@@ -87,7 +87,7 @@ LDFLAGS_T2 = -Xlinker -Ttext=0xe00000 -Xlinker -Tbss=0x000000
 # C compiler for MiNT
 CC = m68k-atari-mint-gcc
 INC = -Iinclude
-CFLAGS = -O2 -fomit-frame-pointer -Wall -mshort -m68000 $(DEF) $(LOCALCONF) $(INC)
+CFLAGS = -Os -fomit-frame-pointer -Wall -mshort -m68000 $(DEF) $(LOCALCONF) $(INC)
 
 CPPFLAGS = $(INC)
 

@@ -1052,3 +1052,6 @@ Start... early ages
 
 21. Aug. 2002
 - doc/announce.txt - updated for release 0.5 (MAD)
+
+27. Aug. 2002
+- Makefile - replaced "-O2" by "-Os" for smaller size (MAD)
