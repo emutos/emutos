@@ -983,3 +983,5 @@ Start... early ages
 30. Jul. 2002
 - vdi/vdiinput.c - fixed bug in vb_draw routine (MAD)
 
+01. Aug. 2002
+- bios/blkdev.c - booting from harddisk enabled (joy)
