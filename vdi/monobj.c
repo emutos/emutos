@@ -230,7 +230,7 @@ void v_locator()
 
     if (loc_mode == 0) {
         DIS_CUR();
-        while ((i = GLOC_KEY()) != 1) { /* loop till some event */
+        while ((i = gloc_key()) != 1) { /* loop till some event */
             if (i == 4) {       /* keyboard cursor? */
                 HIDE_CUR();     /* turn cursor off */
                 GCURX = X1;
@@ -247,7 +247,7 @@ void v_locator()
         *pointer = Y1;
         HIDE_CUR();
     } else {
-        i = GLOC_KEY();
+        i = gloc_key();
         pointer = CONTRL;
         *(pointer + 2) = 1;
         *(pointer + 4) = 0;

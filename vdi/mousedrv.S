@@ -289,6 +289,45 @@ ms_exit:
         rts
 
 
+
+/*      
+ * mov_cur - moves the mouse cursor to its new location
+ *           unless the cursor is currently hidden.
+ *
+ * Inputs:
+ *    d0 = new x-coordinate for mouse cursor
+ *    d1 = new y-coordinate for mouse cursor
+ *
+ * Outputs:        None
+ *
+ * Registers Modified:     None
+ */
+
+_mov_cur:
+        tst.w   _HIDE_CNT       // is the cursor hidden?
+        bne     mov_cur1        // yes - don't draw it now
+
+/*
+ * The cursor is not currently hidden.  Save the new coordinates for the
+ * cursor, set a flag to signal the need to redraw it, and (if we have
+ * no timer or vertical blank tick) then call the routine that will
+ * remove the cursor from its current location and redraw it in the new
+ * one.  This is a critical region so all interrupts must be turned off.
+ */
+        move.w  sr,-(sp)        // save current value of status register
+        ori.w   #0x0700,sr      // mask off all interrupts
+        
+        move.w  d0,_newx        // save new cursor x-coordinate
+        move.w  d1,_newy        // save new cursor y-coordinate
+        bset.b  #0,_draw_flag   // set the 'draw cursor' flag
+
+        move.w  (sp)+,sr        // restore the value of the status register
+mov_cur1:
+        rts
+
+
+
+#if 0   // MAD: hopefully replaced by vinput.c:gloc_key
 /*
  * _GLOC_KEY - get locator key
  *
@@ -358,43 +397,7 @@ mov_stat:
 no_chg:  
         move.l  #0,d0
         rts
-
-
-
-/*      
- * mov_cur - moves the mouse cursor to its new location
- *           unless the cursor is currently hidden.
- *
- * Inputs:
- *    d0 = new x-coordinate for mouse cursor
- *    d1 = new y-coordinate for mouse cursor
- *
- * Outputs:        None
- *
- * Registers Modified:     None
- */
-
-_mov_cur:
-        tst.w   _HIDE_CNT       // is the cursor hidden?
-        bne     mov_cur1        // yes - don't draw it now
-
-/*
- * The cursor is not currently hidden.  Save the new coordinates for the
- * cursor, set a flag to signal the need to redraw it, and (if we have
- * no timer or vertical blank tick) then call the routine that will
- * remove the cursor from its current location and redraw it in the new
- * one.  This is a critical region so all interrupts must be turned off.
- */
-        move.w  sr,-(sp)        // save current value of status register
-        ori.w   #0x0700,sr      // mask off all interrupts
-        
-        move.w  d0,_newx        // save new cursor x-coordinate
-        move.w  d1,_newy        // save new cursor y-coordinate
-        bset.b  #0,_draw_flag   // set the 'draw cursor' flag
-
-        move.w  (sp)+,sr        // restore the value of the status register
-mov_cur1:
-        rts
+#endif
 
 
         .end

@@ -857,3 +857,7 @@ Start... early ages
 - Makefile: added size checks for targets 192, 256, 512. (LVL)
 - vdi/gsxasm1.S: made __ABLINE externally visible (LVL)
 - updated some doc/ files (LVL)
+
+14. May. 2002
+- vdi/vinput.c - renamed to vdiinput.c, should hold all input stuff (MAD)
+- vdi/vdiinput.c - implemented gloc_key in C, more will follow (MAD)
