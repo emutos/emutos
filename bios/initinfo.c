@@ -49,13 +49,14 @@ static void set_margin(void)
 }
 
 
-#if 0   /* unused */
+#if 0  /* unused */
+/* TODO, remove this */
 static void set_middle(void)
 {
     WORD marl;
     WORD celx;
 
-    marl=v_cel_mx/2 + 3 ;     /* 36 = lenght of Logo */
+    marl=v_cel_mx/2 + 3 ;     /* 36 = length of Logo */
 
     cprintf("\r");              /* goto left side */
 
@@ -63,7 +64,7 @@ static void set_middle(void)
     for (celx = 0; celx<=marl; celx++)
         cprintf(" ");
 }
-#endif
+#endif /* unused */
 
 
 static void set_line(void)
