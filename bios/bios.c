@@ -140,9 +140,8 @@ void startup(void)
     exec_os = &emucon;            // set start of console program
     memtop = (LONG) v_bas_ad;
 
-    m_start = os_end;
-    m_length = memtop - m_start;
-    themd = (LONG) &b_mdx;
+    /* initialize BIOS memory management */
+    bmem_init();      
 
     /* setup default exception vectors */
     init_exc_vec();
@@ -220,6 +219,7 @@ void startup(void)
 
     /* initialize BDOS */
 
+    bmem_close();       /* no more bios memory, BDOS now owns the memory */
     osinit();
   
     set_sr(0x2300);
@@ -278,7 +278,6 @@ void bufl_init(void)
     bufl[BI_FAT] = &bcbx[0];                    /* fat buffers */
     bufl[BI_DATA] = &bcbx[2];                   /* dir/data buffers */
 }
-
 
 
 /*
