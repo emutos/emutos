@@ -222,7 +222,17 @@ void startup(void)
 
 
 
-void do_autoexec(void)
+
+/*
+ * autoexec - run programs in auto folder
+ *
+ * Skip this if user holds the Control key down.
+ *
+ * Note that the GEMDOS already created a default basepage so it is save
+ * to use GEMDOS calls here!
+ */
+
+void autoexec(void)
 {
     struct {
       BYTE reserved[21];
@@ -234,6 +244,12 @@ void do_autoexec(void)
     } dta;
     BYTE path[30];
     WORD err;
+
+    if (kbshift(-1) & 0x02)             /* check if Control is held down */
+        return;
+
+    if( ! blkdev_avail(bootdev) )       /* check, if bootdev available */
+        return;
 
     trap_1( 0x1a, &dta);                      /* Setdta */
     err = trap_1( 0x4e, "\\AUTO\\*.PRG", 7);  /* Fsfirst */
@@ -247,33 +263,6 @@ void do_autoexec(void)
 }
 
 
-
-/*
- * autoexec - run programs in auto folder
- *
- * skip this if user holds the Control key down
- */
-
-void autoexec(void)
-{
-#if 0 // see the following
-    PD *pd;
-#endif
-    if (kbshift(-1) & 0x02)             /* check if Control is held down */
-        return;
-
-    if( ! blkdev_avail(bootdev) )       /* check, if bootdev available */
-        return;
-
-    /* create a basepage, and run the do_autoexec routine as a program */
-#if 0  /* I think we can savely call do_autoexec directly since there is already a  default basepage- THH */
-    pd = (PD *) trap_1( 0x4b, 5, "", "", "");
-    pd->p_tbase = (LONG) strtautoexec;
-    launchautoexec(pd);
-#else
-    do_autoexec();
-#endif
-}
 
 /*
  * biosmain - c part of the bios init code

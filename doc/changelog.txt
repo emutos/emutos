@@ -829,3 +829,8 @@ Start... early ages
 - renamed back CS into CZ to please Petr; did not alter po/cs.po (LVL)
 - vdi/vinput.c - rewrote some key stuff in C (MAD)
 
+02. May 2002
+- Added John Elliott's "Desktop 1.2" patches - it's not enabled yet since
+  it is quite instable, but you can enable it by compiling with "-DDESK1"
+  and adding desk/desk1.c to your Makefile (THH).
+

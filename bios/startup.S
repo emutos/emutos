@@ -246,153 +246,36 @@ memdone:
         jmp     _startup
 
 
-// ===========================================================================
-// ==== autoexec stuff =======================================================
-// ===========================================================================
 
-/*
- * to scan AUTO folder using Fsfirst and Fsnext, we need a DTA. 
- * To use Setdta we need to look like a program to BDOS (we need a 
- * basepage). The autoexec() routine in bios.c creates a basepage
- * using pexec(5), sets the TEXT address to strtautoexec, then 
- * launches this fake BDOS program using Pexec(4). The routine
- * strtautoexec needs to do the .PRG startup before jumping in
- * do_autoexec, in bios.c, that does the real job. 
- */
-#if 0  /* Not really needed?  - THH */
-        .global _launchautoexec
-        .global _strtautoexec
-        
-_launchautoexec:
-        // get basepage address
-        move.l  4(sp),a0
-
-        // save registers (they will not be saved by gemdos,
-        // because we do not use Pterm())
-        movem.l d2-d7/a2-a6,-(sp)
-        bsr     launchautoexec
-        movem.l (sp)+,d2-d7/a2-a6
-        rts
-
-launchautoexec: 
-        // save stack 
-        move.l  sp,aexecsave
-
-        // Pexec(4,...)
-        lea     empty(pc),a1
-        pea     (a1)
-        move.l  a0,-(sp)
-        pea     (a1)
-        move.w  #4,-(sp)
-        move.w  #0x4b,-(sp)
-        trap    #1
-        add.w   #16,sp
-        rts
-
-empty:  dc.w    0
-        
-_strtautoexec:
-        // get basepage address
-        move.l  4(sp),a5
-        // basepage + stack size
-        move.l  #0x200,d7
-        // stack pointer at the end of our zone
-        lea     (a5,d7),sp
-        // go in supervisor mode
-        clr.l   -(sp)
-        move.w  #0x20,-(sp)
-        trap    #1
-        add.w   #6,sp
-        // release excess memory (the BDOS has given us all mem left)
-        move.l  d7,-(sp)
-        move.l  a5,-(sp)
-        clr.w   -(sp)
-        move.w  #0x4a,-(sp)
-        trap    #1
-        add.w   #12,sp
-        // jsr into do_autoexec
-        jsr     _do_autoexec
-        // restore stack and return
-        move.l  aexecsave,sp
-        rts
-#endif
-        
-
-
-#if 0 /* Not really needed?  - THH */
-/*
- * subroutine_call - Fake a subroutine call into fVDI (which assumes a Trap)
- *
- * The address of this routine is returned if d0 == $ffff on Trap #2 entry.
- * Mainly used by NVDI
- * 
- * The sub_vdi function that is called when fVDI has been booted
- * (rather than run from the desktop) actually makes use of that
- * stored 'call the VDI without going through Trap #2'-address that
- * was returned earlier by Trap#2/$ffff.
- * I'd completely forgotten about that and it means that your VDI
- * must indeed provide a useful result from that call. If it's not
- * already there, do what I do in fVDI to make it simple:
- */
-
-subroutine_call:
-        move.w  #0xffff,-(a7)           // Mark old stack
-        move.w  #0x88,-(a7)             // Set up a 'Trap #2' on the stack
-        pea     return_here
-        move    sr,-(a7)
-        bra     dispatch_entry          // Just after the d0 == 0x73 check
-return_here:
-        cmp.w   #0xffff,(a7)+
-        beq     was_020
-        addq.l  #2,a7                   // Skip 0x88 if not >= '020
-was_020:
-        rts
-#endif
 
 
 
 /*
- * _gemtrap - dispatches between VDI, AES and others
+ * _gemtrap - VDI trap dispatcher
  *
- * For AES it implements only appl_init().
+ * This functions checks for a trap-2 VDI call and jumps to the VDI dispatcher
+ * then. It also provides a simple vq_gdos call and the "d0=-1" query function
+ * that returns the dispatcher's address.
  *
- * returns 0, to tell Mint that GEM is not running.
+ * Note that this function does not care for AES calls since the AES later
+ * hook into the trap-2 vector.
+ *
  */
 
 _gemtrap:
         cmp.w   #0x73,d0                // VDI call?
         bne     no_vdi
-dispatch_entry:
         jsr     _GSX_ENTRY
         rte
 
 no_vdi:
-        cmp.w   #0xc8,d0                // AES call?
-        bne     no_aes
-
-        move.l  d1,a0                   // check, what AES call
-        move.l  (a0),a1
-        cmp.w   #0x0a,(a1)              // check, if appl_init() ?
-        bne     failgem
-
-        move.l  4(a0),a1                // fake appl_init()
-        clr.l   (a1)
-        rte
-
-no_aes:
         cmp.w   #0xfffe,d0              // vq_gdos call?
         beq     what_gdos
         
         cmp.w   #0xffff,d0              // query for jsr:able address?
         beq     query
 
-#if 0
-        move.l  vdi_address,-(a7)       // Continue to next in chain
-        rts
-#endif        
-
-        bra     failgem                 // should take this out!
-
+        rte
 
 
 what_gdos:
@@ -400,29 +283,8 @@ what_gdos:
         rte
 
 query:
-#if 1
         move.l  #_GSX_ENTRY,d0          // Return address of VDI dispatcher
-#else
-        move.l  #subroutine_call,d0     // Someone doesn't like Trap #2
-#endif
         rte
-
-
-
-/*
- * failgem - print a message, that call is not implemented
- */
-
-failgemmsg:
-        .ascii "unimplemented gem call.\n\0"
-        .even
-failgem:
-        pea     failgemmsg
-        jsr     _kprintf
-        addq    #4,sp
-
-everloop:       
-        bra everloop            // Loop forever, if GEM call not implemented
 
 
 

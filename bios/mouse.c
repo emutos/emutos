@@ -108,7 +108,7 @@ void Initmous(WORD type, struct param *param, PTR newvec)
         retval = 0;             // means error
     }
 
-    if (retval != 0) {          /* if no error */
+    if (retval!=0 && type!=0) {         /* if no error */
         
         if (param != NULL) {
             if (p->topmode == IN_YBOT)
