@@ -262,7 +262,7 @@ LE3EE:
 
 .bss
 
-LEAC2:
+savesr:
         .ds.w    1
 
 _crit_er:

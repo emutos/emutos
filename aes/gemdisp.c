@@ -227,7 +227,7 @@ static void schedule(void)
 /*                                                                      */
 /************************************************************************/
 
-/* routine disp called from dsptch(). 
+/* routine disp called from dsptch(). */
 
 void disp()
 {
