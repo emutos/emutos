@@ -1529,3 +1529,7 @@ Start... early ages
 2003-07-29
 - vdi/blit.c: reactivated assembler implementation of vrt_cpyfm, 
               vro_cpyfm and bit_blt till C is bug free  (MAD)
+
+2003-07-31
+- doc/*: updated doc to clarify country-oriented misunderstandings (LVL)
+

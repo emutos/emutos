@@ -26,6 +26,12 @@ or
 or
     make COUNTRY=de
 
+NOTE: by specifying COUNTRY=xx, all countries are included in the binary, 
+but a flag in the TOS header will indicate counntry 'xx'. If, however, the 
+EmuTOS image is booted on an emulator featuring NVRAM emulation (such as
+Aranym), the country number in the NVRAM will override that setting of the 
+country in the TOS header.
+
 Finally, some settings can be configured in the file include/config.h.
 
 A complete list of targets

@@ -47,8 +47,8 @@ A tool called "bug" is supplied. Bug does three operations:
   and updates the po-file (adding for instance new entries
   for new translatable strings)
 - make: creates the C file(s) that will be linked to EmuTOS 
-  to provide the translation hashes.
-
+  to provide the translation hashes. NOTE: "bug make" is invoked
+  by the EmuTOS Makefile, you should not invoke it directly.
 
 
 po/POTFILES.in  }   bug xgettext
@@ -60,7 +60,7 @@ po/messages.pot }-------->  po/xx.po    (the first time only)
 po/messages.pot }   bug update po/xx.po
 po/xx.po        }------------------------->  po/xx.po  
 
-po/LINGUAS      }   bug make
+po/LINGUAS      }   bug make   (invoked by the Makefile)
 po files        }--------------> C source files
 po/messages.pot }
 

@@ -96,7 +96,6 @@ New country check list
     => font header are not as follow: 
     =>    font_id = 1
     =>    flags = F_STDFORM | F_DEFAULT | F_MONOSPACE
-  - add the new C source codes to the Makefile
   - update the font table in country.mk
   - check if this charset is known by GNU recode and if not
     - send mail to the GNU recode maintainer (!)
