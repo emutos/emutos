@@ -582,7 +582,7 @@ biosxbios:
 //       tst.w   _longframe      // Check _longframe sysvariable one day...
 //       beq.s   bx_nolongframe  // ...when we support CPU >=68000
 //       move.w  (sp)+,-(a1)
-// bx_nolongframe:
+bx_nolongframe:
         movem.l d3-d7/a3-a7, -(a1)      // regs, including stack pointer
         move.l  a1, _savptr
         
@@ -606,7 +606,7 @@ bx_ret_exc:
 //       tst.w   _longframe      // Check longframe again: Is CPU >= 68000?
 //       beq.s   bx_nolong2
 //       move.w  (a1)+,-(sp)
-// bx_nolong2:
+bx_nolong2:
         move.l  (a1)+,-(sp)
         move.w  (a1)+,-(sp)
         move.l  a1, _savptr

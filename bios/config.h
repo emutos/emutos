@@ -1,10 +1,10 @@
 /*
  * config.h - default settings
  *
- * Copyright (c) 2001 Martin Doering
+ * Copyright (c) 2001 by Authors:
  *
- * Authors:
  *  MAD     Martin Doering
+ *  LVL     Laurent Vogel
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.

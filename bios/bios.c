@@ -39,6 +39,7 @@
 
 /*==== Defines ============================================================*/
 
+#define DBGBIOS 0               /* If you want debugging output */
 
 /*==== Forward prototypes =================================================*/
 
@@ -48,8 +49,8 @@ void biosmain(void);
 
 /*==== External declarations ==============================================*/
 
-extern WORD os_dosdate;    /* Time in DOS format */
-extern BYTE *biosts ;         /*  time stamp string */
+extern WORD os_dosdate;         /* Time in DOS format */
+extern BYTE *biosts ;           /*  time stamp string */
 
 
 extern LONG trap_1();           /* found in startup.s */
@@ -62,8 +63,8 @@ extern void clk_init(void);     /* found in clock.c */
 extern LONG oscall();           /* This jumps to BDOS */
 extern LONG osinit();
 
-extern void linea_init(void);    /* found in linea.S */
-extern void cartscan(WORD);      /* found in startup.S */
+extern void linea_init(void);   /* found in linea.S */
+extern void cartscan(WORD);     /* found in startup.S */
 
 
 /*==== Declarations =======================================================*/
@@ -76,7 +77,7 @@ int is_ramtos;
 /* Drive specific declarations */
 static WORD defdrv ;            /* default drive number (0 = a:, 2 = c:) */
 
-static BYTE env[256];            /* environment just for startup*/
+static BYTE env[256];            /* environment string, enough bytes??? */
 
 
 /*==== BOOT ===============================================================*/
@@ -91,8 +92,9 @@ void startup(void)
   WORD i;
   LONG a;
 
+#if DBGBIOS
   kprintf("beginning of BIOS startup\n");
-
+#endif
   
   snd_init();     /* Reset Soundchip, deselect floppies */
   screen_init();  /* detect monitor type, ... */
@@ -105,9 +107,11 @@ void startup(void)
     is_ramtos = 1;
   }
 
+#if DBGBIOS
   kprintf("_etext = 0x%08lx\n", (LONG)_etext);
   kprintf("_edata = 0x%08lx\n", (LONG)_edata);
   kprintf("end    = 0x%08lx\n", (LONG)end);
+#endif
   if(is_ramtos) {
     /* patch TOS header */
     os_end = (LONG) _edata;
@@ -150,7 +154,9 @@ void startup(void)
   dump_vec = dump_scr;
   
   /* misc. variables */
+#if DBGBIOS
   kprintf("diskbuf = %08lx\n", (LONG)diskbuf);
+#endif
   dumpflg = -1;
   sysbase = (LONG) os_entry;
   
@@ -194,8 +200,9 @@ void startup(void)
     VEC_BIOS = bios;
     (*(PFVOID*)0x7C) = brkpt;   /* ??? */
   
+#if DBGBIOS
     kprintf("BIOS: Last test point reached ...\n");
-  
+#endif
     cartscan(3);
 
      /* main BIOS */
@@ -269,10 +276,13 @@ void biosmain()
       }
     }
 
+#if DBGBIOS
     kprintf("drvbits = %08lx\n", drvbits);
+#endif
     do_hdv_boot();
+#if DBGBIOS
     kprintf("drvbits = %08lx, bootdev = %d\n", drvbits, bootdev);
-
+#endif
     defdrv = bootdev;
     trap_1( 0x0e , defdrv );    /* Set boot drive */
 
@@ -315,7 +325,7 @@ void bios_0(MPB *mpb)
     mpb->mp_mfl = mpb->mp_rover = &b_mdx; /* free list/rover set to init MD */
     mpb->mp_mal = (MD *)0;                /* allocated list set to NULL */
 
-#if DBGBIOSC
+#if DBGBIOS
     kprint("BIOS: getmpb m_start = ");
     kputp((LONG*) b_mdx.m_start);
     kprint("\n");
@@ -397,7 +407,7 @@ void bios_3(WORD handle, BYTE what)
 
 LONG bios_4(WORD r_w, LONG adr, WORD numb, WORD first, WORD drive)
 {
-#if DBGBIOSC
+#if DBGBIOS
     kprintf("BIOS rwabs(rw = %d, addr = 0x%08lx, count = 0x%04x, "
             "sect = 0x%04x, dev = 0x%04x)\n",
             r_w, adr, numb, first, drive);
@@ -418,7 +428,7 @@ LONG bios_5(WORD num, LONG vector)
     LONG *addr = (LONG *) (4L * num);
     oldvector = *addr;
 
-#if DBGBIOSC
+#if DBGBIOS
     kprintf("Bios 5: Setexec(num = 0x%x, vector = 0x%08lx)\n", num, vector);
 #endif
 
