@@ -63,6 +63,10 @@ extern LONG random(void);    /* in xbios.c */
  * - delay() should be based on some delay loop callibration
  * - reserved or hidden sectors are not guaranteed to be handled correctly
  * - ... (search for 'TODO' in the rest of this file)
+ * - the unique FDC track register is probably not handled correctly
+ *   when using two drives
+ * - once mediach reported != 0, it should not report zero until a new
+ *   getbpb is called.
  */
 
 
@@ -850,6 +854,7 @@ static void floplock(WORD dev)
     /* 
      * the FDC has only one track register for two units.
      * we need to save the current value, and switch 
+     * TODO !!!
      */
     if(cur_dev != -1) {
       finfo[cur_dev].cur_track = cur_track;
