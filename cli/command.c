@@ -17,6 +17,7 @@
 
 #ifndef NO_ROM
 #include "nls.h"
+#include "string.h"
 #else
 #define _(a) a
 #define N_(a) a
@@ -189,6 +190,7 @@ void prthex(unsigned h)
 }
 
 
+#if NO_ROM
 /* LVL using unsigned long int to stop gcc warning about
  * conflicting types for built-in function `strlen'
  */
@@ -199,6 +201,7 @@ unsigned long int strlen(const char *s)
     for (n = 0; *s++; n++);
     return (n);
 }
+#endif /* NO_ROM */
 
 
 

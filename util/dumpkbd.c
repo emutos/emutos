@@ -11,7 +11,7 @@
  */
 
 #include <osbind.h>
-#include "btools.h"
+#include "string.h"
 
 struct ktbl {
   int magic;

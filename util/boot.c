@@ -11,7 +11,7 @@
  */
 
 #include <osbind.h>
-#include "btools.h"   /* memmove */
+#include "string.h"   /* memmove */
 #include "asm.h"      /* set_sr  */
 
 extern void bootasm(long dest, long src, long count);

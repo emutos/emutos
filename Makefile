@@ -108,7 +108,7 @@ BDOSSSRC = rwa.S
 # source code in util/
 #
 
-UTILCSRC = doprintf.c nls.c langs.c
+UTILCSRC = doprintf.c nls.c langs.c string.c
 UTILSSRC = memset.S memmove.S nlsasm.S
 
 #

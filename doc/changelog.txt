@@ -512,3 +512,16 @@ Start... early ages
 - fixed typos in bios-level memory (LVL) 
 - fixed the amount of fastram printed in debug mode (joy)
 - set the C: in drvbits for the hacked up host access disk drive (joy)
+
+15. Jan. 2002
+- bios/detect.S: functions now keep register a2 intact (LVL)
+- bios/kprint.c: temporarily removed console print in panic, until one
+  knows of a way to be certain that the concole is configured (LVL)
+- collected a number of <string.h> routines scattered around and put 
+  them in util/string.c and include/string.h; merged btools.h with
+  string.h to be consistent with standard ANSI C (LVL)
+- bios/kprint.h: silly debug macro HERE kprintf()s the location in file (LVL)
+- bios/bios.c: commented out VEC_ILLEGAL = brkpt; (LVL)
+- transferred getmpb from bios.c to biosmem.c (LVL)
+- bios/conout.S: fixed bconout5(c) bug when c >= 128 (LVL)
+- removed obsolete bios/keyboard.h include/btools.h (LVL)

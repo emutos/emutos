@@ -17,7 +17,7 @@
 #include "clock.h"
 #include "ikbd.h"
 #include "tosvars.h"
-#include "btools.h"
+#include "string.h"
 #include "detect.h"
 #include "nvram.h"
 

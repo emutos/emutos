@@ -129,7 +129,7 @@
 #include        "bios.h"                /*  M01.01.01                   */
 #include        "mem.h"
 #include        "gemerror.h"
-#include        "btools.h"
+#include        "string.h"
 #include        "../bios/kprint.h"
 
 #ifndef M0101052901

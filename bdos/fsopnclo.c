@@ -51,7 +51,7 @@
 #include "fs.h"
 #include "bios.h"
 #include "gemerror.h"
-#include "btools.h"      
+#include "string.h"      
 #include "mem.h"
 
 /*

@@ -14,6 +14,7 @@
  
 #include "nls.h"
 #include "langs.h"
+#include "string.h"
 
 
 static int the_lang;
@@ -41,17 +42,6 @@ void nls_init(void)
 }
 
 /* functions to query the lang database and to set the lang */
-
-static int strcmp(const char *a, const char *b)
-{
-  while(*a && *a == *b) {
-    a++;
-    b++;
-  }
-  if(*a == *b) return 0;
-  if(*a < *b) return -1;
-  return 1;
-}
 
 void nls_set_lang(const char *s)
 {

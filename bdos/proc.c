@@ -19,7 +19,7 @@
 #include "mem.h"
 #include "proc.h"
 #include "gemerror.h"
-#include "btools.h"
+#include "string.h"
 #include "../bios/kprint.h"
 
 #define DBGPROC 0

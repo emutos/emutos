@@ -22,7 +22,7 @@
 #include "asm.h"
 #include "tosvars.h"
 #include "blkdev.h"
- 
+#include "string.h"
 #include "kprint.h"
 
 /*==== External declarations ==============================================*/
@@ -118,9 +118,6 @@ static void fdc_start_dma_write(WORD count);
 
 /* delay for fdc register access */
 static void delay(void);
-
-/* memcmp */
-static WORD memcmp(void* a, void* b, LONG n);
 
 /*==== Internal floppy status =============================================*/
 
@@ -860,16 +857,5 @@ static void delay(void)
   while(--delay);
 }
 
-static WORD memcmp(void* aa, void* bb, LONG n)
-{
-  UBYTE * a = aa;
-  UBYTE * b = bb;
-  while((--n >= 0) && (*a++ == *b++));
-  if(n < 0) return 0;
-  --a;
-  --b;
-  if(*a < *b) return -1;
-  return 1;
-}
 
 
