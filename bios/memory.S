@@ -35,7 +35,7 @@
 	.xdef	bssstrt	
 
         .xdef   memctrl       
-        .xdef   phystop       
+        .xdef   _phystop       
 
         .xdef   _membot       
         .xdef   _memtop       
@@ -215,7 +215,7 @@ clearmem:
 // ==== Set new memory configuration to sysvars ==============================
 
         move.b  d6, memctrl             // memctrl
-        move.l  d5, phystop             // higest address as phystop
+        move.l  d5, _phystop            // higest address as phystop
         move.l  #0x752019f3, memvalid   // set memvalid to ok
         move.l  #0x237698aa, memval2    // set memval2 to ok
 

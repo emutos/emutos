@@ -203,10 +203,10 @@ exit_conout:
 
 
 
-// ==== do_bell - Ring the bell (not implemented) ============================
+// ==== do_bell - Ring the bell (in sound.c) =================================
 
 do_bell:                         
-//       bsr     ring_bell
+        bsr     _bell
         rts
 
 

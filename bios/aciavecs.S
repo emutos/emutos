@@ -45,10 +45,10 @@
 
         .equ    vec_acia, 0x118         // keyboard/Midi interrupt vector
 
-	.global init_acia_vecs
+	.global _init_acia_vecs
 	.global _int_acia
 		
-init_acia_vecs:
+_init_acia_vecs:
 	move.l	#_midivec,midivec
 	move.l	#_vkbderr,vkbderr
 	move.l	#_vmiderr,vmiderr

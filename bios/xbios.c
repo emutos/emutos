@@ -6,6 +6,7 @@
  * Authors:
  *  MAD     Martin Doering
  *  THO     Thomas Huth
+ *  LVL     Laurent Vogel
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -20,6 +21,9 @@
 #include "ikbd.h"
 #include "midi.h"
 #include "mfp.h"
+#include "screen.h"
+#include "sound.h"
+#include "floppy.h"
 #include "asm.h"
  
 #define	DBG_XBIOS        1
@@ -89,21 +93,10 @@ LONG xbios_1()
 
 ULONG xbios_2()
 {
-    ULONG addr;
-
 #if DBG_XBIOS
     kprintf("XBIOS: Physbase ...\n");
 #endif
-
-    addr = *(UBYTE *)0xffff8201;
-    addr <<= 8;
-    addr += *(UBYTE *)0xffff8203;
-    addr <<= 8;
-#if 0      /* The low byte only exists on STE, TT and Falcon */
-    addr += *(UBYTE *)0xffff820D;  
-#endif
-
-    return(addr);
+    return physbase();
 }
 
 
@@ -119,7 +112,7 @@ LONG xbios_3()
 #if DBG_XBIOS
     kprintf("XBIOS: Logbase ...\n");
 #endif
-    return((ULONG)v_bas_ad);
+    return logbase();
 }
 
 
@@ -135,8 +128,7 @@ WORD xbios_4()
 #if DBG_XBIOS
     kprintf("XBIOS: Getrez ...\n");
 #endif
-
-    return( *(UBYTE *)0xffff8260 );
+    return getrez();
 }
 
 
@@ -157,17 +149,7 @@ VOID xbios_5(LONG logLoc, LONG physLoc, WORD rez)
     kprintf("XBIOS: SetScreen(log = 0x%08lx, phys = 0x%08lx, rez = 0x%04x)\n",
 	   logLoc, physLoc, rez);
 #endif
-    if(logLoc >= 0) {
-      v_bas_ad = (char *)logLoc;
-    }
-    if(physLoc >= 0) {
-      screenpt = (char *)physLoc;
-      /* will be set up at next VBL */
-    }
-    if(rez >= 0) {
-      /* rez ignored for now */
-    }
-    
+    setscreen(logLoc, physLoc, rez);
 }
 
 
@@ -186,8 +168,7 @@ VOID xbios_6(LONG palettePtr)
 #if DBG_XBIOS
     kprintf("XBIOS: SetPalette(0x%08lx)\n", palettePtr);
 #endif
-    /* next VBL will do this */
-    colorptr = (WORD *)palettePtr;
+    setpalette(palettePtr);
 }
 
 
@@ -204,35 +185,10 @@ VOID xbios_6(LONG palettePtr)
 
 WORD xbios_7(WORD colorNum, WORD color)
 {
-    WORD rez = xbios_4();
-    WORD max;
-    WORD *palette = (WORD *)0xFFFF8240;
 #if DBG_XBIOS
     kprintf("XBIOS: Setcolor(0x%04x, 0x%04x)\n", colorNum, color);
 #endif
-    switch(rez) {
-    case 0:
-        max = 15;
-        break;
-    case 1:
-        max = 3;
-        break;
-    case 2:
-        max = 1;
-        break;
-    default:
-        max = 0;
-    }
-    if(colorNum >= 0 && colorNum <= max) {
-        if(color == -1) {
-            return palette[colorNum] & 0x777;
-        } else {
-            palette[colorNum] = color;
-            return color & 0x777;
-        }
-    } else {
-        return 0;
-    }
+    return setcolor(colorNum, color);
 }
 
 
@@ -259,9 +215,9 @@ WORD xbios_8(LONG buf, LONG filler, WORD devno, WORD sectno,
              WORD trackno, WORD sideno, WORD count)
 {
 #if DBG_XBIOS
-    kprintf("XBIOS: Unimplemented function 0x08 ...\n");
+    kprintf("XBIOS: Floprd()\n");
 #endif
-    return(-1);
+    return floprd(buf, filler, devno, sectno, trackno, sideno, count);
 }
 
 
@@ -293,9 +249,9 @@ WORD xbios_9(LONG buf, LONG filler, WORD devno, WORD sectno,
              WORD trackno, WORD sideno, WORD count)
 {
 #if DBG_XBIOS
-    kprintf("XBIOS: Unimplemented function 0x09 ...\n");
+    kprintf("XBIOS: Flopwr()\n");
 #endif
-    return(-1);
+    return flopwr(buf, filler, devno, sectno, trackno, sideno, count);
 }
 
 
@@ -327,9 +283,10 @@ WORD xbios_a(LONG buf, LONG filler, WORD devno, WORD spt,
              LONG magic)
 {
 #if DBG_XBIOS
-    kprintf("XBIOS: Unimplemented function 0x0a ...\n");
+    kprintf("XBIOS: flopfmt()\n");
 #endif
-    return(-1);
+    return flopfmt(buf, filler, devno, spt, trackno, sideno, interlv, 
+                   virgin, magic);
 }
 
 
@@ -400,9 +357,9 @@ LONG xbios_e(WORD devno)
         return (LONG) &midiiorec;
     default:
 #if DBG_XBIOS
-	      kprintf("Iorec(%d) : bad input device\n", devno);
+        kprintf("Iorec(%d) : bad input device\n", devno);
 #endif
-	      return -1;
+	return -1;
     }
 }
 
@@ -464,20 +421,27 @@ static ULONG rseed;
 
 extern volatile LONG hz_200;
 
-LONG xbios_11()
+LONG random(VOID)
 {
 #if DBG_XBIOS
     kprintf("XBIOS: Random()\n");
 #endif
     if(rseed == 0) {
-      rseed = hz_200 << 16;
-      rseed += hz_200;
+        rseed = hz_200 << 16;
+        rseed += hz_200;
     }
     rseed *= 3141592621UL;
     rseed ++;
     return((rseed >> 8) & 0xFFFFFF);
 }
 
+LONG xbios_11(VOID)
+{
+#if DBG_XBIOS
+    kprintf("XBIOS: Random()\n");
+#endif
+    return random();
+}
 
 
 /*
@@ -503,8 +467,9 @@ LONG xbios_11()
 VOID xbios_12(LONG buf, LONG serialno, WORD disktype, WORD execflag)
 {
 #if DBG_XBIOS
-    kprintf("XBIOS: Unimplemented function 0x12 ...\n");
+    kprintf("XBIOS: Protobt()\n");
 #endif
+    protobt(buf, serialno, disktype, execflag);
 }
 
 
@@ -517,9 +482,9 @@ WORD xbios_13(LONG buf, LONG filler, WORD devno, WORD sectno,
               WORD trackno, WORD sideno, WORD count)
 {
 #if DBG_XBIOS
-    kprintf("XBIOS: Unimplemented function 0x13 ...\n");
+    kprintf("XBIOS: Flopver()\n");
 #endif
-    return(-1);
+    return flopver(buf, filler, devno, sectno, trackno, sideno, count);
 }
 
 
@@ -649,9 +614,9 @@ VOID xbios_1b(WORD intno)
 BYTE xbios_1c(BYTE data, WORD regno)
 {
 #if DBG_XBIOS
-    kprintf("XBIOS: Unimplemented function 0x1c ...\n");
+    kprintf("XBIOS: Giaccess()\n");
 #endif
-    return(0);
+    return giaccess(data, regno);
 }
 
 
@@ -663,8 +628,9 @@ BYTE xbios_1c(BYTE data, WORD regno)
 VOID xbios_1d(WORD bitno)
 {
 #if DBG_XBIOS
-    kprintf("XBIOS: Unimplemented function 0x1d ...\n");
+    kprintf("XBIOS: Offgibit()\n");
 #endif
+    offgibit(bitno);
 }
 
 
@@ -676,8 +642,9 @@ VOID xbios_1d(WORD bitno)
 VOID xbios_1e(WORD bitno)
 {
 #if DBG_XBIOS
-    kprintf("XBIOS: Unimplemented function 0x1e ...\n");
+    kprintf("XBIOS: Ongibit()\n");
 #endif
+    ongibit(bitno);
 }
 
 
@@ -706,8 +673,9 @@ VOID xbios_1f(WORD timer, WORD control, WORD data, LONG vec)
 VOID xbios_20(LONG ptr)
 {
 #if DBG_XBIOS
-    kprintf("XBIOS: Unimplemented function 0x20 ...\n");
+    kprintf("XBIOS: Dosound()\n");
 #endif
+    dosound(ptr);
 }
 
 
@@ -777,17 +745,10 @@ VOID xbios_24()
 
 VOID xbios_25()
 {
-    WORD old_sr;
-    LONG a;
-    volatile LONG frclock; 
 #if DBG_XBIOS
-    kprintf("XBIOS: Unimplemented function 0x25 ...\n");
+    kprintf("XBIOS: Vsync()\n");
 #endif
-    old_sr = set_sr(0x0300);   /* allow VBL interrupt */
-    a = frclock;
-    while(frclock == a) 
-      ;
-    set_sr(old_sr);
+    vsync();
 }
 
 

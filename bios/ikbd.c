@@ -21,6 +21,7 @@
  * - alt keys for non-us keyboards
  * - KEYTBL.TBL config with _AKP cookie (tos 5.00 and later)
  * - CLRHOME and INSERT in kbshift.
+ * - key repeat
  */
  
 
@@ -32,6 +33,7 @@
 #include "iorec.h"
 #include "asm.h"
 #include "ikbd.h"
+#include "sound.h"  /* for keyclick */
 
 #define DBG_KBD 0
 
@@ -332,6 +334,7 @@ VOID kbd_int(WORD scancode)
       return;
     case KEY_CAPS:
       shifty ^= MODE_CAPS;           /* toggle bit */
+      if(conterm & 1) keyclick();
       return;
   }
   
@@ -357,6 +360,7 @@ VOID kbd_int(WORD scancode)
   }
 
 push_value:
+  if(conterm & 1) keyclick();
   value += ((LONG)scancode & 0xFF)<<16;
   if (conterm & 0x8) {
     value += ((LONG)shifty) << 24;

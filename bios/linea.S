@@ -43,7 +43,7 @@
 // ==== External Declarations ================================================
 
         .global _linea_init     // initialize linea graphics subsystem
-        .global int_linea       // entry for linea exception
+        .global _int_linea       // entry for linea exception
 
 // ==== References ===========================================================
 
@@ -55,7 +55,7 @@
 
 
 // ==== Line-A handler ===============================
-int_linea:
+_int_linea:
 	move.l  2(sp),a0
 	move.l  a0,a1
 	clr.l   d0
@@ -278,7 +278,7 @@ gl_f_init:
 //        remains true.
 
 _linea_init:
-        move.b  sshiftmod, d0           // get video resolution
+        move.b  _sshiftmod, d0           // get video resolution
         and.b   #3, d0                  // isolate bits 0 and 1
         cmp.b   #3, d0                  // is it 3 - color?
         bne     not3                    // no
@@ -315,7 +315,7 @@ lowres:
         move.l  _memtop, a0             // Set start of RAM
 scr_loop:
         move.w  d0, (a0)+               // set to background color
-        cmp.l   phystop, a0             // End of BSS reached?
+        cmp.l   _phystop, a0             // End of BSS reached?
         bne     scr_loop                // if not, clear next word
 
         move.l  #normal_ascii, con_state // Init conout state machine
@@ -381,10 +381,10 @@ sresolx:
         bne.s setscrnres        // no -->
         moveq #2,d0             // yes, set highres, make valid
 setscrnres:
-        move.b d0, sshiftmod    // Set in sysvar
+        move.b d0, _sshiftmod    // Set in sysvar
 
         move.b #2, 0xffff8260     // Hardware set to highres
-        move.b #2, sshiftmod    // Set in sysvar
+        move.b #2, _sshiftmod    // Set in sysvar
 
 //       jsr 0xfca7c4            // Init screen (video driver???)
 
@@ -394,7 +394,7 @@ setscrnres:
 
 initmidres:
         move.l  #_main, swv_vec // Set Swv_vec (vector res change) to Reset
-        move.w  #1, vblsem      // vblsem: VBL freigeben
+        move.w  #1, _vblsem      // vblsem: VBL freigeben
 
 
 //       pea 0xfffffa00  // Print, what's going on
@@ -409,7 +409,7 @@ initmidres:
 //low_rez:
 //       move.l #0,d0
 //both_rez:
-//       move.b d0, sshiftmod    // set mode sysvar
+//       move.b d0, _sshiftmod    // set mode sysvar
 //       move.w d0, 0xFFFF8260   // and to shifter register
 
 // ==== Set videoshifter address to screenmem ================================

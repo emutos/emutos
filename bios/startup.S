@@ -12,11 +12,11 @@
  *
  */
 
-
+#include "asmdefs.h"
 
 // ==== Defines ==============================================================
 
-        .equ    SUPSIZ, 4096            // size of the supervisor stack in words
+        .equ    SUPSIZ, 4096            // size of supervisor stack in words
         .equ    _GSX_ENT, 0             // Entry to GEM (if graphically)
 
         .equ    TPASTART, 0xE000        // default start address of tpa area
@@ -66,6 +66,7 @@
         .global _bsti
         .global _cmain                  //file system init in main.c (cmain)
         .global _criter
+	.global _criter1
 
         .global _drv_init
         .global _drv_boot
@@ -75,6 +76,39 @@
 
         .global   memdone       	// return to, if memory config done
 
+        .global _cartscan
+        .global _os_end
+        .global _os_beg
+        .global _int_vbl
+        .global _int_hbl
+        .global _bios
+        .global _xbios
+        .global _init_trap
+        .global _dummyaes
+        .global _os_entry
+        .global _just_rts
+        .global _just_rte
+        .global _xbios
+        .global _diskbuf
+        .global _brkpt
+        
+        // useless ?? C code ??
+        .global _print_stat
+        .global _print_vec
+        .global _serial_stat
+        .global _serial_vec
+        .global _prt_stat
+        .global _prt_vec
+        .global _aux_stat
+        .global _aux_vec
+        .global _dump_scr
+        .global _dump_vec
+        
+        // TODO: move these into C code.
+        .global _m_start
+        .global _m_length
+
+	.global _save_area
 	.global _int_timerc
 
 // ==== From bios.c ==========================================================
@@ -149,7 +183,7 @@
         .xdef   hdv_mediach   
         .xdef   _cmdload      
         .xdef   conterm       
-        .xdef   themd          
+        .xdef   _themd          
         .xdef   ____md        
         .xdef   savptr        
         .xdef   _nflops       
@@ -201,8 +235,8 @@
 	
 // ==== vectors.s - Default exception vectors ================================
 
-	.xdef	init_exc_vec
-	.xdef	init_user_vec
+	.xdef	_init_exc_vec
+	.xdef	_init_user_vec
 	
 // ==== memory.s - variables for memory  =====================================
 
@@ -218,25 +252,25 @@
 // save area for trap13/14.
 save_beg:       ds.w    24*3    // d3-d7/a3-a7, sr, pc, vo = 24 words, 
 				// multiplied by 3 ("3 level deep reentrant")
-save_area:                      // End of Save storage
+_save_area:                      // End of Save storage
 
 
         .org    0x167a
-diskbuf:        ds.b    1024    // 1 cluster disk buffer
+_diskbuf:       ds.b    1024    // 1 cluster disk buffer
         .org    0x45b8
 _stkbot:        ds.w    SUPSIZ  // Supervisor stack
 _stktop:                        // filled from top to bottom
 
 _output:        ds.b    1024
-t1regsav:         dc.l    1   
+t1regsav:       dc.l    1   
 
 _b_mdx:                         // initial memory descriptor
-                .dc.l   1
-m_start:        .dc.l   1       // start address of TPA
-m_length:       .dc.l   1       // length of TPA in byte
-                .dc.l   1
+                dc.l    1
+_m_start:       dc.l    1       // start address of TPA
+_m_length:      dc.l    1       // length of TPA in byte
+                dc.l    1
 
-_tticks:        .dc.l   1
+_tticks:        dc.l    1
 
 // ===========================================================================
 // ==== TEXT segment (TOS image) =============================================
@@ -253,15 +287,15 @@ _tticks:        .dc.l   1
 .global _shifty
 .global _run
 
-os_entry:
+_os_entry:
     bra.s   _main       // os_entry, branch to _main
 os_version:
     dc.w    0x0102      // os_version, TOS version
 reseth:
     dc.l    _main       // reseth, pointer to reset handler
-os_beg:
-    dc.l    os_entry    // os_beg, base of os = _sysbase
-os_end: 
+_os_beg:
+    dc.l    _os_entry   // os_beg, base of os = _sysbase
+_os_end: 
     dc.l    _bssend     // os_end, first byte RAM not used by OS
 os_res1:        
     dc.l    _main       // os_res1, reserved
@@ -324,30 +358,48 @@ resetvec:
        jmp 	(a0)			// jump to resvec
 noreset:
 
+// ==== Check, if old memory config can be used ==============================
 
+/* 
+ * LVL - I put back the mem configuration early, to be able to use
+ * the stack, so that the rest of boot sequence can be made more
+ * modular using CDECL routines.
+ */
+	
+        bra     meminit                 // do/test memory config (no sp used)
+memdone:
 
-// ==== Reset Soundchip =======================================================
-initsnd:
+/* 
+ * From now, the stack is allowed, and C code can be used.
+ *
+ */
+
+// ==== Rest of boot in bios.c (experimental) ================================
+
+#if 1
+        jmp     _startup
+#endif
+	
+// ==== Reset Soundchip, deselect floppies  ==================================
+
+#if 0	/* old asm sound & flop init */
         lea     0xffff8800, a0  // base address of PSG Soundchip
         move.b  #7, (a0)        // port A and B          
         move.b  #0xC0, 2(a0)    // set to output           
         move.b  #0xE, (a0)      // port A                
 
-//        pea msg_sound   // Print, what's going on
-//        bsr _kprint
-//        addq #4,sp
-
-
-
-// ==== Reset Floppy =========================================================
         move.b  #7, 2(a0)       // deselect floppy
+#else
+	jsr     _snd_init
+#endif
 
-//        pea msg_floppy  // Print, what's going on
-//        bsr _kprint
-//        addq #4,sp
+/*
+ * this pre-screen initialisation before memory config is not needed
+ * anymore. Do the full screen init in screen.c
+ */	
 
-
-
+#if 0   /* old asm screen pre-init */
+	
 // ==== Set shifter to pal ===================================================
 
         move.b #2, 0xff820a     // sync-mode to 50 hz pal, internal sync
@@ -370,12 +422,13 @@ loadcol:
         move.b  #0x1, 0xffff8201 // set hw video base high word
         move.b  #0x0, 0xffff8203 // set hw video base low word
 
-
+#endif  /* old asm screen pre-init */
 
 // ==== Check, if old memory config can be used ==============================
 
-        bra     meminit                 // do/test memory config (no sp used)
-memdone:
+// moved above.	
+//      bra     meminit                 // do/test memory config (no sp used)
+// memdone:
 
 //        pea msg_mem     // Print, what's going on
 //        bsr _kprint
@@ -384,8 +437,9 @@ memdone:
 
 
 // ==== Set videoshifter address to screenmem ================================
-        
-        move.l  phystop, a0     // get memory top
+
+#if 0	        
+        move.l  _phystop, a0     // get memory top
         sub.l   #0x8000, a0     // minus screen mem length
         move.l  a0, _v_bas_ad   // set screen base
 
@@ -396,25 +450,28 @@ memdone:
         pea msg_shift   // Print, what's going on
         bsr _kprint
         addq #4,sp
-
+#else
+	jsr _screen_init
+#endif
+	
 // ==== Set memory width to sysvars ==========================================
 
-        move.l  os_end, end_os          // end_os
-        move.l  end_os, _membot         // end_os to _membot
-        move.l  os_beg, exec_os         // exec_os
+        move.l  _os_end, _end_os        // end_os
+        move.l  _end_os, _membot        // end_os to _membot
+        move.l  _os_beg, _exec_os       // exec_os
         move.l  _v_bas_ad, _memtop      // _v_bas_ad to _memtop
 
 
 
 // ==== Set memory config to initial memory descriptor =======================
 
-	move.l  #TPASTART, m_start      // set up default values
+	move.l  #TPASTART, _m_start     // set up default values
 
         move.l  _memtop, d0             // calculate length of TPA
         sub.l   #TPASTART, d0
-        move.l  d0, m_length            // set length of TPA in byte
+        move.l  d0, _m_length           // set length of TPA in byte
 
-        move.l  #_b_mdx, themd          // write addr of MDB to sysvar themd
+        move.l  #_b_mdx, _themd         // write addr of MDB to sysvar themd
                                         // defined in bios.c
 
 
@@ -422,16 +479,16 @@ memdone:
 // We currently are experiencing an unexpected cpu interrupt.  We will
 // set the vector addresses of these interrupts to a known location.
 
-	jsr init_exc_vec		// LVL: moved in vectors.s
+	jsr     _init_exc_vec           // LVL: moved in vectors.s
 
 
 
 // ==== Set unassigned user interrupts to dummy handler ======================
-//      	move.l	SAVECT,-(sp)		// save software abort vector
+//      move.l	SAVECT,-(sp)		// save software abort vector
 
-	jsr init_user_vec		// LVL: moved in vectors.s
+	jsr     _init_user_vec          // LVL: moved in vectors.s
 
-//      	move.l	(sp)+,SAVECT		// restore software abort vector
+//      move.l	(sp)+,SAVECT		// restore software abort vector
 
 //	pea msg_main	// Print, what's going on
 //	bsr _kprint
@@ -452,58 +509,62 @@ memdone:
 
 // ==== vector setup =========================================================
 
-        move.l #int_vbl, vec_vbl        // Vbl-interr
-        move.l #int_hbl, vec_hbl        // Hbl-interr
-        move.l #dummyaes, vec_aes       // Trap #2  (AES, almost dummy)
-        move.l #bios, vec_bios          // Trap #13 (BIOS)
-        move.l #xbios, vec_xbios        // trap #14 (XBIOS)
-        move.l #int_linea, vec_linea    // Line-A
-	jsr	init_acia_vecs		// LVL: moved to aciavecs.s
-        move.l #just_rte, vec_divnull   // Division by zero to rte
+        move.l #_int_vbl, vec_vbl       // Vbl-interr
+        move.l #_int_hbl, vec_hbl       // Hbl-interr
+        move.l #_dummyaes, vec_aes      // Trap #2  (AES, almost dummy)
+        move.l #_bios, vec_bios         // Trap #13 (BIOS)
+        move.l #_xbios, vec_xbios       // trap #14 (XBIOS)
+        move.l #_int_linea, vec_linea   // Line-A
+	jsr	_init_acia_vecs	        // LVL: moved to aciavecs.s
+        move.l #_just_rte, vec_divnull  // Division by zero to rte
 
 // ==== disk related vectors =================================================
 
+#if 0	
         move.l  #_drv_init, hdv_init    // Initialize Harddrive
         move.l  #_drv_rw, hdv_rw        // Read/write sectors
         move.l  #_drv_bpb, hdv_bpb      // Get BIOS parameter Block
         move.l  #_drv_mediach, hdv_mediach      // Dummy mediach (STonX)
         move.l  #_drv_boot, hdv_boot    // Get boot device
+        st      _fverify                // _fverify
         move.w  #0x3, seekrate          // floppy seekrate = 3 ms
-        move.l  #diskbuf, _dskbufp      // _dskbufp
-
+        move.l  #_diskbuf, _dskbufp     // _dskbufp
+#else
+	jsr     _floppy_init
+#endif
+		
 // ==== Some other vectors ===================================================
 
-        move.l  #print_stat, prt_stat   //
-        move.l  #print_vec, prt_vec     //
-        move.l  #serial_stat, aux_stat  //
-        move.l  #serial_vec, aux_vec    //
-        move.l  #dump_scr, dump_vec     //
+        move.l  #_print_stat, _prt_stat   //
+        move.l  #_print_vec, _prt_vec     //
+        move.l  #_serial_stat, _aux_stat  //
+        move.l  #_serial_vec, _aux_vec    //
+        move.l  #_dump_scr, _dump_vec     //
 
-        move.w #0x8, nvbls              // nvbls
-        st     _fverify                 // _fverify
-        move.w #-1, _dumpflg            // clear _dumpflg
-        move.l #os_entry, _sysbase      // Set _sysbase to ROM-start
-        move.l #save_area, savptr       // savptr for Trap dispatcher
-	move.l	#vidchng, swv_vec	// vector for video mode change
+        move.w  #0x8, _nvbls            // nvbls
+        move.w  #-1, _dumpflg           // clear _dumpflg
+        move.l  #_os_entry, _sysbase    // Set _sysbase to ROM-start
+        move.l  #_save_area, _savptr     // savptr for Trap dispatcher
+	move.l	#_vidchng, _swv_vec	// vector for video mode change
 
-        move.l #just_rts, etv_timer     // etv_timer (->RTS)
-        move.l #_criter1, etv_critic    // etv_critic
-        move.l #just_rts, etv_term      // etv_term  (->RTS)
+        move.l  #_just_rts, _etv_timer   // etv_timer (->RTS)
+        move.l  #_criter1, _etv_critic   // etv_critic
+        move.l  #_just_rts, _etv_term    // etv_term  (->RTS)
 
         move.l  #_brkpt, 0x7c           // set nmi to do an illegal instruction
-        move.l  #bios, 0xb4             // revector bios entry = trap #13
+        move.l  #_bios, 0xb4            // revector bios entry = trap #13
 
 
 
 // ==== Clear VBL queue list =================================================
         lea _vbl_list, a0               // Get addr. of VBL-routine
-        move.l a0, _vblqueue            // nach _vblqueue
+        move.l a0, _vblqueue            // to _vblqueue
         move.w #7, d0                   // Loop counter
 clrvbl:
         clr.l (a0)+                     // Clear VBL-QUEUE
         dbra d0, clrvbl                 // Loop
 
-        move.w #1, vblsem               // don not execute vbl-routine
+        move.w #1, _vblsem              // do not execute vbl-routine
 
 
 // ==== Test, if Cartridge of type 2 =========================================
@@ -513,6 +574,7 @@ clrvbl:
 
 // ==== Detect and set graphics resolution ===================================
 
+#if 0   /* done in screen_init */	
         move.b 0xffff8260, d0   // Get video resolution from pseudo Hw
         and.b #3,d0             // Isolate bits 0 and 1
         cmp.b #3,d0             // mode invalid?
@@ -530,15 +592,17 @@ setscrnres:
       	move.b #2, 0xffff8260   // and to shifter register
 low_rez:
 
-        bsr _linea_init         // init linea variables
-
         cmp.b #1, sshiftmod             // middle resolution?
         bne.s initmidres                // nein, -->
         move.w 0xffff825e, 0xffff8246   // Copy Color 16->4 kopieren
 
 initmidres:
-        move.l  #_main, swv_vec // Set Swv_vec (vector res change) to Reset
-        move.w  #1, vblsem      // vblsem: VBL freigeben
+#endif
+
+        bsr _linea_init         // init linea variables
+
+        move.l  #_main, _swv_vec // Set Swv_vec (vector res change) to Reset
+        move.w  #1, _vblsem      // vblsem: enable VBL 
 
         pea msg_linea  // Print, what's going on
         bsr _kprint
@@ -599,7 +663,7 @@ msg_cart:
 // is not running.
 //
 
-dummyaes:
+_dummyaes:
         cmp.l #0xc8,d0
         bne failgem
         move.l d1,a0
@@ -630,17 +694,17 @@ failgem:
 
 // ==== Dummy functions ======================================================
 
-print_stat:
-print_vec:
-serial_stat:
-serial_vec:
-dump_scr:
+_print_stat:
+_print_vec:
+_serial_stat:
+_serial_vec:
+_dump_scr:
 
-just_rts:       
+_just_rts:       
         rts             // Just a dummy
 
 // ==== just rte for divide by zero ==========================================
-just_rte:
+_just_rte:
         rte		
 
 
@@ -650,7 +714,7 @@ just_rte:
  *
  */
  
-int_hbl:
+_int_hbl:
         move.w  d0, -(sp)       // save d0
         move.w  2(sp), d0       // get status register from stack
         and.w   #0x0700, d0     // isolate just PIL-mask from sr
@@ -668,21 +732,17 @@ is_ipl0:
  * Do nothing for now
  */
 
-vidchng:
+_vidchng:
         rts
 
 
 
 // ==== Int 0x70 - VBL interrupt =============================================
-// no video resolution change is done, nor pallette change
+// no video resolution change is done.
 
-int_vbl:
-//       pea msg_vbl
-//       bsr _kprint
-//       addq #4,sp
-
+_int_vbl:
         addq.l  #1, _frclock            // increase num of happened ints
-        subq.l  #1, vblsem              // check vblsem
+        subq.l  #1, _vblsem             // check vblsem
         bmi     vbl_end                 // if VBl routine disabled -> end
         
         movem.l d0-d7/a0-a6, -(sp)      // save registers
@@ -719,7 +779,7 @@ vbl_no_screenpt:
 	// bsr    flopvbl                 // flopvbl routine not needed
 
 	// vblqueue
-	move.w	nvbls,d0
+	move.w	_nvbls,d0
 	beq	vbl_no_queue
 	sub.w	#1,d0
 	move.l	_vblqueue,a0
@@ -737,9 +797,9 @@ vbl_no_queue:
 	// screen hardcopy
 	// (not done) 
 
-        movem.l (sp)+, d0-d7/a0-a6      // save registers
+        movem.l (sp)+, d0-d7/a0-a6      // restore registers
 vbl_end:
-        addq.l  #1, vblsem      //
+        addq.l  #1, _vblsem      //
         rte
 
 
@@ -758,11 +818,11 @@ _brkpt:
         bra.s   _brkpt  // never return
 
 // ==== Timer A interrupt handler ============================================
-int_timera:
+_int_timera:
         rte             // Just a dummy
 
 // ==== Timer B interrupt handler ============================================
-int_timerb:
+_int_timerb:
         rte             // Just a dummy
 
 // ==== Timer C interrupt handler ============================================
@@ -777,7 +837,7 @@ _int_timerc:
         // TODO, repeat keys ?
 
         move.w  _timer_ms, -(sp)
-        move.l  etv_timer, a0
+        move.l  _etv_timer, a0
 //        jsr     (a0)                    // jump to etc_timer routine
         addq.w  #2, sp                  // correct stack
         
@@ -788,23 +848,23 @@ timerc_end:
         
 
 // ==== Timer D interrupt handler ============================================
-int_timerd:
+_int_timerd:
         rte             // Just a dummy
 
 // ==== txerror ==============================================================
-txerror:
+_txerror:
         rte             // Just a dummy
 
 // ==== txerror ==============================================================
-txrint:
+_txrint:
         rte             // Just a dummy
 
 // ==== txerror ==============================================================
-rxerror:
+_rxerror:
         rte             // Just a dummy
 
 // ==== txerror ==============================================================
-rcvint:
+_rcvint:
         rte             // Just a dummy
 
 
@@ -822,15 +882,20 @@ _criter1:
 // ==== STonX - Native print routine for debugging ===========================
 _print:
 _printout:
-//        dc.w 0xa0ff     // Jump to native execution
-//        dc.l 0          // Printing subroutine
+#if STONX_NATIVE_PRINT
+        dc.w 0xa0ff     // Jump to native execution
+        dc.l 0          // Printing subroutine
+#endif
         rts
 
 
 
 // ==== Use cartridge, if present ============================================
-// get cartridge-type in d0
+// get cartridge-type in d0, else use C glue.
 
+
+_cartscan:	
+	move.w  4(sp),d0	
 cartscan:
         lea     cart_base, a0
         cmp.l   #0xABCDEF42, (a0)+      // is cartridge present?
@@ -905,11 +970,11 @@ _drv_mediach:
 
 // ==== Boot from floppy/Disk ================================================
 flopboot:
-        move.l  hdv_boot, a0    // Get floppy boot vector
+        move.l  _hdv_boot, a0   // Get floppy boot vector
         jsr     (a0)            // Load boot sector
         tst.w   d0              // Executable?
         bne     rtnflop         // no -> that's it!
-        lea     diskbuf, a0     // Get disk buffer
+        lea     _diskbuf, a0    // Get disk buffer
         jsr     (a0)            // Execute boot sector
 rtnflop:        
         rts
@@ -928,7 +993,7 @@ _drv_boot:
         move #1,-(sp)
         move.l _dskbufp, -(sp)  // get pointer to 1k buffer for io
         move #0,-(sp)
-        lea     hdv_rw, a0      // Get routines address
+        lea     _hdv_rw, a0      // Get routines address
         jsr (a0)
         lea 12(sp),sp
         moveq #4,d0
@@ -950,14 +1015,14 @@ _trap_1:
 
 // ==== Trap 13 - BIOS entry point ==========================================
 
-bios:
+_bios:
         move.w  bios_ent,d1
         lea     bios_vecs,a0
         bra.s   biosxbios
 
 // ==== Trap 14 - XBIOS entry point =========================================
 
-xbios:
+_xbios:
         move.w  xbios_ent,d1
         lea     xbios_vecs,a0
 
@@ -965,7 +1030,7 @@ xbios:
 // ==== Trap 13+14 handler ==================================================
 
 biosxbios:
-	move.l  savptr, a1     
+	move.l  _savptr, a1     
         move.w  (sp)+,d0        // Status register -> d0
         move.w  d0,-(a1)        // and save in save_area
         move.l  (sp)+,-(a1)     // save return address
@@ -974,7 +1039,7 @@ biosxbios:
 //       move.w  (sp)+,-(a1)
 // bx_nolongframe:
         movem.l d3-d7/a3-a7, -(a1)      // regs, including stack pointer
-        move.l  a1, savptr
+        move.l  a1, _savptr
         
         btst    #13,d0          // were we in user mode?
         bne     bx_sp_ok        // yes, the sp already points to the arguments
@@ -991,7 +1056,7 @@ bx_sp_ok:
         jsr     (a0)            // go do it and then come back
 
 bx_ret_exc:
-        move.l  savptr, a1
+        move.l  _savptr, a1
         movem.l (a1)+, d3-d7/a3-a7      // Get regs back, including sp
 //       tst.w   _longframe      // Check longframe again: Is CPU >= 68000?
 //       beq.s   bx_nolong2
@@ -999,7 +1064,7 @@ bx_ret_exc:
 // bx_nolong2:
         move.l  (a1)+,-(sp)
         move.w  (a1)+,-(sp)
-        move.l  a1, savptr
+        move.l  a1, _savptr
         rte                     // return with return value in D0
 
 
@@ -1033,28 +1098,26 @@ forever:
 
 
 bios_vecs:
-        .dc.l   _bios_0
-        .dc.l   _bios_1                 // LONG character_input_status()
-        .dc.l   _bios_2                 // LONG character_input()
-        .dc.l   _bios_3                 // void character_output()
-        .dc.l   _bios_4                 // LONG read_write_sectors()
-        .dc.l   _bios_5                 // set vector
-// LVL        .dc.l   _bsetvec                // set vector
-        .dc.l   _bios_6                 // LONG get_timer_ticks()
-        .dc.l   _drv_bpb                // get disk parameter block address
-//       .dc.l   _bios_7                 // get disk parameter block address
-        .dc.l   _bios_8                 // LONG character_output_status(h)
-        .dc.l   _bios_9                 // media change?
-        .dc.l   _bios_a                 // what drives exist?
-        .dc.l   _bios_b                 // get/set alt-ctrl-shift status
-        .dc.l   _bios_c
-        .dc.l   _bios_d
-        .dc.l   _bios_e
-        .dc.l   _bios_f
-        .dc.l   _bios_10
+        dc.l   _bios_0
+        dc.l   _bios_1                 // LONG character_input_status()
+        dc.l   _bios_2                 // LONG character_input()
+        dc.l   _bios_3                 // void character_output()
+        dc.l   _bios_4                 // LONG read_write_sectors()
+        dc.l   _bios_5                 // set vector
+        dc.l   _bios_6                 // LONG get_timer_ticks()
+        dc.l   _bios_7                 // get disk parameter block address
+        dc.l   _bios_8                 // LONG character_output_status(h)
+        dc.l   _bios_9                 // media change?
+        dc.l   _bios_a                 // what drives exist?
+        dc.l   _bios_b                 // get/set alt-ctrl-shift status
+        dc.l   _bios_c
+        dc.l   _bios_d
+        dc.l   _bios_e
+        dc.l   _bios_f
+        dc.l   _bios_10
 
 bios_ent:               // Max. number of BIOS entries
-        .dc.w   (bios_ent-bios_vecs)/4
+        dc.w   (bios_ent-bios_vecs)/4
 
 
 // ==== XBIOS entry points to allow individual module compilation ============

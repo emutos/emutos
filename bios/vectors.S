@@ -25,15 +25,15 @@
 	.xdef	_proc_usp	
 	.xdef	_proc_stk	
         
-	.global	init_exc_vec
-	.global	init_user_vec
+	.global	_init_exc_vec
+	.global	_init_user_vec
 
 
 
 //
 // initialize the 62 exception vectors.
 //
-init_exc_vec:
+_init_exc_vec:
 	clr.l	_proc_lives
 	lea	deflt_vec_table, a0
 	lea 	8, a1
@@ -46,7 +46,7 @@ set_vec:
 //
 // initialize the 192 user vectors.
 //
-init_user_vec:	
+_init_user_vec:	
 	lea 	user_vec, a0
 	move.l	#191, d0
 set_uvec:

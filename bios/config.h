@@ -18,4 +18,12 @@
 #define	DEFDRV 2		/* 0 = A:, 2 = C: */
 #endif
 
+/* set this to 1 if your emulator provides an STonX-like 
+ * native_print() function, i.e. if the code:
+ *   dc.w 0xa0ff
+ *   dc.l 0
+ * executes native function void print_native(WORD char);
+ */
+#define STONX_NATIVE_PRINT 1
+
 #endif /* _CONFIG_H */

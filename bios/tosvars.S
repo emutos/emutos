@@ -23,45 +23,45 @@
 	.global	_proc_usp	
 	.global	_proc_stk	
                 
-	.global	etv_timer     
-	.global	etv_critic    
-	.global	etv_term      
-	.global	etv_xtra      
+	.global	_etv_timer     
+	.global	_etv_critic    
+	.global	_etv_term      
+	.global	_etv_xtra      
 	.global	memvalid      
 	.global	memctrl       
 	.global	resvalid      
 	.global	resvector     
-	.global	phystop       
+	.global	_phystop       
 	.global	_membot       
 	.global	_memtop       
 	.global	memval2       
-	.global	flock	       
-	.global	seekrate      
+	.global	_flock	       
+	.global	_seekrate      
 	.global	_timer_ms     
 	.global	_fverify      
 	.global	_bootdev      
-	.global	palmode       
-	.global	defshiftmod   
-	.global	sshiftmod      
+	.global	_palmode       
+	.global	_defshiftmod   
+	.global	_sshiftmod      
 	.global	_v_bas_ad     
-	.global	vblsem        
-	.global	nvbls	       
+	.global	_vblsem        
+	.global	_nvbls	       
 	.global	_vblqueue     
 	.global	_colorptr      
 	.global	_screenpt      
 	.global	_vbclock      
 	.global	_frclock      
-	.global	hdv_init      
-	.global	swv_vec       
-	.global	hdv_bpb        
-	.global	hdv_rw        
-	.global	hdv_boot      
-	.global	hdv_mediach   
+	.global	_hdv_init      
+	.global	_swv_vec       
+	.global	_hdv_bpb        
+	.global	_hdv_rw        
+	.global	_hdv_boot      
+	.global	_hdv_mediach   
 	.global	_cmdload      
 	.global	_conterm       
-	.global	themd	       
+	.global	_themd	       
 	.global	____md        
-	.global	savptr        
+	.global	_savptr        
 	.global	_nflops       
 	.global	con_state     
 	.global	save_row      
@@ -76,20 +76,20 @@
 	.global	_dumpflg      
 	.global	_sysbase      
 	.global	_shell_p      
-	.global	end_os        
-	.global	exec_os       
-	.global	dump_vec      
-	.global	prt_stat      
-	.global	prt_vec       
-	.global	aux_stat      
-	.global	aux_vec       
+	.global	_end_os        
+	.global	_exec_os       
+	.global	_dump_vec      
+	.global	_prt_stat      
+	.global	_prt_vec       
+	.global	_aux_stat      
+	.global	_aux_vec       
 	.global	memval3       
 	.global	_bconstat_vec  
 	.global	_bconin_vec    
 	.global	_bcostat_vec   
 	.global	_bconout_vec  
 
-	.global	diskbuf	
+	.global	_diskbuf	
 	.global	_supstk 	
 
 	.global rs232ibufbuf
@@ -160,49 +160,49 @@ _proc_stk: 	ds.w	16	// 16 words from exception stack
 
 // ==== Start of System variables ============================================
 	.org 0x400		//
-etv_timer:      ds.l    1       //
-etv_critic:     ds.l    1
-etv_term:       ds.l    1
-etv_xtra:       ds.l    5
+_etv_timer:      ds.l    1       //
+_etv_critic:     ds.l    1
+_etv_term:       ds.l    1
+_etv_xtra:       ds.l    5
 memvalid:       ds.l    1
 	.org 0x424
 memctrl:        ds.b    1
 	.org 0x426
 resvalid:       ds.l    1
 resvector:      ds.l    1
-phystop:        ds.l    1
+_phystop:       ds.l    1
 _membot:        ds.l    1
 _memtop:        ds.l    1
 memval2:        ds.l    1
-flock:	        ds.w    1
-seekrate:       ds.w    1
+_flock:	        ds.w    1
+_seekrate:      ds.w    1
 _timer_ms:      ds.w    1
 _fverify:       ds.w    1
 _bootdev:       ds.w    1
-palmode:        ds.w    1
-defshiftmod:    ds.w    1
-sshiftmod:     	ds.b    1
+_palmode:       ds.w    1
+_defshiftmod:   ds.w    1
+_sshiftmod:     ds.b    1
 	.org 0x44e
 _v_bas_ad:      ds.l    1	// screen base address  
-vblsem:         ds.w    1
-nvbls:	        ds.w    1
+_vblsem:         ds.w    1
+_nvbls:	        ds.w    1
 _vblqueue:      ds.l    1
 _colorptr:      ds.l    1
 _screenpt:      ds.l    1
 _vbclock:       ds.l    1
 _frclock:       ds.l    1
-hdv_init:       ds.l    1
-swv_vec:        ds.l    1
-hdv_bpb:        ds.l    1
-hdv_rw:         ds.l    1
-hdv_boot:       ds.l    1
-hdv_mediach:    ds.l    1
+_hdv_init:      ds.l    1
+_swv_vec:        ds.l    1
+_hdv_bpb:       ds.l    1
+_hdv_rw:        ds.l    1
+_hdv_boot:      ds.l    1
+_hdv_mediach:   ds.l    1
 _cmdload:       ds.w    1
 _conterm:       ds.b    1
 	.org 0x48e
-themd:	        ds.l    4
+_themd:	        ds.l    4
 ____md:         ds.w    2
-savptr:         ds.l    1
+_savptr:        ds.l    1
 _nflops:        ds.w    1
 con_state:      ds.l    1
 save_row:       ds.w    1
@@ -212,7 +212,7 @@ _hz_200:        ds.l    1
 the_env:        ds.b    4
 	.org 0x4c2
 _drvbits:       ds.l    1
-_dskbufp:      ds.l    1
+_dskbufp:       ds.l    1
 _autopath:      ds.l    1
 _vbl_list:      ds.l    1
 		ds.l    1
@@ -226,15 +226,15 @@ _dumpflg:       ds.w    1
 		ds.w    1     // dummy so that _sysbase == 0x4F2
 _sysbase:       ds.l    1
 _shell_p:       ds.l    1
-end_os:         ds.l    1
-exec_os:        ds.l    1
+_end_os:        ds.l    1
+_exec_os:       ds.l    1
 
 	.org 0x502
-dump_vec:       ds.l    1       //Pointer to screen dump routine
-prt_stat:       ds.l    1       //prv_lsto
-prt_vec:        ds.l    1       //prv_lst
-aux_stat:       ds.l    1       //prv_auxo
-aux_vec:        ds.l    1       //prv_aux
+_dump_vec:      ds.l    1       //Pointer to screen dump routine
+_prt_stat:      ds.l    1       //prv_lsto
+_prt_vec:       ds.l    1       //prv_lst
+_aux_stat:      ds.l    1       //prv_auxo
+_aux_vec:       ds.l    1       //prv_aux
 pun_ptr:        ds.l    1       // If AHDI, pointer to pun_info  
 memval3:        ds.l    1       //If $5555AAAA, reset
 _bconstat_vec:  ds.l    8       //8 Pointers to input-status routines

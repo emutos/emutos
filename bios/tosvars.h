@@ -34,12 +34,62 @@ extern LONG kbdvecs[];
 
 extern WORD *colorptr;
 extern UBYTE *screenpt;
+extern BYTE sshiftmod;
+
+extern LONG phystop;
 
 extern WORD timer_ms;
 
+extern LONG hz_200;
+extern LONG dskbufp;  
+extern WORD flock;
+extern WORD nflops;
+extern LONG drvbits;
+extern WORD bootdev;
+extern WORD fverify;
+extern WORD seekrate;
+extern BYTE diskbuf[];
+extern WORD dumpflg;
+extern WORD nvbls;
+extern WORD vblsem;
+extern LONG vbl_list[];
+extern LONG *vblqueue;
+
+
+extern LONG sysbase;
+extern VOID os_entry(VOID);
+extern LONG os_beg;
+extern LONG exec_os;
+extern LONG end_os;
+extern LONG m_start;
+extern LONG m_length;
+
+extern LONG os_end;
 extern LONG membot;
 extern LONG memtop;
+extern LONG themd;
+
+extern LONG savptr;
+extern WORD save_area[];
+
+extern VOID (*prt_stat)(VOID);
+extern VOID (*prt_vec)(VOID);
+extern VOID (*aux_stat)(VOID);
+extern VOID (*aux_vec)(VOID);
+extern VOID (*dump_vec)(VOID);
+
+/* indirect BIOS vectors */
+
+LONG (*hdv_rw)(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev);
+LONG (*hdv_bpb)(WORD dev);
+LONG (*hdv_mediach)(WORD dev);
+LONG (*hdv_boot)(VOID);
+VOID (*hdv_init)(VOID);
+
+VOID (*etv_timer)(VOID);
+VOID (*etv_critic)(VOID);
+VOID (*etv_term)(VOID);
+VOID (*etv_xtra)(VOID);
 
 
 #endif /* _TOSVARS_H */
-

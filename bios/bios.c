@@ -10,6 +10,7 @@
  *  EWF     Eric W. Fleischman
  *  LTG     Louis T. Garavaglia
  *  MAD     Martin Doering
+ *  LVL     Laurent Vogel
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -27,8 +28,17 @@
 #include "ikbd.h"
 #include "midi.h"
 #include "mfp.h"
+#include "floppy.h"
+#include "sound.h"
+#include "screen.h"
+#include "vectors.h"
+#include "asm.h"
+#include "chardev.h"
 
 /*==== Defines ============================================================*/
+#define OLDSTUFF 0
+
+#if OLDSTUFF
 #define DBGBIOSC        TRUE
 
 #define  HAVE_CON  TRUE
@@ -47,6 +57,13 @@
 
 #define SUPSIZ 1024     /* common supervisor stack size (in words) */
 
+#endif /* OLDSTUFF */
+
+/*==== Forward prototypes =================================================*/
+
+void biosinit(void);
+void biosmain(void);
+
 
 /*==== External declarations ==============================================*/
 
@@ -54,6 +71,7 @@ extern WORD os_dosdate;    /* Time in DOS format */
 extern BYTE *biosts ;         /*  time stamp string */
 
 
+#if OLDSTUFF
 
 #if HAVE_SIO
 extern LONG sinstat();          /* found in siostat.c */
@@ -62,6 +80,8 @@ extern LONG sinstat();          /* found in siostat.c */
 extern LONG format();           /* found in disk.c */
 
 extern BPB vme_dpb [];          /* found in disk.c */
+
+#endif /* OLDSTUFF */
 
 extern LONG tticks;             /* found in startup.s */
 extern LONG trap_1();           /* found in startup.s */
@@ -82,6 +102,8 @@ extern void clk_init(void);     /* found in clock.c */
 extern LONG oscall();           /* This jumps to BDOS */
 extern LONG osinit();
 
+extern void linea_init(void);    /* found in linea.S */
+extern void cartscan(WORD);      /* found in startup.S */
 
 extern void chardev_init();      /* found in chardev.c */
 
@@ -103,7 +125,9 @@ static BYTE env[] = "COMSPEC=c:\\command.prg\0";
 
 
 /* Drive specific declarations */
-static WORD defdrv = DEFDRV ;       /* default drive number (0 = a:, 2 = c:) */
+static WORD defdrv ;       /* default drive number (0 = a:, 2 = c:) */
+
+#if OLDSTUFF
 
 /* BIOS drive table definitions */
 static WORD exist[4];          /* 1, if drive present */
@@ -114,7 +138,107 @@ BYTE secbuf[4][512];          /* sector buffers */
 BCB bcbx[4];    /* buffer control block array for each buffer */
 BCB *bufl[2];   /* buffer lists - two lists:  fat,dir / data */
 
+#endif /* OLDSTUFF */
+
 PFI charvec[5];     /* array of vectors to logical interrupt handlers */
+
+
+
+/*==== BOOT ===============================================================*/
+
+/*
+ * Taken from startup.s, and rewritten in C.
+ * 
+ */
+ 
+void startup(void)
+{
+  WORD i;
+
+  kprintf("beginning of BIOS startup\n");
+
+  
+  snd_init();     /* Reset Soundchip, deselect floppies */
+  screen_init();  /* detect monitor type, ... */
+  
+  /* initialise some memory variables */
+  end_os = os_end;
+  membot = end_os;
+  exec_os = os_beg;
+  memtop = (LONG) v_bas_ad;
+  m_start = 0xE000;
+  m_length = memtop - m_start;
+  themd = (LONG) &b_mdx;
+  
+  /* setup default exception vectors */
+  init_exc_vec();
+  init_user_vec();
+  
+  /* initialise some vectors */
+  VEC_HBL = int_hbl;
+  VEC_VBL = int_vbl;
+  VEC_AES = dummyaes;
+  VEC_BIOS = bios;
+  VEC_XBIOS = xbios;
+  VEC_LINEA = int_linea;
+  
+  init_acia_vecs();
+  
+  VEC_DIVNULL = just_rte;
+  
+  /* floppy related vectors */
+  floppy_init();
+
+  /* are these useful ?? */
+  prt_stat = print_stat;
+  prt_vec = print_vec;
+  aux_stat = serial_stat;
+  aux_vec = serial_vec;
+  dump_vec = dump_scr;
+  
+  /* misc. variables */
+  kprintf("diskbuf = %08lx\n", (LONG)diskbuf);
+  dumpflg = -1;
+  sysbase = (LONG) os_entry;
+  
+  savptr = (LONG) save_area;
+  
+  /* some more variables */
+  etv_timer = just_rts;
+  etv_critic = criter1; 
+  etv_term = just_rts;
+  
+  /* setup VBL queue */
+  nvbls = 8;
+  vblqueue = vbl_list;
+  for(i = 0 ; i < 8 ; i++) {
+    vbl_list[i] = 0;
+  }
+
+  /* init linea */
+  linea_init();
+
+  vblsem = 1;
+  kprintf("BIOS: 1\n");
+  biosinit();
+  
+  kprintf("BIOS: 2\n");
+  osinit();
+  
+  set_sr(0x2300);
+  
+  VEC_BIOS = bios;
+  (*(PFVOID*)0x7C) = brkpt;   /* ??? */
+  
+  kprintf("BIOS: Last test point reached ...\n");
+  
+  cartscan(3);
+  
+  biosmain();
+  
+  for(;;);
+
+}
 
 
 
@@ -136,6 +260,8 @@ void biosinit()
     charvec[2] = (PFI) 0;
     charvec[3] = (PFI) 0;   /* clklox - disabled */
     charvec[4] = (PFI) 0;   /* moulox - disabled */
+
+#if OLDSTUFF
 
     /* initialize drive variables */
     exist[0] = 0;       /* Drive A present */
@@ -172,15 +298,22 @@ void biosinit()
     bufl[BI_FAT] = &bcbx[0];                    /* fat buffers */
     bufl[BI_DATA] = &bcbx[2];                   /* dir/data buffers */
 
-
+#endif /* OLDSTUFF */
 
     /* initialize components */
 
+kprintf("BIOS: 3\n");
     mfp_init();         /* init MFP, timers, USART */
+kprintf("BIOS: 4\n");
     kbd_init();         /* init keyboard, disable mouse and joystick */
+kprintf("BIOS: 5\n");
     midi_init();        /* init MIDI acia so that kbd acia irq works */
+kprintf("BIOS: 6\n");
     clk_init();         /* init clock (dummy for emulator) */
 
+kprintf("BIOS: 8\n");
+  
+#if OLDSTUFF
 
 #if HAVE_SIO
     m400init();   /* initialize the serial I/O ports */
@@ -194,6 +327,7 @@ void biosinit()
     initdsks();   /* send disk config info to disk controller */
 #endif
 
+#endif /* OLDSTUFF */
 
     /* returning to assembler patch OS via cartridge */
 }
@@ -221,6 +355,11 @@ void biosmain()
     trap_1( 0x2b, os_dosdate);  /* set initial date in GEMDOS format */
     cprintf("[ OK ] Initial system date and time set\r\n");
 
+    kprintf("drvbits = %08lx\n", drvbits);
+    do_hdv_boot();
+    kprintf("drvbits = %08lx, bootdev = %d\n", drvbits, bootdev);
+
+    defdrv = bootdev;
     trap_1( 0x0e , defdrv );    /* Set boot drive */
     cprintf("[ OK ] Boot disk drive set\r\n");
 
@@ -355,10 +494,16 @@ void bios_3(WORD handle, BYTE what)
  * drive = drive #: 0 = A:, 1 = B:, etc
  */
 
-LONG bios_4(WORD r_w, BYTE *adr, WORD numb, WORD first, WORD drive)
+LONG bios_4(WORD r_w, LONG adr, WORD numb, WORD first, WORD drive)
 {
+#if 0
     /* implemented by STonX */
     return(drv_rw(r_w, adr, numb, first, drive));
+#else
+    kprintf("rwabs(rw=%d, count = %d, sect = %d, dev = %d)\n",
+            r_w, numb, first, drive);
+    return hdv_rw(r_w, adr, numb, first, drive);
+#endif
 }
 
 
@@ -410,13 +555,7 @@ LONG bios_6()
 
 LONG bios_7(WORD drive)
 {
-#if IMPLEMENTED
-    if(drive <= MAXDSK || exist[drive])
-        return((LONG)&vme_dpb[drive]);
-    else
-        return(0L);     /* drive doesn't exist */
-#endif
-    return(0L);
+    return hdv_bpb(drive);
 }
 
 
@@ -457,8 +596,12 @@ LONG bios_8(WORD handle)        /* GEMBIOS character_output_status */
 
 LONG bios_9(WORD drv)
 {
+#if 0
     /* Implemented by STonX -  STonX can not change Floppies */
     return(drv_mediach(drv));
+#else
+    return hdv_mediach(drv);
+#endif
 }
 
 
