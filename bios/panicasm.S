@@ -26,7 +26,7 @@
  */
  
 _panic:
-  move.w	#0x2700, sr
+	move.w	#0x2700, sr
 	movem.l	d0-d7, _proc_dregs
 	movem.l	a0-a7, _proc_aregs
 	clr.l   _proc_enum

@@ -224,8 +224,8 @@ static int namlen(char *s11) 				/* M01.01.1107.01 */
 
 long xmkdir(char *s) 
 {
-	REG OFD *f;
-	REG FCB *f2;
+	register OFD *f;
+	register FCB *f2;
 	OFD	*fd,*f0;
 	FCB	*b;
 	DND	*dn;
@@ -338,13 +338,13 @@ long xmkdir(char *s)
 
 long xrmdir(char *p)
 {
-	REG DND *d;
+	register DND *d;
 	DND	*d1,**q;
 	FCB	*f;
 	OFD	*fd,*f2;		/* M01.01.03 */
 	long	pos;
 	char	*s;
-	REG int i;
+	register int i;
 
 	if ((d = findit(p,&s,1)) < 0)			/* M01.01.1212.01 */
 		return( (long)d );
@@ -467,7 +467,7 @@ long xchmod(char *p, int wrt, char mod)
  *	error code.
  */
 
-long ixsfirst(char *name, REG WORD att, REG DTAINFO *addr)
+long ixsfirst(char *name, register WORD att, register DTAINFO *addr)
 {
     char *s;			/*  M01.01.03			*/
     DND	*dn;
@@ -554,8 +554,8 @@ long xsfirst(char *name, int att)
 
 long xsnext(void)
 {
-	REG FCB 	*f;
-	REG DTAINFO	*dt ;
+	register FCB 	*f;
+	register DTAINFO	*dt ;
 
 	dt = (DTAINFO *)run->p_xdta;				/* M01.01.1209.01 */
 
@@ -582,8 +582,8 @@ long xsnext(void)
 
 void xgsdtof(int *buf, int h, int wrt)
 {
-	REG OFD *f ;
-	REG int *b ;
+	register OFD *f ;
+	register int *b ;
 
 	b = buf ;
 	f = getofd(h) ;
@@ -640,7 +640,7 @@ void xgsdtof(int *buf, int h, int wrt)
 
 void builds(char *s1, char *s2)
 {
-	REG int i;
+	register int i;
 	char	c;
 
 	/*
@@ -766,7 +766,7 @@ void builds(char *s1, char *s2)
 /*ARGSUSED*/
 long xrename(int n, char *p1, char *p2)
 {
-	REG OFD *fd2;
+	register OFD *fd2;
 	OFD	*f1,*fd;
 	FCB	*f;
 	DND	*dn1,*dn2;
@@ -843,7 +843,7 @@ long xrename(int n, char *p1, char *p2)
 
 long xchdir(char *p)
 {
-	REG int dr, i ;
+	register int dr, i ;
 	long	l;
 	int	dphy,dlog,flg;
 	char	*s;
@@ -1026,7 +1026,7 @@ static long negone = { -1L } ;
  */		
 DND	*findit(char *name, char **sp, int dflag)
 {
-    REG DND *p;
+    register DND *p;
     char	*n;
     DND	*pp,*newp;
     int	i;
@@ -1152,10 +1152,10 @@ DND	*findit(char *name, char **sp, int dflag)
  *	return the pointer to the DND, not the FCB.
  */
 
-FCB	*scan(REG DND *dnd, char *n, WORD att, LONG *posp)
+FCB	*scan(register DND *dnd, char *n, WORD att, LONG *posp)
 { 
 	char	name[12];
-	REG FCB *fcb;
+	register FCB *fcb;
 	OFD	*fd;
 	DND	*dnd1;
 	BOOL	m;		/*  T: found a matching FCB		*/
@@ -1253,10 +1253,10 @@ FCB	*scan(REG DND *dnd, char *n, WORD att, LONG *posp)
 
 static DND *makdnd(DND *p, FCB *b) 
 {
-	REG DND *p1;
-	REG DND **prev;
+	register DND *p1;
+	register DND **prev;
 	OFD	*fd;
-	REG int i;
+	register int i;
 	int	in_use;
 
 	fd = p->d_ofd;
@@ -1338,9 +1338,9 @@ static DND *makdnd(DND *p, FCB *b)
 
 static DND *dcrack(char **np)
 {
-    REG char	*n;
+    register char	*n;
     DND	*p;
-    REG int d;
+    register int d;
     LONG l; 						/* M01.01.1212.01 */
 
     /*
@@ -1403,8 +1403,8 @@ static DND *dcrack(char **np)
  */
 static int getpath(char *p, char *d, int dirspec)
 {
-	REG int 	i, i2 ;
-	REG char	*p1 ;
+	register int 	i, i2 ;
+	register char	*p1 ;
 
 	for( i = 0 , p1 = p ; *p1 && (*p1 != SLASH) ; p1++ , i++ )
 		;
@@ -1445,7 +1445,7 @@ static int getpath(char *p, char *d, int dirspec)
 
 static BOOL match(char *s1, char *s2)
 {
-    REG int i;
+    register int i;
 
     /*
      **  check for deleted entry.  wild cards don't match deleted entries,
@@ -1515,7 +1515,7 @@ static void makbuf(FCB *f, DTAINFO *dt)
 
 static int xcmps(char *s, char *d)
 {
-	REG int i;
+	register int i;
 
 	for (i = 0; i < 11; i++)
 		if (uc(*s++) != uc(*d++))
@@ -1530,7 +1530,7 @@ static int xcmps(char *s, char *d)
 
 static DND *getdnd(char *n, DND *d)
 {
-	REG DND *dnd ;
+	register DND *dnd ;
 
 	for( dnd = d->d_left ; dnd ; dnd = dnd->d_right )
 	{

@@ -63,7 +63,7 @@ void flush(BCB *b)
 
 char *getrec(int recn, DMD *dm, int wrtflg)
 {
-    REG BCB *b;
+    register BCB *b;
     BCB	*p,*mtbuf,**q,**phdr;
     int n,cl,err;
 
@@ -177,10 +177,10 @@ doio:   for (p = *(q = phdr); p->b_link; p = *(q = &p->b_link))
  * MAD: 12/13/01 - ripped out ugly gotos
  */
 
-char *packit(REG char *s, REG char *d)
+char *packit(register char *s, register char *d)
 {
     char *s0;
-    REG int i;
+    register int i;
 
     if ((*s))
     {

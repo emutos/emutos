@@ -1,10 +1,10 @@
 /*
  * portab.h - Definitions for writing portable C
  *
- * Copyright (c) 2001 Lineo, Inc.
+ * Copyright (c) 2001 Lineo, Inc. and  Authors:
  *
- * Authors:
- *  xxx <xxx@xxx>
+ *  MAD Martin Doering
+ *  LVL Laurent Vogel
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -58,34 +58,6 @@
 #define NORETURN
 #endif
 
-/* unused 
- * #define ALCYON1 	1
- * #define ALCYON2 	2
- * #define LATTICE 	5
- *
- * #define COMPILER	ALCYON1
- */
-
-/*
-**	The constant "ALCYON" (without numeric suffix), implies 'any of the
-**	Alcyon compilers and might be used as in "#IF ALCYON"
-*/	
-
-/* 
- * unused
- * #if	COMPILER == ALCYON1 
- * #define ALCYON		TRUE
- * #endif
- *
- * #if	COMPILER == ALCYON2
- * #define ALCYON		TRUE
- * #endif
- *
- * #ifndef ALCYON
- * #define ALCYON		FALSE
- * #endif
- */
-
 /*
 **  extended data types
 */
@@ -99,17 +71,8 @@
 
 typedef char		BYTE ;			/*  Signed byte 	*/
 
-/*****/
-/*
- * #if	COMPILER == ALCYON1
- *					*  unsgnd not supp'd	*
- * typedef char		UBYTE ; 		*  Unsigned byte	*
- * typedef long		ULONG ; 		*  Unsigned long	*
- * #else
- */
 typedef unsigned char	UBYTE ; 		/*  Unsigned byte	*/
 typedef unsigned long	ULONG ; 		/*  unsigned 32 bit word*/
-/* #endif */
 
 typedef long		PTR ;			/*  32 bit pointer */
 

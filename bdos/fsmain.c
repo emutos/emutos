@@ -397,7 +397,7 @@
  *  xfr2usr -
  */
 
-void   xfr2usr(REG int n, REG char *s, REG char *d)
+void   xfr2usr(register int n, register char *s, register char *d)
 {
     while (n--)
         *d++ = *s++;
@@ -409,7 +409,7 @@ void   xfr2usr(REG int n, REG char *s, REG char *d)
  *  usr2xfr -
  */
 
-void    usr2xfr(REG int n, REG char *d, REG char *s)
+void    usr2xfr(register int n, register char *d, register char *s)
 {
     while (n--)
         *d++ = *s++;
@@ -421,7 +421,7 @@ void    usr2xfr(REG int n, REG char *d, REG char *s)
  *  uc - utility routine to return the upper-case of character passed in
  */
 
-char    uc(REG char c)
+char    uc(register char c)
 {
 	return((c >= 'a') && (c <= 'z') ? c & 0x5F : c);
 }
@@ -490,9 +490,9 @@ long	xgetdrv(void)
 **  makofd -
 */
 
-OFD	*makofd(REG DND *p)
+OFD	*makofd(register DND *p)
 {
-	REG OFD *f;
+	register OFD *f;
 
 	if (!(f = MGET(OFD)))
 		return ( (OFD *) 0 );

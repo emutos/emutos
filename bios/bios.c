@@ -50,7 +50,7 @@
 
 /*==== Defines ============================================================*/
 
-#define DBGBIOS 1               /* If you want debugging output */
+#define DBGBIOS 0               /* If you want debugging output */
 
 /*==== Forward prototypes =================================================*/
 

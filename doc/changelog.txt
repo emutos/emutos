@@ -408,3 +408,7 @@ Start... early ages
 - resetvec handling fixed (wrong check 'tst.b resetvec' removed) (joy)
 - cartridge is defined at $00fa0000, not $fffa0000 - fixed. (joy)
 - _check_read_byte now flushes pipelines at the correct places (joy)
+
+03. Jan. 2002
+- replaced "REG" by register in bios/ and bdos/  (MAD)
+- made bdos/kpgmld.c better readable (MAD)

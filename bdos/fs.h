@@ -430,7 +430,7 @@ void flush(BCB *b);
 /* return the ptr to the buffer containing the desired record */
 char *getrec(int recn, DMD *dm, int wrtflg);
 /* pack into user buffer */
-char *packit(REG char *s, REG char *d);
+char *packit(register char *s, register char *d);
 
 /*
  * in fsfat.c
@@ -463,7 +463,7 @@ long ixwrite(OFD *p, long len, void *ubufr);
 long xmkdir(char *s);
 long xrmdir(char *p);
 long xchmod(char *p, int wrt, char mod);
-long ixsfirst(char *name, REG WORD att, REG DTAINFO *addr);
+long ixsfirst(char *name, register WORD att, register DTAINFO *addr);
 long xsfirst(char *name, int att);
 long xsnext(void); 
 void xgsdtof(int *buf, int h, int wrt);
@@ -473,7 +473,7 @@ long xchdir(char *p);
 long xgetdir(char *buf, int drv);
 FCB *dirinit(DND *dn);
 DND *findit(char *name, char **sp, int dflag);
-FCB *scan(REG DND *dnd, char *n, WORD att, LONG *posp);
+FCB *scan(register DND *dnd, char *n, WORD att, LONG *posp);
 
 /*
  * in fsmain.c
@@ -481,12 +481,12 @@ FCB *scan(REG DND *dnd, char *n, WORD att, LONG *posp);
 
 void xfr2usr(int n, char *s, char *d);
 void usr2xfr(int n, char *d, char *s);
-char uc(REG char c);
+char uc(register char c);
 char *xgetdta(void);
 void xsetdta(char *addr);
 long xsetdrv(int drv);
 long xgetdrv(void); 
-OFD  *makofd(REG DND *p);
+OFD  *makofd(register DND *p);
 OFD  *getofd(int h);
 int  divmod(int *modp, int divdnd, long divsor);
 

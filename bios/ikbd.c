@@ -222,7 +222,7 @@ LONG bconin2(void)
 
   while(!bconstat2()) {
 #if USE_STOP_INSN_TO_FREE_HOST_CPU
-  	 stop;
+      stop;
 #endif
   }
   /* disable interrupts */

@@ -23,6 +23,10 @@
 #include "btools.h"
 #include "../bios/kprint.h"
 
+
+#define DBGKPGMLD 1
+
+
 /*
  * forward prototypes
  */
@@ -35,23 +39,26 @@ static LONG	pgfix01(LONG nrelbytes, PGMINFO *pi);
  *
  *  The program space follows PD
  *
- * @s - program name
- * @p - ptr to PD
+ * Arguments:
+ * s - program name
+ * p - ptr to PD
  */
 
 ERROR	xpgmld(char *s , PD *p )
 {
-    ERROR		r ;
+    ERROR	r ;
     FH		h ;
-    WORD		magic ;
-    ERROR		pgmld01() ;
+    WORD	magic ;
+    ERROR	pgmld01() ;
 
-    if(  (r = xopen( s , 0 )) < 0L	)	/*  open file for read	*/
+    r = xopen( s , 0 );		/* open file for read */
+    if( r < 0L	)
         return( r ) ;
 
-    h = (int) r ;				/*  get file handle	*/
+    h = (FH) r ;		/* get file handle */
 
-    if( (r = xread( h, 2L, &magic)) < 0L )	/*  read magic nbr	*/
+    r = xread( h, 2L, &magic);	/* read magic number */
+    if( r < 0L )
         return( r ) ;
 
     /*
@@ -66,6 +73,9 @@ ERROR	xpgmld(char *s , PD *p )
         break ;
     default:
         r = EPLFMT ;
+#if DBGKPGMLD
+        kprintf("BDOS xpgmld: Unknown executable format!\n") ;
+#endif
     }
 
     xclose( h ) ;
@@ -75,10 +85,10 @@ ERROR	xpgmld(char *s , PD *p )
 
 
 /*
- *  lastcp - used to keep track of the code ptr betwee pgmld01 and pgfix01
+ *  lastcp - used to keep track of the code ptr between pgmld01 and pgfix01
  */
 
-static char	*lastcp ;
+static char *lastcp ;
 
 
 /*
@@ -99,131 +109,128 @@ static char	*lastcp ;
 
 static ERROR	pgmld01( FH h , PD *pdptr )
 {
-	REG PGMHDR01	*hd ;			
-	REG PGMINFO	*pi ;
-	REG PD		*p ;
-	PGMHDR01	hdr ;			
-	PGMINFO 	pinfo ; 	
-	char		*cp ;
-	LONG		relst ;
-	LONG		flen ;
-	ERROR		r ;
-	ERROR		pgfix01() ;
+    register PGMHDR01	*hd ;
+    register PGMINFO	*pi ;
+    register PD		*p ;
+    PGMHDR01		hdr ;
+    PGMINFO 		pinfo ;
+    char		*cp ;
+    LONG		relst ;
+    LONG		flen ;
+    ERROR		r ;
+    ERROR		pgfix01() ;
 
 
-	hd = & hdr ;
-	pi = &pinfo ;
-	p = pdptr ;
-	relst = 0 ;
+    hd = & hdr ;
+    pi = &pinfo ;
+    p = pdptr ;
+    relst = 0 ;
 
-	/*
-	**  read in the program header 
-	*/
+    /* read in the program header */
 
-	if(   ( r = xread(h,(LONG)sizeof(PGMHDR01),&hdr) )  <  0L  )
-		return( r ) ;
+    r = xread(h,(LONG)sizeof(PGMHDR01),&hdr);
+    if( r < 0L )
+        return( r ) ;
 
-	/*
-	**  calculate program load info
-	*/
+    /* calculate program load info */
 
-	flen = (pi->pi_tlen=hd->h01_tlen) + (pi->pi_dlen=hd->h01_dlen) ;
-	pi->pi_blen = hd->h01_blen ;
-	pi->pi_slen = hd->h01_slen ;
-	pi->pi_tpalen = p->p_hitpa - p->p_lowtpa - sizeof(PD) ;
-	pi->pi_tbase = (char *) (p+1) ; 	/*  1st byte after PD	*/
-	pi->pi_bbase = pi->pi_tbase + flen ;	
-	pi->pi_dbase = pi->pi_tbase + pi->pi_tlen ;
+    flen = (pi->pi_tlen=hd->h01_tlen) + (pi->pi_dlen=hd->h01_dlen) ;
+    pi->pi_blen = hd->h01_blen ;
+    pi->pi_slen = hd->h01_slen ;
+    pi->pi_tpalen = p->p_hitpa - p->p_lowtpa - sizeof(PD) ;
+    pi->pi_tbase = (char *) (p+1) ; 	/*  1st byte after PD	*/
+    pi->pi_bbase = pi->pi_tbase + flen ;
+    pi->pi_dbase = pi->pi_tbase + pi->pi_tlen ;
 
 
-	/*
-	**  see if there is enough room to load in the file, then see if
-	**  the requested bss space is larger than the space we have to offer
-	*/
+    /*
+     * see if there is enough room to load in the file, then see if
+     * the requested bss space is larger than the space we have to offer
+     */
 
-	if( flen > pi->pi_tpalen  ||  pi->pi_tpalen-flen < pi->pi_blen )
-		return( ENSMEM ) ;
+    if( flen > pi->pi_tpalen  ||  pi->pi_tpalen-flen < pi->pi_blen )
+        return( ENSMEM ) ;
 
-	/*
-	**  initialize PD fields
-	*/
+    /*  initialize PD fields */
 
-	/* LVL bmove( (char*)&pi->pi_tbase , 
-         *            (char*)&p->p_tbase , 
-	 *	      6 * sizeof(long) ) ;
-	 */
-	memcpy(&p->p_tbase, &pi->pi_tbase, 6 * sizeof(long));
+    memcpy(&p->p_tbase, &pi->pi_tbase, 6 * sizeof(long));
 
-	
-	/*  
-	**  read in the program file (text and data)
-	**  if there is an error reading in the file or if it is an abs
-	**	file, then we are finished  
-	*/
+    /*
+     * read in the program file (text and data)
+     * if there is an error reading in the file or if it is an abs
+     * file, then we are finished
+     */
 
-	if(  (r = xread(h,flen,pi->pi_tbase)) < 0  )
-		return( r ) ;
+    r = xread(h,flen,pi->pi_tbase);
+    if( r < 0  )
+        return( r ) ;
 
-	if( hd->h01_abs )
-		return( SUCCESS ) ;	/*  do we need to clr bss here? */
+    if( hd->h01_abs )
+        return( SUCCESS ) ;	/*  do we need to clr bss here? */
 
-	/*  
-	**  if not an absolute format, position past the symbols and start the 
-	**	reloc pointer  (flen is tlen + dlen).  NOTE that relst is 
-	**	init'd to 0, so if the format is absolute, we will not drop
-	**	into the fixup code.
-	*/
+    /*
+     * if not an absolute format, position past the symbols and start the
+     * reloc pointer  (flen is tlen + dlen).  NOTE that relst is
+     * init'd to 0, so if the format is absolute, we will not drop
+     * into the fixup code.
+     */
 
-	if( !hd->h01_abs )
-	{
-		/**********  should change hard coded 0x1c  ******************/
-		if(  (r = xlseek(flen+pi->pi_slen+0x1c,h,0)) < 0L  )
-			return( r ) ;
+    if( !hd->h01_abs )
+    {
+        /**********  should change hard coded 0x1c  ******************/
+        r = xlseek(flen+pi->pi_slen+0x1c,h,0);
+        if( r < 0L  )
+            return( r ) ;
 
-		if(  (r = xread( h , (long)sizeof(relst) , &relst ))  <  0L  )
-			return( r ) ;
-	}
+        r = xread( h , (long)sizeof(relst) , &relst );
+        if( r <  0L  )
+            return( r ) ;
+    }
 
-	if( relst != 0 )
-	{
-		cp = pi->pi_tbase + relst ;
+    if( relst != 0 )
+    {
+        cp = pi->pi_tbase + relst ;
 
-		/*  make sure we didn't wrap memory or overrun the bss	*/
+        /*  make sure we didn't wrap memory or overrun the bss	*/
 
-		if(  cp < pi->pi_tbase	||  cp >= pi->pi_bbase	)
-			return( EPLFMT ) ;
+        if(  cp < pi->pi_tbase	||  cp >= pi->pi_bbase	)
+            return( EPLFMT ) ;
 
-		*((long *)(cp)) += (long)pi->pi_tbase ; /*  1st fixup	  */
+        *((long *)(cp)) += (long)pi->pi_tbase ; /*  1st fixup	  */
 
-		lastcp = cp ;				/*  for pgfix01() */
+        lastcp = cp ;				/*  for pgfix01() */
 
-		flen = (long)p->p_hitpa - (long)pi->pi_bbase;	/* M01.01.0925.01 */
+        flen = (long)p->p_hitpa - (long)pi->pi_bbase;	/* M01.01.0925.01 */
 
-		for(;;)
-		{	/*  read in more relocation info  */
-			if( (r = xread(h,flen,pi->pi_bbase)) <= 0 ) /* M01.01.0925.01 */
-				break ;
-			/*  do fixups using that info  */
-			if(   (r = pgfix01( r , pi ))	<=   0	 )
-				break ;
-		}
+        for(;;)
+        {
+            /*  read in more relocation info  */
+            r = xread(h,flen,pi->pi_bbase);
+            if( r <= 0 )
+                break ;
 
-		if ( r < 0 )			/* M01.01.1023.01 */
-			return( r );
-	}
+            /*  do fixups using that info  */
+            r = pgfix01( r , pi );
+            if( r <= 0 )
+                break ;
+        }
 
-	/*  zero out the bss  */
+        if ( r < 0 )			/* M01.01.1023.01 */
+            return( r );
+    }
 
-	if( pi->pi_blen != 0 )
-	{
-	  *pi->pi_bbase = 0 ;
-	  if( pi->pi_blen > 1 ) {
-	    /* LVL lbmove(pi->pi_bbase, pi->pi_bbase+1, pi->pi_blen-1) ; */
-	    bzero( pi->pi_bbase, pi->pi_blen);
-	  }
-	}
+    /*  zero out the bss  */
 
-	return( SUCCESS ) ;
+    if( pi->pi_blen != 0 )
+    {
+        *pi->pi_bbase = 0 ;
+        if( pi->pi_blen > 1 ) {
+            /* LVL lbmove(pi->pi_bbase, pi->pi_bbase+1, pi->pi_blen-1) ; */
+            bzero( pi->pi_bbase, pi->pi_blen);
+        }
+    }
+
+    return( SUCCESS ) ;
 }
 
 
@@ -239,56 +246,43 @@ static ERROR	pgmld01( FH h , PD *pdptr )
  *		=0: offset of 0 encountered, no more fixups
  *		<0: EPLFMT (load file format error)
  *
- * nrelbytes: nbr of avail rel values	
- * pi: program info pointer	
+ * Arguments:
+ *  nrelbytes - number of avail rel values
+ *  pi        - program info pointer
  */
 
 static LONG	pgfix01( LONG nrelbytes , PGMINFO *pi )
 {
-	REG UBYTE	*cp ;		/*  code pointer		*/
-	REG UBYTE	*rp ;		/*  relocation info pointer	*/
-	REG LONG	n ;		/*  nbr of relocation bytes	*/
-	REG UBYTE	*bbase ;	/*  base addr of bss segment	*/
-	REG LONG	tbase ; 	/*  base addr of text segment	*/
+    register UBYTE	*cp ;		/*  code pointer		*/
+    register UBYTE	*rp ;		/*  relocation info pointer	*/
+    register LONG	n ;		/*  nbr of relocation bytes	*/
+    register UBYTE	*bbase ;	/*  base addr of bss segment	*/
+    register LONG	tbase ; 	/*  base addr of text segment	*/
 
-	cp = lastcp ;
-	rp = pi->pi_bbase ;
-	n = nrelbytes ; 
-	tbase = (LONG) pi->pi_tbase ;
-	bbase = pi->pi_bbase ;
+    cp = lastcp ;
+    rp = pi->pi_bbase ;
+    n = nrelbytes ;
+    tbase = (LONG) pi->pi_tbase ;
+    bbase = pi->pi_bbase ;
 
-	while( n--  &&	*rp != 0 )
-	{
-		if( *rp == 1 )
-			cp += 0xfe ;
-		else
-		{
-#if COMPILER == ALCYON
-			/*  get the byte at rp, don't sign ext, add to cp  */
-			cp += 0x00ff & (long)(*rp) ;		/* [1]	*/
-#else
-			cp += *rp ;
-#endif
-			if(  cp >= bbase  )
-			{
-				return( EPLFMT ) ;
-			}
-			*( (long *)(cp) ) += tbase ;
+    while( n--  &&	*rp != 0 )
+    {
+        if( *rp == 1 )
+            cp += 0xfe ;
+        else
+        {
+            cp += *rp ;	/* add the byte at rp to cp, don't sign ext */
 
-		}
-		++rp ;
-	}
+            if(  cp >= bbase  )
+            {
+                return( EPLFMT ) ;
+            }
+            *( (long *)(cp) ) += tbase ;
 
-	lastcp = cp ;			/*  save code pointer		*/
-	return(  ++n == 0  ? 1 : SUCCESS  ) ;
+        }
+        ++rp ;
+    }
+
+    lastcp = cp ;			/*  save code pointer		*/
+    return(  ++n == 0  ? 1 : SUCCESS  ) ;
 }
-
-/*
-** [1]	Alcyon manages to sign extend the byte into the long which is added to
-**	cp.  It does this even though rp is delcared a pointer to an unsigned 
-**	char (char).  I think this is a bug, and shouldn't occur in other
-**	compilers; but then, what do I know? - ktb
-*/
-
-
-

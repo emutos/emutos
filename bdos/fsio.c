@@ -83,11 +83,11 @@ long	xlseek(long n, int h, int flg)
  * n: number of bytes to seek
  */
 
-long	ixlseek(REG OFD *p, long n)
+long	ixlseek(register OFD *p, long n)
 {
 	int clnum,clx,curnum,i; 			/*  M01.01.03	*/
 	int	curflg ;	/****  M00.01.01b  ****/
-	REG DMD *dm;
+	register DMD *dm;
 
 	if (n > p->o_fileln)
 		return(ERANGE);
@@ -225,7 +225,7 @@ long	ixread(OFD *p, long len, void *ubufr)
 
 long	xwrite(int h, long len, void *ubufr) 
 {
-    REG OFD *p;
+    register OFD *p;
     long ret;
 
     if ( (p = getofd(h)) ) {
@@ -298,7 +298,7 @@ static long xrw(int wrtflg,
 		char *ubufr, 
 		void (*bufxfr)(int, char *, char *))
 {
-	REG DMD *dm;
+	register DMD *dm;
 	char *bufp;
 	int bytn,recn,lenxfr,lentail,num;	/*  M01.01.03 */
 	int hdrrec,lsiz,tailrec;
@@ -482,7 +482,7 @@ exit:	return(rc);
 
 static void usrio(int rwflg, int num, int strt, char *ubuf, DMD *dm)
 {
-	REG BCB *b;
+	register BCB *b;
 
 	for (b = bufl[1]; b; b = b->b_link)
 		if ((b->b_bufdrv == dm->m_drvnum) &&

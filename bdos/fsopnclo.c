@@ -115,8 +115,8 @@ long	xcreat(char *name, char attr)
  */		
 long ixcreat(char *name, char attr)
 {
-	REG DND *dn;
-	REG OFD *fd;
+	register DND *dn;
+	register OFD *fd;
 	FCB *f;
 	char *s,n[2],a[11];			/*  M01.01.03	*/
 	int i,f2;				/*  M01.01.03	*/
@@ -270,12 +270,12 @@ ixopen(char *name, int mod)
 **
 **	NOTES:
 **		make a pointer to the ith entry of sft 
-**		make i a REG int.
+**		make i a register int.
 */
 
 static long opnfil(FCB *f, DND *dn, int mod)
 {
-	REG int i;
+	register int i;
 	int h;
 
 	long	makopn() ;
@@ -304,8 +304,8 @@ static long opnfil(FCB *f, DND *dn, int mod)
 
 static long makopn(FCB *f, DND *dn, int h, int mod) 
 {
-	REG OFD *p;
-	REG OFD *p2;
+	register OFD *p;
+	register OFD *p2;
 	DMD *dm;			/*  M01.01.03	*/
 
 	dm = dn->d_drv;
@@ -365,10 +365,10 @@ static long makopn(FCB *f, DND *dn, int h, int mod)
 
 static FTAB *sftsrch(int field, char *ptr)
 {
-	REG FTAB	*sftp ; /*  scan ptr for sft			*/
-	REG int 	i ;
-	REG OFD 	*ofd ;
-	REG PD		*pd ;
+	register FTAB	*sftp ; /*  scan ptr for sft			*/
+	register int 	i ;
+	register OFD 	*ofd ;
+	register PD		*pd ;
 
 	switch( field )
 	{
@@ -397,8 +397,8 @@ static FTAB *sftsrch(int field, char *ptr)
 
 static void sftdel( FTAB *sftp )
 {
-	REG FTAB	*s ;
-	REG OFD 	*ofd ;
+	register FTAB	*s ;
+	register OFD 	*ofd ;
 
 	/*  clear out the entry  */
 
@@ -493,7 +493,7 @@ long	ixclose(OFD *fd, int part)
 {					/*  M01.01.03			*/
 	OFD *p,**q;
 	long tmp;
-	REG int i;			/*  M01.01.03			*/
+	register int i;			/*  M01.01.03			*/
 	BCB *b;
 
 
@@ -569,8 +569,8 @@ long	ixclose(OFD *fd, int part)
 
 long xunlink(char *name) 
 {
-	REG DND *dn;
-	REG FCB *f;
+	register DND *dn;
+	register FCB *f;
 	char *s;
 	long pos;
 
@@ -616,9 +616,9 @@ long xunlink(char *name)
 
 long ixdel(DND *dn, FCB *f, long pos)
 {
-	REG OFD *fd;
+	register OFD *fd;
 	DMD *dm;
-	REG int n2;
+	register int n2;
 	int n;
 	char c;
 
@@ -677,7 +677,7 @@ long ixdel(DND *dn, FCB *f, long pos)
 
 static BOOLEAN match1(char *ref, char *test)
 {
-	REG char	*t ;
+	register char	*t ;
 
 	while( *ref )
 	{

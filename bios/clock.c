@@ -584,7 +584,7 @@ void	clklox(LONG flags, LONG ticks)
 **	FALSE if fail.
 */
 
-BOOLEAN	clk_gettime( REG TIME *t)
+BOOLEAN	clk_gettime( register TIME *t)
 {
 
     t->ti_sec = (clk.sec_h<<4)|clk.sec_l ;
@@ -599,7 +599,7 @@ BOOLEAN	clk_gettime( REG TIME *t)
 }
 
 /*==== clk_settime - set the current clock ================================*/
-BOOLEAN	clk_settime( REG TIME t )
+BOOLEAN	clk_settime( register TIME t )
 {
     return(TRUE);       /* Emulator allows no write to clock registers */
 }	

@@ -50,10 +50,10 @@ long	bakbuf[3];      /*  longjump buffer */
 
 static void	ixterm( PD *r )
 {
-    REG MD *m,
+    register MD *m,
     **q;
-    REG WORD h;
-    REG WORD i;
+    register WORD h;
+    register WORD i;
 
     /* check the standard devices in both file tables  */
 
@@ -99,8 +99,8 @@ static void	ixterm( PD *r )
 
 static  WORD envsize( char *env )
 {
-    REG char	*e ;
-    REG WORD 	cnt ;
+    register char	*e ;
+    register WORD 	cnt ;
 
     for( e = env, cnt = 0 ; !(*e == NULL && *(e+1) == NULL) ; ++e, ++cnt )
         ;
