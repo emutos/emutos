@@ -31,17 +31,14 @@ Where is it in the code
 - keyboard: 
   bios/country.h holds #defines for the keyboard codes;
   bios/kbd_* contain the actual kbd layouts
-  bios/ikbd.c uses them to convert scancodes to bytes. 
-  bios/ikbd.c calls bios/country.c:get_kbd_number() 
+  bios/country.c contains the logic to choose the keyboard to use.
 
 - charset:
   bios/country.h holds #defines for the charset codes;
 
 - font:
   bios/*6x6.c, bios/*8x8.c and bios/*8x16.c contain the fonts
-  bios/lineainit.c refers to them to fill in the font_ring structure.
-  bios/lineainit.c selects the default font depending on the charset
-    returned by bios/country.c:get_charset()
+  bios/country.c contains the logic to choose the fontsets to use.
 
 - date&time:
   the cookie _IDT. Should be used by cli/command.c and bios/initinfo. 
@@ -85,12 +82,12 @@ New country check list
   - provide C source code fonts for this charset (you may use 
     tool fntconv to create the C files)
   - add the new C source codes to the Makefile
-  - update the font table in bios/lineainit.c
+  - update the font table in bios/country.c
   - check if this charset is known by GNU recode and if not
     - send mail to the GNU recode maintainer (!)
   - see chapter 'charsets' of doc/nls.txt 
 - if a specific keyboard is needed,
-  - add it in bios/ikbd.c (follow instructions there)
+  - add it in bios/country.c (follow instructions there)
   - provide the keyboard layout in a file bios/keyb_*.h
 - if a specific language is needed,
   - follow the instructions in doc/nls.txt

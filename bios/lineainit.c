@@ -35,36 +35,6 @@ int linea_inited;
 extern void con_state_init(void);       // from conout.S
 
 
-/*==== Font tables ========================================================*/
-
-/* to add a set of fonts, please do the following:
- * - read doc/country.txt
- * - add a line in the charset names in bios/country.h
- * - add extern declaration referencing the fonts below
- * - add a line in the font_sets table below
- */
- 
-extern const struct font_head f8x16;
-extern const struct font_head f8x8;
-extern const struct font_head f6x6;
-extern const struct font_head latin2_8x16;
-extern const struct font_head latin2_8x8;
-extern const struct font_head latin2_6x6;
-
-struct charset_fonts {
-    int charset;
-    const struct font_head *f6x6;
-    const struct font_head *f8x8;
-    const struct font_head *f8x16;
-};
-
-const static struct charset_fonts font_sets[] = {
-    { CHARSET_ST, &f6x6, &f8x8, &f8x16 },
-    { CHARSET_L2, &latin2_6x6, &latin2_8x8, &latin2_8x16 }, 
-};
-
-
-
 /*==== Prototypes =========================================================*/
 
 void font_init(void);
@@ -84,21 +54,15 @@ struct font_head fon6x6;
  
 void init_fonts(WORD vmode)
 {
-    int i, j;
-    int charset = get_charset();
-    
-    /* find the index of the required charset in our font table */
-    for(i = j = 0 ; i < sizeof(font_sets)/sizeof(*font_sets) ; i++) {
-        if( font_sets[i].charset == charset ) {
-            j = i; 
-            break;
-        }
-    }
-    
+    struct font_head *f6x6, *f8x8, *f8x16;
+  
+    /* ask country.c for the right fonts */
+    get_fonts(&f6x6, &f8x8, &f8x16);
+  
     /* copy the ROM-fontheaders of 3 system fonts to RAM */
-    memmove(&fon6x6, font_sets[j].f6x6, sizeof(struct font_head));
-    memmove(&fon8x8, font_sets[j].f8x8, sizeof(struct font_head));
-    memmove(&fon8x16, font_sets[j].f8x16, sizeof(struct font_head));
+    memmove(&fon6x6, f6x6, sizeof(struct font_head));
+    memmove(&fon8x8, f8x8, sizeof(struct font_head));
+    memmove(&fon8x16, f8x16, sizeof(struct font_head));
 
     /* now in RAM, chain the font headers to a linked list */
     fon6x6.next_font = &fon8x8;
