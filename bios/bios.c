@@ -76,6 +76,9 @@ extern void launchautoexec(PD *); /* found in startup.S */
 
 extern void ui_start(void);   /* found in cli/coma.S or aes/gemstart.S */
                               /* it is the start addr. of the user interface */
+#if WITH_CLI
+extern void coma_start(void);
+#endif
 
 extern long xmaddalt(long start, long size); /* found in bdos/mem.h */
 
@@ -84,7 +87,8 @@ extern long xmaddalt(long start, long size); /* found in bdos/mem.h */
 /* Drive specific declarations */
 static WORD defdrv ;            /* default drive number (0 is a:, 2 is c:) */
 
-BYTE env[256];                  /* environment string, enough bytes??? */
+/* BYTE env[256];                * environment string, enough bytes??? */
+static const BYTE null_env[] = {0, 0};
 
 int is_ramtos;                  /* 1 if the TOS is running in RAM */
 
@@ -278,7 +282,7 @@ void autoexec(void)
 #if DBGAUTOBOOT
         kprintf("Loading %s ... ", path);
 #endif
-        trap1_pexec(0, path, "", "");   /* Pexec */
+        trap1_pexec(0, path, "", null_env);   /* Pexec */
 #if DBGAUTOBOOT
         kprintf("[OK]\n");
 #endif
@@ -327,19 +331,28 @@ void biosmain(void)
 
     cursconf(1, 0);             /* switch on cursor via XBIOS*/
     
+#if WITH_CLI
+    if (early_cli) {            /* run an early console */
+        PD *pd = (PD *) trap1_pexec(5, "", "", null_env);
+        pd->p_tbase = (LONG) coma_start;
+        pd->p_tlen = pd->p_dlen = pd->p_blen = 0;
+        trap1_pexec(4, "", pd, "");
+    }
+#endif
+    
     autoexec();                 /* autoexec Prgs from AUTO folder */
 
-    env[0]='\0';                /* clear environment string */
+/*    env[0]='\0';               - clear environment string */
 
     /* clear commandline */
     
     if(cmdload != 0) {
         /* Pexec a program called COMMAND.PRG */
-        trap1_pexec(0, "COMMAND.PRG", "", env); 
+        trap1_pexec(0, "COMMAND.PRG", "", null_env); 
     } else {
         /* start the default (ROM) shell */
         PD *pd;
-        pd = (PD *) trap1_pexec(5, "", "", env);
+        pd = (PD *) trap1_pexec(5, "", "", null_env);
         pd->p_tbase = (LONG) exec_os;
         pd->p_tlen = pd->p_dlen = pd->p_blen = 0;
         trap1_pexec(4, "", pd, "");

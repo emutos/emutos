@@ -31,6 +31,7 @@ extern char version[];  /* the version string */
 
 #include "initinfo.h"
 
+int early_cli;
 
 #if TOS_VERSION >= 0x200   /* Don't include splashscreen on TOS 1.0x to
                               save some space in the ROM image */
@@ -45,7 +46,7 @@ extern char version[];  /* the version string */
 /*==== External declarations ==============================================*/
 
 /* mxalloc (defined in bdos/mem.h) */
-long xmxalloc(long amount, int mode);
+extern long xmxalloc(long amount, int mode);
 
 
 /*
@@ -99,7 +100,7 @@ static void set_line(void)
 
     /* count for columns */
     for (celx = 0; celx<=llen; celx++)
-        cprintf("-");
+        cprintf("_");
 
     cprintf("\r\n");          /* goto left side */
 }
@@ -125,7 +126,7 @@ static void pair_end(void)
  * cprint_asctime shows boot date and time in YYYY/MM/DD HH:MM:SS format
  */
 
-static void cprint_asctime()
+static void cprint_asctime(void)
 {
     int years, months, days;
     int hours, minutes, seconds;
@@ -146,7 +147,7 @@ static void cprint_asctime()
 
 #ifdef TIMEOUT_ON_BOOT
 /* display help and wait for <TIMEOUT_ON_BOOT> seconds before boot continues */
-static void draw_timeout_line()
+static void draw_timeout_line(void)
 {
 #if TIMEOUT_ON_BOOT > 0
     char bar[]="                                  ";
@@ -160,9 +161,14 @@ static void draw_timeout_line()
     cprintf("\r\n");
     set_margin(); cprintf(_("Hold <Alternate> to skip HDD"));
     cprintf("\r\n");
+#if WITH_CLI
+    set_margin(); cprintf(_("Press 'C' to run an early console"));
+    cprintf("\r\n"); 
+#endif
     set_margin(); cprintf(_("Press any key to continue booting"));
     cprintf("\r\n");
-
+    cprintf("\r\n");
+    
     oldidx = -1;
     while(hz_200 < end) {
         int idx = (((hz_200 - start) * barsize) / timeout);
@@ -176,7 +182,14 @@ static void draw_timeout_line()
         if (kbshift(-1) || bconstat2())
             break;
     }
-    if (bconstat2()) bconin2(); /* eat the keypress */
+    if (bconstat2()) {  /* examine the keypress */  
+        int c = 0xFF & bconin2(); 
+#if WITH_CLI
+        if (c == 'c' || c == 'C') {
+            early_cli = 1;
+        }
+#endif
+    }
 #endif /* TIMEOUT_ON_BOOT > 0 */
 }
 #endif /* TIMEOUT_ON_BOOT */
@@ -185,7 +198,7 @@ static void draw_timeout_line()
  * initinfo - Show initial configuration at startup
  */
 
-void initinfo()
+void initinfo(void)
 {
 
     /* Clear screen - Esc E */
@@ -202,7 +215,6 @@ void initinfo()
     print_art("11111 1   1  111   7    777  7777 ");
     
     /* Just a separator */
-    cprintf("\n\r");
     set_line();
     cprintf("\n\r");
 
@@ -242,7 +254,6 @@ void initinfo()
     pair_start(_("Boot time")); cprint_asctime(); pair_end();
 
     /* Just a separator */
-    cprintf("\n\r");
     set_line();
     cprintf("\n\r");
 
@@ -255,7 +266,7 @@ void initinfo()
 #else    /* TOS_VERSION >= 0x200 */
 
 
-void initinfo()
+void initinfo(void)
 {
     /* Clear screen, set foreground to 15, background is color 0 */
     cprintf("\033E\033b%c\033c%c", 15 + ' ', 0 + ' ');

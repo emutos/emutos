@@ -14,7 +14,8 @@
 #ifndef INITINFO_H
 #define INITINFO_H
 
-
+/* set if the user asked for an early EmuCON in initinfo() */
+extern int early_cli;
 
 /*==== Prototypes =========================================================*/
 
