@@ -29,7 +29,7 @@
 #include "vectors.h"
 
 
-#define DBG_MOUSE 1
+#define DBG_MOUSE 0
 
 #define	MIN_THRESHOLD 1
 #define	MAX_THRESHOLD 20	/* more seems not reasonable... */
