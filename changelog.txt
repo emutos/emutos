@@ -123,3 +123,6 @@ Start... early ages
 26. Sep. 2001
 - change a prototype for xmgetblk - now command.prg load other programs!
 
+30. Sep. 2001
+- changed XBIOS stubs to right declaration. (MAD)
+
