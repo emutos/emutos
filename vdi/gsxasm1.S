@@ -547,7 +547,7 @@ smd_4:
  *
  * output:
  *    d0.w = word index. (x mod 16)
- *    d1.w = physical offset -- (y * bytes_per_line) + (x & xmask)>>xshift
+ *    d1.l = physical offset -- (y * bytes_per_line) + (x & xmask)>>xshift
  *
  * destroys:       nothing
  */
@@ -587,7 +587,8 @@ concat:
 //      start of the scan line to the offset within the scan line, restore
 //      the clobbered registers, and exit.
 //
-        add.w   d2,d1           // compute total offset into screen buffer
+	ext.l	d2
+        add.l   d2,d1           // compute total offset into screen buffer
         movem.w (sp)+,d2/d3     // restore the clobbered registers
         rts
 
@@ -670,11 +671,7 @@ __ABLINE:
         move.w  _X1,d0          // delta x is positive - start from x1,y1
         move.w  _Y1,d1
         bsr     concat          // compute offset of x1,y1 into plane
-#if vme10
         adda.l  d1,a5           // get address of word containing first point
-#else
-        adda.w  d1,a5           // get address of word containing first point
-#endif
 
 //
 //      Compute the delta y of the line.  If the line is horizontal then
@@ -714,11 +711,7 @@ swap:
         move.w  _X2,d0          // delta x is negative - start from x2,y2
         move.w  _Y2,d1
         bsr     concat          // compute offset of x2,y2 into plane
-#if vme10
         adda.l  d1,a5           // get address of word containing first point
-#else
-        adda.w  d1,a5           // get address of word containing first point
-#endif
         neg.w   d5              // get absolute value of delta x
         move.w  _Y1,d4          // compute delta y
         sub.w   _Y2,d4
@@ -1637,11 +1630,7 @@ _HABLINE:
         move.w  _Y1,d1          // get y-coordinate (input to concat)
         move.w  d1,d5           // save it for later use
         bsr     concat          // compute word offset and bit offset
-#if vme10
         adda.l  d1,a5           // compute actual address of starting word
-#else
-        adda.w  d1,a5           // compute actual address of starting word
-#endif
         move.w  _X2,d2          // get ending x-coordinate
 
 //

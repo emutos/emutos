@@ -1121,11 +1121,7 @@ scrn_blt:
 //  d1.w is screen offset of destination
 //
         move.l  _v_bas_ad,a1
-#if vme10
         adda.l  d1,a1                   // screen dest. addr. for x,y coordinate
-#else
-        adda.w  d1,a1                   // a1 -> screen destination
-#endif
 //
         move.l  a1,dform(a6)            // save character destination address
         move.w  d0,tddad(a6)            // save dot address

@@ -131,12 +131,10 @@ _put_pix:
                 move.w  (a0),d1         // fetch y coord.
                 jsr     concat          // convert to physical offset.
                 move.l  _v_bas_ad,a1    // fetch ptr to video base address.
-#if vme10
                 adda.l  d1,a1           // base + offset.
+#if vme10
                 move.l   _v_pl_dspl,a2  // # of bytes between video planes
                 moveq.l #1,d4           // init for faster rotate instruction
-#else
-                adda.w  d1,a1           // base + offset.
 #endif
                 add.w   d0,d0           // word indexing.
                 lea     ortbl,a0
@@ -200,11 +198,9 @@ _get_pix:       move.l  _PTSIN, a0      // fetch ptr to _PTSIN array.
                 move.w  (a0), d1        // fetch y coord.
                 jsr     concat          // convert to physical offset.
                 move.l  _v_bas_ad, a0   // fetch ptr to video base address.
-#if vme10
                 adda.l  d1,a0           // base + offset.
+#if vme10
                 move.l   _v_pl_dspl,a2  // # of bytes between video planes
-#else
-                adda.w  d1, a0          // base + offset.
 #endif
                 add.w   d0, d0          // word indexing.
                 lea     ortbl, a1
@@ -283,7 +279,7 @@ _fill_line:
 #if vme10
                 adda.l  d1,a5           // base + physical offset.
 #else
-                adda.w  d1,a5           // base + physical offset.
+                adda.l  d1,a5           // base + physical offset.
 #endif
                 move.w  6(sp),d2        // fetch xright.
                 and.w   _patmsk,d5      // compute pattern index.
@@ -365,7 +361,7 @@ _end_pts:       move.w  6(sp),d1        // fetch y coordinate. (input to concat)
 #if vme10
                 adda.l  d1,a5           // base + physical offset.
 #else
-                adda.w  d1,a5           // base + physical offset.
+                adda.l  d1,a5           // base + physical offset.
 #endif
 //
 //      d4 = scratch.                   a5 = ptr to word containing low-order pixel bit.
@@ -710,11 +706,7 @@ BOX_FILL:
                 move.w  _Y1,d1          // fetch Y1. (input to concat)
                 move.w  d1,d5           // save for later.
                 jsr     concat          // form physical offset.
-#if vme10
                 adda.l  d1,a5           // base + physical offset.
-#else
-                adda.w  d1,a5           // base + physical offset.
-#endif
                 move.w  _X2,d2          // fetch X2.
                 move.w  _Y2,d6          // fetch Y2.
                 sub.w   d5,d6           // line loop counter.

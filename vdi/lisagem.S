@@ -29,7 +29,6 @@
         .xdef   _INTIN
         .xdef   _INTOUT
         .xdef   _TERM_CH
-        .xdef   _v_bas_ad
         .xdef   _v_lin_wr
         .xdef   _v_planes
         .xdef   _X1     

@@ -175,7 +175,7 @@ no_clip:
         jsr     concat          // compute offset into buffer
         tst.w   d0              // on an odd byte boundary?  (d0 = 8)
         beq     word_ok         // nope - on an even byte boundary  (d0 = 0)
-        addq.w  #1,d1           // yes - increment the buffer offset
+        addq.l  #1,d1           // yes - increment the buffer offset
 word_ok:
         movea.l _v_bas_ad,a2    // get base address of the screen
         adda.l  d1,a2           // compute starting address within screen
