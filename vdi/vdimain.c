@@ -17,7 +17,6 @@
 #include "gsxextrn.h"
 #include "styles.h"
 
-//#include "vdiconf.h"
 #include "asm.h"
 
 
@@ -773,38 +772,38 @@ void (*jmptb1[])() = {
 };
 
 void(*jmptb2[])() = {
-    d_opnvwk,
-    d_clsvwk,
-    vq_extnd,
-    d_contourfill,
-    vsf_perimeter,
-    v_get_pixel,
-    dst_style,
-    dst_point,
-    vsl_ends,
-    dro_cpyfm,
-    tran_fm,
-    xfm_crfm,
-    dsf_udpat,
-    vsl_udsty,
-    dr_recfl,
-    vqi_mode,
-    dqt_extent,
-    dqt_width,
-    vex_timv,           /* in lisagem.S */
-    dt_loadfont,
-    dt_unloadfont,
-    drt_cpyfm,
-    v_show_c,
-    v_hide_c,
-    vq_mouse,
-    vex_butv,           /* in vdimouse.S */
-    vex_motv,           /* in vdimouse.S */
-    vex_curv,           /* in vdimouse.S */
-    vq_key_s,
-    s_clip,
-    dqt_name,
-    dqt_fontinfo
+    d_opnvwk,           /* 100 */
+    d_clsvwk,           /* 101 */
+    vq_extnd,           /* 102 */
+    d_contourfill,      /* 103 */
+    vsf_perimeter,      /* 104 */
+    v_get_pixel,        /* 105 */
+    dst_style,          /* 106 */
+    dst_point,          /* 107 */
+    vsl_ends,           /* 108 */
+    dro_cpyfm,          /* 109 */
+    tran_fm,            /* 110 */
+    xfm_crfm,           /* 111 */
+    dsf_udpat,          /* 112 */
+    vsl_udsty,          /* 113 */
+    dr_recfl,           /* 114 */
+    vqi_mode,           /* 115 */
+    dqt_extent,         /* 116 */
+    dqt_width,          /* 117 */
+    vex_timv,           /* 118 */ /* in lisagem.S */
+    dt_loadfont,        /* 119 */
+    dt_unloadfont,      /* 120 */
+    drt_cpyfm,          /* 121 */
+    v_show_c,           /* 122 */
+    v_hide_c,           /* 123 */
+    vq_mouse,           /* 124 */
+    vex_butv,           /* 125 */ /* in vdimouse.S */
+    vex_motv,           /* 126 */ /* in vdimouse.S */
+    vex_curv,           /* 127 */ /* in vdimouse.S */
+    vq_key_s,           /* 128 */
+    s_clip,             /* 129 */
+    dqt_name,           /* 130 */
+    dqt_fontinfo        /* 131 */
 };
 
 
@@ -885,13 +884,11 @@ void screen()
     }
     /* end if open work or vwork */
     if (opcode >= 1 && opcode <= 39) {
-        opcode--;
-        (*jmptb1[opcode]) ();
+        (*jmptb1[opcode - 1]) ();
     }
 
     else if (opcode >= 100 && opcode <= 131) {
-        opcode -= 100;
-        (*jmptb2[opcode]) ();
+        (*jmptb2[opcode - 100]) ();
     }
 
 }

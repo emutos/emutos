@@ -935,12 +935,10 @@ void cir_dda()
     REG WORD *xptr, *yptr, x, y, d;
 
     /* Calculate the number of vertical pixels required. */
-
     d = cur_work->line_width;
     num_qc_lines = (d * xsize / ysize) / 2 + 1;
 
     /* Initialize the circle DDA.  "y" is set to the radius. */
-
     line_cw = d;
     y = (d + 1) / 2;
     x = 0;
@@ -951,7 +949,6 @@ void cir_dda()
 
     /* Do an octant, starting at north.  The values for the next octant */
     /* (clockwise) will be filled by transposing x and y.               */
-
     while (x < y) {
         *yptr = x;
         *xptr = y;
@@ -971,9 +968,7 @@ void cir_dda()
         q_circle[x] = x;
 
     /* Fake a pixel averaging when converting to non-1:1 aspect ratio. */
-
     x = 0;
-
 
     yptr = q_circle;
     for (i = 0; i < num_qc_lines; i++) {
@@ -1014,11 +1009,12 @@ void wline()
         return;
 
     work_ptr = cur_work;
-    if (work_ptr->line_width != line_cw)
+
+    if (work_ptr->line_width != line_cw) {
         cir_dda();
+    }
 
     /* If the ends are arrowed, output them. */
-
     if ((work_ptr->line_beg | work_ptr->line_end) & ARROWED)
         do_arrow();
 
@@ -1032,9 +1028,9 @@ void wline()
     src_ptr = pointer;
 
     /* If the end style for the first point is not squared, output a circle. */
-
-    if (s_begsty != SQUARED)
+    if (s_begsty != SQUARED) {
         do_circ(wx1, wy1);
+    }
 
     /* Loop over the number of points passed in. */
 
@@ -1069,10 +1065,8 @@ void wline()
         }
         /* End else if:  horizontal. */
         else {
-            /* Find the offsets in x and y for a point perpendicular to the
-               line */
-            /* segment at the appropriate distance. */
-
+            /* Find the offsets in x and y for a point perpendicular */
+            /* to the line segment at the appropriate distance. */
             k = SMUL_DIV(-vy, ysize, xsize);
             vy = SMUL_DIV(vx, xsize, ysize);
             vx = k;
@@ -1107,25 +1101,19 @@ void wline()
         plygn();
 
         /* restore the PTSIN pointer */
-
         PTSIN = old_ptsin;
 
         /* If the terminal point of the line segment is an internal joint, */
         /* output a filled circle.                                         */
-
         if ((i < numpts - 1) || (s_endsty != SQUARED))
             do_circ(wx2, wy2);
 
-        /* The line segment end point becomes the starting point for the next 
-         */
-        /* line segment. */
-
+        /* end point becomes the starting point for the next line segment. */
         wx1 = wx2;
         wy1 = wy2;
     }                           /* End for:  over number of points. */
 
     /* Restore the attribute environment. */
-
     r_fa_attr();
 }                               /* End "wline". */
 
@@ -1148,7 +1136,6 @@ void perp_off(WORD * px, WORD * py)
     pcircle = q_circle;
 
     /* Mirror transform the vector so that it is in the first quadrant. */
-
     if (*vx >= 0)
         quad = (*vy >= 0) ? 1 : 4;
     else
@@ -1246,7 +1233,6 @@ void do_circ(WORD cx, WORD cy)
     REG WORD *pointer;
 
     /* Only perform the act if the circle has radius. */
-
     if (num_qc_lines > 0) {
         /* Do the horizontal line through the center of the circle. */
 
@@ -1293,7 +1279,6 @@ void s_fa_attr()
     REG struct attribute *work_ptr;
 
     /* Set up the fill area attribute environment. */
-
     work_ptr = cur_work;
 
     LN_MASK = LINE_STYLE[0];
@@ -1320,7 +1305,6 @@ void r_fa_attr()
     REG struct attribute *work_ptr;
 
     /* Restore the fill area attribute environment. */
-
     work_ptr = cur_work;
 
     work_ptr->fill_color = s_fil_col;

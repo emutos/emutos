@@ -131,9 +131,9 @@ UTILSSRC = memset.S memmove.S nlsasm.S setjmp.S miscasm.S stringasm.S
 #
 
 VDICSRC = vdimain.c vdiinput.c monobj.c monout.c text.c seedfill.c bezier.c \
-          #vdiesc.c
+          vdiesc.c
 VDISSRC = entry.S bitblt.S bltfrag.S copyrfm.S gsxasm1.S gsxasm2.S \
-          vdimouse.S textblt.S tranfm.S esclisa.S
+          vdimouse.S textblt.S tranfm.S #esclisa.S
 
 #
 # source code in aes/

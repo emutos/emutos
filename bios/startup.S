@@ -184,23 +184,13 @@ memdone:
 
 
 /*
- * vidchng - change video resolution 
- *
- * Do nothing for now
- */
-
-_vidchng:
-        rts
-
-
-
-/*
  * _ara_XHDI
  */
         .global _ara_XHDI
 _ara_XHDI:
         dc.w 0x7137
         rts
+
 
 
 /*
@@ -241,7 +231,4 @@ cartover:
 
 
         .end
-
-
-
 

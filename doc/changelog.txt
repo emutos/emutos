@@ -1000,3 +1000,5 @@ Start... early ages
 - bios/fntlat2_*.c - Czech language okay (make COUNTRY=cz) but file now is
   too big for 256k: comment out another country in po/LINGUAS to try out
   cz country on a <256k emulator; UNIQUE cz does not work yet (LVL)
+- bios/startup.S - deleted unused function vidchng() (MAD)
+
