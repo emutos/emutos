@@ -437,7 +437,10 @@ Start... early ages
 - did put usr2xfr/xfr2usr to bdos/fsio.c too (MAD)
 - CLI: added unix like commands mv, cp, pwd, format, clear, rmdir, mkdir (MAD)
 
-07. Feb. 2002
+07. Jan. 2002
 - added GETBOOT bootsector extractor routine to EmuCON (MAD)
 - fixed COPY/MOVE/CP/MV command (MAD)
-
+- fixed NVRAM RTC getting/setting date (month is already 1..12) (joy)
+- fixed printing of current time at bootup (month is already 1..12) (joy)
+- disabled vsync() neverending loop (MonST works now) (joy)
+- fixed LineA v_bytes_lin variable (Clocky works now) (joy)
