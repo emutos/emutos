@@ -1056,7 +1056,7 @@ static const OBJECT desk_rs_obj_rom[] = {
    { 13, -1, -1, G_BUTTON,                  /*** 16 ***/
      SELECTABLE | RBUTTON | TOUCHEXIT,
      NORMAL,
-     (long) N_("TTP"),
+     (long) "TTP",
      12, 0, 5, 1 },
 
    { 18, -1, -1, G_STRING,                  /*** 17 ***/
@@ -1601,26 +1601,68 @@ char *desk_rs_fstr[] = {
     "pm",
     N_("Free"),
     "Free",
-    N_("[1][The document type you selected is not|configured to work with a specific|application.  Use the \"Configure|application\" command to associate this|document type with an application.][  OK  ]"),
-    N_("[1][The GEM Desktop has no more available|windows.  Before you open a disk, close|a window you're not using.][  OK  ]"),
-    N_("[1][Cannot find the FORMAT program.  If you|are using a dual-floppy system, you must|format disks from your DOS disk.  If you|are using a hard disk, copy FORMAT to |the root directory.][OK]"),
-    N_("[3][Formatting will ERASE all|information on the disk in drive|%S:.  Click on OK only if you don't|mind losing the information on|this disk.][  OK  |Cancel]"),
-    N_("[3][You cannot copy a parent folder|into one of its child folders.][  OK  ]"),
-    N_("[3][If you are sure you want to|delete ALL the information on the|disk in drive %S:, click on OK.|Otherwise, click on Cancel.][  OK  |Cancel]"),
-    N_("[1][There is not enough space available|to configure this application.  To free|up some space, you'll have to remove|one of your currently configured|applications.][  OK  ]"),
-    N_("[2][A folder with that name already|exists or your disk is full.|Retry with a new name, or Cancel|and check the available disk space.][ Cancel | Retry ]"),
-    N_("[1][This disk does not have enough room for|the information you are trying to copy.|Some items, however, may have been|copied to the disk.][  OK  ]"),
-    N_("[3][The GEM Desktop cannot find the|documents DESKLO.ICN, DESKHI.ICN,|or DESKTOP.INF in the DOS search|path.  These documents are required|to run the GEM Desktop.][Cancel]"),
-    N_("[3][To save your desktop, insert your|GEM DESKTOP disk into drive A:, close|the drive door, and click on OK.|Click on Cancel if you don't want to|save the desktop.][  OK  |Cancel]"),
-    N_("[3][Sorry, but you cannot place any more|folders inside of your current one.|See your documentation for limits on|folders inside other folders.][Cancel]"),
-    N_("[3][Sorry, but the Directory name you have|entered exceeds the maximum number of|characters.  See your documentation for|limits on the number of characters you|can enter.][   OK   ]"),
+    N_("[1][The document type you selected is not|"
+       "configured to work with a specific|"
+       "application.  Use the \"Configure|"
+       "application\" command to associate this|"
+       "document type with an application.][  OK  ]"),
+    N_("[1][The GEM Desktop has no more available|"
+       "windows.  Before you open a disk, close|"
+       "a window you're not using.][  OK  ]"),
+    N_("[1][Cannot find the FORMAT program.  If you|"
+       "are using a dual-floppy system, you must|"
+       "format disks from your DOS disk.  If you|"
+       "are using a hard disk, copy FORMAT to |"
+       "the root directory.][OK]"),
+    N_("[3][Formatting will ERASE all|"
+       "information on the disk in drive|"
+       "%S:.  Click on OK only if you don't|"
+       "mind losing the information on|"
+       "this disk.][  OK  |Cancel]"),
+    N_("[3][You cannot copy a parent folder|"
+       "into one of its child folders.][  OK  ]"),
+    N_("[3][If you are sure you want to|"
+       "delete ALL the information on the|"
+       "disk in drive %S:, click on OK.|"
+       "Otherwise, click on Cancel.][  OK  |Cancel]"),
+    N_("[1][There is not enough space available|"
+       "to configure this application.  To free|"
+       "up some space, you'll have to remove|"
+       "one of your currently configured|applications.][  OK  ]"),
+    N_("[2][A folder with that name already|"
+       "exists or your disk is full.|"
+       "Retry with a new name, or Cancel|"
+       "and check the available disk space.][ Cancel | Retry ]"),
+    N_("[1][This disk does not have enough room for|"
+       "the information you are trying to copy.|"
+       "Some items, however, may have been|"
+       "copied to the disk.][  OK  ]"),
+    N_("[3][The GEM Desktop cannot find the|"
+       "documents DESKLO.ICN, DESKHI.ICN,|"
+       "or DESKTOP.INF in the DOS search|"
+       "path.  These documents are required|"
+       "to run the GEM Desktop.][Cancel]"),
+    N_("[3][To save your desktop, insert your|"
+       "GEM DESKTOP disk into drive A:, close|"
+       "the drive door, and click on OK.|"
+       "Click on Cancel if you don't want to|"
+       "save the desktop.][  OK  |Cancel]"),
+    N_("[3][Sorry, but you cannot place any more|"
+       "folders inside of your current one.|"
+       "See your documentation for limits on|"
+       "folders inside other folders.][Cancel]"),
+    N_("[3][Sorry, but the Directory name you have|"
+       "entered exceeds the maximum number of|"
+       "characters.  See your documentation for|"
+       "limits on the number of characters you|"
+       "can enter.][   OK   ]"),
 };
 
 
 
 
 /* Counts the occurance of c in str */
-int count_chars(char *str, char c)
+static int count_chars(char *str, char c)
 {
     int count;
 
@@ -1633,14 +1675,77 @@ int count_chars(char *str, char c)
     return count;
 }
 
+/* 
+ * the xlate_ functions below are also used by the GEM rsc in aes/gem_rsc.c
+ */
 
-void desk_rs_init(void)
+/* Translates the strings in an OBJECT array */
+void xlate_obj_array(OBJECT *obj_array, int nobj)
+{
+    register OBJECT *obj;
+
+    for(obj = obj_array; --nobj >= 0 ; obj++) {
+        switch(obj->ob_type) {
+        case G_TEXT:
+        case G_BOXTEXT:
+        case G_FTEXT:
+        case G_FBOXTEXT:
+            {
+                LONG * str = & ((TEDINFO *)obj->ob_spec)->te_ptmplt;
+                *str = (LONG) gettext((char *) *str);
+            }
+            break;
+        case G_STRING:
+        case G_BUTTON:
+        case G_TITLE:
+            obj->ob_spec = (LONG) gettext( (char *) obj->ob_spec);
+            break;
+        default:
+            break;
+        }
+    }
+}
+
+/* Translates and fixes the TEDINFO strings */
+void xlate_fix_tedinfo(TEDINFO *tedinfo, int nted)
 {
     register int i = 0;
     long len;
     int j;
     char *tedinfptr;
 
+    /* translate strings in TEDINFO */
+    for (i = 0; i < nted; i++) {
+        TEDINFO *ted = &tedinfo[i];
+        ted->te_ptmplt = (LONG) gettext( (char *) ted->te_ptmplt);
+    }
+
+    /* Fix TEDINFO strings: */
+    len = 0;
+    for (i = 0; i < nted; i++) {
+        if (tedinfo[i].te_ptext == 0) {
+            /* Count number of '_' in strings ( +1 for \0 at the end ): */
+            len += count_chars((char *) tedinfo[i].te_ptmplt, '_') + 1;
+        }
+    }
+    tedinfptr = (char *) dos_alloc(len);        /* Get memory */
+    for (i = 0; i < nted; i++) {
+        if (tedinfo[i].te_ptext == 0) {
+            tedinfo[i].te_ptext = (LONG) tedinfptr;
+            *tedinfptr++ = '@'; /* First character of uninitialized string */
+            len = count_chars((char *) tedinfo[i].te_ptmplt, '_');
+            for (j = 0; j < len; j++) {
+                *tedinfptr++ = '_';     /* Set other characters to '_' */
+            }
+            *tedinfptr++ = 0;   /* Final 0 */
+        }
+    }
+}
+
+
+void desk_rs_init(void)
+{
+    register int i;
 
     /* Copy data from ROM to RAM: */
     memcpy(desk_rs_obj, desk_rs_obj_rom, RS_NOBS * sizeof(OBJECT));
@@ -1653,55 +1758,10 @@ void desk_rs_init(void)
     }
 
     /* translate strings in objects */
-    for(i = 0 ; i < RS_NOBS ; i++) {
-        OBJECT *obj = &desk_rs_obj[i];
-        switch(obj->ob_type) {
-        case G_TEXT:
-        case G_BOXTEXT:
-        case G_FTEXT:
-        case G_FBOXTEXT:
-            ((TEDINFO *)obj->ob_spec)->te_ptmplt = 
-                (LONG) gettext((char *)(((TEDINFO *)obj->ob_spec)->te_ptmplt));
-            break;
-        case G_STRING:
-        case G_BUTTON:
-        case G_TITLE:
-            obj->ob_spec = (LONG) gettext( (char *) obj->ob_spec);
-            break;
-        default:
-            break;
-        }
-    }
+    xlate_obj_array(desk_rs_obj, RS_NOBS);
 
-    /* translate strings in TEDINFO */
-    for (i = 0; i < RS_NTED; i++) {
-        TEDINFO *ted = &desk_rs_tedinfo[i];
-        ted->te_ptmplt = (LONG) gettext( (char *) ted->te_ptmplt);
-    }
-
-    /* Fix TEDINFO strings: */
-    len = 0;
-    for (i = 0; i < RS_NTED; i++) {
-        if (desk_rs_tedinfo[i].te_ptext == 0) {
-            /* Count number of '_' in strings ( +1 for \0 at the end ): */
-            len +=
-                count_chars((char *) desk_rs_tedinfo[i].te_ptmplt,
-                            '_') + 1;
-        }
-    }
-    tedinfptr = (char *) dos_alloc(len);        /* Get memory */
-    for (i = 0; i < RS_NTED; i++) {
-        if (desk_rs_tedinfo[i].te_ptext == 0) {
-            desk_rs_tedinfo[i].te_ptext = (LONG) tedinfptr;
-            *tedinfptr++ = '@'; /* First character of uninitialized string */
-            len = count_chars((char *) desk_rs_tedinfo[i].te_ptmplt, '_');
-            for (j = 0; j < len; j++) {
-                *tedinfptr++ = '_';     /* Set other characters to '_' */
-            }
-            *tedinfptr++ = 0;   /* Final 0 */
-        }
-    }
-
+    /* translate and fix TEDINFO strings */
+    xlate_fix_tedinfo(desk_rs_tedinfo, RS_NTED);
 }
 
 
@@ -1725,3 +1785,4 @@ WORD rsrc_gaddr(WORD rstype, WORD rsid, LONG * paddr)
 
     return TRUE;
 }
+

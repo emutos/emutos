@@ -15,6 +15,7 @@
 #include "obdefs.h"
 #include "gemrslib.h"
 #include "gemdos.h"
+#include "nls.h"
 
 
 static const char rs_str_fstmplt[] = "_ ________.___ ";
@@ -32,7 +33,7 @@ static const TEDINFO rs_tedinfo_rom[] = {
         IBM, 1, TE_LEFT, 4352, 0, 0, 39, 39 },
 
         { 0L,
-        (LONG)"Selection:  ________.___",
+        (LONG)N_("Selection:  ________.___"),
         (LONG)"f",
         IBM, 1, TE_LEFT, 4352, 0, 0, 12, 25 },
 
@@ -219,7 +220,7 @@ static const OBJECT rs_obj_rom[] = {
         { 2, -1, -1, G_STRING,                    /*** 1 ***/
         NONE,
         NORMAL,
-        (long) "ITEM SELECTOR",
+        (long) N_("ITEM SELECTOR"),
         3, 1, 13, 1 },
 
         { 3, -1, -1, G_FBOXTEXT,                  /*** 2 ***/
@@ -237,13 +238,13 @@ static const OBJECT rs_obj_rom[] = {
         { 5, -1, -1, G_BUTTON,                    /*** 4 ***/
         SELECTABLE|DEFAULT|EXIT,
         NORMAL,
-        (long) "OK",
+        (long) N_("OK"),
         28, 15, 8, 1 },
 
         { 6, -1, -1, G_BUTTON,                    /*** 5 ***/
         SELECTABLE|EXIT,
         NORMAL,
-        (long) "Cancel",
+        (long) N_("Cancel"),
         28, 17, 8, 1 },
 
         { 0, 7, 14, G_IBOX,                       /*** 6 ***/
@@ -461,7 +462,7 @@ char *rs_fstr[] = {
         "a..zA..Z0..9 $#&@!%()-{}'`_^~",
         "a..zA..Z ",
         "a..zA..Z0..9 ",
-        "Insert your GEM STARTUP disk",
+        N_("Insert your GEM STARTUP disk"),
         "C:\\GEMAPPS\\GEMSYS;C:\\GEMAPPS;C:\\",
         "C:\\CLIPBRD",
         "GEM.RSC Release 3.0",
@@ -469,22 +470,58 @@ char *rs_fstr[] = {
         "SCRENMGR",
         "C:\\DESKTOP.INF",
         "\\SCRAP.",
-        "[2][You cannot write to the disk in drive|%S: because it is physically write-|protected.  Before you Retry, remove|the write-protect tab or notch the|disk.][Cancel|Retry]",
-        "[2][Drive %S: is not responding.  You must|use the right kind of disk, insert it|correctly, and close the door.  If the|problem is with a hard disk, check the|disk's connections.][Cancel|Retry]",
-        "[2][Data on the disk in drive %S: may be|damaged.  You must use the right kind|of floppy disk; you must connect your|hard disk properly.][Cancel|Retry]",
-        "[2][This application cannot read data on the|disk in drive %S:.  The disk must be|formatted, there must be power to the|disk drive, and the disk drive must be|physically connected to your computer.][Cancel|Retry]",
-        "[2][Your output device is not receiving|data. Before you Retry, make sure the|device has power, is on-line, and is|loaded with paper or film.][Cancel|Retry]",
-        "[3][An error has occurred with the|Graphics Environment Manager (GEM).|Contact Digital Research Technical|Support for assistance.][Cancel]",
-        "[2][This application cannot find the|folder or document you are trying to|open. Check the name you have entered.][  OK  ]",
-        "[3][Your computer doesn't have enough|memory to run the GEM Desktop.][ Sorry ]",
-        "[1][This application doesn't have room to|open another document.  To make room,|close any documents you don't need.][  OK  ]",
-        "[1][An item with this name already exists|in the folder, or the item is set to|Read-Only status. Use the \"Info/Rename\"|command to change the item's status.][  OK  ]",
-        "[1][The disk drive you have indicated does|not exist. Check the drive identifier|letter you entered.][Cancel]",
-        "[1][You cannot delete the folder in|which you are currently working.][  OK  ]",
-        "[1][Your computer does not have enough|memory to run the application you|have selected.][  OK  ]",
-        "[3][DOS error #%W.][Cancel]",
-        "[3][Bad Function #][Cancel]",
-        "[3][To run the GEM Desktop, insert your|GEM DESKTOP disk in drive A and click|on OK or press Enter. To return to DOS,|click on Cancel.][  OK  |Cancel]"
+        N_("[2][You cannot write to the disk in drive|"
+           "%S: because it is physically write-|"
+           "protected.  Before you Retry, remove|"
+           "the write-protect tab or notch the|disk.][Cancel|Retry]"),
+        N_("[2][Drive %S: is not responding.  You must|"
+           "use the right kind of disk, insert it|"
+           "correctly, and close the door.  If the|"
+           "problem is with a hard disk, check the|"
+           "disk's connections.][Cancel|Retry]"),
+        N_("[2][Data on the disk in drive %S: may be|"
+           "damaged.  You must use the right kind|"
+           "of floppy disk; you must connect your|"
+           "hard disk properly.][Cancel|Retry]"),
+        N_("[2][This application cannot read data on the|"
+           "disk in drive %S:.  The disk must be|"
+           "formatted, there must be power to the|"
+           "disk drive, and the disk drive must be|"
+           "physically connected to your computer.][Cancel|Retry]"),
+        N_("[2][Your output device is not receiving|"
+           "data. Before you Retry, make sure the|"
+           "device has power, is on-line, and is|"
+           "loaded with paper or film.][Cancel|Retry]"),
+        N_("[3][An error has occurred with the|"
+           "Graphics Environment Manager (GEM).|"
+           "Please contact the EmuTOS Development|"
+           "Team and submit a bug report.][Cancel]"),
+        N_("[2][This application cannot find the|"
+           "folder or document you are trying to|"
+           "open. Check the name you have entered.][  OK  ]"),
+        N_("[3][Your computer doesn't have enough|"
+           "memory to run the GEM Desktop.][ Sorry ]"),
+        N_("[1][This application doesn't have room to|"
+           "open another document.  To make room,|"
+           "close any documents you don't need.][  OK  ]"),
+        N_("[1][An item with this name already exists|"
+           "in the folder, or the item is set to|"
+           "Read-Only status. Use the \"Info/Rename\"|"
+           "command to change the item's status.][  OK  ]"),
+        N_("[1][The disk drive you have indicated does|"
+           "not exist. Check the drive identifier|"
+           "letter you entered.][Cancel]"),
+        N_("[1][You cannot delete the folder in|"
+           "which you are currently working.][  OK  ]"),
+        N_("[1][Your computer does not have enough|"
+           "memory to run the application you|"
+           "have selected.][  OK  ]"),
+        N_("[3][DOS error #%W.][Cancel]"),
+        N_("[3][Bad Function #][Cancel]"),
+        N_("[3][To run the GEM Desktop, insert your|"
+           "GEM DESKTOP disk in drive A and click|"
+           "on OK or press Enter. To return to DOS,|"
+           "click on Cancel.][  OK  |Cancel]"),
 };
 
 #define RS_NFIMG 11
@@ -515,55 +552,34 @@ BITBLK rs_fimg[] = {
 
 
 
-
-extern int count_chars(char *str, char c);    /* see desk_rsc.c */
-
-
+/* functions defined in desk_rsc.c */
+extern void xlate_obj_array(OBJECT *obj, int nobj);
+extern void xlate_fix_tedinfo(TEDINFO *tedinfo, int nted);
 
 void gem_rsc_init()
 {
-    long len;
-    int i, j;
-    char *tedinfptr;
-
     /* Copy data from ROM to RAM: */
     memcpy(rs_obj, rs_obj_rom, RS_NOBS*sizeof(OBJECT));
     memcpy(rs_tedinfo, rs_tedinfo_rom, RS_NTED*sizeof(TEDINFO));
 
-    /* Fix TEDINFO strings: */
-    len = 0;
-    for (i = 0; i < RS_NTED; i++) {
-        if (rs_tedinfo[i].te_ptext == 0) {
-            /* Count number of '_' in strings ( +1 for \0 at the end ): */
-            len += count_chars((char *)rs_tedinfo[i].te_ptmplt, '_') + 1;
-        }
-    }
-    tedinfptr = (char *) dos_alloc(len);        /* Get memory */
-    for (i = 0; i < RS_NTED; i++) {
-        if (rs_tedinfo[i].te_ptext == 0) {
-            rs_tedinfo[i].te_ptext = (LONG) tedinfptr;
-            *tedinfptr++ = '@'; /* First character of uninitialized string */
-            len = count_chars((char *)rs_tedinfo[i].te_ptmplt, '_');
-            for (j = 0; j < len; j++) {
-                *tedinfptr++ = '_';     /* Set other characters to '_' */
-            }
-            *tedinfptr++ = 0;   /* Final 0 */
-        }
-    }
+    /* translate strings in objects */
+    xlate_obj_array(rs_obj, RS_NOBS);
+
+    /* translate and fix TEDINFO strings */
+    xlate_fix_tedinfo(rs_tedinfo, RS_NTED);
+
     /* The first three TEDINFOs don't use a '@' as first character: */
     *(char *)rs_tedinfo[0].te_ptext = '_';
     *(char *)rs_tedinfo[1].te_ptext = '_';
     *(char *)rs_tedinfo[2].te_ptext = 0;
-
 }
 
 
 void gem_rsc_fixit()
 {
-        register int    i=0;
+    register int i=0;
 
-        do
-        {
-                rs_obfix((LONG)rs_obj, i);
-        } while (++i<RS_NOBS);
+    for(i = 0 ; i < RS_NOBS ; i++) {
+        rs_obfix((LONG)rs_obj, i);
+    } 
 }
