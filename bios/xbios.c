@@ -5,6 +5,7 @@
  *
  * Authors:
  *  MAD     Martin Doering
+ *  THO     Thomas Huth
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -94,10 +95,18 @@ LONG xbios_1()
 
 ULONG xbios_2()
 {
+    ULONG addr;
+
 #if DBG_XBIOS
     kprint("XBIOS: Physbase ...\n");
 #endif
-    return((unsigned long)v_bas_ad);
+
+    addr = ((*(UBYTE *)0xffff8201)<<16) + ((*(UBYTE *)0xffff8203)<<8);
+#if 0
+    addr += (*(UBYTE *)0xffff820D);  /* The low byte only exists on STE, TT and Falcon */
+#endif
+
+    return(addr);
 }
 
 
@@ -111,9 +120,9 @@ ULONG xbios_2()
 LONG xbios_3()
 {
 #if DBG_XBIOS
-    kprint("XBIOS: Unimplemented function 0x03 ...");
+    kprint("XBIOS: Logbase ...");
 #endif
-    return(0);
+    return((ULONG)v_bas_ad);
 }
 
 
@@ -127,9 +136,10 @@ LONG xbios_3()
 WORD xbios_4()
 {
 #if DBG_XBIOS
-    kprint("XBIOS: Unimplemented function 0x04 ...");
+    kprint("XBIOS: Getrez ...");
 #endif
-    return(2);
+
+    return( *(UBYTE *)0xffff8260 );
 }
 
 
