@@ -243,6 +243,24 @@ m68000:
         nop
         move.l  #0x8000,d0
         dc.l    0x4e7b0002      // movec   d0,cacr
+        
+        // Instruction Transparent Translation Registers (ITTRs):
+        // all addresses (bits 23-16), enabled (bit 15), both user and
+        // supervisor (bits 14-13), cachable+write-through (bits 6-5)
+        move.l  #0x00ffe000,d0
+        dc.l    0x4e7b0004      // movec   d0,ittr0
+        moveq.l #0,d0
+        dc.l    0x4e7b0005      // movec   d0,ittr1
+        
+        // The Transparent Translation Registers are setup (even if the cache
+        // and the MMU are disabled) to ensure serialized access ("Without 
+        // serialization, the IU pipeline allows read accesses to occur 
+        // before completion of a write-back for a previous instruction.")
+        move.l  #0x00ffe040,d0
+        dc.l    0x4e7b0006      // movec   d0,dttr0
+        moveq.l #0,d0
+        dc.l    0x4e7b0007      // movec   d0,dttr1
+        
 done:
         rts
 
