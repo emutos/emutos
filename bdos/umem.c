@@ -19,10 +19,15 @@
 
 #include "portab.h"
 #include "fs.h"
+#include "asm.h"
 #include "bios.h"
 #include "mem.h"
 #include "gemerror.h"
 #include "../bios/kprint.h"
+
+
+
+#define getmpb(a) trap13(0,a)
 
 /*
  *  global variables

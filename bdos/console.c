@@ -17,6 +17,7 @@
 
 
 #include        "portab.h"                      /*  M01.01.02           */
+#include        "asm.h"
 #include        "fs.h"
 #include        "bios.h"                        /*  M01.01.01           */
 #include        "proc.h"
@@ -81,6 +82,12 @@ static int backsp(int h, char *cbuf, int retlen, int col);
 #define   space   0x20
 
 #define warmboot() xterm(-32)
+
+#define bconstat(a)  trap13(1,a)
+#define bconin(a)    trap13(2,a)
+#define bconout(a,b) trap13(3,a,b)
+#define bconostat(a) trap13(8,a)
+
 
 
 /**

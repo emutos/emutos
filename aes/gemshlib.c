@@ -100,7 +100,6 @@ GLOBAL WORD     gl_shgem;
 WORD sh_find(LONG pspec);
 extern void deskstart();        /* see ../desk/deskstart.S */
 extern LONG do_pexec(WORD mode, LONG p1, LONG p2, LONG p3);  /* in gemstart.S */
-extern LONG trap_1(WORD, ...);  /* found in ../bios/startup.S */
 
 
 

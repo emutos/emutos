@@ -65,9 +65,6 @@ void autoexec(void);
 extern BYTE *biosts ;           /*  time stamp string */
 
 
-extern LONG trap_1(WORD, ...);  /* found in startup.s */
-
-
 
 /* unused extern LONG oscall();    This jumps to BDOS */
 extern LONG osinit(void);
@@ -264,14 +261,14 @@ void autoexec(void)
     if( ! blkdev_avail(bootdev) )       /* check, if bootdev available */
         return;
 
-    trap_1( 0x1a, &dta);                      /* Setdta */
-    err = trap_1( 0x4e, "\\AUTO\\*.PRG", 7);  /* Fsfirst */
+    trap1( 0x1a, &dta);                      /* Setdta */
+    err = trap1( 0x4e, "\\AUTO\\*.PRG", 7);  /* Fsfirst */
     while(err == 0) {
         strcpy(path, "\\AUTO\\");
         dta.name[12] = 0;
         strcat(path, dta.name);
-        trap_1( 0x4b, 0, path, "", "");       /* Pexec */
-        err = trap_1( 0x4f );                 /* Fsnext */
+        trap1( 0x4b, 0, path, "", "");       /* Pexec */
+        err = trap1( 0x4f );                 /* Fsnext */
     }
 }
 
@@ -288,10 +285,10 @@ void biosmain(void)
 {
     /* PD *shell_pd, com_pd; */
 
-    trap_1( 0x30 );              /* initial test, if BDOS works */
+    trap1( 0x30 );              /* initial test, if BDOS works */
 
     if (! (has_megartc || has_nvram))
-        trap_1( 0x2b, os_dosdate);  /* set initial date in GEMDOS format */
+        trap1( 0x2b, os_dosdate);  /* set initial date in GEMDOS format */
 
     /* if TOS in RAM booted from an autoboot floppy, ask to remove the
      * floppy before going on.
@@ -307,7 +304,7 @@ void biosmain(void)
     blkdev_hdv_boot();
 
     defdrv = bootdev;
-    trap_1( 0x0e , defdrv );    /* Set boot drive */
+    trap1( 0x0e , defdrv );    /* Set boot drive */
 
     /* execute Reset-resistent PRGs */
 
@@ -323,14 +320,14 @@ void biosmain(void)
     
     if(cmdload != 0) {
         /* Pexec a program called COMMAND.PRG */
-        trap_1( 0x4b , 0, "COMMAND.PRG" , "", env); 
+        trap1( 0x4b , 0, "COMMAND.PRG" , "", env); 
     } else {
         /* start the default (ROM) shell */
         PD *pd;
-        pd = (PD *) trap_1( 0x4b , 5, "" , "", env);
+        pd = (PD *) trap1( 0x4b , 5, "" , "", env);
         pd->p_tbase = (LONG) exec_os;
         pd->p_tlen = pd->p_dlen = pd->p_blen = 0;
-        trap_1( 0x4b, 4, "", pd, "");
+        trap1( 0x4b, 4, "", pd, "");
     }
 
     cprintf(_("[FAIL] HALT - should never be reached!\n"));

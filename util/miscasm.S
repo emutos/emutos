@@ -16,6 +16,7 @@
         .global _swp68w         // swap bytes in a word 
         .global _swp68l         // swap word & bytes in long
 
+        .global _trap1          // call GEMDOS
         .global _trap13         // call BIOS
         .global _trap14         // call XBIOS
 
@@ -57,6 +58,25 @@ _swp68l:
 
 
 /*
+ * trap1 - trap 1 (GEMDOS) entry point
+ */
+        .text
+_trap1:
+        move.l  (sp)+,t1spsav   // save return address
+        movem.l d2/a2,t1regsav
+        trap    #1              // call bdos call
+        movem.l t1regsav,d2/a2
+        move.l  t1spsav,-(sp)   // restore return address
+        rts
+
+        .bss
+        .even
+t1spsav:
+	ds.l    1       // Save space for _trap_1
+t1regsav:
+	ds.l    2
+
+/*
  * _trap13 - perform trap 13 supervisor call on behalf of caller
  */
 
@@ -70,7 +90,7 @@ _trap13:
         .bss
         .even
 biosav:
-        .ds.l   1
+        ds.l   1
 
 
 

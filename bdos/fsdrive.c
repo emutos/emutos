@@ -33,13 +33,17 @@
  */
 
 
-#include            "portab.h"
-#include            "fs.h"
-#include            "bios.h"                /*  M01.01.01                   */
-#include            "mem.h"
-#include            "gemerror.h"
-#include        "../bios/kprint.h"
+#include "portab.h"
+#include "asm.h"
+#include "fs.h"
+#include "bios.h"                /*  M01.01.01                   */
+#include "mem.h"
+#include "gemerror.h"
+#include "../bios/kprint.h"
 
+
+
+#define getbpb(a)    trap13(7,a)
 
 /*
  * forward prototypes 

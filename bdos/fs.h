@@ -43,14 +43,6 @@
  *  code macros
  */
 
-#define bconstat(a) trap13(1,a)
-#define bconin(a) trap13(2,a)
-#define bconout(a,b) trap13(3,a,b)
-/* SCC  11 Mar 85 */
-#define bconostat(a) trap13(8,a)
-#define getbpb(a) trap13(7,a)
-#define getmpb(a) trap13(0,a)
-
 #define min(a,b) (((a) < (b)) ? (a) : (b))
 /* LVL define xmovs(n,s,d)      bmove(s,d,n) */
 
@@ -357,24 +349,6 @@ DTAINFO
 #define HXFORM(h)       (3+h)
 
 
-/**********************
-**
-** BIOS function macros
-**
-***********************
-*/
-
-#define CIStat(d)       trap13(0x01,d)          /* Character Input Status   */
-#define GetBPB(d)       (BPB *)trap13(0x07,d)   /* Get BIOS Parameter Block */
-#define COStat(d)       trap13(0x08,d)          /* Character Output Status  */
-#define GetDM()         trap13(0x0A)            /* Get Drive Map            */
-#define CIOCR(d,l,b)    trap13(0x0C,d,l,b)      /* Char IOCtl Read          */
-#define CIOCW(d,l,b)    trap13(0x0D,d,l,b)      /* Char IOCtl Write         */
-#define DIOCR(d,l,b)    trap13(0x0E,d,l,b)      /* Disk IOCtl Read          */
-#define DIOCW(d,l,b)    trap13(0x0F,d,l,b)      /* Disk IOCtl Write         */
-#define CVE(d,a)        trap13(0x10,d,a)        /* Char Vector Exchange     */
-
-
 
 /* External Declarations */
 
@@ -389,7 +363,6 @@ extern  BCB     *bufl[2] ;              /*  in bios main.c              */
 extern  unsigned int    time, date ;
 extern  int     bios_dev[] ;            /*  in fsfioctl.c               */
 
-extern  long    trap13(int, ...);
 
 
 /*

@@ -122,9 +122,6 @@ _save_area:                     // End of Save storage
 _stkbot:        ds.w    SUPSIZ  // Supervisor stack
 _stktop:                        // filled from top to bottom
         
-t1spsav:        ds.l    1       // Save space for _trap_1
-t1regsav:       ds.l    2   
-
 aexecsave:      ds.l    1       // save zone for autoexec
         
         
@@ -540,16 +537,6 @@ cartover:
         
         
 
-
-// ==== trap_1 - trap 1 (GEMDOS) entry point =================================
-
-_trap_1:
-        move.l  (sp)+,t1spsav   // save return address
-        movem.l d2/a2,t1regsav
-        trap    #1              // call bdos call
-        movem.l t1regsav,d2/a2
-        move.l  t1spsav,-(sp)   // restore return address
-        rts
 
 // ==== Trap 13 - BIOS entry point ==========================================
 

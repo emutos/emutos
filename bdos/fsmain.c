@@ -13,6 +13,7 @@
 
 
 #include "portab.h"
+#include "asm.h"
 #include "fs.h"
 #include "bios.h"
 #include "mem.h"

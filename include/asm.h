@@ -38,13 +38,14 @@
 extern void swp68w(int *);
 extern void swp68l(long *);
 
+#define swpw(x) swp68w(&x)
+#define swpl(x) swp68l(&x)
+
+/* OS entry points implemented in util/miscasm.S */
+extern long trap1(int, ...);
 extern long trap13(int, ...);
 extern long trap14(int, ...);
 
-
-
-#define swpw(x) swp68w(&x)
-#define swpl(x) swp68l(&x)
 
 /*
  * WORD set_sr(WORD new); 

@@ -13,6 +13,7 @@
 
 
 #include        "portab.h"
+#include        "asm.h"
 #include        "fs.h"
 #include        "bios.h"                /*  M01.01.01                   */
 #include        "gemerror.h"

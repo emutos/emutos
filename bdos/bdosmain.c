@@ -24,6 +24,7 @@
 
 #include        "portab.h"              /*  M01.01.05  */
 #include        "fs.h"
+#include        "asm.h"
 #include        "bios.h"
 #include        "mem.h"
 #include        "proc.h"
@@ -31,6 +32,10 @@
 #include        "gemerror.h"
 #include        "../bios/kprint.h"
 
+
+
+#define bconout(a,b) trap13(3,a,b)
+#define getbpb(a)    trap13(7,a)
 
 /*
 **  externals
