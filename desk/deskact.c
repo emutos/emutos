@@ -213,8 +213,7 @@ gr_bwait(po, mx, my, numpts, xylnpts, numobs, xyobpts)
 gr_drgplns(in_mx, in_my, pc, numpts, xylnpts, numobs,
                  xyobpts, pdulx, pduly, pdwh, pdobj)
 */
-        VOID
-gr_drgplns(in_mx, in_my, pc, pdulx, pduly, pdwh, pdobj)
+void gr_drgplns(in_mx, in_my, pc, pdulx, pduly, pdwh, pdobj)
         WORD            in_mx, in_my;
         GRECT           *pc;
 /*      WORD            numpts;

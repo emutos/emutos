@@ -52,10 +52,10 @@
 
 
 
-MLOCAL BYTE     ml_files[4], ml_dirs[4];
-MLOCAL WORD     ml_dlfi, ml_dlfo, ml_dlok, ml_dlcn;
-MLOCAL WORD     ml_dlpr, ml_havebox;
-MLOCAL BYTE     ml_fsrc[13], ml_fdst[13], ml_fstr[13], ml_ftmp[13];
+static BYTE     ml_files[4], ml_dirs[4];
+static WORD     ml_dlfi, ml_dlfo, ml_dlok, ml_dlcn;
+static WORD     ml_dlpr, ml_havebox;
+static BYTE     ml_fsrc[13], ml_fdst[13], ml_fstr[13], ml_ftmp[13];
 
 
 

@@ -39,6 +39,7 @@
 #include "gemglobe.h"
 #include "geminit.h"
 #include "gemrslib.h"
+#include "gemasm.h"
 #include "optimopt.h"
 #include "kprint.h"     // just for debugging
 
@@ -90,10 +91,14 @@ GLOBAL LONG     ad_pfile;
 GLOBAL WORD     gl_shgem;
 
 
+static LONG app_stack[STACK_SIZE];  /* The stack for the main application (desktop) */
+
+
 /* Prototypes: */
 WORD sh_find(LONG pspec);
-
-
+extern void deskstart();        /* see ../desk/deskstart.S */
+extern void deskpexec(void *);  /* see gemstart.S */
+extern LONG trap_1(WORD, ...);  /* found in ../bios/startup.S */
 
 
 
@@ -838,8 +843,10 @@ ldend:
 #if SINGLAPP
 void sh_ldapp()
 {
-        WORD            ret, badtry, retry;
-        SHELL           *psh;
+        WORD    ret, badtry, retry;
+        SHELL   *psh;
+        LONG    *desk_pd;
+        void    *udaspsupersave;
 
         psh = &sh[rlr->p_pid];
 #if GEMDOS
@@ -886,33 +893,41 @@ void sh_ldapp()
           do
           {
             retry = FALSE;
-            /* Experimental starting of the ROM desktop:  - THH*/
+
             kprintf("starting %s\n",(char *)ad_scmd);
             if(strcmp((char *)ad_scmd,"DESKTOP.APP")==0)
-            {
-              extern void deskstart();
-              extern LONG trap_1();
-              LONG *pd;
-
+            { /* Experimental starting of the ROM desktop:  - THH*/
               sh_show(ad_scmd);
-              /*p_nameit(rlr, sh_name(&D.s_cmd[0]));*/
+              p_nameit(rlr, sh_name(&D.s_cmd[0]));
 
-              pd = (LONG *) trap_1( 0x4b , 5, "" , "", "");
-              pd[2] = (LONG) deskstart;
-              pd[3] = pd[5] = pd[7] = 0;
-              kprintf("starting desktop\n");
-              trap_1(0x4b, 6, "", pd, "");
+              desk_pd = (LONG *) trap_1( 0x4b , 5, "" , "", "");
+              desk_pd[2] = (LONG) deskstart;
+              desk_pd[3] = desk_pd[5] = desk_pd[7] = 0;
+              kprintf("starting desktop pd=$%lx\n",(LONG)desk_pd);
+              //dsptch();  /* Needed for filling the rlr->p_uda with right values - THH */
+              /* Set up a new uda-stack to not overwrite the AES' stack */
+              udaspsupersave = rlr->p_uda->u_spsuper;
+              rlr->p_uda->u_spsuper = &app_stack[STACK_SIZE-2];
+              deskpexec(desk_pd);    /* Run the desktop */
+              rlr->p_uda->u_spsuper = udaspsupersave;
               kprintf("desktop finished\n");
             }
             else
             if ( sh_find(ad_scmd) )
-            {
+            { /* Run a normal application: */
               sh_show(ad_scmd);
               p_nameit(rlr, sh_name(&D.s_cmd[0]));
               if (psh->sh_fullstep == 0)
               {
 #if GEMDOS
-                dos_exec(ad_scmd, ad_envrn, ad_stail);
+                //dsptch();  /* Needed for filling the rlr->p_uda with right values - THH */
+                /* Set up a new uda-stack to not overwrite the AES' stack */
+                udaspsupersave = rlr->p_uda->u_spsuper;
+                rlr->p_uda->u_spsuper = &app_stack[STACK_SIZE-2];
+                kprintf("starting application\n");
+                dos_exec(ad_scmd, ad_envrn, ad_stail);    /* Run the APP */
+                kprintf("application finished\n");
+                rlr->p_uda->u_spsuper = udaspsupersave;
 #else
                 dos_exec(ad_scmd, LHIWD(ad_envrn), ad_stail, 
                          ad_s1fcb, ad_s2fcb);

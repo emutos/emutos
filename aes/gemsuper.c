@@ -515,7 +515,7 @@ void xif(LONG pcrys_blk)
 *       Supervisor entry point.  Stack frame must be exactly like
 *       this if supret is to work.
 */
-WORD super(LONG dummy, LONG pcrys_blk)
+WORD super(LONG pcrys_blk)
 {
         xif(pcrys_blk);
 

@@ -278,12 +278,6 @@ skip:
           pr_load(rlr->p_pid);
 #endif
 
-  /* FIXME: rlr->p_uda was sometimes NULL, there might be a bug somewhere! */
-  if(rlr->p_uda==0)
-  {
-    cprintf("disp : rlr->p_uda is NULL!\n");
-  }
-
         switchto(rlr->p_uda);
 }
 

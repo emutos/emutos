@@ -18,10 +18,10 @@ _deskstart:
         add.l   #0x100,d0
         move.l  d0,-(a7)
         move.l  a5,-(a7)
-        move.w  d0,-(a7)
+        clr.w   -(a7)
         move.w  #0x4A,-(a7)
         trap    #1                      // Mshrink
-        lea     14(a7),a7
+        lea     12(a7),a7
 
 #ifndef NO_ROM
         move.l  #desksstack,-(a7)       // We can't use the old USP as SSP
@@ -42,7 +42,7 @@ _deskstart:
         addq.l  #6,a7
 #endif
 
-        clr.w   -(a7)
+        clr.w   -(sp)
         trap    #1                      // Pterm
 
 

@@ -38,6 +38,8 @@
 #include "desksupp.h"
 #include "deskfun.h"
 #include "deskrsrc.h"
+#include "deskmain.h"
+#include "deskglob.h"
 
 
 #define LEN_FNODE 45
@@ -48,17 +50,6 @@
 
 LONG    drawaddr;
 
-
-EXTERN WORD             gl_wchar;
-EXTERN WORD             gl_hchar;
-EXTERN WORD             gl_height;
-EXTERN GRECT            gl_rfull;
-/* BugFix       */
-EXTERN ICONBLK  gl_icons[];
-EXTERN WORD             gl_whsiztop;
-/* */
-
-EXTERN GLOBES           G;
 
 
 
@@ -514,7 +505,10 @@ void win_arrow(WORD wh, WORD arrow_type)
 {
         WNODE           *pw;
         WORD            newcv;
+        
+        newcv = 0;
         pw = win_find(wh);
+
         switch(arrow_type)
         {
           case WA_UPPAGE:

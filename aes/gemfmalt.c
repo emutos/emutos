@@ -60,18 +60,18 @@ LONG     ad_nils;
 void fm_strbrk(LONG tree, LONG palstr, WORD stroff, WORD *pcurr_id,
                WORD *pnitem, WORD *pmaxlen)
 {
-        REG WORD        nitem, curr_id;
-        REG WORD        len, maxlen;
-        REG BYTE        tmp;
-        FAR BYTE        *pstr;
-        REG BYTE        nxttmp;
+        REG WORD    nitem, curr_id;
+        REG WORD    len, maxlen;
+        REG BYTE    tmp;
+        BYTE        *pstr;
+        REG BYTE    nxttmp;
 
         nitem = maxlen = 0; 
         curr_id = *pcurr_id;
         tmp = NULL;
         while( tmp != ']')
         {
-          pstr = (FAR BYTE *)LLGET(OB_SPEC(stroff + nitem));
+          pstr = (BYTE *)LLGET(OB_SPEC(stroff + nitem));
           len = 0;
                                                 /* get 1st char of new  */
                                                 /*   string             */

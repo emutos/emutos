@@ -19,14 +19,16 @@
 .globl _ui_start
 .globl _pgmld
 .globl _gemdos
+.globl _deskpexec
+
 
 .xdef _ad_stail
         .text
 
 //_main:
 _ui_start:
-        movea.l a7,a5
-        movea.l #gemusp,a7
+        movea.l sp,a5
+        movea.l #gemusp,sp
         movea.l 4(a5),a5
 
         move.l  a5,d0
@@ -37,17 +39,16 @@ _ui_start:
         add.l   0x14(a5),d0
         add.l   0x1C(a5),d0
         add.l   #0x100,d0
-        move.l  d0,-(a7)
-        move.l  a5,-(a7)
-        move.w  d0,-(a7)
-        move.w  #0x4A,-(a7)
+        move.l  d0,-(sp)
+        move.l  a5,-(sp)
+        clr.w   -(sp)
+        move.w  #0x4A,-(sp)
         trap    #1
-        adda.l  #0xC,a7
+        lea     12(sp),sp
 
-        clr.l  -(a7)
-        move.w  #0x20,-(a7)
-        trap    #1
-        //addq.w  #6,a7
+        clr.l  -(sp)
+        move.w  #0x20,-(sp)
+        trap    #1                      // Switch to supervisor mode
         move.l  d0,old_gem_ssp
 
         move.l  0x2C(a5),_ad_envrn
@@ -68,22 +69,21 @@ LB4:
         movea.l a6,a5
         adda.l  #0x74A,a6
         move.l  a6,0x3E(a5)
-        movea.l a6,a7
+        movea.l a6,sp
         jsr     _gem_main
 
-        move.l  old_gem_ssp,-(a7)
-        move.w  #0x20,-(a7)
+        move.l  old_gem_ssp,-(sp)
+        move.w  #0x20,-(sp)
         trap    #1
-        addq.w  #6,a7
+        addq.w  #6,sp
 
-        move.l  #0,-(a7)
+        move.l  #0,-(sp)
         trap    #1
 
 
 
 
 _gemdos:
-LF2:
         move.l  (SP)+,saveretaddr
 
         movem.l d2/a2,saveregs
@@ -107,6 +107,21 @@ L134:
         rts
 
 
+/*
+   This function starts the ROM desktop, parameter is its basepage that
+   must already have been created.
+*/
+_deskpexec:
+        movem.l d2/a2,-(sp)
+        clr.l   -(sp)
+        move.l  16(sp),-(sp)    // Push parameter on the stack again for pexec
+        clr.l   -(sp)
+        move.w  #4,-(sp)
+        move.w  #0x4b,-(sp)
+        trap    #1              // Pexec
+        lea     16(sp),sp
+        movem.l (sp)+,d2/a2
+        rts
 
 
 .bss
@@ -122,7 +137,7 @@ saveretaddr:
 
 
 // Space for the Stack:
-        .ds.b   0x100
+        .ds.b   512
 gemusp:
 
 

@@ -16,12 +16,6 @@
 *       -------------------------------------------------------------
 */
 
-#define STDIN 0x0000
-#define STDOUT 0x0001
-#define STDERR 0x0002
-#define STDAUX 0x0003
-#define STDPRN 0x0004
-
 #define E_BADFUNC 1
 #define E_FILENOTFND 2
 #define E_PATHNOTFND 3

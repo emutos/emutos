@@ -79,10 +79,7 @@ void my_itoa(UWORD number, BYTE *pnumstr)
 *
 *       put into this form 12:45 pm
 */
-        VOID
-fmt_time(time, ptime)
-        UWORD           time;
-        BYTE            *ptime;
+void fmt_time(UWORD time, BYTE *ptime)
 {
         WORD            pm, val;
 
@@ -122,10 +119,7 @@ fmt_time(time, ptime)
 *       mm = 1 - 12
 *       dd = 1 - 31
 */
-        VOID
-fmt_date(date, pdate)
-        UWORD           date;
-        BYTE            *pdate;
+void fmt_date(UWORD date, BYTE *pdate)
 {
         if (G.g_cdateform)
         {

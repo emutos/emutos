@@ -30,10 +30,8 @@
 
 #include "optimopt.h"
 #include "aesbind.h"
-
-
-EXTERN WORD     gl_width;
-EXTERN WORD     gl_height;
+#include "deskgraf.h"
+#include "deskglob.h"
 
 
 GLOBAL OBJECT   gl_sampob[2] =
@@ -42,7 +40,6 @@ GLOBAL OBJECT   gl_sampob[2] =
         { NIL, NIL, NIL, G_BOX,  NONE, NORMAL, 0x00001100L, 0, 0, 0, 0 }
 };
 
-EXTERN  GLOBES          G;
 
 
 /*

@@ -77,7 +77,7 @@
 #define SPACE 0x20
 
 
-EXTERN LONG     gemdos();
+extern LONG     gemdos();
 
 
 GLOBAL BYTE     gl_amstr[4];

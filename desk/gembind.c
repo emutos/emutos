@@ -174,18 +174,18 @@ typedef struct gemblkstr
 } GEMBLK;
 
 
-EXTERN WORD             gem();                  /* in STARTUP.A86       */
+extern WORD             gem();                  /* in STARTUP.S */
 
 
 static GEMBLK           gb;
 static LONG             ad_g;
 
-GLOBAL UWORD            control[C_SIZE];
+static UWORD            control[C_SIZE];
 GLOBAL UWORD            global[G_SIZE];
-GLOBAL UWORD            int_in[I_SIZE];
-GLOBAL UWORD            int_out[O_SIZE];
-GLOBAL LONG             addr_in[AI_SIZE];
-GLOBAL LONG             addr_out[AO_SIZE];
+static UWORD            int_in[I_SIZE];
+static UWORD            int_out[O_SIZE];
+static LONG             addr_in[AI_SIZE];
+static LONG             addr_out[AO_SIZE];
 
 
 

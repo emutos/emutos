@@ -136,17 +136,17 @@ L2102:
         cmpi.w  #0x00,D0
         beq     _back
         cmpi.w  #0xC8,D0
-        beq.s   L2126
+        beq     L2126
         cmpi.w  #0xC9,D0
-        beq.s   L2126
+        beq     L2126
         move.l  LED4E,-(SP)
         rts
 
 L2126:
         bsr     _cli
-        move    USP,A0
-        movem.l D1-A6,-(A0)
-        move    A0,USP
+        move.l  usp,a0
+        movem.l d1-d7/a0-a6,-(a0)
+        move.l  a0,usp
 
         movea.l _rlr,A6
         movea.l 8(A6),A6
@@ -157,14 +157,11 @@ L2126:
         bsr     _sti
 
         move.l  D1,-(SP)
-        move.w  #0x00,-(SP)
-        move.w  D0,-(SP)
-        movea.l #_super,A0
-        jsr     (A0)
+        jsr     _super
+        addq.l  #4,SP
 
 supret:                             // return from gementry
         bsr     _cli
-        addq.l  #8,SP
 
         movea.l _rlr,A0
         movea.l 8(A0),A0
@@ -173,8 +170,8 @@ supret:                             // return from gementry
         movea.l 0x46(A0),SP
         movea.l 0x42(A0),A0
 
-        movem.l (A0)+,D1-A6
-        move    A0,USP
+        movem.l (a0)+,d1-d7/a0-a6
+        move.l  a0,usp
         bsr     _sti
         rte
 

@@ -119,26 +119,41 @@
 #define XGRF_2BOX 131
 
                                         /* max sizes for arrays         */
-#define C_SIZE 5                /* was 4 for 2.0        */
+#if SINGLAPP
+#define C_SIZE 4
+#endif
+#if MULTIAPP
+#define C_SIZE 5
+#endif
 #define G_SIZE 15
 #define I_SIZE 16
 #define O_SIZE 7
 #define AI_SIZE 2
-#define AO_SIZE 5               /* was 1 for 2.0        */
+#if SINGLAPP
+#define AO_SIZE 1
+#endif
+#if MULTIAPP
+#define AO_SIZE 5
+#endif
 
+/*
 extern UWORD    control[C_SIZE];
+*/
 extern UWORD    global[G_SIZE];
+/*
 extern UWORD    int_in[I_SIZE];
 extern UWORD    int_out[O_SIZE];
 extern LONG     addr_in[AI_SIZE];
 extern LONG     addr_out[AO_SIZE];
-
+*/
                                         /* Crystal funtion op code      */
 #define OP_CODE control[0]
 #define IN_LEN control[1]
 #define OUT_LEN control[2]
 #define AIN_LEN control[3]
+#if MULTIAPP
 #define AOUT_LEN control[4]
+#endif
                         
 #define RET_CODE int_out[0]
                                         /* application lib parameters   */
