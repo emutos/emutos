@@ -161,7 +161,7 @@ const static UBYTE bellsnd[] = {
   5, 0, 
   6, 0,       /* no noise */ 
   7, 0xFE,    /* no sound or noise except channel A*/
-  8, 10,      /* channel A amplitude */
+  8, 0x10,    /* channel A amplitude */
   9, 0,
   10, 0,
   11, 0,      /* envelope */
