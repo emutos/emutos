@@ -253,6 +253,7 @@ LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG lrecnr
                             : DMAread(lrecnr, scount, buf, unit-2);
             }
         } while((retval < 0) && (--retries > 0));
+        buf += scount;
     } while(lcount > 0);
 
     return retval;
@@ -299,7 +300,8 @@ LONG blkdev_getbpb(WORD dev)
     blkdev[dev].bpb.clsiz = b->spc;
     blkdev[dev].bpb.clsizb = blkdev[dev].bpb.clsiz * blkdev[dev].bpb.recsiz;
     tmp = getiword(b->dir);
-    blkdev[dev].bpb.rdlen = (tmp * 32) / blkdev[dev].bpb.recsiz;
+    if (blkdev[dev].bpb.recsiz != 0)
+        blkdev[dev].bpb.rdlen = (tmp * 32) / blkdev[dev].bpb.recsiz;
     blkdev[dev].bpb.fsiz = getiword(b->spf);
 
     /* the structure of the logical disk is assumed to be:
@@ -313,7 +315,8 @@ LONG blkdev_getbpb(WORD dev)
     blkdev[dev].bpb.fatrec = 1 + blkdev[dev].bpb.fsiz; 
     blkdev[dev].bpb.datrec = blkdev[dev].bpb.fatrec + blkdev[dev].bpb.fsiz 
                            + blkdev[dev].bpb.rdlen;
-    blkdev[dev].bpb.numcl = (getiword(b->sec) - blkdev[dev].bpb.datrec) / b->spc;
+    if (b->spc != 0)
+        blkdev[dev].bpb.numcl = (getiword(b->sec) - blkdev[dev].bpb.datrec) / b->spc;
     blkdev[dev].bpb.b_flags = (blkdev[dev].bpb.numcl > 0xff7) ? B_16 : 0;
 
     /* additional geometry info */
