@@ -781,3 +781,5 @@ Start... early ages
 
 23. Apr. 2002
 - Makefile - fal_$(DESASS) removed on make clean (LVL)
+- Fixed text and mouse drawing in VDI color mode (THH).
+- Improved the desktop's about dialog (THH).
