@@ -411,7 +411,8 @@ mkflop$(EXE) : tools/mkflop.c
 date.prg: obj/minicrt.o obj/doprintf.o obj/date.o
 	$(LD) -Xlinker -s -o $@ obj/minicrt.o obj/doprintf.o obj/date.o -lgcc
 
-dumpkbd.prg: obj/minicrt.o obj/memmove.o obj/dumpkbd.o
+dumpkbd.prg: obj/minicrt.o obj/memmove.o obj/dumpkbd.o obj/doprintf.o \
+	     obj/string.o
 	$(LD) -Xlinker -s -o $@ $^ -lgcc
 
 keytbl2c$(EXE) : tools/keytbl2c.c
@@ -555,6 +556,8 @@ obj/country.o: include/i18nconf.h
 obj/langs.o: include/i18nconf.h
 obj/nls.o: include/i18nconf.h
 obj/nlsasm.o: include/i18nconf.h
+obj/boot.o: include/i18nconf.h
+obj/dumpkbd.o: include/i18nconf.h
 
 #
 # OS header
@@ -758,7 +761,7 @@ depend: util/langs.c bios/header.h
 	( \
 	  $(CC) -MM $(INC) -Ibios -Iaes -Idesk/icons $(DEF) $(CSRC); \
 	  $(CC) -MM $(INC) $(DEF) $(SSRC) \
-	) | sed -e '/:/!s,^,obj/,' >makefile.dep;
+	) | sed -e '/:/s,^,obj/,' >makefile.dep;
 
 ifeq (makefile.dep,$(shell echo makefile.dep*))
 include makefile.dep
