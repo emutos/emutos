@@ -134,6 +134,9 @@ extern WORD end_pts(WORD x, WORD y, WORD *xleftout, WORD *xrightout);
 extern WORD ACT_SIZ(WORD top);
 extern void cur_display();
 extern void cur_replace();
+extern void v_show_c();
+extern void v_hide_c();
+
 extern void text_init();
 extern void st_fl_ptr();
 extern void screen();

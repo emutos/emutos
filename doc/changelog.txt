@@ -991,3 +991,5 @@ Start... early ages
 
 07. Aug. 2002
 - po/cs.po - Bohdan's czech language translation of GEM (MAD)
+- vdi/ecslisa - unused, just left for reference for now (MAD)
+- vdi/vdiesc.c - implementation in C (MAD)
