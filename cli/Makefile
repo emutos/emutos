@@ -13,7 +13,7 @@ ASFLAGS = --register-prefix-optional -m68000
 
 # C compiler for MiNT
 CC = m68k-atari-mint-gcc
-CFLAGS = -c -O -mshort  -m68000 -Wall -DBUILDDATE="\"$(BUILDDATE)\""
+CFLAGS = -c -O -mshort  -m68000 -Wall -DBUILDDATE="\"$(BUILDDATE)\"" -DNO_ROM
 #CC = gcc
 #CFLAGS = -c -O -I./include -Wall
 

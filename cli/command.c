@@ -21,8 +21,6 @@ extern long xlongjmp();
 extern long bios();
 extern void in_term();
 extern void rm_term();
-extern long super();
-extern long user();
 extern long xsetjmp();
 extern void devector();
 
@@ -619,7 +617,9 @@ void dspMsg (int msg)
     case 1: wrtln ("File Not Found."); break;
     case 2: wrtln ("Destination is not a valid wild card expresion."); break;
     case 3: wrtln ("******* TEST  CLI *******"); break;
-    case 4: wrtln ("EmuCON - Compiled on " BUILDDATE);break;
+    case 4: wrtln ("EmuCON - Compiled on " BUILDDATE);
+            wrtln ("Type HELP for a list of commands.");
+            wrtln (""); break;
     case 5: wrt ("Done."); break;
     case 6: wrtln ("Command is incompletely specified.");break;
     case 7: wrt (srcFlNm); break;
@@ -667,8 +667,10 @@ void dspMsg (int msg)
         wrtln (""); cr2cont();
         wrtln ("ERR ");
         wrtln ("	Displays the value of the Completion Code for the last command.");
+#ifdef NO_ROM
         wrtln ("EXIT");
         wrtln ("	Exits CLI to invoking program.");
+#endif
         wrtln ("INIT [drive_spec:]");
         wrtln ("	Reinitializes FAT entries this wiping disk.");
         wrtln ("MD [subdirectory name]");
@@ -1368,9 +1370,7 @@ long execPrgm (char *s, char *cmdtl)
 
     exeflg = 1;
 #if 0
-    super();
     rm_term();
-    user();
 #endif
     cmdptr = (char *)&cmd;
     j = 0;
@@ -1394,9 +1394,7 @@ long execPrgm (char *s, char *cmdtl)
 	else gtpath = 0;
     }
 #if 0
-    super();
     in_term();
-    user();
 #endif
     exeflg = 0;
     xmfree(envPtr);
@@ -1995,7 +1993,6 @@ void xCmdLn (char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl)
 		buf[0] = 0xf7;
 		buf[1] = 0xff;
 		buf[2] = 0xff;
-		super();
 		b = (BPB*)getbpb(drv);
 		if (b->b_flags & 1) buf[3] = 0xFF;
 		f1 = b->fatrec - b->fsiz;
@@ -2013,7 +2010,6 @@ void xCmdLn (char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl)
 		rec = f2 + fs;
 		for (i = 0; i < b->rdlen; i++, rec++)
 		    rwabs(1,buf,1,rec,drv);
-		user();
 		dspMsg(5);
 	    }
 
@@ -2025,9 +2021,7 @@ void xCmdLn (char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl)
 		fd = xopen(argv[2], 0);
 		xread(fd,540L,buf);
 		xclose(fd);
-		super();
 		rwabs(1,&buf[28],1,0,drv);
-		user();
 		dspMsg(5);
 	    }
 
@@ -2048,9 +2042,7 @@ void xCmdLn (char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl)
 		cr2cont();
 	    }
             else if (xncmps(5,s,"HELP")) dspMsg(17);
-#if IMPLEMENTED
-            else if (xncmps(6,s,"BREAK")) xbrkpt();
-#endif
+#ifdef NO_ROM
 	    else if (xncmps(5,s,"EXIT"))
 	    {
 		exit:
@@ -2060,6 +2052,7 @@ void xCmdLn (char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl)
 		devector();   /* remove vectors */
 		xterm(0);
 	    }
+#endif
 	    else if (xncmps(8,s,"VERSION"))
 	    {
 		if (*nonStdIn) dspCL (&argv[0]);
@@ -2102,7 +2095,9 @@ void xCmdLn (char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl)
 
 	again:
 	/*if command coming from outside the command int exit*/
+#ifdef NO_ROM
 	if ((long)outsd_tl) goto exit;
+#endif
     }
 }
 

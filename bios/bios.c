@@ -37,6 +37,8 @@
 #include "asm.h"
 #include "chardev.h"
 
+
+
 /*==== Defines ============================================================*/
 
 #define DBGBIOS 0               /* If you want debugging output */
@@ -57,6 +59,8 @@ extern LONG trap_1();           /* found in startup.s */
 extern LONG drvbits;            /* found in startup.s */
 extern MD b_mdx;                /* found in startup.s */
 
+extern PD *run;                 /* see bdos/proc.c */
+
 
 extern void clk_init(void);     /* found in clock.c */
 
@@ -67,6 +71,9 @@ extern void linea_init(void);   /* found in linea.S */
 extern void cartscan(WORD);     /* found in startup.S */
 
 extern void emucon(void);       /* found in cli/coma.S - start of CLI */
+
+extern void *memmove(void * dst, void * src, LONG length);
+
 
 /*==== Declarations =======================================================*/
 
@@ -264,7 +271,7 @@ void bufl_init(void)
 
 void biosmain()
 {
-    VOID (*newexec_os)(VOID);
+    //PD *shell_pd, com_pd;
 
     trap_1( 0x30 );              /* initial test, if BDOS works */
 
@@ -305,10 +312,29 @@ void biosmain()
     /* Jump to the EmuCON - for now not loaded via pexec (hack) */
     trap_1( 0x4b , 0, "COMMAND.PRG" , "", env);
 
-//    newexec_os=(VOID*)trap_1( 0x4b , 5, "" , "", env)+8;
-//    newexec_os=exec_os;
-
-    trap_1( 0x4b , 4, "" , "", env);
+    /* If there is no COMMAND.PRG, start the default (ROM) shell: */
+    /*shell_pd = (PD *)trap_1( 0x4b , 5, "" , "", env);*/ /* Pexec(5) does not yet exists */
+#if 0
+    /* Set up the shell basepage: */
+    memmove(&com_pd, run, 256L);  /* So we get the GEMDOS standard file handles */
+    shell_pd = &com_pd;
+    shell_pd->p_lowtpa = (LONG)shell_pd;
+    shell_pd->p_hitpa = shell_pd->p_lowtpa+256;
+    shell_pd->p_tbase = (LONG)exec_os;
+    shell_pd->p_tlen = shell_pd->p_dlen = shell_pd->p_blen = 0;
+    shell_pd->p_dbase = shell_pd->p_bbase = 0L;
+    shell_pd->p_0fill[0]/*xdta*/ = (LONG)&shell_pd->p_cmdlin[0];  /* default p_xdta is p_cmdlin */
+    shell_pd->p_0fill[1]/*parent*/ = (LONG)run;
+    shell_pd->p_env = env;
+    shell_pd->p_cmdlin[0] = 0;
+    run = shell_pd;
+    ((void(*)(PD*)) run->p_tbase)(run);
+#else
+    /* Use the GEMDOS PD for the shell: */
+    run->p_tbase = (LONG)exec_os;
+    run->p_cmdlin[0] = 0;
+    ((void(*)(PD*)) run->p_tbase)(run);
+#endif    
 
     cprintf("[FAIL] HALT - should never be reached!\n\r");
     while(1) ;

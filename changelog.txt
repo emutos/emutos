@@ -245,5 +245,7 @@ Start... early ages
 - added EmuCON (EmuTOS console, before command.prg) to EmuTOS      (MAD)
   This is not yet working (it seems command.c is not ROMable for now) 
 
+2. Nov. 2001
+- EmuCON is now working. (THO)
 
 
