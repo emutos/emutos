@@ -48,7 +48,7 @@ OBJDUMP=m68k-atari-mint-objdump
 BIOSCSRC = conio.c kbd.c kprint.c xbios.c \
          bios.c clock.c fnt8x8.c fnt8x16.c kbq.c mfp.c version.c midi.c
 BIOSSSRC = tosvars.s startup.s lineavars.s vectors.s aciavecs.s \
-           linea.s conout.s
+           memory.s linea.s conout.s
 
 #
 # source code in bdos/

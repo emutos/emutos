@@ -189,3 +189,6 @@ Start... early ages
 
 16. Oct. 2001
 - Fixed some bugs in bios.c (the bconoutx functions need 2 parameters!) (THO)
+
+19. Oct. 2001
+- Cleaned up and seperated memory initialisation in memory.s

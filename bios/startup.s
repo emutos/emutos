@@ -81,6 +81,7 @@
         .global _drv_bpb
         .global _drv_mediach
 
+        .global   memdone       	| return to, if memory config done
 
 | ==== VME/10 Specifics =============
         .globl  _no_device
@@ -210,14 +211,19 @@
 
         .xdef   _longframe
         
-| ==== lineavars.s - Graphics subsystem variables =============================
+| ==== lineavars.s - Graphics subsystem variables ===========================
 
 	.xdef	font_ring
 	
-| ==== vectors.s - Default exception vectors =============================
+| ==== vectors.s - Default exception vectors ================================
+
 	.xdef	init_exc_vec
 	.xdef	init_user_vec
 	
+| ==== memory.s - variables for memory  =====================================
+
+	.xdef	meminit         | initialize the memory and it's controller
+
 
 | ===========================================================================
 | ==== BSS segment ==========================================================
@@ -308,23 +314,10 @@ _main:                                  | stunt to guarantee entry into supervis
         .equ    cart_base,      0xfffa0000
 
         cmp.l   #0xfa52235f, cart_base  | magic - is cartridge present?
-        bne     memconf                 | no -> memconf
-        lea     memconf(pc), a6         | load return address
-        jmp     cart_base+4              | execute diagnostig cartridge
-
-| ==== Clear BSS before calling any C function ======================
-|| the C part expects the bss to be cleared, so let's do this early
-| Better not, because some values may be needed after a reset!!! (MAD)
-
-	lea bssstart,a0
-	lea _bssend-1,a1
-	move.l a1,d0
-	sub.l a0,d0
-	lsr.l #2,d0
-clearbss:
-	clr.l (a0)+
-	dbra d0,clearbss
-
+        bne     nodiag                  | no -> go on
+        lea     nodiag(pc), a6          | save return address
+        jmp     cart_base+4             | execute diagnostig cartridge
+nodiag:
 
 
 | ==== Set up a supervisor stack ============================================
@@ -332,18 +325,18 @@ clearbss:
 | LVL   lea     _stkbot+SUPSIZ, sp      | Setup Supervisor Stack
         lea     _stktop, sp             | Setup Supervisor Stack
 
-|        pea msg_start   | Print, what's going on
-|        bsr _kprint
-|        addq #4,sp
+
 
 | ==== Check, if old memory config can be used ==============================
 
-memconf:
-        lea     memgoon(pc), a6         | load return address
-        bra     memval                  | memory config valid?
-memgoon:
-        bne.s   resetvec                | no -> skip next command
-        move.b  memctrl, 0xffff8001     | old config to controller
+        bra     meminit                 | do/test memory config (no sp used)
+memdone:
+
+|        pea msg_mem     | Print, what's going on
+|        bsr _kprint
+|        addq #4,sp
+
+
 
 | ==== Reset vector =========================================================
 resetvec:
@@ -359,6 +352,8 @@ resetvec:
        jmp 	(a0)			| jump to resvec
 noreset:
 
+
+
 | ==== Reset Soundchip =======================================================
 initsnd:
         lea     0xffff8800, a0  | base address of PSG Soundchip
@@ -370,6 +365,8 @@ initsnd:
 |        bsr _kprint
 |        addq #4,sp
 
+
+
 | ==== Reset Floppy =========================================================
         move.b  #7, 2(a0)       | deselect floppy
 
@@ -377,10 +374,14 @@ initsnd:
 |        bsr _kprint
 |        addq #4,sp
 
+
+
 | ==== Set shifter to pal ===================================================
 
         move.b #2, 0xff820a     | sync-mode to 50 hz pal, internal sync
         
+
+
 | ==== Set color palette ====================================================
 
         lea    0xffff8240, a1     | video-shifter 
@@ -391,146 +392,13 @@ loadcol:
         dbra   d0, loadcol      | next value   
 
 
+
 | ==== Set temporary screenmem address 0x10000 to videoshifter ==============
         
         move.b  #0x1, 0xffff8201 | set hw video base high word
         move.b  #0x0, 0xffff8203 | set hw video base low word
 
-| ==== Check, if memory configuration is valid ==============================
 
-        move.b  memctrl, d6
-        move.l  phystop, d5
-        lea     memok, a6
-        bra     memval
-memok:
-        beq     aftermem
-
-| ==== Find out memory size for TPA =========================================
-| The memory configuration is found out by running into bus-errors, if memory
-| is not present at a tested address. Therefor a special buserror-handler is
-| temporarely installed. Works just for 4mb or more till now. (MAD)
-
-        clr.w   d6                      | start value form controller
-        move.b  #0xa, 0xffff8001        | set hw to 2 banks by 2 mb
-
-        movea.w #8, a0                  | startoffset for test
-        lea     0x200008, a1            | a1 to 2. bank
-        clr.w   d0                      | first test bitpattern
-
-wrt_patt1:      
-        move.w  d0, (a0)+               | write to both memory banks
-        move.w  d0, (a1)+
-        add.w   #0xfa54, d0             | bitpattern
-        cmpa.l  #0x200, a0              | till adr. 0x200
-        bne.s   wrt_patt1
-
-        move.l  #0x200000, d1           | d1 to 2. bank
-bank1:
-        lsr.w   #2, d6
-
-        movea.w #0x208, a0
-        lea     after1(pc), a5          | save return address
-        bra     memtest                 | memory test
-after1:
-        beq.s   nextbank                | ok 128k
-
-        movea.w #0x408, a0
-        lea     after2(pc), a5          | save return address
-        bra     memtest                 | memory test
-after2:
-        beq.s   conf2mb                 | ok 512k
-
-        movea.w #8, a0
-        lea     after3(pc), a5          | save return address
-        bra     memtest                 | memory test
-after3:
-        bne.s   nextbank
-
-        addq.w  #4, d6
-conf2mb:
-        addq.w  #4, d6                  | configuration value to 2 mbyte
-
-nextbank:
-        sub.l   #0x200000, d1           | next bank
-        beq.s   bank1                   | test for bank 1.
-  
-  
-        move.b  d6, 0xffff8001          | program memorycontroller
-
-        movea.l 8, a4                   | save bus-error vector
-        lea     buserror(pc), a0        | adr. new  bus error routine
-
-        move.l  a0, 8                   | set for test where memory bank ends
-        move.w  #0xfb55, d3             | start-bitpattern
-        move.l  #0x20000, d7            | startadr: 128 k
-        movea.l d7, a0
-
-teston:
-        movea.l a0, a1
-        move.w  d0, d2
-        moveq   #0x2a, d1               | 43 worte
-
-loopmem1:
-        move.w  d2, -(a1)
-        add.w   d3, d2
-        dbra    d1, loopmem1
-        movea.l a0, a1
-        moveq   #0x2a, d1
-
-loopmem2:
-        cmp.w   -(a1), d0
-        bne.s   buserror
-        clr.w   (a1)
-        add.w   d3, d0
-        dbra    d1, loopmem2            | test next word
-        adda.l  d7, a0
-        bra.s   teston                  | weiter testen
-
-
-buserror:
-        suba.l  d7, a0
-        move.l  a0, d5
-      	move.l	a4, 0x00000008          | restore old bus error vector
-        movea.l d5, a0
-        move.l  #0x400, d4              | lowest address for clearing
-
-        movem.l emptylong(pc), d0-d3    | empty bytes for d-register clearing
-clearmem:
-        movem.l d0-d3, -(a0)            | delete 16 bytes
-        cmpa.l  d4, a0                  | lowest address reached?
-        bne.s   clearmem
-        suba.l  a5, a5
-  
-| ==== Set memory configuration to sysvars ==================================
-
-        move.b  d6, memctrl             | memctrl
-        move.l  d5, phystop             | higest address as phystop
-        move.l  #0x752019f3, memvalid   | set memvalid to ok
-        move.l  #0x237698aa, memval2    | set memval2 to ok
-
-aftermem:
-
-
-
-| this is easier... (MAD)
-|bus_error:
-|      	move.l	a0, 0x00000008          | restore old bus error vector
-|      	move.l	a1,sp			| and old stack pointer
-|
-|      	move.l	m_start,a0		| clear TPA
-|      	move.l	m_length,d0		| get byte count
-|      	lsr.l	#1,d0			| make word count
-|      	subq.l	#1,d0			| pre-decrement for DBRA use
-|      	clr.w	d1			| handy zero
-|
-|parity_loop:
-|      	move.w	d1,(a0)+		| clear word
-|      	dbra	d0,parity_loop
-	
-
-|        pea msg_mem     | Print, what's going on
-|        bsr _kprint
-|        addq #4,sp
 
 | ==== Detect and set graphics resolution ===================================
 
@@ -592,9 +460,11 @@ initmidres:
         move.l  os_beg, exec_os         | exec_os
         move.l  _v_bas_ad, _memtop      | _v_bas_ad to _memtop
 
+
+
 | ==== Set memory config to initial memory descriptor =======================
 
-        move.l  #TPASTART, m_start      | set up default values
+	move.l  #TPASTART, m_start      | set up default values
 
         move.l  _memtop, d0             | calculate length of TPA
         sub.l   #TPASTART, d0
@@ -602,6 +472,7 @@ initmidres:
 
         move.l  #_b_mdx, themd          | write addr of MDB to sysvar themd
                                         | defined in bios.c
+
 
 | ==== Set all cpu-interrupts to dummy handler ==============================
 | We currently are experiencing an unexpected cpu interrupt.  We will
@@ -837,35 +708,6 @@ just_rts:
 | ==== just rte for divide by zero ==========================================
 just_rte:
         rte		
-
-
-
-| ==== Test memory ==========================================================
-
-memtest:
-        add.l   d1, a0
-        clr.w   d0
-        lea     0x1f8(a0), a1
-memtloop:
-        cmp.w   (a0)+, d0
-        bne     memerr
-        add.w   #0xfa54, d0
-        cmp.l   a0, a1
-        bne     memtloop
-        
-memerr:
-        jmp     (a5)
-
-
-
-| ==== Check if memory configuration valid ==================================
-memval:
-        sub.l   a5, a5                  | clear a5
-        cmp.l   #0x752019f3, memvalid   | magic in memvalid ?
-        bne     memback
-        cmp.l   #0x237698aa, memvalid   | magic in memval2 ?
-memback:
-        jmp (a6)                        | jump to saved return address
 
 
 
@@ -1263,18 +1105,16 @@ xbios_ent:              | Max. number of XBIOS entries
         .even
 
 | ==== Some messages ========================================================
-cr:
-        .ascii "\n\0"
 
 msg_start:
         .ascii "BIOS: Starting up EmuTOS Ver. 0.0 ...\n"
         dc.w 0
 msg_main:
         .ascii "BIOS: Entered supervisor mode...\n\0"
+msg_mem:
+        .ascii "BIOS: Initialized RAM ...\n\0"
 msg_shift:
         .ascii "BIOS: Initialized shifter ...\n\0"
-msg_clrbss:
-        .ascii "BIOS: Cleared RAM ...\n\0"
 msg_linea:
         .ascii "BIOS: Linea set up and cleared screen ...\n\0"
 msg_drvinit:
