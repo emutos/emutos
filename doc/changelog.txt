@@ -979,3 +979,7 @@ Start... early ages
 - vdi/* - some mouse cursor stuff implemented in C (MAD)
 - vdi/vdimouse.S - removed rbp, used !vme10 instead (MAD)
 - vdi/gsxdef.h - empty, deleted  (MAD)
+
+30. Jul. 2002
+- vdi/vdiinput.c - fixed bug in vb_draw routine (MAD)
+
