@@ -82,6 +82,7 @@ extern VOID mfp_init(VOID);     /* found in mfp.c */
 extern VOID timer_init(VOID);   /* found in mfp.c */
 extern VOID usart_init(VOID);   /* found in mfp.c */
 extern VOID kbd_init(VOID);     /* found in kbd.c */
+extern VOID midi_init(VOID);    /* found in midi.c */
 extern VOID kbq_init(VOID);     /* found in kbq.c */
 extern VOID clk_init(VOID);     /* found in clock.c */
 extern VOID con_init(VOID);     /* found in conio.c */
@@ -161,6 +162,7 @@ VOID biosinit()
     usart_init();       /* init USART */
     kbq_init() ;        /* init keyboard queue */
     kbd_init();         /* init keyboard, disable mouse and joystick */
+    midi_init();        /* init MIDI acia so that kbd acia irq works */
     clk_init();         /* init clock (dummy for emulator) */
 
 
