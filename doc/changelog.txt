@@ -621,3 +621,4 @@ Start... early ages
 - screen.c now detects proper screen size from VIDEL registers - there's no
   more trash on the screen - the size is set to 640x480 (joy)
 - lineainit.c sets the variables according to proper screen resolution (joy)
+- fixed BDOS 16-bit FAT - integer computing was overflowing in fsdrive.c (joy)
