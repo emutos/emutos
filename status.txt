@@ -1,0 +1,139 @@
+This is a list of the status of each more or less implemented
+function. Here is, what the first field means:
+
+- Not yet implemented
+X Fully implemented
+> Partitially implemented
+
+It is followed by the hex-number of the function and it's name:
+
+
+
+==== BIOS ===================================================================
+
+ X 0x00 getmpb
+ X 0x01 bconstat        (the function works for console only)
+ X 0x02 bconin          (the function works for console only)
+ X 0x03 bconout         (the function works for console only)
+ > 0x04 rwabs
+ X 0x05 setexc
+ X 0x06 tickcal
+ - 0x07 getbpb
+ > 0x08 bcostat         (the function works for console only)
+ - 0x09 mediach
+ X 0x0a drvmap		(the function works, but not the devices)
+ X 0x0b kbshift
+
+
+
+==== XBIOS ==================================================================
+
+ - 0x00 initmous
+ - 0x01 ssbrk
+ X 0x02 _physBase
+ X 0x03 _logBase
+ X 0x04 _getRez
+ > 0x05 _setScreen      (the resolution change is ignored)
+ X 0x06 _setPallete
+ X 0x07 _setColor
+ - 0x08 _floprd
+ - 0x09 _flopwr
+ - 0x0a _flopfmt
+ - 0x0b used-by-BIOS
+ > 0x0c midiws
+ > 0x0d _mfpint
+ X 0x0e iorec
+ X 0x0f rsconf
+ X 0x10 keytbl
+ X 0x11 _random
+ - 0x12 _protobt
+ - 0x13 _flopver
+ - 0x14 scrdmp
+ - 0x15 cursconf
+ - 0x16 settime
+ - 0x17 gettime
+ X 0x18 bioskeys
+ X 0x19 ikbdws
+ X 0x1a jdisint
+ X 0x1b jenabint
+ - 0x1c giaccess
+ - 0x1d offgibit
+ - 0x1e ongibit
+ X 0x1f xbtimer
+ - 0x20 dosound
+ - 0x21 setprt
+ X 0x22 kbdvbase
+ - 0x23 kbrate
+ - 0x24 _prtblk
+ X 0x25 vsync
+ X 0x26 supexec
+ - 0x27 puntaes
+
+
+
+==== GEMDOS =================================================================
+
+ X 0x00 Pterm0
+ X 0x01 Cconin
+ X 0x02 Cconout
+ X 0x03 Cauxin
+ X 0x04 Cauxout
+ X 0x05 Cprnout
+ X 0x06 Crawio
+ X 0x07 Crawin
+ X 0x08 Cnecin
+ X 0x09 Cconws
+ X 0x0a Cconrs
+ X 0x0b Cconis
+ X 0x0e Dsetdrv
+ X 0x10 Cconos
+ X 0x11 Cprnos
+ X 0x12 Cauxis
+ X 0x13 Cauxos
+ X 0x19 Dgetdrv
+ X 0x1a Fsetdta
+ X 0x20 Super
+ X 0x25 Ssetvec 	(extra, not in available TOS)
+ X 0x2a Tgetdate
+ X 0x2b Tsetdate
+ X 0x2c Tgettime
+ X 0x2d Tsettime
+ X 0x2f Fgetdta
+ X 0x30 Sversion
+ X 0x31 Ptermres
+ X 0x35 Sgetvec 	(extra, not available in TOS)
+ X 0x36 Dfree
+ X 0x39 Dcreate
+ X 0x3a Ddelete
+ X 0x3b Dsetpath
+ X 0x3c Fcreate
+ X 0x3d Fopen
+ X 0x3e Fclose
+ X 0x3f Fread
+ X 0x40 Fwrite
+ X 0x41 Fdelete
+ X 0x42 Fseek
+ X 0x43 Fattrib
+ X 0x45 Fdup
+ X 0x46 Fforce
+ X 0x47 Dgetpath
+ X 0x48 Malloc
+ X 0x49 Mfree
+ X 0x4a Mshrink
+ X 0x4b Pexec		(flag 6 not really handeled)
+ X 0x4c Pterm
+ X 0x4e Fsfirst
+ X 0x4f Fsnext
+ X 0x56 Frename
+ X 0x57 Fdatime
+
+
+
+==== VDI ====================================================================
+ 
+ not implemented
+ 
+==== AES ====================================================================
+
+ not implemented
+ 
