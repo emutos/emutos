@@ -257,3 +257,6 @@ Start... early ages
 - localconf.h taken in consideration (LVL)
 - implemented processor check and set of _longframe in BIOS/BDOS (MAD)
 - IKBD and MegaRTC clock (setting time & date untested) (LVL)
+
+4. Nov. 2001
+- added old VDI sources from DRI (not running yet)

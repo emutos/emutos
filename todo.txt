@@ -14,3 +14,4 @@
 - the ROM EmuCON does not lauch commands when booting on a floppy 
   (the autoexec'd command.prg still does)
 - bconin needs to have different keyboard mappings
+- VDI: code cleanup, Makefile, esclisa and gsxvars like in EmuTOS
