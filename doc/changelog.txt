@@ -1544,3 +1544,8 @@ Start... early ages
 - aes/gemrslib.c: rs_str() now uses gettext(), too. (THH)
 - desk/deskmain.c desk/deskapp.c aes/gemsuper.c: More bugfixes for the
   "Desktop 1.2" patches: Solved problems with window sizes and menu bar! (THH)
+
+2003-08-17
+- aes/optimize.c : sound() can now be disabled. (THH)
+- desk/deskact.c : Fixed drawing problems while dragging one icon on another
+  one in the "Desktop 1.2" mode. (THH)

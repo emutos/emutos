@@ -122,7 +122,7 @@ gr_accobs(tree, root, pnum, pxypts)
 
 #ifdef DESK1
 
-void move_drvicon(LONG tree, WORD root, WORD x, WORD y, WORD *pts)
+static void move_drvicon(LONG tree, WORD root, WORD x, WORD y, WORD *pts)
 {
         ANODE *an_disk;
         WORD objcnt;
@@ -163,7 +163,7 @@ void move_drvicon(LONG tree, WORD root, WORD x, WORD y, WORD *pts)
 /*
 *       Calculate the extent of the list of x,y points given.
 */
-void gr_extent(WORD numpts, WORD *xylnpts, GRECT *pt)
+static void gr_extent(WORD numpts, WORD *xylnpts, GRECT *pt)
 {
         WORD            i, j;
         WORD            lx, ly, gx, gy;
@@ -191,9 +191,10 @@ void gr_extent(WORD numpts, WORD *xylnpts, GRECT *pt)
 *       x,y object locations that are all relative to a certain x,y
 *       offset.
 */
-void gr_plns(WORD x, WORD y, WORD numpts, WORD *xylnpts, WORD numobs, WORD *xyobpts)
+static void gr_plns(WORD x, WORD y, WORD numpts, WORD *xylnpts, WORD numobs,
+                    WORD *xyobpts)
 {
-        WORD            i, j;
+        WORD    i, j;
 
         graf_mouse(M_OFF, 0x0L);
 
@@ -206,16 +207,21 @@ void gr_plns(WORD x, WORD y, WORD numpts, WORD *xylnpts, WORD numobs, WORD *xyob
 }
 
 
-WORD gr_bwait(GRECT *po, WORD mx, WORD my, WORD numpts, WORD *xylnpts,
-              WORD numobs, WORD *xyobpts)
+static WORD gr_bwait(GRECT *po, WORD mx, WORD my, WORD numpts, WORD *xylnpts,
+                     WORD numobs, WORD *xyobpts)
 {
-        WORD            down;
-        WORD            ret[4];
+        WORD    down;
+        WORD    ret[4];
+
+        /* Since the desktop and the AES currently share the same VDI work-
+         * station, we have to reset the clipping and drawing mode here */
+        gsx_sclip(&gl_rscreen);
+        gsx_attr(FALSE, MD_XOR, BLACK);
                                                 /* draw old             */
         gr_plns(po->g_x, po->g_y, numpts, &xylnpts[0], numobs, &xyobpts[0]);
                                                 /* wait for change      */
         down = gr_isdown(TRUE, mx, my, 2, 2, 
-                                &ret[0], &ret[1], &ret[2], &ret[3]);
+                         &ret[0], &ret[1], &ret[2], &ret[3]);
                                                 /* erase old            */
         gr_plns(po->g_x, po->g_y, numpts, &xylnpts[0], numobs, &xyobpts[0]);
                                                 /* return exit event    */
@@ -247,27 +253,20 @@ void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD numpts,
                    WORD *xylnpts, WORD numobs, WORD *xyobpts, 
                    WORD *pdulx, WORD *pduly, WORD *pdwh, WORD *pdobj)
 {
-        LONG            tree, curr_tree;
-        WNODE           *pw;
-        WORD            root, state, curr_wh, curr_root, curr_sel, dst_wh;
-        WORD            /* overwhite, */l_mx, l_my;
-        WORD            offx, offy;
-        WORD            down, button, keystate, junk;
-//      UWORD           ret[4];
-        FNODE           *pf;
-        GRECT           o;      // BP+2Ah
-        GRECT           ln;     // BP+32h
-        ANODE           *pa;// BP+3Ah
+        LONG    tree, curr_tree;
+        WNODE   *pw;
+        WORD    root, state, curr_wh, curr_root, curr_sel, dst_wh;
+        WORD    /* overwhite,*/ l_mx, l_my;
+        WORD    offx, offy;
+        WORD    down, button, keystate, junk;
+        FNODE   *pf;
+        GRECT   o, ln;
+        ANODE   *pa;
 
-        gsx_sclip(&gl_rscreen);
-        /* DESKTOP v1.2 doesn't do this. */
-        // graf_mouse(4, 0x0L);                 /* flat hand            */
-/* BugFix       */
+        graf_mouse(4, 0x0L);                    /* flat hand            */
+
         l_mx = in_mx;
         l_my = in_my;
-
-        gsx_attr(FALSE, MD_XOR, BLACK);
-
                                                 /* figure out extent of */
                                                 /*   single polygon     */
         gr_extent(numpts, &xylnpts[0], &ln);
@@ -278,7 +277,6 @@ void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD numpts,
         o.g_w += ln.g_w;
         o.g_h += ln.g_h;
 
-
         gr_obalign(numobs, o.g_x, o.g_y, &xyobpts[0]);
 
         offx = l_mx - o.g_x;
@@ -288,6 +286,7 @@ void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD numpts,
         curr_tree = 0x0L; 
         curr_root = 0; 
         curr_sel = 0;
+
         do
         {
           o.g_x = l_mx - offx;
@@ -333,15 +332,15 @@ void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD numpts,
           
           if (*pdobj != curr_sel)
           {
-                if (curr_sel)
-                {
+            if (curr_sel)
+            {
               act_chg(curr_wh, curr_tree, curr_root, curr_sel, pc,
                         SELECTED, FALSE, TRUE, TRUE);
               curr_wh = 0x0;
               curr_tree = 0x0L;
               curr_root = 0x0;
               curr_sel = 0;             
-                }
+            }
           }
           state = LWGET(OB_STATE(*pdobj)); /*state = tree[*pdobj].ob_state;*/
           if ( !(state & SELECTED) )
@@ -350,14 +349,14 @@ void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD numpts,
                 if ((pa->a_type == AT_ISFOLD) ||
                     (pa->a_type == AT_ISDISK) ||
                     (pa->a_type == AT_ISTRSH))
-                        {
-                          curr_wh = dst_wh;
-                          curr_tree = tree;
-                          curr_root = root;
+                {
+                  curr_wh = dst_wh;
+                  curr_tree = tree;
+                  curr_root = root;
                   curr_sel = *pdobj;
                   act_chg(curr_wh, curr_tree, curr_root, curr_sel, pc,
-                                SELECTED, TRUE, TRUE, TRUE);
-                        } /* if */
+                          SELECTED, TRUE, TRUE, TRUE);
+                } /* if */
               } /* if !SELECTED */
         } while (down);
         if (curr_sel)
@@ -379,62 +378,30 @@ void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD numpts,
 *       the destination of the copy. numpts, xylnpts, numobs, & xyobpts
 *       are no longer used.
 */
-void gr_drgplns(in_mx, in_my, pc, pdulx, pduly, pdwh, pdobj)
-        WORD            in_mx, in_my;
-        GRECT           *pc;
-        WORD            *pdulx, *pduly;
-        WORD            *pdwh, *pdobj;
+void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD *pdulx, WORD *pduly,
+                WORD *pdwh, WORD *pdobj)
 {
-        LONG            tree, curr_tree;
-        WNODE           *pw;
-        WORD            root, state, curr_wh, curr_root, curr_sel, dst_wh;
-        WORD            overwhite, l_mx, l_my;
-/*      WORD            i, j, offx, offy;*/
-        WORD            down, button, keystate, junk, ret[4];
-        FNODE           *pf;
-/*      GRECT           o, ln;*/
-        ANODE           *pa;
+        LONG    tree, curr_tree;
+        WNODE   *pw;
+        WORD    root, state, curr_wh, curr_root, curr_sel, dst_wh;
+        WORD    overwhite, l_mx, l_my;
+        WORD    down, button, keystate, junk, ret[4];
+        FNODE   *pf;
+        ANODE   *pa;
 
         gsx_sclip(&gl_rscreen);
         graf_mouse(4, 0x0L);                    /* flat hand            */
-/* BugFix       */
+
         l_mx = in_mx;
         l_my = in_my;
-/*
-        gsx_attr(FALSE, MD_XOR, BLACK);
-*/
-                                                /* figure out extent of */
-                                                /*   single polygon     */
-/*      gr_extent(numpts, &xylnpts[0], &ln);*/
-                                                /* calc overall extent  */
-                                                /*   for use as bounds  */
-                                                /*   of motion          */
-/*      gr_extent(numobs, &xyobpts[0], &o);
-        o.g_w += ln.g_w;
-        o.g_h += ln.g_h;
-*/
-/*      for (i = 0; i < numobs; i++)
-        {
-          j = i * 2;
-          xyobpts[j] -= o.g_x;
-          xyobpts[j+1] -= o.g_y;
-        }
-*/
-/*      offx = l_mx - o.g_x;
-        offy = l_my - o.g_y;
-*/
+
         curr_wh = 0x0;
         curr_tree = 0x0L; 
         curr_root = 0; 
         curr_sel = 0;
+
         do
         {
-/*        o.g_x = l_mx - offx;
-          o.g_y = l_my - offy;
-          rc_constrain(pc, &o);
-          down = gr_bwait(&o, l_mx, l_my,numpts, &xylnpts[0],
-                          numobs, &xyobpts[0]);
-*/
           down = gr_isdown(TRUE, l_mx, l_my, 2, 2, 
                                 &ret[0], &ret[1], &ret[2], &ret[3]);
           graf_mkstate(&l_mx, &l_my, &button, &keystate);
