@@ -1121,7 +1121,7 @@ blt_done:
         .page
 
 
-	.data
+        .data
         
 /*
  * Word Mask Table                                                
@@ -1148,7 +1148,7 @@ rf_tab:         dc.w    0x7FFF          // origin for right fringe lookup.
                 dc.w    0x0001
                 dc.w    0x0000
 
-	.text
+        .text
 
 /////////////////////////////////////////////////////////////////////////
 //   normal blt routine                                                 //

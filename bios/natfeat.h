@@ -13,15 +13,15 @@
 
 typedef struct
 {
-	long magic;
-	long (* nfID)(const char *);
-	long (* nfCall)(long ID, ...);
+        long magic;
+        long (* nfID)(const char *);
+        long (* nfCall)(long ID, ...);
 } NatFeatCookie;
 
 extern void detect_native_features(void);
 extern NatFeatCookie natfeat_cookie;
 
-#define NFID	natfeat_cookie.nfID
-#define NFCall	natfeat_cookie.nfCall
+#define NFID    natfeat_cookie.nfID
+#define NFCall  natfeat_cookie.nfCall
 
 extern long xhdi_vec(void);

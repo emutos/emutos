@@ -547,60 +547,60 @@ long xsfirst(char *name, int att)
         dt->dt_dnd = (DND*)NULLPTR;                                     /* M01.01.1209.01 */
 
 #if DBGFSDIR
-		kprintf("\nxsfirst(%s, DTA=%08lx)", name, (long)dt);
+                kprintf("\nxsfirst(%s, DTA=%08lx)", name, (long)dt);
 #endif
         result = ixsfirst(name , att , dt);                   /* M01.01.1209.01 */
 
-		/* check whether the name is a search mask or a pure filename */
-		{
-			int     is_mask;
-			char    *n_char;
-			register int i;
+                /* check whether the name is a search mask or a pure filename */
+                {
+                        int     is_mask;
+                        char    *n_char;
+                        register int i;
 
-			is_mask = 0;
-			n_char = &dt->dt_name[0];
-			for (i=0; i < 11 ; i++) {
-				if ( *n_char == '*' || *n_char == '?' ) {
-					is_mask = 1;
-					break;
-				}
-				n_char++;
-			}
+                        is_mask = 0;
+                        n_char = &dt->dt_name[0];
+                        for (i=0; i < 11 ; i++) {
+                                if ( *n_char == '*' || *n_char == '?' ) {
+                                        is_mask = 1;
+                                        break;
+                                }
+                                n_char++;
+                        }
 
 #if DBGFSDIR
-			kprintf("\nxsfirst(DTA->dt_name %s DND=%08lx)", dt->dt_name, (long)dt->dt_dnd);
+                        kprintf("\nxsfirst(DTA->dt_name %s DND=%08lx)", dt->dt_name, (long)dt->dt_dnd);
 #endif
-			/* no lock is needed on error or in case of the filename */
-			if ( result < 0 || is_mask == 0 )
-				return result;
+                        /* no lock is needed on error or in case of the filename */
+                        if ( result < 0 || is_mask == 0 )
+                                return result;
 
-			/* lock the directory if success */
+                        /* lock the directory if success */
 
-			/* search whether it is locked or not */
-			for (i = 1; i < NCURDIR; i++)
-				if (diruse[i] && dirtbl[i] == dt->dt_dnd)
-					break;
+                        /* search whether it is locked or not */
+                        for (i = 1; i < NCURDIR; i++)
+                                if (diruse[i] && dirtbl[i] == dt->dt_dnd)
+                                        break;
 
-			/* if not search for free entry */
-			if (i == NCURDIR) {
-				for (i = 1; i < NCURDIR; i++)
-                	if (!diruse[i])
-						break;
-			}
+                        /* if not search for free entry */
+                        if (i == NCURDIR) {
+                                for (i = 1; i < NCURDIR; i++)
+                        if (!diruse[i])
+                                                break;
+                        }
 
-			/* no empty entry found nor locked - no system memory */
-			if (i == NCURDIR)
+                        /* no empty entry found nor locked - no system memory */
+                        if (i == NCURDIR)
                 return (ENSMEM);
 
-			diruse[i]++;
-			dirtbl[i] = dt->dt_dnd;
+                        diruse[i]++;
+                        dirtbl[i] = dt->dt_dnd;
 
 #if DBGFSDIR
-			kprintf("\nxsfirst(DND=%08lx lock %d [at %d])", (long)dt->dt_dnd, diruse[i], i);
+                        kprintf("\nxsfirst(DND=%08lx lock %d [at %d])", (long)dt->dt_dnd, diruse[i], i);
 #endif
-		}
+                }
 
-		return result;
+                return result;
 }
 
 /*
@@ -623,27 +623,27 @@ long xsnext(void)
                 return( ENMFIL );                               /* M01.01.1209.01 */
 
 #if DBGFSDIR
-		kprintf("\n xsnext(pos=%ld DTA=%08lx DND=%08lx)", dt->dt_pos, (long)dt, (long)dt->dt_dnd);
+                kprintf("\n xsnext(pos=%ld DTA=%08lx DND=%08lx)", dt->dt_pos, (long)dt, (long)dt->dt_dnd);
 #endif
         f = scan( dt->dt_dnd, &dt->dt_name[0], dt->dt_attr, &dt->dt_pos ) ;
 
         if( f == (FCB*)NULLPTR ) {
-			/* unlock the DND entry in case it was locked */
-			register int i;
-	       	for (i = 1; i < NCURDIR; i++)
-				if (diruse[i] && dirtbl[i] == dt->dt_dnd)
-					break;
-        	if (i != NCURDIR) {
-				--diruse[i];
-				if ( !diruse[i] )
-					dirtbl[i] = (DND*)NULLPTR;
+                        /* unlock the DND entry in case it was locked */
+                        register int i;
+                for (i = 1; i < NCURDIR; i++)
+                                if (diruse[i] && dirtbl[i] == dt->dt_dnd)
+                                        break;
+                if (i != NCURDIR) {
+                                --diruse[i];
+                                if ( !diruse[i] )
+                                        dirtbl[i] = (DND*)NULLPTR;
 #if DBGFSDIR
-				kprintf("\n xsnext(DND=%08lx unlock %d [at %d])", (long)dt->dt_dnd, diruse[i], i);
+                                kprintf("\n xsnext(DND=%08lx unlock %d [at %d])", (long)dt->dt_dnd, diruse[i], i);
 #endif
-			}
+                        }
 
-			return( ENMFIL ) ;
-		}
+                        return( ENMFIL ) ;
+                }
 
         makbuf(f,(DTAINFO *)run->p_xdta);
         return(E_OK);
@@ -1113,7 +1113,7 @@ DND     *findit(char *name, char **sp, int dflag)
 
     n = name;
 #if DBGFSDIR
-	kprintf("\n findit(%s)", n);
+        kprintf("\n findit(%s)", n);
 #endif
     if ((long)(p = dcrack(&n)) <= 0)                    /* M01.01.1214.01 */
         return( p );
@@ -1291,11 +1291,11 @@ FCB     *scan(register DND *dnd, char *n, WORD att, LONG *posp)
                 }
 
                 if ( (m = match( name , fcb->f_name )) )
-					break;
+                                        break;
         }
 
 #if DBGFSDIR
-		kprintf("\n   scan(pos=%ld DND=%08lx DNDfoundFile=%08lx name=%s name1=%s, %d)", (long)fd->o_bytnum, (long)dnd, (long)dnd1, fcb->f_name, name, m);
+                kprintf("\n   scan(pos=%ld DND=%08lx DNDfoundFile=%08lx name=%s name1=%s, %d)", (long)fd->o_bytnum, (long)dnd, (long)dnd1, fcb->f_name, name, m);
 #endif
         /* restore directory scanning pointer */
 
@@ -1357,11 +1357,11 @@ static DND *makdnd(DND *p, FCB *b)
                         for (i = 1; i < NCURDIR; i++)
                                 if (diruse[i] && dirtbl[i] == p1) {
                                     in_use = 1;
-									break;
-								}
+                                                                        break;
+                                                                }
 
 #if DBGFSDIR
-						kprintf("\n makdnd check dirtbl (%d)", in_use);
+                                                kprintf("\n makdnd check dirtbl (%d)", in_use);
 #endif
                         if( !in_use && p1->d_files == NULLPTR )
                         {       /*  M01.01.KTB.SCC.02  */
@@ -1409,7 +1409,7 @@ static DND *makdnd(DND *p, FCB *b)
         memcpy(p1->d_name, b->f_name, 11);
 
 #if DBGFSDIR
-		kprintf("\n makdnd(%08lx)", (long)p1);
+                kprintf("\n makdnd(%08lx)", (long)p1);
 #endif
         return(p1);
 }

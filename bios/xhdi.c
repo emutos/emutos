@@ -23,7 +23,7 @@
 
 #include "xhdi.h"
  
-#define DBG_XHDI	0
+#define DBG_XHDI        0
 
 /* NatFeats */
 long nfid_xhdi;
@@ -40,45 +40,45 @@ void create_XHDI_cookie()
 long XHInqDev2(UWORD drv, UWORD *major, UWORD *minor, ULONG *start,
                BPB *bpb, ULONG *blocks, char *partid)
 {
-	long pstart = blkdev[drv].start;
-	int mediachange = 0;
-	BPB *myBPB;
+        long pstart = blkdev[drv].start;
+        int mediachange = 0;
+        BPB *myBPB;
 
 #if DBG_XHDI
     kprintf("XHInqDev2(%d)\n", drv); 
 #endif
 
-	switch(drv) {
-		default:
-			if (major)  *major = blkdev[drv].unit-2;
-			if (minor)  *minor = 0;
-			if (bpb) bpb->recsiz = 0;
-		
-			if (!pstart)
-				return EDRVNR;
-		
-			if (start)
-				*start = pstart;
+        switch(drv) {
+                default:
+                        if (major)  *major = blkdev[drv].unit-2;
+                        if (minor)  *minor = 0;
+                        if (bpb) bpb->recsiz = 0;
+                
+                        if (!pstart)
+                                return EDRVNR;
+                
+                        if (start)
+                                *start = pstart;
 
-			myBPB = (BPB *)blkdev_getbpb(drv);
-			if (bpb) memcpy(bpb, myBPB, sizeof(BPB));
-		
-			if (blocks)
-				*blocks = blkdev[drv].size;
-		
-			if (partid)
-			{
-				partid[0] = blkdev[drv].id[0];
-				partid[1] = blkdev[drv].id[1];
-				partid[2] = blkdev[drv].id[2];
-				partid[3] = '\0';
-			}
-		
-			if (mediachange)
-				return EDRVNR;
-		
-			return E_OK;
-	}
+                        myBPB = (BPB *)blkdev_getbpb(drv);
+                        if (bpb) memcpy(bpb, myBPB, sizeof(BPB));
+                
+                        if (blocks)
+                                *blocks = blkdev[drv].size;
+                
+                        if (partid)
+                        {
+                                partid[0] = blkdev[drv].id[0];
+                                partid[1] = blkdev[drv].id[1];
+                                partid[2] = blkdev[drv].id[2];
+                                partid[3] = '\0';
+                        }
+                
+                        if (mediachange)
+                                return EDRVNR;
+                
+                        return E_OK;
+        }
 }
 
 long XHInqDev(UWORD drv, UWORD *major, UWORD *minor, ULONG *start,
@@ -147,7 +147,7 @@ long XHGetCapacity(UWORD major, UWORD minor, ULONG *blocks, ULONG *blocksize)
 long XHReadWrite(UWORD major, UWORD minor, UWORD rw, ULONG sector,
                  UWORD count, void *buf)
 {
-	WORD dev = major;
+        WORD dev = major;
 #if DBG_XHDI
     kprintf("XH%s(%d, %d, %ld, %d, %p)\n", 
             rw ? "Write" : "Read", major, minor, sector, count, buf);
@@ -181,123 +181,123 @@ long XHReadWrite(UWORD major, UWORD minor, UWORD rw, ULONG sector,
 long xhdi_handler(UWORD opcode, long a1, long a2, long a3, long a4,
                   long a5, long a6, long a7)
 {
-	typedef long (*wrap1)(long);
-	typedef long (*wrap2)(long, long);
-	typedef long (*wrap3)(long, long, long);
-	typedef long (*wrap4)(long, long, long, long);
-	typedef long (*wrap5)(long, long, long, long, long);
-	typedef long (*wrap6)(long, long, long, long, long, long);
-	typedef long (*wrap7)(long, long, long, long, long, long, long);
-	
-	switch (opcode)
-	{
-		case  XHGETVERSION:
-		{
-			return 0x130;
-		}
-		case  XHINQTARGET:
-		{
-			wrap4 f = (wrap4) XHInqTarget;
-			return (*f)(a1, a2, a3, a4);
-		}
-		/*
-		case  2:
-		{
-			wrap2 f = (wrap2) xhdi_handler_XHReserve;
-			return (*f)(a1, a2);
-		}
-		case  3:
-		{
-			wrap2 f = (wrap2) xhdi_handler_XHLock;
-			return (*f)(a1, a2);
-		}
-		case  4:
-		{
-			wrap2 f = (wrap2) xhdi_handler_XHStop;
-			return (*f)(a1, a2);
-		}
-		case  5:
-		{
-			wrap2 f = (wrap2) xhdi_handler_XHEject;
-			return (*f)(a1, a2);
-		}
-		*/
-		case  6:
-		{
-			return blkdev_drvmap() & ~0x03;    /* FIXME */
-		}
-		case  XHINQDEV:
-		{
-			wrap5 f = (wrap5) XHInqDev;
-			return (*f)(a1, a2, a3, a4, a5);
-		}
-		/*
-		case  8:
-		{
-			wrap6 f = (wrap6) xhdi_handler_XHInqDriver;
-			return (*f)(a1, a2, a3, a4, a5, a6);
-		}
-		case  9:
-		{
-			wrap1 f = (wrap1) xhdi_handler_XHNewCookie;
-			return (*f)(a1);
-		}
-		*/
-		case XHREADWRITE:
-		{
-			wrap4 f = (wrap4) XHReadWrite;
-			return (*f)(a1, a2, a3, a4);
-		}
-		case XHINQTARGET2:
-		{
-			wrap5 f = (wrap5) XHInqTarget2;
-			return (*f)(a1, a2, a3, a4, a5);
-		}
-		case XHINQDEV2:
-		{
-			wrap7 f = (wrap7) XHInqDev2;
-			return (*f)(a1, a2, a3, a4, a5, a6, a7);
-		}
-		/*
-		case 13:
-		{
-			wrap4 f = (wrap4) xhdi_handler_XHDriverSpecial;
-			return (*f)(a1, a2, a3, a4);
-		}
-		*/
-		case XHGETCAPACITY:
-		{
-			wrap3 f = (wrap3) XHGetCapacity;
-			return (*f)(a1, a2, a3);
-		}
-		/*
-		case 15:
-		{
-			wrap1 f = (wrap1) xhdi_handler_XHMediumChanged;
-			return (*f)(a1);
-		}
-		case 16:
-		{
-			wrap2 f = (wrap2) xhdi_handler_XHMiNTInfo;
-			return (*f)(a1, a2);
-		}
-		case 17:
-		{
-			wrap2 f = (wrap2) xhdi_handler_XHDOSLimits;
-			return (*f)(a1, a2);
-		}
-		case 18:
-		{
-			wrap2 f = (wrap2) xhdi_handler_XHLastAccess;
-			return (*f)(a1, a2);
-		}
-		case 19:
-		{
-			wrap1 f = (wrap1) xhdi_handler_XHReaccess;
-			return (*f)(a1);
-		}
-		*/
-	}
-	
-	return -1; /*ENOSYS;*/
+        typedef long (*wrap1)(long);
+        typedef long (*wrap2)(long, long);
+        typedef long (*wrap3)(long, long, long);
+        typedef long (*wrap4)(long, long, long, long);
+        typedef long (*wrap5)(long, long, long, long, long);
+        typedef long (*wrap6)(long, long, long, long, long, long);
+        typedef long (*wrap7)(long, long, long, long, long, long, long);
+        
+        switch (opcode)
+        {
+                case  XHGETVERSION:
+                {
+                        return 0x130;
+                }
+                case  XHINQTARGET:
+                {
+                        wrap4 f = (wrap4) XHInqTarget;
+                        return (*f)(a1, a2, a3, a4);
+                }
+                /*
+                case  2:
+                {
+                        wrap2 f = (wrap2) xhdi_handler_XHReserve;
+                        return (*f)(a1, a2);
+                }
+                case  3:
+                {
+                        wrap2 f = (wrap2) xhdi_handler_XHLock;
+                        return (*f)(a1, a2);
+                }
+                case  4:
+                {
+                        wrap2 f = (wrap2) xhdi_handler_XHStop;
+                        return (*f)(a1, a2);
+                }
+                case  5:
+                {
+                        wrap2 f = (wrap2) xhdi_handler_XHEject;
+                        return (*f)(a1, a2);
+                }
+                */
+                case  6:
+                {
+                        return blkdev_drvmap() & ~0x03;    /* FIXME */
+                }
+                case  XHINQDEV:
+                {
+                        wrap5 f = (wrap5) XHInqDev;
+                        return (*f)(a1, a2, a3, a4, a5);
+                }
+                /*
+                case  8:
+                {
+                        wrap6 f = (wrap6) xhdi_handler_XHInqDriver;
+                        return (*f)(a1, a2, a3, a4, a5, a6);
+                }
+                case  9:
+                {
+                        wrap1 f = (wrap1) xhdi_handler_XHNewCookie;
+                        return (*f)(a1);
+                }
+                */
+                case XHREADWRITE:
+                {
+                        wrap4 f = (wrap4) XHReadWrite;
+                        return (*f)(a1, a2, a3, a4);
+                }
+                case XHINQTARGET2:
+                {
+                        wrap5 f = (wrap5) XHInqTarget2;
+                        return (*f)(a1, a2, a3, a4, a5);
+                }
+                case XHINQDEV2:
+                {
+                        wrap7 f = (wrap7) XHInqDev2;
+                        return (*f)(a1, a2, a3, a4, a5, a6, a7);
+                }
+                /*
+                case 13:
+                {
+                        wrap4 f = (wrap4) xhdi_handler_XHDriverSpecial;
+                        return (*f)(a1, a2, a3, a4);
+                }
+                */
+                case XHGETCAPACITY:
+                {
+                        wrap3 f = (wrap3) XHGetCapacity;
+                        return (*f)(a1, a2, a3);
+                }
+                /*
+                case 15:
+                {
+                        wrap1 f = (wrap1) xhdi_handler_XHMediumChanged;
+                        return (*f)(a1);
+                }
+                case 16:
+                {
+                        wrap2 f = (wrap2) xhdi_handler_XHMiNTInfo;
+                        return (*f)(a1, a2);
+                }
+                case 17:
+                {
+                        wrap2 f = (wrap2) xhdi_handler_XHDOSLimits;
+                        return (*f)(a1, a2);
+                }
+                case 18:
+                {
+                        wrap2 f = (wrap2) xhdi_handler_XHLastAccess;
+                        return (*f)(a1, a2);
+                }
+                case 19:
+                {
+                        wrap1 f = (wrap1) xhdi_handler_XHReaccess;
+                        return (*f)(a1);
+                }
+                */
+        }
+        
+        return -1; /*ENOSYS;*/
 }

@@ -90,14 +90,14 @@ int is_ramtos;                  /* 1 if the TOS is running in RAM */
 
 static long _NF_getid = 0x73004e75L;
 static long _NF_call  = 0x73014e75L;
-#define nfGetID(n)	(((long (*)(const char *))&_NF_getid)n)
-#define nfCall(n)	(((long (*)(long, ...))&_NF_call)n)
+#define nfGetID(n)      (((long (*)(const char *))&_NF_getid)n)
+#define nfCall(n)       (((long (*)(long, ...))&_NF_call)n)
 
-#define nf_stderr(text)	\
-	(((long (*)(long, const char *))&_NF_call)(nfGetID(("NF_STDERR")), (text)))
+#define nf_stderr(text) \
+        (((long (*)(long, const char *))&_NF_call)(nfGetID(("NF_STDERR")), (text)))
 
-#define nf_stderrprintf(text, par1)	\
-	(((long (*)(long, const char *, ...))&_NF_call)(nfGetID(("NF_STDERR"))+1, text, par1))
+#define nf_stderrprintf(text, par1)     \
+        (((long (*)(long, const char *, ...))&_NF_call)(nfGetID(("NF_STDERR"))+1, text, par1))
 
 
 /*==== BOOT ===============================================================*/

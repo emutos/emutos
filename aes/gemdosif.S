@@ -39,7 +39,7 @@
 
 /* disable interrupts */
 _cli:
-	move    sr,savesr
+        move    sr,savesr
         ori     #0x0700,sr
         rts
 
@@ -134,7 +134,7 @@ _aestrap:
 
 _back:
         clr.w   -(sp)
-        move.w  #0x4C,-(sp)   		// Pterm
+        move.w  #0x4C,-(sp)             // Pterm
         trap    #1
 
 
@@ -142,7 +142,7 @@ L2126:
         bsr     _cli                    // mask out interrupts
         move.l  usp,a0                  
         movem.l d1-d7/a0-a6,-(a0)       // put registers to user stack
-        move.l  a0,usp          	
+        move.l  a0,usp                  
 
         movea.l _rlr,a6
         movea.l 8(a6),a6

@@ -21,10 +21,10 @@
 // ==== References ===========================================================
 
         
-        .global	_detect_native_features
-        .global	_natfeat_cookie
-        .global	_xhdi_vec
-        .xdef	_xhdi_handler
+        .global _detect_native_features
+        .global _natfeat_cookie
+        .global _xhdi_vec
+        .xdef   _xhdi_handler
         .global _nfid_xhdi
 
 // ==== machine.c - Native Features flag =====================================
