@@ -229,6 +229,9 @@ BYTE *scan_2(BYTE *pcurr, UWORD *pwd)
 
         return( pcurr );
 }
+#else
+/* We're using scan_2 from the AES sources: */
+extern BYTE *scan_2(BYTE *pcurr, UWORD *pwd);
 #endif
 
 
