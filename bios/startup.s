@@ -329,17 +329,6 @@ nodiag:
 
 
 
-| ==== Check, if old memory config can be used ==============================
-
-        bra     meminit                 | do/test memory config (no sp used)
-memdone:
-
-|        pea msg_mem     | Print, what's going on
-|        bsr _kprint
-|        addq #4,sp
-
-
-
 | ==== Reset vector =========================================================
 resetvec:
        cmpi.l 	#0x31415926, resvalid	| Jump to resetvector?
@@ -384,38 +373,6 @@ initsnd:
 
 
 
-| ==== Set temporary screenmem address 0x10000 to videoshifter ==============
-        
-        move.b  #0x1, 0xffff8201 | set hw video base high word
-        move.b  #0x0, 0xffff8203 | set hw video base low word
-
-
-
-| ==== Detect and set graphics resolution ===================================
-| Does not work, because of STonX - set it hard for now!
-
-        move.b #2, d0     | Set video resolution hard (#0, #1, or #2)
-
-
-|      	btst    #7,0xfffffa01   | detect b/w-monitor pin via MFP, line I7
-|      	beq     low_rez         | if bit set, then it is a color monitor 
-|      	move.l  #2, d0          | else monochrome mode
-|low_rez:
-|       move.b d0, sshiftmod    | Set in sysvar
-|      	move.w d0, 0xFFFF8260   | and to shifter register
-
-|        move.b 0xffff8260, d0     | Get video resolution from pseudo Hw
-        and.b #3,d0             | Isolate bits 0 and 1
-|        cmp.b #3,d0             | mode invalid?
-|        bne.s setscrnres        | no --> go on
-|        moveq #2,d0             | yes, set highres, make valid
-
-setscrnres:
-        move.b d0, sshiftmod    | Set in sysvar
-        move.b d0, 0xffff8260     | Hardware set to highres
-
-
-
 | ==== Set color palette ====================================================
 
         lea    0xffff8240, a1   | video-shifter 
@@ -425,17 +382,23 @@ loadcol:
         move.w  (a0)+,(a1)+     | set color value         
         dbra   d0, loadcol      | next value   
 
-        cmp.b #1, sshiftmod             | middle resolution?
-        bne.s initmidres                | nein, -->
-        move.w 0xffff825e, 0xffff8246   | Copy Color 16->4 kopieren
 
-initmidres:
-        move.l  #_main, swv_vec | Set Swv_vec (vector res change) to Reset
-        move.w  #1, vblsem      | vblsem: VBL freigeben
 
-        pea msg_linea  | Print, what's going on
-        bsr _kprint
-        addq #4,sp
+| ==== Set temporary screenmem address 0x10000 to videoshifter ==============
+        
+        move.b  #0x1, 0xffff8201 | set hw video base high word
+        move.b  #0x0, 0xffff8203 | set hw video base low word
+
+
+
+| ==== Check, if old memory config can be used ==============================
+
+        bra     meminit                 | do/test memory config (no sp used)
+memdone:
+
+|        pea msg_mem     | Print, what's going on
+|        bsr _kprint
+|        addq #4,sp
 
 
 
@@ -459,12 +422,6 @@ initmidres:
         move.l  end_os, _membot         | end_os to _membot
         move.l  os_beg, exec_os         | exec_os
         move.l  _v_bas_ad, _memtop      | _v_bas_ad to _memtop
-
-
-
-| ==== Setting up Line-a variables and clear screen =========================
-
-        bsr _linea_init         | init linea variables
 
 
 
@@ -551,6 +508,12 @@ initmidres:
 |       move.l #_criter1, etv_critic    | etv_critic
         move.l #just_rts, etv_term      | etv_term  (->RTS)
 
+        move.l  #_brkpt, 0x7c           | set nmi to do an illegal instruction
+        move.l  #bios, 0xb4             | revector bios entry = trap #13
+
+
+
+
 
 | ==== Clear VBL queue list =================================================
         lea _vbl_list, a0               | Get addr. of VBL-routine
@@ -565,36 +528,71 @@ clrvbl:
 
 | ==== Test, if Cartridge of type 2 =========================================
 
-|       moveq.l #2, d0          | after interrupts are enabled
-|       bsr     cartscan
+        moveq.l #2, d0          | after interrupts are enabled
+        bsr     cartscan
+
+| ==== Detect and set graphics resolution ===================================
+| Does not work, because of STonX - set it hard for now!
+
+        move.b 0xffff8260, d0   | Get video resolution from pseudo Hw
+        and.b #3,d0             | Isolate bits 0 and 1
+        cmp.b #3,d0             | mode invalid?
+        bne.s setscrnres        | yes, jump over
+        moveq #2,d0             | invalid, set valid mode highres
+
+setscrnres:
+        move.b d0, sshiftmod    | Set in sysvar
+        move.b d0, 0xffff8260     | Hardware set to highres
+
+      	move.b  0xfffffa01, d0  | detect b/w-monitor pin via MFP, line I7
+      	bmi     low_rez         | if bit set, then it is a color monitor 
+
+        move.b #2, sshiftmod    | Set in sysvar
+      	move.b #2, 0xffff8260   | and to shifter register
+low_rez:
+
+        bsr _linea_init         | init linea variables
+
+        cmp.b #1, sshiftmod             | middle resolution?
+        bne.s initmidres                | nein, -->
+        move.w 0xffff825e, 0xffff8246   | Copy Color 16->4 kopieren
+
+initmidres:
+        move.l  #_main, swv_vec | Set Swv_vec (vector res change) to Reset
+        move.w  #1, vblsem      | vblsem: VBL freigeben
+
+        pea msg_linea  | Print, what's going on
+        bsr _kprint
+        addq #4,sp
+
+
 
 | ==== Now initialize the BIOS =============================================
 
         jsr     _biosinit                
 
-| ==== Now initialize the BDOS =============================================
 
-        jsr     _osinit
 
-| ==== Now initialize the BDOS =============================================
+        clr.l	d0                      | Cartridge of type 0
+        bsr     cartscan
 
-        move    #0x2300,sr              | enable Interrupts 
+        move    #0x2300,sr              | enable Interrupts
+
         
-        move.l  #_brkpt, 0x7c           | set nmi to do an illegal instruction
-        move.l  #bios, 0xb4             | revector bios entry = trap #13
+| ==== Now initialize the BDOS =============================================
 
-|               move.l  #defcrit, v101  | default crit error:        bios13, fnct 5
-|               move.l  #defterm, v102  | terminate handler:         bios13, fnct 5
-|               move.l  #fix_SR, 0x20   | privilege violation
+        jsr     _osinit                 | Initialize the GEMDOS
 
-        pea msg_test
-        bsr _kprint
-        addq #4,sp
+        moveq.l #1, d0              	| Cartridge of type 1
+        bsr     cartscan
+
+
 
 | ==== Test, if Cartridge of type 3 ========================================
 
         moveq.l #3,d0              | just before GEMDOS starts!
         bsr     cartscan
+
 
 
 | ==== Do some informational output ========================================
@@ -626,29 +624,18 @@ clrvbl:
 everloop:
         bra     everloop                        | Halt for debugging
 
+        .even
 
 msg_cart:
         .ascii "BIOS: Cartridge has been initialized ...\n\0"
-        .even
 
+msg_physmem:
+        .ascii "[ OK ] Found %ld (0x%lx) byte of physical memory ...\r\n\0"
+msg_usermem:
+        .ascii "[ OK ] User memory from 0x%lx to 0x%lx ...\r\n\0"
+msg_scradr:
+        .ascii "[ OK ] Screen starts at address 0x%lx ...\r\n\0"
 
-
-
-
-
-
-| ==== STonX reserved vector usage ==========================================
-|       move.l #switch_ok,0x46e(a5)
-
-        move #0x30,-(sp)
-        trap #1         | Call GEMDOS
-        addq #2,sp
-
-        move.w 0x446(a5),d0     | Get _bootdev default boot device
-        move d0,-(sp)
-        move #0xe,-(sp)
-        trap #1         | Call GEMDOS
-        addq #4,sp
 
 
 
@@ -1192,13 +1179,6 @@ msg_key:
         .ascii "BIOS: Key pressed or released ...\n\0"
         .even
         
-
-msg_physmem:
-        .ascii "[ OK ] Found %ld (0x%lx) byte of physical memory ...\r\n\0"
-msg_usermem:
-        .ascii "[ OK ] User memory from 0x%lx to 0x%lx ...\r\n\0"
-msg_scradr:
-        .ascii "[ OK ] Screen starts at address 0x%lx ...\r\n\0"
 
 
 int_test:

@@ -1,11 +1,8 @@
 - implement XBIOS calls
 - implement linea functions 
-- implement screen handling better and in assembler
 - add argument specifications in function prototypes
 - merge identical headers, and put them all in an include directory (?)
 - cleaning function prototypes, checking compiler warnings.
-- complete vt52 console, in low, med, high rez.
 - low-level floppy support (rwabs, booting a floppy)
-- command.prg does echo some things to console
 - pexec: loaded program's memory is not released after exit
-
+- Command.prg crashes, when commandline input is longer than line length

@@ -22,6 +22,7 @@
 #include "gemerror.h"
 #include "config.h"
 #include "kprint.h"
+#include "tosvars.h"
 
 #include "ikbd.h"
 #include "midi.h"
@@ -173,14 +174,6 @@ void biosinit()
 
 
 
-    /* print, what has been done till now (fake) */
-
-    cprintf("[ OK ] Entered supervisormode ...\n\r");
-    cprintf("[ OK ] Configured memory ...\n\r");
-    cprintf("[ OK ] Initialized video shifter ...\n\r");
-    cprintf("[ OK ] Soundchip initialized ...\n\r");
-    cprintf("[ OK ] Floppy deselected ...\n\r");
-
     /* initialize components */
 
     mfp_init();         /* init MFP, timers, USART */
@@ -207,17 +200,27 @@ void biosinit()
 
 
 /*
- *  biosmain - c part of the bios init code
- *      inits the disk buffer cache.
- *      invokes the bdos init code
- *      possibly prints bdos date/version string
- *      exec the CLI
+ * biosmain - c part of the bios init code
+ *
+ * Print some status messages
+ * exec the shell command.prg
  */
 
 void biosmain()
 {
+    /* print, what has been done till now (fake) */
+
+    cprintf("[ OK ] Free Memory of 0x%lx bytes ...\r\n", memtop-membot);
+    cprintf("[ OK ] Screen starts at address 0x%lx ...\r\n", (long)v_bas_ad);
+
+    cprintf("[ OK ] Entered supervisormode ...\n\r");
+    cprintf("[ OK ] Configured memory ...\n\r");
+    cprintf("[ OK ] Initialized video shifter ...\n\r");
+    cprintf("[ OK ] Soundchip initialized ...\n\r");
+    cprintf("[ OK ] Floppy deselected ...\n\r");
+
     trap_1( 0x30 );              /* initial test, if BDOS works */
-    cprintf("[ OK ] BDOS setup works ....\r\n");
+    cprintf("[ OK ] GEMDOS initialized ...\r\n");
 
     trap_1( 0x2b, os_dosdate);  /* set initial date in GEMDOS format */
     cprintf("[ OK ] Initial system date and time set ...\r\n");

@@ -1,7 +1,7 @@
 /*
  * biosts.c - BIOS version string
  *
- * Copyright (c) 2001 Lineo, Inc.
+ * Copyright (c) 2001 by.
  *
  * Authors:
  *  SCC     Steve C. Cavender
@@ -17,4 +17,4 @@
 
 
 
-char *biosts="### EmuBIOS 00.00 13.08.2001 18:00:00 MAD ###\n\r";
+char *biosts="### EmuBIOS 00.01 23.09.2001 22:00:00 MAD ###\n\r";

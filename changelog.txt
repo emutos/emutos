@@ -212,6 +212,10 @@ Start... early ages
 - Cursor is now blinking (thanks Laurent, for Timer stuff!) (MAD)
 - switched off debugging for public release in startup.s: _print (MAD)
 
+23. Okt. 2001
+- Video mode recognition works (mono/color) (MAD)
+- Patched in bigger resolutions work in all modes  (MAD)
+
 ===== Initial release 0.1 ===================================================
 
 

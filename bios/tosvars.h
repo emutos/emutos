@@ -37,4 +37,9 @@ extern UBYTE *screenpt;
 
 extern WORD timer_ms;
 
+extern LONG membot;
+extern LONG memtop;
+
+
 #endif /* _TOSVARS_H */
+

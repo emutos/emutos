@@ -59,6 +59,7 @@ int_linea:
 	jsr     (a0)
 linea_dispatch_pc:	
 	rte
+
 wrong_linea:
 	move.w  d0,-(sp)
 	sub.w   #2,a0
@@ -71,15 +72,20 @@ wrong_linea_msg:
 	.ascii  "pc=0x%08lx: Line-A call number 0x%03x out of bounds\n\0"
 	.even
 
+
+
 _linea_0:	
-	| a0 contains the base address for line a variables
-	lea	line_a_vars,a0
+	
+|        bsr     vars_init       | init again global linea and font variables.
+|                                | no reset of screen layout patched by emus
+        
+	lea	line_a_vars,a0  | get base address for line a variables
 	move.l  a0,d0
-	| a1 is a pointer to the three system font headers
-	move.l  font_ring,a1
+
+	move.l  font_ring,a1	| get pointer to the three system font headers
 	move.l  (a1),a1
-	| a2 is a pointer to a table of the Line-A routines
-	lea     linea_vecs,a2
+	
+	lea     linea_vecs,a2	| get pointer to table of the Line-A routines
 	rts
 
 |
@@ -87,51 +93,97 @@ _linea_0:
 | the stub will print the pc of the caller, whether the function
 | was called using the line a opcode, or directly via its address.
 |
+
 _linea_1:
 	move.w	#1,d0
 	bra	linea_stub
+
+
+
 _linea_2:
 	move.w	#2,d0
 	bra	linea_stub
+
+
+
 _linea_3:
 	move.w	#3,d0
 	bra	linea_stub
+
+
+
 _linea_4:
 	move.w	#4,d0
 	bra	linea_stub
+
+
+
 _linea_5:
 	move.w	#5,d0
 	bra	linea_stub
+
+
+
 _linea_6:
 	move.w	#6,d0
 	bra	linea_stub
+
+
+
 _linea_7:
 	move.w	#7,d0
 	bra	linea_stub
+
+
+
 _linea_8:
 	move.w	#8,d0
 	bra	linea_stub
+
+
+
 _linea_9:
 	move.w	#9,d0
 	bra	linea_stub
+
+
+
 _linea_a:
 	move.w	#0xa,d0
 	bra	linea_stub
+
+
+
 _linea_b:
 	move.w	#0xb,d0
 	bra	linea_stub
+
+
+
 _linea_c:
 	move.w	#0xc,d0
 	bra	linea_stub
+
+
+
 _linea_d:
 	move.w	#0xd,d0
 	bra	linea_stub
+
+
+
 _linea_e:
 	move.w	#0xe,d0
 	bra	linea_stub
+
+
+
 _linea_f:
 	move.w	#0xf,d0
 	bra	linea_stub
+
+
+
 linea_stub:
 	move.l  (sp),d1
 	sub.l   #linea_dispatch_pc,d1
@@ -150,6 +202,8 @@ linea_stub_msg:
 	.ascii	"pc=0x%08lx: unimplemented Line-A call number 0x%03x\n\0"
 	.even
 	
+
+
 linea_vecs:
 	dc.l	_linea_0
 	dc.l	_linea_1
@@ -169,8 +223,6 @@ linea_vecs:
 	dc.l	_linea_f
 linea_ents:
 	dc.w    (linea_ents-linea_vecs)/4
-
-
 
 
 
@@ -214,8 +266,8 @@ gl_f_init:
 
 _linea_init:
         move.b  sshiftmod, d0           | get video resolution
-        and.w   #3, d0                  | isolate bits 0 and 1
-        cmp.w   #3, d0                  | is it 3 - color?
+        and.b   #3, d0                  | isolate bits 0 and 1
+        cmp.b   #3, d0                  | is it 3 - color?
         bne     not3                    | no
         move.w  #2, d0                  | set monochrome resolution
 not3:
@@ -223,8 +275,9 @@ not3:
         bsr     resolset                | set video resolution
         move.w  (sp)+, d0               | restore resolution
         
+vars_init:
         lea     _f8x8, a0               | Get pointer to 8x8 font header
-        cmp.w   #2, d0                  | High resolution?
+        cmp.b   #2, d0                  | High resolution?
         bne     lowres                  | no, low resolution
         lea     _f8x16, a0              | Get pointer to 8x16 font header
 lowres:

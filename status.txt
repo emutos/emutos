@@ -1,3 +1,40 @@
+This file documents the status of the single parts of EmuTOS
+
+At first some more general things:
+
+ BOOT sequence
+ ----------------------------------------------------------------------------
+ X configure memory
+ X execute reset routine
+ - detect monitor type
+   ...
+ - init floppy drives
+ - boot floppy
+ - boot DMA
+ - run AUTO prgs
+ X run 'command.prg'
+
+ BIOS devices
+ ----------------------------------------------------------------------------
+ - parallel port
+ - serial port
+ X console
+ X IKBD
+ X MIDI
+ X ascii 
+
+ ACIA interrupt routines
+ ----------------------------------------------------------------------------
+ - midierr
+ - ikbderr
+ X midi input
+ X ikbd key events
+ - IKBD clock
+ - mouse
+ - joysticks
+
+
+
 This is a list of the status of each more or less implemented
 function. Here is, what the first field means:
 
@@ -9,8 +46,8 @@ It is followed by the hex-number of the function and it's name:
 
 
 
-==== BIOS ===================================================================
-
+ BIOS Functions
+ ----------------------------------------------------------------------------
  X 0x00 getmpb
  X 0x01 bconstat        (the function works for console only)
  X 0x02 bconin          (the function works for console only)
@@ -26,8 +63,8 @@ It is followed by the hex-number of the function and it's name:
 
 
 
-==== XBIOS ==================================================================
-
+ XBIOS Functions
+ ----------------------------------------------------------------------------
  - 0x00 initmous
  - 0x01 ssbrk
  X 0x02 _physBase
@@ -71,8 +108,8 @@ It is followed by the hex-number of the function and it's name:
 
 
 
-==== GEMDOS =================================================================
-
+ GEMDOS Functions
+ ----------------------------------------------------------------------------
  X 0x00 Pterm0
  X 0x01 Cconin
  X 0x02 Cconout
