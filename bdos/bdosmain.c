@@ -254,7 +254,7 @@ FND funcs[0x58] =
 
 
 
-char	*bdosver = "GEMDOS Version 01.MAD" ; /* bdos version string */
+BYTE	*bdosver = "GEMDOS Version 01.MAD" ; /* bdos version string */
 
 
 
@@ -323,7 +323,7 @@ void	cinit()
  *  ncmps -  compare two text strings, ingoreing case.
  */
 
-int	ncmps(int n, char *s, char *d)
+int	ncmps(int n, BYTE *s, BYTE *d)
 {
     while (n--)
 	if (uc(*s++) != uc(*d++))
@@ -393,10 +393,10 @@ void	offree(DMD *d)
 long	osif(int *pw )
 {
     long	osif2() ;
-    char	*p ;
+    BYTE	*p ;
     long	r ;
 
-    p = (char *) &pw ;
+    p = (BYTE *) &pw ;
     osifdmp( p-4 , pw ) ;		/*  pass return addr and pw ptr */
 
     r = osif2( pw ) ;
@@ -415,7 +415,7 @@ long	osif(int *pw )
 
 long	osif2(int *pw)
 {
-    char **pb,*pb2,*p,ctmp;
+    BYTE **pb,*pb2,*p,ctmp;
     BPB *b;
     BCB *bx;
     DND *dn;
@@ -509,16 +509,16 @@ restrt:
 		/*  write the char in the int at
 		 pw[1]	*/
 	    rawout:
-		xwrite( h , 1L , ((char*) &pw[1])+1 ) ;
+		xwrite( h , 1L , ((BYTE*) &pw[1])+1 ) ;
 		return 0; /* dummy */
 
 	    case 9:
-		pb2 = *((char **) &pw[1]);
+		pb2 = *((BYTE **) &pw[1]);
 		while (*pb2) xwrite(h,1L,pb2++);
 		return 0; /* dummy */
 
 	    case 10:
-		pb2 = *((char **) &pw[1]);
+		pb2 = *((BYTE **) &pw[1]);
 		max = *pb2++;
 		p = pb2 + 1;
 		for (i = 0; max--; i++,p++)
@@ -585,7 +585,7 @@ restrt:
 	    if( num < -3 )
 		return( EIHNDL ) ;
 
-	    pb = (char **) &pw[4];
+	    pb = (BYTE **) &pw[4];
 
 	    /* only do things on read and write */
 
@@ -632,7 +632,7 @@ restrt:
     rc = 0;
     if ((fn == 0x3d) || (fn == 0x3c))  /* open, create */
     {
-	p = *((char **) &pw[1]);
+	p = *((BYTE **) &pw[1]);
 	if (ncmps(5,p,"CON:"))
 	    rc = 0xFFFFL;
 	else if (ncmps(5,p,"AUX:"))

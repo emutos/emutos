@@ -150,15 +150,15 @@
  * forward prototypes
  */
 
-static int namlen(char *s11);
-static char *dopath(DND *p, char *buf, int *len);
+static int namlen(BYTE *s11);
+static BYTE *dopath(DND *p, BYTE *buf, int *len);
 static DND *makdnd(DND *p, FCB *b);
-static DND *dcrack(char **np);
-static int getpath(char *p, char *d, int dirspec);
-static BOOL match(char *s1, char *s2);
+static DND *dcrack(BYTE **np);
+static int getpath(BYTE *p, BYTE *d, int dirspec);
+static BOOL match(BYTE *s1, BYTE *s2);
 static void makbuf(FCB *f, DTAINFO *dt);
-static int xcmps(char *s, char *d);
-static DND *getdnd(char *n, DND *d); 
+static int xcmps(BYTE *s, BYTE *d);
+static DND *getdnd(BYTE *n, DND *d); 
 static void freednd(DND *dn);
 
 /*
@@ -187,9 +187,9 @@ static void freednd(DND *dn);
 **  dots -, dots2  -
 */
 
-static	char dots[22] =  { ".	       " } ;
+static	BYTE dots[22] =  { ".	       " } ;
 
-/* unused static	char dots2[22] = { "..	       " } ; */
+/* unused static	BYTE dots2[22] = { "..	       " } ; */
 
 
 
@@ -197,7 +197,7 @@ static	char dots[22] =  { ".	       " } ;
  * namlen - parameter points to a character string of 11 bytes max
  */
 
-static int namlen(char *s11) 				/* M01.01.1107.01 */
+static int namlen(BYTE *s11) 				/* M01.01.1107.01 */
 {
     int	i, len;
 
@@ -222,7 +222,7 @@ static int namlen(char *s11) 				/* M01.01.1107.01 */
 **
 */
 
-long xmkdir(char *s) 
+long xmkdir(BYTE *s) 
 {
 	REG OFD *f;
 	REG FCB *f2;
@@ -336,14 +336,14 @@ long xmkdir(char *s)
 **
 */
 
-long xrmdir(char *p)
+long xrmdir(BYTE *p)
 {
 	REG DND *d;
 	DND	*d1,**q;
 	FCB	*f;
 	OFD	*fd,*f2;		/* M01.01.03 */
 	long	pos;
-	char	*s;
+	BYTE	*s;
 	REG int i;
 
 	if ((d = findit(p,&s,1)) < 0)			/* M01.01.1212.01 */
@@ -371,7 +371,7 @@ long xrmdir(char *p)
 	{
 		if (!(f = (FCB *) ixread(fd,32L,NULPTR)))
 			break;
-	} while (f->f_name[0] == (char)0x0e5);
+	} while (f->f_name[0] == (BYTE)0x0e5);
 
 
 	if( f != (FCB*)NULLPTR  &&  f->f_name[0] != 0 )
@@ -419,11 +419,11 @@ long xrmdir(char *p)
 **
 */
 
-long xchmod(char *p, int wrt, char mod)
+long xchmod(BYTE *p, int wrt, BYTE mod)
 {
 	OFD *fd;
 	DND *dn;					/*  M01.01.03	*/
-	char *s;
+	BYTE *s;
 	long pos;
 
 	if ((dn = findit(p,&s,0)) < 0)			/* M01.01.1212.01 */
@@ -467,9 +467,9 @@ long xchmod(char *p, int wrt, char mod)
  *	error code.
  */
 
-long ixsfirst(char *name, REG WORD att, REG DTAINFO *addr)
+long ixsfirst(BYTE *name, REG WORD att, REG DTAINFO *addr)
 {
-    char *s;			/*  M01.01.03			*/
+    BYTE *s;			/*  M01.01.03			*/
     DND	*dn;
     FCB	*f;
     long pos;
@@ -531,7 +531,7 @@ long ixsfirst(char *name, REG WORD att, REG DTAINFO *addr)
  *	Error returns EFILNF
  */
 
-long xsfirst(char *name, int att)
+long xsfirst(BYTE *name, int att)
 {
 	long	ixsfirst() ;
 	DTAINFO *dt;						/* M01.01.1209.01 */
@@ -638,10 +638,10 @@ void	xgsdtof(int *buf, int h, int wrt)
  * s2 dest 
  */
 
-void builds(char *s1, char *s2)
+void builds(BYTE *s1, BYTE *s2)
 {
 	REG int i;
-	char	c;
+	BYTE	c;
 
 	/*
 	** copy filename part of pathname to destination buffer until a
@@ -714,10 +714,10 @@ void builds(char *s1, char *s2)
 */
 
 /* s1 is source, s2 dest */
-void builds(char *s1, char *s2)
+void builds(BYTE *s1, BYTE *s2)
 {
 	int i;
-	char c;
+	BYTE c;
 
 	for (i=0; (i<8) && (*s1) && (*s1 != '*') && (*s1 != SLASH) &&
 	    (*s1 != '.') && (*s1 != ' '); i++)
@@ -764,14 +764,14 @@ void builds(char *s1, char *s2)
 */
 /* rename file, n unused, old path p1, new path p2 */
 /*ARGSUSED*/
-long	xrename(int n, char *p1, char *p2)	
+long	xrename(int n, BYTE *p1, BYTE *p2)	
 {
 	REG OFD *fd2;
 	OFD	*f1,*fd;
 	FCB	*f;
 	DND	*dn1,*dn2;
-	char	*s1,*s2;
-	char	buf[11];
+	BYTE	*s1,*s2;
+	BYTE	buf[11];
 	int	hnew,att;
 	long	rc, h1;
 
@@ -841,12 +841,12 @@ long	xrename(int n, char *p1, char *p2)
 **
 */
 
-long	xchdir(char *p) 
+long	xchdir(BYTE *p) 
 {
 	REG int dr, i ;
 	long	l;
 	int	dphy,dlog,flg;
-	char	*s;
+	BYTE	*s;
 
 	dlog = 0; /* dummy, to avoid warning */
 	flg = 1;
@@ -915,10 +915,10 @@ xch:	if (p[1] == ':')
 */
 
 /* return text of current dir into specified buffer */
-long	xgetdir(char *buf, int drv) 
+long	xgetdir(BYTE *buf, int drv) 
 {
 	DND	*p;
-	char	*dopath();
+	BYTE	*dopath();
 	int	len;						/* M01.01.1024.02 */
 
 	drv = (drv == 0) ? run->p_curdrv : drv-1 ;
@@ -948,7 +948,7 @@ FCB	*dirinit(DND *dn)
 {
 	OFD	*fd;		/*  ofd for this dir			*/
 	int	num,i2;
-	char	*s1;
+	BYTE	*s1;
 	DMD	*dm;
 	FCB	*f1;
 
@@ -983,10 +983,10 @@ FCB	*dirinit(DND *dn)
 **	M01.01.1024.02
 */
 
-static char *dopath(DND *p, char *buf, int *len)
+static BYTE *dopath(DND *p, BYTE *buf, int *len)
 {
-	char	temp[14];
-	char	*tp;
+	BYTE	temp[14];
+	BYTE	*tp;
 	long	tlen;
 
 	if ( p->d_parent )
@@ -1024,13 +1024,13 @@ static long negone = { -1L } ;
 /*  name: name of file/dir	
  * dflag: T: name is for a directory
  */		
-DND	*findit(char *name, char **sp, int dflag)
+DND	*findit(BYTE *name, BYTE **sp, int dflag)
 {
     REG DND *p;
-    char	*n;
+    BYTE	*n;
     DND	*pp,*newp;
     int	i;
-    char	s[11];
+    BYTE	s[11];
 
     /* crack directory and drive */
 
@@ -1154,7 +1154,7 @@ DND	*findit(char *name, char **sp, int dflag)
 
 FCB	*scan(REG DND *dnd, BYTE *n, WORD att, LONG *posp)
 { 
-	char	name[12];
+	BYTE	name[12];
 	REG FCB *fcb;
 	OFD	*fd;
 	DND	*dnd1;
@@ -1199,7 +1199,7 @@ FCB	*scan(REG DND *dnd, BYTE *n, WORD att, LONG *posp)
 
 		if( (fcb->f_attrib & FA_SUBDIR) 	&&
 		    (fcb->f_name[0] != '.')		&& 
-		    (fcb->f_name[0] != (char)0xe5)
+		    (fcb->f_name[0] != (BYTE)0xe5)
 #if	! M0101052901
 		    (!(fd->o_flag & O_COMPLETE))	&&
 #endif
@@ -1228,7 +1228,7 @@ FCB	*scan(REG DND *dnd, BYTE *n, WORD att, LONG *posp)
  
 	if (!m)
 	{	/*  assumes that (*n != 0xe5) (if posp == -1)  */
-		if( fcb && (*n == (char)0xe5) )
+		if( fcb && (*n == (BYTE)0xe5) )
 			return(fcb) ;
 #if	! M0101052901
 		fd->o_flag |= O_COMPLETE;
@@ -1336,9 +1336,9 @@ static DND *makdnd(DND *p, FCB *b)
  *	ptr to DND for 1st element in path, or error
  */
 
-static DND *dcrack(char **np)
+static DND *dcrack(BYTE **np)
 {
-    REG char	*n;
+    REG BYTE	*n;
     DND	*p;
     REG int d;
     LONG l; 						/* M01.01.1212.01 */
@@ -1401,10 +1401,10 @@ static DND *dcrack(char **np)
  * d: ptr to destination buffer
  * dirspec: true = no file name, just dir path
  */
-static int getpath(char *p, char *d, int dirspec)
+static int getpath(BYTE *p, BYTE *d, int dirspec)
 {
 	REG int 	i, i2 ;
-	REG char	*p1 ;
+	REG BYTE	*p1 ;
 
 	for( i = 0 , p1 = p ; *p1 && (*p1 != SLASH) ; p1++ , i++ )
 		;
@@ -1440,10 +1440,10 @@ static int getpath(char *p, char *d, int dirspec)
 /*
 **  match - utility routine to compare file names
 */
-/* char *s1  -   name we are checking */
-/* char *s2  -   name in fcb */
+/* BYTE *s1  -   name we are checking */
+/* BYTE *s2  -   name in fcb */
 
-static BOOL match(char *s1, char *s2)
+static BOOL match(BYTE *s1, BYTE *s2)
 {
     REG int i;
 
@@ -1452,11 +1452,11 @@ static BOOL match(char *s1, char *s2)
      **  only specific requests for deleted entries do.
      */
 
-    if (*s2 == (char)0xe5)
+    if (*s2 == (BYTE)0xe5)
     {
         if (*s1 == '?')
             return( FALSE );
-        else if (*s1 == (char)0xe5)
+        else if (*s1 == (BYTE)0xe5)
             return( TRUE );
     }
 
@@ -1513,7 +1513,7 @@ static void makbuf(FCB *f, DTAINFO *dt)
 **	Last modified	19 Jul 85	SCC
 */
 
-static int xcmps(char *s, char *d)
+static int xcmps(BYTE *s, BYTE *d)
 {
 	REG int i;
 
@@ -1528,7 +1528,7 @@ static int xcmps(char *s, char *d)
 **  getdnd - find a dnd with matching name
 */
 
-static DND *getdnd(char *n, DND *d)
+static DND *getdnd(BYTE *n, DND *d)
 {
 	REG DND *dnd ;
 

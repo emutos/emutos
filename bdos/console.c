@@ -29,7 +29,7 @@
 /*									  */
 long glbkbchar[3][KBBUFSZ];		/* The actual typeahead buffer	  */
 					/* The 3 elements are prn,aux,con */
-char kbchar[3]; 			/* size of typeahead buffer for   */
+BYTE kbchar[3]; 			/* size of typeahead buffer for   */
 					/* each element 		  */
 long *insptr[3];			/* insertion ptr for each buffer  */
 long *remptr[3];			/* removal ptr for each buffer	  */
@@ -59,9 +59,9 @@ static void buflush(int h);
 static void conout(int h, int ch);
 static void cookdout(int h, int ch);
 static long getch(int h);
-static void prt_line(int h, char *p);
+static void prt_line(int h, BYTE *p);
 static void newline(int h, int startcol);
-static int backsp(int h, char *cbuf, int retlen, int col);
+static int backsp(int h, BYTE *cbuf, int retlen, int col);
 
 #define UBWORD(x) (((int) x) & 0x00ff)
 
@@ -465,7 +465,7 @@ long rawconio(int parm)
  * xprt_line - Function 0x09 - Print line up to nul with tab expansion
  */
 
-void xprt_line(char *p)
+void xprt_line(BYTE *p)
 {
     prt_line(HXFORM(run->p_uft[1]),p);
 }
@@ -476,7 +476,7 @@ void xprt_line(char *p)
  * prt_line - print line to stdout
  */
 
-static void prt_line(int h, char *p)
+static void prt_line(int h, BYTE *p)
 {
     while( *p ) tabout( h, *p++ );
 }
@@ -502,11 +502,11 @@ static void newline(int h, int startcol)
 
 /* backspace one character position */
 /* col is the starting console column */
-static int backsp(int h, char *cbuf, int retlen, int col) 
+static int backsp(int h, BYTE *cbuf, int retlen, int col) 
 {
-    register char	ch;		/* current character		*/
+    register BYTE	ch;		/* current character		*/
     register int	i;
-    register char	*p;		/* character pointer		*/
+    register BYTE	*p;		/* character pointer		*/
 
     if (retlen) --retlen;
 				/* if buffer non-empty, decrease it by 1 */
@@ -541,15 +541,15 @@ static int backsp(int h, char *cbuf, int retlen, int col)
 */
 
 /* p is: max length, return length, buffer space */
-void readline(char *p)
+void readline(BYTE *p)
 {
     p[1] = cgets(HXFORM(run->p_uft[0]),(((int) p[0]) & 0xFF),&p[2]);
 }
 
 /* h is special handle denoting device number */
-int cgets(int h, int maxlen, char *buf)
+int cgets(int h, int maxlen, BYTE *buf)
 {
-	char ch;
+	BYTE ch;
 	int i,stcol,retlen;
 
 	stcol = glbcolumn[h];		/* set up starting column */

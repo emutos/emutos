@@ -1,9 +1,8 @@
 /*
  * proc.c - process management routines
  *
- * Copyright (c) 2001 Lineo, Inc.
+ * Copyright (c) 2001 Lineo, Inc. and Authors:
  *
- * Authors:
  *  KTB     Karl T. Braun (kral)
  *  MAD     Martin Doering
  *  ACH     ???
@@ -16,7 +15,7 @@
 
 #include "portab.h"
 #include "fs.h"
-#include "bios.h"				/*  M01.01.02	*/
+#include "bios.h"
 #include "mem.h"
 #include "proc.h"
 #include "gemerror.h"
@@ -30,7 +29,7 @@
  */
 
 static void ixterm( PD *r );
-static WORD envsize( char *env );
+static WORD envsize( BYTE *env );
 
 /*
  * global variables
@@ -75,10 +74,7 @@ static void	ixterm( PD *r )
             diruse[h]-- ;
     }
 
-    /*
-     *  for each item in the allocated list that is owned by 'r',
-     *	free it
-     */
+    /* free each item in the allocated list, that is owned by 'r' */
 
     for( m = *( q = &pmd.mp_mal ) ; m ; m = *q )
 	{
@@ -101,9 +97,9 @@ static void	ixterm( PD *r )
  * double null.
  */
 
-static WORD envsize( char *env )
+static  WORD envsize( BYTE *env )
 {
-    REG char	*e ;
+    REG BYTE	*e ;
     REG WORD 	cnt ;
 
     for( e = env, cnt = 0 ; !(*e == NULL && *(e+1) == NULL) ; ++e, ++cnt )
@@ -120,7 +116,7 @@ static WORD envsize( char *env )
  * load&go(cmdlin,cmdtail), load/nogo(cmdlin,cmdtail), justgo(psp)
  * create psp - user receives a memory partition
  *
- * @flg: flag = 0: load&go, 3:load/nogo, 4:justgo, 5:create psp
+ * @flg: 0: load&go, 3: load/nogo, 4: justgo, 5: create psp, 6: ???
  * @s:   command
  * @t:   tail
  * @v:   environment
@@ -129,10 +125,10 @@ static WORD envsize( char *env )
 #warning "(I don't know how to get rid of "
 #warning "the following three warnings)"
 
-long	xexec(WORD flg, char *s, char *t, char *v)
+long	xexec(WORD flg, BYTE *s, BYTE *t, BYTE *v)
 {	
     PD	*p;
-    char *b, *e;
+    BYTE *b, *e;
     WORD i, h;			/*  M01.01.04		*/
     long rc, max;
     MD	*m, *env;
@@ -212,7 +208,7 @@ long	xexec(WORD flg, char *s, char *t, char *v)
             return(ENSMEM) ;
         }
 
-        e = (char *) env->m_start;
+        e = (BYTE *) env->m_start;
 
         /*
          **  now copy it
@@ -254,12 +250,12 @@ long	xexec(WORD flg, char *s, char *t, char *v)
          * initialize the PD (first, by zero'ing it out)
          */
 
-        bzero( (char *) p , sizeof(PD)	) ;
+        bzero( (BYTE *) p , sizeof(PD)	) ;
 
         p->p_lowtpa = (long) p ;		/*  M01.01.06	*/
         p->p_hitpa  = (long) p	+  max ;	/*  M01.01.06	*/
         p->p_xdta = &p->p_cmdlin[0] ;	/* default p_xdta is p_cmdlin */
-        p->p_env = (char *) env->m_start ;
+        p->p_env = (BYTE *) env->m_start ;
 
 
         /* now inherit standard files from me */
@@ -288,7 +284,7 @@ long	xexec(WORD flg, char *s, char *t, char *v)
             *b++ = *t++;
 
         *b++ = 0;
-        t = (char *) p;
+        t = (BYTE *) p;
     }
 
     /*
@@ -363,7 +359,7 @@ long	xexec(WORD flg, char *s, char *t, char *v)
  *  without a return code
  */
 
-void x0term(void)
+void    x0term(void)
 {
     xterm(0);
 }

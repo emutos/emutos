@@ -295,3 +295,6 @@ Start... early ages
 - removed -Tdata= from Makefile (LVL)
 - painfully ANSIfied bdos and removed nearly all warnings (LVL)
 - minor changes (LVL)
+
+21. Nov. 2001
+- Changed all 'char's in bdos/ to 'BYTE', other will follow (MAD)

@@ -108,11 +108,11 @@ PD
     long	p_blen;
     /* 0x20 */
     long	p_0fill[3] ;
-    char	*p_env;
+    BYTE	*p_env;
     /* 0x30 */
     long	p_1fill[20] ;
     /* 0x80 */
-    char	p_cmdlin[0x80];
+    BYTE	p_cmdlin[0x80];
 } ;
 #endif
 

@@ -15,3 +15,4 @@
 - bconin needs to have different keyboard mappings
 - VDI: code cleanup, Makefile, esclisa and gsxvars like in EmuTOS
 - EmuTOS crashes, if it boots from some STeem generated floppy images
+- Change char, int, long to BYTE, WORD, LONG

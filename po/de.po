@@ -10,7 +10,8 @@ msgstr "Nimm die Floppy raus und drück RETURN"
 #: bios/bios.c:396
 msgid ""
 "[FAIL] HALT - should never be reached!\n"
-msgstr "HALT - sollte niemals erreicht werden!\n"
+msgstr ""
+"HALT - sollte niemals erreicht werden!\n"
 
 #: bios/initinfo.c:126
 msgid "EmuTOS Ver.:  "
@@ -231,4 +232,163 @@ msgstr "Byte pro Sektor      "
 #: cli/command.c:2113
 msgid "Command not found."
 msgstr "Programm nicht gefunden."
+
+#: cli/command.c:653
+msgid ""
+"CAT or TYPE filenm.ext\r\n"
+"\tWrites filenm.ext to standard output."
+msgstr ""
+"CAT oder TYPE datein.ext\r\n"
+"\tSchreibt datei.ext nach standard Ausgabe."
+
+#: cli/command.c:656
+msgid ""
+"CD [pathnm]\r\n"
+"\tWith pathnm it sets default for working directory.\r\n"
+"\tWithout pathnm displays current working directory."
+msgstr ""
+"CD [pfadname]\r\n"
+"\tMit pfadname wird neues Arbeitsverzeichnis gesetzt.\r\n"
+"\tOhne pfadname wird das aktuelle Arbeitsverzeichnis angezeigt."
+
+#: cli/command.c:660
+msgid ""
+"CHMOD [pathnm/]filenm mode\r\n"
+"\tChanges the mode of the file specified in filenm to the\r\n"
+"\tvalue of mode.\tAcceptable values are < 7:\r\n"
+"\t\t0 - Normal File Entry\r\n"
+"\t\t1 - File is Read Only\r\n"
+"\t\t2 - File is Hidden from directory Search\r\n"
+"\t\t4 - File is System File"
+msgstr ""
+"CHMOD [pfadname/]datei.ext Modus\r\n"
+"\tÄndert den Modus der angegebenen Datei\r\n"
+"\twie in Modus.\tMögliche Werte sind < 7:\r\n"
+"\t\t0 - Normale DateiNormal File Entry\r\n"
+"\t\t1 - Schreibgeschützte Datei\r\n"
+"\t\t2 - Versteckte Datei\r\n"
+"\t\t4 - System-Datei"
+
+#: cli/command.c:670
+msgid ""
+"COPY source_file [destination_file]\r\n"
+"\tCopies source to destination."
+msgstr ""
+"COPY quelldatei [zieldatei]\r\n"
+"\tKopiert die Quelldatei auf die Zieldatei."
+
+#: cli/command.c:673
+msgid ""
+"DIR or LS [filenm.ext] [-f] [-d] [-t] [-w]\r\n"
+"\t-f - anything but directoryies.\r\n"
+"\t-d - directories only.\r\n"
+"\t-t - terse: names only.\r\n"
+"\t-w - wide: names only displayed horizontally."
+msgstr ""
+"DIR oder LS [datei.ext] [-f] [-d] [-t] [-w]\r\n"
+"\t-f - Alles, außer Verzeichnissen.\r\n"
+"\t-d - Nur Verzeichnisse.\r\n"
+"\t-t - Kurz: Nur Datei-Namen.\r\n"
+"\t-w - Breit: Nur Datei-Namen nebeneinander."
+
+#: cli/command.c:686
+msgid ""
+"INIT [drive_spec:]\r\n"
+"\tReinitializes FAT entries this wiping disk."
+msgstr ""
+"INIT [Laufwerk:]\r\n"
+"\tReinitialisiert die FAT-Einträge des Laufwerkes."
+
+#: cli/command.c:689
+msgid ""
+"MD [subdirectory name]\r\n"
+"\tCreates a new subdirectory in current directory."
+msgstr ""
+"MD [Verzeichnis]\r\n"
+"\tErzeugt ein neues Unterverzeichnis im aktuellen Verzeichnis."
+
+#: cli/command.c:692
+msgid ""
+"MOVE source_file [destination_file]\r\n"
+"\tCopies source to destination and deletes source."
+msgstr ""
+"MOVE quelldatei [zieldatei]\r\n"
+"\tBewegt die Quelldatei auf die Zieldatei."
+
+#: cli/command.c:696
+msgid ""
+"\tWrites 'CR to continue...' to standard output\r\n"
+"\tand waits for a carriage return from standard input."
+msgstr ""
+"\tSchreibt 'Weiter mit CR...' nach Standard-Ausgabe\r\n"
+"\tund wartet auf RETURN von Standard-Eingabe."
+
+#: cli/command.c:700
+msgid ""
+"\tTurns command processing abort feature ON/OFF.\r\n"
+"\tIf PRGERR is ON and a .PRG file returns a non zero completion\r\n"
+"\tcode, all further processing will stop.  Usefull in .BAT files.\r\n"
+"\tDefault is ON."
+msgstr ""
+"\tSchaltet die Möglichkeit des Programmabbruchs ON/OFF.\r\n"
+"\tWenn PRGERR auf ON steht und ein Programm einen Rückgabewert > 0 \r\n"
+"\gibt, wird alle weitere Abarbeitung gestoppt. Brauchbar in .BAT Dateien.\r\n"
+"\tStandard ist ON."
+
+#: cli/command.c:707
+msgid ""
+"PATH [;[pathnm]...]\r\n"
+"\tWith path name sets default path for batch and commands.\r\n"
+"\tWithout path name displays current path"
+msgstr ""
+"PATH [;[pfadname]...]\r\n"
+"\tSetzt den Suchpfad für Programme und Batch-Dateien.\r\n"
+"\tOhne 'pfadname' zeigt es den Suchpfad an."
+
+#: cli/command.c:712
+msgid ""
+"REM or ECHO [\"string\"]\r\n"
+"\tStrips quotes and writes string to standard output.\r\n"
+"\tr is replaced by 13, /n by 10, /0 by 0x0.\r\n"
+"\t/c by 13 10, /anything is replaced by anything."
+msgstr ""
+"REM oder ECHO [\"text\"]\r\n"
+"\tSchreibt 'text' ohne die Anführungszeichen nach Standard Ausgabe.\r\n"
+"\t/r wird ersetzt durch 13, /n durch 10, /0 durch 0x0.\r\n"
+"\t/c durch 13 10, /anything durch 'anything'."
+
+#: cli/command.c:717
+msgid ""
+"REN source_file_nm [destination_file_nm]\r\n"
+"\tRenames source to destination."
+msgstr ""
+"REN quelldatei [zieldatei]\r\n"
+"\tÄndert den Namen der Quell-Datei nach Ziel-Datei."
+
+#: cli/command.c:720
+msgid ""
+"RD [pathnm]\r\n"
+"\tRemoves named directory."
+msgstr ""
+"RD [pfadname]\r\n"
+"\tEntfernt das Verzeichnis 'pfadname'."
+
+#: cli/command.c:723
+msgid ""
+"RM or DEL or ERA filenm [[filemn]...] [-q]\r\n"
+"\tRemoves named file from directory.\r\n"
+"\tIf the -q option is used, the CLI will display the question\r\n"
+"\tY/CR... and wait for a response."
+msgstr ""
+"RM oder DEL oder ERA dateiname [[dateiname]...] [-q]\r\n"
+"\tEntfernt Datei aus Verzeichnis.\r\n"
+"\tMit '-q' wird nochmal nachgefragt."
+
+#: cli/command.c:728
+msgid ""
+"SHOW [drive_spec:]\r\n"
+"\tDisplays disk status for default drive or drive specified."
+msgstr ""
+"SHOW [laufwerk:]\r\n"
+"\tZeigt den Status des angegeben oder des Standard-Laufwerks an."
 

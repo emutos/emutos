@@ -72,7 +72,7 @@ void flush(BCB *b)
 **	return the ptr to the buffer containing the desired record
 */
 
-char *getrec(int recn, DMD *dm, int wrtflg)
+BYTE *getrec(int recn, DMD *dm, int wrtflg)
 {
 	REG BCB *b;
 	BCB	*p,*mtbuf,**q,**phdr;
@@ -184,9 +184,9 @@ doio:		for (p = *(q = phdr); p->b_link; p = *(q = &p->b_link))
 **  packit - pack into user buffer
 */
 
-char *packit(REG char *s, REG char *d)
+BYTE *packit(REG BYTE *s, REG BYTE *d)
 { 
-	char *s0;
+	BYTE *s0;
 	REG int i;
 
 	if (!(*s))

@@ -66,7 +66,7 @@ DND     *dirtbl[NCURDIR] ;
  **	drvsel - mask of drives selected since power up
  */
 
-char    diruse[NCURDIR] ;
+BYTE    diruse[NCURDIR] ;
 int     drvsel ;
 
 

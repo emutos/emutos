@@ -397,7 +397,7 @@
  *  xfr2usr -
  */
 
-void   xfr2usr(REG int n, REG char *s, REG char *d)
+void   xfr2usr(REG int n, REG BYTE *s, REG BYTE *d)
 {
     while (n--)
         *d++ = *s++;
@@ -409,7 +409,7 @@ void   xfr2usr(REG int n, REG char *s, REG char *d)
  *  usr2xfr -
  */
 
-void    usr2xfr(REG int n, REG char *d, REG char *s)
+void    usr2xfr(REG int n, REG BYTE *d, REG BYTE *s)
 {
     while (n--)
         *d++ = *s++;
@@ -432,7 +432,7 @@ BYTE    uc(REG BYTE c)
  *  xgetdta - Function 0x2F	f_getdta
  */
 
-char    *xgetdta(void)      /* return address of dta */
+BYTE    *xgetdta(void)      /* return address of dta */
 {
 	return(run->p_xdta);
 }

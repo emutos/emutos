@@ -25,9 +25,9 @@ static void addit(OFD *p, long siz, int flg);
 static long xrw(int wrtflg, 
 		OFD *p, 
 		long len, 
-		char *ubufr, 
-		void (*bufxfr)(int, char *, char *));
-static void usrio(int rwflg, int num, int strt, char *ubuf, DMD *dm);
+		BYTE *ubufr, 
+		void (*bufxfr)(int, BYTE *, BYTE *));
+static void usrio(int rwflg, int num, int strt, BYTE *ubuf, DMD *dm);
 
 
 /*
@@ -282,11 +282,11 @@ static void addit(OFD *p, long siz, int flg)
 static long xrw(int wrtflg, 
 		OFD *p, 
 		long len, 
-		char *ubufr, 
-		void (*bufxfr)(int, char *, char *))
+		BYTE *ubufr, 
+		void (*bufxfr)(int, BYTE *, BYTE *))
 {
 	REG DMD *dm;
-	char *bufp;
+	BYTE *bufp;
 	int bytn,recn,lenxfr,lentail,num;	/*  M01.01.03 */
 	int hdrrec,lsiz,tailrec;
 	int last, nrecs, lflg; /* multi-sector variables */
@@ -467,7 +467,7 @@ exit:	return(rc);
 **		to return any error codes.
 */
 
-static void usrio(int rwflg, int num, int strt, char *ubuf, DMD *dm)
+static void usrio(int rwflg, int num, int strt, BYTE *ubuf, DMD *dm)
 {
 	REG BCB *b;
 
