@@ -26,18 +26,6 @@
 #define BFHCON  2
 
 
-/*
- *  return codes
- */
-
-#define DEVREADY        -1L             /*  device ready                */
-#define DEVNOTREADY     0L              /*  device not ready            */
-#define MEDIANOCHANGE   0L              /*  media def has not changed   */
-#define MEDIAMAYCHANGE  1L              /*  media may have changed      */
-#define MEDIACHANGE     2L              /*  media def has changed       */
-
-
-
 
 
 /*

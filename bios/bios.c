@@ -65,7 +65,6 @@ extern BYTE *biosts ;           /*  time stamp string */
 
 
 extern LONG trap_1(WORD, ...);  /* found in startup.s */
-extern LONG drvbits;            /* found in startup.s */
 extern MD b_mdx;                /* found in startup.s */
 
 extern PD *run;                 /* see bdos/proc.c */
@@ -213,7 +212,8 @@ void autoexec(void)
 {
     PD *pd;
 
-    if( ! ((1L << bootdev) & drvbits) ) return;
+    if( ! blkdev_avail(bootdev) )       /* check, if bootdev available */
+        return;
 
     /* create a basepage, and run the do_autoexec routine as a program */
     pd = (PD *) trap_1( 0x4b, 5, "", "", "");
@@ -273,14 +273,8 @@ void biosmain(void)
         }
     }
 
-#if DBG_BLKDEV
-    kprintf("drvbits = %08lx\n", drvbits);
-#endif
     /* boot eventually from a block device (floppy or harddisk) */
     blkdev_hdv_boot();
-#if DBG_BLKDEV
-    kprintf("drvbits = %08lx, bootdev = %d\n", drvbits, bootdev);
-#endif
 
     defdrv = bootdev;
     trap_1( 0x0e , defdrv );    /* Set boot drive */
@@ -531,7 +525,7 @@ LONG bios_9(WORD drv)
 
 LONG bios_a(void)
 {
-    return(drvbits);
+    return blkdev_drvmap();
 }
 
 

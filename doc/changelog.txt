@@ -592,3 +592,6 @@ Start... early ages
 - updated po/de.po po/fr.po for Fast-RAM texts (MAD)
 - did put BPB in bios/blkdev.h (MAD)
 
+25. Jan. 2002
+- Did put drvbit stuff into bios/blkdev.c (MAD)
+

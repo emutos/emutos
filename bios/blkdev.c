@@ -99,7 +99,14 @@ void blkdev_hdv_init(void)
 
 LONG blkdev_hdv_boot(void)
 {
+#if DBG_BLKDEV
+    kprintf("drvbits = %08lx\n", drvbits);
+#endif
+    /* boot eventually from a block device (floppy or harddisk) */
     return(flop_hdv_boot());
+#if DBG_BLKDEV
+    kprintf("drvbits = %08lx, bootdev = %d\n", drvbits, bootdev);
+#endif
 }
 
 
@@ -310,6 +317,36 @@ LONG blkdev_mediach(WORD dev)
         }
     }
 }
+
+
+
+/**
+ * blkdev_drvmap - Read drive bitmap
+ *
+ * Returns a long containing a bit map of logical drives on  the system,
+ * with bit 0, the least significant bit, corresponding to drive A.
+ * Note that if the BIOS supports logical drives A and B on a single
+ * physical drive, it should return both bits set if a floppy is present.
+ */
+
+LONG blkdev_drvmap(void)
+{
+    return(drvbits);
+}
+
+
+
+/*
+ * blkdev_avail - Read drive bitmapCheck drive availability
+ *
+ * Returns 0, if drive not available
+ */
+
+LONG blkdev_avail(WORD dev)
+{
+    return((1L << dev) & drvbits)
+}
+
 
 /* compute_cksum is also used for booting DMA, hence not static. */
 UWORD compute_cksum(LONG buf)
