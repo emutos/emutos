@@ -508,18 +508,18 @@ void bios_3(WORD handle, BYTE what)
  * drive = drive #: 0 = A:, 1 = B:, etc
  */
 
-LONG bios_4(WORD r_w, LONG adr, WORD numb, WORD first, WORD drive)
+LONG bios_4(WORD r_w, LONG adr, WORD numb, WORD first, WORD drive, LONG lfirst)
 {
 #if DBGBIOS
     LONG ret;
     kprintf("BIOS rwabs(rw = %d, addr = 0x%08lx, count = 0x%04x, "
-            "sect = 0x%04x, dev = 0x%04x)",
-            r_w, adr, numb, first, drive);
-    ret = hdv_rw(r_w, adr, numb, first, drive);
+            "sect = 0x%04x, dev = 0x%04x, lsect = 0x%08x)",
+            r_w, adr, numb, first, drive, lfirst);
+    ret = hdv_rw(r_w, adr, numb, first, drive, lfirst);
     kprintf(" = 0x%08lx\n", ret);
     return ret;
 #else
-    return hdv_rw(r_w, adr, numb, first, drive);
+    return hdv_rw(r_w, adr, numb, first, drive, lfirst);
 #endif
 }
 

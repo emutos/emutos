@@ -27,7 +27,10 @@
 
 /*==== External declarations ==============================================*/
 
-extern LONG random(void);    /* in xbios.c */
+extern LONG random(void);   /* in xbios.c */
+
+extern BLKDEV blkdev[];     /* in blkdev.c */
+extern UNIT devices[];      /* in blkdev.c */
 
 
 /*==== Introduction =======================================================*/
@@ -42,10 +45,8 @@ extern LONG random(void);    /* in xbios.c */
  * - internal floppy status info
  * - floppy_init
  * - disk initializations: hdv_init, hdv_boot
- * - boot-sector: getbpb, protobt 
+ * - boot-sector: protobt 
  * - boot-sector utilities: compute_cksum, intel format words
- * - bios rwabs
- * - bios mediach
  * - xbios floprd, flopwr, flopver
  * - xbios flopfmt
  * - internal floprw, fropwtrack
@@ -76,32 +77,10 @@ extern LONG random(void);    /* in xbios.c */
 #define SECT_SIZ 512
 #define TRACK_SIZ 6250
 
-/*==== Internal declarations ==============================================*/
- 
-struct bs {
-  /*   0 */  UBYTE bra[2];
-  /*   2 */  UBYTE loader[6];
-  /*   8 */  UBYTE serial[3];
-  /*   b */  UBYTE bps[2];    /* bytes per sector */
-  /*   d */  UBYTE spc;       /* sectors per cluster */
-  /*   e */  UBYTE res[2];    /* number of reserved sectors */
-  /*  10 */  UBYTE fat;       /* number of FATs */
-  /*  11 */  UBYTE dir[2];    /* number of DIR root entries */
-  /*  13 */  UBYTE sec[2];    /* total number of sectors */
-  /*  15 */  UBYTE media;     /* media descriptor */
-  /*  16 */  UBYTE spf[2];    /* sectors per FAT */
-  /*  18 */  UBYTE spt[2];    /* sectors per track */
-  /*  1a */  UBYTE sides[2];  /* number of sides */
-  /*  1c */  UBYTE hid[2];    /* number of hidden sectors */
-  /*  1e */  UBYTE data[0x1e0];
-  /* 1fe */  UBYTE cksum[2];
-};
-
 /*==== Internal prototypes ==============================================*/
 
 /* set/get intel words */
 static void setiword(UBYTE *addr, UWORD value);
-static UWORD getiword(UBYTE *addr);
 
 static LONG flop_bootcheck(void);
 
@@ -117,7 +96,7 @@ static void flopini(WORD dev);
 
 /* called at start and end of a floppy access. */
 static void floplock(WORD dev);
-static void flopunlk(void);
+static void flopunlk(WORD dev);
 
 /* select in the PSG port A*/
 static void select(WORD dev, WORD side);
@@ -154,10 +133,6 @@ static WORD memcmp(void* a, void* b, LONG n);
  * cur_track contains a copy of the fdc track register for the current
  * drive, or -1 to indicate that the drive does not exist.
  *
- * the finfo structure contains the geometry as read from the 
- * bootsector at last get_bpb. finfo[].sides == -1 if the geometry
- * is invalid.
- *
  * last_access is set to the value of the 200 Hz counter at the end of
  * last fdc command. last_access can be used by mediach, a short time 
  * elapsed indicating that the floppy was not ejected.
@@ -179,16 +154,10 @@ static WORD cur_track;
 static struct flop_info {
   WORD cur_track;
   WORD rate;
-  WORD spt;          /* number of sectors per track */
-  WORD sides;        /* number of sides, or -1 if geometry not inited */
-  BYTE serial[3];    /* the serial number taken from the bootsector */
   BYTE wp;           /* != 0 means write protected */
 } finfo[2];
-static LONG last_access;
 
 extern WORD flock;
-
-static struct bpb flop_bpb[2];
 
 /*==== hdv_init and hdv_boot ==============================================*/
 
@@ -202,10 +171,8 @@ void flop_hdv_init(void)
     nflops = 0;
     cur_dev = -1;
     finfo[0].cur_track = -1;
-    finfo[0].sides = -1;
     finfo[0].rate = seekrate;
     finfo[1].cur_track = -1;
-    finfo[1].sides = -1;
     finfo[1].rate = seekrate;
     flopini(0);
     flopini(1);
@@ -225,13 +192,15 @@ static void flopini(WORD dev)
 {
   WORD status;
   
+  blkdev[dev].valid = devices[dev].valid = 0;    /* disabled by default */
+
   floplock(dev);
   cur_track = -1;
   select(dev, 0);
   set_fdc_reg(FDC_CS, FDC_RESTORE);
   if(timeout_gpip(TIMEOUT)) {
     /* timeout */
-    flopunlk();
+    flopunlk(dev);
     return;
   }
   status = get_fdc_reg(FDC_CS);
@@ -242,9 +211,22 @@ static void flopini(WORD dev)
     cur_track = 0;
     nflops++;
     drvbits |= (1<<dev);
+
+    /* init blkdev and device with default parameters */
+    blkdev[dev].valid = 1;
+    blkdev[dev].start = 0;
+    blkdev[dev].size = 720;
+    blkdev[dev].geometry.sides = 2;		/* default geometry of 3.5" DD */
+    blkdev[dev].geometry.spt = 9;
+    blkdev[dev].unit = 0;
+    devices[dev].valid = 1;
+    devices[dev].pssize = 512;
+    devices[dev].size = 720;
+    devices[dev].last_access = 0;       /* never */
+
   } else {
   }
-  flopunlk();
+  flopunlk(dev);
 }
 
 
@@ -288,77 +270,37 @@ LONG flop_bootcheck(void)
     }
 }
  
-
-/*==== boot-sector: getbpb, protobt =======================================*/
-
-LONG flop_getbpb(WORD dev)
+LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt, WORD sides, WORD dev)
 {
-  struct bs *b;
-  LONG tmp;
-  WORD err;
+    WORD track;
+    WORD side;
+    WORD sect;
+    WORD err;
   
-  if(dev < 0 || dev > 1) return 0;
-  
-  /* read bootsector */
-  err = floprw((LONG) dskbufp, RW_READ, dev, 1, 0, 0, 1);
-  if(err) {
-    /* TODO */ 
-    finfo[dev].sides = -1;
+    kprintf("floppy_rw(%d, %ld, %d, %ld, %d, %d, %d)\n",
+                       rw, buf, cnt, recnr, spt, sides, dev);
+
+    if (dev < 0 || dev > 1) return EUNDEV;  /* unknown device */
+    
+    while( --cnt >= 0) {
+        sect = (recnr % spt) + 1;
+        track = recnr / spt;
+        if (sides == 1) {
+            side = 0;
+        }
+        else {
+            side = track % 2;
+            track /= 2;
+        }
+        err = floprw(buf, rw, dev, sect, track, side, 1);
+        buf += SECT_SIZ;
+        recnr ++;
+        if(err) return (LONG) err;
+    }
     return 0;
-  }
-
-  b = (struct bs *)dskbufp;
-#if DBG_FLOP
-  kprintf("bootsector[dev = %d] = {\n  ...\n", dev);
-  kprintf("  res = %d;\n", getiword(b->res));
-  kprintf("  hid = %d;\n", getiword(b->hid));
-  kprintf("}\n");
-#endif
-  
-  flop_bpb[dev].recsiz = getiword(b->bps);
-  flop_bpb[dev].clsiz = b->spc;
-  flop_bpb[dev].clsizb = flop_bpb[dev].clsiz * flop_bpb[dev].recsiz;
-  tmp = getiword(b->dir);
-  flop_bpb[dev].rdlen = (tmp * 32) / flop_bpb[dev].recsiz;
-  flop_bpb[dev].fsiz = getiword(b->spf);
-
-  /* the structure of the floppy is assumed to be:
-   * - bootsector
-   * - fats
-   * - dir
-   * - data clusters
-   * TODO: understand what to do with reserved or hidden sectors.
-   */
-
-  flop_bpb[dev].fatrec = 1 + flop_bpb[dev].fsiz; 
-  flop_bpb[dev].datrec = flop_bpb[dev].fatrec + flop_bpb[dev].fsiz 
-                         + flop_bpb[dev].rdlen;
-  flop_bpb[dev].numcl = (getiword(b->sec) - flop_bpb[dev].datrec) / b->spc;
-  flop_bpb[dev].b_flags = 0;   /* assume floppies are always in FAT12 */
-  
-  /* additional geometry info */
-  finfo[dev].sides = getiword(b->sides);
-  finfo[dev].spt = getiword(b->spt);
-  finfo[dev].serial[0] = b->serial[0];
-  finfo[dev].serial[1] = b->serial[1];
-  finfo[dev].serial[2] = b->serial[2];
-  
-#if DBG_FLOP
-  kprintf("bpb[dev = %d] = {\n", dev);
-  kprintf("  recsiz = %d;\n", flop_bpb[dev].recsiz);
-  kprintf("  clsiz  = %d;\n", flop_bpb[dev].clsiz);
-  kprintf("  clsizb = %d;\n", flop_bpb[dev].clsizb);
-  kprintf("  rdlen  = %d;\n", flop_bpb[dev].rdlen);
-  kprintf("  fsiz   = %d;\n", flop_bpb[dev].fsiz);
-  kprintf("  fatrec = %d;\n", flop_bpb[dev].fatrec);
-  kprintf("  datrec = %d;\n", flop_bpb[dev].datrec);
-  kprintf("  numcl  = %d;\n", flop_bpb[dev].numcl);
-  kprintf("  bflags = %d;\n", flop_bpb[dev].b_flags);
-  kprintf("}\n");
-#endif
-
-  return (LONG) &flop_bpb[dev];
 }
+
+/*==== boot-sector: protobt =======================================*/
 
 void protobt(LONG buf, LONG serial, WORD type, WORD exec)
 {
@@ -466,99 +408,17 @@ void protobt(LONG buf, LONG serial, WORD type, WORD exec)
 
 /*==== boot-sector utilities ==============================================*/
 
-/* compute_cksum is also used for booting DMA, hence not static. */
-UWORD compute_cksum(LONG buf)
-{
-  UWORD sum = 0;
-  UWORD tmp;
-  UBYTE *b = (UBYTE *)buf;
-  WORD i;
-  for(i = 0 ; i < 256 ; i++) {
-    tmp = *b++ << 8;
-    tmp += *b++;
-    sum += tmp;
-  }
-  return sum;
-}
-
 static void setiword(UBYTE *addr, UWORD value)
 {
   addr[0] = value;
   addr[1] = value >> 8;
 }
 
-static UWORD getiword(UBYTE *addr)
+UWORD getiword(UBYTE *addr)
 {
   UWORD value;
   value = (((UWORD)addr[1])<<8) + addr[0]; 
   return value;
-}
-
-/*==== bios rwabs =========================================================*/
-
-LONG flop_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev)
-{
-  WORD track;
-  WORD side;
-  WORD sect;
-  WORD err;
-  
-  if(dev < 0 || dev > 1) return EUNDEV;  /* unknown device */
-    
-  if(finfo[dev].sides == -1) {
-    /* no geometry. Should we call get_bpb ??? TODO */
-    return EDRVNR;  /* drive not ready */
-  }
-  
-  /* TODO mediach ignored */
-  rw &= RW_RW_MASK;
-  
-  while( --cnt >= 0) {
-    sect = (recnr % finfo[dev].spt) + 1;
-    track = recnr / finfo[dev].spt;
-    if(finfo[dev].sides == 1) {
-      side = 0;
-    } else {
-      side = track % 2;
-      track /= 2;
-    }
-    err = floprw(buf, rw, dev, sect, track, side, 1);
-    buf += SECT_SIZ;
-    recnr ++;
-    if(err) return (LONG) err;
-  }
-  return 0;
-}
-
-/*==== bios mediach =======================================================*/
-
-
-LONG flop_mediach(WORD dev)
-{
-  if(dev < 0 || dev > 1) return EUNDEV;   /* unknown device */
-  if(hz_200 < last_access + 100) {
-    /* less than half a second since last access, assume no mediachange */
-    return 0; /* definitely not changed */
-  } else {
-    WORD err;
-    struct bs *bs = (struct bs *) dskbufp;
-    /* TODO, monitor write-protect status in flopvbl... */
-    
-    /* for now, assume it is unsure and look at the serial number */
-    /* read bootsector */
-    err = floprw((LONG) bs, RW_READ, dev, 1, 0, 0, 1);
-    if(err) {
-      /* can't even read the bootsector, what do we do ??? */
-      return err;
-    }
-    if( (bs->serial[0] != finfo[dev].serial[0])
-        || (bs->serial[1] != finfo[dev].serial[1])
-        || (bs->serial[2] != finfo[dev].serial[2]) ) {
-      return 2; /* definitely changed */
-    } else {
-      return 1; /* unsure */
-    }
-  }
 }
 
 /*==== xbios floprd, flopwr ===============================================*/
@@ -600,7 +460,7 @@ WORD flopver(LONG buf, LONG filler, WORD dev,
       outerr = err;
       continue;
     }
-    if(memcmp((void *)buf, (void *)dskbufp, (long) flop_bpb[dev].recsiz)) {
+    if(memcmp((void *)buf, (void *)dskbufp, (long) SECT_SIZ)) {
       *bad++ = sect;
       outerr = -16;
     }
@@ -746,7 +606,7 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
   select(dev, side);
   err = set_track(track, finfo[dev].rate);
   if(err) {
-    flopunlk();
+    flopunlk(dev);
     return err;
   }
   for(retry = 0; retry < 2 ; retry ++) {
@@ -762,7 +622,7 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
     if(timeout_gpip(TIMEOUT)) {
       /* timeout */
       err = EDRVNR;  /* drive not ready */
-      flopunlk();
+      flopunlk(dev);
       return err;
     }
     status = get_dma_status();
@@ -787,7 +647,7 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
       }
     }
   }  
-  flopunlk();
+  flopunlk(dev);
   return err;
 }
 
@@ -810,7 +670,7 @@ static WORD flopwtrack(LONG buf, WORD dev, WORD track, WORD side)
   select(dev, side);
   err = set_track(track, finfo[dev].rate);
   if(err) {
-    flopunlk();
+    flopunlk(dev);
     return err;
   }
   for(retry = 0; retry < 2 ; retry ++) {
@@ -821,7 +681,7 @@ static WORD flopwtrack(LONG buf, WORD dev, WORD track, WORD side)
     if(timeout_gpip(TIMEOUT)) {
       /* timeout */
       err = EDRVNR;  /* drive not ready */
-      flopunlk();
+      flopunlk(dev);
       return err;
     }
     status = get_dma_status();
@@ -842,7 +702,7 @@ static WORD flopwtrack(LONG buf, WORD dev, WORD track, WORD side)
       }
     }
   }  
-  flopunlk();
+  flopunlk(dev);
   return err;
 }
 
@@ -866,9 +726,9 @@ static void floplock(WORD dev)
   } 
 }
 
-static void flopunlk(void)
+static void flopunlk(WORD dev)
 {
-  last_access = hz_200;
+  devices[dev].last_access = hz_200;
   flock = 0;
 }
 

@@ -25,6 +25,7 @@
 #include "screen.h"
 #include "sound.h"
 #include "floppy.h"
+#include "disk.h"
 #include "clock.h"
 #include "nvram.h"
 #include "mouse.h"
@@ -815,11 +816,7 @@ LONG xbios_2a(LONG sector, WORD count, PTR buf, WORD dev)
 #if DBG_XBIOS
     kprintf("XBIOS: DMAread\n");
 #endif
-#if IMPLEMENTED
-    return dmaread(sector, count, buf, dev);
-#else
-    return -1;
-#endif
+    return DMAread(sector, count, buf, dev);
 }
 
 /*
@@ -831,11 +828,7 @@ LONG xbios_2b(LONG sector, WORD count, PTR buf, WORD dev)
 #if DBG_XBIOS
     kprintf("XBIOS: DMAwrite\n");
 #endif
-#if IMPLEMENTED
-    return dmawrite(sector, count, buf, dev);
-#else
-    return -1;
-#endif
+    return DMAwrite(sector, count, buf, dev);
 }
 
 /*

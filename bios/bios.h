@@ -113,11 +113,7 @@ PD
  *  BPB - Bios Parameter Block
  */
 
-#if 0
-/* struct bpb is defined in floppy.h */
-#define BPB struct _bpb
-
-BPB /* bios parameter block */
+struct _bpb /* bios parameter block */
 {
         int     recsiz;         /* sector size in bytes */
         int     clsiz;          /* cluster size in sectors */
@@ -128,8 +124,9 @@ BPB /* bios parameter block */
         int     datrec;         /* first data record */
         int     numcl;          /* number of data clusters available */
         int     b_flags;
-} ;
-#endif
+};
+
+typedef struct _bpb BPB;
 
 /*
  *  flags for BPB

@@ -98,7 +98,7 @@ extern void (*dump_vec)(void);
 
 /* indirect BIOS vectors */
 
-LONG (*hdv_rw)(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev);
+LONG (*hdv_rw)(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG lrecnr);
 LONG (*hdv_bpb)(WORD dev);
 LONG (*hdv_mediach)(WORD dev);
 LONG (*hdv_boot)(void);

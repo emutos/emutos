@@ -45,6 +45,7 @@
 
         .global _printout
         .global kprintf         // asm glue, saves registers
+        .global _ara_DMAread
 
         .global _run
 
@@ -598,10 +599,14 @@ _printout:
         dc.l 0          // Printing subroutine
 #endif
 #if ARANYM_NATIVE_PRINT
-                dc.w 0x7135     // Jump to native printing subroutine
+        dc.w 0x7135     // Jump to native printing subroutine
 #endif
         rts
 
+// ==== DMAread(LONG sector, WORD count, LONG buf, WORD dev) =================
+_ara_DMAread:
+        dc.w 0x7136
+        rts
 
 // ==== ASM glue for kprintf =================================================
 kprintf:

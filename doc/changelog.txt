@@ -466,3 +466,38 @@ Start... early ages
 - bios/floppy.c: renamed flop_hdv_boot to flop_bootcheck
                  renamed do_hdv_boot to flop_hdv_boot 
                  should boot now after warmstart... (MAD)
+
+13. Jan. 2002
+- bios/floppy.c: moved BIOS functions (rwabs, getbpb, mediach) to blkdev.c
+                 moved geometry from finfo to blkdev struct
+                 moved last_access to devices struct
+                 moved FATfs bootsector struct to blkdev.h
+                 moved compute_cksum() to blkdev.c
+                 added floppy_rw() (that's the lowlevel part of floppy_rwabs)
+                 added (WORD dev) to flopunlk() in order to update last_access
+                 added hackish init of floppy geometry to flopini() (joy)
+- bios/floppy.h: disabled bpb struct
+                 made getiword externally accessible (joy)
+- bios/startup.S: added ara_DMAread() (for calling the aranym's DMAread) (joy)
+- bios/tosvars.h: added long recnr parameter to rwabs (like AHDI 3.0) (joy)
+- bios/bios.c: added long recnr parameter to bios_4 (like AHDI 3.0) (joy)
+- bios/bios.h: enabled bpb struct (joy)
+- bios/xbios.c: DMAread()/DMAwrite() implemented (joy)
+- Makefile: added disk.c to source files (joy)
+- bios/disk.[ch] created, DMAread()/DMAwrite() implemented (joy)
+- bios/blkdev.c: deleted most of Martin's framework
+                 added full AHDI 3.0 extended Rwabs() (yet to add MEDIACH check)
+                 added getBPB() with auto 12/16-bit FAT detection
+                 added Mediach() (same as was in floppy.c) (joy)
+- bios/blkdev.h: blkdev structure reworked (maybe a bit too much)
+                 bpb structure disabled - what's wrong with the bios.h one?
+                 UNIT and PARTITION structures - first ideas, incomplete (joy)
+- Comment: the only thing I am sure of is the Rwabs() implementation. I am not
+           very sure about the blkdev/device concept. Also would need to set
+           common language - how to call physical drive (unit? device? drive?)
+           and how to call logical disk (C:, partition, disk?). The problem
+           now is how many things can be detected during boot - the size of 
+           partition, of the whole drive (especially with floppy) etc.
+           bdos/fsio.c still strikes - passes null pointer for rwabs buffer.
+           That needs to be debugged (or maybe rewritten completely). (joy)
+
