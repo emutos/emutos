@@ -21,7 +21,7 @@
 #include "lineavars.h"
 #include "tosvars.h"
 
-
+#include "initinfo.h"
 
 /*==== Defines ============================================================*/
 
@@ -31,7 +31,7 @@
  * set_margin - Set
  */
 
-void set_margin(void)
+static void set_margin(void)
 {
     WORD marl;
     WORD celx;
@@ -46,8 +46,8 @@ void set_margin(void)
 }
 
 
-
-void set_middle(void)
+#if 0   /* unused */
+static void set_middle(void)
 {
     WORD marl;
     WORD celx;
@@ -60,10 +60,10 @@ void set_middle(void)
     for (celx = 0; celx<=marl; celx++)
         cprintf(" ");
 }
+#endif
 
 
-
-void set_line(void)
+static void set_line(void)
 {
     WORD llen;
     WORD celx;

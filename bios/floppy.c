@@ -273,26 +273,33 @@ LONG flop_getbpb(WORD dev)
     finfo[dev].sides = -1;
     return 0;
   }
-  {
-    WORD i;
-    UBYTE *bb = (UBYTE *)dskbufp;
-    kprintf("bootsector: \n");
-    for(i = 0 ; i < 128 ; i++) {
-      kprintf("%02x ", bb[i]);
-      if((i & 15) == 15) kprintf("\n");
-    }
-  }
-  
+
   b = (struct bs *)dskbufp;
+#if DBG_FLOP
+  kprintf("bootsector[dev = %d] = {\n  ...\n", dev);
+  kprintf("  res = %d;\n", getiword(b->res));
+  kprintf("  hid = %d;\n", getiword(b->hid));
+  kprintf("}\n");
+#endif
+  
   flop_bpb[dev].recsiz = getiword(b->bps);
   flop_bpb[dev].clsiz = b->spc;
   flop_bpb[dev].clsizb = flop_bpb[dev].clsiz * flop_bpb[dev].recsiz;
   tmp = getiword(b->dir);
   flop_bpb[dev].rdlen = (tmp * 32) / flop_bpb[dev].recsiz;
   flop_bpb[dev].fsiz = getiword(b->spf);
-  /* TODO: formulas below are FALSE if reserved sectors != 0 */
+
+  /* the structure of the floppy is assumed to be:
+   * - bootsector
+   * - fats
+   * - dir
+   * - data clusters
+   * TODO: understand what to do with reserved or hidden sectors.
+   */
+
   flop_bpb[dev].fatrec = 1 + flop_bpb[dev].fsiz; 
-  flop_bpb[dev].datrec = 1 + 2*flop_bpb[dev].fsiz + flop_bpb[dev].rdlen;
+  flop_bpb[dev].datrec = flop_bpb[dev].fatrec + flop_bpb[dev].fsiz 
+                         + flop_bpb[dev].rdlen;
   flop_bpb[dev].numcl = (getiword(b->sec) - flop_bpb[dev].datrec) / b->spc;
   flop_bpb[dev].b_flags = 0;   /* assume floppies are always in FAT12 */
   
@@ -303,6 +310,20 @@ LONG flop_getbpb(WORD dev)
   finfo[dev].serial[1] = b->serial[1];
   finfo[dev].serial[2] = b->serial[2];
   
+#if DBG_FLOP
+  kprintf("bpb[dev = %d] = {\n", dev);
+  kprintf("  recsiz = %d;\n", flop_bpb[dev].recsiz);
+  kprintf("  clsiz  = %d;\n", flop_bpb[dev].clsiz);
+  kprintf("  clsizb = %d;\n", flop_bpb[dev].clsizb);
+  kprintf("  rdlen  = %d;\n", flop_bpb[dev].rdlen);
+  kprintf("  fsiz   = %d;\n", flop_bpb[dev].fsiz);
+  kprintf("  fatrec = %d;\n", flop_bpb[dev].fatrec);
+  kprintf("  datrec = %d;\n", flop_bpb[dev].datrec);
+  kprintf("  numcl  = %d;\n", flop_bpb[dev].numcl);
+  kprintf("  bflags = %d;\n", flop_bpb[dev].b_flags);
+  kprintf("}\n");
+#endif
+
   return (LONG) &flop_bpb[dev];
 }
 
@@ -436,9 +457,7 @@ static void setiword(UBYTE *addr, UWORD value)
 static UWORD getiword(UBYTE *addr)
 {
   UWORD value;
-  kprintf("getiword addr = %lx: ", (LONG) addr - dskbufp);
   value = (((UWORD)addr[1])<<8) + addr[0]; 
-  kprintf("value = %x\n", value);
   return value;
 }
 

@@ -59,6 +59,7 @@ int cprintf(const char *fmt, ...)
 
 /*==== kprintf - do formatted ouput natively to the emulator ======*/
 
+
 static void kprintf_outc(int c)
 {
   char buf[2];

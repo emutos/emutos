@@ -51,7 +51,8 @@
 #define bconostat(a) trap13(8,a)
 #define getbpb(a) trap13(7,a)
 #define getmpb(a) trap13(0,a)
-#define rwabs(a,b,c,d,e) if((rwerr=trap13(4,a,b,c,d,e))!=0){errdrv=e;longjmp(errbuf,rwerr);}
+#define rwabs(a,b,c,d,e) {kprintf("in function %s,\n", __FUNCTION__);\
+  if((rwerr=trap13(4,a,b,c,d,e))!=0){errdrv=e;longjmp(errbuf,rwerr);}}
 
 #define min(a,b) (((a) < (b)) ? (a) : (b))
 /* LVL define xmovs(n,s,d)	bmove(s,d,n) */

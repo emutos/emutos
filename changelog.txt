@@ -235,4 +235,4 @@ Start... early ages
 
 31. Oct. 2001
 - a TOS in RAM loaded using gemdos (TODO, same as a bootable floppy)
-
+- some memory fixes, got rid of end.o

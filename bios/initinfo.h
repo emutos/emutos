@@ -14,13 +14,6 @@
 #ifndef _INITINFO_H
 #define _INITINFO_H
 
-#include "portab.h"
-#include "kprint.h"
-
-#if 0
-#include "bios.h"
-#include "tosvars.h"
-#endif
 
 
 /*==== Prototypes =========================================================*/
