@@ -664,4 +664,5 @@ Start... early ages
 - bios/mouse.c  - Added mouse_init - initial setup of mouse parameters (MAD)
 - bios/mousedrv.S - Seperated the mousedriver from VDI (MAD)
 - vdi/lisagem.S - Here is now just the VDI part of mousedriver setup (MAD)
-
+- bios/screen.c - the last patch for real Falcon reverted because it caused
+                  black screen under ARAnyM (joy)
