@@ -239,8 +239,10 @@ alter:
 
         move.l  #20,d1
         move.l  ramtop, d0
+        beq.s   zerofastram
         asr.l   d1, d0                  // ramtop divided by 2^20 = in MB
         sub.l   #16, d0                 // minus the first 16 MB of ST-RAM
+zerofastram:
         move.l  d0, -(sp)               // is the resulting FastRAM size
         move.l  _phystop, d0
         asr.l   d1, d0
