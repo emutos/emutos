@@ -1202,4 +1202,4 @@ Start... early ages
 
 31. Oct. 2002
 - Makefile - changed, so that vdi/lisaesc.S is used again (MAD)
-
+- aes/gemdosif.S - changed to lowercase and put _back after entry (MAD)
