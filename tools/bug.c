@@ -15,13 +15,14 @@
  * Bugs and limitations:
  * - free comments in po files are put to the end when updating
  * - only _() and N_() macros are handled
- * - not sure 100% compatible with gettext po files
+ * - not 100% compatible with gettext po files
  * - some weird messages
  * - trigraphs are not handled (this is a feature actually !)
  * 
  */
  
-/* Structure of this file
+/* 
+ * Structure of this file
  * (in this order, as each function calls functions above):
  * - library support (errors, memory, ...)
  * - basic data structures (string, dynamic array, hash, ...)
@@ -34,13 +35,13 @@
  * - main()
  */
 
-/* TODO list
+/* 
+ * TODO list
  * - better algorithm for merging po files (keep the order of entries)
- * - update should print stats
  * - parse_po_file is a mess
  * - o_free()
+ * - use strerror() to report errors
  * - use #~ for old entries
- * - write doc/nls.txt
  */
 
 #include <stdio.h>
@@ -715,7 +716,7 @@ int get_c_string(IFILE *f, str *s)
         case 'a': c = '\a'; break;
         case 'b': c = '\b'; break;
         case 'v': c = '\v'; break;
-        case 'e': c = '\e'; break;
+        case 'e': c =  033; break;  /* GNU C extension: \e for escape */
         case 'f': c = '\f'; break;
         case 'r': c = '\r'; break;
         case 't': c = '\t'; break;
@@ -873,7 +874,12 @@ void parse_po_file(char *fname, oh *o)
   
   f = ifopen(fname);
   if(f == NULL) {
-    fatal("could not open %s", fname);
+    /* TODO: UGLY HACK !!! */
+    if(!strcmp("po/messages.pot", fname)) {
+      fatal("could not open %s (run 'bug xgettext' to generate it)", fname);
+    } else {
+      fatal("could not open %s", fname);
+    }
   }
   for(;;) {
     c = inextsh(f);
@@ -1150,7 +1156,7 @@ void print_canon(FILE *f, char *t, char *prefix)
 }
 
 /*
- * pretty print refs and free the refs.
+ * pretty print refs.
  */
 
 char * refs_to_str(da *refs)
@@ -1180,7 +1186,6 @@ char * refs_to_str(da *refs)
     free(r);
   }
   s_addch(s, '\n');
-  da_free(refs);
   return s_detach(s);
 }
 
@@ -1199,6 +1204,7 @@ void po_convert_refs(oh *o)
     e = o_nth(o, i);
     if(e->refs) {
       e->refstr = refs_to_str(e->refs);
+      da_free(e->refs);
       e->refs = 0;
     }
   }
@@ -1246,8 +1252,15 @@ void update(char *fname)
   char * bfname;
   FILE *f;
   int i1, i2, n1, n2;
+  int numtransl = 0;   /* number of translated entries */
+  int numold = 0;      /* number of old entries */
+  int numuntransl = 0; /* number of untranslated entries */
 
-  /* build backup file name */
+  /* get the reference first, before renaming the file */
+  o1 = o_new();
+  parse_po_file("po/messages.pot", o1);
+
+  /* rename the po file (backup) */
   s = s_new();
   s_addstr(s, fname);
   s_addstr(s, ".bak");
@@ -1257,12 +1270,8 @@ void update(char *fname)
     warn("cannot rename file %s, cancelled", fname);
     return;
   }
-
-  /* get the reference */
-  o1 = o_new();
-  parse_po_file("po/messages.pot", o1);
   
-  /* parse the file */
+  /* parse the po file */
   o2 = o_new();
   parse_po_file(bfname, o2);
 
@@ -1271,6 +1280,7 @@ void update(char *fname)
   n2 = o_len(o2);
   o = o_new();
   /* TODO, better algorithm to keep the order of entries... */
+  
   /* first, update entries in the po file */
   for(i2 = 0 ; i2 < n2 ; i2 ++) {
     e2 = o_nth(o2, i2);
@@ -1283,12 +1293,19 @@ void update(char *fname)
         e2->refstr = e->refstr;
         e2->refs = 0;
         o_add(o, e2);
+        if(strcmp("", e2->msgstr)) {
+          numtransl++;
+        } else {
+          numuntransl++;
+        }
       } else {
         e2->kind = KIND_OLD;
         o_add(o, e2);
+        numold++;
       }
     } 
   }
+  
   /* then, add new entries from the template */ 
   for(i1 = 0 ; i1 < n1 ; i1 ++) {
     e1 = o_nth(o1, i1);
@@ -1296,10 +1313,15 @@ void update(char *fname)
       e = o_find(o2, e1->msgid.key);
       if(!e) {
         o_add(o, e1);
+        numuntransl++;
       }
     }
   }
   
+  /* print stats */
+  printf("translated %d, untranslated %d, obsolete %d\n",
+    numtransl, numuntransl, numold);
+    
   /* dump o into the new file */
   f = fopen(fname, "w");
   if(f == NULL) {
@@ -1450,6 +1472,8 @@ void make(void)
   poe *eref;
   char tmp[20];
   char *t;
+  int numref = 0;   /* number of entries in the reference */
+  int numtransl;    /* number of translated entries */
       
   d = da_new();
   parse_oipl_file("po/LINGUAS", d);
@@ -1488,6 +1512,7 @@ void make(void)
       fprintf(f, "static char %s [] = ", tmp);
       print_canon(f, eref->msgid.key, "  ");
       fprintf(f, ";\n");
+      numref++;
     }
   }
   fprintf(f, "\n\n");
@@ -1514,6 +1539,7 @@ void make(void)
     parse_po_file(tmp, o);
     
     /* compare o to oref */
+    numtransl = 0;
     m = o_len(o);
     for(j = 0 ; j < m ; j++) {
       poe *e = o_nth(o, j);
@@ -1528,8 +1554,14 @@ void make(void)
           /* translate into atari encoding */
           iso_to_atari(e->msgstr);
           da_add(th[a], e->msgstr);
+          numtransl++;
         } 
       }
+    }
+    
+    /* print stats if some entries are missing */
+    if(numtransl < numref) {
+      printf("lang %s: %d untranslated entries\n", t, numref - numtransl);
     }
     
     /* dump the hash table */
@@ -1611,7 +1643,7 @@ Commands are:\n\
   update xx.po   compares xx.po to the current messages.pot \n\
                  and creates a new xx.po (new entries added, old \n\
                  entries commented out)\n\
-  make           take all languages listed in file LINGUAS \n\
+  make           takes all languages listed in file LINGUAS \n\
                  and creates the C file(s) for the project\n\
 \n\
 Note: " 
