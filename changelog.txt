@@ -285,3 +285,5 @@ Start... early ages
 
 15. Nov. 2001 
 - Native Language support, german translation (MAD)
+- introduced PTR in include/portab.h, which is a LONG (MAD)
+

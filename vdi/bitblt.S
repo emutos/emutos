@@ -23,8 +23,10 @@
 
         .globl  f0_left,f0_right,f2_update,f1_dst,f1_drt,f2_dst,p1_update
 
-        .globl  mode_00,mode_01,mode_02,mode_03,mode_04,mode_05,mode_06,mode_07
-        .globl  mode_08,mode_09,mode_10,mode_11,mode_12,mode_13,mode_14,mode_15
+        .globl  mode_00,mode_01,mode_02,mode_03
+        .globl  mode_04,mode_05,mode_06,mode_07
+        .globl  mode_08,mode_09,mode_10,mode_11
+        .globl  mode_12,mode_13,mode_14,mode_15
 
 // name:
 //      bitblt.s
@@ -55,7 +57,6 @@
 //              Xmin source, Xmax source, Xmin destination, Xmax destination
 //              rectangle height, rectangle width, number of planes
 
-.page
 
 //       FRAME PARAMETERS
 
@@ -100,9 +101,8 @@
 #define                 P_NXPL     -28  // offset to next plane in pattern (in bytes)       +48
 #define                 P_MASK     -26  // pattern index mask                               +50
 
-//////                                      //////
-//////   these parameters are internally set   //////
-//////                                      //////
+
+/* these parameters are internally set */
 
 #define         P_INDX   -24    // initial pattern index                                    +52
 
@@ -116,19 +116,17 @@
 
 #define         INNER_CT -06    // blt inner loop initial count                     +70
 #define         DST_WR   -04    // destination form wrap (in bytes)                 +72
-#define                 SRC_WR  -02     // source form wrap (in bytes)                      +74
+#define         SRC_WR  -02     // source form wrap (in bytes)                      +74
 
 
 #define          FRAME_LEN      76
 
 
-.page
 
 //  in:
 //      a6.l    points to 76 byte parameter block
 
 
-.page
 
 //  in:
 //      d0.w    X min source

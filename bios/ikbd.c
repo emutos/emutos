@@ -390,20 +390,19 @@ VOID bconout4(WORD dev, WORD c)
 }
 
 /* cnt = number of bytes to send less one */
-VOID ikbdws(WORD cnt, UBYTE * ptr)
+VOID ikbdws(WORD cnt, PTR ptr)
 {
-  while(cnt-- >= 0) {
-    bconout4(0, *ptr++);
-  }
+    UBYTE *p = (UBYTE *)ptr;
+    while(cnt-- >= 0)
+        bconout4(0, *p++);
 }
-
 
 /* Reset (without touching the clock) */
 VOID ikbd_reset(VOID)
 {
     UBYTE cmd[2] = { 0x80, 0x01 };
     
-    ikbdws(2, cmd);
+    ikbdws(2, (PTR)cmd);
 
     /* if all's well code 0xF1 is returned, else the break codes of
        all keys making contact */
@@ -414,7 +413,7 @@ VOID ikbd_mouse_button_action(WORD mode)
 {
     UBYTE cmd[2] = { 0x07, mode };
 
-    ikbdws(2, cmd);
+    ikbdws(2, (PTR)cmd);
 }
 
 /* Set relative mouse position reporting */
@@ -422,7 +421,7 @@ VOID ikbd_mouse_rel_pos(VOID)
 {
     UBYTE cmd[1] = { 0x08 };
 
-    ikbdws(1, cmd);
+    ikbdws(1, (PTR)cmd);
 }
 
 /* Set absolute mouse position reporting */
@@ -430,7 +429,7 @@ VOID ikbd_mouse_abs_pos(WORD xmax, WORD ymax)
 {
     BYTE cmd[5] = { 0x09, xmax>>8, xmax&0xFF, ymax>>8, ymax&0xFF };
 
-    ikbdws(5, cmd);
+    ikbdws(5, (PTR)cmd);
 }
 
 /* Set mouse keycode mode */
@@ -438,7 +437,7 @@ VOID ikbd_mouse_kbd_mode(WORD dx, WORD dy)
 {
     BYTE cmd[3] = { 0x0A, dx, dy };
 
-    ikbdws(3, cmd);
+    ikbdws(3, (PTR)cmd);
 }
 
 /* Set mouse threshold */
@@ -446,7 +445,7 @@ VOID ikbd_mouse_thresh(WORD x, WORD y)
 {
     BYTE cmd[3] = { 0x0B, x, y };
 
-    ikbdws(3, cmd);
+    ikbdws(3, (PTR)cmd);
 }
 
 /* Set mouse scale */
@@ -454,7 +453,7 @@ VOID ikbd_mouse_scale(WORD x, WORD y)
 {
     BYTE cmd[3] = { 0x0C, x, y };
 
-    ikbdws(3, cmd);
+    ikbdws(3, (PTR)cmd);
 }
 
 /* Interrogate mouse position */
@@ -462,7 +461,7 @@ VOID ikbd_mouse_pos_get(WORD *x, WORD *y)
 {
     UBYTE cmd[1] = { 0x0D };
 
-    ikbdws(1, cmd);
+    ikbdws(1, (PTR)cmd);
 
     /* wait for returning bytes */
 }
@@ -472,7 +471,7 @@ VOID ikbd_mouse_pos_set(WORD x, WORD y)
 {
     BYTE cmd[6] = { 0x0E, 0x00, x>>8, x&0xFF, y>>8, y&0xFF };
 
-    ikbdws(6, cmd);
+    ikbdws(6, (PTR)cmd);
 }
 
 /* Set Y=0 at bottom */
@@ -480,7 +479,7 @@ VOID ikbd_mouse_y0_bot(VOID)
 {
     UBYTE cmd[1] = { 0x0F };
 
-    ikbdws(1, cmd);
+    ikbdws(1, (PTR)cmd);
 }
 
 /* Set Y=0 at top */
@@ -488,7 +487,7 @@ VOID ikbd_mouse_y0_top(VOID)
 {
     UBYTE cmd[1] = { 0x10 };
 
-    ikbdws(1, cmd);
+    ikbdws(1, (PTR)cmd);
 }
 
 /* Resume */
@@ -496,7 +495,7 @@ VOID ikbd_resume(VOID)
 {
     UBYTE cmd[1] = { 0x11 };
 
-    ikbdws(1, cmd);
+    ikbdws(1, (PTR)cmd);
 }
 
 /* Disable mouse */
@@ -504,7 +503,7 @@ VOID ikbd_mouse_disable(VOID)
 {
     UBYTE cmd[1] = { 0x12 };
 
-    ikbdws(1, cmd);
+    ikbdws(1, (PTR)cmd);
 }
 
 /* Pause output */
@@ -512,7 +511,7 @@ VOID ikbd_pause(VOID)
 {
     UBYTE cmd[1] = { 0x13 };
 
-    ikbdws(1, cmd);
+    ikbdws(1, (PTR)cmd);
 }
 
 /* Set joystick event reporting */
@@ -520,7 +519,7 @@ VOID ikbd_joystick_event_on(VOID)
 {
     UBYTE cmd[1] = { 0x14 };
 
-    ikbdws(1, cmd);
+    ikbdws(1, (PTR)cmd);
 }
 
 /* Set joystick interrogation mode */
@@ -528,7 +527,7 @@ VOID ikbd_joystick_event_off(VOID)
 {
     UBYTE cmd[1] = { 0x15 };
 
-    ikbdws(1, cmd);
+    ikbdws(1, (PTR)cmd);
 }
 
 /* Joystick interrogation */
@@ -536,7 +535,7 @@ VOID ikbd_joystick_get_state(VOID)
 {
     UBYTE cmd[1] = { 0x16 };
 
-    ikbdws(1, cmd);
+    ikbdws(1, (PTR)cmd);
 }
 
 /* some joystick routines not in yet (0x18-0x19) */
@@ -546,7 +545,7 @@ VOID ikbd_joystick_disable(VOID)
 {
     UBYTE cmd[1] = { 0x1A };
 
-    ikbdws(1, cmd);
+    ikbdws(1, (PTR)cmd);
 }
 
 /* Time-of-day clock set */
@@ -554,7 +553,7 @@ VOID ikbd_clock_set(WORD year, WORD month, WORD day, WORD hour, WORD minute, WOR
 {
     BYTE cmd[7] = { 0x1B, year, month, day, hour, minute, second };
 
-    ikbdws(7, cmd);
+    ikbdws(7, (PTR)cmd);
 }
 
 /* Interrogate time-of-day clock */
@@ -562,7 +561,7 @@ VOID ikbd_clock_get(WORD *year, WORD *month, WORD *day, WORD *hour, WORD *minute
 {
     UBYTE cmd[1] = { 0x1C };
 
-    ikbdws(1, cmd);
+    ikbdws(1, (PTR)cmd);
 }
 
 /* Memory load */
@@ -577,7 +576,7 @@ VOID ikbd_mem_read(WORD address, BYTE data[6])
 {
     BYTE cmd[3] = { 0x21, address>>8, address&0xFF };
 
-    ikbdws(3, cmd);
+    ikbdws(3, (PTR)cmd);
 
     /* receive data and put it in data */
 }
@@ -587,7 +586,7 @@ VOID ikbd_exec(WORD address)
 {
     BYTE cmd[3] = { 0x22, address>>8, address&0xFF };
 
-    ikbdws(3, cmd);
+    ikbdws(3, (PTR)cmd);
 }
 
 /* Status inquiries (0x87-0x9A) not yet implemented */
@@ -597,7 +596,7 @@ VOID atari_kbd_leds (UWORD leds)
 {
     BYTE cmd[6] = {32, 0, 4, 1, 254 + ((leds & 4) != 0), 0};
 
-    ikbdws(6, cmd);
+    ikbdws(6, (PTR)cmd);
 }
 
 

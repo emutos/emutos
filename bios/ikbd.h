@@ -70,7 +70,7 @@ extern VOID atari_kbd_leds (UWORD );
 /* some xbios functions */
 extern LONG keytbl(LONG norm, LONG shft, LONG caps);
 extern VOID bioskeys(VOID);
-extern VOID ikbdws(WORD cnt, UBYTE *ptr);
+extern VOID ikbdws(WORD cnt, LONG ptr);
 extern VOID mouse_init(WORD , LONG , VOID *);
 
 #endif /* _IKBD_H */

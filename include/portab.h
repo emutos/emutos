@@ -94,7 +94,8 @@ typedef long		ULONG ; 		/*  Unsigned long	*/
 typedef unsigned char	UBYTE ; 		/*  Unsigned byte	*/
 typedef unsigned long	ULONG ; 		/*  unsigned 32 bit word*/
 #endif
-/*****/
+
+typedef long		PTR ;			/*  32 bit pointer */
 
 typedef int		BOOLEAN ;		/*  boolean		*/
 typedef int		BOOL ;			/*  same as boolean	*/
