@@ -11,21 +11,28 @@
  */
 
 #include <osbind.h>
-#include "string.h"   /* memmove */
-#include "asm.h"      /* set_sr  */
 
-extern void bootasm(long dest, long src, long count);
+extern void bootasm(long dest, char *src, long count);
 extern long getbootsize(void);
 
 /*
- * the file TOS_FILENAME, of maximum length TOS_SIZE, 
- * will be loaded in memory, then copied at the address
- * indicated by its header and finally be executed by
+ * the file TOS_FILENAME will be loaded in memory, then copied at the 
+ * address indicated by its header and finally be executed by
  * jumping at that address.
  */
 
 #define TOS_FILENAME "ramtos.img"
-#define TOS_SIZE     (192*1024L)
+
+/* hack to ensure the file in RAM is at a higher address than the
+ * final relocation address
+ */
+#define ADDR 0x40000
+
+struct {
+  char fill[26];
+  long size;
+  char name[14];
+} dta;
 
 static void putl(unsigned long u)
 {
@@ -46,6 +53,7 @@ static void fatal(const char *s)
   Cconws("Fatal: ");
   Cconws(s);
   Cconws("\012\015hit any key.");
+  Cconin();
   exit(1);
 }
 
@@ -56,24 +64,25 @@ int main()
   char *buf;
   long address;
   
-  /* allocate temp buffer */
+  /* get the file size */
   
-  count = TOS_SIZE;
-  buf = (char *) Malloc(count + getbootsize());
+  Fsetdta((char *)&dta);
+  if (0 != Fsfirst(TOS_FILENAME, 0)) fatal("missing file " TOS_FILENAME);
+  count = dta.size;
+  
+  /* allocate the buffer */
+  
+  buf = (char *) Malloc(ADDR + count + 1 + getbootsize());
   if(buf == 0) {
     fatal("cannot allocate memory");
   }
+  buf += ADDR;
   
-  /* load the file */
-  
+  /* open the file and load all in memory */
+
   fh = Fopen(TOS_FILENAME, 0);
-  if(fh < 0) {
-    fatal("cannot open file " TOS_FILENAME);
-  }
-  count = Fread(fh, count, buf);
-  if(count < 0) {
-    fatal("error reading file");
-  }
+  if(fh < 0) fatal("cannot open file " TOS_FILENAME);
+  if (count != Fread(fh, count, buf)) fatal("read error");
   Fclose(fh);
   
   /* get final address */
@@ -84,9 +93,9 @@ int main()
   putl(address);
   Cconws(".\012\015");
   
-  /* check that the address is in first 512K RAM */
+  /* check that the address is not after our buffer */
 
-  if((address <= 0x400L) || (address + TOS_SIZE >= 0x80000L)) {
+  if((address <= 0x400L) || (address >= (long)buf)) {
     fatal("bad address in header");
   }
 
@@ -101,7 +110,7 @@ int main()
   
   /* do the rest in assembler */
   
-  bootasm(address, (long)buf, count);
+  bootasm(address, buf, count);
   
   return 1;
 }

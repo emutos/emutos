@@ -1406,3 +1406,6 @@ Start... early ages
 - aes/optimize.c - sound() now really makes sound with Dosound()! (THH)
 - bios/biosmem.c - explanatory comment about memtop and membot added (LVL)
 
+17. Apr. 2003
+- util/boot.c - removed 192k size limitation in RAMTOS loader (LVL)
+
