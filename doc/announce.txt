@@ -1,0 +1,118 @@
+Dear Atari Community!
+
+
+We are happy to announce the first beta release of EmuTOS.
+
+
+INTRODUCTION
+
+EmuTOS is a singleuser singletasking operating system for the 32 bit Atari
+computer emulators. It is thought as a replacement for the TOS-images you
+usually need today for using emulators and it is also running on some real
+hardware, like the Atari Mega STE. All is open and maybe it is also running
+on totally new machines in the future.
+
+EmuTOS is beeing developed for more than a year now and is licensed under
+the OpenSource Gnu General Public Licence (GPL).
+
+
+
+DESCRIPTION
+
+EmuTOS is basically made up of four parts:
+
+- The BIOS, which is the basic input output system
+- The XBIOS, which provides the interface to the hardware
+- The BDOS, which are the high level OS routines, what you know as GEMDOS
+- The shell command.prg we use, as long we have no GEM
+
+The BIOS and XBIOS code is our own developement. It is really written from
+scratch and implements nearly all of the TOS 1.0 BIOS functionality, and a
+bit more, like e.g. harddisk access and STE sampled sound. A few things
+like printing, midi and serial stuff is missing for now, but may be
+implemented somewhere in the future.
+
+The GEMDOS part is based on Digital Research's GEMDOS sources, which were
+made available under GPL licence in 1999 by Caldera. None of the graphical
+parts like VDI and AES are implemented. Instead we plan to use fVDI and an
+extra AES, like XaAES (just on MiNT) which together with a desktop make
+the GEM you all know and love.
+
+Since EmuTOS just implements the TOS's functionality, you might want to
+use MiNT on it in order to run more modern software. EmuTOS is not an
+alternative to MiNT. But EmuTOS is the only free base OS to boot MiNT.
+
+
+
+EMULATION AND FUTURE PLATFORM
+
+EmuTOS and MiNT cooperate well. For the future we plan, that both can make
+use of a yet to implement standard native call interface for emulators.
+When running EmuTOS in an emulator, this interface will provide access to
+use the power of the underlying OS kernel. It may allow using modern 3D
+graphics cards, will provide fast native filesystem access and will enable
+you to use networking with all bells and wistles - and many things more
+you always dreamed of.
+
+This is, what EmuTOS is made for: A free OS, that can evolve. Progress has
+been fast up to now, because we have a small, but enthusiastic development
+team and are eager to see EmuTOS running with GEM and all.
+
+
+
+HARDWARE
+
+Making EmuTOS running natively on a new hardware platform is more or less
+just a question of driver support for EmuTOS. The same for MiNT, if you'd
+like to have it running over EmuTOS.
+
+This is the currently supported Hardware:
+
+- CPU support for m68000, m68010, m68020, m68030, m68040
+- FPU detected
+- Memory controller (both ST and Falcon)
+- Monitor type detection (mono or not)
+- WD 1772 Floppy disk controller (write track not tested)
+- DMA controller
+- MFP
+- PSG
+- ST shifter
+- STE shifter (partitially)
+- ACIAs, IKBD protocol (mouse not tested)
+- MegaST Real-Time Clock  (set clock not tested)
+- NVRAM (including RTC)
+- DMA sound
+
+
+
+AVAILABILITY
+
+EmuTOS has its home at sourceforge:
+
+    http://sourceforge.net/projects/emutos
+
+A ready made EmuTOS image or the source can be downloaded from:
+
+    http://sourceforge.net/project/showfiles.php?group_id=36560
+
+It is always available in source form from our CVS server at:
+
+    http://sourceforge.net/cvs/?group_id=36560
+
+If you are just curious or would like to help us develop this nice little
+OS, you are invited to subscribe to our Mailinglist for developers at:
+
+    http://sourceforge.net/mail/?group_id=36560
+
+
+Hope, you like EmuTOS. If you have any suggestions or comments, we always
+like to hear the good and also the bad things about it.
+
+
+Your EmuTOS development team.
+
+--
+written by Martin Doering
+http://emutos.sourceforge.net/
+
+
