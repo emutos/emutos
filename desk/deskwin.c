@@ -80,6 +80,7 @@ void win_view(WORD vtype, WORD isort)
         G.g_iwspc = G.g_iwext + G.g_iwint;
         G.g_ihspc = G.g_ihext + G.g_ihint;
         G.g_incol = (G.g_wfull - gl_wchar) / G.g_iwspc;
+        if( G.g_incol<1 )  G.g_incol = 1;
 }
 
 
