@@ -28,18 +28,22 @@
         .globl  _exeflg
         .globl  _jb
         .globl  _devector       // SCC  22 Mar 85
+        .globl  _coma_start
+
+// When compiling without AES, the CLI is our system shell:
+#if WITH_AES == 0
         .globl  _ui_start
         .globl  _ui_mupb
 
-
 _ui_start:
-        move.l  #mystak,a5
-        move.l  4(sp),-(a5)
-        clr.l   -(a5)           // bogus return address
-        move.l  a5,sp
+#endif
+
+_coma_start:
+        move.l  4(sp),a5
+        move.l  #mystak,sp
+        move.l  a5,-(sp)        // Save pointer to basepage on stack
 
 // Shrink the TPA to a usefull size:
-        move.l  4(sp),a5
         move.l  0xc(a5),d0
         add.l   0x14(a5),d0
         add.l   0x1c(a5),d0
@@ -49,7 +53,7 @@ _ui_start:
         move.w  #0,-(sp)
         move.w  #0x4a,-(sp)
         trap    #1
-        add.l   #12,sp
+        lea     12(sp),sp
 
 #ifndef NO_ROM
 // if running in ROM, go in supervisor mode to be able to 
@@ -57,7 +61,8 @@ _ui_start:
         clr.l   -(sp)
         move.w  #0x20,-(sp)
         trap    #1
-        add.w   #6,sp
+        //addq.w   #6,sp
+        move.l  d0,save_ssp
 #endif /* ! NO_ROM */
         
         move.l  #mycrit,-(sp)
@@ -67,18 +72,29 @@ _ui_start:
         add.l   #8,sp
         move.l  d0,ocrit
 
-        jsr     _in_term                                       
+        bsr     _in_term                                       
 
-        jmp     _cmain          // leave basepage on stack
+        jsr     _cmain          // leave basepage on stack
+        addq.l  #4,sp
+
+        bsr     _devector
+
+#ifndef NO_ROM
+// if running in ROM, switch back to user mode
+        move.l  save_ssp,-(sp)
+        move.w  #0x20,-(sp)
+        trap    #1
+        addq.w  #6,sp
+#endif /* ! NO_ROM */
+
+        // Pterm0()
+        clr.l   -(sp)
+        trap    #1
+
 
 
 
 _devector:                                                     
-        clr.l   -(sp)           // toggle into sup mode        
-        move.w  #0x20,-(sp)     // to do BIOS calls            
-        trap    #1                                             
-        move.l  d0,2(sp)        // save SSP back in stack       
-
         move.l  ocrit,-(sp)     // restore crit err vector      
         move.w  #0x101,-(sp)                                   
         move.w  #5,-(sp)                                       
@@ -86,9 +102,6 @@ _devector:
         add.l   #8,sp                                          
 
         jsr     _rm_term                                       
-        move.w  #0x20,(sp)      // toggle back out to user mode 
-        trap    #1                                             
-        addq.l  #6,sp                                          
         rts                                                    
 
 
@@ -221,17 +234,23 @@ aris:
         .dc.b   13,10
         .ascii "(A)bort, (R)etry, or (I)gnore ?"
         .dc.b   0
+        .even
 
-// The CLI's MUPB structure:
+
+// The CLI's MUPB structure - only used when compiling without the AES:
+#if WITH_AES == 0
 _ui_mupb:
         .dc.l   0x87654321      // Magic value
-        .dc.l   ui_bss_end      // End of CLI's BSS (actually a dummy value)
-        .dc.l   _ui_start       // Start of CLI code
+        .dc.l   coma_bss_end    // End of CLI's BSS (actually a dummy value)
+        .dc.l   _coma_start     // Start of CLI code
+#endif
+
 
 
         .bss
 
-savess:         .ds.l   1                                         
+save_ssp:       .ds.l   1                                         
+
 ocrit:          .ds.l   1
 oterm:          .ds.l   1
 
@@ -244,7 +263,7 @@ gemdos_ret:     .ds.l   1
 mystak:         .ds.l   1               // Stack for command.prg
 
 
-ui_bss_end:
+coma_bss_end:
 
         .end
 

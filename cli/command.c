@@ -29,7 +29,6 @@ extern long jmp_bios();
 extern long jmp_xbios();
 extern void in_term();
 extern void rm_term();
-extern void devector();
 
 #define MAXARGS 20
 
@@ -100,6 +99,8 @@ int exeflg;
 int rtrnFrmBat;
 int prgerr;
 int cmderr;
+
+int bExitFlag;      /* TRUE when the user wants to leave the CLI */
 
 jmp_buf jb;
 long compl_code;
@@ -782,10 +783,10 @@ DIR or LS [filenm.ext] [-f] [-d] [-t] [-w]\r\n\
         wrtln("ERR ");
         wrtln(_("\
 \tDisplays the value of the Completion Code for the last command."));
-#ifdef NO_ROM
+
         wrtln("EXIT");
-        wrtln(_("\tExits CLI to invoking program."));
-#endif
+        wrtln(_("\tExits the CLI."));
+
         wrtln(_("\
 INIT [drive_spec:]\r\n\
 \tReinitializes FAT entries this wiping disk."));
@@ -2171,17 +2172,14 @@ void xCmdLn(char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl)
                 cr2cont();
             } else if (xncmps(5, s, "HELP"))
                 dspMsg(17);
-#ifdef NO_ROM
             else if (xncmps(5, s, "EXIT")) {
-exit:
                 if (*nonStdIn)
                     dspCL(&argv[0]);
                 xclose(rd.oldsi);
                 xclose(rd.oldso);
-                devector();     /* remove vectors */
-                xterm(0);
+                bExitFlag = 1;
+                return;
             }
-#endif
             else if (xncmps(8, s, "VERSION")) {
                 if (*nonStdIn)
                     dspCL(&argv[0]);
@@ -2221,10 +2219,14 @@ exit:
 
 again:
         /* if command coming from outside the command int exit */
-#ifdef NO_ROM
-        if ((long) outsd_tl)
-            goto exit;
-#endif
+        if ((long) outsd_tl) {
+            if (*nonStdIn)
+                dspCL(&argv[0]);
+            xclose(rd.oldsi);
+            xclose(rd.oldso);
+            bExitFlag = 1;
+            return;
+         }
     }
 }
 
@@ -2292,10 +2294,15 @@ void cmain(char *bp)
         }
     }
 
+    bExitFlag = 0;
+
     do {
         k = 0;
         j = 0;
         xCmdLn(&parm[0], &k, &j, cmd ? tl : (char *) 0L);
     }
-    while (1);
+    while(!bExitFlag);
+
+    wrtln("Leaving EmuCON...\r\n");
 }
+
