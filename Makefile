@@ -28,7 +28,6 @@ EXE = .exe
 else
 # ordinary Unix stuff
 EXE = 
-BUILDDATE=$(shell LANG=C date +"%d. %b. %Y")
 endif
 
 #
@@ -44,6 +43,8 @@ endif
 # 
 # compilation flags
 #
+
+BUILDDATE=$(shell LANG=C date +"%d. %b. %Y")
 
 # Linker with relocation information and binary output (image)
 LD = m68k-atari-mint-ld
@@ -163,7 +164,7 @@ help:
 	@echo "help    this help message"
 	@echo "all     emutos.img, a TOS 1 ROM image (0xFC0000)"
 	@echo "192     etos192k.img, i.e. emutos.img padded to size 192 KB"
-	@echo "falcon  etosfalc.img, i.e. emutos beginning at 0xe00000 
+	@echo "falcon  etosfalc.img, i.e. emutos beginning at 0xe00000" 
 	@echo "ram     ramtos.img + boot.prg, a RAM tos"
 	@echo "flop    emutos.st, a bootable floppy with RAM tos"
 	@echo "clean"
@@ -235,6 +236,12 @@ mkflop$(EXE) : tools/mkflop.c
 
 date.prg: obj/minicrt.o obj/doprintf.o obj/date.o
 	$(LD) -s -o $@ obj/minicrt.o obj/doprintf.o obj/date.o $(LDFLAGS) 
+
+dumpkbd.prg: obj/minicrt.o obj/memmove.o obj/dumpkbd.o
+	$(LD) -s -o $@ $^ $(LDFLAGS)
+
+keytbl2c$(EXE) : tools/keytbl2c.c
+	$(NATIVECC) -o $@ $<
 
 #
 # automatic build rules
@@ -309,11 +316,11 @@ $(DESASS): map emutos.img
 
 clean:
 	rm -f obj/*.o obj/*.s *~ */*~ core emutos.img map $(DESASS)
-	rm -f ramtos.img boot.prg etos192.img mkflop$(EXE) bootsect.img
-	rm -f emutos.st date.prg
+	rm -f ramtos.img boot.prg etos192.img etosfalc.img mkflop$(EXE) 
+	rm -f bootsect.img emutos.st date.prg dumpkbd.prg keytbl2c$(EXE)
 
 distclean: clean nodepend
-	rm -f Makefile.bak
+	rm -f Makefile.bak '.#'* */'.#'* 
 	$(MAKE) -C cli clean
 
 #
