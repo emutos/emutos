@@ -93,7 +93,7 @@ __extension__           \
  *   switches interrupts on again, SR restored from stack
  */
 
-#define ints_on()	\
+#define ints_on()       \
 __extension__           \
 ({__asm__ volatile      \
   ("move  (sp)+, sr "); \

@@ -12,7 +12,7 @@ static UWORD off_table[], dat_table[];
 const struct font_head latin2_6x6 = {
     8859,  /* font_id */
     8,  /* point */
-    "MiNT ISO 8859-2 6x6",  /*   BYTE name[32]	*/
+    "MiNT ISO 8859-2 6x6",  /*   BYTE name[32]  */
     0,  /* first_ade */
     255,  /* last_ade */
     4,  /* top */

@@ -587,7 +587,7 @@ concat:
 //      start of the scan line to the offset within the scan line, restore
 //      the clobbered registers, and exit.
 //
-	ext.l	d2
+        ext.l   d2
         add.l   d2,d1           // compute total offset into screen buffer
         movem.w (sp)+,d2/d3     // restore the clobbered registers
         rts

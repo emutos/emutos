@@ -112,7 +112,7 @@ void init_fonts(WORD vmode)
         cur_font = def_font = &fon8x8;
     }
        
-    font_count=3;		// total number of fonts in fontring
+    font_count=3;               // total number of fonts in fontring
 
     /* Initialize the system font array for linea */
     sysfonts[0]= &fon6x6;

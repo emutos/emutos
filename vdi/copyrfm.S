@@ -16,13 +16,16 @@
         .globl  _COPY_RFM
         .globl  _CLIP,_XMN_CLIP,_YMN_CLIP,_XMX_CLIP,_YMX_CLIP,_COPYTRAN,_patptr
         .globl  _multifill
-        .globl  _v_planes,_v_lin_wr,_v_bas_ad
-        .globl  _CONTRL,_INTIN,_PTSIN
-        .globl  _DEV_TAB,_MAP_COL
         
         .globl  bit_blt
 
         .xdef   _v_pl_dspl
+        .xdef   _v_planes,_v_lin_wr,_v_bas_ad
+        .xdef   _CONTRL,_INTIN,_PTSIN
+        .xdef   _DEV_TAB,_MAP_COL
+
+
+
 //
 //
 // title:

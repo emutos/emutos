@@ -234,10 +234,9 @@ get_addr:
  *  these bits from the x-coordinate.
  */
 
-        move.w  _v_lin_wr,d4    // get number of bytes in a scan line
         move.l  _v_bas_ad,a1    // get start addr. of 1st graphic plane
 
-	jsr concat              // calculate offset
+        jsr concat              // calculate offset
         adda.l  d1,a1           // get destination address
 
 /*
@@ -269,6 +268,7 @@ init:
         move.l  _v_pl_dspl,d3           // get # bytes between graphic planes
 #endif
 
+        move.w  _v_lin_wr,d4            // get number of bytes in a scan line
         move.l  a1,save_addr            // save area: origin of material
         move.w  d5,save_len             //           number of rows
         
@@ -294,7 +294,9 @@ init:
         bra.b   p_loop
 
 rtn_tab:
-        dc.l    store_lw,enter_lw,store_rt,enter_rt,store_lf,enter_lf
+        dc.l    store_lw,enter_lw
+        dc.l    store_rt,enter_rt
+        dc.l    store_lf,enter_lf
 .page
 
 /* plane controller */
@@ -304,7 +306,8 @@ new_plane:
 
 #if rbp
         addq.l  #2,d_addr(sp)           // update destination pointer
-                                        // FIXME: Use d3 here, too???
+        add.l   d3,d_addr(sp)           // get address of next graphics plane
+                                        // FIXED: Used d3 here, too!
 #else
         add.l   d3,d_addr(sp)           // get address of next graphics plane
 #endif
@@ -349,7 +352,7 @@ fgbg_op:
 
 
 /*
- *    fetching and saving a destination long word
+ * fetch_lw - fetching and saving a destination long word
  *
  *  in:
  *      a0.l    points to start of BG/FG form
@@ -390,6 +393,8 @@ enter_lw:
         dbra    d5,fetch_lw
         bra.w   p_next_plane
 
+
+
 /* fetch/store/advance row:  right word only */
 
 fetch_rt:
@@ -408,6 +413,9 @@ enter_rt:
 
         dbra    d5,fetch_rt
         bra.w   p_next_plane
+
+
+
 /*
  *      fetch/store/advance row:  left word only
  */

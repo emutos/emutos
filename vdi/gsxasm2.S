@@ -30,42 +30,42 @@
 
 //              external variables
 
-                .globl   _X1
-                .globl   _Y1
-                .globl   _X2
-                .globl   _Y2
-                .globl   _WRT_MODE
-                .globl   _patmsk
-                .globl   _patptr
-                .globl   _multifill
-                .globl   _FG_BP_1
-                .globl   _FG_BP_2
-                .globl   _FG_BP_3
-                .globl   _FG_BP_4
-                .globl   _PTSIN
-                .globl   _INTIN
-                .globl   _INTOUT
-                .globl   ortbl
-                .globl   retsav
-                .globl   _search_color
-                .globl   _seed_type
-                .globl   _v_bas_ad
-                .globl   _v_planes
-                .globl   _v_lin_wr
-                .globl   lf_tab
+                .xdef   _X1
+                .xdef   _Y1
+                .xdef   _X2
+                .xdef   _Y2
+                .xdef   _WRT_MODE
+                .xdef   _patmsk
+                .xdef   _patptr
+                .xdef   _multifill
+                .xdef   _FG_BP_1
+                .xdef   _FG_BP_2
+                .xdef   _FG_BP_3
+                .xdef   _FG_BP_4
+                .xdef   _PTSIN
+                .xdef   _INTIN
+                .xdef   _INTOUT
+                .xdef   ortbl
+                .xdef   retsav
+                .xdef   _search_color
+                .xdef   _seed_type
+                .xdef   _v_bas_ad
+                .xdef   _v_planes
+                .xdef   _v_lin_wr
+                .xdef   lf_tab
 
-                .globl   htab
+                .xdef   htab
 
-                .globl   _FBASE
-                .globl   _FWIDTH
-                .globl   _DELY
-                .globl   _INTIN
-                .globl   _PTSIN
-                .globl   _CLIP
-                .globl   _XMN_CLIP
-                .globl   _XMX_CLIP
-                .globl   _YMN_CLIP
-                .globl   _YMX_CLIP
+                .xdef   _FBASE
+                .xdef   _FWIDTH
+                .xdef   _DELY
+                .xdef   _INTIN
+                .xdef   _PTSIN
+                .xdef   _CLIP
+                .xdef   _XMN_CLIP
+                .xdef   _XMX_CLIP
+                .xdef   _YMN_CLIP
+                .xdef   _YMX_CLIP
 
 
                 .text                   // open program segment.

@@ -152,7 +152,7 @@ _vex_timv:
         move.w  d0,(a0)
 
 just_rts:
-	rts
+        rts
 
 
 

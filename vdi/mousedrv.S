@@ -35,7 +35,7 @@
 
         /* External routines used here */
         .xdef   _DEV_TAB        // address of device table
-        .xdef 	_XFM_CRFM
+        .xdef   _XFM_CRFM
         .xdef   vb_draw
 
         /* External variables used here */
@@ -59,7 +59,7 @@
 
 
 
-	.text
+        .text
 
 
 
@@ -85,26 +85,26 @@ vdimouse_init:
         bsr     _XFM_CRFM               // transform mouse
         move.l  (sp)+, _INTIN           // restore INTIN pointer
 
-	clr.l	d0
-        move.w  d0, _MOUSE_BT		// clear the mouse button state
+        clr.l   d0
+        move.w  d0, _MOUSE_BT           // clear the mouse button state
 
-        move.b  d0, _cur_ms_stat	// clear the mouse status
-        move.b  d0, _mouse_flag		// clear the mouse flag
-        move.b  d0, _draw_flag		// clear the hide operations counter
-        move.w  d0, _newx		// set cursor x-coordinate to 0
-        move.w  d0, _newx		// set cursor y-coordinate to 0
+        move.b  d0, _cur_ms_stat        // clear the mouse status
+        move.b  d0, _mouse_flag         // clear the mouse flag
+        move.b  d0, _draw_flag          // clear the hide operations counter
+        move.w  d0, _newx               // set cursor x-coordinate to 0
+        move.w  d0, _newx               // set cursor y-coordinate to 0
 
         /* Init mouse vbl interrupt */
         move.l  _vblqueue, a0           // get VBL-queue address
         move.l  #vb_draw, (a0)          // set GEM VBL-routine
         
         /* Initialize mouse via XBIOS */
-        pea 	_mouse_int              // mouse interrupt routine
-        pea 	arrow_cdb               // mouse parameter block
-	move.w	#1, -(sp)		// enable mouse in relative mode
-        move.w  #0, -(sp)		// Initmous
-        trap 	#14			// call XBIOS
-        add.l	#12, sp			// clean up the stack
+        pea     _mouse_int              // mouse interrupt routine
+        pea     arrow_cdb               // mouse parameter block
+        move.w  #1, -(sp)               // enable mouse in relative mode
+        move.w  #0, -(sp)               // Initmous
+        trap    #14                     // call XBIOS
+        add.l   #12, sp                 // clean up the stack
 
 just_rts:
         rts
@@ -130,15 +130,15 @@ vdimouse_exit:
 
         /* Init mouse vbl interrupt */
         move.l  _vblqueue, a0           // get VBL-queue address
-        move.l  #0, (a0)		// unset GEM VBL-routine
+        move.l  #0, (a0)                // unset GEM VBL-routine
         
         /* Initialize mouse via XBIOS */
-        move.l	#-1, -(sp)   		// no mouse interrupt routine
-        move.l	#-1, -(sp)              // no mouse parameter block
-	move.w	#0, -(sp)		// enable mouse in relative mode
-        move.w  #0, -(sp)		// Initmous
-        trap 	#14			// call XBIOS
-        add.l	#12, sp			// clean up the stack
+        move.l  #-1, -(sp)              // no mouse interrupt routine
+        move.l  #-1, -(sp)              // no mouse parameter block
+        move.w  #0, -(sp)               // enable mouse in relative mode
+        move.w  #0, -(sp)               // Initmous
+        trap    #14                     // call XBIOS
+        add.l   #12, sp                 // clean up the stack
 
         rts
 
