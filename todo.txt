@@ -1,4 +1,5 @@
 - implement XBIOS calls
+- implement linea functions 
 - implement screen handling better and in assembler
 - one should not have to type "make clean ; make" each time one changes a file.
 - would be nice, if .o files would be in archived libs for each subdir
