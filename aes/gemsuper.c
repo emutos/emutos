@@ -168,7 +168,7 @@ UWORD crysbind(WORD opcode, LONG pglobal, UWORD int_in[], UWORD int_out[], LONG 
                 break;
                                 /* Menu Manager                         */
           case MENU_BAR:
-                if (gl_mnppd == rlr)
+                if (gl_mnppd == rlr || gl_mnppd == NULL)
                   mn_bar(MM_ITREE, SHOW_IT, rlr->p_pid);
                 else
                   menu_tree[rlr->p_pid] = (SHOW_IT) ? MM_ITREE : 0x0L;

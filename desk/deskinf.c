@@ -402,10 +402,6 @@ WORD inf_folder(BYTE *ppath, FNODE *pf)
           pname++;
         strcpy(pname, &pf->f_name[0]);
         strcat(pname, "\\*.*");
-#if 0   // no output needed here (MAD)
-        gemdos(9,"\r\ninf_folder:\r\n");  /* FIXME: Check if string is ok */
-        gemdos(9,pname);gemdos(7); 
-#endif
         more = inf_fifo(tree, FOLNFILE, FOLNFOLD, &G.g_srcpth[0]);
 
         graf_mouse(ARROW, 0x0L);

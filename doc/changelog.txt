@@ -1542,3 +1542,5 @@ Start... early ages
 - po/de.po: Added missing strings and adjusted some of the form_alert strings
   to the 40 characters per line limit. (THH)
 - aes/gemrslib.c: rs_str() now uses gettext(), too. (THH)
+- desk/deskmain.c desk/deskapp.c aes/gemsuper.c: More bugfixes for the
+  "Desktop 1.2" patches: Solved problems with window sizes and menu bar! (THH)

@@ -75,10 +75,10 @@ static const char *desk_inf_data1 =
 #else
 static const char *desk_inf_data1 =
     "#E 9A 01\r\n"
-    "#W 00 00 02 02 4C 0A 00 @\r\n"
-    "#W 00 00 02 04 4C 0A 00 @\r\n"
-    "#W 00 00 02 06 4C 0A 00 @\r\n"
-    "#W 00 00 02 0D 4C 0A 00 @\r\n";
+    "#W 00 00 02 06 26 0C 00 @\r\n"
+    "#W 00 00 02 08 26 0C 00 @\r\n"
+    "#W 00 00 02 0A 26 0C 00 @\r\n"
+    "#W 00 00 02 0D 26 0C 00 @\r\n";
 #endif
 
 static const char *desk_inf_data2 =
@@ -605,10 +605,10 @@ WORD app_start()
             {
               x = strlen(gl_afile);
               strcat(gl_afile, "#M 00 00 01 FF A DISK A@ @ \r\n");
-              gl_afile[x+4] += i & 4;    /* x position */
+              gl_afile[x+4] += i % 4;    /* x position */
               gl_afile[x+7] += i / 4;    /* y position */
-              if(i<=1)
-                gl_afile[x+10] = '0';    /* Floppy instead of hard disk icon */
+              if (i > 1)
+                gl_afile[x+10] = '0';    /* Hard disk instead of floppy icon */
               gl_afile[x+15] = gl_afile[x+22] = 'A'+i;    /* Drive letter */
             }
           strcat(gl_afile, desk_inf_data2);  /* Copy core data part 2 */
@@ -713,8 +713,9 @@ WORD app_start()
                           gl_savewin[wincnt].g_x = x * gl_wchar;
                           gl_savewin[wincnt].g_y = y * gl_hchar;
                           gl_savewin[wincnt].g_w = w * gl_wchar;
-                          gl_savewin[wincnt++].g_h = h * gl_hchar;
+                          gl_savewin[wincnt].g_h = h * gl_hchar;
 #endif
+                          wincnt += 1;
                         }
                         break;
               case 'E':

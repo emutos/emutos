@@ -126,7 +126,12 @@ GLOBAL WORD     ig_close;
 
 GLOBAL WORD     gl_apid;
 
+#ifndef DESK1
+GLOBAL BYTE     ILL_ITEM[] = {L1ITEM, L2ITEM, L3ITEM, L4ITEM, L5ITEM, CLSWITEM, 0};
+#else
 GLOBAL BYTE     ILL_ITEM[] = {L1ITEM, L2ITEM, L3ITEM, L4ITEM, L5ITEM, 0};
+#endif
+
 GLOBAL BYTE     ILL_FILE[] = {FORMITEM,IDSKITEM,0};
 GLOBAL BYTE     ILL_DOCU[] = {FORMITEM,IDSKITEM,IAPPITEM,0};
 GLOBAL BYTE     ILL_FOLD[] = {/*OUTPITEM,*/FORMITEM,IDSKITEM,IAPPITEM,0};
@@ -529,10 +534,7 @@ WORD do_filemenu(WORD item)
                   fun_mkdir(pw);
                 break;
           case CLOSITEM:
-                hot_close(G.g_cwin);
-                break;
           case CLSWITEM:
-                /* FIXME: Should rather return to drive selection */
                 hot_close(G.g_cwin);
                 break;
 #endif
@@ -635,8 +637,9 @@ WORD do_viewmenu(WORD item)
         switch( item )
         {
           case ICONITEM:
+#if TOS_VERSION >= 0x200
                 newview = (G.g_iview == V_ICON) ? V_TEXT : V_ICON;
-#if TOS_VERSION < 0x200
+#else
                 newview = V_TEXT;   /* No icons in TOS 1.0x so we save space */
 #endif
                 break;
@@ -1302,9 +1305,15 @@ void cnx_get(void)
         {
                 pws = &G.g_cnxsave.win_save[nw];
 
-                /* FIXME: There seems to be a bug somewhere that sets w or h to 0 */
-                if(pws->w_save <= 0)  pws->w_save = 160;
-                if(pws->h_save <= 0)  pws->h_save = 128;
+                /* Check for valid width + height */
+                if(pws->w_save <= 0 || pws->w_save > G.g_wfull)
+                {
+                  pws->w_save = G.g_wfull/2;
+                }
+                if(pws->h_save <= 0 || pws->h_save > G.g_hfull)
+                {
+                  pws->h_save = G.g_hfull/2;
+                }
 
                 if (pws->pth_save[0])
                 {
