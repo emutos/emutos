@@ -465,5 +465,7 @@ void kbd_init(void)
     kb_dead = -1;      /* not in a dead key sequence */
     kb_altnum = -1;    /* not in an alt-numeric sequence */
 
+    conterm |= 0x8;    /* add Kbshift state to Bconin value */
+
     bioskeys();
 }

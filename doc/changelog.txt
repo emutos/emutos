@@ -1322,3 +1322,6 @@ Start... early ages
 - vdi/monout.c - bug in abline's C-implementation found (MAD)
 - vdi/*.c - enabled line drawing in C again (MAD)
 
+12. Feb. 2003
+- bios/ikbd.c - initial settings of conterm hopefully fixes the hotkeys
+  in XaAES (joy)
