@@ -49,16 +49,18 @@ WITH_AES = 1
 ifneq (,$(findstring CYGWIN,$(shell uname)))
 # CYGWIN-dependent stuff
 EXE = .exe
+CORE = *.stackdump
 else
 # ordinary Unix stuff
 EXE = 
+CORE = core
 endif
 
 #
 # test for localconf.h
 #
 
-ifeq (localconf.h,$(shell ls localconf.h))
+ifeq (localconf.h,$(shell echo localconf.h*))
 LOCALCONF = -DLOCALCONF
 else
 LOCALCONF = 
@@ -73,7 +75,7 @@ INDENT = indent -kr
 
 # Linker with relocation information and binary output (image)
 LD = m68k-atari-mint-gcc -nostartfiles -nostdlib
-LDFLAGS = -Xlinker -oformat -Xlinker binary -lgcc
+LDFLAGS = -Xlinker -oformat -Xlinker binary -lgcc 
 LDFLAGS_T1 = -Xlinker -Ttext=0xfc0000 -Xlinker -Tbss=0x000000 
 LDFLAGS_T2 = -Xlinker -Ttext=0xe00000 -Xlinker -Tbss=0x000000 
 
@@ -259,20 +261,26 @@ help:
 	@echo "ram     ramtos.img + boot.prg, a RAM tos"
 	@echo "flop    emutos.st, a bootable floppy with RAM tos"
 	@echo "clean"
+	@echo "cvsready  put files in canonic format before committing to cvs"
 	@echo "tgz     bundles almost it all into a tgz archive"
 	@echo "depend  creates dependancy file (makefile.dep)"
 	@echo "dsm     dsm.txt, an edited desassembly of emutos.img"
 	@echo "fdsm    fal_dsm.txt, like above, but for 0xE00000 ROMs"
+	@echo "*.dsm   desassembly of any .c or almost any .img file"
 
 #
-#
+# the maps must be built at the same time as the images, to enable
+# one generic target to deal with all edited desassembly.
 #
 
-emutos1.img: $(OBJECTS)
-	$(LD) -o $@ $(OBJECTS) $(LDFLAGS) $(LDFLAGS_T1)
+emutos1.img emutos1.map: $(OBJECTS)
+	$(LD) -o emutos1.img -Xlinker -Map -Xlinker emutos1.map \
+	  $(OBJECTS) $(LDFLAGS) $(LDFLAGS_T1)
 
-emutos2.img: $(OBJECTS)
-	$(LD) -o $@ $(OBJECTS) $(LDFLAGS) $(LDFLAGS_T2)
+emutos2.img emutos2.map: $(OBJECTS)
+	$(LD) -o emutos2.img -Xlinker -Map -Xlinker emutos2.map \
+	  $(OBJECTS) $(LDFLAGS) $(LDFLAGS_T2)
+
 
 #
 # generic sized images handling
@@ -326,20 +334,19 @@ etos512k.img: emutos2.img
 
 
 #
-# ram - In two stages. first link EmuTOS to know the top address of bss, 
-# then use this value to relocate the RamTOS. 
-# the top bss address is taken from the disassembly map.
+# ram - In two stages. first link emutos2.img to know the top address of bss, 
+# then use this value (taken from the map) to relocate the RamTOS. 
 #
 
 ram: ramtos.img boot.prg
 
-ramtos.img: $(OBJECTS) map 
-	@TOPBSS=`grep __end map | sed -e 's/^ *0x\([^ ]*\) .*$$/\1/'`; \
-	echo $(LD) -o $@ $(OBJECTS) $(LDFLAGS) \
-		-Xlinker -Ttext=0x$$TOPBSS -Xlinker -Tbss=0 ; \
-	$(LD) -o $@ $(OBJECTS) $(LDFLAGS) \
-		-Xlinker -Ttext=0x$$TOPBSS -Xlinker -Tbss=0 ;
-
+ramtos.img ramtos.map: $(OBJECTS) emutos2.map 
+	@topbss=`sed -e '/__end/!d;s/^ *//;s/ .*//' emutos2.map`; \
+	echo $(LD) -o ramtos.img $(OBJECTS) $(LDFLAGS) \
+		-Xlinker -Ttext=$$topbss -Xlinker -Tbss=0; \
+	$(LD) -o ramtos.img $(OBJECTS) $(LDFLAGS) \
+		-Xlinker -Map -Xlinker ramtos.map \
+		-Xlinker -Ttext=$$topbss -Xlinker -Tbss=0
 
 boot.prg: obj/minicrt.o obj/boot.o obj/bootasm.o
 	$(LD) -Xlinker -s -o $@ obj/minicrt.o obj/boot.o obj/bootasm.o -lgcc
@@ -347,14 +354,28 @@ boot.prg: obj/minicrt.o obj/boot.o obj/bootasm.o
 #
 # compressed ROM image
 #
+	
+COMPROBJ = obj/comprimg.o obj/memory.o obj/uncompr.o obj/processor.o
 
-compr2.img: obj/comprimg.o obj/memory.o obj/uncompr.o obj/processor.o
-	$(LD) -o $@ $+ $(LDFLAGS) $(LDFLAGS_T2)
+compr2.img compr2.map: $(COMPROBJ)
+	$(LD) -o compr2.img $(COMPROBJ) $(LDFLAGS) \
+	  -Xlinker -Map -Xlinker compr2.map $(LDFLAGS_T2)
 
-etoscpr.img: compr2.img compr$(EXE) ramtos.img
-	./compr$(EXE) ramtos.img compr.tmp
-	cat compr2.img compr.tmp > $@
-	rm -f compr2.img compr.tmp
+etoscpr2.img: compr2.img compr$(EXE) ramtos.img
+	./compr$(EXE) --rom compr2.img ramtos.img $@
+
+compr1.img compr1.map: $(COMPROBJ)
+	$(LD) -o compr1.img $(COMPROBJ) $(LDFLAGS) \
+	  -Xlinker -Map -Xlinker compr2.map $(LDFLAGS_T1)
+
+etoscpr1.img: compr1.img compr$(EXE) ramtos.img
+	./compr$(EXE) --rom compr1.img ramtos.img $@
+
+ecpr256k.img: etoscpr2.img
+	$(sized_image)
+
+ecpr192k.img: etoscpr1.img
+	$(sized_image)
 
 compr$(EXE): tools/compr.c
 	$(NATIVECC) -o $@ $<
@@ -403,7 +424,7 @@ keytbl2c$(EXE) : tools/keytbl2c.c
 # NLS support
 #
 
-POFILES = po/fr.po po/de.po
+POFILES = po/fr.po po/de.po po/cs.po
 
 bug$(EXE): tools/bug.c
 	$(NATIVECC) -o $@ $<
@@ -455,12 +476,12 @@ all192:
 # .tr.c french translations). See target obj/country below.
 #
 
-TRANS_SRC = $(shell sed -e '/^[^a-z]/d;s/\.c/.tr&/' <po/POTFILES.in)
+TRANS_SRC_CMD = sed -e '/^[^a-z]/d;s/\.c/.tr&/' <po/POTFILES.in
 
 ifneq (,$(UNIQUE))
 
 ifneq (us,$(ETOSLANG))
-emutos1.img emutos2.img: $(TRANS_SRC)
+emutos1.img emutos2.img: $(shell $(TRANS_SRC_CMD))
 
 %.tr.c : %.c po/$(ETOSLANG).po bug$(EXE) po/LINGUAS obj/country
 	./bug$(EXE) translate $(ETOSLANG) $<
@@ -488,7 +509,7 @@ obj/country: needcountry.tmp
 	  fi; \
 	fi; \
 	mv last.tmp $@; \
-	for i in $(TRANS_SRC); \
+	for i in `$(TRANS_SRC_CMD)`; \
 	do \
 	  j=obj/`basename $$i tr.c`o; \
 	  echo rm -f $$i $$j; \
@@ -541,7 +562,7 @@ obj/nlsasm.o: include/i18nconf.h
 
 obj/startup.o: bios/header.h
 
-obj/comprimg.o: bios/header.h include/i18nconf.h
+obj/comprimg.o: bios/header.h
 
 obj/country.o: bios/header.h 
 
@@ -571,48 +592,34 @@ obj/%.o : %.S
 	$(CC) $(CFLAGS) -S $($(subst /,_,$(dir $<))copts) $< -o $@
 
 #
-# dsm, show
+# generic dsm handling
 #
 
-DESASS = dsm.txt
-
-dsm: $(DESASS)
-
-show: $(DESASS)
-	cat $(DESASS)
-
-
-map: $(OBJECTS)
-	${LD} -Xlinker -Map -Xlinker map -o emutos1.img $(OBJECTS) \
-		 $(LDFLAGS) $(LDFLAGS_T1)
-
-$(DESASS): map
-	$(OBJDUMP) --target=binary --architecture=m68k \
-	--adjust-vma=0x00fc0000 -D emutos1.img | grep '^  f' \
-	| sed -e 's/^  //' -e 's/:	/: /' > $(TMP1)
-	grep '^ \+0x' map | sort | sed -e 's/ \+/ /g' \
-	| sed -e 's/^ 0x00//' -e 's/ /:  /' > $(TMP2)
+%.dsm: %.map
+	vma=`grep '^.text' $< | sed -e 's/[^0]*//;s/ .*//'`; \
+ 	$(OBJDUMP) --target=binary --architecture=m68k \
+	  --adjust-vma=$$vma -D $(<:%.map=%.img) \
+	| sed -e '/:/!d;/^  /!d;s/^  //;s/^ /0/;s/:	/: /' > $(TMP1)
+	grep '^ \+0x' $< | sort \
+	| sed -e 's/^ *0x00//;s/  */:  /' > $(TMP2)
 	cat $(TMP1) $(TMP2) | LC_ALL=C sort > $@
 	rm $(TMP1) $(TMP2)
 
+dsm.txt: emutos1.dsm
+	cp $< $@
 
-fdsm: fal_$(DESASS)
+dsm: dsm.txt
 
-fshow: fal_$(DESASS)
-	cat fal_$(DESASS)
+show: dsm.txt
+	cat dsm.txt
 
-fal_map: $(OBJECTS)
-	${LD} -Xlinker -Map -Xlinker fal_map -o emutos2.img $(OBJECTS) \
-		 $(LDFLAGS) $(LDFLAGS_T2)
+fal_dsm.txt: emutos2.dsm
+	cp $< $@
 
-fal_$(DESASS): fal_map
-	$(OBJDUMP) --target=binary --architecture=m68k \
-	--adjust-vma=0x00e00000 -D emutos2.img | grep '^  e' \
-	| sed -e 's/^  //' -e 's/:	/: /' > $(TMP1)
-	grep '^ \+0x' fal_map | sort | sed -e 's/ \+/ /g' \
-	| sed -e 's/^ 0x00//' -e 's/ /:  /' > $(TMP2)
-	cat $(TMP1) $(TMP2) | LC_ALL=C sort > $@
-	rm $(TMP1) $(TMP2)
+fdsm: fal_dsm.txt
+
+fshow: fal_dsm.txt
+	cat fal_dsm.txt
 
 #
 # clean and distclean 
@@ -620,13 +627,15 @@ fal_$(DESASS): fal_map
 #
 
 clean:
-	rm -f obj/*.o obj/*.s *~ */*~ core emutos[12].img map $(DESASS)
-	rm -f ramtos.img boot.prg etos*.img mkflop$(EXE) 
-	rm -f bootsect.img emutos.st date.prg dumpkbd.prg keytbl2c$(EXE)
+	rm -f obj/*.o obj/*.s *~ */*~ $(CORE) *.img *.map *.dsm *.tmp
+	rm -f dsm.txt fal_dsm.txt
+	rm -f boot.prg date.prg dumpkbd.prg emutos.st
+	rm -f mkflop$(EXE) keytbl2c$(EXE) tounix$(EXE) mkheader$(EXE)
 	rm -f bug$(EXE) po/messages.pot util/langs.c bios/header.h
-	rm -f mkheader$(EXE) tounix$(EXE) *.tmp *.dsm */*.tr.c 
-	rm -f makefile.dep fal_dsm.txt fal_map obj/country include/i18nconf.h
-	rm -f compr$(EXE) uncompr$(EXE) compr2.img etoscpr.img
+	rm -f */*.tr.c obj/country include/i18nconf.h
+	rm -f compr$(EXE) uncompr$(EXE)
+	rm -f makefile.dep 
+	
 
 distclean: clean
 	rm -f '.#'* */'.#'* 
@@ -746,17 +755,12 @@ release: distclean
 #
 
 depend: util/langs.c bios/header.h
-	for i in $(CSRC); do\
-	  j=`basename $$i|sed -e s/c$$/o/`;\
-	  (echo -n obj/;$(CC) -MM $(INC) -Ibios -Iaes -Idesk/icons $(DEF) $$i ) \
-	    >>makefile.dep;\
-	done
-	for i in $(SSRC); do\
-	  j=`basename $$i|sed -e s/S$$/o/`;\
-	  (echo -n obj/;$(CC) -MM $(INC) $(DEF) $$i )>>makefile.dep;\
-	done
+	( \
+	  $(CC) -MM $(INC) -Ibios -Iaes -Idesk/icons $(DEF) $(CSRC); \
+	  $(CC) -MM $(INC) $(DEF) $(SSRC) \
+	) | sed -e '/:/!s,^,obj/,' >makefile.dep;
 
-ifeq (makefile.dep,$(shell ls makefile.dep 2>/dev/null))
+ifeq (makefile.dep,$(shell echo makefile.dep*))
 include makefile.dep
 endif
 
