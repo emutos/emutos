@@ -933,4 +933,5 @@ Start... early ages
   - gmake black magic :-) shrinks down the size of build rules (LVL)
   - experimental building of a unique-country translated EmuTOS (LVL)
 - removed some 'extern' from C source files (should go in .h files) (LVL)
+- bios/version.c - removed, was commented out for some time now (LVL)
 

@@ -103,7 +103,7 @@ NATIVECC = gcc -Wall
 # Note: tosvars.o must be first object linked.
 
 BIOSCSRC = kprint.c xbios.c chardev.c blkdev.c bios.c clock.c \
-           fnt8x16.c fnt8x8.c fnt6x6.c mfp.c version.c parport.c \
+           fnt8x16.c fnt8x8.c fnt6x6.c mfp.c parport.c \
            midi.c ikbd.c sound.c floppy.c disk.c screen.c lineainit.c \
            mouse.c initinfo.c cookie.c machine.c nvram.c country.c \
 	   fntlat2_6.c fntlat2_8.c fntlat2_16.c biosmem.c acsi.c
@@ -392,7 +392,7 @@ po/messages.pot: bug$(EXE) po/POTFILES.in
 #
 # Experimental mono-country translated EmuTOS
 #
-	
+
 ifneq (,$(UNIQUE))
 TRANS_SRC = $(shell sed -e '/^[^a-z]/d;s/\.c/.tr&/' <po/POTFILES.in)
 
