@@ -25,10 +25,7 @@
  */
 
 static void addit(OFD *p, long siz, int flg);
-static long xrw(int wrtflg, 
-                OFD *p, 
-                long len, 
-                char *ubufr, 
+static long xrw(int wrtflg, OFD *p, long len, char *ubufr,
                 void (*bufxfr)(int, char *, char *));
 static void usrio(int rwflg, int num, int strt, char *ubuf, DMD *dm);
 
@@ -184,7 +181,7 @@ long    ixread(OFD *p, long len, void *ubufr)
 {
     long maxlen;
 
-    /*Make sure file not opened as write only.*/
+    /* Make sure file not opened as write only */
     if (p->o_mod == 1)
         return (EACCDN);
 
@@ -293,7 +290,7 @@ static long xrw(int wrtflg, OFD *p, long len, char *ubufr,
     long rc,bytpos,lenrec,lenmid;
 
     /*
-     *  determine where we currently are in the filef
+     * determine where we currently are in the filef
      */
 
     dm = p->o_dmd;                      /*  get drive media descriptor  */
@@ -301,15 +298,18 @@ static long xrw(int wrtflg, OFD *p, long len, char *ubufr,
     bytpos = p->o_bytnum;               /*  starting file position      */
 
     /*
-     *  get logical record number to start i/o with
-     *  (bytn will be byte offset into sector # recn)
+     * get logical record number to start i/o with
+     * (bytn will be byte offset into sector # recn)
      */
 
     recn = divmod(&bytn,(long) p->o_curbyt,dm->m_rblog);
+#if DBGFSIO
+    kprintf("xrw recn %d, bytn %d \n", recn, bytn);
+#endif
     recn += p->o_currec;
 
     /*
-     *  determine "header" of request.
+     * determine "header" of request.
      */
 
     if (bytn) /* do header */
@@ -318,10 +318,10 @@ static long xrw(int wrtflg, OFD *p, long len, char *ubufr,
         /* #bytes left in current record ) */
 
         lenxfr = min(len,dm->m_recsiz-bytn);
-        bufp = getrec(recn,dm,wrtflg);  /*  get desired record  */
-        addit(p,(long) lenxfr,1);       /*  update ofd          */
-        len -= lenxfr;                  /*  nbr left to do      */
-        recn++;                         /*    starting w/ next  */
+        bufp = getrec(recn,dm,wrtflg);  /* get desired record  */
+        addit(p,(long) lenxfr,1);       /* update ofd          */
+        len -= lenxfr;                  /* nbr left to do      */
+        recn++;                         /* starting w/ next    */
 
         if (!ubufr)
         {

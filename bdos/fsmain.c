@@ -384,11 +384,11 @@
 
 
 
-#include        "portab.h"
-#include        "fs.h"
-#include        "bios.h"                
-#include        "mem.h"
-#include        "gemerror.h"
+#include "portab.h"
+#include "fs.h"
+#include "bios.h"
+#include "mem.h"
+#include "gemerror.h"
 
 
 
@@ -423,7 +423,7 @@ void    usr2xfr(register int n, register char *d, register char *s)
 
 char    uc(register char c)
 {
-        return((c >= 'a') && (c <= 'z') ? c & 0x5F : c);
+    return((c >= 'a') && (c <= 'z') ? c & 0x5F : c);
 }
 
 
@@ -434,7 +434,7 @@ char    uc(register char c)
 
 char    *xgetdta(void)      /* return address of dta */
 {
-        return(run->p_xdta);
+    return(run->p_xdta);
 }
 
 
@@ -444,7 +444,7 @@ char    *xgetdta(void)      /* return address of dta */
 
 void    xsetdta(char *addr)     /* set transfer address to addr */
 {
-        run->p_xdta = addr;
+    run->p_xdta = addr;
 }
 
 
@@ -472,73 +472,71 @@ long    xsetdrv(int drv)
 
 
 /*
-**  xgetdrv - get default drive
-**      (0 = A, etc )
-**
-**      Function 0x19   d_getdrv
-**
-**      Last modified   SCC     1 May 85
-*/
+ * xgetdrv - get default drive
+ *
+ * (0 = A, etc )
+ *
+ *      Function 0x19   d_getdrv
+ *
+ *      Last modified   SCC     1 May 85
+ */
 
 long    xgetdrv(void) 
 {
-        return(run->p_curdrv);
+    return(run->p_curdrv);
 }
 
 
+
 /*
-**  makofd -
-*/
+ *  makofd -
+ */
 
 OFD     *makofd(register DND *p)
 {
-        register OFD *f;
+    register OFD *f;
 
-        if (!(f = MGET(OFD)))
-                return ( (OFD *) 0 );
+    if (!(f = MGET(OFD)))
+        return ( (OFD *) 0 );
 
-        f->o_strtcl = p->d_strtcl;
-        f->o_fileln = 0x7fffffffL;
-        f->o_dirfil = p->d_dirfil;
-        f->o_dnode = p->d_parent;
-        f->o_dirbyt = p->d_dirpos;
-        f->o_date = p->d_date;
-        f->o_time = p->d_time;
-        f->o_dmd = p->d_drv;
+    f->o_strtcl = p->d_strtcl;
+    f->o_fileln = 0x7fffffffL;
+    f->o_dirfil = p->d_dirfil;
+    f->o_dnode = p->d_parent;
+    f->o_dirbyt = p->d_dirpos;
+    f->o_date = p->d_date;
+    f->o_time = p->d_time;
+    f->o_dmd = p->d_drv;
 
-        return(f);
+    return(f);
 }
 
 
 
-
 /*
-**  getofd -
-*/
+ *  getofd -
+ */
 
 OFD     *getofd(int h)
 {
-        return(sft[syshnd(h)].f_ofd);
+    return(sft[syshnd(h)].f_ofd);
 }
 
 
 
-
-
 /*
-**  divmod - do divide and modulo arithmetic
-**      the divide is accomplished with the log2 shift factor passed in as
-**      as psuedo divisor, the remainder (modulo) is left in the varable 
-**      pointed to by the third argument.
-*/
+ * divmod - do divide and modulo arithmetic
+ *
+ * the divide is accomplished with the log2 shift factor passed in as
+ * as psuedo divisor, the remainder (modulo) is left in the varable
+ * pointed to by the third argument.
+ */
 
 /* divsor is log2 of actual divisor */
 int     divmod(int *modp, long divdnd, int divsor)
 {
-        *modp = (int)(divdnd & logmsk[divsor]);
+    *modp = (int)(divdnd & logmsk[divsor]);
 
-        return (int)(divdnd >> divsor);
+    return (int)(divdnd >> divsor);
 }
-
-
 
