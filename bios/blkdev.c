@@ -66,51 +66,6 @@ void blkdev_init(void)
     blkdev_hdv_init();
 }
 
-
-/*
- * disk_init
- *
- * Rescans all interfaces and adds all found partitions to blkdev and drvbits
- *
- */
-
-static void disk_init(void)
-{
-        /* scan disk targets in the following order */
-    int targets[] = {16, 18, 17, 19, 20, 22, 21, 23,    /* IDE primary/secondary */
-                     8, 9, 10, 11, 12, 13, 14, 15,      /* SCSI */
-                     0, 1, 2, 3, 4, 5, 6, 7};           /* ACSI */
-    int i;
-
-    /* reset partitions - preserve just floppies */
-    blkdevnum = 2;
-    drvbits &= 0x03;
-
-    /* scan for attached harddrives and their partitions */
-    for(i = 0; i < (sizeof(targets) / sizeof(targets[0])); i++) {
-        ULONG blocksize;
-        ULONG blocks;
-        int major = targets[i];
-        int minor = 0;
-        int xbiosdev = major + 2;
-
-        if (! XHInqTarget(major, minor, &blocksize, NULL, NULL)) {
-            devices[xbiosdev].valid = 1;
-            devices[xbiosdev].pssize = blocksize;
-
-            if (! XHGetCapacity(major, minor, &blocks, NULL))
-                devices[xbiosdev].size = blocks;
-            else
-                devices[xbiosdev].size = 0;
-
-            /* scan for ATARI partitions on this harddrive */
-            atari_partition(major);
-        }
-        else
-            devices[xbiosdev].valid = 0;
-    }
-}
-
 /*
  * blkdev_hdv_init
  *
@@ -120,6 +75,11 @@ void blkdev_hdv_init(void)
 {
     /* call the real */
     flop_hdv_init();
+
+    /* reset partitions - preserve just floppies */
+    blkdevnum = 2;
+    drvbits &= 0x03;
+
     disk_init();
 }
 
@@ -185,8 +145,10 @@ int add_partition(int dev, char id[], ULONG start, ULONG size)
     blkdev[blkdevnum].valid = 1;
 
     /* make just GEM/BGM partitions visible to applications */
+/*
     if (strcmp(blkdev[blkdevnum].id, "GEM") == 0
         || strcmp(blkdev[blkdevnum].id, "BGM") == 0)
+*/
         drvbits |= (1 << blkdevnum);
 
     blkdevnum++;
