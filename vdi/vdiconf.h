@@ -22,7 +22,7 @@
 //#define vme10           1        // assemble for Motorola VME/10
 
 
-#define pattern         0       // for selecting software which applies
+//#define pattern         1       // for selecting software which applies
                                 // a pattern to the source
 
 #define handle 2                // leave 2 for console input, change to 1 for auxin
@@ -33,7 +33,7 @@
 #define v_base          0xF8000
 #endif
 
-#define rev_vid         0       // for selecting reverse video transform
+//#define rev_vid         1       // for selecting reverse video transform
 
 /* Conditionals just for textblit */
 #define test0           1       // if give program access to internal variables
