@@ -220,8 +220,11 @@ LONG bconin2(void)
   WORD old_sr;
   LONG value;
 
-  while(!bconstat2()) 
-    ;
+  while(!bconstat2()) {
+#if USE_STOP_INSN_TO_FREE_HOST_CPU
+  	 stop;
+#endif
+  }
   /* disable interrupts */
   old_sr = set_sr(0x2700);
   
