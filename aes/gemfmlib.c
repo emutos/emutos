@@ -396,7 +396,7 @@ WORD fm_show(WORD string, UWORD *pwd, WORD level)
         ad_alert = (LONG) ADDR( alert = rs_str(string) );
         if (pwd)
         {
-          merge_str(&D.g_loc2[0], alert, pwd);
+          sprintf(&D.g_loc2[0], alert, *pwd);
           ad_alert = ad_g2loc;
         }
         return( fm_alert(level, ad_alert) );
@@ -408,18 +408,16 @@ WORD fm_show(WORD string, UWORD *pwd, WORD level)
 WORD eralert(WORD n, WORD d)    /* n = alert #, 0-5  ;  d = drive code  */
 {
         WORD            ret, level;
-        WORD            *drive_let;
-        WORD            **pwd;
-        BYTE            drive_a[2];
+        WORD            drive_let;
+        WORD            *pwd;
 
-        drive_a[0] = 'A' + d;
-        drive_let = (WORD *) &drive_a[0];
+        drive_let = 'A' + d;
 
         level = (ml_pwlv[n] & 0x00FF);
-        pwd = (ml_pwlv[n] & 0xFF00) ? &drive_let : 0;
+        pwd = (ml_pwlv[n] & 0xFF00) ? &drive_let : NULLPTR;
 
         ct_mouse(TRUE);
-        ret = fm_show(ml_alrt[n], (UWORD *)pwd, level);
+        ret = fm_show(ml_alrt[n], pwd, level);
         ct_mouse(FALSE);
 
         return (ret != 1);

@@ -471,20 +471,20 @@ char *rs_fstr[] = {
         "C:\\EMUDESK.INF",
         NULL,           /* was: "\\SCRAP." - now unused */
         N_("[2][You cannot write to the disk in drive|"
-           "%S: because it is physically write-|"
+           "%c: because it is physically write-|"
            "protected.  Before you Retry, remove|"
            "the write-protect tab or notch the|disk.][Cancel|Retry]"),
-        N_("[2][Drive %S: is not responding.  You must|"
+        N_("[2][Drive %c: is not responding.  You must|"
            "use the right kind of disk, insert it|"
            "correctly, and close the door.  If the|"
            "problem is with a hard disk, check the|"
            "disk's connections.][Cancel|Retry]"),
-        N_("[2][Data on the disk in drive %S: may be|"
+        N_("[2][Data on the disk in drive %c: may be|"
            "damaged.  You must use the right kind|"
            "of floppy disk; you must connect your|"
            "hard disk properly.][Cancel|Retry]"),
         N_("[2][This application cannot read data on the|"
-           "disk in drive %S:.  The disk must be|"
+           "disk in drive %c:.  The disk must be|"
            "formatted, there must be power to the|"
            "disk drive, and the disk drive must be|"
            "physically connected to your computer.][Cancel|Retry]"),
@@ -516,7 +516,7 @@ char *rs_fstr[] = {
         N_("[1][Your computer does not have enough|"
            "memory to run the application you|"
            "have selected.][  OK  ]"),
-        N_("[3][DOS error #%W.][Cancel]"),
+        N_("[3][DOS error #%d.][Cancel]"),
         N_("[3][Bad Function #][Cancel]"),
         N_("[3][To run the GEM Desktop, insert your|"
            "GEM DESKTOP disk in drive A and click|"
