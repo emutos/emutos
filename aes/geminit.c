@@ -194,7 +194,7 @@ void ini_dlongs()
 #if MULTIAPP
         WORD            ii;
 #endif
-        REG BYTE        *ps;
+        register BYTE   *ps;
         
                                                 /* use all of this      */
                                                 /*   initialization     */
@@ -357,7 +357,7 @@ void ev_init(EVB evblist[], WORD cnt)
 */
 static PD *iprocess(BYTE *pname, void (*routine)())
 {
-        REG ULONG       ldaddr;
+        register ULONG  ldaddr;
 
         /* figure out load addr */
 
@@ -401,7 +401,7 @@ void fs_start()
 
 void sndcli(BYTE *pfilespec, WORD *paccroom)     /* paccroom in paragraphs*/
 {
-        REG WORD        handle;
+        register WORD   handle;
         WORD            err_ret;
         LONG            ldaddr;
 
@@ -439,7 +439,7 @@ void sndcli(BYTE *pfilespec, WORD *paccroom)     /* paccroom in paragraphs*/
 */
 void ldaccs()
 {
-        REG WORD        i;
+        register WORD   i;
         WORD            ret;
         ULONG           laccroom;
         UWORD           accroom;
@@ -532,7 +532,7 @@ void sh_addpath()
 
 void sh_deskf(WORD obj, LONG plong)
 {
-        REG LONG        tree;
+        register LONG   tree;
 
         tree = ad_stdesk;
         LLSET(plong, LLGET(OB_SPEC(obj)));

@@ -169,7 +169,7 @@ void w_nilit(WORD num, OBJECT olist[])
 */
 void w_obadd(OBJECT olist[], WORD parent, WORD child)
 {
-        REG WORD        lastkid;
+        register WORD   lastkid;
 
         if ( (parent != NIL) &&
              (child != NIL) )
@@ -189,7 +189,7 @@ void w_obadd(OBJECT olist[], WORD parent, WORD child)
 
 void w_setup(PD *ppd, WORD w_handle, WORD kind)
 {
-        REG WINDOW      *pwin;
+        register WINDOW *pwin;
 
         pwin = &D.w_win[w_handle];
         pwin->w_owner = ppd;
@@ -255,11 +255,8 @@ void w_adjust( WORD parent, WORD obj, WORD x, WORD y,  WORD w, WORD h)
 }
 
 
-        void
-w_hvassign(isvert, parent, obj, vx, vy, hx, hy, w, h)
-        WORD            isvert;
-        REG WORD        parent, obj;
-        WORD            vx, vy, hx, hy, w, h;
+void w_hvassign(WORD isvert, WORD parent, WORD obj, WORD vx, WORD vy,
+                WORD hx, WORD hy, WORD w, WORD h)
 {
         if ( isvert )
           w_adjust(parent, obj, vx, vy, gl_wbox, h);
@@ -275,7 +272,7 @@ w_hvassign(isvert, parent, obj, vx, vy, hx, hy, w, h)
 
 void do_walk(WORD wh, LONG tree, WORD obj, WORD depth, GRECT *pc)
 {
-        REG ORECT       *po;
+        register ORECT  *po;
         GRECT           t;
         
         if ( wh == NIL )
@@ -311,9 +308,9 @@ void do_walk(WORD wh, LONG tree, WORD obj, WORD depth, GRECT *pc)
 
 void w_drawdesk(GRECT *pc)
 {
-        REG LONG        tree;
-        REG WORD        depth;
-        REG WORD        root;
+        register LONG   tree;
+        register WORD   depth;
+        register WORD   root;
         GRECT           pt;
         
         rc_copy(pc, &pt);
@@ -339,12 +336,7 @@ void w_drawdesk(GRECT *pc)
 }
 
 
-        void
-w_cpwalk(wh, obj, depth, usetrue)
-        REG WORD        wh;
-        WORD            obj;
-        WORD            depth;
-        WORD            usetrue;
+void w_cpwalk(WORD wh, WORD obj, WORD depth, WORD usetrue)
 {
         GRECT           c;
                                                 /* start with window's  */
@@ -396,11 +388,7 @@ w_clipdraw(wh, obj, depth, usetrue)
 }
 
 
-        void 
-w_strchg(w_handle, obj, pstring)
-        REG WORD        w_handle;
-        REG WORD        obj;
-        REG LONG        pstring;
+void  w_strchg(WORD w_handle, WORD obj, LONG pstring)
 {
 #if MULTIAPP
         if ( obj == W_NAME )
@@ -426,13 +414,8 @@ w_strchg(w_handle, obj, pstring)
 }
 
 
-        void
-w_barcalc(isvert, space, sl_value, sl_size, min_sld, ptv, pth)
-        WORD            isvert;
-        REG WORD        space;
-        REG WORD        sl_value, sl_size;
-        REG WORD        min_sld;
-        GRECT           *ptv, *pth;
+void w_barcalc(WORD isvert, WORD space, WORD sl_value, WORD sl_size,
+               WORD min_sld, GRECT *ptv, GRECT *pth)
 {
         if (sl_size == -1)
           sl_size = min_sld;
@@ -447,16 +430,12 @@ w_barcalc(isvert, space, sl_value, sl_size, min_sld, ptv, pth)
 }
 
 
-        void
-w_bldbar(kind, istop, w_bar, sl_value, sl_size, x, y, w, h)
-        UWORD           kind;
-        WORD            istop;
-        WORD            w_bar, sl_value, sl_size;
-        REG WORD        x, y, w, h;
+void w_bldbar(UWORD kind, WORD istop, WORD w_bar, WORD sl_value, WORD sl_size,
+              WORD x, WORD y, WORD w, WORD h)
 {
         WORD            isvert, obj;
         UWORD           upcmp, dncmp, slcmp;            
-        REG WORD        w_up;
+        register WORD   w_up;
         WORD            w_dn, w_slide, space, min_sld;
 
         isvert = (w_bar == W_VBAR);
@@ -512,7 +491,7 @@ w_bldbar(kind, istop, w_bar, sl_value, sl_size, x, y, w, h)
             space = (isvert) ? h : w;
 
             w_barcalc(isvert, space, sl_value, sl_size, min_sld, 
-                  &W_ACTIVE[W_VELEV].ob_x, &W_ACTIVE[W_HELEV].ob_x);
+                  (GRECT *)&W_ACTIVE[W_VELEV].ob_x, (GRECT *)&W_ACTIVE[W_HELEV].ob_x);
 
             obj = (isvert) ? W_VELEV : W_HELEV;
             W_ACTIVE[obj].ob_head = W_ACTIVE[obj].ob_tail = NIL;
@@ -531,7 +510,7 @@ WORD w_top()
 void w_setactive()
 {
         GRECT           d;
-        REG WORD        wh;
+        register WORD   wh;
         PD              *ppd;
 
         wh = w_top();
@@ -547,11 +526,11 @@ void w_setactive()
 void w_bldactive(WORD w_handle)
 {
         WORD            istop, issub;
-        REG WORD        kind;
-        REG WORD        havevbar;
-        REG WORD        havehbar;
+        register WORD   kind;
+        register WORD   havevbar;
+        register WORD   havehbar;
         GRECT           t;
-        REG WORD        tempw;
+        register WORD   tempw;
         WORD            offx, offy;
         WINDOW          *pw;
 
@@ -708,10 +687,7 @@ WORD w_union(ORECT *po, GRECT *pt)
 
 
 
-        void
-w_redraw(w_handle, pt)
-        REG WORD        w_handle;
-        GRECT           *pt;
+void w_redraw(WORD w_handle, GRECT *pt)
 {
         GRECT           t, d;
         PD              *ppd;
@@ -748,12 +724,9 @@ w_redraw(w_handle, pt)
 *       destination blt.  If the source is at -1, then the source
 *       and destination left fringes need to be realigned.
 */
-        WORD
-w_mvfix(ps, pd)
-        REG GRECT       *ps;
-        REG GRECT       *pd;
+WORD w_mvfix(GRECT *ps, GRECT *pd)
 {
-        REG WORD        tmpsx;
+        register WORD   tmpsx;
         
         tmpsx = ps->g_x;
         rc_intersect(&gl_rfull, ps);
@@ -772,16 +745,12 @@ w_mvfix(ps, pd)
 *       else the whole desktop to just updated.  All uncovered portions
 *       of the desktop are redrawn by later by calling w_update.
 */
-        WORD    
-w_move(w_handle, pstop, prc)
-        REG WORD        w_handle;
-        REG WORD        *pstop;
-        GRECT           *prc;
+WORD w_move(WORD w_handle, WORD *pstop, GRECT *prc)
 {
         GRECT           s;                      /* source               */
         GRECT           d;                      /* destination          */
-        REG GRECT       *pc;
-        REG WORD        sminus1, dminus1;
+        register GRECT  *pc;
+        register WORD   sminus1, dminus1;
 
         w_getsize(WS_PREV, w_handle, &s);
         s.g_w += 2;
@@ -847,9 +816,8 @@ w_move(w_handle, pstop, prc)
 
 void w_update(WORD bottom, GRECT *pt, WORD top, WORD moved, WORD usetrue)
 {
-        REG WORD        i, ni;
-        REG WORD        done;
-        
+        register WORD   i, ni;
+        register WORD   done;
                                                 /* limit to screen      */
         rc_intersect(&gl_rfull, pt);
         gsx_moff();
@@ -1127,8 +1095,8 @@ w_windfix(npd)
 void draw_change(WORD w_handle, GRECT *pt)
 {
         GRECT           c, pprev;
-        REG GRECT       *pw;
-        REG WORD        start;
+        register GRECT  *pw;
+        register WORD   start;
         WORD            stop, moved;
         WORD            oldtop, clrold, diffbord, wasclr;
 
@@ -1353,9 +1321,9 @@ void w_owns(WORD w_handle, ORECT *po, GRECT *pt, WORD *poutwds)
 */
 void wm_start()
 {
-        REG WORD        i;
-        REG ORECT       *po;
-        REG LONG        tree;
+        register WORD   i;
+        register ORECT  *po;
+        register LONG   tree;
         PD              *ppd;
 
 #if MULTIAPP
@@ -1428,7 +1396,7 @@ void wm_start()
 
 WORD wm_create(WORD kind, GRECT *pt)
 {
-        REG WORD        i;
+        register WORD   i;
 
         for(i=0; (D.w_win[i].w_flags & VF_INUSE) && i<NUM_WIN; i++);
         if ( i < NUM_WIN )
@@ -1446,11 +1414,7 @@ WORD wm_create(WORD kind, GRECT *pt)
 /*
 *       Opens or closes a window.
 */
-        void
-wm_opcl(wh, pt, isadd)
-        REG WORD        wh;
-        REG GRECT       *pt;
-        WORD            isadd;
+void wm_opcl(WORD wh, GRECT *pt, WORD isadd)
 {
         GRECT           t;
 
@@ -1518,9 +1482,9 @@ void wm_delete(WORD w_handle)
 */
 void wm_get(WORD w_handle, WORD w_field, WORD *poutwds)
 {
-        REG WORD        which;
+        register WORD   which;
         GRECT           t;
-        REG ORECT       *po;
+        register ORECT  *po;
 
         which = -1;
         switch(w_field)
@@ -1597,9 +1561,7 @@ wm_gsizes(w_field, psl, psz)
 /*
 *       Routine to top a window and then make the right redraws happen
 */
-        void
-wm_mktop(w_handle)
-        REG WORD        w_handle;
+void wm_mktop(WORD w_handle)
 {
         GRECT           t, p;
 
@@ -1624,7 +1586,7 @@ wm_mktop(w_handle)
 void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
 {
         WORD            which, liketop, i;
-        REG WORD        wbar;
+        register WORD   wbar;
         WORD            osl, osz, nsl, nsz;
         GRECT           t;
         WINDOW          *pwin;  
@@ -1711,7 +1673,7 @@ void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
           }
         }
         if (which != -1)
-                w_strchg(w_handle, which, pinwds[0], pinwds[1]);
+          w_strchg(w_handle, which, *(LONG *)pinwds);
                                                 /* give up the sync     */
         wm_update(FALSE);
 }
@@ -1765,7 +1727,7 @@ void wm_update(WORD beg_update)
 void wm_calc(WORD wtype, UWORD kind, WORD x, WORD y, WORD w, WORD h,
              WORD *px, WORD *py, WORD *pw, WORD *ph)
 {
-        REG WORD        tb, bb, lb, rb;
+        register WORD   tb, bb, lb, rb;
 
         tb = bb = rb = lb = 1;
         

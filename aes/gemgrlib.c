@@ -83,8 +83,8 @@ void gr_clamp(WORD xorigin, WORD yorigin, WORD wmin, WORD hmin,
 
 void gr_scale(WORD xdist, WORD ydist, WORD *pcnt, WORD *pxstep, WORD *pystep)
 {
-        REG WORD        i;
-        REG WORD        dist;
+        register WORD   i;
+        register WORD   dist;
 
 
         gr_setup(BLACK);
@@ -162,8 +162,8 @@ void gr_draw(WORD have2box, GRECT *po, GRECT *poff)
 
 WORD gr_wait(GRECT *po, GRECT *poff)
 {
-        REG WORD        have2box;
-        REG WORD        down;
+        register WORD   have2box;
+        register WORD   down;
         
         have2box = !rc_equal(&gl_rzero, poff);
                                                 /* draw/erase old       */
@@ -263,7 +263,7 @@ void gr_dragbox(WORD w, WORD h, WORD sx, WORD sy, GRECT *pc, WORD *pdx, WORD *pd
 
 void gr_2box(WORD flag1, WORD cnt, GRECT *pt, WORD xstep, WORD ystep, WORD flag2)
 {
-        REG WORD        i;
+        register WORD   i;
 
         gsx_moff();
         for (i=0; i<2; i++)
@@ -280,7 +280,7 @@ void gr_2box(WORD flag1, WORD cnt, GRECT *pt, WORD xstep, WORD ystep, WORD flag2
 
 void gr_movebox(WORD w, WORD h, WORD srcx, WORD srcy, WORD dstx, WORD dsty)
 {
-        REG WORD    signx, signy;
+        register WORD   signx, signy;
         WORD        cnt;
         WORD        xstep, ystep;
         GRECT       t;
@@ -302,10 +302,7 @@ void gr_movebox(WORD w, WORD h, WORD srcx, WORD srcy, WORD dstx, WORD dsty)
 *       size of the rectangle.
 */
 /*
-        VOID
-gr_growbox(po, pt)
-        REG GRECT       *po;
-        GRECT           *pt;
+void gr_growbox(GRECT *po, GRECT *pt)
 {
         WORD            cx, cy;
         WORD            cnt, xstep, ystep;
@@ -324,10 +321,7 @@ gr_growbox(po, pt)
 *       origin point.
 */
 /*
-        VOID
-gr_shrinkbox(po, pt)
-        REG GRECT       *po;
-        REG GRECT       *pt;
+void gr_shrinkbox(GRECT *po, GRECT *pt)
 {
         WORD            cx, cy;
         WORD            cnt, xstep, ystep;
@@ -341,8 +335,8 @@ gr_shrinkbox(po, pt)
 
 WORD gr_watchbox(LONG tree, WORD obj, WORD instate, WORD outstate)
 {
-        REG WORD        out;
-        REG WORD        state;
+        register WORD   out;
+        register WORD   state;
         GRECT           t;
 
         gsx_sclip(&gl_rscreen);

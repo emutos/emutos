@@ -110,7 +110,7 @@ void fm_own(WORD beg_ownit)
 */
 WORD find_obj(LONG tree, WORD start_obj, WORD which)
 {
-        REG WORD        obj, flag, state, inc;
+        register WORD   obj, flag, state, inc;
         WORD            theflag;
 
         obj = 0;
@@ -200,7 +200,7 @@ WORD fm_keybd(LONG tree, WORD obj, WORD *pchar, WORD *pnew_obj)
 
 WORD fm_button(LONG tree, WORD new_obj, WORD clks, WORD *pnew_obj)
 {
-        REG WORD        tobj;
+        register WORD   tobj;
         WORD            orword;
         WORD            parent, state, flags;
         WORD            cont, junk, tstate, tflags;
@@ -286,7 +286,7 @@ WORD fm_button(LONG tree, WORD new_obj, WORD clks, WORD *pnew_obj)
 */
 WORD fm_do(LONG tree, WORD start_fld)
 {
-        REG WORD        edit_obj;
+        register WORD   edit_obj;
         WORD            next_obj;
         WORD            which, cont;
         WORD            idx;

@@ -127,7 +127,7 @@ void sh_curdir(LONG ppath)
 
 BYTE *sh_parse(BYTE *psrc, BYTE *pfcb)
 {
-        REG BYTE        *ptmp;
+        register BYTE   *ptmp;
         BYTE            *sfcb;
         BYTE            drv;
 
@@ -196,7 +196,7 @@ BYTE *sh_parse(BYTE *psrc, BYTE *pfcb)
 */
 void sh_fixtail(WORD iscpm)
 {
-        REG WORD        i;
+        register WORD   i;
         WORD            len;
         BYTE            *s_tail;
         BYTE            *ptmp;
@@ -413,7 +413,7 @@ void sh_show(LONG lcmd)
 */
 BYTE *sh_name(BYTE *ppath)
 {
-        REG BYTE        *pname;
+        register BYTE   *pname;
 
         pname = &ppath[strlen(ppath)];
         while ( (pname >= ppath) &&
@@ -488,9 +488,9 @@ void sh_envrn(LONG ppath, LONG psrch)
 
 WORD sh_path(WORD whichone, LONG dp, BYTE *pname)
 {
-        REG BYTE        tmp, last;
+        register BYTE   tmp, last;
         LONG            lp;
-        REG WORD        i;
+        register WORD   i;
 
         last = 0;
                                                 /* find PATH= in the    */

@@ -133,9 +133,9 @@ WORD ev_multi(WORD flags, MOBLK *pmo1, MOBLK *pmo2, LONG tmcount,
               LONG buparm, LONG mebuff, WORD prets[])
 {
         QPB             m;
-        REG EVSPEC      which;
-        REG WORD        what;
-        REG CQUEUE      *pc;
+        register EVSPEC which;
+        register WORD   what;
+        register CQUEUE *pc;
 #if MULTIAPP
         WORD            evbuff[8];
         WORD            pid;

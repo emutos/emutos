@@ -115,8 +115,8 @@ void fix_chpos(LONG pfix, WORD offset)
 /************************************************************************/
 void rs_obfix(LONG tree, WORD curob)
 {
-        REG WORD        offset;
-        REG LONG        p;
+        register WORD   offset;
+        register LONG   p;
                                                 /* set X,Y,W,H */
         p = OB_X(curob);
 
@@ -142,9 +142,9 @@ LONG get_sub(WORD rsindex, WORD rtype, WORD rsize)
 */
 LONG get_addr(UWORD rstype, UWORD rsindex)
 {
-        REG LONG        psubstruct;
-        REG WORD        size;
-        REG WORD        rt;
+        register LONG   psubstruct;
+        register WORD   size;
+        register WORD   rt;
         WORD            valid;
 
         ULONG           junk;
@@ -218,7 +218,7 @@ LONG get_addr(UWORD rstype, UWORD rsindex)
 
 LONG fix_long(LONG plong)
 {
-        REG LONG        lngval;
+        register LONG   lngval;
 
         lngval = LLGET(plong);
         if (lngval != -1L)
@@ -234,8 +234,8 @@ LONG fix_long(LONG plong)
 
 void fix_trindex()
 {
-        REG WORD        ii;
-        REG LONG        ptreebase;
+        register WORD   ii;
+        register LONG   ptreebase;
         LONG            tree;
 
         ptreebase = get_sub(0, RT_TRINDEX, sizeof(LONG) );
@@ -253,9 +253,9 @@ void fix_trindex()
 
 void fix_objects()
 {
-        REG WORD        ii;
-        REG WORD        obtype;
-        REG LONG        psubstruct;
+        register WORD   ii;
+        register WORD   obtype;
+        register LONG   psubstruct;
         WORD            len;
         LONG            farstr;
 
@@ -289,7 +289,7 @@ void fix_objects()
 
 void fix_nptrs(WORD cnt, WORD type)
 {
-        REG WORD        i;
+        register WORD   i;
 
         for(i=cnt; i>=0; i--)
           fix_long( get_addr(type, i) );
@@ -305,8 +305,8 @@ WORD fix_ptr(WORD type, WORD index)
 
 void fix_tedinfo()
 {
-        REG WORD        ii, i;
-        REG LONG        psubstruct;
+        register WORD   ii, i;
+        register LONG   psubstruct;
         LONG            tl[2], ls[2];
 
 
@@ -378,7 +378,7 @@ WORD rs_gaddr(LONG pglobal, UWORD rtype, UWORD rindex, LONG *rsaddr)
 */
 WORD rs_saddr(LONG pglobal, UWORD rtype, UWORD rindex, LONG rsaddr)
 {
-        REG LONG        psubstruct;
+        register LONG   psubstruct;
 
         rs_sglobe(pglobal);
 
@@ -473,7 +473,7 @@ void rs_fixit(LONG pglobal)
 */
 WORD rs_load(LONG pglobal, LONG rsfname)
 {
-        REG WORD        ret;
+        register WORD   ret;
 
         ret = rs_readit(pglobal, rsfname);
         if (ret)

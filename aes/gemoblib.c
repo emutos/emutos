@@ -109,9 +109,9 @@ void ob_setxywh(LONG tree, WORD obj, GRECT *pt)
 */
 void ob_format(WORD just, BYTE *raw_str, BYTE *tmpl_str, BYTE *fmt_str)
 {
-        REG BYTE        *pfbeg, *ptbeg, *prbeg;
+        register BYTE   *pfbeg, *ptbeg, *prbeg;
         BYTE            *pfend, *ptend, *prend;
-        REG WORD        inc, ptlen, prlen;
+        register WORD   inc, ptlen, prlen;
 
         if (*raw_str == '@')
           *raw_str = NULL;
@@ -415,13 +415,9 @@ void ob_draw(LONG tree, WORD obj, WORD depth)
 *       us.  If we are the first child or we have no parent then
 *       return NIL.
 */
-        WORD
-get_prev(tree, parent, obj)
-        REG LONG        tree;
-        WORD            parent;
-        REG WORD        obj;
+WORD get_prev(LONG tree, WORD parent, WORD obj)
 {
-        REG WORD        nobj, pobj;
+        register WORD   nobj, pobj;
 
         pobj = LWGET(OB_HEAD(parent));
         if (pobj != obj)
@@ -525,8 +521,8 @@ WORD ob_find(LONG tree, WORD currobj, WORD depth, WORD mx, WORD my)
 */
 void ob_add(LONG tree, WORD parent, WORD child)
 {
-        REG WORD        lastkid;
-        REG LONG        ptail;
+        register WORD   lastkid;
+        register LONG   ptail;
 
         if ( (parent != NIL) &&
              (child != NIL) )
@@ -554,9 +550,9 @@ void ob_add(LONG tree, WORD parent, WORD child)
 */
 void ob_delete(LONG tree, WORD obj)
 {
-        REG WORD        parent;
+        register WORD   parent;
         WORD            prev, nextsib;
-        REG LONG        ptail, phead;
+        register LONG   ptail, phead;
 
         if (obj != ROOT)
           parent = get_par(tree, obj, &nextsib);
@@ -603,9 +599,9 @@ void ob_delete(LONG tree, WORD obj)
 */
 void ob_order(LONG tree, WORD mov_obj, WORD new_pos)
 {
-        REG WORD        parent;
+        register WORD   parent;
         WORD            chg_obj, ii, junk;
-        REG LONG        phead, pnext, pmove;
+        register LONG   phead, pnext, pmove;
 
         if (mov_obj != ROOT)
           parent = get_par(tree, mov_obj, &junk);

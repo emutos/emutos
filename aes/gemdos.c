@@ -185,7 +185,7 @@ LONG dos_chdir(BYTE *pdrvpath)
 
 WORD dos_gdir(WORD drive, BYTE *pdrvpath)
 {
-        REG WORD ret;
+        register WORD ret;
 
         ret = gemdos(X_GETDIR,pdrvpath,drive);
         if (pdrvpath[0] == '\\')
@@ -241,7 +241,7 @@ WORD dos_label(BYTE drive, BYTE *plabel)
 {
         BYTE    buf[50];                /* 44 bytes used        */
         BYTE    path[8];
-        REG WORD i;
+        register WORD i;
 
         for (i=0;i<50;)
           buf[i++] = 0;
@@ -292,7 +292,7 @@ WORD dos_rmdir(BYTE *path)
 
 LONG dos_alloc(LONG nbytes)
 {
-        REG LONG ret;
+        register LONG ret;
 
         ret = gemdos(X_MALLOC,nbytes);
         if (ret == 0)

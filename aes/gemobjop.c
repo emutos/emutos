@@ -81,8 +81,8 @@ BYTE ob_sst(LONG tree, WORD obj, LONG *pspec, WORD *pstate, WORD *ptype,
 void everyobj(LONG tree, WORD this, WORD last, void (*routine)(),
               WORD startx, WORD starty, WORD maxdep)
 {
-        REG WORD        tmp1;
-        REG WORD        depth;
+        register WORD   tmp1;
+        register WORD   depth;
         WORD            x[8], y[8];
 
         x[0] = startx;
@@ -153,8 +153,8 @@ sibling:
 */
 WORD get_par(LONG tree, WORD obj, WORD *pnobj)
 {
-        REG WORD        pobj;
-        REG WORD        nobj;
+        register WORD   pobj;
+        register WORD   nobj;
 
         pobj = obj;
         nobj = NIL;

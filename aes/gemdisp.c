@@ -56,7 +56,7 @@ GLOBAL PD               *gl_displock = 0;
 
 void forkq(void (*fcode)(), LONG fdata)
 {
-        REG FPD         *f;
+        register FPD    *f;
                                                 /* q a fork process,    */
                                                 /*   enter with ints OFF*/
         if (fpcnt == 0)
@@ -107,9 +107,9 @@ static void mwait_act(PD *p)
 
 void forker(void)
 {
-        REG FPD         *f;
-        REG PD          *oldrl;
-        REG LONG        amt;
+        register FPD    *f;
+        register PD     *oldrl;
+        register LONG   amt;
         FPD             g;
         
         oldrl = rlr;
@@ -167,7 +167,7 @@ void forker(void)
 
 void chkkbd(void)
 {
-        REG WORD        achar, kstat;
+        register WORD   achar, kstat;
                                                 /* poll keybd           */
         if (!gl_play)
         {
@@ -192,7 +192,7 @@ void chkkbd(void)
 
 static void schedule(void)
 {
-        REG PD          *p;
+        register PD     *p;
 
                                                 /* run through lists    */
                                                 /*   until someone is   */
@@ -231,7 +231,7 @@ static void schedule(void)
 
 void disp()
 {
-        REG PD          *p;
+        register PD     *p;
 
 #if MULTIAPP
 skip:

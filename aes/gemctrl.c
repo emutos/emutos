@@ -114,7 +114,7 @@ void hctl_window(WORD w_handle, WORD mx, WORD my)
         GRECT           t, f, pt;
         WORD            x, y, w, h, ii;
         WORD            kind;
-        REG WORD        cpt, message;
+        register WORD   cpt, message;
         LONG            tree;
         
         message = 0;
@@ -265,8 +265,8 @@ doelev:         message = (cpt == W_HELEV) ? WM_HSLID : WM_VSLID;
 void hctl_rect()
 {
         WORD            title, item;
-        REG WORD        mesag;
-        REG PD          *owner;
+        register WORD   mesag;
+        register PD     *owner;
 #if SINGLAPP
         WORD            ii;
 #endif
@@ -398,7 +398,7 @@ hctl_mesag(pmbuf)
 
 void ctlmgr()
 {
-        REG WORD        ev_which;
+        register WORD   ev_which;
         WORD            rets[6];
         WORD            i, wh;
 #if MULTIAPP

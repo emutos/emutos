@@ -93,7 +93,7 @@ WORD ap_init(void)
 /*
 *       APplication READ or WRITE
 */
-void ap_rdwr(WORD code, REG PD *p, WORD length, LONG pbuff)
+void ap_rdwr(WORD code, PD *p, WORD length, LONG pbuff)
 {
         QPB             m;
                                                 /* do quick version if  */
@@ -117,12 +117,13 @@ void ap_rdwr(WORD code, REG PD *p, WORD length, LONG pbuff)
           }
 }
 
+
 /*
 *       APplication FIND
 */
 WORD ap_find(LONG pname)
 {
-        REG PD          *p;
+        register PD     *p;
         BYTE            temp[9];
 
         strcpy(temp, (char *)pname);
@@ -131,12 +132,13 @@ WORD ap_find(LONG pname)
         return( ((p) ? (p->p_pid) : (-1)) );
 }
 
+
 /*
 *       APplication Tape PLAYer
 */
-void ap_tplay(REG LONG pbuff, WORD length, WORD scale)
+void ap_tplay(LONG pbuff, WORD length, WORD scale)
 {
-        REG WORD        i;
+        register WORD   i;
         FPD             f;
         LONG            ad_f;
 
@@ -176,13 +178,14 @@ void ap_tplay(REG LONG pbuff, WORD length, WORD scale)
         gl_play = FALSE;
 } /* ap_tplay */
 
+
 /*
 *       APplication Tape RECorDer
 */
-WORD ap_trecd(REG LONG pbuff, REG WORD length)
+WORD ap_trecd(LONG pbuff, WORD length)
 {
-        REG WORD        i;
-        REG WORD        code;
+        register WORD   i;
+        register WORD   code;
         WORD            (*proutine)(void);
 
         code = -1;

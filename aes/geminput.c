@@ -96,8 +96,7 @@ UWORD in_mrect(MOBLK *pmo)
 *       returns 0 if it is over the desktop, or +1 if it is over
 *       the active window.
 */
-
-WORD chk_ctrl(REG WORD mx, REG WORD my)
+static WORD chk_ctrl(WORD mx, WORD my)
 {
         WORD            wh;
                                                 /* if inside ctrl rect  */
@@ -131,8 +130,7 @@ WORD chk_ctrl(REG WORD mx, REG WORD my)
 *       Button click code call that is from the button interrupt
 *       code with interrupts off.
 */
-
-void b_click(REG WORD state)
+void b_click(WORD state)
 {
                                                 /* ignore it unless it  */
                                                 /*   represents a change*/
@@ -276,7 +274,7 @@ void set_mown(PD *mp)
 /*
 *       EnQueue a a character on a circular keyboard buffer.
 */
-void nq(UWORD ch, REG CQUEUE *qptr)
+void nq(UWORD ch, CQUEUE *qptr)
 {
         if (qptr->c_cnt < KBD_SIZE)
         {
@@ -293,7 +291,7 @@ void nq(UWORD ch, REG CQUEUE *qptr)
 */
 UWORD dq(CQUEUE *qptr)
 {
-        REG WORD        q2;
+        register WORD   q2;
 
         qptr->c_cnt--;
         q2 = qptr->c_front++;
@@ -331,9 +329,9 @@ void kchange(UWORD ch, WORD kstat)
 }
 
 
-void post_keybd(REG CDA *c, REG UWORD ch)
+void post_keybd(CDA *c, UWORD ch)
 {
-        REG EVB         *e;
+        register EVB    *e;
 
                                                 /* if anyone waiting ?  */
         if ((e = c->c_iiowait) != 0)                    /*   wake him up        */
@@ -353,7 +351,7 @@ void post_keybd(REG CDA *c, REG UWORD ch)
 */
 void chkown()
 {
-        REG WORD        val;
+        register WORD   val;
 
         val = chk_ctrl(xrat, yrat);
         if (val == 1)
@@ -385,9 +383,9 @@ void bchange(WORD new, WORD clicks)
 }
 
 
-WORD downorup(WORD new, REG LONG buparm)
+WORD downorup(WORD new, LONG buparm)
 {
-        REG WORD        flag, mask, val;
+        register WORD   flag, mask, val;
 
         flag = (buparm >> 24) & 0x00ffL;
         mask = (buparm >> 8) & 0x00ffL;
@@ -462,7 +460,7 @@ void mchange(WORD rx, WORD ry)
 
 
 
-WORD inorout(REG EVB *e, REG WORD rx, REG WORD ry)
+WORD inorout(EVB *e, WORD rx, WORD ry)
 {
         MOBLK           mo;
                                                 /* in or out of         */
@@ -482,7 +480,7 @@ WORD inorout(REG EVB *e, REG WORD rx, REG WORD ry)
 */
 void post_mb(WORD ismouse, EVB *elist, WORD parm1, WORD parm2)
 {
-        REG EVB         *e1, *e;
+        register EVB    *e1, *e;
         UWORD           clicks;
 
         for (e = elist; e; e = e1)
@@ -527,7 +525,7 @@ void akbin(EVB *e)
 
 void adelay(EVB *e, LONG c)
 {
-        REG EVB         *p, *q;
+        register EVB   *p, *q;
         
         if (c == 0x0L)
           c = 0x1L;
@@ -580,7 +578,7 @@ void adelay(EVB *e, LONG c)
 
 void abutton(EVB *e, LONG p)
 {
-        REG WORD        bclicks;
+        register WORD   bclicks;
 
         if ( (rlr == gl_mowner) &&
              (downorup(button, p)) )

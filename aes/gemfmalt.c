@@ -60,11 +60,11 @@ LONG     ad_nils;
 void fm_strbrk(LONG tree, LONG palstr, WORD stroff, WORD *pcurr_id,
                WORD *pnitem, WORD *pmaxlen)
 {
-        REG WORD    nitem, curr_id;
-        REG WORD    len, maxlen;
-        REG BYTE    tmp;
-        BYTE        *pstr;
-        REG BYTE    nxttmp;
+        register WORD   nitem, curr_id;
+        register WORD   len, maxlen;
+        register BYTE   tmp;
+        BYTE            *pstr;
+        register BYTE   nxttmp;
 
         nitem = maxlen = 0; 
         curr_id = *pcurr_id;
@@ -135,7 +135,7 @@ void fm_parse(LONG tree, LONG palstr, WORD *picnum, WORD *pnummsg,
 void fm_build(LONG tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
               WORD numbut, WORD mlenbut)
 {
-        REG WORD        i, k;
+        register WORD   i, k;
         GRECT           al, ic, bt, ms;
 
         r_set(&al, 0, 0, 1+INTER_WSPACE, 1+INTER_HSPACE);
@@ -192,7 +192,7 @@ void fm_build(LONG tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
 
 WORD fm_alert(WORD defbut, LONG palstr)
 {
-        REG WORD        i;
+        register WORD   i;
         WORD            inm, nummsg, mlenmsg, numbut, mlenbut;
         LONG            tree, plong;
         GRECT           d, t;

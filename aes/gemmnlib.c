@@ -139,7 +139,7 @@ menu_sub(ptree, ititle)
 */
 WORD mn_getda(PD *ppd)
 {
-        REG WORD        i;
+        register WORD   i;
 
         for (i=0; i<NUM_DESKACC; i++)
         {
@@ -153,7 +153,7 @@ WORD mn_getda(PD *ppd)
 
 void menu_fixup(BYTE *pname)
 {
-        REG OBJECT      *pob;
+        register OBJECT *pob;
         GRECT           t;
         WORD            i, cnt, st;
         LONG            tree;
@@ -244,7 +244,7 @@ UWORD do_chg(LONG tree, WORD iitem, UWORD chgvalue,
 /* dodraw:       draw resulting change*/
 /* chkdisabled:  only if item enabled */
 {
-        REG UWORD       curr_state;
+        register UWORD  curr_state;
 
         curr_state = LWGET(OB_STATE(iitem));
         if ( (chkdisabled) &&
@@ -268,12 +268,7 @@ UWORD do_chg(LONG tree, WORD iitem, UWORD chgvalue,
 *       Routine to set and reset values of certain items if they
 *       are not the current item
 */
-        WORD
-menu_set(tree, last_item, cur_item, setit)
-        LONG            tree;
-        REG WORD        last_item;
-        WORD            cur_item;
-        WORD            setit;
+WORD menu_set(LONG tree, WORD last_item, WORD cur_item, WORD setit)
 {
         if ( (last_item != NIL) &&
              (last_item != cur_item) )
@@ -312,12 +307,10 @@ void menu_sr(WORD saveit, LONG tree, WORD imenu)
 *       Routine to pull a menu down.  This involves saving the data
 *       underneath the menu and drawing in the proper menu sub-tree.
 */
-        WORD
-menu_down(ititle)
-        REG WORD        ititle;
+WORD menu_down(WORD ititle)
 {
         LONG            tree;
-        REG WORD        imenu;
+        register WORD   imenu;
 
         tree = gl_mntree;
         imenu = menu_sub(&tree, ititle);
@@ -337,10 +330,10 @@ menu_down(ititle)
 
 WORD mn_do(WORD *ptitle, WORD *pitem)
 {
-        REG LONG        tree;
+        register LONG   tree;
         LONG            buparm, cur_tree, last_tree;
         WORD            mnu_flags, done;
-        REG WORD        cur_menu, cur_item, last_item;
+        register WORD   cur_menu, cur_item, last_item;
         WORD            cur_title, last_title;
         UWORD           ev_which;
         MOBLK           p1mor, p2mor;
@@ -550,7 +543,7 @@ void mn_bar(LONG tree, WORD showit, WORD pid)
 */
 void mn_clsda()
 {
-        REG WORD        i;
+        register WORD   i;
 
         for (i=0; i<NUM_DESKACC; i++)
         {

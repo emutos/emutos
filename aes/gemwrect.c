@@ -39,7 +39,7 @@ GLOBAL ORECT    gl_mkrect;
 
 void or_start()
 {
-        REG WORD        i;
+        register WORD   i;
 
         rul = (ORECT *) 0;
         for(i=0; i<NUM_ORECT; i++)
@@ -63,7 +63,7 @@ ORECT *get_orect()
 
 ORECT *mkpiece(WORD tlrb, ORECT *new, ORECT *old)
 {
-        REG ORECT       *rl;
+        register ORECT  *rl;
 
         rl = get_orect();
         rl->o_link = old;
@@ -97,7 +97,7 @@ ORECT *mkpiece(WORD tlrb, ORECT *new, ORECT *old)
 
 ORECT *brkrct(ORECT *new, ORECT *r, ORECT *p)
 {
-        REG WORD        i;
+        register WORD   i;
         WORD            have_piece[4];
                                                 /* break up rectangle r */
                                                 /*   based on new,      */
@@ -137,9 +137,9 @@ ORECT *brkrct(ORECT *new, ORECT *r, ORECT *p)
 /* tree = place holder for everyobj */
 void mkrect(LONG tree, WORD wh)
 {
-        REG WINDOW      *pwin;
+        register WINDOW *pwin;
         ORECT           *new;
-        REG ORECT       *r, *p;
+        register ORECT  *r, *p;
 
         pwin = &D.w_win[wh];
                                                 /* get the new rect     */
@@ -170,8 +170,8 @@ void mkrect(LONG tree, WORD wh)
 
 void newrect(LONG tree, WORD wh)
 {
-        REG WINDOW      *pwin;
-        REG ORECT       *r, *new;
+        register WINDOW *pwin;
+        register ORECT  *r, *new;
         ORECT           *r0;
 
         pwin = &D.w_win[wh];

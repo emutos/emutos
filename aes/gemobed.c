@@ -55,7 +55,7 @@
 void ob_getsp(LONG tree, WORD obj, TEDINFO *pted)
 {
         WORD            flags;
-        REG LONG        spec;
+        register LONG   spec;
 
         flags = LWGET(OB_FLAGS(obj));
         spec = LLGET(OB_SPEC(obj));
@@ -67,8 +67,8 @@ void ob_getsp(LONG tree, WORD obj, TEDINFO *pted)
 
 void ob_center(LONG tree, GRECT *pt)
 {
-        REG WORD        xd, yd, wd, hd;
-        REG LONG        plong;
+        register WORD   xd, yd, wd, hd;
+        register LONG   plong;
         WORD            height;
 
         plong = OB_X(ROOT);
@@ -101,11 +101,7 @@ void ob_center(LONG tree, GRECT *pt)
 *       during field entry the cursor will jump to the first 
 *       raw string underscore after that character.
 */
-        WORD
-scan_to_end(pstr, idx, chr)
-        REG BYTE        *pstr;
-        REG WORD        idx;
-        BYTE            chr;
+static WORD scan_to_end(BYTE *pstr, WORD idx, BYTE chr)
 {
         while( (*pstr) &&
                (*pstr != chr) )
@@ -116,18 +112,15 @@ scan_to_end(pstr, idx, chr)
         return(idx);
 }
 
+
 /*
 *       Routine that returns a format/template string relative number
 *       for the position that was input (in raw string relative numbers).
 *       The returned position will always be right before an '_'.
 */
-        WORD
-find_pos(str, pos)
-        REG BYTE        *str;
-        REG WORD        pos;
+static WORD find_pos(BYTE *str, WORD pos)
 {
-        REG WORD        i;
-
+        register WORD        i;
 
         for (i=0; pos > 0; i++) 
         {
@@ -193,12 +186,9 @@ void curfld(LONG tree, WORD obj, WORD new_pos, WORD dist)
 *       range.  The character ranges are
 *       stored as enumerated characters (xyz) or ranges (x..z)
 */
-        WORD
-instr(chr, str)
-        REG BYTE        chr;
-        REG BYTE        *str;
+WORD instr(BYTE chr, BYTE *str)
 {
-        REG BYTE        test1, test2;
+        register BYTE   test1, test2;
 
         while(*str)
         {
@@ -223,8 +213,8 @@ instr(chr, str)
 */
 WORD check(BYTE *in_char, BYTE valchar)
 {
-        REG WORD        upcase;
-        REG WORD        rstr;
+        register WORD   upcase;
+        register WORD   rstr;
 
         upcase = TRUE;
         rstr = -1;
@@ -308,7 +298,7 @@ WORD ob_edit(LONG tree, WORD obj, WORD in_char, WORD *idx, WORD kind)
 {
         WORD            pos, len;
         WORD            ii, no_redraw, start, finish, nstart, nfinish;
-        REG WORD        dist, tmp_back, cur_pos;
+        register WORD   dist, tmp_back, cur_pos;
         BYTE            bin_char;
 
         if ( (kind == EDSTART) ||

@@ -69,7 +69,7 @@ GLOBAL WORD     gl_fspos;
 *       Routine to back off the end of a file string.
 */
 
-static BYTE *fs_back(REG BYTE *pstr, REG BYTE *pend)
+static BYTE *fs_back(BYTE *pstr, BYTE *pend)
 {
                                                 /* back off to last     */
                                                 /*   slash              */
@@ -93,7 +93,7 @@ static BYTE *fs_back(REG BYTE *pstr, REG BYTE *pend)
 *       of the file specification part
 */
 
-static BYTE *fs_pspec(REG BYTE *pstr, REG BYTE *pend)
+static BYTE *fs_pspec(BYTE *pstr, BYTE *pend)
 {
         pend = fs_back(pstr, pend);
         if (*pend == '\\')
@@ -162,7 +162,7 @@ static WORD fs_active(LONG ppath, BYTE *pspec, WORD *pcount)
 {
         WORD            ret, thefile, len;
         WORD            fs_index;
-        REG WORD        i, j, gap;
+        register WORD   i, j, gap;
         BYTE            *temp;
         
         gsx_mfset(ad_hgmice);
@@ -245,9 +245,9 @@ static WORD fs_active(LONG ppath, BYTE *pspec, WORD *pcount)
 *       tail and heads of the list
 */
 
-static WORD fs_1scroll(REG WORD curr, REG WORD count, REG WORD touchob)
+static WORD fs_1scroll(WORD curr, WORD count, WORD touchob)
 {
-        REG WORD        newcurr;
+        register WORD   newcurr;
 
         newcurr = (touchob == FUPAROW) ? (curr - 1) : (curr + 1);
         if (newcurr < 0)
@@ -265,8 +265,8 @@ static WORD fs_1scroll(REG WORD curr, REG WORD count, REG WORD touchob)
 */
 static void fs_format(LONG tree, WORD currtop, WORD count)
 {
-        REG WORD        i, cnt;
-        REG WORD        y, h, th;
+        register WORD   i, cnt;
+        register WORD   y, h, th;
         LONG            adtext;
         WORD            tlen;
                                                 /* build in real text   */
@@ -321,14 +321,10 @@ static void fs_sel(WORD sel, WORD state)
 *       Routine to handle scrolling the directory window a certain number
 *       of file names.
 */
-static WORD fs_nscroll(REG LONG tree, 
-                       REG WORD *psel, 
-                       WORD curr, 
-                       WORD count, 
-                       WORD touchob, 
-                       WORD n)
+static WORD fs_nscroll(LONG tree, WORD *psel, WORD curr, WORD count, 
+                       WORD touchob, WORD n)
 {
-        REG WORD        i, newcurr, diffcurr;
+        register WORD   i, newcurr, diffcurr;
         WORD            sy, dy, neg;
         GRECT           r[2];
                                                 /* single scroll n times*/
@@ -428,14 +424,14 @@ static WORD fs_newdir(LONG ftitle,
 */
 WORD fs_input(LONG pipath, LONG pisel, WORD *pbutton)
 {
-        REG WORD        touchob, value, fnum;
+        register WORD   touchob, value, fnum;
         WORD            curr, count, sel;
         WORD            mx, my;
-        REG LONG        tree;
+        register LONG   tree;
         LONG            ad_fpath, ad_fname, ad_ftitle, ad_locstr;
         WORD            fname_len, fpath_len, temp_len; 
         WORD            dclkret, cont, firsttime, newname, elevpos;
-        REG BYTE        *pstr, *pspec;
+        register BYTE   *pstr, *pspec;
         GRECT           pt;
         BYTE            locstr[64];
 

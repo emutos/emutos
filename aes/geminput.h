@@ -31,9 +31,9 @@ void fq();
 void evremove(EVB *e, UWORD ret);
 
 void kchange(UWORD ch, WORD kstat);
-void post_keybd(REG CDA *c, REG UWORD ch);
+void post_keybd(CDA *c, UWORD ch);
 void bchange(WORD new, WORD clicks);
-WORD downorup(WORD new, REG LONG buparm);
+WORD downorup(WORD new, LONG buparm);
 void mchange(WORD rx,  WORD ry);
 
 void akbin(EVB *e);

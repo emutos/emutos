@@ -34,7 +34,7 @@
 
 void signal(EVB *e)
 {
-        REG PD          *p, *p1, *q1;
+        register PD     *p, *p1, *q1;
 
         p = (PD *) e->e_pd;
         p->p_evflg |= e->e_mask;
@@ -78,7 +78,7 @@ void azombie(EVB *e, UWORD ret)
 
 void evinsert(EVB *e, EVB **root)
 {
-        REG EVB         *p, *q;
+        register EVB    *p, *q;
                                                 /* insert event block   */
                                                 /*   on list            */
         q = (EVB *)((BYTE *) root - elinkoff) ;
@@ -93,7 +93,7 @@ void evinsert(EVB *e, EVB **root)
 
 void takeoff(EVB *p)
 {
-        REG LONG        c;
+        register LONG   c;
 
                                                 /* take event p off     */
                                                 /*   e_link list, must  */
@@ -128,7 +128,7 @@ EVSPEC mwait(EVSPEC mask)
 
 EVSPEC iasync(WORD afunc, LONG aparm)
 {
-        REG EVB         *e;
+        register EVB    *e;
                                                 /* get an evb           */
         if ((e = eul) != 0)
         {
@@ -163,7 +163,7 @@ EVSPEC iasync(WORD afunc, LONG aparm)
 
 UWORD apret(EVSPEC mask)
 {
-        REG EVB         *p, *q;
+        register EVB    *p, *q;
         UWORD           erret;
                                                 /* first find the event */
                                                 /*   on the process list*/
@@ -193,10 +193,9 @@ UWORD apret(EVSPEC mask)
 
 EVSPEC acancel(EVSPEC m)
 {
-        REG EVSPEC      m1;                     /* mask of items not    */
-                                                /*   cancelled          */
-        REG WORD        f;
-        REG EVB         *p, *q;
+        register EVSPEC m1;              /* mask of items not cancelled */
+        register WORD   f;
+        register EVB    *p, *q;
 
         m1 = 0;
         for (p = (q = (EVB *) &rlr->p_evlist)->e_nextp; p; p = (q=p)->e_nextp)

@@ -33,8 +33,8 @@
 
 void tchange(LONG c)            /* c=number of ticks that have gone by  */
 {
-        REG EVB         *d;
-        REG LONG        c1;
+        register EVB    *d;
+        register LONG   c1;
                                                 /* pull pd's off the    */
                                                 /*   delay list that    */
                                                 /*   have waited long   */
@@ -92,7 +92,7 @@ WORD tak_flag(SPB *sy)
 
 void amutex(EVB *e, LONG ls)
 {
-        REG SPB         *sy;
+        register SPB    *sy;
                                                 /* sy - points to sync  */
                                                 /*   parameter block for*/
                                                 /*   which mutex is     */
@@ -107,7 +107,7 @@ void amutex(EVB *e, LONG ls)
 
 void unsync(SPB *sy)
 {
-        REG EVB         *p;
+        register EVB    *p;
                                                 /* internal unsync must */
                                                 /*   be in dispatcher   */
                                                 /*   context or NODISP  */

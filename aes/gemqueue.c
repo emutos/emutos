@@ -31,8 +31,8 @@
 
 void doq(WORD donq, PD *p, QPB *m)
 {
-        REG WORD        n, index;
-        REG WORD        *om, *nm;
+        register WORD   n, index;
+        register WORD   *om, *nm;
 
         n = m->qpb_cnt;
         if (donq)
@@ -94,8 +94,8 @@ void doq(WORD donq, PD *p, QPB *m)
 
 void aqueue(WORD isqwrite, EVB *e, LONG lm)
 {
-        REG PD          *p;
-        REG QPB         *m;
+        register PD     *p;
+        register QPB    *m;
         EVB             **ppe;
         WORD            qready;
         

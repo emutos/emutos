@@ -75,7 +75,7 @@ UWORD crysbind(WORD opcode, LONG pglobal, UWORD int_in[], UWORD int_out[], LONG 
 {
         LONG            maddr;
         LONG            tree;
-        REG WORD        ret;
+        register WORD   ret;
 
         maddr = 0;
         ret = TRUE;
@@ -85,7 +85,7 @@ UWORD crysbind(WORD opcode, LONG pglobal, UWORD int_in[], UWORD int_out[], LONG 
                                 /* Application Manager                  */
           case APPL_INIT:
 #if SINGLAPP
-                LWSET(pglobal, 0x0290);         /* version number       */
+                LWSET(pglobal, 0x0102);         /* version number       */
                 LWSET(pglobal+2, 0x0001);       /* num of concurrent procs*/
 #endif
 #if MULTIAPP
@@ -457,6 +457,7 @@ if ((MB_MASK == 3) && (MB_STATE == 1))
                         XGR_I3, XGR_I5 );
                 break;
           default:
+                kcprintf("Bad function %d\n",opcode);
                 fm_show(ALNOFUNC, NULLPTR, 1);
                 ret = -1;
                 break;
