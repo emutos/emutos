@@ -1,0 +1,64 @@
+Installing:
+
+You will need the (cross-)gcc toolchain from the sparemint pages to
+build this stuff. 
+
+Also you need to get it (more or less) running is STonX. But you have
+to do some changes in STonX. Possibly this will change later.
+
+EmuTOS now needs no change in STonX any longer. It will run on a
+normal STonX. 
+
+But, if you want to see debugging output in STonX, you need to do two
+things:
+
+1. implement a write_native function in gemdos.c of STonX:
+
+/* Print string from emulated side */
+void write_native(char * addr)
+{
+    char buf[1024];
+    int n;
+
+    buf[0]=0;   /* to be save */
+    buf[80]=0;   /* to be save */
+
+    for(n=0;n<1024;n++) {       /* Fill string char by char */
+        if ((buf[n]=LM_UB(MEM(addr++))) == 0) break;
+    }
+    fprintf(stderr,"%s", buf );
+}
+
+void call_native(UL as, UL func)
+{
+#if 0
+	fprintf(stderr,"Calling native %d\n",func);
+#endif
+	switch (func)
+	{
+        case 0: /* Get the address, where string begins*/
+		write_native((char *)LM_UL(MEM(as)));
+		break;
+	case 1:
+.....
+
+2. Switch on the debugging output by setting, in config.h, the
+   parameter STONX_NATIVE_PRINT to 1.
+
+Then you can compile it all depending on your language with 
+
+    make COUNTRY=en
+or
+    make COUNTRY=fr
+or
+    make COUNTRY=de
+
+
+
+Hope this is all. AND: EmuTOS is not thought for the public right now.
+It is alpha!!! Although it may run well for you, it is not bug tested.
+
+
+Have success!
+--
+Your EmuTOS team

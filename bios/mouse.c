@@ -101,6 +101,7 @@ void mouse_change(WORD dx, WORD dy, WORD buttons)
 
 void mouse_int(BYTE * buf)
 {
+#if 0
     WORD buttons;
 
     struct mouse_data *mse = &mdata;
@@ -114,6 +115,7 @@ void mouse_int(BYTE * buf)
     oldbutt = buttons;
 
     mouse_change(buf[1], buf[2], buttons);
+#endif
 }
 
 

@@ -9,6 +9,5 @@
 - VDI: code cleanup, Makefile, esclisa and gsxvars like in EmuTOS
 - EmuTOS crashes, if it boots from some STeem generated floppy images
 - add clock driver for nvram clock
--> are you sure? - Change char, int, long to BYTE, WORD, LONG
 - Go on with implementing mouse driver
 - kpanic() and like should print on screen then use STOP opcode.

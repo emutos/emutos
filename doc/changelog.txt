@@ -327,3 +327,5 @@ Start... early ages
 - cksum handling of nvram (LVL)
 - new 'hardware' section in status.txt (LVL)
 
+28. Nov. 2001
+- Did put all *.txt files in doc/, except this.   (MAD)
