@@ -926,7 +926,7 @@ Start... early ages
   (x)bios function tables out of vectors.S into (x)bios.c (LVL)
 - bdos/fs*.[ch] - renamed rwabs to longjmp_rwabs for clarity (LVL)
 - */*_rsc.c 
-  - aes reource translation added, sharing code with desk/desk_rsc.c (LVL)
+  - aes resource translation added, sharing code with desk/desk_rsc.c (LVL)
   - folded long strings: no source line longer than 80 chars (LVL)
 - po/fr.po - full FR translation (LVL)
 - Makefile 
