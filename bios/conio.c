@@ -27,7 +27,7 @@ extern void charblit(BYTE charcode, UWORD destx, UWORD desty);
 /*==== Defines ============================================================*/
 
 #define MAXCOLS		79	/* last column on physical screen */
-#define MAXLINES	32	/* last line on physical screen */
+#define MAXLINES	24	/* last line on physical screen */
 
 #define ESC		0x1b	/* <esc> character		     */
 #define TAB		0x09	/* <tab> character		     */

@@ -17,10 +17,10 @@
  *
  * The font data is stored in a structure called a 'form'. You can imagine
  * a form as all characters written in one line from left to right. Each
- * character may be 8 bits wide and 12 bits high. So 256 of them may be:
+ * character may be 8 bits wide and 16 bits high. So 256 of them may be:
  *
  * form_width  = 256 = 8 bit wide * 256 characters
- * form_height = 12  = 12 bit deep
+ * form_height = 16  = 16 bit deep
  *=========================================================================*/
 
 
@@ -34,7 +34,7 @@
 typedef	void	(*FP_MODE)(UBYTE bits, UBYTE *a6);	/* function pointers */
 
 extern UBYTE *v_bas_ad;
-extern struct font_head f8x12;
+extern struct font_head f8x16;  /* hardcoded for now */
 
 
 /*==== prototypes =========================================================*/
@@ -125,7 +125,7 @@ void charblit(BYTE charcode, UWORD destx, UWORD desty)
     linebytes=v_lin_wr; /* bytes in a scan line - offset to next scan */
 
        
-    fnt_ptr=&f8x12;           /* pointer to font f8x12 */
+    fnt_ptr=&f8x16;           /* pointer to font f8x16 */
     form_h=fnt_ptr->form_height;
     form_w=fnt_ptr->form_width;
 
