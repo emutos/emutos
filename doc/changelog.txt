@@ -502,3 +502,10 @@ Start... early ages
            That needs to be debugged (or maybe rewritten completely). (joy)
 - updated po/de.po, because of stupid translations by me (MAD)
 
+14. Jan. 2002
+- foreground color now inited in lineainit.c (LVL)
+- CZ fonts (first phase - next will have a correct font_ring) (LVL)
+- wrote doc/country.txt, an overview of country-dependent stuff (LVL)
+- silly BIOS early memory init in biosmem.[ch], used in nvram (LVL)
+- changed some struct {...} foo [] = syntax that Indent didn't like (LVL)
+- removed from lineavars.h struct VIDEO_MODE used only inside lineainit.c (LVL)
