@@ -67,10 +67,12 @@ GLOBAL ACCNODE  gl_caccs[3];
 
 
 /* We use this DESKTOP.INF here when we can't load that file from disk: */
-static const char *desk_inf_data =
+static const char *desk_inf_data1 =
     "#E 9A 01\r\n"
     "#W 00 00 02 02 4C 0A 00 @\r\n"
-    "#W 00 00 02 0D 4C 0A 00 @\r\n"
+    "#W 00 00 02 0D 4C 0A 00 @\r\n";
+
+static const char *desk_inf_data2 =
     "#F FF 28 @ *.*@ \r\n"
     "#D FF 02 @ *.*@ \r\n"
     "#G 08 FF *.APP@ @ \r\n"
@@ -586,7 +588,7 @@ WORD app_start()
         {
           LONG drivemask;
           drivemask = dos_sdrv( dos_gdrv() ); 
-          strcpy(gl_afile, desk_inf_data);  /* Copy core data */
+          strcpy(gl_afile, desk_inf_data1);  /* Copy core data part 1*/
           /* Scan for valid drives: */
           for(i=0; i<32; i++)
             if(drivemask&(1<<i))
@@ -599,6 +601,7 @@ WORD app_start()
                 gl_afile[x+10] = '0';    /* Floppy instead of hard disk icon */
               gl_afile[x+15] = gl_afile[x+22] = 'A'+i;    /* Drive letter */
             }
+          strcat(gl_afile, desk_inf_data2);  /* Copy core data part 2 */
           G.g_afsize = strlen(gl_afile);
         }
 
@@ -928,7 +931,7 @@ void app_save(WORD todisk)
           if ( (pa->a_type == AT_ISTRSH))       /* DESKTOP v1.2 */
 #endif
           {
-            for(i=0; i<6; i++)
+            for(i=0; i<6 && pa!=0; i++)
               pa = pa->a_next;
           }
         }
