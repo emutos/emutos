@@ -56,6 +56,7 @@
 
 #include "string.h"
 
+#include "ikbd.h"
 
 #define ROPEN 0
 
@@ -451,6 +452,9 @@ void ldaccs()
         ret = TRUE;
         for(i=0; (i<NUM_ACCS) && (accroom > 0) && (ret); i++)
         {
+          if ((kbshift(-1) & (1<<2)))  /* if Control is held down */
+            continue;                  /* then skip loading of accs */
+
           ret = (i==0) ? dos_sfirst(ad_path, F_RDONLY) : dos_snext();
           if (ret)
             sndcli(&gl_dta[30], &accroom);
