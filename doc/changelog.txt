@@ -381,3 +381,6 @@ Start... early ages
 - removed old dump stuff in bios/kprint (LVL)
 - updated readme.txt (LVL)
 
+20. Dec. 2001
+- added "stop" macro to include/asm.h as Laurent suggested (joy)
+- added calling the "stop" in bios/ikbd.c (surrounded by #ifdef) (joy)
