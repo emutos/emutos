@@ -250,4 +250,4 @@ Start... early ages
 - Impemented cursconf (XBIOS 0x15)  (MAD)
 - Removed F_IOCtl() and the MOUSE:, CLOCK: and NUL: devices.          (THO)
 - Mapped the CON:, AUX: and PRN: devices to Atari values (-1, -2, -3) (THO)
-
+- commented out XBIOS calls from command.c (for testing)

@@ -19,6 +19,6 @@
  *   dc.l 0
  * executes native function void print_native(char *string);
  */
-#define STONX_NATIVE_PRINT 1
+#define STONX_NATIVE_PRINT 0
 
 #endif /* _CONFIG_H */
