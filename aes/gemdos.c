@@ -22,7 +22,7 @@
 GLOBAL UWORD    DOS_AX; /* really a "DOS_RET"   */
 GLOBAL UWORD    DOS_ERR;
 
-EXTERN  LONG    gemdos();
+extern  LONG    gemdos();
 
 
 #define X_TABOUT 0x02

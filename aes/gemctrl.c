@@ -44,10 +44,6 @@
 
 #define FIXLATER        0
 
-#if MULTIAPP
-EXTERN PD       *fpdnm();
-EXTERN WORD     sh_chmsg();
-#endif
 
 #define THEDESK 3
 
@@ -55,21 +51,22 @@ EXTERN WORD     sh_chmsg();
 #define BELL 0x07                               /* bell                 */
 
 #if FIXLATER
-EXTERN WORD     mn_indextoid();
+extern WORD     mn_indextoid();
 #endif
 
 
-GLOBAL MOBLK    gl_ctwait;                      /* MOBLK telling if menu*/
+/* Global variables: */
+MOBLK    gl_ctwait;                             /* MOBLK telling if menu*/
                                                 /*   bar is waiting     */
                                                 /*   to be entered or   */
                                                 /*   exited by ctrl mgr */
-GLOBAL WORD     gl_ctmown;
+WORD     gl_ctmown;
 
-GLOBAL WORD     appl_msg[8];
+WORD     appl_msg[8];
                                                 /* used to convert from */
                                                 /*   window object # to */
                                                 /*   window message code*/
-GLOBAL WORD     gl_wa[] =
+WORD     gl_wa[] =
 {
         WA_UPLINE,
         WA_DNLINE,
@@ -83,7 +80,10 @@ GLOBAL WORD     gl_wa[] =
 };
 
 
-MLOCAL WORD             gl_tmpmoff;
+
+/* Local variable: */
+static WORD             gl_tmpmoff;
+
 
 
 

@@ -59,7 +59,8 @@ GLOBAL WORD     gl_dspcnt;
 GLOBAL WORD     gl_mnpds[NUM_PDS];
 GLOBAL WORD     gl_mnclick;
 
-MLOCAL LONG     ad_rso;
+
+static LONG     ad_rso;
 
 
 

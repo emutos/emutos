@@ -286,11 +286,7 @@ fs_1scroll(curr, count, touchob)
 *       based on the current scrolled position, and point at them 
 *       with the sub-tree of G_STRINGs that makes up the window box.
 */
-        VOID
-fs_format(tree, currtop, count)
-        REG LONG        tree;
-        WORD            currtop;
-        WORD            count;
+void fs_format(LONG tree, WORD currtop, WORD count)
 {
         REG WORD        i, cnt;
         REG WORD        y, h, th;
@@ -337,10 +333,7 @@ fs_format(tree, currtop, count)
 *       Routine to select or deselect a file name in the scrollable 
 *       list.
 */
-        VOID
-fs_sel(sel, state)
-        WORD            sel;
-        WORD            state;
+void fs_sel(WORD sel, WORD state)
 {
         if (sel)
           ob_change(ad_fstree, F1NAME + sel - 1, state, TRUE);

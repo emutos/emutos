@@ -31,16 +31,19 @@
 
 
 
-GLOBAL WORD     gl_dcrates[5] = {450, 330, 275, 220, 165};
-GLOBAL WORD     gl_dcindex;
-GLOBAL WORD     gl_dclick;                      /* # of ticks to wait   */
+/* Global variables: */
+WORD     gl_dcrates[5] = {450, 330, 275, 220, 165};
+WORD     gl_dcindex;
+WORD     gl_dclick;                      /* # of ticks to wait   */
                                                 /*   to see if a second */
                                                 /*   click will occur   */
-GLOBAL WORD     gl_ticktime;
+WORD     gl_ticktime;
 
 #if MULTIAPP
-EXTERN SHELL    sh[];
+extern SHELL    sh[];
 #endif
+
+
 
 
 /*

@@ -2,7 +2,7 @@
 #ifndef GEMDISP_H
 #define GEMDISP_H
 
-void forkq(void (*fcode)(), WORD lodata, WORD hidata);
+void forkq(void (*fcode)(), ...);
 void forker();
 void chkkbd();
 

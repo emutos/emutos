@@ -779,7 +779,9 @@ void gem_main()
         for (i=0; i<NUM_PDS; i++)
           sh[i].sh_loadable = FALSE;
 #endif
+
         totpds = NUM_PDS;
+        ml_ocnt = 0;
 
                                                 /* init longs           */
         ini_dlongs();

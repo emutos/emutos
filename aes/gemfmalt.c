@@ -47,22 +47,18 @@
 
 
 
-GLOBAL BYTE     gl_nils[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
-GLOBAL LONG     ad_nils;
+/* Global variables: */
+BYTE     gl_nils[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+LONG     ad_nils;
+
 
 
 /*
 *       Routine to break a string into smaller strings.  Breaks occur
 *       whenever an | or a ] is encountered.
 */
-        VOID
-fm_strbrk(tree, palstr, stroff, pcurr_id, pnitem, pmaxlen)
-        LONG            tree;
-        LONG            palstr;
-        WORD            stroff;
-        WORD            *pcurr_id;
-        WORD            *pnitem;
-        WORD            *pmaxlen;
+void fm_strbrk(LONG tree, LONG palstr, WORD stroff, WORD *pcurr_id,
+               WORD *pnitem, WORD *pmaxlen)
 {
         REG WORD        nitem, curr_id;
         REG WORD        len, maxlen;
@@ -122,13 +118,8 @@ fm_strbrk(tree, palstr, stroff, pcurr_id, pnitem, pmaxlen)
 *               2nd button = Cancel
 */
 
-        VOID
-fm_parse(tree, palstr, picnum, pnummsg, plenmsg, pnumbut, plenbut)
-        REG LONG        tree;
-        LONG            palstr;
-        WORD            *picnum;
-        WORD            *pnummsg, *plenmsg;
-        WORD            *pnumbut, *plenbut;
+void fm_parse(LONG tree, LONG palstr, WORD *picnum, WORD *pnummsg,
+              WORD *plenmsg, WORD *pnumbut, WORD *plenbut)
 {
         WORD            curr_id;
 
@@ -140,12 +131,9 @@ fm_parse(tree, palstr, picnum, pnummsg, plenmsg, pnumbut, plenbut)
         *plenbut += 1;
 }
 
-        VOID
-fm_build(tree, haveicon, nummsg, mlenmsg, numbut, mlenbut)
-        REG LONG        tree;
-        WORD            haveicon;
-        WORD            nummsg, mlenmsg;
-        WORD            numbut, mlenbut;
+
+void fm_build(LONG tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
+              WORD numbut, WORD mlenbut)
 {
         REG WORD        i, k;
         GRECT           al, ic, bt, ms;

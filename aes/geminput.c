@@ -132,7 +132,7 @@ WORD chk_ctrl(REG WORD mx, REG WORD my)
 *       code with interrupts off.
 */
 
-VOID b_click(REG WORD state)
+void b_click(REG WORD state)
 {
                                                 /* ignore it unless it  */
                                                 /*   represents a change*/
@@ -187,7 +187,7 @@ VOID b_click(REG WORD state)
 *       interrupts off.
 */
 
-VOID b_delay(WORD amnt)
+void b_delay(WORD amnt)
 {
                                                 /* see if we have a     */
                                                 /*   delay for mouse    */
@@ -276,7 +276,7 @@ void set_mown(PD *mp)
 /*
 *       EnQueue a a character on a circular keyboard buffer.
 */
-VOID nq(UWORD ch, REG CQUEUE *qptr)
+void nq(UWORD ch, REG CQUEUE *qptr)
 {
         if (qptr->c_cnt < KBD_SIZE)
         {
@@ -351,7 +351,7 @@ void post_keybd(REG CDA *c, REG UWORD ch)
 *       when button initially goes down, or when it is moved with the
 *       mouse button down.
 */
-VOID chkown()
+void chkown()
 {
         REG WORD        val;
 
@@ -363,7 +363,7 @@ VOID chkown()
 }
 
 
-VOID bchange(WORD new, WORD clicks)
+void bchange(WORD new, WORD clicks)
 {
                                                 /* see if this button   */
                                                 /*   event causes an    */
@@ -397,7 +397,7 @@ WORD downorup(WORD new, REG LONG buparm)
 
 
 /*
-VOID m_forkq(WORD (*fcode)(), WORD ratx, WORD raty)
+void m_forkq(WORD (*fcode)(), WORD ratx, WORD raty)
 {
   if ((dr_invdi) || (drawrat(ratx, raty)))
   {
@@ -410,7 +410,7 @@ VOID m_forkq(WORD (*fcode)(), WORD ratx, WORD raty)
 */
 
 
-VOID m_drawit()
+void m_drawit()
 {
   dr_doit = FALSE;
   dr_invdi = TRUE;
@@ -435,7 +435,7 @@ void mchange(WORD rx, WORD ry)
         xrat = rx;
         yrat = ry;
 
-        if (gl_play)
+        if (gl_play || !dr_doit)    /* Added dr_doit  - Thomas */
         {
           dr_doit = TRUE;
           dr_xrat = rx;

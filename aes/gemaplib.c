@@ -45,10 +45,11 @@
 #define KCHNG 3
 
 
-GLOBAL WORD     gl_play;
-GLOBAL WORD     gl_recd;
-GLOBAL WORD     gl_rlen;
-GLOBAL LONG     gl_rbuf;
+/* Global variables: */
+WORD     gl_play;
+WORD     gl_recd;
+WORD     gl_rlen;
+LONG     gl_rbuf;
 
 
 /*
@@ -83,7 +84,7 @@ WORD ap_init(void)
 /*
 *       APplication READ or WRITE
 */
-VOID ap_rdwr(WORD code, REG PD *p, WORD length, LONG pbuff)
+void ap_rdwr(WORD code, REG PD *p, WORD length, LONG pbuff)
 {
         QPB             m;
                                                 /* do quick version if  */
@@ -124,7 +125,7 @@ WORD ap_find(LONG pname)
 /*
 *       APplication Tape PLAYer
 */
-VOID ap_tplay(REG LONG pbuff, WORD length, WORD scale)
+void ap_tplay(REG LONG pbuff, WORD length, WORD scale)
 {
         REG WORD        i;
         FPD             f;
@@ -173,7 +174,7 @@ WORD ap_trecd(REG LONG pbuff, REG WORD length)
 {
         REG WORD        i;
         REG WORD        code;
-        WORD            (*proutine)(VOID);
+        WORD            (*proutine)(void);
 
         code = -1;
                                                 /* start recording in   */
@@ -201,7 +202,7 @@ WORD ap_trecd(REG LONG pbuff, REG WORD length)
         for(i=0; i<length; i++)
         {
 #if MC68K
-          proutine = (WORD (*)(VOID))LLGET(pbuff);
+          proutine = (WORD (*)(void))LLGET(pbuff);
 #endif
 #if I8086
           proutine = (WORD (*)())LWGET(pbuff);
@@ -226,9 +227,9 @@ WORD ap_trecd(REG LONG pbuff, REG WORD length)
 
 
 #if MULTIAPP
-VOID ap_exit(WORD isgem)
+void ap_exit(WORD isgem)
 #else
-VOID ap_exit(VOID)
+void ap_exit(void)
 #endif
 {
         wm_update(TRUE);
@@ -246,12 +247,12 @@ VOID ap_exit(VOID)
 #endif
 }
 
+
 #if MULTIAPP
 /*
 *       special abort for accessories
 */
-        VOID
-ap_accexit()
+void ap_accexit()
 {
         ap_exit(TRUE);
 }

@@ -3,6 +3,8 @@
 #define GEMFMLIB_H
 
 extern LONG   ad_g2loc;
+extern WORD   ml_ocnt;
+
 
 void fm_own(WORD beg_ownit);
 

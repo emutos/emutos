@@ -58,15 +58,19 @@
 
 
 
-GLOBAL LONG             ad_g2loc;
-MLOCAL  WORD            ml_ocnt = 0;
-MLOCAL  LONG            ml_mnhold;
-MLOCAL  GRECT           ml_ctrl;
-MLOCAL  PD              *ml_pmown;
+/* Global variables: */
+LONG     ad_g2loc;
+WORD     ml_ocnt;    /* Needs to be 0 initially! */
 
-MLOCAL WORD     ml_alrt[] = 
+
+/* Local variables: */
+static LONG     ml_mnhold;
+static GRECT    ml_ctrl;
+static PD       *ml_pmown;
+
+static WORD     ml_alrt[] = 
                 {AL00CRT,AL01CRT,AL02CRT,AL03CRT,AL04CRT,AL05CRT};
-MLOCAL WORD     ml_pwlv[] = 
+static WORD     ml_pwlv[] = 
                 {0x0102,0x0102,0x0102,0x0101,0x0002,0x0001};
 
 
@@ -104,11 +108,7 @@ void fm_own(WORD beg_ownit)
 *       Routine to find the next editable text field, or a field that
 *       is marked as a default return field.
 */
-        WORD
-find_obj(tree, start_obj, which)
-        REG LONG        tree;
-        WORD            start_obj;
-        WORD            which;
+WORD find_obj(LONG tree, WORD start_obj, WORD which)
 {
         REG WORD        obj, flag, state, inc;
         WORD            theflag;
@@ -147,10 +147,8 @@ find_obj(tree, start_obj, which)
 }
 
 
-        WORD
-fm_inifld(tree, start_fld)
-        LONG            tree;
-        WORD            start_fld;
+
+WORD fm_inifld(LONG tree, WORD start_fld)
 {
                                                 /* position cursor on   */
                                                 /*   the starting field */
@@ -158,6 +156,7 @@ fm_inifld(tree, start_fld)
           start_fld = find_obj(tree, 0, FORWARD);
         return( start_fld );
 }
+
 
 
 WORD fm_keybd(LONG tree, WORD obj, WORD *pchar, WORD *pnew_obj)

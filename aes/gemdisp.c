@@ -30,7 +30,6 @@
 #include "gemaplib.h"
 #include "gemglobe.h"
 #include "gemflag.h"
-#include "gemdisp.h"
 #include "gemasm.h"
 #include "optimize.h"
 #include "gemdosif.h"
@@ -52,7 +51,7 @@ GLOBAL PD               *gl_displock = 0;
 
 /* forkq puts a fork block with a routine in the fork ring      */
 
-void forkq(void (*fcode)(), WORD lodata, WORD hidata)
+void forkq(void (*fcode)(), LONG fdata)
 {
         REG FPD         *f;
                                                 /* q a fork process,    */
@@ -68,7 +67,7 @@ void forkq(void (*fcode)(), WORD lodata, WORD hidata)
             fpt = 0;
 
           f->f_code = fcode;
-          f->f_data = HW(hidata) | LW(lodata);
+          f->f_data = fdata;
 
           fpcnt++;
         }
@@ -180,7 +179,7 @@ void chkkbd()
              (kstat != kstate) )
           {
             cli();
-            forkq( (void (*)())kchange, achar, kstat);
+            forkq( (void (*)())kchange, (((LONG)achar<<16)|kstat) );
             sti();
           }
         }

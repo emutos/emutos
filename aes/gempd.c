@@ -78,7 +78,7 @@ PD *getpd()
 }
 
 
-VOID p_nameit(PD *p, BYTE *pname)
+void p_nameit(PD *p, BYTE *pname)
 {
         bfill(8, ' ',  &p->p_name[0]);
         strscn(pname, &p->p_name[0], '.');

@@ -140,9 +140,7 @@ menu_sub(ptree, ititle)
 /*
 *       Routine to find a desk accessory id number given a process descriptor.
 */
-        WORD
-mn_getda(ppd)
-        PD              *ppd;
+WORD mn_getda(PD *ppd)
 {
         REG WORD        i;
 
@@ -155,9 +153,8 @@ mn_getda(ppd)
 }
 
 
-        VOID
-menu_fixup(pname)
-        BYTE            *pname;
+
+void menu_fixup(BYTE *pname)
 {
         REG OBJECT      *pob;
         GRECT           t;
@@ -257,15 +254,11 @@ menu_fixup(pname)
 }
 
 
+
 /*
 *       Change a mouse-wait rectangle based on an object's size.
 */
-        VOID
-rect_change(tree, prmob, iob, x)
-        LONG            tree;
-        MOBLK           *prmob;
-        WORD            iob;
-        WORD            x;
+void rect_change(LONG tree, MOBLK *prmob, WORD iob, WORD x)
 {
         /* FIXME: Ugly GRECT typecast: */
         ob_actxywh(tree, iob, (GRECT *)&prmob->m_x);
@@ -330,17 +323,14 @@ menu_set(tree, last_item, cur_item, setit)
         return(FALSE);
 }
 
+
 /*
 *       Routine to save or restore the portion of the screen underneath
 *       a menu tree.  This involves BLTing out and back
 *       the data that was underneath the menu before it was pulled
 *       down.
 */
-        VOID
-menu_sr(saveit, tree, imenu)
-        WORD            saveit;
-        REG LONG        tree;
-        WORD            imenu;
+void menu_sr(WORD saveit, LONG tree, WORD imenu)
 {
         GRECT           t;
                                                 /* do the blit to save  */

@@ -254,7 +254,7 @@ void w_adjust( WORD parent, WORD obj, WORD x, WORD y,  WORD w, WORD h)
 }
 
 
-        VOID
+        void
 w_hvassign(isvert, parent, obj, vx, vy, hx, hy, w, h)
         WORD            isvert;
         REG WORD        parent, obj;
@@ -338,7 +338,7 @@ void w_drawdesk(GRECT *pc)
 }
 
 
-        VOID
+        void
 w_cpwalk(wh, obj, depth, usetrue)
         REG WORD        wh;
         WORD            obj;
@@ -369,7 +369,7 @@ w_cpwalk(wh, obj, depth, usetrue)
 *       clip rectangle.
 */
 
-        VOID
+        void
 w_clipdraw(wh, obj, depth, usetrue)
         WORD            wh;
         WORD            obj;
@@ -395,7 +395,7 @@ w_clipdraw(wh, obj, depth, usetrue)
 }
 
 
-        VOID 
+        void 
 w_strchg(w_handle, obj, pstring)
         REG WORD        w_handle;
         REG WORD        obj;
@@ -425,7 +425,7 @@ w_strchg(w_handle, obj, pstring)
 }
 
 
-        VOID
+        void
 w_barcalc(isvert, space, sl_value, sl_size, min_sld, ptv, pth)
         WORD            isvert;
         REG WORD        space;
@@ -446,7 +446,7 @@ w_barcalc(isvert, space, sl_value, sl_size, min_sld, ptv, pth)
 }
 
 
-        VOID
+        void
 w_bldbar(kind, istop, w_bar, sl_value, sl_size, x, y, w, h)
         UWORD           kind;
         WORD            istop;
@@ -707,7 +707,7 @@ WORD w_union(ORECT *po, GRECT *pt)
 
 
 
-        VOID
+        void
 w_redraw(w_handle, pt)
         REG WORD        w_handle;
         GRECT           *pt;
@@ -918,7 +918,7 @@ void w_setmen(WORD pid)
 /*
 *       Routine to draw menu of top most window as the current menu bar.
 */
-        VOID
+        void
 w_menufix()
 {
         WORD            pid;
@@ -930,7 +930,7 @@ w_menufix()
 
 
 #if MULTIAPP
-        VOID
+        void
 w_setmen(pid)
         WORD            pid;
 {
@@ -1011,7 +1011,7 @@ WORD w_clswin()
 *       the window tree.
 *       IF deletions first,
 */
-        VOID
+        void
 oldwfix(npd, isdelete)
         PD              *npd;           /* pd of old process    */
         WORD            isdelete;
@@ -1040,7 +1040,7 @@ oldwfix(npd, isdelete)
           }
         }
 }
-        VOID
+        void
 newwfix(npd)
         PD              *npd;           /* pd of new process    */
 {
@@ -1445,7 +1445,7 @@ WORD wm_create(WORD kind, GRECT *pt)
 /*
 *       Opens or closes a window.
 */
-        VOID
+        void
 wm_opcl(wh, pt, isadd)
         REG WORD        wh;
         REG GRECT       *pt;
@@ -1596,7 +1596,7 @@ wm_gsizes(w_field, psl, psz)
 /*
 *       Routine to top a window and then make the right redraws happen
 */
-        VOID
+        void
 wm_mktop(w_handle)
         REG WORD        w_handle;
 {

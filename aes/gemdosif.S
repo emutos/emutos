@@ -212,14 +212,8 @@ _far_mcha:
         lea     LEDDE,SP
         movem.l D0-D2/A0-A2,-(SP)
 
-#if 0   // Endianness problem with forkq ?   - Thomas
         move.w  D1,-(SP)
         move.w  D0,-(SP)
-#else
-        move.w  D0,-(SP)
-        move.w  D1,-(SP)
-#endif
-
         move.l  #_mchange,-(SP)
         jsr     _forkq
         addq.l  #8,SP
@@ -255,12 +249,7 @@ _tikcod:
         subq.l  #1,_CMP_TICK
         bne     L2234
 
-#if 0   // Endianess problem with forkq?
         move.l  _NUM_TICK,-(a7)
-#else
-        move.w  _NUM_TICK,-(a7)
-        move.w  _NUM_TICK+2,-(a7)
-#endif
         move.l  #_tchange,-(a7)
         jsr     _forkq
         addq.l  #8,a7

@@ -49,11 +49,8 @@
 
 
 
-        VOID
-ob_getsp(tree, obj, pted)
-        REG LONG        tree;
-        REG WORD        obj;
-        TEDINFO         *pted;
+
+void ob_getsp(LONG tree, WORD obj, TEDINFO *pted)
 {
         WORD            flags;
         REG LONG        spec;
@@ -143,12 +140,8 @@ find_pos(str, pos)
 }
 
 
-        VOID
-pxl_rect(tree, obj, ch_pos, pt)
-        REG LONG        tree;
-        REG WORD        obj;
-        WORD            ch_pos;
-        REG GRECT       *pt;
+
+void pxl_rect(LONG tree, WORD obj, WORD ch_pos, GRECT *pt)
 {
         GRECT           o;
         WORD            numchs;
@@ -166,11 +159,7 @@ pxl_rect(tree, obj, ch_pos, pt)
 /*
 *       Routine to redraw the cursor or the field being editted.
 */
-        VOID
-curfld(tree, obj, new_pos, dist)
-        LONG            tree;
-        WORD            obj, new_pos;
-        WORD            dist;
+void curfld(LONG tree, WORD obj, WORD new_pos, WORD dist)
 {
         GRECT           oc, t;
 
@@ -296,19 +285,15 @@ check(in_char, valchar)
 *       Find STart and FiNish of a raw string relative to the template
 *       string.  The start is determined by the InDeX position given.
 */
-        VOID
-ob_stfn(idx, pstart, pfinish)
-        WORD            idx;
-        WORD            *pstart, *pfinish;
+void ob_stfn(WORD idx, WORD *pstart, WORD *pfinish)
 {
         *pstart = find_pos(&D.g_tmpstr[0], idx);
         *pfinish = find_pos(&D.g_tmpstr[0], strlen(&D.g_rawstr[0]) );
 }
 
 
-        WORD
-ob_delit(idx)
-        WORD            idx;
+
+WORD ob_delit(WORD idx)
 {
         if (D.g_rawstr[idx])
         {

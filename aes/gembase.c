@@ -20,19 +20,22 @@
 #include "machine.h"
 #include "struct.h"
 
-GLOBAL PD       *rlr, *drl, *nrl;
-GLOBAL EVB      *eul, *dlr, *zlr;
+
+/* Some global variables: */
+
+PD       *rlr, *drl, *nrl;
+EVB      *eul, *dlr, *zlr;
 
 #if I8086
-GLOBAL UWORD    elinkoff;
+UWORD    elinkoff;
 #else
-GLOBAL LONG     elinkoff;
+LONG     elinkoff;
 #endif
-GLOBAL BYTE     indisp;
+BYTE     indisp;
 
-GLOBAL WORD     fpt, fph, fpcnt;                /* forkq tail, head,    */
+WORD     fpt, fph, fpcnt;                /* forkq tail, head,    */
                                                 /*   count              */
-GLOBAL SPB      wind_spb;
-GLOBAL WORD     curpid;
+SPB      wind_spb;
+WORD     curpid;
 
 

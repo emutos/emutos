@@ -616,9 +616,8 @@ void sh_wdef(LONG lpcmd, LONG lpdir)
 }
 
 
-        VOID
-sh_chgrf(psh)
-        SHELL           *psh;
+
+void sh_chgrf(SHELL *psh)
 {
         if ( psh->sh_isgem != gl_shgem )
         {
@@ -630,12 +629,12 @@ sh_chgrf(psh)
         }
 }
 
+
+
 /*
 *
 */
-        VOID
-sh_chdef(psh)
-        SHELL           *psh;
+void sh_chdef(SHELL *psh)
 {
                                                 /* if we should exec    */
                                                 /*   the default command*/
@@ -667,8 +666,7 @@ sh_chdef(psh)
 *       Special case DOS load
 *       Used from pr_exec when loading a dos app
 */
-        VOID
-sh_dosexec()
+void sh_dosexec()
 {
         WORD            done;
         PD              *owner;

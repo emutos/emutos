@@ -18,7 +18,7 @@
 #define NIL -1
 #define ROOT 0
 
-EXTERN LONG obaddr(LONG tree, WORD obj, WORD fld_off);
+extern LONG obaddr(LONG tree, WORD obj, WORD fld_off);
 
 #define OB_NEXT(x) obaddr(tree, x, 0)
 #define OB_HEAD(x) obaddr(tree, x, 2)
