@@ -131,7 +131,6 @@ clean:
 
 distclean: clean
 	rm -f Makefile.bak
-	$(MAKE) -C cart clean
 	$(MAKE) -C cli clean
 
 #
