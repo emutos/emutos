@@ -1387,59 +1387,23 @@ scr_out:
 |
 |
 p_sc_dwn:
-        move.l  _v_bas_ad,a3    |screen base addr to source
-        move.w  v_cel_my,d3     |max cell y # in d3
-        mulu    v_cel_wr,d3     |form offset for bottom of second to last cell row
-        lea     (a3,d3.w),a3    |form source address in a3
-        move.w  v_cel_wr,d3     |cell wrap to add
-        lea     (a3,d3.w),a2    |form destination from source + cell wrap
+        move.l  _v_bas_ad,a3    | screen base addr to source
+        move.w  v_cel_my,d3     | max cell y # in d3
+        mulu    v_cel_wr,d3     | form offset for bottom of second to last cell row
+        lea     (a3,d3.w),a3    | form source address in a3
+        move.w  v_cel_wr,d3     | cell wrap to add
+        lea     (a3,d3.w),a2    | form destination from source + cell wrap
         move.w  d1,d0
-        neg.w   d0              |do tricky subtract
-        add.w   v_cel_my,d0     |  to form # of cell rows to move
-        mulu    d0,d3           |form # of bytes to move in d3
-        asr.w   #2,d3           |divide by 4 for long byte moves
-        bra     scrdwn1         |enter loop at test
+        neg.w   d0              | do tricky subtract
+        add.w   v_cel_my,d0     |   to form # of cell rows to move
+        mulu    d0,d3           | form # of bytes to move in d3
+        asr.w   #2,d3           | divide by 4 for long byte moves
+        bra     scrdwn1         | enter loop at test
 scrdwn0:
-        move.l  -(a3),-(a2)     |scroll bytes
+        move.l  -(a3),-(a2)     | scroll bytes
 scrdwn1:
-        dbra    d3,scrdwn0      |do all
+        dbra    d3,scrdwn0      | do all
         bra     scr_out
-
-
-
-| ==== _esc_init - escape initialization routine.============================
-
-_esc_init:
-                move.w  #90, _v_lin_wr          | Set the line wrap
-                move.w  #1, _v_planes           | Set the number of planes
-                move.w  #360, v_vt_rez          | Set the vertical resolution
-                move.w  #720, v_hz_rez          | Set the horizontal resolution
-
-                lea     _f8x12, a0              | Load a0 with pointer to font
-
-                bsr     gl_f_init               | init the global font variables.
-
-                move.w  #-1, v_col_fg           | foreground color := 15.
-                moveq.l #0, d0
-                move.w  d0, v_col_bg            | background color := 0.
-                move.w  d0, v_cur_cx
-                move.w  d0, v_cur_cy
-                move.l  #0xF8000, a0
-                move.l  a0, _v_bas_ad           | set base address of screen
-                move.l  a0, v_cur_ad            | home cursor.
-                move.b  #1, v_stat_0            | invisible, flash, nowrap,
-|                                                        & normal video.
-                move.b  #30, v_cur_tim          | .5 second blink rate (@60 Hz vblank).
-                move.w  #1, disab_cnt           | cursor disabled 1 level deep.
-
-                move.w  #8189, d1
-
-scr_loop:       move.l  d0, (a0)+               | Clear the screen
-                dbra    d1, scr_loop
-
-                move.l  #normal_ascii, con_state | Init conout state machine
-
-                bra     esce                    | Show the cursor
 
 
 
@@ -1449,27 +1413,110 @@ scr_loop:       move.l  d0, (a0)+               | Clear the screen
 |   a0 = ptr to system font header
 |
 
-gl_f_init:      move.w  FRM_HT(a0),d0           | fetch form height.
-                move.w  d0,v_cel_ht             | init cell height.
-                move.w  _v_lin_wr,d1            | fetch bytes/line.
-                mulu    d0,d1
-                move.w  d1,v_cel_wr             | init cell wrap.
-                moveq   #0,d1
-                move.w  v_vt_rez,d1             | fetch vertical res.
-                divu    d0,d1                   | vert res/cell height.
-                subq.w  #1,d1                   | 0 origin.
-                move.w  d1,v_cel_my             | init cell max y.
-                moveq   #0,d1
-                move.w  v_hz_rez,d1             | fetch horizontal res.
-                divu    CEL_WD(a0),d1           | hor res/cell width.
-                subq.w  #1,d1                   | 0 origin.
-                move.w  d1,v_cel_mx             | init cell max x.
-                move.w  FRM_WD(a0),v_fnt_wr     | init font wrap.
-                move.w  FIRST(a0),v_fnt_st      | init font start ADE.
-                move.w  LAST(a0),v_fnt_nd       | init font end ADE.
-                move.l  PDAT(a0),v_fnt_ad       | init font data ptr.
-                move.l  POFF(a0),v_off_ad       | init font offset ptr.
-                rts
+gl_f_init:
+        move.w  FRM_HT(a0),d0           | fetch form height.
+        move.w  d0,v_cel_ht             | init cell height.
+        move.w  _v_lin_wr,d1            | fetch bytes/line.
+        mulu    d0,d1
+        move.w  d1,v_cel_wr             | init cell wrap.
+        moveq   #0,d1
+        move.w  v_vt_rez,d1             | fetch vertical res.
+        divu    d0,d1                   | vert res/cell height.
+        subq.w  #1,d1                   | 0 origin.
+        move.w  d1,v_cel_my             | init cell max y.
+        moveq   #0,d1
+        move.w  v_hz_rez,d1             | fetch horizontal res.
+        divu    CEL_WD(a0),d1           | hor res/cell width.
+        subq.w  #1,d1                   | 0 origin.
+        move.w  d1,v_cel_mx             | init cell max x.
+        move.w  FRM_WD(a0),v_fnt_wr     | init font wrap.
+        move.w  FIRST(a0),v_fnt_st      | init font start ADE.
+        move.w  LAST(a0),v_fnt_nd       | init font end ADE.
+        move.l  PDAT(a0),v_fnt_ad       | init font data ptr.
+        move.l  POFF(a0),v_off_ad       | init font offset ptr.
+        rts
+
+
+
+| ==== _esc_init - escape initialization routine.============================
+
+_esc_init:
+        move.b  sshiftmd, d0            | get video resolution
+        and.w   #3, d0                  | isolate bits 0 and 1
+        cmp.w   #3, d0                  | is it 3?
+        bne     not3                    | no
+not3:
+        move.w  #2, d0                  | set monochrome resolution
+        move.w  d0, -(sp)               | save resolution
+        bsr     resolset                | set video resolution
+        move.w  (sp)+, d0               | restore resolution
+        
+        lea     _f8x12, a0              | Get pointer to 8x12 font header
+        cmp.w   #2, d0                  | High resolution?
+        bne     lowres                  | no, low resolution
+        lea     _f8x14, a0              | Get pointer to 8x12 font header
+lowres:
+        bsr     gl_f_init               | init the global font variables.
+
+        move.w  #-1, v_col_fg           | foreground color := 15.
+        moveq.l #0, d0
+        move.w  d0, v_col_bg            | background color := 0.
+        move.w  d0, v_cur_cx            | cursor column 0
+        move.w  d0, v_cur_cy            | cursor line 0
+        move.w  d0, v_cur_ht            | line offset 0
+        move.l  _v_bas_ad, a0           | get base address of screen
+        move.l  a0, v_cur_ad            | home cursor.
+        move.b  #1, v_stat_0            | invisible, flash, nowrap, normal video.
+        move.b  #30, v_cur_tim          | .5 second blink counter (@60 Hz vblank).
+        move.b  #30, v_period           | .5 second blink rate (@60 Hz vblank).
+        move.w  #1, disab_cnt           | cursor disabled 1 level deep.
+
+        | ==== Clear screen =====
+        move.l  _memtop, a0             | Set start of RAM
+scr_loop:
+        move.l  d0, (a0)+               | set to background color
+        cmp.l   phystop, a0             | End of BSS reached?
+        bne     scr_loop                | if not, clear next word
+
+        move.l  #normal_ascii, con_state | Init conout state machine
+
+|        bra     esce                    | Show the cursor
+        rts
+
+
+
+| ==== resolset - set video resolution ======================================
+
+resolset:
+        moveq.l #1, d0                  
+
+        move.b  splanes(pc, d0.w), d1   | Get the number of planes
+        move.w  d1, _v_planes           | save it
+
+        move.b  sbytes(pc, d0.w), d1    | Get the number of bytes per line
+        move.w  d1, _v_lin_wr           | Set the line wrap
+        
+
+        asl.w   #1, d0                  | resolution as word index
+        move.b  sresoly(pc, d0.w), d1   | Get the number of planes
+        move.w  d1, v_vt_rez            | Set the vertical resolution
+
+        move.b  sresolx(pc, d0.w),d1    | Get the number of planes
+        move.w  d1, v_hz_rez            | Set the horizontal resolution
+
+
+
+| ==== screenpar - Screen parameters ========================================
+
+splanes:
+        dc.b    4,2,1                   | count of color planes (_v_planes)
+sbytes:
+        dc.b    160,160,80              | bytes per line (_v_lin_wr)
+sresoly:
+        dc.b    200,200,400             | screen vertical resolution (v_vt_rez)
+sresolx:
+        dc.b    320,640,640             | screen horiz resolution (v_hz_rez)
+        
 
 
 
