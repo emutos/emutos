@@ -59,7 +59,7 @@ WORD ap_init(void)
 {
         WORD    pid;
         LONG    scdir;
-        char    tmpstr[MAX_LEN];
+        char    tmpstr[32];
 #if MULTIAPP
         SHELL   *psh;
         UWORD   chseg;

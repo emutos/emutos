@@ -152,7 +152,7 @@ L2126:
         movea.l 8(A6),A6
         move.w  #1,(A6)
         move.l  A0,0x42(A6)
-        move.l  SP,0x46(A6)     // strange place to store the SP in UDA???
+        move.l  SP,0x46(A6)
         movea.l 0x3E(A6),SP
         bsr     _sti
 

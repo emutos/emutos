@@ -75,7 +75,9 @@ UWORD crysbind(WORD opcode, LONG pglobal, UWORD int_in[], UWORD int_out[], LONG 
         LONG            tree;
         REG WORD        ret;
 
+        maddr = 0;
         ret = TRUE;
+
         switch(opcode)
         {       
                                 /* Application Manager                  */
@@ -516,7 +518,7 @@ void xif(LONG pcrys_blk)
 WORD super(LONG dummy, LONG pcrys_blk)
 {
         xif(pcrys_blk);
-        
+
         if ( (gl_dspcnt++ % 10) == 0 )
           dsptch();
 

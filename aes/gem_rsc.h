@@ -5,14 +5,6 @@
  *       Please see LICENSE.TXT for further information.
  */
 
-#define RS_NOBS     37
-#define RS_NTED     13
-#define RS_NICNBLK  0
-#define RS_NCICNBLK 0
-#define RS_NBITBLK  0
-#define RS_NFIMG    11
-#define RS_NFSTR    37
-#define RS_NUSR     0
 
 #define FSELECTR        0
 #define FSTITLE         1

@@ -42,27 +42,12 @@ static char rs_s22[] = "\200";
 static char rs_s23[] = "\200";
 static char rs_s24[] = "\200";
 
-/*
-#define FLAGS11 0x0800
-#define FLAGS12 0x1000
-#define FLAGS13 0x2000
-#define FLAGS14 0x4000
-#define FLAGS15 0x8000
-#define STATE8  0x0100
-#define STATE9  0x0200
-#define STATE10 0x0400
-#define STATE11 0x0800
-#define STATE12 0x1000
-#define STATE13 0x2000
-#define STATE14 0x4000
-#define STATE15 0x8000
-*/
 
 #define RS_NTED 13
 
 TEDINFO rs_tedinfo[RS_NTED];
 
-TEDINFO rs_tedinfo_rom[] = {
+static TEDINFO rs_tedinfo_rom[] = {
         { (LONG)"__________________________________________",
         (LONG)"Directory:  __________________________________________",
         (LONG)"P",
@@ -244,7 +229,7 @@ char msg_but_3[20];
 
 OBJECT rs_obj[RS_NOBS];
 
-OBJECT rs_obj_rom[] = {
+static OBJECT rs_obj_rom[] = {
 #define TR0 0
 /* TREE 0 */
         { -1, 1, 6, G_BOX,                        /*** 0 ***/

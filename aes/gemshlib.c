@@ -882,27 +882,28 @@ void sh_ldapp()
           }
 
 
-#if 0 //ifndef NO_ROM
-        /* Experimental starting of the ROM desktop:  - THH*/
-          {
-            extern void deskstart();
-            extern LONG trap_1();
-            LONG *pd;
-
-            sh_show(ad_scmd);
-            p_nameit(rlr, sh_name(&D.s_cmd[0]));
-
-            pd = (LONG *) trap_1( 0x4b , 5, "" , "", "");
-            pd[2] = (LONG) deskstart;
-            pd[3] = pd[5] = pd[7] = 0;
-            trap_1( 0x4b, 4, "", pd, "");
-cprintf("desktop failed\n");
-          }
-
-#else
           do
           {
             retry = FALSE;
+            /* Experimental starting of the ROM desktop:  - THH*/
+            kprintf("starting %s\n",ad_scmd);
+            if(strcmp((char *)ad_scmd,"DESKTOP.APP")==0)
+            {
+              extern void deskstart();
+              extern LONG trap_1();
+              LONG *pd;
+
+              sh_show(ad_scmd);
+              /*p_nameit(rlr, sh_name(&D.s_cmd[0]));*/
+
+              pd = (LONG *) trap_1( 0x4b , 5, "" , "", "");
+              pd[2] = (LONG) deskstart;
+              pd[3] = pd[5] = pd[7] = 0;
+              kprintf("starting desktop\n");
+              trap_1(0x4b, 6, "", pd, "");
+              kprintf("desktop finished\n");
+            }
+            else
             if ( sh_find(ad_scmd) )
             {
               sh_show(ad_scmd);
@@ -948,8 +949,6 @@ cprintf("desktop failed\n");
                 badtry = AL18ERR;
             }
           } while (retry && !badtry);
-
-#endif /* of experimental ROM desktop starting */
 
           desk_tree[rlr->p_pid] = 0x0L;         /* clear his desk field */
 

@@ -26,7 +26,7 @@
 //_main:
 _ui_start:
         movea.l a7,a5
-        movea.l #LEABC,a7
+        movea.l #gemusp,a7
         movea.l 4(a5),a5
 
         move.l  a5,d0
@@ -44,10 +44,12 @@ _ui_start:
         trap    #1
         adda.l  #0xC,a7
 
-        move.l  a7,-(a7)
+        clr.l  -(a7)
         move.w  #0x20,-(a7)
         trap    #1
-        addq.w  #6,a7
+        //addq.w  #6,a7
+        move.l  d0,old_gem_ssp
+
         move.l  0x2C(a5),_ad_envrn
 
         jsr     _size_theglo
@@ -68,6 +70,12 @@ LB4:
         move.l  a6,0x3E(a5)
         movea.l a6,a7
         jsr     _gem_main
+
+        move.l  old_gem_ssp,-(a7)
+        move.w  #0x20,-(a7)
+        trap    #1
+        addq.w  #6,a7
+
         move.l  #0,-(a7)
         trap    #1
 
@@ -76,7 +84,7 @@ LB4:
 
 _gemdos:
 LF2:
-        move.l  (SP)+,LEA2C
+        move.l  (SP)+,saveretaddr
 
         movem.l d2/a2,saveregs
 
@@ -95,7 +103,7 @@ L134:
 
         movem.l saveregs,d2/a2
 
-        move.l  LEA2C,-(SP)
+        move.l  saveretaddr,-(SP)
         rts
 
 
@@ -104,13 +112,18 @@ L134:
 .bss
 
 
-LEA2C:
+old_gem_ssp:
+        .ds.l   1
+
+
+
+saveretaddr:
         .ds.l   1
 
 
 // Space for the Stack:
-        .ds.b   0x80
-LEABC:
+        .ds.b   0x100
+gemusp:
 
 
 
