@@ -140,7 +140,7 @@ extern WORD isin();
 extern WORD icos();
 extern void text_init();
 extern void st_fl_ptr();
-extern WORD screen();
+extern void screen();
 extern void d_justified();
 extern void arb_corner(WORD * corners, WORD type);
 extern WORD Icos(WORD angle);

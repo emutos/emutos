@@ -871,3 +871,8 @@ Start... early ages
 - include/asm.h - added trap1/13/14 calls as externals (MAD)
 - vdi/vdiinput.c - vdimouse_init() fixed (MAD)
 
+17. May. 2002
+- vdi/*.c - replaced all gotos by other constructs (MAD)
+- vdi/lisastubs - removed, put into vdi/monobj.c for less files (MAD)
+
+

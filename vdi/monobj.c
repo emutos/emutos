@@ -22,21 +22,16 @@ extern void cur_replace();
 
 
 /*
- * hide_cur                                                               
- *                                                                        
- * This routine hides the mouse cursor if it has not already               
- * been hidden.                                                            
- *                                                                         
- * Inputs:         None                                                    
- *                                                                         
- * Outputs:                                                                
- *    hide_cnt = hide_cnt + 1                                              
- *    draw_flag = 0                                                        
- *                                                                         
- * Registers Modified: a0                                                  
- *                                                                         
- *                                                                         
- *                                                                         
+ * hide_cur
+ *
+ * This routine hides the mouse cursor if it has not already
+ * been hidden.
+ *
+ * Inputs:         None
+ *
+ * Outputs:
+ *    hide_cnt = hide_cnt + 1
+ *    draw_flag = 0
  */
 
 void hide_cur()
@@ -59,7 +54,10 @@ void hide_cur()
 
 
 
-/* S_LINE_TYPE: */
+/*
+ * vsl_type - Set line style for line-drawing functions
+ */
+
 void vsl_type()
 {
     REG WORD li;
@@ -75,13 +73,15 @@ void vsl_type()
 
 
 
-/* S_LINE_WIDTH: */
+/*
+ * vsl_width - Set line width
+ */
+
 void vsl_width()
 {
     REG WORD w, *pts_out;
 
     /* Limit the requested line width to a reasonable value. */
-
     w = PTSIN[0];
     if (w < 1)
         w = 1;
@@ -89,11 +89,9 @@ void vsl_width()
         w = SIZ_TAB[6];
 
     /* Make the line width an odd number (one less, if even). */
-
     w = ((w - 1) / 2) * 2 + 1;
 
     /* Set the line width internals and return parameters */
-
     CONTRL[2] = 1;
     pts_out = PTSOUT;
     *pts_out++ = cur_work->line_width = w;
@@ -102,7 +100,10 @@ void vsl_width()
 
 
 
-/* S_END_STYLE: */
+/*
+ * vsl_ends - sets the style of end point for line starting and ending points
+ */
+
 void vsl_ends()
 {
     REG WORD lb, le;
@@ -128,7 +129,10 @@ void vsl_ends()
 
 
 
-/* S_LINE_COLOR: */
+/*
+ * vsl_color - sets the color for line-drawing
+ */
+
 void vsl_color()
 {
     REG WORD lc;
@@ -143,14 +147,16 @@ void vsl_color()
 
 
 
-/* S_MARKER_SCALE */
+/*
+ * vsm_height - Sets the height of markers
+ */
+
 void vsm_height()
 {
     REG WORD h, *pts_out;
     REG struct attribute *work_ptr;
 
     /* Limit the requested marker height to a reasonable value. */
-
     h = PTSIN[1];
     if (h < DEF_MKHT)
         h = DEF_MKHT;
@@ -159,7 +165,6 @@ void vsm_height()
         h = MAX_MKHT;
 
     /* Set the marker height internals and the return parameters. */
-
     work_ptr = cur_work;
     work_ptr->mark_height = h;
     h = (h + DEF_MKHT / 2) / DEF_MKHT;
@@ -173,7 +178,9 @@ void vsm_height()
 
 
 
-/* S_MARK_TYPE */
+/*
+ * vsm_type - Sets the current type of marker
+ */
 void vsm_type()
 {
     REG WORD i;
@@ -186,7 +193,10 @@ void vsm_type()
 
 
 
-/* S_MARK_COLOR */
+/*
+ * vsm_color - Set mark color
+ */
+
 void vsm_color()
 {
     REG WORD i;
@@ -200,7 +210,10 @@ void vsm_color()
 
 
 
-/* S_FILL_STYLE: */
+/*
+ * vsf_interior - Set fill style
+ */
+
 void vsf_interior()
 {
     REG WORD fs;
@@ -337,7 +350,10 @@ void v_locator()
 
 
 
-/* SHOW CURSOR */
+/*
+ * v_show_c - show cursor
+ */
+
 void v_show_c()
 {
     /* DIS_CUR will trash all registers but FP and SP */
@@ -350,7 +366,10 @@ void v_show_c()
 
 
 
-/* HIDE CURSOR */
+/*
+ * v_hide_c - hide cursor
+ */
+
 void v_hide_c()
 {
     hide_cur();
@@ -672,6 +691,59 @@ void dr_recfl()
 
 
 
+/*
+ * Unimplemented functions
+ */
+
+
+/*
+ * v_cellarray - Draw a square of sqares (just color devices)
+ */
+void v_cellarray()
+{
+    /* not implimented */
+}
+
+
+
+/*
+ * vq_cellarray -
+ */
+void vq_cellarray()
+{
+    /* not implimented */
+}
+
+
+
+/*
+ * vs_color - set color index table
+ */
+void vs_color()
+{
+    /* not implimented */
+}
+
+
+
+/*
+ * vq_color - query color index table
+ */
+WORD vq_color()
+{
+    /* not implimented */
+    return 0;
+}
+
+
+
+/*
+ * v_nop - dummy
+ */
+void v_nop()
+{
+    /* never will be  implemented */
+}
 
 
 

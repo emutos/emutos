@@ -360,6 +360,7 @@ void dst_height()
     struct font_head **chain_ptr;
     REG struct font_head *test_font, *single_font;
     REG WORD *pointer, font_id, test_height;
+    BYTE found;
 
     font_id = cur_font->font_id;
     cur_work->pts_mode = FALSE;
@@ -368,14 +369,12 @@ void dst_height()
 
     chain_ptr = font_ring;
 
-    while ((test_font = *chain_ptr++)) {
+    found = 0;
+    while (!found && (test_font = *chain_ptr++)) {
         do {
-            if (test_font->font_id == font_id)
-                goto find_height;
-        } while ((test_font = test_font->next_font));
+            found = (test_font->font_id == font_id);
+        } while (!found && (test_font = test_font->next_font));
     }
-
-find_height:
 
     single_font = test_font;
     test_height = PTSIN[1];
@@ -496,6 +495,7 @@ void dst_point()
     struct font_head **chain_ptr, *double_font;
     REG struct font_head *test_font, *single_font;
     REG WORD *pointer, test_height, height;
+    BYTE found;
 
     font_id = cur_font->font_id;
     cur_work->pts_mode = TRUE;
@@ -503,15 +503,12 @@ void dst_point()
     /* Find the smallest font in the requested face */
 
     chain_ptr = font_ring;
-
-    while ((test_font = *chain_ptr++)) {
+    found = 0;
+    while (!found && (test_font = *chain_ptr++)) {
         do {
-            if (test_font->font_id == font_id)
-                goto find_height;
-        } while ((test_font = test_font->next_font));
+            found = (test_font->font_id == font_id);
+        } while (!found && (test_font = test_font->next_font));
     }
-
-find_height:
 
     double_font = single_font = test_font;
     test_height = INTIN[0];
@@ -604,6 +601,7 @@ void dst_font()
     WORD *old_intin, point, *old_ptsout, dummy[4], *old_ptsin;
     REG WORD face;
     REG struct font_head *test_font, **chain_ptr;
+    BYTE found;
 
     test_font = cur_font;
     point = test_font->point;
@@ -612,19 +610,17 @@ void dst_font()
 
     chain_ptr = font_ring;
 
-    while ((test_font = *chain_ptr++)) {
+    found = 0;
+    while (!found && (test_font = *chain_ptr++)) {
         do {
-            if (test_font->font_id == face)
-                goto find_height;
-        } while ((test_font = test_font->next_font));
+            found = (test_font->font_id == face);
+        } while (!found && (test_font = test_font->next_font));
     }
 
     /* If we fell through the loop, we could not find the face. */
     /* Default to the system font.                  */
-
-    test_font = &fon6x6;
-
-find_height:
+    if (!found)
+        test_font = &fon6x6;
 
     /* Call down to the set text height routine to get the proper size */
 
@@ -825,6 +821,7 @@ void dqt_name()
     REG BYTE *name;
     REG WORD *int_out;
     REG struct font_head *tmp_font;
+    BYTE found;
 
     WORD font_id;
     struct font_head **chain_ptr;
@@ -834,21 +831,18 @@ void dqt_name()
     i = 0;
     font_id = -1;
 
-    while ((tmp_font = *chain_ptr++)) {
+    found = 0;
+    while (!found && (tmp_font = *chain_ptr++)) {
         do {
-            if (tmp_font->font_id != font_id) {
-                font_id = tmp_font->font_id;
-                if ((++i) == element)
-                    goto found_element;
-            }
-        } while ((tmp_font = tmp_font->next_font));
+            font_id = tmp_font->font_id;
+            if ((++i) == element)
+                found = 1;
+        } while (!found && (tmp_font = tmp_font->next_font));
     }
 
-    /* The element is out of bounds use the system font */
-
-    tmp_font = &fon6x6;
-
-  found_element:
+    /* The element is out of bounds - default to the system font */
+    if (!found)
+        tmp_font = &fon6x6;
 
     int_out = INTOUT;
     *int_out++ = tmp_font->font_id;

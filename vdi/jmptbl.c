@@ -92,14 +92,17 @@ void(*jmptb2[])() = {
     dqt_fontinfo
 };
 
-/************************************************************************
- *    Screen Driver Entry Point                                         *
- ************************************************************************/
 
-void SCREEN()
+
+/*
+ * screen - Screen driver entry point
+ */
+
+void screen()
 {
     REG WORD opcode, r, *control;
     REG struct attribute *work_ptr;
+    BYTE found;
 
     control = CONTRL;
     r = *(control + 6);
@@ -121,16 +124,15 @@ void SCREEN()
 
         work_ptr = &virt_work;
 
+        found = 0;
         do {
-            if (r == work_ptr->handle)
-                goto found_handle;
-        } while ((work_ptr = work_ptr->next_work));
+            found = (r == work_ptr->handle);
+        } while (!found && (work_ptr = work_ptr->next_work));
 
         /* handle is invalid if we fall through, so exit */
 
-        return;
-
-      found_handle:
+        if (!found)
+            return;
 
         cur_work = work_ptr;
         INQ_TAB[19] = CLIP = work_ptr->clip;

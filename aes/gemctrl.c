@@ -88,8 +88,8 @@ static WORD             gl_tmpmoff;
 
 
 /*
-*       Send message and wait for the mouse button to come up
-*/
+ * Send message and wait for the mouse button to come up
+ */
 void ct_msgup(WORD message, PD *owner, WORD wh, WORD m1, WORD m2, WORD m3, WORD m4)
 {
         if (message == NULL)

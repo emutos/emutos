@@ -27,7 +27,7 @@
         .xdef   _INTOUT
         .xdef   _PTSOUT
         .xdef   _FLIP_Y
-        .xdef   _SCREEN
+        .xdef   _screen
 
         .globl  _GSX_ENTRY
 
@@ -94,9 +94,9 @@ size_intin:
 
 intin_ok:
 //
-//  Call SCREEN which contains all the C routines for the SCREEN DRIVER.
+//  Call screen which contains all the C routines for the SCREEN DRIVER.
 //
-        jsr     _SCREEN
+        jsr     _screen
 //
 //  Restore user's CONTRL[1] and CONTRL[3] array elements from the stack.
 //

@@ -102,48 +102,48 @@ void d_contourfill()
     Q[1] = oldxleft;
     Q[2] = oldxright;           /* stuff a point going down into the Q */
 
-    if (notdone)
-        goto start;             /* can't get point out of Q or draw it */
-    else
-        return;
+    if (notdone) {
 
-    do {
-        while (Q[Qptr] == EMPTY) {
-            Qptr += 3;
+        /* couldn't get point out of Q or draw it */
+        while (1) {
+            direction = (oldy & DOWN_FLAG) ? 1 : -1;
+            gotseed = get_seed(oldxleft, (oldy + direction),
+                               &newxleft, &newxright);
+
+            if ((newxleft < (oldxleft - 1)) && gotseed) {
+                xleft = oldxleft;
+                while (xleft > newxleft)
+                    get_seed(--xleft, oldy ^ DOWN_FLAG, &xleft, &xright);
+            }
+            while (newxright < oldxright)
+                gotseed = get_seed(++newxright, oldy + direction, &xleft,
+                                   &newxright);
+            if ((newxright > (oldxright + 1)) && gotseed) {
+                xright = oldxright;
+                while (xright < newxright)
+                    get_seed(++xright, oldy ^ DOWN_FLAG, &xleft, &xright);
+            }
+
+            /* Eventually jump out here */
+            if (Qtop == Qbottom)
+                break;
+
+            while (Q[Qptr] == EMPTY) {
+                Qptr += 3;
+                if (Qptr == Qtop)
+                    Qptr = Qbottom;
+            }
+
+            oldy = Q[Qptr];
+            Q[Qptr++] = EMPTY;
+            oldxleft = Q[Qptr++];
+            oldxright = Q[Qptr++];
             if (Qptr == Qtop)
-                Qptr = Qbottom;
+                crunch_Q();
+
+            fill_line(oldxleft, oldxright, ABS(oldy));
         }
-
-        oldy = Q[Qptr];
-        Q[Qptr++] = EMPTY;
-        oldxleft = Q[Qptr++];
-        oldxright = Q[Qptr++];
-        if (Qptr == Qtop)
-            crunch_Q();
-
-        fill_line(oldxleft, oldxright, ABS(oldy));
-
-      start:
-        direction = (oldy & DOWN_FLAG) ? 1 : -1;
-        gotseed = get_seed(oldxleft, (oldy + direction),
-                           &newxleft, &newxright);
-
-        if ((newxleft < (oldxleft - 1)) && gotseed) {
-            xleft = oldxleft;
-            while (xleft > newxleft)
-                get_seed(--xleft, oldy ^ DOWN_FLAG, &xleft, &xright);
-        }
-        while (newxright < oldxright)
-            gotseed = get_seed(++newxright, oldy + direction, &xleft,
-                               &newxright);
-        if ((newxright > (oldxright + 1)) && gotseed) {
-            xright = oldxright;
-            while (xright < newxright)
-                get_seed(++xright, oldy ^ DOWN_FLAG, &xleft, &xright);
-        }
-
-    } while (Qtop != Qbottom);
-
+    }
 }                               /* end of fill() */
 
 
