@@ -16,6 +16,14 @@
  */
 
 #include "string.h"
+#include "kprint.h"
+
+/* doprintf implemented in doprintf.c. 
+ * This is an OLD one, and does not support floating point.
+ */
+#include <stdarg.h>
+extern int doprintf(void (*outc)(int), const char *fmt, va_list ap);
+
 
 /* The following functions are either used as inlines in string.h
    or here as normal functions */
@@ -100,3 +108,37 @@ int toupper(int c)
         return(c);
 }
 
+
+/*
+ * Implementation of sprintf():
+ * It uses doprintf to print into a string.
+ * Note: It is currently not reentrant.
+ */
+
+static char *sprintf_str;
+static int sprintf_flag;
+
+static void sprintf_outc(int c)     /* Output one character from doprintf */
+{
+    *sprintf_str++ = c;
+}
+
+int sprintf(char *str, const char *fmt, ...)
+{
+    int n;
+    va_list ap;
+
+    if(sprintf_flag)  panic("sprintf is not reentrant!\n");
+
+    sprintf_flag += 1;
+    sprintf_str = str;
+
+    va_start(ap, fmt);
+    n = doprintf(sprintf_outc, fmt, ap);
+    va_end(ap);
+
+    str[n] = 0;                     /* Terminate string with a 0 */
+    sprintf_flag -= 1;
+
+    return n;
+}
