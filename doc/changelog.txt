@@ -1353,3 +1353,7 @@ Start... early ages
 
 19. Feb. 2003
 - bios/screen.c - cleaned up the getrez a bit (MAD)
+
+20. Feb. 2003
+- bios/screen.[ch] - VIDEL color registers supported, EmuTOS can boot
+  in 2, 4 or 16 colors now! (joy)
