@@ -27,7 +27,7 @@
 #include "machine.h"
 #include "clock.h"    /* for displaying boot date and time */
 
-#include "version.h"  /* the EMUTOS_VERSION string */
+extern char version[];  /* the version string */
 
 #include "initinfo.h"
 
@@ -206,7 +206,7 @@ void initinfo()
     set_line();
     cprintf("\n\r");
 
-    pair_start(_("EmuTOS Version")); cprintf(EMUTOS_VERSION); pair_end();
+    pair_start(_("EmuTOS Version")); cprintf("%s", version); pair_end();
     pair_start(_("CPU type")); cprintf("m680%02ld", mcpu); pair_end();
     pair_start(_("Machine")); cprintf(machine_name()); pair_end();
 /*  pair_start(_("MMU available")); cprintf(_("No")); pair_end(); */
@@ -260,7 +260,7 @@ void initinfo()
     /* Clear screen, set foreground to 15, background is color 0 */
     cprintf("\033E\033b%c\033c%c", 15 + ' ', 0 + ' ');
 
-    cprintf("EmuTOS Version %s\r\n", EMUTOS_VERSION);
+    cprintf("EmuTOS Version %s\r\n", version);
 }
 
 

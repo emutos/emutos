@@ -228,7 +228,7 @@ SOBJ = $(foreach d,$(dirs),$(patsubst %.S,obj/%.o,$($(d)_ssrc)))
 CSRC = $(foreach d,$(dirs) $(other_dirs),$(addprefix $(d)/,$($(d)_csrc)))
 SSRC = $(foreach d,$(dirs) $(other_dirs),$(addprefix $(d)/,$($(d)_ssrc)))
 
-OBJECTS = $(SOBJ) $(COBJ) $(FONTOBJ)
+OBJECTS = $(SOBJ) $(COBJ) $(FONTOBJ) obj/version.o
 
 #
 # production targets 
@@ -606,6 +606,18 @@ obj/%.o : %.S
 	$(CC) $(CFLAGS) -S $($(subst /,_,$(dir $<))copts) $< -o $@
 
 #
+# version string
+# 
+
+TOCLEAN += obj/*.c
+
+obj/version.c: doc/changelog.txt tools/version.sed
+	sed -f tools/version.sed doc/changelog.txt > $@
+
+obj/version.o: obj/version.c
+	$(CC) $(CFLAGS) -c $< -o $@
+
+#
 # generic dsm handling
 #
 
@@ -728,19 +740,19 @@ tgz:	distclean
 #
 # proposal to create an archive named emutos-0_2a.tgz when
 # the EMUTOS_VERSION equals "0.2a" in include/version.h
+# (THIS IS CURRENTLY BROKEN)
 #
-
-VERSION = $(shell grep EMUTOS_VERSION include/version.h | cut -f2 -d\")
-RELEASEDIR = emutos-$(VERSION)
-RELEASETGZ = $(shell echo $(RELEASEDIR) | tr A-Z. a-z_).tgz
-
-release: distclean
-	@tmp=tmpCVS; rm -rf $$tmp; mkdir $$tmp; cd $$tmp; \
-	ln -s ../../$(HEREDIR) $(RELEASEDIR); \
-	tar -h -cf - --exclude '*CVS' $(RELEASEDIR) \
-	| gzip -c -9 >../../$(RELEASETGZ);\
-	cd ..; rm -rf $$tmp
-
+#VERSION = $(shell grep EMUTOS_VERSION include/version.h | cut -f2 -d\")
+#RELEASEDIR = emutos-$(VERSION)
+#RELEASETGZ = $(shell echo $(RELEASEDIR) | tr A-Z. a-z_).tgz#
+#
+#release: distclean
+#	@tmp=tmpCVS; rm -rf $$tmp; mkdir $$tmp; cd $$tmp; \
+#	ln -s ../../$(HEREDIR) $(RELEASEDIR); \
+#	tar -h -cf - --exclude '*CVS' $(RELEASEDIR) \
+#	| gzip -c -9 >../../$(RELEASETGZ);\
+#	cd ..; rm -rf $$tmp
+#
 
 #
 # file dependencies (makefile.dep)

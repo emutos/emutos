@@ -1335,4 +1335,13 @@ Start... early ages
 
 15. Feb. 2003
 - desk/deskapp.c - Icon masks are working now (THH).
-
+- po/fr.po - updated. I think we should put back the EmuCON strings in it, 
+  since we now have decided to put back the console in EmuTOS. The size will 
+  not be a problem for 512k images, and for other sizes UNIQUE is fine.
+  However this will have to wait till I fix bug to bring back old entries 
+  into life. (LVL)
+- bios/comprimg.S - added natfeat_init stub, converted debug print from STonX
+  to NF_STDERR (LVL)
+- Makefile - version string deduced from doc/changelog.txt (only partly
+  done, the version in the desk info menu is still taken from version.h) (LVL)
+- bios/bios.c, natfeat* - NF_SHUTDOWN tried before halting (LVL)
