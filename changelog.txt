@@ -145,3 +145,8 @@ Start... early ages
 - changed sysvarend to _bssend (it is the BSS, that ends! - got from DRI)
 - added end.s with _bssend 
 
+08. Oct. 2001
+- started iorec and kbdvbase stuff (aim is to reimplement kbd.c to
+  be compliant with the way TOS does it)
+- some debug info in Malloc(), bios(5)
+- cleaned Makefile and end.s ("the end.s episode")
