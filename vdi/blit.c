@@ -13,18 +13,20 @@
 
 #include "portab.h"
 #include "vdidef.h"
+#include "lineavars.h"
 #include "gsxextrn.h"
 #include "tosvars.h"
 #include "mouse.h"
-#include "kprint.h"
-
 
 #define DBG_BLIT 0
+#define C_BLIT 1        // decide, which implementation
 
+#if DBG_BLIT
+#include "kprint.h"
+#endif
 
 
 /* bitblt modes */
-
 #define BM_ALL_WHITE   0
 #define BM_S_AND_D     1
 #define BM_S_AND_NOTD  2
@@ -42,798 +44,410 @@
 #define BM_NOT_SANDD  14
 #define BM_ALL_BLACK  15
 
-/* bitblt declarations */
-typedef struct  bbpb
-{
-    UWORD   b_wd;       /* width of block to blit (pixels) */
-    UWORD   b_ht;       /* height of block to blit (pixels) */
-    UWORD   plane_ct;   /* number of planes to blit */
-    UWORD   fg_col;     /* foreground colour */
-    UWORD   bg_col;     /* background colour */
-    UBYTE   op_tab[4];  /* logic op table */
-    UWORD   s_xmin;     /* minimum X source */
-    UWORD   s_ymin;     /* minimum Y source */
-    UWORD * s_form;     /* source form base addr */
-    UWORD   s_nxwd;     /* offset to next word in line (bytes) */
-    UWORD   s_nxln;     /* offset to next line in plane (bytes) */
-    UWORD   s_nxpl;     /* offset from start of current plane to next */
-    UWORD   d_xmin;     /* minimum X destination */
-    UWORD   d_ymin;     /* minimum Y destination */
-    UWORD * d_form;     /* destination form base addr */
-    UWORD   d_nxwd;     /* offset to next word in line (bytes) */
-    UWORD   d_nxln;     /* offset to next line in plane (bytes) */
-    UWORD   d_nxpl;     /* offset from start of current plane to next */
-    UWORD * p_addr;     /* address of pattern buffer */
-    UWORD   p_nxln;     /* offset to next line in pattern (bytes) */
-    UWORD   p_nxpl;     /* offset to next plane in pattern (bytes) */
-    UWORD   p_mask;     /* pattern index mask */
+/* flag:1 SOURCE and PATTERN   flag:0 SOURCE only */
+#define PAT_FLAG	4
 
-    /* For internal use */
-    UWORD   p_indx;     /* initial pattern index */
-    UWORD * s_addr;     /* initial source address */
-    UWORD   s_xmax;     /* maximum X: source */
-    UWORD   s_ymax;     /* maximum Y: source */
-    UWORD * d_addr;     /* initial destination address */
-    UWORD   d_xmax;     /* maximum X: destination */
-    UWORD   d_ymax;     /* maximum Y: destination */
-    UWORD   inner_ct;   /* blt inner loop initial count */
-    UWORD   dst_wr;     /* destination form wrap (in bytes) */
-    UWORD   src_wr;     /* source form wrap (in bytes) */
-} FBBLTPBLK;
+/* passes parameters to bitblt */
+struct blit_frame {
+    UWORD b_wd;		// +00 width of block in pixels
+    UWORD b_ht;		// +02 height of block in pixels
+    UWORD plane_ct;     // +04 number of consequitive planes to blt
+    UWORD fg_col;       // +06 foreground color (logic op table index:hi bit)
+    UWORD bg_col;       // +08 background color (logic op table index:lo bit)
+    UBYTE op_tab[4];    // +10 logic ops for all fore and background combos
+    UWORD s_xmin;       // +14 minimum X: source
+    UWORD s_ymin;       // +16 minimum Y: source
+    UWORD * s_form;     // +18 source form base address
+    UWORD s_nxwd;       // +22 offset to next word in line  (in bytes)
+    UWORD s_nxln;       // +24 offset to next line in plane (in bytes)
+    UWORD s_nxpl;       // +26 offset to next plane from start of current plane
+    UWORD d_xmin;       // +28 minimum X: destination
+    UWORD d_ymin;       // +30 minimum Y: destination
+    UWORD * d_form;     // +32 destination form base address
+    UWORD d_nxwd;       // +36 offset to next word in line  (in bytes)
+    UWORD d_nxln;       // +38 offset to next line in plane (in bytes)
+    UWORD d_nxpl;       // +40 offset to next plane from start of current plane
+    UWORD * p_addr;     // +42 address of pattern buffer   (0:no pattern)
+    UWORD p_nxln;       // +46 offset to next line in pattern  (in bytes)
+    UWORD p_nxpl;       // +48 offset to next plane in pattern (in bytes)
+    UWORD p_mask;       // +50 pattern index mask
 
-
-
-FBBLTPBLK pblk;
-
-
-#define LSHIFT(s) s=((ULONG)s<<16)
-#define RSHIFT(s) s=((ULONG)s>>16)
-#define UPPER(s) (0xFFFF0000 & ((s)<<16))
-
-#define EVENWORD(s) (((s)+15) >> 4)
-
-/* just to reduce possible mistakes */
-#define ALL_WHITE(s,d)  (0x0000)
-#define S_AND_D(s,d)    ((s) & (d))
-#define S_AND_NOTD(s,d) ((s) & ~(d))
-#define S_ONLY(s,d)     (s)
-#define NOTS_AND_D(s,d) (~(s) & (d))
-#define D_ONLY(s,d)     (d)
-#define S_XOR_D(s,d)    ((s) ^ (d))
-#define S_OR_D(s,d)     ((s) | (d))
-#define NOT_SORD(s,d)   (~((s) | (d)))
-#define NOT_SXORD(s,d)  (~((s) ^ (d)))
-#define NOT_D(s,d)      (~(d))
-#define S_OR_NOTD(s,d)  ((s) | ~(d))
-#define NOT_S(s,d)      (~(s))
-#define NOTS_OR_D(s,d)  (~(s) | (d))
-#define NOT_SANDD(s,d)  (~((s) & (d)))
-#define ALL_BLACK(s,d)  (0xffff)
-
-
-static UWORD
-all_white(UWORD s, UWORD d)
-{
-    return ALL_WHITE(s,d);
-}
-
-static UWORD
-s_and_d(UWORD s, UWORD d)
-{
-    return S_AND_D(s,d);
-}
-
-static UWORD
-s_and_notd(UWORD s, UWORD d)
-{
-    return S_AND_NOTD(s,d);
-}
-
-static UWORD
-s_only(UWORD s, UWORD d)
-{
-    return S_ONLY(s,d);
-}
-
-static UWORD
-nots_and_d(UWORD s, UWORD d)
-{
-    return NOTS_AND_D(s,d);
-}
-
-static UWORD
-d_only(UWORD s, UWORD d)
-{
-    return D_ONLY(s,d);
-}
-
-static UWORD
-s_xor_d(UWORD s, UWORD d)
-{
-    return S_XOR_D(s,d);
-}
-
-static UWORD
-s_or_d(UWORD s, UWORD d)
-{
-    return S_OR_D(s,d);
-}
-
-static UWORD
-not_sord(UWORD s, UWORD d)
-{
-    return NOT_SORD(s,d);
-}
-
-static UWORD
-not_sxord(UWORD s, UWORD d)
-{
-    return NOT_SXORD(s,d);
-}
-
-static UWORD
-not_d(UWORD s, UWORD d)
-{
-    return NOT_D(s,d);
-}
-
-static UWORD
-s_or_notd(UWORD s, UWORD d)
-{
-    return S_OR_NOTD(s,d);
-}
-
-static UWORD
-not_s(UWORD s, UWORD d)
-{
-    return NOT_S(s,d);
-}
-
-static UWORD
-nots_or_d(UWORD s, UWORD d)
-{
-    return NOTS_OR_D(s,d);
-}
-
-static UWORD
-not_sandd(UWORD s, UWORD d)
-{
-    return NOT_SANDD(s,d);
-}
-
-static UWORD
-all_black(UWORD s, UWORD d)
-{
-    return ALL_BLACK(s,d);
-}
-
-UWORD (*logop_tab[16])(UWORD s, UWORD d) = {
-    all_white,
-    s_and_d,
-    s_and_notd,
-    s_only,
-    nots_and_d,
-    d_only,
-    s_xor_d,
-    s_or_d,
-    not_sord,
-    not_sxord,
-    not_d,
-    s_or_notd,
-    not_s,
-    nots_or_d,
-    not_sandd,
-    all_black
+    /* these frame parameters are internally set */
+    UWORD p_indx;       // +52 initial pattern index
+    UWORD * s_addr;     // +54 initial source address
+    UWORD s_xmax;       // +58 maximum X: source
+    UWORD s_ymax;       // +60 maximum Y: source
+    UWORD * d_addr;     // +62 initial destination address
+    UWORD d_xmax;       // +66 maximum X: destination
+    UWORD d_ymax;       // +68 maximum Y: destination
+    UWORD inner_ct;     // +70 blt inner loop initial count
+    UWORD dst_wr;       // +72 destination form wrap (in bytes)
+    UWORD src_wr;       // +74 source form wrap (in bytes)
 };
-
-
-
-#if 1
-ULONG lshift(ULONG s)
-{
-    return s<<16;
-}
-#endif
-
-#if 0
-static inline ULONG lshift (register ULONG y)
-{
-    register UWORD x
-    __asm__ __volatile__
-        (
-         "swap %0;"
-         "clr.w %0;"
-         : "=d" (x)
-         : "0" (x)
-        );
-    return x;
-}
-#endif
-
+/*
+ * This struct has a global scope. It should just be put on a stack frame by the
+ * cpyfm function and then passed to the bit_blt routine, but I did not manage
+ * to get it that way going. Maybe, the optimizer plays a role?!?
+ */
+struct blit_frame info;     /* holds some internal info for bit_blt */
 
 /*
- * bitblt - Generic bitblt for all interleaved resolutions
+ * cpy_fm - general bitblt operation, using 1 of 16 logical operations.
+ *
+ * device dependent format only.
+ *
+ * copytran - Flag for Copy-raster-form (<>0 = Transparent)
  */
-static inline void
-bit_blt(FBBLTPBLK * fbb )
+void cpyfm(UWORD copytran)
 {
-    WORD  pc;   /* plane counter */
-    UWORD *dbase;
-    UWORD *sbase;
-    WORD  snxline, dnxline;
-    WORD  snxword, dnxword;
-    UWORD endmask1, endmask3;
-    UWORD wordcnt, s_xmin16, s_xmax16, d_xmin16, d_xmax16;
-    UWORD lendmsk=0xffff>>(fbb->d_xmin%16);
-    UWORD rendmsk=~(0x7fff>>(fbb->d_xmax%16));
-    WORD skew = (fbb->d_xmin - fbb->s_xmin) & 0x000f;
-    UWORD prefetch = ((fbb->d_xmin%16) < (fbb->s_xmin%16));
-    UWORD (*logop[4])(UWORD s, UWORD d);
-
-    /* precalculate some values for speed */
-    s_xmin16 = fbb->s_xmin / 16;
-    s_xmax16 = fbb->s_xmax / 16;
-    d_xmin16 = fbb->d_xmin / 16;
-    d_xmax16 = fbb->d_xmax / 16;
-    wordcnt = ((d_xmax16 - d_xmin16) - 1 );
-
-    /* Normally blit top to bottom, left to right */
-    /* Adjust sbase and dbase */
-    sbase = (UWORD *)((UBYTE *)fbb->s_form + (( (LONG)fbb->s_ymin * (LONG)fbb->s_nxln ) + ( ((LONG)fbb->s_xmin/16) * (LONG)fbb->s_nxwd )));
-    dbase = (UWORD *)((UBYTE *)fbb->d_form + (( (LONG)fbb->d_ymin * (LONG)fbb->d_nxln ) + ( ((LONG)fbb->d_xmin/16) * (LONG)fbb->d_nxwd )));
-
-    /* Set next line offsets in number of WORDs */
-    snxline = fbb->s_nxln>>1;
-    dnxline = fbb->d_nxln>>1;
-
-    /* Set next word offsets in number of WORDs  */
-    snxword = fbb->s_nxwd>>1;
-    dnxword = fbb->d_nxwd>>1;
-
-    /* Set endmasks */
-    endmask1 = lendmsk;
-    endmask3 = rendmsk;
-
-    if ( (fbb->b_wd <= 16) && (d_xmin16 == d_xmax16) )  {
-        /* Blit left to right */
-#if DBG_BLIT > 0
-        kprintf("fbbitblt: top to bottom, left to right, wd<16, same dst word\n");
-#endif
-        /* Set next word offsets */
-        snxword = ( s_xmin16 != s_xmax16 ) ? fbb->s_nxwd>>1 : 0;
-        dnxword = 0;
-
-        /* Set endmask */
-        endmask1 = lendmsk & rendmsk;
-        endmask3 = 0;
-    }
-    else if ( ( fbb->b_wd <= 16 ) && ( s_xmin16 == s_xmax16 ) ) {
-        /* Blit left to right */
-#if DBG_BLIT > 0
-       kprintf("fbbitblt: top to bottom, left to right, wd<16, same src word\n");
-#endif
-        /* Set next word offsets */
-        snxword = 0;
-        dnxword = ( d_xmin16 != d_xmax16 ) ? fbb->d_nxwd>>1 : 0;
-    }
-    else if ( fbb->s_ymin > fbb->d_ymin ) {
-        /* Blit top to bottom */
-#if DBG_BLIT > 0
-       kprintf("fbbitblt: top to bottom\n");
-#endif
-    }
-    else if ( fbb->s_ymin < fbb->d_ymin ) {
-        /* Blit bottom to top */
-#if DBG_BLIT > 0
-       kprintf("fbbitblt: bottom to top\n");
-#endif
-        /* Adjust sbase and dbase to bottom of block */
-        (UBYTE *) sbase += ( (LONG)fbb->s_nxln * ( (LONG)fbb->b_ht - 1 ) );
-        (UBYTE *) dbase += ( (LONG)fbb->d_nxln * ( (LONG)fbb->b_ht - 1 ) );
-
-        /* Set next line offsets */
-        snxline = -snxline;
-        dnxline = -dnxline;
-    }
-    else if ( fbb->s_xmin < fbb->d_xmin ) {
-#if DBG_BLIT > 0
-       kprintf("fbbitblt: top to bottom, right to left\n");
-#endif
-        /* Blit top to bottom, right to left */
-        /* Adjust sbase and dbase to top right of block */
-        (UBYTE *)dbase += (((((LONG)fbb->b_wd - 1) / 16) + (((LONG)fbb->d_xmin % 16) != 0)) * (LONG)fbb->d_nxwd);
-        (UBYTE *)sbase += (((((LONG)fbb->b_wd - 1) / 16) + (((LONG)fbb->s_xmin % 16) != 0)) * (LONG)fbb->s_nxwd);
-
-        /* Set next word offsets */
-        snxword = -snxword;
-        dnxword = -dnxword;
-
-        /* Set endmasks */
-        endmask1 = rendmsk;
-        endmask3 = lendmsk;
-    }
-
-#if DBG_BLIT > 0
-    kprintf("s_form: %p d_form: %p\n",fbb->s_form,fbb->d_form);
-    kprintf("sbase: %p dbase: %p\n",sbase,dbase);
-    kprintf("skew: %d\n",skew);
-    kprintf("prefetch: %d\n",prefetch);
-    kprintf("s_xmin: %d\n", fbb->s_xmin);
-    kprintf("d_xmin: %d\n", fbb->d_xmin);
-    kprintf("skew  : %d\n", skew);
-    kprintf("s_nxpl: %d\n", fbb->s_nxpl);
-    kprintf("d_nxpl: %d\n", fbb->d_nxpl);
-    kprintf("endmask1 is %x, endmask3 is %x\n", endmask1, endmask3);
-#endif
-
-    /* Pre-Fill logop[] table with operation modes for each plane */
-    for (pc=fbb->plane_ct-1; pc >= 0; pc--) {
-        int op_tabidx;
-
-        /* Calculate index into op_tab */
-        op_tabidx = ((fbb->fg_col>>pc) & 0x0001 ) <<1;
-        op_tabidx |= (fbb->bg_col>>pc) & 0x0001;
-
-        logop[pc] = logop_tab[fbb->op_tab[op_tabidx] & 0x000f];
-    }
-
-    /* Blit each plane starting from the last */
-    for (pc=fbb->plane_ct-1, sbase+=pc*(fbb->s_nxpl>>1), dbase+=pc*(fbb->d_nxpl>>1);
-         pc >= 0 ;
-         pc--, sbase-=fbb->s_nxpl>>1, dbase-=fbb->d_nxpl>>1) {
-
-        UWORD (*op)(UWORD s, UWORD d);
-
-        op = logop[pc];
-
-        if (snxword>=0) {
-            /* left to right blit entered */
-
-            /* This is just for speed */
-            if (snxword == dnxword && dnxword && logop[pc] == s_only) {
-                /* Just for replace mode, most often used! */
-                int j, nxword;
-                UWORD *lsbase = sbase;
-                UWORD *ldbase = dbase;
-
-                nxword = snxword;
-                /* Do for each line in the blit */
-                for (j=fbb->b_ht-1; j>= 0; j--,
-                lsbase+=snxline, ldbase+=dnxline) {
-
-                    ULONG sbuf=0x00000000;
-                    UWORD *s=lsbase;
-                    UWORD *d=ldbase;
-                    int i;
-
-                    /* If source pixel on word boundary, don't prefetch */
-                    if (prefetch) {
-                        sbuf = *s;
-                        sbuf <<= 16;
-                        s += nxword;
-                    }
-
-                    /* Do first word */
-                    sbuf |= *s;
-                    *d = (*d & ~endmask1) | ((sbuf>>skew) & endmask1);
-
-                    /* Do middle words */
-                    for (i=wordcnt-1; i >= 0; i--) {
-                        s += nxword;
-                        d += nxword;
-                        sbuf <<= 16;
-#if 0
-                        /* just a try to make it faster... (MAD) */
-                        __asm__ __volatile__
-                            (
-                             "swap %0\n\t"
-                             "clr.w %0\n\t"
-                             :
-                             :
-                             : "0" (sbuf)
-                            );
-#endif
-                        sbuf |=  *s;
-                        *d = sbuf>>skew;
-                    }
-
-                    /* Do last word */
-                    s += nxword;
-                    d += nxword;
-                    sbuf <<= 16;
-                    sbuf |= *s;
-                    *d = (*d & ~endmask3) | ((sbuf>>skew) & endmask3);
-                }
-            }
-            else {
-                /* not replace mode, for all the not so often used modes */
-                int j;
-                UWORD *lsbase = sbase;
-                UWORD *ldbase = dbase;
-
-                /* Do for each line in the blit */
-                for (j=fbb->b_ht-1; j>= 0; j--,
-                lsbase+=snxline, ldbase+=dnxline) {
-
-                    ULONG sbuf=0x00000000;
-                    UWORD *s=lsbase;
-                    UWORD *d=ldbase;
-                    int i;
-
-                    /* If source pixel on word boundary, don't prefetch */
-                    if (prefetch) {
-                        sbuf = *s;
-                        sbuf <<= 16;
-                        s += snxword;
-                    }
-
-                    /* Do first word */
-                    sbuf |= *s;
-                    *d &= ~endmask1;
-                    *d |= (*op)((UWORD)(sbuf>>skew), *d) & endmask1;
-
-                    /* One word blit */
-                    if (dnxword==0)
-                        continue;
-
-                    /* Do middle words */
-                    for (i=wordcnt-1 ; i >= 0; i--) {
-                        s += snxword;
-                        d += dnxword;
-                        sbuf <<= 16;
-                        sbuf |=  *s;
-                        *d = (*op)((UWORD)(sbuf>>skew), *d);
-                    }
-
-                    /* Do last word */
-                    s += snxword;
-                    d += dnxword;
-                    sbuf <<= 16;
-                    sbuf |= *s;
-                    *d &= ~endmask3;
-                    *d |= (*op)((UWORD)(sbuf>>skew), *d) & endmask3;
-                }
-            }
-        }
-        else {
-            /* right to left blit entered */
-            int j;
-            UWORD *lsbase = sbase;
-            UWORD *ldbase = dbase;
-
-            /* Do for each line in the blit */
-            for (j=fbb->b_ht-1; j>= 0; j--,
-            lsbase+=snxline, ldbase+=dnxline) {
-
-                ULONG sbuf=0x00000000;
-                UWORD *s=lsbase;
-                UWORD *d=ldbase;
-                int i;
-
-                /* Do first word */
-                sbuf |= UPPER((ULONG)*s);
-                RSHIFT(sbuf);
-                s += snxword;
-                sbuf |= UPPER((ULONG)*s);
-                *d &= ~endmask1;
-                *d |= (*op)((UWORD)(sbuf>>skew), *d) & endmask1;
-
-                /* Do middle words */
-                for (i=wordcnt-1 ; i >= 0; i--) {
-                    s += snxword;
-                    d += dnxword;
-                    sbuf = (sbuf>>16) | ((ULONG)*s<<16);
-                    *d = (*op)((UWORD)(sbuf>>skew), *d);
-                }
-
-                /* Do last word */
-                s += snxword;
-                d += dnxword;
-                sbuf = (sbuf>>16) | ((ULONG)*s<<16);
-                *d &= ~endmask3;
-                *d |= (*op)((UWORD)(sbuf>>skew), *d) & endmask3;
-            }
-        }
-    }
-}
-
-
-
-/*
- * getbltpblk - set defaultvalues for new parameter block
- */
-static void
-getbltpblk(FBBLTPBLK *fbb)
-{
-    fbb->b_wd = xres;
-    fbb->b_ht = yres;
-    fbb->plane_ct = INQ_TAB[4];     /* bytes per Pixel*/
-
-    fbb->fg_col = fbb->bg_col = 0;
-    fbb->op_tab[0] = 0x03; /* dest = src */
-    fbb->op_tab[1] = 0x03; /* dest = src */
-    fbb->op_tab[2] = 0x03; /* dest = src */
-    fbb->op_tab[3] = 0x03; /* dest = src */
-    fbb->s_xmin = 0;
-    fbb->s_ymin = 0;
-    fbb->d_xmin = 0;
-    fbb->d_ymin = 0;
-
-    /* these aren't used yet, but we could just as well set them up anyway */
-    fbb->p_addr = NULL;
-    fbb->p_nxln = 0;
-    fbb->p_nxpl = 0;
-    fbb->p_mask = 0;
-
-    /* VDI driver internal usage - needed??? */
-    fbb->p_indx = 0;
-    fbb->s_addr = NULL;
-    fbb->s_xmax = 0;
-    fbb->s_ymax = 0;
-    fbb->d_addr = NULL;
-    fbb->d_xmax  = 0;
-    fbb->d_ymax = 0;
-    fbb->inner_ct = 0;
-    fbb->dst_wr  = 0;
-    fbb->src_wr = 0;
-
-    /* setup for interleaved planes */
-
-    /* source and destination form base addr */
-    fbb->s_form = fbb->d_form = (UWORD*)v_bas_ad;
-    /* offset to next word in line (bytes) */
-    fbb->s_nxwd = fbb->d_nxwd = INQ_TAB[4] * 2;
-    /* offset to next line in plane (bytes) */
-    fbb->s_nxln = fbb->d_nxln = EVENWORD(xres) * 2 * INQ_TAB[4];     /* bytes per Pixel*/
-    /* offset from start of current plane to next */
-    fbb->s_nxpl = fbb->d_nxpl = 2;
-}
-
-
-/*
- * min - return min of two values
- */
-inline static WORD
-min(WORD a, WORD b)
-{
-    return( (a < b) ? a : b );
-}
-
-/*
- * min - return max of two values
- */
-inline static WORD
-max(WORD a, WORD b)
-{
-    return( (a > b) ? a : b );
-}
-
-
-
-inline void
-fix_rect(RECT *cor)
-{
-    RECT t;
-
-    t.x1 = min(cor->x1, cor->x2);
-    t.y1 = min(cor->y1, cor->y2);
-    cor->x2 = max(cor->x1, cor->x2);
-    cor->y2 = max(cor->y1, cor->y2);
-    cor->x1 = t.x1;
-    cor->y1 = t.y1;
-}
-
-
-
-inline WORD
-do_rectclip(RECT *cor, RECT *clip)
-{
-    fix_rect(cor);
-
-    /* check first if clipping takes away everything */
-    if(((cor->x1 < clip->x1) && (cor->x2 < clip->x1)) ||
-       ((cor->x1 > clip->x2) && (cor->x2 > clip->x2)) ||
-       ((cor->y1 < clip->y1) && (cor->y2 < clip->y1)) ||
-       ((cor->y1 > clip->y2) && (cor->y2 > clip->y2)))
-        return 0;
-
-    cor->x1 = max(cor->x1, clip->x1);
-    cor->y1 = max(cor->y1, clip->y1);
-    cor->x2 = min(cor->x2, clip->x2);
-    cor->y2 = min(cor->y2, clip->y2);
-
-    return 1;
-}
-
-/*
- * gen_cpyfm - general copy raster
- */
-static void
-gen_cpyfm(int tran)
-{
-    struct attribute *work_ptr;
-    FBBLTPBLK myfbb;
-    FBBLTPBLK * fbb;
+    WORD mode, bits;
     MFDB *src,*dst;
-    RECT *srccor, *dstcor;
-    RECT tmpcor;
-    int mode;
 
-    work_ptr = cur_work;
+    /* check user write (write mode #5 (D' = D) => do nothing */
+    mode  = INTIN[0];
+    if ( mode < 0 || mode == 5 || mode > 15)
+        return;                 /* mode is invalid */
 
-    /* Check out the areas to copy */
-    srccor = (RECT*)&PTSIN[0];
-    dstcor = (RECT*)&PTSIN[4];
+    /* check the pattern flag and revert to log op # */
+    info.p_addr = NULL;		/* No pattern selected */
+    bits = (1<<PAT_FLAG);
+    if ( mode & bits )   	/* and set bit to 0! */ {
+        info.p_addr = patptr;	/* get pattern */
+
+        /* multi-plane pattern? */
+        info.p_nxpl = 0;	/* next plane pattern offset default. */
+        if ( multifill ) {
+            info.p_nxpl = 32;	/* yes, next plane pat offset = 32. */
+        }
+        info.p_nxln = 2;        /* offset to next line in pattern */
+        info.p_mask = 0xf;      /* pattern index mask */
+    }
+    info.s_nxpl = 2;		/* d4 <- next plane offset (source) */
+    info.d_nxpl = 2;		/* d5 <- next plane offset (destination) */
 
     /* Get the pointers to the MFDBs */
-    src = *(MFDB **)&CONTRL[7];
-    dst = *(MFDB **)&CONTRL[9];
+    src = *(MFDB **)&CONTRL[7]; /* a5, source MFDB */
+    dst = *(MFDB **)&CONTRL[9]; /* a4, destination MFDB */
 
-    /* order the coordinates as I like them. */
-    fix_rect(srccor);
-    fix_rect(dstcor);
-
-    /* Completely ignore what the user says what the destination
-     width and height should be and recalculate them here.
-     They must be recalculated after the fix. */
-    dstcor->x2 = srccor->x2 - srccor->x1 + dstcor->x1;
-    dstcor->y2 = srccor->y2 - srccor->y1 + dstcor->y1;
-    tmpcor = *dstcor;
-
-    /* check first if clipping takes away everything, or
-     if destination is the screen */
-    if ((work_ptr->clip = *INTIN) != 0) {
-        if(!dst->fd_addr && !do_rectclip(dstcor, (RECT *)&XMN_CLIP)) {
-            return;
-        }
+    /* setup planes for source MFDB */
+    if ( src->fd_addr < 0 )     /* d6 */
+        return;			/* negative source address invalid */
+    else if ( src->fd_addr > 0 ) {
+        /* for a positive source address */
+        info.s_form = src->fd_addr;
+        info.s_nxwd = src->fd_nplanes * 2;
+        info.s_nxln = src->fd_wdwidth * 2 * src->fd_h;
+    }
+    else {
+        /* source address == NULL */
+        info.s_form = (UWORD*) v_bas_ad;		/* source form is screen */
+        info.s_nxwd = v_planes * 2;
+        info.s_nxln = v_lin_wr;
     }
 
-    /* setup fbb according to the screen format */
-    fbb = &myfbb;
-    getbltpblk(fbb);
+    /* setup planes for destination MFDB */
+    if ( dst->fd_addr < 0 )     /* d7 */
+        return;			/* negative source address invalid */
+    else if ( dst->fd_addr > 0 ) {
+        /* for a positive address */
+        info.d_form = dst->fd_addr;
+        info.plane_ct = dst->fd_nplanes;
+        info.d_nxwd = dst->fd_nplanes * 2;
+        info.d_nxln = dst->fd_wdwidth * 2 * dst->fd_h;
+    }
+    else {
+        /* source address == NULL */
+        info.d_form = (UWORD*) v_bas_ad;		/* source form is screen */
+        info.plane_ct = v_planes;
+        info.d_nxwd = v_planes * 2;
+        info.d_nxln = v_lin_wr;
+    }
 
-    mode  = INTIN[0];
+    /* only 4,2, and 1 planes are valid (destination) */
+    if ( 0xfff8 & info.plane_ct )
+        return;
 
-    /* choose, if transparent */
-    if (tran) {
-        /* emulate the four modes with different combinations
-         of the ordinary 15 bitblt modes. */
+    if ( copytran ) {
+        /*
+         * COPY RASTER TRANSPARENT - copies a monochrome raster area
+         * from source form to a color area. A writing mode and color
+         * indices for both 0's and 1's are specified in the INTIN array.
+         */
+        WORD fg, bg;
+
+        /* is source area one plane? */
+        if ( info.s_nxwd != 2 )
+            return;    /* source must be mono plane */
+
+        /* d6 <- background color */
+        fg = INTIN[1];
+        if ((fg >= DEV_TAB[13]) || (fg < 0))
+            fg = 1;
+        fg = MAP_COL[fg];
+
+        /* d7 <- foreground color */
+        bg = INTIN[2];
+        if ((bg >= DEV_TAB[13]) || (bg < 0))
+            bg = 1;
+        bg = MAP_COL[bg];
+
+        /* mode == d2 */
         switch(mode) {
         case MD_TRANS:
-            fbb->op_tab[0] = BM_NOTS_AND_D;     // fg:0 bg:0  D' <- S and D
-            fbb->op_tab[1] = BM_NOTS_AND_D;     // fg:0 bg:1  D' <- [not S] or D
-            fbb->op_tab[2] = BM_S_OR_D;         
-            fbb->op_tab[3] = BM_S_OR_D;
-            fbb->fg_col = MAP_COL[INTIN[1]];    // save the color of interest
-            fbb->bg_col = 0;                    // were only interested in one color
-            break;
-
-        case MD_XOR:
-            fbb->op_tab[0] = BM_S_XOR_D;        // fg:0 bg:0  D' <- S xor D
-            fbb->op_tab[1] = BM_S_XOR_D;        
-            fbb->op_tab[2] = BM_S_XOR_D;        
-            fbb->op_tab[3] = BM_S_XOR_D;        
-            fbb->fg_col = 0;                    // were not interested in any color
-            fbb->bg_col = 0;                    // were not interested in any color
-            break;
-
-        case MD_ERASE:
-            fbb->op_tab[0] = BM_S_AND_D;
-            fbb->op_tab[1] = BM_S_AND_D;
-            fbb->op_tab[2] = BM_S_AND_D;
-            fbb->op_tab[3] = BM_NOTS_OR_D;
-            fbb->fg_col = 0;                    // were only interested in one color
-            fbb->bg_col = MAP_COL[INTIN[2]];    // save the color of interest
+            info.op_tab[0] = 04;	/* fg:0 bg:0  D' <- [not S] and D */
+            info.op_tab[2] = 07;	/* fg:1 bg:0  D' <- S or D */
+            info.fg_col = 0;		/* were only interested in one color */
+            info.bg_col = bg;		/* save the color of interest */
             break;
 
         case MD_REPLACE:
-        default: /* illegal mode specified, use replace mode */
-            fbb->op_tab[0] = BM_ALL_WHITE;      // fg:0 bg:0  D' <- 0
-            fbb->op_tab[1] = BM_NOT_S;          // fg:0 bg:1  D' <- not S
-            fbb->op_tab[2] = BM_S_ONLY;         // fg:1 bg:0  D' <- S
-            fbb->op_tab[3] = BM_ALL_BLACK;      // fg:1 bg:1  D' <- 1
-            fbb->fg_col = MAP_COL[INTIN[1]];    // save the colors of interest
-            fbb->bg_col = MAP_COL[INTIN[2]];    // save the colors of interest
+            /* CHECK: bug, that colors are reversed? */
+            info.op_tab[0] = 00;	/* fg:0 bg:0  D' <- 0 */
+            info.op_tab[1] = 12;	/* fg:0 bg:1  D' <- not S */
+            info.op_tab[2] = 03;	/* fg:1 bg:0  D' <- S */
+            info.op_tab[3] = 15;	/* fg:1 bg:1  D' <- 1 */
+            info.bg_col = fg;		/* save fore and background colors */
+            info.fg_col = bg;
+            break;
+
+        case MD_XOR:
+            info.op_tab[0] = 06;	/* fg:0 bg:0  D' <- S xor D */
+            info.bg_col = 0;
+            info.fg_col = 0;
+            break;
+
+        case MD_ERASE:
+            info.op_tab[0] = 01;	/* fg:0 bg:0  D' <- S and D */
+            info.op_tab[1] = 13;	/* fg:0 bg:1  D' <- [not S] or D */
+            info.fg_col = 0;		/* were only interested in one color */
+            info.bg_col = bg;		/* save the color of interest */
+            break;
+
+        default:
+            return;                     /* unsupported mode */
         }
     }
     else {
-        fbb->op_tab[0] = (BYTE)mode;
-        fbb->op_tab[1] = (BYTE)mode;
-        fbb->op_tab[2] = (BYTE)mode;
-        fbb->op_tab[3] = (BYTE)mode;
-    }
-
-    /* dst size is the same as src size here, only that dst
-     might have been clipped earlier */
-    fbb->b_wd = dstcor->x2 - dstcor->x1 + 1;
-    fbb->b_ht = dstcor->y2 - dstcor->y1 + 1;
-
-    /* adjust coordinates if destination is clipped */
-    fbb->s_xmin = srccor->x1 + dstcor->x1-tmpcor.x1;
-    fbb->s_ymin = srccor->y1 + dstcor->y1-tmpcor.y1;
-    if(src->fd_addr) {
-        fbb->plane_ct = src->fd_nplanes; /* use source no of bitplanes! */
-        fbb->s_form = src->fd_addr;
-
-        /* block is in VDI format == in machine dependent format  */
-        fbb->s_nxwd = 2;
-        fbb->s_nxln = src->fd_wdwidth * 2;
-        fbb->s_nxpl = src->fd_wdwidth * 2 * src->fd_h;
-
         /*
-         * "machine dependent" could be discussed.
-         * On one hand, machine dependent _is_ machine dependent, but
-         * on the other hand, machine dependent is most likely associated
-         * with Atari interleaved format. For now we treat them exactly the
-         * same
-         * if(src->fd_stand) {
-         *   block is in VDI format
-         * }
-         * else {
-         *   block is in machine dependent format
+         * COPY RASTER OPAQUE - copies a rectangular raster area
+         * from source form to destination form using the logic operation
+         * specified by the application.
          */
 
-    } /* else source is the screen, i.e. already setup by getbltpblk() */
+        /* do the standard logic operations */
 
-    fbb->d_xmin = dstcor->x1;
-    fbb->d_ymin = dstcor->y1;
-    if(dst->fd_addr) {
-        fbb->d_form = dst->fd_addr;
+        /* planes of source and destination must be equal in number */
+        if ( info.s_nxwd != info.d_nxwd )
+            return;
 
-        /* block is in VDI format == in machine dependent format  */
-        fbb->d_nxwd = 2;
-        fbb->d_nxln = dst->fd_wdwidth * 2;
-        fbb->d_nxpl = dst->fd_wdwidth * 2 * dst->fd_h;
+        info.op_tab[0] = mode;		/* fg:0 bg:0 */
+        info.bg_col = 0;                /* bg:0 & fg:0 => only first OP_TAB */
+        info.fg_col = 0;                /* entry will be referenced */
+    }
 
-    } /* else destination is the screen, i.e. already setup by getbltpblk() */
 
-    fbb->s_xmax = fbb->s_xmin + fbb->b_wd - 1;
-    fbb->d_xmax = fbb->d_xmin + fbb->b_wd - 1;
+    /* PTSIN ARRAY OFFSETs */
 
-    bit_blt (fbb);
+#define XMIN_S	0	// x of upper left of source rectangle
+#define YMIN_S  1       // y of upper left of source rectangle
+#define XMAX_S  2       // x of lower right of source rectangle
+#define YMAX_S  3       // y of lower right of source rectangle
 
+#define XMIN_D  4       // x of upper left of destination rectangle
+#define YMIN_D  5       // y of upper left of destination rectangle
+#define XMAX_D  6       // x of lower right of destination rectangle
+#define YMAX_D  7       // y of lower right of destination rectangle
+
+    /* check if clipping is enabled and destination is the screen */
+    if (CLIP && !dst->fd_addr) {
+        int s_xmin, s_ymin;
+        int d_xmin, d_ymin;
+        int d_xmax, d_ymax;
+        int clip, deltax, deltay;
+
+        /*
+         * clip Xmin source and destination to window
+         */
+        s_xmin = PTSIN[XMIN_S];
+        d_xmin = PTSIN[XMIN_D];
+        clip = XMN_CLIP;
+
+        /* Xmin dest < Xmin clip */
+        if ( d_xmin < clip ) {    /* Xmin dest > Xmin clip => branch */
+            /* clip Xmin dest */
+            int tmp = clip;
+            clip = d_xmin;
+            d_xmin = tmp;		/* d2 <- Xmin dest = Xmin clip */
+
+            clip -= d_xmin;		/* d4 <- -(amount clipped in x) */
+            s_xmin -= clip;		/* d0 <- adjusted Xmin src */
+        }
+        info.s_xmin = s_xmin;	/* d0 <- clipped Xmin source */
+        info.d_xmin = d_xmin;	/* d2 <- clipped Xmin destination */
+
+
+        /*
+         * clip Xmax destination to window
+         */
+        d_xmax = PTSIN[XMAX_S] - s_xmin + d_xmin;
+        clip = XMX_CLIP;
+
+        /* Xmax dest > Xmax clip */
+        if ( d_xmax > clip ) {
+            /* clip Xmax dest */
+            int tmp = clip;
+            clip = d_xmax;
+            d_xmax = tmp;		/* d6 <- Xmax dest = Xmax clip */
+        }
+        info.d_xmax = d_xmax;
+
+        /* match source and destination rectangles */
+        deltax = d_xmax - d_xmin;
+        if ( deltax < 0 )
+            return;             /* block entirely clipped */
+        info.b_wd = deltax + 1;
+        info.s_xmax = s_xmin + deltax;		/* d4 <- Xmax Source */
+
+
+        /*
+         * clip Ymin source and destination to window
+         */
+        s_ymin = PTSIN[YMIN_S];
+        d_ymin = PTSIN[YMIN_D];
+        clip = YMN_CLIP;
+
+        /* Ymin dest < Ymin clip => clip Ymin */
+        if ( d_ymin < clip ) {
+            int tmp = clip;
+            clip = d_ymin;
+            d_ymin = tmp;		/* d1 <- Ymin dest = Ymin clip */
+
+            clip -= d_ymin;		/* d4 <- -(amount clipped in Y) */
+            s_ymin -= clip;		/* d0 <- adjusted source Ymin  */
+        }
+        info.s_ymin = s_ymin;       /* d1, Dy Source */
+        info.d_ymin = d_ymin;       /* d3, Ymax destination */
+
+
+        /*
+         * clip Ymax destination to window
+         */
+        d_ymax = PTSIN[YMAX_S] - s_ymin + d_ymin;
+        clip = YMX_CLIP;
+
+        /* if Ymax dest > Ymax clip */
+        if ( d_ymax > clip ) {
+            /* clip Ymax dest */
+            int tmp = clip;
+            clip = d_ymax;
+            d_ymax = tmp;		/* d7 <- Xmax dest = Xmax clip */
+        }
+        info.d_ymax = d_ymax;
+
+        /* match source and destination rectangles */
+        deltay = d_ymax - d_ymin;
+        if ( deltay < 0 )
+            return;             /* block entirely clipped */
+        info.b_ht = deltay + 1;
+        info.s_ymax = s_ymin + deltay;		/* d5 <- Ymax Source */
+    }
+    else {
+        /* don't clip */
+
+        /* source */
+        info.s_xmin = PTSIN[XMIN_S];	/* d0 x of upper left of source */
+        info.s_ymin = PTSIN[YMIN_S]; 	/* d1 y of upper left of source */
+        info.s_xmax = PTSIN[XMAX_S];	/* d4 x of lower right of source */
+        info.s_ymax = PTSIN[YMAX_S]; 	/* d5 y of lower right of source */
+
+        /* width and height of block in pixels */
+        info.b_wd = info.s_xmax - info.s_xmin + 1;
+        info.b_ht = info.s_ymax - info.s_ymin + 1;
+
+        /* destination */
+        info.d_xmin = PTSIN[XMIN_D];	/* d2 x of upper left of dest. */
+        info.d_ymin = PTSIN[YMIN_D]; 	/* d3 y of upper left of dest. */
+        info.d_xmax = PTSIN[XMAX_D];	/* d6 x of lower right of dest. */
+        info.d_ymax = PTSIN[YMAX_D]; 	/* d7 y of lower right of dest. */
+    }
+
+#if DBG_BLIT
+    kprintf("\n");
+    kprintf("s_xmin = %d\n", info.s_xmin);
+    kprintf("s_xmax = %d\n", info.s_xmax);
+    kprintf("s_ymin = %d\n", info.s_ymin);
+    kprintf("s_ymax = %d\n", info.s_ymax);
+    kprintf("\n");
+    kprintf("d_xmin = %d\n", info.d_xmin);
+    kprintf("d_xmax = %d\n", info.d_xmax);
+    kprintf("d_ymin = %d\n", info.d_ymin);
+    kprintf("d_ymax = %d\n", info.d_ymax);
+    kprintf("\n");
+    kprintf("b_wd = %d\n", info.b_wd);
+    kprintf("b_ht = %d\n", info.b_ht);
+    kprintf("s_form = %p\n", info.s_form);
+    kprintf("d_form = %p\n", info.d_form);
+
+    kprintf("\n");
+    kprintf("plane_ct = %d\n", info.plane_ct);
+    kprintf("s_nxwd = %d\n", info.s_nxwd);
+    kprintf("s_nxln = %d\n", info.s_nxln);
+    kprintf("d_nxwd = %d\n", info.d_nxwd);
+    kprintf("d_nxln = %d\n", info.d_nxln);
+#endif
+    /* for now call assembly routine */
+    bit_blt();
+
+#if 0
     CONTRL[N_PTSOUT] = 0;
     CONTRL[N_INTOUT] = 0;
-
-#if DBG_BLIT > 0
-    kprintf("gen_cpyfm: %d,%d -> %d,%d  w: %d h: %d mode: %d\n",
-            fbb->s_xmin, fbb->s_ymin, fbb->d_xmin, fbb->d_ymin,
-            fbb->b_wd, fbb->b_ht, mode);
 #endif
-
 }
 
 
-
-#if 0
 /*
- * dro_cpyfm - copy raster opaque
+ * vdi_vro_cpyfm - copy raster opaque
  *
  * This function copies a rectangular raster area from source form to
  * destination form using the logic operation specified by the application.
  */
-void
-dro_cpyfm()
+void vdi_vro_cpyfm()
 {
-    gen_cpyfm(0);
+    arb_corner(PTSIN, ULLR);
+    arb_corner((PTSIN + 4), ULLR);
+#if C_BLIT
+    cpyfm(0);
+#else
+    /* this needs copyrfm.S in Makefile */
+    COPYTRAN = 0;
+    COPY_RFM();
+#endif
 }
 
 
 
 /*
- * drt_cpyfm - copy raster transparent
+ * vdi_vrt_cpyfm - copy raster transparent
  *
  * This function copies a monochrome raster area from source form to a
- * color area. A writing mode and color indices for  both 0's and 1's
+ * color area. A writing mode and color indices for both 0's and 1's
  * are specified in the INTIN array.
  */
-void
-drt_cpyfm()
+
+void vdi_vrt_cpyfm()
 {
     /* transparent blit */
-    gen_cpyfm(1);
-}
+    arb_corner(PTSIN, ULLR);
+    arb_corner((PTSIN + 4), ULLR);
+#if C_BLIT
+    cpyfm(1);
+#else
+    /* this needs copyrfm.S in Makefile */
+    COPYTRAN = 0xFFFF;
+    COPY_RFM();
 #endif
+}
+
 
 
 /*

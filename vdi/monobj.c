@@ -749,23 +749,3 @@ void v_nop()
 {
     /* never will be  implemented */
 }
-
-
-
-void dro_cpyfm()
-{
-    arb_corner(PTSIN, ULLR);
-    arb_corner((PTSIN + 4), ULLR);
-    COPYTRAN = 0;
-    COPY_RFM();
-}                               /* End "dr_cpyfm". */
-
-
-
-void drt_cpyfm()
-{
-    arb_corner(PTSIN, ULLR);
-    arb_corner((PTSIN + 4), ULLR);
-    COPYTRAN = 0xFFFF;
-    COPY_RFM();
-}                               /* End "dr_cpyfm". */

@@ -65,7 +65,7 @@ static long opnfil(FCB *f, DND *dn, int mod);
 static long makopn(FCB *f, DND *dn, int h, int mod);
 static FTAB *sftsrch(int field, char *ptr);
 static void sftdel(FTAB *sftp);
-static BOOLEAN match1(char *ref, char *test);
+static BOOL match1(char *ref, char *test);
 
 /*
 **  used in calls to sftsrch to distinguish which field we are matching on
@@ -676,7 +676,7 @@ long ixdel(DND *dn, FCB *f, long pos)
 **      by scc
 */
 
-static BOOLEAN match1(char *ref, char *test)
+static BOOL match1(char *ref, char *test)
 {
         register char   *t ;
 

@@ -62,7 +62,7 @@
  *      whether a displatch should occurr (TRUE) or not.
  */
 
-//typedef BOOLEAN ISR ;           /*  interrupt service routine   */
+//typedef BOOL ISR;               /*  interrupt service routine   */
 //typedef ISR     (*PISR)() ;     /*  pointer to isr routines     */
 
 /*
@@ -154,9 +154,9 @@ BCB
     int b_bufdrv;       /*  unit for buffer             */
     int b_buftyp;       /*  buffer type                 */
     int b_bufrec;       /*  record number               */
-    BOOLEAN b_dirty;    /*  true if buffer dirty        */
-    long        b_dm;           /*  reserved for file system    */
-    char        *b_bufr;        /*  pointer to buffer           */
+    BOOL b_dirty;	/*  true if buffer dirty        */
+    long b_dm;		/*  reserved for file system    */
+    char *b_bufr;       /*  pointer to buffer           */
 } ;
 
 /*

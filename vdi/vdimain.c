@@ -85,7 +85,7 @@ void vsl_ends();         /* 108 - fcabca */
 void dro_cpyfm();        /* 109 - fcb454 */
 void vr_trnfm();         /* 110 - fd1960 */
 
-void vro_cpyfm();        /* 111 - fd0770 */
+void vdi_vro_cpyfm();    /* 111 - fd0770 */
 void dsf_udpat();        /* 112 - fcd5c0 */
 void vsl_udsty();        /* 113 - fcb34c */
 void dr_recfl();         /* 114 - fcb4be */
@@ -97,7 +97,7 @@ void vex_timv();         /* 118 - fca530 */
 void dt_loadfont();      /* 119 - fcebcc */
 void dt_unloadfont();    /* 120 - fcec60 */
 
-void drt_cpyfm();        /* 121 - fcb486 */
+void vdi_vrt_cpyfm();    /* 121 - fcb486 */
 void v_show_c();         /* 122 - fcafca */
 void v_hide_c();         /* 123 - fcaff2 */
 void vq_mouse();         /* 124 - fcb000 */
@@ -136,7 +136,6 @@ extern WORD INQ_TAB_rom[];
 
 /* Screen related variables */
 extern UWORD v_planes;          // count of color planes
-extern UWORD v_lin_wr;          // line wrap : bytes per line
 extern UWORD v_hz_rez;          // screen horizontal resolution
 extern UWORD v_vt_rez;          // screen vertical resolution
 extern UWORD v_bytes_lin;       // width of line in bytes
@@ -786,7 +785,7 @@ void(*jmptb2[])() = {
     dst_style,          /* 106 */
     dst_point,          /* 107 */
     vsl_ends,           /* 108 */
-    dro_cpyfm,          /* 109 */
+    vdi_vro_cpyfm,      /* 109 */
     vr_trnfm,           /* 110 */
     xfm_crfm,           /* 111 */
     dsf_udpat,          /* 112 */
@@ -798,7 +797,7 @@ void(*jmptb2[])() = {
     vex_timv,           /* 118 */ /* in lisagem.S */
     dt_loadfont,        /* 119 */
     dt_unloadfont,      /* 120 */
-    drt_cpyfm,          /* 121 */
+    vdi_vrt_cpyfm,      /* 121 */
     v_show_c,           /* 122 */
     v_hide_c,           /* 123 */
     vq_mouse,           /* 124 */

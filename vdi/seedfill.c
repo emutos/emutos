@@ -43,8 +43,8 @@ WORD newxright;          /* the current direction    */
 WORD xleft;              /* temporary endpoints          */
 WORD xright;             /* */
 WORD direction;          /* is next scan line up or down */
-BOOLEAN notdone;         /* does seedpoint==search_color */
-BOOLEAN gotseed;         /* a seed was put in the Q      */
+BOOL notdone;         /* does seedpoint==search_color */
+BOOL gotseed;         /* a seed was put in the Q      */
 
 
 static WORD plane_mask[4] = { 1, 3, 7, 15 };

@@ -133,8 +133,8 @@ struct attribute {
     struct font_head *cur_font; /* Pointer to current font      */
     WORD dda_inc;               /* Fraction to be added to the DDA  */
     WORD multifill;             /* Multi-plane fill flag        */
-    WORD patmsk;                /* Current pattern mask         */
-    WORD *patptr;               /* Current pattern pointer      */
+    UWORD patmsk;               /* Current pattern mask         */
+    UWORD *patptr;              /* Current pattern pointer      */
     WORD pts_mode;              /* TRUE if height set in points mode    */
     WORD *scrtchp;              /* Pointer to text scratch buffer   */
     WORD scrpt2;                /* Offset to large text buffer      */
@@ -174,7 +174,6 @@ struct attribute {
 };
 
 /* Raster definitions */
-
 typedef struct {
     void *fd_addr;
     WORD fd_w;
@@ -189,9 +188,8 @@ typedef struct {
 
 typedef struct
 {
-  int x1,y1,x2,y2;
+    WORD x1,y1;
+    WORD x2,y2;
 } RECT;
-
-
 
 #endif                          /* VDIDEF_H */

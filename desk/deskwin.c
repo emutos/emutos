@@ -447,7 +447,7 @@ void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h)
 *       current row or column
 */
 #ifdef DESK1
-void win_blt(WNODE *pw, BOOLEAN vertical, WORD newcv)
+void win_blt(WNODE *pw, BOOL vertical, WORD newcv)
 #else
 void win_blt(WNODE *pw, WORD newcv)
 #endif
@@ -604,7 +604,7 @@ void win_arrow(WORD wh, WORD arrow_type)
         WNODE           *pw;
         WORD            newcv;
 #ifdef DESK1
-        BOOLEAN         vertical = TRUE;
+        BOOL            vertical = TRUE;
 #endif
         
         newcv = 0;

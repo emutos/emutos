@@ -418,7 +418,7 @@ xmax_clipped:
 
         exg     d4,d3                   // d1 <- Ymin dest = Ymin clip
         sub.w   d3,d4                   // d4 <- -(amount clipped in Y)
-        sub.w   d4,d1                   // d0 <- adjusted source Ymin 
+        sub.w   d4,d1                   // d1 <- adjusted source Ymin 
 
 ymin_clipped:
 

@@ -1597,3 +1597,7 @@ Start... early ages
 2004-02-02
 - bios/cookie.c: cookie_add() was not checking jar size. Fixed. Also the jar
   size increased to 20 entries (since EmuTOS takes 11 entries for itself).
+
+2004-06-19
+- include/portab.h: BOOLEAN replaced by BOOL (changed all over the code) (MAD)
+- vdi/blit.c: implementation of cpy_fm() in C. copyrfm.S no longer needed (MAD)

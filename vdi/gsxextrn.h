@@ -62,7 +62,7 @@ extern WORD y, odeltay, deltay, deltay1, deltay2;
 extern WORD fill_miny, fill_maxy;
 extern WORD fil_intersect;
 extern WORD fill_buffer[];
-extern WORD *patptr, patmsk;
+extern UWORD *patptr, patmsk;
 extern WORD multifill;
 
 /* gdp area variables */
@@ -76,14 +76,14 @@ extern WORD s_fill_per, *s_patptr, s_patmsk;
 extern WORD s_begsty, s_endsty, s_fil_col;
 
 extern WORD CLIP, XMN_CLIP, XMX_CLIP, YMN_CLIP, YMX_CLIP;
-extern WORD LINE_STYLE[];
-extern WORD DITHER[];
-extern WORD HATCH0[], HATCH1[], OEMPAT[];
-extern WORD ROM_UD_PATRN[];
-extern WORD SOLID;
-extern WORD HOLLOW;
-extern WORD HAT_0_MSK, HAT_1_MSK;
-extern WORD DITHRMSK, OEMMSKPAT;
+extern UWORD LINE_STYLE[];
+extern UWORD DITHER[];
+extern UWORD HATCH0[], HATCH1[], OEMPAT[];
+extern UWORD ROM_UD_PATRN[];
+extern UWORD SOLID;
+extern UWORD HOLLOW;
+extern UWORD HAT_0_MSK, HAT_1_MSK;
+extern UWORD DITHRMSK, OEMMSKPAT;
 
 extern WORD DEV_TAB[];          /* initial intout array for open workstation */
 extern WORD SIZ_TAB[];          /* initial ptsout array for open workstation */
@@ -114,6 +114,7 @@ extern void v_clrwk(void);
 extern void vex_butv(), vex_motv(), vex_curv(), vex_timv();
 extern void chk_esc();
 extern void CLC_FLIT();
+extern void bit_blt();
 
 /* Assembly Language Support Routines NEWLY ADDED */
 

@@ -47,7 +47,7 @@ long    ccfreeit;
 MD *ffit(long amount, MPB *mp)
 {
     MD *p,*q,*p1;              /* free list is composed of MD's */
-    BOOLEAN maxflg;
+    BOOL maxflg;
     long maxval;
 
 #if     DBG_IUMEM

@@ -1,5 +1,5 @@
 /*
- * bitblt.S - 
+ * bitblt.S - blitting
  *
  * Copyright (c) 1999 Caldera, Inc.
  *               2002 The EmuTOS development team
@@ -13,7 +13,7 @@
 #include "vdiconf.h"
 
         .globl  bit_blt
-        .globl  _BIT_BLT
+        .globl  _bit_blt
 
         .xdef  f0_l2r_rt,f1_l2r_rt,f2_l2r_rt,fl_l2r_rt
         .xdef  f0_l2r_lf,f1_l2r_lf,f2_l2r_lf,fl_l2r_lf
@@ -27,54 +27,48 @@
         .xdef  mode_08,mode_09,mode_10,mode_11
         .xdef  mode_12,mode_13,mode_14,mode_15
 
-// name:
-//      bitblt.s
+	.xdef  _info
+
 //
-// purpose:
+// _bit_blt - wrapper for bit_blt
 //
-//      set up parameters for bitblt and thread together the appropriate bitblt
-//      fragments
+// It emulates the link opcode by adding the FRAME_LEN onto the a6
+// register. That way the rest of the assembler stuff can stay, as
+// it is for now - some of it is also used for text blitting.
+
+_bit_blt:
+        // A wrapper, so save and set up registers 
+        movem.l d2-d7/a2-a5,-(sp)
+
+        lea 	_info, a6               // get info structure
+
+        add.l	#FRAME_LEN, a6          // emulate link opcode 
+
+        move.w  S_XMIN(a6),d0           // clipped Xmin source
+        move.w  D_XMIN(a6),d2           // clipped Xmin destination
+        move.w  S_XMAX(a6),d4           // clipped Xmax source
+        move.w  D_XMAX(a6),d6           // clipped Xmax destination
+        move.l  S_FORM(a6),a0           // a0 -> start of source form (0,0)
+        move.l  D_FORM(a6),a1           // a1 -> start of dest.  form (0,0)
+        
+        bsr.s   bit_blt
+
+        movem.l (sp)+,d2-d7/a2-a5
+        rts
+
 //
-// creation date:
-//
-//      01-nov-84
-//
-// latest update:
-//
-//      22-feb-85
-//
+// bit_blt - set up parameters for bitblt and 
+//           thread together the appropriate bitblt fragments
 //
 // in:
-//      d0.w    Xmin source
-//      d2.w    Xmin destination
-//      d4.w    Xmax source
-//      d6.w    Xmax destination
-//
-//      a6.l    points to frame with following parameters set:
-//
-//              Ymin source, Ymax source, Ymin destination, Ymax destination
-//              Xmin source, Xmax source, Xmin destination, Xmax destination
-//              rectangle height, rectangle width, number of planes
-
-
-
-//  in:
-//      a6.l    points to 76 byte parameter block
-
-
-
-//  in:
 //      d0.w    X min source
 //      d2.w    X min destination
 //      d4.w    X max source
 //      d6.w    X max destination
-
-_BIT_BLT:
-        // A wrapper, so save the registers
-        movem.l d2-d7/a2-a6,-(sp)
-        bsr.s   bit_blt
-        movem.l (sp)+,d2-d7/a2-a6
-        rts
+//
+//      a6.l    points to frame with following parameters set:
+//              points to 76 byte parameter block
+//
 
 bit_blt:
 
@@ -112,7 +106,6 @@ bit_blt:
         cmpi.w  #4,d7
         bcc     word_blt                // do the special word aligned blt
 
-.page
 
 std_blt:
 
@@ -143,6 +136,7 @@ std_blt:
 //                                 1: source words <> destination words 
 //
 //              note: width delta is either 1 word or 0 words
+
 
         move.w  d6,d0                   // d6 <- destination words -1
         subq.w  #1,d0                   // d0 <- initial inner loop counter value  !@#//&?
@@ -181,8 +175,6 @@ start_addr:
 //   calculate starting addresses for source and destination. use these
 //   addresses to determine direction of transfer.
 
-
-
         move.w  S_XMIN(a6),d0           // compute address of destination block
         move.w  S_YMIN(a6),d1
         bsr     s_xy2addr               // a0 -> start of block
@@ -207,7 +199,6 @@ start_addr:
 #endif
 
         sub.w   d3,d6                   // d6 <- DST_WR (row width-form wrap: r2l xfer)
-
 
         cmp.l   a1,a0                   // a0 -> start of source block
         bhi     t2b_l2r                 // SRC addr > DST addr  =>  t2b/l2r

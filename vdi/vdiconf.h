@@ -51,6 +51,7 @@
 
 #define FRAME_LEN   76
 
+#if 1
 #define B_WD       -76  // +00 width of block in pixels
 #define B_HT       -74  // +02 height of block in pixels
 
@@ -95,4 +96,53 @@
 #define INNER_CT    -6  // +70 blt inner loop initial count
 #define DST_WR      -4  // +72 destination form wrap (in bytes)
 #define SRC_WR      -2  // +74 source form wrap (in bytes)
+
+#else
+
+#define B_WD         0  // +00 width of block in pixels
+#define B_HT         2  // +02 height of block in pixels
+
+#define PLANE_CT     4  // +04 number of consequitive planes to blt
+
+#define FG_COL       6  // +06 foreground color (logic op table index:hi bit)
+#define BG_COL       8  // +08 background color (logic op table index:lo bit)
+#define OP_TAB      10  // +10 logic ops for all fore and background combos
+#define S_XMIN      14  // +14 minimum X: source
+#define S_YMIN      16  // +16 minimum Y: source
+#define S_FORM      18  // +18 source form base address
+
+#define S_NXWD      22  // +22 offset to next word in line  (in bytes)
+#define S_NXLN      24  // +24 offset to next line in plane (in bytes)
+#define S_NXPL      26  // +26 offset to next plane from start of current plane
+
+#define D_XMIN      28  // +28 minimum X: destination
+#define D_YMIN      30  // +30 minimum Y: destination
+#define D_FORM      32  // +32 destination form base address
+
+#define D_NXWD      36  // +36 offset to next word in line  (in bytes)
+#define D_NXLN      38  // +38 offset to next line in plane (in bytes)
+#define D_NXPL      40  // +40 offset to next plane from start of current plane
+
+#define P_ADDR      42  // +42 address of pattern buffer   (0:no pattern)
+#define P_NXLN      46  // +46 offset to next line in pattern  (in bytes)
+#define P_NXPL      48  // +48 offset to next plane in pattern (in bytes)
+#define P_MASK      50  // +50 pattern index mask
+
+/* these frame parameters are internally set */
+
+#define P_INDX      52  // +52 initial pattern index
+
+#define S_ADDR      54  // +54 initial source address
+#define S_XMAX      58  // +58 maximum X: source
+#define S_YMAX      60  // +60 maximum Y: source
+
+#define D_ADDR      62  // +62 initial destination address
+#define D_XMAX      66  // +66 maximum X: destination
+#define D_YMAX      68  // +68 maximum Y: destination
+
+#define INNER_CT    70  // +70 blt inner loop initial count
+#define DST_WR      72  // +72 destination form wrap (in bytes)
+#define SRC_WR      74  // +74 source form wrap (in bytes)
+#endif
+
 #endif                          /* VDICONF_H */

@@ -60,8 +60,6 @@
         .xdef   _LSTLIN
         .xdef   _LN_MASK
         .xdef   _WRT_MODE
-        .xdef   _patmsk
-        .xdef   _patptr
 
         .xdef   _v_bas_ad
         .xdef   _v_planes
