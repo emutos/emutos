@@ -8,7 +8,6 @@ BIOS/XBIOS/BDOS
 - VDI: code cleanup, Makefile, esclisa and gsxvars like in EmuTOS
 - auto programs are not run after reset
 - use extended argv specification in EmuCON
-- check that VEC_TIMER (vector number 0x100) is called by bios every 50th sec
 - check that VEC_CRITICALERR (0x101) is called when the BIOS encounters errors
 - should hitting control-c terminate the current process? if so, how?
 - move mem-only routines out of proc.c into umem.c or iumem.c
@@ -21,6 +20,7 @@ BIOS/XBIOS/BDOS
 - rewrite nvram.c so it wouldn't need balloc(50) (no checksum necessary)
 - move nvram_init to machine_detect so it could be used in screen.c:videl_init
 - loop callibration needed for various delays in centronics and DMA ports
+
 
 Internationalisation
 - fix rsc sizes to some reasonable default sizes for all languages ?
