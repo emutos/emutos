@@ -162,19 +162,19 @@ void linea_init(void)
 
     /* set font dependend from video mode */
     if (vmode == 2) {
-        cur_font=&f8x16;
-        def_font=&f8x16;
+        cur_font= &f8x16;
+        def_font= &f8x16;
     }
     else {
-        cur_font=&f8x8;
-        def_font=&f8x8;
+        cur_font= &f8x8;
+        def_font= &f8x8;
     }
     font_init();                        // init linea for actual font
 
     /* Initialize the font ring (is this right so???) */
-    font_ring[0]=&f6x6;
-    font_ring[1]=&f8x8;
-    font_ring[2]=&f8x16;
+    font_ring[0]= &f6x6;
+    font_ring[1]= &f8x8;
+    font_ring[2]= &f8x16;
     font_ring[3]=NULL;
     font_count=3;                       // total number of fonts in fontring
 

@@ -1605,7 +1605,7 @@ int main(int argc, char **argv)
 usage:
   fprintf(stderr, "\
 Usage: " TOOLNAME " command\n\
-Commands are:
+Commands are:\n\
   xgettext       scans source files listed in POTFILES.in \n\
                  and (re)creates messages.pot\n\
   update xx.po   compares xx.po to the current messages.pot \n\
