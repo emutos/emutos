@@ -114,14 +114,14 @@ WORD lastdisk()
 *       Routine to place disk icon between the current disk icon and
 *       the trash can
 */
-/*
-ins_posdisk(dx, dy, pdx, pdy)
-        WORD            dx, dy;
-        WORD            *pdx, *pdy;
+#ifdef DESK1
+void ins_posdisk(WORD dx, WORD dy, WORD *pdx, WORD *pdy)
 {
         WORD            tx, ty;
         WORD            xdiff, ydiff, xdir, ydir;
         ANODE           *pa;
+
+        tx = ty = 0;
 
         for(pa=G.g_ahead; pa; pa=pa->a_next)
         {
@@ -153,7 +153,7 @@ ins_posdisk(dx, dy, pdx, pdy)
           *pdy = dy;
         }
 }
-*/
+#endif
 
 
 /*
@@ -228,6 +228,13 @@ WORD ins_disk(ANODE *pa)
                 newpa->a_aicon = pa->a_aicon;
                 newpa->a_dicon = NIL;
                 newpa->a_letter = nletter[0];
+#ifdef DESK1
+                ins_posdisk(pa->a_xspot, pa->a_yspot, &newpa->a_xspot, 
+                                        &newpa->a_yspot);
+
+                snap_disk(newpa->a_xspot, newpa->a_yspot, 
+                                        &newpa->a_xspot, &newpa->a_yspot);                      
+#endif
               } /* if newpa */
               else
                 fun_alert(1, STAPGONE, NULLPTR);

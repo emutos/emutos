@@ -182,12 +182,19 @@ GLOBES
 /*GLOBAL*/ WORD         g_cwin;                 /* current window #     */
 /*GLOBAL*/ WORD         g_wlastsel;             /* window holding last  */
                                                 /*   selection          */
+#ifdef DESK1
+           WORD         g_viewpref;
+#endif
 /*GLOBAL*/ WORD         g_csortitem;            /* curr. sort item chked*/
 /*GLOBAL*/ WORD         g_ccopypref;            /* curr. copy pref.     */
 /*GLOBAL*/ WORD         g_cdelepref;            /* curr. delete pref.   */
+#ifndef DESK1
 /*GLOBAL*/ WORD         g_covwrpref;            /* curr. overwrite pref.*/
+#endif
 /*GLOBAL*/ WORD         g_cdclkpref;            /* curr. double click   */
+#ifndef DESK1
 /*GLOBAL*/ WORD         g_cmclkpref;            /* curr. menu click     */
+#endif
 /*GLOBAL*/ WORD         g_ctimeform;            /* curr. time format    */
 /*GLOBAL*/ WORD         g_cdateform;            /* curr. date format    */
 

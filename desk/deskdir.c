@@ -427,7 +427,11 @@ WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WORD attr
             inf_sset(G.a_trees[ADCPALER], 2, &ml_fsrc[0]);
             inf_sset(G.a_trees[ADCPALER], 3, &ml_fdst[0]);
                                                 /* show dialog          */
+#ifdef DESK1
+            if (samedir)
+#else
             if ((G.g_covwrpref) || (samedir))
+#endif
             {
               do_namecon();
                                                 /* if okay then if its  */

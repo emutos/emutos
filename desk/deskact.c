@@ -118,15 +118,51 @@ gr_accobs(tree, root, pnum, pxypts)
 }
 
 
+
+#ifdef DESK1
+
+void move_drvicon(LONG tree, WORD root, WORD x, WORD y, WORD *pts)
+{
+        ANODE *an_disk;
+        WORD objcnt;
+        OBJECT *tr;
+        WORD obj;
+        WORD oldx;
+        WORD oldy;
+        
+        objcnt = 0;
+        tr = (OBJECT *)tree;
+        for (obj = tr[root].ob_head; obj > root; obj = tr[obj].ob_next)
+        {
+                if (tr[obj].ob_state & SELECTED)
+                {
+                        oldx = tr[obj].ob_x;
+                        oldy = tr[obj].ob_y;
+
+                        snap_disk(x + pts[2 * objcnt], y + pts[2 * objcnt + 1],
+                                                &tr[obj].ob_x, &tr[obj].ob_y);
+
+                        for (an_disk = G.g_ahead; an_disk; an_disk = an_disk->a_next)
+                        {
+                                if (an_disk->a_obid == obj)
+                                {
+                                        an_disk->a_xspot = tr[obj].ob_x;
+                                        an_disk->a_yspot = tr[obj].ob_y;
+                                }
+                        }
+                        do_wredraw(0, oldx, oldy, G.g_wicon, G.g_hicon);
+                        do_wredraw(0, tr[obj].ob_x, tr[obj].ob_y, G.g_wicon, G.g_hicon);
+                        ++objcnt;
+                }
+        }
+        
+}
+
+
 /*
 *       Calculate the extent of the list of x,y points given.
 */
-/* unused
-        void
-gr_extent(numpts, xylnpts, pt)
-        WORD            numpts;
-        WORD            *xylnpts;
-        GRECT           *pt;
+void gr_extent(WORD numpts, WORD *xylnpts, GRECT *pt)
 {
         WORD            i, j;
         WORD            lx, ly, gx, gy;
@@ -147,22 +183,14 @@ gr_extent(numpts, xylnpts, pt)
         }
         r_set(pt, lx, ly, gx-lx+1, gy-ly+1);
 }
-*/
 
 
-#if 0
 /*
 *       Draw a list of polylines a number of times based on a list of
 *       x,y object locations that are all relative to a certain x,y
 *       offset.
 */
-        VOID
-gr_plns(x, y, numpts, xylnpts, numobs, xyobpts)
-        WORD            x, y;
-        WORD            numpts;
-        WORD            *xylnpts;
-        WORD            numobs;
-        WORD            *xyobpts;
+void gr_plns(WORD x, WORD y, WORD numpts, WORD *xylnpts, WORD numobs, WORD *xyobpts)
 {
         WORD            i, j;
 
@@ -177,14 +205,8 @@ gr_plns(x, y, numpts, xylnpts, numobs, xyobpts)
 }
 
 
-        WORD
-gr_bwait(po, mx, my, numpts, xylnpts, numobs, xyobpts)
-        GRECT           *po;
-        WORD            mx, my;
-        WORD            numpts;
-        WORD            *xylnpts;
-        WORD            numobs;
-        WORD            *xyobpts;
+WORD gr_bwait(GRECT *po, WORD mx, WORD my, WORD numpts, WORD *xylnpts,
+              WORD numobs, WORD *xyobpts)
 {
         WORD            down;
         WORD            ret[4];
@@ -198,8 +220,155 @@ gr_bwait(po, mx, my, numpts, xylnpts, numobs, xyobpts)
                                                 /* return exit event    */
         return(down);
 }
+
+
+static void gr_obalign(WORD numobs, WORD x, WORD y, WORD *xyobpts)
+{
+        WORD i, j;
+        
+        for (i = 0; i < numobs; i++)
+        {
+          j = i * 2;
+          xyobpts[j]   -= x;
+          xyobpts[j+1] -= y;
+        }
+}
+
 #endif
 
+
+
+#ifdef DESK1
+/*
+*       This routine is used to drag a list of polylines.
+*/
+void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD numpts, 
+                   WORD *xylnpts, WORD numobs, WORD *xyobpts, 
+                   WORD *pdulx, WORD *pduly, WORD *pdwh, WORD *pdobj)
+{
+        LONG            tree, curr_tree;
+        WNODE           *pw;
+        WORD            root, state, curr_wh, curr_root, curr_sel, dst_wh;
+        WORD            /* overwhite, */l_mx, l_my;
+        WORD            offx, offy;
+        WORD            down, button, keystate, junk;
+//      UWORD           ret[4];
+        FNODE           *pf;
+        GRECT           o;      // BP+2Ah
+        GRECT           ln;     // BP+32h
+        ANODE           *pa;// BP+3Ah
+
+        gsx_sclip(&gl_rscreen);
+        /* DESKTOP v1.2 doesn't do this. */
+        // graf_mouse(4, 0x0L);                 /* flat hand            */
+/* BugFix       */
+        l_mx = in_mx;
+        l_my = in_my;
+
+        gsx_attr(FALSE, MD_XOR, BLACK);
+
+                                                /* figure out extent of */
+                                                /*   single polygon     */
+        gr_extent(numpts, &xylnpts[0], &ln);
+                                                /* calc overall extent  */
+                                                /*   for use as bounds  */
+                                                /*   of motion          */
+        gr_extent(numobs, &xyobpts[0], &o);
+        o.g_w += ln.g_w;
+        o.g_h += ln.g_h;
+
+
+        gr_obalign(numobs, o.g_x, o.g_y, &xyobpts[0]);
+
+        offx = l_mx - o.g_x;
+        offy = l_my - o.g_y;
+
+        curr_wh = 0x0;
+        curr_tree = 0x0L; 
+        curr_root = 0; 
+        curr_sel = 0;
+        do
+        {
+          o.g_x = l_mx - offx;
+          o.g_y = l_my - offy;
+          rc_constrain(pc, &o);
+          down = gr_bwait(&o, l_mx, l_my,numpts, &xylnpts[0],
+                          numobs, &xyobpts[0]);
+
+          graf_mkstate(&l_mx, &l_my, &button, &keystate);
+          dst_wh = wind_find(l_mx, l_my);
+          tree = G.a_screen;
+          root = DROOT;
+          if (dst_wh)
+          {
+                pw = win_find(dst_wh);
+                if (pw)
+                {
+                        tree = G.a_screen;
+                        root = pw->w_root;
+                }
+                else dst_wh = 0;        
+          }
+                  
+          *pdobj = gr_obfind(tree, root, l_mx, l_my);
+/*        overwhite = (*pdobj == root) || (*pdobj == NIL);
+          if ( (overwhite) || ((!overwhite) && (*pdobj != curr_sel)) )*/
+
+/* The DESKTOP v1.2 test is rather less efficient here, but it is 
+ * the same test. */
+          if ((*pdobj == root) || (*pdobj == NIL))
+          {
+            if (curr_sel)
+            {
+              act_chg(curr_wh, curr_tree, curr_root, curr_sel, pc,
+                        SELECTED, FALSE, TRUE, TRUE);
+              curr_wh = 0x0;
+              curr_tree = 0x0L;
+              curr_root = 0x0;
+              curr_sel = 0;
+                  continue;
+            }
+          }
+          
+          if (*pdobj != curr_sel)
+          {
+                if (curr_sel)
+                {
+              act_chg(curr_wh, curr_tree, curr_root, curr_sel, pc,
+                        SELECTED, FALSE, TRUE, TRUE);
+              curr_wh = 0x0;
+              curr_tree = 0x0L;
+              curr_root = 0x0;
+              curr_sel = 0;             
+                }
+          }
+          state = LWGET(OB_STATE(*pdobj)); /*state = tree[*pdobj].ob_state;*/
+          if ( !(state & SELECTED) )
+          {
+                pa = i_find(dst_wh, *pdobj, &pf, &junk);
+                if ((pa->a_type == AT_ISFOLD) ||
+                    (pa->a_type == AT_ISDISK) ||
+                    (pa->a_type == AT_ISTRSH))
+                        {
+                          curr_wh = dst_wh;
+                          curr_tree = tree;
+                          curr_root = root;
+                  curr_sel = *pdobj;
+                  act_chg(curr_wh, curr_tree, curr_root, curr_sel, pc,
+                                SELECTED, TRUE, TRUE, TRUE);
+                        } /* if */
+              } /* if !SELECTED */
+        } while (down);
+        if (curr_sel)
+            act_chg(curr_wh, curr_tree, curr_root, curr_sel, pc,
+                        SELECTED, FALSE, TRUE, TRUE);
+        *pdulx = l_mx;                          /* pass back dest. x,y  */
+        *pduly = l_my;
+        *pdwh = dst_wh;
+        graf_mouse(ARROW, 0x0L);
+} /* gr_drgplns */
+
+#else /* DESK1 */
 
 /*
 *       This routine was formerly used to drag a list of polylines.
@@ -209,18 +378,9 @@ gr_bwait(po, mx, my, numpts, xylnpts, numobs, xyobpts)
 *       the destination of the copy. numpts, xylnpts, numobs, & xyobpts
 *       are no longer used.
 */
-/*      VOID
-gr_drgplns(in_mx, in_my, pc, numpts, xylnpts, numobs,
-                 xyobpts, pdulx, pduly, pdwh, pdobj)
-*/
 void gr_drgplns(in_mx, in_my, pc, pdulx, pduly, pdwh, pdobj)
         WORD            in_mx, in_my;
         GRECT           *pc;
-/*      WORD            numpts;
-        WORD            *xylnpts;
-        WORD            numobs;
-        WORD            *xyobpts;
-*/
         WORD            *pdulx, *pduly;
         WORD            *pdwh, *pdobj;
 {
@@ -330,6 +490,7 @@ void gr_drgplns(in_mx, in_my, pc, pdulx, pduly, pdwh, pdobj)
         *pdwh = dst_wh;
         graf_mouse(ARROW, 0x0L);
 } /* gr_drgplns */
+#endif
 
 
 /*
@@ -611,7 +772,13 @@ WORD act_bdown(WORD wh, LONG tree, WORD root, WORD *in_mx, WORD *in_my,
                 numpts = G.g_nmtext;
                 pxypts = &G.g_xytext[0];
               }
+#ifdef DESK1
+              gr_drgplns(l_mx, l_my, &gl_rfull, numpts, pxypts, numobs,
+                         G.g_xyobpts, &dulx, &duly, &dst_wh, pdobj);
+
+#else
               gr_drgplns(l_mx, l_my, &gl_rfull, &dulx, &duly, &dst_wh, pdobj);
+#endif
               if (dst_wh) 
               {
                                                 /* cancel drag if it    */
@@ -621,7 +788,17 @@ WORD act_bdown(WORD wh, LONG tree, WORD root, WORD *in_mx, WORD *in_my,
                   dst_wh = NIL;
               } /* if (dst_wh */
               else
+              {
+#ifdef DESK1
+                if (wh == 0 && (*pdobj == root)) // Dragging from desktop
+                {
+                  move_drvicon(tree, root, dulx, duly, G.g_xyobpts);
+                  dst_wh = NIL;
+                }
+#else
                 dst_wh = NIL;
+#endif
+              }
             } /* if numobs */
           } /* if SELECTED */
         } /* else */

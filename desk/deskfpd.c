@@ -460,6 +460,8 @@ FNODE *pn_sort(WORD lstcnt, FNODE *pflist)
 
 
 
+#ifndef DESK1
+
 /*
 *       Make a particular path the active path.  This involves
 *       reading its directory, initializing a file list, and filling
@@ -602,3 +604,58 @@ WORD pn_active(PNODE *thepath)
         else
           return( pn_folder(thepath) );
 }
+
+#else /* DESK1 */
+
+WORD pn_active(PNODE *thepath)
+{
+        FNODE *thefile, *prevfile;
+        WORD ret;
+
+        thepath->p_count = 0;
+        thepath->p_size = 0x0L;
+        fl_free(thepath->p_flist);
+
+        thefile = (FNODE *) NULLPTR;
+        prevfile = (FNODE *) &thepath->p_flist;
+
+        dos_sdta(G.a_wdta);
+
+        ret = dos_sfirst(ADDR(thepath->p_spec), thepath->p_attr);
+        while ( ret )
+        {
+          if ( !thefile )
+          {
+            thefile = fn_alloc();
+            if ( !thefile )
+            {   
+              ret = FALSE;
+              DOS_AX = E_NOFNODES;
+            }
+          }
+          else
+          {
+            if ( G.g_wdta[30] != '.' )  // skip "." and ".." entries
+            {
+                                                // if it is a real file //
+                                                //   or directory then  //
+                                                //   save it            //
+              memcpy(&thefile->f_junk, &G.g_wdta[20], 23);
+              thefile->f_attr &= ~(F_DESKTOP | F_FAKE);
+              
+              thepath->p_size += thefile->f_size;
+              prevfile->f_next = ml_pfndx[thepath->p_count++] = thefile;
+              prevfile = thefile;
+              thefile = (FNODE *) NULL;
+            }
+            ret = dos_snext();
+          }
+        }
+        prevfile->f_next = (FNODE *) NULLPTR;
+        if ( thefile ) fn_free(thefile);
+        thepath->p_flist = pn_sort(thepath->p_count, thepath->p_flist);
+        return(DOS_AX);
+                
+}
+
+#endif /* DESK1 */

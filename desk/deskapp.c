@@ -337,6 +337,12 @@ BYTE *app_parse(BYTE *pcurr, ANODE *pa)
 {
         switch(*pcurr)
         {
+#ifdef DESK1
+          case 'T':                             /* Trash */
+                pa->a_type  = AT_ISTRSH;
+                pa->a_flags = AF_ISCRYS | AF_ISGRAF | AF_ISDESK;
+                break;
+#endif
           case 'M':                             /* Storage Media        */
                 pa->a_type = AT_ISDISK;
                 pa->a_flags = AF_ISCRYS | AF_ISGRAF | AF_ISDESK;
@@ -539,6 +545,7 @@ static WORD app_rdicon()
           }
           gsx_trans(dtmp, iwb, dtmp, iwb, ih);
         }
+#ifndef DESK1
         for (i=0; i<last_icon; i++)
         {
           if ( i == IG_FOLDER )
@@ -553,6 +560,7 @@ static WORD app_rdicon()
                (i < (NUM_ANODES - 1)) )
             G.g_iblist[i].ib_pmask = G.g_iblist[ID_GENERIC].ib_pdata;
         }
+#endif
         return(TRUE);
 } /* app_rdicon */
 
@@ -618,6 +626,18 @@ WORD app_start()
             pcurr++;
             switch(*pcurr)
             {
+#ifdef DESK1
+              case 'T':                         /* Trash */
+                        pa = app_alloc(TRUE);
+                        pcurr = app_parse(pcurr, pa);
+
+                        for (i = 0; i < 6; i++)
+                        {
+                            pa = app_alloc(TRUE);
+                            app_parse(ini_str(ST1STD+i)+1, pa);
+                        } /* for */
+                        break;
+#endif
               case 'M':                         /* Media (Hard/Floppy)  */
               case 'G':                         /* GEM Application      */
               case 'F':                         /* File (DOS w/o parms) */
@@ -627,6 +647,7 @@ WORD app_start()
               case 'D':                         /* Directory            */
                         if ( *pcurr == 'M' )
                           prevdisk = 'M';
+#ifndef DESK1
                         else
                         {
                                                 /* rest of standards    */
@@ -641,6 +662,7 @@ WORD app_start()
                           } /* if */
                           prevdisk = ' ';
                         }
+#endif
                         pa = app_alloc(TRUE);
                         pcurr = app_parse(pcurr, pa);
                         break;
@@ -663,10 +685,21 @@ WORD app_start()
                           pcurr = scan_2(pcurr, &pws->hsl_save);
                           pcurr = scan_2(pcurr, &pws->vsl_save);
 /* BugFix       */
+#ifdef DESK1
+                          pcurr = scan_2(pcurr, &pws->x_save);
+                          pws->x_save *= gl_wchar;
+                          pcurr = scan_2(pcurr, &pws->y_save);
+                          pws->y_save *= gl_hchar;
+                          pcurr = scan_2(pcurr, &pws->w_save);
+                          pws->w_save *= gl_wchar;
+                          pcurr = scan_2(pcurr, &pws->h_save);
+                          pws->h_save *= gl_hchar;
+#else
                           pcurr = scan_2(pcurr, &x);
                           pcurr = scan_2(pcurr, &y);
                           pcurr = scan_2(pcurr, &w);
                           pcurr = scan_2(pcurr, &h);
+#endif
 /* */
                           pcurr = scan_2(pcurr, &pws->obid_save);
                           ptmp = &pws->pth_save[0];
@@ -674,10 +707,12 @@ WORD app_start()
                           while ( *pcurr != '@' )
                             *ptmp++ = *pcurr++;
                           *ptmp = NULL;
+#ifndef DESK1
                           gl_savewin[wincnt].g_x = x * gl_wchar;
                           gl_savewin[wincnt].g_y = y * gl_hchar;
                           gl_savewin[wincnt].g_w = w * gl_wchar;
                           gl_savewin[wincnt++].g_h = h * gl_hchar;
+#endif
                         }
                         break;
               case 'E':
@@ -689,10 +724,12 @@ WORD app_start()
                         G.g_cnxsave.ccopy_save = ( (envr & 0x08) != 0);
                         G.g_cnxsave.cdclk_save = envr & 0x07;
                         pcurr = scan_2(pcurr, &envr);
+#ifndef DESK1
                         G.g_cnxsave.covwr_save = ( (envr & 0x10) == 0);
                         G.g_cnxsave.cmclk_save = ( (envr & 0x08) != 0);
                         G.g_cnxsave.cdtfm_save = ( (envr & 0x04) == 0);
                         G.g_cnxsave.ctmfm_save = ( (envr & 0x02) == 0);
+#endif
                         sound(FALSE, !(envr & 0x01), 0);
                         break;
             }
@@ -712,6 +749,15 @@ WORD app_start()
         G.g_ich = G.g_hicon + MIN_HINT;
         ycnt = ((gl_height-gl_hbox) / G.g_ich);
         G.g_ich += ((gl_height-gl_hbox) % G.g_ich) / ycnt;
+
+#ifdef DESK1
+        for (pa = G.g_ahead; pa; pa = pa->a_next)
+        {
+                x = pa->a_xspot * G.g_icw;
+                y = pa->a_yspot * G.g_ich + G.g_ydesk;
+                snap_disk(x, y, &pa->a_xspot, &pa->a_yspot);            
+        }
+#endif
 
         xcent = (G.g_wicon - G.g_idlist[0].ib_wicon) / 2;
         G.g_nmicon = 9;
@@ -778,11 +824,15 @@ void app_save(WORD todisk)
         envr |= (G.g_cnxsave.ccopy_save) ? 0x08 : 0x00;
         envr |= G.g_cnxsave.cdclk_save;
         pcurr = save_2(pcurr, envr);
+#ifndef DESK1
         envr = (G.g_cnxsave.covwr_save) ? 0x00 : 0x10;
         envr |= (G.g_cnxsave.cmclk_save) ? 0x08 : 0x00;
         envr |= (G.g_cnxsave.cdtfm_save) ? 0x00 : 0x04;
         envr |= (G.g_cnxsave.ctmfm_save) ? 0x00 : 0x02;
         envr |= sound(FALSE, 0xFFFF, 0)  ? 0x00 : 0x01;
+#else
+        envr = sound(FALSE, 0xFFFF, 0)  ? 0x00 : 0x01;
+#endif
         pcurr = save_2(pcurr, envr );
 
         *pcurr++ = 0x0d;
@@ -851,6 +901,10 @@ void app_save(WORD todisk)
             case AT_ISFOLD:
                 *pcurr++ = 'D';
                 break;
+            case AT_ISTRSH:     /* Trash */
+                *pcurr++ = 'T';
+                break;
+
           }
           if (pa->a_flags & AF_ISDESK)
           {
@@ -878,8 +932,12 @@ void app_save(WORD todisk)
           *pcurr++ = 0x0d;
           *pcurr++ = 0x0a;
                                                 /* skip standards       */
+#ifndef DESK1
           if ( (pa->a_type == AT_ISDISK) && 
                (pa->a_next->a_type != AT_ISDISK) )
+#else
+          if ( (pa->a_type == AT_ISTRSH))       /* DESKTOP v1.2 */
+#endif
           {
             for(i=0; i<6; i++)
               pa = pa->a_next;

@@ -48,6 +48,17 @@
 
 #define SPACE 0x20
 
+#define HOTCLOSE 0x1000
+
+#ifndef DESK1
+/* Cut-down DESKTOP 2.x+ style */
+#define WINDOW_STYLE (HOTCLOSE|VSLIDE|UPARROW|DNARROW|NAME|CLOSER|FULLER)
+#else
+#define WINDOW_STYLE (NAME | CLOSER | MOVER | FULLER | INFO | SIZER | \
+                      UPARROW | DNARROW | VSLIDE | LFARROW | RTARROW | HSLIDE)
+#endif
+
+
 LONG    drawaddr;
 
 
@@ -122,7 +133,11 @@ void win_free(WNODE *thewin)
 /*
 *       Allocate a window for use as a folder window
 */
+#ifdef DESK1
+WNODE *win_alloc(WORD obid)
+#else
 WNODE *win_alloc()
+#endif
 {
         WNODE           *pw;
         WORD            wob;
@@ -139,22 +154,28 @@ WNODE *win_alloc()
         {
           pw = &G.g_wlist[wob-2];
           pw->w_flags = 0x0;
+#ifdef DESK1
+          pw->w_obid = obid;    /* DESKTOP v1.2 */
+#else
+          pw->w_obid = 0;
+#endif
           pw->w_root = wob;
           pw->w_cvcol = 0x0;
           pw->w_cvrow = 0x0;
-          pw->w_obid = 0;
           pw->w_pncol = (pt->g_w  - gl_wchar) / G.g_iwspc;
           pw->w_pnrow = (pt->g_h - gl_hchar) / G.g_ihspc;
           pw->w_vncol = 0x0;
           pw->w_vnrow = 0x0;
 /* BugFix       */
                                         /* 0x1000 = hot closer button   */
-          pw->w_id = wind_create(0x11C7, G.g_xfull, G.g_yfull, 
+          pw->w_id = wind_create(WINDOW_STYLE, G.g_xfull, G.g_yfull, 
                                  G.g_wfull, G.g_hfull);
 /* */
           if (pw->w_id != -1)
           {
+#ifndef DESK1
             wind_set(pw->w_id, WF_TATTRB, WA_SUBWIN, 0, 0, 0);
+#endif
             return(pw);
           }
           else
@@ -194,10 +215,8 @@ void win_top(WNODE *thewin)
 *       is the currently active window.  If not, then no window is on
 *       top and return 0.
 */
-
-/*
-        WNODE
-*win_ontop()
+#ifdef DESK1
+WNODE *win_ontop()
 {
         WORD            wob;
 
@@ -207,7 +226,7 @@ void win_top(WNODE *thewin)
         else
           return(0);
 }       
-*/
+#endif
 
 
 /*
@@ -299,8 +318,10 @@ void win_ocalc(WNODE *pwin, WORD wfit, WORD hfit, FNODE **ppstart)
 */
 void win_icalc(FNODE *pfnode)
 {
+#ifndef DESK1
         if (pfnode->f_attr & F_DESKTOP)
           return;
+#endif
 
         if (pfnode->f_attr & F_SUBDIR)
           pfnode->f_pa = app_afind(FALSE, AT_ISFOLD, -1, 
@@ -352,7 +373,7 @@ void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h)
                                                 /* remember it          */
           pstart->f_obid = obid;
                                                 /* build object         */
-          G.g_screen[obid].ob_state = WHITEBAK | DRAW3D;
+          G.g_screen[obid].ob_state = WHITEBAK /*| DRAW3D*/;
           G.g_screen[obid].ob_flags = 0x0;
           switch(G.g_iview)
           {
@@ -394,16 +415,17 @@ void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h)
                                                 /*   position           */
         wh = pwin->w_id;
 /* BugFix       */
-/*      sl_size = mul_div(pwin->w_pncol, 1000, pwin->w_vncol);
+#ifdef DESK1
+        sl_size = mul_div(pwin->w_pncol, 1000, pwin->w_vncol);
         wind_set(wh, WF_HSLSIZ, sl_size, 0, 0, 0);
-        wind_get(wh, WF_HSLSIZ, &sl_size, &i, &i, &i);
+        //wind_get(wh, WF_HSLSIZ, &sl_size, &i, &i, &i);
         if ( pwin->w_vncol > pwin->w_pncol )
           sl_value = mul_div(pwin->w_cvcol, 1000,
                                 pwin->w_vncol - pwin->w_pncol);
         else
           sl_value = 0;
         wind_set(wh, WF_HSLIDE, sl_value, 0, 0, 0);
-*/
+#endif
 /* */
         sl_size = mul_div(pwin->w_pnrow, 1000, pwin->w_vnrow);
         wind_set(wh, WF_VSLSIZ, sl_size, 0, 0, 0);
@@ -421,17 +443,35 @@ void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h)
 *       Routine to blt the contents of a window based on a new 
 *       current row or column
 */
+#ifdef DESK1
+void win_blt(WNODE *pw, BOOLEAN vertical, WORD newcv)
+#else
 void win_blt(WNODE *pw, WORD newcv)
+#endif
 {
         WORD            delcv, pn;
         WORD            sx, sy, dx, dy, wblt, hblt, revblt, tmp;
         GRECT           c, t;
         newcv = max(0, newcv);
         
-        newcv = min(pw->w_vnrow - pw->w_pnrow, newcv);
-        pn = pw->w_pnrow;
-        delcv = newcv - pw->w_cvrow;
-        pw->w_cvrow += delcv;
+#ifdef DESK1
+        if (vertical)
+        {
+#endif
+            newcv = min(pw->w_vnrow - pw->w_pnrow, newcv);
+            pn = pw->w_pnrow;
+            delcv = newcv - pw->w_cvrow;
+            pw->w_cvrow += delcv;
+#ifdef DESK1
+        }
+        else
+        {
+                newcv = min(pw->w_vncol - pw->w_pncol, newcv);
+                pn =pw->w_pncol;
+                delcv = newcv - pw->w_cvcol;
+                pw->w_cvcol += delcv;
+        }
+#endif
         if (!delcv)
           return;
         wind_get(pw->w_id, WF_WXYWH, &c.g_x, &c.g_y, &c.g_w, &c.g_h);
@@ -451,11 +491,26 @@ void win_blt(WNODE *pw, WORD newcv)
           {
                                                 /* see how much there is*/
                                                 /* pretend blt up       */
+#ifdef DESK1
+            if (vertical)       /* DESKTOP v1.2 handle horizontal scrolling */
+            {
+#endif
             sx = dx = 0;
             sy = delcv * G.g_ihspc;
             dy = 0;
             wblt = c.g_w;
             hblt = c.g_h - sy;
+#ifdef DESK1
+            }
+            else
+            {
+                sy = dy = 0;
+                sx = delcv * G.g_iwspc;
+                dx = 0;
+                wblt = c.g_w - sx;
+                hblt = c.g_h; 
+            }
+#endif
             if (revblt)
             {
               tmp = sx;
@@ -468,9 +523,21 @@ void win_blt(WNODE *pw, WORD newcv)
             gsx_sclip(&c);
             bb_screen(S_ONLY, sx+c.g_x, sy+c.g_y, dx+c.g_x, dy+c.g_y, 
                         wblt, hblt);
+#ifdef DESK1
+            if (vertical)       /* DESKTOP v1.2 bidirectional */
+            {
+#endif
             if (!revblt)
               c.g_y += hblt;
             c.g_h -= hblt;
+#ifdef DESK1
+            }
+            else
+            {
+                if (!revblt)  c.g_x += wblt;
+                c.g_w -= wblt;
+            }
+#endif
           }
         }
         do_wredraw(pw->w_id, c.g_x, c.g_y, c.g_w, c.g_h);
@@ -481,6 +548,32 @@ void win_blt(WNODE *pw, WORD newcv)
 *       Routine to change the current virtual row or column being viewed
 *       in the upper left corner based on a new slide amount.
 */
+#ifdef DESK1
+void win_slide(WORD wh, WORD sl_value, WORD vertical)
+{
+        WNODE           *pw;
+        WORD            newcv;
+        WORD            vn, pn, i, sls, sl_size;
+
+        pw = win_find(wh);
+
+        if (vertical)
+        {
+                vn = pw->w_vnrow;
+                pn = pw->w_pnrow;
+                sls = WF_VSLSIZ;
+        }
+        else
+        {
+                vn = pw->w_vncol;
+                pn = pw->w_pncol;
+                sls = WF_HSLSIZ;
+        }
+        wind_get(wh, sls, &sl_size, &i, &i, &i);
+        newcv = mul_div(sl_value, vn - pn, 1000);
+        win_blt(pw, vertical, newcv);
+}
+#else
 void win_slide(WORD wh, WORD sl_value)
 {
         WNODE           *pw;
@@ -496,6 +589,7 @@ void win_slide(WORD wh, WORD sl_value)
         newcv = mul_div(sl_value, vn - pn, 1000);
         win_blt(pw, newcv);
 }
+#endif
 
 
 /*
@@ -506,6 +600,9 @@ void win_arrow(WORD wh, WORD arrow_type)
 {
         WNODE           *pw;
         WORD            newcv;
+#ifdef DESK1
+        BOOLEAN         vertical = TRUE;
+#endif
         
         newcv = 0;
         pw = win_find(wh);
@@ -524,8 +621,30 @@ void win_arrow(WORD wh, WORD arrow_type)
           case WA_DNLINE:
                 newcv = pw->w_cvrow + 1;
                 break;
+#ifdef DESK1
+          case WA_LFPAGE:
+            newcv = pw->w_cvcol - pw->w_pncol;
+            vertical = FALSE; 
+            break;
+          case WA_RTPAGE:
+            newcv = pw->w_cvcol + pw->w_pncol;
+            vertical = FALSE; 
+            break;
+          case WA_LFLINE:
+            newcv = pw->w_cvcol - 1;
+            vertical = FALSE; 
+            break;
+          case WA_RTLINE:
+            newcv = pw->w_cvcol + 1;
+            vertical = FALSE; 
+            break;
+#endif
         }
+#ifdef DESK1
+        win_blt(pw, vertical, newcv);
+#else
         win_blt(pw, newcv);
+#endif
 }
 
 
@@ -633,10 +752,8 @@ WORD win_isel(OBJECT olist[], WORD root, WORD curr)
 *       Return pointer to this icons name.  It will always be an icon that
 *       is on the desktop.
 */
-/*
-        BYTE
-*win_iname(curr)
-        WORD            curr;
+#ifdef DESK1
+BYTE *win_iname(WORD curr)
 {
         ICONBLK         *pib;
         BYTE            *ptext;
@@ -645,7 +762,7 @@ WORD win_isel(OBJECT olist[], WORD root, WORD curr)
         ptext = (BYTE *) LPOINTER(pib->ib_ptext);
         return( ptext );
 }
-*/
+#endif
 
 
 /*
@@ -664,6 +781,24 @@ void win_sname(WNODE *pw)
             *pdst++ = *psrc++;
           *pdst = NULL;
         }
+#ifndef DESK1
         else
           strcpy(pdst, ini_str(STDSKDRV));
+#endif
 } /* win_sname */
+
+
+#ifdef DESK1
+/* Added for DESKTOP v1.2 */
+void win_sinfo(WNODE *pwin)
+{
+        PNODE *pn;
+
+        pn = pwin->w_path;
+        rsrc_gaddr(R_STRING, STINFOST, (LONG *)&G.a_alert);
+        strlencpy(ADDR(G.g_1text), G.a_alert);
+/* FIXME!
+        merge_str(pwin->w_info, G.g_1text, pn->p_size, pn->p_count);
+*/
+}
+#endif

@@ -143,12 +143,18 @@ CSAVE
         WORD    vitem_save;
         WORD    ccopy_save;
         WORD    cdele_save;
+#ifndef DESK1
         WORD    covwr_save;
+#endif
         WORD    cdclk_save;
+#ifndef DESK1
         WORD    cmclk_save;
         WORD    ctmfm_save;
         WORD    cdtfm_save;
         WSAVE   win_save[2];
+#else
+        WSAVE   win_save[4];
+#endif
 };
 
 

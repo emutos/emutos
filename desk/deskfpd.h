@@ -37,8 +37,12 @@
 #define E_NODNODES 102
 
 #define NUM_FNODES 400
-#define NUM_PNODES 3                    /* one more than windows for    */
-                                        /*   unopen disk copy           */
+#ifdef DESK1
+#define NUM_PNODES 6         /* one more than windows for  unopen disk copy */
+#else
+#define NUM_PNODES 3         /* one more than windows for  unopen disk copy */
+#endif
+
 
 #define FNODE struct filenode
 FNODE

@@ -16,8 +16,15 @@
 */
 
 #define DROOT 1
+
+#ifdef DESK1
+#define NUM_WNODES 4
+#define NUM_WOBS 128
+#else
 #define NUM_WNODES 2
 #define NUM_WOBS 300
+#endif
+
 #define NUM_SOBS (NUM_WOBS + NUM_WNODES + 1)
 
 #define WNODE struct windnode
@@ -39,7 +46,9 @@ WNODE
         WORD            w_vnrow;                /* virtual # of rows    */
         PNODE           *w_path;
         BYTE            w_name[LEN_ZPATH];
-/*      BYTE            w_info[81];             NOT USED v2.1           */
+#ifdef DESK1
+        BYTE            w_info[81];             /* NOT USED v2.1 */
+#endif
 };
 
 
@@ -48,16 +57,26 @@ WNODE
 void win_view(WORD vtype, WORD isort);
 void win_start(void);
 void win_free(WNODE *thewin);
+#ifdef DESK1
+WNODE *win_alloc(WORD obid);
+#else
 WNODE *win_alloc(void);
+#endif
 WNODE *win_find(WORD wh);
 void win_top(WNODE *thewin);
+WNODE *win_ontop();
 WNODE *win_ith(WORD level);
 void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h);
+#ifdef DESK1
+void win_slide(WORD wh, WORD sl_value, WORD vertical);
+#else
 void win_slide(WORD wh, WORD sl_value);
+#endif
 void win_arrow(WORD wh, WORD arrow_type);
 void win_srtall(void);
 void win_bdall(void);
 void win_shwall();
 WORD win_isel(OBJECT olist[], WORD root, WORD curr);
+BYTE *win_iname(WORD curr);
 void win_sname(WNODE *pw);
 
