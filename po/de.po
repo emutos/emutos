@@ -27,9 +27,6 @@ msgstr ""
 msgid "EmuTOS Version"
 msgstr "EmuTOS Version"
 
-#~msgid "Alpha Version"
-#~msgstr "Alpha Version"
-
 #: bios/initinfo.c:171
 msgid "CPU type"
 msgstr "CPU-Typ"
@@ -46,9 +43,6 @@ msgstr "Nein"
 msgid "Free memory"
 msgstr "Speicher frei"
 
-#~msgid "%ld bytes"
-#~msgstr "%ld byte "
-
 #: bios/initinfo.c:182
 msgid "Screen start"
 msgstr "Bildschirm ab"
@@ -57,287 +51,6 @@ msgstr "Bildschirm ab"
 msgid "Boot drive"
 msgstr "Bootet von"
 
-#~msgid "CR to continue..."
-#~msgstr "Weiter mit CR... "
-
-#~msgid "Wild cards not allowed in path name."
-#~msgstr "Platzhalter im Pfad nicht erlaubt."
-
-#~msgid "File Not Found."
-#~msgstr "Datei nicht gefunden."
-
-#~msgid "Destination is not a valid wild card expresion."
-#~msgstr "Das Ziel is kein gültiger Ausdruck"
-
-#~msgid "EmuCON - Compiled on "
-#~msgstr "EmuCON - Compiliert am "
-
-#~msgid "Type HELP for a list of commands."
-#~msgstr "Tippe HELP für Kommando-Hilfe."
-
-#~msgid "Done."
-#~msgstr "Fertig"
-
-#~msgid "Command is incompletely specified."
-#~msgstr "Kommando ist nicht komplett."
-
-#~msgid " to "
-#~msgstr " nach "
-
-#~msgid "Wild cards not allowed in destination."
-#~msgstr "Platzhalter für Ziel nicht erlaubt."
-
-#~msgid "# in the first non blank column is a comment."
-#~msgstr "# in der ersten nicht leeren Spalte ist ein Kommentar."
-
-#~msgid "\tClears the screen."
-#~msgstr "\tLöscht den Bildschirm."
-
-#~msgid "\tDisplays the value of the Completion Code for the last command."
-#~msgstr "\tZeigt den Ergebnis-Code des letzten Kommandos an."
-
-#~msgid "\tExits CLI to invoking program."
-#~msgstr "\tKehre zurück zu vorherigem Programm."
-
-#~msgid "\tDisables line wrap."
-#~msgstr "\tSchalte Zeilenumbruch aus."
-
-#~msgid "\tDisplays current version of OS."
-#~msgstr "\tZeigt Version des Betriebsystems an."
-
-#~msgid "\tEnables line wrap."
-#~msgstr "\tSchalte den Zeilenumbruch an."
-
-#~msgid " DELETING "
-#~msgstr " LÖSCHE "
-
-#~msgid "Error creating file."
-#~msgstr "Fehler beim Erzeugen der Datei"
-
-#~msgid "Cannot copy "
-#~msgstr "Kopieren nicht möglich "
-
-#~msgid " to itself."
-#~msgstr " auf sich selbst."
-
-#~msgid "Error reading source file."
-#~msgstr "Fehler beim lesen der Quelle."
-
-#~msgid "Disk full -- copy failed."
-#~msgstr "Laufwerk voll -- Kopieren fehlgeschlagen."
-
-#~msgid "Rename ALL files matching "
-#~msgstr "Benenne alle Dateien um, passend zu "
-
-#~msgid " (Y/CR)? "
-#~msgstr " (Y/CR)? "
-
-#~msgid "  Rename Unsucessfull!"
-#~msgstr "  Umbenennen fehlgeschlagen!"
-
-#~msgid "Directory of "
-#~msgstr "Verzeichnis von "
-
-#~msgid "Unable to change mode on subdirectorys or volumes."
-#~msgstr "Kann Modus von Unterverzeichnissen oder Laufwerk nicht ändern."
-
-#~msgid "Invalid mode specification."
-#~msgstr "Ungültiger Modus angegeben."
-
-#~msgid "Delete ALL files matching "
-#~msgstr "Lösche alle Dateien wie "
-
-#~msgid " << DELETED"
-#~msgstr " << GELÖSCHT"
-
-#~msgid " not found."
-#~msgstr " nicht gefunden."
-
-#~msgid "Completion code for previous command = "
-#~msgstr "Ende-Code für Programm = "
-
-#~msgid "Directory not found."
-#~msgstr "Verzeichnis nicht gefunden."
-
-#~msgid "Arg must be ON or OFF."
-#~msgstr "Argument muß ON oder OFF sein."
-
-#~msgid "Unable to make directory"
-#~msgstr "Kann Verzeichnis nicht anlegen"
-
-#~msgid "Unable to remove directory"
-#~msgstr "Kann Verzeichnis nicht löschen"
-
-#~msgid "Allocation Information: Drive "
-#~msgstr "Zuweisungs-Info: Laufwerk "
-
-#~msgid "Drive size in BYTES    "
-#~msgstr "Laufwerksgröße in BYTES    "
-
-#~msgid "BYTES used on drive    "
-#~msgstr "BYTES belegt auf Laufwerk  "
-
-#~msgid "BYTES left on drive    "
-#~msgstr "BYTES frei auf Laufwerk    "
-
-#~msgid "Total Units on Drive   "
-#~msgstr "Zuweisungseinheiten gesamt "
-
-#~msgid "Free Units on Drive    "
-#~msgstr "Freie Zuweisungseinheiten  "
-
-#~msgid "Sectors per Unit   "
-#~msgstr "Sectoren pro Einheit "
-
-#~msgid "Bytes per Sector   "
-#~msgstr "Byte pro Sektor      "
-
-#~msgid "Command not found."
-#~msgstr "Programm nicht gefunden."
-
-#~msgid ""
-#~"CAT or TYPE filenm.ext\r\n"
-#~"\tWrites filenm.ext to standard output."
-#~msgstr ""
-#~"CAT oder TYPE datein.ext\r\n"
-#~"\tSchreibt datei.ext nach standard Ausgabe."
-
-#~msgid ""
-#~"CD [pathnm]\r\n"
-#~"\tWith pathnm it sets default for working directory.\r\n"
-#~"\tWithout pathnm displays current working directory."
-#~msgstr ""
-#~"CD [pfadname]\r\n"
-#~"\tMit pfadname wird neues Arbeitsverzeichnis gesetzt.\r\n"
-#~"\tOhne pfadname wird das aktuelle Arbeitsverzeichnis angezeigt."
-
-#~msgid ""
-#~"CHMOD [pathnm/]filenm mode\r\n"
-#~"\tChanges the mode of the file specified in filenm to the\r\n"
-#~"\tvalue of mode.\tAcceptable values are < 7:\r\n"
-#~"\t\t0 - Normal File Entry\r\n"
-#~"\t\t1 - File is Read Only\r\n"
-#~"\t\t2 - File is Hidden from directory Search\r\n"
-#~"\t\t4 - File is System File"
-#~msgstr ""
-#~"CHMOD [pfadname/]datei.ext Modus\r\n"
-#~"\tÄndert den Modus der angegebenen Datei\r\n"
-#~"\twie in Modus.\tMögliche Werte sind < 7:\r\n"
-#~"\t\t0 - Normale DateiNormal File Entry\r\n"
-#~"\t\t1 - Schreibgeschützte Datei\r\n"
-#~"\t\t2 - Versteckte Datei\r\n"
-#~"\t\t4 - System-Datei"
-
-#~msgid ""
-#~"COPY source_file [destination_file]\r\n"
-#~"\tCopies source to destination."
-#~msgstr ""
-#~"COPY quelldatei [zieldatei]\r\n"
-#~"\tKopiert die Quelldatei auf die Zieldatei."
-
-#~msgid ""
-#~"DIR or LS [filenm.ext] [-f] [-d] [-t] [-w]\r\n"
-#~"\t-f - anything but directoryies.\r\n"
-#~"\t-d - directories only.\r\n"
-#~"\t-t - terse: names only.\r\n"
-#~"\t-w - wide: names only displayed horizontally."
-#~msgstr ""
-#~"DIR oder LS [datei.ext] [-f] [-d] [-t] [-w]\r\n"
-#~"\t-f - Alles, außer Verzeichnissen.\r\n"
-#~"\t-d - Nur Verzeichnisse.\r\n"
-#~"\t-t - Kurz: Nur Datei-Namen.\r\n"
-#~"\t-w - Breit: Nur Datei-Namen nebeneinander."
-
-#~msgid ""
-#~"INIT [drive_spec:]\r\n"
-#~"\tReinitializes FAT entries this wiping disk."
-#~msgstr ""
-#~"INIT [Laufwerk:]\r\n"
-#~"\tReinitialisiert die FAT-Einträge des Laufwerkes."
-
-#~msgid ""
-#~"MD [subdirectory name]\r\n"
-#~"\tCreates a new subdirectory in current directory."
-#~msgstr ""
-#~"MD [Verzeichnis]\r\n"
-#~"\tErzeugt ein neues Unterverzeichnis im aktuellen Verzeichnis."
-
-#~msgid ""
-#~"MOVE source_file [destination_file]\r\n"
-#~"\tCopies source to destination and deletes source."
-#~msgstr ""
-#~"MOVE quelldatei [zieldatei]\r\n"
-#~"\tBewegt die Quelldatei auf die Zieldatei."
-
-#~msgid ""
-#~"\tWrites 'CR to continue...' to standard output\r\n"
-#~"\tand waits for a carriage return from standard input."
-#~msgstr ""
-#~"\tSchreibt 'Weiter mit CR...' nach Standard-Ausgabe\r\n"
-#~"\tund wartet auf RETURN von Standard-Eingabe."
-
-#~msgid ""
-#~"\tTurns command processing abort feature ON/OFF.\r\n"
-#~"\tIf PRGERR is ON and a .PRG file returns a non zero completion\r\n"
-#~"\tcode, all further processing will stop.  Usefull in .BAT files.\r\n"
-#~"\tDefault is ON."
-#~msgstr ""
-#~"\tSchaltet die Möglichkeit des Programmabbruchs ON/OFF.\r\n"
-#~"\tWenn PRGERR auf ON steht und ein Programm einen Rückgabewert > 0 \r\n"
-#~"gibt, wird alle weitere Abarbeitung gestoppt. Brauchbar in .BAT Dateien.\r\n"
-#~"\tStandard ist ON."
-
-#~msgid ""
-#~"PATH [;[pathnm]...]\r\n"
-#~"\tWith path name sets default path for batch and commands.\r\n"
-#~"\tWithout path name displays current path"
-#~msgstr ""
-#~"PATH [;[pfadname]...]\r\n"
-#~"\tSetzt den Suchpfad für Programme und Batch-Dateien.\r\n"
-#~"\tOhne 'pfadname' zeigt es den Suchpfad an."
-
-#~msgid ""
-#~"REM or ECHO [\"string\"]\r\n"
-#~"\tStrips quotes and writes string to standard output.\r\n"
-#~"\tr is replaced by 13, /n by 10, /0 by 0x0.\r\n"
-#~"\t/c by 13 10, /anything is replaced by anything."
-#~msgstr ""
-#~"REM oder ECHO [\"text\"]\r\n"
-#~"\tSchreibt 'text' ohne die Anführungszeichen nach Standard Ausgabe.\r\n"
-#~"\t/r wird ersetzt durch 13, /n durch 10, /0 durch 0x0.\r\n"
-#~"\t/c durch 13 10, /anything durch 'anything'."
-
-#~msgid ""
-#~"REN source_file_nm [destination_file_nm]\r\n"
-#~"\tRenames source to destination."
-#~msgstr ""
-#~"REN quelldatei [zieldatei]\r\n"
-#~"\tÄndert den Namen der Quell-Datei nach Ziel-Datei."
-
-#~msgid ""
-#~"RD [pathnm]\r\n"
-#~"\tRemoves named directory."
-#~msgstr ""
-#~"RD [pfadname]\r\n"
-#~"\tEntfernt das Verzeichnis 'pfadname'."
-
-#~msgid ""
-#~"RM or DEL or ERA filenm [[filemn]...] [-q]\r\n"
-#~"\tRemoves named file from directory.\r\n"
-#~"\tIf the -q option is used, the CLI will display the question\r\n"
-#~"\tY/CR... and wait for a response."
-#~msgstr ""
-#~"RM oder DEL oder ERA dateiname [[dateiname]...] [-q]\r\n"
-#~"\tEntfernt Datei aus Verzeichnis.\r\n"
-#~"\tMit '-q' wird nochmal nachgefragt."
-
-#~msgid ""
-#~"SHOW [drive_spec:]\r\n"
-#~"\tDisplays disk status for default drive or drive specified."
-#~msgstr ""
-#~"SHOW [laufwerk:]\r\n"
-#~"\tZeigt den Status des angegeben oder des Standard-Laufwerks an."
-
 #: bios/initinfo.c:172
 msgid "Machine"
 msgstr "Rechner"
@@ -345,12 +58,6 @@ msgstr "Rechner"
 #: bios/initinfo.c:195
 msgid "Current time"
 msgstr "Aktuelle Zeit"
-
-#~msgid "Unable to create bootsector file"
-#~msgstr "Kann Bootsector nicht schreiben"
-
-#~msgid "Unable to read bootsector file"
-#~msgstr "Kann Bootsector nicht lesen"
 
 #: bios/initinfo.c:175
 msgid "%ld kB"
@@ -459,65 +166,105 @@ msgid "[3]["
 "Graphics Environment Manager (GEM).|"
 "Please contact the EmuTOS Development|"
 "Team and submit a bug report.][Cancel]"
-msgstr ""
+msgstr "[3]["
+"Im GEM ist ein Fehler passiert.|"
+"Bitte schicke einen Fehler-Bericht|"
+"an das EmuTOS Team. ]"
+"[Abbruch]"
 
 #: aes/gem_rsc.c:519
 msgid "[2]["
 "This application cannot find the|"
 "folder or document you are trying to|"
 "open. Check the name you have entered.][  OK  ]"
-msgstr ""
+msgstr "[2]["
+"Die Anwendung kann das gewünschte|"
+"Dokument oder den Ordner nicht|"
+"finden. Bitte den Namen überprüfen.]"
+"[  OK  ]"
 
 #: aes/gem_rsc.c:524
 msgid "[3]["
 "Your computer doesn't have enough|"
-"memory to run the GEM Desktop.][ Sorry ]"
-msgstr ""
+"memory to run the GEM Desktop.]"
+"[ Sorry ]"
+msgstr "[3]["
+"Dieser Rechner hat nicht genug Speicher,|"
+"um den GEM-Desktop zu starten.]"
+"[ Sorry ]"
 
 #: aes/gem_rsc.c:527
 msgid "[1]["
 "This application doesn't have room to|"
 "open another document.  To make room,|"
-"close any documents you don't need.][  OK  ]"
-msgstr ""
+"close any documents you don't need.]"
+"[  OK  ]"
+msgstr "[1]["
+"Die Anwendung hat keinen PLatz um noch|"
+"ein Dokument zu öffnen.  Bitte schließe|"
+"momentan unbenötigte Dokumente.][  OK  ]"
 
 #: aes/gem_rsc.c:532
 msgid "[1]["
 "An item with this name already exists|"
 "in the folder, or the item is set to|"
 "Read-Only status. Use the \"Info/Rename\"|"
-"command to change the item's status.][  OK  ]"
-msgstr ""
+"command to change the item's status.]"
+"[  OK  ]"
+msgstr "[1]["
+"Eine Datei mit diesem Namen existiert|"
+"schon in diesem Ordner oder die Datei ist|"
+"nicht schreibbar. Benutze das \"Info/Umbenennen\"|"
+"Kommando um den Datei-Status zu ändern.]"
+"[  OK  ]"
 
 #: aes/gem_rsc.c:539
 msgid "[1]["
 "The disk drive you have indicated does|"
 "not exist. Check the drive identifier|"
-"letter you entered.][Cancel]"
-msgstr ""
+"letter you entered.]"
+"[Cancel]"
+msgstr "[1]["
+"Das ausgewählte Laufwerk existiert nicht.|"
+"Prüfe den Laufwerksbuchstaben noch mal.]"
+"[Abbruch]"
 
 #: aes/gem_rsc.c:544
 msgid "[1]["
 "You cannot delete the folder in|"
-"which you are currently working.][  OK  ]"
-msgstr ""
+"which you are currently working.]"
+"[  OK  ]"
+msgstr "[1]["
+"Du kannst nicht den Ordner löschen,|"
+"in dem Du gerade arbeitest.]"
+"[  OK  ]"
 
 #: aes/gem_rsc.c:547
 msgid "[1]["
 "Your computer does not have enough|"
 "memory to run the application you|"
-"have selected.][  OK  ]"
-msgstr ""
+"have selected.]"
+"[  OK  ]"
+msgstr "[1]["
+"Der Rechner hat nicht genug Speicher|"
+"um die gewählte Anwendung zu starten.]"
+"[  OK  ]"
 
 #: aes/gem_rsc.c:552
 msgid "[3]["
-"DOS error #%W.][Cancel]"
-msgstr ""
+"DOS error #%W.]"
+"[Cancel]"
+msgstr "[3]["
+"DOS-Fehler #%W.]"
+"[Abbruch]"
 
 #: aes/gem_rsc.c:553
 msgid "[3]["
-"Bad Function #][Cancel]"
-msgstr ""
+"Bad Function #]"
+"[Cancel]"
+msgstr "[3]["
+"Falsche Funktionsnummer #]"
+"[Abbruch]"
 
 #: aes/gem_rsc.c:554
 msgid "[3]["
@@ -525,431 +272,436 @@ msgid "[3]["
 "GEM DESKTOP disk in drive A and click|"
 "on OK or press Enter. To return to DOS,|"
 "click on Cancel.][  OK  |Cancel]"
-msgstr ""
+msgstr "[3]["
+"Um den Desktop zu starten bitte die|"
+"GEM DESKTOP Diskette einlegen und dann|"
+"OK oder Enter drücken. Abbruch drücken,|"
+"um zu DOS zurückzukehren.]"
+"[  OK  |Abbruch]"
 
 #: desk/desk_rsc.c:27
 msgid "Install"
-msgstr ""
+msgstr "Installieren"
 
 #: desk/desk_rsc.c:28
 msgid "Remove"
-msgstr ""
+msgstr "Entfernen"
 
 #: desk/desk_rsc.c:29
 msgid "Yes"
-msgstr ""
+msgstr "Ja"
 
 #: desk/desk_rsc.c:42 desk/desk_rsc.c:122 desk/desk_rsc.c:222
 msgid "Name:  ________.___"
-msgstr ""
+msgstr "Name:  ________.___"
 
 #: desk/desk_rsc.c:47
 msgid "Size in bytes:  ________"
-msgstr ""
+msgstr "Größe in Bytes:  ________"
 
 #: desk/desk_rsc.c:52
 msgid "Last modified:  __/__/__"
-msgstr ""
+msgstr "Zuletzt geändert:  __/__/__"
 
 #: desk/desk_rsc.c:62
 msgid "Drive identifier:  _:"
-msgstr ""
+msgstr "Laufwerkskennung:  _:"
 
 #: desk/desk_rsc.c:67
 msgid "Disk label:  ___________"
-msgstr ""
+msgstr "Medien-Label:  ___________"
 
 #: desk/desk_rsc.c:72 desk/desk_rsc.c:107
 msgid "Number of folders:     _____"
-msgstr ""
+msgstr "Anzahl der Ordner:     _____"
 
 #: desk/desk_rsc.c:77 desk/desk_rsc.c:112
 msgid "Number of items:     _____"
-msgstr ""
+msgstr "Anzahl der Dateien:     _____"
 
 #: desk/desk_rsc.c:82 desk/desk_rsc.c:117
 msgid "Bytes used:  ________"
-msgstr ""
+msgstr "Genutzte Bytes:  ________"
 
 #: desk/desk_rsc.c:87
 msgid "Bytes available:  ________"
-msgstr ""
+msgstr "Freie Bytes:  ________"
 
 #: desk/desk_rsc.c:92
 msgid "Folder name:  ________.___"
-msgstr ""
+msgstr "Ordnername:  ________.___"
 
 #: desk/desk_rsc.c:97
 msgid "Created:  __-__-__  "
-msgstr ""
+msgstr "Erzeugt:  __-__-__  "
 
 #: desk/desk_rsc.c:127
 msgid "Parameters:  ____________________________________________________"
-msgstr ""
+msgstr "Parameter:  ____________________________________________________"
 
 #: desk/desk_rsc.c:132
 msgid "Drive identifier:  _"
-msgstr ""
+msgstr "Laufwerkskennung:  _"
 
 #: desk/desk_rsc.c:137
 msgid "Icon label:  ____________"
-msgstr ""
+msgstr "Icon-Label:  ____________"
 
 #: desk/desk_rsc.c:142
 msgid "Application name:  ________.___"
-msgstr ""
+msgstr "Anwendungsname:  ________.___"
 
 #: desk/desk_rsc.c:192
 msgid "Folders to copy:  ____"
-msgstr ""
+msgstr "Zu kopierende Ordner:  ____"
 
 #: desk/desk_rsc.c:197
 msgid "Items to copy:  ____"
-msgstr ""
+msgstr "Zu kopierende Dateien:  ____"
 
 #: desk/desk_rsc.c:202
 msgid "Folders to delete:  ____"
-msgstr ""
+msgstr "Zu löschende Ordner:  ____"
 
 #: desk/desk_rsc.c:207
 msgid "Items to delete:  ____"
-msgstr ""
+msgstr "Zu löschende Dateien:  ____"
 
 #: desk/desk_rsc.c:212
 msgid "Current name:  ________.___"
-msgstr ""
+msgstr "Aktueller Name:  ________.___"
 
 #: desk/desk_rsc.c:217
 msgid "Copy's name:  ________.___"
-msgstr ""
+msgstr "Name der Kopie:  ________.___"
 
 #: desk/desk_rsc.c:280
 msgid " Desk "
-msgstr ""
+msgstr " Desk "
 
 #: desk/desk_rsc.c:286
 msgid " File "
-msgstr ""
+msgstr " Datei "
 
 #: desk/desk_rsc.c:292
 msgid " Options "
-msgstr ""
+msgstr " Optionen "
 
 #: desk/desk_rsc.c:298
 msgid " Arrange "
-msgstr ""
+msgstr " Anzeige "
 
 #: desk/desk_rsc.c:316
 msgid "  Desktop info...   "
-msgstr ""
+msgstr "  Desktop-Info...   "
 
 #: desk/desk_rsc.c:370
 msgid "  Open"
-msgstr ""
+msgstr "  Öffnen"
 
 #: desk/desk_rsc.c:376
 msgid "  Info/Rename...  \007I"
-msgstr ""
+msgstr "  Info/Ändern...  \007I"
 
 #: desk/desk_rsc.c:388
 msgid "  Delete...       \007D"
-msgstr ""
+msgstr "  Löschen...      \007D"
 
 #: desk/desk_rsc.c:394
 msgid "  Format..."
-msgstr ""
+msgstr "  Formatieren..."
 
 #: desk/desk_rsc.c:406
 msgid "  To Output       ^U"
-msgstr ""
+msgstr "  An Ausgabe      ^U"
 
 #: desk/desk_rsc.c:412
 msgid "  Exit to DOS     ^Q"
-msgstr ""
+msgstr "  Zurück zu DOS   ^Q"
 
 #: desk/desk_rsc.c:424
 msgid "  Install disk drive..."
-msgstr ""
+msgstr "  Installiere Laufwerk..."
 
 #: desk/desk_rsc.c:430
 msgid "  Configure application...  \007A"
-msgstr ""
+msgstr "  Konfiguriere Anwendung... \007A"
 
 #: desk/desk_rsc.c:442
 msgid "  Set preferences..."
-msgstr ""
+msgstr "  Setze Einstellungen..."
 
 #: desk/desk_rsc.c:448
 msgid "  Save desktop              \007V"
-msgstr ""
+msgstr "  Sichere Desktop           \007V"
 
 #: desk/desk_rsc.c:454
 msgid "  Enter DOS commands        \007C"
-msgstr ""
+msgstr "  DOS-Kommandos eingeben    \007C"
 
 #: desk/desk_rsc.c:478
 msgid "  Sort by name   \007N"
-msgstr ""
+msgstr "  nach Namen     \007N"
 
 #: desk/desk_rsc.c:484
 msgid "  Sort by type   \007P"
-msgstr ""
+msgstr "  nach Typ       \007P"
 
 #: desk/desk_rsc.c:490
 msgid "  Sort by size   \007Z"
-msgstr ""
+msgstr "  nach Größe     \007Z"
 
 #: desk/desk_rsc.c:496
 msgid "  Sort by date   \007T"
-msgstr ""
+msgstr "  nach Datum     \007T"
 
 #: desk/desk_rsc.c:510
 msgid "ITEM INFORMATION / RENAME"
-msgstr ""
+msgstr "DATEI-INFORMATION / UMBENENNEN"
 
 #: desk/desk_rsc.c:540
 msgid "Attributes:"
-msgstr ""
+msgstr "Attribute:"
 
 #: desk/desk_rsc.c:552
 msgid "Read/Write"
-msgstr ""
+msgstr "Lesen/Schreiben"
 
 #: desk/desk_rsc.c:558
 msgid "Read-Only"
-msgstr ""
+msgstr "Nur Lesen"
 
 #: desk/desk_rsc.c:584
 msgid "DISK INFORMATION"
-msgstr ""
+msgstr "LAUFWERKS-INFORMATION"
 
 #: desk/desk_rsc.c:640
 msgid "FOLDER INFORMATION"
-msgstr ""
+msgstr "ORDNER-INFORMATION"
 
 #: desk/desk_rsc.c:702
 msgid "Version"
-msgstr ""
+msgstr "Version"
 
 #: desk/desk_rsc.c:720
 msgid "April 23, 2002"
-msgstr ""
+msgstr "09. July 2002"
 
 #: desk/desk_rsc.c:726
 msgid "Copyright (c) 2002 by"
-msgstr ""
+msgstr "Copyright (c) 2002,"
 
 #: desk/desk_rsc.c:738
 msgid "The EmuTOS development team"
-msgstr ""
+msgstr "EmuTOS Entwickler-Team"
 
 #: desk/desk_rsc.c:744
 msgid "Based on 'GPLed' sources"
-msgstr ""
+msgstr "Basierend auf Quellen von"
 
 #: desk/desk_rsc.c:774
 msgid "EmuTOS is distributed under the GPL"
-msgstr ""
+msgstr "EmuTOS ist lizensiert unter der GPL"
 
 #: desk/desk_rsc.c:780
 msgid "See doc/license.txt for details"
-msgstr ""
+msgstr "Siehe doc/license.txt für mehr"
 
 #: desk/desk_rsc.c:794
 msgid "NEW FOLDER INFORMATION"
-msgstr ""
+msgstr "NEUE ORDNER-INFORMATION"
 
 #: desk/desk_rsc.c:800
 msgid "To create a new folder within the cur-"
-msgstr ""
+msgstr "Um einen neuen Ordner anzulegen, "
 
 #: desk/desk_rsc.c:806
 msgid "rent window, double-click on the New"
-msgstr ""
+msgstr "bitte auf Neuen Ordner oder das Icon"
 
 #: desk/desk_rsc.c:812
 msgid "Folder icon and complete the dialogue"
-msgstr ""
+msgstr "klicken und dann den nachfolgenden"
 
 #: desk/desk_rsc.c:818
 msgid "that appears by entering the name of"
-msgstr ""
+msgstr "Dialog ausfüllen und einen Namen"
 
 #: desk/desk_rsc.c:824
 msgid "the folder you want to create."
-msgstr ""
+msgstr "für den neuen Ordner angeben."
 
 #: desk/desk_rsc.c:844
 msgid "OPEN APPLICATION"
-msgstr ""
+msgstr "ÖFFNE ANWENDUNG"
 
 #: desk/desk_rsc.c:874
 msgid "Enter the name of the document you want"
-msgstr ""
+msgstr "Gib den Namen des zu öffnenden Dokumentes"
 
 #: desk/desk_rsc.c:880
 msgid "to load, or enter parameter values that"
-msgstr ""
+msgstr "an oder gib passende Parameter für die"
 
 #: desk/desk_rsc.c:886
 msgid "are acceptable to this application."
-msgstr ""
+msgstr "Anwendung an."
 
 #: desk/desk_rsc.c:900
 msgid "INSTALL DISK DRIVE"
-msgstr ""
+msgstr "INSTALLIERE LAUFWERK"
 
 #: desk/desk_rsc.c:918
 msgid "Disk type:"
-msgstr ""
+msgstr "Medien-Typ:"
 
 #: desk/desk_rsc.c:930
 msgid "Floppy"
-msgstr ""
+msgstr "Diskette"
 
 #: desk/desk_rsc.c:936
 msgid "Hard"
-msgstr ""
+msgstr "Platte"
 
 #: desk/desk_rsc.c:969
 msgid "CONFIGURE APPLICATION"
-msgstr ""
+msgstr "KONFIGURIERE ANWENDUNG"
 
 #: desk/desk_rsc.c:981
 msgid "Document types:"
-msgstr ""
+msgstr "Dokument-Typen:"
 
 #: desk/desk_rsc.c:1035
 msgid "Application type:"
-msgstr ""
+msgstr "Anwendungs-Typen:"
 
 #: desk/desk_rsc.c:1065
 msgid "Needs full memory?"
-msgstr ""
+msgstr "Maximaler Speicher?"
 
 #: desk/desk_rsc.c:1089
 msgid "Icon type:"
-msgstr ""
+msgstr "Icon-Typ:"
 
 #: desk/desk_rsc.c:1176
 msgid "COPY FOLDERS / ITEMS"
-msgstr ""
+msgstr "KOPIERE ORDNER / DATEIEN"
 
 #: desk/desk_rsc.c:1215
 msgid "DELETE FOLDERS / ITEMS"
-msgstr ""
+msgstr "LÖSCHE ORDNER / DATEIEN"
 
 #: desk/desk_rsc.c:1254
 msgid "NAME CONFLICT DURING COPY"
-msgstr ""
+msgstr "NAMENSKONFLIKT BEIM KOPIEREN"
 
 #: desk/desk_rsc.c:1284
 msgid "Stop"
-msgstr ""
+msgstr "Stop"
 
 #: desk/desk_rsc.c:1299
 msgid "NEW FOLDER"
-msgstr ""
+msgstr "NEUER ORDNER"
 
 #: desk/desk_rsc.c:1332
 msgid "SET PREFERENCES"
-msgstr ""
+msgstr "SETZE EINSTELLUNGEN"
 
 #: desk/desk_rsc.c:1338
 msgid "Confirm deletes?"
-msgstr ""
+msgstr "Bestätige Löschen?"
 
 #: desk/desk_rsc.c:1362
 msgid "Confirm copies?"
-msgstr ""
+msgstr "Bestätige Kopieren?"
 
 #: desk/desk_rsc.c:1386
 msgid "Confirm overwrites?"
-msgstr ""
+msgstr "Bestätige Überschreiben?"
 
 #: desk/desk_rsc.c:1410
 msgid "Double-click speed:"
-msgstr ""
+msgstr "Doppelklick-Geschwindigkeit:"
 
 #: desk/desk_rsc.c:1458
 msgid "Click"
-msgstr ""
+msgstr "Klick"
 
 #: desk/desk_rsc.c:1464
 msgid "No click"
-msgstr ""
+msgstr "Kein Klick"
 
 #: desk/desk_rsc.c:1470
 msgid "To drop down menus:"
-msgstr ""
+msgstr "Um Menüs herunterzuklappen:"
 
 #: desk/desk_rsc.c:1476
 msgid "Sound effects:"
-msgstr ""
+msgstr "Sound-Effekte:"
 
 #: desk/desk_rsc.c:1488
 msgid "On"
-msgstr ""
+msgstr "An"
 
 #: desk/desk_rsc.c:1494
 msgid "Off"
-msgstr ""
+msgstr "Aus"
 
 #: desk/desk_rsc.c:1500
 msgid "Time format:"
-msgstr ""
+msgstr "Zeit-Format:"
 
 #: desk/desk_rsc.c:1512
 msgid "12 Hour"
-msgstr ""
+msgstr "12 Std."
 
 #: desk/desk_rsc.c:1518
 msgid "24 Hour"
-msgstr ""
+msgstr "24 Std."
 
 #: desk/desk_rsc.c:1524
 msgid "Date format:"
-msgstr ""
+msgstr "Datumsformat:"
 
 #: desk/desk_rsc.c:1536
 msgid "MM-DD-YY"
-msgstr ""
+msgstr "MM-DD-YY"
 
 #: desk/desk_rsc.c:1542
 msgid "DD-MM-YY"
-msgstr ""
+msgstr "DD-MM-YY"
 
 #: desk/desk_rsc.c:1580
 msgid "%L bytes used in %W items."
-msgstr ""
+msgstr "%L Bytes in %W Dateien."
 
 #: desk/desk_rsc.c:1581
 msgid "  Show as icons  \007S"
-msgstr ""
+msgstr "  Als Icons      \007S"
 
 #: desk/desk_rsc.c:1582
 msgid "application"
-msgstr ""
+msgstr "Anwendung"
 
 #: desk/desk_rsc.c:1583
 msgid "documents"
-msgstr ""
+msgstr "Dokumente"
 
 #: desk/desk_rsc.c:1585
 msgid "  Show as text   \007S"
-msgstr ""
+msgstr "  Als Text   \007S"
 
 #: desk/desk_rsc.c:1598
 msgid "New Folder"
-msgstr ""
+msgstr "Neuer Ordner"
 
 #: desk/desk_rsc.c:1599
 msgid "Disk Drives:"
-msgstr ""
+msgstr "Laufwerke"
 
 #: desk/desk_rsc.c:1602
 msgid "Free"
-msgstr ""
+msgstr "Frei"
 
 #: desk/desk_rsc.c:1604
 msgid "[1]["
@@ -957,15 +709,27 @@ msgid "[1]["
 "configured to work with a specific|"
 "application.  Use the \"Configure|"
 "application\" command to associate this|"
-"document type with an application.][  OK  ]"
-msgstr ""
+"document type with an application.]"
+"[  OK  ]"
+msgstr "[1]["
+"Das ausgewählte Dokument ist keiner|"
+"Anwendung vom Typ her zugeordnet.|"
+"Benutze das Kommando \"Konfiguriere|"
+"Anwendung\" um den Dokumenten-Typ einer|"
+"Anwendung zuzuordnen.]"
+"[  OK  ]"
 
 #: desk/desk_rsc.c:1613
 msgid "[1]["
 "The GEM Desktop has no more available|"
 "windows.  Before you open a disk, close|"
-"a window you're not using.][  OK  ]"
-msgstr ""
+"a window you're not using.]"
+"[  OK  ]"
+msgstr "[1]["
+"Der GEM-Desktop hat keine Fenster mehr frei|"
+"Bevor ein Laufwerk benutzt wird bitte eines|"
+"der offenen Fenster schließen.]"
+"[  OK  ]"
 
 #: desk/desk_rsc.c:1618
 msgid "[1]["
@@ -973,8 +737,15 @@ msgid "[1]["
 "are using a dual-floppy system, you must|"
 "format disks from your DOS disk.  If you|"
 "are using a hard disk, copy FORMAT to |"
-"the root directory.][OK]"
-msgstr ""
+"the root directory.]"
+"[OK]"
+msgstr "[1]["
+"Kann das FORMAT-Programm nicht finden.  Wenn |"
+"das System zwei Disketten-Laufwerke hat,|"
+"muß von der DOS-Diskette aus formatiert werden.|"
+"Bei einer Festplatte muß das FORMAT programm |"
+"in das oberste Verzeichnis kopiert werden.]"
+"[OK]"
 
 #: desk/desk_rsc.c:1627
 msgid "[3]["
@@ -983,21 +754,35 @@ msgid "[3]["
 "%S:.  Click on OK only if you don't|"
 "mind losing the information on|"
 "this disk.][  OK  |Cancel]"
-msgstr ""
+msgstr "[3]["
+"Formatieren löscht alle Informationen|"
+"auf dem Medium in Laufwerk %S:.|"
+"Drücke OK nur dann, wenn alles auf|"
+"diesem Medium gelöscht werden darf.]"
+"[  OK  |Abbruch]"
 
 #: desk/desk_rsc.c:1636
 msgid "[3]["
 "You cannot copy a parent folder|"
-"into one of its child folders.][  OK  ]"
-msgstr ""
+"into one of its child folders.]"
+"[  OK  ]"
+msgstr "[3]["
+"Man kann nicht einen übergeordneten Ordner|"
+"in einen seiner untergeordneten kopieren.]"
+"[  OK  ]"
 
 #: desk/desk_rsc.c:1639
 msgid "[3]["
 "If you are sure you want to|"
 "delete ALL the information on the|"
 "disk in drive %S:, click on OK.|"
-"Otherwise, click on Cancel.][  OK  |Cancel]"
-msgstr ""
+"Otherwise, click on Cancel.]"
+"[  OK  |Cancel]"
+msgstr "[3]["
+"Beim Drücken von OK werden alle Daten|"
+"auf de, Medium in Laufwerk %S: gelöscht.|"
+"Sonst bitte Abbruch drücken.]"
+"[  OK  |Abbruch]"
 
 #: desk/desk_rsc.c:1646
 msgid "[1]["
@@ -1005,24 +790,42 @@ msgid "[1]["
 "to configure this application.  To free|"
 "up some space, you'll have to remove|"
 "one of your currently configured|"
-"applications.][  OK  ]"
-msgstr ""
+"applications.]"
+"[  OK  ]"
+msgstr "[1]["
+"Es ist nich genug freier Speicher verfügbar,|"
+"um diese Anwendung zu konfigurieren.|"
+"Um Platz zu schaffen, muß eine vorhandene|"
+"Anwendung wieder entfernt werden.]"
+"[  OK  ]"
 
 #: desk/desk_rsc.c:1653
 msgid "[2]["
 "A folder with that name already|"
 "exists or your disk is full.|"
 "Retry with a new name, or Cancel|"
-"and check the available disk space.][ Cancel | Retry ]"
-msgstr ""
+"and check the available disk space.]"
+"[ Cancel | Retry ]"
+msgstr "[2]["
+"Es gibt bereits einen Ordner mit|"
+"diesem Namen oder das Medium ist voll.|"
+"Versuche einen anderen Namen oder drücke|"
+"Abbruch und prüfe den Platz.]"
+"[ Abbruch | Nochmal ]"
 
 #: desk/desk_rsc.c:1660
 msgid "[1]["
 "This disk does not have enough room for|"
 "the information you are trying to copy.|"
 "Some items, however, may have been|"
-"copied to the disk.][  OK  ]"
-msgstr ""
+"copied to the disk.]"
+"[  OK  ]"
+msgstr "[1]["
+"Dieses Medium hat nicht genug Platz|"
+"für alle zu kopierenden Daten.|"
+"Einige sind aber eventuell auf das|"
+"Medium kopiert worden.]"
+"[  OK  ]"
 
 #: desk/desk_rsc.c:1667
 msgid "[3]["
@@ -1031,7 +834,13 @@ msgid "[3]["
 "or DESKTOP.INF in the DOS search|"
 "path.  These documents are required|"
 "to run the GEM Desktop.][Cancel]"
-msgstr ""
+msgstr "[3]["
+"Der GEM Desktop kann die Dateien|"
+"DESKLO.ICN, DESKHI.ICN, oder DESKTOP.INF|"
+"nicht im Such-Pfad finden.|"
+"Diese Dateien werden unbedingt benötigt|"
+"um den GEM Desktop zu benutzen.]"
+"[Abbruch]"
 
 #: desk/desk_rsc.c:1676
 msgid "[3]["
@@ -1040,7 +849,13 @@ msgid "[3]["
 "the drive door, and click on OK.|"
 "Click on Cancel if you don't want to|"
 "save the desktop.][  OK  |Cancel]"
-msgstr ""
+msgstr "[3]["
+"Um die Desktop-Einstellungen zu sichern,|"
+"lege die Desktop-Disk ein in Laufwerk A:|"
+"ein und klicke auf OK.|"
+"Klicke auf Abbruch, um die Einstellungen|"
+"nicht zu sochern.]"
+"[  OK  |Abbruch]"
 
 #: desk/desk_rsc.c:1685
 msgid "[3]["
@@ -1048,7 +863,12 @@ msgid "[3]["
 "folders inside of your current one.|"
 "See your documentation for limits on|"
 "folders inside other folders.][Cancel]"
-msgstr ""
+msgstr "[3]["
+"Leider passen keine Ordner mehr in das|"
+"aktuelle Verzeichnis.  Informationen über|"
+"die maximale Anzahl von Ordnern in anderen|"
+"bitte der Dokumentation entnehmen.]"
+"[Abbruch]"
 
 #: desk/desk_rsc.c:1692
 msgid "[3]["
@@ -1057,5 +877,11 @@ msgid "[3]["
 "characters.  See your documentation for|"
 "limits on the number of characters you|"
 "can enter.][   OK   ]"
-msgstr ""
+msgstr "[3]["
+"Leider ist der Name des aktuellen|"
+"Verzeichnisses zu lang.  Informationen|"
+"über die maximale Länge von Dateinamen|"
+"bitte der Dokumentation entnehmen.]"
+"[   OK   ]"
+
 

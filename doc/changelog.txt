@@ -916,7 +916,7 @@ Start... early ages
 - include/config.h - Added TOS_VERSION define to switch TOS versions and
   to reduce size if compiling a 192kB image (THH).
 
-1. Jul. 2002
+01. Jul. 2002
 - doc/processor.h - added some documentation about processor handling (LVL)
 - tools/bug.c 
   - prints "entry" instead of "entries" when only one entry (LVL)
@@ -934,7 +934,8 @@ Start... early ages
   - experimental building of a unique-country translated EmuTOS (LVL)
 - removed some 'extern' from C source files (should go in .h files) (LVL)
 - bios/version.c - removed, was commented out for some time now (LVL)
+- po/de.po - some german translations done (MAD)
 
-1. Jul. 2002
-- po/de.po - some translations done (MAD)
+09. Jul. 2002
+- po/de.po - all german translations done (MAD)
 
