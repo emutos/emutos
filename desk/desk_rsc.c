@@ -6,7 +6,7 @@
  */
 
 /*
- * This file contains the AES' RSC data
+ * This file contains the Desk's RSC data
  */
 
 #include <string.h>
@@ -15,308 +15,210 @@
 #include "obdefs.h"
 #include "gembind.h"
 #include "aesbind.h"
+#include "gemdos.h"
+#include "kprint.h"
 
 
-static char rs_s2[] = "--------------------";
-static char rs_s34[] = "2";
-static char rs_s36[] = "3";
-static char rs_s38[] = "4";
-static char rs_s0[] = "---------------------";
-static char rs_s1[] = "---------------------";
-static char rs_s3[] = "--------------------";
-static char rs_s4[] = "OK";
-static char rs_s10[] = "Cancel";
-static char rs_s5[] = "OK";
-static char rs_s6[] = "OK";
-static char rs_s7[] = "OK";
-static char rs_s8[] = "OK";
-static char rs_s9[] = "OK";
-static char rs_s11[] = "Cancel";
-static char rs_s13[] = "Install";
-static char rs_s15[] = "Remove";
-static char rs_s12[] = "Cancel";
-static char rs_s26[] = "Yes";
-static char rs_s28[] = "No";
-static char rs_s14[] = "Install";
-static char rs_s16[] = "Remove";
-static char rs_s17[] = "Cancel";
-static char rs_s18[] = "OK";
-static char rs_s19[] = "Cancel";
-static char rs_s20[] = "OK";
-static char rs_s21[] = "Cancel";
-static char rs_s22[] = "OK";
-static char rs_s23[] = "Cancel";
-static char rs_s24[] = "OK";
-static char rs_s25[] = "Cancel";
-static char rs_s27[] = "Yes";
-static char rs_s29[] = "No";
-static char rs_s30[] = "Yes";
-static char rs_s31[] = "No";
-static char rs_s32[] = "Yes";
-static char rs_s33[] = "No";
-static char rs_s35[] = "2";
-static char rs_s37[] = "3";
-static char rs_s39[] = "4";
-static char rs_s40[] = "OK";
-static char rs_s41[] = "Cancel";
-static char rs_s42[] = "Free";
-static char rs_s43[] = "Free";
-static char rs_s46[] = "@2345678901";
-static char rs_s74[] = "Name:  ________.___";
-static char rs_s48[] = "f";
-static char rs_s44[] = "9";
-static char rs_s45[] = "9";
-static char rs_s56[] = "__:__ __";
-static char rs_s58[] = "9999aa";
-static char rs_s77[] = "@";
-static char rs_s79[] = "A";
-static char rs_s47[] = "@2345678901";
-static char rs_s49[] = "f";
-static char rs_s60[] = "@1234";
-static char rs_s62[] = "Number of folders:     _____";
-static char rs_s50[] = "9";
-static char rs_s65[] = "Number of items:     _____";
-static char rs_s51[] = "9";
-static char rs_s68[] = "@7654321";
-static char rs_s70[] = "Bytes used:  ________";
-static char rs_s52[] = "9";
-static char rs_s53[] = "9";
-static char rs_s54[] = "f";
-static char rs_s55[] = "9";
-static char rs_s57[] = "__:__ __";
-static char rs_s59[] = "9999aa";
-static char rs_s61[] = "@1234";
-static char rs_s63[] = "Number of folders:     _____";
-static char rs_s64[] = "9";
-static char rs_s66[] = "Number of items:     _____";
-static char rs_s67[] = "9";
-static char rs_s69[] = "@7654321";
-static char rs_s71[] = "Bytes used:  ________";
-static char rs_s72[] = "9";
-static char rs_s73[] = "@2345678901";
-static char rs_s75[] = "Name:  ________.___";
-static char rs_s76[] = "f";
-static char rs_s78[] = "@";
-static char rs_s80[] = "A";
-static char rs_s81[] = "F";
-static char rs_s82[] = "F";
-static char rs_s84[] = "___";
-static char rs_s83[] = "F";
-static char rs_s85[] = "___";
-static char rs_s86[] = "F";
-static char rs_s87[] = "___";
-static char rs_s88[] = "F";
-static char rs_s89[] = "___";
-static char rs_s90[] = "F";
-static char rs_s91[] = "___";
-static char rs_s92[] = "F";
-static char rs_s93[] = "___";
-static char rs_s94[] = "F";
-static char rs_s95[] = "___";
-static char rs_s96[] = "F";
-static char rs_s97[] = "___";
-static char rs_s98[] = "F";
-static char rs_s99[] = "F";
-static char rs_s100[] = "9";
-static char rs_s101[] = "9";
-static char rs_s102[] = "9";
-static char rs_s103[] = "9";
-static char rs_s104[] = "f";
-static char rs_s105[] = "f";
-static char rs_s106[] = "Name:  ________.___";
-static char rs_s107[] = "f";
+static const char rs_str_OK[] = "OK";
+static const char rs_str_Cancel[] = "Cancel";
+static const char rs_str_Install[] = "Install";
+static const char rs_str_Remove[] = "Remove";
+static const char rs_str_Yes[] = "Yes";
+static const char rs_str_No[] = "No";
 
 
 
 #define RS_NTED 37
 
+
+
 TEDINFO desk_rs_tedinfo[RS_NTED];
 
-static TEDINFO desk_rs_tedinfo_rom[] = {
-        (LONG)rs_s46,
-        (LONG)rs_s74,
-        (LONG)rs_s48,
-        IBM, 0, TE_LEFT, 4352, 0, 0, 12, 20,
+static const TEDINFO desk_rs_tedinfo_rom[] = {
+        { 0L,
+        (LONG)"Name:  ________.___",
+        (LONG)"f",
+        IBM, 0, TE_LEFT, 4352, 0, 0, 12, 20 },  /* 0 */
 
-        (LONG)"@2345678",
+        { 0L,
         (LONG)"Size in bytes:  ________",
-        (LONG)rs_s44,
-        IBM, 0, TE_RIGHT, 4352, 0, 0, 9, 25,
+        (LONG)"9",
+        IBM, 0, TE_RIGHT, 4352, 0, 0, 9, 25 },  /* 1 */
 
-        (LONG)"@54321",
+        { 0L,
         (LONG)"Last modified:  __/__/__",
-        (LONG)rs_s45,
-        IBM, 0, TE_RIGHT, 4352, 0, 0, 7, 25,
+        (LONG)"9",
+        IBM, 0, TE_RIGHT, 4352, 0, 0, 7, 25 },  /* 2 */
 
-        (LONG)"@12345",
-        (LONG)rs_s56,
-        (LONG)rs_s58,
-        IBM, 0, TE_RIGHT, 4352, 0, 0, 7, 9,
+        { 0L,
+        (LONG)"__:__ __",
+        (LONG)"9999aa",
+        IBM, 0, TE_RIGHT, 4352, 0, 0, 7, 9 },   /* 3 */
 
-        (LONG)rs_s77,
+        { 0L,
         (LONG)"Drive identifier:  _:",
-        (LONG)rs_s79,
-        IBM, 0, TE_LEFT, 4352, 0, 0, 2, 22,
+        (LONG)"A",
+        IBM, 0, TE_LEFT, 4352, 0, 0, 2, 22 },   /* 4 */
 
-        (LONG)rs_s47,
+        { 0L,
         (LONG)"Disk label:  ___________",
-        (LONG)rs_s49,
-        IBM, 0, TE_LEFT, 4352, 0, 0, 12, 25,
+        (LONG)"f",
+        IBM, 0, TE_LEFT, 4352, 0, 0, 12, 25 },  /* 5 */
 
-        (LONG)rs_s60,
-        (LONG)rs_s62,
-        (LONG)rs_s50,
-        IBM, 0, TE_RIGHT, 4352, 0, 0, 6, 29,
+        { 0L,
+        (LONG)"Number of folders:     _____",
+        (LONG)"9",
+        IBM, 0, TE_RIGHT, 4352, 0, 0, 6, 29 },  /* 6 */
 
-        (LONG)"@2345",
-        (LONG)rs_s65,
-        (LONG)rs_s51,
-        IBM, 0, TE_RIGHT, 4352, 0, 0, 6, 27,
+        { 0L,
+        (LONG)"Number of items:     _____",
+        (LONG)"9",
+        IBM, 0, TE_RIGHT, 4352, 0, 0, 6, 27 },  /* 7 */
 
-        (LONG)rs_s68,
-        (LONG)rs_s70,
-        (LONG)rs_s52,
-        IBM, 0, TE_RIGHT, 4352, 0, 0, 9, 22,
+        { 0L,
+        (LONG)"Bytes used:  ________",
+        (LONG)"9",
+        IBM, 0, TE_RIGHT, 4352, 0, 0, 9, 22 },  /* 8 */
 
-        (LONG)"@1010101",
+        { 0L,
         (LONG)"Bytes available:  ________",
-        (LONG)rs_s53,
-        IBM, 0, TE_RIGHT, 4352, 0, 0, 9, 27,
+        (LONG)"9",
+        IBM, 0, TE_RIGHT, 4352, 0, 0, 9, 27 },  /* 9 */
 
-        (LONG)"@2345678999",
+        { 0L,
         (LONG)"Folder name:  ________.___",
-        (LONG)rs_s54,
-        IBM, 0, TE_LEFT, 4352, 0, 0, 12, 27,
+        (LONG)"f",
+        IBM, 0, TE_LEFT, 4352, 0, 0, 12, 27 },  /* 10 */
 
-        (LONG)"@ddddd",
+        { 0L,
         (LONG)"Created:  __-__-__  ",
-        (LONG)rs_s55,
-        IBM, 0, TE_LEFT, 4352, 0, 0, 7, 21,
+        (LONG)"9",
+        IBM, 0, TE_LEFT, 4352, 0, 0, 7, 21 },   /* 11 */
 
-        (LONG)"@hhhhh",
-        (LONG)rs_s57,
-        (LONG)rs_s59,
-        IBM, 0, TE_LEFT, 4352, 0, 0, 7, 9,
+        { 0L,
+        (LONG)"__:__ __",
+        (LONG)"9999aa",
+        IBM, 0, TE_LEFT, 4352, 0, 0, 7, 9 },    /* 12 */
 
-        (LONG)rs_s61,
-        (LONG)rs_s63,
-        (LONG)rs_s64,
-        IBM, 0, TE_RIGHT, 4352, 0, 0, 6, 29,
+        { 0L,
+        (LONG)"Number of folders:     _____",
+        (LONG)"9",
+        IBM, 0, TE_RIGHT, 4352, 0, 0, 6, 29 },  /* 13 */
 
-        (LONG)"@8765",
-        (LONG)rs_s66,
-        (LONG)rs_s67,
-        IBM, 0, TE_RIGHT, 4352, 0, 0, 6, 27,
+        { 0L,
+        (LONG)"Number of items:     _____",
+        (LONG)"9",
+        IBM, 0, TE_RIGHT, 4352, 0, 0, 6, 27 },  /* 14 */
 
-        (LONG)rs_s69,
-        (LONG)rs_s71,
-        (LONG)rs_s72,
-        IBM, 0, TE_RIGHT, 4352, 0, 0, 9, 22,
+        { 0L,
+        (LONG)"Bytes used:  ________",
+        (LONG)"9",
+        IBM, 0, TE_RIGHT, 4352, 0, 0, 9, 22 },  /* 15 */
 
-        (LONG)rs_s73,
-        (LONG)rs_s75,
-        (LONG)rs_s76,
-        IBM, 0, TE_LEFT, 4352, 0, 0, 12, 20,
+        { 0L,
+        (LONG)"Name:  ________.___",
+        (LONG)"f",
+        IBM, 0, TE_LEFT, 4352, 0, 0, 12, 20 },  /* 16 */
 
-        (LONG)"@123456789012345678901234567890123456789012345678901",
+        { 0L,
         (LONG)"Parameters:  ____________________________________________________",
         (LONG)"X",
-        IBM, 0, TE_LEFT, 4352, 0, 0, 53, 66,
+        IBM, 0, TE_LEFT, 4352, 0, 0, 53, 66 },  /* 17 */
 
-        (LONG)rs_s78,
+        { 0L,
         (LONG)"Drive identifier:  _",
-        (LONG)rs_s80,
-        IBM, 0, TE_LEFT, 4352, 0, 0, 2, 21,
+        (LONG)"A",
+        IBM, 0, TE_LEFT, 4352, 0, 0, 2, 21 },   /* 18 */
 
-        (LONG)"@23456789012",
+        { 0L,
         (LONG)"Icon label:  ____________",
-        (LONG)rs_s81,
-        IBM, 0, TE_LEFT, 4352, 0, 0, 13, 26,
+        (LONG)"F",
+        IBM, 0, TE_LEFT, 4352, 0, 0, 13, 26 },  /* 19 */
 
-        (LONG)"@1234876512",
+        { 0L,
         (LONG)"Application name:  ________.___",
-        (LONG)rs_s82,
-        IBM, 0, TE_LEFT, 4352, 0, 0, 12, 32,
+        (LONG)"F",
+        IBM, 0, TE_LEFT, 4352, 0, 0, 12, 32 },  /* 20 */
 
-        (LONG)"@01",
-        (LONG)rs_s84,
-        (LONG)rs_s83,
-        IBM, 0, TE_LEFT, 4352, 0, 0, 4, 4,
+        { 0L,
+        (LONG)"___",
+        (LONG)"F",
+        IBM, 0, TE_LEFT, 4352, 0, 0, 4, 4 },    /* 21 */
 
-        (LONG)"@02",
-        (LONG)rs_s85,
-        (LONG)rs_s86,
-        IBM, 0, TE_LEFT, 4352, 0, 0, 4, 4,
+        { 0L,
+        (LONG)"___",
+        (LONG)"F",
+        IBM, 0, TE_LEFT, 4352, 0, 0, 4, 4 },    /* 22 */
 
-        (LONG)"@03",
-        (LONG)rs_s87,
-        (LONG)rs_s88,
-        IBM, 0, TE_LEFT, 4352, 0, 0, 4, 4,
+        { 0L,
+        (LONG)"___",
+        (LONG)"F",
+        IBM, 0, TE_LEFT, 4352, 0, 0, 4, 4 },    /* 23 */
 
-        (LONG)"@04",
-        (LONG)rs_s89,
-        (LONG)rs_s90,
-        IBM, 0, TE_LEFT, 4352, 0, 0, 4, 4,
+        { 0L,
+        (LONG)"___",
+        (LONG)"F",
+        IBM, 0, TE_LEFT, 4352, 0, 0, 4, 4 },    /* 24 */
 
-        (LONG)"@05",
-        (LONG)rs_s91,
-        (LONG)rs_s92,
-        IBM, 0, TE_LEFT, 4352, 0, 0, 4, 4,
+        { 0L,
+        (LONG)"___",
+        (LONG)"F",
+        IBM, 0, TE_LEFT, 4352, 0, 0, 4, 4 },    /* 25 */
 
-        (LONG)"@06",
-        (LONG)rs_s93,
-        (LONG)rs_s94,
-        IBM, 0, TE_LEFT, 4352, 0, 0, 4, 4,
+        { 0L,
+        (LONG)"___",
+        (LONG)"F",
+        IBM, 0, TE_LEFT, 4352, 0, 0, 4, 4 },    /* 26 */
 
-        (LONG)"@07",
-        (LONG)rs_s95,
-        (LONG)rs_s96,
-        IBM, 0, TE_LEFT, 4352, 0, 0, 4, 4,
+        { 0L,
+        (LONG)"___",
+        (LONG)"F",
+        IBM, 0, TE_LEFT, 4352, 0, 0, 4, 4 },    /* 27 */
 
-        (LONG)"@08",
-        (LONG)rs_s97,
-        (LONG)rs_s98,
-        IBM, 0, TE_LEFT, 4352, 0, 0, 4, 4,
+        { 0L,
+        (LONG)"___",
+        (LONG)"F",
+        IBM, 0, TE_LEFT, 4352, 0, 0, 4, 4 },    /* 28 */
 
-        (LONG)"@HOLDSPACESFORICONNAMES",
+        { 0L,
         (LONG)"_______________________",
-        (LONG)rs_s99,
-        IBM, 1, TE_CNTR, 4480, 0, -1, 24, 24,
+        (LONG)"F",
+        IBM, 1, TE_CNTR, 4480, 0, -1, 24, 24 }, /* 29 */
 
-        (LONG)"@234",
+        { 0L,
         (LONG)"Folders to copy:  ____",
-        (LONG)rs_s100,
-        IBM, 0, TE_RIGHT, 4352, 0, 0, 5, 23,
+        (LONG)"9",
+        IBM, 0, TE_RIGHT, 4352, 0, 0, 5, 23 },  /* 30 */
 
-        (LONG)"@432",
+        { 0L,
         (LONG)"Items to copy:  ____",
-        (LONG)rs_s101,
-        IBM, 0, TE_RIGHT, 4352, 0, 0, 5, 21,
+        (LONG)"9",
+        IBM, 0, TE_RIGHT, 4352, 0, 0, 5, 21 },  /* 31 */
 
-        (LONG)"@980",
+        { 0L,
         (LONG)"Folders to delete:  ____",
-        (LONG)rs_s102,
-        IBM, 0, TE_RIGHT, 4352, 0, 0, 5, 25,
+        (LONG)"9",
+        IBM, 0, TE_RIGHT, 4352, 0, 0, 5, 25 },  /* 32 */
 
-        (LONG)"@678",
+        { 0L,
         (LONG)"Items to delete:  ____",
-        (LONG)rs_s103,
-        IBM, 0, TE_RIGHT, 4352, 0, 0, 5, 23,
+        (LONG)"9",
+        IBM, 0, TE_RIGHT, 4352, 0, 0, 5, 23 },  /* 33 */
 
-        (LONG)"@3456354890",
+        { 0L,
         (LONG)"Current name:  ________.___",
-        (LONG)rs_s104,
-        IBM, 0, TE_LEFT, 4352, 0, 0, 12, 28,
+        (LONG)"f",
+        IBM, 0, TE_LEFT, 4352, 0, 0, 12, 28 },  /* 34 */
 
-        (LONG)"@5436354890",
+        { 0L,
         (LONG)"Copy's name:  ________.___",
-        (LONG)rs_s105,
-        IBM, 0, TE_LEFT, 4352, 0, 0, 12, 27,
+        (LONG)"f",
+        IBM, 0, TE_LEFT, 4352, 0, 0, 12, 27 },  /* 35 */
 
-        (LONG)"@1726354890",
-        (LONG)rs_s106,
-        (LONG)rs_s107,
-        IBM, 0, TE_LEFT, 4352, 0, 0, 12, 20
+        { 0L,
+        (LONG)"Name:  ________.___",
+        (LONG)"f",
+        IBM, 0, TE_LEFT, 4352, 0, 0, 12, 20 }   /* 36 */
 };
 
 
@@ -407,11 +309,16 @@ static BITBLK desk_rs_bitblk[] = {
 };
 
 
+
+
+static char rs_str_iconOrText[20];    /* was: "  xxxx xx xxxxx  xx" */
+
+
 #define RS_NOBS 211
 
 OBJECT desk_rs_obj[RS_NOBS];
 
-static OBJECT desk_rs_obj_rom[] = {
+static const OBJECT desk_rs_obj_rom[] = {
 #define TR0 0
 /* TREE 0 */
         -1, 1, 7, G_IBOX,                       /*** 0 ***/
@@ -477,7 +384,7 @@ static OBJECT desk_rs_obj_rom[] = {
         11, -1, -1, G_STRING,                   /*** 10 ***/
         NONE,
         DISABLED,
-        (long) rs_s2,
+        (long) "--------------------",
         0, 1, 20, 1,
 
         12, -1, -1, G_STRING,                   /*** 11 ***/
@@ -489,19 +396,19 @@ static OBJECT desk_rs_obj_rom[] = {
         13, -1, -1, G_STRING,                   /*** 12 ***/
         NONE,
         NORMAL,
-        (long) rs_s34,
+        (long) "2",
         0, 3, 20, 1,
 
         14, -1, -1, G_STRING,                   /*** 13 ***/
         NONE,
         NORMAL,
-        (long) rs_s36,
+        (long) "3",
         0, 4, 20, 1,
 
         15, -1, -1, G_STRING,                   /*** 14 ***/
         NONE,
         NORMAL,
-        (long) rs_s38,
+        (long) "4",
         0, 5, 20, 1,
 
         16, -1, -1, G_STRING,                   /*** 15 ***/
@@ -537,7 +444,7 @@ static OBJECT desk_rs_obj_rom[] = {
         21, -1, -1, G_STRING,                   /*** 20 ***/
         NONE,
         DISABLED,
-        (long) rs_s0,
+        (long) "---------------------",
         0, 2, 21, 1,
 
         22, -1, -1, G_STRING,                   /*** 21 ***/
@@ -555,7 +462,7 @@ static OBJECT desk_rs_obj_rom[] = {
         24, -1, -1, G_STRING,                   /*** 23 ***/
         NONE,
         DISABLED,
-        (long) rs_s1,
+        (long) "---------------------",
         0, 5, 21, 1,
 
         25, -1, -1, G_STRING,                   /*** 24 ***/
@@ -621,13 +528,13 @@ static OBJECT desk_rs_obj_rom[] = {
         35, -1, -1, G_STRING,                   /*** 34 ***/
         NONE,
         NORMAL,
-        (long) "  xxxx xx xxxxx  xx",
+        (long) rs_str_iconOrText,
         0, 0, 20, 1,
 
         36, -1, -1, G_STRING,                   /*** 35 ***/
         NONE,
         DISABLED,
-        (long) rs_s3,
+        (long) "--------------------",
         0, 1, 20, 1,
 
         37, -1, -1, G_STRING,                   /*** 36 ***/
@@ -719,13 +626,13 @@ static OBJECT desk_rs_obj_rom[] = {
         11, -1, -1, G_BUTTON,                   /*** 10 ***/
         SELECTABLE|DEFAULT|EXIT,
         NORMAL,
-        (long) rs_s4,
+        (long) rs_str_OK,
         24, 9, 8, 1,
 
         0, -1, -1, G_BUTTON,                    /*** 11 ***/
         SELECTABLE|EXIT|LASTOB,
         NORMAL,
-        (long) rs_s10,
+        (long) rs_str_Cancel,
         34, 9, 8, 1,
 
 #define TR2 52
@@ -781,7 +688,7 @@ static OBJECT desk_rs_obj_rom[] = {
         0, -1, -1, G_BUTTON,                    /*** 8 ***/
         SELECTABLE|DEFAULT|EXIT|LASTOB,
         NORMAL,
-        (long) rs_s5,
+        (long) rs_str_OK,
         26, 10, 8, 1,
 
 #define TR3 61
@@ -837,7 +744,7 @@ static OBJECT desk_rs_obj_rom[] = {
         0, -1, -1, G_BUTTON,                    /*** 8 ***/
         SELECTABLE|DEFAULT|EXIT|LASTOB,
         NORMAL,
-        (long) rs_s6,
+        (long) rs_str_OK,
         31, 9, 8, 1,
 
 #define TR4 70
@@ -911,7 +818,7 @@ static OBJECT desk_rs_obj_rom[] = {
         12, -1, -1, G_BUTTON,                   /*** 11 ***/
         SELECTABLE|DEFAULT|EXIT,
         NORMAL,
-        (long) rs_s7,
+        (long) rs_str_OK,
         38, 13, 8, 1,
 
         13, -1, -1, G_STRING,                   /*** 12 ***/
@@ -985,7 +892,7 @@ static OBJECT desk_rs_obj_rom[] = {
         0, -1, -1, G_BUTTON,                    /*** 7 ***/
         SELECTABLE|DEFAULT|EXIT|LASTOB,
         NORMAL,
-        (long) rs_s8,
+        (long) rs_str_OK,
         37, 9, 8, 1,
 
 #define TR6 94
@@ -1017,13 +924,13 @@ static OBJECT desk_rs_obj_rom[] = {
         5, -1, -1, G_BUTTON,                    /*** 4 ***/
         SELECTABLE|DEFAULT|EXIT,
         NORMAL,
-        (long) rs_s9,
+        (long) rs_str_OK,
         51, 8, 8, 1,
 
         6, -1, -1, G_BUTTON,                    /*** 5 ***/
         SELECTABLE|EXIT,
         NORMAL,
-        (long) rs_s11,
+        (long) rs_str_Cancel,
         61, 8, 8, 1,
 
         7, -1, -1, G_STRING,                    /*** 6 ***/
@@ -1097,19 +1004,19 @@ static OBJECT desk_rs_obj_rom[] = {
         9, -1, -1, G_BUTTON,                    /*** 8 ***/
         SELECTABLE|EXIT,
         NORMAL,
-        (long) rs_s13,
+        (long) rs_str_Install,
         47, 2, 8, 1,
 
         10, -1, -1, G_BUTTON,                   /*** 9 ***/
         SELECTABLE|EXIT,
         NORMAL,
-        (long) rs_s15,
+        (long) rs_str_Remove,
         47, 4, 8, 1,
 
         0, -1, -1, G_BUTTON,                    /*** 10 ***/
         SELECTABLE|DEFAULT|EXIT|LASTOB,
         NORMAL,
-        (long) rs_s12,
+        (long) rs_str_Cancel,
         47, 6, 8, 1,
 
 #define TR8 114
@@ -1231,13 +1138,13 @@ static OBJECT desk_rs_obj_rom[] = {
         20, -1, -1, G_BUTTON,                   /*** 19 ***/
         SELECTABLE|RBUTTON,
         NORMAL,
-        (long) rs_s26,
+        (long) rs_str_Yes,
         0, 0, 6, 1,
 
         18, -1, -1, G_BUTTON,                   /*** 20 ***/
         SELECTABLE|RBUTTON,
         NORMAL,
-        (long) rs_s28,
+        (long) rs_str_No,
         8, 0, 6, 1,
 
         22, -1, -1, G_STRING,                   /*** 21 ***/
@@ -1303,19 +1210,19 @@ static OBJECT desk_rs_obj_rom[] = {
         32, -1, -1, G_BUTTON,                   /*** 31 ***/
         SELECTABLE|EXIT,
         NORMAL,
-        (long) rs_s14,
+        (long) rs_str_Install,
         30, 18, 9, 1,
 
         33, -1, -1, G_BUTTON,                   /*** 32 ***/
         SELECTABLE|EXIT,
         NORMAL,
-        (long) rs_s16,
+        (long) rs_str_Remove,
         42, 18, 8, 1,
 
         0, -1, -1, G_BUTTON,                    /*** 33 ***/
         SELECTABLE|EXIT|LASTOB,
         NORMAL,
-        (long) rs_s17,
+        (long) rs_str_Cancel,
         53, 18, 8, 1,
 
 #define TR9 148
@@ -1347,13 +1254,13 @@ static OBJECT desk_rs_obj_rom[] = {
         5, -1, -1, G_BUTTON,                    /*** 4 ***/
         SELECTABLE|DEFAULT|EXIT,
         NORMAL,
-        (long) rs_s18,
+        (long) rs_str_OK,
         13, 6, 8, 1,
 
         0, -1, -1, G_BUTTON,                    /*** 5 ***/
         SELECTABLE|EXIT|LASTOB,
         NORMAL,
-        (long) rs_s19,
+        (long) rs_str_Cancel,
         23, 6, 8, 1,
 
 #define TR10 154
@@ -1385,13 +1292,13 @@ static OBJECT desk_rs_obj_rom[] = {
         5, -1, -1, G_BUTTON,                    /*** 4 ***/
         SELECTABLE|EXIT,
         NORMAL,
-        (long) rs_s20,
+        (long) rs_str_OK,
         9, 6, 8, 1,
 
         0, -1, -1, G_BUTTON,                    /*** 5 ***/
         SELECTABLE|DEFAULT|EXIT|LASTOB,
         NORMAL,
-        (long) rs_s21,
+        (long) rs_str_Cancel,
         19, 6, 8, 1,
 
 #define TR11 160
@@ -1423,13 +1330,13 @@ static OBJECT desk_rs_obj_rom[] = {
         5, -1, -1, G_BUTTON,                    /*** 4 ***/
         SELECTABLE|DEFAULT|EXIT,
         NORMAL,
-        (long) rs_s22,
+        (long) rs_str_OK,
         3, 6, 8, 1,
 
         6, -1, -1, G_BUTTON,                    /*** 5 ***/
         SELECTABLE|EXIT,
         NORMAL,
-        (long) rs_s23,
+        (long) rs_str_Cancel,
         13, 6, 8, 1,
 
         0, -1, -1, G_BUTTON,                    /*** 6 ***/
@@ -1461,13 +1368,13 @@ static OBJECT desk_rs_obj_rom[] = {
         4, -1, -1, G_BUTTON,                    /*** 3 ***/
         SELECTABLE|DEFAULT|EXIT,
         NORMAL,
-        (long) rs_s24,
+        (long) rs_str_OK,
         6, 5, 8, 1,
 
         0, -1, -1, G_BUTTON,                    /*** 4 ***/
         SELECTABLE|EXIT|LASTOB,
         NORMAL,
-        (long) rs_s25,
+        (long) rs_str_Cancel,
         16, 5, 8, 1,
 
 #define TR13 172
@@ -1499,13 +1406,13 @@ static OBJECT desk_rs_obj_rom[] = {
         5, -1, -1, G_BUTTON,                    /*** 4 ***/
         SELECTABLE|RBUTTON,
         NORMAL,
-        (long) rs_s27,
+        (long) rs_str_Yes,
         0, 0, 5, 1,
 
         3, -1, -1, G_BUTTON,                    /*** 5 ***/
         SELECTABLE|RBUTTON,
         NORMAL,
-        (long) rs_s29,
+        (long) rs_str_No,
         7, 0, 5, 1,
 
         7, -1, -1, G_STRING,                    /*** 6 ***/
@@ -1523,13 +1430,13 @@ static OBJECT desk_rs_obj_rom[] = {
         9, -1, -1, G_BUTTON,                    /*** 8 ***/
         SELECTABLE|RBUTTON,
         NORMAL,
-        (long) rs_s30,
+        (long) rs_str_Yes,
         0, 0, 5, 1,
 
         7, -1, -1, G_BUTTON,                    /*** 9 ***/
         SELECTABLE|RBUTTON,
         NORMAL,
-        (long) rs_s31,
+        (long) rs_str_No,
         7, 0, 5, 1,
 
         11, -1, -1, G_STRING,                   /*** 10 ***/
@@ -1547,13 +1454,13 @@ static OBJECT desk_rs_obj_rom[] = {
         13, -1, -1, G_BUTTON,                   /*** 12 ***/
         SELECTABLE|RBUTTON,
         NORMAL,
-        (long) rs_s32,
+        (long) rs_str_Yes,
         0, 0, 5, 1,
 
         11, -1, -1, G_BUTTON,                   /*** 13 ***/
         SELECTABLE|RBUTTON,
         NORMAL,
-        (long) rs_s33,
+        (long) rs_str_No,
         7, 0, 5, 1,
 
         15, -1, -1, G_STRING,                   /*** 14 ***/
@@ -1577,19 +1484,19 @@ static OBJECT desk_rs_obj_rom[] = {
         18, -1, -1, G_BUTTON,                   /*** 17 ***/
         SELECTABLE|RBUTTON,
         NORMAL,
-        (long) rs_s35,
+        (long) "2",
         9, 0, 3, 1,
 
         19, -1, -1, G_BUTTON,                   /*** 18 ***/
         SELECTABLE|RBUTTON,
         NORMAL,
-        (long) rs_s37,
+        (long) "3",
         14, 0, 3, 1,
 
         20, -1, -1, G_BUTTON,                   /*** 19 ***/
         SELECTABLE|RBUTTON,
         NORMAL,
-        (long) rs_s39,
+        (long) "4",
         19, 0, 3, 1,
 
         15, -1, -1, G_BUTTON,                   /*** 20 ***/
@@ -1697,13 +1604,13 @@ static OBJECT desk_rs_obj_rom[] = {
         38, -1, -1, G_BUTTON,                   /*** 37 ***/
         SELECTABLE|DEFAULT|EXIT,
         NORMAL,
-        (long) rs_s40,
+        (long) rs_str_OK,
         36, 19, 8, 1,
 
         0, -1, -1, G_BUTTON,                    /*** 38 ***/
         SELECTABLE|EXIT|LASTOB,
         NORMAL,
-        (long) rs_s41,
+        (long) rs_str_Cancel,
         47, 19, 8, 1
 };
 
@@ -1751,8 +1658,8 @@ char *desk_rs_fstr[] = {
         "Disk Drives:",
         "am",
         "pm",
-        rs_s42,
-        rs_s43,
+        "Free",
+        "Free",
         "[1][The document type you selected is not|configured to work with a specific|application.  Use the \"Configure|application\" command to associate this|document type with an application.][  OK  ]",
         "[1][The GEM Desktop has no more available|windows.  Before you open a disk, close|a window you're not using.][  OK  ]",
         "[1][Cannot find the FORMAT program.  If you|are using a dual-floppy system, you must|format disks from your DOS disk.  If you|are using a hard disk, copy FORMAT to |the root directory.][OK]",
@@ -1771,34 +1678,82 @@ char *desk_rs_fstr[] = {
 
 
 
+/* Counts the occurance of c in str */
+int count_chars(char *str, char c)
+{
+        int j;
+        int len;
+
+        len = 0;
+        for(j=0; j<strlen(str); j++)
+        {
+            if(str[j]==c)  len+=1;
+        }
+
+        return len;
+}
+
+
 void desk_rs_init()
 {
-        register int  i = 0;
+    register int  i = 0;
+    long len;
+    int j;
+    char *tedinfptr;
+        
 
-        /* Copy data from ROM to RAM: */
-        memcpy(desk_rs_obj, desk_rs_obj_rom, RS_NOBS*sizeof(OBJECT));
-        memcpy(desk_rs_tedinfo, desk_rs_tedinfo_rom, RS_NTED*sizeof(TEDINFO));
+    /* Copy data from ROM to RAM: */
+    memcpy(desk_rs_obj, desk_rs_obj_rom, RS_NOBS*sizeof(OBJECT));
+    memcpy(desk_rs_tedinfo, desk_rs_tedinfo_rom, RS_NTED*sizeof(TEDINFO));
 
-        do
+    /* Fix objects coordinates: */
+    do
+    {
+        rsrc_obfix((LONG)desk_rs_obj, i);
+    } while (++i<RS_NOBS);
+
+    /* Fix TEDINFO strings: */
+    len = 0;
+    for(i=0; i<RS_NTED; i++)
+    {
+        if(desk_rs_tedinfo[i].te_ptext==0)
         {
-                rsrc_obfix((LONG)desk_rs_obj, i);
-        } while (++i<RS_NOBS);
+            /* Count number of '_' in strings ( +1 for \0 at the end ): */
+            len += count_chars((char *)desk_rs_tedinfo[i].te_ptmplt, '_') + 1;
+        }
+    }
+    tedinfptr = (char *)dos_alloc(len);    /* Get memory */
+    for(i=0; i<RS_NTED; i++)
+    {
+        if(desk_rs_tedinfo[i].te_ptext==0)
+        {
+            desk_rs_tedinfo[i].te_ptext = (LONG)tedinfptr;
+            *tedinfptr++ = '@';   /* First character of uninitialized string */
+            len = count_chars((char *)desk_rs_tedinfo[i].te_ptmplt, '_');
+            for(j=0; j<len; j++)
+            {
+                *tedinfptr++ = '_';    /* Set other characters to '_' */
+            }
+            *tedinfptr++ = 0;    /* Final 0 */
+        }
+    }
+  
 }
 
 
 /* Fake a rsrc_gaddr for the ROM desktop: */
 WORD rsrc_gaddr(WORD rstype, WORD rsid, LONG *paddr)
 {
-        switch(rstype)
-        {
-            case R_TREE:   *paddr = (LONG)desk_rs_trees[rsid]; break;
-            case R_BITBLK: *paddr = (LONG)&desk_rs_bitblk[rsid]; break;
-            case R_STRING: *paddr = (LONG)desk_rs_fstr[rsid]; break;
-            default:
-                kcprintf("FIXME: unsupported (faked) rsrc_gaddr type!\n");
-                return FALSE;
-        }
+    switch(rstype)
+    {
+        case R_TREE:   *paddr = (LONG)desk_rs_trees[rsid]; break;
+        case R_BITBLK: *paddr = (LONG)&desk_rs_bitblk[rsid]; break;
+        case R_STRING: *paddr = (LONG)desk_rs_fstr[rsid]; break;
+        default:
+            kcprintf("FIXME: unsupported (faked) rsrc_gaddr type!\n");
+            return FALSE;
+    }
 
-        return TRUE;
+    return TRUE;
 }
 
