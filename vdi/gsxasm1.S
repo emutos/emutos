@@ -14,12 +14,11 @@
 
 
 
-/////////////////////////////////////////////////////////////////////////
-//                                                                      //
-//                              GSXASM1.S                               //
-//                                                                      //
-/////////////////////////////////////////////////////////////////////////
         .text
+
+/*
+ * Globally used labels 
+ */
 
         .globl  _CLC_FLIT       // calculate fill intersections of vector list
         .globl  _SMUL_DIV       // signed integer multiply and divide
@@ -32,12 +31,11 @@
         .globl  lf_tab          // left fringe look-up table
         .globl  htab            // jump table for drawing horizontal lines
 
-        .page
-/////////////////////////////////////////////////////////////////////////
-//                                                                      //
-//                      Externally Defined Labels                       //
-//                                                                      //
-/////////////////////////////////////////////////////////////////////////
+
+
+/*
+ * Externally defined labels 
+ */
 
         .xdef   _CONTRL
         .xdef   _INTOUT
@@ -49,12 +47,12 @@
         .xdef   _fil_intersect
         .xdef   _multifill
         .xdef   _TERM_CH
-//
+
         .xdef   _FG_BP_1
         .xdef   _FG_BP_2
         .xdef   _FG_BP_3
         .xdef   _FG_BP_4
-//
+
         .xdef   _X1
         .xdef   _X2
         .xdef   _Y1
@@ -64,7 +62,7 @@
         .xdef   _WRT_MODE
         .xdef   _patmsk
         .xdef   _patptr
-//
+
         .xdef   _v_bas_ad
         .xdef   _v_planes
         .xdef   _v_lin_wr
@@ -79,12 +77,9 @@ _fill_buffer:   .ds.w   256             // must be 256 words or it will fail
 
 
 
-/////////////////////////////////////////////////////////////////////////
-//                                                                      //
-//                      Local Constants                                 //
-//                                                                      //
-/////////////////////////////////////////////////////////////////////////
-
+/*
+ * Local constants 
+ */
 
 #define x1              0               // offsets used by CLC_FLIT for accessing
 #define y1              2               // parameters passed on the stack
@@ -92,30 +87,29 @@ _fill_buffer:   .ds.w   256             // must be 256 words or it will fail
 #define y2              6
 
 
-        .page
-/////////////////////////////////////////////////////////////////////////
-//                                                                      //
-//      _vec_len                                                        //
-//                                                                      //
-//      This routine computes the length of a vector using the          //
-//      formula sqrt(dx*dx + dy*dy).                                    //
-//                                                                      //
-//      input:                                                          //
-//         4(sp) = dx.                                                  //
-//         6(sp) = dy.                                                  //
-//                                                                      //
-//      output:                                                         //
-//         d0 = sqrt(dx*dx + dy*dy).                                    //
-//                                                                      //
-//      destroys:       d0, d1, d2, d3, d4                              //
-//                                                                      //
-/////////////////////////////////////////////////////////////////////////
+/*
+ * _vec_len
+ *
+ * This routine computes the length of a vector using the
+ * formula sqrt(dx*dx + dy*dy).
+ *
+ * input:
+ *   4(sp) = dx.
+ *   6(sp) = dy.
+ *
+ * output:
+ *   d0 = sqrt(dx*dx + dy*dy).
+ *
+ * destroys:
+ *   d0, d1, d2, d3, d4
+ */
 
-//
 //      Compute the sum of the squares of the x and y-deltas of the
 //      vector.  If the sum is 0 then the vector has a length of 0.
-//
+
 _vec_len:
+        movem.l d2-d4,-(sp)     // save used registers
+
         move.w  4(sp),d0        // compute the square of x-delta
         muls    d0,d0
         move.w  6(sp),d1        // compute the square of y-delta
@@ -217,42 +211,41 @@ lo_adjust:
 srch_end:
         move.w  d3,d0           // use the lower bound.
 vl_out:
+        movem.l (sp)+,d2-d4     // restore used registers
         rts
 
-        .page
-/////////////////////////////////////////////////////////////////////////
-//                                                                      //
-//      _CLC_FLIT                                                       //
-//                                                                      //
-//      This routine calculates the fill intersections for a list       //
-//      of vectors.  The x-intersection of each vector with the         //
-//      scan-line of interest is calculated and inserted into a         //
-//      buffer which is then sorted in ascending order.  The re-        //
-//      sulting array of x-values are then pulled out pair-wise         //
-//      and used as inputs to "_HABLINE".                               //
-//                                                                      //
-//      This version of the routine has several changes from the        //
-//      original version contained in the screen driver.  The code      //
-//      has been optimized in several places for improvements in        //
-//      both size and execution time.  It also has been changed to      //
-//      prevent the drawing of the outline of a figure with the         //
-//      fill pattern.  These changes are all included as condition-     //
-//      ally assembled code.                                            //
-//                                                                      //
-//      input:                                                          //
-//          CONTRL[1] = number of vectors.                              //
-//          PTSIN[]   = array of vertices.                              //
-//          Y1        = scan-line to calculate intersections for.       //
-//          fil_intersect = 0.                                          //
-//                                                                      //
-//      output:                                                         //
-//          fil_intersect = number of intersections.                    //
-//          fill_buffer  = array of x-values.                           //
-//                                                                      //
-//      destroys:       everything.                                     //
-//                                                                      //
-/////////////////////////////////////////////////////////////////////////
-
+/*
+ * _CLC_FLIT                                                    
+ *
+ * This routine calculates the fill intersections for a list
+ * of vectors.  The x-intersection of each vector with the
+ * scan-line of interest is calculated and inserted into a
+ * buffer which is then sorted in ascending order.  The re-
+ * sulting array of x-values are then pulled out pair-wise
+ * and used as inputs to "_HABLINE".
+ *
+ * This version of the routine has several changes from the
+ * original version contained in the screen driver.  The code
+ * has been optimized in several places for improvements in
+ * both size and execution time.  It also has been changed to
+ * prevent the drawing of the outline of a figure with the
+ * fill pattern.  These changes are all included as condition-
+ * ally assembled code.
+ *
+ * input:
+ *     CONTRL[1] = number of vectors.
+ *     PTSIN[]   = array of vertices.
+ *     Y1        = scan-line to calculate intersections for.
+ *     fil_intersect = 0.
+ *
+ * output:
+ *     fil_intersect = number of intersections.
+ *     fill_buffer  = array of x-values.
+ *
+ * destroys:
+ *     nothing (because of added wrapper)
+ */
+ 
 _CLC_FLIT:
 	// A wrapper, so save the registers
         movem.l d2-d7/a2-a6,-(sp)
@@ -436,25 +429,26 @@ drc_end:
         dbra    d0,drc_0        // loop until done
         rts
 
-        .page
-/////////////////////////////////////////////////////////////////////////
-//                                                                      //
-//      bub_sort                                                        //
-//                                                                      //
-//      This routine bubble-sorts an array of words into ascending      //
-//      order.                                                          //
-//                                                                      //
-//      input:                                                          //
-//         a0 = ptr to start of array.                                  //
-//         d0 = number of words in array.                               //
-//                                                                      //
-//      output:                                                         //
-//         a1 = ptr to start of sorted array.                           //
-//                                                                      //
-//      destroys:       d0, d1, d2, a0, a1                              //
-//                                                                      //
-/////////////////////////////////////////////////////////////////////////
 
+
+/*
+ * bub_sort - sorts an array of words
+ *
+ * This routine bubble-sorts an array of words into ascending order.
+ *
+ * input:
+ *     a0 = ptr to start of array.
+ *     d0 = number of words in array.
+ *
+ * output:
+ *     a1 = ptr to start of sorted array.
+ *
+ * destroys: 
+ *     d0, d1, d2, a0, a1
+ *
+ * MAD: Maybe, this could be replaced by a faster sort algorithm
+ */
+ 
 //
 //      If the array is empty or if there is only one entry to sort then
 //      return.  Otherwise, initialize the necessary pointers and counters.
@@ -497,21 +491,23 @@ bsl1_end:
 bs_out:
         rts
 
-        .page
-//////////////////////////////////////////////////////////////////////////
-//                                                                      //
-//      smul_div (m1,m2,d1)                                             //
-//                                                                      //
-//      ( ( m1 * m2 ) / d1 ) + 1/2                                     //
-//                                                                      //
-//      m1 = signed 16 bit integer                                      //
-//      m2 = unsigned 15 bit integer                                    //
-//      d1 = signed 16 bit integer                                      //
-//                                                                      //
-//////////////////////////////////////////////////////////////////////////
+
+
+/*
+ * SMUL_DIV - signed integer multiply and divide
+ *
+ * smul_div (m1,m2,d1)
+ * 
+ * ( ( m1 * m2 ) / d1 ) + 1/2
+ *
+ * m1 = signed 16 bit integer
+ * m2 = unsigned 15 bit integer
+ * d1 = signed 16 bit integer
+ */
 
 _SMUL_DIV:
-        movem.l d2-d3,-(sp)
+        movem.l d2-d3,-(sp)	// save registers
+        
         moveq   #1,d1           // preload increment
         move.w  8+6(sp),d0
         muls    8+4(sp),d0      // m2 * m1
@@ -536,7 +532,7 @@ smd_3:
         blt     smd_4
         add     d1,d0           // add increment
 smd_4:
-        movem.l  (sp)+,d2-d3
+        movem.l  (sp)+,d2-d3 	// restore registers
         rts
 
 
@@ -613,38 +609,36 @@ shf_tab:
 
 
 
-        .page
-/////////////////////////////////////////////////////////////////////////
-//                                                                      //
-//      ABLINE                                                          //
-//                                                                      //
-//      This routine draws a line between (_X1,_Y1) and (_X2,_Y2)       //
-//      using Bresenham's algorithm.  The line is modified by the       //
-//      _LN_MASK and _WRT_MODE variables.  This routine handles all     //
-//      3 video resolutions.                                            //
-//                                                                      //
-//      Note that for line-drawing in GSX, the background color is      //
-//      always 0 (i.e., there is no user-settable background color).    //
-//      This fact allows coding short-cuts in the implementation of     //
-//      "replace" and "not" modes, resulting in faster execution of     //
-//      their inner loops.                                              //
-//                                                                      //
-//      input:                                                          //
-//         _X1, _Y1, _X2, _Y2 = coordinates.                            //
-//         num_planes         = number of video planes. (resolution)    //
-//         _LN_MASK           = line mask. (for dashed/dotted lines)    //
-//         _WRT_MODE          = writing mode.                           //
-//                                 0 => replace mode.                   //
-//                                 1 => or mode.                        //
-//                                 2 => xor mode.                       //
-//                                 3 => not mode.                       //
-//                                                                      //
-//      output:                                                         //
-//         _LN_MASK rotated to proper alignment with (_X2,_Y2).         //
-//                                                                      //
-//      destroys:       everything                                      //
-//                                                                      //
-/////////////////////////////////////////////////////////////////////////
+/*
+ * ABLINE - draw a line (general purpose)
+ *
+ * This routine draws a line between (_X1,_Y1) and (_X2,_Y2)
+ * using Bresenham's algorithm.  The line is modified by the
+ * _LN_MASK and _WRT_MODE variables.  This routine handles all
+ * 3 video resolutions.
+ *
+ * Note that for line-drawing in GSX, the background color is
+ * always 0 (i.e., there is no user-settable background color).
+ * This fact allows coding short-cuts in the implementation of
+ * "replace" and "not" modes, resulting in faster execution of
+ * their inner loops.
+ *
+ * input:
+ *     _X1, _Y1, _X2, _Y2 = coordinates.
+ *     num_planes         = number of video planes. (resolution)
+ *     _LN_MASK           = line mask. (for dashed/dotted lines)
+ *     _WRT_MODE          = writing mode:
+ *                              0 => replace mode.
+ *                              1 => or mode.
+ *                              2 => xor mode.
+ *                              3 => not mode.
+ *
+ * output:
+ *     _LN_MASK rotated to proper alignment with (_X2,_Y2).
+ *
+ * destroys:
+ *     nothing (because of added wrapper)
+ */
 
 _ABLINE:
 	// A wrapper, to save the registers 
@@ -826,12 +820,9 @@ dxgedy:
 //      d0 = or table mask.
 //
 
-        .page
-/////////////////////////////////////////////////////////////////////////
-//                                                                      //
-//      OR Mask Table                                                   //
-//                                                                      //
-/////////////////////////////////////////////////////////////////////////
+/*
+ * OR Mask Table                               
+ */
 
 ortbl:          dc.w    0x8000
                 dc.w    0x4000
@@ -850,11 +841,9 @@ ortbl:          dc.w    0x8000
                 dc.w    0x0002
                 dc.w    0x0001
 
-/////////////////////////////////////////////////////////////////////////
-//                                                                      //
-//      Write Mode Address Table                                        //
-//                                                                      //
-/////////////////////////////////////////////////////////////////////////
+/*
+ * Write Mode Address Table                                        
+ */
 
 dxge:
 #if rev_vid
@@ -869,21 +858,20 @@ dxge:
         dc.l    or_dxge
 #endif
 
-        .page
-/////////////////////////////////////////////////////////////////////////
-//                                                                      //
-//      Line Drawing Routine for the Replace Mode When Delta X is       //
-//      Greater than Delta Y                                            //
-//                                                                      //
-/////////////////////////////////////////////////////////////////////////
 
-//
-//      Save the registers that get clobbered and test whether the current
-//      plane should be written with the line style or 0's for the current
-//      drawing color.
-//
+
+/*
+ * rep_dxge - Line Drawing Routine for the Replace Mode
+ *
+ * Used, when Delta X is  greater than Delta Y
+ */
+
+// Save the registers that get clobbered and test whether the current plane 
+// should be written with the line style or 0's for the current drawing color.
+
 rep_dxge:
         movem.w d0-d2/d4/d5,-(sp)       // save the registers that get clobbered
+        
         move.l  a5,-(sp)
         tst.w   (a4)+           // write this plane with pattern or 0's
 #if rev_vid
@@ -956,18 +944,16 @@ r_dx_same1:
         dbra    d2,r_dx_ltop    // loop until done with line segment
         bra     r_dx_bp         // done - check for more planes to draw
 
-        .page
-/////////////////////////////////////////////////////////////////////////
-//                                                                      //
-//      Line Drawing Routine for the Transparent Mode When Delta X      //
-//      Is Greater than Delta Y                                         //
-//                                                                      //
-/////////////////////////////////////////////////////////////////////////
 
-//
-//      Save the registers that get clobbered and test whether the current
-//      plane should be set or cleared for the current foreground color.
-//
+
+/*
+ * or_dxge - Line Drawing Routine for the Transparent Mode
+ *
+ * Used, when Delta X is  greater than Delta Y
+ */
+
+// Save the registers that get clobbered and test whether the current
+// plane should be set or cleared for the current foreground color.
 or_dxge:
         movem.w d0-d2/d4/d5,-(sp)       // save the registers that get clobbered
         move.l  a5,-(sp)
@@ -981,9 +967,8 @@ or_dxge:
         bne     o_dx_0ltop      // nope - clear bits where mask = fgnd color
 #endif
 //
-//      If the current bit in the mask is set then set the current bit in the
-//      line segment to acheive the desired foreground color.  Otherwise, do
-//      nothing.
+// If the current bit in the mask is set then set the current bit in the line
+// segment to acheive the desired foreground color.  Otherwise, do nothing.
 //
 o_dx_1ltop:
         rol.w   #1,d1           // get next bit from mask (line style)
@@ -1077,28 +1062,27 @@ o_dx_0same1:
         dbra    d2,o_dx_0ltop   // loop until done with line segment
         bra     o_dx_bp         // done - check for more planes to draw
 
-        .page
-/////////////////////////////////////////////////////////////////////////
-//                                                                      //
-//      Line Drawing Routine for the Exclusive Or Mode When Delta       //
-//      X Is Greater than Delta Y                                       //
-//                                                                      //
-/////////////////////////////////////////////////////////////////////////
+
+/*
+ * xor_dxge - Line Drawing Routine for the Exclusive Or Mode
+ *
+ * Used, when Delta X is  greater than Delta Y
+ */
 
 //
-//      Save the registers that get clobbered.
+// Save the registers that get clobbered.
 //
 xor_dxge:
         movem.w d0-d2/d4,-(sp)  // save the registers that get clobbered
         move.l  a5,-(sp)
 
 //
-//      If the endpoint at x2,y2 should be drawn then don't adjust the line.
-//      If the line is a singularity (point) then do nothing.  If we are
-//      drawing from x1,y1 then decrement the number of times to go through
-//      the pixel drawing loop. If we are drawing from x2,y2 then update
-//      epsilon and decrement the loop count without actually drawing the
-//      first time through the loop.
+// If the endpoint at x2,y2 should be drawn then don't adjust the line.
+// If the line is a singularity (point) then do nothing.  If we are
+// drawing from x1,y1 then decrement the number of times to go through
+// the pixel drawing loop. If we are drawing from x2,y2 then update
+// epsilon and decrement the loop count without actually drawing the
+// first time through the loop.
 //
         tst.w   _LSTLIN         // should the final endpoint be omitted?
         beq     x_dx_ltop       // nope - don't adjust that endpoint
@@ -1110,8 +1094,8 @@ xor_dxge:
         subq.w  #1,d2           // drawing from x1,y1 - don't draw last point
 
 //
-//      If the current bit in the mask is set then exclusive or it with the
-//      current bit in the line segment.  Otherwise, do nothing.
+// If the current bit in the mask is set then exclusive or it with the
+// current bit in the line segment.  Otherwise, do nothing.
 //
 x_dx_ltop:
         rol.w   #1,d1           // get next bit from mask (line style)
@@ -1119,8 +1103,8 @@ x_dx_ltop:
         eor.w   d0,(a5)         // it is 1 - xor it with bit in line
 
 //
-//      Update the mask for exclusive or'ing bits.  If we have overflowed
-//      the current word then update the pointer to the next word in the plane.
+// Update the mask for exclusive or'ing bits.  If we have overflowed
+// the current word then update the pointer to the next word in the plane.
 //
 x_dx_xinc:
         ror.w   #1,d0           // rotate mask for xor'ing bits
@@ -1128,9 +1112,9 @@ x_dx_xinc:
         adda.w  d6,a5           // overflow occurred - bump pointer to next word
 
 //
-//      If the current value of epsilon is positive then add e2 to epsilon
-//      and increment y (by adding the offset to the next scan in the plane).
-//      Loop until all the bits in the line segment have been drawn.
+// If the current value of epsilon is positive then add e2 to epsilon
+// and increment y (by adding the offset to the next scan in the plane).
+// Loop until all the bits in the line segment have been drawn.
 //
 x_dx_yinc:
         tst.w   d4              // epsilon < 0?
@@ -1140,9 +1124,9 @@ x_dx_yinc:
         dbra    d2,x_dx_ltop    // loop until done with line segment
 
 //
-//      We are now done drawing the line in the current plane.  Restore the
-//      registers that were clobbered, update the pointer to the next plane,
-//      and test if any additional planes remain to be drawn.
+// We are now done drawing the line in the current plane.  Restore the
+// registers that were clobbered, update the pointer to the next plane,
+// and test if any additional planes remain to be drawn.
 //
 x_dx_bp:
         move.l  (sp)+,a5        // restore the clobbered registers
@@ -1155,10 +1139,10 @@ x_dx_bp:
         dbra    d3,xor_dxge     // loop until all planes are drawn
 
 //
-//      General Purpose Exit For ABLINE -- Take the actual number of pixels
-//      in the line segment (less 1 if in the xor mode and we are not drawing
-//      the last segment in a polyline) modulo 16 and rotate left the line
-//      style by that amount.  Save the new line style for next time through.
+// General Purpose Exit For ABLINE -- Take the actual number of pixels
+// in the line segment (less 1 if in the xor mode and we are not drawing
+// the last segment in a polyline) modulo 16 and rotate left the line
+// style by that amount.  Save the new line style for next time through.
 //
 abl_out:
         addq.w  #1,d2           // get number of pixels in the line
@@ -1168,26 +1152,26 @@ abl_out:
         rts
 
 //
-//      The current value of epsilon is negative so add e1 to epsilon.
-//      Loop until all the bits in the line segment have been drawn.
+// The current value of epsilon is negative so add e1 to epsilon.
+// Loop until all the bits in the line segment have been drawn.
 //
 x_dx_same1:
         add.w   a3,d4           // epsilon = epsilon + e1
         dbra    d2,x_dx_ltop    // loop until done with line segment
         bra     x_dx_bp         // done - check for more planes to draw
 
-        .page
-/////////////////////////////////////////////////////////////////////////
-//                                                                      //
-//      Line Drawing Routine for the Reverse Transparent Mode When      //
-//      Delta X is Greater than Delta Y                                 //
-//                                                                      //
-/////////////////////////////////////////////////////////////////////////
+
+
+/*
+ * nor_dxge - Line Drawing Routine for the Reverse Transparent Mode
+ *
+ * Used, when Delta X is  greater than Delta Y
+ */
 
 //
-//      Draw a line in the reverse transparent mode by complementing the
-//      line style and calling the code for drawing a line in the transparent
-//      mode.
+// Draw a line in the reverse transparent mode by complementing the
+// line style and calling the code for drawing a line in the transparent
+// mode.
 //
 nor_dxge:
         not.w   d1              // complement the line style
@@ -1197,11 +1181,11 @@ nor_dxge:
 
         .page
 //
-//      We want to draw a line where delta y is greater than delta x so we
-//      will use the y-axis as the frame of reference.  Initialize the loop
-//      counter for plotting individual pixels, calculate the decision
-//      variables for Bresenham's Algorithm, and jump to the appropriate
-//      line drawing routine for the current writing mode.
+// We want to draw a line where delta y is greater than delta x so we
+// will use the y-axis as the frame of reference.  Initialize the loop
+// counter for plotting individual pixels, calculate the decision
+// variables for Bresenham's Algorithm, and jump to the appropriate
+// line drawing routine for the current writing mode.
 //
 dygtdx:
         exg     d4,d5           // swap delta x and delta y
@@ -1220,16 +1204,16 @@ dygtdx:
         jmp     (a0)            // go draw the line
 
 //
-//      The register usages at this point are as follows.
+// The register usages at this point are as follows.
 //
-//      d7 = yinc.              a5 = ptr to destination.
-//      d6 = xinc.              a4 = ptr to _FG_BP_1.
-//      d5 = not or table mask. a3 = e1.
-//      d4 = epsilon.           a2 = e2.
-//      d3 = # of bit_planes - 1.
-//      d2 = line loop counter - 1.
-//      d1 = line mask.         a1 = offset to next plane (vme/10 only)
-//      d0 = or table mask.
+// d7 = yinc.              	a5 = ptr to destination.
+// d6 = xinc.              	a4 = ptr to _FG_BP_1.
+// d5 = not or table mask. 	a3 = e1.
+// d4 = epsilon.           	a2 = e2.
+// d3 = # of bit_planes - 1.
+// d2 = line loop counter - 1.
+// d1 = line mask.         	a1 = offset to next plane (vme/10 only)
+// d0 = or table mask.
 //
 
 /////////////////////////////////////////////////////////////////////////
@@ -1249,18 +1233,18 @@ dygt:
         dc.l    xor_dygt
         dc.l    or_dygt
 #endif
-        .page
-/////////////////////////////////////////////////////////////////////////
-//                                                                      //
-//      Line Drawing Routine for the Replace Mode When Delta Y is       //
-//      Greater than Delta X                                            //
-//                                                                      //
-/////////////////////////////////////////////////////////////////////////
+
+
+/*
+ * rep_dygt - Line Drawing Routine for the Replace Mode
+ *
+ * Used, when Delta Y is greater than Delta X
+ */
 
 //
-//      Save the registers that get clobbered and text whether the current
-//      plane should be written with the line style or 0's for the current
-//      drawing color.
+// Save the registers that get clobbered and text whether the current
+// plane should be written with the line style or 0's for the current
+// drawing color.
 //
 rep_dygt:
         movem.w d0-d2/d4/d5,-(sp)       // save the registers that get clobbered
@@ -1273,8 +1257,8 @@ rep_dygt:
 #endif
         clr.w   d1              // use 0's
 //
-//      If the current bit in the pattern is 0 then clear the current bit
-//      in the plane.  If it is 1 then set the bit in the plane.
+// If the current bit in the pattern is 0 then clear the current bit
+// in the plane.  If it is 1 then set the bit in the plane.
 //
 #if !rev_vid
 r_dy_rev:
@@ -1290,8 +1274,8 @@ r_dy_clr:
         and.w   d5,(a5)         // bit in pattern is 0 - clear bit in plane
 
 //
-//      Increment y (by adding the offset to the next scan in the plane).
-//      If the current value of epsilon is positive then add e2 to epsilon.
+// Increment y (by adding the offset to the next scan in the plane).
+// If the current value of epsilon is positive then add e2 to epsilon.
 //
 r_dy_yinc:
         adda.w  d7,a5           // increment y
@@ -1300,10 +1284,10 @@ r_dy_yinc:
         add.w   a2,d4           // nope - epsilon = epsilon + e2
 
 //
-//      We have a step in x.  Update the masks for clearing and setting bits.
-//      If we have overflowed the current word then update the pointer to the
-//      next word in the plane.  Loop until all the bits in the line segment
-//      have been drawn.
+// We have a step in x.  Update the masks for clearing and setting bits.
+// If we have overflowed the current word then update the pointer to the
+// next word in the plane.  Loop until all the bits in the line segment
+// have been drawn.
 //
         ror.w   #1,d5           // rotate mask for clearing bits
         ror.w   #1,d0           // rotate mask for setting bits
@@ -1313,9 +1297,9 @@ r_dy_llp_end:
         dbra    d2,r_dy_ltop    // loop until done with line segment
 
 //
-//      We are now done drawing the line in the current plane.  Restore the
-//      registers that were clobbered, update the pointer to the next plane,
-//      and test if any additional planes remain to be drawn.
+// We are now done drawing the line in the current plane.  Restore the
+// registers that were clobbered, update the pointer to the next plane,
+// and test if any additional planes remain to be drawn.
 //
 r_dy_bp:
         move.l  (sp)+,a5        // restore the clobbered registers
@@ -1329,21 +1313,19 @@ r_dy_bp:
         bra     abl_out         // take common exit
 
 //
-//      The current value of epsilon is negative so add e1 to epsilon.
-//      Loop until all the bits in the line segment have been drawn.
+// The current value of epsilon is negative so add e1 to epsilon.
+// Loop until all the bits in the line segment have been drawn.
 //
 r_dy_same1:
         add.w   a3,d4           // epsilon = epsilon + e1
         dbra    d2,r_dy_ltop    // loop until done with line segment
         bra     r_dy_bp         // done - check for more planes to draw
 
-        .page
-/////////////////////////////////////////////////////////////////////////
-//                                                                      //
-//      Line Drawing Routine for the Replace Mode When Delta X is       //
-//      Greater than Delta Y                                            //
-//                                                                      //
-/////////////////////////////////////////////////////////////////////////
+/*
+ * or_dygt - Line Drawing Routine for the Replace Mode
+ *
+ * Used, when Delta X is greater than Delta Y
+ */
 
 //
 //      Save the registers that get clobbered and text whether the current
@@ -1459,14 +1441,11 @@ o_dy_0same1:
         bra     o_dy_bp
 
 
-        .page
-/////////////////////////////////////////////////////////////////////////
-//                                                                      //
-//      Line Drawing Routine for the Exclusive Or Mode When Delta       //
-//      Y Is Greater than Delta X                                       //
-//                                                                      //
-/////////////////////////////////////////////////////////////////////////
-
+/*
+ * xor_dygt - Line Drawing Routine for the Exclusive Or Mode 
+ *
+ * Used, when Delta Y is greater than Delta X
+ */
 
 //      Save the registers that get clobbered.
 xor_dygt:
@@ -1544,13 +1523,13 @@ x_dy_same1:
         dbra    d2,x_dy_ltop    // loop until done with line segment
         bra     x_dy_bp         // done - check for more planes to draw
 
-        .page
-/////////////////////////////////////////////////////////////////////////
-//                                                                      //
-//      Line Drawing Routine for the Reverse Transparent Mode When      //
-//      Delta Y Is Greater than Delta X                                 //
-//                                                                      //
-/////////////////////////////////////////////////////////////////////////
+
+
+/*
+ * nor_dygt - Line Drawing Routine for the Reverse Transparent Mode
+ *
+ * Used, when Delta Y is greater than Delta X
+ */
 
 //
 //      Draw a line in the reverse transparent mode by complementing the
@@ -1564,33 +1543,33 @@ nor_dygt:
         rts
 
 
-        .page
-/////////////////////////////////////////////////////////////////////////
-//                                                                      //
-//      HABLINE                                                         //
-//                                                                      //
-//      This routine draws a line between (_X1,_Y1) and (_X2,_Y1)       //
-//      using a left fringe, inner loop, right fringe bitblt algor-     //
-//      ithm.  The line is modified by the pattern and _WRT_MODE        //
-//      variables.  This routine handles all 3 video resolutions.       //
-//      Note that 2 entry points are provided for ABLINE.               //
-//                                                                      //
-//      input:                                                          //
-//         _X1,_Y1,_X2  = coordinates.                                  //
-//         _v_planes    = number of video planes. (resolution)          //
-//         _patmsk      = index into pattern.                           //
-//         _patptr      = ptr to pattern.                               //
-//         _WRT_MODE    = writing mode.                                 //
-//                              0 => replace mode.                      //
-//                              1 => or mode.                           //
-//                              2 => xor mode.                          //
-//                              3 => not mode.                          //
-//                                                                      //
-//      output:         nothing.                                        //
-//                                                                      //
-//      destroys:       everything.                                     //
-//                                                                      //
-/////////////////////////////////////////////////////////////////////////
+
+/*
+ * HABLINE - draw a horizontal line
+ *
+ * This routine draws a line between (_X1,_Y1) and (_X2,_Y1)
+ * using a left fringe, inner loop, right fringe bitblt algor-
+ * ithm.  The line is modified by the pattern and _WRT_MODE
+ * variables.  This routine handles all 3 video resolutions.
+ * Note that 2 entry points are provided for ABLINE.
+ *
+ * input:
+ *     _X1,_Y1,_X2  = coordinates.
+ *     _v_planes    = number of video planes. (resolution)
+ *     _patmsk      = index into pattern.
+ *     _patptr      = ptr to pattern.
+ *     _WRT_MODE    = writing mode:
+ *                        0 => replace mode.
+ *                        1 => or mode.
+ *                        2 => xor mode.
+ *                        3 => not mode.
+ *
+ * output:
+ *     nothing.
+ *
+ * destroys:
+ *     everything, but is just called from assembler
+ */
 
 //
 //      This is the entry point used by ABLINE when a horizontal line is
@@ -1724,16 +1703,12 @@ hab_decode:
 //      d0 = left mask (or left "and" right masks).
 //
 
-        .page
-/////////////////////////////////////////////////////////////////////////
-//                                                                      //
-//      Word Mask Table                                                 //
-//                                                                      //
-//      The table has been compacted by taking the one's complement     //
-//      of the left fringe table and combining it with the right        //
-//      fringe table.                                                   //
-//                                                                      //
-/////////////////////////////////////////////////////////////////////////
+/*
+ * Word Mask Table                                                
+ * 
+ * The table has been compacted by taking the one's complement of the left
+ * fringe table and combining it with the right fringe table.                                                  
+ */
 
 lf_tab:         dc.w    0xFFFF          // origin for not left fringe lookup.
 rf_tab:         dc.w    0x7FFF          // origin for right fringe lookup.
@@ -1753,14 +1728,12 @@ rf_tab:         dc.w    0x7FFF          // origin for right fringe lookup.
                 dc.w    0x0001
                 dc.w    0x0000
 
-/////////////////////////////////////////////////////////////////////////
-//                                                                      //
-//      HABLINE Mode Address Table                                      //
-//                                                                      //
-//      This table contains the jump addresses for the line drawing     //
-//      routines for the four writing modes.                            //
-//                                                                      //
-/////////////////////////////////////////////////////////////////////////
+/*
+ * HABLINE Mode Address Table 
+ *
+ * This table contains the jump addresses for the line drawing routines
+ * for the four writing modes.  
+ */
 
 htab:
 #if rev_vid
@@ -1774,12 +1747,12 @@ htab:
         dc.l    xor_x
         dc.l    or_x
 #endif
-        .page
-/////////////////////////////////////////////////////////////////////////
-//                                                                      //
-//      Line Drawing Routine for Replace Mode                           //
-//                                                                      //
-/////////////////////////////////////////////////////////////////////////
+
+
+
+/*
+ * rep_x - Line Drawing Routine for Replace Mode  
+ */
                            
 //
 //      Save the registers that are clobbered and test whether the current
@@ -1858,26 +1831,23 @@ rx_no_right:
         dbra    d3,rep_x        // loop until all planes are drawn
         rts
 
-        .page
-/////////////////////////////////////////////////////////////////////////
-//                                                                      //
-//      Line Drawing Routine for Transparent Mode                       //
-//                                                                      //
-//      This mode is not to be confused with a true 'or' mode.          //
-//                                                                      //
-/////////////////////////////////////////////////////////////////////////
+/*
+ * or_x - Line Drawing Routine for Transparent Mode    
+ *
+ * This mode is not to be confused with a true 'or' mode.
+ */
 
 //
-//      If the foreground color requires that bits in the current plane
-//      be set then 'or' the mask with the source.  Otherwise, the fore-
-//      ground color requires that bits in the current plane be cleared
-//      so 'and' the complement of the mask with the source.  Bits that
-//      would be drawn with the background color (black) are left unchanged.
+// If the foreground color requires that bits in the current plane
+// be set then 'or' the mask with the source.  Otherwise, the fore-
+// ground color requires that bits in the current plane be cleared
+// so 'and' the complement of the mask with the source.  Bits that
+// would be drawn with the background color (black) are left unchanged.
 //
 
 //
-//      Call a subroutine common to the transparent and reverse transparent
-//      modes to draw the line segment.
+// Call a subroutine common to the transparent and reverse transparent
+// modes to draw the line segment.
 //
 or_x:
         move.w  (a0),d1         // get current scan of pattern
@@ -1885,12 +1855,11 @@ or_x:
         dbra    d3,or_x         // loop until all planes drawn
         rts
 
-        .page
-/////////////////////////////////////////////////////////////////////////
-//                                                                      //
-//      Line Drawing Routine for Reverse Transparent Mode               //
-//                                                                      //
-/////////////////////////////////////////////////////////////////////////
+
+
+/*
+ * nor_x - Line Drawing Routine for Reverse Transparent Mode    
+ */
                            
 //
 //      Get the one's complement of the pattern and call a subroutine
@@ -1904,13 +1873,13 @@ nor_x:
         dbra    d3,nor_x        // loop until all planes drawn
         rts
 
-        .page
-/////////////////////////////////////////////////////////////////////////
-//                                                                      //
-//      General Purpose Line Drawing Routine for Both Transparent       //
-//      and Reverse Transparent Writing Modes                           //
-//                                                                      //
-/////////////////////////////////////////////////////////////////////////
+
+
+/*
+ * or_nor - General Purpose Line Drawing Routine
+ *
+ * For Both Transparent and Reverse Transparent Writing Modes  
+ */
 
 //
 //      Save the registers that get clobbered and test whether the current
@@ -2034,12 +2003,11 @@ oxs_lend:
         or.w    d1,d5           // or mask with source
         bra     ox_merge        // jump to common code for setting and clearing
 
-        .page
-/////////////////////////////////////////////////////////////////////////
-//                                                                      //
-//      Line Drawing Routine for Exclusive Or Mode                      //
-//                                                                      //
-/////////////////////////////////////////////////////////////////////////
+
+
+/*
+ * xor_x - Line Drawing Routine for Exclusive Or Mode  
+ */
 
 //
 //      Save the registers that get clobbered.

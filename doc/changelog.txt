@@ -1026,3 +1026,7 @@ Start... early ages
 
 16. Aug. 2002
 - vdi/gsxasm1.S - fixed bug in CLC_FLIT (no regs was saved) (MAD)
+- vdi/gsxasm1.S - also needed reg-save wrapper added for:
+                  vec_len, 
+
+
