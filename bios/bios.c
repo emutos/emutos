@@ -332,10 +332,10 @@ void do_autoexec(void)
     err = trap_1( 0x4e, "\\AUTO\\*.PRG", 7);  /* Fsfirst */
     while(err == 0) {
         strcpy(path, "\\AUTO\\");
-	dta.name[12] = 0;
-	strcat(path, dta.name);
-	trap_1( 0x4b, 0, path, "", "");       /* Pexec */
-	err = trap_1( 0x4f );                 /* Fsnext */
+        dta.name[12] = 0;
+        strcat(path, dta.name);
+        trap_1( 0x4b, 0, path, "", "");       /* Pexec */
+        err = trap_1( 0x4f );                 /* Fsnext */
     }
 }
 
@@ -362,8 +362,8 @@ void biosmain()
      */
     if(is_ramtos) {
       if(os_magic == OS_MAGIC_EJECT) {
-	cprintf(_("Please eject the floppy and hit RETURN"));
-	bconin2();
+        cprintf(_("Please eject the floppy and hit RETURN"));
+        bconin2();
       }
     }
 
@@ -396,10 +396,10 @@ void biosmain()
     } else {
         /* start the default (ROM) shell */
         PD *pd;
-	pd = (PD *) trap_1( 0x4b , 5, "" , "", env);
-	pd->p_tbase = (LONG) exec_os;
+        pd = (PD *) trap_1( 0x4b , 5, "" , "", env);
+        pd->p_tbase = (LONG) exec_os;
         pd->p_tlen = pd->p_dlen = pd->p_blen = 0;
-	trap_1( 0x4b, 4, "", pd, "");
+        trap_1( 0x4b, 4, "", pd, "");
     }
 
     cprintf(_("[FAIL] HALT - should never be reached!\n"));

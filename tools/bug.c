@@ -1037,8 +1037,8 @@ void parse_po_file(char *fname, oh *o)
       e = poe_new(s_detach(msgid));
       e->msgstr = s_detach(msgstr);
       if(refstr) {
-	e->refstr = s_detach(refstr);
-	refstr = 0;
+        e->refstr = s_detach(refstr);
+        refstr = 0;
       }
       o_insert(o, e);
     }
@@ -1279,13 +1279,13 @@ void update(char *fname)
     } else {
       e = o_find(o1, e2->msgid.key);
       if(e) {
-	e2->kind = KIND_NORM;
-	e2->refstr = e->refstr;
-	e2->refs = 0;
-	o_add(o, e2);
+        e2->kind = KIND_NORM;
+        e2->refstr = e->refstr;
+        e2->refs = 0;
+        o_add(o, e2);
       } else {
-	e2->kind = KIND_OLD;
-	o_add(o, e2);
+        e2->kind = KIND_OLD;
+        o_add(o, e2);
       }
     } 
   }
@@ -1295,7 +1295,7 @@ void update(char *fname)
     if(e1->kind == KIND_NORM) {
       e = o_find(o2, e1->msgid.key);
       if(!e) {
-	o_add(o, e1);
+        o_add(o, e1);
       }
     }
   }
@@ -1392,11 +1392,11 @@ void iso_to_atari(char *s)
     if(c >= 0xa0) {
       c = i2a[c - 0xa0];
       if(c == 0) {
-	c = '?';
+        c = '?';
         if(!warned) {
-	  warn("untranslatable character '%c'", *s);
-	  warned = 1;
-	}
+          warn("untranslatable character '%c'", *s);
+          warned = 1;
+        }
       }
       *s = c;
     }
@@ -1525,8 +1525,8 @@ void make(void)
             th[a] = da_new();
           }
           da_add(th[a], eref->msgstr);
-	  /* translate into atari encoding */
-	  iso_to_atari(e->msgstr);
+          /* translate into atari encoding */
+          iso_to_atari(e->msgstr);
           da_add(th[a], e->msgstr);
         } 
       }

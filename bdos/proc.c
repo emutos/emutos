@@ -35,9 +35,9 @@ static WORD envsize( char *env );
  * global variables
  */
 
-PD	*run;           /* ptr to PD for current process */
-WORD	supstk[SUPSIZ]; /* common sup stack for all processes*/
-long	bakbuf[3];      /*  longjump buffer */
+PD      *run;           /* ptr to PD for current process */
+WORD    supstk[SUPSIZ]; /* common sup stack for all processes*/
+long    bakbuf[3];      /*  longjump buffer */
 
 
 /**
@@ -48,7 +48,7 @@ long	bakbuf[3];      /*  longjump buffer */
  * @r: PD of process to terminate
  */
 
-static void	ixterm( PD *r )
+static void     ixterm( PD *r )
 {
     register MD *m,
     **q;
@@ -77,7 +77,7 @@ static void	ixterm( PD *r )
     /* free each item in the allocated list, that is owned by 'r' */
 
     for( m = *( q = &pmd.mp_mal ) ; m ; m = *q )
-	{
+        {
             if (m->m_own == r)
             {
                 *q = m->m_link;
@@ -99,20 +99,20 @@ static void	ixterm( PD *r )
 
 static  WORD envsize( char *env )
 {
-    register char	*e ;
-    register WORD 	cnt ;
+    register char       *e ;
+    register WORD       cnt ;
 
     for( e = env, cnt = 0 ; !(*e == NULL && *(e+1) == NULL) ; ++e, ++cnt )
         ;
 
-    return( cnt + 2 ) ;		/*  count terminating double null  */
+    return( cnt + 2 ) ;         /*  count terminating double null  */
 }
 
 
 
 /** xexec - (p_exec - 0x4b) execute a new process
  *
- *	
+ *      
  * load&go(cmdlin,cmdtail), load/nogo(cmdlin,cmdtail), justgo(psp)
  * create psp - user receives a memory partition
  *
@@ -125,16 +125,16 @@ static  WORD envsize( char *env )
 #warning "(I don't know how to get rid of "
 #warning "the following three warnings)"
 
-long	xexec(WORD flg, char *s, char *t, char *v)
-{	
-    PD	*p;
+long    xexec(WORD flg, char *s, char *t, char *v)
+{       
+    PD  *p;
     char *b, *e;
-    WORD i, h;			/*  M01.01.04		*/
+    WORD i, h;                  /*  M01.01.04           */
     long rc, max;
-    MD	*m, *env;
+    MD  *m, *env;
     long *spl;
-#if	!M0101082703
-    WORD	*spw;
+#if     !M0101082703
+    WORD        *spw;
 #endif
 
     m = env = 0L ;
@@ -143,26 +143,26 @@ long	xexec(WORD flg, char *s, char *t, char *v)
      *  check validity of flg - 1,2 or >5 is not allowed
      */
 
-#if	DBGPROC
+#if     DBGPROC
     kprintf("BDOS: xexec - flag or mode = %d\n", flg);
 #endif
 
     if (flg == 6)   /* (not really) implement newer mode 6 */
         flg = 4;
     
-    if(   flg && (	flg < 3 || flg > 5  )	 )
+    if(   flg && (      flg < 3 || flg > 5  )    )
         return(EINVFN);
 
     if ((flg == 0) || (flg == 3))       /* load (execute) a file */
     {
-#if	DBGPROC
+#if     DBGPROC
         kprintf("BDOS: xexec - trying to find the command ...\n");
 #endif
         if (ixsfirst(s,0,0L)) {
-#if	DBGPROC
+#if     DBGPROC
             kprintf("BDOS: Command %s not found!!!\n", s);
 #endif
-            return(EFILNF); 	/*  file not found	*/
+            return(EFILNF);     /*  file not found      */
         }
     }
 
@@ -172,8 +172,8 @@ long	xexec(WORD flg, char *s, char *t, char *v)
     if ( (rc = setjmp(errbuf)) )
     {
         /* Free any memory allocated to this program. */
-        if (flg != 4)		/* did we allocate any memory? */
-            ixterm((PD*)t);		/*  yes - free it */
+        if (flg != 4)           /* did we allocate any memory? */
+            ixterm((PD*)t);             /*  yes - free it */
 
         longjmp(bakbuf,rc);
     }
@@ -192,7 +192,7 @@ long	xexec(WORD flg, char *s, char *t, char *v)
          */
 
         i = envsize( v ) ;
-        if( i & 1 )			/*  must be even	*/
+        if( i & 1 )                     /*  must be even        */
             ++i ;
         /*
          **  allocate environment
@@ -200,7 +200,7 @@ long	xexec(WORD flg, char *s, char *t, char *v)
 
         if (!(env = ffit((long) i,&pmd)))
         {
-#if	DBGPROC
+#if     DBGPROC
             kprintf("xexec: Not Enough Memory!\n") ;
 #endif
             return(ENSMEM) ;
@@ -219,12 +219,12 @@ long	xexec(WORD flg, char *s, char *t, char *v)
          **  allocate base page
          */
 
-        max = (long) ffit( -1L , &pmd ) ;	/*  amount left */
+        max = (long) ffit( -1L , &pmd ) ;       /*  amount left */
 
         if( max < sizeof(PD) )
-        {	/*  not enoufg even for PD  */
+        {       /*  not enoufg even for PD  */
             freeit(env,&pmd);
-#if	DBGPROC
+#if     DBGPROC
             kprintf("xexec: No Room For Base Pg\n") ;
 #endif
             return(ENSMEM);
@@ -235,12 +235,12 @@ long	xexec(WORD flg, char *s, char *t, char *v)
 
         m = ffit(max,&pmd);
 
-        p = (PD *) m->m_start;		/*  PD is first in bp	*/
+        p = (PD *) m->m_start;          /*  PD is first in bp   */
 
         env->m_own =  flg == 0 ? p : run ;
         m->m_own = env->m_own ;
 
-        max = m->m_length;		/*  length of tpa	*/
+        max = m->m_length;              /*  length of tpa       */
 
         /*
          * We know we have at least enough room for the PD (room
@@ -248,11 +248,11 @@ long	xexec(WORD flg, char *s, char *t, char *v)
          * initialize the PD (first, by zero'ing it out)
          */
 
-        bzero( (char *) p , sizeof(PD)	) ;
+        bzero( (char *) p , sizeof(PD)  ) ;
 
-        p->p_lowtpa = (long) p ;		/*  M01.01.06	*/
-        p->p_hitpa  = (long) p	+  max ;	/*  M01.01.06	*/
-        p->p_xdta = &p->p_cmdlin[0] ;	/* default p_xdta is p_cmdlin */
+        p->p_lowtpa = (long) p ;                /*  M01.01.06   */
+        p->p_hitpa  = (long) p  +  max ;        /*  M01.01.06   */
+        p->p_xdta = &p->p_cmdlin[0] ;   /* default p_xdta is p_cmdlin */
         p->p_env = (char *) env->m_start ;
 
 
@@ -293,7 +293,7 @@ long	xexec(WORD flg, char *s, char *t, char *v)
     if((flg == 0) || (flg == 3)) {
         if ( (rc = xpgmld(s, (PD *)t)) )
         {
-#if	DBGPROC
+#if     DBGPROC
             kprintf("BDOS: xexec - error returned from xpgmld = %ld (0x%lx)\n",rc , rc);
 #endif
             ixterm((PD*)t);
@@ -303,7 +303,7 @@ long	xexec(WORD flg, char *s, char *t, char *v)
 
     if ((flg == 0) || (flg == 4))
     {
-#if	DBGPROC
+#if     DBGPROC
         kprintf("BDOS: xexec - trying to load (and execute) a command ...\n");
 #endif
         p = (PD *) t;
@@ -318,7 +318,7 @@ long	xexec(WORD flg, char *s, char *t, char *v)
             *--spl = 0L;
 
         *--spl = p->p_tbase; /* text start */
-#if	!M0101082703
+#if     !M0101082703
         spw = (WORD *) spl;
         *--spw = 0; /* startup status reg */
         spl = (long *) spw;
@@ -336,7 +336,7 @@ long	xexec(WORD flg, char *s, char *t, char *v)
 
     /* sub-func 3 and 5 return here */
 
-#if	DBGPROC
+#if     DBGPROC
     kprintf("BDOS: xexec - return code = 0x%lx \n", (long) t);
 #endif
     return( (long) t );
@@ -345,7 +345,7 @@ long	xexec(WORD flg, char *s, char *t, char *v)
 
 
 /*
- * [1]	The limit on this loop should probably be changed to use sizeof(PD)
+ * [1]  The limit on this loop should probably be changed to use sizeof(PD)
  */
 
 
@@ -364,47 +364,47 @@ void    x0term(void)
 
 /*
  *  xterm - terminate a process
- *	terminate the current process and transfer control to the colling
- *	process.  All files opened by the terminating process are closed.
+ *      terminate the current process and transfer control to the colling
+ *      process.  All files opened by the terminating process are closed.
  *
- *	Function 0x4C	p_term
+ *      Function 0x4C   p_term
  */
 
-void	xterm(UWORD rc)
+void    xterm(UWORD rc)
 {
-	PD *r;
+        PD *r;
 
-	(* (WORD(*)()) trap13(5,0x102,-1L))() ;	/*  call user term handler */
+        (* (WORD(*)()) trap13(5,0x102,-1L))() ; /*  call user term handler */
 
-	run = (r = run)->p_parent;
-	ixterm( r );
-	run->p_dreg[0] = rc;
-	gouser();
+        run = (r = run)->p_parent;
+        ixterm( r );
+        run->p_dreg[0] = rc;
+        gouser();
 }
 
 
-/*	
+/*      
 **  xtermres - 
-**	Function 0x31	p_termres
+**      Function 0x31   p_termres
 */
 
-WORD	xtermres(long blkln, WORD rc)
+WORD    xtermres(long blkln, WORD rc)
 {
-	MD *m,**q;
+        MD *m,**q;
 
-	xsetblk(0,run,blkln);
+        xsetblk(0,run,blkln);
 
-	for (m = *(q = &pmd.mp_mal); m ; m = *q)
-		if (m->m_own == run)
-		{
-			*q = m->m_link; /* pouf ! like magic */
-			xmfreblk(m);
-		}
-		else
-			q = &m->m_link;
+        for (m = *(q = &pmd.mp_mal); m ; m = *q)
+                if (m->m_own == run)
+                {
+                        *q = m->m_link; /* pouf ! like magic */
+                        xmfreblk(m);
+                }
+                else
+                        q = &m->m_link;
 
-	xterm(rc);
-}	
+        xterm(rc);
+}       
 
 
 

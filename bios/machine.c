@@ -68,7 +68,7 @@ static void detect_video(void)
   /* test if we have Falcon VIDEL by testing for f030_xreg */
   has_videl = 0;
   if (check_read_byte(0xffff8282))
-  	has_videl = 1;
+        has_videl = 1;
 }
 
 /* vme */

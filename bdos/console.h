@@ -13,8 +13,8 @@
 #ifndef _CONSOLE_H
 #define _CONSOLE_H
 
-extern	int	add[3];
-extern	int	remove[3];
+extern  int     add[3];
+extern  int     remove[3];
 
 long xconstat(void);
 long xconostat(void);

@@ -1,5 +1,5 @@
 /*
- * fsio.c - read/write routines for the file system			
+ * fsio.c - read/write routines for the file system                     
  *
  * Copyright (c) 2001 Lineo, Inc.
  *
@@ -12,10 +12,10 @@
 
 
 
-#include	"portab.h"
-#include	"fs.h"
-#include	"bios.h"		/*  M01.01.01			*/
-#include	"gemerror.h"
+#include        "portab.h"
+#include        "fs.h"
+#include        "bios.h"                /*  M01.01.01                   */
+#include        "gemerror.h"
 #include "../bios/kprint.h"
 
 #define DBGFSIO 1
@@ -26,29 +26,29 @@
 
 static void addit(OFD *p, long siz, int flg);
 static long xrw(int wrtflg, 
-		OFD *p, 
-		long len, 
-		char *ubufr, 
-		void (*bufxfr)(int, char *, char *));
+                OFD *p, 
+                long len, 
+                char *ubufr, 
+                void (*bufxfr)(int, char *, char *));
 static void usrio(int rwflg, int num, int strt, char *ubuf, DMD *dm);
 
 
 /*
  * xlseek - seek to byte position n on file with handle h
  *
- * Function 0x42	f_seek
+ * Function 0x42        f_seek
  *
  * Error returns
  *   EIHNDL
  *
  *   EINVFN
- *     	ixlseek()
+ *      ixlseek()
  */
 
-long	xlseek(long n, int h, int flg)
+long    xlseek(long n, int h, int flg)
 {
     OFD *f;
-    long	ixlseek() ;
+    long        ixlseek() ;
 
 
     f = getofd(h);
@@ -73,17 +73,17 @@ long	xlseek(long n, int h, int flg)
  *   EINTRN
  *
  * NOTE: This function returns ERANGE and EINTRN errors, which are new
- *	 error numbers I just made up (that is, they were not defined
- *	 by the BIOS or by PC DOS).
+ *       error numbers I just made up (that is, they were not defined
+ *       by the BIOS or by PC DOS).
  *
  * p: file descriptor for file in use
  * n: number of bytes to seek
  */
 
-long	ixlseek(register OFD *p, long n)
+long    ixlseek(register OFD *p, long n)
 {
-    int clnum,clx,curnum,i; 	/*  M01.01.03	*/
-    int	curflg ;		/****  M00.01.01b  ****/
+    int clnum,clx,curnum,i;     /*  M01.01.03   */
+    int curflg ;                /****  M00.01.01b  ****/
     register DMD *dm;
 
     if (n > p->o_fileln)
@@ -115,7 +115,7 @@ long	ixlseek(register OFD *p, long n)
     {
         curnum = p->o_bytnum >> dm->m_clblog;
         clnum -= curnum;
-        clnum += curflg ;		/***   M00.01.01b	***/
+        clnum += curflg ;               /***   M00.01.01b       ***/
 
         /*****
          M00.01.01 - original code (fix to Jason's  attempt to fix)
@@ -129,7 +129,7 @@ long	ixlseek(register OFD *p, long n)
     else
         clx = p->o_strtcl;
 
-    for (i=1; i < clnum; i++) {  		/*** M00.01.01b ***/
+    for (i=1; i < clnum; i++) {                 /*** M00.01.01b ***/
         clx = getcl(clx,dm);
         if ( clx == -1)
             return(-1);
@@ -137,7 +137,7 @@ long	ixlseek(register OFD *p, long n)
 
     /* go one more except on cluster boundary */
 
-    if (p->o_curbyt && clnum)			/*** M00.01.01b ***/
+    if (p->o_curbyt && clnum)                   /*** M00.01.01b ***/
         clx = getcl(clx,dm);
 
 fillin:
@@ -153,16 +153,16 @@ fillin:
 /*
  * xread - read 'len' bytes  from handle 'h'
  *
- * Function 0x3F	f_read
+ * Function 0x3F        f_read
  *
  * Error returns
  *   EIHNDL
  *   bios()
  */
 
-long	xread(int h, long len, void *ubufr) 
+long    xread(int h, long len, void *ubufr) 
 {
-    OFD	*p;
+    OFD *p;
     long ret;
 
     p = getofd(h);
@@ -180,7 +180,7 @@ long	xread(int h, long len, void *ubufr)
  * ixread -
  */
 
-long	ixread(OFD *p, long len, void *ubufr)
+long    ixread(OFD *p, long len, void *ubufr)
 {
     long maxlen;
 
@@ -194,7 +194,7 @@ long	ixread(OFD *p, long len, void *ubufr)
     if (len > 0)
         return(xrw(0,p,len,ubufr,xfr2usr));
 
-    return(0L);	/* zero bytes read for zero requested */
+    return(0L); /* zero bytes read for zero requested */
 }
 
 
@@ -209,7 +209,7 @@ long	ixread(OFD *p, long len, void *ubufr)
  *   bios()
  */
 
-long	xwrite(int h, long len, void *ubufr) 
+long    xwrite(int h, long len, void *ubufr) 
 {
     register OFD *p;
     long ret;
@@ -234,7 +234,7 @@ long	xwrite(int h, long len, void *ubufr)
  *  ixwrite -
  */
 
-long	ixwrite(OFD *p, long len, void *ubufr)
+long    ixwrite(OFD *p, long len, void *ubufr)
 {
     return(xrw(1,p,len,ubufr,usr2xfr));
 }
@@ -268,18 +268,18 @@ static void addit(OFD *p, long siz, int flg)
  *  xrw - read/write 'len' bytes from/to the file indicated by the OFD at 'p'.
  *
  *  details
- *	We wish to do the i/o in whole clusters as much as possible.
- *	Therefore, we break the i/o up into 5 sections.  Data which occupies
- *	part of a logical record (e.g., sector) with data not in the request
- *	(both at the start and the end of the the request) are handled
- *	separateley and are called header (tail) bytes.  Data which are
- *	contained complete in sectors but share part of a cluster with data not
- *	in the request are called header (tail) records.  These are also
- *	handled separately.  In between handling of header and tail sections,
- *	we do i/o in terms of whole clusters.
+ *      We wish to do the i/o in whole clusters as much as possible.
+ *      Therefore, we break the i/o up into 5 sections.  Data which occupies
+ *      part of a logical record (e.g., sector) with data not in the request
+ *      (both at the start and the end of the the request) are handled
+ *      separateley and are called header (tail) bytes.  Data which are
+ *      contained complete in sectors but share part of a cluster with data not
+ *      in the request are called header (tail) records.  These are also
+ *      handled separately.  In between handling of header and tail sections,
+ *      we do i/o in terms of whole clusters.
  *
  *  returns
- *	nbr of bytes read/written from/to the file.
+ *      nbr of bytes read/written from/to the file.
  */
 
 static long xrw(int wrtflg, OFD *p, long len, char *ubufr,
@@ -287,7 +287,7 @@ static long xrw(int wrtflg, OFD *p, long len, char *ubufr,
 {
     register DMD *dm;
     char *bufp;
-    int bytn,recn,lenxfr,lentail,num;	/*  M01.01.03 */
+    int bytn,recn,lenxfr,lentail,num;   /*  M01.01.03 */
     int hdrrec,lsiz,tailrec;
     int last, nrecs, lflg; /* multi-sector variables */
     long nbyts;
@@ -297,13 +297,13 @@ static long xrw(int wrtflg, OFD *p, long len, char *ubufr,
      *  determine where we currently are in the filef
      */
 
-    dm = p->o_dmd;			/*  get drive media descriptor	*/
+    dm = p->o_dmd;                      /*  get drive media descriptor  */
 
-    bytpos = p->o_bytnum;		/*  starting file position	*/
+    bytpos = p->o_bytnum;               /*  starting file position      */
 
     /*
      *  get logical record number to start i/o with
-     *	(bytn will be byte offset into sector # recn)
+     *  (bytn will be byte offset into sector # recn)
      */
 
     recn = divmod(&bytn,(long) p->o_curbyt,dm->m_rblog);
@@ -319,14 +319,14 @@ static long xrw(int wrtflg, OFD *p, long len, char *ubufr,
         /* #bytes left in current record ) */
 
         lenxfr = min(len,dm->m_recsiz-bytn);
-        bufp = getrec(recn,dm,wrtflg);	/*  get desired record	*/
-        addit(p,(long) lenxfr,1);	/*  update ofd		*/
-        len -= lenxfr;			/*  nbr left to do	*/
-        recn++; 			/*    starting w/ next	*/
+        bufp = getrec(recn,dm,wrtflg);  /*  get desired record  */
+        addit(p,(long) lenxfr,1);       /*  update ofd          */
+        len -= lenxfr;                  /*  nbr left to do      */
+        recn++;                         /*    starting w/ next  */
 
         if (!ubufr)
         {
-            rc = (long) (bufp+bytn);	/* ???????????	*/
+            rc = (long) (bufp+bytn);    /* ???????????  */
             goto exit;
         }
 
@@ -335,13 +335,13 @@ static long xrw(int wrtflg, OFD *p, long len, char *ubufr,
     }
 
     /*
-     *  "header" complete.	See if there is a "tail".
+     *  "header" complete.      See if there is a "tail".
      *  After that, see if there is anything left in the middle.
      */
 
     lentail = len & dm->m_rbm;
 
-    lenmid = len - lentail;		/*  Is there a Middle ? */
+    lenmid = len - lentail;             /*  Is there a Middle ? */
     if ( lenmid )
     {
         hdrrec = recn & dm->m_clrm;
@@ -349,14 +349,14 @@ static long xrw(int wrtflg, OFD *p, long len, char *ubufr,
         if (hdrrec)
         {
             /*  if hdrrec != 0, then we do not start on a clus bndy;
-             *	so determine the min of (the nbr sects
-             *	remaining in the current cluster) and (the nbr
-             *	of sects remaining in the file).  This will be
-             *	the number of header records to read/write.
+             *  so determine the min of (the nbr sects
+             *  remaining in the current cluster) and (the nbr
+             *  of sects remaining in the file).  This will be
+             *  the number of header records to read/write.
              */
 
-            hdrrec = ( dm->m_clsiz - hdrrec ) ;	/* M00.14.01 */
-            if ( hdrrec > lenmid >> dm->m_rblog )	/* M00.14.01 */
+            hdrrec = ( dm->m_clsiz - hdrrec ) ; /* M00.14.01 */
+            if ( hdrrec > lenmid >> dm->m_rblog )       /* M00.14.01 */
                 hdrrec = lenmid >> dm->m_rblog; /* M00.14.01 */
 
             usrio(wrtflg,hdrrec,recn,ubufr,dm);
@@ -367,18 +367,18 @@ static long xrw(int wrtflg, OFD *p, long len, char *ubufr,
 
         /* do whole clusters */
 
-        lenrec = lenmid >> dm->m_rblog; 	   /* nbr of records  */
+        lenrec = lenmid >> dm->m_rblog;            /* nbr of records  */
         num = divmod(&tailrec,lenrec,dm->m_clrlog);/* nbr of clusters */
 
         last = nrecs = nbyts = lflg = 0;
 
-        while (num--)		/*  for each whole cluster...	*/
+        while (num--)           /*  for each whole cluster...   */
         {
             rc = nextcl(p,wrtflg);
 
             /*
              *  if eof or non-contiguous cluster, or last cluster
-             *	of request, then finish pending I/O
+             *  of request, then finish pending I/O
              */
 
             if ((!rc) && (p->o_currec == last + nrecs))
@@ -459,8 +459,8 @@ exit:
  * usrio -
  *
  * NOTE: rwabs() is a macro that includes a longjmp() which is executed
- *	 if the BIOS returns an error, therefore usrio() does not need
- *	 to return any error codes.
+ *       if the BIOS returns an error, therefore usrio() does not need
+ *       to return any error codes.
  */
 
 static void usrio(int rwflg, int num, int strt, char *ubuf, DMD *dm)

@@ -38,9 +38,9 @@ struct font_head f8x16 ={
     0x5555,             /* UWORD lighten */
     0x5555,             /* UWORD skew */
     F_STDFORM | F_MONOSPACE | F_DEFAULT,  /* UWORD flags */
-    0,			/* UBYTE *hor_table */
-    off_f8x16,		/* UWORD *off_table */
-    dat_f8x16,		/* UWORD *dat_table */
+    0,                  /* UBYTE *hor_table */
+    off_f8x16,          /* UWORD *off_table */
+    dat_f8x16,          /* UWORD *dat_table */
     256,                /* UWORD form_width */
     16,                 /* UWORD form_height */
     0,                  /* struct font * next_font */

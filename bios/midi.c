@@ -88,7 +88,7 @@ void midiws(WORD cnt, LONG ptr)
 
 /*==== midi_init - initialize the MIDI acia ==================*/
 /*
- *	FUNCTION:  This routine is needed for the keyboard to
+ *      FUNCTION:  This routine is needed for the keyboard to
  *      work, since the IRQ is shared between both ACIAs.
  */
  

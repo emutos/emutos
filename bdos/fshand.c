@@ -12,10 +12,10 @@
 
 
 
-#include	"portab.h"
-#include	"fs.h"
-#include	"bios.h"		/*  M01.01.01			*/
-#include	"gemerror.h"
+#include        "portab.h"
+#include        "fs.h"
+#include        "bios.h"                /*  M01.01.01                   */
+#include        "gemerror.h"
 
 
 
@@ -135,14 +135,14 @@ long dup(long h)
     register int i;
 
     if ((h<0) || (h >= NUMSTD))
-        return(EIHNDL); 	/* only dup standard */
+        return(EIHNDL);         /* only dup standard */
 
-    for (i = 0; i < OPNFILES; i++)	/* find the first free handle */
+    for (i = 0; i < OPNFILES; i++)      /* find the first free handle */
         if (!sft[i].f_own)
             break;
 
     if (i == OPNFILES)
-        return(ENHNDL); 	/* no free handles */
+        return(ENHNDL);         /* no free handles */
 
     sft[i].f_own = run;
 

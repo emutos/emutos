@@ -1,5 +1,5 @@
 /*
- * umem.c - user memory management interface routines			
+ * umem.c - user memory management interface routines                   
  *
  * Copyright (c) 2001 Lineo, Inc.
  *
@@ -60,10 +60,10 @@ static void dump_mem_map(void)
 /*
  *  xmalloc - allocate memory
  *
- *	Function 0x48	m_alloc
+ *      Function 0x48   m_alloc
  */
 
-long	xmalloc(long amount)
+long    xmalloc(long amount)
 {
     MD *m;
     long ret_value;
@@ -121,10 +121,10 @@ ret:
 
 
 /*
- *  xmfree - Function 0x49	m_free
+ *  xmfree - Function 0x49      m_free
  */
 
-long	xmfree(long addr)
+long    xmfree(long addr)
 {
     MD *p,**q;
 
@@ -145,7 +145,7 @@ long	xmfree(long addr)
 }
 
 /*
- * xsetblk - Function 0x4A	m_shrink
+ * xsetblk - Function 0x4A      m_shrink
  *
  * Arguments:
  *  n   - dummy, not used
@@ -153,7 +153,7 @@ long	xmfree(long addr)
  *  len - length of block to free
  */
 
-long	xsetblk(int n, void *blk, long len)
+long    xsetblk(int n, void *blk, long len)
 {
     MD *m,*p;
 
@@ -195,7 +195,7 @@ long	xsetblk(int n, void *blk, long len)
 
     m = MGET(MD);
 
-#if	DBGUMEM
+#if     DBGUMEM
     /* what if 0? */
     if( m == 0 )
         panic("umem.c/xsetblk: Null Return From MGET\n") ;

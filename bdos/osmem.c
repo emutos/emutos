@@ -1,5 +1,5 @@
 /*
- * osmem.c - allocate/release os memory				
+ * osmem.c - allocate/release os memory                         
  *
  * Copyright (c) 2001 Lineo, Inc.
  *
@@ -14,11 +14,11 @@
 
 
 #ifndef DBGFREMEM
-#define DBGFREMEM	0
+#define DBGFREMEM       0
 #endif
 
 #ifndef DBGOSMEM
-#define DBGOSMEM	0
+#define DBGOSMEM        0
 #endif
 
 
@@ -26,15 +26,15 @@
 /*
  *  mods
  *
- *  mod no.	 date	   who	comments
- *  ------------ --------  ---	--------
- *  M01.01a.0708 08 Jul 86 ktb	xmgetblk wasn't checking root index
+ *  mod no.      date      who  comments
+ *  ------------ --------  ---  --------
+ *  M01.01a.0708 08 Jul 86 ktb  xmgetblk wasn't checking root index
  *
  */
 
 #include "portab.h"
 #include "fs.h"
-#include "bios.h"				/*  M01.01.02	*/
+#include "bios.h"                               /*  M01.01.02   */
 #include "mem.h"
 #include "gemerror.h"
 
@@ -42,29 +42,29 @@
  *  osmptr -
  */
 
-// GLOBAL	
-int	osmptr;
+// GLOBAL       
+int     osmptr;
 
 
 /*
  *  root - root array for 'quick' pool.
- *	root is an array of ptrs to memblocks of size 'i' paragraphs,
- *	where 'i' is the index into the araay (a paragraph is 16 bites).
- *	Each list is singly linked.  Items on the list are
- *	deleted/added in LIFO order from the root.
+ *      root is an array of ptrs to memblocks of size 'i' paragraphs,
+ *      where 'i' is the index into the araay (a paragraph is 16 bites).
+ *      Each list is singly linked.  Items on the list are
+ *      deleted/added in LIFO order from the root.
  */
 
-#define MAXQUICK	20
-// GLOBAL	
-int	*root[MAXQUICK];
+#define MAXQUICK        20
+// GLOBAL       
+int     *root[MAXQUICK];
 
 /*
  *  local debug counters
  */
 
-long	dbgfreblk = 0 ;
-long	dbggtosm = 0 ;
-long	dbggtblk = 0 ;
+long    dbgfreblk = 0 ;
+long    dbggtosm = 0 ;
+long    dbggtblk = 0 ;
 
 
 /*
@@ -84,17 +84,17 @@ static int *getosm(int n)
     if( n > osmlen ) 
     {
       /*  not enough room  */
-#if	OSMPANIC
-        mgtpanic( root , 20 ) ; /*  will not return		*/
+#if     OSMPANIC
+        mgtpanic( root , 20 ) ; /*  will not return             */
 #endif
-	dbggtosm++ ;
-	return(0);
+        dbggtosm++ ;
+        return(0);
     }
 
-    m = &osmem[osmptr];		/*  start at base		*/
-    osmptr += n;			/*  new base			*/
-    osmlen -= n;			/*  new length of free block	*/
-    return(m);			/*  allocated memory		*/
+    m = &osmem[osmptr];         /*  start at base               */
+    osmptr += n;                        /*  new base                    */
+    osmlen -= n;                        /*  new length of free block    */
+    return(m);                  /*  allocated memory            */
 }
 
 
@@ -113,11 +113,11 @@ static int *getosm(int n)
  *  i - list of i paragraphs sized blocks
  */
 
-void	*xmgetblk(int i)
+void    *xmgetblk(int i)
 {
     int j,w,*m,*q,**r;
 
-    w = i << 3;			/*  number of words		*/
+    w = i << 3;                 /*  number of words             */
 
     /*
      *  allocate block
@@ -133,13 +133,13 @@ void	*xmgetblk(int i)
     if(  *(r = &root[i])  )
     {
         /*  there is an item on the list  */
-        m = *r; 		/*  get 1st item on list	*/
-        *r = *((int **) m);	/*  root pts to next item	*/
+        m = *r;                 /*  get 1st item on list        */
+        *r = *((int **) m);     /*  root pts to next item       */
     }
     else
-    {	/*  nothing on list, try pool  */
-        if ( (m = getosm(w+1)) )	/*  add size of control word	*/
-            *m++ = i;	/*  put size in control word	*/
+    {   /*  nothing on list, try pool  */
+        if ( (m = getosm(w+1)) )        /*  add size of control word    */
+            *m++ = i;   /*  put size in control word    */
     }
 
     /*
@@ -157,15 +157,15 @@ void	*xmgetblk(int i)
  *  xmfreblk - free up memory allocated through mgetblk
  */
 
-void	xmfreblk(void *m)
+void    xmfreblk(void *m)
 {
-    int	i;
+    int i;
 
     i = *(((int *)m) - 1);
     if( i < 0 || i >= MAXQUICK )
     {
         /*  bad index  */
-#if	DBGOSMEM
+#if     DBGOSMEM
         kprintf("xmfreblk: bad index (0x%x)\n") ;
         kprintf("stack at %08lx\n",&m) ;
         while(1) ;
@@ -177,7 +177,7 @@ void	xmfreblk(void *m)
         /*  ok to free up  */
         *((int **) m) = root[i];
         root[i] = m;
-#if	DBGFREMEM
+#if     DBGFREMEM
         if(  *((int **)m) == m )
         {
             kprintf("xmfreblk: Circular link in root[%x]\n",i) ;

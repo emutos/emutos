@@ -2,10 +2,10 @@
 #ifndef GEMAPLIB_H
 #define GEMAPLIB_H
 
-EXTERN WORD	gl_play;
-EXTERN WORD	gl_recd;
-EXTERN WORD	gl_rlen;
-EXTERN LONG	gl_rbuf;
+EXTERN WORD     gl_play;
+EXTERN WORD     gl_recd;
+EXTERN WORD     gl_rlen;
+EXTERN LONG     gl_rbuf;
 
 WORD ap_init(void);
 VOID ap_rdwr(WORD code, REG PD *p, WORD length, LONG pbuff);

@@ -13,7 +13,7 @@
 #ifndef _IOREC_H
 #define _IOREC_H
 
-#include	"portab.h"
+#include        "portab.h"
 
 /*==== Structs ============================================================*/
 

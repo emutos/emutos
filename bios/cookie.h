@@ -14,8 +14,8 @@
 #define _COOKIE_H
  
 struct cookie {
-	long tag;
-	long value;
+        long tag;
+        long value;
 };
  
 #define CJAR (* (struct cookie **) 0x5a0)
@@ -25,18 +25,18 @@ struct cookie {
  * cookies will also exist in variables, defined in bios/machine.c
  */
 
-#define COOKIE_CPU	0x5f435055L
-#define COOKIE_VDO	0x5f56444fL
-#define COOKIE_FPU	0x5f465055L
-#define COOKIE_FDC	0x5f464443L
-#define COOKIE_SND	0x5f534e44L
-#define COOKIE_MCH	0x5f4d4348L
-#define COOKIE_SWI	0x5f535749L
-#define COOKIE_FRB	0x5f465242L
-#define COOKIE_FLK	0x5f464c4bL
-#define COOKIE_NET	0x5f4e4554L
-#define COOKIE_IDT	0x5f494454L
-#define COOKIE_AKP	0x5f414b50L
+#define COOKIE_CPU      0x5f435055L
+#define COOKIE_VDO      0x5f56444fL
+#define COOKIE_FPU      0x5f465055L
+#define COOKIE_FDC      0x5f464443L
+#define COOKIE_SND      0x5f534e44L
+#define COOKIE_MCH      0x5f4d4348L
+#define COOKIE_SWI      0x5f535749L
+#define COOKIE_FRB      0x5f465242L
+#define COOKIE_FLK      0x5f464c4bL
+#define COOKIE_NET      0x5f4e4554L
+#define COOKIE_IDT      0x5f494454L
+#define COOKIE_AKP      0x5f414b50L
 
 /* 
  * values of MCH cookie

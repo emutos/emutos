@@ -14,7 +14,7 @@
 #ifndef _BIOSDEVS_H
 #define _BIOSDEVS_H
 
-#include	"portab.h"
+#include        "portab.h"
  
 LONG bconstat0(void);
 LONG bconstat1(void);

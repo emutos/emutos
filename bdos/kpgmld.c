@@ -31,8 +31,8 @@
  * forward prototypes
  */
 
-static ERROR	pgmld01(FH h, PD *pdptr);
-static LONG	pgfix01(LONG nrelbytes, PGMINFO *pi);
+static ERROR    pgmld01(FH h, PD *pdptr);
+static LONG     pgfix01(LONG nrelbytes, PGMINFO *pi);
 
 /*
  *  xpgmld - load program
@@ -44,20 +44,20 @@ static LONG	pgfix01(LONG nrelbytes, PGMINFO *pi);
  * p - ptr to PD
  */
 
-ERROR	xpgmld(char *s , PD *p )
+ERROR   xpgmld(char *s , PD *p )
 {
-    ERROR	r ;
-    FH		h ;
-    WORD	magic ;
-    ERROR	pgmld01() ;
+    ERROR       r ;
+    FH          h ;
+    WORD        magic ;
+    ERROR       pgmld01() ;
 
-    r = xopen( s , 0 );		/* open file for read */
-    if( r < 0L	)
+    r = xopen( s , 0 );         /* open file for read */
+    if( r < 0L  )
         return( r ) ;
 
-    h = (FH) r ;		/* get file handle */
+    h = (FH) r ;                /* get file handle */
 
-    r = xread( h, 2L, &magic);	/* read magic number */
+    r = xread( h, 2L, &magic);  /* read magic number */
     if( r < 0L )
         return( r ) ;
 
@@ -113,18 +113,18 @@ static char *lastcp ;
  * - zero out the bss
  */
 
-static ERROR	pgmld01( FH h , PD *pdptr )
+static ERROR    pgmld01( FH h , PD *pdptr )
 {
-    register PGMHDR01	*hd ;
-    register PGMINFO	*pi ;
-    register PD		*p ;
-    PGMHDR01		hdr ;
-    PGMINFO 		pinfo ;
-    char		*cp ;
-    LONG		relst ;
-    LONG		flen ;
-    ERROR		r ;
-// MAD   ERROR		pgfix01() ;
+    register PGMHDR01   *hd ;
+    register PGMINFO    *pi ;
+    register PD         *p ;
+    PGMHDR01            hdr ;
+    PGMINFO             pinfo ;
+    char                *cp ;
+    LONG                relst ;
+    LONG                flen ;
+    ERROR               r ;
+// MAD   ERROR          pgfix01() ;
 
 
     hd = & hdr ;
@@ -144,7 +144,7 @@ static ERROR	pgmld01( FH h , PD *pdptr )
     pi->pi_blen = hd->h01_blen ;
     pi->pi_slen = hd->h01_slen ;
     pi->pi_tpalen = p->p_hitpa - p->p_lowtpa - sizeof(PD) ;
-    pi->pi_tbase = (char *) (p+1) ; 	/*  1st byte after PD	*/
+    pi->pi_tbase = (char *) (p+1) ;     /*  1st byte after PD   */
     pi->pi_bbase = pi->pi_tbase + flen ;
     pi->pi_dbase = pi->pi_tbase + pi->pi_tlen ;
 
@@ -172,7 +172,7 @@ static ERROR	pgmld01( FH h , PD *pdptr )
         return( r ) ;
 
     if( hd->h01_abs )
-        return( SUCCESS ) ;	/*  do we need to clr bss here? */
+        return( SUCCESS ) ;     /*  do we need to clr bss here? */
 
     /*
      * if not an absolute format, position past the symbols and start the
@@ -197,16 +197,16 @@ static ERROR	pgmld01( FH h , PD *pdptr )
     {
         cp = pi->pi_tbase + relst ;
 
-        /*  make sure we didn't wrap memory or overrun the bss	*/
+        /*  make sure we didn't wrap memory or overrun the bss  */
 
-        if(  cp < pi->pi_tbase	||  cp >= pi->pi_bbase	)
+        if(  cp < pi->pi_tbase  ||  cp >= pi->pi_bbase  )
             return( EPLFMT ) ;
 
-        *((long *)(cp)) += (long)pi->pi_tbase ; /*  1st fixup	  */
+        *((long *)(cp)) += (long)pi->pi_tbase ; /*  1st fixup     */
 
-        lastcp = cp ;				/*  for pgfix01() */
+        lastcp = cp ;                           /*  for pgfix01() */
 
-        flen = (long)p->p_hitpa - (long)pi->pi_bbase;	/* M01.01.0925.01 */
+        flen = (long)p->p_hitpa - (long)pi->pi_bbase;   /* M01.01.0925.01 */
 
         for(;;)
         {
@@ -221,7 +221,7 @@ static ERROR	pgmld01( FH h , PD *pdptr )
                 break ;
         }
 
-        if ( r < 0 )			/* M01.01.1023.01 */
+        if ( r < 0 )                    /* M01.01.1023.01 */
             return( r );
     }
 
@@ -245,25 +245,25 @@ static ERROR	pgmld01( FH h , PD *pdptr )
  * pgfix01 - do the next set of fixups
  *
  *  returns:
- *	addr of last modified longword in code segment (cp)
- *	0 if error or done
- *	stat01:
- *		>0: all offsets in bss used up, read in more
- *		=0: offset of 0 encountered, no more fixups
- *		<0: EPLFMT (load file format error)
+ *      addr of last modified longword in code segment (cp)
+ *      0 if error or done
+ *      stat01:
+ *              >0: all offsets in bss used up, read in more
+ *              =0: offset of 0 encountered, no more fixups
+ *              <0: EPLFMT (load file format error)
  *
  * Arguments:
  *  nrelbytes - number of avail rel values
  *  pi        - program info pointer
  */
 
-static LONG	pgfix01( LONG nrelbytes , PGMINFO *pi )
+static LONG     pgfix01( LONG nrelbytes , PGMINFO *pi )
 {
-    register UBYTE	*cp ;		/*  code pointer		*/
-    register UBYTE	*rp ;		/*  relocation info pointer	*/
-    register LONG	n ;		/*  nbr of relocation bytes	*/
-    register UBYTE	*bbase ;	/*  base addr of bss segment	*/
-    register LONG	tbase ; 	/*  base addr of text segment	*/
+    register UBYTE      *cp ;           /*  code pointer                */
+    register UBYTE      *rp ;           /*  relocation info pointer     */
+    register LONG       n ;             /*  nbr of relocation bytes     */
+    register UBYTE      *bbase ;        /*  base addr of bss segment    */
+    register LONG       tbase ;         /*  base addr of text segment   */
 
     cp = lastcp ;
     rp = pi->pi_bbase ;
@@ -271,13 +271,13 @@ static LONG	pgfix01( LONG nrelbytes , PGMINFO *pi )
     tbase = (LONG) pi->pi_tbase ;
     bbase = pi->pi_bbase ;
 
-    while( n--  &&	*rp != 0 )
+    while( n--  &&      *rp != 0 )
     {
         if( *rp == 1 )
             cp += 0xfe ;
         else
         {
-            cp += *rp ;	/* add the byte at rp to cp, don't sign ext */
+            cp += *rp ; /* add the byte at rp to cp, don't sign ext */
 
             if(  cp >= bbase  )
             {
@@ -289,6 +289,6 @@ static LONG	pgfix01( LONG nrelbytes , PGMINFO *pi )
         ++rp ;
     }
 
-    lastcp = cp ;			/*  save code pointer		*/
+    lastcp = cp ;                       /*  save code pointer           */
     return(  ++n == 0  ? 1 : SUCCESS  ) ;
 }

@@ -41,43 +41,43 @@ int has_megartc;
 
 #define CLK_BASE (0xfffffc20L)
 
-#define	CLK	struct clkreg
-CLK	/*  needs name for casting	*/
+#define CLK     struct clkreg
+CLK     /*  needs name for casting      */
 {
-	BYTE fill0,  sec_l;     /* seconds elapsed in current minute */
-	BYTE fill2,  sec_h;
-	BYTE fill4,  min_l;	/* minutes elapsed in current hour   */
-	BYTE fill6,  min_h;
-	BYTE fill8,  hour_l;	/* hours elapsed in current day	     */
-	BYTE filla,  hour_h;
-	BYTE fillc,  daywk;	/* day of week (1-7); sunday=1       */
-	BYTE fille,  day_l;	/* day of month (1-31) */
-	BYTE fill10, day_h;
-	BYTE fill12, mon_l;	/* month of year (1-12) */
-	BYTE fill14, mon_h;
-	BYTE fill16, year_l;	/* year of century (0-99) */
-	BYTE fill18, year_h;
-	BYTE fill1a, rega;	/* register A */
-	BYTE fill1c, regb;	/* register B */
-	BYTE fill1e, regc;	/* register C */
+        BYTE fill0,  sec_l;     /* seconds elapsed in current minute */
+        BYTE fill2,  sec_h;
+        BYTE fill4,  min_l;     /* minutes elapsed in current hour   */
+        BYTE fill6,  min_h;
+        BYTE fill8,  hour_l;    /* hours elapsed in current day      */
+        BYTE filla,  hour_h;
+        BYTE fillc,  daywk;     /* day of week (1-7); sunday=1       */
+        BYTE fille,  day_l;     /* day of month (1-31) */
+        BYTE fill10, day_h;
+        BYTE fill12, mon_l;     /* month of year (1-12) */
+        BYTE fill14, mon_h;
+        BYTE fill16, year_l;    /* year of century (0-99) */
+        BYTE fill18, year_h;
+        BYTE fill1a, rega;      /* register A */
+        BYTE fill1c, regb;      /* register B */
+        BYTE fill1e, regc;      /* register C */
 };
 
 #define clk (*(volatile CLK*)CLK_BASE)
 
 struct myclkreg {
-	BYTE sec_l;     /* seconds elapsed in current minute */
-	BYTE sec_h;
-	BYTE min_l;	/* minutes elapsed in current hour   */
-	BYTE min_h;
-	BYTE hour_l;	/* hours elapsed in current day	     */
-	BYTE hour_h;
-	BYTE daywk;	/* day of week (1-7); sunday=1       */
-	BYTE day_l;	/* day of month (1-31) */
-	BYTE day_h;
-	BYTE mon_l;	/* month of year (1-12) */
-	BYTE mon_h;
-	BYTE year_l;	/* year of century (0-99) */
-	BYTE year_h;
+        BYTE sec_l;     /* seconds elapsed in current minute */
+        BYTE sec_h;
+        BYTE min_l;     /* minutes elapsed in current hour   */
+        BYTE min_h;
+        BYTE hour_l;    /* hours elapsed in current day      */
+        BYTE hour_h;
+        BYTE daywk;     /* day of week (1-7); sunday=1       */
+        BYTE day_l;     /* day of month (1-31) */
+        BYTE day_h;
+        BYTE mon_l;     /* month of year (1-12) */
+        BYTE mon_h;
+        BYTE year_l;    /* year of century (0-99) */
+        BYTE year_h;
 };
 
 /* buffers to hols the megartc regs */
@@ -276,7 +276,7 @@ static void msetdt(ULONG dt)
  * engineers could do something like that.
  * With Falcon the situation is clear - the year offset is always 1968.
  */
-#define TOS_VERSION 0x404	/* define the version that ran on this machine */
+#define TOS_VERSION 0x404       /* define the version that ran on this machine */
 static int nvram_rtc_year_offset = ((TOS_VERSION < 0x306) ? 1970 : 1968) - 1980;
 
 static void ndosettime(UWORD time)
@@ -440,7 +440,7 @@ static UWORD idogettime(void)
   time = ( bcd2int(iclkbuf.sec) >> 1 )
     | ( bcd2int(iclkbuf.min) << 5 ) | ( bcd2int(iclkbuf.hour) << 11 ) ;
 #else
-  time = 0;	/* default time if no IKBD clock */
+  time = 0;     /* default time if no IKBD clock */
 #endif /* !NO_IKBD_CLOCK */
   return time;
 }
@@ -513,30 +513,30 @@ static void isetdt(ULONG dt)
 **  ti_year is the year in the current century.
 **
 **  the time indicated in this structure is the system base time.  If the
-**	current implementation is a multi-user type system, or one in a
-**	widely distributed network, then the base time should be something 
-**	based on GMT, with the system converting to local time as needed.  
-**	If, however, the implementation is a simple non-networking machine,
-**	the base time may be local time.
+**      current implementation is a multi-user type system, or one in a
+**      widely distributed network, then the base time should be something 
+**      based on GMT, with the system converting to local time as needed.  
+**      If, however, the implementation is a simple non-networking machine,
+**      the base time may be local time.
 **
 **  the driver does not know anything about normal calendar arithmetic or
-**	daylight savings time, or what century it is (that is up to the 
-**	system, or anything other than keeping an increment in ms, seconds, 
-**	minutes, etc from the base time with which it was
-**	initialized.
+**      daylight savings time, or what century it is (that is up to the 
+**      system, or anything other than keeping an increment in ms, seconds, 
+**      minutes, etc from the base time with which it was
+**      initialized.
 */
 
-#define	TIME	struct _TimStruct
+#define TIME    struct _TimStruct
 
 TIME
 {
-	BYTE 	ti_sec;	        /*  seconds      (0-59)			*/
-	BYTE 	ti_min;	        /*  minutes      (0-59)			*/
-	BYTE 	ti_hour;	/*  hours        (0-23)			*/
-	BYTE    ti_daymo;	/*  day of month (1-31)			*/
-	BYTE 	ti_daywk;	/*  day of week  (1-7)		Sun = 1	*/
-	BYTE 	ti_mon;	        /*  month of year(1-12)			*/
-	BYTE 	ti_year; 	/*  yr of century(0-99)			*/
+        BYTE    ti_sec;         /*  seconds      (0-59)                 */
+        BYTE    ti_min;         /*  minutes      (0-59)                 */
+        BYTE    ti_hour;        /*  hours        (0-23)                 */
+        BYTE    ti_daymo;       /*  day of month (1-31)                 */
+        BYTE    ti_daywk;       /*  day of week  (1-7)          Sun = 1 */
+        BYTE    ti_mon;         /*  month of year(1-12)                 */
+        BYTE    ti_year;        /*  yr of century(0-99)                 */
 };
 
 
@@ -546,13 +546,13 @@ TIME
 
 /*==== clk_int - keyboard interrupt service routine =========================*/
 /*
- *	clock Interrupt Service Routine for
- *	this routine is invoked upon receipt of an interrupt
- *	from the clock by the system.  it retrieves the
- *	convenient time.
+ *      clock Interrupt Service Routine for
+ *      this routine is invoked upon receipt of an interrupt
+ *      from the clock by the system.  it retrieves the
+ *      convenient time.
  */
  
-void	clkint(void)
+void    clkint(void)
 {
     return;
 }
@@ -560,7 +560,7 @@ void	clkint(void)
 
 
 /*==== clk_init - initialize the clock ====================================*/
-ERROR	clk_init(void)
+ERROR   clk_init(void)
 {
     /* no initialization needed - throughpassed to unix clock */
     return(SUCCESS);
@@ -570,7 +570,7 @@ ERROR	clk_init(void)
 
 /*==== clklox - clock as serial device ??? ================================*/
 
-void	clklox(LONG flags, LONG ticks)
+void    clklox(LONG flags, LONG ticks)
 {
     return;
 }
@@ -580,11 +580,11 @@ void	clklox(LONG flags, LONG ticks)
 /*==== clk_gettime - get current time from emulator (Mega ST clock) =======*/
 /*
 **  returns:
-**	TRUE if valid time returned
-**	FALSE if fail.
+**      TRUE if valid time returned
+**      FALSE if fail.
 */
 
-BOOLEAN	clk_gettime( register TIME *t)
+BOOLEAN clk_gettime( register TIME *t)
 {
 
     t->ti_sec = (clk.sec_h<<4)|clk.sec_l ;
@@ -599,10 +599,10 @@ BOOLEAN	clk_gettime( register TIME *t)
 }
 
 /*==== clk_settime - set the current clock ================================*/
-BOOLEAN	clk_settime( register TIME t )
+BOOLEAN clk_settime( register TIME t )
 {
     return(TRUE);       /* Emulator allows no write to clock registers */
-}	
+}       
 
 
 #endif /* old stuff */

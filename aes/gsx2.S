@@ -1,4 +1,4 @@
-/*	GSX2.S	*/
+/*      GSX2.S  */
 
 /*
        Copyright 1999, Caldera Thin Clients, Inc.                      
@@ -8,11 +8,11 @@
                   Historical Copyright                                 
 */
 /*
-*	-------------------------------------------------------------
-*	GEM Application Environment Services		  Version 2.3
-*	Serial No.  XXXX-0000-654321		  All Rights Reserved
-*	Copyright (C) 1986			Digital Research Inc.
-*	-------------------------------------------------------------
+*       -------------------------------------------------------------
+*       GEM Application Environment Services              Version 2.3
+*       Serial No.  XXXX-0000-654321              All Rights Reserved
+*       Copyright (C) 1986                      Digital Research Inc.
+*       -------------------------------------------------------------
 */
 
 
@@ -41,10 +41,10 @@ LD628:
 ;
 ; MUL_DIV (m1,m2,d1)
 ;
-;	 ( ( ( m1 * 2 * m2 ) / d1 ) + 1 ) / 2	
-;	m1 = signed 16 bit integer
-;	m2 = unsigned 15 bit integer
-;	d1 = signed 16 bit integer
+;        ( ( ( m1 * 2 * m2 ) / d1 ) + 1 ) / 2   
+;       m1 = signed 16 bit integer
+;       m2 = unsigned 15 bit integer
+;       d1 = signed 16 bit integer
 ;
 ***************************************************************************
 */
@@ -92,12 +92,12 @@ LD6A8:
             rts
 
 _i_ptr:
-	move.l	4(sp),_contrl+14
-	rts
+        move.l  4(sp),_contrl+14
+        rts
 
 _i_ptr2:
-	move.l	4(sp),_contrl+18
-	rts
+        move.l  4(sp),_contrl+18
+        rts
 
 _i_lptr1:
 LD6D8:

@@ -31,8 +31,8 @@
 
 #define DBG_MOUSE 0
 
-#define	MIN_THRESHOLD 1
-#define	MAX_THRESHOLD 20	/* more seems not reasonable... */
+#define MIN_THRESHOLD 1
+#define MAX_THRESHOLD 20        /* more seems not reasonable... */
 
 /* Begin of mouse storage area */
 extern struct mouse_data mdata;   /* from lineavars.S */
@@ -345,10 +345,10 @@ void mouse_init(void)
 #endif
 
     /* These are the vex_* vectors from VDI, called from mouse driver */
-    user_but= &just_rts;	        // user button vector
-    user_cur= &just_rts;	        // user cursor vector
-    user_mot= &just_rts;	        // user motion vector
-    tim_addr= &just_rts;	        // user timer vector
+    user_but= &just_rts;                // user button vector
+    user_cur= &just_rts;                // user cursor vector
+    user_mot= &just_rts;                // user motion vector
+    tim_addr= &just_rts;                // user timer vector
 
     /* reset mouse state */
     mse->dxpos   = 0;

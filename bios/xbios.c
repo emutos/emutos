@@ -30,7 +30,7 @@
 #include "mouse.h"
 #include "asm.h"
  
-#define	DBG_XBIOS        1
+#define DBG_XBIOS        1
 
 
 
@@ -152,7 +152,7 @@ void xbios_5(LONG logLoc, LONG physLoc, WORD rez)
 {
 #if DBG_XBIOS
     kprintf("XBIOS: SetScreen(log = 0x%08lx, phys = 0x%08lx, rez = 0x%04x)\n",
-	   logLoc, physLoc, rez);
+           logLoc, physLoc, rez);
 #endif
     setscreen(logLoc, physLoc, rez);
 }
@@ -364,7 +364,7 @@ LONG xbios_e(WORD devno)
 #if DBG_XBIOS
         kprintf("Iorec(%d) : bad input device\n", devno);
 #endif
-	return -1;
+        return -1;
     }
 }
 
@@ -663,7 +663,7 @@ void xbios_1f(WORD timer, WORD control, WORD data, LONG vec)
 {
 #if DBG_XBIOS
     kprintf("XBIOS: xbtimer(%d, 0x%02x, 0x%02x, 0x%08lx)\n",
-	    timer, control, data, vec);
+            timer, control, data, vec);
 #endif
     xbtimer(timer, control, data, vec);
 }

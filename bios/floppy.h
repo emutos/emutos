@@ -19,15 +19,15 @@
 
 struct bpb /* bios parameter block */
 {
-	WORD	recsiz; 	/* sector size in bytes */
-	WORD	clsiz;		/* cluster size in sectors */
-	WORD	clsizb; 	/* cluster size in bytes */
-	WORD	rdlen;		/* root directory length in records */
-	WORD	fsiz;		  /* fat size in records */
-	WORD	fatrec; 	/* first fat record (of last fat) */
-	WORD	datrec; 	/* first data record */
-	WORD	numcl;		/* number of data clusters available */
-	WORD	b_flags;
+        WORD    recsiz;         /* sector size in bytes */
+        WORD    clsiz;          /* cluster size in sectors */
+        WORD    clsizb;         /* cluster size in bytes */
+        WORD    rdlen;          /* root directory length in records */
+        WORD    fsiz;             /* fat size in records */
+        WORD    fatrec;         /* first fat record (of last fat) */
+        WORD    datrec;         /* first data record */
+        WORD    numcl;          /* number of data clusters available */
+        WORD    b_flags;
 };
 
 typedef struct bpb BPB;

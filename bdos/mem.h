@@ -19,21 +19,21 @@
  *  conditional compile switches
  */
 
-#define OSMPANIC	FALSE
-#define OSMLIST 	FALSE
+#define OSMPANIC        FALSE
+#define OSMLIST         FALSE
 
 
 /*
  *  externals
  */
 
-extern	FTAB	sft[] ;
-extern	long	errbuf[3] ;			/*  sup.c  */
-extern	MPB	pmd ;
-extern	int	osmem[] ;
-extern	int	osmlen ;
-extern	int	*root[20];
-extern	int	osmptr;
+extern  FTAB    sft[] ;
+extern  long    errbuf[3] ;                     /*  sup.c  */
+extern  MPB     pmd ;
+extern  int     osmem[] ;
+extern  int     osmlen ;
+extern  int     *root[20];
+extern  int     osmptr;
 
 /* 
  * in osmem.c

@@ -69,10 +69,10 @@ struct param
 
 
 struct mouse_data {
-    WORD	dxpos;          /* current X position */
-    WORD	dypos;          /* current Y position */
+    WORD        dxpos;          /* current X position */
+    WORD        dypos;          /* current Y position */
     WORD        hide_cnt;       /* 0 = mouse visible */
-    WORD	buttons;        /* current mouse button state */
+    WORD        buttons;        /* current mouse button state */
 };
 
 

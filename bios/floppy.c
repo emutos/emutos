@@ -550,8 +550,8 @@ LONG flop_mediach(WORD dev)
       return err;
     }
     if( (bs->serial[0] != finfo[dev].serial[0])
-	|| (bs->serial[1] != finfo[dev].serial[1])
-	|| (bs->serial[2] != finfo[dev].serial[2]) ) {
+        || (bs->serial[1] != finfo[dev].serial[1])
+        || (bs->serial[2] != finfo[dev].serial[2]) ) {
       return 2; /* definitely changed */
     } else {
       return 1; /* unsure */

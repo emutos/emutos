@@ -17,18 +17,18 @@
 
 /*
 ;
-;	Push flags and code pointer onto a processes stack in preparation
-;	for an IRET that will start this process executing
+;       Push flags and code pointer onto a processes stack in preparation
+;       for an IRET that will start this process executing
 ;
-;	--->	ip
-;		cs
-;		flags
-;	       =======
+;       --->    ip
+;               cs
+;               flags
+;              =======
 ;
-;		VOID
-;	psetup(p, codevalue)
-;		PD		*p;
-;		CODE		*codevalue;
+;               VOID
+;       psetup(p, codevalue)
+;               PD              *p;
+;               CODE            *codevalue;
 ;
 */
 _psetup:

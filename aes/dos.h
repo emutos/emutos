@@ -1,4 +1,4 @@
-/*	DOS.H		4/18/84 - 9/07/84	Lee Lorenzen		*/
+/*      DOS.H           4/18/84 - 9/07/84       Lee Lorenzen            */
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.                      
@@ -6,11 +6,11 @@
 *       Please see LICENSE.TXT for further information.                 
 *                                                                       
 *                  Historical Copyright                                 
-*	-------------------------------------------------------------
-*	GEM Application Environment Services		  Version 2.3
-*	Serial No.  XXXX-0000-654321		  All Rights Reserved
-*	Copyright (C) 1986			Digital Research Inc.
-*	-------------------------------------------------------------
+*       -------------------------------------------------------------
+*       GEM Application Environment Services              Version 2.3
+*       Serial No.  XXXX-0000-654321              All Rights Reserved
+*       Copyright (C) 1986                      Digital Research Inc.
+*       -------------------------------------------------------------
 */
 
 #define STDIN 0x0000
@@ -49,16 +49,16 @@
 
 typedef struct exec_blk
 {
-	WORD		eb_segenv;
-	LONG		eb_pcmdln;
-	LONG		eb_pfcb1;
-	LONG		eb_pfcb2;
+        WORD            eb_segenv;
+        LONG            eb_pcmdln;
+        LONG            eb_pfcb1;
+        LONG            eb_pfcb2;
 } EXEC_BLK;
 
 
 typedef struct over_blk
 {
-	WORD		ob_seglod;
-	WORD		ob_relfac;
+        WORD            ob_seglod;
+        WORD            ob_relfac;
 } OVER_BLK;
 

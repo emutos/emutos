@@ -75,7 +75,7 @@ _bcopy:
 // the behaviour is undefined if the two regions overlap.
 
 
-	
+        
 _memcpy:
 _memmove:
         move.l   8(sp),a0        // load source pointer

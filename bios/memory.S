@@ -45,7 +45,7 @@
 
 // ==== Overall memory map ===================================================
 
-	.xdef   bssstart      // end of documented low memory tosvars
+        .xdef   bssstart      // end of documented low memory tosvars
         .xdef   _end          // end of bss + comm sections (ld generated)
 
 
@@ -66,14 +66,14 @@
 
 meminit:
 
-	lea 	bssstart, a0
-	lea 	_end-1, a1
-	move.l 	a1, d0
-	sub.l 	a0, d0
-	lsr.l 	#2, d0
+        lea     bssstart, a0
+        lea     _end-1, a1
+        move.l  a1, d0
+        sub.l   a0, d0
+        lsr.l   #2, d0
 clearbss:
-	clr.l 	(a0)+
-	dbra 	d0, clearbss
+        clr.l   (a0)+
+        dbra    d0, clearbss
 
 
 
@@ -83,16 +83,16 @@ clearbss:
  
 memchk:
         cmp.l   #0x752019f3, memvalid   // magic in memvalid ?
-        bne     memconf			// no -> config memory
+        bne     memconf                 // no -> config memory
         cmp.l   #0x237698aa, memval2    // magic in memval2 ?
-        bne     memconf			// no -> config memory
+        bne     memconf                 // no -> config memory
         cmp.l   #0x5555aaaa, memval3    // magic in memval3 ?
-        bne     memconf			// no -> config memory
+        bne     memconf                 // no -> config memory
 
 memok:
         move.b  memctrl, 0xffff8001     // write old valid config to controller
-        				// phystop should then also be ok
-        bra	memdone                 // config ok -> memdone in startup.s
+                                        // phystop should then also be ok
+        bra     memdone                 // config ok -> memdone in startup.s
 
 
 
@@ -255,7 +255,7 @@ alter:
  * Clear all available ST-RAM
  */
         /* clear memory till running into buserror or reaching top */
-        move.l 	_phystop, d0            // maximum top of RAM
+        move.l  _phystop, d0            // maximum top of RAM
         move.l  _end, a0                // Set start of RAM
 clrmem:
         clr.w   (a0)+                   // Clear actual word, then increase

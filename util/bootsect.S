@@ -31,13 +31,13 @@
 #define RWABS 4
 #define GETBPB 7
 
-	.text
+        .text
 
-	/* bootsector for a single-sized floppy */
+        /* bootsector for a single-sized floppy */
 
-	.org    0
-	
-	bra.s   start         //  0 bra[2]    branch  
+        .org    0
+        
+        bra.s   start         //  0 bra[2]    branch  
         .ascii  "Loader"      //  2 loader[6]
         .ascii  "ABC"         //  8 serial[3]
         dc.b    0x00, 0x02    //  b bps[2]    bytes per sector
@@ -52,94 +52,94 @@
         dc.b    0x01, 0x00    // 1a sides[2]  number of sides
         dc.b    0x00, 0x00    // 1c hid[2]    number of hidden sectors
 execflg:
-	dc.w	0             
+        dc.w    0             
 ldmode:
-	dc.w    0
+        dc.w    0
 ssect:
-	dc.w    START
+        dc.w    START
 sectcnt:
-	dc.w    COUNT
+        dc.w    COUNT
 ldaddr:
-	dc.l	TMPADDR
+        dc.l    TMPADDR
 fatbuf:
-	dc.l	0
+        dc.l    0
 fname:
-	ds.b    11
+        ds.b    11
 resvd:
-	ds.b    1
+        ds.b    1
 start:
-	/* getbpb before rwabs */
+        /* getbpb before rwabs */
 
-	move.w  BOOTDEV,-(sp)
-	move.w  #GETBPB,-(sp)
-	trap    #13
-	add.w   #4,sp
-	
-	/* read the sectors in memory */
-	
-	move.l	ldaddr(pc),a4
-	move.w  sectcnt(pc),d6
-	move.w  BOOTDEV,-(sp)
-	move.w	ssect(pc),-(sp)
-	move.w  d6,-(sp)
-	move.l  a4,-(sp)
-	clr.w	-(sp)
-	move.w	#RWABS,-(sp)
-	trap    #13
-	add.w	#14,sp
-	tst.w	d0
-	bne	fail
+        move.w  BOOTDEV,-(sp)
+        move.w  #GETBPB,-(sp)
+        trap    #13
+        add.w   #4,sp
+        
+        /* read the sectors in memory */
+        
+        move.l  ldaddr(pc),a4
+        move.w  sectcnt(pc),d6
+        move.w  BOOTDEV,-(sp)
+        move.w  ssect(pc),-(sp)
+        move.w  d6,-(sp)
+        move.l  a4,-(sp)
+        clr.w   -(sp)
+        move.w  #RWABS,-(sp)
+        trap    #13
+        add.w   #14,sp
+        tst.w   d0
+        bne     fail
 
-	/* tell EmuTOS to ask for floppy removal before going on */
+        /* tell EmuTOS to ask for floppy removal before going on */
 
-	move.l	#0x1234abcd,20(a4)
-	
-	/* d4 = max size of TOS */
-	
-	clr.l	d4
-	move.w	d6,d4
-	lsl.l	#8,d4
-	add.l	d4,d4
-	
-	/* copy boot routine immediately after */
-	
-	lea	boot(pc),a0
-	lea	(a4,d4),a3
-	move.l	a3,a1
-	move.l	#endboot-boot,d0
-	bsr     memcpy
-	
-	/* jump in boot routine */
-	
-	jmp     (a3)
+        move.l  #0x1234abcd,20(a4)
+        
+        /* d4 = max size of TOS */
+        
+        clr.l   d4
+        move.w  d6,d4
+        lsl.l   #8,d4
+        add.l   d4,d4
+        
+        /* copy boot routine immediately after */
+        
+        lea     boot(pc),a0
+        lea     (a4,d4),a3
+        move.l  a3,a1
+        move.l  #endboot-boot,d0
+        bsr     memcpy
+        
+        /* jump in boot routine */
+        
+        jmp     (a3)
 
 fail:
-	rts
-	
-boot:	
-	move.w	#0x2700,sr
-	
-	/* copy from temporary address to destination */
-	
-	move.l  8(a4),a3
-	move.l	a3,a1
-	move.l	a4,a0
-	move.l	d4,d0
-	bsr 	memcpy
-	
-	/* jump in TOS */
-	
-	jmp	(a3)
+        rts
+        
+boot:   
+        move.w  #0x2700,sr
+        
+        /* copy from temporary address to destination */
+        
+        move.l  8(a4),a3
+        move.l  a3,a1
+        move.l  a4,a0
+        move.l  d4,d0
+        bsr     memcpy
+        
+        /* jump in TOS */
+        
+        jmp     (a3)
 
-	/* copies d0 bytes from a0 to a1 */
+        /* copies d0 bytes from a0 to a1 */
 memcpy:
-	add.l	#3,d0
-	lsr.l   #2,d0
-	sub.l   #1,d0
+        add.l   #3,d0
+        lsr.l   #2,d0
+        sub.l   #1,d0
 cpy:
-	move.l  (a0)+,(a1)+
-	dbra    d0,cpy
-	sub.l   #0x10000,d0 
+        move.l  (a0)+,(a1)+
+        dbra    d0,cpy
+        sub.l   #0x10000,d0 
         bhi     cpy 
         rts
 endboot:

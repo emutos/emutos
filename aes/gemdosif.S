@@ -1,4 +1,4 @@
-/*	GEMDOSIF.S	*/
+/*      GEMDOSIF.S      */
 
 /*
        Copyright 1999, Caldera Thin Clients, Inc.                      
@@ -7,11 +7,11 @@
 */
                   /* Historical Copyright */
 /*
-*	-------------------------------------------------------------
-*	GEM Application Environment Services		  Version 2.3
-*	Serial No.  XXXX-0000-654321		  All Rights Reserved
-*	Copyright (C) 1987			Digital Research Inc.
-*	-------------------------------------------------------------
+*       -------------------------------------------------------------
+*       GEM Application Environment Services              Version 2.3
+*       Serial No.  XXXX-0000-654321              All Rights Reserved
+*       Copyright (C) 1987                      Digital Research Inc.
+*       -------------------------------------------------------------
 */
 
 .globl _supret
@@ -153,15 +153,15 @@ L2126:
 ; return from gementry by calling supret
 ;
 ; stack is:
-;	temp space (word)
-;	bp (word)
-;	retadd to gementry (above)
-;	es:bx parm (long)
-; a6->  olda6		(super's link instruction)
-;	super automatic
-;	result (long) from function (to go in d0, axbx,esbx,or ax)
-;	p->err (word) from function (to go to d1, cx)
-; sp->	super retadd
+;       temp space (word)
+;       bp (word)
+;       retadd to gementry (above)
+;       es:bx parm (long)
+; a6->  olda6           (super's link instruction)
+;       super automatic
+;       result (long) from function (to go in d0, axbx,esbx,or ax)
+;       p->err (word) from function (to go to d1, cx)
+; sp->  super retadd
 ;
 */
 _supret:
@@ -230,7 +230,7 @@ L21BC:
 
 /*
 ;
-;	drawrat(newx, newy)
+;       drawrat(newx, newy)
 ;
 */
 _drawrat:
@@ -251,25 +251,25 @@ L21FC:
 
 _tikcod:
 L21FE:
-	move.l	a7,LED72
-	lea	LEE3E,a7
-	tst.l	_CMP_TICK
-	beq	L2234
-	addq.l	#1,_NUM_TICK
-	subq.l	#1,_CMP_TICK
-	bne	L2234
-	move.l	_NUM_TICK,-(a7)
-	move.l	#_tchange,-(a7)
-	jsr	_forkq
-	addq.l	#8,a7
+        move.l  a7,LED72
+        lea     LEE3E,a7
+        tst.l   _CMP_TICK
+        beq     L2234
+        addq.l  #1,_NUM_TICK
+        subq.l  #1,_CMP_TICK
+        bne     L2234
+        move.l  _NUM_TICK,-(a7)
+        move.l  #_tchange,-(a7)
+        jsr     _forkq
+        addq.l  #8,a7
 L2234:
-	move.w	#1,-(a7)
-	jsr	_b_delay
-	addq.l	#2,a7
-	movea.l	LED72,a7
-	movea.l	_tiksav,a0
-	jsr	(a0)
-	rts
+        move.w  #1,-(a7)
+        jsr     _b_delay
+        addq.l  #2,a7
+        movea.l LED72,a7
+        movea.l _tiksav,a0
+        jsr     (a0)
+        rts
 
 
 
@@ -302,7 +302,7 @@ LED6E:
             DS.B 4
 
 LED72:
-	ds.b	4
+        ds.b    4
 
 _tiksav:
 LED76:
@@ -314,7 +314,7 @@ _CMP_TICK:
 LEDDE:
             DS.B 0x60
 LEE3E:
-	ds.b	4
+        ds.b    4
 
 
 _rlr:

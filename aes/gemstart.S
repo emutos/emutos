@@ -1,4 +1,4 @@
-/*	GEMSTART.S */
+/*      GEMSTART.S */
 
 /*
        Copyright 1999, Caldera Thin Clients, Inc.                      
@@ -8,11 +8,11 @@
                   Historical Copyright                                 
 */
 /*
-*	-------------------------------------------------------------
-*	GEM Application Environment Services		  Version 3.0
-*	Serial No.  XXXX-0000-654321		  All Rights Reserved
-*	Copyright (C) 1987			Digital Research Inc.
-*	-------------------------------------------------------------
+*       -------------------------------------------------------------
+*       GEM Application Environment Services              Version 3.0
+*       Serial No.  XXXX-0000-654321              All Rights Reserved
+*       Copyright (C) 1987                      Digital Research Inc.
+*       -------------------------------------------------------------
 */
 
 
@@ -22,73 +22,73 @@
 
 .globl _totpds
 
-	.text
+        .text
 
 _main:
-	movea.l	a7,a5
-	movea.l	#LEABC,a7
-	movea.l	4(a5),a5
+        movea.l a7,a5
+        movea.l #LEABC,a7
+        movea.l 4(a5),a5
 /*
-	move.l	a5,d0
-	add.l	#0x80,d0
-	move.l	d0,_ad_ctai
+        move.l  a5,d0
+        add.l   #0x80,d0
+        move.l  d0,_ad_ctai
 */
-	move.l	0xC(a5),d0
-	add.l	0x14(a5),d0
-	add.l	0x1C(a5),d0
-	add.l	#0x100,d0
-	move.l	d0,-(a7)
-	move.l	a5,-(a7)
-	move.w	d0,-(a7)
-	move.w	#0x4A,-(a7)
-	trap	#1
-	adda.l	#0xC,a7
+        move.l  0xC(a5),d0
+        add.l   0x14(a5),d0
+        add.l   0x1C(a5),d0
+        add.l   #0x100,d0
+        move.l  d0,-(a7)
+        move.l  a5,-(a7)
+        move.w  d0,-(a7)
+        move.w  #0x4A,-(a7)
+        trap    #1
+        adda.l  #0xC,a7
 /* 68010 test disabled at the moment... */
 /*
-	clr.w	is68010
-	movea.l	a7,a0
-	movea.l	0x20,a1
-	move.l	#L5A,0x20
-	move	sr,d0
-	bra	L66
+        clr.w   is68010
+        movea.l a7,a0
+        movea.l 0x20,a1
+        move.l  #L5A,0x20
+        move    sr,d0
+        bra     L66
 L5A:
-	move.w	#0x1,is68010
-	andi.w	#0xDFFF,sr
+        move.w  #0x1,is68010
+        andi.w  #0xDFFF,sr
 L66:
-	move.l	a1,0x20
-	movea.l	a0,a7
+        move.l  a1,0x20
+        movea.l a0,a7
 */
-	move.l	a7,-(a7)
-	move.w	#0x20,-(a7)
-	trap	#1
-	addq.w	#6,a7
-	move.l	0x2C(a5),_ad_envrn
+        move.l  a7,-(a7)
+        move.w  #0x20,-(a7)
+        trap    #1
+        addq.w  #6,a7
+        move.l  0x2C(a5),_ad_envrn
 /*
-	move.w	#0,_gl_resc
-	move.w	#1,_gl_rest
-	move.w	#1,_gl_resp
-	move.l	#0,_system_
+        move.w  #0,_gl_resc
+        move.w  #1,_gl_rest
+        move.w  #1,_gl_resp
+        move.l  #0,_system_
 */
-	jsr	_size_theglo
-	movea.l	#_D,a0
-	clr.l	d1
-	bra	LB4
+        jsr     _size_theglo
+        movea.l #_D,a0
+        clr.l   d1
+        bra     LB4
 LB2:
-	move.w	d1,(a0)+
+        move.w  d1,(a0)+
 LB4:
-	dbmi	d0,LB2
-	lea	_justretf,a0
-	move.l	a0,_drwaddr
-	lea	_tikcod,a0
-	move.l	a0,_tikaddr
-	movea.l	#_D,a6
-	movea.l	a6,a5
-	adda.l	#0x74A,a6
-	move.l	a6,0x3E(a5)
-	movea.l	a6,a7
-	jsr	_gem_main
-	move.l	#0,-(a7)
-	trap	#1
+        dbmi    d0,LB2
+        lea     _justretf,a0
+        move.l  a0,_drwaddr
+        lea     _tikcod,a0
+        move.l  a0,_tikaddr
+        movea.l #_D,a6
+        movea.l a6,a5
+        adda.l  #0x74A,a6
+        move.l  a6,0x3E(a5)
+        movea.l a6,a7
+        jsr     _gem_main
+        move.l  #0,-(a7)
+        trap    #1
 
 
 
@@ -97,10 +97,10 @@ _gemdos:
 LF2:
             move.l  (SP)+,LEA2C
 /*
-	move.l	(SP),-(SP)
-        pea	errormsg
-        jsr	_kprintf
-        addq.l	#8,sp
+        move.l  (SP),-(SP)
+        pea     errormsg
+        jsr     _kprintf
+        addq.l  #8,sp
 */
             move.w  #0,_DOS_ERR
             move.w  #0,_DOS_AX
@@ -127,7 +127,7 @@ LE3E6:
             DC.B 0
 
 errormsg:
-	.ascii	"GEMDOS: Nr=0x%x Parm=0x%x\n\0"
+        .ascii  "GEMDOS: Nr=0x%x Parm=0x%x\n\0"
         .even
 
 
@@ -138,27 +138,27 @@ LEA2C:
             DS.B 4
 /*
 _system_:
-	ds.b	4
+        ds.b    4
 
 _gl_rest:
-	ds.b	2
+        ds.b    2
 
 _gl_resc:
-	ds.b	2
+        ds.b    2
 
 _gl_resp:
-	ds.b	2
+        ds.b    2
 */
 
 * Space for the Stack:
-	.ds.b	0x80
+        .ds.b   0x80
 LEABC:
 
 
 _totpds:
-	ds.w	1
+        ds.w    1
 
 
 saveregs:
-	.ds.l	14
+        .ds.l   14
 

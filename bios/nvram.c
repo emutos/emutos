@@ -29,7 +29,7 @@ void detect_nvram(void)
 {
     if(check_read_byte(0xffff8961)) {
         has_nvram = 1;
-	inited = 0;
+        inited = 0;
     } else {
         has_nvram = 0;
     }
@@ -47,8 +47,8 @@ UBYTE get_nvram_rtc(int index)
     if (has_nvram) {
         if (index >=0 && index < 14) {
             *addr_reg = index;
-	        ret_value = *data_reg;
-	    }
+                ret_value = *data_reg;
+            }
     }
 
     return ret_value;
@@ -65,8 +65,8 @@ void set_nvram_rtc(int index, int data)
     if (has_nvram) {
         if (index >=0 && index < 14) {
             *addr_reg = index;
-	        *data_reg = data;
-	    }
+                *data_reg = data;
+            }
     }
 }
 
@@ -125,10 +125,10 @@ WORD nvmaccess(WORD type, WORD start, WORD count, PTR buffer)
         for(i = 0 ; i < 50 ; i++) {
             *addr_reg = i + 14;
             *data_reg = 0;
-	    buf[i] = 0;
+            buf[i] = 0;
         }
-	inited = 1;
-	return 0;
+        inited = 1;
+        return 0;
     } 
     /* else, first read the nvram if not done already */
     if(! inited) {
@@ -136,25 +136,25 @@ WORD nvmaccess(WORD type, WORD start, WORD count, PTR buffer)
             *addr_reg = i + 14;
             buf[i] = *data_reg;
         }
-	inited = 1;
-	if(compute_sum() != get_sum()) {
-	    /* TODO, wrong checksum, what do we do ? */
-	}
+        inited = 1;
+        if(compute_sum() != get_sum()) {
+            /* TODO, wrong checksum, what do we do ? */
+        }
     }
     start += 14;
     switch(type) {
     case 0: /* read, from our buffer since it is already in memory */
-	for(i = start ; i < start + count ; i++) {
-	    *ubuffer++ = buf[i];
-	}
+        for(i = start ; i < start + count ; i++) {
+            *ubuffer++ = buf[i];
+        }
         break;
     case 1: /* write, in our buffer and in the memory */
         for(i = start ; i < start + count ; i++) {
-	    *addr_reg = i + 14;
+            *addr_reg = i + 14;
             *data_reg = buf[i] = *ubuffer++; 
-	}
-	set_sum(compute_sum());
-	/* TODO - verify ? */
+        }
+        set_sum(compute_sum());
+        /* TODO - verify ? */
         break;
     default:
         /* TODO, wrong operation code! */

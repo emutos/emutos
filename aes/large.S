@@ -1,4 +1,4 @@
-/*	LARGE.S	*/
+/*      LARGE.S */
 
 /*
 ;       Copyright 1999, Caldera Thin Clients, Inc.                      
@@ -8,11 +8,11 @@
 ;                  Historical Copyright                                 
 */
 /*
-*	-------------------------------------------------------------
-*	GEM Application Environment Services		  Version 2.3
-*	Serial No.  XXXX-0000-654321		  All Rights Reserved
-*	Copyright (C) 1986			Digital Research Inc.
-*	-------------------------------------------------------------
+*       -------------------------------------------------------------
+*       GEM Application Environment Services              Version 2.3
+*       Serial No.  XXXX-0000-654321              All Rights Reserved
+*       Copyright (C) 1986                      Digital Research Inc.
+*       -------------------------------------------------------------
 */
 
 
@@ -20,10 +20,10 @@
 .globl _LBWMOV
 
 
-*	copy from src to dest until and including a null in the 
-*	source string
+*       copy from src to dest until and including a null in the 
+*       source string
 
-*	len = LSTCPY(pdst, psrc)
+*       len = LSTCPY(pdst, psrc)
 
 _LSTCPY:
 LD6FA:
@@ -39,10 +39,10 @@ LD704:
 
 
 
-*	expand from bytes to words until you hit a null also return
-*	the number of characters moved
+*       expand from bytes to words until you hit a null also return
+*       the number of characters moved
 *
-*	LBWMOV(pdstoff, pdstseg, psrcoff, psrcseg)
+*       LBWMOV(pdstoff, pdstseg, psrcoff, psrcseg)
 *
 
 _LBWMOV:

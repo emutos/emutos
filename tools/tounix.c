@@ -151,8 +151,8 @@ int main(int argc, char **argv)
       printf("%s\n",argv[i]);
       if(ferror(tmp)) {
         error( "problem with the temp file", tmp);
-	fclose(tmp);
-	exit(1);
+        fclose(tmp);
+        exit(1);
       } else {
         replace(tmp, len, argv[i]);
       }

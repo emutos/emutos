@@ -18,18 +18,18 @@ GRECT           *pt;
 } /* inside */
 
 /*------------------------------*/
-/*	rc_equal					*/
+/*      rc_equal                                        */
 /*------------------------------*/
 WORD
-rc_equal(p1, p2)		/* tests for two rectangles equal	*/
-GRECT		*p1, *p2;
+rc_equal(p1, p2)                /* tests for two rectangles equal       */
+GRECT           *p1, *p2;
 {
-	if ((p1->g_x != p2->g_x) ||
-	    (p1->g_y != p2->g_y) ||
-	    (p1->g_w != p2->g_w) ||
-	    (p1->g_h != p2->g_h))
-		return(FALSE);
-	return(TRUE);
+        if ((p1->g_x != p2->g_x) ||
+            (p1->g_y != p2->g_y) ||
+            (p1->g_w != p2->g_w) ||
+            (p1->g_h != p2->g_h))
+                return(FALSE);
+        return(TRUE);
 }
 
 /*------------------------------*/

@@ -21,7 +21,7 @@
  *  fix conditionals
  */
 
-#define M0101052901	1
+#define M0101052901     1
 
 /*
  *  constants
@@ -29,12 +29,12 @@
 
 #define SLASH '\\'
 
-#define SUPSIZ 1024	/* common supervisor stack size (in words) */
-#define OPNFILES 40	/* max open files in system */
-#define NCURDIR 40	/* max current directories in use in system */
-#define NUMSTD 6	/* number of standard files */
-#define KBBUFSZ 128	/* size of typeahead buffer -- must be power of 2!! */
-#define KBBUFMASK	(KBBUFSZ-1)
+#define SUPSIZ 1024     /* common supervisor stack size (in words) */
+#define OPNFILES 40     /* max open files in system */
+#define NCURDIR 40      /* max current directories in use in system */
+#define NUMSTD 6        /* number of standard files */
+#define KBBUFSZ 128     /* size of typeahead buffer -- must be power of 2!! */
+#define KBBUFMASK       (KBBUFSZ-1)
 
 /*
  *  code macros
@@ -50,7 +50,7 @@ extern void s68l(long *);
 #define bconstat(a) trap13(1,a)
 #define bconin(a) trap13(2,a)
 #define bconout(a,b) trap13(3,a,b)
-/* SCC	11 Mar 85 */
+/* SCC  11 Mar 85 */
 #define bconostat(a) trap13(8,a)
 #define getbpb(a) trap13(7,a)
 #define getmpb(a) trap13(0,a)
@@ -58,7 +58,7 @@ extern void s68l(long *);
 {errdrv=e;longjmp(errbuf,rwerr);}
 
 #define min(a,b) (((a) < (b)) ? (a) : (b))
-/* LVL define xmovs(n,s,d)	bmove(s,d,n) */
+/* LVL define xmovs(n,s,d)      bmove(s,d,n) */
 
 
 
@@ -66,26 +66,26 @@ extern void s68l(long *);
  *  Type declarations
  */
 
-#define BCB	struct	_bcb
-#define FTAB	struct	_ftab
-#define PD	struct	_pd
-#define OFD	struct	_ofd
-#define FCB	struct	_fcb
-#define DND	struct	_dnd
-#define DMD	struct	_dmd
-#define CLNO	int		/*  cluster number M01.01.03	*/
-#define RECNO	int		/*  record number M01.01.03	*/
-				/*** this should be changed to a long!! ***/
-#define FH	unsigned int		/*  file handle M01.01.04	*/
+#define BCB     struct  _bcb
+#define FTAB    struct  _ftab
+#define PD      struct  _pd
+#define OFD     struct  _ofd
+#define FCB     struct  _fcb
+#define DND     struct  _dnd
+#define DMD     struct  _dmd
+#define CLNO    int             /*  cluster number M01.01.03    */
+#define RECNO   int             /*  record number M01.01.03     */
+                                /*** this should be changed to a long!! ***/
+#define FH      unsigned int            /*  file handle M01.01.04       */
 
 /*
  *  PD - Process Descriptor
  */
 
-#define PDCLSIZE	0x80		/*  size of command line in bytes  */
-#define NUMCURDIR	16		/*  number of entries in curdir array */
+#define PDCLSIZE        0x80            /*  size of command line in bytes  */
+#define NUMCURDIR       16              /*  number of entries in curdir array */
 
-PD	/* this is the basepage format */
+PD      /* this is the basepage format */
 {
     /* 0x00 */
     long p_lowtpa;
@@ -99,22 +99,22 @@ PD	/* this is the basepage format */
     long p_blen;
     /* 0x20 */
     char *p_xdta;
-    PD	 *p_parent;		/* parent PD */
+    PD   *p_parent;             /* parent PD */
     long p_0fill[1];
-    char *p_env; 		/* at offset 2ch (eat your heart out, Lee) */
+    char *p_env;                /* at offset 2ch (eat your heart out, Lee) */
     /* 0x30 */
-    char p_uft[NUMSTD];		/* index into sys file table for std files */
+    char p_uft[NUMSTD];         /* index into sys file table for std files */
     char p_lddrv;
     char p_curdrv;
     long p_1fill[2];
     /* 0x40 */
-    char p_curdir[NUMCURDIR];	/* index into sys dir table */
+    char p_curdir[NUMCURDIR];   /* index into sys dir table */
     /* 0x50 */
     long p_2fill[4];
     /* 0x60 */
     long p_3fill[2];
-    long p_dreg[1];		/* dreg[0] */
-    long p_areg[5];		/* areg[3..7] */
+    long p_dreg[1];             /* dreg[0] */
+    long p_areg[5];             /* areg[3..7] */
     /* 0x80 */
     char p_cmdlin[PDCLSIZE];
 } ;
@@ -127,25 +127,25 @@ PD	/* this is the basepage format */
 
 OFD 
 {
-    OFD	  *o_link;	/*  link to next OFD			*/
-    int	  o_flag;
-    int	  o_time; 	/*  the next 4 items must be as in FCB	*/
-    int	  o_date; 	/*  time, date of creation		*/
-    CLNO  o_strtcl;	/*  starting cluster number		*/
-    long  o_fileln;	/*  length of file in bytes		*/
+    OFD   *o_link;      /*  link to next OFD                    */
+    int   o_flag;
+    int   o_time;       /*  the next 4 items must be as in FCB  */
+    int   o_date;       /*  time, date of creation              */
+    CLNO  o_strtcl;     /*  starting cluster number             */
+    long  o_fileln;     /*  length of file in bytes             */
 
-    DMD	  *o_dmd; 	/*  link to media descr 		*/
-    DND	  *o_dnode;	/*  link to dir for this file		*/
-    OFD	  *o_dirfil;	/*  OFD for dir for this file		*/
-    long  o_dirbyt;	/*  pos in dir of this files fcb (dcnt) */
+    DMD   *o_dmd;       /*  link to media descr                 */
+    DND   *o_dnode;     /*  link to dir for this file           */
+    OFD   *o_dirfil;    /*  OFD for dir for this file           */
+    long  o_dirbyt;     /*  pos in dir of this files fcb (dcnt) */
 
-    long  o_bytnum;	/* byte pointer within file		*/
-    CLNO  o_curcl;	/* not used				*/
-    RECNO o_currec;	/* not used				*/
-    int	  o_curbyt;	/* not used				*/
-    int	  o_usecnt;	/* use count for inherited files	*/
-    OFD	  *o_thread;	/* mulitple open thread list		*/
-    int	  o_mod;	/* mode file opened in (r, w, r/w)	*/
+    long  o_bytnum;     /* byte pointer within file             */
+    CLNO  o_curcl;      /* not used                             */
+    RECNO o_currec;     /* not used                             */
+    int   o_curbyt;     /* not used                             */
+    int   o_usecnt;     /* use count for inherited files        */
+    OFD   *o_thread;    /* mulitple open thread list            */
+    int   o_mod;        /* mode file opened in (r, w, r/w)      */
 } ;
 
 
@@ -155,16 +155,16 @@ OFD
  * T: OFD is dirty, because of chg to startcl, length, time, etc.
  */
 
-#define O_DIRTY 	1
+#define O_DIRTY         1
 
-#if	! M0101052901
+#if     ! M0101052901
 /*
  * O_COMPLETE -
  *
  * 1: traversal of directory file (to bld dir tree) has completed
  */
 
-#define O_COMPLETE	2
+#define O_COMPLETE      2
 #endif
 
 
@@ -178,16 +178,16 @@ FCB
     char f_name[11];
     char f_attrib;
     char f_fill[10];
-    int	 f_time;
-    int	 f_date;
+    int  f_time;
+    int  f_date;
     CLNO f_clust;
     long f_fileln;
 } ;
 
-#define FA_VOL		0x08
-#define FA_SUBDIR	0x10
-#define FA_NORM 	0x27
-#define FA_RO		0x01
+#define FA_VOL          0x08
+#define FA_SUBDIR       0x10
+#define FA_NORM         0x27
+#define FA_RO           0x01
 
 
 
@@ -197,29 +197,29 @@ FCB
 
 DND /* directory node descriptor */
 {
-    char d_name[11];	/*  directory name			*/
-    char d_fill; 	/*  attributes? 			*/
-    int	 d_flag;
-    CLNO d_strtcl;	/*  starting cluster number of dir	*/
+    char d_name[11];    /*  directory name                      */
+    char d_fill;        /*  attributes?                         */
+    int  d_flag;
+    CLNO d_strtcl;      /*  starting cluster number of dir      */
 
-    int	 d_time; 	/*  last mod ?				*/
-    int	 d_date; 	/*  ""	 ""				*/
-    OFD	 *d_ofd; 	/*  open file descr for this dir	*/
-    DND	 *d_parent;	/*  parent dir (..)			*/
-    DND	 *d_left;	/*  1st child				*/
+    int  d_time;        /*  last mod ?                          */
+    int  d_date;        /*  ""   ""                             */
+    OFD  *d_ofd;        /*  open file descr for this dir        */
+    DND  *d_parent;     /*  parent dir (..)                     */
+    DND  *d_left;       /*  1st child                           */
 
-    DND	 *d_right;	/*  sibling in same dir 		*/
-    DMD	 *d_drv; 	/*  for drive				*/
-    OFD	 *d_dirfil;
-    long d_dirpos;	/*  */
+    DND  *d_right;      /*  sibling in same dir                 */
+    DMD  *d_drv;        /*  for drive                           */
+    OFD  *d_dirfil;
+    long d_dirpos;      /*  */
 
-    long d_scan; 	/*  current posn in dir for DND tree	*/
-    OFD	 *d_files;	/* open files on this node		*/
+    long d_scan;        /*  current posn in dir for DND tree    */
+    OFD  *d_files;      /* open files on this node              */
 } ;
 
-/* flags:	*/
-#define B_16	1				/* device has 16-bit FATs	*/
-#define B_FIX	2				/* device has fixed media	*/
+/* flags:       */
+#define B_16    1                               /* device has 16-bit FATs       */
+#define B_FIX   2                               /* device has fixed media       */
 
 
 
@@ -227,28 +227,28 @@ DND /* directory node descriptor */
  *  DMD - Drive Media Block
  */
 
-/*  records == sectors	*/
+/*  records == sectors  */
 
 DMD /* drive media block */
 {
-    int	   m_recoff[3];	/*  record offsets for fat,dir,data	*/
-    int	   m_drvnum;	/*  drive number for this media 	*/
-    RECNO  m_fsiz; 	/*  fat size in records M01.01.03	*/
-    RECNO  m_clsiz;	/*  cluster size in records M01.01.03	*/
-    int	   m_clsizb;	/*  cluster size in bytes		*/
-    int	   m_recsiz;	/*  record size in bytes		*/
+    int    m_recoff[3]; /*  record offsets for fat,dir,data     */
+    int    m_drvnum;    /*  drive number for this media         */
+    RECNO  m_fsiz;      /*  fat size in records M01.01.03       */
+    RECNO  m_clsiz;     /*  cluster size in records M01.01.03   */
+    int    m_clsizb;    /*  cluster size in bytes               */
+    int    m_recsiz;    /*  record size in bytes                */
 
-    CLNO   m_numcl;	/*  total number of clusters in data	*/
-    int	   m_clrlog;	/* clsiz in rec, log2 is shift		*/
-    int	   m_clrm; 	/* clsiz in rec, mask			*/
-    int	   m_rblog;	/* recsiz in bytes, shift		*/
-    int	   m_rbm;		/* recsiz in bytes, mask		*/
-    int	   m_clblog;	/* log of clus size in bytes		*/
-    OFD	   *m_fatofd;	/* OFD for 'fat file'			*/
+    CLNO   m_numcl;     /*  total number of clusters in data    */
+    int    m_clrlog;    /* clsiz in rec, log2 is shift          */
+    int    m_clrm;      /* clsiz in rec, mask                   */
+    int    m_rblog;     /* recsiz in bytes, shift               */
+    int    m_rbm;               /* recsiz in bytes, mask                */
+    int    m_clblog;    /* log of clus size in bytes            */
+    OFD    *m_fatofd;   /* OFD for 'fat file'                   */
 
-    OFD	   *m_ofl; 	/*  list of open files			*/
-    DND	   *m_dtl; 	/* root of directory tree list		*/
-    int	   m_16;      	/* 16 bit fat ? 			*/
+    OFD    *m_ofl;      /*  list of open files                  */
+    DND    *m_dtl;      /* root of directory tree list          */
+    int    m_16;        /* 16 bit fat ?                         */
 } ;
 
 
@@ -259,13 +259,13 @@ DMD /* drive media block */
 
 BCB
 {
-    BCB	    *b_link;	/*  next bcb			*/
-    int	    b_bufdrv;	/*  unit for buffer		*/
-    int	    b_buftyp;	/*  buffer type 		*/
-    int	    b_bufrec;	/*  record number		*/
-    BOOLEAN b_dirty;	/*  true if buffer dirty	*/
-    long    b_dm;      	/*  reserved for file system	*/
-    char    *b_bufr;	/*  pointer to buffer		*/
+    BCB     *b_link;    /*  next bcb                    */
+    int     b_bufdrv;   /*  unit for buffer             */
+    int     b_buftyp;   /*  buffer type                 */
+    int     b_bufrec;   /*  record number               */
+    BOOLEAN b_dirty;    /*  true if buffer dirty        */
+    long    b_dm;       /*  reserved for file system    */
+    char    *b_bufr;    /*  pointer to buffer           */
 } ;
 
 /*
@@ -275,9 +275,9 @@ BCB
 /* point these at OFDs when needed */
 FTAB
 {
-    OFD	*f_ofd;
-    PD	*f_own; 	/* file owners */
-    int	f_use;		/* use count */
+    OFD *f_ofd;
+    PD  *f_own;         /* file owners */
+    int f_use;          /* use count */
 } ;
 
 
@@ -290,17 +290,17 @@ FTAB
 
 DTAINFO
 {
-    char  dt_name[12] ;		/*  file name: filename.typ	00-11	*/
-    long  dt_pos ;		/*  dir position		12-15	*/
-    DND	  *dt_dnd ;		/*  pointer to DND		16-19	*/
-    char  dt_attr ;		/*  attributes of file		20	*/
-    				/*  --	below must not change -- [1]	*/
-    char  dt_fattr ;		/*  attrib from fcb		21	*/
-    int	  dt_time ;		/*  time field from fcb 	22-23	*/
-    int	  dt_date ;		/*  date field from fcb 	24-25	*/
-    long  dt_fileln ;		/*  file length field from fcb	26-29	*/
-    char  dt_fname[12] ;	/*  file name from fcb		30-41	*/
-} ;				/*    includes null terminator		*/
+    char  dt_name[12] ;         /*  file name: filename.typ     00-11   */
+    long  dt_pos ;              /*  dir position                12-15   */
+    DND   *dt_dnd ;             /*  pointer to DND              16-19   */
+    char  dt_attr ;             /*  attributes of file          20      */
+                                /*  --  below must not change -- [1]    */
+    char  dt_fattr ;            /*  attrib from fcb             21      */
+    int   dt_time ;             /*  time field from fcb         22-23   */
+    int   dt_date ;             /*  date field from fcb         24-25   */
+    long  dt_fileln ;           /*  file length field from fcb  26-29   */
+    char  dt_fname[12] ;        /*  file name from fcb          30-41   */
+} ;                             /*    includes null terminator          */
 
 #include "bios.h"
 
@@ -312,9 +312,9 @@ DTAINFO
 *******************************************
 */
 
-#define H_Console	-1
-#define H_Aux		-2
-#define H_Print 	-3
+#define H_Console       -1
+#define H_Aux           -2
+#define H_Print         -3
 
 
 /****************************************
@@ -325,7 +325,7 @@ DTAINFO
 *****************************************
 */
 
-#define HXFORM(h)	(3+h)
+#define HXFORM(h)       (3+h)
 
 
 /**********************
@@ -335,35 +335,35 @@ DTAINFO
 ***********************
 */
 
-#define CIStat(d)	trap13(0x01,d)		/* Character Input Status   */
-#define GetBPB(d)	(BPB *)trap13(0x07,d)	/* Get BIOS Parameter Block */
-#define COStat(d)	trap13(0x08,d)		/* Character Output Status  */
-#define GetDM() 	trap13(0x0A)		/* Get Drive Map	    */
-#define CIOCR(d,l,b)	trap13(0x0C,d,l,b)	/* Char IOCtl Read	    */
-#define CIOCW(d,l,b)	trap13(0x0D,d,l,b)	/* Char IOCtl Write	    */
-#define DIOCR(d,l,b)	trap13(0x0E,d,l,b)	/* Disk IOCtl Read	    */
-#define DIOCW(d,l,b)	trap13(0x0F,d,l,b)	/* Disk IOCtl Write	    */
-#define CVE(d,a)	trap13(0x10,d,a)	/* Char Vector Exchange     */
+#define CIStat(d)       trap13(0x01,d)          /* Character Input Status   */
+#define GetBPB(d)       (BPB *)trap13(0x07,d)   /* Get BIOS Parameter Block */
+#define COStat(d)       trap13(0x08,d)          /* Character Output Status  */
+#define GetDM()         trap13(0x0A)            /* Get Drive Map            */
+#define CIOCR(d,l,b)    trap13(0x0C,d,l,b)      /* Char IOCtl Read          */
+#define CIOCW(d,l,b)    trap13(0x0D,d,l,b)      /* Char IOCtl Write         */
+#define DIOCR(d,l,b)    trap13(0x0E,d,l,b)      /* Disk IOCtl Read          */
+#define DIOCW(d,l,b)    trap13(0x0F,d,l,b)      /* Disk IOCtl Write         */
+#define CVE(d,a)        trap13(0x10,d,a)        /* Char Vector Exchange     */
 
 
 
 /* External Declarations */
 
-extern	DND	*dirtbl[] ;
-extern	DMD	*drvtbl[] ;
-extern	char	diruse[] ;
-extern	int	drvsel ;
-extern	PD	*run ;
-extern	int	logmsk[] ;
-extern	FTAB	sft[] ;
-extern	long	rwerr ;
-extern	int	errdrv ;
-extern	long	errbuf[] ;		/*  in sup.c			*/
-extern	BCB	*bufl[2] ;		/*  in bios main.c		*/
-extern	unsigned int	time, date ;
-extern	int	bios_dev[] ;		/*  in fsfioctl.c		*/
+extern  DND     *dirtbl[] ;
+extern  DMD     *drvtbl[] ;
+extern  char    diruse[] ;
+extern  int     drvsel ;
+extern  PD      *run ;
+extern  int     logmsk[] ;
+extern  FTAB    sft[] ;
+extern  long    rwerr ;
+extern  int     errdrv ;
+extern  long    errbuf[] ;              /*  in sup.c                    */
+extern  BCB     *bufl[2] ;              /*  in bios main.c              */
+extern  unsigned int    time, date ;
+extern  int     bios_dev[] ;            /*  in fsfioctl.c               */
 
-extern	long	trap13(int, ...);
+extern  long    trap13(int, ...);
 
 
 
@@ -494,5 +494,5 @@ int  divmod(int *modp, int divdnd, long divsor);
 
 /* Misc. defines */
 
-#define CL_DIR	0x0002
+#define CL_DIR  0x0002
 #define CL_FULL 0x0004

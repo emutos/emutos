@@ -13,10 +13,10 @@
 
 
 
-#include	"portab.h"
-#include	"bios.h"
-#include	"kprint.h"
-#include	"mfp.h"
+#include        "portab.h"
+#include        "bios.h"
+#include        "kprint.h"
+#include        "mfp.h"
 #include        "tosvars.h"
 
 /* the acia interrupt, in aciavecs.s */
@@ -41,7 +41,7 @@ WORD timer_c_sieve;
 
 /*==== kbinit - initialize the MFP ========================================*/
  
-void	mfp_init (void)
+void    mfp_init (void)
 {
     MFP *mfp=MFP_BASE;   /* set base address of MFP */
 
@@ -103,7 +103,7 @@ void	mfp_init (void)
 
 /*==== Clear keyboard interrupt ===========================================*/
 
-void	clear_kbdint(void)
+void    clear_kbdint(void)
 {
     MFP *mfp=MFP_BASE;  /* set base address of MFP */
 

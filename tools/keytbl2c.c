@@ -68,7 +68,7 @@ int main(int argc, char **argv)
 " * This file is distributed under the GPL, version 2 or at your\n"
 " * option any later version.  See doc/license.txt for details.\n"
 " */\n",
-	  argv[2]);
+          argv[2]);
 
   /* the code below is even worse ! */
 
@@ -90,11 +90,11 @@ int main(int argc, char **argv)
 "    keytbl_%s_altcaps, \n"
 "};\n"
 "\n",
-	  ucprefix,
-	  prefix, prefix, prefix, prefix, prefix, prefix,
-	  prefix,
-	  prefix, prefix, prefix, prefix, prefix, prefix
-	  );
+          ucprefix,
+          prefix, prefix, prefix, prefix, prefix, prefix,
+          prefix,
+          prefix, prefix, prefix, prefix, prefix, prefix
+          );
 
   dump_table(ktbl.norm, "norm", out, prefix);
   dump_table(ktbl.shft, "shft", out, prefix);
@@ -103,29 +103,29 @@ int main(int argc, char **argv)
   fprintf(out, 
 "\n"
 "/* TODO - the tables below were not filled by the tool */\n"
-	  );
+          );
 
   fprintf(out, 
 "\n"
 "BYTE keytbl_%s_altnorm[] = {\n"
 "    0,\n"
 "};\n",
-	  prefix
-	  );
+          prefix
+          );
   fprintf(out, 
 "\n"
 "BYTE keytbl_%s_altshft[] = {\n"
 "    0,\n"
 "};\n",
-	  prefix
-	  );
+          prefix
+          );
   fprintf(out, 
 "\n"
 "BYTE keytbl_%s_altcaps[] = {\n"
 "    0,\n"
 "};\n",
-	  prefix
-	  );
+          prefix
+          );
 
   fclose(out);
   fprintf(stderr, "done.\n");
@@ -139,8 +139,8 @@ void dump_table(char *table, char *name, FILE *out, char *prefix)
 
   fprintf(out, 
 "BYTE keytbl_%s_%s[] = {\n",
-	  prefix, name
-	  );
+          prefix, name
+          );
   for(i = 0 ; i < 128 ; i++) {
     int c = table[i];
     if((i & 7) == 0) {
@@ -156,9 +156,9 @@ void dump_table(char *table, char *name, FILE *out, char *prefix)
       if(c >= 0 && c <= 8) {
         fprintf(out, "   %d, ", c);
       } else if(c >= 32 && c <= 126) {
-	fprintf(out, " \'%c\', ", c);
+        fprintf(out, " \'%c\', ", c);
       } else {
-	fprintf(out, "0x%02x, ", c & 0xFF);
+        fprintf(out, "0x%02x, ", c & 0xFF);
       }
       break;
     }

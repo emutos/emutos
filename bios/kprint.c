@@ -29,16 +29,16 @@ extern int doprintf(void (*outc)(int), const char *fmt, va_list ap);
 
 
 
-#define	COMMENT	0
+#define COMMENT 0
 #define MAXDMP 1024
 /*
  *  globals
  */
 
-//static  char	buffer[MAXDMP] ;
+//static  char  buffer[MAXDMP] ;
 
 // GLOBAL
-char	*kcrlf = "\n\r" ;
+char    *kcrlf = "\n\r" ;
 
 /*==== cprintf - do formatted string output direct to the console ======*/
 
@@ -118,10 +118,10 @@ void doassert(const char *file, long line, const char *func, const char *text)
 /*==== dopanic - display information found in 0x380 and halt ======*/
 
 extern LONG proc_lives;
-extern LONG proc_dregs[];	
-extern LONG proc_aregs[];	
-extern LONG proc_enum;	
-extern LONG proc_usp;	
+extern LONG proc_dregs[];       
+extern LONG proc_aregs[];       
+extern LONG proc_enum;  
+extern LONG proc_usp;   
 extern WORD proc_stk[];
 
 static const char *exc_messages[] = {

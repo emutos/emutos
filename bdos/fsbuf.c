@@ -23,8 +23,8 @@
  * flush -
  *
  * NOTE: rwabs() is a macro that includes a longjmp() which is executed
- *	 if the BIOS returns an error, therefore flush() does not need
- *	 to return any error codes.
+ *       if the BIOS returns an error, therefore flush() does not need
+ *       to return any error codes.
  */
 
 void flush(BCB *b)
@@ -36,13 +36,13 @@ void flush(BCB *b)
 
     if ((b->b_bufdrv == -1) || (!b->b_dirty)) {
         b->b_bufdrv = -1;
-	return;
+        return;
     }
     
-    dm = (DMD*) b->b_dm;		/*  media descr for buffer	*/
+    dm = (DMD*) b->b_dm;                /*  media descr for buffer      */
     n = b->b_buftyp;
     d = b->b_bufdrv;
-    b->b_bufdrv = -1;		/* invalidate in case of error */
+    b->b_bufdrv = -1;           /* invalidate in case of error */
 
     rwabs(1,b->b_bufr,1,b->b_bufrec+dm->m_recoff[n],d);
 
@@ -51,7 +51,7 @@ void flush(BCB *b)
     if (n == 0) {
         rwabs(1,b->b_bufr,1,b->b_bufrec+dm->m_recoff[0]-dm->m_fsiz,d);
     }
-    b->b_bufdrv = d;			/* re-validate */
+    b->b_bufdrv = d;                    /* re-validate */
     b->b_dirty = 0;
 }
 
@@ -64,19 +64,19 @@ void flush(BCB *b)
 char *getrec(int recn, DMD *dm, int wrtflg)
 {
     register BCB *b;
-    BCB	*p,*mtbuf,**q,**phdr;
+    BCB *p,*mtbuf,**q,**phdr;
     int n,cl,err;
 
     /* put bcb management here */
 
-    cl = recn >> dm->m_clrlog;	/*  calculate cluster nbr	*/
+    cl = recn >> dm->m_clrlog;  /*  calculate cluster nbr       */
 
     if (cl < dm->m_dtl->d_strtcl)
-        n = 0;			/* FAT operat'n */
+        n = 0;                  /* FAT operat'n */
     else if (recn < 0)
-        n = 1;			/*  DIR (?)	*/
+        n = 1;                  /*  DIR (?)     */
     else
-        n = 2;			/*  DATA (?)	*/
+        n = 2;                  /*  DATA (?)    */
 
     mtbuf = 0;
     phdr = &bufl[(n != 0)];
@@ -84,8 +84,8 @@ char *getrec(int recn, DMD *dm, int wrtflg)
     /*
      * See, if the desired record for the desired drive is in memory.
      * If it is, we will use it.  Otherwise we will use
-     *		the last invalid (available) buffer,  or
-     *		the last (least recently) used buffer.
+     *          the last invalid (available) buffer,  or
+     *          the last (least recently) used buffer.
      */
 
     for (b = *(q = phdr); b; b = *(q = &b->b_link))
@@ -95,8 +95,8 @@ char *getrec(int recn, DMD *dm, int wrtflg)
         /*
          * keep track of the last invalid buffer
          */
-        if (b->b_bufdrv == -1)		/*  if buffer not valid */
-            mtbuf = b;		/*    then it's 'empty' */
+        if (b->b_bufdrv == -1)          /*  if buffer not valid */
+            mtbuf = b;          /*    then it's 'empty' */
     }
 
 
@@ -137,7 +137,7 @@ doio:   for (p = *(q = phdr); p->b_link; p = *(q = &p->b_link))
         b->b_dm = (long) dm;
     }
     else
-    {	/* use a buffer, but first validate media */
+    {   /* use a buffer, but first validate media */
         if ((err = trap13(9,b->b_bufdrv)) != 0) {
             if (err == 1) {
                 goto doio; /* media may be changed */

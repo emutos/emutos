@@ -21,7 +21,7 @@
         .global _memset
         .global _bzero
            
-       	.text
+        .text
 //
 // void bzero(void *address, unsigned long size)
 // 

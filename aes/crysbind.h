@@ -1,5 +1,5 @@
-/*	CRYSBIND.H	05/05/84 - 02/02/85	Lee Lorenzen		*/
-/*	2.0		10/4/85  - 10/28/85	Lowell Webster		*/
+/*      CRYSBIND.H      05/05/84 - 02/02/85     Lee Lorenzen            */
+/*      2.0             10/4/85  - 10/28/85     Lowell Webster          */
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.                      
@@ -7,14 +7,14 @@
 *       Please see LICENSE.TXT for further information.                 
 *                                                                       
 *                  Historical Copyright                                 
-*	-------------------------------------------------------------
-*	GEM Application Environment Services		  Version 2.3
-*	Serial No.  XXXX-0000-654321		  All Rights Reserved
-*	Copyright (C) 1986			Digital Research Inc.
-*	-------------------------------------------------------------
+*       -------------------------------------------------------------
+*       GEM Application Environment Services              Version 2.3
+*       Serial No.  XXXX-0000-654321              All Rights Reserved
+*       Copyright (C) 1986                      Digital Research Inc.
+*       -------------------------------------------------------------
 */
 
-				/* Application Manager			*/
+                                /* Application Manager                  */
 #define APPL_INIT 10
 #define APPL_READ 11
 #define APPL_WRITE 12
@@ -24,15 +24,15 @@
 #define APPL_BVSET 16
 #define APPL_YIELD 17
 #define APPL_EXIT 19
-				/* Event Manager			*/
+                                /* Event Manager                        */
 #define EVNT_KEYBD 20
-#define	EVNT_BUTTON 21
+#define EVNT_BUTTON 21
 #define EVNT_MOUSE 22
 #define EVNT_MESAG 23
 #define EVNT_TIMER 24
 #define EVNT_MULTI 25
 #define EVNT_DCLICK 26
-				/* Menu Manager				*/
+                                /* Menu Manager                         */
 #define MENU_BAR 30
 #define MENU_ICHECK 31
 #define MENU_IENABLE 32
@@ -41,7 +41,7 @@
 #define MENU_REGISTER 35
 #define MENU_UNREGISTER 36
 #define MENU_CLICK 37
-				/* Object Manager			*/
+                                /* Object Manager                       */
 #define OBJC_ADD 40
 #define OBJC_DELETE 41
 #define OBJC_DRAW 42
@@ -50,7 +50,7 @@
 #define OBJC_ORDER 45
 #define OBJC_EDIT 46
 #define OBJC_CHANGE 47
-				/* Form Manager				*/
+                                /* Form Manager                         */
 #define FORM_DO 50
 #define FORM_DIAL 51
 #define FORM_ALERT 52
@@ -58,7 +58,7 @@
 #define FORM_CENTER 54
 #define FORM_KEYBD 55
 #define FORM_BUTTON 56
-				/* Process Manager			*/
+                                /* Process Manager                      */
 #if MULTIAPP
 #define PROC_CREATE 60
 #define PROC_RUN 61
@@ -69,7 +69,7 @@
 #define PROC_SWITCH 66
 #define PROC_SETBLOCK 67
 #endif
-				/* Graphics Manager			*/
+                                /* Graphics Manager                     */
 #define GRAF_RUBBOX 70
 #define GRAF_DRAGBOX 71
 #define GRAF_MBOX 72
@@ -80,13 +80,13 @@
 #define GRAF_HANDLE 77
 #define GRAF_MOUSE 78
 #define GRAF_MKSTATE 79
-				/* Scrap Manager			*/
+                                /* Scrap Manager                        */
 #define SCRP_READ 80
 #define SCRP_WRITE 81
 #define SCRP_CLEAR 82
-				/* File Selector Manager		*/
+                                /* File Selector Manager                */
 #define FSEL_INPUT 90
-				/* Window Manager			*/
+                                /* Window Manager                       */
 #define WIND_CREATE 100
 #define WIND_OPEN 101
 #define WIND_CLOSE 102
@@ -96,13 +96,13 @@
 #define WIND_FIND 106
 #define WIND_UPDATE 107
 #define WIND_CALC 108
-				/* Resource Manager			*/
+                                /* Resource Manager                     */
 #define RSRC_LOAD 110
 #define RSRC_FREE 111
 #define RSRC_GADDR 112
 #define RSRC_SADDR 113
 #define RSRC_OBFIX 114
-				/* Shell Manager			*/
+                                /* Shell Manager                        */
 #define SHEL_READ 120
 #define SHEL_WRITE 121
 #define SHEL_GET 122
@@ -111,11 +111,11 @@
 #define SHEL_ENVRN 125
 #define SHEL_RDEF 126
 #define SHEL_WDEF 127
-				/* Extended Graphics Manager		*/
+                                /* Extended Graphics Manager            */
 #define XGRF_STEPCALC 130
 #define XGRF_2BOX 131
 
-					/* max sizes for arrays		*/
+                                        /* max sizes for arrays         */
 #if SINGLAPP
 #define C_SIZE 4
 #endif
@@ -132,26 +132,26 @@
 #if MULTIAPP
 #define AO_SIZE 5
 #endif
-					/* Crystal funtion op code	*/
+                                        /* Crystal funtion op code      */
 #define OP_CODE control[0]
 #define IN_LEN control[1]
 #define OUT_LEN control[2]
 #define AIN_LEN control[3]
 #define AOUT_LEN control[4]
-			
+                        
 #define RET_CODE int_out[0]
-					/* application lib parameters	*/
+                                        /* application lib parameters   */
 #define AP_VERSION global[0]
 #define AP_COUNT global[1]
 #define AP_ID global[2]
 #define AP_LOPRIVATE global[3]
 #define AP_HIPRIVATE global[4]
-#define AP_LOPNAME global[5]		/* long ptr. to tree base in rsc*/
+#define AP_LOPNAME global[5]            /* long ptr. to tree base in rsc*/
 #define AP_HIPNAME global[6]
-#define AP_LO1RESV global[7]		/* long address of memory alloc.*/
+#define AP_LO1RESV global[7]            /* long address of memory alloc.*/
 #define AP_HI1RESV global[8]
-#define AP_LO2RESV global[9]		/* length of memory allocated	*/
-#define AP_HI2RESV global[10]		/* colors available on screen	*/
+#define AP_LO2RESV global[9]            /* length of memory allocated   */
+#define AP_HI2RESV global[10]           /* colors available on screen   */
 #define AP_LO3RESV global[11]
 #define AP_HI3RESV global[12]
 #define AP_LO4RESV global[13]
@@ -172,7 +172,7 @@
 #define AP_BVDISK int_in[0]
 #define AP_BVHARD int_in[1]
 
-#define SCR_MGR 0x0001			/* pid of the screen manager*/
+#define SCR_MGR 0x0001                  /* pid of the screen manager*/
 
 #define AP_MSG 0
 #define MN_SELECTED 10
@@ -194,7 +194,7 @@
 #define CT_UPDATE 50
 #define CT_MOVE 51
 #define CT_NEWTOP 52
-						/* event lib parameters	*/
+                                                /* event lib parameters */
 #define IN_FLAGS int_in[0]
 
 #define B_CLICKS int_in[0]
@@ -241,8 +241,8 @@
 
 #define MT_LOCOUNT int_in[14]
 #define MT_HICOUNT int_in[15]
-						/* mu_flags		*/
-#define MU_KEYBD 0x0001	
+                                                /* mu_flags             */
+#define MU_KEYBD 0x0001 
 #define MU_BUTTON 0x0002
 #define MU_M1 0x0004
 #define MU_M2 0x0008
@@ -251,28 +251,28 @@
 
 #define EV_DCRATE int_in[0]
 #define EV_DCSETIT int_in[1]
-						/* menu library parameters */
+                                                /* menu library parameters */
 
-#define MM_ITREE	addr_in[0]		/* ienable,icheck,tnorm	*/
+#define MM_ITREE        addr_in[0]              /* ienable,icheck,tnorm */
 
-#define MM_PSTR		addr_in[0]
+#define MM_PSTR         addr_in[0]
 
-#define MM_PTEXT	addr_in[1]
+#define MM_PTEXT        addr_in[1]
 
-#define SHOW_IT		int_in[0]		/* bar			*/
+#define SHOW_IT         int_in[0]               /* bar                  */
 
-#define	ITEM_NUM	int_in[0]		/* icheck, ienable	*/
-#define	MM_PID		int_in[0]		/* register		*/
-#define	MM_MID		int_in[0]		/* unregister		*/
-#define	CHECK_IT	int_in[1]		/* icheck		*/
-#define	ENABLE_IT	int_in[1]		/* ienable		*/
-#define MN_CLICK 	int_in[0]
-#define MN_SETIT 	int_in[1]
+#define ITEM_NUM        int_in[0]               /* icheck, ienable      */
+#define MM_PID          int_in[0]               /* register             */
+#define MM_MID          int_in[0]               /* unregister           */
+#define CHECK_IT        int_in[1]               /* icheck               */
+#define ENABLE_IT       int_in[1]               /* ienable              */
+#define MN_CLICK        int_in[0]
+#define MN_SETIT        int_in[1]
 
-#define	TITLE_NUM	int_in[0]		/* tnorm		*/
-#define	NORMAL_IT	int_in[1]		/* tnormal		*/
+#define TITLE_NUM       int_in[0]               /* tnorm                */
+#define NORMAL_IT       int_in[1]               /* tnormal              */
 
-					/* form library parameters	*/
+                                        /* form library parameters      */
 #define FM_FORM addr_in[0]
 #define FM_START int_in[0]
 
@@ -310,22 +310,22 @@
 #define FM_OCHAR int_out[2]
 
 #define FM_CLKS int_in[1]
-					/* process library parameters	*/
+                                        /* process library parameters   */
 
 #if MULTIAPP
-#define PR_ISSWAP int_in[0]		/* proc_create	*/
+#define PR_ISSWAP int_in[0]             /* proc_create  */
 #define PR_ISGEM int_in[1]
 #define PR_IBEGADDR addr_in[0]
 #define PR_ISIZE addr_in[1]
-#define PR_ONUM	int_out[1]
+#define PR_ONUM int_out[1]
 
-#define PR_NUM int_in[0]		/* proc_run	*/
+#define PR_NUM int_in[0]                /* proc_run     */
 #define PR_ISGRAF int_in[1]
 #define PR_ISOVER int_in[2]
 #define PR_PCMD addr_in[0]
 #define PR_PTAIL addr_in[1]
 
-#define PR_OISSWAP int_out[1]		/* proc_info	*/
+#define PR_OISSWAP int_out[1]           /* proc_info    */
 #define PR_OISGEM int_out[2]
 #define PR_OBEGADDR addr_out[0]
 #define PR_OCSIZE addr_out[1]
@@ -333,40 +333,40 @@
 #define PR_OSSIZE addr_out[3]
 #define PR_OINTADDR addr_out[4]
 #endif
-					/* object library parameters	*/
+                                        /* object library parameters    */
 
-#define OB_TREE addr_in[0]		/* all ob procedures		*/
+#define OB_TREE addr_in[0]              /* all ob procedures            */
 
-#define OB_DELOB int_in[0]		/* ob_delete			*/
+#define OB_DELOB int_in[0]              /* ob_delete                    */
 
-#define OB_DRAWOB int_in[0]		/* ob_draw, ob_change		*/
+#define OB_DRAWOB int_in[0]             /* ob_draw, ob_change           */
 #define OB_DEPTH int_in[1]
 #define OB_XCLIP int_in[2]
 #define OB_YCLIP int_in[3]
 #define OB_WCLIP int_in[4]
 #define OB_HCLIP int_in[5]
 
-#define OB_STARTOB int_in[0]		/* ob_find			*/
+#define OB_STARTOB int_in[0]            /* ob_find                      */
 /*#define OB_DEPTH int_in[1]*/
 #define OB_MX int_in[2]
 #define OB_MY int_in[3]
 
-#define OB_PARENT int_in[0]		/* ob_add			*/
+#define OB_PARENT int_in[0]             /* ob_add                       */
 #define OB_CHILD int_in[1]
-#define OB_OBJ int_in[0]		/* ob_offset, ob_order		*/
+#define OB_OBJ int_in[0]                /* ob_offset, ob_order          */
 #define OB_XOFF int_out[1]
 #define OB_YOFF int_out[2]
-#define OB_NEWPOS int_in[1]		/* ob_order			*/
+#define OB_NEWPOS int_in[1]             /* ob_order                     */
 
-					/* ob_edit			*/
+                                        /* ob_edit                      */
 #define OB_CHAR int_in[1]
 #define OB_IDX int_in[2]
 #define OB_KIND int_in[3]
 #define OB_ODX int_out[1]
 
-#define OB_NEWSTATE int_in[6]		/* ob_change			*/
+#define OB_NEWSTATE int_in[6]           /* ob_change                    */
 #define OB_REDRAW int_in[7]
-					/* graphics library parameters	*/
+                                        /* graphics library parameters  */
 #define GR_I1 int_in[0]
 #define GR_I2 int_in[1]
 #define GR_I3 int_in[2]
@@ -402,7 +402,7 @@
 #define GR_MY int_out[2]
 #define GR_MSTATE int_out[3]
 #define GR_KSTATE int_out[4]
-					/* scrap library parameters	*/
+                                        /* scrap library parameters     */
 #define SC_PATH addr_in[0]
 
 #define SC_FTCSV 0x0001
@@ -411,13 +411,13 @@
 #define SC_FTIMG 0x0008
 #define SC_FTDCA 0x0010
 #define SC_FTUSR 0x8000
-					/* file selector library parms	*/
+                                        /* file selector library parms  */
 
 #define FS_IPATH addr_in[0]
 #define FS_ISEL addr_in[1]
 
 #define FS_BUTTON int_out[1]
-					/* window library parameters	*/
+                                        /* window library parameters    */
 #define XFULL 0
 #define YFULL gl_hbox
 #define WFULL gl_width
@@ -456,7 +456,7 @@
 #define WF_TATTRB 18
 #define WF_SIZTOP 19
 
-						/* arrow message	*/
+                                                /* arrow message        */
 #define WA_UPPAGE 0
 #define WA_DNPAGE 1
 #define WA_UPLINE 2
@@ -465,19 +465,19 @@
 #define WA_RTPAGE 5
 #define WA_LFLINE 6
 #define WA_RTLINE 7
-						/* wm_create		*/
+                                                /* wm_create            */
 #define WM_KIND int_in[0]
-						/* wm_open, close, del	*/
+                                                /* wm_open, close, del  */
 #define WM_HANDLE int_in[0]
-						/* wm_open, wm_create	*/
+                                                /* wm_open, wm_create   */
 #define WM_WX int_in[1]
 #define WM_WY int_in[2]
 #define WM_WW int_in[3]
 #define WM_WH int_in[4]
-						/* wm_find		*/
+                                                /* wm_find              */
 #define WM_MX int_in[0]
 #define WM_MY int_in[1]
-						/* wm_calc		*/
+                                                /* wm_calc              */
 #define WC_BORDER 0
 #define WC_WORK 1
 #define WM_WCTYPE int_in[0]
@@ -490,7 +490,7 @@
 #define WM_WCOY int_out[2]
 #define WM_WCOW int_out[3]
 #define WM_WCOH int_out[4]
-						/* wm_update		*/
+                                                /* wm_update            */
 #define WM_BEGUP int_in[0]
 
 
@@ -499,7 +499,7 @@
 #define WM_IPRIVATE int_in[2]         
 
 #define WM_IKIND int_in[2]
-						/* for name and info	*/
+                                                /* for name and info    */
 #define WM_IOTITLE addr_in[0]
 
 #define WM_IX int_in[2]
@@ -515,13 +515,13 @@
 #define WM_ISLIDE int_in[2]
 
 #define WM_IRECTNUM int_in[6]
-					/* resource library parameters	*/
+                                        /* resource library parameters  */
 
-#define RS_PFNAME addr_in[0]		/* rs_init, 			*/
+#define RS_PFNAME addr_in[0]            /* rs_init,                     */
 #define RS_TYPE int_in[0]
 #define RS_INDEX int_in[1]
 #define RS_INADDR addr_in[0]
-#define RS_OUTADDR addr_out[0]		
+#define RS_OUTADDR addr_out[0]          
 
 #define RS_TREE addr_in[0]
 #define RS_OBJ int_in[0]
@@ -534,18 +534,18 @@
 #define R_STRING 5
 #define R_IMAGEDATA 6
 #define R_OBSPEC 7
-#define R_TEPTEXT 8		/* sub ptrs in TEDINFO	*/
+#define R_TEPTEXT 8             /* sub ptrs in TEDINFO  */
 #define R_TEPTMPLT 9
 #define R_TEPVALID 10
-#define R_IBPMASK 11		/* sub ptrs in ICONBLK	*/
+#define R_IBPMASK 11            /* sub ptrs in ICONBLK  */
 #define R_IBPDATA 12
 #define R_IBPTEXT 13
-#define R_BIPDATA 14		/* sub ptrs in BITBLK	*/
-#define R_FRSTR 15		/* gets addr of ptr to free strings	*/
-#define R_FRIMG 16		/* gets addr of ptr to free images	*/
+#define R_BIPDATA 14            /* sub ptrs in BITBLK   */
+#define R_FRSTR 15              /* gets addr of ptr to free strings     */
+#define R_FRIMG 16              /* gets addr of ptr to free images      */
 
 
-				/* shell library parameters	*/
+                                /* shell library parameters     */
 #define SH_DOEX int_in[0]
 #define SH_ISGR int_in[1]
 #define SH_ISCR int_in[2]
@@ -562,7 +562,7 @@
 
 #define SH_LPCMD addr_in[0]
 #define SH_LPDIR addr_in[1]
-				/* extended graphics library		*/
+                                /* extended graphics library            */
 #define XGR_I1 int_in[0]
 #define XGR_I2 int_in[1]
 #define XGR_I3 int_in[2]

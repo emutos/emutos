@@ -423,3 +423,4 @@ Start... early ages
 - renamed macro stop by stop2300, added the config variable in config.h (LVL)
 - changed stop() usage in bios/ikbd.c (LVL)
 - changed an explicit tab into \t in a string in command.c (LVL)
+- made cvsready (LVL)

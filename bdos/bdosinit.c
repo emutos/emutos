@@ -18,15 +18,15 @@
 
 /*
  *  bufl - buffer lists
- *	two lists:  fat,dir / data
- *	these lists should be initialized by the bios.
- *	(in bios.c)
+ *      two lists:  fat,dir / data
+ *      these lists should be initialized by the bios.
+ *      (in bios.c)
  */
 
 extern BCB *bufl[];
 
 
-extern		void _osinit();
+extern          void _osinit();
 
 
 /*

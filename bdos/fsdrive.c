@@ -13,32 +13,32 @@
 
 
 /*
- **	  date	    who     comment
- **	---------   ---     -------
- **	21 Mar 86   ktb     M01.01.20 - ckdrv() returns EINTRN if no slots
- **			    avail in dirtbl.
+ **       date      who     comment
+ **     ---------   ---     -------
+ **     21 Mar 86   ktb     M01.01.20 - ckdrv() returns EINTRN if no slots
+ **                         avail in dirtbl.
  **
- **	15 Sep 86   scc     M01.01.0915.02  ckdrv() now checks for negative error
- **					    return from BIOS
+ **     15 Sep 86   scc     M01.01.0915.02  ckdrv() now checks for negative error
+ **                                         return from BIOS
  **
- **	 7 Oct 86   scc     M01.01.1007.01  cast several pointers to longs when
- **			    they are compared to 0.
+ **      7 Oct 86   scc     M01.01.1007.01  cast several pointers to longs when
+ **                         they are compared to 0.
  **
- **	31 Oct 86   scc     M01.01.1031.01  removed definition of drvmap.  It was used on
- **			    the assumption that the drive map would not change after boot
- **			    time, which is not the case in BNR land.  Also removed
- **			    ValidDrv(), which checked it.  Corresponding change made in
- **			    xgetdir() in FSDIR.C
+ **     31 Oct 86   scc     M01.01.1031.01  removed definition of drvmap.  It was used on
+ **                         the assumption that the drive map would not change after boot
+ **                         time, which is not the case in BNR land.  Also removed
+ **                         ValidDrv(), which checked it.  Corresponding change made in
+ **                         xgetdir() in FSDIR.C
  **
  */
 
 
-#include	    "portab.h"
-#include	    "fs.h"
-#include	    "bios.h"		    /*	M01.01.01		    */
+#include            "portab.h"
+#include            "fs.h"
+#include            "bios.h"                /*  M01.01.01                   */
 #include            "mem.h"
-#include	    "gemerror.h"
-#include	"../bios/kprint.h"
+#include            "gemerror.h"
+#include        "../bios/kprint.h"
 
 
 /*
@@ -48,22 +48,22 @@
 static int log2(int);
 
 /*
- **	globals
+ **     globals
  */
 
 /*
- **	dirtbl - default directories.
- **	    Each entry points to the DND for someone's default directory.
- **	    They are linked to each process by the p_curdir entry in the PD.
- **	    The first entry (dirtbl[0]) is not used, as p_curdir[i]==0
- **	    means 'none set yet'.
+ **     dirtbl - default directories.
+ **         Each entry points to the DND for someone's default directory.
+ **         They are linked to each process by the p_curdir entry in the PD.
+ **         The first entry (dirtbl[0]) is not used, as p_curdir[i]==0
+ **         means 'none set yet'.
  */
 
 DND     *dirtbl[NCURDIR] ;
 
 /*
- **	diruse - use count
- **	drvsel - mask of drives selected since power up
+ **     diruse - use count
+ **     drvsel - mask of drives selected since power up
  */
 
 char    diruse[NCURDIR] ;
@@ -77,11 +77,11 @@ int     drvsel ;
  *    d - has this drive been accessed, or had a media change
  *
  *
- *	returns:
- *	    ERR     if getbpb() failed
- *	    ENSMEM  if log() failed
- *	    EINTRN  if no room in dirtbl
- *	    drive nbr if success.
+ *      returns:
+ *          ERR     if getbpb() failed
+ *          ENSMEM  if log() failed
+ *          EINTRN  if no room in dirtbl
+ *          drive nbr if success.
  */
 
 long    ckdrv(int d)
@@ -92,10 +92,10 @@ long    ckdrv(int d)
     mask = 1 << d;
 
     if (!(mask & drvsel))
-    {	    /*	drive has not been selected yet  */
+    {       /*  drive has not been selected yet  */
         b = (BPB *) getbpb(d);
 
-        if ( !(long)b )		    /* M01.01.1007.01 */
+        if ( !(long)b )             /* M01.01.1007.01 */
             return(ERR);
 
         if ( (long)b < 0 ) /* M01.01.0915.02 */ /* M01.01.1007.01 */
@@ -108,18 +108,18 @@ long    ckdrv(int d)
     }
 
     if ((!run->p_curdir[d]) || (!dirtbl[(int)(run->p_curdir[d])]))
-    {	    /* need to allocate current dir on this drv */
+    {       /* need to allocate current dir on this drv */
 
-        for (i = 1; i < NCURDIR; i++)   /*	find unused slot    */
+        for (i = 1; i < NCURDIR; i++)   /*      find unused slot    */
             if (!diruse[i])
                 break;
 
-        if (i == NCURDIR)		    /*	no slot available   */
-            return( EINTRN ) ;	    /*	M01.01.20	    */
+        if (i == NCURDIR)                   /*  no slot available   */
+            return( EINTRN ) ;      /*  M01.01.20           */
 
-        diruse[i]++;		    /*	mark as used	    */
-        dirtbl[i] = drvtbl[d]->m_dtl;   /*	link to DND	    */
-        run->p_curdir[d] = i;	    /*	link to process     */
+        diruse[i]++;                /*  mark as used        */
+        dirtbl[i] = drvtbl[d]->m_dtl;   /*      link to DND         */
+        run->p_curdir[d] = i;       /*  link to process     */
     }
 
     return(d);
@@ -128,7 +128,7 @@ long    ckdrv(int d)
 
 
 /*
-**	getdmd - allocate storage for and initialize a DMD
+**      getdmd - allocate storage for and initialize a DMD
 */
 
 DMD     *getdmd(int drv)
@@ -159,8 +159,8 @@ fredm:  xmfreblk (dm);
 
 
 /*
-**	log -
-**	    log in media 'b' on drive 'drv'.
+**      log -
+**          log in media 'b' on drive 'drv'.
 **
 */
 
@@ -170,7 +170,7 @@ fredm:  xmfreblk (dm);
 
 long    log(BPB *b, int drv)
 {
-        OFD *fo,*f; 			    /*	M01.01.03   */
+        OFD *fo,*f;                         /*  M01.01.03   */
         DND *d;
         DMD *dm;
         int rsiz,cs,n,fs,ncl,fcl;
@@ -183,36 +183,36 @@ long    log(BPB *b, int drv)
         if (!(dm = getdmd(drv)))
                 return (ENSMEM);
 
-        d = dm->m_dtl;		    /*	root DND for drive	    */
-        dm->m_fsiz = fs;		    /*	fat size		    */
-        f = d->d_ofd;		    /*	root dir file		    */
-        dm->m_drvnum = drv; 	    /*	drv nbr into media descr    */
-        f->o_dmd = dm;		    /*	link to OFD for rt dir file */
+        d = dm->m_dtl;              /*  root DND for drive          */
+        dm->m_fsiz = fs;                    /*  fat size                    */
+        f = d->d_ofd;               /*  root dir file               */
+        dm->m_drvnum = drv;         /*  drv nbr into media descr    */
+        f->o_dmd = dm;              /*  link to OFD for rt dir file */
 
-        d->d_drv = dm;		    /*	link root DND with DMD	    */
-        d->d_name[0] = 0;		    /*	null out name of root	    */
+        d->d_drv = dm;              /*  link root DND with DMD      */
+        d->d_name[0] = 0;                   /*  null out name of root       */
 
-        dm->m_16 = b->b_flags & B_16;   /*	set 12 or 16 bit fat flag   */
-        dm->m_clsiz = cs;		    /*	set cluster size in sectors */
-        dm->m_clsizb = b->clsizb;	    /*	  and in bytes		    */
-        dm->m_recsiz = rsiz;	    /*	set record (sector) size    */
-        dm->m_numcl = b->numcl;	    /*	set cluster size in records */
-        dm->m_clrlog = log2(cs);	    /*	  and log of it 	    */
-        dm->m_clrm = logmsk[dm->m_clrlog];	    /*	and mask of it	    */
-        dm->m_rblog = log2(rsiz);	    /*	set log of bytes/record     */
-        dm->m_rbm = logmsk[dm->m_rblog];	    /*	and mask of it	    */
-        dm->m_clblog = log2(dm->m_clsizb);	    /*	log of bytes/clus   */
+        dm->m_16 = b->b_flags & B_16;   /*      set 12 or 16 bit fat flag   */
+        dm->m_clsiz = cs;                   /*  set cluster size in sectors */
+        dm->m_clsizb = b->clsizb;           /*    and in bytes              */
+        dm->m_recsiz = rsiz;        /*  set record (sector) size    */
+        dm->m_numcl = b->numcl;     /*  set cluster size in records */
+        dm->m_clrlog = log2(cs);            /*    and log of it             */
+        dm->m_clrm = logmsk[dm->m_clrlog];          /*  and mask of it      */
+        dm->m_rblog = log2(rsiz);           /*  set log of bytes/record     */
+        dm->m_rbm = logmsk[dm->m_rblog];            /*  and mask of it      */
+        dm->m_clblog = log2(dm->m_clsizb);          /*  log of bytes/clus   */
 
-        f->o_fileln = n * rsiz;	    /*	size of file (root dir)     */
+        f->o_fileln = n * rsiz;     /*  size of file (root dir)     */
 
 
-        ncl = (n + cs - 1)/cs;	    /* number of "clusters" in root */
-        d->d_strtcl = f->o_strtcl = -1 - ncl;   /*	root start clus     */
+        ncl = (n + cs - 1)/cs;      /* number of "clusters" in root */
+        d->d_strtcl = f->o_strtcl = -1 - ncl;   /*      root start clus     */
         fcl = (fs + cs - 1)/cs;
 
-        fo = dm->m_fatofd;		    /*	OFD for 'fat file'	    */
-        fo->o_strtcl = d->d_strtcl - fcl;	    /*	start clus for fat  */
-        fo->o_dmd = dm;		    /*	link with DMD		    */
+        fo = dm->m_fatofd;                  /*  OFD for 'fat file'          */
+        fo->o_strtcl = d->d_strtcl - fcl;           /*  start clus for fat  */
+        fo->o_dmd = dm;             /*  link with DMD               */
 
         dm->m_recoff[0] = b->fatrec - (fo->o_strtcl * cs);
         dm->m_recoff[1] = (b->fatrec + fs) - (d->d_strtcl * cs);
@@ -230,8 +230,8 @@ long    log(BPB *b, int drv)
 
 
 /*
-**	log2 -
-**	    return log base 2 of n
+**      log2 -
+**          return log base 2 of n
 */
 
 static int log2(int n)

@@ -18,9 +18,9 @@
  *  process management
  */
 
-extern	long	bakbuf[] ;
-extern	WORD	supstk[] ;
-extern	PD	*run;
+extern  long    bakbuf[] ;
+extern  WORD    supstk[] ;
+extern  PD      *run;
 
 /*
  * in proc.c

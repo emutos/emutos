@@ -18,34 +18,34 @@
 extern UWORD off_first[], dat_first[];
 
 struct font_head f6x6 ={
-    1,			/*   WORD font_id	*/
-    8,			/*   WORD point		*/
-    "6x6 system font",		/*   BYTE name[32]	*/
-    0,			/*   UWORD first_ade	*/
-    255,		/*   UWORD last_ade	*/
-    4,	    		/*   UWORD top		*/
-    4,	    		/*   UWORD ascent	*/
-    3,	    		/*   UWORD half		*/
-    1,	    		/*   UWORD descent	*/
-    1,			/*   UWORD bottom	*/
-    5,			/*   UWORD max_char_width*/
-    6,			/*   UWORD max_cell_width*/
-    0,			/*   UWORD left_offset	*/
-    2,			/*   UWORD right_offset	*/
-    1,			/*   UWORD thicken	*/
-    1,			/*   UWORD ul_size	*/
-    0x5555,		/*   UWORD lighten	*/
-    0x5555,		/*   UWORD skew		*/
+    1,                  /*   WORD font_id       */
+    8,                  /*   WORD point         */
+    "6x6 system font",          /*   BYTE name[32]      */
+    0,                  /*   UWORD first_ade    */
+    255,                /*   UWORD last_ade     */
+    4,                  /*   UWORD top          */
+    4,                  /*   UWORD ascent       */
+    3,                  /*   UWORD half         */
+    1,                  /*   UWORD descent      */
+    1,                  /*   UWORD bottom       */
+    5,                  /*   UWORD max_char_width*/
+    6,                  /*   UWORD max_cell_width*/
+    0,                  /*   UWORD left_offset  */
+    2,                  /*   UWORD right_offset */
+    1,                  /*   UWORD thicken      */
+    1,                  /*   UWORD ul_size      */
+    0x5555,             /*   UWORD lighten      */
+    0x5555,             /*   UWORD skew         */
     F_STDFORM | F_MONOSPACE,/*   UWORD flags        */
 
-    0,			/*   UBYTE *hor_table	*/
-    off_first,		/*   UWORD *off_table	*/
-    dat_first,		/*   UWORD *dat_table	*/
-    192,		/*   UWORD form_width	*/
-    6,			/*   UWORD form_height	*/
+    0,                  /*   UBYTE *hor_table   */
+    off_first,          /*   UWORD *off_table   */
+    dat_first,          /*   UWORD *dat_table   */
+    192,                /*   UWORD form_width   */
+    6,                  /*   UWORD form_height  */
 
-    0,			/*   UWORD next_font	*/
-    0			/*   UWORD next_seg	*/
+    0,                  /*   UWORD next_font    */
+    0                   /*   UWORD next_seg     */
 };
 
 UWORD off_first[257] =

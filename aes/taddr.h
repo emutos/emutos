@@ -1,4 +1,4 @@
-/*	TADDR.H		04/11/84 - 02/09/85	Gregg Morris		*/
+/*      TADDR.H         04/11/84 - 02/09/85     Gregg Morris            */
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.                      
@@ -6,17 +6,17 @@
 *       Please see LICENSE.TXT for further information.                 
 *                                                                       
 *                  Historical Copyright                                 
-*	-------------------------------------------------------------
-*	GEM Application Environment Services		  Version 2.3
-*	Serial No.  XXXX-0000-654321		  All Rights Reserved
-*	Copyright (C) 1986			Digital Research Inc.
-*	-------------------------------------------------------------
+*       -------------------------------------------------------------
+*       GEM Application Environment Services              Version 2.3
+*       Serial No.  XXXX-0000-654321              All Rights Reserved
+*       Copyright (C) 1986                      Digital Research Inc.
+*       -------------------------------------------------------------
 */
 
 #define NIL -1
 #define ROOT 0
 
-EXTERN LONG	obaddr();
+EXTERN LONG     obaddr();
 
 #define OB_NEXT(x) obaddr(tree, x, 0)
 #define OB_HEAD(x) obaddr(tree, x, 2)

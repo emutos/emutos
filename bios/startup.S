@@ -44,23 +44,23 @@
         .global _b_mdx          // used in bios.c
 
         .global _printout
-        .global kprintf		// asm glue, saves registers
+        .global kprintf         // asm glue, saves registers
 
         .global _run
 
         .global _criter
-	.global _criter1
+        .global _criter1
 
         .global memdone         // return to, if memory config done
 
         .global _cartscan
         .global _os_end
         .global _os_beg
-	.global _os_magic
-	.global _os_date
-	.global _os_pal
-	.global _os_dosdate
-	
+        .global _os_magic
+        .global _os_date
+        .global _os_pal
+        .global _os_dosdate
+        
         .global _int_vbl
         .global _int_hbl
         .global _biostrap
@@ -81,11 +81,11 @@
         .global _m_start
         .global _m_length
 
-	.global _save_area
-	.global _int_timera
-	.global _int_timerb
-	.global _int_timerc
-	.global _int_timerd
+        .global _save_area
+        .global _int_timera
+        .global _int_timerb
+        .global _int_timerc
+        .global _int_timerd
 
         .global _load_cli        // load EmuCON
         
@@ -107,7 +107,7 @@
         .xdef   _bios_e
         .xdef   _bios_f
         .xdef   _bios_10
-	.xdef   _bios_11
+        .xdef   _bios_11
 
 
 // ==== tosvars.s - TOS System variables =====================================
@@ -134,28 +134,28 @@
 
         .xdef   _hz_200       
 
-	.xdef   _kprintf
+        .xdef   _kprintf
 
         .xdef   _longframe
         
 // ==== conout.s - Graphics output ===========================================
 
-	.xdef	_blink
-		
+        .xdef   _blink
+                
 // ==== memory.s - variables for memory  =====================================
 
-	.xdef	meminit       // initialize the memory and it's controller
+        .xdef   meminit       // initialize the memory and it's controller
 
 // ==== Overall memory map ===================================================
 
-	.xdef	bssstrt	      // address 0
-	.xdef   bssstart      // end of documented low memory tosvars
+        .xdef   bssstrt       // address 0
+        .xdef   bssstart      // end of documented low memory tosvars
         .xdef   _end          // end of bss + comm sections (ld generated)
 
-	.xdef	_os_entry     // start of text section
-	.xdef   _etext        // end of text section
-	.xdef   _edata        // end of data section
-	
+        .xdef   _os_entry     // start of text section
+        .xdef   _etext        // end of text section
+        .xdef   _edata        // end of data section
+        
 
 // ===========================================================================
 // ==== BSS segment ==========================================================
@@ -165,17 +165,17 @@
 
 // save area for trap13/14.
 save_beg:       ds.w    24*3    // d3-d7/a3-a7, sr, pc, vo = 24 words, 
-				// multiplied by 3 ("3 level deep reentrant")
+                                // multiplied by 3 ("3 level deep reentrant")
 _save_area:                     // End of Save storage
 
 
-// LVL - this .org directive can only be used in tosvars.S	
+// LVL - this .org directive can only be used in tosvars.S      
 //        .org    0x167a
 _diskbuf:       ds.b    1024    // 1 cluster disk buffer
 //        .org    0x45b8
 _stkbot:        ds.w    SUPSIZ  // Supervisor stack
 _stktop:                        // filled from top to bottom
-	
+        
 t1regsav:       dc.l    1   
 
 _b_mdx:                         // initial memory descriptor
@@ -184,10 +184,10 @@ _m_start:       dc.l    1       // start address of TPA
 _m_length:      dc.l    1       // length of TPA in byte
                 dc.l    1
 
-aexecsave:	dc.l	1	// save zone for autoexec
-	
-kprintfsave:	dc.l	5	// save zone for kprintf
-	
+aexecsave:      dc.l    1       // save zone for autoexec
+        
+kprintfsave:    dc.l    5       // save zone for kprintf
+        
 // ===========================================================================
 // ==== TEXT segment (TOS image) =============================================
 // ===========================================================================
@@ -264,15 +264,15 @@ nodiag:
 
 // ==== Reset vector =========================================================
 resetvec:
-       cmpi.l 	#0x31415926, resvalid	// Jump to resetvector?
-       bne.s 	noreset    		// No --> noreset
-       move.l 	resvector, d0		// Yes: old resvec to d0
-       beq.s 	noreset         	// Address null? Yes --> noreset
-       btst 	#0, d0			// Address odd ?
-       bne.s 	noreset    		// Yes --> noreset
-       movea.l  d0, a0			// resvec
-       lea 	resetvec(pc), a6        // save return address
-       jmp 	(a0)			// jump to resvec
+       cmpi.l   #0x31415926, resvalid   // Jump to resetvector?
+       bne.s    noreset                 // No --> noreset
+       move.l   resvector, d0           // Yes: old resvec to d0
+       beq.s    noreset                 // Address null? Yes --> noreset
+       btst     #0, d0                  // Address odd ?
+       bne.s    noreset                 // Yes --> noreset
+       movea.l  d0, a0                  // resvec
+       lea      resetvec(pc), a6        // save return address
+       jmp      (a0)                    // jump to resvec
 noreset:
 
 // ==== Check, if old memory config can be used ==============================
@@ -282,7 +282,7 @@ noreset:
  * the stack, so that the rest of boot sequence can be made more
  * modular using CDECL routines.
  */
-	
+        
         bra     meminit                 // do/test memory config (needs sp)
 memdone:
 
@@ -310,63 +310,63 @@ memdone:
  * do_autoexec, in bios.c, that does the real job. 
  */
 
-	.global _launchautoexec
-	.global _strtautoexec
-	
+        .global _launchautoexec
+        .global _strtautoexec
+        
 _launchautoexec:
-	// get basepage address
-	move.l	4(sp),a0
+        // get basepage address
+        move.l  4(sp),a0
 
-	// save registers (they will not be saved by gemdos,
-	// because we do not use Pterm())
-	movem.l d2-d7/a2-a6,-(sp)
-	bsr     launchautoexec
-	movem.l (sp)+,d2-d7/a2-a6
-	rts
+        // save registers (they will not be saved by gemdos,
+        // because we do not use Pterm())
+        movem.l d2-d7/a2-a6,-(sp)
+        bsr     launchautoexec
+        movem.l (sp)+,d2-d7/a2-a6
+        rts
 
-launchautoexec:	
-	// save stack 
-	move.l  sp,aexecsave
+launchautoexec: 
+        // save stack 
+        move.l  sp,aexecsave
 
-	// Pexec(4,...)
-	lea	empty(pc),a1
-	pea	(a1)
-	move.l	a0,-(sp)
-	pea	(a1)
-	move.w	#4,-(sp)
-	move.w	#0x4b,-(sp)
-	trap	#1
-	add.w	#16,sp
-	rts
+        // Pexec(4,...)
+        lea     empty(pc),a1
+        pea     (a1)
+        move.l  a0,-(sp)
+        pea     (a1)
+        move.w  #4,-(sp)
+        move.w  #0x4b,-(sp)
+        trap    #1
+        add.w   #16,sp
+        rts
 
-empty:	dc.w	0
-	
+empty:  dc.w    0
+        
 _strtautoexec:
-	// get basepage address
-	move.l	4(sp),a5
-	// basepage + stack size
-	move.l	#0x200,d7
-	// stack pointer at the end of our zone
-	lea	(a5,d7),sp
-	// go in supervisor mode
-	clr.l	-(sp)
-	move.w	#0x20,-(sp)
-	trap	#1
-	add.w	#6,sp
-	// release excess memory (the BDOS has given us all mem left)
-	move.l	d7,-(sp)
-	move.l	a5,-(sp)
-	clr.w	-(sp)
-	move.w	#0x4a,-(sp)
-	trap	#1
-	add.w	#12,sp
-	// jsr into do_autoexec
-	jsr	_do_autoexec
-	// restore stack and return
-	move.l	aexecsave,sp
-	rts
+        // get basepage address
+        move.l  4(sp),a5
+        // basepage + stack size
+        move.l  #0x200,d7
+        // stack pointer at the end of our zone
+        lea     (a5,d7),sp
+        // go in supervisor mode
+        clr.l   -(sp)
+        move.w  #0x20,-(sp)
+        trap    #1
+        add.w   #6,sp
+        // release excess memory (the BDOS has given us all mem left)
+        move.l  d7,-(sp)
+        move.l  a5,-(sp)
+        clr.w   -(sp)
+        move.w  #0x4a,-(sp)
+        trap    #1
+        add.w   #12,sp
+        // jsr into do_autoexec
+        jsr     _do_autoexec
+        // restore stack and return
+        move.l  aexecsave,sp
+        rts
 
-	
+        
 // ===========================================================================
 // ==== dummy aes ============================================================
 // ===========================================================================
@@ -395,7 +395,7 @@ failgem:
         jsr _kprintf
         addq #4,sp
 
-everloop:	
+everloop:       
         bra everloop            // Loop forever, if GEM call not implemented
 
 
@@ -419,7 +419,7 @@ _just_rts:
 
 // ==== just rte for divide by zero ==========================================
 _just_rte:
-        rte		
+        rte             
 
 
 
@@ -462,57 +462,57 @@ _int_vbl:
         movem.l d0-d7/a0-a6, -(sp)      // save registers
         addq.l  #1, _vbclock            // count number of VBL interrupts
 
-	// detect rez change
-	// (not done)
+        // detect rez change
+        // (not done)
 
-	bsr _blink                       // blink cursor
+        bsr _blink                       // blink cursor
 
-	// load new color palette
-	move.l	_colorptr,d0
-	beq	vbl_no_palette
-	move.l	d0,a0
-	lea	0xffff8240,a1
-	move.w	#15,d0
+        // load new color palette
+        move.l  _colorptr,d0
+        beq     vbl_no_palette
+        move.l  d0,a0
+        lea     0xffff8240,a1
+        move.w  #15,d0
 vbl_palette_loop:
-	move.w	(a0)+,(a1)+
-	dbra	d0,vbl_palette_loop
-vbl_no_palette:	
+        move.w  (a0)+,(a1)+
+        dbra    d0,vbl_palette_loop
+vbl_no_palette: 
 
-	// set new video address
-	move.l	_screenpt,d0
-	beq	vbl_no_screenpt
-	move.l	d0,_v_bas_ad
-	tst.w	_has_ste_shifter
-	beq	st_shifter
-	move.b	d0,0xffff820d
+        // set new video address
+        move.l  _screenpt,d0
+        beq     vbl_no_screenpt
+        move.l  d0,_v_bas_ad
+        tst.w   _has_ste_shifter
+        beq     st_shifter
+        move.b  d0,0xffff820d
 st_shifter:
-	lsr.w	#8,d0
-	move.b	d0,0xffff8203
-	swap	d0
-	move.b	d0,0xffff8201
-vbl_no_screenpt:	
+        lsr.w   #8,d0
+        move.b  d0,0xffff8203
+        swap    d0
+        move.b  d0,0xffff8201
+vbl_no_screenpt:        
 
-	// flopvbl
-	// bsr    _flopvbl                 // flopvbl routine not needed
+        // flopvbl
+        // bsr    _flopvbl                 // flopvbl routine not needed
 
-	// vblqueue
-	move.w	_nvbls,d0
-	beq	vbl_no_queue
-	sub.w	#1,d0
-	move.l	_vblqueue,a0
-vbl_queue_loop:	
-	move.l	(a0)+,a1
-	cmp.l	#0,a1
-	beq	vbl_queue_next
-	movem.l	d0/a0,-(sp)
-	jsr	(a1)
-	movem.l	(sp)+,d0/a0
-vbl_queue_next:	
-	dbra	d0,vbl_queue_loop
+        // vblqueue
+        move.w  _nvbls,d0
+        beq     vbl_no_queue
+        sub.w   #1,d0
+        move.l  _vblqueue,a0
+vbl_queue_loop: 
+        move.l  (a0)+,a1
+        cmp.l   #0,a1
+        beq     vbl_queue_next
+        movem.l d0/a0,-(sp)
+        jsr     (a1)
+        movem.l (sp)+,d0/a0
+vbl_queue_next: 
+        dbra    d0,vbl_queue_loop
 vbl_no_queue:
-	
-	// screen hardcopy
-	// (not done) 
+        
+        // screen hardcopy
+        // (not done) 
 
         movem.l (sp)+, d0-d7/a0-a6      // restore registers
 vbl_end:
@@ -535,25 +535,25 @@ _int_timerb:
 
 // ==== Timer C interrupt handler ============================================
 _int_timerc:
-	
+        
         addq.l  #1, _hz_200             // increment 200 Hz counter
 
-	rol.w   _timer_c_sieve          // check for 4th call
-	bpl	timerc_end
+        rol.w   _timer_c_sieve          // check for 4th call
+        bpl     timerc_end
 
-        movem.l d0-d7/a0-a6,-(sp)       // save registers	
+        movem.l d0-d7/a0-a6,-(sp)       // save registers       
         // TODO, repeat keys ?
 
-	// dosound support
+        // dosound support
         jsr     _sndirq
-	
+        
         move.w  _timer_ms, -(sp)
         move.l  _etv_timer, a0
 //        jsr     (a0)                    // jump to etc_timer routine
         addq.w  #2, sp                  // correct stack
         
         movem.l (sp)+,d0-d7/a0-a6
-timerc_end:			
+timerc_end:                     
         bclr    #5, 0xfffffa11          // clear interrupt service bit
         rte
         
@@ -598,30 +598,30 @@ _printout:
         dc.l 0          // Printing subroutine
 #endif
 #if ARANYM_NATIVE_PRINT
-		dc.w 0x7135     // Jump to native printing subroutine
+                dc.w 0x7135     // Jump to native printing subroutine
 #endif
         rts
 
 
 // ==== ASM glue for kprintf =================================================
 kprintf:
-	move.l	(sp)+,kprintfsave+16
-	movem.l	d0-d1/a0-a1,kprintfsave
-	jsr 	_kprintf
-	movem.l	kprintfsave,d0-d1/a0-a1
-	move.l	kprintfsave+16,-(sp)
-	rts
-	
+        move.l  (sp)+,kprintfsave+16
+        movem.l d0-d1/a0-a1,kprintfsave
+        jsr     _kprintf
+        movem.l kprintfsave,d0-d1/a0-a1
+        move.l  kprintfsave+16,-(sp)
+        rts
+        
 
 // ==== Use cartridge, if present ============================================
 // get cartridge-type in d0, else use C glue.
 
 msg_cart:
         .ascii "BIOS: Cartridge has been initialized ...\n\0"
-	.even
+        .even
 
-_cartscan:	
-	move.w  4(sp),d0	
+_cartscan:      
+        move.w  4(sp),d0        
 cartscan:
         lea     cart_base, a0
         cmp.l   #0xABCDEF42, (a0)+      // is cartridge present?
@@ -673,7 +673,7 @@ _xbiostrap:
 // ==== Trap 13+14 handler ==================================================
 
 biosxbios:
-	move.l  _savptr, a1     
+        move.l  _savptr, a1     
         move.w  (sp)+,d0        // Status register -> d0
         move.w  d0,-(a1)        // and save in save_area
         move.l  (sp)+,-(a1)     // save return address
@@ -694,7 +694,7 @@ bx_sp_ok:
         move.w  (sp)+,d0        // remove the function number from stack
         cmp.w   d1,d0           // Higher, than highest number?
         bge     bx_ret_exc
-        move.l	d0,d1		// if not implemented, returns the func number
+        move.l  d0,d1           // if not implemented, returns the func number
         add.l   d1,d1           // indirection function table is 1 LW per
         add.l   d1,d1           // so multiply function number by 4
         add.l   d1,a0           // add to the base address of lookup table
@@ -740,13 +740,13 @@ bios_vecs:
         dc.l   _bios_9                 // media change?
         dc.l   _bios_a                 // what drives exist?
         dc.l   _bios_b                 // get/set alt-ctrl-shift status
-	dc.l   _just_rts	// unused bios_c
-	dc.l   _just_rts	// unused bios_d
-	dc.l   _just_rts	// unused bios_e
-	dc.l   _just_rts	// unused bios_f
-	dc.l   _just_rts	// unused bios_10
-	dc.l   _bios_11			// get/set date/time (used by BDOS)
-	
+        dc.l   _just_rts        // unused bios_c
+        dc.l   _just_rts        // unused bios_d
+        dc.l   _just_rts        // unused bios_e
+        dc.l   _just_rts        // unused bios_f
+        dc.l   _just_rts        // unused bios_10
+        dc.l   _bios_11                 // get/set date/time (used by BDOS)
+        
 bios_ent:               // Max. number of BIOS entries
         dc.w    (bios_ent-bios_vecs)/4
 
@@ -795,30 +795,30 @@ xbios_vecs:
         dc.l    _xbios_25
         dc.l    _xbios_26
         dc.l    _xbios_27
-        dc.l	_just_rts	// 28
-        dc.l	_xbios_29
-        dc.l	_xbios_2a
-        dc.l	_xbios_2b
-        dc.l	_xbios_2c
-        dc.l	_just_rts	// 2d
-        dc.l	_xbios_2e
-        dc.l	_just_rts	// 2f
-        dc.l	_just_rts	// 30
-        dc.l	_just_rts	// 31
-        dc.l	_just_rts	// 32
-        dc.l	_just_rts	// 33
-        dc.l	_just_rts	// 34
-        dc.l	_just_rts	// 35
-        dc.l	_just_rts	// 36
-        dc.l	_just_rts	// 37
-        dc.l	_just_rts	// 39
-        dc.l	_just_rts	// 3a
-        dc.l	_just_rts	// 3b
-        dc.l	_just_rts	// 3c
-        dc.l	_just_rts	// 3d
-        dc.l	_just_rts	// 3e
-        dc.l	_just_rts	// 3f
-        dc.l	_xbios_40
+        dc.l    _just_rts       // 28
+        dc.l    _xbios_29
+        dc.l    _xbios_2a
+        dc.l    _xbios_2b
+        dc.l    _xbios_2c
+        dc.l    _just_rts       // 2d
+        dc.l    _xbios_2e
+        dc.l    _just_rts       // 2f
+        dc.l    _just_rts       // 30
+        dc.l    _just_rts       // 31
+        dc.l    _just_rts       // 32
+        dc.l    _just_rts       // 33
+        dc.l    _just_rts       // 34
+        dc.l    _just_rts       // 35
+        dc.l    _just_rts       // 36
+        dc.l    _just_rts       // 37
+        dc.l    _just_rts       // 39
+        dc.l    _just_rts       // 3a
+        dc.l    _just_rts       // 3b
+        dc.l    _just_rts       // 3c
+        dc.l    _just_rts       // 3d
+        dc.l    _just_rts       // 3e
+        dc.l    _just_rts       // 3f
+        dc.l    _xbios_40
 
 xbios_ent:              // Max. number of XBIOS entries
         .dc.w   (xbios_ent-xbios_vecs)/4

@@ -1,4 +1,4 @@
-/*	OPTIMOPT.S */
+/*      OPTIMOPT.S */
 
 
 
@@ -14,10 +14,10 @@
 .globl _strchk
 
 *
-*	VOID
+*       VOID
 *r_get(pxywh, px, py, pw, ph)
-*	WORD		*pxywh;
-*	WORD		*px, *py, *pw, *ph;
+*       WORD            *pxywh;
+*       WORD            *px, *py, *pw, *ph;
 _r_get:
 LD80A:
             link    A6,#0
@@ -37,10 +37,10 @@ LD80A:
             rts
 
 
-*	VOID
+*       VOID
 *r_set(pxywh, x, y, w, h)
-*	WORD		*pxywh;
-*	WORD		x, y, w, h;
+*       WORD            *pxywh;
+*       WORD            x, y, w, h;
 _r_set:
 LD83E:
             link    A6,#0x00
@@ -78,11 +78,11 @@ LDBB0:
             rts
 
 /*
-	VOID
+        VOID
 bfill(num, bval, addr)
-	REG WORD	num;
-	BYTE		bval;
-	REG BYTE	*addr;
+        REG WORD        num;
+        BYTE            bval;
+        REG BYTE        *addr;
 */
 _bfill:
 LDB3E:
@@ -103,12 +103,12 @@ LDB52:
 
 
 /*
-*	Return <0 if s<t, 0 if s==t, >0 if s>t
+*       Return <0 if s<t, 0 if s==t, >0 if s>t
 *
 *
-*	WORD
+*       WORD
 *strchk(s, t)
-*	BYTE		s[], t[];
+*       BYTE            s[], t[];
 */
 _strchk:
 LDC10:
