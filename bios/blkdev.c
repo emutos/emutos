@@ -344,7 +344,7 @@ LONG blkdev_drvmap(void)
 
 LONG blkdev_avail(WORD dev)
 {
-    return((1L << dev) & drvbits)
+    return((1L << dev) & drvbits);
 }
 
 

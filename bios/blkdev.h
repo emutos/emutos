@@ -81,7 +81,7 @@ typedef struct _geometry GEOMETRY;
 #define RW_RW               1
 #define RW_NOMEDIACH        2
 #define RW_NORETRIES        4
-#define RW_NOTRANSLATE          8
+#define RW_NOTRANSLATE      8
 
 /*
  *  return codes
@@ -110,9 +110,9 @@ LONG blkdev_hdv_boot(void);
 LONG blkdev_getbpb(WORD dev);
 LONG blkdev_rwabs(WORD r_w, LONG adr, WORD numb, WORD first, WORD dev, LONG lfirst);
 LONG blkdev_mediach(WORD dev);
+UWORD compute_cksum(LONG buf);
 LONG blkdev_drvmap(void);
 LONG blkdev_avail(WORD dev);
-UWORD compute_cksum(LONG buf);
 
 
 
@@ -134,6 +134,32 @@ UWORD compute_cksum(LONG buf);
 #define BDM_LRECNO             0x10    /* lrecno supported */
 #define BDM_WP_HARD            0x20    /* write-protected partition */
 
+
+/* unified block device identificator - partitially stolen from MiNT, hehe */
+
+struct _blkdev
+{
+#if EVER_NEEDED /* take it, if you need... */
+    UWORD	major;		/* XHDI */
+    UWORD	minor;		/* XHDI */
+    UWORD	mode;		/* some flags */
+
+    UWORD	lock;		/* device in use */
+
+    char	id[4];		/* XHDI partition id (GEM, BGM, RAW, \0D6, ...) */
+    UWORD	key;		/* XHDI key */
+#endif /* EVER_NEEDED */
+
+    ULONG	start;		/* physical start sector */
+    ULONG	size;		/* physical sectors */
+
+    UWORD	valid;		/* device valid */
+	BPB     bpb;
+	GEOMETRY    geometry;   /* this should probably belong to devices */
+    BYTE    serial[3];  /* the serial number taken from the bootsector */
+	int		unit;		/* 0,1 = floppies, 2-9 = ACSI, 10-17 = SCSI, 18-21 = IDE */
+};
+typedef struct _blkdev	BLKDEV;
 
 /* an idea how to assign partitions to a physical unit */
 typedef struct _partition       PARTITION;
