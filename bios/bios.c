@@ -24,6 +24,8 @@
 #include "config.h"
 #include "kprint.h"
 #include "tosvars.h"
+#include "initinfo.h"
+
 
 #include "ikbd.h"
 #include "midi.h"
@@ -63,6 +65,7 @@
 
 void biosinit(void);
 void biosmain(void);
+void initinfo(void);
 
 
 /*==== External declarations ==============================================*/
@@ -344,16 +347,9 @@ void biosmain()
 {
     /* print, what has been done till now (fake) */
 
-    cprintf("[ OK ] %s\r\n", biosts);
-    cprintf("[ OK ] Hardware initialized\n\r");
-    cprintf("[ OK ] Free memory of %ld bytes\r\n", memtop-membot);
-    cprintf("[ OK ] Screen starts at address 0x%lx\r\n", (long)v_bas_ad);
-
     trap_1( 0x30 );              /* initial test, if BDOS works */
-    cprintf("[ OK ] GEMDOS initialized\r\n");
 
     trap_1( 0x2b, os_dosdate);  /* set initial date in GEMDOS format */
-    cprintf("[ OK ] Initial system date and time set\r\n");
 
     kprintf("drvbits = %08lx\n", drvbits);
     do_hdv_boot();
@@ -361,12 +357,11 @@ void biosmain()
 
     defdrv = bootdev;
     trap_1( 0x0e , defdrv );    /* Set boot drive */
-    cprintf("[ OK ] Boot disk drive set\r\n");
 
     /* execute Reset-resistent PRGs */
 
-    /* switch on cursor - Esc E */
-    cprintf("\ee");
+    /* show initial config information */
+    initinfo();
 
     /* autoexec Prgs from AUTO folder */
     
@@ -375,7 +370,6 @@ void biosmain()
     /* clear commandline */
     
     /* load command.prg */
-    cprintf("[ OK ] COMMAND.PRG loading and going on ...\n\r");
     trap_1( 0x4b , 0, "COMMAND.PRG" , "", env);
 
     cprintf("[FAIL] HALT - should never be reached!\n\r");
@@ -717,4 +711,5 @@ PFI bios_10(WORD handle, PFI address)
     }
     return((PFI)ERR);
 }
+
 
