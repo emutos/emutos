@@ -18,7 +18,6 @@
 void (*jmptb1[])() = {
     v_opnwk,
     v_clswk,
-
     v_clrwk,
     v_nop,
     CHK_ESC,
@@ -51,7 +50,12 @@ void (*jmptb1[])() = {
     vswr_mode,
     vsin_mode,
     v_nop,
-    vql_attr, vqm_attr, vqf_attr, dqt_attributes, dst_alignment};
+    vql_attr,
+    vqm_attr,
+    vqf_attr,
+    dqt_attributes,
+    dst_alignment
+};
 
 void(*jmptb2[])() = {
     d_opnvwk,

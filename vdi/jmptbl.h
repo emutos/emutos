@@ -16,93 +16,97 @@
 
 #include "portab.h"
 
-extern void v_nop();            /* 0   */
 
-extern void v_opnwk();          /* 1   */
-extern void v_clswk();          /* 2   */
-extern void v_clrwk();          /* 3   */
-extern void v_updwk();          /* 4   */
-extern void CHK_ESC();          /* 5   */
 
-extern void v_pline();          /* 6   */
-extern void v_pmarker();        /* 7   */
-extern void d_gtext();          /* 8   */
-extern void v_fillarea();       /* 9   */
-extern void v_cellarray();      /* 10  */
+/* As reference the TOS 1.0 start addresses are added */
 
-extern void v_gdp();            /* 11  */
-extern void dst_height();       /* 12  */
-extern void dst_rotation();     /* 13  */
-extern void vs_color();         /* 14  */
-extern void vsl_type();         /* 15  */
+extern void v_opnwk();          /* 1   - fcb53e */
+extern void v_clswk();          /* 2   - fcb812 */
+extern void v_clrwk();          /* 3   - fca4e8 */
+extern void v_updwk();          /* 4   - fca4e6 */
+extern void CHK_ESC();          /* 5   - fc412e */
 
-extern void vsl_width();        /* 16  */
-extern void vsl_color();        /* 17  */
-extern void vsm_type();         /* 18  */
-extern void vsm_height();       /* 19  */
-extern void vsm_color();        /* 20  */
+extern void v_pline();          /* 6   - fcb85a */
+extern void v_pmarker();        /* 7   - fcb8f4 */
+extern void d_gtext();          /* 8   - fcd61c */
+extern void v_fillarea();       /* 9   - fcba3a */
+extern void v_cellarray();      /* 10  - fca4e6 */
 
-extern void dst_font();         /* 21  */
-extern void dst_color();        /* 22  */
-extern void vsf_interior();     /* 23  */
-extern void vsf_style();        /* 24  */
-extern void vsf_color();        /* 25  */
+extern void v_gdp();            /* 11  - fcba46 */
+extern void dst_height();       /* 12  - fcde96 */
+extern void dst_rotation();     /* 13  - fce308 */
+extern void vs_color();         /* 14  - fd1a00 */
+extern void vsl_type();         /* 15  - fcab20 */
 
-extern void vq_color();         /* 26  */
-extern void vq_cellarray();     /* 27  */
-extern void v_locator();        /* 28  */
-extern void v_valuator();       /* 29  */
-extern void v_choice();         /* 30  */
+extern void vsl_width();        /* 16  - fcab6a */
+extern void vsl_color();        /* 17  - fcac26 */
+extern void vsm_type();         /* 18  - fcad02 */
+extern void vsm_height();       /* 19  - fcac76 */
+extern void vsm_color();        /* 20  - fcad52 */
 
-extern void v_string();         /* 31  */
-extern void vswr_mode();        /* 32  */
-extern void vsin_mode();        /* 33  */
-extern void vql_attr();         /* 35  */
+extern void dst_font();         /* 21  - fce342 */
+extern void dst_color();        /* 22  - fce426 */
+extern void vsf_interior();     /* 23  - fcada8 */
+extern void vsf_style();        /* 24  - fcadf4 */
+extern void vsf_color();        /* 25  - fcae5c */
 
-extern void vqm_attr();         /* 36  */
-extern void vqf_attr();         /* 37  */
-extern void dqt_attributes();   /* 38  */
-extern void dst_alignment();    /* 39  */
+extern void vq_color();         /* 26  - fd1ab2 */
+extern void vq_cellarray();     /* 27  - fca4e6 */
+extern void v_locator();        /* 28  - fcaeac */
+extern void v_valuator();       /* 29  - fcb042 */
+extern void v_choice();         /* 30  - fcb04a */
 
-extern void d_opnvwk();         /* 100  */
+extern void v_string();         /* 31  - fcb0d4 */
+extern void vswr_mode();        /* 32  - fcb1d8 */
+extern void vsin_mode();        /* 33  - fcb232 */
+extern void v_nop();            /* 34  - fca4e6 */
+extern void vql_attr();         /* 35  - fcbbf8 */
 
-extern void d_clsvwk();         /* 101  */
-extern void vq_extnd();         /* 102  */
-extern void d_contourfill();    /* 103  */
-extern void vsf_perimeter();    /* 104  */
-extern void v_get_pixel();      /* 105  */
+extern void vqm_attr();         /* 36  - fcbc54 */
+extern void vqf_attr();         /* 37  - fcbcb4 */
+extern void dqt_attributes();   /* 38  - fce476 */
+extern void dst_alignment();    /* 39  - fce2ac */
 
-extern void dst_style();        /* 106  */
-extern void dst_point();        /* 107  */
-extern void vsl_ends();         /* 108  */
-extern void dro_cpyfm();        /* 109  */
-extern void TRAN_FM();          /* 110  */
 
-extern void XFM_CRFM();         /* 111  */
-extern void dsf_udpat();        /* 112  */
-extern void vsl_udsty();        /* 113  */
-extern void dr_recfl();         /* 114  */
-extern void vqi_mode();         /* 115  */
+extern void d_opnvwk();         /* 100 - fcd4d8 */
 
-extern void dqt_extent();       /* 116  */
-extern void dqt_width();        /* 117  */
-extern void EX_TIMV();          /* 118  */
-extern void dt_loadfont();      /* 119  */
-extern void dt_unloadfont();    /* 120  */
+extern void d_clsvwk();         /* 101 - fcd56a */
+extern void vq_extnd();         /* 102 - fcb77a */
+extern void d_contourfill();    /* 103 - fd1208 */
+extern void vsf_perimeter();    /* 104 - fcb306 */
+extern void v_get_pixel();      /* 105 - fd1906 */
 
-extern void drt_cpyfm();        /* 121  */
-extern void v_show_c();         /* 122  */
-extern void v_hide_c();         /* 123  */
-extern void vq_mouse();         /* 124  */
-extern void vex_butv();         /* 125  */
+extern void dst_style();        /* 106 - fce278 */
+extern void dst_point();        /* 107 - fce132 */
+extern void vsl_ends();         /* 108 - fcabca */
+extern void dro_cpyfm();        /* 109 - fcb454 */
+extern void TRAN_FM();          /* 110 - fd1960 */
 
-extern void vex_motv();         /* 126  */
-extern void vex_curv();         /* 127  */
-extern void vq_key_s();         /* 128  */
-extern void s_clip();           /* 129  */
-extern void dqt_name();         /* 130  */
+extern void XFM_CRFM();         /* 111 - fd0770 */
+extern void dsf_udpat();        /* 112 - fcd5c0 */
+extern void vsl_udsty();        /* 113 - fcb34c */
+extern void dr_recfl();         /* 114 - fcb4be */
+extern void vqi_mode();         /* 115 - fcb2a0 */
 
-extern void dqt_fontinfo();     /* 131  */
+extern void dqt_extent();       /* 116 - fce4f0 */
+extern void dqt_width();        /* 117 - fce6b6 */
+extern void EX_TIMV();          /* 118 - fca530 */
+extern void dt_loadfont();      /* 119 - fcebcc */
+extern void dt_unloadfont();    /* 120 - fcec60 */
+
+extern void drt_cpyfm();        /* 121 - fcb486 */
+extern void v_show_c();         /* 122 - fcafca */
+extern void v_hide_c();         /* 123 - fcaff2 */
+extern void vq_mouse();         /* 124 - fcb000 */
+extern void vex_butv();         /* 125 - fd040e */
+
+extern void vex_motv();         /* 126 - fd0426 */
+extern void vex_curv();         /* 127 - fd043e */
+extern void vq_key_s();         /* 128 - fcb1b4 */
+extern void s_clip();           /* 129 - fcb364 */
+extern void dqt_name();         /* 130 - fce790 */
+
+extern void dqt_fontinfo();     /* 131 - fce820 */
 
 
 #endif                          /* JMPTBL_H */
