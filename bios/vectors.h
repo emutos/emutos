@@ -53,7 +53,7 @@ extern void criter1(void);
 extern void int_illegal(void);
 extern void int_priv(void);
 
-extern WORD save_area[];
+extern WORD trap_save_area[];
 
 /* pointer to function returning LONG */
 typedef LONG (*PFLONG)();

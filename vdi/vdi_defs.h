@@ -163,16 +163,11 @@ extern WORD num_qc_lines, q_circle[];
 extern WORD val_mode, chc_mode, loc_mode, str_mode;
 extern BYTE shft_off;           /* once computed Offset into a Scan Line */
 
-/* filled area variables */
-//extern UWORD *patptr, patmsk;
-//extern WORD multifill;
-
 /* gdp area variables */
 extern WORD xc, yc, xrad, yrad, del_ang, beg_ang, end_ang;
 extern WORD start, angle, n_steps;
 
 /* attribute environment save variables */
-//extern WORD s_fill_per, *s_patptr, s_patmsk;
 extern WORD s_begsty, s_endsty, s_fil_col;
 
 /* These are still needed for text blitting */
@@ -223,7 +218,7 @@ void arb_corner_llur(WORD * corners);
 /* C Support routines */
 Vwk * get_vwk_by_handle(WORD);
 
-void cur_display();
+//void cur_display();
 void cur_replace();
 void v_show_c(Vwk *);
 void v_hide_c(Vwk *);

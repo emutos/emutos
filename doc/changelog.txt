@@ -1662,3 +1662,6 @@ Start... early ages
 - vdi/vdi_main.c: eleminated most doubleing to Assembler variables (MAD)
 - vdi/vdi_text:   isolated text specific stuff in vdi_text.c (MAD)
 - vdi/vdi_defs.h: more cleaned up (MAD)
+
+2004-08-12
+- vdi/vdi_mouse.c: implemented cursor drawing in C (MAD)

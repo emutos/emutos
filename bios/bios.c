@@ -172,7 +172,7 @@ void startup(void)
     dumpflg = -1;
     sysbase = (LONG) os_entry;
 
-    savptr = (LONG) save_area;
+    savptr = (LONG) trap_save_area;
 
     /* some more variables */
     etv_timer = (void(*)(int)) just_rts;

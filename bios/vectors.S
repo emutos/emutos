@@ -28,7 +28,7 @@
         .global _int_priv
         .global _just_rts
         .global _just_rte
-        .global _save_area
+        .global _trap_save_area
 
                 
 // ==== tosvars.s - TOS System variables =====================================
@@ -581,7 +581,7 @@ _just_rte:
 /* save area for trap13/14. */
 save_beg:       ds.w    24*3    // d3-d7/a3-a7, sr, pc, vo = 24 words, 
                                 // multiplied by 3 ("3 level deep reentrant")
-_save_area:                     // End of Save storage
+_trap_save_area:                     // End of Save storage
 
 
 

@@ -36,10 +36,12 @@
                 .globl  _newy
                 .globl  retsav
                 .globl  sav_cxy
-                .globl  save_addr
-                .globl  save_area
-                .globl  save_len
-                .globl  save_stat
+
+                .globl  _save_addr
+                .globl  _save_area
+                .globl  _save_len
+                .globl  _save_stat
+
                 .globl  _tim_addr
                 .globl  _tim_chain
                 .globl  _user_but
@@ -156,13 +158,14 @@ _mouse_flag:    .ds.b   1       // -339 non-zero if mouse ints disabled
 
 sav_cxy:        .ds.w   2       // -338 save area for cursor cell coords.
 retsav:         .ds.l   1       // ??? I'm not sure if this is right here
-save_len:       .ds.w   1       // -330
-save_addr:      .ds.l   1       // -328 return address GEMDOS call
-save_stat:      .ds.w   1       // -324
+
+_save_len:       .ds.w   1       // -330
+_save_addr:      .ds.l   1       // -328 return address GEMDOS call
+_save_stat:      .ds.w   1       // -324
 
 /* Sprite save buffer */
 
-save_area:      .ds.l   0x40    // -322
+_save_area:      .ds.l   0x40    // -322
 
 /* Timer vectors */
 
