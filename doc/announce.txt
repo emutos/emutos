@@ -27,12 +27,19 @@ CHANGES SINCE LAST RELEASE
 - Correct usage of 68040 instruction cache
 - Dead key support
 - Boot delay with info screen (hold Alt key to skip boot)
+- Initinfo visually improved (countdown effect and other changes)
 - Hold Ctrl key at boot causes not loading the ACCs
 - XHDI implemented (allows running FreeMiNT)
 - Frees CPU in emulators, when not used (STOP instruction)
-- Better VIDEL support
-- Support for Diskimages up to 4 Mb
 - Up to 16 color mode in 640x480 in Aranym
+- Detect-native-features ON by default (ARAnyM, STonC, STonX)
+- Keyboard fixed for XaAES
+- AES icon masks fixed
+- EmuCON fixed and available from EmuDesk menu
+- Shutdown added to EmuDesk menu
+- much enhanced Falcon VIDEL support (including boot in color)
+- NVRAM works
+- Better VIDEL support
 - Many bugfixes and much more done
 
 
