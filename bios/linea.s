@@ -223,9 +223,9 @@ not3:
         bsr     resolset                | set video resolution
         move.w  (sp)+, d0               | restore resolution
         
-|        lea     _f8x8, a0               | Get pointer to 8x8 font header
-|        cmp.w   #2, d0                  | High resolution?
-|        bne     lowres                  | no, low resolution
+        lea     _f8x8, a0               | Get pointer to 8x8 font header
+        cmp.w   #2, d0                  | High resolution?
+        bne     lowres                  | no, low resolution
         lea     _f8x16, a0              | Get pointer to 8x16 font header
 lowres:
         bsr     gl_f_init               | init the global font variables.
@@ -297,4 +297,67 @@ sresolx:
 | ===========================================================================
 
         .end
+
+
+
+
+| ==== Set temporary screenmem address 0x10000 to videoshifter ==============
+        
+        move.b  #0x1, 0xffff8201 | set hw video base high word
+        move.b  #0x0, 0xffff8203 | set hw video base low word
+
+
+
+| ==== Detect and set graphics resolution ===================================
+
+        move.b 0xffff8260, d0     | Get video resolution from pseudo Hw
+        and.b #3,d0             | Isolate bits 0 and 1
+        cmp.b #3,d0             | Bits 0 and 1 set = invalid
+        bne.s setscrnres        | no -->
+        moveq #2,d0             | yes, set highres, make valid
+setscrnres:
+        move.b d0, sshiftmod    | Set in sysvar
+
+        move.b #2, 0xffff8260     | Hardware set to highres
+        move.b #2, sshiftmod    | Set in sysvar
+
+|       jsr 0xfca7c4            | Init screen (video driver???)
+
+        cmp.b #1, sshiftmod             | middle resolution?
+        bne.s initmidres                | nein, -->
+        move.w 0xffff825e, 0xffff8246   | Copy Color 16->4 kopieren
+
+initmidres:
+        move.l  #_main, swv_vec | Set Swv_vec (vector res change) to Reset
+        move.w  #1, vblsem      | vblsem: VBL freigeben
+
+
+|       pea 0xfffffa00  | Print, what's going on
+|       bsr _kputb
+|       addq #4,sp
+|
+|       btst    #7,0xfffffa01   | detect b/w-monitor pin
+|       beq     low_rez         | if bit set, color monitor 
+|
+|       move.l  #2,d0           | monochrome mode
+|       bra     both_rez
+|low_rez:
+|       move.l #0,d0
+|both_rez:
+|       move.b d0, sshiftmod    | set mode sysvar
+|       move.w d0, 0xFFFF8260   | and to shifter register
+
+| ==== Set videoshifter address to screenmem ================================
+        
+        move.l  phystop, a0     | get memory top
+        sub.l   #0x8000, a0     | minus screen mem length
+        move.l  a0, _v_bas_ad   | set screen base
+
+        move.b  _v_bas_ad+1, 0xffff8201 | set hw video base high word
+        move.b  _v_bas_ad+2, 0xffff8203 | set hw video base low word
+
+
+        pea msg_shift   | Print, what's going on
+        bsr _kprint
+        addq #4,sp
 

@@ -206,3 +206,6 @@ Start... early ages
 - misc. xbios routines (vsync, random, ...) (LVL)
 - warning free, automatic built date in command.prg (LVL)
 - still some headers cleaning in bios/ and include/ (LVL)
+
+22. Okt. 2001
+- Video mode can be set hard in startup.s to all three modes - working!!!

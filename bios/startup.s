@@ -377,17 +377,6 @@ initsnd:
 | ==== Set shifter to pal ===================================================
 
         move.b #2, 0xff820a     | sync-mode to 50 hz pal, internal sync
-        
-
-
-| ==== Set color palette ====================================================
-
-        lea    0xffff8240, a1     | video-shifter 
-        move.w #0xf, d0         | loop for 16 colors
-        lea    colorpal, a0     | color palette to a0
-loadcol:
-        move.w  (a0)+,(a1)+     | set color value         
-        dbra   d0, loadcol      | next value   
 
 
 
@@ -399,19 +388,38 @@ loadcol:
 
 
 | ==== Detect and set graphics resolution ===================================
+| Does not work, because of STonX - set it hard for now!
 
-        move.b 0xffff8260, d0     | Get video resolution from pseudo Hw
+        move.b #2, d0     | Set video resolution hard (#0, #1, or #2)
+
+
+|      	btst    #7,0xfffffa01   | detect b/w-monitor pin via MFP, line I7
+|      	beq     low_rez         | if bit set, then it is a color monitor 
+|      	move.l  #2, d0          | else monochrome mode
+|low_rez:
+|       move.b d0, sshiftmod    | Set in sysvar
+|      	move.w d0, 0xFFFF8260   | and to shifter register
+
+|        move.b 0xffff8260, d0     | Get video resolution from pseudo Hw
         and.b #3,d0             | Isolate bits 0 and 1
-        cmp.b #3,d0             | Bits 0 and 1 set = invalid
-        bne.s setscrnres        | no -->
-        moveq #2,d0             | yes, set highres, make valid
+|        cmp.b #3,d0             | mode invalid?
+|        bne.s setscrnres        | no --> go on
+|        moveq #2,d0             | yes, set highres, make valid
+
 setscrnres:
         move.b d0, sshiftmod    | Set in sysvar
+        move.b d0, 0xffff8260     | Hardware set to highres
 
-        move.b #2, 0xffff8260     | Hardware set to highres
-        move.b #2, sshiftmod    | Set in sysvar
 
-|       jsr 0xfca7c4            | Init screen (video driver???)
+
+| ==== Set color palette ====================================================
+
+        lea    0xffff8240, a1   | video-shifter 
+        move.w #0xf, d0         | loop for 16 colors
+        lea    colorpal, a0     | color palette to a0
+loadcol:
+        move.w  (a0)+,(a1)+     | set color value         
+        dbra   d0, loadcol      | next value   
 
         cmp.b #1, sshiftmod             | middle resolution?
         bne.s initmidres                | nein, -->
@@ -421,21 +429,11 @@ initmidres:
         move.l  #_main, swv_vec | Set Swv_vec (vector res change) to Reset
         move.w  #1, vblsem      | vblsem: VBL freigeben
 
+        pea msg_linea  | Print, what's going on
+        bsr _kprint
+        addq #4,sp
 
-|       pea 0xfffffa00  | Print, what's going on
-|       bsr _kputb
-|       addq #4,sp
-|
-|       btst    #7,0xfffffa01   | detect b/w-monitor pin
-|       beq     low_rez         | if bit set, color monitor 
-|
-|       move.l  #2,d0           | monochrome mode
-|       bra     both_rez
-|low_rez:
-|       move.l #0,d0
-|both_rez:
-|       move.b d0, sshiftmod    | set mode sysvar
-|       move.w d0, 0xFFFF8260   | and to shifter register
+
 
 | ==== Set videoshifter address to screenmem ================================
         
@@ -457,6 +455,12 @@ initmidres:
         move.l  end_os, _membot         | end_os to _membot
         move.l  os_beg, exec_os         | exec_os
         move.l  _v_bas_ad, _memtop      | _v_bas_ad to _memtop
+
+
+
+| ==== Setting up Line-a variables and clear screen =========================
+
+        bsr _linea_init         | init linea variables
 
 
 
@@ -503,14 +507,6 @@ initmidres:
 |        pea msg_clrbss  | Print, what's going on
 |        bsr _kprint
 |        addq #4,sp
-
-| ==== Setting up Line-a variables and clear screen =========================
-
-        bsr _linea_init
-
-        pea msg_linea  | Print, what's going on
-        bsr _kprint
-        addq #4,sp
 
 | ==== vector setup =========================================================
 
