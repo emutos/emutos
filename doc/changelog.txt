@@ -608,3 +608,6 @@ Start... early ages
 - added code for Atari disk partitions detecting (unfinished yet) (joy)
 - a check for Control key added to the AUTO folder execution (joy)
 - #if ARANYM_NATIVE_DISK added to bios/disk.c - so it doesn't kill STonX (joy)
+
+27. Jan. 2002
+- changed kcprintf() calls in panic() to vkcprintf for good CR/LF (MAD)
