@@ -1625,3 +1625,7 @@ Start... early ages
 2004-07-14
 - vdi/blit.c*: fixed vtr_cpyfm() and vro_cpyfm() and optimized clipping (MAD)
 
+2004-07-18
+- vdi/seedfill.c: implemented end_pts() in C, no gsxasm1.S anymore (MAD)
+
+

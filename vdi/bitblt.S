@@ -48,8 +48,10 @@ _bit_blt:
         move.w  D_XMIN(a6),d2           // clipped Xmin destination
         move.w  S_XMAX(a6),d4           // clipped Xmax source
         move.w  D_XMAX(a6),d6           // clipped Xmax destination
+
         move.l  S_FORM(a6),a0           // a0 -> start of source form (0,0)
         move.l  D_FORM(a6),a1           // a1 -> start of dest.  form (0,0)
+        move.l  _PTSIN,a2               // a2 -> PTSIN array
         
         bsr.s   bit_blt
 

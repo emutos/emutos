@@ -143,7 +143,6 @@ extern void arb_corner(WORD * corners, WORD type);
 extern void r_fa_attr();
 extern void s_fa_attr();
 extern void arrow(WORD * xy, WORD inc);
-extern void crunch_Q();
 extern void init_wk();
 extern void vex_butv(), vex_motv(), vex_curv(), vex_timv();
 

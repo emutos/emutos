@@ -134,12 +134,13 @@ extern WORD DEV_TAB_rom[];
 extern WORD INQ_TAB_rom[];
 
 
+#if 0
 /* Screen related variables */
 extern UWORD v_planes;          // count of color planes
 extern UWORD v_hz_rez;          // screen horizontal resolution
 extern UWORD v_vt_rez;          // screen vertical resolution
 extern UWORD v_bytes_lin;       // width of line in bytes
-
+#endif
 
 
 BYTE in_proc;                   /* flag, if we are still running */
@@ -150,16 +151,13 @@ WORD q_circle[MX_LN_WIDTH];     /* Holds the circle DDA */
 
 
 /* GDP variables */
-
 WORD angle, beg_ang, del_ang, deltay, deltay1, deltay2, end_ang;
 WORD start, xc, xrad, y, yc, yrad;
 
 /* Fill Area variables */
-
 WORD fil_intersect, fill_maxy, fill_miny, n_steps, odeltay;
 
 /* Wide line attribute save areas */
-
 WORD s_begsty, s_endsty, s_fil_col, s_fill_per, s_patmsk;
 WORD *s_patptr;
 
