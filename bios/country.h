@@ -36,7 +36,7 @@
 #define COUNTRY_DK 12   /* Denmark */
 #define COUNTRY_SA 13   /* Saudi Arabia */
 #define COUNTRY_NL 14   /* Holland */
-#define COUNTRY_CZ 15   /* Czech Republic */
+#define COUNTRY_CS 15   /* Czech Republic */
 #define COUNTRY_HU 16   /* Hungary */
 #define COUNTRY_SK 17   /* Slovak Republic */
  
@@ -44,6 +44,7 @@
 #define KEYB_US 0
 #define KEYB_DE 1
 #define KEYB_FR 2
+#define KEYB_CS 3
 
 /* charset codes - names in [brackets] are understood by GNU recode */
 #define CHARSET_ST 0   /* original [atarist] */

@@ -32,11 +32,11 @@ struct country_record {
     int idt;         
 } ;
 
-static struct country_record countries[] = {
+const static struct country_record countries[] = {
     { COUNTRY_US, KEYB_US, "us", CHARSET_ST, IDT_12H | IDT_MMDDYY | '/' }, 
     { COUNTRY_DE, KEYB_DE, "de", CHARSET_ST, IDT_24H | IDT_DDMMYY | '/' }, 
     { COUNTRY_FR, KEYB_FR, "fr", CHARSET_ST, IDT_24H | IDT_DDMMYY | '/' }, 
-    { COUNTRY_CZ, KEYB_US, "cs", CHARSET_L2, IDT_24H | IDT_DDMMYY | '/' }, 
+    { COUNTRY_CS, KEYB_CS, "cs", CHARSET_L2, IDT_24H | IDT_DDMMYY | '/' }, 
 };
 
 /* this scheme is set to make it clear which country is partially

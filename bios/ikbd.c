@@ -98,6 +98,7 @@ BYTE shifty;                    /* reflect the status up/down of mode keys */
 #include "keyb_us.h"
 #include "keyb_de.h"
 #include "keyb_fr.h"
+/* #include "keyb_cs.h" */
 
 /* add the available keyboards in this table, using the
  * numbers set in keyboard.h
@@ -108,17 +109,18 @@ struct kbd_record {
     struct keytbl *keytbl;
 };
 
-static const struct kbd_record avail_kbd[] = {
+const static struct kbd_record avail_kbd[] = {
     { KEYB_US, &keytbl_us }, 
     { KEYB_DE, &keytbl_de }, 
     { KEYB_FR, &keytbl_fr },
+    /* { KEYB_CS, &keytbl_cs }, */
 };
 
 #define dflt_keytbl keytbl_us
 
 /*==== Scancode table control (not yet implemented) =======================*/
 #if 0
-static BYTE ascii_ctrl[] = {
+const static BYTE ascii_ctrl[] = {
     0x00, 0x00, 0x00, 0x00, 0x1b, 0x1c, 0x1d, 0x1e,
     0x1f, 0x7f, 0x00, 0x00, 0x7f, 0x00, 0x08, 0x00,
     0x11, 0x17, 0x05, 0x12, 0x14, 0x19, 0x15, 0x09,
@@ -141,7 +143,7 @@ static BYTE ascii_ctrl[] = {
 
 /*==== Scancode table alt (not yet implemented) ===========================*/
 #if 0
-static BYTE ascii_alt[] = {
+const static BYTE ascii_alt[] = {
     0x00, 0x1b, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36,
     0x37, 0x38, 0x39, 0x30, 0x9e, 0x27, 0x08, 0x09,
     0x71, 0x77, 0x65, 0x72, 0x74, 0x7a, 0x75, 0x69,
