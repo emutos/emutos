@@ -197,6 +197,10 @@ _processor_init:
         move.w  #1,_longframe
         move.l  0x10,ii_old
         move.l  #ii_handler,0x10
+#if 0   // FIXME: Enable privileged instruction fetcher and executor
+        move.l  0x20,ii_old
+        move.l  #pi_handler,0x20
+#endif
 m68000:
         jsr     _detect_fpu
         move.l  d0,_fputype
@@ -223,14 +227,43 @@ ii_handler:
 not_SR:
         movem.l (sp)+,d0/a0
         move.l  ii_old,-(sp)            // let OEM handle it
+jumpback:
         rts
+
+
+
+#if 0   // FIXME: Enable privileged instruction fetcher and executor
+/*
+ * pi_handler - privileged instruction handler 
+ *
+ * Does this work with longer instructions too? No!
+ */
+
+pi_handler:
+        movem.l d0/a0,-(sp)  	// saving d0 and a0-a1 while we test
+
+        movea.l 10(sp),a0       // the offending address
+        move.w  (a0),pi_instr	// copy instruction to new place
+        move.w  jumpback, pi_rts 	// copy rts too
+        jsr	pi_instr        // jump to instr. copy in BSS
+
+        movem.l (sp)+,d0/a0
+        rte
+
+#endif
+
 
 // ==== Variables ============================================================
  
         .bss
         .even
 
-ii_old:
+/* Here is a short peace of code, the copied privileged instruction */
+pi_instr:                       // priv. instruction stored for execution
+        ds.w    1
+pi_rts:                         // here is a rts instruction for return
+        ds.w    1
+ii_old:                         // save for illegal instruction handler
         ds.l    1
 
 _mcpu:

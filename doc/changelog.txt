@@ -939,3 +939,7 @@ Start... early ages
 09. Jul. 2002
 - po/de.po - all german translations done (MAD)
 
+19. Jul. 2002
+- bios/processor.S - added sceleton for privileged instruction handler (MAD)
+
+
