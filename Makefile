@@ -144,7 +144,7 @@ TGZ = $(shell echo $(HEREDIR)-`date +%y%m%d`|tr A-Z a-z).tgz
 
 tgz:	distclean
 	cd ..;\
-	tar -cf - --exclude '*CVS' $(HEREDIR)) | gzip -c -9 >$(TGZ)
+	tar -cf - --exclude '*CVS' $(HEREDIR) | gzip -c -9 >$(TGZ)
 
 #
 # automatic dependencies. (this is ugly)
