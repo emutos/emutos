@@ -390,7 +390,7 @@ st_shifter:
 vbl_no_screenpt:        
 
         // flopvbl
-        // bsr    _flopvbl                 // flopvbl routine not needed
+        jsr     _flopvbl
 
         // vblqueue
         move.w  _nvbls,d0
