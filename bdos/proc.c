@@ -446,39 +446,77 @@ static MD *alloc_env(char *env)
     return env_md;
 }
 
+/* proc_go launches the new process by creating the right data
+ * structure in memory, then pretending resuming from an ordinary
+ * BDOS call by calling gouser().
+ * 
+ * Here is an excerpt of gouser() from rwa.S:
+ * _gouser:
+ *   move.l  _run,a5
+ *   move.l  d0,0x68(a5)
+ *   move.l  0x7c(a5),a6     // stack pointer (maybe usp, maybe ssp)
+ *   move.l  (a6)+,a4        // other stack pointer
+ *   move.w  (a6)+,d0
+ *   move.l  (a6)+,a3        // retadd
+ *   movem.l (a6)+,d1-d7/a0-a2
+ *   btst    #13,d0
+ *   bne     retsys          // a6 is (user-supplied) system stack
+ *   move.l  a4,sp
+ *   move.l  a6,usp
+ * gousr:  
+ *   move.l  a3,-(sp)
+ *   move    d0,-(sp)
+ *   movem.l 0x68(a5),d0/a3-a6
+ *
+ */
+
+struct gouser_stack {
+  LONG other_sp;   /* a4, the other stack pointer */
+  WORD sr;         /* d0, the status register */
+  LONG retaddr;    /* a3, the return address */
+  LONG fill[11];   /* 10 registers d1-d7/a0-a2 and one dummy so that ... */
+  PD * basepage;   /* ... upon startup the basepage is in 4(sp) */
+};
+
 static void proc_go(PD *p)
 {
-    int i;
-    long *spl;
+    struct gouser_stack *sp;
 
     D(("BDOS: xexec - trying to load (and execute) a command ...\n"));
     p->p_parent = run;
-    spl = (long *) p->p_hitpa;
-
-    /* TODO, fill the values using the field names !!! */
-    *--spl = (long) p;
-    *--spl = 0L;            /* bogus retadd */
-
-    /* 10 regs (40 bytes) of zeroes  */
-
-    for (i = 0; i < 10; i++)
-        *--spl = 0L;
-
-    *--spl = p->p_tbase;    /* text start */
-
-    {
-        WORD *spw = (WORD *) spl;
-        *--spw = 0;             /* startup status reg */
-        spl = (long *) spw;
+        
+    /* create a stack at the end of the TPA */
+    sp = (struct gouser_stack *) (p->p_hitpa - sizeof(struct gouser_stack));
+    
+    sp->basepage = p;      /* the stack contains the basepage */
+       
+    sp->retaddr = p->p_tbase;    /* return address a3 is text start */
+    sp->sr = 0;                  /* the process will start in user mode */
+    
+    /* the other stack is the supervisor stack */
+    sp->other_sp = (long) &supstk[SUPSIZ];
+    
+    /* store this new stack in the saved a7 field of the PD */
+    p->p_areg[7-3] = (long) sp;
+    
+#if 0
+    /* the following settings are not documented, and hence theoretically 
+     * the assignments below are not necessary.
+     */
+    {   /* d1-d7/a0-a2 and dummy return address set to zero */
+        int i;
+        for(i = 0; i < 11 ; i++) 
+            sp->fill[i] = 0;
     }
-
-    *--spl = (long) &supstk[SUPSIZ];
-    p->p_areg[6-3] = p->p_areg[7-3] = (long) spl;
-    p->p_areg[5-3] = p->p_dbase;
-    p->p_areg[4-3] = p->p_bbase;
+    p->p_areg[6-3] = (long) sp;    /* a6 to hold a copy of the stack */
+    p->p_areg[5-3] = p->p_dbase;   /* a5 to point to the DATA segt */
+    p->p_areg[4-3] = p->p_bbase;   /* a4 to point to the BSS segt */
+#endif
+    
+    /* the new process is the one to run */
     run = (PD *) p;
 
-    gouser() ;
+    gouser();
 }
 
 
