@@ -44,6 +44,7 @@
 #include "vectors.h"
 #include "asm.h"
 #include "chardev.h"
+#include "blkdev.h"
 #include "btools.h"    /* for memmove */
 
 
@@ -166,7 +167,8 @@ void startup(void)
 
     VEC_DIVNULL = just_rte;
 
-    /* floppy related vectors */
+    /* floppy and harddisk initialisation */
+    //blkdevs_init();
     floppy_init();
 
     /* are these useful ?? */

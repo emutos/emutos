@@ -87,7 +87,7 @@ NATIVECC = gcc -Wall
 # source code in bios/
 # Note: tosvars.o must be first object linked.
 
-BIOSCSRC = kprint.c xbios.c chardev.c bios.c clock.c \
+BIOSCSRC = kprint.c xbios.c chardev.c blkdev.c bios.c clock.c \
            fnt8x16.c fnt8x8.c fnt6x6.c mfp.c version.c \
            midi.c ikbd.c sound.c floppy.c screen.c lineainit.c \
            mouse.c initinfo.c cookie.c machine.c nvram.c country.c

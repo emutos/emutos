@@ -445,6 +445,7 @@ Start... early ages
 - disabled vsync() neverending loop (MonST works now) (joy)
 - fixed LineA v_bytes_lin variable (Clocky works now) (joy)
 
+
 08. Jan. 2002
 - hopefully fixed vsync() - I had omitted 'extern' in the declaration
   'volatile LONG frclock;' inside the routine. (LVL)
@@ -457,4 +458,8 @@ Start... early ages
 - initinfo messages displayed properly (the fore and back colors were
   not inited) - still the colors should probably be inited elsewhere (LVL)
 - bell() and keyclick() now use TOS vars bell_hook and kcl_hook (LVL)
+- added general block device functions in bios/blkdev.c (MAD)
+
+
   
+>>>>>>> 1.33
