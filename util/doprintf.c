@@ -123,6 +123,11 @@ int doprintf(void (*outc)(int), const char *fmt, va_list ap)
         c = *fmt++;
     }
     switch (c) {
+    case 'p':
+      zfill = '0';
+      width = 8;
+      (*outc)('0'); len++;
+      (*outc)('x'); len++;
     case 'X':
       lflag++;
     case 'x':

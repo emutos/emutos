@@ -179,7 +179,7 @@ void initinfo()
                 cprintf(_(" ST-RAM, %ld kB TT-RAM"), fastramsize >> 10);
         }
     pair_end();
-    pair_start(_("Screen start")); cprintf("0x%lx", (long)v_bas_ad);
+    pair_start(_("Screen start")); cprintf("%p", v_bas_ad);
     pair_end();
     pair_start(_("GEMDOS drives"));
     {
