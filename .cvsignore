@@ -2,6 +2,7 @@ localconf.h
 makefile.dep
 tounix
 *.img
+*.map
 mkheader
 bug
 local.mk
