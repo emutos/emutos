@@ -1517,3 +1517,7 @@ Start... early ages
 - aes/gemstart.S: _dos_exec() - jsr _dsptch removed on THH suggestion.
   This fixes the EmuDesk Shutdown crash I was experiencing (joy)
 - vdi/blit.c: implemented vrt_cpyfm, vro_cpyfm and bit_blt in C  (MAD)
+
+2003-07-25
+- aes/gemstart.S: _dos_exec() still having problem. Had to increase
+  the stack offset from 0x40 to 0x50 (joy)

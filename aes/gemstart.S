@@ -136,7 +136,7 @@ _dos_exec:
         movea.l 8(a0),a0
         move.l  0x3E(a0),-(sp)          // Save rlr->p_uda->u_spsuper
         movea.l sp,a1
-        suba.l  #0x40,a1
+        suba.l  #0x50,a1                // stack offset
         move.l  a1,0x3E(a0)
         bsr     _sti
 
