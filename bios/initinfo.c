@@ -24,6 +24,8 @@
 #include "machine.h"
 #include "clock.h"    /* for displaying current date and time */
 
+#include "version.h"  /* the EMUTOS_VERSION string */
+
 #include "initinfo.h"
 
 /*==== Defines ============================================================*/
@@ -159,7 +161,7 @@ void initinfo()
     set_line();
     cprintf("\n\r");
 
-    pair_start(_("EmuTOS Version")); cprintf(_("Alpha Version")); pair_end();
+    pair_start(_("EmuTOS Version")); cprintf(EMUTOS_VERSION); pair_end();
     pair_start(_("CPU type")); cprintf("m680%02ld", mcpu); pair_end();
     pair_start(_("Machine")); cprintf(machine_name()); pair_end();
     pair_start(_("MMU available")); cprintf(_("No")); pair_end();
