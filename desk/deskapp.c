@@ -398,42 +398,6 @@ void app_tran(WORD bi_num)
 }
 
 
-static WORD app_getfh(WORD openit, BYTE *pname, WORD attr)
-{
-        WORD            handle, tmpdrv;
-        LONG            lp;
-
-        handle = 0;
-        strcpy(&G.g_srcpth[0], pname);
-        lp = ADDR(&G.g_srcpth[0]);
-        tmpdrv = dos_gdrv();
-
-        if (tmpdrv != gl_stdrv)
-          dos_sdrv(gl_stdrv);
-
-        if ( shel_find(lp) )
-        {
-          if (openit)
-            handle = dos_open((BYTE *)lp, attr);
-          else
-            handle = dos_create((BYTE *)lp, attr);
-        }
-        else if(!openit)
-        {
-          handle = dos_create((BYTE *)lp, attr);
-        }
-        
-        if ( DOS_ERR )
-        {
-          handle = 0;
-        }
-
-        if (tmpdrv != gl_stdrv)
-          dos_sdrv(tmpdrv);
-
-        return(handle);
-}
-
 
 /************************************************************************/
 /* a p p _ r d i c o n                                                  */
@@ -606,8 +570,11 @@ WORD app_start()
         if (gl_afile[0] != '#')                 /* invalid signature    */
         {                                       /*   so read from disk  */
           WORD fh;
-          fh = app_getfh(TRUE, ini_str(STGEMAPP), 0x0);
-          if (fh)
+          char inf_file_name[16];
+          strcpy(inf_file_name, ini_str(STGEMAPP));
+          inf_file_name[0] += gl_stdrv;         /* Adjust drive letter  */
+          fh = dos_open(inf_file_name, 0x0);
+          if( !DOS_ERR )
           {
             G.g_afsize = dos_read(fh, SIZE_AFILE, ADDR(&gl_afile[0]));
             dos_close(fh);
@@ -980,9 +947,13 @@ void app_save(WORD todisk)
           fh = 0;
           while (!fh)
           {
-            fh = app_getfh(FALSE, ini_str(STGEMAPP), 0x0);
-            if (!fh)
+            char inf_file_name[16];
+            strcpy(inf_file_name, ini_str(STGEMAPP));
+            inf_file_name[0] += gl_stdrv;         /* Adjust drive letter  */
+            fh = dos_create(inf_file_name, 0x0);
+            if( DOS_ERR )
             {
+              fh = 0;
               ret = fun_alert(1, STNOINF, NULLPTR);
               if (ret == 2)
                 return;

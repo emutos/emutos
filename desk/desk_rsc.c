@@ -1584,7 +1584,7 @@ char *desk_rs_fstr[] = {
     "FORMAT.COM",
     N_("  Show as text   \007S"),
     "DESKHI.ICN",
-    "EMUDESK.INF",
+    "A:\\EMUDESK.INF",
     "DESKLO.ICN",
     "OUTPUT.APP",
     "????????.BAT",
