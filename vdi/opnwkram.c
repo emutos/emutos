@@ -13,6 +13,7 @@
 #include "portab.h"
 #include "gsxdef.h"
 #include "gsxextrn.h"
+#include "lineavars.h"
 
 extern struct font_head f8x16;
 

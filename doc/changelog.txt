@@ -769,3 +769,5 @@ Start... early ages
 18. Apr. 2002
 - vdi/opnwkram - added right screen coordinates to wk info (MAD)
 
+20. Apr. 2002
+- vdi/vdimouse.S - used concat routine for screen offset calculation (MAD)

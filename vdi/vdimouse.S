@@ -58,6 +58,7 @@
         .xdef   save_area
         .xdef   save_stat
 
+        .xdef   concat          // calculate offset
 
 
 /*
@@ -221,51 +222,20 @@ clip_up:
         clr.w   d1                      // ymin=0
         bra     get_addr
 
-#if rbp
-shf_tab:
-        dc.b    3                       // 1 plane
-        dc.b    2                       // 2 planes
-        dc.b    0                       // not used
-        dc.b    1                       // 4 planes
-#endif
-
 clip_down:
         move.w  2(a2),d5                // get height of screen(maximum y value)
         sub.w   d1,d5                   // d5 <- row count
         addq.w  #1,d5
 
+        
 get_addr:
 /*
  *  Compute the bit offset into the desired word, save it, and remove
  *  these bits from the x-coordinate.
  */
-        move.w  d0,d2           // save the x-coordinate for later
-        andi.w  #0x000F,d0       // bit offset = x-coordinate mod 16
-        andi.w  #0xFFF0,d2       // clear bits for offset into word
-/*
- *  Convert the adjusted x-coordinate to a word offset into the current
- *  scan line.  If the planes are arranged in an interleaved fashion with
- *  a word for each plane then shift the x-coordinate by a value contained
- *  in the shift table.  If the planes are arranged as separate, consecu-
- *  tive entities then divide the x-coordinate by 8 to get the number of bytes.
- */
+	jsr concat              // calculate offset
+
         move.w  _v_lin_wr,d4    // get number of bytes in a scan line
-        mulu.w  d4,d1           // compute offset to scan row
-#if rbp
-        move.w  _v_planes,d3    // get number of planes
-        move.b  shf_tab-1(pc,d3.w),d3   // get shift factor
-        lsr.w   d3,d2           // convert x-coordinate to offset
-#else
-        lsr.w   #3,d2           // convert x-coordinate to offset
-#endif
-
-/*
- *  Compute the offset to the desired word by adding the offset to the
- *  start of the scan line to the offset within the scan line, restore
- *  the clobbered registers, and exit.
- */
-        add.w   d2,d1           // compute total offset into screen buffer
-
         move.l  _v_bas_ad,a1    // get start addr. of 1st graphic plane
 #if rbp
         adda.w  d1,a1           // a1 -> destination

@@ -112,22 +112,13 @@ void init_fonts(WORD vmode)
         cur_font = def_font = &fon8x8;
     }
        
-    font_count=3;                       // total number of fonts in fontring
+    font_count=3;		// total number of fonts in fontring
 
     /* Initialize the system font array for linea */
     sysfonts[0]= &fon6x6;
     sysfonts[1]= &fon8x8;
     sysfonts[2]= &fon8x16;
     sysfonts[3]=NULL;
-
-#if 0 /* No VDI functionality provided anymore - use fVDI instead */
-    /* Initialize the VDI font_ring as an struct of now linked font lists */
-    font_ring.first_list = &fon6x6;
-    font_ring.second_list = &fon6x6;
-    font_ring.gdos_list = &fon6x6;
-    font_ring.null_list = 0;
-#endif
-
 }
 
 

@@ -74,13 +74,8 @@ extern WORD font_count;                // all three fonts and NULL
  * font_ring is a struct of four pointers, each of which points to
  * a list of font headers linked together to form a string.
  */
-struct  {
-    struct font_head *first_list;       /* list of system fonts */
-    struct font_head *second_list;      /* list of system fonts */
-    struct font_head *gdos_list;        /* list of gdos fonts */
-    struct font_head *null_list;        /* termination - always 0 */
-} font_ring;
 
+extern struct font_head *font_ring[4];   /* Ring of available fonts */
 
 /* Cell specific stuff */
 extern UWORD    v_cel_ht;       // cell height (width is 8)
