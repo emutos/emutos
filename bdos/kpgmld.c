@@ -31,11 +31,51 @@
  * forward prototypes
  */
 
-static ERROR    pgmld01(FH h, PD *pdptr);
+static ERROR    pgmld01(FH h, PD *pdptr, PGMHDR01 *hd);
 static LONG     pgfix01(LONG nrelbytes, PGMINFO *pi);
 
 /*
- *  xpgmld - load program
+ *  xpgmhdrld - load program header
+ *
+ * contrary to what was before, we load the prg header first,
+ * then allocate the basepage, choosing the memory pool according to
+ * the flags and the amount of memory needed. Then, we actually load
+ * the program.
+ */
+
+ERROR xpgmhdrld(char *s, PGMHDR01 *hd, FH *h)
+{
+    ERROR r;
+    WORD magic;
+    
+    r = xopen( s , 0 );         /* open file for read */
+    if( r < 0L  )
+        return( r ) ;
+
+    *h = (FH) r ;                /* get file handle */
+
+    r = xread( *h, 2L, &magic);  /* read magic number */
+    if( r < 0L )
+        return( r ) ;
+
+    /* alternate executable formats will not be handled */
+    if( magic != 0x601a ) {
+        r = EPLFMT ;
+#if DBGKPGMLD
+        kprintf("BDOS xpgmld: Unknown executable format!\n") ;
+#endif
+    }
+    /* read in the program header */
+
+    r = xread( *h, (LONG)sizeof(PGMHDR01), hd);
+    if( r < 0L )
+        return( r ) ;
+    return 0;
+}
+
+
+/*
+ *  xpgmld - load program except the header (which has already been read)
  *
  *  The program space follows PD
  *
@@ -44,12 +84,29 @@ static LONG     pgfix01(LONG nrelbytes, PGMINFO *pi);
  * p - ptr to PD
  */
 
-ERROR   xpgmld(char *s , PD *p )
+ERROR   xpgmld(char *s, PD *p, FH h, PGMHDR01 *hd )
+{
+    ERROR r;
+
+    r = pgmld01(h, p, hd);
+#if DBGKPGMLD
+    kprintf("BDOS pgmld01: Return code: 0x%lx\n", r);
+#endif
+    xclose(h);
+    return r;
+}
+
+/*
+ * the old_ implementation is for reference only, I do not guarantee that it
+ * works.
+ */
+
+ERROR   old_xpgmld(char *s, PD *p)
 {
     ERROR       r ;
     FH          h ;
     WORD        magic ;
-    ERROR       pgmld01() ;
+    PGMHDR01    hdr ;
 
     r = xopen( s , 0 );         /* open file for read */
     if( r < 0L  )
@@ -72,7 +129,7 @@ ERROR   xpgmld(char *s , PD *p )
 #if DBGKPGMLD
         kprintf("BDOS xpgmld: 0x601a executable file format!\n") ;
 #endif
-        r = pgmld01( h , p ) ;
+        r = pgmld01( h , p , &hdr ) ;
 #if DBGKPGMLD
         kprintf("BDOS pgmld01: Return code: 0x%lx\n", r) ;
 #endif
@@ -113,30 +170,19 @@ static char *lastcp ;
  * - zero out the bss
  */
 
-static ERROR    pgmld01( FH h , PD *pdptr )
+static ERROR    pgmld01( FH h , PD *pdptr, PGMHDR01 *hd)
 {
-    register PGMHDR01   *hd ;
     register PGMINFO    *pi ;
     register PD         *p ;
-    PGMHDR01            hdr ;
     PGMINFO             pinfo ;
     char                *cp ;
     LONG                relst ;
     LONG                flen ;
     ERROR               r ;
-// MAD   ERROR          pgfix01() ;
 
-
-    hd = & hdr ;
     pi = &pinfo ;
     p = pdptr ;
     relst = 0 ;
-
-    /* read in the program header */
-
-    r = xread(h,(LONG)sizeof(PGMHDR01),&hdr);
-    if( r < 0L )
-        return( r ) ;
 
     /* calculate program load info */
 

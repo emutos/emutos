@@ -10,7 +10,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
+#ifndef _PGHDR_H
+#define _PGHDR_H
 
 #define PGMHDR01        struct  pgmhdr01
 PGMHDR01
@@ -21,7 +22,7 @@ PGMHDR01
         LONG    h01_blen ;      /*  length of bss  segment              */
         LONG    h01_slen ;      /*  length of symbol table              */
         LONG    h01_res1 ;      /*  reserved - always zero              */
-        LONG    h01_res2 ;      /*  ?                                   */
+        LONG    h01_flags ;     /*  flags                               */
         WORD    h01_abs ;       /*  not zero if no relocation           */
 } ;
 
@@ -38,3 +39,4 @@ PGMINFO
         LONG    pi_slen ;               /*  length of symbol table      */
 } ;
 
+#endif /* _PGHDR_H */

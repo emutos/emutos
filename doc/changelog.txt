@@ -551,7 +551,7 @@ Start... early ages
 - new setjmp/longjmp replacing older ones (LVL)
 - updated todo list (LVL)
 - started fastram support in bdos (LVL)
-- fixed some functino prototypes in bios.c (LVL)
+- fixed some function prototypes in bios.c (LVL)
 - removed cli/Makefile (LVL)
 - implemented the font_ring as 3 lists of linked fontheaders (MAD)
 - documented all tosvars in bios/tosvar.h till 0x5b0 (MAD)
@@ -570,3 +570,8 @@ Start... early ages
 
 21. Jan. 2002
 - in bios/lineainit.c: removed font_ring initialization (MAD)
+- re-wrote completely Pexec() for header flags support. I kept the old routine
+  for reference, but ultimately it will go away. Fastram is allocated when 
+  requested but it is still not freed (the *term routines in proc need to
+  be changed as well); Pexec() flag 6 supported. I did not test on Fastram but
+  all of autoexec, EmuCON, loading progs from C: and A: work. (LVL)

@@ -13,14 +13,24 @@
 #ifndef _PROC_H
 #define _PROC_H
 
+#include "pghdr.h"
 
 /*
  *  process management
  */
 
-extern  long    bakbuf[] ;
 extern  WORD    supstk[] ;
 extern  PD      *run;
+
+/* 
+ * values of Pexec flg
+ */
+
+#define PE_LOADGO     0
+#define PE_LOAD       3
+#define PE_GO         4
+#define PE_BASEPAGE   5
+#define PE_GOTHENFREE 6
 
 /*
  * in proc.c
@@ -35,7 +45,8 @@ WORD xtermres(long blkln, WORD rc);
  * in kpgmld.h
  */
 
-ERROR xpgmld(char *s , PD *p);
+ERROR xpgmhdrld(char *s, PGMHDR01 *hd, FH *h);
+ERROR xpgmld(char *s, PD *p, FH h, PGMHDR01 *hd );
 
 /*
  * in rwa.S
