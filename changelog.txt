@@ -112,7 +112,7 @@ Start... early ages
 - Implemented extended TOS 1.02 header - no basepage set in STonX any longer!
 - Did put .org 0x4f2 in front of _sysbase: in tosvars.s
 
-25. Sep. 2001  LVL  <lvl@club-internet.fr>
+25. Sep. 2001 
 - linea commented out of cartridge
 - added .even after .ascii strings (odd exception handlers); 
 - changed "dc.w 0" by '\0' at end of .ascii strings.  (rwa.s, startup.s)
@@ -125,4 +125,7 @@ Start... early ages
 
 30. Sep. 2001
 - changed XBIOS stubs to right declaration. (MAD)
+
+01. Oct. 2001
+- ensured that the MIDI acia was inited (for KBD to work on stonc) (LVL)
 
