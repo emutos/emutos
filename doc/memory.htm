@@ -1,0 +1,65 @@
+<head>
+  <title>GEM DOS 1.0, Spec Version 13</title>
+</head>
+
+<body>
+<h1>GEM DOS 1.0, Spec Version 13</h1>
+<hr>
+
+<h1>6. Memory Models</h2>
+
+GEM DOS establishes the Transient Program Area(TPA)
+for an application program as follows:
+
+<pre>
+              ___________________<-------- High TPA
+             |                   |<---- Initial Stack Pointer
+             |   Application     |
+             |    User Area      |
+             |-------------------|
+             |         BSS       |
+             |-------------------|
+             |         Data      |
+             |-------------------|
+             |         Text      |
+             |-------------------|
+             |    Base Page      |
+             |-------------------|<-------- Low TPA
+</pre>
+
+The initial stack pointer is directed at the top end of the TPA.
+The base page contains pointers as described in Section 7.
+To insure maximum compatibility with future releases of
+GEM DOS, it is recommended that memory that is not
+required by the application program be freed for use by
+other processes. The top of the stack should be moved down
+to an acceptable value. and an M_SHRINK function should
+be performed (0X4A). If additional memory is needed later,
+an M_FREE function should be performed to determine the
+amount of available memory. followed by an M_ALLOC
+function (0x48) to have a portion of that memory allocated.
+
+The TPA will now look like this:
+
+<pre>
+             |------------|<--------- High TPA
+             | Available  |
+             |  to other  |
+             | Processes  |
+             |------------|<----------- Stack Pointer
+             |Application |
+             | User Area  |
+             |------------|
+             |   BSS      |
+             |------------|
+             |   DATA     |
+             |------------|
+             |   TEXT     |
+             |------------|
+             | BASE PAGE  |
+             |------------|<----------- Low TPA
+</pre>
+
+</body>
+</html>
+

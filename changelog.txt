@@ -1,0 +1,125 @@
+Start... early ages
+
+16. May. 1985
+- GEMDOS 1.0 released by Digital Research, Inc.
+
+05. Jun. 1987  ACH	PROC.C
+- Problem - After physical disk error COMMAND.PRG gives "Command not
+  found." message for all subsequent external commands. Fix - Changed the
+  error handling code in  xexec() to always do an ixterm(t); on any disk
+  error, thus freeing memory.
+
+26. Jun. 1987  ACH	TIME.C & BIOS
+- To enable GEMDOS to take advantage of real-time clock/calendars a new
+  BIOS function (11h) has been added. Whenever the BDOS sets a new time
+  or date this function is called and, if the hardware supports it, the
+  real-time clock can be updated. When the BDOS needs the current time or
+  date the function is called to allow  the BIOS to update the internal
+  BDOS values. If there is no hardware clock the BIOS can  simply ignore
+  this call as the BDOS still maintains the time and date internally
+  based on the system tick.
+
+16. Sep. 1987  ACH	SUP.C
+- Problem - the internal date and time variables used to time stamp file
+  updates are set to 0 when the OS starts up.
+
+  Fix - Changed cinit() in SUP.C to call new BIOS date_time() function
+  (11h) so that the BIOS can initialise the internal variables from a 
+  hardware real-time clock, if supported.
+
+09. Oct. 1987 ACH	BDOSMAIN.C
+- Duplicate definition of supstk and SUPSIZ removed from this module.
+  (Duplicated in  PROC.C and FS.H.) If the supervisor stack is to be OEM 
+  configurable some more reliable method must be devised.
+
+19. Nov. 1987 ACH	RWA.A
+- Added _lbmove, _bfill, _bmove routines. (These were supposed to be in
+  something called TOOLS.ARC which was not supplied by DRI.)
+
+01. May. 2001
+- Started working on GEMDOS -> EmuTOS
+
+28. Jul. 2001 
+- Working on MFP initialization
+
+29. Jul. 2001
+- Implementing Cartridge system for work with STonX
+- Rewrite of vector setup
+
+30. Jul. 2001
+- rewrote some exception handlers
+- implemented VBL handler
+- implemented HBL handler
+- implemented keyboard interrupt handler
+
+04. Aug. 2001 
+- working on the keyboard interrupt routine
+
+05. Aug. 2001
+- got the keyboard interrupt running (wow!)
+
+06. Aug. 2001
+- got the keyboard queue running 
+
+07. Aug. 2001
+- Mega ST clock should work - could not test yet
+- Character blit implemented (not tested)
+- VT52 emulator implemented (not yet blitted to screen)
+
+10. Aug. 2001
+- Worked on character blitting (not tested)
+
+11. Aug. 2001
+- Got first real character blitted to screen
+- cons_out is basically working 
+
+12. Aug. 2001
+- Fighting much too long against a too small supervisor stack  :-(
+- Got scrolling much to slowly working
+
+13. Aug. 2001
+- scrolling now faster
+- worked on keyboard decoding for bconin (not tested)
+- fixed linker configuration in Makefile (libgcc forgotten)
+
+26. Aug. 2001
+- trying to bring BDOS and BIOS together
+
+29. Aug. 2001
+- integrating STonX native BIOS emulation to BIOS
+
+02. Sep. 2001 
+- found out, where the basepage is for DTA stuff
+
+04. Sep. 2001
+- got memory setup descritor working 
+- got the command loading running
+
+09. Sep. 2001
+- Uppercase/lowercase is now working
+- got old command.prg compiled and started and basically WORKING!!!
+- command.prg: directory navigation is working
+
+10. Sep. 2001
+- handlers for showing exceptions 0x08 - 0x20 written (atari's bombs)
+
+24. Sep. 2001
+- fixed bug in supervisor stack setup (stack was top of stack + size of stack)
+- Now no garbage in the diskbuffer -> clean screen while ls or dir executing
+
+25. Sep. 2001
+- os_pal changed to word width
+- Implemented extended TOS 1.02 header - no basepage set in STonX any longer!
+- Did put .org 0x4f2 in front of _sysbase: in tosvars.s
+
+25. Sep. 2001  LVL  <lvl@club-internet.fr>
+- linea commented out of cartridge
+- added .even after .ascii strings (odd exception handlers); 
+- changed "dc.w 0" by '\0' at end of .ascii strings.  (rwa.s, startup.s)
+- padded tosvars.s so that _sysbase == 0x4F2
+- fixed (?) malloc() bug (due to missing prototype in fs.h)
+- added/edited some copyright notices on top of files. (rwa.s, startup.s)
+
+26. Sep. 2001
+- change a prototype for xmgetblk - now command.prg load other programs!
+

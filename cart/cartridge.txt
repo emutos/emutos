@@ -1,0 +1,98 @@
+The STonX cartridge.img file                               21 Aug 2001
+
+
+STonX needs a cartridge to function properly with TOS. If the cartridge
+is not functioning STonX will come up, but will not boot correctly.
+
+The cartridge of STonX is implemented in 68000 assembler. This is done,
+because it implements some very lowlevel functionality. The TOS
+executes the cartridge while initializing itself. So it is the ideal
+point to change some things, which are needed for the emulator to work.
+
+This Cartridge is of type 0. This means, that it is executed after the
+hardware is initialized, memory is set up and the BIOS is initialized.
+
+After all this happened, it does the following:
+
+- Initializes STonX while booting TOS
+- Initializes STonX linea routines
+- sets vector for 0x46a - hdv_init (initialize harddisk)
+- sets vector for 0x46e - swv_vec (resolution change)
+- sets vector for 0x472 - hdv_bpb (get disk parameters)
+- sets vector for 0x476 - hdv_rw (read/write a sector)
+- sets vector for 0x47e - hdv_mediach (sense a media change)
+
+Additionally it has some entry points on fixed addresses in it, so
+that STonX can jump to these while executing. Cartridges always begin
+at address 0xfa0000. From here we use an offset:
+
+offset 0x400:
+
+unixfs: This routine is used to support loading code from the native
+unix filesystem. I'm not shure, but I think it is needed to handle
+filenames in upper/lower case.
+
+StonX checks natively, if the mode is 0 or 3. If so, CC-register
+flags are set so, that back in the cartridge we can go on.
+
+pexec: Here we check, if is is mode 0=load and go, or not. If so, the
+cartridge first tries to find the program. Therefore it gets and uses
+the DTA and the GEMDOS function Fsfirst to find the file in the
+filesystem. After that a new basepage is allocated by calling pexec
+again with mode=5. If this is successful, the program is loaded and
+relocated. Now execution goes back to the original GEMDOS, where the
+prepared program really is started.
+
+Nearly the same happens, if the mode is 3, but the program
+is not executed in the end. A use for this would e.g. be debugging.
+
+
+offset 0xff8:
+
+new_trap2: If we use the native vdi, the trap #2 is not sensed by the
+emulator core. Instead the trap #2 vector is bend to this routine and
+this routine implements the native emulator vdi interface.
+
+offset 0x1400:
+
+resvec: The reset vector is bend to this routine. It is just a dummy,
+so that no changes to the video subsystem are done by TOS.
+
+offset 0x2000:
+
+disp: This will be the STonX configuration menu. As far as I know, it
+is not implemented yet. If done, you will have the possibility to
+reboot or stop STonX from a program.
+
+
+
+
+=== Prerequisites ===================================================
+
+For to compile the cartrige for STonX (and possibly for other
+m68k developments) you need the gcc cross-compiler toolchain
+from the SpareMiNT site at:
+
+http://wh58-508.st.uni-magdeburg.de/sparemint/cross-mint.html
+
+
+
+=== Installation ====================================================
+
+For compilation Just type the following:
+
+make clean
+make
+
+Then put your cartridge.img in the directory, where STonX needs it.
+That's all!
+
+The makefile is configured in a way, that the linker will produce an
+executable in binary format. This means, that the produced code will
+have no object format header. This is needed, because the cartridge
+need to have a magic byte at it's beginning. Otherwise it will not be
+recognized as a cartridge by TOS.
+
+
+
+-- Martin Doering

@@ -1,0 +1,75 @@
+<head>
+  <title>Executable File Format</title>
+</head>
+
+<body>
+<h1>Executable File Format</h1>
+<hr>
+
+
+<h2>4.2. Relocation information</h2>
+
+
+The onset from the beginning of the text segment to the first longword
+needing relocation is stored as a longword. The relocation information
+stores the onset from one longword to be relocated to the next such
+longword. When an onset of zero is encountered. No further relocation
+information is to be found. Bytes are then used to store succeeding
+onsets. If the onset Is greater than 254. the relocation information will
+contain a byte of 1. Then 254 will be subtracted from the desired onset
+and the procedure repeated.
+
+
+<h2>4.21. Relocation Table</h2>
+
+
+Relocation Offset Byte Table
+
+<pre>
+Byte           Description
+<hr>
+0                 No further relocation information
+1                 Add 254 to the existing offset go to the next byte
+2,3               Reserved
+4-254             Represents the offset to the next
+                       longword needing relocation*
+255               Reserved
+<hr>
+</pre>
+
+* plus 254 x n where n is the number of "1" bytes that preceded this byte.
+
+All relocation information is relative to the beginning load address (i.e. start of text).
+
+
+<h2>4.3. Typical Program Header</h2>
+
+Typical GEMDOS.PRG Header for Contiguous Program segments
+
+<pre>
+Byte     Values size                   Contents
+<hr>
+OH    601AH   1 Word         Denotes contiguous text, data, and block storage segments
+2H    2376H   1 Longword     Number of bytes in text segment
+6H     422H   1 Longword     Number of bytes in data segment
+OAH   1806H   1 Longword     Number of bytes in block storage segment
+OEH    142H   1 Longword     Number of bytes in symbol table
+12H    000H   1 Longword     Reserved, always zero
+16H    000H   1 Longword     Reserved, always zero
+1AH     00H   1 Word         Reserved, always zero
+
+
+      2376H Bytes    Text segment image
+       422H Bytes    Data segment image
+       142H Bytes    symbol table
+
+           X  1 Longword     Offset of first longword to relocate
+           X  n Bytes         successive offsets to further longwords to relocate
+
+         00H  1 Byte          No more relocation information
+  <hr>
+</pre>
+
+</body>
+</html>
+

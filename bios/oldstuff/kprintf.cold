@@ -1,0 +1,240 @@
+/* Kernel printf (usable only by OS task) */
+
+
+#define LEFT  1
+#define RIGHT 0
+#define MAXSTR	80
+#define LOCAL	static
+#define save_sr()	asm("movw sr, sp@-"); asm("movw #0x2700, sr");
+#define rest_sr()	asm("movw sp@+, sr");
+
+extern void printout(char *);
+
+extern char *  output;	/* This output is the result max 1024 c */
+
+LOCAL void  prt_dec(int num, char * str)
+{
+    int	i;
+    char	temp[6];
+
+    temp[0] = '\0';
+    for(i = 1; i <= 5; i++)  {
+        temp[i] = num % 10 + '0';
+        num /= 10;
+    }
+    for(i = 5; temp[i] == '0'; i--);
+    if( i == 0 )
+        i++;
+    while( i >= 0 )
+        *str++ = temp[i--];
+}
+
+LOCAL void  prt_hex(int num, char * str)
+{
+    int	i;
+    char	temp[5];
+
+    temp[0] = '\0';
+    for(i = 1; i <= 4; i++)  {
+        temp[i] = "0123456789abcdef"[num & 0x0f];
+        num = num >> 4;
+    }
+    for(i = 4; temp[i] == '0'; i--);
+    if( i == 0 )
+        i++;
+    while( i >= 0 )
+        *str++ = temp[i--];
+}
+
+LOCAL void  prt_bin(int num, char * str)
+{
+    int	i;
+    char	temp[17];
+
+    temp[0] = '\0';
+    for(i = 1; i <= 16; i++)  {
+        temp[i] = ((num%2) == 0) ? '0' : '1';
+        num = num >> 1;
+    }
+    for(i = 16; temp[i] == '0'; i--);
+    if( i == 0 )
+        i++;
+    while( i >= 0 )
+        *str++ = temp[i--];
+}
+
+void    doprint(char * fmt, int * args)
+{
+    int	        c;
+    int	        i;
+    int	        f;		/* The format character (comes after %) */
+    char        *str;		/* Running pointer in string		*/
+    char	string[20];	/* The string str points to this output */
+                                /*  from number conversion		*/
+    int	        length; 	/* Length of string "str"		*/
+    char	fill;		/* Fill character (' ' or '0')		*/
+    int	        justified;      /* 0 = right-justified, else left-just. */
+    int	        fmax,fmin;	/* Field specifications % MIN . MAX s	*/
+    int	        leading;	/* No. of leading/trailing fill chars.	*/
+    char	sign;		/* Set to '-' for negative decimals	*/
+
+    char        *out;            /* This points to actual char in output */
+
+    char * testtext="Ich bin ein Berliner!\n";
+
+    out = output;               /* Set output pointer to start */
+
+    while (1) {
+        /* Echo characters until '%' or end of fmt string */
+        c = *testtext++;
+        if( c == '\0' ) {
+            return;
+        }
+        *out++=(char)c;
+    }
+}
+
+#if 0
+}
+        while( (c = *fmt++) != '%' ) {
+            if( c == '\0' ) {
+                return;
+            }
+            *out++=(char)c;
+        }
+
+
+
+    /* Echo "...%%..." as '%' */
+        if( *fmt == '%' ) {
+            *out++=*fmt++;
+            continue;
+        }
+        /* Check for "%-..." == Left-justified output */
+        if (justified = ((*fmt=='-') ? LEFT : RIGHT) )
+            fmt++;
+        /* Allow for zero-filled numeric outputs ("%0...") */
+        fill = (*fmt=='0') ? *fmt++ : ' ';
+        /* Allow for minimum field width specifier for %d,u,x,o,c,s*/
+        /* Also allow %* for variable width (%0* as well)	*/
+        fmin = 0;
+        if( *fmt == '*' ) {
+            fmin = *args++;
+            ++fmt;
+        }
+        else while( '0' <= *fmt && *fmt <= '9' ) {
+            fmin = fmin * 10 + *fmt++ - '0';
+        }
+        /* Allow for maximum string width for %s */
+        fmax = 0;
+        if( *fmt == '.' ) {
+            if( *(++fmt) == '*' ) {
+                fmax = *args++;
+                ++fmt;
+            }
+            else while( '0' <= *fmt && *fmt <= '9' ) {
+                fmax = fmax * 10 + *fmt++ - '0';
+            }
+        }
+
+        str = string;
+        if( (f= *fmt++) == '\0' ) {
+            *out++='%';
+            return;
+        }
+        sign = '\0';	/* sign == '-' for negative decimal */
+
+        switch( f ) {
+        case 'c' :
+            string[0] = (char) *args;
+            string[1] = '\0';
+            fmax = 0;
+            fill = ' ';
+            break;
+
+        case 's' :
+            str = (char *) *args;
+            fill = ' ';
+            break;
+
+        case 'd' :
+            if ( *args < 0 ) {
+                sign = '-';
+                *args = -*args;
+            }
+        case 'u':
+            prt_dec(*args, str);
+            fmax = 0;
+            break;
+
+        case 'x' :
+            prt_hex(*args, str);
+            fmax = 0;
+            break;
+
+        case 'b' :
+            prt_bin(*args, str);
+            fmax = 0;
+            break;
+
+        default :
+            *out++=f;
+            break;
+        }
+        args++;
+        for(length = 0; str[length] != '\0'; length++)
+            ;
+        if ( fmin > MAXSTR || fmin < 0 )
+            fmin = 0;
+        if ( fmax > MAXSTR || fmax < 0 )
+            fmax = 0;
+        leading = 0;
+        if ( fmax != 0 || fmin != 0 ) {
+            if ( fmax != 0 )
+                if ( length > fmax )
+                    length = fmax;
+            if ( fmin != 0 )
+                leading = fmin - length;
+            if ( sign == '-' )
+                --leading;
+        }
+        if( sign == '-' && fill == '0' )
+            *out++=sign;
+        if( justified == RIGHT )
+            for( i = 0; i < leading; i++ )
+                *out++=fill;
+        if( sign == '-' && fill == ' ' )
+            *out++=sign;
+        for( i = 0 ; i < length ; i++ )
+            *out++=str[i];
+        if ( justified = LEFT )
+            for( i = 0; i < leading; i++ )
+                *out++=fill;
+    }
+}
+#endif
+
+/*------------------------------------------------------------------------
+ *  kprintf  --  kernel printf: formatted, unbuffered output to emulator
+ *----------------------------------------------------------------------*/
+void    kprintf(const char * fmt)
+{
+
+    int c;
+    char * out;
+
+    out = output;
+
+    while (1) {
+        /* Echo characters until '%' or end of fmt string */
+        c = *fmt++;
+        *out++=(char)c;
+        if( c == '\0' ) {
+            printout(output);
+            return;
+        }
+    }
+
+//    asm("movw sp@+, sr");       /* restore status register */
+}
+

@@ -1,0 +1,1932 @@
+<head>
+  <title>9. System Function Calls</title>
+</head>
+
+<body>
+<h1>9. System Function Calls</h1>
+<hr>
+
+In this diagram, the position of the parameters and the function number
+correspond to the way C places them on the stack.
+
+Specifically, the C code:
+
+<pre>
+  CALL (function number, P1. P2   P3. ... Pn)
+</pre>
+
+loads the Nth parameter into the parameter block first, followed by the
+N-1th, and continues in this manner until the function number is
+entered last in the parameter block.
+
+
+<h2>9.2. Returned Date</h2>
+
+The default convention returns all byte, word and long data in D0.
+In individual cases where more information is returned. D0 contains
+the address of an Information Return Block, which receives the data.
+The descriptions of individual function calls explain how data returns
+to the application.
+
+
+<hr>
+<h2>9.3. 00: P_TERM0 - Terminate process (Old: Form)</h2>
+<pre>
+
+
+  VOID p_term0()
+
+
+
+Parameter  Block
+
++--------------------------------+ Low memory (Parameter block address)
+|     Function Code  OOH         |
++--------------------------------+
+
+
+
+Function:
+
+Terminate this process. Return to parent process
+with return code set to 0.
+
+
+
+</pre>
+<hr>
+<h2>9.4.01: C_CONIN - Read Character from Standard Input</h2>
+<pre>
+
+
+
+  LONG c_conin()
+
+
+
+Parameter Block
+
++-----------------------+ Low memory (Parameter block address)
+| Function Code  01H    |
++-----------------------+ High memory
+
+
+
+Return Parameters:
+
+Register D0 L :  Character read
+
+
+
+Function:
+
+Reads character from standard input and echoes it to the standard output device.
+
+
+
+If the console is the standard input device. and
+if the console is GSX 2.0 compatible, the console
+scan code is found in the low byte of the high word.
+as shown below. This byte is set to 00H otherwise.
+
+
+
+D0  Contents
+
+
+
+ Hb Hw Lb Hw Hb Lw Lb Lw
+
++---------------------------+
+|00   |code   | 00  | char  |
+|     | or 0  |     |       |
++---------------------------+
+
+
+
+</pre>
+<hr>
+<h2>9.5. 02: C_CONOUT - Write Character to Standard Output</h2>
+<pre>
+
+
+
+  VOID c_conout(WORD c)
+
+
+
+Parameter Block
+
+
+
++---------------------+ Low memory (Parameter block address)
+| Function Code  32H  |
++---------------------+
+|     Character       | 1st Parameter
++---------------------+ high memory
+
+
+
+Function:
+
+The first (and only) parameter is a word; lower 8 bits contain a character
+to be printed. The upper 8 bits should be zero to ensure compatibility with
+future extensions to the 16-bit character set.
+
+
+
+The function displays this character on the standard output device.
+
+
+
+</pre>
+<hr>
+<h2>9.6. 03: C_AUXIN - Read Character from Standard Auxiliary Device</h2>
+<pre>
+
+
+
+  LONG c_auxin()
+
+
+
+Parameter Block
+
+--------------------+ Low memory (Parameter block address)
+| Function Code 03H |
+--------------------+ High memory
+
+
+
+ Return Parameters:
+
+
+
+Register D0.L: Character read from auxilliary port
+
+
+
+Function:
+
+Receives Character from auxiliary port and returns it in D0.L.
+
+
+
+</pre>
+<hr>
+<h2>9.7. 04: C_AUXOUT - Write Character to Standard Auxlliary Device</h2>
+<pre>
+
+
+
+  VOID c_auxout(WORD c)
+
+
+
+Parameter Block
+
++----------------------+ Low memory (Parameter block address)
+| Function Code  04H   |
++----------------------+
+| Character to send    | Parameter
++----------------------+ High memory
+
+
+
+Function:
+
+The character in the perameter block is sent to the auxiliery port.
+The upper 8 bits should be zero to ensure compatibility with future
+extensions to the 16-bit character set.
+
+
+
+</pre>
+<hr>
+<h2>9.8. 05: C_PRNOUT - Write Character to Standard Print Device</h2>
+<pre>
+
+
+
+  VOID c_prnout(WORD c)
+
+
+
+Parameter Block
+
++------------------------+ Low memory (Parameter block address)
+| Function Code  05H     |
++------------------------+
+| Character to send      | parameter
++------------------------+ High memory
+
+
+
+Register D0.W . Character to send to printer.
+
+
+Function:
+
+Send the specified character to the printer device.
+The upper 8 bits should be zero to ensure compatibility
+with future extensions to the 16-bit character set.
+
+
+
+</pre>
+<hr>
+<h2>9.9 06: C_RAWIO - Raw I/O to standard Input/Output</h2>
+<pre>
+
+
+
+  LONG c_rawio (WORD parm)
+
+
+
+Parameter Block
+
++--------------------+ Low memory (Parameter block address)
+| Function Code  06H |
++--------------------+
+|    parm    Word    | Parameter
++--------------------+ High memory
+
+
+
+Function:
+
+If word = FF. read character from standard input device and return in D0.L.
+If word does not equal FF, it it assumed to be a character and is sent to the
+standard output device.
+
+
+
+Return Perameters:
+
+Register D0.W :
+
+If word = FF, D0.W contains character read from standard input device.
+If no character is available, return D0.L equals 0L.
+
+
+
+</pre>
+<hr>
+<h2>9.10. 07: C_RAWCIN - Raw input from Standard Input</h2>
+<pre>
+
+
+
+  LONG c_rawcin()
+
+
+Parameter Block
+
++-----------------------+ Low memory (Parameter block address)
+| Function Code  07H    |
++-----------------------+ High memory
+
+
+
+Return Parameters:
+
+Register D0L;    Character read from standard input
+
+
+
+Function:
+
+Read character from standard input device without echoing it to standard
+output device. Control characters pass through without trapping by the console routine.
+
+
+
+</pre>
+<hr>
+<h2>9.11. 08: C_NECIN - Read Character from Standard Input, No Echo</h2>
+<pre>
+
+
+
+  LONG c_necin()
+
+
+
+Parameter Block
+
++--------------------------------+ Low memory (Parameter
+| Function Code  08H     |                 block addr)
++--------------------------------* High memory
+
+
+
+Return Parameters:
+
+Register D0.L: Character read from standard input device.
+
+
+
+Function:
+
+Read character from standard input device without echoing it to standard output device.
+Control characters ("C, ^S, and ^Q) are interpreted and have their proper effect.
+
+
+
+</pre>
+<hr>
+<h2>9.12. 09: C_CONWS - Write Null Terminated String to Standard Output</h2>
+<pre>
+
+
+
+  VOID c_conws(BYTE *p)
+
+
+
+Parameter Block
+
+ +-----------------------+ Low memory (Parameter
+ | Function Code  09H    |              block addr)
+ + ----------------------+
+ | Address of string     |    Parameter
+ +                       +
+ | to print long         |
+ +-----------------------+ High Memory
+
+
+
+Function:
+
+The target string is transmitted to the standard output device. character by character.
+A null character terminates the string.
+
+
+
+</pre>
+<hr>
+<h2>9.13. 0A: C_CONRS - Read Edited String trom Standard Input</h2>
+<pre>
+
+
+
+  VOID c_conrs(BYTE *p)
+
+
+
+Parameter Block
+
++------------------------+ Low memory(Parameter
+|    Function Code  0AH  |           block addr)
++------------------------+
+|      Address of        |
+| Input Buffer(long)     |
++------------------------+ High Memory
+
+
+
+Function:
+
+On entry. the first byte of the buffer should be set to the length of the
+data portion of the buffer.  On return, the second byte is set to the actual
+length read, and the third through n bytes contain the Characters read. The
+string is null terminated.
+
+
+
+</pre>
+<hr>
+<h2>9.14. OB: C_CONIS - Check Status ot Standard Input</h2>
+<pre>
+
+
+
+  LONG c_conis()
+
+
+
+Parameter Block
+
++------------------------+ Low memory (Parameter block address)
+| Function Code  OBH     |
++------------------------+ High Memory
+
+
+
+Return Parameters:
+
+Register D0.L : Contains -1 if a character is available:
+              0 if no character available.
+
+
+
+Function:
+
+Returns the status of standard input, checking for characters to receive
+from it.
+
+
+GEM DOS Spec Version 13    page 37                       D_SETDRV
+
+
+
+</pre>
+<hr>
+<h2>9.1.5. 0E: D_SETDRV - Set Default Drive</h2>
+<pre>
+
+
+
+  LONG d_setdrv (WORD newdrv)
+
+
+
+Parameter Block
+
++------------------------------+ Low memory (Parameter
+|      Function Code  0EH      |               block addr)
++------------------------------+
+|       Drive Number           |
++------------------------------+ High memory
+
+
+
+Drive Number:
+
+O = Drive A, 1= Drive B.... 15 = Drive P
+
+
+
+Return Parameters:
+
+Register D0.L : Bit map of drives in system (bit 0 = A. bit 1 = B.....).
+
+
+
+Function:
+
+Makes a specified drive in the range A-P the current drive and returns
+the drive map of the system.
+
+
+
+</pre>
+<hr>
+<h2>9.16. 10: C_CONOS - Check Statue of Standard Output</h2>
+<pre>
+
+
+
+  LONG c_conos()
+
+
+
+Parameter Block
+
++---------------------+ Low memory (Parameter
+| Function Code  10H  |             block addr)
++---------------------+ High memory
+
+
+
+Return Parameters:
+
+Register DO.L :
+
+  -1 if the console is ready to receive a character;
+  0 if it is unavailable.
+
+
+
+Function:
+
+Returns the status of the console device. checking to see if it is
+ready to receive characters.
+
+
+
+</pre>
+<hr>
+<h2>9.17. 11: C_PRNOS - Check Status of Standard Print Drive</h2>
+<pre>
+
+
+
+  LONG c_prnos ()
+
+
+
+Parameter Block
+
++----------------------------+ Low memory (Parameter block addr)
+|    Function Code  11H      |
++----------------------------+ High memory
+
+
+
+Return parameters:
+
+Register D0.L :
+
+  -1 it the printer is ready to receive a character
+  0 if it is unavailable.
+
+
+
+Function:
+
+Returns the status of the printer device. checking to see if it is
+ready to receive characters.
+
+
+
+</pre>
+<hr>
+<h2>9.18. 12: C_AUXIS - Check Status of Standard Auxiliary Device Input</h2>
+<pre>
+
+
+
+  LONG c_auxis()
+
+
+
+Parameter Block
+
++------------------------+ Low memory (Parameter
+|    Function Code  12H  |                   block addr)
++------------------------+ High memory
+
+
+
+Return Parameters:
+
+Register D0.L :
+  -1 if a character is available;
+  0  if no character available.
+
+
+
+Function:
+
+Returns the status of the auxiliary input device,
+checking for characters to receive from it.
+
+
+
+</pre>
+<hr>
+<h2>9.19. 13: A_AUXOS - Cheek Status of Standard Auxiliary Device Output</h2>
+<pre>
+
+
+
+  LONG c_auxos()
+
+
+
+Parameter Block
+
++---------------------------+ Low memory (Parameter
+| Function Code  13H        |             block addr)
++---------------------------+ High memory
+
+
+
+Return registers:
+
+Register D0.L :
+
+  -1 if the device is ready to receive a character;
+  0 if it is unavailable.
+
+
+
+Function:
+
+Returns the status of the auxiliary device, checking to see if it is
+ready to receive characters.
+
+
+
+</pre>
+<hr>
+<h2>9.20. 19: D_GETDRV - Get Default Drive</h2>
+<pre>
+
+
+
+  LONG d_getdrv()
+
+
+
+Parameter Block
+
++--------------------+ Low memory (Parameter
+| Function Code  19H |                     block addr)
++--------------------+ High memory
+
+
+
+Register D0.W :
+
+Contains code of the current drive number
+
+0 = A. 1 = 8, UP to 15 = P.
+
+
+
+</pre>
+<hr>
+<h2>9.21. 1A: F_SETDTA - Set Disk Transfer Address</h2>
+<pre>
+
+
+
+  VOID f_setdta(BYTE b)
+
+
+
+Parameter Block
+
++--------------------+ Low memory (Parameter block addr)
+| Function Code  1AH |
++--------------------+
+| Disk Transfer      |
++                    +
+| Address (long)     |
++--------------------+ High Memory
+
+
+
+Set disk transfer address used by f_sfirst().
+
+
+
+</pre>
+<hr>
+<h2>9.22. 2A: T_GETDATE - Get Date</h2>
+<pre>
+
+
+
+  WORD t_getdate()
+
+
+
+Parameter Block
+
++---------------------+ Low memory (Parameter
+| Function Code  2AH  |                       block addr)
++---------------------+ High memory
+
+
+
+Return Parameters:
+
+Register D0.W: Contains date in the format:
+
+Bits 0 through 4 indicate seconds in the range (1 -31)
+Bits 5 through 8 indicate the month in the range (1 -- 12)
+Bits 9 through 15 indicate the year (since 1980) in the range (0-119)
+
+
+
+</pre>
+<hr>
+<h2>9.23. 2B: T_SETDATE - Set Date</h2>
+<pre>
+
+
+
+  LONG t_setdate (WORD date)
+
+
+
+Parameter Block
+
++----------------------+ Low memory (Parameter
+|   Function Code  2BH | word        block addr)
+-----------------------+
+|       Date word      | word
++----------------------+ High memory
+
+
+
+Date Word contains the new date in the format:
+
+Bits 0 through 4 indacate the seocnds in the range of (1-31)
+Bits 5 through 8 indicate the month in the range (1 - 12)
+Bits 9 through 15 indicate the year (since 1980) in the range (0-119)
+
+
+
+Returns ERROR if the date is not valid.
+
+
+
+</pre>
+<hr>
+<h2>9.24. 2C: T_GETTIME - Get Time</h2>
+<pre>
+
+
+
+  WORD t_gettime()
+
+
+
+Parameter Block
+
++------------------------+ Low memory (Parameter
+| Function Code  2CH     |     block addr)
++------------------------+ High memory
+
+
+
+Return Parameters:
+
+Register D0.W contains the time-of-day in the format:
+
+Bits 0  through 4  Indicate the binary number of two-second increments
+Bits 5  through 10 indicate the binary number of minutes
+Bits 11 through 15 indicate the binary number of hours
+
+
+
+</pre>
+<hr>
+<h2>9.25. 2D: T_SETTIME - Set Time</h2>
+<pre>
+
+
+
+  LONG t_settime(WORD time)
+
+
+
+Parameter Block
+
++----------------------+ Low memory (Parameter block addr)
+| Function Code  2DH   | word
++----------------------+
+| Time Word            | word
++----------------------+ High memory
+
+
+
+Time Word contains the new time in the format:
+
+Bits 0  through 4  indicate the binary number of two-second increments
+Bits 5  through 10 indicate the binary number of minutes
+Bits 11 through 15 indicate the binary number of hours
+
+
+
+Returns ERROR if the time is invalid.
+
+
+
+</pre>
+<hr>
+<h2>9.26. 2F: F_GETDTA - Get Disk Transfer Address</h2>
+<pre>
+
+
+
+  LONG f_getdta()
+
+
+
+Parameter Block
+
++--------------------+ Low memory (Parameter
+| Function Code  2FH |             block addr)
++--------------------+ High memory
+
+
+
+Return Parameters:
+
+Register D0.L : Contains the current Disk Transfer Address
+
+
+
+</pre>
+<hr>
+<h2>9.27. 30: S_VERSION - Get Version Number</h2>
+<pre>
+
+
+
+  WORD s_version()
+
+
+
+Parameter Block
+
++----------------------+ Low memory    (Parameter
+| Function Code  30H   |              block addr)
++----------------------+ High memory
+
+
+
+Return Parameters:
+
+Register D0.W : Contains version number. For first release,
+this number will be 0001H.
+
+
+
+Function:
+
+  Lower Byte contains major version number:
+  Upper byte contains minor version number. 0001 = version 1.03.
+
+
+
+</pre>
+<hr>
+<h2>9.28. 31: P_TERMRES - Terminate and Stay Resident</h2>
+<pre>
+
+
+
+  VOID p_termres(LONG nbytes, WORD rc)
+
+
+
+Parameter Block
+
++-----------------------+Low memory (Parameter
+|  Function Code  31H   |            block addr)
++-----------------------+
+|     Number of bytes   |
++                       + long to keep
++-----------------------+
+|       Exit Code       | word
++-----------------------+ High memory
+
+
+
+Long: Contains number of bytes to keep
+
+Word: Contains exit code
+
+
+
+Note: Use of this function may make an application difficult to port
+to a future operating systems.
+
+
+
+</pre>
+<hr>
+<h2>9.29. 36: D_FREE - Get Drive Free Space</h2>
+<pre>
+
+
+
+  VOID d_free (WORD dr)
+
+
+
+Parameter Block
+
++------------------------------+ Low memory (Parameter
+|      Function Code  36H      |             block addr)
++------------------------------+
+|          Address of          |
++                              + long
+| Information_Return_Buffer    |
++------------------------------+
+|        Drive Code            | word
++------------------------------+ High memory
+
+
+
+Drive Code: 0 = Default. 1 = A. 2 = B. etc.
+
+
+
+The Information_Return_Buffer holds the data retrieved by this function cell.
+
+
+
+Information       --------------------------
+Return Buffer -->|  free space on drive     |
+                  --------------------------
+                 | # of clusters on drive   |
+                 ---------------------------
+                 | sector size in bytes     |
+                 ---------------------------
+                 | cluster size in sectors  |
+                 ---------------------------
+
+
+
+</pre>
+<hr>
+<h2>9.30. 39: D_CREATE - Create a Subdirectory</h2>
+<pre>
+
+
+
+  LONG d_create(BYTE *path),
+
+
+
+Parameter Block
+
++---------------------+ Low memory (Parameter
+| Function Code  39H  |    block addr)
++---------------------+
+|    Address of String|
++                     + long
+| Containing Pathname |
++---------------------+ High memory
+
+
+
+The pathname for the new subdirectory is contained in a null-terminated string.
+The parameter block contains the address of this string.
+
+
+
+Return Parameters:
+
+
+
+Register D0.L : Contains
+
+  0 if operation succeeds.
+  non-zero if error occurs.
+
+
+
+</pre>
+<hr>
+<h2>9.31. 3A: D_DELETE - Delete a Subdirectory</h2>
+<pre>
+
+
+
+  LONG d_delete (BYTE *path)
+
+
+
+Parameter Block
+
++-------------------------------+ Low memory (parameter
+|   Function Code  3AH          |             block addr)
++-------------------------------+
+|       address of String       |
++                               +
+| Containing Pathname           |
++-------------------------------+ High memory
+
+
+
+The pathname for the subdirectory to remove is contained in a null-terminated
+string. The parameter block contains the address of this string.
+
+
+
+Return parameters:
+
+Register D0.L : Contains
+
+  0 if operation succeeds.
+  non-zero if error occurs.
+
+
+
+Function.
+
+Removes a subdirectory. If the subdirectory is not empty, an error code
+is returned in register D0.L.
+
+
+
+</pre>
+<hr>
+<h2>9.32. 38: D_SETPATH - Set Current Directory</h2>
+<pre>
+
+
+
+  LONG d_setpath (BYTE *path)
+
+
+
+Parameter Block
+
++----------------------------+ Low memory (Parameter
+| Function Code  3BH         |         Block addr)
++----------------------------+
+|  Address of String         |
++                            +
+| long | Containing Pathname |
++----------------------------+ High memory
+
+
+
+The pathname for the new current directory is contained in a null-terminated string.
+The parameter block contains the address of this string.
+
+
+
+Return Parameters
+
+
+
+Register D0.L : Contains
+
+  0 if operation succeeds.
+  non-zero if error occurs.
+
+
+
+</pre>
+<hr>
+<h2>9.34. 3D: F_OPEN - Open File</h2>
+<pre>
+
+
+
+  LONG f_open (BYTE *pname, WORD mode)
+
+
+
+Parameter Block
+
++-----------------------+ Low memory (Parameter
+|   Function Code  3DH  |          block addr)
++-----------------------+
+|   Pointer to string   |
++                       + Long
+| containing pathname   |
++-----------------------+
+|        Mode Word      | Word
++-----------------------+ High memory
+
+
+
+Long is a pointer to a null-terminated string containing the pathname of the file to open.
+
+
+
+Word contains a code indicating the file read-write mode:
+
+0 = file open for reading only
+1 = file open for writing only
+2 = file open for reading or writing
+
+
+
+Return Parameters:
+
+Register D0.L : Contains
+
+  file handle it the file was opened successfully.
+  negative if an error occurred.
+
+
+
+</pre>
+<hr>
+<h2>9.35. 3E: F_CLOSE - Close File</h2>
+<pre>
+
+
+
+  LONG f_close(WORD handle)
+
+
+
+Parameter Block
+
++-----------------------------+ Low memory (Parameter
+|      Function Code  3EH     |   block addr)
++-----------------------------+
+|   file Hander               |
++-----------------------------+ High memory
+
+
+
+Return Parameters:
+
+
+
+Register D0.L : Contains
+
+  0 if the file was closed successfully.
+  non-zero if an error occurred.
+
+
+
+</pre>
+<hr>
+<h2>9.36. 3F: F_READ - Read File</h2>
+<pre>
+
+
+
+  LONG f_read (WORD handle, LONG cnt, BYTE *pbuffer)
+
+
+
+Parameter Block
+
+
+
++--------------------------+ Low memory (Parameter
+|      Function Code  3FH  |         block addr)
++--------------------------+
+|      File Handle         |
++--------------------------+
+| Number of bytes to return| Long
++--------------------------+
+| Address of storage buffer| Long
++--------------------------+ High memory
+
+
+
+Word contains the file handle.
+
+Long 1 contains the number of bytes to read
+
+Long 2 contains the buffer location to store the read bytes.
+
+
+
+Return Parameters:
+
+Register D0.L: Contains
+
+  number of bytes read if read operation completed successfully, or
+  an error code if an error occurred.
+
+
+
+</pre>
+<hr>
+<h2>9.3.7. 40: F_WRITE - Write file</h2>
+<pre>
+
+
+
+  LONG f_write (WORD handle, LONG cnt, BYTE *pbuffer)
+
+
+
+Parameter Block
+
++-------------------------+ Low memory (Parameter
+| F unction Code  40H     |                    block addr)
++-------------------------+
+|        File Handle      |
++-------------------------+
+|                         |
++Number of bytes to write + Long
+|                         |
++-------------------------+
+|                         |
++Address of storage buffer+ Long
+|                         |
++-------------------------+ High memory
+
+
+
+Word contains the file handle.
+
+Long 1 contains the number of bytes to write
+
+Long 2 contains the buffer location containing the bytes to write.
+
+
+
+Return parameters:
+
+Register D0.L: Contains
+
+  number of bytes written if write operation completed successfully, or
+  an error code if an error occurred.
+
+
+
+</pre>
+<hr>
+<h2>9.38. 41: F_DELETE - Delete File</h2>
+<pre>
+
+
+
+  LONG f_delete(BYTE *name)
+
+
+
+Parameter Block
+
++--------------------------+Low memory (Parameter
+|  Function Code  41H      |     block addr)
++--------------------------+
+| Pointer to string        |
++                          + Long
+| containing pathname      |
++--------------------------+ High Memory
+
+
+
+Long contains the address of a null-terminated string specifying the directory entry.
+
+
+
+Return Parameters:
+
+Register D0.L : Contains 0 if the file was removed. non-zero if an error occurred.
+
+
+
+</pre>
+<hr>
+<h2>9.39. 12: F_SEEK - Seek File pointer</h2>
+<pre>
+
+
+
+  LONG f_seek(LONG softs, WORD handle, WORD smode)
+
+
+Parameter Block
+
++-------------------------+ Low memory (Parameter
+|   Function Code  42H    |                     block addr)
++-------------------------+
+|                         |
++ number of bytes         + Long
+|                         |
++-------------------------+
+|       File Handle       | word 1
++-------------------------+
+|  File Pointer Mode Word |  Word 2
++-------------------------+ High memory
+
+
+
+Long contains N, the number-of-bytes argument.
+
+Long is signed; negative values are useful in Modes 1 end 2 below.
+Positive N moves toward end of file; negative N toward beginning of file.
+
+
+
+Word 1 is the file handle.
+
+Word 2 is the method used to move the file pointer:
+
+
+
+Mode
+
+0  move pointer to N bytes from beginning of file
+1  move pointer N bytes from current location
+2  move pointer to N bytes from end of file
+
+
+
+Return Parameters:
+
+
+
+Register D0.L : Contains
+
+  absolute file pointer location, as the number of bytes from the beginning of the file.
+
+
+
+</pre>
+<hr>
+<h2>9.40. 43: F_ATTRIB - Get/Set File Attributes</h2>
+<pre>
+
+
+
+  LONG f_attrib (BYTE *p, WORD wrt, WORD mod)
+
+
+
+Parameter Block
+
++--------------------------+ Low memory (Parameter
+|      Function Code  43H  |             block addr)
++--------------------------+
+| Pointer to string        |
++                          + Long
+| containing pathname      |
++--------------------------+
+| GET-SET File Attributes  | Word
++--------------------------+
+| Attributes to SET        | Word
++--------------------------+ High memory
+
+
+
+Long contains the address of a null-terminated string containing the
+complete pathname of the  specified file.
+
+
+
+Word contains a 0 to get the file's attributes or a 1 to set the file's attributes
+
+Word indicates file attributes, depending on these values:
+
+01H File set to read-only
+02H File hidden from directory search
+04H File set to system, hidden from directory search
+08H File contains volume label in first it bytes
+01H File is a subdirectory
+01H File has been written to and closed
+
+
+
+Return parameters:
+
+
+
+Register D0.L : If it is a Get Attributes operation,
+
+the current attributes are returned in D0.L.
+
+
+
+
+
+
+
+
+
+GEM DOS Spec Version 13  page 63   F_DUP
+
+
+
+</pre>
+<hr>
+<h2>9.11. 45: Duplicate File Handle</h2>
+<pre>
+
+
+
+  LONG f_dup (WORD stdhnd)
+
+
+Parameter Block
+
++-------------------+ Low Memory (Parameter
+|      45H          |             block addr)
++-------------------+
+|      stdhnd       | Word
++-------------------+ High Memrory
+
+
+
+Input is a standard handle.
+
+Returns a non-standard handle that refers to the same file.
+
+Error returns are EIHNDL and ENHNDL.
+
+
+
+</pre>
+<hr>
+<h2>9.42. 46: F_FORCE - Force File Handle</h2>
+<pre>
+
+
+
+  LONG f_force (WORD stdhnd, WORD nsthnd)
+
+
+
+Parameter Block
+
++----------------+ Low Memory ( Parameter
+|  Function 46H  |              block addr)
++----------------+
+|   stdhnd       | word
++----------------+
+|  nstdhnd       | word
++----------------+ High Memory
+
+
+
+Forces the standard handle to point to the same file or device as
+the non-standard handle.
+
+Returns E_OK on success. EIHNDL on failure.
+
+
+
+</pre>
+<hr>
+<h2>9.43 47: D_GETPATH - Get current Directory</h2>
+<pre>
+
+
+
+  LONG d_getpath (BYTE *pathbuf, WORD drive)
+
+
+
+Parameter Block
+
++-----------------------+ Low memory (Parameter
+| Function Code 47H     |                     block addr)
++-----------------------+
+|  Pointer to buffer    |
++                       + Long
+| to receive pathnane   |
++-----------------------+
+|      Drive Code       | Word
++-----------------------+ High memory
+
+
+
+Long contains the address of a 64-byte buffer that receives the complete
+pathname of the current directory.
+
+
+
+Word specifies the drive;
+
+     0 = default drive.
+     1 = A,
+     2 = B,  etc.
+
+
+
+</pre>
+<hr>
+<h2>9.44. 48: M_ALLOC - Allocate Memory</h2>
+<pre>
+
+
+
+  LONG m_alloc(LONG nbytes)
+
+
+
+Parameter Block
+
++--------------------------------+ Low memory (Parameter
+|      Function Code  48H        |             block addr)
++--------------------------------+
+|                                |
++   Number of bytes to allocate  + long
+|                                |
++--------------------------------+ High memory
+
+
+
+Long contains the number of bytes to allocate, or -1L
+
+(FFFFFFFF). which returns maximum available memory.
+
+
+
+Return Parameters:
+
+
+
+Register D0.L :
+
+If nbytes specifies the number of bytes to allocate.
+  D0.L contains pointer to the starting address of the block of memory allocated.
+
+If allocation tails.
+  D0.L contains 0.
+
+
+
+If nbytes equals FFFFFFFF. D0.L returns the number of available bytes.
+
+
+
+</pre>
+<hr>
+<h2>9.45 49: M_FREE - Free+ Allocated Memory</h2>
+<pre>
+
+
+
+  LONG m_free (LONG maddr)
+
+
+
+Parameter Block
+
++----------------------------+ Low memory (Parameter
+|      Function Code 49B     |                 block addr)
++----------------------------+
+|                            |
++ Address of memory to free  + long
+|                            |
++----------------------------+ High memory
+
+
+
+Long contains address of rnemory to free.
+
+
+
+Return Parameters:
+
+Register D0.L : Contains
+
+  0 if memory was freed,
+  non-zero it an error occurred.
+
+
+
+</pre>
+<hr>
+<h2>9.46. 4A: M_SHRINK - Shrink Size of Allocated Memory</h2>
+<pre>
+
+
+
+  VOID mshrink(BYTE *mp, LONG size)
+
+
+
+Parameter Block
+
++--------------------------------+ Low memory (Parameter
+|      Function Code  4AH        |             block addr)
++--------------------------------+
+|               0                 | Word
++--------------------------------+
+| Beginning address of           |
++       memory space to          + Long
+|        modify                  |
++--------------------------------+
+|           Length of            |
++                                + Long
+|   retained memory              |
++--------------------------------+
+
+
+
+Function:
+
+In the GEM DOS memory model, stack space grows downwards from high memory
+and program and data space grows upwards from low memory. The m_shrink
+function call polices memory space and reallocates unused memory for GEM DOS's
+use.
+
+ Long 1 contains the beginning address of the memory to be returned to GEM DOS.
+
+ Long 2 contains the length of the returned space.
+
+ Word is reserved and must be zero.
+
+
+
+Return parameters:
+
+Register D0.L : Contains
+
+  0 it the block was adjusted successfully,
+  non-zero if an error occurred.
+
+
+
+</pre>
+<hr>
+<h2>9.47. 4B: P_EXEC - Load or Execute a Process</h2>
+<pre>
+
+
+
+  LONG p_exec (WORD load, BYTE *pcspec, BYTE *pcdln,  BYTE *penvstr)
+
+
+
+Parameter Block
+
++---------------------------------+ Low Memory (Parameter
+|      Function Code  4BH         |             block addr)
++---------------------------------+
+|         Mode Word               | word
++---------------------------------+
+|       Pointer to String         |
++                                 + Long
+|     containing pathname         |
++---------------------------------+
+|                                 |
++    Pointer to command tail      + Long
+|                                 |
++---------------------------------+
+|                                 |
++ Pointer to environment strings  + Long
+|                                 |
++---------------------------------+ High memory
+
+
+
+Word contains either a 0 or  3. indicating these actions:
+
+0 = load and execute the prograrn
+3 = load program but do not execute; used with overlays
+
+Long 1 is a pointer to a null-terminated string specifying the name of the file to load.
+
+Long 2 is a pointer to a command tail, which includes redirection details.
+
+
+
+Return Parameters:
+
+
+
+Register D0.L:
+
+For load only: D0.L returns address of base page.
+
+For load and execute: D0.L returns return code of child process upon child's termination.
+
+If load fails:  D0.L returns  ERROR.
+
+
+
+</pre>
+<hr>
+<h2>9.48. 4C: P_TERM - Terminate Process</h2>
+<pre>
+
+
+
+  VOID p_term (WORD code)
+
+
+
+Parameter Block
+
++----------------------------+Low memory(Parameter
+|       Function+ Code  4CH  |           block addr)
++----------------------------+
+|          Status Code       |Word
++----------------------------+High memory
+
+
+
+Word contains a status code that can be interrogated by the parent process.
+
+
+
+Register D0.L: Contains
+
+  0 if the file was terminated successfully.
+  non-zero if an error occurred.
+
+
+
+Function:
+
+This system call terminates the current process and transfers control to
+the invoking process.
+
+
+
+</pre>
+<hr>
+<h2>9.49. 4E: F_SFIRST - Search for First Occurance of Filespec</h2>
+<pre>
+
+
+
+  LONG f_sfirst (BYTE *pspec, WORD attr)
+
+
+
+Parameter Block
+
++--------------------------------+ Low memory (Parameter
+|      Function Code  4EH        I             block addr)
++--------------------------------+
+| Pointer to string              |
++                                + Long
+| containing pathname            |
++--------------------------------+
+| Search Attributes              | Word
++--------------------------------+ High memory
+
+
+
+Long is a pointer to the null-terminated string specifying the file to find.
+May contain * or ? wildcards in filename, but not in path prefix.
+
+
+
+Word contains a code specifying the search attributes. as shown below:
+
+00H File is normal file entry
+01H File is read-only
+02H File hidden from directory search
+04H File is system file
+08H File is a volume label
+10H File is a subdirectory
+20H File has been written to and closed
+
+
+
+The search procedure take these codes into account in this way.
+
+
+If the attribute code is 00H find  normal file entries only, no volume labels,
+subdirectories, hidden, or system files are accepted as matches.
+
+If the attribute field is set for hidden or system files, they are included
+in the search set. To look at all directory entries except the volume labels,
+set the attribute bits for hidden, system, and directory all on.
+
+If the attribute field is set for the volume label, the search only considers
+volume labels.
+
+
+
+Return Parameters:
+
+
+
+Register D0.L =
+
+  E_OK if file found
+  EFILNF if file not found
+
+
+
+Function:
+
+Searches for a match for the specified filename, according to the attribute
+bit settings described above. If a match is found, a 44-byte DMA buffer is
+formatted as follows:
+
+Longs    Contents
+
+0 - 20   Reserved for OS use
+21       File attributes
+22 - 23  File time stamp
+24 - 25  File date stamp
+26 - 29  Longword of file site
+30 - 43  Name and extension of found file
+
+
+
+</pre>
+<hr>
+<h2>9.50. 4F: F_SNEXT - Search for Next Occurrence of Filespec</h2>
+<pre>
+
+
+
+  LONG f_snext()
+
+
+
+Parameter Block
+
++------------------------+ Low memory (Parameter
+| Function Code  4FH     |                 block addr)
++------------------------+ High memory
+
+
+
+Return Parameters:
+
+
+
+Register D0.L =
+
+  E_OK If file found
+  ENMFIL if no file found
+
+
+
+Function;
+
+
+
+This system call uses the information specified in a previous find Matching
+File system call to locate the next matching file.
+
+The DMA buffer bytes 0-20 must remain untouched from the previous SFIRST or
+SNEXT. If a file is found, the DMA buffer initialized in the Find Matching
+File system call is updated with the new filename.
+
+
+
+</pre>
+<hr>
+<h2>9.51. 56: F_RENAME - Rename a File</h2>
+<pre>
+
+
+
+  LONG f_rename (WORD res, BYTE *pi, BYTE *p2)
+
+
+Parameter Block
+
++--------------------------------+ Law memory (Parameter
+|      Function Code  56H        |             block addr)
++--------------------------------+
+|             0                  | Word
++--------------------------------+
+|             Pathname of        |
++                                + Long
+|           Existing File        |
++--------------------------------+
+|       Pathname of              |
++                                + Long
+|       Destination File         |
++--------------------------------+High memory
+
+
+
+Word is reserved and must be zero.
+
+Long 1 is a pointer to the pathname of the existing tile
+Long 2 is a pointer to the pathname of the destination tile
+
+
+
+The destination file must not exist; his instruction can move the file to
+another subdirectory on the same drive.
+
+
+
+</pre>
+<hr>
+<h2>9.52. 57: F_DATIME - Get/Set File Date & Time Stamp</h2>
+<pre>
+
+
+
+  VOID  f_datime(WORD h, BYTE *buff, WORD set)
+
+
+
+Parameter Block
+
++--------------------------------+ Low memory (Parameter
+|      Function Code  57H        |              block addr)
++--------------------------------+
+|      Pointer to buffer         |
++      containing Time and       + Long
+|      Date information          |
++--------------------------------+
+|     File Handle                | Word
++--------------------------------+
+| GET-SET Time and Date Info     | Word
++--------------------------------+ High memory
+
+
+
+Long is a pointer to a buffer that contains the date and time information.
+
+
+
+Word 1 is the specified file handle.
+
+Word 2 is a flag specifying setting or
+
+
+return of data and time information.
+
+ If 0 set data and time;
+ if 1, get data and time information.
+
+ In either case, the buffer holds two words, with time first.
+
+
+
+The format of date and time is Shown below:
+
+Bits 0 through 4 indicate the date in the range 1 - 31
+Bits 5 through 8 indicate the month in the range 1 - 12
+Bits 9 through 15 indicate the year (since 1980) in the range 0-119
+
+
+
+
+Bits 0 through 4 indicate the binary number of two-second increments
+Bits 5 through 10 indicate the binary number of minutes
+Bits 11 through 15 indicate the binary number of hours
+</pre>
+
+</body>
+</html>
+

@@ -1,0 +1,32 @@
+<head>
+  <title>Base Page Format</title>
+</head>
+
+<body>
+<h1>7. Base Page Format</h1>
+<hr>
+
+<pre>
+
+
+Offset into   Value           Description
+base page
+
+00            p_lowtpa      base address of the TPA
+04            p_hitpa       points to the end of TPA + 1
+08            p_tbase       base address of text (code)
+0C            p_tlen        length of text (code)
+10            p_dbase       base address of initialized data
+14            p_dlen        length of data
+18            p_bbase       base address of BSS uninitialized
+                            ...
+                            data
+                            ...
+1C            p_blen        length of BSS uninitialized data
+2C            p_env         pointer to the environment string
+80            p_cmdlin      command line image
+</pre>
+
+</body>
+</html>
+

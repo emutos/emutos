@@ -1,0 +1,293 @@
+<head>
+  <title>3. GEM Dos Development Tools</title>
+</head>
+
+<body>
+<h1>3. GEM Dos Development Tools</h1>
+<hr>
+<pre>
+
+ 
+ 
+<h2>3.1 AS68 Assembler (standard)</h2>
+
+
+
+The 68000 assembler processes an assembly language source module.
+producing a relocatable object module, and an optional listing.
+
+The command line has the following format
+
+ AS68 [-a] [-i] [-p] [-u] [-n] [-l] [-t] [-f path] [-s path] source [->list]
+
+
+
+<h3>3.1.1. AS68 Options</h3>
+
+    The option nags are as follows:
+
+
+     1.  "-a", if present specifies that only short (16-bit) addresses
+          are to be generated  This option is not currently supported
+          by the GEM DOS relocatable load format but could be used when
+          generating a module to be loaded as part of the OS that will
+          reside in the first 32K of memory.
+
+
+
+     2.  "-i" if present specifies that the assembler initialization
+     phase is to be performed. When this option is specified. it should
+     be the only option on the command line. assembler will read the file
+     AS68INIT, and produce the file AS68SYMB.DAT.
+
+
+
+     3. "-p" if present specifies that an assembly listing is to be
+     produced. Default listing takes place to STDOUT  if a listing
+     file is desired. or the output is to be sent to the printer
+     STDOUT should be redirected on the command line.
+
+
+
+     4.  "-u", if present specifies that an underlined labels are to
+     be treated as externally dinned references.
+
+
+
+     5.  "-n" if present specifies that no branch optimization Is to
+     be done by the assembler
+
+
+
+     6.  "-l" if present specifies that only long (32-bit) addresses are to be generated.
+
+
+
+     7.  "-t" if present specifies that 68010 code is to be generated
+
+
+
+     8.  "-f" path" snows the user to direct where temporary files are to be
+     created.  This would show a hard disk or a RAM-disk to be used to 
+     improve performance
+
+
+
+     9.  "-s" path" specifies the path name in which the AS68SYMB.DAT file
+     is to be found. This allows 1 copy to be used from any path on the system.
+
+
+
+The source file name must be spelled out In full; no default extension is 
+supplied by the assembler
+
+
+
+Note: Some of these options have not been extensively tested on GEM DOS, 
+are not fully documented, and thus are not officially supported.
+
+
+
+3.2. LO68 LINK68 L068 is the Digital Research 68000 linker L068 combines 
+object modules into executable programs, resolving external references if 
+any exist
+
+
+
+LINK88 is a Digital Research 68000 linkage editor that
+combines assembled or compiled object modules with other
+object modules called from an appropriate runtime library..
+
+
+
+<h2>3.3.  CPM/68 C Compiler</h2>
+
+
+
+The GEM DOS development environment supports the Alcyon C compiler
+for the 68000.
+
+
+
+This section describes the options present on the individual passes of the 
+CP/M-68K C compiler. Note that these options have not been extensively 
+tested on CP/M68k. are not documented. and thus
+
+    are not officially supported.
+
+
+
+<h3>3.3.1. CP68 Options</h3>
+
+
+
+The preprocessor. CP68 has a number of options which control the
+
+ format cf preprocessor output The command line has the following format:
+
+
+
+CP68 [-c] [-p] [-e] [-dsymbol[=value]] [-i d:] source dest
+
+
+
+The option flags are.
+
+
+1. "-c" if present specifies that comments are to be left in the preprocessed
+output Note that a file processed in this manner must be stripped of
+the comments before passing the file through C168 which expects to have
+comments removed.
+
+
+
+2.  "-p" if present  specifies that  the file and line number information which
+is normally included at the beginning of each line be omitted. Use this flag 
+when preprocessing assembler files with CP68.
+
+
+3.  "-e:" if present specifies that the preprocessor output go to the standard
+      output rather than the destination file.
+
+4.  "-dsymbol[=value]" provides a means of  defining a preprocessor symbol
+     on the command line. The optional "=value" string allows
+
+
+
+assigning a value to the symbol For instance, the construct
+
+      CP68  -dx=y
+
+behaves as if the following preprocessor statement were included in the source file:
+
+       #define X Y
+
+Note that the variable and the value are both converted to upper case.
+
+
+
+5. "-i d:" allows using a different drive / user number combination for
+
+files in a "#include <file.h>" statement. Files in an include
+
+statement with double quotes are unaffected by this option.
+
+
+
+6. The Source and destination files are specified by "source", and
+
+
+
+"dest" respectively
+
+
+
+The compiler also accepts the switches "-3" "-4" "-5" "-6" and  "-7".
+
+These have no function on CP/M-68K.
+
+
+
+<h3>3.3.2. C068 Options</h3> 
+
+The parser C068. has a command line of the following form:
+
+   C068 source link icode strings [-e] [-f] [-w] [-t]
+
+The source for the parser is normally the output of the
+preprocessor, CP68.  The "link" and "icode" files are temporary
+flies for use by  the   code generator C168 The "strings"
+file Is a temporary file for use by  C068.
+This file is deleted by C068 after use.
+
+
+
+
+
+The parser options are:
+
+1.  '-e' specifies that IEEE format floating point is to be used.
+
+2. '-f' specifies that FFP (Fast Floating point) format floating point is to
+be used. Only one of the '-e' and '-f' options may be specified.
+
+3.  '-w' f specified. causes warning messages to be suppressed.
+
+4.  '-t' if specified, causes the compiler to  emit code for the 68010, 
+as opposed to the 68000. This switch if normally not required, as CP/M-68K
+patches MOVE from SR instructions in the user program to MOVE from CCR. 
+'-t' is thus required only for programs which will be run standalone or
+will be placed In ROM.
+
+
+
+<h3>3.3.3 C168 Options</h3>
+
+
+
+        The code generator command line has the following format:
+
+
+             C168 link icode  asm [-[t][a][f][d]]
+
+
+         The "link" and "icode" files are the output of C068. The
+         'asm' file the generated code for input into the assembler.
+         Options for C168 are.
+
+
+         1.  "t"  Generate  68010  code.  See  the note on the "-t"
+         switch for C068 if "-t" is specified for C068, then this
+         switch must be present for C168.
+
+
+         2.  "a"  Generate  16-bit offsets The object program must
+         fit in the first 32K of memory to use this switch.
+
+
+         3.  'f' This switch is accepted but has no affect under
+         CP/M-68K
+
+
+         4.  'd' Include line numbers from the source file as
+         comments in the generated assembly code.
+
+
+
+Note: the "usage" message generated by C168 in version  1.2 is incorrect.
+
+
+
+ 3.4. SlD68
+
+
+
+SID68 is the Symbolic interactive Debugger, which lets you view
+sections of code and disassemble them.
+
+
+
+3.5. RELMOD
+
+
+
+RELMOD is a Digital Research product that adapts relocatable
+object modules from one format to another. The version supplied
+with GEM DOS converts CP/M-68K relocatable object modules to
+GEM DOS format relocatable object module and also performs
+conversions from GEM DOS format to CP/M-68K format
+
+
+
+<h3>3.3.6. MINCE</h3>
+
+
+
+The MINCE program editor is supplied with the GEM DOS tools package.
+
+
+
+</pre>
+</body>
+</html>
+

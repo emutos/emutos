@@ -1,0 +1,11 @@
+- implement XBIOS calls
+- implement screen handling better and in assembler
+- one should not have to type "make clean ; make" each time one changes a file.
+- would be nice, if .o files would be in archived libs for each subdir
+- add argument specifications in function prototypes
+- merge identical headers, and put them all in an include directory (?)
+- a working kprintf(), to ease debugging messages.
+- cleaning function prototypes, checking compiler warnings.
+- complete vt52 console, in low, med, high rez.
+- low-level floppy support (rwabs, booting a floppy)
+
