@@ -20,13 +20,13 @@
 //                                                                      //
 //  changes made--                                                      //
 //                                                                      //
-//  26 Feb  --   a. writing mode values table corrected                 //
-//              b. _MONO_STATUS if true stops thicken source form expansion //
+//  26 Feb -- a. writing mode values table corrected                    //
+//            b. _MONO_STATUS if true stops thicken source form expansion //
 //                                                                      //
-//   6 Mar  --   a. arbitrary scale of text mod to replicate/double code   //
+//   6 Mar -- a. arbitrary scale of text mod to replicate/double code   //
 //                                                                      //
-//  13 Apr  --   a. fixed text rotation when scaled RJG                 //
-//              b. ACT_SIZ preserves C registers on call                //
+//  13 Apr -- a. fixed text rotation when scaled RJG                    //
+//            b. act_siz preserves C registers on call                  //
 /////////////////////////////////////////////////////////////////////////
         .page
 
@@ -142,7 +142,7 @@
 
         .globl  _text_blt
         .globl  _CLC_DDA
-        .globl  _ACT_SIZ
+        //.globl  _act_siz
 
 /////////////////////////////////////////////////////////
 //   Global routines referenced by this module.        //
@@ -502,7 +502,9 @@ calc_DDA:
 #endif
 
 
+
         .page
+#if 0   //MAD: now in text.c:act_siz
 ////
 //  Actual sizer routine
 //
@@ -511,7 +513,7 @@ calc_DDA:
 //  exit:
 //    d0    = actual size
 ////
-_ACT_SIZ:
+_act_siz:
         move.w  4(sp),d1                //get parameter to be scaled 
         movem.w d2-d3,-(sp)             //save c regs
         move.w  #32767,d2               //d2 = accumulator = 1/2      
@@ -550,7 +552,7 @@ sz_sm_1:
 act_exit:
         movem.w (sp)+,d2-d3
         rts
-
+#endif
 
 
         .page
@@ -585,9 +587,9 @@ _text_blt:
 //  added 5 mar 85
 //
 adr_dbl:
-        move.w  d3,-(sp)                //pass DELY to ACT_SIZ on stack 
-        bsr     _ACT_SIZ                //
-        addq.w  #2,sp                   //remove ACT_SIZ parameter from stack
+        move.w  d3,-(sp)                //pass DELY to act_siz on stack 
+        jsr     _act_siz                //
+        addq.w  #2,sp                   //remove act_siz parameter from stack
         move.w  d0,d3                   //set new DELY 
         move.w  d3,tmp_dely(a6)         //save in temp for replication use
         move.w  DELX(a6),d2             //DELX to d2 

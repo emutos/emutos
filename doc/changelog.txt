@@ -875,4 +875,7 @@ Start... early ages
 - vdi/*.c - replaced all gotos by other constructs (MAD)
 - vdi/lisastubs - removed, put into vdi/monobj.c for less files (MAD)
 
+18. May. 2002
+- vdi/text.c - act_siz implemented in C (asm commented out) (MAD)
+
 

@@ -115,7 +115,6 @@ extern void v_clrwk(void);
 extern void vex_butv(), vex_motv(), vex_curv(), vex_timv();
 extern void chk_esc();
 extern void CLC_FLIT();
-extern WORD ACT_SIZ(WORD top);
 extern WORD SMUL_DIV();
 
 /* Assembly Language Support Routines NEWLY ADDED */
@@ -135,6 +134,7 @@ extern WORD end_pts(WORD x, WORD y, WORD *xleftout, WORD *xrightout);
 
 /* C Support routines */
 
+extern WORD ACT_SIZ(WORD top);
 extern void hide_cur();
 extern WORD isin();
 extern WORD icos();

@@ -417,6 +417,66 @@ void dst_height()
 }
 
 
+
+/*
+ * act_siz - Actual sizer routine
+ *
+ * entry:
+ *   top     - size to scale (DELY)
+ *
+ * used variables:
+ *   DDA_INC - (WORD) DDA increment passed externally
+ *   T_SCLST - (WORD) 0 if scale down, 1 if enlarge
+ *
+ * exit:
+ *   actual size
+ */
+
+WORD act_siz(WORD top)
+{
+    UWORD size;
+    UWORD accu;
+    UWORD retval;
+    UWORD i;
+
+    size = (UWORD)top;
+
+    if (DDA_INC == 0xffff) {
+        /* double size */
+        return ((WORD)(size<<1));
+    }
+
+    accu = 0x7fff;
+    retval = 0;
+
+    if (T_SCLSTS) {
+        /* enlarge */
+        for (i = size; i < 0; --i) {
+            accu += DDA_INC;
+            if (accu < DDA_INC) {
+                // Not sz_sm_1 stuff here
+                retval++;
+            }
+            retval++;
+        }
+    } else {
+        /* scale down */
+        for (i = size; i < 0; --i) {
+            accu += DDA_INC;
+            if (accu < DDA_INC) {
+                // Not sz_sm_1 stuff here
+                retval++;
+            }
+        }
+        /* Make return value at least 1 */
+        if (!retval)
+            retval = 1;
+    }
+    return ((WORD)retval);
+}
+
+
+
 void copy_name(BYTE * source, BYTE * dest)
 {
     REG WORD i;
@@ -460,17 +520,17 @@ void make_header()
         dest_font->thicken = source_font->thicken * 2;
         dest_font->ul_size = source_font->ul_size * 2;
     } else {
-        dest_font->top = ACT_SIZ(source_font->top);
-        dest_font->ascent = ACT_SIZ(source_font->ascent);
-        dest_font->half = ACT_SIZ(source_font->half);
-        dest_font->descent = ACT_SIZ(source_font->descent);
-        dest_font->bottom = ACT_SIZ(source_font->bottom);
-        dest_font->max_char_width = ACT_SIZ(source_font->max_char_width);
-        dest_font->max_cell_width = ACT_SIZ(source_font->max_cell_width);
-        dest_font->left_offset = ACT_SIZ(source_font->left_offset);
-        dest_font->right_offset = ACT_SIZ(source_font->right_offset);
-        dest_font->thicken = ACT_SIZ(source_font->thicken);
-        dest_font->ul_size = ACT_SIZ(source_font->ul_size);
+        dest_font->top = act_siz(source_font->top);
+        dest_font->ascent = act_siz(source_font->ascent);
+        dest_font->half = act_siz(source_font->half);
+        dest_font->descent = act_siz(source_font->descent);
+        dest_font->bottom = act_siz(source_font->bottom);
+        dest_font->max_char_width = act_siz(source_font->max_char_width);
+        dest_font->max_cell_width = act_siz(source_font->max_cell_width);
+        dest_font->left_offset = act_siz(source_font->left_offset);
+        dest_font->right_offset = act_siz(source_font->right_offset);
+        dest_font->thicken = act_siz(source_font->thicken);
+        dest_font->ul_size = act_siz(source_font->ul_size);
     }
 
     dest_font->lighten = source_font->lighten;
@@ -714,7 +774,7 @@ void dqt_extent()
         if (DDA_INC == 0xFFFF)
             width *= 2;
         else
-            width = ACT_SIZ(width);
+            width = act_siz(width);
     }
 
     if ((STYLE & F_THICKEN) && !(fnt_ptr->flags & F_MONOSPACE))
@@ -799,7 +859,7 @@ void dqt_width()
             if (DDA_INC == 0xFFFF)
                 *pointer *= 2;
             else
-                *pointer = ACT_SIZ(*pointer);
+                *pointer = act_siz(*pointer);
         }
 
         if (fnt_ptr->flags & F_HORZ_OFF) {
@@ -813,6 +873,7 @@ void dqt_width()
     *(pointer + 4) = 1;
     FLIP_Y = 1;
 }
+
 
 
 void dqt_name()
