@@ -112,7 +112,6 @@ extern WORD COPYTRAN;
 
 /* Assembly Language Support Routines */
 
-extern void ABLINE();
 extern void v_clrwk(void);
 extern void vex_butv(), vex_motv(), vex_curv(), vex_timv();
 extern void chk_esc();
@@ -139,6 +138,7 @@ extern void cur_display();
 extern void cur_replace();
 extern void v_show_c();
 extern void v_hide_c();
+extern void abline();
 
 extern void text_init();
 extern void st_fl_ptr();

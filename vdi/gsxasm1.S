@@ -24,7 +24,7 @@
         .globl  _clc_flit       // draw a filled polygone (for linea)
         .globl  _vec_len        // compute length of a vector
         .globl  _HABLINE        // draw a horizontal line
-        .globl  _ABLINE         // draw a line (general purpose)
+//        .globl  _ABLINE         // draw a line (general purpose)
         .globl  concat          // convert x,y coordinates to buffer offsets
         .globl  xline           // alternate entry to HABLINE
         .globl  ortbl           // OR mask table for line drawing
@@ -428,6 +428,7 @@ concat:
 
 
 
+#if 0
 /*
  * ABLINE - draw a line (general purpose)
  *
@@ -638,6 +639,7 @@ dxgedy:
 //      d1 = line mask.         a1 = offset to next plane (vme/10 only)
 //      d0 = or table mask.
 //
+#endif
 
 /*
  * OR Mask Table                               
@@ -659,7 +661,7 @@ ortbl:          dc.w    0x8000
                 dc.w    0x0004
                 dc.w    0x0002
                 dc.w    0x0001
-
+#if 0
 /*
  * Write Mode Address Table                                        
  */
@@ -1360,6 +1362,7 @@ nor_dygt:
         bsr     or_dygt         // call the transparent mode code to draw line
         not.w   _LN_MASK        // restore the proper states of the style bits
         rts
+#endif
 
 
 

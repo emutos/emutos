@@ -271,14 +271,14 @@ void d_gtext()
                     ty2 = Y2;
 
                     if (clip_line())
-                        ABLINE();
+                        abline();
 
                     X1 = tx1;
                     X2 = tx2;
                     Y1 = ty1;
                     Y2 = ty2;
                 } else
-                    ABLINE();
+                    abline();
 
                 X1 += xfact;
                 X2 += xfact;
