@@ -2207,7 +2207,7 @@ Commands are:\n\
   update xx.po   compares xx.po to the current messages.pot \n\
                  and creates a new xx.po (new entries added, old \n\
                  entries commented out)\n\
-  translate xx from.c
+  translate xx from.c\n\
                  translates from.c into from.tr.c for language xx.\n\
   make           takes all languages listed in file LINGUAS \n\
                  and creates the C file(s) for the project\n\
