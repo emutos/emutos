@@ -118,7 +118,7 @@
  * routine.
  */
 #ifndef TIMEOUT_ON_BOOT
-#define TIMEOUT_ON_BOOT 4
+#define TIMEOUT_ON_BOOT 8
 #endif
 
 /*
