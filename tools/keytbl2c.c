@@ -74,14 +74,14 @@ int main(int argc, char **argv)
 
   fprintf(out, 
 "\n"
-"BYTE keytbl_%s_norm[];\n"
-"BYTE keytbl_%s_shft[];\n"
-"BYTE keytbl_%s_caps[];\n"
-"BYTE keytbl_%s_altnorm[];\n"
-"BYTE keytbl_%s_altshft[];\n"
-"BYTE keytbl_%s_altcaps[];\n"
+"const BYTE keytbl_%s_norm[];\n"
+"const BYTE keytbl_%s_shft[];\n"
+"const BYTE keytbl_%s_caps[];\n"
+"const BYTE keytbl_%s_altnorm[];\n"
+"const BYTE keytbl_%s_altshft[];\n"
+"const BYTE keytbl_%s_altcaps[];\n"
 "\n"
-"struct keytbl keytbl_%s = {\n"
+"const struct keytbl keytbl_%s = {\n"
 "    keytbl_%s_norm, \n"
 "    keytbl_%s_shft, \n"
 "    keytbl_%s_caps, \n"
@@ -90,7 +90,6 @@ int main(int argc, char **argv)
 "    keytbl_%s_altcaps, \n"
 "};\n"
 "\n",
-          ucprefix,
           prefix, prefix, prefix, prefix, prefix, prefix,
           prefix,
           prefix, prefix, prefix, prefix, prefix, prefix
@@ -107,14 +106,14 @@ int main(int argc, char **argv)
 
   fprintf(out, 
 "\n"
-"BYTE keytbl_%s_altnorm[] = {\n"
+"const BYTE keytbl_%s_altnorm[] = {\n"
 "    0,\n"
 "};\n",
           prefix
           );
   fprintf(out, 
 "\n"
-"BYTE keytbl_%s_altshft[] = {\n"
+"const BYTE keytbl_%s_altshft[] = {\n"
 "    0,\n"
 "};\n",
           prefix
@@ -138,7 +137,7 @@ void dump_table(char *table, char *name, FILE *out, char *prefix)
   int i;
 
   fprintf(out, 
-"BYTE keytbl_%s_%s[] = {\n",
+"const BYTE keytbl_%s_%s[] = {\n",
           prefix, name
           );
   for(i = 0 ; i < 128 ; i++) {

@@ -46,13 +46,13 @@ extern WORD v_cur_cy;           // current cursor cell y
 extern BYTE v_cur_tim;          // cursor blink timer.
 
 extern BYTE v_period;           //
-extern WORD disab_cnt;          // disable depth count. (>0 => disabled)
+extern WORD disab_cnt;          // disable depth count. (>0 means disabled)
 extern BYTE v_stat_0;           // video cell system status
 
 
 /* Screen related variables */
 extern UWORD v_planes;          // count of color planes
-extern UWORD v_lin_wr;          // line wrap = bytes per line
+extern UWORD v_lin_wr;          // line wrap : bytes per line
 extern UWORD v_hz_rez;          // screen horizontal resolution
 extern UWORD v_vt_rez;          // screen vertical resolution
 extern UWORD v_bytes_lin;       // width of line in bytes

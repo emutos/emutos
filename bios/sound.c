@@ -152,7 +152,7 @@ void sndirq(void)
   sndtable = code;
 }
 
-static UBYTE bellsnd[] = { 
+const static UBYTE bellsnd[] = { 
   0, 0x34,    /* channel A pitch */
   1, 0,
   2, 0,       /* no channel B */
@@ -170,7 +170,7 @@ static UBYTE bellsnd[] = {
   0xFF, 0,    /* stop sound */
 };
 
-static UBYTE keyclicksnd[] = { 
+const static UBYTE keyclicksnd[] = { 
   0, 0x3B,
   1, 0,
   2, 0,

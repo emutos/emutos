@@ -121,10 +121,12 @@ void mfpint(WORD num, LONG vector)
   jenabint(num);
 }
 
-static struct {
+struct rsconf_struct {
   BYTE control;
   BYTE data;
-} rsconf_data[] = {
+} ;
+
+const static struct rsconf_struct rsconf_data[] = {
   { /* 19200 */  1, 1 }, 
   { /*  9600 */  1, 2 },
   { /*  4800 */  1, 4 },
@@ -229,7 +231,7 @@ static void setup_timer(WORD timer, WORD control, WORD data)
   }
 }
 
-static WORD timer_num[] = { 13, 8, 5, 4 };
+const static WORD timer_num[] = { 13, 8, 5, 4 };
 
 void xbtimer(WORD timer, WORD control, WORD data, LONG vector)
 {

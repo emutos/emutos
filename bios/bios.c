@@ -85,7 +85,7 @@ long xmaddalt(long start, long size); /* found in bdos/mem.h */
 /*==== Declarations =======================================================*/
 
 /* Drive specific declarations */
-static WORD defdrv ;            /* default drive number (0 = a:, 2 = c:) */
+static WORD defdrv ;            /* default drive number (0 is a:, 2 is c:) */
 
 BYTE env[256];                  /* environment string, enough bytes??? */
 

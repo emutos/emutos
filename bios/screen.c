@@ -25,7 +25,7 @@ static void setphys(LONG addr);
 
 /* Define palette */
 
-static WORD dflt_palette[] = {
+const static WORD dflt_palette[] = {
     RGB_WHITE, RGB_RED, RGB_GREEN, RGB_YELLOW,
     RGB_BLUE, RGB_MAGENTA, RGB_CYAN, RGB_LTGRAY,
     RGB_GRAY, RGB_LTRED, RGB_LTGREEN, RGB_LTYELLOW,

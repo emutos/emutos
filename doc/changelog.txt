@@ -724,3 +724,11 @@ Start... early ages
 - vdi/lisagem.S - did remove SR saving in tick_int, like in TOS (MAD)
 - aes/* - removed some warnings (MAD)
 - bdos/fs* - replaced NULPTR completely by NULLPTR  (MAD)
+
+09. Apr. 2002
+- removed Kamenicky fonts (LVL)
+- added ISO latin2 fonts (LVL)
+- added CS po file (LVL)
+- changed for consistancy CZ to CS as a country name (LVL)
+- Makefile: fixed typo for desktop obj files (LVL)
+- added some const keywords here and there (LVL)

@@ -45,7 +45,6 @@ extern int doprintf(void (*outc)(int), const char *fmt, va_list ap);
  
 int native_print_kind;
 
-char    *kcrlf = "\n\r" ;
 
 /*==== cprintf - do formatted string output direct to the console ======*/
 
