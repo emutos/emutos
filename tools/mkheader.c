@@ -54,7 +54,7 @@ struct country_info countries[] = {
   { 12, "dk", "Denmark" }, 
   { 13, "sa", "Saudi Arabia" },
   { 14, "nl", "Holland" }, 
-  { 15, "cz", "Czech Republic" },  
+  { 15, "cs", "Czech Republic" },  
   { 16, "hu", "Hungary" },  
   { 17, "sk", "Slovak Republic" },
 };
