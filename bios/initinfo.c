@@ -202,11 +202,13 @@ void initinfo()
     set_line();
     cprintf("\n\r");
 
-    /* wait for 2 sec., before we start the GEM */
+    /* wait for 3 sec., before we start the GEM */
     {
-        long future = hz_200 + (2 * 200);
-        while(hz_200 < future)
-            ;
+        long future = hz_200 + (3 * 200);
+        while(hz_200 < future) {
+            if (kbshift(-1))
+                break;
+        }
     }
 }
 
