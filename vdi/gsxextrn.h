@@ -25,18 +25,18 @@ extern struct attribute *cur_work;      /* Pointer to current works attr. */
 extern WORD DDA_INC;                    /* the fraction to be added to the DDA */
 extern WORD T_SCLSTS;                   /* 0 if scale down, 1 if enlarge */
 
-extern WORD FLIP_Y;                             /* True if magnitudes being returned */
+extern WORD FLIP_Y;                     /* True if magnitudes being returned */
 extern WORD MONO_STATUS;                /* True if current font monospaced */
 
 extern BYTE deftxbuf[];                 /* Default text scratch buffer */
 extern WORD scrtsiz;                    /* Default offset to large text buffer */
 
-extern WORD scrpt2;                             /* Offset to large text buffer */
-extern BYTE *scrtchp;                   /* Pointer to text scratch buffer */
+extern WORD scrpt2;                     /* Offset to large text buffer */
+extern WORD *scrtchp;                   /* Pointer to text scratch buffer */
 
 extern WORD font_count;                 /* Number of fonts in driver */
 
-extern struct font_head first;  /* The small system font */
+extern struct font_head first;          /* The small system font */
 
 extern struct font_head *cur_font;      /* Current font */
 extern struct font_head *def_font;      /* Default font from open workstation 
@@ -46,9 +46,9 @@ extern struct font_head *font_ring[];   /* Ring of available fonts */
 
 extern WORD h_align;                    /* Text horizontal alignment */
 extern WORD v_align;                    /* Text vertical alignment */
-extern WORD STYLE;                              /* Requested text special effects */
-extern WORD DOUBLE;                             /* True if current font scaled */
-extern WORD CHUP;                               /* Text baseline vector */
+extern WORD STYLE;                      /* Requested text special effects */
+extern WORD DOUBLE;                     /* True if current font scaled */
+extern WORD CHUP;                       /* Text baseline vector */
 
 extern WORD line_cw;                    /* Linewidth for current circle */
 extern WORD num_qc_lines, q_circle[];
@@ -114,7 +114,7 @@ extern WORD SMUL_DIV();
 
 /* Assembly Language Support Routines NEWLY ADDED */
 
-extern void st_fl_p(), DIS_CUR();
+extern void DIS_CUR();
 extern void HIDE_CUR(), TEXT_BLT();
 extern void XFM_CRFM(), XFM_UNDL(), COPY_RFM(), VEX_CURV();
 extern void VEX_BUTV(), VEX_MOTV(), RECTFILL();
@@ -129,7 +129,16 @@ extern WORD GCHR_KEY();
 extern WORD isin();
 extern WORD icos();
 extern void text_init();
+extern void st_fl_ptr();
 extern WORD screen();
+extern void d_justified();
+extern void arb_corner(WORD *corners, WORD type);
+extern WORD Icos(WORD angle);
+extern WORD Isin(WORD angle);
+extern void do_circ(WORD cx, WORD cy);
+extern void perp_off(WORD *px, WORD *py);
+extern void r_fa_attr();
+extern void quad_xform(int quad, int x, int y, int *tx, int *ty);
 
 /* C Support routines */
 

@@ -974,7 +974,9 @@ void wline()
 void perp_off(WORD *px, WORD *py)
 {
         REG WORD *vx, *vy, *pcircle, u, v;
-        WORD x, y, quad, magnitude, min_val, x_val, y_val;
+        WORD x, y, quad, magnitude, min_val;
+        WORD x_val = 0;
+        WORD y_val = 0;
 
         vx = px;
         vy = py;
