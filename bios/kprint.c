@@ -51,6 +51,10 @@ char    *kcrlf = "\n\r" ;
 
 static void cprintf_outc(int c)
 {
+    /* add a CR to Unix LF for VT52 convenience */
+    if ( c == '\n')
+        bconout2(2,'\r');
+
     bconout2(2,c);
 }
 
@@ -201,6 +205,7 @@ void dopanic(const char *fmt, ...)
         kprintf("Exception number %d. sr = 0x%04x, pc = 0x%08lx\n",
                 (int) proc_enum, s->sr, s->pc);
     }
+    kcprintf("Processor halted by HALT instruction\n");
     halt();
 }
 
