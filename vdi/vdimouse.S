@@ -1,18 +1,20 @@
 /*
- * mouse.S - machine independent portion of the mouse driver
+ * vdimouse.S - machine independent portion of the mouse driver
  *
  * Copyright (c) 1999 Caldera, Inc. and Authors:
- *
- *  SCC
- *  MAD   Martin Doering
+ *                    SCC
+ *               2002 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
  */
 
 
-
 #include "vdiconf.h"
+
+#define F_SAVRDY        0               // save buffer status flag: 0:empty  1:full
+#define F_SAVWID        1               // saved line width        0:word   1:longword
+
 
         .text
 
@@ -35,12 +37,12 @@
 
 /* Externally Defined Labels */
 
-        .xdef   user_but        // user button vector
-        .xdef   user_mot        // user motion vector
-        .xdef   user_cur        // user cursor vector
-        .xdef   newx            // New mouse x position
-        .xdef   newy            // New mouse y position
-        .xdef   draw_flag       // Non-zero means draw mouse form on vblank
+        .xdef   _user_but       // user button vector
+        .xdef   _user_mot       // user motion vector
+        .xdef   _user_cur       // user cursor vector
+        .xdef   _newx           // New mouse x position
+        .xdef   _newy           // New mouse y position
+        .xdef   _draw_flag      // Non-zero means draw mouse form on vblank
         .xdef   _GCURX          // graphics cursor x-coordinate
         .xdef   _GCURY          // graphics cursor y-coordinate
         .xdef   _INTIN          // address of INTIN array
@@ -63,7 +65,7 @@
         .xdef   save_len
         .xdef   save_area
         .xdef   save_stat
-        .xdef   mouse_flag      // Non-zero if mouse ints disabled
+        .xdef   _mouse_flag     // Non-zero if mouse ints disabled
 
 
 /*
@@ -156,10 +158,10 @@ _MOV_CUR:
  *      one.  This is a critical region so all interrupts must be turned off.
  */
         move.w  SR,-(sp)        // save current value of status register
-        ori.w   #0x0700,SR       // mask off all interrupts
-        move.w  d0,newx         // save new cursor x-coordinate
-        move.w  d1,newy         // save new cursor y-coordinate
-        bset.b  #0,draw_flag    // set the 'draw cursor' flag
+        ori.w   #0x0700,SR      // mask off all interrupts
+        move.w  d0,_newx        // save new cursor x-coordinate
+        move.w  d1,_newy        // save new cursor y-coordinate
+        bset.b  #0,_draw_flag   // set the 'draw cursor' flag
         bsr     vb_draw         // redraw the cursor
 
         move.w  (sp)+,SR        // restore the value of the status register
@@ -191,8 +193,8 @@ mov_cur1:
 
 vb_draw:
         move.w  SR,-(sp)        // save current value of status register
-        ori.w   #0x0700,SR       // mask off all interrupts
-        bclr.b  #0,draw_flag    // draw the cursor?
+        ori.w   #0x0700,SR      // mask off all interrupts
+        bclr.b  #0,_draw_flag   // draw the cursor?
         beq     vblank_noop     // nope - done
 
 /*
@@ -201,10 +203,10 @@ vb_draw:
  *      then we are already attempting to hide or display the cursor so there
  *      is nothing more to be done here.
  */
-        move.w  newx,d0         // get new cursor x-coordinate
-        move.w  newy,d1         // get new cursor y-coordinate
+        move.w  _newx,d0        // get new cursor x-coordinate
+        move.w  _newy,d1        // get new cursor y-coordinate
         move.w  (sp)+,SR        // restore the status register
-        tst.b   mouse_flag      // are we in a hide/show operation?
+        tst.b   _mouse_flag     // are we in a hide/show operation?
         bne     vblank_exit     // yes - done
 
 /*
@@ -242,8 +244,8 @@ vblank_noop:
 
 _VEX_BUTV:
         move.l  _CONTRL,a0      // get address of CONTRL array
-        move.l  user_but,18(a0) // store old address in CONTRL
-        move.l  14(a0),user_but // store new routine address
+        move.l  _user_but,18(a0) // store old address in CONTRL
+        move.l  14(a0),_user_but // store new routine address
         rts
 
 
@@ -267,8 +269,8 @@ _VEX_BUTV:
 
 _VEX_MOTV:
         move.l  _CONTRL,a0      // get address of CONTRL array
-        move.l  user_mot,18(a0) // store old address in CONTRL
-        move.l  14(a0),user_mot // store new routine address
+        move.l  _user_mot,18(a0) // store old address in CONTRL
+        move.l  14(a0),_user_mot // store new routine address
         rts
 
 
@@ -292,8 +294,8 @@ _VEX_MOTV:
 
 _VEX_CURV:
         move.l  _CONTRL,a0      // get address of CONTRL array
-        move.l  user_cur,18(a0) // store old address in CONTRL
-        move.l  14(a0),user_cur // store new routine address
+        move.l  _user_cur,18(a0) // store old address in CONTRL
+        move.l  14(a0),_user_cur // store new routine address
         rts
 
 
@@ -354,13 +356,7 @@ _VEX_CURV:
 
 #define RTN_REC         2*4
 
-ifeq rbp
-shf_tab:
-        dc.b    3                       // 1 plane
-        dc.b    2                       // 2 planes
-        dc.b    0                       // not used
-        dc.b    1                       // 4 planes
-#endif
+
 cur_display:
         movem.l d4-d7/a4-a6,-(sp)       // save registers used by 'C'
         clr.w   d7                      // init entry & store routine index
@@ -409,6 +405,14 @@ clip_up:
         clr.w   d1                      // ymin=0
         bra     get_addr
 
+#if rbp
+shf_tab:
+        dc.b    3                       // 1 plane
+        dc.b    2                       // 2 planes
+        dc.b    0                       // not used
+        dc.b    1                       // 4 planes
+#endif
+
 clip_down:
         move.w  2(a2),d5                // get height of screen(maximum y value)
         sub.w   d1,d5                   // d5 <- row count
@@ -431,7 +435,7 @@ get_addr:
  *  in the shift table.  If the planes are arranged as separate, consecu-
  *  tive entities then divide the x-coordinate by 8 to get the number of bytes.
  */
-#ifndef rbp
+#if !rbp
         lsr.w   #3,d2           // convert x-coordinate to offset
 #else
         move.w  _v_planes,d3    // get number of planes
@@ -447,7 +451,7 @@ get_addr:
         add.w   d2,d1           // compute total offset into screen buffer
 
         move.l  _v_bas_ad,a1            // get start addr. of 1st graphic plane
-#ifndev rbp
+#if !rbp
         adda.l  d1,a1                   // get destination address
 #else
         adda.w  d1,a1                   // a1 -> destination
@@ -472,7 +476,7 @@ shift_lf:
 init:
         move.l  rtn_tab+00(pc,d7.w),a5  // get starting address of store routine
         move.l  rtn_tab+04(pc,d7.w),a6  // get starting address of fetch routine
-#ifndef rbp
+#if !rbp
         move.w  _v_planes,d7            // get number of graphic planes
         move.l  #v_pl_dspl,d3           // get # bytes between graphic planes
 #else
@@ -513,7 +517,7 @@ new_plane:
         move.w  crow_cnt(sp),d5         // get # of displayable cursor rows
         suba.w  cpl_size(sp),a0         // starting address of cursor source
 
-#ifndef rbp
+#if !rbp
         add.l   d3,d_addr(sp)           // get address of next graphics plane
 #else
         addq.l  #2,d_addr(sp)           // update destination pointer
@@ -574,7 +578,7 @@ fgbg_op:
 
 /* fetch/store/advance row:  long word */
 fetch_lw:
-#ifndef rbp
+#if !rbp
         move.l  (a1),d2
 #else
         move.w  (a1),d2
@@ -586,7 +590,7 @@ fetch_lw:
         jmp     (a3)                    // a3 -> alignment routine
 
 store_lw:
-#ifndef rbp
+#if !rbp
         move.l  d2,(a1)
 #else
         move.w  d2,(a1,d3.w)
@@ -739,14 +743,12 @@ fg1bg1:
  *
  *      clobbered:      d2.w,d3.w,d4.w,d5.w,a0.l,a1.l,a2.l,a3.l,a4.l,a5.l
  */
-#define F_SAVRDY        0               // save buffer status flag: 0:empty  1:full
-#define F_SAVWID        1               // saved line width        0:word   1:longword
 
 cur_replace:
         movem.l d4-d5/a4-a5,-(sp)       // save registers used by 'C'
         bclr.b  #F_SAVRDY,save_stat     // does save area contain valid data ?
         beq     hang_it_up              // 0:nothing saved
-#ifndef rbp
+#if !rbp
         move.w  save_len,d4             // get number of cursor lines per plane
         subq.w  #1,d4                   // adjust for loop counter
 #else
@@ -760,7 +762,7 @@ cur_replace:
         lea     save_area,a1            // a1 -> save area
 
         move.w  _v_planes,d5            // d5 <- resolution discriminator
-#ifndef rbp
+#if !rbp
         subq.w  #1,d5                   // adjust plane count for loop
         movea.l a0,a5                   // save destination address
         lea     v_pl_dspl,a3            // get # of bytes between gr. planes
@@ -962,7 +964,7 @@ hang_it_up:
  *      more.
  */
 _HIDE_CUR:
-        inc.b   mouse_flag      // disable mouse redrawing
+        add.b   #1,_mouse_flag  // disable mouse redrawing
         lea     _HIDE_CNT,a0    // get address of hide operations counter
         addq.w  #1,(a0)         // increment it
         cmpi.w  #1,(a0)         // is cursor already hidden?
@@ -973,9 +975,9 @@ _HIDE_CUR:
  *      blank cursor drawing routine.
  */
         bsr     cur_replace     // remove the cursor
-        clr.b   draw_flag       // disable vb_draw
+        clr.b   _draw_flag      // disable vb_draw
 hid_cur1:
-        dec.b   mouse_flag      // re-enable mouse drawing
+        sub.b   #1,_mouse_flag  // re-enable mouse drawing
         rts
 
 
@@ -1001,7 +1003,7 @@ hid_cur1:
  *      should remain hidden.
  */
 _DIS_CUR:
-        inc.b   mouse_flag      // disable mouse redrawing
+        add.b   #1,_mouse_flag  // disable mouse redrawing
         subq.w  #1,_HIDE_CNT    // decrement hide operations counter
         bgt.b   dis_cur1        // still greater than 0 - do nothing
         bmi.b   fix_neg         // negative - cursor already displayed
@@ -1012,11 +1014,11 @@ _DIS_CUR:
         move.w  _GCURX,d0       // get cursor x-coordinate
         move.w  _GCURY,d1       // get cursor y-coordinate
         bsr     cur_display     // display the cursor
-        clr.b   draw_flag       // disable vb_draw
+        clr.b   _draw_flag      // disable vb_draw
 fix_neg:
         clr.w   _HIDE_CNT       // clear the hide operations counter
 dis_cur1:
-        dec.b   mouse_flag      // re-enable mouse drawing
+        sub.b   #1,_mouse_flag  // re-enable mouse drawing
         rts
 
 
@@ -1046,14 +1048,14 @@ dis_cur1:
  *      spot and the new color indices for the mouse mask and data.
  */
 _XFM_CRFM:
-        inc.b   mouse_flag      // disable updates while redefining cursor
+        add.b   #1,_mouse_flag  // disable updates while redefining cursor
         move.l  _INTIN,a0       // get address of new cursor definition block
         lea     mouse_cdb,a1    // get address of old cursor definition block
         move.w  (a0)+,d0        // get x-offset of mouse hot spot
-        andi.w  #0x000f,d0       // get offset mod 16
+        andi.w  #0x000f,d0      // get offset mod 16
         move.w  d0,m_pos_hx     // save x-offset of mouse hot spot
         move.w  (a0)+,d0        // get y-offset of mouse hot spot
-        andi.w  #0x000f,d0       // get offset mod 16
+        andi.w  #0x000f,d0      // get offset mod 16
         move.w  d0,m_pos_hy     // save y-offset of mouse hot spot
         addq.w  #2,a0           // skip over plane count
         move.w  (a0)+,d0        // get the mask color index
@@ -1087,7 +1089,7 @@ xfm_move_loop:
         move.w  (a0)+,(a1)+     // get next word of mask
         move.w  (a2)+,(a1)+     // get next word of data
         dbra    d0,xfm_move_loop        // loop until all data is stored
-        dec.b   mouse_flag      // re-enable mouse drawing
+        sub.b   #1,_mouse_flag  // re-enable mouse drawing
         rts
 
         .data
@@ -1107,38 +1109,39 @@ rel_pblock:
 
 arrow_cdb:
         .dc.w   1,0,1,0,1
-        .dc.w   %1110000000000000       // background definition
-        .dc.w   %1111000000000000
-        .dc.w   %1111100000000000
-        .dc.w   %1111110000000000
-        .dc.w   %1111111000000000
-        .dc.w   %1111111100000000
-        .dc.w   %1111111110000000
-        .dc.w   %1111111111000000
-        .dc.w   %1111111000000000
-        .dc.w   %1111111000000000
-        .dc.w   %1110111100000000
-        .dc.w   %0000111100000000
-        .dc.w   %0000011110000000
-        .dc.w   %0000011110000000
-        .dc.w   %0000001111000000
-        .dc.w   %0000000000000000
+        .dc.w   0xE000 //%1110000000000000       // background definition
+        .dc.w   0xF000 //%1111000000000000
+        .dc.w   0xF800 //%1111100000000000
+        .dc.w   0xFB00 //%1111110000000000
+        .dc.w   0xFE00 //%1111111000000000
+        .dc.w   0xFF00 //%1111111100000000
+        .dc.w   0xFF80 //%1111111110000000
+        .dc.w   0xFFB0 //%1111111111000000
+        .dc.w   0xFE00 //%1111111000000000
+        .dc.w   0xFE00 //%1111111000000000
+        .dc.w   0xEF00 //%1110111100000000
+        .dc.w   0x0F00 //%0000111100000000
+        .dc.w   0x0780 //%0000011110000000
+        .dc.w   0x0780 //%0000011110000000
+        .dc.w   0x03B0 //%0000001111000000
+        .dc.w   0x0000 //%0000000000000000
 
-        .dc.w   %0100000000000000       // foreground definition
-        .dc.w   %0110000000000000
-        .dc.w   %0111000000000000
-        .dc.w   %0111100000000000
-        .dc.w   %0111110000000000
-        .dc.w   %0111111000000000
-        .dc.w   %0111111100000000
-        .dc.w   %0111111110000000
-        .dc.w   %0111110000000000
-        .dc.w   %0110110000000000
-        .dc.w   %0100011000000000
-        .dc.w   %0000011000000000
-        .dc.w   %0000001100000000
-        .dc.w   %0000001100000000
-        .dc.w   %0000000110000000
-        .dc.w   %0000000000000000
+//FIXME: Compute all right values here:
+        .dc.w   0 //%0100000000000000       // foreground definition
+        .dc.w   0 //%0110000000000000
+        .dc.w   0 //%0111000000000000
+        .dc.w   0 //%0111100000000000
+        .dc.w   0 //%0111110000000000
+        .dc.w   0 //%0111111000000000
+        .dc.w   0 //%0111111100000000
+        .dc.w   0 //%0111111110000000
+        .dc.w   0 //%0111110000000000
+        .dc.w   0 //%0110110000000000
+        .dc.w   0 //%0100011000000000
+        .dc.w   0 //%0000011000000000
+        .dc.w   0 //%0000001100000000
+        .dc.w   0 //%0000001100000000
+        .dc.w   0 //%0000000110000000
+        .dc.w   0x0000 //%0000000000000000
 
         .end

@@ -2,9 +2,7 @@
  * cbssdefs.c - Storage declarations for C structures
  *
  * Copyright (c) 1999 Caldera, Inc.
- *
- * Authors:
- *  xxx <xxx@xxx>
+ *               2002 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -20,6 +18,9 @@
 struct attribute virt_work;             /* attribute areas for workstations */
 WORD q_circle[MX_LN_WIDTH];             /* Holds the circle DDA */
 
+/* NOTE: The following variables are also declared in lineavars.S */
+/* So reactive those line-a variables if you need them! */
+#if 0
 WORD GCURX, GCURY;                              /* Current position of locator */
 WORD HIDE_CNT;                                  /* Number of levels the mouse is hidden */
 WORD MOUSE_BT;                                  /* Mouse button state */
@@ -29,12 +30,13 @@ WORD chc_mode;                                  /* Input mode of choice device *
 struct attribute *cur_work;             /* Pointer to current workstation attributes */
 struct font_head *def_font;             /* Pointer to default font head */
 struct font_head *font_ring[4]; /* Pointers to all fonts present */
-WORD ini_font_count;                    /* Number of fonts at open work */
+WORD font_count;                        /* Number of fonts at open work */
 WORD line_cw;                                   /* Width associated with q_circle data */
 WORD loc_mode;                                  /* Input mode of locater device */
 WORD num_qc_lines;                              /* Number of lines making up wide line */
 WORD str_mode;                                  /* Input mode of string device */
 WORD val_mode;                                  /* Input mode of valuator device */
+#endif
 
 /* GDP variables */
 

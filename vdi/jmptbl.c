@@ -88,7 +88,7 @@ WORD(*jmptb2[])() = {
 *    Screen Driver Entry Point                                          *
 ************************************************************************/
 
-VOID SCREEN()
+void SCREEN()
 {
         REG WORD opcode, r, *control;
         REG struct attribute *work_ptr;
@@ -149,7 +149,7 @@ VOID SCREEN()
 
                 cur_font = work_ptr->cur_font;
 
-                MONO_STATUS = MONOSPACE & cur_font->flags;
+                MONO_STATUS = F_MONOSPACE & cur_font->flags;
                 scrpt2 = work_ptr->scrpt2;
                 scrtchp = work_ptr->scrtchp;
                 STYLE = work_ptr->style;

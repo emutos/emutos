@@ -1,14 +1,20 @@
 /*
  * gsxasm1.S - Graphics kernel part 1
  *
- * Copyright (c) 1999 Caldera, Inc. and Authors:
- *
- *
+ * Copyright (c) 1999 Caldera, Inc.
+ *               2002 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
  */
 
+/*
+ * FIXME: There were some "clr.w a1" in this source (now marked
+ * with "//????").
+ * I changed them to "move.w #0,a1", but I'm not sure
+ * if this was right or if this illegal assembler statement
+ * was thought to be a "clr.w (a1)".
+ */
 
 
 #include "vdiconf.h"
@@ -42,10 +48,10 @@
         .xdef   _INTOUT
         .xdef   _PTSIN
         .xdef   _CLIP
-        .xdef   _XMN_CLI
-        .xdef   _XMX_CLI
-        .xdef   _fill_bu
-        .xdef   _fil_int
+        .xdef   _XMN_CLIP
+        .xdef   _XMX_CLIP
+        .xdef   _fill_buffer
+        .xdef   _fil_intersect
         .xdef   _multifill
         .xdef   _TERM_CH
 //
@@ -233,11 +239,11 @@ vl_out:
 //          CONTRL[1] = number of vectors.                              //
 //          PTSIN[]   = array of vertices.                              //
 //          Y1        = scan-line to calculate intersections for.       //
-//          fil_int   = 0.                                              //
+//          fil_intersect = 0.                                          //
 //                                                                      //
 //      output:                                                         //
-//          fil_int  = number of intersections.                         //
-//          fill_buf  = array of x-values.                              //
+//          fil_intersect = number of intersections.                    //
+//          fill_buffer  = array of x-values.                           //
 //                                                                      //
 //      destroys:       everything.                                     //
 //                                                                      //
@@ -248,10 +254,10 @@ vl_out:
 //
 _CLC_FLIT:
         move.l  _CONTRL,a0      // fetch number of vectors.
-        move.w  #2(a0),d0
+        move.w  2(a0),d0
         subq.w  #1,d0           // minus 1 for dbra
         move.l  _PTSIN,a0       // point to array of vertices.
-        lea     _fill_bu,a1     // point to array of x-values.
+        lea     _fill_buffer,a1  // point to array of x-values.
 
 //
 //      Determine if the current vector is horizontal.  If it is then
@@ -313,8 +319,8 @@ round_x:
         asr.w   #1,d4
 ld_fill_int:
         add.w   d3,d4           // add in x1.
-        move.w  d4,(a1)+        // put in fill_buf.
-        addq.w  #1,_fil_int     // increment # of intersections.
+        move.w  d4,(a1)+        // put in fill_buffer.
+        addq.w  #1,_fil_intersect  // increment # of intersections.
 no_fill_int:
         addq.w  #4,a0           // next pair of endpoints. (next vector)
         dbra    d0,flit_lp
@@ -326,18 +332,18 @@ no_fill_int:
 //      the x-coordinates of the points.)
 //
 sort_fill_int:
-        move.w  _fil_int,d0     // how many intersections?
+        move.w  _fil_intersect,d0     // how many intersections?
         bne     sfi_cont        // 2 or more => sort them.
         rts                     // 0 => nothing else to do.
 sfi_cont:
-        lea     _fill_bu,a0
+        lea     _fill_buffer,a0
         bsr     bub_sort        // bubble-sort the fill buffer.
 
 //
 //      The points are now sorted.  If a clipping rectangle is in use then
 //      branch to special code.
 //
-        move.w  _fil_int,d0     // get number of buffered points
+        move.w  _fil_intersect,d0     // get number of buffered points
         asr.w   #1,d0           // convert to number of pairs of points
         subq.w  #1,d0           // adjust count for loop
         tst.w   _CLIP           // is clipping on?
@@ -383,8 +389,8 @@ dr_lp1:
 //
 
 dr_clip:
-        move.w  _XMN_CLI,d1     // get clip minimum
-        move.w  _XMX_CLI,d2     // get clip maximum
+        move.w  _XMN_CLIP,d1     // get clip minimum
+        move.w  _XMX_CLIP,d2     // get clip maximum
 drc_0:
         move.w  (a1)+,d3        // grab a pair of intersections
         move.w  (a1)+,d4
@@ -568,7 +574,7 @@ concat:
 //      tive entities then divide the x-coordinate by 8 to get the number of
 //      bytes.
 //
-#ifndef vme10
+#if vme10
         move.w  _v_planes,d3    // get number of planes
         move.b  shf_tab-1(pc,d3.w),d3   // get shift factor
         lsr.w   d3,d2           // convert x-coordinate to offset
@@ -585,7 +591,7 @@ concat:
         movem.w (sp)+,d2/d3     // restore the clobbered registers
         rts
 
-#ifndef vme10
+#if vme10
 /////////////////////////////////////////////////////////////////////////
 //                                                                      //
 //      Shift Table for Computing Offsets into a Scan Line When         //
@@ -640,7 +646,7 @@ shf_tab:
 _ABLINE:
         move.l  _v_bas_ad,a5    // get base address of first plane
         lea     _FG_BP_1,a4     // get address of bit plane mask table
-#ifndef vme10
+#if vme10
         move.w  _v_planes,d3    // get number of video planes
         move.w  d3,d6           // save it
         subq.w  #1,d3           // get number of planes - 1
@@ -664,7 +670,7 @@ _ABLINE:
         move.w  _X1,d0          // delta x is positive - start from x1,y1
         move.w  _Y1,d1
         bsr     concat          // compute offset of x1,y1 into plane
-#ifndef vme10
+#if vme10
         adda.w  d1,a5           // get address of word containing first point
 #else
         adda.l  d1,a5           // get address of word containing first point
@@ -708,7 +714,7 @@ swap:
         move.w  _X2,d0          // delta x is negative - start from x2,y2
         move.w  _Y2,d1
         bsr     concat          // compute offset of x2,y2 into plane
-#ifndef vme10
+#if vme10
         adda.w  d1,a5           // get address of word containing first point
 #else
         adda.l  d1,a5           // get address of word containing first point
@@ -819,7 +825,7 @@ dxgedy:
 //                                                                      //
 /////////////////////////////////////////////////////////////////////////
 
-ortbl           dc.w    0x8000
+ortbl:          dc.w    0x8000
                 dc.w    0x4000
                 dc.w    0x2000
                 dc.w    0x1000
@@ -842,17 +848,19 @@ ortbl           dc.w    0x8000
 //                                                                      //
 /////////////////////////////////////////////////////////////////////////
 
-#ifndef rev_vid
-dxge    dc.l    rep_dxge
+dxge:
+#if rev_vid
+        dc.l    rep_dxge
         dc.l    or_dxge
         dc.l    xor_dxge
         dc.l    nor_dxge
 #else
-dxge    dc.l    rep_dxge
+        dc.l    rep_dxge
         dc.l    nor_dxge
         dc.l    xor_dxge
         dc.l    or_dxge
 #endif
+
         .page
 /////////////////////////////////////////////////////////////////////////
 //                                                                      //
@@ -870,7 +878,7 @@ rep_dxge:
         movem.w d0-d2/d4/d5,-(sp)       // save the registers that get clobbered
         move.l  a5,-(sp)
         tst.w   (a4)+           // write this plane with pattern or 0's
-#ifndef rev_vid
+#if rev_vid
         bne     r_dx_ltop       // use pattern
 #else
         bne     r_dx_rev        // use inverted pattern
@@ -880,7 +888,7 @@ rep_dxge:
 //      If the current bit in the pattern is 0 then clear the current bit
 //      in the plane.  If it is 1 then set the bit in the plane.
 //
-#ifdef rev_vid
+#if !rev_vid
 r_dx_rev:
         not.w   d1              // invert pattern for reverse video
 #endif
@@ -923,7 +931,7 @@ r_dx_yinc:
 r_dx_bp:
         move.l  (sp)+,a5        // restore the clobbered registers
         movem.w (sp)+,d0-d2/d4/d5
-#ifndef vme10
+#if vme10
         addq.w  #2,a5           // update pointer to next plane
 #else
         adda.l  a1,a5           // update pointer to next plane
@@ -955,11 +963,11 @@ r_dx_same1:
 or_dxge:
         movem.w d0-d2/d4/d5,-(sp)       // save the registers that get clobbered
         move.l  a5,-(sp)
-ifeq rev_vid
+#if !rev_vid
         not.w   d1              // complement the line style
 #endif
         tst.w   (a4)+           // set bits in this plane for the fgnd color?
-#ifndef rev_vid
+#if rev_vid
         beq     o_dx_0ltop      // nope - clear bits where mask = fgnd color
 #else
         bne     o_dx_0ltop      // nope - clear bits where mask = fgnd color
@@ -1003,7 +1011,7 @@ o_dx_1yinc:
 o_dx_bp:
         move.l  (sp)+,a5        // restore the clobbered registers
         movem.w (sp)+,d0-d2/d4/d5
-#ifndef vme10
+#if vme10
         addq.w  #2,a5           // update pointer to next plane
 #else
         adda.l  a1,a5           // update pointer to next plane
@@ -1131,7 +1139,7 @@ x_dx_yinc:
 x_dx_bp:
         move.l  (sp)+,a5        // restore the clobbered registers
         movem.w (sp)+,d0-d2/d4
-#ifndef vme10
+#if vme10
         addq.w  #2,a5           // update pointer to next plane
 #else
         adda.l  a1,a5           // update pointer to next plane
@@ -1222,7 +1230,7 @@ dygtdx:
 //                                                                      //
 /////////////////////////////////////////////////////////////////////////
 dygt:
-#ifndef rev_vid
+#if rev_vid
         dc.l    rep_dygt
         dc.l    or_dygt
         dc.l    xor_dygt
@@ -1250,7 +1258,7 @@ rep_dygt:
         movem.w d0-d2/d4/d5,-(sp)       // save the registers that get clobbered
         move.l  a5,-(sp)
         tst.w   (a4)+           // write this plane with pattern or 0's?
-#ifndef rev_vid
+#if rev_vid
         bne     r_dy_ltop       // use pattern
 #else
         bne     r_dy_rev        // use inverted pattern
@@ -1260,7 +1268,7 @@ rep_dygt:
 //      If the current bit in the pattern is 0 then clear the current bit
 //      in the plane.  If it is 1 then set the bit in the plane.
 //
-#ifdef rev_vid
+#if !rev_vid
 r_dy_rev:
         not.w   d1              // invert pattern for reverse video
 #endif    
@@ -1304,7 +1312,7 @@ r_dy_llp_end:
 r_dy_bp:
         move.l  (sp)+,a5        // restore the clobbered registers
         movem.w (sp)+,d0-d2/d4/d5
-#ifndef vme10
+#if vme10
         addq.w  #2,a5           // update pointer to next plane
 #else
         adda.l  a1,a5           // update pointer to next plane
@@ -1336,11 +1344,11 @@ r_dy_same1:
 or_dygt:
         movem.w d0-d2/d4/d5,-(sp)       // save the registers that get clobbered
         move.l  a5,-(sp)
-ifeq rev_vid
+#if !rev_vid
         not.w   d1              // complement the line style
 #endif
         tst.w   (a4)+           // set bits in this plane for the fgnd color?
-#ifndef rev_vid
+#if rev_vid
         beq     o_dy_0ltop      // nope - clear bits where mask = fgnd color
 #else
         bne     o_dy_0ltop      // nope - clear bits where mask = fgnd color
@@ -1384,7 +1392,7 @@ o_dy_1llp_end:
 o_dy_bp:
         move.l  (sp)+,a5        // restore the clobbered registers
         movem.w (sp)+,d0-d2/d4/d5
-#ifndef vme10
+#if vme10
         addq.w  #2,a5           // update pointer to next plane
 #else
         adda.l  a1,a5           // update pointer to next plane
@@ -1450,10 +1458,9 @@ o_dy_0same1:
 //                                                                      //
 /////////////////////////////////////////////////////////////////////////
 
-#ifdef vme10
-//
+/*#if !vme10*/ //???? We need xor_dygt!
+
 //      Save the registers that get clobbered.
-//
 xor_dygt:
         movem.w d0-d2/d4,-(sp)  // save the registers that get clobbered
         move.l  a5,-(sp)
@@ -1474,7 +1481,7 @@ xor_dygt:
         cmpa.w  _X1,a0
         blt     x_dy_yinc       // drawing from x2,y2 - don't draw first point
         subq.w  #1,d2           // drawing from x1,y1 - don't draw last point
-#endif
+//????#endif
 
 //
 //      If the current bit in the mask is set then exclusive or it with the
@@ -1513,7 +1520,7 @@ x_dy_llp_end:
 x_dy_bp:
         move.l  (sp)+,a5        // restore the clobbered registers
         movem.w (sp)+,d0-d2/d4
-#ifndef vme10
+#if vme10
         addq.w  #2,a5           // update pointer to next plane
 #else
         adda.l  a1,a5           // update pointer to next plane
@@ -1584,7 +1591,8 @@ nor_dygt:
 xl_noswap:
         lea     _LN_MASK,a0     // get the current line style
         movea.l a1,a3           // get # of bytes between graphic planes
-        clr.w   a1              // line style is monoplaned - no offset
+//????        clr.w   a1              // line style is monoplaned - no offset
+        move.w  #0,a1           // line style is monoplaned - no offset
         move.w  _X1,d4          // get starting x-coordinate
         move.w  _X2,d2          // get ending x-coordinate
         bra     xline
@@ -1597,7 +1605,8 @@ xl_noswap:
 xl_swap:
         lea     _LN_MASK,a0     // get the current line style
         movea.l a1,a3           // get # of bytes between graphic planes
-        clr.w   a1              // line style is monoplaned - no offset
+//????        clr.w   a1              // line style is monoplaned - no offset
+        move.w  #0,a1           // line style is monoplaned - no offset
         move.w  _X2,d4          // get starting x-coordinate
         move.w  _X1,d2          // get ending x-coordinate
         bra     xline
@@ -1612,7 +1621,7 @@ xl_swap:
 _HABLINE:
         movea.l _v_bas_ad,a5    // get base address of first video plane
         lea     _FG_BP_1,a4     // get address of bit plane mask table
-#ifndef vme10
+#if vme10
         movea.w _v_planes,a3    // get number of planes
         move.w  a3,d3           // get number of planes - 1
         subq.w  #1,d3
@@ -1627,7 +1636,7 @@ _HABLINE:
         move.w  _Y1,d1          // get y-coordinate (input to concat)
         move.w  d1,d5           // save it for later use
         bsr     concat          // compute word offset and bit offset
-#ifndef vme10
+#if vme10
         adda.w  d1,a5           // compute actual address of starting word
 #else
         adda.l  d1,a5           // compute actual address of starting word
@@ -1641,7 +1650,8 @@ _HABLINE:
         asl.w   #1,d5           // convert to offset into pattern def table
         move.l  _patptr,a0      // get pointer to start of pattern definition
         adda.w  d5,a0           // get pointer to desired word of pattern def
-        clr.w   a1              // init offset to next plane of pattern to 0
+//????        clr.w   a1              // init offset to next plane of pattern to 0
+        move.w  #0,a1              // init offset to next plane of pattern to 0
         tst.w   _multifill      // using multi-planed patterns?
         beq     xline           // nope
         move.w  #32,a1          // yes - offset = length of 1 plane of pat def
@@ -1723,8 +1733,8 @@ hab_decode:
 //                                                                      //
 /////////////////////////////////////////////////////////////////////////
 
-lf_tab          dc.w    0xFFFF          // origin for not left fringe lookup.
-rf_tab          dc.w    0x7FFF          // origin for right fringe lookup.
+lf_tab:         dc.w    0xFFFF          // origin for not left fringe lookup.
+rf_tab:         dc.w    0x7FFF          // origin for right fringe lookup.
                 dc.w    0x3FFF
                 dc.w    0x1FFF
                 dc.w    0x0FFF
@@ -1751,7 +1761,7 @@ rf_tab          dc.w    0x7FFF          // origin for right fringe lookup.
 /////////////////////////////////////////////////////////////////////////
 
 htab:
-#ifndef rev_vid
+#if rev_vid
         dc.l    rep_x
         dc.l    or_x
         dc.l    xor_x
@@ -1787,7 +1797,7 @@ rep_x:
 //      Draw the left fringe.
 //
 r_x_lf:
-#ifndef rev_vid
+#if rev_vid
         move.w  (a5),d5         // get source data
 #else
         not.w   d1              // invert line style or fill pattern
@@ -1797,7 +1807,7 @@ r_x_lf:
         eor.w   d1,d5           // xor the pattern with the source
         and.w   d0,d5           // isolate the bits outside the fringe
         eor.w   d1,d5           // restore the bits outside the fringe
-#ifndef vme10
+#if vme10
         move.w  d5,(a5)         // write the fringe
         adda.w  a3,a5           // update pointer to next word in plane
 #else
@@ -1809,7 +1819,7 @@ r_x_lf:
 //
         bra     rx_lend         // test if any entire words are to be drawn
 rx_ltop:
-#ifndef vme10
+#if vme10
         move.w  d1,(a5)         // write current word
         adda.w  a3,a5           // update pointer to next word in plane
 #else
@@ -1834,7 +1844,7 @@ rx_lend:
 //
         move.l  (sp)+,a5        // restore the clobbered registers
         move.w  (sp)+,d2
-#ifndef vme10
+#if vme10
         addq.w  #2,a5           // update pointer to next plane
 #else
         adda.l  a3,a5           // update pointer to next plane
@@ -1903,11 +1913,11 @@ nor_x:
 or_nor:
         movem.l d2/a5,-(sp)     // save registers that get clobbered
         adda.w  a1,a0           // update pointer to next plane's pattern
-ifeq rev_vid
+#if !rev_vid
         not.w   d1              // get complement of mask with source
 #endif
         tst.w   (a4)+           // set bits in this plane for the fgnd color?
-#ifndef rev_vid
+#if rev_vid
         bne     o_x_lf1         // yes - or mask with source
 #else
         beq     o_x_lf1         // yes - or mask with source
@@ -1923,7 +1933,7 @@ o_x_lf0:
         eor.w   d5,d4           // isolate changed bits
         and.w   d0,d4           // isolate changed bits outside of fringe
         eor.w   d4,d5           // restore them to original states
-#ifndef vme10
+#if vme10
         move.w  d5,(a5)         // write left fringe
         adda.w  a3,a5           // update pointer to next word in plane
 #else
@@ -1935,7 +1945,7 @@ o_x_lf0:
 //
         bra     oxc_lend        // first test for any full words to be drawn
 oxc_ltop:
-#ifndef vme10
+#if vme10
         and.w   d1,(a5)         // clear all bits to contain foreground color
         adda.w  a3,a5           // update pointer to next word in plane
 #else
@@ -1963,7 +1973,7 @@ ox_merge:
 //      and test whether any additional planes need to be drawn.
 //
         movem.l (sp)+,d2/a5     // restore the clobbered registers
-#ifndef vme10
+#if vme10
         addq.w  #2,a5           // update pointer to next plane
 #else
         adda.l  a3,a5           // update pointer to next plane
@@ -1980,7 +1990,7 @@ o_x_lf1:
         eor.w   d5,d4           // isolate changed bits
         and.w   d0,d4           // isolate changed bits outside of fringe
         eor.w   d4,d5           // restore them to original states
-#ifndef vme10
+#if vme10
         move.w  d5,(a5)         // write left fringe
         adda.w  a3,a5           // update pointer to next word in plane
 #else
@@ -1993,7 +2003,7 @@ o_x_lf1:
         bra     oxs_lend        // first test for any full words to be drawn
 
 oxs_ltop:
-#ifndef vme10
+#if vme10
         or.w    d1,(a5)         // clear all bits to contain foreground color
         adda.w  a3,a5           // update pointer to next word in plane
 #else
@@ -2036,7 +2046,7 @@ x_x_lf:
         eor.w   d5,d4           // xor result with source - now have pattern
         and.w   d0,d4           // isolate changed bits outside of fringe
         eor.w   d4,d5           // restore states of bits outside of fringe
-#ifndef vme10
+#if vme10
         move.w  d5,(a5)         // write left fringe
         adda.w  a3,a5           // update pointer to next word in plane
 #else
@@ -2047,12 +2057,12 @@ x_x_lf:
 //      Inner Loop -- Draw the full words contained in the line.
 //
         bra     xx_lend         // test if any entire words are to be drawn
-#ifndef vme10
+
 xx_ltop:
+#if vme10
         eor.w   d1,(a5)         // draw current word
         adda.w  a3,a5           // update pointer to next word in plane
 #else
-xx_ltop:
         eor.w   d1,(a5)+        // draw current word and advance to next
 #endif
 xx_lend:
@@ -2075,11 +2085,12 @@ xx_lend:
 //      and test whether any additional planes need to be drawn.
 //
         movem.l (sp)+,d2/a5     // restore the clobbered registers
-#ifndef vme10
+#if vme10
         addq.w  #2,a5           // update pointer to next plane
 #else
         adda.l  a3,a5           // update pointer to next plane
 #endif
         dbra    d3,xor_x        // loop until all bit planes are drawn
         rts
+
         .end

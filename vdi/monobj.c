@@ -28,7 +28,7 @@
  ************************************************************************/
 
 /* S_LINE_TYPE: */
-vsl_type()
+void vsl_type()
 {
         REG WORD li;
 
@@ -42,7 +42,7 @@ vsl_type()
 }
 
 /* S_LINE_WIDTH: */
-vsl_width()
+void vsl_width()
 {
         REG WORD w, *pts_out;
 
@@ -67,7 +67,7 @@ vsl_width()
 }
 
 /* S_END_STYLE: */
-vsl_ends()
+void vsl_ends()
 {
         REG WORD lb, le;
         REG WORD *pointer;
@@ -91,7 +91,7 @@ vsl_ends()
 }                                                               /* End "vsl_ends". */
 
 /* S_LINE_COLOR: */
-vsl_color()
+void vsl_color()
 {
         REG WORD lc;
 
@@ -104,7 +104,7 @@ vsl_color()
 }
 
 /* S_MARKER_SCALE */
-vsm_height()
+void vsm_height()
 {
         REG WORD h, *pts_out;
         REG struct attribute *work_ptr;
@@ -134,7 +134,7 @@ vsm_height()
 /* End "vsm_height". */
 
 /* S_MARK_TYPE */
-vsm_type()
+void vsm_type()
 {
         REG WORD i;
 
@@ -145,7 +145,7 @@ vsm_type()
 }
 
 /* S_MARK_COLOR */
-vsm_color()
+void vsm_color()
 {
         REG WORD i;
 
@@ -158,7 +158,7 @@ vsm_color()
 
 
 /* S_FILL_STYLE: */
-vsf_interior()
+void vsf_interior()
 {
         REG WORD fs;
 
@@ -171,7 +171,7 @@ vsf_interior()
 }
 
 /* S_FILL_INDEX: */
-vsf_style()
+void vsf_style()
 {
         REG WORD fi;
         REG struct attribute *work_ptr;
@@ -194,7 +194,7 @@ vsf_style()
 }
 
 /* S_FILL_COLOR: */
-vsf_color()
+void vsf_color()
 {
         REG WORD fc;
 
@@ -208,7 +208,7 @@ vsf_color()
 }
 
 /* LOCATOR_INPUT: */
-v_locator()
+void v_locator()
 {
         WORD i;
         REG WORD *pointer;
@@ -287,7 +287,7 @@ v_locator()
 }
 
 /* SHOW CURSOR */
-v_show_c()
+void v_show_c()
 {
         /* DIS_CUR will trash all registers but FP and SP */
 
@@ -299,13 +299,13 @@ v_show_c()
 
 /* HIDE CURSOR */
 
-v_hide_c()
+void v_hide_c()
 {
         HIDE_CUR();
 }
 
 /* RETURN MOUSE BUTTON STATUS */
-vq_mouse_status()
+void vq_mouse_status()
 {
         REG WORD *pointer;
 
@@ -321,12 +321,12 @@ vq_mouse_status()
 }
 
 /* VALUATOR_INPUT: */
-v_valuator()
+void v_valuator()
 {
 }
 
 /* CHOICE_INPUT: */
-v_choice()
+void v_choice()
 {
         WORD i;
 
@@ -345,9 +345,9 @@ v_choice()
 }
 
 /* STRING_INPUT: */
-v_string()
+void v_string()
 {
-        WORD i, j, k, mask;
+        WORD i, j, mask;
 
         mask = 0x00ff;
         j = *INTIN;
@@ -374,14 +374,14 @@ v_string()
 }
 
 /* Return Shift, Control, Alt State */
-vq_key_s()
+void vq_key_s()
 {
         CONTRL[4] = 1;
         INTOUT[0] = GSHIFT_S();
 }
 
 /* SET_WRITING_MODE: */
-vswr_mode()
+void vswr_mode()
 {
         REG WORD wm;
 
@@ -394,7 +394,7 @@ vswr_mode()
 }
 
 /* SET_INPUT_MODE: */
-vsin_mode()
+void vsin_mode()
 {
         REG WORD i, *int_in;
 
@@ -426,7 +426,7 @@ vsin_mode()
 }
 
 /* INQUIRE INPUT MODE: */
-vqi_mode()
+void vqi_mode()
 {
         REG WORD *int_out;
 
@@ -456,9 +456,9 @@ vqi_mode()
 }
 
 /* ST_FILLPERIMETER: */
-vsf_perimeter()
+void vsf_perimeter()
 {
-        REG WORD h, *int_out;
+        REG WORD *int_out;
         REG struct attribute *work_ptr;
 
         work_ptr = cur_work;
@@ -475,44 +475,13 @@ vsf_perimeter()
 }
 
 /* ST_UD_LINE_STYLE: */
-vsl_udsty()
+void vsl_udsty()
 {
         cur_work->ud_ls = *INTIN;
 }
 
-/* Set Clip Region */
-s_clip()
-{
-        REG WORD *xy, h, rtemp;
-        REG struct attribute *work_ptr;
 
-        work_ptr = cur_work;
-        if ((work_ptr->clip = *INTIN) != 0) {
-                xy = PTSIN;
-                arb_corner(xy, ULLR);
-
-                rtemp = *xy++;
-                work_ptr->xmn_clip = (rtemp < 0) ? 0 : rtemp;
-
-                rtemp = *xy++;
-                work_ptr->ymn_clip = (rtemp < 0) ? 0 : rtemp;
-
-                rtemp = *xy++;
-                work_ptr->xmx_clip = (rtemp > DEV_TAB[0]) ? DEV_TAB[0] : rtemp;
-
-                rtemp = *xy;
-                work_ptr->ymx_clip = (rtemp > DEV_TAB[1]) ? DEV_TAB[1] : rtemp;
-        } else {
-                work_ptr->clip = 0;
-                work_ptr->xmn_clip = 0;
-                work_ptr->ymn_clip = 0;
-                work_ptr->xmx_clip = xres;
-                work_ptr->ymx_clip = yres;
-        }                                                       /* End else:  clipping turned off. */
-}
-
-arb_corner(corners, type)
-WORD *corners, type;
+void arb_corner(WORD *corners, WORD type)
 {
         /* Local declarations. */
         REG WORD temp, typ;
@@ -547,7 +516,40 @@ WORD *corners, type;
         }                                                       /* End if:  "y" values need to be swapped. */
 }                                                               /* End "arb_corner". */
 
-dro_cpyfm()
+
+/* Set Clip Region */
+void s_clip()
+{
+        REG WORD *xy, rtemp;
+        REG struct attribute *work_ptr;
+
+        work_ptr = cur_work;
+        if ((work_ptr->clip = *INTIN) != 0) {
+                xy = PTSIN;
+                arb_corner(xy, ULLR);
+
+                rtemp = *xy++;
+                work_ptr->xmn_clip = (rtemp < 0) ? 0 : rtemp;
+
+                rtemp = *xy++;
+                work_ptr->ymn_clip = (rtemp < 0) ? 0 : rtemp;
+
+                rtemp = *xy++;
+                work_ptr->xmx_clip = (rtemp > DEV_TAB[0]) ? DEV_TAB[0] : rtemp;
+
+                rtemp = *xy;
+                work_ptr->ymx_clip = (rtemp > DEV_TAB[1]) ? DEV_TAB[1] : rtemp;
+        } else {
+                work_ptr->clip = 0;
+                work_ptr->xmn_clip = 0;
+                work_ptr->ymn_clip = 0;
+                work_ptr->xmx_clip = xres;
+                work_ptr->ymx_clip = yres;
+        }                                                       /* End else:  clipping turned off. */
+}
+
+
+void dro_cpyfm()
 {
         arb_corner(PTSIN, ULLR);
         arb_corner((PTSIN + 4), ULLR);
@@ -555,7 +557,7 @@ dro_cpyfm()
         COPY_RFM();
 }                                                               /* End "dr_cpyfm". */
 
-drt_cpyfm()
+void drt_cpyfm()
 {
         arb_corner(PTSIN, ULLR);
         arb_corner((PTSIN + 4), ULLR);
@@ -563,7 +565,7 @@ drt_cpyfm()
         COPY_RFM();
 }                                                               /* End "dr_cpyfm". */
 
-dr_recfl()
+void dr_recfl()
 {
         REG WORD fi, *pts_in;
 

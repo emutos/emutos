@@ -2,9 +2,7 @@
  * copyrfm.S - 
  *
  * Copyright (c) 1999 Caldera, Inc.
- *
- * Authors:
- *  xxx <xxx@xxx>
+ *               2002 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -48,10 +46,10 @@
 
 //      MEMORY FORM DEFINITION BLOCK (MFDB) OFFSETS
 
-#define MF_BAS_AD               00      // memory form base address (0: physical device)
-#define MF_WD_PIX               04      // form width in pixels ( form width in words /16)
-#define MF_HT_PIX               06      // form height in pixels
-#define MF_WD_WRD               08      // form width in words
+#define MF_BAS_AD                0      // memory form base address (0: physical device)
+#define MF_WD_PIX                4      // form width in pixels ( form width in words /16)
+#define MF_HT_PIX                6      // form height in pixels
+#define MF_WD_WRD                8      // form width in words
 #define MF_FORMAT               10      // form format flag (0:device specific 1:standard)
 #define MF_PLANES               12      // number of memory planes
 
@@ -62,18 +60,18 @@
 
 //      INTIN ARRAY OFFSETS
 
-#define I_LOG_OP                00      // logic operation code
-#define I_COL_1                 02
-#define I_COL_0                 04
+#define I_LOG_OP                 0      // logic operation code
+#define I_COL_1                  2
+#define I_COL_0                  4
 
 //      PTSIN ARRAY OFFSET
 
-#define P_XMIN_S                00      // x-coordinate of upper left of source rectangle
-#define P_YMIN_S                02      // y-coordinate of upper left of source rectangle
-#define P_XMAX_S                04      // x-coordinate of lower right of source rectangle
-#define P_YMAX_S                06      // y-coordinate of lower right of source rectangle
+#define P_XMIN_S                 0      // x-coordinate of upper left of source rectangle
+#define P_YMIN_S                 2      // y-coordinate of upper left of source rectangle
+#define P_XMAX_S                 4      // x-coordinate of lower right of source rectangle
+#define P_YMAX_S                 6      // y-coordinate of lower right of source rectangle
 
-#define P_XMIN_D                08      // x-coordinate of upper left of destination rectangle
+#define P_XMIN_D                 8      // x-coordinate of upper left of destination rectangle
 #define P_YMIN_D                10      // y-coordinate of upper left of destination rectangle
 #define P_XMAX_D                12      // x-coordinate of lower right of destination rectangle
 #define P_YMAX_D                14      // y-coordinate of lower right of destination rectangle
@@ -93,7 +91,7 @@
 #define S_YMIN                  -60     // minimum Y: source                                +16
 #define S_FORM                  -58     // source form base address                         +18
 
-#ifndef vme10
+#if vme10
 #define S_NXWD                  -54     // offset to next word in line  (in bytes)          +22
 #define S_NXLN                  -52     // offset to next line in plane (in bytes)          +24
 #define S_NXPL                  -50     // offset to next plane from start of current plane  +26
@@ -106,7 +104,7 @@
 #define D_YMIN                  -46     // minimum Y: destination                           +30
 #define D_FORM                  -44     // destination form base address                            +32
 
-#ifndef vme10
+#if vme10
 #define D_NXWD                  -40     // offset to next word in line  (in bytes)          +36
 #define D_NXLN                  -38     // offset to next line in plane (in bytes)          +38
 #define D_NXPL                  -36     // offset to next plane from start of current plane  +40
@@ -120,9 +118,9 @@
 #define P_NXPL                  -28     // offset to next plane in pattern (in bytes)       +48
 #define P_MASK                  -26     // pattern index mask                               +50
 
-//////                                      //////
+//////                                         //////
 //////   these parameters are internally set   //////
-//////                                      //////
+//////                                         //////
 
 #define P_INDX                  -24     // initial pattern index                                    +52
 
@@ -132,11 +130,11 @@
 
 #define D_ADDR                  -14     // initial destination address                      +62
 #define D_XMAX                  -10     // maximum X: destination                           +66
-#define D_YMAX                  -08     // maximum Y: destination                           +68
+#define D_YMAX                   -8     // maximum Y: destination                           +68
 
-#define INNER_CT                -06     // blt inner loop initial count                     +70
-#define DST_WR                  -04     // destination form wrap (in bytes)                 +72
-#define SRC_WR                  -02     // source form wrap (in bytes)                      +74
+#define INNER_CT                 -6     // blt inner loop initial count                     +70
+#define DST_WR                   -4     // destination form wrap (in bytes)                 +72
+#define SRC_WR                   -2     // source form wrap (in bytes)                      +74
 
 
 #define FRAME_LEN                76
@@ -156,9 +154,10 @@ _COPY_RFM:
         move.l  _INTIN,a2               // a2 -> INTIN array
         move.w  I_LOG_OP(a2),d2         // d2 <- logic op #
         blt.w   bad_parameter           // for a negative write mode operand
-        clr.l   a3                      // No pattern selected
+//???   clr.l   a3                      // No pattern selected
+        move.l  #0,a3                   // No pattern selected
 
-ifeq    pattern
+#if !pattern
         bclr    #PAT_FLAG,d2            // check the pattern flag and revert to log op #
         beq     no_pattern
 
@@ -200,13 +199,13 @@ src_form:
         move.l  _v_bas_ad,d6
         move.w  _v_planes,d0            // source form is screen
         move.w  _v_lin_wr,d4
-#ifdef vme10
+#if !vme10
         move.l  #v_pl_dspl,S_NXPL(a6)   // set # bytes between source planes
 #endif
         bra     dst_form
 
 src_calc:
-#ifndef vme10
+#if vme10
         move.w  MF_PLANES(a5),d0        // d0 <- source plane count
         move.w  MF_WD_WRD(a5),d4
         add.w   d4,d4
@@ -229,13 +228,13 @@ dst_form:
         move.l  _v_bas_ad,d7
         move.w  _v_planes,d1
         move.w  _v_lin_wr,d5
-#ifdef vme10
+#if !vme10
         move.l  #v_pl_dspl,D_NXPL(a6)   // set # bytes between dest. planes
 #endif
         bra     compare
 
 dst_calc:
-#ifndef vme10
+#if vme10
         move.w  MF_PLANES(a4),d1        // d1 <- destination plane count
         move.w  MF_WD_WRD(a4),d5
         add.w   d5,d5
@@ -250,19 +249,18 @@ dst_calc:
 #endif
 
 compare:
-#ifndef vme10
-        moveq.l #%10110,d3              // only 4,2, and 1 are valid (destination)
+#if vme10
+        moveq.l #0x16,d3                // only 4,2, and 1 are valid (destination)
         btst    d1,d3                   // 
         beq     bad_parameter           // 
 #else
-compare:
-        andi.w  #%0011,d1               // valid dest. plane count is 1,2, or 3
+        andi.w  #3,d1                   // valid dest. plane count is 1,2, or 3
         beq.w   bad_parameter           // for invalid dest. plane count
 #endif
 
         move.w  d1,PLANE_CT(a6)         // save the total plane count
 
-#ifndef vme10
+#if vme10
         add.w   d0,d0                   // for device dependent forms NXWD=2//planes
         move.w  d0,S_NXWD(a6)
         add.w   d1,d1
@@ -277,7 +275,7 @@ compare:
         andi.b  #0xfe,d7                        // force least significant bit to zero
         move.l  d7,D_FORM(a6)           // dest. form addr. is now word aligned
 
-#ifndef vme10
+#if vme10
         moveq.l #2,d4                   // d4 <- next plane offset (source)
         moveq.l #2,d5                   // d5 <- next plane offset (destination)
 #endif
@@ -289,7 +287,7 @@ compare:
 //  both 0's and 1's are specified in the INTIN array.
 //
 tran_blt_ops:
-#ifndef vme10
+#if vme10
         cmpi.w  #02,d0
 #else
         cmpi.w  #01,d0                  // is source area one plane?
@@ -375,15 +373,14 @@ standard_blt_ops:
         move.b  d2,OP_TAB+00(a6)        // fg:0 bg:0
 
 the_clipper:
-#ifndef vme10
+#if vme10
         move.w  d4,S_NXPL(a6)           // save inter plane value
         move.w  d5,D_NXPL(a6)
-//   stoke up the stack frame
-        move.l  _PTSIN,a2               // a2 -> PTSIN array
-#else
-//   stoke up the stack frame
-        move.l  _PTSIN,a2               // a2 -> PTSIN array
 #endif
+
+//   stoke up the stack frame
+        move.l  _PTSIN,a2               // a2 -> PTSIN array
+
         tst.w   _CLIP
         beq     dont_clip               // if clipping is disabled, skip the clip
 

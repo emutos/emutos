@@ -2,9 +2,7 @@
  * bitblt.S - 
  *
  * Copyright (c) 1999 Caldera, Inc.
- *
- * Authors:
- *  xxx <xxx@xxx>
+ *               2002 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -60,7 +58,7 @@
 
 //       FRAME PARAMETERS
 
-#define                 B_WD     -76    // width of block in pixels                         +00
+#define                 B_WD       -76  // width of block in pixels                         +00
 #define                 B_HT       -74  // height of block in pixels                        +02
 
 #define                 PLANE_CT   -72  // number of consequitive planes to blt             +04
@@ -72,7 +70,7 @@
 #define                 S_YMIN     -60  // minimum Y: source                                +16
 #define                 S_FORM     -58  // source form base address                         +18
 
-#ifndef vme10
+#if vme10
 #define                 S_NXWD     -54  // offset to next word in line  (in bytes)          +22
 #define                 S_NXLN     -52  // offset to next line in plane (in bytes)          +24
 #define                 S_NXPL     -50  // offset to next plane from start of current plane  +26
@@ -85,13 +83,11 @@
 #define                 D_YMIN     -46  // minimum Y: destination                           +30
 #define                 D_FORM     -44  // destination form base address                            +32
 
-#ifndef vme10
+#if vme10
 #define                 D_NXWD     -40  // offset to next word in line  (in bytes)          +36
 #define                 D_NXLN     -38  // offset to next line in plane (in bytes)          +38
 #define                 D_NXPL     -36  // offset to next plane from start of current plane  +40
-#endif
-
-#ifdef vme10
+#else
 #define                 D_NXLN     -40  // offset to next line in plane (in bytes)          +36
 #define                 D_NXPL     -38  // offset to next plane from start of current plane  +38
 #endif
@@ -112,11 +108,11 @@
 
 #define         D_ADDR   -14    // initial destination address                      +62
 #define         D_XMAX   -10    // maximum X: destination                           +66
-#define         D_YMAX   -08    // maximum Y: destination                           +68
+#define         D_YMAX   -8     // maximum Y: destination                           +68
 
-#define         INNER_CT -06    // blt inner loop initial count                     +70
-#define         DST_WR   -04    // destination form wrap (in bytes)                 +72
-#define         SRC_WR  -02     // source form wrap (in bytes)                      +74
+#define         INNER_CT -6     // blt inner loop initial count                     +70
+#define         DST_WR   -4     // destination form wrap (in bytes)                 +72
+#define         SRC_WR   -2     // source form wrap (in bytes)                      +74
 
 
 #define          FRAME_LEN      76
@@ -245,7 +241,7 @@ start_addr:
         move.w  S_YMIN(a6),d1
         bsr     s_xy2addr               // a0 -> start of block
 
-#ifndef vme10
+#if vme10
         mulu    S_NXWD(a6),d7           // d7 <- row width offset (source)
 #else
         asl.w   #1,d7                   // get source row width in bytes
@@ -258,7 +254,7 @@ start_addr:
         move.w  d1,P_INDX(a6)           // save destination Y for pattern index
         bsr     d_xy2addr               // a1 -> start of block
 
-#ifndef vme10
+#if vme10
         mulu    D_NXWD(a6),d6           // d6 <- row width offset (destination)
 #else
         asl.w   #1,d6                   // get destination row width in bytes
@@ -306,7 +302,7 @@ big_fringe:
 
         bsr     get_fringe
 
-#ifndef vme10
+#if vme10
         move.w  S_NXWD(a6),d2           // d2 <- source increment
         move.w  D_NXWD(a6),d3           // d3 <- destination increment
 #else
@@ -324,7 +320,7 @@ big_fringe:
 
         swap    d6
 
-#ifndef vme10
+#if vme10
         neg.w   d2
         neg.w   d3
 #else
@@ -436,7 +432,7 @@ next_plane:
         swap    d5
         move.w  INNER_CT(a6),d5         // d5(15:00) <- inner loop counter
 
-        move.l  #%1000010000100001,d1   // logic ops 15,10,5, and 0 are special cases
+        move.l  #0x8421,d1              // logic ops 15,10,5, and 0 are special cases ($8421=%1000010000100001)
         btst.l  d0,d1                   // where operation is performed directly upon
         bne     unary_blt               // the destination independent of the source
 
@@ -459,7 +455,7 @@ np_cont:
 
         move.l  S_ADDR(a6),a0           // a0 -> next source plane
 
-#ifndef vme10
+#if vme10
         add.w   S_NXPL(a6),a0
 #else
         add.l   S_NXPL(a6),a0
@@ -469,7 +465,7 @@ np_cont:
 
         move.l  D_ADDR(a6),a1           // a1 -> next destination plane
 
-#ifndef vme10
+#if vme10
         add.w   D_NXPL(a6),a1
 #else
         add.l   D_NXPL(a6),a1
@@ -488,7 +484,7 @@ np_cont:
 quit_blt:
         rts
 log_op:
-#ifndef rev_vid
+#if rev_vid
         dc.l    mode_00,mode_01,mode_02,mode_03,mode_04,mode_05,mode_06,mode_07
         dc.l    mode_08,mode_09,mode_10,mode_11,mode_12,mode_13,mode_14,mode_15
 #else
@@ -584,35 +580,35 @@ fr_r_mask:
 .page
 
 
-/***************************************************************************/
-////                                                                          ////
-////    s_xy2addr:                                                            ////
-////                                                                          ////
-////            input:  d0.w =  x coordinate.                                 ////
-////                    d1.w =  y coordinate.                                 ////
-////                    a6.l -> frame                                         ////
-////                                                                          ////
-////            output:                                                       ////
-////                    d3.w =  line wrap (in bytes)                          ////
-////                    a0.l -> address of word containing x,y                ////
-////                                                                          ////
-////                                                                          ////
-////    d_xy2addr:                                                            ////
-////                                                                          ////
-////            input:  d0.w =  x coordinate.                                 ////
-////                    d1.w =  y coordinate.                                 ////
-////                    a6.l -> frame                                         ////
-////                                                                          ////
-////            output:                                                       ////
-////                    d3.w =  line wrap (in bytes)                          ////
-////                    a1.l -> address of word containing x,y                ////
-////                                                                          ////
-////                                                                          ////
-////            physical offset =  (y//bytes_per_line) + (x/16)//word_offset    ////
-////                                                                          ////
-////            destroys: d0,d1                                               ////
-////                                                                          ////
-/***************************************************************************/
+/***************************************************************************
+ *
+ *      s_xy2addr:
+ *
+ *              input:  d0.w =  x coordinate.
+ *                      d1.w =  y coordinate.
+ *                      a6.l -> frame
+ *
+ *              output:
+ *                      d3.w =  line wrap (in bytes)
+ *                      a0.l -> address of word containing x,y
+ *
+ *
+ *      d_xy2addr:
+ *
+ *              input:  d0.w =  x coordinate.
+ *                      d1.w =  y coordinate.
+ *                      a6.l -> frame
+ *
+ *              output:
+ *                      d3.w =  line wrap (in bytes)
+ *                      a1.l -> address of word containing x,y
+ *
+ *
+ *              physical offset =  (y*bytes_per_line) + (x/16)*word_offset
+ *
+ *              destroys: d0,d1
+ *
+ ***************************************************************************/
 
 
 s_xy2addr:
@@ -620,7 +616,7 @@ s_xy2addr:
         move.l  S_FORM(a6),a0           // a0 -> start of source form (0,0)
         move.w  S_NXLN(a6),d3           // d3 <- inter line offset
 
-#ifndef vme10
+#if vme10
         lsr.w   #4,d0                   // d0 <- X word count
         mulu    S_NXWD(a6),d0           // d0 <- x portion of offset
 #else
@@ -631,7 +627,7 @@ s_xy2addr:
         mulu    d3,d1                   // d1 <- y portion of offset
         add.w   d0,d1                   // d1 <- byte offset into memory form
 
-#ifndef vme10
+#if vme10
         add.w   d1,a0                   // a0 -> word containing (x,y)
 #else
         adda.l  d1,a0                   // a0 -> word containing (x,y)
@@ -643,7 +639,7 @@ d_xy2addr:
         move.l  D_FORM(a6),a1           // a0 -> start of destination form (0,0)
         move.w  D_NXLN(a6),d3           // d3 <- inter line offset
 
-#ifndef vme10
+#if vme10
         lsr.w   #4,d0                   // d0 <- X word count
         mulu    D_NXWD(a6),d0           // d0 <- x portion of offset
 #else
@@ -653,7 +649,7 @@ d_xy2addr:
         mulu    d3,d1                   // d1 <- y portion of offset
         add.w   d0,d1                   // d1 <- byte offset into memory form
 
-#ifndef vme10
+#if vme10
         add.w   d1,a1                   // a1 -> word containing (x,y)
 #else
         adda.l  d1,a1                   // a1 -> word containing (x,y)
@@ -675,7 +671,7 @@ word_blt:
         subq.w  #2,d0                   // d0 <- inner loop counter (count-1)
         move.w  d0,INNER_CT(a6)         // save initial count
 
-#ifndef vme10
+#if vme10
         move.w  S_NXWD(a6),d5           // d5 <- next word increment (l2r src)
         mulu    d5,d4                   // d4 <- row width offset in bytes (src)
         move.w  D_NXWD(a6),d7           // d7 <- next word increment (l2r dest)
@@ -701,7 +697,7 @@ word_blt:
         cmp.l   a1,a0                   // which address is larger: source or dest
         bcc     l2r_t2b                 // select direction based on order of addresses
 
-#ifndef vme10
+#if vme10
         bcc     l2r_t2b                 // select direction based on order of addresses
 
 r2l_b2t:
@@ -902,7 +898,7 @@ r2l_1st_line:
 // 
 r2l_f1:
 
-        move.w  (a0),d0         // d0 <- 1st SOURCE word                                 8
+        move.w  (a0),d0         // d0 <- 1st SOURCE word                         8
         move.w  (a1),d1         // d1 <- 1st DESTINATION word                    8
         eor.w   d1,d0           //                                               4
         and.w   d6,d0           //                                               4
@@ -913,8 +909,8 @@ r2l_f1:
 //
 r2l_word_copy:
 
-        move.w  -(a0),-(a1)     // DEST <- SOURCE                               12
-        dbra    d5,r2l_word_copy                                           (10)/14
+        move.w  -(a0),-(a1)       // DEST <- SOURCE                             12
+        dbra    d5,r2l_word_copy  //                                       (10)/14
 //
 //  Apply the left fringe mask to the last source word and then copy to
 //  the last destination word.
@@ -960,7 +956,7 @@ l2r_1st_line:
 // 
 l2r_f1:
 
-        move.w  (a0)+,d0        // d0 <- 1st SOURCE word                                 8
+        move.w  (a0)+,d0        // d0 <- 1st SOURCE word                         8
         move.w  (a1),d1         // d1 <- 1st DESTINATION word                    8
         eor.w   d1,d0           //                                               4
         and.w   d2,d0           //                                               4
@@ -971,8 +967,8 @@ l2r_f1:
 //
 l2r_word_copy:
 
-        move.w  (a0)+,(a1)+     // DEST <- SOURCE                               12
-        dbra    d5,l2r_word_copy                                           (10)/14
+        move.w  (a0)+,(a1)+       // DEST <- SOURCE                             12
+        dbra    d5,l2r_word_copy  //                                       (10)/14
 //
 //  Apply the left fringe mask to the last source word and then copy to
 //  the last destination word.

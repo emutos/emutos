@@ -2,8 +2,8 @@
  * monout.c - Monochrome output functions
  *
  * Copyright (c) 1999 Caldera, Inc. and Authors:
- *
- *  SCC
+ *                    SCC
+ *               2002 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -18,11 +18,24 @@
 #define X_MALLOC 0x48
 #define X_MFREE 0x49
 
-EXTERN struct attribute *trap();
-EXTERN VOID dr_recfl();
+extern struct attribute *trap();
+extern void dr_recfl();
+
+/* Some prototypes to stop GCC complaining all the time... ;-) : */
+void do_arrow();
+void wline();
+void plygn();
+void pline();
+void gdp_rbox();
+void gdp_arc();
+void clc_nsteps();
+void gdp_ell();
+void clc_arc();
+
+
 
 /* EXTENDED INQUIRE */
-vq_extnd()
+void vq_extnd()
 {
         REG WORD i;
         REG WORD *dp, *sp;
@@ -62,7 +75,7 @@ vq_extnd()
 }
 
 /* CLOSE_WORKSTATION: */
-v_clswk()
+void v_clswk()
 {
         struct attribute *next_work;
 
@@ -78,7 +91,7 @@ v_clswk()
 }
 
 /* POLYLINE: */
-v_pline()
+void v_pline()
 {
         REG WORD l;
         REG struct attribute *work_ptr;
@@ -104,14 +117,14 @@ v_pline()
 
 /* POLYMARKER: */
 
-v_pmarker()
+void v_pmarker()
 {
 
 /* If this constant goes greater than 5, you must increase size of sav_points */
 
 #define MARKSEGMAX 5
 
-        EXTERN WORD m_dot[], m_plus[], m_star[], m_square[], m_cross[],
+        extern WORD m_dot[], m_plus[], m_star[], m_square[], m_cross[],
                 m_dmnd[];
 
         static WORD *markhead[] = {
@@ -119,7 +132,7 @@ v_pmarker()
         };
 
         WORD i, j, num_lines, num_vert, x_center, y_center, sav_points[10];
-        WORD sav_index, sav_color, sav_width, sav_beg, sav_end, sav_clip;
+        WORD sav_index, sav_color, sav_width, sav_beg, sav_end;
         WORD *mrk_ptr, *old_ptsin, scale, num_points, *src_ptr;
         REG WORD h, *pts_in, *m_ptr;
         REG struct attribute *work_ptr;
@@ -203,13 +216,13 @@ v_pmarker()
 
 /* FILLED_AREA: */
 
-v_fillarea()
+void v_fillarea()
 {
         plygn();
 }
 
 /*  GDP: */
-v_gdp()
+void v_gdp()
 {
         WORD i, ltmp_end, rtmp_end;
         REG WORD *xy_pointer;
@@ -299,7 +312,7 @@ v_gdp()
 }
 
 /* INQUIRE CURRENT POLYLINE ATTRIBUTES */
-vql_attr()
+void vql_attr()
 {
         REG WORD *pointer;
         REG struct attribute *work_ptr;
@@ -320,7 +333,7 @@ vql_attr()
 }
 
 /* INQUIRE CURRENT Polymarker ATTRIBUTES */
-vqm_attr()
+void vqm_attr()
 {
         REG WORD *pointer;
         REG struct attribute *work_ptr;
@@ -342,7 +355,7 @@ vqm_attr()
 }
 
 /* INQUIRE CURRENT Fill Area ATTRIBUTES */
-vqf_attr()
+void vqf_attr()
 {
         REG WORD *pointer;
         REG struct attribute *work_ptr;
@@ -358,30 +371,22 @@ vqf_attr()
         *(CONTRL + 4) = 5;
 }
 
-pline()
+
+WORD code(WORD x, WORD y)
 {
-        WORD i, *old_pointer;
-        REG WORD *pointer;
-
-        LSTLIN = TRUE;
-        old_pointer = PTSIN;
-        for (i = (*(CONTRL + 1) - 1); i > 0; i--) {
-                if (i == 1)
-                        LSTLIN = FALSE;
-
-                pointer = old_pointer;
-                X1 = *pointer++;
-                Y1 = *pointer++;
-                X2 = *pointer;
-                Y2 = *(pointer + 1);
-                old_pointer = pointer;
-                if (CLIP) {
-                        if (clip_line())
-                                ABLINE();
-                } else
-                        ABLINE();
-        }
+        WORD clip_flag;
+        clip_flag = 0;
+        if (x < XMN_CLIP)
+                clip_flag = 1;
+        else if (x > XMX_CLIP)
+                clip_flag = 2;
+        if (y < YMN_CLIP)
+                clip_flag += 4;
+        else if (y > YMX_CLIP)
+                clip_flag += 8;
+        return (clip_flag);
 }
+
 
 WORD clip_line()
 {
@@ -420,26 +425,36 @@ WORD clip_line()
         return (TRUE);                          /* segment now cliped  */
 }
 
-WORD code(x, y)
-WORD x, y;
+
+void pline()
 {
-        WORD clip_flag;
-        clip_flag = 0;
-        if (x < XMN_CLIP)
-                clip_flag = 1;
-        else if (x > XMX_CLIP)
-                clip_flag = 2;
-        if (y < YMN_CLIP)
-                clip_flag += 4;
-        else if (y > YMX_CLIP)
-                clip_flag += 8;
-        return (clip_flag);
+        WORD i, *old_pointer;
+        REG WORD *pointer;
+
+        LSTLIN = TRUE;
+        old_pointer = PTSIN;
+        for (i = (*(CONTRL + 1) - 1); i > 0; i--) {
+                if (i == 1)
+                        LSTLIN = FALSE;
+
+                pointer = old_pointer;
+                X1 = *pointer++;
+                Y1 = *pointer++;
+                X2 = *pointer;
+                Y2 = *(pointer + 1);
+                old_pointer = pointer;
+                if (CLIP) {
+                        if (clip_line())
+                                ABLINE();
+                } else
+                        ABLINE();
+        }
 }
 
-plygn()
+
+void plygn()
 {
-        REG WORD *pointer, i, k, cnt;
-        WORD j;
+        REG WORD *pointer, i, k;
 
         i = cur_work->fill_color;
         FG_BP_1 = (i & 1);
@@ -493,7 +508,8 @@ plygn()
         }
 }
 
-VOID gdp_rbox()
+
+void gdp_rbox()
 {
         REG WORD i, j;
         WORD rdeltax, rdeltay;
@@ -567,7 +583,7 @@ VOID gdp_rbox()
         if (*(pointer + 5) == 8) {
                 work_ptr = cur_work;
                 i = work_ptr->line_index;
-                LN_MASK = (i < 6) ? LINE_STYL[i] : work_ptr->ud_ls;
+                LN_MASK = (i < 6) ? LINE_STYLE[i] : work_ptr->ud_ls;
                 i = work_ptr->line_color;
                 FG_BP_1 = (i & 1);
                 FG_BP_2 = (i & 2);
@@ -584,7 +600,7 @@ VOID gdp_rbox()
         return;
 }
 
-VOID gdp_arc()
+void gdp_arc()
 {
         REG WORD *pointer;
 
@@ -609,7 +625,7 @@ VOID gdp_arc()
         return;
 }
 
-clc_nsteps()
+void clc_nsteps()
 {
         if (xrad > yrad)
                 n_steps = xrad;
@@ -625,7 +641,7 @@ clc_nsteps()
         return;
 }
 
-gdp_ell()
+void gdp_ell()
 {
         REG WORD *pointer;
 
@@ -651,7 +667,21 @@ gdp_ell()
         return;
 }
 
-VOID clc_arc()
+
+void Calc_pts(WORD j)
+{
+        WORD k;
+        REG WORD *pointer;
+
+        pointer = PTSIN;
+        k = SMUL_DIV(Icos(angle), xrad, 32767) + xc;
+        *(pointer + j) = k;
+        k = yc - SMUL_DIV(Isin(angle), yrad, 32767);    /* FOR RASTER CORDS. */
+        *(pointer + j + 1) = k;
+}
+
+
+void clc_arc()
 {
         WORD i, j;
         REG WORD *cntl_ptr, *xy_ptr;
@@ -697,22 +727,12 @@ VOID clc_arc()
                 plygn();
 }
 
-VOID Calc_pts(j)
-WORD j;
-{
-        WORD k;
-        REG WORD *pointer;
 
-        pointer = PTSIN;
-        k = SMUL_DIV(Icos(angle), xrad, 32767) + xc;
-        *(pointer + j) = k;
-        k = yc - SMUL_DIV(Isin(angle), yrad, 32767);    /* FOR RASTER CORDS. */
-        *(pointer + j + 1) = k;
-}
 
-st_fl_ptr()
+void st_fl_ptr()
 {
-        REG WORD fi, pm, *pp;
+        REG WORD fi, pm;
+        REG WORD *pp = NULL;
         REG struct attribute *work_ptr;
 
         work_ptr = cur_work;
@@ -756,10 +776,9 @@ st_fl_ptr()
 
 /* Moved the circle DDA code that was in vsl_width() here. */
 
-cir_dda()
+void cir_dda()
 {
-        WORD low, high, i, j;
-
+        WORD i, j;
         REG WORD *xptr, *yptr, x, y, d;
 
         /* Calculate the number of vertical pixels required. */
@@ -819,11 +838,11 @@ cir_dda()
 
 #define ABS(x) ((x) >= 0 ? (x) : -(x))
 
-wline()
+void wline()
 {
         WORD i, k, box[10];                     /* box two high to close polygon */
 
-        WORD numpts, wx1, wy1, wx2, wy2, vx, vy, tinv;
+        WORD numpts, wx1, wy1, wx2, wy2, vx, vy;
 
         WORD *old_ptsin, *src_ptr;
 
@@ -952,11 +971,10 @@ wline()
 }                                                               /* End "wline". */
 
 
-perp_off(px, py)
-WORD *px, *py;
+void perp_off(WORD *px, WORD *py)
 {
         REG WORD *vx, *vy, *pcircle, u, v;
-        WORD i, x, y, quad, magnitude, min_val, x_val, y_val;
+        WORD x, y, quad, magnitude, min_val, x_val, y_val;
 
         vx = px;
         vy = py;
@@ -981,7 +999,7 @@ WORD *px, *py;
         min_val = 32767;
         u = *pcircle;
         v = 0;
-        FOREVER {
+        while(TRUE) {
                 /* Check for new minimum, same minimum, or finished. */
                 if (((magnitude = ABS(u * y - v * x)) < min_val) ||
                         ((magnitude == min_val) && (ABS(x_val - y_val) > ABS(u - v)))) {
@@ -1018,8 +1036,7 @@ WORD *px, *py;
 }                                                               /* End "perp_off". */
 
 
-quad_xform(quad, x, y, tx, ty)
-int quad, x, y, *tx, *ty;
+void quad_xform(int quad, int x, int y, int *tx, int *ty)
 {
         switch (quad) {
         case 1:
@@ -1047,8 +1064,7 @@ int quad, x, y, *tx, *ty;
 }                                                               /* End "quad_xform". */
 
 
-do_circ(cx, cy)
-WORD cx, cy;
+void do_circ(WORD cx, WORD cy)
 {
         WORD k;
         REG WORD *pointer;
@@ -1091,7 +1107,7 @@ WORD cx, cy;
 }                                                               /* End "do_circ". */
 
 
-s_fa_attr()
+void s_fa_attr()
 {
         REG struct attribute *work_ptr;
 
@@ -1099,7 +1115,7 @@ s_fa_attr()
 
         work_ptr = cur_work;
 
-        LN_MASK = LINE_STYL[0];
+        LN_MASK = LINE_STYLE[0];
         s_fil_col = work_ptr->fill_color;
         work_ptr->fill_color = work_ptr->line_color;
         s_fill_per = work_ptr->fill_per;
@@ -1113,7 +1129,7 @@ s_fa_attr()
 }                                                               /* End "s_fa_attr". */
 
 
-r_fa_attr()
+void r_fa_attr()
 {
         REG struct attribute *work_ptr;
 
@@ -1127,7 +1143,7 @@ r_fa_attr()
         work_ptr->line_end = s_endsty;
 }                                                               /* End "r_fa_attr". */
 
-do_arrow()
+void do_arrow()
 {
         WORD x_start, y_start, new_x_start, new_y_start;
         REG WORD *pts_in;
@@ -1166,8 +1182,7 @@ do_arrow()
         r_fa_attr();
 }                                                               /* End "do_arrow". */
 
-arrow(xy, inc)
-WORD *xy, inc;
+void arrow(WORD *xy, WORD inc)
 {
         WORD arrow_len, arrow_wid, line_len;
         WORD *xybeg, sav_contrl, triangle[8];   /* triangle 2 high to close
@@ -1176,6 +1191,8 @@ WORD *xy, inc;
         WORD base_x, base_y, ht_x, ht_y;
         WORD *old_ptsin;
         REG WORD *ptr1, *ptr2, temp, i;
+
+        line_len = dx = dy = 0;
 
         /* Set up the arrow-head length and width as a function of line width. */
 
@@ -1272,7 +1289,7 @@ WORD *xy, inc;
         }                                                       /* End while. */
 }                                                               /* End "arrow". */
 
-init_wk()
+void init_wk()
 {
         REG WORD l;
         REG WORD *pointer, *src_ptr;
@@ -1349,7 +1366,7 @@ init_wk()
         work_ptr->scrpt2 = scrtsiz;
         work_ptr->scrtchp = deftxbuf;
 
-        work_ptr->num_fonts = ini_font_count;
+        work_ptr->num_fonts = font_count;
 
         work_ptr->style = 0;            /* reset special effects */
         work_ptr->scaled = FALSE;
@@ -1387,7 +1404,7 @@ init_wk()
         FLIP_Y = 1;
 }
 
-d_opnvwk()
+void d_opnvwk()
 {
         REG WORD handle;
         REG struct attribute *new_work, *work_ptr, *temp;
@@ -1431,7 +1448,7 @@ d_opnvwk()
         init_wk();
 }
 
-d_clsvwk()
+void d_clsvwk()
 {
         REG struct attribute *work_ptr;
         REG WORD handle;
@@ -1450,7 +1467,7 @@ d_clsvwk()
         trap(X_MFREE, cur_work);
 }
 
-dsf_udpat()
+void dsf_udpat()
 {
         REG WORD *sp, *dp, i, count;
         REG struct attribute *work_ptr;

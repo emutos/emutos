@@ -16,29 +16,33 @@
 #include "gsxdef.h"
 #include "gsxextrn.h"
 
-EXTERN WORD clip_line();
-EXTERN WORD MONO8XHT();
-EXTERN VOID TRNSFONT();
+extern WORD clip_line();
+extern WORD MONO8XHT();
+extern void TRNSFONT();
 
-EXTERN WORD XACC_DDA;                   /* accumulator for x DDA        */
-EXTERN WORD SOURCEX, SOURCEY;   /* upper left of character in font file */
-EXTERN WORD DESTX, DESTY;               /* upper left of destination on screen  */
-EXTERN WORD DELX, DELY;                 /* width and height of character    */
-EXTERN WORD *FBASE;                             /* pointer to font data         */
-EXTERN WORD FWIDTH;                             /* offset,segment and form with of font */
-EXTERN WORD LITEMASK, SKEWMASK; /* special effects          */
-EXTERN WORD WEIGHT;                             /* special effects          */
-EXTERN WORD R_OFF, L_OFF;               /* skew above and below baseline    */
-EXTERN WORD TEXT_FG;
-EXTERN WORD width, height;              /* extent of string set in dqt_extent   */
-EXTERN WORD wordx, wordy;               /* add this to each space for interword */
-EXTERN WORD rmword;                             /* the number of pixels left over   */
-EXTERN WORD rmwordx, rmwordy;   /* add this to use up remainder     */
-EXTERN WORD charx, chary;               /* add this to each char for interchar  */
-EXTERN WORD rmchar;                             /* number of pixels left over       */
-EXTERN WORD rmcharx, rmchary;   /* add this to use up remainder     */
+extern WORD XACC_DDA;                   /* accumulator for x DDA        */
+extern WORD SOURCEX, SOURCEY;   /* upper left of character in font file */
+extern WORD DESTX, DESTY;               /* upper left of destination on screen  */
+extern WORD DELX, DELY;                 /* width and height of character    */
+extern WORD *FBASE;                             /* pointer to font data         */
+extern WORD FWIDTH;                             /* offset,segment and form with of font */
+extern WORD LITEMASK, SKEWMASK; /* special effects          */
+extern WORD WEIGHT;                             /* special effects          */
+extern WORD R_OFF, L_OFF;               /* skew above and below baseline    */
+extern WORD TEXT_FG;
+extern WORD width, height;              /* extent of string set in dqt_extent   */
+extern WORD wordx, wordy;               /* add this to each space for interword */
+extern WORD rmword;                             /* the number of pixels left over   */
+extern WORD rmwordx, rmwordy;   /* add this to use up remainder     */
+extern WORD charx, chary;               /* add this to each char for interchar  */
+extern WORD rmchar;                             /* number of pixels left over       */
+extern WORD rmcharx, rmchary;   /* add this to use up remainder     */
 
-d_gtext()
+
+extern struct font_head f6x6;  /* See bios/fnt6x6.c */
+
+
+void d_gtext()
 {
         WORD monotest;
         WORD count;
@@ -65,13 +69,13 @@ d_gtext()
                 else
                         monotest = STYLE;
 
-                if (STYLE & THICKEN)
+                if (STYLE & F_THICKEN)
                         WEIGHT = fnt_ptr->thicken;
 
-                if (STYLE & LIGHT)
+                if (STYLE & F_LIGHT)
                         LITEMASK = fnt_ptr->lighten;
 
-                if (STYLE & SKEW) {
+                if (STYLE & F_SKEW) {
                         L_OFF = fnt_ptr->left_offset;
                         R_OFF = fnt_ptr->right_offset;
                         SKEWMASK = fnt_ptr->skew;
@@ -110,7 +114,7 @@ d_gtext()
                         break;
                 }
 
-                if (STYLE & SKEW) {
+                if (STYLE & F_SKEW) {
                         d1 = fnt_ptr->left_offset;
                         d2 = fnt_ptr->right_offset;
                 } else {
@@ -182,8 +186,8 @@ d_gtext()
 
                 DELY = fnt_ptr->form_height;
 
-                if (!((!DOUBLE) && (monotest == 0) && (MONOSPACE & fnt_ptr->flags)
-                          && (fnt_ptr->max_cell_sidth == 8) && MONO8XHT())) {
+                if (!((!DOUBLE) && (monotest == 0) && (F_MONOSPACE & fnt_ptr->flags)
+                          && (fnt_ptr->max_cell_width == 8) && MONO8XHT())) {
                         XACC_DDA = 32767;       /* init the horizontal dda */
 
                         for (j = 0; j < count; j++) {
@@ -227,12 +231,12 @@ d_gtext()
                                         }
                                 }
                                 /* end if justified */
-                                if (fnt_ptr->flags & HORZ_OFF)
+                                if (fnt_ptr->flags & F_HORZ_OFF)
                                         DESTX += fnt_ptr->hor_table[temp];
 
                         }                                       /* for j */
 
-                        if (STYLE & UNDER) {
+                        if (STYLE & F_UNDER) {
                                 X1 = startx;
                                 Y1 = starty;
 
@@ -243,7 +247,7 @@ d_gtext()
                                         X2 = X1;
                                         Y2 = DESTY;
                                 }
-                                if (STYLE & LIGHT)
+                                if (STYLE & F_LIGHT)
                                         LN_MASK = cur_font->lighten;
                                 else
                                         LN_MASK = 0xffff;
@@ -287,7 +291,8 @@ d_gtext()
         }                                                       /* if CONTRL[3] */
 }
 
-text_init()
+
+void text_init()
 {
         WORD i, j;
         WORD id_save;
@@ -301,18 +306,18 @@ text_init()
         /* Initialize the font ring.  font_ring[1] is setup before entering here */
         /* since it contains the font which varies with the screen resolution.   */
 
-        font_ring[0] = &first;
+        font_ring[0] = &f6x6;
         font_ring[2] = NULLPTR;
         font_ring[3] = NULLPTR;
 
-        id_save = first.font_id;
+        id_save = f6x6.font_id;
 
         chain_ptr = font_ring;
         i = 0;
         j = 0;
         while ((fnt_ptr = *chain_ptr++)) {
                 do {
-                        if (fnt_ptr->flags & DEFAULT)   /* If default save pointer */
+                        if (fnt_ptr->flags & F_DEFAULT)   /* If default save pointer */
                                 def_font = fnt_ptr;
 
                         if (fnt_ptr->font_id != id_save) {      /* If new font count */
@@ -336,7 +341,7 @@ text_init()
                                 i++;                    /* Increment count of heights */
                         }
                         /* end if system font */
-                        if (!(fnt_ptr->flags & STDFORM)) {
+                        if (!(fnt_ptr->flags & F_STDFORM)) {
                                 FBASE = fnt_ptr->dat_table;
                                 FWIDTH = fnt_ptr->form_width;
                                 DELY = fnt_ptr->form_height;
@@ -347,12 +352,12 @@ text_init()
         }
 
         DEV_TAB[5] = i;                         /* number of sizes */
-        ini_font_count = DEV_TAB[10] = ++j;     /* number of faces */
+        font_count = DEV_TAB[10] = ++j;         /* number of faces */
 
         cur_font = def_font;
 }
 
-dst_height()
+void dst_height()
 {
         struct font_head **chain_ptr;
         REG struct font_head *test_font, *single_font;
@@ -414,8 +419,8 @@ dst_height()
         FLIP_Y = 1;
 }
 
-VOID copy_name(source, dest)
-BYTE *source, *dest;
+
+void  copy_name(BYTE *source, BYTE *dest)
 {
         REG WORD i;
         REG BYTE *sptr, *dptr;
@@ -427,7 +432,8 @@ BYTE *source, *dest;
                 *dptr++ = *sptr++;
 }
 
-VOID make_header()
+
+void make_header()
 {
         REG struct attribute *work_ptr;
         REG struct font_head *source_font, *dest_font;
@@ -485,7 +491,8 @@ VOID make_header()
         work_ptr->cur_font = cur_font = dest_font;
 }
 
-dst_point()
+
+void dst_point()
 {
         WORD font_id;
         struct font_head **chain_ptr, *double_font;
@@ -557,15 +564,17 @@ dst_point()
         FLIP_Y = 1;
 }
 
-dst_style()
+
+void dst_style()
 {
         INTOUT[0] = cur_work->style = INTIN[0] & INQ_TAB[2];
         CONTRL[4] = 1;
 }
 
-dst_alignment()
+
+void dst_alignment()
 {
-        REG WORD a, h, *int_out, *int_in;
+        REG WORD a, *int_out, *int_in;
         REG struct attribute *work_ptr;
 
         work_ptr = cur_work;
@@ -584,13 +593,15 @@ dst_alignment()
         CONTRL[4] = 2;
 }
 
-dst_rotation()
+
+void dst_rotation()
 {
         INTOUT[0] = cur_work->chup = ((INTIN[0] + 450) / 900) * 900;
         CONTRL[4] = 1;
 }
 
-dst_font()
+
+void dst_font()
 {
         WORD *old_intin, point, *old_ptsout, dummy[4], *old_ptsin;
         REG WORD face;
@@ -613,7 +624,7 @@ dst_font()
         /* If we fell through the loop, we could not find the face. */
         /* Default to the system font.                  */
 
-        test_font = &first;
+        test_font = &f6x6;
 
   find_height:
 
@@ -641,7 +652,8 @@ dst_font()
         INTOUT[0] = cur_font->font_id;
 }
 
-dst_color()
+
+void dst_color()
 {
         REG WORD r;
 
@@ -653,7 +665,8 @@ dst_color()
         cur_work->text_color = MAP_COL[r];
 }
 
-dqt_attributes()
+
+void dqt_attributes()
 {
         REG WORD *pointer, temp;
         REG struct font_head *fnt_ptr;
@@ -682,7 +695,8 @@ dqt_attributes()
         FLIP_Y = 1;
 }
 
-dqt_extent()
+
+void dqt_extent()
 {
         REG WORD i, chr, table_start;
         REG WORD *pointer;
@@ -701,16 +715,18 @@ dqt_extent()
                 chr = *pointer++ - table_start;
                 width += fnt_ptr->off_table[chr + 1] - fnt_ptr->off_table[chr];
         }
-        if (DOUBLE)
+
+        if (DOUBLE) {
                 if (DDA_INC == 0xFFFF)
                         width *= 2;
                 else
                         width = ACT_SIZ(width);
+        }
 
-        if ((STYLE & THICKEN) && !(fnt_ptr->flags & MONOSPACE))
+        if ((STYLE & F_THICKEN) && !(fnt_ptr->flags & F_MONOSPACE))
                 width += cnt * fnt_ptr->thicken;
 
-        if (STYLE & SKEW)
+        if (STYLE & F_SKEW)
                 width += fnt_ptr->left_offset + fnt_ptr->right_offset;
 
         height = fnt_ptr->top + fnt_ptr->bottom + 1;
@@ -763,7 +779,8 @@ dqt_extent()
         FLIP_Y = 1;
 }
 
-dqt_width()
+
+void dqt_width()
 {
         REG WORD k;
         REG WORD *pointer;
@@ -784,13 +801,14 @@ dqt_width()
                 INTOUT[0] = k;
                 k -= fnt_ptr->first_ade;
                 *(pointer) = fnt_ptr->off_table[k + 1] - fnt_ptr->off_table[k];
-                if (DOUBLE)
+                if (DOUBLE) {
                         if (DDA_INC == 0xFFFF)
                                 *pointer *= 2;
                         else
                                 *pointer = ACT_SIZ(*pointer);
+                }
 
-                if (fnt_ptr->flags & HORZ_OFF) {
+                if (fnt_ptr->flags & F_HORZ_OFF) {
                         *(pointer + 2) = fnt_ptr->hor_table[k * 2];
                         *(pointer + 4) = fnt_ptr->hor_table[(k * 2) + 1];
                 }
@@ -802,7 +820,8 @@ dqt_width()
         FLIP_Y = 1;
 }
 
-dqt_name()
+
+void dqt_name()
 {
         REG WORD i, element;
         REG BYTE *name;
@@ -829,7 +848,7 @@ dqt_name()
 
         /* The element is out of bounds use the system font */
 
-        tmp_font = &first;
+        tmp_font = &f6x6;
 
   found_element:
 
@@ -844,7 +863,8 @@ dqt_name()
 
 }
 
-dqt_fontinfo()
+
+void dqt_fontinfo()
 {
         REG WORD *pointer;
         REG struct font_head *fnt_ptr;
@@ -859,14 +879,14 @@ dqt_fontinfo()
         *pointer++ = fnt_ptr->max_cell_width;
         *pointer++ = fnt_ptr->bottom;
 
-        if (STYLE & THICKEN)
+        if (STYLE & F_THICKEN)
                 *pointer++ = fnt_ptr->thicken;
         else
                 *pointer++ = 0;
 
         *pointer++ = fnt_ptr->descent;
 
-        if (STYLE & SKEW) {
+        if (STYLE & F_SKEW) {
                 *pointer++ = fnt_ptr->left_offset;
                 *pointer++ = fnt_ptr->half;
                 *pointer++ = fnt_ptr->right_offset;
@@ -886,7 +906,8 @@ dqt_fontinfo()
         FLIP_Y = 1;
 }
 
-d_justified()
+
+void d_justified()
 {
         WORD spaces;
         WORD expand, sav_cnt;
@@ -1022,7 +1043,8 @@ d_justified()
         INTIN = old_intin;
 }
 
-dt_loadfont()
+
+void dt_loadfont()
 {
         REG WORD id, count, *control;
 
@@ -1070,12 +1092,12 @@ dt_loadfont()
 
                 /* Make sure the font is in device specific format. */
 
-                if (!(first_font->flags & STDFORM)) {
+                if (!(first_font->flags & F_STDFORM)) {
                         FBASE = first_font->dat_table;
                         FWIDTH = first_font->form_width;
                         DELY = first_font->form_height;
                         TRNSFONT();
-                        first_font->flags ^= STDFORM;
+                        first_font->flags ^= F_STDFORM;
                 }
         } while (first_font = first_font->next_font);
 
@@ -1085,7 +1107,8 @@ dt_loadfont()
         INTOUT[0] = count;
 }
 
-dt_unloadfont()
+
+void dt_unloadfont()
 {
         REG struct attribute *work_ptr;
 
@@ -1097,6 +1120,6 @@ dt_unloadfont()
         work_ptr->scrpt2 = scrtsiz;     /* Reset pointers to default buffers */
         work_ptr->scrtchp = deftxbuf;
 
-        work_ptr->num_fonts = ini_font_count;   /* Reset font count to
+        work_ptr->num_fonts = font_count;       /* Reset font count to
                                                                                            default */
 }

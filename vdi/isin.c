@@ -1,7 +1,8 @@
 /*
  * isin.c - Sine and cosinus functions
  *
- * Copyright (c) 1999 Caldera, Inc. and Authors:
+ * Copyright (c) 1999 Caldera, Inc.
+ *               2002 The EmuTOS development team
  *
  *
  *
@@ -24,7 +25,7 @@
 /*----------------------------------------------------------------------*/
 /* Sines of angles 1 - 90 degrees normalized between 0-32767.           */
 
-MLOCAL WORD sin_tbl[92] = {
+static WORD sin_tbl[92] = {
         0, 572, 1144, 1716, 2286, 2856, 3425, 3993,
         4560, 5126, 5690, 6252, 6813, 7371, 7927, 8481,
         9032, 9580, 10126, 10668, 11207, 11743, 12275, 12803,
@@ -42,8 +43,7 @@ MLOCAL WORD sin_tbl[92] = {
 /* Returns integer sin between -32767 - 32767. Uses integer             */
 /* lookup table sintable^[]. Expects angle in tenths of degree 0 - 3600. */
 /* Assumes positive angles only.                                        */
-WORD Isin(angle)
-WORD angle;
+WORD Isin(WORD angle)
 {
         WORD direction;                         /* when checking quadrants, must keep   */
         /* track of direction in array.     */
@@ -86,8 +86,7 @@ WORD angle;
 
 /*----------------------------------------------------------------------*/
 /* return integer cos between -32767 and 32767.                         */
-WORD Icos(angle)
-WORD angle;
+WORD Icos(WORD angle)
 {
         angle = angle + HALFPI;
         if (angle > TWOPI)

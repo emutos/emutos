@@ -2,9 +2,7 @@
  * bltfrag.S -
  *
  * Copyright (c) 1999 Caldera, Inc.
- *
- * Authors:
- *  xxx <xxx@xxx>
+ *               2002 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -14,7 +12,6 @@
 
 #include "vdiconf.h"
 
-//           // a pattern to the source
 
 #define    SRC_WR            -2
 #define    DST_WR            -4
@@ -123,9 +120,9 @@ f0_right:
 
 .page
 
-//////                         //////
+//////                            //////
 //////   FIRST FRINGE FRAGMENTS   ////// 
-//////                         //////
+//////                            //////
 
 
 //      move from right to left.
@@ -136,7 +133,7 @@ f0_right:
 f1_r2l_rt:
 
         move.w  (a0),d0         // d0 <- SOURCE 1st word                                 8
-#ifndef vme10
+#if vme10
         adda.w  d2,a0           // a0 -> SOURCE 2nd word                                 8
 #endif
         swap    d0              // d0(31:16) <- 1st SRC word                     4
@@ -148,7 +145,7 @@ f1_r2l_rt:
 //      shift right to achieve a net left shift.
 f0_r2l_rt:
 
-#ifndef vme10
+#if vme10
         move.w  (a0),d0         // d0(31:16) <- most recent SOURCE word          8
 #else
         move.w  -(a0),d0        // d0(31:16) <- most recent SOURCE word          8
@@ -172,7 +169,7 @@ f0_r2l_rt:
 f1_r2l_lf:
 
         move.w  (a0),d0         // d0 <- 1st SOURCE word                                 8
-#ifndef vme10
+#if vme10
         adda.w  d2,a0           // a0 -> 2nd SOURCE word                                 8
 #endif
         swap    d0              // d0(31:16) <- SRC word                                 4
@@ -183,7 +180,7 @@ f1_r2l_lf:
 //      store 1 Destination fringe.
 //      rotate left.
 f0_r2l_lf:
-#ifndef vme10
+#if vme10
 
         move.w  (a0),d0         // d0(15:00) <- SRC wrd                          8
 #else
@@ -214,7 +211,7 @@ f1_l2r_rt:
 //      rotate right.
 f0_l2r_rt:
 
-#ifndef vme10
+#if vme10
         move.w  (a0),d0         // d0(15:00) <- SRC 2nd word (new)               8
 #else
         move.w  (a0)+,d0        // d0(15:00) <- SRC 2nd word (new)               8
@@ -234,7 +231,7 @@ f0_l2r_rt:
 //      shift left.
 f1_l2r_lf:
 
-#ifndef vme10
+#if vme10
         move.w  (a0),d0         // d0 <- SOURCE 1st word                                 8
         adda.w  d2,a0           // a0 -> SOURCE 2nd word                                 8
 #else
@@ -249,7 +246,7 @@ f1_l2r_lf:
 //      shift left to achieve a net right shift.
 f0_l2r_lf:
 
-#ifndef vme10
+#if vme10
         move.w  (a0),d0         // d0(31:16) <- SOURCE 2nd word (new)            8
 #else     
         move.w  (a0)+,d0        // d0(31:16) <- SOURCE 2nd word (new)            8
@@ -266,12 +263,12 @@ f0_l2r_lf:
 
 .page
 
-//////                       //////
+//////                          //////
 //////   INNER LOOP FRAGMENTS   //////
-//////                       //////
+//////                          //////
 i1_r2l_rt:
 
-#ifndef vme10
+#if vme10
         adda.w  d2,a0           // a0 -> new SOURCE word                                 8
         adda.w  d3,a1           // a1 -> new DESTINATION word                    8
         move.l  d1,d0           // d0(31:16) <- old SOURCE word                  4
@@ -291,7 +288,7 @@ i1_r2l_rt:
 
 i1_r2l_lf:
 
-#ifndef vme10
+#if vme10
         adda.w  d2,a0           // a0 -> new SOURCE word                                 8
         adda.w  d3,a1           // a1 -> new DESTINATION word                    8
         move.l  d1,d0           // d0(31:16) <- old SOURCE word                  4
@@ -311,7 +308,7 @@ i1_r2l_lf:
 
 i1_l2r_rt:
 
-#ifndef vme10
+#if vme10
         adda.w  d2,a0           // a0 -> new SOURCE word                                 8
         adda.w  d3,a1           // a1 -> new DESTINATION word                    8
 
@@ -333,7 +330,7 @@ i1_l2r_rt:
 
 i1_l2r_lf:
 
-#ifndef vme10
+#if vme10
         adda.w  d2,a0           // a0 -> new SOURCE word                                 8
         adda.w  d3,a1           // a1 -> new DESTINATION word                    8
 
@@ -357,14 +354,14 @@ i1_l2r_lf:
 
 .page
 
-//////                                                       //////
+//////                                                          //////
 //////   INNER LOOP COUNTER and SECOND FRINGE REQUIRING FETCH   //////
-//////                                                       //////
+//////                                                          //////
 
 f2_r2l_rt:
 
         dbra    d5,i1_r2l_rt    // do another INNER LOOP cycle             (10)/14
-#ifndef vme10
+#if vme10
         adda.w  d2,a0           // a0 -> last SOURCE word                        8
 
         move.l  d1,d0           // d0(31:16) <- next to last SOURCE word                 4
@@ -382,7 +379,7 @@ f2_r2l_rt:
 f2_r2l_lf:
 
         dbra    d5,i1_r2l_lf    // do another INNER LOOP cycle             (10)/14
-#ifndef vme10
+#if vme10
         adda.w  d2,a0           // a0 -> new SOURCE word                                 8
 
         move.l  d1,d0           // d0(31:16) <- next to last SOURCE word                 4
@@ -401,7 +398,7 @@ f2_l2r_rt:
 
         dbra    d5,i1_l2r_rt    // do another INNER LOOP cycle             (10)/14
 
-#ifndef vme10
+#if vme10
         adda.w  d2,a0           // a0 -> new SOURCE word                                 8
 #endif
 
@@ -418,7 +415,7 @@ f2_l2r_lf:
 
         dbra    d5,i1_l2r_lf    // do another INNER LOOP cycle             (10)/14
 
-#ifndef vme10
+#if vme10
         adda.w  d2,a0           // a0 -> new SOURCE word                                 8
 #endif
 
@@ -433,9 +430,9 @@ f2_l2r_lf:
 
 .page
 
-//////                                                       //////
+//////                                                          //////
 //////   INNER LOOP COUNTER and SECOND FRINGE REQUIRING FLUSH   //////
-//////                                                       //////
+//////                                                          //////
 
 fl_r2l_rt:
 
@@ -450,7 +447,7 @@ fl_r2l_lf:
 fl_l2r_rt:
 
         dbra    d5,i1_l2r_rt    // do another INNER LOOP cycle             (10)/14
-#ifdef vme10
+#if !vme10
         subq.w  #2,a0           // correct for last postincrement
 #endif
         bra     f2_flush        //                                              10
@@ -458,7 +455,7 @@ fl_l2r_rt:
 fl_l2r_lf:
 
         dbra    d5,i1_l2r_lf    // do another INNER LOOP cycle             (10)/14
-#ifdef vme10
+#if !vme10
         subq.w  #2,a0           // correct for last postincrement
 #endif
 ////////        bra     f2_flush        // fall through to f2_flush                     10
@@ -468,9 +465,9 @@ fl_l2r_lf:
 
 .page
 
-//////                                      //////
+//////                                         //////
 //////   FINAL FRINGE OUTPUT and ROW CONTROL   //////
-//////                                      //////
+//////                                         //////
 
 f2_flush:
 
@@ -940,4 +937,4 @@ f2op_15:
 
 
 
-        end
+        .end

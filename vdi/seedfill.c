@@ -22,32 +22,32 @@
 #define QSIZE 200
 #define QMAX QSIZE-1
 
-EXTERN WORD seed_type;                  /* indicates the type of fill   */
-EXTERN WORD search_color;               /* the color of the border      */
-EXTERN WORD Q[QSIZE];                   /* storage for the seed points  */
-EXTERN WORD Qbottom;                    /* the bottom of the Q (zero)   */
-EXTERN WORD Qtop;                               /* points top seed +3           */
-EXTERN WORD Qptr;                               /* points to the active point   */
-EXTERN WORD Qtmp;                               /* */
-EXTERN WORD Qhole;                              /* an empty space in the Q      */
-EXTERN WORD oldy;                               /* the previous scan line       */
-EXTERN WORD oldxleft;                   /* left end of line at oldy     */
-EXTERN WORD oldxright;                  /* right end                    */
-EXTERN WORD newxleft;                   /* ends of line at oldy +       */
-EXTERN WORD newxright;                  /* the current direction    */
-EXTERN WORD xleft;                              /* temporary endpoints          */
-EXTERN WORD xright;                             /* */
-EXTERN WORD direction;                  /* is next scan line up or down */
-EXTERN BOOLEAN notdone;                 /* does seedpoint==search_color */
-EXTERN BOOLEAN gotseed;                 /* a seed was put in the Q      */
+extern WORD seed_type;                  /* indicates the type of fill   */
+extern WORD search_color;               /* the color of the border      */
+extern WORD Q[QSIZE];                   /* storage for the seed points  */
+extern WORD Qbottom;                    /* the bottom of the Q (zero)   */
+extern WORD Qtop;                               /* points top seed +3           */
+extern WORD Qptr;                               /* points to the active point   */
+extern WORD Qtmp;                               /* */
+extern WORD Qhole;                              /* an empty space in the Q      */
+extern WORD oldy;                               /* the previous scan line       */
+extern WORD oldxleft;                   /* left end of line at oldy     */
+extern WORD oldxright;                  /* right end                    */
+extern WORD newxleft;                   /* ends of line at oldy +       */
+extern WORD newxright;                  /* the current direction    */
+extern WORD xleft;                              /* temporary endpoints          */
+extern WORD xright;                             /* */
+extern WORD direction;                  /* is next scan line up or down */
+extern BOOLEAN notdone;                 /* does seedpoint==search_color */
+extern BOOLEAN gotseed;                 /* a seed was put in the Q      */
 
 extern WORD get_pix();
 
-d_contourfill()
+void d_contourfill()
 {
         REG WORD fc;
 
-        EXTERN WORD plane_mask[];
+        extern WORD plane_mask[];
 
         xleft = PTSIN[0];
         oldy = PTSIN[1];
@@ -141,7 +141,7 @@ d_contourfill()
 }                                                               /* end of fill() */
 
 
-VOID crunch_Q()
+void crunch_Q()
 {                                                               /* move Qtop down to remove unused seeds */
         while ((Q[Qtop - 3] == EMPTY) && (Qtop > Qbottom))
                 Qtop -= 3;
@@ -190,7 +190,7 @@ WORD *xleftout, *xrightout;
                 return (0);                             /* we didnt put a seed in the Q */
 }                                                               /* get_seed */
 
-v_get_pixel()
+void v_get_pixel()
 {
         REG WORD pel;
         REG WORD *int_out;

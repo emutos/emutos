@@ -30,7 +30,7 @@
 //                                                                      //
 /////////////////////////////////////////////////////////////////////////
 
-        .globl  _MONO8XH
+        .globl  _MONO8XHT
 
         .page
 /////////////////////////////////////////////////////////////////////////
@@ -44,12 +44,12 @@
         .xdef   _DELY           // character height in scans
         .xdef   _FBASE          // base address of the font definition
         .xdef   _FWIDTH         // width of the font definition
-        .xdef   _WRT_MOD        // writing mode flag
+        .xdef   _WRT_MODE       // writing mode flag
         .xdef   _CLIP           // clipping enabled/disabled flag
-        .xdef   _XMN_CLI        // x-coord of upper left corner of clip rect
-        .xdef   _XMX_CLI        // y-coord of upper left corner of clip rect
-        .xdef   _YMN_CLI        // x-coord of lower right corner of clip rect
-        .xdef   _YMX_CLI        // y-coord of lower right corner of clip rect
+        .xdef   _XMN_CLIP       // x-coord of upper left corner of clip rect
+        .xdef   _XMX_CLIP       // y-coord of upper left corner of clip rect
+        .xdef   _YMN_CLIP       // x-coord of lower right corner of clip rect
+        .xdef   _YMX_CLIP       // y-coord of lower right corner of clip rect
         .xdef   _INTIN          // base address of INTIN array
         .xdef   _CONTRL         // base address of CONTRL array
         .xdef   _v_bas_ad       // base address of screen
@@ -83,7 +83,7 @@
         .page
 /////////////////////////////////////////////////////////////////////////
 //                                                                      //
-//      _MONO8XH                                                        //
+//      _MONO8XHT                                                       //
 //                                                                      //
 //      This routine performs text blt's on mono-spaced, 8-bit          //
 //      wide fonts.  They can be arbitrarily tall.  This blt is         //
@@ -100,7 +100,7 @@
 //                                corner of clipping rectangle          //
 //         _FBASE - base address of font definition                     //
 //         _FWIDTH - width of font definition                           //
-//         _WRT_MOD - current writing mode                              //
+//         _WRT_MODE- current writing mode                              //
 //         _TEXT_FG - text foreground color                             //
 //         _v_bas_ad - base address of first video page                 //
 //         _v_lin_wr - # of bytes in a single scan line                 //
@@ -126,7 +126,7 @@
 //      blt can not be used.  The function will need to be performed by
 //      the general case text blt.
 //
-_MONO8XH:
+_MONO8XHT:
         movem.l d3-d7/a3-a6,-(a7)       // save registers used by C
         move.w  _DESTX,d0       // get x-coordinate of destination
         move.w  d0,d2           // get a temporary copy
@@ -153,18 +153,18 @@ _MONO8XH:
         move.w  _DELY,d3        // get character cell height
         tst.w   _CLIP           // is clipping enabled?
         beq     no_clip         // nope - don't need to worry about clipping
-        cmp.w   _YMN_CLI,d1     // top bound of clipping rectangle exceeded?
+        cmp.w   _YMN_CLIP,d1    // top bound of clipping rectangle exceeded?
         blt     blt_fail        // yes - use general case text blt
         move.w  d1,d4           // get temp copy of top of text rectangle
         add.w   d3,d4           // compute bottom row + 1
-        cmp.w   _YMX_CLI,d4     // bottom bound of clipping rectangle exceeded?
+        cmp.w   _YMX_CLIP,d4    // bottom bound of clipping rectangle exceeded?
         bge     blt_fail        // yes - use general case text blt
-        cmp.w   _XMN_CLI,d0     // left bound of clipping rectangle exceeded?
+        cmp.w   _XMN_CLIP,d0    // left bound of clipping rectangle exceeded?
         blt     blt_fail        // yes - use general case text blt
         move.w  d2,d4           // get # of characters in string
         lsl.w   #3,d4           // convert to # of pixels
         add.w   d0,d4           // compute right pixel column + 1
-        cmp.w   _XMX_CLI,d4     // right bound of clipping rectangle exceeded?
+        cmp.w   _XMX_CLIP,d4    // right bound of clipping rectangle exceeded?
         bge     blt_fail        // yes - use general case text blt
 
 //
@@ -227,7 +227,7 @@ mplan_lp:
         movea.l a2,a6           // get starting address for this plane
         move.w  d3,d5           // get scan loop counter
         movea.l a1,a4           // get base address of font definition
-        move.w  _WRT_MOD,d7     // get the writing mode
+        move.w  _WRT_MODE,d7    // get the writing mode
         asl.w   #1,d7           // convert it to a word offset
         ror.w   #1,d1           // get next foreground bit plane flag
         bcc.b   bit_clr         // write plane with 0's

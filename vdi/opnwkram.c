@@ -15,12 +15,12 @@
 #include "gsxdef.h"
 #include "gsxextrn.h"
 
-extern struct font_head second;
+extern struct font_head f8x16;
 
 /* OPEN_WORKSTATION: */
-VOID v_opnwk()
+void v_opnwk()
 {
-        font_ring[1] = &second;
+        font_ring[1] = &f8x16;
 
         cur_work = &virt_work;
         CONTRL[6] = virt_work.handle = 1;

@@ -133,6 +133,7 @@ s_physcl_dev:
         lsr.w   #1,d3                   //get # of words in raster line
         move.w  _DEV_TAB+2,d4           //get # of raster lines per plane - 1
         addq.w  #1,d4                   //get # of raster lines per plane
+//FIXME: The following line needs a patch
         move.l  #v_pl_dspl,d5           //get # of bytes between video planes
 //
 //  Determine if destination is a physical device or a raster area
@@ -153,6 +154,7 @@ dest_form:
 //
 d_physcl_dev:
         movea.l _v_bas_ad,a3            //get screen starting adress
+//FIXME: The following line needs a patch
         move.l  #v_pl_dspl,d6           //get # of bytes between video planes
 //
 //  Calculate the size of the source plane in words

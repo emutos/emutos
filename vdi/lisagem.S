@@ -1,17 +1,15 @@
 /*
  * lisagem.S - 
  *
- * Copyright (c) 1999 Caldera, Inc. and Authors:
- *
- *
+ * Copyright (c) 1999 Caldera, Inc.
+ *               2002 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
  */
 
-
-
 #include "vdiconf.h"
+
 
                 .globl  _CLEARMEM       // globl routines declared here
                 .globl  _DINIT_G
@@ -48,22 +46,13 @@
                 .xdef   _Y1
                 .xdef   arrow_cdb
                 .xdef   cur_ms_stat
-                .xdef   draw_flag
-                .xdef   mouse_flag
-                .xdef   tim_addr
-                .xdef   user_but
-                .xdef   user_cur
-                .xdef   user_mot
+                .xdef   _draw_flag
+                .xdef   _mouse_flag
+                .xdef   _tim_addr
+                .xdef   _user_but
+                .xdef   _user_cur
+                .xdef   _user_mot
 
-
-                .data
-copyright:
-        dc.b    'GEMVDI V1.0  8/15/85'
-        dc.b    'Lisa 2/5 Screen Driver'
-        dc.b    'Serial No. XXXX-0000-654321 '
-        dc.b    'All Rights Reserved'
-        dc.b    'Copyright (C) 1985 '
-        dc.b    'Digital Research Inc.'
 
                 .text
 //////
@@ -93,7 +82,7 @@ _GSHIFT_S:
 ///////////////////////////////////////////////
 
 _CLEARMEM:      move.l  _v_bas_ad,a0
-                move.w  #screen_siz,d0
+                move.w  #32000/4,d0    // FIXME!!!
                 moveq.l #0,d1
 
 scr_loop:       move.l  d1,(a0)+
@@ -109,14 +98,20 @@ just_rts:       rts
 //
 ///////////////////////////////////////////////
 
-_INIT_G:        move.l  #v_base, _v_bas_ad
-                move.w  #90, _v_lin_wr
-                move.w  #1, _v_planes
+_INIT_G:
+              // These variables are currently already initialized by the bios...
+              /*
+                move.l  #v_base,_v_bas_ad
+                move.w  #90,_v_lin_wr
+                move.w  #1,_v_planes
+              */
 
                 clr.b   in_proc         // no vblanks in process
 
-                move.l  #just_rts, tim_addr     // Tick points to rts
+                move.l  #just_rts,_tim_addr     // Tick points to rts
 
+// FIXME: This clock setup does not work on the Atari   - Thomas
+/*
                 clr.w   -(sp)                   // get a handle to the clock
                 pea     clock                   // device
                 move.w  #0x3d, -(sp)
@@ -139,6 +134,7 @@ _INIT_G:        move.l  #v_base, _v_bas_ad
                 add.l   #12, sp                 // clean up stack
 
                 move    (sp)+, SR               // Restore interrupt context
+*/
 
                 bsr     mouse_init
 
@@ -153,20 +149,20 @@ _INIT_G:        move.l  #v_base, _v_bas_ad
 //
 
 _EX_TIMV:
-                move.l  _CONTRL, a0
+                move.l  _CONTRL,a0
 
-                move    SR, -(sp)       // Disable interrupts
-                ori.w   #0x0700, SR
-                move.l  tim_addr,  18(a0)
-                move.l  14(a0), tim_addr
-                move    (sp)+, SR
+                move    SR,-(sp)       // Disable interrupts
+                ori.w   #0x0700,SR
+                move.l  _tim_addr,18(a0)
+                move.l  14(a0),_tim_addr
+                move    (sp)+,SR
 
-                move.w  #6, -(sp)       // Get number of milliseconds per tick
+                move.w  #6,-(sp)       // Get number of milliseconds per tick
                 trap    #13
-                addq.l  #2, sp
+                addq.l  #2,sp
 
-                move.l  _INTOUT, a0
-                move.w  d0, (a0)
+                move.l  _INTOUT,a0
+                move.w  d0,(a0)
 
                 rts
 
@@ -181,13 +177,13 @@ _EX_TIMV:
 tick_int:
                 tst.b   in_proc                 // if we are still running, exit
                 bne     timer_exit
-                inc.b   in_proc
+                move.b  #1,in_proc
 
                 movem.l d0-d7/a0-a6, -(sp)
                 move    SR, -(sp)               // Disable interrupts
                 ori.w   #0x0700, SR
 
-                move.l  tim_addr, a0            // Invoke user routine
+                move.l  _tim_addr,a0            // Invoke user routine
                 jsr     (a0)
 
                 move    (sp)+, SR               // Restore interrupt context
@@ -198,7 +194,7 @@ tick_int:
                 clr.b   in_proc         //allow yet another trip through
                 movem.l (sp)+, d0-d7/a0-a6
 timer_exit:
-                move.l  tim_chain, -(sp)
+//                move.l  tim_chain, -(sp)  // FIXME: Add a Atari compatible interrupt routine
                 rts
 
 ///////////////////////////////////////////////
@@ -209,6 +205,8 @@ timer_exit:
 //
 ///////////////////////////////////////////////
 _DINIT_G:
+// FIXME: Again not Atari compatible...   - Thomas
+/*
                 move.l  tim_chain, -(sp)        // reset timer vector
                 clr.w   -(sp)
                 move.w  clock_handle, -(sp)
@@ -221,7 +219,7 @@ _DINIT_G:
                 move.w  #0x3E, -(sp)            // clock device
                 trap    #1
                 addq.l  #4, sp
-
+*/
                 bsr     dinit_mouse
                 bra     escfn3
 
@@ -289,10 +287,10 @@ no_char:
 
 mouse_init:
                 lea.l   user_init,a0    // init user_but and user_mot to 
-                move.l  a0,user_but     // just rts
-                move.l  a0,user_mot     //
+                move.l  a0,_user_but     // just rts
+                move.l  a0,_user_mot
 
-                move.l  #_MOV_CUR, user_cur     // initialize user_cur vector
+                move.l  #_MOV_CUR,_user_cur     // initialize user_cur vector
 
 //  Move in the default mouse form (presently the arrow)
 
@@ -306,16 +304,17 @@ mouse_init:
 
 //      INIT MOUSE INTERUPT VARIABLES
 
-                moveq   #0, d0
-                move.b  d0, cur_ms_stat // init cur_mouse_stat
-                move.b  d0, mouse_flag  // interrupts can happen
-                move.b  d0, draw_flag   // No action yet on vblank
+                moveq   #0,d0
+                move.b  d0,cur_ms_stat // init cur_mouse_stat
+                move.b  d0,_mouse_flag  // interrupts can happen
+                move.b  d0,_draw_flag   // No action yet on vblank
 
 // Get mouse execption vector
-
+// FIXME: Of course this does not work on the Atari :-(   - Thomas
+/*
                 clr.w   -(sp)                   // get a handle to the mouse
                 pea     mouse                   // device
-                move.w  #0x3d, -(sp)
+                move.w  #0x3d, -(sp)            // Fopen()
                 trap    #1
                 move.w  d0, mouse_handle
                 addq.l  #8, sp
@@ -335,7 +334,7 @@ mouse_init:
                 add.l   #12, sp                 // clean up stack
 
                 move    (sp)+, SR               // Restore interrupt context
-
+*/
 user_init:
                 rts
 
@@ -349,6 +348,8 @@ user_init:
 ///////////////////////////////////////////////
 
 dinit_mouse:
+// FIXME: Again not Atari compatible...  - Thomas
+/*
                 move.l  mouse_chain, -(sp)      // reset timer vector
                 clr.w   -(sp)
                 move.w  mouse_handle, -(sp)
@@ -361,7 +362,7 @@ dinit_mouse:
                 move.w  #0x3E, -(sp)            // mouse device
                 trap    #1
                 addq.l  #4, sp
-
+*/
                 rts
 
 ///////////////////////////////////////////////
@@ -436,7 +437,7 @@ no_chg:         move.l  #0,d0
 ///////////////////////////////////////////////
 
 int_mouse:
-                tst.b   mouse_flag      // If we are in a show/hide operation
+                tst.b   _mouse_flag     // If we are in a show/hide operation
                 bne     ms_exit         // just exit.
 
                 link    a6, #0
@@ -456,7 +457,7 @@ int_mouse:
                 beq     xy_update       // no go test x,y change
 
                 move.w  d1,-(sp)        // save previous mouse state
-                move.l  user_but,a1     // get user routine address
+                move.l  _user_but,a1    // get user routine address
                 move.w  SR, -(sp)       // Call user with interrupts off
                 ori.w   #0x0700, SR
                 jsr     (a1)
@@ -494,7 +495,7 @@ new_coord:
                 add.w   d3, d1          // d1 contains new x coordinate
 
                 bsr     scrn_clip
-                move.l  user_mot,a1     // get user routine address
+                move.l  _user_mot,a1    // get user routine address
                 move.w  SR, -(sp)       // Call user with interrupts off
                 ori.w   #0x0700, SR
                 jsr     (a1)            // call user to modify x,y
@@ -504,7 +505,7 @@ new_coord:
                 move.w  d0,_GCURX       // save new X location
                 move.w  d1,_GCURY       // save new y location
 
-                move.l  user_cur,a1     // get user routine address
+                move.l  _user_cur,a1     // get user routine address
                 move.w  SR, -(sp)       // Call user with interrupts off
                 ori.w   #0x0700, SR
                 jsr     (a1)            // call user to draw cursor
@@ -515,21 +516,28 @@ ms_done:
                 movem.l (sp)+,d0-d7/a0-a5       // restore old registers
                 unlk    a6
 ms_exit:
-                move.l  mouse_chain, -(sp)      // chain to next guy
+// FIXME: The following line was again not Atari compatible:
+//                move.l  mouse_chain, -(sp)      // chain to next guy
                 rts
 
-                .bss
-_v_bas_ad       ds.l    1
 
-in_proc         ds.b    1       // non-zero if my timer code is running
-ms_buffer       ds.b    1       // mouse_buffer (header and button info)
-delta_x         ds.b    1       // change in x pos. 2's comp
-delta_y         ds.b    1       // change in y pos. 2's comp
-clock_handle    ds.w    1
-mouse_handle    ds.w    1
+                .bss
+//_v_bas_ad       ds.l    1   // FIXME: Already declared in tosvars.S ?
+
+in_proc:         ds.b    1       // non-zero if my timer code is running
+ms_buffer:       ds.b    1       // mouse_buffer (header and button info)
+delta_x:         ds.b    1       // change in x pos. 2's comp
+delta_y:         ds.b    1       // change in y pos. 2's comp
+
+// Clock and mouse device handles and names - not usable on the Atari...  - Thomas
+/*
 tim_chain       ds.l    1
 mouse_chain:    ds.l    1
+clock_handle    ds.w    1
+mouse_handle    ds.w    1
+
                 .data
 clock           .dc.b   'CLOCK:',0
 mouse           .dc.b   'MOUSE:',0
+*/
                 .end

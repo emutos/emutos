@@ -2,8 +2,8 @@
  * textblt.S - Blitting of Text
  *
  * Copyright (c) 1999 Caldera, Inc. and Authors:
- *
- *      Dave Staugas
+ *               1984 Dave Staugas
+ *               2002 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -21,7 +21,7 @@
 //  changes made--                                                      //
 //                                                                      //
 //  26 Feb  --   a. writing mode values table corrected                 //
-//              b. _MONO_ST if true stops thicken source form expansion //
+//              b. _MONO_STATUS if true stops thicken source form expansion //
 //                                                                      //
 //   6 Mar  --   a. arbitrary scale of text mod to replicate/double code        //
 //                                                                      //
@@ -29,9 +29,8 @@
 //              b. ACT_SIZ preserves C registers on call                //
 /////////////////////////////////////////////////////////////////////////
         .page
-        .page
 
-#ifndef test0
+#if test0
 //  for test routine access..
         .globl  sgl_loop
         .globl  dbl_loop
@@ -136,21 +135,21 @@
 
         .page
 /////////////////////////////////////////////////////////
-//   Global routines defined in this module.                    //
+//   Global routines defined in this module.           //
 /////////////////////////////////////////////////////////
 
-        .globl  _TEXT_BL
+        .globl  _TEXT_BLT
         .globl  _CLC_DDA
         .globl  _ACT_SIZ
 
 /////////////////////////////////////////////////////////
-//   Global routines referenced by this module.                 //
+//   Global routines referenced by this module.        //
 /////////////////////////////////////////////////////////
 
         .globl  concat
 
 /////////////////////////////////////////////////////////
-//  Global variables referenced by this module.                 //      
+//  Global variables referenced by this module.        //      
 /////////////////////////////////////////////////////////
 
         .globl  _SOURCEX,_SOURCEY
@@ -158,19 +157,19 @@
         .globl  _DELX,_DELY
         .globl  _FBASE
         .globl  _FWIDTH
-        .globl  _WRT_MOD
+        .globl  _WRT_MODE
         .globl  _STYLE
         .globl  _R_OFF,_L_OFF
-        .globl  _WEIGHT,_LITEMAS,_SKEWMAS
+        .globl  _WEIGHT,_LITEMASK,_SKEWMASK
         .globl  _DOUBLE
         .globl  _CHUP
         .globl  _CLIP
-        .globl  _XMN_CLI,_XMX_CLI
-        .globl  _YMN_CLI,_YMX_CLI
-        .globl  _MONO_ST
+        .globl  _XMN_CLIP,_XMX_CLIP
+        .globl  _YMN_CLIP,_YMX_CLIP
+        .globl  _MONO_STATUS
         .globl  _XACC_DD
         .globl  _DDA_INC
-        .globl  _T_SCLST
+        .globl  _T_SCLSTS
         .globl  _TEXT_FG        //foreground color, text
 //
         .globl  lf_tab  
@@ -187,7 +186,7 @@
 //  Character buffer variables referenced.                      //
 /////////////////////////////////////////////////////////
 
-        .globl  _deftxbu        //base of scratch buffer
+        .globl  _deftxbuf       //base of scratch buffer
         .globl  _scrtchp        //32-bit ptr to base of scratch buffer
         .globl  _scrpt2         //16-bit offset to buffer partition
 
@@ -205,7 +204,7 @@
 //  NOTE: font dependent equates would normally be found in the font header //
 //////
 //
-#ifndef test1
+#if test1
 ////////////////////////////////////////////////////////////////////////
 //  test for very large font        //  
 ////////////////////////////////////////////////////////////////////////
@@ -256,11 +255,11 @@
 //  Select the maximum for the character buffer size.           //
 /////////////////////////////////////////////////////////
 
-ifge    cel_sz0-cel_sz9
+//ifge    cel_sz0-cel_sz9
+#if cel_sz0>=cel_sz9
 #define cel_siz         cel_sz0*2
-#endif
-
-iflt    cel_sz0-cel_sz9
+//iflt    cel_sz0-cel_sz9
+#else
 #define cel_siz         cel_sz9*2
 #endif
 
@@ -280,10 +279,11 @@ iflt    cel_sz0-cel_sz9
 //  Select the maximum size character buffer for doubled characters.     //
 /////////////////////////////////////////////////////////////////////////
 
-ifge    cel2_sz0-cel2_sz9
+//ifge    cel2_sz0-cel2_sz9
+#if cel2_sz0>=cel2_sz9
 #define cel2_siz        cel2_sz0
-#endif
-iflt    cel2_sz0-cel2_sz9
+#else
+//iflt    cel2_sz0-cel2_sz9
 #define cel2_siz             cel2_sz9
 #endif
 
@@ -293,10 +293,11 @@ iflt    cel2_sz0-cel2_sz9
 //  worst case add two bytes.                                   //
 /////////////////////////////////////////////////////////
 
-ifge    cel2_ww-cel2_hw
+//ifge    cel2_ww-cel2_hw
+#if cel2_ww>=cel2_hw
 #define out_add         cel2_ww+2
-#endif
-iflt    cel2_ww-cel2_hw
+#else
+//iflt    cel2_ww-cel2_hw
 #define out_add         cel2_hw+2
 #endif
 
@@ -308,7 +309,7 @@ iflt    cel2_ww-cel2_hw
 //                                                  // small + large buffer
         .page
 /////////////////////////////////////////////////////////////////////////
-//  _TEXT_BL expects variables scratchp & scrpt2 to be                  // 
+//  _TEXT_BLT expects variables scratchp & scrpt2 to be                 // 
 //           initialized as follows:                                    //
 //                                                                      //
 //   _scrtchp:  is a long word pointer to the base of a buffer with at  //
@@ -321,8 +322,8 @@ iflt    cel2_ww-cel2_hw
 //               even offset respectively                               //
 /////////////////////////////////////////////////////////////////////////
 
-#ifndef test2 //for testing use statically allocated char. buffer
-           
+#if test2     // for testing use statically allocated char. buffer
+
         .data
 //
 _deftxbu:
@@ -348,167 +349,160 @@ _scrpt2:
 // NOTE: labels follow storage directives for use with LINK instruction  //
 /////////////////////////////////////////////////////////////////////////
 
-        .offset 0
+        //.offset 0
 
-        .ds.w   1               //for clip & prerotate blt
-#define buffa           -
-        .ds.w   1               //for rotate
-#define buffb           -
-        .ds.w   1               //for replicate
-#define buffc           -
+#define buffa   -2              //for clip & prerotate blt
 
+#define buffb   -4              //for rotate
+
+#define buffc   -6              //for replicate
 
 
-        .ds.l   1               //start of source form
-#define sform           -
-        .ds.l   1               //start of destination form
-#define dform           -
+#define sform   -10             //start of source form
 
-        .ds.w   1               //width of source form (formerly s_width)
-#define s_next          -
-        .ds.w   1               //width of dest form (_v_lin_wr formerly used)
-#define d_next          -
-
-        .ds.w   1               //width of area in pixels
-#define width           -
-        .ds.w   1               //height of area in pixels
-#define height          -
+#define dform   -14             //start of destination form
 
 
-        .ds.w   1               //source dot address
-//                              //(pixel address, 0-15 word offset)
-#define tsdad           -
+#define s_next  -16             //width of source form (formerly s_width)
 
-        .ds.w   1               //destination dot address
-#define tddad           -
-//
-//
-        .ds.w   1               //# full words between fringes (destination)
-#define dest_wrd        -
-        .ds.w   1               //# full words between fringes (source)
-//                              //(before thicken)
-#define src_wrd         -
-        .ds.w   1               //
-#define src_wthk        -
-        .ds.w   1               //right fringe mask, before thicken
-#define thk_msk         -
-        .ds.w   1               //
-#define rite_msk        -
-        .ds.w   1               //fringes of destination to be affected
-#define left_msk        -
-        .ds.w   1               //overlap between words in inner loop
-#define rota_msk        -
-        .ds.w   1               //shift count for use by left/right shift routines
-#define shif_cnt        -
-        .ds.w   1               //number inner loop words for left/right 
-#define wrd_cnt         -
+#define d_next  -18             //width of dest form (_v_lin_wr formerly used)
 
-/////////////////////////////////////////
-//  Vectors that may contain a toptable entry.          //
-/////////////////////////////////////////
-        .ds.l   1               //vector for function after thicken
-#define thknjmp         -
-        .ds.l   1               //vector for function after light
-#define litejmp         -
-        .ds.l   1               //vector for function after skew
-#define skewjmp         -
-        .ds.l   1               //vector for word fringe function after thicken
-#define thknjpwf        -
-        .ds.l   1               //vector for word fringe function after light
-#define litejpwf        -
 
-/////////////////////////////////////////
-//  Vectors that may contain twoptable entries.         //
-/////////////////////////////////////////
-        .ds.l   1               //vector for word function after thicken
-#define thknjpw         -
-        .ds.l   1               //vector for word function after light
-#define litejpw         -
+#define width   -20             //width of area in pixels
 
-/////////
-//  Masks for special effects.          //
-/////////
-        .ds.w   1               //amount to increase width
-#define smear           -
-        .ds.w   1               //ambient temp
-#define ambient         -
-        .ds.w   1               //AND with this to get light effect
-#define lite_msk        -
-        .ds.w   1               //rotate this to check shift
-#define skew_msk        -
-        .ds.w   1               //overflow for word thicken
-#define thknover        -
+#define height  -22             //height of area in pixels
+
+
+#define tsdad   -24             //source dot address (pixel address, 0-15 word offset)
+
+#define tddad   -26             //destination dot address
+
+
+#define dest_wrd -28            //# full words between fringes (destination)
+
+#define src_wrd  -30            //# full words between fringes (source) (before thicken)
+
+#define src_wthk -32            //
+
+#define thk_msk  -34            //right fringe mask, before thicken
+
+#define rite_msk -36            //
+
+#define left_msk -38            //fringes of destination to be affected
+
+#define rota_msk -40            //overlap between words in inner loop
+
+#define shif_cnt -42            //shift count for use by left/right shift routines
+
+#define wrd_cnt  -44            //number inner loop words for left/right 
+
+/////////////////////////////////////////////////
+//  Vectors that may contain a toptable entry. //
+/////////////////////////////////////////////////
+
+#define thknjmp  -48            //vector for function after thicken
+
+#define litejmp  -52            //vector for function after light
+
+#define skewjmp  -56            //vector for function after skew
+
+#define thknjpwf -60            //vector for word fringe function after thicken
+
+#define litejpwf -64            //vector for word fringe function after light
+
+//////////////////////////////////////////////////
+//  Vectors that may contain twoptable entries. //
+//////////////////////////////////////////////////
+
+#define thknjpw  -68            //vector for word function after thicken
+
+#define litejpw  -72            //vector for word function after light
+
+/////////////////////////////////
+//  Masks for special effects. //
+/////////////////////////////////
+
+#define smear    -74            //amount to increase width
+
+#define ambient  -76            //ambient temp
+
+#define lite_msk -78            //AND with this to get light effect
+
+#define skew_msk -80            //rotate this to check shift
+
+#define thknover -82            //overflow for word thicken
 
 /////////
-//  color temp & # of planes            //
+//  color temp & # of planes
 /////////
-        .ds.w   1               //foreground color temp
-#define forecol         -
-        .ds.w   1               //# of planes
-#define nbrplane        -
-        .ds.w   1               //offset to next word in same
-#define nextwrd         -
+
+#define forecol  -84            //foreground color temp
+
+#define nbrplane -86            //# of planes
+
+#define nextwrd  -88            //offset to next word in same
 
 /////////
-//  arbitrary scale of text temps.      //
+//  arbitrary scale of text temps.
 /////////
-        .ds.w   1               //temp DELX used by arbitrary scale of text
-#define tmp_delx        -
-        .ds.w   1               //temp DELY
-#define tmp_dely        -
-        .ds.w   1               //Non zero if we had to swap temps
-#define swap_tmps       -
 
-/////////////////////////////////////////////////////////
-//  Working copies of often used external global varibles.      //
-/////////////////////////////////////////////////////////
-        .ds.w   1
-#define STYLE           -
-        .ds.w   1
-#define WRT_MOD         -
-        .ds.w   1
-#define SKEWMAS         -
-        .ds.w   1
-#define DELX            -
-        .ds.w   1
-#define DESTX           -
-        .ds.w   1 
-#define DELY            -
-        .ds.w   1
-#define DESTY           -
-        .ds.w   1
-#define CHUP            -
+#define tmp_delx -90            //temp DELX used by arbitrary scale of text
 
-/////////////////////////
-//  Working copies of the clipping variables    //
-/////////////////////////
-        .ds.w   1
-#define CLIP            -
-        .ds.w   1
-#define XMN_CLI         -
-        .ds.w   1
-#define YMN_CLI         -
-        .ds.w   1
-#define XMX_CLI         -
-        .ds.w   1
-#define YMX_CLI         -
-//////////////////////////////////////////////////////////////////
+#define tmp_dely -92            //temp DELY
+
+#define swap_tmps -94           //Non zero if we had to swap temps
+
+/////////////////////////////////////////////////////////////
+//  Working copies of often used external global varibles. //
+/////////////////////////////////////////////////////////////
+
+#define STYLE   -96
+
+#define WRT_MOD -98
+
+#define SKEWMAS -100
+
+#define DELX    -102
+
+#define DESTX   -104
+
+#define DELY    -106
+
+#define DESTY   -108
+
+#define CHUP    -110
+
+///////////////////////////////////////////////
+//  Working copies of the clipping variables //
+///////////////////////////////////////////////
+
+#define CLIP    -112
+
+#define XMN_CLI -114
+
+#define YMN_CLI -116
+
+#define XMX_CLI -118
+
+#define YMX_CLI -120
+
+//////////////////////////////////
 //  Temporary working variables //
-//////////////////////////////////////////////////////////////////
-        .ds.w   1
-#define tmp_style       -
-        .ds.w   1
-#define blt_flag        -
-        .ds.w   1
-#define chup_flag       -
+//////////////////////////////////
 
-#define ramlen          -
+#define tmp_style -122
+
+#define blt_flag  -124
+
+#define chup_flag -126
+
+#define ramlen    -126
 
         .text
         .page
-//
 
-#ifdef test2
+
+#if !test2
         .globl  _scrtsiz
 _scrtsiz:
         .dc.w   cel_siz                 //eat up some rom so value can be passed
@@ -525,7 +519,7 @@ _scrtsiz:
 //     d0    = DDA_INC                                          //
 /////////////////////////////////////////////////////////
 _CLC_DDA:
-        lea.l   _T_SCLST,a0             //get address of text scaling flag
+        lea.l   _T_SCLSTS,a0             //get address of text scaling flag
         move.w  6(sp),d0                //get requested size 
         move.w  4(sp),d1                //get actual size    
         cmp.w   d1,d0                   //if actual =< requested
@@ -570,7 +564,7 @@ _ACT_SIZ:
         moveq.l #0,d0                   //d0 = new count
         subq.w  #1,d1                   //adjust count for loop 
         bmi.b   act_exit                //if it was 0, just exit
-        btst.b  #0,_T_SCLST+1           //check for shrink
+        btst.b  #0,_T_SCLSTS+1           //check for shrink
         beq.b   size_small_loop         //br if so
 size_loop:
         add.w   d3,d2                   //else, enlarge
@@ -605,7 +599,7 @@ act_exit:
 //   Global TEXTBLT entry point                                         //
 /////////////////////////////////////////////////////////////////////////
 //
-_TEXT_BL:
+_TEXT_BLT:
         movem.l d3-d7/a3-a5,-(sp)
         link    a6,#ramlen              //allocate stack for local variables
 //
@@ -613,8 +607,8 @@ _TEXT_BL:
         move.w  #_scrpt1,buffc(a6)
         lea.l   STYLE(a6),a1
         move.w  _STYLE,(a1)
-        move.w  _WRT_MOD,-(a1)
-        move.w  _SKEWMAS,-(a1)
+        move.w  _WRT_MODE,-(a1)
+        move.w  _SKEWMASK,-(a1)
 //
         move.w  _DELX,-(a1)
         move.w  _DESTX,-(a1)
@@ -647,7 +641,7 @@ doub_wid:
         bcc.b   no_db_wd
         addq.w  #1,d1
 no_db_wd:
-        btst.b  #0,_T_SCLST+1
+        btst.b  #0,_T_SCLSTS+1
         beq.b   clc_n_su
         addq.w  #1,d1
 clc_n_su:
@@ -681,7 +675,7 @@ adr_nodb:
         bne.b   adr_th1
         and.w   #0xFFFF-THICKM,STYLE(a6)        //cancel thicken if WEIGHT=0
 adr_th1:
-        tst.w   _MONO_ST                // 26-Feb skip source expand
+        tst.w   _MONO_STATUS                // 26-Feb skip source expand
         bne.b   adr_notk                // 26-Feb if monospaced font
 //
         add.w   d4,d1                   //we'll smear this amount (DELX=DELX+WEIGHT)
@@ -711,7 +705,7 @@ chk_addr:
 //
         sub.w   d1,d2                   //move up by DELX
         move.w  d2,DESTY(a6)            //DESTY = DESTY - DELX
-        exg.l   d1,d3                   //DELX <-> DELY (swap x & y to check clipping)
+        exg     d1,d3                   //DELX <-> DELY (swap x & y to check clipping)
         bra.b   chk_clip
 //
 //  180 degree rotation
@@ -740,10 +734,10 @@ chk_clip:
         moveq.l #0,d5                   //clear x clip flag (assume no clip)
         move.w  _CLIP,-(a1)             //clip required?
         beq.b   clp_done                //no, skip over clip-stuff
-        move.w  _XMN_CLI,-(a1)
-        move.w  _YMN_CLI,-(a1)
-        move.w  _XMX_CLI,-(a1)
-        move.w  _YMX_CLI,-(a1)
+        move.w  _XMN_CLIP,-(a1)
+        move.w  _YMN_CLIP,-(a1)
+        move.w  _XMX_CLIP,-(a1)
+        move.w  _YMX_CLIP,-(a1)
 //
 //  y -coord clip check..
 //
@@ -903,7 +897,7 @@ do_clear:
         movea.l a1,a2
         move.w  d0,d3
         sub.w   d_next(a6),d3           // count the bottom line
-        lsr.w   d3                      // bytes to words
+        lsr.w   #1,d3                   // bytes to words
         subq.w  #1,d3                   // adjust words to clear for loop
         moveq.l #0,d1
 replp:
@@ -928,7 +922,7 @@ no_clear:
 //
         move.w  STYLE(a6),tmp_style(a6)
 //
-#ifndef rev_vid
+#if rev_vid
         clr.w   WRT_MOD(a6)             // replace mode for this blt
         move.w  #1,forecol(a6)          // foreground 1 for this blt
         clr.w   ambient(a6)             // background 0 for this blt
@@ -938,7 +932,7 @@ no_clear:
         clr.w   ambient(a6)             // background 0
 #endif
         move.w  #1,nbrplane(a6)         // 1 plane, natch
-#ifndef vme10
+#if vme10
         move.w  #2,nextwrd(a6)          // plane offset is 2
 #endif
         andi.w  #SKEWM+THICKM,STYLE(a6) // only do thicken & skew
@@ -946,7 +940,7 @@ no_clear:
         bsr     norm_blt                // blt source into buffer
 //
         move.w  tmp_style(a6),STYLE(a6)
-        move.w  _WRT_MOD,WRT_MOD(a6)
+        move.w  _WRT_MODE,WRT_MOD(a6)
 no_mode:
         move.w  d_next(a6),d7           // reset the source to the buffer
         neg.w   d7
@@ -998,7 +992,7 @@ do_clip:
         btst.b  #THICKEN,STYLE+1(a6)
         beq.b   no_thik
         move.w  _WEIGHT,d0
-        tst.w   _MONO_ST                // 26 Feb
+        tst.w   _MONO_STATUS                // 26 Feb
         bne.b   do_cl_nt                // 26 Feb
         add.w   d0,DELX(a6)
 do_cl_nt:
@@ -1055,7 +1049,7 @@ mx_clipx:
         add.w   DELX(a6),d0
         subq.w  #1,d0           // make 0 relative
         cmp.w   XMX_CLI(a6),d0
-#ifndef vme10
+#if vme10
         ble     xmx_fine
 #else
         ble.b   scrn_blt
@@ -1063,7 +1057,7 @@ mx_clipx:
 //clip x
         sub.w   XMX_CLI(a6),d0
         sub.w   d0,DELX(a6)
-#ifndef vme10
+#if vme10
 xmx_fine:
         bra     scrn_blt
 //
@@ -1083,7 +1077,7 @@ nxtword:
 scrn_blt:
         move.w  _TEXT_FG,forecol(a6)    // copy foreground color to temp
         move.w  buffc(a6),ambient(a6)   //
-#ifndef vme10
+#if vme10
         move.w  _v_planes,d0            // copy # of planes
         move.w  d0,nbrplane(a6)         // save in local
         move.b  nxtword-1(pc,d0.w),d0   // fetch offset from table (assumed:hi byte=0)
@@ -1126,7 +1120,7 @@ scrn_blt:
 //  d1.w is screen offset of destination
 //
         move.l  _v_bas_ad,a1
-#ifndef vme10
+#if vme10
         adda.w  d1,a1                   // a1 -> screen destination
 #else
         adda.l  d1,a1                   // screen dest. addr. for x,y coordinate
@@ -1164,7 +1158,7 @@ upda_dst:
 upda_ndb:
         btst.b  #THICKEN,_STYLE+1
         beq.b   upda_ntk
-        tst.w   _MONO_ST                // 26 Feb
+        tst.w   _MONO_STATUS                // 26 Feb
         bne.b   upda_ntk                // 26 Feb
         add.w   _WEIGHT,d1              // we smeared this amount
 upda_ntk:
@@ -1240,7 +1234,8 @@ get_mask:
         move.w  d2,thk_msk(a6)
         clr.w   d4
         move.w  #0x8000,skew_msk(a6)
-        moveq.l #0xFF,d3                // assume sgl_loop
+//????    moveq.l #0xFF,d3                // assume sgl_loop
+        moveq.l #-1,d3                // assume sgl_loop
 //  end bug fix
 //
         cmpi.w  #0x10,d0                // more than a word?
@@ -1326,11 +1321,11 @@ wrmappin:
         .dc.b   op4,op4,op4,op4         // XOR mode
         .dc.b   op5,op5,op6,op6         // inverse transparent mode
 //
-ifeq rev_vid
+#if !rev_vid
         .dc.b   op7,op7                 // replace mode required for pre-blits
 #endif
 
-#ifndef rev_vid
+#if rev_vid
 toptable:
         .dc.l   top0,top3,top4,top7,top6,top1,topd
 twoptble:
@@ -1347,7 +1342,7 @@ twoptble:
         .page
 //
 plane_loop:
-        move.w  WRT_MOD(a6),d0          // d0 = 0000xxxx ,_WRT_MOD
+        move.w  WRT_MOD(a6),d0          // d0 = 0000xxxx ,_WRT_MODE
         lsr.w   forecol(a6)             // this plane's foreground bit 
         roxl.w  #1,d0
         lsr.w   ambient(a6)
@@ -1372,7 +1367,7 @@ plane_loop:
 //
 //  Light special effect..
 //
-        move.w  _LITEMAS,lite_msk(a6)   // reload the mask for this char
+        move.w  _LITEMASK,lite_msk(a6)   // reload the mask for this char
         move.l  a5,litejmp(a6)          // endpoint of light routine
         lea.l   liteop,a5               // insert this in the loop
 //
@@ -1444,7 +1439,8 @@ next_plane:
         ble.b   no_more_planes          // loop for next plane
         movea.l sform(a6),a0
         movea.l dform(a6),a1
-#ifndef vme10
+//????
+#if vme10
         addq.l  #2,a1                   // advance destination plane
 #else
         adda.l  #v_pl_dspl,a1           // addr of next graphic plane
@@ -1472,10 +1468,10 @@ sgl_loop:
 sgl_lp:
         adda.w  d6,a0                   // get to next line above in font
         adda.w  d7,a1                   // and on screen
-sgl_1st_scan
+sgl_1st_scan:
         move.w  (a1),d4                 // get dest
 //
-#ifndef bytswap
+#if bytswap
         move.w  (a0),d0
         ror.w   #8,d0
         swap    d0
@@ -1514,7 +1510,7 @@ dbl_loop:
         lea.l   dbl_2wrd,a2
         move.l  a2,d5
         lea.l   dbl_1wrd,a3
-#ifdef vme10
+#if !vme10
         subq.w  #2,d7                   //adjust bytes between dest lines for
 //                                      //postincrement addressing  
 #endif
@@ -1523,11 +1519,11 @@ dbl_loop:
 dbl_lp:
         adda.w  d6,a0           //get to next line above in font
         adda.w  d7,a1           //   and on screen
-        exg.l   a3,d5           //set write mode return address
+        exg     a3,d5           //set write mode return address
 dbl_1st_scan:
         move.w  (a1),d4                 //get destination word
 //
-#ifndef bytswap
+#if bytswap
         move.w  (a0),d0
         ror.w   #8,d0
         swap    d0
@@ -1551,7 +1547,7 @@ dblendr:
 //
         jmp     (a5)                    //call special
 //
-#ifndef vme10
+#if vme10
 dbl_1wrd:
 
         move.w  d1,(a1)                 //write 1st scan word 
@@ -1569,10 +1565,10 @@ dbl_1wrd:
 //
         move.w  rite_msk(a6),d2         //use right mask
 //
-        exg.l   a3,d5                   //set write mode return address
+        exg     a3,d5                   //set write mode return address
         jmp     (a4)                    //call logic op
 //
-#ifndef vme10
+#if vme10
 dbl_2wrd:
         move.w  nextwrd(a6),a2
         move.w  d1,(a1,a2.w)            //save the result
@@ -1603,7 +1599,7 @@ mlt_left:
         move.l  a0,d6
         move.l  a1,d7
         move.w  dest_wrd(a6),wrd_cnt(a6) //# of full words between fringes
-#ifndef bytswap
+#if bytswap
         move.w  (a0)+,d0
         ror.w   #8,d0
         swap    d0
@@ -1627,12 +1623,11 @@ mlt_left:
         lea.l   lft_lfrng,a3            //set write mode return address
         jmp     (a5)                    //call specialwf
 //
-#ifndef vme10
 lft_lfrng:
+#if vme10
         move.w  d1,(a1)                 //store the result
         adda.w  nextwrd(a6),a1          //advance destination ptr to next word
 #else
-lft_lfrng:
         move.w  d1,(a1)+                //write 1st scan word  & fringe
 #endif
 //
@@ -1646,7 +1641,7 @@ word_lef:
         and.w   d2,d4                   //clear out garbage at end of word
         move.w  (a0)+,d0                //get next source word
 //
-#ifndef bytswap
+#if bytswap
         ror.w   #8,d0
 #endif
 //
@@ -1673,12 +1668,11 @@ word_lef:
 //
         jmp     (a4)                    //call specialw
 //
-#ifndef vme10
 lft_wrds:
+#if vme10
         move.w  d1,(a1)                 //store the result
         adda.w  nextwrd(a6),a1          //advance destination to next word
 #else
-lft_wrds:
         move.w  d1,(a1)+                //write adjacent char. scan lines
 #endif
 //
@@ -1717,7 +1711,7 @@ mlt_rite:
         move.l  a1,d7
         move.w  dest_wrd(a6),wrd_cnt(a6) //# of full words between fringes
         move.w  (a0)+,d0                //get one word of source
-#ifndef bytswap
+#if bytswap
         ror.w   #8,d0
 #endif
         swap    d0                      //put in hi word
@@ -1735,12 +1729,11 @@ mlt_rite:
         lea.l   rgt_lfrng,a3            //set write mode return address
         jmp     (a5)                    //call specialwf
 //
-#ifndef vme10
 rgt_lfrng:
+#if vme10
         move.w  d1,(a1)                 //store the result
         adda.w  nextwrd(a6),a1          //advance destination ptr to next word
 #else
-rgt_lfrng:
         move.w  d1,(a1)+                //write 1st char. scan line
 #endif
 //
@@ -1754,7 +1747,7 @@ word_rit:
         and.w   d2,d4                   //clear out garbage at end of word
         swap    d0
         move.w  (a0)+,d0                //get next source word
-#ifndef bytswap
+#if bytswap
         ror.w   #8,d0
 #endif
         swap    d0
@@ -1777,12 +1770,11 @@ word_rit:
 //
         jmp     (a4)                    //call specialw
 //
-#ifndef vme10
 rgt_wrds:
+#if vme10
         move.w  d1,(a1)                 //store the result
         adda.w  nextwrd(a6),a1          //advance destination to next word
 #else
-rgt_wrds:
         move.w  d1,(a1)+                //write adjacent char. scans
 #endif
 //
@@ -1806,7 +1798,7 @@ rgt_rfrng:
 //      Writing Mode Operations using fringe mask            // 
 ///////////////////////////////////////////////////
 //      
-#ifndef rev_vid
+#if rev_vid
 top0:
         not.w   d2                      //mode 0 - D' = 0
         and.w   d2,d4
@@ -1903,7 +1895,7 @@ topf:
 //      Word Writing Mode Operations                         //
 ///////////////////////////////////////////////////
 //
-#ifndef rev_vid
+#if rev_vid
 twop0:
         moveq.l #0,d1                   //mode 0        - D' = 0
         jmp     (a3)
@@ -1993,7 +1985,7 @@ thknop:
         btst.b  #0,skew_msk+1(a6)       //was a skew performed?
         beq.b   thk00                   //br if not
         ori.b   #0x10,ccr
-        roxr.w  d6
+        roxr.w  #1,d6
         bcc.b   thk01
         move.w  #0x8000,d6
 thk01:
@@ -2026,7 +2018,7 @@ thk1:
         subq.w  #1,d6
 thkoplp:
         move.l  d1,d0
-        lsr.l   d0
+        lsr.l   #1,d0
         or.l    d0,d1
         dbra    d6,thkoplp
 //
@@ -2117,7 +2109,7 @@ thk5:
         addq.w  #2,d5
         move.w  rite_msk(a6),d7
         ori.b   #0x10,ccr
-        roxr.w  d7
+        roxr.w  #1,d7
         bcc.b   thk33
         move.w  #0x8000,d7
         addq.w  #1,d5
@@ -2127,7 +2119,7 @@ thk33:
         subq.w  #1,d5
 thk34:
         ori.b   #0x10,ccr
-        roxr.w  d6
+        roxr.w  #1,d6
         bcc.b   thk31
         move.w  #0x8000,d6
 thk31:
@@ -2211,11 +2203,11 @@ skewop:
 //
         swap    d1
         move.w  d0,d1                   //pack source words into long one (d1)
-        lsr.l   d1
+        lsr.l   #1,d1
 //
         swap    d2
         move.w  rite_msk(a6),d2         //pack mask words into long one (d2)
-        lsr.l   d2
+        lsr.l   #1,d2
         move.w  d2,rite_msk(a6)
         swap    d2                      //unpack mask words
         move.w  d2,left_msk(a6)
@@ -2248,7 +2240,7 @@ nxt_word:
         move.w  d2,rite_msk(a6)         //0h to right mask
         swap    d2
         move.w  d2,left_msk(a6)         //move right mask to left mask
-#ifndef vme10
+#if vme10
         adda.w  nextwrd(a6),a1          //bump next destination address
 #else
         addq.w  #2,a1                   //get addr of next destination word
@@ -2283,7 +2275,7 @@ do_shift:
         beq.b   inc_rite
 //
         ori     #0x10,ccr                       //set x bit
-        roxr.w  d0                              //rotate in a 1
+        roxr.w  #1,d0                           //rotate in a 1
         move.w  d0,rite_msk(a6)
 //
 do_left:
@@ -2293,7 +2285,7 @@ do_left:
         move.w  #0x8000,rota_msk(a6)            //these are the bits that are good
 no_rota:
         move.w  left_msk(a6),d1
-        lsr.w   d1                              //rotate in a 0
+        lsr.w   #1,d1                           //rotate in a 0
         beq.b   wnxt_wrd                        //br if mask inoperative, inc addr
 //
         move.w  d1,left_msk(a6)
@@ -2320,7 +2312,7 @@ wnxt_wrd:
         move.w  #0xFFFF,left_msk(a6)            //ran out of word
 //
         subq.w  #1,dest_wrd(a6)                 //so more is in the fringe
-#ifndef vme10
+#if vme10
         adda.w  nextwrd(a6),a1                  //bump next destination address
 #else
         addq.w  #2,a1                           //get next dest. word address
@@ -2578,7 +2570,7 @@ noline1:
 //      move.l  a1,a3                   //not used with arbitrarily scaled text
 //
 //--6 mar --V
-        move.w  _T_SCLST,d7
+        move.w  _T_SCLSTS,d7
         roxr.l  #1,d7
         moveq.l #0,d7
         roxr.l  #1,d7
@@ -2731,7 +2723,7 @@ nrepnor:
 //--6 mar --^
 //
         or.w    d4,d0
-        ror.w   d4
+        ror.w   #1,d4
 //--6 mar --V
         bcc.b   o_no_rep
         move.w  d0,(a1)+
@@ -2773,7 +2765,7 @@ outlin:
         lea     (a0,d7.w),a1            //bump mid line to "real" top line
 outlin1:
         lea     (a1,d7.w),a2            //set up a2 to point to 1 line below current
-        lsr.w   d7                      //# of words in horz line
+        lsr.w   #1,d7                   //# of words in horz line
         subq.w  #1,d7                   //for "dbra" sweetie
         move.w  d7,wrd_cnt(a6)          //save char. buffer width( in words )
         move.w  DELY(a6),d6             //# of vertical lines
@@ -2786,28 +2778,28 @@ out_edge:
         moveq.l #0,d5
         moveq.l #0,d6
         move.l  (a2),d1                 //get bottom line/left edge grafix data
-        lsr.l   d1                      //clear left-most bit too
+        lsr.l   #1,d1                   //clear left-most bit too
 //
 //  within line loop entry point..
 //
 out_loop:
         move.l  (a0),d0                 //get next top line grafix data
         move.b  d5,d0                   //put bit to left of current data in bit 0
-        ror.l   d0                      //now its L 15 14 13 ... 1 0 R X X X...
+        ror.l   #1,d0                   //now its L 15 14 13 ... 1 0 R X X X...
 //
         move.l  (a1),d2                 //get current line data
         move.b  d6,d2                   //same trick
         move.l  d2,d3                   //d2 is left-shifted current
-        ror.l   d3                      //d3 is 0 shifted current
+        ror.l   #1,d3                   //d3 is 0 shifted current
         move.l  d3,d4
-        ror.l   d4                      //d4 is right-shifted current
+        ror.l   #1,d4                   //d4 is right-shifted current
 //
         move.l  d0,d5                   //get copy of top line
         move.l  d0,d6                   //get 2nd copy
         eor.l   d2,d0                   //exclusive neighbor #1
         eor.l   d3,d5                   //exclusive neighbor #2
         eor.l   d4,d6                   //exclusive neighbor #3
-        rol.l   d5                      //adjust 0 shifted for final
+        rol.l   #1,d5                      //adjust 0 shifted for final
         rol.l   #2,d6                   //adjust right shifted too
         or.l    d5,d0                   //form exclusive accumulator
         or.l    d6,d0
@@ -2817,7 +2809,7 @@ out_loop:
         eor.l   d2,d1                   //exclusive neighbor #4
         eor.l   d3,d5                   //exclusive neighbor #5
         eor.l   d4,d6                   //exclusive neighbor #6
-        rol.l   d5                      //adjust 0 shifted for final
+        rol.l   #1,d5                   //adjust 0 shifted for final
         rol.l   #2,d6                   //adjust right shifted too
         or.l    d1,d0
         or.l    d5,d0
@@ -2838,7 +2830,7 @@ out_loop:
         addq.l  #2,a2                   //advance bottom line to next word
         move.l  (a2),d1                 //get next bottom line grafix data
         move.b  -1(a2),d1               //same trick as with top line
-        ror.l   d1                      //now its L 15 14 13 ... 1 0 R X X X...
+        ror.l   #1,d1                   //now its L 15 14 13 ... 1 0 R X X X...
 //
         move.w  d5,(a1)+
         move.w  (a0),d5
