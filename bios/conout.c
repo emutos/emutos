@@ -286,7 +286,7 @@ blank_out (int topx, int topy, int botx, int boty)
 static UBYTE *
 cell_addr(int x, int y)
 {
-    int disx, disy;
+    LONG disx, disy;
 
     /* check bounds against screen limits */
     if ( x >= v_cel_mx )
@@ -296,13 +296,13 @@ cell_addr(int x, int y)
         y = v_cel_my;           /* clipped y */
 
     /* X displacement = even(X) * v_planes + Xmod2 */
-    disx = v_planes * (x & ~1);
+    disx = (LONG)v_planes * (x & ~1);
     if ( x & 1 ) {              /* Xmod2 = 0 ? */
         disx++;                 /* Xmod2 = 1 */
     }
 
     /* Y displacement = Y // cell conversion factor */
-    disy = v_cel_wr * y;
+    disy = (LONG)v_cel_wr * y;
 
     /*
      * cell address = screen base address + Y displacement
