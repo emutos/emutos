@@ -85,7 +85,7 @@ UWORD crysbind(WORD opcode, LONG pglobal, UWORD int_in[], UWORD int_out[], LONG 
                                 /* Application Manager                  */
           case APPL_INIT:
 #if SINGLAPP
-                LWSET(pglobal, 0x0102);         /* version number       */
+                LWSET(pglobal, 0x0120);         /* version number       */
                 LWSET(pglobal+2, 0x0001);       /* num of concurrent procs*/
 #endif
 #if MULTIAPP
@@ -406,6 +406,9 @@ if ((MB_MASK == 3) && (MB_STATE == 1))
                 wm_calc(WM_WCTYPE, WM_WCKIND, WM_WCIX, WM_WCIY, 
                         WM_WCIW, WM_WCIH, &WM_WCOX, &WM_WCOY, 
                         &WM_WCOW, &WM_WCOH);
+                break;
+          case WIND_NEW:
+                wm_new();
                 break;
                                 /* Resource Manager                     */
           case RSRC_LOAD:

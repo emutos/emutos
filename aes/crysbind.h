@@ -88,15 +88,16 @@
 #define FSEL_INPUT    90
 #define FSEL_EXINPUT  91
                                 /* Window Manager                       */
-#define WIND_CREATE 100
-#define WIND_OPEN 101
-#define WIND_CLOSE 102
-#define WIND_DELETE 103
-#define WIND_GET 104
-#define WIND_SET 105
-#define WIND_FIND 106
-#define WIND_UPDATE 107
-#define WIND_CALC 108
+#define WIND_CREATE  100
+#define WIND_OPEN    101
+#define WIND_CLOSE   102
+#define WIND_DELETE  103
+#define WIND_GET     104
+#define WIND_SET     105
+#define WIND_FIND    106
+#define WIND_UPDATE  107
+#define WIND_CALC    108
+#define WIND_NEW     109
                                 /* Resource Manager                     */
 #define RSRC_LOAD 110
 #define RSRC_FREE 111

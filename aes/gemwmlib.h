@@ -42,6 +42,6 @@ WORD wm_find(WORD x, WORD y);
 void wm_update(WORD beg_update);
 void wm_calc(WORD wtype, UWORD kind, WORD x, WORD y, WORD w, WORD h,
              WORD *px, WORD *py, WORD *pw, WORD *ph);
-
+void wm_new(void);
 
 #endif

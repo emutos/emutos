@@ -1442,3 +1442,7 @@ Start... early ages
   program directly!). I also included a new dos_exec function that makes the
   handling of the rlr->p_uda->u_spsuper problem much more easier (the new
   dos_exec has basically been taken from the old Lisa-GEM). (THH)
+
+24. Apr. 2003
+- aes/gemsuper.c, aes/crysbind.h, aes/gemwmlib.c : Added wind_new() function
+  (called wm_new internally). TeraDesk seems now to be working fine. (THH)

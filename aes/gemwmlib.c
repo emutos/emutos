@@ -363,12 +363,7 @@ void w_cpwalk(WORD wh, WORD obj, WORD depth, WORD usetrue)
 *       clip rectangle.
 */
 
-        void
-w_clipdraw(wh, obj, depth, usetrue)
-        WORD            wh;
-        WORD            obj;
-        WORD            depth;
-        WORD            usetrue;
+static void w_clipdraw(WORD wh, WORD obj, WORD depth, WORD usetrue)
 {
         WORD            i;
 
@@ -586,9 +581,8 @@ void w_bldactive(WORD w_handle)
             w_adjust(W_TITLE, W_NAME, t.g_x, t.g_y, tempw, gl_hbox);
             W_ACTIVE[W_NAME].ob_state = (istop || issub) ? NORMAL : DISABLED;
 
-/* APPLE  no pattern in window title
+            /* uncomment following line to disable pattern in window title */
             gl_aname.te_color = (istop && (!issub)) ? WTS_FG : WTN_FG;
-*/
           }
           t.g_x = 0;
           t.g_y += (gl_hbox - 1);
@@ -740,6 +734,7 @@ WORD w_mvfix(GRECT *ps, GRECT *pd)
         return(FALSE);
 }
 
+
 /*
 *       Call to move top window.  This involves BLTing the window if
 *       none of it that is partially off the screen needs to be redraw,
@@ -881,11 +876,11 @@ void w_setmen(WORD pid)
         }
 }
 
+
 /*
 *       Routine to draw menu of top most window as the current menu bar.
 */
-        void
-w_menufix()
+void w_menufix()
 {
         WORD            pid;
 
@@ -977,10 +972,7 @@ WORD w_clswin()
 *       the window tree.
 *       IF deletions first,
 */
-        void
-oldwfix(npd, isdelete)
-        PD              *npd;           /* pd of old process    */
-        WORD            isdelete;
+static void oldwfix(PD *npd, WORD isdelete)    /* npd = pd of old process */
 {
         WORD            ii, next;
         PD              *owner;
@@ -1006,9 +998,9 @@ oldwfix(npd, isdelete)
           }
         }
 }
-        void
-newwfix(npd)
-        PD              *npd;           /* pd of new process    */
+
+
+static void newwfix(PD *npd)            /* npd = pd of new process */
 {
         WORD            ii, next;
 
@@ -1025,9 +1017,8 @@ newwfix(npd)
         }
 }
 
-        WORD
-w_windfix(npd)
-        PD              *npd;           /* pd of new process    */
+
+static WORD w_windfix(PD *npd)          /* npd = pd of new process    */
 {
         WORD            ii, jj;
         WORD            wh, old;
@@ -1531,11 +1522,8 @@ void wm_get(WORD w_handle, WORD w_field, WORD *poutwds)
           w_getsize(which, w_handle, (GRECT *)&poutwds[0]);
 }
 
-        WORD
-wm_gsizes(w_field, psl, psz)
-        WORD            w_field;
-        WORD            *psl;
-        WORD            *psz;
+
+static WORD wm_gsizes(WORD w_field, WORD *psl, WORD *psz)
 {
         if ( (w_field == WF_HSLSIZ) ||
              (w_field == WF_HSLIDE) )
@@ -1714,6 +1702,7 @@ void wm_update(WORD beg_update)
         }
 }
 
+
 /*
 *       Given a width and height of a Work Area and the Kind of window
 *       desired calculate the required window size including the 
@@ -1750,5 +1739,28 @@ void wm_calc(WORD wtype, UWORD kind, WORD x, WORD y, WORD w, WORD h,
         *py = y + tb;
         *pw = w - lb - rb;
         *ph = h - tb - bb;
+}
+
+
+/*
+ * This function deletes _ALL_ windows and clears all locks that have been
+ * done with wind_update()
+ */
+void wm_new(void)
+{
+    int wh;
+
+    /* Remove locks: */
+    while(ml_ocnt > 0)
+        wm_update(2);                   /* END_MCTRL */
+    while(wind_spb.sy_tas > 0)
+        wm_update(0);                   /* END_UPDATE */
+
+    /* Delete windows: */
+    for(wh = 1; wh < NUM_WIN; wh++)
+    {
+        if(D.w_win[wh].w_flags & VF_INTREE)  wm_close(wh);
+        if(D.w_win[wh].w_flags & VF_INUSE)   wm_delete(wh);
+    }
 }
 
