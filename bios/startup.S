@@ -179,6 +179,9 @@ _m_start:       dc.l    1       // start address of TPA
 _m_length:      dc.l    1       // length of TPA in byte
                 dc.l    1
 
+aexecsave:	dc.l	1	// save zone for autoexec
+		
+	
 // ===========================================================================
 // ==== TEXT segment (TOS image) =============================================
 // ===========================================================================
@@ -286,6 +289,77 @@ memdone:
         jmp     _startup
 
 
+// ===========================================================================
+// ==== autoexec stuff =======================================================
+// ===========================================================================
+
+/*
+ * to scan AUTO folder using Fsfirst and Fsnext, we need a DTA. 
+ * To use Setdta we need to look like a program to BDOS (we need a 
+ * basepage). The autoexec() routine in bios.c creates a basepage
+ * using pexec(5), sets the TEXT address to strtautoexec, then 
+ * launches this fake BDOS program using Pexec(4). The routine
+ * strtautoexec needs to do the .PRG startup before jumping in
+ * do_autoexec, in bios.c, that does the real job. 
+ */
+
+	.global _launchautoexec
+	.global _strtautoexec
+	
+_launchautoexec:
+	// get basepage address
+	move.l	4(sp),a0
+
+	// save registers (they will not be saved by gemdos,
+	// because we do not use Pterm())
+	movem.l d2-d7/a2-a6,-(sp)
+	bsr     launchautoexec
+	movem.l (sp)+,d2-d7/a2-a6
+	rts
+
+launchautoexec:	
+	// save stack 
+	move.l  sp,aexecsave
+
+	// Pexec(4,...)
+	lea	empty(pc),a1
+	pea	(a1)
+	move.l	a0,-(sp)
+	pea	(a1)
+	move.w	#4,-(sp)
+	move.w	#0x4b,-(sp)
+	trap	#1
+	add.w	#16,sp
+	rts
+
+empty:	dc.w	0
+	
+_strtautoexec:
+	// get basepage address
+	move.l	4(sp),a5
+	// basepage + stack size
+	move.l	#0x200,d7
+	// stack pointer at the end of our zone
+	lea	(a5,d7),sp
+	// go in supervisor mode
+	clr.l	-(sp)
+	move.w	#0x20,-(sp)
+	trap	#1
+	add.w	#6,sp
+	// release excess memory (the BDOS has given us all mem left)
+	move.l	d7,-(sp)
+	move.l	a5,-(sp)
+	clr.w	-(sp)
+	move.w	#0x4a,-(sp)
+	trap	#1
+	add.w	#12,sp
+	// jsr into do_autoexec
+	jsr	_do_autoexec
+	// restore stack and return
+	move.l	aexecsave,sp
+	rts
+
+	
 // ===========================================================================
 // ==== dummy aes ============================================================
 // ===========================================================================

@@ -37,6 +37,7 @@
 #include "vectors.h"
 #include "asm.h"
 #include "chardev.h"
+#include "btools.h"    /* for memmove */
 
 
 
@@ -48,7 +49,7 @@
 
 void bufl_init(void);
 void biosmain(void);
-
+void autoexec(void);
 
 /*==== External declarations ==============================================*/
 
@@ -70,10 +71,10 @@ extern LONG osinit();
 
 extern void linea_init(void);   /* found in linea.S */
 extern void cartscan(WORD);     /* found in startup.S */
+extern void strtautoexec(void); /* found in startup.S */
+extern void launchautoexec(PD *); /* found in startup.S */
 
 extern void emucon(void);       /* found in cli/coma.S - start of CLI */
-
-extern void *memmove(void * dst, void * src, LONG length);
 
 
 /*==== Declarations =======================================================*/
@@ -264,6 +265,68 @@ void bufl_init(void)
 
 
 /*
+ * autoexec - run programs in auto folder
+ */
+
+static char *strcpy(char *dest, const char *src) 
+{
+    register char *tmp = dest;
+ 
+    while( (*tmp++ = *src++) ) 
+      ;
+    return dest;
+}
+
+static char *strcat(char *dest, const char *src) 
+{
+    register char *tmp = dest;
+    while( *tmp++ ) 
+        ;
+    tmp --;
+    while( (*tmp++ = *src++) ) 
+        ;
+    return dest;
+}
+
+void autoexec(void)
+{
+    PD *pd;
+
+    if( ! ((1L << bootdev) & drvbits) ) return;
+
+    /* create a basepage, and run the do_autoexec routine as a program */
+    pd = (PD *) trap_1( 0x4b, 5, "", "", "");
+    pd->p_tbase = (LONG) strtautoexec;
+    launchautoexec(pd);
+}
+
+void do_autoexec(void)
+{
+    struct {
+      BYTE reserved[21];
+      BYTE attr;
+      WORD time;
+      WORD date;
+      LONG size;
+      BYTE name[14];
+    } dta;
+    BYTE path[30];
+    WORD err;
+
+    trap_1( 0x1a, &dta);                      /* Setdta */
+    err = trap_1( 0x4e, "\\AUTO\\*.PRG", 7);  /* Fsfirst */
+    while(err == 0) {
+        strcpy(path, "\\AUTO\\");
+	dta.name[12] = 0;
+	strcat(path, dta.name);
+	trap_1( 0x4b, 0, path, "", "");       /* Pexec */
+	err = trap_1( 0x4f );                 /* Fsnext */
+    }
+}
+
+
+
+/*
  * biosmain - c part of the bios init code
  *
  * Print some status messages
@@ -272,7 +335,7 @@ void bufl_init(void)
 
 void biosmain()
 {
-    //PD *shell_pd, com_pd;
+    /* PD *shell_pd, com_pd; */
 
     trap_1( 0x30 );              /* initial test, if BDOS works */
 
@@ -307,37 +370,23 @@ void biosmain()
     cursconf(1, 0);
 
     /* autoexec Prgs from AUTO folder */
-    
+    autoexec();
+
     /* clear environment string */
     env[0]='\0';
 
-    /* Jump to the EmuCON - for now not loaded via pexec (hack) */
-//    trap_1( 0x4b , 0, "COMMAND.PRG" , "", env);
-
-    /* If there is no COMMAND.PRG, start the default (ROM) shell: */
-    /*shell_pd = (PD *)trap_1( 0x4b , 5, "" , "", env);*/ /* Pexec(5) does not yet exists */
-#if 0
-    /* Set up the shell basepage: */
-    memmove(&com_pd, run, 256L);  /* So we get the GEMDOS standard file handles */
-    shell_pd = &com_pd;
-    shell_pd->p_lowtpa = (LONG)shell_pd;
-    shell_pd->p_hitpa = shell_pd->p_lowtpa+256;
-    shell_pd->p_tbase = (LONG)exec_os;
-    shell_pd->p_tlen = shell_pd->p_dlen = shell_pd->p_blen = 0;
-    shell_pd->p_dbase = shell_pd->p_bbase = 0L;
-    shell_pd->p_0fill[0]/*xdta*/ = (LONG)&shell_pd->p_cmdlin[0];  /* default p_xdta is p_cmdlin */
-    shell_pd->p_0fill[1]/*parent*/ = (LONG)run;
-    shell_pd->p_env = env;
-    shell_pd->p_cmdlin[0] = 0;
-    run = shell_pd;
-    ((void(*)(PD*)) run->p_tbase)(run);
-#else
-    /* Use the GEMDOS PD for the shell: */
-    run->p_tbase = (LONG)exec_os;
-    run->p_cmdlin[0] = 0;
-    ((void(*)(PD*)) run->p_tbase)(run);
-#endif    
-
+    /* clear commandline */
+    
+    if(cmdload != 0) {
+        /* Pexec a program called COMMAND.PRG */
+        trap_1( 0x4b , 0, "COMMAND.PRG" , "", env); 
+    } else {
+        /* start the default (ROM) shell */
+        PD *pd;
+	pd = (PD *) trap_1( 0x4b , 5, "" , "", env);
+	pd->p_tbase = (LONG) exec_os;
+	trap_1( 0x4b, 4, "", pd, "");
+    }
     cprintf("[FAIL] HALT - should never be reached!\n\r");
     while(1) ;
 }

@@ -29,6 +29,8 @@ extern WORD proc_stk[];
 
 extern BYTE conterm;
 
+extern WORD cmdload;
+
 extern UBYTE *v_bas_ad;
 extern LONG kbdvecs[];
 

@@ -17,9 +17,9 @@ emulators/hardware. You  :
 ROM img means:  Using the etos192k.img file as ROM
 
 autoboot means: Loading emutos.st disk from bootsector, then when prompted,
-                eject a: and insert a FAT12 floppy containing command.prg
+                eject a: 
 
-boot.prg means: A FAT12 floppy containing ramtos.img, boot.prg and command.prg
+boot.prg means: A FAT12 floppy containing ramtos.img and boot.prg 
 
 (1) because STonX does not allow to eject floppies.
 
@@ -46,8 +46,10 @@ T tested and working on an emulator or real hardware
  X init floppy drives
  X boot floppy
  - boot DMA
- - run AUTO prgs
+ - execute reset-resident prgs
+ X run AUTO prgs
  X run 'command.prg'
+ X run the default shell, EmuCON
 
 
 
@@ -95,24 +97,24 @@ T tested and working on an emulator or real hardware
  ----------------------------------------------------------------------------
  - 0x00 initmous
  - 0x01 ssbrk
- X 0x02 _physBase
- X 0x03 _logBase
- X 0x04 _getRez
- > 0x05 _setScreen      (the resolution change is ignored)
- X 0x06 _setPallete
- X 0x07 _setColor
- X 0x08 _floprd
- X 0x09 _flopwr
- - 0x0a _flopfmt
+ X 0x02 physBase
+ X 0x03 logBase
+ X 0x04 getRez
+ > 0x05 setScreen      (the resolution change is ignored)
+ X 0x06 setPallete
+ X 0x07 setColor
+ X 0x08 floprd
+ X 0x09 flopwr
+ - 0x0a flopfmt
  - 0x0b used-by-BIOS
  X 0x0c midiws
- > 0x0d _mfpint
+ > 0x0d mfpint
  X 0x0e iorec
  X 0x0f rsconf
  X 0x10 keytbl
- X 0x11 _random
- X 0x12 _protobt
- > 0x13 _flopver
+ X 0x11 random
+ X 0x12 protobt
+ > 0x13 flopver
  - 0x14 scrdmp
  T 0x15 cursconf
  - 0x16 settime
@@ -129,7 +131,7 @@ T tested and working on an emulator or real hardware
  - 0x21 setprt
  X 0x22 kbdvbase
  - 0x23 kbrate
- - 0x24 _prtblk
+ - 0x24 prtblk
  X 0x25 vsync
  X 0x26 supexec
  - 0x27 puntaes

@@ -7,6 +7,7 @@
  *  JSL  Jason S. Loveman
  *  SCC  Steven C. Cavender
  *  MAD  Martin Doering
+ *  LVL  Laurent Vogel
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -27,7 +28,7 @@
 	.globl	_xlongjmp
 	.globl	_exeflg
 	.globl	_jb
-	.globl	_devector					// SCC  22 Mar 85
+	.globl	_devector	// SCC  22 Mar 85
 	.globl	_emucon
 
 _emucon:
@@ -50,8 +51,17 @@ _emucon:
 	move.w	#0x4a,-(sp)
 	trap	#1
 	add.l	#12,sp
-#endif
+#endif /* NO_ROM */
 
+#ifndef NO_ROM
+// if running in ROM, go in supervisor mode to be able to 
+// read our data and our code (switch tables)
+	clr.l   -(sp)
+	move.w  #0x20,-(sp)
+	trap    #1
+	add.w   #6,sp
+#endif /* ! NO_ROM */
+	
 	move.l	#mycrit,-(sp)
 	move	#0x101,-(sp)				       
 	move	#5,-(sp)
