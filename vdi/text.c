@@ -39,9 +39,9 @@ extern WORD rmchar;             /* number of pixels left over       */
 extern WORD rmcharx, rmchary;   /* add this to use up remainder     */
 
 
-extern struct font_head fon6x6;   	/* See bios/fntxxx.c */
-extern struct font_head fon8x8;   	/* See bios/fntxxx.c */
-extern struct font_head fon8x16;	/* See bios/fntxxx.c */
+extern struct font_head fon6x6;         /* See bios/fntxxx.c */
+extern struct font_head fon8x8;         /* See bios/fntxxx.c */
+extern struct font_head fon8x16;        /* See bios/fntxxx.c */
 
 
 
@@ -631,7 +631,7 @@ void dst_font()
     /* If we fell through the loop, we could not find the face. */
     /* Default to the system font.                  */
 
-    test_font = &fon8x8;
+    test_font = &fon6x6;
 
   find_height:
 
@@ -855,7 +855,7 @@ void dqt_name()
 
     /* The element is out of bounds use the system font */
 
-    tmp_font = &fon8x8;
+    tmp_font = &fon6x6;
 
   found_element:
 

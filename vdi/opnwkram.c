@@ -59,11 +59,8 @@ void v_opnwk()
     else
         DEV_TAB[13] = 256;
 
-    /* Set up the initial font, depending on vertical resolution */
-    if (v_vt_rez < 400)
-        font_ring[1] = &fon8x8;
-    else
-        font_ring[1] = &fon8x16;
+    /* Set up the initial font ring */
+    font_ring[1] = &fon8x16;
 
     cur_work = &virt_work;
     CONTRL[6] = virt_work.handle = 1;
