@@ -209,7 +209,7 @@ LONG dos_create(BYTE *name, WORD attr)
 }
 
 
-WORD dos_mkdir(BYTE *path, WORD attr)
+WORD dos_mkdir(BYTE *path)
 {
         gemdos(X_MKDIR,path);
         return( !DOS_ERR );
@@ -222,7 +222,7 @@ WORD dos_chmod(BYTE *name, WORD wrt, WORD mod)
 }
 
 
-WORD dos_set(UWORD h, UWORD time, UWORD date)
+WORD dos_setdt(UWORD h, UWORD time, UWORD date)
 {
         UWORD   buf[2];
 
@@ -232,7 +232,6 @@ WORD dos_set(UWORD h, UWORD time, UWORD date)
 }
 
 
-#if 0
 WORD dos_label(BYTE drive, BYTE *plabel)
 {
         BYTE    buf[50];                /* 44 bytes used        */
@@ -252,7 +251,6 @@ WORD dos_label(BYTE drive, BYTE *plabel)
         else
           return(FALSE);
 }
-#endif
 
 
 LONG dos_delete(BYTE *name)
@@ -261,7 +259,6 @@ LONG dos_delete(BYTE *name)
 }
 
 
-#if 0
 WORD dos_space(WORD drv, LONG *ptotal, LONG *pavail)
 {
         LONG    buf[4];
@@ -273,7 +270,6 @@ WORD dos_space(WORD drv, LONG *ptotal, LONG *pavail)
         *pavail = mult * buf[0];
         return(TRUE);
 }
-#endif
 
 
 WORD dos_rename(BYTE *p1, BYTE *p2)

@@ -252,7 +252,9 @@ skip:
         do
         {
           if (fpcnt)
+          {
             forker();
+          }
           schedule();
         } while (fpcnt);
 

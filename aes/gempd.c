@@ -110,7 +110,7 @@ void insert_process(PD *pi, PD **root)
 {
         REG PD          *p, *q;
 
-#if 1   /* New version - hope it's better than the old one    - Thomas  */
+#if 0   /* New version - hope it's better than the old one    - Thomas  */
         q = *root;
         p = 0;
         pi->p_link = 0;

@@ -515,6 +515,7 @@ void vrn_trnfm(FDB *psrcMFDB, FDB *pdesMFDB)
 {
         i_ptr( psrcMFDB );
         i_ptr2( pdesMFDB );
+
         gsx_ncode(TRANSFORM_FORM, 0, 0);
 }
 

@@ -22,10 +22,12 @@ LONG dos_chdir(BYTE *pdrvpath);
 WORD dos_gdir(WORD drive, BYTE *pdrvpath);
 WORD dos_sdrv(WORD newdrv);
 LONG dos_create(BYTE *name, WORD attr);
-WORD dos_mkdir(BYTE *path, WORD attr);
+WORD dos_mkdir(BYTE *path);
 WORD dos_chmod(BYTE *name, WORD wrt, WORD mod);
-WORD dos_set(UWORD h, UWORD time, UWORD date);
+WORD dos_setdt(UWORD h, UWORD time, UWORD date);
+WORD dos_label(BYTE drive, BYTE *plabel);
 LONG dos_delete(BYTE *name);
+WORD dos_space(WORD drv, LONG *ptotal, LONG *pavail);
 WORD dos_rename(BYTE *p1, BYTE *p2);
 WORD dos_rmdir(BYTE *path);
 

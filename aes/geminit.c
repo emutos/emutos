@@ -157,6 +157,7 @@ WORD hex_dig(BYTE achar)
 *       Scan off and convert the next two hex digits and return with
 *       pcurr pointing one space past the end of the four hex digits
 */
+/*
 void scan_2(LONG pcurr, UWORD *pwd)
 {
         UWORD           temp;
@@ -166,7 +167,20 @@ void scan_2(LONG pcurr, UWORD *pwd)
         temp |= hex_dig( LBGET(pcurr) );
         *pwd = temp;
 }
+*/
+BYTE *scan_2(BYTE *pcurr, UWORD *pwd)
+{
+        UWORD           temp;
+        
+        temp = 0x0;
+        temp |= hex_dig(*pcurr++) << 4;
+        temp |= hex_dig(*pcurr++);
+        if (temp == 0x00ff)
+          temp = NIL;
+        *pwd = temp;
 
+        return( pcurr );
+}
 
 
 void ini_dlongs()
@@ -719,7 +733,7 @@ void sh_rdinf()
           {
                                         /* #M000001FF B FLOPPY DISK@ @  */
             pcurr += 5;                 /* convert the icon number      */
-            scan_2(pcurr, &ishdisk);
+            scan_2((BYTE *)pcurr, &ishdisk);
             pcurr += 5;                 /* get the disk letter          */
             bvect = ((UWORD) 0x8000) >> ((UWORD) ( LBGET(pcurr) - 'A'));
             bvdisk |= bvect;
@@ -729,10 +743,10 @@ void sh_rdinf()
           else if ( tmp == 'E')         /* #E3A11                       */
           {                             /* desktop environment          */
             pcurr++;
-            scan_2(pcurr, &env);
+            scan_2((BYTE *)pcurr, &env);
             ev_dclick(env & 0x07, TRUE);
             pcurr += 2;
-            scan_2(pcurr, &env);
+            scan_2((BYTE *)pcurr, &env);
             gl_mnclick = ((env & 0x08) != 0);
             sound(FALSE, !(env & 0x01), 0);
           }
@@ -741,7 +755,7 @@ void sh_rdinf()
           {
                                         /* #A59 CALCLOCK.ACC@   */
             pcurr++;
-            scan_2(pcurr, &(gl_caccs[gl_numaccs].acc_swap));
+            scan_2((BYTE *)pcurr, &(gl_caccs[gl_numaccs].acc_swap));
             pcurr += 3;
             pstr = &gl_caccs[gl_numaccs].acc_name[0];
             while( (tmp = LBGET(pcurr++)) != '@')

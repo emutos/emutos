@@ -881,6 +881,25 @@ void sh_ldapp()
             badtry = 0;
           }
 
+
+#if 0 //ifndef NO_ROM
+        /* Experimental starting of the ROM desktop:  - THH*/
+          {
+            extern void deskstart();
+            extern LONG trap_1();
+            LONG *pd;
+
+            sh_show(ad_scmd);
+            p_nameit(rlr, sh_name(&D.s_cmd[0]));
+
+            pd = (LONG *) trap_1( 0x4b , 5, "" , "", "");
+            pd[2] = (LONG) deskstart;
+            pd[3] = pd[5] = pd[7] = 0;
+            trap_1( 0x4b, 4, "", pd, "");
+cprintf("desktop failed\n");
+          }
+
+#else
           do
           {
             retry = FALSE;
@@ -929,10 +948,13 @@ void sh_ldapp()
                 badtry = AL18ERR;
             }
           } while (retry && !badtry);
-                                                /* clear his desk field */
-          desk_tree[rlr->p_pid] = 0x0L;
+
+#endif /* of experimental ROM desktop starting */
+
+          desk_tree[rlr->p_pid] = 0x0L;         /* clear his desk field */
 
         } while(psh->sh_doexec);
+
 }
 #endif
 

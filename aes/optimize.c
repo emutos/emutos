@@ -222,23 +222,20 @@ void fs_sget(LONG tree, WORD obj, LONG pstr)
 }
 
 
-/*
+
 void inf_sget(LONG tree, WORD obj, BYTE *pstr)
 {
         fs_sget(tree, obj, ADDR(pstr));
 }
-*/
 
-/*
-void inf_fldset(tree, obj, testfld, testbit, truestate, falsestate)
-        LONG            tree;
-        WORD            obj;
-        UWORD           testfld, testbit;
-        UWORD           truestate, falsestate;
+
+
+void inf_fldset(LONG tree, WORD obj, UWORD testfld, UWORD testbit,
+                UWORD truestate, UWORD falsestate)
 {
         LWSET(OB_STATE(obj), (testfld & testbit) ? truestate : falsestate);
 }
-*/
+
 
 
 WORD inf_gindex(LONG tree, WORD baseobj, WORD numobj)
