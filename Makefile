@@ -95,7 +95,7 @@ CPPFLAGS = $(INC)
 OBJDUMP = m68k-atari-mint-objdump
 
 # the native C compiler, for tools
-NATIVECC = gcc -Wall
+NATIVECC = gcc -Wall -W -pedantic -ansi -O
 
 # 
 # source code in bios/
@@ -345,6 +345,27 @@ boot.prg: obj/minicrt.o obj/boot.o obj/bootasm.o
 	$(LD) -Xlinker -s -o $@ obj/minicrt.o obj/boot.o obj/bootasm.o -lgcc
 
 #
+# compressed ROM image
+#
+
+compr2.img: obj/comprimg.o obj/memory.o obj/uncompr.o obj/processor.o
+	$(LD) -o $@ $+ $(LDFLAGS) $(LDFLAGS_T2)
+
+etoscpr.img: compr2.img compr$(EXE) ramtos.img
+	./compr$(EXE) ramtos.img compr.tmp
+	cat compr2.img compr.tmp > $@
+	rm -f compr2.img compr.tmp
+
+compr$(EXE): tools/compr.c
+	$(NATIVECC) -o $@ $<
+
+uncompr$(EXE): tools/uncompr.c
+	$(NATIVECC) -o $@ $<
+
+comprtest: compr$(EXE) uncompr$(EXE)
+	sh tools/comprtst.sh
+
+#
 # flop
 #
 
@@ -520,6 +541,8 @@ obj/nlsasm.o: include/i18nconf.h
 
 obj/startup.o: bios/header.h
 
+obj/comprimg.o: bios/header.h include/i18nconf.h
+
 obj/country.o: bios/header.h 
 
 bios/header.h: mkheader$(EXE) obj/country include/i18nconf.h
@@ -603,6 +626,7 @@ clean:
 	rm -f bug$(EXE) po/messages.pot util/langs.c bios/header.h
 	rm -f mkheader$(EXE) tounix$(EXE) *.tmp *.dsm */*.tr.c 
 	rm -f makefile.dep fal_dsm.txt fal_map obj/country include/i18nconf.h
+	rm -f compr$(EXE) uncompr$(EXE) compr2.img etoscpr.img
 
 distclean: clean
 	rm -f '.#'* */'.#'* 
