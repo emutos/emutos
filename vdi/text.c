@@ -1138,20 +1138,20 @@ WORD clc_dda(WORD actual, WORD requested)
 
     if (actual <= requested) {
         /* scale down */
-        T_SCLSTS = 0; 	        	/* clear enlarge indicator */
-        if (!requested)	         	/* if requested 0 ... */
-            requested = 1;		/* then make it 1 (minimum value) */
-    } else {                    	/* small DDA */
+        T_SCLSTS = 0;                   /* clear enlarge indicator */
+        if (!requested)                 /* if requested 0 ... */
+            requested = 1;              /* then make it 1 (minimum value) */
+    } else {                            /* small DDA */
         /* scale up */
-        T_SCLSTS = 1;         		/* set enlarge indicator */
+        T_SCLSTS = 1;                   /* set enlarge indicator */
 
-        requested -= actual;    	/* larger than 2x? FIXME: Keep half value ??? */
+        requested -= actual;            /* larger than 2x? FIXME: Keep half value ??? */
         if (requested >= actual)
-            return -1;              	/* error, (max value, 2x) */
+            return -1;                  /* error, (max value, 2x) */
     }
 
     retval = requested;                 /* expand to LONG */
-    retval = retval << 16;          	/* request size to high word(bits 31-16) */
+    retval = retval << 16;              /* request size to high word(bits 31-16) */
     return ((WORD)(retval / actual));   /* return the quotient as WORD */
 }
 

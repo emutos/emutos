@@ -23,7 +23,7 @@ extern void s68l(long *);
 #define swp68(x) s68(&x)
 #define swp68l(x) s68l(&x)
 
-#define kbshift(a)   trap13(0x0B, a)	/* Get Drive Map            */
+#define kbshift(a)   trap13(0x0B, a)    /* Get Drive Map            */
 #define bconstat(a)  trap13(0x01,a)
 #define bconin(a)    trap13(0x02,a)
 #define bconout(a,b) trap13(0x03,a,b)

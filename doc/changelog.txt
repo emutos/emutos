@@ -829,8 +829,14 @@ Start... early ages
 - renamed back CS into CZ to please Petr; did not alter po/cs.po (LVL)
 - vdi/vinput.c - rewrote some key stuff in C (MAD)
 
-02. May 2002
+02. May. 2002
 - Added John Elliott's "Desktop 1.2" patches - it's not enabled yet since
   it is quite instable, but you can enable it by compiling with "-DDESK1"
   and adding desk/desk1.c to your Makefile (THH).
 
+04. May. 2002
+- po/POTFILES.in - removed cli files (LVL)
+- added experimental ACSI support in acsi.c; it does work on STonC but
+  freezes the atari when no hard disk is present. Activate it by setting
+  CONF_WITH_ACSI in include/config.h (LVL)
+- bios/tosvars.h: hz_200 declared as volatile (LVL)

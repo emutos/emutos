@@ -44,7 +44,7 @@ extern void vdimouse_init();
 extern void vdimouse_exit();
 
 #define tickcal() trap13(0x06)          /* ms between timer C calls */
-#define setexec(a,b) trap13(0x05, a,b)	/* change exception vector */
+#define setexec(a,b) trap13(0x05, a,b)  /* change exception vector */
 
 #define X_MALLOC 0x48
 #define X_MFREE 0x49
@@ -196,11 +196,11 @@ void v_opnwk()
 
     ints_off();                         // disable interrupts
     tim_chain = (void*)                 // save old vector
-        setexec(0x100, tick_int);	// set etv_timer to tick_int
+        setexec(0x100, tick_int);       // set etv_timer to tick_int
     ints_on();                          // enable interrupts
 
-    vdimouse_init();			// initialize mouse
-    escfn2();				// enter graphics mode
+    vdimouse_init();                    // initialize mouse
+    escfn2();                           // enter graphics mode
 }
 
 
@@ -221,11 +221,11 @@ void v_clswk()
 
     /* Now de-initialize the lower level things */
     ints_off();                         // disable interrupts
-    setexec(0x100, tim_chain);		// set etv_timer to tick_int
+    setexec(0x100, tim_chain);          // set etv_timer to tick_int
     ints_on();                          // enable interrupts
 
-    vdimouse_exit();			// initialize mouse
-    escfn3();				// back to console mode
+    vdimouse_exit();                    // initialize mouse
+    escfn3();                           // back to console mode
 }
 
 
@@ -403,7 +403,7 @@ void tick_int()
     if (!in_proc) {
         in_proc = 1;                    // set flag, that we are running
         // MAD: evtl. registers to stack
-        tim_addr();			// call the timer vector
+        tim_addr();                     // call the timer vector
         // and back from stack
     }
     in_proc = 0;                        // allow yet another trip through
