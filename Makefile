@@ -45,6 +45,12 @@ endif
 
 WITH_AES = 1
 
+#
+# Also include EmuCON when already using AES as main interface?
+#
+
+WITH_CLI = 0
+
 
 #
 # crude machine detection (Unix or Cygwin)
@@ -93,7 +99,9 @@ LDFLAGS_T2 = -Xlinker -Ttext=0xe00000 -Xlinker -Tbss=0x000000
 # C compiler for MiNT
 CC = m68k-atari-mint-gcc
 INC = -Iinclude
-CFLAGS = -Os -fomit-frame-pointer -Wall -mshort -m68000 $(DEF) $(LOCALCONF) $(INC)
+OPTFLAGS = -Os -fomit-frame-pointer
+CFLAGS =  $(OPTFLAGS) -Wall -mshort -m68000 $(DEF) $(LOCALCONF) $(INC) \
+  -DWITH_AES=$(WITH_AES) -DWITH_CLI=$(WITH_CLI)
 
 CPPFLAGS = $(INC)
 
@@ -187,11 +195,16 @@ desk_copts = -Ibios -Iaes -Idesk/icons
 #
 
 ifeq ($(WITH_AES),0)
-ui_dirs := cli
-other_dirs := vdi aes desk
+ ui_dirs := vdi cli
+ other_dirs := aes desk
 else
-ui_dirs := vdi aes desk
-other_dirs := cli
+ ifeq ($(WITH_CLI),0)
+  ui_dirs := vdi aes desk
+  other_dirs := cli
+ else
+  ui_dirs := vdi aes desk cli
+  other_dirs :=
+ endif 
 endif
 
 dirs := bios bdos util $(ui_dirs)
@@ -248,11 +261,11 @@ help:
 
 TOCLEAN += *.img *.map
 
-emutos1.img emutos1.map: $(OBJECTS)
+emutos1.img emutos1.map: $(OBJECTS) Makefile
 	$(LD) -o emutos1.img -Xlinker -Map -Xlinker emutos1.map \
 	  $(OBJECTS) $(LDFLAGS) $(LDFLAGS_T1)
 
-emutos2.img emutos2.map: $(OBJECTS)
+emutos2.img emutos2.map: $(OBJECTS) Makefile
 	$(LD) -o emutos2.img -Xlinker -Map -Xlinker emutos2.map \
 	  $(OBJECTS) $(LDFLAGS) $(LDFLAGS_T2)
 
@@ -438,7 +451,7 @@ all192:
 	do \
 	  j=etos192$${i}.img; \
 	  echo building $$j; \
-	  make DEF='-DTOS_VERSION=0x102' UNIQUE=$$i 192; \
+	  make DEF='-DTOS_VERSION=0x102' WITH_CLI=0 UNIQUE=$$i 192; \
 	  mv etos192k.img $$j; \
 	done
 

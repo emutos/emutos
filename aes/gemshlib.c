@@ -101,6 +101,10 @@ GLOBAL WORD     gl_shgem;
 WORD sh_find(LONG pspec);
 extern void deskstart();        /* see ../desk/deskstart.S */
 
+#if WITH_CLI != 0
+extern void coma_start();
+#endif
+
 
 
 void sh_read(LONG pcmd, LONG ptail)
@@ -848,7 +852,7 @@ void sh_ldapp()
 {
         WORD    ret, badtry, retry;
         SHELL   *psh;
-        LONG    *desk_pd;
+        LONG    *ui_pd;
         void    *uda_ssp_save;
 
 
@@ -899,24 +903,38 @@ void sh_ldapp()
             retry = FALSE;
 
             kprintf("starting %s\n",(char *)ad_scmd);
-            if(strcmp((char *)ad_scmd,rs_str(STDESKTP))==0)
+            if(strcmp((char *)ad_scmd,rs_str(STDESKTP)) == 0)
             { /* Experimental starting of the ROM desktop:  - THH*/
               sh_show(ad_scmd);
               p_nameit(rlr, sh_name(&D.s_cmd[0]));
 
-              desk_pd = (LONG *) trap1_pexec(5, 0L , "", 0L);
-              desk_pd[2] = (LONG) deskstart;
-              desk_pd[3] = desk_pd[5] = desk_pd[7] = 0;
+              ui_pd = (LONG *) trap1_pexec(5, 0L , "", 0L);
+              ui_pd[2] = (LONG) deskstart;
+              ui_pd[3] = ui_pd[5] = ui_pd[7] = 0;
               dsptch();  /* Updates rlr->p_uda! */
               /* Save old stacks and set up new stacks so that AES' stacks
                  won't be destroyed: */
               uda_ssp_save = rlr->p_uda->u_spsuper;
               rlr->p_uda->u_spsuper = &rlr->p_uda->u_supstk;
-              trap1_pexec(4, 0L, desk_pd, 0L);    /* Run the desktop */
+              trap1_pexec(6, 0L, ui_pd, 0L);    /* Run the desktop */
               rlr->p_uda->u_spsuper = uda_ssp_save;
             }
-            else
-            if ( sh_find(ad_scmd) )
+#if WITH_CLI != 0
+            else if(strcmp((char *)ad_scmd, "EMUCON") == 0)
+            { /* start the EmuCON shell - experimental! */
+              ui_pd = (LONG *) trap1_pexec(5, 0L , "", 0L);
+              ui_pd[2] = (LONG) coma_start;
+              ui_pd[3] = ui_pd[5] = ui_pd[7] = 0;
+              dsptch();  /* Updates rlr->p_uda! */
+              /* Save old stacks and set up new stacks so that AES' stacks
+                 won't be destroyed: */
+              uda_ssp_save = rlr->p_uda->u_spsuper;
+              rlr->p_uda->u_spsuper = &rlr->p_uda->u_supstk;
+              trap1_pexec(6, 0L, ui_pd, 0L);    /* Run EmuCON */
+              rlr->p_uda->u_spsuper = uda_ssp_save;
+            }
+#endif
+            else if ( sh_find(ad_scmd) )
             { /* Run a normal application: */
               sh_show(ad_scmd);
               p_nameit(rlr, sh_name(&D.s_cmd[0]));

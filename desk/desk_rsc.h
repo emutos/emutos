@@ -18,14 +18,14 @@
 #define DELTITEM        21
 #define FORMITEM        22
 #define L3ITEM          23
-#define OUTPITEM        24
+#define CLIITEM         24
 #define QUITITEM        25
 #define IDSKITEM        27
 #define IAPPITEM        28
 #define L5ITEM          29
 #define PREFITEM        30
 #define SAVEITEM        31
-#define DOSITEM         32
+#define RESITEM         32
 #define ICONITEM        34
 #define L4ITEM          35
 #define NAMEITEM        36

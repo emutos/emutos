@@ -58,7 +58,7 @@
                                         /* keyboard shortcuts & others  */
 #define ESCAPE 0x011B                   /* resort directory in window   */
 #define ALTA 0x1E00                     /* Configure App                */
-#define ALTC 0x2E00                     /* Enter DOS commands           */
+#define ALTC 0x2E00                     /* Change resolution            */
 #define ALTD 0x2000                     /* Delete                       */
 #define ALTI 0x1700                     /* Info/Rename                  */
 #define ALTN 0x3100                     /* Sort by Name                 */
@@ -68,6 +68,7 @@
 #define ALTV 0x2F00                     /* Save Desktop                 */
 #define ALTZ 0x2C00                     /* Sort by Size                 */
 #define CNTLU 0x1615                    /* To Output                    */
+#define CNTLZ 0x2c1a                    /* Execute CLI                  */
 #define CNTLQ 0x1011                    /* Exit To Dos                  */
 
 
@@ -131,9 +132,9 @@ GLOBAL WORD     gl_apid;
 GLOBAL BYTE     ILL_ITEM[] = {L2ITEM,L3ITEM,L4ITEM,L5ITEM,0};
 GLOBAL BYTE     ILL_FILE[] = {FORMITEM,IDSKITEM,0};
 GLOBAL BYTE     ILL_DOCU[] = {FORMITEM,IDSKITEM,IAPPITEM,0};
-GLOBAL BYTE     ILL_FOLD[] = {OUTPITEM,FORMITEM,IDSKITEM,IAPPITEM,0};
-GLOBAL BYTE     ILL_FDSK[] = {OUTPITEM,IAPPITEM,0};
-GLOBAL BYTE     ILL_HDSK[] = {FORMITEM,OUTPITEM,IAPPITEM,0};
+GLOBAL BYTE     ILL_FOLD[] = {/*OUTPITEM,*/FORMITEM,IDSKITEM,IAPPITEM,0};
+GLOBAL BYTE     ILL_FDSK[] = {/*OUTPITEM,*/IAPPITEM,0};
+GLOBAL BYTE     ILL_HDSK[] = {FORMITEM,/*OUTPITEM,*/IAPPITEM,0};
 GLOBAL BYTE     ILL_NOSEL[] = {OPENITEM,SHOWITEM,FORMITEM,DELTITEM,
                                 IDSKITEM,IAPPITEM,0};
 GLOBAL BYTE     ILL_YSEL[] = {OPENITEM, IDSKITEM, FORMITEM, SHOWITEM, 0};
@@ -445,6 +446,11 @@ void men_update(LONG tree)
           }
           men_list(tree, pvalue, FALSE);
         } /* if */
+
+#if WITH_CLI == 0
+        menu_ienable(tree, CLIITEM, FALSE);
+#endif
+
 } /* men_update */
 
 
@@ -484,14 +490,17 @@ WORD do_deskmenu(WORD item)
 
 WORD do_filemenu(WORD item)
 {
-        WORD            done;
-        WORD            curr, junk, first;
-        WNODE           *pw;
-        FNODE           *pf;
-        BYTE            *pdst;
+        WORD    done;
+        WORD    curr;
+        WNODE   *pw;
+/*
+        WORD    junk, first;
+        FNODE   *pf;
+        BYTE    *pdst;
+*/
 
 #if MULTIAPP
-        ANODE           *pa;
+        ANODE   *pa;
 #endif
         
         done = FALSE;
@@ -535,10 +544,12 @@ WORD do_filemenu(WORD item)
                 if (curr)
                   do_format(curr);
                 break;   
+
+#if 0  /* Currently unused since we do not support a OUTPUT.APP atm */
           case OUTPITEM:
 
-                        /* build cmd tail that looks like this:         */
-                        /* C:\path\*.*,file.ext,file.ext,file.ext       */
+                /* build cmd tail that looks like this:         */
+                /* C:\path\*.*,file.ext,file.ext,file.ext       */
                 G.g_tail[1] = NULL;
                 if (pw && curr)
                 {
@@ -587,6 +598,14 @@ WORD do_filemenu(WORD item)
                 done = pro_run(TRUE, TRUE, -1, -1);
 #endif
                 break;
+#endif  /* if 0 */
+
+          case CLIITEM:                         /* Start EmuCON */
+                G.g_tail[0] = G.g_tail[1] = 0;
+                strcpy(G.g_cmd, "EMUCON");
+                done = pro_run(FALSE, TRUE, -1, -1);
+                break;
+
           case QUITITEM:
 #if MULTIAPP
                 if (fun_alert(1,STEXTDSK,NULLPTR) == 2)         /* CANCEL */
@@ -672,7 +691,7 @@ WORD do_viewmenu(WORD item)
 WORD do_optnmenu(WORD item)
 {
         ANODE           *pa;
-        WORD            done, rebld, curr, ret;
+        WORD            done, rebld, curr;
         FNODE           *pf;
         WORD            isapp;
         BYTE            *pstr;
@@ -741,32 +760,9 @@ WORD do_optnmenu(WORD item)
                 app_save(TRUE);
                 desk_wait(FALSE);
                 break;
-          case DOSITEM:
-
-
-#if MULTIAPP
-                ret = appl_find(ADDR("COMMAND "));
-                if (ret == -1)
-                {
-                  ret = pro_cmd( "\0", "\0", FALSE);
-                  if (ret)
-                  {
-                    pa = app_afind(FALSE, AT_ISFILE, -1,"COMMAND.COM", &junk);
-                    pr_kbytes = (pa ? pa->a_memreq : 128);
-                    pro_run(FALSE, -1, -1, -1);
-                  }
-                }
-                else
-                {
-                  menu_tnormal(G.a_trees[ADMENU], OPTNMENU, TRUE);
-                  proc_switch(ret);
-                }
-
-#else
-                ret = pro_cmd( "\0", "\0", FALSE);
-                if (ret)
-                  done = pro_run(FALSE, TRUE, -1, -1);
-#endif
+          case RESITEM:
+                form_alert(1,ADDR("[3][Sorry, changing the |resolution isn't"
+                                  "|supported yet.][Ok]"));
                 break;
         }
         return(done);
@@ -902,9 +898,9 @@ WORD hndl_kbd(WORD thechar)
                   done = hndl_menu(OPTNMENU, IAPPITEM);
                 }
                 break;
-          case ALTC:    /* Options: Enter DOS commands  */
+          case ALTC:    /* Options: Change resolution  */
                 menu_tnormal(G.a_trees[ADMENU], OPTNMENU, FALSE);
-                done = hndl_menu(OPTNMENU, DOSITEM);
+                done = hndl_menu(OPTNMENU, RESITEM);
                 break;
           case ALTD:    /* File: Delete         */
                 if (can_del)            /* if it's ok to delete         */
@@ -944,6 +940,7 @@ WORD hndl_kbd(WORD thechar)
                 menu_tnormal(G.a_trees[ADMENU], VIEWMENU, FALSE);
                 done = hndl_menu(VIEWMENU, SIZEITEM);
                 break;
+/* Currently unused:
           case CNTLU:
                 if (can_output)
                 {
@@ -951,6 +948,13 @@ WORD hndl_kbd(WORD thechar)
                   done = hndl_menu(FILEMENU, OUTPITEM);
                 }
                 break;
+*/
+#if WITH_CLI != 0
+          case CNTLZ:
+                menu_tnormal(G.a_trees[ADMENU], FILEMENU, FALSE);
+                done = hndl_menu(FILEMENU, CLIITEM);
+                break;
+#endif
           case CNTLQ:
                 menu_tnormal(G.a_trees[ADMENU], FILEMENU, FALSE);
                 done = hndl_menu(FILEMENU, QUITITEM);

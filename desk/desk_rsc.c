@@ -420,7 +420,7 @@ static const OBJECT desk_rs_obj_rom[] = {
    { 25, -1, -1, G_STRING,                      /*** 24 ***/
      NONE,
      NORMAL,
-     (long) N_("  To Output       ^U"),
+     (long) N_("  Execute EmuCON  ^Z"),
      0, 6, 21, 1},
 
    { 17, -1, -1, G_STRING,                      /*** 25 ***/
@@ -467,8 +467,8 @@ static const OBJECT desk_rs_obj_rom[] = {
 
    { 26, -1, -1, G_STRING,                      /*** 32 ***/
      NONE,
-     NORMAL,
-     (long) N_("  Enter shell commands      \007C"),
+     DISABLED,
+     (long) N_("  Change resolution         \007C"),
      0, 5, 31, 1},
 
    { 7, 34, 39, G_BOX,                          /*** 33 ***/
