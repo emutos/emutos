@@ -43,6 +43,7 @@
         .global _b_mdx          // used in bios.c
 
         .global _printout
+        .global kprintf		// asm glue, saves registers
 
         .global _run
 
@@ -179,7 +180,8 @@ _m_length:      dc.l    1       // length of TPA in byte
                 dc.l    1
 
 aexecsave:	dc.l	1	// save zone for autoexec
-		
+	
+kprintfsave:	dc.l	5	// save zone for kprintf
 	
 // ===========================================================================
 // ==== TEXT segment (TOS image) =============================================
@@ -591,6 +593,15 @@ _printout:
         rts
 
 
+// ==== ASM glue for kprintf =================================================
+kprintf:
+	move.l	(sp)+,kprintfsave+16
+	movem.l	d0-d1/a0-a1,kprintfsave
+	jsr 	_kprintf
+	movem.l	kprintfsave,d0-d1/a0-a1
+	move.l	kprintfsave+16,-(sp)
+	rts
+	
 
 // ==== Use cartridge, if present ============================================
 // get cartridge-type in d0, else use C glue.
