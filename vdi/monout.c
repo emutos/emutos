@@ -18,8 +18,6 @@
 
 
 
-
-extern struct attribute *trap();
 extern void dr_recfl();
 
 
@@ -57,46 +55,6 @@ void v_clrwk()
 }
 
 
-
-    /* EXTENDED INQUIRE */
-void vq_extnd()
-{
-    REG WORD i;
-    REG WORD *dp, *sp;
-
-    dp = CONTRL;
-    *(dp + 2) = 6;
-    *(dp + 4) = 45;
-
-    FLIP_Y = 1;
-
-    dp = PTSOUT;
-
-    if (*(INTIN) == 0) {
-        sp = SIZ_TAB;
-        for (i = 0; i < 12; i++)
-            *dp++ = *sp++;
-
-        sp = DEV_TAB;
-    }
-
-    else {
-        *dp++ = XMN_CLIP;       /* PTSOUT[0] */
-        *dp++ = YMN_CLIP;       /* PTSOUT[1] */
-        *dp++ = XMX_CLIP;       /* PTSOUT[2] */
-        *dp++ = YMX_CLIP;       /* PTSOUT[3] */
-
-        for (i = 4; i < 12; i++)
-            *dp++ = 0;
-
-        sp = INQ_TAB;
-    }
-
-    dp = INTOUT;
-    for (i = 0; i < 45; i++)
-        *dp++ = *sp++;
-
-}
 
 /* POLYLINE: */
 void v_pline()
