@@ -33,6 +33,35 @@ void detect_nvram(void)
     }
 }
 
+UBYTE get_nvram_rtc(int index)
+{
+    volatile UBYTE * addr_reg = (volatile UBYTE *)0xffff8961;
+    volatile UBYTE * data_reg = (volatile UBYTE *)0xffff8963;
+    int ret_value = 0;
+
+    if (has_nvram) {
+        if (index >=0 && index < 14) {
+            *addr_reg = index;
+	        ret_value = *data_reg;
+	    }
+    }
+
+    return ret_value;
+}
+
+void set_nvram_rtc(int index, int data)
+{
+    volatile UBYTE * addr_reg = (volatile UBYTE *)0xffff8961;
+    volatile UBYTE * data_reg = (volatile UBYTE *)0xffff8963;
+
+    if (has_nvram) {
+        if (index >=0 && index < 14) {
+            *addr_reg = index;
+	        *data_reg = data;
+	    }
+    }
+}
+
 /* XBios function */
 /* internal checksum handling */
 
