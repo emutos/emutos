@@ -20,13 +20,14 @@
 #include "kprint.h"
 #include "desk_rsc.h"
 
+#include "nls.h"
 
-static const char rs_str_OK[] = "OK";
-static const char rs_str_Cancel[] = "Cancel";
-static const char rs_str_Install[] = "Install";
-static const char rs_str_Remove[] = "Remove";
-static const char rs_str_Yes[] = "Yes";
-static const char rs_str_No[] = "No";
+static const char rs_str_OK[] = N_("OK");
+static const char rs_str_Cancel[] = N_("Cancel");
+static const char rs_str_Install[] = N_("Install");
+static const char rs_str_Remove[] = N_("Remove");
+static const char rs_str_Yes[] = N_("Yes");
+static const char rs_str_No[] = N_("No");
 
 
 
@@ -38,17 +39,17 @@ TEDINFO desk_rs_tedinfo[RS_NTED];
 
 static const TEDINFO desk_rs_tedinfo_rom[] = {
     {0L,
-     (LONG) "Name:  ________.___",
+     (LONG) N_("Name:  ________.___"),
      (LONG) "f",
      IBM, 0, TE_LEFT, 4352, 0, 0, 12, 20},      /* 0 */
 
     {0L,
-     (LONG) "Size in bytes:  ________",
+     (LONG) N_("Size in bytes:  ________"),
      (LONG) "9",
      IBM, 0, TE_RIGHT, 4352, 0, 0, 9, 25},      /* 1 */
 
     {0L,
-     (LONG) "Last modified:  __/__/__",
+     (LONG) N_("Last modified:  __/__/__"),
      (LONG) "9",
      IBM, 0, TE_RIGHT, 4352, 0, 0, 7, 25},      /* 2 */
 
@@ -58,42 +59,42 @@ static const TEDINFO desk_rs_tedinfo_rom[] = {
      IBM, 0, TE_RIGHT, 4352, 0, 0, 7, 9},       /* 3 */
 
     {0L,
-     (LONG) "Drive identifier:  _:",
+     (LONG) N_("Drive identifier:  _:"),
      (LONG) "A",
      IBM, 0, TE_LEFT, 4352, 0, 0, 2, 22},       /* 4 */
 
     {0L,
-     (LONG) "Disk label:  ___________",
+     (LONG) N_("Disk label:  ___________"),
      (LONG) "f",
      IBM, 0, TE_LEFT, 4352, 0, 0, 12, 25},      /* 5 */
 
     {0L,
-     (LONG) "Number of folders:     _____",
+     (LONG) N_("Number of folders:     _____"),
      (LONG) "9",
      IBM, 0, TE_RIGHT, 4352, 0, 0, 6, 29},      /* 6 */
 
     {0L,
-     (LONG) "Number of items:     _____",
+     (LONG) N_("Number of items:     _____"),
      (LONG) "9",
      IBM, 0, TE_RIGHT, 4352, 0, 0, 6, 27},      /* 7 */
 
     {0L,
-     (LONG) "Bytes used:  ________",
+     (LONG) N_("Bytes used:  ________"),
      (LONG) "9",
      IBM, 0, TE_RIGHT, 4352, 0, 0, 9, 22},      /* 8 */
 
     {0L,
-     (LONG) "Bytes available:  ________",
+     (LONG) N_("Bytes available:  ________"),
      (LONG) "9",
      IBM, 0, TE_RIGHT, 4352, 0, 0, 9, 27},      /* 9 */
 
     {0L,
-     (LONG) "Folder name:  ________.___",
+     (LONG) N_("Folder name:  ________.___"),
      (LONG) "f",
      IBM, 0, TE_LEFT, 4352, 0, 0, 12, 27},      /* 10 */
 
     {0L,
-     (LONG) "Created:  __-__-__  ",
+     (LONG) N_("Created:  __-__-__  "),
      (LONG) "9",
      IBM, 0, TE_LEFT, 4352, 0, 0, 7, 21},       /* 11 */
 
@@ -103,44 +104,44 @@ static const TEDINFO desk_rs_tedinfo_rom[] = {
      IBM, 0, TE_LEFT, 4352, 0, 0, 7, 9},        /* 12 */
 
     {0L,
-     (LONG) "Number of folders:     _____",
+     (LONG) N_("Number of folders:     _____"),
      (LONG) "9",
      IBM, 0, TE_RIGHT, 4352, 0, 0, 6, 29},      /* 13 */
 
     {0L,
-     (LONG) "Number of items:     _____",
+     (LONG) N_("Number of items:     _____"),
      (LONG) "9",
      IBM, 0, TE_RIGHT, 4352, 0, 0, 6, 27},      /* 14 */
 
     {0L,
-     (LONG) "Bytes used:  ________",
+     (LONG) N_("Bytes used:  ________"),
      (LONG) "9",
      IBM, 0, TE_RIGHT, 4352, 0, 0, 9, 22},      /* 15 */
 
     {0L,
-     (LONG) "Name:  ________.___",
+     (LONG) N_("Name:  ________.___"),
      (LONG) "f",
      IBM, 0, TE_LEFT, 4352, 0, 0, 12, 20},      /* 16 */
 
     {0L,
      
      (LONG)
-     "Parameters:  ____________________________________________________",
+     N_("Parameters:  ____________________________________________________"),
      (LONG) "X",
      IBM, 0, TE_LEFT, 4352, 0, 0, 53, 66},      /* 17 */
 
     {0L,
-     (LONG) "Drive identifier:  _",
+     (LONG) N_("Drive identifier:  _"),
      (LONG) "A",
      IBM, 0, TE_LEFT, 4352, 0, 0, 2, 21},       /* 18 */
 
     {0L,
-     (LONG) "Icon label:  ____________",
+     (LONG) N_("Icon label:  ____________"),
      (LONG) "F",
      IBM, 0, TE_LEFT, 4352, 0, 0, 13, 26},      /* 19 */
 
     {0L,
-     (LONG) "Application name:  ________.___",
+     (LONG) N_("Application name:  ________.___"),
      (LONG) "F",
      IBM, 0, TE_LEFT, 4352, 0, 0, 12, 32},      /* 20 */
 
@@ -190,37 +191,37 @@ static const TEDINFO desk_rs_tedinfo_rom[] = {
      IBM, 1, TE_CNTR, 4480, 0, -1, 24, 24},     /* 29 */
 
     {0L,
-     (LONG) "Folders to copy:  ____",
+     (LONG) N_("Folders to copy:  ____"),
      (LONG) "9",
      IBM, 0, TE_RIGHT, 4352, 0, 0, 5, 23},      /* 30 */
 
     {0L,
-     (LONG) "Items to copy:  ____",
+     (LONG) N_("Items to copy:  ____"),
      (LONG) "9",
      IBM, 0, TE_RIGHT, 4352, 0, 0, 5, 21},      /* 31 */
 
     {0L,
-     (LONG) "Folders to delete:  ____",
+     (LONG) N_("Folders to delete:  ____"),
      (LONG) "9",
      IBM, 0, TE_RIGHT, 4352, 0, 0, 5, 25},      /* 32 */
 
     {0L,
-     (LONG) "Items to delete:  ____",
+     (LONG) N_("Items to delete:  ____"),
      (LONG) "9",
      IBM, 0, TE_RIGHT, 4352, 0, 0, 5, 23},      /* 33 */
 
     {0L,
-     (LONG) "Current name:  ________.___",
+     (LONG) N_("Current name:  ________.___"),
      (LONG) "f",
      IBM, 0, TE_LEFT, 4352, 0, 0, 12, 28},      /* 34 */
 
     {0L,
-     (LONG) "Copy's name:  ________.___",
+     (LONG) N_("Copy's name:  ________.___"),
      (LONG) "f",
      IBM, 0, TE_LEFT, 4352, 0, 0, 12, 27},      /* 35 */
 
     {0L,
-     (LONG) "Name:  ________.___",
+     (LONG) N_("Name:  ________.___"),
      (LONG) "f",
      IBM, 0, TE_LEFT, 4352, 0, 0, 12, 20}       /* 36 */
 };
@@ -278,25 +279,25 @@ static const OBJECT desk_rs_obj_rom[] = {
    { 4, -1, -1, G_TITLE,                        /*** 3 ***/
      NONE,
      NORMAL,
-     (long) " Desk ",
+     (long) N_(" Desk "),
      0, 0, 6, 769},
 
    { 5, -1, -1, G_TITLE,                        /*** 4 ***/
      NONE,
      NORMAL,
-     (long) " File ",
+     (long) N_(" File "),
      6, 0, 6, 769},
 
    { 6, -1, -1, G_TITLE,                        /*** 5 ***/
      NONE,
      NORMAL,
-     (long) " Options ",
+     (long) N_(" Options "),
      12, 0, 9, 769},
 
    { 2, -1, -1, G_TITLE,                        /*** 6 ***/
      NONE,
      NORMAL,
-     (long) " Arrange ",
+     (long) N_(" Arrange "),
      21, 0, 9, 769},
 
    { 0, 8, 33, G_IBOX,                          /*** 7 ***/
@@ -314,7 +315,7 @@ static const OBJECT desk_rs_obj_rom[] = {
    { 10, -1, -1, G_STRING,                      /*** 9 ***/
      NONE,
      NORMAL,
-     (long) "  Desktop info...   ",
+     (long) N_("  Desktop info...   "),
      0, 0, 20, 1},
 
    { 11, -1, -1, G_STRING,                      /*** 10 ***/
@@ -368,13 +369,13 @@ static const OBJECT desk_rs_obj_rom[] = {
    { 19, -1, -1, G_STRING,                      /*** 18 ***/
      NONE,
      NORMAL,
-     (long) "  Open",
+     (long) N_("  Open"),
      0, 0, 21, 1},
 
    { 20, -1, -1, G_STRING,                      /*** 19 ***/
      NONE,
      NORMAL,
-     (long) "  Info/Rename...  \007I",
+     (long) N_("  Info/Rename...  \007I"),
      0, 1, 21, 1},
 
    { 21, -1, -1, G_STRING,                      /*** 20 ***/
@@ -386,13 +387,13 @@ static const OBJECT desk_rs_obj_rom[] = {
    { 22, -1, -1, G_STRING,                      /*** 21 ***/
      NONE,
      NORMAL,
-     (long) "  Delete...       \007D",
+     (long) N_("  Delete...       \007D"),
      0, 3, 21, 1},
 
    { 23, -1, -1, G_STRING,                      /*** 22 ***/
      NONE,
      NORMAL,
-     (long) "  Format...",
+     (long) N_("  Format..."),
      0, 4, 21, 1},
 
    { 24, -1, -1, G_STRING,                      /*** 23 ***/
@@ -404,13 +405,13 @@ static const OBJECT desk_rs_obj_rom[] = {
    { 25, -1, -1, G_STRING,                      /*** 24 ***/
      NONE,
      NORMAL,
-     (long) "  To Output       ^U",
+     (long) N_("  To Output       ^U"),
      0, 6, 21, 1},
 
    { 17, -1, -1, G_STRING,                      /*** 25 ***/
      NONE,
      NORMAL,
-     (long) "  Exit to DOS     ^Q",
+     (long) N_("  Exit to DOS     ^Q"),
      0, 7, 21, 1},
 
    { 33, 27, 32, G_BOX,                         /*** 26 ***/
@@ -422,13 +423,13 @@ static const OBJECT desk_rs_obj_rom[] = {
    { 28, -1, -1, G_STRING,                      /*** 27 ***/
      NONE,
      NORMAL,
-     (long) "  Install disk drive...",
+     (long) N_("  Install disk drive..."),
      0, 0, 31, 1},
 
    { 29, -1, -1, G_STRING,                      /*** 28 ***/
      NONE,
      NORMAL,
-     (long) "  Configure application...  \007A",
+     (long) N_("  Configure application...  \007A"),
      0, 1, 31, 1},
 
    { 30, -1, -1, G_STRING,                      /*** 29 ***/
@@ -440,19 +441,19 @@ static const OBJECT desk_rs_obj_rom[] = {
    { 31, -1, -1, G_STRING,                      /*** 30 ***/
      NONE,
      NORMAL,
-     (long) "  Set preferences...",
+     (long) N_("  Set preferences..."),
      0, 3, 31, 1},
 
    { 32, -1, -1, G_STRING,                      /*** 31 ***/
      NONE,
      NORMAL,
-     (long) "  Save desktop              \007V",
+     (long) N_("  Save desktop              \007V"),
      0, 4, 31, 1},
 
    { 26, -1, -1, G_STRING,                      /*** 32 ***/
      NONE,
      NORMAL,
-     (long) "  Enter DOS commands        \007C",
+     (long) N_("  Enter DOS commands        \007C"),
      0, 5, 31, 1},
 
    { 7, 34, 39, G_BOX,                          /*** 33 ***/
@@ -476,25 +477,25 @@ static const OBJECT desk_rs_obj_rom[] = {
    { 37, -1, -1, G_STRING,                      /*** 36 ***/
      NONE,
      NORMAL,
-     (long) "  Sort by name   \007N",
+     (long) N_("  Sort by name   \007N"),
      0, 2, 20, 1},
 
    { 38, -1, -1, G_STRING,                      /*** 37 ***/
      NONE,
      NORMAL,
-     (long) "  Sort by type   \007P",
+     (long) N_("  Sort by type   \007P"),
      0, 3, 20, 1},
 
    { 39, -1, -1, G_STRING,                      /*** 38 ***/
      NONE,
      NORMAL,
-     (long) "  Sort by size   \007Z",
+     (long) N_("  Sort by size   \007Z"),
      0, 4, 20, 1},
 
    { 33, -1, -1, G_STRING,                      /*** 39 ***/
      LASTOB,
      NORMAL,
-     (long) "  Sort by date   \007T",
+     (long) N_("  Sort by date   \007T"),
      0, 5, 20, 1},
 
 #define TR1 40
@@ -508,7 +509,7 @@ static const OBJECT desk_rs_obj_rom[] = {
    { 2, -1, -1, G_STRING,                       /*** 1 ***/
      NONE,
      NORMAL,
-     (long) "ITEM INFORMATION / RENAME",
+     (long) N_("ITEM INFORMATION / RENAME"),
      2, 1, 16, 1},
 
    { 3, -1, -1, G_FBOXTEXT,                     /*** 2 ***/
@@ -538,7 +539,7 @@ static const OBJECT desk_rs_obj_rom[] = {
    { 7, -1, -1, G_STRING,                       /*** 6 ***/
      NONE,
      NORMAL,
-     (long) "Attributes:",
+     (long) N_("Attributes:"),
      2, 7, 11, 1},
 
    { 10, 8, 9, G_IBOX,                          /*** 7 ***/
@@ -550,13 +551,13 @@ static const OBJECT desk_rs_obj_rom[] = {
    { 9, -1, -1, G_BUTTON,                       /*** 8 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
-     (long) "Read/Write",
+     (long) N_("Read/Write"),
      0, 0, 11, 1},
 
    { 7, -1, -1, G_BUTTON,                       /*** 9 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
-     (long) "Read-Only",
+     (long) N_("Read-Only"),
      13, 0, 10, 1},
 
    { 11, -1, -1, G_BUTTON,                      /*** 10 ***/
@@ -582,7 +583,7 @@ static const OBJECT desk_rs_obj_rom[] = {
    { 2, -1, -1, G_STRING,                       /*** 1 ***/
      NONE,
      NORMAL,
-     (long) "DISK INFORMATION",
+     (long) N_("DISK INFORMATION"),
      3, 1, 16, 1},
 
    { 3, -1, -1, G_FBOXTEXT,                     /*** 2 ***/
@@ -638,7 +639,7 @@ static const OBJECT desk_rs_obj_rom[] = {
    { 2, -1, -1, G_STRING,                       /*** 1 ***/
      NONE,
      NORMAL,
-     (long) "FOLDER INFORMATION",
+     (long) N_("FOLDER INFORMATION"),
      2, 1, 18, 1},
 
    { 3, -1, -1, G_FBOXTEXT,                     /*** 2 ***/
@@ -700,7 +701,7 @@ static const OBJECT desk_rs_obj_rom[] = {
    { 3, -1, -1, G_STRING,                   /*** 2 ***/
      NONE,
      NORMAL,
-     (long) "Version",
+     (long) N_("Version"),
      14, 2, 7, 1 },
 
    { 4, -1, -1, G_STRING,                   /*** 3 ***/
@@ -718,13 +719,13 @@ static const OBJECT desk_rs_obj_rom[] = {
    { 6, -1, -1, G_STRING,                   /*** 5 ***/
      NONE,
      NORMAL,
-     (long) "April 23, 2002",
+     (long) N_("April 23, 2002"),
      13, 4, 24, 1 },
 
    { 7, -1, -1, G_STRING,                   /*** 6 ***/
      NONE,
      NORMAL,
-     (long) "Copyright (c) 2002 by",
+     (long) N_("Copyright (c) 2002 by"),
      9, 6, 21, 1 },
 
    { 8, -1, -1, G_IMAGE,                    /*** 7 ***/
@@ -736,13 +737,13 @@ static const OBJECT desk_rs_obj_rom[] = {
    { 9, -1, -1, G_STRING,                   /*** 8 ***/
      NONE,
      NORMAL,
-     (long) "The EmuTOS development team",
+     (long) N_("The EmuTOS development team"),
      6, 7, 27, 1 },
 
    { 10, -1, -1, G_STRING,                  /*** 9 ***/
      NONE,
      NORMAL,
-     (long) "Based on 'GPLed' sources",
+     (long) N_("Based on 'GPLed' sources"),
      8, 9, 24, 1 },
 
    { 11, -1, -1, G_STRING,                  /*** 10 ***/
@@ -772,13 +773,13 @@ static const OBJECT desk_rs_obj_rom[] = {
    { 15, -1, -1, G_STRING,                  /*** 14 ***/
      NONE,
      NORMAL,
-     (long) "EmuTOS is distributed under the GPL",
+     (long) N_("EmuTOS is distributed under the GPL"),
      3, 14, 35, 1 },
 
    { 0, -1, -1, G_STRING,                   /*** 15 ***/
      LASTOB,
      NORMAL,
-     (long) "See doc/license.txt for details",
+     (long) N_("See doc/license.txt for details"),
      4, 15, 21, 1 },
 
 #define TR5 86
@@ -792,37 +793,37 @@ static const OBJECT desk_rs_obj_rom[] = {
    { 2, -1, -1, G_STRING,                   /*** 1 ***/
      NONE,
      NORMAL,
-     (long) "NEW FOLDER INFORMATION",
+     (long) N_("NEW FOLDER INFORMATION"),
      3, 1, 23, 1},
 
    { 3, -1, -1, G_STRING,                   /*** 2 ***/
      NONE,
      NORMAL,
-     (long) "To create a new folder within the cur-",
+     (long) N_("To create a new folder within the cur-"),
      1, 3, 38, 1},
 
    { 4, -1, -1, G_STRING,                   /*** 3 ***/
      NONE,
      NORMAL,
-     (long) "rent window, double-click on the New",
+     (long) N_("rent window, double-click on the New"),
      1, 4, 36, 1},
 
    { 5, -1, -1, G_STRING,                   /*** 4 ***/
      NONE,
      NORMAL,
-     (long) "Folder icon and complete the dialogue",
+     (long) N_("Folder icon and complete the dialogue"),
      1, 5, 37, 1},
 
    { 6, -1, -1, G_STRING,                   /*** 5 ***/
      NONE,
      NORMAL,
-     (long) "that appears by entering the name of",
+     (long) N_("that appears by entering the name of"),
      1, 6, 36, 1},
 
    { 7, -1, -1, G_STRING,                   /*** 6 ***/
      NONE,
      NORMAL,
-     (long) "the folder you want to create.",
+     (long) N_("the folder you want to create."),
      1, 7, 30, 1},
 
    { 0, -1, -1, G_BUTTON,                   /*** 7 ***/
@@ -842,7 +843,7 @@ static const OBJECT desk_rs_obj_rom[] = {
      2, -1, -1, G_STRING,                   /*** 1 ***/
      NONE,
      NORMAL,
-     (long) "OPEN APPLICATION",
+     (long) N_("OPEN APPLICATION"),
      3, 1, 16, 1},
     {
      3, -1, -1, G_FBOXTEXT,                 /*** 2 ***/
@@ -872,19 +873,19 @@ static const OBJECT desk_rs_obj_rom[] = {
      7, -1, -1, G_STRING,                   /*** 6 ***/
      NONE,
      NORMAL,
-     (long) "Enter the name of the document you want",
+     (long) N_("Enter the name of the document you want"),
      3, 6, 39, 1},
     {
      8, -1, -1, G_STRING,                   /*** 7 ***/
      NONE,
      NORMAL,
-     (long) "to load, or enter parameter values that",
+     (long) N_("to load, or enter parameter values that"),
      3, 7, 39, 1},
     {
      0, -1, -1, G_STRING,                   /*** 8 ***/
      LASTOB,
      NORMAL,
-     (long) "are acceptable to this application.",
+     (long) N_("are acceptable to this application."),
      3, 8, 35, 1},
     {
 #define TR7 103
@@ -898,7 +899,7 @@ static const OBJECT desk_rs_obj_rom[] = {
      2, -1, -1, G_STRING,                   /*** 1 ***/
      NONE,
      NORMAL,
-     (long) "INSTALL DISK DRIVE",
+     (long) N_("INSTALL DISK DRIVE"),
      3, 1, 18, 1},
     {
      3, -1, -1, G_FBOXTEXT,                 /*** 2 ***/
@@ -916,7 +917,7 @@ static const OBJECT desk_rs_obj_rom[] = {
      5, -1, -1, G_STRING,                   /*** 4 ***/
      NONE,
      NORMAL,
-     (long) "Disk type:",
+     (long) N_("Disk type:"),
      10, 6, 10, 1},
     {
      8, 6, 7, G_IBOX,                       /*** 5 ***/
@@ -928,13 +929,13 @@ static const OBJECT desk_rs_obj_rom[] = {
      7, -1, -1, G_BUTTON,                   /*** 6 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
-     (long) "Floppy",
+     (long) N_("Floppy"),
      2, 0, 8, 1},
     {
      5, -1, -1, G_BUTTON,                   /*** 7 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
-     (long) "Hard",
+     (long) N_("Hard"),
      12, 0, 8, 1},
     {
      9, -1, -1, G_BUTTON,                   /*** 8 ***/
@@ -966,7 +967,7 @@ static const OBJECT desk_rs_obj_rom[] = {
      2, -1, -1, G_STRING,                   /*** 1 ***/
      NONE,
      NORMAL,
-     (long) "CONFIGURE APPLICATION",
+     (long) N_("CONFIGURE APPLICATION"),
      3, 1, 21, 1},
     {
      3, -1, -1, G_FBOXTEXT,                 /*** 2 ***/
@@ -978,7 +979,7 @@ static const OBJECT desk_rs_obj_rom[] = {
      4, -1, -1, G_STRING,                   /*** 3 ***/
      NONE,
      NORMAL,
-     (long) "Document types:",
+     (long) N_("Document types:"),
      6, 4, 15, 1},
     {
      5, -1, -1, G_FBOXTEXT,                 /*** 4 ***/
@@ -1032,7 +1033,7 @@ static const OBJECT desk_rs_obj_rom[] = {
      13, -1, -1, G_STRING,                  /*** 12 ***/
      NONE,
      NORMAL,
-     (long) "Application type:",
+     (long) N_("Application type:"),
      4, 6, 17, 1},
     {
      17, 14, 16, G_IBOX,                    /*** 13 ***/
@@ -1056,13 +1057,13 @@ static const OBJECT desk_rs_obj_rom[] = {
      13, -1, -1, G_BUTTON,                  /*** 16 ***/
      SELECTABLE | RBUTTON | TOUCHEXIT,
      NORMAL,
-     (long) "DOS-takes parameters",
+     (long) N_("DOS-takes parameters"),
      16, 0, 22, 1},
     {
      18, -1, -1, G_STRING,                  /*** 17 ***/
      NONE,
      NORMAL,
-     (long) "Needs full memory?",
+     (long) N_("Needs full memory?"),
      3, 8, 18, 1},
     {
      21, 19, 20, G_IBOX,                    /*** 18 ***/
@@ -1086,7 +1087,7 @@ static const OBJECT desk_rs_obj_rom[] = {
      22, -1, -1, G_STRING,                  /*** 21 ***/
      NONE,
      NORMAL,
-     (long) "Icon type:",
+     (long) N_("Icon type:"),
      11, 10, 10, 1},
     {
      23, -1, -1, G_BOXTEXT,                 /*** 22 ***/
@@ -1179,7 +1180,7 @@ static const OBJECT desk_rs_obj_rom[] = {
      2, -1, -1, G_STRING,                   /*** 1 ***/
      NONE,
      NORMAL,
-     (long) "COPY FOLDERS / ITEMS",
+     (long) N_("COPY FOLDERS / ITEMS"),
      3, 1, 20, 1},
     {
      3, -1, -1, G_FBOXTEXT,                 /*** 2 ***/
@@ -1217,7 +1218,7 @@ static const OBJECT desk_rs_obj_rom[] = {
      2, -1, -1, G_STRING,                   /*** 1 ***/
      NONE,
      NORMAL,
-     (long) "DELETE FOLDERS / ITEMS",
+     (long) N_("DELETE FOLDERS / ITEMS"),
      3, 1, 23, 1},
     {
      3, -1, -1, G_FBOXTEXT,                 /*** 2 ***/
@@ -1255,7 +1256,7 @@ static const OBJECT desk_rs_obj_rom[] = {
      2, -1, -1, G_STRING,                   /*** 1 ***/
      NONE,
      NORMAL,
-     (long) "NAME CONFLICT DURING COPY",
+     (long) N_("NAME CONFLICT DURING COPY"),
      3, 1, 25, 1},
     {
      3, -1, -1, G_FBOXTEXT,                 /*** 2 ***/
@@ -1285,7 +1286,7 @@ static const OBJECT desk_rs_obj_rom[] = {
      0, -1, -1, G_BUTTON,                   /*** 6 ***/
      SELECTABLE | EXIT | LASTOB,
      NORMAL,
-     (long) "Stop",
+     (long) N_("Stop"),
      23, 6, 8, 1},
     {
 #define TR12 167
@@ -1299,7 +1300,7 @@ static const OBJECT desk_rs_obj_rom[] = {
      2, -1, -1, G_STRING,                   /*** 1 ***/
      NONE,
      NORMAL,
-     (long) "NEW FOLDER",
+     (long) N_("NEW FOLDER"),
      3, 1, 10, 1},
     {
      3, -1, -1, G_FBOXTEXT,                 /*** 2 ***/
@@ -1331,13 +1332,13 @@ static const OBJECT desk_rs_obj_rom[] = {
      2, -1, -1, G_STRING,                   /*** 1 ***/
      NONE,
      NORMAL,
-     (long) "SET PREFERENCES",
+     (long) N_("SET PREFERENCES"),
      3, 1, 15, 1},
     {
      3, -1, -1, G_STRING,                   /*** 2 ***/
      NONE,
      NORMAL,
-     (long) "Confirm deletes?",
+     (long) N_("Confirm deletes?"),
      6, 3, 16, 1},
     {
      6, 4, 5, G_IBOX,                       /*** 3 ***/
@@ -1361,7 +1362,7 @@ static const OBJECT desk_rs_obj_rom[] = {
      7, -1, -1, G_STRING,                   /*** 6 ***/
      NONE,
      NORMAL,
-     (long) "Confirm copies?",
+     (long) N_("Confirm copies?"),
      7, 5, 15, 1},
     {
      10, 8, 9, G_IBOX,                      /*** 7 ***/
@@ -1385,7 +1386,7 @@ static const OBJECT desk_rs_obj_rom[] = {
      11, -1, -1, G_STRING,                  /*** 10 ***/
      NONE,
      NORMAL,
-     (long) "Confirm overwrites?",
+     (long) N_("Confirm overwrites?"),
      3, 7, 19, 1},
     {
      14, 12, 13, G_IBOX,                    /*** 11 ***/
@@ -1409,7 +1410,7 @@ static const OBJECT desk_rs_obj_rom[] = {
      15, -1, -1, G_STRING,                  /*** 14 ***/
      NONE,
      NORMAL,
-     (long) "Double-click speed:",
+     (long) N_("Double-click speed:"),
      3, 9, 19, 1},
     {
      21, 16, 20, G_IBOX,                    /*** 15 ***/
@@ -1421,7 +1422,7 @@ static const OBJECT desk_rs_obj_rom[] = {
      17, -1, -1, G_BUTTON,                  /*** 16 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
-     (long) "Slow",
+     (long) N_("Slow"),
      0, 0, 7, 1},
     {
      18, -1, -1, G_BUTTON,                  /*** 17 ***/
@@ -1445,7 +1446,7 @@ static const OBJECT desk_rs_obj_rom[] = {
      15, -1, -1, G_BUTTON,                  /*** 20 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
-     (long) "Fast",
+     (long) N_("Fast"),
      24, 0, 7, 1},
     {
      24, 22, 23, G_IBOX,                    /*** 21 ***/
@@ -1457,25 +1458,25 @@ static const OBJECT desk_rs_obj_rom[] = {
      23, -1, -1, G_BUTTON,                  /*** 22 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
-     (long) "Click",
+     (long) N_("Click"),
      0, 0, 8, 1},
     {
      21, -1, -1, G_BUTTON,                  /*** 23 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
-     (long) "No click",
+     (long) N_("No click"),
      10, 0, 10, 1},
     {
      25, -1, -1, G_STRING,                  /*** 24 ***/
      NONE,
      NORMAL,
-     (long) "To drop down menus:",
+     (long) N_("To drop down menus:"),
      3, 11, 19, 1},
     {
      26, -1, -1, G_STRING,                  /*** 25 ***/
      NONE,
      NORMAL,
-     (long) "Sound effects:",
+     (long) N_("Sound effects:"),
      8, 13, 14, 1},
     {
      29, 27, 28, G_IBOX,                    /*** 26 ***/
@@ -1487,19 +1488,19 @@ static const OBJECT desk_rs_obj_rom[] = {
      28, -1, -1, G_BUTTON,                  /*** 27 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
-     (long) "On",
+     (long) N_("On"),
      0, 0, 5, 1},
     {
      26, -1, -1, G_BUTTON,                  /*** 28 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
-     (long) "Off",
+     (long) N_("Off"),
      7, 0, 5, 1},
     {
      30, -1, -1, G_STRING,                  /*** 29 ***/
      NONE,
      NORMAL,
-     (long) "Time format:",
+     (long) N_("Time format:"),
      10, 15, 12, 1},
     {
      33, 31, 32, G_IBOX,                    /*** 30 ***/
@@ -1511,19 +1512,19 @@ static const OBJECT desk_rs_obj_rom[] = {
      32, -1, -1, G_BUTTON,                  /*** 31 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
-     (long) "12 Hour",
+     (long) N_("12 Hour"),
      0, 0, 9, 1},
     {
      30, -1, -1, G_BUTTON,                  /*** 32 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
-     (long) "24 Hour",
+     (long) N_("24 Hour"),
      11, 0, 9, 1},
     {
      34, -1, -1, G_STRING,                  /*** 33 ***/
      NONE,
      NORMAL,
-     (long) "Date format:",
+     (long) N_("Date format:"),
      10, 17, 12, 1},
     {
      37, 35, 36, G_IBOX,                    /*** 34 ***/
@@ -1535,13 +1536,13 @@ static const OBJECT desk_rs_obj_rom[] = {
      36, -1, -1, G_BUTTON,                  /*** 35 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
-     (long) "MM-DD-YY",
+     (long) N_("MM-DD-YY"),
      0, 0, 11, 1},
     {
      34, -1, -1, G_BUTTON,                  /*** 36 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
-     (long) "DD-MM-YY",
+     (long) N_("DD-MM-YY"),
      13, 0, 11, 1},
     {
      38, -1, -1, G_BUTTON,                  /*** 37 ***/
@@ -1579,12 +1580,12 @@ static OBJECT *desk_rs_trees[] = {
 #define RS_NFSTR 37
 
 char *desk_rs_fstr[] = {
-    "%L bytes used in %W items.",
-    "  Show as icons  \007S",
-    "application",
-    "documents",
+    N_("%L bytes used in %W items."),
+    N_("  Show as icons  \007S"),
+    N_("application"),
+    N_("documents"),
     "FORMAT.COM",
-    "  Show as text   \007S",
+    N_("  Show as text   \007S"),
     "DESKHI.ICN",
     "DESKTOP.INF",
     "DESKLO.ICN",
@@ -1597,43 +1598,42 @@ char *desk_rs_fstr[] = {
     "#P08FF *.COM@ @",
     "#P08FF *.BAT@ @",
     "FORMAT.EXE",
-    "New Folder",
-    "Disk Drives:",
+    N_("New Folder"),
+    N_("Disk Drives:"),
     "am",
     "pm",
+    N_("Free"),
     "Free",
-    "Free",
-    "[1][The document type you selected is not|configured to work with a specific|application.  Use the \"Configure|application\" command to associate this|document type with an application.][  OK  ]",
-    "[1][The GEM Desktop has no more available|windows.  Before you open a disk, close|a window you're not using.][  OK  ]",
-    "[1][Cannot find the FORMAT program.  If you|are using a dual-floppy system, you must|format disks from your DOS disk.  If you|are using a hard disk, copy FORMAT to |the root directory.][OK]",
-    "[3][Formatting will ERASE all|information on the disk in drive|%S:.  Click on OK only if you don't|mind losing the information on|this disk.][  OK  |Cancel]",
-    "[3][You cannot copy a parent folder|into one of its child folders.][  OK  ]",
-    "[3][If you are sure you want to|delete ALL the information on the|disk in drive %S:, click on OK.|Otherwise, click on Cancel.][  OK  |Cancel]",
-    "[1][There is not enough space available|to configure this application.  To free|up some space, you'll have to remove|one of your currently configured|applications.][  OK  ]",
-    "[2][A folder with that name already|exists or your disk is full.|Retry with a new name, or Cancel|and check the available disk space.][ Cancel | Retry ]",
-    "[1][This disk does not have enough room for|the information you are trying to copy.|Some items, however, may have been|copied to the disk.][  OK  ]",
-    "[3][The GEM Desktop cannot find the|documents DESKLO.ICN, DESKHI.ICN,|or DESKTOP.INF in the DOS search|path.  These documents are required|to run the GEM Desktop.][Cancel]",
-    "[3][To save your desktop, insert your|GEM DESKTOP disk into drive A:, close|the drive door, and click on OK.|Click on Cancel if you don't want to|save the desktop.][  OK  |Cancel]",
-    "[3][Sorry, but you cannot place any more|folders inside of your current one.|See your documentation for limits on|folders inside other folders.][Cancel]",
-    "[3][Sorry, but the Directory name you have|entered exceeds the maximum number of|characters.  See your documentation for|limits on the number of characters you|can enter.][   OK   ]"
+    N_("[1][The document type you selected is not|configured to work with a specific|application.  Use the \"Configure|application\" command to associate this|document type with an application.][  OK  ]"),
+    N_("[1][The GEM Desktop has no more available|windows.  Before you open a disk, close|a window you're not using.][  OK  ]"),
+    N_("[1][Cannot find the FORMAT program.  If you|are using a dual-floppy system, you must|format disks from your DOS disk.  If you|are using a hard disk, copy FORMAT to |the root directory.][OK]"),
+    N_("[3][Formatting will ERASE all|information on the disk in drive|%S:.  Click on OK only if you don't|mind losing the information on|this disk.][  OK  |Cancel]"),
+    N_("[3][You cannot copy a parent folder|into one of its child folders.][  OK  ]"),
+    N_("[3][If you are sure you want to|delete ALL the information on the|disk in drive %S:, click on OK.|Otherwise, click on Cancel.][  OK  |Cancel]"),
+    N_("[1][There is not enough space available|to configure this application.  To free|up some space, you'll have to remove|one of your currently configured|applications.][  OK  ]"),
+    N_("[2][A folder with that name already|exists or your disk is full.|Retry with a new name, or Cancel|and check the available disk space.][ Cancel | Retry ]"),
+    N_("[1][This disk does not have enough room for|the information you are trying to copy.|Some items, however, may have been|copied to the disk.][  OK  ]"),
+    N_("[3][The GEM Desktop cannot find the|documents DESKLO.ICN, DESKHI.ICN,|or DESKTOP.INF in the DOS search|path.  These documents are required|to run the GEM Desktop.][Cancel]"),
+    N_("[3][To save your desktop, insert your|GEM DESKTOP disk into drive A:, close|the drive door, and click on OK.|Click on Cancel if you don't want to|save the desktop.][  OK  |Cancel]"),
+    N_("[3][Sorry, but you cannot place any more|folders inside of your current one.|See your documentation for limits on|folders inside other folders.][Cancel]"),
+    N_("[3][Sorry, but the Directory name you have|entered exceeds the maximum number of|characters.  See your documentation for|limits on the number of characters you|can enter.][   OK   ]"),
 };
 
 
 
 
 /* Counts the occurance of c in str */
-int count_chars(char *str, char c)
+static int count_chars(char *str, char c)
 {
-    int j;
-    int len;
+    int count;
 
-    len = 0;
-    for (j = 0; j < strlen(str); j++) {
-        if (str[j] == c)
-            len += 1;
+    count = 0;
+    while(*str) {
+        if(*str++ == c) 
+            count ++;
     }
 
-    return len;
+    return count;
 }
 
 
@@ -1651,10 +1651,33 @@ void desk_rs_init(void)
            RS_NTED * sizeof(TEDINFO));
 
     /* Fix objects coordinates: */
-    do {
+    for(i = 0 ; i < RS_NOBS ; i++) {
         rsrc_obfix((LONG) desk_rs_obj, i);
     }
-    while (++i < RS_NOBS);
+
+    /* translate strings in objects */
+    for(i = 0 ; i < RS_NOBS ; i++) {
+        OBJECT *obj = &desk_rs_obj[i];
+        switch(obj->ob_type) {
+        case G_TEXT:
+        case G_BOXTEXT:
+        case G_STRING:
+        case G_FTEXT:
+        case G_BUTTON:
+        case G_FBOXTEXT:
+        case G_TITLE:
+            obj->ob_spec = (LONG) gettext( (char *) obj->ob_spec);
+            break;
+        default:
+            break;
+        }
+    }
+
+    /* translate strings in TEDINFO */
+    for (i = 0; i < RS_NTED; i++) {
+        TEDINFO *ted = &desk_rs_tedinfo[i];
+        ted->te_ptmplt = (LONG) gettext( (char *) ted->te_ptmplt);
+    }
 
     /* Fix TEDINFO strings: */
     len = 0;
@@ -1693,7 +1716,7 @@ WORD rsrc_gaddr(WORD rstype, WORD rsid, LONG * paddr)
         *paddr = (LONG) & desk_rs_bitblk[rsid];
         break;
     case R_STRING:
-        *paddr = (LONG) desk_rs_fstr[rsid];
+        *paddr = (LONG) gettext( desk_rs_fstr[rsid] );
         break;
     default:
         kcprintf("FIXME: unsupported (faked) rsrc_gaddr type!\n");

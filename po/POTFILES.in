@@ -8,3 +8,5 @@ bios/initinfo.c
 
 cli/command.c
 
+desk/desk_rsc.c
+

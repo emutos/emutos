@@ -809,3 +809,8 @@ Start... early ages
 - aes/gsx2.S - cleaned up, gave better names to labels (LVL)
 - updated some todo items (LVL)
 - aes/ - wrote comments trying to understand how the processes work (LVL)
+
+28. Apr. 2002
+- desk/desk_rsc.c - added string translation using gettext (LVL)
+- po/fr.po - updated FR translations to include desktop strings (LVL)
+
