@@ -16,6 +16,7 @@
 #include "fontdef.h"
 #include "kprint.h"
 #include "country.h"
+#include "string.h"
 
 #define DBG_LINEA 1
 /*==== Defines ============================================================*/
@@ -54,11 +55,17 @@ static struct charset_fonts font_sets[] = {
 };
 
 
+
 /*==== Prototypes =========================================================*/
 
 void font_init(void);
 void init_fonts(WORD vmode);
 
+
+/* Copies of the ROM-fontheaders */
+struct font_head fon8x16;
+struct font_head fon8x8;
+struct font_head fon6x6;
 
 /*
  * init_fonts - font ring initialization
@@ -77,19 +84,29 @@ void init_fonts(WORD vmode)
         }
     }
     
+    /* copy the ROM-fontheaders of 3 system fonts to RAM */
+    memmove(&fon6x6, font_sets[j].f6x6, sizeof(struct font_head));
+    memmove(&fon8x8, font_sets[j].f8x8, sizeof(struct font_head));
+    memmove(&fon8x16, font_sets[j].f8x16, sizeof(struct font_head));
+
+    /* now in RAM, chain the font headers to a linked list */
+    fon6x6.next_font = &f8x8;
+    fon8x8.next_font = &f8x16;
+    fon8x16.next_font = 0;
+
     /* set current font depending on the video mode */
     if (vmode == 2) {
-        cur_font = def_font = font_sets[j].f8x16;
+        cur_font = def_font = &fon8x16;
     } else {
-        cur_font = def_font = font_sets[j].f8x8;
+        cur_font = def_font = &fon8x8;
     }
        
-    /* Initialize the font ring */
-    /* I think this is plain wrong. Will fix it next time - LVL */
-    font_ring[0]= font_sets[j].f6x6;
-    font_ring[1]= font_sets[j].f8x8;
-    font_ring[2]= font_sets[j].f8x16;
-    font_ring[3]= NULL;
+    /* Initialize the font ring as an array of now linked font lists */
+    font_ring.first_list = &fon6x6;
+    font_ring.second_list = &fon6x6;
+    font_ring.gdos_list = &fon6x6;
+    font_ring.null_list = 0;
+
     font_count=3;                       // total number of fonts in fontring
 }
 

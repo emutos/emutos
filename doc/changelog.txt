@@ -553,3 +553,4 @@ Start... early ages
 - started fastram support in bdos (LVL)
 - fixed some functino prototypes in bios.c (LVL)
 - removed cli/Makefile (LVL)
+- implemented the font_ring as 3 lists of linked fontheaders (MAD)

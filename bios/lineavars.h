@@ -64,7 +64,13 @@ extern struct font_head * def_font;     // actual font
 extern struct font_head * cur_font;     // actual font (VDI)
 
 extern UWORD font_count;                // all three fonts and NULL
-extern struct font_head *font_ring[4];  // all three fonts and NULL
+
+struct  {
+    struct font_head *first_list;
+    struct font_head *second_list;
+    struct font_head *gdos_list;
+    struct font_head *null_list;
+} font_ring;
 
 
 /* Cell specific stuff */
