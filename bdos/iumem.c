@@ -12,9 +12,9 @@
 
 
 
-#ifndef DBGIUMEM
-#define DBGIUMEM  1
-#endif
+#define DBG_IUMEM  0
+
+
 
 #include	"gportab.h"
 #include	"fs.h"
@@ -53,7 +53,7 @@ MD	*ffit(long amount, MPB *mp)
     BOOLEAN maxflg;
     long maxval;
 
-#if	DBGIUMEM
+#if	DBG_IUMEM
     kprint("BDOS: ffit - amount = ");
     kputp(amount);
     kprint("\n");
@@ -68,7 +68,7 @@ MD	*ffit(long amount, MPB *mp)
 
     if( (q = mp->mp_rover) == 0  )	/*  get rotating pointer	*/
     {
-#if	DBGIUMEM
+#if	DBG_IUMEM
 	kprint("ffit: null rover\n") ;
 #endif
 	return( 0 ) ;
@@ -106,7 +106,7 @@ MD	*ffit(long amount, MPB *mp)
 		 **************************/
 		if( (p1=MGET(MD)) == 0 )
 		{
-#if	DBGIUMEM
+#if	DBG_IUMEM
 		    kprint("ffit: Null Mget\n") ;
 #endif
 		    return(0);
@@ -146,7 +146,7 @@ MD	*ffit(long amount, MPB *mp)
 
     /*	return either the max, or 0 (error)  */
 
-#if	DBGIUMEM
+#if	DBG_IUMEM
     if( !maxflg )
 	kprint("ffit: Not Enough Contiguous Memory\n") ;
 #endif

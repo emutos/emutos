@@ -42,10 +42,10 @@ extern	MD	*ffit() ;
  */
 
 extern	long	bakbuf[] ;
-extern	int	supstk[] ;
+extern	WORD	supstk[] ;
 extern	PD	*run;
 
-extern	long	xexec() ;
+extern	long	xexec(WORD, char *, char *, char *) ;
 extern	void	xterm() ;
 extern	void	x0term() ;
 

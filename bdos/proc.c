@@ -26,9 +26,9 @@
 
 
 
-GLOBAL	PD	*run;           /* ptr to PD for current process */
-GLOBAL	int	supstk[SUPSIZ]; /* common sup stack for all processes*/
-GLOBAL	long	bakbuf[3];      /*  longjump buffer */
+PD	*run;           /* ptr to PD for current process */
+WORD	supstk[SUPSIZ]; /* common sup stack for all processes*/
+long	bakbuf[3];      /*  longjump buffer */
 
 
 /**
@@ -43,8 +43,8 @@ void	ixterm( PD *r )
 {
     REG MD *m,
     **q;
-    REG int h;
-    REG int i;
+    REG WORD h;
+    REG WORD i;
 
     /* check the standard devices in both file tables  */
 
@@ -84,6 +84,26 @@ void	ixterm( PD *r )
 
 
 
+/*
+ * envsize - determine size of env area
+ *
+ * counts bytes starting at 'env' upto and including the terminating
+ * double null.
+ */
+
+WORD	envsize( char *env )
+{
+    REG char	*e ;
+    REG WORD 	cnt ;
+
+    for( e = env, cnt = 0 ; !(*e == NULL && *(e+1) == NULL) ; ++e, ++cnt )
+        ;
+
+    return( cnt + 2 ) ;		/*  count terminating double null  */
+}
+
+
+
 /** xexec - (p_exec - 0x4b) execute a new process
  *
  *	
@@ -97,17 +117,17 @@ void	ixterm( PD *r )
  */
 
 
-long	xexec(int flg, char *s, char *t, char *v)
+long	xexec(WORD flg, char *s, char *t, char *v)
 {	
     PD	*p;
     char *b, *e;
-    int	i, h;			/*  M01.01.04		*/
-    int	cnt ;
+    WORD i, h;			/*  M01.01.04		*/
+    WORD cnt ;
     long rc, max;
     MD	*m, *env;
     long *spl;
 #if	!M0101082703
-    int	*spw;
+    WORD	*spw;
 #endif
 
     m = env = 0L ;
@@ -117,9 +137,7 @@ long	xexec(int flg, char *s, char *t, char *v)
      */
 
 #if	DBGPROC
-    kprint("BDOS: xexec - flag or mode = ");
-    kputp((void *)flg);
-    kprint("\n");
+    kprintf("BDOS: xexec - flag or mode = %lx \n", flg);
 #endif
 
     if (flg == 6)   /* (not really) implement newer mode 6 */
@@ -131,13 +149,11 @@ long	xexec(int flg, char *s, char *t, char *v)
     if ((flg == 0) || (flg == 3))       /* load (execute) a file */
     {
 #if	DBGPROC
-        kprint("BDOS: xexec - trying to find the command ...\n");
+        kprintf("BDOS: xexec - trying to find the command ...\n");
 #endif
         if (ixsfirst(s,0,0L)) {
 #if	DBGPROC
-            kprint("BDOS: Command \"");
-            kprint(s);
-            kprint("\" not found!!!\n");
+            kprintf("BDOS: Command %s not found!!!\n", s);
 #endif
             return(EFILNF); 	/*  file not found	*/
         }
@@ -177,11 +193,10 @@ long	xexec(int flg, char *s, char *t, char *v)
         if (!(env = ffit((long) i,&pmd)))
         {
 #if	DBGPROC
-            kprint("xexec: Not Enough Memory!\n") ;
+            kprintf("xexec: Not Enough Memory!\n") ;
 #endif
             return(ENSMEM) ;
         }
-        kprint("==============\n");
 
         e = (char *) env->m_start;
 
@@ -202,7 +217,7 @@ long	xexec(int flg, char *s, char *t, char *v)
         {	/*  not enoufg even for PD  */
             freeit(env,&pmd);
 #if	DBGPROC
-            kprint("xexec: No Room For Base Pg\n") ;
+            kprintf("xexec: No Room For Base Pg\n") ;
 #endif
             return(ENSMEM);
         }
@@ -271,9 +286,7 @@ long	xexec(int flg, char *s, char *t, char *v)
         if (rc = xpgmld(s,t))
         {
 #if	DBGPROC
-            kprint("cmain: error returned from xpgmld = ");
-            kputp((void*)rc) ;
-            kprint("\n");
+            kprintf("cmain: error returned from xpgmld = %lx \n", rc);
 #endif
             ixterm((PD*)t);
             return(rc);
@@ -282,7 +295,7 @@ long	xexec(int flg, char *s, char *t, char *v)
     if ((flg == 0) || (flg == 4))
     {
 #if	DBGPROC
-        kprint("BDOS: xexec - trying to load (and execute) a command ...\n");
+        kprintf("BDOS: xexec - trying to load (and execute) a command ...\n");
 #endif
         p = (PD *) t;
         p->p_parent = run;
@@ -297,7 +310,7 @@ long	xexec(int flg, char *s, char *t, char *v)
 
         *--spl = p->p_tbase; /* text start */
 #if	!M0101082703
-        spw = (int *) spl;
+        spw = (WORD *) spl;
         *--spw = 0; /* startup status reg */
         spl = (long *) spw;
 #else
@@ -315,9 +328,7 @@ long	xexec(int flg, char *s, char *t, char *v)
     /* sub-func 3 and 5 return here */
 
 #if	DBGPROC
-    kprint("BDOS: xexec - return code = ");
-    kputl((void *)t);
-    kprint("\n");
+    kprintf("BDOS: xexec - return code = %lx \n", t);
 #endif
     return( (long) t );
 }
@@ -327,25 +338,6 @@ long	xexec(int flg, char *s, char *t, char *v)
 /*
 ** [1]	The limit on this loop should probably be changed to use sizeof(PD)
 */
-
-
-/*
- * envsize - determine size of env area
- *
- * counts bytes starting at 'env' upto and including the terminating
- * double null.
- */
-
-int	envsize( char *env )
-{
-    REG char	*e ;
-    REG int 	cnt ;
-
-    for( e = env, cnt = 0 ; !(*e == NULL && *(e+1) == NULL) ; ++e, ++cnt )
-        ;
-
-    return( cnt + 2 ) ;		/*  count terminating double null  */
-}
 
 
 
@@ -370,11 +362,11 @@ void	x0term()
  */
 
 void	xterm(rc)
-	unsigned int	rc;
+	UWORD	rc;
 {
 	PD *r;
 
-	(* (int(*)()) trap13(5,0x102,-1L))() ;	/*  call user term handler */
+	(* (WORD(*)()) trap13(5,0x102,-1L))() ;	/*  call user term handler */
 
 	run = (r = run)->p_parent;
 	ixterm( r );
@@ -388,8 +380,8 @@ void	xterm(rc)
 **	Function 0x31	p_termres
 */
 
-int	xtermres(blkln,rc)
-	int	rc;
+WORD	xtermres(blkln,rc)
+	WORD	rc;
 	long	blkln;
 {
 	MD *m,**q;
