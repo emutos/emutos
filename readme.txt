@@ -42,13 +42,8 @@ void call_native(UL as, UL func)
 	case 1:
 .....
 
-2. Switch on the debugging output in the file bios/startup.s. Remove the 
-   comments on these two lines:
-
-|        dc.w 0xa0ff     | Jump to native execution
-|        dc.l 0          | Printing subroutine
-        rts
-
+2. Switch on the debugging output by setting, in config.h, the
+   parameter STONX_NATIVE_PRINT to 1.
 
 
 You will find no compiled command.prg in this archive. The source of it
