@@ -61,8 +61,8 @@
 		.globl	_v_off_ad
 		.globl	_v_stat_0
 		.globl	_v_vt_rez
-		.global font_ring
-	
+		.global _font_ring
+		.global _font_count
 // **FIXME: There are still lots of variables missing here...**
 
 GCURX:		.ds.w	1	// -602	MiNT needs GCURX and GCURY
@@ -75,8 +75,8 @@ TERM_CH:	.ds.w	1	//
 chc_mode:	.ds.w	1	//
 cur_work:	.ds.l	1	// -464
 def_font:	.ds.l	1	// -460
-font_ring:	.ds.l	4	// -456
-ini_font_count:	.ds.w	1	// -440
+_font_ring:	.ds.l	4	// -456 Three pointers to sysfonts and NULL
+_font_count:	.ds.w	1	// -440 Total numbers of fonts in font_ring
 
 		.ds.b	90	// some free space (??)
 

@@ -55,11 +55,15 @@ extern UWORD v_hz_rez;         	// screen horizontal resolution
 extern UWORD v_vt_rez;         	// screen vertical resolution
 
 /* Font specific variables */
-extern UWORD    *v_fnt_ad;	// address of current monospace font
-extern UWORD    *v_off_ad;	// address of font offset table
-extern UWORD	v_fnt_nd;	// ascii code of last cell in font
-extern UWORD    v_fnt_st;	// ascii code of first cell in font
-extern UWORD    v_fnt_wr;	// font cell wrap
+extern UWORD *v_fnt_ad;		// address of current monospace font
+extern UWORD *v_off_ad;		// address of font offset table
+extern UWORD v_fnt_nd;		// ascii code of last cell in font
+extern UWORD v_fnt_st;		// ascii code of first cell in font
+extern UWORD v_fnt_wr;		// font cell wrap
+
+extern UWORD font_count;   		// all three fonts and NULL
+extern struct font_head *font_ring[4];  // all three fonts and NULL
+
 
 /* Cell specific stuff */
 extern UWORD	v_cel_ht;	// cell height (width is 8)

@@ -24,6 +24,7 @@ extern void con_state_init(void);       // from conout.S
 
 extern struct font_head f8x16;
 extern struct font_head f8x8;
+extern struct font_head f6x6;
 
 /*==== Prototypes =========================================================*/
 
@@ -46,8 +47,11 @@ void clear_screen(void);
 #define FRM_HT  82
 
 
-/* Settings for the different video modes */
-/* They are: planes, lin_wr, hz_rez, vt_rez */
+/*
+ * Settings for the different video modes They are:
+ * planes, lin_wr, hz_rez, vt_rez
+ */
+
 static const VIDEO_MODE video_mode[] = {
     {4, 160, 320, 200},         // 16 color mode
     {2, 160, 640, 200},         // 4 color mode
@@ -92,6 +96,14 @@ void font_init(struct font_head * font)
     v_fnt_nd=font->last_ade;            // init font end ADE
     v_fnt_ad=font->dat_table;            // init font data ptr
     v_off_ad=font->off_table;            // init font offset ptr
+
+    /* Initialize the font ring (is this right so???) */
+    font_ring[0]=&f8x16;
+    font_ring[1]=&f8x8;
+    font_ring[2]=&f6x6;
+    font_ring[3]=NULL;
+
+    font_count=3;                       // total number of fonts in fontring
 }
 
 
@@ -164,9 +176,5 @@ void linea_init(void)
 
     /* Init conout state machine */
     con_state_init();                       // set initial state
-
-
-    kprintf("============\n");
-
 }
 
