@@ -227,6 +227,10 @@ doio:   for (p = *(q = phdr); p->b_link; p = *(q = &p->b_link))
 
 /*
  * packit - pack into user buffer
+ * more especially, convert a filename of the form
+ *   NAME    EXT
+ * into:
+ *   NAME.EXT
  *
  * MAD: 12/13/01 - ripped out ugly gotos
  */

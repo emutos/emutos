@@ -1434,4 +1434,5 @@ Start... early ages
   EmuCON, as a first step towards what Petr really wants (?) (LVL)
 - Makefile - bug no longer unnecessarily built when making UNIQUE=us (LVL)
 - cli/command.c - implemented prototypes for gemdos bindings (LVL)
+- bdos/fs.h - fixed DTA.dt_fname: the correct size is 14 bytes, not 12 (LVL)
 

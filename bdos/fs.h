@@ -320,7 +320,7 @@ DTAINFO
     int   dt_time ;             /*  time field from fcb         22-23   */
     int   dt_date ;             /*  date field from fcb         24-25   */
     long  dt_fileln ;           /*  file length field from fcb  26-29   */
-    char  dt_fname[12] ;        /*  file name from fcb          30-41   */
+    char  dt_fname[14] ;        /*  file name from fcb          30-43   */
 } ;                             /*    includes null terminator          */
 
 #include "bios.h"
