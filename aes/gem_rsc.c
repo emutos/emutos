@@ -469,7 +469,7 @@ char *rs_fstr[] = {
         "AVAILNUL",
         "SCRENMGR",
         "C:\\EMUDESK.INF",
-        "\\SCRAP.",
+        NULL,           /* was: "\\SCRAP." - now unused */
         N_("[2][You cannot write to the disk in drive|"
            "%S: because it is physically write-|"
            "protected.  Before you Retry, remove|"

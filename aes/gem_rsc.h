@@ -77,7 +77,7 @@
 
 #define STINFPAT        19
 
-#define STSCRAP         20
+#define STSCRAP         20    /* currently unused */
 
 #define AL00CRT         21
 
