@@ -844,7 +844,7 @@ int copyCmd(char *src, char *dst, int move)
     WSrcReq = (char *)&srcSpc;
     WAttCode = -1;
 
-    compl_code = 0xFFFFFFFF;
+    compl_code = -1;
 
     /*If not a valid file name...*/
     switch (chkDir ((char *)&srcSpc, srcDir, srcNmPat))
@@ -879,8 +879,11 @@ int copyCmd(char *src, char *dst, int move)
 				    {
 					if ((nr = xread (fds, (long)BUFSIZ, buf)) > 0)
 					{
-					    if ((nw = xwrite (fdd, nr, buf)) < nr)
+					    if ((nw = xwrite (fdd, nr, buf)) < nr) {
+					        /* kprintf("nw = %ld\n", nw); */
+					      
 						goto error4;
+					    }
 					}
 					else if (nr < 0)
 					{
@@ -941,7 +944,7 @@ long renmCmd(char *src, char *dst)
     WAttCode = -1;
 
     /* Set up completion code to show failure */
-    compl_code = 0xFFFFFFFF;
+    compl_code = -1;
 
     /* IF src not specified err out. */
     if (!(*src))
@@ -1052,7 +1055,7 @@ long dirCmd (char * argv[])
     WAttCode = -1;
     if (! gtFlNm())
     {
-	compl_code = 0xFFFFFFFF;
+	compl_code = -1;
 	if (!terse) dspMsg (1);
     }
     else
@@ -1093,12 +1096,12 @@ long dirCmd (char * argv[])
 		dt = (int *)&srchb[24];
 		j = *dt;
 		wrtDate(j);
-		wrt ("	");
+		wrt ("\t");
 
 		dt = (int *)&srchb[22];
 		j = *dt;
 		wrtTime(j);
-		wrt ("	");
+		wrt ("\t");
 
 		att = srchb[21];
 		if (att < 0x10) wrt ("0");
@@ -1164,7 +1167,7 @@ long chmodCmd (char * argv[])
     WAttCode = -1;
     if (! gtFlNm())
     {
-	compl_code = 0xFFFFFFFF;
+	compl_code = -1;
 	dspMsg (1);
     }
     else
@@ -1174,7 +1177,7 @@ long chmodCmd (char * argv[])
 	if (att & 0x18)
 	{
 	    wrt (_("Unable to change mode on subdirectorys or volumes."));
-	    compl_code = 0xFFFFFFFF;
+	    compl_code = -1;
 	}
 	else
 	{
@@ -1184,7 +1187,7 @@ long chmodCmd (char * argv[])
 		if (!*argv[2])
 		{
 		    wrt (_("Invalid mode specification."));
-		    compl_code = 0xFFFFFFFF;
+		    compl_code = -1;
 		}
 		else
 		{
@@ -1192,7 +1195,7 @@ long chmodCmd (char * argv[])
 		    if (i & ~0x7)
 		    {
 			wrt (_("Invalid mode specification."));
-			compl_code = 0xFFFFFFFF;
+			compl_code = -1;
 		    }
 		    else
 			compl_code = xattrib (srcFlNm, 1, i);
@@ -1228,7 +1231,7 @@ long typeCmd (char * argv[])
 	if (!gtFlNm())
 	{
 	    dspMsg (1);
-	    compl_code = 0xFFFFFFFF;
+	    compl_code = -1;
 	}
 	else
 	{
@@ -1301,7 +1304,7 @@ long delCmd (char * argv[])
 	    }
 	    if (!gtFlNm())
 	    {
-		compl_code = 0xFFFFFFFF;
+		compl_code = -1;
 		dspMsg (1);
 		wrtln("");
 	    }
@@ -1388,11 +1391,12 @@ long execPrgm (char *s, char *cmdtl)
     char * envPtr;
 
     /* Add len of path definition + 2 for 00 terminator */
-    envLen = ((i = strlen (path)) + (i ? 5 : 0) + 2);
+    i = strlen(path);
+    envLen = i + (i ? 5 : 0) + 2;
 
-    /*Loop thru enviorment strings looking for '00'*/
+    /* Loop thru environment strings looking for '00' */
     i = 0;
-    while ((prntEnvPtr[i] + prntEnvPtr[i + 1]) != 0)
+    while ((prntEnvPtr[i] | prntEnvPtr[i + 1]) != 0)
     {
 	/* if a path has been defined, don't count it.*/
 	if (xncmps (5, &prntEnvPtr[i], "PATH="))
@@ -1438,7 +1442,7 @@ long execPrgm (char *s, char *cmdtl)
     /* inc index past 0.*/
     i++;
 
-    /* Null termintate.*/
+    /* Null terminate.*/
     envPtr [i] = 0;
 
     for (i = 0; (cmd[i] = *s); s++, i++)
@@ -1458,7 +1462,7 @@ long execPrgm (char *s, char *cmdtl)
     cmdptr = (char *)&cmd;
     j = 0;
     Cursconf(0, 0);         /* XBIOS switch cursor off before command */
-    while ((((err = xexec(0, cmdptr, cmdtl, envPtr)) & 0xFFFFFFFF) == -33) && (gtpath))
+    while (((err = xexec(0, cmdptr, cmdtl, envPtr)) == -33) && (gtpath))
     {
 	k = j;
 	if (path [j])
@@ -1543,7 +1547,7 @@ int execBat (char *s, char *parms[])
 	}
     }
 
-    compl_code = 0XFFFFFFFF;
+    compl_code = -1;
     return 0;
 }
 
@@ -2117,7 +2121,7 @@ void xCmdLn (char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl)
 		{
 		    compl_code = copyCmd(p, argv[2], xncmps(5,s,"MOVE") ? 1 : 0);
 		    {
-			compl_code = 0xFFFFFFFF;
+			compl_code = -1;
 		    }
 		}
 		else dspMsg(6);
@@ -2165,10 +2169,10 @@ void xCmdLn (char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl)
 		if (*nonStdIn) dspCL (&argv[0]);
 		if (!(execBat (s, (char**)&argv)))
 		{
-		    if ((compl_code = execPrgm (s, cmdtl)) == -32) errout();
+		    if ((compl_code = execPrgm (s, cmdtl)) == -32) errout(); 
 		    else if ((compl_code > 0) && prgerr) errout();
 		    else
-			if ((compl_code & 0xFFFFFFFF) < 0)
+			if (compl_code < 0)
 		    {
 			wrt (_("Command not found."));
 			if (prgerr) errout();
