@@ -21,6 +21,7 @@
         .equ    _GSX_ENT, 0             | Entry to GEM (if graphically)
 
         .equ    TPASTART, 0xE000        | default start address of tpa area
+	.equ	TPALENGTH, 0x30000-TPASTART | length of tpa area - from 0x30000 down to TPASTART
 
         .equ    vec_divnull, 0x14       | division by zero interrupt vector
         .equ    vec_linea, 0x28         | LineA interrupt vector
@@ -301,6 +302,7 @@ _main:                                  | stunt to guarantee entry into supervis
         reset                           | Reset all hardware
 
 | ==== Set up a supervisor stack ============================================
+
 | LVL   lea     _stkbot+SUPSIZ, sp      | Setup Supervisor Stack
         lea     _stktop, sp             | Setup Supervisor Stack
 
@@ -309,7 +311,26 @@ _main:                                  | stunt to guarantee entry into supervis
         addq #4,sp
 
 | ==== Reset peripherals =====================================================
+
         reset
+
+| ==== Check for diagnostic cartridge =======================================
+
+        .equ    cart_base,      0x00fa0000
+
+        cmp.l   #0xfa52235f, cart_base  | magic - is cartridge present?
+        bne     memconf                 | no -> cartover
+        lea     memconf(pc), a6         | load return address
+        jmp     cart_base+4              | execute diagnostig cartridge
+
+| ==== Check, if old memory config can be used ==============================
+
+memconf:
+        lea     memgoon(pc), a6         | load return address
+        bra     memval                  | memory config valid?
+memgoon:
+        bne.s   resetvec                | no -> skip next command
+        move.b  memctrl, 0xffff8001     | old config to controller
 
 | ==== Reset vector =========================================================
 resetvec:
@@ -360,16 +381,53 @@ clearbss:
 
 | ==== Set memory (hard for now) ============================================
 
+
+| ==== Find out memory size for TPA =========================================
+| The memory configuration is found out by running into bus-errors, if memory
+| is not present at a tested address. Therefor a special buserror-handler is
+| temporarely installed. Works just for 4mb or more till now. (MAD)
+
         clr.l   d6
         move.b  #0x0f, d6               | set hw to 2 banks by 2 mb
         move.b  d6, 0xffff8001          | set hw to 2 banks by 2 mb
         move.b  d6, memctrl             | set copy of hw memory config
+
+       	move.l	0x00000008, a0	      	| save old bus error vector
+       	move.l	#bus_error, 0x00000008 	| and put in our temporary handler
+       	move.l	sp, a1			| save the current SP
+
+       	move.l	#TPASTART, m_start	| set up default values
+       	move.l	#TPALENGTH, m_length	| for internal memory
+
+|    	move.w	#0, 0x180000		| do we have memory here?
+       	move.l	#0x40000, m_length	| and length (for 256K initially)
+
+|      	move.w	#0, 0x1C0000		| memory at 2nd 256K boundary? 
+	move.l	#0x80000, m_length	| yes, assume 512K at this step
+
+|	move.w	#0, 0x200000		| memory at 3rd 256K boundary?
+	move.l	#0xC0000, m_length	| yes, assume 3/4M at this step
+
+|	move.w	#0, 0x200000		| memory at 3rd 256K boundary?
+|	move.l	#0xE00000, m_length	| yes, assume 14M at this step
+
+bus_error:
+       	move.l	a0, 0x00000008          | restore old bus error vector
+       	move.l	a1,sp			| and old stack pointer
+
+       	move.l	m_start,a0		| clear TPA
+       	move.l	m_length,d0		| get byte count
+       	lsr.l	#1,d0			| make word count
+       	subq.l	#1,d0			| pre-decrement for DBRA use
+       	clr.w	d1			| handy zero
+
+parity_loop:
+       	move.w	d1,(a0)+		| clear word
+       	dbra	d0,parity_loop
+	
         move.l  #0x400000, phystop      | set memory to 4 mb
         move.l  #0x752019f3, memvalid   | set memvalid to ok
         move.l  #0x237698aa, memval2    | set memval2 to ok
-
-        move.l  #TPASTART, m_start      | set up default values
-        move.l  #0xC0000, m_length      | yes, assume 3/4M at this step
 
         move.l  #_b_mdx, themd          | write addr of MDB to sysvar themd
                                         | defined in bios.c
@@ -451,19 +509,23 @@ initmidres:
 
 
 | ==== Clear RAM ============================================================
-        move.l  _membot, a0             | Set start of RAM
-clrbss:
-        clr.w   (a0)+                   | Clear actual word
-        cmp.l   _memtop, a0             | End of BSS reached?
-        bne     clrbss                  | if not, clear next word
-
-        pea msg_clrbss  | Print, what's going on
-        bsr _kprint
-        addq #4,sp
+|        move.l  _membot, a0             | Set start of RAM
+|clrbss:
+|        clr.w   (a0)+                   | Clear actual word
+|        cmp.l   _memtop, a0             | End of BSS reached?
+|        bne     clrbss                  | if not, clear next word
+|
+|        pea msg_clrbss  | Print, what's going on
+|        bsr _kprint
+|        addq #4,sp
 
 | ==== Setting up Line-a variables and clear screen =========================
 
         bsr _linea_init
+
+        pea msg_linea  | Print, what's going on
+        bsr _kprint
+        addq #4,sp
 
 | ==== Reset Soundchip =======================================================
 initsnd:
@@ -649,9 +711,20 @@ dump_scr:
 just_rts:       
         rts             | Just a dummy
 
-| ==== just rte for divide by zero ==========================
+| ==== just rte for divide by zero ==========================================
 just_rte:
         rte		
+
+
+
+| ==== Check if memory configuration valid ==================================
+memval:
+        sub.l   a5, a5                      | clear a5
+        cmp.l   #0x752019f3, memvalid   | magic in memvalid ?
+        bne     memback
+        cmp.l   #0x237698aa, memvalid   | magic in memval2 ?
+memback:
+        jmp (a6)                        | jump to saved return address
 
 
 
@@ -771,8 +844,6 @@ _printout:
 
 | ==== Use cartridge, if present ============================================
 | get cartridge-type in d0
-
-        .equ    cart_base,      0x00fa0000
 
 cartscan:
         lea     cart_base, a0
@@ -1065,13 +1136,13 @@ msg_start:
 msg_main:
         .ascii "BIOS: Entered supervisor mode...\n\0"
 msg_mem:
-        .ascii "BIOS: Configured Memory ...\n\0"
+        .ascii "BIOS: Configured memory ...\n\0"
 msg_shift:
-        .ascii "BIOS: Initialized Shifter ...\n\0"
+        .ascii "BIOS: Initialized shifter ...\n\0"
 msg_clrbss:
         .ascii "BIOS: Cleared RAM ...\n\0"
-msg_clrscn:
-        .ascii "BIOS: Cleared Screen ...\n\0"
+msg_linea:
+        .ascii "BIOS: Linea set up and cleared screen ...\n\0"
 msg_drvinit:
         .ascii "BIOS: Drives initialized ...\n\0"
 msg_sound:

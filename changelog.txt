@@ -171,3 +171,4 @@ Start... early ages
 - Put all linea stuff in bios/linea.s
 - Cleaned up some minor things in bdos/proc.c
 - Changed linea/graphics init in bios/startup.s
+- Set up half of memory config in bios/startup.s
