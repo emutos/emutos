@@ -70,7 +70,7 @@ msgstr "Das Ziel is kein gültiger Ausdruck"
 
 #: cli/command.c:626
 msgid "EmuCON - Compiled on "
-msgstr "EmuCON - COmpiliert am "
+msgstr "EmuCON - Compiliert am "
 
 #: cli/command.c:627
 msgid "Type HELP for a list of commands."

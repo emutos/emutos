@@ -86,9 +86,9 @@ void font_init(struct font_head * font)
     v_off_ad=font->off_table;            // init font offset ptr
 
     /* Initialize the font ring (is this right so???) */
-    font_ring[0]=&f8x16;
+    font_ring[0]=&f6x6;
     font_ring[1]=&f8x8;
-    font_ring[2]=&f6x6;
+    font_ring[2]=&f8x16;
     font_ring[3]=NULL;
 
     font_count=3;                       // total number of fonts in fontring

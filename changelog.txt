@@ -287,3 +287,6 @@ Start... early ages
 - Native Language support, german translation (MAD)
 - introduced PTR in include/portab.h, which is a LONG (MAD)
 
+16. Nov. 2001
+- Fixed bug in font_ring init (MAD)
+
