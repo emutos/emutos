@@ -8,13 +8,6 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-/*
- * FIXME: There were some "clr.w a1" in this source (now marked
- * with "//????").
- * I changed them to "move.w #0,a1", but I'm not sure
- * if this was right or if this illegal assembler statement
- * was thought to be a "clr.w (a1)".
- */
 
 
 #include "vdiconf.h"
@@ -32,7 +25,7 @@
         .globl  _SMUL_DIV       // signed integer multiply and divide
         .globl  _vec_len        // compute length of a vector
         .globl  _HABLINE        // draw a horizontal line
-        .globl  __ABLINE        // draw a line (general purpose)
+        .globl  _ABLINE         // draw a line (general purpose)
         .globl  concat          // convert x,y coordinates to buffer offsets
         .globl  xline           // alternate entry to HABLINE
         .globl  ortbl           // OR mask table for line drawing
@@ -637,7 +630,13 @@ shf_tab:
 //                                                                      //
 /////////////////////////////////////////////////////////////////////////
 
-//
+// Wrapper that also saves the CPU registers:
+_ABLINE:
+        movem.l d2-d7/a2-a6,-(sp)
+        bsr.s   __ABLINE
+        movem.l (sp)+,d2-d7/a2-a6
+        rts
+
 //      Initialize the necessary pointers and counters and determine
 //      whether the line should be drawn using x1,y1 or x2,y2 as the
 //      starting point.
@@ -1443,6 +1442,7 @@ o_dy_0same1:
         dbra    d2,o_dy_0ltop   // loop until done with line segment
         bra     o_dy_bp
 
+
         .page
 /////////////////////////////////////////////////////////////////////////
 //                                                                      //
@@ -1451,7 +1451,6 @@ o_dy_0same1:
 //                                                                      //
 /////////////////////////////////////////////////////////////////////////
 
-/*#if !vme10*/ //???? We need xor_dygt!
 
 //      Save the registers that get clobbered.
 xor_dygt:
@@ -1474,7 +1473,6 @@ xor_dygt:
         cmpa.w  _X1,a0
         blt     x_dy_yinc       // drawing from x2,y2 - don't draw first point
         subq.w  #1,d2           // drawing from x1,y1 - don't draw last point
-//????#endif
 
 //
 //      If the current bit in the mask is set then exclusive or it with the
@@ -1549,6 +1547,7 @@ nor_dygt:
         not.w   _LN_MASK        // restore the proper states of the style bits
         rts
 
+
         .page
 /////////////////////////////////////////////////////////////////////////
 //                                                                      //
@@ -1584,7 +1583,6 @@ nor_dygt:
 xl_noswap:
         lea     _LN_MASK,a0     // get the current line style
         movea.l a1,a3           // get # of bytes between graphic planes
-//????        clr.w   a1              // line style is monoplaned - no offset
         move.w  #0,a1           // line style is monoplaned - no offset
         move.w  _X1,d4          // get starting x-coordinate
         move.w  _X2,d2          // get ending x-coordinate
@@ -1598,7 +1596,6 @@ xl_noswap:
 xl_swap:
         lea     _LN_MASK,a0     // get the current line style
         movea.l a1,a3           // get # of bytes between graphic planes
-//????        clr.w   a1              // line style is monoplaned - no offset
         move.w  #0,a1           // line style is monoplaned - no offset
         move.w  _X2,d4          // get starting x-coordinate
         move.w  _X1,d2          // get ending x-coordinate
@@ -1640,8 +1637,7 @@ _HABLINE:
         asl.w   #1,d5           // convert to offset into pattern def table
         move.l  _patptr,a0      // get pointer to start of pattern definition
         adda.w  d5,a0           // get pointer to desired word of pattern def
-//????        clr.w   a1              // init offset to next plane of pattern to 0
-        move.w  #0,a1              // init offset to next plane of pattern to 0
+        move.w  #0,a1           // init offset to next plane of pattern to 0
         tst.w   _multifill      // using multi-planed patterns?
         beq     xline           // nope
         move.w  #32,a1          // yes - offset = length of 1 plane of pat def

@@ -110,12 +110,7 @@ extern WORD COPYTRAN;
 
 /* Assembly Language Support Routines */
 
-/* ABLINE destroys nearly all CPU registers, and since its a real beast
-   of function, I wasn't able to modify it so that it saves and restores
-   the registers - so I'm now using regsafe_call() here! */
-extern void _ABLINE();
-#define ABLINE()  regsafe_call(_ABLINE)
-
+extern void ABLINE();
 extern void v_clrwk(void);
 extern void vex_butv(), vex_motv(), vex_curv(), vex_timv();
 extern void chk_esc();

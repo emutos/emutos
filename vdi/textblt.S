@@ -503,14 +503,14 @@ calc_DDA:
 
 
         .page
-/////////////////////////
-//  Actual sizer routine                                //
-//                                              //
-//  entry:                                      //      
-//    4(sp) = size to scale (DELY)              //
-//  exit:                                       //
-//    d0    = actual size                       //
-/////////////////////////
+////
+//  Actual sizer routine
+//
+//  entry:
+//    4(sp) = size to scale (DELY)
+//  exit:
+//    d0    = actual size
+////
 _ACT_SIZ:
         move.w  4(sp),d1                //get parameter to be scaled 
         movem.w d2-d3,-(sp)             //save c regs
@@ -551,13 +551,15 @@ act_exit:
         movem.w (sp)+,d2-d3
         rts
 
+
+
         .page
 /////////////////////////////////////////////////////////////////////////
 //   Global TEXTBLT entry point                                         //
 /////////////////////////////////////////////////////////////////////////
 //
 _text_blt:
-        movem.l d3-d7/a3-a5,-(sp)
+        movem.l d2-d7/a2-a6,-(sp)
         link    a6,#ramlen              //allocate stack for local variables
 //
         clr.w   swap_tmps(a6)           //temps not swapped yet RJG 4/13/85
@@ -1132,7 +1134,7 @@ ck270:
         add.w   d1,_DESTY               // move down by DELX
 blt_done:
         unlk    a6
-        movem.l (sp)+,d3-d7/a3-a5
+        movem.l (sp)+,d2-d7/a2-a6
         rts                             // return to "C"
 //
         .page
