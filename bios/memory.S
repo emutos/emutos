@@ -11,6 +11,7 @@
  *
  */
 
+#define DBGMEMORY 1
 
 
 // ==== References ===========================================================
@@ -248,6 +249,7 @@ alter:
         asr.l   d1, d0                  // ramtop divided by 2^20 = in MB
         sub.l   #16, d0                 // minus the first 16 MB of ST-RAM
 zerofastram:
+#if DBGMEMORY
         move.l  d0, -(sp)               // is the resulting FastRAM size
         move.l  _phystop, d0
         asr.l   d1, d0
@@ -255,7 +257,7 @@ zerofastram:
         pea     msg_bss                 // Print, what's going on
         bsr     _kprintf                // this also requires stack!
         add.l   #12,sp
-
+#endif
 
 
 /*
@@ -273,11 +275,10 @@ setmemok:
 
 // ==== Some messages ========================================================
 
+#if DBGMEMORY
 msg_bss:
         .ascii "BIOS: Detected memory: ST-RAM = %ld MB, FastRAM = %ld MB\n\0"
-msg_bss2:
-        .ascii "BIOS: Cleared RAM ...\n\0"
-
+#endif
 
 // ===========================================================================
 // ==== End ==================================================================
