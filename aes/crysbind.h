@@ -126,7 +126,7 @@
 #define G_SIZE 15
 #define I_SIZE 16
 #define O_SIZE 7
-#define AI_SIZE 2
+#define AI_SIZE 3
 #if SINGLAPP
 #define AO_SIZE 1
 #endif

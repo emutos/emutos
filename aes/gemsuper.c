@@ -14,6 +14,7 @@
 */
 
 #include "portab.h"
+#include "kprint.h"
 #include "machine.h"
 #include "struct.h"
 #include "basepage.h"
@@ -73,9 +74,9 @@ UWORD crysbind(WORD opcode, LONG pglobal, UWORD int_in[], UWORD int_out[], LONG 
 UWORD crysbind(WORD opcode, LONG pglobal, UWORD int_in[], UWORD int_out[], LONG addr_in[], LONG addr_out[])
 #endif
 {
-        LONG            maddr;
-        LONG            tree;
-        register WORD   ret;
+        LONG    maddr;
+        LONG    tree;
+        WORD    ret;
 
         maddr = 0;
         ret = TRUE;
@@ -457,7 +458,7 @@ if ((MB_MASK == 3) && (MB_STATE == 1))
                         XGR_I3, XGR_I5 );
                 break;
           default:
-                /*kcprintf("Bad function %d\n",opcode);*/
+                kprintf("Bad AES function %d\n", opcode);
                 if(opcode!=0)     /* Ignore the 0 since some PRGs are this call */
                   fm_show(ALNOFUNC, NULLPTR, 1);
                 ret = -1;
