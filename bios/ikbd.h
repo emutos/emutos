@@ -17,6 +17,17 @@
 
 extern BYTE shifty;
 
+struct keytbl {
+  /* 128-sized array giving ascii codes for each scan code */
+  BYTE *norm;
+  BYTE *shft;
+  BYTE *caps;
+  /* couples of (scan code, ascii code), ended by byte zero */
+  BYTE *altnorm;
+  BYTE *altshft;
+  BYTE *altcaps;
+};
+
 /* initialise the ikbd */
 extern VOID kbd_init(VOID);
 

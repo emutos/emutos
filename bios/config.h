@@ -38,4 +38,19 @@
 #define STONX_NATIVE_PRINT 0
 #endif
 
+
+/* Set DEFAULT_KEYBOARD to any value in the following table. 
+ * (numbers assigned in the order in which the keyboard definitions
+ * become available - nothing personal in this)
+ *   1   US
+ *   2   DE
+ *   3   FR
+ *
+ * (see bios/ikbd.c for details)
+ */
+#ifndef DEFAULT_KEYBOARD
+#define DEFAULT_KEYBOARD 1
+#endif
+
+
 #endif /* _CONFIG_H */
