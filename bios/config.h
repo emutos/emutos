@@ -47,6 +47,14 @@
 #define ARANYM_NATIVE_PRINT 0
 #endif
 
+/* set this to 1 if your emulator is capable of emulating properly the 
+ * STOP opcode (used to spare host CPU burden during loops). This is
+ * currently set to zero as STOP does not work well on all emulators.
+ */
+#ifndef USE_STOP_INSN_TO_FREE_HOST_CPU
+#define USE_STOP_INSN_TO_FREE_HOST_CPU 0
+#endif
+
 /* The keyboard ans language are now set using
  *   make LOCALE="xx" 
  * where xx is a lowercase two-letter country code as
