@@ -300,7 +300,11 @@ LONG blkdev_getbpb(WORD dev)
                            + blkdev[dev].bpb.rdlen;
     if (b->spc != 0)
         blkdev[dev].bpb.numcl = (getiword(b->sec) - blkdev[dev].bpb.datrec) / b->spc;
+#ifdef MSDOS_COMPATIBLE /* never */
     blkdev[dev].bpb.b_flags = (blkdev[dev].bpb.numcl > 0xff7) ? B_16 : 0;
+#else
+    blkdev[dev].bpb.b_flags = (blkdev[dev].bpb.numcl > 1440) ? B_16 : 0;
+#endif
 
     /* additional geometry info */
     blkdev[dev].geometry.sides = getiword(b->sides);
