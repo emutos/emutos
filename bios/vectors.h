@@ -50,7 +50,8 @@ extern void print_vec(void);
 
 /* */
 extern void criter1(void);
-extern void brkpt(void);
+extern void int_illegal(void);
+extern void int_priv(void);
 
 extern WORD save_area[];
 
@@ -66,6 +67,7 @@ typedef void (*PFVOID)();
 #define VEC_LINEA   (*(PFVOID*)0x28)    /* LineA interrupt vector */
 #define VEC_HBL     (*(PFVOID*)0x68)    /* HBL interrupt vector */
 #define VEC_VBL     (*(PFVOID*)0x70)    /* VBL interrupt vector */
+#define VEC_NMI     (*(PFVOID*)0x7c)    /* NMI - not maskable interrupt */
 #define VEC_AES     (*(PFVOID*)0x88)    /* AES interrupt vector */
 #define VEC_BIOS    (*(PFVOID*)0xb4)    /* BIOS interrupt vector */
 #define VEC_XBIOS   (*(PFVOID*)0xb8)    /* XBIOS interrupt vector */

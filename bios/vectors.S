@@ -26,7 +26,8 @@
         .global _check_read_byte
         .global _int_vbl
         .global _int_hbl
-        .global _brkpt
+        .global _int_illegal
+        .global _int_priv
         .global _just_rts
         .global _just_rte
         .global _save_area
@@ -83,20 +84,6 @@ set_vec:
         add.l   #2, a0
         dbra    d0, set_vec
         rts
-
-/* set illegal and privileged instruction handlers */
-
-        tst.w   _longframe      	// Check processor type...
-        beq.s   m68000
-
-	/* this is a 68010 or later */
-        move.l  0x10,ii_old             // save old illegal instr. handler
-        move.l  #ii_handler,0x10        // set illegal instr. handler
-        move.l  0x20,pi_old             // save old privileged instr. handler
-        move.l  #pi_handler,0x20        // and set privileged instr. handler
-m68000:
-        rts
-
 
 /* initialize the 192 user vectors. */
 
@@ -245,7 +232,6 @@ query:
 
 /* 
  * Int 0x68 - HBL interrupt 
- *
  */
  
 _int_hbl:
@@ -260,8 +246,11 @@ is_ipl0:
 
 
 
-// ==== Int 0x70 - VBL interrupt =============================================
-// no video resolution change is done.
+/*
+ * _int_vbl - Int 0x70 - VBL interrupt 
+ *
+ * no video resolution change is done.
+ */
 
 _int_vbl:
         addq.l  #1, _frclock            // increase num of happened ints
@@ -343,10 +332,6 @@ vbl_end:
         rte
 
 
-// ==== breakpoint for illegal instruction ===================================
-_brkpt:
-        illegal
-        bra.s   _brkpt  // never return
 
 // ==== Timer A interrupt handler ============================================
         .global _int_timera
@@ -424,14 +409,14 @@ _criter1:
 
 
 /*
- * ii_handler - illegal instruction handler 
+ * _int_illegal - illegal instruction handler 
  *
  * We set up a handler on the 68010/20/30/40 to convert 'MOVE SR,...'
  * to 'MOVE CCR,...' at execution time, so that we can support one
  * release of 68XXX software.
  */
 
-ii_handler:
+_int_illegal:
         movem.l d0/a0,-(sp)             // saving d0 and a0 while we test
         movea.l 10(sp),a0               // the offending address
         move.w  (a0),d0                 // the offending instruction
@@ -445,20 +430,20 @@ ii_handler:
 
 ii_back:
         movem.l (sp)+,d0/a0
-        move.l  ii_old,-(sp)            // take old handler
+        move.l  any_vec,-(sp)            // use panic handler
         rts
 
 
 
 /*
- * pi_handler - privileged instruction handler
+ * _int_priv - privileged instruction handler
  *	
  * We set up a handler on the 68010/20/30/40 to convert 'MOVE SR,...'
  * to 'MOVE CCR,...' at execution time, so that we can support one
  * release of 68XXX software.
  */
 
-pi_handler:
+_int_priv:
         movem.l d0/a0,-(sp)             // saving d0 and a0 while we test
         movea.l 10(sp),a0               // the offending address
         move.w  (a0),d0                 // the offending instruction
@@ -472,7 +457,7 @@ pi_handler:
 
 pi_back:
         movem.l (sp)+,d0/a0
-        move.l  pi_old,-(sp)            // take old handler
+        move.l  any_vec,-(sp)            // use panic handler
         rts
 
 
@@ -601,113 +586,6 @@ _just_rte:
 
 
 
-// ===========================================================================
-// ==== DATA in text segment =================================================
-// ===========================================================================
-
-// ==== BIOS entry points to allow individual module compilation =============
-
-#if 0  /* moved in bios.c */
-_bios_vecs:
-        dc.l   _bios_0
-        dc.l   _bios_1                 // LONG character_input_status()
-        dc.l   _bios_2                 // LONG character_input()
-        dc.l   _bios_3                 // void character_output()
-        dc.l   _bios_4                 // LONG read_write_sectors()
-        dc.l   _bios_5                 // set vector
-        dc.l   _bios_6                 // LONG get_timer_ticks()
-        dc.l   _bios_7                 // get disk parameter block address
-        dc.l   _bios_8                 // LONG character_output_status(h)
-        dc.l   _bios_9                 // media change?
-        dc.l   _bios_a                 // what drives exist?
-        dc.l   _bios_b                 // get/set alt-ctrl-shift status
-        dc.l   _just_rts        // unused bios_c
-        dc.l   _just_rts        // unused bios_d
-        dc.l   _just_rts        // unused bios_e
-        dc.l   _just_rts        // unused bios_f
-        dc.l   _just_rts        // unused bios_10
-        dc.l   _bios_11                 // get/set date/time (used by BDOS)
-        
-_bios_ent:               // Max. number of BIOS entries
-        dc.w    (_bios_ent-_bios_vecs)/4
-#endif
-
-// ==== XBIOS entry points to allow individual module compilation ============
-
-        .even
-#if 0  /* moved in xbios.c */
-_xbios_vecs:
-        dc.l    _xbios_0
-        dc.l    _xbios_1 
-        dc.l    _xbios_2 
-        dc.l    _xbios_3 
-        dc.l    _xbios_4 
-        dc.l    _xbios_5 
-        dc.l    _xbios_6 
-        dc.l    _xbios_7 
-        dc.l    _xbios_8 
-        dc.l    _xbios_9 
-        dc.l    _xbios_a 
-        dc.l    _xbios_b 
-        dc.l    _xbios_c
-        dc.l    _xbios_d
-        dc.l    _xbios_e
-        dc.l    _xbios_f
-        dc.l    _xbios_10
-        dc.l    _xbios_11
-        dc.l    _xbios_12
-        dc.l    _xbios_13
-        dc.l    _xbios_14
-        dc.l    _xbios_15
-        dc.l    _xbios_16
-        dc.l    _xbios_17
-        dc.l    _xbios_18
-        dc.l    _xbios_19
-        dc.l    _xbios_1a
-        dc.l    _xbios_1b
-        dc.l    _xbios_1c
-        dc.l    _xbios_1d
-        dc.l    _xbios_1e
-        dc.l    _xbios_1f
-        dc.l    _xbios_20
-        dc.l    _xbios_21
-        dc.l    _xbios_22
-        dc.l    _xbios_23
-        dc.l    _xbios_24
-        dc.l    _xbios_25
-        dc.l    _xbios_26
-        dc.l    _xbios_27
-        dc.l    _just_rts       // 28
-        dc.l    _xbios_29
-        dc.l    _xbios_2a
-        dc.l    _xbios_2b
-        dc.l    _xbios_2c
-        dc.l    _just_rts       // 2d
-        dc.l    _xbios_2e
-        dc.l    _just_rts       // 2f
-        dc.l    _just_rts       // 30
-        dc.l    _just_rts       // 31
-        dc.l    _just_rts       // 32
-        dc.l    _just_rts       // 33
-        dc.l    _just_rts       // 34
-        dc.l    _just_rts       // 35
-        dc.l    _just_rts       // 36
-        dc.l    _just_rts       // 37
-        dc.l    _just_rts       // 39
-        dc.l    _just_rts       // 3a
-        dc.l    _just_rts       // 3b
-        dc.l    _just_rts       // 3c
-        dc.l    _just_rts       // 3d
-        dc.l    _just_rts       // 3e
-        dc.l    _just_rts       // 3f
-        dc.l    _xbios_40
-
-_xbios_ent:              // Max. number of XBIOS entries
-        .dc.w   (_xbios_ent-_xbios_vecs)/4
-#endif
-
-
-
 // ==== Variables ============================================================
  
         .bss
@@ -718,8 +596,6 @@ save_beg:       ds.w    24*3    // d3-d7/a3-a7, sr, pc, vo = 24 words,
                                 // multiplied by 3 ("3 level deep reentrant")
 _save_area:                     // End of Save storage
 
-ii_old:		ds.l	1	// save for illegal instruction handler
-pi_old:         ds.l    1       // save for privileged instruction handler
 
 
 // ===========================================================================

@@ -104,8 +104,34 @@ void testprint(void)
 
 
 /*
+ * setup all vectors
+ */
+ 
+void vecs_init(void)
+{
+    /* setup default exception vectors */
+    init_exc_vec();
+    init_user_vec();
+
+    /* initialise some vectors we really need */
+    VEC_HBL = int_hbl;
+    VEC_VBL = int_vbl;
+    VEC_AES = gemtrap;
+    VEC_BIOS = biostrap;
+    VEC_XBIOS = xbiostrap;
+    VEC_LINEA = int_linea;
+    VEC_DIVNULL = just_rte;     /* just return for this */
+    VEC_NMI = int_illegal;	/* MAD: Set NMI to illegal instr. */
+
+    /* These just for advanced 680x0 processors */
+    if (longframe) {
+        VEC_PRIVLGE = int_priv;		/* set priv. instr. handler */
+        VEC_ILLEGAL = int_illegal;      /* set ill. instr. handler */
+    }
+}
+
+/*
  * Taken from startup.s, and rewritten in C.
- * 
  */
  
 void startup(void)
@@ -119,34 +145,13 @@ void startup(void)
     machine_detect();
 
     /* First cut memory for screen, rest goes in memory descriptor */
-    screen_init();     /* detect monitor type, ... */
+    screen_init();      /* detect monitor type, ... */
 
-    bmem_init();       /* initialize BIOS memory management */
-    processor_init();  /* Set CPU type, VEC_ILLEGAL, longframe and FPU type */
-    cookie_init();     /* sets a cookie jar */
-    machine_init();    /* detect hardware features and fill the cookie jar */
-
-    /* setup default exception vectors */
-    init_exc_vec();
-    init_user_vec();
-
-    /* initialise some vectors */
-    VEC_HBL = int_hbl;
-    VEC_VBL = int_vbl;
-
-    VEC_AES = gemtrap;
-    VEC_BIOS = biostrap;
-    VEC_XBIOS = xbiostrap;
-
-    VEC_LINEA = int_linea;
-
-    /* the following exceptions are just silently ignored */
-    VEC_DIVNULL = just_rte;
-    VEC_PRIVLGE = just_rte;
-
-    /* LVL   VEC_ILLEGAL = brkpt; I don't understand why this is needed.
-     * a vector was already setup by init_exc_vec().
-     */
+    bmem_init();        /* initialize BIOS memory management */
+    processor_init();   /* Set CPU type, VEC_ILLEGAL, longframe and FPU type */
+    cookie_init();      /* sets a cookie jar */
+    machine_init();     /* detect hardware features and fill the cookie jar */
+    vecs_init();        /* setup all exception vectors (above) */
 
     /* misc. variables */
     dumpflg = -1;
@@ -207,9 +212,6 @@ void startup(void)
     osinit();                   /* initialize BDOS */
   
     set_sr(0x2300);
-  
-    /*VEC_BIOS = biostrap;*/ /* Already done above? */
-    (*(PFVOID*)0x7C) = brkpt;   /* ??? */
   
 #if DBGBIOS
     kprintf("BIOS: Last test point reached ...\n");

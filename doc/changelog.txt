@@ -955,3 +955,6 @@ Start... early ages
 - bios/vector.S - implemented priv. instr. handler (MAD)
                 - moved ill. and priv. instr. handlers here. (MAD)
 
+24. Jul. 2002
+- bios/vector.S - changed priv. instr. handler (MAD)
+- bios/bios.c - Now here all basic vector is done in vecs_init() (MAD)
