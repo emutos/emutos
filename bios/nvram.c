@@ -30,7 +30,7 @@ void detect_nvram(void)
 {
     if(check_read_byte(0xffff8961)) {
         has_nvram = 1;
-	nvram_buf = balloc(50);
+        nvram_buf = balloc(50);
         inited = 0;
     } else {
         has_nvram = 0;

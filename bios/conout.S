@@ -129,7 +129,7 @@ _cputc:
  * printed regardless of the sign of char.
  */
 _bconout5:
-	move.l	#0,d1
+        move.l  #0,d1
         move.b  7(sp),d1
         movem.l d2-d7/a2-a6,-(sp)
         bsr     ascii_out

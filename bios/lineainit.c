@@ -236,7 +236,7 @@ void linea_init(void)
     v_lin_wr=video_mode[vmode].lin_wr;
     v_hz_rez=video_mode[vmode].hz_rez;
     v_vt_rez=video_mode[vmode].vt_rez;
-    v_bytes_lin=video_mode[vmode].lin_wr;	/* I think v_bytes_lin = v_lin_wr (joy) */
+    v_bytes_lin=video_mode[vmode].lin_wr;       /* I think v_bytes_lin = v_lin_wr (joy) */
     v_col_bg=0;
     v_col_fg=video_mode[vmode].col_fg;
 

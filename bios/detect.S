@@ -91,7 +91,7 @@ berr:   move.l  a1,(8).w
 
 
 _detect_cpu:
-        move.l	a2,-(sp)  
+        move.l  a2,-(sp)  
         move.l  (0x10).w,a1     // save the illegal instr. exc. vector
         move.l  (0xf4).w,a2     // save the unimplemented instr. exc. vector
         lea     exit.w(PC),a0
@@ -131,7 +131,7 @@ exit:   move.l  a2,(0xf4).w     // restore stuff and exit
         move.l  a1,(0x10).w
         move.l  a0,sp
         nop                     // flush pipelines
-	move.l	(sp)+,a2
+        move.l  (sp)+,a2
         rts
 
 // FPU type detection, experimental (draco@atari.org).
@@ -167,7 +167,7 @@ exit:   move.l  a2,(0xf4).w     // restore stuff and exit
 
 
 _detect_fpu:
-	move.l	a2,-(sp)
+        move.l  a2,-(sp)
         move.l  sp,a0           // save the ssp
         clr.l   d0              // assume no FPU
         move.l  (0x2c).w,a1     // save the Line-F vector
@@ -219,7 +219,7 @@ fexit:  move.l  a1,(0x2c).w     // restore Line-F
         move.l  a0,sp
         nop                     // flush pipelines
         swap    d0
-	move.l	(sp)+,a2
+        move.l  (sp)+,a2
         rts
 
 

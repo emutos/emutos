@@ -26,7 +26,7 @@
 
 #define RWABS_RETRIES   3
 
-#define BLKDEVNUM   16	/* A: .. P: */
+#define BLKDEVNUM   16  /* A: .. P: */
 #define UNITSNUM    23  /* 2xFDC, 8xACSI, 8xSCSI, 4xIDE, 1xARAnyM */
 
 struct bs {
@@ -48,7 +48,7 @@ struct bs {
   /* 1fe */  UBYTE cksum[2];
 };
 
-#if 0	/* defined in bios.h */
+#if 0   /* defined in bios.h */
 struct _bpb /* bios parameter block */
 {
         WORD    recsiz;         /* sector size in bytes */
@@ -63,7 +63,7 @@ struct _bpb /* bios parameter block */
 };
 #endif
 
-struct _geometry	/* disk parameter block */
+struct _geometry        /* disk parameter block */
 {
     WORD spt;          /* number of sectors per track */
     WORD sides;        /* number of sides */
@@ -78,7 +78,7 @@ typedef struct _geometry GEOMETRY;
 #define RW_RW               1
 #define RW_NOMEDIACH        2
 #define RW_NORETRIES        4
-#define RW_NOTRANSLATE     	8
+#define RW_NOTRANSLATE          8
 
 
 
@@ -104,12 +104,12 @@ UWORD compute_cksum(LONG buf);
  * Modes of block devices
  */
 
-# define BDM_WP_MODE		0x01	/* write-protect bit (soft) */
-# define BDM_WB_MODE		0x02	/* write-back bit (soft) */
-# define BDM_REMOVABLE		0x04	/* removable media */
-# define BDM_LOCKABLE		0x08	/* lockable media */
-# define BDM_LRECNO		0x10	/* lrecno supported */
-# define BDM_WP_HARD		0x20	/* write-protected partition */
+# define BDM_WP_MODE            0x01    /* write-protect bit (soft) */
+# define BDM_WB_MODE            0x02    /* write-back bit (soft) */
+# define BDM_REMOVABLE          0x04    /* removable media */
+# define BDM_LOCKABLE           0x08    /* lockable media */
+# define BDM_LRECNO             0x10    /* lrecno supported */
+# define BDM_WP_HARD            0x20    /* write-protected partition */
 
 
 /* unified block device identificator - partitially stolen from MiNT, hehe */
@@ -117,41 +117,41 @@ UWORD compute_cksum(LONG buf);
 struct _blkdev
 {
 #if EVER_NEEDED /* take it, if you need... */
-    UWORD	major;		/* XHDI */
-    UWORD	minor;		/* XHDI */
-    UWORD	mode;		/* some flags */
+    UWORD       major;          /* XHDI */
+    UWORD       minor;          /* XHDI */
+    UWORD       mode;           /* some flags */
 
-    UWORD	lock;		/* device in use */
+    UWORD       lock;           /* device in use */
 
-    char	id[4];		/* XHDI partition id (GEM, BGM, RAW, \0D6, ...) */
-    UWORD	key;		/* XHDI key */
+    char        id[4];          /* XHDI partition id (GEM, BGM, RAW, \0D6, ...) */
+    UWORD       key;            /* XHDI key */
 #endif /* EVER_NEEDED */
 
-    ULONG	start;		/* physical start sector */
-    ULONG	size;		/* physical sectors */
+    ULONG       start;          /* physical start sector */
+    ULONG       size;           /* physical sectors */
 
-    UWORD	valid;		/* device valid */
-	BPB     bpb;
-	GEOMETRY    geometry;   /* this should probably belong to devices */
+    UWORD       valid;          /* device valid */
+        BPB     bpb;
+        GEOMETRY    geometry;   /* this should probably belong to devices */
     BYTE    serial[3];  /* the serial number taken from the bootsector */
-	int		unit;		/* 0,1 = floppies, 2-9 = ACSI, 10-17 = SCSI, 18-21 = IDE */
+        int             unit;           /* 0,1 = floppies, 2-9 = ACSI, 10-17 = SCSI, 18-21 = IDE */
 };
-typedef struct _blkdev	BLKDEV;
+typedef struct _blkdev  BLKDEV;
 
 /* an idea how to assign partitions to a physical unit */
-typedef struct _partition	PARTITION;
+typedef struct _partition       PARTITION;
 struct _partition
 {
-	BLKDEV		*blkdev;
-	PARTITION	*next;
+        BLKDEV          *blkdev;
+        PARTITION       *next;
 };
 
 /* physical unit (floppy/harddisk) identificator */
 struct _unit
 {
     int     valid;      /* unit valid */
-    ULONG	size;		/* number of physical sectors */
-    ULONG	pssize;		/* physical sector size */
+    ULONG       size;           /* number of physical sectors */
+    ULONG       pssize;         /* physical sector size */
     LONG    last_access;/* used in mediach only */
     PARTITION *partitions;
 

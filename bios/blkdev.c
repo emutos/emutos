@@ -67,7 +67,7 @@ void blkdev_init(void)
 
 void blkdev_hdv_init(void)
 {
-	drvbits = 0;
+        drvbits = 0;
 
     /* call the real */
     flop_hdv_init();
@@ -296,7 +296,7 @@ LONG blkdev_mediach(WORD dev)
         /* TODO, monitor write-protect status in flopvbl... */
     
         /* for now, assume it is unsure and look at the serial number */
-    	/* read bootsector using the physical mode */
+        /* read bootsector using the physical mode */
         err = blkdev_rwabs(RW_READ | RW_NOTRANSLATE, (LONG) dskbufp, 1, -1,
                            unit, blkdev[dev].start);
         if (err) {

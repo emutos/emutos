@@ -286,7 +286,7 @@ _s68l:
         rts
 
 
-	
+        
 //==== _enter - Front end of TRAP #1 handler =================================
 
         .text

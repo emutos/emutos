@@ -35,7 +35,7 @@ LONG DMAread(LONG sector, WORD count, LONG buf, WORD dev)
 #if DBG_DISK
     kprintf("DMAread(%ld, %d, %ld, %d)\n", sector, count, buf, dev);
 #endif
-	if (dev >= 0 && dev <= 7) {
+        if (dev >= 0 && dev <= 7) {
         /* ACSI */
     }
     else if (dev <= 15) {
@@ -57,5 +57,5 @@ LONG DMAread(LONG sector, WORD count, LONG buf, WORD dev)
 
 LONG DMAwrite(LONG sector, WORD count, LONG buf, WORD dev)
 {
-	return 0;
+        return 0;
 }

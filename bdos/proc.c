@@ -320,7 +320,7 @@ static long do_xexec(char *s)
 #endif
         p = (PD *) t;
         p->p_parent = run;
-	p->p_flags = 0; /* TODO, handle PRG flags */
+        p->p_flags = 0; /* TODO, handle PRG flags */
         spl = (long *) p->p_hitpa;
         *--spl = (long) p;
         *--spl = 0L;            /* bogus retadd */

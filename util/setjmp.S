@@ -15,26 +15,26 @@
  *   0: return address
  *   4: twelve registers d2-d7/a2-a7
  */
-	.global _setjmp
-	.global _longjmp
-	
-	.text
+        .global _setjmp
+        .global _longjmp
+        
+        .text
 
 _setjmp:
-	move.l	4(sp),a0
-	move.l	(sp),(a0)+
-	movem.l	d2-d7/a2-a7,(a0)
-	move.l	#0,d0
-	rts
+        move.l  4(sp),a0
+        move.l  (sp),(a0)+
+        movem.l d2-d7/a2-a7,(a0)
+        move.l  #0,d0
+        rts
 
 _longjmp:
-	move.l	4(sp),a0
-	move.w	8(sp),d0
-	beq	nonzero
-	move.l	#1,d0
+        move.l  4(sp),a0
+        move.w  8(sp),d0
+        beq     nonzero
+        move.l  #1,d0
 nonzero:
-	move.l	(a0)+,d1
-	movem.l (a0),d2-d7/a2-a7
-	move.l	d1,(sp)
-	rts
+        move.l  (a0)+,d1
+        movem.l (a0),d2-d7/a2-a7
+        move.l  d1,(sp)
+        rts
 

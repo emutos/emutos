@@ -290,24 +290,24 @@ long    xmxalloc(long amount, int mode)
     if(amount == -1L) {
       switch(mode) {
       case MX_STRAM:
-	ret_value = (long) ffit(-1L,&pmd);
-	break;
+        ret_value = (long) ffit(-1L,&pmd);
+        break;
       case MX_TTRAM:
-	ret_value = (long) ffit(-1L,&pmdtt);
-	break;
+        ret_value = (long) ffit(-1L,&pmdtt);
+        break;
       case MX_PREFSTRAM:
       case MX_PREFTTRAM:
-	/* TODO - I assume that the correct behabiour is to return
-	 * the biggest size in either pools. The documentation is unclear.
-	 */ 
-	{
-	  long tmp = (long) ffit(-1L,&pmd);
-	  ret_value = (long) ffit(-1L,&pmdtt);
-	  if(ret_value < tmp) ret_value = tmp;
-	}
+        /* TODO - I assume that the correct behabiour is to return
+         * the biggest size in either pools. The documentation is unclear.
+         */ 
+        {
+          long tmp = (long) ffit(-1L,&pmd);
+          ret_value = (long) ffit(-1L,&pmdtt);
+          if(ret_value < tmp) ret_value = tmp;
+        }
       default:
-	/* unknown mode */
-	ret_value = 0;
+        /* unknown mode */
+        ret_value = 0;
       }
       goto ret;
     }
@@ -342,12 +342,12 @@ long    xmxalloc(long amount, int mode)
     case MX_PREFSTRAM:
       m = ffit(amount,&pmd);
       if(m == NULL) 
-	m = ffit(amount,&pmdtt);
+        m = ffit(amount,&pmdtt);
       break;
     case MX_PREFTTRAM:
       m = ffit(amount,&pmdtt);
       if(m == NULL) 
-	m = ffit(amount,&pmd);
+        m = ffit(amount,&pmd);
       break;
     default:
       /* unknown mode */

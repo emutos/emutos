@@ -20,7 +20,7 @@
 
 // ==== Misc. functions ======================================================
 
-	.xdef	kprintf_init
+        .xdef   kprintf_init
 
 
 // ==== startup.s - variables for memory  ====================================
@@ -79,9 +79,9 @@ clearbss:
         clr.l   (a0)+
         dbra    d0, clearbss
 
-	/* At this point, better initialize kprintf before we forget */
-	jsr	kprintf_init
-	/* This is it. C code and kprintf allowed past this point. */
+        /* At this point, better initialize kprintf before we forget */
+        jsr     kprintf_init
+        /* This is it. C code and kprintf allowed past this point. */
 
 
 

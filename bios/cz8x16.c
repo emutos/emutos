@@ -12,7 +12,7 @@ static UWORD off_table[], dat_table[];
 struct font_head cz8x16 = {
     1,  /* WORD font_id */
     10,  /* WORD point */
-    "8x16 system font",  /*   BYTE name[32]	*/
+    "8x16 system font",  /*   BYTE name[32]     */
     0,  /* WORD first_ade */
     255,  /* WORD last_ade */
     13,  /* UWORD top */
@@ -28,10 +28,10 @@ struct font_head cz8x16 = {
     1,  /* UWORD ul_size */
     0x5555, /* UWORD lighten */
     0x5555, /* UWORD skew */
-    F_STDFORM | F_MONOSPACE | F_DEFAULT,  /* UWORD flags	*/
-    0,			/*   UBYTE *hor_table	*/
-    off_table,		/*   UWORD *off_table	*/
-    dat_table,		/*   UWORD *dat_table	*/
+    F_STDFORM | F_MONOSPACE | F_DEFAULT,  /* UWORD flags        */
+    0,                  /*   UBYTE *hor_table   */
+    off_table,          /*   UWORD *off_table   */
+    dat_table,          /*   UWORD *dat_table   */
     256,  /* UWORD form_width */
     16,  /* UWORD form_height */
     0,  /* struct font * next_font */

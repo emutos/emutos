@@ -196,7 +196,7 @@ _palmode:       ds.w    1       // 0 = NTSC, else PAL
 _defshiftmod:   ds.w    1       // default video resolution
 _sshiftmod:     ds.b    1       // copy of contents of 0xff8260
         .org 0x44e
-_v_bas_ad:	ds.l    1       // screen base address
+_v_bas_ad:      ds.l    1       // screen base address
 _vblsem:        ds.w    1       // pointer to logical screen base
 _nvbls:         ds.w    1       // if not 0, VBL routine not executed
 _vblqueue:      ds.l    1       // number of VBL routines
@@ -212,11 +212,11 @@ _hdv_boot:      ds.l    1       // vector for hard disk boot
 _hdv_mediach:   ds.l    1       // vector for hard disk media change
 _cmdload:       ds.w    1       // if not 0, load command.prg after boot
 _conterm:       ds.b    1       // attribute vector for console output
-trp14ret:       ds.l	1       // return address for trap #14 (unused)
-criticret       ds.l	1       // return address for critical error hndlr
+trp14ret:       ds.l    1       // return address for trap #14 (unused)
+criticret:      ds.l    1       // return address for critical error hndlr
         .org 0x48e
 _themd:         ds.l    4       // first memory descriptor block
-____md:         ds.w    2	// space for additional memory descriptors
+____md:         ds.w    2       // space for additional memory descriptors
 _savptr:        ds.l    1       // pointer to BIOS save register block
 _nflops:        ds.w    1       // number of connected floppy drives
 con_state:      ds.l    1       // vector for screen output
@@ -238,7 +238,7 @@ _vbl_list:      ds.l    1       // pointers to 8 VBl routines
                 ds.l    1
                 ds.l    1
 _dumpflg:       ds.w    1       // flag for screen dump (unsused)
-_prtabt:	ds.w    1	// printer abort flag
+_prtabt:        ds.w    1       // printer abort flag
 _sysbase:       ds.l    1       // pointer to start of OS
 _shell_p:       ds.l    1       // pointer to shell
 _end_os:        ds.l    1       // pointer to end of OS
