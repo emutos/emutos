@@ -163,13 +163,6 @@ void startup(void)
     /* floppy and harddisk initialisation */
     blkdev_init();
 
-    /* are these useful ?? */
-    prt_stat = print_stat;
-    prt_vec = print_vec;
-    aux_stat = serial_stat;
-    aux_vec = serial_vec;
-    dump_vec = dump_scr;
-
     /* misc. variables */
     dumpflg = -1;
     sysbase = (LONG) os_entry;

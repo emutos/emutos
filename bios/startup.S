@@ -18,42 +18,26 @@
 // ==== Defines ==============================================================
 
         .equ    SUPSIZ, 8192            // size of supervisor stack in words
-        .equ    _GSX_ENT, 0             // Entry to GEM (if graphically)
-
 
 
 // ==== References ===========================================================
 
-        .global _trap_1         // Calling GEMDOS from C
-        .global _b_mdx          // used in bios.c
-
-
-
-
+        .global _trap_1         // call GEMDOS from C
+        .global _dummyaes       // call AES (not implemented)
+        .global _biostrap       // call BIOS from C
+        .global _xbiostrap      // call XBIOS from C
 
         .global _cartscan
         
         .global _int_vbl
         .global _int_hbl
-        .global _biostrap
-        .global _xbiostrap
-        .global _dummyaes
         .global _os_entry
         .global _just_rts
         .global _just_rte
         .global _brkpt
         
-        .global _print_stat
-        .global _print_vec
-        .global _serial_stat
-        .global _serial_vec
-        .global _dump_scr
-        
-
         .global _save_area
 
-        .global _load_cli        // load EmuCON
-        
 // ==== From bios.c ==========================================================
 
         .xdef   _bios_0
@@ -369,14 +353,6 @@ everloop:
 // ===========================================================================
 // ==== Subroutines ==========================================================
 // ===========================================================================
-
-// ==== Dummy functions ======================================================
-
-_print_stat:
-_print_vec:
-_serial_stat:
-_serial_vec:
-_dump_scr:
 
 _just_rts:       
         rts             // Just a dummy

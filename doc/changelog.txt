@@ -580,4 +580,5 @@ Start... early ages
 - untested ttram-compliant internal memory stuff in proc.c (LVL)
 - cleaned up bios/biosmem.c:bmem_init, removed old _b_mdx from startup.S (MAD)
 - put diskbuf from startup.S to floppy.c, made dskbufp a pointer (MAD)
+- put parallel and serial output funcs from asm to chardev.c (MAD)
 

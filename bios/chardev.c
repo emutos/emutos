@@ -18,6 +18,7 @@
 #include "bios.h"
 #include "gemerror.h"
 #include "kprint.h"
+#include "tosvars.h"
 #include "chardev.h"
 
 /*==== Defines ============================================================*/
@@ -69,6 +70,15 @@ void chardev_init()
     bcostat_vec[5] = bcostat5;
     bcostat_vec[6] = bcostat6;
     bcostat_vec[7] = bcostat7;
+
+    /* setup serial output functions */
+    aux_stat = dummy;
+    aux_vec = dummy;
+
+    /* setup parallel output functions */
+    prt_stat = dummy;
+    prt_vec = dummy;
+    dump_vec = dummy;
 }
 
 
@@ -191,4 +201,15 @@ LONG bcostat6(void)
 LONG bcostat7(void)
 {
   return -1;
+}
+
+
+
+/*
+ * dummy - not implemented functions
+ */
+
+void dummy(void)
+{
+    return;
 }

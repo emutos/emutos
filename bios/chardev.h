@@ -15,7 +15,9 @@
 #define _BIOSDEVS_H
 
 #include        "portab.h"
- 
+
+
+/* Prototypes */
 LONG bconstat0(void);
 LONG bconstat1(void);
 LONG bconstat2(void);
@@ -51,6 +53,8 @@ LONG bcostat4(void);
 LONG bcostat5(void);
 LONG bcostat6(void);
 LONG bcostat7(void);
+
+void dummy(void);
 
 /* defined in tosvars.s */
 
