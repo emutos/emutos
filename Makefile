@@ -126,6 +126,17 @@ VDISSRC = entry.S bitblt.S bltfrag.S copyrfm.S esclisa.S  \
           textblt.S tranfm.S gsxvars.S
 
 #
+# source code in aes/
+#
+
+AESCSRC = gemaplib.c gemasync.c gembase.c gemctrl.c gemdisp.c gemevlib.c \
+   gemflag.c gemfmalt.c gemfmlib.c gemfslib.c gemglobe.c gemgraf.c gemgrlib.c \
+   gemgsxif.c geminit.c geminput.c gemmnlib.c gemobed.c gemobjop.c gemoblib.c \
+   gempd.c gemqueue.c gemrslib.c gemsclib.c gemshlib.c gemsuper.c gemwmlib.c \
+   gemwrect.c optimize.c rectfunc.c gemdos.c
+AESSSRC = gemstart.S gemdosif.S gemasm.S gsx2.S large.S optimopt.S
+
+#
 # source code in cli/ for EmuTOS console EmuCON
 #
 
@@ -146,9 +157,13 @@ PCONSCSRC = $(CONSCSRC:%=cli/%)
 PCONSSSRC = $(CONSSSRC:%=cli/%)
 PVDICSRC = $(VDICSRC:%=vdi/%)
 PVDISSRC = $(VDISSRC:%=vdi/%)
+PAESCSRC = $(AESCSRC:%=aes/%)
+PAESSSRC = $(AESSSRC:%=aes/%)
 
-CSRC = $(PBIOSCSRC) $(PBDOSCSRC) $(PUTILCSRC) $(PVDICSRC) $(PCONSCSRC)
-SSRC = $(PBIOSSSRC) $(PBDOSSSRC) $(PUTILSSRC) $(PVDISSRC) $(PCONSSSRC)
+CSRC = $(PBIOSCSRC) $(PBDOSCSRC) $(PUTILCSRC) \
+       $(PVDICSRC) $(PAESCSRC) $(PCONSCSRC)
+SSRC = $(PBIOSSSRC) $(PBDOSSSRC) $(PUTILSSRC) \
+       $(PVDISSRC) $(PAESSSRC) $(PCONSSSRC)
 
 BIOSCOBJ = $(BIOSCSRC:%.c=obj/%.o)
 BIOSSOBJ = $(BIOSSSRC:%.S=obj/%.o)
@@ -160,9 +175,11 @@ CONSCOBJ = $(CONSCSRC:%.c=obj/%.o)
 CONSSOBJ = $(CONSSSRC:%.S=obj/%.o)
 VDICOBJ  = $(VDICSRC:%.c=obj/%.o)
 VDISOBJ  = $(VDISSRC:%.S=obj/%.o)
+AESCOBJ  = $(AESCSRC:%.c=obj/%.o)
+AESSOBJ  = $(AESSSRC:%.S=obj/%.o)
 
-SOBJ = $(BIOSSOBJ) $(BDOSSOBJ) $(UTILSOBJ) $(CONSSOBJ) $(VDISOBJ) 
-COBJ = $(BIOSCOBJ) $(BDOSCOBJ) $(UTILCOBJ) $(CONSCOBJ) $(VDICOBJ) 
+SOBJ = $(BIOSSOBJ) $(BDOSSOBJ) $(UTILSOBJ) $(CONSSOBJ) $(VDISOBJ) $(AESSOBJ)
+COBJ = $(BIOSCOBJ) $(BDOSCOBJ) $(UTILCOBJ) $(CONSCOBJ) $(VDICOBJ) $(AESCOBJ)
 OBJECTS = $(SOBJ) $(COBJ) 
 
 #
@@ -341,6 +358,12 @@ obj/%.o : vdi/%.c
 obj/%.o : vdi/%.S
 	${CC} ${CFLAGS} -c $< -o $@
 
+obj/%.o : aes/%.c
+	${CC} ${CFLAGS} -c $< -o $@
+
+obj/%.o : aes/%.S
+	${CC} ${CFLAGS} -c $< -o $@
+
 #
 # make bios.dsm will create an assembly-only of bios.c
 #
@@ -358,6 +381,9 @@ obj/%.o : vdi/%.S
 	${CC} ${CFLAGS} -S -Iutil $< -o $@
 
 %.dsm : vdi/%.c
+	${CC} ${CFLAGS} -S -Iutil $< -o $@
+
+%.dsm : aes/%.c
 	${CC} ${CFLAGS} -S -Iutil $< -o $@
 
 #
@@ -473,7 +499,7 @@ tounix$(EXE): tools/tounix.c
 #     find . -name CVS -prune -or -not -name '*~' | xargs $(HERE)/tounix$(EXE)
 
 crlf: tounix$(EXE)
-	./tounix$(EXE) * bios/* bdos/* doc/* util/* tools/* po/* include/*
+	./tounix$(EXE) * bios/* bdos/* doc/* util/* tools/* po/* include/* aes/*
 
 cvsready: expand crlf nodepend
 

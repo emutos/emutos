@@ -639,4 +639,9 @@ Start... early ages
 - bios/machine.c - got rid of some compiler warnings
 
 07. Mar. 2002
-- Made the VDI compilable again (Thomas)
+- Made the VDI compilable again... And it even seems already to work a little
+  bit (Thomas)
+
+08. Mar. 2002
+- Cleaned up the AES sources, added prototypes and header files. The AES can
+  now be linked with the rest of EmuTOS. (Thomas)
