@@ -1446,3 +1446,7 @@ Start... early ages
 24. Apr. 2003
 - aes/gemsuper.c, aes/crysbind.h, aes/gemwmlib.c : Added wind_new() function
   (called wm_new internally). TeraDesk seems now to be working fine. (THH)
+
+01. May. 2003
+- doc/authors.txt - historic part fixed (LVL)
+
