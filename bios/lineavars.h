@@ -46,8 +46,8 @@ extern WORD v_col_bg;           // current background color
 extern WORD v_col_fg;		// current foreground color
 
 /* Cursor related variables */
-extern VOID os_entry(VOID);
-extern VOID *v_cur_ad;		// current cursor address
+extern void os_entry(void);
+extern void *v_cur_ad;		// current cursor address
 extern WORD v_cur_of;		// cursor offset
 extern WORD v_cur_cx;		// current cursor cell x
 extern WORD v_cur_cy;		// current cursor cell y
@@ -85,11 +85,19 @@ extern WORD cursconf(WORD, WORD);       // XBIOS cursor configuration
 
 
 /* Mouse related variables */
+#if NEEDED
 extern WORD     newx;           // new mouse x&y position
 extern WORD     newy;           // new mouse x&y position
 extern BYTE     draw_flag;      // non-zero means draw mouse form on vblank
 extern BYTE     mouse_flag;     // non-zero, if mouse ints disabled
+#endif
+extern void     (*tim_addr)(void);      // timer interrupt vector
+extern void     (*tim_chain)(void);     // timer interrupt vector save
+extern void     (*user_but)(void);	// user button vector
+extern void     (*user_cur)(void);	// user cursor vector
+extern void     (*user_mot)(void);	// user motion vector
 
+void (*etv_timer)(void);
 
 #define NEEDED 0
 
@@ -127,11 +135,6 @@ save_len:	.ds.w	1	// -330
 save_addr:	.ds.l	1	// -328
 save_stat:	.ds.w	1	// -324
 save_area:	.ds.l	0x40	// -322
-tim_addr:	.ds.l	1	// -66
-tim_chain:	.ds.l	1	// -62
-user_but:	.ds.l	1	// -58	user button vector
-user_cur:	.ds.l	1	// -54	user cursor vector
-user_mot:	.ds.l	1	// -50	user motion vector
                 .ds.b	1	//       dummy
 BYTES_LN:	.ds.w	1	// -2
 

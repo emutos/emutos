@@ -312,3 +312,5 @@ Start... early ages
 - a cvs trick to ensure obj/ directory is created even with update -d -P (LVL)
 - floppy floprate() and flopfmt() untested (LVL)
 
+25. Nov. 2001
+- Worked on bios/mouse.c   (MAD)

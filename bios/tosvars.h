@@ -109,6 +109,9 @@ VOID (*etv_critic)(VOID);
 VOID (*etv_term)(VOID);
 VOID (*etv_xtra)(VOID);
 
+PTR     mousevec;         // mouse driver routine
+//VOID (*mousevec)(VOID);         // mouse driver routine
+
 
 #endif /* _TOSVARS_H */
 

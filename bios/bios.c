@@ -34,6 +34,7 @@
 
 
 #include "ikbd.h"
+#include "mouse.h"
 #include "midi.h"
 #include "mfp.h"
 #include "floppy.h"
@@ -206,6 +207,7 @@ void startup(void)
     mfp_init();         /* init MFP, timers, USART */
     kbd_init();         /* init keyboard, disable mouse and joystick */
     midi_init();        /* init MIDI acia so that kbd acia irq works */
+    mouse_init();       /* init mouse driver */
     clock_init();       /* init clock */
     nls_init();         /* init native language support */
     nls_set_lang(get_lang_name());

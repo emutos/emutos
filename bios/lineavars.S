@@ -18,6 +18,7 @@
 //	Negative line-a variables come first
 // ===========================================================================
 
+		.global _mdata
 		.globl	cur_ms_stat
 		.globl	_disab_cnt
 		.globl	_draw_flag
@@ -36,11 +37,11 @@
 		.globl	save_area
 		.globl	save_len
 		.globl	save_stat
-		.globl	tim_addr
-		.globl	tim_chain
-		.globl	user_but
-		.globl	user_cur
-		.globl	user_mot
+		.globl	_tim_addr
+		.globl	_tim_chain
+		.globl	_user_but
+		.globl	_user_cur
+		.globl	_user_mot
 		.globl	_v_cel_ht
 		.globl	_v_cel_mx
 		.globl	_v_cel_my
@@ -65,10 +66,12 @@
 		.global _font_count
 // **FIXME: There are still lots of variables missing here...**
 
+_mdata:                         // Block of mouse pointer data
 GCURX:		.ds.w	1	// -602	MiNT needs GCURX and GCURY
 GCURY:		.ds.w	1	// -600	(the current mouse position)
 M_HID_CT:	.ds.w	1	// -598
 MOUSE_BT:	.ds.w	1	// -596
+
 REQ_COL:	.ds.w	48	// -594
 SIZ_TAB:	.ds.w	15	// -498
 TERM_CH:	.ds.w	1	//
@@ -92,11 +95,11 @@ save_len:	.ds.w	1	// -330
 save_addr:	.ds.l	1	// -328
 save_stat:	.ds.w	1	// -324
 save_area:	.ds.l	0x40	// -322
-tim_addr:	.ds.l	1	// -66
-tim_chain:	.ds.l	1	// -62
-user_but:	.ds.l	1	// -58	user button vector
-user_cur:	.ds.l	1	// -54	user cursor vector
-user_mot:	.ds.l	1	// -50	user motion vector
+_tim_addr:	.ds.l	1	// -66  timer interrupt vector
+_tim_chain:	.ds.l	1	// -62  timer interrupt vector save
+_user_but:	.ds.l	1	// -58	user button vector
+_user_cur:	.ds.l	1	// -54	user cursor vector
+_user_mot:	.ds.l	1	// -50	user motion vector
 _v_cel_ht:	.ds.w	1	// -46   cell height (width is 8)
 _v_cel_mx:	.ds.w	1	// -44	needed by MiNT: columns on the screen minus 1
 _v_cel_my:	.ds.w	1	// -42	needed by MiNT: rows on the screen minus 1

@@ -28,8 +28,13 @@
 
 
 /* External declarations */
-extern VOID mouse_init(WORD , PTR , PTR);
-extern PTR mousevec;    /* IKBD Mouse */
+extern void Initmous(WORD , PTR , PTR);
+
+extern void mouse_init(void);
+extern void mouse_change(WORD dx, WORD dy, WORD buttons);
+extern void mouse_add_movement(WORD dx, WORD dy);
+extern void mouse_add_buttons(WORD clear, WORD eor);
+
 
 
 
@@ -54,30 +59,26 @@ extern PTR mousevec;    /* IKBD Mouse */
 
 struct param
 {
-    BYTE topmode;
-    BYTE buttons;
-    BYTE xparam;
-    BYTE yparam;
-    WORD xmax;
-    WORD ymax;
-    WORD xinitial;
-    WORD yinitial;
+    BYTE      topmode;
+    BYTE      buttons;
+    BYTE      xparam;
+    BYTE      yparam;
+    WORD     xmax;
+    WORD     ymax;
+    WORD     xinitial;
+    WORD     yinitial;
 };
-
 
 
 struct mouse_data {
-    WORD	dxpos;
-    WORD	dypos;
-    BYTE        active;
-    BYTE	buttons;
+    WORD	dxpos;          /* current X position */
+    WORD	dypos;          /* current Y position */
+    WORD        hide_cnt;       /* 0 = mouse visible */
+    WORD	buttons;        /* current mouse button state */
 };
 
 
 
-extern VOID mouse_change(WORD dx, WORD dy, WORD buttons);
-extern VOID mouse_add_movement(WORD dx, WORD dy);
-extern VOID mouse_add_buttons(WORD clear, WORD eor);
 
 #endif /* _MOUSE_H */
 

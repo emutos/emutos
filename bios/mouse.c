@@ -22,17 +22,22 @@
 #include "kprint.h"
 
 #include "bios.h"
+#include "tosvars.h"
 #include "lineavars.h"
 #include "ikbd.h"
 #include "mouse.h"
+#include "vectors.h"
 
 
-#define DBG_MOUSE 0
+#define DBG_MOUSE 1
 
+#define	MIN_THRESHOLD 1
+#define	MAX_THRESHOLD 20	/* more seems not reasonable... */
 
-static BYTE oldbuts;
+/* Begin of mouse storage area */
+extern struct mouse_data mdata;   /* from lineavars.S */
 
-
+WORD oldbutt;
 
 /**
  * mouse_change - notification of a change of mouse position
@@ -47,7 +52,8 @@ static BYTE oldbuts;
  
 void mouse_change(WORD dx, WORD dy, WORD buttons)
 {
-    struct mouse_data *mse = (struct mouse_data *)&newx;
+    struct mouse_data *mse = &mdata;
+
     WORD changed;
 
 //    spin_lock(&mse->lock);
@@ -73,6 +79,9 @@ void mouse_change(WORD dx, WORD dy, WORD buttons)
             mse->dypos = -2048;
         if (mse->dypos > 2048)
             mse->dypos = 2048;
+#ifdef DBG_MOUSE
+        kprintf("mouse: %d, %d, %x\n", mse->dxpos, mse->dypos, mse->buttons);
+#endif
     }
 
 //    spin_unlock(&mse->lock);
@@ -91,9 +100,9 @@ void mouse_change(WORD dx, WORD dy, WORD buttons)
  * @dy: delta Y movement
  */
  
-VOID mouse_add_movement(WORD dx, WORD dy)
+void mouse_add_movement(WORD dx, WORD dy)
 {
-    struct mouse_data *mse = (struct mouse_data *)&newx;
+    struct mouse_data *mse = &mdata;
 
     mouse_change(dx, dy, mse->buttons);
 }
@@ -111,32 +120,11 @@ VOID mouse_add_movement(WORD dx, WORD dy)
  
 void mouse_add_buttons(WORD clear, WORD eor)
 {
-    struct mouse_data *mse = (struct mouse_data *)&newx;
+    struct mouse_data *mse = &mdata;
 
     mouse_change(0, 0, (mse->buttons & ~clear) ^ eor);
 }
 
-
-
-#if NEEDED
-static WORD mouse_open(VOID)
-{
-    struct mouse_data *mse = (struct mouse_data *)&newx;
-
-    /* Still running? */
-    if (mse->active++)
-        return 0;
-
-    // spin_lock_irq(&mse->lock);
-
-    mse->dxpos   = 0;
-    mse->dypos   = 0;
-    mse->buttons = 7;
-
-    // spin_unlock_irq(&mse->lock);
-    return 1;
-}
-#endif
 
 
 /*
@@ -146,25 +134,86 @@ static WORD mouse_open(VOID)
  * part did see an relative mouse packet.
  */
 
-VOID mouse_int(BYTE * buf)
+void mouse_int(BYTE * buf)
 {
-    struct mouse_data *mse = (struct mouse_data *)&newx;
     WORD buttons;
 
-    /* Mouse ints disabled?? */
-    if (mse->active)
+    struct mouse_data *mse = &mdata;
+
+    /* Mouse unvisible?? */
+    if (mse->hide_cnt)
         return;
 
-    buttons = ((buf[0] & 1) | ((buf[0] & 2) << 1) | (oldbuts & 2));
-    oldbuts = buttons;
+    /* Set just changed buttons as bitmap */
+    buttons = ((buf[0] & 1) | ((buf[0] & 2) << 1) | (oldbutt & 2));
+    oldbutt = buttons;
 
     mouse_change(buf[1], -buf[2], buttons ^ 7);
 }
 
 
 
-/* Set mouse button action */
-VOID mouse_button_action(WORD mode)
+void mouse_init(void)
+{
+    struct param parm;
+    struct mouse_data *mse = &mdata;
+
+
+    /* Still running? */
+#if 0
+    if (mse->hide_cnt++)
+        return 0;
+#endif
+
+    /* These are the vex_* vectors from VDI, called from mouse driver */
+    user_but=&just_rts;	        // user button vector
+    user_cur=&just_rts;	        // user cursor vector
+    user_mot=&just_rts;	        // user motion vector
+    tim_addr=&just_rts;	        // user timer vector
+
+    /* reset mouse state */
+    mse->dxpos   = 0;
+    mse->dypos   = 0;
+    mse->buttons = 0;
+
+    parm.topmode = 0;
+    parm.buttons = 0;
+    parm.xparam = 1;
+    parm.yparam = 1;
+
+
+    Initmous(1, (PTR)&parm, (PTR)&mouse_int);
+}
+
+
+/*
+ * mouse_enable - switch on mouse
+ */
+
+void mouse_enable(void)
+{
+    struct mouse_data *mse = &mdata;
+}
+
+
+
+/*
+ * mouse_disable - switch off mouse
+ */
+
+void mouse_disable(void)
+{
+    struct mouse_data *mse = &mdata;
+
+    UBYTE cmd[1] = { 0x12 };
+
+    ikbdws(1, (PTR)cmd);
+}
+
+
+
+    /* Set mouse button action */
+void mouse_button_action(WORD mode)
 {
     UBYTE cmd[2] = { 0x07, mode };
 
@@ -172,7 +221,7 @@ VOID mouse_button_action(WORD mode)
 }
 
 /* Set relative mouse position reporting */
-VOID mouse_rel_pos(VOID)
+void mouse_rel_pos(void)
 {
     UBYTE cmd[1] = { 0x08 };
 
@@ -180,7 +229,7 @@ VOID mouse_rel_pos(VOID)
 }
 
 /* Set absolute mouse position reporting */
-VOID mouse_abs_pos(WORD xmax, WORD ymax)
+void mouse_abs_pos(WORD xmax, WORD ymax)
 {
     BYTE cmd[5] = { 0x09, xmax>>8, xmax&0xFF, ymax>>8, ymax&0xFF };
 
@@ -201,7 +250,7 @@ VOID mouse_abs_pos(WORD xmax, WORD ymax)
  * deltay - distance in Y clicks to return (UP) or (DOWN)
  */
 
-VOID mouse_kbd_mode(WORD deltax, WORD deltay)
+void mouse_kbd_mode(WORD deltax, WORD deltay)
 {
     BYTE cmd[3] = { 0x0A, deltax, deltay };
 
@@ -209,7 +258,7 @@ VOID mouse_kbd_mode(WORD deltax, WORD deltay)
 }
 
 /* Set mouse threshold */
-VOID mouse_thresh(WORD x, WORD y)
+void mouse_thresh(WORD x, WORD y)
 {
     BYTE cmd[3] = { 0x0B, x, y };
 
@@ -217,7 +266,7 @@ VOID mouse_thresh(WORD x, WORD y)
 }
 
 /* Set mouse scale */
-VOID mouse_scale(WORD x, WORD y)
+void mouse_scale(WORD x, WORD y)
 {
     BYTE cmd[3] = { 0x0C, x, y };
 
@@ -225,7 +274,7 @@ VOID mouse_scale(WORD x, WORD y)
 }
 
 /* Interrogate mouse position */
-VOID mouse_pos_get(WORD *x, WORD *y)
+void mouse_pos_get(WORD *x, WORD *y)
 {
     UBYTE cmd[1] = { 0x0D };
 
@@ -235,7 +284,7 @@ VOID mouse_pos_get(WORD *x, WORD *y)
 }
 
 /* Load mouse position */
-VOID mouse_pos_set(WORD x, WORD y)
+void mouse_pos_set(WORD x, WORD y)
 {
     BYTE cmd[6] = { 0x0E, 0x00, x>>8, x&0xFF, y>>8, y&0xFF };
 
@@ -243,7 +292,7 @@ VOID mouse_pos_set(WORD x, WORD y)
 }
 
 /* Set Y=0 at bottom */
-VOID mouse_y0_bot(VOID)
+void mouse_y0_bot(void)
 {
     UBYTE cmd[1] = { 0x0F };
 
@@ -251,7 +300,7 @@ VOID mouse_y0_bot(VOID)
 }
 
 /* Set Y=0 at top */
-VOID mouse_y0_top(VOID)
+void mouse_y0_top(void)
 {
     UBYTE cmd[1] = { 0x10 };
 
@@ -259,23 +308,15 @@ VOID mouse_y0_top(VOID)
 }
 
 /* Resume */
-VOID resume(VOID)
+void resume(void)
 {
     UBYTE cmd[1] = { 0x11 };
 
     ikbdws(1, (PTR)cmd);
 }
 
-/* Disable mouse */
-VOID mouse_disable(VOID)
-{
-    UBYTE cmd[1] = { 0x12 };
-
-    ikbdws(1, (PTR)cmd);
-}
-
 /* Pause output */
-VOID pause(VOID)
+void pause(void)
 {
     UBYTE cmd[1] = { 0x13 };
 
@@ -287,13 +328,15 @@ VOID pause(VOID)
 /*
  * mouse_init - mouse initialization
  *
- * The parameter block is not yet implemented. Instead the maximal
- * values of the resolution are used.
  */
 
-VOID mouse_init(WORD type, PTR param, PTR vec)
+void Initmous(WORD type, PTR param, PTR vec)
 {
     struct param *p = (struct param*)param;     /* pointer to parameter block */
+
+    if (vec != NULL) {
+//        mousevec = vec;         /* set new IKBD Mouse interrupt vector */
+    }
 
     switch (type) {
 
@@ -335,15 +378,15 @@ VOID mouse_init(WORD type, PTR param, PTR vec)
 
     case 4:
         if (param != NULL) {
+            if (p->topmode == IN_YBOT)
+                mouse_y0_bot();
+            if (p->topmode == IN_YTOP)
+                mouse_y0_top();
             mouse_button_action(p->buttons);
+
             /* Set mouse keycode mode */
             mouse_kbd_mode(p->xparam, p->yparam);
         }
         break;
     }
-
-    if (vec != NULL) {
-        mousevec = vec;    /* set new IKBD Mouse interrupt vector */
-    }
-
 }

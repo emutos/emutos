@@ -63,7 +63,7 @@ VOID xbiosinit()
 
 VOID xbios_0(WORD type, PTR param, PTR vec)
 {
-    mouse_init(type, param, vec);
+    Initmous(type, param, vec);
 #if DBG_XBIOS
     kprintf("XBIOS: Unimplemented function 0x00 ...\n");
 #endif

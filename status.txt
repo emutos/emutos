@@ -74,8 +74,8 @@ T tested and working on an emulator or real hardware
  X midi input
  X ikbd key events
  X IKBD clock
- - mouse           (will be done as part of VDI)
- - joysticks       (is done by games - TOS does not have one)
+ - mouse                (will be done as part of VDI)
+ - joysticks            (is done by games - TOS does not have one)
 
 
 
@@ -99,17 +99,17 @@ T tested and working on an emulator or real hardware
  XBIOS Functions
  ----------------------------------------------------------------------------
  X 0x00 initmous
- - 0x01 ssbrk
+ - 0x01 ssbrk           (useless - will not be implemented)
  X 0x02 physBase
  X 0x03 logBase
  X 0x04 getRez
- > 0x05 setScreen      (the resolution change is ignored)
+ > 0x05 setScreen       (the resolution change is ignored)
  X 0x06 setPallete
  X 0x07 setColor
  X 0x08 floprd
  X 0x09 flopwr
  X 0x0a flopfmt
- - 0x0b used-by-BIOS
+ - 0x0b used-by-BIOS    (useless - will not be implemented)
  X 0x0c midiws
  X 0x0d mfpint
  X 0x0e iorec
@@ -131,20 +131,20 @@ T tested and working on an emulator or real hardware
  X 0x1e ongibit
  X 0x1f xbtimer
  X 0x20 dosound
- - 0x21 setprt
+ - 0x21 setprt          (useless - will not be implemented)
  X 0x22 kbdvbase
  - 0x23 kbrate
- - 0x24 prtblk
+ - 0x24 prtblk          (useless - will not be implemented)
  X 0x25 vsync
  X 0x26 supexec
- - 0x27 puntaes
+ - 0x27 puntaes         (useless - no AES available)
 
  X 0x29 floprate
  - 0x2a DMAread
  - 0x2b DMAwrite
  - 0x2c Bconmap
 
- > 0x2e NVMaccess  (does not handle the cksum)
+ > 0x2e NVMaccess       (does not handle the cksum)
 
  - 0x40 Blitmode
 
