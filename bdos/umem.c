@@ -304,6 +304,7 @@ long    xmxalloc(long amount, int mode)
           ret_value = (long) ffit(-1L,&pmdtt);
           if(ret_value < tmp) ret_value = tmp;
         }
+        break;
       default:
         /* unknown mode */
         ret_value = 0;
