@@ -12,10 +12,6 @@
 
 #include "vdiconf.h"
 
-//#undef vme10
-//#define vme10 1
-//#define _v_pl_dspl 2
-
 
 //              public routines
 
