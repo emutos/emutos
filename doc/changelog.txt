@@ -1301,3 +1301,14 @@ Start... early ages
 - bdos/console.c - better code style (MAD)
 - vdi/vdiesc.c - used this again  (MAD)
 - po/de.po - updated (MAD)
+
+9. Feb. 2003
+- doc/annouce.txt - minor english language rewording (LVL)
+- po/fr.po - updated (LVL)
+- include/version.h - set to 0.6 (LVL)
+- include/config.h - added DETECT_NATIVE_FEATURES (I assume it was only in
+  joy's localconf.h) and set it to 1 by default. I checked that it works on
+  on both non-nf-enabled-yet STonX and on newly-nf-enabled STonC. I suggest
+  to get rid of the STonX native print stuff as soon as I commit to STonX the
+  quick natfeat implementation I just added to STonC (LVL)
+- natfeat_init() called in memory.S, for earlier availability of kprintf (LVL)
