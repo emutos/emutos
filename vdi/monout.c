@@ -78,7 +78,6 @@ int smul_div(WORD m1, WORD m2, WORD d1)
 }
 
 
-
 /*
  * v_clrwk - clear screen
  *
@@ -1496,6 +1495,7 @@ void dsf_udpat()
 }
 
 
+#if 0
 /* Set pixel at x, y */
 inline void
 setpixel(UWORD *addr, UWORD offs, int linebit)
@@ -1600,7 +1600,7 @@ setpixel(UWORD *addr, UWORD offs, int linebit)
         }
     }
 }
-
+#endif
 
 
 /*
@@ -1614,6 +1614,10 @@ setpixel(UWORD *addr, UWORD offs, int linebit)
  * is no user-settable background color).  This fact allows coding short-cuts
  * in the implementation of "replace" and "not" modes, resulting in faster
  * execution of their inner loops.
+ *
+ * This routines is more or less the one from the original VDI asm part.
+ * I could not take bresenham, because pixels were set improperly in
+ * use with the polygone filling part, did look ugly.  (MAD)
  *
  * input:
  *     X1, Y1, X2, Y2 = coordinates.
@@ -1632,15 +1636,14 @@ setpixel(UWORD *addr, UWORD offs, int linebit)
 void
 abline ()
 {
-    UWORD x1,y1,x2,y2;           /* the coordinates */
+    void *adr;                  /* using void pointer is much faster */
+    UWORD x1,y1,x2,y2;          /* the coordinates */
     WORD dx;			/* width of rectangle around line */
     WORD dy;			/* height of rectangle around line */
-    WORD rem;			/* remainder */
-    void *yend;
-    WORD xpart;
-    void * ypart;
-    LONG yadd;
-    UWORD offs;
+    WORD xinc;                  /* positive increase for each x step */
+    WORD yinc;                  /* in/decrease for each y step */
+    UWORD msk;
+    int plane;
     UWORD linemask;             /* linestyle bits */
 
     /* Make x axis always goind up */
@@ -1657,59 +1660,259 @@ abline ()
         x2 = X2;
         y2 = Y2;
     }
+
     dx = x2 - x1;
-    dx += dx;
-
     dy = y2 - y1;
+
+    /* calculate increase values for x and y to add to actual address */
     if (dy < 0) {
-        dy = -dy;
-        yadd = (LONG) -1 * v_lin_wr;
+        dy = -dy;                       /* make dy absolute */
+        yinc = (LONG) -1 * v_lin_wr;    /* sub one line of bytes */
     } else {
-        yadd = (LONG) v_lin_wr;
+        yinc = (LONG) v_lin_wr;         /* add one line of bytes */
     }
-    dy += dy;
+    xinc = v_planes<<1;			/* add v_planes WORDS */
 
-    ypart = v_bas_ad + (LONG)y1 * v_lin_wr;     /* init adress counter */
-    yend = v_bas_ad + (LONG)y2 * v_lin_wr;	/* end address */
-    offs = 0x8000 >> (x1&0xf);                  /* initial bit position in WORD */
+    adr = v_bas_ad;                    	/* start of screen */
+    adr += (LONG)y1 * v_lin_wr;		/* add y coordinate part of addr */
+    adr += (x1&0xfff0)>>shft_off;      	/* add x coordinate part of addr */
+    msk = 0x8000 >> (x1&0xf);          	/* initial bit position in WORD */
 
-    linemask = LN_MASK;
+    for (plane = v_planes-1; plane >= 0; plane-- ) {
+        void *addr;
+        WORD  eps;		/* epsilon */
+        WORD  e1;		/* epsilon 1 */
+        WORD  e2;		/* epsilon 2 */
+        WORD  loopcnt;
+        UWORD bit;
+        int thisplane;
 
-    if (dx >= dy) {
-        rem = -dx;
-        for (;;) {
-            xpart = (x1&0xfff0)>>shft_off;
-            linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
-            setpixel(ypart + xpart, offs, linemask&1);
-            offs = offs >> 1| offs << 15;
-            if (x1 == x2)
+        /* load values fresh for this bitplane */
+        if (fg_bp[plane])
+            thisplane = 1;
+        else
+            thisplane = 0;
+
+        addr = adr;             /* initial start address for changes */
+        bit = msk;		/* initial bit position in WORD */
+        linemask = LN_MASK;
+
+        if (dx >= dy) {
+            e1 = 2*dy;
+            eps = e1 - dx;
+            e2 = e1 - 2*dx;
+
+            switch (WRT_MODE) {
+            case 3:              /* not */
+                if (thisplane) {
+                    for (loopcnt=dx;loopcnt >= 0;loopcnt--) {
+                        linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                        if (thisplane && linemask&0x0001)
+                            *(WORD*)addr &= ~bit;
+                        bit = bit >> 1| bit << 15;
+                        if (bit&0x8000)
+                            addr += xinc;
+                        if (eps < 0 )
+                            eps += e1;
+                        else {
+                            eps += e2;
+                            addr += yinc;       /* increment y */
+                        }
+                    }
+                } else {
+                    for (loopcnt=dx;loopcnt >= 0;loopcnt--) {
+                        linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                    }
+                }
                 break;
-            x1++;
-            rem += dy;
-            if (rem >= 0) {
-                    rem -= dx;
-                    ypart += yadd;
+            case 2:              /* xor */
+                if (thisplane) {
+                    for (loopcnt=dx;loopcnt >= 0;loopcnt--) {
+                        linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                        if (thisplane && linemask&0x0001)
+                            *(WORD*)addr ^= bit;
+                        bit = bit >> 1| bit << 15;
+                        if (bit&0x8000)
+                            addr += xinc;
+                        if (eps < 0 )
+                            eps += e1;
+                        else {
+                            eps += e2;
+                            addr += yinc;       /* increment y */
+                        }
+                    }
+                } else {
+                    for (loopcnt=dx;loopcnt >= 0;loopcnt--) {
+                        linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                    }
+                }
+                break;
+            case 1:              /* or */
+                if (thisplane) {
+                    for (loopcnt=dx;loopcnt >= 0;loopcnt--) {
+                        linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                        if (thisplane && linemask&0x0001)
+                            *(WORD*)addr |= bit;
+                        bit = bit >> 1| bit << 15;
+                        if (bit&0x8000)
+                            addr += xinc;
+                        if (eps < 0 )
+                            eps += e1;
+                        else {
+                            eps += e2;
+                            addr += yinc;       /* increment y */
+                        }
+                    }
+                } else {
+                    for (loopcnt=dx;loopcnt >= 0;loopcnt--) {
+                        linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                    }
+                }
+            break;
+        case 0:              /* not */
+            if (thisplane) {
+                for (loopcnt=dx;loopcnt >= 0;loopcnt--) {
+                    linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                    if (linemask&0x0001)
+                        *(WORD*)addr |= bit;
+                    else
+                        *(WORD*)addr &= ~bit;
+                    bit = bit >> 1| bit << 15;
+                    if (bit&0x8000)
+                        addr += xinc;
+                    if (eps < 0 )
+                        eps += e1;
+                    else {
+                        eps += e2;
+                        addr += yinc;       /* increment y */
+                    }
+                }
+            } else {
+                for (loopcnt=dx;loopcnt >= 0;loopcnt--) {
+                    linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                    *(WORD*)addr &= ~bit;
+                    bit = bit >> 1| bit << 15;
+                    if (bit&0x8000)
+                        addr += xinc;
+                    if (eps < 0 )
+                        eps += e1;
+                    else {
+                        eps += e2;
+                        addr += yinc;       /* increment y */
+                    }
+                }
             }
         }
-    } else {
-        rem = -dy;
-        xpart = (x1&0xfff0)>>shft_off;
-        for (;;) {
-            linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
-            setpixel(ypart + xpart, offs, linemask&1);
-            if (ypart == yend)
+        } else {
+            e1 = 2*dx;
+            eps = e1 - dy;
+            e2 = e1 - 2*dy;
+
+            switch (WRT_MODE) {
+            case 3:              /* not */
+                if (thisplane) {
+                    for (loopcnt=dy;loopcnt >= 0;loopcnt--) {
+                        linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                        if (thisplane && linemask&0x0001)
+                            *(WORD*)addr &= ~bit;
+                        addr += yinc;
+                        if (eps < 0 )
+                            eps += e1;
+                        else {
+                            eps += e2;
+                            bit = bit >> 1| bit << 15;
+                            if (bit&0x8000)
+                                addr += xinc;
+                        }
+                    }
+                } else {
+                    for (loopcnt=dy;loopcnt >= 0;loopcnt--) {
+                        linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                    }
+                }
                 break;
-            ypart += yadd;
-            rem += dx;
-            if (rem >= 0) {
-                rem -= dy;
-                x1++;
-                xpart = (x1&0xfff0)>>shft_off;
-                offs = offs >> 1| offs << 15;
+            case 2:              /* xor */
+                if (thisplane) {
+                    for (loopcnt=dy;loopcnt >= 0;loopcnt--) {
+                        linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                        if (thisplane && linemask&0x0001)
+                            *(WORD*)addr ^= bit;
+                        addr += yinc;
+                        if (eps < 0 )
+                            eps += e1;
+                        else {
+                            eps += e2;
+                            bit = bit >> 1| bit << 15;
+                            if (bit&0x8000)
+                                addr += xinc;
+                        }
+                    }
+                } else {
+                    for (loopcnt=dy;loopcnt >= 0;loopcnt--) {
+                        linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                    }
+                }
+                break;
+            case 1:              /* or */
+                if (thisplane) {
+                    for (loopcnt=dy;loopcnt >= 0;loopcnt--) {
+                        linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                        if (thisplane && linemask&0x0001)
+                            *(WORD*)addr |= bit;
+                        addr += yinc;
+                        if (eps < 0 )
+                            eps += e1;
+                        else {
+                            eps += e2;
+                            bit = bit >> 1| bit << 15;
+                            if (bit&0x8000)
+                                addr += xinc;
+                        }
+                    }
+                } else {
+                    for (loopcnt=dy;loopcnt >= 0;loopcnt--) {
+                        linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                    }
+                }
+                break;
+            case 0:              /* rep */
+                if (thisplane) {
+                    for (loopcnt=dy;loopcnt >= 0;loopcnt--) {
+                        linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                        if (linemask&0x0001)
+                            *(WORD*)addr |= bit;
+                        else
+                            *(WORD*)addr &= ~bit;
+                        addr += yinc;
+                        if (eps < 0 )
+                            eps += e1;
+                        else {
+                            eps += e2;
+                            bit = bit >> 1| bit << 15;
+                            if (bit&0x8000)
+                                addr += xinc;
+                        }
+                    }
+                } else {
+                    for (loopcnt=dy;loopcnt >= 0;loopcnt--) {
+                        linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                        *(WORD*)addr &= ~bit;
+                        addr += yinc;
+                        if (eps < 0 )
+                            eps += e1;
+                        else {
+                            eps += e2;
+                            bit = bit >> 1| bit << 15;
+                            if (bit&0x8000)
+                                addr += xinc;
+                        }
+                    }
+                }
             }
         }
+        adr+=2;
+        LN_MASK = linemask;
     }
-    LN_MASK = linemask;
 }
 
 
@@ -1769,6 +1972,18 @@ void st_fl_ptr()
 
 
 /*
+ * habline - draw a horizontal line
+ *
+ * This routine is just a wrapper for horzline.
+ */
+
+void habline() {
+    horzline(X1, X2, Y1);
+}
+
+
+
+/*
  * horzline - draw a horizontal line
  *
  * This routine draws a line between (x1,y) and (x2,y) using a left fringe,
@@ -1791,7 +2006,7 @@ void st_fl_ptr()
 void horzline(WORD x1, WORD x2, WORD y) {
     WORD x;
     WORD dx;
-    WORD w;
+    WORD pixels;                   /* counting down the rest of dx */
     UWORD *addr;
     WORD bw;
     UWORD patind;               /* index into pattern table */
@@ -1822,10 +2037,9 @@ void horzline(WORD x1, WORD x2, WORD y) {
 
     /* precalculate, what to draw */
     leftpart = x&0xf;
-    leftmask = ~(0xffff>>leftpart);
+    leftmask = ~(0xffff>>leftpart);     /* origin for not left fringe lookup */
     rightpart = (x+dx)&0xf;
-    rightmask = 0xffff>>rightpart;
-
+    rightmask = 0x7fff>>rightpart;      /* origin for right fringe lookup */
 
     switch (WRT_MODE) {
     case 3:  /* nor */
@@ -1838,10 +2052,10 @@ void horzline(WORD x1, WORD x2, WORD y) {
             else
                 pattern = 0;
             adr = addr;
-            w = dx;
+            pixels = dx;
 
             /* check, if the line is completely contained within one WORD */
-            if ((leftpart+w) < 16 ) {
+            if ((leftpart+pixels) < 16 ) {
                 UWORD mask;
                 UWORD d4,d5;
                 /* Isolate the necessary pixels */
@@ -1867,10 +2081,10 @@ void horzline(WORD x1, WORD x2, WORD y) {
                     *adr = d5;         	/* write back the result */
 
                     adr += planes;;
-                    w -= 16-leftpart;
+                    pixels -= 16-leftpart;
                 }
                 /* Full bytes */
-                for (bw = w >> 4;bw>0;bw--) {
+                for (bw = pixels >> 4;bw>0;bw--) {
                     *adr &= ~pattern;	/* write back the result */
                     adr += planes;
                 }
@@ -1899,10 +2113,10 @@ void horzline(WORD x1, WORD x2, WORD y) {
             else
                 pattern = 0;
             adr = addr;
-            w = dx;
+            pixels = dx;
 
             /* check, if the line is completely contained within one WORD */
-            if ((leftpart+w) < 16 ) {
+            if ((leftpart+pixels) < 16 ) {
                 UWORD mask;
                 UWORD d4,d5;
                 /* Isolate the necessary pixels */
@@ -1928,10 +2142,10 @@ void horzline(WORD x1, WORD x2, WORD y) {
                     *adr = d5;         	/* write back the result */
 
                     adr += planes;;
-                    w -= 16-leftpart;
+                    pixels -= 16-leftpart;
                 }
                 /* Full bytes */
-                for (bw = w >> 4;bw>0;bw--) {
+                for (bw = pixels >> 4;bw>0;bw--) {
                     *adr ^= pattern;         /* write back the result */
                     adr += planes;
                 }
@@ -1960,10 +2174,10 @@ void horzline(WORD x1, WORD x2, WORD y) {
             else
                 pattern = 0;
             adr = addr;
-            w = dx;
+            pixels = dx;
 
             /* check, if the line is completely contained within one WORD */
-            if ((leftpart+w) < 16 ) {
+            if ((leftpart+pixels) < 16 ) {
                 UWORD mask;
                 UWORD d4,d5;
                 /* Isolate the necessary pixels */
@@ -1989,10 +2203,10 @@ void horzline(WORD x1, WORD x2, WORD y) {
                     *adr = d5;         	/* write back the result */
 
                     adr += planes;;
-                    w -= 16-leftpart;
+                    pixels -= 16-leftpart;
                 }
                 /* Full bytes */
-                for (bw = w >> 4;bw>0;bw--) {
+                for (bw = pixels >> 4;bw>0;bw--) {
                     *adr |= pattern;   
                     adr += planes;
                 }
@@ -2021,10 +2235,10 @@ void horzline(WORD x1, WORD x2, WORD y) {
             else
                 pattern = 0;
             adr = addr;
-            w = dx;
+            pixels = dx;
 
             /* check, if the line is completely contained within one WORD */
-            if ((leftpart+w) < 16 ) {
+            if ((leftpart+pixels) < 16 ) {
                 UWORD mask;
                 UWORD d5;
                 /* Isolate the necessary pixels */
@@ -2046,10 +2260,10 @@ void horzline(WORD x1, WORD x2, WORD y) {
                     *adr = d5;         	/* write back the result */
 
                     adr += planes;;
-                    w -= 16-leftpart;
+                    pixels -= 16-leftpart;
                 }
                 /* Full bytes */
-                for (bw = w >> 4;bw>0;bw--) {
+                for (bw = pixels >> 4;bw>0;bw--) {
                     *adr = pattern;     
                     adr += planes;
                 }
@@ -2066,16 +2280,4 @@ void horzline(WORD x1, WORD x2, WORD y) {
             patind += patadd;
         }
     }
-}
-
-
-
-/*
- * habline - draw a horizontal line
- *
- * This routine is just a wrapper for horzline.
- */
-
-void habline() {
-    horzline(X1, X2, Y1);
 }

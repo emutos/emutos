@@ -1080,3 +1080,5 @@ Start... early ages
 - vdi/monout.c - abline() always starts with smaller x value (MAD)
                - habline() fully implemented in C (MAD)
                
+17. Sep. 2002
+- vdi/monout.c - abline() new old algorithm and bug free (MAD)
