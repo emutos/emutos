@@ -3,17 +3,16 @@ Dear Atari Community!
 
 We are happy to announce the third beta release of EmuTOS
 
-EmuTOS 0.6 --- 9. Feb. 2003
+EmuTOS 0.7 --- 3. Jun. 2003
 
 
 INTRODUCTION
 
 EmuTOS is a single-user single-tasking operating system for the 32 bit Atari
-computers and emulators. It is meant to be a replacement for the
-TOS-images typically needed today for using emulators and it is also
-running on some real hardware, like the Atari Mega STE. As all the source
-code is open and free it is could even run on totally new machines in the 
-future.
+computers and emulators. It can be used as a replacement for the TOS-images 
+typically needed today for using emulators and it is also running on some
+real hardware, like the Atari Mega STE. As all the source code is open and 
+free it is could even run on totally new machines in the future.
 
 EmuTOS has been developed for nearly two years now and is licensed
 under the OpenSource Gnu General Public Licence (GPL).
@@ -22,31 +21,22 @@ under the OpenSource Gnu General Public Licence (GPL).
 
 CHANGES SINCE LAST RELEASE
 
-- Working vr_trnfm implementation
-- Native feature interface for emulators
-- Correct usage of 68040 instruction cache
-- Dead key support
-- Boot delay with info screen (hold Alt key to skip boot)
-- Initinfo visually improved (countdown effect and other changes)
-- Hold Ctrl key at boot causes not loading the ACCs
-- XHDI implemented (allows running FreeMiNT)
-- Frees CPU in emulators, when not used (STOP instruction)
-- Up to 16 color mode in 640x480 in Aranym
-- Detect-native-features ON by default (ARAnyM, STonC, STonX)
-- Keyboard fixed for XaAES
-- AES icon masks fixed
-- EmuCON fixed and available from EmuDesk menu
-- Shutdown added to EmuDesk menu
-- much enhanced Falcon VIDEL support (including boot in color)
-- NVRAM works
-- Better VIDEL support
-- Many bugfixes and much more done
-
+- experimental support for #Z line in EMUDESK.INF to start another desktop
+- bug in VDI's clipping routine fixed
+- bug in C-pattern filling removed
+- now really makes sound with Dosound()
+- EmuCON is now usable from the desktop via a menu
+- hitting 'C' during initinfo launches an early EmuCON
+- programs can now be started and left from an external desktop program
+- programs can now see, if they are started as accessory
+- the working linea-functions are now usable from the autofolder too
+- fixed a problem with mouse buttons in certain programs (Thing, Pixart, ...)
+- ... and many minor improvements you will not see
 
 
 DESCRIPTION
 
-EmuTOS is basically made up of six parts:
+EmuTOS is basically made up of six subsystems:
 
 - The BIOS, which is the basic input output system
 - The XBIOS, which provides the interface to the hardware
@@ -57,9 +47,7 @@ EmuTOS is basically made up of six parts:
 
 The BIOS and XBIOS code is our own developement. It is really written from
 scratch and implements nearly all of the TOS 1.0 BIOS functionality, and a
-bit more, like e.g. harddisk access and STE sampled sound. A few things
-like printing, midi and serial stuff is missing for now, but may be
-implemented at some point in the future.
+bit more, like e.g. harddisk access.
 
 The GEMDOS part is based on Digital Research's GEMDOS sources, which were
 made available under GPL licence in 1999 by Caldera. 
@@ -81,15 +69,15 @@ alternative to MiNT. But EmuTOS is the only free base OS to boot MiNT.
 
 EMULATION AND FUTURE PLATFORM
 
-EmuTOS and MiNT cooperate well. For the future we plan, that both can make
-use of a yet to implement standard native call interface for emulators.
-EmuTOS itself still uses this new standard native interface for all
-its supported native functions. When running EmuTOS in an emulator,
-this interface will provide access to use the power of the underlying
-OS kernel. It may allow using modern 3D graphics cards, will provide
-fast native filesystem access and will enable you to use networking
-with all bells and wistles - and many things more you always dreamed
-of. This all will at first get possible on the Aranym platform.
+EmuTOS and MiNT cooperate well. Both can make use of a standard native
+call interface for emulators.
+EmuTOS itself still uses this new standard native interface for all its 
+supported native functions. When running EmuTOS in an emulator, this
+interface will provide access to use the power of the underlying OS kernel.
+It may allow using modern 3D graphics cards, providesfast native filesystem 
+access and will enable you to use networking with all bells and wistles - 
+and many things more you always dreamed of. This all will at first get 
+possible on the Aranym platform.
 
 This is, what EmuTOS is made for: A free OS, that can evolve. Progress has
 been fast up to now, because we have a small, but enthusiastic development

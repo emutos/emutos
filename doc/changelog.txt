@@ -1482,3 +1482,8 @@ Start... early ages
 2003-05-31
 - aes/rectfunc.c : Function inside() did not work if one of the parameters
   x or y was negativ => Changed type from UWORD to WORD. (THH)
+
+2003-06-03
+- readme.txt : made ready for binary releases  (MAD)
+
+* Release: 0.7
