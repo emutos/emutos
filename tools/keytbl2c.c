@@ -63,7 +63,7 @@ int main(int argc, char **argv)
 " * Copyright (c) 2001 EmuTOS development team\n"
 " *\n"
 " * Authors:\n"
-" *  LVL   Laurent Vogel\n"
+" *  xxx   xxx\n"
 " *\n"
 " * This file is distributed under the GPL, version 2 or at your\n"
 " * option any later version.  See doc/license.txt for details.\n"
@@ -73,8 +73,6 @@ int main(int argc, char **argv)
   /* the code below is even worse ! */
 
   fprintf(out, 
-"\n"
-"#if KEYB_%s\n"
 "\n"
 "BYTE keytbl_%s_norm[];\n"
 "BYTE keytbl_%s_shft[];\n"
@@ -128,18 +126,6 @@ int main(int argc, char **argv)
 "};\n",
 	  prefix
 	  );
-
-  fprintf(out,
-"\n"
-"#if DFLT_KEYB_%s\n"
-"#define the_keytbl keytbl_%s\n"
-"#endif /* DFLT_KEYB_%s */\n",
-	  ucprefix, prefix, ucprefix);
-
-  fprintf(out,
-"\n"
-"#endif /* KEYB_%s */\n",
-	  ucprefix);
 
   fclose(out);
   fprintf(stderr, "done.\n");
