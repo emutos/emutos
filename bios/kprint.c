@@ -14,14 +14,12 @@
 
 #include "portab.h"
 #include "bios.h"
+#include "kprint.h"
 
 extern void printout(char *);
 
 extern void bconout2(WORD, UBYTE);
-void con_out(char c)
-{
-  bconout2(2,c);
-}
+
   
 /* doprintf implemented in doprintf.c. 
  * This is an OLD one, and does not support floating point 
@@ -44,12 +42,22 @@ char	*kcrlf = "\n\r" ;
 
 /*==== cprintf - do formatted string output direct to the console ======*/
 
+static void cprintf_outc(int c)
+{
+  bconout2(2,c);
+}
+
+static int vcprintf(const char *fmt, va_list ap)
+{
+  return doprintf(cprintf_outc, fmt, ap);
+}
+
 int cprintf(const char *fmt, ...)
 {
   int n;
   va_list ap;
   va_start(ap, fmt);
-  n = doprintf((void(*)(int))con_out, fmt, ap);
+  n = vcprintf(fmt, ap);
   va_end(ap);
   return n;
 }
@@ -66,17 +74,48 @@ static void kprintf_outc(int c)
   printout(buf);
 }
 
+static int vkprintf(const char *fmt, va_list ap)
+{
+  return doprintf(kprintf_outc, fmt, ap);
+}
+
+
 int kprintf(const char *fmt, ...)
 {
   int n;
   va_list ap;
   va_start(ap, fmt);
-  n = doprintf(kprintf_outc, fmt, ap);
+  n = vkprintf(fmt, ap);
   va_end(ap);
   return n;
 }
 
-/*==== panic - display information found in 0x380 and halt ======*/
+/*==== kcprintf - do both cprintf and kprintf ======*/
+
+static int vkcprintf(const char *fmt, va_list ap)
+{
+  vkprintf(fmt, ap);
+  return vcprintf(fmt, ap);
+}
+
+int kcprintf(const char *fmt, ...)
+{
+  int n;
+  va_list ap;
+  va_start(ap, fmt);
+  n = vkcprintf(fmt, ap);
+  va_end(ap);
+  return n;
+}
+
+/*==== doassert ======*/
+
+void doassert(const char *file, long line, const char *func, const char *text)
+{
+  kprintf("assert failed in %s:%ld (function %s): %s\n", file, line, func, text);
+}
+
+/*==== dopanic - display information found in 0x380 and halt ======*/
 
 extern LONG proc_lives;
 extern LONG proc_dregs[];	
@@ -93,14 +132,20 @@ static const char *exc_messages[] = {
   "privilege violation", "Trace", "LineA", "LineF" };
   
 
-void panic(void)
+void dopanic(const char *fmt, ...)
 {
-  kprintf("[BIOS] Panic.\n"); 
   if(proc_lives != 0x12345678) {
-    kprintf("No saved info ; halted.\n");
-    goto halt;
+    kprintf("No saved info in dopanic; halted.\n");
+    halt();
   } 
-  if(proc_enum == 2 || proc_enum == 3) {
+  /* TODO, make sure the vt52 stuff is ready and wrapping */
+  kcprintf("Panic: ");
+  if(proc_enum == 0) {
+    va_list ap;
+    va_start(ap, fmt);
+    vkcprintf(fmt, ap);
+    va_end(ap);
+  } else if(proc_enum == 2 || proc_enum == 3) {
     struct {
       WORD misc;
       LONG address;
@@ -108,59 +153,31 @@ void panic(void)
       WORD sr;
       LONG pc;
     } *s = (void *)proc_stk;
-    kprintf("%s. misc = 0x%04x, address = 0x%08lx\n",
+    kcprintf("%s. misc = 0x%04x, address = 0x%08lx\n",
       exc_messages[proc_enum], s->misc, s->address);
-    kprintf("opcode = 0x%04x, sr = 0x%04x, pc = 0x%08lx\n",
+    kcprintf("opcode = 0x%04x, sr = 0x%04x, pc = 0x%08lx\n",
       s->opcode, s->sr, s->pc);
-    goto halt;
   } else if(proc_enum >= 4 && proc_enum < sizeof(exc_messages)) {
     struct {
       WORD sr;
       LONG pc;
     } *s = (void *)proc_stk;
-    kprintf("%s. sr = 0x%04x, pc = 0x%08lx\n",
+    kcprintf("%s. sr = 0x%04x, pc = 0x%08lx\n",
       exc_messages[proc_enum], s->sr, s->pc);
-    goto halt;
   } else {
     struct {
       WORD sr;
       LONG pc;
     } *s = (void *)proc_stk;
     kprintf("Exception number %d. sr = 0x%04x, pc = 0x%08lx\n",
-      proc_enum, s->sr, s->pc);
-    goto halt;
+      (int) proc_enum, s->sr, s->pc);
   } 
-halt:
-  for(;;); /* TODO, use stop instruction */
+  halt();
 }
 
 
-
-/*==== kputs - output a null terminated string direct to the console ======*/
-
-void cputs(char * s )
-{
-    cprintf("%s", s);
-}
-
-
-
-/**
- * kpanic - throw out a panic message and halt
- */
-
-void kpanic(const char * fmt, ...)
-{
-    va_list ap;
-
-    kprintf( "BIOS: Panic: " );
-    va_start(ap, fmt);
-    doprintf(kprintf_outc, fmt, ap);
-    va_end(ap);
-    for(;;); /* TODO, use stop instruction */
-}
-
-
+#if 0  /* unused */
+/* TODO, remove this */
 
 /*
  * ntoa - nibble to ascii
@@ -280,7 +297,6 @@ char	*sbhex(BYTE c , char *s )
 }
 
 
-#if 0
 /*
 **  kdump - dump memory
 **	dump the specified memory locations direct to the console
@@ -346,5 +362,5 @@ char	*dmphdr(LONG h , char *s )
 }
 
 
-#endif
+#endif /* unused */
 

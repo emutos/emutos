@@ -68,6 +68,9 @@ long	xmalloc(long amount)
     MD *m;
     long ret_value;
 
+#if DBGUMEM
+    kprintf("BDOS: xmalloc(0x%08lx)", amount);
+#endif
     if(  amount < -1L  ) {
       ret_value = 0;
       goto ret;
@@ -109,7 +112,7 @@ long	xmalloc(long amount)
 
 ret:
 #if DBGUMEM
-    kprintf("BDOS: xmalloc(0x%08lx) = 0x%08lx\n", amount, ret_value);
+    kprintf(" = 0x%08lx\n", ret_value);
     dump_mem_map();
 #endif
 
@@ -125,6 +128,9 @@ long	xmfree(long addr)
 {
     MD *p,**q;
 
+#if DBGUMEM
+    kprintf("BDOS: Mfree(0x%08lx)\n", (long) addr);
+#endif
     for (p = *(q = &pmd.mp_mal); p; p = *(q = &p->m_link))
         if (addr == p->m_start)
             break;
@@ -151,6 +157,9 @@ long	xsetblk(int n, void *blk, long len)
 {
     MD *m,*p;
 
+#if DBGUMEM
+    kprintf("BDOS: Mshrink(0x%08lx, 0x%08lx)", (long) blk, len);
+#endif
     /*
      * Traverse the list of memory descriptors looking for this block.
      */
@@ -189,7 +198,7 @@ long	xsetblk(int n, void *blk, long len)
 #if	DBGUMEM
     /* what if 0? */
     if( m == 0 )
-        kpanic("umem.c/xsetblk: Null Return From MGET\n") ;
+        panic("umem.c/xsetblk: Null Return From MGET\n") ;
 #endif
 
     m->m_start = p->m_start + len;

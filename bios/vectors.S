@@ -16,7 +16,7 @@
 // for vectors 2 to 63 even if working on a 32bit address bus. 
 // LVL.
 
-	.xdef	_panic
+	.xdef	_dopanic
 	
 	.xdef	_proc_lives
 	.xdef	_proc_dregs	
@@ -146,6 +146,5 @@ any_vec:
 	move.l	(a1)+, (a0)+
 	move.l	(a1)+, (a0)+
 	move.l	#0x12345678, _proc_lives
-	jsr	_panic
-forever:
-	bra	forever
+	jmp     _dopanic
+

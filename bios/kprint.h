@@ -1,7 +1,7 @@
 /*
  *  kprint.h - header file for keyboard/console routines
  *
- * Copyright (c) 2001 Lineo, Inc.
+ * Copyright (c) 2001 EmuTOS .
  *
  * Authors:
  *  MAD     Martin Doering
@@ -13,7 +13,7 @@
 #ifndef _KPRINT_H
 #define _KPRINT_H
 
-// #include "portab.h"
+#include "portab.h"
 
 #ifdef __GNUC__
 #define PRINTF_STYLE __attribute__ ((format (printf, 1, 2)))
@@ -23,12 +23,24 @@
 
 /* console output */
 extern int cprintf(const char *fmt, ...) PRINTF_STYLE;
-extern void cputs( char *s );
 
 /* native debugging output */
 extern int kprintf(const char *fmt, ...) PRINTF_STYLE;
 
-extern void kpanic(const char *fmt, ...) PRINTF_STYLE;
+/* output done both through kprintf and cprintf */
+extern int kcprintf(const char *fmt, ...) PRINTF_STYLE;
+
+/* assert stuff */
+extern void doassert(const char *, long, const char *, const char *);
+#define assert(a) if(!(a)) { doassert(__FILE__, __LINE__, __FUNCTION__, #a); }
+
+/* functions below implemented in panicasm.S */
+
+/* print a panic message bot via kprintf and cprintf, then halt */
+extern void panic(const char *fmt, ...) PRINTF_STYLE NORETURN;
+
+/* halt the machine */
+extern void halt(void) NORETURN;
 
 #endif /* _KPRINT_H */
 
