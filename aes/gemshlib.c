@@ -91,7 +91,8 @@ GLOBAL LONG     ad_pfile;
 GLOBAL WORD     gl_shgem;
 
 
-static LONG app_stack[STACK_SIZE];  /* The stack for the main application (desktop) */
+static LONG     userstack[256];
+
 
 
 /* Prototypes: */
@@ -846,7 +847,7 @@ void sh_ldapp()
         WORD    ret, badtry, retry;
         SHELL   *psh;
         LONG    *desk_pd;
-        void    *udaspsupersave;
+        void    *uda_ssp_save, *uda_usp_save;
 
         psh = &sh[rlr->p_pid];
 #if GEMDOS
@@ -904,12 +905,15 @@ void sh_ldapp()
               desk_pd[2] = (LONG) deskstart;
               desk_pd[3] = desk_pd[5] = desk_pd[7] = 0;
               kprintf("starting desktop pd=$%lx\n",(LONG)desk_pd);
-              //dsptch();  /* Needed for filling the rlr->p_uda with right values - THH */
-              /* Set up a new uda-stack to not overwrite the AES' stack */
-              udaspsupersave = rlr->p_uda->u_spsuper;
-              rlr->p_uda->u_spsuper = &app_stack[STACK_SIZE-2];
+              dsptch();  /* Needed for filling the rlr->p_uda with right values - THH */
+              /* Save old stacks and set up new stacks to not overwrite the AES' stack */
+              uda_ssp_save = rlr->p_uda->u_spsuper;
+              rlr->p_uda->u_spsuper = &rlr->p_uda->u_supstk;
+              uda_usp_save = rlr->p_uda->u_spuser;
+              rlr->p_uda->u_spuser = &userstack[250];
               deskpexec(desk_pd);    /* Run the desktop */
-              rlr->p_uda->u_spsuper = udaspsupersave;
+              rlr->p_uda->u_spsuper = uda_ssp_save;
+              rlr->p_uda->u_spuser = uda_usp_save;
               kprintf("desktop finished\n");
             }
             else
@@ -920,14 +924,17 @@ void sh_ldapp()
               if (psh->sh_fullstep == 0)
               {
 #if GEMDOS
-                //dsptch();  /* Needed for filling the rlr->p_uda with right values - THH */
-                /* Set up a new uda-stack to not overwrite the AES' stack */
-                udaspsupersave = rlr->p_uda->u_spsuper;
-                rlr->p_uda->u_spsuper = &app_stack[STACK_SIZE-2];
+                dsptch();  /* Needed for filling the rlr->p_uda with right values - THH */
+                /* Set up a new uda-stacks to not overwrite the AES' stacks */
+                uda_ssp_save = rlr->p_uda->u_spsuper;
+                rlr->p_uda->u_spsuper = &rlr->p_uda->u_supstk;
+                uda_usp_save = rlr->p_uda->u_spuser;
+                rlr->p_uda->u_spuser = &userstack[250];
                 kprintf("starting application\n");
                 dos_exec(ad_scmd, ad_envrn, ad_stail);    /* Run the APP */
                 kprintf("application finished\n");
-                rlr->p_uda->u_spsuper = udaspsupersave;
+                rlr->p_uda->u_spsuper = uda_ssp_save;
+                rlr->p_uda->u_spuser = uda_usp_save;
 #else
                 dos_exec(ad_scmd, LHIWD(ad_envrn), ad_stail, 
                          ad_s1fcb, ad_s2fcb);

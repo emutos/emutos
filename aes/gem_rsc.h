@@ -144,4 +144,5 @@ extern BITBLK    rs_fimg[];
 
 
 extern void gem_rsc_init();
+extern void gem_rsc_fixit();
 

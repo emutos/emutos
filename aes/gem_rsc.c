@@ -539,15 +539,18 @@ BITBLK rs_fimg[] = {
 
 void gem_rsc_init()
 {
-        register int    i=0;
-
         /* Copy data from ROM to RAM: */
         memcpy(rs_obj, rs_obj_rom, RS_NOBS*sizeof(OBJECT));
         memcpy(rs_tedinfo, rs_tedinfo_rom, RS_NTED*sizeof(TEDINFO));
+}
+
+
+void gem_rsc_fixit()
+{
+        register int    i=0;
 
         do
         {
                 rs_obfix((LONG)rs_obj, i);
         } while (++i<RS_NOBS);
 }
-

@@ -69,7 +69,8 @@ LB4:
         movea.l a6,a5
         adda.l  #0x74A,a6
         move.l  a6,0x3E(a5)
-        movea.l a6,sp
+        //movea.l a6,sp
+        movea.l #gemssp,sp        // Set up new SSP
         jsr     _gem_main
 
         move.l  old_gem_ssp,-(sp)
@@ -136,10 +137,13 @@ saveretaddr:
         .ds.l   1
 
 
-// Space for the Stack:
-        .ds.b   512
+// Space for the Stacks:
+
+        .ds.b   256
 gemusp:
 
+        .ds.b   4096
+gemssp:
 
 
 saveregs:

@@ -972,6 +972,7 @@ void gem_main()
                                                 /* get st_desk ptr      */
           rs_gaddr(ad_sysglo, R_TREE, 2, &ad_stdesk);   
 #else
+          gem_rsc_fixit();
                                                 /* get st_desk ptr      */
           ad_stdesk = (LONG) rs_tree[2];
 #endif
