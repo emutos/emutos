@@ -10,10 +10,13 @@
 
 
 
-#include "lineavars.h"
+
 #include "portab.h"
+#include "lineavars.h"
 #include "gsxdef.h"
 #include "gsxextrn.h"
+#include "fontdef.h"
+#include "attrdef.h"
 
 //#include "vdiconf.h"
 #include "asm.h"
@@ -21,17 +24,97 @@
 
 
 /* Prototypes for this module */
-
-void v_clswk();
-void v_opnwk();
-void d_opnvwk();
-void d_clsvwk();
-void vex_butv();
-void vex_motv();
-void vex_curv();
-void vex_timv();
-void init_wk();
 void tick_int();
+
+/* As reference the TOS 1.0 start addresses are added */
+void v_opnwk();          /* 1   - fcb53e */
+void v_clswk();          /* 2   - fcb812 */
+void v_clrwk();          /* 3   - fca4e8 */
+void v_updwk();          /* 4   - fca4e6 */
+void chk_esc();          /* 5   - fc412e */
+
+void v_pline();          /* 6   - fcb85a */
+void v_pmarker();        /* 7   - fcb8f4 */
+void d_gtext();          /* 8   - fcd61c */
+void v_fillarea();       /* 9   - fcba3a */
+void v_cellarray();      /* 10  - fca4e6 */
+
+void v_gdp();            /* 11  - fcba46 */
+void dst_height();       /* 12  - fcde96 */
+void dst_rotation();     /* 13  - fce308 */
+void vs_color();         /* 14  - fd1a00 */
+void vsl_type();         /* 15  - fcab20 */
+
+void vsl_width();        /* 16  - fcab6a */
+void vsl_color();        /* 17  - fcac26 */
+void vsm_type();         /* 18  - fcad02 */
+void vsm_height();       /* 19  - fcac76 */
+void vsm_color();        /* 20  - fcad52 */
+
+void dst_font();         /* 21  - fce342 */
+void dst_color();        /* 22  - fce426 */
+void vsf_interior();     /* 23  - fcada8 */
+void vsf_style();        /* 24  - fcadf4 */
+void vsf_color();        /* 25  - fcae5c */
+
+void vq_color();         /* 26  - fd1ab2 */
+void vq_cellarray();     /* 27  - fca4e6 */
+void v_locator();        /* 28  - fcaeac */
+void v_valuator();       /* 29  - fcb042 */
+void v_choice();         /* 30  - fcb04a */
+
+void v_string();         /* 31  - fcb0d4 */
+void vswr_mode();        /* 32  - fcb1d8 */
+void vsin_mode();        /* 33  - fcb232 */
+void v_nop();            /* 34  - fca4e6 */
+void vql_attr();         /* 35  - fcbbf8 */
+
+void vqm_attr();         /* 36  - fcbc54 */
+void vqf_attr();         /* 37  - fcbcb4 */
+void dqt_attributes();   /* 38  - fce476 */
+void dst_alignment();    /* 39  - fce2ac */
+
+
+void d_opnvwk();         /* 100 - fcd4d8 */
+
+void d_clsvwk();         /* 101 - fcd56a */
+void vq_extnd();         /* 102 - fcb77a */
+void d_contourfill();    /* 103 - fd1208 */
+void vsf_perimeter();    /* 104 - fcb306 */
+void v_get_pixel();      /* 105 - fd1906 */
+
+void dst_style();        /* 106 - fce278 */
+void dst_point();        /* 107 - fce132 */
+void vsl_ends();         /* 108 - fcabca */
+void dro_cpyfm();        /* 109 - fcb454 */
+void tran_fm();         /* 110 - fd1960 */
+
+void vro_cpyfm();        /* 111 - fd0770 */
+void dsf_udpat();        /* 112 - fcd5c0 */
+void vsl_udsty();        /* 113 - fcb34c */
+void dr_recfl();         /* 114 - fcb4be */
+void vqi_mode();         /* 115 - fcb2a0 */
+
+void dqt_extent();       /* 116 - fce4f0 */
+void dqt_width();        /* 117 - fce6b6 */
+void vex_timv();         /* 118 - fca530 */
+void dt_loadfont();      /* 119 - fcebcc */
+void dt_unloadfont();    /* 120 - fcec60 */
+
+void drt_cpyfm();        /* 121 - fcb486 */
+void v_show_c();         /* 122 - fcafca */
+void v_hide_c();         /* 123 - fcaff2 */
+void vq_mouse();         /* 124 - fcb000 */
+void vex_butv();         /* 125 - fd040e */
+
+void vex_motv();         /* 126 - fd0426 */
+void vex_curv();         /* 127 - fd043e */
+void vq_key_s();         /* 128 - fcb1b4 */
+void s_clip();           /* 129 - fcb364 */
+void dqt_name();         /* 130 - fce790 */
+
+void dqt_fontinfo();     /* 131 - fce820 */
+
 
 
 /* External declarations */
@@ -65,6 +148,25 @@ extern UWORD v_bytes_lin;       // width of line in bytes
 
 
 BYTE in_proc;                   // flag, if we are still running
+
+struct attribute virt_work;     /* attribute areas for workstations */
+WORD q_circle[MX_LN_WIDTH];     /* Holds the circle DDA */
+
+/* GDP variables */
+
+WORD angle, beg_ang, del_ang, deltay, deltay1, deltay2, end_ang;
+WORD start, xc, xrad, y, yc, yrad;
+
+/* Fill Area variables */
+
+WORD fil_intersect, fill_maxy, fill_miny, n_steps, odeltay;
+
+/* Wide line attribute save areas */
+
+WORD s_begsty, s_endsty, s_fil_col, s_fill_per, s_patmsk;
+WORD *s_patptr;
+
+struct font_head *cur_font;     /* Pointer to current font */
 
 
 
@@ -513,4 +615,173 @@ void vex_timv()
     ints_on();
 
     INTOUT[0] = (WORD)tickcal();
+}
+
+
+
+/* Two main jumptables for VDI functions */
+void (*jmptb1[])() = {
+    v_opnwk,            /*   1 */
+    v_clswk,            /*   2 */
+    v_clrwk,            /*   3 */
+    v_nop,              /*   4 - v_updwk not yet implemented */
+    chk_esc,            /*   5 - each escape function has it's own call */
+    v_pline,            /*   6 */
+    v_pmarker,          /*   7 */
+    d_gtext,            /*   8 */
+    v_fillarea,         /*   9 */
+    v_cellarray,        /*  10 */
+    v_gdp,              /*  11 */
+    dst_height,         /*  12 */
+    dst_rotation,       /*  13 */
+    vs_color,           /*  14 */
+    vsl_type,           /*  15 */
+    vsl_width,          /*  16 */
+    vsl_color,          /*  17 */
+    vsm_type,           /*  18 */
+    vsm_height,         /*  19 */
+    vsm_color,          /*  20 */
+    dst_font,           /*  21 */
+    dst_color,          /*  22 */
+    vsf_interior,       /*  23 */
+    vsf_style,          /*  24 */
+    vsf_color,          /*  25 */
+    vq_color,           /*  26 */
+    vq_cellarray,       /*  27 */
+    v_locator,          /*  28 */
+    v_valuator,         /*  29 */
+    v_choice,           /*  30 */
+    v_string,           /*  31 */
+    vswr_mode,          /*  32 */
+    vsin_mode,          /*  33 */
+    v_nop,              /*  34 */
+    vql_attr,           /*  35 */
+    vqm_attr,           /*  36 */
+    vqf_attr,           /*  37 */
+    dqt_attributes,     /*  38 */
+    dst_alignment       /*  39 */
+};
+
+void(*jmptb2[])() = {
+    d_opnvwk,
+    d_clsvwk,
+    vq_extnd,
+    d_contourfill,
+    vsf_perimeter,
+    v_get_pixel,
+    dst_style,
+    dst_point,
+    vsl_ends,
+    dro_cpyfm,
+    tran_fm,
+    xfm_crfm,
+    dsf_udpat,
+    vsl_udsty,
+    dr_recfl,
+    vqi_mode,
+    dqt_extent,
+    dqt_width,
+    vex_timv,           /* in lisagem.S */
+    dt_loadfont,
+    dt_unloadfont,
+    drt_cpyfm,
+    v_show_c,
+    v_hide_c,
+    vq_mouse,
+    vex_butv,           /* in vdimouse.S */
+    vex_motv,           /* in vdimouse.S */
+    vex_curv,           /* in vdimouse.S */
+    vq_key_s,
+    s_clip,
+    dqt_name,
+    dqt_fontinfo
+};
+
+
+
+/*
+ * screen - Screen driver entry point
+ */
+
+void screen()
+{
+    REG WORD opcode, r, *control;
+    REG struct attribute *work_ptr;
+    BYTE found;
+
+    control = CONTRL;
+    r = *(control + 6);
+
+    opcode = *control;
+
+    //cprintf("SCREEN opcode=%d\n", opcode);
+
+    /* no ints out & no pts out */
+
+    *(control + 2) = 0;
+    *(control + 4) = 0;
+
+    FLIP_Y = 0;
+
+    if (opcode != 1 && opcode != 100) {
+
+        /* Find the attribute area which matches the handle */
+        work_ptr = &virt_work;
+
+        found = 0;
+        do {
+            found = (r == work_ptr->handle);
+        } while (!found && (work_ptr = work_ptr->next_work));
+
+        /* handle is invalid if we fall through, so exit */
+        if (!found)
+            return;
+
+        cur_work = work_ptr;
+        INQ_TAB[19] = CLIP = work_ptr->clip;
+        XMN_CLIP = work_ptr->xmn_clip;
+        YMN_CLIP = work_ptr->ymn_clip;
+        XMX_CLIP = work_ptr->xmx_clip;
+        YMX_CLIP = work_ptr->ymx_clip;
+
+        WRT_MODE = work_ptr->wrt_mode;
+
+        patptr = work_ptr->patptr;
+        patmsk = work_ptr->patmsk;
+
+        if (work_ptr->fill_style == 4)
+            multifill = work_ptr->multifill;
+        else
+            multifill = 0;
+
+        font_ring[2] = work_ptr->loaded_fonts;
+
+        DEV_TAB[10] = work_ptr->num_fonts;
+
+        DDA_INC = work_ptr->dda_inc;
+        T_SCLSTS = work_ptr->t_sclsts;
+        DOUBLE = work_ptr->scaled;
+
+        cur_font = work_ptr->cur_font;
+
+        MONO_STATUS = F_MONOSPACE & cur_font->flags;
+        scrpt2 = work_ptr->scrpt2;
+        scrtchp = work_ptr->scrtchp;
+        STYLE = work_ptr->style;
+        h_align = work_ptr->h_align;
+        v_align = work_ptr->v_align;
+        CHUP = work_ptr->chup;
+
+    }
+    /* end if open work or vwork */
+    if (opcode >= 1 && opcode <= 39) {
+        opcode--;
+        (*jmptb1[opcode]) ();
+    }
+
+    else if (opcode >= 100 && opcode <= 131) {
+        opcode -= 100;
+        (*jmptb2[opcode]) ();
+    }
+
 }

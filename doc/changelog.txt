@@ -886,4 +886,6 @@ Start... early ages
 - aes/gemsuper.c - Changed the AES version back to 1.02, seems to work
   better this way with most applications (THH).
 - vdi/isin.c - removed. Did put functions to vdi/monout.c (MAD)
-
+  vdi/cbssdefs.c - removed. Did put functions to vdi/vdimain.c (MAD)
+  vdi/jmptbl.c - removed. Did put tables to vdi/vdimain.c (MAD)
+  vdi/jmptbl.h - removed. Did put prototypes to vdi/vdimain.c (MAD)

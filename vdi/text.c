@@ -14,10 +14,11 @@
 #include "portab.h"
 #include "gsxdef.h"
 #include "gsxextrn.h"
-#include "jmptbl.h"
+//#include "jmptbl.h"
 
 extern WORD clip_line();
 extern void trnsfont();
+extern void dqt_extent();
 
 extern WORD XACC_DDA;           /* accumulator for x DDA        */
 extern WORD SOURCEX, SOURCEY;   /* upper left of character in font file */
