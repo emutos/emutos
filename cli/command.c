@@ -24,46 +24,64 @@
 #define N_(a) a
 #endif
 
-extern long jmp_gemdos();
-extern long jmp_bios();
-extern long jmp_xbios();
-extern void in_term();
-extern void rm_term();
+extern long jmp_gemdos(int, ...);
+extern long jmp_bios(int, ...);
+extern long jmp_xbios(int, ...);
+extern void in_term(void);
+extern void rm_term(void);
+
+#define jmp_gemdos_v    ((long(*)(int))jmp_gemdos)
+#define jmp_gemdos_w    ((long(*)(int,int))jmp_gemdos)
+#define jmp_gemdos_l    ((long(*)(int,long))jmp_gemdos)
+#define jmp_gemdos_p    ((long(*)(int,void*))jmp_gemdos)
+#define jmp_gemdos_ww   ((long(*)(int,int,int))jmp_gemdos)
+#define jmp_gemdos_lw   ((long(*)(int,long,int))jmp_gemdos)
+#define jmp_gemdos_pw   ((long(*)(int,void*,int))jmp_gemdos)
+#define jmp_gemdos_wpp  ((long(*)(int,int,void*,void*))jmp_gemdos)
+#define jmp_gemdos_wlp  ((long(*)(int,int,long,void*))jmp_gemdos)
+#define jmp_gemdos_lww  ((long(*)(int,long,int,int))jmp_gemdos)
+#define jmp_gemdos_pww  ((long(*)(int,void*,int,int))jmp_gemdos)
+#define jmp_gemdos_wppp ((long(*)(int,int,void*,void*,void*))jmp_gemdos)
+
+#define xrdchne() jmp_gemdos_v(0x08)
+#define xecho(a) jmp_gemdos_w(0x02,a)
+#define xread(a,b,c) jmp_gemdos_wlp(0x3f,a,b,c)
+#define xwrite(a,b,c) jmp_gemdos_wlp(0x40,a,b,c)
+#define xopen(a,b) jmp_gemdos_pw(0x3d,a,b)
+#define xclose(a) jmp_gemdos_w(0x3e,a)
+#define xcreat(a,b) jmp_gemdos_pw(0x3c,a,b)
+#define xforce(a,b) jmp_gemdos_ww(0x46,a,b)
+#define xexec(a,b,c,d) jmp_gemdos_wppp(0x4b,a,b,c,d)
+#define dup(a) jmp_gemdos_w(0x45,a)
+#define xgetdrv() jmp_gemdos_v(0x19)
+#define xsetdrv(a) jmp_gemdos_w(0x0e,a)
+#define xsetdta(a) jmp_gemdos_p(0x1a,a)
+#define xsfirst(a,b) jmp_gemdos_pw(0x4e,a,b)
+#define xsnext() jmp_gemdos_v(0x4f)
+#define xgetdir(a,b) jmp_gemdos_pw(0x47,a,b)
+#define xmkdir(a) jmp_gemdos_p(0x39,a)
+#define xrmdir(a) jmp_gemdos_p(0x3a,a)
+#define xchdir(a) jmp_gemdos_p(0x3b,a)
+#define xunlink(a) jmp_gemdos_p(0x41,a)
+#define xrename(a,b,c) jmp_gemdos_wpp(0x56,a,b,c)
+#define xgetfree(a,b) jmp_gemdos_pw(0x36,a,b)
+#define xterm(a) jmp_gemdos_w(0x4c,a)
+#define xf_seek(a,b,c) jmp_gemdos_lww(0x42,a,b,c)
+#define xmalloc(a) jmp_gemdos_l(0x48,a);
+#define xmfree(a) jmp_gemdos_p(0x49,a);
+#define xattrib(a,b,c) jmp_gemdos_pww(0x43,a,b,c)
+
+#define jmp_bios_w     ((long(*)(int,int))jmp_bios)
+#define jmp_bios_wpwww ((long(*)(int,int,void*,int,int,int))jmp_bios)
+ 
+#define getbpb(a) jmp_bios_w(7,a)
+#define rwabs(a,b,c,d,e) jmp_bios_wpwww(4,a,b,c,d,e)
+
+#define jmp_xbios_ww   ((long(*)(int,int,int))jmp_xbios)
+
+#define Cursconf(a,b) jmp_xbios_ww(0x15,a,b)
 
 #define MAXARGS 20
-
-#define xrdchne() jmp_gemdos (0x08)
-#define xecho(a) jmp_gemdos (0x02,a)
-#define xread(a,b,c) jmp_gemdos(0x3f,a,b,c)
-#define xwrite(a,b,c) jmp_gemdos(0x40,a,b,c)
-#define xopen(a,b) jmp_gemdos(0x3d,a,b)
-#define xclose(a) jmp_gemdos(0x3e,a)
-#define xcreat(a,b) jmp_gemdos(0x3c,a,b)
-#define xforce(a,b) jmp_gemdos(0x46,a,b)
-#define xexec(a,b,c,d) jmp_gemdos(0x4b,a,b,c,d)
-#define dup(a) jmp_gemdos(0x45,a)
-#define xgetdrv() jmp_gemdos(0x19)
-#define xsetdrv(a) jmp_gemdos(0x0e,a)
-#define xsetdta(a) jmp_gemdos(0x1a,a)
-#define xsfirst(a,b) jmp_gemdos(0x4e,a,b)
-#define xsnext() jmp_gemdos(0x4f)
-#define xgetdir(a,b) jmp_gemdos(0x47,a,b)
-#define xmkdir(a) jmp_gemdos(0x39,a)
-#define xrmdir(a) jmp_gemdos(0x3a,a)
-#define xchdir(a) jmp_gemdos(0x3b,a)
-#define xunlink(a) jmp_gemdos(0x41,a)
-#define xrename(a,b,c) jmp_gemdos(0x56,a,b,c)
-#define xgetfree(a,b) jmp_gemdos(0x36,a,b)
-#define xterm(a) jmp_gemdos(0x4c,a)
-#define xf_seek(a,b,c) jmp_gemdos(0x42,a,b,c)
-#define xmalloc(a) jmp_gemdos(0x48,a);
-#define xmfree(a) jmp_gemdos(0x49,a);
-#define xattrib(a,b,c) jmp_gemdos(0x43,a,b,c)
-
-#define getbpb(a) jmp_bios(7,a)
-#define rwabs(a,b,c,d,e) jmp_bios(4,a,b,c,d,e)
-
-#define Cursconf(a,b) jmp_xbios(0x15,a,b)
 
 #define BPB struct _bpb
 BPB                             /* bios parameter block */
@@ -156,7 +174,7 @@ void chk_redirect(struct rdb *r)
 
 
 
-void errout()
+void errout(void)
 {
     chk_redirect(rd_ptr);
     longjmp(jb, 1);
@@ -272,7 +290,7 @@ void ucase(char *s)
  *
  */
 
-int gtFlNm()
+int gtFlNm(void)
 {
     /* First file request?      */
     if (WSrcReq != NULLPTR) {
@@ -391,7 +409,7 @@ int chkDir(char *pathExp, char *dirExp, char *filExp)
 
 
 /*
- *  int chkDst ();
+ *  int chkDst (void);
  *
  *  chkDst - Checks dst file name for validity. If there are any wild cards in
  *     the source file name the only valid dst names are "*", or "*.*".  Any
@@ -402,7 +420,7 @@ int chkDir(char *pathExp, char *dirExp, char *filExp)
  *
  */
 
-int chkDst()
+int chkDst(void)
 {
     int i = 0;
     char c;
@@ -457,7 +475,7 @@ doDstChk:
  *
  */
 
-int mkDst()
+int mkDst(void)
 {
     int i, k, ndx;
     int srcEqDst;
@@ -524,7 +542,7 @@ int mkDst()
  *  mkSrc - make source file name from directory path and file name.
  */
 
-void mkSrc()
+void mkSrc(void)
 {
     int i, j = 0;
 
@@ -544,7 +562,7 @@ void mkSrc()
 
 void wrt(const char *msg)
 {
-    xwrite(1, (long) strlen(msg), msg);
+    xwrite(1, (long) strlen(msg), (char *)msg);
 }
 
 void wrtln(const char *msg)
@@ -676,7 +694,7 @@ void dspDir(char *p, char *dir)
  *  cr2cont - wait for cariage return before continuing.
  */
 
-void cr2cont()
+void cr2cont(void)
 {
     wrt(_("CR to continue..."));
     lin[0] = 126;
@@ -849,7 +867,7 @@ SHOW [drive_spec:]\r\n\
  * getYes
  */
 
-int getYes()
+int getYes(void)
 {
     char inpStr[30];
 

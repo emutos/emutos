@@ -1429,3 +1429,9 @@ Start... early ages
 - bios/panicasm.S - made panic message a little bit more robust (LVL)
 - bios/kprint.c - fixed dopanic() (LVL)
 
+21. Apr. 2003
+- bios/initinfo.c bios/bios.c - hitting 'C' during initinfo launches an early
+  EmuCON, as a first step towards what Petr really wants (?) (LVL)
+- Makefile - bug no longer unnecessarily built when making UNIQUE=us (LVL)
+- cli/command.c - implemented prototypes for gemdos bindings (LVL)
+
