@@ -758,11 +758,12 @@ VOID xbios_25()
  * with GEMDOS get/set supervisor mode call.
  */
 
-VOID xbios_26(LONG codeptr)
+LONG xbios_26(LONG codeptr)
 {
 #if DBG_XBIOS
-    kprint("XBIOS: Unimplemented function 0x26 ...\n");
+    kprintf("XBIOS: Supexec(0x%08lx)\n", codeptr);
 #endif
+    return ((LONG(*)(void))codeptr)();
 }
 
 
