@@ -935,3 +935,6 @@ Start... early ages
 - removed some 'extern' from C source files (should go in .h files) (LVL)
 - bios/version.c - removed, was commented out for some time now (LVL)
 
+1. Jul. 2002
+- po/de.po - some translations done (MAD)
+
