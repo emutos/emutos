@@ -55,8 +55,9 @@
 #include "optimopt.h"
 
 #include "string.h"
-
 #include "ikbd.h"
+#include "kprint.h"     // just for debugging
+
 
 #define ROPEN 0
 
@@ -745,34 +746,48 @@ void sh_rdinf()
         {
           if ( LBGET(pcurr++) != '#' )
             continue;
-          else if ( (tmp = LBGET(pcurr)) == 'M')
+          tmp = LBGET(pcurr);
+          if (tmp == 'M')               /* #M 00 00 01 FF B FLOPPY DISK@ @ */
           {
-                                        /* #M000001FF B FLOPPY DISK@ @  */
-            pcurr += 5;                 /* convert the icon number      */
+            pcurr += 8;                 /* convert the icon number      */
             scan_2((BYTE *)pcurr, &ishdisk);
-            pcurr += 5;                 /* get the disk letter          */
+            pcurr += 6;                 /* get the disk letter          */
             bvect = ((UWORD) 0x8000) >> ((UWORD) ( LBGET(pcurr) - 'A'));
             bvdisk |= bvect;
             if (ishdisk == IG_HARD)
               bvhard |= bvect;
           }
-          else if ( tmp == 'E')         /* #E3A11                       */
+          else if (tmp == 'E')          /* #E 3A 11                     */
           {                             /* desktop environment          */
-            pcurr++;
+            pcurr += 2;
             scan_2((BYTE *)pcurr, &env);
             ev_dclick(env & 0x07, TRUE);
-            pcurr += 2;
+            pcurr += 3;
             scan_2((BYTE *)pcurr, &env);
             gl_mnclick = ((env & 0x08) != 0);
             sound(FALSE, !(env & 0x01), 0);
           }
-#if MULTIAPP
-          else if ( tmp == 'A')         /* test for accessories */
+          else if (tmp == 'Z')      /* something like "#Z 01 C:\THING.APP@" */
           {
-                                        /* #A59 CALCLOCK.ACC@   */
+            BYTE *tmpptr1, *tmpptr2;
+            pcurr += 5;
+            tmpptr1 = (BYTE *)pcurr;
+            tmpptr2 = sh_name((BYTE *)pcurr);
+            while(LBGET(pcurr) != '@')
+              ++pcurr;
+            *(tmpptr2-1) = *(BYTE *)pcurr = 0;
+            kprintf("Found #Z entry in EMUDESK.INF with path=%s and prg=%s\n",
+                    tmpptr1,tmpptr2);
+            sh_wdef((LONG)tmpptr2, (LONG)tmpptr1);
+            ++pcurr;
+          }
+#if MULTIAPP
+          else if (tmp == 'A')          /* test for accessories */
+          {
+                                        /* #A 59 CALCLOCK.ACC@  */
             pcurr++;
             scan_2((BYTE *)pcurr, &(gl_caccs[gl_numaccs].acc_swap));
-            pcurr += 3;
+            pcurr += 4;
             pstr = &gl_caccs[gl_numaccs].acc_name[0];
             while( (tmp = LBGET(pcurr++)) != '@')
               *pstr++ = tmp;

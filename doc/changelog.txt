@@ -1372,3 +1372,7 @@ Start... early ages
 
 27. Feb. 2003
 - vdi/* - found bug in C-pattern filling, enabled again (MAD)
+
+03. Mar. 2003
+- aes/geminit.c, gemshlib.c : Experimental support for #Z line in EMUDESK.INF
+  to start another desktop instead of the ROM desktop. (THH)

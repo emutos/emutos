@@ -272,6 +272,9 @@ WORD sh_write(WORD doex, WORD isgem, WORD isover, LONG pcmd, LONG ptail)
 {
         SHELL           *psh;
 
+        kprintf("sh_write doex=%d - isgem=%d - isover=%d - pcmd=%s - ptail=%s\n",
+                doex,  isgem,  isover,  (char *)pcmd,  (char *)ptail);
+
         LBCOPY(ad_scmd, pcmd, 128);
         LBCOPY(ad_stail, ptail, 128);
         if (isover > 0)
@@ -658,14 +661,16 @@ void sh_chdef(SHELL *psh)
         {
           psh->sh_isdef = psh->sh_isgem = TRUE;
           psh->sh_fullstep = 0;
-          dos_sdrv(psh->sh_cdir[0] - 'A');
+          if(psh->sh_cdir[1] == ':')
+            dos_sdrv(psh->sh_cdir[0] - 'A');
           dos_chdir((BYTE *)ADDR(&psh->sh_cdir[0]));
           strcpy(&D.s_cmd[0], &psh->sh_desk[0]);
         }
 #if GEMDOS
         else
         {                       
-          dos_sdrv(sh_apdir[0] - 'A');          /* desktop's def. dir   */
+          if(sh_apdir[1] == ':')
+            dos_sdrv(sh_apdir[0] - 'A');        /* desktop's def. dir   */
           dos_chdir(sh_apdir);
         }
 #endif
@@ -862,8 +867,13 @@ void sh_ldapp()
 #endif
         badtry = 0;     
 
-        strcpy(&psh->sh_desk[0], rs_str(STDESKTP));
-        strcpy(&psh->sh_cdir[0], &D.s_cdir[0]);
+        /* Set default DESKTOP if there isn't any yet: */
+        if(psh->sh_desk[0] == 0)
+        {
+          strcpy(&psh->sh_desk[0], rs_str(STDESKTP));
+          strcpy(&psh->sh_cdir[0], &D.s_cdir[0]);
+        }
+
         do
         {
           sh_chdef(psh);
@@ -887,8 +897,8 @@ void sh_ldapp()
 
                                                 /* clear his desk field */
           desk_tree[rlr->p_pid] = 0x0L;
-                                          /* exec it              */
-                                          /* handle bad try msg */
+                                                /* exec it              */
+                                                /* handle bad try msg   */
           if (badtry)
           {
             ret = fm_show(badtry, NULLPTR, 1);
@@ -903,8 +913,8 @@ void sh_ldapp()
             retry = FALSE;
 
             kprintf("starting %s\n",(char *)ad_scmd);
-            if(strcmp((char *)ad_scmd,rs_str(STDESKTP)) == 0)
-            { /* Experimental starting of the ROM desktop:  - THH*/
+            if(psh->sh_isdef && strcmp((char *)ad_scmd,rs_str(STDESKTP)) == 0)
+            { /* Experimental starting of the ROM desktop: */
               sh_show(ad_scmd);
               p_nameit(rlr, sh_name(&D.s_cmd[0]));
 
@@ -948,6 +958,15 @@ void sh_ldapp()
                 rlr->p_uda->u_spsuper = &rlr->p_uda->u_supstk;
                 dos_exec(ad_scmd, ad_envrn, ad_stail);    /* Run the APP */
                 rlr->p_uda->u_spsuper = uda_ssp_save;
+
+                /* If the user ran an alternative desktop and quitted it,
+                   return now to the default desktop: (experimental) */
+                if(psh->sh_isdef && psh->sh_dodef)
+                {
+                  kprintf("Returning to ROM DESKTOP!\n");
+                  strcpy(&psh->sh_desk[0], rs_str(STDESKTP));
+                  strcpy(&psh->sh_cdir[0], &D.s_cdir[0]);
+                }
 #else
                 dos_exec(ad_scmd, LHIWD(ad_envrn), ad_stail, 
                          ad_s1fcb, ad_s2fcb);
