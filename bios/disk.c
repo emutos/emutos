@@ -1,7 +1,7 @@
 /*
  * disk.c - disk routines
  *
- * Copyright (c) 2001,2002 EmuTOS development team
+ * Copyright (c) 2001-2005 EmuTOS development team
  *
  * Authors:
  *  joy   Petr Stehlik
@@ -32,7 +32,7 @@
 
 void disk_init(void)
 {
-        /* scan disk targets in the following order */
+    /* scan disk targets in the following order */
     int targets[] = {16, 18, 17, 19, 20, 22, 21, 23,    /* IDE primary/secondary */
                      8, 9, 10, 11, 12, 13, 14, 15,      /* SCSI */
                      0, 1, 2, 3, 4, 5, 6, 7};           /* ACSI */
@@ -66,7 +66,7 @@ void disk_init(void)
 /*
  * partition detection code
  *
- * inspired by Linux 2.4.x kernel (file fs/partitions/atari.c)
+ * atari part inspired by Linux 2.4.x kernel (file fs/partitions/atari.c)
  */
 
 #include "string.h"
@@ -87,9 +87,9 @@ static int VALID_PARTITION(struct partition_info *pi, unsigned long hdsiz)
     kprintf("        partition end (%ld <= %ld): %s\n", pi->st + pi->siz, hdsiz, (pi->st + pi->siz <= hdsiz) ? "OK" : "Failed" );
 #endif
     return ((pi->flg & 1) &&
-     // isalnum(pi->id[0]) && isalnum(pi->id[1]) && isalnum(pi->id[2]) &&
-     pi->st <= hdsiz &&
-     pi->st + pi->siz <= hdsiz);
+        // isalnum(pi->id[0]) && isalnum(pi->id[1]) && isalnum(pi->id[2]) &&
+        pi->st <= hdsiz &&
+        pi->st + pi->siz <= hdsiz);
 }
 
 static inline int OK_id(char *s)
@@ -105,8 +105,8 @@ static inline int OK_id(char *s)
 }
 
 #define MAXPHYSSECTSIZE 2048
-char sect[MAXPHYSSECTSIZE];
-char sect2[MAXPHYSSECTSIZE];
+u8 sect[MAXPHYSSECTSIZE];
+u8 sect2[MAXPHYSSECTSIZE];
 
 /*
  * scans for Atari partitions on disk 'bdev' and adds them to blkdev array
@@ -121,6 +121,7 @@ int atari_partition(int bdev)
 #ifdef ICD_PARTS
     int part_fmt = 0; /* 0:unknown, 1:AHDI, 2:ICD/Supra */
 #endif
+    int byteswap = 0;
 
     /* reset the sector buffer content */
     bzero(sect, sizeof(sect));
@@ -129,6 +130,61 @@ int atari_partition(int bdev)
         return -1;
 
     printk("%cd%c:", (bdev >> 3) ? (((bdev >> 3) == 2) ? 'h' : 's') : 'a', (bdev & 7) + 'a');
+
+    /* check for DOS byteswapped master boot record */
+    if (sect[510] == 0xaa && sect[511] == 0x55) {
+        int i;
+        byteswap = 1;   /* byteswap required for whole 'bdev' disk!! */
+#if DBG_DISK
+        kprintf("DOS MBR byteswapped checksum detected: byteswap required!\n");
+#endif
+        /* swap bytes in the loaded boot sector */
+        for(i=0; i<512; i+=2) {
+            int a = sect[i];
+            sect[i] = sect[i+1];
+            sect[i+1] = a;
+        }
+    }
+
+    /* check for DOS master boot record */
+    if (sect[510] == 0x55 && sect[511] == 0xaa) {
+        /* follow DOS PTBL */
+        int i;
+        int offset = 450;
+        for(i=0; i<4; i++, offset+=16) {
+            u32 start, size;
+            u8 type = sect[offset];
+            char pid[3] = {0, 'D', type };
+
+	    start = sect[offset+7];
+	    start <<= 8;
+	    start |= sect[offset+6];
+	    start <<= 8;
+	    start |= sect[offset+5];
+	    start <<= 8;
+	    start |= sect[offset+4];
+
+            size = sect[offset+11];
+	    size <<= 8;
+	    size |= sect[offset+10];
+	    size <<= 8;
+	    size |= sect[offset+9];
+	    size <<= 8;
+	    size |= sect[offset+8];
+
+#if DBG_DISK
+            kprintf("DOS partition detected: start=%ld, size=%ld, type=$%02x\n",
+                    start, size, type);
+#endif
+            add_partition(bdev, pid, start, size, byteswap);
+            kprintf(" $%02x", type);
+        }
+    
+        printk ("\n");
+
+        return 1;
+    }
+
 
     rs = (struct rootsector *)sect;
     hd_size = rs->hd_siz;
@@ -157,7 +213,7 @@ int atari_partition(int bdev)
         /* active partition */
         if (memcmp (pi->id, "XGM", 3) != 0) {
             /* we don't care about other id's */
-            if (add_partition(bdev, pi->id, pi->st, pi->siz))
+            if (add_partition(bdev, pi->id, pi->st, pi->siz, 0))
                 break;  /* max number of partitions reached */
             printk(" %c%c%c", pi->id[0], pi->id[1], pi->id[2]);
             continue;
@@ -186,7 +242,7 @@ int atari_partition(int bdev)
 
             if (add_partition(bdev, xrs->part[0].id,
                               partsect + xrs->part[0].st,
-                              xrs->part[0].siz))
+                              xrs->part[0].siz, 0))
                 break;  /* max number of partitions reached */
             printk(" %c%c%c", xrs->part[0].id[0], xrs->part[0].id[1], xrs->part[0].id[2]);
 
@@ -214,7 +270,7 @@ int atari_partition(int bdev)
                 if (!((pi->flg & 1) && OK_id(pi->id)))
                     continue;
                 part_fmt = 2;
-                if (add_partition(bdev, pi->id, pi->st, pi->siz))
+                if (add_partition(bdev, pi->id, pi->st, pi->siz, 0))
                     break;  /* max number of partitions reached */
                 printk(" %c%c%c", pi->id[0], pi->id[1], pi->id[2]);
             }
@@ -233,10 +289,16 @@ int atari_partition(int bdev)
 
 LONG DMAread(LONG sector, WORD count, LONG buf, WORD dev)
 {
+    /* TODO: byteswap */
     return XHReadWrite(dev, 0, 0, sector, count, (void *)buf);
 }
 
 LONG DMAwrite(LONG sector, WORD count, LONG buf, WORD dev)
 {
+    /* TODO: byteswap */
     return XHReadWrite(dev, 0, 1, sector, count, (void *)buf);
 }
+
+/*
+vim:et:ts=4:sw=4:
+*/
