@@ -55,7 +55,7 @@
 #define TAB 0x0F09                              /* tab                  */
 #define BACKTAB 0x0F00                          /* backtab              */
 #define RETURN 0x1C0D                           /* carriage return      */
-
+#define ENTER 0x720D                            /* keypad enter         */
 
 
 /* Global variables: */
@@ -167,6 +167,7 @@ WORD fm_keybd(LONG tree, WORD obj, WORD *pchar, WORD *pnew_obj)
         switch( *pchar )
         {
           case RETURN:
+          case ENTER:
                 obj = 0;
                 direction = DEFLT;
                 break;

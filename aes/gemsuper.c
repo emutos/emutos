@@ -457,8 +457,9 @@ if ((MB_MASK == 3) && (MB_STATE == 1))
                         XGR_I3, XGR_I5 );
                 break;
           default:
-                //kcprintf("Bad function %d\n",opcode);
-                fm_show(ALNOFUNC, NULLPTR, 1);
+                /*kcprintf("Bad function %d\n",opcode);*/
+                if(opcode!=0)     /* Ignore the 0 since some PRGs are this call */
+                  fm_show(ALNOFUNC, NULLPTR, 1);
                 ret = -1;
                 break;
         }
