@@ -1457,3 +1457,6 @@ Start... early ages
 - doc/changelog.txt - converted dates to ISO YYYY-MM-DD format (LVL)
 - desk/desk_rsc.c - menu sizes adjusted so that they fit in the screen (LVL)
 
+2003-05-11
+- bdos/bdosmain.c : Changed the GEMDOS version to a more reasonable number
+  since some programs might depend on this value. (THH)

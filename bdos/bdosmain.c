@@ -224,9 +224,6 @@ FND funcs[0x58] =
 
 
 
-char    *bdosver = "GEMDOS Version 01.MAD" ; /* bdos version string */
-
-
 
 /*
  *  xgetver -
@@ -235,7 +232,7 @@ char    *bdosver = "GEMDOS Version 01.MAD" ; /* bdos version string */
 
 long    xgetver(void)
 {
-        return(0x0101L);                /*  minor.major */
+        return(0x2000L);                /*  minor.major */
 #if DBGOSIF
         kprintf("BDOS: xgetver - Get version  successful ...\n");
 #endif
