@@ -10,7 +10,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#define DBG_DISK 1
+#define DBG_DISK 0
 
 #include "portab.h"
 #include "gemerror.h"
