@@ -28,10 +28,11 @@
  * - CLRHOME and INSERT in kbshift.
  * - key repeat
  */
- 
+
 #include "country.h"
 #include "keyboard.h"
 
+#include "config.h"
 #include "portab.h"
 #include "bios.h"
 #include "acia.h"
@@ -41,7 +42,7 @@
 #include "iorec.h"
 #include "asm.h"
 #include "ikbd.h"
-#include "sound.h"  /* for keyclick */
+#include "sound.h"              /* for keyclick */
 
 
 #define DBG_KBD 0
@@ -49,7 +50,7 @@
 
 
 /* scancode definitions */
-#define KEY_RELEASED 0x80     /* This bit set, when key-release scancode */
+#define KEY_RELEASED 0x80       /* This bit set, when key-release scancode */
 
 #define KEY_LSHIFT  0x2a
 #define KEY_RSHIFT  0x36
@@ -63,21 +64,21 @@
  * of control keys on the keyboard, like:
  * right shift, left shift, control, alt, ...
  */
- 
-/* mode types - these are the different bits */
-#define MODE_RSHIFT 0x01      /* right shift keys is down */
-#define MODE_LSHIFT 0x02      /* right shift keys is down */
-#define MODE_CTRL   0x04      /* CTRL is down.*/
-#define MODE_ALT    0x08      /* ALT is down.			     */
-#define MODE_CAPS   0x10      /* ALPHA LOCK is down. 		     */
-#define MODE_CLEAR  0x20      /* CLR/HOME mode key is down    */
 
-#define MODE_SHIFT   (MODE_RSHIFT|MODE_LSHIFT)      /* shifted */
+/* mode types - these are the different bits */
+#define MODE_RSHIFT 0x01        /* right shift keys is down */
+#define MODE_LSHIFT 0x02        /* right shift keys is down */
+#define MODE_CTRL   0x04        /* CTRL is down. */
+#define MODE_ALT    0x08        /* ALT is down.                        */
+#define MODE_CAPS   0x10        /* ALPHA LOCK is down.                 */
+#define MODE_CLEAR  0x20        /* CLR/HOME mode key is down    */
+
+#define MODE_SHIFT   (MODE_RSHIFT|MODE_LSHIFT)  /* shifted */
 
 
 
 /*==== Global variables ===================================================*/
-BYTE	shifty;          /* reflect the status up/down of mode keys */
+BYTE shifty;                    /* reflect the status up/down of mode keys */
 
 
 /*==== Keyboard layouts ===================================================*/
@@ -103,19 +104,19 @@ BYTE	shifty;          /* reflect the status up/down of mode keys */
  */
 
 struct {
-  int number;
-  struct keytbl *keytbl;
+    int number;
+    struct keytbl *keytbl;
 } avail_kbd[] = {
-  { KEYB_US, &keytbl_us },
-  { KEYB_DE, &keytbl_de },
-  { KEYB_FR, &keytbl_fr },
-};
+    {
+    KEYB_US, &keytbl_us}, {
+    KEYB_DE, &keytbl_de}, {
+KEYB_FR, &keytbl_fr},};
 
 #define dflt_keytbl keytbl_us
-  
+
 /*==== Scancode table control (not yet implemented) =======================*/
 #if 0
-static BYTE ascii_ctrl [] = {
+static BYTE ascii_ctrl[] = {
     0x00, 0x00, 0x00, 0x00, 0x1b, 0x1c, 0x1d, 0x1e,
     0x1f, 0x7f, 0x00, 0x00, 0x7f, 0x00, 0x08, 0x00,
     0x11, 0x17, 0x05, 0x12, 0x14, 0x19, 0x15, 0x09,
@@ -138,7 +139,7 @@ static BYTE ascii_ctrl [] = {
 
 /*==== Scancode table alt (not yet implemented) ===========================*/
 #if 0
-static BYTE ascii_alt [] = {
+static BYTE ascii_alt[] = {
     0x00, 0x1b, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36,
     0x37, 0x38, 0x39, 0x30, 0x9e, 0x27, 0x08, 0x09,
     0x71, 0x77, 0x65, 0x72, 0x74, 0x7a, 0x75, 0x69,
@@ -164,24 +165,24 @@ static struct keytbl current_keytbl;
 
 LONG keytbl(LONG norm, LONG shft, LONG caps)
 {
-  if(norm != -1L) {
-    current_keytbl.norm = (BYTE *)norm;
-  }
-  if(shft != -1L) {
-    current_keytbl.shft = (BYTE *)shft;
-  }
-  if(caps != -1L) {
-    current_keytbl.caps = (BYTE *)caps;
-  }
-  return (LONG) &current_keytbl;
+    if (norm != -1L) {
+        current_keytbl.norm = (BYTE *) norm;
+    }
+    if (shft != -1L) {
+        current_keytbl.shft = (BYTE *) shft;
+    }
+    if (caps != -1L) {
+        current_keytbl.caps = (BYTE *) caps;
+    }
+    return (LONG) & current_keytbl;
 }
 
 void bioskeys(void)
 {
     int i;
-    int goal = get_kbd_number();   /* in country.c */
-    for(i = 0 ; i < sizeof(avail_kbd)/sizeof(*avail_kbd) ; i++) {
-        if(avail_kbd[i].number == goal) {
+    int goal = get_kbd_number();        /* in country.c */
+    for (i = 0; i < sizeof(avail_kbd) / sizeof(*avail_kbd); i++) {
+        if (avail_kbd[i].number == goal) {
             current_keytbl = *avail_kbd[i].keytbl;
             return;
         }
@@ -195,61 +196,70 @@ LONG kbshift(WORD flag)
 {
     WORD oldy;
 
-    if(flag == -1)
-        return(shifty);         /* return bitvector of shift state */
+    if (flag == -1)
+        return (shifty);        /* return bitvector of shift state */
 
     oldy = shifty;
-    shifty=flag;
+    shifty = flag;
 
-    return(oldy);
+    return (oldy);
 }
 
 /*=== iorec handling (bios) ==============================================*/
 
 LONG bconstat2(void)
 {
-  if(ikbdiorec.head == ikbdiorec.tail) {
-    return 0;   /* iorec empty */
-  } else {
-    return -1;  /* not empty => input available */
-  }
+    if (ikbdiorec.head == ikbdiorec.tail) {
+        return 0;               /* iorec empty */
+    } else {
+        return -1;              /* not empty => input available */
+    }
 }
 
 LONG bconin2(void)
 {
-  WORD old_sr;
-  LONG value;
+    WORD old_sr;
+    LONG value;
 
-  while(!bconstat2()) {
+    /* keep current value of sr before changing it using STOP */
+    old_sr = get_sr();
+
+    while (!bconstat2()) {
 #if USE_STOP_INSN_TO_FREE_HOST_CPU
-      stop;
+        /* set sr = 0x2300 and stop the CPU until the next interrupt.
+         * This allows VBL and MFP interrupts, but no HBL interrupts.
+         * TODO - A problem could occur if the IPL mask was intentionnally 
+         * set to something higher than 3 before calling bconin. If so, 
+         * based on the value of old_sr, we should use different stop opcodes.
+         */
+        stop2300();
 #endif
-  }
-  /* disable interrupts */
-  old_sr = set_sr(0x2700);
-  
-  ikbdiorec.head += 4;
-  if(ikbdiorec.head >= ikbdiorec.size) {
-    ikbdiorec.head = 0;
-  }
-  value = *(LONG *)(ikbdiorec.buf+ikbdiorec.head);
-  
-  /* restore interrupts */
-  set_sr(old_sr);
-  return value;
+    }
+    /* disable interrupts */
+    set_sr(0x2700);
+
+    ikbdiorec.head += 4;
+    if (ikbdiorec.head >= ikbdiorec.size) {
+        ikbdiorec.head = 0;
+    }
+    value = *(LONG *) (ikbdiorec.buf + ikbdiorec.head);
+
+    /* restore interrupts */
+    set_sr(old_sr);
+    return value;
 }
 
 static void push_ikbdiorec(LONG value)
 {
-  ikbdiorec.tail += 4;
-  if(ikbdiorec.tail >= ikbdiorec.size) {
-    ikbdiorec.tail = 0;
-  }
-  if(ikbdiorec.tail == ikbdiorec.size) {
-    /* iorec full */
-    return;
-  }
-  *(LONG *)(ikbdiorec.buf+ikbdiorec.tail) = value;
+    ikbdiorec.tail += 4;
+    if (ikbdiorec.tail >= ikbdiorec.size) {
+        ikbdiorec.tail = 0;
+    }
+    if (ikbdiorec.tail == ikbdiorec.size) {
+        /* iorec full */
+        return;
+    }
+    *(LONG *) (ikbdiorec.buf + ikbdiorec.tail) = value;
 }
 
 /*=== interrupt routine support ===================================*/
@@ -260,109 +270,111 @@ static void push_ikbdiorec(LONG value)
 
 void kbd_int(WORD scancode)
 {
-  LONG value;        /* the value to push into iorec */
-  UBYTE ascii = 0;
-    
-    
+    LONG value;                 /* the value to push into iorec */
+    UBYTE ascii = 0;
+
+
 #if DBG_KBD
-  kprint ("================\n ");
-  kprintf ("Key-scancode: 0x%02x\n", scancode & 0xff);
-  
-  kprintf ("Key-shift bits: 0x%02x\n", shifty);
+    kprint("================\n ");
+    kprintf("Key-scancode: 0x%02x\n", scancode & 0xff);
+
+    kprintf("Key-shift bits: 0x%02x\n", shifty);
 #endif
 
-  if (scancode & KEY_RELEASED) {
-    scancode &= ~KEY_RELEASED;       /* get rid of release bits */
+    if (scancode & KEY_RELEASED) {
+        scancode &= ~KEY_RELEASED;      /* get rid of release bits */
+        switch (scancode) {
+        case KEY_RSHIFT:
+            shifty &= ~MODE_RSHIFT;     /* clear bit */
+            break;
+        case KEY_LSHIFT:
+            shifty &= ~MODE_LSHIFT;     /* clear bit */
+            break;
+        case KEY_CTRL:
+            shifty &= ~MODE_CTRL;       /* clear bit */
+            break;
+        case KEY_ALT:
+            shifty &= ~MODE_ALT;        /* clear bit */
+            break;
+        }
+        /* The TOS does not return when ALT is set, to emulate
+         * mouse movement using alt keys. This feature is not 
+         * currently supported by EmuTOS.
+         */
+#if 0
+        if (!(shifty & KEY_ALT))
+#endif
+            return;
+    }
+
     switch (scancode) {
     case KEY_RSHIFT:
-      shifty &= ~MODE_RSHIFT;        /* clear bit */
-      break;
+        shifty |= MODE_RSHIFT;  /* set bit */
+        return;
     case KEY_LSHIFT:
-      shifty &= ~MODE_LSHIFT;        /* clear bit */
-      break;
+        shifty |= MODE_LSHIFT;  /* set bit */
+        return;
     case KEY_CTRL:
-      shifty &= ~MODE_CTRL;          /* clear bit */
-      break;
+        shifty |= MODE_CTRL;    /* set bit */
+        return;
     case KEY_ALT:
-      shifty &= ~MODE_ALT;           /* clear bit */
-      break;
-    }
-    /* The TOS does not return when ALT is set, to emulate
-     * mouse movement using alt keys. This feature is not 
-     * currently supported by EmuTOS.
-     */
-#if 0
-    if(! (shifty & KEY_ALT))
-#endif
-    return;
-  }
-
-  switch (scancode) {
-    case KEY_RSHIFT:
-      shifty |= MODE_RSHIFT;         /* set bit */
-      return;
-    case KEY_LSHIFT:
-      shifty |= MODE_LSHIFT;         /* set bit */
-      return;
-    case KEY_CTRL:
-      shifty |= MODE_CTRL;           /* set bit */
-      return;
-    case KEY_ALT:
-      shifty |= MODE_ALT;            /* set bit */
-      return;
+        shifty |= MODE_ALT;     /* set bit */
+        return;
     case KEY_CAPS:
-      shifty ^= MODE_CAPS;           /* toggle bit */
-      if(conterm & 1) keyclick();
-      return;
-  }
-  
-  if (shifty & MODE_ALT) {
-    BYTE *a;
-    
-    if (shifty & MODE_SHIFT) {
-      a = current_keytbl.altshft;
-    } else if (shifty & MODE_CAPS) {
-      a = current_keytbl.altcaps;
-    } else {
-      a = current_keytbl.altnorm;
+        shifty ^= MODE_CAPS;    /* toggle bit */
+        if (conterm & 1)
+            keyclick();
+        return;
     }
-    while(*a && *a != scancode) {
-      a += 2;
-    }
-    if(*a++) {
-      ascii = *a;
-    }
-  } else {
-    if (shifty & MODE_SHIFT) {
-      if (scancode >= 0x3B && scancode <= 0x44) {
-        scancode += 0x19;
-        goto push_value;
-      }
-      ascii = current_keytbl.shft[scancode];
-    } else if (shifty & MODE_CAPS) {
-      ascii = current_keytbl.caps[scancode];
-    } else {
-      ascii = current_keytbl.norm[scancode];
-    }
-  }
-  
-  if (shifty & MODE_CTRL) {
-    /* More complicated in TOS, but is it really necessary ? */
-    ascii &= 0x1F;
-  }
-            
 
-push_value:
-  if(conterm & 1) keyclick();
-  value = ((LONG)scancode & 0xFF)<<16;
-  value += ascii;
-  if (conterm & 0x8) {
-    value += ((LONG)shifty) << 24;
-  }
+    if (shifty & MODE_ALT) {
+        BYTE *a;
+
+        if (shifty & MODE_SHIFT) {
+            a = current_keytbl.altshft;
+        } else if (shifty & MODE_CAPS) {
+            a = current_keytbl.altcaps;
+        } else {
+            a = current_keytbl.altnorm;
+        }
+        while (*a && *a != scancode) {
+            a += 2;
+        }
+        if (*a++) {
+            ascii = *a;
+        }
+    } else {
+        if (shifty & MODE_SHIFT) {
+            if (scancode >= 0x3B && scancode <= 0x44) {
+                scancode += 0x19;
+                goto push_value;
+            }
+            ascii = current_keytbl.shft[scancode];
+        } else if (shifty & MODE_CAPS) {
+            ascii = current_keytbl.caps[scancode];
+        } else {
+            ascii = current_keytbl.norm[scancode];
+        }
+    }
+
+    if (shifty & MODE_CTRL) {
+        /* More complicated in TOS, but is it really necessary ? */
+        ascii &= 0x1F;
+    }
+
+
+  push_value:
+    if (conterm & 1)
+        keyclick();
+    value = ((LONG) scancode & 0xFF) << 16;
+    value += ascii;
+    if (conterm & 0x8) {
+        value += ((LONG) shifty) << 24;
+    }
 #if DBG_KBD
-  kprintf ("KBD iorec: Pushing value 0x%08lx\n", value);
+    kprintf("KBD iorec: Pushing value 0x%08lx\n", value);
 #endif
-  push_ikbdiorec(value);
+    push_ikbdiorec(value);
 }
 
 
@@ -371,27 +383,26 @@ push_value:
 /* can we send a byte to the ikbd ? */
 LONG bcostat4(void)
 {
-  if(ikbd_acia.ctrl & ACIA_TDRE) {
-    return -1;  /* OK */
-  } else {
-    /* Data register not empty */
-    return 0;   /* not OK */
-  }
+    if (ikbd_acia.ctrl & ACIA_TDRE) {
+        return -1;              /* OK */
+    } else {
+        /* Data register not empty */
+        return 0;               /* not OK */
+    }
 }
 
 /* send a byte to the IKBD */
 void bconout4(WORD dev, WORD c)
 {
-  while(! bcostat4())
-    ;
-  ikbd_acia.data = c;
+    while (!bcostat4());
+    ikbd_acia.data = c;
 }
 
 /* cnt = number of bytes to send less one */
 void ikbdws(WORD cnt, PTR ptr)
 {
-    UBYTE *p = (UBYTE *)ptr;
-    while(cnt-- >= 0)
+    UBYTE *p = (UBYTE *) ptr;
+    while (cnt-- >= 0)
         bconout4(0, *p++);
 }
 
@@ -399,8 +410,8 @@ void ikbdws(WORD cnt, PTR ptr)
 void ikbd_reset(void)
 {
     UBYTE cmd[2] = { 0x80, 0x01 };
-    
-    ikbdws(2, (PTR)cmd);
+
+    ikbdws(2, (PTR) cmd);
 
     /* if all's well code 0xF1 is returned, else the break codes of
        all keys making contact */
@@ -411,7 +422,7 @@ void ikbd_resume(void)
 {
     UBYTE cmd[1] = { 0x11 };
 
-    ikbdws(1, (PTR)cmd);
+    ikbdws(1, (PTR) cmd);
 }
 
 /* Pause output */
@@ -419,24 +430,24 @@ void ikbd_pause(void)
 {
     UBYTE cmd[1] = { 0x13 };
 
-    ikbdws(1, (PTR)cmd);
+    ikbdws(1, (PTR) cmd);
 }
 
 /* some joystick routines not in yet (0x18-0x19) */
 
 /* Memory load */
-void ikbd_mem_write(WORD address, WORD size, BYTE *data)
+void ikbd_mem_write(WORD address, WORD size, BYTE * data)
 {
     kprintf("Attempt to write data into keyboard memory");
-    while(1);
+    while (1);
 }
 
 /* Memory read */
 void ikbd_mem_read(WORD address, BYTE data[6])
 {
-    BYTE cmd[3] = { 0x21, address>>8, address&0xFF };
+    BYTE cmd[3] = { 0x21, address >> 8, address & 0xFF };
 
-    ikbdws(3, (PTR)cmd);
+    ikbdws(3, (PTR) cmd);
 
     /* receive data and put it in data */
 }
@@ -444,45 +455,43 @@ void ikbd_mem_read(WORD address, BYTE data[6])
 /* Controller execute */
 void ikbd_exec(WORD address)
 {
-    BYTE cmd[3] = { 0x22, address>>8, address&0xFF };
+    BYTE cmd[3] = { 0x22, address >> 8, address & 0xFF };
 
-    ikbdws(3, (PTR)cmd);
+    ikbdws(3, (PTR) cmd);
 }
 
 /* Status inquiries (0x87-0x9A) not yet implemented */
 
 /* Set the state of the caps lock led. */
-void atari_kbd_leds (UWORD leds)
+void atari_kbd_leds(UWORD leds)
 {
-    BYTE cmd[6] = {32, 0, 4, 1, 254 + ((leds & 4) != 0), 0};
+    BYTE cmd[6] = { 32, 0, 4, 1, 254 + ((leds & 4) != 0), 0 };
 
-    ikbdws(6, (PTR)cmd);
+    ikbdws(6, (PTR) cmd);
 }
 
 
 
 /*
- *	FUNCTION:  This routine resets the keyboard,
- *	  configures the MFP so we can get interrupts
+ *      FUNCTION:  This routine resets the keyboard,
+ *        configures the MFP so we can get interrupts
  */
- 
+
 void kbd_init(void)
 {
     /* initialize ikbd ACIA */
-    ikbd_acia.ctrl =
-        ACIA_RESET;     /* master reset */
+    ikbd_acia.ctrl = ACIA_RESET;        /* master reset */
 
-    ikbd_acia.ctrl =
-        ACIA_RIE|       /* enable interrupts */
-        ACIA_RLTID|     /* RTS low, TxINT disabled */
-        ACIA_DIV64|     /* clock/64 */
-        ACIA_D8N1S;  /* 8 bit, 1 stop, no parity */
+    ikbd_acia.ctrl = ACIA_RIE | /* enable interrupts */
+        ACIA_RLTID |            /* RTS low, TxINT disabled */
+        ACIA_DIV64 |            /* clock/64 */
+        ACIA_D8N1S;             /* 8 bit, 1 stop, no parity */
 
     /* initialize the IKBD */
     ikbd_reset();
 
-    ikbdws(1, 0x1A);    /* disable joystick */
-    ikbdws(1, 0x12);    /* disable mouse */
+    ikbdws(1, 0x1A);            /* disable joystick */
+    ikbdws(1, 0x12);            /* disable mouse */
 
     bioskeys();
 }
