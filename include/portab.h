@@ -64,10 +64,8 @@
 
 
 #define REG             register                /* register variable       */
+#define GLOBAL                                  /* Global variable         */
 /* unused #define LOCAL         auto               Local var on 68000      */
-/* unused #define MLOCAL        static             Local to module         */
-/* unused #define GLOBAL                           Global variable         */
-/* unused #define EXTERN        extern             Extern variable         */
 
 typedef char            BYTE ;                  /*  Signed byte         */
 

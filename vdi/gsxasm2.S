@@ -77,21 +77,23 @@ _trap:  move.l  (sp)+,retsav            // remove return address from stack
 //                                      // pushing and popping the stack        
 
 ////////////
-//                                                                            //
-//      _TRNSFONT                                                             //
-//              This routine converts a font to standard form                 //
-//                                                                            //
-//              input:  _FWIDTH = width of font data in bytes.                //
-//                      _DELY   = number of scan lines in font.               //
-//                      _FBASE  = starting address of the font data.          //
-//                                                                            //
-//              output: none.                                                 //
-//                                                                            //
-//              destroys: d0,d1,d2 & a0.                                      //
+//
+//      _TRNSFONT
+//              This routine converts a font to standard form
+//
+//              input:  _FWIDTH = width of font data in bytes.
+//                      _DELY   = number of scan lines in font.
+//                      _FBASE  = starting address of the font data.
+//
+//              output: none.
+//
+//              destroys: d0,d1 & a0.
 ////////////
 
 
-_TRNSFONT:      move.w  _FWIDTH, d0     // Width of a scan line in bytes times
+_TRNSFONT:
+                move.l  d2,-(sp)
+                move.w  _FWIDTH, d0     // Width of a scan line in bytes times
                 mulu.w  _DELY, d0       // number of scan lines divided by two
                 lsr.w   #1, d0          // is number of words to byte swap
                 subq.w  #1, d0          // minus one for dbra
@@ -102,6 +104,7 @@ swap_loop:      move.w  (a0), d1        // Get word
                 ror.w   d2, d1          // swap bytes(use faster instruction)
                 move.w  d1, (a0)+       // put it back
                 dbra    d0, swap_loop
+                move.l  (sp)+,d2
                 rts
 
 //////////////
@@ -615,15 +618,14 @@ ep_ret0:        moveq.l #0,d0           // return(1). (success)
 ////                    _X2 = x coord of lower right corner.                  ////
 ////                    _Y2 = y coord of lower right corner.                  ////
 ////                                                                          ////
-////            destroys: nothing.                                            ////
+////            destroys: d0,d1,a0 & a1.                                      ////
 ////                                                                          ////
 //////////////
 //////////////
 //
-//
-rf_out:         rts
-//
-_RECTFILL:      tst.w   _CLIP
+_RECTFILL:
+                movem.l d2-d7/a2-a6,-(sp)       // restore registers
+                tst.w   _CLIP
                 beq     BOX_FILL                // if no clipping, just do it.
 //
 //      clipping.
@@ -660,7 +662,6 @@ rf_ymx:         move.w  _YMX_CLIP,d0
 //
 //      fall through to BOX_FILL.
 //
-                .page
 
 //////////////
 //////////////
@@ -678,7 +679,7 @@ rf_ymx:         move.w  _YMX_CLIP,d0
 ////                                                                          ////
 ////            output: none.                                                 ////
 ////                                                                          ////
-////            destroys: everything.                                         ////
+////            destroys: d0,d1,a0 & a1.                                      ////
 ////                                                                          ////
 //////////////
 //////////////
@@ -690,7 +691,7 @@ rf_ymx:         move.w  _YMX_CLIP,d0
 #define pat_ptr                 2               // copy of pattern pointer
 #define pl_cnt                  0               // copy of video plane count
 
-BOX_FILL:       move.l  a6,-(sp)        // save C frame pointer
+BOX_FILL:
                 adda.w  #-parm_size,sp  // allocate temporary stack area
                 move.l  _v_bas_ad,a5    // fetch video base address.
 #if vme10
@@ -806,6 +807,10 @@ bf_1st_line:
                 jsr     (a2)            // draw a horizontal line.
                 dbra    d6,bf_loop      // rectangle loop.
                 adda.w  #parm_size,sp   // remove temporary stack variables
-                movea.l (sp)+,a6        // restore C frame pointer
+
+rf_out:
+                movem.l (sp)+,d2-d7/a2-a6    // restore registers
                 rts
+
+
                 .end

@@ -5,7 +5,7 @@
  *
  *  MAD  Martin Doering
  *  LVL  Laurent Vogel
- *  THO  Thomas Huth
+ *  THH  Thomas Huth
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -121,9 +121,10 @@ _save_area:                     // End of Save storage
 _stkbot:        ds.w    SUPSIZ  // Supervisor stack
 _stktop:                        // filled from top to bottom
         
-t1regsav:       dc.l    1   
+t1spsav:        ds.l    1       // Save space for _trap_1
+t1regsav:       ds.l    2   
 
-aexecsave:      dc.l    1       // save zone for autoexec
+aexecsave:      ds.l    1       // save zone for autoexec
         
         
 // ===========================================================================
@@ -257,7 +258,7 @@ memdone:
  * strtautoexec needs to do the .PRG startup before jumping in
  * do_autoexec, in bios.c, that does the real job. 
  */
-
+#if 0  /* Not really needed?  - THH */
         .global _launchautoexec
         .global _strtautoexec
         
@@ -313,10 +314,11 @@ _strtautoexec:
         // restore stack and return
         move.l  aexecsave,sp
         rts
-
+#endif
         
 
 
+#if 0 /* Not really needed?  - THH */
 /*
  * subroutine_call - Fake a subroutine call into fVDI (which assumes a Trap)
  *
@@ -344,6 +346,7 @@ return_here:
         addq.l  #2,a7                   // Skip 0x88 if not >= '020
 was_020:
         rts
+#endif
 
 
 
@@ -396,7 +399,11 @@ what_gdos:
         rte
 
 query:
+#if 1
+        move.l  #_GSX_ENTRY,d0          // Return address of VDI dispatcher
+#else
         move.l  #subroutine_call,d0     // Someone doesn't like Trap #2
+#endif
         rte
 
 
@@ -660,9 +667,11 @@ cartover:
 // ==== trap_1 - trap 1 (GEMDOS) entry point =================================
 
 _trap_1:
-        move.l  (sp)+,t1regsav  // save return address
+        move.l  (sp)+,t1spsav   // save return address
+        movem.l d2/a2,t1regsav
         trap    #1              // call bdos call
-        move.l  t1regsav,-(sp)  // restore return address
+        movem.l t1regsav,d2/a2
+        move.l  t1spsav,-(sp)   // restore return address
         rts
 
 // ==== Trap 13 - BIOS entry point ==========================================

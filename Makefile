@@ -243,6 +243,7 @@ help:
 	@echo "tgz     bundles almost it all into a tgz archive"
 	@echo "depend  creates dependancy section in Makefile"
 	@echo "dsm     dsm.txt, an edited desassembly of emutos.img"
+	@echo "fdsm    fal_dsm.txt, like above, but for 0xE00000 ROMs"
 
 emutos.img: $(OBJECTS)
 	$(LD) -oformat binary -o $@ $(OBJECTS) $(LDFLAGS) $(LDFLROM)
@@ -449,6 +450,7 @@ dsm: $(DESASS)
 show: $(DESASS)
 	cat $(DESASS)
 
+
 map: $(OBJECTS)
 	${LD} -Map map -oformat binary -o emutos.img $(OBJECTS) $(LDFLAGS) \
 		$(LDFLROM)
@@ -458,6 +460,25 @@ $(DESASS): map
 	--adjust-vma=0x00fc0000 -D emutos.img | grep '^  f' \
 	| sed -e 's/^  //' -e 's/:	/: /' > $(TMP1)
 	grep '^ \+0x' map | sort | sed -e 's/ \+/ /g' \
+	| sed -e 's/^ 0x00//' -e 's/ /:  /' > $(TMP2)
+	cat $(TMP1) $(TMP2) | LC_ALL=C sort > $@
+	rm $(TMP1) $(TMP2)
+
+
+fdsm: fal_$(DESASS)
+
+fshow: fal_$(DESASS)
+	cat fal_$(DESASS)
+
+fal_map: $(OBJECTS)
+	${LD} -Map fal_map -oformat binary -o etosfalc.tmp $(OBJECTS) $(LDFLAGS) \
+		$(LDFLFAL)
+
+fal_$(DESASS): fal_map
+	$(OBJDUMP) --target=binary --architecture=m68k \
+	--adjust-vma=0x00e00000 -D etosfalc.tmp | grep '^  e' \
+	| sed -e 's/^  //' -e 's/:	/: /' > $(TMP1)
+	grep '^ \+0x' fal_map | sort | sed -e 's/ \+/ /g' \
 	| sed -e 's/^ 0x00//' -e 's/ /:  /' > $(TMP2)
 	cat $(TMP1) $(TMP2) | LC_ALL=C sort > $@
 	rm $(TMP1) $(TMP2)
@@ -619,327 +640,3 @@ depend:
 	mv Makefile.new Makefile
 
 # DO NOT DELETE
-obj/kprint.o: bios/kprint.c include/portab.h bios/bios.h bios/kprint.h \
- bios/lineavars.h
-obj/xbios.o: bios/xbios.c include/portab.h bios/kprint.h bios/iorec.h \
- bios/tosvars.h bios/lineavars.h bios/ikbd.h bios/midi.h bios/mfp.h \
- bios/screen.h bios/sound.h bios/floppy.h bios/disk.h bios/clock.h \
- bios/nvram.h bios/mouse.h bios/config.h include/asm.h
-obj/chardev.o: bios/chardev.c include/portab.h bios/bios.h bios/gemerror.h \
- bios/kprint.h bios/tosvars.h bios/chardev.h
-obj/blkdev.o: bios/blkdev.c include/portab.h bios/bios.h bios/gemerror.h \
- bios/kprint.h bios/tosvars.h bios/floppy.h bios/disk.h bios/blkdev.h
-obj/bios.o: bios/bios.c include/portab.h bios/bios.h bios/gemerror.h \
- bios/config.h bios/kprint.h bios/tosvars.h bios/lineavars.h \
- bios/processor.h bios/initinfo.h bios/machine.h bios/cookie.h \
- bios/country.h include/nls.h bios/biosmem.h bios/ikbd.h bios/mouse.h \
- bios/midi.h bios/mfp.h bios/floppy.h bios/sound.h bios/screen.h \
- bios/clock.h bios/vectors.h include/asm.h bios/chardev.h \
- bios/blkdev.h include/string.h
-obj/clock.o: bios/clock.c include/portab.h bios/bios.h bios/kprint.h \
- bios/clock.h bios/ikbd.h bios/tosvars.h include/string.h \
- bios/detect.h bios/nvram.h
-obj/fnt8x16.o: bios/fnt8x16.c include/portab.h bios/fontdef.h
-obj/fnt8x8.o: bios/fnt8x8.c include/portab.h bios/fontdef.h
-obj/fnt6x6.o: bios/fnt6x6.c include/portab.h bios/fontdef.h
-obj/mfp.o: bios/mfp.c include/portab.h bios/bios.h bios/kprint.h \
- bios/mfp.h bios/tosvars.h
-obj/version.o: bios/version.c
-obj/midi.o: bios/midi.c include/portab.h bios/bios.h bios/kprint.h \
- bios/acia.h bios/iorec.h include/asm.h bios/midi.h
-obj/ikbd.o: bios/ikbd.c bios/country.h bios/config.h include/portab.h \
- bios/bios.h bios/acia.h bios/kprint.h bios/tosvars.h bios/lineavars.h \
- bios/iorec.h include/asm.h bios/ikbd.h bios/sound.h bios/keyb_us.h \
- bios/keyb_de.h bios/keyb_fr.h
-obj/sound.o: bios/sound.c include/portab.h bios/sound.h bios/psg.h \
- bios/tosvars.h include/asm.h
-obj/floppy.o: bios/floppy.c include/portab.h bios/gemerror.h bios/floppy.h \
- bios/dma.h bios/fdc.h bios/psg.h bios/mfp.h include/asm.h \
- bios/tosvars.h bios/machine.h bios/blkdev.h bios/bios.h \
- include/string.h bios/kprint.h
-obj/disk.o: bios/disk.c include/portab.h bios/gemerror.h bios/disk.h \
- include/asm.h bios/blkdev.h bios/bios.h bios/config.h bios/kprint.h \
- /usr/lib/gcc-lib/m68k-atari-mint/2.95.3/../../../../m68k-atari-mint/include/ctype.h \
- include/string.h bios/atari_rootsec.h
-obj/screen.o: bios/screen.c bios/config.h bios/machine.h bios/screen.h \
- include/portab.h bios/tosvars.h include/asm.h
-obj/lineainit.o: bios/lineainit.c bios/tosvars.h include/portab.h \
- bios/lineavars.h bios/fontdef.h bios/kprint.h bios/country.h \
- include/string.h bios/screen.h bios/machine.h
-obj/mouse.o: bios/mouse.c bios/config.h include/portab.h bios/kprint.h \
- bios/bios.h bios/tosvars.h bios/lineavars.h bios/ikbd.h bios/mouse.h \
- bios/vectors.h
-obj/initinfo.o: bios/initinfo.c include/portab.h bios/kprint.h \
- include/nls.h bios/lineavars.h bios/tosvars.h bios/machine.h \
- bios/clock.h include/version.h bios/initinfo.h
-obj/cookie.o: bios/cookie.c include/portab.h bios/cookie.h \
- bios/processor.h bios/kprint.h
-obj/machine.o: bios/machine.c include/portab.h bios/cookie.h \
- bios/machine.h bios/biosmem.h bios/bios.h bios/detect.h bios/nvram.h \
- bios/tosvars.h bios/country.h bios/clock.h
-obj/nvram.o: bios/nvram.c include/portab.h bios/cookie.h bios/machine.h \
- bios/detect.h bios/nvram.h bios/biosmem.h bios/bios.h
-obj/country.o: bios/country.c include/portab.h bios/cookie.h \
- bios/country.h bios/detect.h bios/nvram.h bios/tosvars.h
-obj/cz6x6.o: bios/cz6x6.c include/portab.h bios/fontdef.h
-obj/cz8x8.o: bios/cz8x8.c include/portab.h bios/fontdef.h
-obj/cz8x16.o: bios/cz8x16.c include/portab.h bios/fontdef.h
-obj/biosmem.o: bios/biosmem.c include/portab.h bios/bios.h bios/biosmem.h \
- bios/kprint.h bios/tosvars.h
-obj/fntlat2_6.o: bios/fntlat2_6.c include/portab.h bios/fontdef.h
-obj/fntlat2_8.o: bios/fntlat2_8.c include/portab.h bios/fontdef.h
-obj/fntlat2_16.o: bios/fntlat2_16.c include/portab.h bios/fontdef.h
-obj/bdosinit.o: bdos/bdosinit.c include/portab.h bdos/bios.h
-obj/console.o: bdos/console.c include/portab.h bdos/fs.h include/setjmp.h \
- bdos/bios.h bdos/proc.h bdos/pghdr.h bdos/console.h
-obj/fsdrive.o: bdos/fsdrive.c include/portab.h bdos/fs.h include/setjmp.h \
- bdos/bios.h bdos/mem.h bdos/gemerror.h bdos/../bios/kprint.h
-obj/fshand.o: bdos/fshand.c include/portab.h bdos/fs.h include/setjmp.h \
- bdos/bios.h bdos/gemerror.h
-obj/fsopnclo.o: bdos/fsopnclo.c include/portab.h bdos/fs.h \
- include/setjmp.h bdos/bios.h bdos/gemerror.h include/string.h \
- bdos/mem.h
-obj/osmem.o: bdos/osmem.c include/portab.h bdos/fs.h include/setjmp.h \
- bdos/bios.h bdos/mem.h bdos/gemerror.h
-obj/umem.o: bdos/umem.c include/portab.h bdos/fs.h include/setjmp.h \
- bdos/bios.h bdos/mem.h bdos/gemerror.h bdos/../bios/kprint.h
-obj/bdosmain.o: bdos/bdosmain.c include/portab.h bdos/fs.h \
- include/setjmp.h bdos/bios.h bdos/mem.h bdos/proc.h bdos/pghdr.h \
- bdos/console.h bdos/gemerror.h bdos/../bios/kprint.h
-obj/fsbuf.o: bdos/fsbuf.c include/portab.h bdos/fs.h include/setjmp.h \
- bdos/bios.h bdos/gemerror.h
-obj/fsfat.o: bdos/fsfat.c include/portab.h bdos/fs.h include/setjmp.h \
- bdos/bios.h bdos/gemerror.h
-obj/fsio.o: bdos/fsio.c include/portab.h bdos/fs.h include/setjmp.h \
- bdos/bios.h bdos/gemerror.h bdos/../bios/kprint.h
-obj/iumem.o: bdos/iumem.c include/portab.h bdos/fs.h include/setjmp.h \
- bdos/bios.h bdos/mem.h bdos/gemerror.h bdos/../bios/kprint.h
-obj/proc.o: bdos/proc.c include/portab.h bdos/fs.h include/setjmp.h \
- bdos/bios.h bdos/mem.h bdos/proc.h bdos/pghdr.h bdos/gemerror.h \
- include/string.h bdos/../bios/kprint.h
-obj/bdosts.o: bdos/bdosts.c include/portab.h
-obj/fsdir.o: bdos/fsdir.c include/portab.h bdos/fs.h include/setjmp.h \
- bdos/bios.h bdos/mem.h bdos/gemerror.h include/string.h \
- bdos/../bios/kprint.h
-obj/fsglob.o: bdos/fsglob.c include/portab.h bdos/fs.h include/setjmp.h \
- bdos/bios.h bdos/gemerror.h
-obj/fsmain.o: bdos/fsmain.c include/portab.h bdos/fs.h include/setjmp.h \
- bdos/bios.h bdos/mem.h bdos/gemerror.h
-obj/kpgmld.o: bdos/kpgmld.c include/portab.h bdos/fs.h include/setjmp.h \
- bdos/bios.h bdos/mem.h bdos/proc.h bdos/pghdr.h bdos/gemerror.h \
- include/string.h bdos/../bios/kprint.h
-obj/time.o: bdos/time.c include/portab.h bdos/gemerror.h bdos/bios.h
-obj/doprintf.o: util/doprintf.c
-obj/nls.o: util/nls.c include/portab.h include/nls.h util/langs.h \
- include/string.h
-obj/langs.o: util/langs.c util/langs.h
-obj/string.o: util/string.c include/string.h
-obj/cbssdefs.o: vdi/cbssdefs.c include/portab.h vdi/gsxdef.h vdi/fontdef.h \
- vdi/attrdef.h
-obj/isin.o: vdi/isin.c include/portab.h
-obj/jmptbl.o: vdi/jmptbl.c vdi/gsxdef.h include/portab.h vdi/gsxextrn.h \
- vdi/fontdef.h vdi/attrdef.h include/asm.h vdi/jmptbl.h
-obj/lisastub.o: vdi/lisastub.c include/portab.h
-obj/lisatabl.o: vdi/lisatabl.c include/portab.h vdi/gsxdef.h vdi/styles.h
-obj/monobj.o: vdi/monobj.c include/portab.h vdi/gsxdef.h vdi/gsxextrn.h \
- vdi/fontdef.h vdi/attrdef.h include/asm.h
-obj/obj/opnwkram.o: vdi/opnwkram.c include/portab.h vdi/gsxdef.h \
- vdi/gsxextrn.h vdi/fontdef.h vdi/attrdef.h include/asm.h
-obj/seedfill.o: vdi/seedfill.c include/portab.h vdi/gsxdef.h \
- vdi/gsxextrn.h vdi/fontdef.h vdi/attrdef.h include/asm.h
-obj/text.o: vdi/text.c include/portab.h vdi/gsxdef.h vdi/gsxextrn.h \
- vdi/fontdef.h vdi/attrdef.h include/asm.h vdi/jmptbl.h
-obj/cbssdefs.o: vdi/cbssdefs.c include/portab.h vdi/gsxdef.h vdi/fontdef.h \
- vdi/attrdef.h
-obj/gemaplib.o: aes/gemaplib.c aes/portab.h aes/../include/portab.h \
- aes/machine.h aes/struct.h aes/basepage.h aes/obdefs.h aes/gemlib.h \
- aes/gem_rsc.h aes/geminit.h aes/gempd.h aes/geminput.h aes/gemflag.h \
- aes/gemevlib.h aes/gemgsxif.h aes/gsxdefs.h aes/gemwmlib.h \
- aes/gemmnlib.h aes/gemdosif.h aes/gemasm.h aes/gemdisp.h \
- aes/gemsclib.h aes/gemrslib.h
-obj/gemasync.o: aes/gemasync.c aes/portab.h aes/../include/portab.h \
- aes/machine.h aes/struct.h aes/basepage.h aes/obdefs.h aes/gemlib.h \
- aes/geminput.h aes/gemflag.h aes/gemqueue.h aes/optimopt.h \
- aes/gemasm.h
-obj/gembase.o: aes/gembase.c aes/portab.h aes/../include/portab.h \
- aes/machine.h aes/struct.h
-obj/gemctrl.o: aes/gemctrl.c aes/portab.h aes/../include/portab.h \
- aes/machine.h aes/struct.h aes/basepage.h aes/obdefs.h aes/taddr.h \
- aes/gemlib.h aes/geminput.h aes/gemevlib.h aes/gemwmlib.h \
- aes/gemglobe.h aes/gemgraf.h aes/gsxdefs.h aes/gemmnlib.h \
- aes/geminit.h aes/gemgsxif.h aes/gemgrlib.h aes/gemoblib.h \
- aes/gemasm.h aes/optimopt.h aes/rectfunc.h
-obj/obj/gemevlib.o: aes/gemevlib.c aes/portab.h aes/../include/portab.h \
- aes/machine.h aes/struct.h aes/basepage.h aes/obdefs.h aes/gemlib.h \
- aes/gemasync.h aes/gemdisp.h aes/geminput.h aes/gemaplib.h \
- aes/geminit.h
-obj/gemflag.o: aes/gemflag.c aes/portab.h aes/../include/portab.h \
- aes/machine.h aes/struct.h aes/basepage.h aes/obdefs.h aes/gemlib.h \
- aes/gemasync.h aes/geminput.h aes/gemdosif.h aes/gemasm.h
-obj/gemfmalt.o: aes/gemfmalt.c aes/portab.h aes/../include/portab.h \
- aes/machine.h aes/struct.h aes/basepage.h aes/obdefs.h aes/taddr.h \
- aes/gemlib.h aes/gem_rsc.h aes/gemgsxif.h aes/gsxdefs.h \
- aes/gemoblib.h aes/gemobed.h aes/geminit.h aes/gemrslib.h \
- aes/gemgraf.h aes/gemfmlib.h aes/gemwmlib.h aes/optimopt.h \
- aes/rectfunc.h
-obj/gemfmlib.o: aes/gemfmlib.c aes/portab.h aes/../include/portab.h \
- aes/machine.h aes/struct.h aes/basepage.h aes/obdefs.h aes/taddr.h \
- aes/gemlib.h aes/gem_rsc.h aes/gemwmlib.h aes/gemrslib.h \
- aes/geminput.h aes/gemctrl.h aes/gemoblib.h aes/gemobjop.h \
- aes/gemgrlib.h aes/gemevlib.h aes/gemgraf.h aes/gsxdefs.h \
- aes/gemobed.h aes/optimize.h aes/gemfmalt.h aes/gemglobe.h \
- aes/gemmnlib.h
-obj/gemfslib.o: aes/gemfslib.c aes/portab.h aes/../include/portab.h \
- aes/machine.h aes/struct.h aes/obdefs.h aes/taddr.h aes/dos.h \
- aes/gemlib.h aes/gem_rsc.h aes/gemdos.h aes/gemoblib.h aes/gemgraf.h \
- aes/gsxdefs.h aes/gemfmlib.h aes/gemgsxif.h aes/gemgrlib.h \
- aes/gemglobe.h aes/geminit.h aes/gemsuper.h aes/gemshlib.h aes/gsx2.h \
- aes/optimize.h aes/optimopt.h aes/rectfunc.h
-obj/gemglobe.o: aes/gemglobe.c aes/portab.h aes/../include/portab.h \
- aes/machine.h aes/struct.h aes/obdefs.h aes/gemlib.h
-obj/gemgraf.o: aes/gemgraf.c aes/portab.h aes/../include/portab.h \
- aes/machine.h aes/obdefs.h aes/gsxdefs.h aes/funcdef.h aes/gemgraf.h \
- aes/gemgsxif.h aes/optimize.h aes/optimopt.h aes/gsx2.h \
- aes/rectfunc.h
-obj/gemgrlib.o: aes/gemgrlib.c aes/portab.h aes/../include/portab.h \
- aes/machine.h aes/struct.h aes/basepage.h aes/obdefs.h aes/gemlib.h \
- aes/gemevlib.h aes/gemgraf.h aes/gsxdefs.h aes/gemwmlib.h \
- aes/gemoblib.h aes/geminput.h aes/gemgsxif.h aes/gemasm.h aes/gsx2.h \
- aes/optimopt.h aes/rectfunc.h aes/optimize.h
-obj/gemgsxif.o: aes/gemgsxif.c aes/portab.h aes/../include/portab.h \
- aes/machine.h aes/dos.h aes/obdefs.h aes/gsxdefs.h aes/funcdef.h \
- aes/gemdos.h aes/gemrslib.h aes/gemgraf.h aes/geminput.h aes/struct.h \
- aes/gemlib.h aes/gemdosif.h aes/gsx2.h aes/geminit.h aes/gemctrl.h \
- aes/gemgsxif.h
-obj/geminit.o: aes/geminit.c aes/portab.h aes/../include/portab.h \
- aes/machine.h aes/obdefs.h aes/taddr.h aes/struct.h aes/basepage.h \
- aes/gemlib.h aes/crysbind.h aes/gem_rsc.h aes/dos.h aes/gemgsxif.h \
- aes/gsxdefs.h aes/gemdosif.h aes/gemctrl.h aes/gemshlib.h aes/gempd.h \
- aes/gemdisp.h aes/gemrslib.h aes/gemobed.h aes/gemdos.h aes/gemgraf.h \
- aes/gemevlib.h aes/gemwmlib.h aes/gemglobe.h aes/gemfslib.h \
- aes/gemoblib.h aes/gemsclib.h aes/gemfmlib.h aes/gemasm.h \
- aes/gemaplib.h aes/gemsuper.h aes/geminput.h aes/gemmnlib.h \
- aes/optimize.h aes/optimopt.h
-obj/geminput.o: aes/geminput.c aes/portab.h aes/../include/portab.h \
- aes/machine.h aes/struct.h aes/basepage.h aes/obdefs.h aes/gemlib.h \
- aes/geminput.h aes/gemgraf.h aes/gsxdefs.h aes/gemdosif.h \
- aes/gemctrl.h aes/gemmnlib.h aes/gemaplib.h aes/gemglobe.h \
- aes/gemevlib.h aes/gemwmlib.h aes/gemasync.h aes/gemdisp.h \
- aes/rectfunc.h
-obj/gemmnlib.o: aes/gemmnlib.c aes/portab.h aes/../include/portab.h \
- aes/machine.h aes/struct.h aes/basepage.h aes/obdefs.h aes/taddr.h \
- aes/gemlib.h aes/gemgsxif.h aes/gsxdefs.h aes/gemevlib.h \
- aes/gemoblib.h aes/gemobed.h aes/gemwmlib.h aes/gemgraf.h \
- aes/geminput.h aes/gemsuper.h aes/gemctrl.h aes/gempd.h \
- aes/rectfunc.h
-obj/gemobed.o: aes/gemobed.c aes/portab.h aes/../include/portab.h \
- aes/machine.h aes/struct.h aes/basepage.h aes/obdefs.h aes/taddr.h \
- aes/gemlib.h aes/gem_rsc.h aes/gemoblib.h aes/gemgraf.h aes/gsxdefs.h \
- aes/gemglobe.h aes/geminit.h aes/gemrslib.h aes/optimize.h \
- aes/optimopt.h aes/rectfunc.h
-obj/gemobjop.o: aes/gemobjop.c aes/portab.h aes/../include/portab.h \
- aes/machine.h aes/obdefs.h aes/taddr.h
-obj/gemoblib.o: aes/gemoblib.c aes/portab.h aes/../include/portab.h \
- aes/machine.h aes/struct.h aes/basepage.h aes/obdefs.h aes/taddr.h \
- aes/gemlib.h aes/funcdef.h aes/gemglobe.h aes/gemgsxif.h \
- aes/gsxdefs.h aes/gemobjop.h aes/gemgraf.h aes/optimopt.h \
- aes/rectfunc.h
-obj/gempd.o: aes/gempd.c aes/portab.h aes/../include/portab.h \
- aes/machine.h aes/struct.h aes/basepage.h aes/obdefs.h aes/gemlib.h \
- aes/gemdosif.h aes/gemglobe.h aes/geminit.h aes/gemasm.h \
- aes/optimize.h aes/optimopt.h
-obj/gemqueue.o: aes/gemqueue.c aes/portab.h aes/../include/portab.h \
- aes/machine.h aes/struct.h aes/basepage.h aes/obdefs.h aes/gemlib.h \
- aes/optimize.h aes/gemasync.h
-obj/gemrslib.o: aes/gemrslib.c aes/portab.h aes/../include/portab.h \
- aes/machine.h aes/struct.h aes/basepage.h aes/obdefs.h aes/taddr.h \
- aes/gemlib.h aes/gem_rsc.h aes/gemdos.h aes/gemshlib.h aes/gemglobe.h \
- aes/gemgraf.h aes/gsxdefs.h aes/geminit.h
-obj/gemsclib.o: aes/gemsclib.c aes/portab.h aes/../include/portab.h \
- aes/machine.h aes/struct.h aes/basepage.h aes/obdefs.h aes/gemlib.h \
- aes/crysbind.h aes/dos.h aes/gem_rsc.h aes/gemrslib.h aes/gemdos.h \
- aes/geminit.h aes/gemshlib.h
-obj/gemshlib.o: aes/gemshlib.c aes/portab.h aes/../include/portab.h \
- aes/machine.h aes/obdefs.h aes/taddr.h aes/struct.h aes/basepage.h \
- aes/dos.h aes/gemlib.h aes/gem_rsc.h aes/gemdosif.h aes/gemdos.h \
- aes/gemgraf.h aes/gsxdefs.h aes/gemgsxif.h aes/gemoblib.h \
- aes/gemwmlib.h aes/gemfmlib.h aes/gempd.h aes/gemflag.h \
- aes/gemglobe.h aes/geminit.h aes/gemrslib.h aes/optimopt.h
-obj/gemsuper.o: aes/gemsuper.c aes/portab.h aes/../include/portab.h \
- aes/machine.h aes/struct.h aes/basepage.h aes/obdefs.h aes/taddr.h \
- aes/gemlib.h aes/crysbind.h aes/gem_rsc.h aes/gempd.h aes/gemaplib.h \
- aes/geminit.h aes/gemevlib.h aes/gemmnlib.h aes/gemoblib.h \
- aes/gemobed.h aes/gemfmlib.h aes/gemfslib.h aes/gemgrlib.h \
- aes/gemgraf.h aes/gsxdefs.h aes/gemgsxif.h aes/gemsclib.h \
- aes/gemwmlib.h aes/gemrslib.h aes/gemshlib.h aes/gemglobe.h \
- aes/gemfmalt.h aes/gemdosif.h aes/gemasm.h
-obj/gemwmlib.o: aes/gemwmlib.c aes/portab.h aes/../include/portab.h \
- aes/machine.h aes/struct.h aes/basepage.h aes/obdefs.h aes/taddr.h \
- aes/gemlib.h aes/gempd.h aes/gemaplib.h aes/gemflag.h aes/gemoblib.h \
- aes/gemwrect.h aes/gemmnlib.h aes/geminit.h aes/gemgraf.h \
- aes/gsxdefs.h aes/gemglobe.h aes/gemfmlib.h aes/gemevlib.h \
- aes/gemwmlib.h aes/gemgsxif.h aes/gemobjop.h aes/gemctrl.h aes/gsx2.h \
- aes/rectfunc.h aes/optimopt.h aes/optimize.h
-obj/gemwrect.o: aes/gemwrect.c aes/portab.h aes/../include/portab.h \
- aes/machine.h aes/struct.h aes/basepage.h aes/obdefs.h aes/gemlib.h \
- aes/gemobjop.h aes/gemwmlib.h aes/gemglobe.h aes/optimize.h \
- aes/rectfunc.h
-obj/optimize.o: aes/optimize.c aes/portab.h aes/../include/portab.h \
- aes/machine.h aes/taddr.h aes/obdefs.h aes/geminit.h aes/gemrslib.h \
- aes/rectfunc.h aes/optimopt.h
-obj/rectfunc.o: aes/rectfunc.c aes/portab.h aes/../include/portab.h \
- aes/obdefs.h
-obj/gemdos.o: aes/gemdos.c aes/portab.h aes/../include/portab.h \
- aes/machine.h
-obj/gem_rsc.o: aes/gem_rsc.c aes/portab.h aes/../include/portab.h \
- aes/obdefs.h aes/gemrslib.h
-obj/command.o: cli/command.c include/nls.h include/string.h \
- include/setjmp.h include/portab.h
-obj/obj/obj/obj/obj/obj/deskglob.o: desk/deskglob.c desk/portab.h desk/machine.h desk/obdefs.h \
- desk/deskapp.h desk/deskfpd.h desk/deskwin.h desk/infodef.h \
- desk/desktop.h desk/gembind.h desk/deskbind.h
-obj/obj/obj/obj/obj/obj/deskrsrc.o: desk/deskrsrc.c desk/portab.h desk/machine.h desk/obdefs.h \
- desk/aesbind.h
-obj/obj/obj/gembind.o: desk/gembind.c desk/portab.h desk/machine.h desk/taddr.h \
- desk/obdefs.h desk/gembind.h
-obj/icons.o: desk/icons.c desk/portab.h desk/machine.h desk/obdefs.h \
- desk/deskapp.h
-obj/tosvars.o: bios/tosvars.S
-obj/startup.o: bios/startup.S bios/asmdefs.h bios/config.h bios/header.h
-obj/lineavars.o: bios/lineavars.S
-obj/vectors.o: bios/vectors.S
-obj/aciavecs.o: bios/aciavecs.S
-obj/processor.o: bios/processor.S bios/asmdefs.h bios/config.h
-obj/memory.o: bios/memory.S
-obj/linea.o: bios/linea.S
-obj/conout.o: bios/conout.S
-obj/mousedrv.o: bios/mousedrv.S
-obj/detect.o: bios/detect.S
-obj/panicasm.o: bios/panicasm.S
-obj/kprintasm.o: bios/kprintasm.S bios/asmdefs.h bios/config.h
-obj/rwa.o: bdos/rwa.S
-obj/memset.o: util/memset.S
-obj/memmove.o: util/memmove.S
-obj/nlsasm.o: util/nlsasm.S
-obj/setjmp.o: util/setjmp.S
-obj/entry.o: vdi/entry.S vdi/vdiconf.h
-obj/bitblt.o: vdi/bitblt.S vdi/vdiconf.h
-obj/bltfrag.o: vdi/bltfrag.S vdi/vdiconf.h
-obj/copyrfm.o: vdi/copyrfm.S vdi/vdiconf.h
-obj/esclisa.o: vdi/esclisa.S vdi/vdiconf.h
-obj/gsxasm1.o: vdi/gsxasm1.S vdi/vdiconf.h
-obj/gsxasm2.o: vdi/gsxasm2.S vdi/vdiconf.h
-obj/lisagem.o: vdi/lisagem.S vdi/vdiconf.h
-obj/vdimouse.o: vdi/vdimouse.S vdi/vdiconf.h
-obj/newmono.o: vdi/newmono.S vdi/vdiconf.h
-obj/textblt.o: vdi/textblt.S vdi/vdiconf.h
-obj/tranfm.o: vdi/tranfm.S vdi/vdiconf.h
-obj/gsxvars.o: vdi/gsxvars.S
-obj/gemstart.o: aes/gemstart.S
-obj/gemdosif.o: aes/gemdosif.S
-obj/gemasm.o: aes/gemasm.S
-obj/gsx2.o: aes/gsx2.S
-obj/large.o: aes/large.S
-obj/optimopt.o: aes/optimopt.S
-obj/coma.o: cli/coma.S
-obj/deskstart.o: desk/deskstart.S

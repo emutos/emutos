@@ -734,3 +734,11 @@ Start... early ages
 - changed for consistancy CZ to CS as a country name (LVL)
 - Makefile: fixed typo for desktop obj files (LVL)
 - added some const keywords here and there (LVL)
+
+10. Apr. 2002
+- Added additional application stack in aes/gemshlib.c so that it is now
+  possible to start another application at least. However, it will still
+  crash when it finishs. (THH)
+- Some minor bug fixes in aes and desk. (THH)
+- Disabled the autoexec stuff in bios/startup.S, I think creating a new
+  baspage for that is not really necessary (THH).

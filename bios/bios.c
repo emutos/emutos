@@ -220,6 +220,7 @@ void startup(void)
     halt();
 }
 
+
 /*
  * autoexec - run programs in auto folder
  *
@@ -237,9 +238,13 @@ void autoexec(void)
         return;
 
     /* create a basepage, and run the do_autoexec routine as a program */
+#if 0  /* I think we can savely call do_autoexec directly since there is already a  default basepage- THH */
     pd = (PD *) trap_1( 0x4b, 5, "", "", "");
     pd->p_tbase = (LONG) strtautoexec;
     launchautoexec(pd);
+#else
+    do_autoexec();
+#endif
 }
 
 void do_autoexec(void)
