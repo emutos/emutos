@@ -129,7 +129,7 @@ static inline long Rwabs(short rwflag, long buf, short count,
 
 
 
-static inline long Setexc(short vecnum, long vec)
+static inline long Setexc(short vecnum, long vec )
 {
     register long retval __asm__("d0");
     short _a = vecnum;

@@ -77,6 +77,7 @@ t1spsav:
 t1regsav:
         ds.l    2
 
+#if 0
 /*
  * _trap13 - perform trap 13 supervisor call on behalf of caller
  */
@@ -92,6 +93,7 @@ _trap13:
         .even
 biosav:
         ds.l   1
+#endif
 
 
 

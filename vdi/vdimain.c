@@ -18,7 +18,7 @@
 #include "styles.h"
 #include "kprint.h"
 
-#include "asm.h"
+#include "biosbind.h"
 
 
 
@@ -116,15 +116,15 @@ void dqt_fontinfo();     /* 131 - fce820 */
 
 /* External declarations */
 //extern struct attribute *trap();
-extern long trap13(int, ...);
+//extern long trap13(int, ...);
 
 extern void escfn2();
 extern void escfn3();
 extern void vdimouse_init();
 extern void vdimouse_exit();
 
-#define tickcal() trap13(0x06)          /* ms between timer C calls */
-#define setexec(a,b) trap13(0x05, a,b)  /* change exception vector */
+//#define tickcal() trap13(0x06)          /* ms between timer C calls */
+//#define setexec(a,b) trap13(0x05, a,b)  /* change exception vector */
 
 #define X_MALLOC 0x48
 #define X_MFREE 0x49
@@ -444,7 +444,7 @@ void v_opnwk()
 
     ints_off();                         // disable interrupts
     tim_chain = (void(*)(int))          // save old vector
-        setexec(0x100, tick_int);       // set etv_timer to tick_int
+        Setexc(0x100, (long)tick_int);	// set etv_timer to tick_int
     ints_on();                          // enable interrupts
 
     vdimouse_init();                    // initialize mouse
@@ -470,7 +470,7 @@ void v_clswk()
 
     /* Now de-initialize the lower level things */
     ints_off();                         // disable interrupts
-    setexec(0x100, tim_chain);          // set etv_timer to tick_int
+    Setexc(0x100, (long)tim_chain);		// set etv_timer to tick_int
     ints_on();                          // enable interrupts
 
     vdimouse_exit();                    // initialize mouse
@@ -746,7 +746,7 @@ void vex_timv()
 
     ints_on();
 
-    INTOUT[0] = (WORD)tickcal();
+    INTOUT[0] = (WORD)Tickcal();
 }
 
 

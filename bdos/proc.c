@@ -508,7 +508,7 @@ void    xterm(UWORD rc)
 {
     PD *p = run;
 
-    (* (WORD(*)()) Setexc(0x102,-1L))() ;     /*  call user term handler */
+    (* (WORD(*)()) Setexc(0x102, (long)-1L))();	/*  call user term handler */
 
     run = run->p_parent;
     ixterm(p);
