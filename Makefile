@@ -90,7 +90,8 @@ NATIVECC = gcc -Wall
 BIOSCSRC = kprint.c xbios.c chardev.c blkdev.c bios.c clock.c \
            fnt8x16.c fnt8x8.c fnt6x6.c mfp.c version.c \
            midi.c ikbd.c sound.c floppy.c disk.c screen.c lineainit.c \
-           mouse.c initinfo.c cookie.c machine.c nvram.c country.c
+           mouse.c initinfo.c cookie.c machine.c nvram.c country.c \
+	   cz6x6.c cz8x8.c cz8x16.c biosmem.c
 BIOSSSRC = tosvars.S startup.S lineavars.S vectors.S aciavecs.S \
            processor.S memory.S linea.S conout.S detect.S panicasm.S
 
