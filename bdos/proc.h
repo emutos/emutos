@@ -31,8 +31,8 @@ extern	PD	*run;
  * in proc.c
  */
 
-//long xexec(WORD flg, BYTE *s, BYTE *t, BYTE *v);
-long xexec(WORD, BYTE *, BYTE *, BYTE *);
+//long xexec(WORD flg, char *s, char *t, char *v);
+long xexec(WORD, char *, char *, char *);
 void x0term(void);
 void xterm(UWORD rc)  NORETURN ;
 WORD xtermres(long blkln, WORD rc);
@@ -41,7 +41,7 @@ WORD xtermres(long blkln, WORD rc);
  * in kpgmld.h
  */
 
-ERROR xpgmld(BYTE *s , PD *p);
+ERROR xpgmld(char *s , PD *p);
 
 /*
  * in rwa.S

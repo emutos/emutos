@@ -22,7 +22,9 @@ int has_nvram;
 static UBYTE buf[48];
 static int inited;
 
-/* detect and init the nvram */
+/*
+ * detect_nvram - detect and init the nvram
+ */
 void detect_nvram(void)
 {
     if(check_read_byte(0xffff8961)) {
@@ -33,6 +35,9 @@ void detect_nvram(void)
     }
 }
 
+/*
+ * get_nvram_rtc - read the realtime clock from NVRAM
+ */
 UBYTE get_nvram_rtc(int index)
 {
     volatile UBYTE * addr_reg = (volatile UBYTE *)0xffff8961;
@@ -49,6 +54,9 @@ UBYTE get_nvram_rtc(int index)
     return ret_value;
 }
 
+/*
+ * set_nvram_rtc - set the realtime clock in NVRAM
+ */
 void set_nvram_rtc(int index, int data)
 {
     volatile UBYTE * addr_reg = (volatile UBYTE *)0xffff8961;
@@ -62,9 +70,9 @@ void set_nvram_rtc(int index, int data)
     }
 }
 
-/* XBios function */
-/* internal checksum handling */
-
+/*
+ * compute_sum - internal checksum handling
+ */
 static UWORD compute_sum(void)
 {
     UWORD sum;
@@ -93,8 +101,16 @@ static void set_sum(UWORD sum)
     *data_reg = buf[49] = sum;
 }
 
-/* XBios function */
-
+/*
+ * nvmaccess - XBIOS read or set NVRAM
+ *
+ * Arguments:
+ *
+ *   type   - 0:read, 1:write, 2:reset
+ *   start  - start address for operation
+ *   count  - count of bytes
+ *   buffer - buffer for operations
+ */
 WORD nvmaccess(WORD type, WORD start, WORD count, PTR buffer)
 {
     volatile UBYTE * addr_reg = (volatile UBYTE *)0xffff8961;

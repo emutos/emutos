@@ -329,3 +329,7 @@ Start... early ages
 
 28. Nov. 2001
 - Did put all *.txt files in doc/, except this.   (MAD)
+
+08. Dec 2001
+- changed back all BYTE to char in bdos/*.[ch]
+- added/marked up some comments in bios/nvram.c

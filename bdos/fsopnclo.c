@@ -58,12 +58,12 @@
  * forward prototypes
  */
 
-static long ixopen(BYTE *name, int mod);
+static long ixopen(char *name, int mod);
 static long opnfil(FCB *f, DND *dn, int mod);
 static long makopn(FCB *f, DND *dn, int h, int mod);
-static FTAB *sftsrch(int field, BYTE *ptr);
+static FTAB *sftsrch(int field, char *ptr);
 static void sftdel(FTAB *sftp);
-static BOOLEAN match1(BYTE *ref, BYTE *test);
+static BOOLEAN match1(char *ref, char *test);
 
 /*
 **  used in calls to sftsrch to distinguish which field we are matching on
@@ -77,14 +77,14 @@ static BOOLEAN match1(BYTE *ref, BYTE *test);
 **	call sftsrch with correct parms
 */
 
-#define SFTOFDSRCH(o)	sftsrch( SFTOFD , (BYTE *) o )
+#define SFTOFDSRCH(o)	sftsrch( SFTOFD , (char *) o )
 
 /*
 **  SFTOWNSRCH - search sft for entry with matching PD
 **	call sftsrch with correct parms
 */
 
-#define SFTOWNSRCH(p)	sftsrch( SFTOWN , (BYTE *) p )
+#define SFTOWNSRCH(p)	sftsrch( SFTOWN , (char *) p )
 
 
 /*
@@ -101,7 +101,7 @@ static BOOLEAN match1(BYTE *ref, BYTE *test);
 **	Last modified	SCC	13 May 85
 */
 
-long	xcreat(BYTE *name, BYTE attr) 
+long	xcreat(char *name, char attr) 
 {
 	return(ixcreat(name, attr & 0xEF));
 }
@@ -113,12 +113,12 @@ long	xcreat(BYTE *name, BYTE attr)
 /*  name: path name of file
  *  attr: atttributes
  */		
-long ixcreat(BYTE *name, BYTE attr)
+long ixcreat(char *name, char attr)
 {
 	REG DND *dn;
 	REG OFD *fd;
 	FCB *f;
-	BYTE *s,n[2],a[11];			/*  M01.01.03	*/
+	char *s,n[2],a[11];			/*  M01.01.03	*/
 	int i,f2;				/*  M01.01.03	*/
 	long pos,rc;
 
@@ -191,7 +191,7 @@ long ixcreat(BYTE *name, BYTE attr)
 	ixwrite(fd,11L,a);	/* write name, set dirty flag */
 	ixclose(fd,CL_DIR);	/* partial close to flush */
 	ixlseek(fd,pos);
-	s = (BYTE*) ixread(fd,32L,NULPTR);
+	s = (char*) ixread(fd,32L,NULPTR);
 	f2 = rc = opnfil((FCB*)s,dn, ((f->f_attrib & FA_RO) ? 0 : 2));
 
 	if (rc < 0)
@@ -219,7 +219,7 @@ long ixcreat(BYTE *name, BYTE attr)
 **	Last modified	SCC	5 Apr 85
 */
 
-long	xopen(BYTE *name, int mod) 
+long	xopen(char *name, int mod) 
 {
 	return (ixopen (name, mod));
 }
@@ -233,11 +233,11 @@ long	xopen(BYTE *name, int mod)
 */
 
 static long 
-ixopen(BYTE *name, int mod)
+ixopen(char *name, int mod)
 {
 	FCB *f;
 	DND *dn;
-	BYTE *s;
+	char *s;
 	long pos;
 
 	/* first find path */
@@ -363,7 +363,7 @@ static long makopn(FCB *f, DND *dn, int h, int mod)
  * ptr: ptr to match on 
  */
 
-static FTAB *sftsrch(int field, BYTE *ptr)
+static FTAB *sftsrch(int field, char *ptr)
 {
 	REG FTAB	*sftp ; /*  scan ptr for sft			*/
 	REG int 	i ;
@@ -508,11 +508,11 @@ long	ixclose(OFD *fd, int part)
 		{
 			tmp = fd->o_fileln;		/* [1] */
 			fd->o_fileln = 0;
-			ixwrite(fd->o_dirfil,10L,(BYTE *)&fd->o_time);
+			ixwrite(fd->o_dirfil,10L,(char *)&fd->o_time);
 			fd->o_fileln = tmp;
 		}
 		else
-			ixwrite(fd->o_dirfil,10L,(BYTE *)&fd->o_time);
+			ixwrite(fd->o_dirfil,10L,(char *)&fd->o_time);
 
 		swp68(fd->o_strtcl);
 		swp68l(fd->o_fileln);
@@ -567,11 +567,11 @@ long	ixclose(OFD *fd, int part)
 **
 */
 
-long xunlink(BYTE *name) 
+long xunlink(char *name) 
 {
 	REG DND *dn;
 	REG FCB *f;
-	BYTE *s;
+	char *s;
 	long pos;
 
  /* first find path */
@@ -620,7 +620,7 @@ long ixdel(DND *dn, FCB *f, long pos)
 	DMD *dm;
 	REG int n2;
 	int n;
-	BYTE c;
+	char c;
 
 
 	for (fd = dn->d_files; fd; fd = fd->o_link)
@@ -675,9 +675,9 @@ long ixdel(DND *dn, FCB *f, long pos)
 **	by scc
 */
 
-static BOOLEAN match1(BYTE *ref, BYTE *test)
+static BOOLEAN match1(char *ref, char *test)
 {
-	REG BYTE	*t ;
+	REG char	*t ;
 
 	while( *ref )
 	{

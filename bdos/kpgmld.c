@@ -39,7 +39,7 @@ static LONG	pgfix01(LONG nrelbytes, PGMINFO *pi);
  * @p - ptr to PD
  */
 
-ERROR	xpgmld(BYTE *s , PD *p )
+ERROR	xpgmld(char *s , PD *p )
 {
     ERROR		r ;
     FH		h ;
@@ -78,7 +78,7 @@ ERROR	xpgmld(BYTE *s , PD *p )
  *  lastcp - used to keep track of the code ptr betwee pgmld01 and pgfix01
  */
 
-static BYTE	*lastcp ;
+static char	*lastcp ;
 
 
 /*
@@ -104,7 +104,7 @@ static ERROR	pgmld01( FH h , PD *pdptr )
 	REG PD		*p ;
 	PGMHDR01	hdr ;			
 	PGMINFO 	pinfo ; 	
-	BYTE		*cp ;
+	char		*cp ;
 	LONG		relst ;
 	LONG		flen ;
 	ERROR		r ;
@@ -131,7 +131,7 @@ static ERROR	pgmld01( FH h , PD *pdptr )
 	pi->pi_blen = hd->h01_blen ;
 	pi->pi_slen = hd->h01_slen ;
 	pi->pi_tpalen = p->p_hitpa - p->p_lowtpa - sizeof(PD) ;
-	pi->pi_tbase = (BYTE *) (p+1) ; 	/*  1st byte after PD	*/
+	pi->pi_tbase = (char *) (p+1) ; 	/*  1st byte after PD	*/
 	pi->pi_bbase = pi->pi_tbase + flen ;	
 	pi->pi_dbase = pi->pi_tbase + pi->pi_tlen ;
 
@@ -148,8 +148,8 @@ static ERROR	pgmld01( FH h , PD *pdptr )
 	**  initialize PD fields
 	*/
 
-	/* LVL bmove( (BYTE*)&pi->pi_tbase , 
-         *            (BYTE*)&p->p_tbase , 
+	/* LVL bmove( (char*)&pi->pi_tbase , 
+         *            (char*)&p->p_tbase , 
 	 *	      6 * sizeof(long) ) ;
 	 */
 	memcpy(&p->p_tbase, &pi->pi_tbase, 6 * sizeof(long));
@@ -286,7 +286,7 @@ static LONG	pgfix01( LONG nrelbytes , PGMINFO *pi )
 /*
 ** [1]	Alcyon manages to sign extend the byte into the long which is added to
 **	cp.  It does this even though rp is delcared a pointer to an unsigned 
-**	BYTE (BYTE).  I think this is a bug, and shouldn't occur in other
+**	char (char).  I think this is a bug, and shouldn't occur in other
 **	compilers; but then, what do I know? - ktb
 */
 

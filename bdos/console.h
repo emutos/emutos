@@ -29,9 +29,9 @@ long xconin(void);
 long x8in(void);
 long xauxin(void);
 long rawconio(int parm);
-void xprt_line(BYTE *p);
-void readline(BYTE *p);
-int cgets(int h, int maxlen, BYTE *buf);
+void xprt_line(char *p);
+void readline(char *p);
+int cgets(int h, int maxlen, char *buf);
 long conin(int h); 
 void tabout(int h, int ch);
 

@@ -397,7 +397,7 @@
  *  xfr2usr -
  */
 
-void   xfr2usr(REG int n, REG BYTE *s, REG BYTE *d)
+void   xfr2usr(REG int n, REG char *s, REG char *d)
 {
     while (n--)
         *d++ = *s++;
@@ -409,7 +409,7 @@ void   xfr2usr(REG int n, REG BYTE *s, REG BYTE *d)
  *  usr2xfr -
  */
 
-void    usr2xfr(REG int n, REG BYTE *d, REG BYTE *s)
+void    usr2xfr(REG int n, REG char *d, REG char *s)
 {
     while (n--)
         *d++ = *s++;
@@ -421,7 +421,7 @@ void    usr2xfr(REG int n, REG BYTE *d, REG BYTE *s)
  *  uc - utility routine to return the upper-case of character passed in
  */
 
-BYTE    uc(REG BYTE c)
+char    uc(REG char c)
 {
 	return((c >= 'a') && (c <= 'z') ? c & 0x5F : c);
 }
@@ -432,7 +432,7 @@ BYTE    uc(REG BYTE c)
  *  xgetdta - Function 0x2F	f_getdta
  */
 
-BYTE    *xgetdta(void)      /* return address of dta */
+char    *xgetdta(void)      /* return address of dta */
 {
 	return(run->p_xdta);
 }
@@ -442,7 +442,7 @@ BYTE    *xgetdta(void)      /* return address of dta */
  *  xsetdta - Function 0x1A	f_setdta
  */
 
-void    xsetdta(BYTE *addr)     /* set transfer address to addr */
+void    xsetdta(char *addr)     /* set transfer address to addr */
 {
 	run->p_xdta = addr;
 }

@@ -158,7 +158,8 @@ void initinfo()
     pair_start(_("Screen start: ")); cprintf("0x%lx", (long)v_bas_ad);
     pair_end();
     pair_start(_("Boot drive :  ")); cprintf("%c:", bootdev+65); pair_end();
-    pair_start(_("Curr. time :  ")); cprint_asctime(); pair_end();
+    // MAD - does not work for now:
+    // pair_start(_("Curr. time :  ")); cprint_asctime(); pair_end();
 
     /* Just a separator */
     cprintf("\n\r");

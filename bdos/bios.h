@@ -102,11 +102,11 @@ PD
     long	p_blen;
     /* 0x20 */
     long	p_0fill[3] ;
-    BYTE	*p_env;
+    char	*p_env;
     /* 0x30 */
     long	p_1fill[20] ;
     /* 0x80 */
-    BYTE	p_cmdlin[0x80];
+    char	p_cmdlin[0x80];
 } ;
 #endif
 
@@ -156,7 +156,7 @@ BCB
     int	b_bufrec;	/*  record number		*/
     BOOLEAN b_dirty;	/*  true if buffer dirty	*/
     long	b_dm;		/*  reserved for file system	*/
-    BYTE	*b_bufr;	/*  pointer to buffer		*/
+    char	*b_bufr;	/*  pointer to buffer		*/
 } ;
 
 /*

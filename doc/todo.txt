@@ -11,3 +11,4 @@
 - add clock driver for nvram clock
 - Go on with implementing mouse driver
 - kpanic() and like should print on screen then use STOP opcode.
+- since nvram.c STonX does not run anymore

@@ -101,17 +101,17 @@ PD	/* this is the basepage format */
 	long	p_bbase;
 	long	p_blen;
 /* 0x20 */
-	BYTE	*p_xdta;
+	char	*p_xdta;
 	PD	*p_parent;	/* parent PD */
 	long	p_0fill[1];
-	BYTE	*p_env; 	/* at offset 2ch (eat your heart out, Lee) */
+	char	*p_env; 	/* at offset 2ch (eat your heart out, Lee) */
 /* 0x30 */
-	BYTE	p_uft[NUMSTD];	/* index into sys file table for std files */
-	BYTE	p_lddrv;
-	BYTE	p_curdrv;
+	char	p_uft[NUMSTD];	/* index into sys file table for std files */
+	char	p_lddrv;
+	char	p_curdrv;
 	long	p_1fill[2];
 /* 0x40 */
-	BYTE	p_curdir[NUMCURDIR];	/* index into sys dir table */
+	char	p_curdir[NUMCURDIR];	/* index into sys dir table */
 /* 0x50 */
 	long	p_2fill[4];
 /* 0x60 */
@@ -119,7 +119,7 @@ PD	/* this is the basepage format */
 	long	p_dreg[1];	/* dreg[0] */
 	long	p_areg[5];	/* areg[3..7] */
 /* 0x80 */
-	BYTE	p_cmdlin[PDCLSIZE];
+	char	p_cmdlin[PDCLSIZE];
 } ;
 
 
@@ -179,9 +179,9 @@ OFD
 
 FCB
 {
-	BYTE	f_name[11];
-	BYTE	f_attrib;
-	BYTE	f_fill[10];
+	char	f_name[11];
+	char	f_attrib;
+	char	f_fill[10];
 	int	f_time;
 	int	f_date;
 	CLNO	f_clust;
@@ -200,8 +200,8 @@ FCB
 
 DND /* directory node descriptor */
 {
-	BYTE	d_name[11];	/*  directory name			*/
-	BYTE	d_fill; 	/*  attributes? 			*/
+	char	d_name[11];	/*  directory name			*/
+	char	d_fill; 	/*  attributes? 			*/
 	int	d_flag;
 	CLNO	d_strtcl;	/*  starting cluster number of dir	*/
 
@@ -268,7 +268,7 @@ BCB
 	int	b_bufrec;	/*  record number		*/
 	BOOLEAN b_dirty;	/*  true if buffer dirty	*/
 	long	b_dm;		/*  reserved for file system	*/
-	BYTE	*b_bufr;	/*  pointer to buffer		*/
+	char	*b_bufr;	/*  pointer to buffer		*/
 } ;
 
 /*
@@ -293,16 +293,16 @@ FTAB
 
 DTAINFO
 {
-	BYTE	dt_name[12] ;	/*  file name: filename.typ	00-11	*/
+	char	dt_name[12] ;	/*  file name: filename.typ	00-11	*/
 	long	dt_pos ;	/*  dir position		12-15	*/
 	DND	*dt_dnd ;	/*  pointer to DND		16-19	*/
-	BYTE	dt_attr ;	/*  attributes of file		20	*/
+	char	dt_attr ;	/*  attributes of file		20	*/
 				/*  --	below must not change -- [1]	*/
-	BYTE	dt_fattr ;	/*  attrib from fcb		21	*/
+	char	dt_fattr ;	/*  attrib from fcb		21	*/
 	int	dt_time ;	/*  time field from fcb 	22-23	*/
 	int	dt_date ;	/*  date field from fcb 	24-25	*/
 	long	dt_fileln ;	/*  file length field from fcb	26-29	*/
-	BYTE	dt_fname[12] ;	/*  file name from fcb		30-41	*/
+	char	dt_fname[12] ;	/*  file name from fcb		30-41	*/
 } ;				/*    includes null terminator		*/
 
 #include "bios.h"
@@ -358,7 +358,7 @@ DTAINFO
 
 extern	DND	*dirtbl[] ;
 extern	DMD	*drvtbl[] ;
-extern	BYTE	diruse[] ;
+extern	char	diruse[] ;
 extern	int	drvsel ;
 extern	PD	*run ;
 extern	int	logmsk[] ;
@@ -413,18 +413,18 @@ long dup(long h);
  */
 
 /* create file with specified name, attributes */
-long xcreat(BYTE *name, BYTE attr);
-long ixcreat(BYTE *name, BYTE attr);
+long xcreat(char *name, char attr);
+long ixcreat(char *name, char attr);
 
 /* open a file (path name) */
-long xopen(BYTE *name, int mod);
+long xopen(char *name, int mod);
 
 /* Close a file */
 long xclose(int h);
 long ixclose(OFD *fd, int part);
 
 /* remove a file */
-long xunlink(BYTE *name);
+long xunlink(char *name);
 /* internal delete file. */
 long ixdel(DND *dn, FCB *f, long pos);
 
@@ -435,9 +435,9 @@ long ixdel(DND *dn, FCB *f, long pos);
 /* ??? */
 void flush(BCB *b);
 /* return the ptr to the buffer containing the desired record */
-BYTE *getrec(int recn, DMD *dm, int wrtflg);
+char *getrec(int recn, DMD *dm, int wrtflg);
 /* pack into user buffer */
-BYTE *packit(REG BYTE *s, REG BYTE *d);
+char *packit(REG char *s, REG char *d);
 
 /*
  * in fsfat.c
@@ -467,30 +467,30 @@ long ixwrite(OFD *p, long len, void *ubufr);
  * in fsdir.c
  */
 
-long xmkdir(BYTE *s);
-long xrmdir(BYTE *p);
-long xchmod(BYTE *p, int wrt, BYTE mod);
-long ixsfirst(BYTE *name, REG WORD att, REG DTAINFO *addr);
-long xsfirst(BYTE *name, int att);
+long xmkdir(char *s);
+long xrmdir(char *p);
+long xchmod(char *p, int wrt, char mod);
+long ixsfirst(char *name, REG WORD att, REG DTAINFO *addr);
+long xsfirst(char *name, int att);
 long xsnext(void); 
 void xgsdtof(int *buf, int h, int wrt);
-void builds( BYTE *s1 , BYTE *s2 );
-long xrename(int n, BYTE *p1, BYTE *p2);
-long xchdir(BYTE *p);
-long xgetdir(BYTE *buf, int drv);
+void builds( char *s1 , char *s2 );
+long xrename(int n, char *p1, char *p2);
+long xchdir(char *p);
+long xgetdir(char *buf, int drv);
 FCB *dirinit(DND *dn);
-DND *findit(BYTE *name, BYTE **sp, int dflag);
-FCB *scan(REG DND *dnd, BYTE *n, WORD att, LONG *posp);
+DND *findit(char *name, char **sp, int dflag);
+FCB *scan(REG DND *dnd, char *n, WORD att, LONG *posp);
 
 /*
  * in fsmain.c
  */
 
-void xfr2usr(int n, BYTE *s, BYTE *d);
-void usr2xfr(int n, BYTE *d, BYTE *s);
-BYTE uc(REG BYTE c);
-BYTE *xgetdta(void);
-void xsetdta(BYTE *addr);
+void xfr2usr(int n, char *s, char *d);
+void usr2xfr(int n, char *d, char *s);
+char uc(REG char c);
+char *xgetdta(void);
+void xsetdta(char *addr);
 long xsetdrv(int drv);
 long xgetdrv(void); 
 OFD  *makofd(REG DND *p);

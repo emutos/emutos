@@ -29,7 +29,7 @@
  */
 
 static void ixterm( PD *r );
-static WORD envsize( BYTE *env );
+static WORD envsize( char *env );
 
 /*
  * global variables
@@ -97,9 +97,9 @@ static void	ixterm( PD *r )
  * double null.
  */
 
-static  WORD envsize( BYTE *env )
+static  WORD envsize( char *env )
 {
-    REG BYTE	*e ;
+    REG char	*e ;
     REG WORD 	cnt ;
 
     for( e = env, cnt = 0 ; !(*e == NULL && *(e+1) == NULL) ; ++e, ++cnt )
@@ -125,10 +125,10 @@ static  WORD envsize( BYTE *env )
 #warning "(I don't know how to get rid of "
 #warning "the following three warnings)"
 
-long	xexec(WORD flg, BYTE *s, BYTE *t, BYTE *v)
+long	xexec(WORD flg, char *s, char *t, char *v)
 {	
     PD	*p;
-    BYTE *b, *e;
+    char *b, *e;
     WORD i, h;			/*  M01.01.04		*/
     long rc, max;
     MD	*m, *env;
@@ -206,7 +206,7 @@ long	xexec(WORD flg, BYTE *s, BYTE *t, BYTE *v)
             return(ENSMEM) ;
         }
 
-        e = (BYTE *) env->m_start;
+        e = (char *) env->m_start;
 
         /*
          **  now copy it
@@ -248,12 +248,12 @@ long	xexec(WORD flg, BYTE *s, BYTE *t, BYTE *v)
          * initialize the PD (first, by zero'ing it out)
          */
 
-        bzero( (BYTE *) p , sizeof(PD)	) ;
+        bzero( (char *) p , sizeof(PD)	) ;
 
         p->p_lowtpa = (long) p ;		/*  M01.01.06	*/
         p->p_hitpa  = (long) p	+  max ;	/*  M01.01.06	*/
         p->p_xdta = &p->p_cmdlin[0] ;	/* default p_xdta is p_cmdlin */
-        p->p_env = (BYTE *) env->m_start ;
+        p->p_env = (char *) env->m_start ;
 
 
         /* now inherit standard files from me */
@@ -282,7 +282,7 @@ long	xexec(WORD flg, BYTE *s, BYTE *t, BYTE *v)
             *b++ = *t++;
 
         *b++ = 0;
-        t = (BYTE *) p;
+        t = (char *) p;
     }
 
     /*
