@@ -784,13 +784,6 @@ _printout:
         dc.l 0          | Printing subroutine
         rts
 
-|_kprintf:
-|       move.w sr, -(sp)        | Save status register
-|        move.w #0x2700, sr      | make routine uninteruptable 
-|        jsr _doprint            | do the real work of printing
-|        move.w (sp)+, sr       | restore status register
-|       rts
-
 
 
 | ==== Use cartridge, if present ============================================
@@ -824,16 +817,12 @@ cartover:
         
 
 
-| ==== STonX - read/write sectors ===========================================
+| ==== Read/write sectors ===================================================
 _drv_rw:
         pea drv_rwmsg
         bsr _kprint
         addq #4,sp
-
-|       dc.w 0xa0ff     | jump native 
-|       dc.l 1
-
-        rts
+        rts             | Just a dummy
 
 drv_rwmsg:
         .ascii "BIOS: hdv_rw - Native Disk read/write\n\0"
@@ -841,18 +830,12 @@ drv_rwmsg:
 
 
 
-| ==== STonX - Get the BIOS parameter block =================================
+| ==== Get the BIOS parameter block =========================================
 _drv_bpb:
-
-
-|       pea drv_bpbmsg  | Print, what's going on
-|       bsr _kprint
-|       addq #4,sp
-
-|       dc.w 0xa0ff     | jump native 
-|       dc.l 2
-
-        rts
+        pea drv_bpbmsg  | Print, what's going on
+        bsr _kprint
+        addq #4,sp
+        rts             | Just a dummy
 
 drv_bpbmsg:
         .ascii "BIOS: hdv_bpb - Got native Bios Parameter Block for drive\n\0"
@@ -860,7 +843,7 @@ drv_bpbmsg:
 
 
 
-| ==== STonX - Init the Harddrive ===========================================
+| ==== Init the Harddrive ===================================================
 _drv_init:
         pea drv_initmsg
         bsr _kprint
@@ -871,7 +854,9 @@ drv_initmsg:
         .ascii "BIOS: Do dummy drv_init - Init the Harddrive (fake)\n\0"
         .even
 
-| ==== STonX - Did the media (Floppy) change? ===============================
+
+
+| ==== Did the media (Floppy) change? =======================================
 _drv_mediach:   
         moveq #0,d0     | just a dummy 
         rts             | STonX can not change floppies (till now)
@@ -889,7 +874,9 @@ flopboot:
 rtnflop:        
         rts
 
-| ==== STonX - Boot the Harddrive ===========================================
+
+
+| ==== Boot the Harddrive ===================================================
 _drv_boot:      
         pea hdv_bootmsg
         bsr _kprint
@@ -910,6 +897,8 @@ _drv_boot:
 hdv_bootmsg:
         .ascii "BIOS: Do hdv_boot - Boot from specific drive\n\0"
         .even
+
+
 
 | ==== trap_1 - trap 1 (GEMDOS) entry point =================================
 

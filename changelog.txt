@@ -169,3 +169,5 @@ Start... early ages
 - Cleaned up conio.c
 - Cleaned up output stuff in bios.c
 - Put all linea stuff in bios/linea.s
+- Cleaned up some minor things in bdos/proc.c
+

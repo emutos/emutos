@@ -17,10 +17,10 @@
 
 EXTERN	UWORD	off_first[], dat_first[];
 
-struct font_head first ={
+struct font_head f6x6 ={
     1,			/*   WORD font_id	*/
     8,			/*   WORD point		*/
-    "system font",		/*   BYTE name[32]	*/
+    "6x6 system font",		/*   BYTE name[32]	*/
     0,			/*   UWORD first_ade	*/
     255,		/*   UWORD last_ade	*/
     4,	    		/*   UWORD top		*/
