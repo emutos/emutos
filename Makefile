@@ -61,9 +61,9 @@ INDENT = indent -kr
 LD = m68k-atari-mint-ld
 LDFLAGS = -L/usr/lib/gcc-lib/m68k-atari-mint/2.95.3/mshort -lgcc
 LDFLROM = -Ttext=0xfc0000 -Tbss=0x000000 
-LDFLRAM =  -Ttext=0x10000 -Tbss=0x000000 
 LDFLFAL = -Ttext=0xe00000 -Tbss=0x000000 
 
+# (relocation for RAM TOS is derived dynamically from the BSS size)
 
 # Assembler with options for Motorola like syntax (68000 cpu)
 AS = m68k-atari-mint-gcc -x assembler
@@ -224,13 +224,20 @@ etosfalc.img: etosfalc.tmp
 	rm -f etosfalc.tmp empty.tmp
 
 #
-# ram
+# ram - In two stages. first link EmuTOS to know the top address of bss, 
+# then use this value to relocate the RamTOS. 
+# the top bss address is taken from the disassembly map.
 #
 
 ram: ramtos.img boot.prg
 
-ramtos.img: $(OBJECTS)
-	$(LD) -oformat binary -o $@ $(OBJECTS) $(LDFLAGS) $(LDFLRAM)
+ramtos.img: $(OBJECTS) map 
+	@TOPBSS=`grep __end map | sed -e 's/^ *0x\([^ ]*\) .*$$/\1/'`; \
+	echo $(LD) -oformat binary -o $@ $(OBJECTS) $(LDFLAGS) \
+		-Ttext=0x$$TOPBSS -Tbss=0 ; \
+	$(LD) -oformat binary -o $@ $(OBJECTS) $(LDFLAGS) \
+		-Ttext=0x$$TOPBSS -Tbss=0 ;
+
 
 boot.prg: obj/minicrt.o obj/boot.o obj/bootasm.o
 	$(LD) -s -o $@ obj/minicrt.o obj/boot.o obj/bootasm.o $(LDFLAGS) 
@@ -485,10 +492,16 @@ tgz:	distclean
 #
 
 nodepend:
-	cp Makefile Makefile.bak
-	chmod +w Makefile
 	sed -n '1,/^# DO NOT DELETE/p' < Makefile > Makefile.new
-	mv Makefile.new Makefile
+	@if cmp -s Makefile.new Makefile ; then \
+		echo rm -f Makefile.new ; \
+		rm -f Makefile.new ; \
+	else \
+		echo cp Makefile Makefile.bak ; \
+		cp Makefile Makefile.bak ; \
+		echo mv Makefile.new Makefile ; \
+		mv Makefile.new Makefile ; \
+	fi
 
 depend: 
 	cp Makefile Makefile.bak
