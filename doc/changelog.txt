@@ -1533,3 +1533,8 @@ Start... early ages
 2003-07-31
 - doc/*: updated doc to clarify country-oriented misunderstandings (LVL)
 
+2003-08-02
+- po/fr.po: updated
+- tools/bug.c Makefile: bug produces util/langs.c directly; bug no longer
+  complains about unknown charsets. (LVL)
+
