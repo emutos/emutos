@@ -96,54 +96,6 @@ ERROR   xpgmld(char *s, PD *p, FH h, PGMHDR01 *hd )
     return r;
 }
 
-/*
- * the old_ implementation is for reference only, I do not guarantee that it
- * works.
- */
-
-ERROR   old_xpgmld(char *s, PD *p)
-{
-    ERROR       r ;
-    FH          h ;
-    WORD        magic ;
-    PGMHDR01    hdr ;
-
-    r = xopen( s , 0 );         /* open file for read */
-    if( r < 0L  )
-        return( r ) ;
-
-    h = (FH) r ;                /* get file handle */
-
-    r = xread( h, 2L, &magic);  /* read magic number */
-    if( r < 0L )
-        return( r ) ;
-
-    /*
-     *  the following switch statement will allow us to call different
-     *  strategies for loading different types of files
-     */
-
-    switch( magic )
-    {
-    case 0x0601a:
-#if DBGKPGMLD
-        kprintf("BDOS xpgmld: 0x601a executable file format!\n") ;
-#endif
-        r = pgmld01( h , p , &hdr ) ;
-#if DBGKPGMLD
-        kprintf("BDOS pgmld01: Return code: 0x%lx\n", r) ;
-#endif
-        break ;
-    default:
-        r = EPLFMT ;
-#if DBGKPGMLD
-        kprintf("BDOS xpgmld: Unknown executable format!\n") ;
-#endif
-    }
-
-    xclose( h ) ;
-    return( r ) ;
-}
 
 
 
@@ -281,15 +233,17 @@ static ERROR    pgmld01( FH h , PD *pdptr, PGMHDR01 *hd)
             return( r );
     }
 
-    /*  zero out the bss  */
+    /* clear the bss or the whole heap */
 
-    if( pi->pi_blen != 0 )
-    {
-        *pi->pi_bbase = 0 ;
-        if( pi->pi_blen > 1 ) {
-            /* LVL lbmove(pi->pi_bbase, pi->pi_bbase+1, pi->pi_blen-1) ; */
-            bzero( pi->pi_bbase, pi->pi_blen);
-        }
+    if( hd->h01_flags & PF_FASTLOAD ) {
+        /* clear only the bss */ 
+        flen =  pi->pi_blen;
+    } else {
+        /* clear the whole heap */
+        flen = (long)p->p_hitpa - (long)pi->pi_bbase;
+    }
+    if(flen > 0) {
+        bzero(pi->pi_bbase, flen);
     }
 
     return( SUCCESS ) ;
