@@ -555,6 +555,10 @@ Start... early ages
 - removed cli/Makefile (LVL)
 - implemented the font_ring as 3 lists of linked fontheaders (MAD)
 - documented all tosvars in bios/tosvar.h till 0x5b0 (MAD)
+
+20. Jan. 2002
+- in bios/lineainit.c there is now the sysfonts array for linea.
+  font_ring is not longer used by linea (MAD).
 - keyboard reset (Alt+Ctrl+Del(+RShift)) implemented (joy)
 - trying to get 16-bit sector number working in BDOS - one workaround
   in fsbuf.c makes DIR (fsfirst/fsnext) working correctly (it seems).

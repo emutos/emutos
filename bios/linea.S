@@ -55,7 +55,7 @@ _linea_0:
         lea     line_a_vars,a0  // get base address for line a variables
         move.l  a0,d0
 
-        lea     _font_ring,a1   // get pointer to the three system font headers
+        lea     _sysfonts,a1   // get pointer to the three system font headers
         
         lea     linea_vecs,a2   // get pointer to table of the Line-A routines
         rts

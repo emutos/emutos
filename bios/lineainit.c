@@ -63,6 +63,8 @@ void init_fonts(WORD vmode);
 
 
 /* Copies of the ROM-fontheaders */
+struct font_head *sysfonts[4];  // all three fonts and NULL
+
 struct font_head fon8x16;
 struct font_head fon8x8;
 struct font_head fon6x6;
@@ -101,13 +103,20 @@ void init_fonts(WORD vmode)
         cur_font = def_font = &fon8x8;
     }
        
-    /* Initialize the font ring as an array of now linked font lists */
+    font_count=3;                       // total number of fonts in fontring
+
+    /* Initialize the system font array for linea */
+    sysfonts[0]= &fon6x6;
+    sysfonts[1]= &fon8x8;
+    sysfonts[2]= &fon8x16;
+    sysfonts[3]=NULL;
+
+    /* Initialize the VDI font_ring as an struct of now linked font lists */
     font_ring.first_list = &fon6x6;
     font_ring.second_list = &fon6x6;
     font_ring.gdos_list = &fon6x6;
     font_ring.null_list = 0;
 
-    font_count=3;                       // total number of fonts in fontring
 }
 
 
