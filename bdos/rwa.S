@@ -157,7 +157,6 @@ __osinit:
 	subq.l	#8, sp
 
 	move.l	#_enter,4(sp)		// take over the handling of TRAP #1
-//	move.l	#0xfa0404,4(sp)		// take over the handling of TRAP #1
 	move.w	#0x21,2(sp)
 	move.w	#x_vector,(sp)
 	trap	#13

@@ -57,13 +57,12 @@
 	.global _os_magic
         .global _int_vbl
         .global _int_hbl
-        .global _bios
-        .global _xbios
+        .global _biostrap
+        .global _xbiostrap
         .global _dummyaes
         .global _os_entry
         .global _just_rts
         .global _just_rte
-        .global _xbios
         .global _diskbuf
         .global _brkpt
         
@@ -637,14 +636,14 @@ _trap_1:
 
 // ==== Trap 13 - BIOS entry point ==========================================
 
-_bios:
+_biostrap:
         move.w  bios_ent,d1
         lea     bios_vecs,a0
         bra.s   biosxbios
 
 // ==== Trap 14 - XBIOS entry point =========================================
 
-_xbios:
+_xbiostrap:
         move.w  xbios_ent,d1
         lea     xbios_vecs,a0
 

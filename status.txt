@@ -13,7 +13,8 @@ emulators/hardware. You  :
   TOSBox 1.10a              |    no   |    ?     |    ?    
   Pacifist v0.48            |   yes   |   yes    |   yes   
   real MegaSTE (2MB RAM)    |   n/a   |   yes    |   yes   
-  
+  Hatari (latest CVS vers.) |   yes   |    ?     |    ?
+
 ROM img means:  Using the etos192k.img file as ROM
 
 autoboot means: Loading emutos.st disk from bootsector, then when prompted,

@@ -39,8 +39,6 @@ _emucon:
 	move.l	a5,sp
 
 // Shrink the TPA to a usefull size:
-// Not needed if we run in ROM!
-#ifdef NO_ROM
 	move.l	4(sp),a5
 	move.l	0xc(a5),d0
 	add.l	0x14(a5),d0
@@ -52,7 +50,6 @@ _emucon:
 	move.w	#0x4a,-(sp)
 	trap	#1
 	add.l	#12,sp
-#endif /* NO_ROM */
 
 #ifndef NO_ROM
 // if running in ROM, go in supervisor mode to be able to 

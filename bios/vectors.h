@@ -31,8 +31,8 @@ extern VOID int_hbl(VOID);
 extern VOID int_vbl(VOID);
 extern VOID int_linea(VOID);
 extern VOID dummyaes(VOID);
-extern VOID bios(VOID);
-extern VOID xbios(VOID);
+extern VOID biostrap(VOID);
+extern VOID xbiostrap(VOID);
 extern VOID just_rte(VOID);
 
 /* are these useful ? */

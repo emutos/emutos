@@ -144,8 +144,8 @@ void startup(void)
   VEC_HBL = int_hbl;
   VEC_VBL = int_vbl;
   VEC_AES = dummyaes;
-  VEC_BIOS = bios;
-  VEC_XBIOS = xbios;
+  VEC_BIOS = biostrap;
+  VEC_XBIOS = xbiostrap;
   VEC_LINEA = int_linea;
   
   init_acia_vecs();
@@ -206,7 +206,7 @@ void startup(void)
   
     set_sr(0x2300);
   
-    VEC_BIOS = bios;
+    /*VEC_BIOS = biostrap;*/ /* Already done above? */
     (*(PFVOID*)0x7C) = brkpt;   /* ??? */
   
 #if DBGBIOS
@@ -380,6 +380,7 @@ void biosmain()
         PD *pd;
 	pd = (PD *) trap_1( 0x4b , 5, "" , "", env);
 	pd->p_tbase = (LONG) exec_os;
+        pd->p_tlen = pd->p_dlen = pd->p_blen = 0;
 	trap_1( 0x4b, 4, "", pd, "");
     }
     cprintf("[FAIL] HALT - should never be reached!\n\r");
