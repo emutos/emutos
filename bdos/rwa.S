@@ -128,7 +128,6 @@
 	.global	_oscall
 	.global	_trap13
 	.global	__osinit
-	.global	mc68010
 
 	.xdef	_osif
 	.xdef	_xterm
@@ -136,6 +135,7 @@
 	.xdef	_run
 	.xdef	_tikfrk
 	.xdef	fstrt
+        .xdef   _longframe              // If not 0, use long stack frames
 
 	.global	_xsuper
 
@@ -153,7 +153,7 @@
 	.text
 
 __osinit:
-	move.w	#0, mc68010		// flag that we're not on a 68010
+//	move.w	#0, mc68010		// flag that we're not on a 68010
 	subq.l	#8, sp
 
 	move.l	#_enter,4(sp)		// take over the handling of TRAP #1
@@ -217,8 +217,8 @@ not_SR:
 	.bss
 	.even
 
-mc68010:				// 0 = 68000, 1 = 68010
-	.ds.w	1
+//mc68010:				// 0 = 68000, 1 = 68010
+//	.ds.w	1
 
 old_2:
 	.ds.l	1			// old TRAP #2 handler
@@ -512,7 +512,7 @@ _oscall:
 
 	.text
 _fix_trap:
-	tst.w	mc68010 	// check processor type
+	tst.w	_longframe 	// check processor type
 	beq	ft_exit
 
 	move.w	8(sp),10(sp)	// lsw of return address of TRAP
@@ -530,7 +530,7 @@ ft_exit:
 
 	.text
 _fix_rte:
-	tst.w	mc68010 	// check processor type
+	tst.w	_longframe 	// check processor type
 	beq	fr_exit
 
 	sub.l	#2,sp		// resverve a hole on top of the stack

@@ -255,4 +255,5 @@ Start... early ages
 3. Nov. 2001
 - run AUTO folder prgs, run EmuCON using Pexec(5) (LVL)
 - localconf.h taken in consideration (LVL)
+- implemented processor check and set of _longframe in BIOS/BDOS (MAD)
 - IKBD and MegaRTC clock (setting time & date untested) (LVL)

@@ -25,6 +25,7 @@
 #include "kprint.h"
 #include "tosvars.h"
 #include "lineavars.h"
+#include "processor.h"
 #include "initinfo.h"
 
 
@@ -138,6 +139,8 @@ void startup(void)
   
   /* setup default exception vectors */
   init_exc_vec();
+
+
   init_user_vec();
   
   /* initialise some vectors */
@@ -147,7 +150,10 @@ void startup(void)
   VEC_BIOS = biostrap;
   VEC_XBIOS = xbiostrap;
   VEC_LINEA = int_linea;
+  VEC_ILLEGAL = brkpt;
   
+  frame_set();                  /* Set CPU type, VEC_ILLEGAL and longframe */
+
   init_acia_vecs();
   
   VEC_DIVNULL = just_rte;
@@ -372,6 +378,10 @@ void biosmain()
 
     /* clear commandline */
     
+    /* Pexec a program called COMMAND.PRG */
+    trap_1( 0x4b , 0, "COMMAND.PRG" , "", env);
+
+#if 0
     if(cmdload != 0) {
         /* Pexec a program called COMMAND.PRG */
         trap_1( 0x4b , 0, "COMMAND.PRG" , "", env); 
@@ -383,6 +393,7 @@ void biosmain()
         pd->p_tlen = pd->p_dlen = pd->p_blen = 0;
 	trap_1( 0x4b, 4, "", pd, "");
     }
+#endif
     cprintf("[FAIL] HALT - should never be reached!\n\r");
     while(1) ;
 }

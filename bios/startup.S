@@ -237,6 +237,8 @@ _main:                         // stunt to guarantee entry into supervisor mode
 
         reset                           // Reset all hardware
 
+
+
 // ==== Check for diagnostic cartridge =======================================
 
         .equ    cart_base,      0xfffa0000
@@ -655,9 +657,11 @@ biosxbios:
         move.w  (sp)+,d0        // Status register -> d0
         move.w  d0,-(a1)        // and save in save_area
         move.l  (sp)+,-(a1)     // save return address
-//       tst.w   _longframe      // Check _longframe sysvariable one day...
-//       beq.s   bx_nolongframe  // ...when we support CPU >=68000
-//       move.w  (sp)+,-(a1)
+
+        tst.w   _longframe      // Check _longframe sysvariable one day...
+        beq.s   bx_nolongframe  // ...when we support CPU >=68000
+        move.w  (sp)+,-(a1)
+
 bx_nolongframe:
         movem.l d3-d7/a3-a7, -(a1)      // regs, including stack pointer
         move.l  a1, _savptr
@@ -679,9 +683,11 @@ bx_sp_ok:
 bx_ret_exc:
         move.l  _savptr, a1
         movem.l (a1)+, d3-d7/a3-a7      // Get regs back, including sp
-//       tst.w   _longframe      // Check longframe again: Is CPU >= 68000?
-//       beq.s   bx_nolong2
-//       move.w  (a1)+,-(sp)
+
+        tst.w   _longframe      // Check longframe again: Is CPU >= 68000?
+        beq.s   bx_nolong2
+        move.w  (a1)+,-(sp)
+
 bx_nolong2:
         move.l  (a1)+,-(sp)
         move.w  (a1)+,-(sp)

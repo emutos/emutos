@@ -56,6 +56,7 @@ extern WORD nvbls;
 extern WORD vblsem;
 extern LONG vbl_list[];
 extern LONG *vblqueue;
+extern LONG longframe;
 
 
 extern LONG sysbase;

@@ -1,5 +1,5 @@
 /*
- * vectors.h - declarations for exception vectors.
+ * vectors.h - declarations for processor type check
  *
  * Copyright (c) 2001 EmuTOS development team.
  *
@@ -50,6 +50,7 @@ extern VOID brkpt(VOID);
 
 typedef VOID (*PFVOID)();
 
+#define VEC_ILLEGAL (*(PFVOID*)0x10)    /* illegal instruction vector */
 #define VEC_DIVNULL (*(PFVOID*)0x14)    /* division by zero interrupt vector */
 #define VEC_LINEA   (*(PFVOID*)0x28)    /* LineA interrupt vector */
 #define VEC_HBL     (*(PFVOID*)0x68)    /* HBL interrupt vector */

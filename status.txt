@@ -43,6 +43,7 @@ T tested and working on an emulator or real hardware
  X execute reset routine
  ? detect monitor type
  T detect graphics resolution
+ X automatic Processor check
    ...
  X init floppy drives
  X boot floppy
@@ -50,7 +51,7 @@ T tested and working on an emulator or real hardware
  - execute reset-resident prgs
  X run AUTO prgs
  X run 'command.prg'
- X run the default shell, EmuCON
+ > run the default shell, EmuCON
 
 
 

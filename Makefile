@@ -62,6 +62,7 @@ CC = m68k-atari-mint-gcc
 INC = -Iinclude
 # no -Wall for bdos right now...
 CFLAGS = -O -mshort -m68000 $(LOCALCONF) -DBUILDDATE="\"$(BUILDDATE)\"" $(INC) 
+CFLAGS020 = -O -mshort -m68020 $(LOCALCONF) -DBUILDDATE="\"$(BUILDDATE)\"" $(INC) 
 
 CPPFLAGS = $(INC)
 CPP = $(CC) -E -x assembler
@@ -81,7 +82,7 @@ BIOSCSRC = kprint.c xbios.c chardev.c bios.c clock.c \
            midi.c ikbd.c sound.c floppy.c screen.c lineainit.c \
            initinfo.c
 BIOSSSRC = tosvars.S startup.S lineavars.S vectors.S aciavecs.S \
-           memory.S linea.S conout.S
+           processor.S memory.S linea.S conout.S
 
 #
 # source code in bdos/
@@ -210,6 +211,9 @@ date.prg: obj/minicrt.o obj/doprintf.o obj/date.o
 
 obj/%.o : bios/%.c
 	${CC} ${CFLAGS} -Wall -c -Ibios $< -o $@
+
+obj/processor.o : bios/processor.S
+	${CC} ${CFLAGS020} -Wall -c -Ibios $< -o $@
 
 obj/%.o : bios/%.S
 	${CC} ${CFLAGS} -Wall -c -Ibios $< -o $@

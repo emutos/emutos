@@ -111,7 +111,13 @@ void initinfo()
     cprintf("\n\r");
 
     set_margin(); cprintf("[ OK ] EmuTOS Ver.:  \eb!Alpha Version\eb/ \r\n");
-    set_margin(); cprintf("[ OK ] CPU type:     \eb!m68000\eb/ \r\n");
+    set_margin();
+
+    if (longframe)
+        cprintf("[ OK ] CPU type:     \eb!m68010-40\eb/ \r\n");
+    else
+        cprintf("[ OK ] CPU type:     \eb!m68000\eb/ \r\n");
+
     set_margin(); cprintf("[ OK ] MMU avail.:   \eb!No\eb/ \r\n");
     set_margin(); cprintf("[ OK ] Free memory:  \eb!%ld bytes\eb/ \r\n", memtop-membot);
     set_margin(); cprintf("[ OK ] Screen start: \eb!0x%lx\eb/ \r\n", (long)v_bas_ad);
