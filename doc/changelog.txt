@@ -1194,3 +1194,8 @@ Start... early ages
   changed back to good old $7300/$7301. The LineF interface requires
   the $fe0x instructions to be long words and I am not ready to accept
   such change of NatFeat calling convention. Sorry. (joy)
+
+28. Oct 2002
+- bios/bios.c - loading of AUTO folder programs displayed on stderr console
+  via new NF_STDERR (sorry for the mess in bios.c, the nf calling must be
+  cleaned up somehow). (joy)
