@@ -10,6 +10,18 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+#include "config.h"
+
+#if CONF_NO_NLS
+
+        .global _gettext
+
+_gettext:
+        move.l  4(sp),d0
+        rts
+
+#else /* ! CONF_NO_NLS */
+        
 // set this to one to first hash addresses in RAM before
 // computing actual string hashes. (experimental)
  
@@ -152,4 +164,5 @@ ram_hash:
         ds.l    20      // 10 additional slots.
 #endif /* USE_RAM_HASH */
         
-        
+#endif /* ! CONF_NO_NLS */
+ 

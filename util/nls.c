@@ -15,7 +15,29 @@
 #include "nls.h"
 #include "langs.h"
 #include "string.h"
+#include "config.h"
 
+#if CONF_NO_NLS
+
+void nls_init(void)
+{
+}
+
+void nls_set_lang(const char *s)
+{
+}
+
+const char *nls_nth_lang(int i)
+{
+  return "us";
+}
+
+int nls_num_of_langs(void)
+{
+  return 1;
+}
+
+#else /* ! CONF_NO_NLS */
 
 static int the_lang;
 static int num_of_langs;
@@ -68,3 +90,4 @@ int nls_num_of_langs(void)
   return num_of_langs;
 }
 
+#endif /* ! CONF_NO_NLS */
