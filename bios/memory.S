@@ -34,6 +34,9 @@
         .xdef   memval2       
         .xdef   memval3       
 
+        .xdef   ramtop
+        .xdef   ramvalid
+
 // ==== Overall memory map ===================================================
 
 	.xdef   bssstart      // end of documented low memory tosvars
@@ -77,6 +80,8 @@ memchk:
         bne     memconf			// no -> config memory
         cmp.l   #0x237698aa, memval2    // magic in memval2 ?
         bne     memconf			// no -> config memory
+        cmp.l   #0x5555aaaa, memval3    // magic in memval3 ?
+        bne     memconf			// no -> config memory
 
 memok:
         move.b  memctrl, 0xffff8001     // write old valid config to controller
@@ -86,7 +91,35 @@ memok:
 
 
 /*
- * memconf - Configure the memory and clear it
+ * memconf - Configure the memory (and clear it)
+ */
+ 
+memconf:
+        /* detect if this is a Falcon by reading $ff8006 register (joy) */
+
+        /* The test fires a bus error on non-Falcon machines.
+         * The bus error fills a couple of words on the temporary stack.
+         * If we wanted to avoid stack usage we would have to abandon
+         * this run-time check and go with #ifdef FALCON...
+         */
+        lea     8.w, a0
+        move.l  (a0), a1
+        move.l  #fbuserr, (a0)          // set up a new bus error handler
+        move.w  sr, d1                  // remember SR
+        move.l  sp, a0                  // remember SP
+        clr.l   d0
+        nop
+        move.w  0xffff8006.w, d0        // read the Falcon MMU register
+        nop
+fbuserr:
+        move.l  a0, sp                  // restore SP
+        move.w  d1, sr                  // restore SR
+        move.l  a1, 8.w                 // restore original bus error handler
+        tst.w   d0
+        bne     falcmemconf             // non-zero value on real Falcon
+
+/*
+ * memconf for ST
  *
  * At first the memory configuration is set to 4 Mb. If the memory
  * configuration is not really 2 * 2 mb, the written test values will
@@ -94,8 +127,6 @@ memok:
  * set the memory config accordingly. No real memory check is done, 
  * because in emulators it should be always ok - hopefully!
  */
- 
-memconf:
         move.b  #0xa, 0xffff8001        // set hw to 2 banks by 2 mb
 
         lea     0x000008, a0            // a0 points to 1. bank
@@ -145,6 +176,27 @@ nextbank:
         sub.l   #0x200000, d1           // first (other) bank
         beq.s   bankloop                // 
 
+        bra.s   setmem
+
+/*
+ * memconf for Falcon
+ */
+
+falcmemconf:
+        /* find out the memory size by checking the d0 = $ff8006 value */
+        lsr.w   #8,d0
+        lsr.b   #1,d0
+        move.b  d0,d1
+        and.b   #1,d1
+        lsr.b   #2,d0
+        and.b   #6,d0
+        or.b    d0,d1
+        move.l  #0x00080000,d0
+        asl.l   d1,d0
+        cmp.b   #5,d1
+        bne.s   less16
+        move.l  #0x00E00000,d0
+less16: move.l  d0,d5            /* d5 = phystop */
 
 
 /*
@@ -159,6 +211,11 @@ setmem:
         /* make memory config valid */
         move.l  #0x752019f3, memvalid   // set memvalid to ok
         move.l  #0x237698aa, memval2    // set memval2 to ok
+        move.l  #0x5555aaaa, memval3    // set memval3 to ok
+
+        /* TT-RAM (FastRAM) */
+        clr.l   ramtop                  // set ramtop to 0 (= no FastRAM)
+        move.l  #0x1357BD13, ramvalid   // set ramvalid to ok
 
         pea msg_bss     // Print, what's going on
         bsr _kprintf
@@ -170,12 +227,12 @@ setmem:
 
 #if 0
         /* clear memory till running into buserror or reaching top */
-	move.l 	#0xd00000, d0           // maximum top of RAM
+        move.l 	#0xe00000, d0           // maximum top of RAM
         move.l  _end, a0                // Set start of RAM
 clrmem:
         clr.w   (a0)+                   // Clear actual word, then increase
         cmp.l   d0, a0                  // End of MEM reached?
-        blt     clrmem                  // if not, clear next word
+        blt.s   clrmem                  // if not, clear next word
 #endif
 
 
