@@ -42,9 +42,19 @@
 #include "gemrslib.h"
 #include "gemasm.h"
 #include "optimopt.h"
-#include "kprint.h"     // just for debugging
 
 #include "string.h"
+#include "kprint.h"             /* for debugging */
+
+
+#define DBGSHLIB 0
+
+#if DBGSHLIB
+#define Dprintf(a) kprintf a
+#else
+#define Dprintf(a)
+#endif
+
 
 
 #if MULTIAPP
@@ -908,7 +918,7 @@ void sh_ldapp()
           {
             retry = FALSE;
 
-            kprintf("starting %s\n",(char *)ad_scmd);
+            Dprintf(("sh_ldapp: Starting %s\n",(char *)ad_scmd));
             if(psh->sh_isdef && strcmp((char *)ad_scmd,rs_str(STDESKTP)) == 0)
             {
               /* Start the ROM desktop: */
@@ -944,7 +954,7 @@ void sh_ldapp()
                    return now to the default desktop: (experimental) */
                 if(psh->sh_isdef && psh->sh_dodef)
                 {
-                  kprintf("Returning to ROM DESKTOP!\n");
+                  Dprintf(("sh_ldapp: Returning to ROM desktop!\n"));
                   strcpy(&psh->sh_desk[0], rs_str(STDESKTP));
                   strcpy(&psh->sh_cdir[0], &D.s_cdir[0]);
                 }
