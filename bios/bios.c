@@ -140,6 +140,10 @@ void startup(void)
 
     VEC_LINEA = int_linea;
 
+    /* the following exceptions are just silently ignored */
+    VEC_DIVNULL = just_rte;
+    VEC_PRIVLGE = just_rte;
+
     /* LVL   VEC_ILLEGAL = brkpt; I don't understand why this is needed.
      * a vector was already setup by init_exc_vec().
      */
@@ -169,8 +173,6 @@ void startup(void)
     mfp_init();         /* init MFP, timers, USART */
     snd_init();                 /* Reset Soundchip, deselect floppies */
     init_acia_vecs();           /* Init ACIAs and their vecs */
-
-    VEC_DIVNULL = just_rte;
 
     /* Now that the MFP is configured, allow MFP interrupts (we need a
      * Timer C for DMA timeouts in floppy and harddisk initialisation)

@@ -61,7 +61,8 @@ typedef LONG (*PFLONG)();
 typedef void (*PFVOID)();
 
 #define VEC_ILLEGAL (*(PFVOID*)0x10)    /* illegal instruction vector */
-#define VEC_DIVNULL (*(PFVOID*)0x14)    /* division by zero interrupt vector */
+#define VEC_DIVNULL (*(PFVOID*)0x14)    /* division by zero exception vector */
+#define VEC_PRIVLGE (*(PFVOID*)0x20)    /* priviledge exception vector */
 #define VEC_LINEA   (*(PFVOID*)0x28)    /* LineA interrupt vector */
 #define VEC_HBL     (*(PFVOID*)0x68)    /* HBL interrupt vector */
 #define VEC_VBL     (*(PFVOID*)0x70)    /* VBL interrupt vector */
