@@ -22,6 +22,7 @@
 #include "tosvars.h"
 #include "floppy.h"
 #include "disk.h"
+#include "ikbd.h"
 #include "blkdev.h"
 
 /*
@@ -119,7 +120,6 @@ void blkdev_hdv_init(void)
 {
     /* call the real */
     flop_hdv_init();
-
     disk_init();
 }
 
@@ -142,17 +142,21 @@ LONG blkdev_hdv_boot(void)
        for now: if C: exists use it as the boot device, otherwise boot from A:
     */
 
-    if (blkdev_avail(2)) {  /* if drive C: is available */
-        bootdev = 2;        /* make it the boot drive */
-        return 0;           /* don't actually boot from the boot device
-                               as there is most probably a harddisk driver
-                               installed and that would require complete
-                               lowlevel IDE/ACSI/SCSI emulation. Luckily
-                               EmuTOS got its own internal hdd driver,
-                               so we don't need to execute the boot sector
-                               code and boot the drive at all! :-) */
+    /* boot hard drive only if user does not hold the Alternate key down */
+    if ((kbshift(-1) & 0x08) == 0) {
+        if (blkdev_avail(2)) {  /* if drive C: is available */
+            bootdev = 2;        /* make it the boot drive */
+            return 0;           /* don't actually boot from the boot device
+                                   as there is most probably a harddisk driver
+                                   installed and that would require complete
+                                   lowlevel IDE/ACSI/SCSI emulation. Luckily
+                                   EmuTOS got its own internal hdd driver,
+                                   so we don't need to execute the boot sector
+                                   code and boot the drive at all! :-) */
+        }
     }
-    bootdev = 0;            /* otherwise try to boot from floppy A: */
+    /* otherwise try to boot from floppy A: */
+    bootdev = 0;
     return(flop_hdv_boot());
 }
 

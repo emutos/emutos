@@ -300,6 +300,8 @@ void biosmain(void)
         }
     }
 
+    initinfo();                 /* show initial config information */
+    
     /* boot eventually from a block device (floppy or harddisk) */
     blkdev_hdv_boot();
 
@@ -308,8 +310,6 @@ void biosmain(void)
 
     /* execute Reset-resistent PRGs */
 
-    initinfo();                 /* show initial config information */
-    
     cursconf(1, 0);             /* switch on cursor via XBIOS*/
     
     autoexec();                 /* autoexec Prgs from AUTO folder */

@@ -191,7 +191,10 @@ void initinfo()
         }
     }
     pair_end();
+    /* boot drive is unknown at this moment since blkdev_hdv_boot is now
+       executed after the initinfo is printed:
     pair_start(_("Boot drive")); cprintf("%c:", bootdev+65); pair_end();
+    */
     pair_start(_("Current time")); cprint_asctime(); pair_end();
 
     /* Just a separator */

@@ -1176,3 +1176,10 @@ Start... early ages
   a third time) (LVL)
 - include/config.h - removed "i18nconf.h" from there, as it caused trouble 
   with tools needing "string.h" but not "i18nconf.h" (LVL)
+
+19. Oct 2002
+- bios/bios.c - display initinfo before you start booting from a device
+  so that users have time to press and hold the Alt key to skip the boot
+- bios/blkdev.c - added check for the Alt key
+- bios/initinfo.c - can't display the boot device - is unknown at this moment
+- bios/bios.c - fixed the check for Ctrl key (hold Ctrl to skip AUTO folder)
