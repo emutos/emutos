@@ -1,0 +1,57 @@
+/*
+ * machine.h - declarations about the machine type and capabilities
+ *
+ * Copyright (c) 2001 EmuTOS development team.
+ *
+ * Authors:
+ *  LVL     Laurent Vogel
+ *
+ * This file is distributed under the GPL, version 2 or at your
+ * option any later version.  See doc/license.txt for details.
+ */
+
+#ifndef _MACHINE_H
+#define _MACHINE_H
+
+/*
+ * some useful cookies.
+ */
+
+extern long cookie_mch;
+extern long cookie_vdo;
+extern long cookie_fdc;
+extern long cookie_snd;
+extern long cookie_swi;
+extern long cookie_idt;
+extern long cookie_akp;
+
+/*
+ * these are != 0 if the feature is present
+ */
+
+extern int has_ste_shifter;
+extern int has_vme;
+extern int has_megartc;   /* in clock.c */
+extern int has_nvram;     /* in nvram.c */
+
+/*
+ * other variables
+ */
+
+extern long mcpu; 
+extern long fputype; 
+
+/*
+ * functions
+ */
+
+/* initialise the machine, and fill the cookie jar */
+
+void machine_init(void);
+
+/* print the name of the machine */
+const char * machine_name(void);
+
+
+#endif /* _MACHINE_H */
+
