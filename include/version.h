@@ -16,4 +16,4 @@
  * TGZ named after this version.
  */
 
-#define EMUTOS_VERSION "0.2a"
+#define EMUTOS_VERSION "0.5"
