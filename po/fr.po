@@ -3,266 +3,266 @@
 # fr.po: the french translations.
 # 
 
-#: bios/bios.c:356
+#: bios/bios.c:361
 msgid "Please eject the floppy and hit RETURN"
 msgstr "Veuillez éjecter la disquette et taper ENTREE"
 
-#: bios/initinfo.c:126
+#: bios/initinfo.c:127
 msgid "EmuTOS Ver.:  "
 msgstr "EmuTOS Vers.: "
 
-#: bios/initinfo.c:126
+#: bios/initinfo.c:127
 msgid "Alpha Version"
 msgstr "Alpha"
 
-#: bios/initinfo.c:128
+#: bios/initinfo.c:129
 msgid "CPU type:     "
 msgstr "Type de CPU:  "
 
-#: bios/initinfo.c:135
+#: bios/initinfo.c:130
+msgid "Machine:      "
+msgstr "Machine:      "
+
+#: bios/initinfo.c:131
 msgid "MMU avail.:   "
 msgstr "MMU présente: "
 
-#: bios/initinfo.c:135
+#: bios/initinfo.c:131
 msgid "No"
 msgstr "Non"
 
-#: bios/initinfo.c:136
+#: bios/initinfo.c:132
 msgid "Free memory:  "
 msgstr "Mém. libre:   "
 
-#: bios/initinfo.c:136
+#: bios/initinfo.c:132
 msgid "%ld bytes"
 msgstr "%ld octets"
 
-#: bios/initinfo.c:138
+#: bios/initinfo.c:134
 msgid "Screen start: "
 msgstr "Début écran:  "
 
-#: bios/initinfo.c:140
+#: bios/initinfo.c:136
 msgid "Boot drive :  "
 msgstr "Disque boot:  "
 
-#: cli/command.c:606
+#: cli/command.c:669
 msgid "CR to continue..."
 msgstr "ENTREE pour continuer..."
 
-#: cli/command.c:621
+#: cli/command.c:684
 msgid "Wild cards not allowed in path name."
 msgstr "Pas de jokers dans les chemins"
 
-#: cli/command.c:622
+#: cli/command.c:685
 msgid "File Not Found."
 msgstr "Fichier non trouvé."
 
-#: cli/command.c:623
+#: cli/command.c:686
 msgid "Destination is not a valid wild card expresion."
 msgstr "La destination n'est pas une expression joker valide"
 
-#: cli/command.c:626
+#: cli/command.c:689
 msgid "EmuCON - Compiled on "
 msgstr "EmuCON - compilé le "
 
-#: cli/command.c:627
+#: cli/command.c:690
 msgid "Type HELP for a list of commands."
 msgstr "HELP donne la liste des commandes."
 
-#: cli/command.c:629
+#: cli/command.c:692
 msgid "Done."
 msgstr "Fini."
 
-#: cli/command.c:630
+#: cli/command.c:693
 msgid "Command is incompletely specified."
 msgstr "La commande n'est pas complètement spécifiée."
 
-#: cli/command.c:634
+#: cli/command.c:697
 msgid " to "
 msgstr " à "
 
-#: cli/command.c:645
+#: cli/command.c:708
 msgid "Wild cards not allowed in destination."
 msgstr "Jokers interdits dans la destination."
 
-#: cli/command.c:651
+#: cli/command.c:714
 msgid "# in the first non blank column is a comment."
 msgstr "Une ligne commençant par # est un commentaire."
 
-
-#: cli/command.c:669
+#: cli/command.c:732
 msgid "\tClears the screen."
 msgstr "\tVide l'écran."
 
-
-#: cli/command.c:681
+#: cli/command.c:744
 msgid "\tDisplays the value of the Completion Code for the last command."
 msgstr "\tAffiche la valeur de retour de la dernière commande."
 
-#: cli/command.c:684
+#: cli/command.c:747
 msgid "\tExits CLI to invoking program."
 msgstr "\tTermine CLI et rend la main au programme appelant."
 
-# ??? 
-#: cli/command.c:706
+#: cli/command.c:769
 msgid "\tDisables line wrap."
 msgstr "\tInhibe le pliage de lignes."
 
-# ??? 
-#: cli/command.c:734
+#: cli/command.c:797
 msgid "\tEnables line wrap."
 msgstr "\tActive le pliage de lignes."
 
-#: cli/command.c:732
+#: cli/command.c:795
 msgid "\tDisplays current version of OS."
 msgstr "\tAffiche la version du système d'exploitation."
 
-#: cli/command.c:826 cli/command.c:853
+#: cli/command.c:889 cli/command.c:916
 msgid " DELETING "
 msgstr " EFFACE "
 
-#: cli/command.c:844
+#: cli/command.c:907
 msgid "Error creating file."
 msgstr "Erreur à la cration de fichier."
 
-#: cli/command.c:845
+#: cli/command.c:908
 msgid "Cannot copy "
 msgstr "Ne peux copier "
 
-#: cli/command.c:845
+#: cli/command.c:908
 msgid " to itself."
 msgstr " sur lui-même."
 
-#: cli/command.c:846
+#: cli/command.c:909
 msgid "Error reading source file."
 msgstr "Erreur à la lecture du fichier."
 
-#: cli/command.c:847
+#: cli/command.c:910
 msgid "Disk full -- copy failed."
 msgstr "Disque plein - échec de la copie."
 
-#: cli/command.c:895
+#: cli/command.c:958
 msgid "Rename ALL files matching "
 msgstr "Renomme TOUS les fichiers spécifiés par "
 
-#: cli/command.c:898 cli/command.c:1237
+#: cli/command.c:961 cli/command.c:1292
 msgid " (Y/CR)? "
 msgstr " (Y/CR)? "
 
-#: cli/command.c:924
+#: cli/command.c:987
 msgid "  Rename Unsucessfull!"
 msgstr "  Echec du renommage!"
 
-#: cli/command.c:978
+#: cli/command.c:1041
 msgid "Directory of "
 msgstr "Répertoire de "
 
-#: cli/command.c:1116
+#: cli/command.c:1171
 msgid "Unable to change mode on subdirectorys or volumes."
 msgstr "Impossible de changer le mode de sous-répertoires ou de volumes."
 
-#: cli/command.c:1126 cli/command.c:1134
+#: cli/command.c:1181 cli/command.c:1189
 msgid "Invalid mode specification."
 msgstr "Spécification de mode invalide."
 
-#: cli/command.c:1234
+#: cli/command.c:1289
 msgid "Delete ALL files matching "
 msgstr "Effacer TOUS les fichiers spécifiés par "
 
-#: cli/command.c:1262
+#: cli/command.c:1317
 msgid " << DELETED"
 msgstr " << EFFACE"
 
-#: cli/command.c:1745 cli/command.c:1765
+#: cli/command.c:1800 cli/command.c:1820
 msgid " not found."
 msgstr " non trouvé."
 
-#: cli/command.c:1863
+#: cli/command.c:1918
 msgid "Completion code for previous command = "
 msgstr "Valeur de retour de la commande précédente = "
 
-#: cli/command.c:1926
+#: cli/command.c:1981
 msgid "Directory not found."
 msgstr "Répertoire non trouvé."
 
-#: cli/command.c:1943 cli/command.c:1960
+#: cli/command.c:1998 cli/command.c:2015
 msgid "Arg must be ON or OFF."
-msgstr "Arg doi être ON ou OFF"
+msgstr "Arg doit être ON ou OFF."
 
-#: cli/command.c:1968
+#: cli/command.c:2023
 msgid "Unable to make directory"
 msgstr "Impossible de créer le répertoire"
 
-#: cli/command.c:1974
+#: cli/command.c:2029
 msgid "Unable to remove directory"
 msgstr "Impossible d'effacer le répertoire"
 
-#: cli/command.c:1992
+#: cli/command.c:2047
 msgid "Allocation Information: Drive "
 msgstr "Information de formattage: Lecteur "
 
-#: cli/command.c:1996
+#: cli/command.c:2051
 msgid "Drive size in BYTES    "
 msgstr "Taille disque (octets) "
 
-#: cli/command.c:1998
+#: cli/command.c:2053
 msgid "BYTES used on drive    "
 msgstr "octets utilisés        "
 
-#: cli/command.c:2000
+#: cli/command.c:2055
 msgid "BYTES left on drive    "
 msgstr "Octets restants        "
 
-#: cli/command.c:2002
+#: cli/command.c:2057
 msgid "Total Units on Drive   "
 msgstr "Nombre total de blocs  "
 
-#: cli/command.c:2004
+#: cli/command.c:2059
 msgid "Free Units on Drive    "
 msgstr "Nombre de blocs libres "
 
-#: cli/command.c:2006
+#: cli/command.c:2061
 msgid "Sectors per Unit   "
 msgstr "Secteurs par bloc  "
 
-#: cli/command.c:2008
+#: cli/command.c:2063
 msgid "Bytes per Sector   "
 msgstr "Octets par secteur "
 
-#: cli/command.c:2113
+#: cli/command.c:2168
 msgid "Command not found."
 msgstr "Commande non trouvée."
 
-#: bios/bios.c:396
+#: bios/bios.c:401
 msgid ""
 "[FAIL] HALT - should never be reached!\n"
 msgstr ""
-"[ECHEC] système arrêté - ne devrait jamais se produire:\n"
+"[ECHEC] système arrêté - ne devrait jamais se produire!\n"
 
-#: cli/command.c:653
+#: cli/command.c:716
 msgid ""
-"CAT or TYPE filenm.ext\015\n"
+"CAT or TYPE filenm.ext\r\n"
 "\tWrites filenm.ext to standard output."
 msgstr ""
 "CAT ou TYPE fichier.ext\r\n"
 "\tEcrit fichier.ext sur la sortie standard."
 
-#: cli/command.c:656
+#: cli/command.c:719
 msgid ""
-"CD [pathnm]\015\n"
-"\tWith pathnm it sets default for working directory.\015\n"
+"CD [pathnm]\r\n"
+"\tWith pathnm it sets default for working directory.\r\n"
 "\tWithout pathnm displays current working directory."
 msgstr ""
 "CD [chemin]\r\n"
 "\tSi le chemin est spécifié, définit le répertoire courant.\r\n"
 "\tSinon, affiche le répertoire courant."
 
-#: cli/command.c:660
+#: cli/command.c:723
 msgid ""
-"CHMOD [pathnm/]filenm mode\015\n"
-"\tChanges the mode of the file specified in filenm to the\015\n"
-"\tvalue of mode.\tAcceptable values are < 7:\015\n"
-"\t\t0 - Normal File Entry\015\n"
-"\t\t1 - File is Read Only\015\n"
-"\t\t2 - File is Hidden from directory Search\015\n"
+"CHMOD [pathnm/]filenm mode\r\n"
+"\tChanges the mode of the file specified in filenm to the\r\n"
+"\tvalue of mode.\tAcceptable values are < 7:\r\n"
+"\t\t0 - Normal File Entry\r\n"
+"\t\t1 - File is Read Only\r\n"
+"\t\t2 - File is Hidden from directory Search\r\n"
 "\t\t4 - File is System File"
 msgstr ""
 "CHMOD [chemin]/fichier mode\r\n"
@@ -272,20 +272,20 @@ msgstr ""
 "\t\t2 - Fichier caché\r\n"
 "\t\t4 - fichier système"
 
-#: cli/command.c:670
+#: cli/command.c:733
 msgid ""
-"COPY source_file [destination_file]\015\n"
+"COPY source_file [destination_file]\r\n"
 "\tCopies source to destination."
 msgstr ""
 "COPY fichier_source [fichier_destination]\r\n"
 "\tCopie la source sur la destination."
 
-#: cli/command.c:673
+#: cli/command.c:736
 msgid ""
-"DIR or LS [filenm.ext] [-f] [-d] [-t] [-w]\015\n"
-"\t-f - anything but directoryies.\015\n"
-"\t-d - directories only.\015\n"
-"\t-t - terse: names only.\015\n"
+"DIR or LS [filenm.ext] [-f] [-d] [-t] [-w]\r\n"
+"\t-f - anything but directoryies.\r\n"
+"\t-d - directories only.\r\n"
+"\t-t - terse: names only.\r\n"
 "\t-w - wide: names only displayed horizontally."
 msgstr ""
 "DIR ou LS [fichier.ext] [-f] [-d] [-t] [-w]\r\n"
@@ -294,43 +294,43 @@ msgstr ""
 "\t-t - (terse) affiche uniquement les noms.\r\n"
 "\t-w - (wide) uniquement les noms, horizontalement."
 
-#: cli/command.c:686
+#: cli/command.c:749
 msgid ""
-"INIT [drive_spec:]\015\n"
+"INIT [drive_spec:]\r\n"
 "\tReinitializes FAT entries this wiping disk."
 msgstr ""
 "INIT [lecteur:]\r\n"
 "\tRéinitialise les entrées de la FAT, ce qui efface le disque."
 
-#: cli/command.c:689
+#: cli/command.c:752
 msgid ""
-"MD [subdirectory name]\015\n"
+"MD [subdirectory name]\r\n"
 "\tCreates a new subdirectory in current directory."
 msgstr ""
 "MD [sous_répertoire]\r\n"
 "\tCrée un nouveau sous-répertoire dans le répertoire courant."
 
-#: cli/command.c:692
+#: cli/command.c:755
 msgid ""
-"MOVE source_file [destination_file]\015\n"
+"MOVE source_file [destination_file]\r\n"
 "\tCopies source to destination and deletes source."
 msgstr ""
 "MOVE fichier_source [fichier_destination]\r\n"
 "\tCopie la source vers la destination, puis efface la source."
 
-#: cli/command.c:696
+#: cli/command.c:759
 msgid ""
-"\tWrites 'CR to continue...' to standard output\015\n"
+"\tWrites 'CR to continue...' to standard output\r\n"
 "\tand waits for a carriage return from standard input."
 msgstr ""
 "\tEcrit 'CR pour continuer...' sur la sortie standard\r\n"
 "\tet attend un retour chariot sur l'entrée standard."
 
-#: cli/command.c:700
+#: cli/command.c:763
 msgid ""
-"\tTurns command processing abort feature ON/OFF.\015\n"
-"\tIf PRGERR is ON and a .PRG file returns a non zero completion\015\n"
-"\tcode, all further processing will stop.  Usefull in .BAT files.\015\n"
+"\tTurns command processing abort feature ON/OFF.\r\n"
+"\tIf PRGERR is ON and a .PRG file returns a non zero completion\r\n"
+"\tcode, all further processing will stop.  Usefull in .BAT files.\r\n"
 "\tDefault is ON."
 msgstr ""
 "\tactive/désactive l'abandon de traitement de commande.\r\n"
@@ -338,49 +338,49 @@ msgstr ""
 "\tnon nulle, tout traitement ultérieur est annullé. Utile dans les\r\n"
 "\tfichiers .BAT. Par défaut sur ON."
 
-#: cli/command.c:707
+#: cli/command.c:770
 msgid ""
-"PATH [;[pathnm]...]\015\n"
-"\tWith path name sets default path for batch and commands.\015\n"
+"PATH [;[pathnm]...]\r\n"
+"\tWith path name sets default path for batch and commands.\r\n"
 "\tWithout path name displays current path"
 msgstr ""
 "PATH [;[chemin]...]\r\n"
 "\tSi le chemin est spécifié, définit le chemin par défaut pour\r\n"
 "\tles commandes et les .BAT; sinon affiche le chemin en cours"
 
-#: cli/command.c:712
+#: cli/command.c:775
 msgid ""
-"REM or ECHO [\"string\"]\015\n"
-"\tStrips quotes and writes string to standard output.\015\n"
-"\tr is replaced by 13, /n by 10, /0 by 0x0.\015\n"
+"REM or ECHO [\"string\"]\r\n"
+"\tStrips quotes and writes string to standard output.\r\n"
+"\tr is replaced by 13, /n by 10, /0 by 0x0.\r\n"
 "\t/c by 13 10, /anything is replaced by anything."
 msgstr ""
 "REM ou ECHO [\"chaîne\"]\r\n"
 "\tRetire les guillemets et affiche la chaîne sur la sotrtie standard.\r\n"
 "\t/r est remplacé par 13, /n par 10, /0 par 0, /c par 13 10,\r\n"
-"\t/ suivi d'un autre caractère est remplacé par ce caractère." 
+"\t/ suivi d'un autre caractère est remplacé par ce caractère."
 
-#: cli/command.c:717
+#: cli/command.c:780
 msgid ""
-"REN source_file_nm [destination_file_nm]\015\n"
+"REN source_file_nm [destination_file_nm]\r\n"
 "\tRenames source to destination."
 msgstr ""
 "REN fichier_source [fichier_destination]\r\n"
 "\trenomme le fichier source en destination."
 
-#: cli/command.c:720
+#: cli/command.c:783
 msgid ""
-"RD [pathnm]\015\n"
+"RD [pathnm]\r\n"
 "\tRemoves named directory."
 msgstr ""
 "RD [chemin]\r\n"
 "\tRetire le répertoire spécifié."
 
-#: cli/command.c:723
+#: cli/command.c:786
 msgid ""
-"RM or DEL or ERA filenm [[filemn]...] [-q]\015\n"
-"\tRemoves named file from directory.\015\n"
-"\tIf the -q option is used, the CLI will display the question\015\n"
+"RM or DEL or ERA filenm [[filemn]...] [-q]\r\n"
+"\tRemoves named file from directory.\r\n"
+"\tIf the -q option is used, the CLI will display the question\r\n"
 "\tY/CR... and wait for a response."
 msgstr ""
 "RM ou DEL ou ERA fichier [[fichier]...] [-q]\r\n"
@@ -388,12 +388,11 @@ msgstr ""
 "\tSi l'option -q est utilisée, la question «Y/CR...» sera posée\r\n"
 "\tet EmuCON attendra la réponse."
 
-#: cli/command.c:728
+#: cli/command.c:791
 msgid ""
-"SHOW [drive_spec:]\015\n"
+"SHOW [drive_spec:]\r\n"
 "\tDisplays disk status for default drive or drive specified."
 msgstr ""
 "SHOW [lecteur:]\r\n"
 "\tAffiche l'état du lecteur par défaut, ou du lecteur spécifié."
-
 
