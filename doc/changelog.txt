@@ -1555,8 +1555,13 @@ Start... early ages
   and warning strings for the "Desktop 1.2" mode. (THH)
 - Makefile : The "Desktop 1.2" mode is now enabled by default. (THH)
 
-2003-09-29
+2003-08-29
 - util/string.c : Added sprintf() function. (THH)
 - desk/*.c aes/*.c : Replaced old merge_str() function by sprintf(). (THH)
 - po/*.po : Replaced the old formating characters for merge_str() with the
   new formating characters for sprintf(). (THH)
+
+2003-09-04
+- desk/deskinf.c : Fixed a year-2k-bug and a buffer overflow when browsing a
+  directory with huge files. (bugfixes based on John C. Elliott's FreeGEM
+  desktop sources - thanks!). (THH)

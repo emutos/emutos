@@ -40,8 +40,7 @@
 
 
 
-#define SFCB struct sfcb
-SFCB
+typedef struct sfcb
 {
         BYTE            sfcb_junk;
         BYTE            sfcb_attr;
@@ -49,7 +48,7 @@ SFCB
         WORD            sfcb_date;
         LONG            sfcb_size;
         BYTE            sfcb_name[13];
-};
+} SFCB;
 
 
 /************************************************************************/
@@ -60,7 +59,7 @@ static void my_itoa(UWORD number, BYTE *pnumstr)
         WORD            ii;
 
         for (ii = 0; ii < 2; pnumstr[ii++] = '0');
-        pnumstr[2] = NULL;
+        pnumstr[2] = 0;
         if (number > 9)
           sprintf(pnumstr, "%d", number);
         else
@@ -84,7 +83,7 @@ void fmt_time(UWORD time, BYTE *ptime)
         WORD            pm, val;
 
         val = ((time & 0xf800) >> 11) & 0x001f;
-        pm = 0;
+        pm = FALSE;
 
         if (G.g_ctimeform)
         {
@@ -121,6 +120,8 @@ void fmt_time(UWORD time, BYTE *ptime)
 */
 void fmt_date(UWORD date, BYTE *pdate)
 {
+        WORD year;
+
         if (G.g_cdateform)
         {
           my_itoa( (date & 0x01e0) >> 5, &pdate[0]);
@@ -131,16 +132,23 @@ void fmt_date(UWORD date, BYTE *pdate)
           my_itoa(date & 0x001f, &pdate[0]);
           my_itoa( (date & 0x01e0) >> 5, &pdate[2]);
         }
-        my_itoa(80 + (((date & 0xfe00) >> 9) & 0x007f), &pdate[4]);
+
+        /* [JCE 25-11-2001] year 2000 bugfix. Without this, the
+         * my_itoa() call overruns the buffer in ob_sfcb() by 
+         * putting 3 bytes where there was only room for 2. The
+         * last byte hits the saved BP value, with hilarious 
+         * consequences. */
+        year = 1980 + (((date & 0xfe00) >> 9) & 0x007f);
+        my_itoa(year % 100, &pdate[4]);
 } /* fmt_date */
 
 
 static WORD ob_sfcb(LONG psfcb, BYTE *pfmt)
 {
-        SFCB            sf;
-        BYTE            *pdst, *psrc;
-        BYTE            pdate_str[7], ptime_str[7], psize_str[9];
-        WORD            cnt;
+        SFCB    sf;
+        BYTE    *pdst, *psrc;
+        BYTE    pdate_str[7], ptime_str[7], psize_str[9];
+        WORD    cnt;
 
         LBCOPY(ADDR(&sf.sfcb_junk), psfcb, sizeof(SFCB));
         pdst = pfmt;
@@ -170,9 +178,20 @@ static WORD ob_sfcb(LONG psfcb, BYTE *pfmt)
           *pdst++ = ' ';
         psrc = &psize_str[0];
         if (sf.sfcb_attr & F_SUBDIR)
-          *psrc = NULL;
+          *psrc = 0;
         else
-          sprintf(&psize_str[0], "%ld", sf.sfcb_size);
+        {
+          LONG size = sf.sfcb_size;
+          static const char *fix[4] = { "", "K", "M", "G" };
+          int fi = 0;  
+          while (size >= 10000000L && fi <= 3)
+          {
+            size = (size + 1023) / 1024;
+            fi += 1;
+          }
+          sprintf(psize_str, "%ld", size);
+          strcat(psize_str, fix[fi]);
+        }
         for(cnt = 8 - strlen(psrc); cnt--; *pdst++ = ' ');
         while (*psrc)
           *pdst++ = *psrc++;
@@ -279,7 +298,6 @@ WORD inf_fifo(LONG tree, WORD dl_fi, WORD dl_fo, BYTE *ppath)
         G.g_ndirs = 0x0L;
         G.g_size = 0x0L;
 
-        /*???more = d_doop(OP_COUNT, 0x0L, ppath, ppath, &junk, &junk);*/
         more = d_doop(OP_COUNT, NULL, 0, ppath, ppath, &junk, &junk, 0);
 
         if (!more)
