@@ -396,9 +396,6 @@ dumpkbd.prg: obj/minicrt.o obj/memmove.o obj/dumpkbd.o obj/doprintf.o \
 	     obj/string.o
 	$(LD) -Xlinker -s -o $@ $+ -lgcc
 
-#testflop.prg: obj/minicrt.o obj/doprintf.o obj/testflop.o
-#	$(LD) -Xlinker -s -o $@ $+ -lgcc
-
 #
 # NLS support
 #
@@ -746,6 +743,14 @@ depend: util/langs.c bios/header.h
 
 ifneq (,$(wildcard makefile.dep))
 include makefile.dep
+endif
+
+#
+# local Makefile
+#
+
+ifneq (,$(wildcard local.mk))
+include local.mk
 endif
 
 #

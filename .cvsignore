@@ -4,3 +4,4 @@ tounix
 *.img
 mkheader
 bug
+local.mk
