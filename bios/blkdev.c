@@ -76,6 +76,7 @@ void blkdev_hdv_init(void)
     devices[blkdev[2].unit].valid = 1;
     devices[blkdev[2].unit].pssize = 512;
     devices[blkdev[2].unit].size = 100000;
+    drvbits |= (1<<2);
 }
 
 
