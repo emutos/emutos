@@ -48,23 +48,26 @@ static void set_margin(void)
         cprintf(" ");
 }
 
-
-#if 0  /* unused */
-/* TODO, remove this */
-static void set_middle(void)
+/* print a line in which each char stands for the background color */
+static void print_art(const char *s)
 {
-    WORD marl;
-    WORD celx;
-
-    marl=v_cel_mx/2 + 3 ;     /* 36 = length of Logo */
-
-    cprintf("\r");              /* goto left side */
-
-    /* count for columns */
-    for (celx = 0; celx<=marl; celx++)
+    int old = -1;
+    int color;
+    
+    set_margin(); 
+    while(*s) {
+        color = (*s++) & 15;
+        if(color != old) {
+            cprintf("\033c%c", color + 32);
+            old = color;
+        }
         cprintf(" ");
+    }
+    if(old != 0) {
+        cprintf("\033c ");
+    }
+    cprintf("\r\n");
 }
-#endif /* unused */
 
 
 static void set_line(void)
@@ -128,10 +131,13 @@ void initinfo()
 {
 
     /* Clear screen - Esc E */
-    cprintf("\eE\r\n");
+    cprintf("\033E\r\n");
 
+    /* foreground is color 15, background is color 0 */
+    cprintf("\033b%c\033c%c", 15 + ' ', 0 + ' ');
 
     /* Now print the EmuTOS Logo */
+#if 0
     set_margin();
     cprintf("\ec!           \ec  \ec'          \ec   \ec'   \ec    \ec'    \ec \r\n");
     set_margin();
@@ -142,15 +148,20 @@ void initinfo()
     cprintf("\ec! \ec      \ec! \ec  \ec! \ec  \ec! \ec  \ec! \ec    \ec! \ec   \ec' \ec    \ec' \ec    \ec' \ec      \ec' \ec     \r\n");
     set_margin();
     cprintf("\ec!     \ec  \ec! \ec    \ec! \ec   \ec!   \ec    \ec' \ec     \ec'   \ec   \ec'    \ec  \r\n");
-
-
-    /* Just a seperator */
+#else
+    print_art("11111111111 7777777777  777   7777");
+    print_art("1                  7   7   7 7    ");
+    print_art("1111   1 1  1   1  7   7   7  777 ");
+    print_art("1     1 1 1 1   1  7   7   7     7");
+    print_art("11111 1   1  111   7    777  7777 ");
+#endif
+    
+    /* Just a separator */
     cprintf("\n\r");
     set_line();
     cprintf("\n\r");
 
     pair_start(_("EmuTOS Ver.:  ")); cprintf(_("Alpha Version")); pair_end();
-
     pair_start(_("CPU type:     ")); cprintf("m680%02ld", mcpu); pair_end();
     pair_start(_("Machine:      ")); cprintf(machine_name()); pair_end();
     pair_start(_("MMU avail.:   ")); cprintf(_("No")); pair_end();

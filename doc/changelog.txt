@@ -449,3 +449,11 @@ Start... early ages
 - hopefully fixed vsync() - I had omitted 'extern' in the declaration
   'volatile LONG frclock;' inside the routine. (LVL)
 - updated fr translations (LVL)
+
+09. Jan. 2002
+- bug now tells the number of untranslated entries in po files (LVL)
+- make ikbd.dsm creates the 'gcc -S' output of file bios/ikbd.c (LVL)
+- initinfo logo code rewritten: it's easier to change the picture now (LVL)
+- initinfo messages displayed properly (the fore and back colors were
+  not inited) - still the colors should probably be inited elsewhere (LVL)
+
