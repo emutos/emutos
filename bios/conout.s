@@ -20,15 +20,17 @@
 
 | ==== External Declarations ================================================
 
-                .global _con_out
+                .global _cons_out
                 .global _blink
                 .global _esc_init
        
 
 
 | ==== References ===========================================================
-                .xdef   _f8x12          | font header
-
+                .xdef   _f8x8           | font header
+                .xdef   _f8x16          | font header
+                .xdef   sshiftmod        | mode/bits of shift/modifyer keys
+                
                 .xdef   _v_planes       | number of planes
                 .xdef   _v_lin_wr       | line wrap
                 .xdef   v_cel_ht        | cell height (width is 8)
@@ -47,6 +49,7 @@
 
                 .xdef   v_col_fg        | current foreground color
                 .xdef   v_col_bg        | current background color
+                .xdef   v_cur_of        | cursor offset
                 .xdef   v_cur_cx        | current cursor cell x
                 .xdef   v_cur_cy        | current cursor cell y 
                 .xdef   v_cur_ad        | current cursor address
@@ -55,6 +58,7 @@
 
                 .xdef   v_stat_0        | VIDEO CELL SYSTEM STATUS
                 .xdef   v_cur_tim       | cursor blink timer
+                .xdef   v_period        | 
 
                 .xdef   disab_cnt       | disable depth count. (>0 => disabled)
                 .xdef   sav_cxy         | save area for cursor coords.
@@ -74,11 +78,11 @@
 |       bell information:  data needed generate tones which simulates a bell
 |
 
-        .equ    SNDCHIP,        0xFCDD80        | where the tone chip is located
-        .equ    ACR,            0x17            | register on the tone chip
-        .equ    SHFTREG,        0x15            | register on the tone chip
-        .equ    LOLATCH,        0x11            | register on the tone chip
-        .equ    HICOUNT,        0x13            | register on the tone chip
+|        .equ    SNDCHIP,        0xFCDD80        | where the tone chip is located
+|        .equ    ACR,            0x17            | register on the tone chip
+|        .equ    SHFTREG,        0x15            | register on the tone chip
+|        .equ    LOLATCH,        0x11            | register on the tone chip
+|        .equ    HICOUNT,        0x13            | register on the tone chip
 
 |
 |       font header structure equates.
@@ -187,20 +191,21 @@ exit_conout:
 
 
 | ==== do_bell - Ring the bell (not implemented) ============================
+| No bell on Lisa so it must be simulated
 
-do_bell:                        | No bell on Lisa so it must be simulated
-        lea     SNDCHIP, a0     | get address at which the tone chip is loc
-        or.b    #0x10, ACR(a0)
-        move.b  #0xf0, SHFTREG(a0)
-        moveq   #0,  d1                 | clear the d1 register
-        move.b  #0xa6, d0               | This will specify the G note
-        move.b  #11,  d1                | This will be duration note held
-        move.b  d0, LOLATCH(a0)         |
-        clr.b   HICOUNT(a0)             |
-delay:  move.w  tempo, d2               |
-loop8:  dbra    d2, loop8               |
-        dbra    d1, delay               |
-        and.b   #0xef, ACR(a0)          |
+do_bell:                         
+|        lea     SNDCHIP, a0     | get address at which the tone chip is loc
+|        or.b    #0x10, ACR(a0)
+|        move.b  #0xf0, SHFTREG(a0)
+|        moveq   #0,  d1                 | clear the d1 register
+|        move.b  #0xa6, d0               | This will specify the G note
+|        move.b  #11,  d1                | This will be duration note held
+|        move.b  d0, LOLATCH(a0)         |
+|        clr.b   HICOUNT(a0)             |
+|delay:  move.w  tempo, d2               |
+|loop8:  dbra    d2, loop8               |
+|        dbra    d1, delay               |
+|        and.b   #0xef, ACR(a0)          |
         rts
 
 
@@ -657,7 +662,7 @@ escw:           bclr    #F_CEOL,v_stat_0 | clear the eol handling bit.
 
 ascii_cr:       move.w  v_cur_cy,d1
                 clr.w   d0              | beginning of current line.
-                bra     move_cur
+                bra     move_cursor
 
 
 
@@ -844,18 +849,18 @@ dc_out: rts
 
 blnk_blt:
         sub.l   d1,d2                   |form cell delta x, delta y in d2
-        move.w  d1,d0                   |get cell x for cell_addr call
+        move    d1,d0                   |get cell x for cell_addr call
         swap    d1                      |get cell y in d1.w
 
         bsr     cell_addr               |form screen address of top/left cell in a1
 
-        asr.w   #1,d2                   |d2 = # of cell-pairs per row in region -1
-        move.w  _v_planes,d3            |# of planes -> d3
-        cmpi.w  #4,d3                   |form 1,2, or 3
+        asr     #1,d2                   |d2 = # of cell-pairs per row in region -1
+        move    _v_planes,d3            |# of planes -> d3
+        cmpi    #4,d3                   |form 1,2, or 3
         bne     b1                      |    in d0 for shift purposes
-        subq.w  #1,d3                   |4 planes -> 3 shifts
+        subq    #1,d3                   |4 planes -> 3 shifts
 b1:
-        move.w  d2,d1                   |
+        move    d2,d1                   |
         addq.w  #1,d1                   |d1 = # of cell-pairs per row in region
         asl.w   d3,d1                   |d1 = total bytes per row in region
         move.w  _v_lin_wr,a2            |line wrap to a2
@@ -876,17 +881,17 @@ b1:
 |  4 planes
 
 plane4:
-        asr.w   d5                      |shift background color plane 0 to cy
+        asr     #1,d5                   |shift background color plane 0 to cy
         negx.w  d0                      |d0.w=0xFFFF if cy=1, =0x0000 if cy=0
         swap    d0                      |put 1st bit in high word
-        asr.w   d5                      |shift plane 1 to cy
+        asr     #1, d5                  |shift plane 1 to cy
         negx.w  d0                      |fill with all 1's if cy
 |
         clr.l   d3                      |assume all 0's for planes 2 & 3
-        asr.w   d5
+        asr.w   #1, d5
         negx.w  d3
         swap    d3
-        asr.w   d5
+        asr.w   #1, d5
         negx.w  d3
 
 |  d0 & d3 packed as double long word of blanking background
@@ -907,10 +912,10 @@ plane4x:
         rts
 
 plane2:
-        asr.w   d5                      |shift background color plane 0 to cy
+        asr.w   #1, d5                  |shift background color plane 0 to cy
         negx.w  d0                      |d0.w=0xFFFF if cy=1, =0x0000 if cy=0
         swap    d0                      |put 1st bit in high word
-        asr.w   d5                      |shift plane 1 to cy
+        asr.w   #1, d5                  |shift plane 1 to cy
         negx.w  d0                      |fill with all 1's if cy
 
 |  d0 packed as long word of blanking background
@@ -931,7 +936,7 @@ plane2x:
         rts
 
 mono:
-        asr.w   d5
+        asr.w   #1, d5
         negx.w  d0
 
 |  d0 packed as word of blanking background
@@ -1069,7 +1074,7 @@ p_lp0:
         move.l  a0,a4                   | a4 -> top of source block
         move.l  a1,a5                   | a5 -> top of current dest plane
 
-        asr.l   #01,d7                  | cy <- current foreground color bit
+        asr.l   #1, d7                  | cy <- current foreground color bit
         btst    #15,d7                  | z  <- current background color bit
         beq     back_0
 
@@ -1365,7 +1370,7 @@ p_sc_up:
         move.w  v_cel_wr,d3     |cell wrap to temp d3
         lea     (a3,d3.w),a2    |form source address from cell wrap + base address
         mulu    d1,d3           |form # of bytes to move in d3
-        asr.w   #2,d3           |divide by 4 for long byte moves
+        asr.w   #2, d3          |divide by 4 for long byte moves
         bra     scrup1          |enter loop at test
 |
 scrup0:
@@ -1441,7 +1446,7 @@ gl_f_init:
 | ==== _esc_init - escape initialization routine.============================
 
 _esc_init:
-        move.b  sshiftmd, d0            | get video resolution
+        move.b  sshiftmod, d0           | get video resolution
         and.w   #3, d0                  | isolate bits 0 and 1
         cmp.w   #3, d0                  | is it 3?
         bne     not3                    | no
@@ -1451,10 +1456,10 @@ not3:
         bsr     resolset                | set video resolution
         move.w  (sp)+, d0               | restore resolution
         
-        lea     _f8x12, a0              | Get pointer to 8x12 font header
+        lea     _f8x8, a0               | Get pointer to 8x12 font header
         cmp.w   #2, d0                  | High resolution?
         bne     lowres                  | no, low resolution
-        lea     _f8x14, a0              | Get pointer to 8x12 font header
+        lea     _f8x16, a0              | Get pointer to 8x12 font header
 lowres:
         bsr     gl_f_init               | init the global font variables.
 
@@ -1463,7 +1468,7 @@ lowres:
         move.w  d0, v_col_bg            | background color := 0.
         move.w  d0, v_cur_cx            | cursor column 0
         move.w  d0, v_cur_cy            | cursor line 0
-        move.w  d0, v_cur_ht            | line offset 0
+        move.w  d0, v_cur_of            | line offset 0
         move.l  _v_bas_ad, a0           | get base address of screen
         move.l  a0, v_cur_ad            | home cursor.
         move.b  #1, v_stat_0            | invisible, flash, nowrap, normal video.
@@ -1488,7 +1493,7 @@ scr_loop:
 | ==== resolset - set video resolution ======================================
 
 resolset:
-        moveq.l #1, d0                  
+        moveq.l #0, d1                  
 
         move.b  splanes(pc, d0.w), d1   | Get the number of planes
         move.w  d1, _v_planes           | save it
@@ -1504,6 +1509,7 @@ resolset:
         move.b  sresolx(pc, d0.w),d1    | Get the number of planes
         move.w  d1, v_hz_rez            | Set the horizontal resolution
 
+        rts
 
 
 | ==== screenpar - Screen parameters ========================================
@@ -1513,9 +1519,9 @@ splanes:
 sbytes:
         dc.b    160,160,80              | bytes per line (_v_lin_wr)
 sresoly:
-        dc.b    200,200,400             | screen vertical resolution (v_vt_rez)
+        dc.w    200,200,400             | screen vertical resolution (v_vt_rez)
 sresolx:
-        dc.b    320,640,640             | screen horiz resolution (v_hz_rez)
+        dc.w    320,640,640             | screen horiz resolution (v_hz_rez)
         
 
 
