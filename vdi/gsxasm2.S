@@ -25,8 +25,8 @@
 
 //              external routines.
 
-                .globl   concat
-                .globl   xline
+                .xdef    concat
+                .xdef    xline
 
 //              external variables
 

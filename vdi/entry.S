@@ -25,7 +25,7 @@
         .xdef   _PTSIN
         .xdef   _INTOUT
         .xdef   _PTSOUT
-        .xdef   _FLIP_Y
+        .xdef   _flip_y
         .xdef   _screen
 
         .globl  _GSX_ENTRY
@@ -104,7 +104,7 @@ intin_ok:
 
         movem.l (sp)+, d1-d7/a0-a6 // restore the caller's registers
         clr.l   d0
-        move.w  _FLIP_Y,d0      // set d0 to indicate magnitude/coordinate 
+        move.w  _flip_y,d0      // set d0 to indicate magnitude/coordinate 
 
         rts
 

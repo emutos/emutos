@@ -27,7 +27,6 @@ extern struct attribute *cur_work;      /* Pointer to current works attr. */
 extern WORD DDA_INC;            /* the fraction to be added to the DDA */
 extern WORD T_SCLSTS;           /* 0 if scale down, 1 if enlarge */
 
-extern WORD FLIP_Y;             /* True if magnitudes being returned */
 extern WORD MONO_STATUS;        /* True if current font monospaced */
 
 extern WORD deftxbuf[];         /* Default text scratch buffer */
@@ -36,6 +35,7 @@ extern WORD scrtsiz;            /* Default offset to large text buffer */
 extern WORD scrpt2;             /* Offset to large text buffer */
 extern WORD *scrtchp;           /* Pointer to text scratch buffer */
 
+extern WORD flip_y;             /* True if magnitudes being returned */
 extern WORD h_align;            /* Text horizontal alignment */
 extern WORD v_align;            /* Text vertical alignment */
 
@@ -100,6 +100,7 @@ extern WORD REQ_COL[3][MAX_COLOR];
 extern WORD MAP_COL[], REV_MAP_COL[];
 extern WORD X1, Y1, X2, Y2;
 extern WORD GCURX, GCURY, TERM_CH;
+extern WORD mousex, mousey;
 
 /* Bit-Blt variables */
 
@@ -116,7 +117,6 @@ extern WORD SMUL_DIV();
 
 /* Assembly Language Support Routines NEWLY ADDED */
 
-extern void DIS_CUR();
 extern void text_blt();
 extern void xfm_crfm(), XFM_UNDL(), COPY_RFM(), RECTFILL();
 
@@ -132,7 +132,8 @@ extern WORD end_pts(WORD x, WORD y, WORD *xleftout, WORD *xrightout);
 /* C Support routines */
 
 extern WORD ACT_SIZ(WORD top);
-extern void hide_cur();
+extern void cur_display();
+extern void cur_replace();
 extern void text_init();
 extern void st_fl_ptr();
 extern void screen();

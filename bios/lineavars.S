@@ -329,10 +329,12 @@ _TEXT_FG:       ds.w    1               // text foreground color
 _scrtchp:       ds.l    1               // pointer to base of scratch buffer
 _scrpt2:        ds.w    1               // large buffer base offset
 
+
+#if 0
 // ==== Additional Atari specific things =====================================
 _TEXT_BG:       ds.w    1               // text foreground color
 _COPYTRAN:      ds.w    1               // Flag for Copy-raster-form (<>0 = Transparent)
 _FILL_ABORT:    ds.l    1               // Adress of Routine for Test of break of contour fill function
-
+#endif
 
                 .end

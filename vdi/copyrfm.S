@@ -15,6 +15,7 @@
 
         .globl  _COPY_RFM
         .globl  _CLIP,_XMN_CLIP,_YMN_CLIP,_XMX_CLIP,_YMX_CLIP,_patptr
+	.globl	_COPYTRAN
         .globl  _multifill
         
         .globl  bit_blt
@@ -25,13 +26,13 @@
         .xdef   _DEV_TAB,_MAP_COL
 
 
-        .bss
-        .even
-        
-        .globl  _COPYTRAN
-_COPYTRAN:      .ds.w   1
-        
 
+	.bss
+        .even
+_COPYTRAN:      ds.w    1	// Flag for Copy-raster-form (<>0 = Transparent)
+
+
+        
 	.text
 //
 //

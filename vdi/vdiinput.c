@@ -161,6 +161,41 @@ static void do_nothing()
 
 
 /*
+ * vb_draw - moves mouse cursor, GEM VBL routine
+ *
+ * It removes the mouse cursor from its current location, if necessary,
+ * * and redraws it at a new location.
+ *
+ *      Inputs:
+ *         draw_flag - signals need to redraw cursor
+ *         newx - new cursor x-coordinate
+ *         newy - new cursor y-coordinate
+ *         mouse_flag - cursor hide/show flag
+ *
+ *      Outputs:
+ *         draw_flag is cleared
+ *
+ *      Registers Modified:     d0, d1
+ *
+ */
+
+/* If we do not need to draw the cursor now then just exit. */
+
+void vb_draw()
+{
+    if (draw_flag) {
+        if (!mouse_flag) {
+            cur_replace();		// remove the old cursor from the screen
+            mousex = newx;		// get cursor x-coordinate
+            mousey = newy;		// get cursor y-coordinate
+            cur_display();		// redraw the cursor
+        }
+    }
+}
+
+
+
+/*
  * vdimouse_init - Initializes the mouse (VDI part)
  *
  * entry:          none
@@ -215,3 +250,6 @@ void vdimouse_exit()
     /* disable mouse via XBIOS */
     initmous(0, 0, 0);
 }
+
+
+

@@ -416,7 +416,7 @@ void dst_height()
     *pointer++ = test_height = single_font->top;
     *pointer++ = single_font->max_cell_width;
     *pointer++ = test_height + single_font->bottom + 1;
-    FLIP_Y = 1;
+    flip_y = 1;
 }
 
 
@@ -619,7 +619,7 @@ void dst_point()
     *pointer++ = test_height = single_font->top;
     *pointer++ = single_font->max_cell_width;
     *pointer++ = test_height + single_font->bottom + 1;
-    FLIP_Y = 1;
+    flip_y = 1;
 }
 
 
@@ -749,7 +749,7 @@ void dqt_attributes()
     pointer = CONTRL;
     *(pointer + 2) = 2;
     *(pointer + 4) = 6;
-    FLIP_Y = 1;
+    flip_y = 1;
 }
 
 
@@ -833,7 +833,7 @@ void dqt_extent()
         *pointer = height;
         break;
     }
-    FLIP_Y = 1;
+    flip_y = 1;
 }
 
 
@@ -874,7 +874,7 @@ void dqt_width()
     pointer = CONTRL;
     *(pointer + 2) = 3;
     *(pointer + 4) = 1;
-    FLIP_Y = 1;
+    flip_y = 1;
 }
 
 
@@ -959,7 +959,7 @@ void dqt_fontinfo()
     pointer = CONTRL;
     *(pointer + 2) = 5;
     *(pointer + 4) = 2;
-    FLIP_Y = 1;
+    flip_y = 1;
 }
 
 

@@ -25,10 +25,13 @@
 
         .globl  _xfm_crfm       // set mouse form
         .globl  _cur_replace  
+        .globl  _cur_display
         .globl  _vb_draw        // vertical blank mouse draw routine
 
-        .globl  _DIS_CUR        // display cursor routine
         .globl  _arrow_cdb      // default mouse definition
+
+	.globl	_mousex
+	.globl	_mousey
 
         /* External variables used here */
 
@@ -45,7 +48,6 @@
         .xdef   _mouse_flag     // Non-zero if mouse ints disabled
         .xdef   _newx           // New mouse x position
         .xdef   _newy           // New mouse y position
-        .xdef   _draw_flag      // Non-zero means draw mouse form on vblank
 
         .xdef   _user_but       // user button vector
         .xdef   _user_mot       // user motion vector
@@ -265,61 +267,6 @@ mov_cur1:
 
 
 /*
- * _vb_draw - moves mouse cursor, GEM VBL routine
- *
- * It removes the mouse cursor from its current location, if necessary,
- * * and redraws it at a new location.
- *
- *      Inputs:
- *         draw_flag - signals need to redraw cursor
- *         newx - new cursor x-coordinate
- *         newy - new cursor y-coordinate
- *         mouse_flag - cursor hide/show flag
- *
- *      Outputs:
- *         draw_flag is cleared
- *
- *      Registers Modified:     d0, d1
- *
- */
-
-/* If we do not need to draw the cursor now then just exit. */
-
-_vb_draw:
-        move.w  sr,-(sp)        // save current value of status register
-        ori.w   #0x0700,sr      // mask off all interrupts
-        bclr.b  #0,_draw_flag   // draw the cursor?
-        beq     vblank_noop     // nope - done
-
-/*
- *      We want to draw the cursor.  Get the new coordinates for the cursor
- *      and check the value of the hide/show flag.  If its value is non-zero
- *      then we are already attempting to hide or display the cursor so there
- *      is nothing more to be done here.
- */
-        move.w  _newx,d0        // get new cursor x-coordinate
-        move.w  _newy,d1        // get new cursor y-coordinate
-        move.w  (sp)+,SR        // restore the status register
-        tst.b   _mouse_flag     // are we in a hide/show operation?
-        bne     vblank_exit     // yes - done
-
-/*
- *      Everything is now clear to redraw the mouse cursor.  First, remove
- *      the old cursor, if one exists, from the screen.  Finally, redraw
- *      the cursor in its new location.
- */
-        bsr     _cur_replace     // remove the old cursor from the screen
-        bsr     cur_display     // redraw the cursor
-vblank_exit:
-        rts
-
-vblank_noop:
-        move.w  (sp)+, sr               // restore interrupt context
-        rts
-
-
-
-/*
  *    cur_display
  *
  *      This routine blts a "cursor" to the destination by com-
@@ -350,8 +297,8 @@ vblank_noop:
  *      Latest Update:  07-dec-84
  *
  *      Inputs:
- *         d0.w - cursor x
- *         d1.w - cursor y
+ *         _mousex - cursor x
+ *         _mousey - cursor y
  *
  *      Outputs:        None
  *
@@ -377,7 +324,10 @@ vblank_noop:
 #define RTN_REC         2*4
 
 
-cur_display:
+_cur_display:
+	move.w	_mousex,d0
+	move.w	_mousey,d1
+
         movem.l d2-d7/a2-a6,-(sp)       // save registers used by 'C'
         clr.w   d7                      // init entry & store routine index
         lea     _DEV_TAB,a2             // get address of the DEVICE TABLE
@@ -463,12 +413,12 @@ init:
         move.l  rtn_tab+00(pc,d7.w),a5  // get starting address of store routine
         move.l  rtn_tab+04(pc,d7.w),a6  // get starting address of fetch routine
         move.w  _v_planes,d7            // get number of graphic planes
-#if rbp
+#if vme10
+        move.l  _v_pl_dspl,d3           // get # bytes between graphic planes
+#else
         moveq.l #0,d3
         move.w  d7,d3
         add.w   d3,d3                   // # bytes between words in same plane
-#else
-        move.l  _v_pl_dspl,d3           // get # bytes between graphic planes
 #endif
 
         move.w  _v_lin_wr,d4            // get number of bytes in a scan line
@@ -507,10 +457,10 @@ new_plane:
         move.w  crow_cnt(sp),d5         // get # of displayable cursor rows
         suba.w  cpl_size(sp),a0         // starting address of cursor source
 
-#if rbp
-        addq.l  #2,d_addr(sp)           // get address of next graphics plane
-#else
+#if vme10
         add.l   d3,d_addr(sp)           // get address of next graphics plane
+#else
+        addq.l  #2,d_addr(sp)           // get address of next graphics plane
 #endif
         movea.l d_addr(sp),a1           // current destination address
 
@@ -568,24 +518,24 @@ fgbg_op:
 
 /* fetch/store/advance row:  long word */
 fetch_lw:
-#if rbp
+#if vme10
+        move.l  (a1),d2
+#else
         move.w  (a1),d2
         swap    d2
         move.w  (a1,d3.w),d2            // d2(31:00) <- destination
-#else
-        move.l  (a1),d2
 #endif
         move.l  d2,(a2)+                // save original destination
 
         jmp     (a3)                    // a3 -> alignment routine
 
 store_lw:
-#if rbp
+#if vme10
+        move.l  d2,(a1)
+#else
         move.w  d2,(a1,d3.w)
         swap    d2
         move.w  d2,(a1)                 // send long word to screen
-#else
-        move.l  d2,(a1)
 #endif
         add.w   d4,a1                   // a1 -> next row of destination
 
@@ -742,13 +692,13 @@ _cur_replace:
         bclr.b  #F_SAVRDY,save_stat     // does save area contain valid data ?
         beq     cur_rep_end             // 0:nothing saved
 
-#if rbp
+#if vme10
+        move.w  save_len,d4             // get number of cursor lines per plane
+        subq.w  #1,d4                   // adjust for loop counter
+#else
         move.w  save_len,d4             // d4 <- number of lines per plane
         move.w  d4,d2
         subq.w  #1,d2                   // d2 <- adjust counter for dbra
-#else
-        move.w  save_len,d4             // get number of cursor lines per plane
-        subq.w  #1,d4                   // adjust for loop counter
 #endif
         move.w  _v_lin_wr,d3            // d3 <- dy wrap value
 
@@ -756,7 +706,42 @@ _cur_replace:
         lea     save_area,a1            // a1 -> save area
 
         move.w  _v_planes,d5            // d5 <- resolution discriminator
-#if rbp
+#if vme10
+
+        subq.w  #1,d5                   // adjust plane count for loop
+        movea.l a0,a5                   // save destination address
+        move.l  _v_pl_dspl,a3           // get # of bytes between gr. planes
+        move.w  d4,d2                   // save # of lines/plane
+        btst.b  #F_SAVWID,save_stat     // word or longword transfer?
+        bne.b   lw_1st_line             // for longword transfer
+        bra.b   wd_1st_line             // for word transfer
+
+v_wd_plane:
+        adda.l  a3,a5                   // point to next graphics plane
+        movea.l a5,a0                   // new destination address
+        move.w  d4,d2                   // restore # of lines to be written
+        bra.b   wd_1st_line             // restore 1st dest.line for this plane
+v_wd_loop:
+        adda.w  d3,a0                   // next scan line of destination
+wd_1st_line:
+        move.w  (a1)+,(a0)              // restore one destination line
+        dbra    d2,v_wd_loop            // next line in save buffer
+        dbra    d5,v_wd_plane           // set up for next graphics plane
+        movem.l (sp)+,d2-d5/a2-a5       // restore 'C' registers
+        bra     cur_rep_end
+
+v_lw_plane:
+        adda.l  a3,a5                   // point to next graphics plane
+        movea.l a5,a0                   // new destination address
+        move.w  d4,d2                   // restore # of lines to be written
+        bra.b   lw_1st_line             // restore 1st dest.line for this plane
+v_lw_loop:
+        adda.w  d3,a0                   // next scan line of destination
+lw_1st_line:
+        move.l  (a1)+,(a0)              // restore one destination line
+        dbra    d2,v_lw_loop            // next line in save buffer
+        dbra    d5,v_lw_plane           // set up for next graphics plane
+#else  /* vme10 */
         subq.w  #2,d5
         bgt     lo_rez
         beq     md_rez
@@ -859,130 +844,10 @@ lo_lw_loop:
         move.l  a5,a0                   // a0 -> next line
         dbra    d2,lo_lw_loop
 
-#else  /* rbp */
-
-        subq.w  #1,d5                   // adjust plane count for loop
-        movea.l a0,a5                   // save destination address
-#if vme10
-        move.l  _v_pl_dspl,a3           // get # of bytes between gr. planes
-#else
-        moveq.l #2,a3
-#endif
-        move.w  d4,d2                   // save # of lines/plane
-        btst.b  #F_SAVWID,save_stat     // word or longword transfer?
-        bne.b   lw_1st_line             // for longword transfer
-        bra.b   wd_1st_line             // for word transfer
-
-v_wd_plane:
-        adda.l  a3,a5                   // point to next graphics plane
-        movea.l a5,a0                   // new destination address
-        move.w  d4,d2                   // restore # of lines to be written
-        bra.b   wd_1st_line             // restore 1st dest.line for this plane
-v_wd_loop:
-        adda.w  d3,a0                   // next scan line of destination
-wd_1st_line:
-        move.w  (a1)+,(a0)              // restore one destination line
-        dbra    d2,v_wd_loop            // next line in save buffer
-        dbra    d5,v_wd_plane           // set up for next graphics plane
-        movem.l (sp)+,d2-d5/a2-a5       // restore 'C' registers
-        bra     cur_rep_end
-
-v_lw_plane:
-        adda.l  a3,a5                   // point to next graphics plane
-        movea.l a5,a0                   // new destination address
-        move.w  d4,d2                   // restore # of lines to be written
-        bra.b   lw_1st_line             // restore 1st dest.line for this plane
-v_lw_loop:
-        adda.w  d3,a0                   // next scan line of destination
-lw_1st_line:
-        move.l  (a1)+,(a0)              // restore one destination line
-        dbra    d2,v_lw_loop            // next line in save buffer
-        dbra    d5,v_lw_plane           // set up for next graphics plane
-#endif /* rbp */
+#endif /* vme10 */
 
 cur_rep_end:
         movem.l (sp)+,d2-d5/a2-a5       // restore 'C' registers
-        rts
-
-
-#if 0
-/*
- *    hide_cur
- *
- *      This routine hides the mouse cursor if it has not already
- *      been hidden.
- *
- *      Inputs:         None
- *
- *      Outputs:
- *         hide_cnt = hide_cnt + 1
- *         draw_flag = 0
- *
- *      Registers Modified: a0
- *
- *
- *
- *      Increment the counter for the number of hide operations performed.
- *      If this is the first one then remove the cursor from the screen.
- *      If not then do nothing because the cursor isn't on the screen any
- *      more.
- */
-_HIDE_CUR:
-        add.b   #1,_mouse_flag  // disable mouse redrawing
-        lea     _HIDE_CNT,a0    // get address of hide operations counter
-        addq.w  #1,(a0)         // increment it
-        cmpi.w  #1,(a0)         // is cursor already hidden?
-        bne.b   hid_cur1        // yes - done
-
-/*
- *      Remove the mouse cursor from the screen and disable the vertical
- *      blank cursor drawing routine.
- */
-        bsr     cur_replace     // remove the cursor
-        clr.b   _draw_flag      // disable vb_draw
-hid_cur1:
-        sub.b   #1,_mouse_flag  // re-enable mouse drawing
-        rts
-#endif
-
-
-/*
- * dis_cur - Displays the mouse cursor if the number of hide 
- *           operations has gone back to 0.
- *
- *   Inputs:         None
- *
- *   Outputs:
- *      hide_cnt = hide_cnt - 1
- *      draw_flag = 0
- *
- *   Registers Modified:     d0, d1
- */
-
-/*
- *  Decrement the counter for the number of hide operations performed.
- *  If this is not the last one then do nothing because the cursor
- *  should remain hidden.
- */
-_DIS_CUR:
-        add.b   #1,_mouse_flag  // disable mouse redrawing
-        subq.w  #1,_HIDE_CNT    // decrement hide operations counter
-        bgt.b   dis_cur1        // still greater than 0 - do nothing
-        bmi.b   fix_neg         // negative - cursor already displayed
-
-/*
- *      Get the coordinates of the current cursor position and display it.
- */
-        move.w  _GCURX,d0       // get cursor x-coordinate
-        move.w  _GCURY,d1       // get cursor y-coordinate
-        //move.w  50,d0       // get cursor x-coordinate
-        //move.w  50,d1       // get cursor y-coordinate
-        bsr     cur_display     // display the cursor
-        clr.b   _draw_flag      // disable vb_draw
-fix_neg:
-        clr.w   _HIDE_CNT       // clear the hide operations counter
-dis_cur1:
-        sub.b   #1,_mouse_flag  // re-enable mouse drawing
         rts
 
 
@@ -1098,5 +963,9 @@ _arrow_cdb:
         .dc.w   0x0000 //%0000000000000000
 
 
+	.bss
+        
+_mousex:       .ds.w 	1
+_mousey:       .ds.w 	1
 
         .end

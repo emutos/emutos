@@ -359,7 +359,7 @@ void vqm_attr()
     pointer = CONTRL;
     *(pointer + 4) = 3;
     *(pointer + 2) = 1;
-    FLIP_Y = 1;
+    flip_y = 1;
 }
 
 

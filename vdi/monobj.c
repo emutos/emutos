@@ -18,42 +18,6 @@
 
 
 
-extern void cur_replace();
-
-
-/*
- * hide_cur
- *
- * This routine hides the mouse cursor if it has not already
- * been hidden.
- *
- * Inputs:         None
- *
- * Outputs:
- *    hide_cnt = hide_cnt + 1
- *    draw_flag = 0
- */
-
-void hide_cur()
-{
-    mouse_flag += 1;            /* disable mouse redrawing */
-
-    /*
-     * Increment the counter for the number of hide operations performed.
-     * If this is the first one then remove the cursor from the screen.
-     * If not then do nothing, because the cursor wasn't on the screen.
-     */
-    HIDE_CNT += 1;              // increment it
-    if (HIDE_CNT == 1) {        // if cursor was not hidden...
-        cur_replace();          // remove the cursor from screen
-        draw_flag = 0;          // disable vb_draw routine
-    }
-
-    mouse_flag -= 1;            /* re-enable mouse drawing */
-}
-
-
-
 /*
  * vsl_type - Set line style for line-drawing functions
  */
@@ -173,8 +137,8 @@ void vsm_height()
     pts_out = PTSOUT;
     *pts_out++ = h * DEF_MKWD;
     *pts_out = h * DEF_MKHT;
-    FLIP_Y = 1;
-} /* End "vsm_height". */
+    flip_y = 1;
+} 
 
 
 
@@ -269,6 +233,68 @@ void vsf_color()
 
 
 
+/*
+ * dis_cur - Displays the mouse cursor if the number of hide 
+ *           operations has gone back to 0.
+ *
+ *  Decrement the counter for the number of hide operations performed.
+ *  If this is not the last one then do nothing because the cursor
+ *  should remain hidden.
+ *
+ *   Outputs:
+ *      hide_cnt = hide_cnt - 1
+ *      draw_flag = 0
+ */
+
+void dis_cur()
+{
+    mouse_flag += 1;            // disable mouse redrawing
+    HIDE_CNT -= 1;              // decrement hide operations counter
+    if (HIDE_CNT <= 0) {
+        HIDE_CNT = 0;     	// if hide counter < 0
+        mousex = GCURX;		// get cursor x-coordinate
+        mousey = GCURY;		// get cursor y-coordinate
+        cur_display();		// display the cursor
+        draw_flag = 0;		// disable vbl drawing routine
+    }
+    mouse_flag -= 1;            // re-enable mouse drawing
+}
+
+
+
+/*
+ * hide_cur
+ *
+ * This routine hides the mouse cursor if it has not already
+ * been hidden.
+ *
+ * Inputs:         None
+ *
+ * Outputs:
+ *    hide_cnt = hide_cnt + 1
+ *    draw_flag = 0
+ */
+
+void hide_cur()
+{
+    mouse_flag += 1;            /* disable mouse redrawing */
+
+    /*
+     * Increment the counter for the number of hide operations performed.
+     * If this is the first one then remove the cursor from the screen.
+     * If not then do nothing, because the cursor wasn't on the screen.
+     */
+    HIDE_CNT += 1;              // increment it
+    if (HIDE_CNT == 1) {        // if cursor was not hidden...
+        cur_replace();          // remove the cursor from screen
+        draw_flag = 0;          // disable vbl drawing routine
+    }
+
+    mouse_flag -= 1;            /* re-enable mouse drawing */
+}
+
+
+
 /* LOCATOR_INPUT: */
 void v_locator()
 {
@@ -284,13 +310,13 @@ void v_locator()
     GCURY = *pointer;
 
     if (loc_mode == 0) {
-        DIS_CUR();
+        dis_cur();
         while ((i = gloc_key()) != 1) { /* loop till some event */
             if (i == 4) {       /* keyboard cursor? */
                 hide_cur();     /* turn cursor off */
                 GCURX = X1;
                 GCURY = Y1;
-                DIS_CUR();      /* turn cursor on */
+                dis_cur();      /* turn cursor on */
             }
         }
         *(INTOUT) = TERM_CH & 0x00ff;
@@ -336,7 +362,7 @@ void v_locator()
                 pointer = PTSOUT;
                 *pointer++ = GCURX = X1;
                 *pointer = GCURY = Y1;
-                DIS_CUR();
+                dis_cur();
             } else {
                 pointer = PTSOUT;
                 *pointer++ = GCURX = X1;
@@ -356,12 +382,10 @@ void v_locator()
 
 void v_show_c()
 {
-    /* DIS_CUR will trash all registers but FP and SP */
-
     if (!*INTIN && HIDE_CNT)
         HIDE_CNT = 1;           /* reset cursor to on */
 
-    DIS_CUR();
+    dis_cur();
 }
 
 

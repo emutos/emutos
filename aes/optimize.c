@@ -59,7 +59,7 @@ WORD sound(WORD isfreq, WORD freq, WORD dura)
 }
 
 
-/*
+#if 0
 WORD bit_num(UWORD flag)
 {
         WORD            i;
@@ -70,7 +70,7 @@ WORD bit_num(UWORD flag)
         for (i=0,test=1; !(flag & test); test <<= 1,i++);
         return(i);
 }
-*/
+#endif
 
 
 void rc_constrain(GRECT *pc, GRECT *pt)
@@ -273,6 +273,9 @@ WORD inf_what(LONG tree, WORD ok, WORD cncl)
 }
 
 
+/*
+ * merge_str - merge in integrated variables
+ */
 void merge_str(BYTE *pdst, BYTE *ptmp, UWORD parms[])
 {
         WORD            num;

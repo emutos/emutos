@@ -145,7 +145,7 @@ extern UWORD v_bytes_lin;       // width of line in bytes
 
 
 BYTE in_proc;                   /* flag, if we are still running */
-WORD FLIP_Y;			/* True if magnitudes being returned */
+WORD flip_y;			/* True if magnitudes being returned */
 
 struct attribute virt_work;     /* attribute areas for workstations */
 WORD q_circle[MX_LN_WIDTH];     /* Holds the circle DDA */
@@ -477,7 +477,7 @@ void vq_extnd()
     *(dp + 2) = 6;
     *(dp + 4) = 45;
 
-    FLIP_Y = 1;
+    flip_y = 1;
 
     dp = PTSOUT;
 
@@ -621,7 +621,7 @@ void init_wk()
     for (l = 0; l < 12; l++)
         *pointer++ = *src_ptr++;
 
-    FLIP_Y = 1;
+    flip_y = 1;
 }
 
 
@@ -831,7 +831,7 @@ void screen()
     *(control + 2) = 0;
     *(control + 4) = 0;
 
-    FLIP_Y = 0;
+    flip_y = 0;
 
     if (opcode != 1 && opcode != 100) {
 
