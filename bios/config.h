@@ -13,11 +13,6 @@
 #ifndef _CONFIG_H
 #define _CONFIG_H
 
-/* contains all default-drive dependant info */
-#ifndef DEFDRV
-#define	DEFDRV 2		/* 0 = A:, 2 = C: */
-#endif
-
 /* set this to 1 if your emulator provides an STonX-like 
  * native_print() function, i.e. if the code:
  *   dc.w 0xa0ff

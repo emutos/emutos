@@ -73,16 +73,10 @@ extern void cartscan(WORD);      /* found in startup.S */
  */
 int is_ramtos;
 
-
-#if     DEFDRV == 0
-static BYTE env[] = "COMSPEC=a:\\command.prg\0";
-#else
-static BYTE env[] = "COMSPEC=c:\\command.prg\0";
-#endif
-
-
 /* Drive specific declarations */
-static WORD defdrv ;       /* default drive number (0 = a:, 2 = c:) */
+static WORD defdrv ;            /* default drive number (0 = a:, 2 = c:) */
+
+static BYTE env[256];            /* environment just for startup*/
 
 
 /*==== BOOT ===============================================================*/
@@ -290,6 +284,7 @@ void biosmain()
     /* autoexec Prgs from AUTO folder */
     
     /* clear environment string */
+    env[0]='\0';
 
     /* clear commandline */
     

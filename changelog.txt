@@ -241,3 +241,6 @@ Start... early ages
 1. Nov. 2001
 - removed old stuff from bios.c and startup.s (LVL)
 - fixed the BDOS-buffer-init bug: EmuTOS boots a real MegaSTE2!!! (LVL)
+- Removed hardcoded default drive #defines
+
+

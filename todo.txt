@@ -6,7 +6,6 @@
 - check that RAM disks work (an easy way to test bdos under STonX)
 - pexec: loaded program's memory is not released after exit
 - Command.prg crashes, when commandline input is longer than line length
-- Font is bad, if STonX uses big color video resolutions:
-  font_ring maybe not initialized
+- Scrolling is bad, if STonX uses some big color video resolutions  
 - implement mediach, and flopvbl (to deselect the drive when idle)
 

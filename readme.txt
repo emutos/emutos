@@ -52,7 +52,9 @@ lots of bugs and debugging code in it!
 
 
 Hope this is all. AND: EmuTOS is not thought for the public right now.
-It is alpha alpha!!!
+It is alpha!!!
+
+
 
 --
 Martin
