@@ -179,3 +179,7 @@ Start... early ages
 13. Oct. 2001
 - Fixed some minor errors while compilation (MAD)
 - Added more system vars in tosvars.s and fixed an error (no pun_ptr) (MAD)
+
+14. Oct. 2001
+- implemented full memory configuration (MAD)
+

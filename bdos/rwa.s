@@ -184,7 +184,7 @@ __osinit:
 	jsr	_cinit
 	rts
 
-	.ascii	"Copyright 2001, Martin Doering\0"
+	.ascii	"Copyright 2001, EmuTOS team\0"
 	.even
 
 |==== ground_it - trap 2 entry point ========================================
