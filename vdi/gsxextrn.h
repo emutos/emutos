@@ -120,7 +120,7 @@ extern void CLC_FLIT();
 /* Assembly Language Support Routines NEWLY ADDED */
 
 extern void text_blt();
-extern void xfm_crfm(), XFM_UNDL(), COPY_RFM(), rectfill(), box_fill();
+extern void xfm_crfm(), XFM_UNDL(), COPY_RFM(), rectfill();
 
 extern WORD gloc_key();
 extern WORD gchc_key();

@@ -1094,5 +1094,9 @@ Start... early ages
 - vdi/monout.c - abline() bugs fixed. Thanks, Johan! (MAD)
 
 21. Sep. 2002 
-- vdi/tranfm.S - vr_trnfm() implemented (MAD)
+- vdi/tranfm.S - vr_trnfm() implemented in assembler (MAD)
+- vdi/monout.c - rectfill() in C (MAD)
+               - habline() uses same sub-routines as rectfill() (MAD)
+- vdi/gsxasm1.S - concat() moved to gsxasm2.S, where it is used (MAD)
+
 

@@ -173,8 +173,7 @@
         .globl  _DDA_INC
         .globl  _T_SCLSTS
         .globl  _TEXT_FG        //foreground color, text
-//
-        .globl  lf_tab  
+
 
 /////////////////////////////////////////////////////////
 //  Hardware dependent variables referenced.                    //
@@ -1118,8 +1117,38 @@ blt_done:
         unlk    a6
         movem.l (sp)+,d2-d7/a2-a5
         rts                             // return to "C"
-//
+
         .page
+
+
+
+/*
+ * Word Mask Table                                                
+ * 
+ * The table has been compacted by taking the one's complement of the left
+ * fringe table and combining it with the right fringe table.                                                  
+ */
+
+lf_tab:         dc.w    0xFFFF          // origin for not left fringe lookup.
+rf_tab:         dc.w    0x7FFF          // origin for right fringe lookup.
+                dc.w    0x3FFF
+                dc.w    0x1FFF
+                dc.w    0x0FFF
+                dc.w    0x07FF
+                dc.w    0x03FF
+                dc.w    0x01FF
+                dc.w    0x00FF
+                dc.w    0x007F
+                dc.w    0x003F
+                dc.w    0x001F
+                dc.w    0x000F
+                dc.w    0x0007
+                dc.w    0x0003
+                dc.w    0x0001
+                dc.w    0x0000
+
+
+
 /////////////////////////////////////////////////////////////////////////
 //   normal blt routine                                                 //
 //              uses:   a0.l - starting source address                  //

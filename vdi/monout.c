@@ -1967,6 +1967,356 @@ void st_fl_ptr()
 
 
 /*
+ * hzline_rep - draw a horizontal line in replace mode
+ *
+ * This routine is used by habline() and boxfill()
+ */
+
+static
+void hzline_rep(UWORD *addr, int dx, int leftpart, int rightpart, int patind)
+{
+    UWORD *adr;
+    UWORD pattern;
+    UWORD rightmask;
+    UWORD leftmask;
+    int pixels;                   /* counting down the rest of dx */
+    int bw;
+    int planes;
+    int plane;
+    int patadd;               /* advance for multiplane patterns */
+
+    /* init adress counter */
+    planes = v_planes;
+    patadd = multifill ? 16 : 0;     /* multi plane pattern offset */
+
+    /* precalculate, what to draw */
+    leftmask = ~(0xffff>>leftpart);     /* origin for not left fringe lookup */
+    rightmask = 0x7fff>>rightpart;      /* origin for right fringe lookup */
+
+    for (plane = v_planes-1; plane >= 0; plane-- ) {
+
+        /* load values fresh for this bitplane */
+        if (fg_bp[plane])
+            pattern = patptr[patind];
+        else
+            pattern = 0;
+        adr = addr;
+        pixels = dx;
+
+        /* check, if the line is completely contained within one WORD */
+        if ((leftpart+pixels) < 16 ) {
+            UWORD mask;
+            UWORD d5;
+            /* Isolate the necessary pixels */
+            mask  = leftmask | rightmask;
+
+            d5 = *adr;    	/* get data from screen address */
+            d5 ^= pattern;  /* xor the pattern with the source */
+            d5 &= mask;     /* isolate the bits outside the fringe */
+            d5 ^= pattern;  /* restore the bits outside the fringe */
+            *adr = d5;      /* write back the result */
+        } else {
+            UWORD d5;
+            /* Draw the left fringe */
+            if (leftmask) {
+                d5 = *adr;  	/* get data from screen address */
+                d5 ^= pattern;   	/* xor the pattern with the source */
+                d5 &= leftmask;     /* isolate the bits outside the fringe */
+                d5 ^= pattern;   	/* restore the bits outside the fringe */
+                *adr = d5;         	/* write back the result */
+
+                adr += planes;;
+                pixels -= 16-leftpart;
+            }
+            /* Full bytes */
+            for (bw = pixels >> 4;bw>0;bw--) {
+                *adr = pattern;
+                adr += planes;
+            }
+            /* Draw the right fringe */
+            if (rightmask != 0xffff) {
+                d5 = *adr;    	/* get data from screen address */
+                d5 ^= pattern;   	/* xor the pattern with the source */
+                d5 &= rightmask;    /* isolate the bits outside the fringe */
+                d5 ^= pattern;   	/* restore the bits outside the fringe */
+                *adr = d5;         	/* write back the result */
+            }
+        }
+        addr++; /* advance one WORD to next plane */
+        patind += patadd;
+    }
+}
+
+
+
+/*
+ * hzline_or - draw a horizontal line in transparent mode
+ *
+ * This routine is used by habline() and boxfill()
+ */
+
+static
+void hzline_or(UWORD *addr, int dx, int leftpart, int rightpart, int patind)
+{
+    UWORD *adr;
+    UWORD pattern;
+    UWORD rightmask;
+    UWORD leftmask;
+    int pixels;                   /* counting down the rest of dx */
+    int bw;
+    int planes;
+    int plane;
+    int patadd;               /* advance for multiplane patterns */
+
+    /* init adress counter */
+    planes = v_planes;
+    patadd = multifill ? 16 : 0;     /* multi plane pattern offset */
+
+    /* precalculate, what to draw */
+    leftmask = ~(0xffff>>leftpart);     /* origin for not left fringe lookup */
+    rightmask = 0x7fff>>rightpart;      /* origin for right fringe lookup */
+
+    for (plane = v_planes-1; plane >= 0; plane-- ) {
+
+        /* load values fresh for this bitplane */
+        if (fg_bp[plane])
+            pattern = patptr[patind];
+        else
+            pattern = 0;
+        adr = addr;
+        pixels = dx;
+
+        /* check, if the line is completely contained within one WORD */
+        if ((leftpart+pixels) < 16 ) {
+            UWORD mask;
+            UWORD d4,d5;
+            /* Isolate the necessary pixels */
+            mask  = leftmask | rightmask;
+
+            d5 = *adr;    	/* get data from screen address */
+            d4 = d5;
+            d5 &= pattern;  /* and complement of mask with source */
+            d4 ^= d5;       /* isolate changed bits */
+            d4 &= mask;     /* isolate changed bits outside of fringe */
+            d5 ^= d4;       /* restore them to original states */
+            *adr = d5;      /* write back the result */
+        } else {
+            UWORD d4,d5;
+            /* Draw the left fringe */
+            if (leftmask) {
+                d5 = *adr;  	/* get data from screen address */
+                d4 = d5;
+                d5 &= pattern;   	/* and complement of mask with source */
+                d4 ^= d5;        	/* isolate changed bits */
+                d4 &= leftmask;     /* isolate changed bits outside of fringe */
+                d5 ^= d4;        	/* restore them to original states */
+                *adr = d5;         	/* write back the result */
+
+                adr += planes;;
+                pixels -= 16-leftpart;
+            }
+            /* Full bytes */
+            for (bw = pixels >> 4;bw>0;bw--) {
+                *adr |= pattern;
+                adr += planes;
+            }
+            /* Draw the right fringe */
+            if (rightmask != 0xffff) {
+                d5 = *adr;    	/* get data from screen address */
+                d4 = d5;
+                d5 &= pattern;   	/* and complement of mask with source */
+                d4 ^= d5;        	/* isolate changed bits */
+                d4 &= rightmask;    /* isolate changed bits outside of fringe */
+                d5 ^= d4;        	/* restore them to original states */
+                *adr = d5;         	/* write back the result */
+            }
+        }
+        addr++; /* advance one WORD to next plane */
+        patind += patadd;
+    }
+}
+
+
+
+/*
+ * hzline_rep - draw a horizontal line in xor mode
+ *
+ * This routine is used by habline() and boxfill()
+ */
+
+static
+void hzline_xor(UWORD *addr, int dx, int leftpart, int rightpart, int patind)
+{
+    UWORD *adr;
+    UWORD pattern;
+    UWORD rightmask;
+    UWORD leftmask;
+    int pixels;                   /* counting down the rest of dx */
+    int bw;
+    int planes;
+    int plane;
+    int patadd;               /* advance for multiplane patterns */
+
+    /* init adress counter */
+    planes = v_planes;
+    patadd = multifill ? 16 : 0;     /* multi plane pattern offset */
+
+    /* precalculate, what to draw */
+    leftmask = ~(0xffff>>leftpart);     /* origin for not left fringe lookup */
+    rightmask = 0x7fff>>rightpart;      /* origin for right fringe lookup */
+
+    for (plane = v_planes-1; plane >= 0; plane-- ) {
+
+        /* load values fresh for this bitplane */
+        if (fg_bp[plane])
+            pattern = patptr[patind];
+        else
+            pattern = 0;
+        adr = addr;
+        pixels = dx;
+
+        /* check, if the line is completely contained within one WORD */
+        if ((leftpart+pixels) < 16 ) {
+            UWORD mask;
+            UWORD d4,d5;
+            /* Isolate the necessary pixels */
+            mask  = leftmask | rightmask;
+
+            d5 = *adr;	/* get data from screen address */
+            d4 = d5;
+            d5 ^= pattern;  /* xor the pattern with the source */
+            d4 ^= d5;       /* xor result with source - now have pattern */
+            d4 &= mask;     /* isolate changed bits outside of fringe */
+            d5 ^= d4;       /* restore states of bits outside of fringe */
+            *adr = d5;      /* write back the result */
+        } else {
+            UWORD d4,d5;
+            /* Draw the left fringe */
+            if (leftmask) {
+                d5 = *adr;  	/* get data from screen address */
+                d4 = d5;
+                d5 ^= pattern;   	/* xor the pattern with the source */
+                d4 ^= d5;        	/* xor result with source - now have pattern */
+                d4 &= leftmask;     /* isolate changed bits outside of fringe */
+                d5 ^= d4;        	/* restore states of bits outside of fringe */
+                *adr = d5;         	/* write back the result */
+
+                adr += planes;;
+                pixels -= 16-leftpart;
+            }
+            /* Full bytes */
+            for (bw = pixels >> 4;bw>0;bw--) {
+                *adr ^= pattern;         /* write back the result */
+                adr += planes;
+            }
+            /* Draw the right fringe */
+            if (rightmask != 0xffff) {
+                    d5 = *adr;    	/* get data from screen address */
+                    d4 = d5;
+                    d5 ^= pattern;   	/* xor the pattern with the source */
+                    d4 ^= d5;        	/* xor result with source - now have pattern */
+                    d4 &= rightmask;    /* isolate changed bits outside of fringe */
+                    d5 ^= d4;        	/* restore states of bits outside of fringe */
+                    *adr = d5;         	/* write back the result */
+            }
+        }
+        addr++; /* advance one WORD to next plane */
+        patind += patadd;
+    }
+}
+
+
+
+/*
+ * hzline_rep - draw a horizontal line in reverse transparent mode
+ *
+ * This routine is used by habline() and boxfill()
+ */
+
+static
+void hzline_nor(UWORD *addr, int dx, int leftpart, int rightpart, int patind)
+{
+    UWORD *adr;
+    UWORD pattern;
+    UWORD rightmask;
+    UWORD leftmask;
+    int pixels;                   /* counting down the rest of dx */
+    int bw;
+    int planes;
+    int plane;
+    int patadd;               /* advance for multiplane patterns */
+
+    /* init adress counter */
+    planes = v_planes;
+    patadd = multifill ? 16 : 0;     /* multi plane pattern offset */
+
+    /* precalculate, what to draw */
+    leftmask = ~(0xffff>>leftpart);     /* origin for not left fringe lookup */
+    rightmask = 0x7fff>>rightpart;      /* origin for right fringe lookup */
+
+    for (plane = v_planes-1; plane >= 0; plane-- ) {
+
+        /* load values fresh for this bitplane */
+        if (fg_bp[plane])
+            pattern = patptr[patind];
+        else
+            pattern = 0;
+        adr = addr;
+        pixels = dx;
+
+        /* check, if the line is completely contained within one WORD */
+        if ((leftpart+pixels) < 16 ) {
+            UWORD mask;
+            UWORD d4,d5;
+            /* Isolate the necessary pixels */
+            mask  = leftmask | rightmask;
+
+            d5 = *adr;	/* get data from screen address */
+            d4 = d5;
+            d5 &= ~pattern; /* and complement of mask with source */
+            d4 ^= d5;       /* isolate changed bits */
+            d4 &= mask;     /* isolate changed bits outside of fringe */
+            d5 ^= d4;       /* restore them to original states */
+            *adr = d5;      /* write back the result */
+        } else {
+            UWORD d4,d5;
+            /* Draw the left fringe */
+            if (leftmask) {
+                d5 = *adr;		/* get data from screen address */
+                d4 = d5;
+                d5 &= ~pattern;   	/* and complement of mask with source */
+                d4 ^= d5;        	/* isolate changed bits */
+                d4 &= leftmask;     /* isolate changed bits outside of fringe */
+                d5 ^= d4;        	/* restore them to original states */
+                *adr = d5;         	/* write back the result */
+
+                adr += planes;;
+                pixels -= 16-leftpart;
+            }
+            /* Full bytes */
+            for (bw = pixels >> 4;bw>0;bw--) {
+                *adr &= ~pattern;	/* write back the result */
+                adr += planes;
+            }
+            /* Draw the right fringe */
+            if (rightmask != 0xffff) {
+                d5 = *adr;		/* get data from screen address */
+                d4 = d5;
+                d5 &= ~pattern;	/* and complement of mask with source */
+                d4 ^= d5;       	/* isolate changed bits */
+                d4 &= rightmask;    /* isolate changed bits outside of fringe */
+                d5 ^= d4;        	/* restore them to original states */
+                *adr = d5;         	/* write back the result */
+            }
+        }
+        addr++; /* advance one WORD to next plane */
+        patind += patadd;
+    }
+}
+
+
+
+/*
  * habline - draw a horizontal line
  *
  * This routine is just a wrapper for horzline.
@@ -2000,23 +2350,16 @@ void habline() {
 
 void horzline(WORD x1, WORD x2, WORD y) {
     WORD x;
-    WORD dx;
-    WORD pixels;                   /* counting down the rest of dx */
     UWORD *addr;
-    WORD bw;
-    UWORD patind;               /* index into pattern table */
-    int planes;
-    UWORD patadd;               /* advance for multiplane patterns */
-    UWORD *adr;
-    int plane;
+    int dx;
+    int patind;               /* index into pattern table */
+    int patadd;               /* advance for multiplane patterns */
     int leftpart;
     int rightpart;
-    UWORD rightmask;
-    UWORD leftmask;
 
     if (x2 > x1) {
-       dx = x2 - x1;             /* width of line */
-       x = x1;
+        dx = x2 - x1;             /* width of line */
+        x = x1;
     } else {
         dx = x1 - x2;            /* width of line */
         x = x2;
@@ -2027,253 +2370,24 @@ void horzline(WORD x1, WORD x2, WORD y) {
     patadd = multifill ? 16 : 0;     /* multi plane pattern offset */
 
     /* init adress counter */
-    planes = v_planes;
     addr = (UWORD*)(v_bas_ad + (LONG)y * v_lin_wr + ((x&0xfff0)>>shft_off));
 
     /* precalculate, what to draw */
     leftpart = x&0xf;
-    leftmask = ~(0xffff>>leftpart);     /* origin for not left fringe lookup */
     rightpart = (x+dx)&0xf;
-    rightmask = 0x7fff>>rightpart;      /* origin for right fringe lookup */
 
     switch (WRT_MODE) {
     case 3:  /* nor */
-        for (plane = v_planes-1; plane >= 0; plane-- ) {
-            UWORD pattern;
-
-            /* load values fresh for this bitplane */
-            if (fg_bp[plane])
-                pattern = patptr[patind];
-            else
-                pattern = 0;
-            adr = addr;
-            pixels = dx;
-
-            /* check, if the line is completely contained within one WORD */
-            if ((leftpart+pixels) < 16 ) {
-                UWORD mask;
-                UWORD d4,d5;
-                /* Isolate the necessary pixels */
-                mask  = leftmask | rightmask;
-
-                d5 = *adr;	/* get data from screen address */
-                d4 = d5;
-                d5 &= ~pattern; /* and complement of mask with source */
-                d4 ^= d5;       /* isolate changed bits */
-                d4 &= mask;     /* isolate changed bits outside of fringe */
-                d5 ^= d4;       /* restore them to original states */
-                *adr = d5;      /* write back the result */
-            } else {
-                UWORD d4,d5;
-                /* Draw the left fringe */
-                if (leftmask) {
-                    d5 = *adr;		/* get data from screen address */
-                    d4 = d5;
-                    d5 &= ~pattern;   	/* and complement of mask with source */
-                    d4 ^= d5;        	/* isolate changed bits */
-                    d4 &= leftmask;     /* isolate changed bits outside of fringe */
-                    d5 ^= d4;        	/* restore them to original states */
-                    *adr = d5;         	/* write back the result */
-
-                    adr += planes;;
-                    pixels -= 16-leftpart;
-                }
-                /* Full bytes */
-                for (bw = pixels >> 4;bw>0;bw--) {
-                    *adr &= ~pattern;	/* write back the result */
-                    adr += planes;
-                }
-                /* Draw the right fringe */
-                if (rightmask != 0xffff) {
-                    d5 = *adr;		/* get data from screen address */
-                    d4 = d5;
-                    d5 &= ~pattern;	/* and complement of mask with source */
-                    d4 ^= d5;       	/* isolate changed bits */
-                    d4 &= rightmask;    /* isolate changed bits outside of fringe */
-                    d5 ^= d4;        	/* restore them to original states */
-                    *adr = d5;         	/* write back the result */
-                }
-            }
-            addr++; /* advance one WORD to next plane */
-            patind += patadd;
-        }
+        hzline_nor(addr, dx, leftpart, rightpart, patind);
         break;
     case 2:  /* xor */
-        for (plane = v_planes-1; plane >= 0; plane-- ) {
-            UWORD pattern;
-
-            /* load values fresh for this bitplane */
-            if (fg_bp[plane])
-                pattern = patptr[patind];
-            else
-                pattern = 0;
-            adr = addr;
-            pixels = dx;
-
-            /* check, if the line is completely contained within one WORD */
-            if ((leftpart+pixels) < 16 ) {
-                UWORD mask;
-                UWORD d4,d5;
-                /* Isolate the necessary pixels */
-                mask  = leftmask | rightmask;
-
-                d5 = *adr;	/* get data from screen address */
-                d4 = d5;
-                d5 ^= pattern;  /* xor the pattern with the source */
-                d4 ^= d5;       /* xor result with source - now have pattern */
-                d4 &= mask;     /* isolate changed bits outside of fringe */
-                d5 ^= d4;       /* restore states of bits outside of fringe */
-                *adr = d5;      /* write back the result */
-            } else {
-                UWORD d4,d5;
-                /* Draw the left fringe */
-                if (leftmask) {
-                    d5 = *adr;  	/* get data from screen address */
-                    d4 = d5;
-                    d5 ^= pattern;   	/* xor the pattern with the source */
-                    d4 ^= d5;        	/* xor result with source - now have pattern */
-                    d4 &= leftmask;     /* isolate changed bits outside of fringe */
-                    d5 ^= d4;        	/* restore states of bits outside of fringe */
-                    *adr = d5;         	/* write back the result */
-
-                    adr += planes;;
-                    pixels -= 16-leftpart;
-                }
-                /* Full bytes */
-                for (bw = pixels >> 4;bw>0;bw--) {
-                    *adr ^= pattern;         /* write back the result */
-                    adr += planes;
-                }
-                /* Draw the right fringe */
-                if (rightmask != 0xffff) {
-                    d5 = *adr;    	/* get data from screen address */
-                    d4 = d5;
-                    d5 ^= pattern;   	/* xor the pattern with the source */
-                    d4 ^= d5;        	/* xor result with source - now have pattern */
-                    d4 &= rightmask;    /* isolate changed bits outside of fringe */
-                    d5 ^= d4;        	/* restore states of bits outside of fringe */
-                    *adr = d5;         	/* write back the result */
-                }
-            }
-            addr++; /* advance one WORD to next plane */
-            patind += patadd;
-        }
+        hzline_xor(addr, dx, leftpart, rightpart, patind);
         break;
     case 1:  /* or */
-        for (plane = v_planes-1; plane >= 0; plane-- ) {
-            UWORD pattern;
-
-            /* load values fresh for this bitplane */
-            if (fg_bp[plane])
-                pattern = patptr[patind];
-            else
-                pattern = 0;
-            adr = addr;
-            pixels = dx;
-
-            /* check, if the line is completely contained within one WORD */
-            if ((leftpart+pixels) < 16 ) {
-                UWORD mask;
-                UWORD d4,d5;
-                /* Isolate the necessary pixels */
-                mask  = leftmask | rightmask;
-
-                d5 = *adr;    	/* get data from screen address */
-                d4 = d5;
-                d5 &= pattern;  /* and complement of mask with source */
-                d4 ^= d5;       /* isolate changed bits */
-                d4 &= mask;     /* isolate changed bits outside of fringe */
-                d5 ^= d4;       /* restore them to original states */
-                *adr = d5;      /* write back the result */
-            } else {
-                UWORD d4,d5;
-                /* Draw the left fringe */
-                if (leftmask) {
-                    d5 = *adr;  	/* get data from screen address */
-                    d4 = d5;
-                    d5 &= pattern;   	/* and complement of mask with source */
-                    d4 ^= d5;        	/* isolate changed bits */
-                    d4 &= leftmask;     /* isolate changed bits outside of fringe */
-                    d5 ^= d4;        	/* restore them to original states */
-                    *adr = d5;         	/* write back the result */
-
-                    adr += planes;;
-                    pixels -= 16-leftpart;
-                }
-                /* Full bytes */
-                for (bw = pixels >> 4;bw>0;bw--) {
-                    *adr |= pattern;   
-                    adr += planes;
-                }
-                /* Draw the right fringe */
-                if (rightmask != 0xffff) { 
-                    d5 = *adr;    	/* get data from screen address */
-                    d4 = d5;
-                    d5 &= pattern;   	/* and complement of mask with source */
-                    d4 ^= d5;        	/* isolate changed bits */
-                    d4 &= rightmask;    /* isolate changed bits outside of fringe */
-                    d5 ^= d4;        	/* restore them to original states */
-                    *adr = d5;         	/* write back the result */
-                }
-            }
-            addr++; /* advance one WORD to next plane */
-            patind += patadd;
-        }
+        hzline_or(addr, dx, leftpart, rightpart, patind);
         break;
     default: /* rep */
-        for (plane = v_planes-1; plane >= 0; plane-- ) {
-            UWORD pattern;
-
-            /* load values fresh for this bitplane */
-            if (fg_bp[plane])
-                pattern = patptr[patind];
-            else
-                pattern = 0;
-            adr = addr;
-            pixels = dx;
-
-            /* check, if the line is completely contained within one WORD */
-            if ((leftpart+pixels) < 16 ) {
-                UWORD mask;
-                UWORD d5;
-                /* Isolate the necessary pixels */
-                mask  = leftmask | rightmask;
-
-                d5 = *adr;    	/* get data from screen address */
-                d5 ^= pattern;  /* xor the pattern with the source */
-                d5 &= mask;     /* isolate the bits outside the fringe */
-                d5 ^= pattern;  /* restore the bits outside the fringe */
-                *adr = d5;      /* write back the result */
-            } else {
-                UWORD d5;
-                /* Draw the left fringe */
-                if (leftmask) {
-                    d5 = *adr;  	/* get data from screen address */
-                    d5 ^= pattern;   	/* xor the pattern with the source */
-                    d5 &= leftmask;     /* isolate the bits outside the fringe */
-                    d5 ^= pattern;   	/* restore the bits outside the fringe */
-                    *adr = d5;         	/* write back the result */
-
-                    adr += planes;;
-                    pixels -= 16-leftpart;
-                }
-                /* Full bytes */
-                for (bw = pixels >> 4;bw>0;bw--) {
-                    *adr = pattern;     
-                    adr += planes;
-                }
-                /* Draw the right fringe */
-                if (rightmask != 0xffff) { 
-                    d5 = *adr;    	/* get data from screen address */
-                    d5 ^= pattern;   	/* xor the pattern with the source */
-                    d5 &= rightmask;    /* isolate the bits outside the fringe */
-                    d5 ^= pattern;   	/* restore the bits outside the fringe */
-                    *adr = d5;         	/* write back the result */
-                }
-            }
-            addr++; /* advance one WORD to next plane */
-            patind += patadd;
-        }
+        hzline_rep(addr, dx, leftpart, rightpart, patind);
     }
 }
 
@@ -2416,9 +2530,6 @@ WORD clipbox()
  * rectfill - fills a rectangular area of the screen with a pattern
  *            using a "bitblt" algorithm similar to "_HABLINE"'s.
  *
- *            Actually, this routine just clips and copies the inputs for
- *    use by "BOX_FILL".
- *
  * input:
  *     X1       = x coord of upper left corner.
  *     Y1       = y coord of upper left corner.
@@ -2439,11 +2550,64 @@ WORD clipbox()
 
 void rectfill ()
 {
-    if (!CLIP || clipbox())
-            box_fill();
-#if 0
+    WORD x1, y1, x2, y2;
+    void *addr;
+    int dx, dy;
+    int yinc;
+    int patind;               /* index into pattern table */
+    int leftpart;
+    int rightpart;
+
     if (CLIP)
-        if (!clipxy())
+        if (!clipbox())
             return;
-#endif
+
+    x1 = X1;
+    y1 = Y1;
+    x2 = X2;
+    y2 = Y2;
+
+    /* sort x coordinates */
+    if (x2 < x1) {
+       x1 = X2;
+       x2 = X1;
+    }
+    dx = x2 - x1;             /* width of line */
+
+    /* sort y coordinates */
+    if (y2 < y1) {
+        y1 = Y2;
+        y2 = Y1;
+    }
+    dy = y2 - y1;             /* width of line */
+
+    /* precalculate masks for left and right fringe */
+    leftpart = x1&0xf;
+    rightpart = (x1+dx)&0xf;
+
+    /* init adress counter */
+    addr = v_bas_ad;                    /* start of screen */
+    addr += (x1&0xfff0)>>shft_off;      /* add x coordinate part of addr */
+    addr += (LONG)y1 * v_lin_wr;		/* add y coordinate part of addr */
+    yinc = v_lin_wr;			/* y coordinate increase */
+
+    for (y1 = dy; y1 >= 0; y1-- ) {
+        /* Get the pattern with which the line is to be drawn. */
+        patind = y1&patmsk;               /* which pattern to start with */
+
+        switch (WRT_MODE) {
+        case 3:  /* nor */
+            hzline_nor(addr, dx, leftpart, rightpart, patind);
+            break;
+        case 2:  /* xor */
+            hzline_xor(addr, dx, leftpart, rightpart, patind);
+            break;
+        case 1:  /* or */
+            hzline_or(addr, dx, leftpart, rightpart, patind);
+            break;
+        default: /* rep */
+            hzline_rep(addr, dx, leftpart, rightpart, patind);
+        }
+        addr += yinc;           /* next scanline */
+    }
 }

@@ -36,6 +36,8 @@ VDI
   if they save and restore enough registers.
 - Bug in mouse painting code. The mouse coordinates are clipped right,
   but not drawn, if vertical rez > 400
+- The linemask for dashed lines is not calculated correct, depending on 
+  the internal calculations of increase in x direction, like in original TOS.
 
 AES
 - desk_rsc.c and gem_rsc.c are not fully ROM save yet (the TEDINFO strings etc)
