@@ -1,7 +1,7 @@
 /*
  * xbios.c - C portion of XBIOS initialization and front end
  *
- * Copyright (c) 2001 EmuTOS development team
+ * Copyright (c) 2001 by
  *
  * Authors:
  *  MAD     Martin Doering
@@ -204,35 +204,35 @@ VOID xbios_6(LONG palettePtr)
 
 WORD xbios_7(WORD colorNum, WORD color)
 {
-  WORD rez = xbios_4();
-  WORD max;
-  WORD *palette = (WORD *)0xFFFF8240;
+    WORD rez = xbios_4();
+    WORD max;
+    WORD *palette = (WORD *)0xFFFF8240;
 #if DBG_XBIOS
-  kprintf("XBIOS: Setcolor(0x%04x, 0x%04x)\n", colorNum, color);
+    kprintf("XBIOS: Setcolor(0x%04x, 0x%04x)\n", colorNum, color);
 #endif
-  switch(rez) {
-  case 0:
-    max = 15;
-    break;
-  case 1:
-    max = 3;
-    break;
-  case 2:
-    max = 1;
-    break;
-  default:
-    max = 0;
-  }
-  if(colorNum >= 0 && colorNum <= max) {
-    if(color == -1) {
-      return palette[colorNum] & 0x777;
-    } else {
-      palette[colorNum] = color;
-      return color & 0x777;
+    switch(rez) {
+    case 0:
+        max = 15;
+        break;
+    case 1:
+        max = 3;
+        break;
+    case 2:
+        max = 1;
+        break;
+    default:
+        max = 0;
     }
-  } else {
-    return 0;
-  }
+    if(colorNum >= 0 && colorNum <= max) {
+        if(color == -1) {
+            return palette[colorNum] & 0x777;
+        } else {
+            palette[colorNum] = color;
+            return color & 0x777;
+        }
+    } else {
+        return 0;
+    }
 }
 
 
