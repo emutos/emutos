@@ -160,3 +160,6 @@ Start... early ages
 
 10. Oct. 2001
 - EmuTOS now expects a cartridge of type 3, just as the original TOS. (THO)
+
+11. Oct. 2001
+- removed the cart directory and the cartridge - no longer needed (MAD)
