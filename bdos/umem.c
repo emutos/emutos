@@ -25,6 +25,40 @@
 #include	"../bios/kprint.h"
 
 
+#ifdef DBGUMEM
+static void dump_mem_map(void)
+{
+  MD *m;
+  int i;
+  
+  kprintf("===mem_dump==========================\n");
+  kprintf("| mp_mfl = 0x%08lx {\n|   ", m = pmd.mp_mfl);
+  i = 0;
+  for(; m != NULL ; m = m->m_link) {
+    if(i >= 3) {
+      kprintf("\n|   ");
+      i = 0;
+    }
+    i++; 
+    kprintf("[0x%06lx, 0x%06lx], ", m->m_start, m->m_length); 
+  }
+  kprintf("\n| }\n");
+  kprintf("| mp_mal = 0x%08lx {\n|   ", m = pmd.mp_mal);
+  i = 0;
+  for(; m != NULL ; m = m->m_link) {
+    if(i >= 3) {
+      kprintf(" \n|   ");
+      i = 0;
+    }
+    i++; 
+    kprintf("[0x%06lx, 0x%06lx], ", m->m_start, m->m_length);
+  }
+  kprintf("\n| }\n");
+  kprintf("| mp_rover = 0x%08lx\n", pmd.mp_rover);
+  kprintf("===/mem_dump==========================\n");
+}
+#endif
+
 /*
  *  xmalloc - allocate memory
  *
@@ -64,7 +98,7 @@ long	xmalloc(long amount)
      */
 
     if (amount == -1L) {
-      ret_value = (long) m->m_link;
+      ret_value = (long) m;
       goto ret;
     }
 
@@ -77,7 +111,8 @@ long	xmalloc(long amount)
 
 ret:
 #if DBGUMEM
-    kprintf("BDOS: xmalloc(0x%08lx) = 0x%08lx\n", ret_value);
+    kprintf("BDOS: xmalloc(0x%08lx) = 0x%08lx\n", amount, ret_value);
+    dump_mem_map();
 #endif
 
     return(ret_value);
