@@ -99,6 +99,19 @@ int strncmp(const char *a, const char *b, unsigned long int n)
 }
 #endif /* NEEDED */
 
+int strncasecmp(const char *a, const char *b, unsigned long int n)
+{
+    while(n && *a && toupper(*a) == toupper(*b)) {
+        n--;
+        a++;
+        b++;
+    }
+    if(n == 0) return 0;
+    if(toupper(*a) == toupper(*b)) return 0;
+    if(toupper(*a) < toupper(*b)) return -1;
+    return 1;
+}
+
 
 int toupper(int c)
 {

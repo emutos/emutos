@@ -1585,4 +1585,5 @@ Start... early ages
 - Added George Nakos' greek translations. (THH)
 
 2004-01-07
-- _MCH cookie now contains 0x50000 on ARAnyM (joy)
+- bios/machine.c: _MCH cookie now contains 0x50000 on ARAnyM (joy)
+- util/string.c,h: strncasecmp() added
