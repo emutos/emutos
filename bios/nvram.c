@@ -13,7 +13,7 @@
 #include "portab.h"
 #include "cookie.h"
 #include "machine.h"
-#include "detect.h"
+#include "vectors.h"
 #include "nvram.h"
 #include "biosmem.h"
 

@@ -17,7 +17,6 @@
 #include "portab.h"
 #include "cookie.h"
 #include "country.h"
-#include "detect.h"
 #include "nvram.h"
 #include "tosvars.h"
 

@@ -96,9 +96,7 @@ BIOSCSRC = kprint.c xbios.c chardev.c blkdev.c bios.c clock.c \
            mouse.c initinfo.c cookie.c machine.c nvram.c country.c \
 	   fntlat2_6.c fntlat2_8.c fntlat2_16.c biosmem.c acsi.c
 BIOSSSRC = tosvars.S startup.S lineavars.S vectors.S aciavecs.S \
-           processor.S memory.S linea.S conout.S \
-           detect.S panicasm.S \
-           kprintasm.S
+           processor.S memory.S linea.S conout.S panicasm.S kprintasm.S
 
 #
 # source code in bdos/

@@ -13,7 +13,8 @@
 #ifndef _PROCESSOR_H
 #define _PROCESSOR_H
  
-#include "portab.h"
+long detect_cpu(void);
+long detect_fpu(void);
 
 extern void processor_init(void);
 extern LONG mcpu;

@@ -18,7 +18,7 @@
 #include "ikbd.h"
 #include "tosvars.h"
 #include "string.h"
-#include "detect.h"
+#include "vectors.h"
 #include "nvram.h"
 
 /* set this to 1 to debug IKBD clock (you should also disable NVRAM) */

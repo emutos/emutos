@@ -36,6 +36,9 @@ extern void biostrap(void);
 extern void xbiostrap(void);
 
 extern void just_rte(void);
+extern void just_rts(void);
+
+long check_read_byte(long);
 
 /* are these useful ? */
 extern void print_stat(void);
@@ -46,9 +49,10 @@ extern void dump_scr(void);
 extern void print_vec(void);
 
 /* */
-extern void just_rts(void);
 extern void criter1(void);
 extern void brkpt(void);
+
+extern WORD save_area[];
 
 typedef void (*PFVOID)();
 

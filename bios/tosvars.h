@@ -95,7 +95,6 @@ extern LONG ramvalid;     /* indicates if fastram is present */
 extern LONG os_magic;
 
 extern LONG savptr;
-extern WORD save_area[];
 
 extern void (*prt_stat)(void);
 extern void (*prt_vec)(void);

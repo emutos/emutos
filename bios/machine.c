@@ -14,7 +14,7 @@
 #include "cookie.h"
 #include "machine.h"
 #include "biosmem.h"
-#include "detect.h"
+#include "vectors.h"
 #include "nvram.h"
 #include "tosvars.h"
 #include "country.h"

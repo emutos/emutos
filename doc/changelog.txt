@@ -897,4 +897,7 @@ Start... early ages
 15. Jun. 2002
 - bios/memory.S - seperated Falcon and ST stuff, still a memconfig bug? (MAD)
 
+16. Jun. 2002
+- bios/detect.S - removed, put into processor.S and vector.S (MAD)
+- bios/vectors.S - put exception stuff here in (mostly from startup.S). (MAD)
 
