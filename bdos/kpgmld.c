@@ -26,12 +26,18 @@
 
 #define DBGKPGMLD 1
 
+/*
+ * private macros
+ */
+
+/* this used to be in portab.h, but since it is *only* used here... */
+#define SUCCESS 0
 
 /*
  * forward prototypes
  */
 
-static ERROR    pgmld01(FH h, PD *pdptr, PGMHDR01 *hd);
+static LONG     pgmld01(FH h, PD *pdptr, PGMHDR01 *hd);
 static LONG     pgfix01(LONG nrelbytes, PGMINFO *pi);
 
 /*
@@ -43,9 +49,9 @@ static LONG     pgfix01(LONG nrelbytes, PGMINFO *pi);
  * the program.
  */
 
-ERROR xpgmhdrld(char *s, PGMHDR01 *hd, FH *h)
+LONG xpgmhdrld(char *s, PGMHDR01 *hd, FH *h)
 {
-    ERROR r;
+    LONG r;
     WORD magic;
     
     r = xopen( s , 0 );         /* open file for read */
@@ -84,9 +90,9 @@ ERROR xpgmhdrld(char *s, PGMHDR01 *hd, FH *h)
  * p - ptr to PD
  */
 
-ERROR   xpgmld(char *s, PD *p, FH h, PGMHDR01 *hd )
+LONG   xpgmld(char *s, PD *p, FH h, PGMHDR01 *hd )
 {
-    ERROR r;
+    LONG r;
 
     r = pgmld01(h, p, hd);
 #if DBGKPGMLD
@@ -122,7 +128,7 @@ static char *lastcp ;
  * - zero out the bss
  */
 
-static ERROR    pgmld01( FH h , PD *pdptr, PGMHDR01 *hd)
+static LONG     pgmld01( FH h , PD *pdptr, PGMHDR01 *hd)
 {
     register PGMINFO    *pi ;
     register PD         *p ;
@@ -130,7 +136,7 @@ static ERROR    pgmld01( FH h , PD *pdptr, PGMHDR01 *hd)
     char                *cp ;
     LONG                relst ;
     LONG                flen ;
-    ERROR               r ;
+    LONG                r ;
 
     pi = &pinfo ;
     p = pdptr ;

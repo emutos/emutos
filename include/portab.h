@@ -1,56 +1,26 @@
 /*
  * portab.h - Definitions for writing portable C
  *
- * Copyright (c) 2001 Lineo, Inc. and  Authors:
- *
- *  MAD Martin Doering
- *  LVL Laurent Vogel
+ * Copyright (c) 2001 Lineo, Inc. and the EmuTOS devel team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
  */
 
 /*
- * LVL - 28 Nov 2001, commented out most of it.
- * this file is used by bdos and bios, NOT vdi or AES yet.
+ * I guess now this file is just badly named. it just contains 
+ * common macros that were so often in the code that we just have
+ * to keep them here.
  */
 
 #ifndef H_PORTAB_
 #define H_PORTAB_
 
+
+
 /*
- *  17 Jan 86 - ktb
- *      Starting to convert this to 'gportab.h', which will have env defines
- *      in it as well.
- *
+ *  Compiler Definitions
  */
-
-
-/*
-**  Independant Constants 
-**      These Constants never [1] change over different systems, and make
-**      it a little easier to define some of the basic stuff below
-**
-**      [1] - 'never' implies 'almost never'; remember Capt. Murhpy!
-*/
-
-#define FAILURE (-1)                    /*      Function failure return val */
-#define SUCCESS (0)                     /*      Function success return val */
-/* unused #define YES   (1)                     "TRUE"                      */
-/* unused #define NO    (0)                     "FALSE"                     */
-/* unused #define FOREVER for(;;)               Infinite loop declaration   */
-#define NULL    0                       /*      Null character value        */
-#define EOF     (-1)                    /*      EOF Value                   */
-#define TRUE    (1)                     /*      Function TRUE  value        */
-#define FALSE   (0)                     /*      Function FALSE value        */
-
-/*
-**  Compiler Definitions
-**
-**      There are two definitions for Alcyon, in hopes that someday they will
-**      fix the unsigned char problem.  ALCYON1 doesn't.
-**
-*/
 
 #ifdef __GNUC__
 #define NORETURN __attribute__ ((noreturn))
@@ -59,13 +29,24 @@
 #endif
 
 /*
-**  extended data types
-*/
+ *  Constants 
+ */
 
+#define NULL    0                       /*      Null character value        */
+#define TRUE    (1)                     /*      Function TRUE  value        */
+#define FALSE   (0)                     /*      Function FALSE value        */
+#define NULLPTR ((void*)0)              /*      Null pointer value          */
+
+/*
+ *  Miscellaneous
+ */
 
 #define REG             register                /* register variable       */
 #define GLOBAL                                  /* Global variable         */
-/* unused #define LOCAL         auto               Local var on 68000      */
+
+/*
+ *  Types
+ */
 
 typedef char            BYTE ;                  /*  Signed byte         */
 
@@ -79,28 +60,6 @@ typedef int             BOOL ;                  /*  same as boolean     */
 typedef short int       WORD ;                  /*  signed 16 bit word  */
 typedef unsigned short int UWORD ;              /*  unsigned 16 bit word*/
 typedef long            LONG ;                  /*  signed 32 bit word  */
-/* typedef void         VOID ;                      returns no value    */
-/* typedef int          DEFAULT ;                   return def value    */
-/* typedef float        FLOAT ;                     floating point      */
-/* typedef double       DOUBLE ;                    double precision    */
-
-
-typedef long            ERROR ;                 /*  error codes         */
-/* typedef int          (*PFI)() ;                  ptr to func ret int */
-/* typedef ERROR        (*PFE)() ;                  ptr to func ret err */
-/* typedef LONG         (*PFL)() ;                  ptr to func ret long*/
-
-/****************************************************************************/
-/*      Miscellaneous Definitions:                                          */
-/****************************************************************************/
-#define NULLPTR (void*)0                /*      Null pointer value          */
-#define STDIN    0                      /*      Standard Input              */
-#define STDOUT   1                      /*      Standard Output             */
-#define STDERR   2                      /*      Standard Error              */
-
-
-/****************************************************************************/
-/****************************************************************************/
 
 #endif /* H_PORTAB_ */
 

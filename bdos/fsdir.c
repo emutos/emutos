@@ -512,7 +512,6 @@ long ixsfirst(char *name, register WORD att, register DTAINFO *addr)
 
     if (addr)
     {
-        /* LVL bmove( s , (char *)&addr->dt_name[0] , 12 ) ; */
         memcpy(&addr->dt_name[0], s, 12);
         addr->dt_attr = att ;
         addr->dt_pos = pos ;
@@ -1499,9 +1498,8 @@ static void makbuf(FCB *f, DTAINFO *dt)
     swpl( dt->dt_fileln ) ;
     
     if( f->f_attrib & FA_VOL ) {
-      /* LVL bmove( (char *)&f->f_name[0] , (char *)&dt->dt_fname[0] , 11 ); */
         memcpy(&dt->dt_fname[0], &f->f_name[0], 11);
-        dt->dt_fname[11] = NULL ;
+        dt->dt_fname[11] = '\0' ;
     } else {
         packit(&f->f_name[0],&dt->dt_fname[0]);
     }

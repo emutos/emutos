@@ -19,7 +19,7 @@
  *  process management
  */
 
-extern  WORD    supstk[] ;
+extern  WORD    supstk[];
 extern  PD      *run;
 
 /* 
@@ -45,8 +45,8 @@ WORD xtermres(long blkln, WORD rc);
  * in kpgmld.h
  */
 
-ERROR xpgmhdrld(char *s, PGMHDR01 *hd, FH *h);
-ERROR xpgmld(char *s, PD *p, FH h, PGMHDR01 *hd );
+LONG xpgmhdrld(char *s, PGMHDR01 *hd, FH *h);
+LONG xpgmld(char *s, PD *p, FH h, PGMHDR01 *hd );
 
 /*
  * in rwa.S

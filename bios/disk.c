@@ -40,7 +40,7 @@ static long _NF_call  = 0x73014e75L;
  * inspired by Linux 2.4.x kernel (file fs/partitions/atari.c)
  */
 
-#include "ctype.h"
+//#include "ctype.h"
 #include "string.h"
 #include "atari_rootsec.h"
 

@@ -168,7 +168,7 @@ static  WORD envsize( char *env )
     register char       *e ;
     register WORD       cnt ;
 
-    for( e = env, cnt = 0 ; !(*e == NULL && *(e+1) == NULL) ; ++e, ++cnt )
+    for( e = env, cnt = 0 ; !(*e == '\0' && *(e+1) == '\0') ; ++e, ++cnt )
         ;
 
     return( cnt + 2 ) ;         /*  count terminating double null  */
@@ -212,7 +212,7 @@ static long do_xexec(char *s)
     PD *p;
     PGMHDR01 hdr;
     MD *m, *env;
-    ERROR rc;
+    LONG  rc;
     FH fh;
     long max, needed;
 
