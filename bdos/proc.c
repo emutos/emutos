@@ -121,10 +121,26 @@ static  WORD envsize( char *env )
  * @v:   environment
  */
 
-#warning "(I don't know how to get rid of "
-#warning "the following three warnings)"
+/* LVL - this avoids warnings using gcc. The offending function parameters 
+ * are transformed into static variables, ensuring that they do not have
+ * 'undetermined' value when coming back from longjmp.
+ * This will fail only if two processes call xexec at the same time, which
+ * is not allowed in bdos anyway.
+ */
 
-long    xexec(WORD flg, char *s, char *t, char *v)
+static WORD flg;
+static char *t, *v;
+static long do_xexec(char *);
+ 
+long    xexec(WORD fflg, char *s, char *tt, char *vv)
+{
+    flg = fflg;
+    t = tt;
+    v = vv;
+    return do_xexec(s);
+}
+
+static long do_xexec(char *s)
 {       
     PD  *p;
     char *b, *e;
