@@ -22,7 +22,7 @@
         
         .globl  bit_blt
 
-	.xdef   _v_pl_dspl
+        .xdef   _v_pl_dspl
 //
 //
 // title:

@@ -320,7 +320,7 @@ _COPYTRAN:      ds.w    1               // Flag for Copy-raster-form (<>0 = Tran
 _FILL_ABORT:    ds.l    1               // Adress of Routine for Test of break of contour fill function
 
 // ==== This stuff was added, it may be at a different address normally ======
-_v_pl_dspl:	ds.l    1
+_v_pl_dspl:     ds.l    1
 
 
                 .end
