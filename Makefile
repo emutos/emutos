@@ -7,20 +7,17 @@
 # option any later version.  See doc/license.txt for details.
 #
 
-# The Makefile is suitable for Linux and Cygwin setups
-# only GCC (cross-mint) is supported. 
-# Some features like pattern substitution probably require GNU-make. 
+# The Makefile is suitable for Linux and Cygwin setups.
+# only GCC (cross-mint) is supported. GNU-make *is* required.
 #
-# for a list of main targets do  
+# for a list of main targets do
 #   make help
 #
-# C code (C) and assembler (S) source go in directories 
-# bios/, bdos/, util/, ... ; To add source code files, update
-# the variables XXXXCSRC and XXXXSSRC below; each directories has
-# a different set of build flags indicated in variables 
-# xxxx_copts and xxxx_sopts below. 
-# Here xxxx is the directory name, and XXXX is the same in uppercase.
-#
+# C code (C) and assembler (S) source go in directories bios/, bdos/, ...
+# To modify the list of source code files, update the variables xxx_csrc 
+# and xxx_ssrc below; each directories has a different set of build flags 
+# indicated in variables xxx_copts and xxx_sopts below. 
+# (xxx being the directory name)
 
 
 #
@@ -67,7 +64,7 @@ endif
 # test for localconf.h
 #
 
-ifeq (localconf.h,$(shell echo localconf.h*))
+ifneq (,$(wildcard localconf.h))
 LOCALCONF = -DLOCALCONF
 else
 LOCALCONF = 
@@ -78,7 +75,7 @@ endif
 # when doing make clean; temporary Makefile files are *.tmp
 #
 
-TOCLEAN = *~ */*~ $(CORE) *.tmp
+TOCLEAN := *~ */*~ $(CORE) *.tmp
 
 # 
 # compilation flags
@@ -88,17 +85,10 @@ TOCLEAN = *~ */*~ $(CORE) *.tmp
 INDENT = indent -kr
 
 # Linker with relocation information and binary output (image)
-LD = m68k-atari-mint-gcc -nostartfiles -nostdlib
+LD = $(CC) -nostartfiles -nostdlib
 LDFLAGS = -Xlinker -oformat -Xlinker binary -lgcc 
 LDFLAGS_T1 = -Xlinker -Ttext=0xfc0000 -Xlinker -Tbss=0x000000 
 LDFLAGS_T2 = -Xlinker -Ttext=0xe00000 -Xlinker -Tbss=0x000000 
-
-# (relocation for RAM TOS is derived dynamically from the BSS size)
-
-# Assembler with options for Motorola like syntax (68000 cpu)
-# AS = m68k-atari-mint-gcc -x assembler
-# ASINC = -Iinclude
-# ASFLAGS = --register-prefix-optional -m68000 $(ASINC) 
 
 # C compiler for MiNT
 CC = m68k-atari-mint-gcc
@@ -117,72 +107,70 @@ NATIVECC = gcc -Wall -W -pedantic -ansi -O
 # source code in bios/
 # Note: tosvars.o must be the first object linked.
 
-BIOSCSRC = kprint.c xbios.c chardev.c blkdev.c bios.c clock.c \
-           mfp.c parport.c biosmem.c acsi.c \
-           midi.c ikbd.c sound.c floppy.c disk.c screen.c lineainit.c \
-           mouse.c initinfo.c cookie.c machine.c nvram.c country.c 
-BIOSSSRC = tosvars.S startup.S lineavars.S vectors.S aciavecs.S \
-           processor.S memory.S linea.S conout.S panicasm.S kprintasm.S
+bios_csrc = kprint.c xbios.c chardev.c blkdev.c bios.c clock.c \
+            mfp.c parport.c biosmem.c acsi.c \
+            midi.c ikbd.c sound.c floppy.c disk.c screen.c lineainit.c \
+            mouse.c initinfo.c cookie.c machine.c nvram.c country.c 
+bios_ssrc = tosvars.S startup.S lineavars.S vectors.S aciavecs.S \
+            processor.S memory.S linea.S conout.S panicasm.S kprintasm.S
 
 #
 # source code in bdos/
 #
 
-BDOSCSRC = console.c fsdrive.c fshand.c fsopnclo.c osmem.c \
-           umem.c bdosmain.c fsbuf.c fsfat.c fsio.c iumem.c proc.c \
-           fsdir.c fsglob.c fsmain.c kpgmld.c time.c 
-BDOSSSRC = rwa.S
+bdos_csrc = console.c fsdrive.c fshand.c fsopnclo.c osmem.c \
+            umem.c bdosmain.c fsbuf.c fsfat.c fsio.c iumem.c proc.c \
+            fsdir.c fsglob.c fsmain.c kpgmld.c time.c 
+bdos_ssrc = rwa.S
 
 #
 # source code in util/
 #
 
-UTILCSRC = doprintf.c nls.c langs.c string.c
-UTILSSRC = memset.S memmove.S nlsasm.S setjmp.S miscasm.S stringasm.S
+util_csrc = doprintf.c nls.c langs.c string.c
+util_ssrc = memset.S memmove.S nlsasm.S setjmp.S miscasm.S stringasm.S
 
 #
 # source code in vdi/
 #
 
-VDICSRC = vdimain.c vdiinput.c monobj.c monout.c text.c seedfill.c bezier.c \
-          vdiesc.c
-VDISSRC = entry.S bitblt.S bltfrag.S copyrfm.S gsxasm1.S gsxasm2.S \
-          vdimouse.S textblt.S #tranfm.S esclisa.S
+vdi_csrc = vdimain.c vdiinput.c monobj.c monout.c text.c seedfill.c \
+           bezier.c vdiesc.c
+vdi_ssrc = entry.S bitblt.S bltfrag.S copyrfm.S gsxasm1.S gsxasm2.S \
+           vdimouse.S textblt.S #tranfm.S esclisa.S
 
 #
 # source code in aes/
 #
 
-AESCSRC = gemaplib.c gemasync.c gemctrl.c gemdisp.c gemevlib.c \
-          gemflag.c gemfmalt.c gemfmlib.c gemfslib.c gemgraf.c \
-          gemgrlib.c gemgsxif.c geminit.c geminput.c gemmnlib.c gemobed.c \
-          gemobjop.c gemoblib.c gempd.c gemqueue.c gemrslib.c gemsclib.c \
-          gemshlib.c gemsuper.c gemwmlib.c gemwrect.c optimize.c rectfunc.c \
-          gemdos.c gem_rsc.c
-AESSSRC = gemstart.S gemdosif.S gemasm.S gsx2.S large.S optimopt.S
+aes_csrc = gemaplib.c gemasync.c gemctrl.c gemdisp.c gemevlib.c \
+           gemflag.c gemfmalt.c gemfmlib.c gemfslib.c gemgraf.c \
+           gemgrlib.c gemgsxif.c geminit.c geminput.c gemmnlib.c gemobed.c \
+           gemobjop.c gemoblib.c gempd.c gemqueue.c gemrslib.c gemsclib.c \
+           gemshlib.c gemsuper.c gemwmlib.c gemwrect.c optimize.c \
+           rectfunc.c gemdos.c gem_rsc.c
+aes_ssrc = gemstart.S gemdosif.S gemasm.S gsx2.S large.S optimopt.S
 
 #
 # source code in desk/
 #
 
-DESKCSRC = deskact.c deskapp.c deskdir.c deskfpd.c deskfun.c deskglob.c \
-           deskinf.c deskins.c deskmain.c deskobj.c deskpro.c deskrsrc.c \
-           desksupp.c deskwin.c gembind.c icons.c desk_rsc.c
-           #taddr.c deskgraf.c deskgsx.c
-DESKSSRC = deskstart.S
+desk_csrc = deskact.c deskapp.c deskdir.c deskfpd.c deskfun.c deskglob.c \
+            deskinf.c deskins.c deskmain.c deskobj.c deskpro.c deskrsrc.c \
+            desksupp.c deskwin.c gembind.c icons.c desk_rsc.c
+            #taddr.c deskgraf.c deskgsx.c
+desk_ssrc = deskstart.S
 
 #
 # source code in cli/ for EmuTOS console EmuCON
 #
 
-CONSCSRC = command.c
-CONSSSRC = coma.S
+cli_csrc = command.c
+cli_ssrc = coma.S
 
 #
 # specific CC -c options for specific directories
 #
-
-vpath % bios:bdos:util:cli:vdi:aes:desk
 
 bios_copts =
 bdos_copts =
@@ -193,6 +181,23 @@ aes_copts  = -Ibios
 desk_copts = -Ibios -Iaes -Idesk/icons
 
 #
+# Directory selection depending on the user interface (EmuCON or AES)
+#
+
+ifeq ($(WITH_AES),0)
+ui_dirs := cli
+other_dirs := vdi aes desk
+else
+ui_dirs := vdi aes desk
+other_dirs := cli
+endif
+
+dirs := bios bdos util $(ui_dirs)
+
+vpath %.c $(dirs)
+vpath %.S $(dirs)
+
+#
 # country-specific settings
 #
 
@@ -200,54 +205,14 @@ include country.mk
 
 #
 # everything should work fine below.
-# P for PATH
+# 
 
-PBIOSCSRC = $(BIOSCSRC:%=bios/%)
-PBIOSSSRC = $(BIOSSSRC:%=bios/%)
-PBDOSCSRC = $(BDOSCSRC:%=bdos/%)
-PBDOSSSRC = $(BDOSSSRC:%=bdos/%)
-PUTILCSRC = $(UTILCSRC:%=util/%)
-PUTILSSRC = $(UTILSSRC:%=util/%)
-PCONSCSRC = $(CONSCSRC:%=cli/%)
-PCONSSSRC = $(CONSSSRC:%=cli/%)
-PVDICSRC  = $(VDICSRC:%=vdi/%)
-PVDISSRC  = $(VDISSRC:%=vdi/%)
-PAESCSRC  = $(AESCSRC:%=aes/%)
-PAESSSRC  = $(AESSSRC:%=aes/%)
-PDESKCSRC = $(DESKCSRC:%=desk/%)
-PDESKSSRC = $(DESKSSRC:%=desk/%)
+COBJ = $(foreach d,$(dirs),$(patsubst %.c,obj/%.o,$($(d)_csrc)))
+SOBJ = $(foreach d,$(dirs),$(patsubst %.S,obj/%.o,$($(d)_ssrc)))
 
-CSRC = $(PBIOSCSRC) $(PBDOSCSRC) $(PUTILCSRC) \
-       $(PVDICSRC) $(PAESCSRC) $(PCONSCSRC) $(PDESKCSRC)
-SSRC = $(PBIOSSSRC) $(PBDOSSSRC) $(PUTILSSRC) \
-       $(PVDISSRC) $(PAESSSRC) $(PCONSSSRC) $(PDESKSSRC)
+CSRC = $(foreach d,$(dirs) $(other_dirs),$(addprefix $(d)/,$($(d)_csrc)))
+SSRC = $(foreach d,$(dirs) $(other_dirs),$(addprefix $(d)/,$($(d)_ssrc)))
 
-BIOSCOBJ = $(BIOSCSRC:%.c=obj/%.o)
-BIOSSOBJ = $(BIOSSSRC:%.S=obj/%.o)
-BDOSCOBJ = $(BDOSCSRC:%.c=obj/%.o)
-BDOSSOBJ = $(BDOSSSRC:%.S=obj/%.o)
-UTILCOBJ = $(UTILCSRC:%.c=obj/%.o)
-UTILSOBJ = $(UTILSSRC:%.S=obj/%.o)
-CONSCOBJ = $(CONSCSRC:%.c=obj/%.o)
-CONSSOBJ = $(CONSSSRC:%.S=obj/%.o)
-VDICOBJ  = $(VDICSRC:%.c=obj/%.o)
-VDISOBJ  = $(VDISSRC:%.S=obj/%.o)
-AESCOBJ  = $(AESCSRC:%.c=obj/%.o)
-AESSOBJ  = $(AESSSRC:%.S=obj/%.o)
-DESKCOBJ = $(DESKCSRC:%.c=obj/%.o)
-DESKSOBJ = $(DESKSSRC:%.S=obj/%.o)
-
-# Selects the user interface (EmuCON or AES):
-ifeq ($(WITH_AES),0)
-UICOBJ = $(CONSCOBJ)
-UISOBJ = $(CONSSOBJ)
-else
-UICOBJ = $(AESCOBJ) $(DESKCOBJ)
-UISOBJ = $(AESSOBJ) $(DESKSOBJ)
-endif
-
-COBJ = $(BIOSCOBJ) $(BDOSCOBJ) $(UTILCOBJ) $(VDICOBJ) $(UICOBJ)
-SOBJ = $(BIOSSOBJ) $(BDOSSOBJ) $(UTILSOBJ) $(VDISOBJ) $(UISOBJ)
 OBJECTS = $(SOBJ) $(COBJ) $(FONTOBJ)
 
 #
@@ -302,7 +267,7 @@ then \
   rm -f $<; \
   goalbytes=`expr $${goal} \* 1024`; \
   echo "EmuTOS too big for $${goal}K ($$goalbytes bytes): size = $$size"; \
-  false ; \
+  false; \
 else \
   echo dd if=/dev/zero of=$@ bs=1024 count=$$goal; \
   dd if=/dev/zero of=$@ bs=1024 count=$$goal; \
@@ -359,7 +324,7 @@ ramtos.img ramtos.map: $(OBJECTS) emutos2.map
 		-Xlinker -Ttext=$$topbss -Xlinker -Tbss=0
 
 boot.prg: obj/minicrt.o obj/boot.o obj/bootasm.o
-	$(LD) -Xlinker -s -o $@ obj/minicrt.o obj/boot.o obj/bootasm.o -lgcc
+	$(LD) -Xlinker -s -o $@ $+ -lgcc
 
 #
 # compressed ROM image
@@ -376,7 +341,7 @@ etoscpr2.img: compr2.img compr$(EXE) ramtos.img
 
 compr1.img compr1.map: $(COMPROBJ)
 	$(LD) -o compr1.img $(COMPROBJ) $(LDFLAGS) \
-	  -Xlinker -Map -Xlinker compr2.map $(LDFLAGS_T1)
+	  -Xlinker -Map -Xlinker compr1.map $(LDFLAGS_T1)
 
 etoscpr1.img: compr1.img compr$(EXE) ramtos.img
 	./compr$(EXE) --rom compr1.img ramtos.img $@
@@ -425,14 +390,14 @@ mkflop$(EXE) : tools/mkflop.c
 TOCLEAN += date.prg dumpkbd.prg
 
 date.prg: obj/minicrt.o obj/doprintf.o obj/date.o
-	$(LD) -Xlinker -s -o $@ obj/minicrt.o obj/doprintf.o obj/date.o -lgcc
+	$(LD) -Xlinker -s -o $@ $+ -lgcc
 
 dumpkbd.prg: obj/minicrt.o obj/memmove.o obj/dumpkbd.o obj/doprintf.o \
 	     obj/string.o
-	$(LD) -Xlinker -s -o $@ $^ -lgcc
+	$(LD) -Xlinker -s -o $@ $+ -lgcc
 
 #testflop.prg: obj/minicrt.o obj/doprintf.o obj/testflop.o
-#	$(LD) -Xlinker -s -o $@ $^ -lgcc
+#	$(LD) -Xlinker -s -o $@ $+ -lgcc
 
 #
 # NLS support
@@ -492,14 +457,13 @@ all192:
 # .tr.c french translations). See target obj/country below.
 #
 
-TRANS_SRC_CMD = sed -e '/^[^a-z]/d;s/\.c/.tr&/' <po/POTFILES.in
+TRANS_SRC = $(shell sed -e '/^[^a-z]/d;s/\.c/.tr&/' <po/POTFILES.in)
 
 TOCLEAN += */*.tr.c
 
 ifneq (,$(UNIQUE))
-
 ifneq (us,$(ETOSLANG))
-emutos1.img emutos2.img: $(shell $(TRANS_SRC_CMD))
+emutos1.img emutos2.img ramtos.img: $(TRANS_SRC)
 
 %.tr.c : %.c po/$(ETOSLANG).po bug$(EXE) po/LINGUAS obj/country
 	./bug$(EXE) translate $(ETOSLANG) $<
@@ -529,7 +493,7 @@ obj/country: needcountry.tmp
 	  fi; \
 	fi; \
 	mv last.tmp $@; \
-	for i in `$(TRANS_SRC_CMD)`; \
+	for i in $(TRANS_SRC); \
 	do \
 	  j=obj/`basename $$i tr.c`o; \
 	  echo rm -f $$i $$j; \
@@ -638,12 +602,11 @@ obj/%.o : %.S
 TOCLEAN += *.dsm *.dsm dsm.txt fal_dsm.txt
 
 %.dsm: %.map
-	vma=`grep '^.text' $< | sed -e 's/[^0]*//;s/ .*//'`; \
+	vma=`sed -e '/^\.text/!d;s/[^0]*//;s/ .*//;q' $<`; \
 	$(OBJDUMP) --target=binary --architecture=m68k \
-	  --adjust-vma=$$vma -D $(<:%.map=%.img) \
-	| sed -e '/:/!d;/^  /!d;s/^  //;s/^ /0/;s/:	/: /' > dsm.tmp
-	grep '^ \+0x' $< | sort \
-	| sed -e 's/^ *0x00//;s/  */:  /' > map.tmp
+	  --adjust-vma=$$vma -D $*.img \
+	  | sed -e '/:/!d;/^  /!d;s/^  //;s/^ /0/;s/:	/: /' > dsm.tmp
+	sed -e '/^ *0x00/!d;s///;s/  */:  /' $< > map.tmp
 	cat dsm.tmp map.tmp | LC_ALL=C sort > $@
 	rm -f dsm.tmp map.tmp
 
@@ -719,7 +682,7 @@ TOCLEAN += tounix$(EXE)
 
 expand:
 	@for i in `grep -l '	' */*.[chS]` ; do \
-		echo expanding $$i ; \
+		echo expanding $$i; \
 		expand <$$i >expand.tmp; \
 		mv expand.tmp $$i; \
 	done
@@ -737,7 +700,7 @@ tounix$(EXE): tools/tounix.c
 #     find . -name CVS -prune -or -not -name '*~' | xargs $(HERE)/tounix$(EXE)
 
 crlf: tounix$(EXE)
-	./tounix$(EXE) * bios/* bdos/* doc/* util/* tools/* po/* include/* aes/* desk/*
+	./$< * bios/* bdos/* doc/* util/* tools/* po/* include/* aes/* desk/*
 
 cvsready: expand crlf
 
@@ -745,11 +708,12 @@ cvsready: expand crlf
 # create a tgz archive named project-nnnnnn.tgz, where nnnnnn is the date.
 #
 
+HEREDIR = $(shell basename $(shell pwd))
+TGZ = $(shell echo $(HEREDIR)-`date +%y%m%d`|tr A-Z a-z).tgz
+
 tgz:	distclean
-	@here=`pwd`; heredir=`basename $$here`; today=`date +%y%m%d`; \
-	tgz=`echo $$heredir-$$today | tr A-Z a-z`.tgz; echo cd ..; cd ..; \
-	echo "tar -cf - --exclude '*CVS' $$heredir | gzip -c -9 >$$tgz"; \
-	tar -cf - --exclude '*CVS' $$heredir | gzip -c -9 >$$tgz
+	cd ..;\
+	tar -cf - --exclude '*CVS' $(HEREDIR) | gzip -c -9 >$(TGZ)
 
 #
 # proposal to create an archive named emutos-0_2a.tgz when
@@ -761,11 +725,10 @@ RELEASEDIR = emutos-$(VERSION)
 RELEASETGZ = $(shell echo $(RELEASEDIR) | tr A-Z. a-z_).tgz
 
 release: distclean
-	cd ..; \
-	tmp=tmp$$$$; mkdir $$tmp; cd $$tmp; \
-	ln -s ../$(HEREDIR) $(RELEASEDIR); \
-	tar -h -cf - --exclude '*CVS' $(TGZEXCL) $(RELEASEDIR) | \
-	gzip -c -9 >../$(RELEASETGZ) ;\
+	@tmp=tmpCVS; rm -rf $$tmp; mkdir $$tmp; cd $$tmp; \
+	ln -s ../../$(HEREDIR) $(RELEASEDIR); \
+	tar -h -cf - --exclude '*CVS' $(RELEASEDIR) \
+	| gzip -c -9 >../../$(RELEASETGZ);\
 	cd ..; rm -rf $$tmp
 
 
@@ -781,7 +744,7 @@ depend: util/langs.c bios/header.h
 	  $(CC) -MM $(INC) $(DEF) $(SSRC) \
 	) | sed -e '/:/s,^,obj/,' >makefile.dep
 
-ifeq (makefile.dep,$(shell echo makefile.dep*))
+ifneq (,$(wildcard makefile.dep))
 include makefile.dep
 endif
 
@@ -795,3 +758,4 @@ clean:
 
 distclean: clean
 	rm -f '.#'* */'.#'* 
+

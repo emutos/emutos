@@ -1149,3 +1149,13 @@ Start... early ages
   to be removed when doing make clean, to make it harder to forget files
   in make clean (LVL)
 - doc/country.txt - updated, but still not entirely satisfactory (LVL)
+
+14. Oct. 2002
+- Makefile - some more optimisations: removed tedious $(PBIOSCSRC) stuff;
+  less sub-processes are launched (e.g. grep | sed | sort | sort replaced
+  by the more logical sed | sort ... sometimes you just see when things
+  were done (by me!) just using a trial and error method) (LVL)
+- portab.h - removed commented-out and some seldom used macros. Ultimately
+  I would like to replace NULL-used-to-mean-char-zero by '\0' and have
+  NULL and NULLPTR be ((void*)0). Then we could replace NULLPTR by NULL and
+  forget about NULLPTR... (LVL)
