@@ -15,6 +15,13 @@
 
 #include "vdiconf.h"
 #include "lineavars.h"
+#include "asm.h"
+
+
+
+extern long trap13(int, ...);
+
+#define tickcal() (WORD)trap13(0x06)            /* ms between timer C calls */
 
 
 
@@ -97,4 +104,30 @@ void vex_curv()
     pointer = (LONG*) &CONTRL[9];
     *pointer = (LONG) user_cur;
     (LONG*)user_cur = *--pointer;
+}
+
+
+
+/*
+ * vex_timv - exchange timer interrupt vector
+ * 
+ * entry:          new vector in CONTRL[7-8]
+ * exit:           old vector in CONTRL[9-10]
+ * destroys:       a0
+ */
+
+void vex_timv()
+{
+    LONG * pointer;
+
+    pointer = (LONG*) &CONTRL[9];
+
+    ints_off();
+
+    *pointer = (LONG) tim_addr;
+    (LONG*)tim_addr = *--pointer;
+
+    ints_on();
+
+    INTOUT[0] = tickcal();
 }

@@ -125,37 +125,8 @@ timer_exit:
 
 
 
-/*
- * _vex_timv - exchange timer interrupt vector
- * 
- * entry:          new vector in CONTRL[7-8]
- * exit:           old vector in CONTRL[9-10]
- * destroys:       a0
- */
-
-_vex_timv:
-        move.l  _CONTRL,a0
-
-        move    sr, -(sp)       // Disable interrupts
-        ori.w   #0x0700, sr
-
-        move.l  _tim_addr,18(a0)
-        move.l  14(a0),_tim_addr
-
-        move    (sp)+,sr
-
-        move.w  #6,-(sp)        // Get tickcal (milliseconds per tick)
-        trap    #13
-        addq.l  #2,sp
-
-        move.l  _INTOUT,a0
-        move.w  d0,(a0)
-
 just_rts:
         rts
-
-
-
 
 
 

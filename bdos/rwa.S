@@ -120,8 +120,6 @@
 
 //==== Global References =====================================================
 
-        .global _s68
-        .global _s68l
         .global _gouser
         .global _oscall
         .global _trap13

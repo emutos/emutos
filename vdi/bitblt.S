@@ -258,13 +258,8 @@ big_fringe:
 
         swap    d6
 
-#if vme10
         neg.w   d2
         neg.w   d3
-#else
-        neg.w   d2
-        neg.w   d3
-#endif
 
 save_addr:
 
