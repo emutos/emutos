@@ -1234,7 +1234,20 @@ Start... early ages
 - "__NF" cookie now contains pointer to the NatFeat structure with
   function pointers (joy)
 
-14. Jan. 2004
-- bios/vectors.S - the scceenpt must be cleared after successful video
+14. Jan. 2003
+- bios/vectors.S - the screenpt must be cleared after successful video
   registers update (joy)
 - NatFeat calling cleaned up - uses function pointers now (joy)
+
+20. Jan. 2003
+- bdos/fsdir.c - Fsfirst/Fsnext nesting fixed. This was a very important
+  fix since without this the AUTO folder processing didn't work (Standa)
+- bdos/proc.c - local or global variable referenced? Fixed by a wild
+  guess (Standa)
+- bios/bios.c - restore our DTA when processing the AUTO folder since
+  the executed AUTO program could have changed it in the meantime (joy)
+- bios/blkdev.c - TOS uses a different algorithm for detecting whether
+  a FAT partition is 12-bit or 16-bit. From mtools I understood that
+  anything with non-floppy-standard cluster number (probably 720/1440)
+  is considered to be 16-bit FAT. Without this patch 4 MB disk image
+  formatted with TOS could not be used under EmuTOS. Now fixed (joy)
