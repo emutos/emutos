@@ -13,6 +13,7 @@
 #define DBG_FLOP 1
 
 #include "portab.h"
+#include "gemerror.h"
 #include "floppy.h"
 #include "dma.h"
 #include "fdc.h"
@@ -30,7 +31,6 @@ extern LONG random(void);    /* in xbios.c */
 
 /*==== Introduction =======================================================*/
 
-
 /*
  * This file contains all floppy-related bios and xbios routines.
  * They are stacked by sections, function of a higher level calling 
@@ -47,11 +47,24 @@ extern LONG random(void);    /* in xbios.c */
  * - bios mediach
  * - xbios floprd, flopwr, flopver
  * - xbios flopfmt
- * - internal floprw
+ * - internal floprw, fropwtrack
  * - internal status, flopvbl
  * - low level dma and fdc registers access
  *
  */
+
+/*
+ * TODO and not implemented:
+ * - mediach does not check the write-protect status
+ * - on error, the geometry info should be reset to a sane state
+ * - on error, should jump to critical error vector
+ * - no 'virtual' disk B: mapped to disk A: when only one drive
+ * - high density media not considered in flopfmt or protobt
+ * - delay() should be based on some delay loop callibration
+ * - reserved or hidden sectors are not guaranteed to be handled correctly
+ * - ... (search for 'TODO' in the rest of this file)
+ */
+
 
 /*==== Internal defines ===================================================*/
  
@@ -484,11 +497,11 @@ LONG flop_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev)
   WORD sect;
   WORD err;
   
-  if(dev < 0 || dev > 1) return -15;
+  if(dev < 0 || dev > 1) return EUNDEV;  /* unknown device */
     
   if(finfo[dev].sides == -1) {
     /* no geometry. Should we call get_bpb ??? TODO */
-    return -1;
+    return EDRVNR;  /* drive not ready */
   }
   
   /* TODO mediach ignored */
@@ -516,9 +529,30 @@ LONG flop_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev)
 
 LONG flop_mediach(WORD dev)
 {
-  if(dev < 0 || dev > 1) return -15;
-  /* TODO */
-  return 1; /* unsure */ 
+  if(dev < 0 || dev > 1) return EUNDEV;   /* unknown device */
+  if(hz_200 < last_access + 100) {
+    /* less than half a second since last access, assume no mediachange */
+    return 0; /* definitely not changed */
+  } else {
+    WORD err;
+    struct bs *bs = (struct bs *) dskbufp;
+    /* TODO, monitor write-protect status in flopvbl... */
+    
+    /* for now, assume it is unsure and look at the serial number */
+    /* read bootsector */
+    err = floprw((LONG) bs, RW_READ, dev, 1, 0, 0, 1);
+    if(err) {
+      /* can't even read the bootsector, what do we do ??? */
+      return err;
+    }
+    if( (bs->serial[0] != finfo[dev].serial[0])
+	|| (bs->serial[1] != finfo[dev].serial[1])
+	|| (bs->serial[2] != finfo[dev].serial[2]) ) {
+      return 2; /* definitely changed */
+    } else {
+      return 1; /* unsure */
+    }
+  }
 }
 
 /*==== xbios floprd, flopwr ===============================================*/
@@ -552,7 +586,7 @@ WORD flopver(LONG buf, LONG filler, WORD dev,
   WORD *bad = (WORD *) buf;
   
   if(count <= 0) return 0;
-  if(dev < 0 || dev > 1) return -15;
+  if(dev < 0 || dev > 1) return EUNDEV;  /* unknown disk */
   for(i = 0 ; i < count ; i++) {
     err = floprw((LONG) dskbufp, RW_READ, dev, sect, track, side, 1);
     if(err) {
@@ -591,8 +625,8 @@ WORD flopfmt(LONG buf, LONG filler, WORD dev, WORD spt,
 #define APPEND(b, count) do { n=count; while(n--) *s++ = b; } while(0) 
 
   if(magic != 0x87654321UL) return 0;
-  if(dev < 0 || dev > 1) return -15;
-  if(spt < 1 || spt > 10) return -1;
+  if(dev < 0 || dev > 1) return EUNDEV;  /* unknown disk */
+  if(spt < 1 || spt > 10) return EGENRL;  /* general error */
   s = (BYTE *)buf;
 
   data = s; /* dummy, to avoid warning. data will be set in the loop */
@@ -659,7 +693,7 @@ WORD flopfmt(LONG buf, LONG filler, WORD dev, WORD spt,
   }
   *bad = 0;
   if(bad != (WORD *)buf) {
-    return -16;
+    return EBADSF;  /* bad sectors on format */
   }
   
   return 0;
@@ -678,7 +712,7 @@ WORD flopfmt(LONG buf, LONG filler, WORD dev, WORD spt,
 WORD floprate(WORD dev, WORD rate)
 {
   WORD old;
-  if(dev < 0 || dev > 1) return -15;
+  if(dev < 0 || dev > 1) return EUNDEV;  /* unknown disk */
   old = finfo[dev].rate;
   if(rate >= 0 && rate <= 3) {
     finfo[dev].rate = rate;
@@ -695,10 +729,10 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
   WORD err;
   WORD status;
   
-  if(dev < 0 || dev > 1) return -15;
+  if(dev < 0 || dev > 1) return EUNDEV;  /* unknown disk */
   
   if((rw == RW_WRITE) && (track == 0) && (sect == 1) && (side == 0)) {
-    /* maybe media changed ? */
+    /* TODO, maybe media changed ? */
   }
   
   floplock(dev);
@@ -721,25 +755,26 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
     }
     if(timeout_gpip(TIMEOUT)) {
       /* timeout */
-      err = -2;
+      err = EDRVNR;  /* drive not ready */
       flopunlk();
       return err;
     }
     status = get_dma_status();
     if(! (status & DMA_OK)) {
       /* DMA error, retry */
+      err = EGENRL;  /* general error */
     } else {
       status = get_fdc_reg(FDC_CS);
       if((rw == RW_WRITE) && (status & FDC_WRI_PRO)) {
-        err = -13;
+        err = EWRPRO;  /* write protect */
         /* no need to retry */
         break;
       } else if(status & FDC_RNF) {
-        err = -8;
+        err = ESECNF;  /* sector not found */
       } else if(status & FDC_CRCERR) {
-        err = -4;
+        err = E_CRC;   /* CRC error */
       } else if(status & FDC_LOSTDAT) {
-        err = -2;
+        err = EDRVNR;  /* drive not ready */
       } else {
         err = 0;
         break;
@@ -758,10 +793,10 @@ static WORD flopwtrack(LONG buf, WORD dev, WORD track, WORD side)
   WORD err;
   WORD status;
   
-  if(dev < 0 || dev > 1) return -15;
+  if(dev < 0 || dev > 1) return EUNDEV;  /* unknown disk */
   
   if((track == 0) && (side == 0)) {
-    /* maybe media changed ? */
+    /* TODO, maybe media changed ? */
   }
   
   floplock(dev);
@@ -779,21 +814,22 @@ static WORD flopwtrack(LONG buf, WORD dev, WORD track, WORD side)
   
     if(timeout_gpip(TIMEOUT)) {
       /* timeout */
-      err = -2;
+      err = EDRVNR;  /* drive not ready */
       flopunlk();
       return err;
     }
     status = get_dma_status();
     if(! (status & DMA_OK)) {
       /* DMA error, retry */
+      err = EGENRL;  /* general error */
     } else {
       status = get_fdc_reg(FDC_CS);
       if(status & FDC_WRI_PRO) {
-        err = -13;
+        err = EWRPRO;  /* write protect */
         /* no need to retry */
         break;
       } else if(status & FDC_LOSTDAT) {
-        err = -2;
+        err = EDRVNR;  /* drive not ready */ 
       } else {
         err = 0;
         break;
@@ -876,7 +912,7 @@ static WORD set_track(WORD track, WORD rate)
   }
   if(timeout_gpip(TIMEOUT)) {
     cur_track = -1;
-    return -1;
+    return E_SEEK;  /* seek error */
   } else {
     cur_track = track;
     return 0;
