@@ -73,77 +73,6 @@
 //////////////
 //////////////
 ////                                                                          ////
-////    _fill_line:                                                           ////
-////            This routine fills a line for "seedfill" using the "xline"    ////
-////    routine.                                                              ////
-////                                                                          ////
-////            input:  4(sp) = xleft.                                        ////
-////                    6(sp) = xright.                                       ////
-////                    8(sp) = y.                                            ////
-////                                                                          ////
-////            output: filled line.                                          ////
-////                                                                          ////
-////            destroys: everything.                                         ////
-////                                                                          ////
-//////////////
-//////////////
-//
-//
-_horzline:
-_fill_line:
-                move.l  _v_bas_ad,a5    // fetch video base address.
-                lea     _FG_BP_1,a4     // point to array of bit_plane values.
-#if vme10
-                move.w  _v_planes,d3    // d3 := xinc. (# of planes)
-                subq.w  #1,d3           // d3 := (# of planes) -1.
-                move.l  _v_pl_dspl,a3   // # of bytes between video planes
-#else
-                move.l  #0,a3
-                move.w  _v_planes,a3    // a3 := xinc. (# of planes)
-                move.w  a3,d3
-                adda.w  a3,a3           // word xinc.
-                subq.w  #1,d3           // d3 := (# of planes) -1.
-#endif
-                move.w  4(sp),d0        // fetch xleft. (input to concat)
-                move.w  d0,d4           // save for later.
-
-                move.w  8(sp),d1        // fetch y. (input to concat)
-                move.w  d1,d5           // save for later.
-                jsr     concat          // form physical offset.
-
-                adda.l  d1,a5           // base + physical offset.
-                move.w  6(sp),d2        // fetch xright.
-                and.w   _patmsk,d5      // compute pattern index.
-                asl.w   #1,d5           // word indexing.
-                move.l  _patptr,a0      // ptr to start of pattern.
-                adda.w  d5,a0           // index into pattern.
-                move.w  #0,a1           // default offset = 0.
-#if vme10
-                lea.l   xline,a2        // address of HABLINE entry point
-                tst.w   _multifill      // multi-plane fill pattern?
-                beq.b   xline_entry     // no, branch.
-                move.w  #32,a1          // yes, offset = 32.
-xline_entry:
-                jmp     (a2)            // fill the horizontal line with color.
-#else
-                tst.w   _multifill      // multi-plane fill pattern?
-                beq     xline           // no, branch.
-                move.w  #32,a1          // yes, offset = 32.
-//
-//      d4 = xleft.                     a5 = ptr to destination.
-//      d3 = # of bit_planes - 1        a4 = ptr to _FG_BP_1.
-//      d2 = xright.                    a3 = xinc.
-//       for VME10 software              a3 = # of bytes between video planes   
-//      d1 = fill pattern.              a1 = offset to next planes fill pattern
-//      d0 = xleft and 0x000F.           a0 = ptr to fill pattern. 
-//
-                bra     xline           // fill the horizontal line with color.
-#endif
-                .page
-
-//////////////
-//////////////
-////                                                                          ////
 ////    _end_pts:                                                             ////
 ////            This routine finds the endpoints of a section of solid color  ////
 ////    for the _seed_fill routine.                                           ////
@@ -418,6 +347,80 @@ ep_ret0:        moveq.l #0,d0           // return(1). (success)
                 rts
                 .page
 
+
+
+#if 1
+//////////////
+//////////////
+////                                                                          ////
+////    _fill_line:                                                           ////
+////            This routine fills a line for "seedfill" using the "xline"    ////
+////    routine.                                                              ////
+////                                                                          ////
+////            input:  4(sp) = xleft.                                        ////
+////                    6(sp) = xright.                                       ////
+////                    8(sp) = y.                                            ////
+////                                                                          ////
+////            output: filled line.                                          ////
+////                                                                          ////
+////            destroys: everything.                                         ////
+////                                                                          ////
+//////////////
+//////////////
+//
+//
+_horzline:
+_fill_line:
+                move.l  _v_bas_ad,a5    // fetch video base address.
+                lea     _FG_BP_1,a4     // point to array of bit_plane values.
+#if vme10
+                move.w  _v_planes,d3    // d3 := xinc. (# of planes)
+                subq.w  #1,d3           // d3 := (# of planes) -1.
+                move.l  _v_pl_dspl,a3   // # of bytes between video planes
+#else
+                move.l  #0,a3
+                move.w  _v_planes,a3    // a3 := xinc. (# of planes)
+                move.w  a3,d3
+                adda.w  a3,a3           // word xinc.
+                subq.w  #1,d3           // d3 := (# of planes) -1.
+#endif
+                move.w  4(sp),d0        // fetch xleft. (input to concat)
+                move.w  d0,d4           // save for later.
+
+                move.w  8(sp),d1        // fetch y. (input to concat)
+                move.w  d1,d5           // save for later.
+                jsr     concat          // form physical offset.
+
+                adda.l  d1,a5           // base + physical offset.
+                move.w  6(sp),d2        // fetch xright.
+                and.w   _patmsk,d5      // compute pattern index.
+                asl.w   #1,d5           // word indexing.
+                move.l  _patptr,a0      // ptr to start of pattern.
+                adda.w  d5,a0           // index into pattern.
+                move.w  #0,a1           // default offset = 0.
+#if vme10
+                lea.l   xline,a2        // address of HABLINE entry point
+                tst.w   _multifill      // multi-plane fill pattern?
+                beq.b   xline_entry     // no, branch.
+                move.w  #32,a1          // yes, offset = 32.
+xline_entry:
+                jmp     (a2)            // fill the horizontal line with color.
+#else
+                tst.w   _multifill      // multi-plane fill pattern?
+                beq     xline           // no, branch.
+                move.w  #32,a1          // yes, offset = 32.
+//
+//      d4 = xleft.                     a5 = ptr to destination.
+//      d3 = # of bit_planes - 1        a4 = ptr to _FG_BP_1.
+//      d2 = xright.                    a3 = xinc.
+//       for VME10 software              a3 = # of bytes between video planes   
+//      d1 = fill pattern.              a1 = offset to next planes fill pattern
+//      d0 = xleft and 0x000F.           a0 = ptr to fill pattern. 
+//
+                bra     xline           // fill the horizontal line with color.
+#endif
+                .page
+
 //////////////
 //////////////
 ////                                                                          ////
@@ -634,4 +637,5 @@ rf_out:
                 rts
 
 
+#endif
                 .end

@@ -5,23 +5,22 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: EMUTOS beta\n"
-"POT-Creation-Date: 2003-02-08 17:13+0100\n"
-"PO-Revision-Date: 2003-02-08 18:17+0100\n"
+"POT-Creation-Date: 2003-02-12 20:37+0100\n"
+"PO-Revision-Date: 2003-02-12 20:37+0100\n"
 "Last-Translator: Martin Doering <mdoering@mucl.de>\n"
 "Language-Team: German <de@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: bios/bios.c:308
+#: bios/bios.c:313
 msgid "Please eject the floppy and hit RETURN"
 msgstr "Bitte Floppy entnehmen, dann RETURN drücken"
 
-#: bios/bios.c:343
-msgid ""
-"[FAIL] HALT - should never be reached!\n"
-msgstr ""
-"HALT - sollte niemals erreicht werden!\n"
+#~msgid ""
+#~"[FAIL] HALT - should never be reached!\n"
+#~msgstr ""
+#~"HALT - sollte niemals erreicht werden!\n"
 
 #: bios/initinfo.c:209
 msgid "EmuTOS Version"
@@ -380,13 +379,11 @@ msgstr "  Löschen...      \007D"
 msgid "  Format..."
 msgstr "  Formatieren..."
 
-#: desk/desk_rsc.c:423
-msgid "  To Output       ^U"
-msgstr "  An Ausgabe      ^U"
+#~msgid "  To Output       ^U"
+#~msgstr "  An Ausgabe      ^U"
 
-#: desk/desk_rsc.c:429
-msgid "  Exit to DOS     ^Q"
-msgstr "  Zurück zu DOS   ^Q"
+#~msgid "  Exit to DOS     ^Q"
+#~msgstr "  Zurück zu DOS   ^Q"
 
 #: desk/desk_rsc.c:441
 msgid "  Install disk drive..."
@@ -404,9 +401,8 @@ msgstr "  Setze Einstellungen..."
 msgid "  Save desktop              \007V"
 msgstr "  Sichere Desktop           \007V"
 
-#: desk/desk_rsc.c:471
-msgid "  Enter DOS commands        \007C"
-msgstr "  DOS-Kommandos eingeben    \007C"
+#~msgid "  Enter DOS commands        \007C"
+#~msgstr "  DOS-Kommandos eingeben    \007C"
 
 #: desk/desk_rsc.c:495
 msgid "  Sort by name   \007N"
@@ -860,3 +856,21 @@ msgstr "Halte <Strg> = ohne AUTO/ACC"
 #: bios/initinfo.c:161
 msgid "Hold <Alternate> to skip HDD"
 msgstr "Halte <Alt> = keine Harddisk"
+
+#: bios/bios.c:348
+msgid ""
+"System halted!\n"
+msgstr "System angehalten!\n"
+
+#: desk/desk_rsc.c:423
+msgid "  Execute EmuCON  ^Z"
+msgstr "  Starte EmuCON   ^Z"
+
+#: desk/desk_rsc.c:429
+msgid "  Shutdown        ^Q"
+msgstr "  Stoppe System   ^Q"
+
+#: desk/desk_rsc.c:471
+msgid "  Change resolution         \007C"
+msgstr "  Ändere Auflösungn         \007C"
+

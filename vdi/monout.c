@@ -2399,7 +2399,7 @@ void horzline(WORD x1, WORD x2, WORD y) {
  *     Y1       = y coord of upper left corner.
  *     X2       = x coord of lower right corner.
  *     Y2       = y coord of lower right corner.
- *     CLIP     = clipping flag. (0 => no clipping.
+ *     CLIP     = clipping flag. (0 => no clipping.)
  *     XMN_CLIP = x clipping minimum.
  *     XMX_CLIP = x clipping maximum.
  *     YMN_CLIP = y clipping minimum.
@@ -2548,7 +2548,7 @@ void rectfill ()
 #endif
 
 
-#if 1
+
 /*
  * put_pix - plot a pixel, just for linea
  *
@@ -2618,6 +2618,4 @@ WORD get_pix()
     }
     return color;                       /* return the composed color value */
 }
-#endif
-
 

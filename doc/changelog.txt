@@ -1330,3 +1330,6 @@ Start... early ages
 - EmuCON can now be compiled into EmuTOS together with the AES/Desktop and
   it can even be executed from the Desktop now! (THH)
 - tools/bug.c - Added missing include file. (THH)
+- util/intmath.c - fixed bug in mul_div, circles work again (MAD)
+- po/de.po - updated (MAD)
+

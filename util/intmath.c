@@ -25,9 +25,7 @@
  * d1 = signed 16 bit integer
  */
 
-WORD mul_div(WORD m1, UWORD m2, WORD d1)
+int mul_div(WORD m1, UWORD m2, WORD d1)
 {
-    return (WORD)((m1 * (LONG)m2) / d1);
+    return (WORD)(((WORD)(m1)*(LONG)((WORD)(m2))) / (WORD)d1);
 }
-
-
