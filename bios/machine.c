@@ -292,6 +292,24 @@ void machine_init(void)
 
 const char * machine_name(void)
 {
+/* NatFeat hack */
+#if 1
+    static long _NF_getid = 0x73004e75L;    /* make NatFeat global not static */
+    static long _NF_call  = 0x73014e75L;
+    #define nfGetID(n)	(((long (*)(const char *))&_NF_getid)n)
+    #define nfCall(n)	(((long (*)(long, ...))&_NF_call)n)
+    #define nf_getFullName(buffer, size) \
+	    (((long (*)(long, char *, unsigned long))&_NF_call)(nfGetID(("NF_NAME"))+1, (buffer), (unsigned long)(size)))
+    extern int native_features;     /* should be included in some global *.h */
+    char *nf_name_buf = phystop-64; /* how to alloc a bit of RAM? */
+
+    if (native_features)
+        nf_getFullName(nf_name_buf, (long)63);
+
+    if (*nf_name_buf)
+        return nf_name_buf;
+#endif /* NatFeat hack */
+
   switch(cookie_mch) {
   case MCH_ST:
     if(has_megartc) {
