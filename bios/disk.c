@@ -47,10 +47,12 @@ LONG DMAread(LONG sector, WORD count, LONG buf, WORD dev)
     else if (dev <= 19) {
         /* Milan Secondary IDE channel */
     }
+#if ARANYM_NATIVE_DISK
     else if (dev <= UNITSNUM) {
         /* virtual device through host access */
         return ara_DMAread(sector, count, buf, dev);
     }
+#endif
 
     return EUNDEV;  /* unknown device */
 }
