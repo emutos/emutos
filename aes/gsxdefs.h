@@ -1,17 +1,22 @@
 /*      GSXDEFS.H       05/06/84 - 12/08/84     Lee Lorenzen            */
 
 /*
-*       Copyright 1999, Caldera Thin Clients, Inc.                      
-*       This software is licenced under the GNU Public License.         
-*       Please see LICENSE.TXT for further information.                 
-*                                                                       
-*                  Historical Copyright                                 
+*       Copyright 1999, Caldera Thin Clients, Inc.
+*                 2002 The EmuTOS development team
+*
+*       This software is licenced under the GNU Public License.
+*       Please see LICENSE.TXT for further information.
+*
+*                  Historical Copyright
 *       -------------------------------------------------------------
 *       GEM Application Environment Services              Version 2.3
 *       Serial No.  XXXX-0000-654321              All Rights Reserved
 *       Copyright (C) 1986                      Digital Research Inc.
 *       -------------------------------------------------------------
 */
+
+#ifndef GSXDEFS_H
+#define GSXDEFS_H
 
 typedef struct wsstr
 {
@@ -71,7 +76,7 @@ typedef struct fdbstr
 } FDB;
 
 
-typedef struct mfstr
+typedef struct mform
 {
         WORD    mf_xhot;
         WORD    mf_yhot;
@@ -82,3 +87,4 @@ typedef struct mfstr
         WORD    mf_data[16];
 } MFORM;
 
+#endif

@@ -2,11 +2,13 @@
 /*      merge High C vers. w. 2.2 & 3.0         8/20/87         mdf     */ 
 
 /*
-*       Copyright 1999, Caldera Thin Clients, Inc.                      
-*       This software is licenced under the GNU Public License.         
-*       Please see LICENSE.TXT for further information.                 
-*                                                                       
-*                  Historical Copyright                                 
+*       Copyright 1999, Caldera Thin Clients, Inc.
+*                 2002 The EmuTOS development team
+*
+*       This software is licenced under the GNU Public License.
+*       Please see LICENSE.TXT for further information.
+*
+*                  Historical Copyright
 *       -------------------------------------------------------------
 *       GEM Application Environment Services              Version 2.3
 *       Serial No.  XXXX-0000-654321              All Rights Reserved
@@ -14,49 +16,37 @@
 *       -------------------------------------------------------------
 */
 
-#include <portab.h>
-#include <machine.h>
-#include <struct.h>
-#include <basepage.h>
-#include <obdefs.h>
-#include <gemlib.h>
+#include "portab.h"
+#include "machine.h"
+#include "struct.h"
+#include "basepage.h"
+#include "obdefs.h"
+#include "gemlib.h"
 
-                                                /* in ASYNC88.C         */
-EXTERN EVSPEC   iasync();
-EXTERN EVSPEC   acancel();
-EXTERN UWORD    apret();
-EXTERN EVSPEC   mwait();
+#include "gemasync.h"
+#include "gemdisp.h"
+#include "geminput.h"
+#include "gemaplib.h"
 
-/* ---------- added for metaware compiler ---------- */
-EXTERN VOID     chkkbd();                       /* in DISP.C            */
-EXTERN VOID     forker();
-EXTERN UWORD    dq();                           /* in INPUT.C           */
-EXTERN WORD     downorup();
-EXTERN WORD     in_mrect();
-EXTERN VOID     ap_rdwr();                      /* in APLIB.C           */
-/* ------------------------------------------------- */
 
-EXTERN WORD     xrat, yrat, button, kstate, mclick, mtrans;
-EXTERN WORD     pr_button, pr_xrat, pr_yrat, pr_mclick;
-
-EXTERN PD       *gl_mowner;
 
 GLOBAL WORD     gl_dcrates[5] = {450, 330, 275, 220, 165};
 GLOBAL WORD     gl_dcindex;
-GLOBAL WORD     gl_dclick;
+GLOBAL WORD     gl_dclick;                      /* # of ticks to wait   */
+                                                /*   to see if a second */
+                                                /*   click will occur   */
 GLOBAL WORD     gl_ticktime;
 
 #if MULTIAPP
 EXTERN SHELL    sh[];
 #endif
 
+
 /*
 *       Stuff the return array with the mouse x, y, button, and keyboard
 *       state.
 */
-        VOID
-ev_rets(rets)
-        WORD            rets[];
+void ev_rets(WORD rets[])
 {
         if (mtrans)
         {
@@ -78,10 +68,7 @@ ev_rets(rets)
 *       Routine to block for a certain async event and return a
 *       single return code.
 */
-        WORD
-ev_block(code, lvalue)
-        WORD            code;
-        LONG            lvalue;
+WORD ev_block(WORD code, LONG lvalue)
 {
         mwait( iasync(code, lvalue) );
         return( apret(code) );
@@ -101,12 +88,7 @@ ev_block(code, lvalue)
 *       indicated state. If bflag = 1 then we are waiting to LEAVE
 *       the state.
 */
-        UWORD
-ev_button(bflgclks, bmask, bstate, rets)
-        WORD            bflgclks;
-        UWORD           bmask;
-        UWORD           bstate;
-        WORD            rets[];
+UWORD ev_button(WORD bflgclks, UWORD bmask, UWORD bstate, WORD rets[])
 {
         WORD            ret;
         LONG            parm;
@@ -121,10 +103,7 @@ ev_button(bflgclks, bmask, bstate, rets)
 /*
 *       Wait for the mouse to leave or enter a specified rectangle.
 */
-        UWORD
-ev_mouse(pmo, rets)
-        REG MOBLK       *pmo;
-        WORD            rets[];
+UWORD ev_mouse(MOBLK *pmo, WORD rets[])
 {
         WORD            ret;
 
@@ -137,9 +116,7 @@ ev_mouse(pmo, rets)
 /*
 *       Routine to wait a specified number of milli-seconds.
 */
-        VOID
-ev_timer(count)
-        LONG            count;
+void ev_timer(LONG count)
 {
         ev_block(MU_TIMER, count / gl_ticktime);
 }
@@ -148,15 +125,8 @@ ev_timer(count)
 /*
 *       Do a multi-wait on the specified events.
 */
-        WORD
-ev_multi(flags, pmo1, pmo2, tmcount, buparm, mebuff, prets)
-        REG WORD        flags;
-        REG MOBLK       *pmo1;
-        MOBLK           *pmo2;
-        LONG            tmcount;
-        LONG            buparm;
-        LONG            mebuff;
-        WORD            prets[];
+WORD ev_multi(WORD flags, MOBLK *pmo1, MOBLK *pmo2, LONG tmcount,
+              LONG buparm, LONG mebuff, WORD prets[])
 {
         QPB             m;
         REG EVSPEC      which;
@@ -167,6 +137,8 @@ ev_multi(flags, pmo1, pmo2, tmcount, buparm, mebuff, prets)
         WORD            pid;
         SHELL           *psh;
         LONG            ljunk;
+
+        which = 0;
 
         pid = rlr->p_pid;
         psh = &sh[pid];
@@ -322,9 +294,7 @@ ev_multi(flags, pmo1, pmo2, tmcount, buparm, mebuff, prets)
 /*
 *       Wait for a key to be ready at the keyboard and return it. 
 */
-        WORD
-ev_dclick(rate, setit)
-        WORD            rate, setit;
+WORD ev_dclick(WORD rate, WORD setit)
 {
         if (setit)
         {

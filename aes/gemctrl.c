@@ -4,11 +4,13 @@
 /*      fix menu bar hang                       11/16/87        mdf     */
 
 /*
-*       Copyright 1999, Caldera Thin Clients, Inc.                      
-*       This software is licenced under the GNU Public License.         
-*       Please see LICENSE.TXT for further information.                 
-*                                                                       
-*                  Historical Copyright                                 
+*       Copyright 1999, Caldera Thin Clients, Inc.
+*                 2002 The EmuTOS development team
+*
+*       This software is licenced under the GNU Public License.
+*       Please see LICENSE.TXT for further information.
+*
+*                  Historical Copyright
 *       -------------------------------------------------------------
 *       GEM Application Environment Services              Version 2.3
 *       Serial No.  XXXX-0000-654321              All Rights Reserved
@@ -16,13 +18,23 @@
 *       -------------------------------------------------------------
 */
 
-#include <portab.h>
-#include <machine.h>
-#include <struct.h>
-#include <basepage.h>
-#include <obdefs.h>
-#include <taddr.h>
-#include <gemlib.h>
+#include "portab.h"
+#include "machine.h"
+#include "struct.h"
+#include "basepage.h"
+#include "obdefs.h"
+#include "taddr.h"
+#include "gemlib.h"
+
+#include "geminput.h"
+#include "gemevlib.h"
+#include "gemwmlib.h"
+#include "gemglobe.h"
+#include "gemgraf.h"
+#include "gemmnlib.h"
+#include "geminit.h"
+#include "gemgsxif.h"
+#include "rectfunc.h"
 
 
 #define FIXLATER        0
@@ -37,68 +49,18 @@ EXTERN WORD     sh_chmsg();
 #define MBDOWN 0x0001
 #define BELL 0x07                               /* bell                 */
 
-                                                /* in INPUT88.C         */
-EXTERN WORD     set_ctrl();
-                                                /* in EVLIB.C           */
-EXTERN WORD     ev_multi();
-                                                /* in WMLIB.C           */
-EXTERN WORD     w_getsize();
-EXTERN WORD     w_bldactive();
-EXTERN WORD     w_setactive();
-
 #if FIXLATER
 EXTERN WORD     mn_indextoid();
 #endif
+
                                                 /* in ASM.A86           */
 EXTERN WORD     dsptch();
 
-EXTERN LONG     gl_mntree;
-EXTERN PD       *gl_mnppd;
-EXTERN WORD     gl_dabox;
-EXTERN PD       *desk_ppd[];
 
-
-EXTERN LONG     gl_awind;
-
-EXTERN WORD     gl_wtop;
-EXTERN WORD     gl_wbox;
-EXTERN WORD     gl_hbox;
-EXTERN GRECT    gl_rmenu;
-
-EXTERN WORD     button, xrat, yrat;
-EXTERN PD       *gl_mowner;
-EXTERN LONG     ad_armice, ad_mouse;
-EXTERN WORD     gl_moff;
-
-
-EXTERN THEGLO   D;
-
-/* ---------- added for metaware compiler ------------- */
-EXTERN VOID     ob_change();                    /* in OBLIB.C           */
-EXTERN WORD     ob_find();
-EXTERN VOID     ob_actxywh();   
-EXTERN VOID     ob_relxywh();
-EXTERN VOID     gr_dragbox();                   /* in GRAF.C            */
-EXTERN VOID     gr_rubwind();
-EXTERN WORD     gr_watchbox();
-EXTERN WORD     gr_slidebox();
-EXTERN WORD     mn_do();                        /* in MNLIB.C           */
-EXTERN VOID     do_chg();
-EXTERN VOID     set_mown();                     /* in INPUT.C           */
-EXTERN VOID     wm_update();                    /* in WMLIB.C           */
-EXTERN WORD     wm_find();
-EXTERN VOID     ap_sendmsg();
-EXTERN VOID     gsx_mfset();                    /* in GSXIF.C           */
-EXTERN VOID     ratinit();
-EXTERN VOID     gsx_moff();
-EXTERN VOID     rc_copy();                      /* in OPTIMOPT.a86      */  
-EXTERN VOID     r_get();                        
-EXTERN VOID     r_set();
-EXTERN WORD     inside();
-
-/* ---------------------------------------------------- */
-
-GLOBAL MOBLK    gl_ctwait;
+GLOBAL MOBLK    gl_ctwait;                      /* MOBLK telling if menu*/
+                                                /*   bar is waiting     */
+                                                /*   to be entered or   */
+                                                /*   exited by ctrl mgr */
 GLOBAL WORD     gl_ctmown;
 
 GLOBAL WORD     appl_msg[8];
@@ -122,15 +84,11 @@ GLOBAL WORD     gl_wa[] =
 MLOCAL WORD             gl_tmpmoff;
 
 
+
 /*
 *       Send message and wait for the mouse button to come up
 */
-        VOID
-ct_msgup(message, owner, wh, m1, m2, m3, m4)
-        WORD            message;
-        PD              *owner;
-        WORD            wh;
-        WORD            m1, m2, m3, m4;
+void ct_msgup(WORD message, PD *owner, WORD wh, WORD m1, WORD m2, WORD m3, WORD m4)
 {
         if (message == NULL)
           return;
@@ -149,10 +107,7 @@ ct_msgup(message, owner, wh, m1, m2, m3, m4)
 }
 
 
-        VOID
-hctl_window(w_handle, mx, my)
-        REG WORD        w_handle;
-        WORD            mx, my;
+void hctl_window(WORD w_handle, WORD mx, WORD my)
 {
         GRECT           t, f, pt;
         WORD            x, y, w, h, ii;
@@ -304,8 +259,8 @@ doelev:         message = (cpt == W_HELEV) ? WM_HSLID : WM_VSLID;
                         x, y, w, h);
 }
 
-        VOID
-hctl_rect()
+
+void hctl_rect()
 {
         WORD            title, item;
         REG WORD        mesag;
@@ -371,15 +326,11 @@ hctl_rect()
 *       Control change of ownership to this rectangle and this process.
 *       Doing the control rectangle first is important.
 */
-        VOID
 #if FIXLATER
-ct_chgown(mpd, cpd, pr)
-        PD              *mpd, *cpd;
+void ct_chgown(PD *mpd, PD *cpd, GRECT *pr)
 #else
-ct_chgown(mpd, pr)
-        PD              *mpd;
+void ct_chgown(PD *mpd, GRECT *pr)
 #endif
-        GRECT           *pr;
 {
         set_ctrl(pr);
         if (!gl_ctmown)
@@ -390,9 +341,8 @@ ct_chgown(mpd, pr)
 #endif
 }
 
-        VOID
-ct_mouse(grabit)
-        WORD            grabit;
+
+void ct_mouse(WORD grabit)
 {
         
         if (grabit)
@@ -436,6 +386,7 @@ hctl_mesag(pmbuf)
 }
 #endif
 
+
 /*
 *       Internal process context used to control the screen for use by
 *       the menu manager, and the window manager.
@@ -443,8 +394,7 @@ hctl_mesag(pmbuf)
 *       the system.
 */
 
-        VOID
-ctlmgr()
+void ctlmgr()
 {
         REG WORD        ev_which;
         WORD            rets[6];

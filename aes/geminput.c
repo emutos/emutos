@@ -2,11 +2,13 @@
 /*      merge High C vers. w. 2.2               8/21/87         mdf     */ 
 
 /*
-*       Copyright 1999, Caldera Thin Clients, Inc.                      
-*       This software is licenced under the GNU Public License.         
-*       Please see LICENSE.TXT for further information.                 
-*                                                                       
-*                  Historical Copyright                                 
+*       Copyright 1999, Caldera Thin Clients, Inc.
+*                 2002 The EmuTOS development team
+*
+*       This software is licenced under the GNU Public License.
+*       Please see LICENSE.TXT for further information.
+*
+*                  Historical Copyright
 *       -------------------------------------------------------------
 *       GEM Application Environment Services              Version 2.3
 *       Serial No.  XXXX-0000-654321              All Rights Reserved
@@ -14,44 +16,26 @@
 *       -------------------------------------------------------------
 */
 
-#include <portab.h>
-#include <machine.h>
-#include <struct.h>
-#include <basepage.h>
-#include <obdefs.h>
-#include <gemlib.h>
+#include "portab.h"
+#include "machine.h"
+#include "struct.h"
+#include "basepage.h"
+#include "obdefs.h"
+#include "gemlib.h"
 
 #include "geminput.h"
+#include "gemgraf.h"
+#include "gemdosif.h"
+#include "gemctrl.h"
+#include "gemmnlib.h"
+#include "gemaplib.h"
+#include "gemglobe.h"
+#include "gemevlib.h"
+#include "gemwmlib.h"
 
 
 #define MB_DOWN 0x01
-                                                /* in DOSIF.A86         */
-EXTERN WORD     drawrat();
 
-EXTERN WORD     inside();                       /* in OPTIMOPT.A86      */
-EXTERN VOID     rc_copy();
-EXTERN WORD     wm_find();                      /* in WMLIB.C           */
-EXTERN VOID     forkq();                        /* in DISP.C            */
-EXTERN VOID     azombie();                      /* in ASYNC.C           */
-EXTERN VOID     evinsert();
-EXTERN VOID     cli();                          /* in DOSIF.A86         */
-EXTERN VOID     sti();
-
-                                                /* in GSXIF.C           */
-EXTERN LONG     CMP_TICK;
-EXTERN LONG     NUM_TICK;
-
-EXTERN GRECT    gl_rmenu;
-
-EXTERN WORD     gl_play;
-
-EXTERN WORD     gl_ctmown;
-EXTERN MOBLK    gl_ctwait;                      /* MOBLK telling if menu*/
-                                                /*   bar is waiting     */
-                                                /*   to be entered or   */
-                                                /*   exited by ctrl mgr */
-EXTERN LONG     gl_mntree;
-EXTERN WORD     gl_wtop;
 
 GLOBAL WORD     dr_invdi, dr_xrat, dr_yrat, dr_doit;
 GLOBAL WORD     button, xrat, yrat, kstate, mclick, mtrans;
@@ -84,11 +68,13 @@ GLOBAL WORD     gl_bdely;                       /* the current amount   */
                                                 /*   of time before the */
                                                 /*   button event is    */
                                                 /*   considered finished*/
-EXTERN WORD     gl_dclick;                      /* # of ticks to wait   */
-                                                /*   to see if a second */
-                                                /*   click will occur   */
 
-EXTERN THEGLO   D;
+
+/* Prototypes: */
+void post_mb(WORD ismouse, EVB *elist, WORD parm1, WORD parm2);
+
+
+
 
 
 /*
@@ -227,7 +213,7 @@ VOID b_delay(WORD amnt)
 *       of the top window.
 */
 
-VOID set_ctrl(GRECT *pt)
+void set_ctrl(GRECT *pt)
 {
         rc_copy(pt, &ctrl);
 }
@@ -241,7 +227,7 @@ VOID set_ctrl(GRECT *pt)
 *       form fill-in.
 */
 
-VOID get_ctrl(GRECT *pt)
+void get_ctrl(GRECT *pt)
 {
         rc_copy(&ctrl, pt);
 }
@@ -252,7 +238,7 @@ VOID get_ctrl(GRECT *pt)
 *       owners.
 */
 
-VOID get_mown(PD **pmown)
+void get_mown(PD **pmown)
 {
         *pmown = gl_mowner;
 }
@@ -264,7 +250,7 @@ VOID get_mown(PD **pmown)
 *       buttons in an up state.
 */
 
-VOID set_mown(PD *mp)
+void set_mown(PD *mp)
 {
         if (!button)
         {
@@ -324,7 +310,7 @@ VOID fq()
 }
 
 
-VOID evremove(REG EVB *e, UWORD ret)
+void evremove(EVB *e, UWORD ret)
 {
         e->e_pred->e_link = e->e_link;
         if (e->e_link)
@@ -333,7 +319,7 @@ VOID evremove(REG EVB *e, UWORD ret)
 }
 
 
-VOID kchange(UWORD ch, WORD kstat)
+void kchange(UWORD ch, WORD kstat)
 {
         
         kstate = kstat;
@@ -342,7 +328,7 @@ VOID kchange(UWORD ch, WORD kstat)
 }
 
 
-VOID post_keybd(REG CDA *c, REG UWORD ch)
+void post_keybd(REG CDA *c, REG UWORD ch)
 {
         REG EVB         *e;
 
@@ -406,6 +392,8 @@ WORD downorup(WORD new, REG LONG buparm)
         return( ((mask & (val ^ new)) == 0) != flag );
 }
 
+
+/*
 VOID m_forkq(WORD (*fcode)(), WORD ratx, WORD raty)
 {
   if ((dr_invdi) || (drawrat(ratx, raty)))
@@ -416,6 +404,8 @@ VOID m_forkq(WORD (*fcode)(), WORD ratx, WORD raty)
   }
   forkq(fcode, ratx, raty);
 }
+*/
+
 
 VOID m_drawit()
 {
@@ -426,7 +416,7 @@ VOID m_drawit()
 }
 
 
-VOID mchange(REG WORD rx, REG WORD ry)
+void mchange(WORD rx, WORD ry)
 {
                                                 /* zero out button wait */
                                                 /*   if mouse moves more*/
@@ -486,7 +476,7 @@ WORD inorout(REG EVB *e, REG WORD rx, REG WORD ry)
 *       Routine to walk the list of mouse or button events and remove
 *       the ones that are satisfied.
 */
-VOID post_mb(WORD ismouse, EVB *elist, WORD parm1, WORD parm2)
+void post_mb(WORD ismouse, EVB *elist, WORD parm1, WORD parm2)
 {
         REG EVB         *e1, *e;
         UWORD           clicks;
@@ -520,7 +510,7 @@ VOID post_mb(WORD ismouse, EVB *elist, WORD parm1, WORD parm2)
 
 
 
-VOID akbin(REG EVB *e)
+void akbin(EVB *e)
 {
                                                 /* see if already       */
                                                 /*   satisfied          */
@@ -531,7 +521,7 @@ VOID akbin(REG EVB *e)
 }
 
 
-VOID adelay(REG EVB *e, REG LONG c)
+void adelay(EVB *e, LONG c)
 {
         REG EVB         *p, *q;
         
@@ -584,7 +574,7 @@ VOID adelay(REG EVB *e, REG LONG c)
 }
 
 
-VOID abutton(REG EVB *e, REG LONG p)
+void abutton(EVB *e, LONG p)
 {
         REG WORD        bclicks;
 
@@ -608,14 +598,13 @@ VOID abutton(REG EVB *e, REG LONG p)
 }
 
 
-VOID amouse(REG EVB *e, LONG pmo)
+void amouse(EVB *e, LONG pmo)
 {
         MOBLK           mob;
         
         LBCOPY(ADDR(&mob), pmo, sizeof(MOBLK));
-                                                /* if already in (or    */
-                                                /*   out) signal        */
-                                                /*   immediately        */
+                                               /* if already in (or out) */
+                                               /* signal immediately     */
         if ( (rlr == gl_mowner) &&
              (in_mrect(&mob.m_out)) )
           azombie(e, 0);

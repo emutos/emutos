@@ -2,10 +2,12 @@
 /*      merge High C vers. w. 2.2               8/21/87         mdf     */ 
 
 /*
-*       Copyright 1999, Caldera Thin Clients, Inc.                      
+*       Copyright 1999, Caldera Thin Clients, Inc.
+*                 2002 The EmuTOS development team
+*
 *       This software is licenced under the GNU Public License.         
 *       Please see LICENSE.TXT for further information.                 
-*                                                                       
+*
 *                  Historical Copyright                                 
 *       -------------------------------------------------------------
 *       GEM Application Environment Services              Version 2.3
@@ -14,38 +16,19 @@
 *       -------------------------------------------------------------
 */
 
-#include <portab.h>
-#include <machine.h>
-#include <struct.h>
-#include <basepage.h>
-#include <obdefs.h>
-#include <gemlib.h>
-                                                /* in GSX.EXE           */
-EXTERN VOID     gsx_moff();
-EXTERN VOID     gsx_mon();
+#include "portab.h"
+#include "machine.h"
+#include "struct.h"
+#include "basepage.h"
+#include "obdefs.h"
+#include "gemlib.h"
 
-/* ------------- added for metaware compiler  ------------- */
-EXTERN          dsptch();                       /* in ASM.A86           */
-EXTERN WORD     ev_multi();                     /* in EVLIB.C           */
-EXTERN VOID     gsx_sclip();                    /* in GRAF.C            */
-EXTERN VOID     gsx_attr();
-EXTERN VOID     gsx_xcbox();
-EXTERN VOID     gsx_xbox();
-EXTERN WORD     max();                          /* in OPTIMOPT.A86      */
-EXTERN VOID     r_set();
-EXTERN WORD     rc_equal();
-EXTERN VOID     wm_update();                    /* in WMLIB.C           */
-EXTERN VOID     rc_constrain();                 /* in OPTIMIZE.C        */
-EXTERN VOID     ob_actxywh();                   /* in OBLIB.C           */
-EXTERN VOID     ob_change();
-EXTERN VOID     ob_relxywh();
-EXTERN WORD     mul_div();                      /* in GSX2.A86          */
-/* --------------------------------------------------------- */
+#include "gemevlib.h"
+#include "gemgraf.h"
+#include "gemwmlib.h"
+#include "gemoblib.h"
+#include "geminput.h"
 
-EXTERN GRECT    gl_rscreen;
-EXTERN GRECT    gl_rzero;
-
-EXTERN WORD     xrat, yrat, button, kstate;
 
 /*
 *       Routine to watch the mouse while the button is down and
@@ -435,9 +418,7 @@ gr_slidebox(tree, parent, obj, isvert)
 }
 
 
-        VOID
-gr_mkstate(pmx, pmy, pmstat, pkstat)
-        WORD            *pmx, *pmy, *pmstat, *pkstat;
+void gr_mkstate(WORD *pmx, WORD *pmy, WORD *pmstat, WORD *pkstat)
 {
         *pmx = xrat;
         *pmy = yrat;

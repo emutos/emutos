@@ -2,11 +2,13 @@
 /*      merge High C vers. w. 2.2 & 3.0         8/20/87         mdf     */ 
 
 /*
-*       Copyright 1999, Caldera Thin Clients, Inc.                      
-*       This software is licenced under the GNU Public License.         
-*       Please see LICENSE.TXT for further information.                 
-*                                                                       
-*                  Historical Copyright                                 
+*       Copyright 1999, Caldera Thin Clients, Inc.
+*                 2002 The EmuTOS development team
+*
+*       This software is licenced under the GNU Public License.
+*       Please see LICENSE.TXT for further information.
+*
+*                  Historical Copyright
 *       -------------------------------------------------------------
 *       GEM Application Environment Services              Version 2.3
 *       Serial No.  XXXX-0000-654321              All Rights Reserved
@@ -14,33 +16,21 @@
 *       -------------------------------------------------------------
 */
 
-#include <portab.h>
-#include <machine.h>
-#include <struct.h>
-#include <basepage.h>
-#include <obdefs.h>
-#include <gemlib.h>
-                                                /* in ASYNC88.C         */
-EXTERN VOID     evinsert();
-                                                /* in AINTS88.C         */
-EXTERN VOID     azombie();
+#include "portab.h"
+#include "machine.h"
+#include "struct.h"
+#include "basepage.h"
+#include "obdefs.h"
+#include "gemlib.h"
 
-/* ----------- added for metaware compiler ---------- */
-EXTERN VOID     evremove();                     /* in INPUT.C           */
-EXTERN          cli();                          /* in DOSIF.A86         */
-EXTERN          sti();
-EXTERN          dsptch();                       /* in ASM.A86           */
-/* -------------------------------------------------- */
+#include "gemasync.h"
+#include "geminput.h"
+#include "gemdosif.h"
 
-EXTERN LONG     NUM_TICK;                       /* number of ticks      */
-                                                /*   since last sample  */
-                                                /*   while someone was  */
-                                                /*   waiting            */
-EXTERN LONG     CMP_TICK;                       /* indicates to tick    */
-                                                /*   handler how much   */
-                                                /*   time to wait before*/
-                                                /*   sending the first  */
-                                                /*   tchange            */
+
+EXTERN      dsptch();                       /* in ASM.A86           */
+
+
 
 VOID tchange(REG LONG c)                        /* c=number of ticks that have gone by  */
 {

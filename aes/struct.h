@@ -1,11 +1,13 @@
 /*      STRUCT.H        1/28/84 - 01/18/85      Lee Jay Lorenzen        */
 
 /*
-*       Copyright 1999, Caldera Thin Clients, Inc.                      
-*       This software is licenced under the GNU Public License.         
-*       Please see LICENSE.TXT for further information.                 
-*                                                                       
-*                  Historical Copyright                                 
+*       Copyright 1999, Caldera Thin Clients, Inc.
+*                 2002 The EmuTOS development team
+*
+*       This software is licenced under the GNU Public License.
+*       Please see LICENSE.TXT for further information.
+*
+*                  Historical Copyright
 *       -------------------------------------------------------------
 *       GEM Application Environment Services              Version 2.3
 *       Serial No.  XXXX-0000-654321              All Rights Reserved
@@ -13,13 +15,16 @@
 *       -------------------------------------------------------------
 */
 
+#ifndef GEMSTRUCT_H
+#define GEMSTRUCT_H
+
+
 #define PD      struct pd               /* process descriptor           */
 #define UDA     struct uda              /* user stack data area         */
 #define CDA     struct cdastr           /* console data area structure  */
 #define QPB     struct qpb              /* queue parameter block        */
 #define EVB     struct evb              /* event block                  */
 #define CQUEUE  struct cqueue           /* console kbd queue            */
-#define MFORM   struct mform            /* mouse form                   */
 #define SPB     struct spb              /* sync parameter block         */
 #define FPD     struct fpd              /* fork process descriptor      */
 
@@ -42,7 +47,9 @@ CQUEUE
 };
 
 
-MFORM
+/* mouse form */
+#if 0  /* Defined in gsxdefs.h */
+typedef struct mform
 {
         WORD    mf_xhot;
         WORD    mf_yhot;
@@ -51,7 +58,8 @@ MFORM
         WORD    mf_bg;
         WORD    mf_mask[16];
         WORD    mf_data[16];
-} ;
+} MFORM;
+#endif
 
 
 #define C_KOWNER 0x0001
@@ -163,3 +171,4 @@ FPD
 } ;
 
 
+#endif /* GEMSTRUCT_H */

@@ -3,11 +3,13 @@
 /*      fix sh_envrn                            11/17/87        mdf     */
 
 /*
-*       Copyright 1999, Caldera Thin Clients, Inc.                      
-*       This software is licenced under the GNU Public License.         
-*       Please see LICENSE.TXT for further information.                 
-*                                                                       
-*                  Historical Copyright                                 
+*       Copyright 1999, Caldera Thin Clients, Inc.
+*                 2002 The EmuTOS development team
+*
+*       This software is licenced under the GNU Public License.
+*       Please see LICENSE.TXT for further information.
+*
+*                  Historical Copyright
 *       -------------------------------------------------------------
 *       GEM Application Environment Services              Version 2.3
 *       Serial No.  XXXX-0000-654321              All Rights Reserved
@@ -15,15 +17,27 @@
 *       -------------------------------------------------------------
 */
 
-#include <portab.h>
-#include <machine.h>
-#include <obdefs.h>
-#include <taddr.h>
-#include <struct.h>
-#include <basepage.h>
-#include <dos.h>
-#include <gem.h>
-#include <gemlib.h>
+#include "portab.h"
+#include "machine.h"
+#include "obdefs.h"
+#include "taddr.h"
+#include "struct.h"
+#include "basepage.h"
+#include "dos.h"
+#include "gem.h"
+#include "gemlib.h"
+
+#include "gemdosif.h"
+#include "gemdos.h"
+#include "gemgraf.h"
+#include "gemgsxif.h"
+#include "gemoblib.h"
+#include "gemwmlib.h"
+#include "gemfmlib.h"
+#include "gempd.h"
+#include "gemflag.h"
+#include "gemglobe.h"
+#include "geminit.h"
 
 
 #if MULTIAPP
@@ -46,57 +60,6 @@ EXTERN WORD     proc_msg[8];
 
 WORD            sh_find();
 
-
-EXTERN WORD     strlen();
-EXTERN VOID     dos_exec();
-
-EXTERN WORD     DOS_AX;
-EXTERN WORD     DOS_ERR;
-EXTERN          cli();                          /* in DOSIF.A86         */
-EXTERN          sti();
-EXTERN WORD     giveerr();
-EXTERN WORD     retake();
-EXTERN WORD     gsx_graphic();
-EXTERN WORD     gsx_malloc();
-EXTERN WORD     gsx_mfree();
-EXTERN BYTE     *rs_str();
-
-/* ---------- added for metaware compiler ---------- */
-GLOBAL VOID     sh_fixtail();
-EXTERN VOID     gsx_sclip();                    /* in GRAF.C            */  
-EXTERN VOID     ratinit();                      /* in GSXIF.C           */
-EXTERN VOID     gsx_mfset();
-EXTERN VOID     ratexit();
-EXTERN VOID     gsx_exec();
-EXTERN VOID     ob_draw();                      /* in OBLIB.C           */
-EXTERN WORD     strcmp();                       /* in OPTIMOPT.A86      */
-EXTERN WORD     toupper();
-EXTERN VOID     bfill();
-EXTERN WORD     dos_gdrv();                     /* in DOS.C             */
-EXTERN VOID     dos_gdir();
-EXTERN VOID     dos_sdta();
-EXTERN VOID     dos_sfirst();
-EXTERN VOID     dos_sdrv();
-EXTERN VOID     dos_chdir();
-EXTERN VOID     wm_start();                     /* in WMLIB.C           */
-EXTERN WORD     fm_show();                      /* in FMLIB.C           */
-EXTERN VOID     p_nameit();                     /* in PD.C              */
-EXTERN VOID     unsync();                       /* in FLAG.C            */
-/* ------------------------------------------------- */
-
-EXTERN LONG ad_scdir;  /*!!!*/
-
-                                                /* in GSXIF.C           */
-EXTERN GRECT    gl_rscreen;
-
-EXTERN LONG     ad_envrn;
-EXTERN LONG     ad_stdesk;
-EXTERN LONG     ad_armice;
-EXTERN LONG     ad_hgmice;
-
-EXTERN LONG     desk_tree[];
-
-EXTERN THEGLO   D;
 
 #if MULTIAPP
 GLOBAL WORD     nulp_msg[8];
@@ -131,6 +94,8 @@ GLOBAL LONG     ad_path;
 GLOBAL LONG     ad_pfile;
 
 GLOBAL WORD     gl_shgem;
+
+
 
         VOID
 sh_read(pcmd, ptail)

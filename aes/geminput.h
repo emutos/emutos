@@ -2,8 +2,42 @@
 #ifndef GEMINPUT_H
 #define GEMINPUT_H
 
-VOID kchange(UWORD ch, WORD kstat);
-VOID mchange(REG WORD rx, REG WORD ry);
-VOID bchange(WORD new, WORD clicks);
+#include "struct.h"
+#include "gemlib.h"
+
+extern WORD     dr_invdi, dr_xrat, dr_yrat, dr_doit;
+extern WORD     button, xrat, yrat, kstate, mclick, mtrans;
+extern WORD     pr_button, pr_xrat, pr_yrat, pr_mclick;
+
+extern PD       *gl_mowner;
+extern PD       *gl_cowner;
+extern PD       *ctl_pd;
+extern GRECT    ctrl;
+
+extern WORD     gl_bclick;
+extern WORD     gl_bpend;
+extern WORD     gl_bdesired;
+extern WORD     gl_btrue;
+extern WORD     gl_bdely;
+
+
+UWORD in_mrect(MOBLK *pmo);
+void set_ctrl(GRECT *pt);
+void get_ctrl(GRECT *pt);
+void get_mown(PD **pmown);
+void set_mown(PD *mp);
+void evremove(EVB *e, UWORD ret);
+
+void kchange(UWORD ch, WORD kstat);
+void post_keybd(REG CDA *c, REG UWORD ch);
+void bchange(WORD new, WORD clicks);
+WORD downorup(WORD new, REG LONG buparm);
+void mchange(WORD rx,  WORD ry);
+
+void akbin(EVB *e);
+void adelay(EVB *e, LONG c);
+void abutton(EVB *e, LONG p);
+void amouse(EVB *e, LONG pmo);
+
 
 #endif

@@ -1,9 +1,11 @@
 /*
-*       Copyright 1999, Caldera Thin Clients, Inc.                      
-*       This software is licenced under the GNU Public License.         
-*       Please see LICENSE.TXT for further information.                 
-*                                                                       
-*                  Historical Copyright                                 
+*       Copyright 1999, Caldera Thin Clients, Inc.
+*                 2002 The EmuTOS development team
+*
+*       This software is licenced under the GNU Public License.
+*       Please see LICENSE.TXT for further information.
+*
+*                  Historical Copyright
 *       -------------------------------------------------------------
 *       GEM Application Environment Services              Version 2.3
 *       Serial No.  XXXX-0000-654321              All Rights Reserved
@@ -11,35 +13,30 @@
 *       -------------------------------------------------------------
 */
 
-#include <portab.h>
-#include <machine.h>
-#include <struct.h>
-#include <basepage.h>
-#include <obdefs.h>
-#include <gemlib.h>
+#include "portab.h"
+#include "machine.h"
+#include "struct.h"
+#include "basepage.h"
+#include "obdefs.h"
+#include "gemlib.h"
+
+#include "gemobjop.h"
+#include "gemwmlib.h"
+#include "optimize.h"
+#include "gemglobe.h"
+
 
 #define TOP 0
 #define LEFT 1
 #define RIGHT 2
 #define BOTTOM 3
-                                                /* in OPTIMIZE.A86      */
-EXTERN          min();
-EXTERN          max();
-                                                /* in WMLIB.C           */
-EXTERN WORD     w_getsize();
 
-
-EXTERN VOID     everyobj();                     /* in OBJOP.C           */
-                                                /* added for hc compiler*/
-    
-EXTERN THEGLO   D;
 
 GLOBAL ORECT    *rul;
 GLOBAL ORECT    gl_mkrect;
 
 
-        VOID
-or_start()
+void or_start()
 {
         REG WORD        i;
 
@@ -53,8 +50,7 @@ or_start()
 }
 
 
-        ORECT
-*get_orect()
+ORECT *get_orect()
 {
         ORECT           *po;
 
@@ -64,10 +60,7 @@ or_start()
 }
 
 
-        ORECT
-*mkpiece(tlrb, new, old)
-        WORD            tlrb;
-        REG ORECT       *new, *old;
+ORECT *mkpiece(WORD tlrb, ORECT *new, ORECT *old)
 {
         REG ORECT       *rl;
 
@@ -101,9 +94,7 @@ or_start()
 }
 
 
-        ORECT
-*brkrct(new, r, p)
-        REG ORECT       *new, *r, *p;
+ORECT *brkrct(ORECT *new, ORECT *r, ORECT *p)
 {
         REG WORD        i;
         WORD            have_piece[4];
@@ -141,10 +132,9 @@ or_start()
 }
 
 
-        VOID
-mkrect(tree, wh)
-        LONG            tree;                   /* place holder for everyobj */
-        WORD            wh;
+
+/* tree = place holder for everyobj */
+void mkrect(LONG tree, WORD wh)
 {
         REG WINDOW      *pwin;
         ORECT           *new;
@@ -176,10 +166,7 @@ mkrect(tree, wh)
 
 
 
-        VOID
-newrect(tree, wh)
-        LONG            tree;
-        WORD            wh;
+void newrect(LONG tree, WORD wh)
 {
         REG WINDOW      *pwin;
         REG ORECT       *r, *new;

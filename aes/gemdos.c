@@ -2,9 +2,11 @@
 /*      GEMDOSIF.C      5/15/85 - 6/4/85        MDF                     */
 
 /*
-*       This software is licenced under the GNU Public License.         
-*       Please see LICENSE.TXT for further information.                 
-*                                                                       
+*       Copyright (C) 2002 The EmuTOS development team
+*
+*       This software is licenced under the GNU Public License.
+*       Please see LICENSE.TXT for further information.
+*
 *                  Historical Copyright
 *       -------------------------------------------------------------
 *       GEM Application Environment Services              Version 1.1
@@ -13,10 +15,9 @@
 *       -------------------------------------------------------------
 */
 
-#include <portab.h>
-#include <machine.h>
+#include "portab.h"
+#include "machine.h"
 
-#include <osbind.h>
 
 GLOBAL UWORD    DOS_AX; /* really a "DOS_RET"   */
 GLOBAL UWORD    DOS_ERR;
@@ -328,9 +329,7 @@ dos_rmdir(path)
 
 
 
-        LONG
-dos_alloc(nbytes)
-        LONG            nbytes;
+LONG dos_alloc(LONG nbytes)
 {
         REG LONG ret;
 
@@ -349,9 +348,8 @@ dos_avail()
         return( gemdos( X_MALLOC, -1L) );
 }
 
-        WORD
-dos_free(maddr)
-        LONG            maddr;
+
+WORD dos_free(LONG maddr)
 {
         return( gemdos(X_MFREE,maddr) );
 }

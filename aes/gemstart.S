@@ -1,13 +1,13 @@
 /*      GEMSTART.S */
 
 /*
-       Copyright 1999, Caldera Thin Clients, Inc.                      
-       This software is licenced under the GNU Public License.         
-       Please see LICENSE.TXT for further information.                 
-                                                                       
-                  Historical Copyright                                 
-*/
-/*
+*       Copyright 1999, Caldera Thin Clients, Inc.
+*                 2002 The EmuTOS development team
+*
+*       This software is licenced under the GNU Public License.
+*       Please see LICENSE.TXT for further information.
+*
+*                  Historical Copyright
 *       -------------------------------------------------------------
 *       GEM Application Environment Services              Version 3.0
 *       Serial No.  XXXX-0000-654321              All Rights Reserved
@@ -16,15 +16,15 @@
 */
 
 
-.globl _main
+//.globl _main
+.globl _gem_startup
 .globl _pgmld
 .globl _gemdos
 
-.globl _totpds
-
         .text
 
-_main:
+//_main:
+_gem_startup:
         movea.l a7,a5
         movea.l #LEABC,a7
         movea.l 4(a5),a5
@@ -154,9 +154,6 @@ _gl_resp:
         .ds.b   0x80
 LEABC:
 
-
-_totpds:
-        ds.w    1
 
 
 saveregs:

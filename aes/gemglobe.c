@@ -2,11 +2,13 @@
 /*      merge High C vers. w. 2.2               8/21/87         mdf     */ 
 
 /*
-*       Copyright 1999, Caldera Thin Clients, Inc.                      
-*       This software is licenced under the GNU Public License.         
-*       Please see LICENSE.TXT for further information.                 
-*                                                                       
-*                  Historical Copyright                                 
+*       Copyright 1999, Caldera Thin Clients, Inc.
+*                 2002 The EmuTOS development team
+*
+*       This software is licenced under the GNU Public License.
+*       Please see LICENSE.TXT for further information.
+*
+*                  Historical Copyright
 *       -------------------------------------------------------------
 *       GEM Application Environment Services              Version 2.3
 *       Serial No.  XXXX-0000-654321              All Rights Reserved
@@ -14,12 +16,12 @@
 *       -------------------------------------------------------------
 */
 
-#include <portab.h>
-#include <machine.h>
-#include <struct.h>
-#include <obdefs.h>
-#include <gem.h>
-#include <gemlib.h>
+#include "portab.h"
+#include "machine.h"
+#include "struct.h"
+#include "obdefs.h"
+#include "gem.h"
+#include "gemlib.h"
 
 #if I8086
 GLOBAL WORD             D;
@@ -30,12 +32,10 @@ GLOBAL WORD             D;
 GLOBAL THEGLO           D;
 
 
-        VOID
-far_call(fcode, fdata)
-        WORD            (*fcode)();
-        LONG            fdata;
+
+WORD far_call(WORD (*fcode)(), LONG fdata)
 {
-        (*fcode)(fdata);
+        return (*fcode)(fdata);
 }
 #endif
 

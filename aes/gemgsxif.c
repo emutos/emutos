@@ -3,6 +3,8 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.                      
+*                 2002 The EmuTOS development team
+*
 *       This software is licenced under the GNU Public License.         
 *       Please see LICENSE.TXT for further information.                 
 *                                                                       
@@ -14,14 +16,23 @@
 *       -------------------------------------------------------------
 */
 
-#include <portab.h>
-#include <machine.h>
-#include <dos.h>
-#include <obdefs.h>
-#include <gsxdefs.h>
-#include <bind.h>
-#include <funcdef.h>
-#include <gem.h>
+#include "portab.h"
+#include "machine.h"
+#include "dos.h"
+#include "obdefs.h"
+#include "gsxdefs.h"
+#include "funcdef.h"
+#include "gem.h"
+
+#include "gemdos.h"
+#include "gemrslib.h"
+#include "gemgraf.h"
+#include "geminput.h"
+#include "gemdosif.h"
+#include "gsx2.h"
+#include "geminit.h"
+#include "gemctrl.h"
+#include "gemgsxif.h"
 
 /*
 *       Calls used in Crystal:
@@ -31,95 +42,50 @@
 *       vst_height(); 
 *       vsl_type();
 *       vsl_udsty();
-*       vsl_width();
-*       v_pline();
+*       g_vsl_width();
+*       g_v_pline();
 *       vst_clip();
 *       vex_butv();
 *       vex_motv();
 *       vex_curv();
 *       vex_timv();
 *       vr_cpyfm();
-*       v_opnwk();
+*       g_v_opnwk();
 *       v_clswk();
 *       vq_extnd();
 *       v_clsvwk( handle )
 *       v_opnvwk( pwork_in, phandle, pwork_out )
 */
 
-                                                /* in GEMDOS.C          */
-EXTERN LONG     dos_alloc();
-EXTERN WORD     dos_free();
-                                                /* in DOSIF.A86         */
-EXTERN WORD     justretf();
-                                                /* in GSX2.A86          */
-EXTERN          gsx2();
-EXTERN          i_ptsin();
-EXTERN          i_intin();
-EXTERN          i_ptsout();
-EXTERN          i_intout();
-EXTERN          i_ptr();
-EXTERN          i_ptr2();
-EXTERN          i_lptr1();      
-EXTERN          m_lptr2();
-                                                /* in OPTIMIZE.C        */
-                                                /* in RSLIB.C           */
-EXTERN BYTE     *rs_str();
-                                                /* in DOSIF.A86         */
-EXTERN WORD     far_bcha();
-EXTERN WORD     far_mcha();
 
-/* ------------ added for metaware compiler ---------- */
-EXTERN VOID     gsx_fix();                      /* in GRAF.C            */
-EXTERN VOID     gsx_start();
-GLOBAL VOID     gsx_setmb();                    /* in GSXIF.C           */
-GLOBAL VOID     gsx_resetmb();
-GLOBAL VOID     gsx_wsopen();
-GLOBAL VOID     gsx_moff();
-GLOBAL VOID     gsx_mon();
-GLOBAL VOID     vro_cpyfm();
-/* -------------------------------------------------- */
 
-EXTERN LONG     drwaddr;
-                                                /* in APGSXIF.C         */
-EXTERN WORD     xrat, yrat, button;
+GLOBAL WORD  intout[45];
+GLOBAL WORD  ptsout[12];
 
-EXTERN WORD     gl_nplanes;
-EXTERN WORD     gl_handle;
+GLOBAL FDB   gl_tmp;
 
-EXTERN WORD     gl_wchar;
-EXTERN WORD     gl_hchar;
+GLOBAL LONG  old_mcode;
+GLOBAL LONG  old_bcode;
+GLOBAL WORD  gl_moff;                /* counting semaphore   */
+                                     /*  == 0 implies ON     */
+                                     /*  >  0 implies OFF    */
+GLOBAL LONG  gl_mlen;
+GLOBAL WORD  gl_graphic;
 
-EXTERN FDB              gl_src;
-EXTERN FDB              gl_dst;
+ULONG        gsx_gbufflen();         /* forward decl.        */
 
-EXTERN WS               gl_ws;
-EXTERN WORD             contrl[];
-EXTERN WORD             intin[];
-EXTERN WORD             ptsin[];
-EXTERN LONG             ad_intin;
-
-EXTERN WORD             gl_ctmown;
-EXTERN LONG             ad_mouse;
-
-GLOBAL WORD             intout[45];
-GLOBAL WORD             ptsout[12];
-
-GLOBAL FDB              gl_tmp;
-
-GLOBAL LONG             old_mcode;
-GLOBAL LONG             old_bcode;
-GLOBAL WORD             gl_moff;                /* counting semaphore   */
-                                                /*  == 0 implies ON     */
-                                                /*  >  0 implies OFF    */
-GLOBAL LONG             gl_mlen;
-GLOBAL WORD             gl_graphic;
-
-ULONG                   gsx_gbufflen();         /* forward decl.        */
 
 #define GRAFMEM         0xFFFFFFFFl
 
-        ULONG
-gsx_mcalc()
+
+/* Prototypes: */
+void gsx_wsopen();
+void gsx_setmb(void *boff, void *moff, LONG *pdrwaddr);
+
+
+
+
+ULONG gsx_mcalc()
 {
         gsx_fix(&gl_tmp, 0x0L, 0, 0);           /* store screen info    */
         gl_mlen = gsx_gbufflen();
@@ -130,8 +96,7 @@ gsx_mcalc()
         return(gl_mlen);
 }
 
-        VOID
-gsx_malloc()
+void gsx_malloc()
 {
         ULONG   mlen;
 
@@ -141,14 +106,13 @@ gsx_malloc()
 }
 
 
-        VOID
-gsx_mfree()
+void gsx_mfree()
 {
         dos_free(gl_tmp.fd_addr);
 }
 
 
-        VOID
+        void
 gsx_mret(pmaddr, pmlen)
         LONG            *pmaddr;
         LONG            *pmlen;
@@ -166,7 +130,7 @@ gsx_mret(pmaddr, pmlen)
 }
 
 
-        VOID
+        void
 gsx_ncode(code, n, m)
         WORD            code;
         WORD            n, m;
@@ -178,7 +142,7 @@ gsx_ncode(code, n, m)
         gsx2();
 }
 
-        VOID
+        void
 gsx_1code(code, value)
         WORD            code;
         WORD            value;
@@ -188,8 +152,7 @@ gsx_1code(code, value)
 }
 
 
-        VOID
-gsx_init()
+void gsx_init()
 {
         gsx_wsopen();
         gsx_start();
@@ -199,7 +162,7 @@ gsx_init()
         yrat = ptsout[1];
 }
 
-        VOID
+        void
 gsx_exec(pcspec, segenv, pcmdln, pfcb1, pfcb2)
         LONG            pcspec;
         WORD            segenv;
@@ -227,9 +190,20 @@ gsx_exec(pcspec, segenv, pcmdln, pfcb1, pfcb2)
 }
 
 
-        VOID
-gsx_graphic(tographic)
-        WORD            tographic;
+void gsx_resetmb()
+{
+        i_lptr1( old_bcode );   
+        gsx_ncode(BUT_VECX, 0, 0);
+
+        i_lptr1( old_mcode );
+        gsx_ncode(MOT_VECX, 0, 0);
+
+        i_lptr1( drwaddr );     
+        gsx_ncode(CUR_VECX, 0, 0);
+}
+
+
+void gsx_graphic(WORD tographic)
 {
         if (gl_graphic != tographic)
         {
@@ -250,41 +224,38 @@ gsx_graphic(tographic)
 }
 
 
-        VOID
-gsx_wsopen()
+void gsx_wsopen()
 {
         WORD            i;
 
         for(i=0; i<10; i++)
           intin[i] = 1;
         intin[10] = 2;                  /* device coordinate space */
-        v_opnwk( &intin[0], &gl_handle, &gl_ws );
+        g_v_opnwk( &intin[0], &gl_handle, &gl_ws );
         gl_graphic = TRUE;
 }
 
 
-        VOID
-gsx_wsclose()
+void gsx_wsclose()
 {
         gsx_ncode(CLOSE_WORKSTATION, 0, 0);
 }
 
-        VOID
-ratinit()
+
+void ratinit()
 {
         gsx_1code(SHOW_CUR, 0);
         gl_moff = 0;
 }
 
 
-        VOID
-ratexit()
+void ratexit()
 {
         gsx_moff();
 }
 
 
-        VOID
+        void
 bb_set(sx, sy, sw, sh, pts1, pts2, pfd, psrc, pdst)
         REG WORD        sx, sy, sw, sh;
         REG WORD        *pts1, *pts2;
@@ -313,13 +284,13 @@ bb_set(sx, sy, sw, sh, pts1, pts2, pfd, psrc, pdst)
         pts2[2] = sw - 1;
         pts2[3] = sh - 1 ;
 
-        gsx_fix(pfd, 0, 0, 0, 0);
+        gsx_fix(pfd, 0L, 0, 0);
         vro_cpyfm( S_ONLY, &ptsin[0], psrc, pdst );
         gsx_mon();
 }
 
 
-        VOID
+        void
 bb_save(ps)
         GRECT           *ps;
 {       
@@ -328,7 +299,7 @@ bb_save(ps)
 }
 
 
-        VOID
+        void
 bb_restore(pr)
         GRECT           *pr;
 {
@@ -337,10 +308,7 @@ bb_restore(pr)
 }
 
 
-        VOID
-gsx_setmb(boff, moff, pdrwaddr)
-        UWORD           *boff, *moff;
-        LONG            *pdrwaddr;
+void gsx_setmb(void *boff, void *moff, LONG *pdrwaddr)
 {
         i_lptr1( boff, 0x0 );   
         gsx_ncode(BUT_VECX, 0, 0);
@@ -356,23 +324,7 @@ gsx_setmb(boff, moff, pdrwaddr)
 }
 
 
-        VOID
-gsx_resetmb()
-{
-        i_lptr1( old_bcode );   
-        gsx_ncode(BUT_VECX, 0, 0);
-
-        i_lptr1( old_mcode );
-        gsx_ncode(MOT_VECX, 0, 0);
-
-        i_lptr1( drwaddr );     
-        gsx_ncode(CUR_VECX, 0, 0);
-}
-
-        WORD
-gsx_tick(tcode, ptsave)
-        LONG            tcode;
-        LONG            *ptsave;
+WORD gsx_tick(LONG tcode, LONG *ptsave)
 {
         i_lptr1( tcode );       
         gsx_ncode(TIM_VECX, 0, 0);
@@ -381,7 +333,7 @@ gsx_tick(tcode, ptsave)
 }
 
 
-        VOID
+        void
 gsx_mfset(pmfnew)
         LONG            pmfnew;
 {
@@ -394,7 +346,7 @@ gsx_mfset(pmfnew)
 }
 
 
-        VOID
+        void
 gsx_mxmy(pmx, pmy)
         WORD            *pmx, *pmy;
 {
@@ -403,23 +355,20 @@ gsx_mxmy(pmx, pmy)
 }
 
 
-        WORD
-gsx_button()
+WORD gsx_button()
 {
         return( button );
 }
 
 
-        WORD
-gsx_kstate()
+WORD gsx_kstate()
 {
         gsx_ncode(KEY_SHST, 0, 0);
         return(intout[0]);
 }
 
 
-        VOID
-gsx_moff()
+void gsx_moff()
 {
         if (!gl_moff)
           gsx_ncode(HIDE_CUR, 0, 0);
@@ -428,8 +377,7 @@ gsx_moff()
 }
 
 
-        VOID
-gsx_mon()
+void gsx_mon()
 {
         gl_moff--;
         if (!gl_moff)
@@ -438,8 +386,7 @@ gsx_mon()
 
 
 
-        WORD
-gsx_char()
+WORD gsx_char()
 {
         intin[0] = 4;
         intin[1] = 2;
@@ -494,19 +441,17 @@ gsx_char()
 #endif
 }
 
-        ULONG   
-gsx_gbufflen()
+
+ULONG gsx_gbufflen()
 {
         gsx_1code(EXTENDED_INQUIRE, 1);
         return(LLGET(ADDR(&intout[26])));
 }
 
 
-        VOID
-v_opnwk( pwork_in, phandle, pwork_out )
-        WORD            *pwork_in;
-        WORD            *phandle;
-        REG WORD        *pwork_out;
+/* This function was formally only called v_opnwk, but there was a
+   conflict with the VDI then, so I renamed it to g_v_opnwk  - Thomas */
+void g_v_opnwk(WORD *pwork_in, WORD *phandle, WORD *pwork_out )
 {
         WORD            *ptsptr;
 
@@ -523,10 +468,10 @@ v_opnwk( pwork_in, phandle, pwork_out )
         i_ptsout( &ptsout );
 }
 
-        VOID
-v_pline( count, pxyarray )
-        WORD            count;
-        WORD            *pxyarray;
+
+/* This function was formally only called v_pline, but there was a
+   conflict with the VDI then, so I renamed it to g_v_pline  - Thomas */
+void g_v_pline(WORD  count, WORD *pxyarray )
 {
         i_ptsin( pxyarray );
         gsx_ncode(POLYLINE, count, 0);
@@ -534,7 +479,7 @@ v_pline( count, pxyarray )
 }
 
 
-        VOID
+        void
 vst_clip( clip_flag, pxyarray )
         REG WORD        clip_flag;
         WORD            *pxyarray;
@@ -549,7 +494,7 @@ vst_clip( clip_flag, pxyarray )
 }
 
 
-        VOID
+        void
 vst_height( height, pchr_width, pchr_height, pcell_width, pcell_height )
         WORD    height;
         WORD    *pchr_width;
@@ -567,7 +512,7 @@ vst_height( height, pchr_width, pchr_height, pcell_width, pcell_height )
 }
 
 
-        VOID
+        void
 vr_recfl( pxyarray, pdesMFDB )
         WORD    *pxyarray;
         WORD    *pdesMFDB;
@@ -579,12 +524,7 @@ vr_recfl( pxyarray, pdesMFDB )
 }
 
 
-        VOID
-vro_cpyfm( wr_mode, pxyarray, psrcMFDB, pdesMFDB )
-        WORD    wr_mode;
-        WORD    *pxyarray;
-        FDB     *psrcMFDB;
-        FDB     *pdesMFDB;
+void vro_cpyfm(WORD wr_mode, WORD *pxyarray, FDB *psrcMFDB, FDB *pdesMFDB )
 {
         intin[0] = wr_mode;
         i_ptr( psrcMFDB );
@@ -595,7 +535,7 @@ vro_cpyfm( wr_mode, pxyarray, psrcMFDB, pdesMFDB )
 }
 
 
-        VOID
+        void
 vrt_cpyfm( wr_mode, pxyarray, psrcMFDB, pdesMFDB, fgcolor, bgcolor )
         WORD    wr_mode;
         WORD    *pxyarray;
@@ -614,7 +554,7 @@ vrt_cpyfm( wr_mode, pxyarray, psrcMFDB, pdesMFDB, fgcolor, bgcolor )
 }
 
 
-        VOID
+        void
 vrn_trnfm( psrcMFDB, pdesMFDB )
         WORD    *psrcMFDB;
         WORD    *pdesMFDB;
@@ -625,9 +565,9 @@ vrn_trnfm( psrcMFDB, pdesMFDB )
 }
 
 
-        VOID
-vsl_width( width )
-        WORD    width;
+/* This function was formally only called vsl_width, but there was a
+   conflict with the VDI then, so I renamed it to g_vsl_width  - Thomas */
+void g_vsl_width(WORD width)
 {
         ptsin[0] = width;
         ptsin[1] = 0;

@@ -3,11 +3,13 @@
 /*      merge High C vers. w. 2.2               8/24/87         mdf     */ 
 
 /*
-*       Copyright 1999, Caldera Thin Clients, Inc.                      
-*       This software is licenced under the GNU Public License.         
-*       Please see LICENSE.TXT for further information.                 
-*                                                                       
-*                  Historical Copyright                                 
+*       Copyright 1999, Caldera Thin Clients, Inc.
+*                 2002 The EmuTOS development team
+*
+*       This software is licenced under the GNU Public License.
+*       Please see LICENSE.TXT for further information.
+*
+*                  Historical Copyright
 *       -------------------------------------------------------------
 *       GEM Application Environment Services              Version 2.3
 *       Serial No.  XXXX-0000-654321              All Rights Reserved
@@ -15,27 +17,24 @@
 *       -------------------------------------------------------------
 */
 
-#include <portab.h>
-#include <machine.h>
-#include <struct.h>
-#include <basepage.h>
-#include <obdefs.h>
-#include <gemlib.h>
-#include <crysbind.h>
-#include <dos.h>
-#include <gem.h>
+#include "portab.h"
+#include "machine.h"
+#include "struct.h"
+#include "basepage.h"
+#include "obdefs.h"
+#include "gemlib.h"
+#include "crysbind.h"
+#include "dos.h"
+#include "gem.h"
+
+#include "gemrslib.h"
+#include "gemdos.h"
+#include "geminit.h"
+#include "gemshlib.h"
+
 
 #define NUM_SCRAPS      6
 
-/* --------------- added for metaware compiler --------------- */
-EXTERN WORD             rs_gaddr();                     /* in RSLIB.C   */
-EXTERN VOID             dos_sdta();                     /* in DOS.C     */
-EXTERN WORD             dos_sfirst();
-EXTERN VOID             dos_delete();
-/* ----------------------------------------------------------- */
-
-EXTERN LONG             ad_dta;
-EXTERN LONG             ad_sysglo;
 
 GLOBAL LONG             ad_scrap;
 GLOBAL BYTE     *sc_types[NUM_SCRAPS] =
@@ -44,6 +43,9 @@ GLOBAL BYTE     *sc_types[NUM_SCRAPS] =
 GLOBAL WORD     sc_bits[NUM_SCRAPS] =
                          {SC_FTCSV,SC_FTTXT,SC_FTGEM,
                           SC_FTIMG,SC_FTDCA,SC_FTUSR};
+
+
+
 
         WORD
 sc_clrd(isread)

@@ -14,18 +14,18 @@
 */
 
                                                 /* in BASE88.C          */
-EXTERN PD       *rlr, *drl, *nrl;
-EXTERN EVB      *eul, *dlr, *zlr;
+extern PD       *rlr, *drl, *nrl;
+extern EVB      *eul, *dlr, *zlr;
 
 #if I8086
-EXTERN UWORD    elinkoff;
+extern UWORD    elinkoff;
 #else
-EXTERN LONG     elinkoff;
+extern LONG     elinkoff;
 #endif
-EXTERN BYTE     indisp;
-EXTERN WORD     fpt, fph, fpcnt;                /* forkq tail, head,    */
+extern BYTE     indisp;
+extern WORD     fpt, fph, fpcnt;                /* forkq tail, head,    */
                                                 /*   count              */
-EXTERN SPB      wind_spb;
-EXTERN CDA      *cda;
-EXTERN WORD     curpid;
+extern SPB      wind_spb;
+extern CDA      *cda;
+extern WORD     curpid;
 

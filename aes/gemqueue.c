@@ -2,11 +2,13 @@
 /*      merge High C vers. w. 2.2               8/21/87         mdf     */ 
 
 /*
-*       Copyright 1999, Caldera Thin Clients, Inc.                      
-*       This software is licenced under the GNU Public License.         
-*       Please see LICENSE.TXT for further information.                 
-*                                                                       
-*                  Historical Copyright                                 
+*       Copyright 1999, Caldera Thin Clients, Inc.
+*                 2002 The EmuTOS development team
+*
+*       This software is licenced under the GNU Public License.
+*       Please see LICENSE.TXT for further information.
+*
+*                  Historical Copyright
 *       -------------------------------------------------------------
 *       GEM Application Environment Services              Version 2.3
 *       Serial No.  XXXX-0000-654321              All Rights Reserved
@@ -14,22 +16,17 @@
 *       -------------------------------------------------------------
 */
 
-#include <portab.h>
-#include <machine.h>
-#include <struct.h>
-#include <basepage.h>
-#include <obdefs.h>
-#include <gemlib.h>
+#include "portab.h"
+#include "machine.h"
+#include "struct.h"
+#include "basepage.h"
+#include "obdefs.h"
+#include "gemlib.h"
+
+#include "optimize.h"
+#include "gemasync.h"
 
 
-/* ---------- added for metaware compiler ---------- */
-EXTERN VOID     rc_union();                     /* in OPTIMIZE.C        */
-#if I8086
-EXTERN VOID     movs();                         /* in OPTIMOPT.A86      */
-#endif
-EXTERN VOID     azombie();                      /* in ASYNC.C           */
-EXTERN VOID     evinsert();
-/* ------------------------------------------------- */
 
         VOID
 doq(donq, p, m)

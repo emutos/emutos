@@ -3,17 +3,23 @@
 /*      2.0             10/30/85 - 10/30/85     Lowell Webster          */
 
 /*
-*       Copyright 1999, Caldera Thin Clients, Inc.                      
-*       This software is licenced under the GNU Public License.         
-*       Please see LICENSE.TXT for further information.                 
-*                                                                       
-*                  Historical Copyright                                 
+*       Copyright 1999, Caldera Thin Clients, Inc.
+*                 2002 The EmuTOS development team
+*
+*       This software is licenced under the GNU Public License.
+*       Please see LICENSE.TXT for further information.
+*
+*                  Historical Copyright
 *       -------------------------------------------------------------
 *       GEM Application Environment Services              Version 2.3
 *       Serial No.  XXXX-0000-654321              All Rights Reserved
 *       Copyright (C) 1986                      Digital Research Inc.
 *       -------------------------------------------------------------
 */
+
+#ifndef GEMLIB_H
+#define GEMLIB_H
+
 
 #if MULTIAPP
 #define PR_EXITED       0
@@ -466,3 +472,4 @@ THEGLO
 };
 
 
+#endif /* GEMLIB_H */

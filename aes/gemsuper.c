@@ -1,9 +1,11 @@
 /*
-*       Copyright 1999, Caldera Thin Clients, Inc.                      
-*       This software is licenced under the GNU Public License.         
-*       Please see LICENSE.TXT for further information.                 
-*                                                                       
-*                  Historical Copyright                                 
+*       Copyright 1999, Caldera Thin Clients, Inc.
+*                 2002 The EmuTOS development team
+*
+*       This software is licenced under the GNU Public License.
+*       Please see LICENSE.TXT for further information.
+*
+*                  Historical Copyright
 *       -------------------------------------------------------------
 *       GEM Application Environment Services              Version 2.3
 *       Serial No.  XXXX-0000-654321              All Rights Reserved
@@ -11,17 +13,34 @@
 *       -------------------------------------------------------------
 */
 
-#include <portab.h>
-#include <machine.h>
-#include <struct.h>
-#include <basepage.h>
-#include <obdefs.h>
-#include <taddr.h>
-#include <gemlib.h>
-#include <crysbind.h>
-#include <gem.h>
+#include "portab.h"
+#include "machine.h"
+#include "struct.h"
+#include "basepage.h"
+#include "obdefs.h"
+#include "taddr.h"
+#include "gemlib.h"
+#include "crysbind.h"
+#include "gem.h"
 
+#include "gempd.h"
 #include "gemaplib.h"
+#include "geminit.h"
+#include "gemevlib.h"
+#include "gemmnlib.h"
+#include "gemoblib.h"
+#include "gemobed.h"
+#include "gemfmlib.h"
+#include "gemfslib.h"
+#include "gemgrlib.h"
+#include "gemgraf.h"
+#include "gemgsxif.h"
+#include "gemsclib.h"
+#include "gemwmlib.h"
+#include "gemrslib.h"
+#include "gemshlib.h"
+#include "gemglobe.h"
+
 
 #define CONTROL LLGET(pcrys_blk)
 #define GGLOBAL LLGET(pcrys_blk+4)
@@ -30,94 +49,6 @@
 #define ADDR_IN LLGET(pcrys_blk+16)
 #define ADDR_OUT LLGET(pcrys_blk+20)
 
-EXTERN PD       *fpdnm();
-
-/* --------- added for metaware compiler ------- */
-EXTERN VOID     sh_desk();                      /* in INIT.C            */
-EXTERN WORD     ev_block();                     /* in EVLIB.C           */
-EXTERN WORD     ev_button();
-EXTERN WORD     ev_mouse();
-EXTERN VOID     ev_timer();
-EXTERN WORD     ev_multi();
-EXTERN WORD     ev_dclick();
-EXTERN VOID     mn_bar();                       /* in MNLIB.C           */
-EXTERN WORD     mn_register();
-EXTERN VOID     mn_unregister();
-EXTERN VOID     do_chg();
-EXTERN VOID     ob_add();                       /* in OBLIB.C           */
-EXTERN VOID     ob_delete();
-EXTERN VOID     ob_draw();
-EXTERN WORD     ob_find();
-EXTERN VOID     ob_offset();
-EXTERN VOID     ob_order();
-EXTERN VOID     ob_change();
-EXTERN WORD     ob_edit();                      /* in OBED.C            */
-EXTERN VOID     ob_center();
-EXTERN WORD     fm_do();                        /* in FMLIB.C           */
-EXTERN WORD     fm_dial();
-EXTERN WORD     fm_alert();
-EXTERN WORD     fm_error();
-EXTERN WORD     fm_keybd();
-EXTERN WORD     fm_button();
-EXTERN VOID     fm_show();
-EXTERN VOID     gr_rubbox();                    /* in GRLIB.C           */
-EXTERN VOID     gr_dragbox();
-EXTERN VOID     gr_movebox();
-EXTERN WORD     gr_watchbox();
-EXTERN WORD     gr_slidebox();
-EXTERN VOID     gr_stepcalc();
-EXTERN VOID     gr_2box();
-EXTERN WORD     gr_mkstate();
-EXTERN VOID     gsx_sclip();                    /* in GRAF.C            */
-EXTERN VOID     gsx_moff();                     /* in GSXIF.C           */
-EXTERN VOID     gsx_mon();
-EXTERN VOID     gsx_mfset();
-EXTERN WORD     sc_read();                      /* in SCLIB.C           */
-EXTERN WORD     sc_write();
-EXTERN WORD     sc_clear();
-EXTERN WORD     fs_input();                     /* in FSLIB.C           */
-EXTERN WORD     wm_create();                    /* in WMLIB.C           */
-EXTERN VOID     wm_open();
-EXTERN VOID     wm_close();
-EXTERN VOID     wm_delete();
-EXTERN VOID     wm_get();
-EXTERN VOID     wm_set();
-EXTERN WORD     wm_find();
-EXTERN VOID     wm_update();
-EXTERN VOID     wm_calc();
-EXTERN WORD     rs_gaddr();                     /* in RSLIB.C           */
-EXTERN WORD     rs_saddr();
-EXTERN WORD     rs_load();
-EXTERN WORD     rs_free();
-EXTERN WORD     rs_obfix();
-EXTERN WORD     sh_read();                      /* in SHLIB.C           */
-EXTERN WORD     sh_write();
-EXTERN WORD     sh_get();
-EXTERN WORD     sh_put();
-EXTERN WORD     sh_find();
-EXTERN WORD     sh_envrn();
-EXTERN VOID     sh_rdef();
-EXTERN VOID     sh_wdef();
-EXTERN VOID     dsptch();                       /* in ASM.A86           */
-EXTERN VOID     supret();                       /* in DOSIF.A86         */
-/* ------------------------------------------------ */
-EXTERN WORD     gl_wchar;
-EXTERN WORD     gl_hchar;
-EXTERN WORD     gl_wbox;
-EXTERN WORD     gl_hbox;
-EXTERN WORD     gl_handle;
-EXTERN LONG     ad_sysglo;
-EXTERN WORD     gl_nplanes;
-
-EXTERN PD       *gl_mnppd;
-EXTERN LONG     gl_mntree;
-EXTERN LONG     menu_tree[];
-
-EXTERN LONG     desk_acc[];
-
-EXTERN GRECT    gl_rfull;
-
-EXTERN THEGLO   D;
 
 GLOBAL WORD     gl_bvdisk;
 GLOBAL WORD     gl_bvhard;
@@ -128,11 +59,12 @@ GLOBAL WORD     gl_mnclick;
 MLOCAL LONG     ad_rso;
 
 
+
 #if SINGLAPP
-UWORD crysbind(WORD opcode, REG LONG pglobal, REG UWORD int_in[], REG UWORD int_out[], REG LONG addr_in[])
+UWORD crysbind(WORD opcode, LONG pglobal, UWORD int_in[], UWORD int_out[], LONG addr_in[])
 #endif
 #if MULTIAPP
-UWORD crysbind(WORD opcode, REG LONG pglobal, REG UWORD int_in[], REG UWORD int_out[], REG LONG addr_in[], LONG addr_out[])
+UWORD crysbind(WORD opcode, LONG pglobal, UWORD int_in[], UWORD int_out[], LONG addr_in[], LONG addr_out[])
 #endif
 {
         LONG            maddr;
@@ -412,7 +344,7 @@ if ((MB_MASK == 3) && (MB_STATE == 1))
                 }
                 break;
           case GRAF_MKSTATE:
-                ret = gr_mkstate(&GR_MX, &GR_MY, &GR_MSTATE, &GR_KSTATE);
+                gr_mkstate(&GR_MX, &GR_MY, &GR_MSTATE, &GR_KSTATE);
                 break;
                                 /* Scrap Manager                        */
           case SCRP_READ:
@@ -472,7 +404,7 @@ if ((MB_MASK == 3) && (MB_STATE == 1))
                 ret = rs_saddr(pglobal, RS_TYPE, RS_INDEX, RS_INADDR);
                 break;
           case RSRC_OBFIX:
-                ret = rs_obfix(RS_TREE, RS_OBJ);
+                rs_obfix(RS_TREE, RS_OBJ);
                 break;
                                 /* Shell Manager                        */
           case SHEL_READ:
@@ -522,9 +454,7 @@ if ((MB_MASK == 3) && (MB_STATE == 1))
 *       routine.
 */
 
-        VOID
-xif(pcrys_blk)
-        LONG            pcrys_blk;
+void xif(LONG pcrys_blk)
 {
         UWORD           control[C_SIZE];
         UWORD           int_in[I_SIZE];
@@ -564,10 +494,7 @@ xif(pcrys_blk)
 *       Supervisor entry point.  Stack frame must be exactly like
 *       this if supret is to work.
 */
-        VOID
-super(/*dummy,*/ pcrys_blk)
-        /*LONG  dummy;*/
-        LONG    pcrys_blk;
+void super(/*LONG dummy,*/ LONG pcrys_blk)
 {
         xif(pcrys_blk);
         
@@ -582,9 +509,7 @@ super(/*dummy,*/ pcrys_blk)
 *       Supervisor entry point.  Stack frame must be exactly like
 *       this if supret is to work.
 */
-        VOID
-nsuper(pcrys_blk)
-        LONG            pcrys_blk;
+void nsuper(LONG pcrys_blk)
 {
 #if MULTIAPP
         supret(0);

@@ -5,11 +5,13 @@
 /*      fix command tail handling               10/19/87        mdf     */
 
 /*
-*       Copyright 1999, Caldera Thin Clients, Inc.                      
-*       This software is licenced under the GNU Public License.         
-*       Please see LICENSE.TXT for further information.                 
-*                                                                       
-*                  Historical Copyright                                 
+*       Copyright 1999, Caldera Thin Clients, Inc.
+*                 2002 The EmuTOS development team
+*
+*       This software is licenced under the GNU Public License.
+*       Please see LICENSE.TXT for further information.
+*
+*                  Historical Copyright
 *       -------------------------------------------------------------
 *       GEM Application Environment Services              Version 2.3
 *       Serial No.  XXXX-0000-654321              All Rights Reserved
@@ -17,16 +19,39 @@
 *       -------------------------------------------------------------
 */
 
-#include <portab.h>
-#include <machine.h>
-#include <obdefs.h>
-#include <taddr.h>
-#include <struct.h>
-#include <basepage.h>
-#include <gemlib.h>
-#include <crysbind.h>
-#include <gem.h>
-#include <dos.h>
+#include "portab.h"
+#include "machine.h"
+#include "obdefs.h"
+#include "taddr.h"
+#include "struct.h"
+#include "basepage.h"
+#include "gemlib.h"
+#include "crysbind.h"
+#include "gem.h"
+#include "dos.h"
+
+#include "gemgsxif.h"
+#include "gemdosif.h"
+#include "gemctrl.h"
+#include "gemshlib.h"
+#include "gempd.h"
+#include "gemdisp.h"
+#include "gemrslib.h"
+#include "gemobed.h"
+#include "gemdos.h"
+#include "gemgraf.h"
+#include "gemevlib.h"
+#include "gemwmlib.h"
+#include "gemglobe.h"
+#include "gemfslib.h"
+#include "gemoblib.h"
+#include "gemsclib.h"
+#include "gemfmlib.h"
+#include "gemasm.h"
+#include "gemaplib.h"
+#include "gemsuper.h"
+#include "geminput.h"
+#include "gemmnlib.h"
 
 
 /*
@@ -55,17 +80,8 @@
 #define INF_SIZE 2048
 #endif
 
-EXTERN LONG     gsx_mcalc();
-                                                /* in DOSIF.A86         */
-EXTERN          cli();
-EXTERN          sti();
-EXTERN          takecpm();
-EXTERN          givecpm();
-                                                /* in GEMCTRL.C         */
-EXTERN VOID     ctlmgr();
 
 #if MULTIAPP
-GLOBAL WORD     totpds;
 GLOBAL WORD     gl_numaccs;
 GLOBAL ACCNODE  gl_caccs[3];            /* max 3 accessories    */
 
@@ -80,11 +96,7 @@ EXTERN LONG     desk_acc[];
 EXTERN WORD     nulp_msg[];
 EXTERN WORD     gl_pids;
 #endif
-                                                /* in SHLIB.C           */
-EXTERN VOID     sh_main();
-EXTERN BYTE     *sh_name();
 
-EXTERN VOID     sound();
                                                 /* in GEMINIT.C         */
 #if I8086
 EXTERN VOID     start();
@@ -93,116 +105,9 @@ EXTERN VOID     start();
         BYTE    start[SIZE_AFILE];              /* can't play the same  */
                                                 /* trick in 68k land    */
 #endif
-                                                /* in PD88.C            */
-EXTERN PD       *pstart();
-EXTERN PD       *pd_index();
-                                                /* in DISPA88.A86       */
-EXTERN VOID     gotopgm();
-                                                /* in START.A86         */
-EXTERN WORD     pgmld();
-EXTERN WORD     DOS_ERR;
-EXTERN LONG     dos_avail();
-                                                /* in GEMRSLIB.C        */
-EXTERN BYTE     *rs_str();
-
-GLOBAL VOID     sh_desk();
-GLOBAL VOID     sh_rdinf();
-GLOBAL VOID     all_run();
 
 
-EXTERN VOID     sh_curdir();                    /* in SHLIB.C           */
-EXTERN VOID     sh_tographic();
-EXTERN VOID     sh_envrn();
-EXTERN VOID     ob_center();                    /* in OBED.C            */
-EXTERN WORD     dos_gdrv();
-EXTERN WORD     dos_sdrv();
-EXTERN WORD     dos_open();
-EXTERN VOID     dos_close();
-EXTERN VOID     dos_chdir();
-EXTERN VOID     dos_sdta();
-EXTERN WORD     dos_sfirst();
-EXTERN WORD     dos_snext();
-EXTERN WORD     dos_read();
-EXTERN VOID     bfill();                        /* in OPTIMOPT.A86      */
-EXTERN BYTE     toupper();
-EXTERN WORD     strlen();
-EXTERN WORD     rs_readit();                    /* in RSLIB.C           */
-EXTERN WORD     rs_gaddr();
-EXTERN VOID     rs_free();
-EXTERN VOID     rs_fixit();
-EXTERN VOID     gsx_init();                     /* in GSXIF.C           */
-EXTERN WORD     gsx_tick();
-EXTERN VOID     gsx_wsclose();
-EXTERN VOID     gsx_trans();                    /* in GRAF.C            */
-EXTERN VOID     takeerr();                      /* in DOSIF.A86         */
-EXTERN VOID     ev_dclick();                    /* in EVLIB.C           */
-EXTERN VOID     wm_start();                     /* in WMLIB.C           */
-EXTERN VOID     wm_update();
-EXTERN          dsptch();                       /* in ASM.A86           */
-
-/* ------------------------------------------------------------ */
-
-EXTERN WORD     gl_bvdisk;
-EXTERN WORD     gl_bvhard;
-
-EXTERN WORD     gl_recd;
-EXTERN WORD     gl_rlen;
-EXTERN LONG     gl_rbuf;
-
-EXTERN WORD     gl_mnclick;
-
-EXTERN PD       *gl_mowner;
-EXTERN PD       *ctl_pd;
-
-EXTERN LONG     ad_scmd;
-EXTERN LONG     ad_stail;
-
-EXTERN LONG     ad_ssave;
-EXTERN LONG     ad_dta;
-EXTERN LONG     ad_path;
-EXTERN LONG     ad_scrap;
-EXTERN LONG     ad_windspb;
-
-EXTERN LONG     ad_tmp1;
-EXTERN BYTE     gl_tmp1[];
-EXTERN LONG     ad_tmp2;
-EXTERN BYTE     gl_tmp2[];
-EXTERN LONG     ad_fsdta;
-EXTERN WORD     hdr_buff[];
-
-EXTERN LONG     ad_g2loc;
-
-EXTERN LONG     ad_tmpstr;
-EXTERN LONG     ad_rawstr;
-EXTERN LONG     ad_fmtstr;
-EXTERN LONG     ad_edblk;
-EXTERN LONG     ad_bi;
-EXTERN LONG     ad_ib;
-
-EXTERN LONG     ad_fstree;
-EXTERN LONG     ad_pfile;
-EXTERN GRECT    gl_rfs;
-
-EXTERN TEDINFO  edblk;
-EXTERN BITBLK   bi;
-EXTERN ICONBLK  ib;
-
-EXTERN WORD     gl_bclick;
-EXTERN WORD     gl_bdesired;
-EXTERN WORD     gl_btrue;
-EXTERN WORD     gl_bdely;
-
-EXTERN LONG     tikaddr;
-EXTERN LONG     tiksav;
-EXTERN WORD     gl_ticktime;
-EXTERN WORD     totpds;                         /* 2 if on 256k system, */
-                                                /*   else NUM_PDS       */
-EXTERN WORD     gl_dacnt;
-
-EXTERN WORD     gl_shgem;
-EXTERN SHELL    sh[];
-
-EXTERN THEGLO   D;
+GLOBAL WORD     totpds;
 
 GLOBAL LONG     ad_g1loc;
 GLOBAL LONG     ad_hdrbuff;
@@ -226,14 +131,25 @@ GLOBAL WORD     gl_mouse[37];
 GLOBAL LONG     ad_scdir;
 GLOBAL BYTE     gl_logdrv;
 
-       VOID
-ini_dlongs()
+
+/* Prototypes: */
+void sh_rdinf();
+void sh_desk(WORD obj, LONG plong);
+void all_run();
+
+
+
+
+
+void ini_dlongs()
 {
+#if I8086
         REG LONG        ad_dseg;
-        REG BYTE        *ps;
+#endif
 #if MULTIAPP
         WORD            ii;
 #endif
+        REG BYTE        *ps;
         
                                                 /* use all of this      */
                                                 /*   initialization     */
@@ -693,8 +609,8 @@ sh_init()
 
 
 
-        VOID
-gem_main()
+
+void gem_main()
 {
         WORD            i;
         LONG            tmpadbi;
@@ -799,7 +715,6 @@ gem_main()
         if ( !rs_readit(ad_sysglo, ADDR("GEM.RSC")) ) 
         {
            /* bad resource load, so dive out */
-//kprintf("FreeGEM: Bad resource load!\n");
         }
         else
         {
@@ -900,8 +815,7 @@ gem_main()
 *       Give everyone a chance to run, at least once
 */
        
-        VOID
-all_run()
+void all_run()
 {
         WORD            i;
 
@@ -915,16 +829,14 @@ all_run()
 }
 
 
-        VOID
-sh_desk(obj, plong)
-        WORD            obj;
-        LONG            plong;
+void sh_desk(WORD obj, LONG plong)
 {
         REG LONG        tree;
 
         tree = ad_stdesk;
         LLSET(plong, LLGET(OB_SPEC(obj)));
 }
+
 
 /*
 *       Convert a single hex ASCII digit to a number
@@ -967,8 +879,7 @@ scan_2(pcurr, pwd)
 *       directory and set the bvdisk and bvhard variables
 *       so that apps and accessories can always use this data.
 */
-        VOID
-sh_rdinf()
+void sh_rdinf()
 {
         WORD    fh, size, ishdisk;
         LONG    pcurr;

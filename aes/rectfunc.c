@@ -1,14 +1,18 @@
+/*
+ *       Copyright 2002 The EmuTOS development team
+ *
+ *       This software is licenced under the GNU Public License.         
+ *       Please see LICENSE.TXT for further information.                 
+ */
 
-#include <portab.h>
-#include <obdefs.h>
+#include "portab.h"
+#include "obdefs.h"
 
-/*------------------------------*/
-/*      inside                  */
-/*------------------------------*/
-UWORD
-inside(x, y, pt)                /* determine if x,y is in rectangle     */
-UWORD           x, y;
-GRECT           *pt;
+/*--------------------------------------*/
+/*      inside                          */
+/* determine if x,y is in rectangle     */
+/*--------------------------------------*/
+UWORD inside(UWORD x, UWORD y, GRECT *pt)
 {
         if ( (x >= pt->g_x) && (y >= pt->g_y) &&
             (x < pt->g_x + pt->g_w) && (y < pt->g_y + pt->g_h) )
@@ -17,12 +21,11 @@ GRECT           *pt;
                 return(FALSE);
 } /* inside */
 
-/*------------------------------*/
-/*      rc_equal                                        */
-/*------------------------------*/
-WORD
-rc_equal(p1, p2)                /* tests for two rectangles equal       */
-GRECT           *p1, *p2;
+/*--------------------------------------*/
+/*      rc_equal                        */
+/* tests for two rectangles equal       */
+/*--------------------------------------*/
+WORD rc_equal(GRECT *p1, GRECT *p2)
 {
         if ((p1->g_x != p2->g_x) ||
             (p1->g_y != p2->g_y) ||
@@ -32,13 +35,11 @@ GRECT           *p1, *p2;
         return(TRUE);
 }
 
-/*------------------------------*/
-/*      rc_copy                 */
-/*------------------------------*/
-VOID
-rc_copy(psbox, pdbox)           /* copy source to destination rectangle */
-GRECT   *psbox;
-GRECT   *pdbox;
+/*--------------------------------------*/
+/*      rc_copy                         */
+/* copy source to destination rectangle */
+/*--------------------------------------*/
+void rc_copy(GRECT *psbox, GRECT *pdbox)
 {
         pdbox->g_x = psbox->g_x;
         pdbox->g_y = psbox->g_y;
@@ -49,20 +50,18 @@ GRECT   *pdbox;
 
 /*------------------------------*/
 /*      min                     */
+/* return min of two values     */
 /*------------------------------*/
-WORD
-min(a, b)                       /* return min of two values */
-WORD            a, b;
+WORD min(WORD a, WORD b)
 {
         return( (a < b) ? a : b );
 }
 
 /*------------------------------*/
 /*      max                     */
+/* return max of two values     */
 /*------------------------------*/
-WORD
-max(a, b)                       /* return max of two values */
-WORD            a, b;
+WORD max(WORD a, WORD b)
 {
         return( (a > b) ? a : b );
 }

@@ -1,11 +1,13 @@
 /*      TADDR.H         04/11/84 - 02/09/85     Gregg Morris            */
 
 /*
-*       Copyright 1999, Caldera Thin Clients, Inc.                      
-*       This software is licenced under the GNU Public License.         
-*       Please see LICENSE.TXT for further information.                 
-*                                                                       
-*                  Historical Copyright                                 
+*       Copyright 1999, Caldera Thin Clients, Inc.
+*                 2002 The EmuTOS development team
+*
+*       This software is licenced under the GNU Public License.
+*       Please see LICENSE.TXT for further information.
+*
+*                  Historical Copyright
 *       -------------------------------------------------------------
 *       GEM Application Environment Services              Version 2.3
 *       Serial No.  XXXX-0000-654321              All Rights Reserved
@@ -16,7 +18,7 @@
 #define NIL -1
 #define ROOT 0
 
-EXTERN LONG     obaddr();
+EXTERN LONG obaddr(LONG tree, WORD obj, WORD fld_off);
 
 #define OB_NEXT(x) obaddr(tree, x, 0)
 #define OB_HEAD(x) obaddr(tree, x, 2)

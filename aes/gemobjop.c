@@ -4,9 +4,11 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.                      
+*                 2002 The EmuTOS development team
+*
 *       This software is licenced under the GNU Public License.         
 *       Please see LICENSE.TXT for further information.                 
-*                                                                       
+*
 *                  Historical Copyright                                 
 *       -------------------------------------------------------------
 *       GEM Application Environment Services              Version 2.3
@@ -15,29 +17,20 @@
 *       -------------------------------------------------------------
 */
 
-#include <portab.h>
-#include <machine.h>
-#include <obdefs.h>
-#include <taddr.h>
+#include "portab.h"
+#include "machine.h"
+#include "obdefs.h"
+#include "taddr.h"
 
-        LONG
-obaddr(tree, obj, fld_off)
-        LONG            tree;
-        WORD            obj;
-        WORD            fld_off;
+
+LONG obaddr(LONG tree, WORD obj, WORD fld_off)
 {
         return( (tree + ((obj) * sizeof(OBJECT) + fld_off)) );
 }
 
-        BYTE
-ob_sst(tree, obj, pspec, pstate, ptype, pflags, pt, pth)
-        LONG            tree;
-        WORD            obj;
-        REG LONG        *pspec;
-        WORD            *pstate, *ptype;
-        REG WORD        *pflags;
-        REG GRECT       *pt;
-        WORD            *pth;
+
+BYTE ob_sst(LONG tree, WORD obj, LONG *pspec, WORD *pstate, WORD *ptype,
+            WORD *pflags, GRECT *pt, WORD *pth)
 {
         WORD            th;
         OBJECT          tmp;
@@ -85,13 +78,8 @@ ob_sst(tree, obj, pspec, pstate, ptype, pflags, pt, pth)
 }
 
 
-        VOID
-everyobj(tree, this, last, routine, startx, starty, maxdep)
-        REG LONG        tree;
-        REG WORD        this, last;
-        WORD            (*routine)();
-        WORD            startx, starty;
-        WORD            maxdep;
+void everyobj(LONG tree, WORD this, WORD last, WORD (*routine)(),
+              WORD startx, WORD starty, WORD maxdep)
 {
         REG WORD        tmp1;
         REG WORD        depth;
@@ -163,11 +151,7 @@ sibling:
 *
 
 */
-        WORD
-get_par(tree, obj, pnobj)
-        REG LONG        tree;
-        REG WORD        obj;
-        WORD            *pnobj;
+WORD get_par(LONG tree, WORD obj, WORD *pnobj)
 {
         REG WORD        pobj;
         REG WORD        nobj;

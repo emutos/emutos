@@ -3,11 +3,13 @@
 /*      fix gr_gicon null text                  11/18/87        mdf     */
 
 /*
-*       Copyright 1999, Caldera Thin Clients, Inc.                      
-*       This software is licenced under the GNU Public License.         
-*       Please see LICENSE.TXT for further information.                 
-*                                                                       
-*                  Historical Copyright                                 
+*       Copyright 1999, Caldera Thin Clients, Inc.
+*                 2002 The EmuTOS development team
+*
+*       This software is licenced under the GNU Public License.
+*       Please see LICENSE.TXT for further information.
+*
+*                  Historical Copyright
 *       -------------------------------------------------------------
 *       GEM Application Environment Services              Version 2.3
 *       Serial No.  XXXX-0000-654321              All Rights Reserved
@@ -15,12 +17,16 @@
 *       -------------------------------------------------------------
 */
 
-#include <portab.h>
-#include <machine.h>
-#include <obdefs.h>
-#include <gsxdefs.h>
-#include <bind.h>
-#include <funcdef.h>
+#include "portab.h"
+#include "machine.h"
+#include "obdefs.h"
+#include "gsxdefs.h"
+#include "funcdef.h"
+
+#include "optimize.h"
+#include "gemgraf.h"
+#include "gemgsxif.h"
+
 
 #define ORGADDR 0x0L
                                                 /* in GSXBIND.C         */
@@ -29,23 +35,6 @@
 #define vsf_style( x )          gsx_1code(S_FILL_INDEX, x)
 #define vsf_color( x )          gsx_1code(S_FILL_COLOR, x)
 #define vsl_udsty( x )          gsx_1code(ST_UD_LINE_STYLE, x)
-                                                /* in OPTIMIZE.C        */
-EXTERN WORD     min();
-
-/* --------    added for metaware compiler    ----------------- */
-GLOBAL VOID     gsx_xline();                    /* in GRAF.C            */
-EXTERN VOID     vst_clip();                     /* in GSXIF.C           */
-EXTERN VOID     vro_cpyfm();
-EXTERN VOID     vrt_cpyfm();
-EXTERN VOID     vrn_trnfm();
-EXTERN VOID     gsx_moff();
-EXTERN VOID     gsx_mon();
-EXTERN VOID     gsx_1code(); 
-EXTERN VOID     gsx2();                         /* in GSX2.A86          */
-EXTERN VOID     rc_copy();                      /* in OPTIMOPT.A86      */
-EXTERN VOID     r_get();
-EXTERN VOID     r_set();
-/* ------------------------------------ */
 
 
 GLOBAL WORD     gl_width;
@@ -77,28 +66,33 @@ GLOBAL WORD     gl_hclip;
 GLOBAL WORD     gl_nplanes;
 GLOBAL WORD     gl_handle;
 
-GLOBAL FDB              gl_src;
-GLOBAL FDB              gl_dst;
+GLOBAL FDB      gl_src;
+GLOBAL FDB      gl_dst;
 
-GLOBAL WS               gl_ws;
-GLOBAL WORD             contrl[12];
-GLOBAL WORD             intin[128];
-GLOBAL WORD             ptsin[20];
+GLOBAL WS       gl_ws;
+GLOBAL WORD     contrl[12];
+GLOBAL WORD     intin[128];
+GLOBAL WORD     ptsin[20];
 
-GLOBAL LONG             ad_intin;
+GLOBAL LONG     ad_intin;
 
-GLOBAL WORD             gl_mode;
-GLOBAL WORD             gl_tcolor;
-GLOBAL WORD             gl_lcolor;
-GLOBAL WORD             gl_fis;
-GLOBAL WORD             gl_patt;
-GLOBAL WORD             gl_font;
+GLOBAL WORD     gl_mode;
+GLOBAL WORD     gl_tcolor;
+GLOBAL WORD     gl_lcolor;
+GLOBAL WORD     gl_fis;
+GLOBAL WORD     gl_patt;
+GLOBAL WORD     gl_font;
 
-GLOBAL GRECT            gl_rscreen;
-GLOBAL GRECT            gl_rfull;
-GLOBAL GRECT            gl_rzero;
-GLOBAL GRECT            gl_rcenter;
-GLOBAL GRECT            gl_rmenu;
+GLOBAL GRECT    gl_rscreen;
+GLOBAL GRECT    gl_rfull;
+GLOBAL GRECT    gl_rzero;
+GLOBAL GRECT    gl_rcenter;
+GLOBAL GRECT    gl_rmenu;
+
+
+/* Prototypes: */
+void gsx_xline(WORD ptscount, WORD *ppoints );
+
 
 
 /*
@@ -106,9 +100,7 @@ GLOBAL GRECT            gl_rmenu;
 *       is 0, then no clip should be set.  Ohterwise, set the 
 *       appropriate clip.
 */
-        VOID
-gsx_sclip(pt)
-        GRECT           *pt;
+void gsx_sclip(GRECT *pt)
 {
         r_get(pt, &gl_xclip, &gl_yclip, &gl_wclip, &gl_hclip);
 
@@ -128,9 +120,7 @@ gsx_sclip(pt)
 /*
 *       Routine to get the current clip setting
 */
-        VOID
-gsx_gclip(pt)
-        GRECT           *pt;
+void gsx_gclip(GRECT *pt)
 {
         r_set(pt, gl_xclip, gl_yclip, gl_wclip, gl_hclip);
 }
@@ -140,9 +130,7 @@ gsx_gclip(pt)
 *       Routine to set if the passed in rectangle intersects the
 *       current clip rectangle
 */
-        WORD
-gsx_chkclip(pt)
-        GRECT           *pt;
+WORD gsx_chkclip(GRECT *pt)
 {
                                                 /* if clipping is on    */
         if (gl_wclip && gl_hclip)
@@ -164,6 +152,7 @@ gsx_chkclip(pt)
 *       Routine to draw a certain number of points in a polyline
 *       relative to a given x,y offset.
 */
+/*
         VOID
 gsx_pline(offx, offy, cnt, pts)
         WORD            offx, offy;
@@ -181,18 +170,18 @@ gsx_pline(offx, offy, cnt, pts)
 
         gsx_xline( cnt, &ptsin[0]);
 }
+*/
+
 
 /*
 *       Routine to draw a clipped polyline, hiding the mouse as you
 *       do it.
 */
-        VOID
-gsx_cline(x1, y1, x2, y2)
-        UWORD           x1, y1, x2, y2;
+void gsx_cline(UWORD x1, UWORD y1, UWORD x2, UWORD y2)
 {
 
         gsx_moff();
-        v_pline( 2, &x1 );
+        g_v_pline( 2, &x1 );
         gsx_mon();
 }
 
@@ -200,9 +189,7 @@ gsx_cline(x1, y1, x2, y2)
 /*
 *       Routine to set the text, writing mode, and color attributes.
 */
-        VOID
-gsx_attr(text, mode, color)
-        UWORD           text, mode, color;
+void gsx_attr(UWORD text, UWORD mode, UWORD color)
 {
         WORD            tmp;
 
@@ -245,9 +232,7 @@ gsx_attr(text, mode, color)
 /*
 *       Routine to set up the points for drawing a box.
 */
-        VOID
-gsx_bxpts(pt)
-        GRECT           *pt;
+void gsx_bxpts(GRECT *pt)
 {
         ptsin[0] = pt->g_x;
         ptsin[1] = pt->g_y;
@@ -265,12 +250,10 @@ gsx_bxpts(pt)
 /*
 *       Routine to draw a box using the current attributes.
 */
-        VOID
-gsx_box(pt)
-        GRECT           *pt;
+void gsx_box(GRECT *pt)
 {
         gsx_bxpts(pt);
-        v_pline( 5, &ptsin[0] );
+        g_v_pline( 5, &ptsin[0] );
 }
 
 
@@ -278,9 +261,7 @@ gsx_box(pt)
 *       Routine to draw a box that will look right on a dithered
 *       surface.
 */
-        VOID
-gsx_xbox(pt)
-        GRECT           *pt;
+void gsx_xbox(GRECT *pt)
 {
         gsx_bxpts(pt);
         gsx_xline( 5, &ptsin[0] );
@@ -291,9 +272,7 @@ gsx_xbox(pt)
 *       Routine to draw a portion of the corners of a box that will
 *       look right on a dithered surface.
 */
-        VOID
-gsx_xcbox(pt)
-        GRECT           *pt;
+void gsx_xcbox(GRECT *pt)
 {
         WORD            wa, ha;
 
@@ -333,11 +312,7 @@ gsx_xcbox(pt)
 /*
 *       Routine to fix up the MFDB of a particular raster form
 */
-        VOID
-gsx_fix(pfd, theaddr, wb, h)
-        FDB             *pfd;
-        LONG            theaddr;
-        WORD            wb, h;
+void gsx_fix(FDB *pfd, LONG theaddr, WORD wb, WORD h)
 {
         if (theaddr == ORGADDR)
         {
@@ -361,14 +336,9 @@ gsx_fix(pfd, theaddr, wb, h)
 /*
 *       Routine to blit, to and from a specific area
 */
-        VOID
-gsx_blt(saddr, sx, sy, swb, daddr, dx, dy, dwb, w, h, rule, fgcolor, bgcolor)
-        LONG            saddr;
-        UWORD           sx, sy, swb;
-        LONG            daddr;
-        UWORD           dx, dy, dwb;
-        UWORD           w, h, rule;
-        WORD            fgcolor, bgcolor;
+void gsx_blt(LONG saddr, UWORD sx, UWORD sy, UWORD swb,
+             LONG daddr, UWORD dx, UWORD dy, UWORD dwb, UWORD w, UWORD h,
+             UWORD rule, WORD fgcolor, WORD bgcolor)
 {
         gsx_fix(&gl_src, saddr, swb, h);
         gsx_fix(&gl_dst, daddr, dwb, h);
@@ -393,9 +363,8 @@ gsx_blt(saddr, sx, sy, swb, daddr, dx, dy, dwb, w, h, rule, fgcolor, bgcolor)
 /*
 *       Routine to blit around something on the screen
 */
-        VOID
-bb_screen(scrule, scsx, scsy, scdx, scdy, scw, sch)
-        WORD            scrule, scsx, scsy, scdx, scdy, scw, sch;
+void bb_screen(WORD scrule, WORD scsx, WORD scsy, WORD scdx, WORD scdy,
+               WORD scw, WORD sch)
 {
         gsx_blt(0x0L, scsx, scsy, 0, 
                 0x0L, scdx, scdy, 0,
@@ -407,13 +376,7 @@ bb_screen(scrule, scsx, scsy, scdx, scdy, scw, sch)
 *       Routine to transform a standard form to device specific
 *       form.
 */
-        VOID
-gsx_trans(saddr, swb, daddr, dwb, h)
-        LONG            saddr;
-        UWORD           swb;
-        LONG            daddr;
-        UWORD           dwb;
-        UWORD           h;
+void gsx_trans(LONG saddr, UWORD swb, LONG daddr, UWORD dwb, UWORD h)
 {
         gsx_fix(&gl_src, saddr, swb, h);
         gl_src.fd_stand = TRUE;
@@ -428,8 +391,7 @@ gsx_trans(saddr, swb, daddr, dwb, h)
 *       Routine to initialize all the global variables dealing
 *       with a particular workstation open
 */
-        VOID
-gsx_start()
+void gsx_start()
 {
         WORD            char_height, nc;
 
@@ -456,7 +418,7 @@ gsx_start()
         gl_hbox = gl_hchar + 3;
         gl_wbox = (gl_hbox * gl_ws.ws_hpixel) / gl_ws.ws_wpixel;
         vsl_type( 7 );
-        vsl_width( 1 );
+        g_vsl_width( 1 );
         vsl_udsty( 0xffff );
         r_set(&gl_rscreen, 0, 0, gl_width, gl_height);
         r_set(&gl_rfull, 0, gl_hbox, gl_width, (gl_height - gl_hbox));
@@ -470,9 +432,7 @@ gsx_start()
 /*
 *       Routine to do a filled bit blit, (a rectangle).
 */
-        VOID
-bb_fill(mode, fis, patt, hx, hy, hw, hh)
-        WORD            mode, fis, patt, hx, hy, hw, hh;
+void bb_fill(WORD mode, WORD fis, WORD patt, WORD hx, WORD hy, WORD hw, WORD hh)
 {
 
         gsx_fix(&gl_dst, 0x0L, 0, 0);
@@ -496,9 +456,7 @@ bb_fill(mode, fis, patt, hx, hy, hw, hh)
 }
 
 
-        UWORD
-ch_width(fn)
-        WORD            fn;
+UWORD ch_width(WORD fn)
 {
         if (fn == IBM)
           return(gl_wchar);
@@ -509,9 +467,7 @@ ch_width(fn)
 
 
 
-        UWORD
-ch_height(fn)
-        WORD            fn;
+UWORD ch_height(WORD fn)
 {
         if (fn == IBM)
           return(gl_hchar);
@@ -521,13 +477,7 @@ ch_height(fn)
 }
 
 
-        VOID
-gsx_tcalc(font, ptext, ptextw, ptexth, pnumchs)
-        WORD            font;
-        LONG            ptext;
-        WORD            *ptextw;
-        WORD            *ptexth;
-        WORD            *pnumchs;
+void gsx_tcalc(WORD font, LONG ptext, WORD *ptextw, WORD *ptexth, WORD *pnumchs)
 {
         WORD            wc, hc;
 
@@ -549,11 +499,7 @@ gsx_tcalc(font, ptext, ptextw, ptexth, pnumchs)
 }
 
 
-        VOID
-gsx_tblt(tb_f, x, y, tb_nc)
-        WORD            tb_f;
-        WORD            x, y;
-        WORD            tb_nc;
+void gsx_tblt(WORD tb_f, WORD x, WORD y, WORD tb_nc)
 {
         WORD            pts_height;
 
@@ -592,9 +538,7 @@ gsx_tblt(tb_f, x, y, tb_nc)
 
 
 
-        VOID
-gsx_xline( ptscount, ppoints )
-        WORD            ptscount, *ppoints;
+void gsx_xline(WORD ptscount, WORD *ppoints )
 {
         static  WORD    hztltbl[2] = { 0x5555, 0xaaaa };
         static  WORD    verttbl[4] = { 0x5555, 0xaaaa, 0xaaaa, 0x5555 };
@@ -613,7 +557,7 @@ gsx_xline( ptscount, ppoints )
             st = hztltbl[( *(linexy + 1) & 1)];
           }
           vsl_udsty( st );
-          v_pline( 2, ppoints );
+          g_v_pline( 2, ppoints );
           ppoints += 2;
         }
         vsl_udsty( 0xffff );
@@ -622,10 +566,7 @@ gsx_xline( ptscount, ppoints )
 /*
 *       Routine to convert a rectangle to its inside dimensions.
 */
-        VOID
-gr_inside(pt, th)
-        GRECT           *pt;
-        WORD            th;
+void gr_inside(GRECT *pt, WORD th)
 {
         pt->g_x += th;
         pt->g_y += th;
@@ -637,11 +578,7 @@ gr_inside(pt, th)
 /*
 *       Routine to draw a colored, patterned, rectangle.
 */
-        VOID
-gr_rect(icolor, ipattern, pt)
-        UWORD           icolor;
-        UWORD           ipattern;
-        GRECT           *pt;
+void gr_rect(UWORD icolor, UWORD ipattern, GRECT *pt)
 {
         WORD            fis;
 
@@ -662,13 +599,7 @@ gr_rect(icolor, ipattern, pt)
 *       to account for its justification.  The number of characters
 *       in the string is also returned.
 */
-        WORD
-gr_just(just, font, ptext, w, h, pt)
-        WORD            just;
-        WORD            font;
-        LONG            ptext;
-        WORD            w, h;
-        GRECT           *pt;
+WORD gr_just(WORD just, WORD font, LONG ptext, WORD w, WORD h, GRECT *pt)
 {
         WORD            numchs, diff;
                                                 /* figure out the       */
@@ -713,12 +644,7 @@ gr_just(just, font, ptext, w, h, pt)
 /*
 *       Routine to draw a string of graphic text.
 */
-        VOID
-gr_gtext(just, font, ptext, pt)
-        WORD            just;
-        WORD            font;
-        LONG            ptext;
-        GRECT           *pt;
+void gr_gtext(WORD just, WORD font, LONG ptext, GRECT *pt)
 {
         WORD            numchs;
         GRECT           t;
@@ -737,10 +663,7 @@ gr_gtext(just, font, ptext, pt)
 *       Routine to crack out the border color, text color, inside pattern,
 *       and inside color from a single color information word.
 */
-        VOID
-gr_crack(color, pbc, ptc, pip, pic, pmd)
-        UWORD           color;
-        WORD            *pbc, *ptc, *pip, *pic, *pmd;
+void gr_crack(UWORD color, WORD *pbc, WORD *ptc, WORD *pip, WORD *pic, WORD *pmd)
 {
                                                 /* 4 bit encoded border */
                                                 /*   color              */
@@ -765,11 +688,7 @@ gr_crack(color, pbc, ptc, pip, pic, pmd)
 }
 
 
-        VOID
-gr_gblt(pimage, pi, col1, col2)
-        LONG            pimage;
-        GRECT           *pi;
-        WORD            col1, col2;
+void gr_gblt(LONG pimage, GRECT *pi, WORD col1, WORD col2)
 {
         gsx_blt(pimage, 0, 0, pi->g_w/8, 0x0L, pi->g_x, pi->g_y, 
                         gl_width/8, pi->g_w, pi->g_h, MD_TRANS,
@@ -781,15 +700,8 @@ gr_gblt(pimage, pi, col1, col2)
 *       Routine to draw an icon, which is a graphic image with a text
 *       string underneath it.
 */
-        VOID
-gr_gicon(state, pmask, pdata, ptext, ch, chx, chy, pi, pt)
-        WORD            state;
-        LONG            pmask;
-        LONG            pdata;
-        LONG            ptext;
-        WORD            ch, chx, chy;
-        GRECT           *pi;
-        GRECT           *pt;
+void gr_gicon(WORD state, LONG pmask, LONG pdata, LONG ptext, WORD ch,
+              WORD chx, WORD chy, GRECT *pi, GRECT *pt)
 {
         WORD            ifgcol, ibgcol;
         WORD            tfgcol, tbgcol, tmp;
@@ -853,9 +765,7 @@ gr_gicon(state, pmask, pdata, ptext, ch, chx, chy, pi, pt)
 *       Routine to draw a box of a certain thickness using the current
 *       attribute settings
 */
-        VOID
-gr_box(x, y, w, h, th)
-        WORD            x, y, w, h, th;
+void gr_box(WORD x, WORD y, WORD w, WORD h, WORD th)
 {
         GRECT           t, n;
 

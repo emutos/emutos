@@ -3,10 +3,12 @@
 /*      fix mn_bar -- bar too wide              11/19/87        mdf     */
 
 /*
-*       Copyright 1999, Caldera Thin Clients, Inc.                      
-*       This software is licenced under the GNU Public License.         
-*       Please see LICENSE.TXT for further information.                 
-*                                                                       
+*       Copyright 1999, Caldera Thin Clients, Inc.
+*                 2002 The EmuTOS development team
+*
+*       This software is licenced under the GNU Public License.
+*       Please see LICENSE.TXT for further information.
+*
 *                  Historical Copyright                                 
 *       -------------------------------------------------------------
 *       GEM Application Environment Services              Version 3.0
@@ -15,54 +17,24 @@
 *       -------------------------------------------------------------
 */
 
-#include <portab.h>
-#include <machine.h>
-#include <struct.h>
-#include <basepage.h>
-#include <obdefs.h>
-#include <taddr.h>
-#include <gemlib.h>
-                                                /* in BB.C              */
-EXTERN  VOID    bb_restore();
-EXTERN  VOID    bb_save();
-                                                /* in EVLIB.C           */
-EXTERN  WORD    ev_multi();
-                                                /* in OBLIB.C           */
-EXTERN  WORD    ob_find();
-EXTERN  VOID    ob_draw();
-EXTERN  VOID    ob_change();
-                                                /* in OBED.C            */
-EXTERN  VOID    ob_actxywh();
+#include "portab.h"
+#include "machine.h"
+#include "struct.h"
+#include "basepage.h"
+#include "obdefs.h"
+#include "taddr.h"
+#include "gemlib.h"
 
-EXTERN PD       *fpdnm();
+#include "gemgsxif.h"
+#include "gemevlib.h"
+#include "gemoblib.h"
+#include "gemobed.h"
+#include "gemwmlib.h"
+#include "gemgraf.h"
+#include "geminput.h"
+#include "gemsuper.h"
+#include "gemctrl.h"
 
-EXTERN VOID     w_nilit();                      /* in WMLIB.C           */
-EXTERN VOID     ap_sendmsg();
-EXTERN VOID     ob_relxywh();                   /* in OBLIB.C           */
-EXTERN VOID     ob_setxywh();
-EXTERN WORD     strlen();                       /* in OPTIMOPT.A86      */
-EXTERN VOID     rc_copy();
-#if I8086
-EXTERN VOID     movs();
-#endif
-EXTERN VOID     gsx_sclip();                    /* in GRAF.C            */
-EXTERN VOID     gsx_cline();
-EXTERN VOID     post_keybd();                   /* in INPUT.C           */
-
-EXTERN WORD     gl_width;
-EXTERN WORD     gl_hbox;
-EXTERN GRECT    gl_rzero;
-EXTERN GRECT    gl_rmenu;
-
-EXTERN WORD     gl_wchar;
-EXTERN WORD     gl_hchar;
-
-EXTERN WORD     appl_msg[];
-EXTERN PD       *ctl_pd;
-EXTERN MOBLK    gl_ctwait;
-
-EXTERN WORD     button;
-EXTERN WORD     gl_mnclick;
 
 GLOBAL LONG     gl_mntree;
 GLOBAL PD       *gl_mnppd;
@@ -85,7 +57,6 @@ GLOBAL BYTE     *desk_str[NUM_DESKACC] =
         "  7345678901234567890",
 #if SINGLAPP
         "  8345678901234567890"
-};
 #endif
 #if MULTIAPP
         "  8345678901234567890",
@@ -97,8 +68,8 @@ GLOBAL BYTE     *desk_str[NUM_DESKACC] =
         "  1445678901234567890",
         "  1545678901234567890",
         "  1645678901234567890"
-};
 #endif
+};
 
 GLOBAL WORD     gl_dacnt;
 GLOBAL WORD     gl_dabox;

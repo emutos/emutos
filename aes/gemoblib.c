@@ -1,11 +1,14 @@
 /*      GEMOBLIB.C      03/15/84 - 05/27/85     Gregg Morris            */
 /*      merge High C vers. w. 2.2               8/21/87         mdf     */ 
+
 /*
-*       Copyright 1999, Caldera Thin Clients, Inc.                      
-*       This software is licenced under the GNU Public License.         
-*       Please see LICENSE.TXT for further information.                 
-*                                                                       
-*                  Historical Copyright                                 
+*       Copyright 1999, Caldera Thin Clients, Inc.
+*                 2002 The EmuTOS development team
+*
+*       This software is licenced under the GNU Public License.
+*       Please see LICENSE.TXT for further information.
+*
+*                  Historical Copyright
 *       -------------------------------------------------------------
 *       GEM Application Environment Services              Version 2.3
 *       Serial No.  XXXX-0000-654321              All Rights Reserved
@@ -13,63 +16,27 @@
 *       -------------------------------------------------------------
 */
 
-#include <portab.h>
-#include <machine.h>
-#include <struct.h>
-#include <basepage.h>
-#include <obdefs.h>
-#include <taddr.h>
-#include <gemlib.h>
-#include <funcdef.h>
+#include "portab.h"
+#include "machine.h"
+#include "struct.h"
+#include "basepage.h"
+#include "obdefs.h"
+#include "taddr.h"
+#include "gemlib.h"
+#include "funcdef.h"
 
-
+#include "gemglobe.h"
+#include "gemgsxif.h"
+#include "gemobjop.h"
+#include "gemgraf.h"
                                                 /* in GSXBIND.C         */
 #define vsf_color( x )          gsx_1code(S_FILL_COLOR, x)
-                                                /* in GLOBE.C           */
-EXTERN UWORD    far_call();
-                                                /* in GSXIF.C           */
-EXTERN VOID     gsx_moff();
-EXTERN VOID     gsx_mon();
-EXTERN WORD     gsx_chkclip();
 
 /* ------------- added for metaware compiler --------- */
 GLOBAL VOID     ob_actxywh();
 GLOBAL VOID     ob_relxywh();
 GLOBAL VOID     ob_offset();
-EXTERN VOID     rc_copy();                      /* in OPITMOPT.A86      */
-EXTERN VOID     r_set();
-EXTERN WORD     strlen();
-EXTERN WORD     inside();
-EXTERN BYTE     ob_sst();                       /* in OBJOP.C           */
-EXTERN VOID     everyobj();
-EXTERN WORD     get_par();
-EXTERN VOID     gsx_gclip();                    /* in GRAF.C            */
-EXTERN VOID     gsx_cline();
-EXTERN VOID     gsx_attr();
-EXTERN VOID     gsx_blt();
-EXTERN VOID     gr_inside();
-EXTERN VOID     gr_crack();
-EXTERN VOID     gr_box();
-EXTERN VOID     gr_rect();
-EXTERN VOID     gr_gtext();
-EXTERN VOID     gr_gicon();
-EXTERN VOID     gsx_tblt();
-EXTERN VOID     bb_fill();
-EXTERN VOID     gsx_1code();                    /* in GSXIF.C           */
 /* ------------------------------------------- */
-
-EXTERN WORD     gl_width;
-
-EXTERN WORD     gl_wclip;
-EXTERN WORD     gl_hclip;
-
-EXTERN WORD     gl_wchar;
-EXTERN WORD     gl_hchar;
-
-EXTERN LONG     ad_intin;
-EXTERN WORD     intin[];
-
-EXTERN THEGLO   D;
 
 GLOBAL LONG     ad_tmpstr;
 GLOBAL LONG     ad_rawstr;

@@ -2,11 +2,13 @@
 /*      merge High C vers. w. 2.2 & 3.0         8/19/87         mdf     */ 
 
 /*
-*       Copyright 1999, Caldera Thin Clients, Inc.                      
-*       This software is licenced under the GNU Public License.         
-*       Please see LICENSE.TXT for further information.                 
-*                                                                       
-*                  Historical Copyright                                 
+*       Copyright 1999, Caldera Thin Clients, Inc.
+*                 2002 The EmuTOS development team
+*
+*       This software is licenced under the GNU Public License.
+*       Please see LICENSE.TXT for further information.
+*
+*                  Historical Copyright
 *       -------------------------------------------------------------
 *       GEM Application Environment Services              Version 2.3
 *       Serial No.  XXXX-0000-654321              All Rights Reserved
@@ -14,33 +16,17 @@
 *       -------------------------------------------------------------
 */
 
-#include <portab.h>
-#include <machine.h>
-#include <struct.h>
-#include <basepage.h>
-#include <obdefs.h>
-#include <gemlib.h>
-                                                /* in ASM.A86           */
-EXTERN          dsptch();
+#include "portab.h"
+#include "machine.h"
+#include "struct.h"
+#include "basepage.h"
+#include "obdefs.h"
+#include "gemlib.h"
 
-EXTERN VOID     adelay();                       /* in INPUT88.C         */
+#include "geminput.h"
 
-EXTERN VOID     akbin();                        /* in INPUT88.C         */
 
-EXTERN VOID     amouse();                       /* in INPUT88.C         */
-EXTERN VOID     abutton();
-
-/* ---------- added for metaware compiler ---------- */
-EXTERN          bfill();                        /* in OPTIMOPT.A86      */
-EXTERN VOID     aqueue();                       /* in QUEUE.C           */
-EXTERN VOID     amutex();                       /* in FLAG.C            */
-/* ------------------------------------------------- */
-
-EXTERN UWORD    button, xrat, yrat;
-
-        VOID
-signal(e)
-        EVB             *e;
+void signal(EVB *e)
 {
         REG PD          *p, *p1, *q1;
 
@@ -67,10 +53,7 @@ signal(e)
 }
 
 
-        VOID
-azombie(e, ret)
-        REG EVB         *e;
-        UWORD           ret;
+void azombie(EVB *e, UWORD ret)
 {
                                                 /* must be called with  */
                                                 /*   dispatching off    */
@@ -87,10 +70,7 @@ azombie(e, ret)
 }
 
 
-        VOID
-evinsert(e, root)
-        REG EVB         *e;
-        EVB             **root;
+void evinsert(EVB *e, EVB **root)
 {
         REG EVB         *p, *q;
                                                 /* insert event block   */
@@ -104,9 +84,8 @@ evinsert(e, root)
           p->e_pred = e;
 }
 
-        VOID
-takeoff(p)
-        REG EVB         *p;
+
+void takeoff(EVB *p)
 {
         REG LONG        c;
 
@@ -129,9 +108,7 @@ takeoff(p)
 }
 
 
-        EVSPEC
-mwait(mask)
-        EVSPEC          mask;
+EVSPEC mwait(EVSPEC mask)
 {
         rlr->p_evwait = mask;
         if ( !(mask & rlr->p_evflg) )
@@ -142,10 +119,8 @@ mwait(mask)
         return(rlr->p_evflg);
 }
 
-        EVSPEC 
-iasync(afunc, aparm)
-        WORD            afunc;
-        REG LONG        aparm;
+
+EVSPEC iasync(WORD afunc, LONG aparm)
 {
         REG EVB         *e;
                                                 /* get an evb           */
@@ -180,9 +155,7 @@ iasync(afunc, aparm)
 }
 
 
-        UWORD
-apret(mask)
-        REG EVSPEC      mask;
+UWORD apret(EVSPEC mask)
 {
         REG EVB         *p, *q;
         UWORD           erret;
@@ -211,9 +184,8 @@ apret(mask)
         return( erret );
 }
 
-        EVSPEC
-acancel(m)
-        EVSPEC          m;
+
+EVSPEC acancel(EVSPEC m)
 {
         REG EVSPEC      m1;                     /* mask of items not    */
                                                 /*   cancelled          */

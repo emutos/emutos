@@ -2,11 +2,13 @@
 /*      merge High C vers. w. 2.2               8/24/87         mdf     */ 
 
 /*
-*       Copyright 1999, Caldera Thin Clients, Inc.                      
-*       This software is licenced under the GNU Public License.         
-*       Please see LICENSE.TXT for further information.                 
-*                                                                       
-*                  Historical Copyright                                 
+*       Copyright 1999, Caldera Thin Clients, Inc.
+*                 2002 The EmuTOS development team
+*
+*       This software is licenced under the GNU Public License.
+*       Please see LICENSE.TXT for further information.
+*
+*                  Historical Copyright
 *       -------------------------------------------------------------
 *       GEM Application Environment Services              Version 2.3
 *       Serial No.  XXXX-0000-654321              All Rights Reserved
@@ -14,13 +16,20 @@
 *       -------------------------------------------------------------
 */
 
-#include <portab.h>
-#include <machine.h>
-#include <struct.h>
-#include <basepage.h>
-#include <obdefs.h>
-#include <taddr.h>
-#include <gemlib.h>
+#include "portab.h"
+#include "machine.h"
+#include "struct.h"
+#include "basepage.h"
+#include "obdefs.h"
+#include "taddr.h"
+#include "gemlib.h"
+
+#include "gemdos.h"
+#include "gemshlib.h"
+#include "gemglobe.h"
+#include "gemgraf.h"
+#include "geminit.h"
+
 
 #define NUM_OBS LWGET(rs_hdr + 2*R_NOBS)
 #define NUM_TREE LWGET(rs_hdr + 2*R_NTREE)
@@ -51,30 +60,7 @@
 #define APP_LOPNAME (rs_global + 10)
 #define APP_LO1RESV (rs_global + 14)
 #define APP_LO2RESV (rs_global + 18)
-                                        /* in DOS.C                     */
-WORD            rs_gaddr();
 
-EXTERN  WORD    dos_open();
-EXTERN  LONG    dos_lseek();
-EXTERN  WORD    dos_read();
-EXTERN  WORD    dos_close();
-EXTERN  LONG    dos_alloc();
-EXTERN  WORD    dos_free();
-                                        /* in SHIB.C, added for hc      */
-EXTERN  WORD    sh_find(); 
-
-EXTERN LONG     ad_scmd;
-EXTERN LONG     ad_g1loc;
-EXTERN LONG     ad_sysglo;
-
-EXTERN WORD     DOS_ERR;
-EXTERN WORD     DOS_AX;
-EXTERN WORD     gl_width;
-EXTERN WORD     gl_height;
-EXTERN WORD     gl_wchar;
-EXTERN WORD     gl_hchar;
-
-EXTERN THEGLO           D;
 
 
 /*******  LOCALS  **********************/
@@ -89,10 +75,7 @@ UWORD           hdr_buff[HDR_LENGTH/2];
 *       If column or width is 80 then convert to rightmost column or 
 *       full screen width. 
 */
-        VOID
-fix_chpos(pfix, offset)
-        LONG    pfix;
-        WORD    offset;
+void fix_chpos(LONG pfix, WORD offset)
 {
         WORD    coffset;
         WORD    cpos;
@@ -127,10 +110,7 @@ fix_chpos(pfix, offset)
 /************************************************************************/
 /* rs_obfix                                                             */
 /************************************************************************/
-        VOID
-rs_obfix(tree, curob)
-        LONG            tree;
-        WORD            curob;
+void rs_obfix(LONG tree, WORD curob)
 {
         REG WORD        offset;
         REG LONG        p;
@@ -142,8 +122,7 @@ rs_obfix(tree, curob)
 }
 
 
-        BYTE
-*rs_str(stnum)
+BYTE *rs_str(UWORD stnum)
 {
         LONG            ad_string;
 
@@ -153,9 +132,7 @@ rs_obfix(tree, curob)
 }
 
 
-        LONG
-get_sub(rsindex, rtype, rsize)
-        WORD            rsindex, rtype, rsize;
+LONG get_sub(WORD rsindex, WORD rtype, WORD rsize)
 {
         UWORD           offset;
 
@@ -169,10 +146,7 @@ get_sub(rsindex, rtype, rsize)
 /*
  *      return address of given type and index, INTERNAL ROUTINE
 */
-        LONG
-get_addr(rstype, rsindex)
-        REG UWORD       rstype;
-        REG UWORD       rsindex;
+LONG get_addr(UWORD rstype, UWORD rsindex)
 {
         REG LONG        psubstruct;
         REG WORD        size;
@@ -246,9 +220,7 @@ get_addr(rstype, rsindex)
 } /* get_addr() */
 
 
-        LONG
-fix_long(plong)
-        REG LONG        plong;
+LONG fix_long(LONG plong)
 {
         REG LONG        lngval;
 
@@ -263,8 +235,8 @@ fix_long(plong)
           return( 0x0L );
 }
 
-        VOID
-fix_trindex()
+
+void fix_trindex()
 {
         REG WORD        ii;
         REG LONG        ptreebase;
@@ -282,8 +254,8 @@ fix_trindex()
         }
 }
 
-        VOID
-fix_objects()
+
+void fix_objects()
 {
         REG WORD        ii;
         REG WORD        obtype;
@@ -318,10 +290,8 @@ fix_objects()
 }
 
 
-        VOID
-fix_nptrs(cnt, type)
-        WORD            cnt;
-        WORD            type;
+
+void fix_nptrs(WORD cnt, WORD type)
 {
         REG WORD        i;
 
@@ -330,17 +300,14 @@ fix_nptrs(cnt, type)
 }
 
 
-        WORD
-fix_ptr(type, index)
-        WORD            type;
-        WORD            index;
+WORD fix_ptr(WORD type, WORD index)
 {
         return( fix_long( get_addr(type, index) ) != 0x0L );
 }
 
 
-        VOID
-fix_tedinfo()
+
+void fix_tedinfo()
 {
         REG WORD        ii, i;
         REG LONG        psubstruct;
@@ -377,9 +344,7 @@ fix_tedinfo()
 *       Set global addresses that are used by the resource library sub-
 *       routines
 */
-        VOID
-rs_sglobe(pglobal)
-        LONG            pglobal;
+void rs_sglobe(LONG pglobal)
 {
         rs_global = pglobal;
         rs_hdr = LLGET(APP_LO1RESV);
@@ -389,9 +354,7 @@ rs_sglobe(pglobal)
 /*
 *       Free the memory associated with a particular resource load.
 */
-        WORD
-rs_free(pglobal)
-        LONG            pglobal;
+WORD rs_free(LONG pglobal)
 {
         rs_global = pglobal;
 
@@ -404,12 +367,7 @@ rs_free(pglobal)
 *       Get a particular ADDRess out of a resource file that has been
 *       loaded into memory.
 */
-        WORD
-rs_gaddr(pglobal, rtype, rindex, rsaddr)
-        LONG            pglobal;
-        UWORD           rtype;
-        UWORD           rindex;
-        REG LONG        *rsaddr;
+WORD rs_gaddr(LONG pglobal, UWORD rtype, UWORD rindex, LONG *rsaddr)
 {
         rs_sglobe(pglobal);
 
@@ -422,12 +380,7 @@ rs_gaddr(pglobal, rtype, rindex, rsaddr)
 *       Set a particular ADDRess in a resource file that has been
 *       loaded into memory.
 */
-        WORD
-rs_saddr(pglobal, rtype, rindex, rsaddr)
-        LONG            pglobal;
-        UWORD           rtype;
-        UWORD           rindex;
-        LONG            rsaddr;
+WORD rs_saddr(LONG pglobal, UWORD rtype, UWORD rindex, LONG rsaddr)
 {
         REG LONG        psubstruct;
 
@@ -458,7 +411,6 @@ WORD rs_readit(LONG pglobal, LONG rsfname)
         LSTCPY(ad_scmd, rsfname);
         if ( !sh_find(ad_scmd) )
         {
-//kprintf("GEM: rs_readit: sh_find failed!\n");
           return(FALSE);
         }
                                                 /* init global          */
@@ -466,10 +418,9 @@ WORD rs_readit(LONG pglobal, LONG rsfname)
                                                 /* open then file and   */
                                                 /*   read the header    */
         fd = dos_open( ad_scmd, RMODE_RD);
-//kprintf("rs_readit handle=0x%x\n",(int)fd);
+
         if ( !DOS_ERR )
           dos_read(fd, HDR_LENGTH, ADDR(&hdr_buff[0]));
-//else kprintf("rs_readit: dos_open failed!\n");
                                                 /* read in resource and */
                                                 /*   interpret it       */
         if ( !DOS_ERR )
@@ -500,12 +451,8 @@ WORD rs_readit(LONG pglobal, LONG rsfname)
               fix_nptrs(NUM_FRSTR-1, R_FRSTR);
               fix_nptrs(NUM_FRIMG-1, R_FRIMG);
             }
-//else kprintf("rs_readit: dos_read2 failed!\n");
           }
-//else kprintf("rs_readit: dos_alloc failed!\n");
         }
-//else kprintf("rs_readit: dos_read1 failed!\n");
-//      kprintf("rs_readit: DOS_AX=0x%x\n",(int)DOS_AX);
                                                 /* close file and return*/
         ret = !DOS_ERR;
         dos_close(fd);
@@ -518,9 +465,7 @@ WORD rs_readit(LONG pglobal, LONG rsfname)
 *       do an open workstation, then once we know the character sizes we
 *       can fix up the objects accordingly.
 */
-        VOID
-rs_fixit(pglobal)
-        LONG            pglobal;
+void rs_fixit(LONG pglobal)
 {
         rs_sglobe(pglobal);
         fix_objects();
@@ -530,10 +475,7 @@ rs_fixit(pglobal)
 /*
 *       RS_LOAD         mega resource load
 */
-        WORD
-rs_load(pglobal, rsfname)
-        REG LONG        pglobal;
-        LONG            rsfname;
+WORD rs_load(LONG pglobal, LONG rsfname)
 {
         REG WORD        ret;
 

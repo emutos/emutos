@@ -2,11 +2,13 @@
 /*      merge High C vers. w. 2.2               8/21/87         mdf     */ 
 
 /*
-*       Copyright 1999, Caldera Thin Clients, Inc.                      
-*       This software is licenced under the GNU Public License.         
-*       Please see LICENSE.TXT for further information.                 
-*                                                                       
-*                  Historical Copyright                                 
+*       Copyright 1999, Caldera Thin Clients, Inc.
+*                 2002 The EmuTOS development team
+*
+*       This software is licenced under the GNU Public License.
+*       Please see LICENSE.TXT for further information.
+*
+*                  Historical Copyright
 *       -------------------------------------------------------------
 *       GEM Application Environment Services              Version 2.3
 *       Serial No.  XXXX-0000-654321              All Rights Reserved
@@ -14,70 +16,33 @@
 *       -------------------------------------------------------------
 */
 
-#include <portab.h>
-#include <machine.h>
-#include <struct.h>
-#include <obdefs.h>
-#include <taddr.h>
-#include <dos.h>
-#include <gemlib.h>
-#include <gem.h>
+#include "portab.h"
+#include "machine.h"
+#include "struct.h"
+#include "obdefs.h"
+#include "taddr.h"
+#include "dos.h"
+#include "gemlib.h"
+#include "gem.h"
+
+#include "gemdos.h"
+#include "optimize.h"
+#include "gemoblib.h"
+#include "gemgraf.h"
+#include "gemfmlib.h"
+#include "gemgsxif.h"
+#include "gemgrlib.h"
+#include "gemglobe.h"
+#include "geminit.h"
+#include "gemsuper.h"
+#include "gemshlib.h"
 
 
 #define NM_NAMES (F9NAME-F1NAME+1)
 #define NAME_OFFSET F1NAME
 #define LEN_FTITLE 18                           /* BEWARE, requires change*/
                                                 /*  in GEM.RSC          */
-                                                /* in DOS.C             */
-EXTERN  LONG    dos_alloc();
-EXTERN  BYTE    *scasb();
 
-/* ---------- added for metaware compiler ---------- */
-EXTERN VOID     dos_sdta();                     /* in DOS.C             */
-EXTERN WORD     dos_gdrv();
-EXTERN WORD     dos_sfirst();
-EXTERN WORD     dos_snext();
-EXTERN VOID     dos_free();
-EXTERN VOID     sound();                        /* in OPTIMIZE.C        */
-EXTERN WORD     wildcmp();
-EXTERN VOID     ins_char();
-EXTERN VOID     fs_sset();
-EXTERN VOID     fs_sget();
-EXTERN VOID     fmt_str();
-EXTERN VOID     unfmt_str();
-EXTERN WORD     min();                          /* in OPTIMOPT.A86      */
-EXTERN WORD     max();
-EXTERN WORD     inside();
-EXTERN WORD     strcmp();
-EXTERN WORD     strchk();
-EXTERN WORD     mul_div();                      /* in GSX2.A86          */
-EXTERN VOID     ob_change();                    /* in OBLIB.C           */
-EXTERN VOID     ob_actxywh();
-EXTERN VOID     ob_draw();
-EXTERN VOID     ob_relxywh();
-EXTERN VOID     bb_screen();                    /* in GRAF.C            */
-EXTERN VOID     gsx_gclip();
-EXTERN VOID     gsx_sclip();
-EXTERN VOID     fm_dial();                      /* in FMLIB.C           */
-EXTERN WORD     fm_do();
-EXTERN VOID     fm_own();
-EXTERN VOID     gsx_mxmy();                     /* in GSXIF.C           */
-EXTERN VOID     gsx_mfset();
-EXTERN WORD     gr_slidebox();                  /* in GRLIB.C           */
-EXTERN WORD     inf_what();
-/* ----------------------------------------------------- */
-
-EXTERN WORD     gl_hbox;
-
-EXTERN LONG     ad_armice;
-EXTERN LONG     ad_hgmice;
-
-EXTERN LONG     ad_dta;
-EXTERN BYTE     gl_dta[128];
-
-EXTERN UWORD    gl_bvdisk;
-
-EXTERN THEGLO   D;
 
 GLOBAL BYTE     gl_fsobj[4] = {FTITLE, FILEBOX, SCRLBAR, 0x0};
 GLOBAL LONG     ad_fstree;

@@ -3,11 +3,13 @@
 /*      add beep in chkkbd                      11/12/87        mdf     */
 
 /*
-*       Copyright 1999, Caldera Thin Clients, Inc.                      
-*       This software is licenced under the GNU Public License.         
-*       Please see LICENSE.TXT for further information.                 
-*                                                                       
-*                  Historical Copyright                                 
+*       Copyright 1999, Caldera Thin Clients, Inc.
+*                 2002 The EmuTOS development team
+*
+*       This software is licenced under the GNU Public License.
+*       Please see LICENSE.TXT for further information.
+*
+*                  Historical Copyright
 *       -------------------------------------------------------------
 *       GEM Application Environment Services              Version 2.3
 *       Serial No.  XXXX-0000-654321              All Rights Reserved
@@ -15,43 +17,28 @@
 *       -------------------------------------------------------------
 */
 
-#include <portab.h>
-#include <machine.h>
-#include <struct.h>
-#include <basepage.h>
-#include <obdefs.h>
-#include <gemlib.h>
+#include "portab.h"
+#include "machine.h"
+#include "struct.h"
+#include "basepage.h"
+#include "obdefs.h"
+#include "gemlib.h"
 
+#include "geminput.h"
+#include "gempd.h"
+#include "gemgsxif.h"
+#include "gemaplib.h"
+#include "gemglobe.h"
+#include "gemflag.h"
 
 #define KEYSTOP 0x00002b1cL                     /* control backslash    */
-                                                /* in INPUT.C           */
-EXTERN WORD     tchange();
-EXTERN WORD     kchange();
-                                                /* in ASM.A86           */
+
+                                                /* in GEMASM.S          */
 EXTERN          savestat();
 EXTERN          switchto();
 
-EXTERN VOID     sound();
-
-                                                /* in PD.C              */
-EXTERN VOID     insert_process();
-
-EXTERN WORD     gsx_kstate();                   /* in GSXIF.C           */
-EXTERN WORD     gsx_char();
 EXTERN          sti();                          /* in DOSIF.A86         */
 EXTERN          cli();
-                                                /* in APLIB.C           */
-EXTERN WORD             gl_play;
-EXTERN WORD             gl_recd;
-EXTERN WORD             gl_rlen;
-EXTERN LONG             gl_rbuf;
-
-EXTERN PD               *gl_mowner;
-
-EXTERN WORD             kstate;
-
-
-EXTERN THEGLO           D;
 
 #if MULTIAPP
 EXTERN VOID             ap_accexit();
@@ -65,12 +52,10 @@ EXTERN PD               *gl_mnppd;
 GLOBAL PD               *gl_displock = 0;
 #endif
 
+
 /* forkq puts a fork block with a routine in the fork ring      */
 
-        VOID
-forkq(fcode, lodata, hidata)
-        WORD            (*fcode)();
-        WORD            lodata, hidata;
+void forkq(WORD (*fcode)(), WORD lodata, WORD hidata)
 {
         REG FPD         *f;
                                                 /* q a fork process,    */
@@ -93,9 +78,7 @@ forkq(fcode, lodata, hidata)
 }
 
 
-        VOID
-disp_act(p)
-        REG PD          *p;
+void disp_act(PD *p)
 {      
                                                 /* process is ready,    */
                                                 /*   so put him on RLR  */
@@ -104,9 +87,7 @@ disp_act(p)
 }
 
 
-        VOID
-mwait_act(p)
-        REG PD          *p;
+void mwait_act(PD *p)
 {       
                                                 /* sleep on nrl if      */
                                                 /*   event flags are    */
@@ -124,8 +105,8 @@ mwait_act(p)
 }
 
 
-        VOID
-forker()
+
+void forker()
 {
         REG FPD         *f;
         REG PD          *oldrl;
@@ -165,12 +146,7 @@ forker()
                                                 /*   else record the    */
                                                 /*   event              */
               if ( (g.f_code == tchange) &&
-#if MC68K
                    (LLGET(gl_rbuf - sizeof(FPD)) == (LONG)tchange) )
-#endif
-#if I8086
-                   (LWGET(gl_rbuf - sizeof(FPD)) == tchange) )
-#endif
               {
                 amt = g.f_data + LLGET(gl_rbuf-sizeof(LONG));
                 LLSET(gl_rbuf - sizeof(LONG), amt);           
@@ -189,8 +165,8 @@ forker()
         rlr = oldrl;
 }
 
-        VOID
-chkkbd()
+
+void chkkbd()
 {
         REG WORD        achar, kstat;
                                                 /* poll keybd           */
@@ -214,8 +190,8 @@ chkkbd()
 }
 
 
-        VOID
-schedule()
+
+void schedule()
 {
         REG PD          *p;
 
@@ -240,6 +216,7 @@ schedule()
 }
 
 
+
 /************************************************************************/
 /*                                                                      */
 /* dispatcher maintains all flags/regs so it looks like an rte to       */
@@ -251,8 +228,7 @@ schedule()
 /*                                                                      */
 /************************************************************************/
 
-        VOID
-disp()
+void disp()
 {
         REG PD          *p;
 /* savestate() is a machine (& compiler) dependent routine which:
@@ -310,3 +286,4 @@ skip:
 #endif
         switchto(rlr->p_uda);
 }
+

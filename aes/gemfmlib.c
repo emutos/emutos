@@ -2,11 +2,13 @@
 /*      merge High C vers. w. 2.2 & 3.0         8/20/87         mdf     */ 
 
 /*
-*       Copyright 1999, Caldera Thin Clients, Inc.                      
-*       This software is licenced under the GNU Public License.         
-*       Please see LICENSE.TXT for further information.                 
-*                                                                       
-*                  Historical Copyright                                 
+*       Copyright 1999, Caldera Thin Clients, Inc.
+*                 2002 The EmuTOS development team
+*
+*       This software is licenced under the GNU Public License.
+*       Please see LICENSE.TXT for further information.
+*
+*                  Historical Copyright
 *       -------------------------------------------------------------
 *       GEM Application Environment Services              Version 2.3
 *       Serial No.  XXXX-0000-654321              All Rights Reserved
@@ -14,14 +16,30 @@
 *       -------------------------------------------------------------
 */
 
-#include <portab.h>
-#include <machine.h>
-#include <struct.h>
-#include <basepage.h>
-#include <obdefs.h>
-#include <taddr.h>
-#include <gemlib.h>
-#include <gem.h>
+#include "portab.h"
+#include "machine.h"
+#include "struct.h"
+#include "basepage.h"
+#include "obdefs.h"
+#include "taddr.h"
+#include "gemlib.h"
+#include "gem.h"
+
+#include "gemwmlib.h"
+#include "gemrslib.h"
+#include "geminput.h"
+#include "gemctrl.h"
+#include "gemoblib.h"
+#include "gemobjop.h"
+#include "gemgrlib.h"
+#include "gemevlib.h"
+#include "gemgraf.h"
+#include "gemobed.h"
+#include "optimize.h"
+#include "gemfmalt.h"
+#include "gemglobe.h"
+#include "gemmnlib.h"
+
 
 #define FORWARD 0
 #define BACKWARD 1
@@ -39,38 +57,6 @@
 #define RETURN 0x1C0D                           /* carriage return      */
 
 
-                                                /* in WMLIB.C           */
-EXTERN WORD             w_drawdesk();
-EXTERN WORD             w_update();
-                                                /* in GEMRSLIB.C        */
-EXTERN BYTE             *rs_str();
-/* --------------- added for metaware compiler --------------- */
-EXTERN VOID             wm_update();            /* in WMLIB.C           */
-EXTERN VOID             get_ctrl();             /* in INPUT.C           */
-EXTERN VOID             get_mown();
-EXTERN VOID             fq();
-EXTERN VOID             ct_chgown();            /* in CTRL.C            */
-EXTERN VOID             ct_mouse();
-EXTERN WORD             ob_fs();                /* in OBLIB.C           */
-EXTERN VOID             ob_change();
-EXTERN WORD             ob_find();
-EXTERN WORD             get_par();              /* in OBJOP.C           */
-EXTERN WORD             gr_watchbox();          /* in GRLIB.C           */
-EXTERN VOID             ev_button();            /* in EVLIB.C           */
-EXTERN WORD             ev_multi();
-EXTERN VOID             gsx_sclip();            /* in GRAF.C            */
-EXTERN VOID             ob_edit();              /* in OBED.C            */
-EXTERN VOID             merge_str();            /* in OPTIMIZE.C        */
-EXTERN VOID             sound();                
-EXTERN WORD             fm_alert();             /* in FMALT.C           */
-/* ---------------------------------------------------------- */
-
-EXTERN GRECT            gl_rfull;
-EXTERN GRECT            gl_rscreen;
-
-EXTERN LONG             gl_mntree;
-
-EXTERN THEGLO           D;
 
 GLOBAL LONG             ad_g2loc;
 MLOCAL  WORD            ml_ocnt = 0;
@@ -82,6 +68,7 @@ MLOCAL WORD     ml_alrt[] =
                 {AL00CRT,AL01CRT,AL02CRT,AL03CRT,AL04CRT,AL05CRT};
 MLOCAL WORD     ml_pwlv[] = 
                 {0x0102,0x0102,0x0102,0x0101,0x0002,0x0001};
+
 
         VOID
 fm_own(beg_ownit)

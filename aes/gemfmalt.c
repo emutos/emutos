@@ -2,11 +2,13 @@
 /*      merge High C vers. w. 2.2 & 3.0         8/20/87         mdf     */ 
 
 /*
-*       Copyright 1999, Caldera Thin Clients, Inc.                      
-*       This software is licenced under the GNU Public License.         
-*       Please see LICENSE.TXT for further information.                 
-*                                                                       
-*                  Historical Copyright                                 
+*       Copyright 1999, Caldera Thin Clients, Inc.
+*                 2002 The EmuTOS development team
+*
+*       This software is licenced under the GNU Public License.
+*       Please see LICENSE.TXT for further information.
+*
+*                  Historical Copyright
 *       -------------------------------------------------------------
 *       GEM Application Environment Services              Version 2.3
 *       Serial No.  XXXX-0000-654321              All Rights Reserved
@@ -14,15 +16,18 @@
 *       -------------------------------------------------------------
 */
 
-#include <portab.h>
-#include <machine.h>
-#include <struct.h>
-#include <basepage.h>
-#include <obdefs.h>
-#include <taddr.h>
-#include <gemlib.h>
-#include <gem.h>
+#include "portab.h"
+#include "machine.h"
+#include "struct.h"
+#include "basepage.h"
+#include "obdefs.h"
+#include "taddr.h"
+#include "gemlib.h"
+#include "gem.h"
 
+#include "gemgsxif.h"
+#include "gemoblib.h"
+#include "geminit.h"
 
 #define MSG_OFF 2
 #define BUT_OFF 7
@@ -32,32 +37,11 @@
 #define INTER_WSPACE 1
 #define INTER_HSPACE 0
                                                 /* in GSXIF.C           */
-EXTERN  VOID    bb_restore();
-EXTERN  VOID    bb_save();
-                                                /* in OBLIB.C           */
-EXTERN  WORD    ob_add();
-EXTERN  VOID    ob_draw();
 
-EXTERN VOID     rs_obfix();
-
-/* ---------- added for metaware compiler ---------- */
-EXTERN WORD     max();
-EXTERN VOID     r_set();
-EXTERN VOID     ob_setxywh();
-EXTERN WORD     rs_gaddr();
-EXTERN VOID     gsx_mfset();
-EXTERN VOID     ob_center();
-EXTERN VOID     wm_update();
-EXTERN VOID     gsx_gclip();
-EXTERN VOID     gsx_sclip();
-EXTERN WORD     fm_do();
-/* -------------------------------------------------- */
-
-EXTERN LONG     ad_sysglo;
-EXTERN LONG     ad_armice;
 
 GLOBAL BYTE     gl_nils[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 GLOBAL LONG     ad_nils;
+
 
 /*
 *       Routine to break a string into smaller strings.  Breaks occur

@@ -3,11 +3,13 @@
 /*      modify fs_sset                          10/30/87        mdf     */
 
 /*
-*       Copyright 1999, Caldera Thin Clients, Inc.                      
-*       This software is licenced under the GNU Public License.         
-*       Please see LICENSE.TXT for further information.                 
-*                                                                       
-*                  Historical Copyright                                 
+*       Copyright 1999, Caldera Thin Clients, Inc.
+*                 2002 The EmuTOS development team
+
+*       This software is licenced under the GNU Public License.
+*       Please see LICENSE.TXT for further information.
+*
+*                  Historical Copyright
 *       -------------------------------------------------------------
 *       GEM Application Environment Services              Version 3.0
 *       Serial No.  XXXX-0000-654321              All Rights Reserved
@@ -15,32 +17,18 @@
 *       -------------------------------------------------------------
 */
 
-#include <portab.h>
-#include <machine.h>
-#include <taddr.h>
-#include <obdefs.h>
+#include "portab.h"
+#include "machine.h"
+#include "taddr.h"
+#include "obdefs.h"
 
+#include "geminit.h"
 
-EXTERN BYTE     *scasb();
-
-EXTERN VOID     gsx_ncode();                    /* in GSXIF.C           */
-EXTERN WORD     max();                          /* in OPTIMOPT.C        */
-EXTERN WORD     min();                          /* in OPTIMOPT.C        */
-EXTERN WORD     strlen();                       /* in OPTIMOPT.C        */
-EXTERN WORD     rs_gaddr();                     /* in RSLIB.C           */
-
-EXTERN UWORD    intin[];
-EXTERN UWORD    intout[];
-EXTERN UWORD    contrl[];
-EXTERN LONG     ad_sysglo;
 
 GLOBAL BYTE     gl_rsname[16];
 
-        WORD
-sound(isfreq, freq, dura)
-        WORD            isfreq;
-        WORD            freq;
-        WORD            dura;
+
+WORD sound(WORD isfreq, WORD freq, WORD dura)
 {
         WORD            cnt;
 #if 0
@@ -65,9 +53,8 @@ sound(isfreq, freq, dura)
 }
 
 
-        WORD
-bit_num(flag)
-        UWORD           flag;
+/*
+WORD bit_num(UWORD flag)
 {
         WORD            i;
         UWORD           test;
@@ -77,11 +64,10 @@ bit_num(flag)
         for (i=0,test=1; !(flag & test); test <<= 1,i++);
         return(i);
 }
+*/
 
-        VOID
-rc_constrain(pc, pt)
-        GRECT           *pc;
-        GRECT           *pt;
+
+void rc_constrain(GRECT *pc, GRECT *pt)
 {
           if (pt->g_x < pc->g_x)
             pt->g_x = pc->g_x;
@@ -94,9 +80,7 @@ rc_constrain(pc, pt)
 }
 
 
-        VOID
-rc_union(p1, p2)
-        GRECT           *p1, *p2;
+void rc_union(GRECT *p1, GRECT *p2)
 {
         WORD            tx, ty, tw, th;
 
@@ -111,9 +95,7 @@ rc_union(p1, p2)
 }
 
 
-        WORD
-rc_intersect(p1, p2)
-        GRECT           *p1, *p2;
+WORD rc_intersect(GRECT *p1, GRECT *p2)
 {
         WORD            tx, ty, tw, th;
 
@@ -128,6 +110,8 @@ rc_intersect(p1, p2)
         return( (tw > tx) && (th > ty) );
 }
 
+
+/*
         WORD
 mid(lo, val, hi)
         WORD            lo, val, hi;
@@ -138,10 +122,10 @@ mid(lo, val, hi)
           return(hi);
         return(val);
 }
+*/
 
-        BYTE
-*strscn(ps, pd, stop)
-        BYTE            *ps, *pd, stop;
+
+BYTE *strscn(BYTE *ps, BYTE *pd, BYTE stop)
 {
         while ( (*ps) &&
                 (*ps != stop) )
@@ -150,25 +134,11 @@ mid(lo, val, hi)
 }
 
 
-/*
-        BYTE
-*strcat(ps, pd)
-        BYTE            *ps, *pd;
-{
-        while(*pd)
-          pd++;
-        while((*pd++ = *ps++)!= 0)
-          ;
-        return(pd);
-}
-*/
 
 /*
 *       Strip out period and turn into raw data.
 */
-        VOID
-fmt_str(instr, outstr)
-        BYTE            *instr, *outstr;
+void fmt_str(BYTE *instr, BYTE *outstr)
 {
         WORD            count;
         BYTE            *pstr;
@@ -192,9 +162,7 @@ fmt_str(instr, outstr)
 /*
 *       Insert in period and make into true data.
 */
-        VOID
-unfmt_str(instr, outstr)
-        BYTE            *instr, *outstr;
+void unfmt_str(BYTE *instr, BYTE *outstr)
 {
         BYTE            *pstr, temp;
 
@@ -215,13 +183,7 @@ unfmt_str(instr, outstr)
 }
 
 
-        VOID
-fs_sset(tree, obj, pstr, ptext, ptxtlen)
-        LONG            tree;
-        WORD            obj;
-        LONG            pstr;
-        LONG            *ptext;
-        WORD            *ptxtlen;
+void fs_sset(LONG tree, WORD obj, LONG pstr, LONG *ptext, WORD *ptxtlen)
 {
         LONG            spec;
         WORD            len;
@@ -237,11 +199,7 @@ fs_sset(tree, obj, pstr, ptext, ptxtlen)
 }
 
 
-        VOID
-inf_sset(tree, obj, pstr)
-        LONG            tree;
-        WORD            obj;
-        BYTE            *pstr;
+void inf_sset(LONG tree, WORD obj, BYTE *pstr)
 {
         LONG            text;
         WORD            txtlen;
@@ -250,11 +208,7 @@ inf_sset(tree, obj, pstr)
 }
 
 
-        VOID
-fs_sget(tree, obj, pstr)
-        LONG            tree;
-        WORD            obj;
-        LONG            pstr;
+void fs_sget(LONG tree, WORD obj, LONG pstr)
 {
         LONG            ptext;
 
@@ -264,18 +218,15 @@ fs_sget(tree, obj, pstr)
 }
 
 
-        VOID
-inf_sget(tree, obj, pstr)
-        LONG            tree;
-        WORD            obj;
-        BYTE            *pstr;
+/*
+void inf_sget(LONG tree, WORD obj, BYTE *pstr)
 {
         fs_sget(tree, obj, ADDR(pstr));
 }
+*/
 
-
-        VOID
-inf_fldset(tree, obj, testfld, testbit, truestate, falsestate)
+/*
+void inf_fldset(tree, obj, testfld, testbit, truestate, falsestate)
         LONG            tree;
         WORD            obj;
         UWORD           testfld, testbit;
@@ -283,13 +234,10 @@ inf_fldset(tree, obj, testfld, testbit, truestate, falsestate)
 {
         LWSET(OB_STATE(obj), (testfld & testbit) ? truestate : falsestate);
 }
+*/
 
 
-        WORD
-inf_gindex(tree, baseobj, numobj)
-        LONG            tree;
-        WORD            baseobj;
-        WORD            numobj;
+WORD inf_gindex(LONG tree, WORD baseobj, WORD numobj)
 {
         WORD            retobj;
 
@@ -307,10 +255,7 @@ inf_gindex(tree, baseobj, numobj)
 *       nothing was selected.
 */
 
-        WORD
-inf_what(tree, ok, cncl)
-        LONG            tree;
-        WORD            ok, cncl;
+WORD inf_what(LONG tree, WORD ok, WORD cncl)
 {
         WORD            field;
 
@@ -325,11 +270,7 @@ inf_what(tree, ok, cncl)
 }
 
 
-        VOID
-merge_str(pdst, ptmp, parms)
-        BYTE            *pdst;
-        BYTE            *ptmp;
-        UWORD           parms[];        
+void merge_str(BYTE *pdst, BYTE *ptmp, UWORD parms[])
 {
         WORD            num;
         WORD            do_value;
@@ -402,16 +343,14 @@ merge_str(pdst, ptmp, parms)
         *pdst = NULL;
 }
 
+
 /*
 *       Routine to see if the test filename matches one of a set of 
 *       comma delimited wildcard strings.
 *               e.g.,   pwld = "*.COM,*.EXE,*.BAT"
 *                       ptst = "MYFILE.BAT"
 */
-        WORD
-wildcmp(pwld, ptst)
-        BYTE            *pwld;
-        BYTE            *ptst;
+WORD wildcmp(BYTE *pwld, BYTE *ptst)
 {
         BYTE            *pwild;
         BYTE            *ptest;
@@ -492,12 +431,7 @@ wildcmp(pwld, ptst)
 /*
 *       Routine to insert a character in a string by
 */
-        VOID
-ins_char(str, pos, chr, tot_len)
-        REG BYTE        *str;
-        WORD            pos;
-        BYTE            chr;
-        REG WORD        tot_len;
+void ins_char(BYTE *str, WORD pos, BYTE chr, WORD tot_len)
 {
         REG WORD        ii, len;
 
@@ -512,12 +446,11 @@ ins_char(str, pos, chr, tot_len)
           str[tot_len-1] = NULL;
 }
 
+
 /*
 *       Used to get strings of 16 bytes or less from resource.
 */
-        BYTE
-*op_gname(index)
-        WORD    index;
+BYTE *op_gname(WORD index)
 {
         LONG    pname;
 /* define R_STRING 5    */

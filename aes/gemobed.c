@@ -2,11 +2,13 @@
 /*      merge High C vers. w. 2.2               8/21/87         mdf     */ 
 
 /*
-*       Copyright 1999, Caldera Thin Clients, Inc.                      
-*       This software is licenced under the GNU Public License.         
+*       Copyright 1999, Caldera Thin Clients, Inc.
+*                 2002 The EmuTOS development team
+*
+*       This software is licenced under the GNU Public License. 
 *       Please see LICENSE.TXT for further information.                 
-*                                                                       
-*                  Historical Copyright                                 
+*
+*                  Historical Copyright
 *       -------------------------------------------------------------
 *       GEM Application Environment Services              Version 2.3
 *       Serial No.  XXXX-0000-654321              All Rights Reserved
@@ -14,14 +16,20 @@
 *       -------------------------------------------------------------
 */
 
-#include <portab.h>
-#include <machine.h>
-#include <struct.h>
-#include <basepage.h>
-#include <obdefs.h>
-#include <taddr.h>
-#include <gem.h>
-#include <gemlib.h>
+#include "portab.h"
+#include "machine.h"
+#include "struct.h"
+#include "basepage.h"
+#include "obdefs.h"
+#include "taddr.h"
+#include "gem.h"
+#include "gemlib.h"
+
+#include "gemoblib.h"
+#include "gemgraf.h"
+#include "optimize.h"
+#include "gemglobe.h"
+#include "geminit.h"
 
 
 #define BACKSPACE 0x0E08                        /* backspace            */
@@ -35,45 +43,8 @@
 #define BACKTAB 0x0F00                          /* backtab              */
 #define RETURN 0x1C0D                           /* carriage return      */
 #define ESCAPE 0x011B                           /* escape               */
-                                                /* in GSXIF or APGSXIF  */
-EXTERN VOID     gsx_gclip();
-EXTERN VOID     gsx_sclip();
-
-EXTERN BYTE     *rs_str();
-EXTERN WORD     min();
 
 
-/* --------------- added for metaware compiler --------------- */
-EXTERN VOID     r_set();                        /* in OPTIMOPT.A86      */
-EXTERN VOID     bfill();
-EXTERN WORD     min();
-EXTERN WORD     max();
-EXTERN BYTE     toupper();
-EXTERN WORD     strlen();
-EXTERN VOID     ob_actxywh();                   /* in OBLIB.C           */
-EXTERN VOID     ob_draw();
-EXTERN VOID     ob_format();
-EXTERN WORD     gr_just();                      /* in GRAF.C            */
-EXTERN VOID     gsx_attr();
-EXTERN VOID     gsx_cline();
-EXTERN VOID     ins_char();                     /* in OPTIMIZE.C        */
-/* ----------------------------------------------------------- */
-
-EXTERN WORD     gl_wchar;
-EXTERN WORD     gl_hchar;
-
-EXTERN WORD     gl_wbox;
-EXTERN WORD     gl_hbox;
-
-EXTERN WORD     gl_width;
-EXTERN WORD     gl_height;
-EXTERN TEDINFO  edblk;
-
-EXTERN LONG     ad_tmpstr;
-EXTERN LONG     ad_valstr;
-EXTERN LONG     ad_rawstr;
-
-EXTERN THEGLO   D;
 
 
         VOID
@@ -348,13 +319,8 @@ ob_delit(idx)
 }
 
 
-        WORD
-ob_edit(tree, obj, in_char, idx, kind)
-        REG LONG        tree;
-        REG WORD        obj;
-        WORD            in_char;
-        REG WORD        *idx;                   /* rel. to raw data     */
-        WORD            kind;
+
+WORD ob_edit(LONG tree, WORD obj, WORD in_char, WORD *idx, WORD kind)
 {
         WORD            pos, len;
         WORD            ii, no_redraw, start, finish, nstart, nfinish;

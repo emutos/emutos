@@ -4,6 +4,8 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
+*                 2002 The EmuTOS development team
+*
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
 *
@@ -15,13 +17,23 @@
 *       -------------------------------------------------------------
 */
 
-#include <portab.h>
-#include <machine.h>
-#include <struct.h>
-#include <basepage.h>
-#include <obdefs.h>
-#include <taddr.h>
-#include <gemlib.h>
+#include "portab.h"
+#include "machine.h"
+#include "struct.h"
+#include "basepage.h"
+#include "obdefs.h"
+#include "taddr.h"
+#include "gemlib.h"
+
+#include "gempd.h"
+#include "gemflag.h"
+#include "gemoblib.h"
+#include "gemwrect.h"
+#include "gemmnlib.h"
+#include "geminit.h"
+#include "gemgraf.h"
+#include "gemglobe.h"
+
 
 #define DESKWH  0x0
 
@@ -39,29 +51,7 @@ EXTERN LONG     ad_sysmenu;
 
 WORD            w_bldactive();
 
-EXTERN PD       *fpdnm();
-                                                /* in GEMFLAG.C         */
-EXTERN WORD     unsync();
-EXTERN WORD     tak_flag();
-                                                /* in GSXIF.C           */
-EXTERN WORD     gsx_gclip();
-EXTERN VOID     gsx_sclip();
-EXTERN VOID     gsx_mret();
-                                                /* in OBLIB.C           */
-EXTERN VOID     everyobj();
-EXTERN VOID     ob_delete();
-EXTERN VOID     ob_draw();
-EXTERN VOID     ob_order();
-EXTERN WORD     ob_find();
-                                                /* in WRECT88.C         */
-EXTERN ORECT    *get_orect();
-EXTERN VOID     newrect();
 
-EXTERN LONG     ad_stdesk;
-EXTERN LONG     gl_mntree;
-EXTERN LONG     menu_tree[];
-
-EXTERN GRECT    gl_rfull;
 
 GLOBAL LONG     gl_newdesk;                     /* current desktop back-*/
                                                 /* ground pattern.      */
@@ -141,45 +131,6 @@ GLOBAL TEDINFO  gl_asamp =
 };
 
 
-/* ---------- added for metaware compiler ---------- */
-GLOBAL VOID     wm_update();
-GLOBAL VOID     wm_calc();
-EXTERN VOID     rc_copy();                      /* in OPTIMOPT.A86      */
-EXTERN WORD     rc_equal();
-EXTERN VOID     r_set();
-EXTERN VOID     bfill();
-EXTERN WORD     min();
-EXTERN WORD     max();
-#if I8086
-EXTERN VOID     movs();
-#endif
-EXTERN WORD     rc_intersect();                 /* in OPTIMIZE.C        */
-EXTERN VOID     rc_union();
-EXTERN WORD     mul_div();                      /* in GSX2.A86          */
-EXTERN VOID     ct_chgown();                    /* in CTRL.C            */
-EXTERN VOID     ap_rdwr();                      /* in APLIB.C           */
-EXTERN VOID     bb_screen();                    /* in GRAF.C            */
-EXTERN VOID     gsx_moff();                     /* in GSXIF.C           */
-EXTERN VOID     gsx_mon();
-EXTERN VOID     mn_bar();                       /* in MNLIB.C           */
-EXTERN VOID     or_start();                     /* in WRECT.C           */
-EXTERN VOID     ev_block();                     /* in EVLIB.C           */
-EXTERN VOID     fm_own();                       /* in FMLIB.C           */
-/* ------------------------------------------------- */
-
-EXTERN WORD     gl_wbox;
-EXTERN WORD     gl_hbox;
-
-EXTERN WORD     gl_width;
-EXTERN WORD     gl_height;
-
-EXTERN GRECT    gl_rscreen;
-EXTERN GRECT    gl_rfull;
-EXTERN GRECT    gl_rzero;
-
-
-EXTERN THEGLO   D;
-
 GLOBAL WORD     wind_msg[8];
 
 GLOBAL LONG     ad_windspb;
@@ -189,10 +140,9 @@ GLOBAL LONG     gl_wtree;
 GLOBAL LONG     gl_awind;
 
 
-        VOID
-w_nilit(num, olist)
-        REG WORD        num;
-        REG OBJECT      olist[];
+
+
+void w_nilit(WORD num, OBJECT olist[])
 {
         while( num-- )
         {
@@ -206,10 +156,7 @@ w_nilit(num, olist)
 *       is added at the end of the parent's current sibling list.
 *       It is also initialized.
 */
-        VOID
-w_obadd(olist, parent, child)
-        REG OBJECT      olist[];
-        REG WORD        parent, child;
+void w_obadd(OBJECT olist[], WORD parent, WORD child)
 {
         REG WORD        lastkid;
 
@@ -719,12 +666,9 @@ w_bldactive(w_handle)
         }
 }
 
-        VOID
-ap_sendmsg(ap_msg, type, towhom, w3, w4, w5, w6, w7)
-        REG WORD        ap_msg[];
-        WORD            type;
-        PD              *towhom;
-        WORD            w3, w4, w5, w6, w7;
+
+void ap_sendmsg(WORD ap_msg[], WORD type, PD *towhom,
+                WORD w3, WORD w4, WORD w5, WORD w6, WORD w7)
 {
         ap_msg[0] = type;
         ap_msg[1] = rlr->p_pid;

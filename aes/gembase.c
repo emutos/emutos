@@ -3,6 +3,8 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.                      
+*                 2002 The EmuTOS development team
+*
 *       This software is licenced under the GNU Public License.         
 *       Please see LICENSE.TXT for further information.                 
 *                                                                       
@@ -14,9 +16,9 @@
 *       -------------------------------------------------------------
 */
 
-#include <portab.h>
-#include <machine.h>
-#include <struct.h>
+#include "portab.h"
+#include "machine.h"
+#include "struct.h"
 
 GLOBAL PD       *rlr, *drl, *nrl;
 GLOBAL EVB      *eul, *dlr, *zlr;
