@@ -9,7 +9,12 @@
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
  */
- 
+
+#ifndef _KPRINT_H
+#define _KPRINT_H
+
+// #include "portab.h"
+
 #ifdef __GNUC__
 #define PRINTF_STYLE __attribute__ ((format (printf, 1, 2)))
 #else
@@ -29,4 +34,5 @@ extern void kputw( WORD *l );
 extern void kputl( LONG *l );
 extern void kputp( VOID *p );
 
+#endif /* _KPRINT_H */
 

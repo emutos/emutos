@@ -10,6 +10,11 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+#ifndef _MIDI_H
+#define _MIDI_H
+
+#include "portab.h"
+
 /* initialise the MIDI ACIA */
 extern void midi_init(VOID);
 
@@ -22,3 +27,4 @@ extern VOID bconout3(WORD dev, WORD c);
 /* some xbios functions */
 extern VOID midiws(WORD cnt, LONG ptr);
 
+#endif /* _MIDI_H */

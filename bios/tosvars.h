@@ -15,6 +15,11 @@
  * C code.
  */
 
+#ifndef _TOSVARS_H
+#define _TOSVARS_H
+
+#include "portab.h"
+
 extern LONG proc_lives;
 extern LONG proc_dregs[];
 extern LONG proc_aregs[];
@@ -26,3 +31,10 @@ extern BYTE conterm;
 
 extern UBYTE *v_bas_ad;
 extern LONG kbdvecs[];
+
+extern WORD *colorptr;
+extern UBYTE *screenpt;
+
+extern WORD timer_ms;
+
+#endif /* _TOSVARS_H */

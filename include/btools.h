@@ -18,6 +18,9 @@
  * Nevertheless this header will only work with -mshort option.
  */
 
+#ifndef _BTOOLS_H
+#define _BTOOLS_H
+
 /* moves length bytes from src to dst. returns dst as passed.
  * the behaviour is undefined if the two regions overlap.
  */
@@ -41,4 +44,5 @@ void * memset(void *address, int c, long unsigned int size);
 /* clear memory */
 void bzero(void *address, long unsigned int size);
 
+#endif /* _BTOOLS_H */
 

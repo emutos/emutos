@@ -10,7 +10,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
+#ifndef _PORTAB_H
+#define _PORTAB_H
 
 /* Setup for MiNT's cross-gcc */
  
@@ -31,10 +32,6 @@
 #define MLOCAL	static				/* Local to module	   */
 #define GLOBAL	/**/				/* Global variable	   */
 #define VOID	void				/* Void function return    */
-#define DEFAULT int				/* Default size 	   */
-#define FLOAT	float				/* Floating Point	   */
-#define DOUBLE	double				/* Double precision	   */
-#define CODE	int				/* 68000 code word aligned */
 
 /****************************************************************************/
 /*	Miscellaneous Definitions:					    */
@@ -57,3 +54,4 @@
 /****************************************************************************/
 /****************************************************************************/
 
+#endif /* _PORTAB_H */

@@ -134,6 +134,7 @@ static BYTE ascii_caps [] = {
 
 
 /*==== Scancode table control (not yet implemented) =======================*/
+#if 0
 static BYTE ascii_ctrl [] = {
     0x00, 0x00, 0x00, 0x00, 0x1b, 0x1c, 0x1d, 0x1e,
     0x1f, 0x7f, 0x00, 0x00, 0x7f, 0x00, 0x08, 0x00,
@@ -152,10 +153,11 @@ static BYTE ascii_ctrl [] = {
     0x00, 0x10, 0x0e, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
-
+#endif
 
 
 /*==== Scancode table alt (not yet implemented) ===========================*/
+#if 0
 static BYTE ascii_alt [] = {
     0x00, 0x1b, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36,
     0x37, 0x38, 0x39, 0x30, 0x9e, 0x27, 0x08, 0x09,
@@ -174,7 +176,7 @@ static BYTE ascii_alt [] = {
     0x30, 0x2e, 0x0d, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
-
+#endif
 
 /*=== Keymaps handling (xbios) =======================================*/
 
@@ -211,6 +213,20 @@ VOID bioskeys(VOID)
   caps_key_map = ascii_caps;
 }
 
+/*=== kbshift (bios) =====================================================*/
+
+LONG kbshift(WORD flag)
+{
+    WORD oldy;
+
+    if(flag == -1)
+        return(shifty);         /* return bitvector of shift state */
+
+    oldy = shifty;
+    shifty=flag;
+
+    return(oldy);
+}
 
 /*=== iorec handling (bios) ==============================================*/
 

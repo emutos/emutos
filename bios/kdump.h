@@ -10,7 +10,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
+#if 0
 
 /*
 **  Just include this file, if you use these external functions
@@ -61,3 +61,4 @@ EXTERN	char	ntoa() ;	/* 0x01 => '1', 0x02 => '2', ...	*/
 #define	MIN(x,y)	( x < y ? x : y ) 
 #endif
 
+#endif

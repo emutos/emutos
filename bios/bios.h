@@ -10,14 +10,10 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+#ifndef _BIOS_H
+#define _BIOS_H
 
-
-/*
- *  externs declarations
- */
-
-EXTERN	BYTE	INP() ;
-EXTERN	VOID	OUTP() ;
+#include "portab.h"
 
 
 
@@ -51,14 +47,6 @@ EXTERN	VOID	OUTP() ;
 #define MEDIACHANGE	2L		/*  media def has changed	*/
 
 
-
-/*
- *  code macros
- */
-
-#define ADDRESS_OF(x)	x
-#define INP		inp
-#define OUTP		outp
 
 
 
@@ -231,14 +219,5 @@ MPB
 } ;
 
 
-
-/*
- *  VME/10 machine dependent stuff.
- */
-
-#define IVNKBD	0x118		/*  keyboard interrupt vector number	*/
-#define IVNDSK	0x11c		/*  disk controller interrupt vec no	*/
-#define IVNSER	0x108		/*  serial port interrupt vector number */
-
-#define IVNABT	0x42a		/*  abort button interrupt vector no	*/
+#endif /* _BIOS_H */
 

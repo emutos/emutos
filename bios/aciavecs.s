@@ -45,6 +45,7 @@
         .equ    vec_acia, 0x118         | keyboard/Midi interrupt vector
 
 	.global init_acia_vecs
+	.global _int_acia
 		
 init_acia_vecs:
 	move.l	#_midivec,midivec
@@ -56,7 +57,7 @@ init_acia_vecs:
 	move.l	#_joyvec,joyvec
 	move.l	#_midisys,midisys
 	move.l	#_ikbdsys,ikbdsys
-	move.l	#int_acia,vec_acia
+	move.l	#_int_acia,vec_acia
 	| while we're at it, initialize the iorecs
 	move.l	#rs232ibufbuf,rs232ibuf
 	move.w	#0x100,rs232ibufsz
@@ -88,7 +89,7 @@ init_acia_vecs:
 | ==== Int 0x118 - midi/kbd interrupt routine ================
 |
 
-int_acia:
+_int_acia:
 	| save scratch regs
 	movem.l d0-d1/a0-a1,-(sp)
 	

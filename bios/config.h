@@ -10,10 +10,12 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
+#ifndef _CONFIG_H
+#define _CONFIG_H
 
 /* contains all default-drive dependant info */
 #ifndef DEFDRV
 #define	DEFDRV 2		/* 0 = A:, 2 = C: */
 #endif
 
+#endif /* _CONFIG_H */

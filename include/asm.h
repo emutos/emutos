@@ -23,6 +23,9 @@
  * new macros below.
  */
 
+#ifndef _ASM_H
+#define _ASM_H
+
 /*
  * WORD set_sr(WORD new); 
  *   sets sr to the new value, and return the old sr value 
@@ -33,13 +36,13 @@ __extension__                               \
 ({register short retvalue __asm__("d0");    \
   short _a = (short)(a);                    \
   __asm__ volatile                          \
-  ("                                        \
-    move.w sr,d0;                           \
+  ("move.w sr,d0;                           \
     move.w %1,sr "                          \
-  : "=r"(retvalue)			/* outputs */	      \
-	: "r"(_a)     /* inputs  */		            \
-	: "d0"  /* clobbered regs */	            \
-	);								                        \
-	retvalue;							                    \
+  : "=r"(retvalue)   /* outputs */	    \
+  : "d"(_a)          /* inputs  */	    \
+  : "d0"             /* clobbered regs */   \
+  );                                        \
+  retvalue;                                 \
 })
 
+#endif /* _ASM_H */
