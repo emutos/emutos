@@ -519,7 +519,7 @@ initsnd:
 | ==== vector setup =========================================================
 	move.l #int_vbl, vec_vbl       	| Vbl-interr
 	move.l #int_hbl, vec_hbl      	| Hbl-interr
-	move.l #excepth, vec_aes       	| Trap #2  (AES, now dummy)
+	move.l #dummyaes, vec_aes       | Trap #2  (AES, almost dummy)
 	move.l #bios, vec_bios	      	| Trap #13 (BIOS)
 	move.l #xbios, vec_xbios      	| trap #14 (XBIOS)
 	move.l #int_linea, vec_linea    	| Line-A
@@ -647,6 +647,33 @@ msg_cart:
 
 
 
+| ===========================================================================
+| ==== dummy aes ==========================================================
+| ===========================================================================
+
+|
+| implements only appl_init(), returns 0, to tell Mint that GEM
+| is not running.
+|
+
+dummyaes:
+	cmp.l #0xc8,d0
+	bne failgem
+	move.l d1,a0
+	move.l (a0),a1
+	cmp.w #0x0a,(a1)
+	bne failgem
+	move.l 4(a0),a1
+	clr.l (a1)
+	rte
+failgemmsg:
+	.ascii "unimplemented gem call.\n\0"
+	.even
+failgem:
+	pea failgemmsg
+	jsr _kprint
+1:
+	bra 1b
 
 
 
