@@ -1,11 +1,13 @@
 /*
- * ikbd.c - Intelligent keyboard routines
+ * mouse.c - Intelligent keyboard routines
  *
  * Copyright (c) 2001 EmuTOS development team
+ * Copyright (C) 1995 - 1998 Russell King <linux@arm.linux.org.uk>
  *
  * Authors:
  *  LVL   Laurent Vogel
  *  MAD   Martin Doering
+ *        Russell King <linux@arm.linux.org.uk>
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -13,19 +15,151 @@
  * Some code I got from Linux m68k, thanks to the authors! (MAD)
  */
 
+
+
 #include "config.h"
-
 #include "portab.h"
-
-
+#include "kprint.h"
 
 #include "bios.h"
-#include "kprint.h"
+#include "lineavars.h"
 #include "ikbd.h"
 #include "mouse.h"
 
 
 #define DBG_MOUSE 0
+
+
+static BYTE oldbuts;
+
+
+
+/**
+ * mouse_change - notification of a change of mouse position
+ *
+ * Updates the mouse position and button information. The movement
+ * information is updated, and the new button state is saved.
+ *
+ * @dx: delta X movement
+ * @dy: delta Y movement
+ * @buttons: new button state
+ */
+ 
+void mouse_change(WORD dx, WORD dy, WORD buttons)
+{
+    struct mouse_data *mse = (struct mouse_data *)&newx;
+    WORD changed;
+
+//    spin_lock(&mse->lock);
+    changed = (dx != 0 || dy != 0 || mse->buttons != buttons);
+
+    if (changed) {
+//        add_mouse_randomness((buttons << 16) + (dy << 8) + dx);
+
+        mse->buttons = buttons;
+        mse->dxpos += dx;
+        mse->dypos += dy;
+
+        /*
+         * keep dx/dy reasonable, but still able to track when X (or
+         * whatever) must page or is busy (i.e. long waits between
+         * reads)
+         */
+        if (mse->dxpos < -2048)
+            mse->dxpos = -2048;
+        if (mse->dxpos > 2048)
+            mse->dxpos = 2048;
+        if (mse->dypos < -2048)
+            mse->dypos = -2048;
+        if (mse->dypos > 2048)
+            mse->dypos = 2048;
+    }
+
+//    spin_unlock(&mse->lock);
+
+    if (changed) {
+        /* call button change vector from VDI mouse driver */
+    }
+}
+
+/**
+ * mouse_add_movement - notification of a change of mouse position
+ *
+ * Updates the mouse position. The movement information is updated.
+ *
+ * @dx: delta X movement
+ * @dy: delta Y movement
+ */
+ 
+VOID mouse_add_movement(WORD dx, WORD dy)
+{
+    struct mouse_data *mse = (struct mouse_data *)&newx;
+
+    mouse_change(dx, dy, mse->buttons);
+}
+
+/**
+ * mouse_add_buttons - notification of a change of button state
+ *
+ * Updates the button state. The buttons are updated by:
+ *     	new_state = (old_state & ~clear) ^ eor
+ *
+ * mousedev - mouse number
+ * clear    - mask of buttons to clear
+ * eor      - mask of buttons to change
+ */
+ 
+void mouse_add_buttons(WORD clear, WORD eor)
+{
+    struct mouse_data *mse = (struct mouse_data *)&newx;
+
+    mouse_change(0, 0, (mse->buttons & ~clear) ^ eor);
+}
+
+
+
+#if NEEDED
+static WORD mouse_open(VOID)
+{
+    struct mouse_data *mse = (struct mouse_data *)&newx;
+
+    /* Still running? */
+    if (mse->active++)
+        return 0;
+
+    // spin_lock_irq(&mse->lock);
+
+    mse->dxpos   = 0;
+    mse->dypos   = 0;
+    mse->buttons = 7;
+
+    // spin_unlock_irq(&mse->lock);
+    return 1;
+}
+#endif
+
+
+/*
+ * mouse_int - mouse interrupt vector
+ *
+ * This routine decodes the mouse packets. Here we just go, if the asm
+ * part did see an relative mouse packet.
+ */
+
+VOID mouse_int(BYTE * buf)
+{
+    struct mouse_data *mse = (struct mouse_data *)&newx;
+    WORD buttons;
+
+    /* Mouse ints disabled?? */
+    if (mse->active)
+        return;
+
+    buttons = ((buf[0] & 1) | ((buf[0] & 2) << 1) | (oldbuts & 2));
+    oldbuts = buttons;
+
+    mouse_change(buf[1], -buf[2], buttons ^ 7);
+}
 
 
 

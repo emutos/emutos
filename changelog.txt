@@ -298,3 +298,7 @@ Start... early ages
 
 21. Nov. 2001
 - Changed all 'char's in bdos/ to 'BYTE', other will follow (MAD)
+
+22. Nov. 2001
+- Partitially implemented unused mouse driver in bios/mouse.c (MAD)
+

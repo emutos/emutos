@@ -169,7 +169,7 @@ kbd_length_table:
 
 key_event:
 	move.w	d0,-(sp)
-	// call the C routine in newkbc.c to do the work.
+	// call the C routine in ikbd.c to do the work.
 	jsr 	_kbd_int
 	add.w   #2,sp
 	rts

@@ -65,5 +65,19 @@ struct param
 };
 
 
+
+struct mouse_data {
+    WORD	dxpos;
+    WORD	dypos;
+    BYTE        active;
+    BYTE	buttons;
+};
+
+
+
+extern VOID mouse_change(WORD dx, WORD dy, WORD buttons);
+extern VOID mouse_add_movement(WORD dx, WORD dy);
+extern VOID mouse_add_buttons(WORD clear, WORD eor);
+
 #endif /* _MOUSE_H */
 

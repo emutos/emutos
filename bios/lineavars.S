@@ -20,16 +20,16 @@
 
 		.globl	cur_ms_stat
 		.globl	_disab_cnt
-		.globl	draw_flag
+		.globl	_draw_flag
 		.globl	m_cdb_bg
 		.globl	m_cdb_fg
 		.globl	m_pos_hx
 		.globl	m_pos_hy
 		.globl	mask_form
 		.globl	mouse_cdb
-		.globl	mouse_flag
-		.globl	newx
-		.globl	newy
+		.globl	_mouse_flag
+		.globl	_newx
+		.globl	_newy
 		.globl	retsav
 		.globl	sav_cxy
 		.globl	save_addr
@@ -83,10 +83,10 @@ _font_count:	.ds.w	1	// -440 Total numbers of fonts in font_ring
 cur_ms_stat:	.ds.b	1	// -348	current mouse status
 		.ds.b	1
 _disab_cnt:	.ds.w	1	// -346  disable depth count. (>0 => disabled)
-newx:		.ds.w	1	// -344	new mouse x&y position
-newy:		.ds.w	1
-draw_flag:	.ds.b	1	// -340	non-zero means draw mouse form on vblank
-mouse_flag:	.ds.b	1	// -339	non-zero if mouse ints disabled
+_newx:		.ds.w	1	// -344	new mouse x&y position
+_newy:		.ds.w	1
+_draw_flag:	.ds.b	1	// -340	non-zero means draw mouse form on vblank
+_mouse_flag:	.ds.b	1	// -339	non-zero if mouse ints disabled
 sav_cxy:	.ds.w	2	// -338	save area for cursor cell coords.
 save_len:	.ds.w	1	// -330
 save_addr:	.ds.l	1	// -328
