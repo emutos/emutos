@@ -129,7 +129,7 @@ _midivec:
 1:      rts
 
 _kbdvec:
-        and.w   #$00ff,d0
+        and.w   #0x00ff,d0
         move.w  d0,-(sp)
         // call the C routine in ikbd.c to do the work.
         jsr     _kbd_int
