@@ -32,7 +32,7 @@
 	.globl	_super						// JSL  20 Mar 85
 	.globl	_user						// JSL  20 Mar 85
 	.globl	_emucon
-//_main:
+_main:
 _emucon:
       	move.l	#mystak,a5
 	move.l	4(sp),-(a5)
