@@ -1,6 +1,7 @@
 
 # Setup for crosscompiling under Linux only at this time :-(
 
+BUILDDATE=$(shell LANG=C date +"%d. %b. %Y")
 
 # Linker 
 LD = m68k-atari-mint-ld
@@ -12,7 +13,7 @@ ASFLAGS = --register-prefix-optional -m68000
 
 # C compiler for MiNT
 CC = m68k-atari-mint-gcc
-CFLAGS = -c -O -mshort -I./include -Wall
+CFLAGS = -c -O -mshort -Wall -DBUILDDATE="\"$(BUILDDATE)\""
 #CC = gcc
 #CFLAGS = -c -O -I./include -Wall
 
@@ -25,7 +26,7 @@ all:	command.prg
 
 
 command.prg: $(OBJECTS)
-	${LD} -o $@ $? ${LDFLAGS}
+	${LD} -o $@ $(OBJECTS) ${LDFLAGS}
 
 
 command.o: command.c
