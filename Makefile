@@ -114,9 +114,9 @@ BIOSSSRC = tosvars.S startup.S lineavars.S vectors.S aciavecs.S \
 # source code in bdos/
 #
 
-BDOSCSRC = bdosinit.c console.c fsdrive.c fshand.c fsopnclo.c osmem.c \
+BDOSCSRC = console.c fsdrive.c fshand.c fsopnclo.c osmem.c \
            umem.c bdosmain.c fsbuf.c fsfat.c fsio.c iumem.c proc.c \
-           bdosts.c fsdir.c fsglob.c fsmain.c kpgmld.c time.c 
+           fsdir.c fsglob.c fsmain.c kpgmld.c time.c 
 BDOSSSRC = rwa.S
 
 #
@@ -354,7 +354,7 @@ boot.prg: obj/minicrt.o obj/boot.o obj/bootasm.o
 #
 # compressed ROM image
 #
-	
+
 COMPROBJ = obj/comprimg.o obj/memory.o obj/uncompr.o obj/processor.o
 
 compr2.img compr2.map: $(COMPROBJ)
@@ -597,7 +597,7 @@ obj/%.o : %.S
 
 %.dsm: %.map
 	vma=`grep '^.text' $< | sed -e 's/[^0]*//;s/ .*//'`; \
- 	$(OBJDUMP) --target=binary --architecture=m68k \
+	$(OBJDUMP) --target=binary --architecture=m68k \
 	  --adjust-vma=$$vma -D $(<:%.map=%.img) \
 	| sed -e '/:/!d;/^  /!d;s/^  //;s/^ /0/;s/:	/: /' > $(TMP1)
 	grep '^ \+0x' $< | sort \
@@ -635,7 +635,7 @@ clean:
 	rm -f */*.tr.c obj/country include/i18nconf.h
 	rm -f compr$(EXE) uncompr$(EXE)
 	rm -f makefile.dep 
-	
+
 
 distclean: clean
 	rm -f '.#'* */'.#'* 
