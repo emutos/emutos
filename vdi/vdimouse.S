@@ -81,6 +81,20 @@
 
 
 /*
+ * testmsg - print a test message
+ */
+
+testmsg:
+        .ascii "================== mouse button was pressed.\n\0"
+        .even
+
+printtestmsg:
+        pea     testmsg
+        jsr     _kprintf
+        addq    #4,sp
+	rts
+
+/*
  * vdimouse_init - INITIALIZE MOUSE
  *
  * entry:          none
@@ -90,6 +104,7 @@
 
 vdimouse_init:
         /* Init _user_cur vector */
+        // lea.l   printtestmsg,a0
         lea.l   just_rts,a0             
         move.l  a0,_user_but            // just rts
         move.l  a0,_user_mot            // just rts
@@ -344,18 +359,17 @@ cl_done:
 
 
 
-/*      mov_cur
+/*      
+ * mov_cur - moves the mouse cursor to its new location
+ *           unless the cursor is currently hidden.
  *
- *      This routine moves the mouse cursor to its new location
- *      unless the cursor is currently hidden.
+ * Inputs:
+ *    d0 = new x-coordinate for mouse cursor
+ *    d1 = new y-coordinate for mouse cursor
  *
- *      Inputs:
- *         d0 = new x-coordinate for mouse cursor
- *         d1 = new y-coordinate for mouse cursor
+ * Outputs:        None
  *
- *      Outputs:        None
- *
- *      Registers Modified:     None
+ * Registers Modified:     None
  */
 
 /*

@@ -308,9 +308,7 @@ void biosmain(void)
     trap_1( 0x0e , defdrv );    /* Set boot drive */
 
     /* execute Reset-resistent PRGs */
-#if 0
-    font_init();                /* again, to fake STonX */
-#endif
+
     initinfo();                 /* show initial config information */
     
     cursconf(1, 0);             /* switch on cursor via XBIOS*/

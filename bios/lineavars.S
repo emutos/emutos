@@ -88,9 +88,9 @@
 
 /* Font related VDI variables */
 
-                .ds.w   1       // -908 start angle
+                .ds.l   1       // -910 start angle
 _cur_font:      .ds.l   1       // -906 current VDI font
-                .ds.w   23      // -902
+                .ds.w   46      // -902
 
 
 /* The mouse form storage area: */
@@ -98,7 +98,7 @@ _cur_font:      .ds.l   1       // -906 current VDI font
 mouse_cdb:
 m_pos_hx:       .ds.w   1       // -856 (cdb+0) Mouse hot spot - x coord
 m_pos_hy:       .ds.w   1       // -854 (cdb+2) Mouse hot spot - y coord
-                .ds.w   1       // -852 m_planes?
+m_planes:       .ds.w   1       // -852 (cdb+4) Writing mode for mouse pointer
 m_cdb_bg:       .ds.w   1       // -850 (cdb+6) Mouse background color as pel value
 m_cdb_fg:       .ds.w   1       // -848 (cdb+8) Mouse foreground color as pel value
 mask_form:      .ds.w   32      // -846 (cdb+10) Storage for mouse mask and cursor
@@ -107,15 +107,15 @@ mask_form:      .ds.w   32      // -846 (cdb+10) Storage for mouse mask and curs
 /* Extended workstation information */
 
 _INQ_TAB:
-                .ds.w   45      // -782
+                .ds.w   45      // -782 information returned from a vq_extnd() 
+                .ds.w   1       // -694 reserved WORD
 
 
 /* Workstation information */
 
 _DEV_TAB:
-                .ds.w   1       // -692 screen width in pixels
-                .ds.w   1       // -690 screen heigth in pixels
-                .ds.w   43      // -688 
+                .ds.w   45      // -692 information returned from a v_opnwk()
+                .ds.w   1       // -604 reserved WORD
 
 
 /* Mouse data */
@@ -128,7 +128,7 @@ _MOUSE_BT:      .ds.w   1       // -596 mouse button state
 
 /* RGB values for colors 0-15 */
 
-REQ_COL:        .ds.w   48      // -594
+REQ_COL:        .ds.w   48      // -594 48 WORDs of RGB data (color registers)
 
 /* Workstation PTSOUT information */
 
@@ -145,9 +145,9 @@ _line_cw:       .ds.w   1       // -438 Width associated with q_circle data
 _loc_mode:      .ds.w   1       // -436 input mode, locator
                 .ds.b   80      // some space (input mode???)
 _num_qc_lines:  .ds.w   1       // -354 Number of lines making up wide line - not sure if right here
+
 _str_mode:      .ds.w   1       // -352 input mode, string
 _val_mode:      .ds.w   1       // -350 input mode, valuator
-
 _cur_ms_stat:   .ds.b   1       // -348 current mouse status
                 .ds.b   1
 _disab_cnt:     .ds.w   1       // -346 disable depth count. (>0 => disabled)
@@ -159,7 +159,7 @@ sav_cxy:        .ds.w   2       // -338 save area for cursor cell coords.
 retsav:         .ds.l   1       // ??? I'm not sure if this is right here
 save_len:       .ds.w   1       // -330
 save_addr:      .ds.l   1       // -328 return address GEMDOS call
-save_stat:      .ds.w   1       // -324
+save_stat:      .ds.l   1       // -324
 
 /* Sprite save buffer */
 

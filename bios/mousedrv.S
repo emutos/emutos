@@ -38,6 +38,22 @@
 
 
 /*
+ * testmsg - print a test message
+ */
+
+testmsg:
+        .ascii "================== mouse button was pressed.\n\0"
+        .even
+
+printtestmsg:
+        pea     testmsg
+        jsr     _kprintf
+        addq    #4,sp
+	rts
+
+
+
+/*
  * _mouse_int - Mouse interrupt routine
  * entry:       a0 = address of mouse buffer from aciavecs.S
  * exit:        none                   
@@ -49,11 +65,11 @@ _mouse_int:
         bne     ms_exit         // just exit.
 
         movem.l d0-d7/a0-a6, -(sp)      // save registers used
-        
-        move.b  (a0), d0                // see if we have a mouse packet
-        move.b  d0, d1                  // save packet
-        and.b   #0xf8, d1               // mask out for ...
-        cmp.b   #0xf8, d1               // relative mouse packet header?
+
+        move.b  (a0), d0        // see if we have a mouse packet
+        move.b  d0, d1          // save packet
+        and.b   #0xf8, d1       // mask out for ...
+        cmp.b   #0xf8, d1       // relative mouse packet header?
 
         bne     ms_done
 
@@ -63,7 +79,7 @@ _mouse_int:
         bset    #1, d0          // set bit 0 for left button 
 
 no_left:
-        move.b  _cur_ms_stat,d1  // get previous mouse state
+        move.b  _cur_ms_stat,d1 // get previous mouse state
 
         and.w   #3,d1           // mask out state codes bits 6,7
         cmp.b   d1,d0           // has button state changed
@@ -80,12 +96,12 @@ no_left:
         ror.b   #2, d1          // put deltas in bits 6 & 7
         or.b    d1, d0          // combine deltas and states
 
-        move.b  d0, _cur_ms_stat // store change in button stat
+        move.b  d0,_cur_ms_stat // store change in button stat
 
 xy_update:
-        move.b  1(a0), d0
-        or.b    2(a0), d0
-        bne     new_coord
+        move.b  1(a0), d0       // get new relative x pos
+        or.b    2(a0), d0       // get new relative y pos
+        bne     new_coord       // just check for movement
 
         bclr.b  #5, _cur_ms_stat // no motion clear motion status
         bra     ms_done         // no change done bye-bye
@@ -105,6 +121,7 @@ new_coord:
         add.w   d3, d1          // d1 contains new x coordinate
 
         bsr     scrn_clip
+
         move.l  _user_mot,a1    // get user routine address
         jsr     (a1)            // call user to modify x,y
 
@@ -112,9 +129,10 @@ new_coord:
 
         move.w  d0,_GCURX       // save new X location
         move.w  d1,_GCURY       // save new y location
-        move.l  _user_cur,a1    // get user routine address
 
+        move.l  _user_cur,a1    // get user routine address
         jsr     (a1)            // call user to draw cursor
+
                                 // d0 contains new x position
                                 // d1 contains new y position
 ms_done:

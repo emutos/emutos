@@ -751,3 +751,7 @@ Start... early ages
 13. Apr. 2002
 - doc/vdibind.txt - added documentation for vdi routine implementation (MAD)
 - doc/vdimouse.S - put all mouse related stuff here in (MAD)
+
+14. Apr. 2002
+- bios/lineavars.S - corrected length and memory position of vars (MAD)
+
