@@ -344,3 +344,6 @@ Start... early ages
   all lowlevel IKBD functions. STonX boots EmuTOS again. (joy)
 - changed back all BYTE to char in bdos/*.[ch] (MAD)
 - added/marked up some comments in bios/nvram.c (MAD)
+
+09. Dec. 2001
+- standalone command.prg (added replacement _() and N_()) (LVL)
