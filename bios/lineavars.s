@@ -1,3 +1,9 @@
+| ===========================================================================
+| ==== linea vars - Graphics related system variables
+| ===========================================================================
+
+
+
 		.bss
 
 | ===========================================================================
@@ -48,7 +54,6 @@
 
 | **FIXME: There are still lots of variables missing here...**
 
-
 GCURX:		.ds.w	1	| -602	MiNT needs GCURX and GCURY
 GCURY:		.ds.w	1	| -600	(the current mouse position)
 M_HID_CT:	.ds.w	1	| -598
@@ -62,15 +67,15 @@ def_font:	.ds.l	1	| -460
 font_ring:	.ds.l	4	| -456
 ini_font_count:	.ds.w	1	| -440
 
-		.ds.b	90	| Some free space (??)
+		.ds.b	90	| some free space (??)
 
-cur_ms_stat:	.ds.b	1	| -348	Current mouse status
+cur_ms_stat:	.ds.b	1	| -348	current mouse status
 		.ds.b	1
-disab_cnt:	.ds.w	1	| -346
-newx:		.ds.w	1	| -344	New mouse x&y position
+disab_cnt:	.ds.w	1	| -346  disable depth count. (>0 => disabled)
+newx:		.ds.w	1	| -344	new mouse x&y position
 newy:		.ds.w	1
-draw_flag:	.ds.b	1	| -340	Non-zero means draw mouse form on vblank
-mouse_flag:	.ds.b	1	| -339	Non-zero if mouse ints disabled
+draw_flag:	.ds.b	1	| -340	non-zero means draw mouse form on vblank
+mouse_flag:	.ds.b	1	| -339	non-zero if mouse ints disabled
 sav_cxy:	.ds.w	2	| -338	save area for cursor cell coords.
 save_len:	.ds.w	1	| -330
 save_addr:	.ds.l	1	| -328
@@ -81,27 +86,29 @@ tim_chain:	.ds.l	1	| -62
 user_but:	.ds.l	1	| -58	user button vector
 user_cur:	.ds.l	1	| -54	user cursor vector
 user_mot:	.ds.l	1	| -50	user motion vector
-v_cel_ht:	.ds.w	1	| -46
-v_cel_mx:	.ds.w	1	| -44	Needed by MiNT: columns on the screen minus 1
-v_cel_my:	.ds.w	1	| -42	Needed by MiNT: rows on the screen minus 1
-v_cel_wr:	.ds.w	1	| -40	Needed by MiNT: length (in bytes) of a line of characters
-v_col_bg:	.ds.w	1	| -38
-v_col_fg:	.ds.w	1	| -36
-v_cur_ad:	.ds.l	1	| -34
+v_cel_ht:	.ds.w	1	| -46   cell height (width is 8)
+v_cel_mx:	.ds.w	1	| -44	needed by MiNT: columns on the screen minus 1
+v_cel_my:	.ds.w	1	| -42	needed by MiNT: rows on the screen minus 1
+v_cel_wr:	.ds.w	1	| -40	needed by MiNT: length (in bytes) of a line of characters
+v_col_bg:	.ds.w	1	| -38   current background color 
+v_col_fg:	.ds.w	1	| -36   current foreground color 
+v_cur_ad:	.ds.l	1	| -34   current cursor address  
 v_cur_of:	.ds.w	1	| -30
-v_cur_cx:	.ds.w	1	| -28
-v_cur_cy:	.ds.w	1	| -26
+v_cur_cx:	.ds.w	1	| -28   current cursor cell x 
+v_cur_cy:	.ds.w	1	| -26   current cursor cell y
 v_period:	.ds.b	1	| -24
-v_cur_tim:	.ds.b	1	| -23
-v_fnt_ad:	.ds.l	1	| -22
-v_fnt_nd:	.ds.w	1	| -18
-v_fnt_st:	.ds.w	1	| -16
-v_fnt_wr:	.ds.w	1	| -14
-v_hz_rez:	.ds.w	1	| -12
-v_off_ad:	.ds.l	1	| -10
-v_stat_0:	.ds.w	1	| -6
-v_vt_rez:	.ds.w	1	| -4
+v_cur_tim:	.ds.b	1	| -23   cursor blink timer.
+v_fnt_ad:	.ds.l	1	| -22   address of current monospace font
+v_fnt_nd:	.ds.w	1	| -18   ascii code of last cell in font
+v_fnt_st:	.ds.w	1	| -16   ascii code of first cell in font
+v_fnt_wr:	.ds.w	1	| -14   font cell wrap 
+v_hz_rez:	.ds.w	1	| -12   horizontal pixel resolution
+v_off_ad:	.ds.l	1	| -10   address of font offset table
+v_stat_0:	.ds.b	1	| -6    video cell system status (was in words)
+                .ds.b	1	|       dummy
+v_vt_rez:	.ds.w	1	| -4    vertical pixel resolution 
 BYTES_LN:	.ds.w	1	| -2
+
 
 
 | ===========================================================================
