@@ -60,7 +60,7 @@ void escfn1()
 
 void escfn2()
 {
-    trap1(wntstr, "\ef\eE");   // hide alpha cursor
+    trap1(wntstr, "\033f\033E");   // hide alpha cursor
     v_clrwk();
 }
 
@@ -72,7 +72,7 @@ void escfn2()
 void escfn3()
 {
     v_clrwk();
-    trap1(wntstr, "\eE\ee");   // show alpha cursor
+    trap1(wntstr, "\033E\033e");   // show alpha cursor
 }
 
 
@@ -83,7 +83,7 @@ void escfn3()
 
 void escfn4()
 {
-    trap1(wntstr, "\eA");   
+    trap1(wntstr, "\033A");   
 }
 
 
@@ -94,7 +94,7 @@ void escfn4()
 
 void escfn5()
 {
-    trap1(wntstr, "\eB");
+    trap1(wntstr, "\033B");
 }
 
 
@@ -105,7 +105,7 @@ void escfn5()
 
 void escfn6()
 {
-    trap1(wntstr, "\eC");
+    trap1(wntstr, "\033C");
 }
 
 
@@ -116,7 +116,7 @@ void escfn6()
 
 void escfn7()
 {
-    trap1(wntstr, "\eD");
+    trap1(wntstr, "\033D");
 }
 
 
@@ -127,7 +127,7 @@ void escfn7()
 
 void escfn8()
 {
-    trap1(wntstr, "\eH");
+    trap1(wntstr, "\033H");
 }
 
 
@@ -138,7 +138,7 @@ void escfn8()
 
 void escfn9()
 {
-    trap1(wntstr, "\eJ");
+    trap1(wntstr, "\033J");
 }
 
 
@@ -149,7 +149,7 @@ void escfn9()
 
 void escfn10()
 {
-    trap1(wntstr, "\eK");      // cursor down
+    trap1(wntstr, "\033K");      // cursor down
 }
 
 
@@ -169,7 +169,7 @@ void escfn11()
 {
     char out[5];
 
-    out[0] = '\e';
+    out[0] = '\033';
     out[1] = 'Y';
     out[2] = 0x20 + INTIN[0];   /* get row number */
     out[3] = 0x20 + INTIN[1];  /* get col number */
@@ -196,7 +196,7 @@ void escfn12()
     char *chr;
 
     cnt = CONTRL[3];            /* get the character count */
-    chr = (char*)&INTIN[0];             /* address of the character array */
+    chr = (char*)&INTIN[0];     /* address of the character array */
 
     while (cnt--) {
         trap1(rawio, chr++);    /*  raw i/o to standard input/output */
@@ -211,7 +211,7 @@ void escfn12()
 
 void escfn13()
 {
-    trap1(wntstr, "\ep");      /* enter reverse video */
+    trap1(wntstr, "\033p");      /* enter reverse video */
 }
 
 
@@ -222,7 +222,7 @@ void escfn13()
 
 void escfn14()
 {
-    trap1(wntstr, "\eq");      /* enter reverse video */
+    trap1(wntstr, "\033q");      /* enter reverse video */
 }
 
 

@@ -166,10 +166,10 @@ WORD cursconf(WORD function, WORD operand)
 {
     switch (function) {
     case 0:
-        cprintf("\ef");                 /* set cursor unvisible */
+        cprintf("\033f");               /* set cursor unvisible */
         break;
     case 1:
-        cprintf("\ee");                 /* set cursor visible */
+        cprintf("\033e");               /* set cursor visible */
         break;
     case 2:
         v_stat_0 &= ~M_CFLASH;          /* unset cursor flash bit */

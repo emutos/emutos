@@ -1409,3 +1409,19 @@ Start... early ages
 17. Apr. 2003
 - util/boot.c - removed 192k size limitation in RAMTOS loader (LVL)
 
+19. Apr. 2003
+- bdos/proc.c - proc_go() now better documented (LVL)
+- tools/mkheader.awk - simpler and smaller replacement of mkheader.c (LVL)
+- doc/country.txt - updated following removal of mkheader.c (LVL)
+- bios/country.h bios/ctrycodes.h - country codes now in separate file (LVL)
+- Makefile - make cvsready now also expands awk files (LVL)
+- bios/sound.c - minor comment editing (LVL)
+- include/asm.h - removed ints_off()/ints_on() macros as I really think their
+  direct use of the stack for storage is unsafe/unportable in conjunction 
+  with a C compiler (LVL)
+- vdi/*.c - replaced ints_off(); ... ints_on(); by the traditional way:
+  WORD old_sr; ... old_sr = set_sr(2700); ... set_sr(old_sr); (LVL)
+- util/miscasm.S - gratuitious optimisation (LVL)
+- bdos/comprimg.S - fixed syntax error in debug stuff (LVL)
+- */*.c - replaced GNU extension '\e' by the proper ANSI '\033' (LVL)
+
