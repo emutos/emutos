@@ -74,6 +74,14 @@ extern LONG membot;
 extern LONG memtop;
 extern LONG themd;
 
+/* if == 0x87654321, means that GEM is present ;
+ * EmuTOS convention : if == 0x1234abcd, means that the TOS
+ * was booted from an autoboot floppy, and so asks to remove
+ * the floppy before going on.
+ */
+#define OS_MAGIC_EJECT 0x1234abcd
+extern LONG os_magic;
+
 extern LONG savptr;
 extern WORD save_area[];
 

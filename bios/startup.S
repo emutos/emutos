@@ -79,6 +79,7 @@
         .global _cartscan
         .global _os_end
         .global _os_beg
+	.global _os_magic
         .global _int_vbl
         .global _int_hbl
         .global _bios
@@ -312,7 +313,7 @@ _os_end:
     dc.l    _end        // os_end, first byte RAM not used by OS
 os_res1:        
     dc.l    _main       // os_res1, reserved
-os_magic:
+_os_magic:
     dc.l    0x0         // os_magic, pointer to GEM's MUPB
 os_date:
     dc.l    0x14062001  // os_date, Date of system build

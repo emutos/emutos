@@ -367,6 +367,16 @@ void biosmain()
 
     trap_1( 0x2b, os_dosdate);  /* set initial date in GEMDOS format */
 
+    /* if TOS in RAM booted from an autoboot floppy, ask to remove the
+     * floppy before going on.
+     */
+    if(is_ramtos) {
+      if(os_magic == OS_MAGIC_EJECT) {
+	cprintf("Please eject the floppy and hit RETURN");
+	bconin2();
+      }
+    }
+
     kprintf("drvbits = %08lx\n", drvbits);
     do_hdv_boot();
     kprintf("drvbits = %08lx, bootdev = %d\n", drvbits, bootdev);
