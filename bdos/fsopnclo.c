@@ -334,7 +334,7 @@ static long makopn(FCB *f, DND *dn, int h, int mod)
         {       /* steal time,date,startcl,fileln */
                 /* LVL xmovs(12,&p2->o_time,&p->o_time); */
                 memcpy(&p->o_time, &p2->o_time, 12);
-                /* not used yet... TBA *********/       /*<<<<<<<<<<<<<*/
+                /* not used yet... TBA *********/      
                 p2->o_thread = p; 
         }
         else
@@ -634,8 +634,8 @@ long ixdel(DND *dn, FCB *f, long pos)
                                                 return(EACCDN);
                                 }
 /*
-? Traverse this file's chain of allocated clusters, freeing them.
-*/
+ * Traverse this file's chain of allocated clusters, freeing them.
+ */
 
         dm = dn->d_drv;
         n = f->f_clust;
@@ -649,8 +649,8 @@ long ixdel(DND *dn, FCB *f, long pos)
         }
 
 /*
-? Mark the directory entry as erased.
-*/
+ * Mark the directory entry as erased.
+ */
 
         fd = dn->d_ofd;
         ixlseek(fd,pos);

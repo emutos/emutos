@@ -140,7 +140,10 @@ static ERROR    pgmld01( FH h , PD *pdptr )
 
     /* calculate program load info */
 
-    flen = (pi->pi_tlen=hd->h01_tlen) + (pi->pi_dlen=hd->h01_dlen) ;
+    pi->pi_tlen=hd->h01_tlen;
+    pi->pi_dlen=hd->h01_dlen;
+    flen = pi->pi_tlen + pi->pi_dlen;
+
     pi->pi_blen = hd->h01_blen ;
     pi->pi_slen = hd->h01_slen ;
     pi->pi_tpalen = p->p_hitpa - p->p_lowtpa - sizeof(PD) ;
@@ -157,7 +160,7 @@ static ERROR    pgmld01( FH h , PD *pdptr )
     if( flen > pi->pi_tpalen  ||  pi->pi_tpalen-flen < pi->pi_blen )
         return( ENSMEM ) ;
 
-    /*  initialize PD fields */
+    /* initialize PD fields */
 
     memcpy(&p->p_tbase, &pi->pi_tbase, 6 * sizeof(long));
 
@@ -184,11 +187,18 @@ static ERROR    pgmld01( FH h , PD *pdptr )
     if( !hd->h01_abs )
     {
         /**********  should change hard coded 0x1c  ******************/
+#if DBGKPGMLD
+        kprintf("BDOS pgmld01: flen:    0x%lx\n", flen) ;
+        kprintf("BDOS pgmld01: pi_slen: 0x%lx\n", pi->pi_slen) ;
+#endif
         r = xlseek(flen+pi->pi_slen+0x1c,h,0);
         if( r < 0L  )
             return( r ) ;
 
         r = xread( h , (long)sizeof(relst) , &relst );
+#if DBGKPGMLD
+        kprintf("BDOS pgmld01: relst: 0x%lx\n", relst) ;
+#endif
         if( r <  0L  )
             return( r ) ;
     }

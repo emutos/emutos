@@ -50,8 +50,7 @@ long    bakbuf[3];      /*  longjump buffer */
 
 static void     ixterm( PD *r )
 {
-    register MD *m,
-    **q;
+    register MD *m, **q;
     register WORD h;
     register WORD i;
 
@@ -140,7 +139,7 @@ long    xexec(WORD flg, char *s, char *t, char *v)
     m = env = 0L ;
 
     /*
-     *  check validity of flg - 1,2 or >5 is not allowed
+     * check validity of flg - 1,2 or >5 is not allowed
      */
 
 #if     DBGPROC
@@ -169,7 +168,8 @@ long    xexec(WORD flg, char *s, char *t, char *v)
     /* LVL xmovs(sizeof(errbuf),errbuf,bakbuf); */
     memcpy(bakbuf, errbuf, sizeof(errbuf));
 
-    if ( (rc = setjmp(errbuf)) )
+    rc = setjmp(errbuf);
+    if ( rc )
     {
         /* Free any memory allocated to this program. */
         if (flg != 4)           /* did we allocate any memory? */
@@ -187,18 +187,15 @@ long    xexec(WORD flg, char *s, char *t, char *v)
         if (!v)
             v = run->p_env;
 
-        /*
-         **  determine minimum
-         */
+        /* determine minimum */
 
         i = envsize( v ) ;
         if( i & 1 )                     /*  must be even        */
             ++i ;
-        /*
-         **  allocate environment
-         */
+        /* allocate environment */
 
-        if (!(env = ffit((long) i,&pmd)))
+        env = ffit((long) i,&pmd);
+        if ( !env )
         {
 #if     DBGPROC
             kprintf("xexec: Not Enough Memory!\n") ;
@@ -208,21 +205,18 @@ long    xexec(WORD flg, char *s, char *t, char *v)
 
         e = (char *) env->m_start;
 
-        /*
-         **  now copy it
-         */
+        /* now copy it */
 
         /* LVL bmove( v , e , i ) ; */
         memcpy(e, v, i);
 
-        /*
-         **  allocate base page
-         */
+        /* allocate base page */
 
         max = (long) ffit( -1L , &pmd ) ;       /*  amount left */
 
         if( max < sizeof(PD) )
-        {       /*  not enoufg even for PD  */
+        {
+            /* not enough even for PD  */
             freeit(env,&pmd);
 #if     DBGPROC
             kprintf("xexec: No Room For Base Pg\n") ;
@@ -230,8 +224,10 @@ long    xexec(WORD flg, char *s, char *t, char *v)
             return(ENSMEM);
         }
 
-        /*  allocate the base page.  The owner of it is either the
-         new process being created, or the parent  */
+        /*
+         * Allocate the base page.  The owner of it is either the
+         * new process being created, or the parent
+         */
 
         m = ffit(max,&pmd);
 
@@ -260,7 +256,8 @@ long    xexec(WORD flg, char *s, char *t, char *v)
 
         for (i = 0; i < NUMSTD; i++)
         {
-            if ((h = run->p_uft[i]) > 0)
+            h = run->p_uft[i];
+            if ( h > 0 )
                 ixforce(i,run->p_uft[i],p);
             else
                 p->p_uft[i] = h;
@@ -291,7 +288,8 @@ long    xexec(WORD flg, char *s, char *t, char *v)
      */
 
     if((flg == 0) || (flg == 3)) {
-        if ( (rc = xpgmld(s, (PD *)t)) )
+        rc = xpgmld(s, (PD *)t);
+        if ( rc )
         {
 #if     DBGPROC
             kprintf("BDOS: xexec - error returned from xpgmld = %ld (0x%lx)\n",rc , rc);
@@ -310,17 +308,17 @@ long    xexec(WORD flg, char *s, char *t, char *v)
         p->p_parent = run;
         spl = (long *) p->p_hitpa;
         *--spl = (long) p;
-        *--spl = 0L; /* bogus retadd */
+        *--spl = 0L; 		/* bogus retadd */
 
         /* 10 regs (40 bytes) of zeroes  */
 
         for (i = 0; i < 10; i++)
             *--spl = 0L;
 
-        *--spl = p->p_tbase; /* text start */
-#if     !M0101082703
+        *--spl = p->p_tbase; 	/* text start */
+#if	!M0101082703
         spw = (WORD *) spl;
-        *--spw = 0; /* startup status reg */
+        *--spw = 0; 		/* startup status reg */
         spl = (long *) spw;
 #else
         *--(WORD *)spl = 0 ;
@@ -351,10 +349,10 @@ long    xexec(WORD flg, char *s, char *t, char *v)
 
 
 /*
- *  x0term - (p_term0 - 0x00)Terminate Current Process
+ * x0term - (p_term0 - 0x00)Terminate Current Process
  *
- *  terminates the calling process and returns to the parent process
- *  without a return code
+ * terminates the calling process and returns to the parent process
+ * without a return code
  */
 
 void    x0term(void)
@@ -363,48 +361,46 @@ void    x0term(void)
 }
 
 /*
- *  xterm - terminate a process
- *      terminate the current process and transfer control to the colling
- *      process.  All files opened by the terminating process are closed.
+ * xterm - terminate a process
  *
- *      Function 0x4C   p_term
+ * terminate the current process and transfer control to the colling
+ * process.  All files opened by the terminating process are closed.
+ *
+ * Function 0x4C	p_term
  */
 
 void    xterm(UWORD rc)
 {
-        PD *r;
+    PD *r;
 
-        (* (WORD(*)()) trap13(5,0x102,-1L))() ; /*  call user term handler */
+    (* (WORD(*)()) trap13(5,0x102,-1L))() ;	/*  call user term handler */
 
-        run = (r = run)->p_parent;
-        ixterm( r );
-        run->p_dreg[0] = rc;
-        gouser();
+    run = (r = run)->p_parent;
+    ixterm( r );
+    run->p_dreg[0] = rc;
+    gouser();
 }
 
 
 /*      
-**  xtermres - 
-**      Function 0x31   p_termres
-*/
+ * xtermres - Function 0x31   p_termres
+ */
 
 WORD    xtermres(long blkln, WORD rc)
 {
-        MD *m,**q;
+    MD *m,**q;
 
-        xsetblk(0,run,blkln);
+    xsetblk(0,run,blkln);
 
-        for (m = *(q = &pmd.mp_mal); m ; m = *q)
-                if (m->m_own == run)
-                {
-                        *q = m->m_link; /* pouf ! like magic */
-                        xmfreblk(m);
-                }
-                else
-                        q = &m->m_link;
+    for (m = *(q = &pmd.mp_mal); m ; m = *q)
+        if (m->m_own == run)
+        {
+            *q = m->m_link; /* pouf ! like magic */
+            xmfreblk(m);
+        }
+        else
+            q = &m->m_link;
 
-        xterm(rc);
-}       
-
-
+    xterm(rc);
+}
 
