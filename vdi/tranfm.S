@@ -1,7 +1,7 @@
 /*
  * tranfm.S - transform raster area from standard to device-specific format
  *
- * Copyright (c) 1999 Caldera, Inc.
+ * Copyright (c) 1991 L. Pruessner, S. Behne, W. Behne
  *               2002 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
@@ -9,39 +9,29 @@
  */
 
 
-#if 1
-#include "vdiconf.h"
-
-
-
-/* Memory form definition block offsets */
-
-#define MF_BAS_AD               0               //memory form base address
-                                                //0 = physical device
-#define MF_WDTH_PIX             4               //form width in pixels 
-#define MF_HGHT_PIX             6               //form height in pixels
-#define MF_WRD_WDTH             8               //form width in words
-#define MF_FORMAT               10              //form format flag
-                                                //0 = device specific, 1 = standard
-#define MF_PLANES               12              //number of memory planes
-
-/* CONTRL array offsets */
-
-#define C_S_MFDB                14              //pointer to source MFDB
-#define C_D_MFDB                18              //pointer to destination MFDB
 
 /* Global Declarations */
 
-        .globl  _vr_trnfm       //TRANSFORFM FORM entry point
+        .globl  _vr_trnfm       		// entry point
 
 /* Global references */
 
-        .globl  _CONTRL         //CONTRL array address
-        .globl  _v_bas_ad       //address of first plane of video screen
-        .globl  _v_lin_wr       //# of words in a screen raster line
-        .globl  _v_planes       //number of video screen planes
-        .globl  _DEV_TAB        //DEVICE TABLE[1] = y resolution - 1    
+        .xdef  _CONTRL         			// CONTRL array address
+
+/* MFDB address offsets in CONTRL array */
+
+#define 	s_addr	        0x0e            // pointer to source MFDB
+#define 	d_addr	        0x12            // pointer to destination MFDB
+
+/* Memory form definition block offsets */
+
+#define 	fd_h		0x06            // form height in pixels
+#define 	fd_wdwidth	0x08            // form width in words
+#define 	fd_stand	0x0a            // form format flag
+#define 	fd_nplanes	0x0c            // number of memory planes
+
         .text
+
 
 
 /*
@@ -69,160 +59,106 @@
  * Input Arguments handle = contrl[6]
  *                 psrcMFDB = contrl[7-8]
  *                 pdesMFDB = contrl[9-10]
- * Registers used  -  D0/D7, A0/A3
+ * Registers used  -  D0/d7, a0/a2
  */
 
 _vr_trnfm:
-        movem.l d2-d7/a2-a3,-(sp)       //save 'C' registers
+	movem.l	d0-d4/d7-a2, -(sp)    
 
 /* Get source and destination MFDB pointers from the user CONTROL array */
 
-        movea.l _CONTRL,a0              //get CONTROL array address
-        move.l  C_S_MFDB(a0),d0         //get source MFDB address
-        bmi.w   exit                    //for an invalid address
-        moveq.l #-1,d1                  //get mask of all ones
-        andi.b  #0xfe,d1                //clear least significant bit of mask
-        and.b   d1,d0                   //force source ptr. even word alignment
-        movea.l d0,a1                   //source MFDB pointer
-        move.l  C_D_MFDB(a0),d0         //get destination MFDB address
-        bmi.w   exit                    //for an invalid address
-        and.b   d1,d0                   //force dest. ptr. even word alignment
-        movea.l d0,a2                   //destination MFDB pointer
+        movea.l _CONTRL,a2              // get CONTROL array address
+        move.l  s_addr(a2),d0           // get source MFDB address
+        bmi     exit                    // for an invalid address
+        move.l  #0xfffffffe,d1          // get mask 
+        and.l   d1,d0                   // force source ptr. even word alignment
+        movea.l d0,a0                   // source MFDB pointer
+        move.l  d_addr(a2),d0           // get source MFDB address
+        bmi     exit                    // for an invalid address
+        and.l   d1,d0                   // force dest. ptr. even word alignment
+        movea.l d0,a1                   // destination MFDB pointer
 
-/* Determine if source is a physical device or a raster area */
-
-        move.l  MF_BAS_AD(a1),d0        //get source form starting address
-        bmi.w   exit                    //for an invalid address
-        and.l   d1,d0                   //force source addr. even word alignment
-        beq.s   s_physcl_dev            //for a physical device
-
-/* Source is device independent( raster area ). */
-
-        move.w  MF_PLANES(a1),d2        //get # of source planes
-        ble.w   exit                    //for an invalid # of planes
-        move.w  MF_HGHT_PIX(a1),d3      //get source form height in pixels
-        ble.w   exit                    //for an invalid form height
-        move.w  MF_WRD_WDTH(a1),d4      //get source form width in words
-        ble.w   exit                    //for an invalid form width
-        clr.l   d5                      //indicate consequetive planes
-        movea.l d0,a0                   //source form starting address
-        bra.s   dest_form               //get destination form parameters
+	moveq	#0, d0			// clear long
+	move.w	fd_nplanes(a0), d0	// source plane count
+	move.w	fd_h(a0), d1		// source line count
+	mulu	fd_wdwidth(a0), d1	// source word count per plane
+	tst.w	fd_stand(a0)		// source device dependant?
+	bne.s	s_physcl_dev            // yes, jump...
+	move.w	#1, fd_stand(a1)	// set standard format flag
+	bra.s	addr
 
 /* Source is device dependent( physical device ). */
 
 s_physcl_dev:
-        movea.l _v_bas_ad,a0            //get screen starting address
-        move.w  _v_planes,d2            //get # of video planes
-        move.w  _v_lin_wr,d3            //get # of bytes in raster line
-        lsr.w   #1,d3                   //get # of words in raster line
-        move.w  _DEV_TAB+2,d4           //get # of raster lines per plane - 1
-        addq.w  #1,d4                   //get # of raster lines per plane
-#if vme10
-        move.l  _v_pl_dspl,d5           //get # of bytes between video planes
-#else
-        moveq.l #2,d5                   // two bytes between video planes
-#endif
+	clr.w	fd_stand(a1)		// source is device dependant!
+	exg	d0, d1			// exchanges planes and word count
 
-/* Determine if destination is a physical device or a raster area */
+addr:
+	movea.l	(a0), a0		// source block address
+	movea.l	(a1), a1		// destination block address
+	subq.l	#1, d0			// at least one plane/word?
+	bmi  	exit
+	move.l	d1, d4
+	subq.l	#1, d4			// word/plane counter
+	bmi.s	exit
+	cmpa.l	a0, a1			// source and dest address same?
+	beq.s	in_place
 
-dest_form:
-        move.l  MF_BAS_AD(a2),d0        //get destination form starting addr.
-        bmi.w   exit                    //for an invalid destination address
-        and.l   d1,d0                   //force dest. addr. even word alignment
-        beq.s   d_physcl_dev            //for a physical device
+	add.l	d1, d1			// distance to next word/plane
 
-/* Destination is device independent( raster area ). */
-
-        movea.l d0,a3                   //get destination starting address
-        clr.l   d6                      //indicate consequetive planes
-        bra.s   plane_len               //calculate words per source plane
-
-/* Destination is device dependent( physical device ). */
-
-d_physcl_dev:
-        movea.l _v_bas_ad,a3            //get screen starting adress
-#if vme10
-        move.l  _v_pl_dspl,d6           //get # of bytes between video planes
-#else
-        moveq.l #2,d6                   // two bytes between video planes
-#endif
-
-/* Calculate the size of the source plane in words */
-
-plane_len:
-        mulu    d3,d4                   //get # of words per source plane
-
-/*
- * Set the destination MFDB format flag to the opposite of the source
- * MFDB format flag.
- */
-
-        tst.w   MF_FORMAT(a1)           //source format flag zero or one?
-        bne.s   clr_flag                //for source format flag = 1
-        move.w  #1,MF_FORMAT(a2)        //set dest. format flag to one
-        bra.s   tran_type               //determine transformation type
-clr_flag:
-        clr.w   MF_FORMAT(a2)           //set dest. format flag to zero
-/*
- * Determine if transformation is completely overlapped( in place ) or
- *  completely non-overlapped( out of place ).
- */
- 
-tran_type:
-        move.l  d6,d3                   //save # of bytes between dest. planes
-        subq.w  #1,d2                   //adjust # of planes to transform
-        subq.w  #1,d4                   //adjust # of words per source plane
-        move.w  d4,d0                   //save # of words per source plane
-        cmpa.l  a0,a3                   //source address = dest. address?
-#if rev_vid
-        beq.s   exit                    //for completely overlapped transform
-#else
-        beq.s   in_place                //for completely overlapped transform
-#endif
-
-/* Transformation is completely non-overlapped */
+/* source and destination address are different */
 
 out_of_place:
-        move.l  a0,d6                   //save source starting address
-        move.l  a3,d7                   //save destination starting address
-        bra.s   out_loop                //transform first plane
-out_plane:
-        add.l   d5,d6                   //advance to next source plane
-        add.l   d3,d7                   //advance to next dest. plane
-        movea.l d6,a0                   //address of next source plane
-        movea.l d7,a3                   //address of next dest. plane
-        move.w  d0,d4                   //# of words to transform
-out_loop:
-#if rev_vid
-        move.w  (a0)+,(a3)+             //word of source written to destination
-#else
-        move.w  (a0)+,d1                //word of source needs to be inverted
-        not.w   d1                      //invert source word
-        move.w  d1,(a3)+                //write inverted source to destination
-#endif
-        dbra    d4,out_loop             //next word of source
-        dbra    d2,out_plane            //transform next plane of source
-        bra     exit                    //all through with transformation
+	movea.l	a1, a2
+	move.l	d0, d3
+d_copy:
+	move.w	(a0)+, (a2)
+	adda.l	d1, a2			// next dest word
+	subq.l	#1, d3
+	bpl.s	d_copy
+	addq.l	#2, a1			// next plane
+	subq.l	#1, d4
+	bpl.s	out_of_place
+	rts
 
-/* Transformation is completely overlapped */
+/* source and destination address are the same */
 
-#if !rev_vid
 in_place:
-        move.l  a0,d6                   //save source starting address
-        bra.s   in_loop                 //transform first plane
-in_plane:
-        add.l   d5,d6                   //advance to next source plane
-        movea.l d6,a0                   //address of next source plane
-        move.w  d0,d4                   //# of words to transform
-in_loop:
-        not.w   (a0)+                   //word of source written to destination
-        dbra    d4,in_loop              //next word of source
-        dbra    d2,in_plane             //transform next plane of source
-#endif
-                                        //all through with transformation
+	subq.l	#1, d4			// just one word/plane?
+	bmi.s	exit
+
+s_loop:
+	moveq	#0, D2
+	move.l	d4, d1			// word/plane counter
+
+bls:
+	adda.l	d0, a0
+	lea	2(a0, d0.l), a0
+	move.w	(a0), D5
+	movea.l	a0, a1
+	movea.l	a0, a2
+	add.l	d0, D2
+	move.l	D2, d3
+	bra.s	s_next
+
+s_copy:
+	movea.l	a1, a2
+	move.l	-(a1), (a2)             // shift all by one word
+
+s_next:
+	subq.l	#1, d3
+	bpl.s	s_copy
+	move.w	D5, (a1)
+
+dbfs:
+	subq.l	#1, d1
+	bpl.s	bls
+	movea.l	a2, a0
+	subq.l	#1, d0
+	bpl.s	s_loop
+
 exit:
-        movem.l (sp)+,d2-d7/a2-a3       //restore 'C' registers
-        rts                             //return to 'C' calling procedure
+	movem.l	(sp)+, d0-d4/d7-a2
+	rts
 
         .end
-#endif

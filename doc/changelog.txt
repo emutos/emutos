@@ -1093,3 +1093,6 @@ Start... early ages
 20. Sep. 2002
 - vdi/monout.c - abline() bugs fixed. Thanks, Johan! (MAD)
 
+21. Sep. 2002 
+- vdi/tranfm.S - vr_trnfm() implemented (MAD)
+
