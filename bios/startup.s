@@ -189,10 +189,6 @@
         .xdef   aux_stat      
         .xdef   aux_vec       
         .xdef   memval3       
-        .xdef   bconstat_vec  
-        .xdef   bconin_vec    
-        .xdef   bcostat_vec   
-        .xdef   bconout_vec  
 
         .xdef   _kprint
 

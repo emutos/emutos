@@ -45,7 +45,7 @@ OBJDUMP=m68k-atari-mint-objdump
 # source code in bios/
 # Note: tosvars.o must be first object linked.
 
-BIOSCSRC = kprint.c xbios.c bios.c clock.c fnt8x8.c fnt8x16.c mfp.c \
+BIOSCSRC = kprint.c xbios.c chardev.c bios.c clock.c fnt8x8.c fnt8x16.c mfp.c \
            version.c midi.c ikbd.c
 BIOSSSRC = tosvars.s startup.s lineavars.s vectors.s aciavecs.s \
            memory.s linea.s conout.s

@@ -1,7 +1,7 @@
 /*
  *  biosc.c - C portion of BIOS initialization and front end
  *
- * Copyright (c) 2001 Lineo, Inc.
+ * Copyright (c) 2001 Lineo, Inc. and
  *
  * Authors:
  *  SCC     Steve C. Cavender
@@ -28,43 +28,42 @@
 #include "mfp.h"
 
 /*==== Defines ============================================================*/
-#define	DBGBIOSC        TRUE
+#define DBGBIOSC        TRUE
 
-#define	 HAVE_CON  TRUE
-#define	 HAVE_SER  FALSE
-#define	 HAVE_PAR  FALSE
-#define	 HAVE_MOU  FALSE
-#define	 HAVE_DSK  FALSE
+#define  HAVE_CON  TRUE
+#define  HAVE_SER  FALSE
+#define  HAVE_PAR  FALSE
+#define  HAVE_MOU  FALSE
+#define  HAVE_DSK  FALSE
 
-#ifndef	COMMENT
-#define	COMMENT	0
+#ifndef COMMENT
+#define COMMENT 0
 #endif
 
-#define	M0101060301     FALSE
+#define M0101060301     FALSE
 
-#define	PRTVER 0        /* set true to print bdos & bios time/date version */
+#define PRTVER 0        /* set true to print bdos & bios time/date version */
 
-#define SUPSIZ 1024	/* common supervisor stack size (in words) */
+#define SUPSIZ 1024     /* common supervisor stack size (in words) */
 
 
 /*==== External declarations ==============================================*/
+
 extern WORD os_dosdate;    /* Time in DOS format */
 extern BYTE *biosts ;         /*  time stamp string */
 
 
 
 #if HAVE_SIO
-extern LONG sinstat();		/* found in siostat.c */
+extern LONG sinstat();          /* found in siostat.c */
 #endif
 
-extern void cputc(WORD);        /* found in conout.s */
+extern LONG format();           /* found in disk.c */
 
-extern LONG format();		/* found in disk.c */
+extern BPB vme_dpb [];          /* found in disk.c */
 
-extern BPB vme_dpb [];		/* found in disk.c */
-
-extern LONG tticks;		/* found in startup.s */
-extern LONG trap_1();		/* found in startup.s */
+extern LONG tticks;             /* found in startup.s */
+extern LONG trap_1();           /* found in startup.s */
 extern LONG drvbits;            /* found in startup.s */
 extern MD b_mdx;                /* found in startup.s */
 
@@ -79,25 +78,33 @@ extern LONG drv_rw(WORD r_w,            /* found in startup.s */
 
 extern void clk_init(void);     /* found in clock.c */
 
-//EXTERN void siolox();
-//EXTERN void moulox();
-//EXTERN void clklox();
-
 extern LONG oscall();           /* This jumps to BDOS */
-extern LONG osinit() ;
+extern LONG osinit();
+
+
+extern void chardev_init();      /* found in chardev.c */
+
+/* Arrays of BIOS function pointers for fast function calling */
+extern LONG (*bconstat_vec[])(void);
+extern LONG (*bconin_vec[])(void);
+extern void (*bconout_vec[])(WORD, WORD);
+extern LONG (*bcostat_vec[])(void);
 
 
 
+/*==== Declarations =======================================================*/
 
-#if	DEFDRV == 0
-    static BYTE env[] = "COMSPEC=a:\\command.prg\0";
+#if     DEFDRV == 0
+static BYTE env[] = "COMSPEC=a:\\command.prg\0";
 #else
-    static BYTE env[] = "COMSPEC=c:\\command.prg\0";
+static BYTE env[] = "COMSPEC=c:\\command.prg\0";
 #endif
 
+
+/* Drive specific declarations */
 static WORD defdrv = DEFDRV ;       /* default drive number (0 = a:, 2 = c:) */
 
-/* BIOS table definitions */
+/* BIOS drive table definitions */
 static WORD exist[4];          /* 1, if drive present */
 static WORD known[4];          /* 1, if disk logged-in */
 
@@ -108,59 +115,21 @@ BCB *bufl[2];   /* buffer lists - two lists:  fat,dir / data */
 
 PFI charvec[5];     /* array of vectors to logical interrupt handlers */
 
-/*== Bios devices prototypes ==============================================*/
-
-LONG bconstat0(void);
-LONG bconstat1(void);
-LONG bconstat2(void);
-LONG bconstat3(void);
-LONG bconstat4(void);
-LONG bconstat5(void);
-LONG bconstat6(void);
-LONG bconstat7(void);
-
-LONG bconin0(void);
-LONG bconin1(void);
-LONG bconin2(void);
-LONG bconin3(void);
-LONG bconin4(void);
-LONG bconin5(void);
-LONG bconin6(void);
-LONG bconin7(void);
-
-void bconout0(WORD, WORD);
-void bconout1(WORD, WORD);
-void bconout2(WORD, WORD);
-void bconout3(WORD, WORD);
-void bconout4(WORD, WORD);
-void bconout5(WORD, WORD);
-void bconout6(WORD, WORD);
-void bconout7(WORD, WORD);
-
-LONG bcostat0(void);
-LONG bcostat1(void);
-LONG bcostat2(void);
-LONG bcostat3(void);
-LONG bcostat4(void);
-LONG bcostat5(void);
-LONG bcostat6(void);
-LONG bcostat7(void);
-
-extern LONG (*bconstat_vec[])(void);
-extern LONG (*bconin_vec[])(void);
-extern void (*bconout_vec[])(WORD, WORD);
-extern LONG (*bcostat_vec[])(void);
 
 
 /*==== BIOS initialization ================================================*/
 /*
-**	called from startup.s, this routine will do necessary bios initialization
-**	that can be done in hi level lang.  startup.s has the rest.
-*/
+ *      called from startup.s, this routine will do necessary bios initialization
+ *      that can be done in hi level lang.  startup.s has the rest.
+ */
 
 void biosinit()
 {
     /*==== set up logical interrupt handlers for character devices =========*/
+    chardev_init();             /* Initialize character devices */
+
+
+    /* Are these still needed? (MAD) */
     charvec[0] = (PFI) 0;
     charvec[1] = (PFI) 0;   /* siolox - disabled */
     charvec[2] = (PFI) 0;
@@ -177,37 +146,6 @@ void biosinit()
     known[1] = 0;       /* not loggend in */
     known[2] = 0;       /* not loggend in */
     known[3] = 0;       /* not loggend in */
-
-
-/*==== initialize components ==============================================*/
-
-/*    con_init();          initialize the system console */
-
-    /* print, what has been done till now (fake) */
-    cprintf("[ OK ] Entered supervisormode ...\n\r");
-    cprintf("[ OK ] Configured memory ...\n\r");
-    cprintf("[ OK ] Initialized video shifter ...\n\r");
-    cprintf("[ OK ] Soundchip initialized ...\n\r");
-    cprintf("[ OK ] Floppy deselected ...\n\r");
-
-    /* now do the remaining things */
-    mfp_init();         /* init MFP, timers, USART */
-    kbd_init();         /* init keyboard, disable mouse and joystick */
-    midi_init();        /* init MIDI acia so that kbd acia irq works */
-    clk_init();         /* init clock (dummy for emulator) */
-
-
-#if HAVE_SIO
-    m400init();	  /* initialize the serial I/O ports */
-#endif
-
-#if HAVE_PAR
-    m410_init();  /* initialize the parallel printer ports */
-#endif
-
-#if HAVE_DSK
-    initdsks();   /* send disk config info to disk controller */
-#endif
 
     /* set up sector buffers */
 
@@ -230,46 +168,39 @@ void biosinit()
 
     /* initialize the buffer list pointers */
     
-    bufl[BI_FAT] = &bcbx[0]; 			/* fat buffers */
-    bufl[BI_DATA] = &bcbx[2]; 			/* dir/data buffers */
+    bufl[BI_FAT] = &bcbx[0];                    /* fat buffers */
+    bufl[BI_DATA] = &bcbx[2];                   /* dir/data buffers */
 
-    /* initialise bios device functions */
 
-    bconstat_vec[0] = bconstat0;
-    bconstat_vec[1] = bconstat1;
-    bconstat_vec[2] = bconstat2;
-    bconstat_vec[3] = bconstat4;    /* IKBD and MIDI bconstat swapped */
-    bconstat_vec[4] = bconstat3;
-    bconstat_vec[5] = bconstat5;
-    bconstat_vec[6] = bconstat6;
-    bconstat_vec[7] = bconstat7;
 
-    bconin_vec[0] = bconin0;
-    bconin_vec[1] = bconin1;
-    bconin_vec[2] = bconin2;
-    bconin_vec[3] = bconin3;
-    bconin_vec[4] = bconin4;
-    bconin_vec[5] = bconin5;
-    bconin_vec[6] = bconin6;
-    bconin_vec[7] = bconin7;
-    
-    bconout_vec[0] = bconout0;
-    bconout_vec[1] = bconout1;
-    bconout_vec[2] = bconout2;
-    bconout_vec[3] = bconout3;
-    bconout_vec[4] = bconout4;
-    bconout_vec[5] = bconout5;
-    bconout_vec[6] = bconout6;
-    bconout_vec[7] = bconout7;
+    /* print, what has been done till now (fake) */
 
-    bcostat_vec[0] = bcostat0;
-    bcostat_vec[1] = bcostat1;
-    bcostat_vec[2] = bcostat2;
-    bcostat_vec[3] = bcostat3;
-    bcostat_vec[4] = bcostat4;
-    bcostat_vec[5] = bcostat5;
-    bcostat_vec[6] = bcostat6;
-    bcostat_vec[7] = bcostat7;
+    cprintf("[ OK ] Entered supervisormode ...\n\r");
+    cprintf("[ OK ] Configured memory ...\n\r");
+    cprintf("[ OK ] Initialized video shifter ...\n\r");
+    cprintf("[ OK ] Soundchip initialized ...\n\r");
+    cprintf("[ OK ] Floppy deselected ...\n\r");
+
+    /* initialize components */
+
+    mfp_init();         /* init MFP, timers, USART */
+    kbd_init();         /* init keyboard, disable mouse and joystick */
+    midi_init();        /* init MIDI acia so that kbd acia irq works */
+    clk_init();         /* init clock (dummy for emulator) */
+
+
+#if HAVE_SIO
+    m400init();   /* initialize the serial I/O ports */
+#endif
+
+#if HAVE_PAR
+    m410_init();  /* initialize the parallel printer ports */
+#endif
+
+#if HAVE_DSK
+    initdsks();   /* send disk config info to disk controller */
+#endif
+
 
     /* returning to assembler patch OS via cartridge */
 }
@@ -277,10 +208,10 @@ void biosinit()
 
 /*
  *  biosmain - c part of the bios init code
- *	inits the disk buffer cache.
- *	invokes the bdos init code
- *	possibly prints bdos date/version string
- *	exec the CLI
+ *      inits the disk buffer cache.
+ *      invokes the bdos init code
+ *      possibly prints bdos date/version string
+ *      exec the CLI
  */
 
 void biosmain()
@@ -326,6 +257,8 @@ void bios_null(UWORD x , UWORD y , BYTE * ptr )
     ++ptr ;
 }
 
+
+
 /**
  * bios_0 - (getmpb) Load Memory parameter block
  *
@@ -363,11 +296,11 @@ void bios_0(MPB *mpb)
  *
  *
  * Returns status in D0.L:
- *  -1	device is ready
- *   0	device is not ready
+ *  -1  device is ready
+ *   0  device is not ready
  */
 
-LONG bios_1(WORD handle)	/* GEMBIOS character_input_status */
+LONG bios_1(WORD handle)        /* GEMBIOS character_input_status */
 {
     return bconstat_vec[handle & 7]() ;
 }
@@ -430,6 +363,7 @@ LONG bios_4(WORD r_w, BYTE *adr, WORD numb, WORD first, WORD drive)
 }
 
 
+
 /**
  * Setexec - set exception vector
  *
@@ -437,17 +371,20 @@ LONG bios_4(WORD r_w, BYTE *adr, WORD numb, WORD first, WORD drive)
 
 LONG bios_5(WORD num, LONG vector)
 {
-  LONG oldvector;
-  LONG *addr = (LONG *) (4L * num);
-  oldvector = *addr;
+    LONG oldvector;
+    LONG *addr = (LONG *) (4L * num);
+    oldvector = *addr;
 
-  kprintf("Bios 5: Setexec(num = 0x%x, vector = 0x%08lx)\n", num, vector);
+#if DBGBIOSC
+    kprintf("Bios 5: Setexec(num = 0x%x, vector = 0x%08lx)\n", num, vector);
+#endif
 
-  if(vector != -1) {
-    *addr = vector;
-  }
-  return oldvector;
+    if(vector != -1) {
+        *addr = vector;
+    }
+    return oldvector;
 }
+
 
 
 /**
@@ -456,8 +393,9 @@ LONG bios_5(WORD num, LONG vector)
 
 LONG bios_6()
 {
-    return(20L);	/* system timer is 50 Hz so 20 ms is the period */
+    return(20L);        /* system timer is 50 Hz so 20 ms is the period */
 }
+
 
 
 /**
@@ -477,7 +415,7 @@ LONG bios_7(WORD drive)
     if(drive <= MAXDSK || exist[drive])
         return((LONG)&vme_dpb[drive]);
     else
-        return(0L);	/* drive doesn't exist */
+        return(0L);     /* drive doesn't exist */
 #endif
     return(0L);
 }
@@ -488,15 +426,16 @@ LONG bios_7(WORD drive)
  * bconstat - Read status of output device
  *
  * Returns status in D0.L:
- * -1	device is ready	      
- * 0	device is not ready
+ * -1   device is ready       
+ * 0    device is not ready
  */
 
-/* handle  = 0:PRT 1:AUX 2:CON */
+/* handle  = 0:PRT 1:AUX 2:CON 3:MID 4:KEYB */
 
-LONG bios_8(WORD handle)	/* GEMBIOS character_output_status */
+LONG bios_8(WORD handle)        /* GEMBIOS character_output_status */
 {
-    if(handle>7)  return 0;     /* Illegal handle */
+    if(handle>7)
+        return 0;               /* Illegal handle */
 
     /* compensate for a known BIOS bug: MIDI and IKBD are switched */
     /*    if(handle==3)  handle=4; else if (handle==4)  handle=3;  */
@@ -505,13 +444,15 @@ LONG bios_8(WORD handle)	/* GEMBIOS character_output_status */
     return bcostat_vec[handle]();
 }
 
+
+
 /**
  * bios_9 - (mediach) See, if floppy has changed
  *
  * Returns media change status for specified drive in D0.L:
- *   0	Media definitely has not changed
- *   1	Media may have changed
- *   2	Media definitely has changed
+ *   0  Media definitely has not changed
+ *   1  Media may have changed
+ *   2  Media definitely has changed
  * where "changed" = "removed"
  */
 
@@ -541,17 +482,18 @@ LONG bios_a()
 
 /*
  *  bios_b - (kbshift)  Shift Key mode get/set.
+ *
  *  two descriptions:
- *	o	If 'mode' is non-negative, sets the keyboard shift bits
- *		accordingly and returns the old shift bits.  If 'mode' is
- *		less than zero, returns the IBM0PC compatible state of the
- *		shift keys on the keyboard, as a bit vector in the low byte
- *		of D0
- *	o	The flag parameter is used to control the operation of
- *		this function.  If flag is not -1, it is copied into the
- *		state variable(s) for the shift, control and alt keys,
- *		and the previous key states are returned in D0.L.  If
- *		flag is -1, then only the inquiry is done.
+ *      o       If 'mode' is non-negative, sets the keyboard shift bits
+ *              accordingly and returns the old shift bits.  If 'mode' is
+ *              less than zero, returns the IBM0PC compatible state of the
+ *              shift keys on the keyboard, as a bit vector in the low byte
+ *              of D0
+ *      o       The flag parameter is used to control the operation of
+ *              this function.  If flag is not -1, it is copied into the
+ *              state variable(s) for the shift, control and alt keys,
+ *              and the previous key states are returned in D0.L.  If
+ *              flag is -1, then only the inquiry is done.
  */
 
 LONG bios_b(WORD flag)
@@ -560,15 +502,16 @@ LONG bios_b(WORD flag)
 }
 
 
+
 /**
  * bios_c - character device control channel input
  */
 
 LONG bios_c(WORD handle, WORD length, BYTE *buffer)
 {
-    bios_null( handle, length, buffer ) ;	/*  for lint		*/
     return(ERR);
 }
+
 
 
 /**
@@ -577,9 +520,9 @@ LONG bios_c(WORD handle, WORD length, BYTE *buffer)
 
 LONG bios_d(WORD handle, WORD length, BYTE *buffer)
 {
-    bios_null( handle, length, buffer) ;	/* for lint  */
     return(ERR);
 }
+
 
 
 /**
@@ -588,9 +531,9 @@ LONG bios_d(WORD handle, WORD length, BYTE *buffer)
 
 LONG bios_e(WORD drive, WORD length, BYTE *buffer)
 {
-    bios_null( drive , length , buffer ) ;	/*  for lint	*/
     return(ERR);
 }
+
 
 
 /**
@@ -601,7 +544,7 @@ LONG bios_f(WORD drive, WORD length, BYTE *buffer)
 {
     if ((drive == 0) || (drive == 1))
     {
-        if ((length == 1) && (buffer[0] == 1))	/* disk format */
+        if ((length == 1) && (buffer[0] == 1))  /* disk format */
         {
 #if IMPLEMENTED
             return(format(drive));
@@ -614,15 +557,16 @@ LONG bios_f(WORD drive, WORD length, BYTE *buffer)
 }
 
 
+
 /**
  * bios_10 - character device exchange logical interrupt vector
  */
 
 PFI bios_10(WORD handle, PFI address)
 {
-    PFI	temp;
+    PFI temp;
 
-    if (handle < 5)	/* note hard-coded device count */
+    if (handle < 5)     /* note hard-coded device count */
     {
         temp = charvec[handle];
         if (address != (PFI)-1)
@@ -632,110 +576,3 @@ PFI bios_10(WORD handle, PFI address)
     return((PFI)ERR);
 }
 
-/*
- * nullint - an unexpected interrupt has happened
- *
- * The 'a' parameter is really the first word in the information pushed
- * onto the stack for exception processing.
- */
-
-void nullint(WORD a)
-{
-    WORD	*b ;
-
-    b = &a ;
-}
-
-/*== BIOS devices ========================================================*/
-
-LONG bconstat0(void)
-{
-  return 0;
-}
-LONG bconstat1(void)
-{
-  return 0;
-}
-LONG bconstat4(void)
-{
-  return 0;
-}
-LONG bconstat5(void)
-{
-  return 0;
-}
-LONG bconstat6(void)
-{
-  return 0;
-}
-LONG bconstat7(void)
-{
-  return 0;
-}
-
-LONG bconin0(void)
-{
-  return 0;
-}
-LONG bconin1(void)
-{
-  return 0;
-}
-LONG bconin4(void)
-{
-  return 0;
-}
-LONG bconin5(void)
-{
-  return 0;
-}
-LONG bconin6(void)
-{
-  return 0;
-}
-LONG bconin7(void)
-{
-  return 0;
-}
-
-void bconout0(WORD dev, WORD b)
-{
-}
-void bconout1(WORD dev, WORD b)
-{
-}
-void bconout2(WORD dev, WORD b)
-{
-  cputc(b);
-}
-void bconout6(WORD dev, WORD b)
-{
-}
-void bconout7(WORD dev, WORD b)
-{
-}
-
-LONG bcostat0(void)
-{
-  return -1;
-}
-LONG bcostat1(void)
-{
-  return -1;
-}
-LONG bcostat2(void)
-{
-  return -1;
-}
-LONG bcostat5(void)
-{
-  return -1;
-}
-LONG bcostat6(void)
-{
-  return -1;
-}
-LONG bcostat7(void)
-{
-  return -1;
-}
