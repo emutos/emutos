@@ -1,7 +1,7 @@
 /*
- * blkdev.c - BIOS character device funtions
+ * blkdev.c - BIOS block device functions
  *
- * Copyright (c) 2001 by
+ * Copyright (c) 2002 by
  *
  * Authors:
  *  MAD     Martin Doering
