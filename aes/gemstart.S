@@ -78,7 +78,7 @@ _gemdos:
 LF2:
         move.l  (SP)+,LEA2C
 
-        //movem.l d1-d3/a1-a3,saveregs
+        movem.l d2/a2,saveregs
 
         move.w  #0,_DOS_ERR
         move.w  #0,_DOS_AX
@@ -93,7 +93,7 @@ LF2:
         subi.w  #0x1E,_DOS_AX
 L134:
 
-        //movem.l saveregs,d1-d3/a1-a3
+        movem.l saveregs,d2/a2
 
         move.l  LEA2C,-(SP)
         rts
@@ -115,5 +115,5 @@ LEABC:
 
 
 saveregs:
-        .ds.l   14
+        .ds.l   2
 

@@ -25,7 +25,7 @@
 #include "gemlib.h"
 #include "crysbind.h"
 #include "dos.h"
-#include "gem.h"
+#include "gem_rsc.h"
 
 #include "gemrslib.h"
 #include "gemdos.h"
@@ -55,7 +55,11 @@ WORD sc_clrd(WORD isread)
         ptmp = ad_scrap;
         while(LBGET(ptmp))                      /* find null            */
           ptmp++;
+#ifdef USE_GEM_RSC
         rs_gaddr(ad_sysglo, R_STRING, STSCRAP, &ptype);
+#else
+        ptype = (LONG) rs_fstr[STSCRAP];
+#endif
         LSTCPY(ptmp, ptype); 
         ptype = ptmp + LSTRLEN(ptype);                  /* point just past '.'  */
         bitvect = 0;

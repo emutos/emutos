@@ -20,8 +20,8 @@
 #include "machine.h"
 #include "struct.h"
 #include "obdefs.h"
-#include "gem.h"
 #include "gemlib.h"
+
 
 #if I8086
 GLOBAL WORD             D;

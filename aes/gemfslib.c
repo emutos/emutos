@@ -23,7 +23,7 @@
 #include "taddr.h"
 #include "dos.h"
 #include "gemlib.h"
-#include "gem.h"
+#include "gem_rsc.h"
 
 #include "gemdos.h"
 #include "gemoblib.h"

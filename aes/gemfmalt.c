@@ -23,7 +23,7 @@
 #include "obdefs.h"
 #include "taddr.h"
 #include "gemlib.h"
-#include "gem.h"
+#include "gem_rsc.h"
 
 #include "gemgsxif.h"
 #include "gemoblib.h"
@@ -198,7 +198,11 @@ WORD fm_alert(WORD defbut, LONG palstr)
         GRECT           d, t;
 
                                                 /* init tree pointer    */
-        rs_gaddr(ad_sysglo, R_TREE, 1, &tree);
+#ifdef USE_GEM_RSC
+        rs_gaddr(ad_sysglo, R_TREE, DIALERT, &tree);
+#else
+        tree = (LONG) rs_tree[DIALERT];
+#endif
         gsx_mfset(ad_armice);
 
         fm_parse(tree, palstr, &inm, &nummsg, &mlenmsg, &numbut, &mlenbut);
@@ -212,7 +216,11 @@ WORD fm_alert(WORD defbut, LONG palstr)
 
         if (inm != 0)
         {
+#ifdef USE_GEM_RSC
           rs_gaddr(ad_sysglo, R_BITBLK, inm-1, &plong);
+#else
+          plong = (LONG) &rs_fimg[inm-1];
+#endif
           LLSET(OB_SPEC(1), plong);
         }
                                                 /* convert to pixels    */

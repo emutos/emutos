@@ -27,7 +27,7 @@
 #include "basepage.h"
 #include "gemlib.h"
 #include "crysbind.h"
-#include "gem.h"
+#include "gem_rsc.h"
 #include "dos.h"
 
 #include "gemgsxif.h"
@@ -357,8 +357,11 @@ void fs_start()
 {
         LONG            tree;
 
+#ifdef USE_GEM_RSC
         rs_gaddr(ad_sysglo, R_TREE, FSELECTR, &tree);
-
+#else
+        tree = (LONG) rs_tree[FSELECTR];
+#endif
         ad_fstree = tree;
         ob_center(tree, &gl_rfs);
 }
@@ -436,9 +439,10 @@ void ldaccs()
 
 void sh_addpath()
 {
-        LONG            lp, np, new_envr;
-        WORD            oelen, oplen, nplen, fstlen;
-        BYTE            tmp;
+        LONG    lp, np, new_envr;
+        WORD    oelen, oplen, nplen, fstlen;
+        BYTE    tmp;
+        char    tmpstr[MAX_LEN];
 
         lp = ad_envrn;
                                                 /* get to end of envrn  */
@@ -449,7 +453,12 @@ void sh_addpath()
                                                 /* old evironment length*/
         oelen = (lp - ad_envrn) + 2;
                                                 /* new path length      */
+#ifdef USE_GEM_RSC
         rs_gaddr(ad_sysglo, R_STRING, STINPATH, &np);
+#else
+        strcpy(tmpstr, rs_fstr[STINPATH]);
+        np = (LONG) tmpstr;
+#endif
         nplen = LSTRLEN(np);
                                                 /* fix up drive letters */
         lp = np;
@@ -669,15 +678,21 @@ void sh_rdinf()
         WORD    fh, size, ishdisk;
         LONG    pcurr;
         WORD    bvdisk, bvhard, bvect, env;
-        LONG    pfile;
+        char    *pfile;
         BYTE    tmp;
         WORD    i;
+        char    tmpstr[MAX_LEN];
 
 #if MULTIAPP
         BYTE            *pstr;
 #endif
 
+#ifdef USE_GEM_RSC
         rs_gaddr(ad_sysglo, R_STRING, STINFPAT, &pfile);
+#else
+        strcpy(tmpstr, rs_fstr[STINFPAT]);
+        pfile = tmpstr;
+#endif
         LBSET(pfile, D.s_cdir[0] );             /* set the drive        */
 
         fh = dos_open((BYTE *)pfile, ROPEN);
@@ -875,17 +890,26 @@ void gem_main()
                                                 /* load gem resource    */
                                                 /*   and fix it up      */
                                                 /*   before we go       */
+#ifdef USE_GEM_RSC
         if ( !rs_readit(ad_sysglo, ADDR("GEM.RSC")) ) 
         {
            /* bad resource load, so dive out */
            cprintf("gem_main: failed to load GEM.RSC...\n");
         }
         else
+#else
+        gem_rsc_init();
+#endif
         {
                                                 /* get mice forms       */
+#ifdef USE_GEM_RSC
           rs_gaddr(ad_sysglo, R_BIPDATA, 3 + ARROW, &ad_armice);
-          ad_armice = LLGET(ad_armice);
           rs_gaddr(ad_sysglo, R_BIPDATA, 3 + HGLASS, &ad_hgmice);
+#else
+          ad_armice = (LONG) &rs_fimg[3+ARROW];
+          ad_hgmice = (LONG) &rs_fimg[3+HGLASS];
+#endif
+          ad_armice = LLGET(ad_armice);
           ad_hgmice = LLGET(ad_hgmice);
                                                 /* init button stuff    */
           gl_btrue = 0x0;
@@ -905,7 +929,11 @@ void gem_main()
                                                 /* fix up icons         */
           for(i=0; i<3; i++)
           {
+#ifdef USE_GEM_RSC
             rs_gaddr(ad_sysglo, R_BITBLK, i, &tmpadbi);
+#else
+            tmpadbi = (LONG) &rs_fimg[i];
+#endif
             LBCOPY(ad_bi, tmpadbi, sizeof(BITBLK));
             gsx_trans(bi.bi_pdata, bi.bi_wb, bi.bi_pdata, bi.bi_wb, bi.bi_hl);
           }
@@ -925,9 +953,14 @@ void gem_main()
                                                 /* fix up the GEM rsc.  */
                                                 /*   file now that we   */
                                                 /*   have an open WS    */ 
+#ifdef USE_GEM_RSC
           rs_fixit(ad_sysglo);
                                                 /* get st_desk ptr      */
           rs_gaddr(ad_sysglo, R_TREE, 2, &ad_stdesk);   
+#else
+                                                /* get st_desk ptr      */
+          ad_stdesk = (LONG) rs_tree[2];
+#endif
                                                 /* init. window vars.   */
           wm_start();
                                                 /* startup gem libs     */
@@ -962,7 +995,9 @@ void gem_main()
 #endif
                                                 /* free up resource     */
                                                 /*   space              */
+#ifdef USE_GEM_RSC
           rs_free(ad_sysglo);
+#endif
                                                 /* give back the tick   */
           cli();
           gl_ticktime = gsx_tick(tiksav, &tiksav);

@@ -24,8 +24,8 @@
 #include "struct.h"
 #include "basepage.h"
 #include "dos.h"
-#include "gem.h"
 #include "gemlib.h"
+#include "gem_rsc.h"
 
 #include "gemdosif.h"
 #include "gemdos.h"

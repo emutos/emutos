@@ -21,7 +21,7 @@
 #include "taddr.h"
 #include "gemlib.h"
 #include "crysbind.h"
-#include "gem.h"
+#include "gem_rsc.h"
 
 #include "gempd.h"
 #include "gemaplib.h"
@@ -346,7 +346,11 @@ if ((MB_MASK == 3) && (MB_STATE == 1))
                 {
                   if (GR_MNUMBER != 255)                
                   {
+#ifdef USE_GEM_RSC
                     rs_gaddr(ad_sysglo, R_BIPDATA, 3 + GR_MNUMBER, &maddr);
+#else
+                    maddr = (LONG) &rs_fimg[3+GR_MNUMBER];
+#endif
                     maddr = LLGET(maddr);
                   }
                   else

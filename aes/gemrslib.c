@@ -23,6 +23,7 @@
 #include "obdefs.h"
 #include "taddr.h"
 #include "gemlib.h"
+#include "gem_rsc.h"
 
 #include "gemdos.h"
 #include "gemshlib.h"
@@ -479,11 +480,16 @@ WORD rs_load(LONG pglobal, LONG rsfname)
 }
 
 
+/* Get a string from the GEM-RSC */
 BYTE *rs_str(UWORD stnum)
 {
         LONG            ad_string;
 
+#ifdef USE_GEM_RSC
         rs_gaddr(ad_sysglo, R_STRING, stnum, &ad_string);
+#else
+        ad_string = (LONG) rs_fstr[stnum];
+#endif
         LSTCPY(ad_g1loc, ad_string);
         return( &D.g_loc1[0] );
 }

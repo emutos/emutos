@@ -22,7 +22,6 @@
 #include "obdefs.h"
 #include "gsxdefs.h"
 #include "funcdef.h"
-#include "gem.h"
 
 #include "gemdos.h"
 #include "gemrslib.h"
@@ -333,14 +332,6 @@ void gsx_mxmy(WORD *pmx, WORD *pmy)
         *pmx = xrat;
         *pmy = yrat;
 }
-
-
-/*
-WORD gsx_button()
-{
-        return( button );
-}
-*/
 
 
 WORD gsx_kstate()

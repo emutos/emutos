@@ -457,6 +457,7 @@ void ins_char(BYTE *str, WORD pos, BYTE chr, WORD tot_len)
 /*
 *       Used to get strings of 16 bytes or less from resource.
 */
+#if MULTIAPP
 BYTE *op_gname(WORD index)
 {
         LONG    pname;
@@ -465,4 +466,5 @@ BYTE *op_gname(WORD index)
         LSTCPY(ADDR(&gl_rsname[0]), pname);
         return(&gl_rsname[0]);
 }
+#endif
 

@@ -22,7 +22,7 @@
 #include "basepage.h"
 #include "obdefs.h"
 #include "gemlib.h"
-#include "gem.h"
+#include "gem_rsc.h"
 
 #include "geminit.h"
 #include "gempd.h"
@@ -57,11 +57,12 @@ LONG     gl_rbuf;
 */
 WORD ap_init(void)
 {
-        WORD            pid;
-        LONG            scdir;
+        WORD    pid;
+        LONG    scdir;
+        char    tmpstr[MAX_LEN];
 #if MULTIAPP
-        SHELL           *psh;
-        UWORD           chseg;
+        SHELL   *psh;
+        UWORD   chseg;
 #endif
 
         pid = rlr->p_pid;
@@ -74,9 +75,16 @@ WORD ap_init(void)
 
         }
 #endif
+
+#ifdef USE_GEM_RSC
         rs_gaddr(ad_sysglo, R_STRING, STSCDIR, &scdir);
+#else
+        strcpy(tmpstr, rs_fstr[STSCDIR]);
+        scdir = (LONG) tmpstr;
+#endif
         LBSET(scdir, gl_logdrv);                /* set drive letter     */
         sc_write(scdir);
+
         return( pid );
 }
 

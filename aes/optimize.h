@@ -15,6 +15,5 @@ WORD inf_what(LONG tree, WORD ok, WORD cncl);
 void merge_str(BYTE *pdst, BYTE *ptmp, UWORD parms[]);
 WORD wildcmp(BYTE *pwld, BYTE *ptst);
 void ins_char(BYTE *str, WORD pos, BYTE chr, WORD tot_len);
-BYTE *op_gname(WORD index);
 
 #endif

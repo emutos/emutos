@@ -22,8 +22,8 @@
 #include "basepage.h"
 #include "obdefs.h"
 #include "taddr.h"
-#include "gem.h"
 #include "gemlib.h"
+#include "gem_rsc.h"
 
 #include "gemoblib.h"
 #include "gemgraf.h"
@@ -219,10 +219,7 @@ instr(chr, str)
 *       Routine to verify that the character matches the validation
 *       string.  If necessary, upshift it.
 */
-        WORD
-check(in_char, valchar)
-        REG BYTE        *in_char;
-        BYTE            valchar;
+WORD check(BYTE *in_char, BYTE valchar)
 {
         REG WORD        upcase;
         REG WORD        rstr;

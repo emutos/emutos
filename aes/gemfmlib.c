@@ -23,7 +23,7 @@
 #include "obdefs.h"
 #include "taddr.h"
 #include "gemlib.h"
-#include "gem.h"
+#include "gem_rsc.h"
 
 #include "gemwmlib.h"
 #include "gemrslib.h"
