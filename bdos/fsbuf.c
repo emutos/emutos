@@ -68,12 +68,16 @@ char *getrec(int recn, DMD *dm, int wrtflg)
     int n,cl,err;
 
     /* put bcb management here */
-
-    cl = recn >> dm->m_clrlog;  /*  calculate cluster nbr       */
+    /* unsigned added by Petr Stehlik: trying to get 16-bit recn working */
+    cl = (unsigned)recn >> dm->m_clrlog;  /*  calculate cluster nbr       */
 
     if (cl < dm->m_dtl->d_strtcl)
         n = 0;                  /* FAT operat'n */
-    else if (recn < 0)
+    else if (recn < 0
+          && recn >= -4)        /* added by Petr Stehlik: a hack to work around
+                                   the misuse of negative recn for directory
+                                   index. The -4 should be replaced by main dir
+                                   size, I guess */
         n = 1;                  /*  DIR (?)     */
     else
         n = 2;                  /*  DATA (?)    */
