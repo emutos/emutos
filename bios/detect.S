@@ -1,7 +1,7 @@
 /*
  * detect.S - detect CPU and FPU type
  *
- * Copyright (c) 1999, 2001 by Authors:
+ * Copyright (c) 1999, 2002 by Authors:
  *
  *  ???  Jörg Westheide <joerg_westheide@su.maus.de>
  *  ???  Draco  
@@ -21,6 +21,7 @@
  * - have it assemble using option -m68000
  * - address detection (nops for flushing the pipeline) (joy)
  * - 78 columns wide comments only
+ * - made sure that registers a2 and d2 are not modified
  *
  * below is the file. Must we keep the initial notice ?
  */
@@ -56,21 +57,21 @@
 // int check_read_byte(long);
 // returns 0 if reading the address caused a bus error
 _check_read_byte:
-        move.l  sp,a0
+        move.l  sp,d1
         move.l  (8).w,a1
-        lea     berr.w(pc),a2
-        move.l  a2,(8).w
+        lea     berr.w(pc),a0
+        move.l  a0,(8).w
         clr.l   d0
         nop                                     // flush pipeline
 
-        move.l  4(sp),a2
-        tst.b   (a2)
+        move.l  4(sp),a0
+        tst.b   (a0)
         nop                                     // flush pipeline
 
         moveq   #0x01,d0        // passed
 
 berr:   move.l  a1,(8).w
-        move.l  a0,sp
+        move.l  d1,sp
         nop
         rts
 
@@ -90,6 +91,7 @@ berr:   move.l  a1,(8).w
 
 
 _detect_cpu:
+        move.l	a2,-(sp)  
         move.l  (0x10).w,a1     // save the illegal instr. exc. vector
         move.l  (0xf4).w,a2     // save the unimplemented instr. exc. vector
         lea     exit.w(PC),a0
@@ -129,6 +131,7 @@ exit:   move.l  a2,(0xf4).w     // restore stuff and exit
         move.l  a1,(0x10).w
         move.l  a0,sp
         nop                     // flush pipelines
+	move.l	(sp)+,a2
         rts
 
 // FPU type detection, experimental (draco@atari.org).
@@ -164,6 +167,7 @@ exit:   move.l  a2,(0xf4).w     // restore stuff and exit
 
 
 _detect_fpu:
+	move.l	a2,-(sp)
         move.l  sp,a0           // save the ssp
         clr.l   d0              // assume no FPU
         move.l  (0x2c).w,a1     // save the Line-F vector
@@ -215,6 +219,7 @@ fexit:  move.l  a1,(0x2c).w     // restore Line-F
         move.l  a0,sp
         nop                     // flush pipelines
         swap    d0
+	move.l	(sp)+,a2
         rts
 
 
