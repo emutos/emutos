@@ -351,10 +351,10 @@ void v_choice()
 
     if (chc_mode == 0) {
         *(CONTRL + 4) = 1;
-        while (GCHC_KEY() != 1);
+        while (gchc_key() != 1);
         *(INTOUT) = TERM_CH & 0x00ff;
     } else {
-        i = GCHC_KEY();
+        i = gchc_key();
         *(CONTRL + 4) = i;
         if (i == 1)
             *(INTOUT) = TERM_CH & 0x00ff;
@@ -379,7 +379,7 @@ void v_string()
     if (!str_mode) {            /* Request mode */
         TERM_CH = 0;
         for (i = 0; (i < j) && ((TERM_CH & 0x00ff) != 0x000d); i++) {
-            while (GCHR_KEY() == 0);
+            while (gchr_key() == 0);
             *(INTOUT + i) = TERM_CH = TERM_CH & mask;
         }
         if ((TERM_CH & 0x00ff) == 0x000d)
@@ -388,7 +388,7 @@ void v_string()
     } else {                    /* Sample mode */
 
         i = 0;
-        while ((GCHR_KEY() != 0) && (i < j))
+        while ((gchr_key() != 0) && (i < j))
             *(INTOUT + i++) = TERM_CH & mask;
         *(CONTRL + 4) = i;
     }
@@ -400,7 +400,7 @@ void v_string()
 void vq_key_s()
 {
     CONTRL[4] = 1;
-    INTOUT[0] = GSHIFT_S();
+    INTOUT[0] = gshift_s();
 }
 
 

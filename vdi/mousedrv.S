@@ -23,10 +23,7 @@
         .globl  _mouse_int      // mouse interrupt routine
 
         /* Global variables declared here */
-        .globl  _GCHC_KEY
-        .globl  _GCHR_KEY
         .globl  _GLOC_KEY
-        .globl  _GSHIFT_S
 
 
         /* External routines used here */
@@ -290,45 +287,6 @@ ms_done:
         movem.l (sp)+,d0-d7/a0-a6       // restore old registers
 ms_exit:
         rts
-
-
-
-/*
- * _GCHR_KEY - get char for string input
- *
- * entry: none
- * exit:  d0=1     button pressed
- *        d0=0     nothing happened
- * 
- * TERM_CH         16 bit char info
- */
-
-_GCHR_KEY:
-        move.w  #2, -(sp)               // see if a character present at con
-        move.w  #1, -(sp)
-        trap    #13
-        addq.l  #4, sp
-
-        tst.w   d0
-        beq     no_char
-
-        move.w  #2, -(sp)               // get the character from console
-        move.w  #2, -(sp)               // call Bconin
-        trap    #13                     // BIOS
-        addq.l  #4, sp
-
-        move.l  d0, d1
-        swap    d1
-        lsl.w   #8, d1                  // scancode to bit 8-15
-        or.w    d1, d0                  // asciicode to bit 0-7
-
-        move.w  d0,_TERM_CH             // store char
-        move.l  #1,d0
-        rts
-no_char:
-        moveq.l #0,d0
-        rts
-
 
 
 /*

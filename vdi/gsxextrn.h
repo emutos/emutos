@@ -129,10 +129,10 @@ extern void DIS_CUR();
 extern void HIDE_CUR(), text_blt();
 extern void xfm_crfm(), XFM_UNDL(), COPY_RFM(), RECTFILL();
 
-extern WORD GSHIFT_S();
 extern WORD GLOC_KEY();
-extern WORD GCHC_KEY();
-extern WORD GCHR_KEY();
+extern WORD gchr_key();
+extern WORD gchr_key();
+extern WORD gshift_s();
 
 extern WORD vec_len(WORD x, WORD y);
 extern void fill_line(WORD left, WORD right, WORD val);
