@@ -49,8 +49,8 @@ extern WORD os_dosdate;    /* Time in DOS format */
 extern char *biosts ;         /*  time stamp string */
 
 extern VOID c_init();         /* found in conio.c */
-extern long cons_stat();      /* found in conio.c */
-extern long cons_in ();       /* found in conio.c */
+extern long con_stat();      /* found in conio.c */
+extern long con_in ();       /* found in conio.c */
 extern int  shifty;           /* found in conio.c */
 
 
@@ -58,7 +58,7 @@ extern int  shifty;           /* found in conio.c */
 extern long sinstat();		/* found in siostat.c */
 #endif
 
-extern void cons_out(char);     /* found in vt52.c */
+extern void con_out(char);     /* found in vt52.c */
 
 extern long format();		/* found in disk.c */
 
@@ -319,7 +319,7 @@ LONG bios_1(WORD handle)	/* GEMBIOS character_input_status */
         return(NULL);               /* No yet implemented */
 
     case h_CON :
-        return ( cons_stat() );
+        return ( con_stat() );
 
     default:
         return(NULL);		/* non-existent devices never ready */
@@ -352,7 +352,7 @@ LONG bios_2(int handle)
     case h_AUX :
         return(NULL);	        /* not yet implemented */
     case h_CON :
-        return( cons_in() );	/* read the keyboard */
+        return( con_in() );	/* read the keyboard */
     default:
         return(NULL);		/*non-existnt devices ret null*/
 
@@ -384,11 +384,11 @@ VOID bios_3(int handle, char what)
         break;
 
     case h_CON :
-        cons_out(what);		/* output char to the screen	*/
+        con_out(what);		/* output char to the screen	*/
         break;
 
     default:
-        cons_out(what);
+        con_out(what);
         break;
     }
 }

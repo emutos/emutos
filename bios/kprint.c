@@ -19,7 +19,7 @@
 #endif
 
 extern void printout(char *);
-extern void cons_out(char);
+extern void con_out(char);
 
 /* doprintf implemented in doprintf.c. 
  * This is an OLD one, and does not support floating point 
@@ -46,7 +46,7 @@ int cprintf(const char *fmt, ...)
   int n;
   va_list ap;
   va_start(ap, fmt);
-  n = doprintf((void(*)(int))cons_out, fmt, ap);
+  n = doprintf((void(*)(int))con_out, fmt, ap);
   va_end(ap);
   return n;
 }
@@ -135,7 +135,7 @@ halt:
 void cputs(char * s )
 {
 //    while( *s )
-//		cons_out( *s++ ) ;
+//		con_out( *s++ ) ;
 }
 
 void cstatus(ERROR status)

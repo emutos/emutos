@@ -206,11 +206,9 @@
         .xdef   _init_timer
         .xdef   _init_usart
         .xdef   _bssend
+        .xdef   _linea_init
 
 | ==== lineavars.s - Graphics subsystem variables =============================
-        .xdef   v_cel_mx
-	.xdef   v_cel_my
-	.xdef   v_cel_wr
 	.xdef	font_ring
 		
 | ==== vectors.s - Default exception vectors =============================
@@ -498,13 +496,8 @@ initsnd:
         bsr _kprint
         addq #4,sp
 
-
-
 | ==== Setting up Line-a variables ==========================================
-        move.w  #79,v_cel_mx            | 80 columns at the moment
-        move.w  #24,v_cel_my            | 25 rows at the moment
-        move.w  #1280,v_cel_wr          | Size of a text row in bytes
-        
+        bsr _linea_init
 
 | ==== vector setup =========================================================
         move.l #int_vbl, vec_vbl        | Vbl-interr

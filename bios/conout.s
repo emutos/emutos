@@ -22,7 +22,7 @@
 
                 .global _cputc
                 .global _blink
-                .global _esc_init
+                .global _linea_init
        
 
 
@@ -1464,7 +1464,7 @@ gl_f_init:
 | 	 if this routine calls other routines, please ensure this
 |        remains true.
 
-_esc_init:
+_linea_init:
         move.b  sshiftmod, d0           | get video resolution
         and.w   #3, d0                  | isolate bits 0 and 1
         cmp.w   #3, d0                  | is it 3 - color?
