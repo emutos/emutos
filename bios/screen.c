@@ -18,7 +18,7 @@
 #include "screen.h"
 #include "asm.h"
 #include "tosvars.h"
-#include "kprintf.h"
+#include "kprint.h"
 
 /* private prototypes */
 
