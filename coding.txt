@@ -1,0 +1,72 @@
+This files is about how to do coding for EmuTOS and to use what coding
+styles. It is far from beeing complete (my most loved sentence!):
+
+Rules for C coding 
+==================
+
+Well, at first these are not much. If you have any recommendations, just write
+them in here, and we can discuss it later.
+
+- Don't use tabs, if you can. If you can not stay away from them, at least
+  set them to 8 spaces - good for most editors and printing tools.
+
+- Use an indention of 4 spaces for all things.
+
+- If you use gnu indent, use it like:
+  indent -kr -ts4   (is this right, I lost the mail???)
+
+
+
+Rules for assembler coding
+==========================
+
+As a general rule, try to ensure that external functions and 
+variables can be accessed from C language. To achieve this:
+- name external symbols with a leading underscore;
+- make sure external functions use CDECL conventions 
+  o parameters passed on the stack, 
+  o registers saved except d0-d1/a0-a1, 
+  o return value in d0
+
+When the TOS specifications or efficiency considerations 
+impose that a routine have special register-parameters 
+conventions, name this routine with no underscore and try 
+to make a C glue for it using CDECL, like in the following 
+example:
+
+  _my_routine:
+    move.w 4(sp),d0
+    move.w 6(sp),d1
+  my_routine:
+    ...
+    rts
+
+(where C code would call my_routine(a,b), and asm code would 
+pass parameters in D0 and D1)
+
+Exceptions to the 'underscore leading' rule are:
+- routines and variables that can only be used from assembler, 
+  and whose addresses need not to be manipulated by C code. 
+  example is the memory configuration routines. 
+  Note: the exception routines will never be *called* by C code,
+  however they will be *accessed* by C code copying their address
+  into the vector.
+- addresses used to represent the names of fields in a structure.
+  example:
+
+    _struct_a:
+    structamemberx:  dc.l 1
+    structamembery:  dc.l 1
+
+  accompanied by the following header:
+
+    extern struct {
+      long x;
+      long y;
+    } struct_a;
+
+
+
+
+
+
