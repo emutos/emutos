@@ -889,3 +889,4 @@ Start... early ages
   vdi/cbssdefs.c - removed. Did put functions to vdi/vdimain.c (MAD)
   vdi/jmptbl.c - removed. Did put tables to vdi/vdimain.c (MAD)
   vdi/jmptbl.h - removed. Did put prototypes to vdi/vdimain.c (MAD)
+- vdi/lisatabl.c - removed. tables distributed to where they belong (MAD)

@@ -120,8 +120,7 @@ UTILSSRC = memset.S memmove.S nlsasm.S setjmp.S miscasm.S stringasm.S
 # source code in vdi/
 #
 
-VDICSRC = vdimain.c vdiinput.c lisatabl.c monobj.c monout.c \
-          text.c seedfill.c bezier.c 
+VDICSRC = vdimain.c vdiinput.c monobj.c monout.c text.c seedfill.c bezier.c 
 VDISSRC = entry.S bitblt.S bltfrag.S copyrfm.S esclisa.S gsxasm1.S \
           gsxasm2.S vdimouse.S textblt.S tranfm.S gsxvars.S
 

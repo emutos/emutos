@@ -43,6 +43,17 @@ void perp_off(WORD * px, WORD * py);
 
 
 
+/* Marker definitions */
+
+static WORD m_dot[] = { 1, 2, 0, 0, 0, 0 };
+static WORD m_plus[] = { 2, 2, 0, -3, 0, 3, 2, -4, 0, 4, 0 };
+static WORD m_star[] = { 3, 2, 0, -3, 0, 3, 2, 3, 2, -3, -2, 2, 3, -2, -3, 2};
+static WORD m_square[] = { 1, 5, -4, -3, 4, -3, 4, 3, -4, 3, -4, -3 };
+static WORD m_cross[] = { 2, 2, -4, -3, 4, 3, 2, -4, 3, 4, -3 };
+static WORD m_dmnd[] = { 1, 5, -4, 0, 0, -3, 4, 0, 0, 3, -4, 0 };
+
+
+
 /*
  * v_clrwk - clear screen
  *

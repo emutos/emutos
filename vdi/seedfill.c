@@ -43,6 +43,7 @@ extern BOOLEAN gotseed;         /* a seed was put in the Q      */
 
 extern WORD get_pix();
 
+static WORD plane_mask[4] = { 1, 3, 7, 15 };
 
 
 /* Prototypes local to this module */
