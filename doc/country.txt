@@ -94,6 +94,8 @@ New country check list
 - if a specific keyboard is needed,
   - add it in bios/country.c (follow instructions there)
   - provide the keyboard layout in a file bios/keyb_*.h
+    (you may use supplied tool dumpkbd.prg to generate such a file from an
+    existing atari ST with the correct keyboard)
 - if a specific language is needed,
   - follow the instructions in doc/nls.txt
 

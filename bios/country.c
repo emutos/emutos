@@ -114,7 +114,7 @@ static int get_charset(void)
 /* To add a keyboard, please do the following:
  * - read doc/country.txt
  * - create a file bios/keyb_xx.h 
- *   (supplied tools dumpkbd.prg and keytbl2c may help)
+ *   (you may use supplied tool dumpkbd.prg)
  * - add a #include "keyb_xx.h" below
  * - add a line in the keyboard table in bios/country.h
  * - add a line in the table below. 
