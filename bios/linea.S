@@ -42,8 +42,13 @@
 
 // ==== External Declarations ================================================
 
-        .global _linea_init     // initialize linea graphics subsystem
-        .global _int_linea       // entry for linea exception
+        .global _con_state_init  	// initialize linea graphics subsystem
+        .global _int_linea       	// entry for linea exception
+        .global _font_init       	// cursor initialisation
+        .global _cur_init       	// cursor initialisation
+        .global _color_init       	// color initialisation
+        .global _resol_set       	// set screen resolution
+        .global _clear_screen       	// do it!
 
 // ==== References ===========================================================
 
@@ -88,10 +93,6 @@ wrong_linea_msg:
 
 
 _linea_0:	
-	
-//        bsr     _linea_init       // init again global linea and font variables.
-//                                // no reset of screen layout patched by emus
-        
 	lea	line_a_vars,a0  // get base address for line a variables
 	move.l  a0,d0
 
@@ -239,13 +240,18 @@ linea_ents:
 
 
 
-// gl_f_init - font globals initialization routine ===========================
-//
-// input:
-//   a0 = ptr to system font header
-//
+/*
+ * _font_init - font globals initialization
+ *
+ * Initialize the fonts
+ *
+ * input:
+ *   (sp) = ptr to system font header
+ */
 
-gl_f_init:
+_font_init:
+	move.l  4(sp),a0
+        lea     _f8x16, a0              // Get pointer to 8x16 font header
         move    FRM_HT(a0),d0           // fetch form height.
         move    d0,v_cel_ht             // init cell height.
         move    _v_lin_wr,d1            // fetch bytes/line.
@@ -266,40 +272,40 @@ gl_f_init:
         move    LAST(a0),v_fnt_nd       // init font end ADE.
         move.l  PDAT(a0),v_fnt_ad       // init font data ptr.
         move.l  POFF(a0),v_off_ad       // init font offset ptr.
+
         rts
 
 
 
-// ==== _linea_init - escape initialization routine.============================
+/*
+ * _con_state_init - initialize the conout state machine
+ */
 
-	
-// LVL:	 checked that this routine only clobbers 'scratch' registers.
-// 	 if this routine calls other routines, please ensure this
-//        remains true.
+_con_state_init:
+        move.l  #normal_ascii, con_state // Init conout state machine
 
-_linea_init:
-        move.b  _sshiftmod, d0           // get video resolution
-        and.b   #3, d0                  // isolate bits 0 and 1
-        cmp.b   #3, d0                  // is it 3 - color?
-        bne     not3                    // no
-        move.w  #2, d0                  // set monochrome resolution
-not3:
-        move.w  d0, -(sp)               // save resolution
-        bsr     resolset                // set video resolution
-        move.w  (sp)+, d0               // restore resolution
-        
-vars_init:
-        lea     _f8x8, a0               // Get pointer to 8x8 font header
-        cmp.b   #2, d0                  // High resolution?
-        bne     lowres                  // no, low resolution
-        lea     _f8x16, a0              // Get pointer to 8x16 font header
-lowres:
-        bsr     gl_f_init               // init the global font variables.
+        rts
 
+
+
+/*
+ * _color_init - initialize the system colors
+ */
+
+_color_init:
         move.w  #-1, v_col_fg           // foreground color := 15.
+        move.w  #0, v_col_bg            // background color := 0.
+
+        rts
+
+
+
+/*
+ * _cur_init - initialize the vt52 cursor
+ */
+
+_cur_init:
         moveq.l #0, d0
-        move.w  d0, v_col_bg            // background color := 0.
-        
         move.w  d0, v_cur_cx            // cursor column 0
         move.w  d0, v_cur_cy            // cursor line 0
         move.w  d0, v_cur_of            // line offset 0
@@ -309,8 +315,16 @@ lowres:
         move.b  #30, v_cur_tim          // .5 second blink counter (@60 Hz vblank).
         move.b  #30, v_period           // .5 second blink rate (@60 Hz vblank).
         move.w  #1, disab_cnt           // cursor disabled 1 level deep.
+	
+        rts
 
-        // ==== Clear screen =====
+
+
+/*
+ * _clear_screen - Clear the screen
+ */
+ 
+_clear_screen:
         move.w  v_col_bg, d0            // load background color
         move.l  _memtop, a0             // Set start of RAM
 scr_loop:
@@ -318,15 +332,15 @@ scr_loop:
         cmp.l   _phystop, a0             // End of BSS reached?
         bne     scr_loop                // if not, clear next word
 
-        move.l  #normal_ascii, con_state // Init conout state machine
-
         rts
 
 
+/*
+ * resol_set - set video resolution
+ */
 
-// ==== resolset - set video resolution ======================================
-
-resolset:
+_resol_set:
+	move.w  4(sp), d0               // get video mode
         moveq.l #0, d1                  
 
         move.b  splanes(pc, d0.w), d1   // Get the number of planes
@@ -361,69 +375,5 @@ sresolx:
 // ==== End ==================================================================
 // ===========================================================================
 
-        .end
-
-
-
-
-// ==== Set temporary screenmem address 0x10000 to videoshifter ==============
-        
-        move.b  #0x1, 0xffff8201 // set hw video base high word
-        move.b  #0x0, 0xffff8203 // set hw video base low word
-
-
-
-// ==== Detect and set graphics resolution ===================================
-
-        move.b 0xffff8260, d0     // Get video resolution from pseudo Hw
-        and.b #3,d0             // Isolate bits 0 and 1
-        cmp.b #3,d0             // Bits 0 and 1 set = invalid
-        bne.s setscrnres        // no -->
-        moveq #2,d0             // yes, set highres, make valid
-setscrnres:
-        move.b d0, _sshiftmod    // Set in sysvar
-
-        move.b #2, 0xffff8260     // Hardware set to highres
-        move.b #2, _sshiftmod    // Set in sysvar
-
-//       jsr 0xfca7c4            // Init screen (video driver???)
-
-        cmp.b #1, sshiftmod             // middle resolution?
-        bne.s initmidres                // nein, -->
-        move.w 0xffff825e, 0xffff8246   // Copy Color 16->4 kopieren
-
-initmidres:
-        move.l  #_main, swv_vec // Set Swv_vec (vector res change) to Reset
-        move.w  #1, _vblsem      // vblsem: VBL freigeben
-
-
-//       pea 0xfffffa00  // Print, what's going on
-//       bsr _kputb
-//       addq #4,sp
-//
-//       btst    #7,0xfffffa01   // detect b/w-monitor pin
-//       beq     low_rez         // if bit set, color monitor 
-//
-//       move.l  #2,d0           // monochrome mode
-//       bra     both_rez
-//low_rez:
-//       move.l #0,d0
-//both_rez:
-//       move.b d0, _sshiftmod    // set mode sysvar
-//       move.w d0, 0xFFFF8260   // and to shifter register
-
-// ==== Set videoshifter address to screenmem ================================
-        
-        move.l  phystop, a0     // get memory top
-        sub.l   #0x8000, a0     // minus screen mem length
-        move.l  a0, _v_bas_ad   // set screen base
-
-        move.b  _v_bas_ad+1, 0xffff8201 // set hw video base high word
-        move.b  _v_bas_ad+2, 0xffff8203 // set hw video base low word
-
-
-        pea msg_shift   // Print, what's going on
-        bsr _kprint
-        addq #4,sp
-
 	.end
+        

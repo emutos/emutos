@@ -94,7 +94,7 @@ VOID midiws(WORD cnt, LONG ptr)
  
 void midi_init(VOID)
 {
-    cprintf("[    ] MIDI ACIA initialized ...\r");
+//    cprintf("[    ] MIDI ACIA initialized ...\r");
 
     /* initialize midi ACIA */
     midi_acia.ctrl =
@@ -106,5 +106,5 @@ void midi_init(VOID)
         ACIA_DIV16|     /* clock/16 */
         ACIA_D8N1S;  /* 8 bit, 1 stop, no parity */
 
-    cstatus(SUCCESS);
+//    cstatus(SUCCESS);
 }
