@@ -1023,3 +1023,6 @@ Start... early ages
 - desk/desk_rsc.c - menu items are automatically adjusted to the right size
   after translation; I don't think this hack would work in the general case
   but for the current desktop it works fine (no sub-menus, icons, ...) (LVL)
+
+16. Aug. 2002
+- vdi/gsxasm1.S - fixed bug in CLC_FLIT (no regs was saved) (MAD)

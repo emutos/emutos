@@ -253,10 +253,17 @@ vl_out:
 //                                                                      //
 /////////////////////////////////////////////////////////////////////////
 
+_CLC_FLIT:
+	// A wrapper, so save the registers
+        movem.l d2-d7/a2-a6,-(sp)
+        bsr.s   clc_flit
+        movem.l (sp)+,d2-d7/a2-a6
+        rts
+
 //
 //      Initialize the pointers and counters.
 //
-_CLC_FLIT:
+clc_flit:
         move.l  _CONTRL,a0      // fetch number of vectors.
         move.w  2(a0),d0
         subq.w  #1,d0           // minus 1 for dbra
@@ -639,8 +646,8 @@ shf_tab:
 //                                                                      //
 /////////////////////////////////////////////////////////////////////////
 
-// Wrapper that also saves the CPU registers:
 _ABLINE:
+	// A wrapper, to save the registers 
         movem.l d2-d7/a2-a6,-(sp)
         bsr.s   abline
         movem.l (sp)+,d2-d7/a2-a6

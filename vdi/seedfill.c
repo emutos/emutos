@@ -63,8 +63,9 @@ void d_contourfill()
     xleft = PTSIN[0];
     oldy = PTSIN[1];
 
-    if (xleft < XMN_CLIP || xleft > XMX_CLIP || oldy < YMN_CLIP
-        || oldy > YMX_CLIP) return;
+    if (xleft < XMN_CLIP || xleft > XMX_CLIP ||
+        oldy < YMN_CLIP  || oldy > YMX_CLIP)
+        return;
 
     search_color = INTIN[0];
 

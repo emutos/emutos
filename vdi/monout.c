@@ -1015,9 +1015,10 @@ void wline()
     }
 
     /* If the ends are arrowed, output them. */
+#if 1
     if ((work_ptr->line_beg | work_ptr->line_end) & ARROWED)
         do_arrow();
-
+#endif
     s_fa_attr();
 
     /* Initialize the starting point for the loop. */
@@ -1028,10 +1029,11 @@ void wline()
     src_ptr = pointer;
 
     /* If the end style for the first point is not squared, output a circle. */
+#if 1
     if (s_begsty != SQUARED) {
         do_circ(wx1, wy1);
     }
-
+#endif
     /* Loop over the number of points passed in. */
 
     for (i = 1; i < numpts; i++) {
@@ -1105,9 +1107,10 @@ void wline()
 
         /* If the terminal point of the line segment is an internal joint, */
         /* output a filled circle.                                         */
+#if 1
         if ((i < numpts - 1) || (s_endsty != SQUARED))
             do_circ(wx2, wy2);
-
+#endif
         /* end point becomes the starting point for the next line segment. */
         wx1 = wx2;
         wy1 = wy2;
@@ -1321,17 +1324,16 @@ void r_fa_attr()
 
 void do_arrow()
 {
-    WORD x_start, y_start, new_x_start, new_y_start;
+    WORD x_start, y_start;
+    WORD new_x_start, new_y_start;
     REG WORD *pts_in;
 
     /* Set up the attribute environment. */
-
     s_fa_attr();
 
     /* Function "arrow" will alter the end of the line segment.  Save the */
     /* starting point of the polyline in case two calls to "arrow" are    */
     /* necessary.                                                         */
-
     pts_in = PTSIN;
     new_x_start = x_start = *pts_in;
     new_y_start = y_start = *(pts_in + 1);
@@ -1351,7 +1353,6 @@ void do_arrow()
         *pts_in = new_x_start;
         *(pts_in + 1) = new_y_start;
     }
-
 
     /* End if:  ending point is arrowed. */
     /* Restore the attribute environment. */
