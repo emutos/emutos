@@ -161,6 +161,16 @@ COBJ = $(BIOSCOBJ) $(BDOSCOBJ) $(UTILCOBJ) $(CONSCOBJ) #$(VDICOBJ)
 OBJECTS = $(SOBJ) $(COBJ) 
 
 #
+# temporary variables, for internal Makefile use
+#
+
+TMP1 = make.tmp1
+TMP2 = make.tmp2
+TMP3 = make.tmp3
+
+TMPS = $(TMP1) $(TMP2) $(TMP3)
+
+#
 # production targets 
 # 
 
@@ -331,9 +341,6 @@ dsm: $(DESASS)
 show: $(DESASS)
 	cat $(DESASS)
 
-TMP1 = tmp1
-TMP2 = tmp2
-
 map: $(OBJECTS)
 	${LD} -Map map -oformat binary -o emutos.img $(OBJECTS) $(LDFLAGS) \
 		$(LDFLROM)
@@ -357,7 +364,7 @@ clean:
 	rm -f ramtos.img boot.prg etos192k.img etosfalc.img mkflop$(EXE) 
 	rm -f bootsect.img emutos.st date.prg dumpkbd.prg keytbl2c$(EXE)
 	rm -f bug$(EXE) po/messages.pot util/langs.c bios/header.h
-	rm -f mkheader$(EXE) tounix$(EXE)
+	rm -f mkheader$(EXE) tounix$(EXE) $(TMPS)
 
 distclean: clean nodepend
 	rm -f Makefile.bak '.#'* */'.#'* 
@@ -368,38 +375,33 @@ distclean: clean nodepend
 # checkindent - check for indent warnings, but do not alter files.
 #
 
-TMP1=indent.tmp1
-TMP2=indent.tmp2
-EMPTY=indent.empty
-
 INDENTFILES = bdos/*.c bios/*.c util/*.c tools/*.c
 
 checkindent:
 	@err=0 ; \
-	touch $(EMPTY) ; \
+	rm -f $(TMP3); touch $(TMP3); \
 	for i in $(INDENTFILES) ; do \
 		$(INDENT) <$$i 2>$(TMP1) >/dev/null; \
-		if cmp -s $(TMP1) $(EMPTY) ; then : ; else\
+		if cmp -s $(TMP1) $(TMP3) ; then : ; else\
 			err=`expr $$err + 1`; \
 			echo in $$i:; \
 			cat $(TMP1); \
 		fi \
 	done ; \
-	rm -f $(EMPTY) $(TMP1); \
+	rm -f $(TMP1) $(TMP3); \
 	if [ $$err -ne 0 ] ; then \
 		echo indent issued warnings on $$err 'file(s)'; \
 		false; \
 	else \
 		echo done.; \
 	fi
-	
 
 indent:
 	@err=0 ; \
-	touch $(EMPTY) ; \
+	rm -f $(TMP3); touch $(TMP3); \
 	for i in $(INDENTFILES) ; do \
 		$(INDENT) <$$i 2>$(TMP1) | expand >$(TMP2); \
-		if cmp -s $(TMP1) $(EMPTY) ; then \
+		if cmp -s $(TMP1) $(TMP3) ; then \
 			if cmp -s $(TMP2) $$i ; then : ; else \
 				echo indenting $$i; \
 				mv $$i $$i~; \
@@ -411,7 +413,7 @@ indent:
 			cat $(TMP1); \
 		fi \
 	done ; \
-	rm -f $(EMPTY) $(TMP1) $(TMP2); \
+	rm -f $(TMP1) $(TMP2) $(TMP3); \
 	if [ $$err -ne 0 ] ; then \
 		echo $$err 'file(s)' untouched because of warnings; \
 		false; \
@@ -425,22 +427,21 @@ indent:
 expand:
 	@for i in `grep -l '	' */*.[chS]` ; do \
 		echo expanding $$i ; \
-		expand <$$i >$(TMP); \
-		mv $(TMP) $$i; \
+		expand <$$i >$(TMP1); \
+		mv $(TMP1) $$i; \
 	done
 
 tounix$(EXE): tools/tounix.c
 	$(NATIVECC) -o $@ $<
-
-HERE = $(shell pwd)
 
 # LVL - I checked that both on Linux and Cygwin passing more than 10000 
 # arguments on the command line works fine. On other systems it might be 
 # necessary to adopt another technique, for example using an find | xargs 
 # approach like that below:
 #
+# HERE = $(shell pwd)
 # crlf:	tounix$(EXE)
-#	find . -name CVS -prune -or -not -name '*~' | xargs $(HERE)/tounix$(EXE)
+#     find . -name CVS -prune -or -not -name '*~' | xargs $(HERE)/tounix$(EXE)
 
 crlf: tounix$(EXE)
 	./tounix$(EXE) * bios/* bdos/* doc/* util/* tools/* po/* include/*
