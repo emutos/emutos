@@ -276,19 +276,15 @@ emutos2.img emutos2.map: $(OBJECTS) Makefile
 
 define sized_image
 @goal=`echo $@ | sed -e 's/[^0-9]//g'`; \
-size=`wc -c < $<`; \
-if [ $$size -gt `expr $$goal \* 1024` ]; \
+size=`wc -c < $<`; goalbytes=`expr $$goal \* 1024`; \
+if [ $$size -gt $$goalbytes ]; \
 then \
-  rm -f $<; \
-  goalbytes=`expr $${goal} \* 1024`; \
   echo "EmuTOS too big for $${goal}K ($$goalbytes bytes): size = $$size"; \
   false; \
 else \
-  echo dd if=/dev/zero of=$@ bs=1024 count=$$goal; \
-  dd if=/dev/zero of=$@ bs=1024 count=$$goal; \
-  echo dd if=$< of=$@ bs=1024 conv=notrunc; \
-  dd if=$< of=$@ bs=1024 conv=notrunc; \
-  rm -f $<; \
+  dd if=/dev/zero of=$@ bs=1024 count=$$goal 2>/dev/null; \
+  dd if=$< of=$@ conv=notrunc 2>/dev/null; \
+  echo "$@ done"; \
 fi
 endef
 
@@ -556,7 +552,7 @@ obj/nlsasm.o: include/i18nconf.h
 
 #
 # ctables.h - the country tables, generated from country.mk, and only
-# included in bios/country.h
+# included in bios/country.c
 #
 
 TOCLEAN += bios/ctables.h
@@ -570,19 +566,16 @@ obj/country.o: bios/ctables.h
 # OS header
 #
 
-TOCLEAN += bios/header.h mkheader$(EXE)
+TOCLEAN += bios/header.h
 
 obj/startup.o: bios/header.h
 
 obj/comprimg.o: bios/header.h
 
-obj/country.o: bios/header.h 
+obj/country.o: bios/header.h
 
-bios/header.h: mkheader$(EXE) obj/country include/i18nconf.h
-	./mkheader$(EXE) $(COUNTRY)
-
-mkheader$(EXE): tools/mkheader.c
-	$(NATIVECC) -o $@ $<
+bios/header.h: tools/mkheader.awk obj/country include/i18nconf.h
+	awk -f tools/mkheader.awk $(COUNTRY) > $@
 
 #
 # build rules - the little black magic here allows for e.g.
@@ -594,16 +587,16 @@ mkheader$(EXE): tools/mkheader.c
 TOCLEAN += obj/*.o */*.dsm
 
 obj/%.o : %.tr.c
-	$(CC) $(CFLAGS) -c $($(subst /,_,$(dir $<))copts) $< -o $@
+	$(CC) $(CFLAGS) $($(subst /,_,$(dir $<))copts) -c $< -o $@
 
 obj/%.o : %.c
-	$(CC) $(CFLAGS) -c $($(subst /,_,$(dir $<))copts) $< -o $@
+	$(CC) $(CFLAGS) $($(subst /,_,$(dir $<))copts) -c $< -o $@
 
 obj/%.o : %.S
-	$(CC) $(CFLAGS) -c $($(subst /,_,$(dir $<))sopts) $< -o $@
+	$(CC) $(CFLAGS) $($(subst /,_,$(dir $<))sopts) -c $< -o $@
 
 %.dsm : %.c
-	$(CC) $(CFLAGS) -S $($(subst /,_,$(dir $<))copts) $< -o $@
+	$(CC) $(CFLAGS) $($(subst /,_,$(dir $<))copts) -S $< -o $@
 
 #
 # version string
@@ -621,7 +614,7 @@ obj/version.o: obj/version.c
 # generic dsm handling
 #
 
-TOCLEAN += *.dsm *.dsm dsm.txt fal_dsm.txt
+TOCLEAN += *.dsm dsm.txt fal_dsm.txt
 
 %.dsm: %.map
 	vma=`sed -e '/^\.text/!d;s/[^0]*//;s/ .*//;q' $<`; \
@@ -703,7 +696,7 @@ indent:
 TOCLEAN += tounix$(EXE)
 
 expand:
-	@for i in `grep -l '	' */*.[chS]` ; do \
+	@for i in `grep -l '	' */*.[chS] */*.awk` ; do \
 		echo expanding $$i; \
 		expand <$$i >expand.tmp; \
 		mv expand.tmp $$i; \
