@@ -175,17 +175,17 @@ memdone:
  * NatFeats test
  */
 #if DETECT_NATIVE_FEATURES
-        .equ vec_illegal, 0x10       // illegal exception vector
+        .equ vec_linef, 0x2c       // LineF exception vector
 
         move.l  sp,a1
-        move.l  vec_illegal,a0
-        move.l  #fail_natfeat,vec_illegal
+        move.l  vec_linef,a0
+        move.l  #fail_natfeat,vec_linef
         pea     nf_xhdi_name
         sub.l   #4,sp
-        dc.w    0x7300     // Jump to NATFEAT_ID
+        dc.w    0xfe00     // Jump to NATFEAT_ID
         move.l  d0,_nfid_xhdi
         move.l  a1,sp
-        move.l  a0,vec_illegal
+        move.l  a0,vec_linef
         move.w  #1,_has_natfeats
         bra     natfeatdone
 
@@ -195,7 +195,7 @@ nf_xhdi_name:
 
 fail_natfeat:
         move.l  a1,sp
-        move.l  a0,vec_illegal
+        move.l  a0,vec_linef
 #endif  /* DETECT_NATIVE_FEATURES */
         clr.l   _nfid_xhdi
         clr.w   _has_natfeats

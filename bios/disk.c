@@ -26,11 +26,7 @@
 long nfid_xhdi;
 
 /* NatFeats */
-/*
-static long _NF_getid = 0x73004e75L;
-#define nfGetID(n)      (((long (*)(const char *))&_NF_getid)n)
-*/
-static long _NF_call  = 0x73014e75L;
+static long _NF_call  = 0xfe014e75L;
 #define nfCall(n)       (((long (*)(long, ...))&_NF_call)n)
 
 
@@ -40,7 +36,6 @@ static long _NF_call  = 0x73014e75L;
  * inspired by Linux 2.4.x kernel (file fs/partitions/atari.c)
  */
 
-//#include "ctype.h"
 #include "string.h"
 #include "atari_rootsec.h"
 
@@ -214,9 +209,9 @@ static LONG dma_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev)
     /* direct access to device */
     if (nfid_xhdi) {
         long ret = nfCall((nfid_xhdi + XHREADWRITE, (long)dev, (long)0, (long)rw, (long)sector, (long)count, buf));
-                if (ret != EUNDEV)
-                        return ret;
-        }
+        if (ret != EUNDEV)
+            return ret;
+    }
 
     /* hardware access to device */
     if (dev >= 0 && dev < 8) {
@@ -278,9 +273,9 @@ LONG XHGetCapacity(UWORD major, UWORD minor, ULONG *blocks, ULONG *blocksize)
 {
     if (nfid_xhdi) {
         long ret = nfCall((nfid_xhdi + XHGETCAPACITY, (long)major, (long)minor, (long)blocks, (long)blocksize));
-                if (ret != EUNDEV)
-                        return ret;
-        }
+        if (ret != EUNDEV)
+            return ret;
+    }
 
     /* TODO could read the blocks from Atari root sector */
     return EINVFN;

@@ -27,6 +27,7 @@ long cookie_snd;
 long cookie_mch;
 long cookie_swi;
 long cookie_frb;
+long cookie_natfeat;
 
 
 /*
@@ -294,14 +295,20 @@ void machine_init(void)
 
   setvalue_fdc();
   cookie_add(COOKIE_FDC, cookie_fdc);
+
+  if (has_natfeats) {
+    cookie_natfeat = 0;
+    cookie_add(COOKIE_NATFEAT, cookie_natfeat);
+  }
+
 }
 
 const char * machine_name(void)
 {
 /* NatFeat hack */
 #if 1
-    static long _NF_getid = 0x73004e75L;    /* make NatFeat global not static */
-    static long _NF_call  = 0x73014e75L;
+    static long _NF_getid = 0xfe004e75L;    /* make NatFeat global not static */
+    static long _NF_call  = 0xfe014e75L;
     #define nfGetID(n)  (((long (*)(const char *))&_NF_getid)n)
     #define nfCall(n)   (((long (*)(long, ...))&_NF_call)n)
     #define nf_getFullName(buffer, size) \

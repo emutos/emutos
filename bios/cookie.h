@@ -37,6 +37,7 @@ struct cookie {
 #define COOKIE_NET      0x5f4e4554L
 #define COOKIE_IDT      0x5f494454L
 #define COOKIE_AKP      0x5f414b50L
+#define COOKIE_NATFEAT  0x5f5f4e46L
 
 /* 
  * values of MCH cookie
