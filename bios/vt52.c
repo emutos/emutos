@@ -833,7 +833,8 @@ blink ()
  *   M_CVIS   - cursor visibility on
  */
 
-WORD cursconf(WORD function, WORD operand)
+WORD
+cursconf(WORD function, WORD operand)
 {
     switch (function) {
     case 0:
@@ -867,18 +868,31 @@ void
 vt52_init()
 {
     /* Initial cursor settings */
-    v_cur_cx = 0;                         // cursor to column 0
-    v_cur_cy = 0;                         // cursor to line 0
-    v_cur_of = 0;                         // line offset is 0
-    v_cur_ad = v_bas_ad;                  // set cursor to begin of screen
+    v_cur_cx = 0;                       // cursor to column 0
+    v_cur_cy = 0;                       // cursor to line 0
+    v_cur_of = 0;                       // line offset is 0
+    v_cur_ad = v_bas_ad;                // set cursor to begin of screen
 
-    v_stat_0 = M_CFLASH;                  // cursor invisible, flash,
-                                        // nowrap, normal video.
+    v_stat_0 = M_CFLASH;                // cursor invisible, flash,
+                               		// nowrap, normal video.
     cursconf(4, 30);                    // .5 second blink rate (@60 Hz vblank).
-    v_cur_tim = v_period;                 // load initial value to blink timer
-    disab_cnt = 1;                        // cursor disabled 1 level deep.
+    v_cur_tim = v_period;               // load initial value to blink timer
+    disab_cnt = 1;                      // cursor disabled 1 level deep.
 
-    con_state = normal_ascii;       /* Init conout state machine */
+    /* set foreground color depending on color depth */
+    switch (v_planes) {
+    case 1:
+	v_col_fg = 1;
+	break;
+    case 2:
+	v_col_fg = 3;
+	break;
+    default:
+	v_col_fg = 15;
+    }
+    v_col_bg = 0;
+
+    con_state = normal_ascii;       	/* Init conout state machine */
 
     vt52_initialized = TRUE;
 }

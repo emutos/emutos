@@ -430,7 +430,6 @@ void v_opnwk(Vwk * vwk)
 /* CLOSE_WORKSTATION: */
 void v_clswk(Vwk * vwk)
 {
-    WORD old_sr;
     Vwk *next_work;
 
     if (virt_work.next_work != NULLPTR) {       /* Are there VWs to close */
@@ -441,12 +440,7 @@ void v_clswk(Vwk * vwk)
         } while ((vwk = next_work));
     }
 
-
-    /* Now de-initialize the lower level things */
-    old_sr = set_sr(0x2700);            // disable interrupts
-    Setexc(0x100, (long)tim_chain);     // set etv_timer to tick_int
-    set_sr(old_sr);                     // enable interrupts
-
+    timer_exit(vwk);
     vdimouse_exit(vwk);                 // deinitialize mouse
     esc_exit(vwk);                      // back to console mode
 }

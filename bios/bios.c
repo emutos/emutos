@@ -243,7 +243,8 @@ void startup(void)
 
     cartscan(3);
 
-    font_set_default();	/* set default font again, if screen changed  */
+    /* This had been just used for StonX' cartrige hacks */
+    //font_set_default();	/* set default font again, if screen changed  */
 
     /* add TT-RAM that was detected in memory.S */
     if (ramtop > 0x1000000)

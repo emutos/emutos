@@ -20,7 +20,14 @@
 
 
 
-BOOL in_proc;                   /* flag, if we are still running */
+/* timer related vectors (linea variables in bios/lineavars.S) */
+
+extern void     (*tim_addr)(int);       // timer interrupt vector
+extern void     (*tim_chain)(int);      // timer interrupt vector save
+
+
+
+static BOOL in_proc;                   /* flag, if we are still running */
 
 
 
@@ -122,15 +129,15 @@ WORD Isqrt(ULONG x)
 void tick_int(int u)
 {
     if (!in_proc) {
-        in_proc = 1;                    // set flag, that we are running
-        // MAD: evtl. registers to stack
-        (*tim_addr)(u);                    // call the timer vector
-        // and back from stack
+        in_proc = 1;			// set flag, that we are running
+        				// MAD: evtl. registers to stack
+        (*tim_addr)(u);                 // call the timer vector
+					// and back from stack
     }
     in_proc = 0;                        // allow yet another trip through
-    // MAD: evtl. registers to stack
-    (*tim_chain)(u);                       // call the old timer vector too
-    // and back from stack
+					// MAD: evtl. registers to stack
+    (*tim_chain)(u);                    // call the old timer vector too
+					// and back from stack
 }
 
 
@@ -172,6 +179,12 @@ static void do_nothing_int(int u)
 
 
 
+/*
+ * timer_init - initialize the timer
+ *
+ * initially set timer vector to dummy, save old vector
+ */
+
 void timer_init(Vwk * vwk)
 {
     WORD old_sr;
@@ -187,6 +200,24 @@ void timer_init(Vwk * vwk)
     set_sr(old_sr);                     // enable interrupts
 
 }
+
+
+
+/*
+ * timer_exit - de-initialize the time
+ *
+ * reactivate the old saved vector
+ */
+
+void timer_exit(Vwk * vwk)
+{
+    WORD old_sr;
+
+    old_sr = set_sr(0x2700);            // disable interrupts
+    Setexc(0x100, (long)tim_chain);     // set etv_timer to tick_int
+    set_sr(old_sr);                     // enable interrupts
+}
+
 
 
 void * get_start_addr(const WORD x, const WORD y)

@@ -19,6 +19,7 @@
 #include "iorec.h"     
 #include "tosvars.h"
 #include "lineavars.h"
+#include "vt52.h"
 #include "ikbd.h"
 #include "midi.h"
 #include "mfp.h"

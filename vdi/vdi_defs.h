@@ -234,6 +234,20 @@ extern WORD TERM_CH;
 /* Bit-Blt variables */
 extern WORD COPYTRAN;
 
+/* Mouse specific externals */
+extern WORD GCURX;              // mouse X position
+extern WORD GCURY;              // mouse Y position
+extern WORD HIDE_CNT;           // Number of levels the mouse is hidden
+extern WORD MOUSE_BT;           // mouse button state
+
+/* Mouse related variables */
+extern WORD     newx;           // new mouse x&y position
+extern WORD     newy;           // new mouse x&y position
+extern BYTE     draw_flag;      // non-zero means draw mouse form on vblank
+extern BYTE     mouse_flag;     // non-zero, if mouse ints disabled
+extern BYTE     cur_ms_stat;    /* current mouse status */
+
+
 
 /* Assembly Language Support Routines NEWLY ADDED */
 void text_blt();
@@ -289,6 +303,7 @@ void vdimouse_init(Vwk *);
 void esc_init(Vwk *);
 
 void vdimouse_exit(Vwk *);
+void timer_exit(Vwk *);
 void esc_exit(Vwk *);
 
 /* all VDI functions */

@@ -15,7 +15,6 @@
 #include "lineavars.h"
 #include "font.h"
 #include "kprint.h"
-//#include "country.h"
 #include "screen.h"
 #include "machine.h"
 
@@ -40,14 +39,13 @@ struct video_mode {
     UBYTE       planes;         // count of color planes (v_planes)
     UWORD       hz_rez;         // screen horizontal resolution (v_hz_rez)
     UWORD       vt_rez;         // screen vertical resolution (v_vt_rez)
-    UBYTE       col_fg;         // color number of initial foreground color
 };
 
 
 static const struct video_mode video_mode[] = {
-    {4, 320, 200, 15},        // 16 color mode
-    {2, 640, 200, 3},         // 4 color mode
-    {1, 640, 400, 1}          // monochrome mode
+    {4, 320, 200},        // 16 color mode
+    {2, 640, 200},         // 4 color mode
+    {1, 640, 400}          // monochrome mode
 };
 
 
@@ -81,16 +79,13 @@ void linea_init(void)
         v_vt_rez = video_mode[vmode].vt_rez;
     }
     v_lin_wr = v_hz_rez / 8 * v_planes;     /* bytes per line */
-    /*v_pl_dspl = (long)v_hz_rez*(long)v_vt_rez/8;*/     /* bytes per plane */
     v_bytes_lin = v_lin_wr;       /* I think v_bytes_lin = v_lin_wr (joy) */
-
-    v_col_fg = video_mode[vmode].col_fg;
-    v_col_bg = 0;
 
     /* Calculate the shift offset by a value contained in the shift table
      * (used for screen modes that have the planes arranged in an
      *  interleaved fashion with a word for each plane). */
-    if (v_planes <= 4)  shft_off = shft_tab[v_planes - 1];
+    if (v_planes <= 4)
+	shft_off = shft_tab[v_planes - 1];
 
 #if DBG_LINEA
     kprintf("planes: %d\n", v_planes);

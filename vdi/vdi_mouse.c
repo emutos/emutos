@@ -21,6 +21,14 @@
 
 
 
+/* mouse related vectors (linea variables in bios/lineavars.S) */
+
+extern void     (*user_but)(void);      // user button vector
+extern void     (*user_cur)(void);      // user cursor vector
+extern void     (*user_mot)(void);      // user motion vector
+
+
+
 typedef struct Mcdb_ Mcdb;
 struct Mcdb_ {
         WORD    xhot;
