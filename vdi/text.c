@@ -439,19 +439,19 @@ WORD act_siz(WORD top)
     UWORD retval;
     UWORD i;
 
-    size = (UWORD)top;
 
     if (DDA_INC == 0xffff) {
         /* double size */
-        return ((WORD)(size<<1));
+        return ((WORD)(top<<1));
     }
 
+    size = (UWORD)(top - 1);
     accu = 0x7fff;
     retval = 0;
 
     if (T_SCLSTS) {
         /* enlarge */
-        for (i = size; i < 0; --i) {
+        for (i = size; i >= 0; --i) {
             accu += DDA_INC;
             if (accu < DDA_INC) {
                 // Not sz_sm_1 stuff here
@@ -461,7 +461,7 @@ WORD act_siz(WORD top)
         }
     } else {
         /* scale down */
-        for (i = size; i < 0; --i) {
+        for (i = size; i >= 0; --i) {
             accu += DDA_INC;
             if (accu < DDA_INC) {
                 // Not sz_sm_1 stuff here
