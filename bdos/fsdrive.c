@@ -173,7 +173,7 @@ long    log(BPB *b, int drv)
         OFD *fo,*f;                         /*  M01.01.03   */
         DND *d;
         DMD *dm;
-        int rsiz,cs,n,fs,ncl,fcl;
+        unsigned long rsiz,cs,n,fs,ncl,fcl;
 
         rsiz = b->recsiz;
         cs = b->clsiz;
