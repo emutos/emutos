@@ -8,13 +8,14 @@ EmuTOS 0.6 --- 9. Feb. 2003
 
 INTRODUCTION
 
-EmuTOS is a singleuser singletasking operating system for the 32 bit Atari
-computers and emulators. It is thought as a replacement for the
-TOS-images you usually need today for using emulators and it is also
-running on some real hardware, like the Atari Mega STE. All is open and
-maybe it is also running on totally new machines in the future.
+EmuTOS is a single-user single-tasking operating system for the 32 bit Atari
+computers and emulators. It is meant to be a replacement for the
+TOS-images typically needed today for using emulators and it is also
+running on some real hardware, like the Atari Mega STE. As all the source
+code is open and free it is could even run on totally new machines in the 
+future.
 
-EmuTOS is beeing developed for nearly two years now and is licensed
+EmuTOS has been developed for nearly two years now and is licensed
 under the OpenSource Gnu General Public Licence (GPL).
 
 
@@ -51,7 +52,7 @@ The BIOS and XBIOS code is our own developement. It is really written from
 scratch and implements nearly all of the TOS 1.0 BIOS functionality, and a
 bit more, like e.g. harddisk access and STE sampled sound. A few things
 like printing, midi and serial stuff is missing for now, but may be
-implemented somewhere in the future.
+implemented at some point in the future.
 
 The GEMDOS part is based on Digital Research's GEMDOS sources, which were
 made available under GPL licence in 1999 by Caldera. 
@@ -63,7 +64,7 @@ screen resolutions without any problems.
 
 The desktop is not as nice as the original one, but is pretty usable
 now for a start. You are free to use a more advanced desktop
-replacement any time, like it is teradesk for example.
+replacement any time, like teradesk for example.
 
 Since EmuTOS just implements the TOS's functionality, you might want to
 use MiNT on it in order to run more modern software. EmuTOS is not an
@@ -134,8 +135,8 @@ OS, you are invited to subscribe to our Mailinglist for developers at:
     http://sourceforge.net/mail/?group_id=36560
 
 
-Hope, you like EmuTOS. If you have any suggestions or comments, we always
-like to hear the good and also the bad things about it.
+We hope that you like EmuTOS. If you have any suggestions or comments, we 
+always appreciate to hear the good and also the bad things about it.
 
 
 Your EmuTOS development team.
