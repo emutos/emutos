@@ -503,49 +503,49 @@ static const OBJECT desk_rs_obj_rom[] = {
      NONE,
      OUTLINED,
      (long) 135424L,
-     0, 0, 45, 11},
+     0, 0, 40, 11},
 
    { 2, -1, -1, G_STRING,                       /*** 1 ***/
      NONE,
      NORMAL,
      (long) "ITEM INFORMATION / RENAME",
-     3, 1, 16, 1},
+     2, 1, 16, 1},
 
    { 3, -1, -1, G_FBOXTEXT,                     /*** 2 ***/
      EDITABLE,
      NORMAL,
      (long) &desk_rs_tedinfo[0],
-     12, 3, 19, 1},
+     11, 3, 19, 1},
 
    { 4, -1, -1, G_FBOXTEXT,                     /*** 3 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[1],
-     3, 4, 24, 1},
+     2, 4, 24, 1},
 
    { 5, -1, -1, G_FBOXTEXT,                     /*** 4 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[2],
-     3, 5, 24, 1},
+     2, 5, 24, 1},
 
    { 6, -1, -1, G_FBOXTEXT,                     /*** 5 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[3],
-     29, 5, 8, 1},
+     28, 5, 8, 1},
 
    { 7, -1, -1, G_STRING,                       /*** 6 ***/
      NONE,
      NORMAL,
      (long) "Attributes:",
-     6, 7, 11, 1},
+     2, 7, 11, 1},
 
    { 10, 8, 9, G_IBOX,                          /*** 7 ***/
      NONE,
      NORMAL,
      (long) 0L,
-     19, 7, 23, 1},
+     15, 7, 23, 1},
 
    { 9, -1, -1, G_BUTTON,                       /*** 8 ***/
      SELECTABLE | RBUTTON,
@@ -563,13 +563,13 @@ static const OBJECT desk_rs_obj_rom[] = {
      SELECTABLE | DEFAULT | EXIT,
      NORMAL,
      (long) rs_str_OK,
-     24, 9, 8, 1},
+     10, 9, 8, 1},
 
    { 0, -1, -1, G_BUTTON,                       /*** 11 ***/
      SELECTABLE | EXIT | LASTOB,
      NORMAL,
      (long) rs_str_Cancel,
-     34, 9, 8, 1},
+     22, 9, 8, 1},
 
 #define TR2 52
 /* TREE 2 */
@@ -633,55 +633,55 @@ static const OBJECT desk_rs_obj_rom[] = {
      NONE,
      OUTLINED,
      (long) 135424L,
-     0, 0, 46, 11},
+     0, 0, 40, 11},
 
    { 2, -1, -1, G_STRING,                       /*** 1 ***/
      NONE,
      NORMAL,
      (long) "FOLDER INFORMATION",
-     3, 1, 18, 1},
+     2, 1, 18, 1},
 
    { 3, -1, -1, G_FBOXTEXT,                     /*** 2 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[10],
-     9, 3, 26, 1},
+     8, 3, 26, 1},
 
    { 4, -1, -1, G_FBOXTEXT,                     /*** 3 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[11],
-     13, 4, 20, 1},
+     12, 4, 20, 1},
 
    { 5, -1, -1, G_FBOXTEXT,                     /*** 4 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[12],
-     33, 4, 8, 1},
+     31, 4, 8, 1},
 
    { 6, -1, -1, G_FBOXTEXT,                     /*** 5 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[13],
-     3, 5, 28, 1},
+     2, 5, 28, 1},
 
    { 7, -1, -1, G_FBOXTEXT,                     /*** 6 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[14],
-     5, 6, 26, 1},
+     4, 6, 26, 1},
 
    { 8, -1, -1, G_FBOXTEXT,                     /*** 7 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[15],
-     10, 7, 21, 1},
+     9, 7, 21, 1},
 
    { 0, -1, -1, G_BUTTON,                       /*** 8 ***/
      SELECTABLE | DEFAULT | EXIT | LASTOB,
      NORMAL,
      (long) rs_str_OK,
-     31, 9, 8, 1},
+     16, 9, 8, 1},
 
 #define TR4 70
 /* TREE 4 */
@@ -787,53 +787,53 @@ static const OBJECT desk_rs_obj_rom[] = {
      NONE,
      OUTLINED,
      (long) 135424L,
-     0, 0, 48, 11},
-    {
-     2, -1, -1, G_STRING,                   /*** 1 ***/
+     0, 0, 40, 11},
+
+   { 2, -1, -1, G_STRING,                   /*** 1 ***/
      NONE,
      NORMAL,
      (long) "NEW FOLDER INFORMATION",
      3, 1, 23, 1},
-    {
-     3, -1, -1, G_STRING,                   /*** 2 ***/
+
+   { 3, -1, -1, G_STRING,                   /*** 2 ***/
      NONE,
      NORMAL,
-     (long) "To create a new folder within the current",
-     3, 3, 41, 1},
-    {
-     4, -1, -1, G_STRING,                   /*** 3 ***/
+     (long) "To create a new folder within the cur-",
+     1, 3, 38, 1},
+
+   { 4, -1, -1, G_STRING,                   /*** 3 ***/
      NONE,
      NORMAL,
-     (long) "window, double-click on the New Folder",
-     3, 4, 38, 1},
-    {
-     5, -1, -1, G_STRING,                   /*** 4 ***/
+     (long) "rent window, double-click on the New",
+     1, 4, 36, 1},
+
+   { 5, -1, -1, G_STRING,                   /*** 4 ***/
      NONE,
      NORMAL,
-     (long) "icon and complete the dialogue that appears",
-     3, 5, 43, 1},
-    {
-     6, -1, -1, G_STRING,                   /*** 5 ***/
+     (long) "Folder icon and complete the dialogue",
+     1, 5, 37, 1},
+
+   { 6, -1, -1, G_STRING,                   /*** 5 ***/
      NONE,
      NORMAL,
-     (long) "by entering the name of the folder you",
-     3, 6, 38, 1},
-    {
-     7, -1, -1, G_STRING,                   /*** 6 ***/
+     (long) "that appears by entering the name of",
+     1, 6, 36, 1},
+
+   { 7, -1, -1, G_STRING,                   /*** 6 ***/
      NONE,
      NORMAL,
-     (long) "want to create.",
-     3, 7, 15, 1},
-    {
-     0, -1, -1, G_BUTTON,                   /*** 7 ***/
+     (long) "the folder you want to create.",
+     1, 7, 30, 1},
+
+   { 0, -1, -1, G_BUTTON,                   /*** 7 ***/
      SELECTABLE | DEFAULT | EXIT | LASTOB,
      NORMAL,
      (long) rs_str_OK,
-     37, 9, 8, 1},
-    {
+     16, 9, 8, 1},
+
 #define TR6 94
 /* TREE 6 */
-     -1, 1, 8, G_BOX,                       /*** 0 ***/
+   { -1, 1, 8, G_BOX,                       /*** 0 ***/
      NONE,
      OUTLINED,
      (long) 135424L,

@@ -413,7 +413,10 @@ void gsx_start()
         char_height = gl_ws.ws_chminh;
         vst_height( char_height, &gl_wsptschar, &gl_hsptschar, 
                                 &gl_wschar, &gl_hschar );
-        char_height = gl_ws.ws_chmaxh;
+        if(gl_ws.ws_yres<380)   /* Use a smaller font on tiny screens */
+          char_height = 6;
+        else
+          char_height = gl_ws.ws_chmaxh;
         vst_height( char_height, &gl_wptschar, &gl_hptschar, 
                                 &gl_wchar, &gl_hchar );
         gl_ncols = gl_width / gl_wchar;
@@ -510,7 +513,10 @@ void gsx_tblt(WORD tb_f, WORD x, WORD y, WORD tb_nc)
         {
           if (tb_f != gl_font)
           {
-            pts_height = gl_ws.ws_chmaxh;
+            if(gl_ws.ws_yres<380)   /* Use a smaller font on tiny screens */
+              pts_height = 6;
+            else
+              pts_height = gl_ws.ws_chmaxh;
             vst_height( pts_height, &gl_wptschar, &gl_hptschar, 
                                 &gl_wchar, &gl_hchar );
             gl_font = tb_f;
