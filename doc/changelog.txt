@@ -1499,3 +1499,7 @@ Start... early ages
 2003-07-06
 - aes/gemsclib.c : Return value of sc_read() is now compatible to Atari GEM
   again and sc_clear() now clears all scrap files in the clipboard. (THH)
+
+2003-07-12
+- po/es.po: added Spanish translation of EmuTOS, created by Gabriel Huertas
+  <gabrielhuertas@terra.es (joy)
