@@ -19,13 +19,17 @@ extern BYTE shifty;
 
 /*
  * dead key support: i.e. hitting ^ then a yields â.
- * char codes DEAD(1) to DEAD(DEADMAX) included are reserved for dead 
- * keys. table keytbl->dead[i-1], 1 <= i <= DEADMAX, gives the list of 
- * couples of (before, after) char codes ended by zero.
+ * char codes DEADMIN to DEADMAX inclusive are reserved for dead keys. 
+ * table keytbl->dead[i - DEADMIN], DEADMIN <= i <= DEADMAX, gives the 
+ * list of couples of (before, after) char codes ended by zero.
  */
 
-#define DEAD(a) (1+a)
+/* We use range 1 to 7, as it is best to keep 0 for unallocated keys?
+ * and 8 is taken by backspace.
+ */
+#define DEADMIN 1
 #define DEADMAX 7
+#define DEAD(i) (i + DEADMIN)
 
 struct keytbl {
   /* 128-sized array giving char codes for each scan code */

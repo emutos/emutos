@@ -364,8 +364,8 @@ void kbd_int(WORD scancode)
             ascii = *a;
         } 
         kb_dead = -1;
-    } else if(ascii <= DEAD(DEADMAX) && ascii >= DEAD(1)) {
-        kb_dead = ascii - DEAD(1);
+    } else if(ascii <= DEADMAX && ascii >= DEADMIN) {
+        kb_dead = ascii - DEADMIN;
         return;
     }
 

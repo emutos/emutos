@@ -1261,3 +1261,6 @@ Start... early ages
 - bdos/proc.c - yet another cleanup of the xexec() implementation; there
   should be no memory leak any more in case of IO error, but of course this
   feature is untested as of now (LVL)
+
+1. Feb. 2003
+- bios/ikbd.[ch] - dead keys fixed, backspace seems to work okay now (LVL)
