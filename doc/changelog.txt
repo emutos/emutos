@@ -684,4 +684,7 @@ Start... early ages
 - doc/changelog.txt - added vdi/ and aes/ to the tgz target (MAD)
 - doc/license.txt   - added GPL for EmuTOS (MAD)
 
-(MAD)
+25. Mar. 2002
+- Included the GEM.RSC into the ROM (THH).
+
+

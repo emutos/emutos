@@ -39,8 +39,8 @@ extern WORD rmchar;             /* number of pixels left over       */
 extern WORD rmcharx, rmchary;   /* add this to use up remainder     */
 
 
-extern struct font_head f8x8;   /* See bios/fntxxx.c */
-#define firstfnt f8x8
+extern struct font_head f6x6;   /* See bios/fntxxx.c */
+#define firstfnt f6x6
 
 
 
