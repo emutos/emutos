@@ -50,7 +50,10 @@ extern void atari_kbd_leds (UWORD );
 /* some xbios functions */
 extern LONG keytbl(LONG norm, LONG shft, LONG caps);
 extern void bioskeys(void);
+
 extern void ikbdws(WORD cnt, LONG ptr);
+extern void ikbd_writeb(BYTE b);
+extern void ikbd_writew(WORD w);
 
 #endif /* _IKBD_H */
 

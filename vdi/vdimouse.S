@@ -1014,6 +1014,8 @@ _DIS_CUR:
  */
         move.w  _GCURX,d0       // get cursor x-coordinate
         move.w  _GCURY,d1       // get cursor y-coordinate
+        //move.w  50,d0       // get cursor x-coordinate
+        //move.w  50,d1       // get cursor y-coordinate
         bsr     cur_display     // display the cursor
         clr.b   _draw_flag      // disable vb_draw
 fix_neg:

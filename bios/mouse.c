@@ -1,5 +1,5 @@
 /*
- * mouse.c - Intelligent keyboard routines
+ * mouse.c - Mouse vector setting for XBIOS 0
  *
  * Copyright (c) 2001 EmuTOS development team
  * Copyright (C) 1995 - 1998 Russell King <linux@arm.linux.org.uk>
@@ -34,229 +34,6 @@
 #define MIN_THRESHOLD 1
 #define MAX_THRESHOLD 20        /* more seems not reasonable... */
 
-/* Begin of mouse storage area */
-extern struct mouse_data mdata;   /* from lineavars.S */
-
-WORD oldbutt;
-
-/**
- * mouse_change - notification of a change of mouse position
- *
- * Updates the mouse position and button information. The movement
- * information is updated, and the new button state is saved.
- *
- * @dx: delta X movement
- * @dy: delta Y movement
- * @buttons: new button state
- */
- 
-void mouse_change(WORD dx, WORD dy, WORD buttons)
-{
-    struct mouse_data *mse = &mdata;
-
-    WORD changed;
-
-    changed = (dx != 0 || dy != 0 || mse->buttons != buttons);
-
-#if DBG_MOUSE
-        kprintf("mouse delta: %d, %d, %x\n", dx, dy, buttons);
-#endif
-    if (changed) {
-
-        mse->buttons = buttons;
-        mse->dxpos += dx;
-        mse->dypos += dy;
-
-        /*
-         * keep dx/dy reasonable, but still able to track when X (or
-         * whatever) must page or is busy (i.e. long waits between
-         * reads)
-         */
-        if (mse->dxpos < -128)
-            mse->dxpos = -128;
-        else if (mse->dxpos > 127)
-            mse->dxpos = 127;
-        if (mse->dypos < -128)
-            mse->dypos = -128;
-        else if (mse->dypos > 127)
-            mse->dypos = 127;
-#if DBG_MOUSE
-        kprintf("mouse: abs.:  %d, %d, %x\n", mse->dxpos, mse->dypos, mse->buttons);
-#endif
-    }
-
-    if (changed) {
-        /* call button change vector from graphicle mouse driver */
-    }
-}
-
-
-
-/*
- * mouse_int - mouse interrupt vector
- *
- * This routine decodes the mouse packets. Here we just go, if the asm
- * part did see an relative mouse packet.
- */
-
-void mouse_int(BYTE * buf)
-{
-#if 0
-    WORD buttons;
-
-    struct mouse_data *mse = &mdata;
-
-    /* Mouse unvisible?? */
-    if (mse->hide_cnt)
-        return;
-
-    /* Set just changed buttons as bitmap */
-    buttons = ((buf[0] & 1) | ((buf[0] & 2) << 1) | (oldbutt & 2));
-    oldbutt = buttons;
-
-    mouse_change(buf[1], buf[2], buttons);
-#endif
-}
-
-
-
-/*
- * mouse_enable - switch on mouse
- */
-
-void mouse_enable(void)
-{
-//    struct mouse_data *mse = &mdata;
-}
-
-
-
-/*
- * mouse_disable - switch off mouse
- */
-
-void mouse_disable(void)
-{
-//    struct mouse_data *mse = &mdata;
-
-    UBYTE cmd[1] = { 0x12 };
-
-    ikbdws(1, (PTR)cmd);
-}
-
-
-
-    /* Set mouse button action */
-void mouse_button_action(WORD mode)
-{
-    UBYTE cmd[2] = { 0x07, mode };
-
-    ikbdws(2, (PTR)cmd);
-}
-
-/* Set relative mouse position reporting */
-void mouse_rel_pos(void)
-{
-    UBYTE cmd[1] = { 0x08 };
-
-    ikbdws(1, (PTR)cmd);
-}
-
-/* Set absolute mouse position reporting */
-void mouse_abs_pos(WORD xmax, WORD ymax)
-{
-    BYTE cmd[5] = { 0x09, xmax>>8, xmax&0xFF, ymax>>8, ymax&0xFF };
-
-    ikbdws(5, (PTR)cmd);
-}
-
-/*
- * mouse_kbd_mode - Set mouse keycode mode
- *
- * Set mouse monitoring routines to return cursor motion keycodes instead of
- * either RELATIVE or ABSOLUTE motion records. The ikbd returns the
- * appropriate cursor keycode after mouse travel exceeding the user specified
- * deltas in either axis. When the keyboard is in key scan code mode, mouse
- * motion will cause the make code immediately followed by the break code.
- * Note that this command is not affected by the mouse motion origin.
- *
- * deltax - distance in X clicks to return (LEFT) or (RIGHT)
- * deltay - distance in Y clicks to return (UP) or (DOWN)
- */
-
-void mouse_kbd_mode(WORD deltax, WORD deltay)
-{
-    BYTE cmd[3] = { 0x0A, deltax, deltay };
-
-    ikbdws(3, (PTR)cmd);
-}
-
-/* Set mouse threshold */
-void mouse_thresh(WORD x, WORD y)
-{
-    BYTE cmd[3] = { 0x0B, x, y };
-
-    ikbdws(3, (PTR)cmd);
-}
-
-/* Set mouse scale */
-void mouse_scale(WORD x, WORD y)
-{
-    BYTE cmd[3] = { 0x0C, x, y };
-
-    ikbdws(3, (PTR)cmd);
-}
-
-/* Interrogate mouse position */
-void mouse_pos_get(WORD *x, WORD *y)
-{
-    UBYTE cmd[1] = { 0x0D };
-
-    ikbdws(1, (PTR)cmd);
-
-    /* wait for returning bytes */
-}
-
-/* Load mouse position */
-void mouse_pos_set(WORD x, WORD y)
-{
-    BYTE cmd[6] = { 0x0E, 0x00, x>>8, x&0xFF, y>>8, y&0xFF };
-
-    ikbdws(6, (PTR)cmd);
-}
-
-/* Set Y=0 at bottom */
-void mouse_y0_bot(void)
-{
-    UBYTE cmd[1] = { 0x0F };
-
-    ikbdws(1, (PTR)cmd);
-}
-
-/* Set Y=0 at top */
-void mouse_y0_top(void)
-{
-    UBYTE cmd[1] = { 0x10 };
-
-    ikbdws(1, (PTR)cmd);
-}
-
-/* Resume */
-void resume(void)
-{
-    UBYTE cmd[1] = { 0x11 };
-
-    ikbdws(1, (PTR)cmd);
-}
-
-/* Pause output */
-void pause(void)
-{
-    UBYTE cmd[1] = { 0x13 };
-
-    ikbdws(1, (PTR)cmd);
-}
-
 
 
 /*
@@ -266,102 +43,87 @@ void pause(void)
 
 void Initmous(WORD type, PTR param, PTR newvec)
 {
-    struct param *p = (struct param*)param;     /* pointer to parameter block */
-
-    if (newvec != NULL) {
-        kbdvecs.mousevec = (void*)newvec;      /* set new IKBD Mouse interrupt vector */
-    }
+    long retval = -1;           /* ok, if it stays so... */
+    struct param *p =
+        (struct param*)param;   /* pointer to parameter block */
 
     switch (type) {
 
     case 0:
-        /* disable mouse */
-        mouse_disable();
+        ikbd_writeb(0x12);	/* disable mouse */
         break;
 
     case 1:
         /* Parameters for relative mouse movement */
         if (param != NULL) {
-            if (p->topmode == IN_YBOT)
-                mouse_y0_bot();
-            if (p->topmode == IN_YTOP)
-                mouse_y0_top();
-            mouse_button_action(p->buttons);
+            ikbd_writeb(0x08);		/* set relative  mouse mode */
 
-            /* set relative mouse position reporting */
-            mouse_thresh(p->xparam, p->yparam);
-            mouse_rel_pos();
+            ikbd_writeb(0x0b);		/* set relative treshhold */
+            ikbd_writeb(p->xparam);
+            ikbd_writeb(p->yparam);
         }
         break;
 
     case 2:
         /* Parameters for absolute mouse movement */
         if (param != NULL) {
-            if (p->topmode == IN_YBOT)
-                mouse_y0_bot();
-            if (p->topmode == IN_YTOP)
-                mouse_y0_top();
-            mouse_button_action(p->buttons);
+            ikbd_writeb(0x09);		/* set absolute position */
+            ikbd_writew(p->xmax);
+            ikbd_writew(p->ymax);
 
-            /* Set absolute mouse position reporting */
-            mouse_scale(p->xparam, p->yparam);
-            mouse_pos_set(p->xinitial, p->yinitial);
-            mouse_abs_pos(p->xmax, p->ymax);
+            ikbd_writeb(0x0c);		/* set mouse scale */
+            ikbd_writeb(p->xparam);
+            ikbd_writeb(p->yparam);
+
+            ikbd_writeb(0x0e);     	/* set initial position */
+            ikbd_writeb(0x00);		/* dummy */
+            ikbd_writew(p->xinitial);
+            ikbd_writew(p->yinitial);
         }
         break;
 
     case 4:
+        /*
+         * mouse_kbd_mode - Set mouse keycode mode
+         *
+         * Set mouse monitoring routines to return cursor motion keycodes instead of
+         * either RELATIVE or ABSOLUTE motion records. The ikbd returns the
+         * appropriate cursor keycode after mouse travel exceeding the user specified
+         * deltas in either axis. When the keyboard is in key scan code mode, mouse
+         * motion will cause the make code immediately followed by the break code.
+         * Note that this command is not affected by the mouse motion origin.
+         *
+         * deltax - distance in X clicks to return (LEFT) or (RIGHT)
+         * deltay - distance in Y clicks to return (UP) or (DOWN)
+         */
+        
         if (param != NULL) {
-            if (p->topmode == IN_YBOT)
-                mouse_y0_bot();
-            if (p->topmode == IN_YTOP)
-                mouse_y0_top();
-            mouse_button_action(p->buttons);
-
-            /* Set mouse keycode mode */
-            mouse_kbd_mode(p->xparam, p->yparam);
+            ikbd_writeb(0x0a);		/* set keyboard mode */
+            ikbd_writeb(p->xparam);
+            ikbd_writeb(p->yparam);
         }
         break;
+    default:
+        retval = 0;             // means error
     }
+
+    if (retval != 0) {          /* if no error */
+        
+        if (param != NULL) {
+            if (p->topmode == IN_YBOT)
+                ikbd_writeb(0x0f); 	/* set bottom to y=0 */
+            if (p->topmode == IN_YTOP)
+                ikbd_writeb(0x10); 	/* set top to y=0 */
+
+            ikbd_writeb(0x07);		/* set mouse button reaction */
+            ikbd_writeb(p->buttons);
+        }
+        if (newvec != NULL)
+            kbdvecs.mousevec = (void*)newvec;   /* set mouse vector */
+
+    } else {                    /* if error */
+        kbdvecs.mousevec = (void*) just_rts;	/* set dummy vector */
+    }
+
+    //return (retval);             // Error  (in void function???)
 }
-
-
-
-/*
- * mouse_init - mouse initialization
- *
- */
-
-void mouse_init(void)
-{
-    struct param parm;
-    struct mouse_data *mse = &mdata;
-
-
-    /* Still running? */
-#if 0
-    if (mse->hide_cnt++)
-        return 0;
-#endif
-
-    /* These are the vex_* vectors from VDI, called from mouse driver */
-    user_but= &just_rts;                // user button vector
-    user_cur= &just_rts;                // user cursor vector
-    user_mot= &just_rts;                // user motion vector
-    tim_addr= &just_rts;                // user timer vector
-
-    /* reset mouse state */
-    mse->dxpos   = 0;
-    mse->dypos   = 0;
-    mse->buttons = 0;
-
-    parm.topmode = 0;
-    parm.buttons = 0;
-    parm.xparam = 1;
-    parm.yparam = 1;
-
-
-    Initmous(1, (PTR)&parm, (PTR)&mouse_int);
-}
-
-

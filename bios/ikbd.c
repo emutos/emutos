@@ -418,68 +418,21 @@ void ikbdws(WORD cnt, PTR ptr)
         bconout4(0, *p++);
 }
 
-/* Reset (without touching the clock) */
-void ikbd_reset(void)
+/* send a byte to the IKBD - for general use */
+void ikbd_writeb(BYTE b)
 {
-    UBYTE cmd[2] = { 0x80, 0x01 };
-
-    ikbdws(2, (PTR) cmd);
-
-    /* if all's well code 0xF1 is returned, else the break codes of
-       all keys making contact */
+    while (!bcostat4());
+    ikbd_acia.data = b;
 }
 
-/* Resume */
-void ikbd_resume(void)
+/* send a word to the IKBD as two bytes - for general use */
+void ikbd_writew(WORD w)
 {
-    UBYTE cmd[1] = { 0x11 };
+    while (!bcostat4());
+    ikbd_acia.data = (w>>8);
 
-    ikbdws(1, (PTR) cmd);
-}
-
-/* Pause output */
-void ikbd_pause(void)
-{
-    UBYTE cmd[1] = { 0x13 };
-
-    ikbdws(1, (PTR) cmd);
-}
-
-/* some joystick routines not in yet (0x18-0x19) */
-
-/* Memory load */
-void ikbd_mem_write(WORD address, WORD size, BYTE * data)
-{
-    kprintf("Attempt to write data into keyboard memory");
-    while (1);
-}
-
-/* Memory read */
-void ikbd_mem_read(WORD address, BYTE data[6])
-{
-    BYTE cmd[3] = { 0x21, address >> 8, address & 0xFF };
-
-    ikbdws(3, (PTR) cmd);
-
-    /* receive data and put it in data */
-}
-
-/* Controller execute */
-void ikbd_exec(WORD address)
-{
-    BYTE cmd[3] = { 0x22, address >> 8, address & 0xFF };
-
-    ikbdws(3, (PTR) cmd);
-}
-
-/* Status inquiries (0x87-0x9A) not yet implemented */
-
-/* Set the state of the caps lock led. */
-void atari_kbd_leds(UWORD leds)
-{
-    BYTE cmd[6] = { 32, 0, 4, 1, 254 + ((leds & 4) != 0), 0 };
-
-    ikbdws(6, (PTR) cmd);
+    while (!bcostat4());
+    ikbd_acia.data = (w&0xff);
 }
 
 
@@ -500,10 +453,11 @@ void kbd_init(void)
         ACIA_D8N1S;             /* 8 bit, 1 stop, no parity */
 
     /* initialize the IKBD */
-    ikbd_reset();
+    ikbd_writeb(0x80);            /* Reset */
+    ikbd_writeb(0x01);
 
-    ikbdws(1, 0x1A);            /* disable joystick */
-    ikbdws(1, 0x12);            /* disable mouse */
+    ikbd_writeb(0x1A);            /* disable joystick */
+    ikbd_writeb(0x12);            /* disable mouse */
 
     bioskeys();
 }

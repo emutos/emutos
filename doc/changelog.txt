@@ -656,4 +656,5 @@ Start... early ages
   are passed in arrays in VDI, not via stack.  (MAD)
 - vdi/lisagem.S partitially implemented mouse driver
   
-  
+13. Mar. 2002
+- bios/bios.c removed mouse_init. Done, when graphics is initialized (MAD)

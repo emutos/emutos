@@ -112,18 +112,19 @@ _INIT_G:
 
         move.l  #just_rts,_tim_addr     // Tick points to rts
 
-        move    sr, -(sp)               // Disable interrupts
+#if 0
+	move    sr, -(sp)               // Disable interrupts
         ori.w   #0x0700, sr
-
+#endif
         pea     tick_int
         move.w	#0x100, -(sp)           // etv_timer
         move.w  #5, -(sp)               // call setexc via
         trap    #13                     // BIOS
-        add.l   #8, sp                 // clean up stack
+        add.l   #8, sp                  // clean up stack
 
-        move.l  d0, _tim_chain            // save old timer int vector
+        move.l  d0, _tim_chain          // save old timer int vector
 
-        move    (sp)+, sr               // Restore interrupt context
+        //move    (sp)+, sr             // Restore interrupt context
 
         bsr     mouse_init              // initialize mouse
         				/* TODO: switch off cursor */
@@ -142,11 +143,13 @@ _INIT_G:
 _EX_TIMV:
         move.l  _CONTRL,a0
 
-        move    sr,-(sp)       // Disable interrupts
-        ori.w   #0x0700,sr
+#if 0
+	move    sr, -(sp)               // Disable interrupts
+        ori.w   #0x0700, sr
+#endif
         move.l  _tim_addr,18(a0)
         move.l  14(a0),_tim_addr
-        move    (sp)+,sr
+        //move    (sp)+,sr
 
         move.w  #6,-(sp)       // Get number of milliseconds per tick
         trap    #13
@@ -175,14 +178,17 @@ tick_int:
         move.b  #1,in_proc
 
         movem.l d0-d7/a0-a6, -(sp)
-        move    sr, -(sp)               // Disable interrupts
+#if 0
+	move    sr, -(sp)               // Disable interrupts
         ori.w   #0x0700, sr
+#endif
 
         move.l  _tim_addr,a0            // Invoke user routine
         jsr     (a0)
 
-        move    (sp)+, SR               // Restore interrupt context
+        //move    (sp)+, SR               // Restore interrupt context
 
+        bsr     _CLEARMEM
 #if 0
 // see if the mouse needs drawing
 
@@ -272,6 +278,7 @@ no_char:
         rts
 
 
+
 /*
  * mouse_init - INITIALIZE MOUSE
  *
@@ -298,33 +305,35 @@ mouse_init:
 
 	/* Init mouse interrupt variables */
 
-        moveq.l #0,d0
+	moveq.l #0,d0
         move.w  d0,cur_ms_stat  	// init cur_mouse_stat
         move.b  d0,_mouse_flag  	// interrupts can happen
         move.b  d0,_draw_flag   	// No action yet on vblank
 
 	lea	_mdata, a0              // begin off mouse data (lineavars)
-        move.w	d0, (a0)+               // set mouse x (_newx) to 0
-        move.w	d0, (a0)+               // set mouse y (_newy) to 0
-        move.b	d0, (a0)                // set draw flag (_draw_flag) to 0
+        move.w	d0, (a0)+               // set mouse x (_GCURX) to 0
+        move.w	d0, (a0)+               // set mouse y (_GCURY) to 0
+        move.b	d0, (a0)                // set draw flag (_HIDE_CNT) to 0
 
 	move.l	_vblqueue, a0           // get VBL-queue address
         move.l	#vb_draw, (a0)          // set GEM VBL-routine (in vdimouse.S)
         
-        move    sr, -(sp)               // Disable interrupts
+#if 0
+	move    sr, -(sp)               // Disable interrupts
         ori.w   #0x0700, sr
+#endif
 
         pea     int_mouse               // Get character vector for
 	pea     arrow_cdb               // get arrow bitmap data
         move.w  #0x1, -(sp)             // enable mouse in relative mode
         move.w  #0x0, -(sp)             // Initmous
         trap    #14			// call XBIOS
+        add.l   #12, sp                 // clean up stack
 
         //move.l  d0, mouse_chain         // Set up chain before ints go on
 
-        add.l   #12, sp                 // clean up stack
 
-        move    (sp)+, sr               // Restore interrupt context
+        //move    (sp)+, sr               // Restore interrupt context
 
         rts
 
@@ -352,8 +361,10 @@ user_init:
  
 dinit_mouse:
 
-        move    sr, -(sp)               // Disable interrupts
+#if 0
+	move    sr, -(sp)               // Disable interrupts
         ori.w   #0x0700, sr
+#endif
 
         //move.l  d0, mouse_chain         // Set up chain before ints go on
 
@@ -364,7 +375,7 @@ dinit_mouse:
         trap    #14			// call XBIOS
         add.l   #12, sp                 // clean up stack
 
-        move    (sp)+, sr               // Restore interrupt context
+        //move    (sp)+, sr               // Restore interrupt context
         rts
 
 
@@ -449,14 +460,15 @@ no_chg:
  */
  
 int_mouse:
-        tst.b   _mouse_flag     // If we are in a show/hide operation
+	tst.b   _mouse_flag     // If we are in a show/hide operation
         bne     ms_exit         // just exit.
 
         movem.l d0-d7/a0-a6, -(sp)      // save registers used
         move.b  (a0), d0                // see if we have a mouse packet
         move.b	d0, d1                  // save packet
-        andi.b  #0xf8, d1               // mask out for ...
+        and.b  #0xf8, d1               // mask out for ...
         cmp.b   #0xf8, d1               // relative packet header?
+
         bne     ms_done
 
 	and.w   #3, d0          // isolate mouse buttons
@@ -473,11 +485,13 @@ no_left:
 
         move.w  d1,-(sp)        // save previous mouse state
         move.l  _user_but,a1    // get user routine address
-        move.w  sr, -(sp)       // Call user with interrupts off
+#if 0
+	move    sr, -(sp)               // Disable interrupts
         ori.w   #0x0700, sr
+#endif
         jsr     (a1)
 
-        move.w  (sp)+, sr       // restore interrupt context
+        //move.w  (sp)+, sr       // restore interrupt context
         move.w  (sp)+, d1       // get back previous mouse button state
         move.w  d0,_MOUSE_BT
 
@@ -511,25 +525,27 @@ new_coord:
 
         bsr     scrn_clip
         move.l  _user_mot,a1    // get user routine address
-        move.w  sr, -(sp)       // Call user with interrupts off
+#if 0
+	move    sr, -(sp)               // Disable interrupts
         ori.w   #0x0700, sr
+#endif
         jsr     (a1)            // call user to modify x,y
-        move.w  (sp)+, SR       // restore interrupt context
+        //move.w  (sp)+, SR       // restore interrupt context
         bsr     scrn_clip
 
         move.w  d0,_GCURX       // save new X location
         move.w  d1,_GCURY       // save new y location
-
         move.l  _user_cur,a1     // get user routine address
-        move.w  SR, -(sp)       // Call user with interrupts off
+#if 0
+	move    sr, -(sp)               // Disable interrupts
         ori.w   #0x0700, sr
+#endif
         jsr     (a1)            // call user to draw cursor
-        move.w  (sp)+, sr       // restore interrupt context
+        //move.w  (sp)+, sr       // restore interrupt context
 //                                      // d0 contains new x position
 //                                      // d1 contains new y position
 ms_done:
-        movem.l (sp)+,d0-d7/a0-a5       // restore old registers
-        unlk    a6
+        movem.l (sp)+,d0-d7/a0-a6       // restore old registers
 ms_exit:
 // FIXME: The following line was again not Atari compatible:
 //      move.l  mouse_chain, -(sp)      // chain to next guy
