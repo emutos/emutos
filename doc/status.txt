@@ -6,12 +6,12 @@ if possible add a line telling in which version it did run.
 
   emulator/machine    |  ok?  | who |   date    |  details
   --------------------+-------+-----+-----------+----------------
-  Aranym              |  yes  |  ?  |  < Sep 02 | 
+  Aranym              |  yes  | LVL |    Feb 03 | 
   Hatari              |  yes  |  ?  |  < Sep 02 |
   MegaSTE (2MB RAM)   |  yes  | LVL | spring 02 | RAMTOS only
   Pacifist v0.48      |  yes  | LVL | winter 01 |
-  STonX 0.6.7.2       |  yes  | LVL | 30 Sep 02 | no autoboot
-  STonC v0.8.0        |  yes  | LVL | 29 Sep 02 |
+  STonX 0.6.7.2       |  yes  | LVL | 9  Feb 03 | no autoboot
+  STonC v0.8.1        |  yes  | LVL | 9  Feb 03 |
   STeem v2.0.6        |  yes  | LVL | 30 Sep 02 | 
   TOSBox 1.10a        |   no  |  ?  |  < Sep 02 |
   WinSTon V0.1r2      |   no  |  ?  |  < Sep 02 |
@@ -32,7 +32,7 @@ T tested and working on an emulator or real hardware
 
  Hardware initialisation
  ----------------------------------------------------------------------------
- > CPU setting (for CPU >= 68020, vbr, mmu, msp, isp, ... not inited)
+ t CPU setting (tested only 68000 (real and emu) and 68040 (emu))
  > FPU (detected, is any initialisation needed?) 
  T Memory controller (both ST and Falcon)
  T DMA controller
@@ -40,11 +40,11 @@ T tested and working on an emulator or real hardware
  T MFP
  T PSG
  T ST shifter
- t ACIAs, IKBD protocol (mouse not tested)
+ T ACIAs, IKBD protocol
  t MegaST Real-Time Clock  (set clock not tested)
  > STE shifter
  t NVRAM (including RTC)
- - Videl
+ > Videl
  - Blitter
  - Microwire
  - DMA sound
@@ -52,7 +52,7 @@ T tested and working on an emulator or real hardware
  - SCC
  - IDE
  > ACSI hard disk
-
+ T NatFeats (a framework for native features on emulators) 
 
 
  BOOT sequence
@@ -71,7 +71,7 @@ T tested and working on an emulator or real hardware
  T run AUTO prgs
  T run 'command.prg'
  T run the default shell, EmuCON
-
+ T run the GEM desktop
 
 
  BIOS devices
