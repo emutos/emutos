@@ -53,50 +53,6 @@ static const struct video_mode video_mode[] = {
 
 
 /*
- * cursconf - cursor configuration
- *
- * Arguments:
- *
- *   function =
- *   0 - switch off cursor
- *   1 - switch on cursor
- *   2 - blinking cursor
- *   3 - not blinking cursor
- *   4 - set cursor blink rate
- *   5 - get cursor blink rate
- *
- * Bits:
- *   M_CFLASH - cursor flash on
- *   M_CVIS   - cursor visibility on
- */
-
-WORD cursconf(WORD function, WORD operand)
-{
-    switch (function) {
-    case 0:
-        cprintf("\033f");               /* set cursor unvisible */
-        break;
-    case 1:
-        cprintf("\033e");               /* set cursor visible */
-        break;
-    case 2:
-        v_stat_0 &= ~M_CFLASH;          /* unset cursor flash bit */
-        break;
-    case 3:
-        v_stat_0 |= M_CFLASH;           /* set cursor flash bit */
-        break;
-    case 4:
-        v_period = operand;             /* set cursor flash interval */
-        break;
-    case 5:
-        return(v_period);               /* set cursor flash interval */
-    }
-    return(0);                          /* Hopefully never reached */
-}
-
-
-
-/*
  * linea_init - init linea variables
  */
 

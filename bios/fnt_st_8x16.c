@@ -10,7 +10,7 @@
 
 
 #include "portab.h"
-#include "fontdef.h"
+#include "font.h"
 
 static UWORD off_table[], dat_table[];
 
