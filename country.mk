@@ -35,7 +35,12 @@ i18n_cz_keyb = CZ
 i18n_cz_cset = L2
 i18n_cz_idt  = IDT_24H | IDT_DDMMYY | '/'
 
-COUNTRIES = us de fr cz
+i18n_gr_lang = gr
+i18n_gr_keyb = GR
+i18n_gr_cset = GR
+i18n_gr_idt  = IDT_24H | IDT_DDMMYY | '/'
+
+COUNTRIES = us de fr cz gr
 
 # 
 
@@ -47,7 +52,8 @@ ETOSCSET = $(i18n_$(COUNTRY)_cset)
 
 FONTOBJ_ST = fnt_st_6x6.o fnt_st_8x8.o fnt_st_8x16.o 
 FONTOBJ_L2 = fnt_l2_6x6.o fnt_l2_8x8.o fnt_l2_8x16.o
-FONTOBJ_ALL = $(FONTOBJ_ST) $(FONTOBJ_L2)
+FONTOBJ_GR = fnt_gr_6x6.o fnt_gr_8x8.o fnt_gr_8x16.o
+FONTOBJ_ALL = $(FONTOBJ_ST) $(FONTOBJ_L2) $(FONTOBJ_GR)
 
 ifneq (,$(UNIQUE))
 FONTOBJ = $(FONTOBJ_$(ETOSCSET):%=obj/%)

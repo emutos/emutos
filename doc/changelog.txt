@@ -1580,3 +1580,6 @@ Start... early ages
 - desk/desk_rsc.c desk/deskinf.c po/*.po : Increased the size of some strings
   so that the desktop can also display the size information of huge files.
   Up to 4GB should be working now.  (THH)
+
+2003-12-24
+- Added George Nakos' greek translations. (THH)

@@ -32,4 +32,6 @@
 #define COUNTRY_HU 16   /* Hungary */
 #define COUNTRY_SK 17   /* Slovak Republic */
 
-
+/* There aren't any official country codes > 16, but we need some more codes
+   for the other languages... */
+#define COUNTRY_GR 18   /* Greek */
