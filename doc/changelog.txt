@@ -818,3 +818,12 @@ Start... early ages
 - vdi/vex.c -> vdimain.c, file deleted (MAD)
 - vdi/lisagem.S -> vdimain.c, file deleted (MAD)
 - vdi/txtblit.S - CLC_DDA now in C in text.c:clc_dda  (MAD)
+
+29. Apr. 2002
+- bios/config.h - moved to include/config.h (LVL)
+- include/config.h - set CONF_NO_NLS = 1 to disable NLS completely (LVL)
+- bios/country.c - moved keyb and font selection tables here from ikbd.c and
+    initlinea.c, in an attempt to make next Changelog item easier (LVL)
+- include/config.h - set CONF_UNIQUE_COUNTRY = 1 to save some room by
+    including only one set of keyboard and fonts in the ROM (LVL)
+- renamed back CS into CZ to please Petr; did not alter po/cs.po (LVL)

@@ -1,5 +1,5 @@
 /*
- * country.h - _AKP, _IDT and all that stuff
+ * country.h - _AKP, _IDT and country-dependant configuration
  *
  * Copyright (c) 2001 EmuTOS development team.
  *
@@ -10,11 +10,11 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-/*
- * dependencies: this header file must be included after:
- *
- * (no dependency)
- */
+#ifndef _COUNTRY_H
+#define _COUNTRY_H
+
+#include "ikbd.h"
+#include "fontdef.h"
  
 /* a list of country codes */
 
@@ -36,7 +36,7 @@
 #define COUNTRY_DK 12   /* Denmark */
 #define COUNTRY_SA 13   /* Saudi Arabia */
 #define COUNTRY_NL 14   /* Holland */
-#define COUNTRY_CS 15   /* Czech Republic */
+#define COUNTRY_CZ 15   /* Czech Republic */
 #define COUNTRY_HU 16   /* Hungary */
 #define COUNTRY_SK 17   /* Slovak Republic */
  
@@ -44,7 +44,7 @@
 #define KEYB_US 0
 #define KEYB_DE 1
 #define KEYB_FR 2
-#define KEYB_CS 3
+#define KEYB_CZ 3
 
 /* charset codes - names in [brackets] are understood by GNU recode */
 #define CHARSET_ST 0   /* original [atarist] */
@@ -63,6 +63,7 @@
 #define IDT_DMASK  0x300
 #define IDT_SMASK   0xFF  /* date mask */
 
+
 /* cookies */
 
 extern long cookie_idt;
@@ -72,11 +73,14 @@ extern long cookie_akp;
 void detect_akp_idt(void);
 
 /* used by ikbd.c */
-int get_kbd_number(void);
+void get_keytbl(struct keytbl **tbl);
 
 /* used by nls.c */
 const char *get_lang_name(void);
 
 /* used by initlinea.c */
-int get_charset(void);
+void get_fonts(struct font_head **f6x6, 
+               struct font_head **f8x8, 
+               struct font_head **f8x16);
 
+#endif /* _COUNTRY_H */
