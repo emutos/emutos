@@ -713,13 +713,14 @@ static void floplock(WORD dev)
     /* 
      * the FDC has only one track register for two units.
      * we need to save the current value, and switch 
-     * TODO !!!
      */
     if(cur_dev != -1) {
       finfo[cur_dev].cur_track = cur_track;
     }
     cur_dev = dev;
     cur_track = finfo[cur_dev].cur_track;
+    /* TODO, what if the new device is not available? */
+    set_fdc_reg(FDC_TR, cur_track);
   } 
 }
 
