@@ -1,9 +1,7 @@
 #! /bin/sh
 
-#
-# test compr/uncompr on various kind of input and checking the the output
-# of uncompr is identical to the input of compr.
-#
+# test compr/uncompr on various kind of input and check that 
+# the output of uncompr is identical to the input of compr.
 
 TMP=.compr
 
@@ -36,20 +34,19 @@ fi
 rm -f a b c
 EOF
 
-
 cp ../readme.txt a
-. t readme.txt
+sh -f t readme.txt
 
 if test -f ../ramtos.img 
 then
   cp ../ramtos.img a
-  . t ramtos.img
+  sh -f t ramtos.img
 fi
 
 
 
 echo -n aaaaaaaaaaaa > a
-. t "aaaa"
+sh -f t "aaaa"
 
 awk '
 BEGIN {
@@ -61,10 +58,10 @@ BEGIN {
     }
   }
 }' >a
-. t "non-compressible data"
+sh -f t "non-compressible data"
 
 >a
-. t "empty file"
+sh -f t "empty file"
 
 # cleanup
 cd ..
