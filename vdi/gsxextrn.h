@@ -126,7 +126,7 @@ extern WORD SMUL_DIV();
 /* Assembly Language Support Routines NEWLY ADDED */
 
 extern void DIS_CUR();
-extern void HIDE_CUR(), TEXT_BLT();
+extern void HIDE_CUR(), text_blt();
 extern void xfm_crfm(), XFM_UNDL(), COPY_RFM(), RECTFILL();
 extern void vex_butv(), vex_motv(), vex_curv(), vex_timv();
 

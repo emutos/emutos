@@ -132,7 +132,7 @@ VDICSRC = cbssdefs.c isin.c lisastub.c lisatabl.c monobj.c monout.c \
           opnwkram.c seedfill.c text.c cbssdefs.c jmptbl.c 
 VDISSRC = entry.S bitblt.S bltfrag.S copyrfm.S esclisa.S  \
           gsxasm1.S gsxasm2.S mousedrv.S lisagem.S vdimouse.S \
-          newmono.S textblt.S tranfm.S gsxvars.S
+          textblt.S tranfm.S gsxvars.S
 
 #
 # source code in aes/

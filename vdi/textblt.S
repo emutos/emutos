@@ -139,7 +139,7 @@
 //   Global routines defined in this module.           //
 /////////////////////////////////////////////////////////
 
-        .globl  _TEXT_BLT
+        .globl  _text_blt
         .globl  _CLC_DDA
         .globl  _ACT_SIZ
 
@@ -310,7 +310,7 @@
 //                                                  // small + large buffer
         .page
 /////////////////////////////////////////////////////////////////////////
-//  _TEXT_BLT expects variables scratchp & scrpt2 to be                 // 
+//  _text_blt expects variables scratchp & scrpt2 to be                 // 
 //           initialized as follows:                                    //
 //                                                                      //
 //   _scrtchp:  is a long word pointer to the base of a buffer with at  //
@@ -600,7 +600,7 @@ act_exit:
 //   Global TEXTBLT entry point                                         //
 /////////////////////////////////////////////////////////////////////////
 //
-_TEXT_BLT:
+_text_blt:
         movem.l d3-d7/a3-a5,-(sp)
         link    a6,#ramlen              //allocate stack for local variables
 //

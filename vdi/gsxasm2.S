@@ -21,7 +21,7 @@
                 .globl   _get_pix
                 .globl   _put_pix
                 .globl   _RECTFILL
-                .globl   _TRNSFONT
+                .globl   _trnsfont
 
 //              external routines.
 
@@ -78,7 +78,7 @@ _trap:  move.l  (sp)+,retsav            // remove return address from stack
 
 ////////////
 //
-//      _TRNSFONT
+//      _trnsfont
 //              This routine converts a font to standard form
 //
 //              input:  _FWIDTH = width of font data in bytes.
@@ -91,7 +91,7 @@ _trap:  move.l  (sp)+,retsav            // remove return address from stack
 ////////////
 
 
-_TRNSFONT:
+_trnsfont:
                 move.l  d2,-(sp)
                 move.w  _FWIDTH, d0     // Width of a scan line in bytes times
                 mulu.w  _DELY, d0       // number of scan lines divided by two

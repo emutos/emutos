@@ -1,5 +1,5 @@
 /*
- * text.c - uses TEXT_BLT to move data from a font table to screen
+ * text.c - uses text_blt to move data from a font table to screen
  *
  * Copyright 1982 by Digital Research Inc.  All rights reserved.
  * Copyright (c) 1999 Caldera, Inc. and Authors:
@@ -17,8 +17,7 @@
 #include "jmptbl.h"
 
 extern WORD clip_line();
-extern WORD MONO8XHT();
-extern void TRNSFONT();
+extern void trnsfont();
 
 extern WORD XACC_DDA;           /* accumulator for x DDA        */
 extern WORD SOURCEX, SOURCEY;   /* upper left of character in font file */
@@ -51,7 +50,6 @@ void make_header();
 
 void d_gtext()
 {
-    WORD monotest;
     WORD count;
     WORD i, j;
     WORD startx=0, starty=0;
@@ -67,14 +65,12 @@ void d_gtext()
     REG struct font_head *fnt_ptr = NULL;
     REG WORD *pointer = NULL;
 
-    if ((count = CONTRL[3]) > 0) {
+    count = CONTRL[3];
+    if (count > 0) {
 
         fnt_ptr = cur_font;     /* Get current font pointer in register */
 
-        if ((justified = (*CONTRL == 11)))
-            monotest = -1;
-        else
-            monotest = STYLE;
+        justified = (*CONTRL == 11);
 
         if (STYLE & F_THICKEN)
             WEIGHT = fnt_ptr->thicken;
@@ -94,7 +90,6 @@ void d_gtext()
         FBASE = fnt_ptr->dat_table;
         FWIDTH = fnt_ptr->form_width;
 
-        monotest |= h_align;
         switch (h_align) {
         case 0:
             delh = 0;
@@ -156,33 +151,35 @@ void d_gtext()
         }
 
         pointer = PTSIN;
-        monotest |= CHUP;
         switch (CHUP) {
         case 0:
-            startx = DESTX = *(pointer) - delh;
-            starty = (DESTY = *(pointer + 1) - delv)
-                + fnt_ptr->top + fnt_ptr->ul_size + 1;
+            DESTX = *(pointer) - delh;
+            DESTY = *(pointer + 1) - delv;
+            startx = DESTX;
+            starty = DESTY + fnt_ptr->top + fnt_ptr->ul_size + 1;
             xfact = 0;
             yfact = 1;
             break;
         case 900:
-            startx = (DESTX = *(pointer) - delv)
-                + fnt_ptr->top + fnt_ptr->ul_size + 1;
-            starty = DESTY = *(pointer + 1) + delh;
+            DESTX = *(pointer) - delv;
+            DESTY = *(pointer + 1) + delh;
+            startx = DESTX + fnt_ptr->top + fnt_ptr->ul_size + 1;
+            starty = DESTY;
             xfact = 1;
             yfact = 0;
             break;
         case 1800:
-            startx = DESTX = *(pointer) + delh;
-            DESTY =
-                *(pointer + 1) - ((fnt_ptr->top + fnt_ptr->bottom) - delv);
+            DESTX = *(pointer) + delh;
+            DESTY = *(pointer + 1) - ((fnt_ptr->top + fnt_ptr->bottom) - delv);
+            startx = DESTX;
             starty = (DESTY + fnt_ptr->bottom) - (fnt_ptr->ul_size + 1);
             xfact = 0;
             yfact = -1;
             break;
         case 2700:
             DESTX = *pointer - ((fnt_ptr->top + fnt_ptr->bottom) - delv);
-            starty = DESTY = *(pointer + 1) - delh;
+            DESTY = *(pointer + 1) - delh;
+            starty = DESTY;
             startx = (DESTX + fnt_ptr->bottom) - (fnt_ptr->ul_size + 1);
             xfact = -1;
             yfact = 0;
@@ -193,110 +190,104 @@ void d_gtext()
 
         DELY = fnt_ptr->form_height;
 
-        if (!
-            ((!DOUBLE) && (monotest == 0) && (F_MONOSPACE & fnt_ptr->flags)
-             && (fnt_ptr->max_cell_width == 8) && MONO8XHT())) {
-            XACC_DDA = 32767;   /* init the horizontal dda */
+        XACC_DDA = 32767;   /* init the horizontal dda */
 
-            for (j = 0; j < count; j++) {
+        for (j = 0; j < count; j++) {
 
-                temp = INTIN[j];
+            temp = INTIN[j];
 
-                /* If the character is out of range for this font make it a ?
-                 */
+            /* If the character is out of range for this font make it a ? */
 
-                if ((temp < fnt_ptr->first_ade)
-                    || (temp > fnt_ptr->last_ade))
-                    temp = 63;
-                temp -= fnt_ptr->first_ade;
+            if ((temp < fnt_ptr->first_ade) || (temp > fnt_ptr->last_ade))
+                temp = 63;
+            temp -= fnt_ptr->first_ade;
 
-                SOURCEX = fnt_ptr->off_table[temp];
-                DELX = fnt_ptr->off_table[temp + 1] - SOURCEX;
+            SOURCEX = fnt_ptr->off_table[temp];
+            DELX = fnt_ptr->off_table[temp + 1] - SOURCEX;
 
-                SOURCEY = 0;
-                DELY = fnt_ptr->form_height;
+            SOURCEY = 0;
+            DELY = fnt_ptr->form_height;
 
-                TEXT_BLT();
+            text_blt();
 
-                fnt_ptr = cur_font;     /* restore reg var */
+            fnt_ptr = cur_font;     /* restore reg var */
 
-                if (justified) {
-                    DESTX += charx;
-                    DESTY += chary;
-                    if (rmchar) {
-                        DESTX += rmcharx;
-                        DESTY += rmchary;
-                        rmchar--;
-                    }
-                    if (INTIN[j] == 32) {
-                        DESTX += wordx;
-                        DESTY += wordy;
-                        if (rmword) {
-                            DESTX += rmwordx;
-                            DESTY += rmwordy;
-                            rmword--;
-                        }
+            if (justified) {
+                DESTX += charx;
+                DESTY += chary;
+                if (rmchar) {
+                    DESTX += rmcharx;
+                    DESTY += rmchary;
+                    rmchar--;
+                }
+                if (INTIN[j] == 32) {
+                    DESTX += wordx;
+                    DESTY += wordy;
+                    if (rmword) {
+                        DESTX += rmwordx;
+                        DESTY += rmwordy;
+                        rmword--;
                     }
                 }
-                /* end if justified */
-                if (fnt_ptr->flags & F_HORZ_OFF)
-                    DESTX += fnt_ptr->hor_table[temp];
+            }
+            /* end if justified */
+            if (fnt_ptr->flags & F_HORZ_OFF)
+                DESTX += fnt_ptr->hor_table[temp];
 
-            }                   /* for j */
+        }                   /* for j */
 
-            if (STYLE & F_UNDER) {
-                X1 = startx;
-                Y1 = starty;
+        if (STYLE & F_UNDER) {
+            X1 = startx;
+            Y1 = starty;
 
-                if (CHUP % 1800 == 0) {
-                    X2 = DESTX;
-                    Y2 = Y1;
-                } else {
-                    X2 = X1;
-                    Y2 = DESTY;
-                }
-                if (STYLE & F_LIGHT)
-                    LN_MASK = cur_font->lighten;
-                else
-                    LN_MASK = 0xffff;
+            if (CHUP % 1800 == 0) {
+                X2 = DESTX;
+                Y2 = Y1;
+            } else {
+                X2 = X1;
+                Y2 = DESTY;
+            }
+            if (STYLE & F_LIGHT)
+                LN_MASK = cur_font->lighten;
+            else
+                LN_MASK = 0xffff;
 
-                temp = TEXT_FG;
-                FG_BP_1 = temp & 1;
-                FG_BP_2 = temp & 2;
-                FG_BP_3 = temp & 4;
-                FG_BP_4 = temp & 8;
+            temp = TEXT_FG;
+            FG_BP_1 = temp & 1;
+            FG_BP_2 = temp & 2;
+            FG_BP_3 = temp & 4;
+            FG_BP_4 = temp & 8;
 
-                count = cur_font->ul_size;
-                for (i = 0; i < count; i++) {
-                    if (CLIP) {
-                        tx1 = X1;
-                        tx2 = X2;
-                        ty1 = Y1;
-                        ty2 = Y2;
+            count = cur_font->ul_size;
+            for (i = 0; i < count; i++) {
+                if (CLIP) {
+                    tx1 = X1;
+                    tx2 = X2;
+                    ty1 = Y1;
+                    ty2 = Y2;
 
-                        if (clip_line())
-                            ABLINE();
-
-                        X1 = tx1;
-                        X2 = tx2;
-                        Y1 = ty1;
-                        Y2 = ty2;
-                    } else
+                    if (clip_line())
                         ABLINE();
 
-                    X1 += xfact;
-                    X2 += xfact;
-                    Y1 += yfact;
-                    Y2 += yfact;
+                    X1 = tx1;
+                    X2 = tx2;
+                    Y1 = ty1;
+                    Y2 = ty2;
+                } else
+                    ABLINE();
 
-                    if (LN_MASK & 1)
-                        LN_MASK = (LN_MASK >> 1) | 0x8000;
-                    else
-                        LN_MASK = LN_MASK >> 1;
-                }               /* End for */
-            }                   /* End if underline */
-        }                       /* end if MONOBLT */
-    }                           /* if CONTRL[3] */
+                X1 += xfact;
+                X2 += xfact;
+                Y1 += yfact;
+                Y2 += yfact;
+
+                if (LN_MASK & 1)
+                    LN_MASK = (LN_MASK >> 1) | 0x8000;
+                else
+                    LN_MASK = LN_MASK >> 1;
+            } /* End for */
+        } /* End if underline */
+    } /* if count */
 }
 
 
@@ -351,7 +342,7 @@ void text_init()
                 FBASE = fnt_ptr->dat_table;
                 FWIDTH = fnt_ptr->form_width;
                 DELY = fnt_ptr->form_height;
-                TRNSFONT();
+                trnsfont();
             }
 
         } while ((fnt_ptr = fnt_ptr->next_font));
@@ -1103,7 +1094,7 @@ void dt_loadfont()
             FBASE = first_font->dat_table;
             FWIDTH = first_font->form_width;
             DELY = first_font->form_height;
-            TRNSFONT();
+            trnsfont();
             first_font->flags ^= F_STDFORM;
         }
         first_font = first_font->next_font;
