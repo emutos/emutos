@@ -3,4 +3,4 @@
 - EmuTOS crashes, if it boots from some STeem generated floppy images
 - auto programs are not run after reset
 - bad font, if run in STonX in mono and Y-resolution => 400 (STonX's bug)
-- bconout(5, i) fails if i >= 128
+

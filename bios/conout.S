@@ -112,7 +112,7 @@ msg_cputc:
  *
  * LVL: This wrapper is probably a bit pessimistic. The exact registers
  * to save should be examined in each routine... Anyway it works until
- * some assembler adept hase time to check all registers :-)
+ * some assembler adept has time to check all registers :-)
  */
 _cputc:
         move.w  4(sp),d1
@@ -123,9 +123,14 @@ _cputc:
         movem.l (sp)+,d2-d7/a2-a6
         rts
 
-// LVL   raw console output.
+/* 
+ * raw console output.
+ * the weird move.b 7(sp),d1 ensures that characters >= 128 get
+ * printed regardless of the sign of char.
+ */
 _bconout5:
-        move.w  6(sp),d1
+	move.l	#0,d1
+        move.b  7(sp),d1
         movem.l d2-d7/a2-a6,-(sp)
         bsr     ascii_out
         movem.l (sp)+,d2-d7/a2-a6
