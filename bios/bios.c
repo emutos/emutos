@@ -116,6 +116,48 @@ BCB *bufl[2];   /* buffer lists - two lists:  fat,dir / data */
 
 PFI charvec[5];     /* array of vectors to logical interrupt handlers */
 
+/*== Bios devices prototypes ==============================================*/
+
+LONG bconstat0(void);
+LONG bconstat1(void);
+LONG bconstat2(void);
+LONG bconstat3(void);
+LONG bconstat4(void);
+LONG bconstat5(void);
+LONG bconstat6(void);
+LONG bconstat7(void);
+
+LONG bconin0(void);
+LONG bconin1(void);
+LONG bconin2(void);
+LONG bconin3(void);
+LONG bconin4(void);
+LONG bconin5(void);
+LONG bconin6(void);
+LONG bconin7(void);
+
+void bconout0(BYTE);
+void bconout1(BYTE);
+void bconout2(BYTE);
+void bconout3(BYTE);
+void bconout4(BYTE);
+void bconout5(BYTE);
+void bconout6(BYTE);
+void bconout7(BYTE);
+
+LONG bcostat0(void);
+LONG bcostat1(void);
+LONG bcostat2(void);
+LONG bcostat3(void);
+LONG bcostat4(void);
+LONG bcostat5(void);
+LONG bcostat6(void);
+LONG bcostat7(void);
+
+extern LONG (*bconstat_vec[])(void);
+extern LONG (*bconin_vec[])(void);
+extern void (*bconout_vec[])(BYTE);
+extern LONG (*bcostat_vec[])(void);
 
 
 /*==== BIOS initialization ================================================*/
@@ -201,6 +243,44 @@ void biosinit()
     
     bufl[BI_FAT] = &bcbx[0]; 			/* fat buffers */
     bufl[BI_DATA] = &bcbx[2]; 			/* dir/data buffers */
+
+    /* initialise bios device functions */
+
+    bconstat_vec[0] = bconstat0;
+    bconstat_vec[1] = bconstat1;
+    bconstat_vec[2] = bconstat2;
+    bconstat_vec[3] = bconstat3;
+    bconstat_vec[4] = bconstat4;
+    bconstat_vec[5] = bconstat5;
+    bconstat_vec[6] = bconstat6;
+    bconstat_vec[7] = bconstat7;
+
+    bconin_vec[0] = bconin0;
+    bconin_vec[1] = bconin1;
+    bconin_vec[2] = bconin2;
+    bconin_vec[3] = bconin3;
+    bconin_vec[4] = bconin4;
+    bconin_vec[5] = bconin5;
+    bconin_vec[6] = bconin6;
+    bconin_vec[7] = bconin7;
+    
+    bconout_vec[0] = bconout0;
+    bconout_vec[1] = bconout1;
+    bconout_vec[2] = bconout2;
+    bconout_vec[3] = bconout3;
+    bconout_vec[4] = bconout4;
+    bconout_vec[5] = bconout5;
+    bconout_vec[6] = bconout6;
+    bconout_vec[7] = bconout7;
+
+    bcostat_vec[0] = bcostat0;
+    bcostat_vec[1] = bcostat1;
+    bcostat_vec[2] = bcostat2;
+    bcostat_vec[3] = bcostat3;
+    bcostat_vec[4] = bcostat4;
+    bcostat_vec[5] = bcostat5;
+    bcostat_vec[6] = bcostat6;
+    bcostat_vec[7] = bcostat7;
 
     /* returning to assembler patch OS via cartridge */
 }
@@ -309,21 +389,7 @@ void bios_0(MPB *mpb)
 
 LONG bios_1(WORD handle)	/* GEMBIOS character_input_status */
 {
-    switch(handle & 7)          /* strip upper bits */
-    {
-    case h_PRT :
-        return(NULL); 		/* This device does not accept input */
-
-    case h_AUX :
-        /*		return( sinstat() );*/
-        return(NULL);               /* No yet implemented */
-
-    case h_CON :
-        return ( con_stat() );
-
-    default:
-        return(NULL);		/* non-existent devices never ready */
-    }
+    return bconstat_vec[handle & 7]() ;
 }
 
 
@@ -345,18 +411,7 @@ LONG bios_1(WORD handle)	/* GEMBIOS character_input_status */
 
 LONG bios_2(WORD handle)
 {
-    switch(handle & 3)          /* strip upper bits */
-    {
-    case h_PRT :
-        return(NULL);		/* printer is not an input dev*/
-    case h_AUX :
-        return(NULL);	        /* not yet implemented */
-    case h_CON :
-        return( con_in() );	/* read the keyboard */
-    default:
-        return(NULL);		/*non-existnt devices ret null*/
-
-    }
+    return bconin_vec[handle & 7]() ;
 }
 
 
@@ -367,30 +422,7 @@ LONG bios_2(WORD handle)
 
 void bios_3(WORD handle, BYTE what)
 {
-    switch(handle & 7)          /* strip upper bits */
-    {
-    case h_PRT :
-#if IMPLEMENTED
-#if MVME410
-        m410_out(what);		/* output char to parallel printer */
-#else
-        sputc(what);		/* output char to printer	   */
-#endif
-#endif
-        break;
-
-    case h_AUX :
-        /*        sputc(what);*/		/* output char to AUX:		*/
-        break;
-
-    case h_CON :
-        cputc(what);		/* output char to the screen	*/
-        break;
-
-    default:
-        cputc(what);
-        break;
-    }
+    bconout_vec[handle & 7](what);
 }
 
 
@@ -444,7 +476,7 @@ LONG bios_5(WORD num, LONG vector)
 
 LONG bios_6()
 {
-    return(5L);	/* Intterupt is 200 Hz so 5 ms is the period */
+    return(20L);	/* system timer is 50 Hz so 20 ms is the period */
 }
 
 
@@ -484,17 +516,7 @@ LONG bios_7(WORD drive)
 
 LONG bios_8(WORD handle)	/* GEMBIOS character_output_status */
 {
-    switch(handle)
-    {
-    case h_PRT :
-        return(dev_RDY);
-    case h_AUX :
-        return(dev_RDY);
-    case h_CON :
-        return(dev_RDY);
-    default:
-        return(NULL);			/* non-existnt devices ret null */
-    }
+    return bcostat_vec[handle & 7]();
 }
 
 /**
@@ -644,4 +666,131 @@ void nullint(WORD a)
     WORD	*b ;
 
     b = &a ;
+}
+
+/*== BIOS devices ========================================================*/
+
+LONG bconstat0(void)
+{
+  return 0;
+}
+LONG bconstat1(void)
+{
+  return 0;
+}
+LONG bconstat2(void)
+{
+  return con_stat();
+}
+LONG bconstat3(void)
+{
+  return 0;
+}
+LONG bconstat4(void)
+{
+  return 0;
+}
+LONG bconstat5(void)
+{
+  return 0;
+}
+LONG bconstat6(void)
+{
+  return 0;
+}
+LONG bconstat7(void)
+{
+  return 0;
+}
+
+LONG bconin0(void)
+{
+  return 0;
+}
+LONG bconin1(void)
+{
+  return 0;
+}
+LONG bconin2(void)
+{
+  return con_in();
+}
+LONG bconin3(void)
+{
+  return 0;
+}
+LONG bconin4(void)
+{
+  return 0;
+}
+LONG bconin5(void)
+{
+  return 0;
+}
+LONG bconin6(void)
+{
+  return 0;
+}
+LONG bconin7(void)
+{
+  return 0;
+}
+
+void bconout0(BYTE b)
+{
+}
+void bconout1(BYTE b)
+{
+}
+void bconout2(BYTE b)
+{
+  cputc(b);
+}
+void bconout3(BYTE b)
+{
+}
+void bconout4(BYTE b)
+{
+}
+void bconout5(BYTE b)
+{
+}
+void bconout6(BYTE b)
+{
+}
+void bconout7(BYTE b)
+{
+}
+
+LONG bcostat0(void)
+{
+  return -1;
+}
+LONG bcostat1(void)
+{
+  return -1;
+}
+LONG bcostat2(void)
+{
+  return -1;
+}
+LONG bcostat3(void)
+{
+  return -1;
+}
+LONG bcostat4(void)
+{
+  return -1;
+}
+LONG bcostat5(void)
+{
+  return -1;
+}
+LONG bcostat6(void)
+{
+  return -1;
+}
+LONG bcostat7(void)
+{
+  return -1;
 }

@@ -75,10 +75,10 @@
 	.global	aux_stat      
 	.global	aux_vec       
 	.global	memval3       
-	.global	bconstat_vec  
-	.global	bconin_vec    
-	.global	bcostat_vec   
-	.global	bconout_vec  
+	.global	_bconstat_vec  
+	.global	_bconin_vec    
+	.global	_bcostat_vec   
+	.global	_bconout_vec  
 
 	.global	diskbuf	
 	.global	_supstk 	
@@ -221,10 +221,10 @@ prt_vec:        ds.l    1
 aux_stat:       ds.l    1
 aux_vec:        ds.l    1
 memval3:        ds.l    1
-bconstat_vec:   ds.l    8
-bconin_vec:     ds.l    8
-bcostat_vec:    ds.l    8
-bconout_vec:    ds.l    8
+_bconstat_vec:  ds.l    8
+_bconin_vec:    ds.l    8
+_bcostat_vec:   ds.l    8
+_bconout_vec:   ds.l    8
 
 | ==== IOREC BUFFERS ======================================================
 | Table of input-output buffersfor rs232 in, rs232 out, kdb in, midi in
