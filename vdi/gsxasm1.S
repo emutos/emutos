@@ -67,6 +67,7 @@
         .xdef   _v_planes
         .xdef   _v_lin_wr
 
+        .xdef   _shft_off
 
         .bss
         .even
@@ -541,30 +542,19 @@ concat:
 #if vme10
         lsr.w   #3,d2           // convert x-coordinate to offset
 #else
-        move.w  _v_planes,d3    // get number of planes
-        move.b  shf_tab-1(pc,d3.w),d3   // get shift factor
+        move.b  _shft_off,d3    // get pre-calculated shift factor
         lsr.w   d3,d2           // convert x-coordinate to offset
 #endif
 
 //
-//      Compute the offset to the desired word by adding the offset to the
-//      start of the scan line to the offset within the scan line, restore
-//      the clobbered registers, and exit.
+// Compute the offset to the desired word by adding the offset to the
+// start of the scan line to the offset within the scan line, restore
+// the clobbered registers, and exit.
 //
         ext.l   d2
         add.l   d2,d1           // compute total offset into screen buffer
         movem.w (sp)+,d2/d3     // restore the clobbered registers
         rts
-
-#if !vme10
-/* Shift Table for Computing Offsets into a Scan Line (interleaved planes) */
-
-shf_tab:
-        dc.b    3                       // 1 plane
-        dc.b    2                       // 2 planes
-        dc.b    0                       // not used
-        dc.b    1                       // 4 planes
-#endif
 
 
 

@@ -238,16 +238,16 @@ T tested and working on an emulator or real hardware
 
 ==== VDI ====================================================================
  
- X      v_opnwk
+ T      v_opnwk
  X      v_clswk
- X      v_opnvwk
- X      v_clsvwk
- ?      v_clrwk
+ T      v_opnvwk
+ T      v_clsvwk
+ T      v_clrwk
  ?      v_updwk
  ?      vst_load_fonts
  ?      vst_unload_fonts
  ?      vs_clip
- ?      v_pline
+ T      v_pline
  ?      v_pmarker
  ?      v_gtext
  ?      v_fillarea
@@ -257,7 +257,7 @@ T tested and working on an emulator or real hardware
  ?      v_bar
  ?      v_arc
  ?      v_pieslice
- ?      v_circle
+ T      v_circle
  ?      v_ellarc
  ?      v_ellpie
  ?      v_ellipse
@@ -304,9 +304,9 @@ T tested and working on an emulator or real hardware
  ?      v_show_c
  ?      v_hide_c
  ?      vq_mouse
- ?      vex_butv
- ?      vex_motv
- ?      vex_curv
+ T      vex_butv
+ T      vex_motv
+ T      vex_curv
  ?      vq_key_s
  ?      vq_extnd
  ?      vq_color

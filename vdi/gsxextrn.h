@@ -55,6 +55,9 @@ extern WORD num_qc_lines, q_circle[];
 
 extern WORD val_mode, chc_mode, loc_mode, str_mode;
 
+extern BYTE shft_off;		/* once computed Offset into a Scan Line */
+
+
 /* filled area variables */
 
 extern WORD y, odeltay, deltay, deltay1, deltay2;

@@ -1036,3 +1036,6 @@ Start... early ages
 18. Aug. 2002
 - vdi/text.c - trnsfont implemented in C (MAD)
 
+19. Aug. 2002
+- vdi/vdimain.c - precalculated shift offset shft_off for concat (MAD)
+

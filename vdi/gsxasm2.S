@@ -15,13 +15,11 @@
 
 //              public routines
 
-                .globl   _trap
                 .globl   _end_pts
                 .globl   _fill_line
                 .globl   _get_pix
                 .globl   _put_pix
                 .globl   _RECTFILL
-                .globl   _trnsfont
 
 //              external routines.
 

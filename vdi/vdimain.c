@@ -149,6 +149,20 @@ WORD flip_y;                    /* True if magnitudes being returned */
 struct attribute virt_work;     /* attribute areas for workstations */
 WORD q_circle[MX_LN_WIDTH];     /* Holds the circle DDA */
 
+
+#if !vme10
+/* Shift Table for Computing Offsets into a Scan Line (interleaved planes) */
+
+static const BYTE shft_tab [] = {
+    3,	// 1 plane
+    2,  // 2 planes
+    0,  // not used
+    1   // 4 planes
+};
+
+BYTE shft_off;			// once computed Offset into a Scan Line
+#endif
+
 /* GDP variables */
 
 WORD angle, beg_ang, del_ang, deltay, deltay1, deltay2, end_ang;
@@ -621,6 +635,13 @@ void init_wk()
         *pointer++ = *src_ptr++;
 
     flip_y = 1;
+
+//#if !vme10
+    // If the planes are arranged in an interleaved fashion with a word
+    // for each plane then calculate the shift offset by a value contained
+    // in the shift table.
+    shft_off = shft_tab[INQ_TAB[4] - 1];         // INQ_TAB[4] = v_planes
+//#endif
 }
 
 

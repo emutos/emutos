@@ -15,6 +15,7 @@
 #include "portab.h"
 #include "vdidef.h"
 #include "gsxextrn.h"
+#include "lineavars.h"
 #include "tosvars.h"
 
 
@@ -54,6 +55,67 @@ static WORD m_star[] = { 3, 2, 0, -3, 0, 3, 2, 3, 2, -3, -2, 2, 3, -2, -3, 2};
 static WORD m_square[] = { 1, 5, -4, -3, 4, -3, 4, 3, -4, 3, -4, -3 };
 static WORD m_cross[] = { 2, 2, -4, -3, 4, 3, 2, -4, 3, 4, -3 };
 static WORD m_dmnd[] = { 1, 5, -4, 0, 0, -3, 4, 0, 0, 3, -4, 0 };
+
+
+
+/*
+ * word_offset - calculate word offset into screen buffer
+ *
+ * This routine converts x and y coordinates into a physical offset to a word
+ * in the screen buffer.
+ *
+ * input:
+ *     x coordinate.
+ *     y coordinate.
+ *
+ * output:
+ *     physical offset -- (y * bytes_per_line) + (x & xmask)>>xshift
+ */
+
+ULONG word_offset(WORD x, WORD y)
+{
+    ULONG offset;
+    ULONG start;
+
+    /* Convert the y-coordinate into an offset to the start of the scan row. */
+    start = y * v_lin_wr;  // compute offset to start of scan row
+
+    // Convert the x-coordinate to a word offset into the current scan line.
+#if vme10
+    // If the planes are arranged as separate, consecutive entities
+    // then divide the x-coordinate by 8 to get the number of bytes.
+    offset = (x & 0xfff0) >> 3;
+#else
+    // If the planes are arranged in an interleaved fashion with a word
+    // for each plane then shift the x-coordinate by a value contained
+    // in the shift table.
+    offset = (x & 0xfff0) >> shft_off;
+#endif
+// Compute the offset to the desired word by adding the offset to the
+// start of the scan line to the offset within the scan line.
+    return (start + offset);
+}
+
+
+
+/*
+ * bit offset - calculate bit offset in screen
+ *
+ * This routine converts x coordinate into an index to the desired
+ * bit within a word in screen memory.
+ *
+ * input:
+ *     x coordinate.
+ *
+ * output:
+ *     word index. (x mod 16)
+ */
+
+
+WORD bit_offset(WORD x)
+{
+    return (x & 0x000f);        // bit offset = x-coordinate mod 16
+}
 
 
 /*
