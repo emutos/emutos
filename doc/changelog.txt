@@ -1601,3 +1601,6 @@ Start... early ages
 2004-06-19
 - include/portab.h: BOOLEAN replaced by BOOL (changed all over the code) (MAD)
 - vdi/blit.c: implementation of cpy_fm() in C. copyrfm.S no longer needed (MAD)
+
+2004-06-21
+- vdi/blit.c: implementation of bitblt() in C. (MAD)

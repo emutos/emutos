@@ -1,9 +1,8 @@
 /*
  * blit.c - Blitting routines
  *
- * Copyright 1999 Christer Gustavsson <cg@nocrew.org>
- * Copyright 1999 Caldera, Inc.
  * Copyright 2003 The EmuTOS development team
+ * Copyright 2002 Joachim Hoenig (blitter)
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -18,8 +17,9 @@
 #include "tosvars.h"
 #include "mouse.h"
 
-#define DBG_BLIT 1
-#define C_BLIT 1        // decide, which implementation
+#define DBG_BLIT 0
+#define C_BLIT 1        // cpy_fm routine in C
+#define BLITTER_IN_C 1  // bit_blt routine in C
 
 #if DBG_BLIT
 #include "kprint.h"
@@ -45,7 +45,12 @@
 #define BM_ALL_BLACK  15
 
 /* flag:1 SOURCE and PATTERN   flag:0 SOURCE only */
-#define PAT_FLAG    0x10      // = 2^4 = 16
+#define PAT_FLAG	4
+
+
+
+/* prototypes */
+static void do_blit(void);
 
 /* passes parameters to bitblt */
 struct blit_frame {
@@ -84,6 +89,7 @@ struct blit_frame {
     UWORD dst_wr;       // +72 destination form wrap (in bytes)
     UWORD src_wr;       // +74 source form wrap (in bytes)
 };
+
 /*
  * This struct has a global scope. It should just be put on a stack frame by the
  * cpyfm function and then passed to the bit_blt routine, but I did not manage
@@ -452,8 +458,7 @@ void vdi_vrt_cpyfm()
  * The major difference is, that in the device independant format the planes
  * are consecutive, while on the screen they are interleaved.
  */
-void
-vr_trnfm()
+void vr_trnfm()
 {
     MFDB *src_mfdb, *dst_mfdb;
     WORD *src;
@@ -553,3 +558,476 @@ vr_trnfm()
 }
 
 
+
+
+
+
+#if BLITTER_IN_C
+
+/* BLiTTER BASE ADDRESS */
+//#define BLiTTER 0xFF8A00:
+
+    /* BLiTTER REGISTER FLAGS */
+#define fHOP_Source    1
+#define fHOP_Halftone  0
+
+#define fSkewFXSR  7
+#define fSkewNFSR  6
+
+#define fLineBusy  7
+#define fLineHog  6
+#define fLineSmudge  5
+
+#define mLineBusy    0x80
+#define mLineHog     0x40
+#define mLineSmudge  0x20
+
+/*
+ * endmask data
+ *
+ * a bit means:
+ *
+ *   0: Destination
+ *   1: Source <<< Invert right end mask data >>>
+ */
+
+/* TiTLE: BLiT_iT */
+
+/* PuRPoSE: */
+/* Transfer a rectangular block of pixels located at an */
+/* arbitrary X,Y position in the source memory form to */
+/* another arbitrary X,Y position in the destination memory */
+/* form using replace mode (boolean operator 3). */
+/* The source and destination rectangles should not overlap. */
+
+/* iN: */
+/* a4 pointer to 34 byte input parameter block */
+
+/* Note: This routine must be executed in supervisor mode as */
+/* access is made to hardware registers in the protected region */
+/* of the memory map. */
+
+
+/* I n p u t p a r a m e t e r b l o c k o f f s e t s */
+
+#define SRC_FORM  0 // Base address of source memory form .l:
+#define SRC_NXWD  4 // Offset between words in source plane .w:
+#define SRC_NXLN  6 // Source form width .w:
+#define SRC_NXPL  8 // Offset between source planes .w:
+#define SRC_XMIN 10 // Source blt rectangle minimum X .w:
+#define SRC_YMIN 12 // Source blt rectangle minimum Y .w:
+
+#define DST_FORM 14 // Base address of destination memory form .l:
+#define DST_NXWD 18 // Offset between words in destination plane.w:
+#define DST_NXLN 20 // Destination form width .w:
+#define DST_NXPL 22 // Offset between destination planes .w:
+#define DST_XMIN 24 // Destination blt rectangle minimum X .w:
+#define DST_YMIN 26 // Destination blt rectangle minimum Y .w:
+
+#define WIDTH    28 // Width of blt rectangle .w:
+#define HEIGHT   30 // Height of blt rectangle .w:
+#define PLANES   32 // Number of planes to blt .w:
+
+/* BLiTTER REGISTER OFFSETS - not neede here */
+#if 0
+#define Halftone  0:
+#define Src_Xinc 32:
+#define Src_Yinc 34:
+#define Src_Addr 36:
+#define Endmask1 40:
+#define Endmask2 42:
+#define Endmask3 44:
+#define Dst_Xinc 46:
+#define Dst_Yinc 48:
+#define Dst_Addr 50:
+#define X_Count  54:
+#define Y_Count  56:
+#define HOP      58:
+#define OP       59:
+#define Line_Num 60:
+#define Skew     61:
+#endif
+
+/* blitter registers */
+UWORD          blt_halftone[16];
+WORD           blt_src_x_inc, blt_src_y_inc;
+ULONG          blt_src_addr;
+WORD           blt_end_1, blt_end_2, blt_end_3;
+WORD           blt_dst_x_inc, blt_dst_y_inc;
+ULONG          blt_dst_addr;
+UWORD          blt_x_cnt, blt_y_cnt;
+BYTE           blt_hop, blt_op, blt_status, blt_skew;
+BYTE           blt_ready;
+
+void bit_blt ()
+{
+    WORD plane;
+    WORD s_xmin, s_xmax;
+    WORD d_xmin, d_xmax;
+    UWORD lendmask, rendmask;
+    WORD skew, skew_idx;
+    WORD s_span, s_xmin_off, s_xmax_off;
+    WORD d_span, d_xmin_off, d_xmax_off;
+    ULONG s_addr, d_addr;
+
+    /* setting of skew flags */
+
+    /* QUALIFIERS   ACTIONS   BITBLT DIRECTION: LEFT -> RIGHT */
+
+    /* equal Sx&F> */
+    /* spans Dx&F FXSR NFSR */
+
+    /* 0     0     0    1 |..ssssssssssssss|ssssssssssssss..|   */
+    /*   |......dddddddddd|dddddddddddddddd|dd..............|   */
+
+    /* 0     1      1  0 */
+    /*   |......ssssssssss|ssssssssssssssss|ss..............|   */
+    /*   |..dddddddddddddd|dddddddddddddd..|   */
+
+    /* 1     0     0    0 |..ssssssssssssss|ssssssssssssss..|   */
+    /*   |...ddddddddddddd|ddddddddddddddd.|   */
+
+    /* 1     1     1    1 |...sssssssssssss|sssssssssssssss.|   */
+    /*   |..dddddddddddddd|dddddddddddddd..|   */
+
+#define mSkewFXSR    0x80
+#define mSkewNFSR    0x40
+
+    const UBYTE skew_flags [8] = {
+        mSkewNFSR,		/* Source span < Destination span */
+        mSkewFXSR,		/* Source span > Destination span */
+        0,			/* Spans equal Shift Source right */
+	mSkewNFSR+mSkewFXSR,    /* Spans equal Shift Source left */
+
+        /* When Destination span is but a single word ... */
+        0,			/* Implies a Source span of no words */
+        mSkewFXSR,		/* Source span of two words */
+        0,			/* Skew flags aren't set if Source and */
+        0			/* Destination spans are both one word */
+    };
+
+    //a5 = BLiTTER;   /* word */    /* a5-> BLiTTER register block */
+
+    /* Calculate Xmax coordinates from Xmin coordinates and width */
+    s_xmin = info.s_xmin;		/* d0<- src Xmin */
+    s_xmax = s_xmin + info.b_wd - 1;	/* d1<- src Xmax=src Xmin+width-1 */
+    d_xmin = info.d_xmin;		/* d2<- dst Xmin */
+    d_xmax = d_xmin + info.b_wd - 1;	/* d3<- dst Xmax=dstXmin+width-1 */
+
+    /* Endmasks derived from source Xmin mod 16 and source Xmax mod 16 */
+    lendmask=0xffff>>(d_xmin%16);
+    rendmask=~(0x7fff>>(d_xmax%16));
+
+    /* Skew value is (destination Xmin mod 16 - source Xmin mod 16) */
+    /* && 0x000F.  Three discriminators are used to determine the */
+    /* states of FXSR and NFSR flags: */
+
+    /* bit 0     0: Source Xmin mod 16 =< Destination Xmin mod 16 */
+    /* 1: Source Xmin mod 16 >  Destination Xmin mod 16 */
+
+    /* bit 1     0: SrcXmax/16-SrcXmin/16 <> DstXmax/16-DstXmin/16 */
+    /* Source span      Destination span */
+    /* 1: SrcXmax/16-SrcXmin/16 == DstXmax/16-DstXmin/16 */
+
+    /* bit 2     0: multiple word Destination span */
+    /* 1: single word Destination span */
+
+    /* These flags form an offset into a skew flag table yielding */
+    /* correct FXSR and NFSR flag states for the given source and */
+    /* destination alignments */
+
+    /* d7<- Dst Xmin mod16 - Src Xmin mod16 */
+    skew = (d_xmin & 0x0f) - (s_xmin & 0x0f);
+
+    /* if Sx&F > Dx&F then cy:1 else cy:0 */
+    skew_idx = (skew < 0) ? 0x0001 : 0x0000; /* d6[bit0]<- alignment flag */
+
+    s_xmin_off = s_xmin >> 4;		/* d0<- word offset to src Xmin */
+    s_xmax_off = s_xmax >> 4;		/* d1<- word offset to src Xmax */
+    s_span = s_xmax_off - s_xmin_off;   /* d1<- Src span - 1 */
+
+    d_xmin_off = d_xmin >> 4;		/* d2<- word offset to dst Xmin */
+    d_xmax_off = d_xmax >> 4;		/* d3<- word offset to dst Xmax */
+    d_span = d_xmax_off - d_xmin_off;   /* d3<- dst span - 1 */
+
+    /* does destination just span a single word? */
+    if ( !d_span ) {
+        /* merge both end masks into Endmask1. */
+        lendmask &= rendmask;		/* d4<- single word end mask */
+        skew_idx |= 0x0004;			/* d6[bit2]:1 => single word dst */
+        /* The other end masks will be ignored by the BLiTTER */
+    }
+
+    blt_end_1 = lendmask;		/* left end mask */
+    blt_end_2 = 0xFFFF;			/* center end mask */
+    blt_end_3 = rendmask;		/* right end mask */
+
+    /* the last discriminator is the */
+    if ( d_span == s_span ) {    	/* equality of src and dst spans */
+        skew_idx |= 0x0002;   		/* d6[bit1]:1 => equal spans */
+    }
+
+    /* d4<- number of words in dst line */
+    blt_x_cnt = d_span + 1;		/* set value in BLiTTER */
+
+    /* Calculate Source starting address */
+    s_addr = (ULONG)info.s_form
+        + info.s_ymin * info.s_nxln
+        + s_xmin_off * info.s_nxwd;
+
+    /* d4<- offset between consecutive words in Src plane */
+    blt_src_x_inc = info.s_nxwd;
+
+    /* Src_Yinc is the offset in bytes from the last word of one Source */
+    /* line to the first word of the next Source line */
+    blt_src_y_inc = info.s_nxln - info.s_nxwd * s_span;
+
+
+    /* Calculate Destination starting address */
+    d_addr = (ULONG)info.d_form
+        + info.d_ymin * info.d_nxln
+        + d_xmin_off * info.d_nxwd;
+
+    /* d4<- offset between consecutive words in Src plane */
+    blt_dst_x_inc = info.d_nxwd;
+
+    /* Dst_Yinc is the offset in bytes from the last word of one
+     * Destination line to the first word of the next Dest. line */
+    blt_dst_y_inc = info.d_nxln - info.d_nxwd * d_span;
+
+    /*
+     * The low nibble of the difference in Source and Destination alignment
+     * is the skew value.  Use the skew flag index to reference FXSR and
+     * NFSR states in skew flag table.
+     */
+    skew &= 0x0f;			/* d7<- isolated skew count */
+    skew |= skew_flags[skew_idx];	/* d7<- necessary flags and skew */
+    blt_skew = skew;			/* load Skew register   */
+
+    /* BLiTTER REGISTER MASKS */
+#define mHOP_Source  0x02
+#define mHOP_Halftone 0x01
+    blt_hop = mHOP_Source;   /* word */    /* set HOP to source only */
+
+    for (plane = info.plane_ct-1; plane >= 0; plane--) {
+        int op_tabidx;
+
+        blt_src_addr = s_addr;		/* load Source pointer to this plane */
+        blt_dst_addr = d_addr;		/* load Dest ptr to this plane   */
+        blt_y_cnt = info.b_ht;		/* load the line count   */
+
+        /* calculate operation for actual plane */
+        op_tabidx = ((info.fg_col>>plane) & 0x0001 ) <<1;
+        op_tabidx |= (info.bg_col>>plane) & 0x0001;
+        blt_op = info.op_tab[op_tabidx] & 0x000f;
+
+        do_blit();
+
+        s_addr += info.s_nxpl;		/* a0-> start of next src plane   */
+        d_addr += info.d_nxpl;		/* a1-> start of next dst plane   */
+    }
+
+}
+
+
+
+
+#define FXSR    0x80
+#define NFSR    0x40
+#define SKEW    0x0f
+#define BUSY    0x80
+#define HOG     0x40
+#define SMUDGE  0x20
+#define LINENO  0x0f
+
+#define GetMemW(addr) ((ULONG)*(UWORD*)(addr))
+#define SetMemW(addr, val) *(UWORD*)(addr) = val
+
+static void do_blit(void)
+{
+    ULONG   blt_src_in;
+    UWORD   blt_src_out, blt_hop_out, blt_dst_in, blt_dst_out, mask_out;
+    int     xc, yc, lineno, last, first;
+
+#if DBG_BLIT
+    kprintf ("bitblt: Start\n");
+    kprintf ("HALFT[] 0x%04x-%04x-%04x-%04x\n", (UWORD) blt_halftone[0], blt_halftone[1], blt_halftone[2], blt_halftone[3]);
+    kprintf ("X COUNT 0x%04x\n", (UWORD) blt_x_cnt);
+    kprintf ("Y COUNT 0x%04x\n", (UWORD) blt_y_cnt);
+    kprintf ("X S INC 0x%04x\n", (UWORD) blt_src_x_inc);
+    kprintf ("Y S INC 0x%04x\n", (UWORD) blt_src_y_inc);
+    kprintf ("X D INC 0x%04x\n", (UWORD) blt_dst_x_inc);
+    kprintf ("Y D INC 0x%04x\n", (UWORD) blt_dst_y_inc);
+    kprintf ("ENDMASK 0x%04x-%04x-%04x\n", (UWORD) blt_end_1, (UWORD) blt_end_2, (UWORD) blt_end_3);
+    kprintf ("S_ADDR  0x%08lx\n", blt_src_addr);
+    kprintf ("D_ADDR  0x%08lx\n", blt_dst_addr);
+    kprintf ("HOP=%01d, OP=%02d\n", blt_hop & 0x3, blt_op & 0xf);
+    kprintf ("HOPline=%02d\n", blt_status & 0xf);
+    kprintf ("NFSR=%d, FXSR=%d, SKEW=%02d\n", (blt_skew & NFSR) != 0,
+                                              (blt_skew & FXSR) != 0,
+                                              (blt_skew & SKEW));
+#endif
+    xc = 0;
+    yc = (blt_y_cnt == 0) ? 65536 : blt_y_cnt;
+    while (yc-- > 0) {
+        xc = (blt_x_cnt == 0) ? 65536 : blt_x_cnt;
+        first = 1;
+        blt_src_in = 0;
+        /* next line to get rid of obnoxious compiler warnings */
+        blt_src_out = blt_hop_out = blt_dst_out = 0;
+        while (xc-- > 0) {
+            last = (xc == 0);
+            if ((blt_hop & 0x03) >= 2) {
+                /* read source into blt_src_in */
+                if (blt_src_x_inc >= 0) {
+                    if (first && (blt_skew & FXSR)) {
+                        blt_src_in = GetMemW (blt_src_addr);
+                        blt_src_addr += blt_src_x_inc;
+                    }
+                    blt_src_in <<= 16;
+
+                    if (last && (blt_skew & NFSR)) {
+                        blt_src_addr -= blt_src_x_inc;
+                    } else {
+                        blt_src_in |= GetMemW (blt_src_addr);
+                        if (!last) {
+                            blt_src_addr += blt_src_x_inc;
+                        }
+                    }
+                } else {
+                    if (first &&  (blt_skew & FXSR)) {
+                        blt_src_in = GetMemW (blt_src_addr);
+                        blt_src_addr +=blt_src_x_inc;
+                    } else {
+                        blt_src_in >>= 16;
+                    }
+                    if (last && (blt_skew & NFSR)) {
+                        blt_src_addr -= blt_src_x_inc;
+                    } else {
+                        blt_src_in |= (GetMemW (blt_src_addr) << 16);
+                        if (!last) {
+                            blt_src_addr += blt_src_x_inc;
+                        }
+                    }
+                }
+                /* shift blt_skew times into blt_src_out */
+                blt_src_out = blt_src_in >> (blt_skew & SKEW);
+#if (VERBOSE & 0x8)
+                kprintf ("%04x ", blt_src_out);
+#endif
+            }
+            /* halftone OP */
+            lineno = ((blt_status & SMUDGE) ? blt_src_out : blt_status) & LINENO;
+            switch (blt_hop & 0x3) {
+            case 0:
+                blt_hop_out = 0xffff;
+                break;
+            case 1:
+                blt_hop_out = blt_halftone[lineno];
+                break;
+            case 2:
+                blt_hop_out = blt_src_out;
+                break;
+            case 3:
+                blt_hop_out = blt_src_out & blt_halftone[lineno];
+                break;
+            }
+            /* read destination into blt_dst_in */
+            blt_dst_in = GetMemW (blt_dst_addr);
+            /* op into blt_dst_out */
+            switch (blt_op & 0xf) {
+            case 0:
+                blt_dst_out = 0;
+                break;
+            case 1:
+                blt_dst_out = blt_hop_out & blt_dst_in;
+                break;
+            case 2:
+                blt_dst_out = blt_hop_out & ~blt_dst_in;
+                break;
+            case 3:
+                blt_dst_out = blt_hop_out;
+                break;
+            case 4:
+                blt_dst_out = ~blt_hop_out & blt_dst_in;
+                break;
+            case 5:
+                blt_dst_out = blt_dst_in;
+                break;
+            case 6:
+                blt_dst_out = blt_hop_out ^ blt_dst_in;
+                break;
+            case 7:
+                blt_dst_out = blt_hop_out | blt_dst_in;
+                break;
+            case 8:
+                blt_dst_out = ~blt_hop_out & ~blt_dst_in;
+                break;
+            case 9:
+                blt_dst_out = ~blt_hop_out ^ blt_dst_in;
+                break;
+            case 0xa:
+                blt_dst_out = ~blt_dst_in;
+                break;
+            case 0xb:
+                blt_dst_out = blt_hop_out | ~blt_dst_in;
+                break;
+            case 0xc:
+                blt_dst_out = ~blt_hop_out;
+                break;
+            case 0xd:
+                blt_dst_out = ~blt_hop_out | blt_dst_in;
+                break;
+            case 0xe:
+                blt_dst_out = ~blt_hop_out | ~blt_dst_in;
+                break;
+            case 0xf:
+                blt_dst_out = 0xffff;
+                break;
+            }
+
+            /* and endmask */
+            if (first) {
+                mask_out = (blt_dst_out & blt_end_1) | (blt_dst_in & ~blt_end_1);
+            } else if (last) {
+                mask_out = (blt_dst_out & blt_end_3) | (blt_dst_in & ~blt_end_3);
+            } else {
+                mask_out = (blt_dst_out & blt_end_2) | (blt_dst_in & ~blt_end_2);
+            }
+            SetMemW (blt_dst_addr, mask_out);
+            if (!last) {
+                blt_dst_addr += blt_dst_x_inc;
+            }
+            first = 0;
+        }
+#if DBG_BLIT
+        kprintf ("\n");
+#endif
+        blt_status = (blt_status + ((blt_dst_y_inc >= 0) ? 1 : 15)) & 0xef;
+        blt_src_addr += blt_src_y_inc;
+        blt_dst_addr += blt_dst_y_inc;
+    }
+    /* blt_status &= ~BUSY; */
+    blt_y_cnt = 0;
+#if DBG_BLIT
+    kprintf ("bitblt: End\n");
+    kprintf ("HALFT[] 0x%04x-%04x-%04x-%04x\n", (UWORD) blt_halftone[0], blt_halftone[1], blt_halftone[2], blt_halftone[3]);
+    kprintf ("X COUNT 0x%04x\n", (UWORD) xc);
+    kprintf ("Y COUNT 0x%04x\n", (UWORD) yc);
+    kprintf ("X S INC 0x%04x\n", (UWORD) blt_src_x_inc);
+    kprintf ("Y S INC 0x%04x\n", (UWORD) blt_src_y_inc);
+    kprintf ("X D INC 0x%04x\n", (UWORD) blt_dst_x_inc);
+    kprintf ("Y D INC 0x%04x\n", (UWORD) blt_dst_y_inc);
+    kprintf ("ENDMASK 0x%04x-%04x-%04x\n", (UWORD) blt_end_1, (UWORD) blt_end_2, (UWORD) blt_end_3);
+    kprintf ("S_ADDR  0x%08lx\n", blt_src_addr);
+    kprintf ("D_ADDR  0x%08lx\n", blt_dst_addr);
+    kprintf ("HOP=%01d, OP=%02d\n", blt_hop & 0x3, blt_op & 0xf);
+    kprintf ("HOPline=%02d\n", blt_status & 0xf);
+    kprintf ("NFSR=%d, FXSR=%d, SKEW=%02d\n", (blt_skew & NFSR) != 0,
+                                              (blt_skew & FXSR) != 0,
+                                              (blt_skew & SKEW));
+#endif
+
+
+}
+#endif   //BLITTER_IN_C
