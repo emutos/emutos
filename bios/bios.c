@@ -258,7 +258,7 @@ void autoexec(void)
     BYTE path[30];
     WORD err;
 
-    if (kbshift(-1) & 0x02)             /* check if Control is held down */
+    if (kbshift(-1) & 0x04)             /* check if Control is held down */
         return;
 
     if( ! blkdev_avail(bootdev) )       /* check, if bootdev available */
