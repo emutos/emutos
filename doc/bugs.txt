@@ -1,0 +1,5 @@
+- pexec: loaded program's memory is not released after exit
+- Command.prg crashes, when commandline input is longer than line length
+- EmuTOS crashes, if it boots from some STeem generated floppy images
+- auto programs are not run after reset
+- bad font, if run in STonX in mono and Y-resolution => 400 (STonX's bug)
