@@ -1,10 +1,38 @@
 Installing:
 
 You will need the (cross-)gcc toolchain from the sparemint pages to
-build this stuff. 
+build this stuff. You will also probably need GNU make.
 
-Also you need to get it (more or less) running is STonX. But you have
-to do some changes in STonX. Possibly this will change later.
+building EmuTOS
+===============
+
+to build, simply do
+
+    make
+
+This will create a TOS1 image file 'emutos.img', configured by
+default for the US country. A list of the main Makefile targets is
+obtained by doing 
+
+    make help
+
+To build EmuTOS for a different country (changes the language and the
+keyboard), do
+
+    make COUNTRY=en
+or
+    make COUNTRY=fr
+or
+    make COUNTRY=de
+
+Finally, some settings can be configured in the file bios/config.h.
+
+
+Emulator-specific notes
+=======================
+
+STonX
+-----
 
 EmuTOS now needs no change in STonX any longer. It will run on a
 normal STonX. 
@@ -20,13 +48,11 @@ void write_native(char * addr)
     char buf[1024];
     int n;
 
-    buf[0]=0;   /* to be save */
-    buf[80]=0;   /* to be save */
-
-    for(n=0;n<1024;n++) {       /* Fill string char by char */
-        if ((buf[n]=LM_UB(MEM(addr++))) == 0) break;
+    for(n = 0 ; n < 1023 ; n++) {  /* Fill string char by char */
+        if ( (buf[n]=LM_UB(MEM(addr++))) == 0) break;
     }
-    fprintf(stderr,"%s", buf );
+    buf[1023] = 0;
+    fprintf(stderr,"%s", buf);
 }
 
 void call_native(UL as, UL func)
@@ -42,17 +68,25 @@ void call_native(UL as, UL func)
 	case 1:
 .....
 
-2. Switch on the debugging output by setting, in config.h, the
-   parameter STONX_NATIVE_PRINT to 1.
+(STonC release 0.8.0 and later already has this function)
 
-Then you can compile it all depending on your language with 
+2. Switch on the debugging output by setting, in bios/config.h, the
+   parameter STONX_NATIVE_PRINT to 1 before building EmuTOS.
 
-    make COUNTRY=en
-or
-    make COUNTRY=fr
-or
-    make COUNTRY=de
+ARAnyM
+------
 
+To switch on the debugging output, set in bios/config.h the
+parameter ARANYM_NATIVE_PRINT to 1 before building EmuTOS.
+
+use the 'falcon' Makefile target
+
+
+Other emulators
+---------------
+
+Use 'make 192' to create etos192k.img, a file having the exact same
+size as TOS1 ROM images, for other emulators.
 
 
 Hope this is all. AND: EmuTOS is not thought for the public right now.
