@@ -45,8 +45,6 @@ VOID	mfp_init (VOID)
 {
     MFP *mfp=MFP_BASE;   /* set base address of MFP */
 
-    cputs("[    ] MFP initialized ...\r");
-
     mfp_ctrl = MFP_CTRL_NONE;  /* no flow control */
 
     /* reset the MFP registers */
@@ -100,8 +98,6 @@ VOID	mfp_init (VOID)
     /* timer D */
     rsconf(B9600, 0, 0x98, 1, 1, 0);
     /* TODO, flow control */
-
-    cstatus(SUCCESS);
 }
  
 

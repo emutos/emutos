@@ -214,10 +214,11 @@ Start... early ages
 
 23. Okt. 2001
 - Video mode recognition works (mono/color) (MAD)
-- Patched in bigger resolutions work in all modes  (MAD)
+- Emulated bigger screen resolutions work in mono mode  (MAD)
 
 ===== Initial release 0.1 ===================================================
 
-
+24. Okt. 2001
+- Changed all *.s assembler files to *.S, changed comments from "|" to "//"
 
 

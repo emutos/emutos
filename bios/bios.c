@@ -210,23 +210,19 @@ void biosmain()
 {
     /* print, what has been done till now (fake) */
 
-    cprintf("[ OK ] Free Memory of 0x%lx bytes ...\r\n", memtop-membot);
-    cprintf("[ OK ] Screen starts at address 0x%lx ...\r\n", (long)v_bas_ad);
-
-    cprintf("[ OK ] Entered supervisormode ...\n\r");
-    cprintf("[ OK ] Configured memory ...\n\r");
-    cprintf("[ OK ] Initialized video shifter ...\n\r");
-    cprintf("[ OK ] Soundchip initialized ...\n\r");
-    cprintf("[ OK ] Floppy deselected ...\n\r");
+    cprintf("[ OK ] %s\r\n", biosts);
+    cprintf("[ OK ] Hardware initialized\n\r");
+    cprintf("[ OK ] Free memory of %ld bytes\r\n", memtop-membot);
+    cprintf("[ OK ] Screen starts at address 0x%lx\r\n", (long)v_bas_ad);
 
     trap_1( 0x30 );              /* initial test, if BDOS works */
-    cprintf("[ OK ] GEMDOS initialized ...\r\n");
+    cprintf("[ OK ] GEMDOS initialized\r\n");
 
     trap_1( 0x2b, os_dosdate);  /* set initial date in GEMDOS format */
-    cprintf("[ OK ] Initial system date and time set ...\r\n");
+    cprintf("[ OK ] Initial system date and time set\r\n");
 
     trap_1( 0x0e , defdrv );    /* Set boot drive */
-    cprintf("[ OK ] Boot disk drive set ...\r\n");
+    cprintf("[ OK ] Boot disk drive set\r\n");
 
     /* execute Reset-resistent PRGs */
 

@@ -17,4 +17,4 @@
 
 
 
-char *biosts="### EmuBIOS 00.01 23.09.2001 22:00:00 MAD ###\n\r";
+char *biosts="EmuTOS 00.01 - 23.09.2001 22:00:00 MAD";

@@ -1,6 +1,6 @@
-| ===========================================================================
-| ==== tosvars.s - TOS System variables
-| ===========================================================================
+// ===========================================================================
+// ==== tosvars.s - TOS System variables
+// ===========================================================================
 
 
 	.global _vec_118
@@ -130,28 +130,28 @@
 	.global kbdindex
 	.global	kbdbuf
 
-| ===========================================================================
-| ==== BSS segment ==========================================================
-| ===========================================================================
+// ===========================================================================
+// ==== BSS segment ==========================================================
+// ===========================================================================
 
 
-| ==== Beginning of RAM (used by OS) ========================================
+// ==== Beginning of RAM (used by OS) ========================================
 	.bss
-	.org 0x00000000 	| start of RAM
+	.org 0x00000000 	// start of RAM
 bssstrt:
 
-| ==== Start of Exception related variables =================================
+// ==== Start of Exception related variables =================================
 	.org	0x380
-_proc_lives:	ds.l	1       | Validates system crash page, if 0x12345678
-_proc_dregs:	ds.l    8	| Saved registers d0-d7
-_proc_aregs:	ds.l	8	| Saved registers a0-a7
-_proc_enum:	ds.l	1	| Vector number of crash exception
-_proc_usp:	ds.l	1	| Saved user stackpointer
-_proc_stk: 	ds.w	16	| 16 words from exception stack
+_proc_lives:	ds.l	1       // Validates system crash page, if 0x12345678
+_proc_dregs:	ds.l    8	// Saved registers d0-d7
+_proc_aregs:	ds.l	8	// Saved registers a0-a7
+_proc_enum:	ds.l	1	// Vector number of crash exception
+_proc_usp:	ds.l	1	// Saved user stackpointer
+_proc_stk: 	ds.w	16	// 16 words from exception stack
 
-| ==== Start of System variables ============================================
-	.org 0x400		|
-etv_timer:      ds.l    1       |
+// ==== Start of System variables ============================================
+	.org 0x400		//
+etv_timer:      ds.l    1       //
 etv_critic:     ds.l    1
 etv_term:       ds.l    1
 etv_xtra:       ds.l    5
@@ -174,7 +174,7 @@ palmode:        ds.w    1
 defshiftmod:    ds.w    1
 sshiftmod:     	ds.b    1
 	.org 0x44e
-_v_bas_ad:      ds.l    1	| screen base address  
+_v_bas_ad:      ds.l    1	// screen base address  
 vblsem:         ds.w    1
 nvbls:	        ds.w    1
 _vblqueue:      ds.l    1
@@ -214,35 +214,35 @@ _vbl_list:      ds.l    1
 		ds.l    1
 		ds.l    1
 _dumpflg:       ds.w    1
-		ds.w    1     | dummy so that _sysbase == 0x4F2
+		ds.w    1     // dummy so that _sysbase == 0x4F2
 _sysbase:       ds.l    1
 _shell_p:       ds.l    1
 end_os:         ds.l    1
 exec_os:        ds.l    1
 
 	.org 0x502
-dump_vec:       ds.l    1       |Pointer to screen dump routine
-prt_stat:       ds.l    1       |prv_lsto
-prt_vec:        ds.l    1       |prv_lst
-aux_stat:       ds.l    1       |prv_auxo
-aux_vec:        ds.l    1       |prv_aux
-pun_ptr:        ds.l    1       | If AHDI, pointer to pun_info  
-memval3:        ds.l    1       |If $5555AAAA, reset
-_bconstat_vec:  ds.l    8       |8 Pointers to input-status routines
-_bconin_vec:    ds.l    8       |8 Pointers to input routines
-_bcostat_vec:   ds.l    8       |8 Pointers to output-status routines
-_bconout_vec:   ds.l    8       |8 Pointers to output routines
-_longframe:     ds.w    1       |If not 0, then not 68000 - use long stack frames
-_p_cookies:     ds.l    1       |Pointer to cookie jar
-ramtop:         ds.l    1       |Pointer to end of FastRam
-ramvalid:       ds.l    1       |Validates ramtop if $1357BD13
-bell_hook:      ds.l    1       |Pointer to routine for system bell
-kcl_hook:       ds.l    1       |Pointer to routine for system keyclick
+dump_vec:       ds.l    1       //Pointer to screen dump routine
+prt_stat:       ds.l    1       //prv_lsto
+prt_vec:        ds.l    1       //prv_lst
+aux_stat:       ds.l    1       //prv_auxo
+aux_vec:        ds.l    1       //prv_aux
+pun_ptr:        ds.l    1       // If AHDI, pointer to pun_info  
+memval3:        ds.l    1       //If $5555AAAA, reset
+_bconstat_vec:  ds.l    8       //8 Pointers to input-status routines
+_bconin_vec:    ds.l    8       //8 Pointers to input routines
+_bcostat_vec:   ds.l    8       //8 Pointers to output-status routines
+_bconout_vec:   ds.l    8       //8 Pointers to output routines
+_longframe:     ds.w    1       //If not 0, then not 68000 - use long stack frames
+_p_cookies:     ds.l    1       //Pointer to cookie jar
+ramtop:         ds.l    1       //Pointer to end of FastRam
+ramvalid:       ds.l    1       //Validates ramtop if $1357BD13
+bell_hook:      ds.l    1       //Pointer to routine for system bell
+kcl_hook:       ds.l    1       //Pointer to routine for system keyclick
 	.org 0x5b4
 
 
-| ==== IOREC BUFFERS ======================================================
-| Table of input-output buffersfor rs232 in, rs232 out, kdb in, midi in
+// ==== IOREC BUFFERS ======================================================
+// Table of input-output buffersfor rs232 in, rs232 out, kdb in, midi in
 	.org	0xa0e
 rs232ibufbuf:	
 	.org	0xb0e
@@ -253,8 +253,8 @@ ikbdibufbuf:
 midiibufbuf:	
 	.org	0xd8e
 
-| ==== IORECS =============================================================
-| Table of input-output records for rs232 in, rs232 out, kdb in, midi in
+// ==== IORECS =============================================================
+// Table of input-output records for rs232 in, rs232 out, kdb in, midi in
 	.org	0xd8e
 _rs232iorec:
 rs232ibuf:	ds.l	1
@@ -285,32 +285,32 @@ midiibuflo:	ds.w	1
 midiibufhi:	ds.w	1
 
 	
-| ==== KBDVBASE =============================================================
-| Table of routines for managing midi and keyboard data
-| in packets from IKBD (shown by A0 und 4(sp)) 
+// ==== KBDVBASE =============================================================
+// Table of routines for managing midi and keyboard data
+// in packets from IKBD (shown by A0 und 4(sp)) 
 	.org 0xdcc
 _kbdvecs:	
-midivec:	ds.l	1	| MIDI input
-vkbderr:	ds.l	1	| keyboard error
-vmiderr:	ds.l	1	| MIDI-Error
-statvec:	ds.l	1	| IKBD-Status
-mousevec:	ds.l	1	| mouse-routine
-clockvec:	ds.l	1	| time-routine
-joyvec:		ds.l	1	| joystick-routinee
-midisys:	ds.l	1	| MIDI-systemvector
-ikbdsys:	ds.l	1	| IKBD-systemvector
-kbdlength:	ds.b	1	| kbd length of packet
-kbdindex:	ds.b	1	| kbd index of next byte of packet 
-kbdbuf:		ds.b	8	| kbd buffer for packet
+midivec:	ds.l	1	// MIDI input
+vkbderr:	ds.l	1	// keyboard error
+vmiderr:	ds.l	1	// MIDI-Error
+statvec:	ds.l	1	// IKBD-Status
+mousevec:	ds.l	1	// mouse-routine
+clockvec:	ds.l	1	// time-routine
+joyvec:		ds.l	1	// joystick-routinee
+midisys:	ds.l	1	// MIDI-systemvector
+ikbdsys:	ds.l	1	// IKBD-systemvector
+kbdlength:	ds.b	1	// kbd length of packet
+kbdindex:	ds.b	1	// kbd index of next byte of packet 
+kbdbuf:		ds.b	8	// kbd buffer for packet
 
 	
 
 	
-| memory past this address will be cleared on startup or on reset.
+// memory past this address will be cleared on startup or on reset.
 bssstart:
 
-| ===========================================================================
-| ==== End ==================================================================
-| ===========================================================================
+// ===========================================================================
+// ==== End ==================================================================
+// ===========================================================================
 
 	.end

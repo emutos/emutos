@@ -408,9 +408,6 @@ VOID ikbdws(WORD cnt, LONG ptr)
  
 VOID	kbd_init(VOID)
 {
-
-    cputs("[    ] IKBD ACIA initialized ...\r");
-
     /* initialize ikbd ACIA */
     ikbd_acia.ctrl =
         ACIA_RESET;     /* master reset */
@@ -431,6 +428,4 @@ VOID	kbd_init(VOID)
 #endif
 
     bioskeys();
-
-    cstatus(SUCCESS);
 }

@@ -13,7 +13,7 @@ ASFLAGS = --register-prefix-optional -m68000
 
 # C compiler for MiNT
 CC = m68k-atari-mint-gcc
-CFLAGS = -c -O -mshort -Wall -DBUILDDATE="\"$(BUILDDATE)\""
+CFLAGS = -c -O -mshort  -m68000 -Wall -DBUILDDATE="\"$(BUILDDATE)\""
 #CC = gcc
 #CFLAGS = -c -O -I./include -Wall
 
@@ -32,8 +32,9 @@ command.prg: $(OBJECTS)
 command.o: command.c
 	${CC} ${CFLAGS} -c $?
 
-coma.o: coma.s
-	$(AS) $(ASFLAGS) $? -o $@
+coma.o: coma.S
+	${CC} ${CFLAGS} -c $?
+#	$(AS) $(ASFLAGS) $? -o $@
 
 clean:
 	rm -f *.o *~ lib*.a core command.prg

@@ -36,7 +36,7 @@ ASFLAGS = --register-prefix-optional -m68000 $(ASINC)
 CC = m68k-atari-mint-gcc
 INC = -Iinclude
 # no -Wall for bdos right now...
-CFLAGS = -O -mshort $(INC) 
+CFLAGS = -O -mshort -m68000 $(INC) 
 
 # The objdump utility (disassembler)
 OBJDUMP=m68k-atari-mint-objdump
@@ -47,8 +47,8 @@ OBJDUMP=m68k-atari-mint-objdump
 
 BIOSCSRC = kprint.c xbios.c chardev.c bios.c clock.c fnt8x8.c fnt8x16.c mfp.c \
            version.c midi.c ikbd.c
-BIOSSSRC = tosvars.s startup.s lineavars.s vectors.s aciavecs.s \
-           memory.s linea.s conout.s
+BIOSSSRC = tosvars.S startup.S lineavars.S vectors.S aciavecs.S \
+           memory.S linea.S conout.S
 
 #
 # source code in bdos/
@@ -57,14 +57,14 @@ BIOSSSRC = tosvars.s startup.s lineavars.s vectors.s aciavecs.s \
 BDOSCSRC = bdosinit.c console.c fsdrive.c fshand.c fsopnclo.c osmem.c \
          umem.c bdosmain.c fsbuf.c fsfat.c fsio.c iumem.c proc.c \
          bdosts.c fsdir.c fsglob.c fsmain.c kpgmld.c time.c
-BDOSSSRC = rwa.s
+BDOSSSRC = rwa.S
 
 #
 # source code in util/
 #
 
 UTILCSRC = doprintf.c 
-UTILSSRC = memset.s memmove.s
+UTILSSRC = memset.S memmove.S
 
 #
 # everything should work fine below.
@@ -81,11 +81,11 @@ CSRC = $(PBIOSCSRC) $(PBDOSCSRC) $(PUTILCSRC)
 SSRC = $(PBIOSSSRC) $(PBDOSSSRC) $(PUTILSSRC)
 
 BIOSCOBJ = $(BIOSCSRC:%.c=obj/%.o)
-BIOSSOBJ = $(BIOSSSRC:%.s=obj/%.o)
+BIOSSOBJ = $(BIOSSSRC:%.S=obj/%.o)
 BDOSCOBJ = $(BDOSCSRC:%.c=obj/%.o)
-BDOSSOBJ = $(BDOSSSRC:%.s=obj/%.o)
+BDOSSOBJ = $(BDOSSSRC:%.S=obj/%.o)
 UTILCOBJ = $(UTILCSRC:%.c=obj/%.o)
-UTILSOBJ = $(UTILSSRC:%.s=obj/%.o)
+UTILSOBJ = $(UTILSSRC:%.S=obj/%.o)
 
 SOBJ = $(BIOSSOBJ) $(BDOSSOBJ) $(UTILSOBJ)
 COBJ = $(BIOSCOBJ) $(BDOSCOBJ) $(UTILCOBJ)
@@ -99,20 +99,25 @@ emutos.img: $(OBJECTS) obj/end.o
 obj/%.o : bios/%.c
 	${CC} ${CFLAGS} -Wall -c -Ibios $< -o $@
 
-obj/%.o : bios/%.s
-	$(AS) $(ASFLAGS) $< -o $@
+obj/%.o : bios/%.S
+	${CC} ${CFLAGS} -Wall -c -Ibios $< -o $@
+#	$(AS) $(ASFLAGS) $< -o $@
 
 obj/%.o : bdos/%.c
 	${CC} ${CFLAGS} -c -Ibdos $< -o $@
 
-obj/%.o : bdos/%.s
-	$(AS) $(ASFLAGS) $< -o $@
+obj/%.o : bdos/%.S
+	${CC} ${CFLAGS} -Wall -c -Ibios $< -o $@
+#	$(AS) $(ASFLAGS) $< -o $@
 
 obj/%.o : util/%.c
 	${CC} ${CFLAGS} -Wall -c -Iutil $< -o $@
 
-obj/%.o : util/%.s
-	$(AS) $(ASFLAGS) $< -o $@
+obj/%.o : util/%.S
+	${CC} ${CFLAGS} -Wall -c -Ibios $< -o $@
+#	$(AS) $(ASFLAGS) $< -o $@
+
+
 
 #
 # show
@@ -159,7 +164,7 @@ depend:
 	  (echo -n obj/;$(CC) -MM $(INC) $(DEF) $$i )>>Makefile.new;\
 	done
 	for i in $(ASMSRC); do\
-	  j=`basename $$i|sed -e s/s$$/o/`;\
+	  j=`basename $$i|sed -e s/S$$/o/`;\
 	  $(AS) $(ASINC) --MD Makefile.tmp -o FOO $$i;\
 	  sed -e "s/FOO/obj\\/$$j/" Makefile.tmp >>Makefile.new;\
 	done
