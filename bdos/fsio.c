@@ -16,6 +16,9 @@
 #include	"fs.h"
 #include	"bios.h"		/*  M01.01.01			*/
 #include	"gemerror.h"
+#include "../bios/kprint.h"
+
+#define DBGFSIO 1
 
 /*
  * forward prototypes
@@ -166,11 +169,16 @@ fillin: p->o_curcl = clx;
 long	xread(int h, long len, void *ubufr) 
 {
 	OFD	*p;
+	long ret;
 
 	if ( (p = getofd(h)) )
-		return(ixread(p,len,ubufr));
-
-	return(EIHNDL);
+		ret = ixread(p,len,ubufr);
+	else
+	        ret = EIHNDL;
+#if DBGFSIO
+	kprintf("xread(%d, %ld) => %ld\n", h, len, ret);
+#endif
+	return ret;
 }
 
 /*
@@ -217,17 +225,22 @@ long	ixread(OFD *p, long len, void *ubufr)
 
 long	xwrite(int h, long len, void *ubufr) 
 {
-	REG OFD *p;
-	long	ixwrite() ;
+    REG OFD *p;
+    long ret;
 
-	if ( (p = getofd(h)) )
-	{	/* Make sure not read only.*/
-		if (p->o_mod == 0)	
-			return (EACCDN);
-		return(ixwrite(p,len,ubufr));
-	}
-
-	return(EIHNDL);
+    if ( (p = getofd(h)) ) {
+        /* Make sure not read only.*/
+        if (p->o_mod == 0)	
+	    ret = EACCDN;
+	else
+	    ret = ixwrite(p,len,ubufr);
+    } else { 
+        ret = EIHNDL;
+    }
+#if DBGFSIO
+    kprintf("xwrite(%d, %ld) => %ld\n", h, len, ret);
+#endif
+    return ret;
 }
 
 /*
@@ -236,7 +249,7 @@ long	xwrite(int h, long len, void *ubufr)
 
 long	ixwrite(OFD *p, long len, void *ubufr)
 {
-	return(xrw(1,p,len,ubufr,usr2xfr));
+    return(xrw(1,p,len,ubufr,usr2xfr));
 }
 
 /*
