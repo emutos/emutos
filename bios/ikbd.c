@@ -36,6 +36,7 @@
 #include "acia.h"
 #include "kprint.h"
 #include "tosvars.h"
+#include "lineavars.h"
 #include "iorec.h"
 #include "asm.h"
 #include "ikbd.h"
@@ -44,6 +45,7 @@
 
 #define DBG_KBD 0
 
+//extern VOID (*mousevec)(UBYTE *buf);    /* IKBD Mouse */
 
 
 /* scancode definitions */
@@ -408,100 +410,10 @@ VOID ikbd_reset(VOID)
        all keys making contact */
 }
 
-/* Set mouse button action */
-VOID ikbd_mouse_button_action(WORD mode)
-{
-    UBYTE cmd[2] = { 0x07, mode };
-
-    ikbdws(2, (PTR)cmd);
-}
-
-/* Set relative mouse position reporting */
-VOID ikbd_mouse_rel_pos(VOID)
-{
-    UBYTE cmd[1] = { 0x08 };
-
-    ikbdws(1, (PTR)cmd);
-}
-
-/* Set absolute mouse position reporting */
-VOID ikbd_mouse_abs_pos(WORD xmax, WORD ymax)
-{
-    BYTE cmd[5] = { 0x09, xmax>>8, xmax&0xFF, ymax>>8, ymax&0xFF };
-
-    ikbdws(5, (PTR)cmd);
-}
-
-/* Set mouse keycode mode */
-VOID ikbd_mouse_kbd_mode(WORD dx, WORD dy)
-{
-    BYTE cmd[3] = { 0x0A, dx, dy };
-
-    ikbdws(3, (PTR)cmd);
-}
-
-/* Set mouse threshold */
-VOID ikbd_mouse_thresh(WORD x, WORD y)
-{
-    BYTE cmd[3] = { 0x0B, x, y };
-
-    ikbdws(3, (PTR)cmd);
-}
-
-/* Set mouse scale */
-VOID ikbd_mouse_scale(WORD x, WORD y)
-{
-    BYTE cmd[3] = { 0x0C, x, y };
-
-    ikbdws(3, (PTR)cmd);
-}
-
-/* Interrogate mouse position */
-VOID ikbd_mouse_pos_get(WORD *x, WORD *y)
-{
-    UBYTE cmd[1] = { 0x0D };
-
-    ikbdws(1, (PTR)cmd);
-
-    /* wait for returning bytes */
-}
-
-/* Load mouse position */
-VOID ikbd_mouse_pos_set(WORD x, WORD y)
-{
-    BYTE cmd[6] = { 0x0E, 0x00, x>>8, x&0xFF, y>>8, y&0xFF };
-
-    ikbdws(6, (PTR)cmd);
-}
-
-/* Set Y=0 at bottom */
-VOID ikbd_mouse_y0_bot(VOID)
-{
-    UBYTE cmd[1] = { 0x0F };
-
-    ikbdws(1, (PTR)cmd);
-}
-
-/* Set Y=0 at top */
-VOID ikbd_mouse_y0_top(VOID)
-{
-    UBYTE cmd[1] = { 0x10 };
-
-    ikbdws(1, (PTR)cmd);
-}
-
 /* Resume */
 VOID ikbd_resume(VOID)
 {
     UBYTE cmd[1] = { 0x11 };
-
-    ikbdws(1, (PTR)cmd);
-}
-
-/* Disable mouse */
-VOID ikbd_mouse_disable(VOID)
-{
-    UBYTE cmd[1] = { 0x12 };
 
     ikbdws(1, (PTR)cmd);
 }
@@ -514,55 +426,7 @@ VOID ikbd_pause(VOID)
     ikbdws(1, (PTR)cmd);
 }
 
-/* Set joystick event reporting */
-VOID ikbd_joystick_event_on(VOID)
-{
-    UBYTE cmd[1] = { 0x14 };
-
-    ikbdws(1, (PTR)cmd);
-}
-
-/* Set joystick interrogation mode */
-VOID ikbd_joystick_event_off(VOID)
-{
-    UBYTE cmd[1] = { 0x15 };
-
-    ikbdws(1, (PTR)cmd);
-}
-
-/* Joystick interrogation */
-VOID ikbd_joystick_get_state(VOID)
-{
-    UBYTE cmd[1] = { 0x16 };
-
-    ikbdws(1, (PTR)cmd);
-}
-
 /* some joystick routines not in yet (0x18-0x19) */
-
-/* Disable joysticks */
-VOID ikbd_joystick_disable(VOID)
-{
-    UBYTE cmd[1] = { 0x1A };
-
-    ikbdws(1, (PTR)cmd);
-}
-
-/* Time-of-day clock set */
-VOID ikbd_clock_set(WORD year, WORD month, WORD day, WORD hour, WORD minute, WORD second)
-{
-    BYTE cmd[7] = { 0x1B, year, month, day, hour, minute, second };
-
-    ikbdws(7, (PTR)cmd);
-}
-
-/* Interrogate time-of-day clock */
-VOID ikbd_clock_get(WORD *year, WORD *month, WORD *day, WORD *hour, WORD *minute, WORD second)
-{
-    UBYTE cmd[1] = { 0x1C };
-
-    ikbdws(1, (PTR)cmd);
-}
 
 /* Memory load */
 VOID ikbd_mem_write(WORD address, WORD size, BYTE *data)
@@ -621,37 +485,8 @@ VOID kbd_init(VOID)
     /* initialize the IKBD */
     ikbd_reset();
 
-    ikbd_joystick_disable();
-    ikbd_mouse_disable();
+    ikbdws(1, 0x1A);    /* disable joystick */
+    ikbdws(1, 0x12);    /* disable mouse */
 
     bioskeys();
 }
-
-
-
-/* mouse initialization */
-VOID mouse_init(WORD type, LONG param, VOID *vec)
-{
-#if IMPLEMENTED  /* This is not ready yet, sorry */
-    switch (type) {
-    case 0:
-        /* disable mouse */
-        ikbd_mouse_disable();
-        break;
-    case 1:
-        /* set relative mouse position reporting */
-        ikbd_mouse_rel_pos();
-        break;
-    case 2:
-        /* Set absolute mouse position reporting */
-        ikbd_mouse_abs_pos(v_hz_rez, v_vt_rez)
-            break;
-    case 4:
-        /* Set mouse keycode mode */
-        ikbd_mouse_kbd_mode(dx, dy)
-        break;
-    }
-#endif /* IMPLEMENTED */
-}
-
-

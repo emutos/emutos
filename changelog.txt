@@ -290,8 +290,8 @@ Start... early ages
 16. Nov. 2001
 - Fixed bug in font_ring init (MAD)
 
-18. Nov. 2001
+18. Nov. 2001 
+- Initmous implemented (C part - no data from asm delivered yet)  (MAD)
 - removed -Tdata= from Makefile (LVL)
 - painfully ANSIfied bdos and removed nearly all warnings (LVL)
 - minor changes (LVL)
-

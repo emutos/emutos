@@ -46,6 +46,7 @@
 
 	.global _init_acia_vecs
 	.global _int_acia
+	.global _mousevec
 		
 _init_acia_vecs:
 	move.l	#_midivec,midivec

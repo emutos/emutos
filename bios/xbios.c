@@ -26,6 +26,7 @@
 #include "sound.h"
 #include "floppy.h"
 #include "clock.h"
+#include "mouse.h"
 #include "asm.h"
  
 #define	DBG_XBIOS        1
@@ -59,9 +60,9 @@ VOID xbiosinit()
  * xbios_0 - (initmous) Initialize mouse packet handler
  */
 
-VOID xbios_0(WORD type, LONG param, LONG vec)
+VOID xbios_0(WORD type, PTR param, PTR vec)
 {
-    mouse_init(type, param, (VOID *)vec);
+    mouse_init(type, param, vec);
 #if DBG_XBIOS
     kprintf("XBIOS: Unimplemented function 0x00 ...\n");
 #endif
