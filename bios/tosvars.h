@@ -38,6 +38,7 @@ extern UBYTE *v_bas_ad;
 extern WORD *colorptr;
 extern UBYTE *screenpt;
 extern BYTE sshiftmod;
+extern BYTE defshiftmod;
 
 extern void *phystop;
 

@@ -155,7 +155,7 @@ void setscreen(LONG logLoc, LONG physLoc, WORD rez)
         /* will be set up at next VBL */
     }
     if (rez >= 0) {
-        /* rez ignored for now */
+        defshiftmod = rez;
     }
 }
 

@@ -783,3 +783,4 @@ Start... early ages
 - Makefile - fal_$(DESASS) removed on make clean (LVL)
 - Fixed text and mouse drawing in VDI color mode (THH).
 - Improved the desktop's about dialog (THH).
+- bios/startup.S - VBL video mode change written (disabled) (MAD)
