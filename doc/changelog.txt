@@ -755,3 +755,6 @@ Start... early ages
 14. Apr. 2002
 - bios/lineavars.S - corrected length and memory position of vars (MAD)
 
+15. Apr. 2002
+- finally commited in Czech keyboard (LVL)
+

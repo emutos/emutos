@@ -98,7 +98,7 @@ BYTE shifty;                    /* reflect the status up/down of mode keys */
 #include "keyb_us.h"
 #include "keyb_de.h"
 #include "keyb_fr.h"
-/* #include "keyb_cs.h" */
+#include "keyb_cz.h"
 
 /* add the available keyboards in this table, using the
  * numbers set in keyboard.h
@@ -113,7 +113,7 @@ const static struct kbd_record avail_kbd[] = {
     { KEYB_US, &keytbl_us }, 
     { KEYB_DE, &keytbl_de }, 
     { KEYB_FR, &keytbl_fr },
-    /* { KEYB_CS, &keytbl_cs }, */
+    { KEYB_CS, &keytbl_cz }, 
 };
 
 #define dflt_keytbl keytbl_us
