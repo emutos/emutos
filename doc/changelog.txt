@@ -1687,3 +1687,8 @@ vdi/fill.c: fixed fills to use fill color, not line color (MAD)
 
 2004-10-08
 vdi/vdi_mouse.c: implemented vex_wheelv() (MAD)
+
+2004-10-09
+bios/ikbd.c: keyboard repetition respects 1st bit of conterm (joy)
+             conterm initialized (we never did that before) (joy)
+doc/bios.txt: fixed description of conterm bits (joy)
