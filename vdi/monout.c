@@ -15,8 +15,6 @@
 #include "gsxdef.h"
 #include "gsxextrn.h"
 #include "tosvars.h"
-#define X_MALLOC 0x48
-#define X_MFREE 0x49
 
 
 
@@ -98,22 +96,6 @@ void vq_extnd()
     for (i = 0; i < 45; i++)
         *dp++ = *sp++;
 
-}
-
-/* CLOSE_WORKSTATION: */
-void v_clswk()
-{
-    struct attribute *next_work;
-
-    if (virt_work.next_work != NULLPTR) {       /* Are there VWs to close */
-        cur_work = virt_work.next_work;
-        do {
-            next_work = cur_work->next_work;
-            trap(X_MFREE, cur_work);
-        } while ((cur_work = next_work));
-    }
-
-    gfx_exit();
 }
 
 /* POLYLINE: */
@@ -1430,69 +1412,6 @@ void init_wk()
         *pointer++ = *src_ptr++;
 
     FLIP_Y = 1;
-}
-
-void d_opnvwk()
-{
-    REG WORD handle;
-    REG struct attribute *new_work, *work_ptr, *temp;
-
-    /* Allocate the memory for a virtual workstation.  If none available,
-       exit */
-
-    new_work = trap(X_MALLOC, (LONG) (sizeof(struct attribute)));
-
-    if (new_work == NULLPTR) {  /* No work available */
-        CONTRL[6] = 0;
-        return;
-    }
-
-    /* Now find a free handle */
-
-    handle = 1;
-    work_ptr = &virt_work;
-
-    while (handle == work_ptr->handle) {
-        handle++;
-        if (work_ptr->next_work == NULLPTR)
-            break;
-        work_ptr = work_ptr->next_work;
-    }
-
-    /* Empty slot found, Insert the workstation here */
-
-    if (work_ptr->next_work == NULLPTR) {       /* Add at end of chain */
-        cur_work = work_ptr->next_work = new_work;
-        new_work->next_work = NULLPTR;
-    }
-
-    else {                      /* Add in middle of chain */
-        temp = work_ptr->next_work;
-        cur_work = work_ptr->next_work = new_work;
-        new_work->next_work = temp;
-    }
-
-    new_work->handle = CONTRL[6] = handle;
-    init_wk();
-}
-
-void d_clsvwk()
-{
-    REG struct attribute *work_ptr;
-    REG WORD handle;
-
-    /* cur_work points to workstation to deallocate, find who points to me */
-
-    handle = cur_work->handle;
-
-    if (handle == 1)            /* Can't close physical this way */
-        return;
-
-    for (work_ptr = &virt_work; handle != work_ptr->next_work->handle;
-         work_ptr = work_ptr->next_work);
-
-    work_ptr->next_work = cur_work->next_work;
-    trap(X_MFREE, cur_work);
 }
 
 void dsf_udpat()

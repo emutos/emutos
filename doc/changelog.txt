@@ -813,4 +813,8 @@ Start... early ages
 28. Apr. 2002
 - desk/desk_rsc.c - added string translation using gettext (LVL)
 - po/fr.po - updated FR translations to include desktop strings (LVL)
+- vdi/vdimain.c - VDI startup and other stuff  (MAD)
+- vdi/opnwkram.c -> vdimain.c, file deleted (MAD)
+- vdi/vex.c -> vdimain.c, file deleted (MAD
+
 

@@ -25,7 +25,7 @@
 #define pattern         1       /* for selecting software which applies */
                                 /* a pattern to the source */
 
-#define handle          2       /* leave 2 for console input, change to 1 for auxin */
+//#define handle          2       /* leave 2 for console input, change to 1 for auxin */
 
 #define rev_vid         1       /* for selecting reverse video transform */
 
