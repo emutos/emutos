@@ -24,8 +24,10 @@
 
 # Linker with relocation information and binary output (image)
 LD = m68k-atari-mint-ld
-LDFLAGS = -Ttext=0xfc0000 -Tdata=0xfd0000 -Tbss=0x000000 \
-	-L/usr/lib/gcc-lib/m68k-atari-mint/2.95.3/mshort -lgcc
+LDFLAGS = -L/usr/lib/gcc-lib/m68k-atari-mint/2.95.3/mshort -lgcc
+LDFLROM = -Ttext=0xfc0000 -Tdata=0xfd0000 -Tbss=0x000000 
+LDFLRAM = -Ttext=0x10000 -Tdata=0x20000 -Tbss=0x000000 
+
 
 # Assembler with options for Motorola like syntax (68000 cpu)
 AS = m68k-atari-mint-gcc -x assembler
@@ -98,16 +100,39 @@ OBJECTS = $(SOBJ) $(COBJ)
 
 all:	emutos.img
 
+help:	
+	@echo "target  meaning"
+	@echo "------  -------"
+	@echo "help    this help message"
+	@echo "all     emutos.img, a TOS 1 ROM image (0xFC0000)"
+	@echo "192     etos192k.img, i.e. emutos.img padded to size 192 KB"
+	@echo "ram     ramtos.img + boot.prg, a RAM tos"
+	@echo "flop    emutos.st, a bootable floppy with RAM tos (TODO)"
+	@echo "clean"
+	@echo "tgz     bundles all except doc into a tgz archive"
+	@echo "depend  creates dependancy section in Makefile"
+	@echo "dsm     dsm.txt, an edited desassembly of emutos.img"
+
 emutos.img: $(OBJECTS) obj/end.o
-	${LD} -oformat binary -o $@ $(OBJECTS) ${LDFLAGS} obj/end.o
-	
-etos192k.img: $(OBJECTS) obj/end.o
-	${LD} -oformat binary -o emutos.tmp $(OBJECTS) ${LDFLAGS} obj/end.o
+	${LD} -oformat binary -o $@ $(OBJECTS) ${LDFLAGS} $(LDFLROM) obj/end.o
+
+192: etos192k.img
+
+ram: ramtos.img boot.prg
+
+ramtos.img: $(OBJECTS) obj/end.o
+	$(LD) -oformat binary -o $@ $(OBJECTS) $(LDFLAGS) $(LDFLRAM) obj/end.o
+
+boot.prg: obj/minicrt.o obj/boot.o obj/bootasm.o
+	$(LD) -s -o $@ obj/minicrt.o obj/boot.o obj/bootasm.o $(LDFLAGS) 
+
+etos192k.img: emutos.img
+	cp emutos.img emutos.tmp
 	dd if=/dev/zero of=empty.tmp bs=1024 count=192 
 	cat empty.tmp >> emutos.tmp                    # Make real tos.img...
 	dd if=emutos.tmp of=$@ bs=1024 count=192       # with right length.
 	rm -f emutos.tmp empty.tmp
-	
+
 obj/%.o : bios/%.c
 	${CC} ${CFLAGS} -Wall -c -Ibios $< -o $@
 
@@ -132,8 +157,29 @@ obj/%.o : util/%.S
 # show
 # Does just work without -oformat binary of Linker!!!
 #
-show: emutos.img
-	$(OBJDUMP) --target=binary --architecture=m68k -D emutos.img
+
+DESASS = dsm.txt
+
+dsm: $(DESASS)
+
+show: $(DESASS)
+	cat $(DESASS)
+
+TMP1 = tmp1
+TMP2 = tmp2
+
+map: $(OBJECTS) obj/end.o
+	${LD} -Map map -oformat binary -o /dev/null $(OBJECTS) $(LDFLAGS) \
+		$(LDFLROM) obj/end.o
+
+$(DESASS): map emutos.img
+	$(OBJDUMP) --target=binary --architecture=m68k \
+	--adjust-vma=0x00fc0000 -D emutos.img | grep '^  f' \
+	| sed -e 's/^  //' -e 's/:	/: /' > $(TMP1)
+	grep '^ \+0x' map | sort | sed -e 's/ \+/ /g' \
+	| sed -e 's/^ 0x00//' -e 's/ /:  /' > $(TMP2)
+	cat $(TMP1) $(TMP2) | LC_ALL=C sort > $@
+	rm $(TMP1) $(TMP2)
 
 #
 # clean and distclean 
@@ -141,7 +187,8 @@ show: emutos.img
 #
 
 clean:
-	rm -f obj/*.o obj/*.s *~ */*~ core emutos.img
+	rm -f obj/*.o obj/*.s *~ */*~ core emutos.img map $(DESASS)
+	rm -f ramtos.img boot.prg etos192.img
 
 distclean: clean
 	rm -f Makefile.bak
@@ -172,12 +219,11 @@ depend:
 	  j=`basename $$i|sed -e s/c$$/o/`;\
 	  (echo -n obj/;$(CC) -MM $(INC) $(DEF) $$i )>>Makefile.new;\
 	done
-	for i in $(ASMSRC); do\
+	for i in $(SSRC); do\
 	  j=`basename $$i|sed -e s/S$$/o/`;\
-	  $(AS) $(ASINC) --MD Makefile.tmp -o FOO $$i;\
-	  sed -e "s/FOO/obj\\/$$j/" Makefile.tmp >>Makefile.new;\
+	  (echo -n obj/;$(CC) -MM $(INC) $(DEF) $$i )>>Makefile.new;\
 	done
-	rm -f FOO Makefile.tmp
+	rm -f Makefile.tmp
 	mv Makefile.new Makefile
 
 # DO NOT DELETE

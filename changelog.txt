@@ -233,4 +233,6 @@ Start... early ages
 - emutos.img file now is 192 kb (MAD)
 - rewrote complete linea initialization in C (bios/lineainit.c) (MAD)
 
+31. Oct. 2001
+- a TOS in RAM loaded using gemdos (TODO, same as a bootable floppy)
 
