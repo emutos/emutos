@@ -136,15 +136,11 @@ extern WORD end_pts(WORD x, WORD y, WORD *xleftout, WORD *xrightout);
 
 extern WORD ACT_SIZ(WORD top);
 extern void hide_cur();
-extern WORD isin();
-extern WORD icos();
 extern void text_init();
 extern void st_fl_ptr();
 extern void screen();
 extern void d_justified();
 extern void arb_corner(WORD * corners, WORD type);
-extern WORD Icos(WORD angle);
-extern WORD Isin(WORD angle);
 extern void r_fa_attr();
 extern void s_fa_attr();
 extern void arrow(WORD * xy, WORD inc);

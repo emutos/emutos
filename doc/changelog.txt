@@ -885,4 +885,5 @@ Start... early ages
   bug that caused the text fields not to redraw correctly (THH).
 - aes/gemsuper.c - Changed the AES version back to 1.02, seems to work
   better this way with most applications (THH).
+- vdi/isin.c - removed. Did put functions to vdi/monout.c (MAD)
 
