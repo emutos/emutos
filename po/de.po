@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: EMUTOS beta\n"
-"POT-Creation-Date: 2003-02-08 14:27+0100\n"
-"PO-Revision-Date: 2003-02-08 14:30+0100\n"
+"POT-Creation-Date: 2003-02-08 17:13+0100\n"
+"PO-Revision-Date: 2003-02-08 18:17+0100\n"
 "Last-Translator: Martin Doering <mdoering@mucl.de>\n"
 "Language-Team: German <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -831,13 +831,11 @@ msgstr "[3]["
 "über die maximale Länge von Dateinamen|"
 "bitte der Dokumentation entnehmen.][   OK   ]"
 
-#: bios/initinfo.c:159
-msgid "Hold <Control> to skip AUTO/ACC loading"
-msgstr "Halte <Strg> gedrückt um AUTO/ACC-Laden zu überspringen"
+#~msgid "Hold <Control> to skip AUTO/ACC loading"
+#~msgstr "Halte <Strg> gedrückt um AUTO/ACC-Laden zu überspringen"
 
-#: bios/initinfo.c:161
-msgid "Hold <Alternate> key to skip HDD boot"
-msgstr "Halte <Alt> gedrückt um Booten von Platte zu überspringen"
+#~msgid "Hold <Alternate> key to skip HDD boot"
+#~msgstr "Halte <Alt> gedrückt um Booten von Platte zu überspringen"
 
 #: bios/initinfo.c:163
 msgid "Press any key to continue booting"
@@ -855,3 +853,10 @@ msgstr "Freies FastRAM"
 msgid "Boot time"
 msgstr "Boot-Zeit"
 
+#: bios/initinfo.c:159
+msgid "Hold <Control> to skip AUTO/ACC"
+msgstr "Halte <Strg> = ohne AUTO/ACC"
+
+#: bios/initinfo.c:161
+msgid "Hold <Alternate> to skip HDD"
+msgstr "Halte <Alt> = keine Harddisk"

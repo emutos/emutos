@@ -1300,3 +1300,4 @@ Start... early ages
 - vdi/esclisa.S - used this instead of buggy vdiesc.c  (MAD)
 - bdos/console.c - better code style (MAD)
 - vdi/vdiesc.c - used this again  (MAD)
+- po/de.po - updated (MAD)
