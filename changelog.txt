@@ -172,9 +172,9 @@ Start... early ages
 - Cleaned up some minor things in bdos/proc.c
 - Changed linea/graphics init in bios/startup.s
 - Set up half of memory config in bios/startup.s
-- pseudo reentrant bios xbios trap handler
-- Supexec()
-- bios device functions arrays (bconstat_vec, ...)
+- pseudo reentrant bios xbios trap handler (LVL)
+- Supexec() (LVL)
+- bios device functions arrays (bconstat_vec, ...) (LVL)
 
 13. Oct. 2001
 - Fixed some minor errors while compilation (MAD)
@@ -184,4 +184,5 @@ Start... early ages
 - implemented full memory configuration - much much more memory now (MAD)
 - implemented cursor (not blinking - this was easy) 
 - Changed version string of command.prg
-
+- correct fnt8x8 (previous one useless) and fnt8x16 (last char offset) (LVL)
+- some progress on iorec, but still not in service (LVL)
