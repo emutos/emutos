@@ -316,12 +316,15 @@ void v_hide_c()
 
 
 
-/* RETURN MOUSE BUTTON STATUS */
-void vq_mouse_status()
+/*
+ * vq_mouse - Query mouse position and button status
+ */
+
+void vq_mouse()
 {
     REG WORD *pointer;
 
-    *(INTOUT) = MOUSE_BT;
+    INTOUT[0] = MOUSE_BT;
 
     pointer = CONTRL;
     *(pointer + 4) = 1;

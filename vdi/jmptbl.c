@@ -79,7 +79,7 @@ void(*jmptb2[])() = {
     drt_cpyfm,
     v_show_c,
     v_hide_c,
-    vq_mouse_status,
+    vq_mouse,
     vex_butv,           /* in vdimouse.S */
     vex_motv,           /* in vdimouse.S */
     vex_curv,           /* in vdimouse.S */

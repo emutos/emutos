@@ -93,7 +93,7 @@ extern void dt_unloadfont();    /* 120  */
 extern void drt_cpyfm();        /* 121  */
 extern void v_show_c();         /* 122  */
 extern void v_hide_c();         /* 123  */
-extern void vq_mouse_status();  /* 124  */
+extern void vq_mouse();         /* 124  */
 extern void vex_butv();         /* 125  */
 
 extern void vex_motv();         /* 126  */
