@@ -459,6 +459,8 @@ _scrtsiz:
         .dc.w   cel_siz                 //eat up some rom so value can be passed
 #endif
 
+
+
         .page
 /////////////////////////////////////////////////////////
 //  calculate DDA                                               //
@@ -469,6 +471,7 @@ _scrtsiz:
 //  exit:                                                       //
 //     d0    = DDA_INC                                          //
 /////////////////////////////////////////////////////////
+#if 0   // MAD: Now in text.c
 _CLC_DDA:
         lea.l   _T_SCLSTS,a0             //get address of text scaling flag
         move.w  6(sp),d0                //get requested size 
@@ -495,6 +498,9 @@ calc_DDA:
         divu    d1,d0                   //requested/actual: quotient = bits 15-0
 //                                      //remainder = bits 31-16
         rts                             //return to 'C' calling procedure
+
+#endif
+
 
         .page
 /////////////////////////

@@ -16,6 +16,9 @@
 
 /*
  *   $Log$
+ *   Revision 1.2  2002/04/27 08:48:05  lvl
+ *   make cvsready
+ *
  *   Revision 1.1  2002/04/24 20:31:56  mdoering
  *   added raw bezier code from PC GEM's GDOS - not yet working
  *
@@ -37,21 +40,20 @@
 
 
 
-#ifndef DEBUG
-    #define     DEBUG           0
-#endif
-
-#define BEZIER_START    0x01
-#define POINT_MOVE      0x02
-
-#define FP_SEG(fp) ( *(((unsigned *)&fp) + 1) )
-#define FP_OFF(fp) ( *((unsigned *)&fp) )
+#define DBG_BEZIER 0
 
 #include "portab.h"
+
 
 #define BEZ 0
 
 #if BEZ         /* USED to enable this code */
+
+#define FP_SEG(fp) ( *(((unsigned *)&fp) + 1) )
+#define FP_OFF(fp) ( *((unsigned *)&fp) )
+
+#define BEZIER_START    0x01
+#define POINT_MOVE      0x02
 
 #define MIN_BEZIER_DEPTH        2       /*** CJLT  was 1 ***/
 #define MAX_BEZIER_DEPTH        7

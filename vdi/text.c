@@ -47,6 +47,7 @@ extern struct font_head fon8x16;        /* See bios/fntxxx.c */
 /* Prototypes for this module */
 
 void make_header();
+WORD clc_dda(WORD top, WORD height);
 
 void d_gtext()
 {
@@ -400,7 +401,7 @@ find_height:
 
     if (single_font->top != test_height) {
         DDA_INC = cur_work->dda_inc =
-            CLC_DDA(single_font->top, test_height);
+            clc_dda(single_font->top, test_height);
         cur_work->t_sclsts = T_SCLSTS;
         make_header();
         single_font = cur_font;
@@ -1122,3 +1123,35 @@ void dt_unloadfont()
     work_ptr->num_fonts = font_count;   /* Reset font count to
                                            default */
 }
+
+
+
+/*
+ * clc_dda - calculate DDA
+ *
+ * returns the quotient requested/actual
+ */
+
+WORD clc_dda(WORD actual, WORD requested)
+{
+    ULONG retval;                       /* unsigned return value */
+
+    if (actual <= requested) {
+        /* scale down */
+        T_SCLSTS = 0; 	        	/* clear enlarge indicator */
+        if (!requested)	         	/* if requested 0 ... */
+            requested = 1;		/* then make it 1 (minimum value) */
+    } else {                    	/* small DDA */
+        /* scale up */
+        T_SCLSTS = 1;         		/* set enlarge indicator */
+
+        requested -= actual;    	/* larger than 2x? FIXME: Keep half value ??? */
+        if (requested >= actual)
+            return -1;              	/* error, (max value, 2x) */
+    }
+
+    retval = requested;                 /* expand to LONG */
+    retval = retval << 16;          	/* request size to high word(bits 31-16) */
+    return ((WORD)(retval / actual));   /* return the quotient as WORD */
+}
+

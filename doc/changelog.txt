@@ -817,4 +817,4 @@ Start... early ages
 - vdi/opnwkram.c -> vdimain.c, file deleted (MAD)
 - vdi/vex.c -> vdimain.c, file deleted (MAD)
 - vdi/lisagem.S -> vdimain.c, file deleted (MAD)
-
+- vdi/txtblit.S - CLC_DDA now in C in text.c:clc_dda  (MAD)
