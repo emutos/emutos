@@ -1,7 +1,7 @@
 /*
  * disk.c - disk routines
  *
- * Copyright (c) 2001 EmuTOS development team
+ * Copyright (c) 2001,2002 EmuTOS development team
  *
  * Authors:
  *  joy   Petr Stehlik
@@ -23,8 +23,15 @@
 
 /*==== External declarations ==============================================*/
 
-extern LONG ara_XHDI(WORD function, ...);    /* in startup.S */
-extern int native_print_kind;   /* hack to detect if aranym is present */
+long nfid_xhdi;
+
+/* NatFeats */
+/*
+static long _NF_getid = 0x73004e75L;
+#define nfGetID(n)	(((long (*)(const char *))&_NF_getid)n)
+*/
+static long _NF_call  = 0x73014e75L;
+#define nfCall(n)	(((long (*)(long, ...))&_NF_call)n)
 
 
 /*
@@ -204,6 +211,14 @@ static LONG dma_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev)
             rw ? "write" : "read", sector, count, buf, dev);
 #endif
 
+    /* direct access to device */
+    if (nfid_xhdi) {
+        long ret = nfCall((nfid_xhdi + XHREADWRITE, (long)dev, (long)0, (long)rw, (long)sector, (long)count, buf));
+		if (ret != EUNDEV)
+			return ret;
+	}
+
+    /* hardware access to device */
     if (dev >= 0 && dev < 8) {
         return acsi_rw(rw, sector, count, buf, dev);
     }
@@ -219,21 +234,11 @@ static LONG dma_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev)
 
 LONG DMAread(LONG sector, WORD count, LONG buf, WORD dev)
 {
-#if ARANYM_NATIVE_DISK
-    /* direct access to host device */
-    if (native_print_kind == 2)
-        return ara_XHDI(XHREADWRITE, dev, 0, 0, sector, count, buf);
-#endif
     return dma_rw(0, sector, count, buf, dev);
 }
 
 LONG DMAwrite(LONG sector, WORD count, LONG buf, WORD dev)
 {
-#if ARANYM_NATIVE_DISK
-    /* direct access to host device */
-    if (native_print_kind == 2)
-        return ara_XHDI(XHREADWRITE, dev, 0, 1, sector, count, buf);
-#endif
     return dma_rw(1, sector, count, buf, dev);
 }
 
@@ -271,12 +276,12 @@ LONG XHInqTarget(UWORD major, UWORD minor, ULONG *blocksize,
 
 LONG XHGetCapacity(UWORD major, UWORD minor, ULONG *blocks, ULONG *blocksize)
 {
-#if ARANYM_NATIVE_DISK
-    if (native_print_kind == 2) {
-    /* direct access to host device */
-        return ara_XHDI(XHGETCAPACITY, major, minor, blocks, blocksize);
-    }
-#endif
+    if (nfid_xhdi) {
+        long ret = nfCall((nfid_xhdi + XHGETCAPACITY, (long)major, (long)minor, (long)blocks, (long)blocksize));
+		if (ret != EUNDEV)
+			return ret;
+	}
+
     /* TODO could read the blocks from Atari root sector */
     return EINVFN;
 }
