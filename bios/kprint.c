@@ -182,16 +182,16 @@ void dopanic(const char *fmt, ...)
             WORD sr;
             LONG pc;
         } *s = (void *)proc_stk;
-        vkcprintf("%s. misc = 0x%04x, address = 0x%08lx\n",
+        kcprintf("%s. misc = 0x%04x, address = 0x%08lx\n",
                  exc_messages[proc_enum], s->misc, s->address);
-        vkcprintf("opcode = 0x%04x, sr = 0x%04x, pc = 0x%08lx\n",
+        kcprintf("opcode = 0x%04x, sr = 0x%04x, pc = 0x%08lx\n",
                  s->opcode, s->sr, s->pc);
     } else if(proc_enum >= 4 && proc_enum < sizeof(exc_messages)) {
         struct {
             WORD sr;
             LONG pc;
         } *s = (void *)proc_stk;
-        vkcprintf("%s. sr = 0x%04x, pc = 0x%08lx\n",
+        kcprintf("%s. sr = 0x%04x, pc = 0x%08lx\n",
                  exc_messages[proc_enum], s->sr, s->pc);
     } else {
         struct {
