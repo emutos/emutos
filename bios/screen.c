@@ -35,6 +35,13 @@ const static WORD dflt_palette[] = {
     RGB_LTBLUE, RGB_LTMAGENTA, RGB_LTCYAN, RGB_BLACK
 };
 
+const static LONG videl_dflt_palette[] = {
+    FRGB_WHITE, FRGB_RED, FRGB_GREEN, FRGB_YELLOW,
+    FRGB_BLUE, FRGB_MAGENTA, FRGB_CYAN, FRGB_LTGRAY,
+    FRGB_GRAY, FRGB_LTRED, FRGB_LTGREEN, FRGB_LTYELLOW,
+    FRGB_LTBLUE, FRGB_LTMAGENTA, FRGB_LTCYAN, FRGB_BLACK
+};
+
 
 /*
  * In the original TOS there used to be an early screen init, 
@@ -46,6 +53,7 @@ void screen_init(void)
 {
     volatile BYTE *rez_reg = (BYTE *) 0xffff8260;
     volatile WORD *col_regs = (WORD *) 0xffff8240;
+    volatile LONG *fcol_regs = (LONG *) 0xffff9800;
     WORD rez;
     WORD i;
     ULONG screen_size = 32000;  /* standard Shifter videoram size */
@@ -55,11 +63,11 @@ void screen_init(void)
         /* reset VIDEL on boot-up */
         /* first set the physbase to a safe memory */
         setphys(0x10000L);
-        /* then change the resolution to 2-bit depth VGA */
-        set_videl_vga640x480(2);
+        /* then change the resolution to 4-bit depth VGA */
+        set_videl_vga640x480(4);
 
         /* set desired resolution (fetch it from NVRAM - TODO) */
-        set_videl_vga640x480(1);
+        set_videl_vga640x480(1 /* or 2 or 4 */);
 
         /* detect real videoram size from the current resolution */
         screen_size = get_videl_width() / 8L * get_videl_height()
@@ -75,9 +83,13 @@ void screen_init(void)
 
     /* Get the video mode */
     rez = getrez();
-    kprintf("Getrez=%d\n", rez);
 
-    if (!has_videl) {
+    if (has_videl) {
+        for(i = 0; i < 256; i++) {
+            fcol_regs[i] = videl_dflt_palette[i%16]; /* hackish way of getting all 256 colors from first 16 - incorrect, FIXME */
+        }
+    }
+    else {
         volatile struct {
             BYTE gpip;
         } *mfp = (void *) 0xfffffa01;
@@ -90,15 +102,20 @@ void screen_init(void)
             if (rez < 2)
                 rez = 2;
         }
+
+        *rez_reg = rez;
     }
-    *rez_reg = rez;     /* why needed for Falcon? */
     sshiftmod = rez;
 
     if (rez == 1) {
         col_regs[3] = col_regs[15];
+        if (has_videl)
+            fcol_regs[3] = fcol_regs[15];
     }
     else if (rez == 2) {
         col_regs[1] = col_regs[15];
+        if (has_videl)
+            fcol_regs[1] = fcol_regs[15];
     }
 
     /* videoram is placed just below the phystop */
@@ -359,13 +376,11 @@ void set_videl_vga640x480(int bitplanes)
     videlregs[0xc1] = 134;
     videlregs[0x66] = 0;
     videlregs[0x67] = 0;
-/*
-    switch(bitplanes) {
-        case 1: videlregs[0x60] = 2; break;
-        case 2: videlregs[0x60] = 1; break;
-        case 4: videlregs[0x60] = 0; break;
-   	}
-*/
+
     videlregs[0x66] = fsm[idx] >> 8;
     videlregs[0x67] = fsm[idx] & 0xff;
+
+    /* special support for STE 4 color mode */
+    if (bitplanes == 2)
+        videlregs[0x60] = 1;
 }
