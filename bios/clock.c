@@ -302,7 +302,7 @@ static UWORD ndogettime(void)
 static void ndosetdate(UWORD date)
 {
   set_nvram_rtc(NVRAM_RTC_DAYS, date & 0x1F);
-  set_nvram_rtc(NVRAM_RTC_MONTHS, ((date >> 5) & 0xF)+1);
+  set_nvram_rtc(NVRAM_RTC_MONTHS, (date >> 5) & 0xF);
   set_nvram_rtc(NVRAM_RTC_YEARS, (date >> 9) - nvram_rtc_year_offset);
 }
 
@@ -311,7 +311,7 @@ static UWORD ndogetdate(void)
   UWORD date;
 
   date = (get_nvram_rtc(NVRAM_RTC_DAYS) & 0x1F)
-    |  (((get_nvram_rtc(NVRAM_RTC_MONTHS)-1) & 0xF) << 5) 
+    |  ((get_nvram_rtc(NVRAM_RTC_MONTHS) & 0xF) << 5) 
     |  ((get_nvram_rtc(NVRAM_RTC_YEARS) + nvram_rtc_year_offset) << 9);
  
   return date;
