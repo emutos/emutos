@@ -31,6 +31,7 @@
 #include "geminit.h"
 
 #include "string.h"
+#include "nls.h"
 
 
 #define NUM_OBS LWGET(rs_hdr + 2*R_NOBS)
@@ -490,7 +491,7 @@ BYTE *rs_str(UWORD stnum)
 #ifdef USE_GEM_RSC
         rs_gaddr(ad_sysglo, R_STRING, stnum, &ad_string);
 #else
-        ad_string = (LONG) rs_fstr[stnum];
+        ad_string = (LONG) gettext( rs_fstr[stnum] );
 #endif
         strcpy(D.g_loc1, (char *) ad_string);
         return( &D.g_loc1[0] );
