@@ -1039,3 +1039,14 @@ Start... early ages
 19. Aug. 2002
 - vdi/vdimain.c - precalculated shift offset shft_off for concat (MAD)
 
+20. Aug. 2002
+- Makefile, include/config.h, country.mk, bios/country.c - changed the way
+  UNIQUE country EmuTOS are built. Now make unique 192 and 256k work for 
+  all languages (e.g. make allbin; rm obj/*.o; make all192) but there is
+  some redundancy as I can't figure yet how to avoid duplication between
+  country.mk and country.c (LVL)
+- tools/bug.c - removed indent warning (LVL)
+- include/version.c - set version to 0.5 (LVL)
+- bios/clock.c - disabled nvram code for TOS1 192k ROMS (LVL)
+- bios/bios.c bios/machine.[ch] bios/startup.S - int native_features 
+  renamed to int has_natfeats (LVL)

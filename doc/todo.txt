@@ -40,3 +40,6 @@ VDI
 AES
 - desk_rsc.c and gem_rsc.c are not fully ROM save yet (the TEDINFO strings etc)
 - automatically display drives as set in drvbits ?
+
+DESK
+- ability to run TTP with parameters
