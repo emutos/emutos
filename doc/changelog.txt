@@ -1587,3 +1587,9 @@ Start... early ages
 2004-01-07
 - bios/machine.c: _MCH cookie now contains 0x50000 on ARAnyM (joy)
 - util/string.c,h: strncasecmp() added
+
+2004-01-27
+- desk/desk_rsc.c util/langs.h: preprocessor syntax fixed (LVL)
+- include/asm.h include/biosbind.h include/xbiosbind.h: fixed embedded asm 
+  constructs (thanks to Patrice Mandin) (LVL)
+- po/fr.po: french translation updated (LVL) 

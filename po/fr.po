@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: EMUTOS beta\n"
-"POT-Creation-Date: 2003-08-02 18:57+0200\n"
-"PO-Revision-Date: 2003-08-02 19:00+0200\n"
+"POT-Creation-Date: 2004-01-27 14:37+0100\n"
+"PO-Revision-Date: 2004-01-27 14:41+0100\n"
 "Last-Translator: Laurent Vogel <lvl@club-internet.fr>\n"
 "Language-Team: French <fr@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -435,12 +435,6 @@ msgstr "  Effacer..."
 msgid "  Format..."
 msgstr "  Formater..."
 
-#~msgid "  To Output       ^U"
-#~msgstr "  Vers output"
-
-#~msgid "  Exit to DOS     ^Q"
-#~msgstr "  Retour au DOS"
-
 #: desk/desk_rsc.c:456
 msgid "  Install disk drive..."
 msgstr "  Installer un lecteur..."
@@ -456,9 +450,6 @@ msgstr "  Préférences..."
 #: desk/desk_rsc.c:480
 msgid "  Save desktop              \007V"
 msgstr "  Sauver le bureau"
-
-#~msgid "  Enter DOS commands        \007C"
-#~msgstr "  Commandes DOS"
 
 #: desk/desk_rsc.c:510
 msgid "  Sort by name   \007N"
@@ -563,12 +554,6 @@ msgstr "INFORMATIONS DOSSIER"
 #: desk/desk_rsc.c:734
 msgid "Version"
 msgstr "Version"
-
-#~msgid "April 23, 2002"
-#~msgstr "23 Avril 2002"
-
-#~msgid "Copyright (c) 2002 by"
-#~msgstr "Copyright (c) 2002"
 
 #: desk/desk_rsc.c:772
 msgid "The EmuTOS development team"
@@ -952,7 +937,7 @@ msgstr "[3]["
 "Le nom de dossier dépasse le nombre|"
 "maximum de caractères. Consultez la|"
 "documentation pour les limites sur le|"
-"nombre de caractères.][Annuler]"
+"nombre de caractères.][  OK  ]"
 
 #: aes/gem_rsc.c:36
 msgid "Selection:  ________.___"
@@ -1215,4 +1200,45 @@ msgstr "[1]["
 "dossiers, fichiers ou applications,|"
 "les faire glisser sur la corbeille.][  OK  ]"
 
+#: desk/desk_rsc.c:1741
+msgid "[1]["
+"The trash can is the destination to|"
+"which you drag the disks, folders,|"
+"documents, or applications that you|"
+"want to delete PERMANENTLY!][  OK  ]"
+msgstr "[1]["
+"La corbeille est l'endroit vers|"
+"lequel glisser disques, dossiers,|"
+"documents et applications à|"
+"détruire DEFINITIVEMENT!][  OK  ]"
+
+#: desk/desk_rsc.c:1748
+msgid "[1]["
+"You cannot drag folders, documents, or|"
+"applications onto the Desktop.  However,|"
+"you can copy them to disks or drag them|"
+"to the trash.][  OK  ]"
+msgstr "[1]["
+"Impossible de glisser disques, docu-|"
+"ments, documents ou pplications sur|"
+"le bureau. En revanche ils peuvent|"
+"être glissés vers la corbeille.][  OK  ]"
+
+#: desk/desk_rsc.c:1755
+msgid "[1]["
+"You cannot drag the trash can|"
+"into a window.][  OK  ]"
+msgstr "[1]["
+"La corbeille ne peut pas être glissée|"
+"dans une fenêtre.][  OK  ]"
+
+#: desk/desk_rsc.c:1758
+msgid "[1]["
+"You can drag the trash can to another|"
+"location on the GEM Desktop, but you|"
+"cannot place it on top of another icon.][  OK  ]"
+msgstr "[1]["
+"L'icône de la corbeille peut être|"
+"déplacée sur le bureau, mais pas au|"
+"dessus d'une autre icône.][  OK  ]"
 
