@@ -796,3 +796,5 @@ Start... early ages
 26. Apr. 2002
 - vdi/vmouse.c - implemented vex and some other mouse funcs in C (MAD)
 - util/miscasm.S - added for smaller asm routines (MAD)
+- bdos/umem.c - added missing break in a case that is responsible
+                for returning free memory - now everything works OK! (joy)
