@@ -1,0 +1,8 @@
+#
+# this file contains the name of languages that will
+# be generated in file langs.c by bug make.
+# (one two-letter lowercase language name per line)
+#
+
+fr
+

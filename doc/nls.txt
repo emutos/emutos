@@ -1,0 +1,178 @@
+
+nls.txt - native language support for EmuTOS, 
+or how having printf("welcome") display "willkommen".
+
+Principle
+=========
+
+A gettext-like approach is used. A run-time function 
+
+  char * gettext(char *)
+  
+is called on translatable strings, looks in a hash table and returns 
+a translation. If no translation is found, the supplied string is 
+returned. So we need to know
+- what string is translatable
+- when to do the translation
+
+Translatable strings are marked in the source code using two ways: 
+
+  _("blah")    is #defined as being      gettext("blah")
+  N_("blah")   is #defined as simply     "blah"
+
+Both macros are defined in "nls.h".
+The former is intended to be used in expressions, the latter in 
+declarations, as in the following example:
+
+  #include "nls.h"
+  char *answer_names[] = { N_("yes"), N_("no") };
+  
+  void print_answer(int answer)
+  {
+    printf( _("the answer\nis: %s\n"), 
+           gettext( answer_names[answer] ));
+  }
+
+translatable strings not immediately translated by _(...) need
+to be translated using gettext explicitely.
+
+Operations
+==========
+
+A tool called "bug" is supplied. Bug does three operations:
+- xgettext: scan the C source files to collect translateable
+  strings by looking for _("...") and N_("..."), and put all
+  translatable strings in a po-file called messages.pot
+- update po-file: compares the supplied po-file to messages.pot
+  and updates the po-file (adding for instance new entries
+  for new translatable strings)
+- make: creates the C file(s) that will be liked to EmuTOS 
+  to provide the translation hashes.
+
+
+
+po/POTFILES.in  }   bug xgettext
+C source code   }------------------> po/messages.pot
+
+                    cp
+po/messages.pot }-------->  po/xx.po    (the first time only)
+
+po/messages.pot }   bug update po/xx.po
+po/xx.po        }------------------------->  po/xx.po  
+
+po/LINGUAS      }   bug make
+po files        }--------------> C source files
+po/messages.pot }
+
+
+Who does what
+=============
+
+The translator for language 'xx' owns po/xx.po. The translator
+edits it, adding translations (initially all translations are
+empty). It is the translator's responsibility to update the po-file 
+regularly to make sure no translation is missing. "update" here 
+means, generate po/messages.pot using bug xgettext, and then do 
+bug update po/xx.po. This is a manual task. 
+
+To build EmuTOS, a set of C source files containing the translation
+hashes are needed. These files are output by bug make. Bug make needs
+a po/messages.pot. Thus, the Makefile contains rules to run 
+bug make and if po/messages.pot is not present, bug xgettext.
+
+Running bug xgettext over an existing messages.pot is not done
+by the Makefile, because the Makefile has no easy way to know
+when this is needed. 
+
+
+Makefile and CVS usage
+======================
+
+                  |   created  |  deleted by  |  committed
+file              |   by make  |  make clean  |  into cvs 
+------------------+------------+--------------+-------------
+po/POTFILES.in    |      no    |      no      |    yes
+po/LINGUAS        |      no    |      no      |    yes
+po/messages.pot   | only when  |      yes     |    no
+                  | absent     |              |
+po/xx.po          |      no    |      no      |    yes
+C lang hashes     |     yes    |      yes     |    no
+
+
+Files
+=====
+
+po/POTFILES.in is a list of C source files, one file per line,
+ignoring empty lines and lines beginning with #. 
+
+po/LINGUAS is a list of lowercase two letter language names,
+one name per line, ignoring empty lines and lines beginning with #. 
+
+po/messages.pot and the various po/xx.po are po-files, described below.
+
+
+Format of po-file
+=================
+
+the po-file contains free comments (blocks of lines beginning with #),
+and entries. each entry has
+- optional free comment lines, beginning with '# ' (sharp, space)
+- optional special comments, beginning with #, and whose second
+  character is not a space
+- the english string,    msgid "..."
+- the translation,       msgstr "..."  
+
+the strings after msgid and msgstr follow the C syntax, and can contain
+several "..." strings concatenated. Example:
+
+  #
+  # this is a commented po-file for the sample C source code above
+  # this part is a free comment
+  #
+  
+  # this is an entry
+  # the line starting with #: is a special comment giving pointers 
+  # to source code where the english string was found
+  #: source/file.c:2
+  msgid "yes"
+  msgstr "Ja"
+  
+  #: source/file.c:2
+  msgid "no"
+  msgstr "Nein"
+  
+  # This entry shows multi-line entries
+  #: source/file.c:7
+  msgid ""
+  "the answer\n"
+  "is: %s\n"
+  msgstr ""
+  "Die Antwort\n"
+  "ist: %s\n"
+
+
+Details
+=======
+
+updating po-files will
+- create a backup po/xx.po.bak
+- keep all user comments from the previous po-file
+- take no user comments from messages.pot (messages.pot is not
+  intended to be edited)
+- replace all #: references by those found in messages.pot
+- comment out entries not found in messages.pot
+- add entries found in messages.pot, but missing from the 
+  previous po-file
+The po-files are parsed entirely in memory, then written
+back to files. Any special string formatting will be lost.
+
+
+References
+==========
+
+- the bug source code
+- the GNU gettext manual
+- GNU gettext tools
+
+
+

@@ -52,5 +52,12 @@
 #define DEFAULT_KEYBOARD 1
 #endif
 
+/* Set DEFAULT_LANG to a two character lowercase string 
+ * identifying the language name.
+ * (see doc/nls.txt for details)
+ */
+#ifndef DEFAULT_LANG
+#define DEFAULT_LANG "us"
+#endif
 
 #endif /* _CONFIG_H */

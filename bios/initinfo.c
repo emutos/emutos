@@ -17,6 +17,7 @@
 
 #include "portab.h"
 #include "kprint.h"
+#include "nls.h"
 
 #include "lineavars.h"
 #include "tosvars.h"
@@ -80,6 +81,18 @@ static void set_line(void)
 }
 
 
+static void pair_start(const char *left)
+{
+    set_margin();
+    cprintf("[ OK ] ");
+    cprintf(left);
+    cprintf("\033b!");
+}
+
+static void pair_end(void)
+{
+    cprintf("\033b/ \r\n");
+}
 
  /*
  * initinfo - Show initial configuration at startup
@@ -110,20 +123,23 @@ void initinfo()
     set_line();
     cprintf("\n\r");
 
-    set_margin(); cprintf("[ OK ] EmuTOS Ver.:  \eb!Alpha Version\eb/ \r\n");
-    set_margin();
+    pair_start(_("EmuTOS Ver.:  ")); cprintf(_("Alpha Version")); pair_end();
 
+    pair_start(_("CPU type:     "));
     if (longframe)
-        cprintf("[ OK ] CPU type:     \eb!m68010-40\eb/ \r\n");
+        cprintf("m68010-40");
     else
-        cprintf("[ OK ] CPU type:     \eb!m68000\eb/ \r\n");
+        cprintf("m68000");
+    pair_end();
 
-    set_margin(); cprintf("[ OK ] MMU avail.:   \eb!No\eb/ \r\n");
-    set_margin(); cprintf("[ OK ] Free memory:  \eb!%ld bytes\eb/ \r\n", memtop-membot);
-    set_margin(); cprintf("[ OK ] Screen start: \eb!0x%lx\eb/ \r\n", (long)v_bas_ad);
-    set_margin(); cprintf("[ OK ] Boot drive :  \eb!%c:\eb/ \r\n", bootdev+65);
+    pair_start(_("MMU avail.:   ")); cprintf(_("No")); pair_end();
+    pair_start(_("Free memory:  ")); cprintf(_("%ld bytes"), memtop-membot);
+    pair_end();
+    pair_start(_("Screen start: ")); cprintf("0x%lx", (long)v_bas_ad);
+    pair_end();
+    pair_start(_("Boot drive :  ")); cprintf("%c:", bootdev+65); pair_end();
 
-    /* Just a seperator */
+    /* Just a separator */
     cprintf("\n\r");
     set_line();
     cprintf("\n\r");

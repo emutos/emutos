@@ -99,8 +99,8 @@ BDOSSSRC = rwa.S
 # source code in util/
 #
 
-UTILCSRC = doprintf.c 
-UTILSSRC = memset.S memmove.S
+UTILCSRC = doprintf.c nls.c langs.c
+UTILSSRC = memset.S memmove.S nlsasm.S
 
 #
 # source code in vdi/
@@ -244,6 +244,22 @@ keytbl2c$(EXE) : tools/keytbl2c.c
 	$(NATIVECC) -o $@ $<
 
 #
+# NLS support
+#
+
+POFILES = po/fr.po
+
+bug$(EXE): tools/bug.c
+	$(NATIVECC) -o $@ $<
+
+util/langs.c: $(POFILES) po/LINGUAS bug$(EXE) po/messages.pot
+	./bug$(EXE) make
+	mv langs.c $@
+
+po/messages.pot: bug$(EXE)
+	./bug$(EXE) xgettext
+
+#
 # automatic build rules
 #
 
@@ -318,6 +334,7 @@ clean:
 	rm -f obj/*.o obj/*.s *~ */*~ core emutos.img map $(DESASS)
 	rm -f ramtos.img boot.prg etos192.img etosfalc.img mkflop$(EXE) 
 	rm -f bootsect.img emutos.st date.prg dumpkbd.prg keytbl2c$(EXE)
+	rm -f bug$(EXE) po/messages.pot util/langs.c 
 
 distclean: clean nodepend
 	rm -f Makefile.bak '.#'* */'.#'* 

@@ -1,0 +1,10 @@
+#
+# this file contains a list of source files containing _("...") 
+# macros. 
+#
+
+bios/bios.c
+bios/initinfo.c
+
+cli/command.c
+

@@ -27,6 +27,7 @@
 #include "lineavars.h"
 #include "processor.h"
 #include "initinfo.h"
+#include "nls.h"
 
 
 #include "ikbd.h"
@@ -201,6 +202,8 @@ void startup(void)
     kbd_init();         /* init keyboard, disable mouse and joystick */
     midi_init();        /* init MIDI acia so that kbd acia irq works */
     clock_init();       /* init clock */
+    nls_init();         /* init native language support */
+    nls_set_lang(DEFAULT_LANG);
   
     /* initialize BDOS buffer list */
 
@@ -350,7 +353,7 @@ void biosmain()
      */
     if(is_ramtos) {
       if(os_magic == OS_MAGIC_EJECT) {
-	cprintf("Please eject the floppy and hit RETURN");
+	cprintf(_("Please eject the floppy and hit RETURN"));
 	bconin2();
       }
     }
@@ -390,7 +393,7 @@ void biosmain()
 	trap_1( 0x4b, 4, "", pd, "");
     }
 
-    cprintf("[FAIL] HALT - should never be reached!\n\r");
+    cprintf(_("[FAIL] HALT - should never be reached!\n"));
     while(1) ;
 }
 
