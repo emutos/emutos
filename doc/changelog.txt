@@ -1002,3 +1002,17 @@ Start... early ages
   cz country on a <256k emulator; UNIQUE cz does not work yet (LVL)
 - bios/startup.S - deleted unused function vidchng() (MAD)
 
+11. Aug. 2002
+- bios/startup.S - added NatFeat detection code (joy)
+- bios/bios.c - added 'int native_features' flag (please move elsewhere as 
+  appropriate - it's definitely not bios related but will be used mostly
+  there) (joy)
+- bios/disk.c - adapted to NatFeat. Finally clean XHDI interface that other
+  emulators may follow. (joy)
+- bios/machine.c - a very hackish code for reading NF_NAME in place
+  of emulated machine name. Where to get a bit of free RAM? Please fix it.
+  (joy)
+- bios/initinfo.c - added 5 seconds delay so users can enjoy machine name.
+  The waiting is not using CPU STOP insn yet. Also needs to be
+  interruptable by a keypress. Would be nice if it was possible to jump
+  to the EmuShell instead of booting the GEM by pressing a key. (joy)
