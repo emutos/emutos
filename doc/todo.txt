@@ -32,4 +32,3 @@ VDI
 
 AES
 - desk_rsc.c and gem_rsc.c are not fully ROM save yet (the TEDINFO strings etc)
-- gemmnlib.c not ROMable (desk_str[])
