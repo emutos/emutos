@@ -89,6 +89,8 @@
 	.global	_bcostat_vec   
 	.global	_bconout_vec  
 	.global	_longframe
+	.global ramtop
+	.global ramvalid
 
 	.global	_diskbuf	
 	.global	_supstk 	
