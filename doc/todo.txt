@@ -23,13 +23,9 @@ BIOS/XBIOS/BDOS
 - loop callibration needed for various delays in centronics and DMA ports
 
 Internationalisation
-- examine how to build a mono-country EmuTOS 192k ROM 
 - fix rsc sizes to some reasonable default sizes for all languages ?
   (or dynamically resize the dialogs ???)
 - bugs in tools/bug.c; more things should be configurable on the command line
-- rework mkheader so that it can help configure things in the Makefile,
-  e.g. derive the lang from the COUNTRY, ... (the current assumption
-  that COUNTRY == LANG is wrong and should be fixed).
 
 VDI
 - Check the various assembler routines that are called from C functions
