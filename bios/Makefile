@@ -26,7 +26,7 @@ OBJDUMP=m68k-atari-mint-objdump
 #                siophysa.o startup.o
 
 OBJECTS	=	startup.o tosvars.o charblit.o \
-		kbd.o kbq.o mfp.o clock.o \
+		kbd.o midi.o kbq.o mfp.o clock.o \
 		bios.o conio.o kprint.o xbios.o \
                 fnt8x12.o version.o lineavars.o
 
