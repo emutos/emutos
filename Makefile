@@ -163,10 +163,10 @@ PUTILCSRC = $(UTILCSRC:%=util/%)
 PUTILSSRC = $(UTILSSRC:%=util/%)
 PCONSCSRC = $(CONSCSRC:%=cli/%)
 PCONSSSRC = $(CONSSSRC:%=cli/%)
-PVDICSRC = $(VDICSRC:%=vdi/%)
-PVDISSRC = $(VDISSRC:%=vdi/%)
-PAESCSRC = $(AESCSRC:%=aes/%)
-PAESSSRC = $(AESSSRC:%=aes/%)
+PVDICSRC  = $(VDICSRC:%=vdi/%)
+PVDISSRC  = $(VDISSRC:%=vdi/%)
+PAESCSRC  = $(AESCSRC:%=aes/%)
+PAESSSRC  = $(AESSSRC:%=aes/%)
 PDESKCSRC = $(DESKCSRC:%=desk/%)
 PDESKSSRC = $(DESKSSRC:%=desk/%)
 
@@ -187,8 +187,8 @@ VDICOBJ  = $(VDICSRC:%.c=obj/%.o)
 VDISOBJ  = $(VDISSRC:%.S=obj/%.o)
 AESCOBJ  = $(AESCSRC:%.c=obj/%.o)
 AESSOBJ  = $(AESSSRC:%.S=obj/%.o)
-DESKCOBJ  = $(DESKCSRC:%.c=obj/%.o)
-DESKSOBJ  = $(DESKSSRC:%.S=obj/%.o)
+DESKCOBJ = $(DESKCSRC:%.c=obj/%.o)
+DESKSOBJ = $(DESKSSRC:%.S=obj/%.o)
 
 # Selects the user interface (EmuCON or AES):
 ifeq ($(WITH_AES),0)
@@ -205,13 +205,11 @@ OBJECTS = $(SOBJ) $(COBJ)
 
 #
 # temporary variables, for internal Makefile use
-#
+# anything ending in .tmp will be removed by make clean.
 
-TMP1 = make.tmp1
-TMP2 = make.tmp2
-TMP3 = make.tmp3
-
-TMPS = $(TMP1) $(TMP2) $(TMP3)
+TMP1 = make1.tmp
+TMP2 = make2.tmp
+TMP3 = make3.tmp
 
 #
 # production targets 
@@ -248,19 +246,8 @@ emutos2.img: $(OBJECTS)
 
 192: etos192k.img
 
-etos192k.img: emutos1.img
-	@goal=192 ; \
-	size=`wc -c < $<` ; \
-	if [ $$size -gt `expr $$goal \* 1024` ] ; \
-	then \
-	  echo EmuTOS too big for $${goal}K: size = $$size ; \
-	  false ; \
-	else \
-	  echo dd if=/dev/zero of=$@ bs=1024 count=$$goal ; \
-	  dd if=/dev/zero of=$@ bs=1024 count=$$goal ; \
-	  echo dd if=$< of=$@ conv=notrunc ; \
-	  dd if=$< of=$@ conv=notrunc ; \
-	fi
+etos192k.tmp: emutos1.img
+	cp $< $@
 
 #
 # 256kB Image
@@ -268,20 +255,8 @@ etos192k.img: emutos1.img
 
 256: etos256k.img
 
-etos256k.img: emutos2.img
-	@goal=256 ; \
-	size=`wc -c < $<` ; \
-	if [ $$size -gt `expr $$goal \* 1024` ] ; \
-	then \
-	  echo EmuTOS too big for $${goal}K: size = $$size ; \
-	  false ; \
-	else \
-	  echo dd if=/dev/zero of=$@ bs=1024 count=$$goal ; \
-	  dd if=/dev/zero of=$@ bs=1024 count=$$goal ; \
-	  echo dd if=$< of=$@ conv=notrunc ; \
-	  dd if=$< of=$@ conv=notrunc ; \
-	fi
-
+etos256k.tmp: emutos2.img
+	cp $< $@
 
 #
 # 512kB Image (for Aranym or Falcon)
@@ -290,11 +265,19 @@ etos256k.img: emutos2.img
 512: etos512k.img
 falcon: etos512k.img
 
-etos512k.img: emutos2.img
-	@goal=512 ; \
+etos512k.tmp: emutos2.img
+	cp $< $@
+
+#
+# generic sized images handling
+#
+
+%k.img: %k.tmp
+	@goal=`echo $@ | sed -e 's/[^0-9]//g'` ; \
 	size=`wc -c < $<` ; \
 	if [ $$size -gt `expr $$goal \* 1024` ] ; \
 	then \
+	  rm -f $< ; \
 	  echo EmuTOS too big for $${goal}K: size = $$size ; \
 	  false ; \
 	else \
@@ -302,6 +285,7 @@ etos512k.img: emutos2.img
 	  dd if=/dev/zero of=$@ bs=1024 count=$$goal ; \
 	  echo dd if=$< of=$@ conv=notrunc ; \
 	  dd if=$< of=$@ conv=notrunc ; \
+	  rm -f $< ; \
 	fi
 
 
@@ -521,7 +505,7 @@ clean:
 	rm -f ramtos.img boot.prg etos*.img mkflop$(EXE) 
 	rm -f bootsect.img emutos.st date.prg dumpkbd.prg keytbl2c$(EXE)
 	rm -f bug$(EXE) po/messages.pot util/langs.c bios/header.h
-	rm -f mkheader$(EXE) tounix$(EXE) $(TMPS) *.dsm
+	rm -f mkheader$(EXE) tounix$(EXE) *.tmp *.dsm
 	rm -f emutos.tmp fal_dsm.txt fal_map
 	rm -f makefile.dep
 
