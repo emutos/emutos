@@ -30,7 +30,6 @@
  */
 
 #include "country.h"
-#include "keyboard.h"
 
 #include "config.h"
 #include "portab.h"
@@ -84,11 +83,11 @@ BYTE shifty;                    /* reflect the status up/down of mode keys */
 /*==== Keyboard layouts ===================================================*/
 
 /* To add a keyboard, please do the following:
+ * - read doc/country.txt
  * - create a file bios/keyb_xx.h 
  *   (supplied tools dumpkbd.prg and keytbl2c may help)
  * - add a #include "keyb_xx.h" below
- * - add a line in bios/keyboard.h
- * - add a line in the table in bios/country.c
+ * - add a line in the keyboard table in bios/country.h
  * - add a line in the table below. 
  */
 
@@ -100,17 +99,19 @@ BYTE shifty;                    /* reflect the status up/down of mode keys */
 #include "keyb_fr.h"
 
 /* add the available keyboards in this table, using the
- * numbers set in country.c
+ * numbers set in keyboard.h
  */
 
-struct {
+struct kbd_record {
     int number;
     struct keytbl *keytbl;
-} avail_kbd[] = {
-    {
-    KEYB_US, &keytbl_us}, {
-    KEYB_DE, &keytbl_de}, {
-KEYB_FR, &keytbl_fr},};
+};
+
+static const struct kbd_record avail_kbd[] = {
+    { KEYB_US, &keytbl_us }, 
+    { KEYB_DE, &keytbl_de }, 
+    { KEYB_FR, &keytbl_fr },
+};
 
 #define dflt_keytbl keytbl_us
 

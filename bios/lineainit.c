@@ -15,6 +15,7 @@
 #include "lineavars.h"
 #include "fontdef.h"
 #include "kprint.h"
+#include "country.h"
 
 #define DBG_LINEA 1
 /*==== Defines ============================================================*/
@@ -23,31 +24,96 @@
 
 extern void con_state_init(void);       // from conout.S
 
+
+/*==== Font tables ========================================================*/
+
+/* to add a set of fonts, please do the following:
+ * - read doc/country.txt
+ * - add a line in the charset names in bios/country.h
+ * - add extern declaration referencing the fonts below
+ * - add a line in the font_sets table below
+ */
+ 
 extern struct font_head f8x16;
 extern struct font_head f8x8;
 extern struct font_head f6x6;
+extern struct font_head cz8x16;
+extern struct font_head cz8x8;
+extern struct font_head cz6x6;
+
+struct charset_fonts {
+    int charset;
+    struct font_head *f6x6;
+    struct font_head *f8x8;
+    struct font_head *f8x16;
+};
+
+static struct charset_fonts font_sets[] = {
+    { CHARSET_ST, &f6x6, &f8x8, &f8x16 },
+    { CHARSET_CZ, &cz6x6, &cz8x8, &cz8x16 },
+};
+
 
 /*==== Prototypes =========================================================*/
 
 void font_init(void);
-
+void init_fonts(WORD vmode);
 
 
 /*
- * Settings for the different video modes They are:
- * planes, lin_wr, hz_rez, vt_rez
+ * init_fonts - font ring initialization
  */
+ 
+void init_fonts(WORD vmode)
+{
+    int i, j;
+    int charset = get_charset();
+    
+    /* find the index of the required charset in our font table */
+    for(i = j = 0 ; i < sizeof(font_sets)/sizeof(*font_sets) ; i++) {
+        if( font_sets[i].charset == charset ) {
+            j = i; 
+            break;
+        }
+    }
+    
+    /* set current font depending on the video mode */
+    if (vmode == 2) {
+        cur_font = def_font = font_sets[j].f8x16;
+    } else {
+        cur_font = def_font = font_sets[j].f8x8;
+    }
+       
+    /* Initialize the font ring */
+    /* I think this is plain wrong. Will fix it next time - LVL */
+    font_ring[0]= font_sets[j].f6x6;
+    font_ring[1]= font_sets[j].f8x8;
+    font_ring[2]= font_sets[j].f8x16;
+    font_ring[3]= NULL;
+    font_count=3;                       // total number of fonts in fontring
+}
 
-static const VIDEO_MODE video_mode[] = {
-    {4, 160, 320, 200},         // 16 color mode
-    {2, 160, 640, 200},         // 4 color mode
-    {1,  80, 640, 400}          // monochrome mode
+
+/* Settings for the different video modes */
+struct video_mode {
+    UBYTE       planes;         // count of color planes (v_planes)
+    UBYTE       lin_wr;         // bytes per line (v_lin_wr)
+    UWORD       hz_rez;         // screen horizontal resolution (v_hz_rez)
+    UWORD       vt_rez;         // screen vertical resolution (v_vt_rez)
+    UBYTE       col_fg;         // color number of initial foreground color
+};
+
+
+static const struct video_mode video_mode[] = {
+    {4, 160, 320, 200, 15},        // 16 color mode
+    {2, 160, 640, 200, 3},         // 4 color mode
+    {1,  80, 640, 400, 1}          // monochrome mode
 };
 
 
 
 /*
- * font_init - font ring  initialization
+ * font_init - configure LineA for the default font
  */
 
 void font_init(void)
@@ -154,6 +220,8 @@ void linea_init(void)
     v_hz_rez=video_mode[vmode].hz_rez;
     v_vt_rez=video_mode[vmode].vt_rez;
     v_bytes_lin=video_mode[vmode].lin_wr;	/* I think v_bytes_lin = v_lin_wr (joy) */
+    v_col_bg=0;
+    v_col_fg=video_mode[vmode].col_fg;
 
 #if DBG_LINEA
     kprintf("planes: %d\n", v_planes);
@@ -162,23 +230,9 @@ void linea_init(void)
     kprintf("vt_rez: %d\n", v_vt_rez);
 #endif
 
-    /* set font dependend from video mode */
-    if (vmode == 2) {
-        cur_font= &f8x16;
-        def_font= &f8x16;
-    }
-    else {
-        cur_font= &f8x8;
-        def_font= &f8x8;
-    }
-    font_init();                        // init linea for actual font
+    init_fonts(vmode);                  // init the fonts and select current
 
-    /* Initialize the font ring (is this right so???) */
-    font_ring[0]= &f6x6;
-    font_ring[1]= &f8x8;
-    font_ring[2]= &f8x16;
-    font_ring[3]=NULL;
-    font_count=3;                       // total number of fonts in fontring
+    font_init();                        // init linea for current font
 
     /* Initial cursor settings */
     v_cur_cx=0;                         // cursor to column 0
