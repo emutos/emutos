@@ -363,17 +363,14 @@ void biosmain()
 
     /* execute Reset-resistent PRGs */
 
-    /* show initial config information */
-    initinfo();
+    
+    initinfo();                 /* show initial config information */
+    
+    cursconf(1, 0);             /* switch on cursor via XBIOS*/
+    
+    autoexec();                 /* autoexec Prgs from AUTO folder */
 
-    /* switch on cursor via XBIOS*/
-    cursconf(1, 0);
-
-    /* autoexec Prgs from AUTO folder */
-    autoexec();
-
-    /* clear environment string */
-    env[0]='\0';
+    env[0]='\0';                /* clear environment string */
 
     /* clear commandline */
     
