@@ -120,11 +120,11 @@ LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG lrecnr
     LONG retval;
 
 #if DBG_BLKDEV
-    kprintf("rwabs(%d, %ld, %ld, %d, %d, %ld)\n", rw, buf, lcount, recnr, dev, lrecnr);
+    kprintf("rwabs(rw=%d, buf=%ld, count=%ld, recnr=%u, dev=%d, lrecnr=%ld)\n", rw, buf, lcount, recnr, dev, lrecnr);
 #endif
 
-    if (recnr != -1)
-        lrecnr = recnr; /* long offset not used */
+    if (recnr != -1)            /* if long offset not used */
+        lrecnr = (UWORD)recnr;  /* recnr as unsigned to enable 16-bit recn */
 
     if (! (rw & RW_NOTRANSLATE)) {
         int sectors;
