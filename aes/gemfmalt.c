@@ -42,7 +42,7 @@
 #define NUM_ALOBJS 10
 #define NUM_ALSTRS 8 
 #define MAX_MSGLEN 40
-#define INTER_WSPACE 1
+#define INTER_WSPACE 0
 #define INTER_HSPACE 0
 
 
@@ -144,11 +144,12 @@ void fm_build(LONG tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
         if (haveicon)
         {
           r_set(&ic, 1+INTER_WSPACE, 1+INTER_HSPACE, 4, 4);
-          al.g_w += ic.g_w + INTER_WSPACE;
+          al.g_w += ic.g_w + INTER_WSPACE + 1;
           al.g_h += ic.g_h + INTER_HSPACE + 1;
           ms.g_x = ic.g_x + ic.g_w + INTER_WSPACE + 1;
         }
 
+#if 0   /* Buttons on the right */
         al.g_w += ms.g_w + INTER_WSPACE + 1;
         r_set(&bt, al.g_w, 1 + INTER_HSPACE, mlenbut, 1);
 
@@ -156,6 +157,23 @@ void fm_build(LONG tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
         al.g_h = max(al.g_h, 2 + (2 * INTER_HSPACE) + nummsg );
         al.g_h = max(al.g_h, 2 + INTER_HSPACE + (numbut * 2) - 1);
         al.g_h |= 0xfd00;
+
+#else   /* Buttons on the bottom */
+
+        r_set(&bt, 1+INTER_WSPACE, 2+INTER_HSPACE+max(nummsg, 2), mlenbut, 1);
+
+        if (mlenmsg + al.g_w > numbut * mlenbut + (numbut-1) + 1+INTER_WSPACE)
+        {
+          al.g_w += mlenmsg + INTER_WSPACE + 1;
+          bt.g_x = (al.g_w - numbut * mlenbut - (numbut-1)) / 2;
+        }
+        else
+        {
+          al.g_w = numbut * mlenbut + (numbut-1) + 2 * (1+INTER_WSPACE);
+        }
+
+        al.g_h = max(al.g_h, 2 + (2 * INTER_HSPACE) + nummsg + 2);
+#endif
                                                 /* init. root object    */
         ob_setxywh(tree, ROOT, &al);
         ad_nils = (LONG) ADDR(&gl_nils[0]);
@@ -181,8 +199,12 @@ void fm_build(LONG tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
           LWSET(OB_FLAGS(k), SELECTABLE | EXIT);
           LWSET(OB_STATE(k), NORMAL);
           ob_setxywh(tree, k, &bt);
-          bt.g_y++;
-          bt.g_y++;
+
+#if 0   /* Buttons on the right */
+          bt.g_y += 2;
+#else   /* Buttons on the bottom */
+          bt.g_x += mlenbut + 1;
+#endif
           ob_add(tree, ROOT, k);
         }
                                                 /* set last object flag */
@@ -231,6 +253,9 @@ WORD fm_alert(WORD defbut, LONG palstr)
         LLSET(OB_WIDTH(1), 0x00200020L);        
                                                 /* center tree on screen*/
         ob_center(tree, &d);
+
+        /* Fix 2003-09-25: Limit drawing to the screen! */
+        rc_intersect(&gl_rscreen, &d);
                                                 /* save screen under-   */
                                                 /*   neath the alert    */
         wm_update(TRUE);

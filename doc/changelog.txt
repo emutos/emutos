@@ -1569,3 +1569,9 @@ Start... early ages
 2003-09-06
 - desk/desksupp.c desk/desk1.c aes/gemgrlib.c aes/gemsuper.c :
   graf_shrinkbox() and graf_growbox() have been enabled again. (THH)
+
+2003-09-25
+- aes/gemfmalt.c aes/gem_rsc.c : The buttons in the form-alert boxes have now
+  been places at the bottom instead of the right of the box. fm_alert() also
+  uses right clipping now, so there should be no more crashes when using a
+  form-alert box in ST-LOW resolution. (THH)

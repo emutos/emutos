@@ -361,7 +361,7 @@ static const OBJECT rs_obj_rom[] = {
         NONE,
         SHADOWED,
         (long) 135424L,
-        0, 0, 78, 7 },
+        0, 0, 80, 9 },
 
         { 2, -1, -1, G_BOX,                       /*** 1 ***/
         NONE,
@@ -403,19 +403,19 @@ static const OBJECT rs_obj_rom[] = {
         SELECTABLE|DEFAULT|EXIT,
         NORMAL,
         (long) msg_but_1,
-        61, 1, 16, 1 },
+        9, 7, 16, 1 },
 
         { 9, -1, -1, G_BUTTON,                    /*** 8 ***/
         SELECTABLE|DEFAULT|EXIT,
         NORMAL,
         (long) msg_but_2,
-        61, 3, 16, 1 },
+        26, 7, 16, 1 },
 
         { 0, -1, -1, G_BUTTON,                    /*** 9 ***/
         SELECTABLE|DEFAULT|EXIT|LASTOB,
         NORMAL,
         (long) msg_but_3,
-        61, 5, 16, 1 },
+        43, 7, 16, 1 },
 
 #define TR2 34
 /* TREE 2 */
