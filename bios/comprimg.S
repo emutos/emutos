@@ -1,11 +1,10 @@
 /*
  * comprimg.S - EmuTOS startup module for a compressed RAM image
  *
- * Copyright (c) 02 by the EmuTOS development team
+ * Copyright (c) 02-03 by the EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
- *
  */
 
 /* LVL note: this is a very minimum startup module. it just setups memory
@@ -16,14 +15,21 @@
 #include "asmdefs.h"
 #include "header.h"
 #include "config.h"
-        
+
+/* define this to 1 to activate minimum debug support. This will print 
+ * data using the native feature interface. 
+ */
+#define COMPRDBG 0
+
 
 /* To be sure not to have any trouble when loading the actual image
- * in RAM, just set the stack around the top of the exception vector 
+ * in RAM, just set the stack below the top of the exception vector 
  * zone.  We won't need that much of a stack anyway.
  */
-_stktop = 0x380
+_stktop = 0x378
 
+/* NF_STDERR id */
+stderr = 0x37C
 
 /*
  * some needed low memory vars
@@ -205,6 +211,29 @@ _kprintf:
 
 
 /*
+ * minimum natfeat init - setups only the stderr id for debug below
+ */
+        .global _natfeat_init
+_natfeat_init:
+        .equ vec_illegal, 0x10       // illegal exception vector
+
+        clr.l   stderr
+#if DETECT_NATIVE_FEATURES || COMPRDBG
+        move.l  sp,a1
+        move.l  #fail_natfeat,vec_illegal
+        pea     nf_stderr_name
+        sub.l   #4,sp
+        dc.w    0x7300              // Jump to NATFEAT_ID
+        move.l  d0,stderr
+fail_natfeat:
+        move.l  a1,sp
+#endif
+        rts
+        
+nf_stderr_name:
+        .ascii  "NF_STDERR\0"
+        
+/*
  * debug - activate to use minimal debug support on STonX.
  * usage:
  *    move.l d0,-(sp)   
@@ -214,7 +243,7 @@ _kprintf:
  * prints "H %08lx" the current pc
  */
 
-#if 0
+#if COMPRDBG
         .global p
 p:
         movem.l d0-d2,-(sp)
@@ -231,11 +260,11 @@ nibble:
         add.b   #7,d2
 digit:
         move.b  d2,-(sp)
-        bsr     outch_stonx
+        bsr     outch
         addq.l  #2,sp
         dbra    d1,nibble
         move.b  #10,-(sp)
-        bsr     outch_stonx
+        bsr     outch
         addq.l  #2,sp
         movem.l (sp)+,d0-d2
         move.l  (sp),4(sp)
@@ -245,26 +274,28 @@ digit:
         .global h
 h:
         move.b  #72,-(sp)
-        bsr     outch_stonx
+        bsr     outch
         move.b  #32,-(sp)
-        bsr     outch_stonx
+        bsr     outch
         move.l  4(sp),(sp)
         bsr     p
         move.b  #10,-(sp)
-        bsr     outch_stonx
+        bsr     outch
         addq.l  #2,sp
         rts
         
-        
-outch_stonx:
+outch:
         subq.l  #4,sp
         clr.b   9(sp)
         move.l  sp,(sp)
         add.l   #8,(sp)
-        subq.l  #4,sp
-        dc.w    0xa0ff     // Jump to native execution
-        dc.l    0          // Printing subroutine
-        add.l   #8,sp
+        move.l  stderr,-(sp)
+        beq     no_natfeat
+        move.l  d0,-sp
+        dc.w    0x7301
+        move.l  (sp)+,d0
+no_natfeat:
+        add.l   #12,sp
         rts
 #endif
 
