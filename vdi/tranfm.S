@@ -9,6 +9,7 @@
  */
 
 
+#if 1
 
 /* Global Declarations */
 
@@ -162,3 +163,5 @@ exit:
 	rts
 
         .end
+
+#endif

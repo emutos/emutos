@@ -1099,4 +1099,8 @@ Start... early ages
                - habline() uses same sub-routines as rectfill() (MAD)
 - vdi/gsxasm1.S - concat() moved to gsxasm2.S, where it is used (MAD)
 
+22. Sep. 2002 
+- vdi/monout.c - replaced asm vr_trnfm() by Johan's impl. in C (MAD)
+               - fixed bugs in horizontal line drawing modes (MAD)
+- vdi/tranfm.S - removed from compile in Makefile (MAD)
 
