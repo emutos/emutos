@@ -13,9 +13,9 @@
  */
 
 
-#ifndef DBGUMEM
 #define DBGUMEM 0
-#endif
+
+
 
 #include "portab.h"
 #include "fs.h"
@@ -43,7 +43,7 @@ long end_stram;
  * static functions
  */
 
-#ifdef DBGUMEM
+#if DBGUMEM
 static void dump_mem_map(void)
 {
   MD *m;
@@ -279,9 +279,8 @@ long    xmxalloc(long amount, int mode)
 
 #if DBGUMEM
     kprintf("BDOS: xmxalloc(0x%08lx, %d)", amount, mode);
-#endif
-
     assert(has_ttram || mode == MX_STRAM);
+#endif
 
     /*
      * if amount == -1L, return the size of the biggest block

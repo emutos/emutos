@@ -689,4 +689,4 @@ Start... early ages
 
 26. Mar. 2002
 - bdos/biosmain.c - made DBGIFOS working by disabl. osif  (MAD)
-
+- bdos/umem.c  switched off DBGUMEM and assert by default (MAD)
