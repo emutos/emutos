@@ -221,7 +221,7 @@ long xexec(WORD flag, char *path, char *tail, char *env)
         env_md = alloc_env(env);
         if(env_md == NULL) {
             D(("xexec: Not Enough Memory!\n"));
-            return(ENSMEM) ;
+            return(ENSMEM);
         }
         max = (long) ffit(-1L, &pmd); 
         if(max >= sizeof(PD)) {
@@ -388,13 +388,13 @@ static void init_pd_fields(PD *p, char *tail, long max, MD *env_md)
     bzero(p, sizeof(PD)) ;
 
     /* memory values */
-    p->p_lowtpa = (long) p ;                /*  M01.01.06   */
-    p->p_hitpa  = (long) p  +  max ;        /*  M01.01.06   */
-    p->p_xdta = &p->p_cmdlin[0] ;   /* default p_xdta is p_cmdlin */
-    p->p_env = (char *) env_md->m_start ;
+    p->p_lowtpa = (long) p;                /*  M01.01.06   */
+    p->p_hitpa  = (long) p  +  max;        /*  M01.01.06   */
+    p->p_xdta = &p->p_cmdlin[0];   /* default p_xdta is p_cmdlin */
+    p->p_env = (char *) env_md->m_start;
 
     /* copy tail */
-    b = &p->p_cmdlin[0] ;
+    b = &p->p_cmdlin[0];
     for( i = 0 ; (i < PDCLSIZE)  && (*tail) ; i++ )
         *b++ = *tail++;
 
