@@ -150,34 +150,42 @@ int atari_partition(int bdev)
     if (sect[510] == 0x55 && sect[511] == 0xaa) {
         /* follow DOS PTBL */
         int i;
-        int offset = 450;
+        int offset = 446;
         for(i=0; i<4; i++, offset+=16) {
             u32 start, size;
-            u8 type = sect[offset];
+            u8 type = sect[offset+4];
             char pid[3] = {0, 'D', type };
 
-	    start = sect[offset+7];
-	    start <<= 8;
-	    start |= sect[offset+6];
-	    start <<= 8;
-	    start |= sect[offset+5];
-	    start <<= 8;
-	    start |= sect[offset+4];
+            start = sect[offset+11];
+            start <<= 8;
+            start |= sect[offset+10];
+            start <<= 8;
+            start |= sect[offset+9];
+            start <<= 8;
+            start |= sect[offset+8];
 
-            size = sect[offset+11];
-	    size <<= 8;
-	    size |= sect[offset+10];
-	    size <<= 8;
-	    size |= sect[offset+9];
-	    size <<= 8;
-	    size |= sect[offset+8];
+                size = sect[offset+15];
+            size <<= 8;
+            size |= sect[offset+14];
+            size <<= 8;
+            size |= sect[offset+13];
+            size <<= 8;
+            size |= sect[offset+12];
+
+            if (type == 0 || size == 0)
+                continue;
 
 #if DBG_DISK
             kprintf("DOS partition detected: start=%ld, size=%ld, type=$%02x\n",
                     start, size, type);
 #endif
-            add_partition(bdev, pid, start, size, byteswap);
-            kprintf(" $%02x", type);
+            if (type == 0x05 || type == 0x0f || type == 0x85) {
+                kprintf(" extended partitions unsupported yet ");
+            }
+            else {
+                add_partition(bdev, pid, start, size, byteswap);
+                kprintf(" $%02x", type);
+            }
         }
     
         printk ("\n");
