@@ -894,3 +894,7 @@ Start... early ages
 - vdi/attrib.h - moved to vdi/vdidef.h (MAD)
 - vdi/fontdef.h - integrated in vdi/vdidef.h (MAD)
 
+15. Jun. 2002
+- bios/memory.S - seperated Falcon and ST stuff, still a memconfig bug? (MAD)
+
+

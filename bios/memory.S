@@ -106,14 +106,14 @@ memok:
 /*
  * memconf - Configure the memory (and clear it)
  */
- 
 memconf:
+#if 1   // FIXME: set to 0 for Steem
         /* detect if this is a Falcon by reading $ff8006 register (joy) */
         pea     0xff8006
         bsr     _check_read_byte
         tst.w   d0
         bne     falcmemconf
-
+#endif
 /*
  * memconf for ST
  *
@@ -172,7 +172,12 @@ nextbank:
         sub.l   #0x200000, d1           // first (other) bank
         beq.s   bankloop                // 
 
-        bra.s   setmem
+        move.b  d6, 0xffff8001          // program ST's memorycontroller
+        move.b  d6, memctrl             // set copy of hw memory config
+        move.l  d5, _phystop            // highest address as phystop
+        bra     setmemok
+
+
 
 /*
  * memconf for Falcon
@@ -193,22 +198,10 @@ falcmemconf:
         cmp.b   #5,d1
         bne.s   less16
         move.l  #0x00E00000,d0
-less16: move.l  d0,d5            /* d5 = phystop */
+less16: 
+	move.l  d0, _phystop            // highest address as phystop
 
 
-/*
- * setmem - Set the new values to hardware and config
- */
-  
-setmem:
-        move.b  d6, 0xffff8001          // program memorycontroller
-        move.b  d6, memctrl             // set copy of hw memory config
-        move.l  d5, _phystop            // highest address as phystop
-
-        /* make memory config valid */
-        move.l  #0x752019f3, memvalid   // set memvalid to ok
-        move.l  #0x237698aa, memval2    // set memval2 to ok
-        move.l  #0x5555aaaa, memval3    // set memval3 to ok
 
 /*
  * TT-RAM (FastRAM) detection (joy)
@@ -259,21 +252,16 @@ zerofastram:
         add.l   #12,sp
 
 
-#if 0
+
 /*
- * Clear all available ST-RAM
+ * setmemok - Set the new values to hardware and config
  */
-        /* clear memory till running into buserror or reaching top */
-        move.l  _phystop, d0            // maximum top of RAM
-        move.l  _end, a0                // Set start of RAM
-clrmem:
-        clr.w   (a0)+                   // Clear actual word, then increase
-        cmp.l   d0, a0                  // End of MEM reached?
-        blt.s   clrmem                  // if not, clear next word
-        pea     msg_bss2                // Print, what's going on
-        bsr     _kprintf                // this also requires stack!
-        add.l   #12,sp
-#endif
+  
+setmemok:
+        /* make memory config valid */
+        move.l  #0x752019f3, memvalid   // set memvalid to ok
+        move.l  #0x237698aa, memval2    // set memval2 to ok
+        move.l  #0x5555aaaa, memval3    // set memval3 to ok
 
         bra     memdone                 // config done -> return to startup.s
 
