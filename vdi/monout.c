@@ -1817,11 +1817,8 @@ abline ()
 
 
 
-
-
-
 /*
- * st_fl_ptr -
+ * st_fl_ptr - set fill pattern?
  */
 
 void st_fl_ptr()
@@ -1871,20 +1868,16 @@ void st_fl_ptr()
 
 
 
-#if 0  //MAD: for now implemented in assembler
+#if 1  //MAD: for now implemented in assembler
 /*
  * hzline_rep - draw a horizontal line in replace mode
  *
  * This routine is used by habline() and rectfill()
  */
 
-inline
-void hzline_rep(UWORD *addr, int dx, int leftpart, UWORD rightmask, UWORD leftmask, int patind)
+static
+void hzline_rep(UWORD *addr, int dx, int leftpart, UWORD rightmask, UWORD leftmask, WORD patind)
 {
-    UWORD *adr;
-    UWORD pattern;
-    int pixels;                   /* counting down the rest of dx */
-    int bw;
     int planes;
     int plane;
     WORD *color;
@@ -1896,6 +1889,10 @@ void hzline_rep(UWORD *addr, int dx, int leftpart, UWORD rightmask, UWORD leftma
     planes = v_planes;
 
     for (plane = planes-1; plane >= 0; plane-- ) {
+        UWORD *adr;
+        UWORD pattern;
+        int pixels;                   /* counting down the rest of dx */
+        int bw;
 
         adr = addr;
         pixels = dx-16;
@@ -1920,17 +1917,17 @@ void hzline_rep(UWORD *addr, int dx, int leftpart, UWORD rightmask, UWORD leftma
             UWORD bits;
             /* Draw the left fringe */
             if (leftmask) {
-                bits = *adr;    /* get data from screen address */
-                bits ^= pattern;  /* xor the pattern with the source */
-                bits &= leftmask; /* isolate the bits outside the fringe */
-                bits ^= pattern;  /* restore the bits outside the fringe */
-                *adr = bits;      /* write back the result */
+                bits = *adr;		/* get data from screen address */
+                bits ^= pattern;	/* xor the pattern with the source */
+                bits &= leftmask;	/* isolate the bits outside the fringe */
+                bits ^= pattern;	/* restore the bits outside the fringe */
+                *adr = bits;		/* write back the result */
 
                 adr += planes;;
                 pixels -= 16;
                 pixels += leftpart;
             }
-            /* Full bytes */
+            /* Full WORDs */
             for (bw = pixels >> 4;bw>=0;bw--) {
                 *adr = pattern;
                 adr += planes;
@@ -1966,11 +1963,7 @@ void hzline_rep(UWORD *addr, int dx, int leftpart, UWORD rightmask, UWORD leftma
 static
 void hzline_or(UWORD *addr, int dx, int leftpart, UWORD rightmask, UWORD leftmask, int patind)
 {
-    UWORD *adr;
-    UWORD pattern;
     WORD *color;
-    int pixels;                   /* counting down the rest of dx */
-    int bw;
     int planes;
     int plane;
     int patadd;               /* advance for multiplane patterns */
@@ -1981,6 +1974,10 @@ void hzline_or(UWORD *addr, int dx, int leftpart, UWORD rightmask, UWORD leftmas
     color = &FG_BP_1;
 
     for (plane = v_planes-1; plane >= 0; plane-- ) {
+        UWORD *adr;
+        UWORD pattern;
+        int pixels;                   /* counting down the rest of dx */
+        int bw;
 
         /* load values fresh for this bitplane */
         adr = addr;
@@ -2097,10 +2094,6 @@ void hzline_or(UWORD *addr, int dx, int leftpart, UWORD rightmask, UWORD leftmas
 static
 void hzline_xor(UWORD *addr, int dx, int leftpart, UWORD rightmask, UWORD leftmask, int patind)
 {
-    UWORD *adr;
-    UWORD pattern;
-    int pixels;                   /* counting down the rest of dx */
-    int bw;
     int planes;
     int plane;
     int patadd;               /* advance for multiplane patterns */
@@ -2110,6 +2103,10 @@ void hzline_xor(UWORD *addr, int dx, int leftpart, UWORD rightmask, UWORD leftma
     patadd = multifill ? 16 : 0;     /* multi plane pattern offset */
 
     for (plane = v_planes-1; plane >= 0; plane-- ) {
+        UWORD *adr;
+        UWORD pattern;
+        int pixels;                   /* counting down the rest of dx */
+        int bw;
 
         /* load values fresh for this bitplane */
         pattern = patptr[patind];
@@ -2182,14 +2179,10 @@ void hzline_xor(UWORD *addr, int dx, int leftpart, UWORD rightmask, UWORD leftma
 static
 void hzline_nor(UWORD *addr, int dx, int leftpart, UWORD rightmask, UWORD leftmask, int patind)
 {
-    UWORD *adr;
-    UWORD pattern;
     WORD *color;
-    int pixels;                   /* counting down the rest of dx */
-    int bw;
     int planes;
     int plane;
-    int patadd;               /* advance for multiplane patterns */
+    int patadd;			/* advance for multiplane patterns */
 
     /* init adress counter */
     planes = v_planes;
@@ -2197,6 +2190,10 @@ void hzline_nor(UWORD *addr, int dx, int leftpart, UWORD rightmask, UWORD leftma
     color = &FG_BP_1;
 
     for (plane = v_planes-1; plane >= 0; plane-- ) {
+        UWORD *adr;
+        UWORD pattern;
+        int pixels;		/* counting down the rest of dx */
+        int bw;
 
         /* load values fresh for this bitplane */
 
@@ -2314,7 +2311,7 @@ void hzline_nor(UWORD *addr, int dx, int leftpart, UWORD rightmask, UWORD leftma
  * This routine is just a wrapper for horzline.
  */
 
-void xhabline() {
+void habline() {
     horzline(X1, X2, Y1);
 }
 
@@ -2477,6 +2474,7 @@ WORD clipbox()
 void rectfill ()
 {
     WORD x1, y1, x2, y2;
+    WORD y;
     UWORD leftmask;
     UWORD rightmask;
     void *addr;
@@ -2484,6 +2482,7 @@ void rectfill ()
     int yinc;
     int leftpart;
     int rightpart;
+
 
     if (CLIP)
         if (!clipbox())
@@ -2521,26 +2520,26 @@ void rectfill ()
 
     switch (WRT_MODE) {
     case 3:  /* nor */
-        for (y1 = dy; y1 >= 0; y1-- ) {
-            hzline_nor(addr, dx, leftpart, rightmask, leftmask, y1&patmsk);
+        for (y = y1; y <= y2; y++ ) {
+            hzline_nor(addr, dx, leftpart, rightmask, leftmask, y&patmsk);
             addr += yinc;           /* next scanline */
         }
         break;
     case 2:  /* xor */
-        for (y1 = dy; y1 >= 0; y1-- ) {
-            hzline_xor(addr, dx, leftpart, rightmask, leftmask, y1&patmsk);
+        for (y = y1; y <= y2; y++ ) {
+            hzline_xor(addr, dx, leftpart, rightmask, leftmask, y&patmsk);
             addr += yinc;           /* next scanline */
         }
         break;
     case 1:  /* or */
-        for (y1 = dy; y1 >= 0; y1-- ) {
-            hzline_or(addr, dx, leftpart, rightmask, leftmask, y1&patmsk);
+        for (y = y1; y <= y2; y++ ) {
+            hzline_or(addr, dx, leftpart, rightmask, leftmask, y&patmsk);
             addr += yinc;           /* next scanline */
         }
         break;
     default: /* rep */
-        for (y1 = dy; y1 >= 0; y1-- ) {
-            hzline_rep(addr, dx, leftpart, rightmask, leftmask, y1&patmsk);
+        for (y = y1; y <= y2; y++ ) {
+        hzline_rep(addr, dx, leftpart, rightmask, leftmask, y&patmsk);
             addr += yinc;           /* next scanline */
         }
     }
