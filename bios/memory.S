@@ -88,23 +88,87 @@ memok:
 /*
  * memconf - Configure the memory and clear it
  *
- * At first the memory configuratio is set to 4 Mb.
- * The real memory is found out by running into bus-errors, if memory 
- * is not present at a tested address. Therefor a special buserror-handler
- * is temporarely installed. The real memory may be bigger than the 
- * setting for the memory controller, because some emulators patch it in.
+ * At first the memory configuration is set to 4 Mb. If the memory
+ * configuration is not really 2 * 2 mb, the written test values will
+ * repeat in memory. The trick is to find these repeated values and
+ * set the memory config accordingly. No real memory check is done, 
+ * because in emulators it should be always ok - hopefully!
  */
  
 memconf:
+        move.b  #0xa, 0xffff8001        // set hw to 2 banks by 2 mb
 
-        /* set memory config to 4 Mb */
-        move.b  #0x0a, d1               // set 2 banks by 2 mb
-        move.b  d1, 0xffff8001          // set config to hw
+        lea     0x000008, a0            // a0 points to 1. bank
+        lea     0x200008, a1            // a1 points to 2. bank
 
-        /* save old buserror handler for later restore */
-       	move.l	0x00000008, a1 		// save old bus error vector
-       	move.l	#buserr, 0x00000008     // and put in our temporary handler
+        move.w  #0xabcd, d0             // my very special bitpattern
+        move.w  d0, (a0)                // set bitpattern to 1st bank start
+        move.w  d0, (a1)                // set bitpattern to 2nd bank start
 
+
+        /* set start values */
+set128kb:
+        clr.l   d5                      // total memory (later phystop)
+        clr.l   d6                      // configuration value to 128 kb
+        move.l  #0x200000, d1           // d1 to 2. bank
+
+
+        /* find config for both  banks (written for to be understood) */
+bankloop:
+        lsr.w   #2, d6                  // switch bank in configuration byte
+
+        add.l   #0x20000, d5            // add default 128k to total mem
+        movea.l d1, a0                  // set actual bank and
+        adda    #0x208, a0              // add offset
+        cmp.w   (a0)+, d0               // found repeated test value?
+        beq.s   nextbank                // 128k ok in actual bank!
+
+        add.l   #0x60000, d5            // add (512k-128k) to total mem
+        movea.l d1, a0                  // set actual bank and
+        adda    #0x408, a0              // add offset
+        cmp.w   (a0)+, d0               // found repeated test value?
+        beq.s   set2048kb               // 512k ok in actual bank!
+
+        add.l   #0x160000, d5           // add (2048-512-128k) to total mem
+        movea.l d1, a0                  // set actual bank and
+        adda    #0x008, a0              // add offset
+        cmp.w   (a0)+, d0               // found repeated test value?
+        bne.s   nextbank                // 2048k ok in actual bank!
+
+set512kb:
+        addq    #4, d6                  // configuration value to 512 kb
+
+set2048kb:
+        addq    #4, d6                  // configuration value to 2 mb
+
+nextbank:
+        sub.l   #0x200000, d1           // first (other) bank
+        beq.s   bankloop                // 
+
+
+
+/*
+ * setmem - Set the new values to hardware and config
+ */
+  
+setmem:
+        move.b  d6, 0xffff8001          // program memorycontroller
+        move.b  d6, memctrl             // set copy of hw memory config
+        move.l  d5, _phystop            // highest address as phystop
+
+        /* make memory config valid */
+        move.l  #0x752019f3, memvalid   // set memvalid to ok
+        move.l  #0x237698aa, memval2    // set memval2 to ok
+
+        pea msg_bss     // Print, what's going on
+        bsr _kprintf
+        addq #4,sp
+
+        bra	memdone                 // config done -> return to startup.s
+
+
+
+#if 0
         /* clear memory till running into buserror or reaching top */
 	move.l 	#0xd00000, d0           // maximum top of RAM
         move.l  _end, a0                // Set start of RAM
@@ -112,31 +176,9 @@ clrmem:
         clr.w   (a0)+                   // Clear actual word, then increase
         cmp.l   d0, a0                  // End of MEM reached?
         blt     clrmem                  // if not, clear next word
+#endif
 
 
-
-
-/*
- * buserr - temporary buserror handler
- */
- 
-buserr:
-        /* Set config */
-        move.b  d1, memctrl             // set copy of hw memory config
-        move.l  a0, _phystop            // higest address as phystop
-
-        pea msg_bss     // Print, what's going on
-        bsr _kprintf
-        addq #4,sp
-
-        /* make memory config valid */
-        move.l  #0x752019f3, memvalid   // set memvalid to ok
-        move.l  #0x237698aa, memval2    // set memval2 to ok
-
-        /* restore old buserror handler */
-       	move.l	a1, 0x00000008          // and put in our temporary handler
-
-        bra	memdone                 // config done -> return to startup.s
 
 // ==== Some messages ========================================================
 

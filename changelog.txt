@@ -268,3 +268,6 @@ Start... early ages
 - Makefile (updated clean and distclean, BUILDDATE also for CYGWIN) (LVL)
 - Reimplemented bios/memory.S in a more readable kind   (MAD)
 
+07. Nov. 2001
+- Reimplemented bios/memory.S - is hopefully perfect now   (MAD)
+
