@@ -12,7 +12,7 @@
 /*      inside                          */
 /* determine if x,y is in rectangle     */
 /*--------------------------------------*/
-UWORD inside(UWORD x, UWORD y, GRECT *pt)
+UWORD inside(WORD x, WORD y, GRECT *pt)
 {
         if ( (x >= pt->g_x) && (y >= pt->g_y) &&
             (x < pt->g_x + pt->g_w) && (y < pt->g_y + pt->g_h) )

@@ -1478,3 +1478,7 @@ Start... early ages
 - aes/gemrslib.c : Fixed the remaining bug with TeraDesk by using an extra
   buffer for a temporary string (Quitting QED caused a crash or error message
   when it was launched from TeraDesk) (THH).
+
+2003-05-31
+- aes/rectfunc.c : Function inside() did not work if one of the parameters
+  x or y was negativ => Changed type from UWORD to WORD. (THH)
