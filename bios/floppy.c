@@ -25,7 +25,7 @@
 
 /*==== External declarations ==============================================*/
 
-extern LONG random(VOID);    /* in xbios.c */
+extern LONG random(void);    /* in xbios.c */
 
 
 /*==== Introduction =======================================================*/
@@ -52,7 +52,12 @@ extern LONG random(VOID);    /* in xbios.c */
  * - low level dma and fdc registers access
  *
  */
+
+/*==== Internal defines ===================================================*/
  
+#define SECT_SIZ 512
+#define TRACK_SIZ 6250
+
 /*==== Internal declarations ==============================================*/
  
 struct bs {
@@ -77,12 +82,15 @@ struct bs {
 /*==== Internal prototypes ==============================================*/
 
 /* set/get intel words */
-static VOID setiword(UBYTE *addr, UWORD value);
+static void setiword(UBYTE *addr, UWORD value);
 static UWORD getiword(UBYTE *addr);
 
 /* floppy read/write */
 static WORD floprw(LONG buf, WORD rw, WORD dev, 
                    WORD sect, WORD track, WORD side, WORD count); 
+
+/* floppy write track */
+static WORD flopwtrack(LONG buf, WORD dev, WORD track, WORD side);
 
 /* initialise a floppy for hdv_init */
 static void flopini(WORD dev);
@@ -94,12 +102,12 @@ static void flopunlk(void);
 /* select in the PSG port A*/
 static void select(WORD dev, WORD side);
 
-/* sets the track, returns 0 or error. */
-static WORD set_track(WORD track);
+/* sets the track, returns 0 or error. rate is the step rate */
+static WORD set_track(WORD track, WORD rate);
 
 /* returns 1 if the timeout elapsed before the gpip changed */
-#define TIMEOUT 0x50000   /* arbitrary value */
-static WORD timeout_gpip(LONG delay);
+static WORD timeout_gpip(LONG delay);  /* delay in milliseconds */
+#define TIMEOUT 1500L   /* default one second and a half */
 
 /* access to dma and fdc registers */
 static WORD get_dma_status(void);
@@ -131,11 +139,14 @@ static WORD memcmp(void* a, void* b, LONG n);
  * is invalid.
  *
  * last_access is set to the value of the 200 Hz counter at the end of
- * last fdc command. When time elapsed since last_access is greater than
- * .5 seconds, and if no command is running, the flopvbl interrupt 
- * routine will deselect the drive (which will turn the motor off).
- * last_access is also used by mediach, a short time elapsed indicating 
- * that the floppy was not ejected.
+ * last fdc command. last_access can be used by mediach, a short time 
+ * elapsed indicating that the floppy was not ejected.
+ * 
+ * finfo[].wp is set according to the corresponding bit in the fdc 
+ * controller status reg. As soon as this value is different for
+ * the drive, this means that the floppy has changed.
+ *
+ * finfo[].rate is the seek rate (TODO: unused)
  * 
  * the flock variable in tosvars.s is used as following :
  * - floppy.c will set it before accessing to the DMA/FDC, and
@@ -147,10 +158,11 @@ static WORD cur_dev;
 static WORD cur_track;
 static struct flop_info {
   WORD cur_track;
+  WORD rate;
   WORD spt;          /* number of sectors per track */
   WORD sides;        /* number of sides, or -1 if geometry not inited */
   BYTE serial[3];    /* the serial number taken from the bootsector */
-  BYTE wp;           /* TODO, write protected */
+  BYTE wp;           /* != 0 means write protected */
 } finfo[2];
 static LONG last_access;
 
@@ -174,14 +186,16 @@ void floppy_init(void)
 
 /*==== hdv_init and hdv_boot ==============================================*/
 
-VOID flop_hdv_init(VOID)
+void flop_hdv_init(void)
 {
   nflops = 0;
   cur_dev = -1;
   finfo[0].cur_track = -1;
   finfo[0].sides = -1;
+  finfo[0].rate = seekrate;
   finfo[1].cur_track = -1;
-  finfo[0].sides = -1;
+  finfo[1].sides = -1;
+  finfo[1].rate = seekrate;
   flopini(0);
   flopini(1);  
 }
@@ -213,7 +227,7 @@ static void flopini(WORD dev)
 }
 
 
-VOID do_hdv_boot(VOID)
+void do_hdv_boot(void)
 {
   LONG err;
 
@@ -222,12 +236,12 @@ VOID do_hdv_boot(VOID)
   kprintf("hdv_boot returns %ld\n", err);
   if(err == 0) {
     /* if bootable, jump in it */
-    ((VOID (*)(VOID))dskbufp)();
+    ((void (*)(void))dskbufp)();
   }
 }
   
 
-LONG flop_hdv_boot(VOID)
+LONG flop_hdv_boot(void)
 {
   struct bs *b = (struct bs *) dskbufp;
   WORD err;
@@ -327,7 +341,7 @@ LONG flop_getbpb(WORD dev)
   return (LONG) &flop_bpb[dev];
 }
 
-VOID protobt(LONG buf, LONG serial, WORD type, WORD exec)
+void protobt(LONG buf, LONG serial, WORD type, WORD exec)
 {
   WORD is_exec;
   struct bs *b = (struct bs *)buf;
@@ -350,7 +364,7 @@ VOID protobt(LONG buf, LONG serial, WORD type, WORD exec)
     
   switch(type) {   /* this is ugly */
   case 0:
-    setiword(b->bps, 512);
+    setiword(b->bps, SECT_SIZ);
     b->spc = 1;
     setiword(b->res, 1);
     b->fat = 2;
@@ -363,7 +377,7 @@ VOID protobt(LONG buf, LONG serial, WORD type, WORD exec)
     setiword(b->hid, 0); 
     break;
   case 1:
-    setiword(b->bps, 512);
+    setiword(b->bps, SECT_SIZ);
     b->spc = 2;
     setiword(b->res, 1);
     b->fat = 2;
@@ -376,7 +390,7 @@ VOID protobt(LONG buf, LONG serial, WORD type, WORD exec)
     setiword(b->hid, 0); 
     break;
   case 2:
-    setiword(b->bps, 512);
+    setiword(b->bps, SECT_SIZ);
     b->spc = 2;
     setiword(b->res, 1);
     b->fat = 2;
@@ -389,7 +403,7 @@ VOID protobt(LONG buf, LONG serial, WORD type, WORD exec)
     setiword(b->hid, 0); 
     break;
   case 3:
-    setiword(b->bps, 512);
+    setiword(b->bps, SECT_SIZ);
     b->spc = 2;
     setiword(b->res, 1);
     b->fat = 2;
@@ -490,7 +504,7 @@ LONG flop_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev)
       track /= 2;
     }
     err = floprw(buf, rw, dev, sect, track, side, 1);
-    buf += 512;
+    buf += SECT_SIZ;
     recnr ++;
     if(err) return (LONG) err;
   }
@@ -525,6 +539,9 @@ WORD flopwr(LONG buf, LONG filler, WORD dev,
 
 /*==== xbios flopver ======================================================*/
 
+/* TODO, in the case where both one sector cannot be read and another is
+ * read wrong, what is the error return code? 
+ */
 
 WORD flopver(LONG buf, LONG filler, WORD dev, 
              WORD sect, WORD track, WORD side, WORD count)
@@ -532,26 +549,26 @@ WORD flopver(LONG buf, LONG filler, WORD dev,
   WORD i;
   WORD err;
   WORD outerr = 0;
-  WORD *out = (WORD *) buf;
+  WORD *bad = (WORD *) buf;
   
   if(count <= 0) return 0;
   if(dev < 0 || dev > 1) return -15;
   for(i = 0 ; i < count ; i++) {
     err = floprw((LONG) dskbufp, RW_READ, dev, sect, track, side, 1);
     if(err) {
-      *out++ = sect;
+      *bad++ = sect;
       outerr = err;
       continue;
     }
     if(memcmp((void *)buf, (void *)dskbufp, (long) flop_bpb[dev].recsiz)) {
-      *out++ = sect;
+      *bad++ = sect;
       outerr = -16;
     }
     sect ++;
   }
     
   if(outerr) {
-    *out = 0;
+    *bad = 0;
   }
   return outerr;
 }
@@ -559,24 +576,120 @@ WORD flopver(LONG buf, LONG filler, WORD dev,
 
 /*==== xbios flopfmt ======================================================*/
 
-
 WORD flopfmt(LONG buf, LONG filler, WORD dev, WORD spt,
              WORD track, WORD side, WORD interleave, 
              ULONG magic, WORD virgin)
 {
+  int i, j;
+  BYTE b1, b2;
+  BYTE *s;
+  BYTE *data;
+  WORD *bad;
+  WORD err;
+  int n;
+
+#define APPEND(b, count) do { n=count; while(n--) *s++ = b; } while(0) 
+
   if(magic != 0x87654321UL) return 0;
   if(dev < 0 || dev > 1) return -15;
+  if(spt < 1 || spt > 10) return -1;
+  s = (BYTE *)buf;
+
+  data = s; /* dummy, to avoid warning. data will be set in the loop */
   
-  /* TODO */
+  /*
+   * sector interleave factor ignored, always 1.
+   * create the image in memory. 
+   * track  ::= GAP1 record record ... record GAP5
+   * record ::= GAP2 index GAP3 data GAP4
+   */
+
+  b1 = virgin >> 8;
+  b2 = virgin;
+
+  /* GAP1 : 60 bytes 0x4E */  
+  APPEND(0x4E, 60);
   
-  return -15;
+  for(i = 0 ; i < spt ; i++) {
+    /* GAP2 */
+    APPEND(0x00, 12);
+    APPEND(0xF5, 3);
+
+    /* index */
+    *s++ = 0xfe;
+    *s++ = track;
+    *s++ = side;
+    *s++ = i+1;
+    *s++ = 2; /* means sector of 512 bytes */
+    *s++ = 0xf7;
+
+    /* GAP3 */
+    APPEND(0x4e, 22);
+    APPEND(0x00, 12);
+    APPEND(0xF5, 3);
+    
+    /* data */
+    *s++ = 0xfe;
+    data = s; /* the content of a sector */
+    for(j = 0 ; j < SECT_SIZ ; j += 2) {
+      *s++ = b1; *s++ = b2;
+    }
+    *s++ = 0xf7;
+
+    /* GAP4 */
+    APPEND(0x4e, 40);
+  }    
+
+  /* GAP5 : all the rest to fill to size 6250 (size of a raw track) */  
+  APPEND(0x4E, TRACK_SIZ - 60 - 614 * spt);
+  
+#undef APPEND
+
+  /* write the buffer to track */
+  err = flopwtrack(buf, dev, track, side);
+  if(err) return err;
+
+  /* verify sectors and store bad sector numbers in buf */
+  bad = (WORD *)buf;
+  for(i = 0 ; i < spt ; i++) {
+    err = flopver((LONG)data, 0L, dev, i+1, track, side, 1);
+    if(err) {
+      *bad++ = i+1;
+    }
+  }
+  *bad = 0;
+  if(bad != (WORD *)buf) {
+    return -16;
+  }
+  
+  return 0;
 }
 
+/*==== xbios floprate ======================================================*/
+
+/* sets the rate of the specified drive. 
+ * rate meaning
+ * 0   6ms
+ * 1  12ms
+ * 2   2ms
+ * 3   3ms
+ */
+
+WORD floprate(WORD dev, WORD rate)
+{
+  WORD old;
+  if(dev < 0 || dev > 1) return -15;
+  old = finfo[dev].rate;
+  if(rate >= 0 && rate <= 3) {
+    finfo[dev].rate = rate;
+  }
+  return old;
+}
 
 /*==== internal floprw ====================================================*/
 
-WORD floprw(LONG buf, WORD rw, WORD dev, 
-            WORD sect, WORD track, WORD side, WORD count)
+static WORD floprw(LONG buf, WORD rw, WORD dev, 
+                   WORD sect, WORD track, WORD side, WORD count)
 {
   WORD retry;
   WORD err;
@@ -591,7 +704,7 @@ WORD floprw(LONG buf, WORD rw, WORD dev,
   floplock(dev);
   
   select(dev, side);
-  err = set_track(track);
+  err = set_track(track, finfo[dev].rate);
   if(err) {
     flopunlk();
     return err;
@@ -637,6 +750,60 @@ WORD floprw(LONG buf, WORD rw, WORD dev,
   return err;
 }
 
+/*==== internal flopwtrack =================================================*/
+
+static WORD flopwtrack(LONG buf, WORD dev, WORD track, WORD side)
+{
+  WORD retry;
+  WORD err;
+  WORD status;
+  
+  if(dev < 0 || dev > 1) return -15;
+  
+  if((track == 0) && (side == 0)) {
+    /* maybe media changed ? */
+  }
+  
+  floplock(dev);
+  
+  select(dev, side);
+  err = set_track(track, finfo[dev].rate);
+  if(err) {
+    flopunlk();
+    return err;
+  }
+  for(retry = 0; retry < 2 ; retry ++) {
+    set_dma_addr((ULONG) buf);
+    fdc_start_dma_write((TRACK_SIZ + SECT_SIZ-1) / SECT_SIZ);
+    set_fdc_reg(FDC_CS, FDC_WRITETR);
+  
+    if(timeout_gpip(TIMEOUT)) {
+      /* timeout */
+      err = -2;
+      flopunlk();
+      return err;
+    }
+    status = get_dma_status();
+    if(! (status & DMA_OK)) {
+      /* DMA error, retry */
+    } else {
+      status = get_fdc_reg(FDC_CS);
+      if(status & FDC_WRI_PRO) {
+        err = -13;
+        /* no need to retry */
+        break;
+      } else if(status & FDC_LOSTDAT) {
+        err = -2;
+      } else {
+        err = 0;
+        break;
+      }
+    }
+  }  
+  flopunlk();
+  return err;
+}
+
 /*==== internal status, flopvbl ===========================================*/
 
 
@@ -670,6 +837,7 @@ void flopvbl(void)
      - deselects drives only when motor is not on
      - checks if floppies are write protected
   */
+  
 }
 
 /*==== low level register access ==========================================*/
@@ -696,15 +864,15 @@ static void select(WORD dev, WORD side)
   set_sr(old_sr);
 }
 
-static WORD set_track(WORD track)
+static WORD set_track(WORD track, WORD rate)
 {
   if(track == cur_track) return 0;
   
   if(track == 0) {
-    set_fdc_reg(FDC_CS, FDC_RESTORE);
+    set_fdc_reg(FDC_CS, FDC_RESTORE | (rate & 3));
   } else {
     set_fdc_reg(FDC_DR, track);
-    set_fdc_reg(FDC_CS, FDC_SEEK);
+    set_fdc_reg(FDC_CS, FDC_SEEK | (rate & 3));
   }
   if(timeout_gpip(TIMEOUT)) {
     cur_track = -1;
@@ -715,11 +883,12 @@ static WORD set_track(WORD track)
   }
 }
 
-/* returns 1 if the timeout elapsed before the event occurred */
-static WORD timeout_gpip(LONG timeout)
+/* returns 1 if the timeout (milliseconds) elapsed before gpip went low */
+static WORD timeout_gpip(LONG delay)
 {
   MFP *mfp = MFP_BASE;
-  while(--timeout >= 0) {
+  LONG next = hz_200 + delay/5;
+  while(hz_200 < next) {
     if((mfp->gpip & 0x20) == 0) {
       return 0;
     }

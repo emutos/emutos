@@ -43,7 +43,8 @@ T tested and working on an emulator or real hardware
  X execute reset routine
  X detect monitor type
  T detect graphics resolution
- T automatic Processor check
+ T detect processor type, FPU type and hardware features
+ X setup a cookie jar with system cookies
    ...
  X init floppy drives
  T boot floppy
@@ -107,16 +108,16 @@ T tested and working on an emulator or real hardware
  X 0x07 setColor
  X 0x08 floprd
  X 0x09 flopwr
- - 0x0a flopfmt
+ X 0x0a flopfmt
  - 0x0b used-by-BIOS
  X 0x0c midiws
- > 0x0d mfpint
+ X 0x0d mfpint
  X 0x0e iorec
  X 0x0f rsconf
  X 0x10 keytbl
  X 0x11 random
  X 0x12 protobt
- > 0x13 flopver
+ X 0x13 flopver
  - 0x14 scrdmp
  T 0x15 cursconf
  X 0x16 settime
@@ -138,6 +139,14 @@ T tested and working on an emulator or real hardware
  X 0x26 supexec
  - 0x27 puntaes
 
+ X 0x29 floprate
+ - 0x2a DMAread
+ - 0x2b DMAwrite
+ - 0x2c Bconmap
+
+ > 0x2e NVMaccess  (does not handle the cksum)
+
+ - 0x40 Blitmode
 
 
  GEMDOS Functions

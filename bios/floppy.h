@@ -66,6 +66,7 @@ extern WORD flopfmt(LONG buf, LONG filler, WORD dev, WORD spt,
 extern VOID protobt(LONG buf, LONG serial, WORD type, WORD exec);
 extern WORD flopver(LONG buf, LONG filler, WORD dev, 
                     WORD sect, WORD track, WORD side, WORD count); 
+extern WORD floprate(WORD dev, WORD rate);
 
 /* internal functions */
 

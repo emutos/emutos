@@ -12,3 +12,4 @@
 - add clock driver for nvram clock
 -> are you sure? - Change char, int, long to BYTE, WORD, LONG
 - Go on with implementing mouse driver
+- BDOS still not working on a floppy

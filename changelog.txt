@@ -309,3 +309,6 @@ Start... early ages
 - dates in EmuCON printed according to _IDT (LVL)
 - 0xffff820e used when ste shifter present (LVL)
 - added some xbios functions skeletons (LVL)
+- a cvs trick to ensure obj/ directory is created even with update -d -P (LVL)
+- floppy floprate() and flopfmt() untested (LVL)
+

@@ -803,11 +803,7 @@ WORD xbios_29(WORD dev, WORD rate)
 #if DBG_XBIOS
     kprintf("XBIOS: Floprate\n");
 #endif
-#if IMPLEMENTED
     return floprate(dev, rate);
-#else
-    return 0;
-#endif
 }
 
 /*
