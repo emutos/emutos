@@ -16,30 +16,33 @@
 
 /*
  *   $Log$
+ *   Revision 1.1  2002/04/24 20:31:56  mdoering
+ *   added raw bezier code from PC GEM's GDOS - not yet working
+ *
  *   BEZIER.C 1.1 92/07/23 18:04:31 AWIGHTMA
  *   
  *   Convert MWC intrinsic functions _abs, _max and _min for BC++ 2.0 atw
  *   Eliminate warning messages on prototypes and ambiguity atw
- *    * 06/Jun/92	Pass in the GEM/DR_DESKTOP definition from makefile
- *    * 06/Apr/92	Converted to Turbo C
- *    * 08.08.88	Converted do_bez4 to recursion,
- *    * 		and commented out lmult and bshift, since not needed now. -CJLT
- *    * 15.7.88	Modified for GDOS use. - DAO
- *    * 24.12.87	Adapted for use in GEM screen/printer drivers
- *    * 		and lattice C, from Jeremy's version from 1.12.
- *    *		Lattice C won't eat parameter definitions in
- *    * 		function declarations and voids or unsigned
- *    *		longs anywhere at all. -WDH
+ *    * 06/Jun/92       Pass in the GEM/DR_DESKTOP definition from makefile
+ *    * 06/Apr/92       Converted to Turbo C
+ *    * 08.08.88        Converted do_bez4 to recursion,
+ *    *                 and commented out lmult and bshift, since not needed now. -CJLT
+ *    * 15.7.88 Modified for GDOS use. - DAO
+ *    * 24.12.87        Adapted for use in GEM screen/printer drivers
+ *    *                 and lattice C, from Jeremy's version from 1.12.
+ *    *         Lattice C won't eat parameter definitions in
+ *    *                 function declarations and voids or unsigned
+ *    *         longs anywhere at all. -WDH
  */
 
 
 
 #ifndef DEBUG
-    #define	DEBUG		0
+    #define     DEBUG           0
 #endif
 
-#define	BEZIER_START	0x01
-#define	POINT_MOVE	0x02
+#define BEZIER_START    0x01
+#define POINT_MOVE      0x02
 
 #define FP_SEG(fp) ( *(((unsigned *)&fp) + 1) )
 #define FP_OFF(fp) ( *((unsigned *)&fp) )
@@ -48,21 +51,21 @@
 
 #define BEZ 0
 
-#if BEZ		/* USED to enable this code */
+#if BEZ         /* USED to enable this code */
 
-#define	MIN_BEZIER_DEPTH	2	/*** CJLT  was 1 ***/
-#define	MAX_BEZIER_DEPTH	7
+#define MIN_BEZIER_DEPTH        2       /*** CJLT  was 1 ***/
+#define MAX_BEZIER_DEPTH        7
 
-#define	MIN_DEPTH_SCALE		9
-#define	MAX_DEPTH_SCALE		0
+#define MIN_DEPTH_SCALE         9
+#define MAX_DEPTH_SCALE         0
 
-#define MINVERTSIN		129
-#define MININTIN		56
+#define MINVERTSIN              129
+#define MININTIN                56
 
-extern	VOID	GEXT_DCALL(WORD *parmblock[5]);
-extern	UWORD	GEXT_ALLMEM(UWORD npara, UWORD *segment);
-extern	WORD	GEXT_RELMEM(UWORD segment);
-extern	LONG	MULT(WORD a, WORD b);
+extern  VOID    GEXT_DCALL(WORD *parmblock[5]);
+extern  UWORD   GEXT_ALLMEM(UWORD npara, UWORD *segment);
+extern  WORD    GEXT_RELMEM(UWORD segment);
+extern  LONG    MULT(WORD a, WORD b);
 
 /* To allow this code to be ported to Borland C++ from Metaware 'C'
    We must define these three functions which are intrinsic functions
@@ -70,15 +73,15 @@ extern	LONG	MULT(WORD a, WORD b);
    This may reduce performance but it does still allow the functionality
    to be tested in case it is ever needed again.
 */
-#ifdef MWC		/* use intrinsic functions in Metaware */
+#ifdef MWC              /* use intrinsic functions in Metaware */
 #define _max4 _max
 #define _max3 _max
 #define _min4 _min
 #define _min3 _min
-#else		/* use functions for BCC20 as it seems that there is  */
-		/* a limit to the complexity of definitions allowed   */
-		/* and we get pretty efficient assembly code this way */
-WORD	_abs(WORD x)
+#else           /* use functions for BCC20 as it seems that there is  */
+                /* a limit to the complexity of definitions allowed   */
+                /* and we get pretty efficient assembly code this way */
+WORD    _abs(WORD x)
 {
     if (x < 0)
         return(-x);
@@ -88,7 +91,7 @@ WORD	_abs(WORD x)
 
 
 
-WORD	_max(WORD x, WORD y)
+WORD    _max(WORD x, WORD y)
 {
     if (x < y)
         return(y);
@@ -98,7 +101,7 @@ WORD	_max(WORD x, WORD y)
 
 
 
-WORD	_max3(WORD x, WORD y, WORD z)
+WORD    _max3(WORD x, WORD y, WORD z)
 {
     if (x < y)
         x = y;
@@ -110,7 +113,7 @@ WORD	_max3(WORD x, WORD y, WORD z)
 
 
 
-WORD	_max4(WORD w, WORD x, WORD y, WORD z)
+WORD    _max4(WORD w, WORD x, WORD y, WORD z)
 {
     if (w < x)
         w = x;
@@ -124,7 +127,7 @@ WORD	_max4(WORD w, WORD x, WORD y, WORD z)
 
 
 
-WORD	_min3(WORD x, WORD y, WORD z)
+WORD    _min3(WORD x, WORD y, WORD z)
 {
     if (x > y)
         x = y;
@@ -136,7 +139,7 @@ WORD	_min3(WORD x, WORD y, WORD z)
 
 
 
-WORD	_min4(WORD w, WORD x, WORD y, WORD z)
+WORD    _min4(WORD w, WORD x, WORD y, WORD z)
 {
     if (w > x)
         w = x;
@@ -150,56 +153,56 @@ WORD	_min4(WORD w, WORD x, WORD y, WORD z)
 #endif
 
 /*================================================================
-	Internal static variables
+        Internal static variables
 ================================================================*/
 
-WORD	pnt_mv_cnt;
-WORD	x_used;
-WORD	*XPTS;
-WORD	*XMOV;
-WORD	depth_scale	= MAX_DEPTH_SCALE;
-WORD	*appbuff	= NULLPTR;
-UWORD	appsize		= 0;
-WORD	*dosbuff	= NULLPTR;
-UWORD	dossize		= 0;
-WORD	max_dos_used	= 0;
-WORD	bez_capable	= 0;
-WORD	max_poly_points = 127;
-WORD	is_metafile	= 0;
+WORD    pnt_mv_cnt;
+WORD    x_used;
+WORD    *XPTS;
+WORD    *XMOV;
+WORD    depth_scale     = MAX_DEPTH_SCALE;
+WORD    *appbuff        = NULLPTR;
+UWORD   appsize         = 0;
+WORD    *dosbuff        = NULLPTR;
+UWORD   dossize         = 0;
+WORD    max_dos_used    = 0;
+WORD    bez_capable     = 0;
+WORD    max_poly_points = 127;
+WORD    is_metafile     = 0;
 
-static	WORD	*CONTRL;
-static	WORD	*INTIN;
-static	WORD	*PTSIN;
-static	WORD	*INTOUT;
-static	WORD	*PTSOUT;
+static  WORD    *CONTRL;
+static  WORD    *INTIN;
+static  WORD    *PTSIN;
+static  WORD    *INTOUT;
+static  WORD    *PTSOUT;
 /**** New structures added by CLT *****/
 
 struct coords {LONG x;LONG y;}; /* all co-ordinate pairs are LONGs */
 struct node   {struct coords anchor,in,out; WORD onscreen,level;};
-	  /* "node" is a misnomer as each node is one section of Bezier.
-	     anchor is its end point. Its start point is the anchor from the
-	       next node (where next=this+1)
-	     in is the coordinates of the direction point in this section
-	       belonging to its anchor
-	     out is the direction point in this section of the next anchor
-	     onscreen is a flag. TRUE if Bezier entirely onscreen/page 
-	     level is the depth of division before we should stop and print
-	  */
-static	struct coords mid;  /* Used to save a temporary value */
-static	struct node bez[MAX_BEZIER_DEPTH+1];
-static	struct node *this;
+          /* "node" is a misnomer as each node is one section of Bezier.
+             anchor is its end point. Its start point is the anchor from the
+               next node (where next=this+1)
+             in is the coordinates of the direction point in this section
+               belonging to its anchor
+             out is the direction point in this section of the next anchor
+             onscreen is a flag. TRUE if Bezier entirely onscreen/page 
+             level is the depth of division before we should stop and print
+          */
+static  struct coords mid;  /* Used to save a temporary value */
+static  struct node bez[MAX_BEZIER_DEPTH+1];
+static  struct node *this;
 static int xres = 0, yres = 0, xmin, xmax, ymin, ymax;
 
 
 
 /*================================================================
-	bez_depth:	find the bezier depth necessary for
-			a reasonable looking curve.
+        bez_depth:      find the bezier depth necessary for
+                        a reasonable looking curve.
 ================================================================*/
-int	bez_depth(int *pts_ptr)
+int     bez_depth(int *pts_ptr)
 {
-    int	xdiff, ydiff, depth;
-    long	bez_size;
+    int xdiff, ydiff, depth;
+    long        bez_size;
 
 /* Estimate area. May be to high, but that's better than too low */
 
@@ -222,24 +225,24 @@ int	bez_depth(int *pts_ptr)
 
 
 /*================================================================
-	do_bez4:	calculate a bezier curve for xyin using
-			exactly four control points. See also
-			the best book so far on beziers:
-			Algorithms for graphics & image processing,
-			Theo Pavlidis, Bell Labs,
-			Computer Science Press ISBN 0-914894-65-X.
+        do_bez4:        calculate a bezier curve for xyin using
+                        exactly four control points. See also
+                        the best book so far on beziers:
+                        Algorithms for graphics & image processing,
+                        Theo Pavlidis, Bell Labs,
+                        Computer Science Press ISBN 0-914894-65-X.
 
-	Input:	x & y control point coords in array xyin.
-		Max # of points of bezier curve to calculate m.
-	Output:	bezier curve x & y coords in array xyout.
+        Input:  x & y control point coords in array xyin.
+                Max # of points of bezier curve to calculate m.
+        Output: bezier curve x & y coords in array xyout.
 
-	The first point is already done and the last point
-	will be done for us in the drivers. -WDH
+        The first point is already done and the last point
+        will be done for us in the drivers. -WDH
 ================================================================*/
-int	do_bez4 (WORD *xyin, WORD depth, WORD *xyout)
+int     do_bez4 (WORD *xyin, WORD depth, WORD *xyout)
 {
-    int	count;
-	
+    int count;
+        
 /* Initialize our local data structures */
 
     count=0;
@@ -255,14 +258,14 @@ int	do_bez4 (WORD *xyin, WORD depth, WORD *xyout)
     this->out.y=((((LONG) xyin[3])<<16) >>1) +0x4000;/*Also, we add 4000H to bias to*/
     (this+1)->anchor.x=((((LONG) xyin[0]) <<16) >>1) +0x4000;/*the centre of the pixel*/
     (this+1)->anchor.y=((((LONG) xyin[1]) <<16) >>1) +0x4000;
-	
+        
 /* Now recursively divide the bez into small segments that can be printed
    as straight lines */
-   	
-    while (1)	/* until break, near the middle of the loop */
+        
+    while (1)   /* until break, near the middle of the loop */
     {
         if (this->onscreen == FALSE)
-        {	/* Test if on-screen. */
+        {       /* Test if on-screen. */
             xmin= _min4( (WORD) (this->anchor.x>>16), (WORD) (this->in.x>>16),
                          (WORD) (this->out.x>>16), (WORD)( (this+1)->anchor.x>>16));
             xmax= _max4( (WORD) (this->anchor.x>>16), (WORD) (this->in.x>>16),
@@ -318,7 +321,7 @@ int	do_bez4 (WORD *xyin, WORD depth, WORD *xyout)
             this->level -- ;
             (this+1)->level = this->level;
             (this+1)->onscreen = this->onscreen;
-            this++;	/* and point to the top of the stack of Bezier bits */
+            this++;     /* and point to the top of the stack of Bezier bits */
         }
     }
     return count;
@@ -327,21 +330,21 @@ int	do_bez4 (WORD *xyin, WORD depth, WORD *xyout)
 
 
 /*================================================================
-	bezier4:	calculate a bezier curve for xyin using
-			exactly four control points. See also
-			the best book so far on beziers:
-			Algorithms for graphics & image processing,
-			Theo Pavlidis, Bell Labs,
-			Computer Science Press ISBN 0-914894-65-X.
+        bezier4:        calculate a bezier curve for xyin using
+                        exactly four control points. See also
+                        the best book so far on beziers:
+                        Algorithms for graphics & image processing,
+                        Theo Pavlidis, Bell Labs,
+                        Computer Science Press ISBN 0-914894-65-X.
 
-	Input:	x & y control point coords in array xyin.
-		power of two of # of points of bezier curve to
-			calculate. Must be 4, 5 or 6.
-	Output:	bezier curve x & y coords in array xyout.
+        Input:  x & y control point coords in array xyin.
+                power of two of # of points of bezier curve to
+                        calculate. Must be 4, 5 or 6.
+        Output: bezier curve x & y coords in array xyout.
 ================================================================*/
-VOID	bezier4 (int *xyin,int **xyout)
+VOID    bezier4 (int *xyin,int **xyout)
 {
-    int	depth, cnt;
+    int depth, cnt;
 
     depth = bez_depth(xyin);
     cnt = do_bez4 (xyin, depth, *xyout);  /*CJLT changed to new parameters
@@ -352,28 +355,28 @@ VOID	bezier4 (int *xyin,int **xyout)
 
 
 /*================================================================
-	calc_bez:	Calculate Bezier curves and moves (when
-			necessary).
+        calc_bez:       Calculate Bezier curves and moves (when
+                        necessary).
 
-	Input:	PTSIN		- The points (actual or reference).
-		INTIN		- Marks beziers & move points.
-		close_loop	- if first point should be copied
-				  to last point (also done in
-				  point moves). For polygons.
+        Input:  PTSIN           - The points (actual or reference).
+                INTIN           - Marks beziers & move points.
+                close_loop      - if first point should be copied
+                                  to last point (also done in
+                                  point moves). For polygons.
 
-	Output:	XPTS		- The resulting points.
-		XMOV		- An ordered list of the
-				  indices of move points in XPTS.
-		CONTRL[1]	- The number of points in XPTS.
-		pnt_mv_cnt	- The size of XMOV.
-		x_used		- If Beziers or moves occured.
+        Output: XPTS            - The resulting points.
+                XMOV            - An ordered list of the
+                                  indices of move points in XPTS.
+                CONTRL[1]       - The number of points in XPTS.
+                pnt_mv_cnt      - The size of XMOV.
+                x_used          - If Beziers or moves occured.
 ================================================================*/
-WORD	calc_bez(WORD close_loop)
+WORD    calc_bez(WORD close_loop)
 {
-    WORD	maxchk, maxpnt, maxin, movptr, i;
-    WORD	*pts_ptr, *last_pnt, *pts_out;
-    BYTE	*chk_ptr;
-    UWORD	memneeded;
+    WORD        maxchk, maxpnt, maxin, movptr, i;
+    WORD        *pts_ptr, *last_pnt, *pts_out;
+    BYTE        *chk_ptr;
+    UWORD       memneeded;
 
 #if DEBUG >= 30
     printf("\nCalc_bez appbuff: %p appsize: %x depth scale: %d\n",
@@ -381,8 +384,8 @@ WORD	calc_bez(WORD close_loop)
 #endif
     pnt_mv_cnt = 0;
 
-    /* Calculate the number of points we will actually need with all the	*/
-    /* Bezier curves and point moves.					*/
+    /* Calculate the number of points we will actually need with all the        */
+    /* Bezier curves and point moves.                                   */
 
     maxpnt = CONTRL[1];
     maxin = CONTRL[3] << 1;
@@ -457,7 +460,7 @@ WORD	calc_bez(WORD close_loop)
 #endif
     }
     if (XPTS) {
-        XMOV = XPTS + _max(maxpnt, MINVERTSIN) * 2;	/* dao #0012 */
+        XMOV = XPTS + _max(maxpnt, MINVERTSIN) * 2;     /* dao #0012 */
     } else {
 #if DEBUG >= 30
         printf("calc_bez NO buffer available\n");
@@ -469,7 +472,7 @@ WORD	calc_bez(WORD close_loop)
     last_pnt = pts_ptr;
     pts_out = XPTS;
     maxchk = CONTRL[1];
-    /** CJLT commented out. See below.	CONTRL[1] = maxpnt;  */
+    /** CJLT commented out. See below.  CONTRL[1] = maxpnt;  */
     movptr = pnt_mv_cnt;
     for ( i=0, chk_ptr=(BYTE*) &INTIN[0] ; i < maxchk ; i++, chk_ptr++) {
         if (i < maxin) {
@@ -512,11 +515,11 @@ WORD	calc_bez(WORD close_loop)
 
 void bez_call(WORD *parmblock[5], WORD *tappbuff, UWORD tappsize)
 {
-    WORD	close_loop;
-    WORD	save;
-    WORD	savecontrl3;
-    WORD	minx, maxx, miny, maxy, i, k, savenpts;
-    WORD	*ptsptr;
+    WORD        close_loop;
+    WORD        save;
+    WORD        savecontrl3;
+    WORD        minx, maxx, miny, maxy, i, k, savenpts;
+    WORD        *ptsptr;
 
     CONTRL = parmblock[0];
     INTIN = parmblock[1];
@@ -532,7 +535,7 @@ void bez_call(WORD *parmblock[5], WORD *tappbuff, UWORD tappsize)
             if (INTIN[2] < 0 || INTIN[2] > 99)
                 depth_scale = MAX_DEPTH_SCALE;
             else {
-#if	MIN_DEPTH_SCALE<MAX_DEPTH_SCALE
+#if     MIN_DEPTH_SCALE<MAX_DEPTH_SCALE
                 depth_scale = ((INTIN[2] * (MAX_DEPTH_SCALE-MIN_DEPTH_SCALE+1)) / 100) + MIN_DEPTH_SCALE;
 
 #else
@@ -558,7 +561,7 @@ void bez_call(WORD *parmblock[5], WORD *tappbuff, UWORD tappsize)
         dossize = 0;
         bez_capable = 0;
         is_metafile = 0;
-        if ((save = CONTRL[1]) != 0) {		/* dao #0013 */
+        if ((save = CONTRL[1]) != 0) {          /* dao #0013 */
             CONTRL[0] = 102;
             CONTRL[1] = 0;
             CONTRL[3] = 1;
@@ -630,16 +633,16 @@ void bez_call(WORD *parmblock[5], WORD *tappbuff, UWORD tappsize)
         }
 #endif
 
-        ptsptr = parmblock[2];				/* dao #0011 s*/
+        ptsptr = parmblock[2];                          /* dao #0011 s*/
         minx = maxx = *ptsptr++;
         miny = maxy = *ptsptr++;
         for (i = CONTRL[1] - 1; i > 0; i--) {
             k = *ptsptr++;
-            if ( k < minx )		minx = k;
-            else if ( k > maxx )	maxx = k;
+            if ( k < minx )             minx = k;
+            else if ( k > maxx )        maxx = k;
             k = *ptsptr++;
-            if ( k < miny )		miny = k;
-            else if ( k > maxy )	maxy = k;
+            if ( k < miny )             miny = k;
+            else if ( k > maxy )        maxy = k;
         }
 
         savenpts = CONTRL[1];
@@ -657,7 +660,7 @@ void bez_call(WORD *parmblock[5], WORD *tappbuff, UWORD tappsize)
         INTOUT[2] = FP_OFF(XPTS);
         INTOUT[3] = FP_SEG(XPTS);
         INTOUT[4] = FP_OFF(XMOV);
-        INTOUT[5] = FP_SEG(XMOV);			/* dao #0011 s*/
+        INTOUT[5] = FP_SEG(XMOV);                       /* dao #0011 s*/
         CONTRL[3] = savecontrl3;
     }
 }

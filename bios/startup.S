@@ -484,17 +484,17 @@ _int_vbl:
         addq.l  #1, _vbclock            // count number of VBL interrupts
 
 #if 0   // MAD: does not work with Aranym for now - disabled
-	// detect emulator friendly rez change (for now just ST modes)
+        // detect emulator friendly rez change (for now just ST modes)
         move.b  0xffff8260,d0           // get shifter mode
-        and.b	#3, d0                  // isolate first 2 bits
-        move.w	_defshiftmod, d1        // get new mode
-        and.b	#3, d1                  // isolate first 2 bits
-        cmp.b	d0, d1                  // has mode changed?
-        beq	vbl_nochg               // no...
-	
-        move.b	d1, _sshiftmod		// set new mode to tosvars
-        move.b	d1, 0xffff8260		// and to HW
-        move.l	_swv_vec, a0            // video mode change vector
+        and.b   #3, d0                  // isolate first 2 bits
+        move.w  _defshiftmod, d1        // get new mode
+        and.b   #3, d1                  // isolate first 2 bits
+        cmp.b   d0, d1                  // has mode changed?
+        beq     vbl_nochg               // no...
+        
+        move.b  d1, _sshiftmod          // set new mode to tosvars
+        move.b  d1, 0xffff8260          // and to HW
+        move.l  _swv_vec, a0            // video mode change vector
         jmp (a0)                        // is normally reset
  
 vbl_nochg:

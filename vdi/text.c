@@ -348,7 +348,7 @@ void text_init()
         } while ((fnt_ptr = fnt_ptr->next_font));
     }
 
-    DEV_TAB[5] = i;             	/* number of sizes */
+    DEV_TAB[5] = i;                     /* number of sizes */
     font_count = DEV_TAB[10] = ++j;     /* number of faces */
 
     cur_font = def_font;

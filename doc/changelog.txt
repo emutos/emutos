@@ -798,3 +798,13 @@ Start... early ages
 - util/miscasm.S - added for smaller asm routines (MAD)
 - bdos/umem.c - added missing break in a case that is responsible
                 for returning free memory - now everything works OK! (joy)
+
+27. Apr. 2002
+- vdi/*.S - changed // back to * inside comments (LVL)
+- aes/large.S - moved LSTCPY to util/stringasm.S named strlencpy (LVL)
+- aes/optimopt.S - replaced strchk by strcmp (LVL)
+- aes/ - removed some calls to scabs by calls to strchr (LVL)
+- aes/optimopt.S - replaced bfill by memset, rewrote rest of file (LVL)
+- util/stringasm.S - added strlencpy and strchr (LVL)
+- aes/gsx2.S - cleaned up, gave better names to labels (LVL)
+- updated some todo items (LVL)
