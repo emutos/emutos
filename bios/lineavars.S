@@ -41,10 +41,10 @@
 		.globl	user_but
 		.globl	user_cur
 		.globl	user_mot
-		.globl	v_cel_ht
-		.globl	v_cel_mx
-		.globl	v_cel_my
-		.globl	v_cel_wr
+		.globl	_v_cel_ht
+		.globl	_v_cel_mx
+		.globl	_v_cel_my
+		.globl	_v_cel_wr
 		.globl	_v_col_bg
 		.globl	_v_col_fg
 		.globl	_v_cur_ad
@@ -53,14 +53,14 @@
 		.globl	_v_cur_cy
 		.globl	_v_period
 		.globl	_v_cur_tim
-		.globl	v_fnt_ad
-		.globl	v_fnt_nd
-		.globl	v_fnt_st
-		.globl	v_fnt_wr
-		.globl	v_hz_rez
-		.globl	v_off_ad
+		.globl	_v_fnt_ad
+		.globl	_v_fnt_nd
+		.globl	_v_fnt_st
+		.globl	_v_fnt_wr
+		.globl	_v_hz_rez
+		.globl	_v_off_ad
 		.globl	_v_stat_0
-		.globl	v_vt_rez
+		.globl	_v_vt_rez
 		.global font_ring
 	
 // **FIXME: There are still lots of variables missing here...**
@@ -97,10 +97,10 @@ tim_chain:	.ds.l	1	// -62
 user_but:	.ds.l	1	// -58	user button vector
 user_cur:	.ds.l	1	// -54	user cursor vector
 user_mot:	.ds.l	1	// -50	user motion vector
-v_cel_ht:	.ds.w	1	// -46   cell height (width is 8)
-v_cel_mx:	.ds.w	1	// -44	needed by MiNT: columns on the screen minus 1
-v_cel_my:	.ds.w	1	// -42	needed by MiNT: rows on the screen minus 1
-v_cel_wr:	.ds.w	1	// -40	needed by MiNT: length (in bytes) of a line of characters
+_v_cel_ht:	.ds.w	1	// -46   cell height (width is 8)
+_v_cel_mx:	.ds.w	1	// -44	needed by MiNT: columns on the screen minus 1
+_v_cel_my:	.ds.w	1	// -42	needed by MiNT: rows on the screen minus 1
+_v_cel_wr:	.ds.w	1	// -40	needed by MiNT: length (in bytes) of a line of characters
 _v_col_bg:	.ds.w	1	// -38   current background color 
 _v_col_fg:	.ds.w	1	// -36   current foreground color 
 _v_cur_ad:	.ds.l	1	// -34   current cursor address  
@@ -109,15 +109,15 @@ _v_cur_cx:	.ds.w	1	// -28   current cursor cell x
 _v_cur_cy:	.ds.w	1	// -26   current cursor cell y
 _v_period:	.ds.b	1	// -24
 _v_cur_tim:	.ds.b	1	// -23   cursor blink timer.
-v_fnt_ad:	.ds.l	1	// -22   address of current monospace font
-v_fnt_nd:	.ds.w	1	// -18   ascii code of last cell in font
-v_fnt_st:	.ds.w	1	// -16   ascii code of first cell in font
-v_fnt_wr:	.ds.w	1	// -14   font cell wrap 
-v_hz_rez:	.ds.w	1	// -12   horizontal pixel resolution
-v_off_ad:	.ds.l	1	// -10   address of font offset table
+_v_fnt_ad:	.ds.l	1	// -22   address of current monospace font
+_v_fnt_nd:	.ds.w	1	// -18   ascii code of last cell in font
+_v_fnt_st:	.ds.w	1	// -16   ascii code of first cell in font
+_v_fnt_wr:	.ds.w	1	// -14   font cell wrap 
+_v_hz_rez:	.ds.w	1	// -12   horizontal pixel resolution
+_v_off_ad:	.ds.l	1	// -10   address of font offset table
 _v_stat_0:	.ds.b	1	// -6    video cell system status (was in words)
                 .ds.b	1	//       dummy
-v_vt_rez:	.ds.w	1	// -4    vertical pixel resolution 
+_v_vt_rez:	.ds.w	1	// -4    vertical pixel resolution 
 BYTES_LN:	.ds.w	1	// -2
 
 

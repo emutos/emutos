@@ -19,6 +19,7 @@
 
 // ==== External Declarations ================================================
 
+	        .global _con_state_init // initialize linea graphics subsystem
                 .global _cputc          // print a character for bios.c
 		.global _bconout5	// raw console output
                 .global _blink
@@ -30,19 +31,16 @@
                 
                 .xdef   _v_planes       // number of planes
                 .xdef   _v_lin_wr       // line wrap
-                .xdef   v_cel_ht        // cell height (width is 8)
-                .xdef   v_cel_mx        // maximum cell # in x (minimum is 0)
-                .xdef   v_cel_my        // maximum cell # in y (minimum is 0)
-                .xdef   v_cel_wr        // cell wrap
+                .xdef   _v_cel_ht        // cell height (width is 8)
+                .xdef   _v_cel_mx        // maximum cell # in x (minimum is 0)
+                .xdef   _v_cel_my        // maximum cell # in y (minimum is 0)
+                .xdef   _v_cel_wr        // cell wrap
 
-                .xdef   v_vt_rez        // vertical pixel resolution
-                .xdef   v_hz_rez        // horizontal pixel resolution
-
-                .xdef   v_fnt_ad        // address of current monospace font
-                .xdef   v_fnt_nd        // ascii code of last cell in font
-                .xdef   v_fnt_st        // ascii code of first cell in font
-                .xdef   v_fnt_wr        // font cell wrap
-                .xdef   v_off_ad        // address of font offset table
+                .xdef   _v_fnt_ad        // address of current monospace font
+                .xdef   _v_fnt_nd        // ascii code of last cell in font
+                .xdef   _v_fnt_st        // ascii code of first cell in font
+                .xdef   _v_fnt_wr        // font cell wrap
+                .xdef   _v_off_ad        // address of font offset table
 
                 .xdef   _v_col_fg        // current foreground color
                 .xdef   _v_col_bg        // current background color
@@ -352,7 +350,7 @@ escA1:          subq.w  #1,d1           // move the cursor up.
 escB:
 escfn5:
         move.w  _v_cur_cy,d1     // d1 := current cursor y.
-        cmp.w   v_cel_my,d1
+        cmp.w   _v_cel_my,d1
         beq     esc_out         // if at bottom of screen, branch.
         addq.w  #1,d1           // move the cursor down.
         move.w  _v_cur_cx,d0     // d0 & d1 are inputs to "move_cursor".
@@ -365,7 +363,7 @@ escfn5:
 escC:
 escfn6:
         move.w  _v_cur_cx,d0     // d0 := current cursor x.
-        cmp.w   v_cel_mx,d0
+        cmp.w   _v_cel_mx,d0
         beq     esc_out         // if at right edge of screen, branch.
         addq.w  #1,d0           // move the cursor right.
         move.w  _v_cur_cy,d1     // d0 & d1 are inputs to "move_cursor".
@@ -401,14 +399,14 @@ escJ:
 escfn9:
         bsr     escfn10         // erase to end of line.
         move.w  _v_cur_cy,d1
-        cmp.w   v_cel_my,d1     // last line?
+        cmp.w   _v_cel_my,d1     // last line?
         beq     esc_out         // yes, done.
         addq.w  #1,d1           // no, drop down a line.
         swap    d1
         move.w  #0,d1           // upper left corner.
-        move.w  v_cel_my,d2
+        move.w  _v_cel_my,d2
         swap    d2
-        move.w  v_cel_mx,d2     // lower right corner.
+        move.w  _v_cel_mx,d2     // lower right corner.
         bra     blnk_blt        // erase rest of screen.
 
 
@@ -424,7 +422,7 @@ escfn10:
         move.w  _v_cur_cx,d1     // test current x.
         btst    #0,d1           // even or odd?   (fixed btst.l)
         beq     ef10_blnk       // if even, branch.
-        cmp.w   v_cel_mx,d1     // if odd, is x = x maximum?
+        cmp.w   _v_cel_mx,d1     // if odd, is x = x maximum?
         beq     ef10_space      // if so, just output a space.
         move.w  #0x20,d1        // else output a space &
         bsr     ascii_out
@@ -435,7 +433,7 @@ ef10_blnk:
         move.w  d1,d2
         swap    d1              // upper left coords.
         swap    d2
-        move.w  v_cel_mx,d2     // lower right coords.
+        move.w  _v_cel_mx,d2     // lower right coords.
         bsr     blnk_blt
 ef10_out:
         move.w  (sp)+,ccr       // restore result of EOL test.
@@ -528,7 +526,7 @@ escd:           bsr     esco            // erase from beginning of line.
                 beq     escc_out        // yes, done.
                 subq.w  #1,d2           // no, move up a line.
                 swap    d2
-                move.w  v_cel_mx,d2     // lower right coord.
+                move.w  _v_cel_mx,d2     // lower right coord.
                 moveq.l #0,d1           // upper left coord.
                 bra     blnk_blt        // erase rest of screen.
 
@@ -610,7 +608,7 @@ escl:           bsr     escf            // hide cursor.
                 swap    d1
                 clr.w   d1              // upper left coords. (0,y)
                 swap    d2
-                move.w  v_cel_mx,d2     // lower right coords. (max,y)
+                move.w  _v_cel_mx,d2     // lower right coords. (max,y)
                 bsr     blnk_blt        // blank whole line.
                 bra     esclmout        // move cursor to BOL and show it.
 
@@ -671,7 +669,7 @@ ascii_cr:
 // ==== ascii_lf - line feed.=================================================
 
 ascii_lf:       move.w  _v_cur_cy,d0     // d0 := current cursor y.
-                cmp.w   v_cel_my,d0     // at bottom of screen?
+                cmp.w   _v_cel_my,d0     // at bottom of screen?
                 bne     escB            // no, branch.
                 bsr     escf            // yes, hide cursor.
                 clr.w   d1              // line to begin scrolling up.
@@ -719,19 +717,19 @@ bl_out:         rts
 // ===========================================================================
 
 alpha_cell:
-        move.w  v_fnt_st,d3
+        move.w  _v_fnt_st,d3
         cmp.w   d3,d1                   // test against limits
         bcs     out_of_bounds
 
-        cmp.w   v_fnt_nd,d1
+        cmp.w   _v_fnt_nd,d1
         bhi     out_of_bounds
 
-        move.l  v_off_ad,a0             // ptr to offset table.
+        move.l  _v_off_ad,a0             // ptr to offset table.
         add.w   d1,d1                   // word indexing.
         move.w  0(a0,d1.w),d1           // fetch offset.
         lsr.w   #3,d1                   // convert from pixels to bytes.
 
-        move.l  v_fnt_ad,a0
+        move.l  _v_fnt_ad,a0
         adda.w  d1,a0                   // a0 -> alpha source
 
         clr.w   d3                      // z:1 -> valid address returned
@@ -796,16 +794,16 @@ put_char:
         bsr     next_cell               // advance the cursor
         beq     disp_cur
 
-        move.w  v_cel_wr,d0             // perform cell carriage return.
+        move.w  _v_cel_wr,d0             // perform cell carriage return.
         mulu    d1,d0
         move.l  _v_bas_ad,a1            // a1 -> first cell in line
         adda.l  d0,a1
         clr.w   d0                      // set X to first cell in line
 
-        cmp.w   v_cel_my,d1             // perform cell line feed.
+        cmp.w   _v_cel_my,d1             // perform cell line feed.
         bcc     scroll_up
 
-        adda.w  v_cel_wr,a1             // move down one cell
+        adda.w  _v_cel_wr,a1             // move down one cell
         addq    #1,d1
         bra     disp_cur
 
@@ -873,7 +871,7 @@ b1:
         move.w  d2,d1                   //# of cell pairs per row in region -1
         swap    d2                      //cell delta y in lo word
         addq.w  #1,d2                   // # of vertical cells in region
-        mulu    v_cel_ht,d2             // d2 = # of lines in region
+        mulu    _v_cel_ht,d2             // d2 = # of lines in region
         subq.w  #1,d2                   // d2 = # of lines in region -1
 
         clr.l   d0                      //assume 0 background color
@@ -989,7 +987,7 @@ cell_addr:
 
 //       check bounds against screen limits
 
-        move.w  v_cel_mx,d3
+        move.w  _v_cel_mx,d3
         cmp.w   d0,d3
         bpl     x_clipped
 
@@ -997,7 +995,7 @@ cell_addr:
 
 x_clipped:
 
-        move.w  v_cel_my,d3
+        move.w  _v_cel_my,d3
         cmp.w   d1,d3
         bpl     y_clipped
 
@@ -1024,7 +1022,7 @@ y_disp:
 //       Y displacement = Y // cell conversion factor
 
 
-        move.w  v_cel_wr,d5
+        move.w  _v_cel_wr,d5
         mulu    d1,d5
 
 
@@ -1065,9 +1063,9 @@ y_disp:
 // ===========================================================================
 
 cell_xfer:
-        move.w  v_fnt_wr,a2
+        move.w  _v_fnt_wr,a2
         move.w  _v_lin_wr,a3
-        move.w  v_cel_ht,d4
+        move.w  _v_cel_ht,d4
         subq.w  #1,d4                   // for dbra.
         move.w  _v_planes,d6
         subq.w  #1,d6                   // for dbra.
@@ -1156,12 +1154,12 @@ move_cursor:
 
 //       update cell position
 
-        cmp.w   v_cel_mx,d0     // clip x.
+        cmp.w   _v_cel_mx,d0     // clip x.
         bls     escYY           // no, branch.
-        move.w  v_cel_mx,d0     // yes.
-escYY:  cmp.w   v_cel_my,d1     // clip y.
+        move.w  _v_cel_mx,d0     // yes.
+escYY:  cmp.w   _v_cel_my,d1     // clip y.
         bls     escYok          // no, branch.
-        move.w  v_cel_my,d1     // yes.
+        move.w  _v_cel_my,d1     // yes.
 
 escYok: move.w  d0,_v_cur_cx
         move.w  d1,_v_cur_cy
@@ -1226,7 +1224,7 @@ invisible:
 neg_cell:
 
         move.w  _v_lin_wr,a2
-        move.w  v_cel_ht,d4
+        move.w  _v_cel_ht,d4
         subq.w  #1,d4                   // for dbra.
         move.w  _v_planes,d6
         subq.w  #1,d6                   // for dbra.
@@ -1286,7 +1284,7 @@ next_cell:
 //       check bounds against screen limits
 
 
-        cmp.w   v_cel_mx,d0
+        cmp.w   _v_cel_mx,d0
         bne     inc_cell_ptr                    // increment cell ptr
 
         btst    #F_CEOL,_v_stat_0
@@ -1367,12 +1365,12 @@ next_word:
 
 p_sc_up:
         move.l  _v_bas_ad,a3    //get base addr to destination
-        move.w  v_cel_wr,d3     //cell wrap to temp
+        move.w  _v_cel_wr,d3     //cell wrap to temp
         mulu.w    d1,d3           //cell y nbr // cell wrap is destination offset
         lea     (a3,d3.w),a3    //form destination add in a3
         neg.w   d1
-        add.w   v_cel_my,d1     //form (max-1) - top row # for total rows to move
-        move.w  v_cel_wr,d3     //cell wrap to temp d3
+        add.w   _v_cel_my,d1     //form (max-1) - top row # for total rows to move
+        move.w  _v_cel_wr,d3     //cell wrap to temp d3
         lea     (a3,d3.w),a2    //form source address from cell wrap + base address
         mulu    d1,d3           //form # of bytes to move in d3
         asr.w   #2, d3          //divide by 4 for long byte moves
@@ -1384,13 +1382,13 @@ scrup1:
         dbra    d3,scrup0       //loop til finished
 
 
-        move.w  v_cel_my,d1     //bottom line cell address y to top/left cell
+        move.w  _v_cel_my,d1     //bottom line cell address y to top/left cell
 scr_out:
         move.w  d1,d2           //for bottom/left cell too
         swap    d1
         swap    d2
         clr.w   d1              //top/left starts at left edge
-        move.w  v_cel_mx,d2     //maximum x for right edge on bottom/right
+        move.w  _v_cel_mx,d2     //maximum x for right edge on bottom/right
         bra     blnk_blt        //exit thru blank out
 //
 //  Partial scroll down entry point:
@@ -1398,14 +1396,14 @@ scr_out:
 //
 p_sc_dwn:
         move.l  _v_bas_ad,a3    // screen base addr to source
-        move.w  v_cel_my,d3     // max cell y # in d3
-        mulu    v_cel_wr,d3     // form offset for bottom of second to last cell row
+        move.w  _v_cel_my,d3     // max cell y # in d3
+        mulu    _v_cel_wr,d3     // form offset for bottom of second to last cell row
         lea     (a3,d3.w),a3    // form source address in a3
-        move.w  v_cel_wr,d3     // cell wrap to add
+        move.w  _v_cel_wr,d3     // cell wrap to add
         lea     (a3,d3.w),a2    // form destination from source + cell wrap
         move.w  d1,d0
         neg.w   d0              // do tricky subtract
-        add.w   v_cel_my,d0     //   to form # of cell rows to move
+        add.w   _v_cel_my,d0     //   to form # of cell rows to move
         mulu    d0,d3           // form # of bytes to move in d3
         asr.w   #2,d3           // divide by 4 for long byte moves
         bra     scrdwn1         // enter loop at test
@@ -1414,6 +1412,17 @@ scrdwn0:
 scrdwn1:
         dbra    d3,scrdwn0      // do all
         bra     scr_out
+
+
+
+/*
+ * _con_state_init - initialize the conout state machine
+ */
+
+_con_state_init:
+        move.l  #normal_ascii, con_state // Init conout state machine
+
+        rts
 
 
 

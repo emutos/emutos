@@ -3,7 +3,6 @@
  *
  * Copyright (c) 2001 by Authors:
  *
- *  MAD  Martin Doering
  *  THO  Thomas Huth
  *
  * This file is distributed under the GPL, version 2 or at your
@@ -26,37 +25,9 @@
 
 
 
-// ==== Defines ==============================================================
-
-//
-//       font header structure equates.
-//
-
-        .equ    FIRST,          36
-        .equ    LAST,           38
-        .equ    CEL_WD,         52
-        .equ    POFF,           72
-        .equ    PDAT,           76
-        .equ    FRM_WD,         80
-        .equ    FRM_HT,         82
-
 // ==== External Declarations ================================================
 
-        .global _con_state_init  	// initialize linea graphics subsystem
         .global _int_linea       	// entry for linea exception
-        .global _font_init       	// cursor initialisation
-        .global _cur_init       	// cursor initialisation
-        .global _color_init       	// color initialisation
-        .global _resol_set       	// set screen resolution
-        .global _clear_screen       	// do it!
-
-// ==== References ===========================================================
-
-        .xdef   _f8x8           // font header
-        .xdef   _f8x16          // font header
-        .xdef   sshiftmod       // mode/bits of shift/modifyer keys
-
-        .xdef normal_ascii      // start with default function
 
 
 // ==== Line-A handler ===============================
@@ -240,108 +211,8 @@ linea_ents:
 
 
 
-/*
- * _font_init - font globals initialization
- *
- * Initialize the fonts
- *
- * input:
- *   (sp) = ptr to system font header
- */
-
-_font_init:
-	move.l  4(sp),a0
-        lea     _f8x16, a0              // Get pointer to 8x16 font header
-        move    FRM_HT(a0),d0           // fetch form height.
-        move    d0,v_cel_ht             // init cell height.
-        move    _v_lin_wr,d1            // fetch bytes/line.
-        mulu    d0,d1
-        move    d1,v_cel_wr             // init cell wrap.
-        moveq.l #0,d1
-        move    v_vt_rez,d1             // fetch vertical res.
-        divu    d0,d1                   // vert res/cell height.
-        subq    #1,d1                   // 0 origin.
-        move    d1,v_cel_my             // init cell max y.
-        moveq.l #0,d1
-        move    v_hz_rez,d1             // fetch horizontal res.
-        divu    CEL_WD(a0),d1           // hor res/cell width.
-        subq    #1,d1                   // 0 origin.
-        move    d1,v_cel_mx             // init cell max x.
-        move    FRM_WD(a0),v_fnt_wr     // init font wrap.
-        move    FIRST(a0),v_fnt_st      // init font start ADE.
-        move    LAST(a0),v_fnt_nd       // init font end ADE.
-        move.l  PDAT(a0),v_fnt_ad       // init font data ptr.
-        move.l  POFF(a0),v_off_ad       // init font offset ptr.
-
-        rts
-
-
-
-/*
- * _con_state_init - initialize the conout state machine
- */
-
-_con_state_init:
-        move.l  #normal_ascii, con_state // Init conout state machine
-
-        rts
-
-
-
-/*
- * _clear_screen - Clear the screen
- */
- 
-_clear_screen:
-        move.w  _v_col_bg, d0            // load background color
-        move.l  _memtop, a0             // Set start of RAM
-scr_loop:
-        move.w  d0, (a0)+               // set to background color
-        cmp.l   _phystop, a0             // End of BSS reached?
-        bne     scr_loop                // if not, clear next word
-
-        rts
-
-
-/*
- * resol_set - set video resolution
- */
-
-_resol_set:
-	move.w  4(sp), d0               // get video mode
-        moveq.l #0, d1                  
-
-        move.b  splanes(pc, d0.w), d1   // Get the number of planes
-        move.w  d1, _v_planes           // save it
-
-        move.b  sbytes(pc, d0.w), d1    // Get the number of bytes per line
-        move.w  d1, _v_lin_wr           // Set the line wrap
-
-        asl.w   #1, d0                  // resolution as word index
-        move.w  sresoly(pc, d0.w), d1   // Get the vertical resolution
-        move.w  d1, v_vt_rez            // Set it
-
-        move.w  sresolx(pc, d0.w), d1   // Get the horizontal resolution
-        move.w  d1, v_hz_rez            // Set it
-
-        rts
-
-
-// ==== screenpar - Screen parameters ========================================
-
-splanes:
-        dc.b    4,2,1                   // count of color planes (_v_planes)
-sbytes:
-        dc.b    160,160,80              // bytes per line (_v_lin_wr)
-sresoly:
-        dc.w    200,200,400             // screen vertical resolution (v_vt_rez)
-sresolx:
-        dc.w    320,640,640             // screen horiz resolution (v_hz_rez)
-        
-
 // ===========================================================================
 // ==== End ==================================================================
 // ===========================================================================
 
 	.end
-        

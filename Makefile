@@ -98,7 +98,7 @@ all:	emutos.img
 
 emutos.img: $(OBJECTS) obj/end.o
 	${LD} -oformat binary -o emutos.tmp $(OBJECTS) ${LDFLAGS} obj/end.o
-	dd if=/proc/kcore of=empty.tmp bs=1024 count=192 
+	dd if=/dev/zero of=empty.tmp bs=1024 count=192 
 	cat empty.tmp >> emutos.tmp                    # Make real tos.img...
 	dd if=emutos.tmp of=$@ bs=1024 count=192       # with right length.
 	rm -f emutos.tmp empty.tmp

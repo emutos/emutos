@@ -19,7 +19,16 @@
 
 #include "portab.h"
 
-#define NEEDED 0
+
+/* Struct for different video mode parameters */
+typedef struct
+{
+    UBYTE	planes;         // count of color planes (v_planes)
+    UBYTE	lin_wr;		// bytes per line (v_lin_wr)
+    UWORD       hz_rez;         // screen horizontal resolution (v_hz_rez)
+    UWORD       vt_rez;         // screen vertical resolution (v_vt_rez)
+} VIDEO_MODE;
+
 
 
 /* Color related variables */
@@ -28,7 +37,7 @@ extern WORD v_col_fg;		// current foreground color
 
 /* Cursor related variables */
 extern VOID os_entry(VOID);
-extern LONG v_cur_ad;		// current cursor address
+extern VOID *v_cur_ad;		// current cursor address
 extern WORD v_cur_of;		// cursor offset
 extern WORD v_cur_cx;		// current cursor cell x
 extern WORD v_cur_cy;		// current cursor cell y
@@ -40,8 +49,28 @@ extern BYTE v_stat_0;		// video cell system status
 
 
 /* Screen related variables */
+extern UWORD v_planes;         	// count of color planes
+extern UWORD v_lin_wr;		// line wrap = bytes per line
+extern UWORD v_hz_rez;         	// screen horizontal resolution
+extern UWORD v_vt_rez;         	// screen vertical resolution
+
+/* Font specific variables */
+extern UWORD    *v_fnt_ad;	// address of current monospace font
+extern UWORD    *v_off_ad;	// address of font offset table
+extern UWORD	v_fnt_nd;	// ascii code of last cell in font
+extern UWORD    v_fnt_st;	// ascii code of first cell in font
+extern UWORD    v_fnt_wr;	// font cell wrap
+
+/* Cell specific stuff */
+extern UWORD	v_cel_ht;	// cell height (width is 8)
+extern UWORD	v_cel_mx;	// needed by MiNT: columns on the screen minus 1
+extern UWORD	v_cel_my;	// needed by MiNT: rows on the screen minus 1
+extern UWORD	v_cel_wr;	// needed by MiNT: length (in bytes) of a line of characters
 
 
+#define NEEDED 0
+
+/* Use the following for now unused variables, if you need them */
 
 #if NEEDED
 
@@ -66,7 +95,6 @@ ini_font_count:	.ds.w	1	// -440
 
 cur_ms_stat:	.ds.b	1	// -348	current mouse status
 		.ds.b	1
-disab_cnt:	.ds.w	1	// -346  disable depth count. (>0 => disabled)
 newx:		.ds.w	1	// -344	new mouse x&y position
 newy:		.ds.w	1
 draw_flag:	.ds.b	1	// -340	non-zero means draw mouse form on vblank
@@ -81,19 +109,7 @@ tim_chain:	.ds.l	1	// -62
 user_but:	.ds.l	1	// -58	user button vector
 user_cur:	.ds.l	1	// -54	user cursor vector
 user_mot:	.ds.l	1	// -50	user motion vector
-v_cel_ht:	.ds.w	1	// -46   cell height (width is 8)
-v_cel_mx:	.ds.w	1	// -44	needed by MiNT: columns on the screen minus 1
-v_cel_my:	.ds.w	1	// -42	needed by MiNT: rows on the screen minus 1
-v_cel_wr:	.ds.w	1	// -40	needed by MiNT: length (in bytes) of a line of characters
-v_fnt_ad:	.ds.l	1	// -22   address of current monospace font
-v_fnt_nd:	.ds.w	1	// -18   ascii code of last cell in font
-v_fnt_st:	.ds.w	1	// -16   ascii code of first cell in font
-v_fnt_wr:	.ds.w	1	// -14   font cell wrap 
-v_hz_rez:	.ds.w	1	// -12   horizontal pixel resolution
-v_off_ad:	.ds.l	1	// -10   address of font offset table
-v_stat_0:	.ds.b	1	// -6    video cell system status (was in words)
                 .ds.b	1	//       dummy
-v_vt_rez:	.ds.w	1	// -4    vertical pixel resolution 
 BYTES_LN:	.ds.w	1	// -2
 
 
@@ -106,9 +122,6 @@ BYTES_LN:	.ds.w	1	// -2
 // ==== Global GSX Variables =================================================
 
 line_a_vars:                            // This is the base line-a pointer
-
-_v_planes:	ds.w	1		// +0	number of video planes.
-_v_lin_wr:	ds.w	1		// +2	number of bytes/video line.
 
 local_pb:
 _CONTRL:	ds.l	1		// +4	ptr to the CONTRL array.

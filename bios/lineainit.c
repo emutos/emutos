@@ -20,17 +20,16 @@
 
 /*==== External declarations ==============================================*/
 
-/* Just used, if functions are assembler coded */
-extern void font_init(struct font_head *);
-extern void con_state_init(void);
-extern void resol_set(BYTE);
-extern void clear_screen(void);
+extern void con_state_init(void);       // from conout.S
 
 extern struct font_head f8x16;
 extern struct font_head f8x8;
 
 /*==== Prototypes =========================================================*/
 
+void font_init(struct font_head *);
+void resol_set(BYTE);
+void clear_screen(void);
 
 
 /*==== Defines ============================================================*/
@@ -47,21 +46,28 @@ extern struct font_head f8x8;
 #define FRM_HT  82
 
 
+/* Settings for the different video modes */
+/* They are: planes, lin_wr, hz_rez, vt_rez */
+static const VIDEO_MODE video_mode[] = {
+    {4, 160, 320, 200},         // 16 color mode
+    {2, 160, 640, 200},         // 4 color mode
+    {1,  80, 640, 400}          // monochrome mode
+};
+
 
 /* Clear screen with foreground color */
 
 /* Can this be made with Laurents mem* functions? */
 
-#if IMPLEMENTED
 void clear_screen(void)
 {
-    WORD color;
-    WORD *address;
+    UWORD color;
+    UWORD *address;
 
     color=v_col_bg;                     // get actual foreground color
 
 
-    for (address = (LONG *)memtop; address < phystop; address++)
+    for (address = (UWORD*)memtop; address < (UWORD*)phystop; address++)
         *address=color;                 // set screen to color
 }
 
@@ -71,10 +77,40 @@ void clear_screen(void)
  * font_init - font ring  initialization
  */
 
-void font_init(struct font_head)
+void font_init(struct font_head * font)
 {
+    v_cel_ht=font->form_height;		// init cell height.
+    v_cel_wr=v_lin_wr*font->form_height;// init cell wrap
+
+    v_cel_mx=(v_hz_rez/                 // init cell max x
+              font->max_cell_width)-1;  
+    v_cel_my=(v_vt_rez/
+              font->form_height)-1;     // init cell max y
+
+    v_fnt_wr=font->form_width;          // init font wrap
+    v_fnt_st=font->first_ade;           // init font start ADE
+    v_fnt_nd=font->last_ade;            // init font end ADE
+    v_fnt_ad=font->dat_table;            // init font data ptr
+    v_off_ad=font->off_table;            // init font offset ptr
 }
-#endif
+
+
+
+/*
+ * resol_set - set screen parameters according to video mode
+ */
+
+void resol_set(BYTE vmode)
+{
+    WORD m;
+
+    m=(WORD) vmode;
+
+    v_planes=video_mode[m].planes;
+    v_lin_wr=video_mode[m].lin_wr;
+    v_hz_rez=video_mode[m].hz_rez;
+    v_vt_rez=video_mode[m].vt_rez;
+}
 
 
 
@@ -93,6 +129,12 @@ void linea_init(void)
 
     resol_set(video_mode);
 
+#if 0
+    kprintf("planes: %d\n", v_planes);
+    kprintf("lin_wr: %d\n", v_lin_wr);
+    kprintf("hz_rez: %d\n", v_hz_rez);
+    kprintf("vt_rez: %d\n", v_vt_rez);
+#endif
 
     if (video_mode == 2)
     {
@@ -102,8 +144,8 @@ void linea_init(void)
         font_init(&f8x8);
 
     /* Initial color settings */
-    v_col_fg=0xffff;			// foreground color
-    v_col_bg=0x0000;			// background color
+    v_col_fg=0xffff;			// foreground color black
+    v_col_bg=0x0000;			// background color white
 
     /* Initial cursor settings */
     v_cur_cx=0;				// cursor to column 0
@@ -122,6 +164,9 @@ void linea_init(void)
 
     /* Init conout state machine */
     con_state_init();                       // set initial state
+
+
+    kprintf("============\n");
 
 }
 

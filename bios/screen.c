@@ -131,7 +131,7 @@ WORD setcolor(WORD colorNum, WORD color)
 {
   WORD rez = getrez();
   WORD max;
-  WORD *palette = (WORD *)0xFFFF8240;
+  WORD *palette = (WORD *)0xffff8240;
   switch(rez) {
   case 0:
     max = 15;

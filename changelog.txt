@@ -228,3 +228,9 @@ Start... early ages
 - started rewriting some of startup.c in C code (not completely done yet)
 - started cleaning old VME stuff in bios.c
 - native print is activated by a STONX_NATIVE_PRINT #define in config.h
+
+28. Oct. 2001
+- emutos.img file now is 192 kb (MAD)
+- rewrote complete linea initialization in C (bios/lineainit.c) (MAD)
+
+

@@ -36,7 +36,7 @@ extern WORD *colorptr;
 extern UBYTE *screenpt;
 extern BYTE sshiftmod;
 
-extern LONG phystop;
+extern VOID *phystop;
 
 extern WORD timer_ms;
 
