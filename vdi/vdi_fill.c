@@ -34,7 +34,6 @@ static BOOL clipbox(Vwk * vwk, Rect * rect);
 
 
 /* Global variables */
-static WORD seed_type;          /* indicates the type of fill   */
 UWORD search_color;       /* the color of the border      */
 
 
@@ -150,7 +149,8 @@ UWORD SOLID = 0xFFFF;
  * dsf_udpat - Update pattern
  */
 
-void dsf_udpat(Vwk * vwk)
+void
+dsf_udpat(Vwk * vwk)
 {
     WORD *sp, *dp, i, count;
 
@@ -175,7 +175,8 @@ void dsf_udpat(Vwk * vwk)
  * vsf_interior - Set fill style
  */
 
-void vsf_interior(Vwk * vwk)
+void
+vsf_interior(Vwk * vwk)
 {
     WORD fs;
 
@@ -190,7 +191,8 @@ void vsf_interior(Vwk * vwk)
 
 
 /* S_FILL_INDEX: */
-void vsf_style(Vwk * vwk)
+void
+vsf_style(Vwk * vwk)
 {
     WORD fi;
 
@@ -211,7 +213,8 @@ void vsf_style(Vwk * vwk)
 
 
 /* S_FILL_COLOR: */
-void vsf_color(Vwk * vwk)
+void
+vsf_color(Vwk * vwk)
 {
     WORD fc;
 
@@ -227,7 +230,8 @@ void vsf_color(Vwk * vwk)
 
 
 /* ST_FILLPERIMETER: */
-void vsf_perimeter(Vwk * vwk)
+void
+vsf_perimeter(Vwk * vwk)
 {
     WORD *int_out;
 
@@ -248,7 +252,8 @@ void vsf_perimeter(Vwk * vwk)
  * dr_recfl - draw filled rectangle
  */
 
-void dr_recfl(Vwk * vwk)
+void
+dr_recfl(Vwk * vwk)
 {
     Rect * rect = (Rect*)PTSIN;
 
@@ -266,7 +271,8 @@ void dr_recfl(Vwk * vwk)
 /*
  * v_cellarray - Draw a square of sqares (just color devices)
  */
-void v_cellarray(Vwk * vwk)
+void
+v_cellarray(Vwk * vwk)
 {
     /* not implemented */
 }
@@ -276,7 +282,8 @@ void v_cellarray(Vwk * vwk)
 /*
  * vq_cellarray -
  */
-void vq_cellarray(Vwk * vwk)
+void
+vq_cellarray(Vwk * vwk)
 {
     /* not implemented */
 }
@@ -287,7 +294,8 @@ void vq_cellarray(Vwk * vwk)
  * vql_attr - Inquire current fill area attributes
  */
 
-void vqf_attr(Vwk * vwk)
+void
+vqf_attr(Vwk * vwk)
 {
     WORD *pointer;
 
@@ -307,7 +315,8 @@ void vqf_attr(Vwk * vwk)
  * st_fl_ptr - set fill pattern?
  */
 
-void st_fl_ptr(Vwk * vwk)
+void
+st_fl_ptr(Vwk * vwk)
 {
     WORD fi, pm;
     WORD *pp = NULL;
@@ -362,7 +371,8 @@ void st_fl_ptr(Vwk * vwk)
  *     count - number of words in array.
  */
 
-inline void bub_sort (WORD * buf, WORD count)
+inline void
+bub_sort (WORD * buf, WORD count)
 {
     int i, j;
 
@@ -391,19 +401,17 @@ inline void bub_sort (WORD * buf, WORD count)
  *   - Draw pixels between each pair of points (x coords) on the scan line
  */
 
-void clc_flit (Vwk * vwk, WORD y)
+static void
+clc_flit (Vwk * vwk, Point * point, WORD y, int vectors)
 {
     WORD fill_buffer[256];	/* must be 256 words or it will fail */
     WORD * bufptr;            	/* point to array of x-values. */
-    int vectors;       		/* count of vectors. */
     int intersections;		/* count of intersections */
     int i;
-    Point * point = (Point*)PTSIN;	/* point to array of vertices. */
 
     /* Initialize the pointers and counters. */
     intersections = 0;	/* reset counter */
     bufptr = fill_buffer;
-    vectors = CONTRL[1];	/* d0 - fetch number of vectors. */
 
     /* find intersection points of scan line with poly edges. */
     for (i = vectors - 1; i >= 0; i--) {
@@ -473,7 +481,7 @@ void clc_flit (Vwk * vwk, WORD y)
         WORD * ptr = fill_buffer;
         for (i = intersections / 2 - 1; i >= 0; i--) {
             WORD x1, x2;
-            Line line;
+            Rect rect;
 
             /* grab a pair of adjusted intersections */
             x1 = *ptr++ + 1;
@@ -494,11 +502,15 @@ void clc_flit (Vwk * vwk, WORD y)
                     continue;         	/* entire segment clippped */
                 x2 = vwk->xmx_clip;		/* clip right end of line */
             }
-            line.x1 = x1;
-            line.y1 = y;
-            line.x2 = x2;
-            line.y2 = y;
-            horzline(vwk, &line);
+            rect.x1 = x1;
+            rect.y1 = y;
+            rect.x2 = x2;
+            rect.y2 = y;
+
+            /* Fix corners and invoke rectangle fill routine */
+            arb_corner(&rect);
+            draw_rect(vwk, &rect, vwk->fill_color);
+            //horzline(vwk, &line);
         }
     }
     else {
@@ -514,7 +526,7 @@ void clc_flit (Vwk * vwk, WORD y)
         WORD * ptr = fill_buffer;
         for (i = intersections / 2 - 1; i >= 0; i--) {
             WORD x1, x2;
-            Line line;
+            Rect rect;
 
             /* grab a pair of adjusted endpoints */
             x1 = *ptr++ + 1 ;   /* word */
@@ -522,36 +534,41 @@ void clc_flit (Vwk * vwk, WORD y)
 
             /* If starting point greater than ending point, nothing is done. */            /* is start still to left of end? */
             if ( x1 <= x2 ) {
-                line.x1 = x1;
-                line.y1 = y;
-                line.x2 = x2;
-                line.y2 = y;
-                horzline(vwk, &line);    /* draw the line segment */
+                rect.x1 = x1;
+                rect.y1 = y;
+                rect.x2 = x2;
+                rect.y2 = y;
+
+                /* Fix corners and invoke rectangle fill routine */
+                arb_corner(&rect);
+                draw_rect(vwk, &rect, vwk->fill_color);
             }
         }
     }
 }
+
+
+
 /*
  * plygn - draw a filled polygone
  */
 
-void polygon(Vwk * vwk)
+void
+polygon(Vwk * vwk, Point * ptsin, int count)
 {
-    WORD *pointer, i, k, y;
+    WORD i, k, y;
     WORD fill_maxy, fill_miny;
+    Point * point, * ptsget, * ptsput;
 
     LSTLIN = FALSE;
 
-    pointer = PTSIN;
-    pointer++;
-
-    fill_maxy = fill_miny = *pointer++;
-    pointer++;
-
     /* find out the total min and max y values */
-    for (i = CONTRL[1] - 1; i > 0; i--) {
-        k = *pointer++;
-        pointer++;
+    point = ptsin;
+    fill_maxy = fill_miny = point->y;
+    for (i = count - 1; i > 0; i--) {
+        point++;
+        k = point->y;
+
         if (k < fill_miny)
             fill_miny = k;
         else
@@ -561,7 +578,8 @@ void polygon(Vwk * vwk)
 
     if (vwk->clip) {
         if (fill_miny < vwk->ymn_clip) {
-            if (fill_maxy >= vwk->ymn_clip) {        /* plygon starts before clip */
+            if (fill_maxy >= vwk->ymn_clip) {
+                /* plygon starts before clip */
                 fill_miny = vwk->ymn_clip - 1;       /* plygon partial overlap */
                 if (fill_miny < 1)
                     fill_miny = 1;
@@ -576,37 +594,43 @@ void polygon(Vwk * vwk)
         }
     }
 
-    k = CONTRL[1] * 2;
-    pointer = PTSIN;
-    *(pointer + k) = *pointer;
-    *(pointer + k + 1) = *(pointer + 1);
+    /* close the polygon, connect last and first point */
+    ptsget = ptsin;
+    ptsput = ptsin + count;
+    ptsput->x = ptsget->x;
+    ptsput->y = ptsget->y;
+
+    /* really draw it */
     for (y = fill_maxy; y > fill_miny; y--) {
-        clc_flit(vwk, y);
+        clc_flit(vwk, ptsin, y, count);
     }
     if (vwk->fill_per == TRUE) {
         LN_MASK = 0xffff;
-        CONTRL[1]++;
-        polyline(vwk);
+        polyline(vwk, ptsin, count+1);
     }
 }
 
 
 
 /*
- * v_fillarea . Fill an area
+ * v_fillarea - Fill an area
  */
 
-void v_fillarea(Vwk * vwk)
+void
+v_fillarea(Vwk * vwk)
 {
+    Point * point = (Point*)PTSIN;
+    int count = CONTRL[1];
+
 #if 0
 #if HAVE_BEZIER
     /* check, if we want to draw a filled bezier curve */
     if (CONTRL[5] == 13 && vwk->bez_qual )
-        v_bez_fill(vwk);
+        v_bez_fill(vwk, point, count);
     else
 #endif
 #endif
-        polygon(vwk);
+        polygon(vwk, point, count);
 }
 
 
@@ -632,8 +656,8 @@ void v_fillarea(Vwk * vwk)
  *     Y2 = y coord of lower right corner.
  */
 
-static
-BOOL clipbox(Vwk * vwk, Rect * rect)
+static BOOL
+clipbox(Vwk * vwk, Rect * rect)
 {
     WORD x1, y1, x2, y2;
 
@@ -696,7 +720,8 @@ BOOL clipbox(Vwk * vwk, Rect * rect)
  *     Y2 = y coord of lower right corner.
  */
 
-void rectfill (Vwk * vwk, Rect * rect)
+void
+rectfill (Vwk * vwk, Rect * rect)
 {
     if (vwk->clip)
         if (!clipbox(vwk, rect))
@@ -816,10 +841,12 @@ search_to_left (Vwk * vwk, WORD x, UWORD mask, const UWORD search_col, UWORD * a
  *         d0        := success flag.
  *             0 => no endpoints or xstart on edge.
  *             1 => endpoints found.
+ *         seed_type  indicates the type of fill
  */
 
 WORD
-end_pts(Vwk * vwk, WORD x, WORD y, WORD *xleftout, WORD *xrightout)
+end_pts(Vwk * vwk, WORD x, WORD y, WORD *xleftout, WORD *xrightout,
+        BOOL seed_type)
 {
     UWORD color;
     UWORD * addr;
@@ -847,23 +874,25 @@ end_pts(Vwk * vwk, WORD x, WORD y, WORD *xleftout, WORD *xrightout)
 }
 
 /* Prototypes local to this module */
-WORD get_seed(Vwk * vwk, WORD xin, WORD yin, WORD *xleftout, WORD *xrightout);
+WORD
+get_seed(Vwk * vwk, WORD xin, WORD yin, WORD *xleftout, WORD *xrightout,
+             BOOL seed_type);
 
 
 void
 d_contourfill(Vwk * vwk)
 {
-    REG WORD fc;
-    WORD newxleft;           /* ends of line at oldy +       */
-    WORD newxright;          /* the current direction    */
-    WORD oldxleft;           /* left end of line at oldy     */
-    WORD oldxright;          /* right end                    */
-    WORD oldy;               /* the previous scan line       */
-    WORD xleft;              /* temporary endpoints          */
-    WORD xright;             /* */
-    WORD direction;          /* is next scan line up or down */
-    BOOL notdone;            /* does seedpoint==search_color */
-    BOOL gotseed;            /* a seed was put in the Q      */
+    WORD newxleft;           	/* ends of line at oldy +       */
+    WORD newxright;          	/* the current direction    */
+    WORD oldxleft;           	/* left end of line at oldy     */
+    WORD oldxright;          	/* right end                    */
+    WORD oldy;               	/* the previous scan line       */
+    WORD xleft;              	/* temporary endpoints          */
+    WORD xright;             	/* */
+    WORD direction;          	/* is next scan line up or down */
+    BOOL notdone;            	/* does seedpoint==search_color */
+    BOOL gotseed;            	/* a seed was put in the Q      */
+    BOOL seed_type;             /* indicates the type of fill */
 
     xleft = PTSIN[0];
     oldy = PTSIN[1];
@@ -896,15 +925,9 @@ d_contourfill(Vwk * vwk)
     }
 
     /* Initialize the line drawing parameters */
-    fc = vwk->fill_color;
-    FG_BP_1 = (fc & 1);
-    FG_BP_2 = (fc & 2);
-    FG_BP_3 = (fc & 4);
-    FG_BP_4 = (fc & 8);
-
     LSTLIN = FALSE;
 
-    notdone = end_pts(vwk, xleft, oldy, &oldxleft, &oldxright);
+    notdone = end_pts(vwk, xleft, oldy, &oldxleft, &oldxright, seed_type);
 
     qptr = qbottom = 0;
     qtop = 3;                   /* one above highest seed point */
@@ -915,23 +938,26 @@ d_contourfill(Vwk * vwk)
     if (notdone) {
         /* couldn't get point out of Q or draw it */
         while (1) {
-            Line line;
+            Rect rect;
+
             direction = (oldy & DOWN_FLAG) ? 1 : -1;
             gotseed = get_seed(vwk, oldxleft, (oldy + direction),
-                               &newxleft, &newxright);
+                               &newxleft, &newxright, seed_type);
 
             if ((newxleft < (oldxleft - 1)) && gotseed) {
                 xleft = oldxleft;
                 while (xleft > newxleft)
-                    get_seed(vwk, --xleft, oldy ^ DOWN_FLAG, &xleft, &xright);
+                    get_seed(vwk, --xleft, oldy ^ DOWN_FLAG,
+                             &xleft, &xright, seed_type);
             }
             while (newxright < oldxright)
-                gotseed = get_seed(vwk, ++newxright, oldy + direction, &xleft,
-                                   &newxright);
+                gotseed = get_seed(vwk, ++newxright, oldy + direction,
+                                   &xleft, &newxright, seed_type);
             if ((newxright > (oldxright + 1)) && gotseed) {
                 xright = oldxright;
                 while (xright < newxright)
-                    get_seed(vwk, ++xright, oldy ^ DOWN_FLAG, &xleft, &xright);
+                    get_seed(vwk, ++xright, oldy ^ DOWN_FLAG,
+                             &xleft, &xright, seed_type);
             }
 
             /* Eventually jump out here */
@@ -951,11 +977,14 @@ d_contourfill(Vwk * vwk)
             if (qptr == qtop)
                 crunch_queue();
 
-            line.x1 = oldxleft;
-            line.y1 = ABS(oldy);
-            line.x2 = oldxright;
-            line.y2 = ABS(oldy);
-            horzline(vwk, &line);
+            rect.x1 = oldxleft;
+            rect.y1 = ABS(oldy);
+            rect.x2 = oldxright;
+            rect.y2 = ABS(oldy);
+
+            /* Fix corners and invoke rectangle fill routine */
+            arb_corner(&rect);
+            draw_rect(vwk, &rect, vwk->fill_color);
         }
     }
 }                               /* end of fill() */
@@ -976,9 +1005,10 @@ crunch_queue()
  * get_seed - put seeds into Q, if (xin,yin) is not of search_color
  */
 WORD
-get_seed(Vwk * vwk, WORD xin, WORD yin, WORD *xleftout, WORD *xrightout)
+get_seed(Vwk * vwk, WORD xin, WORD yin, WORD *xleftout, WORD *xrightout,
+         BOOL seed_type)
 {
-    if (end_pts(vwk, xin, ABS(yin), xleftout, xrightout)) {
+    if (end_pts(vwk, xin, ABS(yin), xleftout, xrightout, seed_type)) {
         /* false if of search_color */
         for (qtmp = qbottom, qhole = EMPTY; qtmp < qtop; qtmp += 3) {
             /* see, if we ran into another seed */
@@ -987,13 +1017,16 @@ get_seed(Vwk * vwk, WORD xin, WORD yin, WORD *xleftout, WORD *xrightout)
 
             {
                 /* we ran into another seed so remove it and fill the line */
-                Line line;
+                Rect rect;
 
-                line.x1 = *xleftout;
-                line.y1 = ABS(yin);
-                line.x2 = *xrightout;
-                line.y2 = ABS(yin);
-                horzline(vwk, &line);
+                rect.x1 = *xleftout;
+                rect.y1 = ABS(yin);
+                rect.x2 = *xrightout;
+                rect.y2 = ABS(yin);
+
+                /* Fix corners and invoke rectangle fill routine */
+                arb_corner(&rect);
+                draw_rect(vwk, &rect, vwk->fill_color);
 
                 queue[qtmp] = EMPTY;
                 if ((qtmp + 3) == qtop)

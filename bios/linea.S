@@ -193,19 +193,20 @@ linea_stub_msg:
 
 
 
-linea_vecs:
+/* These routines are now different, and no longer usable from assembler */
+linea_vecs:                     
         dc.l    _linea_0
-        dc.l    _put_pix        /* _linea_1 */
-        dc.l    _get_pix        /* _linea_2 */
-        dc.l    _abline         /* _linea_3 */
-        dc.l    _habline        /* _linea_4 */
+        dc.l    _linea_1        /* _put_pix */
+        dc.l    _linea_2        /* _get_pix */
+        dc.l    _linea_3        /* _abline  */
+        dc.l    _linea_4        /* _habline */
         dc.l    _linea_5        /* _rectfill */
-        dc.l    _clc_flit       /* _linea_6 */
+        dc.l    _linea_6        /* _clc_flit */
         dc.l    _linea_7        /* _bit_blt */
         dc.l    _linea_8        /* _text_blt */
-        dc.l    _dis_cur        /* _linea_9 */
-        dc.l    _hide_cur       /* _linea_a */
-        dc.l    _xfm_crfm       /* _linea_b */
+        dc.l    _linea_9        /* _dis_cur */
+        dc.l    _linea_a        /* _hide_cur */
+        dc.l    _linea_b        /* _xfm_crfm */
         dc.l    _linea_c        /* cur_replace??? */
         dc.l    _linea_d        /* cur_display??? */
         dc.l    _linea_e        /* _COPY_RFM */

@@ -27,13 +27,12 @@
 /* Prototypes local to this module */
 void gdp_rbox(Vwk * vwk);
 void gdp_arc(Vwk * vwk);
-void clc_nsteps();
+int  clc_nsteps();
 void gdp_ell(Vwk * vwk);
-void clc_arc(Vwk * vwk);
+void clc_arc(Vwk * vwk, int steps);
 void quad_xform(WORD quad, WORD x, WORD y, WORD *tx, WORD *ty);
 void do_circ(Vwk * vwk, WORD cx, WORD cy);
 void perp_off(WORD * px, WORD * py);
-void clc_flit ();
 
 
 
@@ -139,10 +138,10 @@ void clc_pts(WORD j)
  * clc_arc - calculates
  */
 
-void clc_arc(Vwk * vwk)
+void clc_arc(Vwk * vwk, int steps)
 {
     WORD i, j;
-    WORD *cntl_ptr, *xy_ptr;
+    Point * point;
 
     if (vwk->clip) {
         if (((xc + xrad) < vwk->xmn_clip) || ((xc - xrad) > vwk->xmx_clip) ||
@@ -150,38 +149,42 @@ void clc_arc(Vwk * vwk)
             return;
     }
     start = angle = beg_ang;
-    i = j = 0;
+    j = 0;
     clc_pts(j);
-    for (i = 1; i < n_steps; i++) {
+    for (i = 1; i < steps; i++) {
         j += 2;
-        angle = mul_div(del_ang, i, n_steps) + start;
+        angle = mul_div(del_ang, i, steps) + start;
         clc_pts(j);
     }
     j += 2;
-    i = n_steps;
     angle = end_ang;
     clc_pts(j);
 
-    /*
-     * If pie wedge draw to center and then close. If arc or circle, do
-     * nothing because loop should close circle.
-     */
+    point = (Point*)PTSIN;
 
-    cntl_ptr = CONTRL;
-    xy_ptr = PTSIN;
+    /* If pie wedge draw to center and then close. */
+    if ((CONTRL[5] == 3) || (CONTRL[5] == 7)) {
+        /* pie wedge */
+        Point * endpoint;
 
-    *(cntl_ptr + 1) = n_steps + 1;      /* since loop in Clc_arc starts at 0 */
-    if ((*(cntl_ptr + 5) == 3) || (*(cntl_ptr + 5) == 7)) {     /* pie wedge */
-        n_steps++;
-        j += 2;
-        *(xy_ptr + j) = xc;
-        *(xy_ptr + j + 1) = yc;
-        *(cntl_ptr + 1) = n_steps + 1;
+        steps++;
+        endpoint = point + steps;
+        endpoint->x = xc;
+        endpoint->y = yc;
     }
-    if ((*(cntl_ptr + 5) == 2) || (*(cntl_ptr + 5) == 6))       /* open arc */
-        v_pline(vwk);
+    steps++;                 /* since loop in Clc_arc starts at 0 */
+
+    /* If arc or circle, do nothing because loop should close circle. */
+    if ((CONTRL[5] == 2) || (CONTRL[5] == 6)) {
+        /* open arc */
+        if (vwk->line_width == 1) {
+            polyline(vwk, point, steps);
+            // FIXME: Originally here was a check fpr arrow drawing!
+        } else
+            wideline(vwk, point, steps);
+    }
     else
-        polygon(vwk);
+        polygon(vwk, point, steps);
 }
 
 
@@ -210,9 +213,7 @@ void v_gdp(Vwk * vwk)
             *(xy_pointer + 4) = *(xy_pointer + 2);
             *(xy_pointer + 6) = *(xy_pointer + 8) = *(xy_pointer);
 
-            CONTRL[1] = 5;
-
-            polyline(vwk);
+            polyline(vwk, (Point*)PTSIN, 5);
         }
         break;
 
@@ -229,8 +230,7 @@ void v_gdp(Vwk * vwk)
         del_ang = 3600;
         beg_ang = 0;
         end_ang = 3600;
-        clc_nsteps(vwk);
-        clc_arc(vwk);
+        clc_arc(vwk, clc_nsteps(vwk));
         break;
 
     case 5:         /* GDP ELLIPSE */
@@ -243,8 +243,7 @@ void v_gdp(Vwk * vwk)
         del_ang = 3600;
         beg_ang = 0;
         end_ang = 0;
-        clc_nsteps(vwk);
-        clc_arc(vwk);
+        clc_arc(vwk, clc_nsteps(vwk));
         break;
 
     case 6:         /* GDP ELLIPTICAL ARC */
@@ -351,23 +350,16 @@ void gdp_rbox(Vwk * vwk)
     *(pointer + 40) = *pointer;
     *(pointer + 41) = *(pointer + 1);
 
-    pointer = CONTRL;
-    *(pointer + 1) = 21;
-    if (*(pointer + 5) == 8) {
+    if (CONTRL[5] == 8) {
         i = vwk->line_index;
         LN_MASK = (i < 6) ? LINE_STYLE[i] : vwk->ud_ls;
-        i = vwk->line_color;
-        FG_BP_1 = (i & 1);
-        FG_BP_2 = (i & 2);
-        FG_BP_3 = (i & 4);
-        FG_BP_4 = (i & 8);
 
         if (vwk->line_width == 1) {
-            polyline(vwk);
+            polyline(vwk, (Point*)PTSIN, 21);
         } else
-            wideline(vwk);
+            wideline(vwk, (Point*)PTSIN, 21);
     } else {
-        polygon(vwk);
+        polygon(vwk, (Point*)PTSIN, 21);
     }
 
     return;
@@ -382,6 +374,7 @@ void gdp_rbox(Vwk * vwk)
 void gdp_arc(Vwk * vwk)
 {
     WORD *pointer;
+    int steps;
 
     pointer = INTIN;
 
@@ -394,19 +387,15 @@ void gdp_arc(Vwk * vwk)
     pointer = PTSIN;
     xrad = *(pointer + 6);
     yrad = mul_div(xrad, xsize, ysize);
-    clc_nsteps();
-    n_steps = mul_div(del_ang, n_steps, 3600);
-    if (n_steps == 0)
+    steps = clc_nsteps(vwk);
+    steps = mul_div(del_ang, steps, 3600);
+    if (steps == 0)
         return;
     xc = *pointer++;
     yc = *pointer;
-    clc_arc(vwk);
+    clc_arc(vwk, steps);
     return;
 }
-
-
-
-WORD n_steps;
 
 
 
@@ -414,20 +403,22 @@ WORD n_steps;
  * clc_nsteps - calculates
  */
 
-void clc_nsteps()
+int clc_nsteps()
 {
+    int steps;
+
     if (xrad > yrad)
-        n_steps = xrad;
+        steps = xrad;
     else
-        n_steps = yrad;
-    n_steps = n_steps >> 2;
-    if (n_steps < 16)
-        n_steps = 16;
+        steps = yrad;
+    steps = steps >> 2;
+    if (steps < 16)
+        steps = 16;
     else {
-        if (n_steps > MAX_ARC_CT)
-            n_steps = MAX_ARC_CT;
+        if (steps > MAX_ARC_CT)
+            steps = MAX_ARC_CT;
     }
-    return;
+    return steps;
 }
 
 
@@ -439,6 +430,7 @@ void clc_nsteps()
 void gdp_ell(Vwk * vwk)
 {
     WORD *pointer;
+    int steps;
 
     pointer = INTIN;
     beg_ang = *pointer++;
@@ -454,11 +446,11 @@ void gdp_ell(Vwk * vwk)
     yrad = *pointer;
     if (vwk->xfm_mode < 2)
         yrad = yres - yrad;
-    clc_nsteps();
-    n_steps = mul_div(del_ang, n_steps, 3600);
-    if (n_steps == 0)
+    steps = clc_nsteps(vwk);
+    steps = mul_div(del_ang, steps, 3600);
+    if (steps == 0)
         return;
-    clc_arc(vwk);
+    clc_arc(vwk, steps);
     return;
 }
 

@@ -1678,3 +1678,9 @@ Start... early ages
 - vdi/vdi_bezier.c: implemented not filled bezier curves (MAD)
                     filled onces also, but not integrated (MAD)
                     
+2004-08-19
+bios/processor.S: added coldfire test in detect_cpu (MAD)
+
+2004-08-26
+vdi/*.c: ripped off some more global variables (MAD)
+vdi/fill.c: fixed fills to use fill color, not line color (MAD)

@@ -22,13 +22,17 @@
 #define ABS(x) ((x) >= 0 ? (x) : -(x))
 
 
+
+/* prototypes*/
+void arrow(Vwk * vwk, Point * point, int count);
+
 /* the six predefined line styles */
 UWORD LINE_STYLE[6] = { 0xFFFF, 0xFFF0, 0xC0C0, 0xFF18, 0xFF00, 0xF191 };
+static WORD q_circle[MX_LN_WIDTH];     /* Holds the circle DDA */
 
 
 /* Wide line attribute save areas */
 WORD s_begsty, s_endsty, s_fil_col, s_fill_per;
-WORD *s_patptr;
 
 /* ST_UD_LINE_STYLE: */
 void vsl_udsty(Vwk * vwk)
@@ -148,7 +152,7 @@ void vql_attr(Vwk * vwk)
 
 
 /*
- * habline - draw a horizontal line
+ * habline - draw a horizontal line (just for linea needed)
  *
  * This routine is just a wrapper for horzline.
  */
@@ -633,21 +637,6 @@ void draw_rect(const Vwk * vwk, const Rect * rect, const UWORD fillcolor) {
 }
 
 
-/*
- * do_pline - the real thing
- */
-
-void draw_pline(Vwk * vwk)
-{
-    if (vwk->line_width == 1) {
-        polyline(vwk);
-        if ((vwk->line_beg | vwk->line_end) & ARROWED)
-            draw_arrow(vwk);
-    } else
-        wideline(vwk);
-}
-
-
 
 /*
  * v_pline - the wrapper
@@ -656,6 +645,8 @@ void draw_pline(Vwk * vwk)
 void v_pline(Vwk * vwk)
 {
     WORD l;
+    Point * point = (Point*)PTSIN;
+    int count = CONTRL[1];
 
     l = vwk->line_index;
     LN_MASK = (l < 6) ? LINE_STYLE[l] : vwk->ud_ls;
@@ -663,10 +654,17 @@ void v_pline(Vwk * vwk)
 #if HAVE_BEZIER
     /* check, if we want to draw a bezier curve */
     if (CONTRL[5] == 13 && vwk->bez_qual )        //FIXME: bez_qual ok??
-        v_bez(vwk);
-    else
+        v_bez(vwk, point, count);
+    else 
 #endif
-        draw_pline(vwk);
+    {
+        if (vwk->line_width == 1) {
+            polyline(vwk, point, count);
+            if ((vwk->line_beg | vwk->line_end) & ARROWED)
+                arrow(vwk, point, count);
+        } else
+            wideline(vwk, point, count);
+    }
 }
 
 
@@ -739,18 +737,12 @@ BOOL clip_line(Vwk * vwk, Line * line)
  * pline - draw a poly-line
  */
 
-void polyline(Vwk * vwk)
+void polyline(Vwk * vwk, Point * point, int count)
 {
-    short i;
+    int i;
     Line line;
 
-    Point * point = (Point*)PTSIN;
-    LSTLIN = FALSE;
-    for(i = CONTRL[1] - 1; i > 0; i--) {
-#if 0   // not needed anymore?!?
-        if (i == 1)
-            LSTLIN = TRUE;
-#endif
+    for(i = count - 1; i > 0; i--) {
         line.x1 = point->x;
         line.y1 = point->y;
         point++;                /* advance point by point */
@@ -984,15 +976,16 @@ void s_fa_attr(Vwk * vwk)
     /* Set up the fill area attribute environment. */
     LN_MASK = LINE_STYLE[0];
     s_fil_col = vwk->fill_color;
-    vwk->fill_color = vwk->line_color;
     s_fill_per = vwk->fill_per;
+    s_begsty = vwk->line_beg;
+    s_endsty = vwk->line_end;
+
+    vwk->fill_color = vwk->line_color;
+    vwk->line_beg = SQUARED;
+    vwk->line_end = SQUARED;
     vwk->fill_per = TRUE;
     vwk->patptr = &SOLID;
     vwk->patmsk = 0;
-    s_begsty = vwk->line_beg;
-    s_endsty = vwk->line_end;
-    vwk->line_beg = SQUARED;
-    vwk->line_end = SQUARED;
 }                               /* End "s_fa_attr". */
 
 
@@ -1016,16 +1009,14 @@ void r_fa_attr(Vwk * vwk)
  * wideline - draw a line with width >1
  */
 
-void wideline(Vwk * vwk)
+void wideline(Vwk * vwk, Point * point, int count)
 {
-    WORD i, k, box[10];         /* box two high to close polygon */
-    WORD numpts, wx1, wy1, wx2, wy2, vx, vy;
-    WORD *old_ptsin, *src_ptr;
-    WORD *pointer, x, y, d, d2;
+    WORD i, k;         
+    WORD wx1, wy1, wx2, wy2, vx, vy;
+    Point *ptr, box[5];      /* box too high, to close polygon */
 
     /* Don't attempt wide lining on a degenerate polyline */
-    numpts = CONTRL[1];
-    if (numpts < 2)
+    if (count < 2)
         return;
 
     if (vwk->line_width != line_cw) {
@@ -1034,14 +1025,13 @@ void wideline(Vwk * vwk)
 
     /* If the ends are arrowed, output them. */
     if ((vwk->line_beg | vwk->line_end) & ARROWED)
-        draw_arrow(vwk);
+        arrow(vwk, point, count);
+
     s_fa_attr(vwk);
 
     /* Initialize the starting point for the loop. */
-    old_ptsin = pointer = PTSIN;
-    wx1 = *pointer++;
-    wy1 = *pointer++;
-    src_ptr = pointer;
+    wx1 = point->x;
+    wy1 = point->y;
 
     /* If the end style for the first point is not squared, output a circle. */
     if (s_begsty != SQUARED) {
@@ -1049,12 +1039,11 @@ void wideline(Vwk * vwk)
     }
 
     /* Loop over the number of points passed in. */
-    for (i = 1; i < numpts; i++) {
+    for (i = 1; i < count; i++) {
         /* Get ending point for line segment */
-        pointer = src_ptr;
-        wx2 = *pointer++;
-        wy2 = *pointer++;
-        src_ptr = pointer;
+        point++;
+        wx2 = point->x;
+        wy2 = point->y;
 
         /* Get vector from start to end of the segment. */
         vx = wx2 - wx1;
@@ -1086,88 +1075,38 @@ void wideline(Vwk * vwk)
                                    vertical. */
 
         /* Prepare the control and points parameters for the polygon call. */
-        CONTRL[1] = 4;
+        ptr = box;
+        ptr->x = wx1 + vx;
+        ptr->y = wy1 + vy;
+        ptr++;
 
+        ptr->x = wx1 - vx;
+        ptr->y = wy1 - vy;
+        ptr++;
 
-        x = wx1;
-        y = wy1;
-        d = vx;
-        d2 = vy;
+        ptr->x = wx2 - vx;
+        ptr->y = wy2 - vy;
+        ptr++;
 
-        PTSIN = pointer = box;
-        *pointer++ = x + d;
-        *pointer++ = y + d2;
-        *pointer++ = x - d;
-        *pointer++ = y - d2;
+        ptr->x = wx2 + vx;
+        ptr->y = wy2 + vy;
+        ptr++;
 
-        x = wx2;
-        y = wy2;
-
-        *pointer++ = x - d;
-        *pointer++ = y - d2;
-        *pointer++ = x + d;
-        *pointer = y + d2;
-
-        polygon(vwk);
-
-        /* restore the PTSIN pointer */
-        PTSIN = old_ptsin;
+        polygon(vwk, box, 4);
 
         /* If the terminal point of the line segment is an internal joint, */
         /* output a filled circle.                                         */
-        if ((i < numpts - 1) || (s_endsty != SQUARED))
+        if ((i < count - 1) || (s_endsty != SQUARED))
             do_circ(vwk, wx2, wy2);
+
         /* end point becomes the starting point for the next line segment. */
         wx1 = wx2;
         wy1 = wy2;
-    } /* End for:  over number of points. */
+    }
 
     /* Restore the attribute environment. */
     r_fa_attr(vwk);
 }
-
-
-
-/*
- * do_arrow - Draw an arrow
- */
-
-void draw_arrow(Vwk * vwk)
-{
-    WORD x_start, y_start;
-    WORD new_x_start, new_y_start;
-    WORD *pts_in;
-
-    /* Set up the attribute environment. */
-    s_fa_attr(vwk);
-
-    /* Function "arrow" will alter the end of the line segment.  Save the */
-    /* starting point of the polyline in case two calls to "arrow" are    */
-    /* necessary.                                                         */
-    pts_in = PTSIN;
-    new_x_start = x_start = *pts_in;
-    new_y_start = y_start = *(pts_in + 1);
-
-    if (s_begsty & ARROWED) {
-        arrow(vwk, pts_in, 2);
-        pts_in = PTSIN;         /* arrow calls plygn which trashes regs */
-        new_x_start = *pts_in;
-        new_y_start = *(pts_in + 1);
-    }
-    /* End if:  beginning point is arrowed. */
-    if (s_endsty & ARROWED) {
-        *pts_in = x_start;
-        *(pts_in + 1) = y_start;
-        arrow(vwk, (pts_in + 2 ** (CONTRL + 1) - 2), -2);
-        pts_in = PTSIN;         /* arrow calls plygn which trashes regs */
-        *pts_in = new_x_start;
-        *(pts_in + 1) = new_y_start;
-    }
-
-    /* End if:  ending point is arrowed. */
-    /* Restore the attribute environment. */
-    r_fa_attr(vwk);
-}                               /* End "do_arrow". */
 
 
 
@@ -1188,30 +1127,26 @@ WORD vec_len(WORD dx, WORD dy)
  * arrow - Draw an arrow
  */
 
-void arrow(Vwk * vwk, WORD * xy, WORD inc)
+void draw_arrow(Vwk * vwk, Point * point, int inc)
 {
     WORD arrow_len, arrow_wid, line_len;
-    WORD *xybeg, sav_contrl, triangle[8];       /* triangle 2 high to close
-                                                   polygon */
     WORD dx, dy;
     WORD base_x, base_y, ht_x, ht_y;
-    WORD *old_ptsin;
-    WORD *ptr1, *ptr2, temp, i;
+    WORD temp, i;
+    Point triangle[8];       /* triangle 2 high to close polygon */
+    Point *ptr1, *ptr2, *xybeg;
 
     line_len = dx = dy = 0;
 
     /* Set up the arrow-head length and width as a function of line width. */
-
     temp = vwk->line_width;
     arrow_wid = (arrow_len = (temp == 1) ? 8 : 3 * temp - 1) / 2;
 
     /* Initialize the beginning pointer. */
-
-    xybeg = ptr1 = ptr2 = xy;
+    xybeg = ptr1 = ptr2 = point;
 
     /* Find the first point which is not so close to the end point that it */
     /* will be obscured by the arrowhead.                                  */
-
     temp = CONTRL[1];
     for (i = 1; i < temp; i++) {
         /* Find the deltas between the next point and the end point.
@@ -1220,8 +1155,8 @@ void arrow(Vwk * vwk, WORD * xy, WORD inc)
         /* distance is preserved. */
 
         ptr1 += inc;
-        dx = *ptr2 - *ptr1;
-        dy = mul_div(*(ptr2 + 1) - *(ptr1 + 1), ysize, xsize);
+        dx = ptr2->x - ptr1->x;
+        dy = mul_div(ptr2->y - ptr1->y, ysize, xsize);
 
         /* Get length of vector connecting the point with the end point. */
         /* If the vector is of sufficient length, the search is over. */
@@ -1230,11 +1165,9 @@ void arrow(Vwk * vwk, WORD * xy, WORD inc)
     }                           /* End for:  over i. */
 
     /* Set xybeg to the point we found */
-
     xybeg = ptr1;
 
     /* If the longest vector is insufficiently long, don't draw an arrow. */
-
     if (line_len < arrow_len)
         return;
 
@@ -1251,46 +1184,61 @@ void arrow(Vwk * vwk, WORD * xy, WORD inc)
     ht_y = mul_div(ht_y, xsize, ysize);
     base_y = mul_div(base_y, xsize, ysize);
 
-    /* Save the vertice count */
-
-    ptr1 = CONTRL;
-    sav_contrl = *(ptr1 + 1);
-
-    /* Build a polygon to send to plygn.  Build into a local array first */
-    /* since xy will probably be pointing to the PTSIN array. */
-
-    *(ptr1 + 1) = 3;
+    /* Build a polygon into a local array first */
     ptr1 = triangle;
-    ptr2 = xy;
-    *ptr1 = *ptr2 + base_x - ht_x;
-    *(ptr1 + 1) = *(ptr2 + 1) + base_y - ht_y;
-    *(ptr1 + 2) = *ptr2 - base_x - ht_x;
-    *(ptr1 + 3) = *(ptr2 + 1) - base_y - ht_y;
-    *(ptr1 + 4) = *ptr2;
-    *(ptr1 + 5) = *(ptr2 + 1);
+    ptr2 = point;
 
-    old_ptsin = PTSIN;
-    PTSIN = ptr1;
-    polygon(vwk);
-    PTSIN = old_ptsin;
+    ptr1->x = ptr2->x + base_x - ht_x;
+    ptr1->y = ptr2->y + base_y - ht_y;
+    ptr1++;
+    ptr1->x = ptr2->x - base_x - ht_x;
+    ptr1->y = ptr2->y - base_y - ht_y;
+    ptr1++;
+    ptr1->x = ptr2->x;
+    ptr1->y = ptr2->y;
 
-    /* Restore the vertex count. */
-
-    CONTRL[1] = sav_contrl;
+    polygon(vwk, triangle, 3);
 
     /* Adjust the end point and all points skipped. */
-
-    ptr1 = xy;
+    ptr1 = point;
     ptr2 = xybeg;
-    *ptr1 -= ht_x;
-    *(ptr1 + 1) -= ht_y;
 
-    temp = inc;
-    while ((ptr2 -= temp) != ptr1) {
-        *ptr2 = *ptr1;
-        *(ptr2 + 1) = *(ptr1 + 1);
-    }                           /* End while. */
-}                               /* End "arrow". */
+    ptr1->x -= ht_x;
+    ptr1->y -= ht_y;
+
+    while ((ptr2 -= inc) != ptr1) {
+        ptr2->x = ptr1->x;
+        ptr2->y = ptr1->y;
+    }
+}
+
+
+
+/*
+ * arrow - Draw an arrow
+ *
+ * Will alter the end of the line segment.
+ */
+
+void arrow(Vwk * vwk, Point * point, int count)
+{
+    /* Set up the attribute environment. */
+    s_fa_attr(vwk);
+
+    /* beginning point is arrowed. */
+    if (s_begsty & ARROWED) {
+        draw_arrow(vwk, point, 1);
+    }
+
+    /* ending point is arrowed. */
+    point += count - 1;
+    if (s_endsty & ARROWED) {
+        draw_arrow(vwk, point, -1);
+    }
+
+    /* Restore the attribute environment. */
+    r_fa_attr(vwk);
+}                               /* End "do_arrow". */
 
 
 

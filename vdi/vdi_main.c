@@ -22,7 +22,6 @@
 
 WORD lcl_ptsin[ptsin_size];
 WORD flip_y;                    /* True if magnitudes being returned */
-WORD q_circle[MX_LN_WIDTH];     /* Holds the circle DDA */
 
 /* GDP variables */
 WORD angle, beg_ang, del_ang, deltay, end_ang;

@@ -226,9 +226,6 @@ extern WORD INQ_TAB[];          /* extended inquire values */
 
 extern WORD *CONTRL, *INTIN, *PTSIN, *INTOUT, *PTSOUT;
 
-extern WORD fg_bp[4];           /* points to ... */
-extern WORD FG_BP_1, FG_BP_2, FG_BP_3, FG_BP_4;
-
 extern WORD LN_MASK, LSTLIN;
 extern WORD REQ_COL[3][MAX_COLOR];
 extern WORD MAP_COL[], REV_MAP_COL[];
@@ -276,13 +273,11 @@ void vex_timv(Vwk *);
 void abline (Vwk * vwk, Line * line);
 void draw_pline(Vwk * vwk);
 
-void arrow(Vwk *, WORD * xy, WORD inc);
 void horzline(const Vwk * vwk, Line * line);
 void draw_rect(const Vwk * vwk, const Rect * rect, const UWORD fillcolor);
-void polygon(Vwk *);
-void polyline(Vwk *);
-void wideline(Vwk *);
-void draw_arrow(Vwk *);
+void polygon(Vwk * vwk, Point * point, int count);
+void polyline(Vwk * vwk, Point * point, int count);
+void wideline(Vwk * vwk, Point * point, int count);
 
 WORD Isqrt(ULONG x);
 
@@ -390,8 +385,8 @@ void dqt_fontinfo(Vwk *);     /* 131 - fce820 */
 /* not in original TOS */
 void v_bez_qual(Vwk *);
 void v_bez_control(Vwk *);
-void v_bez_fill(Vwk *);
-void v_bez(Vwk *);
+void v_bez(Vwk *vwk, Point * points, int count);
+void v_bez_fill(Vwk *vwk, Point * points, int count);
 
 
 #endif                          /* VDIDEF_H */
