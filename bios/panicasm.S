@@ -13,10 +13,10 @@
 #include "config.h"
 
 
-  .text
+        .text
   
-  .global _panic
-  .global _halt
+        .global _panic
+        .global _halt
 
 
 /*
@@ -54,11 +54,12 @@ _panic:
  */
 _halt:
 #if USE_STOP_INSN_TO_FREE_HOST_CPU
-  // first try 'STOP'
-  stop    #0x2700
-  // a normal 680x0 CPU would have halted already, but just in case:
+        // first try 'STOP'
+        stop    #0x2700
+        // a normal 680x0 CPU would have halted already, but just in case:
 #endif
+        move.w  #0x2700,sr
 forever:
-  bra     forever
+        bra     forever
 
 

@@ -210,7 +210,7 @@ void dopanic(const char *fmt, ...)
         kprintf("Exception number %d. sr = 0x%04x, pc = 0x%08lx\n",
                 (int) proc_enum, s->sr, s->pc);
     }
-    kcprintf("Processor halted by HALT instruction\n");
+    kcprintf("Processor halted.\n");
     halt();
 }
 

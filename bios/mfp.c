@@ -4,7 +4,7 @@
  * Copyright (c) 2001 Laurent Vogel, Martin Doering
  *
  * Authors:
- *  LAV   Laurent Vogel
+ *  LVL   Laurent Vogel
  *  MAD   Martin Doering
  *
  * This file is distributed under the GPL, version 2 or at your
@@ -109,7 +109,7 @@ void    mfp_init (void)
 
 /*==== Clear keyboard interrupt ===========================================*/
 
-void    clear_kbdint(void)
+void clear_kbdint(void)
 {
     MFP *mfp=MFP_BASE;  /* set base address of MFP */
 
@@ -121,127 +121,125 @@ void    clear_kbdint(void)
 
 void mfpint(WORD num, LONG vector)
 {
-  num &= 0x0F;
-  jdisint(num);
-  *(LONG *)((0x40L + num)*4) = vector;
-  jenabint(num);
+    num &= 0x0F;
+    jdisint(num);
+    *(LONG *)((0x40L + num)*4) = vector;
+    jenabint(num);
 }
 
 struct rsconf_struct {
-  BYTE control;
-  BYTE data;
-} ;
+    BYTE control;
+    BYTE data;
+};
 
 const static struct rsconf_struct rsconf_data[] = {
-  { /* 19200 */  1, 1 }, 
-  { /*  9600 */  1, 2 },
-  { /*  4800 */  1, 4 },
-  { /*  3600 */  1, 5 },
-  { /*  2400 */  1, 8 },
-  { /*  2000 */  1, 10 },
-  { /*  1800 */  1, 11 },
-  { /*  1200 */  1, 16 },
-  { /*   600 */  1, 32 },
-  { /*   300 */  1, 64 },
-  { /*   200 */  1, 96 },
-  { /*   150 */  1, 128 },
-  { /*   134 */  1, 143 },
-  { /*   110 */  1, 175 },
-  { /*    75 */  2, 64 },
-  { /*    50 */  2, 96 }, 
+    { /* 19200 */  1, 1 }, 
+    { /*  9600 */  1, 2 },
+    { /*  4800 */  1, 4 },
+    { /*  3600 */  1, 5 },
+    { /*  2400 */  1, 8 },
+    { /*  2000 */  1, 10 },
+    { /*  1800 */  1, 11 },
+    { /*  1200 */  1, 16 },
+    { /*   600 */  1, 32 },
+    { /*   300 */  1, 64 },
+    { /*   200 */  1, 96 },
+    { /*   150 */  1, 128 },
+    { /*   134 */  1, 143 },
+    { /*   110 */  1, 175 },
+    { /*    75 */  2, 64 },
+    { /*    50 */  2, 96 }, 
 };
 
 
 void rsconf(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
 {
-  MFP *mfp=MFP_BASE;   /* set base address of MFP */
+    MFP *mfp=MFP_BASE;   /* set base address of MFP */
 
-  if(ctrl >= 0) mfp_ctrl = ctrl;
-  if(ucr >= 0) mfp->ucr = ucr;
-  if(rsr >= 0) mfp->rsr = rsr;
-  if(tsr >= 0) mfp->tsr = tsr;
-  if(scr >= 0) mfp->scr = scr;
-
-  if(baud >= 0) {
-    if(baud < 16) {
-      setup_timer(3, rsconf_data[baud].control, rsconf_data[baud].data);
+    if(ctrl >= 0) mfp_ctrl = ctrl;
+    if(ucr >= 0) mfp->ucr = ucr;
+    if(rsr >= 0) mfp->rsr = rsr;
+    if(tsr >= 0) mfp->tsr = tsr;
+    if(scr >= 0) mfp->scr = scr;
+    
+    if(baud >= 0 && baud < 16) {
+        setup_timer(3, rsconf_data[baud].control, rsconf_data[baud].data);
     }
-  }
 }
 
 void jdisint(WORD num)
 {
-  MFP *mfp=MFP_BASE;   /* set base address of MFP */
-  UBYTE i;
+    MFP *mfp=MFP_BASE;   /* set base address of MFP */
+    UBYTE i;
 
-  num &= 0x0F;
-  if(num >= 8) {
-    i = 1 << (num - 8);
-    mfp->imra &= ~i;
-    mfp->iera &= ~i;
-    mfp->ipra &= ~i;
-    mfp->isra &= ~i;
-  } else {
-    i = 1 << num;
-    mfp->imrb &= ~i;
-    mfp->ierb &= ~i;
-    mfp->iprb &= ~i;
-    mfp->isrb &= ~i;
-  }
+    num &= 0x0F;
+    if(num >= 8) {
+        i = 1 << (num - 8);
+        mfp->imra &= ~i;
+        mfp->iera &= ~i;
+        mfp->ipra &= ~i;
+        mfp->isra &= ~i;
+    } else {
+        i = 1 << num;
+        mfp->imrb &= ~i;
+        mfp->ierb &= ~i;
+        mfp->iprb &= ~i;
+        mfp->isrb &= ~i;
+    }
 }
 
 void jenabint(WORD num)
 {
-  MFP *mfp=MFP_BASE;   /* set base address of MFP */
-  UBYTE i;
+    MFP *mfp=MFP_BASE;   /* set base address of MFP */
+    UBYTE i;
 
-  num &= 0x0F;
-  if(num >= 8) {
-    i = 1 << (num - 8);
-    mfp->iera |= i;
-    mfp->imra |= i;
-  } else {
-    i = 1 << num;
-    mfp->ierb |= i;
-    mfp->imrb |= i;
-  }
+    num &= 0x0F;
+    if(num >= 8) {
+        i = 1 << (num - 8);
+        mfp->iera |= i;
+        mfp->imra |= i;
+    } else {
+        i = 1 << num;
+        mfp->ierb |= i;
+        mfp->imrb |= i;
+    }
 }
 
 /* setup the timer, but do not activate the interrupt */
 static void setup_timer(WORD timer, WORD control, WORD data)
 {
-  MFP *mfp=MFP_BASE;   /* set base address of MFP */
-  switch(timer) {
-  case 0:  /* timer A */
-    mfp->tacr = 0;
-    mfp->tadr = data;
-    mfp->tacr = control;
-    break;
-  case 1:  /* timer B */
-    mfp->tbcr = 0;
-    mfp->tbdr = data;
-    mfp->tbcr = control;
-    break;
-  case 2:  /* timer C */
-    mfp->tcdcr &= 0x0F;
-    mfp->tcdr = data;
-    mfp->tcdcr |= control & 0xF0;
-    break;
-  case 3:  /* timer D */
-    mfp->tcdcr &= 0xF0;
-    mfp->tddr = data;
-    mfp->tcdcr |= control & 0x0F;
-    break;
-  default:
-    return;
-  }
+    MFP *mfp=MFP_BASE;   /* set base address of MFP */
+    switch(timer) {
+    case 0:  /* timer A */
+        mfp->tacr = 0;
+        mfp->tadr = data;
+        mfp->tacr = control;
+        break;
+    case 1:  /* timer B */
+        mfp->tbcr = 0;
+        mfp->tbdr = data;
+        mfp->tbcr = control;
+        break;
+    case 2:  /* timer C */
+        mfp->tcdcr &= 0x0F;
+        mfp->tcdr = data;
+        mfp->tcdcr |= control & 0xF0;
+        break;
+    case 3:  /* timer D */
+        mfp->tcdcr &= 0xF0;
+        mfp->tddr = data;
+        mfp->tcdcr |= control & 0x0F;
+        break;
+    default:
+        return;
+    }
 }
 
 const static WORD timer_num[] = { 13, 8, 5, 4 };
 
 void xbtimer(WORD timer, WORD control, WORD data, LONG vector)
 {
-  if(timer < 0 || timer > 3) return;
-  setup_timer(timer, control, data);
-  mfpint(timer_num[timer], vector);
+    if(timer < 0 || timer > 3) return;
+    setup_timer(timer, control, data);
+    mfpint(timer_num[timer], vector);
 }

@@ -3,7 +3,7 @@ BIOS/XBIOS/BDOS
 - implement linea functions
 - merge identical headers, and put them all in an include directory (?)
 - check that RAM disks work (an easy way to test bdos under STonX)
-- implement flopvbl (deselect idle drive), other TODOs in floppy.c
+- misc. TODOs in floppy.c
 - VDI: code cleanup, Makefile, esclisa and gsxvars like in EmuTOS
 - auto programs are not run after reset
 - use extended argv specification in EmuCON
@@ -19,7 +19,8 @@ BIOS/XBIOS/BDOS
 - Alt key pressed during boot should skip harddisk driver init
 - rewrite nvram.c so it wouldn't need balloc(50) (no checksum necessary)
 - move nvram_init to machine_detect so it could be used in screen.c:videl_init
-- floppy.c - fastram support with _FRB cookie buggy (only read works).
+- CPU cache to be made invalid after Pexec has loaded a program in memory ???
+- loop callibration needed for various delays in centronics and DMA ports
 
 Internationalisation
 - examine how to build a mono-country EmuTOS 192k ROM 
@@ -35,3 +36,4 @@ VDI
 
 AES
 - desk_rsc.c and gem_rsc.c are not fully ROM save yet (the TEDINFO strings etc)
+- automatically display drives as set in drvbits ?

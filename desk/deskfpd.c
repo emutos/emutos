@@ -43,7 +43,7 @@ GLOBAL FNODE    *ml_pfndx[NUM_FNODES];
 /*
 *       Initialize the list of fnodes
 */
-void fn_init()
+static void fn_init(void)
 {
         WORD            i;
 
@@ -57,7 +57,7 @@ void fn_init()
 /*
 *       Initialize the list of pnodes
 */
-void pn_init()
+static void pn_init(void)
 {
         WORD            i;
 
@@ -72,7 +72,7 @@ void pn_init()
 /*
 *       Start up by initializing global variables
 */
-void fpd_start()
+void fpd_start(void)
 {
         G.a_wdta = ADDR(&G.g_wdta[0]);
         G.a_wspec = ADDR(&G.g_wspec[0]);
@@ -236,7 +236,7 @@ void fl_free(FNODE *pflist)
 /*
 *       Allocate a file node.
 */
-FNODE *fn_alloc()
+FNODE *fn_alloc(void)
 {
         FNODE           *thefile;
 
@@ -253,7 +253,7 @@ FNODE *fn_alloc()
 /*
 *       Allocate a path node.
 */
-PNODE *pn_alloc()
+PNODE *pn_alloc(void)
 {
         PNODE           *thepath;
         

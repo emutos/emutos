@@ -60,6 +60,7 @@ T tested and working on an emulator or real hardware
  - DSP
  - SCC
  - IDE
+ > ACSI hard disk
 
 
 
@@ -84,7 +85,7 @@ T tested and working on an emulator or real hardware
 
  BIOS devices
  ----------------------------------------------------------------------------
- - parallel port
+ > parallel port
  - serial port
  T console
  X IKBD
@@ -166,8 +167,8 @@ T tested and working on an emulator or real hardware
  - 0x27 puntaes         (useless - no AES available)
 
  X 0x29 floprate
- - 0x2a DMAread
- - 0x2b DMAwrite
+ X 0x2a DMAread
+ X 0x2b DMAwrite
  - 0x2c Bconmap
 
  X 0x2e NVMaccess

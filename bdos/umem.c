@@ -46,34 +46,34 @@ long end_stram;
 #if DBGUMEM
 static void dump_mem_map(void)
 {
-  MD *m;
-  int i;
+    MD *m;
+    int i;
   
-  kprintf("===mem_dump==========================\n");
-  kprintf("| mp_mfl = 0x%08lx {\n|   ", (long)(m = pmd.mp_mfl));
-  i = 0;
-  for(; m != NULL ; m = m->m_link) {
-    if(i >= 3) {
-      kprintf("\n|   ");
-      i = 0;
+    kprintf("===mem_dump==========================\n");
+    kprintf("| mp_mfl = 0x%08lx {\n|   ", (long)(m = pmd.mp_mfl));
+    i = 0;
+    for(; m != NULL ; m = m->m_link) {
+        if(i >= 3) {
+            kprintf("\n|   ");
+            i = 0;
+        }
+        i++; 
+        kprintf("[0x%06lx, 0x%06lx], ", m->m_start, m->m_length); 
     }
-    i++; 
-    kprintf("[0x%06lx, 0x%06lx], ", m->m_start, m->m_length); 
-  }
-  kprintf("\n| }\n");
-  kprintf("| mp_mal = 0x%08lx {\n|   ",  (long)(m = pmd.mp_mal));
-  i = 0;
-  for(; m != NULL ; m = m->m_link) {
-    if(i >= 3) {
-      kprintf(" \n|   ");
-      i = 0;
+    kprintf("\n| }\n");
+    kprintf("| mp_mal = 0x%08lx {\n|   ",  (long)(m = pmd.mp_mal));
+    i = 0;
+    for(; m != NULL ; m = m->m_link) {
+        if(i >= 3) {
+            kprintf(" \n|   ");
+            i = 0;
+        }
+        i++; 
+        kprintf("[0x%06lx, 0x%06lx], ", m->m_start, m->m_length);
     }
-    i++; 
-    kprintf("[0x%06lx, 0x%06lx], ", m->m_start, m->m_length);
-  }
-  kprintf("\n| }\n");
-  kprintf("| mp_rover = 0x%08lx\n",  (long)(pmd.mp_rover));
-  kprintf("===/mem_dump==========================\n");
+    kprintf("\n| }\n");
+    kprintf("| mp_rover = 0x%08lx\n",  (long)(pmd.mp_rover));
+    kprintf("===/mem_dump==========================\n");
 }
 #endif
 
@@ -96,63 +96,6 @@ long    xmalloc(long amount)
     }
 }
 
-#if 0 /* old xmalloc */
-long    xmalloc(long amount)
-{
-    MD *m;
-    long ret_value;
-
-#if DBGUMEM
-    kprintf("BDOS: xmalloc(0x%08lx)", amount);
-#endif
-    if(  amount < -1L  ) {
-      ret_value = 0;
-      goto ret;
-    }
-
-    /*
-     * Round odd-value requests (except -1L) to next higher even number.
-     */
-
-    if ((amount != -1L) && (amount & 1))
-        amount++;
-
-    /*
-     * Pass the request on to the internal routine.  If it was not able
-     * to grant the request, then abort.
-     */
-
-    if (!(m = ffit(amount,&pmd))) {
-      ret_value = 0;
-      goto ret;
-    }
-
-    /*
-     * If the request was -1L, the internal routine returned the amount
-     * of available memory, rather than a pointer to a memory descriptor.
-     */
-
-    if (amount == -1L) {
-      ret_value = (long) m;
-      goto ret;
-    }
-
-    /*
-     * The internal routine returned a pointer to a memory descriptor.
-     * Return its pointer to the start of the block.
-     */
-
-    ret_value = (long) m->m_start;
-
-ret:
-#if DBGUMEM
-    kprintf(" = 0x%08lx\n", ret_value);
-    dump_mem_map();
-#endif
-
-    return(ret_value);
-}
-#endif
 
 /*
  *  xmfree - Function 0x49      m_free
@@ -287,29 +230,29 @@ long    xmxalloc(long amount, int mode)
      * 
      */
     if(amount == -1L) {
-      switch(mode) {
-      case MX_STRAM:
-        ret_value = (long) ffit(-1L,&pmd);
-        break;
-      case MX_TTRAM:
-        ret_value = (long) ffit(-1L,&pmdtt);
-        break;
-      case MX_PREFSTRAM:
-      case MX_PREFTTRAM:
-        /* TODO - I assume that the correct behabiour is to return
-         * the biggest size in either pools. The documentation is unclear.
-         */ 
-        {
-          long tmp = (long) ffit(-1L,&pmd);
-          ret_value = (long) ffit(-1L,&pmdtt);
-          if(ret_value < tmp) ret_value = tmp;
+        switch(mode) {
+        case MX_STRAM:
+            ret_value = (long) ffit(-1L,&pmd);
+            break;
+        case MX_TTRAM:
+            ret_value = (long) ffit(-1L,&pmdtt);
+            break;
+        case MX_PREFSTRAM:
+        case MX_PREFTTRAM:
+            /* TODO - I assume that the correct behaviour is to return
+             * the biggest size in either pools. The documentation is unclear.
+             */ 
+            {
+                long tmp = (long) ffit(-1L,&pmd);
+                ret_value = (long) ffit(-1L,&pmdtt);
+                if(ret_value < tmp) ret_value = tmp;
+            }
+            break;
+        default:
+            /* unknown mode */
+            ret_value = 0;
         }
-        break;
-      default:
-        /* unknown mode */
-        ret_value = 0;
-      }
-      goto ret;
+        goto ret;
     }
 
     /* 
@@ -317,8 +260,8 @@ long    xmxalloc(long amount, int mode)
      */
 
     if( amount <= 0 ) {
-      ret_value = 0;
-      goto ret;
+        ret_value = 0;
+        goto ret;
     }
 
     /*
@@ -334,24 +277,24 @@ long    xmxalloc(long amount, int mode)
 
     switch(mode) {
     case MX_STRAM:
-      m = ffit(amount,&pmd);
-      break;
-    case MX_TTRAM:
-      m = ffit(amount,&pmdtt);
-      break;
-    case MX_PREFSTRAM:
-      m = ffit(amount,&pmd);
-      if(m == NULL) 
-        m = ffit(amount,&pmdtt);
-      break;
-    case MX_PREFTTRAM:
-      m = ffit(amount,&pmdtt);
-      if(m == NULL) 
         m = ffit(amount,&pmd);
-      break;
+        break;
+    case MX_TTRAM:
+        m = ffit(amount,&pmdtt);
+        break;
+    case MX_PREFSTRAM:
+        m = ffit(amount,&pmd);
+        if(m == NULL) 
+            m = ffit(amount,&pmdtt);
+        break;
+    case MX_PREFTTRAM:
+        m = ffit(amount,&pmdtt);
+        if(m == NULL) 
+            m = ffit(amount,&pmd);
+        break;
     default:
-      /* unknown mode */
-      m = 0;
+        /* unknown mode */
+        m = 0;
     }
 
     /*
@@ -397,34 +340,34 @@ ret:
 
 long xmaddalt( LONG start, LONG size)
 {
-  MD *md;
-  if(size <= 1) return -1;
-  if(size & 1) size --;
-  /* does it overlap with ST RAM? */
-  if(start <= start_stram && start+size >= start_stram) return -1;
-  if(start <= end_stram && start+size >= end_stram) return -1;
+    MD *md;
+    if(size <= 1) return -1;
+    if(size & 1) size --;
+    /* does it overlap with ST RAM? */
+    if(start <= start_stram && start+size >= start_stram) return -1;
+    if(start <= end_stram && start+size >= end_stram) return -1;
 
-  md = MGET(MD);
-  if(md == NULL) return ENSMEM;
-  md->m_start = start;
-  md->m_length = size;
-  md->m_own = NULL;
-  if(has_ttram) {
-    /* some alternative RAM has already been registered, just insert it
-     * to the beginning of the free block list.
-     */
-    MD *tmp = pmdtt.mp_mfl;
-    pmdtt.mp_mfl = md;
-    if(pmdtt.mp_rover == tmp) pmdtt.mp_rover = md;
-    md->m_link = tmp;
-  } else {
-    md->m_link = NULL;
-    pmdtt.mp_mfl = md;
-    pmdtt.mp_mal = NULL;
-    pmdtt.mp_rover = md;
-    has_ttram = 1;
-  }
-  return 0;
+    md = MGET(MD);
+    if(md == NULL) return ENSMEM;
+    md->m_start = start;
+    md->m_length = size;
+    md->m_own = NULL;
+    if(has_ttram) {
+        /* some alternative RAM has already been registered, just insert it
+         * to the beginning of the free block list.
+         */
+        MD *tmp = pmdtt.mp_mfl;
+        pmdtt.mp_mfl = md;
+        if(pmdtt.mp_rover == tmp) pmdtt.mp_rover = md;
+        md->m_link = tmp;
+    } else {
+        md->m_link = NULL;
+        pmdtt.mp_mfl = md;
+        pmdtt.mp_mal = NULL;
+        pmdtt.mp_rover = md;
+        has_ttram = 1;
+    }
+    return 0;
 }
 
 

@@ -26,6 +26,7 @@
         .globl  _vec_len        // compute length of a vector
         .globl  _HABLINE        // draw a horizontal line
         .globl  _ABLINE         // draw a line (general purpose)
+        .globl  __ABLINE        // draw a line (general purpose)
         .globl  concat          // convert x,y coordinates to buffer offsets
         .globl  xline           // alternate entry to HABLINE
         .globl  ortbl           // OR mask table for line drawing
