@@ -16,9 +16,9 @@
 #include "kprint.h"
 #include "tosvars.h"
 
-extern MD b_mdx;            /* found in startup.s */
+extern MD b_mdx;            /* found in startup.S */
 
-static int bmem_allowed = 0;
+static int bmem_allowed;
 
 void bmem_init(void)
 {
@@ -44,9 +44,11 @@ void * balloc(LONG size)
     return ret;
 }
 
-/* called before giving the memory to BDOS */
-void bmem_close(void)
+void getmpb(MPB * mpb)
 {
-    bmem_allowed = 0;
+    bmem_allowed = 0; /* BIOS memory handling not allowed past this point */
+
+    mpb->mp_mfl = mpb->mp_rover = &b_mdx; /* free list/rover set to init MD */
+    mpb->mp_mal = (MD *)0;                /* allocated list set to NULL */
 }
 

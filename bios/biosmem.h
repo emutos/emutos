@@ -14,9 +14,13 @@
 #define _BIOSMEM_H
 
 #include "portab.h"
+#include "bios.h"
 
 void bmem_init(void);
-void bmem_close(void);
 void *balloc(long size);
+
+/* BIOS function */
+
+void getmpb(MPB *mpb);
 
 #endif /* _BIOSMEM_H */

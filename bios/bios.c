@@ -45,7 +45,7 @@
 #include "asm.h"
 #include "chardev.h"
 #include "blkdev.h"
-#include "btools.h"    /* for memmove */
+#include "string.h"
 
 
 
@@ -111,7 +111,6 @@ void startup(void)
 #if DBGBIOS
     kprintf("beginning of BIOS startup\n");
 #endif
-
     snd_init();     /* Reset Soundchip, deselect floppies */
     screen_init();  /* detect monitor type, ... */
 
@@ -146,7 +145,6 @@ void startup(void)
     /* setup default exception vectors */
     init_exc_vec();
 
-
     init_user_vec();
 
     /* initialise some vectors */
@@ -156,12 +154,13 @@ void startup(void)
     VEC_BIOS = biostrap;
     VEC_XBIOS = xbiostrap;
     VEC_LINEA = int_linea;
-    VEC_ILLEGAL = brkpt;
+    /* LVL   VEC_ILLEGAL = brkpt; I don't understand why this is needed.
+     * a vector was already setup by init_exc_vec().
+     */
 
     processor_init();  /* Set CPU type, VEC_ILLEGAL, longframe and FPU type */
     cookie_init();     /* sets a cookie jar */
     machine_init();    /* detect hardware features and fill the cookie jar */
-
     init_acia_vecs();
 
     VEC_DIVNULL = just_rte;
@@ -219,7 +218,6 @@ void startup(void)
 
     /* initialize BDOS */
 
-    bmem_close();       /* no more bios memory, BDOS now owns the memory */
     osinit();
   
     set_sr(0x2300);
@@ -283,26 +281,6 @@ void bufl_init(void)
 /*
  * autoexec - run programs in auto folder
  */
-
-static char *strcpy(char *dest, const char *src) 
-{
-    register char *tmp = dest;
- 
-    while( (*tmp++ = *src++) ) 
-      ;
-    return dest;
-}
-
-static char *strcat(char *dest, const char *src) 
-{
-    register char *tmp = dest;
-    while( *tmp++ ) 
-        ;
-    tmp --;
-    while( (*tmp++ = *src++) ) 
-        ;
-    return dest;
-}
 
 void autoexec(void)
 {
@@ -371,7 +349,7 @@ void biosmain()
 #if DBG_BLKDEV
     kprintf("drvbits = %08lx\n", drvbits);
 #endif
-    /* boot eventuelly from a block device (floppy or harddisk) */
+    /* boot eventually from a block device (floppy or harddisk) */
     blkdev_hdv_boot();
 #if DBG_BLKDEV
     kprintf("drvbits = %08lx, bootdev = %d\n", drvbits, bootdev);
@@ -381,7 +359,6 @@ void biosmain()
     trap_1( 0x0e , defdrv );    /* Set boot drive */
 
     /* execute Reset-resistent PRGs */
-    
 #if 0
     font_init();                /* again, to fake STonX */
 #endif
@@ -428,8 +405,7 @@ void biosmain()
 
 void bios_0(MPB *mpb)
 {
-    mpb->mp_mfl = mpb->mp_rover = &b_mdx; /* free list/rover set to init MD */
-    mpb->mp_mal = (MD *)0;                /* allocated list set to NULL */
+    getmpb(mpb); 
 
 #if DBGBIOS
     kprintf("BIOS: getmpb m_start  = %08lx\n", (LONG) b_mdx.m_start);
