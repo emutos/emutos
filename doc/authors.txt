@@ -30,8 +30,9 @@ Petr Stehlik (joy) <pstehlik@sophics.cz>
 - bios disk interface, BDOS filesystem
 - Falcon and ARAnyM support
 
-Thomas Huth (THH) <thomas.huth@informatik.uni-ulm.de>
-- ROMable EMuCON, everything graphic! AES, VDI, desktop, ...
+Thomas Huth (THH) <thothy@users.sourceforge.net>
+- Lots of VDI bugfixes
+- Integration and maintenance of the AES and GEM-Desktop
 
 Laurent Vogel (LVL) <lvl@club-internet.fr>
 - original ST hardware (MFP, ACIA, parport, sound, floppy, ACSI)
