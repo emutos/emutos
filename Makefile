@@ -168,7 +168,7 @@ aes_ssrc = gemstart.S gemdosif.S gemasm.S gsx2.S large.S optimopt.S
 
 desk_csrc = deskact.c deskapp.c deskdir.c deskfpd.c deskfun.c deskglob.c \
             deskinf.c deskins.c deskmain.c deskobj.c deskpro.c deskrsrc.c \
-            desksupp.c deskwin.c gembind.c icons.c desk_rsc.c
+            desksupp.c deskwin.c gembind.c icons.c desk_rsc.c desk1.c
             #taddr.c deskgraf.c deskgsx.c
 desk_ssrc = deskstart.S
 
@@ -189,7 +189,7 @@ util_copts = -Ibios
 cli_copts  = -Ibios
 vdi_copts  = -Ibios
 aes_copts  = -Ibios
-desk_copts = -Ibios -Iaes -Idesk/icons
+desk_copts = -Ibios -Iaes -Idesk/icons -DDESK1
 
 #
 # Directory selection depending on the user interface (EmuCON or AES)
