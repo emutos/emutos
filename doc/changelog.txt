@@ -1725,3 +1725,15 @@ bios/conout.c: some integer overflow bugs fixed (MAD)
   argument in register d0 (LVL)
 - bios/vt52.c: bell() called depending of bit 3 of conterm (LVL)
 
+2004-12-03
+- bios/processor.S: TTRs registers setup on a 68040 (probably quite useless
+  on our current emulators, but who knows...) (LVL)
+- aes/gemgraf.c: removed the -1 pixel correction in gsx_tblt(); the AES text 
+  displays correctly now (used to be displayed one pixel up, which was
+  annoying on small resolutions) (LVL)
+- aes/gemgraf.c: improved display of window elements by ensuring that 
+  gl_wbox is wide enough to hold the character glyphs (LVL)
+- bios/vectors.S: fixed bug in VBL interrupt routine (_vblsem is WORD) (LVL)
+- aes/gem*.c: wider slidebars (grep "anemic slidebars" to see the previous 
+  code where the slide bars were not as wide as their containing box) (LVL)
+

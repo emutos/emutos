@@ -515,8 +515,10 @@ WORD fs_input(LONG pipath, LONG pisel, WORD *pbutton)
                 break;
             case FSVSLID:
                 ob_actxywh(tree, FSVELEV, &pt);
-                pt.g_x -= 3;
-                pt.g_w += 6;
+                /* anemic slidebars
+                  pt.g_x -= 3;
+                  pt.g_w += 6;
+                */
                 if ( inside(mx, my, &pt) )
                   goto dofelev;
                 touchob = (my <= pt.g_y) ? FUPAROW : FDNAROW;
@@ -525,13 +527,17 @@ WORD fs_input(LONG pipath, LONG pisel, WORD *pbutton)
             case FSVELEV:
 dofelev:        fm_own(TRUE);
                 ob_relxywh(tree, FSVSLID, &pt);
-                pt.g_x += 3;            /* APPLE        */
-                pt.g_w -= 6;
+                /* anemic slidebars
+                  pt.g_x += 3;           
+                  pt.g_w -= 6;
+                */
                 LWSET(OB_X(FSVSLID), pt.g_x);
                 LWSET(OB_WIDTH(FSVSLID), pt.g_w);
                 value = gr_slidebox(tree, FSVSLID, FSVELEV, TRUE);
-                pt.g_x -= 3;
-                pt.g_w += 6;
+                /* anemic slidebars
+                  pt.g_x -= 3;
+                  pt.g_w += 6;
+                */
                 LWSET(OB_X(FSVSLID), pt.g_x);
                 LWSET(OB_WIDTH(FSVSLID), pt.g_w);
                 fm_own(FALSE);

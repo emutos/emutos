@@ -172,8 +172,10 @@ void hctl_window(WORD w_handle, WORD mx, WORD my)
                 if ( cpt == W_HSLIDE )
                 {
                                                 /* APPLE change         */
-                  pt.g_y -= 2;
-                  pt.g_h += 4;
+                  /* anemic slidebars 
+                    pt.g_y -= 2;
+                    pt.g_h += 4;
+                  */
                   if ( inside(mx, my, &pt) )
                   {
                     cpt = W_HELEV;
@@ -186,8 +188,10 @@ void hctl_window(WORD w_handle, WORD mx, WORD my)
                 }
                 else
                 {
-                  pt.g_x -= 3;
-                  pt.g_w += 6;
+                  /* anemic slidebars
+                    pt.g_x -= 3;
+                    pt.g_w += 6;
+                  */
                   if ( inside(mx, my, &pt) )
                   {
                     cpt = W_VELEV;
@@ -209,30 +213,38 @@ doelev:         message = (cpt == W_HELEV) ? WM_HSLID : WM_VSLID;
                 ob_relxywh(tree, cpt - 1, &pt);
                 if ( message == WM_VSLID )
                 {
-                  pt.g_x += 3;          /* APPLE        */
-                  pt.g_w -= 6;
+                  /* anemic slidebars
+                    pt.g_x += 3; 
+                    pt.g_w -= 6;
+                  */
                   LWSET(OB_X(cpt - 1), pt.g_x);
                   LWSET(OB_WIDTH(cpt - 1), pt.g_w);
                 }
                 else
                 {
-                  pt.g_y += 2;          /* APPLE        */
-                  pt.g_h -= 4;
+                  /* anemic slidebars
+                    pt.g_y += 2; 
+                    pt.g_h -= 4;
+                  */
                   LWSET(OB_Y(cpt - 1), pt.g_y);
                   LWSET(OB_HEIGHT(cpt - 1), pt.g_h);
                 }
                 x = gr_slidebox(gl_awind, cpt - 1, cpt, (cpt == W_VELEV));
                 if ( message == WM_VSLID )
                 {
-                  pt.g_x -= 3;
-                  pt.g_w += 6;
+                  /* anemic slidebars
+                    pt.g_x -= 3;
+                    pt.g_w += 6;
+                  */
                   LWSET(OB_X(cpt - 1), pt.g_x);
                   LWSET(OB_WIDTH(cpt - 1), pt.g_w);
                 }
                 else
                 {
-                  pt.g_y -= 2;
-                  pt.g_h += 4;
+                  /* anemic slidebars
+                    pt.g_y -= 2;
+                    pt.g_h += 4;
+                  */
                   LWSET(OB_Y(cpt - 1), pt.g_y);
                   LWSET(OB_HEIGHT(cpt - 1), pt.g_h);
                 }
