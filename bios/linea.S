@@ -4,25 +4,13 @@
  * Copyright (c) 2001 by Authors:
  *
  *  THO  Thomas Huth
+ *  MAD  Martin Doering
+ *  LVL  Laurent Vogel
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
  *
  */
-
-// ===========================================================================
-// ==== 
-// ===========================================================================
-//
-// Copyright (c) 2001 Martin Doering.
-//
-// Authors:
-//  MAD  Martin Doering
-//
-// This file is distributed under the GPL, version 2 or at your
-// option any later version.  See doc/license.txt for details.
-//
-
 
 
 // ==== External Declarations ================================================
@@ -68,7 +56,7 @@ _linea_0:
 	move.l  a0,d0
 
 	move.l  _font_ring,a1	// get pointer to the three system font headers
-	move.l  (a1),a1
+// BUG ? move.l  (a1),a1
 	
 	lea     linea_vecs,a2	// get pointer to table of the Line-A routines
 	rts
