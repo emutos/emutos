@@ -1,7 +1,7 @@
 This file documents the status of the single parts of EmuTOS
 
-As of 1. Nov. 2001, here is a quick list of supported 
-emulators/hardware. You  :
+Here is a quick list of supported emulators/hardware:
+(updated last 18. Nov. 2001)
 
   emulator/machine          | ROM img | autoboot | boot.prg
   --------------------------+---------+----------+---------
@@ -41,12 +41,12 @@ T tested and working on an emulator or real hardware
  ----------------------------------------------------------------------------
  T configure memory
  X execute reset routine
- ? detect monitor type
+ X detect monitor type
  T detect graphics resolution
  T automatic Processor check
    ...
  X init floppy drives
- X boot floppy
+ T boot floppy
  - boot DMA
  - execute reset-resident prgs
  T run AUTO prgs
@@ -189,7 +189,7 @@ T tested and working on an emulator or real hardware
  X 0x48 Malloc
  X 0x49 Mfree
  X 0x4a Mshrink
- X 0x4b Pexec		(flag 6 not really handeled)
+ X 0x4b Pexec		(flag 6 not really handled)
  X 0x4c Pterm
  X 0x4e Fsfirst
  X 0x4f Fsnext
