@@ -13,6 +13,7 @@
 #include "portab.h"
 #include "sound.h"
 #include "psg.h"
+#include "tosvars.h"
 #include "asm.h"
  
 /*
@@ -31,7 +32,12 @@
  * read or write control or data, it is necessary that no interrupt
  * which could also use the PSG occur when using the PSG.
  */
- 
+
+/* internal routines */
+
+static void do_bell(void);
+static void do_keyclick(void);
+
 /* data used by dosound: */
 
 static BYTE *sndtable;    /* 0xE44 */
@@ -46,6 +52,11 @@ void snd_init(void)
   /* deselect both floppies */
   PSG->control = PSG_PORT_A;
   PSG->data = 0x07;
+  /* set bell_hook and kcl_hook */
+  bell_hook = do_bell;
+  kcl_hook = do_keyclick;
+  /* dosound init */
+  sndtable = NULL;
 }
 
 LONG giaccess(WORD data, WORD reg)
@@ -176,9 +187,18 @@ static UBYTE keyclicksnd[] = {
 };
 
 void bell(void) {
-  dosound((LONG) bellsnd);
+  bell_hook();
 }
 
 void keyclick(void) {
+  kcl_hook();
+}
+
+static void do_bell(void)
+{
+  dosound((LONG) bellsnd);
+}
+
+static void do_keyclick(void) {
   dosound((LONG) keyclicksnd);
 }

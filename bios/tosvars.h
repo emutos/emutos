@@ -104,6 +104,9 @@ LONG (*hdv_mediach)(WORD dev);
 LONG (*hdv_boot)(void);
 void (*hdv_init)(void);
 
+void (*bell_hook)(void);
+void (*kcl_hook)(void);
+
 void (*etv_timer)(void);
 void (*etv_critic)(void);
 void (*etv_term)(void);

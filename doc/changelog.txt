@@ -456,4 +456,5 @@ Start... early ages
 - initinfo logo code rewritten: it's easier to change the picture now (LVL)
 - initinfo messages displayed properly (the fore and back colors were
   not inited) - still the colors should probably be inited elsewhere (LVL)
-
+- bell() and keyclick() now use TOS vars bell_hook and kcl_hook (LVL)
+  

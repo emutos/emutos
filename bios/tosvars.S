@@ -258,8 +258,8 @@ _longframe:     ds.w    1       //If not 0, then not 68000 - use long stack fram
 _p_cookies:     ds.l    1       //Pointer to cookie jar
 ramtop:         ds.l    1       //Pointer to end of FastRam
 ramvalid:       ds.l    1       //Validates ramtop if $1357BD13
-bell_hook:      ds.l    1       //Pointer to routine for system bell
-kcl_hook:       ds.l    1       //Pointer to routine for system keyclick
+_bell_hook:     ds.l    1       //Pointer to routine for system bell
+_kcl_hook:      ds.l    1       //Pointer to routine for system keyclick
         .org 0x5b4
 
 
