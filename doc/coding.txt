@@ -1,21 +1,66 @@
 This files is about how to do coding for EmuTOS and to use what coding
 styles. It is far from beeing complete (my most loved sentence!):
 
+Rules for the format of source files
+====================================
+
+In order to avoid troubles with CVS when using several text editors,
+please do 'make cvsready' before committing files. This will ensure that:
+
+- all non-binary files are in Unix Line ending convention
+
+- no hard TABs are present in source files (.c, .h and .S)
+
+however for 'make cvsready' to work correctly please make sure that:
+
+- if you use TABs in your editor, set them to 8 spaces.
+
+- To help the tool determining which file is non-binary, make sure that 
+  that no non-printable ISO latin 1 characters are in text files.
+
+- use \t instead of TABs in strings ("example") and quoted ascii 
+  chars ('!'), especially in strings marked for translation _("...")
+
+
 Rules for C coding 
 ==================
 
-Well, at first these are not much. If you have any recommendations, just write
-them in here, and we can discuss it later.
-
-- Don't use tabs, if you can. If you can not stay away from them, at least
-  set them to 8 spaces - good for most editors and printing tools.
+Well, at first these are not much. If you have any recommendations, just 
+write them in here, and we can discuss it later.
 
 - Use an indention of 4 spaces for all things.
 
-- If you use gnu indent, use it like:
-  indent -kr -ts4   (is this right, I lost the mail???)
+- try to avoid source code that generates warnings when compiled using
+  gcc -Wall
 
+- avoid source code that generates warnings when passed through GNU indent.
 
+The tool GNU indent is run as an option. Doing 'make checkindent' will run
+indent on all C source files, and only check for warnings (it will not
+alter the files). Doing 'make indent' will alter the files, unless for
+those file which cause warnings. Typically:
+
+- avoid comments in the form /**/ or /*UPPERCASE*/  (indent generates
+  bad input when finding such comments)
+
+- instead of 'a =& routine;' do 'a = &routine;'  (indent complains
+  about old syntax '=&' for '&=')
+
+- avoid cpp tricks that do not respect brace balancing, like:
+
+  instead of     please do    |  instead of     please do 
+                              |
+  if( a &&    |  if( a        |  foo_t a = {  | foo_t a = {
+  #if FOO     |  #if FOO      |    1,         |   1,
+      foo )   |     && foo    |  #if FOO      | #if FOO
+  #else       |  #else        |    2};        |   2,
+      bar )   |     && bar    |  #else        | #else
+  #endif      |  #endif       |    4};        |   4,
+     ...      |    ) ...      |  #endif       | #endif
+              |               |               | };
+
+Also, when in doubt please refer to the file doc/old_code.txt, which
+contains a summary of bugs linked to old C code and ways to fix them.
 
 Rules for assembler coding
 ==========================
