@@ -24,7 +24,8 @@
 
 WORD plane_mask[4] = { 1, 3, 7, 15 };
 
-WORD DEV_TAB[45];
+
+/* Here's the template DEV_TAB, see lineavars.S for the normal DEV_TAB! */
 WORD DEV_TAB_rom[45] = {
     639,                        /* 0    x resolution             */
     399,                        /* 1    y resolution             */
@@ -97,7 +98,8 @@ WORD SIZ_TAB_rom[12] = {
     88,                         /* 11   max marker height       */
 };
 
-WORD INQ_TAB[45];
+
+/* Here's the template INQ_TAB, see lineavars.S for the normal INQ_TAB */
 WORD INQ_TAB_rom[45] = {
     1,                          /* 0  type of alpha/graphic controllers */
     1,                          /* 1  number of background colors  */
