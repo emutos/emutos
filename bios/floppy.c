@@ -154,8 +154,6 @@ static struct flop_info {
   BYTE wp;           /* != 0 means write protected */
 } finfo[2];
 
-static BYTE diskbuf[1024];      /* buffer for 2 sectors */
-
 extern WORD flock;
 
 /*==== hdv_init and hdv_boot ==============================================*/
@@ -165,10 +163,6 @@ void flop_hdv_init(void)
     /* set floppy specific stuff */
     fverify = 0xff;
     seekrate = 3;
-    dskbufp = &diskbuf;
-#if DBG_FLOP
-    kprintf("diskbuf = %08lx\n", dskbufp);
-#endif
 
     nflops = 0;
     cur_dev = -1;
@@ -185,7 +179,7 @@ void floppy_init(void)
     /* set floppy specific stuff from floppy init */
     fverify = 0xff;
     seekrate = 3;
-    dskbufp = &diskbuf;
+    //dskbufp = &diskbuf;
 }
 
 

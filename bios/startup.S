@@ -143,8 +143,8 @@ aexecsave:      dc.l    1       // save zone for autoexec
         .global _os_date
         .global _os_pal
         .global _os_dosdate
-	.global _shifty
-	.global _run
+        .global _shifty
+        .global _run
 
 _os_entry:
     bra.s   _main       // os_entry, branch to _main

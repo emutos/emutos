@@ -22,8 +22,6 @@
  * defines
  */
 
-#define DBG_BLKDEV 0
-
 #define RWABS_RETRIES   1   /* on real machine might want to increase this */
 
 #define BLKDEVNUM   16  /* A: .. P: */

@@ -585,3 +585,4 @@ Start... early ages
   C-startup procedure of bios.c (MAD)
 - TT-RAM is added to BDOS memory by calling Maddalt (should be changed) (joy)
 - free TT-RAM is displayed in initinfo.c (joy)
+- put diskbuf to blkdev.c (MAD)

@@ -1,9 +1,8 @@
 /*
  * blkdev.c - BIOS block device functions
  *
- * Copyright (c) 2002 by
+ * Copyright (c) 2002 by Authors:
  *
- * Authors:
  *  MAD     Martin Doering
  *  joy     Petr Stehlik
  *
@@ -12,6 +11,8 @@
  */
 
 
+
+#define DBG_BLKDEV
 
 #include "portab.h"
 #include "bios.h"
@@ -29,6 +30,8 @@
 BLKDEV blkdev[BLKDEVNUM];     /* enough for now? */
 UNIT devices[UNITSNUM];
 
+static BYTE diskbuf[2*512];      /* buffer for 2 sectors */
+
 
 /*
  * blkdevs_init - BIOS block drive initialization
@@ -39,6 +42,12 @@ UNIT devices[UNITSNUM];
 
 void blkdev_init(void)
 {
+    /* set the block buffer pointer to reserved memory */
+    dskbufp = &diskbuf;
+#if DBG_BLKDEV
+    kprintf("diskbuf = %08lx\n", dskbufp);
+#endif
+
     /* setup booting related vectors */
     hdv_boot    = blkdev_hdv_boot;
     hdv_init    = 0; // blkdev_hdv_init;
@@ -67,7 +76,7 @@ void blkdev_init(void)
 
 void blkdev_hdv_init(void)
 {
-        drvbits = 0;
+    drvbits = 0;
 
     /* call the real */
     flop_hdv_init();
@@ -91,18 +100,6 @@ void blkdev_hdv_init(void)
 LONG blkdev_hdv_boot(void)
 {
     return(flop_hdv_boot());
-
-
-#if IMPLEMENTED
-    int drv;                        /* device counter for init */
-
-    /* Loop through all devices, see, if they boot */
-    for (drv=0; drv<BLKDEVNUM; drv++) {
-        if (blkdev[drv].boot() >= 0 )   /* See, if device did boot */
-            break;                      /* if yes, break */
-    }
-    return 0;
-#endif
 }
 
 

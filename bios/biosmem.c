@@ -62,7 +62,7 @@ void bmem_init(void)
     themd.m_link = (MD*) 0;     /* no next memory descriptor */
     themd.m_start = os_end;
     themd.m_length = memtop - themd.m_start;
-    themd.m_own = (PD*) 0;   	/* no owner's process descriptor */
+    themd.m_own = (PD*) 0;      /* no owner's process descriptor */
 
     bmem_allowed = 1;
 }

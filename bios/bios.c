@@ -111,7 +111,7 @@ void startup(void)
 #endif
 
     /* First cut memory for screen, rest goes in memory descriptor */
-    screen_init();  		/* detect monitor type, ... */
+    screen_init();              /* detect monitor type, ... */
 
     bmem_init();                /* initialize BIOS memory management */
 
@@ -134,7 +134,7 @@ void startup(void)
      * a vector was already setup by init_exc_vec().
      */
 
-    snd_init();     		/* Reset Soundchip, deselect floppies */
+    snd_init();                 /* Reset Soundchip, deselect floppies */
     init_acia_vecs();           /* Init ACIAs and their vecs */
 
     VEC_DIVNULL = just_rte;
@@ -194,7 +194,7 @@ void startup(void)
 
     cartscan(3);
 
-    font_init(); 		/* Init font related line-a variables */
+    font_init();                /* Init font related line-a variables */
 
     /* add TT-RAM that was detected in memory.S */
     if (ramtop > 0x1000000)
