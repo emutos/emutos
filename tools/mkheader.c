@@ -113,7 +113,7 @@ char * now(time_t *t)
 char * os_date(char *buf, time_t *t)
 {
   struct tm *p = localtime(t);
-  sprintf(buf, "0x%02d%02d%04d", p->tm_mday, p->tm_mon + 1, p->tm_year+1900);
+  sprintf(buf, "0x%02d%02d%04d", p->tm_mon + 1, p->tm_mday, p->tm_year+1900);
   return buf;
 }
 
