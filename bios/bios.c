@@ -64,9 +64,6 @@ void autoexec(void);
 
 extern BYTE *biosts ;           /*  time stamp string */
 
-
-
-/* unused extern LONG oscall();    This jumps to BDOS */
 extern LONG osinit(void);
 
 extern void linea_init(void);   /* found in lineainit.c */
@@ -76,9 +73,9 @@ extern void strtautoexec(void); /* found in startup.S */
 extern void launchautoexec(PD *); /* found in startup.S */
 
 extern void ui_start(void);   /* found in cli/coma.S or aes/gemstart.S */
-                              /* it is the start addr. of  the user interface */
+                              /* it is the start addr. of the user interface */
 
-long xmaddalt(long start, long size); /* found in bdos/mem.h */
+extern long xmaddalt(long start, long size); /* found in bdos/mem.h */
 
 /*==== Declarations =======================================================*/
 
@@ -336,7 +333,6 @@ void biosmain(void)
 
 
 
-
 /**
  * bios_0 - (getmpb) Load Memory parameter block
  *
@@ -349,11 +345,12 @@ void biosmain(void)
  *
  */
 
+#if DBGBIOS
 void bios_0(MPB *mpb)
 {
     getmpb(mpb); 
 }
-
+#endif
 
 
 /**
@@ -368,12 +365,17 @@ void bios_0(MPB *mpb)
  *   0  device is not ready
  */
 
-LONG bios_1(WORD handle)        /* GEMBIOS character_input_status */
+LONG bconstat(WORD handle)        /* GEMBIOS character_input_status */
 {
-    return bconstat_vec[handle & 7]() ;
+    return bconstat_vec[handle & 7]();
 }
 
-
+#if DBGBIOS
+LONG bios_1(WORD handle)
+{
+    return bconstat(handle);
+}
+#endif
 
 /**
  * bconin  - Get character from device
@@ -390,22 +392,33 @@ LONG bios_1(WORD handle)        /* GEMBIOS character_input_status */
  * returns the character in the low byte.
  */
 
-LONG bios_2(WORD handle)
+LONG bconin(WORD handle)
 {
-    return bconin_vec[handle & 7]() ;
+    return bconin_vec[handle & 7]();
 }
 
-
+#if DBGBIOS
+LONG bios_2(WORD handle)
+{
+    return bconin(handle);
+}
+#endif
 
 /**
  * bconout  - Print character to output device
  */
 
-void bios_3(WORD handle, BYTE what)
+void bconout(WORD handle, BYTE what)
 {
     bconout_vec[handle & 7](handle, what);
 }
 
+#if DBGBIOS
+void bios_3(WORD handle, BYTE what)
+{
+    bconout(handle, what);
+}
+#endif
 
 
 /**
@@ -424,20 +437,23 @@ void bios_3(WORD handle, BYTE what)
  * drive = drive #: 0 = A:, 1 = B:, etc
  */
 
+LONG lrwabs(WORD r_w, LONG adr, WORD numb, WORD first, WORD drive, LONG lfirst)
+{
+    return hdv_rw(r_w, adr, numb, first, drive, lfirst);
+}
+
+#if DBGBIOS
 LONG bios_4(WORD r_w, LONG adr, WORD numb, WORD first, WORD drive, LONG lfirst)
 {
-#if DBGBIOS
     LONG ret;
     kprintf("BIOS rwabs(rw = %d, addr = 0x%08lx, count = 0x%04x, "
             "sect = 0x%04x, dev = 0x%04x, lsect = 0x%08x)",
             r_w, adr, numb, first, drive, lfirst);
-    ret = hdv_rw(r_w, adr, numb, first, drive, lfirst);
+    ret = lrwabs(r_w, adr, numb, first, drive, lfirst);
     kprintf(" = 0x%08lx\n", ret);
     return ret;
-#else
-    return hdv_rw(r_w, adr, numb, first, drive, lfirst);
-#endif
 }
+#endif
 
 
 
@@ -446,15 +462,11 @@ LONG bios_4(WORD r_w, LONG adr, WORD numb, WORD first, WORD drive, LONG lfirst)
  *
  */
 
-LONG bios_5(WORD num, LONG vector)
+LONG setexec(WORD num, LONG vector)
 {
     LONG oldvector;
     LONG *addr = (LONG *) (4L * num);
     oldvector = *addr;
-
-#if DBGBIOS
-    kprintf("Bios 5: Setexec(num = 0x%x, vector = 0x%08lx)\n", num, vector);
-#endif
 
     if(vector != -1) {
         *addr = vector;
@@ -462,17 +474,30 @@ LONG bios_5(WORD num, LONG vector)
     return oldvector;
 }
 
+#if DBGBIOS
+LONG bios_5(WORD num, LONG vector)
+{
+    kprintf("Bios 5: Setexec(num = 0x%x, vector = 0x%08lx)\n", num, vector);
+    return setexec(num, vector);
+}
+#endif
 
 
 /**
  * tickcal - Time between two systemtimer calls
  */
 
-LONG bios_6(void)
+LONG tickcal(void)
 {
     return(20L);        /* system timer is 50 Hz so 20 ms is the period */
 }
 
+#if DBGBIOS
+LONG bios_6(void)
+{
+    return tickcal();
+}
+#endif
 
 
 /**
@@ -486,15 +511,21 @@ LONG bios_6(void)
  *  drive - drive  (0 = A:, 1 = B:, etc)
  */
 
-LONG bios_7(WORD drive)
+LONG getbpb(WORD drive)
 {
     return hdv_bpb(drive);
 }
 
+#if DBGBIOS
+LONG bios_7(WORD drive)
+{
+    return getbpb(drive);
+}
+#endif
 
 
 /**
- * bconstat - Read status of output device
+ * bcostat - Read status of output device
  *
  * Returns status in D0.L:
  * -1   device is ready       
@@ -503,7 +534,7 @@ LONG bios_7(WORD drive)
 
 /* handle  = 0:PRT 1:AUX 2:CON 3:MID 4:KEYB */
 
-LONG bios_8(WORD handle)        /* GEMBIOS character_output_status */
+LONG bcostat(WORD handle)        /* GEMBIOS character_output_status */
 {
     if(handle>7)
         return 0;               /* Illegal handle */
@@ -514,6 +545,13 @@ LONG bios_8(WORD handle)        /* GEMBIOS character_output_status */
 
     return bcostat_vec[handle]();
 }
+
+#if DBGBIOS
+LONG bios_8(WORD handle)
+{
+    return bcostat(handle);
+}
+#endif
 
 
 
@@ -527,12 +565,17 @@ LONG bios_8(WORD handle)        /* GEMBIOS character_output_status */
  * where "changed" = "removed"
  */
 
-LONG bios_9(WORD drv)
+LONG mediach(WORD drv)
 {
     return hdv_mediach(drv);
 }
 
-
+#if DBGBIOS
+LONG bios_9(WORD drv)
+{
+    return mediach(drv);
+}
+#endif
 
 /**
  * bios_a - (drvmap) Read drive bitmap
@@ -543,12 +586,17 @@ LONG bios_9(WORD drv)
  * physical drive, it should return both bits set if a floppy is present.
  */
 
-LONG bios_a(void)
+LONG drvmap(void)
 {
     return blkdev_drvmap();
 }
 
-
+#if DBGBIOS
+LONG bios_a(void)
+{
+    return drvmap();
+}
+#endif
 
 /*
  *  bios_b - (kbshift)  Shift Key mode get/set.
@@ -566,20 +614,79 @@ LONG bios_a(void)
  *              flag is -1, then only the inquiry is done.
  */
 
+#if DBGBIOS
 LONG bios_b(WORD flag)
 {
     return kbshift(flag);
 }
+#endif
 
 /*
  * used by BDOS to ask for, or update, the time and date.
  */
 
 
+#if DBGBIOS
 void bios_11(WORD flag, WORD *dt)
 {
     date_time(flag, dt);    /* clock.c */
 }
+#endif
 
+
+/*
+ * bios_unimpl
+ *
+ * ASM function _bios_unimpl will call bios_do_unimpl(WORD number);
+ * with the function number passed as parameter.
+ */
+
+LONG bios_do_unimpl(WORD number)
+{
+#if DBGBIOS
+    kprintf("unimplemented BIOS function 0x%02x\n", number);
+#endif
+    return 0;
+}
+
+extern LONG bios_unimpl();
+
+
+
+
+/**
+ * bios_vecs - the table of bios command vectors.
+ */
+ 
+/* PFLONG defined in bios/vectors.h */
+
+#if DBGBIOS
+#define VEC(wrapper, direct) (PFLONG) wrapper
+#else
+#define VEC(wrapper, direct) (PFLONG) direct
+#endif
+
+const PFLONG bios_vecs[] = {
+    VEC(bios_0, getmpb),
+    VEC(bios_1, bconstat),
+    VEC(bios_2, bconin),
+    VEC(bios_3, bconout),
+    VEC(bios_4, lrwabs),
+    VEC(bios_5, setexec),
+    VEC(bios_6, tickcal),
+    VEC(bios_7, getbpb),
+    VEC(bios_8, bcostat),
+    VEC(bios_9, mediach),
+    VEC(bios_a, drvmap),
+    VEC(bios_b, kbshift),
+    bios_unimpl,  /*  c */
+    bios_unimpl,  /*  d */
+    bios_unimpl,  /*  e */
+    bios_unimpl,  /*  f */
+    bios_unimpl,  /* 10 */
+    VEC(bios_11, date_time),
+};
+
+const short bios_ent = sizeof(bios_vecs) / sizeof(PFLONG);
 
 

@@ -54,6 +54,10 @@ extern void brkpt(void);
 
 extern WORD save_area[];
 
+/* pointer to function returning LONG */
+typedef LONG (*PFLONG)();
+
+/* pointer to function returning VOID */
 typedef void (*PFVOID)();
 
 #define VEC_ILLEGAL (*(PFVOID*)0x10)    /* illegal instruction vector */

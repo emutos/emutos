@@ -30,8 +30,12 @@
 #include "nvram.h"
 #include "mouse.h"
 #include "asm.h"
+#include "vectors.h"
+#include "xbios.h"
  
 #define DBG_XBIOS        0
+
+
 
 
 
@@ -45,7 +49,7 @@
  * the rest.
  */
 
-void xbiosinit()
+void xbiosinit(void)
 {
     /*
      * Later print version string ...
@@ -58,17 +62,18 @@ void xbiosinit()
 
 
 
+
 /*
  * xbios_0 - (initmous) Initialize mouse packet handler
  */
 
+#if DBG_XBIOS
 void xbios_0(WORD type, PTR param, PTR vec)
 {
-#if DBG_XBIOS
     kprintf("XBIOS: Initmous\n");
-#endif
     Initmous(type, (struct param *)param, vec);
 }
+#endif
 
 
 
@@ -81,14 +86,7 @@ void xbios_0(WORD type, PTR param, PTR vec)
  * brought up, since the TPA has already been set up
  */
 
-LONG xbios_1()
-{
-#if DBG_XBIOS
-    kprintf("XBIOS: Unimplemented function 0x01 ...\n");
-#endif
-    return(0);
-}
-
+/* unimplemented */
 
 
 /*
@@ -97,13 +95,13 @@ LONG xbios_1()
  * (at the beginning of the next vblank).
  */
 
-ULONG xbios_2()
-{
 #if DBG_XBIOS
+ULONG xbios_2(void)
+{
     kprintf("XBIOS: Physbase ...\n");
-#endif
     return physbase();
 }
+#endif
 
 
 
@@ -113,13 +111,13 @@ ULONG xbios_2()
  * This is the location that GSX uses when drawing to the screen.
  */
 
-LONG xbios_3()
-{
 #if DBG_XBIOS
+LONG xbios_3(void)
+{
     kprintf("XBIOS: Logbase ...\n");
-#endif
     return logbase();
 }
+#endif
 
 
 
@@ -129,13 +127,13 @@ LONG xbios_3()
  * Returns 0, 1 or 2.
  */
 
-WORD xbios_4()
-{
 #if DBG_XBIOS
+WORD xbios_4(void)
+{
     kprintf("XBIOS: Getrez ...\n");
-#endif
     return getrez();
 }
+#endif
 
 
 
@@ -149,14 +147,14 @@ WORD xbios_4()
  * the cursor is homed, and the VT52 terminal emulator state is reset.
  */
 
+#if DBG_XBIOS
 void xbios_5(LONG logLoc, LONG physLoc, WORD rez)
 {
-#if DBG_XBIOS
     kprintf("XBIOS: SetScreen(log = 0x%08lx, phys = 0x%08lx, rez = 0x%04x)\n",
            logLoc, physLoc, rez);
-#endif
     setscreen(logLoc, physLoc, rez);
 }
+#endif
 
 
 
@@ -168,14 +166,13 @@ void xbios_5(LONG logLoc, LONG physLoc, WORD rez)
  * place at the beginning of the next vertical blank interrupt.
  */
 
-void xbios_6(LONG palettePtr)
-
-{
 #if DBG_XBIOS
+void xbios_6(LONG palettePtr)
+{
     kprintf("XBIOS: SetPalette(0x%08lx)\n", palettePtr);
-#endif
     setpalette(palettePtr);
 }
+#endif
 
 
 
@@ -189,22 +186,22 @@ void xbios_6(LONG palettePtr)
  * Return the old color. 
  */
 
+#if DBG_XBIOS
 WORD xbios_7(WORD colorNum, WORD color)
 {
-#if DBG_XBIOS
     kprintf("XBIOS: Setcolor(0x%04x, 0x%04x)\n", colorNum, color);
-#endif
     return setcolor(colorNum, color);
 }
+#endif
 
 
 
 /*
  * xbios_8 - (floprd) Read one or more sectors from a floppy disk.
  *
- * filler   - an unused longword.
  * buf      - must point to a word-aligned buffer large enough to contain the
  *            number of sectors requested.
+ * filler   - an unused longword.
  * devno    - the floppy number (0 or 1).
  * sectno   - the sector number to start reading from (usually 1 through 9).
  * trackno  - the track number to seek to.
@@ -217,48 +214,37 @@ WORD xbios_7(WORD colorNum, WORD color)
  *  nonzero - the operation failed. Returns an error number.
  */
 
+#if DBG_XBIOS
 WORD xbios_8(LONG buf, LONG filler, WORD devno, WORD sectno,
              WORD trackno, WORD sideno, WORD count)
 {
-#if DBG_XBIOS
     kprintf("XBIOS: Floprd()\n");
-#endif
     return floprd(buf, filler, devno, sectno, trackno, sideno, count);
 }
+#endif
 
 
 
 /*
  * xbios_9 - (flopwr) Write one or more sectors to a floppy disk.
  *
- * filler   - an unused longword.
- * buf      - must point to a word-aligned buffer large enough to contain the
- *            number of sectors requested.
- * devno    - the floppy number (0 or 1).
- * sectno   - the sector number to start reading from (usually 1 through 9).
- * trackno  - the track number to seek to.
- * sideno   - the side number to select.
- * count    - the number of sectors to read (which must be less than or equal
- *            to the number of sectors per track).
+ * (same parameters and return value as floprd)
  *
  * Writing to the boot sector (sector 1, side 0, track 0) will cause the
  * media to enter the "might have changed" state. This will be reflected
  * on the next rwabs() or mediach() BIOS call.
  *
- * Returns a status code.
- *  0       - the operation succeeded.
- *  nonzero - the operation failed. Returns an error number.
  */
 
 
+#if DBG_XBIOS
 WORD xbios_9(LONG buf, LONG filler, WORD devno, WORD sectno,
              WORD trackno, WORD sideno, WORD count)
 {
-#if DBG_XBIOS
     kprintf("XBIOS: Flopwr()\n");
-#endif
     return flopwr(buf, filler, devno, sectno, trackno, sideno, count);
 }
+#endif
 
 
 
@@ -284,16 +270,16 @@ WORD xbios_9(LONG buf, LONG filler, WORD devno, WORD sectno,
  *
  */
 
+#if DBG_XBIOS
 WORD xbios_a(LONG buf, LONG filler, WORD devno, WORD spt,
              WORD trackno, WORD sideno, WORD interlv, WORD virgin,
              LONG magic)
 {
-#if DBG_XBIOS
     kprintf("XBIOS: flopfmt()\n");
-#endif
     return flopfmt(buf, filler, devno, spt, trackno, sideno, interlv, 
                    virgin, magic);
 }
+#endif
 
 
 
@@ -301,13 +287,7 @@ WORD xbios_a(LONG buf, LONG filler, WORD devno, WORD spt,
  * xbios_b - Used by BIOS - Obsolete function
  */
 
-void xbios_b()
-{
-#if DBG_XBIOS
-    kprintf("XBIOS: Unimplemented function 0x0b ...\n");
-#endif
-}
-
+/* unimplemented */
 
 
 /*
@@ -317,13 +297,13 @@ void xbios_b()
  * ptr   - points to a vector of characters to write.
  */
 
+#if DBG_XBIOS
 void xbios_c(WORD cnt, LONG ptr)
 {
-#if DBG_XBIOS
     kprintf("XBIOS: Midiws(0x%04x, 0x%08lx)\n", cnt, ptr);
-#endif
     midiws(cnt, ptr);
 }
+#endif
 
 
 
@@ -335,13 +315,13 @@ void xbios_c(WORD cnt, LONG ptr)
  */
 
 
+#if DBG_XBIOS
 void xbios_d(WORD interno, LONG vector)
 {
-#if DBG_XBIOS
     kprintf("XBIOS: Mfpint(0x%x, 0x%08lx)\n", interno, vector);
-#endif
     mfpint(interno, vector);
 }
+#endif
 
 
 
@@ -349,11 +329,8 @@ void xbios_d(WORD interno, LONG vector)
  * xbios_e - (iorec) Returns pointer to a serial device's input buffer record.
  */
 
-LONG xbios_e(WORD devno)
+LONG iorec(WORD devno)
 {
-#if DBG_XBIOS
-    kprintf("XBIOS: Iorec(%d)\n", devno);
-#endif
     switch(devno) {
     case 0:
         return (LONG) &rs232iorec;
@@ -362,14 +339,22 @@ LONG xbios_e(WORD devno)
     case 2:
         return (LONG) &midiiorec;
     default:
-#if DBG_XBIOS
-        kprintf("Iorec(%d) : bad input device\n", devno);
-#endif
         return -1;
     }
 }
 
-
+#if DBG_XBIOS
+LONG xbios_e(WORD devno)
+{
+    LONG ret;
+    kprintf("XBIOS: Iorec(%d)\n", devno);
+    ret = iorec(devno);
+    if(ret == -1) {
+        kprintf("Iorec(%d) : bad input device\n", devno);
+    }
+    return ret;
+}
+#endif
 
 /*
  * xbios_f - (rsconf) Configure RS-232 port.
@@ -385,13 +370,13 @@ LONG xbios_e(WORD devno)
  * scr    - 68901 register
  */
 
+#if DBG_XBIOS
 void xbios_f(WORD speed, WORD flowctl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
 {
-#if DBG_XBIOS
     kprintf("XBIOS: Rsconf(...)\n");
-#endif
     rsconf(speed, flowctl, ucr, rsr, tsr, scr);
 }
+#endif
 
 
 
@@ -406,14 +391,14 @@ void xbios_f(WORD speed, WORD flowctl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
  * is converted to Ascii by indexing into the table and taking the byte there.
  */
 
+#if DBG_XBIOS
 LONG xbios_10(LONG unshift, LONG shift, LONG capslock)
 {
-#if DBG_XBIOS
     kprintf("XBIOS: Keytbl(0x%08lx, 0x%08lx, 0x%08lx)\n",
             unshift, shift, capslock);
-#endif
     return keytbl(unshift, shift, capslock);
 }
+#endif
 
 
 
@@ -427,9 +412,6 @@ static ULONG rseed;
 
 LONG random(void)
 {
-#if DBG_XBIOS
-    kprintf("XBIOS: Random()\n");
-#endif
     if(rseed == 0) {
         rseed = hz_200 << 16;
         rseed += hz_200;
@@ -439,13 +421,13 @@ LONG random(void)
     return((rseed >> 8) & 0xFFFFFF);
 }
 
+#if DBG_XBIOS
 LONG xbios_11(void)
 {
-#if DBG_XBIOS
     kprintf("XBIOS: Random()\n");
-#endif
     return random();
 }
+#endif
 
 
 /*
@@ -468,13 +450,13 @@ LONG xbios_11(void)
  *             on the way it was originally.
  */
 
+#if DBG_XBIOS
 void xbios_12(LONG buf, LONG serialno, WORD disktype, WORD execflag)
 {
-#if DBG_XBIOS
     kprintf("XBIOS: Protobt()\n");
-#endif
     protobt(buf, serialno, disktype, execflag);
 }
+#endif
 
 
 
@@ -482,14 +464,14 @@ void xbios_12(LONG buf, LONG serialno, WORD disktype, WORD execflag)
  * xbios_13 - (flopver) Verify sectors from a floppy disk.
  */
 
+#if DBG_XBIOS
 WORD xbios_13(LONG buf, LONG filler, WORD devno, WORD sectno,
               WORD trackno, WORD sideno, WORD count)
 {
-#if DBG_XBIOS
     kprintf("XBIOS: Flopver()\n");
-#endif
     return flopver(buf, filler, devno, sectno, trackno, sideno, count);
 }
+#endif
 
 
 
@@ -497,12 +479,7 @@ WORD xbios_13(LONG buf, LONG filler, WORD devno, WORD sectno,
  * xbios_14 - (scrdmp) Dump screen to printer.
  */
 
-void xbios_14()
-{
-#if DBG_XBIOS
-    kprintf("XBIOS: Unimplemented function 0x14 ...\n");
-#endif
-}
+/* unimplemented */
 
 
 
@@ -510,13 +487,13 @@ void xbios_14()
  * xbios_15 - (cursconf) Configure the cursor
  */
 
+#if DBG_XBIOS
 WORD xbios_15(WORD function, WORD operand)
 {
-#if DBG_XBIOS
     kprintf("XBIOS: Cursconf( 0x%04x, 0x%04x )\n", function, operand);
-#endif
     return cursconf(function, operand);
 }
+#endif
 
 
 
@@ -527,13 +504,13 @@ WORD xbios_15(WORD function, WORD operand)
  * date in the high word).
  */
 
+#if DBG_XBIOS
 void xbios_16(ULONG datetime)
 {
-#if DBG_XBIOS
     kprintf("XBIOS: Settime()\n");
-#endif
     settime(datetime);
 }
+#endif
 
 
 
@@ -544,13 +521,13 @@ void xbios_16(ULONG datetime)
  * (Time in the low word, date in the high word).
  */
 
+#if DBG_XBIOS
 ULONG xbios_17(void)
 {
-#if DBG_XBIOS
     kprintf("XBIOS: Gettime()\n");
-#endif
     return gettime();
 }
+#endif
 
 
 
@@ -560,13 +537,13 @@ ULONG xbios_17(void)
  * Restores powerup settings of keyboard translation tables.
  */
 
+#if DBG_XBIOS
 void xbios_18(void)
 {
-#if DBG_XBIOS
     kprintf("XBIOS: Bioskeys()\n");
-#endif
     bioskeys();
 }
+#endif
 
 
 
@@ -574,13 +551,13 @@ void xbios_18(void)
  * xbios_19 - (ikbdws) Writes a string to the intelligent keyboard.
  */
 
+#if DBG_XBIOS
 void xbios_19(WORD cnt, LONG ptr)
 {
-#if DBG_XBIOS
     kprintf("XBIOS: Midiws(0x%04x, 0x%08lx)\n", cnt, ptr);
-#endif
     ikbdws(cnt, (PTR) ptr);
 }
+#endif
 
 
 
@@ -588,13 +565,13 @@ void xbios_19(WORD cnt, LONG ptr)
  * xbios_1a - (jdisint) Disable interrupt number 'intno' on the 68901
  */
 
+#if DBG_XBIOS
 void xbios_1a(WORD intno)
 {
-#if DBG_XBIOS
     kprintf("XBIOS: Jdisint(0x%x)\n", intno);
-#endif
     jdisint(intno);
 }
+#endif
 
 
 
@@ -602,13 +579,13 @@ void xbios_1a(WORD intno)
  * xbios_1b - (jenabint) Enable interrupt number 'intno' on the 68901.
  */
 
+#if DBG_XBIOS
 void xbios_1b(WORD intno)
 {
-#if DBG_XBIOS
     kprintf("XBIOS: Jenabint(0x%x)\n", intno);
-#endif
     jenabint(intno);
 }
+#endif
 
 
 
@@ -616,13 +593,13 @@ void xbios_1b(WORD intno)
  * xbios_1c - (giaccess) Read or write a register on the sound chip
  */
 
+#if DBG_XBIOS
 BYTE xbios_1c(BYTE data, WORD regno)
 {
-#if DBG_XBIOS
     kprintf("XBIOS: Giaccess()\n");
-#endif
     return giaccess(data, regno);
 }
+#endif
 
 
 
@@ -630,13 +607,13 @@ BYTE xbios_1c(BYTE data, WORD regno)
  * xbios_1d - (offgibit) Atomically set a bit in the PORT A register to zero.
  */
 
+#if DBG_XBIOS
 void xbios_1d(WORD bitno)
 {
-#if DBG_XBIOS
-    kprintf("XBIOS: Offgibit()\n");
-#endif
+    kprintf("XBIOS: Offgibit(%d)\n", bitno);
     offgibit(bitno);
 }
+#endif
 
 
 
@@ -644,13 +621,13 @@ void xbios_1d(WORD bitno)
  * xbios_1e - (ongibit) Atomically set a bit in the PORT A register to one
  */
 
+#if DBG_XBIOS
 void xbios_1e(WORD bitno)
 {
-#if DBG_XBIOS
-    kprintf("XBIOS: Ongibit()\n");
-#endif
+    kprintf("XBIOS: Ongibit(%d)\n", bitno);
     ongibit(bitno);
 }
+#endif
 
 
 
@@ -658,14 +635,14 @@ void xbios_1e(WORD bitno)
  * xbios_1f - (xbtimer)
  */
 
+#if DBG_XBIOS
 void xbios_1f(WORD timer, WORD control, WORD data, LONG vec)
 {
-#if DBG_XBIOS
     kprintf("XBIOS: xbtimer(%d, 0x%02x, 0x%02x, 0x%08lx)\n",
             timer, control, data, vec);
-#endif
     xbtimer(timer, control, data, vec);
 }
+#endif
 
 
 
@@ -675,13 +652,13 @@ void xbios_1f(WORD timer, WORD control, WORD data, LONG vec)
  * 'ptr' points to a set of commands organized as bytes.
  */
 
+#if DBG_XBIOS
 void xbios_20(LONG ptr)
 {
-#if DBG_XBIOS
     kprintf("XBIOS: Dosound()\n");
-#endif
     dosound(ptr);
 }
+#endif
 
 
 
@@ -692,42 +669,40 @@ void xbios_20(LONG ptr)
  * byte. Otherwise set the byte and return it's old value.
  */
 
-WORD xbios_21(WORD config)
-{
-#if DBG_XBIOS
-    kprintf("XBIOS: Unimplemented function 0x21 ...\n");
-#endif
-    return(0);
-}
-
+/* unimplemented */
 
 
 /*
  * xbios_22 - (kbdvbase) Returns pointer to a kbdvecs structure
  *
  */
-
-LONG xbios_22()
+ 
+LONG kbdvbase(void)
 {
-#if DBG_XBIOS
-    kprintf("XBIOS: Kbdvbase()\n");
-#endif
     return (LONG) &kbdvecs;
 }
+
+#if DBG_XBIOS
+LONG xbios_22(void)
+{
+    kprintf("XBIOS: Kbdvbase()\n");
+    return kbdvbase();
+}
+#endif
 
 
 
 /*
  * xbios_23 - (kbrate) Get/set the keyboard's repeat rate
  */
-
+ 
+#if DBG_XBIOS
 WORD xbios_23(WORD initial, WORD repeat)
 {
-#if DBG_XBIOS
-    kprintf("XBIOS: Unimplemented function 0x23 ...\n");
-#endif
-    return(0);
+    kprintf("XBIOS: kbrate(%d, %d)\n", initial, repeat);
+    return kbrate(initial, repeat);
 }
+#endif
 
 
 
@@ -735,26 +710,20 @@ WORD xbios_23(WORD initial, WORD repeat)
  * xbios_24 - (prtblk) Prtblk() primitive
  */
 
-void xbios_24()
-{
-#if DBG_XBIOS
-    kprintf("XBIOS: Unimplemented function 0x24 ...\n");
-#endif
-}
-
+/* unimplemented */
 
 
 /*
  * xbios_25 - (vsync) Waits until the next vertical-blank interrupt
  */
 
-void xbios_25()
-{
 #if DBG_XBIOS
+void xbios_25(void)
+{
     kprintf("XBIOS: Vsync()\n");
-#endif
     vsync();
 }
+#endif
 
 
 
@@ -768,13 +737,18 @@ void xbios_25()
  * with GEMDOS get/set supervisor mode call.
  */
 
-LONG xbios_26(LONG codeptr)
+LONG supexec(LONG codeptr)
 {
-#if DBG_XBIOS
-    kprintf("XBIOS: Supexec(0x%08lx)\n", codeptr);
-#endif
     return ((LONG(*)(void))codeptr)();
 }
+
+#if DBG_XBIOS
+LONG xbios_26(LONG codeptr)
+{
+    kprintf("XBIOS: Supexec(0x%08lx)\n", codeptr);
+    return supexec(codeptr);
+}
+#endif
 
 
 
@@ -786,64 +760,65 @@ LONG xbios_26(LONG codeptr)
  * the function will return.
  */
 
-void xbios_27()
-{
-#if DBG_XBIOS
-    kprintf("XBIOS: Unimplemented function 0x27 ...\n");
-#endif
-}
+/* unimplemented */
 
 /*
  * xbios_29 - (Floprate) 
  */
 
+#if DBG_XBIOS
 WORD xbios_29(WORD dev, WORD rate)
 {
-#if DBG_XBIOS
     kprintf("XBIOS: Floprate\n");
-#endif
     return floprate(dev, rate);
 }
+#endif
 
 /*
  * xbios_2a - (DMAread) 
  */
 
+#if DBG_XBIOS
 LONG xbios_2a(LONG sector, WORD count, PTR buf, WORD dev)
 {
-#if DBG_XBIOS
     kprintf("XBIOS: DMAread\n");
-#endif
     return DMAread(sector, count, buf, dev);
 }
+#endif
 
 /*
  * xbios_2b - (DMAwrite) 
  */
 
+#if DBG_XBIOS
 LONG xbios_2b(LONG sector, WORD count, PTR buf, WORD dev)
 {
-#if DBG_XBIOS
     kprintf("XBIOS: DMAwrite\n");
-#endif
     return DMAwrite(sector, count, buf, dev);
 }
+#endif
 
 /*
  * xbios_2c - (Bconmap) 
  */
 
-LONG xbios_2c(WORD devno)
+LONG bconmap(WORD devno)
 {
-#if DBG_XBIOS
-    kprintf("XBIOS: Bconmap\n");
-#endif
+    /* TODO, should we implement it? */
 #if IMPLEMENTED
-    return bconmap(devno);
+    return TODO;
 #else
     return 0x2c; /* return the function opcode */
 #endif
 }
+
+#if DBG_XBIOS
+LONG xbios_2c(WORD devno)
+{
+    kprintf("XBIOS: Bconmap\n");
+    return bconmap(devno);
+}
+#endif
 
 
 
@@ -851,25 +826,120 @@ LONG xbios_2c(WORD devno)
  * xbios_2e - (NVMaccess) 
  */
 
+#if DBG_XBIOS
 WORD xbios_2e(WORD op, WORD start, WORD count, PTR buffer)
 {
-#if DBG_XBIOS
     kprintf("XBIOS: NVMaccess\n");
-#endif
     return nvmaccess(op, start, count, buffer);
 }
+#endif
 
 
 /*
  * xbios_40 - (blitmode) 
  */
 
-WORD xbios_40(WORD mode)
+/* unimplemented */
+
+
+/*
+ * xbios_unimpl
+ *
+ * ASM function _xbios_unimpl will call xbios_do_unimpl(WORD number);
+ * with the function number passed as parameter.
+ */
+
+LONG xbios_do_unimpl(WORD number)
 {
 #if DBG_XBIOS
-    kprintf("XBIOS: Unimplemented function 0x40 ...\n");
+    kprintf("unimplemented XBIOS function 0x%02x\n", number);
 #endif
     return 0;
 }
+
+extern LONG xbios_unimpl();
+
+
+/*
+ * xbios_vecs - the table of xbios command vectors.
+ */
+
+/* PFLONG defined in bios/vectors.h */
+
+#if DBG_XBIOS
+#define VEC(wrapper, direct) (PFLONG) wrapper
+#else
+#define VEC(wrapper, direct) (PFLONG) direct
+#endif
+
+const PFLONG xbios_vecs[] = {
+    VEC(xbios_0, Initmous),
+    xbios_unimpl,   /*  1 ssbrk */ 
+    VEC(xbios_2, physbase),
+    VEC(xbios_3, logbase),
+    VEC(xbios_4, getrez),
+    VEC(xbios_5, setscreen),
+    VEC(xbios_6, setpalette),
+    VEC(xbios_7, setcolor),
+    VEC(xbios_8, floprd),
+    VEC(xbios_9, flopwr),
+    VEC(xbios_a, flopfmt),
+    xbios_unimpl,   /*  b used_by_bios */ 
+    VEC(xbios_c, midiws),
+    VEC(xbios_d, mfpint),
+    VEC(xbios_e, iorec),
+    VEC(xbios_f, rsconf),
+    VEC(xbios_10, keytbl),
+    VEC(xbios_11, random),
+    VEC(xbios_12, protobt),
+    VEC(xbios_13, flopver),
+    xbios_unimpl,   /* 14 scrdmp */
+    VEC(xbios_15, cursconf),
+    VEC(xbios_16, settime),
+    VEC(xbios_17, gettime),
+    VEC(xbios_18, bioskeys),
+    VEC(xbios_19, ikbdws),
+    VEC(xbios_1a, jdisint),
+    VEC(xbios_1b, jenabint),
+    VEC(xbios_1c, giaccess),
+    VEC(xbios_1d, offgibit),
+    VEC(xbios_1e, ongibit),
+    VEC(xbios_1f, xbtimer),
+    VEC(xbios_20, dosound),
+    xbios_unimpl,   /* 21 setprt */ 
+    VEC(xbios_22, kbdvbase),
+    VEC(xbios_23, kbrate),
+    xbios_unimpl,   /* 24 prtblk */ 
+    VEC(xbios_25, vsync),
+    VEC(xbios_26, supexec),
+    xbios_unimpl,   /* 27 puntaes */ 
+    xbios_unimpl,   /* 28 */
+    VEC(xbios_29, floprate),
+    VEC(xbios_2a, DMAread),
+    VEC(xbios_2b, DMAwrite),
+    VEC(xbios_2c, bconmap),
+    xbios_unimpl,   /* 2d */
+    VEC(xbios_2e, nvmaccess),
+    xbios_unimpl,   /* 2f */
+    xbios_unimpl,   /* 30 */
+    xbios_unimpl,   /* 31 */
+    xbios_unimpl,   /* 32 */
+    xbios_unimpl,   /* 33 */
+    xbios_unimpl,   /* 34 */
+    xbios_unimpl,   /* 35 */
+    xbios_unimpl,   /* 36 */
+    xbios_unimpl,   /* 37 */
+    xbios_unimpl,   /* 38 */
+    xbios_unimpl,   /* 39 */
+    xbios_unimpl,   /* 3a */
+    xbios_unimpl,   /* 3b */
+    xbios_unimpl,   /* 3c */
+    xbios_unimpl,   /* 3d */
+    xbios_unimpl,   /* 3e */
+    xbios_unimpl,   /* 3f */
+    xbios_unimpl,   /* 40 blitmode */
+};
+
+const short xbios_ent = sizeof(xbios_vecs) / sizeof(PFLONG);
 
 

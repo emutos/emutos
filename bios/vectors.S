@@ -19,6 +19,9 @@
         .global _gemtrap        // call VDI/AES
         .global _biostrap       // call BIOS from C
         .global _xbiostrap      // call XBIOS from C
+        .global _bios_unimpl
+        .global _xbios_unimpl
+        
 
         .global _check_read_byte
         .global _int_vbl
@@ -46,24 +49,6 @@
         .xdef   _v_bas_ad
         .xdef   colorptr
         .xdef   screenpt
-
-        .xdef   _bios_0
-        .xdef   _bios_1
-        .xdef   _bios_2
-        .xdef   _bios_3
-        .xdef   _bios_4
-        .xdef   _bios_6
-        .xdef   _bios_7
-        .xdef   _bios_8
-        .xdef   _bios_9
-        .xdef   _bios_a
-        .xdef   _bios_b
-        .xdef   _bios_c
-        .xdef   _bios_d
-        .xdef   _bios_e
-        .xdef   _bios_f
-        .xdef   _bios_10
-        .xdef   _bios_11
 
         .xdef   _blink          // conout.s - Graphics output
 
@@ -426,15 +411,15 @@ _criter1:
 // ==== Trap 13 - BIOS entry point ==========================================
 
 _biostrap:
-        move.w  bios_ent,d1
-        lea     bios_vecs,a0
+        move.w  _bios_ent,d1
+        lea     _bios_vecs,a0
         bra.s   biosxbios
 
 // ==== Trap 14 - XBIOS entry point =========================================
 
 _xbiostrap:
-        move.w  xbios_ent,d1
-        lea     xbios_vecs,a0
+        move.w  _xbios_ent,d1
+        lea     _xbios_vecs,a0
 
 
 // ==== Trap 13+14 handler ==================================================
@@ -482,6 +467,23 @@ bx_nolong2:
         move.l  a1, _savptr
         rte                     // return with return value in D0
 
+
+
+/*
+ * (X)BIOS unimplemented function handler.
+ */
+
+_bios_unimpl:
+       move.w   d1,-(sp)
+       jsr      _bios_do_unimpl
+       addq.l   #2,sp
+       rts
+
+_xbios_unimpl:
+       move.w   d1,-(sp)
+       jsr      _xbios_do_unimpl
+       addq.l   #2,sp
+       rts
 
 
 /*
@@ -536,8 +538,8 @@ _just_rte:
 
 // ==== BIOS entry points to allow individual module compilation =============
 
-
-bios_vecs:
+#if 0  /* moved in bios.c */
+_bios_vecs:
         dc.l   _bios_0
         dc.l   _bios_1                 // LONG character_input_status()
         dc.l   _bios_2                 // LONG character_input()
@@ -557,14 +559,15 @@ bios_vecs:
         dc.l   _just_rts        // unused bios_10
         dc.l   _bios_11                 // get/set date/time (used by BDOS)
         
-bios_ent:               // Max. number of BIOS entries
-        dc.w    (bios_ent-bios_vecs)/4
-
+_bios_ent:               // Max. number of BIOS entries
+        dc.w    (_bios_ent-_bios_vecs)/4
+#endif
 
 // ==== XBIOS entry points to allow individual module compilation ============
 
         .even
-xbios_vecs:
+#if 0  /* moved in xbios.c */
+_xbios_vecs:
         dc.l    _xbios_0
         dc.l    _xbios_1 
         dc.l    _xbios_2 
@@ -630,10 +633,9 @@ xbios_vecs:
         dc.l    _just_rts       // 3f
         dc.l    _xbios_40
 
-xbios_ent:              // Max. number of XBIOS entries
-        .dc.w   (xbios_ent-xbios_vecs)/4
-
-
+_xbios_ent:              // Max. number of XBIOS entries
+        .dc.w   (_xbios_ent-_xbios_vecs)/4
+#endif
 
         .bss
 /* save area for trap13/14. */
