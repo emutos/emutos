@@ -1465,3 +1465,7 @@ Start... early ages
 - bdos/proc.c : Registers are now initialized to 0 again in proc_go() since
   some programs need A0 = 0 to test if they are running as a normal program
   or as an accessory. (THH)
+
+2003-0521
+- bios/lineainit.c vdi/vdimain.c : Moved initialization of shft_off to
+  lineainit.c so that some line-a functions also work from AUTO folder. (THH)

@@ -41,6 +41,18 @@ void font_init(void);
 void init_fonts(WORD vmode);
 
 
+/* Shift table for computing offsets into a scan line (interleaved planes) */
+static const BYTE shft_tab [] =
+{
+    3,  /* 1 plane */
+    2,  /* 2 planes */
+    0,  /* not used */
+    1   /* 4 planes */
+};
+
+BYTE shft_off;                  /* once computed Offset into a Scan Line */
+
+
 /* Copies of the ROM-fontheaders */
 struct font_head *sysfonts[4];  // all three fonts and NULL
 
@@ -222,6 +234,11 @@ void linea_init(void)
 
     v_col_fg = video_mode[vmode].col_fg;
     v_col_bg = 0;
+
+    /* Calculate the shift offset by a value contained in the shift table
+     * (used for screen modes that have the planes arranged in an
+     *  interleaved fashion with a word for each plane). */
+    if (v_planes <= 4)  shft_off = shft_tab[v_planes - 1];
 
 #if DBG_LINEA
     kprintf("planes: %d\n", v_planes);
