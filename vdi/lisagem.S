@@ -216,83 +216,86 @@ timer_exit:
 _DINIT_G:
 // FIXME: Again not Atari compatible...   - Thomas
 #if 0
-                move.l  tim_chain, -(sp)        // reset timer vector
-                clr.w   -(sp)
-                move.w  clock_handle, -(sp)
-                move.w  #-1, -(sp)
-                move.w  #0x44, -(sp)
-                trap    #1
-                add.l   #12, sp
+        move.l  tim_chain, -(sp)        // reset timer vector
+        clr.w   -(sp)
+        move.w  clock_handle, -(sp)
+        move.w  #-1, -(sp)
+        move.w  #0x44, -(sp)
+        trap    #1
+        add.l   #12, sp
 
-                move.w  clock_handle, -(sp)     // close the handle to the
-                move.w  #0x3E, -(sp)            // clock device
-                trap    #1
-                addq.l  #4, sp
+        move.w  clock_handle, -(sp)     // close the handle to the
+        move.w  #0x3E, -(sp)            // clock device
+        trap    #1
+        addq.l  #4, sp
 #endif
-                bsr     dinit_mouse
-                bra     escfn3
+        bsr     dinit_mouse             // de-initialize mouse
+        bra     escfn3
 
-///////////////////////////////////////////////
-//
-//      GCHC_KEY        -get choice for choice input
-//                      entry:  none
-//                      exit:   d0=0    nothing happened
-//                              d0=1    choice value
-//                              d0=2    button pressed
-//
-//                      TERM_CH         16 bit char info
-//                              
-///////////////////////////////////////////////
+
+
+/*
+ * _GCHC_KEY - get choice for choice input
+ *
+ * entry:  none
+ * exit:   d0=0    nothing happened
+ *         d0=1    choice value
+ *         d0=2    button pressed
+ *
+ * TERM_CH         16 bit char info
+ */
 
 _GCHC_KEY:
-                moveq   #1,d0
-                move.w  d0, _TERM_CH
-                rts
+        moveq   #1,d0
+        move.w  d0, _TERM_CH
+        rts
 
-///////////////////////////////////////////////
-//
-//      GCHR_KEY        -get char for string input
-//                      entry: none
-//                      exit:  d0=1     button pressed
-//                             d0=0     nothing happened
-//
-//                      TERM_CH         16 bit char info
-//
-///////////////////////////////////////////////
+
+
+/*
+ * _GCHR_KEY - get char for string input
+ *
+ * entry: none
+ * exit:  d0=1     button pressed
+ *        d0=0     nothing happened
+ * 
+ * TERM_CH         16 bit char info
+ */
 
 _GCHR_KEY:
-                move.w  #handle, -(sp)  // see if a character present at aux port
-                move.w  #1, -(sp)
-                trap    #13
-                addq.l  #4, sp
+        move.w  #handle, -(sp)  // see if a character present at aux port
+        move.w  #1, -(sp)
+        trap    #13
+        addq.l  #4, sp
 
-                tst.w   d0
-                beq     no_char
+        tst.w   d0
+        beq     no_char
 
-                move.w  #handle, -(sp)  // get the character
-                move.w  #2, -(sp)       // from auxin
-                trap    #13
-                addq.l  #4, sp
+        move.w  #handle, -(sp)  // get the character
+        move.w  #2, -(sp)       // from auxin
+        trap    #13
+        addq.l  #4, sp
 
-                move.l  d0, d1
-                swap    d1
-                lsl.w   #8, d1
-                or.w    d1, d0
+        move.l  d0, d1
+        swap    d1
+        lsl.w   #8, d1
+        or.w    d1, d0
 
-                move.w  d0,_TERM_CH     // store char
-                move.l  #1,d0
-                rts
+        move.w  d0,_TERM_CH     // store char
+        move.l  #1,d0
+        rts
 no_char:
-                moveq.l #0,d0
-                rts
+        moveq.l #0,d0
+        rts
 
-///////////////////////////////////////////////
-//
-//      INITIALIZE MOUSE        entry:          none
-//                              exit:           none
-//                              destroys:       d0/a0-a1
-//
-///////////////////////////////////////////////
+
+/*
+ * mouse_init - INITIALIZE MOUSE
+ *
+ * entry:          none
+ * exit:           none
+ * destroys:       d0/a0-a1
+ */
 
 mouse_init:
         lea.l   user_init,a0    	// init user_but and user_mot to 
@@ -300,7 +303,7 @@ mouse_init:
         move.l  a0,_user_mot            // just rts
         move.l  #_MOV_CUR,_user_cur     // initialize user_cur vector
 
-//  Move in the default mouse form (presently the arrow)
+	/* Move in the default mouse form (presently the arrow) */
 
         move.l  _INTIN, -(sp)           // Save the intin pointer and make
         move.l  #arrow_cdb, _INTIN      // it point to the arrow
@@ -310,23 +313,15 @@ mouse_init:
         move.l  (sp)+, _INTIN           // Restore INTIN pointer
 
 
-//      INIT MOUSE INTERUPT VARIABLES
+	/* Init mouse interrupt variables */
 
         moveq.l #0,d0
         move.w  d0,cur_ms_stat  	// init cur_mouse_stat
         move.b  d0,_mouse_flag  	// interrupts can happen
         move.b  d0,_draw_flag   	// No action yet on vblank
 
-
-
-/*
- * user_init - Get mouse execption vector
- *
- * FIXME: Of course this does not work on the Atari :-(   - Thomas
- */
-
-user_init:
-
+	// Here evntually init additional things (MAD)
+        
         move    sr, -(sp)               // Disable interrupts
         ori.w   #0x0700, sr
 
@@ -341,6 +336,17 @@ user_init:
         add.l   #12, sp                 // clean up stack
 
         move    (sp)+, sr               // Restore interrupt context
+
+        rts
+
+
+/*
+ * user_init - Dummy function for vex* vectors
+ *
+ * vex_* vectors point to here initially, till VDI takes them over
+ */
+
+user_init:
         rts
 
 
@@ -348,10 +354,11 @@ user_init:
 /*
  * dinit_mouse - deinitialize mouse
  *
+ * Disables the mouse
+ *
  *  entry:          none   
  *  exit:           none   
  *  destroys:       nothing
- *
  */
  
 dinit_mouse:
@@ -373,77 +380,70 @@ dinit_mouse:
 
 
 
-///////////////////////////////////////////////
-//
-//      _GLOC_KEY       -get locator key
-//
-//                      entry:  none
-//                      exit:   d0=0    -nothing
-//
-//                              d0=1    -button pressed
-//                                         _TERM_CH = 16 bit char info
-//
-//                              d0=2    -coordinate info
-//                                         _X1 = new x
-//                                         _Y1 = new y
-//                              d0=4    -NOT IMPLIMENTED IN THIS VERSION
-//
-///////////////////////////////////////////////
+/*
+ * _GLOC_KEY - get locator key
+ *
+ * entry:  none
+ * exit:   d0 = 0    - nothing
+ *         d0 = 1    - button pressed
+ *                     _TERM_CH = 16 bit char info
+ *
+ *         d0 = 2    - coordinate info
+ *                     _X1 = new x
+ *                     _Y1 = new y
+ *         d0 = 4    - NOT IMPLIMENTED IN THIS VERSION
+ */
 
 _GLOC_KEY:
-                move.b  cur_ms_stat,d0
-                move.b  d0,d1           // save state
-                andi.b  #0xc0,d0                // mask out all but button status bits
-                cmpi.b  #0,d0           // see if mouse status changed
-                beq     key_stat        // nothing go check key stat
-                move.w  #0x20,_TERM_CH  // send terminator code for left key
+        move.b  cur_ms_stat,d0
+        move.b  d0,d1           // save state
+        andi.b  #0xc0,d0                // mask out all but button status bits
+        cmpi.b  #0,d0           // see if mouse status changed
+        beq     key_stat        // nothing go check key stat
+        move.w  #0x20,_TERM_CH  // send terminator code for left key
 
 clr_bt_stat:
-                andi.b  #0x23,d0                // clear mouse button status
-                move.b  d0,cur_ms_stat  // store cleared state
-                move.w  #1,d0           // set button pressed flag
-                rts
+        andi.b  #0x23,d0                // clear mouse button status
+        move.b  d0,cur_ms_stat  // store cleared state
+        move.w  #1,d0           // set button pressed flag
+        rts
 
-key_stat:       move.w  #handle, -(sp)  // see if a character present at aux port
-                move.w  #1, -(sp)
-                trap    #13
-                addq.l  #4, sp
+key_stat:
+	move.w  #handle, -(sp)  // see if a character present at aux port
+        move.w  #1, -(sp)
+        trap    #13
+        addq.l  #4, sp
 
-                tst.w   d0
-                beq     mov_stat        // no char
+        tst.w   d0
+        beq     mov_stat        // no char
 
-                move.w  #handle, -(sp)  // get the character
-                move.w  #2, -(sp)       // from auxin
-                trap    #13
-                addq.l  #4, sp
-                move.l  d0, d1
-                swap    d1
-                lsl.w   #8, d1
-                or.w    d1, d0
-                move.w  d0,_TERM_CH     // store char
-                move.l  #1,d0
-                rts
+        move.w  #handle, -(sp)  // get the character
+        move.w  #2, -(sp)       // from auxin
+        trap    #13
+        addq.l  #4, sp
+        move.l  d0, d1
+        swap    d1
+        lsl.w   #8, d1
+        or.w    d1, d0
+        move.w  d0,_TERM_CH     // store char
+        move.l  #1,d0
+        rts
 mov_stat:
-                bclr.l  #5,d1           // test and clear mouse motion flag 
-                beq     no_chg
+        bclr.l  #5,d1           // test and clear mouse motion flag 
+        beq     no_chg
 
-                move.b  d1,cur_ms_stat  // save mouse stat
-                move.w  _GCURX,_X1      // set _X1 = _GCURX
-                move.w  _GCURY,_Y1      // set _Y1 = _GCURY
-                move.l  #2,d0
-                rts
+        move.b  d1,cur_ms_stat  // save mouse stat
+        move.w  _GCURX,_X1      // set _X1 = _GCURX
+        move.w  _GCURY,_Y1      // set _Y1 = _GCURY
+        move.l  #2,d0
+        rts
 
-no_chg:         move.l  #0,d0
-                rts
+no_chg:  
+	move.l  #0,d0
+        rts
         
-///////////////////////////////////////////////
-//
-//      MOUSE INTERUPT ROUTINE  entry:  8(sp) = address of mouse buffer
-//                              exit:           none
-//                              destroys:       nothing
-//
-///////////////////////////////////////////////
-
+        
+        
 /*
  * int_mouse - Mouse interrupt routine
  * entry:  8(sp) = address of mouse buffer
@@ -539,13 +539,17 @@ ms_exit:
         rts
 
 
-                .bss
-//_v_bas_ad       ds.l    1   // FIXME: Already declared in tosvars.S ?
 
-in_proc:         ds.b    1       // non-zero if my timer code is running
-ms_buffer:       ds.b    1       // mouse_buffer (header and button info)
-delta_x:         ds.b    1       // change in x pos. 2's comp
-delta_y:         ds.b    1       // change in y pos. 2's comp
+
+
+
+                .bss
+//_v_bas_ad     ds.l    1   // FIXME: Already declared in tosvars.S ?
+
+in_proc:        ds.b    1       // non-zero if my timer code is running
+ms_buffer:      ds.b    1       // mouse_buffer (header and button info)
+delta_x:        ds.b    1       // change in x pos. 2's comp
+delta_y:        ds.b    1       // change in y pos. 2's comp
 
 // Clock and mouse device handles and names - not usable on the Atari...  - Thomas
 #if 0
