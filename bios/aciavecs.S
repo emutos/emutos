@@ -84,6 +84,9 @@ _init_acia_vecs:
 	move.w	#0x20,midiibuflo
 	move.w	#0x60,midiibufhi
 	move.b	#0,kbdbuf
+	move.b	#0,joybuf
+	move.b	#0,joybuf+1
+	move.b	#0,joybuf+2
 	rts
 	
 // ==== Int 0x118 - midi/kbd interrupt routine ================
@@ -151,16 +154,6 @@ _ikbdsys:
 	// TODO (?): check errors (buffer full ?)
 	move.b	ikbd_acia_data,d0
 	
-//	movem.l d0/d1/a0/a1,-(sp)
-//	bra 1f
-//2:	.ascii  "IKBD data = 0x%02x\n\0"
-//	.even
-//1:	move.w	d0,-(sp)
-//	pea 	2b
-//	jsr 	_kprintf
-//	add.w 	#6,sp
-//	movem.l (sp)+,d0/d1/a0/a1
-
 	tst.b	kbdbuf
 	bne	in_packet	// kbdbuf[0] != 0, we are receiving a packet
 	cmp.w	#0xf6,d0
@@ -225,21 +218,33 @@ kbd_clock:
 	lea	kbdbuf+1,a0
 	move.l	clockvec,a1
 	bra	kbd_jump_vec
-kbd_joys:
-	lea	kbdbuf,a0
-	move.l	joyvec,a1
-	bra	kbd_jump_vec
-kbd_joy0:
-	lea	kbdbuf,a0
-	move.l	joyvec,a1
-	bra	kbd_jump_vec
-kbd_joy1:
-	lea	kbdbuf,a0
-	move.b	1(a0),2(a0)
-	clr.b	1(a0)			// ???
-	move.l	joyvec,a1
-	bra	kbd_jump_vec
 
+// Joystick support is special. The buffer passed to routine joyvec
+// will, in any case, contain (package header, joystick 0, joystick 1)
+// so for each kind of package we copy this info into a separate joybuf.
+
+kbd_joys:
+	lea	kbdbuf,a1
+	lea	joybuf,a0
+	move.b	(a1)+,(a0)+
+	move.b	(a1)+,(a0)+
+	move.b	(a1),(a0)
+	sub.w	#2,a0
+	bra	joy_next
+kbd_joy0:
+	lea	kbdbuf,a1
+	lea	joybuf,a0
+	move.b	(a1)+,(a0)+
+	move.b  (a1),(a0)
+	sub.w   #1,a0
+	bra	joy_next
+kbd_joy1:
+	lea	kbdbuf,a1
+	lea	joybuf,a0
+	move.b	(a1)+,(a0)
+	move.b	(a1),2(a0)
+joy_next:	
+	move.l	joyvec,a1
 kbd_jump_vec:		
 	move.l	a0,-(sp)
 	jsr	(a1)

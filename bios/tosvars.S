@@ -139,6 +139,7 @@
 	.global	kbdlength
 	.global kbdindex
 	.global	kbdbuf
+	.global joybuf
 
 // ===========================================================================
 // ==== BSS segment ==========================================================
@@ -297,7 +298,8 @@ midiibufhi:	ds.w	1
 	
 // ==== KBDVBASE =============================================================
 // Table of routines for managing midi and keyboard data
-// in packets from IKBD (shown by A0 und 4(sp)) 
+// in packets from IKBD (shown by A0 und 4(sp))
+// (see aciavecs.S)
 	.org 0xdcc
 _kbdvecs:	
 midivec:	ds.l	1	// MIDI input
@@ -312,8 +314,8 @@ ikbdsys:	ds.l	1	// IKBD-systemvector
 kbdlength:	ds.b	1	// kbd length of packet
 kbdindex:	ds.b	1	// kbd index of next byte of packet 
 kbdbuf:		ds.b	8	// kbd buffer for packet
-
-	
+joybuf:         ds.b    3       // kbd buffer for joystick
+	.even
 
 	
 // memory past this address will be cleared on startup or on reset.
