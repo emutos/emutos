@@ -1,22 +1,47 @@
 This file documents the status of the single parts of EmuTOS
 
-Here is, what the first field means:
+As of 1. Nov. 2001, here is a quick list of supported 
+emulators/hardware. You  :
 
-TODO : what about the "tested" status ???
-====
+  emulator/machine          | ROM img | autoboot | boot.prg
+  --------------------------+---------+----------+---------
+  STonX, with cartridge     |   yes   |  no (1)  |   yes  
+  STonC, with cartridge     |   yes   |   yes    |   yes   
+  STonC, no cartridge       |   yes   |   yes    |   yes   
+  STeem v1.5                |   yes   |   yes    |   yes   
+  WinSTon V0.1r2            |    no   |    no    |    no   
+  TOSBox 1.10a              |    no   |    ?     |    ?    
+  Pacifist v0.48            |   yes   |   yes    |   yes   
+  real MegaSTE (2MB RAM)    |   n/a   |   yes    |   yes   
+  
+ROM img means:  Using the etos192k.img file as ROM
+
+autoboot means: Loading emutos.st disk from bootsector, then when prompted,
+                eject a: and insert a FAT12 floppy containing command.prg
+
+boot.prg means: A FAT12 floppy containing ramtos.img, boot.prg and command.prg
+
+(1) because STonX does not allow to eject floppies.
+
+
+
+Now lets talk about the different subsystems, and if they are implemented.
+
+This is, what the first field of the following table means:
 
 - Not yet implemented
 X Fully implemented
 > Partially implemented
 ? status unknown
+T tested and working on an emulator or real hardware
 
-At first some more general things:
 
  BOOT sequence
  ----------------------------------------------------------------------------
- X configure memory
+ T configure memory
  X execute reset routine
  ? detect monitor type
+ T detect graphics resolution
    ...
  X init floppy drives
  X boot floppy
