@@ -244,6 +244,7 @@ help:
 	@echo "192     etos192k.img, EmuTOS ROM padded to size 192 KB (starting at 0xFC0000)"
 	@echo "256     etos256k.img, EmuTOS ROM padded to size 256 KB (starting at 0xE00000)"
 	@echo "512     etos512k.img, EmuTOS ROM padded to size 512 KB (starting at 0xE00000)" 
+	@echo "aranym  etos512k.img, suitable for ARAnyM" 
 	@echo "ram     ramtos.img + boot.prg, a RAM tos"
 	@echo "flop    emutos.st, a bootable floppy with RAM tos"
 	@echo "clean"
@@ -310,8 +311,12 @@ etos256k.img: emutos2.img
 # 512kB Image (for Aranym or Falcon)
 #
 
+aranym:
+	@echo building ARAnyM EmuTOS in etos512k.img; \
+	make DEF='-DRTC_TOS_VER=0x404 -DUSE_STOP_INSN_TO_FREE_HOST_CPU=1 -DCONF_WITH_ACSI=0' 512; \
+
 512: etos512k.img
-falcon: etos512k.img
+falcon: help
 
 etos512k.img: emutos2.img
 	$(sized_image)

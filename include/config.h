@@ -119,6 +119,19 @@
 #endif
 
 /*
+ * NVRAM RTC (real time clock) needs to know the TOS version that wrote
+ * the initial year offset to your NVRAM. By default EmuTOS uses
+ * the TOS_VERSION value but this is not working on real TT030 or Falcon
+ * machines since you can't increase the TOS_VERSION to 0x306 or 0x404
+ * (many newer TOS functions are not defined and badly written programs
+ * that check for TOS version only start failing then).
+ * The solution is to define the RTC_TOS_VER independently and set it
+ * to the version of original TOS that runs on your machine and updates
+ * your NVRAM RTC.
+ */
+/* #define RTC_TOS_VER 0x404 */
+
+/*
  * Define the boot timeout in seconds. The higher the number the better
  * chance for the user to read all the initinfo screen.
  * Undefined or defined with zero value will skip the whole boot timeout

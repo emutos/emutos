@@ -289,12 +289,16 @@ static void msetdt(ULONG dt)
  * But in the TT030 case it's unsure - with old TOS (3.01, 3.05) it's 1970, but
  * with latest TT TOS (3.06) it's 1968. This is completely crazy and only Atari
  * engineers could do something like that.
- * With Falcon the situation is clear - the year offset is always 1968.
+ * With Falcon TOS 4.0x the situation is clear - the offset is always 1968.
+ *
+ * If you want to run EmuTOS (which has currently set the TOS version 
+ * to 0x206 in include/config.h) on a real TT030 with newer TOS or on a Falcon
+ * or ARAnyM then please define RTC_TOS_VER in your localconf.h.
  */
-#ifndef TOS_VERSION
-#define TOS_VERSION 0x404       /* define the version that ran on this machine */
+#ifndef RTC_TOS_VER
+#define RTC_TOS_VER		(TOS_VERSION)
 #endif
-const static int nvram_rtc_year_offset = ((TOS_VERSION < 0x306) ? 1970 : 1968) - 1980;
+const static int nvram_rtc_year_offset = ((RTC_TOS_VER < 0x306) ? 1970 : 1968) - 1980;
 
 static void ndosettime(UWORD time)
 {
