@@ -351,6 +351,8 @@ LONG blkdev_mediach(WORD dev)
     if ((dev < 0 ) || (dev >= BLKDEVNUM) || !blkdev[dev].valid)
         return EUNDEV;  /* unknown device */
 
+    if (dev >= 2) return 0;  /* for harddrives return "not changed" for now */
+
     unit = blkdev[dev].unit;
     if (hz_200 < devices[unit].last_access + 100) {
         /* less than half a second since last access, assume no mediachange */
