@@ -864,4 +864,5 @@ Start... early ages
 
 16. May. 2002
 - vdi/vdimouse.S - moved/rewrote DIS_CUR to monobj.c:dis_cur()  (MAD)
+- vdi/vdiinput.c - moved/rewrote vdimouse_init/exit to here (MAD)
 

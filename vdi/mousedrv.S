@@ -17,8 +17,9 @@
 
 
         /* globl routines declared here */
-        .globl  _vdimouse_init
+        .globl  _mov_cur
         .globl  _vdimouse_exit
+        .globl  _vdimouse_init
 
         .globl  _mouse_int      // mouse interrupt routine
 
@@ -29,7 +30,7 @@
         /* External routines used here */
         .xdef   _DEV_TAB        // address of device table
         .xdef   _xfm_crfm
-        .xdef   vb_draw
+        .xdef   _vb_draw
 
         .xdef  _vex_butv       // exchange button change vector
         .xdef  _vex_motv       // exchange mouse movement vector
@@ -59,7 +60,7 @@
         .text
 
 
-
+#if 0
 /*
  * _vdimouse_init - INITIALIZE MOUSE
  *
@@ -78,7 +79,7 @@ _vdimouse_init:
 
         /* Move in the default mouse form (presently the arrow) */
         move.l  _INTIN, -(sp)           // Save the intin pointer and make
-        move.l  #arrow_cdb, _INTIN      // it point to the arrow
+        move.l  #_arrow_cdb, _INTIN      // it point to the arrow
         bsr     _xfm_crfm               // transform mouse
         move.l  (sp)+, _INTIN           // restore INTIN pointer
 
@@ -93,11 +94,11 @@ _vdimouse_init:
 
         /* Init mouse vbl interrupt */
         move.l  _vblqueue, a0           // get VBL-queue address
-        move.l  #vb_draw, (a0)          // set GEM VBL-routine
+        move.l  #_vb_draw, (a0)          // set GEM VBL-routine
         
         /* Initialize mouse via XBIOS */
         pea     _mouse_int              // mouse interrupt routine
-        pea     arrow_cdb               // mouse parameter block
+        pea     _arrow_cdb               // mouse parameter block
         move.w  #1, -(sp)               // enable mouse in relative mode
         move.w  #0, -(sp)               // Initmous
         trap    #14                     // call XBIOS
@@ -105,7 +106,6 @@ _vdimouse_init:
 
 just_rts:
         rts
-
 
 
 /*
@@ -139,6 +139,7 @@ _vdimouse_exit:
 
         rts
 
+#endif
 
 
 /*

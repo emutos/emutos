@@ -22,11 +22,11 @@
 
         .globl  _xfm_crfm       // set mouse form
         .globl  _cur_replace  
+        .globl  _vb_draw 	// vertical blank mouse draw routine
 
         .globl  _DIS_CUR        // display cursor routine
 //        .globl  _HIDE_CUR       // hide cursor routine
-        .globl  vb_draw         // vertical blank mouse draw routine
-        .globl  arrow_cdb       // default mouse definition
+        .globl  _arrow_cdb       // default mouse definition
 
 /* Externally Defined Labels */
 
@@ -64,7 +64,7 @@
 
 
 /*
- * vb_draw - moves mouse cursor, GEM VBL routine
+ * _vb_draw - moves mouse cursor, GEM VBL routine
  *
  * It removes the mouse cursor from its current location, if necessary,
  * * and redraws it at a new location.
@@ -84,7 +84,7 @@
 
 /* If we do not need to draw the cursor now then just exit. */
 
-vb_draw:
+_vb_draw:
         move.w  sr,-(sp)        // save current value of status register
         ori.w   #0x0700,sr      // mask off all interrupts
         bclr.b  #0,_draw_flag   // draw the cursor?
@@ -860,7 +860,7 @@ xfm_move_loop:
 
 /* Default Mouse Cursor Definition */
 
-arrow_cdb:
+_arrow_cdb:
         .dc.w   1,0,1,0,1
         .dc.w   0xE000 //%1110000000000000       // background definition
         .dc.w   0xF000 //%1111000000000000

@@ -13,11 +13,17 @@
 #include "gsxdef.h"
 #include "gsxextrn.h"
 #include "vdiconf.h"
+#include "tosvars.h"
+#include "lineavars.h"
 #include "mouse.h"
+#include "asm.h"
 
 
+extern void mouse_int();    /* mouse interrupt routine */
+extern void mov_cur();      // user button vector
+extern void vb_draw();      // user button vector
+extern struct param arrow_cdb;
 
-extern long trap13(int, ...);
 extern void s68(int *);
 extern void s68l(long *);
 
@@ -28,6 +34,8 @@ extern void s68l(long *);
 #define bconstat(a)  trap13(0x01,a)
 #define bconin(a)    trap13(0x02,a)
 #define bconout(a,b) trap13(0x03,a,b)
+
+#define initmous(a,b,c) trap14(0x00,a,b,c)
 
 
 
@@ -142,3 +150,75 @@ WORD gloc_key()
     }
     return retval;
 }
+
+
+
+/*
+ * do_nothing - doesn't do much  :-)
+ */
+
+static void do_nothing()
+{
+}
+
+
+
+#if 1
+/*
+ * vdimouse_init - Initializes the mouse (VDI part)
+ *
+ * entry:          none
+ * exit:           none
+ */
+
+void vdimouse_init()
+{
+    LONG * pointer;             /* help for storing LONGs in INTIN */
+    LONG savelong;
+
+    user_but = do_nothing;
+    user_mot = do_nothing;
+    user_cur = mov_cur;        // initialize user_cur vector
+
+    /* Move in the default mouse form (presently the arrow) */
+    pointer = (LONG*)&INTIN[0]; /* let it point to INTIN[0] */
+    savelong = *pointer;        /* save old value */
+    *pointer = (LONG)&arrow_cdb;        // it points to the arrow
+    xfm_crfm();			// transform mouse
+    *pointer = savelong;        /* restore old value */
+
+    MOUSE_BT = 0;               // clear the mouse button state
+    cur_ms_stat = 0;            // clear the mouse status
+    mouse_flag = 0;		// clear the mouse flag
+    draw_flag = 0;		// clear the hide operations counter
+    newx = 0;			// set cursor x-coordinate to 0
+    newy = 0;			// set cursor y-coordinate to 0
+
+    pointer = vblqueue;         /* vblqueue points to start of vbl_list[] */
+    *pointer = (LONG)vb_draw;	/* set GEM VBL-routine to vbl_list[0] */
+
+    /* Initialize mouse via XBIOS in relative mode */
+    initmous(1, &arrow_cdb, mouse_int);
+}
+
+
+
+/*
+ * vdimouse_exit - deinitialize/disable mouse
+ */
+ 
+void vdimouse_exit()
+{
+    LONG * pointer;             /* help for storing LONGs in INTIN */
+
+    user_but = do_nothing;
+    user_mot = do_nothing;
+    user_cur = do_nothing;
+
+    pointer = vblqueue;         /* vblqueue points to start of vbl_list[] */
+    *pointer = (LONG)vb_draw;	/* set GEM VBL-routine to vbl_list[0] */
+
+    /* disable mouse via XBIOS */
+    initmous(0, 0, 0);
+}
+#endif

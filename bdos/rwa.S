@@ -228,22 +228,6 @@ ii_stksav:
 
 
 
-//==== trap13 - perform trap 13 supervisor call on behalf of caller ==========
-
-        .text
-_trap13:
-        move.l  (sp)+,biosav
-        trap    #13
-        move.l  biosav,-(sp)
-        rts
-
-        .bss
-        .even
-biosav:
-        .ds.l   1
-
-
-
 //==== tikhnd - logical tick interrupt handler ===============================
 
         .text

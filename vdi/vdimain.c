@@ -72,7 +72,7 @@ BYTE in_proc;                   // flag, if we are still running
  * do_nothing - doesn't do much  :-)
  */
 
-void do_nothing()
+static void do_nothing()
 {
 }
 

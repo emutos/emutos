@@ -16,6 +16,8 @@
         .global _swp68w         // swap bytes in a word 
         .global _swp68l         // swap word & bytes in long
 
+        .global _trap13         // call BIOS
+        .global _trap14         // call XBIOS
 
 
         .text
@@ -53,4 +55,40 @@ _swp68l:
         rts
 
 
-        
+
+/*
+ * _trap13 - perform trap 13 supervisor call on behalf of caller
+ */
+
+        .text
+_trap13:
+        move.l  (sp)+,biosav
+        trap    #13
+        move.l  biosav,-(sp)
+        rts
+
+        .bss
+        .even
+biosav:
+        .ds.l   1
+
+
+
+/*
+ * _trap14 - perform trap 14 supervisor call on behalf of caller
+ */
+
+        .text
+_trap14:
+        move.l  (sp)+,xbiosav
+        trap    #14
+        move.l  xbiosav,-(sp)
+        rts
+
+        .bss
+        .even
+xbiosav:
+        .ds.l   1
+
+
+

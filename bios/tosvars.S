@@ -198,13 +198,13 @@ _defshiftmod:   ds.w    1       // default video resolution
 _sshiftmod:     ds.b    1       // copy of contents of 0xff8260
         .org 0x44e
 _v_bas_ad:      ds.l    1       // screen base address
-_vblsem:        ds.w    1       // pointer to logical screen base
-_nvbls:         ds.w    1       // if not 0, VBL routine not executed
-_vblqueue:      ds.l    1       // number of VBL routines
-_colorptr:      ds.l    1       // pointer to list of VBL routines
-_screenpt:      ds.l    1       // pointer to color palette to be loaded
-_vbclock:       ds.l    1       // pointer to video RAM for next VBL
-_frclock:       ds.l    1       // number of VBL routines executed
+_vblsem:        ds.w    1       // if not 0, VBL routine not executed
+_nvbls:         ds.w    1       // number of VBL routines
+_vblqueue:      ds.l    1       // pointer to list of VBL routines
+_colorptr:      ds.l    1       // pointer to color palette to be loaded
+_screenpt:      ds.l    1       // pointer to video RAM for next VBL
+_vbclock:       ds.l    1       // number of VBL routines executed
+_frclock:       ds.l    1       // number of VBL routines processed
 _hdv_init:      ds.l    1       // vector for hard disk initialization
 _swv_vec:       ds.l    1       // vector for resolution change
 _hdv_bpb:       ds.l    1       // vector for getbpb for harddisk
