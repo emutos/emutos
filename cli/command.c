@@ -8,7 +8,7 @@
  *  JSL Jason S. Loveman
  *  LGT Lou T. Garavaglia
  *  SCC Steven C. Cavender
- *  MAD     Martin Doering
+ *  MAD Martin Doering
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -16,10 +16,10 @@
 
 
 
-extern long xoscall();
+extern long jmp_gemdos();
 extern long xlongjmp();
-extern long bios();
-extern long xbios();
+extern long jmp_bios();
+extern long jmp_xbios();
 extern void in_term();
 extern void rm_term();
 extern long xsetjmp();
@@ -30,38 +30,38 @@ extern void devector();
 #define TRUE -1
 #define MAXARGS 20
 
-#define xrdchne() xoscall (0x08)
-#define xecho(a) xoscall (0x02,a)
-#define xread(a,b,c) xoscall(0x3f,a,b,c)
-#define xwrite(a,b,c) xoscall(0x40,a,b,c)
-#define xopen(a,b) xoscall(0x3d,a,b)
-#define xclose(a) xoscall(0x3e,a)
-#define xcreat(a,b) xoscall(0x3c,a,b)
-#define xforce(a,b) xoscall(0x46,a,b)
-#define xexec(a,b,c,d) xoscall(0x4b,a,b,c,d)
-#define dup(a) xoscall(0x45,a)
-#define xgetdrv() xoscall(0x19)
-#define xsetdrv(a) xoscall(0x0e,a)
-#define xsetdta(a) xoscall(0x1a,a)
-#define xsfirst(a,b) xoscall(0x4e,a,b)
-#define xsnext() xoscall(0x4f)
-#define xgetdir(a,b) xoscall(0x47,a,b)
-#define xmkdir(a) xoscall(0x39,a)
-#define xrmdir(a) xoscall(0x3a,a)
-#define xchdir(a) xoscall(0x3b,a)
-#define xunlink(a) xoscall(0x41,a)
-#define xrename(a,b,c) xoscall(0x56,a,b,c)
-#define xgetfree(a,b) xoscall(0x36,a,b)
-#define xterm(a) xoscall(0x4c,a)
-#define xf_seek(a,b,c) xoscall(0x42,a,b,c)
-#define xmalloc(a) xoscall(0x48,a);
-#define xmfree(a) xoscall(0x49,a);
-#define xattrib(a,b,c) xoscall(0x43,a,b,c)
+#define xrdchne() jmp_gemdos (0x08)
+#define xecho(a) jmp_gemdos (0x02,a)
+#define xread(a,b,c) jmp_gemdos(0x3f,a,b,c)
+#define xwrite(a,b,c) jmp_gemdos(0x40,a,b,c)
+#define xopen(a,b) jmp_gemdos(0x3d,a,b)
+#define xclose(a) jmp_gemdos(0x3e,a)
+#define xcreat(a,b) jmp_gemdos(0x3c,a,b)
+#define xforce(a,b) jmp_gemdos(0x46,a,b)
+#define xexec(a,b,c,d) jmp_gemdos(0x4b,a,b,c,d)
+#define dup(a) jmp_gemdos(0x45,a)
+#define xgetdrv() jmp_gemdos(0x19)
+#define xsetdrv(a) jmp_gemdos(0x0e,a)
+#define xsetdta(a) jmp_gemdos(0x1a,a)
+#define xsfirst(a,b) jmp_gemdos(0x4e,a,b)
+#define xsnext() jmp_gemdos(0x4f)
+#define xgetdir(a,b) jmp_gemdos(0x47,a,b)
+#define xmkdir(a) jmp_gemdos(0x39,a)
+#define xrmdir(a) jmp_gemdos(0x3a,a)
+#define xchdir(a) jmp_gemdos(0x3b,a)
+#define xunlink(a) jmp_gemdos(0x41,a)
+#define xrename(a,b,c) jmp_gemdos(0x56,a,b,c)
+#define xgetfree(a,b) jmp_gemdos(0x36,a,b)
+#define xterm(a) jmp_gemdos(0x4c,a)
+#define xf_seek(a,b,c) jmp_gemdos(0x42,a,b,c)
+#define xmalloc(a) jmp_gemdos(0x48,a);
+#define xmfree(a) jmp_gemdos(0x49,a);
+#define xattrib(a,b,c) jmp_gemdos(0x43,a,b,c)
 
-#define getbpb(a) bios(7,a)
-#define rwabs(a,b,c,d,e) bios(4,a,b,c,d,e)
+#define getbpb(a) jmp_bios(7,a)
+#define rwabs(a,b,c,d,e) jmp_bios(4,a,b,c,d,e)
 
-#define Cursconf(a,b) xbios(0x15,a,b)
+#define Cursconf(a,b) jmp_xbios(0x15,a,b)
 
 #define BPB struct _bpb
 BPB /* bios parameter block */
@@ -604,7 +604,7 @@ void cr2cont()
 {
     wrt ("CR to continue...");
     lin[0] = 126;
-    xoscall(10,&lin[0]);
+    jmp_gemdos(10,&lin[0]);
 }
 
 
@@ -1373,12 +1373,12 @@ long execPrgm (char *s, char *cmdtl)
     while ((ch = cmd[i++])) if ((ch == ':') || (ch == '\\')) gtpath = 0;
 
     exeflg = 1;
-#if 0
+//#if 0
     rm_term();
-#endif
+//#endif
     cmdptr = (char *)&cmd;
     j = 0;
-//    Cursconf(0, 0);         /* XBIOS switch cursor off before command */
+    Cursconf(0, 0);         /* XBIOS switch cursor off before command */
     while ((((err = xexec(0, cmdptr, cmdtl, envPtr)) & 0xFFFFFFFF) == -33) && (gtpath))
     {
 	k = j;
@@ -1398,12 +1398,12 @@ long execPrgm (char *s, char *cmdtl)
 	}
 	else gtpath = 0;
     }
-#if 0
+//#if 0
     in_term();
-#endif
+//#endif
     exeflg = 0;
     xmfree(envPtr);
-//    Cursconf(1, 0);         /* XBIOS switch cursor off before command */
+    Cursconf(1, 0);         /* XBIOS switch cursor off before command */
 
     return (err);
 }
@@ -1580,7 +1580,7 @@ int readSi (char *lin)
     i = j = 0;
 
     lin[0] = 126;
-    xoscall(10, &lin[0]);
+    jmp_gemdos(10, &lin[0]);
 
     lin[lin[1] + 2] = 0;
 
@@ -2062,7 +2062,7 @@ void xCmdLn (char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl)
 	    else if (xncmps(8,s,"VERSION"))
 	    {
 		if (*nonStdIn) dspCL (&argv[0]);
-		i = xoscall(0x30);
+		i = jmp_gemdos(0x30);
 		prtdecl((long)(i&0xFF));
 		xwrite(1,1L,".");
 		prtdecl((long)((i>>8)&0xFF));

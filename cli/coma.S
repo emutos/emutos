@@ -22,8 +22,9 @@
 	.globl	_cmain
 	.globl	_div10
 	.globl	_mod10
-	.globl	_xoscall
-//	.globl	_bios
+	.globl	_jmp_gemdos
+	.globl	_jmp_bios
+	.globl	_jmp_xbios
 	.globl	_xsetjmp
 	.globl	_xlongjmp
 	.globl	_exeflg
@@ -199,10 +200,20 @@ okrc:	move.l	8(a6),a0
 	rts
 
 
-//_bios:	move.l	(sp)+,biosav
-//	trap	#13
-//	move.l	biosav,-(sp)
-//	rts
+_jmp_bios:
+        move.l	(sp)+,bios_ret
+	trap	#13
+	move.l	bios_ret,-(sp)
+	rts
+
+
+_jmp_xbios:
+//        movem.l d0-d2/a0-a2, -(sp)      // save registers
+        move.l	(sp)+,xbios_ret
+	trap	#14
+	move.l	xbios_ret,-(sp)
+//        movem.l (sp)+, d0-d2/a0-a2      // save registers
+	rts
 
 
 _div10: link	a6,#0
@@ -224,10 +235,10 @@ _mod10: link	a6,#0
 	rts
 
 // call dosjr from within itself (or from linked-in shell)
-_xoscall:
-	move.l	(sp)+,retshell
+_jmp_gemdos:
+	move.l	(sp)+,gemdos_ret
 	trap	#1
-	move.l	retshell,-(sp)
+	move.l	gemdos_ret,-(sp)
 	rts
 
 
@@ -237,17 +248,20 @@ aris:
 	.ascii "(A)bort, (R)etry, or (I)gnore ?"
         .dc.b	0
 
-	.bss
-	.even
+	        .bss
+	        .even
 
-savess: .ds.l	1					  
-ocrit:	.ds.l	1
-oterm:	.ds.l	1
-biosav: .ds.l	1
-retshell: .ds.l 1
+savess:         .ds.l	1					  
+ocrit:	        .ds.l	1
+oterm:	        .ds.l	1
 
-	.ds.l	800		// Stack space, growing backwards			  
-mystak: .ds.l	1               // Stack for command.prg
+/* Saved return addresses for jumps to BIOS, XBIOS, GEMDOS */
+bios_ret:         .ds.l	1
+xbios_ret:        .ds.l	1
+gemdos_ret:       .ds.l   1
+
+	        .ds.l	800		// Stack space, growing backwards			  
+mystak:         .ds.l	1               // Stack for command.prg
 	.end
 
 
