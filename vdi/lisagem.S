@@ -254,8 +254,9 @@ _GCHR_KEY:
         tst.w   d0
         beq     no_char
 
-        move.w  #2, -(sp)  		// get the character from Bconin
-        trap    #13
+        move.w  #2, -(sp)  		// get the character from console
+        move.w  #2, -(sp)  		// call Bconin
+        trap    #13                     // BIOS
         addq.l  #4, sp
 
         move.l  d0, d1
@@ -306,6 +307,7 @@ mouse_init:
         move.w	d0, (a0)+               // set mouse x (_newx) to 0
         move.w	d0, (a0)+               // set mouse y (_newy) to 0
         move.b	d0, (a0)                // set draw flag (_draw_flag) to 0
+
 	move.l	_vblqueue, a0           // get VBL-queue address
         move.l	#vb_draw, (a0)          // set GEM VBL-routine (in vdimouse.S)
         
@@ -339,7 +341,7 @@ user_init:
 
 
 /*
- * dinit_mouse - deinitialize mouse
+ * dinit_mouse - deinitialize/disable mouse
  *
  * Disables the mouse
  *
@@ -384,19 +386,26 @@ dinit_mouse:
 _GLOC_KEY:
         move.b  cur_ms_stat,d0
         move.b  d0,d1           // save state
-        andi.b  #0xc0,d0                // mask out all but button status bits
-        cmpi.b  #0,d0           // see if mouse status changed
+        andi.b  #0xc0,d0        // mask out all but button status bits
         beq     key_stat        // nothing go check key stat
-        move.w  #0x20,_TERM_CH  // send terminator code for left key
+
+        move.b	d1, d0
+        btst	#6, d0
+        beq	notright
+
+        move.w	#0x20, _TERM_CH // send terminator code for left key
+        bra 	clr_bt_stat
+notright:
+        move.w  #0x21,_TERM_CH  // send terminator code for left key
 
 clr_bt_stat:
-        andi.b  #0x23,d0                // clear mouse button status
-        move.b  d0,cur_ms_stat  // store cleared state
-        move.w  #1,d0           // set button pressed flag
+        andi.b  #0x23, d0                // clear mouse button status
+        move.b  d0, cur_ms_stat  // store cleared state
+        move.w  #1, d0           // set button pressed flag
         rts
 
 key_stat:
-	move.w  #handle, -(sp)  // see if a character present at aux port
+	move.w  #2, -(sp)  // see if a character present at con
         move.w  #1, -(sp)
         trap    #13
         addq.l  #4, sp
@@ -404,24 +413,25 @@ key_stat:
         tst.w   d0
         beq     mov_stat        // no char
 
-        move.w  #handle, -(sp)  // get the character
-        move.w  #2, -(sp)       // from auxin
-        trap    #13
+        move.w  #2, -(sp)  	// get the character from console
+        move.w  #2, -(sp)       // call Bconin
+        trap    #13             // BIOS
         addq.l  #4, sp
+        
         move.l  d0, d1
         swap    d1
         lsl.w   #8, d1
         or.w    d1, d0
-        move.w  d0,_TERM_CH     // store char
-        move.l  #1,d0
+        move.w  d0, _TERM_CH     // store char
+        move.l  #1, d0
         rts
 mov_stat:
         bclr.l  #5,d1           // test and clear mouse motion flag 
         beq     no_chg
 
-        move.b  d1,cur_ms_stat  // save mouse stat
-        move.w  _GCURX,_X1      // set _X1 = _GCURX
-        move.w  _GCURY,_Y1      // set _Y1 = _GCURY
+        move.b  d1, cur_ms_stat  // save mouse stat
+        move.w  _GCURX, _X1      // set _X1 = _GCURX
+        move.w  _GCURY, _Y1      // set _Y1 = _GCURY
         move.l  #2,d0
         rts
 
