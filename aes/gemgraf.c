@@ -155,12 +155,7 @@ WORD gsx_chkclip(GRECT *pt)
 *       Routine to draw a certain number of points in a polyline
 *       relative to a given x,y offset.
 */
-/*
-        VOID
-gsx_pline(offx, offy, cnt, pts)
-        WORD            offx, offy;
-        WORD            cnt;
-        WORD            *pts;
+void gsx_pline(WORD offx, WORD offy, WORD cnt, WORD *pts)
 {
         WORD            i, j;
 
@@ -171,9 +166,8 @@ gsx_pline(offx, offy, cnt, pts)
           ptsin[j+1] = offy + pts[j+1];
         }
 
-        gsx_xline( cnt, &ptsin[0]);
+        gsx_xline(cnt, &ptsin[0]);
 }
-*/
 
 
 /*
