@@ -48,6 +48,7 @@
 
 
 #include "portab.h"
+#include "asm.h"
 #include "fs.h"
 #include "bios.h"
 #include "gemerror.h"
@@ -182,9 +183,9 @@ long ixcreat(char *name, char attr)
         for (i=0; i<10; i++)
                 f->f_fill[i] = 0;
         f->f_time = time;
-        swp68(f->f_time);
+        swpw(f->f_time);
         f->f_date = date;
-        swp68(f->f_date);
+        swpw(f->f_date);
         f->f_clust = 0;
         f->f_fileln = 0;
         ixlseek(fd,pos);
@@ -340,9 +341,9 @@ static long makopn(FCB *f, DND *dn, int h, int mod)
         else
         {
                 p->o_strtcl = f->f_clust;       /*  1st cluster of file */
-                swp68(p->o_strtcl);
+                swpw(p->o_strtcl);
                 p->o_fileln = f->f_fileln;      /*  init length of file */
-                swp68l(p->o_fileln);
+                swpl(p->o_fileln);
                 p->o_date = f->f_date;
                 p->o_time = f->f_time;
         }
@@ -501,8 +502,8 @@ long    ixclose(OFD *fd, int part)
         {
                 ixlseek(fd->o_dirfil,fd->o_dirbyt+22);
 
-                swp68(fd->o_strtcl);
-                swp68l(fd->o_fileln);
+                swpw(fd->o_strtcl);
+                swpl(fd->o_fileln);
 
                 if (part & CL_DIR)
                 {
@@ -514,8 +515,8 @@ long    ixclose(OFD *fd, int part)
                 else
                         ixwrite(fd->o_dirfil,10L,(char *)&fd->o_time);
 
-                swp68(fd->o_strtcl);
-                swp68l(fd->o_fileln);
+                swpw(fd->o_strtcl);
+                swpl(fd->o_fileln);
         }
 
         if ((!part) || (part & CL_FULL))
@@ -639,7 +640,7 @@ long ixdel(DND *dn, FCB *f, long pos)
 
         dm = dn->d_drv;
         n = f->f_clust;
-        swp68(n);
+        swpw(n);
 
         while (n && (n != -1))
         {

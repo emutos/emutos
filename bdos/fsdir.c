@@ -125,6 +125,7 @@
 
 
 #include        "portab.h"
+#include        "asm.h"
 #include        "fs.h"
 #include        "bios.h"                /*  M01.01.01                   */
 #include        "mem.h"
@@ -287,11 +288,11 @@ long xmkdir(char *s)
         memcpy(f2, dots, 22);
         f2->f_attrib = FA_SUBDIR;
         f2->f_time = time;
-        swp68( f2->f_time ) ;           /*  M01.01.SCC.FS.04  */
+        swpw( f2->f_time ) ;           /*  M01.01.SCC.FS.04  */
         f2->f_date = date;
-        swp68( f2->f_date ) ;           /*  M01.01.SCC.FS.04  */
+        swpw( f2->f_date ) ;           /*  M01.01.SCC.FS.04  */
         cl = f0->o_strtcl;
-        swp68(cl);
+        swpw(cl);
         f2->f_clust = cl;
         f2->f_fileln = 0;
         f2++;
@@ -302,15 +303,15 @@ long xmkdir(char *s)
         memcpy(f2, dots, 22);
         f2->f_attrib = FA_SUBDIR;
         f2->f_time = time;
-        swp68( f2->f_time ) ;           /*  M01.01.SCC.FS.06  */
+        swpw( f2->f_time ) ;           /*  M01.01.SCC.FS.06  */
         f2->f_date = date;
-        swp68( f2->f_date ) ;           /*  M01.01.SCC.FS.06  */
+        swpw( f2->f_date ) ;           /*  M01.01.SCC.FS.06  */
         cl = f->o_dirfil->o_strtcl;
 
         if (cl < 0)
                 cl = 0;
 
-        swp68(cl);
+        swpw(cl);
         f2->f_clust = cl;
         f2->f_fileln = 0;
         /* LVL xmovs(sizeof(OFD),(char *)f0,(char *)f); */
@@ -594,16 +595,16 @@ void xgsdtof(int *buf, int h, int wrt)
                 b[1] = f->o_date ;
         }
 
-        swp68(b[0]);
-        swp68(b[1]);
+        swpw(b[0]);
+        swpw(b[1]);
 
         if ( wrt )
         {
                 f->o_time = b[0] ;
                 f->o_date = b[1] ;
                 f->o_flag |= O_DIRTY;           /* M01.01.0918.01 */
-                swp68(b[0]);                    /* M01.01.0918.01 */
-                swp68(b[1]);                    /* M01.01.0918.01 */
+                swpw(b[0]);                    /* M01.01.0918.01 */
+                swpw(b[1]);                    /* M01.01.0918.01 */
         }
 }
 
@@ -1311,7 +1312,7 @@ static DND *makdnd(DND *p, FCB *b)
 
         p1->d_ofd = (OFD *) 0;
         p1->d_strtcl = b->f_clust;
-        swp68(p1->d_strtcl);
+        swpw(p1->d_strtcl);
         p1->d_drv = p->d_drv;
         p1->d_dirfil = fd;
         p1->d_dirpos = fd->o_bytnum - 32;
@@ -1490,11 +1491,11 @@ static void makbuf(FCB *f, DTAINFO *dt)
 {                                       /*  M01.01.03   */
     dt->dt_fattr = f->f_attrib ;
     dt->dt_time = f->f_time ;
-    swp68(dt->dt_time) ;
+    swpw(dt->dt_time) ;
     dt->dt_date = f->f_date ;
-    swp68(dt->dt_date) ;
+    swpw(dt->dt_date) ;
     dt->dt_fileln = f->f_fileln ;
-    swp68l( dt->dt_fileln ) ;
+    swpl( dt->dt_fileln ) ;
     
     if( f->f_attrib & FA_VOL ) {
       /* LVL bmove( (char *)&f->f_name[0] , (char *)&dt->dt_fname[0] , 11 ); */

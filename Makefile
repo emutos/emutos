@@ -122,7 +122,7 @@ BDOSSSRC = rwa.S
 #
 
 UTILCSRC = doprintf.c nls.c langs.c string.c
-UTILSSRC = memset.S memmove.S nlsasm.S setjmp.S
+UTILSSRC = memset.S memmove.S nlsasm.S setjmp.S miscasm.S
 
 #
 # source code in vdi/

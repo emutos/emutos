@@ -35,6 +35,12 @@
 
 
 
+extern void swp68w(int *);
+extern void swp68l(long *);
+
+#define swpw(x) swp68w(&x)
+#define swpl(x) swp68l(&x)
+
 /*
  * WORD set_sr(WORD new); 
  *   sets sr to the new value, and return the old sr value 

@@ -13,6 +13,7 @@
 
 
 #include        "portab.h"
+#include        "asm.h"
 #include        "fs.h" 
 #include        "bios.h"                /*  M01.01.01                   */
 #include        "gemerror.h"
@@ -47,7 +48,7 @@ void clfix(CLNO cl, CLNO link, DMD *dm)
 
         if (dm->m_16)
         {
-                swp68(link);
+                swpw(link);
                 pos = (long)(cl) << 1;                  /*  M01.01.04   */
                 ixlseek(dm->m_fatofd,pos);
                 ixwrite(dm->m_fatofd,2L,&link);
@@ -71,9 +72,9 @@ void clfix(CLNO cl, CLNO link, DMD *dm)
         /* pre -read */
         ixread(dm->m_fatofd,2L,f);
 
-        swp68(f[0]);
+        swpw(f[0]);
         f[0] = (f[0] & mask) | link;
-        swp68(f[0]);
+        swpw(f[0]);
 
         ixlseek(dm->m_fatofd,pos);
         ixwrite(dm->m_fatofd,2L,f);
@@ -104,13 +105,13 @@ CLNO getcl(int cl, DMD *dm)
         {                               /*  M01.01.04  */
                 ixlseek( dm->m_fatofd , (long)( (long)(cl) << 1 ) ) ;
                 ixread(dm->m_fatofd,2L,f);
-                swp68(f[0]);
+                swpw(f[0]);
                 return(f[0]);
         }
 
         ixlseek(dm->m_fatofd,((long) (cl + (cl >> 1))));
         ixread(dm->m_fatofd,2L,f);
-        swp68(f[0]);
+        swpw(f[0]);
 
         if (cl & 1)
                 cl = f[0] >> 4;

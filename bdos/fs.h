@@ -43,11 +43,6 @@
  *  code macros
  */
 
-extern void s68(int *);
-extern void s68l(long *);
-
-#define swp68(x) s68(&x)
-#define swp68l(x) s68l(&x)
 #define bconstat(a) trap13(1,a)
 #define bconin(a) trap13(2,a)
 #define bconout(a,b) trap13(3,a,b)
