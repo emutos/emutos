@@ -1363,3 +1363,7 @@ Start... early ages
 - bios/screen.c - make use of NVRAM boot resolution setting. Tested on
   ARAnyM (aranym -e -r <X>) and should work also on real Falcon030. (joy)
 - doc/announce.txt - updated for 0.6 release (MAD)
+
+21. Feb. 2003
+- bios/lineainit.c - quick patch to get 8x16 font in all resolutions with
+  screen height >= 400 (joy)

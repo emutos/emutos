@@ -69,8 +69,8 @@ void init_fonts(WORD vmode)
     fon8x8.next_font = &fon8x16;
     fon8x16.next_font = 0;
 
-    /* set current font depending on the video mode */
-    if (vmode == 2) {
+    /* set current font depending on the video mode or the screen height */
+    if (vmode == 2 || v_vt_rez >= 400) {
         cur_font = def_font = &fon8x16;
     } else {
         cur_font = def_font = &fon8x8;
