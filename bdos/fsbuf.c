@@ -38,34 +38,32 @@
 **		to return any error codes.
 */
 
-void flush(b)
-REG BCB *b;
+void flush(BCB *b)
 {
-int	n,d;
-DMD	*dm;
+    int n,d;
+    DMD *dm;
 
-	/* if buffer not in use or not dirty, no work to do */
+    /* if buffer not in use or not dirty, no work to do */
 
-	if ((b->b_bufdrv == -1) || (!b->b_dirty))
-	{
-		b->b_bufdrv = -1;
-		return;
-	}
+    if ((b->b_bufdrv == -1) || (!b->b_dirty)) {
+        b->b_bufdrv = -1;
+	return;
+    }
+    
+    dm = (DMD*) b->b_dm;		/*  media descr for buffer	*/
+    n = b->b_buftyp;
+    d = b->b_bufdrv;
+    b->b_bufdrv = -1;		/* invalidate in case of error */
 
-	dm = (DMD*) b->b_dm;		/*  media descr for buffer	*/
-	n = b->b_buftyp;
-	d = b->b_bufdrv;
-	b->b_bufdrv = -1;		/* invalidate in case of error */
+    rwabs(1,b->b_bufr,1,b->b_bufrec+dm->m_recoff[n],d);
 
-	rwabs(1,b->b_bufr,1,b->b_bufrec+dm->m_recoff[n],d);
+    /* flush to both fats */
 
-	/* flush to both fats */
-
-	if (n == 0) 
-		rwabs(1,b->b_bufr,1,b->b_bufrec+dm->m_recoff[0]-dm->m_fsiz,d);
-
-	b->b_bufdrv = d;			/* re-validate */
-	b->b_dirty = 0;
+    if (n == 0) {
+        rwabs(1,b->b_bufr,1,b->b_bufrec+dm->m_recoff[0]-dm->m_fsiz,d);
+    }
+    b->b_bufdrv = d;			/* re-validate */
+    b->b_dirty = 0;
 }
 
 
@@ -74,10 +72,7 @@ DMD	*dm;
 **	return the ptr to the buffer containing the desired record
 */
 
-char	*getrec(recn,dm,wrtflg)
-	int	recn;
-	int	wrtflg;
-	REG DMD *dm;
+char *getrec(int recn, DMD *dm, int wrtflg)
 {
 	REG BCB *b;
 	BCB	*p,*mtbuf,**q,**phdr;
@@ -151,17 +146,18 @@ doio:		for (p = *(q = phdr); p->b_link; p = *(q = &p->b_link))
 		b->b_bufdrv = dm->m_drvnum;
 		b->b_dm = (long) dm;
 	}
-	else
+	else 
 	{	/* use a buffer, but first validate media */
-		if ((err = trap13(9,b->b_bufdrv)) != 0)
-			if (err == 1)
-				goto doio; /* media may be changed */
-			else if (err == 2)
-			{ /* media definitely changed */
-				errdrv = b->b_bufdrv;
-				rwerr = E_CHNG; /* media change */
-				longjmp(errbuf,rwerr);
-			}
+	    if ((err = trap13(9,b->b_bufdrv)) != 0) {
+	        if (err == 1) {
+		    goto doio; /* media may be changed */
+		} else if (err == 2) {
+		    /* media definitely changed */
+		    errdrv = b->b_bufdrv;
+		    rwerr = E_CHNG; /* media change */
+		    longjmp(errbuf,rwerr);
+		}
+	    }
 	}
 
 	/*
@@ -176,8 +172,9 @@ doio:		for (p = *(q = phdr); p->b_link; p = *(q = &p->b_link))
 	**  if we are writing to the buffer, dirty it.
 	*/
 
-	if (wrtflg)
+	if (wrtflg) {
 		b->b_dirty = 1;
+	}
 
 	return(b->b_bufr);
 }
@@ -187,8 +184,7 @@ doio:		for (p = *(q = phdr); p->b_link; p = *(q = &p->b_link))
 **  packit - pack into user buffer
 */
 
-char	*packit(s,d)
-	REG char *s,*d;
+char *packit(REG char *s, REG char *d)
 { 
 	char *s0;
 	REG int i;
@@ -205,10 +201,11 @@ char	*packit(s,d)
 
 	s = s0 + 8; /* ext */
 
-	if (*s != ' ')
+	if (*s != ' ') {
 		*d++ = '.';
-	else
+	} else {
 		goto pakok;
+	}
 
 	for (i=0; (i < 3) && (*s) && (*s != ' '); i++)
 		*d++ = *s++;

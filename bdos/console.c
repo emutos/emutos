@@ -19,6 +19,8 @@
 #include	"portab.h"			/*  M01.01.02		*/
 #include	"fs.h"
 #include	"bios.h"			/*  M01.01.01		*/
+#include        "proc.h"
+#include        "console.h"
 
 #ifdef	OLDCODE
 /* *************************** typeahead buffer ************************* */
@@ -45,11 +47,21 @@ int	remove[3] ;			/*  index of remove position	  */
 
 int glbcolumn[3];
 
-extern int bios_dev[];
 
-extern PD *run;
+/* 
+ * forward declarations (internal prototypes) 
+ */
 
-extern long trap13();
+static void buflush(int h);
+static long constat(int h);
+static void conbrk(int h);
+static void buflush(int h);
+static void conout(int h, int ch);
+static void cookdout(int h, int ch);
+static long getch(int h);
+static void prt_line(int h, char *p);
+static void newline(int h, int startcol);
+static int backsp(int h, char *cbuf, int retlen, int col);
 
 #define UBWORD(x) (((int) x) & 0x00ff)
 
@@ -68,7 +80,7 @@ extern long trap13();
 #define   bs	  0x08
 #define   space   0x20
 
-#define warmboot xterm(-32)
+#define warmboot() xterm(-32)
 
 
 /**
@@ -77,8 +89,7 @@ extern long trap13();
  * @h - device handle
  */
 
-long
-constat(int h)
+static long constat(int h)
 {
 	if (h > BFHCON)
 		return(0);
@@ -96,8 +107,7 @@ constat(int h)
 ******************************************************************************
 */
 
-long
-xconstat()
+long xconstat(void)
 {
 	return(constat(HXFORM(run->p_uft[0])));
 }
@@ -111,8 +121,7 @@ xconstat()
 ******************************************************************************
 */
 
-long
-xconostat()
+long xconostat(void)
 {
 	return(bconostat(HXFORM(run->p_uft[1])));
 }
@@ -126,8 +135,7 @@ xconostat()
 ******************************************************************************
 */
 
-long
-xprtostat()
+long xprtostat(void)
 {
 	return(bconostat(HXFORM(run->p_uft[4])));
 }
@@ -141,8 +149,7 @@ xprtostat()
 ******************************************************************************
 */
 
-long
-xauxistat()
+long xauxistat(void)
 {
 	return(constat(HXFORM(run->p_uft[3])));
 }
@@ -156,8 +163,7 @@ xauxistat()
 ******************************************************************************
 */
 
-long
-xauxostat()
+long xauxostat(void)
 {
 	return(bconostat(HXFORM(run->p_uft[3])));
 }
@@ -170,7 +176,7 @@ xauxostat()
  * @h - device handle
  */
 
-conbrk(int h)
+static void conbrk(int h)
 {
     register long ch;
     register int stop, c;
@@ -182,7 +188,7 @@ conbrk(int h)
             if ( c == ctrlc )
             {
                 buflush(h);	/* flush BDOS & BIOS buffers */
-                return(warmboot);
+                warmboot();
             }
 
             if ( c == ctrls )
@@ -216,7 +222,7 @@ conbrk(int h)
  * @h - device handle
  */
 
-buflush(int h)
+static void buflush(int h)
 {
 	add[h] = remove[h] = 0;
 }
@@ -229,7 +235,7 @@ buflush(int h)
  * @h - device handle
  */
 
-conout(int h, int ch)
+static void conout(int h, int ch)
 {
     conbrk(h);			/* check for control-s break */
     bconout(h,ch);		/* output character to console */
@@ -253,8 +259,7 @@ conout(int h, int ch)
 ******************************************************************************
 */
 
-xtabout(ch)
-int ch;
+void xtabout(int ch)
 {
 	tabout(HXFORM(run->p_uft[1]),ch);
 }
@@ -268,7 +273,7 @@ int ch;
  * @ch - character to output to console
  */
 
-tabout(int h, int ch)
+void tabout(int h, int ch)
 {
     if (ch == tab)
         do
@@ -287,7 +292,7 @@ tabout(int h, int ch)
  * @ch - character to output to console
  */
 
-cookdout(int h, int ch)
+static void cookdout(int h, int ch)
 {
     if (ch == tab) tabout(h,ch); /* if tab, expand it	*/
     else
@@ -310,8 +315,7 @@ cookdout(int h, int ch)
 ******************************************************************************
 */
 
-long
-xauxout(int ch)
+long xauxout(int ch)
 {
     return(  bconout(HXFORM(run->p_uft[3]),ch)  );
 }
@@ -325,11 +329,9 @@ xauxout(int ch)
 ******************************************************************************
 */
 
-long
-xprtout(ch)
-	int ch;
+long xprtout(int ch)
 {
-	return(  bconout(HXFORM(run->p_uft[4]),ch)  ) ;
+    return(  bconout(HXFORM(run->p_uft[4]),ch)  ) ;
 }
 
 
@@ -340,8 +342,7 @@ xprtout(ch)
  * @h - device handle
  */
 
-long
-getch(int h)
+static long getch(int h)
 {
     long temp;
 
@@ -369,16 +370,13 @@ getch(int h)
 ******************************************************************************
 */
 
-long
-x7in()
+long x7in(void)
 {
-	return(getch(HXFORM(run->p_uft[0])));
+    return(getch(HXFORM(run->p_uft[0])));
 }
 
 
-long
-conin(h)		/* BDOS console input function */
-int h;
+long conin(int h)		/* BDOS console input function */
 {
     long ch;
 
@@ -395,14 +393,13 @@ int h;
 ******************************************************************************
 */
 
-long
-xconin()
+long xconin(void)
 {
-	int h;
+    int h;
 
-	h = HXFORM( run->p_uft[0] );
-	conbrk( h );
-	return( conin( h ) );
+    h = HXFORM( run->p_uft[0] );
+    conbrk( h );
+    return( conin( h ) );
 }
 
 /*****************************************************************************
@@ -414,19 +411,19 @@ xconin()
 ******************************************************************************
 */
 
-long
-x8in()
+long x8in(void)
 {
-	register int h;
-	register long ch;
+    register int h;
+    register long ch;
 
-	h = HXFORM(run->p_uft[0]);
-	conbrk(h);
-	ch = getch(h);
-	if ((ch & 0xFF) == ctrlc)
-		warmboot;
-	else
-		return(ch);
+    h = HXFORM(run->p_uft[0]);
+    conbrk(h);
+    ch = getch(h);
+    if ((ch & 0xFF) == ctrlc) {
+        warmboot();
+    } else {
+        return(ch);
+    }
 }
 
 /*****************************************************************************
@@ -438,10 +435,9 @@ x8in()
 ******************************************************************************
 */
 
-long
-xauxin()
+long xauxin(void)
 {
-	return(bconin(HXFORM(run->p_uft[3])));
+    return(bconin(HXFORM(run->p_uft[3])));
 }
 
 /*****************************************************************************
@@ -453,25 +449,23 @@ xauxin()
 ******************************************************************************
 */
 
-long
-rawconio(parm)
-int parm;
+long rawconio(int parm)
 {
-	int i;
+    int i;
 
-	if (parm == 0xFF)
-	{
-		i = HXFORM(run->p_uft[0]);
-		return(constat(i) ? getch(i) : 0L);
-	}
-	bconout(HXFORM(run->p_uft[1]), parm);
+    if (parm == 0xFF) {
+	i = HXFORM(run->p_uft[0]);
+	return(constat(i) ? getch(i) : 0L);
+    }
+    bconout(HXFORM(run->p_uft[1]), parm);
+    return 0; /* dummy */
 }
 
 /**
  * xprt_line - Function 0x09 - Print line up to nul with tab expansion
  */
 
-xprt_line(char *p)
+void xprt_line(char *p)
 {
     prt_line(HXFORM(run->p_uft[1]),p);
 }
@@ -482,7 +476,7 @@ xprt_line(char *p)
  * prt_line - print line to stdout
  */
 
-prt_line(int h, char *p)
+static void prt_line(int h, char *p)
 {
     while( *p ) tabout( h, *p++ );
 }
@@ -495,8 +489,7 @@ prt_line(int h, char *p)
 
 /* Two subroutines first */
 
-newline(h,startcol)
-int startcol,h;
+static void newline(int h, int startcol)
 {
     conout(h,cr);			/* go to new line */
     conout(h,lf);
@@ -507,12 +500,9 @@ int startcol,h;
     }
 }
 
-
-backsp(h,cbuf,retlen, col) /* backspace one character position */
-int h;
-int retlen;
-char *cbuf;
-int col;			/* starting console column	*/
+/* backspace one character position */
+/* col is the starting console column */
+static int backsp(int h, char *cbuf, int retlen, int col) 
 {
     register char	ch;		/* current character		*/
     register int	i;
@@ -550,16 +540,14 @@ int col;			/* starting console column	*/
 ******************************************************************************
 */
 
-readline(p)
-char *p; /* max length, return length, buffer space */
+/* p is: max length, return length, buffer space */
+void readline(char *p)
 {
-	p[1] = cgets(HXFORM(run->p_uft[0]),(((int) p[0]) & 0xFF),&p[2]);
+    p[1] = cgets(HXFORM(run->p_uft[0]),(((int) p[0]) & 0xFF),&p[2]);
 }
 
-cgets(h,maxlen,buf)
-int h;	/* h is special handle denoting device number */
-int maxlen;
-char *buf;
+/* h is special handle denoting device number */
+int cgets(int h, int maxlen, char *buf)
 {
 	char ch;
 	int i,stcol,retlen;
@@ -575,7 +563,7 @@ char *buf;
 			case rub:
 				retlen = backsp(h,buf,retlen,stcol);
 				break;
-			case ctrlc: warmboot;
+			case ctrlc: warmboot();
 			case ctrlx:
 				do retlen = backsp(h,buf,retlen,stcol);
 				while (retlen);

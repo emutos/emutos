@@ -49,9 +49,9 @@ BUILDDATE=$(shell LANG=C date +"%d. %b. %Y")
 # Linker with relocation information and binary output (image)
 LD = m68k-atari-mint-ld
 LDFLAGS = -L/usr/lib/gcc-lib/m68k-atari-mint/2.95.3/mshort -lgcc
-LDFLROM = -Ttext=0xfc0000 -Tdata=0xfd0000 -Tbss=0x000000 
-LDFLRAM = -Ttext=0x10000 -Tdata=0x20000 -Tbss=0x000000 
-LDFLFAL = -Ttext=0xe00000 -Tdata=0xe40000 -Tbss=0x000000 
+LDFLROM = -Ttext=0xfc0000 -Tbss=0x000000 
+LDFLRAM =  -Ttext=0x10000 -Tbss=0x000000 
+LDFLFAL = -Ttext=0xe00000 -Tbss=0x000000 
 
 
 # Assembler with options for Motorola like syntax (68000 cpu)
@@ -62,12 +62,10 @@ ASFLAGS = --register-prefix-optional -m68000 $(ASINC)
 # C compiler for MiNT
 CC = m68k-atari-mint-gcc
 INC = -Iinclude
-# no -Wall for bdos right now...
-CFLAGS = -O -mshort -m68000 $(LOCALCONF) -DBUILDDATE="\"$(BUILDDATE)\"" $(INC) 
-CFLAGS020 = -O -mshort -m68020 $(LOCALCONF) -DBUILDDATE="\"$(BUILDDATE)\"" $(INC) 
+CFLAGS = -O -Wall -mshort -m68000 $(LOCALCONF) -DBUILDDATE="\"$(BUILDDATE)\"" $(INC) 
+CFLAGS020 = -O -Wall -mshort -m68020 $(LOCALCONF) -DBUILDDATE="\"$(BUILDDATE)\"" $(INC) 
 
 CPPFLAGS = $(INC)
-CPP = $(CC) -E -x assembler
 
 # The objdump utility (disassembler)
 OBJDUMP=m68k-atari-mint-objdump
@@ -264,37 +262,37 @@ po/messages.pot: bug$(EXE)
 #
 
 obj/%.o : bios/%.c
-	${CC} ${CFLAGS} -Wall -c -Ibios $< -o $@
+	${CC} ${CFLAGS} -c -Ibios $< -o $@
 
 obj/processor.o : bios/processor.S
-	${CC} ${CFLAGS020} -Wall -c -Ibios $< -o $@
+	${CC} ${CFLAGS020} -c -Ibios $< -o $@
 
 obj/%.o : bios/%.S
-	${CC} ${CFLAGS} -Wall -c -Ibios $< -o $@
+	${CC} ${CFLAGS} -c -Ibios $< -o $@
 
 obj/%.o : bdos/%.c
 	${CC} ${CFLAGS} -c -Ibdos $< -o $@
 
 obj/%.o : bdos/%.S
-	${CC} ${CFLAGS} -Wall -c -Ibios $< -o $@
+	${CC} ${CFLAGS} -c -Ibios $< -o $@
 
 obj/%.o : util/%.c
-	${CC} ${CFLAGS} -Wall -c -Iutil $< -o $@
+	${CC} ${CFLAGS} -c -Iutil $< -o $@
 
 obj/%.o : util/%.S
-	${CC} ${CFLAGS} -Wall -c -Ibios $< -o $@
+	${CC} ${CFLAGS} -c -Ibios $< -o $@
 
 obj/%.o : cli/%.c
-	${CC} ${CFLAGS} -Wall -c $< -o $@
+	${CC} ${CFLAGS} -c $< -o $@
 
 obj/%.o : cli/%.S
-	${CC} ${CFLAGS} -Wall -c $< -o $@
+	${CC} ${CFLAGS} -c $< -o $@
 
 obj/%.o : vdi/%.c
-	${CC} ${CFLAGS} -Wall -c $< -o $@
+	${CC} ${CFLAGS} -c $< -o $@
 
 obj/%.o : vdi/%.S
-	${CC} ${CFLAGS} -Wall -c $< -o $@
+	${CC} ${CFLAGS} -c $< -o $@
 
 
 

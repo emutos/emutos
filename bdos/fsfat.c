@@ -24,9 +24,7 @@
 **	M01.0.1.03
 */
 
-RECNO	cl2rec(cl,dm)
-	CLNO	cl;
-	DMD	*dm;
+RECNO cl2rec(CLNO cl, DMD *dm)
 {
 	return(cl * dm->m_clsiz);
 }
@@ -42,9 +40,7 @@ RECNO	cl2rec(cl,dm)
 **	M01.01.03
 */
 
-VOID	clfix(cl,link,dm)
-	CLNO	cl,link;
-	DMD *dm;
+void clfix(CLNO cl, CLNO link, DMD *dm)
 {
 	int f[1],mask;
 	long pos;
@@ -97,9 +93,7 @@ VOID	clfix(cl,link,dm)
 **	M01.0.1.03
 */
 
-CLNO	getcl(cl,dm)
-	int cl;
-	DMD *dm;
+CLNO getcl(int cl, DMD *dm)
 {
 	unsigned f[1];
 
@@ -143,9 +137,7 @@ CLNO	getcl(cl,dm)
 **
 */
 
-nextcl(p,wrtflg)
-	OFD *p;
-	int wrtflg;
+int nextcl(OFD *p, int wrtflg)
 {
 	DMD	*dm ;
 	CLNO	i ;
@@ -156,17 +148,14 @@ nextcl(p,wrtflg)
 	cl = p->o_curcl;
 	dm = p->o_dmd;
 
-	if((int)(cl) < 0)
-	{
-		cl2 = cl + 1;
-		goto retcl;
+	if((int)(cl) < 0) {
+	    cl2 = cl + 1;
+	    goto retcl;
+	} else if((int)(cl) > 0) {
+	    cl2 = getcl(cl,dm);
+	} else { /* was  if (cl == 0) */
+	    cl2 = (p->o_strtcl ? p->o_strtcl : 0xffff );
 	}
-
-	if((int)(cl) > 0)
-		cl2 = getcl(cl,dm);
-
-	if (cl == 0)
-		cl2 = (p->o_strtcl ? p->o_strtcl : 0xffff );
 
 	if (wrtflg && (cl2 == 0xffff ))
 	{ /* end of file, allocate new clusters */
@@ -212,18 +201,15 @@ retcl:	p->o_curcl = cl2;
 
 
 
-
 /*	Function 0x36	d_free
-
+	        get disk free space data into buffer *
 	Error returns
 		ERR
 
 	Last modified	SCC	15 May 85
 */
 
-long	xgetfree(buf,drv) /*+ get disk free space data into buffer */
-	int	drv;
-	long	*buf;
+long xgetfree(long *buf, int drv) 
 {
 	int i,free;
 	DMD *dm;
@@ -244,5 +230,4 @@ long	xgetfree(buf,drv) /*+ get disk free space data into buffer */
 	*buf++ = (long)(dm->m_clsiz);
 	return(E_OK);
 }
-
 

@@ -12,7 +12,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
+#ifndef _BIOS_H
+#define _BIOS_H
 
 /*
  *  externs declarations
@@ -121,6 +122,7 @@ PD
  *  BPB - Bios Parameter Block
  */
 
+#ifndef BPB
 #define BPB struct _bpb
 
 BPB /* bios parameter block */
@@ -135,7 +137,7 @@ BPB /* bios parameter block */
     int	numcl;		/* number of data clusters available */
     int	b_flags;
 } ;
-
+#endif
 
 /*
  *  flags for BPB
@@ -149,7 +151,6 @@ BPB /* bios parameter block */
  */
 
 #ifndef BCB
-
 #define BCB struct _bcb
 
 
@@ -236,3 +237,5 @@ MPB
 
 extern	long	setjmp(long *);
 extern	VOID	longjmp(long *, long);
+
+#endif /* _BIOS_H */

@@ -15,6 +15,11 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+#if 1 /* TODO, check if gcc, and what version */
+#define NORETURN __attribute__ ((noreturn))
+#else
+#define NORETURN 
+#endif
 
 
 /*
@@ -40,10 +45,13 @@
  *  code macros
  */
 
+extern void s68(int *);
+extern void s68l(long *);
+
 #define swp68(x) s68(&x)
 #define swp68l(x) s68l(&x)
 #define NULPTR ((void *) 0)
-#define MGET(x) ((x *) xmgetblk((sizeof(x) + 15)>>4))
+// #define MGET(x) ((x *) xmgetblk((sizeof(x) + 15)>>4))
 #define bconstat(a) trap13(1,a)
 #define bconin(a) trap13(2,a)
 #define bconout(a,b) trap13(3,a,b)
@@ -297,6 +305,7 @@ DTAINFO
 	char	dt_fname[12] ;	/*  file name from fcb		30-41	*/
 } ;				/*    includes null terminator		*/
 
+#include "bios.h"
 
 
 /******************************************
@@ -361,9 +370,7 @@ extern	BCB	*bufl[2] ;		/*  in bios main.c		*/
 extern	unsigned int	time, date ;
 extern	int	bios_dev[] ;		/*  in fsfioctl.c		*/
 
-extern   int   *xmgetblk(int);  /* LVL: prototype needed in macro MGET() */
-extern	long	trap13();
-extern	long	constat();
+extern	long	trap13(int, ...);
 
 
 
@@ -371,28 +378,126 @@ extern	long	constat();
  * Forward Declarations
  */
 
-DND	*dcrack() ;
-FCB	*scan(REG DND *dnd, BYTE *n, WORD att, LONG *posp);
-DND	*findit() ;
-DMD	*getdmd() ;
-OFD	*getofd() ;
-FCB	*dirinit() ;
-OFD	*makofd() ;
-char	*packit() ;
-DND	*makdnd() ;
-char	*getrec() ;
-VOID	movs() ;
-VOID	xfr2usr() ;
-VOID	usr2xfr() ;
-BYTE	uc(BYTE c);
 
+/* 
+ * in fsdrive.c 
+ */
+
+/* check the drive, see if it needs to be logged in. */
+long ckdrv(int d);
+
+/* allocate storage for and initialize a DMD */
+DMD  *getdmd(int drv);
+
+/* log in media 'b' on drive 'drv'. */
+long log(BPB *b, int drv);
+
+/*
+ * in fshand.c
+ */
+
+long xforce(int std, int h);
+long ixforce(int std, int h, PD *p);
+
+/* ??? */
+int syshnd(int h);
+
+/* ??? */
+void ixdirdup(int h, int dn, PD *p);
+
+/* duplicate a file handle. */
+long dup(long h);
+
+/*
+ * in fsopnclo.c
+ */
+
+/* create file with specified name, attributes */
+long xcreat(char *name, char attr);
+long ixcreat(char *name, char attr);
+
+/* open a file (path name) */
+long xopen(char *name, int mod);
+
+/* Close a file */
+long xclose(int h);
+long ixclose(OFD *fd, int part);
+
+/* remove a file */
+long xunlink(char *name);
+/* internal delete file. */
+long ixdel(DND *dn, FCB *f, long pos);
+
+/*
+ * in fsbuf.c
+ */
+
+/* ??? */
+void flush(BCB *b);
+/* return the ptr to the buffer containing the desired record */
+char *getrec(int recn, DMD *dm, int wrtflg);
+/* pack into user buffer */
+char *packit(REG char *s, REG char *d);
+
+/*
+ * in fsfat.c
+ */
+
+RECNO cl2rec(CLNO cl, DMD *dm);
+void clfix(CLNO cl, CLNO link, DMD *dm);
+CLNO getcl(int cl, DMD *dm);
+int nextcl(OFD *p, int wrtflg);
+long xgetfree(long *buf, int drv);
+
+/* 
+ * in fsio.c
+ */
+
+/* seek to byte position n on file with handle h */
+long xlseek(int n, long h, int flg);
+long ixlseek(OFD *p, long n);
+
+long xread(int h, long len, void *ubufr);
+long ixread(OFD *p, long len, void *ubufr);
+
+long xwrite(int h, long len, void *ubufr);
+long ixwrite(OFD *p, long len, void *ubufr);
+
+/*
+ * in fsdir.c
+ */
+
+long xmkdir(char *s);
+long xrmdir(char *p);
+long xchmod(char *p, int wrt, char mod);
 long ixsfirst(char *name, REG WORD att, REG DTAINFO *addr);
+long xsfirst(char *name, int att);
+long xsnext(void); 
+void xgsdtof(int *buf, int h, int wrt);
+void builds( char *s1 , char *s2 );
+long xrename(int n, char *p1, char *p2);
+long xchdir(char *p);
+long xgetdir(char *buf, int drv);
+FCB *dirinit(DND *dn);
+DND *findit(char *name, char **sp, int dflag);
+FCB *scan(REG DND *dnd, BYTE *n, WORD att, LONG *posp);
 
-long xread(), xwrite(), xlseek(), xrw();
-long ixread(), ixwrite(), ixlseek(), ixforce();
+/*
+ * in fsmain.c
+ */
 
-long ixcreat(), ixopen(), ixdel(), ixclose();
-long makopn(), log(), opnfil();
+void xfr2usr(int n, char *s, char *d);
+void usr2xfr(int n, char *d, char *s);
+BYTE uc(REG BYTE c);
+char *xgetdta(void);
+void xsetdta(BYTE *addr);
+long xsetdrv(int drv);
+long xgetdrv(void); 
+OFD  *makofd(REG DND *p);
+OFD  *getofd(int h);
+int  divmod(int *modp, int divdnd, long divsor);
+
+
 
 /********************************
 **

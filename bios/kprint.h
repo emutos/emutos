@@ -28,5 +28,7 @@ extern void cputs( char *s );
 /* native debugging output */
 extern int kprintf(const char *fmt, ...) PRINTF_STYLE;
 
+extern void kpanic(const char *fmt, ...) PRINTF_STYLE;
+
 #endif /* _KPRINT_H */
 

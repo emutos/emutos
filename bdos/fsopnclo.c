@@ -52,7 +52,18 @@
 #include "bios.h"
 #include "gemerror.h"
 #include "btools.h"      
+#include "mem.h"
 
+/*
+ * forward prototypes
+ */
+
+static long ixopen(char *name, int mod);
+static long opnfil(FCB *f, DND *dn, int mod);
+static long makopn(FCB *f, DND *dn, int h, int mod);
+static FTAB *sftsrch(int field, char *ptr);
+static void sftdel(FTAB *sftp);
+static BOOLEAN match1(char *ref, char *test);
 
 /*
 **  used in calls to sftsrch to distinguish which field we are matching on
@@ -90,11 +101,8 @@
 **	Last modified	SCC	13 May 85
 */
 
-long	xcreat(name,attr) 
-	char *name;
-	char attr;
+long	xcreat(char *name, char attr) 
 {
-	long	ixcreat() ;
 	return(ixcreat(name, attr & 0xEF));
 }
 
@@ -102,10 +110,10 @@ long	xcreat(name,attr)
 /*	
 **  ixcreat - internal routine for creating files
 */
-
-long ixcreat(name,attr)
-	char	*name;		/*  path name of file			*/
-	char	attr;		/*  attibutes				*/
+/*  name: path name of file
+ *  attr: atttributes
+ */		
+long ixcreat(char *name, char attr)
 {
 	REG DND *dn;
 	REG OFD *fd;
@@ -138,7 +146,7 @@ long ixcreat(name,attr)
 	/* is it already there ? */
 
 	pos = 0;
-	if (f = scan(dn,s,-1,&pos))
+	if ( (f = scan(dn,s,-1,&pos)) )
 	{
 							 /* M01.01.0730.01   */
 		if ( (f->f_attrib & (FA_SUBDIR | FA_RO)) || (attr == FA_SUBDIR) )
@@ -211,12 +219,8 @@ long ixcreat(name,attr)
 **	Last modified	SCC	5 Apr 85
 */
 
-long	xopen(name,mod) 
-	char	*name;
-	int	mod;		
+long	xopen(char *name, int mod) 
 {
-	long	ixopen() ;
-
 	return (ixopen (name, mod));
 }
 
@@ -228,9 +232,8 @@ long	xopen(name,mod)
 **	>0 = file handle
 */
 
-long	ixopen(name, mod)
-	char	*name;
-	int	mod;
+static long 
+ixopen(char *name, int mod)
 {
 	FCB *f;
 	DND *dn;
@@ -270,10 +273,7 @@ long	ixopen(name, mod)
 **		make i a REG int.
 */
 
-long	opnfil(f, dn, mod)
-	FCB *f;
-	DND *dn;
-	int mod;
+static long opnfil(FCB *f, DND *dn, int mod)
 {
 	REG int i;
 	int h;
@@ -302,11 +302,7 @@ long	opnfil(f, dn, mod)
 **	Last modified	SCC	8 Apr 85
 */
 
-long	makopn(f, dn, h, mod) 
-	FCB *f;
-	DND *dn;
-	int h;
-	int mod;
+static long makopn(FCB *f, DND *dn, int h, int mod) 
 {
 	REG OFD *p;
 	REG OFD *p2;
@@ -363,9 +359,11 @@ long	makopn(f, dn, h, mod)
 **	NULL
 */
 
-FTAB	*sftsrch( field , ptr )
-	int	field ; 	/*  which field to match on		*/
-	char	*ptr ;		/*  ptr to match on			*/
+/* field: which field to match on 
+ * ptr: ptr to match on 
+ */
+
+static FTAB *sftsrch(int field, char *ptr)
 {
 	REG FTAB	*sftp ; /*  scan ptr for sft			*/
 	REG int 	i ;
@@ -387,7 +385,7 @@ FTAB	*sftsrch( field , ptr )
 				;
 			break ;
 		default:
-			i = OPNFILES ;	/* setup for null return  */
+			return (FTAB *)NULLPTR;
 	}
 	return( i >= OPNFILES ? (FTAB *)NULLPTR : sftp ) ;	/* M01.01.1023.03 */
 }
@@ -397,8 +395,7 @@ FTAB	*sftsrch( field , ptr )
 **	have the same ofd, free up the OFD, also.
 */
 
-VOID	sftdel( sftp )
-	FTAB	*sftp ;
+static void sftdel( FTAB *sftp )
 {
 	REG FTAB	*s ;
 	REG OFD 	*ofd ;
@@ -434,8 +431,7 @@ VOID	sftdel( sftp )
 **		of ixclose(), but I am leaving the flow of control intact.
 */
 
-long	xclose(h)
-	int h;
+long xclose(int h)
 {
 	int h0;
 	OFD *fd;
@@ -493,9 +489,7 @@ long	xclose(h)
 #define CL_DIR 0x0002	/* this is a directory file, flush, do not free */
 #define CL_FULL 0x0004	/* even though its a directory, full close */
 
-long	ixclose(fd,part)
-	REG OFD *fd;
-	int part;
+long	ixclose(OFD *fd, int part)
 {					/*  M01.01.03			*/
 	OFD *p,**q;
 	long tmp;
@@ -573,8 +567,7 @@ long	ixclose(fd,part)
 **
 */
 
-long	xunlink(name) 
-	char *name;		/*  path name of file to delete 	*/
+long xunlink(char *name) 
 {
 	REG DND *dn;
 	REG FCB *f;
@@ -621,14 +614,11 @@ long	xunlink(name)
 ** 
 */
 
-long	ixdel(dn,f,pos)
-	DND	*dn;
-	FCB	*f;
-	long	pos;
+long ixdel(DND *dn, FCB *f, long pos)
 {
 	REG OFD *fd;
 	DMD *dm;
-	REG n2;
+	REG int n2;
 	int n;
 	char c;
 
@@ -685,9 +675,7 @@ long	ixdel(dn,f,pos)
 **	by scc
 */
 
-BOOLEAN match1( ref , test )
-	REG char	*ref;
-	char		*test ;
+static BOOLEAN match1(char *ref, char *test)
 {
 	REG char	*t ;
 

@@ -18,13 +18,23 @@
 #include "fs.h"
 #include "bios.h"				/*  M01.01.02	*/
 #include "mem.h"
+#include "proc.h"
 #include "gemerror.h"
 #include "btools.h"
 #include "../bios/kprint.h"
 
 #define DBGPROC 1
 
+/*
+ * forward prototypes
+ */
 
+static void ixterm( PD *r );
+static WORD envsize( char *env );
+
+/*
+ * global variables
+ */
 
 PD	*run;           /* ptr to PD for current process */
 WORD	supstk[SUPSIZ]; /* common sup stack for all processes*/
@@ -39,7 +49,7 @@ long	bakbuf[3];      /*  longjump buffer */
  * @r: PD of process to terminate
  */
 
-void	ixterm( PD *r )
+static void	ixterm( PD *r )
 {
     REG MD *m,
     **q;
@@ -91,7 +101,7 @@ void	ixterm( PD *r )
  * double null.
  */
 
-WORD	envsize( char *env )
+static WORD envsize( char *env )
 {
     REG char	*e ;
     REG WORD 	cnt ;
@@ -116,19 +126,22 @@ WORD	envsize( char *env )
  * @v:   environment
  */
 
+#warning "(I don't know how to get rid of "
+#warning "the following three warnings)"
 
 long	xexec(WORD flg, char *s, char *t, char *v)
 {	
     PD	*p;
     char *b, *e;
     WORD i, h;			/*  M01.01.04		*/
-    WORD cnt ;
     long rc, max;
     MD	*m, *env;
     long *spl;
 #if	!M0101082703
     WORD	*spw;
 #endif
+    /* unused     WORD cnt ; */
+
 
     m = env = 0L ;
 
@@ -137,7 +150,7 @@ long	xexec(WORD flg, char *s, char *t, char *v)
      */
 
 #if	DBGPROC
-    kprintf("BDOS: xexec - flag or mode = %lx \n", flg);
+    kprintf("BDOS: xexec - flag or mode = %d\n", flg);
 #endif
 
     if (flg == 6)   /* (not really) implement newer mode 6 */
@@ -162,7 +175,7 @@ long	xexec(WORD flg, char *s, char *t, char *v)
     /* LVL xmovs(sizeof(errbuf),errbuf,bakbuf); */
     memcpy(bakbuf, errbuf, sizeof(errbuf));
 
-    if (rc = setjmp(errbuf))
+    if ( (rc = setjmp(errbuf)) )
     {
         /* Free any memory allocated to this program. */
         if (flg != 4)		/* did we allocate any memory? */
@@ -283,15 +296,16 @@ long	xexec(WORD flg, char *s, char *t, char *v)
      * tpa limits, filled in with start addrs,lens
      */
 
-    if((flg == 0) || (flg == 3))
-        if (rc = xpgmld(s,t))
+    if((flg == 0) || (flg == 3)) {
+        if ( (rc = xpgmld(s, (PD *)t)) )
         {
 #if	DBGPROC
-            kprintf("cmain: error returned from xpgmld = %lx \n", rc);
+            kprintf("cmain: error returned from xpgmld = 0x%lx\n", rc);
 #endif
             ixterm((PD*)t);
             return(rc);
         }
+    }
 
     if ((flg == 0) || (flg == 4))
     {
@@ -329,7 +343,7 @@ long	xexec(WORD flg, char *s, char *t, char *v)
     /* sub-func 3 and 5 return here */
 
 #if	DBGPROC
-    kprintf("BDOS: xexec - return code = %lx \n", t);
+    kprintf("BDOS: xexec - return code = 0x%lx \n", (long) t);
 #endif
     return( (long) t );
 }
@@ -349,7 +363,7 @@ long	xexec(WORD flg, char *s, char *t, char *v)
  *  without a return code
  */
 
-void	x0term()
+void x0term(void)
 {
     xterm(0);
 }
@@ -362,8 +376,7 @@ void	x0term()
  *	Function 0x4C	p_term
  */
 
-void	xterm(rc)
-	UWORD	rc;
+void	xterm(UWORD rc)
 {
 	PD *r;
 
@@ -381,9 +394,7 @@ void	xterm(rc)
 **	Function 0x31	p_termres
 */
 
-WORD	xtermres(blkln,rc)
-	WORD	rc;
-	long	blkln;
+WORD	xtermres(long blkln, WORD rc)
 {
 	MD *m,**q;
 

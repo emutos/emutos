@@ -387,6 +387,7 @@
 #include	"portab.h"
 #include	"fs.h"
 #include	"bios.h"		
+#include        "mem.h"
 #include	"gemerror.h"
 
 
@@ -396,7 +397,7 @@
  *  xfr2usr -
  */
 
-VOID    xfr2usr(REG int n, REG char *s, REG char *d)
+void   xfr2usr(REG int n, REG char *s, REG char *d)
 {
     while (n--)
         *d++ = *s++;
@@ -408,7 +409,7 @@ VOID    xfr2usr(REG int n, REG char *s, REG char *d)
  *  usr2xfr -
  */
 
-VOID    usr2xfr(REG int n, REG char *d, REG char *s)
+void    usr2xfr(REG int n, REG char *d, REG char *s)
 {
     while (n--)
         *d++ = *s++;
@@ -431,7 +432,7 @@ BYTE    uc(REG BYTE c)
  *  xgetdta - Function 0x2F	f_getdta
  */
 
-char    *xgetdta()      /* return address of dta */
+char    *xgetdta(void)      /* return address of dta */
 {
 	return(run->p_xdta);
 }
@@ -479,7 +480,7 @@ long	xsetdrv(int drv)
 **	Last modified	SCC	1 May 85
 */
 
-long	xgetdrv() 
+long	xgetdrv(void) 
 {
 	return(run->p_curdrv);
 }
@@ -489,8 +490,7 @@ long	xgetdrv()
 **  makofd -
 */
 
-OFD	*makofd(p)
-	REG DND *p;
+OFD	*makofd(REG DND *p)
 {
 	REG OFD *f;
 
@@ -516,8 +516,7 @@ OFD	*makofd(p)
 **  getofd -
 */
 
-OFD	*getofd(h)
-	int h;
+OFD	*getofd(int h)
 {
 	return(sft[syshnd(h)].f_ofd);
 }
@@ -533,10 +532,8 @@ OFD	*getofd(h)
 **	pointed to by the third argument.
 */
 
-int	divmod(modp,divdnd,divsor)
-	REG int 	*modp;
-	REG int 	divsor; /* divsor is log2 of actual divisor */
-	REG long	divdnd;
+/* divsor is log2 of actual divisor */
+int	divmod(int *modp, int divdnd, long divsor)
 {
 	*modp = divdnd & logmsk[divsor];
 

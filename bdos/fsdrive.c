@@ -36,8 +36,16 @@
 #include	    "portab.h"
 #include	    "fs.h"
 #include	    "bios.h"		    /*	M01.01.01		    */
+#include            "mem.h"
 #include	    "gemerror.h"
 #include	"../bios/kprint.h"
+
+
+/*
+ * forward prototypes 
+ */
+
+static int log2(int);
 
 /*
  **	globals
@@ -99,7 +107,7 @@ long    ckdrv(int d)
         drvsel |= mask;
     }
 
-    if ((!run->p_curdir[d]) || (!dirtbl[run->p_curdir[d]]))
+    if ((!run->p_curdir[d]) || (!dirtbl[(int)(run->p_curdir[d])]))
     {	    /* need to allocate current dir on this drv */
 
         for (i = 1; i < NCURDIR; i++)   /*	find unused slot    */
@@ -123,8 +131,7 @@ long    ckdrv(int d)
 **	getdmd - allocate storage for and initialize a DMD
 */
 
-DMD     *getdmd(drv)
-        int drv;
+DMD     *getdmd(int drv)
 {
         DMD *dm;
 
@@ -157,9 +164,11 @@ fredm:  xmfreblk (dm);
 **
 */
 
-long    log(b,drv)
-        BPB *b;		    /*	bios parm block for drive	    */
-        int drv;		    /*	drive number			    */
+/* b: bios parm block for drive
+ * drv: drive number
+ */
+
+long    log(BPB *b, int drv)
 {
         OFD *fo,*f; 			    /*	M01.01.03   */
         DND *d;
@@ -225,15 +234,15 @@ long    log(b,drv)
 **	    return log base 2 of n
 */
 
-int     log2(n)
-        int n;
+static int log2(int n)
 {
-        int i;
+    int i;
 
-        for (i = 0; n ; i++)
-                n >>= 1;
+    for (i = 0; n ; i++) {
+        n >>= 1;
+    }
 
-        return(i-1);
+    return(i-1);
 }
 
 

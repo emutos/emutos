@@ -12,7 +12,6 @@
  */
 
 
-
 #ifndef DBGUMEM
 #define DBGUMEM 1
 #endif
@@ -24,7 +23,6 @@
 #include "gemerror.h"
 #include "../bios/kprint.h"
 
-
 #ifdef DBGUMEM
 static void dump_mem_map(void)
 {
@@ -32,7 +30,7 @@ static void dump_mem_map(void)
   int i;
   
   kprintf("===mem_dump==========================\n");
-  kprintf("| mp_mfl = 0x%08lx {\n|   ", m = pmd.mp_mfl);
+  kprintf("| mp_mfl = 0x%08lx {\n|   ", (long)(m = pmd.mp_mfl));
   i = 0;
   for(; m != NULL ; m = m->m_link) {
     if(i >= 3) {
@@ -43,7 +41,7 @@ static void dump_mem_map(void)
     kprintf("[0x%06lx, 0x%06lx], ", m->m_start, m->m_length); 
   }
   kprintf("\n| }\n");
-  kprintf("| mp_mal = 0x%08lx {\n|   ", m = pmd.mp_mal);
+  kprintf("| mp_mal = 0x%08lx {\n|   ",  (long)(m = pmd.mp_mal));
   i = 0;
   for(; m != NULL ; m = m->m_link) {
     if(i >= 3) {
@@ -54,7 +52,7 @@ static void dump_mem_map(void)
     kprintf("[0x%06lx, 0x%06lx], ", m->m_start, m->m_length);
   }
   kprintf("\n| }\n");
-  kprintf("| mp_rover = 0x%08lx\n", pmd.mp_rover);
+  kprintf("| mp_rover = 0x%08lx\n",  (long)(pmd.mp_rover));
   kprintf("===/mem_dump==========================\n");
 }
 #endif
@@ -149,7 +147,7 @@ long	xmfree(long addr)
  *  len - length of block to free
  */
 
-long	xsetblk(int n, char *blk, long len)
+long	xsetblk(int n, void *blk, long len)
 {
     MD *m,*p;
 

@@ -17,7 +17,9 @@
 #include	"bios.h"		/*  M01.01.01			*/
 #include	"gemerror.h"
 
-
+/* 
+ * forward prototypes
+ */
 
 
 /*
@@ -31,22 +33,20 @@
 **	Last modified	SCC	5 Apr 85
 */
 
-long	xforce(std,h)
-	int std,h;
+long	xforce(int std, int h)
 {
-	long	ixforce() ;
 	return(ixforce(std,h,run));
 }
 
 /*
-**  ixforce - force a std handle to a non-std handle.
-**	if the std handle is for an open non-char device, close it
-*/
+ *  ixforce - force a std handle to a non-std handle.
+ *	if the std handle is for an open non-char device, close it
+ *
+ * std must	be a standard handle
+ * h   must NOT be a standard handle	
+ */
 
-long	ixforce(std,h,p)	
-	PD *p;			
-	int std;		/* std must	be a standard handle	*/
-	int h;			/* h   must NOT be a standard handle	*/
+long	ixforce(int std, int h, PD *p)	
 {
 	long fh;
 
@@ -80,8 +80,7 @@ long	ixforce(std,h,p)
 **  syshnd -
 */
 
-syshnd(h)
-	int h;
+int syshnd(int h)
 {
 	if (h >= NUMSTD)
 		return(h-NUMSTD);
@@ -95,13 +94,13 @@ syshnd(h)
 
 
 /*
-**  ixdirdup -
-*/
+ *  ixdirdup -
+ *
+ * h: file handle
+ * dn: directory number
+ */
 
-ixdirdup(h,dn,p)
-	PD *p;
-	int h;			/* file handle				*/
-	int dn; 		/* directory number			*/
+void ixdirdup(int h, int dn, PD *p)
 {
 	p->p_curdir[h] = dn;
 	diruse[dn]++;
@@ -121,8 +120,9 @@ ixdirdup(h,dn,p)
 **	Last modified	SCC	 5 Apr 85
 */
 
-long	dup(h)	
-	long h;			/*+ h must be a standard handle (checked) */
+/*+ h must be a standard handle (checked) */
+
+long	dup(long h)	
 {
 	register int i;
 

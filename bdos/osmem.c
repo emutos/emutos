@@ -75,24 +75,24 @@ long	dbggtblk = 0 ;
  *  n -  number of words
  */
 
-int	*getosm(int n)
+static int *getosm(int n)
 {
-	int *m;
+    int *m;
 
-	if( n > osmlen ) 
-	{
-		/*  not enough room  */
+    if( n > osmlen ) 
+    {
+      /*  not enough room  */
 #if	OSMPANIC
-		mgtpanic( root , 20 ) ; /*  will not return		*/
+        mgtpanic( root , 20 ) ; /*  will not return		*/
 #endif
-		dbggtosm++ ;
-		return(0);
-	}
+	dbggtosm++ ;
+	return(0);
+    }
 
-	m = &osmem[osmptr];		/*  start at base		*/
-	osmptr += n;			/*  new base			*/
-	osmlen -= n;			/*  new length of free block	*/
-	return(m);			/*  allocated memory		*/
+    m = &osmem[osmptr];		/*  start at base		*/
+    osmptr += n;			/*  new base			*/
+    osmlen -= n;			/*  new length of free block	*/
+    return(m);			/*  allocated memory		*/
 }
 
 
@@ -111,7 +111,7 @@ int	*getosm(int n)
  *  i - list of i paragraphs sized blocks
  */
 
-int	*xmgetblk(int i)
+void	*xmgetblk(int i)
 {
     int j,w,*m,*q,**r;
 
@@ -136,7 +136,7 @@ int	*xmgetblk(int i)
     }
     else
     {	/*  nothing on list, try pool  */
-        if (m = getosm(w+1))	/*  add size of control word	*/
+        if ( (m = getosm(w+1)) )	/*  add size of control word	*/
             *m++ = i;	/*  put size in control word	*/
     }
 
@@ -144,7 +144,7 @@ int	*xmgetblk(int i)
      *  zero out the block
      */
 
-    if( q = m )
+    if( (q = m) )
         for( j = 0 ; j < w ; j++ )
             *q++ = 0;
 
@@ -155,11 +155,11 @@ int	*xmgetblk(int i)
  *  xmfreblk - free up memory allocated through mgetblk
  */
 
-VOID	xmfreblk(int *m)
+VOID	xmfreblk(void *m)
 {
     int	i;
 
-    i = *(m - 1);
+    i = *(((int *)m) - 1);
     if( i < 0 || i >= MAXQUICK )
     {
         /*  bad index  */

@@ -36,9 +36,6 @@
 long	ccffit;
 long	ccfreeit;
 
-ccffit=0;
-ccfreeit=0;
-
 #endif
 
 
@@ -47,7 +44,7 @@ ccfreeit=0;
  *  ffit - find first fit for requested memory in ospool
  */
 
-MD	*ffit(long amount, MPB *mp)
+MD *ffit(long amount, MPB *mp)
 {
     MD *p,*q,*p1;	       /* free list is composed of MD's */
     BOOLEAN maxflg;
@@ -154,7 +151,7 @@ MD	*ffit(long amount, MPB *mp)
  *  freeit - Free up a memory descriptor
  */
 
-freeit(MD *m, MPB *mp)
+void freeit(MD *m, MPB *mp)
 {
     MD *p, *q;
 

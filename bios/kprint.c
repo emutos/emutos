@@ -148,9 +148,14 @@ void cputs(char * s )
  * kpanic - throw out a panic message and halt
  */
 
-VOID kpanic(char * s)
+VOID kpanic(const char * fmt, ...)
 {
-    kprintf( "BIOS: Panic: %s\n", s);
+    va_list ap;
+
+    kprintf( "BIOS: Panic: " );
+    va_start(ap, fmt);
+    doprintf(kprintf_outc, fmt, ap);
+    va_end(ap);
     while(1);
 }
 

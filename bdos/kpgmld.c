@@ -14,16 +14,21 @@
 
 
 #include "portab.h"
-#include "bdos.h"
 #include "fs.h"
 #include "bios.h"
 #include "mem.h"
+#include "proc.h"
 #include "gemerror.h"
 #include "pghdr.h"
 #include "btools.h"
 #include "../bios/kprint.h"
 
+/*
+ * forward prototypes
+ */
 
+static ERROR	pgmld01(FH h, PD *pdptr);
+static LONG	pgfix01(LONG nrelbytes, PGMINFO *pi);
 
 /*
  *  xpgmld - load program
@@ -92,9 +97,7 @@ static BYTE	*lastcp ;
  * - zero out the bss
  */
 
-ERROR	pgmld01( h , pdptr )
-	FH	h ;
-	PD	*pdptr ;
+static ERROR	pgmld01( FH h , PD *pdptr )
 {
 	REG PGMHDR01	*hd ;			
 	REG PGMINFO	*pi ;
@@ -235,11 +238,12 @@ ERROR	pgmld01( h , pdptr )
  *		>0: all offsets in bss used up, read in more
  *		=0: offset of 0 encountered, no more fixups
  *		<0: EPLFMT (load file format error)
+ *
+ * nrelbytes: nbr of avail rel values	
+ * pi: program info pointer	
  */
 
-LONG	pgfix01( nrelbytes , pi )
-	LONG	nrelbytes ;		/*  nbr of avail rel values	*/
-	PGMINFO *pi ;			/*  program info pointer	*/
+static LONG	pgfix01( LONG nrelbytes , PGMINFO *pi )
 {
 	REG UBYTE	*cp ;		/*  code pointer		*/
 	REG UBYTE	*rp ;		/*  relocation info pointer	*/

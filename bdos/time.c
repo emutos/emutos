@@ -47,14 +47,14 @@ extern	int	nday[]; 		/* declared in sup.c */
 #include "gemerror.h"
 #include "bios.h"
 
-extern	long	trap13();		/* direct bios calls */
+extern	long	trap13(int, ...);		/* direct bios calls */
 
 
 /****************************/
 /* Function 0x2A:  Get date */
 /****************************/
 
-long	xgetdate()
+long	xgetdate(void)
 {
     date_time(GET_DATE, &date); 	/* allow bios to update date */
     return date;
@@ -71,8 +71,7 @@ long	xgetdate()
 #define YRS_BM		0xFE00
 
 
-long	xsetdate(d)
-int	d;
+long	xsetdate(int d)
 {
 int	curmo, day;
 
@@ -105,7 +104,7 @@ int	curmo, day;
 /* Function 0x2C:  Get time */
 /****************************/
 
-long	xgettime()
+long	xgettime(void)
 {
     date_time(GET_TIME, &time); 	/* bios may update time if it wishes */
     return time;
@@ -123,8 +122,7 @@ long	xgettime()
 #define HRS_BM		0xF800
 
 
-long	xsettime(t)
-int	t;
+long	xsettime(int t)
 {
     if ((t & SEC_BM) >= 30)
 	return ERR;

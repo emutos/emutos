@@ -25,6 +25,9 @@
 #include	"portab.h"		/*  M01.01.05  */
 #include	"fs.h"
 #include	"bios.h"
+#include        "mem.h"
+#include        "proc.h"
+#include        "console.h"
 #include	"gemerror.h"
 #include	"../bios/kprint.h"
 
@@ -40,34 +43,29 @@
 **  externals
 */
 
-extern long x0term(),xterm(),conin(),tabout();
-extern long rawconio(),prt_line(),readline(),constat();
-extern long xsetdrv(),xgetdrv(),xsetdta(),xgetdta(),xgetfree();
-extern long xmkdir(),xrmdir(),xchdir(),xcreat(),xopen(),xclose();
-extern long xread(),xwrite(),xunlink(),xlseek(),xchmod();
-extern long xgetdir(),xmalloc(),xmfree(),xsfirst(),xsnext();
-extern long xrename(),xgsdtof(),xexec(),xtabout(),xconin();
-extern long xconstat(),xprt_line(),xtermres(),dup();
-extern long xforce(), xauxin(), xauxout(), xprtout();
-extern long x7in(), x8in(), xconostat(), xprtostat();
-extern long xauxistat(), xauxostat();
-extern long xgetdate(), xsetdate(), xgettime(), xsettime();
-extern long xsuper();
+/* 
+ * in rwa.S
+ */
 
-extern	int	add[3];
-extern	int	remove[3];
-extern	long	xsetblk();
-extern	long	glbkbchar[3][KBBUFSZ];	/* typeahead buffer */
+extern long xsuper(long);
+extern long oscall(int, ...);
 
+/*
+ * in time.c
+ */
 
-extern PD *run;
+extern long xgettime(void);
+extern long xgetdate(void);
+extern long xsettime(int);
+extern long xsetdate(int);
 
 
 /*
  *  prototypes / forward declarations
  */
 
-long	ni() , xgetver() ;
+long ni(void);
+long xgetver(void);
 
 
 
@@ -119,7 +117,7 @@ FND funcs[0x58] =
 {
 
     
-    x0term,0,	/* 0x00 */
+     { (long(*)()) x0term, 0 },	/* 0x00 */
 
     /*
      * console functions
@@ -128,17 +126,17 @@ FND funcs[0x58] =
      * 0x80 is std in, 0x81 is stdout, 0x82 is stdaux, 0x83 stdprn
      */
 
-    xconin,	0x80,	/* 0x01 */
-    xtabout,	0x81,	/* 0x02 */
-    xauxin,	0x82,	/* 0x03 */
-    xauxout,	0x82,	/* 0x04 */
-    xprtout,	0x83,	/* 0x05 */
-    rawconio,	0,	/* 0x06 */
-    x7in,	0x80,	/* 0x07 */
-    x8in,	0x80,	/* 0x08 */
-    xprt_line,	0x81,	/* 0x09 */
-    readline,	0x80,	/* 0x0A */
-    xconstat,	0x80,	/* 0x0B */
+    { xconin,	0x80 },	/* 0x01 */
+    { (long(*)()) xtabout,  0x81 },	/* 0x02 */
+    { xauxin,	0x82 },	/* 0x03 */
+    { xauxout,	0x82 },	/* 0x04 */
+    { xprtout,	0x83 },	/* 0x05 */
+    { rawconio,	0 },	/* 0x06 */
+    { x7in,	0x80 },	/* 0x07 */
+    { x8in,	0x80 },	/* 0x08 */
+    { (long(*)()) xprt_line,  0x81 },	/* 0x09 */
+    { (long(*)()) readline,   0x80 },	/* 0x0A */
+    { xconstat,	0x80 },	/* 0x0B */
 
     /*
      * disk functions
@@ -148,12 +146,12 @@ FND funcs[0x58] =
      * as usual.
      */
 
-    ni, 	0,
-    ni, 	0,
+    { ni, 	0 },
+    { ni, 	0 },
 
-    xsetdrv,	0,	/* 0x0E */
+    { xsetdrv,	0 },	/* 0x0E */
 
-    ni, 	0,
+    { ni, 	0 },
 
     /*
      * extended console functions
@@ -161,97 +159,97 @@ FND funcs[0x58] =
      * Here the 0x80 flag indicates std file used, as above
      */
 
-    xconostat,	0x81,	/* 0x10 */
-    xprtostat,	0x83,	/* 0x11 */
-    xauxistat,	0x82,	/* 0x12 */
-    xauxostat,	0x82,	/* 0x13 */
+    { xconostat, 0x81 },	/* 0x10 */
+    { xprtostat, 0x83 },	/* 0x11 */
+    { xauxistat, 0x82 },	/* 0x12 */
+    { xauxostat, 0x82 },	/* 0x13 */
 
-    ni, 	0,
-    ni, 	0,
-    ni, 	0,
-    ni, 	0,
-    ni, 	0,
+    { ni, 	0 },
+    { ni, 	0 },
+    { ni, 	0 },
+    { ni, 	0 },
+    { ni, 	0 },
 
-    xgetdrv,	0,	/* 0x19 */
-    xsetdta,	1,	/* 0x1A */
+    { xgetdrv,	0 },	/* 0x19 */
+    { (long(*)()) xsetdta, 1 },	/* 0x1A */
 
-    xsuper,	0,	/* 0x20 - switch to supervisor mode */
-    ni, 	0,
-    ni, 	0,
-    ni, 	0,
-    ni, 	0,
+    { xsuper,	0 },	/* 0x20 - switch to supervisor mode */
+    { ni, 	0 },
+    { ni, 	0 },
+    { ni, 	0 },
+    { ni, 	0 },
 
     /* xgsps */
 
-    ni, 	0,	/* 0x20 */
-    ni, 	0,
-    ni, 	0,
-    ni, 	0,
-    ni, 	0,
+    { ni, 	0 },	/* 0x20 */
+    { ni, 	0 },
+    { ni, 	0 },
+    { ni, 	0 },
+    { ni, 	0 },
 
-    S_SetVec,	1,	/* 0x25 */
+    { S_SetVec,	1 },	/* 0x25 */
 
-    ni, 	0,
-    ni, 	0,
-    ni, 	0,
-    ni, 	0,
+    { ni, 	0 },
+    { ni, 	0 },
+    { ni, 	0 },
+    { ni, 	0 },
 
-    xgetdate,	0,	/* 0x2A */
-    xsetdate,	0,	/* 0x2B */
-    xgettime,	0,	/* 0x2C */
-    xsettime,	0,	/* 0x2D */
+    { xgetdate,	0 },	/* 0x2A */
+    { xsetdate,	0 },	/* 0x2B */
+    { xgettime,	0 },	/* 0x2C */
+    { xsettime,	0 },	/* 0x2D */
 
-    ni, 	0,
+    { ni, 	0 },
 
-    xgetdta,	0,	/* 0x2F */
-    xgetver,	0,	/* 0x30 */
-    xtermres,	1,	/* 0x31 */
+    { (long(*)()) xgetdta, 0 },	/* 0x2F */
+    { xgetver,	0},	/* 0x30 */
+    { (long(*)()) xtermres, 1 },	/* 0x31 */
 
-    ni, 	0,
-    ni, 	0,
-    ni, 	0,
+    { ni, 	0 },
+    { ni, 	0 },
+    { ni, 	0 },
 
-    S_GetVec,	0,	/* 0x35 */
-    xgetfree,	1,	/* 0x36 */
+    { S_GetVec,	0 },	/* 0x35 */
+    { xgetfree,	1 },	/* 0x36 */
 
-    ni, 	0,
-    ni, 	0,
+    { ni, 	0 },
+    { ni, 	0 },
 
-    xmkdir,	1,	/* 0x39 */
-    xrmdir,	1,	/* 0x3A */
-    xchdir,	1,	/* 0x3B */
-    xcreat,	1,	/* 0x3C */
-    xopen,	1,	/* 0x3D */
-    xclose,	0x0,	/* 0x3E - will handle its own redirection */
-    xread,	0x82,	/* 0x3F */
-    xwrite,	0x82,	/* 0x40 */
-    xunlink,	1,	/* 0x41 */
-    xlseek,	0x81,	/* 0x42 */
-    xchmod,	1,	/* 0x43 */
-    ni,		0,	/* 0x44 */
-    dup,	0,	/* 0x45 */
-    xforce,	0,	/* 0x46 */
-    xgetdir,	1,	/* 0x47 */
-    xmalloc,	1,	/* 0x48 */
-    xmfree,	1,	/* 0x49 */
-    xsetblk,	2,	/* 0x4A */
-    xexec,	3,	/* 0x4B */
-    xterm,	0,	/* 0x4C */
+    { xmkdir,	1 },	/* 0x39 */
+    { xrmdir,	1 },	/* 0x3A */
+    { xchdir,	1 },	/* 0x3B */
+    { (long(*)()) xcreat, 1 },	/* 0x3C */
+    { xopen,	1 },	/* 0x3D */
+    { xclose,	0x0 },	/* 0x3E - will handle its own redirection */
+    { xread,	0x82 },	/* 0x3F */
+    { xwrite,	0x82 },	/* 0x40 */
+    { xunlink,	1 },	/* 0x41 */
+    { xlseek,	0x81 },	/* 0x42 */
+    { (long(*)()) xchmod, 1 },	/* 0x43 */
+    { ni,	0 },	/* 0x44 */
+    { dup,	0 },	/* 0x45 */
+    { xforce,	0 },	/* 0x46 */
+    { xgetdir,	1 },	/* 0x47 */
+    { xmalloc,	1 },	/* 0x48 */
+    { xmfree,	1 },	/* 0x49 */
+    { xsetblk,	2 },	/* 0x4A */
+    { (long(*)()) xexec, 3 },	/* 0x4B */
+    { (long(*)()) xterm, 0 },	/* 0x4C */
 
-    ni, 	0,
+    { ni, 	0 },
 		
-    xsfirst,	1,	/* 0x4E */
-    xsnext,	0,	/* 0x4F */
+    { xsfirst,	1 },	/* 0x4E */
+    { xsnext,	0 },	/* 0x4F */
 
-    ni, 	0,	/* 0x50 */
-    ni, 	0,
-    ni, 	0,
-    ni, 	0,
-    ni, 	0,
-    ni, 	0,
+    { ni, 	0 },	/* 0x50 */
+    { ni, 	0 },
+    { ni, 	0 },
+    { ni, 	0 },
+    { ni, 	0 },
+    { ni, 	0 },
 
-    xrename,	2,	/* 0x56 */
-    xgsdtof,	1	/* 0x57 */
+    { xrename,	2 },	/* 0x56 */
+    { (long(*)()) xgsdtof, 1 }	/* 0x57 */
 };
 
 
@@ -265,7 +263,7 @@ char	*bdosver = "GEMDOS Version 01.MAD" ; /* bdos version string */
  *	return current version number
  */
 
-long	xgetver()
+long	xgetver(void)
 {
 	return(0x0101L);		/*  minor.major */
 #if DBGOSIF
@@ -278,7 +276,7 @@ long	xgetver()
  *  ni -
  */
 
-long	ni()
+long	ni(void)
 {
 	return(EINVFN);
 }
@@ -436,7 +434,7 @@ restrt:
     if (fn > 0x57)
 	return(EINVFN);
 
-    if (rc = setjmp(errbuf))
+    if ( (rc = setjmp(errbuf)) )
     {
 	/* hard error processing */
 	/* is this a media change ? */
@@ -512,12 +510,12 @@ restrt:
 		 pw[1]	*/
 	    rawout:
 		xwrite( h , 1L , ((char*) &pw[1])+1 ) ;
-		return;
+		return 0; /* dummy */
 
 	    case 9:
 		pb2 = *((char **) &pw[1]);
 		while (*pb2) xwrite(h,1L,pb2++);
-		return;
+		return 0; /* dummy */
 
 	    case 10:
 		pb2 = *((char **) &pw[1]);
@@ -751,11 +749,12 @@ void	tikfrk(int n)
 	if ((curmo = (date >> 5) & 0x0F) == 2)
 	{
 	    /* 2100 is the next non-leap year divisible by 4, so OK */
-	    if (!(date & 0x0600))
+            if (!(date & 0x0600)) {
 		if ((date & 0x001F) <= 29)
 		    return;
 		else
 		    goto datok;
+	    }
 	}
 
 	if ((date & 0x001F) <= nday[curmo])

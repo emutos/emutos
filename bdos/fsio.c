@@ -18,6 +18,19 @@
 #include	"gemerror.h"
 
 /*
+ * forward prototypes
+ */
+
+static void addit(OFD *p, long siz, int flg);
+static long xrw(int wrtflg, 
+		OFD *p, 
+		long len, 
+		char *ubufr, 
+		void (*bufxfr)(int, char *, char *));
+static void usrio(int rwflg, int num, int strt, char *ubuf, DMD *dm);
+
+
+/*
 **  xlseek -
 **	seek to byte position n on file with handle h
 **
@@ -29,9 +42,7 @@
 **		ixlseek()
 */
 
-long	xlseek( n , h , flg )
-	int	h, flg ;
-	long	n ;
+long	xlseek(int n, long h, int flg)
 {
 	OFD *f;
 	long	ixlseek() ;
@@ -65,9 +76,11 @@ long	xlseek( n , h , flg )
 **		by the BIOS or by PC DOS).
 */
 
-long	ixlseek(p,n)
-	REG OFD *p;		/*  file descriptor for file in use	*/
-	long	n;		/*  number of bytes to seek		*/
+/* p: file descriptor for file in use
+ * n: number of bytes to seek
+ */
+
+long	ixlseek(REG OFD *p, long n)
 {
 	int clnum,clx,curnum,i; 			/*  M01.01.03	*/
 	int	curflg ;	/****  M00.01.01b  ****/
@@ -150,15 +163,11 @@ fillin: p->o_curcl = clx;
 **	Last modified	SCC	8 Apr 85
 */
 
-long	xread(h,len,ubufr) 
-	int h;
-	long len;
-	char *ubufr;
+long	xread(int h, long len, void *ubufr) 
 {
 	OFD	*p;
-	long	ixread() ;
 
-	if (p = getofd(h))
+	if ( (p = getofd(h)) )
 		return(ixread(p,len,ubufr));
 
 	return(EIHNDL);
@@ -170,10 +179,7 @@ long	xread(h,len,ubufr)
 **	Last modified	SCC	26 July 85
 */
 
-long	ixread(p,len,ubufr)
-	REG OFD *p;
-	long len;
-	char *ubufr;
+long	ixread(OFD *p, long len, void *ubufr)
 {
 	long maxlen;
 
@@ -209,15 +215,12 @@ long	ixread(p,len,ubufr)
 **	Last modified	SCC	10 Apr 85
 */
 
-long	xwrite(h,len,ubufr) 
-	int h;
-	long len;
-	char *ubufr;
+long	xwrite(int h, long len, void *ubufr) 
 {
 	REG OFD *p;
 	long	ixwrite() ;
 
-	if (p = getofd(h))
+	if ( (p = getofd(h)) )
 	{	/* Make sure not read only.*/
 		if (p->o_mod == 0)	
 			return (EACCDN);
@@ -231,24 +234,20 @@ long	xwrite(h,len,ubufr)
 **  ixwrite -
 */
 
-long	ixwrite(p,len,ubufr)
-	OFD *p;
-	long len;
-	char *ubufr;
+long	ixwrite(OFD *p, long len, void *ubufr)
 {
 	return(xrw(1,p,len,ubufr,usr2xfr));
 }
 
 /*
-**  addit -
-**	update the OFD for the file to reflect the fact that 'siz' bytes
-**	have been written to it.
-*/
+ *  addit -
+ *	update the OFD for the file to reflect the fact that 'siz' bytes
+ *	have been written to it.
+ *
+ * flg: update curbyt ? (yes if less than 1 cluster transferred)
+ */
 
-VOID	addit(p,siz,flg)
-	REG OFD *p;
-	REG long siz;
-	int flg; /* update curbyt ? (yes if less than 1 cluster transferred) */
+static void addit(OFD *p, long siz, int flg)
 {
 	p->o_bytnum += siz;
 
@@ -280,11 +279,11 @@ VOID	addit(p,siz,flg)
 **	nbr of bytes read/written from/to the file.
 */
 
-long	xrw(wrtflg,p,len,ubufr,bufxfr)
-	int wrtflg,(*bufxfr)();
-	OFD *p;
-	long len;
-	char *ubufr;
+static long xrw(int wrtflg, 
+		OFD *p, 
+		long len, 
+		char *ubufr, 
+		void (*bufxfr)(int, char *, char *))
 {
 	REG DMD *dm;
 	char *bufp;
@@ -342,7 +341,7 @@ long	xrw(wrtflg,p,len,ubufr,bufxfr)
 
 	lentail = len & dm->m_rbm;
 
-	if (lenmid = len - lentail)		/*  Is there a Middle ? */
+	if ( (lenmid = len - lentail) )		/*  Is there a Middle ? */
 	{	
 		hdrrec = recn & dm->m_clrm;
 
@@ -450,7 +449,7 @@ mulio:				if (nrecs)
 			goto exit;
 		}
 
-		(*bufxfr)(lentail,bufp,ubufr,wrtflg);
+		(*bufxfr)(lentail,bufp,ubufr);
 	} /*  end tail bytes  */
 
 eof:	rc = p->o_bytnum - bytpos;
@@ -468,10 +467,7 @@ exit:	return(rc);
 **		to return any error codes.
 */
 
-usrio(rwflg,num,strt,ubuf,dm)
-int rwflg,num,strt;
-char *ubuf;
-REG DMD *dm;
+static void usrio(int rwflg, int num, int strt, char *ubuf, DMD *dm)
 {
 	REG BCB *b;
 

@@ -9,25 +9,4 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
-/*
- *  system types
- */
-
-
-
-/*  FH - File Handle							*/
-typedef int	FH ;
-
-
-
-/*
- *  common externals
- */
-
-EXTERN	ERROR	xopen(),	ixopen() ;
-EXTERN	ERROR	xclose(),	ixclose() ;
-EXTERN	ERROR	xread(),	ixread() ;
-EXTERN	ERROR	xwrite(),	ixwrite() ;
-EXTERN	ERROR	xlseek(),	ixlseek() ;
-
+#error "useless"
