@@ -113,15 +113,15 @@ help:
 	@echo "depend  creates dependancy section in Makefile"
 	@echo "dsm     dsm.txt, an edited desassembly of emutos.img"
 
-emutos.img: $(OBJECTS) obj/end.o
-	${LD} -oformat binary -o $@ $(OBJECTS) ${LDFLAGS} $(LDFLROM) obj/end.o
+emutos.img: $(OBJECTS)
+	${LD} -oformat binary -o $@ $(OBJECTS) ${LDFLAGS} $(LDFLROM)
 
 192: etos192k.img
 
 ram: ramtos.img boot.prg
 
-ramtos.img: $(OBJECTS) obj/end.o
-	$(LD) -oformat binary -o $@ $(OBJECTS) $(LDFLAGS) $(LDFLRAM) obj/end.o
+ramtos.img: $(OBJECTS)
+	$(LD) -oformat binary -o $@ $(OBJECTS) $(LDFLAGS) $(LDFLRAM)
 
 boot.prg: obj/minicrt.o obj/boot.o obj/bootasm.o
 	$(LD) -s -o $@ obj/minicrt.o obj/boot.o obj/bootasm.o $(LDFLAGS) 
@@ -168,9 +168,9 @@ show: $(DESASS)
 TMP1 = tmp1
 TMP2 = tmp2
 
-map: $(OBJECTS) obj/end.o
+map: $(OBJECTS)
 	${LD} -Map map -oformat binary -o /dev/null $(OBJECTS) $(LDFLAGS) \
-		$(LDFLROM) obj/end.o
+		$(LDFLROM)
 
 $(DESASS): map emutos.img
 	$(OBJDUMP) --target=binary --architecture=m68k \
@@ -227,3 +227,83 @@ depend:
 	mv Makefile.new Makefile
 
 # DO NOT DELETE
+obj/kprint.o: bios/kprint.c bios/portab.h bios/bios.h
+obj/xbios.o: bios/xbios.c bios/portab.h bios/kprint.h bios/iorec.h \
+ bios/tosvars.h bios/ikbd.h bios/midi.h bios/mfp.h bios/screen.h \
+ bios/sound.h bios/floppy.h include/asm.h
+obj/chardev.o: bios/chardev.c bios/portab.h bios/bios.h bios/gemerror.h \
+ bios/kprint.h bios/chardev.h
+obj/bios.o: bios/bios.c bios/portab.h bios/bios.h bios/gemerror.h \
+ bios/config.h bios/kprint.h bios/tosvars.h bios/initinfo.h \
+ bios/ikbd.h bios/midi.h bios/mfp.h bios/floppy.h bios/sound.h \
+ bios/screen.h bios/vectors.h include/asm.h bios/chardev.h
+obj/clock.o: bios/clock.c bios/portab.h bios/bios.h bios/kprint.h
+obj/fnt8x16.o: bios/fnt8x16.c bios/portab.h bios/fontdef.h
+obj/fnt8x8.o: bios/fnt8x8.c bios/portab.h bios/fontdef.h
+obj/fnt6x6.o: bios/fnt6x6.c bios/portab.h bios/fontdef.h
+obj/mfp.o: bios/mfp.c bios/portab.h bios/bios.h bios/kprint.h bios/mfp.h \
+ bios/tosvars.h
+obj/version.o: bios/version.c
+obj/midi.o: bios/midi.c bios/portab.h bios/bios.h bios/kprint.h \
+ bios/acia.h bios/iorec.h include/asm.h bios/midi.h
+obj/ikbd.o: bios/ikbd.c bios/portab.h bios/bios.h bios/acia.h \
+ bios/kprint.h bios/tosvars.h bios/iorec.h include/asm.h bios/ikbd.h \
+ bios/sound.h
+obj/sound.o: bios/sound.c bios/portab.h bios/sound.h bios/psg.h \
+ include/asm.h
+obj/floppy.o: bios/floppy.c bios/portab.h bios/floppy.h bios/dma.h \
+ bios/fdc.h bios/psg.h bios/mfp.h include/asm.h bios/tosvars.h \
+ bios/kprint.h
+obj/screen.o: bios/screen.c bios/screen.h bios/portab.h bios/tosvars.h \
+ include/asm.h
+obj/lineainit.o: bios/lineainit.c bios/tosvars.h bios/portab.h \
+ bios/lineavars.h bios/fontdef.h bios/kprint.h
+obj/initinfo.o: bios/initinfo.c bios/portab.h bios/kprint.h \
+ bios/lineavars.h bios/tosvars.h bios/initinfo.h
+obj/bdosinit.o: bdos/bdosinit.c bdos/gportab.h bdos/bios.h
+obj/console.o: bdos/console.c bdos/gportab.h bdos/fs.h bdos/bios.h
+obj/fsdrive.o: bdos/fsdrive.c bdos/gportab.h bdos/fs.h bdos/bios.h \
+ bdos/gemerror.h bdos/../bios/kprint.h
+obj/fshand.o: bdos/fshand.c bdos/gportab.h bdos/fs.h bdos/bios.h \
+ bdos/gemerror.h
+obj/fsopnclo.o: bdos/fsopnclo.c bdos/gportab.h bdos/fs.h bdos/bios.h \
+ bdos/gemerror.h include/btools.h
+obj/osmem.o: bdos/osmem.c bdos/gportab.h bdos/fs.h bdos/bios.h bdos/mem.h \
+ bdos/gemerror.h
+obj/umem.o: bdos/umem.c bdos/gportab.h bdos/fs.h bdos/bios.h bdos/mem.h \
+ bdos/gemerror.h bdos/../bios/kprint.h
+obj/bdosmain.o: bdos/bdosmain.c bdos/gportab.h bdos/fs.h bdos/bios.h \
+ bdos/gemerror.h bdos/../bios/kprint.h
+obj/fsbuf.o: bdos/fsbuf.c bdos/gportab.h bdos/fs.h bdos/bios.h \
+ bdos/gemerror.h
+obj/fsfat.o: bdos/fsfat.c bdos/gportab.h bdos/fs.h bdos/bios.h \
+ bdos/gemerror.h
+obj/fsio.o: bdos/fsio.c bdos/gportab.h bdos/fs.h bdos/bios.h \
+ bdos/gemerror.h
+obj/iumem.o: bdos/iumem.c bdos/gportab.h bdos/fs.h bdos/bios.h bdos/mem.h \
+ bdos/gemerror.h bdos/../bios/kprint.h
+obj/proc.o: bdos/proc.c bdos/gportab.h bdos/fs.h bdos/bios.h bdos/mem.h \
+ bdos/gemerror.h include/btools.h bdos/../bios/kprint.h
+obj/bdosts.o: bdos/bdosts.c
+obj/fsdir.o: bdos/fsdir.c bdos/gportab.h bdos/fs.h bdos/bios.h \
+ bdos/gemerror.h include/btools.h bdos/../bios/kprint.h
+obj/fsglob.o: bdos/fsglob.c bdos/gportab.h bdos/fs.h bdos/bios.h \
+ bdos/gemerror.h
+obj/fsmain.o: bdos/fsmain.c bdos/gportab.h bdos/fs.h bdos/bios.h \
+ bdos/gemerror.h
+obj/kpgmld.o: bdos/kpgmld.c bdos/gportab.h bdos/bdos.h bdos/fs.h \
+ bdos/bios.h bdos/mem.h bdos/gemerror.h bdos/pghdr.h include/btools.h \
+ bdos/../bios/kprint.h
+obj/time.o: bdos/time.c bdos/gportab.h bdos/gemerror.h bdos/bios.h
+obj/doprintf.o: util/doprintf.c
+obj/tosvars.o: bios/tosvars.S
+obj/startup.o: bios/startup.S bios/asmdefs.h bios/config.h
+obj/lineavars.o: bios/lineavars.S
+obj/vectors.o: bios/vectors.S
+obj/aciavecs.o: bios/aciavecs.S
+obj/memory.o: bios/memory.S
+obj/linea.o: bios/linea.S
+obj/conout.o: bios/conout.S
+obj/rwa.o: bdos/rwa.S
+obj/memset.o: util/memset.S
+obj/memmove.o: util/memmove.S

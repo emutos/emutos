@@ -109,7 +109,10 @@
         .global _m_length
 
 	.global _save_area
+	.global _int_timera
+	.global _int_timerb
 	.global _int_timerc
+	.global _int_timerd
 
 // ==== From bios.c ==========================================================
 
@@ -138,8 +141,6 @@
 
 // ==== tosvars.s - TOS System variables =====================================
 
-	.xdef	bssstrt	
-	.xdef   bssstart
 	.xdef	_proc_lives	
 	.xdef	_proc_dregs	
 	.xdef	_proc_aregs	
@@ -224,7 +225,6 @@
         .xdef   _init_mfp
         .xdef   _init_timer
         .xdef   _init_usart
-        .xdef   _bssend
         .xdef   _linea_init
 
         .xdef   _longframe
@@ -242,6 +242,16 @@
 
 	.xdef	meminit         // initialize the memory and it's controller
 
+// ==== Overall memory map ===================================================
+
+	.xdef	bssstrt	      // address 0
+	.xdef   bssstart      // end of documented low memory tosvars
+        .xdef   _end          // end of bss + comm sections (ld generated)
+
+	.xdef	_os_entry     // start of text section
+	.xdef   _etext        // end of text section
+	.xdef   _edata        // end of data section
+	
 
 // ===========================================================================
 // ==== BSS segment ==========================================================
@@ -255,13 +265,16 @@ save_beg:       ds.w    24*3    // d3-d7/a3-a7, sr, pc, vo = 24 words,
 _save_area:                      // End of Save storage
 
 
-        .org    0x167a
+// LVL - this .org directive can only be used in tosvars.S	
+//        .org    0x167a
 _diskbuf:       ds.b    1024    // 1 cluster disk buffer
-        .org    0x45b8
+//        .org    0x45b8
 _stkbot:        ds.w    SUPSIZ  // Supervisor stack
 _stktop:                        // filled from top to bottom
 
-_output:        ds.b    1024
+// LVL - _output not used
+// _output:        ds.b    1024
+	
 t1regsav:       dc.l    1   
 
 _b_mdx:                         // initial memory descriptor
@@ -296,7 +309,7 @@ reseth:
 _os_beg:
     dc.l    _os_entry   // os_beg, base of os = _sysbase
 _os_end: 
-    dc.l    _bssend     // os_end, first byte RAM not used by OS
+    dc.l    _end        // os_end, first byte RAM not used by OS
 os_res1:        
     dc.l    _main       // os_res1, reserved
 os_magic:
@@ -836,6 +849,9 @@ _int_timerc:
         movem.l d0-d7/a0-a6,-(sp)       // save registers	
         // TODO, repeat keys ?
 
+	// dosound support
+        jsr     _sndirq
+	
         move.w  _timer_ms, -(sp)
         move.l  _etv_timer, a0
 //        jsr     (a0)                    // jump to etc_timer routine

@@ -32,7 +32,6 @@
 
 // ==== tosvars.s - TOS System variables =====================================
 
-	.xdef	bssstrt	
 
         .xdef   memctrl       
         .xdef   _phystop       
@@ -46,9 +45,16 @@
 
         .xdef   _v_bas_ad     
 
-	.xdef   bssstart
-        .xdef   _bssend
+// ==== Overall memory map ===================================================
 
+	.xdef	bssstrt	      // address 0
+	.xdef   bssstart      // end of documented low memory tosvars
+        .xdef   _end          // end of bss + comm sections (ld generated)
+
+	.xdef	_os_entry     // start of text section
+	.xdef   _etext        // end of text section
+	.xdef   _edata        // end of data section
+	
 
 
 // ===========================================================================
@@ -72,7 +78,7 @@
 
 
 
-// ==== Clear BSS before calling any C function ======================
+// ==== Clear BSS + COMM before calling any C function =======================
 // the C part expects the bss to be cleared, so let's do this early
 
 meminit:
@@ -80,7 +86,7 @@ meminit:
 
 
 	lea 	bssstart, a0
-	lea 	_bssend-1, a1
+	lea 	_end-1, a1
 	move.l 	a1, d0
 	sub.l 	a0, d0
 	lsr.l 	#2, d0

@@ -65,7 +65,6 @@
 
 void biosinit(void);
 void biosmain(void);
-void initinfo(void);
 
 
 /*==== External declarations ==============================================*/
@@ -120,6 +119,12 @@ extern LONG (*bcostat_vec[])(void);
 
 /*==== Declarations =======================================================*/
 
+/* is_ramtos = 1 if the TOS is running in RAM (detected by looking
+ * at os_entry).
+ */
+int is_ramtos;
+
+
 #if     DEFDRV == 0
 static BYTE env[] = "COMSPEC=a:\\command.prg\0";
 #else
@@ -157,6 +162,7 @@ PFI charvec[5];     /* array of vectors to logical interrupt handlers */
 void startup(void)
 {
   WORD i;
+  LONG a;
 
   kprintf("beginning of BIOS startup\n");
 
@@ -164,12 +170,29 @@ void startup(void)
   snd_init();     /* Reset Soundchip, deselect floppies */
   screen_init();  /* detect monitor type, ... */
   
+  /* detect if TOS in RAM */
+  a = ((LONG) os_entry) & 0xffffff;
+  if( a == 0xe00000L || a == 0xfc0000L ) {
+    is_ramtos = 0;
+  } else {
+    is_ramtos = 1;
+  }
+
+  kprintf("_etext = 0x%08lx\n", (LONG)_etext);
+  kprintf("_edata = 0x%08lx\n", (LONG)_edata);
+  kprintf("end    = 0x%08lx\n", (LONG)end);
+  if(is_ramtos) {
+    /* patch TOS header */
+    os_end = (LONG) _edata;
+  }
+
   /* initialise some memory variables */
   end_os = os_end;
   membot = end_os;
   exec_os = os_beg;
   memtop = (LONG) v_bas_ad;
-  m_start = 0xE000;
+
+  m_start = os_end;
   m_length = memtop - m_start;
   themd = (LONG) &b_mdx;
   
@@ -222,10 +245,8 @@ void startup(void)
   linea_init();
 
   vblsem = 1;
-  kprintf("BIOS: 1\n");
   biosinit();
   
-  kprintf("BIOS: 2\n");
   osinit();
   
   set_sr(0x2300);
@@ -305,16 +326,11 @@ void biosinit()
 
     /* initialize components */
 
-kprintf("BIOS: 3\n");
     mfp_init();         /* init MFP, timers, USART */
-kprintf("BIOS: 4\n");
     kbd_init();         /* init keyboard, disable mouse and joystick */
-kprintf("BIOS: 5\n");
     midi_init();        /* init MIDI acia so that kbd acia irq works */
-kprintf("BIOS: 6\n");
     clk_init();         /* init clock (dummy for emulator) */
 
-kprintf("BIOS: 8\n");
   
 #if OLDSTUFF
 
@@ -494,8 +510,9 @@ LONG bios_4(WORD r_w, LONG adr, WORD numb, WORD first, WORD drive)
     /* implemented by STonX */
     return(drv_rw(r_w, adr, numb, first, drive));
 #else
-    kprintf("rwabs(rw=%d, count = %d, sect = %d, dev = %d)\n",
-            r_w, numb, first, drive);
+    kprintf("rwabs(rw = %d, addr = 0x%08lx, count = 0x%04x, sect = 0x%04x"
+            ", dev = 0x%04x)\n",
+            r_w, adr, numb, first, drive);
     return hdv_rw(r_w, adr, numb, first, drive);
 #endif
 }
