@@ -145,12 +145,12 @@ LONG blkdev_hdv_boot(void)
     if (blkdev_avail(2)) {  /* if drive C: is available */
         bootdev = 2;        /* make it the boot drive */
         return 0;           /* don't actually boot from the boot device
-    	                       as there is most probably a harddisk driver
-    	                       installed and that would require complete
-    	                       lowlevel IDE/ACSI/SCSI emulation. Luckily
-    	                       EmuTOS got its own internal hdd driver,
-    	                       so we don't need to execute the boot sector
-    	                       code and boot the drive at all! :-) */
+                               as there is most probably a harddisk driver
+                               installed and that would require complete
+                               lowlevel IDE/ACSI/SCSI emulation. Luckily
+                               EmuTOS got its own internal hdd driver,
+                               so we don't need to execute the boot sector
+                               code and boot the drive at all! :-) */
     }
     bootdev = 0;            /* otherwise try to boot from floppy A: */
     return(flop_hdv_boot());

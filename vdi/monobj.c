@@ -251,11 +251,11 @@ void dis_cur()
     mouse_flag += 1;            // disable mouse redrawing
     HIDE_CNT -= 1;              // decrement hide operations counter
     if (HIDE_CNT <= 0) {
-        HIDE_CNT = 0;     	// if hide counter < 0
-        mousex = GCURX;		// get cursor x-coordinate
-        mousey = GCURY;		// get cursor y-coordinate
-        cur_display();		// display the cursor
-        draw_flag = 0;		// disable vbl drawing routine
+        HIDE_CNT = 0;           // if hide counter < 0
+        mousex = GCURX;         // get cursor x-coordinate
+        mousey = GCURY;         // get cursor y-coordinate
+        cur_display();          // display the cursor
+        draw_flag = 0;          // disable vbl drawing routine
     }
     mouse_flag -= 1;            // re-enable mouse drawing
 }

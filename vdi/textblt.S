@@ -325,11 +325,11 @@
 
 
 
-	.bss
+        .bss
 _deftxbuf:
-	.ds.b   buf_siz 	// char. buffer
+        .ds.b   buf_siz         // char. buffer
 
-	.data
+        .data
 
 #define _scrpt1 0               // small buffer base offset 
 

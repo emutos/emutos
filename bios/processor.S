@@ -206,7 +206,7 @@ m68000:
         .bss
         .even
 
-_mcpu:		ds.l    1
+_mcpu:          ds.l    1
 _fputype:       ds.l    1
 
 

@@ -171,7 +171,7 @@ void escfn11()
 
     out[0] = '\e';
     out[1] = 'Y';
-    out[2] = 0x20 + INTIN[0];	/* get row number */
+    out[2] = 0x20 + INTIN[0];   /* get row number */
     out[3] = 0x20 + INTIN[1];  /* get col number */
     out[4] = '\0';
     trap1(wntstr, out);
@@ -195,11 +195,11 @@ void escfn12()
     int cnt;
     char *chr;
 
-    cnt = CONTRL[3];          	/* get the character count */
-    chr = (char*)&INTIN[0];		/* address of the character array */
+    cnt = CONTRL[3];            /* get the character count */
+    chr = (char*)&INTIN[0];             /* address of the character array */
 
     while (cnt--) {
-        trap1(rawio, chr++);	/*  raw i/o to standard input/output */
+        trap1(rawio, chr++);    /*  raw i/o to standard input/output */
     }
 }
 
@@ -277,7 +277,7 @@ void escfn17()
 
 void escfn18()
 {
-    INTIN[0] = 0;	/* show regardless */
+    INTIN[0] = 0;       /* show regardless */
     v_show_c();         /* display the graphics cursor */
 }
 

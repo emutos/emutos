@@ -24,7 +24,7 @@
 /*==== External declarations ==============================================*/
 
 extern LONG ara_XHDI(WORD function, ...);    /* in startup.S */
-extern int native_print_kind;	/* hack to detect if aranym is present */
+extern int native_print_kind;   /* hack to detect if aranym is present */
 
 
 /*

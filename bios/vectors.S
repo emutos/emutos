@@ -437,7 +437,7 @@ ii_back:
 
 /*
  * _int_priv - privileged instruction handler
- *	
+ *      
  * We set up a handler on the 68010/20/30/40 to convert 'MOVE SR,...'
  * to 'MOVE CCR,...' at execution time, so that we can support one
  * release of 68XXX software.

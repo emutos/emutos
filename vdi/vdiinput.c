@@ -185,12 +185,12 @@ void vb_draw()
 {
     ints_off();
     if (draw_flag) {
-        mousex = newx;		// get cursor x-coordinate
-        mousey = newy;		// get cursor y-coordinate
+        mousex = newx;          // get cursor x-coordinate
+        mousey = newy;          // get cursor y-coordinate
         ints_on();
         if (!mouse_flag) {
-            cur_replace();		// remove the old cursor from the screen
-            cur_display();		// redraw the cursor
+            cur_replace();              // remove the old cursor from the screen
+            cur_display();              // redraw the cursor
         }
     } else
         ints_on();

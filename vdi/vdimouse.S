@@ -30,8 +30,8 @@
 
         .globl  _arrow_cdb      // default mouse definition
 
-	.globl	_mousex
-	.globl	_mousey
+        .globl  _mousex
+        .globl  _mousey
 
         /* External variables used here */
 
@@ -325,8 +325,8 @@ mov_cur1:
 
 
 _cur_display:
-	move.w	_mousex,d0
-	move.w	_mousey,d1
+        move.w  _mousex,d0
+        move.w  _mousey,d1
 
         movem.l d2-d7/a2-a6,-(sp)       // save registers used by 'C'
         clr.w   d7                      // init entry & store routine index
@@ -963,9 +963,9 @@ _arrow_cdb:
         .dc.w   0x0000 //%0000000000000000
 
 
-	.bss
+        .bss
         
-_mousex:       .ds.w 	1
-_mousey:       .ds.w 	1
+_mousex:       .ds.w    1
+_mousey:       .ds.w    1
 
         .end
