@@ -83,6 +83,9 @@ void screen_init(void)
             rez = 2;
     }
 
+    if (has_videl)   /* enforce mono mode on Videl */
+        rez = 2;     /* FIXME: replace with proper screen depth detection */
+
     *rez_reg = rez;  /* on real Falcon this could cause trouble (?) */
     sshiftmod = rez;
 
