@@ -7,6 +7,7 @@
         .text
 
 _deskstart:
+
         movea.l a7,a5
         movea.l #deskustack,a7
         movea.l 4(a5),a5
@@ -19,23 +20,30 @@ _deskstart:
         move.l  a5,-(a7)
         move.w  d0,-(a7)
         move.w  #0x4A,-(a7)
-        trap    #1
-        adda.l  #0xC,a7
+        trap    #1                      // Mshrink
+        lea     14(a7),a7
+
+#ifndef NO_ROM
+        move.l  #desksstack,-(a7)       // We can't use the old USP as SSP
+        move.w  #0x20,-(a7)             // when doing GEM calls in supervisor
+        trap    #1                      // mode...
+        move.l  d0,old_ssp
+#endif
 
         move.l  #far_draw,d0
         move.l  d0,_drawaddr
 
+        jsr     _deskmain               // Run the desktop
+
 #ifndef NO_ROM
-        move.l  #desksstack,-(a7)
+        move.l  old_ssp,-(a7)
         move.w  #0x20,-(a7)
-        trap    #1
-        //addq.w  #6,a7
+        trap    #1                      // Back to user mode
+        addq.l  #6,a7
 #endif
 
-        jsr     _deskmain
-
-        move.l  #0,-(a7)
-        trap    #1
+        clr.w   -(a7)
+        trap    #1                      // Pterm
 
 
 
@@ -91,10 +99,15 @@ _gem:
 
 // Space for the Stack:
 
-        .ds.b   0x800
-desksstack:
+#ifndef NO_ROM
+old_ssp:
+        .ds.l   1
 
         .ds.b   0x800
+desksstack:
+#endif
+
+        .ds.b   0x200
 deskustack:
 
 
@@ -112,3 +125,4 @@ saveret:
 saveregs:
         .ds.l   2
 #endif
+

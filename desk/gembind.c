@@ -1021,6 +1021,9 @@ WORD wind_calc(WORD wctype, UWORD kind, WORD x, WORD y, WORD w, WORD h,
 
 
                                         /* Resource Manager             */
+#if 1
+/* We only need this when desktop is compiled as a standalone app and uses
+   an external DESKTOP.RSC */
 WORD rsrc_load(LONG rsname)
 {
         RS_PFNAME = rsname;
@@ -1034,6 +1037,7 @@ WORD rsrc_free()
 }
 
 
+/* Note: We fake this call in desk_rsc.c when desktop is in ROM */
 WORD rsrc_gaddr(WORD rstype, WORD rsid, LONG *paddr)
 {
         RS_TYPE = rstype;
@@ -1042,6 +1046,8 @@ WORD rsrc_gaddr(WORD rstype, WORD rsid, LONG *paddr)
         *paddr = RS_OUTADDR;
         return((WORD) RET_CODE );
 }
+#endif
+
 
 /* unused
 WORD rsrc_saddr(WORD rstype, WORD rsid, LONG lngval)

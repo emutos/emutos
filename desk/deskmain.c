@@ -24,12 +24,12 @@
 #include "taddr.h"
 #include "dos.h"
 #include "gembind.h"
-#include "desktop.h"
 #include "deskapp.h"
 #include "deskfpd.h"
 #include "deskwin.h"
 #include "infodef.h"
 #include "deskbind.h"
+#include "desk_rsc.h"
 
 #include "optimize.h"
 #include "rectfunc.h"
@@ -1143,11 +1143,20 @@ WORD deskmain()
         desk_wait(TRUE);
         wind_update(END_UPDATE);
                                                 /* initialize resources */
-        rsrc_load( ADDR("DESKTOP.RSC") );
+#if 1
+        if( !rsrc_load(ADDR("DESKTOP.RSC")) )
+        {
+          form_alert(1,ADDR("[3][ Can not load | the DESKTOP.RSC ][Cancel]"));
+          /*appl_exit();*/
+          return(FALSE);
+        }
+#else
+        desk_rs_init();
+#endif
                                                 /* initialize menus and */
                                                 /*   dialogs            */
         for(ii = 0; ii < NUM_ADTREES; ii++)
-          rsrc_gaddr(0, ii, &G.a_trees[ii]);
+          rsrc_gaddr(R_TREE, ii, &G.a_trees[ii]);
 
 
 
@@ -1342,6 +1351,8 @@ WORD deskmain()
 #endif
                                                 /* exit the gem AES     */
         appl_exit();
+
+        kprintf("Desktop shutting down!\n");
         return(TRUE);
 } /* main */
 
