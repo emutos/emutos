@@ -126,11 +126,20 @@ static void setvalue_vdo(void)
   }
 }
 
-/* machine type */
+/* detect ARAnyM */
+#define ARANYM_NAME	"aranym"
+static int is_it_aranym(void)
+{
+  return (strncasecmp(machine_name(), ARANYM_NAME, strlen(ARANYM_NAME)) == 0);
+}
 
+/* machine type */
 static void setvalue_mch(void)
 {
-  if(has_videl) {
+  if (is_it_aranym()) {
+    cookie_mch = MCH_ARANYM;
+  }
+  else if(has_videl) {
     cookie_mch = MCH_FALCON;
   }
   else if(has_tt_shifter) {

@@ -1583,3 +1583,6 @@ Start... early ages
 
 2003-12-24
 - Added George Nakos' greek translations. (THH)
+
+2004-01-07
+- _MCH cookie now contains 0x50000 on ARAnyM (joy)
