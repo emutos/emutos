@@ -20,15 +20,17 @@ BIOS/XBIOS/BDOS
 - rewrite nvram.c so it wouldn't need balloc(50) (no checksum necessary)
 - move nvram_init to machine_detect so it could be used in screen.c:videl_init
 
-Czech internationalisation
-- change CS into CZ in various places
+Internationalisation
 - examine how to build a mono-country EmuTOS 192k ROM 
+- translate AES strings
+- fix rsc sizes to some reasonable default sizes for all languages ?
+  (or dynamically resize the dialogs ???)
 
 VDI
 - Check the various assembler routines that are called from C functions
   if they save and restore enough registers.
-- But in mouse painting code. The mouse coordinates are clipped right,
-  but not draw, if vertical rez > 400
+- Bug in mouse painting code. The mouse coordinates are clipped right,
+  but not drawn, if vertical rez > 400
 
 AES
 - desk_rsc.c and gem_rsc.c are not fully ROM save yet (the TEDINFO strings etc)
