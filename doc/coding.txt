@@ -111,6 +111,10 @@ Exceptions to the 'underscore leading' rule are:
     } struct_a;
 
 
+See also
+========
+
+- the notice on processor-specific support in bios/processor.h
 
 
 

@@ -109,6 +109,15 @@ void bioskeys(void)
     current_keytbl = *tbl;
 }
 
+/*=== kbrate (xbios) =====================================================*/
+
+WORD kbrate(WORD initial, WORD repeat)
+{
+    /* TODO */
+    return 0;
+}
+
+
 /*=== kbshift (bios) =====================================================*/
 
 LONG kbshift(WORD flag)

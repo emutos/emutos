@@ -25,13 +25,7 @@
 #include "blkdev.h"
 #include "string.h"
 #include "kprint.h"
-
-/*==== External declarations ==============================================*/
-
-extern LONG random(void);   /* in xbios.c */
-
-extern BLKDEV blkdev[];     /* in blkdev.c */
-extern UNIT devices[];      /* in blkdev.c */
+#include "xbios.h"  /* random() */
 
 
 /*==== Introduction =======================================================*/
@@ -99,7 +93,7 @@ static void flopini(WORD dev);
 static void floplock(WORD dev);
 static void flopunlk(WORD dev);
 
-/* select in the PSG port A*/
+/* select drive and side in the PSG port A */
 static void select(WORD dev, WORD side);
 
 /* sets the track, returns 0 or error. rate is the step rate */
@@ -164,8 +158,6 @@ static struct flop_info {
 
 static UBYTE deselected;
 
-extern WORD flock;
-
 /*==== hdv_init and hdv_boot ==============================================*/
 
 void flop_hdv_init(void)
@@ -177,7 +169,7 @@ void flop_hdv_init(void)
     nflops = 0;
     cur_dev = -1;
 
-    /* I'm unsure, so let flopvbl() do the work or figuring out. */
+    /* I'm unsure, so let flopvbl() do the work of figuring out. */
     deselected = 1;
 
     finfo[0].cur_track = -1;
@@ -377,7 +369,7 @@ void protobt(LONG buf, LONG serial, WORD type, WORD exec)
     } else {
         if(serial >= 0x1000000) {
             /* create a random serial */
-          serial = random();
+            serial = random();
         }
         /* set this serial */
         b->serial[0] = serial>>16;

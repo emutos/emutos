@@ -16,6 +16,7 @@
 #include "machine.h"
 #include "screen.h"
 #include "asm.h"
+#include "tosvars.h"
 
 /* private prototypes */
 
@@ -206,7 +207,6 @@ void vsync(void)
 {
     WORD old_sr;
     LONG a;
-    extern volatile LONG frclock;
 
     old_sr = set_sr(0x2300);    /* allow VBL interrupt */
     a = frclock;

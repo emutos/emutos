@@ -121,13 +121,13 @@ char *prntEnvPtr;
 char *WSrcReq;
 int WAttCode;
 char wildExp[4] = { "*.*" };
-char srcFlNm[67];               /*src file name */
+char srcFlNm[67];               /* src file name */
 char dstFlNm[67];               /* destination file name */
-char srcDir[67];                /*src dir path */
-char dstDir[67];                /*dst dir path */
-char srcNmPat[13];              /*src file name specified in path */
-char dstNmPat[13];              /*dst file name specified in path */
-char path[67];                  /*lst of default path names */
+char srcDir[67];                /* src dir path */
+char dstDir[67];                /* dst dir path */
+char srcNmPat[13];              /* src file name specified in path */
+char dstNmPat[13];              /* dst file name specified in path */
+char path[67];                  /* lst of default path names */
 
 /* Forward declarations */
 void xCmdLn(char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl);

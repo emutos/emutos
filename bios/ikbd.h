@@ -49,6 +49,7 @@ extern void atari_kbd_leds (UWORD );
 
 /* some xbios functions */
 extern LONG keytbl(LONG norm, LONG shft, LONG caps);
+extern WORD kbrate(WORD initial, WORD repeat);
 extern void bioskeys(void);
 
 extern void ikbdws(WORD cnt, LONG ptr);

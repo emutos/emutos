@@ -109,9 +109,8 @@
 #endif
 
 
-/*
- * The keyboard and language are now set using
- *   make LOCALE="xx" 
+/* The keyboard and language are now set using
+ *   make COUNTRY="xx" 
  * where xx is a lowercase two-letter country code as
  * found in the table in bios/country.c
  */

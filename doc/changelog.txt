@@ -899,7 +899,7 @@ Start... early ages
 - vdi/fontdef.h - integrated in vdi/vdidef.h (MAD)
 
 15. Jun. 2002
-- bios/memory.S - seperated Falcon and ST stuff, still a memconfig bug? (MAD)
+- bios/memory.S - separated Falcon and ST stuff, still a memconfig bug? (MAD)
 
 16. Jun. 2002
 - bios/detect.S - removed, put into processor.S and vector.S (MAD)
@@ -915,3 +915,22 @@ Start... early ages
 23. Jun. 2002
 - include/config.h - Added TOS_VERSION define to switch TOS versions and
   to reduce size if compiling a 192kB image (THH).
+
+1. Jul. 2002
+- doc/processor.h - added some documentation about processor handling (LVL)
+- tools/bug.c 
+  - prints "entry" instead of "entries" when only one entry (LVL)
+  - GEM Alert strings folded at vertical bars in po files (LVL)
+  - experimental translation directly within C files (LVL)
+- wrappers for (x)bios functions not present unless DBG_(X)BIOS is set; moved
+  (x)bios function tables out of vectors.S into (x)bios.c (LVL)
+- bdos/fs*.[ch] - renamed rwabs to longjmp_rwabs for clarity (LVL)
+- */*_rsc.c 
+  - aes reource translation added, sharing code with desk/desk_rsc.c (LVL)
+  - folded long strings: no source line longer than 80 chars (LVL)
+- po/fr.po - full FR translation (LVL)
+- Makefile 
+  - gmake black magic :-) shrinks down the size of build rules (LVL)
+  - experimental building of a unique-country translated EmuTOS (LVL)
+- removed some 'extern' from C source files (should go in .h files) (LVL)
+

@@ -17,6 +17,7 @@
 #include "bios.h"
 #include "kprint.h"
 #include "lineavars.h"
+#include "tosvars.h"
 
 /* extern declarations */
 
@@ -149,12 +150,6 @@ void doassert(const char *file, long line, const char *func, const char *text)
 
 /*==== dopanic - display information found in 0x380 and halt ======*/
 
-extern LONG proc_lives;
-extern LONG proc_dregs[];
-extern LONG proc_aregs[];
-extern LONG proc_enum;
-extern LONG proc_usp;
-extern WORD proc_stk[];
 
 static const char *exc_messages[] = {
     "", "", "bus error", "address error",

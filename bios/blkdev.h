@@ -170,5 +170,13 @@ struct _unit
 };
 typedef struct _unit UNIT;
 
+/*
+ * defined in blkdev.c, also used in floppy.c
+ */
+
+extern BLKDEV blkdev[]; 
+extern UNIT devices[];  
+
+
 #endif /* _BLKDEV_H */
 

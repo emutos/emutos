@@ -1,8 +1,10 @@
 BIOS/XBIOS/BDOS
+- implement keyboard repeat
 - implement XBIOS calls
 - implement linea functions
 - merge identical headers, and put them all in an include directory (?)
-- check that RAM disks work (an easy way to test bdos under STonX)
+- reduce the number of 'extern' in .c files
+- check that RAM disks work
 - misc. TODOs in floppy.c
 - VDI: code cleanup, Makefile, esclisa and gsxvars like in EmuTOS
 - auto programs are not run after reset
@@ -11,7 +13,7 @@ BIOS/XBIOS/BDOS
 - check that VEC_CRITICALERR (0x101) is called when the BIOS encounters errors
 - should hitting control-c terminate the current process? if so, how?
 - move mem-only routines out of proc.c into umem.c or iumem.c
-- check that EmuCON understands 'exit' (useful in .BAT scripts)
+- EmuCON should allow 'exit' in .BAT scripts?
 - improve Mediach()
 - implement full XHDI 1.30
 - add proper VIDEL init and selectable resolutions
@@ -19,14 +21,16 @@ BIOS/XBIOS/BDOS
 - Alt key pressed during boot should skip harddisk driver init
 - rewrite nvram.c so it wouldn't need balloc(50) (no checksum necessary)
 - move nvram_init to machine_detect so it could be used in screen.c:videl_init
-- CPU cache to be made invalid after Pexec has loaded a program in memory ???
 - loop callibration needed for various delays in centronics and DMA ports
 
 Internationalisation
 - examine how to build a mono-country EmuTOS 192k ROM 
-- translate AES strings
 - fix rsc sizes to some reasonable default sizes for all languages ?
   (or dynamically resize the dialogs ???)
+- bugs in tools/bug.c; more things should be configurable on the command line
+- rework mkheader so that it can help configure things in the Makefile,
+  e.g. derive the lang from the COUNTRY, ... (the current assumption
+  that COUNTRY == LANG is wrong and should be fixed).
 
 VDI
 - Check the various assembler routines that are called from C functions
