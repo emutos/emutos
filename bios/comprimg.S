@@ -199,7 +199,7 @@ find:
         
 
 /*
- * stubs
+ * stubs - these are called during memory initialisation
  */
 
         .global kprintf_init
@@ -211,14 +211,16 @@ _kprintf:
 
 
 /*
- * minimum natfeat init - setups only the stderr id for debug below
+ * minimum natfeat init - only initializes the stderr id for debug below
  */
         .global _natfeat_init
-_natfeat_init:
+
+#if DETECT_NATIVE_FEATURES || COMPRDBG
+
         .equ vec_illegal, 0x10       // illegal exception vector
 
+_natfeat_init:
         clr.l   stderr
-#if DETECT_NATIVE_FEATURES || COMPRDBG
         move.l  sp,a1
         move.l  #fail_natfeat,vec_illegal
         pea     nf_stderr_name
@@ -227,14 +229,22 @@ _natfeat_init:
         move.l  d0,stderr
 fail_natfeat:
         move.l  a1,sp
-#endif
         rts
         
 nf_stderr_name:
         .ascii  "NF_STDERR\0"
+        .even
+
+#else /* no native features */
+        
+_natfeat_init:
+        clr.l   stderr
+        rts       
+
+#endif
         
 /*
- * debug - activate to use minimal debug support on STonX.
+ * debug - activate to use minimal debug support using natfeat NF_STDERR.
  * usage:
  *    move.l d0,-(sp)   
  *    jsr p   
@@ -291,7 +301,7 @@ outch:
         add.l   #8,(sp)
         move.l  stderr,-(sp)
         beq     no_natfeat
-        move.l  d0,-sp
+        move.l  d0,-(sp)
         dc.w    0x7301
         move.l  (sp)+,d0
 no_natfeat:

@@ -31,14 +31,11 @@
  */
 
 _swp68w:
-        link    a6,#0
-        move.l  8(a6),a0
+        move.l  4(sp),a0
         move    (a0),d0
         ror     #8,d0
         move    d0,(a0)
-        unlk    a6
         rts
-
 
 
 /*
@@ -46,16 +43,13 @@ _swp68w:
  */
 
 _swp68l:
-        link    a6,#0
-        move.l  8(a6),a0
+        move.l  4(sp),a0
         move.l  (a0),d0
         ror     #8,d0
         swap    d0
         ror     #8,d0
         move.l  d0,(a0)
-        unlk    a6
         rts
-
 
 
 /*

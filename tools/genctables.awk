@@ -60,8 +60,8 @@ END {
     for(i = 1 ; i <= ncountries ; i++) {
         country = countries[i]
         print "    { COUNTRY_" country ", \"" langs[country] "\", " \
-           "KEYB_" keybs[country] ", CHARSET_" csets[country] ", " \
-           idts[country] "},"
+            "KEYB_" keybs[country] ", CHARSET_" csets[country] ", " \
+            idts[country] "},"
 
         needkeybs[keybs[country]] = 1
         needcsets[csets[country]] = 1
@@ -71,28 +71,28 @@ END {
 
     for(keyb in needkeybs) {
         print "#if (CONF_KEYB == KEYB_ALL || CONF_KEYB == KEYB_" keyb ")"
-	print "#include \"keyb_" tolower(keyb) ".h\""
-	print "#endif" 
+        print "#include \"keyb_" tolower(keyb) ".h\""
+        print "#endif" 
     }
     print "\nconst static struct kbd_record avail_kbd[] = {"
     for(keyb in needkeybs) {
         print "#if (CONF_KEYB == KEYB_ALL || CONF_KEYB == KEYB_" keyb ")" 
-	print "    { KEYB_" keyb ", &keytbl_" tolower(keyb) " },"
-	print "#endif" 
+        print "    { KEYB_" keyb ", &keytbl_" tolower(keyb) " },"
+        print "#endif" 
     }
     print "};\n\n" 
 
     for(cset in needcsets) {
         lcset = tolower(cset)
-	print "extern const struct font_head fnt_" lcset "_6x6;"
-	print "extern const struct font_head fnt_" lcset "_8x8;"
-	print "extern const struct font_head fnt_" lcset "_8x16;"
+        print "extern const struct font_head fnt_" lcset "_6x6;"
+        print "extern const struct font_head fnt_" lcset "_8x8;"
+        print "extern const struct font_head fnt_" lcset "_8x16;"
     }
     print "\nconst static struct charset_fonts font_sets[] = {"
     for(cset in needcsets) {
         lcset = tolower(cset)
         print "#if (CONF_CHARSET == CHARSET_ALL || CONF_CHARSET == CHARSET_" \
-	    cset ")" 
+            cset ")" 
         print "    { CHARSET_" cset ", &fnt_" lcset "_6x6, &fnt_" lcset \
             "_8x8, &fnt_" lcset "_8x16 },"
         print "#endif"

@@ -17,20 +17,19 @@
 #include "asm.h"
  
 /*
- * This is a straightforward implementation of the PSG-related
- * xbios routines.
- * These are untested for now (my STonX hangs when noaudio is not set)
- *
+ * This is a straightforward implementation of PSG-related xbios routines.
+ * 
  * Note: some care has to be exerted when accessing the PDG registers.
- * areas using the PSG are :
+ * Areas using the PSG are:
  * - xbios sound and floppy routines
  * - floppy VBL interrupt (to deselect floppy drives, in port A)
  * - RS232 interrupts (to handle RTS/CTS hardware flow control)
  * - timer C sound interrupt (play dosound)
  * - parallel port bios device.
- * Since acessing to a PSG register requires to write in control, then
- * read or write control or data, it is necessary that no interrupt
- * which could also use the PSG occur when using the PSG.
+ * Since acessing to a PSG register is a two step operation that requires 
+ * first to write in control, then read or write control or data, it is 
+ * necessary that no interrupt which could also use the PSG occur when 
+ * using the PSG.
  */
 
 /* internal routines */
@@ -160,7 +159,7 @@ const static UBYTE bellsnd[] = {
   4, 0,       /* no channel C */ 
   5, 0, 
   6, 0,       /* no noise */ 
-  7, 0xFE,    /* no sound or noise except channel A*/
+  7, 0xFE,    /* no sound or noise except channel A */
   8, 0x10,    /* channel A amplitude */
   9, 0,
   10, 0,
@@ -186,11 +185,13 @@ const static UBYTE keyclicksnd[] = {
   0xFF, 0,
 };
 
-void bell(void) {
+void bell(void) 
+{
   bell_hook();
 }
 
-void keyclick(void) {
+void keyclick(void) 
+{
   kcl_hook();
 }
 
@@ -199,6 +200,7 @@ static void do_bell(void)
   dosound((LONG) bellsnd);
 }
 
-static void do_keyclick(void) {
+static void do_keyclick(void) 
+{
   dosound((LONG) keyclicksnd);
 }
