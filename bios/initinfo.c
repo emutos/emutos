@@ -19,6 +19,7 @@
 #include "portab.h"
 #include "kprint.h"
 #include "nls.h"
+#include "ikbd.h"
 
 #include "lineavars.h"
 #include "tosvars.h"
