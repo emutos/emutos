@@ -34,9 +34,12 @@
 long	xmalloc(long amount)
 {
     MD *m;
+    long ret_value;
 
-    if(  amount < -1L  )
-        return( 0 ) ;
+    if(  amount < -1L  ) {
+      ret_value = 0;
+      goto ret;
+    }
 
     /*
      * Round odd-value requests (except -1L) to next higher even number.
@@ -50,28 +53,34 @@ long	xmalloc(long amount)
      * to grant the request, then abort.
      */
 
-    if (!(m = ffit(amount,&pmd)))
-        return(0);
+    if (!(m = ffit(amount,&pmd))) {
+      ret_value = 0;
+      goto ret;
+    }
 
     /*
      * If the request was -1L, the internal routine returned the amount
      * of available memory, rather than a pointer to a memory descriptor.
      */
 
-    if (amount == -1L)
-        return( (long) m->m_link );
+    if (amount == -1L) {
+      ret_value = (long) m->m_link;
+      goto ret;
+    }
 
     /*
      * The internal routine returned a pointer to a memory descriptor.
      * Return its pointer to the start of the block.
      */
 
+    ret_value = (long) m->m_start;
+
+ret:
 #if DBGUMEM
-    kprint("BDOS: xmalloc = ");
-    kputl((long*) &m->m_start);  /* This fails - not byte aligned?!? */
-    kprint("\n");
+    kprintf("BDOS: xmalloc(0x%08lx) = 0x%08lx\n", ret_value);
 #endif
-    return(m->m_start);
+
+    return(ret_value);
 }
 
 
