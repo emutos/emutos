@@ -86,6 +86,19 @@ BYTE env[256];                  /* environment string, enough bytes??? */
 
 int is_ramtos;                  /* 1 if the TOS is running in RAM */
 
+/*==== NatFeat ============================================================*/
+
+static long _NF_getid = 0x73004e75L;
+static long _NF_call  = 0x73014e75L;
+#define nfGetID(n)	(((long (*)(const char *))&_NF_getid)n)
+#define nfCall(n)	(((long (*)(long, ...))&_NF_call)n)
+
+#define nf_stderr(text)	\
+	(((long (*)(long, const char *))&_NF_call)(nfGetID(("NF_STDERR")), (text)))
+
+#define nf_stderrprintf(text, par1)	\
+	(((long (*)(long, const char *, ...))&_NF_call)(nfGetID(("NF_STDERR"))+1, text, par1))
+
 
 /*==== BOOT ===============================================================*/
 
@@ -267,7 +280,13 @@ void autoexec(void)
         strcpy(path, "\\AUTO\\");
         dta.name[12] = 0;
         strcat(path, dta.name);
+
+        if (has_natfeats)
+            nf_stderrprintf("Loading %s ... ", path);
         trap1( 0x4b, 0, path, "", "");       /* Pexec */
+        if (has_natfeats)
+            nf_stderr("[OK]\n");
+
         err = trap1( 0x4f );                 /* Fsnext */
     }
 }
