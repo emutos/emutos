@@ -10,6 +10,7 @@
  */
 
 #include <string.h>
+#include <version.h>
 
 #include "portab.h"
 #include "obdefs.h"
@@ -39,208 +40,195 @@ static const TEDINFO desk_rs_tedinfo_rom[] = {
     {0L,
      (LONG) "Name:  ________.___",
      (LONG) "f",
-     IBM, 0, TE_LEFT, 4352, 0, 0, 12, 20},	/* 0 */
+     IBM, 0, TE_LEFT, 4352, 0, 0, 12, 20},      /* 0 */
 
     {0L,
      (LONG) "Size in bytes:  ________",
      (LONG) "9",
-     IBM, 0, TE_RIGHT, 4352, 0, 0, 9, 25},	/* 1 */
+     IBM, 0, TE_RIGHT, 4352, 0, 0, 9, 25},      /* 1 */
 
     {0L,
      (LONG) "Last modified:  __/__/__",
      (LONG) "9",
-     IBM, 0, TE_RIGHT, 4352, 0, 0, 7, 25},	/* 2 */
+     IBM, 0, TE_RIGHT, 4352, 0, 0, 7, 25},      /* 2 */
 
     {0L,
      (LONG) "__:__ __",
      (LONG) "9999aa",
-     IBM, 0, TE_RIGHT, 4352, 0, 0, 7, 9},	/* 3 */
+     IBM, 0, TE_RIGHT, 4352, 0, 0, 7, 9},       /* 3 */
 
     {0L,
      (LONG) "Drive identifier:  _:",
      (LONG) "A",
-     IBM, 0, TE_LEFT, 4352, 0, 0, 2, 22},	/* 4 */
+     IBM, 0, TE_LEFT, 4352, 0, 0, 2, 22},       /* 4 */
 
     {0L,
      (LONG) "Disk label:  ___________",
      (LONG) "f",
-     IBM, 0, TE_LEFT, 4352, 0, 0, 12, 25},	/* 5 */
+     IBM, 0, TE_LEFT, 4352, 0, 0, 12, 25},      /* 5 */
 
     {0L,
      (LONG) "Number of folders:     _____",
      (LONG) "9",
-     IBM, 0, TE_RIGHT, 4352, 0, 0, 6, 29},	/* 6 */
+     IBM, 0, TE_RIGHT, 4352, 0, 0, 6, 29},      /* 6 */
 
     {0L,
      (LONG) "Number of items:     _____",
      (LONG) "9",
-     IBM, 0, TE_RIGHT, 4352, 0, 0, 6, 27},	/* 7 */
+     IBM, 0, TE_RIGHT, 4352, 0, 0, 6, 27},      /* 7 */
 
     {0L,
      (LONG) "Bytes used:  ________",
      (LONG) "9",
-     IBM, 0, TE_RIGHT, 4352, 0, 0, 9, 22},	/* 8 */
+     IBM, 0, TE_RIGHT, 4352, 0, 0, 9, 22},      /* 8 */
 
     {0L,
      (LONG) "Bytes available:  ________",
      (LONG) "9",
-     IBM, 0, TE_RIGHT, 4352, 0, 0, 9, 27},	/* 9 */
+     IBM, 0, TE_RIGHT, 4352, 0, 0, 9, 27},      /* 9 */
 
     {0L,
      (LONG) "Folder name:  ________.___",
      (LONG) "f",
-     IBM, 0, TE_LEFT, 4352, 0, 0, 12, 27},	/* 10 */
+     IBM, 0, TE_LEFT, 4352, 0, 0, 12, 27},      /* 10 */
 
     {0L,
      (LONG) "Created:  __-__-__  ",
      (LONG) "9",
-     IBM, 0, TE_LEFT, 4352, 0, 0, 7, 21},	/* 11 */
+     IBM, 0, TE_LEFT, 4352, 0, 0, 7, 21},       /* 11 */
 
     {0L,
      (LONG) "__:__ __",
      (LONG) "9999aa",
-     IBM, 0, TE_LEFT, 4352, 0, 0, 7, 9},	/* 12 */
+     IBM, 0, TE_LEFT, 4352, 0, 0, 7, 9},        /* 12 */
 
     {0L,
      (LONG) "Number of folders:     _____",
      (LONG) "9",
-     IBM, 0, TE_RIGHT, 4352, 0, 0, 6, 29},	/* 13 */
+     IBM, 0, TE_RIGHT, 4352, 0, 0, 6, 29},      /* 13 */
 
     {0L,
      (LONG) "Number of items:     _____",
      (LONG) "9",
-     IBM, 0, TE_RIGHT, 4352, 0, 0, 6, 27},	/* 14 */
+     IBM, 0, TE_RIGHT, 4352, 0, 0, 6, 27},      /* 14 */
 
     {0L,
      (LONG) "Bytes used:  ________",
      (LONG) "9",
-     IBM, 0, TE_RIGHT, 4352, 0, 0, 9, 22},	/* 15 */
+     IBM, 0, TE_RIGHT, 4352, 0, 0, 9, 22},      /* 15 */
 
     {0L,
      (LONG) "Name:  ________.___",
      (LONG) "f",
-     IBM, 0, TE_LEFT, 4352, 0, 0, 12, 20},	/* 16 */
+     IBM, 0, TE_LEFT, 4352, 0, 0, 12, 20},      /* 16 */
 
     {0L,
      
      (LONG)
      "Parameters:  ____________________________________________________",
      (LONG) "X",
-     IBM, 0, TE_LEFT, 4352, 0, 0, 53, 66},	/* 17 */
+     IBM, 0, TE_LEFT, 4352, 0, 0, 53, 66},      /* 17 */
 
     {0L,
      (LONG) "Drive identifier:  _",
      (LONG) "A",
-     IBM, 0, TE_LEFT, 4352, 0, 0, 2, 21},	/* 18 */
+     IBM, 0, TE_LEFT, 4352, 0, 0, 2, 21},       /* 18 */
 
     {0L,
      (LONG) "Icon label:  ____________",
      (LONG) "F",
-     IBM, 0, TE_LEFT, 4352, 0, 0, 13, 26},	/* 19 */
+     IBM, 0, TE_LEFT, 4352, 0, 0, 13, 26},      /* 19 */
 
     {0L,
      (LONG) "Application name:  ________.___",
      (LONG) "F",
-     IBM, 0, TE_LEFT, 4352, 0, 0, 12, 32},	/* 20 */
+     IBM, 0, TE_LEFT, 4352, 0, 0, 12, 32},      /* 20 */
 
     {0L,
      (LONG) "___",
      (LONG) "F",
-     IBM, 0, TE_LEFT, 4352, 0, 0, 4, 4},	/* 21 */
+     IBM, 0, TE_LEFT, 4352, 0, 0, 4, 4},        /* 21 */
 
     {0L,
      (LONG) "___",
      (LONG) "F",
-     IBM, 0, TE_LEFT, 4352, 0, 0, 4, 4},	/* 22 */
+     IBM, 0, TE_LEFT, 4352, 0, 0, 4, 4},        /* 22 */
 
     {0L,
      (LONG) "___",
      (LONG) "F",
-     IBM, 0, TE_LEFT, 4352, 0, 0, 4, 4},	/* 23 */
+     IBM, 0, TE_LEFT, 4352, 0, 0, 4, 4},        /* 23 */
 
     {0L,
      (LONG) "___",
      (LONG) "F",
-     IBM, 0, TE_LEFT, 4352, 0, 0, 4, 4},	/* 24 */
+     IBM, 0, TE_LEFT, 4352, 0, 0, 4, 4},        /* 24 */
 
     {0L,
      (LONG) "___",
      (LONG) "F",
-     IBM, 0, TE_LEFT, 4352, 0, 0, 4, 4},	/* 25 */
+     IBM, 0, TE_LEFT, 4352, 0, 0, 4, 4},        /* 25 */
 
     {0L,
      (LONG) "___",
      (LONG) "F",
-     IBM, 0, TE_LEFT, 4352, 0, 0, 4, 4},	/* 26 */
+     IBM, 0, TE_LEFT, 4352, 0, 0, 4, 4},        /* 26 */
 
     {0L,
      (LONG) "___",
      (LONG) "F",
-     IBM, 0, TE_LEFT, 4352, 0, 0, 4, 4},	/* 27 */
+     IBM, 0, TE_LEFT, 4352, 0, 0, 4, 4},        /* 27 */
 
     {0L,
      (LONG) "___",
      (LONG) "F",
-     IBM, 0, TE_LEFT, 4352, 0, 0, 4, 4},	/* 28 */
+     IBM, 0, TE_LEFT, 4352, 0, 0, 4, 4},        /* 28 */
 
     {0L,
      (LONG) "_______________________",
      (LONG) "F",
-     IBM, 1, TE_CNTR, 4480, 0, -1, 24, 24},	/* 29 */
+     IBM, 1, TE_CNTR, 4480, 0, -1, 24, 24},     /* 29 */
 
     {0L,
      (LONG) "Folders to copy:  ____",
      (LONG) "9",
-     IBM, 0, TE_RIGHT, 4352, 0, 0, 5, 23},	/* 30 */
+     IBM, 0, TE_RIGHT, 4352, 0, 0, 5, 23},      /* 30 */
 
     {0L,
      (LONG) "Items to copy:  ____",
      (LONG) "9",
-     IBM, 0, TE_RIGHT, 4352, 0, 0, 5, 21},	/* 31 */
+     IBM, 0, TE_RIGHT, 4352, 0, 0, 5, 21},      /* 31 */
 
     {0L,
      (LONG) "Folders to delete:  ____",
      (LONG) "9",
-     IBM, 0, TE_RIGHT, 4352, 0, 0, 5, 25},	/* 32 */
+     IBM, 0, TE_RIGHT, 4352, 0, 0, 5, 25},      /* 32 */
 
     {0L,
      (LONG) "Items to delete:  ____",
      (LONG) "9",
-     IBM, 0, TE_RIGHT, 4352, 0, 0, 5, 23},	/* 33 */
+     IBM, 0, TE_RIGHT, 4352, 0, 0, 5, 23},      /* 33 */
 
     {0L,
      (LONG) "Current name:  ________.___",
      (LONG) "f",
-     IBM, 0, TE_LEFT, 4352, 0, 0, 12, 28},	/* 34 */
+     IBM, 0, TE_LEFT, 4352, 0, 0, 12, 28},      /* 34 */
 
     {0L,
      (LONG) "Copy's name:  ________.___",
      (LONG) "f",
-     IBM, 0, TE_LEFT, 4352, 0, 0, 12, 27},	/* 35 */
+     IBM, 0, TE_LEFT, 4352, 0, 0, 12, 27},      /* 35 */
 
     {0L,
      (LONG) "Name:  ________.___",
      (LONG) "f",
-     IBM, 0, TE_LEFT, 4352, 0, 0, 12, 20}	/* 36 */
+     IBM, 0, TE_LEFT, 4352, 0, 0, 12, 20}       /* 36 */
 };
 
 
-static int rs_b4img[] = {
-    0x0780, 0x0000, 0x0000, 0x0000, 0x1860, 0x0000, 0x0000, 0x0000,
-    0x2010, 0x0000, 0x0000, 0x0000, 0x4708, 0xe0fe, 0x0000, 0x0000,
-    0x4489, 0xc3ff, 0x8000, 0x0000, 0x4709, 0xc787, 0x8000, 0x0000,
-    0x448b, 0x8703, 0xc000, 0x0000, 0x2013, 0x8701, 0xc000, 0x0000,
-    0x1867, 0x0003, 0xc000, 0x0000, 0x0787, 0x0007, 0x8000, 0x0000,
-    0x000e, 0x003f, 0x0000, 0x0000, 0x000e, 0x003f, 0x8000, 0x0000,
-    0x001c, 0x0007, 0xc000, 0x0000, 0x001c, 0x0003, 0xe000, 0x0000,
-    0x0038, 0x0701, 0xe000, 0x0000, 0x0038, 0x0703, 0xe000, 0x0000,
-    0x0070, 0x0787, 0xc000, 0x0000, 0x0070, 0x03ff, 0xc000, 0x0000,
-    0x00e0, 0x01ff, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000
-};
 
-static int rs_b3img[] = {
+
+static int rs_logo_img[] = {
     0x3fff, 0xfffc, 0x7fff, 0xfffe, 0xe000, 0x0007, 0xc000, 0x0003,
     0xc000, 0x0003, 0xc3f8, 0x1fc3, 0xc7fc, 0x3fe3, 0xc7fc, 0x3063,
     0xc7fc, 0x3063, 0xc7fc, 0x3063, 0xc7fc, 0x3063, 0xc7fc, 0x3063,
@@ -251,70 +239,15 @@ static int rs_b3img[] = {
     0xc000, 0x0003, 0xe000, 0x0007, 0x7fff, 0xfffe, 0x3fff, 0xfffc
 };
 
-static int rs_b2img[] = {
-    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x01f6, 0x3000, 0x0000,
-    0x0000, 0x0045, 0x5000, 0x0000, 0xfc3f, 0xe044, 0x9000, 0x0000,
-    0xfe3f, 0xf044, 0x1000, 0x0000, 0x8f38, 0x7800, 0x0000, 0x0000,
-    0x0738, 0x3800, 0x0000, 0x0000, 0x0738, 0x3800, 0x0000, 0x0000,
-    0x0738, 0x3800, 0x0000, 0x0000, 0x0738, 0x3800, 0x0000, 0x0000,
-    0x8f38, 0x7800, 0x0000, 0x0000, 0xfe3f, 0xf000, 0x0000, 0x0000,
-    0xfc3f, 0xe000, 0x0000, 0x0000, 0x0038, 0x0000, 0x0000, 0x0000,
-    0x0038, 0x0000, 0x0000, 0x0000, 0x0038, 0x0000, 0x0000, 0x0000,
-    0x0038, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000
-};
-
-static int rs_b1img[] = {
-    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-    0x0000, 0x0000, 0x0000, 0x0000, 0xffe0, 0x0000, 0x0000, 0x0000,
-    0xfff0, 0x0000, 0x00e0, 0x0000, 0x3878, 0x0000, 0x00e0, 0x0000,
-    0x3838, 0x0000, 0x00e0, 0x0380, 0x3838, 0x0000, 0x00e0, 0x0380,
-    0x3838, 0x0000, 0x00e0, 0x0380, 0x3838, 0x7e03, 0xf8e1, 0xcfe1,
-    0x3838, 0xff07, 0xf8e3, 0x8fe3, 0x3839, 0xe38f, 0x00e7, 0x0387,
-    0x3839, 0xc1ce, 0x00ee, 0x0387, 0x3839, 0xffc7, 0xf0fc, 0x0387,
-    0x3839, 0xffc3, 0xf8fe, 0x0387, 0x3839, 0xc000, 0x1ce7, 0x0387,
-    0x3879, 0xe1c0, 0x3ce3, 0x8387, 0xfff0, 0xff87, 0xf8e1, 0xc383,
-    0xffe0, 0x7f07, 0xf0e0, 0xe381, 0x0000, 0x0000, 0x0000, 0x0000,
-    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000
-};
-
-static int rs_b0img[] = {
-    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-    0x0000, 0x0000, 0x0000, 0x0000, 0x07fe, 0x4fff, 0xe7fc, 0x00ff,
-    0x1f07, 0xc3e0, 0xe1fc, 0x01fc, 0x3e01, 0xc1e0, 0x60fe, 0x01f8,
-    0x7c00, 0xc1e0, 0x20fe, 0x03f8, 0x7800, 0xc1e0, 0x00ef, 0x0378,
-    0x7800, 0x01e2, 0x00ef, 0x0778, 0x7800, 0x01e6, 0x00e7, 0x8678,
-    0x780f, 0xf9fe, 0x00e7, 0x8e78, 0x7801, 0xe1e6, 0x00e3, 0xcc78,
-    0x7801, 0xe1e2, 0x00e3, 0xdc78, 0x7801, 0xe1e0, 0x00e1, 0xf878,
-    0x7801, 0xe1e0, 0x00e1, 0xf878, 0x7801, 0xe1e0, 0x10e0, 0xf078,
-    0x3c03, 0xe1e0, 0x30e0, 0xf078, 0x1e07, 0x83e0, 0x71e0, 0x607c,
-    0x07fe, 0x0fff, 0xf7e0, 0x607f, 0x0000, 0x0000, 0x0000, 0x0000,
-    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
-    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000
-};
-
-
-#define RS_NBITBLK 5
 
 static BITBLK desk_rs_bitblk[] = {
-    {(LONG) rs_b0img, 8, 24, 0, 0, 1},
-
-    {(LONG) rs_b1img, 8, 24, 0, 0, 1},
-
-    {(LONG) rs_b2img, 8, 24, 0, 0, 1},
-
-    {(LONG) rs_b3img, 4, 32, 0, 0, 1},
-
-    {(LONG) rs_b4img, 8, 24, 0, 0, 1}
+    {(LONG) rs_logo_img, 4, 32, 0, 0, 1},
 };
 
 
 
 
-static char rs_str_iconOrText[20];	/* was: "  xxxx xx xxxxx  xx" */
+static char rs_str_iconOrText[20];      /* was: "  xxxx xx xxxxx  xx" */
 
 
 #define RS_NOBS 211
@@ -324,581 +257,575 @@ OBJECT desk_rs_obj[RS_NOBS];
 static const OBJECT desk_rs_obj_rom[] = {
 #define TR0 0
     /* TREE 0 */
-    {
-     -1, 1, 7, G_IBOX,				/*** 0 ***/
+   { -1, 1, 7, G_IBOX,                          /*** 0 ***/
      NONE,
      NORMAL,
      (long) 0L,
-     0, 0, 80, 25},
-    {
-     7, 2, 2, G_BOX,			/*** 1 ***/
+     0, 0, 80, 25 },
+
+   { 7, 2, 2, G_BOX,                            /*** 1 ***/
      NONE,
      NORMAL,
      (long) 4352L,
-     0, 0, 80, 513},
-    {
-     1, 3, 6, G_IBOX,				/*** 2 ***/
+     0, 0, 80, 513 },
+
+   { 1, 3, 6, G_IBOX,                           /*** 2 ***/
      NONE,
      NORMAL,
      (long) 0L,
      2, 0, 30, 769},
-    {
-     4, -1, -1, G_TITLE,			/*** 3 ***/
+
+   { 4, -1, -1, G_TITLE,                        /*** 3 ***/
      NONE,
      NORMAL,
      (long) " Desk ",
      0, 0, 6, 769},
-    {
-     5, -1, -1, G_TITLE,			/*** 4 ***/
+
+   { 5, -1, -1, G_TITLE,                        /*** 4 ***/
      NONE,
      NORMAL,
      (long) " File ",
      6, 0, 6, 769},
-    {
-     6, -1, -1, G_TITLE,			/*** 5 ***/
+
+   { 6, -1, -1, G_TITLE,                        /*** 5 ***/
      NONE,
      NORMAL,
      (long) " Options ",
      12, 0, 9, 769},
-    {
-     2, -1, -1, G_TITLE,			/*** 6 ***/
+
+   { 2, -1, -1, G_TITLE,                        /*** 6 ***/
      NONE,
      NORMAL,
      (long) " Arrange ",
      21, 0, 9, 769},
-    {
-     0, 8, 33, G_IBOX,				/*** 7 ***/
+
+   { 0, 8, 33, G_IBOX,                          /*** 7 ***/
      NONE,
      NORMAL,
      (long) 0L,
      0, 769, 80, 24},
-    {
-     17, 9, 16, G_BOX,				/*** 8 ***/
+
+   { 17, 9, 16, G_BOX,                          /*** 8 ***/
      NONE,
      NORMAL,
      (long) 16716032L,
      2, 0, 20, 8},
-    {
-     10, -1, -1, G_STRING,			/*** 9 ***/
+
+   { 10, -1, -1, G_STRING,                      /*** 9 ***/
      NONE,
      NORMAL,
      (long) "  Desktop info...   ",
      0, 0, 20, 1},
-    {
-     11, -1, -1, G_STRING,			/*** 10 ***/
+
+   { 11, -1, -1, G_STRING,                      /*** 10 ***/
      NONE,
      DISABLED,
      (long) "--------------------",
      0, 1, 20, 1},
-    {
-     12, -1, -1, G_STRING,			/*** 11 ***/
+
+   { 12, -1, -1, G_STRING,                      /*** 11 ***/
      NONE,
      NORMAL,
      (long) "1",
      0, 2, 20, 1},
-    {
-     13, -1, -1, G_STRING,			/*** 12 ***/
+
+   { 13, -1, -1, G_STRING,                      /*** 12 ***/
      NONE,
      NORMAL,
      (long) "2",
      0, 3, 20, 1},
-    {
-     14, -1, -1, G_STRING,			/*** 13 ***/
+
+   { 14, -1, -1, G_STRING,                      /*** 13 ***/
      NONE,
      NORMAL,
      (long) "3",
      0, 4, 20, 1},
-    {
-     15, -1, -1, G_STRING,			/*** 14 ***/
+
+   { 15, -1, -1, G_STRING,                      /*** 14 ***/
      NONE,
      NORMAL,
      (long) "4",
      0, 5, 20, 1},
-    {
-     16, -1, -1, G_STRING,			/*** 15 ***/
+
+   { 16, -1, -1, G_STRING,                      /*** 15 ***/
      NONE,
      NORMAL,
      (long) "5",
      0, 6, 20, 1},
-    {
-     8, -1, -1, G_STRING,			/*** 16 ***/
+
+   { 8, -1, -1, G_STRING,                       /*** 16 ***/
      NONE,
      NORMAL,
      (long) "6",
      0, 7, 20, 1},
-    {
-     26, 18, 25, G_BOX,				/*** 17 ***/
+
+   { 26, 18, 25, G_BOX,                         /*** 17 ***/
      NONE,
      NORMAL,
      (long) 16716032L,
      8, 0, 21, 8},
-    {
-     19, -1, -1, G_STRING,			/*** 18 ***/
+
+   { 19, -1, -1, G_STRING,                      /*** 18 ***/
      NONE,
      NORMAL,
      (long) "  Open",
      0, 0, 21, 1},
-    {
-     20, -1, -1, G_STRING,			/*** 19 ***/
+
+   { 20, -1, -1, G_STRING,                      /*** 19 ***/
      NONE,
      NORMAL,
      (long) "  Info/Rename...  \007I",
      0, 1, 21, 1},
-    {
-     21, -1, -1, G_STRING,			/*** 20 ***/
+
+   { 21, -1, -1, G_STRING,                      /*** 20 ***/
      NONE,
      DISABLED,
      (long) "---------------------",
      0, 2, 21, 1},
-    {
-     22, -1, -1, G_STRING,			/*** 21 ***/
+
+   { 22, -1, -1, G_STRING,                      /*** 21 ***/
      NONE,
      NORMAL,
      (long) "  Delete...       \007D",
      0, 3, 21, 1},
-    {
-     23, -1, -1, G_STRING,			/*** 22 ***/
+
+   { 23, -1, -1, G_STRING,                      /*** 22 ***/
      NONE,
      NORMAL,
      (long) "  Format...",
      0, 4, 21, 1},
-    {
-     24, -1, -1, G_STRING,			/*** 23 ***/
+
+   { 24, -1, -1, G_STRING,                      /*** 23 ***/
      NONE,
      DISABLED,
      (long) "---------------------",
      0, 5, 21, 1},
-    {
-     25, -1, -1, G_STRING,			/*** 24 ***/
+
+   { 25, -1, -1, G_STRING,                      /*** 24 ***/
      NONE,
      NORMAL,
      (long) "  To Output       ^U",
      0, 6, 21, 1},
-    {
-     17, -1, -1, G_STRING,			/*** 25 ***/
+
+   { 17, -1, -1, G_STRING,                      /*** 25 ***/
      NONE,
      NORMAL,
      (long) "  Exit to DOS     ^Q",
      0, 7, 21, 1},
-    {
-     33, 27, 32, G_BOX,				/*** 26 ***/
+
+   { 33, 27, 32, G_BOX,                         /*** 26 ***/
      NONE,
      NORMAL,
      (long) 16716032L,
      14, 0, 31, 6},
-    {
-     28, -1, -1, G_STRING,			/*** 27 ***/
+
+   { 28, -1, -1, G_STRING,                      /*** 27 ***/
      NONE,
      NORMAL,
      (long) "  Install disk drive...",
      0, 0, 31, 1},
-    {
-     29, -1, -1, G_STRING,			/*** 28 ***/
+
+   { 29, -1, -1, G_STRING,                      /*** 28 ***/
      NONE,
      NORMAL,
      (long) "  Configure application...  \007A",
      0, 1, 31, 1},
-    {
-     30, -1, -1, G_STRING,			/*** 29 ***/
+
+   { 30, -1, -1, G_STRING,                      /*** 29 ***/
      NONE,
      DISABLED,
      (long) "-------------------------------",
      0, 2, 31, 1},
-    {
-     31, -1, -1, G_STRING,			/*** 30 ***/
+
+   { 31, -1, -1, G_STRING,                      /*** 30 ***/
      NONE,
      NORMAL,
      (long) "  Set preferences...",
      0, 3, 31, 1},
-    {
-     32, -1, -1, G_STRING,			/*** 31 ***/
+
+   { 32, -1, -1, G_STRING,                      /*** 31 ***/
      NONE,
      NORMAL,
      (long) "  Save desktop              \007V",
      0, 4, 31, 1},
-    {
-     26, -1, -1, G_STRING,			/*** 32 ***/
+
+   { 26, -1, -1, G_STRING,                      /*** 32 ***/
      NONE,
      NORMAL,
      (long) "  Enter DOS commands        \007C",
      0, 5, 31, 1},
-    {
-     7, 34, 39, G_BOX,				/*** 33 ***/
+
+   { 7, 34, 39, G_BOX,                          /*** 33 ***/
      NONE,
      NORMAL,
      (long) 16716032L,
      23, 0, 20, 6},
-    {
-     35, -1, -1, G_STRING,			/*** 34 ***/
+
+   { 35, -1, -1, G_STRING,                      /*** 34 ***/
      NONE,
      NORMAL,
      (long) rs_str_iconOrText,
      0, 0, 20, 1},
-    {
-     36, -1, -1, G_STRING,			/*** 35 ***/
+
+   { 36, -1, -1, G_STRING,                      /*** 35 ***/
      NONE,
      DISABLED,
      (long) "--------------------",
      0, 1, 20, 1},
-    {
-     37, -1, -1, G_STRING,			/*** 36 ***/
+
+   { 37, -1, -1, G_STRING,                      /*** 36 ***/
      NONE,
      NORMAL,
      (long) "  Sort by name   \007N",
      0, 2, 20, 1},
-    {
-     38, -1, -1, G_STRING,		    /*** 37 ***/
+
+   { 38, -1, -1, G_STRING,                      /*** 37 ***/
      NONE,
      NORMAL,
      (long) "  Sort by type   \007P",
      0, 3, 20, 1},
-    {
-     39, -1, -1, G_STRING,		    /*** 38 ***/
+
+   { 39, -1, -1, G_STRING,                      /*** 38 ***/
      NONE,
      NORMAL,
      (long) "  Sort by size   \007Z",
      0, 4, 20, 1},
-    {
-     33, -1, -1, G_STRING,		    /*** 39 ***/
+
+   { 33, -1, -1, G_STRING,                      /*** 39 ***/
      LASTOB,
      NORMAL,
      (long) "  Sort by date   \007T",
      0, 5, 20, 1},
-    {
+
 #define TR1 40
 /* TREE 1 */
-     -1, 1, 11, G_BOX,			    /*** 0 ***/
+   { -1, 1, 11, G_BOX,                          /*** 0 ***/
      NONE,
      OUTLINED,
      (long) 135424L,
      0, 0, 45, 11},
-    {
-     2, -1, -1, G_STRING,		    /*** 1 ***/
+
+   { 2, -1, -1, G_STRING,                       /*** 1 ***/
      NONE,
      NORMAL,
      (long) "ITEM INFORMATION / RENAME",
      3, 1, 16, 1},
-    {
-     3, -1, -1, G_FBOXTEXT,		    /*** 2 ***/
+
+   { 3, -1, -1, G_FBOXTEXT,                     /*** 2 ***/
      EDITABLE,
      NORMAL,
      (long) &desk_rs_tedinfo[0],
      12, 3, 19, 1},
-    {
-     4, -1, -1, G_FBOXTEXT,		    /*** 3 ***/
+
+   { 4, -1, -1, G_FBOXTEXT,                     /*** 3 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[1],
      3, 4, 24, 1},
-    {
-     5, -1, -1, G_FBOXTEXT,		    /*** 4 ***/
+
+   { 5, -1, -1, G_FBOXTEXT,                     /*** 4 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[2],
      3, 5, 24, 1},
-    {
-     6, -1, -1, G_FBOXTEXT,		    /*** 5 ***/
+
+   { 6, -1, -1, G_FBOXTEXT,                     /*** 5 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[3],
      29, 5, 8, 1},
-    {
-     7, -1, -1, G_STRING,		    /*** 6 ***/
+
+   { 7, -1, -1, G_STRING,                       /*** 6 ***/
      NONE,
      NORMAL,
      (long) "Attributes:",
      6, 7, 11, 1},
-    {
-     10, 8, 9, G_IBOX,			    /*** 7 ***/
+
+   { 10, 8, 9, G_IBOX,                          /*** 7 ***/
      NONE,
      NORMAL,
      (long) 0L,
      19, 7, 23, 1},
-    {
-     9, -1, -1, G_BUTTON,		    /*** 8 ***/
+
+   { 9, -1, -1, G_BUTTON,                       /*** 8 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) "Read/Write",
      0, 0, 11, 1},
-    {
-     7, -1, -1, G_BUTTON,		    /*** 9 ***/
+
+   { 7, -1, -1, G_BUTTON,                       /*** 9 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) "Read-Only",
      13, 0, 10, 1},
-    {
-     11, -1, -1, G_BUTTON,		    /*** 10 ***/
+
+   { 11, -1, -1, G_BUTTON,                      /*** 10 ***/
      SELECTABLE | DEFAULT | EXIT,
      NORMAL,
      (long) rs_str_OK,
      24, 9, 8, 1},
-    {
-     0, -1, -1, G_BUTTON,		    /*** 11 ***/
+
+   { 0, -1, -1, G_BUTTON,                       /*** 11 ***/
      SELECTABLE | EXIT | LASTOB,
      NORMAL,
      (long) rs_str_Cancel,
      34, 9, 8, 1},
-    {
+
 #define TR2 52
 /* TREE 2 */
-     -1, 1, 8, G_BOX,			    /*** 0 ***/
+   { -1, 1, 8, G_BOX,                           /*** 0 ***/
      NONE,
      OUTLINED,
      (long) 135424L,
      0, 0, 37, 12},
-    {
-     2, -1, -1, G_STRING,		    /*** 1 ***/
+
+   { 2, -1, -1, G_STRING,                       /*** 1 ***/
      NONE,
      NORMAL,
      (long) "DISK INFORMATION",
      3, 1, 16, 1},
-    {
-     3, -1, -1, G_FBOXTEXT,		    /*** 2 ***/
+
+   { 3, -1, -1, G_FBOXTEXT,                     /*** 2 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[4],
      4, 3, 21, 1},
-    {
-     4, -1, -1, G_FBOXTEXT,		    /*** 3 ***/
+
+   { 4, -1, -1, G_FBOXTEXT,                     /*** 3 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[5],
      10, 4, 24, 1},
-    {
-     5, -1, -1, G_FBOXTEXT,		    /*** 4 ***/
+
+   { 5, -1, -1, G_FBOXTEXT,                     /*** 4 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[6],
      3, 5, 28, 1},
-    {
-     6, -1, -1, G_FBOXTEXT,		    /*** 5 ***/
+
+   { 6, -1, -1, G_FBOXTEXT,                     /*** 5 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[7],
      5, 6, 26, 1},
-    {
-     7, -1, -1, G_FBOXTEXT,		    /*** 6 ***/
+
+   { 7, -1, -1, G_FBOXTEXT,                     /*** 6 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[8],
      10, 7, 21, 1},
-    {
-     8, -1, -1, G_FBOXTEXT,		    /*** 7 ***/
+
+   { 8, -1, -1, G_FBOXTEXT,                     /*** 7 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[9],
      5, 8, 26, 1},
-    {
-     0, -1, -1, G_BUTTON,		    /*** 8 ***/
+
+   { 0, -1, -1, G_BUTTON,                       /*** 8 ***/
      SELECTABLE | DEFAULT | EXIT | LASTOB,
      NORMAL,
      (long) rs_str_OK,
      26, 10, 8, 1},
-    {
+
 #define TR3 61
 /* TREE 3 */
-     -1, 1, 8, G_BOX,			    /*** 0 ***/
+   { -1, 1, 8, G_BOX,                           /*** 0 ***/
      NONE,
      OUTLINED,
      (long) 135424L,
      0, 0, 46, 11},
-    {
-     2, -1, -1, G_STRING,		    /*** 1 ***/
+
+   { 2, -1, -1, G_STRING,                       /*** 1 ***/
      NONE,
      NORMAL,
      (long) "FOLDER INFORMATION",
      3, 1, 18, 1},
-    {
-     3, -1, -1, G_FBOXTEXT,		    /*** 2 ***/
+
+   { 3, -1, -1, G_FBOXTEXT,                     /*** 2 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[10],
      9, 3, 26, 1},
-    {
-     4, -1, -1, G_FBOXTEXT,		    /*** 3 ***/
+
+   { 4, -1, -1, G_FBOXTEXT,                     /*** 3 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[11],
      13, 4, 20, 1},
-    {
-     5, -1, -1, G_FBOXTEXT,		    /*** 4 ***/
+
+   { 5, -1, -1, G_FBOXTEXT,                     /*** 4 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[12],
      33, 4, 8, 1},
-    {
-     6, -1, -1, G_FBOXTEXT,		    /*** 5 ***/
+
+   { 6, -1, -1, G_FBOXTEXT,                     /*** 5 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[13],
      3, 5, 28, 1},
-    {
-     7, -1, -1, G_FBOXTEXT,		    /*** 6 ***/
+
+   { 7, -1, -1, G_FBOXTEXT,                     /*** 6 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[14],
      5, 6, 26, 1},
-    {
-     8, -1, -1, G_FBOXTEXT,		    /*** 7 ***/
+
+   { 8, -1, -1, G_FBOXTEXT,                     /*** 7 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[15],
      10, 7, 21, 1},
-    {
-     0, -1, -1, G_BUTTON,		    /*** 8 ***/
+
+   { 0, -1, -1, G_BUTTON,                       /*** 8 ***/
      SELECTABLE | DEFAULT | EXIT | LASTOB,
      NORMAL,
      (long) rs_str_OK,
      31, 9, 8, 1},
-    {
+
 #define TR4 70
 /* TREE 4 */
-     -1, 1, 15, G_BOX,			    /*** 0 ***/
+   { -1, 1, 15, G_BOX,                      /*** 0 ***/
      NONE,
      OUTLINED,
      (long) 135424L,
-     0, 0, 49, 19,
-     },
-    {
-     2, -1, -1, G_IMAGE,		    /*** 1 ***/
+     0, 0, 40, 19 },
+
+   { 2, -1, -1, G_STRING,                   /*** 1 ***/
+     NONE,
+     NORMAL,
+     (long) "- EmuTOS -",
+     15, 1, 10, 1 },
+
+   { 3, -1, -1, G_STRING,                   /*** 2 ***/
+     NONE,
+     NORMAL,
+     (long) "Version",
+     14, 2, 7, 1 },
+
+   { 4, -1, -1, G_STRING,                   /*** 3 ***/
+     NONE,
+     NORMAL,
+     (long) EMUTOS_VERSION,
+     22, 2, 4, 1 },
+
+   { 5, -1, -1, G_IMAGE,                    /*** 4 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_bitblk[0],
-     11, 1, 8, 3,
-     },
-    {
-     3, -1, -1, G_IMAGE,		    /*** 2 ***/
+     33, 1, 4, 4 },
+
+   { 6, -1, -1, G_STRING,                   /*** 5 ***/
      NONE,
      NORMAL,
-     (long) &desk_rs_bitblk[1],
-     25, 1, 8, 3,
-     },
-    {
-     4, -1, -1, G_IMAGE,		    /*** 3 ***/
+     (long) "April 23, 2002",
+     13, 4, 24, 1 },
+
+   { 7, -1, -1, G_STRING,                   /*** 6 ***/
      NONE,
      NORMAL,
-     (long) &desk_rs_bitblk[2],
-     33, 1, 8, 3,
-     },
-    {
-     5, -1, -1, G_STRING,		    /*** 4 ***/
-     NONE,
-     NORMAL,
-     (long) "EmuTOS Release 0.1",
-     15, 4, 11, 1},
-    {
-     6, -1, -1, G_STRING,		    /*** 5 ***/
-     NONE,
-     NORMAL,
-     (long) "April 21, 2002",
-     17, 5, 23, 1},
-    {
-     7, -1, -1, G_STRING,		    /*** 6 ***/
-     NONE,
-     NORMAL,
-     (long) "AUTHORS",
-     21, 10, 7, 1},
-    {
-     8, -1, -1, G_IMAGE,		    /*** 7 ***/
+     (long) "Copyright (c) 2002 by",
+     9, 6, 21, 1 },
+
+   { 8, -1, -1, G_IMAGE,                    /*** 7 ***/
      TOUCHEXIT,
      NORMAL,
-     (long) &desk_rs_bitblk[3],
-     3, 12, 4, 4,
-     },
-    {
-     9, -1, -1, G_STRING,		    /*** 8 ***/
+     (long) &desk_rs_bitblk[0],
+     3, 1, 4, 4 },
+
+   { 9, -1, -1, G_STRING,                   /*** 8 ***/
      NONE,
      NORMAL,
-     (long) "=====================",
-     14, 11, 21, 1},
-    {
-     10, -1, -1, G_STRING,		    /*** 9 ***/
+     (long) "The EmuTOS development team",
+     6, 7, 27, 1 },
+
+   { 10, -1, -1, G_STRING,                  /*** 9 ***/
      NONE,
      NORMAL,
-     (long) "",
-     16, 9, 0, 1},
-    {
-     11, -1, -1, G_STRING,		    /*** 10 ***/
+     (long) "Based on 'GPLed' sources",
+     8, 9, 24, 1 },
+
+   { 11, -1, -1, G_STRING,                  /*** 10 ***/
      NONE,
      NORMAL,
-     (long) "Michael Franusich",
-     16, 12, 17, 1},
-    {
-     12, -1, -1, G_BUTTON,		    /*** 11 ***/
+     (long) "(c) 1987 by Digital Research Inc.",
+     3, 10, 33, 1 },
+
+   { 12, -1, -1, G_BUTTON,                  /*** 11 ***/
      SELECTABLE | DEFAULT | EXIT,
      NORMAL,
      (long) rs_str_OK,
-     38, 13, 8, 1},
-    {
-     13, -1, -1, G_STRING,		    /*** 12 ***/
+     16, 17, 8, 1 },
+
+   { 13, -1, -1, G_STRING,                  /*** 12 ***/
      NONE,
      NORMAL,
-     (long) "Lowell Webster",
-     17, 13, 14, 1},
-    {
-     14, -1, -1, G_STRING,		    /*** 13 ***/
+     (long) "(c) 1999 Caldera Thin Clients, Inc.",
+     3, 11, 35, 1 },
+
+   { 14, -1, -1, G_STRING,                  /*** 13 ***/
      NONE,
      NORMAL,
-     (long) "Copyright (c) 1987 Digital Research Inc.",
-     4, 6, 41, 1},
-    {
-     15, -1, -1, G_STRING,		    /*** 14 ***/
+     (long) "(c) 2001 Lineo, Inc.",
+     3, 12, 20, 1 },
+
+   { 15, -1, -1, G_STRING,                  /*** 14 ***/
      NONE,
      NORMAL,
-     (long) "All rights reserved.",
-     15, 7, 20, 1},
-    {
-     0, -1, -1, G_IMAGE,		    /*** 15 ***/
+     (long) "EmuTOS is distributed under the GPL",
+     3, 14, 35, 1 },
+
+   { 0, -1, -1, G_STRING,                   /*** 15 ***/
      LASTOB,
      NORMAL,
-     (long) &desk_rs_bitblk[4],
-     19, 1, 8, 3},
-    {
+     (long) "See doc/license.txt for details",
+     4, 15, 21, 1 },
+
 #define TR5 86
 /* TREE 5 */
-     -1, 1, 7, G_BOX,			    /*** 0 ***/
+   { -1, 1, 7, G_BOX,                       /*** 0 ***/
      NONE,
      OUTLINED,
      (long) 135424L,
      0, 0, 48, 11},
     {
-     2, -1, -1, G_STRING,		    /*** 1 ***/
+     2, -1, -1, G_STRING,                   /*** 1 ***/
      NONE,
      NORMAL,
      (long) "NEW FOLDER INFORMATION",
      3, 1, 23, 1},
     {
-     3, -1, -1, G_STRING,		    /*** 2 ***/
+     3, -1, -1, G_STRING,                   /*** 2 ***/
      NONE,
      NORMAL,
      (long) "To create a new folder within the current",
      3, 3, 41, 1},
     {
-     4, -1, -1, G_STRING,		    /*** 3 ***/
+     4, -1, -1, G_STRING,                   /*** 3 ***/
      NONE,
      NORMAL,
      (long) "window, double-click on the New Folder",
      3, 4, 38, 1},
     {
-     5, -1, -1, G_STRING,		    /*** 4 ***/
+     5, -1, -1, G_STRING,                   /*** 4 ***/
      NONE,
      NORMAL,
      (long) "icon and complete the dialogue that appears",
      3, 5, 43, 1},
     {
-     6, -1, -1, G_STRING,		    /*** 5 ***/
+     6, -1, -1, G_STRING,                   /*** 5 ***/
      NONE,
      NORMAL,
      (long) "by entering the name of the folder you",
      3, 6, 38, 1},
     {
-     7, -1, -1, G_STRING,		    /*** 6 ***/
+     7, -1, -1, G_STRING,                   /*** 6 ***/
      NONE,
      NORMAL,
      (long) "want to create.",
      3, 7, 15, 1},
     {
-     0, -1, -1, G_BUTTON,		    /*** 7 ***/
+     0, -1, -1, G_BUTTON,                   /*** 7 ***/
      SELECTABLE | DEFAULT | EXIT | LASTOB,
      NORMAL,
      (long) rs_str_OK,
@@ -906,55 +833,55 @@ static const OBJECT desk_rs_obj_rom[] = {
     {
 #define TR6 94
 /* TREE 6 */
-     -1, 1, 8, G_BOX,			    /*** 0 ***/
+     -1, 1, 8, G_BOX,                       /*** 0 ***/
      NONE,
      OUTLINED,
      (long) 135424L,
      0, 0, 71, 10},
     {
-     2, -1, -1, G_STRING,		    /*** 1 ***/
+     2, -1, -1, G_STRING,                   /*** 1 ***/
      NONE,
      NORMAL,
      (long) "OPEN APPLICATION",
      3, 1, 16, 1},
     {
-     3, -1, -1, G_FBOXTEXT,		    /*** 2 ***/
+     3, -1, -1, G_FBOXTEXT,                 /*** 2 ***/
      EDITABLE,
      NORMAL,
      (long) &desk_rs_tedinfo[16],
      9, 3, 19, 1},
     {
-     4, -1, -1, G_FBOXTEXT,		    /*** 3 ***/
+     4, -1, -1, G_FBOXTEXT,                 /*** 3 ***/
      EDITABLE,
      NORMAL,
      (long) &desk_rs_tedinfo[17],
      3, 4, 65, 1},
     {
-     5, -1, -1, G_BUTTON,		    /*** 4 ***/
+     5, -1, -1, G_BUTTON,                   /*** 4 ***/
      SELECTABLE | DEFAULT | EXIT,
      NORMAL,
      (long) rs_str_OK,
      51, 8, 8, 1},
     {
-     6, -1, -1, G_BUTTON,		    /*** 5 ***/
+     6, -1, -1, G_BUTTON,                   /*** 5 ***/
      SELECTABLE | EXIT,
      NORMAL,
      (long) rs_str_Cancel,
      61, 8, 8, 1},
     {
-     7, -1, -1, G_STRING,		    /*** 6 ***/
+     7, -1, -1, G_STRING,                   /*** 6 ***/
      NONE,
      NORMAL,
      (long) "Enter the name of the document you want",
      3, 6, 39, 1},
     {
-     8, -1, -1, G_STRING,		    /*** 7 ***/
+     8, -1, -1, G_STRING,                   /*** 7 ***/
      NONE,
      NORMAL,
      (long) "to load, or enter parameter values that",
      3, 7, 39, 1},
     {
-     0, -1, -1, G_STRING,		    /*** 8 ***/
+     0, -1, -1, G_STRING,                   /*** 8 ***/
      LASTOB,
      NORMAL,
      (long) "are acceptable to this application.",
@@ -962,67 +889,67 @@ static const OBJECT desk_rs_obj_rom[] = {
     {
 #define TR7 103
 /* TREE 7 */
-     -1, 1, 10, G_BOX,			    /*** 0 ***/
+     -1, 1, 10, G_BOX,                      /*** 0 ***/
      NONE,
      OUTLINED,
      (long) 135424L,
      0, 0, 59, 9},
     {
-     2, -1, -1, G_STRING,		    /*** 1 ***/
+     2, -1, -1, G_STRING,                   /*** 1 ***/
      NONE,
      NORMAL,
      (long) "INSTALL DISK DRIVE",
      3, 1, 18, 1},
     {
-     3, -1, -1, G_FBOXTEXT,		    /*** 2 ***/
+     3, -1, -1, G_FBOXTEXT,                 /*** 2 ***/
      EDITABLE,
      NORMAL,
      (long) &desk_rs_tedinfo[18],
      3, 3, 20, 1},
     {
-     4, -1, -1, G_FBOXTEXT,		    /*** 3 ***/
+     4, -1, -1, G_FBOXTEXT,                 /*** 3 ***/
      EDITABLE,
      NORMAL,
      (long) &desk_rs_tedinfo[19],
      9, 4, 25, 1},
     {
-     5, -1, -1, G_STRING,		    /*** 4 ***/
+     5, -1, -1, G_STRING,                   /*** 4 ***/
      NONE,
      NORMAL,
      (long) "Disk type:",
      10, 6, 10, 1},
     {
-     8, 6, 7, G_IBOX,			    /*** 5 ***/
+     8, 6, 7, G_IBOX,                       /*** 5 ***/
      NONE,
      NORMAL,
      (long) 0L,
      20, 6, 24, 1},
     {
-     7, -1, -1, G_BUTTON,		    /*** 6 ***/
+     7, -1, -1, G_BUTTON,                   /*** 6 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) "Floppy",
      2, 0, 8, 1},
     {
-     5, -1, -1, G_BUTTON,		    /*** 7 ***/
+     5, -1, -1, G_BUTTON,                   /*** 7 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) "Hard",
      12, 0, 8, 1},
     {
-     9, -1, -1, G_BUTTON,		    /*** 8 ***/
+     9, -1, -1, G_BUTTON,                   /*** 8 ***/
      SELECTABLE | EXIT,
      NORMAL,
      (long) rs_str_Install,
      47, 2, 8, 1},
     {
-     10, -1, -1, G_BUTTON,		    /*** 9 ***/
+     10, -1, -1, G_BUTTON,                  /*** 9 ***/
      SELECTABLE | EXIT,
      NORMAL,
      (long) rs_str_Remove,
      47, 4, 8, 1},
     {
-     0, -1, -1, G_BUTTON,		    /*** 10 ***/
+     0, -1, -1, G_BUTTON,                   /*** 10 ***/
      SELECTABLE | DEFAULT | EXIT | LASTOB,
      NORMAL,
      (long) rs_str_Cancel,
@@ -1030,212 +957,212 @@ static const OBJECT desk_rs_obj_rom[] = {
     {
 #define TR8 114
 /* TREE 8 */
-     -1, 1, 33, G_BOX,			    /*** 0 ***/
+     -1, 1, 33, G_BOX,                      /*** 0 ***/
      NONE,
      OUTLINED,
      (long) 135424L,
      0, 0, 64, 20},
     {
-     2, -1, -1, G_STRING,		    /*** 1 ***/
+     2, -1, -1, G_STRING,                   /*** 1 ***/
      NONE,
      NORMAL,
      (long) "CONFIGURE APPLICATION",
      3, 1, 21, 1},
     {
-     3, -1, -1, G_FBOXTEXT,		    /*** 2 ***/
+     3, -1, -1, G_FBOXTEXT,                 /*** 2 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[20],
      4, 3, 32, 1},
     {
-     4, -1, -1, G_STRING,		    /*** 3 ***/
+     4, -1, -1, G_STRING,                   /*** 3 ***/
      NONE,
      NORMAL,
      (long) "Document types:",
      6, 4, 15, 1},
     {
-     5, -1, -1, G_FBOXTEXT,		    /*** 4 ***/
+     5, -1, -1, G_FBOXTEXT,                 /*** 4 ***/
      EDITABLE,
      NORMAL,
      (long) &desk_rs_tedinfo[21],
      23, 4, 3, 1},
     {
-     6, -1, -1, G_FBOXTEXT,		    /*** 5 ***/
+     6, -1, -1, G_FBOXTEXT,                 /*** 5 ***/
      EDITABLE,
      NORMAL,
      (long) &desk_rs_tedinfo[22],
      28, 4, 3, 1},
     {
-     7, -1, -1, G_FBOXTEXT,		    /*** 6 ***/
+     7, -1, -1, G_FBOXTEXT,                 /*** 6 ***/
      EDITABLE,
      NORMAL,
      (long) &desk_rs_tedinfo[23],
      33, 4, 3, 1},
     {
-     8, -1, -1, G_FBOXTEXT,		    /*** 7 ***/
+     8, -1, -1, G_FBOXTEXT,                 /*** 7 ***/
      EDITABLE,
      NORMAL,
      (long) &desk_rs_tedinfo[24],
      38, 4, 3, 1},
     {
-     9, -1, -1, G_FBOXTEXT,		    /*** 8 ***/
+     9, -1, -1, G_FBOXTEXT,                 /*** 8 ***/
      EDITABLE,
      NORMAL,
      (long) &desk_rs_tedinfo[25],
      43, 4, 3, 1},
     {
-     10, -1, -1, G_FBOXTEXT,		    /*** 9 ***/
+     10, -1, -1, G_FBOXTEXT,                /*** 9 ***/
      EDITABLE,
      NORMAL,
      (long) &desk_rs_tedinfo[26],
      48, 4, 3, 1},
     {
-     11, -1, -1, G_FBOXTEXT,		    /*** 10 ***/
+     11, -1, -1, G_FBOXTEXT,                /*** 10 ***/
      EDITABLE,
      NORMAL,
      (long) &desk_rs_tedinfo[27],
      53, 4, 3, 1},
     {
-     12, -1, -1, G_FBOXTEXT,		    /*** 11 ***/
+     12, -1, -1, G_FBOXTEXT,                /*** 11 ***/
      EDITABLE,
      NORMAL,
      (long) &desk_rs_tedinfo[28],
      58, 4, 3, 1},
     {
-     13, -1, -1, G_STRING,		    /*** 12 ***/
+     13, -1, -1, G_STRING,                  /*** 12 ***/
      NONE,
      NORMAL,
      (long) "Application type:",
      4, 6, 17, 1},
     {
-     17, 14, 16, G_IBOX,		    /*** 13 ***/
+     17, 14, 16, G_IBOX,                    /*** 13 ***/
      NONE,
      NORMAL,
      (long) 4352L,
      23, 6, 39, 1},
     {
-     15, -1, -1, G_BUTTON,		    /*** 14 ***/
+     15, -1, -1, G_BUTTON,                  /*** 14 ***/
      SELECTABLE | RBUTTON | TOUCHEXIT,
      NORMAL,
      (long) "GEM",
      0, 0, 6, 1},
     {
-     16, -1, -1, G_BUTTON,		    /*** 15 ***/
+     16, -1, -1, G_BUTTON,                  /*** 15 ***/
      SELECTABLE | RBUTTON | TOUCHEXIT,
      NORMAL,
      (long) "DOS",
      8, 0, 6, 1},
     {
-     13, -1, -1, G_BUTTON,		    /*** 16 ***/
+     13, -1, -1, G_BUTTON,                  /*** 16 ***/
      SELECTABLE | RBUTTON | TOUCHEXIT,
      NORMAL,
      (long) "DOS-takes parameters",
      16, 0, 22, 1},
     {
-     18, -1, -1, G_STRING,		    /*** 17 ***/
+     18, -1, -1, G_STRING,                  /*** 17 ***/
      NONE,
      NORMAL,
      (long) "Needs full memory?",
      3, 8, 18, 1},
     {
-     21, 19, 20, G_IBOX,		    /*** 18 ***/
+     21, 19, 20, G_IBOX,                    /*** 18 ***/
      NONE,
      NORMAL,
      (long) 4352L,
      23, 8, 15, 1},
     {
-     20, -1, -1, G_BUTTON,		    /*** 19 ***/
+     20, -1, -1, G_BUTTON,                  /*** 19 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) rs_str_Yes,
      0, 0, 6, 1},
     {
-     18, -1, -1, G_BUTTON,		    /*** 20 ***/
+     18, -1, -1, G_BUTTON,                  /*** 20 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) rs_str_No,
      8, 0, 6, 1},
     {
-     22, -1, -1, G_STRING,		    /*** 21 ***/
+     22, -1, -1, G_STRING,                  /*** 21 ***/
      NONE,
      NORMAL,
      (long) "Icon type:",
      11, 10, 10, 1},
     {
-     23, -1, -1, G_BOXTEXT,		    /*** 22 ***/
+     23, -1, -1, G_BOXTEXT,                 /*** 22 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[29],
      23, 10, 27, 1},
     {
-     26, 24, 25, G_BOX,			    /*** 23 ***/
+     26, 24, 25, G_BOX,                     /*** 23 ***/
      NONE,
      NORMAL,
      (long) 69888L,
      23, 11, 24, 6,
      },
     {
-     25, -1, -1, G_BOX,			    /*** 24 ***/
+     25, -1, -1, G_BOX,                     /*** 24 ***/
      NONE,
      NORMAL,
      (long) 69889L,
      3, 1, 6, 4,
      },
     {
-     23, -1, -1, G_BOX,			    /*** 25 ***/
+     23, -1, -1, G_BOX,                     /*** 25 ***/
      NONE,
      NORMAL,
      (long) 69889L,
      12, 1, 6, 4,
      },
     {
-     31, 27, 29, G_BOX,			    /*** 26 ***/
+     31, 27, 29, G_BOX,                     /*** 26 ***/
      TOUCHEXIT,
      NORMAL,
      (long) 69888L,
      47, 11, 3, 6,
      },
     {
-     28, -1, -1, G_BOXCHAR,		    /*** 27 ***/
+     28, -1, -1, G_BOXCHAR,                 /*** 27 ***/
      TOUCHEXIT,
      NORMAL,
      (long) 201396480L,
      0, 0, 3, 2,
      },
     {
-     29, -1, -1, G_BOXCHAR,		    /*** 28 ***/
+     29, -1, -1, G_BOXCHAR,                 /*** 28 ***/
      TOUCHEXIT,
      NORMAL,
      (long) 218173696L,
      0, 4, 3, 2,
      },
     {
-     26, 30, 30, G_BOX,			    /*** 29 ***/
+     26, 30, 30, G_BOX,                     /*** 29 ***/
      TOUCHEXIT,
      NORMAL,
      (long) 69905L,
      0, 2, 3, 2,
      },
     {
-     29, -1, -1, G_BOX,			    /*** 30 ***/
+     29, -1, -1, G_BOX,                     /*** 30 ***/
      TOUCHEXIT,
      NORMAL,
      (long) 69889L,
      1024, 0, 258, 1},
     {
-     32, -1, -1, G_BUTTON,		    /*** 31 ***/
+     32, -1, -1, G_BUTTON,                  /*** 31 ***/
      SELECTABLE | EXIT,
      NORMAL,
      (long) rs_str_Install,
      30, 18, 9, 1},
     {
-     33, -1, -1, G_BUTTON,		    /*** 32 ***/
+     33, -1, -1, G_BUTTON,                  /*** 32 ***/
      SELECTABLE | EXIT,
      NORMAL,
      (long) rs_str_Remove,
      42, 18, 8, 1},
     {
-     0, -1, -1, G_BUTTON,		    /*** 33 ***/
+     0, -1, -1, G_BUTTON,                   /*** 33 ***/
      SELECTABLE | EXIT | LASTOB,
      NORMAL,
      (long) rs_str_Cancel,
@@ -1243,37 +1170,37 @@ static const OBJECT desk_rs_obj_rom[] = {
     {
 #define TR9 148
 /* TREE 9 */
-     -1, 1, 5, G_BOX,			    /*** 0 ***/
+     -1, 1, 5, G_BOX,                       /*** 0 ***/
      NONE,
      OUTLINED,
      (long) 135424L,
      0, 0, 34, 8},
     {
-     2, -1, -1, G_STRING,		    /*** 1 ***/
+     2, -1, -1, G_STRING,                   /*** 1 ***/
      NONE,
      NORMAL,
      (long) "COPY FOLDERS / ITEMS",
      3, 1, 20, 1},
     {
-     3, -1, -1, G_FBOXTEXT,		    /*** 2 ***/
+     3, -1, -1, G_FBOXTEXT,                 /*** 2 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[30],
      3, 3, 22, 1},
     {
-     4, -1, -1, G_FBOXTEXT,		    /*** 3 ***/
+     4, -1, -1, G_FBOXTEXT,                 /*** 3 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[31],
      5, 4, 20, 1},
     {
-     5, -1, -1, G_BUTTON,		    /*** 4 ***/
+     5, -1, -1, G_BUTTON,                   /*** 4 ***/
      SELECTABLE | DEFAULT | EXIT,
      NORMAL,
      (long) rs_str_OK,
      13, 6, 8, 1},
     {
-     0, -1, -1, G_BUTTON,		    /*** 5 ***/
+     0, -1, -1, G_BUTTON,                   /*** 5 ***/
      SELECTABLE | EXIT | LASTOB,
      NORMAL,
      (long) rs_str_Cancel,
@@ -1281,37 +1208,37 @@ static const OBJECT desk_rs_obj_rom[] = {
     {
 #define TR10 154
 /* TREE 10 */
-     -1, 1, 5, G_BOX,			    /*** 0 ***/
+     -1, 1, 5, G_BOX,                       /*** 0 ***/
      NONE,
      OUTLINED,
      (long) 135424L,
      0, 0, 30, 8},
     {
-     2, -1, -1, G_STRING,		    /*** 1 ***/
+     2, -1, -1, G_STRING,                   /*** 1 ***/
      NONE,
      NORMAL,
      (long) "DELETE FOLDERS / ITEMS",
      3, 1, 23, 1},
     {
-     3, -1, -1, G_FBOXTEXT,		    /*** 2 ***/
+     3, -1, -1, G_FBOXTEXT,                 /*** 2 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[32],
      3, 3, 24, 1},
     {
-     4, -1, -1, G_FBOXTEXT,		    /*** 3 ***/
+     4, -1, -1, G_FBOXTEXT,                 /*** 3 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[33],
      5, 4, 22, 1},
     {
-     5, -1, -1, G_BUTTON,		    /*** 4 ***/
+     5, -1, -1, G_BUTTON,                   /*** 4 ***/
      SELECTABLE | EXIT,
      NORMAL,
      (long) rs_str_OK,
      9, 6, 8, 1},
     {
-     0, -1, -1, G_BUTTON,		    /*** 5 ***/
+     0, -1, -1, G_BUTTON,                   /*** 5 ***/
      SELECTABLE | DEFAULT | EXIT | LASTOB,
      NORMAL,
      (long) rs_str_Cancel,
@@ -1319,43 +1246,43 @@ static const OBJECT desk_rs_obj_rom[] = {
     {
 #define TR11 160
 /* TREE 11 */
-     -1, 1, 6, G_BOX,			    /*** 0 ***/
+     -1, 1, 6, G_BOX,                       /*** 0 ***/
      NONE,
      OUTLINED,
      (long) 135424L,
      0, 0, 34, 8},
     {
-     2, -1, -1, G_STRING,		    /*** 1 ***/
+     2, -1, -1, G_STRING,                   /*** 1 ***/
      NONE,
      NORMAL,
      (long) "NAME CONFLICT DURING COPY",
      3, 1, 25, 1},
     {
-     3, -1, -1, G_FBOXTEXT,		    /*** 2 ***/
+     3, -1, -1, G_FBOXTEXT,                 /*** 2 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[34],
      3, 3, 27, 1},
     {
-     4, -1, -1, G_FBOXTEXT,		    /*** 3 ***/
+     4, -1, -1, G_FBOXTEXT,                 /*** 3 ***/
      EDITABLE,
      NORMAL,
      (long) &desk_rs_tedinfo[35],
      4, 4, 26, 1},
     {
-     5, -1, -1, G_BUTTON,		    /*** 4 ***/
+     5, -1, -1, G_BUTTON,                   /*** 4 ***/
      SELECTABLE | DEFAULT | EXIT,
      NORMAL,
      (long) rs_str_OK,
      3, 6, 8, 1},
     {
-     6, -1, -1, G_BUTTON,		    /*** 5 ***/
+     6, -1, -1, G_BUTTON,                   /*** 5 ***/
      SELECTABLE | EXIT,
      NORMAL,
      (long) rs_str_Cancel,
      13, 6, 8, 1},
     {
-     0, -1, -1, G_BUTTON,		    /*** 6 ***/
+     0, -1, -1, G_BUTTON,                   /*** 6 ***/
      SELECTABLE | EXIT | LASTOB,
      NORMAL,
      (long) "Stop",
@@ -1363,31 +1290,31 @@ static const OBJECT desk_rs_obj_rom[] = {
     {
 #define TR12 167
 /* TREE 12 */
-     -1, 1, 4, G_BOX,			    /*** 0 ***/
+     -1, 1, 4, G_BOX,                       /*** 0 ***/
      NONE,
      OUTLINED,
      (long) 135424L,
      0, 0, 27, 7},
     {
-     2, -1, -1, G_STRING,		    /*** 1 ***/
+     2, -1, -1, G_STRING,                   /*** 1 ***/
      NONE,
      NORMAL,
      (long) "NEW FOLDER",
      3, 1, 10, 1},
     {
-     3, -1, -1, G_FBOXTEXT,		    /*** 2 ***/
+     3, -1, -1, G_FBOXTEXT,                 /*** 2 ***/
      EDITABLE,
      NORMAL,
      (long) &desk_rs_tedinfo[36],
      3, 3, 19, 1},
     {
-     4, -1, -1, G_BUTTON,		    /*** 3 ***/
+     4, -1, -1, G_BUTTON,                   /*** 3 ***/
      SELECTABLE | DEFAULT | EXIT,
      NORMAL,
      (long) rs_str_OK,
      6, 5, 8, 1},
     {
-     0, -1, -1, G_BUTTON,		    /*** 4 ***/
+     0, -1, -1, G_BUTTON,                   /*** 4 ***/
      SELECTABLE | EXIT | LASTOB,
      NORMAL,
      (long) rs_str_Cancel,
@@ -1395,235 +1322,235 @@ static const OBJECT desk_rs_obj_rom[] = {
     {
 #define TR13 172
 /* TREE 13 */
-     -1, 1, 38, G_BOX,			    /*** 0 ***/
+     -1, 1, 38, G_BOX,                      /*** 0 ***/
      NONE,
      OUTLINED,
      (long) 135424L,
      0, 0, 59, 21},
     {
-     2, -1, -1, G_STRING,		    /*** 1 ***/
+     2, -1, -1, G_STRING,                   /*** 1 ***/
      NONE,
      NORMAL,
      (long) "SET PREFERENCES",
      3, 1, 15, 1},
     {
-     3, -1, -1, G_STRING,		    /*** 2 ***/
+     3, -1, -1, G_STRING,                   /*** 2 ***/
      NONE,
      NORMAL,
      (long) "Confirm deletes?",
      6, 3, 16, 1},
     {
-     6, 4, 5, G_IBOX,			    /*** 3 ***/
+     6, 4, 5, G_IBOX,                       /*** 3 ***/
      NONE,
      NORMAL,
      (long) 0L,
      24, 3, 12, 1},
     {
-     5, -1, -1, G_BUTTON,		    /*** 4 ***/
+     5, -1, -1, G_BUTTON,                   /*** 4 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) rs_str_Yes,
      0, 0, 5, 1},
     {
-     3, -1, -1, G_BUTTON,		    /*** 5 ***/
+     3, -1, -1, G_BUTTON,                   /*** 5 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) rs_str_No,
      7, 0, 5, 1},
     {
-     7, -1, -1, G_STRING,		    /*** 6 ***/
+     7, -1, -1, G_STRING,                   /*** 6 ***/
      NONE,
      NORMAL,
      (long) "Confirm copies?",
      7, 5, 15, 1},
     {
-     10, 8, 9, G_IBOX,			    /*** 7 ***/
+     10, 8, 9, G_IBOX,                      /*** 7 ***/
      NONE,
      NORMAL,
      (long) 0L,
      24, 5, 12, 1},
     {
-     9, -1, -1, G_BUTTON,		    /*** 8 ***/
+     9, -1, -1, G_BUTTON,                   /*** 8 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) rs_str_Yes,
      0, 0, 5, 1},
     {
-     7, -1, -1, G_BUTTON,		    /*** 9 ***/
+     7, -1, -1, G_BUTTON,                   /*** 9 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) rs_str_No,
      7, 0, 5, 1},
     {
-     11, -1, -1, G_STRING,		    /*** 10 ***/
+     11, -1, -1, G_STRING,                  /*** 10 ***/
      NONE,
      NORMAL,
      (long) "Confirm overwrites?",
      3, 7, 19, 1},
     {
-     14, 12, 13, G_IBOX,		    /*** 11 ***/
+     14, 12, 13, G_IBOX,                    /*** 11 ***/
      NONE,
      NORMAL,
      (long) 0L,
      24, 7, 12, 1},
     {
-     13, -1, -1, G_BUTTON,		    /*** 12 ***/
+     13, -1, -1, G_BUTTON,                  /*** 12 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) rs_str_Yes,
      0, 0, 5, 1},
     {
-     11, -1, -1, G_BUTTON,		    /*** 13 ***/
+     11, -1, -1, G_BUTTON,                  /*** 13 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) rs_str_No,
      7, 0, 5, 1},
     {
-     15, -1, -1, G_STRING,		    /*** 14 ***/
+     15, -1, -1, G_STRING,                  /*** 14 ***/
      NONE,
      NORMAL,
      (long) "Double-click speed:",
      3, 9, 19, 1},
     {
-     21, 16, 20, G_IBOX,		    /*** 15 ***/
+     21, 16, 20, G_IBOX,                    /*** 15 ***/
      NONE,
      NORMAL,
      (long) 0L,
      24, 9, 31, 1},
     {
-     17, -1, -1, G_BUTTON,		    /*** 16 ***/
+     17, -1, -1, G_BUTTON,                  /*** 16 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) "Slow",
      0, 0, 7, 1},
     {
-     18, -1, -1, G_BUTTON,		    /*** 17 ***/
+     18, -1, -1, G_BUTTON,                  /*** 17 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) "2",
      9, 0, 3, 1},
     {
-     19, -1, -1, G_BUTTON,		    /*** 18 ***/
+     19, -1, -1, G_BUTTON,                  /*** 18 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) "3",
      14, 0, 3, 1},
     {
-     20, -1, -1, G_BUTTON,		    /*** 19 ***/
+     20, -1, -1, G_BUTTON,                  /*** 19 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) "4",
      19, 0, 3, 1},
     {
-     15, -1, -1, G_BUTTON,		    /*** 20 ***/
+     15, -1, -1, G_BUTTON,                  /*** 20 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) "Fast",
      24, 0, 7, 1},
     {
-     24, 22, 23, G_IBOX,		    /*** 21 ***/
+     24, 22, 23, G_IBOX,                    /*** 21 ***/
      NONE,
      NORMAL,
      (long) 0L,
      24, 11, 20, 1},
     {
-     23, -1, -1, G_BUTTON,		    /*** 22 ***/
+     23, -1, -1, G_BUTTON,                  /*** 22 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) "Click",
      0, 0, 8, 1},
     {
-     21, -1, -1, G_BUTTON,		    /*** 23 ***/
+     21, -1, -1, G_BUTTON,                  /*** 23 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) "No click",
      10, 0, 10, 1},
     {
-     25, -1, -1, G_STRING,		    /*** 24 ***/
+     25, -1, -1, G_STRING,                  /*** 24 ***/
      NONE,
      NORMAL,
      (long) "To drop down menus:",
      3, 11, 19, 1},
     {
-     26, -1, -1, G_STRING,		    /*** 25 ***/
+     26, -1, -1, G_STRING,                  /*** 25 ***/
      NONE,
      NORMAL,
      (long) "Sound effects:",
      8, 13, 14, 1},
     {
-     29, 27, 28, G_IBOX,		    /*** 26 ***/
+     29, 27, 28, G_IBOX,                    /*** 26 ***/
      NONE,
      NORMAL,
      (long) 0L,
      24, 13, 12, 1},
     {
-     28, -1, -1, G_BUTTON,		    /*** 27 ***/
+     28, -1, -1, G_BUTTON,                  /*** 27 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) "On",
      0, 0, 5, 1},
     {
-     26, -1, -1, G_BUTTON,		    /*** 28 ***/
+     26, -1, -1, G_BUTTON,                  /*** 28 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) "Off",
      7, 0, 5, 1},
     {
-     30, -1, -1, G_STRING,		    /*** 29 ***/
+     30, -1, -1, G_STRING,                  /*** 29 ***/
      NONE,
      NORMAL,
      (long) "Time format:",
      10, 15, 12, 1},
     {
-     33, 31, 32, G_IBOX,		    /*** 30 ***/
+     33, 31, 32, G_IBOX,                    /*** 30 ***/
      NONE,
      NORMAL,
      (long) 0L,
      24, 15, 20, 1},
     {
-     32, -1, -1, G_BUTTON,		    /*** 31 ***/
+     32, -1, -1, G_BUTTON,                  /*** 31 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) "12 Hour",
      0, 0, 9, 1},
     {
-     30, -1, -1, G_BUTTON,		    /*** 32 ***/
+     30, -1, -1, G_BUTTON,                  /*** 32 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) "24 Hour",
      11, 0, 9, 1},
     {
-     34, -1, -1, G_STRING,		    /*** 33 ***/
+     34, -1, -1, G_STRING,                  /*** 33 ***/
      NONE,
      NORMAL,
      (long) "Date format:",
      10, 17, 12, 1},
     {
-     37, 35, 36, G_IBOX,		    /*** 34 ***/
+     37, 35, 36, G_IBOX,                    /*** 34 ***/
      NONE,
      NORMAL,
      (long) 0L,
      24, 17, 24, 1},
     {
-     36, -1, -1, G_BUTTON,		    /*** 35 ***/
+     36, -1, -1, G_BUTTON,                  /*** 35 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) "MM-DD-YY",
      0, 0, 11, 1},
     {
-     34, -1, -1, G_BUTTON,		    /*** 36 ***/
+     34, -1, -1, G_BUTTON,                  /*** 36 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) "DD-MM-YY",
      13, 0, 11, 1},
     {
-     38, -1, -1, G_BUTTON,		    /*** 37 ***/
+     38, -1, -1, G_BUTTON,                  /*** 37 ***/
      SELECTABLE | DEFAULT | EXIT,
      NORMAL,
      (long) rs_str_OK,
      36, 19, 8, 1},
     {
-     0, -1, -1, G_BUTTON,		    /*** 38 ***/
+     0, -1, -1, G_BUTTON,                   /*** 38 ***/
      SELECTABLE | EXIT | LASTOB,
      NORMAL,
      (long) rs_str_Cancel,
@@ -1702,8 +1629,8 @@ int count_chars(char *str, char c)
 
     len = 0;
     for (j = 0; j < strlen(str); j++) {
-	if (str[j] == c)
-	    len += 1;
+        if (str[j] == c)
+            len += 1;
     }
 
     return len;
@@ -1721,35 +1648,35 @@ void desk_rs_init(void)
     /* Copy data from ROM to RAM: */
     memcpy(desk_rs_obj, desk_rs_obj_rom, RS_NOBS * sizeof(OBJECT));
     memcpy(desk_rs_tedinfo, desk_rs_tedinfo_rom,
-	   RS_NTED * sizeof(TEDINFO));
+           RS_NTED * sizeof(TEDINFO));
 
     /* Fix objects coordinates: */
     do {
-	rsrc_obfix((LONG) desk_rs_obj, i);
+        rsrc_obfix((LONG) desk_rs_obj, i);
     }
     while (++i < RS_NOBS);
 
     /* Fix TEDINFO strings: */
     len = 0;
     for (i = 0; i < RS_NTED; i++) {
-	if (desk_rs_tedinfo[i].te_ptext == 0) {
-	    /* Count number of '_' in strings ( +1 for \0 at the end ): */
-	    len +=
-		count_chars((char *) desk_rs_tedinfo[i].te_ptmplt,
-			    '_') + 1;
-	}
+        if (desk_rs_tedinfo[i].te_ptext == 0) {
+            /* Count number of '_' in strings ( +1 for \0 at the end ): */
+            len +=
+                count_chars((char *) desk_rs_tedinfo[i].te_ptmplt,
+                            '_') + 1;
+        }
     }
-    tedinfptr = (char *) dos_alloc(len);	/* Get memory */
+    tedinfptr = (char *) dos_alloc(len);        /* Get memory */
     for (i = 0; i < RS_NTED; i++) {
-	if (desk_rs_tedinfo[i].te_ptext == 0) {
-	    desk_rs_tedinfo[i].te_ptext = (LONG) tedinfptr;
-	    *tedinfptr++ = '@';	/* First character of uninitialized string */
-	    len = count_chars((char *) desk_rs_tedinfo[i].te_ptmplt, '_');
-	    for (j = 0; j < len; j++) {
-		*tedinfptr++ = '_';	/* Set other characters to '_' */
-	    }
-	    *tedinfptr++ = 0;	/* Final 0 */
-	}
+        if (desk_rs_tedinfo[i].te_ptext == 0) {
+            desk_rs_tedinfo[i].te_ptext = (LONG) tedinfptr;
+            *tedinfptr++ = '@'; /* First character of uninitialized string */
+            len = count_chars((char *) desk_rs_tedinfo[i].te_ptmplt, '_');
+            for (j = 0; j < len; j++) {
+                *tedinfptr++ = '_';     /* Set other characters to '_' */
+            }
+            *tedinfptr++ = 0;   /* Final 0 */
+        }
     }
 
 }
@@ -1760,17 +1687,17 @@ WORD rsrc_gaddr(WORD rstype, WORD rsid, LONG * paddr)
 {
     switch (rstype) {
     case R_TREE:
-	*paddr = (LONG) desk_rs_trees[rsid];
-	break;
+        *paddr = (LONG) desk_rs_trees[rsid];
+        break;
     case R_BITBLK:
-	*paddr = (LONG) & desk_rs_bitblk[rsid];
-	break;
+        *paddr = (LONG) & desk_rs_bitblk[rsid];
+        break;
     case R_STRING:
-	*paddr = (LONG) desk_rs_fstr[rsid];
-	break;
+        *paddr = (LONG) desk_rs_fstr[rsid];
+        break;
     default:
-	kcprintf("FIXME: unsupported (faked) rsrc_gaddr type!\n");
-	return FALSE;
+        kcprintf("FIXME: unsupported (faked) rsrc_gaddr type!\n");
+        return FALSE;
     }
 
     return TRUE;

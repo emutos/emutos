@@ -71,7 +71,7 @@
 #define BEG_UPDATE 1
 #define END_UPDATE 0
 
-#define NUM_BB  5
+#define NUM_BB  1
 
 /* */
 #define SPACE 0x20
@@ -1087,20 +1087,13 @@ WORD deskmain()
         WORD            ii, done, flags;
         WORD            ev_which, mx, my, button, kstate, kret, bret;
         WSAVE           *pws;
-        LONG            tree, plong;
-        WORD            hsave;
 #if MULTIAPP
         WORD            junk1, junk2;
         LONG            csize;
         LONG            templn, templn2;
         BYTE            memszstr[4];
 #endif
-        BYTE            docopyrt;
 
-
-        tree = 0;
-        plong = 0;
-        hsave = 0;
 
         /* initialize libraries */
         gl_apid = appl_init();
@@ -1178,18 +1171,6 @@ WORD deskmain()
         for (ii=0; ii<NUM_BB; ii++)             /* initialize bit images */
         {
           app_tran(ii);
-        }
-
-        shel_get(ADDR(&gl_afile[0]), 1);
-        docopyrt = (gl_afile[0] != '#');
-
-        if (docopyrt)
-        {
-          tree = G.a_trees[ADDINFO];            /* copyright notice     */
-          plong = OB_HEIGHT(ROOT);              /* just upper part      */
-          hsave = LWGET(plong);
-          LWSET(plong, hsave - 10*gl_hchar);
-          show_hide(FMD_START, tree);
         }
 
         rsrc_gaddr(R_STRING, STASTEXT, &ad_ptext);
@@ -1275,13 +1256,6 @@ WORD deskmain()
         } /* for */
                                 /* fix up y loc. of lower window        */
         pws->y_save += pws->h_save + (gl_hbox / 2);
-
-        if (docopyrt)
-        {
-          evnt_timer(1000, 0);
-          LWSET(plong, hsave);                  /* ABOUT height restored */
-          show_hide(FMD_FINISH, tree);          /* copyright notice     */
-        }
 
         fix_wins();             /* update with latest window x,y,w,h    */
 

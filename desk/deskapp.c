@@ -585,11 +585,12 @@ WORD app_start()
         G.g_aavail = &G.g_alist[0];
         G.g_alist[NUM_ANODES - 1].a_next = (ANODE *) NULL;
 
-#if 0 /* We're ignoring the normal DESKTOP.INF and use our built-in own data
-         instead due to incompatibilities between the different GEM versions - THH*/
         shel_get(ADDR(&gl_afile[0]), SIZE_AFILE);
         if (gl_afile[0] != '#')                 /* invalid signature    */
         {                                       /*   so read from disk  */
+#if 0     /* We're ignoring the normal DESKTOP.INF and use our
+             built-in own data instead due to incompatibilities between
+             the different GEM versions - THH*/
           WORD fh;
           fh = app_getfh(TRUE, ini_str(STGEMAPP), 0x0);
           if (!fh)
@@ -597,11 +598,11 @@ WORD app_start()
           G.g_afsize = dos_read(fh, SIZE_AFILE, ADDR(&gl_afile[0]));
           dos_close(fh);
           gl_afile[G.g_afsize] = NULL;
-        }
 #else
-        G.g_afsize = strlen(desk_inf_data);
-        strcpy(gl_afile, desk_inf_data);
+          G.g_afsize = strlen(desk_inf_data);
+          strcpy(gl_afile, desk_inf_data);
 #endif        
+        }
 
         wincnt = 0;
         pcurr = &gl_afile[0];
