@@ -24,11 +24,12 @@
 /* string routines */
 
 unsigned long int strlen(const char *s);
+short strlencpy(char *dest, const char *src);
 char *strcat(char *dest, const char *src);
 char *strcpy(char *dest, const char *src);
 int strcmp(const char *a, const char *b);
 int strncmp(const char *a, const char *b, unsigned long int n);
-
+char *strchr(const char *s, int c);
 int toupper(int c);
 
 

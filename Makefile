@@ -89,7 +89,7 @@ CFLAGS = -O2 -fomit-frame-pointer -Wall -mshort -m68000 $(LOCALCONF) $(INC)
 CPPFLAGS = $(INC)
 
 # The objdump utility (disassembler)
-OBJDUMP=m68k-atari-mint-objdump
+OBJDUMP = m68k-atari-mint-objdump
 
 # the native C compiler, for tools
 NATIVECC = gcc -Wall
@@ -113,8 +113,8 @@ BIOSSSRC = tosvars.S startup.S lineavars.S vectors.S aciavecs.S \
 #
 
 BDOSCSRC = bdosinit.c console.c fsdrive.c fshand.c fsopnclo.c osmem.c \
-         umem.c bdosmain.c fsbuf.c fsfat.c fsio.c iumem.c proc.c \
-         bdosts.c fsdir.c fsglob.c fsmain.c kpgmld.c time.c 
+           umem.c bdosmain.c fsbuf.c fsfat.c fsio.c iumem.c proc.c \
+           bdosts.c fsdir.c fsglob.c fsmain.c kpgmld.c time.c 
 BDOSSSRC = rwa.S
 
 #
@@ -122,7 +122,7 @@ BDOSSSRC = rwa.S
 #
 
 UTILCSRC = doprintf.c nls.c langs.c string.c
-UTILSSRC = memset.S memmove.S nlsasm.S setjmp.S miscasm.S
+UTILSSRC = memset.S memmove.S nlsasm.S setjmp.S miscasm.S stringasm.S
 
 #
 # source code in vdi/
@@ -139,20 +139,21 @@ VDISSRC = entry.S bitblt.S bltfrag.S copyrfm.S esclisa.S  \
 #
 
 AESCSRC = gemaplib.c gemasync.c gembase.c gemctrl.c gemdisp.c gemevlib.c \
-   gemflag.c gemfmalt.c gemfmlib.c gemfslib.c gemglobe.c gemgraf.c gemgrlib.c \
-   gemgsxif.c geminit.c geminput.c gemmnlib.c gemobed.c gemobjop.c gemoblib.c \
-   gempd.c gemqueue.c gemrslib.c gemsclib.c gemshlib.c gemsuper.c gemwmlib.c \
-   gemwrect.c optimize.c rectfunc.c gemdos.c gem_rsc.c
+          gemflag.c gemfmalt.c gemfmlib.c gemfslib.c gemglobe.c gemgraf.c \
+          gemgrlib.c gemgsxif.c geminit.c geminput.c gemmnlib.c gemobed.c \
+          gemobjop.c gemoblib.c gempd.c gemqueue.c gemrslib.c gemsclib.c \
+          gemshlib.c gemsuper.c gemwmlib.c gemwrect.c optimize.c rectfunc.c \
+          gemdos.c gem_rsc.c
 AESSSRC = gemstart.S gemdosif.S gemasm.S gsx2.S large.S optimopt.S
 
 #
 # source code in desk/
 #
 
-DESKCSRC = deskact.c deskapp.c deskdir.c deskfpd.c deskfun.c \
-    deskglob.c deskinf.c deskins.c deskmain.c deskobj.c deskpro.c \
-    deskrsrc.c desksupp.c deskwin.c gembind.c icons.c desk_rsc.c
-    #taddr.c deskgraf.c deskgsx.c
+DESKCSRC = deskact.c deskapp.c deskdir.c deskfpd.c deskfun.c deskglob.c \
+           deskinf.c deskins.c deskmain.c deskobj.c deskpro.c deskrsrc.c \
+           desksupp.c deskwin.c gembind.c icons.c desk_rsc.c
+           #taddr.c deskgraf.c deskgsx.c
 DESKSSRC = deskstart.S
 
 #
