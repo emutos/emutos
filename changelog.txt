@@ -149,8 +149,6 @@ Start... early ages
 - started iorec and kbdvbase stuff (aim is to reimplement kbd.c to
   be compliant with the way TOS does it)
 - some debug info in Malloc(), bios(5)
-<<<<<<< changelog.txt
-- cleaned Makefile and end.s ("the end.s episode")
 
 09. Oct. 2001
 - Got asm conout working - MiNT did run somewhat better (MAD)
@@ -264,3 +262,7 @@ Start... early ages
 05. Nov. 2001.
 - added forgotten bios/processor.h
 
+06. Nov. 2001
+- US kbd default, optional DE and FR kbds, tools to add more KBD defs (LVL)
+- changed joystick support in aciavecs.S (untested) (LVL)
+- Makefile (updated clean and distclean, BUILDDATE also for CYGWIN) (LVL)
