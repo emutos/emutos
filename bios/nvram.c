@@ -18,48 +18,102 @@
 
 int has_nvram;
 
+/* don't know how to declare this only when an NVRAM is detected :-( */
+static UBYTE buf[48];
+static int inited;
+
+/* detect and init the nvram */
 void detect_nvram(void)
 {
     if(check_read_byte(0xffff8961)) {
         has_nvram = 1;
+	inited = 0;
     } else {
         has_nvram = 0;
     }
 }
 
 /* XBios function */
+/* internal checksum handling */
 
-int nvmaccess(int type, int start, int count, char *buffer)
+static UWORD compute_sum(void)
 {
-    volatile BYTE * addr_reg = (volatile BYTE *)0xffff8961;
-    volatile BYTE * data_reg = (volatile BYTE *)0xffff8963;
+    UWORD sum;
+    int i;
+
+    sum = 0;
+    for(i = 0 ; i < 48 ; i+=2) {
+        sum += (buf[i] << 8) | buf[i+1];
+    }
+    return sum;
+}
+
+static UWORD get_sum(void)
+{
+    return (buf[48] << 8 ) | buf[49];
+}
+
+static void set_sum(UWORD sum)
+{
+    volatile UBYTE * addr_reg = (volatile UBYTE *)0xffff8961;
+    volatile UBYTE * data_reg = (volatile UBYTE *)0xffff8963;
+    
+    *addr_reg = 62;
+    *data_reg = buf[48] = sum >> 8;
+    *addr_reg = 63;
+    *data_reg = buf[49] = sum;
+}
+
+/* XBios function */
+
+WORD nvmaccess(WORD type, WORD start, WORD count, PTR buffer)
+{
+    volatile UBYTE * addr_reg = (volatile UBYTE *)0xffff8961;
+    volatile UBYTE * data_reg = (volatile UBYTE *)0xffff8963;
+    UBYTE * ubuffer = (UBYTE *) buffer;
     int i;
 
     if(! has_nvram) {
         return 0x2E;
     }
-    start += 14;
-    
-    /* TODO: update and check cksum in bytes 62, 63 */
-    
-    switch(type) {
-    case 0:
-        while(count--) {
-            *addr_reg = start++;
-            *buffer++ = *data_reg;
-        }
-        break;
-    case 1:
-        while(count--) {
-            *addr_reg = start++;
-            *data_reg = *buffer++;
-        }
-        break;
-    case 2: /* reset all, including cksum */
-        for(i = 14 ; i < 64 ; i++) {
-            *addr_reg = i;
+    if(type == 2) { /* reset all */
+        for(i = 0 ; i < 50 ; i++) {
+            *addr_reg = i + 14;
             *data_reg = 0;
+	    buf[i] = 0;
         }
+	inited = 1;
+	return 0;
+    } 
+    /* else, first read the nvram if not done already */
+    if(! inited) {
+        for(i = 0 ; i < 50 ; i++) {
+            *addr_reg = i + 14;
+            buf[i] = *data_reg;
+        }
+	inited = 1;
+	if(compute_sum() != get_sum()) {
+	    /* TODO, wrong checksum, what do we do ? */
+	}
+    }
+    start += 14;
+    switch(type) {
+    case 0: /* read, from our buffer since it is already in memory */
+	for(i = start ; i < start + count ; i++) {
+	    *ubuffer++ = buf[i];
+	}
+        break;
+    case 1: /* write, in our buffer and in the memory */
+        for(i = start ; i < start + count ; i++) {
+	    *addr_reg = i + 14;
+            *data_reg = buf[i] = *ubuffer++; 
+	}
+	set_sum(compute_sum());
+	/* TODO - verify ? */
+        break;
+    default:
+        /* TODO, wrong operation code! */
+        return -1;
     }
     return 0;
 }

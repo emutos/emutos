@@ -63,10 +63,10 @@ void xbiosinit()
 
 void xbios_0(WORD type, PTR param, PTR vec)
 {
-    Initmous(type, param, vec);
 #if DBG_XBIOS
-    kprintf("XBIOS: Unimplemented function 0x00 ...\n");
+    kprintf("XBIOS: Initmous\n");
 #endif
+    Initmous(type, param, vec);
 }
 
 
@@ -865,7 +865,7 @@ WORD xbios_2e(WORD op, WORD start, WORD count, PTR buffer)
 #if DBG_XBIOS
     kprintf("XBIOS: NVMaccess\n");
 #endif
-    return nvmaccess(op, start, count, (char *)buffer);
+    return nvmaccess(op, start, count, buffer);
 }
 
 

@@ -10,8 +10,6 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#ifndef _NVRAM_H
-#define _NVRAM_H
 
 /* internal feature detection */
 
@@ -20,8 +18,7 @@ void detect_nvram(void);
 
 /* XBios function */
 
-int nvmaccess(int type, int start, int count, char *buffer);
+WORD nvmaccess(WORD type, WORD start, WORD count, PTR buffer);
 
-#endif /* _NVRAM_H */
 
 

@@ -56,7 +56,7 @@ void detect_akp_idt(void)
   char buf[4];
   int err;
   
-  err = nvmaccess(0, 6, 4, buf);
+  err = nvmaccess(0, 6, 4, (PTR) buf);
   if(err) { 
     /* either no NVRAM, or the NVRAM is corrupt (low battery, bad cksum), */
     /* interpret the os_pal flag in header */
