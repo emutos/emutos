@@ -210,3 +210,4 @@ Start... early ages
 22. Okt. 2001
 - Video mode can be set hard in startup.s to all three modes!!! (MAD)
 - Cursor is now blinking (thanks Laurent, for Timer stuff!) (MAD)
+- switched off debugging for public release in startup.s: _print (MAD)

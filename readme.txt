@@ -9,8 +9,10 @@ to do some changes in STonX. Possibly this will change later.
 EmuTOS now needs no change in STonX any longer. It will run on a
 normal STonX. 
 
-But, if you want to see debugging output in STonX, you need to
-implement a write_native function in gemdos.c of STonX:
+But, if you want to see debugging output in STonX, you need to do two
+things:
+
+1. implement a write_native function in gemdos.c of STonX:
 
 /* Print string from emulated side */
 void write_native(char * addr)
@@ -40,6 +42,14 @@ void call_native(UL as, UL func)
 	case 1:
 .....
 
+2. Switch on the debugging output in the file bios/startup.s. Remove the 
+   comments on these two lines:
+
+|        dc.w 0xa0ff     | Jump to native execution
+|        dc.l 0          | Printing subroutine
+        rts
+
+
 
 You will find no compiled command.prg in this archive. The source of it
 now is ok (it works a bit). It is in the cli sub-directory. It may have
@@ -48,3 +58,6 @@ lots of bugs and debugging code in it!
 
 Hope this is all. AND: EmuTOS is not thought for the public right now.
 It is alpha alpha!!!
+
+--
+Martin

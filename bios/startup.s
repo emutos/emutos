@@ -870,8 +870,8 @@ _criter1:
 | ==== STonX - Native print routine for debugging ===========================
 _print:
 _printout:
-        dc.w 0xa0ff     | Jump to native execution
-        dc.l 0          | Printing subroutine
+|        dc.w 0xa0ff     | Jump to native execution
+|        dc.l 0          | Printing subroutine
         rts
 
 
