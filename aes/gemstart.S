@@ -128,7 +128,6 @@ gd_end:
 // A wrapper around Pexec. We can't use the above function _gemdos for this
 // since _gemdos is not reentrant.
 _dos_exec:
-        jsr     _dsptch                 // Updates rlr->p_uda!
         move.l  sp,d1
         movem.l d2/a2,-(sp)             // Save registers
 
