@@ -53,7 +53,7 @@
 
 /*==== Defines ============================================================*/
 
-#define DBGBIOS 0               /* If you want debugging output */
+#define DBGBIOS 1               /* If you want debugging output */
 #define DBGAUTOBOOT 1           /* If you want to see AUTO folder loading */
 
 /*==== Forward prototypes =================================================*/
@@ -467,7 +467,7 @@ LONG bios_4(WORD r_w, LONG adr, WORD numb, WORD first, WORD drive, LONG lfirst)
 {
     LONG ret;
     kprintf("BIOS rwabs(rw = %d, addr = 0x%08lx, count = 0x%04x, "
-            "sect = 0x%04x, dev = 0x%04x, lsect = 0x%08x)",
+            "sect = 0x%04x, dev = 0x%04x, lsect = 0x%08lx)",
             r_w, adr, numb, first, drive, lfirst);
     ret = lrwabs(r_w, adr, numb, first, drive, lfirst);
     kprintf(" = 0x%08lx\n", ret);

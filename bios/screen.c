@@ -21,6 +21,8 @@
 #include "nvram.h"
 #include "kprint.h"
 
+#define DBG_SCREEN 0
+
 /* private prototypes */
 
 static void setphys(LONG addr);
@@ -214,6 +216,17 @@ void setscreen(LONG logLoc, LONG physLoc, WORD rez)
 
 void setpalette(LONG palettePtr)
 {
+#if DBG_SCREEN
+    int i, max;
+    WORD *p = (WORD *)palettePtr;
+    max = getrez() == 0 ? 15 : getrez() == 1 ? 3 : 1;
+    kprintf("Setpalette(");
+    for(i = 0 ; i <= max ; i++) {
+        kprintf("%03x", p[i]);
+        if(i < 15) kprintf(" ");
+    }
+    kprintf(")\n");
+#endif
     /* next VBL will do this */
     colorptr = (WORD *) palettePtr;
 }
@@ -224,6 +237,10 @@ WORD setcolor(WORD colorNum, WORD color)
     WORD max;
     WORD mask;
     WORD *palette = (WORD *) 0xffff8240;
+    
+#if DBG_SCREEN
+    kprintf("Setcolor(0x%04x, 0x%04x)\n", colorNum, color);
+#endif
     switch (rez) {
     case 0:
         max = 15;

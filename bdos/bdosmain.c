@@ -360,13 +360,13 @@ void    offree(DMD *d)
  * to avoid the 'clobbered by longjmp or vfork' compiler warnings!
  */
 static
-BPB *	MyGetbpb(errdrv)
+BPB *   MyGetbpb(errdrv)
 {
     return (BPB *) Getbpb(errdrv);
 }
 
 static
-long	MyBconout(short dev, short c)
+long    MyBconout(short dev, short c)
 {
     return Bconout(dev, c);
 }
@@ -422,7 +422,10 @@ restrt:
     fn = pw[0];
     if (fn > 0x57)
         return(EINVFN);
-
+#if 0
+    kprintf("bdos(fn = 0x%04x)\n", fn);
+#endif
+    
     if ( setjmp(errbuf) )
     {
         rc = errcode;
