@@ -5,6 +5,7 @@ Here is a quick list of supported software:
 
 This is, what the first field of the following table means:
 
+ -   - Not running or crashing
  ?   - Not yet tested, but should run later
  X   - Starting at least or running in any kind
  T   - Tested and working on EmuTOS
@@ -12,10 +13,30 @@ This is, what the first field of the following table means:
 
  System Software
  ----------------------------------------------------------------------------
+T  TURBODOS.PRG (STonX)
+   Runs well on EmuTOS and tells us to fix some bugs, well, that's what we need.
+ 
+X  QUICKST3.PRG (STonX)
+   Does slow down everything, but also runs without crash.
+
+-  TRUEDISC 2.3 (STonX)
+   Crashes EmuTOS
+ 
+T  K-RAM.TOS (STonX)
+   Installs a RAMdisk, works well
+ 
+ 
 
  TOS Applications
  ----------------------------------------------------------------------------
+T  HOWCRACK.TOS
+   Working - Shows nice tips about hacking nobody needs anymore.
 
+X  MEMSPEED 1.0
+   Does say, that we need TOS 2 or higher
+   
+   
+ 
  GEM Software (EmuTOS with MiNT, fVDI and XaAES)
  ----------------------------------------------------------------------------
 

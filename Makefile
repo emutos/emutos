@@ -97,7 +97,7 @@ BIOSSSRC = tosvars.S startup.S lineavars.S vectors.S aciavecs.S \
 
 BDOSCSRC = bdosinit.c console.c fsdrive.c fshand.c fsopnclo.c osmem.c \
          umem.c bdosmain.c fsbuf.c fsfat.c fsio.c iumem.c proc.c \
-         bdosts.c fsdir.c fsglob.c fsmain.c kpgmld.c time.c
+         bdosts.c fsdir.c fsglob.c fsmain.c kpgmld.c time.c 
 BDOSSSRC = rwa.S
 
 #
