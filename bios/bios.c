@@ -31,7 +31,7 @@
 #include "cookie.h"
 #include "country.h"
 #include "nls.h"
-
+#include "biosmem.h"
 
 #include "ikbd.h"
 #include "mouse.h"
