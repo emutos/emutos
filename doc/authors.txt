@@ -21,17 +21,16 @@ Here is about the 'recent' contributors - individuals involved in the EmuTOS
 project. In this project virtually everybody modifies every file,
 nevertheless here is an attempt at identifying who's guilty of what: 
 
-Martin Doering (MAD) <mdoering@gmx.net>
+Martin Doering (MAD) <mdoering@mucl.de>
 - project initiator and manager; 
 - memory setup, VT52 console, linea, mouse
 - virtually everything not modified later by the other fellows
-- 
   
-Petr Stehlik (joy) <>
+Petr Stehlik (joy) <pstehlik@sophics.cz>
 - bios disk interface, BDOS filesystem
 - Falcon and ARAnyM support
 
-Thomas Huth (THH) <>
+Thomas Huth (THH) <thomas.huth@informatik.uni-ulm.de>
 - ROMable EMuCON, everything graphic! AES, VDI, desktop, ...
 
 Laurent Vogel (LVL) <lvl@club-internet.fr>
@@ -39,9 +38,27 @@ Laurent Vogel (LVL) <lvl@club-internet.fr>
 - Makefile tricks and tools
 - NLS support
 
+Bohdan Milar <milarb@volny.cz>
+- Czech translation
+
 
 Thanks also to all Mailing list contributors for their help, and 
 especially:
-- Frank Neumann
-- ... (to be continued)
+
+Frank Neumann <fneumann@cs.uni-magdeburg.de> 
+- MiNT
+
+Stanislav Opichal <opichals@seznam.cz>,
+Ctirad Fertr <phanatic@volny.cz>,
+Milan Jurik <M.Jurik@sh.cvut.cz>
+- the ARanyM team
+
+Johan Klockars <rand@cd.chalmers.se> 
+- fVDI
+
+Henk Robbers <h.robbers@chello.nl> 
+- XaAES
+
+Jacques-Etienne Rahon "Kevin Flynn" <kevin.flynn@wanadoo.fr>
+- extensive demo testing on STeeM
 

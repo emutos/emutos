@@ -914,7 +914,7 @@ Start... early ages
 
 23. Jun. 2002
 - include/config.h - Added TOS_VERSION define to switch TOS versions and
-  to reduce size if compiling a 192kB image (THH).
+  to reduce size if compiling a 192kB image (THH)
 
 01. Jul. 2002
 - doc/processor.h - added some documentation about processor handling (LVL)
@@ -940,6 +940,10 @@ Start... early ages
 - po/de.po - all german translations done (MAD)
 
 19. Jul. 2002
-- bios/processor.S - added sceleton for privileged instruction handler (MAD)
+- bios/processor.S - added skeleton for privileged instruction handler (MAD)
 
+20. Jul. 2002
+- bios/ikbd.[ch], bios/vectors.S - added key repeat (LVL)
+- bios/bios.c - priviledge exception ignored (LVL)
+- doc/authors.txt - updated and added email addresses (LVL)
 
