@@ -528,4 +528,7 @@ Start... early ages
 - removed obsolete bios/keyboard.h include/btools.h (LVL)
 - in bios/vectors.S, init_user_vec no longer relies on the previous value of 
   register a1 from init_exc_vec (LVL)
-
+- bios/blkdev.c - the floppy_init does not use the hdv_init vector. A: works
+  under STonX again. (joy)
+- bios/bios.c - increased the fixed size sector cache to 4kB sector. That's
+  enough for partitions smaller than 512MB. Ideally it should be 32kB (joy).
