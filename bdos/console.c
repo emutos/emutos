@@ -22,6 +22,7 @@
 #include        "bios.h"                        /*  M01.01.01           */
 #include        "proc.h"
 #include        "console.h"
+#include        "biosbind.h"
 
 /* The following data structures are used for the typeahead buffer */
 long glbkbchar[3][KBBUFSZ];     /* The actual typeahead buffer */
@@ -63,11 +64,6 @@ static int backsp(int h, char *cbuf, int retlen, int col);
 
 #define warmboot() xterm(-32)
 
-#define bconstat(a)  trap13(1,a)
-#define bconin(a)    trap13(2,a)
-#define bconout(a,b) trap13(3,a,b)
-#define bconostat(a) trap13(8,a)
-
 
 
 /*
@@ -80,7 +76,7 @@ static long constat(int h)
     if (h > BFHCON)
         return(0);
 
-    return( add[h] > remove[h] ? -1L : bconstat(h) );
+    return( add[h] > remove[h] ? -1L : Bconstat(h) );
 }
 
 /*
@@ -96,7 +92,7 @@ long xconstat(void)
  */
 long xconostat(void)
 {
-    return(bconostat(HXFORM(run->p_uft[1])));
+    return(Bcostat(HXFORM(run->p_uft[1])));
 }
 
 /*
@@ -104,7 +100,7 @@ long xconostat(void)
  */
 long xprtostat(void)
 {
-    return(bconostat(HXFORM(run->p_uft[4])));
+    return(Bcostat(HXFORM(run->p_uft[4])));
 }
 
 /*
@@ -120,7 +116,7 @@ long xauxistat(void)
  */
 long xauxostat(void)
 {
-    return(bconostat(HXFORM(run->p_uft[3])));
+    return(Bcostat(HXFORM(run->p_uft[3])));
 }
 
 /*
@@ -134,9 +130,9 @@ static void conbrk(int h)
     register int stop, c;
 
     stop = 0;
-    if ( bconstat(h) ) {
+    if ( Bconstat(h) ) {
         do {
-            c = (ch = bconin(h)) & 0xFF;
+            c = (ch = Bconin(h)) & 0xFF;
             if ( c == ctrlc ) {
                 buflush(h);     /* flush BDOS & BIOS buffers */
                 warmboot();
@@ -155,7 +151,7 @@ static void conbrk(int h)
                     glbkbchar[h][add[h]++ & KBBUFMASK] = ch;
                 }
                 else {
-                    bconout(h, 7);
+                    Bconout(h, 7);
                 }
             }
         } while (stop);
@@ -185,7 +181,7 @@ static void buflush(int h)
 static void conout(int h, int ch)
 {
     conbrk(h);                  /* check for control-s break */
-    bconout(h,ch);              /* output character to console */
+    Bconout(h,ch);              /* output character to console */
     if (ch >= ' ')
         glbcolumn[h]++;         /* keep track of screen column */
     else if (ch == cr)
@@ -247,7 +243,7 @@ static void cookdout(int h, int ch)
  */
 long xauxout(int ch)
 {
-    return(  bconout(HXFORM(run->p_uft[3]),ch)  );
+    return(  Bconout(HXFORM(run->p_uft[3]),ch)  );
 }
 
 /*
@@ -255,7 +251,7 @@ long xauxout(int ch)
  */
 long xprtout(int ch)
 {
-    return(  bconout(HXFORM(run->p_uft[4]),ch)  ) ;
+    return(  Bconout(HXFORM(run->p_uft[4]),ch)  ) ;
 }
 
 
@@ -277,7 +273,7 @@ static long getch(int h)
         return(temp);
     }
 
-    return(bconin(h));
+    return(Bconin(h));
 }
 
 
@@ -337,7 +333,7 @@ long x8in(void)
  */
 long xauxin(void)
 {
-    return(bconin(HXFORM(run->p_uft[3])));
+    return(Bconin(HXFORM(run->p_uft[3])));
 }
 
 /*
@@ -351,7 +347,7 @@ long rawconio(int parm)
         i = HXFORM(run->p_uft[0]);
         return(constat(i) ? getch(i) : 0L);
     }
-    bconout(HXFORM(run->p_uft[1]), parm);
+    Bconout(HXFORM(run->p_uft[1]), parm);
     return 0; /* dummy */
 }
 

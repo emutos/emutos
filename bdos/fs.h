@@ -57,7 +57,7 @@ extern  jmp_buf errbuf;
 extern  int     errdrv;
 extern  long    errcode;
 
-#define longjmp_rwabs(a,b,c,d,e) if((rwerr=trap13(4,a,b,c,d,e))!=0) \
+#define longjmp_rwabs(a,b,c,d,e) if((rwerr=Rwabs(a,b,c,d,e))!=0) \
 {errdrv=e;errcode=rwerr;longjmp(errbuf,1);}
 
 /*

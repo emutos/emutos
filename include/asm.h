@@ -1,5 +1,5 @@
 /*
- * newkbd.c - Intelligent keyboard routines
+ * asm.h - Assembler help routines
  *
  * Copyright (c) 2001 EmuTOS development team
  *
@@ -43,7 +43,7 @@ extern void swp68l(long *);
 
 /* OS entry points implemented in util/miscasm.S */
 extern long trap1(int, ...);
-extern long trap13(int, ...);
+//extern long trap13(int, ...);
 extern long trap14(int, ...);
 extern long trap1_pexec(short mode, char* p1, void* p2, char* p3);
 

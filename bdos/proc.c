@@ -21,6 +21,7 @@
 #include "mem.h"
 #include "proc.h"
 #include "gemerror.h"
+#include "biosbind.h"
 #include "string.h"
 #include "../bios/kprint.h"
 #include "../bios/processor.h"
@@ -336,6 +337,9 @@ long xexec(WORD flag, char *path, char *tail, char *env)
     /* we have now allocated memory, so we need to intercept longjmp. */
     memcpy(bakbuf, errbuf, sizeof(errbuf));
     if ( setjmp(errbuf) ) {
+
+        kprintf("Error and longjmp in xexec()!");
+
         /* free any memory allocated yet */
         freeit(cur_env_md, &pmd);
         freeit(cur_m, find_mpb((void *)cur_m->m_start));
@@ -504,7 +508,7 @@ void    xterm(UWORD rc)
 {
     PD *p = run;
 
-    (* (WORD(*)()) trap13(5,0x102,-1L))() ;     /*  call user term handler */
+    (* (WORD(*)()) Setexc(0x102,-1L))() ;     /*  call user term handler */
 
     run = run->p_parent;
     ixterm(p);

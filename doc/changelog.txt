@@ -1383,3 +1383,9 @@ Start... early ages
 
 10. Mar. 2003
 - bdos/time.c - implemented Tgettime() and Tgetdate() (MAD)
+
+22. Mar. 2003
+- bdos/bdosmain.c - ripped out unused oscnt variable (MAD)
+- bdos/bdosmain.c - added two wrappers to avoid compiler warnings (MAD)
+- include/bindbios.h - now use fully prototyped BIOS bindings (MAD)
+

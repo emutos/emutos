@@ -17,6 +17,7 @@
 #include "lineavars.h"
 #include "mouse.h"
 #include "asm.h"
+#include "biosbind.h"
 
 
 extern void mouse_int();    /* mouse interrupt routine */
@@ -26,11 +27,6 @@ extern struct param arrow_cdb;
 
 extern void s68(int *);
 extern void s68l(long *);
-
-#define kbshift(a)   trap13(0x0B,a)
-#define bconstat(a)  trap13(0x01,a)
-#define bconin(a)    trap13(0x02,a)
-#define bconout(a,b) trap13(0x03,a,b)
 
 #define initmous(a,b,c) trap14(0x00,a,b,c)
 
@@ -44,7 +40,7 @@ extern void s68l(long *);
  
 WORD gshift_s()
 {
-    return (kbshift(-1) & 0x000f);
+    return (Getshift() & 0x000f);
 }
 
 
@@ -78,8 +74,8 @@ WORD gchr_key()
 {
     ULONG ch;
 
-    if (bconstat(2)) {                  // see if a character present at con
-        ch = bconin(2);
+    if (Bconstat(2)) {                  // see if a character present at con
+        ch = Bconin(2);
         TERM_CH = (WORD)
             (ch >> 8)|                  // scancode down to bit 8-15
             (ch & 0xff);                // asciicode to bit 0-7
@@ -128,8 +124,8 @@ WORD gloc_key()
         cur_ms_stat &= 0x23;            // clear mouse button status (bit 6/7)
         retval = 1;                     // set button pressed flag
     } else {                            // check key stat
-        if (bconstat(2)) {              // see if a character present at con
-            ch = bconin(2);
+        if (Bconstat(2)) {              // see if a character present at con
+            ch = Bconin(2);
             TERM_CH = (WORD)
                 (ch >> 8)|              // scancode down to bit 8-15
                 (ch & 0xff);            // asciicode to bit 0-7

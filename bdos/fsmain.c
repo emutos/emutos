@@ -18,6 +18,7 @@
 #include "bios.h"
 #include "mem.h"
 #include "gemerror.h"
+#include "biosbind.h"
 
 /*
 **
@@ -433,7 +434,7 @@ long    xsetdrv(int drv)
 {
     int drvmap ;
 
-    drvmap = trap13(0x0a) ;
+    drvmap = Drvmap();
 
     if( drvmap & (1<<drv)  )
     {

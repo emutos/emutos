@@ -12,7 +12,6 @@
 
 #include <osbind.h>
 
-
 /* doprintf implemented in doprintf.c. 
  * This is an OLD one, and does not support floating point 
  */

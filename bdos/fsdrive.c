@@ -39,11 +39,10 @@
 #include "bios.h"                /*  M01.01.01                   */
 #include "mem.h"
 #include "gemerror.h"
+#include "biosbind.h"
 #include "../bios/kprint.h"
 
 
-
-#define getbpb(a)    trap13(7,a)
 
 /*
  * forward prototypes 
@@ -97,7 +96,7 @@ long    ckdrv(int d)
 
     if (!(mask & drvsel))
     {       /*  drive has not been selected yet  */
-        b = (BPB *) getbpb(d);
+        b = (BPB *) Getbpb(d);
 
         if ( !(long)b )             /* M01.01.1007.01 */
             return(ERR);

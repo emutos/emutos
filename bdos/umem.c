@@ -23,11 +23,10 @@
 #include "bios.h"
 #include "mem.h"
 #include "gemerror.h"
+#include "biosbind.h"
 #include "../bios/kprint.h"
 
 
-
-#define getmpb(a) trap13(0,a)
 
 /*
  *  global variables
@@ -386,7 +385,7 @@ long xmaddalt( LONG start, LONG size)
 void umem_init(void)
 {
     /* get the MPB */
-    getmpb(&pmd);
+    Getmpb((long)&pmd);
     /* derive the addresses, assuming the MPB is in clean state */ 
     start_stram = pmd.mp_mfl->m_start;
     end_stram = start_stram + pmd.mp_mfl->m_length;

@@ -17,6 +17,7 @@
 #include "fs.h"
 #include "bios.h"
 #include "gemerror.h"
+#include "biosbind.h"
 
 
 
@@ -87,12 +88,12 @@ void flush(BCB *b)
     d = b->b_bufdrv;
     b->b_bufdrv = -1;           /* invalidate in case of error */
 
-    longjmp_rwabs(1, b->b_bufr, 1, b->b_bufrec+dm->m_recoff[n], d);
+    longjmp_rwabs(1, (long)b->b_bufr, 1, b->b_bufrec+dm->m_recoff[n], d);
 
     /* flush to both fats */
 
     if (n == 0) {
-        longjmp_rwabs(1, b->b_bufr, 1, 
+        longjmp_rwabs(1, (long)b->b_bufr, 1,
                       b->b_bufrec+dm->m_recoff[0]-dm->m_fsiz, d);
     }
     b->b_bufdrv = d;                    /* re-validate */
@@ -152,7 +153,6 @@ char *getrec(int recn, DMD *dm, int wrtflg)
             mtbuf = b;          /*    then it's 'empty' */
     }
 
-
     if (!b)
     {
         /*
@@ -177,7 +177,7 @@ doio:   for (p = *(q = phdr); p->b_link; p = *(q = &p->b_link))
          */
 
         flush(b);
-        longjmp_rwabs(0, b->b_bufr, 1, recn+dm->m_recoff[n], dm->m_drvnum);
+        longjmp_rwabs(0, (long)b->b_bufr, 1, recn+dm->m_recoff[n], dm->m_drvnum);
 
         /*
          * make the new buffer current
@@ -191,7 +191,7 @@ doio:   for (p = *(q = phdr); p->b_link; p = *(q = &p->b_link))
     }
     else
     {   /* use a buffer, but first validate media */
-        if ((err = trap13(9,b->b_bufdrv)) != 0) {
+        if ((err = Mediach(b->b_bufdrv)) != 0) {
             if (err == 1) {
                 goto doio; /* media may be changed */
             } else if (err == 2) {

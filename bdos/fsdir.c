@@ -131,6 +131,7 @@
 #include        "bios.h"
 #include        "mem.h"
 #include        "gemerror.h"
+#include        "biosbind.h"
 #include        "string.h"
 #include        "../bios/kprint.h"
 
@@ -1000,7 +1001,7 @@ long    xgetdir(char *buf, int drv)
 
         drv = (drv == 0) ? run->p_curdrv : drv-1 ;
         
-        if( !(trap13(0xA) & (1<<drv)) || (ckdrv(drv) < 0) )     /* M01.01.1031.01 */
+        if( !(Drvmap() & (1<<drv)) || (ckdrv(drv) < 0) )     /* M01.01.1031.01 */
         {
                 *buf = 0;
                 return(EDRIVE);

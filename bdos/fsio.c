@@ -17,6 +17,7 @@
 #include        "fs.h"
 #include        "bios.h"                /*  M01.01.01                   */
 #include        "gemerror.h"
+#include        "biosbind.h"
 #include "../bios/kprint.h"
 
 #define DBGFSIO 0
@@ -507,5 +508,5 @@ static void usrio(int rwflg, int num, int strt, char *ubuf, DMD *dm)
             (b->b_bufrec < strt+num))
             flush(b);
 
-    longjmp_rwabs(rwflg, ubuf, num, strt+dm->m_recoff[2], dm->m_drvnum);
+    longjmp_rwabs(rwflg, (long)ubuf, num, strt+dm->m_recoff[2], dm->m_drvnum);
 }

@@ -32,13 +32,10 @@
 #include        "console.h"
 #include        "time.h"
 #include        "gemerror.h"
+#include        "biosbind.h"
 #include        "../bios/kprint.h"
 
 
-
-#define bconout(a,b) trap13(3,(int)(a),(int)(b))
-#define getbpb(a)    trap13(7,(int)(a))
-#define setexec(a,b) trap13(5,(int)a,(void(*)())b)
 
 /*
 **  externals
@@ -61,14 +58,6 @@ extern void (*old_trap2)(void);
 
 long ni(void);
 long xgetver(void);
-
-
-
-/*
- *  globals
- */
-
-int oscnt;
 
 
 
@@ -271,11 +260,11 @@ long    ni(void)
 void    osinit(void)
 {
     /* take over the handling of TRAP #1 */
-    setexec(0x21, enter);
+    Setexc(0x21, (long)enter);
     /* intercept TRAP #2 only for xterm(), keeping the old value
      * so that our trap handler can call the old one
      */
-    old_trap2 = (void(*)()) setexec(0x22, bdos_trap2);
+    old_trap2 = (void(*)()) Setexc(0x22, (long)bdos_trap2);
 
     bufl_init();                /* initialize BDOS buffer list */
     osmem_init();
@@ -365,6 +354,25 @@ void    offree(DMD *d)
             }
 }
 
+
+/*
+ * These both are just wrappers for some BIOS function. They are made
+ * to avoid the 'clobbered by longjmp or vfork' compiler warnings!
+ */
+static
+BPB *	MyGetbpb(errdrv)
+{
+    return (BPB *) Getbpb(errdrv);
+}
+
+static
+long	MyBconout(short dev, short c)
+{
+    return Bconout(dev, c);
+}
+
+
+
 /*
  *  osif -
  */
@@ -410,12 +418,8 @@ long    osif2(int *pw)
     FND *f;
 
 
-    oscnt = 0;
 restrt:
-    oscnt++;
     fn = pw[0];
-
-
     if (fn > 0x57)
         return(EINVFN);
 
@@ -423,10 +427,11 @@ restrt:
     {
         rc = errcode;
         /* hard error processing */
+#if DBGOSIF
+        kprintf("Error code gotten from some longjmp(), back in osif(): %ld\n", rc);
+#endif
         /* is this a media change ? */
-
-        if (rc == E_CHNG)
-        {
+        if (rc == E_CHNG) {
             /* first, out with the old stuff */
             dn = drvtbl[errdrv]->m_dtl;
             offree(drvtbl[errdrv]);
@@ -442,15 +447,13 @@ restrt:
                         bx->b_bufdrv = -1;
 
             /* then, in with the new */
-
-            b = (BPB *) getbpb(errdrv);
-            if ( (long)b <= 0 ) /* M01.01.1007.01 */ /* M01.01.1024.01 */
-            {                           /*  M01.01.01   */
-                drvsel &= ~(1<<errdrv); /*  M01.01.01   */
-                if ( (long)b )          /* M01.01.1024.01 */
-                    return( (long)b );  /* M01.01.1024.01 */
+            b = MyGetbpb(errdrv);       /* use wrapper just to avoid longjmp() compiler warning */
+            if ( (long)b <= 0 ) {
+                drvsel &= ~(1<<errdrv);
+                if ( (long)b )
+                    return( (long)b );
                 return(rc);
-            }                           /*  M01.01.01   */
+            }
 
             if(  log(b,errdrv)  )
                 return (ENSMEM);
@@ -472,8 +475,7 @@ restrt:
     f = &funcs[fn];
     typ = f->fntyp;
 
-    if (typ && fn && ((fn<12) ||
-                      ((fn>=16) && (fn<=19)))) /* std funcs */
+    if (typ && fn && ((fn<12) || ((fn>=16) && (fn<=19)))) /* std funcs */
     {
         h = run->p_uft[typ & 0x7f];
         if ( h > 0)
@@ -494,8 +496,7 @@ restrt:
             case 4:
             case 5:
                 /*  M01.01.07  */
-                /*  write the char in the int at
-                 pw[1]  */
+                /*  write the char in the int at pw[1]  */
             rawout:
                 xwrite( h , 1L , ((char*) &pw[1])+1 ) ;
                 return 0; /* dummy */
@@ -606,7 +607,7 @@ restrt:
                         tabout( HXFORM(num) , *pb2++ ) ;
                     else
                     {           /* M01.01.1029.01 */
-                        rc = bconout( HXFORM(num), *pb2++ ) ;
+                        rc = MyBconout( HXFORM(num), *pb2++ ) ;
                         if (rc < 0)
                             return(rc);
                     }
