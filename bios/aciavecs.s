@@ -26,7 +26,6 @@
 |   VOID (*joyvec)(char *buf);      /* IKBD Joystick */
 |   VOID (*midisys)( VOID );        /* Main MIDI Vector */
 |   VOID (*ikbdsys)( VOID );        /* Main IKBD Vector */
-|   char ikbdstate;                 /* See below */
 | } KBDVECS;
 |
 |- midivec is called with the received data byte in d0. 
@@ -38,8 +37,10 @@
 |- midisys and ikbdsys are called by the MFP ACIA interrupt handler 
 |  when a character is ready to be read from either the midi or 
 |  keyboard ports.
-|- ikbdstate is set to the number of bytes remaining to be read 
-|  by the ikbdsys handler from a multiple-byte status packet.
+|
+| LVL:	The following implementation is DIFFERENT from that of TOS.
+| And, right now, if is widely UNTESTED.
+|
 
         .equ    vec_acia, 0x118         | keyboard/Midi interrupt vector
 
@@ -99,8 +100,8 @@ int_acia:
         rte
 
 new_int_acia:
-	| save regs (which ones, to be determined)
-	movem.l d0-d2/a0-a2,-(sp)
+	| save scratch regs
+	movem.l d0-d1/a0-a1,-(sp)
 	
 int_acia_loop:
 	move.l	midisys,a0
@@ -111,11 +112,14 @@ int_acia_loop:
 	beq	int_acia_loop
 	bclr	#6,0xfffffa11		| clear in service bit
 	
-	| restore regs
-	movem.l (sp)+,d0-d2/a0-a2
+	| restore scratch regs
+	movem.l (sp)+,d0-d1/a0-a1
 	rte
 
 _midivec:
+	| TODO, push data on midi iorec.
+	rts
+	
 _vkbderr:
 _vmiderr:
 _statvec:
@@ -141,8 +145,94 @@ just_rts:
 	.equ	ikbd_acia_data, 0xfffffc02
 
 _ikbdsys:
-	move.b	ikbd_acia_stat,d0
+	move.l	#0,d0
+	move.b	ikbd_acia_stat,d1
+	move.b	d1,d0
 	bpl	just_rts		| not interrupting
-	| TODO
+	| TODO (?): check errors (buffer full ?)
+	move.b	ikbd_acia_data,d0
+	tst.b	kbdbuf
+	bne	in_packet	| kbdbuf[0] != 0, we are receiving a packet
+	cmp.w	#0xf6,d0
+	bmi	key_event	| byte < 0xf6, a key press or release event
+	sub.b	#0xf6,d0
+	move.b	kbd_length_table(pc,d0),kbdlength
+	move.b	#1,kbdindex
+	move.b	d0,kbdbuf
 	rts
+kbd_length_table:
+	dc.b	8, 6, 3, 3, 3, 3, 7, 3, 2, 2
 
+key_event:
+	move.b	d1,d0
+	move.w	d0,-(sp)
+	| TODO, call a C routine to do the job 	
+	rts
+	
+in_packet:
+	move.l	#0,d1
+	move.b	kbdindex,d1
+	lea	kbdbuf,a0
+	move.b	d0,(a0,d1)
+	add.b	#1,d1
+	cmp.b	kbdlength,d1
+	bge	got_packet
+	move.b	d1,kbdindex
+	rts
+| now I've got a packet in buffer kbdbuf, of length kbdlength.
+got_packet:
+	move.l	#0,d0
+	move.b	(a0),d0
+	add.w	d0,d0
+	add.w	d0,d0
+	move.l	packet_switch(pc,d0),a0
+	jmp	(a0)
+packet_switch:
+	dc.l	kbd_status
+	dc.l	kbd_abs_mouse
+	dc.l	kbd_rel_mouse
+	dc.l	kbd_rel_mouse
+	dc.l	kbd_rel_mouse
+	dc.l	kbd_rel_mouse
+	dc.l	kbd_clock
+	dc.l	kbd_joys
+	dc.l	kbd_joy0
+	dc.l	kbd_joy1
+kbd_status:
+	lea	kbdbuf+1,a0
+	move.l	statvec,a1
+	bra	kbd_jump_vec
+kbd_abs_mouse:
+	lea	kbdbuf+1,a0
+	move.l	mousevec,a1
+	bra	kbd_jump_vec
+kbd_rel_mouse:
+	lea	kbdbuf,a0
+	move.l	mousevec,a1
+	bra	kbd_jump_vec
+kbd_clock:
+	lea	kbdbuf+1,a0
+	move.l	clockvec,a1
+	bra	kbd_jump_vec
+kbd_joys:
+	lea	kbdbuf,a0
+	move.l	joyvec,a1
+	bra	kbd_jump_vec
+kbd_joy0:
+	lea	kbdbuf,a0
+	move.l	joyvec,a1
+	bra	kbd_jump_vec
+kbd_joy1:
+	lea	kbdbuf,a0
+	move.b	1(a0),2(a0)
+	clr.b	1(a0)			| ???
+	move.l	joyvec,a1
+	bra	kbd_jump_vec
+
+kbd_jump_vec:		
+	move.l	a0,-(sp)
+	jsr	(a1)
+	add.w	#4,sp
+	clr.b	kbdbuf
+	rts
+		

@@ -125,7 +125,11 @@
 	.global	joyvec	
 	.global	midisys
 	.global	ikbdsys
-        
+
+	.global	kbdlength
+	.global kbdindex
+	.global	kbdbuf
+
 | ===========================================================================
 | ==== BSS segment ==========================================================
 | ===========================================================================
@@ -295,7 +299,13 @@ clockvec:	ds.l	1	| time-routine
 joyvec:		ds.l	1	| joystick-routinee
 midisys:	ds.l	1	| MIDI-systemvector
 ikbdsys:	ds.l	1	| IKBD-systemvector
+kbdlength:	ds.b	1	| kbd length of packet
+kbdindex:	ds.b	1	| kbd index of next byte of packet 
+kbdbuf:		ds.b	8	| kbd buffer for packet
 
+	
+
+	
 | memory past this address will be cleared on startup or on reset.
 bssstart:
 
