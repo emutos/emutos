@@ -24,6 +24,11 @@
         .xdef   memdone       // return to, if memory config done
 
 
+// ==== detect.s - function for detecting CPU type and for testing memory  ===
+
+        .xdef   _check_read_byte
+        .xdef   _detect_cpu
+
 
 // ==== tosvars.s - TOS System variables =====================================
 
@@ -97,25 +102,10 @@ memok:
  
 memconf:
         /* detect if this is a Falcon by reading $ff8006 register (joy) */
-        /* The test fires a bus error on non-Falcon machines.
-         * The bus error fills a couple of words on the temporary stack.
-         */
-        lea     8.w, a0
-        move.l  (a0), a1
-        move.l  #fbuserr, (a0)          // set up a new bus error handler
-        move.w  sr, d1                  // remember SR
-        or.w    #0x700, sr              // disable interrupts
-        move.l  sp, a0                  // remember SP
-        clr.l   d0
-        nop
-        move.w  0xffff8006.w, d0        // read the Falcon MMU register
-        nop
-fbuserr:
-        move.l  a0, sp                  // restore SP
-        move.w  d1, sr                  // restore SR
-        move.l  a1, 8.w                 // restore original bus error handler
+        pea     0xff8006
+        bsr     _check_read_byte
         tst.w   d0
-        bne     falcmemconf             // non-zero value on real Falcon
+        bne     falcmemconf
 
 /*
  * memconf for ST
@@ -183,6 +173,7 @@ nextbank:
 
 falcmemconf:
         /* find out the memory size by checking the d0 = $ff8006 value */
+        move.w  0xffff8006.w, d0        // read the Falcon MMU register
         lsr.w   #8,d0
         lsr.b   #1,d0
         move.b  d0,d1
@@ -220,63 +211,40 @@ setmem:
         moveq   #0, d6
 
         /* test CPU - FastRAM is possible on 68020+ (32-bit address space) */
-        lea     0x10.w, a0
-        move.l  (a0), a1
-        move.l  #illeg, (a0)            // set up a new illegal insn handler
-        move.w  sr, d2                  // remember SR
-        or.w    #0x700, sr              // disable interrupts
-        move.l  sp, a0                  // remember SP
-        clr.l   d0
-        nop
-        dc.l    0x4e7a1002              // movec cacr,d1 (valid on 68020+)
-        nop
-        moveq   #1, d0
-illeg:
-        move.l  a0, sp                  // restore SP
-        move.w  d2, sr                  // restore SR
-        move.l  a1, 0x10.w              // restore original illegal insn handler
-        tst.w   d0
-        beq     setramtop
+        bsr     _detect_cpu
+        cmp.w   #20,d0
+        blt     setramtop
 
-        move.w  sr, d1                  // remember SR
-        or.w    #0x700, sr              // disable interrupts
-        move.l  sp, a6                  // remember SP
-        move.l  8.w, a5
-        move.l  #tbuserr, 8.w           // set up a new bus error handler
-
-        lea     0x1000000, a0           // start from 16MB boundary
-
-        move.l  #1024*1024, d0          // test by blocks of 1MB size
-
+        lea     0x1000000, a3           // start from 16MB boundary
+        move.l  #1024*1024, d3          // test by blocks of 1MB size
 loop:
-        lea     (a0,d0.l), a1
-        tst.l   -(a1)
+        lea     -1(a3,d3.l), a0
+        pea     (a0)
+        bsr     _check_read_byte
+        tst.w   d0
+        beq.s   setramtop
         addq.l  #1, d6
-        add.l   d0, a0
+        add.l   d3, a3
         cmp.l   #2048, d6                // 2048 MB of FastRAM should be enough
         blt.s   loop
-tbuserr:
-        move.l  a5, 8.w                  // restore original bus error handler
-        move.l  a6, sp                   // restore SP
-        move.w  d1, sr                   // restore SR
 
 setramtop:
         /* test MB counter */
         tst.l   d6
         bne.s   alter
-        sub.l   a0, a0
+        sub.l   a3, a3
 alter:
-        move.l  a0, ramtop              // set ramtop to size of found memory
+        move.l  a3, ramtop              // set ramtop to size of found memory
         move.l  #0x1357BD13, ramvalid   // set ramvalid to ok
 
         move.l  #20,d1
         move.l  ramtop, d0
-        asr.l   d1, d0
-        sub.l   #16, d0
-        move.l  d0, -(sp)
+        asr.l   d1, d0                  // ramtop divided by 2^20 = in MB
+        sub.l   #16, d0                 // minus the first 16 MB of ST-RAM
+        move.l  d0, -(sp)               // is the resulting FastRAM size
         move.l  _phystop, d0
         asr.l   d1, d0
-        move.l  d0, -(sp)
+        move.l  d0, -(sp)               // phystop divided by 2^20 = in MB
         pea     msg_bss                 // Print, what's going on
         bsr     _kprintf                // this also requires stack!
         add.l   #12,sp
