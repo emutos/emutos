@@ -305,9 +305,7 @@ new_plane:
         suba.w  cpl_size(sp),a0         // starting address of cursor source
 
 #if rbp
-        addq.l  #2,d_addr(sp)           // update destination pointer
-        add.l   d3,d_addr(sp)           // get address of next graphics plane
-                                        // FIXED: Used d3 here, too!
+        addq.l  #2,d_addr(sp)           // get address of next graphics plane
 #else
         add.l   d3,d_addr(sp)           // get address of next graphics plane
 #endif
@@ -539,9 +537,9 @@ fg1bg1:
 cur_replace:
         movem.l d2-d5/a2-a5,-(sp)       // save registers used by 'C'
         bclr.b  #F_SAVRDY,save_stat     // does save area contain valid data ?
-        beq     hang_it_up              // 0:nothing saved
+        beq     cur_rep_end             // 0:nothing saved
 
-#if 0 //rbp   //FIXME!
+#if rbp
         move.w  save_len,d4             // d4 <- number of lines per plane
         move.w  d4,d2
         subq.w  #1,d2                   // d2 <- adjust counter for dbra
@@ -555,94 +553,69 @@ cur_replace:
         lea     save_area,a1            // a1 -> save area
 
         move.w  _v_planes,d5            // d5 <- resolution discriminator
-#if 0 //rbp   //FIXME - the routine only crashes, so we're using the vme10 routine instead
+#if rbp
         subq.w  #2,d5
         bgt     lo_rez
         beq     md_rez
 
 hi_rez:
-
         btst.b  #F_SAVWID,save_stat     // word or longword ?
         bne     hi_lw_loop
 
 /* hi rez: word wide */
-
 hi_wd_loop:
-
         move.w  (a1)+,(a0)
         add.w   d3,a0
-
         dbra    d2,hi_wd_loop
-
-        rts
+        bra     cur_rep_end
 
 /* hi rez: long word */
 
 hi_lw_loop:
-
         move.l  (a1)+,(a0)
         add.w   d3,a0
-
         dbra    d2,hi_lw_loop
-
-        rts
+        bra     cur_rep_end
 
 md_rez:
         move.l  a0,a5
         add.w   d4,d4                   // d4 <- word offset
-
         move.l  a1,a2                   // a2 -> second plane (word)
         add.w   d4,a2
-
-
         btst.b  #F_SAVWID,save_stat     // word or longword ?
         bne     md_lw_enter
 
 /* medium rez: word wide */
-
 md_wd_loop:
-
         move.w  (a1)+,(a0)+             // store plane 1
         move.w  (a2)+,(a0)              // store plane 2
-
         add.w   d3,a5
         move.l  a5,a0                   // a0 -> next screen line
-
         dbra    d2,md_wd_loop
-
-        rts
+        bra     cur_rep_end
 
 /* medium rez: longword */
 
 md_lw_enter:
-
         add.w   d4,a2                   // a2 -> second plane (longword)
 
 md_lw_loop:
-
         move.w  (a1)+,(a0)+             // 1st plane, hi word
         move.w  (a2)+,(a0)+             // 2nd plane, hi word
         move.w  (a1)+,(a0)+             // 1st plane, lo word
         move.w  (a2)+,(a0)              // 2nd plane, lo word
-
         add.w   d3,a5
         move.l  a5,a0                   // a0 -> next line
-
         dbra    d2,md_lw_loop
-
-        rts
+        bra     cur_rep_end
 
 lo_rez:
-
         add.w   d4,d4                   // d4 <- offset to next plane (word wide)
-
         move.l  a0,a5                   // a5 -> current line in plane 1
-
         btst.b  #F_SAVWID,save_stat     // word or longword ?
         bne     lo_lw_enter
 
 /* lo rez: word */
-
         move.l  a1,a2
         add.w   d4,a2                   // a2 -> 2nd plane
         move.l  a2,a3
@@ -651,25 +624,18 @@ lo_rez:
         add.w   d4,a4                   // a4 -> 4th plane
 
 lo_wd_loop:
-
         move.w  (a1)+,(a0)+             // store 1st plane
         move.w  (a2)+,(a0)+             // store 2nd plane
         move.w  (a3)+,(a0)+             // store 3rd plane
         move.w  (a4)+,(a0)              // store 4th plane
-
         add.w   d3,a5
         move.l  a5,a0                   // a0 -> next line
-
         dbra    d2,lo_wd_loop
-
-        rts
+        bra     cur_rep_end
 
 /* lo rez: long words */
-
 lo_lw_enter:
-
         add.w   d4,d4                   // d4 <- plane offset (longword wide)
-
         move.l  a1,a2                   // set up pointers to each plane
         add.w   d4,a2
         move.l  a2,a3
@@ -678,7 +644,6 @@ lo_lw_enter:
         add.w   d4,a4
 
 lo_lw_loop:
-
         move.w  (a1)+,(a0)+             // 1st plane, hi word
         move.w  (a2)+,(a0)+             // 2nd plane, hi word
         move.w  (a3)+,(a0)+             // 3rd plane, hi word
@@ -687,22 +652,18 @@ lo_lw_loop:
         move.w  (a2)+,(a0)+             // 2nd plane, lo word
         move.w  (a3)+,(a0)+             // 3rd plane, lo word
         move.w  (a4)+,(a0)              // 4th plane, lo word
-
         add.w   d3,a5
         move.l  a5,a0                   // a0 -> next line
-
         dbra    d2,lo_lw_loop
 
-#else
+#else  /* rbp */
 
         subq.w  #1,d5                   // adjust plane count for loop
         movea.l a0,a5                   // save destination address
 #if vme10
         move.l  _v_pl_dspl,a3           // get # of bytes between gr. planes
-#else   // Ugly hack for the Atari:
-        move.l  #0,a3
-        move.w  _v_planes,a3
-        add.w   a3,a3
+#else
+        moveq.l #2,a3
 #endif
         move.w  d4,d2                   // save # of lines/plane
         btst.b  #F_SAVWID,save_stat     // word or longword transfer?
@@ -721,7 +682,7 @@ wd_1st_line:
         dbra    d2,v_wd_loop            // next line in save buffer
         dbra    d5,v_wd_plane           // set up for next graphics plane
         movem.l (sp)+,d2-d5/a2-a5       // restore 'C' registers
-        rts
+        bra     cur_rep_end
 
 v_lw_plane:
         adda.l  a3,a5                   // point to next graphics plane
@@ -734,13 +695,10 @@ lw_1st_line:
         move.l  (a1)+,(a0)              // restore one destination line
         dbra    d2,v_lw_loop            // next line in save buffer
         dbra    d5,v_lw_plane           // set up for next graphics plane
+#endif /* rbp */
+
+cur_rep_end:
         movem.l (sp)+,d2-d5/a2-a5       // restore 'C' registers
-        rts
-#endif
-
-
-hang_it_up:
-
         rts
 
 /*

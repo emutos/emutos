@@ -187,6 +187,7 @@ word_ok:
         movea.l _INTIN,a0       // get base address of the character string
         move.w  _v_planes,d0    // get # of planes
         subq.w  #1,d0           // convert it to counter for dbra loop
+        bne     blt_fail        // FIXME: MONO8XHT doesn't yet work in color
         move.w  _FWIDTH,d4      // get width of font definition
         move.w  _v_lin_wr,a3    // get # of bytes in a scan line
         suba.w  d2,a3           // get offset to start of next scan of string
@@ -239,8 +240,7 @@ bit_clr:
 #if vme10
         adda.l  _v_pl_dspl,a2   // get starting address in next plane
 #else
-        addq.l  #2,a2           // FIXME: This is just a guess (and only works
-                                // in monochrome mode)  - Thomas
+        addq.l  #2,a2           // get starting address in next plane
 #endif
         dbra    d0,mplan_lp     // loop until all planes drawn
 
@@ -258,7 +258,8 @@ mono_exit:
 //
 blt_fail:
         moveq   #0,d0           // signal unsuccessful completion
-        bra     mono_exit       // restore registers and return
+        bra.s   mono_exit       // restore registers and return
+
 
         .page
 /////////////////////////////////////////////////////////////////////////
