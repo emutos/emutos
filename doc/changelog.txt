@@ -416,3 +416,10 @@ Start... early ages
 04. Jan. 2002 
 - made bdos/fsio.c better readable (MAD)
 - bios/memory.S makes use of routines in bios/detect.S (joy)
+
+05. Jan. 2002
+- fixed set_sr(0x0300) to 0x2300 in bios/screen.c:vsync() (LVL)
+- added get_sr() macro in include/asm.h (LVL)
+- renamed macro stop by stop2300, added the config variable in config.h (LVL)
+- changed an explicit tab into \t in a string in command.c (LVL)
+
