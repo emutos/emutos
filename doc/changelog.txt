@@ -412,3 +412,7 @@ Start... early ages
 03. Jan. 2002
 - replaced "REG" by register in bios/ and bdos/  (MAD)
 - made bdos/kpgmld.c better readable (MAD)
+
+04. Jan. 2002 
+- made bdos/fsio.c better readable (MAD)
+

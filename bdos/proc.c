@@ -22,7 +22,7 @@
 #include "btools.h"
 #include "../bios/kprint.h"
 
-#define DBGPROC 0
+#define DBGPROC 1
 
 /*
  * forward prototypes
@@ -294,7 +294,7 @@ long	xexec(WORD flg, char *s, char *t, char *v)
         if ( (rc = xpgmld(s, (PD *)t)) )
         {
 #if	DBGPROC
-            kprintf("cmain: error returned from xpgmld = 0x%lx\n", rc);
+            kprintf("BDOS: xexec - error returned from xpgmld = %ld (0x%lx)\n",rc , rc);
 #endif
             ixterm((PD*)t);
             return(rc);
@@ -345,8 +345,8 @@ long	xexec(WORD flg, char *s, char *t, char *v)
 
 
 /*
-** [1]	The limit on this loop should probably be changed to use sizeof(PD)
-*/
+ * [1]	The limit on this loop should probably be changed to use sizeof(PD)
+ */
 
 
 

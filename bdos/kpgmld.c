@@ -69,7 +69,13 @@ ERROR	xpgmld(char *s , PD *p )
     switch( magic )
     {
     case 0x0601a:
+#if DBGKPGMLD
+        kprintf("BDOS xpgmld: 0x061a executable file format!\n") ;
+#endif
         r = pgmld01( h , p ) ;
+#if DBGKPGMLD
+        kprintf("BDOS pgmld01: Return code: 0x%lx\n", r) ;
+#endif
         break ;
     default:
         r = EPLFMT ;
@@ -118,7 +124,7 @@ static ERROR	pgmld01( FH h , PD *pdptr )
     LONG		relst ;
     LONG		flen ;
     ERROR		r ;
-    ERROR		pgfix01() ;
+// MAD   ERROR		pgfix01() ;
 
 
     hd = & hdr ;
