@@ -12,11 +12,8 @@
 
 
 
-#include	"portab.h"
+#include "portab.h"
 #include "bios.h"
-#if 0
-#include	"kprint.h"
-#endif
 
 extern void printout(char *);
 
@@ -40,7 +37,7 @@ extern int doprintf(void (*outc)(int), const char *fmt, va_list ap);
  *  globals
  */
 
-static  char	buffer[MAXDMP] ;
+//static  char	buffer[MAXDMP] ;
 
 GLOBAL	char	*kcrlf = "\n\r" ;
 
@@ -147,142 +144,13 @@ void cputs(char * s )
 
 
 
-#if 0
-void cstatus(ERROR status)
-{
-    switch (status) {
-    case SUCCESS:
-        cputs("[ OK ]\n\r");
-        break;
-    default:
-        cputs("[FAIL]\n\r");
-    }
-}
-#endif
-
-/*
- *  kprint - prints natively to emulator
- */
-
-void	kprint(char *s)
-{
-    printout(s);
-}
-
-
-
-/*
- *  kputcrlf - output a cr/lf sequence
- *	used mostly for the convenience of asm routines
- */
-
-void kputcrlf()
-{
-	kprint( kcrlf ) ;
-}
-
-/*
- *  kpress - display a message, then wait for a key to be input
- */
-
-void kpress(char *s)
-{
-#if 0
-    char	ch ;
-#endif
-
-	if( s )		/*  if there is a message to display		*/
-  	    kprint(s) ;	/*  display it				*/
-
-	kprint(" ...PRESS") ;
-#if 0
-        ch = cgetc() ;
-#endif
-	kputcrlf() ;
-}
-
-#if	COMMENT
-/*
-**  kputs - output a null terminated string direct to the console.
-*/
-
-void kputs(char * s )
-{
-    while(*s != '\0') {
-                    *out++=*str++;
-	while( *s )
-		CONOUT( *s++ ) ;
-}
-#endif
-
-
-
-/*
- *  kputp - output the address of a pointer (in hex)
- */
-
-void kputp(VOID *p )
-{
-    char	*s ;
-    char	*slhex() ;
-
-    s = slhex( p , buffer ) ;
-    kprint( buffer ) ;
-}
-
-
-
-/*
- *  kputl - output the value of a long (in hex)
- */
-
-void kputl(LONG *p)
-{
-    char	*s ;
-    char	*slhex() ;
-
-    s = slhex(*p  , buffer ) ;
-    kprint( buffer ) ;
-}
-
-
-
-/*
- *  kputw - output the value of a word (in hex)
- */
-
-void kputw(WORD *p )
-{
-	char	*s ;
-	char	*swhex() ;
-
-	s = swhex(*p , buffer ) ;
-	kprint( buffer ) ;
-}
-
-/*
- * kputb - output the value of a byte (in hex)
- */
-
-void kputb(BYTE *p)
-{
-	char	*s ;
-	char	*sbhex() ;
-
-
-	s = sbhex(*p , buffer ) ;
-	kprint( buffer ) ;
-}
-
 /**
  * kpanic - throw out a panic message and halt
  */
 
 VOID kpanic(char * s)
 {
-    kprint( "BIOS: Panic: \n");
-    kprint (s);
-    kprint( "\n");
+    kprintf( "BIOS: Panic: %s\n", s);
     while(1);
 }
 

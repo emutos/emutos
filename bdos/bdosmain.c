@@ -268,7 +268,9 @@ char	*bdosver = "GEMDOS Version 01.MAD" ; /* bdos version string */
 long	xgetver()
 {
 	return(0x0101L);		/*  minor.major */
-	kprint("BDOS: xgetver - Get version  successful ...\n");
+#if DBGOSIF
+	kprintf("BDOS: xgetver - Get version  successful ...\n");
+#endif
 }
 
 
@@ -294,10 +296,9 @@ void	cinit()
     getmpb(&pmd);
     osmlen = LENOSM;
     run = MGET(PD);
-    kprint("BDOS: Address of basepage = ");
-    kputp((VOID*)&run);
-    kprint("\n");
-
+#if DBGOSIF
+    kprintf("BDOS: Address of basepage = %08lx\n", (LONG)&run);
+#endif
 
     /* set up system initial standard handles */
 
@@ -313,7 +314,9 @@ void	cinit()
     date_time(GET_DATE, &date); 	/* allow bios to initialise date and */
     date_time(GET_TIME, &time); 	/* time from hardware, if supported */
 
-    kprint("BDOS: cinit - osinit successful ...\n");
+#if DBGOSIF
+    kprintf("BDOS: cinit - osinit successful ...\n");
+#endif
 }
 
 

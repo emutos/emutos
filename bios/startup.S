@@ -128,7 +128,6 @@
 
         .xdef   _hz_200       
 
-        .xdef   _kprint
 	.xdef   _kprintf
 
         .xdef   _longframe
@@ -387,7 +386,7 @@ failgemmsg:
         .even
 failgem:
         pea failgemmsg
-        jsr _kprint
+        jsr _kprintf
         addq #4,sp
 
 everloop:	
@@ -610,9 +609,9 @@ testtype:
         btst    d0, 4(a0)               // What type?
         beq     nextapp
 
-        pea     msg_cart
-        bsr     _kprint
-        addq #4,sp
+//        pea     msg_cart
+//        bsr     _kprintf
+//        addq #4,sp
 
         movem.l d0-d7/a0-a6, -(sp)      // save registers
         move.l  4(a0), a0

@@ -415,12 +415,8 @@ void bios_0(MPB *mpb)
     mpb->mp_mal = (MD *)0;                /* allocated list set to NULL */
 
 #if DBGBIOS
-    kprint("BIOS: getmpb m_start = ");
-    kputp((LONG*) b_mdx.m_start);
-    kprint("\n");
-    kprint("BIOS: getmpb m_length = ");
-    kputp((LONG*) b_mdx.m_length);
-    kprint("\n");
+    kprintf("BIOS: getmpb m_start  = %08lx\n", (LONG) b_mdx.m_start);
+    kprintf("BIOS: getmpb m_length = %08lx\n", (LONG) b_mdx.m_length);
 #endif
 }
 

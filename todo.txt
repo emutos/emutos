@@ -15,3 +15,4 @@
   (the autoexec'd command.prg still does)
 - bconin needs to have different keyboard mappings
 - VDI: code cleanup, Makefile, esclisa and gsxvars like in EmuTOS
+- EmuTOS crashes, if it boots from some STeem generated floppy images

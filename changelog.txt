@@ -277,3 +277,4 @@ Start... early ages
 
 11. Nov. 2001
 - Put portab.h to include/ for bdos AND bios   (MAD)
+- ripped out kprint() (it has been replaced by kprintf()  (MAD)

@@ -49,7 +49,7 @@ VOID xbiosinit()
      */
 
 #if DBG_XBIOS
-    kprint("XBIOS: Initialization ...\n");
+    kprintf("XBIOS: Initialization ...\n");
 #endif
 }
 

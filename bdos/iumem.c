@@ -54,12 +54,8 @@ MD	*ffit(long amount, MPB *mp)
     long maxval;
 
 #if	DBG_IUMEM
-    kprint("BDOS: ffit - amount = ");
-    kputp(amount);
-    kprint("\n");
-    kprint("BDOS: ffit - mp = ");
-    kputp((void*)mp);
-    kprint("\n");
+    kprintf("BDOS: ffit - amount = %08lx\n", amount);
+    kprintf("BDOS: ffit - mp = %08lx\n", (LONG)mp);
 #endif
 
 #if	STATIUMEM
@@ -69,7 +65,7 @@ MD	*ffit(long amount, MPB *mp)
     if( (q = mp->mp_rover) == 0  )	/*  get rotating pointer	*/
     {
 #if	DBG_IUMEM
-	kprint("ffit: null rover\n") ;
+	kprintf("ffit: null rover\n") ;
 #endif
 	return( 0 ) ;
     }
@@ -107,7 +103,7 @@ MD	*ffit(long amount, MPB *mp)
 		if( (p1=MGET(MD)) == 0 )
 		{
 #if	DBG_IUMEM
-		    kprint("ffit: Null Mget\n") ;
+		    kprintf("ffit: Null Mget\n") ;
 #endif
 		    return(0);
 		}
@@ -148,7 +144,7 @@ MD	*ffit(long amount, MPB *mp)
 
 #if	DBG_IUMEM
     if( !maxflg )
-	kprint("ffit: Not Enough Contiguous Memory\n") ;
+	kprintf("ffit: Not Enough Contiguous Memory\n") ;
 #endif
     return( maxflg ? (MD *) maxval : 0 ) ;
 }

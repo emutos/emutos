@@ -418,9 +418,9 @@ fstrt:
 
 	.text
 _xsuper:
-	pea msg_super
-	bsr _kprint
-	addq #4,sp
+//	pea msg_super
+//	bsr _kprint
+//	addq #4,sp
 x20_usr:			// user mode entry point
 	move.l	2(a0),d1	// get parameter
 	beq	xu_0		// already have new SSP from
