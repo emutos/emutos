@@ -9,7 +9,7 @@
 # - 192:    creates emutos as a 192kb rom image file
 # - 512:    creates a falcon compatible 512 kb rom image
 # - falcon: the same like above
-# - depend: updates automatic dependencies
+# - depend: updates dependencies file
 # - clean:  removes all compiled and tmeporary stuff
 # - show:   disassembles the emutos.img 
 # - tgz:    bundles all in a tgz archive.
@@ -69,10 +69,10 @@ INDENT = indent -kr
 # BUILDDATE=$(shell LANG=C date +"%d. %b. %Y")
 
 # Linker with relocation information and binary output (image)
-LD = m68k-atari-mint-ld
-LDFLAGS = -L/usr/lib/gcc-lib/m68k-atari-mint/2.95.3/mshort -lgcc
-LDFLROM = -Ttext=0xfc0000 -Tbss=0x000000 
-LDFLFAL = -Ttext=0xe00000 -Tbss=0x000000 
+LD = m68k-atari-mint-gcc -nostartfiles -nostdlib
+LDFLAGS = -Xlinker -oformat -Xlinker binary -lgcc
+LDFLAGS_T1 = -Xlinker -Ttext=0xfc0000 -Xlinker -Tbss=0x000000 
+LDFLAGS_T2 = -Xlinker -Ttext=0xe00000 -Xlinker -Tbss=0x000000 
 
 # (relocation for RAM TOS is derived dynamically from the BSS size)
 
@@ -230,62 +230,67 @@ TMPS = $(TMP1) $(TMP2) $(TMP3)
 # production targets 
 # 
 
-all:	emutos.img
+all:	emutos2.img
 
 help:	
 	@echo "target  meaning"
 	@echo "------  -------"
 	@echo "help    this help message"
-	@echo "all     emutos.img, a TOS 1 ROM image (0xFC0000)"
-	@echo "192     etos192k.img, i.e. emutos.img padded to size 192 KB"
-	@echo "falcon  etosfalc.img, i.e. emutos beginning at 0xe00000" 
+	@echo "all     emutos2.img, a TOS 2 ROM image (0xE00000)"
+	@echo "192     etos192k.img, EmuTOS ROM padded to size 192 KB (starting at 0xFC0000)"
+	@echo "256     etos256k.img, EmuTOS ROM padded to size 192 KB (starting at 0xE00000)"
+	@echo "512     etos512k.img, EmuTOS ROM padded to size 512 KB (starting at 0xE00000)" 
 	@echo "ram     ramtos.img + boot.prg, a RAM tos"
 	@echo "flop    emutos.st, a bootable floppy with RAM tos"
 	@echo "clean"
 	@echo "tgz     bundles almost it all into a tgz archive"
-	@echo "depend  creates dependancy section in Makefile"
+	@echo "depend  creates dependancy file (makefile.dep)"
 	@echo "dsm     dsm.txt, an edited desassembly of emutos.img"
 	@echo "fdsm    fal_dsm.txt, like above, but for 0xE00000 ROMs"
 
-emutos.img: $(OBJECTS)
-	$(LD) -oformat binary -o $@ $(OBJECTS) $(LDFLAGS) $(LDFLROM)
+emutos1.img: $(OBJECTS)
+	$(LD) -o $@ $(OBJECTS) $(LDFLAGS) $(LDFLAGS_T1)
+
+emutos2.img: $(OBJECTS)
+	$(LD) -o $@ $(OBJECTS) $(LDFLAGS) $(LDFLAGS_T2)
+
 
 #
-# 192
+# 192kB Image
 #
 
 192: etos192k.img
 
-etos192k.img: emutos.img
-	cp emutos.img emutos.tmp
-	dd if=/dev/zero of=empty.tmp bs=1024 count=192 
-	cat empty.tmp >> emutos.tmp                    # Make real tos.img...
-	dd if=emutos.tmp of=$@ bs=1024 count=192       # with right length.
-	rm -f emutos.tmp empty.tmp
+etos192k.img: emutos1.img
+	cp emutos1.img emutos.tmp
+	dd if=/dev/zero bs=1024 count=192 >> emutos.tmp    # Make real tos.img...
+	dd if=emutos.tmp of=$@ bs=1024 count=192           # with right length.
+	rm -f emutos.tmp
+
+#
+# 256kB Image
+#
 
 256: etos256k.img
 
-etos256k.img: etosfalc.tmp
-	dd if=/dev/zero of=empty.tmp bs=1024 count=256 
-	cat empty.tmp >> etosfalc.tmp
-	dd if=etosfalc.tmp of=$@ bs=1024 count=256
-	rm -f etosfalc.tmp empty.tmp
+etos256k.img: emutos2.img
+	cp emutos2.img emutos.tmp
+	dd if=/dev/zero bs=1024 count=256 >> emutos.tmp
+	dd if=emutos.tmp of=$@ bs=1024 count=256
+	rm -f emutos.tmp
 
 #
-# Aranym or Falcon
+# 512kB Image (for Aranym or Falcon)
 #
 
-512: etosfalc.img
-falcon: etosfalc.img
+512: etos512k.img
+falcon: etos512k.img
 
-etosfalc.tmp: $(OBJECTS)
-	$(LD) -oformat binary -o $@ $(OBJECTS) $(LDFLAGS) $(LDFLFAL)
-
-etosfalc.img: etosfalc.tmp
-	dd if=/dev/zero of=empty.tmp bs=1024 count=512 
-	cat empty.tmp >> etosfalc.tmp                    # Make real tos.img...
-	dd if=etosfalc.tmp of=$@ bs=1024 count=512       # with right length.
-	rm -f etosfalc.tmp empty.tmp
+etos512k.img: emutos2.img
+	cp emutos2.img emutos.tmp
+	dd if=/dev/zero bs=1024 count=512 >> emutos.tmp    # Make real tos.img...
+	dd if=emutos.tmp of=$@ bs=1024 count=512           # with right length.
+	rm -f emutos.tmp
 
 #
 # ram - In two stages. first link EmuTOS to know the top address of bss, 
@@ -297,14 +302,14 @@ ram: ramtos.img boot.prg
 
 ramtos.img: $(OBJECTS) map 
 	@TOPBSS=`grep __end map | sed -e 's/^ *0x\([^ ]*\) .*$$/\1/'`; \
-	echo $(LD) -oformat binary -o $@ $(OBJECTS) $(LDFLAGS) \
-		-Ttext=0x$$TOPBSS -Tbss=0 ; \
-	$(LD) -oformat binary -o $@ $(OBJECTS) $(LDFLAGS) \
-		-Ttext=0x$$TOPBSS -Tbss=0 ;
+	echo $(LD) -o $@ $(OBJECTS) $(LDFLAGS) \
+		-Xlinker -Ttext=0x$$TOPBSS -Xlinker -Tbss=0 ; \
+	$(LD) -o $@ $(OBJECTS) $(LDFLAGS) \
+		-Xlinker -Ttext=0x$$TOPBSS -Xlinker -Tbss=0 ;
 
 
 boot.prg: obj/minicrt.o obj/boot.o obj/bootasm.o
-	$(LD) -s -o $@ obj/minicrt.o obj/boot.o obj/bootasm.o $(LDFLAGS) 
+	$(LD) -Xlinker -s -o $@ obj/minicrt.o obj/boot.o obj/bootasm.o -lgcc
 
 #
 # flop
@@ -316,7 +321,7 @@ emutos.st: mkflop$(EXE) bootsect.img ramtos.img
 	./mkflop$(EXE)
 
 bootsect.img : obj/bootsect.o
-	$(LD) -oformat binary -o $@ obj/bootsect.o
+	$(LD) -Xlinker -oformat -Xlinker binary -o $@ obj/bootsect.o
 
 mkflop$(EXE) : tools/mkflop.c
 	$(NATIVECC) -o $@ $<
@@ -326,16 +331,16 @@ mkflop$(EXE) : tools/mkflop.c
 #
 
 date.prg: obj/minicrt.o obj/doprintf.o obj/date.o
-	$(LD) -s -o $@ obj/minicrt.o obj/doprintf.o obj/date.o $(LDFLAGS) 
+	$(LD) -Xlinker -s -o $@ obj/minicrt.o obj/doprintf.o obj/date.o -lgcc
 
 dumpkbd.prg: obj/minicrt.o obj/memmove.o obj/dumpkbd.o
-	$(LD) -s -o $@ $^ $(LDFLAGS)
+	$(LD) -Xlinker -s -o $@ $^ -lgcc
 
 keytbl2c$(EXE) : tools/keytbl2c.c
 	$(NATIVECC) -o $@ $<
 
-testflop.prg: obj/minicrt.o obj/doprintf.o obj/testflop.o
-	$(LD) -s -o $@ $^ $(LDFLAGS)
+#testflop.prg: obj/minicrt.o obj/doprintf.o obj/testflop.o
+#	$(LD) -Xlinker -s -o $@ $^ -lgcc
 
 #
 # NLS support
@@ -458,12 +463,12 @@ show: $(DESASS)
 
 
 map: $(OBJECTS)
-	${LD} -Map map -oformat binary -o emutos.img $(OBJECTS) $(LDFLAGS) \
-		$(LDFLROM)
+	${LD} -Xlinker -Map -Xlinker map -o emutos1.img $(OBJECTS) \
+		 $(LDFLAGS) $(LDFLAGS_T1)
 
 $(DESASS): map
 	$(OBJDUMP) --target=binary --architecture=m68k \
-	--adjust-vma=0x00fc0000 -D emutos.img | grep '^  f' \
+	--adjust-vma=0x00fc0000 -D emutos1.img | grep '^  f' \
 	| sed -e 's/^  //' -e 's/:	/: /' > $(TMP1)
 	grep '^ \+0x' map | sort | sed -e 's/ \+/ /g' \
 	| sed -e 's/^ 0x00//' -e 's/ /:  /' > $(TMP2)
@@ -477,12 +482,12 @@ fshow: fal_$(DESASS)
 	cat fal_$(DESASS)
 
 fal_map: $(OBJECTS)
-	${LD} -Map fal_map -oformat binary -o etosfalc.tmp $(OBJECTS) $(LDFLAGS) \
-		$(LDFLFAL)
+	${LD} -Xlinker -Map -Xlinker fal_map -o emutos2.img $(OBJECTS) \
+		 $(LDFLAGS) $(LDFLAGS_T2)
 
 fal_$(DESASS): fal_map
 	$(OBJDUMP) --target=binary --architecture=m68k \
-	--adjust-vma=0x00e00000 -D etosfalc.tmp | grep '^  e' \
+	--adjust-vma=0x00e00000 -D emutos2.img | grep '^  e' \
 	| sed -e 's/^  //' -e 's/:	/: /' > $(TMP1)
 	grep '^ \+0x' fal_map | sort | sed -e 's/ \+/ /g' \
 	| sed -e 's/^ 0x00//' -e 's/ /:  /' > $(TMP2)
@@ -500,10 +505,11 @@ clean:
 	rm -f bootsect.img emutos.st date.prg dumpkbd.prg keytbl2c$(EXE)
 	rm -f bug$(EXE) po/messages.pot util/langs.c bios/header.h
 	rm -f mkheader$(EXE) tounix$(EXE) $(TMPS) *.dsm
-	rm -f etosfalc.tmp fal_dsm.txt fal_map
+	rm -f emutos.tmp fal_dsm.txt fal_map
+	rm -f makefile.dep
 
-distclean: clean nodepend
-	rm -f Makefile.bak '.#'* */'.#'* 
+distclean: clean
+	rm -f '.#'* */'.#'* 
 
 #
 # indent - indents the files except when there are warnings
@@ -581,7 +587,7 @@ tounix$(EXE): tools/tounix.c
 crlf: tounix$(EXE)
 	./tounix$(EXE) * bios/* bdos/* doc/* util/* tools/* po/* include/* aes/* desk/*
 
-cvsready: expand crlf nodepend
+cvsready: expand crlf
 
 #
 # create a tgz archive named emutos-nnnnnn.tgz,
@@ -616,34 +622,21 @@ release: distclean
 
 
 #
-# automatic dependencies. (this is ugly)
+# file dependencies (makefile.dep)
 #
 
-nodepend:
-	sed -n '1,/^# DO NOT DELETE/p' < Makefile > Makefile.new
-	@if cmp -s Makefile.new Makefile ; then \
-		echo rm -f Makefile.new ; \
-		rm -f Makefile.new ; \
-	else \
-		echo cp Makefile Makefile.bak ; \
-		cp Makefile Makefile.bak ; \
-		echo mv Makefile.new Makefile ; \
-		mv Makefile.new Makefile ; \
-	fi
-
-depend: 
-	cp Makefile Makefile.bak
-	chmod +w Makefile
-	sed -n '1,/^# DO NOT DELETE/p' < Makefile > Makefile.new
+depend: util/langs.c bios/header.h
 	for i in $(CSRC); do\
 	  j=`basename $$i|sed -e s/c$$/o/`;\
-	  (echo -n obj/;$(CC) -MM $(INC) $(DEF) $$i )>>Makefile.new;\
+	  (echo -n obj/;$(CC) -MM $(INC) -Ibios -Iaes -Idesk/icons $(DEF) $$i ) \
+	    >>makefile.dep;\
 	done
 	for i in $(SSRC); do\
 	  j=`basename $$i|sed -e s/S$$/o/`;\
-	  (echo -n obj/;$(CC) -MM $(INC) $(DEF) $$i )>>Makefile.new;\
+	  (echo -n obj/;$(CC) -MM $(INC) $(DEF) $$i )>>makefile.dep;\
 	done
-	rm -f Makefile.tmp
-	mv Makefile.new Makefile
 
-# DO NOT DELETE
+ifeq (makefile.dep,$(shell ls makefile.dep 2>/dev/null))
+include makefile.dep
+endif
+

@@ -1,1 +1,4 @@
 localconf.h
+makefile.dep
+tounix
+*.img
