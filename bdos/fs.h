@@ -454,7 +454,7 @@ long xgetfree(long *buf, int drv);
  */
 
 /* seek to byte position n on file with handle h */
-long xlseek(int n, long h, int flg);
+long xlseek(long n, int h, int flg);
 long ixlseek(OFD *p, long n);
 
 long xread(int h, long len, void *ubufr);

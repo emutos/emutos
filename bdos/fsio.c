@@ -42,7 +42,7 @@ static void usrio(int rwflg, int num, int strt, BYTE *ubuf, DMD *dm);
 **		ixlseek()
 */
 
-long	xlseek(int n, long h, int flg)
+long	xlseek(long n, int h, int flg)
 {
 	OFD *f;
 	long	ixlseek() ;
