@@ -45,7 +45,7 @@
 #define BM_ALL_BLACK  15
 
 /* flag:1 SOURCE and PATTERN   flag:0 SOURCE only */
-#define PAT_FLAG	4
+#define PAT_FLAG    0x10      // = 2^4 = 16
 
 /* passes parameters to bitblt */
 struct blit_frame {
@@ -100,19 +100,16 @@ struct blit_frame info;     /* holds some internal info for bit_blt */
  */
 void cpyfm(UWORD copytran)
 {
-    WORD mode, bits;
+    WORD mode;
     MFDB *src,*dst;
 
-    /* check user write (write mode #5 (D' = D) => do nothing */
-    mode  = INTIN[0];
-    if ( mode < 0 || mode == 5 || mode > 15)
+    mode = INTIN[0];
+    if ( mode < 0 )
         return;                 /* mode is invalid */
 
     /* check the pattern flag and revert to log op # */
-    info.p_addr = NULL;		/* No pattern selected */
-    bits = (1<<PAT_FLAG);
-    if ( mode & bits )   	/* and set bit to 0! */ {
-        info.p_addr = patptr;	/* get pattern */
+    if ( mode & PAT_FLAG )   	/* and set bit to 0! */ {
+        mode &= ~PAT_FLAG;      /* split pattern flag from mode */
 
         /* multi-plane pattern? */
         info.p_nxpl = 0;	/* next plane pattern offset default. */
@@ -122,6 +119,11 @@ void cpyfm(UWORD copytran)
         info.p_nxln = 2;        /* offset to next line in pattern */
         info.p_mask = 0xf;      /* pattern index mask */
     }
+    /* check user write (write mode #5 (D' = D) => do nothing */
+    if ( mode == 5 || mode > 15)
+        return;                 /* mode is invalid */
+
+    info.p_addr = patptr;	/* get pattern pointer*/
     info.s_nxpl = 2;		/* d4 <- next plane offset (source) */
     info.d_nxpl = 2;		/* d5 <- next plane offset (destination) */
 
@@ -130,13 +132,12 @@ void cpyfm(UWORD copytran)
     dst = *(MFDB **)&CONTRL[9]; /* a4, destination MFDB */
 
     /* setup planes for source MFDB */
-    if ( src->fd_addr < 0 )     /* d6 */
-        return;			/* negative source address invalid */
-    else if ( src->fd_addr > 0 ) {
+    if ( src->fd_addr ) {
         /* for a positive source address */
         info.s_form = src->fd_addr;
         info.s_nxwd = src->fd_nplanes * 2;
-        info.s_nxln = src->fd_wdwidth * 2 * src->fd_h;
+        //info.s_nxln = src->fd_wdwidth * 2 * src->fd_h;
+        info.s_nxln = src->fd_wdwidth * 2 * src->fd_nplanes;
     }
     else {
         /* source address == NULL */
@@ -146,14 +147,12 @@ void cpyfm(UWORD copytran)
     }
 
     /* setup planes for destination MFDB */
-    if ( dst->fd_addr < 0 )     /* d7 */
-        return;			/* negative source address invalid */
-    else if ( dst->fd_addr > 0 ) {
+    if ( dst->fd_addr ) {
         /* for a positive address */
         info.d_form = dst->fd_addr;
         info.plane_ct = dst->fd_nplanes;
         info.d_nxwd = dst->fd_nplanes * 2;
-        info.d_nxln = dst->fd_wdwidth * 2 * dst->fd_h;
+        info.d_nxln = dst->fd_wdwidth * 2 * dst->fd_nplanes;
     }
     else {
         /* source address == NULL */
@@ -164,7 +163,7 @@ void cpyfm(UWORD copytran)
     }
 
     /* only 4,2, and 1 planes are valid (destination) */
-    if ( 0xfff8 & info.plane_ct )
+    if ( info.plane_ct & ~0x0007 )
         return;
 
     if ( copytran ) {
@@ -196,8 +195,8 @@ void cpyfm(UWORD copytran)
         case MD_TRANS:
             info.op_tab[0] = 04;	/* fg:0 bg:0  D' <- [not S] and D */
             info.op_tab[2] = 07;	/* fg:1 bg:0  D' <- S or D */
-            info.fg_col = 0;		/* were only interested in one color */
-            info.bg_col = bg;		/* save the color of interest */
+            info.fg_col = fg;		/* were only interested in one color */
+            info.bg_col = 0;		/* save the color of interest */
             break;
 
         case MD_REPLACE:
@@ -206,8 +205,8 @@ void cpyfm(UWORD copytran)
             info.op_tab[1] = 12;	/* fg:0 bg:1  D' <- not S */
             info.op_tab[2] = 03;	/* fg:1 bg:0  D' <- S */
             info.op_tab[3] = 15;	/* fg:1 bg:1  D' <- 1 */
-            info.bg_col = fg;		/* save fore and background colors */
-            info.fg_col = bg;
+            info.bg_col = bg;		/* save fore and background colors */
+            info.fg_col = fg;
             break;
 
         case MD_XOR:
