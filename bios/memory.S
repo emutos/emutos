@@ -40,8 +40,8 @@
         .xdef   memval2       
         .xdef   memval3       
 
-        .xdef   ramtop
-        .xdef   ramvalid
+        .xdef   _ramtop
+        .xdef   _ramvalid
 
 // ==== Overall memory map ===================================================
 
@@ -234,11 +234,11 @@ setramtop:
         bne.s   alter
         sub.l   a3, a3
 alter:
-        move.l  a3, ramtop              // set ramtop to size of found memory
-        move.l  #0x1357BD13, ramvalid   // set ramvalid to ok
+        move.l  a3, _ramtop             // set ramtop to size of found memory
+        move.l  #0x1357BD13, _ramvalid  // set ramvalid to ok
 
         move.l  #20,d1
-        move.l  ramtop, d0
+        move.l  _ramtop, d0
         beq.s   zerofastram
         asr.l   d1, d0                  // ramtop divided by 2^20 = in MB
         sub.l   #16, d0                 // minus the first 16 MB of ST-RAM

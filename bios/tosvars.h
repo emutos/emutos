@@ -80,6 +80,10 @@ extern LONG membot;
 extern LONG memtop;
 extern LONG themd;
 
+extern LONG ramtop;       /* top of fastram */
+#define RAMVALID_MAGIC 0x1357BD13
+extern LONG ramvalid;     /* indicates if fastram is present */
+
 /* if == 0x87654321, means that GEM is present ;
  * EmuTOS convention : if == 0x1234abcd, means that the TOS
  * was booted from an autoboot floppy, and so asks to remove

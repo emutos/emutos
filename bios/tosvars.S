@@ -89,8 +89,8 @@
         .global _bcostat_vec   
         .global _bconout_vec  
         .global _longframe
-        .global ramtop
-        .global ramvalid
+        .global _ramtop
+        .global _ramvalid
 
         .global _diskbuf        
         .global _supstk         
@@ -256,8 +256,8 @@ _bcostat_vec:   ds.l    8       //8 Pointers to output-status routines
 _bconout_vec:   ds.l    8       //8 Pointers to output routines
 _longframe:     ds.w    1       //If not 0, then not 68000 - use long stack frames
 _p_cookies:     ds.l    1       //Pointer to cookie jar
-ramtop:         ds.l    1       //Pointer to end of FastRam
-ramvalid:       ds.l    1       //Validates ramtop if $1357BD13
+_ramtop:        ds.l    1       //Pointer to end of FastRam
+_ramvalid:      ds.l    1       //Validates ramtop if $1357BD13
 _bell_hook:     ds.l    1       //Pointer to routine for system bell
 _kcl_hook:      ds.l    1       //Pointer to routine for system keyclick
         .org 0x5b4
