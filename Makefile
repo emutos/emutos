@@ -40,11 +40,19 @@ else
 LOCALCONF = 
 endif
 
+#
+# the country. should be a lowercase two-letter code as found in
+# the table in tools/mkheader.c and bios/country.c
+#
+
+COUNTRY = us
+
 # 
 # compilation flags
 #
 
-BUILDDATE=$(shell LANG=C date +"%d. %b. %Y")
+# not needed, job taken by mkheader.
+# BUILDDATE=$(shell LANG=C date +"%d. %b. %Y")
 
 # Linker with relocation information and binary output (image)
 LD = m68k-atari-mint-ld
@@ -62,8 +70,7 @@ ASFLAGS = --register-prefix-optional -m68000 $(ASINC)
 # C compiler for MiNT
 CC = m68k-atari-mint-gcc
 INC = -Iinclude
-CFLAGS = -O -Wall -mshort -m68000 $(LOCALCONF) -DBUILDDATE="\"$(BUILDDATE)\"" $(INC) 
-CFLAGS020 = -O -Wall -mshort -m68020 $(LOCALCONF) -DBUILDDATE="\"$(BUILDDATE)\"" $(INC) 
+CFLAGS = -O -Wall -mshort -m68000 $(LOCALCONF) $(INC) 
 
 CPPFLAGS = $(INC)
 
@@ -80,9 +87,9 @@ NATIVECC = gcc -Wall
 BIOSCSRC = kprint.c xbios.c chardev.c bios.c clock.c \
            fnt8x16.c fnt8x8.c fnt6x6.c mfp.c version.c \
            midi.c ikbd.c sound.c floppy.c screen.c lineainit.c \
-           mouse.c initinfo.c
+           mouse.c initinfo.c cookie.c machine.c nvram.c country.c
 BIOSSSRC = tosvars.S startup.S lineavars.S vectors.S aciavecs.S \
-           processor.S memory.S linea.S conout.S
+           processor.S memory.S linea.S conout.S detect.S
 
 #
 # source code in bdos/
@@ -258,14 +265,28 @@ po/messages.pot: bug$(EXE)
 	./bug$(EXE) xgettext
 
 #
+# OS header
+# (need_header is an ugly trick to make sure the header is generated 
+# each time)
+
+need_header:
+	@touch $@
+
+obj/startup.o: bios/header.h
+
+bios/header.h: mkheader$(EXE) need_header
+	./mkheader$(EXE) $(COUNTRY)
+	@rm -f need_header
+
+mkheader$(EXE): tools/mkheader.c
+	$(NATIVECC) -o $@ $<
+
+#
 # automatic build rules
 #
 
 obj/%.o : bios/%.c
 	${CC} ${CFLAGS} -c -Ibios $< -o $@
-
-obj/processor.o : bios/processor.S
-	${CC} ${CFLAGS020} -c -Ibios $< -o $@
 
 obj/%.o : bios/%.S
 	${CC} ${CFLAGS} -c -Ibios $< -o $@
@@ -311,10 +332,10 @@ TMP1 = tmp1
 TMP2 = tmp2
 
 map: $(OBJECTS)
-	${LD} -Map map -oformat binary -o /dev/null $(OBJECTS) $(LDFLAGS) \
+	${LD} -Map map -oformat binary -o emutos.img $(OBJECTS) $(LDFLAGS) \
 		$(LDFLROM)
 
-$(DESASS): map emutos.img
+$(DESASS): map
 	$(OBJDUMP) --target=binary --architecture=m68k \
 	--adjust-vma=0x00fc0000 -D emutos.img | grep '^  f' \
 	| sed -e 's/^  //' -e 's/:	/: /' > $(TMP1)
@@ -332,7 +353,8 @@ clean:
 	rm -f obj/*.o obj/*.s *~ */*~ core emutos.img map $(DESASS)
 	rm -f ramtos.img boot.prg etos192.img etosfalc.img mkflop$(EXE) 
 	rm -f bootsect.img emutos.st date.prg dumpkbd.prg keytbl2c$(EXE)
-	rm -f bug$(EXE) po/messages.pot util/langs.c 
+	rm -f bug$(EXE) po/messages.pot util/langs.c bios/header.h
+	rm -f mkheader$(EXE)
 
 distclean: clean nodepend
 	rm -f Makefile.bak '.#'* */'.#'* 

@@ -27,6 +27,9 @@
 #include "lineavars.h"
 #include "processor.h"
 #include "initinfo.h"
+#include "machine.h"
+#include "cookie.h"
+#include "country.h"
 #include "nls.h"
 
 
@@ -153,7 +156,9 @@ void startup(void)
   VEC_LINEA = int_linea;
   VEC_ILLEGAL = brkpt;
   
-  frame_set();                  /* Set CPU type, VEC_ILLEGAL and longframe */
+  processor_init();  /* Set CPU type, VEC_ILLEGAL, longframe and FPU type */
+  cookie_init();     /* sets a cookie jar */
+  machine_init();    /* detect hardware features and fill the cookie jar */
 
   init_acia_vecs();
   
@@ -203,7 +208,7 @@ void startup(void)
     midi_init();        /* init MIDI acia so that kbd acia irq works */
     clock_init();       /* init clock */
     nls_init();         /* init native language support */
-    nls_set_lang(DEFAULT_LANG);
+    nls_set_lang(get_lang_name());
   
     /* initialize BDOS buffer list */
 

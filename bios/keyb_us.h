@@ -10,7 +10,6 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#if KEYB_US
 
 BYTE keytbl_us_norm[];
 BYTE keytbl_us_shft[];
@@ -95,8 +94,4 @@ BYTE keytbl_us_altcaps[] = {
     0,
 };
 
-#if DFLT_KEYB_US
-#define dflt_keytbl keytbl_us
-#endif /* DFLT_KEYB_US */
 
-#endif /* KEYB_US */

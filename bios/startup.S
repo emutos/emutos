@@ -13,6 +13,7 @@
  */
 
 #include "asmdefs.h"
+#include "header.h"
 
 // ==== Defines ==============================================================
 
@@ -56,6 +57,10 @@
         .global _os_end
         .global _os_beg
 	.global _os_magic
+	.global _os_date
+	.global _os_pal
+	.global _os_dosdate
+	
         .global _int_vbl
         .global _int_hbl
         .global _biostrap
@@ -212,12 +217,12 @@ os_res1:
     dc.l    _main       // os_res1, reserved
 _os_magic:
     dc.l    0x0         // os_magic, pointer to GEM's MUPB
-os_date:
-    dc.l    0x14062001  // os_date, Date of system build
-os_pal:        
-    dc.w    0x0003      // Flag for PAL version (Only a word!)
+_os_date:
+    dc.l    OS_DATE     // os_date, Date of system build
+_os_pal:        
+    dc.w    OS_PAL      // Flag for PAL version + country
 _os_dosdate:
-    dc.w    0x0c46      // _os_dosdate (wrong)
+    dc.w    OS_DOSDATE  // os_date, Date of system build in GEMDOS format
 os_root:
     dc.l    0x0         // Pointer to the GEMDOS mem pool - not yet supported
 os_kbshift:
@@ -478,7 +483,10 @@ vbl_no_palette:
 	move.l	_screenpt,d0
 	beq	vbl_no_screenpt
 	move.l	d0,_v_bas_ad
-	// move.b d0,0xffff820d
+	tst.w	_has_ste_shifter
+	beq	st_shifter
+	move.b	d0,0xffff820d
+st_shifter:
 	lsr.w	#8,d0
 	move.b	d0,0xffff8203
 	swap	d0
@@ -684,9 +692,10 @@ bx_sp_ok:
         move.w  (sp)+,d0        // remove the function number from stack
         cmp.w   d1,d0           // Higher, than highest number?
         bge     bx_ret_exc
-        add.l   d0,d0           // indirection function table is 1 LW per
-        add.l   d0,d0           // so multiply function number by 4
-        add.l   d0,a0           // add to the base address of lookup table
+        move.l	d0,d1		// if not implemented, returns the func number
+        add.l   d1,d1           // indirection function table is 1 LW per
+        add.l   d1,d1           // so multiply function number by 4
+        add.l   d1,a0           // add to the base address of lookup table
         move.l  (a0),a0         // get the procedures address
         jsr     (a0)            // go do it and then come back
 
@@ -737,53 +746,77 @@ bios_vecs:
 	dc.l   _bios_11			// get/set date/time (used by BDOS)
 	
 bios_ent:               // Max. number of BIOS entries
-        dc.w   (bios_ent-bios_vecs)/4
+        dc.w    (bios_ent-bios_vecs)/4
 
 
 // ==== XBIOS entry points to allow individual module compilation ============
 
         .even
 xbios_vecs:
-        .dc.l   _xbios_0
-        .dc.l   _xbios_1 
-        .dc.l   _xbios_2 
-        .dc.l   _xbios_3 
-        .dc.l   _xbios_4 
-        .dc.l   _xbios_5 
-        .dc.l   _xbios_6 
-        .dc.l   _xbios_7 
-        .dc.l   _xbios_8 
-        .dc.l   _xbios_9 
-        .dc.l   _xbios_a 
-        .dc.l   _xbios_b 
-        .dc.l   _xbios_c
-        .dc.l   _xbios_d
-        .dc.l   _xbios_e
-        .dc.l   _xbios_f
-        .dc.l   _xbios_10
-        .dc.l   _xbios_11
-        .dc.l   _xbios_12
-        .dc.l   _xbios_13
-        .dc.l   _xbios_14
-        .dc.l   _xbios_15
-        .dc.l   _xbios_16
-        .dc.l   _xbios_17
-        .dc.l   _xbios_18
-        .dc.l   _xbios_19
-        .dc.l   _xbios_1a
-        .dc.l   _xbios_1b
-        .dc.l   _xbios_1c
-        .dc.l   _xbios_1d
-        .dc.l   _xbios_1e
-        .dc.l   _xbios_1f
-        .dc.l   _xbios_20
-        .dc.l   _xbios_21
-        .dc.l   _xbios_22
-        .dc.l   _xbios_23
-        .dc.l   _xbios_24
-        .dc.l   _xbios_25
-        .dc.l   _xbios_26
-        .dc.l   _xbios_27
+        dc.l    _xbios_0
+        dc.l    _xbios_1 
+        dc.l    _xbios_2 
+        dc.l    _xbios_3 
+        dc.l    _xbios_4 
+        dc.l    _xbios_5 
+        dc.l    _xbios_6 
+        dc.l    _xbios_7 
+        dc.l    _xbios_8 
+        dc.l    _xbios_9 
+        dc.l    _xbios_a 
+        dc.l    _xbios_b 
+        dc.l    _xbios_c
+        dc.l    _xbios_d
+        dc.l    _xbios_e
+        dc.l    _xbios_f
+        dc.l    _xbios_10
+        dc.l    _xbios_11
+        dc.l    _xbios_12
+        dc.l    _xbios_13
+        dc.l    _xbios_14
+        dc.l    _xbios_15
+        dc.l    _xbios_16
+        dc.l    _xbios_17
+        dc.l    _xbios_18
+        dc.l    _xbios_19
+        dc.l    _xbios_1a
+        dc.l    _xbios_1b
+        dc.l    _xbios_1c
+        dc.l    _xbios_1d
+        dc.l    _xbios_1e
+        dc.l    _xbios_1f
+        dc.l    _xbios_20
+        dc.l    _xbios_21
+        dc.l    _xbios_22
+        dc.l    _xbios_23
+        dc.l    _xbios_24
+        dc.l    _xbios_25
+        dc.l    _xbios_26
+        dc.l    _xbios_27
+        dc.l	_just_rts	// 28
+        dc.l	_xbios_29
+        dc.l	_xbios_2a
+        dc.l	_xbios_2b
+        dc.l	_xbios_2c
+        dc.l	_just_rts	// 2d
+        dc.l	_xbios_2e
+        dc.l	_just_rts	// 2f
+        dc.l	_just_rts	// 30
+        dc.l	_just_rts	// 31
+        dc.l	_just_rts	// 32
+        dc.l	_just_rts	// 33
+        dc.l	_just_rts	// 34
+        dc.l	_just_rts	// 35
+        dc.l	_just_rts	// 36
+        dc.l	_just_rts	// 37
+        dc.l	_just_rts	// 39
+        dc.l	_just_rts	// 3a
+        dc.l	_just_rts	// 3b
+        dc.l	_just_rts	// 3c
+        dc.l	_just_rts	// 3d
+        dc.l	_just_rts	// 3e
+        dc.l	_just_rts	// 3f
+        dc.l	_xbios_40
 
 xbios_ent:              // Max. number of XBIOS entries
         .dc.w   (xbios_ent-xbios_vecs)/4

@@ -39,28 +39,10 @@
 #endif
 
 
-/* Set DEFAULT_KEYBOARD to any value in the following table. 
- * (numbers assigned in the order in which the keyboard definitions
- * become available - nothing personal in this)
- *   1   US
- *   2   DE
- *   3   FR
- *
- * (see bios/ikbd.c for details)
+/* The keyboard ans language are now set using
+ *   make LOCALE="xx" 
+ * where xx is a lowercase two-letter country code as
+ * found in the table in bios/country.c
  */
-#ifndef DEFAULT_KEYBOARD
-#define DEFAULT_KEYBOARD 1
-#endif
-
-/* Set DEFAULT_LANG to a two character lowercase string 
- * identifying the language name.
- * (see doc/nls.txt for details)
- * "us" - american english
- * "fr" - french
- * "de" - german
- */
-#ifndef DEFAULT_LANG
-#define DEFAULT_LANG "us"
-#endif
 
 #endif /* _CONFIG_H */

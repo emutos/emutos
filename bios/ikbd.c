@@ -23,13 +23,14 @@
  * not supported: 
  * - mouse move using alt-arrowkeys
  * - alt-help screen hardcopy
- * - alt keys for non-us keyboards
+ * - alt-numeric-pad to enter characters by their ASCII code
  * - KEYTBL.TBL config with _AKP cookie (tos 5.00 and later)
  * - CLRHOME and INSERT in kbshift.
  * - key repeat
  */
  
-#include "config.h"
+#include "country.h"
+#include "keyboard.h"
 
 #include "portab.h"
 #include "bios.h"
@@ -85,36 +86,12 @@ BYTE	shifty;          /* reflect the status up/down of mode keys */
 /* To add a keyboard, please do the following:
  * - create a file bios/keyb_xx.h 
  *   (supplied tools dumpkbd.prg and keytbl2c may help)
- * - add a #if DEFAULT_KEYBOARD == n ... #endif test below
  * - add a #include "keyb_xx.h" below
- * - add a line in config.h giving the correspondance between
- *   the keyboard and its number.
+ * - add a line in bios/keyboard.h
+ * - add a line in the table in bios/country.c
+ * - add a line in the table below. 
  */
 
-/* How it works:
- *
- * The DEFAULT_KEYBOARD macro is set in config.h.
- * Depending on its value, the code below will generate the 
- * right combination of KEYB_xx and DFLT_KEYB_xx:
- * - KEYB_xx means that keyboard xx is available 
- * - DFLT_KEYB_xx means that it is the default keyboard
- * (It is done this way to avoid changing all keyboard definition 
- * files if EmuTOS does one day support multiple keyboards in the
- * same ROM.)
- */
-
-#if DEFAULT_KEYBOARD == 1
-#define KEYB_US 1
-#define DFLT_KEYB_US 1
-#endif
-#if DEFAULT_KEYBOARD == 2
-#define KEYB_DE 1
-#define DFLT_KEYB_DE 1
-#endif
-#if DEFAULT_KEYBOARD == 3
-#define KEYB_FR 1
-#define DFLT_KEYB_FR 1
-#endif
 
 /* include here all available keyboard definitions */
 
@@ -122,12 +99,21 @@ BYTE	shifty;          /* reflect the status up/down of mode keys */
 #include "keyb_de.h"
 #include "keyb_fr.h"
 
+/* add the available keyboards in this table, using the
+ * numbers set in country.c
+ */
 
-#ifndef dflt_keytbl
-#error "Invalid Keyboard Configuration."
-#endif
+struct {
+  int number;
+  struct keytbl *keytbl;
+} avail_kbd[] = {
+  { KEYB_US, &keytbl_us },
+  { KEYB_DE, &keytbl_de },
+  { KEYB_FR, &keytbl_fr },
+};
 
-
+#define dflt_keytbl keytbl_us
+  
 /*==== Scancode table control (not yet implemented) =======================*/
 #if 0
 static BYTE ascii_ctrl [] = {
@@ -193,6 +179,14 @@ LONG keytbl(LONG norm, LONG shft, LONG caps)
 
 VOID bioskeys(VOID)
 {
+    int i;
+    int goal = get_kbd_number();   /* in country.c */
+    for(i = 0 ; i < sizeof(avail_kbd)/sizeof(*avail_kbd) ; i++) {
+        if(avail_kbd[i].number == goal) {
+            current_keytbl = *avail_kbd[i].keytbl;
+            return;
+        }
+    }
     current_keytbl = dflt_keytbl;
 }
 

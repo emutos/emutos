@@ -56,13 +56,14 @@ extern WORD nvbls;
 extern WORD vblsem;
 extern LONG vbl_list[];
 extern LONG *vblqueue;
-extern LONG longframe;
 
 
 extern LONG sysbase;
 extern VOID os_entry(VOID);
 extern LONG os_beg;
+extern LONG os_date;
 extern UWORD os_dosdate;
+extern WORD os_pal;
 extern VOID (*exec_os)(VOID);
 extern LONG end_os;
 extern LONG m_start;
