@@ -1642,3 +1642,7 @@ Start... early ages
 2004-07-31
 - vdi/*: pass pointer to vwk to all VDI functions (MAD)
 - vdi/*: refactored/renamed all VDI files (MAD)
+
+2004-08-01
+- vdi/*:           make more use of vwk struct's member variables (MAD)
+- vdi/vdi_mouse.c: implemented xfm_crfm in C (MAD)

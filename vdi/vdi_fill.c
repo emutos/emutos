@@ -141,6 +141,9 @@ UWORD HATCH1[96] = {
 
 UWORD HOLLOW = 0;
 UWORD SOLID = 0xFFFF;
+
+
+
 /*
  * dsf_udpat - Update pattern
  */
@@ -258,7 +261,7 @@ void dr_recfl(Vwk * vwk)
     X2 = *pts_in++;
     Y2 = *pts_in;
 
-    rectfill();
+    rectfill(vwk);
 }                               /* End "dr_recfl". */
 
 
@@ -463,7 +466,7 @@ void clc_flit (Vwk * vwk)
     if ( intersections > 1 )
         bub_sort(fill_buffer, intersections);
 
-    if (CLIP) {
+    if (vwk->clip) {
         /* Clipping is in force.  Once the endpoints of the line segment have */
         /* been adjusted for the border, clip them to the left and right sides */
         /* of the clipping rectangle. */
@@ -484,18 +487,18 @@ void clc_flit (Vwk * vwk)
             if ( x1 > x2 )
                 continue;
 
-            if ( x1 < XMN_CLIP  ) {
-                if ( x2 < XMN_CLIP )
+            if ( x1 < vwk->xmn_clip ) {
+                if ( x2 < vwk->xmn_clip )
                     continue;         	/* entire segment clipped left */
-                x1 = XMN_CLIP;		/* clip left end of line */
+                x1 = vwk->xmn_clip;		/* clip left end of line */
             }
 
-            if ( x2 > XMX_CLIP  ) {
-                if ( x1 > XMX_CLIP )
+            if ( x2 > vwk->xmx_clip ) {
+                if ( x1 > vwk->xmx_clip )
                     continue;         	/* entire segment clippped */
-                x2 = XMX_CLIP;		/* clip right end of line */
+                x2 = vwk->xmx_clip;		/* clip right end of line */
             }
-            horzline(x1, x2, Y1);
+            horzline(vwk, x1, x2, Y1);
         }
     }
     else {
@@ -518,7 +521,7 @@ void clc_flit (Vwk * vwk)
 
             /* If starting point greater than ending point, nothing is done. */            /* is start still to left of end? */
             if ( x1 <= x2 ) {
-                horzline(x1, x2, Y1);    /* draw the line segment */
+                horzline(vwk, x1, x2, Y1);    /* draw the line segment */
             }
         }
     }
@@ -554,18 +557,18 @@ void polygon(Vwk * vwk)
             if (k > fill_maxy)
                 fill_maxy = k;
     }
-    if (CLIP) {
-        if (fill_miny < YMN_CLIP) {
-            if (fill_maxy >= YMN_CLIP) {        /* plygon starts before clip */
-                fill_miny = YMN_CLIP - 1;       /* plygon partial overlap */
+    if (vwk->clip) {
+        if (fill_miny < vwk->ymn_clip) {
+            if (fill_maxy >= vwk->ymn_clip) {        /* plygon starts before clip */
+                fill_miny = vwk->ymn_clip - 1;       /* plygon partial overlap */
                 if (fill_miny < 1)
                     fill_miny = 1;
             } else
                 return;         /* plygon entirely before clip */
         }
-        if (fill_maxy > YMX_CLIP) {
-            if (fill_miny <= YMX_CLIP)  /* plygon ends after clip */
-                fill_maxy = YMX_CLIP;   /* plygon partial overlap */
+        if (fill_maxy > vwk->ymx_clip) {
+            if (fill_miny <= vwk->ymx_clip)  /* plygon ends after clip */
+                fill_maxy = vwk->ymx_clip;   /* plygon partial overlap */
             else
                 return;         /* plygon entirely after clip */
         }
@@ -619,7 +622,7 @@ void v_fillarea(Vwk * vwk)
  */
 
 static
-WORD clipbox()
+BOOL clipbox(Vwk * vwk)
 {
     WORD x1, y1, x2, y2;
 
@@ -629,30 +632,30 @@ WORD clipbox()
     y2 = Y2;
 
     /* clip x coordinates */
-    if ( x1 < XMN_CLIP) {
-        if (x2 < XMN_CLIP) {
+    if ( x1 < vwk->xmn_clip) {
+        if (x2 < vwk->xmn_clip) {
             return(FALSE);             /* clipped box is null */
         }
-        X1 = XMN_CLIP;
+        X1 = vwk->xmn_clip;
     }
-    if ( x2 > XMX_CLIP) {
-        if (x1 > XMX_CLIP) {
+    if ( x2 > vwk->xmx_clip) {
+        if (x1 > vwk->xmx_clip) {
             return(FALSE);             /* clipped box is null */
         }
-        X2 = XMX_CLIP;
+        X2 = vwk->xmx_clip;
     }
     /* clip y coordinates */
-    if ( y1 < YMN_CLIP) {
-        if (y2 < YMN_CLIP) {
+    if ( y1 < vwk->ymn_clip) {
+        if (y2 < vwk->ymn_clip) {
             return(FALSE);             /* clipped box is null */
         }
-        Y1 = YMN_CLIP;
+        Y1 = vwk->ymn_clip;
     }
-    if ( y2 > YMX_CLIP) {
-        if (y1 > YMX_CLIP) {
+    if ( y2 > vwk->ymx_clip) {
+        if (y1 > vwk->ymx_clip) {
             return(FALSE);             /* clipped box is null */
         }
-        Y2 = YMX_CLIP;
+        Y2 = vwk->ymx_clip;
     }
     return (TRUE);
 }
@@ -681,25 +684,26 @@ WORD clipbox()
  *     Y2 = y coord of lower right corner.
  */
 
-void hzline_rep(UWORD *, int, int, UWORD, UWORD, WORD);
-void hzline_or(UWORD *, int, int, UWORD, UWORD, WORD);
-void hzline_xor(UWORD *, int, int, UWORD, UWORD, WORD);
-void hzline_nor(UWORD *, int, int, UWORD, UWORD, WORD);
+void hzline_rep(Vwk *, UWORD *, int, int, UWORD, UWORD, WORD);
+void hzline_or(Vwk *, UWORD *, int, int, UWORD, UWORD, WORD);
+void hzline_xor(Vwk *, UWORD *, int, int, UWORD, UWORD, WORD);
+void hzline_nor(Vwk *, UWORD *, int, int, UWORD, UWORD, WORD);
 
-void rectfill ()
+void rectfill (Vwk * vwk)
 {
     WORD x1, y1, x2, y2;
     WORD y;
     UWORD leftmask;
     UWORD rightmask;
+    UWORD mypatmsk;
     void *addr;
     int dx, dy;
     int yinc;
     int leftpart;
     int rightpart;
 
-    if (CLIP)
-        if (!clipbox())
+    if (vwk->clip)
+        if (!clipbox(vwk))
             return;
 
     /* sort x coordinates */
@@ -731,29 +735,30 @@ void rectfill ()
     addr += (x1&0xfff0)>>shft_off;      /* add x coordinate part of addr */
     addr += (LONG)y1 * v_lin_wr;                /* add y coordinate part of addr */
     yinc = v_lin_wr;                    /* y coordinate increase */
+    mypatmsk = vwk->patmsk;
 
     switch (WRT_MODE) {
     case 3:  /* nor */
         for (y = y1; y <= y2; y++ ) {
-            hzline_nor(addr, dx, leftpart, rightmask, leftmask, y&patmsk);
+            hzline_nor(vwk, addr, dx, leftpart, rightmask, leftmask, y&mypatmsk);
             addr += yinc;           /* next scanline */
         }
         break;
     case 2:  /* xor */
         for (y = y1; y <= y2; y++ ) {
-            hzline_xor(addr, dx, leftpart, rightmask, leftmask, y&patmsk);
+            hzline_xor(vwk, addr, dx, leftpart, rightmask, leftmask, y&mypatmsk);
             addr += yinc;           /* next scanline */
         }
         break;
     case 1:  /* or */
         for (y = y1; y <= y2; y++ ) {
-            hzline_or(addr, dx, leftpart, rightmask, leftmask, y&patmsk);
+            hzline_or(vwk, addr, dx, leftpart, rightmask, leftmask, y&mypatmsk);
             addr += yinc;           /* next scanline */
         }
         break;
     default: /* rep */
         for (y = y1; y <= y2; y++ ) {
-            hzline_rep(addr, dx, leftpart, rightmask, leftmask, y&patmsk);
+            hzline_rep(vwk, addr, dx, leftpart, rightmask, leftmask, y&mypatmsk);
             addr += yinc;           /* next scanline */
         }
     }
@@ -809,10 +814,10 @@ pixelread(WORD x, WORD y)
 }
 
 static inline UWORD
-search_to_right (WORD x, UWORD mask, const UWORD search_col, UWORD * addr)
+search_to_right (Vwk * vwk, WORD x, UWORD mask, const UWORD search_col, UWORD * addr)
 {
     /* is x coord < x resolution ? */
-    while( x++ < XMX_CLIP ) {
+    while( x++ < vwk->xmx_clip ) {
         UWORD color;
 
         /* need to jump over interleaved bit_plane? */
@@ -832,10 +837,10 @@ search_to_right (WORD x, UWORD mask, const UWORD search_col, UWORD * addr)
 }
 
 static inline UWORD
-search_to_left (WORD x, UWORD mask, const UWORD search_col, UWORD * addr)
+search_to_left (Vwk * vwk, WORD x, UWORD mask, const UWORD search_col, UWORD * addr)
 {
     /* Now, search to the left. */
-    while (x-- > XMN_CLIP) {
+    while (x-- > vwk->xmn_clip) {
         UWORD color;
 
         /* need to jump over interleaved bit_plane? */
@@ -871,14 +876,14 @@ search_to_left (WORD x, UWORD mask, const UWORD search_col, UWORD * addr)
  */
 
 WORD
-end_pts(WORD x, WORD y, WORD *xleftout, WORD *xrightout)
+end_pts(Vwk * vwk, WORD x, WORD y, WORD *xleftout, WORD *xrightout)
 {
     UWORD color;
     UWORD * addr;
     UWORD mask;
 
     /* see, if we are in the y clipping range */
-    if ( y < YMN_CLIP || y > YMX_CLIP)
+    if ( y < vwk->ymn_clip || y > vwk->ymx_clip)
         return 0;
 
     /* convert x,y to start adress and bit mask */
@@ -888,8 +893,8 @@ end_pts(WORD x, WORD y, WORD *xleftout, WORD *xrightout)
 
     /* get search color and the left and right end */
     color = get_color (mask, addr);
-    *xrightout = search_to_right (x, mask, color, addr);
-    *xleftout = search_to_left (x, mask, color, addr);
+    *xrightout = search_to_right (vwk, x, mask, color, addr);
+    *xleftout = search_to_left (vwk, x, mask, color, addr);
 
     /* see, if the whole found segment is of search color? */
     if ( color != search_color ) {
@@ -899,7 +904,7 @@ end_pts(WORD x, WORD y, WORD *xleftout, WORD *xrightout)
 }
 
 /* Prototypes local to this module */
-WORD get_seed(WORD xin, WORD yin, WORD *xleftout, WORD *xrightout);
+WORD get_seed(Vwk * vwk, WORD xin, WORD yin, WORD *xleftout, WORD *xrightout);
 
 
 void
@@ -920,8 +925,8 @@ d_contourfill(Vwk * vwk)
     xleft = PTSIN[0];
     oldy = PTSIN[1];
 
-    if (xleft < XMN_CLIP || xleft > XMX_CLIP ||
-        oldy < YMN_CLIP  || oldy > YMX_CLIP)
+    if (xleft < vwk->xmn_clip || xleft > vwk->xmx_clip ||
+        oldy < vwk->ymn_clip  || oldy > vwk->ymx_clip)
         return;
 
     search_color = INTIN[0];
@@ -956,7 +961,7 @@ d_contourfill(Vwk * vwk)
 
     LSTLIN = FALSE;
 
-    notdone = end_pts(xleft, oldy, &oldxleft, &oldxright);
+    notdone = end_pts(vwk, xleft, oldy, &oldxleft, &oldxright);
 
     qptr = qbottom = 0;
     qtop = 3;                   /* one above highest seed point */
@@ -968,21 +973,21 @@ d_contourfill(Vwk * vwk)
         /* couldn't get point out of Q or draw it */
         while (1) {
             direction = (oldy & DOWN_FLAG) ? 1 : -1;
-            gotseed = get_seed(oldxleft, (oldy + direction),
+            gotseed = get_seed(vwk, oldxleft, (oldy + direction),
                                &newxleft, &newxright);
 
             if ((newxleft < (oldxleft - 1)) && gotseed) {
                 xleft = oldxleft;
                 while (xleft > newxleft)
-                    get_seed(--xleft, oldy ^ DOWN_FLAG, &xleft, &xright);
+                    get_seed(vwk, --xleft, oldy ^ DOWN_FLAG, &xleft, &xright);
             }
             while (newxright < oldxright)
-                gotseed = get_seed(++newxright, oldy + direction, &xleft,
+                gotseed = get_seed(vwk, ++newxright, oldy + direction, &xleft,
                                    &newxright);
             if ((newxright > (oldxright + 1)) && gotseed) {
                 xright = oldxright;
                 while (xright < newxright)
-                    get_seed(++xright, oldy ^ DOWN_FLAG, &xleft, &xright);
+                    get_seed(vwk, ++xright, oldy ^ DOWN_FLAG, &xleft, &xright);
             }
 
             /* Eventually jump out here */
@@ -1002,7 +1007,7 @@ d_contourfill(Vwk * vwk)
             if (qptr == qtop)
                 crunch_queue();
 
-            horzline(oldxleft, oldxright, ABS(oldy));
+            horzline(vwk, oldxleft, oldxright, ABS(oldy));
         }
     }
 }                               /* end of fill() */
@@ -1023,9 +1028,9 @@ crunch_queue()
  * get_seed - put seeds into Q, if (xin,yin) is not of search_color
  */
 WORD
-get_seed(WORD xin, WORD yin, WORD *xleftout, WORD *xrightout)
+get_seed(Vwk * vwk, WORD xin, WORD yin, WORD *xleftout, WORD *xrightout)
 {
-    if (end_pts(xin, ABS(yin), xleftout, xrightout)) {
+    if (end_pts(vwk, xin, ABS(yin), xleftout, xrightout)) {
         /* false if of search_color */
         for (qtmp = qbottom, qhole = EMPTY; qtmp < qtop; qtmp += 3) {
             /* see, if we ran into another seed */
@@ -1034,7 +1039,7 @@ get_seed(WORD xin, WORD yin, WORD *xleftout, WORD *xrightout)
 
             {
                 /* we ran into another seed so remove it and fill the line */
-                horzline(*xleftout, *xrightout, ABS(yin));
+                horzline(vwk, *xleftout, *xrightout, ABS(yin));
                 queue[qtmp] = EMPTY;
                 if ((qtmp + 3) == qtop)
                     crunch_queue();

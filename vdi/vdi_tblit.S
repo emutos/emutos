@@ -161,8 +161,6 @@
         .globl  _DOUBLE
         .globl  _CHUP
         .globl  _CLIP
-        .globl  _XMN_CLIP,_XMX_CLIP
-        .globl  _YMN_CLIP,_YMX_CLIP
         .globl  _MONO_STATUS
         .globl  _XACC_DD
         .globl  _DDA_INC
@@ -177,6 +175,8 @@
         .xdef  _v_bas_ad       //base address of graphic plane
         .xdef  _v_lin_wr       //size of a scan line in bytes
         .xdef  _v_planes       //number of graphic planes
+        .xdef  _XMN_CLIP,_XMX_CLIP
+        .xdef  _YMN_CLIP,_YMX_CLIP
 
 /////////////////////////////////////////////////////////
 //  Character buffer variables referenced.                      //

@@ -19,6 +19,10 @@
 
 
 
+/* Wide line attribute save areas */
+WORD s_begsty, s_endsty, s_fil_col, s_fill_per;
+WORD *s_patptr;
+
 /* ST_UD_LINE_STYLE: */
 void vsl_udsty(Vwk * vwk)
 {
@@ -147,7 +151,8 @@ void vql_attr(Vwk * vwk)
  * This routine is used by habline() and rectfill()
  */
 
-void hzline_rep(UWORD *addr, int dx, int leftpart, UWORD rightmask, UWORD leftmask, WORD patind)
+void hzline_rep(Vwk * vwk, UWORD *addr, int dx, int leftpart,
+                UWORD rightmask, UWORD leftmask, WORD patind)
 {
     int planes;
     int plane;
@@ -155,7 +160,7 @@ void hzline_rep(UWORD *addr, int dx, int leftpart, UWORD rightmask, UWORD leftma
     int patadd;                         /* advance for multiplane patterns */
 
     /* precalculate, what to draw */
-    patadd = multifill ? 16 : 0;        /* multi plane pattern offset */
+    patadd = vwk->multifill ? 16 : 0;        /* multi plane pattern offset */
     color = &FG_BP_1;
     planes = v_planes;
 
@@ -170,7 +175,7 @@ void hzline_rep(UWORD *addr, int dx, int leftpart, UWORD rightmask, UWORD leftma
 
         /* load values fresh for this bitplane */
         if (*color++)
-            pattern = patptr[patind];
+            pattern = vwk->patptr[patind];
         else
             pattern = 0;
 
@@ -231,7 +236,8 @@ void hzline_rep(UWORD *addr, int dx, int leftpart, UWORD rightmask, UWORD leftma
  * This routine is used by habline() and rectfill()
  */
 
-void hzline_or(UWORD *addr, int dx, int leftpart, UWORD rightmask, UWORD leftmask, int patind)
+void hzline_or(Vwk * vwk, UWORD *addr, int dx, int leftpart,
+               UWORD rightmask, UWORD leftmask, int patind)
 {
     WORD *color;
     int planes;
@@ -240,7 +246,7 @@ void hzline_or(UWORD *addr, int dx, int leftpart, UWORD rightmask, UWORD leftmas
 
     /* init start values */
     planes = v_planes;
-    patadd = multifill ? 16 : 0;     /* multi plane pattern offset */
+    patadd = vwk->multifill ? 16 : 0;     /* multi plane pattern offset */
     color = &FG_BP_1;
 
     for (plane = v_planes-1; plane >= 0; plane-- ) {
@@ -252,7 +258,7 @@ void hzline_or(UWORD *addr, int dx, int leftpart, UWORD rightmask, UWORD leftmas
         /* load values fresh for this bitplane */
         adr = addr;
         pixels = dx-16;
-        pattern = patptr[patind];
+        pattern = vwk->patptr[patind];
 
         if (*color++) {
             /* check, if the line is completely contained within one WORD */
@@ -361,7 +367,8 @@ void hzline_or(UWORD *addr, int dx, int leftpart, UWORD rightmask, UWORD leftmas
  * This routine is used by habline() and rectfill()
  */
 
-void hzline_xor(UWORD *addr, int dx, int leftpart, UWORD rightmask, UWORD leftmask, int patind)
+void hzline_xor(Vwk * vwk, UWORD *addr, int dx, int leftpart,
+                UWORD rightmask, UWORD leftmask, int patind)
 {
     int planes;
     int plane;
@@ -369,7 +376,7 @@ void hzline_xor(UWORD *addr, int dx, int leftpart, UWORD rightmask, UWORD leftma
 
     /* init adress counter */
     planes = v_planes;
-    patadd = multifill ? 16 : 0;     /* multi plane pattern offset */
+    patadd = vwk->multifill ? 16 : 0;     /* multi plane pattern offset */
 
     for (plane = v_planes-1; plane >= 0; plane-- ) {
         UWORD *adr;
@@ -378,7 +385,7 @@ void hzline_xor(UWORD *addr, int dx, int leftpart, UWORD rightmask, UWORD leftma
         int bw;
 
         /* load values fresh for this bitplane */
-        pattern = patptr[patind];
+        pattern = vwk->patptr[patind];
         adr = addr;
         pixels = dx-16;
 
@@ -445,7 +452,8 @@ void hzline_xor(UWORD *addr, int dx, int leftpart, UWORD rightmask, UWORD leftma
  * This routine is used by habline() and rectfill()
  */
 
-void hzline_nor(UWORD *addr, int dx, int leftpart, UWORD rightmask, UWORD leftmask, int patind)
+void hzline_nor(Vwk * vwk, UWORD *addr, int dx, int leftpart,
+                UWORD rightmask, UWORD leftmask, int patind)
 {
     WORD *color;
     int planes;
@@ -454,7 +462,7 @@ void hzline_nor(UWORD *addr, int dx, int leftpart, UWORD rightmask, UWORD leftma
 
     /* init adress counter */
     planes = v_planes;
-    patadd = multifill ? 16 : 0;     /* multi plane pattern offset */
+    patadd = vwk->multifill ? 16 : 0;     /* multi plane pattern offset */
     color = &FG_BP_1;
 
     for (plane = v_planes-1; plane >= 0; plane-- ) {
@@ -467,7 +475,7 @@ void hzline_nor(UWORD *addr, int dx, int leftpart, UWORD rightmask, UWORD leftma
 
         adr = addr;
         pixels = dx-16;
-        pattern = patptr[patind];
+        pattern = vwk->patptr[patind];
 
         if (*color++) {
             pattern = ~pattern;
@@ -579,8 +587,8 @@ void hzline_nor(UWORD *addr, int dx, int leftpart, UWORD rightmask, UWORD leftma
  * This routine is just a wrapper for horzline.
  */
 
-void habline() {
-    horzline(X1, X2, Y1);
+void habline(Vwk * vwk) {
+    horzline(vwk, X1, X2, Y1);
 }
 
 
@@ -605,7 +613,7 @@ void habline() {
  *                     3 => not mode.
  */
 
-void horzline(WORD x1, WORD x2, WORD y) {
+void horzline(Vwk * vwk, WORD x1, WORD x2, WORD y) {
     WORD x;
     UWORD leftmask;
     UWORD rightmask;
@@ -625,8 +633,8 @@ void horzline(WORD x1, WORD x2, WORD y) {
     }
 
     /* Get the pattern with which the line is to be drawn. */
-    patind = y&patmsk;               /* which pattern to start with */
-    patadd = multifill ? 16 : 0;     /* multi plane pattern offset */
+    patind = vwk->patmsk & y;             /* which pattern to start with */
+    patadd = vwk->multifill ? 16 : 0;     /* multi plane pattern offset */
 
     /* init adress counter */
     addr = v_bas_ad;                    /* start of screen */
@@ -641,16 +649,16 @@ void horzline(WORD x1, WORD x2, WORD y) {
 
     switch (WRT_MODE) {
     case 3:  /* nor */
-        hzline_nor(addr, dx, leftpart, rightmask, leftmask, patind);
+        hzline_nor(vwk, addr, dx, leftpart, rightmask, leftmask, patind);
         break;
     case 2:  /* xor */
-        hzline_xor(addr, dx, leftpart, rightpart, leftmask, patind);
+        hzline_xor(vwk, addr, dx, leftpart, rightpart, leftmask, patind);
         break;
     case 1:  /* or */
-        hzline_or(addr, dx, leftpart, rightpart, leftmask, patind);
+        hzline_or(vwk, addr, dx, leftpart, rightpart, leftmask, patind);
         break;
     default: /* rep */
-        hzline_rep(addr, dx, leftpart, rightmask, leftmask, patind);
+        hzline_rep(vwk, addr, dx, leftpart, rightmask, leftmask, patind);
     }
 }
 
@@ -684,21 +692,21 @@ void v_pline(Vwk * vwk)
 
 
 /*
- * code - helper function
+ * clip_code - helper function
  */
 
-WORD code(WORD x, WORD y)
+WORD clip_code(Vwk * vwk, WORD x, WORD y)
 {
     WORD clip_flag;
 
     clip_flag = 0;
-    if (x < XMN_CLIP)
+    if (x < vwk->xmn_clip)
         clip_flag = 1;
-    else if (x > XMX_CLIP)
+    else if (x > vwk->xmx_clip)
         clip_flag = 2;
-    if (y < YMN_CLIP)
+    if (y < vwk->ymn_clip)
         clip_flag += 4;
-    else if (y > YMX_CLIP)
+    else if (y > vwk->ymx_clip)
         clip_flag += 8;
     return (clip_flag);
 }
@@ -709,13 +717,13 @@ WORD code(WORD x, WORD y)
  * clip_line - helper function
  */
 
-WORD clip_line()
+BOOL clip_line(Vwk * vwk)
 {
     WORD deltax, deltay, x1y1_clip_flag, x2y2_clip_flag, line_clip_flag;
     WORD *x, *y;
 
-    while ((x1y1_clip_flag = code(X1, Y1)) |
-           (x2y2_clip_flag = code(X2, Y2))) {
+    while ((x1y1_clip_flag = clip_code(vwk, X1, Y1)) |
+           (x2y2_clip_flag = clip_code(vwk, X2, Y2))) {
         if ((x1y1_clip_flag & x2y2_clip_flag))
             return (FALSE);
         if (x1y1_clip_flag) {
@@ -730,17 +738,17 @@ WORD clip_line()
         deltax = X2 - X1;
         deltay = Y2 - Y1;
         if (line_clip_flag & 1) {       /* left ? */
-            *y = Y1 + mul_div(deltay, (XMN_CLIP - X1), deltax);
-            *x = XMN_CLIP;
+            *y = Y1 + mul_div(deltay, (vwk->xmn_clip - X1), deltax);
+            *x = vwk->xmn_clip;
         } else if (line_clip_flag & 2) {        /* right ? */
-            *y = Y1 + mul_div(deltay, (XMX_CLIP - X1), deltax);
-            *x = XMX_CLIP;
+            *y = Y1 + mul_div(deltay, (vwk->xmx_clip - X1), deltax);
+            *x = vwk->xmx_clip;
         } else if (line_clip_flag & 4) {        /* top ? */
-            *x = X1 + mul_div(deltax, (YMN_CLIP - Y1), deltay);
-            *y = YMN_CLIP;
+            *x = X1 + mul_div(deltax, (vwk->ymn_clip - Y1), deltay);
+            *y = vwk->ymn_clip;
         } else if (line_clip_flag & 8) {        /* bottom ? */
-            *x = X1 + mul_div(deltax, (YMX_CLIP - Y1), deltay);
-            *y = YMX_CLIP;
+            *x = X1 + mul_div(deltax, (vwk->ymx_clip - Y1), deltay);
+            *y = vwk->ymx_clip;
         }
     }
     return (TRUE);              /* segment now clipped  */
@@ -764,7 +772,7 @@ void polyline(Vwk * vwk)
         Y1 = PTSIN[j++];
         X2 = PTSIN[j];
         Y2 = PTSIN[j+1];
-        if (!CLIP || clip_line())
+        if (!vwk->clip || clip_line(vwk))
             abline(vwk);
     }
 }
@@ -952,7 +960,7 @@ void do_circ(Vwk * vwk, WORD cx, WORD cy)
         X1 = cx - *pointer;
         X2 = cx + *pointer;
         Y1 = Y2 = cy;
-        if (clip_line())
+        if (clip_line(vwk))
             abline(vwk);
 
         /* Do the upper and lower semi-circles. */
@@ -964,7 +972,7 @@ void do_circ(Vwk * vwk, WORD cx, WORD cy)
             X1 = cx - *pointer;
             X2 = cx + *pointer;
             Y1 = Y2 = cy - k;
-            if (clip_line()) {
+            if (clip_line(vwk)) {
                 abline(vwk);
                 pointer = &q_circle[k];
             }
@@ -974,7 +982,7 @@ void do_circ(Vwk * vwk, WORD cx, WORD cy)
             X1 = cx - *pointer;
             X2 = cx + *pointer;
             Y1 = Y2 = cy + k;
-            if (clip_line())
+            if (clip_line(vwk))
                 abline(vwk);
         }                       /* End for. */
     }                           /* End if:  circle has positive radius. */
@@ -998,8 +1006,8 @@ void s_fa_attr(Vwk * vwk)
     vwk->fill_color = vwk->line_color;
     s_fill_per = vwk->fill_per;
     vwk->fill_per = TRUE;
-    patptr = &SOLID;
-    patmsk = 0;
+    vwk->patptr = &SOLID;
+    vwk->patmsk = 0;
     s_begsty = vwk->line_beg;
     s_endsty = vwk->line_end;
     vwk->line_beg = SQUARED;

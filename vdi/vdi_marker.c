@@ -121,7 +121,7 @@ void v_pmarker(Vwk * vwk)
     vwk->line_width = 1;
     vwk->line_beg = 0;
     vwk->line_end = 0;
-    CLIP = 1;
+    vwk->clip = 1;
 
     scale = vwk->mark_scale;
 

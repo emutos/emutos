@@ -16,7 +16,6 @@
 
 
 
-extern WORD clip_line();
 //extern void trnsfont();
 extern void dqt_extent();
 
@@ -263,13 +262,13 @@ void d_gtext(Vwk * vwk)
 
             count = cur_font->ul_size;
             for (i = 0; i < count; i++) {
-                if (CLIP) {
+                if (vwk->clip) {
                     tx1 = X1;
                     tx2 = X2;
                     ty1 = Y1;
                     ty2 = Y2;
 
-                    if (clip_line())
+                    if (clip_line(vwk))
                         abline(vwk);
 
                     X1 = tx1;

@@ -20,12 +20,74 @@
 
 
 
+typedef struct Mcdb_ Mcdb;
+struct Mcdb_ {
+	WORD	xhot;
+	WORD	yhot;
+	WORD	planes;
+	WORD	bg_col;
+	WORD	fg_col;
+	UWORD	mask[16];
+	UWORD	data[16];
+};
+
 extern void mouse_int();    /* mouse interrupt routine */
 extern void mov_cur();      // user button vector
 extern void vb_draw();      // user button vector
-extern struct param arrow_cdb;
+
+/* global storage area for mouse form definition */
+/* as long, as we use parts in assembler, we need these */
+extern WORD m_pos_hx;	    // (cdb+0) Mouse hot spot - x coord
+extern WORD m_pos_hy;       // (cdb+2) Mouse hot spot - y coord
+extern WORD m_planes;       // (cdb+4) unused - Plane count for mouse pointer
+extern WORD m_cdb_bg;       // (cdb+6) Mouse background color as pel value
+extern WORD m_cdb_fg;       // (cdb+8) Mouse foreground color as pel value
+extern UWORD mask_form;     // (cdb+10) Storage for mouse mask and cursor
 
 
+
+/* Default Mouse Cursor Definition */
+static Mcdb arrow_cdb = {
+    1, 0, 1, 0, 1,
+    /* background definition */
+    {
+        0xE000, //%1110000000000000
+        0xF000, //%1111000000000000
+        0xF800, //%1111100000000000
+        0xFB00, //%1111110000000000
+        0xFE00, //%1111111000000000
+        0xFF00, //%1111111100000000
+        0xFF80, //%1111111110000000
+        0xFFB0, //%1111111111000000
+        0xFE00, //%1111111000000000
+        0xFE00, //%1111111000000000
+        0xEF00, //%1110111100000000
+        0x0F00, //%0000111100000000
+        0x0780, //%0000011110000000
+        0x0780, //%0000011110000000
+        0x03B0, //%0000001111000000
+        0x0000 //%0000000000000000
+    },
+    /* foreground definition */
+    {
+        0x4000, //%0100000000000000
+        0x6000, //%0110000000000000
+        0x7000, //%0111000000000000
+        0x7800, //%0111100000000000
+        0x7B00, //%0111110000000000
+        0x7E00, //%0111111000000000
+        0x7F00, //%0111111100000000
+        0x7F80, //%0111111110000000
+        0x7B00, //%0111110000000000
+        0x6B00, //%0110110000000000
+        0x4600, //%0100011000000000
+        0x0600, //%0000011000000000
+        0x0300, //%0000001100000000
+        0x0300, //%0000001100000000
+        0x0180, //%0000000110000000
+        0x0000 //%0000000000000000
+    }
+};
 
 /*
  * do_nothing - doesn't do much  :-)
@@ -311,6 +373,79 @@ void vex_curv(Vwk * vwk)
 
 
 
+static void set_mouse_form (Vwk * vwk, Mcdb * mcdb)
+{
+    int i;
+    UWORD * gmdt;                /* global mouse definition table */
+    UWORD * mask;
+    UWORD * data;
+
+    mouse_flag += 1;		/* disable updates while redefining cursor */
+
+    /* save x-offset of mouse hot spot */
+    m_pos_hx = mcdb->xhot & 0x000f;
+
+    /* save y-offset of mouse hot spot */
+    m_pos_hy = mcdb->yhot & 0x000f;
+
+    /* is background color index too high? */
+    if (mcdb->bg_col >= DEV_TAB[13]) {
+        mcdb->bg_col = 1;		/* yes - default to 1 */
+    }
+    m_cdb_bg = MAP_COL[mcdb->bg_col];
+
+    /* is forground color index too high? */
+    if (mcdb->fg_col >= DEV_TAB[13]) {
+        mcdb->fg_col = 1;		/* yes - default to 1 */
+    }
+    m_cdb_fg = MAP_COL[mcdb->fg_col];
+
+    /*
+     * Move the new mouse defintion into the global mouse cursor definition
+     * table.  The values for the mouse mask and data are supplied as two
+     * separate 16-word entities.  They must be stored as a single array
+     * starting with the first word of the mask followed by the first word
+     * of the data and so on.
+     */
+
+    /* copy the data to the global mouse definition table */
+    gmdt = &mask_form;
+    mask = mcdb->mask;
+    data = mcdb->data;
+    for (i = 15; i >= 0; i--) {
+        *gmdt++ = *mask++;		/* get next word of mask */
+        *gmdt++ = *data++;		/* get next word of data */
+    }
+
+    mouse_flag -= 1;			/* re-enable mouse drawing */
+}
+
+
+
+/*
+ * xfm_crfm - Transforms user defined cursor to device specific format.
+ *
+ * Get the new values for the x and y-coordinates of the mouse hot
+ * spot and the new color indices for the mouse mask and data.
+ *
+ * Inputs:
+ *     intin[0] - x coordinate of hot spot
+ *     intin[1] - y coordinate of hot spot
+ *     intin[2] - reserved for future use. must be 1
+ *     intin[3] - Mask color index
+ *     intin[4] - Data color index
+ *     intin[5-20]  - 16 words of cursor mask
+ *     intin[21-36] - 16 words of cursor data
+ *
+ * Outputs:        None
+ */
+void xfm_crfm (Vwk * vwk)
+{
+    set_mouse_form(vwk, (Mcdb *)INTIN);
+}
+
+
+
 /*
  * vdimouse_init - Initializes the mouse (VDI part)
  *
@@ -320,17 +455,12 @@ void vex_curv(Vwk * vwk)
 
 void vdimouse_init(Vwk * vwk)
 {
-    WORD * pointer;             /* help for storing LONGs in INTIN */
-
     user_but = do_nothing;
     user_mot = do_nothing;
     user_cur = mov_cur;         /* initialize user_cur vector */
 
     /* Move in the default mouse form (presently the arrow) */
-    pointer = INTIN;            /* save INTIN */
-    INTIN = (WORD *)&arrow_cdb; /* it points to the arrow data */
-    xfm_crfm();                 /* transform mouse */
-    INTIN = pointer;            /* restore old value */
+    set_mouse_form(vwk, &arrow_cdb);	/* transform mouse */
 
     MOUSE_BT = 0;               // clear the mouse button state
     cur_ms_stat = 0;            // clear the mouse status
@@ -405,6 +535,3 @@ void vb_draw()
         set_sr(old_sr);
 
 }
-
-
-

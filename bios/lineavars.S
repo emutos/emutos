@@ -24,12 +24,12 @@
                 .globl  _disab_cnt
                 .globl  _draw_flag
 
-                .globl  m_cdb_bg
-                .globl  m_cdb_fg
-                .globl  m_pos_hx
-                .globl  m_pos_hy
-                .globl  mask_form
-                .globl  mouse_cdb
+                .globl  _mouse_cdb
+                .globl  _m_pos_hx
+                .globl  _m_pos_hy
+                .globl  _m_cdb_bg
+                .globl  _m_cdb_fg
+                .globl  _mask_form
 
                 .globl  _mouse_flag
                 .globl  _newx
@@ -95,13 +95,13 @@ _cur_font:      .ds.l   1       // -906 current VDI font
 
 /* The mouse form storage area: */
 
-mouse_cdb:
-m_pos_hx:       .ds.w   1       // -856 (cdb+0) Mouse hot spot - x coord
-m_pos_hy:       .ds.w   1       // -854 (cdb+2) Mouse hot spot - y coord
-m_planes:       .ds.w   1       // -852 (cdb+4) Writing mode for mouse pointer
-m_cdb_bg:       .ds.w   1       // -850 (cdb+6) Mouse background color as pel value
-m_cdb_fg:       .ds.w   1       // -848 (cdb+8) Mouse foreground color as pel value
-mask_form:      .ds.w   32      // -846 (cdb+10) Storage for mouse mask and cursor
+_mouse_cdb:
+_m_pos_hx:       .ds.w   1       // -856 (cdb+0) Mouse hot spot - x coord
+_m_pos_hy:       .ds.w   1       // -854 (cdb+2) Mouse hot spot - y coord
+_m_planes:       .ds.w   1       // -852 (cdb+4) Writing mode for mouse pointer
+_m_cdb_bg:       .ds.w   1       // -850 (cdb+6) Mouse background color as pel value
+_m_cdb_fg:       .ds.w   1       // -848 (cdb+8) Mouse foreground color as pel value
+_mask_form:      .ds.w   32      // -846 (cdb+10) Storage for mouse mask and cursor
 
 
 /* Extended workstation information */
@@ -153,6 +153,7 @@ _newx:          .ds.w   1       // -344 new mouse x&y position
 _newy:          .ds.w   1
 _draw_flag:     .ds.b   1       // -340 non-zero means draw mouse form on vblank
 _mouse_flag:    .ds.b   1       // -339 non-zero if mouse ints disabled
+
 sav_cxy:        .ds.w   2       // -338 save area for cursor cell coords.
 retsav:         .ds.l   1       // ??? I'm not sure if this is right here
 save_len:       .ds.w   1       // -330
@@ -297,8 +298,8 @@ _X1:            ds.w    1               // _X1 coordinate for squares
 _Y1:            ds.w    1               // _Y1 coordinate for squares
 _X2:            ds.w    1               // _X2 coordinate for squares
 _Y2:            ds.w    1               // _Y2 coordinate for squares
-_patptr:        ds.l    1               // pointer to fill pattern.
-_patmsk:        ds.w    1               // pattern index. (mask)
+_patptr:        ds.l    1               // unused by linea now
+_patmsk:        ds.w    1               // unused by linea now
 _multifill:     ds.w    1               // multi-plane fill flag. (0 => 1 plane)
 
 _CLIP:          ds.w    1               // clipping flag.

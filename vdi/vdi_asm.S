@@ -116,12 +116,9 @@ intin_ok:
         .globl  _mov_cur        // set's new x/y coordinates
         .globl  _mouse_int      // mouse interrupt routine
 
-        .globl  _xfm_crfm       // set mouse form
         .globl  _cur_replace  
         .globl  _cur_display
         .globl  _vb_draw        // vertical blank mouse draw routine
-
-        .globl  _arrow_cdb      // default mouse definition
 
         .globl  _mousex
         .globl  _mousey
@@ -146,13 +143,13 @@ intin_ok:
         .xdef   _user_mot       // user motion vector
         .xdef   _user_cur       // user cursor vector
 
-        .xdef   mouse_cdb       // storage area for mouse form definition
-        .xdef   m_pos_hx        // (cdb+0) Mouse hot spot - x coord
-        .xdef   m_pos_hy        // (cdb+2) Mouse hot spot - y coord
-        .xdef   m_planes        // (cdb+4) unused - Plane count for mouse pointer
-        .xdef   m_cdb_bg        // (cdb+6) Mouse background color as pel value
-        .xdef   m_cdb_fg        // (cdb+8) Mouse foreground color as pel value
-        .xdef   mask_form       // (cdb+10) Storage for mouse mask and cursor
+        // storage area for mouse form definition
+        .xdef   _m_pos_hx        // (cdb+0) Mouse hot spot - x coord
+        .xdef   _m_pos_hy        // (cdb+2) Mouse hot spot - y coord
+        .xdef   _m_planes        // (cdb+4) unused - Plane count for mouse pointer
+        .xdef   _m_cdb_bg        // (cdb+6) Mouse background color as pel value
+        .xdef   _m_cdb_fg        // (cdb+8) Mouse foreground color as pel value
+        .xdef   _mask_form       // (cdb+10) Storage for mouse mask and cursor
 
         .xdef   _v_planes       // number of video planes
         .xdef   _v_lin_wr       // number of bytes in a scan line
@@ -429,7 +426,7 @@ _cur_display:
 clip_x:
         bclr.b  #F_SAVWID,(a4)          // default to word wide save format
 
-        sub.w   m_pos_hx,d0             // d0 <- left side of destination block
+        sub.w   _m_pos_hx,d0             // d0 <- left side of destination block
         bcs     clip_left
 
         move.w  (a2),d3                 // get width of screen(maximum x value)
@@ -448,8 +445,8 @@ clip_right:
         moveq.l #RTN_REC*2,d7          // index to right clip routine addresses
 
 clip_y:
-        lea     mask_form,a0            // a3 -> MASK/FORM for cursor
-        sub.w   m_pos_hy,d1             // d1 <- hi y : destination block
+        lea     _mask_form,a0            // a3 -> MASK/FORM for cursor
+        sub.w   _m_pos_hy,d1             // d1 <- hi y : destination block
         bcs     clip_up                 // if y<0 clip top of form
 
         move.w  2(a2),d3                // get height of screen(maximum y value)
@@ -529,8 +526,8 @@ init:
 #define d_addr                  8               // destination starting address
 
         adda.w  #-curs_parm,sp          // get temporary stack space
-        move.w  m_cdb_fg,cdb_fg(sp)     // get copy of mouse foreground colors
-        move.w  m_cdb_bg,cdb_bg(sp)     // get copy of mouse background colors
+        move.w  _m_cdb_fg,cdb_fg(sp)     // get copy of mouse foreground colors
+        move.w  _m_cdb_bg,cdb_bg(sp)     // get copy of mouse background colors
         move.w  d5,d1                   // cursor row count
         lsl.w   #2,d1                   // get # of cursor bytes per plane
         move.w  d5,crow_cnt(sp)         // get copy # of displayable cur. rows
@@ -943,117 +940,6 @@ cur_rep_end:
         movem.l (sp)+,d2-d5/a2-a5       // restore 'C' registers
         rts
 
-
-
-/*
- * xfm_crfm - Transforms user defined cursor to device specific format.
- *
- *  Inputs:
- *     intin[0] - x coordinate of hot spot
- *     intin[1] - y coordinate of hot spot
- *     intin[2] - reserved for future use. must be 1
- *     intin[3] - Mask color index
- *     intin[4] - Data color index
- *     intin[5-20]  - 16 words of cursor mask
- *     intin[21-36] - 16 words of cursor data
- *
- *  Outputs:        None
- *
- *  Registers Modified:   d0, a0-a3
- */
-
-/*
- *  Get the new values for the x and y-coordinates of the mouse hot
- *  spot and the new color indices for the mouse mask and data.
- */
-_xfm_crfm:
-        movem.l a2-a3,-(sp)
-        add.b   #1,_mouse_flag  // disable updates while redefining cursor
-        move.l  _INTIN,a0       // get address of new cursor definition block
-        lea     mouse_cdb,a1    // get address of old cursor definition block
-        move.w  (a0)+,d0        // get x-offset of mouse hot spot
-        andi.w  #0x000f,d0      // get offset mod 16
-        move.w  d0,m_pos_hx     // save x-offset of mouse hot spot
-        move.w  (a0)+,d0        // get y-offset of mouse hot spot
-        andi.w  #0x000f,d0      // get offset mod 16
-        move.w  d0,m_pos_hy     // save y-offset of mouse hot spot
-        addq.w  #2,a0           // skip over plane count
-        move.w  (a0)+,d0        // get the mask color index
-        lea     _DEV_TAB+26,a3  // get address of maximum color index
-        cmp.w   (a3),d0         // is index too high?
-        bmi     xfm_bg_col_ok   // nope - accept it as is
-        moveq.l #1,d0           // yes - default to color index of 1
-xfm_bg_col_ok:
-        lea     _MAP_COL,a1     // get address of color index mapping table
-        add.w   d0,d0           // convert index to word offset
-        move.w  (a1,d0.w),m_cdb_bg      // get bit plane masks for mouse mask
-        move.w  (a0)+,d0        // get mouse data color index
-        cmp.w   (a3),d0         // is the index too high?
-        bmi     xfm_fg_col_ok   // nope - accept it as is
-        moveq.l #1,d0           // yes - default to color index of 1
-xfm_fg_col_ok:
-        add.w   d0,d0           // convert index to word offset
-        move.w  (a1,d0.w),m_cdb_fg      // get bit plane masks for mouse data
-
-/*
- *      Move the new mouse defintion into the global mouse cursor definition
- *      table.  The values for the mouse mask and data are supplied as two
- *      separate 16-word entities.  They must be stored as a single array
- *      starting with the first word of the mask followed by the first word
- *      of the data and so on.
- */
-        moveq.l #15,d0          // initialize the loop counter
-        lea.l   mask_form,a1    // get address of global mouse definition table
-        lea.l   32(a0),a2       // get address of mouse data
-xfm_move_loop:
-        move.w  (a0)+,(a1)+     // get next word of mask
-        move.w  (a2)+,(a1)+     // get next word of data
-        dbra    d0,xfm_move_loop        // loop until all data is stored
-        sub.b   #1,_mouse_flag  // re-enable mouse drawing
-        movem.l (sp)+,a2-a3
-        rts
-
-        .data
-
-
-
-/* Default Mouse Cursor Definition */
-
-_arrow_cdb:
-        .dc.w   1,0,1,0,1
-        .dc.w   0xE000 //%1110000000000000       // background definition
-        .dc.w   0xF000 //%1111000000000000
-        .dc.w   0xF800 //%1111100000000000
-        .dc.w   0xFB00 //%1111110000000000
-        .dc.w   0xFE00 //%1111111000000000
-        .dc.w   0xFF00 //%1111111100000000
-        .dc.w   0xFF80 //%1111111110000000
-        .dc.w   0xFFB0 //%1111111111000000
-        .dc.w   0xFE00 //%1111111000000000
-        .dc.w   0xFE00 //%1111111000000000
-        .dc.w   0xEF00 //%1110111100000000
-        .dc.w   0x0F00 //%0000111100000000
-        .dc.w   0x0780 //%0000011110000000
-        .dc.w   0x0780 //%0000011110000000
-        .dc.w   0x03B0 //%0000001111000000
-        .dc.w   0x0000 //%0000000000000000
-
-        .dc.w   0x4000 //%0100000000000000       // foreground definition
-        .dc.w   0x6000 //%0110000000000000
-        .dc.w   0x7000 //%0111000000000000
-        .dc.w   0x7800 //%0111100000000000
-        .dc.w   0x7B00 //%0111110000000000
-        .dc.w   0x7E00 //%0111111000000000
-        .dc.w   0x7F00 //%0111111100000000
-        .dc.w   0x7F80 //%0111111110000000
-        .dc.w   0x7B00 //%0111110000000000
-        .dc.w   0x6B00 //%0110110000000000
-        .dc.w   0x4600 //%0100011000000000
-        .dc.w   0x0600 //%0000011000000000
-        .dc.w   0x0300 //%0000001100000000
-        .dc.w   0x0300 //%0000001100000000
-        .dc.w   0x0180 //%0000000110000000
-        .dc.w   0x0000 //%0000000000000000
 
 
         .bss

@@ -100,6 +100,19 @@ struct blit_frame {
     WORD src_wr;       // +74 source form wrap (in bytes)
 };
 
+/* Raster definitions */
+typedef struct {
+    void *fd_addr;
+    WORD fd_w;
+    WORD fd_h;
+    WORD fd_wdwidth;
+    WORD fd_stand;
+    WORD fd_nplanes;
+    WORD fd_r1;
+    WORD fd_r2;
+    WORD fd_r3;
+} MFDB;
+
 
 
 /*
@@ -673,15 +686,14 @@ void bit_blt ()
 /*
  * setup_pattern - if bit 5 of mode is set, use pattern with blit
  */
-static void setup_pattern (struct blit_frame * info)
+static void setup_pattern (Vwk * vwk, struct blit_frame * info)
 {
-    info->p_addr = patptr;	/* get pattern pointer*/
-
     /* multi-plane pattern? */
-    info->p_nxpl = 0;	/* next plane pattern offset default. */
-    if ( multifill ) {
+    info->p_nxpl = 0;		/* next plane pattern offset default. */
+    if ( vwk->multifill ) {
         info->p_nxpl = 32;	/* yes, next plane pat offset = 32. */
     }
+    info->p_addr = vwk->patptr;	/* get pattern pointer */
     info->p_nxln = 2;        /* offset to next line in pattern */
     info->p_mask = 0xf;      /* pattern index mask */
 }
@@ -694,7 +706,7 @@ static void setup_pattern (struct blit_frame * info)
  * return TRUE, if clipping took away everything
  */
 /* not fully optimized yet*/
-static BOOL do_clip (struct blit_frame * info)
+static BOOL do_clip (Vwk * vwk, struct blit_frame * info)
 {
     WORD s_xmin, s_ymin;
     WORD d_xmin, d_ymin;
@@ -704,7 +716,7 @@ static BOOL do_clip (struct blit_frame * info)
     /* clip Xmin source and destination to window */
     s_xmin = PTSIN[XMIN_S];
     d_xmin = PTSIN[XMIN_D];
-    clip = XMN_CLIP;
+    clip = vwk->xmn_clip;
 
     /* Xmin dest < Xmin clip */
     if ( d_xmin < clip ) {    /* Xmin dest > Xmin clip => branch */
@@ -716,7 +728,7 @@ static BOOL do_clip (struct blit_frame * info)
 
     /* clip Xmax destination to window */
     d_xmax = PTSIN[XMAX_S] - s_xmin + d_xmin;
-    clip = XMX_CLIP;
+    clip = vwk->xmx_clip;
 
     /* Xmax dest > Xmax clip */
     if ( d_xmax > clip )
@@ -736,7 +748,7 @@ static BOOL do_clip (struct blit_frame * info)
     /* clip Ymin source and destination to window */
     s_ymin = PTSIN[YMIN_S];
     d_ymin = PTSIN[YMIN_D];
-    clip = YMN_CLIP;
+    clip = vwk->ymn_clip;
 
     /* Ymin dest < Ymin clip => clip Ymin */
     if ( d_ymin < clip ) {
@@ -748,7 +760,7 @@ static BOOL do_clip (struct blit_frame * info)
 
     /* clip Ymax destination to window */
     d_ymax = PTSIN[YMAX_S] - s_ymin + d_ymin;
-    clip = YMX_CLIP;
+    clip = vwk->ymx_clip;
 
     /* if Ymax dest > Ymax clip */
     if ( d_ymax > clip ) {
@@ -794,7 +806,7 @@ static void dont_clip (struct blit_frame * info)
 /*
  * setup_info - fill the info structure with MFDB values
  */
-static BOOL setup_info (struct blit_frame * info)
+static BOOL setup_info (Vwk * vwk, struct blit_frame * info)
 {
     MFDB *src,*dst;
     BOOL use_clip = FALSE;
@@ -833,12 +845,12 @@ static BOOL setup_info (struct blit_frame * info)
         info->d_nxln = v_lin_wr;
 
         /* check if clipping is enabled, when destination is screen */
-        if (CLIP)
+        if (vwk->clip)
             use_clip = TRUE;
     }
 
     if (use_clip) {
-        if (do_clip(info))
+        if (do_clip(vwk, info))
             return TRUE;        /* clipping took away everything */
     }
     else
@@ -873,11 +885,11 @@ void vdi_vro_cpyfm(Vwk * vwk)
     info.p_addr = NULL;		/* clear pattern pointer */
     if ( mode & PAT_FLAG ) {
         mode &= ~PAT_FLAG;      /* set bit to 0! */
-        setup_pattern(&info);   /* fill in pattern related stuff */
+        setup_pattern(vwk, &info);   /* fill in pattern related stuff */
     }
 
     /* if true, the plane count is invalid or clipping took all! */
-    if ( setup_info(&info) )
+    if ( setup_info(vwk, &info) )
         return;
 
     /* planes of source and destination must be equal in number */
@@ -920,11 +932,11 @@ void vdi_vrt_cpyfm(Vwk * vwk)
     info.p_addr = NULL;		/* get pattern pointer*/
     if ( mode & PAT_FLAG ) {
         mode &= ~PAT_FLAG;      /* set bit to 0! */
-        setup_pattern(&info);   /* fill in pattern related stuff */
+        setup_pattern(vwk, &info);   /* fill in pattern related stuff */
     }
 
     /* if true, the plane count is invalid or clipping took all! */
-    if ( setup_info(&info) )
+    if ( setup_info(vwk, &info) )
         return;
 
     /*

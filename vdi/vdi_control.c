@@ -261,16 +261,14 @@ void init_wk(Vwk * vwk)
     vwk->ymn_clip = 0;
     vwk->xmx_clip = DEV_TAB[0];
     vwk->ymx_clip = DEV_TAB[1];
-    vwk->clip = 0;
+    vwk->clip = FALSE;
 
     vwk->cur_font = def_font;
-
     vwk->loaded_fonts = NULLPTR;
+    vwk->num_fonts = font_count;
 
     vwk->scrpt2 = scrtsiz;
     vwk->scrtchp = deftxbuf;
-
-    vwk->num_fonts = font_count;
 
     vwk->style = 0;        /* reset special effects */
     vwk->scaled = FALSE;
@@ -280,7 +278,6 @@ void init_wk(Vwk * vwk)
     vwk->pts_mode = FALSE;
 
     /* move default user defined pattern to RAM */
-
     src_ptr = ROM_UD_PATRN;
     pointer = &vwk->ud_patrn[0];
 
@@ -288,7 +285,6 @@ void init_wk(Vwk * vwk)
         *pointer++ = *src_ptr++;
 
     vwk->multifill = 0;
-
     vwk->ud_ls = LINE_STYLE[0];
 
     pointer = CONTRL;
@@ -313,11 +309,10 @@ void init_wk(Vwk * vwk)
 void d_opnvwk(Vwk * vwk)
 {
     WORD handle;
-    Vwk *new_work, *work_ptr, *temp;
+    Vwk *new_work, *work_ptr;
 
     /* Allocate the memory for a virtual workstation. */
     new_work = (Vwk *)trap1(X_MALLOC, (LONG) (sizeof(Vwk)));
-
     if (new_work == NULLPTR) {  
         CONTRL[6] = 0;  /* No memory available, exit */
         return;
@@ -334,14 +329,15 @@ void d_opnvwk(Vwk * vwk)
         work_ptr = work_ptr->next_work;
     }
 
-    /* Empty slot found, Insert the workstation here */
-    if (work_ptr->next_work == NULLPTR) {     
-        vwk = work_ptr->next_work = new_work;   /* Add at end of chain */
+    /* Empty slot found, insert the workstation here */
+    if (work_ptr->next_work == NULLPTR) {
+        /* Add at end of chain */
+        vwk = work_ptr->next_work = new_work;  
         new_work->next_work = NULLPTR;
     }
-
-    else {                      /* Add in middle of chain */
-        temp = work_ptr->next_work;
+    else {
+        /* Add in middle of chain */
+        Vwk * temp = work_ptr->next_work;
         vwk = work_ptr->next_work = new_work;
         new_work->next_work = temp;
     }
@@ -357,7 +353,6 @@ void d_clsvwk(Vwk * vwk)
 
     /* vwk points to workstation to deallocate, find who points to me */
     handle = vwk->handle;
-
     if (handle == 1)            /* Can't close physical this way */
         return;
 
@@ -397,8 +392,8 @@ void v_opnwk(Vwk * vwk)
         DEV_TAB[13] = 256;
 
     vwk = &virt_work;
-    CONTRL[6] = virt_work.handle = 1;
-    virt_work.next_work = NULLPTR;
+    CONTRL[6] = vwk->handle = 1;
+    vwk->next_work = NULLPTR;
 
     line_cw = -1;               /* invalidate current line width */
 
@@ -413,14 +408,12 @@ void v_opnwk(Vwk * vwk)
 
     /* mouse settings */
     HIDE_CNT = 1;               /* mouse is initially hidden */
-
     GCURX = DEV_TAB[0] / 2;     /* initialize the mouse to center */
     GCURY = DEV_TAB[1] / 2;
 
     timer_init(vwk);
-    vdimouse_init(vwk);                 // initialize mouse
-    //cprintf("\033f");                 // FIXME: switch off cursor
-    esc_init(vwk);                      // enter graphics mode
+    vdimouse_init(vwk);		/* initialize mouse */
+    esc_init(vwk);		/* enter graphics mode */
 }
 
 
@@ -495,10 +488,10 @@ void vq_extnd(Vwk * vwk)
     }
 
     else {
-        *dp++ = XMN_CLIP;       /* PTSOUT[0] */
-        *dp++ = YMN_CLIP;       /* PTSOUT[1] */
-        *dp++ = XMX_CLIP;       /* PTSOUT[2] */
-        *dp++ = YMX_CLIP;       /* PTSOUT[3] */
+        *dp++ = vwk->xmn_clip;       /* PTSOUT[0] */
+        *dp++ = vwk->ymn_clip;       /* PTSOUT[1] */
+        *dp++ = vwk->xmx_clip;       /* PTSOUT[2] */
+        *dp++ = vwk->ymx_clip;       /* PTSOUT[3] */
 
         for (i = 4; i < 12; i++)
             *dp++ = 0;

@@ -45,10 +45,6 @@ WORD q_circle[MX_LN_WIDTH];     /* Holds the circle DDA */
 WORD angle, beg_ang, del_ang, deltay, end_ang;
 WORD start, xc, xrad, y, yc, yrad;
 
-/* Wide line attribute save areas */
-WORD s_begsty, s_endsty, s_fil_col, s_fill_per, s_patmsk;
-WORD *s_patptr;
-
 struct font_head *cur_font;     /* Pointer to current font */
 
 
@@ -174,6 +170,7 @@ void screen()
         if (!found)
             return;
 
+        /* This copying is done for assembler routines */
         INQ_TAB[19] = CLIP = vwk->clip;
         XMN_CLIP = vwk->xmn_clip;
         YMN_CLIP = vwk->ymn_clip;
@@ -182,13 +179,8 @@ void screen()
 
         WRT_MODE = vwk->wrt_mode;
 
-        patptr = vwk->patptr;
-        patmsk = vwk->patmsk;
-
-        if (vwk->fill_style == 4)
-            multifill = vwk->multifill;
-        else
-            multifill = 0;
+        if (vwk->fill_style != 4)       /* multifill just for user */
+            vwk->multifill = 0;
 
         font_ring[2] = vwk->loaded_fonts;
 

@@ -144,9 +144,9 @@ void clc_arc(Vwk * vwk)
     WORD i, j;
     WORD *cntl_ptr, *xy_ptr;
 
-    if (CLIP) {
-        if (((xc + xrad) < XMN_CLIP) || ((xc - xrad) > XMX_CLIP) ||
-            ((yc + yrad) < YMN_CLIP) || ((yc - yrad) > YMX_CLIP))
+    if (vwk->clip) {
+        if (((xc + xrad) < vwk->xmn_clip) || ((xc - xrad) > vwk->xmx_clip) ||
+            ((yc + yrad) < vwk->ymn_clip) || ((yc - yrad) > vwk->ymx_clip))
             return;
     }
     start = angle = beg_ang;

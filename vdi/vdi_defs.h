@@ -172,19 +172,6 @@ struct Vwk_ {
     WORD ymx_clip;              /* High y point of clipping rectangle   */
 };
 
-/* Raster definitions */
-typedef struct {
-    void *fd_addr;
-    WORD fd_w;
-    WORD fd_h;
-    WORD fd_wdwidth;
-    WORD fd_stand;
-    WORD fd_nplanes;
-    WORD fd_r1;
-    WORD fd_r2;
-    WORD fd_r3;
-} MFDB;
-
 typedef struct
 {
     WORD x1,y1;
@@ -232,17 +219,18 @@ extern BYTE shft_off;           /* once computed Offset into a Scan Line */
 
 
 /* filled area variables */
-extern UWORD *patptr, patmsk;
-extern WORD multifill;
+//extern UWORD *patptr, patmsk;
+//extern WORD multifill;
 
 /* gdp area variables */
 extern WORD xc, yc, xrad, yrad, del_ang, beg_ang, end_ang;
 extern WORD start, angle, n_steps;
 
 /* attribute environment save variables */
-extern WORD s_fill_per, *s_patptr, s_patmsk;
+//extern WORD s_fill_per, *s_patptr, s_patmsk;
 extern WORD s_begsty, s_endsty, s_fil_col;
 
+/* These are still needed for text blitting */
 extern WORD CLIP, XMN_CLIP, XMX_CLIP, YMN_CLIP, YMX_CLIP;
 extern UWORD LINE_STYLE[];
 extern UWORD DITHER[];
@@ -278,15 +266,16 @@ extern WORD COPYTRAN;
 
 /* Assembly Language Support Routines NEWLY ADDED */
 void text_blt();
-void xfm_crfm(), rectfill(), COPY_RFM();
+void xfm_crfm();
+void rectfill (Vwk *);
 
 WORD gloc_key();
 WORD gchc_key();
 WORD gchr_key();
 WORD gshift_s();
 
+BOOL clip_line(Vwk * vwk);
 WORD vec_len(WORD x, WORD y);
-WORD end_pts(WORD x, WORD y, WORD *xleftout, WORD *xrightout);
 void arb_corner(WORD * corners);
 void arb_corner_llur(WORD * corners);
 
@@ -309,7 +298,7 @@ void vex_timv(Vwk *);
 /* drawing primitives */
 void abline(Vwk *);
 void arrow(Vwk *, WORD * xy, WORD inc);
-void horzline(WORD x1, WORD x2, WORD y);
+void horzline(Vwk * vwk, WORD x1, WORD x2, WORD y);
 void polygon(Vwk *);
 void polyline(Vwk *);
 void wideline(Vwk *);
