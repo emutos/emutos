@@ -210,7 +210,8 @@
         .xdef   v_cel_mx
 	.xdef   v_cel_my
 	.xdef   v_cel_wr
-	
+	.xdef	font_ring
+		
 | ==== vectors.s - Default exception vectors =============================
 	.xdef	init_exc_vec
 	.xdef	init_user_vec
@@ -688,15 +689,139 @@ just_rte:
         rte		
 
 
-| ==== Our new Line-A handler ===============================
+| ==== Line-A handler ===============================
 int_linea:
-        | Well, it would be better to check which Line-A call has occured
-        | For the moment we always asume Line-A #0
-        move.l  #line_a_vars,d0
-        move.l  d0,a0
-        rte
+	move.l  2(sp),a0
+	move.l  a0,a1
+	clr.l   d0
+	move.w  (a0)+,d0
+	move.l  a0,2(sp)
+	and.w   #0xFFF,d0
+	tst.w   d0
+	bmi     wrong_linea
+	cmp.w   linea_ents,d0
+	bpl	wrong_linea
+	lea     linea_vecs,a0
+	lsl.w   #2,d0
+	move.l  0(a0,d0),a0
+	jsr     (a0)
+linea_dispatch_pc:	
+	rte
+wrong_linea:
+	move.w  d0,-(sp)
+	sub.w   #2,a0
+	move.l  a0,-(sp)
+	pea	wrong_linea_msg
+	jsr     _kprintf
+	add.w	#10,sp
+	rte
+wrong_linea_msg:	
+	.ascii  "pc=0x%08lx: Line-A call number 0x%03x out of bounds\n\0"
+	.even
+
+_linea_0:	
+	| a0 contains the base address for line a variables
+	lea	line_a_vars,a0
+	move.l  a0,d0
+	| a1 is a pointer to the three system font headers
+	move.l  font_ring,a1
+	move.l  (a1),a1
+	| a2 is a pointer to a table of the Line-A routines
+	lea     linea_vecs,a2
+	rts
+
+|
+| These are stubs for linea :
+| the stub will print the pc of the caller, whether the function
+| was called using the line a opcode, or directly via its address.
+|
+_linea_1:
+	move.w	#1,d0
+	bra	linea_stub
+_linea_2:
+	move.w	#1,d0
+	bra	linea_stub
+_linea_3:
+	move.w	#1,d0
+	bra	linea_stub
+_linea_4:
+	move.w	#1,d0
+	bra	linea_stub
+_linea_5:
+	move.w	#1,d0
+	bra	linea_stub
+_linea_6:
+	move.w	#1,d0
+	bra	linea_stub
+_linea_7:
+	move.w	#1,d0
+	bra	linea_stub
+_linea_8:
+	move.w	#1,d0
+	bra	linea_stub
+_linea_9:
+	move.w	#1,d0
+	bra	linea_stub
+_linea_a:
+	move.w	#1,d0
+	bra	linea_stub
+_linea_b:
+	move.w	#1,d0
+	bra	linea_stub
+_linea_c:
+	move.w	#1,d0
+	bra	linea_stub
+_linea_d:
+	move.w	#1,d0
+	bra	linea_stub
+_linea_e:
+	move.w	#1,d0
+	bra	linea_stub
+_linea_f:
+	move.w	#1,d0
+	bra	linea_stub
+linea_stub:
+	move.l  (sp),d1
+	sub.l   #linea_dispatch_pc,d1
+	and.l   #0xFFFFFF,d1
+	bne	1f
+	move.l  a1,a0
+	bra     2f
+1:	move.l  (sp),a0
+2:	move.w  d0,-(sp)
+	move.l  a0,-(sp)	
+	pea	linea_stub_msg
+	jsr	_kprintf
+	add.w	#10,sp
+	rts
+linea_stub_msg:
+	.ascii	"pc=0x%08lx: unimplemented Line-A call number 0x%03x\n\0"
+	.even
+	
+linea_vecs:
+	dc.l	_linea_0
+	dc.l	_linea_1
+	dc.l	_linea_2
+	dc.l	_linea_3
+	dc.l	_linea_4
+	dc.l	_linea_5
+	dc.l	_linea_6
+	dc.l	_linea_7
+	dc.l	_linea_8
+	dc.l	_linea_9
+	dc.l	_linea_a
+	dc.l	_linea_b
+	dc.l	_linea_c
+	dc.l	_linea_d
+	dc.l	_linea_e
+	dc.l	_linea_f
+linea_ents:
+	dc.w    (linea_ents-linea_vecs)/4
 
 
+
+	
+	
 | ==== Int 0x68 - HBL interrupt =============================================
 int_hbl:
         move.w  d0, -(sp)       | save d0
@@ -1060,7 +1185,7 @@ bios_vecs:
 |       .dc.l   _bios_5                 | set vector
         .dc.l   _bsetvec                | set vector
         .dc.l   _bios_6                 | LONG get_timer_ticks()
-        .dc.l   _drv_bpb                        | get disk parameter block address
+        .dc.l   _drv_bpb                | get disk parameter block address
 |       .dc.l   _bios_7                 | get disk parameter block address
         .dc.l   _bios_8                 | LONG character_output_status(h)
         .dc.l   _bios_9                 | media change?

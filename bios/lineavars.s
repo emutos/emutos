@@ -51,7 +51,8 @@
 		.globl	v_off_ad
 		.globl	v_stat_0
 		.globl	v_vt_rez
-
+		.global font_ring
+	
 | **FIXME: There are still lots of variables missing here...**
 
 GCURX:		.ds.w	1	| -602	MiNT needs GCURX and GCURY
