@@ -12,8 +12,8 @@
 
 
 
-#ifndef _VDIDEF_H
-#define _VDIDEF_H
+#ifndef H_VDIDEF_
+#define H_VDIDEF_
 
 #include "portab.h"
 
@@ -184,4 +184,4 @@ typedef struct {
 
 
 
-#endif                          /* _VDIDEF_H */
+#endif                          /* H_VDIDEF_ */

@@ -1125,3 +1125,14 @@ Start... early ages
 - doc/status.txt - changed the table of supported emulators, to include date 
   of update of individual entries (LVL)
 - doc/install.txt - documented some of the current makefile targets (LVL)
+
+05. Oct. 2002
+- renamed _FOO_H into H_FOO_ for standard C compliance (I kept the script 
+  which did it in case anybody wants to change back or again) (LVL)
+- bdos/time.[ch] - regrouped stuff here, and connected it to _evt_timer (LVL)
+- bdos/rwa.S - removed some useless remnants, osinit now in C (LVL)
+- vectors.S - unused vectors _int_timera, ... deleted; priv and illg now
+  correctly jump to the default exception vector (LVL)
+- tosvars.h, vdimain.c - etv_timer gets an int argument (LVL)
+- bios.c - commented out illegal error setting, as I don't think it does the
+  right thing [changing a move SR, to CCR, is done pby the priv stuff] (LVL)

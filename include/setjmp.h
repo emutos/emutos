@@ -10,8 +10,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#ifndef _SETJMP_H
-#define _SETJMP_H
+#ifndef H_SETJMP_
+#define H_SETJMP_
 
 #include "portab.h"
  
@@ -20,4 +20,4 @@ typedef long jmp_buf[13];
 int setjmp(jmp_buf state);
 void longjmp(jmp_buf state, WORD value) NORETURN;
 
-#endif /* _SETJMP_H */
+#endif /* H_SETJMP_ */

@@ -10,8 +10,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#ifndef _DMA_H
-#define _DMA_H
+#ifndef H_DMA_
+#define H_DMA_
 
 #include "portab.h"
  
@@ -49,5 +49,5 @@ struct dma {
 #define DMA_SCNOT0  0x0002          /* sector count not 0 */
 #define DMA_DATREQ  0x0004          /* FDC data request signal */
 
-#endif /* _DMA_H */
+#endif /* H_DMA_ */
 

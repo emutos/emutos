@@ -10,8 +10,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#ifndef _BIOS_H
-#define _BIOS_H
+#ifndef H_BIOS_
+#define H_BIOS_
 
 #include "portab.h"
 
@@ -78,5 +78,5 @@ PD
 
 
 
-#endif /* _BIOS_H */
+#endif /* H_BIOS_ */
 

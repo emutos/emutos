@@ -12,8 +12,8 @@
  * Some code I got from Linux m68k, thanks to the authors! (MAD)
  */
 
-#ifndef _MOUSE_H
-#define _MOUSE_H
+#ifndef H_MOUSE_
+#define H_MOUSE_
 
 #include "config.h"
 
@@ -84,5 +84,5 @@ extern BYTE     mouse_flag;     // non-zero, if mouse ints disabled
 extern BYTE     cur_ms_stat;    /* current mouse status */
 
 
-#endif /* _MOUSE_H */
+#endif /* H_MOUSE_ */
 

@@ -12,8 +12,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#ifndef _BIOS_H
-#define _BIOS_H
+#ifndef H_BIOS_
+#define H_BIOS_
 
 
 /*
@@ -217,15 +217,4 @@ MPB
 
 
 
-
-/* For BIOS calls... */
-
-#define date_time(op,var)       trap13(0x11,(op),(var))
-#define GET_TIME        0
-#define SET_TIME        1
-#define GET_DATE        2
-#define SET_DATE        3
-
-
-
-#endif /* _BIOS_H */
+#endif /* H_BIOS_ */

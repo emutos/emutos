@@ -10,8 +10,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#ifndef _FDC_H
-#define _FDC_H
+#ifndef H_FDC_
+#define H_FDC_
 
 #include "portab.h"
 #include "dma.h"
@@ -71,4 +71,4 @@
 #define FDC_MOTORON 0x80    /* Motor On */
  
  
-#endif /* _FDC_H */
+#endif /* H_FDC_ */

@@ -10,8 +10,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#ifndef _COUNTRY_H
-#define _COUNTRY_H
+#ifndef H_COUNTRY_
+#define H_COUNTRY_
 
 #include "ikbd.h"
 #include "fontdef.h"
@@ -85,4 +85,4 @@ void get_fonts(struct font_head **f6x6,
                struct font_head **f8x8, 
                struct font_head **f8x16);
 
-#endif /* _COUNTRY_H */
+#endif /* H_COUNTRY_ */

@@ -11,8 +11,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#ifndef _MFP_H
-#define _MFP_H
+#ifndef H_MFP_
+#define H_MFP_
 
 #include "portab.h"
 
@@ -164,4 +164,4 @@ void xbtimer(WORD timer, WORD control, WORD data, LONG vector);
 void mfp_init(void);
 
 
-#endif /* _MFP_H */
+#endif /* H_MFP_ */

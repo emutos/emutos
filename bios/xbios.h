@@ -7,8 +7,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#ifndef _XBIOS_H
-#define _XBIOS_H
+#ifndef H_XBIOS_
+#define H_XBIOS_
  
 /* initializes the xbios */
 void xbiosinit(void);
@@ -21,4 +21,4 @@ LONG kbdvbase(void);
 LONG supexec(LONG codeptr);
 LONG bconmap(WORD devno);
 
-#endif /* _XBIOS_H */
+#endif /* H_XBIOS_ */

@@ -46,8 +46,8 @@
  * purpose delay routine (based on processor cycle callibration ?)
  */
 
-#ifndef _PROCESSOR_H
-#define _PROCESSOR_H
+#ifndef H_PROCESSOR_
+#define H_PROCESSOR_
  
 long detect_cpu(void);
 long detect_fpu(void);

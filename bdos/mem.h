@@ -11,8 +11,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#ifndef _MEM_H
-#define _MEM_H
+#ifndef H_MEM_
+#define H_MEM_
 
 
 /*
@@ -90,4 +90,4 @@ MD *ffit(long amount, MPB *mp);
 void freeit(MD *m, MPB *mp);
 
 
-#endif /* _MEM_H */
+#endif /* H_MEM_ */

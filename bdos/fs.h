@@ -17,8 +17,8 @@
 
 
 
-#ifndef _FS_H
-#define _FS_H
+#ifndef H_FS_
+#define H_FS_
 
 /*
  *  fix conditionals
@@ -360,7 +360,6 @@ extern  PD      *run ;
 extern  int     logmsk[] ;
 extern  FTAB    sft[] ;
 extern  BCB     *bufl[2] ;              /*  in bios main.c              */
-extern  unsigned int    time, date ;
 extern  int     bios_dev[] ;            /*  in fsfioctl.c               */
 
 
@@ -493,4 +492,4 @@ OFD  *getofd(int h);
 #define CL_DIR  0x0002
 #define CL_FULL 0x0004
 
-#endif /* _FS_H */
+#endif /* H_FS_ */

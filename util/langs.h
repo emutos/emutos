@@ -10,8 +10,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#ifndef _LANGS_H
-#define _LANGS_H
+#ifndef H_LANGS_
+#define H_LANGS_
  
 struct lang_info {
   char *name;
@@ -20,4 +20,4 @@ struct lang_info {
 
 extern struct lang_info *langs[];
  
-#endif _LANGS_H
+#endif H_LANGS_

@@ -10,8 +10,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#ifndef _PGHDR_H
-#define _PGHDR_H
+#ifndef H_PGHDR_
+#define H_PGHDR_
 
 #define PGMHDR01        struct  pgmhdr01
 PGMHDR01
@@ -39,4 +39,4 @@ PGMINFO
         LONG    pi_slen ;               /*  length of symbol table      */
 } ;
 
-#endif /* _PGHDR_H */
+#endif /* H_PGHDR_ */

@@ -10,8 +10,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#ifndef _PROC_H
-#define _PROC_H
+#ifndef H_PROC_
+#define H_PROC_
 
 #include "pghdr.h"
 
@@ -54,6 +54,6 @@ ERROR xpgmld(char *s, PD *p, FH h, PGMHDR01 *hd );
 
 void gouser(void)  NORETURN;  
 
-#endif /* _PROC_H */
+#endif /* H_PROC_ */
 
 

@@ -10,8 +10,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#ifndef _CONFIG_H
-#define _CONFIG_H
+#ifndef H_CONFIG_
+#define H_CONFIG_
 
 #include "i18nconf.h"
 
@@ -131,4 +131,4 @@
  * found in the table in bios/country.c
  */
 
-#endif /* _CONFIG_H */
+#endif /* H_CONFIG_ */

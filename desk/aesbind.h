@@ -1,6 +1,6 @@
 
-#ifndef _AESBIND_H
-#define _AESBIND_H
+#ifndef H_AESBIND_
+#define H_AESBIND_
 
 /* AES prototypes: */
 

@@ -10,8 +10,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#ifndef _BIOSMEM_H
-#define _BIOSMEM_H
+#ifndef H_BIOSMEM_
+#define H_BIOSMEM_
 
 #include "portab.h"
 #include "bios.h"
@@ -61,4 +61,4 @@ void *balloc(long size);
 
 void getmpb(MPB *mpb);
 
-#endif /* _BIOSMEM_H */
+#endif /* H_BIOSMEM_ */

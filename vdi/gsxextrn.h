@@ -11,8 +11,8 @@
 
 
 
-#ifndef _GSXEXTRN_H
-#define _GSXEXTRN_H
+#ifndef H_GSXEXTRN_
+#define H_GSXEXTRN_
 
 #include "portab.h"
 

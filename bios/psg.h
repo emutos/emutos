@@ -10,8 +10,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#ifndef _PSG_H
-#define _PSH_H
+#ifndef H_PSG_
+#define H_PSH_
  
 struct psg {
   UBYTE control;
@@ -32,4 +32,4 @@ struct psg {
 #define PSG_PORT_B 0xF
 
  
-#endif /* _PSG_H */
+#endif /* H_PSG_ */

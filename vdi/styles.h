@@ -11,8 +11,8 @@
 
 
 
-#ifndef _STYLES_H
-#define _STYLES_H
+#ifndef H_STYLES_
+#define H_STYLES_
 
 #include "portab.h"
 

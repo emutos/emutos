@@ -10,8 +10,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#ifndef _FONTDEF_H
-#define _FONTDEF_H
+#ifndef H_FONTDEF_
+#define H_FONTDEF_
 
 #include "portab.h"
 
@@ -62,4 +62,4 @@ struct font_head {              /* descibes a font */
     UWORD font_seg;
 };
 
-#endif /* _FONTDEF_H */
+#endif /* H_FONTDEF_ */

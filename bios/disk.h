@@ -10,8 +10,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#ifndef _DISK_H
-#define _DISK_H
+#ifndef H_DISK_
+#define H_DISK_
 
 #include "portab.h"
  
@@ -34,4 +34,4 @@ extern LONG XHGetCapacity(UWORD major, UWORD minor, ULONG *blocks,
 
 int atari_partition(int bdev);
 
-#endif /* _DISK_H */
+#endif /* H_DISK_ */

@@ -15,8 +15,8 @@
  * this file is used by bdos and bios, NOT vdi or AES yet.
  */
 
-#ifndef _PORTAB_H
-#define _PORTAB_H
+#ifndef H_PORTAB_
+#define H_PORTAB_
 
 /*
  *  17 Jan 86 - ktb
@@ -102,5 +102,5 @@ typedef long            ERROR ;                 /*  error codes         */
 /****************************************************************************/
 /****************************************************************************/
 
-#endif /* _PORTAB_H */
+#endif /* H_PORTAB_ */
 

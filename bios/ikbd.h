@@ -10,8 +10,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#ifndef _IKBD_H
-#define _IKBD_H
+#ifndef H_IKBD_
+#define H_IKBD_
 
 #include "portab.h"
 
@@ -59,6 +59,6 @@ extern void ikbdws(WORD cnt, LONG ptr);
 extern void ikbd_writeb(BYTE b);
 extern void ikbd_writew(WORD w);
 
-#endif /* _IKBD_H */
+#endif /* H_IKBD_ */
 
 

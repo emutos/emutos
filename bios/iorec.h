@@ -10,8 +10,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#ifndef _IOREC_H
-#define _IOREC_H
+#ifndef H_IOREC_
+#define H_IOREC_
 
 #include        "portab.h"
 
@@ -32,4 +32,4 @@ extern IOREC rs232iorec, ikbdiorec, midiiorec;
 
 /*==== Functions ==========================================================*/
 
-#endif /* _IOREC_H */
+#endif /* H_IOREC_ */

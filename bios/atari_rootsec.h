@@ -1,5 +1,5 @@
-#ifndef _ATARI_ROOTSEC_H
-#define _ATARI_ROOTSEC_H
+#ifndef H_ATARI_ROOTSEC_
+#define H_ATARI_ROOTSEC_
 
 /*
  * linux/include/linux/atari_rootsec.h
@@ -35,4 +35,4 @@ struct rootsector
   u16 checksum;                         /* checksum for bootable disks */
 } __attribute__ ((__packed__));
 
-#endif /* _ATARI_ROOTSEC_H */
+#endif /* H_ATARI_ROOTSEC_ */
