@@ -17,8 +17,7 @@
 
 
         /* External routines used here */
-        .globl  _MOV_CUR
-        .globl  scrn_clip
+        .xdef  scrn_clip
 
         /* External variables used here */
         .xdef   _GCURX          
@@ -72,13 +71,8 @@ no_left:
 
         move.w  d1,-(sp)        // save previous mouse state
         move.l  _user_but,a1    // get user routine address
-#if 0
-        move    sr, -(sp)       // Disable interrupts
-        ori.w   #0x0700, sr
-#endif
         jsr     (a1)
 
-        //move.w  (sp)+, sr       // restore interrupt context
         move.w  (sp)+, d1       // get back previous mouse button state
         move.w  d0,_MOUSE_BT
 
@@ -112,23 +106,15 @@ new_coord:
 
         bsr     scrn_clip
         move.l  _user_mot,a1    // get user routine address
-#if 0
-        move    sr, -(sp)       // Disable interrupts
-        ori.w   #0x0700, sr
-#endif
         jsr     (a1)            // call user to modify x,y
-        //move.w  (sp)+, SR     // restore interrupt context
+
         bsr     scrn_clip
 
         move.w  d0,_GCURX       // save new X location
         move.w  d1,_GCURY       // save new y location
         move.l  _user_cur,a1    // get user routine address
-#if 0
-        move    sr, -(sp)       // Disable interrupts
-        ori.w   #0x0700, sr
-#endif
+
         jsr     (a1)            // call user to draw cursor
-        //move.w  (sp)+, sr     // restore interrupt context
                                 // d0 contains new x position
                                 // d1 contains new y position
 ms_done:

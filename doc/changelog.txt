@@ -718,3 +718,6 @@ Start... early ages
 - cookie_swi commented out in bios/machine.c (bus error in some cases) (LVL)
 - misc involuntary whitespace changes in some files (LVL)
 - added po/cs.po from Bohdan for Czech native language support  (MAD)
+
+08. Apr. 2002
+- bios/mousedrv.S cleaned up a bit. (MAD)
