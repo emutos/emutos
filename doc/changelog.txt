@@ -703,4 +703,5 @@ Start... early ages
 - vdi/lisagem.S - put mouse drawing additionally to timer_int (MAD)
 - vdi/lisagem.S - put _CLEARMEM to vdi/monout.c (MAD)
 
-
+04. Apr. 2002
+- desk/*  -  Added the desktop sources (THH).

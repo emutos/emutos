@@ -146,6 +146,16 @@ AESCSRC = gemaplib.c gemasync.c gembase.c gemctrl.c gemdisp.c gemevlib.c \
 AESSSRC = gemstart.S gemdosif.S gemasm.S gsx2.S large.S optimopt.S
 
 #
+# source code in desk/
+#
+
+DESKCSRC = deskact.c deskapp.c deskdir.c deskfpd.c deskfun.c \
+    deskglob.c deskinf.c deskins.c deskmain.c deskobj.c deskpro.c \
+    deskrsrc.c desksupp.c deskwin.c gembind.c icons.c
+    #taddr.c deskgraf.c deskgsx.c
+DESKSSRC = deskstart.S
+
+#
 # source code in cli/ for EmuTOS console EmuCON
 #
 
@@ -168,11 +178,13 @@ PVDICSRC = $(VDICSRC:%=vdi/%)
 PVDISSRC = $(VDISSRC:%=vdi/%)
 PAESCSRC = $(AESCSRC:%=aes/%)
 PAESSSRC = $(AESSSRC:%=aes/%)
+PDESKCSRC = $(DESKCSRC:%=aes/%)
+PDESKSSRC = $(DESKSSRC:%=aes/%)
 
 CSRC = $(PBIOSCSRC) $(PBDOSCSRC) $(PUTILCSRC) \
-       $(PVDICSRC) $(PAESCSRC) $(PCONSCSRC)
+       $(PVDICSRC) $(PAESCSRC) $(PCONSCSRC) $(PDESKCSRC)
 SSRC = $(PBIOSSSRC) $(PBDOSSSRC) $(PUTILSSRC) \
-       $(PVDISSRC) $(PAESSSRC) $(PCONSSSRC)
+       $(PVDISSRC) $(PAESSSRC) $(PCONSSSRC) $(PDESKSSRC)
 
 BIOSCOBJ = $(BIOSCSRC:%.c=obj/%.o)
 BIOSSOBJ = $(BIOSSSRC:%.S=obj/%.o)
@@ -186,14 +198,16 @@ VDICOBJ  = $(VDICSRC:%.c=obj/%.o)
 VDISOBJ  = $(VDISSRC:%.S=obj/%.o)
 AESCOBJ  = $(AESCSRC:%.c=obj/%.o)
 AESSOBJ  = $(AESSSRC:%.S=obj/%.o)
+DESKCOBJ  = $(DESKCSRC:%.c=obj/%.o)
+DESKSOBJ  = $(DESKSSRC:%.S=obj/%.o)
 
 # Selects the user interface (EmuCON or AES):
 ifeq ($(WITH_AES),0)
 UICOBJ = $(CONSCOBJ)
 UISOBJ = $(CONSSOBJ)
 else
-UICOBJ = $(AESCOBJ)
-UISOBJ = $(AESSOBJ)
+UICOBJ = $(AESCOBJ) #$(DESKCOBJ)
+UISOBJ = $(AESSOBJ) #$(DESKSOBJ)
 endif
 
 COBJ = $(BIOSCOBJ) $(BDOSCOBJ) $(UTILCOBJ) $(VDICOBJ) $(UICOBJ)
@@ -245,6 +259,14 @@ etos192k.img: emutos.img
 	cat empty.tmp >> emutos.tmp                    # Make real tos.img...
 	dd if=emutos.tmp of=$@ bs=1024 count=192       # with right length.
 	rm -f emutos.tmp empty.tmp
+
+256: etos256k.img
+
+etos256k.img: etosfalc.tmp
+	dd if=/dev/zero of=empty.tmp bs=1024 count=256 
+	cat empty.tmp >> etosfalc.tmp
+	dd if=etosfalc.tmp of=$@ bs=1024 count=256
+	rm -f etosfalc.tmp empty.tmp
 
 #
 # Aranym or Falcon
@@ -380,7 +402,13 @@ obj/%.o : aes/%.c
 	${CC} ${CFLAGS} -c -Ibios $< -o $@
 
 obj/%.o : aes/%.S
-	${CC} ${CFLAGS} -c -Ibios $< -o $@
+	${CC} ${CFLAGS} -c $< -o $@
+
+obj/%.o : desk/%.c
+	${CC} ${CFLAGS} -c -Ibios -Iaes -Idesk/icons $< -o $@
+
+obj/%.o : desk/%.S
+	${CC} ${CFLAGS} -c -Iaes $< -o $@
 
 #
 # make bios.dsm will create an assembly-only of bios.c
@@ -402,6 +430,9 @@ obj/%.o : aes/%.S
 	${CC} ${CFLAGS} -S -Iutil $< -o $@
 
 %.dsm : aes/%.c
+	${CC} ${CFLAGS} -S -Iutil $< -o $@
+
+%.dsm : desk/%.c
 	${CC} ${CFLAGS} -S -Iutil $< -o $@
 
 #
@@ -517,7 +548,7 @@ tounix$(EXE): tools/tounix.c
 #     find . -name CVS -prune -or -not -name '*~' | xargs $(HERE)/tounix$(EXE)
 
 crlf: tounix$(EXE)
-	./tounix$(EXE) * bios/* bdos/* doc/* util/* tools/* po/* include/* aes/*
+	./tounix$(EXE) * bios/* bdos/* doc/* util/* tools/* po/* include/* aes/* desk/*
 
 cvsready: expand crlf nodepend
 
