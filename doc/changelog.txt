@@ -705,3 +705,15 @@ Start... early ages
 
 04. Apr. 2002
 - desk/*  -  Added the desktop sources (THH).
+
+05. Apr. 2002
+- newer bug - handles different encoding for different languages (LVL)
+- added administrative entry in fr.po and de.po (LVL)
+- encoding specified in po/LINGUAS (LVL)
+- started removing Kamenicky encoding (LVL)
+- doc/todo.txt: added 'Czech i18n' section (LVL)
+- added version 0.2a in include/version.h, printed by initinfo.c (LVL)
+- make release generates a TGZ named after include/version.h (LVL)
+- GPL re-formatted to 72 chars wide (copied over the standard file) (LVL)
+- cookie_swi commented out in bios/machine.c (bus error in some cases) (LVL)
+- misc involuntary whitespace changes in some files (LVL)

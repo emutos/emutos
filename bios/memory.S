@@ -84,7 +84,6 @@ clearbss:
         /* This is it. C code and kprintf allowed past this point. */
 
 
-
 /*
  * memchk - Check, if old memory config can be used
  */

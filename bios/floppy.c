@@ -274,7 +274,7 @@ LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt, WORD sides, WO
     WORD sect;
     WORD err;
   
-    kprintf("floppy_rw(%d, %ld, %d, %ld, %d, %d, %d)\n",
+    kprintf("floppy_rw(rw %d, buf 0x%lx, cnt %d, recnr %ld, spt %d, sides %d, dev %d)\n",
                        rw, buf, cnt, recnr, spt, sides, dev);
 
     if (dev < 0 || dev > 1) return EUNDEV;  /* unknown device */

@@ -15,6 +15,4 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
-
 char *biosts="EmuTOS 00.01 - 01.11.2001 22:00:00 MAD";

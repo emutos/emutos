@@ -128,7 +128,6 @@ void startup(void)
     screen_init();              /* detect monitor type, ... */
 
     bmem_init();                /* initialize BIOS memory management */
-
     processor_init();  /* Set CPU type, VEC_ILLEGAL, longframe and FPU type */
     cookie_init();     /* sets a cookie jar */
     machine_init();    /* detect hardware features and fill the cookie jar */
