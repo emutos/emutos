@@ -53,7 +53,7 @@
 
 /*==== Defines ============================================================*/
 
-#define DBGBIOS 1               /* If you want debugging output */
+#define DBGBIOS 0               /* If you want debugging output */
 #define DBGAUTOBOOT 1           /* If you want to see AUTO folder loading */
 
 /*==== Forward prototypes =================================================*/
@@ -64,7 +64,7 @@ void autoexec(void);
 
 /*==== External declarations ==============================================*/
 
-extern BYTE *biosts ;           /*  time stamp string */
+extern BYTE *biosts;           /*  time stamp string */
 
 extern LONG osinit(void);
 
@@ -85,7 +85,7 @@ extern long xmaddalt(long start, long size); /* found in bdos/mem.h */
 /*==== Declarations =======================================================*/
 
 /* Drive specific declarations */
-static WORD defdrv ;            /* default drive number (0 is a:, 2 is c:) */
+static WORD defdrv;             /* default drive number (0 is a:, 2 is c:) */
 
 /* BYTE env[256];                * environment string, enough bytes??? */
 static const BYTE null_env[] = {0, 0};
@@ -510,8 +510,9 @@ LONG setexec(WORD num, LONG vector)
 #if DBGBIOS
 LONG bios_5(WORD num, LONG vector)
 {
+    LONG ret = setexec(num, vector);
     kprintf("Bios 5: Setexec(num = 0x%x, vector = 0x%08lx)\n", num, vector);
-    return setexec(num, vector);
+    return ret;
 }
 #endif
 
