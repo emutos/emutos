@@ -45,25 +45,6 @@
  */
 
 /*
- *  pointer to function returning an integer
- */
-
-#if 0
-    (*(void (*)())0x118) = my_0x118_irq;
-    #define PFI (int (*)())
-
-typedef int     (*PFI)() ;      /*  from K & R, pg 141          */
-
-/*
- *  error code
- */
-
-typedef long    ERROR ;         /*  error types                 */
-
-#endif
-
-
-/*
  *  SSN - Sequential Sector Numbers
  *      At the outermost level of support, the disks look like an
  *      array of sequential logical sectors.  The range of SSNs are
@@ -106,56 +87,6 @@ PD
         char    p_cmdlin[0x80];
 } ;
 #endif
-
-
-
-/*
- *  BPB - Bios Parameter Block
- */
-
-struct _bpb /* bios parameter block */
-{
-        int     recsiz;         /* sector size in bytes */
-        int     clsiz;          /* cluster size in sectors */
-        int     clsizb;         /* cluster size in bytes */
-        int     rdlen;          /* root directory length in records */
-        int     fsiz;           /* fat size in records */
-        int     fatrec;         /* first fat record (of last fat) */
-        int     datrec;         /* first data record */
-        int     numcl;          /* number of data clusters available */
-        int     b_flags;
-};
-
-typedef struct _bpb BPB;
-
-/*
- *  flags for BPB
- */
-
-#define B_16    1                       /* device has 16-bit FATs       */
-#define B_FIX   2                       /* device has fixed media       */
-
-/*
- *  BCB - Buffer Control Block
- */
-
-#ifndef BCB
-#define BCB struct _bcb
-
-BCB
-{
-        BCB     *b_link;        /*  next bcb                    */
-        int     b_bufdrv;       /*  unit for buffer             */
-        int     b_buftyp;       /*  buffer type                 */
-        int     b_bufrec;       /*  record number               */
-        BOOLEAN b_dirty;        /*  true if buffer dirty        */
-        long    b_dm;           /*  reserved for file system    */
-        BYTE    *b_bufr;        /*  pointer to buffer           */
-} ;
-
-#endif
-
-
 
 
 

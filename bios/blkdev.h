@@ -46,20 +46,25 @@ struct bs {
   /* 1fe */  UBYTE cksum[2];
 };
 
-#if 0   /* defined in bios.h */
+/*
+ *  BPB - Bios Parameter Block
+ */
+
 struct _bpb /* bios parameter block */
 {
-        WORD    recsiz;         /* sector size in bytes */
-        WORD    clsiz;          /* cluster size in sectors */
-        WORD    clsizb;         /* cluster size in bytes */
-        WORD    rdlen;          /* root directory length in records */
-        WORD    fsiz;             /* fat size in records */
-        WORD    fatrec;         /* first fat record (of last fat) */
-        WORD    datrec;         /* first data record */
-        WORD    numcl;          /* number of data clusters available */
-        WORD    b_flags;
+        int     recsiz;         /* sector size in bytes */
+        int     clsiz;          /* cluster size in sectors */
+        int     clsizb;         /* cluster size in bytes */
+        int     rdlen;          /* root directory length in records */
+        int     fsiz;           /* fat size in records */
+        int     fatrec;         /* first fat record (of last fat) */
+        int     datrec;         /* first data record */
+        int     numcl;          /* number of data clusters available */
+        int     b_flags;
 };
-#endif
+
+typedef struct _bpb BPB;
+
 
 struct _geometry        /* disk parameter block */
 {
@@ -97,6 +102,13 @@ UWORD compute_cksum(LONG buf);
 
 
 
+
+/*
+ *  flags for BPB
+ */
+
+#define B_16    1                       /* device has 16-bit FATs       */
+#define B_FIX   2                       /* device has fixed media       */
 
 /*
  * Modes of block devices
