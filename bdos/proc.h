@@ -13,11 +13,6 @@
 #ifndef _PROC_H
 #define _PROC_H
 
-#if 1 /* TODO, check if gcc, and what version */
-#define NORETURN __attribute__ ((noreturn))
-#else
-#define NORETURN 
-#endif
 
 /*
  *  process management
@@ -31,7 +26,6 @@ extern	PD	*run;
  * in proc.c
  */
 
-//long xexec(WORD flg, char *s, char *t, char *v);
 long xexec(WORD, char *, char *, char *);
 void x0term(void);
 void xterm(UWORD rc)  NORETURN ;

@@ -1,5 +1,5 @@
 /*
- * gportab.h - Definitions for writing poratble C
+ * portab.h - Definitions for writing portable C
  *
  * Copyright (c) 2001 Lineo, Inc.
  *
@@ -51,6 +51,12 @@
 **	fix the unsigned char problem.	ALCYON1 doesn't.
 **
 */
+
+#ifdef __GNUC__
+#define NORETURN __attribute__ ((noreturn))
+#else
+#define NORETURN
+#endif
 
 /* unused 
  * #define ALCYON1 	1

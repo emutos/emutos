@@ -15,11 +15,6 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#if 1 /* TODO, check if gcc, and what version */
-#define NORETURN __attribute__ ((noreturn))
-#else
-#define NORETURN 
-#endif
 
 
 /*
