@@ -43,6 +43,7 @@
 #include "deskmain.h"
 #include "icons.h"
 
+#include "string.h"
 
 #define MIN_WINT 4
 #define MIN_HINT 2
@@ -765,7 +766,7 @@ void app_save(WORD todisk)
         ANODE           *pa;
         WSAVE           *pws;
 
-        bfill(SIZE_AFILE, 0, &gl_afile[0]);
+        memset(&gl_afile[0], 0, SIZE_AFILE);
         pcurr = &gl_afile[0];
                                                 /* save evironment      */
         *pcurr++ = '#';

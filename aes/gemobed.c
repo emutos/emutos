@@ -34,6 +34,8 @@
 #include "optimopt.h"
 #include "rectfunc.h"
 
+#include "string.h"
+
 #define BACKSPACE 0x0E08                        /* backspace            */
 #define SPACE 0x3920                            /* ASCII <space>        */
 #define UP 0x4800                               /* up arrow             */
@@ -317,9 +319,9 @@ WORD ob_edit(LONG tree, WORD obj, WORD in_char, WORD *idx, WORD kind)
         ob_getsp(tree, obj, &edblk);
                                                 /* copy passed in strs  */
                                                 /*   to local strs      */
-        LSTCPY(ad_tmpstr, edblk.te_ptmplt);
-        LSTCPY(ad_rawstr, edblk.te_ptext);
-        len = ii = LSTCPY(ad_valstr, edblk.te_pvalid);
+        strcpy((char *) ad_tmpstr, (char *) edblk.te_ptmplt);
+        strcpy((char *) ad_rawstr, (char *) edblk.te_ptext);
+        len = ii = strlencpy((char *) ad_valstr, (char *) edblk.te_pvalid);
                                                 /* expand out valid str */
         while ( (ii > 0) &&
                 (len < edblk.te_tmplen) )
@@ -406,7 +408,7 @@ WORD ob_edit(LONG tree, WORD obj, WORD in_char, WORD *idx, WORD kind)
 
                             if (pos < (edblk.te_txtlen - 2) )
                             {
-                              bfill(pos - *idx, ' ', &D.g_rawstr[*idx]);
+                              memset(&D.g_rawstr[*idx], ' ', pos - *idx);
                               D.g_rawstr[pos] = NULL;
                               *idx = pos;
                               no_redraw = FALSE;
@@ -416,7 +418,7 @@ WORD ob_edit(LONG tree, WORD obj, WORD in_char, WORD *idx, WORD kind)
                         break;
                 }
 
-                LSTCPY(edblk.te_ptext, ad_rawstr);
+                strcpy((char *) edblk.te_ptext, (char *) ad_rawstr);
 
                 if (!no_redraw)
                 {

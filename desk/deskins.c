@@ -42,6 +42,8 @@
 #include "deskdir.h"
 #include "icons.h"
 
+#include "string.h"
+
 
 
 GLOBAL ICONBLK  gl_aib;
@@ -280,7 +282,7 @@ void insa_icon(LONG tree, WORD obj, WORD nicon, ICONBLK *pic, BYTE *ptext)
 void insa_elev(LONG tree, WORD nicon, WORD numics)
 {
         WORD            y, h, th;
-        LONG            lp;
+        char            *lp;
 
         y = 0;
         th = h = LWGET(OB_HEIGHT(APFSVSLI));  
@@ -308,9 +310,9 @@ void insa_elev(LONG tree, WORD nicon, WORD numics)
              (nicon * sizeof(BYTE *)) );
 #endif
 */
-        lp = (LONG)cfg_icons_txt[nicon];
+        lp = cfg_icons_txt[nicon];
 
-        LSTCPY(ADDR(&gl_lngstr[0]), lp);
+        strcpy(&gl_lngstr[0], lp);
         inf_sset(tree, APFTITLE, &gl_lngstr[0] );
 } /* insa_elev */
 

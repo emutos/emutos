@@ -38,7 +38,7 @@
 #include "desksupp.h"
 #include "deskdir.h"
 
-
+#include "string.h"
 
 
 
@@ -52,7 +52,7 @@ WORD fun_alert(WORD defbut, WORD stnum, WORD pwtemp[])
         rsrc_gaddr(R_STRING, stnum, &G.a_alert);
         if (pwtemp != (WORD *) 0)
         {
-          LSTCPY(ADDR(&G.g_2text[0]), G.a_alert);
+          strcpy(&G.g_2text[0], (char *)G.a_alert);
           merge_str(&G.g_1text[0], &G.g_2text[0], pwtemp);
           G.a_alert = ADDR(&G.g_1text[0]);
         }
@@ -249,8 +249,8 @@ fun_wdst(pspath, pdspec, datype, pdf, dulx, duly, from_disk, src_ob, pdo_both)
         BYTE            *pwname1, *pwname2;
                                                 /* default case: don't  */
         *pdo_both = FALSE;                      /* redraw both windows  */
-                                    		/* set up destination   */
-        					/*   path name          */
+                                                /* set up destination   */
+                                                /*   path name          */
         drv_ltr = 'A';
 /* BugFix       */
         if (G.g_iview == V_TEXT)

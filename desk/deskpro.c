@@ -127,7 +127,7 @@ WORD pro_cmd(BYTE *psubcmd, BYTE *psubtail, WORD exitflag)
         shel_envrn(ADDR(&lp), ADDR("COMSPEC="));
         if (lp)
         {
-          LSTCPY(ADDR(&G.g_cmd[0]), lp);
+          strcpy(&G.g_cmd[0], (char *)lp);
 /* BugFix       */
           if (!exitflag)
           {

@@ -40,6 +40,8 @@
 #include "optimopt.h"
 #include "rectfunc.h"
 
+#include "string.h"
+
 
 #define NM_NAMES (F9NAME-F1NAME+1)
 #define NAME_OFFSET F1NAME
@@ -64,36 +66,10 @@ GLOBAL WORD     gl_fspos;
 
 
 /*
-*       LONG string compare, TRUE == strings the same
-*/
-
-        WORD
-LSTCMP(lst, rst)
-        LONG            lst, rst;
-{
-        WORD            i;
-        BYTE            l;
-
-        i = 0;
-        while ((l = LBGET(lst+i)) != 0)
-        { 
-          if    (l != LBGET(rst+i))
-            return(FALSE);
-          i++;
-        }
-        if (LBGET(rst+i))
-          return(FALSE);
-        return(TRUE);
-}
-
-
-/*
 *       Routine to back off the end of a file string.
 */
-        BYTE
-*fs_back(pstr, pend)
-        REG BYTE        *pstr;
-        REG BYTE        *pend;
+
+static BYTE *fs_back(REG BYTE *pstr, REG BYTE *pend)
 {
                                                 /* back off to last     */
                                                 /*   slash              */
@@ -116,10 +92,8 @@ LSTCMP(lst, rst)
 *       Routine to back up a path and return the pointer to the beginning
 *       of the file specification part
 */
-        BYTE
-*fs_pspec(pstr, pend)
-        REG BYTE        *pstr;
-        REG BYTE        *pend;
+
+static BYTE *fs_pspec(REG BYTE *pstr, REG BYTE *pend)
 {
         pend = fs_back(pstr, pend);
         if (*pend == '\\')
@@ -138,32 +112,39 @@ LSTCMP(lst, rst)
 *       else, just based on name
 */
 
-        WORD
-fs_comp()
+
+static WORD fs_comp(void)
 {
         WORD            chk;
 
-        if ( (gl_tmp1[0] == ' ') &&
-             (gl_tmp2[0] == ' ') )
+        if ( (gl_tmp1[0] == ' ') && (gl_tmp2[0] == ' ') )
         {
-          chk = strchk( scasb(&gl_tmp1[0], '.'), 
-                        scasb(&gl_tmp2[0], '.') );
+          // old implementation:
+          // chk = strchk( scasb(&gl_tmp1[0], '.'), 
+          //               scasb(&gl_tmp2[0], '.') );
+          // 
+          char *t1, *t2;
+
+          t1 = strchr(gl_tmp1, '.');
+          if(t1 == NULL) t1 = "";
+          t2 = strchr(gl_tmp2, '.');
+          if(t2 == NULL) t2 = "";
+
+          chk = strcmp(t1, t2);
           if ( chk )
             return( chk );
         }
-        return ( strchk(&gl_tmp1[0], &gl_tmp2[0]) );
+        return ( strcmp(gl_tmp1, gl_tmp2) );
 }
 
 
-        WORD
-fs_add(thefile, fs_index)
-        WORD            thefile;
-        WORD            fs_index;
+
+static WORD fs_add(WORD thefile, WORD fs_index)
 {
         WORD            len;
 
-        len = LSTCPY(ad_fsnames + (LONG) fs_index, 
-                        ad_fsdta - (LONG) 1);
+        len = strlencpy((char *) ad_fsnames + (LONG) fs_index, 
+                        (char *) ad_fsdta - (LONG) 1);
         D.g_fslist[thefile] = (BYTE *) ((LONG)fs_index);
         fs_index += len + 2;
 
@@ -176,11 +157,8 @@ fs_add(thefile, fs_index)
 *       reading its directory, initializing a file list, and filling
 *       out the information in the path node.  Then sort the files.
 */
-        WORD
-fs_active(ppath, pspec, pcount)
-        LONG            ppath;
-        BYTE            *pspec;
-        WORD            *pcount;
+
+static WORD fs_active(LONG ppath, BYTE *pspec, WORD *pcount)
 {
         WORD            ret, thefile, len;
         WORD            fs_index;
@@ -246,8 +224,8 @@ fs_active(ppath, pspec, pcount)
           {
             for (j = i-gap; j >= 0; j -= gap)
             {
-              LSTCPY(ad_tmp1, ad_fsnames + (LONG) D.g_fslist[j]);
-              LSTCPY(ad_tmp2, ad_fsnames + (LONG) D.g_fslist[j+gap]);
+              strcpy(gl_tmp1, (char *) ad_fsnames + (LONG) D.g_fslist[j]);
+              strcpy(gl_tmp2, (char *) ad_fsnames + (LONG) D.g_fslist[j+gap]);
               if ( fs_comp() <= 0 )
                 break;
               temp = D.g_fslist[j];
@@ -266,9 +244,8 @@ fs_active(ppath, pspec, pcount)
 *       direction, being careful not to overrun or underrun the
 *       tail and heads of the list
 */
-        WORD
-fs_1scroll(curr, count, touchob)
-        REG WORD        curr, count, touchob;
+
+static WORD fs_1scroll(REG WORD curr, REG WORD count, REG WORD touchob)
 {
         REG WORD        newcurr;
 
@@ -286,7 +263,7 @@ fs_1scroll(curr, count, touchob)
 *       based on the current scrolled position, and point at them 
 *       with the sub-tree of G_STRINGs that makes up the window box.
 */
-void fs_format(LONG tree, WORD currtop, WORD count)
+static void fs_format(LONG tree, WORD currtop, WORD count)
 {
         REG WORD        i, cnt;
         REG WORD        y, h, th;
@@ -300,7 +277,7 @@ void fs_format(LONG tree, WORD currtop, WORD count)
         {
           if (i < cnt)
           {
-            LSTCPY(ad_tmp2,  ad_fsnames + (LONG) D.g_fslist[currtop+i]);
+            strcpy(gl_tmp2, (char *)ad_fsnames + (LONG) D.g_fslist[currtop+i]);
             fmt_str(&gl_tmp2[1], &gl_tmp1[1]);
             gl_tmp1[0] = gl_tmp2[0];
           }
@@ -333,7 +310,7 @@ void fs_format(LONG tree, WORD currtop, WORD count)
 *       Routine to select or deselect a file name in the scrollable 
 *       list.
 */
-void fs_sel(WORD sel, WORD state)
+static void fs_sel(WORD sel, WORD state)
 {
         if (sel)
           ob_change(ad_fstree, F1NAME + sel - 1, state, TRUE);
@@ -344,11 +321,12 @@ void fs_sel(WORD sel, WORD state)
 *       Routine to handle scrolling the directory window a certain number
 *       of file names.
 */
-        WORD
-fs_nscroll(tree, psel, curr, count, touchob, n)
-        REG LONG        tree;
-        REG WORD        *psel;
-        WORD            curr, count, touchob, n;
+static WORD fs_nscroll(REG LONG tree, 
+                       REG WORD *psel, 
+                       WORD curr, 
+                       WORD count, 
+                       WORD touchob, 
+                       WORD n)
 {
         REG WORD        i, newcurr, diffcurr;
         WORD            sy, dy, neg;
@@ -406,14 +384,13 @@ fs_nscroll(tree, psel, curr, count, touchob, n)
 *       Routine to call when a new directory has been specified.  This
 *       will activate the directory, format it, and display ir[0].
 */
-        WORD
-fs_newdir(ftitle, fpath, pspec, tree, pcount, pos)
-        LONG            ftitle;
-        LONG            fpath;
-        BYTE            *pspec;
-        LONG            tree;
-        WORD            *pcount;
-        WORD            pos;
+        
+static WORD fs_newdir(LONG ftitle, 
+                      LONG fpath, 
+                      BYTE *pspec, 
+                      LONG tree, 
+                      WORD *pcount, 
+                      WORD pos)
 {
         BYTE            *ptmp;
         WORD            len;
@@ -425,7 +402,7 @@ fs_newdir(ftitle, fpath, pspec, tree, pcount, pos)
         if (pos+ NM_NAMES > *pcount)    /* in case file deleted         */
           pos = max(0, *pcount - NM_NAMES);
         fs_format(tree, pos, *pcount);
-        len = LSTRLEN(ADDR(pspec));
+        len = strlen(pspec);
         len = (len > LEN_FTITLE) ? LEN_FTITLE : len;
         LBSET(ftitle, ' ');
         ftitle++;
@@ -488,14 +465,14 @@ WORD fs_input(LONG pipath, LONG pisel, WORD *pbutton)
         dummy = LLGET(OB_SPEC(FTITLE));
         ad_ftitle = LLGET(dummy);
 
-        LSTCPY(ad_ftitle, ADDR(" *.* "));
+        strcpy((char *) ad_ftitle, " *.* ");
         dummy=LLGET(OB_SPEC(FSDIRECT));
-        if (LSTCMP(pipath, LLGET(dummy)))
-          elevpos = gl_fspos;                   /* same dir as last time */     
+        if (!strcmp((char *)pipath, (char *)LLGET(dummy)))   /* if equal */
+          elevpos = gl_fspos;                   /* same dir as last time */ 
         else                                    
           elevpos = 0;
         fs_sset(tree, FSDIRECT, pipath, &ad_fpath, &temp_len);
-        LSTCPY(ad_tmp1, pisel);
+        strcpy(gl_tmp1, (char *) pisel);
         fmt_str(&gl_tmp1[0], &gl_tmp2[0]);
         fs_sset(tree, FSSELECT, ad_tmp2, &ad_fname, &fname_len);
                                                 /* set clip and start   */
@@ -516,8 +493,8 @@ WORD fs_input(LONG pipath, LONG pisel, WORD *pbutton)
           touchob = (firsttime) ? 0x0 : fm_do(tree, FSSELECT);
           gsx_mxmy(&mx, &my);
         
-          fpath_len = LSTCPY(ad_locstr, ad_fpath);
-          if ( strcmp(&D.g_dir[0], &locstr[0])!=0 )
+          fpath_len = strlencpy(locstr, (char *) ad_fpath);
+          if ( strcmp(&D.g_dir[0], locstr)!=0 )
           {
             fs_sel(sel, NORMAL);
             if ( (touchob == FSOK) ||
@@ -525,7 +502,7 @@ WORD fs_input(LONG pipath, LONG pisel, WORD *pbutton)
               ob_change(tree, touchob, NORMAL, TRUE);
             strcpy(&D.g_dir[0], &locstr[0]);
             pspec = fs_pspec(&D.g_dir[0], &D.g_dir[fpath_len]);     
-/*          LSTCPY(ad_fpath, ADDR(&D.g_dir[0])); */
+/*          strcpy((char *)ad_fpath, &D.g_dir[0]); */
             fs_sset(tree, FSDIRECT, ADDR(&D.g_dir[0]), &ad_fpath, &temp_len);
             pstr = fs_pspec(&locstr[0], &locstr[fpath_len]);        
             strcpy(pstr, "*.*");
@@ -620,7 +597,7 @@ dofelev:        fm_own(TRUE);
                     {
                                                 /* append in folder name*/
                       pstr = fs_pspec(&locstr[0], &locstr[fpath_len]);
-                      strcpy(&gl_tmp2[0], pstr - 1);
+                      strcpy(gl_tmp2, pstr - 1);
                       unfmt_str(&gl_tmp1[1], pstr);
                       strcat(pstr, &gl_tmp2[0]);
                     }
@@ -653,7 +630,7 @@ dofelev:        fm_own(TRUE);
           }
           if (firsttime)
           {
-           /* LSTCPY(ad_fpath, ad_locstr); */
+           /* strcpy(ad_fpath, ad_locstr); */
             fs_sset(tree, FSDIRECT, ad_locstr, &ad_fpath, &temp_len);
             D.g_dir[0] = NULL;
             gl_tmp1[1] = NULL;
@@ -661,7 +638,7 @@ dofelev:        fm_own(TRUE);
           }
           if (newname)
           {
-            LSTCPY(ad_fname, ad_tmp1 + 1);
+            strcpy((char *)ad_fname, gl_tmp1 + 1);
             ob_draw(tree, FSSELECT, MAX_DEPTH);
             if (!cont)
               ob_change(tree, FSOK, SELECTED, TRUE);
@@ -672,10 +649,10 @@ dofelev:        fm_own(TRUE);
         }
                                                 /* return path and      */
                                                 /*   file name to app   */
-        LSTCPY(pipath, ad_fpath);
-        LSTCPY(ad_tmp1, ad_fname);
+        strcpy((char *) pipath, (char *) ad_fpath);
+        strcpy(gl_tmp1, (char *) ad_fname);
         unfmt_str(&gl_tmp1[0], &gl_tmp2[0]);
-        LSTCPY(pisel, ad_tmp2);
+        strcpy((char *) pisel, gl_tmp2);
                                                 /* start the redraw     */
         fm_dial(FMD_FINISH, &gl_rfs);
                                                 /* return exit button   */

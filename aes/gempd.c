@@ -30,7 +30,7 @@
 #include "optimize.h"
 #include "optimopt.h"
 
-
+#include "string.h"
 
 PD *pd_index(WORD i)
 {
@@ -80,7 +80,7 @@ PD *getpd()
 
 void p_nameit(PD *p, BYTE *pname)
 {
-        bfill(8, ' ',  &p->p_name[0]);
+        memset(p->p_name, ' ', 8);
         strscn(pname, &p->p_name[0], '.');
 }
 

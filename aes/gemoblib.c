@@ -32,6 +32,8 @@
 #include "optimopt.h"
 #include "rectfunc.h"
 
+#include "string.h"
+
                                                 /* in GSXBIND.C         */
 #define vsf_color( x )          gsx_1code(S_FILL_COLOR, x)
 
@@ -274,8 +276,8 @@ void  just_draw(LONG tree, WORD obj, WORD sx, WORD sy)
           {
             case G_FTEXT:
             case G_FBOXTEXT:
-                LSTCPY(ad_rawstr, edblk.te_ptext);
-                LSTCPY(ad_tmpstr, edblk.te_ptmplt);
+                strcpy(D.g_rawstr, (char *) edblk.te_ptext);
+                strcpy(D.g_tmpstr, (char *) edblk.te_ptmplt);
                 ob_format(edblk.te_just, &D.g_rawstr[0], &D.g_tmpstr[0], 
                         &D.g_fmtstr[0]);
                                                 /* fall thru to gr_gtext*/

@@ -32,6 +32,8 @@
 #include "geminit.h"
 #include "gemshlib.h"
 
+#include "string.h"
+
 
 #define NUM_SCRAPS      6
 
@@ -60,13 +62,13 @@ WORD sc_clrd(WORD isread)
 #else
         ptype = (LONG) rs_fstr[STSCRAP];
 #endif
-        LSTCPY(ptmp, ptype); 
-        ptype = ptmp + LSTRLEN(ptype);                  /* point just past '.'  */
+        strcpy((char *) ptmp, (char *) ptype); 
+        ptype = ptmp + strlen((char *) ptype);  /* point just past '.'  */
         bitvect = 0;
         dos_sdta(ad_dta);                       /* make sure dta ok     */
         for (ii = 0; ii < NUM_SCRAPS; ii++)
         {
-          LSTCPY(ptype, ADDR(sc_types[ii]));    /* cat on file type     */
+          strcpy((char *) ptype, sc_types[ii]);    /* cat on file type     */
           if (dos_sfirst(ad_scrap, F_SUBDIR))
           {
             if (isread)
@@ -96,8 +98,9 @@ WORD sc_read(LONG pscrap)
 {
         WORD            len;
 
-        len = LSTCPY(pscrap, ad_scrap);         /* current scrap directory */
-        LSTCPY(pscrap+len, ADDR("\\"));         /* cat on backslash     */
+        /* current scrap directory */
+        len = strlencpy((char *) pscrap, (char *) ad_scrap);      
+        strcpy((char *) pscrap+len, "\\");         /* cat on backslash  */
         return( sc_clrd(TRUE) );
 }
 
@@ -115,7 +118,7 @@ WORD sc_write(LONG pscrap)
 {
         WORD            len;
 
-        len = LSTCPY(ad_scrap, pscrap);         /* new scrap directory  */
+        len = strlencpy((char *) ad_scrap, (char *) pscrap);      /* new scrap directory  */
         if (LBGET(ad_scrap + --len) == '\\')    /* remove backslash     */
           LBSET(ad_scrap + len, '\0');
         dos_sdta(ad_dta);                       /* use our dta          */

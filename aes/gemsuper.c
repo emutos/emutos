@@ -44,6 +44,8 @@
 #include "gemdosif.h"
 #include "gemasm.h"
 
+#include "string.h"
+
 
 #define CONTROL LLGET(pcrys_blk)
 #define GGLOBAL LLGET(pcrys_blk+4)
@@ -193,9 +195,11 @@ if ((MB_MASK == 3) && (MB_STATE == 1))
           case MENU_TEXT:
                 tree = MM_ITREE;
                 if (LHIWD(tree))
-                  LSTCPY(LLGET(OB_SPEC(ITEM_NUM)), MM_PTEXT);   
+                  strcpy((char *)LLGET(OB_SPEC(ITEM_NUM)), 
+                         (char *)MM_PTEXT);   
                 else
-                  LSTCPY(desk_acc[ gl_mnpds[ LLOWD(tree) ] ], MM_PTEXT);
+                  strcpy((char *)desk_acc[ gl_mnpds[ LLOWD(tree) ] ], 
+                         (char *)MM_PTEXT);
                 break;
           case MENU_REGISTER:
                 ret = mn_register(MM_PID, MM_PSTR);

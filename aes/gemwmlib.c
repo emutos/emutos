@@ -46,6 +46,7 @@
 #include "optimize.h"
 #include "gemwmlib.h"
 
+#include "string.h"
 
 #define DESKWH  0x0
 
@@ -1367,7 +1368,7 @@ void wm_start()
         or_start();
                                                 /* init window extent   */
                                                 /*   objects            */
-        bfill(NUM_MWIN * sizeof(OBJECT), 0, &W_TREE[ROOT]);
+        memset(&W_TREE[ROOT], 0, NUM_MWIN * sizeof(OBJECT));
         w_nilit(NUM_MWIN, &W_TREE[ROOT]);
         for(i=0; i<NUM_MWIN; i++)
         {
@@ -1383,7 +1384,7 @@ void wm_start()
         W_TREE[ROOT].ob_spec = LLGET(OB_SPEC(ROOT));
                                                 /* init window element  */
                                                 /*   objects            */
-        bfill(NUM_ELEM * sizeof(OBJECT), 0, &W_ACTIVE[ROOT]);
+        memset(&W_ACTIVE[ROOT], 0, NUM_ELEM * sizeof(OBJECT));
         w_nilit(NUM_ELEM, &W_ACTIVE[0]);
         for(i=0; i<NUM_ELEM; i++)
         {

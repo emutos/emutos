@@ -55,6 +55,7 @@
 #include "optimize.h"
 #include "optimopt.h"
 
+#include "string.h"
 
 /*
 *       In an effort to save bytes, the initialization code in this module
@@ -866,7 +867,7 @@ void gem_main()
           }
           rlr->p_qaddr = ADDR(&rlr->p_queue[0]);
           rlr->p_qindex = 0;
-          bfill(8, ' ', &rlr->p_name[0]);
+          memset(rlr->p_name, ' ', 8);
                                                 /* if not rlr then      */
                                                 /*   initialize his     */
                                                 /*   stack pointer      */

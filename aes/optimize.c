@@ -27,6 +27,7 @@
 #include "rectfunc.h"
 #include "optimopt.h"
 
+#include "string.h"
 
 GLOBAL BYTE     gl_rsname[16];
 
@@ -218,7 +219,7 @@ void fs_sget(LONG tree, WORD obj, LONG pstr)
 
         ptext=LLGET(OB_SPEC(obj));  /*!!!*/
         ptext = LLGET( ptext );
-        LSTCPY(pstr, ptext);
+        strcpy((char *)pstr, (char *)ptext);
 }
 
 
@@ -460,7 +461,7 @@ BYTE *op_gname(WORD index)
         LONG    pname;
 /* define R_STRING 5    */
         rs_gaddr(ad_sysglo, 5, index, &pname);
-        LSTCPY(ADDR(&gl_rsname[0]), pname);
+        strcpy(&gl_rsname[0], (char *)pname);
         return(&gl_rsname[0]);
 }
 #endif

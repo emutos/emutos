@@ -43,6 +43,8 @@
 #include "optimopt.h"
 #include "kprint.h"     // just for debugging
 
+#include "string.h"
+
 
 #if MULTIAPP
 EXTERN PD       *desk_ppd[];
@@ -227,10 +229,11 @@ void sh_fixtail(WORD iscpm)
         else
         {
                                                 /* zero the fcbs        */
-          bfill(32, 0, &s_fcbs[0]);
-          bfill(11, ' ',  &s_fcbs[1]);
-          bfill(11, ' ',  &s_fcbs[17]);
-                                                /* parse the fcbs       */
+          memset(s_fcbs, 0, 32);
+          memset(&s_fcbs[1], ' ', 11);
+          memset(&s_fcbs[17], ' ', 11);
+
+                                      /* parse the fcbs       */
           if ( s_tail[0] )
           {
             s_tail[ 1 + s_tail[0] ] = NULL;
@@ -435,10 +438,10 @@ void sh_envrn(LONG ppath, LONG psrch)
         BYTE            last, tmp, loc1[10], loc2[10];
 
 
-        len = LSTCPY(ADDR(&loc2[0]), psrch);
+        len = strlencpy(loc2, (char *)psrch);
         len--;
 
-        ad_loc1 = ADDR(&loc1[0]);
+        ad_loc1 = ADDR(loc1);
         loc1[len] = NULL;
 
         lp = ad_envrn;
@@ -533,7 +536,7 @@ WORD sh_path(WORD whichone, LONG dp, BYTE *pname)
              (last != ':') )
           LBSET(dp++, '\\');
                                                 /* append file name     */
-        LSTCPY(dp, ADDR(pname));
+        strcpy((char *) dp, pname);
                                                 /* make whichone refer  */
                                                 /*   to next path       */
         return(whichone+1);
@@ -552,12 +555,12 @@ WORD sh_find(LONG pspec)
 
         dos_sdta(ad_dta);
 
-        LSTCPY(ad_path, pspec);                 /* copy to local buffer */
+        strcpy((char *) ad_path, (char *) pspec);  /* copy to local buffer */
         pname = sh_name(&D.g_dir[0]);           /* get ptr to name      */
         gotdir = (pname != &D.g_dir[0]);
         if (!gotdir)
         {
-          strcpy(&tmpname[0], pname);           /* save name            */
+          strcpy(tmpname, pname);           /* save name            */
           sh_curdir(ad_path);                   /* get current drive/dir*/
           if (D.g_dir[3] != NULL)               /* if not at root       */
             strcat(&D.g_dir[0], "\\");          /*  add foreslash       */
@@ -584,7 +587,7 @@ WORD sh_find(LONG pspec)
         } while ( !gotdir && DOS_ERR && path );
 
         if (!DOS_ERR)
-          LSTCPY(pspec, ad_path);
+          strcpy((char *) pspec, (char *) ad_path);
 
         return(!DOS_ERR);
 }
@@ -602,8 +605,8 @@ void sh_rdef(LONG lpcmd, LONG lpdir)
 
         psh = &sh[rlr->p_pid];
 
-        LSTCPY(lpcmd, ADDR(&psh->sh_desk[0]));
-        LSTCPY(lpdir, ADDR(&psh->sh_cdir[0]));
+        strcpy((char *)lpcmd, &psh->sh_desk[0]);
+        strcpy((char *)lpdir, &psh->sh_cdir[0]);
 }
 
 
@@ -617,8 +620,8 @@ void sh_wdef(LONG lpcmd, LONG lpdir)
 
         psh = &sh[rlr->p_pid];
 
-        LSTCPY(ADDR(&psh->sh_desk[0]), lpcmd);
-        LSTCPY(ADDR(&psh->sh_cdir[0]), lpdir);
+        strcpy(&psh->sh_desk[0], (char *) lpcmd);
+        strcpy(&psh->sh_cdir[0], (char *) lpdir);
 }
 
 
@@ -736,7 +739,8 @@ void sh_ldapp()  /* for MULTIAPP */
                 
         psh = &sh[rlr->p_pid];
 #if GEMDOS
-        strcpy(sh_apdir, ad_scdir);             /* initialize sh_apdir  */
+        /* initialize sh_apdir */
+        strcpy((char *) sh_apdir, (char *) ad_scdir); 
 #endif
 
         strcpy(&psh->sh_desk[0], rs_str(STDESKTP));

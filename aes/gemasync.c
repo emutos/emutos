@@ -29,6 +29,7 @@
 #include "optimopt.h"
 #include "gemasm.h"
 
+#include "string.h"
 
 
 void signal(EVB *e)
@@ -132,7 +133,7 @@ EVSPEC iasync(WORD afunc, LONG aparm)
         if ((e = eul) != 0)
         {
           eul = eul->e_nextp;
-          bfill(sizeof(EVB), 0, e);
+          memset(e, 0, sizeof(EVB));
         }
                                                 /* put in on list       */
         e->e_nextp = rlr->p_evlist;

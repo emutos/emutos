@@ -37,6 +37,8 @@
 #include "gempd.h"
 #include "rectfunc.h"
 
+#include "string.h"
+
 
 GLOBAL LONG     gl_mntree;
 GLOBAL PD       *gl_mnppd;
@@ -634,10 +636,10 @@ WORD mn_register(WORD pid, LONG pstr)
             LBSET(pdest, '*');
             pdest += 1;
           }
-          len = LSTCPY(pdest, pstr);
+          len = strlencpy((char *) pdest, (char *) pstr);
 #endif
 #if SINGLAPP
-          len = LSTCPY(desk_acc[openda], pstr);
+          len = strlencpy((char *) desk_acc[openda], (char *) pstr);
 #endif
           ptmp = desk_str[openda] + len + 1;
           while( *ptmp == ' ' )

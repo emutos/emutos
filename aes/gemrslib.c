@@ -31,6 +31,8 @@
 #include "gemgraf.h"
 #include "geminit.h"
 
+#include "string.h"
+
 
 #define NUM_OBS LWGET(rs_hdr + 2*R_NOBS)
 #define NUM_TREE LWGET(rs_hdr + 2*R_NTREE)
@@ -402,7 +404,7 @@ WORD rs_readit(LONG pglobal, LONG rsfname)
         WORD    ibcnt;
         UWORD   rslsize, fd, ret;
                                                 /* make sure its there  */
-        LSTCPY(ad_scmd, rsfname);
+        strcpy((char *) ad_scmd, (char *) rsfname);
         if ( !sh_find(ad_scmd) )
         {
           return(FALSE);
@@ -490,7 +492,7 @@ BYTE *rs_str(UWORD stnum)
 #else
         ad_string = (LONG) rs_fstr[stnum];
 #endif
-        LSTCPY(ad_g1loc, ad_string);
+        strcpy(D.g_loc1, (char *) ad_string);
         return( &D.g_loc1[0] );
 }
 

@@ -38,6 +38,7 @@
 #include "gemsclib.h"
 #include "gemrslib.h"
 
+#include "string.h"
 
 #define TCHNG 0
 #define BCHNG 1
@@ -124,7 +125,7 @@ WORD ap_find(LONG pname)
         REG PD          *p;
         BYTE            temp[9];
 
-        LSTCPY(ADDR(&temp[0]), pname);
+        strcpy(temp, (char *)pname);
  
         p = fpdnm(&temp[0], 0x0);
         return( ((p) ? (p->p_pid) : (-1)) );

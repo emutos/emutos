@@ -23,6 +23,8 @@
 
 #include "aesbind.h"
 
+#include "string.h"
+
 
 #define R_STRING 5
 
@@ -35,7 +37,7 @@ BYTE *ini_str(WORD stnum)
         LONG            lstr;
 
         rsrc_gaddr(R_STRING, stnum, &lstr);
-        LSTCPY(ADDR(&gl_lngstr[0]), lstr);
+        strcpy(gl_lngstr, (char *)lstr);
 
         return(&gl_lngstr[0]);
 }

@@ -34,6 +34,7 @@
 #include "deskrsrc.h"
 #include "deskglob.h"
 
+#include "string.h"
 
 GLOBAL FNODE    *ml_pfndx[NUM_FNODES];
 
@@ -355,14 +356,14 @@ static WORD pn_fcomp(FNODE *pf1, FNODE *pf2, WORD which)
                   return(1);
                 if (pf2->f_size < pf1->f_size)
                   return(-1);
-                return( strchk(ps1, ps2) );
+                return( strcmp(ps1, ps2) );
           case S_TYPE:
-                chk = strchk(scasb(ps1, '.'), scasb(ps2, '.'));
+                chk = strcmp(scasb(ps1, '.'), scasb(ps2, '.'));
                 if (chk)
                   return(chk);
                                                         /* == falls thru*/
           case S_NAME:
-                return( strchk(ps1, ps2) );
+                return( strcmp(ps1, ps2) );
           case S_DATE:
                 chk = pf2->f_date - pf1->f_date;
                 if (chk)
