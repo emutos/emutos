@@ -13,9 +13,9 @@
 
 /* Global declarations */
 
-        .globl  _DINIT_G
+        .globl  _gfx_init
+        .globl  _gfx_exit
         .globl  _vex_timv
-        .globl  _INIT_G
 
         .globl  scrn_clip
         .globl  escfn2          // enter graphics mode
@@ -45,14 +45,14 @@
 
 
 /*
- * _INIT_G - INITIALIZE GRAPHICS 
+ * _gfx_init - Initialize graphics subsystem
  *
  * entry:          none
  * exit:           none
  * destroys:       see _v_clrwk
  */
 
-_INIT_G:
+_gfx_init:
         clr.b   in_proc                 // no vblanks in process
 
         move.l  #just_rts,_tim_addr     // Tick points to rts
@@ -77,14 +77,14 @@ _INIT_G:
 
 
 /*
- * _DINIT_G - deinitialize graphics
+ * _gfx_exit - deinitialize graphics subsystem
  *
  * entry:          none
  * exit:           none
  * destroys:       see _v_clrwk
  */
 
-_DINIT_G:
+_gfx_exit:
         move.l  _tim_chain, -(sp)       // restore old timer int vector
         move.w  #0x100, -(sp)           // etv_timer
         move.w  #5, -(sp)               // call setexc via

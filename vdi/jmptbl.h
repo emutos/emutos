@@ -24,7 +24,7 @@ extern void v_opnwk();          /* 1   - fcb53e */
 extern void v_clswk();          /* 2   - fcb812 */
 extern void v_clrwk();          /* 3   - fca4e8 */
 extern void v_updwk();          /* 4   - fca4e6 */
-extern void CHK_ESC();          /* 5   - fc412e */
+extern void chk_esc();          /* 5   - fc412e */
 
 extern void v_pline();          /* 6   - fcb85a */
 extern void v_pmarker();        /* 7   - fcb8f4 */
@@ -80,9 +80,9 @@ extern void dst_style();        /* 106 - fce278 */
 extern void dst_point();        /* 107 - fce132 */
 extern void vsl_ends();         /* 108 - fcabca */
 extern void dro_cpyfm();        /* 109 - fcb454 */
-extern void TRAN_FM();          /* 110 - fd1960 */
+extern void tran_fm();         /* 110 - fd1960 */
 
-extern void XFM_CRFM();         /* 111 - fd0770 */
+extern void vro_cpyfm();        /* 111 - fd0770 */
 extern void dsf_udpat();        /* 112 - fcd5c0 */
 extern void vsl_udsty();        /* 113 - fcb34c */
 extern void dr_recfl();         /* 114 - fcb4be */
@@ -90,7 +90,7 @@ extern void vqi_mode();         /* 115 - fcb2a0 */
 
 extern void dqt_extent();       /* 116 - fce4f0 */
 extern void dqt_width();        /* 117 - fce6b6 */
-extern void EX_TIMV();          /* 118 - fca530 */
+extern void vex_timv();         /* 118 - fca530 */
 extern void dt_loadfont();      /* 119 - fcebcc */
 extern void dt_unloadfont();    /* 120 - fcec60 */
 

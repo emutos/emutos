@@ -113,7 +113,7 @@ void v_clswk()
         } while ((cur_work = next_work));
     }
 
-    DINIT_G();
+    gfx_exit();
 }
 
 /* POLYLINE: */

@@ -16,51 +16,50 @@
 #include    "jmptbl.h"
 
 void (*jmptb1[])() = {
-    v_opnwk,
-    v_clswk,
-    v_clrwk,
-    v_nop,
-    CHK_ESC,
-    v_pline,
-    v_pmarker,
-    d_gtext,
-    v_fillarea,
-    v_cellarray,
-    v_gdp,
-    dst_height,
-    dst_rotation,
-    vs_color,
-    vsl_type,
-    vsl_width,
-    vsl_color,
-    vsm_type,
-    vsm_height,
-    vsm_color,
-    dst_font,
-    dst_color,
-    vsf_interior,
-    vsf_style,
-    vsf_color,
-    vq_color,
-    vq_cellarray,
-    v_locator,
-    v_valuator,
-    v_choice,
-    v_string,
-    vswr_mode,
-    vsin_mode,
-    v_nop,
-    vql_attr,
-    vqm_attr,
-    vqf_attr,
-    dqt_attributes,
-    dst_alignment
+    v_opnwk,            /*   1 */
+    v_clswk,            /*   2 */
+    v_clrwk,            /*   3 */
+    v_nop,              /*   4 - v_updwk not yet implemented */
+    chk_esc,            /*   5 - each escape function has it's own call */
+    v_pline,            /*   6 */
+    v_pmarker,          /*   7 */
+    d_gtext,            /*   8 */
+    v_fillarea,         /*   9 */
+    v_cellarray,        /*  10 */
+    v_gdp,              /*  11 */
+    dst_height,         /*  12 */
+    dst_rotation,       /*  13 */
+    vs_color,           /*  14 */
+    vsl_type,           /*  15 */
+    vsl_width,          /*  16 */
+    vsl_color,          /*  17 */
+    vsm_type,           /*  18 */
+    vsm_height,         /*  19 */
+    vsm_color,          /*  20 */
+    dst_font,           /*  21 */
+    dst_color,          /*  22 */
+    vsf_interior,       /*  23 */
+    vsf_style,          /*  24 */
+    vsf_color,          /*  25 */
+    vq_color,           /*  26 */
+    vq_cellarray,       /*  27 */
+    v_locator,          /*  28 */
+    v_valuator,         /*  29 */
+    v_choice,           /*  30 */
+    v_string,           /*  31 */
+    vswr_mode,          /*  32 */
+    vsin_mode,          /*  33 */
+    v_nop,              /*  34 */
+    vql_attr,           /*  35 */
+    vqm_attr,           /*  36 */
+    vqf_attr,           /*  37 */
+    dqt_attributes,     /*  38 */
+    dst_alignment       /*  39 */
 };
 
 void(*jmptb2[])() = {
     d_opnvwk,
     d_clsvwk,
-
     vq_extnd,
     d_contourfill,
     vsf_perimeter,
@@ -69,8 +68,8 @@ void(*jmptb2[])() = {
     dst_point,
     vsl_ends,
     dro_cpyfm,
-    TRAN_FM,
-    XFM_CRFM,
+    tran_fm,
+    xfm_crfm,
     dsf_udpat,
     vsl_udsty,
     dr_recfl,

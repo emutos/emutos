@@ -35,7 +35,7 @@
 
         /* External routines used here */
         .xdef   _DEV_TAB        // address of device table
-        .xdef   _XFM_CRFM
+        .xdef   _xfm_crfm
         .xdef   vb_draw
 
         /* External variables used here */
@@ -82,7 +82,7 @@ vdimouse_init:
         /* Move in the default mouse form (presently the arrow) */
         move.l  _INTIN, -(sp)           // Save the intin pointer and make
         move.l  #arrow_cdb, _INTIN      // it point to the arrow
-        bsr     _XFM_CRFM               // transform mouse
+        bsr     _xfm_crfm               // transform mouse
         move.l  (sp)+, _INTIN           // restore INTIN pointer
 
         clr.l   d0

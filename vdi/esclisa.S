@@ -13,7 +13,7 @@
 #include "vdiconf.h"
 
         .text
-        .globl  _CHK_ESC
+        .globl  _chk_esc
         .globl  escfn2
         .globl  escfn3
 
@@ -70,27 +70,24 @@ pcx:            .dc.b    0
                 .dc.b    null
 
 
-        .page
         .text
-/***************************************************************************/
-//                                                                            //
-//      _CHK_ESC:                                                             //
-//              This routine decodes the escape functions.                    //
-//                                                                            //
-//              input:  CONTRL[5] = escape function ID.                       //
-//                      CONTRL[6] = device handle.                            //
-//                      INTIN[]   = array of input parameters.                //
-//                                                                            //
-//              output: CONTRL[2] = number of output vertices.                //
-//                      CONTRL[4] = number of output parameters.              //
-//                      INTOUT[]  = array of output parameters.               //
-//                      PTSOUT[]  = array of output vertices.                 //
-//                                                                            //
-//              destroys: everything.                                         //
-//                                                                            //
-/***************************************************************************/
+        
+/*
+ * _chk_esc -  This routine decodes the escape functions.
+ *
+ * input:  CONTRL[5] = escape function ID.
+ *         CONTRL[6] = device handle.
+ *         INTIN[]   = array of input parameters.
+ *
+ * output: CONTRL[2] = number of output vertices.
+ *         CONTRL[4] = number of output parameters.
+ *         INTOUT[]  = array of output parameters.
+ *         PTSOUT[]  = array of output vertices.
+ *
+ * destroys: everything.
+ */
 
-_CHK_ESC:
+_chk_esc:
         movea.l _CONTRL,a0      // get address of CONTRL array
         move.w  10(a0),d0       // get the escape function id
         cmp.w   #ldri_escape,d0 // is it too large?

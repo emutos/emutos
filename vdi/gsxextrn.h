@@ -117,7 +117,7 @@ extern void _ABLINE();
 #define ABLINE()  regsafe_call(_ABLINE)
 
 extern void v_clrwk(void);
-extern void CHK_ESC(), INIT_G(), DINIT_G();
+extern void chk_esc(), gfx_init(), gfx_exit();
 extern void CLC_FLIT();
 extern WORD CLC_DDA(WORD top, WORD height);
 extern WORD ACT_SIZ(WORD top);
@@ -127,7 +127,7 @@ extern WORD SMUL_DIV();
 
 extern void DIS_CUR();
 extern void HIDE_CUR(), TEXT_BLT();
-extern void XFM_CRFM(), XFM_UNDL(), COPY_RFM(), RECTFILL();
+extern void xfm_crfm(), XFM_UNDL(), COPY_RFM(), RECTFILL();
 extern void vex_butv(), vex_motv(), vex_curv(), vex_timv();
 
 extern WORD GSHIFT_S();

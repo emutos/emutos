@@ -20,9 +20,10 @@
 
 /* Locally Defined Constants and Variables */
 
+        .globl  _xfm_crfm       // set mouse form
+
         .globl  _DIS_CUR        // display cursor routine
         .globl  _HIDE_CUR       // hide cursor routine
-        .globl  _XFM_CRFM       // set mouse form
         .globl  vb_draw         // vertical blank mouse draw routine
         .globl  arrow_cdb       // default mouse definition
 
@@ -742,24 +743,22 @@ hid_cur1:
 
 
 /*
- *    dis_cur
+ * dis_cur - Displays the mouse cursor if the number of hide 
+ *           operations has gone back to 0.
  *
- *      This routine displays the mouse cursor if the number of
- *      hide operations has gone back to 0.
+ *   Inputs:         None
  *
- *      Inputs:         None
+ *   Outputs:
+ *      hide_cnt = hide_cnt - 1
+ *      draw_flag = 0
  *
- *      Outputs:
- *         hide_cnt = hide_cnt - 1
- *         draw_flag = 0
- *
- *      Registers Modified:     d0, d1
+ *   Registers Modified:     d0, d1
  */
 
 /*
- *      Decrement the counter for the number of hide operations performed.
- *      If this is not the last one then do nothing because the cursor
- *      should remain hidden.
+ *  Decrement the counter for the number of hide operations performed.
+ *  If this is not the last one then do nothing because the cursor
+ *  should remain hidden.
  */
 _DIS_CUR:
         add.b   #1,_mouse_flag  // disable mouse redrawing
@@ -785,30 +784,27 @@ dis_cur1:
 
 
 /*
- *      xfm_crfm
+ * xfm_crfm - Transforms user defined cursor to device specific format.
  *
- *      This routine transforms a user defined cursor to device
- *      specific format.
+ *  Inputs:
+ *     intin[0] - x coordinate of hot spot
+ *     intin[1] - y coordinate of hot spot
+ *     intin[2] - reserved for future use. must be 1
+ *     intin[3] - Mask color index
+ *     intin[4] - Data color index
+ *     intin[5-20]  - 16 words of cursor mask
+ *     intin[21-36] - 16 words of cursor data
  *
- *      Inputs:
- *         intin[0] - x coordinate of hot spot
- *         intin[1] - y coordinate of hot spot
- *         intin[2] - reserved for future use. must be 1
- *         intin[3] - Mask color index
- *         intin[4] - Data color index
- *         intin[5-20]  - 16 words of cursor mask
- *         intin[21-36] - 16 words of cursor data
+ *  Outputs:        None
  *
- *      Outputs:        None
- *
- *      Registers Modified:   d0, a0-a3
+ *  Registers Modified:   d0, a0-a3
  */
 
 /*
- *      Get the new values for the x and y-coordinates of the mouse hot
- *      spot and the new color indices for the mouse mask and data.
+ *  Get the new values for the x and y-coordinates of the mouse hot
+ *  spot and the new color indices for the mouse mask and data.
  */
-_XFM_CRFM:
+_xfm_crfm:
         movem.l a2-a3,-(sp)
         add.b   #1,_mouse_flag  // disable updates while redefining cursor
         move.l  _INTIN,a0       // get address of new cursor definition block

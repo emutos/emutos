@@ -21,7 +21,7 @@
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
 //                                                                      //
-//      TRANSFORM FORM                                                  //
+// xfm_crfm - TRANSFORM FORM                                            //
 //                                                                      //
 //              This function transforms a raster area from standard    //
 //      format to device-specific format or from device-specific to     //
@@ -72,18 +72,18 @@
 //  Global Declarations //
 //////////////////////////
 
-                .globl  _TRAN_FM        //TRANSFORFM FORM entry point
+        .globl  _tran_fm       //TRANSFORFM FORM entry point
 
 //////////////////////////
 //  Global references   //
 //////////////////////////
 
-                .globl  _CONTRL         //CONTRL array address
-                .globl  _v_bas_ad       //address of first plane of video screen
-                .globl  _v_lin_wr       //# of words in a screen raster line
-                .globl  _v_planes       //number of video screen planes
-                .globl  _DEV_TAB        //DEVICE TABLE[1] = y resolution - 1    
-                .text
+        .globl  _CONTRL         //CONTRL array address
+        .globl  _v_bas_ad       //address of first plane of video screen
+        .globl  _v_lin_wr       //# of words in a screen raster line
+        .globl  _v_planes       //number of video screen planes
+        .globl  _DEV_TAB        //DEVICE TABLE[1] = y resolution - 1    
+        .text
 
 /////////////////////////////////////////////////////////////////////////
 //  Registers used  -  D0/D7, A0/A3                                     //
@@ -92,7 +92,7 @@
 //
 //  Get source and destination MFDB pointers from the user CONTROL array
 //
-_TRAN_FM:
+_tran_fm:
         movem.l d2-d7/a2-a3,-(sp)       //save 'C' registers
         movea.l _CONTRL,a0              //get CONTROL array address
         move.l  C_S_MFDB(a0),d0         //get source MFDB address

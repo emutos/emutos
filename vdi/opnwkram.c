@@ -86,5 +86,5 @@ void v_opnwk()
     GCURX = DEV_TAB[0] / 2;     /* initialize the mouse to center */
     GCURY = DEV_TAB[1] / 2;
 
-    INIT_G();                   /* go into graphics mode */
+    gfx_init();                 /* go into graphics mode */
 }
