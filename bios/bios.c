@@ -85,15 +85,13 @@ extern void emucon(void);       /* found in cli/coma.S - start of CLI */
 
 /*==== Declarations =======================================================*/
 
-/* is_ramtos = 1 if the TOS is running in RAM (detected by looking
- * at os_entry).
- */
-int is_ramtos;
-
 /* Drive specific declarations */
 static WORD defdrv ;            /* default drive number (0 = a:, 2 = c:) */
 
 BYTE env[256];                  /* environment string, enough bytes??? */
+
+int is_ramtos;           /* 1 if the TOS is running in RAM */
+
 
 
 /*==== BOOT ===============================================================*/
@@ -106,40 +104,21 @@ BYTE env[256];                  /* environment string, enough bytes??? */
 void startup(void)
 {
     WORD i;
-    LONG a;
 
 #if DBGBIOS
     kprintf("beginning of BIOS startup\n");
 #endif
-    snd_init();     /* Reset Soundchip, deselect floppies */
-    screen_init();  /* detect monitor type, ... */
 
-    /* detect if TOS in RAM */
-    a = ((LONG) os_entry) & 0xffffff;
-    if( a == 0xe00000L || a == 0xfc0000L ) {
-        is_ramtos = 0;
-    } else {
-        is_ramtos = 1;
-    }
+    processor_init();  /* Set CPU type, VEC_ILLEGAL, longframe and FPU type */
+    cookie_init();     /* sets a cookie jar */
+    machine_init();    /* detect hardware features and fill the cookie jar */
 
-#if DBGBIOS
-    kprintf("_etext = 0x%08lx\n", (LONG)_etext);
-    kprintf("_edata = 0x%08lx\n", (LONG)_edata);
-    kprintf("end    = 0x%08lx\n", (LONG)end);
-#endif
-    if(is_ramtos) {
-        /* patch TOS header */
-        os_end = (LONG) _edata;
-    }
-
-    exec_os = &emucon;            // set start of console program
-
-    /* initialize BIOS memory management */
-    bmem_init();      
+    /* First cut memory for screen, rest goes in memory descriptor */
+    screen_init();  		/* detect monitor type, ... */
+    bmem_init();                /* initialize BIOS memory management */
 
     /* setup default exception vectors */
     init_exc_vec();
-
     init_user_vec();
 
     /* initialise some vectors */
@@ -153,10 +132,8 @@ void startup(void)
      * a vector was already setup by init_exc_vec().
      */
 
-    processor_init();  /* Set CPU type, VEC_ILLEGAL, longframe and FPU type */
-    cookie_init();     /* sets a cookie jar */
-    machine_init();    /* detect hardware features and fill the cookie jar */
-    init_acia_vecs();
+    snd_init();     		/* Reset Soundchip, deselect floppies */
+    init_acia_vecs();           /* Init ACIAs and their vecs */
 
     VEC_DIVNULL = just_rte;
 
@@ -196,14 +173,13 @@ void startup(void)
     clock_init();       /* init clock */
     nls_init();         /* init native language support */
     nls_set_lang(get_lang_name());
-  
-    /* initialize BDOS buffer list */
+    
 
-    bufl_init();
+    bufl_init();                /* initialize BDOS buffer list */
 
-    /* initialize BDOS */
+    exec_os = &emucon;          /* set start of console program */
 
-    osinit();
+    osinit();                   /* initialize BDOS */
   
     set_sr(0x2300);
   
@@ -216,7 +192,7 @@ void startup(void)
 
     cartscan(3);
 
-    font_init();        /* Init font related line-a variables */
+    font_init(); 		/* Init font related line-a variables */
 
     /* main BIOS */
     biosmain();

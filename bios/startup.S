@@ -12,8 +12,12 @@
  *
  */
 
+
+
 #include "asmdefs.h"
 #include "header.h"
+
+
 
 // ==== Defines ==============================================================
 
@@ -67,9 +71,6 @@
         .xdef   resvector     
         .xdef   _timer_ms     
 
-        .xdef   palmode       
-        .xdef   defshiftmod   
-        .xdef   sshiftmod      
         .xdef   _v_bas_ad     
         .xdef   vblsem        
         .xdef   nvbls          
@@ -97,8 +98,6 @@
 
 // ==== Overall memory map ===================================================
 
-        .xdef   bssstrt       // address 0
-        .xdef   bssstart      // end of documented low memory tosvars
         .xdef   _end          // end of bss + comm sections (ld generated)
 
         .xdef   _os_entry     // start of text section
@@ -131,8 +130,6 @@ aexecsave:      dc.l    1       // save zone for autoexec
 // ===========================================================================
 
         .text
-
-
 
 
 /*
@@ -204,7 +201,9 @@ _main:                         // stunt to guarantee entry into supervisor mode
 nodiag:
 
 
-// ==== Set up a supervisor stack ============================================
+/*
+ * Set up a supervisor stack 
+ */
 
         lea     _stktop, sp             // Setup Supervisor Stack
 
@@ -609,7 +608,7 @@ biosxbios:
         move.w  d0,-(a1)        // and save in save_area
         move.l  (sp)+,-(a1)     // save return address
 
-        tst.w   _longframe      // Check _longframe sysvariable one day...
+        tst.w   _longframe      // Check processor type
         beq.s   bx_nolongframe  // ...when we support CPU >=68000
         move.w  (sp)+,-(a1)
 

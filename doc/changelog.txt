@@ -581,4 +581,5 @@ Start... early ages
 - cleaned up bios/biosmem.c:bmem_init, removed old _b_mdx from startup.S (MAD)
 - put diskbuf from startup.S to floppy.c, made dskbufp a pointer (MAD)
 - put parallel and serial output funcs from asm to chardev.c (MAD)
-
+- put cpu_init(), cooki_init() and machine_init() to the beginning of the 
+  C-startup procedure of bios.c (MAD)

@@ -16,11 +16,15 @@
 #include "kprint.h"
 #include "tosvars.h"
 
+#define DBG_MEM 0
 
 
 extern MD themd;            /* BIOS memory descriptor (from tosvars.S) */
 
 static int bmem_allowed;
+
+extern int is_ramtos;           /* 1 if the TOS is running in RAM */
+
 
 
 /*
@@ -28,10 +32,31 @@ static int bmem_allowed;
  */
 void bmem_init(void)
 {
+    LONG a;
+
+    /* detect by looking at os_entry, if TOS in RAM */
+    a = ((LONG) os_entry) & 0xffffff;
+    if( a == 0xe00000L || a == 0xfc0000L ) {
+        is_ramtos = 0;
+    } else {
+        is_ramtos = 1;
+    }
+
+#if DBG_MEM
+    kprintf("_etext = 0x%08lx\n", (LONG)_etext);
+    kprintf("_edata = 0x%08lx\n", (LONG)_edata);
+    kprintf("end    = 0x%08lx\n", (LONG)end);
+#endif
+    if(is_ramtos) {
+        /* patch TOS header */
+        os_end = (LONG) _edata;
+    }
+
+
     /* initialise some memory variables */
     end_os = os_end;
     membot = end_os;
-    memtop = v_bas_ad;
+    memtop = (long) v_bas_ad;
 
     /* Fill out the first memory descriptor */
     themd.m_link = (MD*) 0;     /* no next memory descriptor */
