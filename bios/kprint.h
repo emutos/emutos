@@ -21,6 +21,13 @@
 #define PRINTF_STYLE
 #endif
 
+/* LVL - A handy macro used when debugging */
+#ifdef __GNUC__
+#define HERE kprintf("HERE %s:%s:%d\n", __FILE__, __FUNCTION__, __LINE__);
+#else
+#define HERE kprintf("HERE %s:%d\n", __FILE__, __LINE__);
+#endif
+
 /* console output */
 extern int cprintf(const char *fmt, ...) PRINTF_STYLE;
 
