@@ -127,6 +127,7 @@
         .global midiibuflo
         .global midiibufhi
 
+        .global kbdvec
         .global _kbdvecs
         .global midivec
         .global vkbderr
@@ -315,6 +316,7 @@ midiibufhi:     ds.w    1
 // in packets from IKBD (shown by A0 und 4(sp))
 // (see aciavecs.S)
         .org 0xdcc
+kbdvec:         ds.l    1       // must be right before _kbdvecs
 _kbdvecs:       
 midivec:        ds.l    1       // MIDI input
 vkbderr:        ds.l    1       // keyboard error

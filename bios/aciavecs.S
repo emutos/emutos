@@ -15,6 +15,7 @@
 // Kbdvbase() returns a pointer to a system structure KBDVECS which 
 // is defined as follows: 
 //
+// void (*kbdvec)( UBYTE data );     /* KBD Input, TOS >= 2.0 */
 // typedef struct
 // {
 //   void (*midivec)( UBYTE data );  /* MIDI Input */
@@ -28,6 +29,8 @@
 //   void (*ikbdsys)( void );        /* Main IKBD Vector */
 // } KBDVECS;
 //
+//- kbdvec (undocumented feature of TOS >= 2.0) is called with the
+//  received data byte in d0.
 //- midivec is called with the received data byte in d0. 
 //- If an overflow error occurred on either ACIA, vkbderr or vmiderr 
 //  will be called, as appropriate by midisys or ikbdsys with the 
@@ -49,6 +52,7 @@
         .global _mousevec
                 
 _init_acia_vecs:
+        move.l  #_kbdvec,kbdvec
         move.l  #_midivec,midivec
         move.l  #_vkbderr,vkbderr
         move.l  #_vmiderr,vmiderr
@@ -123,7 +127,15 @@ _midivec:
         move.b  d0,0(a0,d1.w)
         move.w  d1,midiibuftl
 1:      rts
-        
+
+_kbdvec:
+        and.w   #$00ff,d0
+        move.w  d0,-(sp)
+        // call the C routine in ikbd.c to do the work.
+        jsr     _kbd_int
+        add.w   #2,sp
+        rts
+
 _vkbderr:
 _vmiderr:
 _statvec:
@@ -158,7 +170,10 @@ _ikbdsys:
         tst.b   kbdbuf
         bne     in_packet       // kbdbuf[0] != 0, we are receiving a packet
         cmp.w   #0xf6,d0        // is byte a packet header?
-        blt     key_event       // byte < 0xf6, a key press or release event
+        bcc     not_keyevent    // byte >= 0xf6, not a key press or release event
+        move.l  kbdvec,a0
+        jmp     (a0)            // stack is clean: no need to jsr.
+not_keyevent:
         sub.b   #0xf6,d0        // make 1st packet byte a switch choice
         move.b  kbd_length_table(pc,d0),kbdlength
         move.b  #1,kbdindex
@@ -167,13 +182,6 @@ _ikbdsys:
 kbd_length_table:
         dc.b    8, 6, 3, 3, 3, 3, 7, 3, 2, 2
 
-key_event:
-        move.w  d0,-(sp)
-        // call the C routine in ikbd.c to do the work.
-        jsr     _kbd_int
-        add.w   #2,sp
-        rts
-        
 in_packet:
         move.l  #0,d1
         move.b  kbdindex,d1

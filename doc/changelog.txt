@@ -1652,3 +1652,8 @@ Start... early ages
 
 2004-08-03
 - bios/cookie.h: _FDC cookie now uses correct "ATC" identification string (THH)
+
+2004-08-04
+- bios/tosvars.S: kbdvec added in order to satisfy FreeMiNT 1.16.1 that
+                  relies on an undocumented TOS >= 2.0 feature (joy)
+- bios/aciavecs.S: jump to ikbd.c via the kbdvec with scancode in d0 (joy)
