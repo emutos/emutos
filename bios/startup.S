@@ -30,12 +30,17 @@
         .global _os_entry
         .global _cartscan
 
+        .global _nfid_xhdi
+
 // ==== tosvars.s - TOS System variables =====================================
                 
         .xdef   resvalid      
         .xdef   resvector     
         .xdef   _kprintf
 
+// ==== bios.c - Native Features flag ========================================
+
+        .xdef   _native_features
         
 // ==== memory.s - variables for memory  =====================================
 
@@ -171,26 +176,41 @@ noreset:
 memdone:
 
 /* 
+ * NatFeats test
+ */
+#if DETECT_NATIVE_FEATURES
+        .equ vec_illegal, 0x10       // illegal exception vector
+
+        move.l  sp,a1
+        move.l  vec_illegal,a0
+        move.l  #fail_natfeat,vec_illegal
+        pea     nf_xhdi_name
+        sub.l   #4,sp
+        dc.w    0x7300     // Jump to NATFEAT_ID
+        move.l  d0,_nfid_xhdi
+        move.l  a1,sp
+        move.l  a0,vec_illegal
+        move.w  #1,_native_features
+        bra     natfeatdone
+
+nf_xhdi_name:
+        .ascii  "XHDI\0"
+        .even
+
+fail_natfeat:
+        move.l  a1,sp
+        move.l  a0,vec_illegal
+#endif  /* DETECT_NATIVE_FEATURES */
+        clr.l   _nfid_xhdi
+        clr.w   _native_features
+natfeatdone:
+
+/* 
  * From now, the stack is allowed, and C code can be used.
  * The startup goes on in bios.c
  */
 
         jmp     _startup
-
-
-
-/* Different subroutines */
-
-
-
-/*
- * _ara_XHDI
- */
-        .global _ara_XHDI
-_ara_XHDI:
-        dc.w 0x7137
-        rts
-
 
 
 /*
