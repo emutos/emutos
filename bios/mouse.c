@@ -56,11 +56,12 @@ void mouse_change(WORD dx, WORD dy, WORD buttons)
 
     WORD changed;
 
-//    spin_lock(&mse->lock);
     changed = (dx != 0 || dy != 0 || mse->buttons != buttons);
 
+#if DBG_MOUSE
+        kprintf("mouse delta: %d, %d, %x\n", dx, dy, buttons);
+#endif
     if (changed) {
-//        add_mouse_randomness((buttons << 16) + (dy << 8) + dx);
 
         mse->buttons = buttons;
         mse->dxpos += dx;
@@ -71,58 +72,22 @@ void mouse_change(WORD dx, WORD dy, WORD buttons)
          * whatever) must page or is busy (i.e. long waits between
          * reads)
          */
-        if (mse->dxpos < -2048)
-            mse->dxpos = -2048;
-        if (mse->dxpos > 2048)
-            mse->dxpos = 2048;
-        if (mse->dypos < -2048)
-            mse->dypos = -2048;
-        if (mse->dypos > 2048)
-            mse->dypos = 2048;
-#ifdef DBG_MOUSE
-        kprintf("mouse: %d, %d, %x\n", mse->dxpos, mse->dypos, mse->buttons);
+        if (mse->dxpos < -128)
+            mse->dxpos = -128;
+        else if (mse->dxpos > 127)
+            mse->dxpos = 127;
+        if (mse->dypos < -128)
+            mse->dypos = -128;
+        else if (mse->dypos > 127)
+            mse->dypos = 127;
+#if DBG_MOUSE
+        kprintf("mouse: abs.:  %d, %d, %x\n", mse->dxpos, mse->dypos, mse->buttons);
 #endif
     }
 
-//    spin_unlock(&mse->lock);
-
     if (changed) {
-        /* call button change vector from VDI mouse driver */
+        /* call button change vector from graphicle mouse driver */
     }
-}
-
-/**
- * mouse_add_movement - notification of a change of mouse position
- *
- * Updates the mouse position. The movement information is updated.
- *
- * @dx: delta X movement
- * @dy: delta Y movement
- */
- 
-void mouse_add_movement(WORD dx, WORD dy)
-{
-    struct mouse_data *mse = &mdata;
-
-    mouse_change(dx, dy, mse->buttons);
-}
-
-/**
- * mouse_add_buttons - notification of a change of button state
- *
- * Updates the button state. The buttons are updated by:
- *     	new_state = (old_state & ~clear) ^ eor
- *
- * mousedev - mouse number
- * clear    - mask of buttons to clear
- * eor      - mask of buttons to change
- */
- 
-void mouse_add_buttons(WORD clear, WORD eor)
-{
-    struct mouse_data *mse = &mdata;
-
-    mouse_change(0, 0, (mse->buttons & ~clear) ^ eor);
 }
 
 
@@ -148,42 +113,9 @@ void mouse_int(BYTE * buf)
     buttons = ((buf[0] & 1) | ((buf[0] & 2) << 1) | (oldbutt & 2));
     oldbutt = buttons;
 
-    mouse_change(buf[1], -buf[2], buttons ^ 7);
+    mouse_change(buf[1], buf[2], buttons);
 }
 
-
-
-void mouse_init(void)
-{
-    struct param parm;
-    struct mouse_data *mse = &mdata;
-
-
-    /* Still running? */
-#if 0
-    if (mse->hide_cnt++)
-        return 0;
-#endif
-
-    /* These are the vex_* vectors from VDI, called from mouse driver */
-    user_but=&just_rts;	        // user button vector
-    user_cur=&just_rts;	        // user cursor vector
-    user_mot=&just_rts;	        // user motion vector
-    tim_addr=&just_rts;	        // user timer vector
-
-    /* reset mouse state */
-    mse->dxpos   = 0;
-    mse->dypos   = 0;
-    mse->buttons = 0;
-
-    parm.topmode = 0;
-    parm.buttons = 0;
-    parm.xparam = 1;
-    parm.yparam = 1;
-
-
-    Initmous(1, (PTR)&parm, (PTR)&mouse_int);
-}
 
 
 /*
@@ -192,7 +124,7 @@ void mouse_init(void)
 
 void mouse_enable(void)
 {
-    struct mouse_data *mse = &mdata;
+//    struct mouse_data *mse = &mdata;
 }
 
 
@@ -203,7 +135,7 @@ void mouse_enable(void)
 
 void mouse_disable(void)
 {
-    struct mouse_data *mse = &mdata;
+//    struct mouse_data *mse = &mdata;
 
     UBYTE cmd[1] = { 0x12 };
 
@@ -335,7 +267,7 @@ void Initmous(WORD type, PTR param, PTR newvec)
     struct param *p = (struct param*)param;     /* pointer to parameter block */
 
     if (newvec != NULL) {
-        kbdvecs.mousevec = (VOID*)newvec;      /* set new IKBD Mouse interrupt vector */
+        kbdvecs.mousevec = (void*)newvec;      /* set new IKBD Mouse interrupt vector */
     }
 
     switch (type) {
@@ -390,3 +322,44 @@ void Initmous(WORD type, PTR param, PTR newvec)
         break;
     }
 }
+
+
+
+/*
+ * mouse_init - mouse initialization
+ *
+ */
+
+void mouse_init(void)
+{
+    struct param parm;
+    struct mouse_data *mse = &mdata;
+
+
+    /* Still running? */
+#if 0
+    if (mse->hide_cnt++)
+        return 0;
+#endif
+
+    /* These are the vex_* vectors from VDI, called from mouse driver */
+    user_but=&just_rts;	        // user button vector
+    user_cur=&just_rts;	        // user cursor vector
+    user_mot=&just_rts;	        // user motion vector
+    tim_addr=&just_rts;	        // user timer vector
+
+    /* reset mouse state */
+    mse->dxpos   = 0;
+    mse->dypos   = 0;
+    mse->buttons = 0;
+
+    parm.topmode = 0;
+    parm.buttons = 0;
+    parm.xparam = 1;
+    parm.yparam = 1;
+
+
+    Initmous(1, (PTR)&parm, (PTR)&mouse_int);
+}
+
+

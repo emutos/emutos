@@ -213,7 +213,7 @@ long	xexec(WORD flg, BYTE *s, BYTE *t, BYTE *v)
          */
 
         /* LVL bmove( v , e , i ) ; */
-	memcpy(e, v, i);
+        memcpy(e, v, i);
 
         /*
          **  allocate base page

@@ -32,8 +32,6 @@ extern void Initmous(WORD , PTR , PTR);
 
 extern void mouse_init(void);
 extern void mouse_change(WORD dx, WORD dy, WORD buttons);
-extern void mouse_add_movement(WORD dx, WORD dy);
-extern void mouse_add_buttons(WORD clear, WORD eor);
 
 
 

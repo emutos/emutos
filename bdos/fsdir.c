@@ -552,7 +552,7 @@ long xsfirst(BYTE *name, int att)
  *	Error returns ENMFIL
  */
 
-long	xsnext(void) 
+long xsnext(void)
 {
 	REG FCB 	*f;
 	REG DTAINFO	*dt ;
@@ -580,7 +580,7 @@ long	xsnext(void)
 **	Function 0x57	f_datime
 */
 
-void	xgsdtof(int *buf, int h, int wrt) 
+void xgsdtof(int *buf, int h, int wrt)
 {
 	REG OFD *f ;
 	REG int *b ;
@@ -764,7 +764,7 @@ void builds(BYTE *s1, BYTE *s2)
 */
 /* rename file, n unused, old path p1, new path p2 */
 /*ARGSUSED*/
-long	xrename(int n, BYTE *p1, BYTE *p2)	
+long xrename(int n, BYTE *p1, BYTE *p2)
 {
 	REG OFD *fd2;
 	OFD	*f1,*fd;
@@ -841,7 +841,7 @@ long	xrename(int n, BYTE *p1, BYTE *p2)
 **
 */
 
-long	xchdir(BYTE *p) 
+long xchdir(BYTE *p)
 {
 	REG int dr, i ;
 	long	l;
