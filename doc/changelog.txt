@@ -1206,3 +1206,11 @@ Start... early ages
 
 02. Nov. 2002
 - aes/geminit.c - held Ctrl key causes not loading the ACCs (joy)
+
+03. Nov. 2002
+- bios/xhdi.[ch] - XHDI implemented - allows running FreeMiNT (joy)
+- bios/disk.c - some functions moved to the xhdi.c (joy)
+- bios/blkdev.c - initialization order changed (joy)
+- bios/machine.c - add XHDI cookie to the jar (joy)
+- bios/startup.S - XHDI entry point (joy)
+- bios/initinfo.c - missing #include (joy)
