@@ -344,7 +344,7 @@ pre_flight:
 
 first_index:
 
-        mulu    P_INDX(a6),d0           // initial Y // delta Y
+        mulu    P_INDX(a6),d0           // initial Y * delta Y
         move.w  d0,P_INDX(a6)
 
 

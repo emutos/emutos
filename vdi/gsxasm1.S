@@ -96,14 +96,14 @@
 //      _vec_len                                                        //
 //                                                                      //
 //      This routine computes the length of a vector using the          //
-//      formula sqrt(dx//dx + dy//dy).                                  //
+//      formula sqrt(dx*dx + dy*dy).                                    //
 //                                                                      //
 //      input:                                                          //
 //         4(sp) = dx.                                                  //
 //         6(sp) = dy.                                                  //
 //                                                                      //
 //      output:                                                         //
-//         d0 = sqrt(dx//dx + dy//dy).                                  //
+//         d0 = sqrt(dx*dx + dy*dy).                                    //
 //                                                                      //
 //      destroys:       d0, d1, d2, d3, d4                              //
 //                                                                      //
@@ -184,7 +184,7 @@ srch_lp:
         asr.w   #1,d1           // (upper-lower)/2.
         add.w   d3,d1           // candidate = lower + (upper-lower)/2.
         move.w  d1,d4           // save candidate for adjustment.
-        mulu    d1,d1           // candidate//candidate.
+        mulu    d1,d1           // candidate * candidate.
         cmp.l   d0,d1           // compare with target square.
         bhi     hi_adjust       // if candidate too large, branch.
         bcs     lo_adjust       // if candidate too small, branch.
@@ -309,9 +309,9 @@ rtol:
         neg.w   d1              // negate dy
         neg.w   d2              // negate dx
 getdx:
-        asl.w   #1,d2           // 2//dx. (for more precision)
-        muls    d2,d4           // (2//dx) // delta y1.
-        divs    d1,d4           // (2//dx) // delta y1 / dy.
+        asl.w   #1,d2           // 2*dx. (for more precision)
+        muls    d2,d4           // (2*dx) * delta y1.
+        divs    d1,d4           // (2*dx) * delta y1 / dy.
         bmi     int_neg
         addq.w  #1,d4           // rounding.
         bra     round_x
@@ -493,7 +493,7 @@ bs_out:
 //                                                                      //
 //      smul_div (m1,m2,d1)                                             //
 //                                                                      //
-//      ( ( m1 // m2 ) / d1 ) + 1/2                                     //
+//      ( ( m1 * m2 ) / d1 ) + 1/2                                     //
 //                                                                      //
 //      m1 = signed 16 bit integer                                      //
 //      m2 = unsigned 15 bit integer                                    //
@@ -505,12 +505,12 @@ _SMUL_DIV:
         movem.l d2-d3,-(sp)
         moveq   #1,d1           // preload increment
         move.w  8+6(sp),d0
-        muls    8+4(sp),d0        // m2 // m1
+        muls    8+4(sp),d0      // m2 * m1
         bpl     smd_1
         neg     d1              // negate increment
 smd_1:
         move.w  8+8(sp),d2
-        divs    d2,d0           // m2 // m1 / d1
+        divs    d2,d0           // m2 * m1 / d1
         and     d2,d2           // test if divisor is negative
         bpl     smd_2
         neg     d1              // negate increment
@@ -522,7 +522,7 @@ smd_2:
         bpl     smd_3
         neg     d3              // make remainder positive
 smd_3:
-        asl     #1,d3           // see if 2//remainder is > divisor
+        asl     #1,d3           // see if 2 * remainder is > divisor
         cmp     d2,d3
         blt     smd_4
         add     d1,d0           // add increment

@@ -23,7 +23,7 @@
 //  26 Feb  --   a. writing mode values table corrected                 //
 //              b. _MONO_STATUS if true stops thicken source form expansion //
 //                                                                      //
-//   6 Mar  --   a. arbitrary scale of text mod to replicate/double code        //
+//   6 Mar  --   a. arbitrary scale of text mod to replicate/double code   //
 //                                                                      //
 //  13 Apr  --   a. fixed text rotation when scaled RJG                 //
 //              b. ACT_SIZ preserves C registers on call                //
@@ -115,8 +115,9 @@
 /////////////////////////////////////////////////////////////////////////
         .page
 /////////////////////////////////////////////////////////
-//   Style equates..                                            //
+//   Style equates..                                   //
 /////////////////////////////////////////////////////////
+        
 #define THICKM                 0x1
 #define LIGHTM                 0x2
 #define SKEWM                  0x4
@@ -242,9 +243,9 @@
 /////////////////////////////////////////////////////////
 // The maximum of either:                                       //
 //                                                              //
-//              cell width (as width) // cell height (as height) //
+//              cell width (as width) * cell height (as height) //
 //                                   or                         //
-//              cell width (as height) // cell height (as width) //
+//              cell width (as height) * cell height (as width) //
 //                                                              //
 //  will be used for the basic buffer size.                     //
 /////////////////////////////////////////////////////////
@@ -527,7 +528,7 @@ size_time1:
 //
 size_double:
         move.w  d1,d0
-        lsl.w   #1,d0                   //d0 = size // 2
+        lsl.w   #1,d0                   //d0 = size * 2
         bra.b   act_exit
 //
 size_small_loop:
@@ -1180,7 +1181,6 @@ get_mask:
         move.w  d2,thk_msk(a6)
         clr.w   d4
         move.w  #0x8000,skew_msk(a6)
-//????    moveq.l #0xFF,d3                // assume sgl_loop
         moveq.l #-1,d3                // assume sgl_loop
 //  end bug fix
 //
@@ -1756,24 +1756,24 @@ top1:
         jmp     (a3)
 //
 top3:
-        eor.w   d4,d1                   //mode 3        - D' = S (replace mode)
+        eor.w   d4,d1                   //mode 3 - D' = S (replace mode)
         and.w   d2,d1
         eor.w   d4,d1
         jmp     (a3)
 //      
 top4:
-        and.w   d2,d1                   //mode 4        - D' = [not S] and D
+        and.w   d2,d1                   //mode 4 - D' = [not S] and D
         not.w   d1
         and.w   d4,d1
         jmp     (a3)
 //
 top6:
-        and.w   d2,d1                   //mode 6        - D' = S xor D (xor mode)
+        and.w   d2,d1                   //mode 6 - D' = S xor D (xor mode)
         eor.w   d4,d1
         jmp     (a3)
 //
 top7:
-        and.w   d2,d1                   //mode 7        - D' = S or D (or mode)
+        and.w   d2,d1                   //mode 7 - D' = S or D (or mode)
         or.w    d4,d1
         jmp     (a3)
 //
@@ -1785,31 +1785,31 @@ topd:
 #else
 //
 top1:
-        not.w   d2                      //mode 1        - D' = S and D
+        not.w   d2                      //mode 1 - D' = S and D
         or.w    d2,d1
         not.w   d2
         and.w   d4,d1
         jmp     (a3)
 //
 top3:
-        eor.w   d4,d1                   //mode 3        - D' = S (replace mode)
+        eor.w   d4,d1                   //mode 3 - D' = S (replace mode)
         and.w   d2,d1
         eor.w   d4,d1
         jmp     (a3)
 //      
 top4:
-        and.w   d2,d1                   //mode 4        - D' = [not S] and D
+        and.w   d2,d1                   //mode 4 - D' = [not S] and D
         not.w   d1
         and.w   d4,d1
         jmp     (a3)
 //
 top6:
-        and.w   d2,d1                   //mode 6        - D' = S xor D (xor mode)
+        and.w   d2,d1                   //mode 6 - D' = S xor D (xor mode)
         eor.w   d4,d1
         jmp     (a3)
 //
 top7:
-        and.w   d2,d1                   //mode 7        - D' = S or D (or mode)
+        and.w   d2,d1                   //mode 7 - D' = S or D (or mode)
         or.w    d4,d1
         jmp     (a3)
 //
@@ -1834,32 +1834,32 @@ topf:
 //
         .page
 ///////////////////////////////////////////////////
-//      Word Writing Mode Operations                         //
+//      Word Writing Mode Operations             //
 ///////////////////////////////////////////////////
 //
 #if rev_vid
 twop0:
-        moveq.l #0,d1                   //mode 0        - D' = 0
+        moveq.l #0,d1                   //mode 0 - D' = 0
         jmp     (a3)
 //
 twop1:
-        and.w   d4,d1                   //mode 1        - D' = S and D
+        and.w   d4,d1                   //mode 1 - D' = S and D
         jmp     (a3)
 //
 twop3:
-        jmp     (a3)                            //mode 3        - D' = S (replace mode)
+        jmp     (a3)                    //mode 3 - D' = S (replace mode)
 //
 twop4:
-        not.w   d1                      //mode 4        - D' = [not S] and D
+        not.w   d1                      //mode 4 - D' = [not S] and D
         and.w   d4,d1
         jmp     (a3)
 //
 twop6:
-        eor.w   d4,d1                   //mode 6        - D' = S xor D
+        eor.w   d4,d1                   //mode 6 - D' = S xor D
         jmp     (a3)
 //
 twop7:
-        or.w    d4,d1                   //mode 7        - D' = S or D
+        or.w    d4,d1                   //mode 7 - D' = S or D
         jmp     (a3)
 //
 twopd:
@@ -1870,23 +1870,23 @@ twopd:
 #else
 //
 twop1:
-        and.w   d4,d1                   //mode 1        - D' = S and D
+        and.w   d4,d1                   //mode 1 - D' = S and D
         jmp     (a3)
 //
 twop3:
-        jmp     (a3)                            //mode 3        - D' = S (replace mode)
+        jmp     (a3)                    //mode 3 - D' = S (replace mode)
 //
 twop4:
-        not.w   d1                      //mode 4        - D' = [not S] and D
+        not.w   d1                      //mode 4 - D' = [not S] and D
         and.w   d4,d1
         jmp     (a3)
 //
 twop6:
-        eor.w   d4,d1                   //mode 6        - D' = S xor D
+        eor.w   d4,d1                   //mode 6  - D' = S xor D
         jmp     (a3)
 //
 twop7:
-        or.w    d4,d1                   //mode 7        - D' = S or D
+        or.w    d4,d1                   //mode 7 - D' = S or D
         jmp     (a3)
 //
 twopc:
@@ -1899,8 +1899,7 @@ twopd:
         jmp     (a3)
 //
 twopf:
-        //????moveq.l #0xFF,d1                        //mode 15 - D' = 1
-        moveq.l #-1,d1                        //mode 15 - D' = 1
+        moveq.l #-1,d1                  //mode 15 - D' = 1
         jmp     (a3)
 #endif
 //
@@ -2478,7 +2477,7 @@ replicat:
         addq.w  #1,DELY(a6)             //will add 2 to height when doubled
         addq.w  #1,DELX(a6)             //same with width
 //
-        lsl.w   #1,d1                   //buffer width //2 -> new buffer width
+        lsl.w   #1,d1                   //buffer width * 2 -> new buffer width
         addq.w  #3,d1                   //new buffer is 3 pixels wider
         lsr.w   #4,d1
         lsl.w   #1,d1                   //# (even) of bytes per row
