@@ -65,9 +65,9 @@ void bufl_init(void)
 /*
  * flush -
  *
- * NOTE: rwabs() is a macro that includes a longjmp() which is executed
- *       if the BIOS returns an error, therefore flush() does not need
- *       to return any error codes.
+ * NOTE: longjmp_rwabs() is a macro that includes a longjmp() which is 
+ *       executed if the BIOS returns an error, therefore flush() does 
+ *       not need to return any error codes.
  */
 
 void flush(BCB *b)
@@ -87,12 +87,13 @@ void flush(BCB *b)
     d = b->b_bufdrv;
     b->b_bufdrv = -1;           /* invalidate in case of error */
 
-    rwabs(1,b->b_bufr,1,b->b_bufrec+dm->m_recoff[n],d);
+    longjmp_rwabs(1, b->b_bufr, 1, b->b_bufrec+dm->m_recoff[n], d);
 
     /* flush to both fats */
 
     if (n == 0) {
-        rwabs(1,b->b_bufr,1,b->b_bufrec+dm->m_recoff[0]-dm->m_fsiz,d);
+        longjmp_rwabs(1, b->b_bufr, 1, 
+                      b->b_bufrec+dm->m_recoff[0]-dm->m_fsiz, d);
     }
     b->b_bufdrv = d;                    /* re-validate */
     b->b_dirty = 0;
@@ -176,7 +177,7 @@ doio:   for (p = *(q = phdr); p->b_link; p = *(q = &p->b_link))
          */
 
         flush(b);
-        rwabs(0,b->b_bufr,1,recn+dm->m_recoff[n],dm->m_drvnum);
+        longjmp_rwabs(0, b->b_bufr, 1, recn+dm->m_recoff[n], dm->m_drvnum);
 
         /*
          * make the new buffer current

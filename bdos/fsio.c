@@ -492,9 +492,9 @@ exit:
 /*
  * usrio -
  *
- * NOTE: rwabs() is a macro that includes a longjmp() which is executed
- *       if the BIOS returns an error, therefore usrio() does not need
- *       to return any error codes.
+ * NOTE: longjmp_rwabs() is a macro that includes a longjmp() which is 
+ *       executed if the BIOS returns an error, therefore usrio() does 
+ *       not need to return any error codes.
  */
 
 static void usrio(int rwflg, int num, int strt, char *ubuf, DMD *dm)
@@ -507,5 +507,5 @@ static void usrio(int rwflg, int num, int strt, char *ubuf, DMD *dm)
             (b->b_bufrec < strt+num))
             flush(b);
 
-    rwabs(rwflg,ubuf,num,strt+dm->m_recoff[2],dm->m_drvnum);
+    longjmp_rwabs(rwflg, ubuf, num, strt+dm->m_recoff[2], dm->m_drvnum);
 }
