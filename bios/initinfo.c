@@ -198,6 +198,13 @@ void initinfo()
     cprintf("\n\r");
     set_line();
     cprintf("\n\r");
+
+    /* sleep(5) */
+    {
+        long future = hz_200 + (5 * 200);
+        while(hz_200 < future)
+            ;
+    }
 }
 
 
