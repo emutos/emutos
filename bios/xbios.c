@@ -49,7 +49,7 @@ VOID xbiosinit()
      */
 
 #if DBG_XBIOS
-    kprint("XBIOS: Initialization ...");
+    kprint("XBIOS: Initialization ...\n");
 #endif
 }
 
@@ -62,7 +62,7 @@ VOID xbiosinit()
 void xbios_0(WORD type, LONG param, LONG vec)
 {
 #if DBG_XBIOS
-    kprint("XBIOS: Unimplemented function 0x00 ...");
+    kprint("XBIOS: Unimplemented function 0x00 ...\n");
 #endif
 }
 
@@ -80,7 +80,7 @@ void xbios_0(WORD type, LONG param, LONG vec)
 LONG xbios_1()
 {
 #if DBG_XBIOS
-    kprint("XBIOS: Unimplemented function 0x01 ...");
+    kprint("XBIOS: Unimplemented function 0x01 ...\n");
 #endif
     return(0);
 }
@@ -101,9 +101,12 @@ ULONG xbios_2()
     kprint("XBIOS: Physbase ...\n");
 #endif
 
-    addr = ((*(UBYTE *)0xffff8201)<<16) + ((*(UBYTE *)0xffff8203)<<8);
-#if 0
-    addr += (*(UBYTE *)0xffff820D);  /* The low byte only exists on STE, TT and Falcon */
+    addr = *(UBYTE *)0xffff8201;
+    addr <<= 8;
+    addr += *(UBYTE *)0xffff8203;
+    addr <<= 8;
+#if 0      /* The low byte only exists on STE, TT and Falcon */
+    addr += *(UBYTE *)0xffff820D;  
 #endif
 
     return(addr);
@@ -120,7 +123,7 @@ ULONG xbios_2()
 LONG xbios_3()
 {
 #if DBG_XBIOS
-    kprint("XBIOS: Logbase ...");
+    kprint("XBIOS: Logbase ...\n");
 #endif
     return((ULONG)v_bas_ad);
 }
@@ -136,7 +139,7 @@ LONG xbios_3()
 WORD xbios_4()
 {
 #if DBG_XBIOS
-    kprint("XBIOS: Getrez ...");
+    kprint("XBIOS: Getrez ...\n");
 #endif
 
     return( *(UBYTE *)0xffff8260 );
@@ -157,8 +160,23 @@ WORD xbios_4()
 VOID xbios_5(LONG logLoc, LONG physLoc, WORD rez)
 {
 #if DBG_XBIOS
-    kprint("XBIOS: Unimplemented function 0x05 ...");
+    kprintf("XBIOS: SetScreen(log = 0x%08lx, phys = 0x%08lx, rez = 0x%04x)\n",
+	   logLoc, physLoc, rez);
 #endif
+    if(logLoc >= 0) {
+      v_bas_ad = (char *)logLoc;
+    }
+    if(physLoc >= 0) {
+      *(UBYTE *)0xffff8201 = physLoc >> 16;
+      *(UBYTE *)0xffff8203 = physLoc >> 8;
+#if 0
+      *(UBYTE *)0xffff820d = physLoc;
+#endif
+    }
+    if(rez >= 0) {
+      /* rez ignored for now */
+    }
+    
 }
 
 
@@ -175,7 +193,7 @@ VOID xbios_6(LONG palettePtr)
 
 {
 #if DBG_XBIOS
-    kprint("XBIOS: Unimplemented function 0x06 ...");
+    kprint("XBIOS: Unimplemented function 0x06 ...\n");
 #endif
 }
 
@@ -194,7 +212,7 @@ VOID xbios_6(LONG palettePtr)
 WORD xbios_7(WORD colorNum, WORD color)
 {
 #if DBG_XBIOS
-    kprint("XBIOS: Unimplemented function 0x07 ...");
+    kprint("XBIOS: Unimplemented function 0x07 ...\n");
 #endif
     return(0);
 }
@@ -223,7 +241,7 @@ WORD xbios_8(LONG buf, LONG filler, WORD devno, WORD sectno,
              WORD trackno, WORD sideno, WORD count)
 {
 #if DBG_XBIOS
-    kprint("XBIOS: Unimplemented function 0x08 ...");
+    kprint("XBIOS: Unimplemented function 0x08 ...\n");
 #endif
     return(-1);
 }
@@ -257,7 +275,7 @@ WORD xbios_9(LONG buf, LONG filler, WORD devno, WORD sectno,
              WORD trackno, WORD sideno, WORD count)
 {
 #if DBG_XBIOS
-    kprint("XBIOS: Unimplemented function 0x09 ...");
+    kprint("XBIOS: Unimplemented function 0x09 ...\n");
 #endif
     return(-1);
 }
@@ -291,7 +309,7 @@ WORD xbios_a(LONG buf, LONG filler, WORD devno, WORD spt,
              LONG magic)
 {
 #if DBG_XBIOS
-    kprint("XBIOS: Unimplemented function 0x0a ...");
+    kprint("XBIOS: Unimplemented function 0x0a ...\n");
 #endif
     return(-1);
 }
@@ -305,7 +323,7 @@ WORD xbios_a(LONG buf, LONG filler, WORD devno, WORD spt,
 VOID xbios_b()
 {
 #if DBG_XBIOS
-    kprint("XBIOS: Unimplemented function 0x0b ...");
+    kprint("XBIOS: Unimplemented function 0x0b ...\n");
 #endif
 }
 
@@ -321,7 +339,7 @@ VOID xbios_b()
 VOID xbios_c(WORD cnt, LONG ptr)
 {
 #if DBG_XBIOS
-    kprint("XBIOS: Unimplemented function 0x0c ...");
+    kprint("XBIOS: Unimplemented function 0x0c ...\n");
 #endif
 }
 
@@ -338,7 +356,7 @@ VOID xbios_c(WORD cnt, LONG ptr)
 VOID xbios_d(WORD interno, LONG vector)
 {
 #if DBG_XBIOS
-    kprint("XBIOS: Unimplemented function 0x0d ...");
+    kprint("XBIOS: Unimplemented function 0x0d ...\n");
 #endif
 }
 
@@ -351,7 +369,7 @@ VOID xbios_d(WORD interno, LONG vector)
 LONG xbios_e(WORD devno)
 {
 #if DBG_XBIOS
-    kprint("XBIOS: Unimplemented function 0x0e ...");
+    kprint("XBIOS: Unimplemented function 0x0e ...\n");
 #endif
     return(-1);
 }
@@ -375,7 +393,7 @@ LONG xbios_e(WORD devno)
 VOID xbios_f(WORD speed, WORD flowctl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
 {
 #if DBG_XBIOS
-    kprint("XBIOS: Unimplemented function 0x0f ...");
+    kprint("XBIOS: Unimplemented function 0x0f ...\n");
 #endif
 }
 
@@ -395,7 +413,7 @@ VOID xbios_f(WORD speed, WORD flowctl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
 LONG xbios_10(LONG unshift, LONG shift, LONG capslock)
 {
 #if DBG_XBIOS
-    kprint("XBIOS: Unimplemented function 0x10 ...");
+    kprint("XBIOS: Unimplemented function 0x10 ...\n");
 #endif
     return(-1);
 }
@@ -411,7 +429,7 @@ LONG xbios_10(LONG unshift, LONG shift, LONG capslock)
 LONG xbios_11()
 {
 #if DBG_XBIOS
-    kprint("XBIOS: Unimplemented function 0x11 ...");
+    kprint("XBIOS: Unimplemented function 0x11 ...\n");
 #endif
     return(0);
 }
@@ -441,7 +459,7 @@ LONG xbios_11()
 VOID xbios_12(LONG buf, LONG serialno, WORD disktype, WORD execflag)
 {
 #if DBG_XBIOS
-    kprint("XBIOS: Unimplemented function 0x12 ...");
+    kprint("XBIOS: Unimplemented function 0x12 ...\n");
 #endif
 }
 
@@ -455,7 +473,7 @@ WORD xbios_13(LONG buf, LONG filler, WORD devno, WORD sectno,
               WORD trackno, WORD sideno, WORD count)
 {
 #if DBG_XBIOS
-    kprint("XBIOS: Unimplemented function 0x13 ...");
+    kprint("XBIOS: Unimplemented function 0x13 ...\n");
 #endif
     return(-1);
 }
@@ -469,7 +487,7 @@ WORD xbios_13(LONG buf, LONG filler, WORD devno, WORD sectno,
 VOID xbios_14()
 {
 #if DBG_XBIOS
-    kprint("XBIOS: Unimplemented function 0x14 ...");
+    kprint("XBIOS: Unimplemented function 0x14 ...\n");
 #endif
 }
 
@@ -482,7 +500,7 @@ VOID xbios_14()
 WORD xbios_15(WORD function, WORD operand)
 {
 #if DBG_XBIOS
-    kprint("XBIOS: Unimplemented function 0x15 ...");
+    kprint("XBIOS: Unimplemented function 0x15 ...\n");
 #endif
     return(0);
 }
@@ -499,7 +517,7 @@ WORD xbios_15(WORD function, WORD operand)
 VOID xbios_16(LONG datetime)
 {
 #if DBG_XBIOS
-    kprint("XBIOS: Unimplemented function 0x16 ...");
+    kprint("XBIOS: Unimplemented function 0x16 ...\n");
 #endif
 }
 
@@ -515,7 +533,7 @@ VOID xbios_16(LONG datetime)
 LONG xbios_17()
 {
 #if DBG_XBIOS
-    kprint("XBIOS: Unimplemented function 0x17 ...");
+    kprint("XBIOS: Unimplemented function 0x17 ...\n");
 #endif
     return(0);
 }
@@ -531,7 +549,7 @@ LONG xbios_17()
 VOID xbios_18()
 {
 #if DBG_XBIOS
-    kprint("XBIOS: Unimplemented function 0x18 ...");
+    kprint("XBIOS: Unimplemented function 0x18 ...\n");
 #endif
 }
 
@@ -544,7 +562,7 @@ VOID xbios_18()
 VOID xbios_19(WORD cnt, LONG ptr)
 {
 #if DBG_XBIOS
-    kprint("XBIOS: Unimplemented function 0x19 ...");
+    kprint("XBIOS: Unimplemented function 0x19 ...\n");
 #endif
 }
 
@@ -557,7 +575,7 @@ VOID xbios_19(WORD cnt, LONG ptr)
 VOID xbios_1a(WORD intno)
 {
 #if DBG_XBIOS
-    kprint("XBIOS: Unimplemented function 0x1a ...");
+    kprint("XBIOS: Unimplemented function 0x1a ...\n");
 #endif
 }
 
@@ -570,7 +588,7 @@ VOID xbios_1a(WORD intno)
 VOID xbios_1b(WORD intno)
 {
 #if DBG_XBIOS
-    kprint("XBIOS: Unimplemented function 0x1b ...");
+    kprint("XBIOS: Unimplemented function 0x1b ...\n");
 #endif
 }
 
@@ -583,7 +601,7 @@ VOID xbios_1b(WORD intno)
 BYTE xbios_1c(BYTE data, WORD regno)
 {
 #if DBG_XBIOS
-    kprint("XBIOS: Unimplemented function 0x1c ...");
+    kprint("XBIOS: Unimplemented function 0x1c ...\n");
 #endif
     return(0);
 }
@@ -597,7 +615,7 @@ BYTE xbios_1c(BYTE data, WORD regno)
 VOID xbios_1d(WORD bitno)
 {
 #if DBG_XBIOS
-    kprint("XBIOS: Unimplemented function 0x1d ...");
+    kprint("XBIOS: Unimplemented function 0x1d ...\n");
 #endif
 }
 
@@ -610,7 +628,7 @@ VOID xbios_1d(WORD bitno)
 VOID xbios_1e(WORD bitno)
 {
 #if DBG_XBIOS
-    kprint("XBIOS: Unimplemented function 0x1e ...");
+    kprint("XBIOS: Unimplemented function 0x1e ...\n");
 #endif
 }
 
@@ -623,7 +641,7 @@ VOID xbios_1e(WORD bitno)
 VOID xbios_1f(WORD timer, WORD control, WORD data, LONG vec)
 {
 #if DBG_XBIOS
-    kprint("XBIOS: Unimplemented function 0x1f ...");
+    kprint("XBIOS: Unimplemented function 0x1f ...\n");
 #endif
 }
 
@@ -638,7 +656,7 @@ VOID xbios_1f(WORD timer, WORD control, WORD data, LONG vec)
 VOID xbios_20(LONG ptr)
 {
 #if DBG_XBIOS
-    kprint("XBIOS: Unimplemented function 0x20 ...");
+    kprint("XBIOS: Unimplemented function 0x20 ...\n");
 #endif
 }
 
@@ -654,7 +672,7 @@ VOID xbios_20(LONG ptr)
 WORD xbios_21(WORD config)
 {
 #if DBG_XBIOS
-    kprint("XBIOS: Unimplemented function 0x21 ...");
+    kprint("XBIOS: Unimplemented function 0x21 ...\n");
 #endif
     return(0);
 }
@@ -669,7 +687,7 @@ WORD xbios_21(WORD config)
 LONG xbios_22()
 {
 #if DBG_XBIOS
-    kprint("XBIOS: Unimplemented function 0x22 ...");
+    kprint("XBIOS: Unimplemented function 0x22 ...\n");
 #endif
     return(0);
 }
@@ -683,7 +701,7 @@ LONG xbios_22()
 WORD xbios_23(WORD initial, WORD repeat)
 {
 #if DBG_XBIOS
-    kprint("XBIOS: Unimplemented function 0x23 ...");
+    kprint("XBIOS: Unimplemented function 0x23 ...\n");
 #endif
     return(0);
 }
@@ -697,7 +715,7 @@ WORD xbios_23(WORD initial, WORD repeat)
 VOID xbios_24()
 {
 #if DBG_XBIOS
-    kprint("XBIOS: Unimplemented function 0x24 ...");
+    kprint("XBIOS: Unimplemented function 0x24 ...\n");
 #endif
 }
 
@@ -710,7 +728,7 @@ VOID xbios_24()
 VOID xbios_25()
 {
 #if DBG_XBIOS
-    kprint("XBIOS: Unimplemented function 0x25 ...");
+    kprint("XBIOS: Unimplemented function 0x25 ...\n");
 #endif
 }
 
@@ -729,7 +747,7 @@ VOID xbios_25()
 VOID xbios_26(LONG codeptr)
 {
 #if DBG_XBIOS
-    kprint("XBIOS: Unimplemented function 0x26 ...");
+    kprint("XBIOS: Unimplemented function 0x26 ...\n");
 #endif
 }
 
@@ -746,7 +764,7 @@ VOID xbios_26(LONG codeptr)
 VOID xbios_27()
 {
 #if DBG_XBIOS
-    kprint("XBIOS: Unimplemented function 0x27 ...");
+    kprint("XBIOS: Unimplemented function 0x27 ...\n");
 #endif
 }
 
