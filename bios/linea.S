@@ -21,12 +21,12 @@
         .xdef _habline
         .xdef _CLC_FLIT           // from vdi/gsxasm1.S
         .xdef _RECTFILL
-        .xdef bit_blt
+//        .xdef bit_blt
         .xdef _text_blt
         .xdef _dis_cur
         .xdef _hide_cur
         .xdef _xfm_crfm
-        .xdef _COPY_RFM
+//        .xdef _COPY_RFM
 
 
 // ==== Global Declarations ================================================
@@ -208,7 +208,7 @@ linea_vecs:
         dc.l    _xfm_crfm       /* _linea_b */
         dc.l    _linea_c        /* cur_replace??? */
         dc.l    _linea_d        /* cur_display??? */
-        dc.l    _COPY_RFM       /* _linea_e */
+        dc.l    _linea_e        /* _COPY_RFM */
         dc.l    _linea_f        /* _d_contourfill?? */
 linea_ents:
         dc.w    (linea_ents-linea_vecs)/4

@@ -2612,4 +2612,3 @@ WORD get_pix()
     }
     return color;                       /* return the composed color value */
 }
-

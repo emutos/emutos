@@ -67,6 +67,11 @@
 #define SUBROUTINE 5
 #define VDI_HANDLE 6
 
+/* gsx write modes */
+#define MD_REPLACE  1
+#define MD_TRANS    2
+#define MD_XOR      3
+#define MD_ERASE    4
 
 
 
@@ -181,6 +186,11 @@ typedef struct {
     WORD fd_r2;
     WORD fd_r3;
 } MFDB;
+
+typedef struct
+{
+  int x1,y1,x2,y2;
+} RECT;
 
 
 
