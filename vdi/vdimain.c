@@ -17,6 +17,7 @@
 #include "gsxextrn.h"
 #include "fontdef.h"
 #include "attrdef.h"
+#include "styles.h"
 
 //#include "vdiconf.h"
 #include "asm.h"
