@@ -1466,6 +1466,10 @@ Start... early ages
   some programs need A0 = 0 to test if they are running as a normal program
   or as an accessory. (THH)
 
-2003-0521
+2003-05-21
 - bios/lineainit.c vdi/vdimain.c : Moved initialization of shft_off to
   lineainit.c so that some line-a functions also work from AUTO folder. (THH)
+
+2003-05-26
+- aes/gemsuper.c, aes/gemevlib.c : Fixed a problem with the mouse buttons
+  in certain programs (Thing, Pixart, etc.). (THH).

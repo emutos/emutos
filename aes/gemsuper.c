@@ -157,14 +157,9 @@ UWORD crysbind(WORD opcode, LONG pglobal, UWORD int_in[], UWORD int_out[], LONG 
                 ev_timer( HW(T_HICOUNT) + LW(T_LOCOUNT) );
                 break;
           case EVNT_MULTI:
-                  if (MU_FLAGS & MU_TIMER)
+                if (MU_FLAGS & MU_TIMER)
                   maddr = HW(MT_HICOUNT) + LW(MT_LOCOUNT);
-if ((MB_MASK == 3) && (MB_STATE == 1))
-{
-  MB_STATE = 0;
-
-}
-          tree = HW(MB_CLICKS) | LW((MB_MASK << 8) | MB_STATE);
+                tree = HW(MB_CLICKS) | LW((MB_MASK << 8) | MB_STATE);
                 ret = ev_multi(MU_FLAGS, (MOBLK *)&MMO1_FLAGS, (MOBLK *)&MMO2_FLAGS, 
                         maddr, tree, MME_PBUFF, &EV_MX);
                 break;
