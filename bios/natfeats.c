@@ -44,7 +44,7 @@ int has_natfeats(void)
 long nfGetFullName(char *buffer, long size)
 {
     if (nfid_name) {
-        return NFCall( nfid_name | 0x0001, buffer, size);
+        return NFCall( nfid_name /*| 0x0001*/, buffer, size);
     }
     else {
         if (size >= 0) {
