@@ -15,6 +15,7 @@
  * Well, this can be made nicer later, if we have much time... :-)
  */
 
+#include "config.h"
 #include "portab.h"
 #include "kprint.h"
 #include "nls.h"
@@ -27,6 +28,11 @@
 #include "version.h"  /* the EMUTOS_VERSION string */
 
 #include "initinfo.h"
+
+
+#if TOS_VERSION >= 0x200   /* Don't include splashscreen on TOS 1.0x to
+                              save some space in the ROM image */
+
 
 /*==== Defines ============================================================*/
 
@@ -193,4 +199,20 @@ void initinfo()
     set_line();
     cprintf("\n\r");
 }
+
+
+#else    /* TOS_VERSION >= 0x200 */
+
+
+void initinfo()
+{
+    /* Clear screen, set foreground to 15, background is color 0 */
+    cprintf("\033E\033b%c\033c%c", 15 + ' ', 0 + ' ');
+
+    cprintf("EmuTOS Version %s\r\n", EMUTOS_VERSION);
+}
+
+
+#endif   /* TOS_VERSION >= 0x200 */
+
 

@@ -18,6 +18,7 @@
 
 #include <string.h>
 
+#include "config.h"
 #include "portab.h"
 #include "machine.h"
 #include "obdefs.h"
@@ -621,6 +622,9 @@ WORD do_viewmenu(WORD item)
                 newview = V_ICON;
 #else
                 newview = (G.g_iview == V_ICON) ? V_TEXT : V_ICON;
+#endif
+#if TOS_VERSION < 0x200
+                newview = V_TEXT;   /* No icons in TOS 1.0x so we save space */
 #endif
                 break;
           case NAMEITEM:

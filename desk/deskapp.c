@@ -19,6 +19,7 @@
 
 #include <string.h>
 
+#include "config.h"
 #include "portab.h"
 #include "machine.h"
 #include "obdefs.h"
@@ -433,6 +434,7 @@ static WORD app_getfh(WORD openit, BYTE *pname, WORD attr)
    function. See icons.c, too.  - THH */
 static WORD app_rdicon()
 {
+#if TOS_VERSION >= 0x200    /* Don't include icons in TOS 1.x to save space */
         LONG            temp, stmp, dtmp;
         WORD            length, i, iwb, ih;
         WORD            num_icons, num_masks, last_icon, num_wds, 
@@ -552,7 +554,9 @@ static WORD app_rdicon()
                (i < (NUM_ANODES - 1)) )
             G.g_iblist[i].ib_pmask = G.g_iblist[ID_GENERIC].ib_pdata;
         }
-#endif
+#endif /* DESK1 */
+
+#endif /* TOS_VERSION >= 0x200 */
         return(TRUE);
 } /* app_rdicon */
 

@@ -911,3 +911,7 @@ Start... early ages
 - doc/authors.txt - a first attempt. Please don't feel offended if I forgot
   something. The idea is to be able in a second phase to remove the 'Authors' 
   lines in our source file headers that IMHO are not truly meaningful (LVL)
+
+23. Jun. 2002
+- include/config.h - Added TOS_VERSION define to switch TOS versions and
+  to reduce size if compiling a 192kB image (THH).

@@ -18,6 +18,7 @@
 
 #include <string.h>
 
+#include "config.h"
 #include "portab.h"
 #include "machine.h"
 #include "obdefs.h"
@@ -308,6 +309,8 @@ void insa_elev(LONG tree, WORD nicon, WORD numics)
 
         strcpy(&G.g_2text[0], ini_str(STDOCU));
         insa_icon(tree, APF2NAME, ID_GENERIC+nicon, &gl_dib, &G.g_2text[0]);
+/* The following disabled lines were used when the icons have been loaded
+   from an external file: */
 /*
 #if ALCYON
         lp = G.a_datastart + (LONG) *((BYTE **)(G.a_datastart + gl_pstart +
@@ -318,9 +321,15 @@ void insa_elev(LONG tree, WORD nicon, WORD numics)
              (nicon * sizeof(BYTE *)) );
 #endif
 */
+
+#if TOS_VERSION < 0x200 /* Don't include icons in TOS 1.x to save space */
+        lp = "Not available";
+#else
         lp = cfg_icons_txt[nicon];
+#endif
 
         strcpy(&gl_lngstr[0], lp);
+
         inf_sset(tree, APFTITLE, &gl_lngstr[0] );
 } /* insa_elev */
 

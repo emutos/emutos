@@ -16,7 +16,7 @@
 
 #include "asmdefs.h"
 #include "header.h"
-
+#include "config.h"
 
 
 // ==== Defines ==============================================================
@@ -83,7 +83,7 @@ aexecsave:      ds.l    1       // save zone for autoexec
 _os_entry:
     bra.s   _main       // os_entry, branch to _main
 os_version:
-    dc.w    0x0102      // os_version, TOS version
+    dc.w    TOS_VERSION // os_version, TOS version
 reseth:
     dc.l    _main       // reseth, pointer to reset handler
 _os_beg:

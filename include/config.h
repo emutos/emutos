@@ -92,15 +92,25 @@
 #define CONF_NO_NLS 0
 #endif
 
-/* Set this to 1 to activate experimental ACSI support 
+/*
+ * Set this to 1 to activate experimental ACSI support 
  */
-
 #ifndef CONF_WITH_ACSI
 #define CONF_WITH_ACSI 1
 #endif
 
+/*
+ * Define the TOS version here. Valid values are 0x102 and 0x206 for example.
+ * Note that using a value less than 0x200 might force some parts of
+ * EmuTOS not to be compiled to save some space in the ROM image.
+ */
+#ifndef TOS_VERSION
+#define TOS_VERSION 0x206
+#endif
 
-/* The keyboard and language are now set using
+
+/*
+ * The keyboard and language are now set using
  *   make LOCALE="xx" 
  * where xx is a lowercase two-letter country code as
  * found in the table in bios/country.c

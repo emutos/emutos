@@ -1,12 +1,16 @@
 /*      COMPICON.H      10/05/84 - 10/10/84     Gregg Morris            */
-
+/* taken from ICONHI.H  10/05/84 -      06/11/85        Lee Lorenzen    */
+/* added Desktop Publisher icons        03/27/87        Gregg Morris    */
+/* 2002/04/03 : Renamed to icons.c, it's now included in EmuTOS - THH   */
+ 
+#include "config.h"
 #include "portab.h"
 #include "machine.h"
 #include "obdefs.h"
 #include "deskapp.h"
 
-/* taken from ICONHI.H  10/05/84 -      06/11/85        Lee Lorenzen            */
-/* added Desktop Publisher icons        03/27/87        Gregg Morris    */
+#if TOS_VERSION >= 0x200    /* Don't include icons in TOS 1.x to save space */
+
 
 /*ICONBLK
    (L)ib_pmask, (L)ib_pdata, (L)ib_ptext,
@@ -232,3 +236,5 @@ void *icondata_start = &ighdskmh[0];
 
 void *icondata_end = &iddpubdh[DATASIZE];
 
+
+#endif  /* TOS_VERSION >= 0x200 */
