@@ -102,15 +102,19 @@ memconf:
          * If we wanted to avoid stack usage we would have to abandon
          * this run-time check and go with #ifdef FALCON...
          */
+        moveq   #0, d7                  // clear flag of 32-bit address CPU
+
         lea     8.w, a0
         move.l  (a0), a1
         move.l  #fbuserr, (a0)          // set up a new bus error handler
         move.w  sr, d1                  // remember SR
+        or.w    #0x700, sr              // disable interrupts
         move.l  sp, a0                  // remember SP
         clr.l   d0
         nop
         move.w  0xffff8006.w, d0        // read the Falcon MMU register
         nop
+        moveq   #1, d7                  // Falcon is known to have 68030+
 fbuserr:
         move.l  a0, sp                  // restore SP
         move.w  d1, sr                  // restore SR
@@ -213,33 +217,99 @@ setmem:
         move.l  #0x237698aa, memval2    // set memval2 to ok
         move.l  #0x5555aaaa, memval3    // set memval3 to ok
 
-        /* TT-RAM (FastRAM) */
-        clr.l   ramtop                  // set ramtop to 0 (= no FastRAM)
+/*
+ * TT-RAM (FastRAM)
+ * This alternate RAM begins at 16MB boundary ($1000000)
+ */
+        /* clear MB counter */
+        moveq   #0, d6
+
+        /* test CPU - FastRAM is possible on 68020+ (32-bit address space) */
+        /* the CPU type test is missing here. I am using a work-around by
+         * setting the D7 register in the Falcon MMU detection to nonzero.
+         * This hack should be removed and proper CPU detection should be added.
+         * (joy)
+         */
+        tst.w   d7
+        beq     setramtop
+
+        /* disable IRQ */
+        move.w  sr, d1
+        or.w    #0x700, sr
+
+        /* set up alternate bus error handler */
+        move.l  sp, a6
+        move.l  8.w, a5
+        move.l  #tbuserr, 8.w
+
+        /* start from 16MB boundary */
+        lea     0x1000000, a0
+
+        /* test by blocks of 1MB size */
+        move.l  #1024*1024, d0
+
+loop:
+        lea     (a0,d0.l), a1
+        tst.l   -(a1)
+        addq.l  #1, d6
+        add.l   d0, a0
+        cmp.l   #2048, d6                // 2048 MB of FastRAM should be enough
+        blt.s   loop
+
+        /* alternate bus error handler here */
+tbuserr:
+        move.l  a5, 8.w
+        move.l  a6, sp
+
+        /* enable IRQ */
+        move.w  d1, sr
+
+setramtop:
+        /* test MB counter */
+        tst.l   d6
+        bne.s   alter
+        sub.l   a0, a0
+alter:
+        move.l  a0, ramtop              // set ramtop to size of found memory
         move.l  #0x1357BD13, ramvalid   // set ramvalid to ok
 
-        pea msg_bss     // Print, what's going on
-        bsr _kprintf
-        addq #4,sp
-
-        bra	memdone                 // config done -> return to startup.s
-
+        move.l  #20,d1
+        move.l  ramtop, d0
+        asr.l   d1, d0
+        sub.l   #16, d0
+        move.l  d0, -(sp)
+        move.l  _phystop, d0
+        asr.l   d1, d0
+        move.l  d0, -(sp)
+        pea     msg_bss                 // Print, what's going on
+        bsr     _kprintf                // this also requires stack!
+        add.l   #12,sp
 
 
 #if 0
+/*
+ * Clear all available ST-RAM
+ */
         /* clear memory till running into buserror or reaching top */
-        move.l 	#0xe00000, d0           // maximum top of RAM
+        move.l 	_phystop, d0            // maximum top of RAM
         move.l  _end, a0                // Set start of RAM
 clrmem:
         clr.w   (a0)+                   // Clear actual word, then increase
         cmp.l   d0, a0                  // End of MEM reached?
         blt.s   clrmem                  // if not, clear next word
+        pea     msg_bss2                // Print, what's going on
+        bsr     _kprintf                // this also requires stack!
+        add.l   #12,sp
 #endif
 
+        bra     memdone                 // config done -> return to startup.s
 
 
 // ==== Some messages ========================================================
 
 msg_bss:
+        .ascii "BIOS: Detected memory: ST-RAM = %ld MB, FastRAM = %ld MB\n\0"
+msg_bss2:
         .ascii "BIOS: Cleared RAM ...\n\0"
 
 

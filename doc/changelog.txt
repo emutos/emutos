@@ -394,3 +394,11 @@ Start... early ages
   on non-Falcon machines. This makes use of stack so the notice
   in bios/startup.S about meminit not using sp is not correct (joy)
 - updated status.txt (the hw init paragraph) (joy)
+
+31. Dec. 2001
+- added FastRAM (TT-RAM) detection to bios/memory.S. Right now
+  it is called if Falcon MMU was detected but generally I need
+  to detect CPU type so it would work on TT as well. (joy)
+- corrected // notice in bios/startup.S - the meminit actually
+  needs stack pointer - for both the bus error handler and for
+  occasionals bsr kprintf (joy)
