@@ -247,7 +247,7 @@ _main:                         // stunt to guarantee entry into supervisor mode
 
 // ==== Check for diagnostic cartridge =======================================
 
-        .equ    cart_base,      0xfffa0000
+        .equ    cart_base,      0x00fa0000
 
         cmp.l   #0xfa52235f, cart_base  // magic - is cartridge present?
         bne     nodiag                  // no -> go on
@@ -267,8 +267,7 @@ resetvec:
        cmpi.l 	#0x31415926, resvalid	// Jump to resetvector?
        bne.s 	noreset    		// No --> noreset
        move.l 	resvector, d0		// Yes: old resvec to d0
-       tst.b 	resvector		// Is it valid?
-       bne.s 	noreset                	// No --> noreset
+       beq.s 	noreset         	// Address null? Yes --> noreset
        btst 	#0, d0			// Address odd ?
        bne.s 	noreset    		// Yes --> noreset
        movea.l  d0, a0			// resvec
