@@ -555,3 +555,11 @@ Start... early ages
 - removed cli/Makefile (LVL)
 - implemented the font_ring as 3 lists of linked fontheaders (MAD)
 - documented all tosvars in bios/tosvar.h till 0x5b0 (MAD)
+- keyboard reset (Alt+Ctrl+Del(+RShift)) implemented (joy)
+- trying to get 16-bit sector number working in BDOS - one workaround
+  in fsbuf.c makes DIR (fsfirst/fsnext) working correctly (it seems).
+  The NEGATIVE_RECN value (currently -200) should be fixed when it will be
+  clear what is FAT/DIR negative recn and what is unsigned recn in signed int.
+  FAT traversing seems to be broken (Pexec fails for some files) (joy)
+- blkdev.h: retrying in emulator is not necessary (joy)
+- blkdev.c: 16-bit recn should work now (joy)
