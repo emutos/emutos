@@ -1699,8 +1699,8 @@ abline ()
 
         if (dx >= dy) {
             e1 = 2*dy;
-            eps = e1 - dx;
-            e2 = e1 - 2*dx;
+            eps = -dx;
+            e2 = 2*dx;
 
             switch (WRT_MODE) {
             case 3:              /* not */
@@ -1712,10 +1712,9 @@ abline ()
                         bit = bit >> 1| bit << 15;
                         if (bit&0x8000)
                             addr += xinc;
-                        if (eps < 0 )
-                            eps += e1;
-                        else {
-                            eps += e2;
+                        eps += e1;
+                        if (eps >= 0 ) {
+                            eps -= e2;
                             addr += yinc;       /* increment y */
                         }
                     }
@@ -1734,10 +1733,9 @@ abline ()
                         bit = bit >> 1| bit << 15;
                         if (bit&0x8000)
                             addr += xinc;
-                        if (eps < 0 )
-                            eps += e1;
-                        else {
-                            eps += e2;
+                        eps += e1;
+                        if (eps >= 0 ) {
+                            eps -= e2;
                             addr += yinc;       /* increment y */
                         }
                     }
@@ -1756,10 +1754,9 @@ abline ()
                         bit = bit >> 1| bit << 15;
                         if (bit&0x8000)
                             addr += xinc;
-                        if (eps < 0 )
-                            eps += e1;
-                        else {
-                            eps += e2;
+                        eps += e1;
+                        if (eps >= 0 ) {
+                            eps -= e2;
                             addr += yinc;       /* increment y */
                         }
                     }
@@ -1780,10 +1777,9 @@ abline ()
                     bit = bit >> 1| bit << 15;
                     if (bit&0x8000)
                         addr += xinc;
-                    if (eps < 0 )
-                        eps += e1;
-                    else {
-                        eps += e2;
+                    eps += e1;
+                    if (eps >= 0 ) {
+                        eps -= e2;
                         addr += yinc;       /* increment y */
                     }
                 }
@@ -1794,10 +1790,9 @@ abline ()
                     bit = bit >> 1| bit << 15;
                     if (bit&0x8000)
                         addr += xinc;
-                    if (eps < 0 )
-                        eps += e1;
-                    else {
-                        eps += e2;
+                    eps += e1;
+                    if (eps >= 0 ) {
+                        eps -= e2;
                         addr += yinc;       /* increment y */
                     }
                 }
@@ -1805,8 +1800,8 @@ abline ()
         }
         } else {
             e1 = 2*dx;
-            eps = e1 - dy;
-            e2 = e1 - 2*dy;
+            eps = - dy;
+            e2 = 2*dy;
 
             switch (WRT_MODE) {
             case 3:              /* not */
@@ -1816,10 +1811,9 @@ abline ()
                         if (thisplane && linemask&0x0001)
                             *(WORD*)addr &= ~bit;
                         addr += yinc;
-                        if (eps < 0 )
-                            eps += e1;
-                        else {
-                            eps += e2;
+                        eps += e1;
+                        if (eps >= 0 ) {
+                            eps -= e2;
                             bit = bit >> 1| bit << 15;
                             if (bit&0x8000)
                                 addr += xinc;
@@ -1838,10 +1832,9 @@ abline ()
                         if (thisplane && linemask&0x0001)
                             *(WORD*)addr ^= bit;
                         addr += yinc;
-                        if (eps < 0 )
-                            eps += e1;
-                        else {
-                            eps += e2;
+                        eps += e1;
+                        if (eps >= 0 ) {
+                            eps -= e2;
                             bit = bit >> 1| bit << 15;
                             if (bit&0x8000)
                                 addr += xinc;
@@ -1860,10 +1853,9 @@ abline ()
                         if (thisplane && linemask&0x0001)
                             *(WORD*)addr |= bit;
                         addr += yinc;
-                        if (eps < 0 )
-                            eps += e1;
-                        else {
-                            eps += e2;
+                        eps += e1;
+                        if (eps >= 0 ) {
+                            eps -= e2;
                             bit = bit >> 1| bit << 15;
                             if (bit&0x8000)
                                 addr += xinc;
@@ -1884,10 +1876,9 @@ abline ()
                         else
                             *(WORD*)addr &= ~bit;
                         addr += yinc;
-                        if (eps < 0 )
-                            eps += e1;
-                        else {
-                            eps += e2;
+                        eps += e1;
+                        if (eps >= 0 ) {
+                            eps -= e2;
                             bit = bit >> 1| bit << 15;
                             if (bit&0x8000)
                                 addr += xinc;
@@ -1898,10 +1889,9 @@ abline ()
                         linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
                         *(WORD*)addr &= ~bit;
                         addr += yinc;
-                        if (eps < 0 )
-                            eps += e1;
-                        else {
-                            eps += e2;
+                        eps += e1;
+                        if (eps >= 0 ) {
+                            eps -= e2;
                             bit = bit >> 1| bit << 15;
                             if (bit&0x8000)
                                 addr += xinc;

@@ -13,6 +13,7 @@
 #include "vdiconf.h"
 
         .globl  bit_blt
+        .globl  _BIT_BLT
 
         .xdef  f0_l2r_rt,f1_l2r_rt,f2_l2r_rt,fl_l2r_rt
         .xdef  f0_l2r_lf,f1_l2r_lf,f2_l2r_lf,fl_l2r_lf
@@ -67,6 +68,13 @@
 //      d2.w    X min destination
 //      d4.w    X max source
 //      d6.w    X max destination
+
+_BIT_BLT:
+        // A wrapper, so save the registers
+        movem.l d2-d7/a2-a6,-(sp)
+        bsr.s   bit_blt
+        movem.l (sp)+,d2-d7/a2-a6
+        rts
 
 bit_blt:
 
@@ -366,7 +374,7 @@ next_plane:
         move.w  INNER_CT(a6),d5         // d5(15:00) <- inner loop counter
 
         move.l  #0x8421,d1              // logic ops 15,10,5, and 0 are special cases ($8421=%1000010000100001)
-        btst.l  d0,d1                   // where operation is performed directly upon
+        btst    d0,d1                   // where operation is performed directly upon
         bne     unary_blt               // the destination independent of the source
 
         tst.l   P_ADDR(a6)              // skip this stuff if no pattern

@@ -1082,3 +1082,6 @@ Start... early ages
                
 17. Sep. 2002
 - vdi/monout.c - abline() new old algorithm and bug free (MAD)
+               - abline() opt. (color now faster, than old asm) (MAD)
+- bios/linea.S - made CLC_FLIT as linea_6 working. (MAD) 
+

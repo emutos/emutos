@@ -17,10 +17,11 @@
 
         .xdef _put_pix
         .xdef _get_pix
-        .xdef _ABLINE
-        .xdef _HABLINE
-        .xdef _clcflit           // from vdi/gsxasm1.S
+        .xdef _abline
+        .xdef _habline
+        .xdef _CLC_FLIT           // from vdi/gsxasm1.S
         .xdef _RECTFILL
+        .xdef bit_blt
         .xdef _text_blt
         .xdef _dis_cur
         .xdef _hide_cur
@@ -46,12 +47,14 @@ _int_linea:
         cmp.w   linea_ents,d0
         bpl     wrong_linea
 
-        movem.l d0-d2/a0-a2,-(sp)
+#if 0
+	movem.l d0-d2/a0-a2,-(sp)
         move.w  d0,-(sp)
         pea     linea_msg
         jsr     _kprintf              /* Print debugging information */
         addq.l  #6,sp
         movem.l (sp)+,d0-d2/a0-a2
+#endif
 
         lea     linea_vecs,a0
         lsl.w   #2,d0
@@ -197,7 +200,7 @@ linea_vecs:
         dc.l    _abline         /* _linea_3 */
         dc.l    _habline        /* _linea_4 */
         dc.l    _RECTFILL       /* _linea_5 */
-        dc.l    _linea_6        /* _clc_flit - does not work yet */
+        dc.l    _CLC_FLIT       /* _clc_flit - does not work yet */
         dc.l    _linea_7        /* _bit_blt? */
         dc.l    _linea_8        /* _text_blt */
         dc.l    _dis_cur        /* _linea_9 */
