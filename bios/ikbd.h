@@ -34,6 +34,9 @@ extern void kbd_init(void);
 /* called by ikbdvec to handle key events */
 extern void kbd_int(WORD scancode);
 
+/* called by timer C int to handle key repeat */
+extern void kb_timerc_int(void);
+
 /* some bios functions */
 extern LONG bconstat2(void);
 extern LONG bconin2(void);

@@ -1,5 +1,4 @@
 BIOS/XBIOS/BDOS
-- implement keyboard repeat
 - implement XBIOS calls
 - implement linea functions
 - merge identical headers, and put them all in an include directory (?)

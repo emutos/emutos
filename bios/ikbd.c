@@ -26,7 +26,6 @@
  * - alt-numeric-pad to enter characters by their ASCII code
  * - KEYTBL.TBL config with _AKP cookie (tos 5.00 and later)
  * - CLRHOME and INSERT in kbshift.
- * - key repeat
  */
 
 #include "country.h"
@@ -109,14 +108,6 @@ void bioskeys(void)
     current_keytbl = *tbl;
 }
 
-/*=== kbrate (xbios) =====================================================*/
-
-WORD kbrate(WORD initial, WORD repeat)
-{
-    /* TODO */
-    return 0;
-}
-
 
 /*=== kbshift (bios) =====================================================*/
 
@@ -190,6 +181,52 @@ static void push_ikbdiorec(LONG value)
     *(LONG *) (ikbdiorec.buf + ikbdiorec.tail) = value;
 }
 
+/*=== kbrate (xbios) =====================================================*/
+
+/*
+ * key repeat is handled as follows:
+ * As a key is hit and enters the buffer, it is recorded as kb_last_key; 
+ * at the same time a downward counter kb_ticks is set to the first delay,
+ * kb_initial.
+ * Every fourth timer C interrupt (50 Hz ticks), kb_tick is decremented if
+ * not null (kb_tick null means no more key repeat for this key). If kb_tick
+ * reaches zero, the key is re-emited and kb_tick is now set to the second 
+ * delay kb_repeat.
+ * Finally, any kind of key depress IKBD event stops the repeat handling 
+ * by setting kb_tick back to zero.
+ * There is no need to disable interrupts when modifying kb_tick, kb_initial 
+ * and kb_repeat since:
+ * - each routine not in interrupt routines only accesses kb_tick once;
+ * - the interrupt routines (ACIA and timer C) cannot happen at the same
+ *   time (they both have IPL level 6);
+ * - interrupt routines do not modify kb_initial and kb_repeat.
+ */
+
+static WORD kb_initial;
+static WORD kb_repeat;
+static WORD kb_ticks;
+static LONG kb_last_key;
+
+WORD kbrate(WORD initial, WORD repeat)
+{
+    WORD ret = (kb_initial << 8) | (kb_repeat & 0xFF);
+    if(initial > 1) 
+        kb_initial = initial;
+    if(repeat > 1) 
+        kb_repeat = repeat;
+    return ret;
+}
+
+void kb_timerc_int(void)
+{
+    if(kb_ticks <= 0) return;
+    if(-- kb_ticks <= 0) {
+        push_ikbdiorec(kb_last_key);
+        kb_ticks = kb_repeat;
+    }
+}
+
+
 /*=== interrupt routine support ===================================*/
 
 /*
@@ -220,6 +257,9 @@ void kbd_int(WORD scancode)
     }
 
     if (scancode & KEY_RELEASED) {
+        /* stop key repeat */
+        kb_ticks = 0;
+        
         scancode &= ~KEY_RELEASED;      /* get rid of release bits */
         switch (scancode) {
         case KEY_RSHIFT:
@@ -313,6 +353,10 @@ void kbd_int(WORD scancode)
     kprintf("KBD iorec: Pushing value 0x%08lx\n", value);
 #endif
     push_ikbdiorec(value);
+    
+    /* set initial delay for key repeat */
+    kb_last_key = value;
+    kb_ticks = kb_initial;
 }
 
 
@@ -384,6 +428,11 @@ void kbd_init(void)
 
     ikbd_writeb(0x1A);            /* disable joystick */
     ikbd_writeb(0x12);            /* disable mouse */
+
+    /* initialize the key repeat stuff */
+    kb_ticks = 0;
+    kb_initial = 25;
+    kb_repeat = 5;
 
     bioskeys();
 }

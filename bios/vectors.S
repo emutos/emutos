@@ -354,7 +354,9 @@ _int_timerc:
         bpl     timerc_end
 
         movem.l d0-d7/a0-a6,-(sp)       // save registers       
-        // TODO, repeat keys ?
+
+        // repeat keys 
+        jsr     _kb_timerc_int
 
         // dosound support
         jsr     _sndirq
