@@ -24,7 +24,7 @@
 
 /*==== MIDI bios functions =========================================*/
 
-LONG bconstat3(VOID)
+LONG bconstat3(void)
 {
   if(midiiorec.head == midiiorec.tail) {
     return 0;   /* iorec empty */
@@ -33,7 +33,7 @@ LONG bconstat3(VOID)
   }
 }
 
-LONG bconin3(VOID)
+LONG bconin3(void)
 {
   WORD old_sr;
   LONG value;
@@ -56,7 +56,7 @@ LONG bconin3(VOID)
 
 
 /* can we send a byte to the MIDI ACIA ? */
-LONG bcostat3(VOID)
+LONG bcostat3(void)
 {
   if(midi_acia.ctrl & ACIA_TDRE) {
     return -1;  /* OK */
@@ -67,7 +67,7 @@ LONG bcostat3(VOID)
 }
 
 /* send a byte to the MIDI ACIA */
-VOID bconout3(WORD dev, WORD c)
+void bconout3(WORD dev, WORD c)
 {
   while(! bcostat3())
     ;
@@ -77,7 +77,7 @@ VOID bconout3(WORD dev, WORD c)
 /*==== MIDI xbios function =========================================*/
 
 /* cnt = number of bytes to send less one */
-VOID midiws(WORD cnt, LONG ptr)
+void midiws(WORD cnt, LONG ptr)
 {
   UBYTE *p = (UBYTE *)ptr;
   while(cnt-- >= 0) {
@@ -92,7 +92,7 @@ VOID midiws(WORD cnt, LONG ptr)
  *      work, since the IRQ is shared between both ACIAs.
  */
  
-void midi_init(VOID)
+void midi_init(void)
 {
 //    cprintf("[    ] MIDI ACIA initialized ...\r");
 

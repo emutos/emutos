@@ -21,22 +21,22 @@
 #define GIACCESS_WRITE 0x80
 
 extern LONG giaccess(WORD data, WORD reg);
-extern VOID ongibit(WORD value);
-extern VOID offgibit(WORD value);
+extern void ongibit(WORD value);
+extern void offgibit(WORD value);
 extern LONG dosound(LONG table);
 
 /* internal routines */
 
 /* initialize */
-VOID snd_init(VOID);
+void snd_init(void);
 
 /* timer C int sound routine */
-extern VOID sndirq(VOID);
+extern void sndirq(void);
 
 /* play bell sound, called by bconout2 */
-VOID bell(VOID);     
+void bell(void);     
 
 /* play key click sound, called by keyboard interrupt */
-VOID keyclick(VOID);   
+void keyclick(void);   
 
 #endif /* _SOUND_H */

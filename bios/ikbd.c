@@ -46,8 +46,6 @@
 
 #define DBG_KBD 0
 
-//extern VOID (*mousevec)(UBYTE *buf);    /* IKBD Mouse */
-
 
 /* scancode definitions */
 #define KEY_RELEASED 0x80     /* This bit set, when key-release scancode */
@@ -177,7 +175,7 @@ LONG keytbl(LONG norm, LONG shft, LONG caps)
   return (LONG) &current_keytbl;
 }
 
-VOID bioskeys(VOID)
+void bioskeys(void)
 {
     int i;
     int goal = get_kbd_number();   /* in country.c */
@@ -207,7 +205,7 @@ LONG kbshift(WORD flag)
 
 /*=== iorec handling (bios) ==============================================*/
 
-LONG bconstat2(VOID)
+LONG bconstat2(void)
 {
   if(ikbdiorec.head == ikbdiorec.tail) {
     return 0;   /* iorec empty */
@@ -216,7 +214,7 @@ LONG bconstat2(VOID)
   }
 }
 
-LONG bconin2(VOID)
+LONG bconin2(void)
 {
   WORD old_sr;
   LONG value;
@@ -237,7 +235,7 @@ LONG bconin2(VOID)
   return value;
 }
 
-static VOID push_ikbdiorec(LONG value)
+static void push_ikbdiorec(LONG value)
 {
   ikbdiorec.tail += 4;
   if(ikbdiorec.tail >= ikbdiorec.size) {
@@ -256,7 +254,7 @@ static VOID push_ikbdiorec(LONG value)
  * kbd_int : called by the interrupt routine for key events.
  */
 
-VOID kbd_int(WORD scancode)
+void kbd_int(WORD scancode)
 {
   LONG value;        /* the value to push into iorec */
   UBYTE ascii = 0;
@@ -367,7 +365,7 @@ push_value:
 /*=== ikbd acia stuff ==================================================*/
 
 /* can we send a byte to the ikbd ? */
-LONG bcostat4(VOID)
+LONG bcostat4(void)
 {
   if(ikbd_acia.ctrl & ACIA_TDRE) {
     return -1;  /* OK */
@@ -378,7 +376,7 @@ LONG bcostat4(VOID)
 }
 
 /* send a byte to the IKBD */
-VOID bconout4(WORD dev, WORD c)
+void bconout4(WORD dev, WORD c)
 {
   while(! bcostat4())
     ;
@@ -386,7 +384,7 @@ VOID bconout4(WORD dev, WORD c)
 }
 
 /* cnt = number of bytes to send less one */
-VOID ikbdws(WORD cnt, PTR ptr)
+void ikbdws(WORD cnt, PTR ptr)
 {
     UBYTE *p = (UBYTE *)ptr;
     while(cnt-- >= 0)
@@ -394,7 +392,7 @@ VOID ikbdws(WORD cnt, PTR ptr)
 }
 
 /* Reset (without touching the clock) */
-VOID ikbd_reset(VOID)
+void ikbd_reset(void)
 {
     UBYTE cmd[2] = { 0x80, 0x01 };
     
@@ -405,7 +403,7 @@ VOID ikbd_reset(VOID)
 }
 
 /* Resume */
-VOID ikbd_resume(VOID)
+void ikbd_resume(void)
 {
     UBYTE cmd[1] = { 0x11 };
 
@@ -413,7 +411,7 @@ VOID ikbd_resume(VOID)
 }
 
 /* Pause output */
-VOID ikbd_pause(VOID)
+void ikbd_pause(void)
 {
     UBYTE cmd[1] = { 0x13 };
 
@@ -423,14 +421,14 @@ VOID ikbd_pause(VOID)
 /* some joystick routines not in yet (0x18-0x19) */
 
 /* Memory load */
-VOID ikbd_mem_write(WORD address, WORD size, BYTE *data)
+void ikbd_mem_write(WORD address, WORD size, BYTE *data)
 {
     kprintf("Attempt to write data into keyboard memory");
     while(1);
 }
 
 /* Memory read */
-VOID ikbd_mem_read(WORD address, BYTE data[6])
+void ikbd_mem_read(WORD address, BYTE data[6])
 {
     BYTE cmd[3] = { 0x21, address>>8, address&0xFF };
 
@@ -440,7 +438,7 @@ VOID ikbd_mem_read(WORD address, BYTE data[6])
 }
 
 /* Controller execute */
-VOID ikbd_exec(WORD address)
+void ikbd_exec(WORD address)
 {
     BYTE cmd[3] = { 0x22, address>>8, address&0xFF };
 
@@ -450,7 +448,7 @@ VOID ikbd_exec(WORD address)
 /* Status inquiries (0x87-0x9A) not yet implemented */
 
 /* Set the state of the caps lock led. */
-VOID atari_kbd_leds (UWORD leds)
+void atari_kbd_leds (UWORD leds)
 {
     BYTE cmd[6] = {32, 0, 4, 1, 254 + ((leds & 4) != 0), 0};
 
@@ -464,7 +462,7 @@ VOID atari_kbd_leds (UWORD leds)
  *	  configures the MFP so we can get interrupts
  */
  
-VOID kbd_init(VOID)
+void kbd_init(void)
 {
     /* initialize ikbd ACIA */
     ikbd_acia.ctrl =

@@ -647,7 +647,7 @@ LONG bios_b(WORD flag)
  */
 
 
-VOID bios_11(WORD flag, WORD *dt)
+void bios_11(WORD flag, WORD *dt)
 {
     date_time(flag, dt);    /* clock.c */
 }

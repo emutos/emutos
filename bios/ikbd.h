@@ -29,28 +29,28 @@ struct keytbl {
 };
 
 /* initialise the ikbd */
-extern VOID kbd_init(VOID);
+extern void kbd_init(void);
 
 /* called by ikbdvec to handle key events */
-extern VOID kbd_int(WORD scancode);
+extern void kbd_int(WORD scancode);
 
 /* some bios functions */
-extern LONG bconstat2(VOID);
-extern LONG bconin2(VOID);
-extern LONG bcostat4(VOID);
-extern VOID bconout4(WORD dev, WORD c);
+extern LONG bconstat2(void);
+extern LONG bconin2(void);
+extern LONG bcostat4(void);
+extern void bconout4(WORD dev, WORD c);
 extern LONG kbshift(WORD flag);
 
 /* advanced ikbd functions */
-extern VOID ikbd_pause(VOID);
-extern VOID ikbd_resume(VOID);
-extern VOID ikbd_reset(VOID);
-extern VOID atari_kbd_leds (UWORD );
+extern void ikbd_pause(void);
+extern void ikbd_resume(void);
+extern void ikbd_reset(void);
+extern void atari_kbd_leds (UWORD );
 
 /* some xbios functions */
 extern LONG keytbl(LONG norm, LONG shft, LONG caps);
-extern VOID bioskeys(VOID);
-extern VOID ikbdws(WORD cnt, LONG ptr);
+extern void bioskeys(void);
+extern void ikbdws(WORD cnt, LONG ptr);
 
 #endif /* _IKBD_H */
 

@@ -39,7 +39,7 @@ static WORD dflt_palette[] = {
  * done at the same time from C.
  */
 
-VOID screen_init(VOID)
+void screen_init(void)
 {
     volatile BYTE *rez_reg = (BYTE *) 0xffff8260;
     volatile WORD *col_regs = (WORD *) 0xffff8240;
@@ -116,7 +116,7 @@ WORD getrez(void)
 }
 
 
-VOID setscreen(LONG logLoc, LONG physLoc, WORD rez)
+void setscreen(LONG logLoc, LONG physLoc, WORD rez)
 {
     if(logLoc >= 0) {
       v_bas_ad = (char *)logLoc;
@@ -130,7 +130,7 @@ VOID setscreen(LONG logLoc, LONG physLoc, WORD rez)
     }    
 }
 
-VOID setpalette(LONG palettePtr)
+void setpalette(LONG palettePtr)
 {
     /* next VBL will do this */
     colorptr = (WORD *)palettePtr;
@@ -173,7 +173,7 @@ WORD setcolor(WORD colorNum, WORD color)
 }
 
 
-VOID vsync(VOID)
+void vsync(void)
 {
     WORD old_sr;
     LONG a;

@@ -48,8 +48,8 @@ extern BPB flop_bpb[2];
  * are the implementation of these provided by floppy.c.
  */
 
-extern LONG flop_hdv_boot(VOID);
-extern VOID flop_hdv_init(VOID);
+extern LONG flop_hdv_boot(void);
+extern void flop_hdv_init(void);
 extern LONG flop_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev);
 extern LONG flop_getbpb(WORD dev);
 extern LONG flop_mediach(WORD dev);
@@ -63,7 +63,7 @@ extern WORD flopwr(LONG buf, LONG filler, WORD dev,
 extern WORD flopfmt(LONG buf, LONG filler, WORD dev, WORD spt,
                     WORD track, WORD side, WORD interleave, 
                     ULONG magic, WORD virgin); 
-extern VOID protobt(LONG buf, LONG serial, WORD type, WORD exec);
+extern void protobt(LONG buf, LONG serial, WORD type, WORD exec);
 extern WORD flopver(LONG buf, LONG filler, WORD dev, 
                     WORD sect, WORD track, WORD side, WORD count); 
 extern WORD floprate(WORD dev, WORD rate);
@@ -73,9 +73,9 @@ extern WORD floprate(WORD dev, WORD rate);
 extern UWORD compute_cksum(LONG buf);
 
 /* call hdv_boot() and execute bootsector */
-extern VOID do_hdv_boot(VOID);  
+extern void do_hdv_boot(void);  
 
 /* initialise hdv_* vectors and floppy parameters */
-extern VOID floppy_init(VOID);
+extern void floppy_init(void);
 
 #endif /* _FLOPPY_H */

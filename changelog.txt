@@ -314,3 +314,9 @@ Start... early ages
 
 25. Nov. 2001
 - Worked on bios/mouse.c   (MAD)
+
+26. Nov. 2001 
+- got Initmous() working (thanks Laurent)  (MAD)
+- changed all "VOID"s to "void" in bios/*.[hc]  (MAD)
+
+

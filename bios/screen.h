@@ -17,7 +17,7 @@
 #include "tosvars.h"
 
 /* determine monitor type, ... */
-VOID screen_init(VOID);
+void screen_init(void);
 
 /* misc routines */
 
@@ -27,10 +27,10 @@ VOID screen_init(VOID);
 LONG physbase(void);
 LONG logbase(void);
 WORD getrez(void);
-VOID setscreen(LONG logLoc, LONG physLoc, WORD rez);
-VOID setpalette(LONG palettePtr);
+void setscreen(LONG logLoc, LONG physLoc, WORD rez);
+void setpalette(LONG palettePtr);
 WORD setcolor(WORD colorNum, WORD color);
-VOID vsync(VOID);
+void vsync(void);
 
 
 

@@ -431,7 +431,7 @@ TIME
  *	convenient time.
  */
  
-VOID	clkint(VOID)
+void	clkint(void)
 {
     return;
 }
@@ -439,7 +439,7 @@ VOID	clkint(VOID)
 
 
 /*==== clk_init - initialize the clock ====================================*/
-ERROR	clk_init(VOID)
+ERROR	clk_init(void)
 {
     /* no initialization needed - throughpassed to unix clock */
     return(SUCCESS);
@@ -449,7 +449,7 @@ ERROR	clk_init(VOID)
 
 /*==== clklox - clock as serial device ??? ================================*/
 
-VOID	clklox(LONG flags, LONG ticks)
+void	clklox(LONG flags, LONG ticks)
 {
     return;
 }

@@ -32,13 +32,13 @@ extern BYTE conterm;
 extern WORD cmdload;
 
 extern UBYTE *v_bas_ad;
-extern LONG kbdvecs[];
+//extern LONG kbdvecs[];
 
 extern WORD *colorptr;
 extern UBYTE *screenpt;
 extern BYTE sshiftmod;
 
-extern VOID *phystop;
+extern void *phystop;
 
 extern WORD timer_ms;
 
@@ -59,12 +59,12 @@ extern LONG *vblqueue;
 
 
 extern LONG sysbase;
-extern VOID os_entry(VOID);
+extern void os_entry(void);
 extern LONG os_beg;
 extern LONG os_date;
 extern UWORD os_dosdate;
 extern WORD os_pal;
-extern VOID (*exec_os)(VOID);
+extern void (*exec_os)(void);
 extern LONG end_os;
 extern LONG m_start;
 extern LONG m_length;
@@ -90,28 +90,39 @@ extern LONG os_magic;
 extern LONG savptr;
 extern WORD save_area[];
 
-extern VOID (*prt_stat)(VOID);
-extern VOID (*prt_vec)(VOID);
-extern VOID (*aux_stat)(VOID);
-extern VOID (*aux_vec)(VOID);
-extern VOID (*dump_vec)(VOID);
+extern void (*prt_stat)(void);
+extern void (*prt_vec)(void);
+extern void (*aux_stat)(void);
+extern void (*aux_vec)(void);
+extern void (*dump_vec)(void);
 
 /* indirect BIOS vectors */
 
 LONG (*hdv_rw)(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev);
 LONG (*hdv_bpb)(WORD dev);
 LONG (*hdv_mediach)(WORD dev);
-LONG (*hdv_boot)(VOID);
-VOID (*hdv_init)(VOID);
+LONG (*hdv_boot)(void);
+void (*hdv_init)(void);
 
-VOID (*etv_timer)(VOID);
-VOID (*etv_critic)(VOID);
-VOID (*etv_term)(VOID);
-VOID (*etv_xtra)(VOID);
+void (*etv_timer)(void);
+void (*etv_critic)(void);
+void (*etv_term)(void);
+void (*etv_xtra)(void);
 
-PTR     mousevec;         // mouse driver routine
-//VOID (*mousevec)(VOID);         // mouse driver routine
 
+struct kbdvecs
+{
+    void (*midivec)( UBYTE data );  /* MIDI Input */
+    void (*vkbderr)( UBYTE data );  /* IKBD Error */
+    void (*vmiderr)( UBYTE data );  /* MIDI Error */
+    void (*statvec)(char *buf);     /* IKBD Status */
+    void (*mousevec)(char *buf);    /* IKBD Mouse */
+    void (*clockvec)(char *buf);    /* IKBD Clock */
+    void (*joyvec)(char *buf);      /* IKBD Joystick */
+    void (*midisys)( void );        /* Main MIDI Vector */
+    void (*ikbdsys)( void );        /* Main IKBD Vector */
+};
+extern struct kbdvecs kbdvecs;
 
 #endif /* _TOSVARS_H */
 

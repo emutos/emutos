@@ -153,15 +153,15 @@ extern WORD timer_c_sieve;
 
 /*==== Xbios functions ====================================================*/
 
-VOID mfpint(WORD num, LONG vector);
-VOID rsconf(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
-VOID jdisint(WORD num);
-VOID jenabint(WORD num);
-VOID xbtimer(WORD timer, WORD control, WORD data, LONG vector);
+void mfpint(WORD num, LONG vector);
+void rsconf(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
+void jdisint(WORD num);
+void jenabint(WORD num);
+void xbtimer(WORD timer, WORD control, WORD data, LONG vector);
 
 /*==== internal functions =================================================*/
 
-VOID mfp_init(VOID);
+void mfp_init(void);
 
 
 #endif /* _MFP_H */

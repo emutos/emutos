@@ -17,38 +17,38 @@
  
 /* initialize default exception vectors */
 
-extern VOID init_exc_vec(VOID);
-extern VOID init_user_vec(VOID);
+extern void init_exc_vec(void);
+extern void init_user_vec(void);
  
 /* initialise acia vectors */
 
-extern VOID init_acia_vecs(VOID);
+extern void init_acia_vecs(void);
 
 
 /* some exception vectors */
 
-extern VOID int_hbl(VOID);
-extern VOID int_vbl(VOID);
-extern VOID int_linea(VOID);
-extern VOID dummyaes(VOID);
-extern VOID biostrap(VOID);
-extern VOID xbiostrap(VOID);
-extern VOID just_rte(VOID);
+extern void int_hbl(void);
+extern void int_vbl(void);
+extern void int_linea(void);
+extern void dummyaes(void);
+extern void biostrap(void);
+extern void xbiostrap(void);
+extern void just_rte(void);
 
 /* are these useful ? */
-extern VOID print_stat(VOID);
-extern VOID print_vec(VOID);
-extern VOID serial_stat(VOID);
-extern VOID serial_vec(VOID);
-extern VOID dump_scr(VOID);
-extern VOID print_vec(VOID);
+extern void print_stat(void);
+extern void print_vec(void);
+extern void serial_stat(void);
+extern void serial_vec(void);
+extern void dump_scr(void);
+extern void print_vec(void);
 
 /* */
-extern VOID just_rts(VOID);
-extern VOID criter1(VOID);
-extern VOID brkpt(VOID);
+extern void just_rts(void);
+extern void criter1(void);
+extern void brkpt(void);
 
-typedef VOID (*PFVOID)();
+typedef void (*PFVOID)();
 
 #define VEC_ILLEGAL (*(PFVOID*)0x10)    /* illegal instruction vector */
 #define VEC_DIVNULL (*(PFVOID*)0x14)    /* division by zero interrupt vector */

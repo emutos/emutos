@@ -330,12 +330,12 @@ void pause(void)
  *
  */
 
-void Initmous(WORD type, PTR param, PTR vec)
+void Initmous(WORD type, PTR param, PTR newvec)
 {
     struct param *p = (struct param*)param;     /* pointer to parameter block */
 
-    if (vec != NULL) {
-//        mousevec = vec;         /* set new IKBD Mouse interrupt vector */
+    if (newvec != NULL) {
+        kbdvecs.mousevec = (VOID*)newvec;      /* set new IKBD Mouse interrupt vector */
     }
 
     switch (type) {

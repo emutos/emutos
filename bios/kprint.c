@@ -148,7 +148,7 @@ void cputs(char * s )
  * kpanic - throw out a panic message and halt
  */
 
-VOID kpanic(const char * fmt, ...)
+void kpanic(const char * fmt, ...)
 {
     va_list ap;
 

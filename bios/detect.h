@@ -14,4 +14,3 @@ long check_read_byte(long);
 long detect_cpu(void);
 long detect_fpu(void);
 
-

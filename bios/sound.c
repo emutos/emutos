@@ -38,7 +38,7 @@ static BYTE *sndtable;    /* 0xE44 */
 static UBYTE snddelay;    /* 0xE48 */
 static UBYTE sndtmp;      /* 0xE49 */
 
-VOID snd_init(VOID)
+void snd_init(void)
 {
   /* set ports A and B to output */
   PSG->control = PSG_MULTI;
@@ -63,7 +63,7 @@ LONG giaccess(WORD data, WORD reg)
   return value;
 }
 
-VOID ongibit(WORD data)
+void ongibit(WORD data)
 {
   WORD old_sr;
   WORD tmp;
@@ -76,7 +76,7 @@ VOID ongibit(WORD data)
   set_sr(old_sr);
 }
 
-VOID offgibit(WORD data)
+void offgibit(WORD data)
 {
   WORD old_sr;
   WORD tmp;
@@ -99,7 +99,7 @@ LONG dosound(LONG table)
   return oldtable;
 }
 
-VOID sndirq(VOID)
+void sndirq(void)
 {
   register BYTE *code;
   register BYTE instr;
@@ -175,10 +175,10 @@ static UBYTE keyclicksnd[] = {
   0xFF, 0,
 };
 
-VOID bell(void) {
+void bell(void) {
   dosound((LONG) bellsnd);
 }
 
-VOID keyclick(void) {
+void keyclick(void) {
   dosound((LONG) keyclicksnd);
 }

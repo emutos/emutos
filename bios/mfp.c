@@ -29,7 +29,7 @@ extern void int_timerc(void);
 /*==== Prototypes =========================================================*/
 
 /* setup the timer, but do not activate the interrupt */
-static VOID setup_timer(WORD timer, WORD control, WORD data);
+static void setup_timer(WORD timer, WORD control, WORD data);
 
 
 /*==== Defines ============================================================*/
@@ -41,7 +41,7 @@ WORD timer_c_sieve;
 
 /*==== kbinit - initialize the MFP ========================================*/
  
-VOID	mfp_init (VOID)
+void	mfp_init (void)
 {
     MFP *mfp=MFP_BASE;   /* set base address of MFP */
 
@@ -103,7 +103,7 @@ VOID	mfp_init (VOID)
 
 /*==== Clear keyboard interrupt ===========================================*/
 
-VOID	clear_kbdint(VOID)
+void	clear_kbdint(void)
 {
     MFP *mfp=MFP_BASE;  /* set base address of MFP */
 
@@ -113,7 +113,7 @@ VOID	clear_kbdint(VOID)
 
 /*==== xbios functions ===========================================*/
 
-VOID mfpint(WORD num, LONG vector)
+void mfpint(WORD num, LONG vector)
 {
   num &= 0x0F;
   jdisint(num);
@@ -144,7 +144,7 @@ static struct {
 };
 
 
-VOID rsconf(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
+void rsconf(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
 {
   MFP *mfp=MFP_BASE;   /* set base address of MFP */
 
@@ -161,7 +161,7 @@ VOID rsconf(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
   }
 }
 
-VOID jdisint(WORD num)
+void jdisint(WORD num)
 {
   MFP *mfp=MFP_BASE;   /* set base address of MFP */
   UBYTE i;
@@ -182,7 +182,7 @@ VOID jdisint(WORD num)
   }
 }
 
-VOID jenabint(WORD num)
+void jenabint(WORD num)
 {
   MFP *mfp=MFP_BASE;   /* set base address of MFP */
   UBYTE i;
@@ -200,7 +200,7 @@ VOID jenabint(WORD num)
 }
 
 /* setup the timer, but do not activate the interrupt */
-static VOID setup_timer(WORD timer, WORD control, WORD data)
+static void setup_timer(WORD timer, WORD control, WORD data)
 {
   MFP *mfp=MFP_BASE;   /* set base address of MFP */
   switch(timer) {
@@ -231,7 +231,7 @@ static VOID setup_timer(WORD timer, WORD control, WORD data)
 
 static WORD timer_num[] = { 13, 8, 5, 4 };
 
-VOID xbtimer(WORD timer, WORD control, WORD data, LONG vector)
+void xbtimer(WORD timer, WORD control, WORD data, LONG vector)
 {
   if(timer < 0 || timer > 3) return;
   setup_timer(timer, control, data);
