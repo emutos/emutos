@@ -43,15 +43,15 @@ T tested and working on an emulator or real hardware
  X execute reset routine
  ? detect monitor type
  T detect graphics resolution
- X automatic Processor check
+ T automatic Processor check
    ...
  X init floppy drives
  X boot floppy
  - boot DMA
  - execute reset-resident prgs
- X run AUTO prgs
- X run 'command.prg'
- > run the default shell, EmuCON
+ T run AUTO prgs
+ T run 'command.prg'
+ T run the default shell, EmuCON
 
 
 
@@ -59,7 +59,7 @@ T tested and working on an emulator or real hardware
  ----------------------------------------------------------------------------
  - parallel port
  - serial port
- X console
+ T console
  X IKBD
  X MIDI
  X ascii 
@@ -80,14 +80,14 @@ T tested and working on an emulator or real hardware
 
  BIOS Functions
  ----------------------------------------------------------------------------
- X 0x00 getmpb
- X 0x01 bconstat        (the function works for console only)
- X 0x02 bconin          (the function works for console only)
- X 0x03 bconout         (the function works for console only)
- X 0x04 rwabs
- X 0x05 setexc
- X 0x06 tickcal
- X 0x07 getbpb
+ T 0x00 getmpb
+ T 0x01 bconstat        (the function works for console only)
+ > 0x02 bconin          (the function works for console only)
+ T 0x03 bconout         (the function works for console only)
+ T 0x04 rwabs
+ T 0x05 setexc
+ T 0x06 tickcal
+ T 0x07 getbpb
  > 0x08 bcostat         (the function works for console only)
  X 0x09 mediach
  X 0x0a drvmap		(the function works, but not the devices)
