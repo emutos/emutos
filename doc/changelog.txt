@@ -1604,3 +1604,14 @@ Start... early ages
 
 2004-06-21
 - vdi/blit.c: implementation of bitblt() in C. (MAD)
+
+2004-06-22
+- vdi/blit.c: fixed bug with info.p_addr. (MAD)
+
+2004-06-23
+- vdi/blit.c: fixed bug with skew mask. (MAD)
+
+2004-06-23
+- vdi/blit.c: tuned. C-blit now just 6 times slower than asm version. (MAD)
+
+
