@@ -303,7 +303,13 @@ etos192k.img: emutos1.img
 # 256kB Image
 #
 
+ifeq (,$(UNIQUE))
+256: 
+	@echo building $(COUNTRY)-only EmuTOS in etos256k.img; \
+	make UNIQUE=$(COUNTRY) etos256k.img; 
+else
 256: etos256k.img
+endif
 
 etos256k.img: emutos2.img
 	$(sized_image)
