@@ -10,8 +10,6 @@ extern LONG     desk_acc[];
 extern PD       *desk_ppd[];
 extern LONG     menu_tree[];
 
-extern BYTE     menu_name[];
-
 extern BYTE     *desk_str[];
 
 extern WORD     gl_dacnt;

@@ -362,7 +362,7 @@ void  just_draw(LONG tree, WORD obj, WORD sx, WORD sy)
           if ( state & CHECKED )
           {
             gsx_attr(TRUE, MD_TRANS, BLACK);
-            intin[0] = 0x10;                            /* a check mark */
+            intin[0] = 0x08;                            /* a check mark */
             gsx_tblt(IBM, t.g_x+2, t.g_y, 1);
           }
           if ( state & CROSSED )

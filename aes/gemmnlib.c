@@ -47,31 +47,26 @@ GLOBAL LONG     desk_acc[NUM_DESKACC];
 GLOBAL PD       *desk_ppd[NUM_DESKACC];
 GLOBAL LONG     menu_tree[NUM_PDS];
 
-GLOBAL BYTE     menu_name[11];
-
+static BYTE     desk_str_space[NUM_DESKACC][22];
 GLOBAL BYTE     *desk_str[NUM_DESKACC] = 
 {
-        "  0345678901234567890",
-        "  1345678901234567890",
-        "  2345678901234567890",
-        "  3345678901234567890",
-        "  4345678901234567890",
-        "  5345678901234567890",
-        "  6345678901234567890",
-        "  7345678901234567890",
-#if SINGLAPP
-        "  8345678901234567890"
-#endif
+    desk_str_space[0],
+    desk_str_space[1],
+    desk_str_space[2],
+    desk_str_space[3],
+    desk_str_space[4],
+    desk_str_space[5],
+    desk_str_space[6],
+    desk_str_space[7],
 #if MULTIAPP
-        "  8345678901234567890",
-        "  9345678901234567890",
-        "  1045678901234567890",
-        "  1145678901234567890",
-        "  1245678901234567890",
-        "  1345678901234567890",
-        "  1445678901234567890",
-        "  1545678901234567890",
-        "  1645678901234567890"
+    desk_str_space[8],
+    desk_str_space[9],
+    desk_str_space[10],
+    desk_str_space[11],
+    desk_str_space[12],
+    desk_str_space[13],
+    desk_str_space[14],
+    desk_str_space[15],
 #endif
 };
 
@@ -160,8 +155,7 @@ void menu_fixup(BYTE *pname)
 {
         REG OBJECT      *pob;
         GRECT           t;
-        WORD            i, cnt, st, desktitle, imenu, offw;
-        GRECT           ta, dt, tmp;
+        WORD            i, cnt, st;
         LONG            tree;
 
         if ( (tree = gl_mntree) == 0x0L )
@@ -170,48 +164,13 @@ void menu_fixup(BYTE *pname)
         w_nilit(3 + NUM_DESKACC, &M_DESK[0]);
                                                 
         gl_dabox = LWGET( OB_HEAD(THEMENUS) );
-        gl_datree = ADDR( pob = &M_DESK[ROOT] );
-
-        desktitle = LWGET(OB_HEAD(THEACTIVE));
-        ob_relxywh(tree, desktitle, &dt);
-        ob_relxywh(tree, THEACTIVE, &ta);
-                                                /* if desk title not    */
-                                                /*   moved then move it */
-        menu_name[0] = menu_name[9] = ' ';
-        movs(8, pname, &menu_name[1]);
-        menu_name[10] = NULL;
-        LLSET( OB_SPEC(desktitle), ADDR(&menu_name[0]) );
-
-        if (dt.g_x == 0x0)
-        {
-          offw = dt.g_w;
-
-          dt.g_w = strlen( &menu_name[0] ) * gl_wchar; 
-
-          dt.g_x = gl_width - dt.g_w - ta.g_x - ta.g_x;
-          ta.g_w = (dt.g_x - ta.g_x) + dt.g_w - 1;
-          ob_setxywh(tree, THEACTIVE, &ta);
-          ob_setxywh(tree, desktitle, &dt);
-          i = desktitle;
-                                                
-          while ( (i = LWGET(OB_NEXT(i))) > desktitle )
-          {
-            ob_relxywh(tree, i, &tmp);
-            tmp.g_x -= offw;
-            ob_setxywh(tree, i, &tmp);
-            imenu = menu_sub(&tree, i);
-            ob_relxywh(tree, imenu, &tmp);
-            tmp.g_x -= offw;
-            ob_setxywh(tree, imenu, &tmp);
-          }
-        }
+        pob = &M_DESK[ROOT];
+        gl_datree = ADDR( pob );
                                                 /* fix up desk root     */
         pob->ob_type = G_BOX;
         pob->ob_state = pob->ob_flags = 0x0;
         pob->ob_spec = 0x00FF1100L;
-        /* FIXME: Ugly GRECT typecast: */
         ob_actxywh(tree, gl_dabox, (GRECT *)&pob->ob_x);
-        pob->ob_x = gl_width - pob->ob_width - ta.g_x;
 
         cnt = (gl_dacnt) ? (2 + gl_dacnt) : 1;
                                                 /* fix up links         */
@@ -244,7 +203,7 @@ void menu_fixup(BYTE *pname)
           }
           else
             pob->ob_spec = LLGET(OB_SPEC(gl_dabox+i));
-          rc_copy(&t, (GRECT *)&pob->ob_x);  /* FIXME: Ugly GRECT typecasting */
+          rc_copy(&t, (GRECT *)&pob->ob_x);
           t.g_y += gl_hchar;
         }
                                                 /* link back to root    */
@@ -262,7 +221,6 @@ void menu_fixup(BYTE *pname)
 */
 void rect_change(LONG tree, MOBLK *prmob, WORD iob, WORD x)
 {
-        /* FIXME: Ugly GRECT typecast: */
         ob_actxywh(tree, iob, (GRECT *)&prmob->m_x);
         prmob->m_out = x;
 }
@@ -554,8 +512,7 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
 /*
 *       Routine to display the menu bar.  Clipping is turned completely
 *       off so that this operation will be as fast as possible.  The
-*       global variable gl_mntree which is used in CTLMGR88.C is also
-*       set or reset.
+*       global variable gl_mntree is also set or reset.
 */
 void mn_bar(LONG tree, WORD showit, WORD pid)
 {
@@ -569,7 +526,6 @@ void mn_bar(LONG tree, WORD showit, WORD pid)
           menu_tree[pid] = gl_mntree = tree;
           menu_fixup(&p->p_name[0]);
           LWSET(OB_WIDTH(1), gl_width - LWGET(OB_X(1)));
-          /* FIXME: remove GRECT typecasting.... */
           ob_actxywh(gl_mntree, THEACTIVE, (GRECT *)&gl_ctwait.m_x);
           gsx_sclip(&gl_rzero);
           ob_draw(gl_mntree, THEBAR, MAX_DEPTH);
@@ -578,7 +534,7 @@ void mn_bar(LONG tree, WORD showit, WORD pid)
         else
         {
           menu_tree[pid] = gl_mntree = 0x0L;
-          rc_copy(&gl_rmenu, (GRECT *)&gl_ctwait.m_x); /* FIXME: Ugly typecast again */
+          rc_copy(&gl_rmenu, (GRECT *)&gl_ctwait.m_x);
         }
                                                 /* make ctlmgr fix up   */
                                                 /*   the size of rect   */
