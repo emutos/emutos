@@ -83,6 +83,39 @@
 	.global	diskbuf	
 	.global	_supstk 	
 
+	.global rs232ibufbuf
+	.global rs232obufbuf
+	.global ikbdibufbuf
+	.global midiibufbuf
+	.global _rs232iorec
+	.global rs232ibuf
+	.global rs232ibufsz
+	.global rs232ibufhd
+	.global rs232ibuftl
+	.global rs232ibuflo
+	.global rs232ibufhi
+	.global rs232obuf
+	.global rs232obufsz
+	.global rs232obufhd
+	.global rs232obuftl
+	.global rs232obuflo
+	.global rs232obufhi
+	.global _ikbdiorec
+	.global ikbdibuf
+	.global ikbdibufsz
+	.global ikbdibufhd
+	.global ikbdibuftl
+	.global ikbdibuflo
+	.global ikbdibufhi
+	.global _midiiorec
+	.global midiibuf
+	.global midiibufsz
+	.global midiibufhd
+	.global midiibuftl
+	.global midiibuflo
+	.global midiibufhi
+
+	.global _kbdvecs
 	.global	midivec
 	.global	vkbderr
 	.global	vmiderr
@@ -193,10 +226,55 @@ bconin_vec:     ds.l    8
 bcostat_vec:    ds.l    8
 bconout_vec:    ds.l    8
 
+| ==== IOREC BUFFERS ======================================================
+| Table of input-output buffersfor rs232 in, rs232 out, kdb in, midi in
+	.org	0xa0e
+rs232ibufbuf:	
+	.org	0xb0e
+rs232obufbuf:
+	.org	0xc0e
+ikbdibufbuf:
+	.org	0xd0e
+midiibufbuf:	
+	.org	0xd8e
+
+| ==== IORECS =============================================================
+| Table of input-output records for rs232 in, rs232 out, kdb in, midi in
+	.org	0xd8e
+_rs232iorec:
+rs232ibuf:	ds.l	1
+rs232ibufsz:	ds.w	1
+rs232ibufhd:	ds.w	1
+rs232ibuftl:	ds.w	1
+rs232ibuflo:	ds.w	1
+rs232ibufhi:	ds.w	1
+rs232obuf:	ds.l	1
+rs232obufsz:	ds.w	1
+rs232obufhd:	ds.w	1
+rs232obuftl:	ds.w	1
+rs232obuflo:	ds.w	1
+rs232obufhi:	ds.w	1
+_ikbdiorec:
+ikbdibuf:	ds.l	1
+ikbdibufsz:	ds.w	1
+ikbdibufhd:	ds.w	1
+ikbdibuftl:	ds.w	1
+ikbdibuflo:	ds.w	1
+ikbdibufhi:	ds.w	1
+_midiiorec:
+midiibuf:	ds.l	1
+midiibufsz:	ds.w	1
+midiibufhd:	ds.w	1
+midiibuftl:	ds.w	1
+midiibuflo:	ds.w	1
+midiibufhi:	ds.w	1
+
+	
 | ==== KBDVBASE =============================================================
 | Table of routines for managing midi and keyboard data
 | in packets from IKBD (shown by A0 und 4(sp)) 
 	.org 0xdcc
+_kbdvecs:	
 midivec:	ds.l	1	| MIDI input
 vkbderr:	ds.l	1	| keyboard error
 vmiderr:	ds.l	1	| MIDI-Error

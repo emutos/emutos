@@ -30,7 +30,7 @@
 
         .equ    vec_bios, 0xb4          | BIOS interrupt vector
         .equ    vec_xbios, 0xb8         | XBIOS interrupt vector
-        .equ    vec_kbd, 0x118          | keyboard/Midi interrupt vector
+        .equ    vec_acia, 0x118         | keyboard/Midi interrupt vector
 
 
 
@@ -511,7 +511,7 @@ initsnd:
         move.l #bios, vec_bios          | Trap #13 (BIOS)
         move.l #xbios, vec_xbios        | trap #14 (XBIOS)
         move.l #int_linea, vec_linea    | Line-A
-        move.l #int_kbd, vec_kbd        | keyboard interrupt vector (ACIAs)
+	jsr	init_acia_vecs		| LVL: moved to aciavecs.s
         move.l #just_rte, vec_divnull   | Division by zero to rte
 
 | ==== disk related vectors =================================================
@@ -861,17 +861,7 @@ vbl_end:
 
 
 | ==== Int 0x118 - exception for keyboard interrupt =========================
-int_kbd:
-        movem.l d0-d7/a0-a6,-(sp)
-        move    sr,-(sp)                | save status register
-        ori     #0x2700,sr              | turn off all interrupts
-        jsr     _kbd_int                        | call the C routine to do the work
-        ori     #0x2300,sr              | turn on interrupts
-        move    (sp)+,sr                | restore status register
-        movem.l (sp)+,d0-d7/a0-a6
-        rte
-
-
+| LVL: moved to aciavec.s
 
 
 
@@ -1182,8 +1172,8 @@ bios_vecs:
         .dc.l   _bios_2                 | LONG character_input()
         .dc.l   _bios_3                 | void character_output()
         .dc.l   _bios_4                 | LONG read_write_sectors()
-|       .dc.l   _bios_5                 | set vector
-        .dc.l   _bsetvec                | set vector
+        .dc.l   _bios_5                 | set vector
+| LVL        .dc.l   _bsetvec                | set vector
         .dc.l   _bios_6                 | LONG get_timer_ticks()
         .dc.l   _drv_bpb                | get disk parameter block address
 |       .dc.l   _bios_7                 | get disk parameter block address

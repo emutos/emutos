@@ -17,7 +17,7 @@
 #include "abbrev.h"
 #include "gemerror.h"
 #include "kprint.h"
-
+#include "iorec.h"     
 
 
 #define	DBG_XBIOS        1
@@ -369,9 +369,21 @@ VOID xbios_d(WORD interno, LONG vector)
 LONG xbios_e(WORD devno)
 {
 #if DBG_XBIOS
-    kprint("XBIOS: Unimplemented function 0x0e ...\n");
+    kprintf("XBIOS: Iorec(%d)\n", devno);
 #endif
-    return(-1);
+    switch(devno) 
+      {
+      case 0:
+	return (LONG) rs232iorec;
+      case 1:
+	return (LONG) ikbdiorec;
+      case 2:
+	return (LONG) midiiorec;
+      default:
+	kprintf("Iorec(%d) : bad input device\n", devno);
+	return -1;
+      }
+
 }
 
 
@@ -684,12 +696,14 @@ WORD xbios_21(WORD config)
  *
  */
 
+extern LONG kbdvecs[];    /* in tosvars.s */
+
 LONG xbios_22()
 {
 #if DBG_XBIOS
-    kprint("XBIOS: Unimplemented function 0x22 ...\n");
+    kprint("XBIOS: Kbdvbase()\n");
 #endif
-    return(0);
+    return (LONG) kbdvecs;
 }
 
 
