@@ -717,3 +717,4 @@ Start... early ages
 - GPL re-formatted to 72 chars wide (copied over the standard file) (LVL)
 - cookie_swi commented out in bios/machine.c (bus error in some cases) (LVL)
 - misc involuntary whitespace changes in some files (LVL)
+- added po/cs.po from Bohdan for Czech native language support  (MAD)
