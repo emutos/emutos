@@ -422,6 +422,7 @@ long xmaddalt( LONG start, LONG size)
     pmdtt.mp_mfl = md;
     pmdtt.mp_mal = NULL;
     pmdtt.mp_rover = md;
+    has_ttram = 1;
   }
   return 0;
 }
