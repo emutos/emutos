@@ -1,9 +1,8 @@
 /*
  * clock.c - Realtime clock routines
  *
- * Copyright (c) 2001 Martin Doering
+ * Copyright (c) 2001 by Authors:
  *
- * Authors:
  *  MAD   Martin Doering
  *
  * This file is distributed under the GPL, version 2 or at your

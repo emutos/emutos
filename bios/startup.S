@@ -46,13 +46,6 @@
         .global _printout
         .global _output
 
-//#if    OLDCLOCK
-//               .globl  _ti
-//               .globl  _x1
-//#else
-//               .xdef   _cl_init        //  vmetimer.c
-//               .xdef   _cl_intr        //  vmetimer.c
-//#endif
         .global _s68
         .global _s68l
         .global _setjmp
@@ -83,13 +76,6 @@
         .global   memdone       	// return to, if memory config done
 
 	.global _int_timerc
-
-	
-// ==== VME/10 Specifics =============
-        .globl  _no_device
-        .globl  _rddat
-        .globl  _wrdat
-        .globl  _supstk
 
 // ==== From bios.c ==========================================================
 
@@ -482,6 +468,8 @@ memdone:
         move.l  #_drv_bpb, hdv_bpb      // Get BIOS parameter Block
         move.l  #_drv_mediach, hdv_mediach      // Dummy mediach (STonX)
         move.l  #_drv_boot, hdv_boot    // Get boot device
+        move.w  #0x3, seekrate          // floppy seekrate = 3 ms
+        move.l  #diskbuf, _dskbufp      // _dskbufp
 
 // ==== Some other vectors ===================================================
 
@@ -493,20 +481,17 @@ memdone:
 
         move.w #0x8, nvbls              // nvbls
         st     _fverify                 // _fverify
-        move.w #0x3, seekrate           // floppy seekrate = 3 ms
-        move.l #diskbuf, _dskbufp       // _dskbufp
         move.w #-1, _dumpflg            // clear _dumpflg
         move.l #os_entry, _sysbase      // Set _sysbase to ROM-start
         move.l #save_area, savptr       // savptr for Trap dispatcher
+	move.l	#vidchng, swv_vec	// vector for video mode change
 
         move.l #just_rts, etv_timer     // etv_timer (->RTS)
-//       move.l #_criter1, etv_critic    // etv_critic
+        move.l #_criter1, etv_critic    // etv_critic
         move.l #just_rts, etv_term      // etv_term  (->RTS)
 
         move.l  #_brkpt, 0x7c           // set nmi to do an illegal instruction
         move.l  #bios, 0xb4             // revector bios entry = trap #13
-
-
 
 
 
@@ -527,7 +512,6 @@ clrvbl:
         bsr     cartscan
 
 // ==== Detect and set graphics resolution ===================================
-// Does not work, because of STonX - set it hard for now!
 
         move.b 0xffff8260, d0   // Get video resolution from pseudo Hw
         and.b #3,d0             // Isolate bits 0 and 1
@@ -661,7 +645,11 @@ just_rte:
 
 
 
-// ==== Int 0x68 - HBL interrupt =============================================
+/* 
+ * Int 0x68 - HBL interrupt 
+ *
+ */
+ 
 int_hbl:
         move.w  d0, -(sp)       // save d0
         move.w  2(sp), d0       // get status register from stack
@@ -671,6 +659,17 @@ int_hbl:
         move.w  (sp)+, d0       // restore d0
 is_ipl0:
         rte
+
+
+
+/*
+ * vidchng - change video resolution 
+ *
+ * Do nothing for now
+ */
+
+vidchng:
+        rts
 
 
 
