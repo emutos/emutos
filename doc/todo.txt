@@ -19,6 +19,7 @@ BIOS/XBIOS/BDOS
 - Alt key pressed during boot should skip harddisk driver init
 - rewrite nvram.c so it wouldn't need balloc(50) (no checksum necessary)
 - move nvram_init to machine_detect so it could be used in screen.c:videl_init
+- floppy.c - fastram support with _FRB cookie buggy (only read works).
 
 Internationalisation
 - examine how to build a mono-country EmuTOS 192k ROM 
