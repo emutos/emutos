@@ -1491,3 +1491,7 @@ Start... early ages
 2003-06-26
 - bios/bios.c: initialize unknown level interrupts to just RTE (not bombs)
   (joy)
+
+2003-07-04
+- bios/bios.c: also initialize level int 0x11 to just RTE, not
+  date_time (needed by Diablo-Emulator for  LM-laserprinter (MAD)

@@ -722,7 +722,8 @@ const PFLONG bios_vecs[] = {
     bios_unimpl,  /*  e */
     bios_unimpl,  /*  f */
     bios_unimpl,  /* 10 */
-    VEC(bios_11, date_time),
+    bios_unimpl   /* 11 */
+    //VEC(bios_11, date_time),  /* This is not in TOS, was just in GEMDOS */
 };
 
 const short bios_ent = sizeof(bios_vecs) / sizeof(PFLONG);
