@@ -19,6 +19,8 @@
 
 #include "portab.h"
 #include "machine.h"
+#include "asm.h"
+
 #include "obdefs.h"
 #include "taddr.h"
 #include "struct.h"
@@ -98,7 +100,6 @@ GLOBAL WORD     gl_shgem;
 /* Prototypes: */
 WORD sh_find(LONG pspec);
 extern void deskstart();        /* see ../desk/deskstart.S */
-extern LONG do_pexec(WORD mode, LONG p1, LONG p2, LONG p3);  /* in gemstart.S */
 
 
 
@@ -903,7 +904,7 @@ void sh_ldapp()
               sh_show(ad_scmd);
               p_nameit(rlr, sh_name(&D.s_cmd[0]));
 
-              desk_pd = (LONG *) do_pexec(5, 0L , (LONG)"", 0L);
+              desk_pd = (LONG *) trap1_pexec(5, 0L , "", 0L);
               desk_pd[2] = (LONG) deskstart;
               desk_pd[3] = desk_pd[5] = desk_pd[7] = 0;
               dsptch();  /* Updates rlr->p_uda! */
@@ -911,7 +912,7 @@ void sh_ldapp()
                  won't be destroyed: */
               uda_ssp_save = rlr->p_uda->u_spsuper;
               rlr->p_uda->u_spsuper = &rlr->p_uda->u_supstk;
-              do_pexec(4, 0L, (LONG)desk_pd, 0L);    /* Run the desktop */
+              trap1_pexec(4, 0L, desk_pd, 0L);    /* Run the desktop */
               rlr->p_uda->u_spsuper = uda_ssp_save;
             }
             else

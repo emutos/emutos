@@ -1314,3 +1314,7 @@ Start... early ages
 - natfeat_init() called in memory.S, for earlier availability of kprintf (LVL)
 - bios/bios.c - DBGAUTOBOOT added so that the AUTO crash is visible (joy)
 - bios/ikbd.c - corrected debug typo (joy)
+
+10. Feb. 2003
+- bios/bios.c - now using the reentrant trap1_pexec() to load programs (THH)
+

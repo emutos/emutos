@@ -19,7 +19,6 @@
 .globl _ui_start
 .globl _pgmld
 .globl _gemdos
-.globl _do_pexec
 .globl _ui_mupb
 
 
@@ -129,33 +128,6 @@ gd_end:
         move.l  saveretaddr,-(SP)
         rts
 
-
-/*
-   GEMDOS Pexec() call. This version is reentrant unlike most others!
-*/
-_do_pexec:
-        movem.l d2/a2,-(sp)
-        move.l  22(sp),-(sp)    // Push parameter on the stack again for pexec
-        move.l  22(sp),-(sp)
-        move.l  22(sp),-(sp)
-        move.w  24(sp),-(sp)
-        move.w  #0x4b,-(sp)
-        trap    #1              // Pexec
-        lea     16(sp),sp
-        movem.l (sp)+,d2/a2
-
-        move.w  #0,_DOS_ERR
-        move.w  #0,_DOS_AX
-        cmp.l   #0,D0
-        bge.s   dopex_end
-        move.w  #1,_DOS_ERR
-        move.w  D0,_DOS_AX
-        cmp.w   #0xFFE0,D0
-        bgt.s   dopex_end
-        not.w   _DOS_AX
-        subi.w  #0x1E,_DOS_AX
-dopex_end:
-        rts
 
 
 

@@ -17,13 +17,13 @@
 
 #include "portab.h"
 #include "machine.h"
+#include "asm.h"
 
 
 GLOBAL UWORD    DOS_AX; /* really a "DOS_RET"   */
 GLOBAL UWORD    DOS_ERR;
 
 extern LONG gemdos();
-extern LONG do_pexec(WORD mode, LONG p1, LONG p2, LONG p3);  /* in gemstart.S */
 
 
 #define X_TABOUT 0x02
@@ -168,12 +168,28 @@ LONG dos_lseek(WORD handle, WORD smode, LONG sofst)
 
 void dos_exec(LONG pcspec, LONG segenv, LONG pcmdln)
 {
-#if 0
-        gemdos(X_EXEC, 0, pcspec, pcmdln, segenv); 
-#else
-        do_pexec(0, pcspec, pcmdln, segenv);
-#endif
-}       
+        LONG retval;
+
+        /* This call once used the gemdos() function, too. */
+        /* But since this is not reentrant, we're using trap1_pexec now! */
+        /*gemdos(X_EXEC, 0, pcspec, pcmdln, segenv);*/
+
+        retval = trap1_pexec(0, (char*)pcspec, (char*)pcmdln, (char*)segenv);
+
+        if(retval < 0)
+        {
+            DOS_ERR = 1;
+            if((WORD)retval > 0xffe0)
+                DOS_AX = retval;
+            else
+                DOS_AX = (WORD)(~retval) - 0x1e;
+        }
+        else
+        {
+            DOS_ERR = 0;
+            DOS_AX = 0;
+        }
+}
 
 
 

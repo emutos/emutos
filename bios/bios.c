@@ -278,7 +278,7 @@ void autoexec(void)
 #if DBGAUTOBOOT
         kprintf("Loading %s ... ", path);
 #endif
-        trap1( 0x4b, 0, path, "", "");       /* Pexec */
+        trap1_pexec(0, path, "", "");   /* Pexec */
 #if DBGAUTOBOOT
         kprintf("[OK]\n");
 #endif
@@ -335,17 +335,17 @@ void biosmain(void)
     
     if(cmdload != 0) {
         /* Pexec a program called COMMAND.PRG */
-        trap1( 0x4b , 0, "COMMAND.PRG" , "", env); 
+        trap1_pexec(0, "COMMAND.PRG", "", env); 
     } else {
         /* start the default (ROM) shell */
         PD *pd;
-        pd = (PD *) trap1( 0x4b , 5, "" , "", env);
+        pd = (PD *) trap1_pexec(5, "", "", env);
         pd->p_tbase = (LONG) exec_os;
         pd->p_tlen = pd->p_dlen = pd->p_blen = 0;
-        trap1( 0x4b, 4, "", pd, "");
+        trap1_pexec(4, "", pd, "");
     }
 
-    cprintf(_("[FAIL] HALT - should never be reached!\n"));
+    kcprintf(_("System halted!\n"));
     halt();
 }
 

@@ -19,6 +19,7 @@
         .global _trap1          // call GEMDOS
         .global _trap13         // call BIOS
         .global _trap14         // call XBIOS
+        .global _trap1_pexec    // Reentrant Pexec call
 
 
         .text
@@ -111,4 +112,20 @@ xbiosav:
         .ds.l   1
 
 
+
+/*
+ *  GEMDOS Pexec() call. This version is reentrant unlike the trap1 function!
+ */
+        .text
+_trap1_pexec:
+        movem.l d2/a2,-(sp)
+        move.l  22(sp),-(sp)    // Push parameter on the stack again for pexec
+        move.l  22(sp),-(sp)
+        move.l  22(sp),-(sp)
+        move.w  24(sp),-(sp)
+        move.w  #0x4b,-(sp)
+        trap    #1              // Pexec
+        lea     16(sp),sp
+        movem.l (sp)+,d2/a2
+        rts
 
