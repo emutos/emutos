@@ -191,13 +191,22 @@ void startup(void)
 
 
     mfp_init();         /* init MFP, timers, USART */
-    snd_init();                 /* Reset Soundchip, deselect floppies */
-    init_acia_vecs();           /* Init ACIAs and their vecs */
+    
+    /* The sound init must be done before allowing MFC interrupts,
+     * because of dosound stuff in the timer C interrupt routine.
+     */
+    snd_init();         /* Reset Soundchip, deselect floppies */
+
+    /* Init the two ACIA devices (MIDI and KBD). The three actions below can 
+     * be done in any order provided they happen before allowing MFP 
+     * interrupts.
+     */
+    kbd_init();         /* init keyboard, disable mouse and joystick */
+    midi_init();        /* init MIDI acia so that kbd acia irq works */
+    init_acia_vecs();   /* Init the ACIA interrupt vector and related stuff */
 
     /* Now that the MFP is configured, allow MFP interrupts (we need a
      * Timer C for DMA timeouts in floppy and harddisk initialisation)
-     * Note: the sound init must be done before allowing timer C ints,
-     * because of dosound stuff in the timer C interrupt routine.
      */
     set_sr(0x2500);
   
@@ -213,8 +222,6 @@ void startup(void)
 
     chardev_init();     /* Initialize character devices */
     parport_init();     /* parallel port */
-    kbd_init();         /* init keyboard, disable mouse and joystick */
-    midi_init();        /* init MIDI acia so that kbd acia irq works */
     //mouse_init();       /* init mouse driver */
     clock_init();       /* init clock */
     nls_init();         /* init native language support */
@@ -404,7 +411,7 @@ void bios_0(MPB *mpb)
 
 LONG bconstat(WORD handle)        /* GEMBIOS character_input_status */
 {
-    return bconstat_vec[handle & 7]();
+    return protect_v(bconstat_vec[handle & 7]);
 }
 
 #if DBGBIOS
@@ -431,7 +438,7 @@ LONG bios_1(WORD handle)
 
 LONG bconin(WORD handle)
 {
-    return bconin_vec[handle & 7]();
+    return protect_v(bconin_vec[handle & 7]);
 }
 
 #if DBGBIOS
@@ -447,7 +454,7 @@ LONG bios_2(WORD handle)
 
 void bconout(WORD handle, BYTE what)
 {
-    bconout_vec[handle & 7](handle, what);
+    protect_ww((PFLONG)(bconout_vec[handle & 7]), handle, what);
 }
 
 #if DBGBIOS
@@ -476,7 +483,7 @@ void bios_3(WORD handle, BYTE what)
 
 LONG lrwabs(WORD r_w, LONG adr, WORD numb, WORD first, WORD drive, LONG lfirst)
 {
-    return hdv_rw(r_w, adr, numb, first, drive, lfirst);
+    return protect_wlwwwl((PFLONG)hdv_rw, r_w, adr, numb, first, drive, lfirst);
 }
 
 #if DBGBIOS
@@ -551,7 +558,7 @@ LONG bios_6(void)
 
 LONG getbpb(WORD drive)
 {
-    return hdv_bpb(drive);
+    return protect_w(hdv_bpb, drive);
 }
 
 #if DBGBIOS
@@ -581,7 +588,7 @@ LONG bcostat(WORD handle)        /* GEMBIOS character_output_status */
     /*    if(handle==3)  handle=4; else if (handle==4)  handle=3;  */
     /* LVL: now done directly in the table */
 
-    return bcostat_vec[handle]();
+    return protect_v(bcostat_vec[handle]);
 }
 
 #if DBGBIOS
@@ -605,7 +612,7 @@ LONG bios_8(WORD handle)
 
 LONG mediach(WORD drv)
 {
-    return hdv_mediach(drv);
+    return protect_w(hdv_mediach, drv);
 }
 
 #if DBGBIOS

@@ -12,8 +12,6 @@
 
 
 
-        .global _vec_118
-
         .global bssstrt
         .global bssstart
         .global _proc_lives
@@ -138,11 +136,8 @@
         .global joyvec  
         .global midisys
         .global ikbdsys
-
+        .global ikbdstate
         .global kbdlength
-        .global kbdindex
-        .global kbdbuf
-        .global joybuf
 
         .global _sdata          // start adress of data section
 
@@ -231,14 +226,7 @@ the_env:        ds.l    1       // pointer to default environment string
 _drvbits:       ds.l    1       // bit allocation for physical drives
 _dskbufp:       ds.l    1       // pointer to disk buffer
 _autopath:      ds.l    1       // pointer to auto-execute path
-_vbl_list:      ds.l    1       // pointers to 8 VBl routines
-                ds.l    1
-                ds.l    1
-                ds.l    1
-                ds.l    1
-                ds.l    1
-                ds.l    1
-                ds.l    1
+_vbl_list:      ds.l    8       // pointers to 8 VBl routines
 _dumpflg:       ds.w    1       // flag for screen dump (unsused)
 _prtabt:        ds.w    1       // printer abort flag
 _sysbase:       ds.l    1       // pointer to start of OS
@@ -327,10 +315,8 @@ clockvec:       ds.l    1       // time-routine
 joyvec:         ds.l    1       // joystick-routinee
 midisys:        ds.l    1       // MIDI-systemvector
 ikbdsys:        ds.l    1       // IKBD-systemvector
-kbdlength:      ds.b    1       // kbd length of packet
-kbdindex:       ds.b    1       // kbd index of next byte of packet 
-kbdbuf:         ds.b    8       // kbd buffer for packet
-joybuf:         ds.b    3       // kbd buffer for joystick
+ikbdstate:      ds.b    1       // action to take upon packet completion 
+kbdlength:      ds.b    1       // number of bytes remaining in current packet
         .even
 
         

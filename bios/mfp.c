@@ -1,5 +1,5 @@
 /*
- * ikbd.c - Intelligent keyboard routines
+ * mfp.c - handling of the Atari ST Multi-Function Peripheral MFP 68901
  *
  * Copyright (c) 2001 Laurent Vogel, Martin Doering
  *
@@ -18,13 +18,7 @@
 #include "kprint.h"
 #include "mfp.h"
 #include "tosvars.h"
-
-
-/* the acia interrupt, in aciavecs.s */
-extern void int_acia(void);
-
-/* the timer C interrupt, in startup.s */
-extern void int_timerc(void);
+#include "vectors.h"
 
 
 /*==== Prototypes =========================================================*/
@@ -83,14 +77,6 @@ void    mfp_init (void)
 
     /* initialize the MFP */
     mfp->vr = 0x48;      /* vectors 0x40 to 0x4F, software end of interrupt */
-
-
-    /* setup IKBD and MIDI ACIA interrupt */
-#if 0  /* LVL this is not necessary, since the regs are already null */
-    mfp->ddr &= ~0x08;
-    mfp->aer &= ~0x08;
-#endif
-    mfpint(6, (LONG)int_acia);
     
     /* timer C */
     timer_c_sieve = 0x1111;
@@ -106,16 +92,6 @@ void    mfp_init (void)
     /* TODO, flow control */
 }
  
-
-/*==== Clear keyboard interrupt ===========================================*/
-
-void clear_kbdint(void)
-{
-    MFP *mfp=MFP_BASE;  /* set base address of MFP */
-
-    mfp->isrb = ~0x40;  /* signal end of keyboard interrupt */
-}
-
 
 /*==== xbios functions ===========================================*/
 
