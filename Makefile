@@ -350,6 +350,8 @@ util/langs.c: $(POFILES) po/LINGUAS bug$(EXE) po/messages.pot
 	./bug$(EXE) make
 	mv langs.c $@
 
+obj/langs.o: include/config.h
+
 po/messages.pot: bug$(EXE) po/POTFILES.in
 	./bug$(EXE) xgettext
 
@@ -362,6 +364,8 @@ need_header:
 	@touch $@
 
 obj/startup.o: bios/header.h
+
+obj/country.o: bios/header.h
 
 bios/header.h: mkheader$(EXE) need_header
 	./mkheader$(EXE) $(COUNTRY)
