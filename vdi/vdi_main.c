@@ -100,20 +100,23 @@ void(*jmptb2[])(Vwk *) = {
     vqi_mode,           /* 115 */
     dqt_extent,         /* 116 */
     dqt_width,          /* 117 */
-    vex_timv,           /* 118 */ /* in lisagem.S */
+    vex_timv,           /* 118 */ /* in vdi_misc.c */
     dt_loadfont,        /* 119 */
     dt_unloadfont,      /* 120 */
     vdi_vrt_cpyfm,      /* 121 */
     v_show_c,           /* 122 */
     v_hide_c,           /* 123 */
     vq_mouse,           /* 124 */
-    vex_butv,           /* 125 */ /* in vdimouse.S */
-    vex_motv,           /* 126 */ /* in vdimouse.S */
-    vex_curv,           /* 127 */ /* in vdimouse.S */
+    vex_butv,           /* 125 */ /* in vdi_mouse.c */
+    vex_motv,           /* 126 */ /* in vdi_mouse.c */
+    vex_curv,           /* 127 */ /* in vdi_mouse.c */
     vq_key_s,           /* 128 */
     s_clip,             /* 129 */
     dqt_name,           /* 130 */
-    dqt_fontinfo        /* 131 */
+    dqt_fontinfo,       /* 131 */
+    v_nop,              /* 132 */ /* vqt_justified */
+    v_nop,              /* 133 */
+    vex_wheelv          /* 134 */
 };
 
 
@@ -153,7 +156,7 @@ void screen()
         (*jmptb1[opcode - 1]) (vwk);
     }
 
-    else if (opcode >= 100 && opcode <= 131) {
+    else if (opcode >= 100 && opcode <= 134) {
         (*jmptb2[opcode - 100]) (vwk);
     }
 }

@@ -19,7 +19,7 @@
 
 
 
-#define DBG_BLIT 1      // see, what happens (a bit)
+#define DBG_BLIT 0      // see, what happens (a bit)
 #define ASM_BLIT 1  	// use bit_blt routine in assembler
 
 #if DBG_BLIT
@@ -130,7 +130,8 @@ struct blit_frame info;     /* holds some internal info for bit_blt */
  * The major difference is, that in the device independant format the planes
  * are consecutive, while on the screen they are interleaved.
  */
-void vr_trnfm(Vwk * vwk)
+void
+vr_trnfm(Vwk * vwk)
 {
     MFDB *src_mfdb, *dst_mfdb;
     WORD *src;
@@ -277,7 +278,8 @@ struct blit {
     //BYTE           ready;
 };
 
-static inline void do_blit(blit * blt)
+static inline void
+do_blit(blit * blt)
 {
     ULONG   blt_src_in;
     UWORD   blt_src_out, blt_dst_in, blt_dst_out, mask_out;
@@ -491,7 +493,8 @@ static inline void do_blit(blit * blt)
 #define HEIGHT   30 // Height of blt rectangle .w:
 #define PLANES   32 // Number of planes to blt .w:
 
-void bit_blt ()
+void
+bit_blt ()
 {
     WORD plane;
     UWORD s_xmin, s_xmax;
@@ -686,7 +689,8 @@ void bit_blt ()
 /*
  * setup_pattern - if bit 5 of mode is set, use pattern with blit
  */
-static void setup_pattern (Vwk * vwk, struct blit_frame * info)
+static void
+setup_pattern (Vwk * vwk, struct blit_frame * info)
 {
     /* multi-plane pattern? */
     info->p_nxpl = 0;		/* next plane pattern offset default. */
@@ -706,7 +710,8 @@ static void setup_pattern (Vwk * vwk, struct blit_frame * info)
  * return TRUE, if clipping took away everything
  */
 /* not fully optimized yet*/
-static BOOL do_clip (Vwk * vwk, struct blit_frame * info)
+static BOOL
+do_clip (Vwk * vwk, struct blit_frame * info)
 {
     WORD s_xmin, s_ymin;
     WORD d_xmin, d_ymin;
@@ -784,7 +789,8 @@ static BOOL do_clip (Vwk * vwk, struct blit_frame * info)
 /*
  * dont_clip - clip, if dest is screen and cipping is wanted
  */
-static void dont_clip (struct blit_frame * info)
+static void
+dont_clip (struct blit_frame * info)
 {
     /* source */
     info->s_xmin = PTSIN[XMIN_S];	/* d0 x of upper left of source */
@@ -806,7 +812,8 @@ static void dont_clip (struct blit_frame * info)
 /*
  * setup_info - fill the info structure with MFDB values
  */
-static BOOL setup_info (Vwk * vwk, struct blit_frame * info)
+static BOOL
+setup_info (Vwk * vwk, struct blit_frame * info)
 {
     MFDB *src,*dst;
     BOOL use_clip = FALSE;
@@ -869,7 +876,8 @@ static BOOL setup_info (Vwk * vwk, struct blit_frame * info)
  * This function copies a rectangular raster area from source form to
  * destination form using the logic operation specified by the application.
  */
-void vdi_vro_cpyfm(Vwk * vwk)
+void
+vdi_vro_cpyfm(Vwk * vwk)
 {
     WORD mode;
 
@@ -879,13 +887,13 @@ void vdi_vro_cpyfm(Vwk * vwk)
 
     /* if mode is made up of more than the first 5 bits */
     if ( mode & ~0x001f )
-        return;                 /* mode is invalid */
+        return;                 	/* mode is invalid */
 
     /* check the pattern flag (bit 5) and revert to log op # */
-    info.p_addr = NULL;		/* clear pattern pointer */
+    info.p_addr = NULL;			/* clear pattern pointer */
     if ( mode & PAT_FLAG ) {
-        mode &= ~PAT_FLAG;      /* set bit to 0! */
-        setup_pattern(vwk, &info);   /* fill in pattern related stuff */
+        mode &= ~PAT_FLAG;      	/* set bit to 0! */
+        setup_pattern(vwk, &info);	/* fill in pattern related stuff */
     }
 
     /* if true, the plane count is invalid or clipping took all! */
@@ -914,7 +922,8 @@ void vdi_vro_cpyfm(Vwk * vwk)
  * are specified in the INTIN array.
  */
 
-void vdi_vrt_cpyfm(Vwk * vwk)
+void
+vdi_vrt_cpyfm(Vwk * vwk)
 {
     WORD mode;
     WORD fg_col, bg_col;

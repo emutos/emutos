@@ -60,6 +60,11 @@ extern BYTE save_stat;          /* status and format of save buffer */
 extern WORD save_len;           /* number of lines to be returned */
 
 
+/* FIXME: should go to linea variables */
+void     (*user_wheel)(void);	/* user provided mouse wheel vector */
+
+
+
 
 /* Default Mouse Cursor Definition */
 static Mcdb arrow_cdb = {
@@ -378,6 +383,33 @@ void vex_curv(Vwk * vwk)
     pointer = (LONG*) &CONTRL[9];
     *pointer = (LONG) user_cur;
     (LONG*)user_cur = *--pointer;
+}
+
+
+
+/*
+ * vex_wheelv
+ *
+ * This routine replaces the mouse wheel vector with the
+ * address of a user-supplied routine.  The previous value
+ * is returned so that it also may be called when the mouse
+ * wheel is used.
+ *
+ * Inputs:
+ *    contrl[7], contrl[8] - pointer to user routine
+ *
+ * Outputs:
+ *    contrl[9], contrl[10] - pointer to old routine
+ *
+ */
+
+void vex_wheelv(Vwk * vwk)
+{
+    LONG * pointer;
+
+    pointer = (LONG*) &CONTRL[9];
+    *pointer = (LONG) user_wheel;
+    (LONG*)user_wheel = *--pointer;
 }
 
 

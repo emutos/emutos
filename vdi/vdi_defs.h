@@ -382,6 +382,8 @@ void dqt_name(Vwk *);         /* 130 - fce790 */
 
 void dqt_fontinfo(Vwk *);     /* 131 - fce820 */
 
+void vex_wheelv(Vwk *);       /* 134 */
+
 /* not in original TOS */
 void v_bez_qual(Vwk *);
 void v_bez_control(Vwk *);

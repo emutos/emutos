@@ -1684,3 +1684,6 @@ bios/processor.S: added coldfire test in detect_cpu (MAD)
 2004-08-26
 vdi/*.c: ripped off some more global variables (MAD)
 vdi/fill.c: fixed fills to use fill color, not line color (MAD)
+
+2004-10-08
+vdi/vdi_mouse.c: implemented vex_wheelv() (MAD)
