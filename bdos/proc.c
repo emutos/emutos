@@ -27,13 +27,20 @@
 
 #define DBGPROC 0
 
+#if DBGPROC
+#define D(a) kprintf a
+#else
+#define D(a)
+#endif
+
 /*
  * forward prototypes
  */
 
 static void ixterm( PD *r );
 static WORD envsize( char *env );
-static void init_pd(PD *p, char *t, long max, MD *env);
+static void init_pd_fields(PD *p, char *tail, long max, MD *env_md);
+static void init_pd_files(PD *p);
 static MD *alloc_env(char *v);
 static void proc_go(PD *p);
 
@@ -179,7 +186,6 @@ static  WORD envsize( char *env )
 
 /** xexec - (p_exec - 0x4b) execute a new process
  *
- *      
  * load&go(cmdlin,cmdtail), load/nogo(cmdlin,cmdtail), justgo(psp)
  * create psp - user receives a memory partition
  *
@@ -189,83 +195,62 @@ static  WORD envsize( char *env )
  * @v:   environment
  */
 
-/* LVL - this avoids warnings using gcc. The offending function parameters 
- * are transformed into static variables, ensuring that they do not have
- * 'undetermined' value when coming back from longjmp.
- * This will fail only if two processes call xexec at the same time, which
- * is not allowed in bdos anyway.
+/* these variables are used to avoid the following warning:
+ * variable `foo' might be clobbered by `longjmp' or `vfork'
  */
+static PD *cur_p;
+static MD *cur_m;
+static MD *cur_env_md;
 
-static WORD flg;
-static char *t, *v;
-static long do_xexec(char *);
- 
-long    xexec(WORD fflg, char *s, char *tt, char *vv)
-{
-    flg = fflg;
-    t = tt;
-    v = vv;
-    return do_xexec(s);
-}
-
-static long do_xexec(char *s)
+long xexec(WORD flag, char *path, char *tail, char *env)
 {
     PD *p;
     PGMHDR01 hdr;
-    MD *m, *env;
-    LONG  rc;
-    FH fh;
+    MD *m, *env_md;
+    LONG rc;
     long max, needed;
+    FH fh;
 
-#if     DBGPROC
-    kprintf("BDOS: xexec - flag or mode = %d\n", flg);
-#endif
+    D(("BDOS: xexec - flag or mode = %d\n", flag));
 
     /* first branch - actions that do not require loading files */
-    switch(flg) {
-    case PE_BASEPAGE:
-    {
-        MD *mm;
-        long mmax;
-
+    switch(flag) {
+    case PE_BASEPAGE:        
         /* just create a basepage */
-        env = alloc_env(v);
-        if(env == NULL) {
-#if DBGPROC
-            kprintf("xexec: Not Enough Memory!\n") ;
-#endif
+        env_md = alloc_env(env);
+        if(env_md == NULL) {
+            D(("xexec: Not Enough Memory!\n"));
             return(ENSMEM) ;
         }
-        mmax = (long) ffit(-1L, &pmd); 
-        if(mmax >= sizeof(PD)) {
-            /* not even enough memory for basepage */
-            mm = ffit(mmax, &pmd);
-            p = (PD *) mm->m_start;
+        max = (long) ffit(-1L, &pmd); 
+        if(max >= sizeof(PD)) {
+            m = ffit(max, &pmd);
+            p = (PD *) m->m_start;
         } else {
-            freeit(env, &pmd);
-#if DBGPROC
-            kprintf("xexec: No memory for TPA\n") ;
-#endif
+            /* not even enough memory for basepage */
+            freeit(env_md, &pmd);
+            D(("xexec: No memory for TPA\n"));
             return(ENSMEM);
         }
         /* memory ownership */
-        mm->m_own = env->m_own = run;
+        m->m_own = env_md->m_own = run;
 
         /* initialize the PD */
-        init_pd(p, t, mmax, env);
+        init_pd_fields(p, tail, max, env_md);
+        init_pd_files(p);
 
         return (long) p;
-    }
     case PE_GOTHENFREE:
         /* set the owner of the memory to be this process */
-        p = (PD *)t;
+        p = (PD *) tail;
         set_owner(p, p, find_mpb(p));
         set_owner(p->p_env, p, find_mpb(p->p_env));
         /* fall through */
     case PE_GO:
-        proc_go((PD *)t);
+        p = (PD *) tail;
+        proc_go(p);
         /* should not return ? */
-        return (long)t;
+        return (long)p;
     case PE_LOADGO:
     case PE_LOAD:
         break;
@@ -274,54 +259,36 @@ static long do_xexec(char *s)
     }
     
     /* we now need to load a file */
-#if DBGPROC
-    kprintf("BDOS: xexec - trying to find the command ...\n");
-#endif
-    if (ixsfirst(s,0,0L)) {
-#if DBGPROC
-        kprintf("BDOS: Command %s not found!!!\n", s);
-#endif
+    D(("BDOS: xexec - trying to find the command ...\n"));
+    if (ixsfirst(path,0,0L)) {
+        D(("BDOS: Command %s not found!!!\n", path));
         return(EFILNF);     /*  file not found      */
     }
 
-    /* error handling */
-    memcpy(bakbuf, errbuf, sizeof(errbuf));
-    if ( setjmp(errbuf) )
-    {
-        /* Free any memory allocated to this program. */
-        if (flg != PE_GO)           /* did we allocate any memory? */
-            ixterm((PD*)t);             /*  yes - free it */
-
-        longjmp(bakbuf,1);
-    }
-    
-    /* avoid warnings */    
-    max = 0;
-    m = NULL;
-
-    /* load the header */
-    rc = xpgmhdrld(s, &hdr, &fh);
+    /* load the header - if IO error occurs now, the longjmp in rwabs will
+     * jump directly back to bdosmain.c, which is not a problem because
+     * we haven't allocated anything yet.
+     */
+    rc = kpgmhdrld(path, &hdr, &fh);
     if(rc) {
-#if DBGPROC
-        kprintf("BDOS: xexec - error returned from xpgmhdrld = %ld (0x%lx)\n",rc , rc);
-#endif
+        D(("BDOS: xexec - kpgmhdrld returned %ld (0x%lx)\n", rc, rc));
         return(rc);
     }
 
     /* allocate the environment first, always in ST RAM */
-    env = alloc_env(v);
-    if ( !env ) {
-#if DBGPROC
-        kprintf("xexec: Not Enough Memory!\n") ;
-#endif
-        return(ENSMEM) ;
+    env_md = alloc_env(env);
+    if ( env_md == NULL ) {
+        D(("xexec: Not Enough Memory!\n"));
+        return(ENSMEM);
     }
     
     /* allocate the basepage depending on memory policy */
     needed = hdr.h01_tlen + hdr.h01_dlen + hdr.h01_blen + sizeof(PD);
+    max = 0;
         
     /* first try */
     p = NULL;
+    m = NULL;
     if(has_ttram && (hdr.h01_flags & PF_TTRAMLOAD)) {
         /* use ttram preferably */
         max = (long) ffit(-1L, &pmdtt); 
@@ -338,12 +305,10 @@ static long do_xexec(char *s)
             p = (PD *) m->m_start;
         } 
     }
-    /* still failed? free env and return */
+    /* still failed? free env_md and return */
     if(p == NULL) {
-        freeit(env,&pmd);
-#if DBGPROC
-        kprintf("xexec: No memory for TPA\n") ;
-#endif
+        D(("xexec: No memory for TPA\n"));
+        freeit(env_md, &pmd);
         return(ENSMEM);
     }
     assert(m != NULL);
@@ -351,45 +316,68 @@ static long do_xexec(char *s)
     /* memory ownership - the owner is either the new process being created,
      * or the parent 
      */
-    if(flg == PE_LOADGO) {
-        m->m_own = env->m_own = p;
+    if(flag == PE_LOADGO) {
+        m->m_own = env_md->m_own = p;
     } else {
-        m->m_own = env->m_own = run;
+        m->m_own = env_md->m_own = run;
     }   
 
-    /* initialize the PD */
-    init_pd(p, t, max, env);
-
+    /* initialize the fields in the PD structure */
+    init_pd_fields(p, tail, max, env_md);
+    
     /* set the flags (must be done after init_pd) */
     p->p_flags = hdr.h01_flags;
 
-    /* now, read in the rest of the program and perform relocation */
-    rc = xpgmld(s, p, fh, &hdr);
-    if ( rc ) {
-#if DBGPROC
-        kprintf("BDOS: xexec - error returned from xpgmld = %ld (0x%lx)\n",rc , rc);
-#endif
-        freeit(env, &pmd);
+    /* use static variable to avoid the obscure longjmp warning */
+    cur_p = p;
+    cur_m = m;
+    cur_env_md = env_md;
+
+    /* we have now allocated memory, so we need to intercept longjmp. */
+    memcpy(bakbuf, errbuf, sizeof(errbuf));
+    if ( setjmp(errbuf) ) {
+        /* free any memory allocated yet */
+        freeit(cur_env_md, &pmd);
+        freeit(cur_m, find_mpb((void *)cur_m->m_start));
         
-        xmfree((long)p);
-        return(rc);
+        /* we still have to jump back to bdosmain.c so that the proper error
+         * handling can occur.
+         */
+        longjmp(bakbuf, 1);
     }
+
+    /* now, load the rest of the program and perform relocation */
+    rc = kpgmld(cur_p, fh, &hdr);
+    if ( rc ) {
+        D(("BDOS: xexec - kpgmld returned %ld (0x%lx)\n", rc, rc));
+        /* free any memory allocated yet */
+        freeit(cur_env_md, &pmd);
+        freeit(cur_m, find_mpb((void *)cur_m->m_start));
+    
+        return rc;
+    }
+
+    /* at this point the program has been correctly loaded in memory, and 
+     * more IO errors cannot occur, so it is safe now to finish initializing
+     * the new process.
+     */
+    init_pd_files(cur_p);
     
     /* invalidate instruction cache for the TEXT segment only
      * programs that jump into their DATA, BSS or HEAP are kindly invited 
      * to do their cache management themselves.
      */
-    invalidate_icache(((char *)p) + sizeof(PD), hdr.h01_tlen);
+    invalidate_icache(((char *)cur_p) + sizeof(PD), hdr.h01_tlen);
 
-    if(flg != PE_LOAD) 
-        proc_go(p);
-    return (long) p;
+    if(flag != PE_LOAD)
+        proc_go(cur_p);
+    return (long) cur_p;
 }
 
-static void init_pd(PD *p, char *tt, long max, MD *env)
+/* initialize the structure fields */
+static void init_pd_fields(PD *p, char *tail, long max, MD *env_md)
 {
     int i;
-    WORD h;
     char *b;
     
     /* first, zero it out */
@@ -399,13 +387,26 @@ static void init_pd(PD *p, char *tt, long max, MD *env)
     p->p_lowtpa = (long) p ;                /*  M01.01.06   */
     p->p_hitpa  = (long) p  +  max ;        /*  M01.01.06   */
     p->p_xdta = &p->p_cmdlin[0] ;   /* default p_xdta is p_cmdlin */
-    p->p_env = (char *) env->m_start ;
+    p->p_env = (char *) env_md->m_start ;
 
-    /* now inherit standard files from me */
+    /* copy tail */
+    b = &p->p_cmdlin[0] ;
+    for( i = 0 ; (i < PDCLSIZE)  && (*tail) ; i++ )
+        *b++ = *tail++;
+
+    *b++ = 0;
+}
+
+/* duplicate files */
+static void init_pd_files(PD *p)
+{
+    int i;
+    
+    /* inherit standard files from me */
     for (i = 0; i < NUMSTD; i++) {
-        h = run->p_uft[i];
+        WORD h = run->p_uft[i];
         if ( h > 0 )
-            ixforce(i,run->p_uft[i],p);
+            ixforce(i, h, p);
         else
             p->p_uft[i] = h;
     }
@@ -416,39 +417,29 @@ static void init_pd(PD *p, char *tt, long max, MD *env)
 
     /* and current drive */
     p->p_curdrv = run->p_curdrv;
-
-    /* copy tail */
-    b = &p->p_cmdlin[0] ;
-    for( i = 0 ; (i < PDCLSIZE)  && (*tt) ; i++ )
-        *b++ = *tt++;
-
-    *b++ = 0;
-    t = (char *) p;
 }
 
 /* allocate the environment, always in ST RAM */
-static MD *alloc_env(char *v)
+static MD *alloc_env(char *env)
 {
-    MD *env;
-    int i;
+    MD *env_md;
+    int size;
 
     /* determine the env size */
-    if (!v)
-        v = run->p_env;
-    i = envsize( v ) ;
-    if ( i & 1 )                     /*  must be even        */
-        ++i ;
-
+    if (env == NULL)
+        env = run->p_env;
+    size = (envsize(env) + 1) & ~1;  /* must be even */
+ 
     /* allocate it */
-    env = ffit((long) i,&pmd);
-    if ( !env ) {
+    env_md = ffit((long) size, &pmd);
+    if ( env_md == NULL ) {
         return NULL;
     }
 
     /* copy it */
-    memcpy((void *)(env->m_start), v, i);
+    memcpy((void *)(env_md->m_start), env, size);
     
-    return env;
+    return env_md;
 }
 
 static void proc_go(PD *p)
@@ -456,9 +447,7 @@ static void proc_go(PD *p)
     int i;
     long *spl;
 
-#if DBGPROC
-    kprintf("BDOS: xexec - trying to load (and execute) a command ...\n");
-#endif
+    D(("BDOS: xexec - trying to load (and execute) a command ...\n"));
     p->p_parent = run;
     spl = (long *) p->p_hitpa;
 
@@ -513,12 +502,12 @@ void    x0term(void)
 
 void    xterm(UWORD rc)
 {
-    PD *r;
+    PD *p = run;
 
     (* (WORD(*)()) trap13(5,0x102,-1L))() ;     /*  call user term handler */
 
-    run = (r = run)->p_parent;
-    ixterm( r );
+    run = run->p_parent;
+    ixterm(p);
     run->p_dreg[0] = rc;
     gouser();
 }

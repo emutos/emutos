@@ -42,11 +42,11 @@ void xterm(UWORD rc)  NORETURN ;
 WORD xtermres(long blkln, WORD rc);
 
 /*
- * in kpgmld.h
+ * in kpgmld.c
  */
 
-LONG xpgmhdrld(char *s, PGMHDR01 *hd, FH *h);
-LONG xpgmld(char *s, PD *p, FH h, PGMHDR01 *hd );
+LONG kpgmhdrld(char *s, PGMHDR01 *hd, FH *h);
+LONG kpgmld(PD *p, FH h, PGMHDR01 *hd);
 
 /*
  * in rwa.S

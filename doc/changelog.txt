@@ -1255,3 +1255,9 @@ Start... early ages
 21. Jan. 2003
 - bdos/fsfirst.c - yesterday's patch corrected (Standa)
 - bios/bios.c - the Setdta() should not be needed (Standa)
+
+29. Jan. 2003
+- bdos/kpgmld.c - cleaned interface with proc.c a little bit (LVL)
+- bdos/proc.c - yet another cleanup of the xexec() implementation; there
+  should be no memory leak any more in case of IO error, but of course this
+  feature is untested as of now (LVL)

@@ -41,7 +41,7 @@ static LONG     pgmld01(FH h, PD *pdptr, PGMHDR01 *hd);
 static LONG     pgfix01(LONG nrelbytes, PGMINFO *pi);
 
 /*
- *  xpgmhdrld - load program header
+ * kpgmhdrld - load program header
  *
  * contrary to what was before, we load the prg header first,
  * then allocate the basepage, choosing the memory pool according to
@@ -49,7 +49,7 @@ static LONG     pgfix01(LONG nrelbytes, PGMINFO *pi);
  * the program.
  */
 
-LONG xpgmhdrld(char *s, PGMHDR01 *hd, FH *h)
+LONG kpgmhdrld(char *s, PGMHDR01 *hd, FH *h)
 {
     LONG r;
     WORD magic;
@@ -81,16 +81,17 @@ LONG xpgmhdrld(char *s, PGMHDR01 *hd, FH *h)
 
 
 /*
- *  xpgmld - load program except the header (which has already been read)
+ *  kpgmld - load program except the header (which has already been read)
  *
  *  The program space follows PD
  *
  * Arguments:
- * s - program name
  * p - ptr to PD
+ * h - file handle opened by kpgmhdrld
+ * hd - the program header read by kpgmhdrld
  */
 
-LONG   xpgmld(char *s, PD *p, FH h, PGMHDR01 *hd )
+LONG   kpgmld(PD *p, FH h, PGMHDR01 *hd )
 {
     LONG r;
 
