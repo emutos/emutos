@@ -23,6 +23,7 @@ void screen_init(void);
 UWORD get_videl_bpp();
 UWORD get_videl_width();
 UWORD get_videl_height();
+void set_videl_vga640x480(int bitplanes);
 
 
 /* xbios routines */

@@ -1264,3 +1264,11 @@ Start... early ages
 
 1. Feb. 2003
 - bios/ikbd.[ch] - dead keys fixed, backspace seems to work okay now (LVL)
+
+6. Feb. 2003
+- bios/bios.c - natfeat printing changed back to kprintf (joy)
+- bios/screen.[ch] - a routine for programming VIDEL to produce any of
+  bitplane modes on VGA monitor with 640x480 res. added. Also proper VIDEL
+  reset is now done on init. The last missing thing is to fetch the
+  pre-selected boot resolution from the NVRAM and apply it. Until then
+  the default boot resolution will be the 2-color mode (joy)

@@ -1,12 +1,13 @@
 /*
  * screen.c - low-level screen routines
  *
- * Copyright (c) 2001 EmuTOS development team
+ * Copyright (c) 2001-2003 EmuTOS development team
  *
  * Authors:
  *  MAD   Martin Doering
  *  THO   Thomas Huth
  *  LVL   Laurent Vogel
+ *  joy   Petr Stehlik
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -53,10 +54,16 @@ void screen_init(void)
     ULONG screen_start;
 
     if (has_videl) {
+        /* reset VIDEL on boot-up */
+        /* first set the physbase to a safe memory */
+        setphys(0x10000L);
+        /* then change the resolution to 2-bit depth VGA */
+        set_videl_vga640x480(2);
+
+        /* set desired resolution (fetch it from NVRAM - TODO) */
+        set_videl_vga640x480(1);
+
         /* detect real videoram size from the current resolution */
-        /* the right thing to do would be to set the resolution based
-         * on info fetched from NVRAM
-         */
         screen_size = get_videl_width() / 8L * get_videl_height()
                       * get_videl_bpp();
     }
@@ -277,3 +284,64 @@ UWORD get_videl_height()
     return yres;
 }
 
+/*
+ * this routine can set VIDEL to 1,2,4 or 8 bitplanes mode
+ * on VGA in 640x480 resolution
+ */
+void set_videl_vga640x480(int bitplanes)
+{
+	char *videlregs = (char *)0xff8200;
+    int hdb[4] = {115, 138, 163, 171 };
+    int hde[4] = {80, 107, 124, 132 };
+    int lwidth[4] = {40, 80, 160, 320 };
+    int fsm[4] = { 0x400, 0, 0, 16 };
+    int vmd[4] = { 8, 4, 8, 8};
+    int idx;
+
+    switch(bitplanes) {
+        case 1: idx = 0; break;
+        case 2: idx = 1; break;
+        case 4: idx = 2; break;
+        case 8: idx = 3; break;
+        default: idx = 0;
+    }
+
+    videlregs[0x0a] = 2;
+    videlregs[0x82] = 0;
+    videlregs[0x83] = 198;
+    videlregs[0x84] = 0;
+    videlregs[0x85] = 141;
+    videlregs[0x86] = 0;
+    videlregs[0x87] = 21;
+    videlregs[0x88] = 2;
+    videlregs[0x89] = hdb[idx];
+    videlregs[0x8a] = 0;
+    videlregs[0x8b] = hde[idx];
+    videlregs[0x8c] = 0;
+    videlregs[0x8d] = 150;
+    videlregs[0xa2] = 4;
+    videlregs[0xa3] = 25;
+    videlregs[0xa4] = 3;
+    videlregs[0xa5] = 255;
+    videlregs[0xa6] = 0;
+    videlregs[0xa7] = 63;
+    videlregs[0xa8] = 0;
+    videlregs[0xa9] = 63;
+    videlregs[0xaa] = 3;
+    videlregs[0xab] = 255;
+    videlregs[0xac] = 4;
+    videlregs[0xad] = 21;
+    videlregs[0x0e] = 0;
+    videlregs[0x0f] = 0;
+    videlregs[0x10] = lwidth[idx] >> 8;
+    videlregs[0x11] = lwidth[idx] & 0xff;
+    videlregs[0xc2] = 0;
+    videlregs[0xc3] = vmd[idx];
+    videlregs[0xc0] = 1;
+    videlregs[0xc1] = 134;
+    videlregs[0x66] = 0;
+    videlregs[0x67] = 0;
+
+    videlregs[0x66] = fsm[idx] >> 8;
+    videlregs[0x67] = fsm[idx] & 0xff;
+}
