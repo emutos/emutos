@@ -25,7 +25,6 @@
 void create_XHDI_cookie(void);
 
 long xhdi_handler(unsigned short opcode, long a1, long a2, long a3, long a4, long a5, long a6, long a7);
-extern long xhdi_vec(void); /* defined in startup.S right now */
 
 long XHInqTarget(UWORD major, UWORD minor, ULONG *blocksize,
                  ULONG *deviceflags, char *productname);

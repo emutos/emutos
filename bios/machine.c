@@ -19,6 +19,7 @@
 #include "tosvars.h"
 #include "country.h"
 #include "clock.h"
+#include "natfeat.h"
 #include "xhdi.h"
 
 
@@ -28,7 +29,6 @@ long cookie_snd;
 long cookie_mch;
 long cookie_swi;
 long cookie_frb;
-long cookie_natfeat;
 
 
 /*
@@ -190,6 +190,7 @@ void machine_detect(void)
   detect_vme();
   detect_megartc();
   // detect_nvram();  can't be called here due to the balloc()! :-(
+  detect_native_features();
 }
   
 void machine_init(void)
@@ -298,8 +299,7 @@ void machine_init(void)
   cookie_add(COOKIE_FDC, cookie_fdc);
 
   if (has_natfeats) {
-    cookie_natfeat = 1;  /* version of the NatFeat interface */
-    cookie_add(COOKIE_NATFEAT, cookie_natfeat);
+    cookie_add(COOKIE_NATFEAT, natfeat_cookie_struct);
   }
 
   create_XHDI_cookie();
@@ -309,12 +309,10 @@ const char * machine_name(void)
 {
 /* NatFeat hack */
 #if 1
-    static long _NF_getid = 0x73004e75L;    /* make NatFeat global not static */
-    static long _NF_call  = 0x73014e75L;
-    #define nfGetID(n)  (((long (*)(const char *))&_NF_getid)n)
-    #define nfCall(n)   (((long (*)(long, ...))&_NF_call)n)
+    #define nfGetID(n)  (((long (*)(const char *))__nfID)n)
+    #define nfCall(n)   (((long (*)(long, ...))__nfCall)n)
     #define nf_getFullName(buffer, size) \
-            (((long (*)(long, char *, unsigned long))&_NF_call)(nfGetID(("NF_NAME"))+1, (buffer), (unsigned long)(size)))
+            nfCall((nfGetID(("NF_NAME"))+1, (buffer), (unsigned long)(size)))
 
     char *nf_name_buf = phystop-64; /* how to alloc a bit of RAM? */
 

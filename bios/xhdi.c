@@ -19,6 +19,7 @@
 #include "acsi.h"
 #include "string.h"
 #include "cookie.h"
+#include "natfeat.h"
 
 #include "xhdi.h"
  
@@ -26,8 +27,7 @@
 
 /* NatFeats */
 long nfid_xhdi;
-static long _NF_call  = 0x73014e75L;
-#define nfCall(n)       (((long (*)(long, ...))&_NF_call)n)
+#define nfCall(n)       (((long (*)(long, ...))__nfCall)n)
 
 /*=========================================================================*/
 

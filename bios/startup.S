@@ -25,9 +25,6 @@
         
         .global _os_entry
         .global _cartscan
-        .global	_xhdi_vec
-        .xdef	_xhdi_handler
-        .global _nfid_xhdi
 
 // ==== tosvars.s - TOS System variables =====================================
                 
@@ -35,10 +32,6 @@
         .xdef   resvector     
 //        .xdef   _kprintf
 
-// ==== machine.c - Native Features flag =====================================
-
-        .xdef   _has_natfeats
-        
 // ==== memory.s - variables for memory  =====================================
 
         .xdef   meminit       // initialize the memory and it's controller
@@ -172,35 +165,6 @@ noreset:
         bra     meminit         // do/test memory config (needs sp)
 memdone:
 
-/* 
- * NatFeats test
- */
-#if DETECT_NATIVE_FEATURES
-        .equ vec_illegal, 0x10       // illegal exception vector
-
-        move.l  sp,a1
-        move.l  vec_illegal,a0
-        move.l  #fail_natfeat,vec_illegal
-        pea     nf_xhdi_name
-        sub.l   #4,sp
-        dc.w    0x7300     // Jump to NATFEAT_ID
-        move.l  d0,_nfid_xhdi
-        move.l  a1,sp
-        move.l  a0,vec_illegal
-        move.w  #1,_has_natfeats
-        bra     natfeatdone
-
-nf_xhdi_name:
-        .ascii  "XHDI\0"
-        .even
-
-fail_natfeat:
-        move.l  a1,sp
-        move.l  a0,vec_illegal
-#endif  /* DETECT_NATIVE_FEATURES */
-        clr.l   _nfid_xhdi
-        clr.w   _has_natfeats
-natfeatdone:
 
 /* 
  * From now, the stack is allowed, and C code can be used.
@@ -244,12 +208,6 @@ nextapp:
         bne     testtype
 cartover:
         rts
-
-
-
-        dc.l    0x27011992              // XHDI magic constant
-_xhdi_vec:
-        jmp     _xhdi_handler
 
         .end
 

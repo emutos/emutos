@@ -1227,3 +1227,9 @@ Start... early ages
 
 22. Nov. 2002
 - vdi/vdimain.c - change timer vectors to be used as pointers (MAD)
+
+13. Jan. 2003
+- bios/natfeat.[hS] - NatFeat stuff moved to separate files (joy)
+- bios/startup.S, bios/machine.c - cleaned up (joy)
+- "__NF" cookie now contains pointer to the NatFeat structure with
+  function pointers (joy)
