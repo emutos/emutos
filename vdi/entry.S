@@ -29,6 +29,9 @@
         .xdef   _FLIP_Y
         .xdef   _SCREEN
 
+        .globl  _GSX_ENTRY
+
+
 #define ptsin_size         256      // max. # of elements allowed for PTSIN array
 #define ptsin_max          ptsin_size/2 // max. # of coordinate pairs for PTSIN array
 #define W_1                2        // byte offset to first element of an array
@@ -104,5 +107,7 @@ intin_ok:
         movem.l (sp)+, d1-d7/a0-a6 // restore the caller's registers
         clr.l   d0
         move.w  _FLIP_Y,d0      // set d0 to indicate magnitude/coordinate 
+
         rts
+
         .end

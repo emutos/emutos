@@ -1957,7 +1957,8 @@ twopd:
         jmp     (a3)
 //
 twopf:
-        moveq.l #0xFF,d1                        //mode 15 - D' = 1
+        //????moveq.l #0xFF,d1                        //mode 15 - D' = 1
+        moveq.l #-1,d1                        //mode 15 - D' = 1
         jmp     (a3)
 #endif
 //

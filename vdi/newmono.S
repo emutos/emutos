@@ -1,9 +1,9 @@
 /*
  * newmono.S - monospaced text blit
  *
- * Copyright (c) 1999 Caldera, Inc. and Authors:
+ * Copyright (c) 1999 Caldera, Inc.
+ *               2002 The EmuTOS development team
  *
- *  SCC
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -263,8 +263,8 @@ blt_fail:
 //                                                                      //
 /////////////////////////////////////////////////////////////////////////
 
-#ifndef rev_vid
 mon_mode:
+#if rev_vid
         dc.w    mon_zer-mon_mode        // replace mode         0
         dc.w    mon_set0-mon_mode       // transparent mode     0
         dc.w    mon_xor-mon_mode        // exclusive or (xor)   0
@@ -274,7 +274,6 @@ mon_mode:
         dc.w    mon_xor-mon_mode        // exclusive or (xor)   1
         dc.w    mon_not1-mon_mode       // reverse transparent  1
 #else
-mon_mode:
         dc.w    mon_zer-mon_mode        // replace mode         0
         dc.w    mon_set1-mon_mode       // transparent mode     0
         dc.w    mon_xor-mon_mode        // exclusive or (xor)   0
@@ -324,10 +323,10 @@ mon_zer1:
 //
 mon_zer:
         move.w  d2,d6           // get character loop count
-#ifndef rev_vid
+#if rev_vid
         clr.b   d7              // get a byte of 0's
 #endif
-#ifndef rev_vid
+#if rev_vid
         moveq.l #-1,d7          // get a long word of 1's
 #endif
 //
@@ -391,7 +390,7 @@ mon_rep:
 //
 mon_rep2:
         move.w  (a5)+,d7        // get next character code
-#ifndef rev_vid
+#if rev_vid
         move.b  0(a4,d7.w),(a6)+        // move scan byte from table to screen
 #else
         move.b  0(a4,d7.w),d7   // move scan byte from table to register

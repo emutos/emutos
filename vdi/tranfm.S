@@ -1,9 +1,8 @@
 /*
  * tranfm.S - transform raster area from standard to device-specific format
  *
- * Copyright (c) 1999 Caldera, Inc. and Authors:
- *
- *      Dave Staugas
+ * Copyright (c) 1999 Caldera, Inc.
+ *               2002 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -181,7 +180,7 @@ tran_type:
         subq.w  #1,d4                   //adjust # of words per source plane
         move.w  d4,d0                   //save # of words per source plane
         cmpa.l  a0,a3                   //source address = dest. address?
-#ifndef rev_vid
+#if rev_vid
         beq.b   exit                    //for completely overlapped transform
 #else
         beq.b   in_place                //for completely overlapped transform
@@ -200,7 +199,7 @@ out_plane:
         movea.l d7,a3                   //address of next dest. plane
         move.w  d0,d4                   //# of words to transform
 out_loop:
-#ifndef rev_vid
+#if rev_vid
         move.w  (a0)+,(a3)+             //word of source written to destination
 #else
         move.w  (a0)+,d1                //word of source needs to be inverted
@@ -213,7 +212,7 @@ out_loop:
 //
 //  Transformation is completely overlapped
 //
-#ifdef rev_vid
+#if !rev_vid
 in_place:
         move.l  a0,d6                   //save source starting address
         bra.b   in_loop                 //transform first plane

@@ -51,22 +51,23 @@
 
                 .data
                 .even
-zero:            dc.w    0
-cur_up:          dc.b    esc,'A',null            // cursor up
-cur_dn:          dc.b    esc,'B',null            // cursor down
-cur_rt:          dc.b    esc,'C',null            // cursor right
-cur_lt:          dc.b    esc,'D',null            // cursor left
-cur_home:        dc.b    esc,'H',null            // home cursor
-clr_eos:         dc.b    esc,'J',null            // clear to end of screen
-clr_eol:         dc.b    esc,'K',null            // clear to end of line
-curs_off:        dc.b    esc,'f',esc,'E',null    // hide alpha cursor
-curs_on:         dc.b    esc,'E',esc,'e',null    // show alpha cursor
-entr_rvid:       dc.b    esc,'p',null            // enter reverse video
-exit_rvid:       dc.b    esc,'q',null            // exit reverse video
-pos_cur:         dc.b    esc,'Y'                 // position cursor
-pcy:             dc.b    0
-pcx:             dc.b    0
-                 dc.b    null
+
+zero:           .dc.w    0
+cur_up:         .dc.b    esc,'A',null            // cursor up
+cur_dn:         .dc.b    esc,'B',null            // cursor down
+cur_rt:         .dc.b    esc,'C',null            // cursor right
+cur_lt:         .dc.b    esc,'D',null            // cursor left
+cur_home:       .dc.b    esc,'H',null            // home cursor
+clr_eos:        .dc.b    esc,'J',null            // clear to end of screen
+clr_eol:        .dc.b    esc,'K',null            // clear to end of line
+curs_off:       .dc.b    esc,'f',esc,'E',null    // hide alpha cursor
+curs_on:        .dc.b    esc,'E',esc,'e',null    // show alpha cursor
+entr_rvid:      .dc.b    esc,'p',null            // enter reverse video
+exit_rvid:      .dc.b    esc,'q',null            // exit reverse video
+pos_cur:        .dc.b    esc,'Y'                 // position cursor
+pcy:            .dc.b    0
+pcx:            .dc.b    0
+                .dc.b    null
 
 
         .page
