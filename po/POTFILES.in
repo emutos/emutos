@@ -8,5 +8,7 @@ bios/initinfo.c
 
 # cli/command.c
 
+aes/gem_rsc.c
+
 desk/desk_rsc.c
 
