@@ -1068,3 +1068,6 @@ Start... early ages
 
 06. Sep. 2002
 - vdi/monout.c - abline() in C optimized (MAD)
+
+09. Sep. 2002
+- vdi/monout.c - abline() in C more optimized (MAD)

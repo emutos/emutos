@@ -1548,34 +1548,46 @@ void dsf_udpat()
 
 /* Set pixel at x, y */
 inline void
-drawpixel(UWORD x, UWORD y, int linebit)
+drawpixel(UWORD * addr, UWORD offs, int linebit)
 {
-    void *addr;
-    WORD offs;
-
     if (linebit) {  /* use pattern ?*/
-        /* calculate addr from x/y-coordinates */
-        addr = v_bas_ad;	            /* get base address of first plane */
-        addr += (LONG)y * v_lin_wr;         /* y into scan row */
-        addr += ((x&0xfff0)>>shft_off); /* shift x by a precalculated value */
-
-        /* convert x into index to the desired bit within word in screen mem. */
-        offs = (1 << (15-(x&0xf)));
-
         switch (WRT_MODE) {
+        case 0:              /* rep */
+            switch (v_planes) {
+            case 4:
+                if (fg_bp[3])
+                    *(WORD*)addr |= offs;
+                else
+                    *(WORD*)addr &= ~offs;
+                addr++;
+                if (fg_bp[2])
+                    *(WORD*)addr |= offs;
+                else
+                    *(WORD*)addr &= ~offs;
+                addr++;
+            case 2:
+                if (fg_bp[1])
+                    *(WORD*)addr |= offs;
+                else
+                    *(WORD*)addr &= ~offs;
+                addr++;
+            case 1:
+                if (fg_bp[0])
+                    *(WORD*)addr |= offs;
+                else
+                    *(WORD*)addr &= ~offs;
+            }
+            break;
         case 1:              /* or */
             switch (v_planes) {
             case 4:
                 if (fg_bp[3])
-                    *(WORD*)addr |= offs;   // set bit
-                addr += 2;
-                if (fg_bp[3])
-                    *(WORD*)addr |= offs;   // set bit
-                addr += 2;
+                    *(WORD*)addr++ |= offs;   // set bit
+                if (fg_bp[2])
+                    *(WORD*)addr++ |= offs;   // set bit
             case 2:
                 if (fg_bp[1])
-                    *(WORD*)addr |= offs;   // set bit
-                addr += 2;
+                    *(WORD*)addr++ |= offs;   // set bit
             case 1:
                 if (fg_bp[0])
                     *(WORD*)addr |= offs;   // set bit
@@ -1585,15 +1597,12 @@ drawpixel(UWORD x, UWORD y, int linebit)
             switch (v_planes) {
             case 4:
                 if (fg_bp[3])
-                    *(WORD*)addr ^= offs;   // xor bit
-                addr += 2;
-                if (fg_bp[3])
-                    *(WORD*)addr ^= offs;   // xor bit
-                addr += 2;
+                    *(WORD*)addr++ ^= offs;   // xor bit
+                if (fg_bp[2])
+                    *(WORD*)addr++ ^= offs;   // xor bit
             case 2:
                 if (fg_bp[1])
-                    *(WORD*)addr ^= offs;   // xor bit
-                addr += 2;
+                    *(WORD*)addr++ ^= offs;   // xor bit
             case 1:
                 if (fg_bp[0])
                     *(WORD*)addr ^= offs;   // xor bit
@@ -1603,18 +1612,27 @@ drawpixel(UWORD x, UWORD y, int linebit)
             switch (v_planes) {
             case 4:
                 if (fg_bp[3])
-                    *(WORD*)addr &= ~offs;
-                addr += 2;
-                if (fg_bp[3])
-                    *(WORD*)addr &= ~offs;
-                addr += 2;
+                    *(WORD*)addr++ &= ~offs;
+                if (fg_bp[2])
+                    *(WORD*)addr++ &= ~offs;
             case 2:
                 if (fg_bp[1])
-                    *(WORD*)addr &= ~offs;
-                addr += 2;
+                    *(WORD*)addr++ &= ~offs;
             case 1:
                 if (fg_bp[0])
                     *(WORD*)addr &= ~offs;
+            }
+        }
+    } else {
+        if (WRT_MODE == 0) {
+            switch (v_planes) {
+            case 4:
+                *(WORD*)addr++ &= ~offs;
+                *(WORD*)addr++ &= ~offs;
+            case 2:
+                *(WORD*)addr++ &= ~offs;
+            case 1:
+                *(WORD*)addr &= ~offs;
             }
         }
     }
@@ -1622,56 +1640,23 @@ drawpixel(UWORD x, UWORD y, int linebit)
 
 /* Set pixel at x, y */
 inline void
-drawpixel0(UWORD x, UWORD y, int linebit)
+monopixel(UWORD * addr, UWORD offs, int linebit)
 {
-    void *addr;
-    WORD offs;
-
-    /* calculate addr from x/y-coordinates */
-    addr = v_bas_ad;	            /* get base address of first plane */
-    addr += (LONG)y * v_lin_wr;         /* y into scan row */
-    addr += ((x&0xfff0)>>shft_off); /* shift x by a precalculated value */
-
-    /* convert x into index to the desired bit within word in screen mem. */
-    offs = (1 << (15-(x&0xf)));
-
-    if (linebit) {
-        switch (v_planes) {
-        case 4:
-            if (fg_bp[3])
-                *(WORD*)addr |= offs;
-            else
-                *(WORD*)addr &= ~offs;
-            addr += 2;
-            if (fg_bp[3])
-                *(WORD*)addr |= offs;
-            else
-                *(WORD*)addr &= ~offs;
-            addr += 2;
-        case 2:
-            if (fg_bp[1])
-                *(WORD*)addr |= offs;
-            else
-                *(WORD*)addr &= ~offs;
-            addr += 2;
-        case 1:
-            if (fg_bp[0])
-                *(WORD*)addr |= offs;
-            else
-                *(WORD*)addr &= ~offs;
+    if (linebit) {  /* use pattern ?*/
+        switch (WRT_MODE) {
+        case 3:              /* reverse transparent */
+            *addr &= ~offs;
+            break;
+        case 2:              /* xor */
+            *addr ^= offs;
+            break;
+        case 1:              /* or */
+        case 0:              /* rep */
+            *addr |= offs;
         }
     } else {
-        switch (v_planes) {
-        case 4:
-            *(WORD*)addr &= ~offs;
-            addr += 2;
-            *(WORD*)addr &= ~offs;
-            addr += 2;
-        case 2:
-            *(WORD*)addr &= ~offs;
-            addr += 2;
-        case 1:
-            *(WORD*)addr &= ~offs;
+        if (WRT_MODE == 0) {
+            *addr &= ~offs;
         }
     }
 }
@@ -1711,6 +1696,12 @@ abline ()
     WORD rem;			/* remainder */
     WORD xinc;			/* increment for moving x coordinate */
     WORD yinc;			/* increment for moving y coordinate */
+    void *yend;
+    WORD xpart;
+    void * ypart;
+    UWORD offs;
+    LONG yadd;
+    UWORD linemask;             /* linestyle bits */
     int linebit;                /* actual bit of linestyle */
 
     x1 = X1;
@@ -1727,70 +1718,87 @@ abline ()
     if (dy < 0) dy = -dy;
     xinc = (x2 > x1) ? 1 : -1;
     yinc = (y2 > y1) ? 1 : -1;
+    yadd = (LONG) yinc * v_lin_wr;
 
-    if (WRT_MODE == 0) {                	/* replace */
+    offs = 0x8000 >> (x1&0xf);
+    ypart = v_bas_ad + (LONG)y1 * v_lin_wr;     /* init adress counter */
+    yend = v_bas_ad + (LONG)y2 * v_lin_wr;     /* init adress counter */
+    xpart = (x1&0xfff0)>>shft_off;
+
+    linemask = LN_MASK;
+
+    if (v_planes == 1) {                	/* replace */
         if (dx >= dy) {
             rem = dx / 2;
             for (;;) {
-                linebit = !!(LN_MASK & 0x8000);     /* get next bit of line style */
-                LN_MASK = (LN_MASK << 1) | linebit; /* roll LN_MASK */
-                drawpixel0(x1, y1, linebit);
-                rem += dy;
-                if (rem >= dx) {
-                    rem -= dx;
-                    y1 += yinc;
-                }
+                linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                linebit = linemask & 1;
+                monopixel(ypart + xpart, offs, linebit);
                 if (x1 == x2)
                     break;
                 x1 += xinc;
+                xpart = (x1&0xfff0)>>3;
+                offs = 0x8000 >> (x1&0xf);
+                rem += dy;
+                if (rem >= dx) {
+                    rem -= dx;
+                    ypart += yadd;
+                }
             }
         } else {
             rem = dy / 2;
             for (;;) {
-                linebit = !!(LN_MASK & 0x8000);     /* get next bit of line style */
-                LN_MASK = (LN_MASK << 1) | linebit; /* roll LN_MASK */
-                drawpixel0(x1, y1, linebit);
+                linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                linebit = linemask & 1;
+                monopixel(ypart + xpart, offs, linebit);
+                if (ypart == yend)
+                    break;
+                ypart += yadd;
                 rem += dx;
                 if (rem >= dy) {
                     rem -= dy;
                     x1 += xinc;
+                    offs = 0x8000 >> (x1&0xf);
+                    xpart = (x1&0xfff0)>>3;
                 }
-                if (y1 == y2)
-                    break;
-                y1 += yinc;
             }
         }
     } else {
         if (dx >= dy) {
             rem = dx / 2;
             for (;;) {
-                linebit = !!(LN_MASK & 0x8000);     /* get next bit of line style */
-                LN_MASK = (LN_MASK << 1) | linebit; /* roll LN_MASK */
-                drawpixel(x1, y1, linebit);
-                rem += dy;
-                if (rem >= dx) {
-                    rem -= dx;
-                    y1 += yinc;
-                }
+                linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                linebit = linemask & 1;
+                drawpixel(ypart + xpart, offs, linebit);
                 if (x1 == x2)
                     break;
                 x1 += xinc;
+                xpart = (x1&0xfff0)>>shft_off;
+                offs = 0x8000 >> (x1&0xf);
+                rem += dy;
+                if (rem >= dx) {
+                    rem -= dx;
+                    ypart += yadd;
+                }
             }
         } else {
             rem = dy / 2;
             for (;;) {
-                linebit = !!(LN_MASK & 0x8000);     /* get next bit of line style */
-                LN_MASK = (LN_MASK << 1) | linebit; /* roll LN_MASK */
-                drawpixel(x1, y1, linebit);
+                linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                linebit = linemask & 1;
+                drawpixel(ypart + xpart, offs, linebit);
+                if (ypart == yend)
+                    break;
+                ypart += yadd;
                 rem += dx;
                 if (rem >= dy) {
                     rem -= dy;
                     x1 += xinc;
+                    offs = 0x8000 >> (x1&0xf);
+                    xpart = (x1&0xfff0)>>shft_off;
                 }
-                if (y1 == y2)
-                    break;
-                y1 += yinc;
             }
         }
     }
+    LN_MASK = linemask;
 }
