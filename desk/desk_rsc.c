@@ -225,9 +225,8 @@ static const TEDINFO desk_rs_tedinfo_rom[] = {
 };
 
 
-
-
 static int rs_logo_img[] = {
+#if 0 /* old logo (one box with a black and a white rectange inside) */
     0x3fff, 0xfffc, 0x7fff, 0xfffe, 0xe000, 0x0007, 0xc000, 0x0003,
     0xc000, 0x0003, 0xc3f8, 0x1fc3, 0xc7fc, 0x3fe3, 0xc7fc, 0x3063,
     0xc7fc, 0x3063, 0xc7fc, 0x3063, 0xc7fc, 0x3063, 0xc7fc, 0x3063,
@@ -236,6 +235,24 @@ static int rs_logo_img[] = {
     0xc7fc, 0x3063, 0xc7fc, 0x3063, 0xc7fc, 0x3063, 0xc7fc, 0x3063,
     0xc7fc, 0x3063, 0xc7fc, 0x3fe3, 0xc3f8, 0x1fc3, 0xc000, 0x0003,
     0xc000, 0x0003, 0xe000, 0x0007, 0x7fff, 0xfffe, 0x3fff, 0xfffc
+#else /* EmuTOS logo as designed by Martin */
+    0x0000, 0x0000, 0x0000, 0x0000, 
+    0x0000, 0x0000, 0x0000, 0x0000, 
+    0x0000, 0x0000, 0x000B, 0xD000, 
+    0x000B, 0xD000, 0x001B, 0xD800, 
+    0x001B, 0xD800, 0x002B, 0xD400, 
+    0x003B, 0xDC00, 0x006B, 0xD600, 
+    0x005B, 0xDA00, 0x00AB, 0xD500, 
+    0x00DB, 0xDB00, 0x01AB, 0xD580, 
+    0x015B, 0xDA80, 0x02AB, 0xD540, 
+    0x0353, 0xCAC0, 0x06A3, 0xC560, 
+    0x0543, 0xC2A0, 0x0A83, 0xC150, 
+    0x0D03, 0xC0B0, 0x1A03, 0xC058, 
+    0x1403, 0xC028, 0x2803, 0xC014, 
+    0x3003, 0xC00C, 0x0000, 0x0000, 
+    0x0000, 0x0000, 0x0000, 0x0000, 
+    0x0000, 0x0000, 0x0000, 0x0000, 
+#endif
 };
 
 
@@ -1742,6 +1759,63 @@ void xlate_fix_tedinfo(TEDINFO *tedinfo, int nted)
     }
 }
 
+/* hack - change the sizes of the menus after translation
+ *
+ * DISCLAIMER: I wrote this by looking closely to the way the RSRC looks;
+ * however I have no real knowledge of what a menu bar really is in terms 
+ * of RSRC. So perhaps the code below just work by pure luck - LVL.
+ */
+void adjust_menu(OBJECT *obj_array, WORD tree)
+{
+
+#define OBJ(i) (&obj_array[i])
+
+    int i;  /* index in the menu bar */
+    int j;  /* index in the array of pull downs */
+    int x;  
+    OBJECT *menu = OBJ(tree);
+    OBJECT *mbar = OBJ(OBJ(menu->ob_head)->ob_head);
+    OBJECT *pulls = OBJ(menu->ob_tail);
+
+    x = 0; 
+    j = pulls->ob_head;
+    for(i = mbar->ob_head ; i <= mbar->ob_tail ; i++) {
+        OBJECT *title = OBJ(i);
+        int n = strlen( (char *) title->ob_spec);
+        int k, m;
+        title->ob_x = x;
+        title->ob_width = n;
+
+        m = 0;
+        for(k = OBJ(j)->ob_head ; k <= OBJ(j)->ob_tail ; k++) {
+            OBJECT *item = OBJ(k);
+            int n = strlen( (char *) item->ob_spec);
+            if(m < n) {
+                m = n;
+            }
+        }
+        for(k = OBJ(j)->ob_head ; k <= OBJ(j)->ob_tail ; k++) {
+            OBJECT *item = OBJ(k);
+            item->ob_width = m;
+        }
+
+        OBJ(j)->ob_width = m;
+        OBJ(j)->ob_x = 2+x;
+
+        /* TODO - if the menu is too far on the right and goes out
+         * of the screen, shift in to the left.
+         *
+         * if(OBJ(j)->ob_x + m >= screen_width_expressed_in_chars) {
+         *     OBJ(j)->ob_x = ... - m;
+         * }
+         */
+
+        j = OBJ(j)->ob_next;
+        x += n;
+    }
+    
+    mbar->ob_width = x;
+}
 
 void desk_rs_init(void)
 {
@@ -1752,13 +1826,16 @@ void desk_rs_init(void)
     memcpy(desk_rs_tedinfo, desk_rs_tedinfo_rom,
            RS_NTED * sizeof(TEDINFO));
 
+    /* translate strings in objects */
+    xlate_obj_array(desk_rs_obj, RS_NOBS);
+
+    /* adjust the size and coordinates of menu items */
+    adjust_menu(desk_rs_obj, TR0);
+
     /* Fix objects coordinates: */
     for(i = 0 ; i < RS_NOBS ; i++) {
         rsrc_obfix((LONG) desk_rs_obj, i);
     }
-
-    /* translate strings in objects */
-    xlate_obj_array(desk_rs_obj, RS_NOBS);
 
     /* translate and fix TEDINFO strings */
     xlate_fix_tedinfo(desk_rs_tedinfo, RS_NTED);
