@@ -1221,3 +1221,6 @@ Start... early ages
 
 09. Nov. 2002
 - aes/gemgsxif.c - changed i_lptr1 to use just one argument (MAD)
+
+16. Nov. 2002
+- aes/gemdisp.c - schedule() loop now sleeps with the STOP #2300 insn (joy)

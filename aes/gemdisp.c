@@ -37,6 +37,7 @@
 #include "gemdosif.h"
 #include "kprint.h"
 
+#include "asm.h"
 
 #define KEYSTOP 0x00002b1cL                     /* control backslash    */
 
@@ -200,6 +201,9 @@ static void schedule(void)
                                                 /*   fork list          */
         do
         {
+#if USE_STOP_INSN_TO_FREE_HOST_CPU
+        stop2300();
+#endif
                                                 /* poll the keyboard    */
           chkkbd();
                                                 /* now move drl         */
