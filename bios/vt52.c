@@ -209,7 +209,9 @@ nop()
 
 static void
 do_bell () {
-    bell();
+    if (conterm & 4) {
+        bell();
+    }
 }
 
 
