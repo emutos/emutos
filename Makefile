@@ -93,7 +93,8 @@ BIOSCSRC = kprint.c xbios.c chardev.c blkdev.c bios.c clock.c \
            mouse.c initinfo.c cookie.c machine.c nvram.c country.c \
 	   cz6x6.c cz8x8.c cz8x16.c biosmem.c
 BIOSSSRC = tosvars.S startup.S lineavars.S vectors.S aciavecs.S \
-           processor.S memory.S linea.S conout.S detect.S panicasm.S
+           processor.S memory.S linea.S conout.S detect.S panicasm.S \
+           kprintasm.S
 
 #
 # source code in bdos/
@@ -109,7 +110,7 @@ BDOSSSRC = rwa.S
 #
 
 UTILCSRC = doprintf.c nls.c langs.c string.c
-UTILSSRC = memset.S memmove.S nlsasm.S
+UTILSSRC = memset.S memmove.S nlsasm.S setjmp.S
 
 #
 # source code in vdi/
@@ -187,7 +188,7 @@ help:
 	@echo "ram     ramtos.img + boot.prg, a RAM tos"
 	@echo "flop    emutos.st, a bootable floppy with RAM tos"
 	@echo "clean"
-	@echo "tgz     bundles all except doc into a tgz archive"
+	@echo "tgz     bundles almost it all into a tgz archive"
 	@echo "depend  creates dependancy section in Makefile"
 	@echo "dsm     dsm.txt, an edited desassembly of emutos.img"
 
@@ -266,7 +267,7 @@ keytbl2c$(EXE) : tools/keytbl2c.c
 # NLS support
 #
 
-POFILES = po/fr.po
+POFILES = po/fr.po po/de.po
 
 bug$(EXE): tools/bug.c
 	$(NATIVECC) -o $@ $<
@@ -275,7 +276,7 @@ util/langs.c: $(POFILES) po/LINGUAS bug$(EXE) po/messages.pot
 	./bug$(EXE) make
 	mv langs.c $@
 
-po/messages.pot: bug$(EXE)
+po/messages.pot: bug$(EXE) po/POTFILES.in
 	./bug$(EXE) xgettext
 
 #
