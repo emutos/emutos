@@ -66,9 +66,10 @@
 
 
 /*******  LOCALS  **********************/
-LONG            rs_hdr;
-LONG            rs_global;
-UWORD           hdr_buff[HDR_LENGTH/2];
+LONG    rs_hdr;
+LONG    rs_global;
+char    tmprsfname[128];
+UWORD   hdr_buff[HDR_LENGTH/2];
 
 
 
@@ -403,8 +404,8 @@ WORD rs_readit(LONG pglobal, LONG rsfname)
         WORD    ibcnt;
         UWORD   rslsize, fd, ret;
                                                 /* make sure its there  */
-        strcpy((char *) ad_scmd, (char *) rsfname);
-        if ( !sh_find(ad_scmd) )
+        strcpy(tmprsfname, (char *) rsfname);
+        if ( !sh_find((LONG)tmprsfname) )
         {
           return(FALSE);
         }
@@ -412,7 +413,7 @@ WORD rs_readit(LONG pglobal, LONG rsfname)
         rs_global = pglobal;
                                                 /* open then file and   */
                                                 /*   read the header    */
-        fd = dos_open((BYTE *)ad_scmd, RMODE_RD);
+        fd = dos_open((BYTE *)tmprsfname, RMODE_RD);
 
         if ( !DOS_ERR )
           dos_read(fd, HDR_LENGTH, ADDR(&hdr_buff[0]));

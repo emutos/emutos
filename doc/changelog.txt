@@ -1473,3 +1473,8 @@ Start... early ages
 2003-05-26
 - aes/gemsuper.c, aes/gemevlib.c : Fixed a problem with the mouse buttons
   in certain programs (Thing, Pixart, etc.). (THH).
+
+2003-05-29
+- aes/gemrslib.c : Fixed the remaining bug with TeraDesk by using an extra
+  buffer for a temporary string (Quitting QED caused a crash or error message
+  when it was launched from TeraDesk) (THH).
