@@ -98,6 +98,9 @@ OBJECTS = $(SOBJ) $(COBJ)
 all:	emutos.img
 
 emutos.img: $(OBJECTS) obj/end.o
+	${LD} -oformat binary -o $@ $(OBJECTS) ${LDFLAGS} obj/end.o
+	
+etos192k.img: $(OBJECTS) obj/end.o
 	${LD} -oformat binary -o emutos.tmp $(OBJECTS) ${LDFLAGS} obj/end.o
 	dd if=/dev/zero of=empty.tmp bs=1024 count=192 
 	cat empty.tmp >> emutos.tmp                    # Make real tos.img...
