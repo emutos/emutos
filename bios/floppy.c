@@ -21,6 +21,7 @@
 #include "mfp.h"
 #include "asm.h"
 #include "tosvars.h"
+#include "machine.h"
 #include "blkdev.h"
 #include "string.h"
 #include "kprint.h"
@@ -288,7 +289,19 @@ LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt, WORD sides, WO
             side = track % 2;
             track /= 2;
         }
-        err = floprw(buf, rw, dev, sect, track, side, 1);
+        if (buf > 0x1000000L) {
+            if (cookie_frb > 0) {
+                /* proper FRB lock (TODO) */
+                err = floprw(cookie_frb, rw, dev, sect, track, side, 1);
+                memcpy((void *)buf, (void *)cookie_frb, SECT_SIZ);
+                /* proper FRB unlock (TODO) */
+            }
+            else {
+                err = -1;   /* problem: can't DMA to FastRAM */
+            }
+        }
+        else
+            err = floprw(buf, rw, dev, sect, track, side, 1);
         buf += SECT_SIZ;
         recnr ++;
         if(err) return (LONG) err;
