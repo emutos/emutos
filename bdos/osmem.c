@@ -68,9 +68,9 @@ static  int     *root[MAXQUICK];
  *  local debug counters
  */
 
-static  long    dbgfreblk = 0 ;
-static  long    dbggtosm = 0 ;
-static  long    dbggtblk = 0 ;
+static  long    dbgfreblk;
+static  long    dbggtosm;
+static  long    dbggtblk;
 
 
 /*
@@ -201,4 +201,7 @@ void    xmfreblk(void *m)
 void osmem_init(void)
 {
     osmlen = LENOSM;
+    dbgfreblk = 0;
+    dbggtosm = 0;
+    dbggtblk = 0;
 }
