@@ -73,7 +73,8 @@ extern PD *run;                 /* see bdos/proc.c */
 extern LONG oscall();           /* This jumps to BDOS */
 extern LONG osinit();
 
-extern void linea_init(void);   /* found in linea.S */
+extern void linea_init(void);   /* found in lineainit.c */
+extern void font_init(void);    /* found in lineainit.c */
 extern void cartscan(WORD);     /* found in startup.S */
 extern void strtautoexec(void); /* found in startup.S */
 extern void launchautoexec(PD *); /* found in startup.S */
@@ -228,10 +229,11 @@ void startup(void)
 #if DBGBIOS
     kprintf("BIOS: Last test point reached ...\n");
 #endif
+
     cartscan(3);
 
-     /* main BIOS */
- 
+    font_init();
+    /* main BIOS */
     biosmain();
 
     for(;;);

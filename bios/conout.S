@@ -1341,8 +1341,8 @@ next_word:
 //   Scroll copies a source region as wide as the screen to an overlapping
 //   destination region on a one cell-height offset basis.  Two entry points
 //   are provided:  Partial-lower scroll-up, partial-lower scroll-down.
-//   Partial-lower screen operations require the cell y # indicating the top line
-//   where scrolling will take place.
+//   Partial-lower screen operations require the cell y # indicating the 
+//   top line where scrolling will take place.
 //
 //   After the copy is performed, any non-overlapping area of the previous
 //   source region is "erased" by calling blnk_blt which fills the area
@@ -1372,7 +1372,7 @@ p_sc_up:
         move.w  _v_cel_wr,d3     //cell wrap to temp d3
         lea     (a3,d3.w),a2    //form source address from cell wrap + base address
         mulu    d1,d3           //form # of bytes to move in d3
-        asr.w   #2, d3          //divide by 4 for long byte moves
+        asr.l   #2, d3          //divide by 4 for long byte moves
         bra     scrup1          //enter loop at test
 
 scrup0:

@@ -19,6 +19,7 @@
 // ===========================================================================
 
 		.global _mdata
+		.global _cur_font
 		.globl	cur_ms_stat
 		.globl	_disab_cnt
 		.globl	_draw_flag
@@ -62,66 +63,108 @@
 		.globl	_v_off_ad
 		.globl	_v_stat_0
 		.globl	_v_vt_rez
+		.global _def_font
 		.global _font_ring
 		.global _font_count
-// **FIXME: There are still lots of variables missing here...**
+
+
+/* Font related VDI variables */
+
+		.ds.w	1	// -908 start angle
+_cur_font:	.ds.l	1	// -906 current VDI font
+		.ds.w	23	// -902
+
+/* Sprite definitio block for VDI */
+
+		.ds.w	37	// -856
+                
+/* Extended workstation information */
+
+		.ds.w	45	// -782
+
+/* Workstation information */
+
+		.ds.w	1	// -692 screen width in pixels
+		.ds.w	1	// -690 screen heigth in pixels
+		.ds.w	43	// -688 
+
+/* Mouse data */
 
 _mdata:                         // Block of mouse pointer data
-GCURX:		.ds.w	1	// -602	MiNT needs GCURX and GCURY
-GCURY:		.ds.w	1	// -600	(the current mouse position)
-M_HID_CT:	.ds.w	1	// -598
-MOUSE_BT:	.ds.w	1	// -596
+GCURX:		.ds.w	1	// -602	mouse X position
+GCURY:		.ds.w	1	// -600	mouse Y position
+M_HID_CT:	.ds.w	1	// -598 mouse show/hide reset flag
+MOUSE_BT:	.ds.w	1	// -596 mouse button state
+
+/* RGB values for colors 0-15 */
 
 REQ_COL:	.ds.w	48	// -594
-SIZ_TAB:	.ds.w	15	// -498
-TERM_CH:	.ds.w	1	//
-chc_mode:	.ds.w	1	//
-cur_work:	.ds.l	1	// -464
-def_font:	.ds.l	1	// -460
-_font_ring:	.ds.l	4	// -456 Three pointers to sysfonts and NULL
-_font_count:	.ds.w	1	// -440 Total numbers of fonts in font_ring
 
-		.ds.b	90	// some free space (??)
+/* Workstation PTSOUT information */
+
+SIZ_TAB:	.ds.w	15	// -498 size table
+
+TERM_CH:	.ds.w	1	// -468 pressed key, aciii + scancode
+chc_mode:	.ds.w	1	// -466 input mode choice
+cur_work:	.ds.l	1	// -464 parameter block of current workst.
+_def_font:	.ds.l	1	// -460 default font
+_font_ring:	.ds.l	4	// -456 three pointers to sysfonts and NULL
+_font_count:	.ds.w	1	// -440 total numbers of fonts in font_ring
+
+		.ds.w	1	// -438
+		.ds.w	1	// -436 input mode, locator
+		.ds.b	84	// some space (input mode???)
+		.ds.w	1	// -352 input mode, string
+		.ds.w	1	// -350 input mode, valuator
 
 cur_ms_stat:	.ds.b	1	// -348	current mouse status
 		.ds.b	1
-_disab_cnt:	.ds.w	1	// -346  disable depth count. (>0 => disabled)
+_disab_cnt:	.ds.w	1	// -346 disable depth count. (>0 => disabled)
 _newx:		.ds.w	1	// -344	new mouse x&y position
 _newy:		.ds.w	1
 _draw_flag:	.ds.b	1	// -340	non-zero means draw mouse form on vblank
 _mouse_flag:	.ds.b	1	// -339	non-zero if mouse ints disabled
 sav_cxy:	.ds.w	2	// -338	save area for cursor cell coords.
 save_len:	.ds.w	1	// -330
-save_addr:	.ds.l	1	// -328
+save_addr:	.ds.l	1	// -328 return address GEMDOS call
 save_stat:	.ds.w	1	// -324
+
+/* Sprite save buffer */
+
 save_area:	.ds.l	0x40	// -322
+
+/* Timer vectors */
+
 _tim_addr:	.ds.l	1	// -66  timer interrupt vector
 _tim_chain:	.ds.l	1	// -62  timer interrupt vector save
 _user_but:	.ds.l	1	// -58	user button vector
 _user_cur:	.ds.l	1	// -54	user cursor vector
 _user_mot:	.ds.l	1	// -50	user motion vector
-_v_cel_ht:	.ds.w	1	// -46   cell height (width is 8)
-_v_cel_mx:	.ds.w	1	// -44	needed by MiNT: columns on the screen minus 1
-_v_cel_my:	.ds.w	1	// -42	needed by MiNT: rows on the screen minus 1
-_v_cel_wr:	.ds.w	1	// -40	needed by MiNT: length (in bytes) of a line of characters
-_v_col_bg:	.ds.w	1	// -38   current background color 
-_v_col_fg:	.ds.w	1	// -36   current foreground color 
-_v_cur_ad:	.ds.l	1	// -34   current cursor address  
-_v_cur_of:	.ds.w	1	// -30
-_v_cur_cx:	.ds.w	1	// -28   current cursor cell x 
-_v_cur_cy:	.ds.w	1	// -26   current cursor cell y
-_v_period:	.ds.b	1	// -24
-_v_cur_tim:	.ds.b	1	// -23   cursor blink timer.
-_v_fnt_ad:	.ds.l	1	// -22   address of current monospace font
-_v_fnt_nd:	.ds.w	1	// -18   ascii code of last cell in font
-_v_fnt_st:	.ds.w	1	// -16   ascii code of first cell in font
-_v_fnt_wr:	.ds.w	1	// -14   font cell wrap 
-_v_hz_rez:	.ds.w	1	// -12   horizontal pixel resolution
-_v_off_ad:	.ds.l	1	// -10   address of font offset table
-_v_stat_0:	.ds.b	1	// -6    video cell system status (was in words)
-                .ds.b	1	//       dummy
-_v_vt_rez:	.ds.w	1	// -4    vertical pixel resolution 
-BYTES_LN:	.ds.w	1	// -2
+
+/* VDI ESC variables */
+
+_v_cel_ht:	.ds.w	1	// -46  cell height (width is 8)
+_v_cel_mx:	.ds.w	1	// -44	columns on the screen minus 1
+_v_cel_my:	.ds.w	1	// -42	rows on the screen minus 1
+_v_cel_wr:	.ds.w	1	// -40	length (in bytes) of a line of characters
+_v_col_bg:	.ds.w	1	// -38  current background color 
+_v_col_fg:	.ds.w	1	// -36  current foreground color 
+_v_cur_ad:	.ds.l	1	// -34  current cursor address  
+_v_cur_of:	.ds.w	1	// -30  offset from begin of screen
+_v_cur_cx:	.ds.w	1	// -28  current cursor column
+_v_cur_cy:	.ds.w	1	// -26  current cursor row
+_v_period:	.ds.b	1	// -24  cursor blink rate
+_v_cur_tim:	.ds.b	1	// -23  cursor blink timer.
+_v_fnt_ad:	.ds.l	1	// -22  pointer to current monospace font
+_v_fnt_nd:	.ds.w	1	// -18  ascii code of last cell in font
+_v_fnt_st:	.ds.w	1	// -16  ascii code of first cell in font
+_v_fnt_wr:	.ds.w	1	// -14  font cell wrap 
+_v_hz_rez:	.ds.w	1	// -12  horizontal resolution in pixels
+_v_off_ad:	.ds.l	1	// -10  pointer to font offset table
+_v_stat_0:	.ds.b	1	// -6   video cell system status (was in words)
+                .ds.b	1	//      dummy
+_v_vt_rez:	.ds.w	1	// -4   vertical resolution in pixels
+BYTES_LN:	.ds.w	1	// -2   byte per screen line
 
 
 

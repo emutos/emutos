@@ -71,6 +71,9 @@ extern UWORD v_fnt_nd;		// ascii code of last cell in font
 extern UWORD v_fnt_st;		// ascii code of first cell in font
 extern UWORD v_fnt_wr;		// font cell wrap
 
+extern struct font_head * def_font; 	// actual font
+extern struct font_head * cur_font; 	// actual font (VDI)
+
 extern UWORD font_count;   		// all three fonts and NULL
 extern struct font_head *font_ring[4];  // all three fonts and NULL
 

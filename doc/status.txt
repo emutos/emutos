@@ -14,8 +14,9 @@ Here is a quick list of supported emulators/hardware:
   Pacifist v0.48            |   yes   |   yes    |   yes   
   real MegaSTE (2MB RAM)    |   n/a   |   yes    |   yes   
   Hatari (latest CVS vers.) |   yes   |    ?     |    ?
+  Aranym (latest CVS vers.) |   yes   |    ?     |    ?
 
-ROM img means:  Using the etos192k.img file as ROM
+ROM img means:  Using the etos192k.img/etosfalc.img file as ROM
 
 autoboot means: Loading emutos.st disk from bootsector, then when prompted,
                 eject a: 

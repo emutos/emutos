@@ -347,3 +347,8 @@ Start... early ages
 
 09. Dec. 2001
 - standalone command.prg (added replacement _() and N_()) (LVL)
+
+11. Dec. 2001
+- added many of the lacking linea-variables (MAD)
+- fixed int overflow bug in scrolling in bios/consout.S:p_sc_up (MAD)
+
