@@ -198,6 +198,13 @@ mkflop$(EXE) : tools/mkflop.c
 	$(NATIVECC) -o $@ $<
 
 #
+# Misc utilities
+#
+
+date.prg: obj/minicrt.o obj/doprintf.o obj/date.o
+	$(LD) -s -o $@ obj/minicrt.o obj/doprintf.o obj/date.o $(LDFLAGS) 
+
+#
 # automatic build rules
 #
 
