@@ -64,15 +64,15 @@ void autoexec(void);
 extern BYTE *biosts ;           /*  time stamp string */
 
 
-extern LONG trap_1();           /* found in startup.s */
+extern LONG trap_1(WORD, ...);  /* found in startup.s */
 extern LONG drvbits;            /* found in startup.s */
 extern MD b_mdx;                /* found in startup.s */
 
 extern PD *run;                 /* see bdos/proc.c */
 
 
-extern LONG oscall();           /* This jumps to BDOS */
-extern LONG osinit();
+/* unused extern LONG oscall();    This jumps to BDOS */
+extern LONG osinit(void);
 
 extern void linea_init(void);   /* found in lineainit.c */
 extern void font_init(void);    /* found in lineainit.c */
@@ -327,7 +327,7 @@ void do_autoexec(void)
  * exec the shell command.prg
  */
 
-void biosmain()
+void biosmain(void)
 {
     /* PD *shell_pd, com_pd; */
 
@@ -527,7 +527,7 @@ LONG bios_5(WORD num, LONG vector)
  * tickcal - Time between two systemtimer calls
  */
 
-LONG bios_6()
+LONG bios_6(void)
 {
     return(20L);        /* system timer is 50 Hz so 20 ms is the period */
 }
@@ -602,7 +602,7 @@ LONG bios_9(WORD drv)
  * physical drive, it should return both bits set if a floppy is present.
  */
 
-LONG bios_a()
+LONG bios_a(void)
 {
     return(drvbits);
 }
