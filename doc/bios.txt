@@ -1609,9 +1609,9 @@
              Contains attribute bits for the console system:
 
                  Bit     Function
-                 0       nonzero: enable bell when ^G is written to CON:
+                 0       nonzero: enable key-click
                  1       nonzero: enable key-repeat
-                 2       nonzero: enable key-click
+                 2       nonzero: enable bell when ^G is written to CON:
                  3       nonzero: on BIOS conin() function, return the
                                   current value of 'kbshift' in bits
                                   24..31 of D0.L.
