@@ -22,10 +22,20 @@ static void setphys(LONG addr);
 
 /* determine monitor type, ... */
 
+/* Define pallette */
+
 static WORD dflt_palette[] = {
-    0x0777, 0x0707, 0x0070, 0x0770, 0x0007, 0x0707, 0x0077, 0x0555,
-    0x0333, 0x0733, 0x0373, 0x0773, 0x0337, 0x0737, 0x0377, 0x0000,
+    VT_WHITE,   VT_RED,
+    VT_GREEN,   VT_YELLOW,
+    VT_BLUE,    VT_MAGENTA,
+    VT_CYAN,     VT_LTGRAY,
+    VT_GRAY,    VT_LTRED,
+    VT_LTGREEN, VT_LTYELLOW,
+    VT_LTBLUE,  VT_LTMAGENTA,
+    VT_LTCYAN,  VT_BLACK
 };
+
+
 
 /*
  * In the original TOS there used to be an early screen init, 

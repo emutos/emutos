@@ -33,19 +33,6 @@ void resol_set(BYTE);
 void clear_screen(void);
 
 
-/*==== Defines ============================================================*/
-
-
-/* font header structure equates. */
-
-#define FIRST	36
-#define LAST	38
-#define CEL_WD  52
-#define POFF    72
-#define PDAT    76
-#define FRM_WD  80
-#define FRM_HT  82
-
 
 /*
  * Settings for the different video modes They are:
