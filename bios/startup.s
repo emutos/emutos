@@ -7,6 +7,7 @@
 | Authors:
 |  MAD  Martin Doering
 |  LVL  Laurent Vogel
+|  THO  Thomas Huth
 |
 | This file is distributed under the GPL, version 2 or at your
 | option any later version.  See doc/license.txt for details.
@@ -226,9 +227,10 @@
 save_beg:       ds.l    23      | Save storage for trap dispatcher        
 save_area:                      | End of Save storage
 
-save_sp:        ds.l    1       | save stack pointer (within trap13)
-save_rt:        ds.l    1       | save return address (within trap13)
-save_sr:        ds.w    1       | save status register (within trap13)
+save_sp:        ds.l    1       | save stack pointer (within trap13/14)
+save_rt:        ds.l    1       | save return address (within trap13/14)
+save_sr:        ds.w    1       | save status register (within trap13/14)
+save_vo:        ds.w    1       | save vector-offset register (within trap13/14)
         
 
         .org    0x167a
@@ -603,7 +605,8 @@ clrvbl:
 
 
 | ==== Now really start the BDOS ===========================================
-        jsr     _biosmain
+
+        jsr     _biosmain          | go and start our shell
 
 
 | ==== Get lost forever... =================================================
@@ -1072,9 +1075,28 @@ _trap_1:
 | ==== Trap 13 - BIOS entry point ==========================================
 
 bios:
+        move.w  bios_ent,d1
+        lea     bios_vecs,a0
+        bra.s   biosxbios
+
+| ==== Trap 14 - XBIOS entry point =========================================
+
+xbios:
+        move.w  xbios_ent,d1
+        lea     xbios_vecs,a0
+
+
+| ==== Trap 13+14 handler ==================================================
+
+biosxbios:
+
         move.w  (sp)+,d0        | Status register -> d0
         move.w  d0,save_sr      | and save in savesr
         move.l  (sp)+,save_rt   | save return address
+|       tst.w   0x59E           | Check longframe sysvariable one day...
+|       beq.s   bx_nolongframe  | ...when we support CPU >=68000
+|       move.w  (sp)+,save_vo
+| bx_nolongframe:
         move.l  sp,save_sp      | save stack pointer
         
         move.l  savptr, a1
@@ -1082,56 +1104,29 @@ bios:
         move.l  a1, savptr
         
         btst    #13,d0          | were we in user mode?
-        beq     bret_exc        | yes, exit
-        move.l  #0, a0          | clear higher bits in a0
-        move.w  (sp)+,a0        | remove the function number from stack
-        cmp.w   bios_ent,a0     | Higher, than highest number?
-        bge     bret_exc
-        add.l   a0,a0           | indirection function table is 1 LW per
-        add.l   a0,a0           | so multiply function number by 4
-        add.l   #bios_vecs,a0   | add in the base address of lookup table
+        bne     bx_sp_ok        | yes, the sp already points to the arguments
+        move.l  usp,sp          | no, the arguments were on the user stack
+bx_sp_ok:
+        move.l  #0,d0           | clear d0 (use d0 like the original TOS does!)
+        move.w  (sp)+,d0        | remove the function number from stack
+        cmp.w   d1,d0           | Higher, than highest number?
+        bge     bx_ret_exc
+        add.l   d0,d0           | indirection function table is 1 LW per
+        add.l   d0,d0           | so multiply function number by 4
+        add.l   d0,a0           | add the offset to the base address of lookup table
         move.l  (a0),a0         | get the procedures address
         jsr     (a0)            | go do it and then come back
 
-bret_exc:
+bx_ret_exc:
         move.l  savptr, a1
         movem.l (a1)+, d3-d7/a3-a7      | Get all registers back
         move.l  a1, savptr
 
         move.l  save_sp,sp      | restore original stack
-        move.l  save_rt,-(sp)
-        move.w  save_sr,-(sp)
-        rte                     | return with function # in D0
-
-| ==== Trap 14 - XBIOS entry point =========================================
-
-xbios:
-        move.w  (sp)+,d0        | Status register -> d0
-        move.w  d0,save_sr       | and save in savesr
-        move.l  (sp)+,save_rt   | save return address (within trap14)
-        move.l  sp,save_sp
-
-        move.l  savptr, a1
-        movem.l d3-d7/a3-a7, -(a1)      | Safety for routines
-        move.l  a1, savptr
-        
-        btst    #13,d0          | were we in user?
-        beq     xret_exc                | yes, exit
-        move.l  #0, a0          | clear a0
-        move.w  (sp)+,a0        | remove the function number from stack
-        cmp.w   xbios_ent,a0    | Higher, than highest number?
-        bge     xret_exc
-        add.l   a0,a0           | indirection function table is 1 LW per
-        add.l   a0,a0           | so multiply function number by 4
-        add.l   #xbios_vecs,a0  | add in the base address of lookup table
-        move.l  (a0),a0         | get the procedures address
-        jsr     (a0)            | go do it and then come back
-xret_exc:
-        move.l  savptr, a1
-        movem.l (a1)+, d3-d7/a3-a7      | Get all registers back
-        move.l  a1, savptr
-        
-        move.l  save_sp,sp      | restore original stack
+|       tst.w   0x59E           | Check longframe again: Is CPU >= 68000?
+|       beq.s   bx_nolong2
+|       move.w  save_vo,-(sp)
+| bx_nolong2:
         move.l  save_rt,-(sp)
         move.w  save_sr,-(sp)
         rte                     | return with function # in D0
