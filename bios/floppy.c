@@ -236,7 +236,7 @@ LONG flop_hdv_boot(void)
     kprintf("hdv_boot returns %ld\n", err);
     if(err == 0) {
         /* if bootable, jump in it */
-        ((void (*)(void))dskbufp)();
+        regsafe_call(dskbufp);
     }
     return err;         /* may never be reached, if booting */
 }

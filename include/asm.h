@@ -23,6 +23,8 @@
  * void stop2300(void);
  * void stop2500(void);
  *   the STOP immediate instruction
+ * void regsafe_call(void *addr);
+ *   Do a subroutine call with saving/restoring the CPU registers
  *
  * For clarity, please add such two lines above when adding 
  * new macros below.
@@ -83,5 +85,18 @@ __extension__                                   \
 ({__asm__ volatile                              \
   ("stop #0x2500 ");                            \
 })
+
+/*
+ * void regsafe_call(void *addr)
+ *   Saves all registers to the stack, calls the function
+ *   that addr points to, and restores the registers afterwards.
+ */
+#define regsafe_call(addr)                          \
+__extension__                                       \
+({__asm__ volatile ("movem.l d0-d7/a0-a6,-(sp) ");  \
+  ((void (*)(void))addr)();                         \
+  __asm__ volatile ("movem.l (sp)+,d0-d7/a0-a6 ");  \
+})
+
 
 #endif /* _ASM_H */
