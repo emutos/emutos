@@ -1233,3 +1233,7 @@ Start... early ages
 - bios/startup.S, bios/machine.c - cleaned up (joy)
 - "__NF" cookie now contains pointer to the NatFeat structure with
   function pointers (joy)
+
+14. Jan. 2004
+- bios/vectors.S - the scceenpt must be cleared after successful video
+  registers update (joy)

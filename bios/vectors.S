@@ -312,6 +312,9 @@ st_shifter:
         move.b  d0,0xffff8203
         swap    d0
         move.b  d0,0xffff8201
+        // clear _screept after successful changing the video registers
+        clr.l   d0
+        move.l  d0,_screenpt
 vbl_no_screenpt:        
 
         // flopvbl
