@@ -34,6 +34,7 @@ struct Mcdb_ {
 
 /* prototypes */
 void cur_display (WORD x, WORD y);
+void cur_replace();
 
 extern void mouse_int();    /* mouse interrupt routine */
 extern void mov_cur();      // user button vector
@@ -178,76 +179,72 @@ void v_locator(Vwk * vwk)
 {
     WORD i;
     WORD *pointer;
+    Point * point = (Point*)PTSIN;
 
     *INTIN = 1;
 
     /* Set the initial locator position. */
 
-    pointer = PTSIN;
-    GCURX = *pointer++;
-    GCURY = *pointer;
-
+    GCURX = point->x;
+    GCURY = point->y;
     if (loc_mode == 0) {
         dis_cur();
-        while ((i = gloc_key()) != 1) { /* loop till some event */
+        /* loop till some event */
+        while ((i = gloc_key()) != 1) {
             if (i == 4) {       /* keyboard cursor? */
                 hide_cur();     /* turn cursor off */
-                GCURX = X1;
-                GCURY = Y1;
+                GCURX = point->x;
+                GCURY = point->y;
                 dis_cur();      /* turn cursor on */
             }
         }
         *(INTOUT) = TERM_CH & 0x00ff;
-        pointer = CONTRL;
-        *(pointer + 4) = 1;
-        *(pointer + 2) = 1;
+
+        CONTRL[4] = 1;
+        CONTRL[2] = 1;
+
         pointer = PTSOUT;
-        *pointer++ = X1;
-        *pointer = Y1;
+        PTSOUT[0] = point->x;
+        PTSOUT[1] = point->y;
         hide_cur();
     } else {
+        CONTRL[4] = 1;
+        CONTRL[2] = 0;
+
         i = gloc_key();
-        pointer = CONTRL;
-        *(pointer + 2) = 1;
-        *(pointer + 4) = 0;
         switch (i) {
         case 0:
-            *(pointer + 2) = 0;
+            CONTRL[2] = 0;
             break;
 
         case 1:
-            *(pointer + 2) = 0;
-            *(pointer + 4) = 1;
+            CONTRL[2] = 0;
+            CONTRL[4] = 1;
             *(INTOUT) = TERM_CH & 0x00ff;
             break;
 
         case 2:
-            pointer = PTSOUT;
-            *pointer++ = X1;
-            *pointer = Y1;
+            PTSOUT[0] = point->x;
+            PTSOUT[1] = point->y;
             break;
 
         case 3:
-            *(pointer + 4) = 1;
-            pointer = PTSOUT;
-            *pointer++ = X1;
-            *pointer = Y1;
+            CONTRL[4] = 1;
+            PTSOUT[0] = point->x;
+            PTSOUT[1] = point->y;
             break;
 
         case 4:
             if (HIDE_CNT == 0) {
                 hide_cur();
-                pointer = PTSOUT;
-                *pointer++ = GCURX = X1;
-                *pointer = GCURY = Y1;
+                PTSOUT[0] = GCURX = point->x;
+                PTSOUT[1] = GCURY = point->y;
                 dis_cur();
             } else {
-                pointer = PTSOUT;
-                *pointer++ = GCURX = X1;
-                *pointer = GCURY = Y1;
+                PTSOUT[0] = GCURX = point->x;
+                PTSOUT[1] = GCURY = point->y;
             }
             break;
-
         }
     }
 }
@@ -659,7 +656,7 @@ void cur_display (WORD x, WORD y)
      *  Compute the bit offset into the desired word, save it, and remove
      *  these bits from the x-coordinate.
      */
-    addr = (UWORD*)(v_bas_ad + (LONG)y * v_lin_wr + ((x&0xfff0)>>shft_off));
+    addr = get_start_addr(x, y);
     shft = x&0xf;		/* initial bit position in WORD */
 
     /*

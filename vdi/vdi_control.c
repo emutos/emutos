@@ -21,9 +21,6 @@
 
 
 
-#define X_MALLOC 0x48
-#define X_MFREE 0x49
-
 Vwk virt_work;     /* attribute areas for workstations */
 
 /*
@@ -50,30 +47,52 @@ static WORD SIZ_TAB_rom[12] = {
 
 /* Here's the template INQ_TAB, see lineavars.S for the normal INQ_TAB */
 static WORD INQ_TAB_rom[45] = {
-    1,                          /* 0  type of alpha/graphic controllers */
-    1,                          /* 1  number of background colors  */
-    0x1F,                       /* 2  text styles supported        */
-    0,                          /* 3  scale rasters = false        */
-    1,                          /* 4  number of planes         */
-    0,                          /* 5  video lookup table       */
-    50,                         /* 6  performance factor????       */
-    1,                          /* 7  contour fill capability      */
-    1,                          /* 8  character rotation capability    */
-    4,                          /* 9  number of writing modes      */
-    2,                          /* 10 highest input mode       */
-    1,                          /* 11 text alignment flag      */
-    0,                          /* 12 Inking capability        */
-    0,                          /* 13 rubber banding           */
-    128,                        /* 14 maximum vertices - must agree with entry.s */
-    -1,                         /* 15 maximum intin            */
-    1,                          /* 16 number of buttons on MOUSE   */
-    0,                          /* 17 styles for wide lines            */
-    0,                          /* 18 writing modes for wide lines     */
-    0,                          /* 19 filled in with clipping flag     */
-    0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0
+    1,			/* 0  - type of alpha/graphic controllers */
+    1,                  /* 1  - number of background colors  */
+    0x1F,               /* 2  - text styles supported        */
+    0,                  /* 3  - scale rasters = false        */
+    1,                  /* 4  - number of planes         */
+    0,                  /* 5  - video lookup table       */
+    50,                 /* 6  - performance factor????       */
+    1,                  /* 7  - contour fill capability      */
+    1,                  /* 8  - character rotation capability    */
+    4,                  /* 9  - number of writing modes      */
+    2,                  /* 10 - highest input mode       */
+    1,                  /* 11 - text alignment flag      */
+    0,                  /* 12 - Inking capability        */
+    0,                  /* 13 - rubber banding           */
+    256,                /* 14 - maximum vertices (must agree with vdi_asm.s) */
+    -1,                 /* 15 - maximum intin            */
+    1,                  /* 16 - number of buttons on MOUSE   */
+    0,                  /* 17 - styles for wide lines            */
+    0,                  /* 18 - writing modes for wide lines     */
+    0,                  /* 19 - filled in with clipping flag     */
+
+    0,                  /* 20 - extended precision pixel size information */
+    0,                  /* 21 - pixel width in 1/10, 1/100 or 1/1000 microns */
+    0,                  /* 22 - pixel height in 1/10, 1/100 or 1/1000 microns */
+    0,                  /* 23 - horizontal resolution in dpi */
+    0,                  /* 24 - vertical resolution in dpi */
+    0,                  /* 25 -  */
+    0,                  /* 26 -  */
+    0,                  /* 27 -  */
+    0,                  /* 28 - bezier flag (bit 1) */
+    0,                  /* 29 -  */
+    0,                  /* 30 - raster flag (bit 0), does vro_cpyfm scaling? */
+    0,                  /* 31 -  */
+    0,                  /* 32 -  */
+    0,                  /* 33 -  */
+    0,                  /* 34 -  */
+    0,                  /* 35 -  */
+    0,                  /* 36 -  */
+    0,                  /* 37 -  */
+    0,                  /* 38 -  */
+    0,                  /* 39 -  */
+    0,                  /* 40 - not imprintable left border in pixels (printers/plotters) */
+    0,                  /* 41 - not imprintable upper border in pixels (printers/plotters) */
+    0,                  /* 42 - not imprintable right border in pixels (printers/plotters) */
+    0,                  /* 43 - not imprintable lower border in pixels (printers/plotters) */
+    0                   /* 44 - page size (printers etc.) */
 };
 
 
@@ -91,8 +110,8 @@ WORD DEV_TAB_rom[45] = {
     6,                          /* 8    marker types             */
     8,                          /* 9    marker size              */
     1,                          /* 10   text font                */
-    MX_FIL_PAT_INDEX,           /* 11  area patterns             */
-    MX_FIL_HAT_INDEX,           /* 12  crosshatch patterns       */
+    MX_FIL_PAT_INDEX,           /* 11   area patterns             */
+    MX_FIL_HAT_INDEX,           /* 12   crosshatch patterns       */
     2,                          /* 13   colors at one time       */
     10,                         /* 14   number of GDP's          */
     1,                          /* 15   GDP bar                  */
@@ -166,23 +185,22 @@ void vq_color(Vwk * vwk)
 /* Set Clip Region */
 void s_clip(Vwk * vwk)
 {
-    WORD *xy, rtemp;
-
     vwk->clip = *INTIN;
     if (vwk->clip) {
-        xy = PTSIN;
-        arb_corner(xy);
+        WORD rtemp;
+        Rect * rect = (Rect*)PTSIN;
+        arb_corner(rect);
 
-        rtemp = *xy++;
+        rtemp = rect->x1;
         vwk->xmn_clip = (rtemp < 0) ? 0 : rtemp;
 
-        rtemp = *xy++;
+        rtemp = rect->y1;
         vwk->ymn_clip = (rtemp < 0) ? 0 : rtemp;
 
-        rtemp = *xy++;
+        rtemp = rect->x2;
         vwk->xmx_clip = (rtemp > DEV_TAB[0]) ? DEV_TAB[0] : rtemp;
 
-        rtemp = *xy;
+        rtemp = rect->y2;
         vwk->ymx_clip = (rtemp > DEV_TAB[1]) ? DEV_TAB[1] : rtemp;
     } else {
         vwk->xmn_clip = 0;
@@ -279,9 +297,8 @@ void init_wk(Vwk * vwk)
     text_init2(vwk);
 
     /* move default user defined pattern to RAM */
-    src_ptr = ROM_UD_PATRN;
     pointer = &vwk->ud_patrn[0];
-
+    src_ptr = ROM_UD_PATRN;
     for (l = 0; l < 16; l++)
         *pointer++ = *src_ptr++;
 
@@ -302,6 +319,16 @@ void init_wk(Vwk * vwk)
     for (l = 0; l < 12; l++)
         *pointer++ = *src_ptr++;
 
+    /* setup initial bezier values */
+    vwk->bez_qual = 7;
+#if 0
+    vwk->bezier.available = 1;
+    vwk->bezier.depth_scale.min = 9;
+    vwk->bezier.depth_scale.max = 0;
+    vwk->bezier.depth.min = 2;
+    vwk->bezier.depth.max = 7;
+#endif
+
     flip_y = 1;
 }
 
@@ -310,11 +337,11 @@ void init_wk(Vwk * vwk)
 void d_opnvwk(Vwk * vwk)
 {
     WORD handle;
-    Vwk *new_work, *work_ptr;
+    Vwk *temp, *work_ptr;
 
     /* Allocate the memory for a virtual workstation. */
-    new_work = (Vwk *)trap1(X_MALLOC, (LONG) (sizeof(Vwk)));
-    if (new_work == NULLPTR) {  
+    vwk = (Vwk *)trap1(X_MALLOC, (LONG) (sizeof(Vwk)));
+    if (vwk == NULLPTR) {
         CONTRL[6] = 0;  /* No memory available, exit */
         return;
     }
@@ -322,7 +349,6 @@ void d_opnvwk(Vwk * vwk)
     /* Now find a free handle */
     handle = 1;
     work_ptr = &virt_work;
-
     while (handle == work_ptr->handle) {
         handle++;
         if (work_ptr->next_work == NULLPTR)
@@ -331,19 +357,11 @@ void d_opnvwk(Vwk * vwk)
     }
 
     /* Empty slot found, insert the workstation here */
-    if (work_ptr->next_work == NULLPTR) {
-        /* Add at end of chain */
-        vwk = work_ptr->next_work = new_work;  
-        new_work->next_work = NULLPTR;
-    }
-    else {
-        /* Add in middle of chain */
-        Vwk * temp = work_ptr->next_work;
-        vwk = work_ptr->next_work = new_work;
-        new_work->next_work = temp;
-    }
+    temp = work_ptr->next_work;   /* may be NULL */
+    work_ptr->next_work = vwk;
+    vwk->next_work = temp;
 
-    new_work->handle = CONTRL[6] = handle;
+    vwk->handle = CONTRL[6] = handle;
     init_wk(vwk);
 }
 

@@ -195,84 +195,85 @@ void v_gdp(Vwk * vwk)
     WORD i, ltmp_end, rtmp_end;
     WORD *xy_pointer;
 
-    i = *(CONTRL + 5);
+    i = CONTRL[5];
     xy_pointer = PTSIN;
 
-    if ((i > 0) && (i < 11)) {
-        i--;
-        switch (i) {
-        case 0:         /* GDP BAR - converted to alpha 2 RJG 12-1-84 
-                                 */
-            dr_recfl(vwk);
-            if (vwk->fill_per == TRUE) {
-                LN_MASK = 0xffff;
+    switch (i) {
+    case 1:         /* GDP BAR - converted to alpha 2 RJG 12-1-84 */
+        dr_recfl(vwk);
+        if (vwk->fill_per == TRUE) {
+            LN_MASK = 0xffff;
 
-                xy_pointer = PTSIN;
-                *(xy_pointer + 5) = *(xy_pointer + 7) = *(xy_pointer + 3);
-                *(xy_pointer + 3) = *(xy_pointer + 9) = *(xy_pointer + 1);
-                *(xy_pointer + 4) = *(xy_pointer + 2);
-                *(xy_pointer + 6) = *(xy_pointer + 8) = *(xy_pointer);
+            xy_pointer = PTSIN;
+            *(xy_pointer + 5) = *(xy_pointer + 7) = *(xy_pointer + 3);
+            *(xy_pointer + 3) = *(xy_pointer + 9) = *(xy_pointer + 1);
+            *(xy_pointer + 4) = *(xy_pointer + 2);
+            *(xy_pointer + 6) = *(xy_pointer + 8) = *(xy_pointer);
 
-                *(CONTRL + 1) = 5;
+            CONTRL[1] = 5;
 
-                polyline(vwk);
-            }
-            break;
-
-        case 1:         /* GDP ARC */
-        case 2:         /* GDP PIE */
-            gdp_arc(vwk);
-            break;
-
-        case 3:         /* GDP CIRCLE */
-            xc = *xy_pointer;
-            yc = *(xy_pointer + 1);
-            xrad = *(xy_pointer + 4);
-            yrad = mul_div(xrad, xsize, ysize);
-            del_ang = 3600;
-            beg_ang = 0;
-            end_ang = 3600;
-            clc_nsteps(vwk);
-            clc_arc(vwk);
-            break;
-
-        case 4:         /* GDP ELLIPSE */
-            xc = *xy_pointer;
-            yc = *(xy_pointer + 1);
-            xrad = *(xy_pointer + 2);
-            yrad = *(xy_pointer + 3);
-            if (vwk->xfm_mode < 2)
-                yrad = yres - yrad;
-            del_ang = 3600;
-            beg_ang = 0;
-            end_ang = 0;
-            clc_nsteps(vwk);
-            clc_arc(vwk);
-            break;
-
-        case 5:         /* GDP ELLIPTICAL ARC */
-        case 6:         /* GDP ELLIPTICAL PIE */
-            gdp_ell(vwk);
-            break;
-
-        case 7:         /* GDP Rounded Box */
-            ltmp_end = vwk->line_beg;
-            vwk->line_beg = SQUARED;
-            rtmp_end = vwk->line_end;
-            vwk->line_end = SQUARED;
-            gdp_rbox(vwk);
-            vwk->line_beg = ltmp_end;
-            vwk->line_end = rtmp_end;
-            break;
-
-        case 8:         /* GDP Rounded Filled Box */
-            gdp_rbox(vwk);
-            break;
-
-        case 9:         /* GDP Justified Text */
-            d_justified(vwk);
-            break;
+            polyline(vwk);
         }
+        break;
+
+    case 2:         /* GDP ARC */
+    case 3:         /* GDP PIE */
+        gdp_arc(vwk);
+        break;
+
+    case 4:         /* GDP CIRCLE */
+        xc = *xy_pointer;
+        yc = *(xy_pointer + 1);
+        xrad = *(xy_pointer + 4);
+        yrad = mul_div(xrad, xsize, ysize);
+        del_ang = 3600;
+        beg_ang = 0;
+        end_ang = 3600;
+        clc_nsteps(vwk);
+        clc_arc(vwk);
+        break;
+
+    case 5:         /* GDP ELLIPSE */
+        xc = *xy_pointer;
+        yc = *(xy_pointer + 1);
+        xrad = *(xy_pointer + 2);
+        yrad = *(xy_pointer + 3);
+        if (vwk->xfm_mode < 2)
+            yrad = yres - yrad;
+        del_ang = 3600;
+        beg_ang = 0;
+        end_ang = 0;
+        clc_nsteps(vwk);
+        clc_arc(vwk);
+        break;
+
+    case 6:         /* GDP ELLIPTICAL ARC */
+    case 7:         /* GDP ELLIPTICAL PIE */
+        gdp_ell(vwk);
+        break;
+
+    case 8:         /* GDP Rounded Box */
+        ltmp_end = vwk->line_beg;
+        vwk->line_beg = SQUARED;
+        rtmp_end = vwk->line_end;
+        vwk->line_end = SQUARED;
+        gdp_rbox(vwk);
+        vwk->line_beg = ltmp_end;
+        vwk->line_end = rtmp_end;
+        break;
+
+    case 9:         /* GDP Rounded Filled Box */
+        gdp_rbox(vwk);
+        break;
+
+    case 10:         /* GDP Justified Text */
+        d_justified(vwk);
+        break;
+#if HAVE_BEZIER
+    case 13:         /* GDP Bezier */
+        v_bez_control(vwk);     /* check, if we can do bezier curves */
+        break;
+#endif
     }
 }
 
@@ -285,17 +286,19 @@ void v_gdp(Vwk * vwk)
 void gdp_rbox(Vwk * vwk)
 {
     WORD i, j;
+    WORD x1,y1,x2,y2;
     WORD rdeltax, rdeltay;
-    WORD *pointer = PTSIN;
+    WORD *pointer;
+    Line * line = (Line*)PTSIN;
 
-    arb_corner_llur(pointer);
-    X1 = *pointer++;
-    Y1 = *pointer++;
-    X2 = *pointer++;
-    Y2 = *pointer;
+    arb_line(line);
+    x1 = line->x1;
+    y1 = line->y1;
+    x2 = line->x2;
+    y2 = line->y2;
 
-    rdeltax = (X2 - X1) / 2;
-    rdeltay = (Y1 - Y2) / 2;
+    rdeltax = (x2 - x1) / 2;
+    rdeltay = (y1 - y2) / 2;
 
     xrad = xres >> 6;
     if (xrad > rdeltax)
@@ -318,28 +321,28 @@ void gdp_rbox(Vwk * vwk)
     *pointer = 0;
 
     pointer = PTSIN;
-    xc = X2 - xrad;
-    yc = Y1 - yrad;
+    xc = x2 - xrad;
+    yc = y1 - yrad;
     j = 10;
     for (i = 9; i >= 0; i--) {
         *(pointer + j + 1) = yc + *(pointer + i--);
         *(pointer + j) = xc + *(pointer + i);
         j += 2;
     }
-    xc = X1 + xrad;
+    xc = x1 + xrad;
     j = 20;
     for (i = 0; i < 10; i++) {
         *(pointer + j++) = xc - *(pointer + i++);
         *(pointer + j++) = yc + *(pointer + i);
     }
-    yc = Y2 + yrad;
+    yc = y2 + yrad;
     j = 30;
     for (i = 9; i >= 0; i--) {
         *(pointer + j + 1) = yc - *(pointer + i--);
         *(pointer + j) = xc - *(pointer + i);
         j += 2;
     }
-    xc = X2 - xrad;
+    xc = x2 - xrad;
     j = 0;
     for (i = 0; i < 10; i++) {
         *(pointer + j++) = xc + *(pointer + i++);
@@ -363,8 +366,9 @@ void gdp_rbox(Vwk * vwk)
             polyline(vwk);
         } else
             wideline(vwk);
-    } else
+    } else {
         polygon(vwk);
+    }
 
     return;
 }

@@ -873,8 +873,8 @@ void vdi_vro_cpyfm(Vwk * vwk)
 {
     WORD mode;
 
-    arb_corner(PTSIN);
-    arb_corner(PTSIN + 4);
+    arb_corner((Rect*)PTSIN);
+    arb_corner((Rect*)PTSIN + 4);
     mode = INTIN[0];
 
     /* if mode is made up of more than the first 5 bits */
@@ -920,8 +920,8 @@ void vdi_vrt_cpyfm(Vwk * vwk)
     WORD fg_col, bg_col;
 
     /* transparent blit */
-    arb_corner(PTSIN);
-    arb_corner(PTSIN + 4);
+    arb_corner((Rect*)PTSIN);
+    arb_corner((Rect*)PTSIN + 4);
     mode = INTIN[0];
 
     /* if mode is made up of more than the first 5 bits */

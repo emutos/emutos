@@ -243,10 +243,14 @@ void vsf_perimeter(Vwk * vwk)
 }
 
 
+/*
+ * dr_recfl - draw filled rectangle
+ */
 
 void dr_recfl(Vwk * vwk)
 {
-    WORD fi, *pts_in;
+    WORD fi;
+    Rect * rect;
 
     /* Perform arbitrary corner fix-ups and invoke rectangle fill routine */
     fi = vwk->fill_color;
@@ -255,15 +259,10 @@ void dr_recfl(Vwk * vwk)
     fg_bp[2] = (fi & 4);
     fg_bp[3] = (fi & 8);
 
-    pts_in = PTSIN;
-    arb_corner(pts_in);
-    X1 = *pts_in++;
-    Y1 = *pts_in++;
-    X2 = *pts_in++;
-    Y2 = *pts_in;
-
-    rectfill(vwk);
-}                               /* End "dr_recfl". */
+    rect = (Rect*)PTSIN;
+    arb_corner(rect);
+    rectfill(vwk, rect);
+}
 
 
 
@@ -395,29 +394,29 @@ inline void bub_sort (WORD * buf, WORD count)
  *   - Draw pixels between each pair of points (x coords) on the scan line
  */
 
-void clc_flit (Vwk * vwk)
+void clc_flit (Vwk * vwk, WORD y)
 {
     WORD fill_buffer[256];	/* must be 256 words or it will fail */
     WORD * bufptr;            	/* point to array of x-values. */
-    WORD * xy;
     int vectors;       		/* count of vectors. */
     int intersections;		/* count of intersections */
     int i;
+    Point * point = (Point*)PTSIN;	/* point to array of vertices. */
 
     /* Initialize the pointers and counters. */
     intersections = 0;	/* reset counter */
     bufptr = fill_buffer;
     vectors = CONTRL[1];	/* d0 - fetch number of vectors. */
-    xy = PTSIN;   /* word */    /* point to array of vertices. */
 
     /* find intersection points of scan line with poly edges. */
     for (i = vectors - 1; i >= 0; i--) {
         WORD x1, x2, y1, y2, dy;
 
-        x1 = *xy++;		/* fetch x-value of 1st endpoint. */
-        y1 = *xy++;		/* fetch y-value of 1st endpoint. */
-        x2 = *xy++;		/* fetch x-value of 2nd endpoint. */
-        y2 = *xy++;		/* fetch y-value of 2nd endpoint. */
+        x1 = point->x;		/* fetch x-value of 1st endpoint. */
+        y1 = point->y;		/* fetch y-value of 1st endpoint. */
+        point++;
+        x2 = point->x;		/* fetch x-value of 2nd endpoint. */
+        y2 = point->y;		/* fetch y-value of 2nd endpoint. */
 
         /* if the current vector is horizontal, ignore it. */
         dy = y2 - y1;
@@ -425,8 +424,8 @@ void clc_flit (Vwk * vwk)
             LONG dy1, dy2;
 
             /* fetch scan-line y. */
-            dy1 = Y1 - y1;   	/* d4 - delta y1. */
-            dy2 = Y1 - y2;    	/* d3 - delta y2. */
+            dy1 = y - y1;   	/* d4 - delta y1. */
+            dy2 = y - y2;    	/* d3 - delta y2. */
 
             /*
              * Determine whether the current vector intersects with the scan
@@ -448,8 +447,6 @@ void clc_flit (Vwk * vwk)
                 intersections++;
             }
         }
-        /* one vector back - let the last ending point be our next start */
-        xy -= 2;
     }
 
     /*
@@ -499,7 +496,7 @@ void clc_flit (Vwk * vwk)
                     continue;         	/* entire segment clippped */
                 x2 = vwk->xmx_clip;		/* clip right end of line */
             }
-            horzline(vwk, x1, x2, Y1);
+            horzline(vwk, x1, x2, y);
         }
     }
     else {
@@ -522,7 +519,7 @@ void clc_flit (Vwk * vwk)
 
             /* If starting point greater than ending point, nothing is done. */            /* is start still to left of end? */
             if ( x1 <= x2 ) {
-                horzline(vwk, x1, x2, Y1);    /* draw the line segment */
+                horzline(vwk, x1, x2, y);    /* draw the line segment */
             }
         }
     }
@@ -533,7 +530,7 @@ void clc_flit (Vwk * vwk)
 
 void polygon(Vwk * vwk)
 {
-    WORD *pointer, i, k;
+    WORD *pointer, i, k, y;
     WORD fill_maxy, fill_miny;
 
     i = vwk->fill_color;
@@ -578,8 +575,8 @@ void polygon(Vwk * vwk)
     pointer = PTSIN;
     *(pointer + k) = *pointer;
     *(pointer + k + 1) = *(pointer + 1);
-    for (Y1 = fill_maxy; Y1 > fill_miny; Y1--) {
-        clc_flit(vwk);
+    for (y = fill_maxy; y > fill_miny; y--) {
+        clc_flit(vwk, y);
     }
     if (vwk->fill_per == TRUE) {
         LN_MASK = 0xffff;
@@ -623,40 +620,40 @@ void v_fillarea(Vwk * vwk)
  */
 
 static
-BOOL clipbox(Vwk * vwk)
+BOOL clipbox(Vwk * vwk, Rect * rect)
 {
     WORD x1, y1, x2, y2;
 
-    x1 = X1;
-    y1 = Y1;
-    x2 = X2;
-    y2 = Y2;
+    x1 = rect->x1;
+    y1 = rect->y1;
+    x2 = rect->x2;
+    y2 = rect->y2;
 
     /* clip x coordinates */
     if ( x1 < vwk->xmn_clip) {
         if (x2 < vwk->xmn_clip) {
             return(FALSE);             /* clipped box is null */
         }
-        X1 = vwk->xmn_clip;
+        rect->x1 = vwk->xmn_clip;
     }
     if ( x2 > vwk->xmx_clip) {
         if (x1 > vwk->xmx_clip) {
             return(FALSE);             /* clipped box is null */
         }
-        X2 = vwk->xmx_clip;
+        rect->x2 = vwk->xmx_clip;
     }
     /* clip y coordinates */
     if ( y1 < vwk->ymn_clip) {
         if (y2 < vwk->ymn_clip) {
             return(FALSE);             /* clipped box is null */
         }
-        Y1 = vwk->ymn_clip;
+        rect->y1 = vwk->ymn_clip;
     }
     if ( y2 > vwk->ymx_clip) {
         if (y1 > vwk->ymx_clip) {
             return(FALSE);             /* clipped box is null */
         }
-        Y2 = vwk->ymx_clip;
+        rect->y2 = vwk->ymx_clip;
     }
     return (TRUE);
 }
@@ -690,7 +687,7 @@ void hzline_or(Vwk *, UWORD *, int, int, UWORD, UWORD, WORD);
 void hzline_xor(Vwk *, UWORD *, int, int, UWORD, UWORD, WORD);
 void hzline_nor(Vwk *, UWORD *, int, int, UWORD, UWORD, WORD);
 
-void rectfill (Vwk * vwk)
+void rectfill (Vwk * vwk, Rect * rect)
 {
     WORD x1, y1, x2, y2;
     WORD y;
@@ -704,37 +701,35 @@ void rectfill (Vwk * vwk)
     int rightpart;
 
     if (vwk->clip)
-        if (!clipbox(vwk))
+        if (!clipbox(vwk, rect))
             return;
 
     /* sort x coordinates */
-    x1 = X1;
-    x2 = X2;
+    x1 = rect->x1;
+    x2 = rect->x2;
     if (x2 < x1) {
-       x1 = X2;
-       x2 = X1;
+       x1 = rect->x2;
+       x2 = rect->x1;
     }
     dx = x2 - x1;             /* width of line */
 
     /* sort y coordinates */
-    y1 = Y1;
-    y2 = Y2;
+    y1 = rect->y1;
+    y2 = rect->y2;
     if (y2 < y1) {
-        y1 = Y2;
-        y2 = Y1;
+        y1 = rect->y2;
+        y2 = rect->y1;
     }
     dy = y2 - y1;             /* width of line */
 
     /* precalculate masks for left and right fringe */
     leftpart = x1&0xf;
-    rightpart = (x1+dx)&0xf;
+    rightpart = x2&0xf;
     leftmask = ~(0xffff>>leftpart);     /* origin for not left fringe lookup */
     rightmask = 0x7fff>>rightpart;      /* origin for right fringe lookup */
 
     /* init adress counter */
-    addr = v_bas_ad;                    /* start of screen */
-    addr += (x1&0xfff0)>>shft_off;      /* add x coordinate part of addr */
-    addr += (LONG)y1 * v_lin_wr;                /* add y coordinate part of addr */
+    addr = get_start_addr(x1, y1);
     yinc = v_lin_wr;                    /* y coordinate increase */
     mypatmsk = vwk->patmsk;
 
@@ -807,7 +802,7 @@ pixelread(const WORD x, const WORD y)
     UWORD mask;
 
     /* convert x,y to start adress and bit mask */
-    addr = (UWORD*)(v_bas_ad + (LONG)y * v_lin_wr + ((x&0xfff0)>>shft_off));
+    addr = get_start_addr(x, y);
     addr += v_planes;           	/* start at highest-order bit_plane */
     mask = 0x8000 >> (x&0xf);		/* initial bit position in WORD */
 
@@ -888,7 +883,7 @@ end_pts(Vwk * vwk, WORD x, WORD y, WORD *xleftout, WORD *xrightout)
         return 0;
 
     /* convert x,y to start adress and bit mask */
-    addr = (UWORD*)(v_bas_ad + (LONG)y * v_lin_wr + ((x&0xfff0)>>shft_off));
+    addr = get_start_addr(x, y);
     addr += v_planes;           	/* start at highest-order bit_plane */
     mask = 0x8000 >> (x & 0x000f);   /* fetch the pixel mask. */
 
@@ -1135,7 +1130,7 @@ put_pix()
     color = INTIN[0];   /* device dependent encoded color bits */
 
     /* convert x,y to start adress and bit mask */
-    addr = (UWORD*)(v_bas_ad + (LONG)y * v_lin_wr + ((x&0xfff0)>>shft_off));
+    addr = get_start_addr(x, y);
     mask = 0x8000 >> (x&0xf);            /* initial bit position in WORD */
 
     for (plane = v_planes-1; plane >= 0; plane-- ) {

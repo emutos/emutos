@@ -31,7 +31,7 @@
         .globl  _GSX_ENTRY
 
 
-#define ptsin_size 256          // max. # of elements allowed for PTSIN array
+#define ptsin_size 512          // max. # of elements allowed for PTSIN array
 #define ptsin_max  ptsin_size/2 // max. # of coordinate pairs for PTSIN array
 #define W_1        2            // byte offset to first element of an array
 #define W_3        6            // byte offset to third element of an array

@@ -21,6 +21,55 @@
 #define    F1OP       8
 #define    F2OP      22
 
+/* Frame parameters - just for copyfrm.S and bitblt.S */
+
+#define FRAME_LEN   76
+
+#define B_WD       -76  // +00 width of block in pixels
+#define B_HT       -74  // +02 height of block in pixels
+
+#define PLANE_CT   -72  // +04 number of consequitive planes to blt
+
+#define FG_COL     -70  // +06 foreground color (logic op table index:hi bit)
+#define BG_COL     -68  // +08 background color (logic op table index:lo bit)
+#define OP_TAB     -66  // +10 logic ops for all fore and background combos
+#define S_XMIN     -62  // +14 minimum X: source
+#define S_YMIN     -60  // +16 minimum Y: source
+#define S_FORM     -58  // +18 source form base address
+
+#define S_NXWD     -54  // +22 offset to next word in line  (in bytes)
+#define S_NXLN     -52  // +24 offset to next line in plane (in bytes)
+#define S_NXPL     -50  // +26 offset to next plane from start of current plane
+
+#define D_XMIN     -48  // +28 minimum X: destination
+#define D_YMIN     -46  // +30 minimum Y: destination
+#define D_FORM     -44  // +32 destination form base address
+
+#define D_NXWD     -40  // +36 offset to next word in line  (in bytes)
+#define D_NXLN     -38  // +38 offset to next line in plane (in bytes)
+#define D_NXPL     -36  // +40 offset to next plane from start of current plane
+
+#define P_ADDR     -34  // +42 address of pattern buffer   (0:no pattern)
+#define P_NXLN     -30  // +46 offset to next line in pattern  (in bytes)
+#define P_NXPL     -28  // +48 offset to next plane in pattern (in bytes)
+#define P_MASK     -26  // +50 pattern index mask
+
+/* these frame parameters are internally set */
+
+#define P_INDX     -24  // +52 initial pattern index
+
+#define S_ADDR     -22  // +54 initial source address
+#define S_XMAX     -18  // +58 maximum X: source
+#define S_YMAX     -16  // +60 maximum Y: source
+
+#define D_ADDR     -14  // +62 initial destination address
+#define D_XMAX     -10  // +66 maximum X: destination
+#define D_YMAX      -8  // +68 maximum Y: destination
+
+#define INNER_CT    -6  // +70 blt inner loop initial count
+#define DST_WR      -4  // +72 destination form wrap (in bytes)
+#define SRC_WR      -2  // +74 source form wrap (in bytes)
+
 
 
 // name:
@@ -119,9 +168,7 @@ f0_right:
 f1_r2l_rt:
 
         move.w  (a0),d0         // d0 <- SOURCE 1st word                                 8
-#if !vme10
         adda.w  d2,a0           // a0 -> SOURCE 2nd word                                 8
-#endif
         swap    d0              // d0(31:16) <- 1st SRC word                     4
 
 
@@ -131,11 +178,7 @@ f1_r2l_rt:
 //      shift right to achieve a net left shift.
 f0_r2l_rt:
 
-#if vme10
-        move.w  -(a0),d0        // d0(31:16) <- most recent SOURCE word          8
-#else
         move.w  (a0),d0         // d0(31:16) <- most recent SOURCE word          8
-#endif
         swap    d0              // d0(15:00) <- 1st SOURCE word or garbage       4
 
         move.l  d0,d1           // d1(31:16) <- set up for INNER LOOP            4
@@ -155,9 +198,7 @@ f0_r2l_rt:
 f1_r2l_lf:
 
         move.w  (a0),d0         // d0 <- 1st SOURCE word                                 8
-#if !vme10
         adda.w  d2,a0           // a0 -> 2nd SOURCE word                                 8
-#endif
         swap    d0              // d0(31:16) <- SRC word                                 4
 
 
@@ -166,11 +207,7 @@ f1_r2l_lf:
 //      store 1 Destination fringe.
 //      rotate left.
 f0_r2l_lf:
-#if vme10
-        move.w  -(a0),d0        // d0(15:00) <- SRC wrd                          8
-#else
         move.w  (a0),d0         // d0(15:00) <- SRC wrd                          8
-#endif
         move.l  d0,d1           // set up d1(31:16) for inner loop               4
         swap    d1              // d1(31:16) <- 1st word for bit pump            4
 
@@ -196,11 +233,7 @@ f1_l2r_rt:
 //      rotate right.
 f0_l2r_rt:
 
-#if vme10
-        move.w  (a0)+,d0        // d0(15:00) <- SRC 2nd word (new)               8
-#else
         move.w  (a0),d0         // d0(15:00) <- SRC 2nd word (new)               8
-#endif
         move.l  d0,d1           // set up d1(31:16) for inner loop               4
         swap    d1              // d1(31:16) <- SOURCE 2nd word                  4
 
@@ -216,12 +249,8 @@ f0_l2r_rt:
 //      shift left.
 f1_l2r_lf:
 
-#if vme10
-        move.w  (a0)+,d0        // d0 <- SOURCE 1st word                                 8
-#else
         move.w  (a0),d0         // d0 <- SOURCE 1st word                                 8
         adda.w  d2,a0           // a0 -> SOURCE 2nd word                                 8
-#endif
         swap    d0              //                                               4
 
 
@@ -231,11 +260,7 @@ f1_l2r_lf:
 //      shift left to achieve a net right shift.
 f0_l2r_lf:
 
-#if vme10
-        move.w  (a0)+,d0        // d0(31:16) <- SOURCE 2nd word (new)            8
-#else     
         move.w  (a0),d0         // d0(31:16) <- SOURCE 2nd word (new)            8
-#endif
         swap    d0              // d0(15:00) <- SOURCE 1st word (old)            4
 
         move.l  d0,d1           // d1(31:16) <- set up for INNER LOOP            4
@@ -252,16 +277,10 @@ f0_l2r_lf:
 //////                          //////
 i1_r2l_rt:
 
-#if vme10
-        adda.w  d3,a1           // a1 -> new DESTINATION word                    8
-        move.l  d1,d0           // d0(31:16) <- old SOURCE word                  4
-        move.w  -(a0),d0        // d0(15:00) <- old SOURCE word                  8
-#else
         adda.w  d2,a0           // a0 -> new SOURCE word                                 8
         adda.w  d3,a1           // a1 -> new DESTINATION word                    8
         move.l  d1,d0           // d0(31:16) <- old SOURCE word                  4
         move.w  (a0),d0         // d0(15:00) <- old SOURCE word                  8
-#endif
         swap    d0              // d0(31:16) <- new SOURCE word                  4
         move.l  d0,d1           // d1(31:16) <- new SOURCE word (unaligned)      4
 
@@ -272,16 +291,10 @@ i1_r2l_rt:
 
 i1_r2l_lf:
 
-#if vme10
-        adda.w  d3,a1           // a1 -> new DESTINATION word                    8
-        move.l  d1,d0           // d0(31:16) <- old SOURCE word                  4
-        move.w  -(a0),d0        // d0(15:00) <- new SOURCE word                  8
-#else
         adda.w  d2,a0           // a0 -> new SOURCE word                                 8
         adda.w  d3,a1           // a1 -> new DESTINATION word                    8
         move.l  d1,d0           // d0(31:16) <- old SOURCE word                  4
         move.w  (a0),d0         // d0(15:00) <- new SOURCE word                  8
-#endif
         move.l  d0,d1           // d0(31:16) <- old SOURCE word                  4
         swap    d1              // d1(31:16) <- new SOURCE word (unaligned)      4
 
@@ -292,16 +305,10 @@ i1_r2l_lf:
 
 i1_l2r_rt:
 
-#if vme10
-        adda.w  d3,a1           // a1 -> new DESTINATION word                    8
-        move.l  d1,d0           // d0(31:16) <- old SOURCE word                  4
-        move.w  (a0)+,d0        // d0(15:00) <- new SOURCE word                  8
-#else
         adda.w  d2,a0           // a0 -> new SOURCE word                                 8
         adda.w  d3,a1           // a1 -> new DESTINATION word                    8
         move.l  d1,d0           // d0(31:16) <- old SOURCE word                  4
         move.w  (a0),d0         // d0(15:00) <- new SOURCE word                  8
-#endif
         move.l  d0,d1           // d0(31:16) <- old SOURCE word                  4
         swap    d1              // d1(31:16) <- new SOURCE word (unaligned)      4
 
@@ -312,16 +319,10 @@ i1_l2r_rt:
 
 i1_l2r_lf:
 
-#if vme10
-        adda.w  d3,a1           // a1 -> new DESTINATION word                    8
-        move.l  d1,d0           // d0(31:16) <- old SOURCE word                  4
-        move.w  (a0)+,d0        // d0(15:00) <- old SOURCE word                  8
-#else
         adda.w  d2,a0           // a0 -> new SOURCE word                                 8
         adda.w  d3,a1           // a1 -> new DESTINATION word                    8
         move.l  d1,d0           // d0(31:16) <- old SOURCE word                  4
         move.w  (a0),d0         // d0(15:00) <- old SOURCE word                  8
-#endif
         swap    d0              // d0(31:16) <- new SOURCE word                  4
         move.l  d0,d1           // d1(31:16) <- new SOURCE word (unaligned)      4
 
@@ -341,15 +342,10 @@ i1_l2r_lf:
 f2_r2l_rt:
 
         dbra    d5,i1_r2l_rt    // do another INNER LOOP cycle             (10)/14
-#if vme10
-        move.l  d1,d0           // d0(31:16) <- next to last SOURCE word                 4
-        move.w  -(a0),d0        // d0(15:00) <- last SOURCE word                         8
-#else
         adda.w  d2,a0           // a0 -> last SOURCE word                        8
 
         move.l  d1,d0           // d0(31:16) <- next to last SOURCE word                 4
         move.w  (a0),d0         // d0(15:00) <- last SOURCE word                         8
-#endif
         ror.l   d4,d0           // d0(31:16) <- alligned SRC: new|old         8-24
 
         bra     f2_flush        // send fringe to DESTINATION                   10
@@ -359,15 +355,10 @@ f2_r2l_rt:
 f2_r2l_lf:
 
         dbra    d5,i1_r2l_lf    // do another INNER LOOP cycle             (10)/14
-#if vme10
-        move.l  d1,d0           // d0(31:16) <- next to last SOURCE word                 4
-        move.w  -(a0),d0        // d0(15:00) <- last SOURCE word                         8
-#else
         adda.w  d2,a0           // a0 -> new SOURCE word                                 8
 
         move.l  d1,d0           // d0(31:16) <- next to last SOURCE word                 4
         move.w  (a0),d0         // d0(15:00) <- last SOURCE word                         8
-#endif  
         rol.l   d4,d0           // d0(15:00) <- alligned SRC: new|old         8-24
 
         bra     f2_out          // send fringe to DESTINATION                   10
@@ -378,9 +369,7 @@ f2_l2r_rt:
 
         dbra    d5,i1_l2r_rt    // do another INNER LOOP cycle             (10)/14
 
-#if !vme10
         adda.w  d2,a0           // a0 -> new SOURCE word                                 8
-#endif
 
         move.l  d1,d0           // d0(31:16) <- next to last SOURCE word                 4
         move.w  (a0),d0         // d0(15:00) <- last SOURCE word                         8
@@ -395,9 +384,7 @@ f2_l2r_lf:
 
         dbra    d5,i1_l2r_lf    // do another INNER LOOP cycle             (10)/14
 
-#if !vme10
         adda.w  d2,a0           // a0 -> new SOURCE word                                 8
-#endif
 
         move.l  d1,d0           // d0(31:16) <- next to last SOURCE word                 4
         move.w  (a0),d0         // d0(15:00) <- last SOURCE word                         8
@@ -426,17 +413,12 @@ fl_r2l_lf:
 fl_l2r_rt:
 
         dbra    d5,i1_l2r_rt    // do another INNER LOOP cycle             (10)/14
-#if vme10
-        subq.w  #2,a0           // correct for last postincrement
-#endif
         bra     f2_flush        //                                              10
 
 fl_l2r_lf:
 
         dbra    d5,i1_l2r_lf    // do another INNER LOOP cycle             (10)/14
-#if vme10
-        subq.w  #2,a0           // correct for last postincrement
-#endif
+
 ////////        bra     f2_flush        // fall through to f2_flush                     10
 
 
@@ -1062,11 +1044,7 @@ start_addr:
         move.w  S_YMIN(a6),d1
         bsr     s_xy2addr               // a0 -> start of block
 
-#if vme10
-        asl.w   #1,d7                   // get source row width in bytes
-#else
         mulu    S_NXWD(a6),d7           // d7 <- row width offset (source)
-#endif
         sub.w   d3,d7                   // d7 <- SRC_WR (for r2l xfer)
 
 
@@ -1075,11 +1053,7 @@ start_addr:
         move.w  d1,P_INDX(a6)           // save destination Y for pattern index
         bsr     d_xy2addr               // a1 -> start of block
 
-#if vme10
-        asl.w   #1,d6                   // get destination row width in bytes
-#else
         mulu    D_NXWD(a6),d6           // d6 <- row width offset (destination)
-#endif
 
         sub.w   d3,d6                   // d6 <- DST_WR (row width-form wrap: r2l xfer)
 
@@ -1122,18 +1096,13 @@ big_fringe:
 
         bsr     get_fringe
 
-#if vme10
 //
 //  Without expanding jump tables and adding duplicate code to BLTFRAG.S
 //  predecrement and postincrement addressing modes can't be used to
 //  manipulate the destination address.
 //
-        moveq.l #2,d2                   // number of bytes between source words
-        moveq.l #2,d3                   // number of bytes between dest. words
-#else
         move.w  S_NXWD(a6),d2           // d2 <- source increment
         move.w  D_NXWD(a6),d3           // d3 <- destination increment
-#endif
 
         btst.l  #2,d5                   // r2l case => swap fringes
         beq     save_addr               // and negate inter word increments
@@ -1270,21 +1239,13 @@ np_cont:
 
         move.l  S_ADDR(a6),a0           // a0 -> next source plane
 
-#if vme10
-        add.l   S_NXPL(a6),a0
-#else
         add.w   S_NXPL(a6),a0
-#endif
 
         move.l  a0,S_ADDR(a6)
 
         move.l  D_ADDR(a6),a1           // a1 -> next destination plane
 
-#if vme10
-        add.l   D_NXPL(a6),a1
-#else
         add.w   D_NXPL(a6),a1
-#endif
 
         move.l  a1,D_ADDR(a6)
 
@@ -1299,13 +1260,8 @@ np_cont:
 quit_blt:
         rts
 log_op:
-#if rev_vid
         dc.l    mode_00,mode_01,mode_02,mode_03,mode_04,mode_05,mode_06,mode_07
         dc.l    mode_08,mode_09,mode_10,mode_11,mode_12,mode_13,mode_14,mode_15
-#else
-        dc.l    mode_15,mode_07,mode_11,mode_03,mode_13,mode_05,mode_09,mode_01
-        dc.l    mode_14,mode_06,mode_10,mode_02,mode_12,mode_04,mode_08,mode_00
-#endif
 
 unary_blt:
         movem.l a3-a4,-(sp)             // save routine threads
@@ -1429,13 +1385,8 @@ s_xy2addr:
         move.l  S_FORM(a6),a0           // a0 -> start of source form (0,0)
         move.w  S_NXLN(a6),d3           // d3 <- inter line offset
 
-#if vme10
-        andi.w  #0xfff0,d0              // x masked for byte displacement
-        lsr.w   #3,d0                   // x displacement in bytes
-#else
         lsr.w   #4,d0                   // d0 <- X word count
         mulu    S_NXWD(a6),d0           // d0 <- x portion of offset
-#endif
 
         mulu    d3,d1                   // d1 <- y portion of offset
         add.l   d0,d1                   // d1 <- byte offset into memory form
@@ -1448,13 +1399,8 @@ d_xy2addr:
         move.l  D_FORM(a6),a1           // a0 -> start of destination form (0,0)
         move.w  D_NXLN(a6),d3           // d3 <- inter line offset
 
-#if vme10
-        andi.w  #0xfff0,d0              // x masked for byte displacement
-        lsr.w   #3,d0                   // x displacement in bytes
-#else
         lsr.w   #4,d0                   // d0 <- X word count
         mulu    D_NXWD(a6),d0           // d0 <- x portion of offset
-#endif
         mulu    d3,d1                   // d1 <- y portion of offset
         add.l   d0,d1                   // d1 <- byte offset into memory form
         adda.l  d1,a1                   // a1 -> word containing (x,y)
@@ -1475,15 +1421,10 @@ word_blt:
         subq.w  #2,d0                   // d0 <- inner loop counter (count-1)
         move.w  d0,INNER_CT(a6)         // save initial count
 
-#if vme10
-        asl.w   #1,d4                   // get source row width in bytes(l2r)
-        asl.w   #1,d6                   // get dest.row width in bytes(l2r)
-#else
         move.w  S_NXWD(a6),d5           // d5 <- next word increment (l2r src)
         mulu    d5,d4                   // d4 <- row width offset in bytes (src)
         move.w  D_NXWD(a6),d7           // d7 <- next word increment (l2r dest)
         mulu    d7,d6                   // d6 <- row width offset in bytes (dst)
-#endif
 
         move.w  S_XMIN(a6),d0           // compute address of destination block
         move.w  S_YMIN(a6),d1
@@ -1501,7 +1442,6 @@ word_blt:
         cmp.l   a1,a0                   // which address is larger: source or dest
         bcc     l2r_t2b                 // select direction based on order of addresses
 
-#if vme10
 
 //
 //  Source to destination copy direction will either be from:
@@ -1510,175 +1450,6 @@ word_blt:
 //  larger than the destination starting address. The intent is not to alter
 //  the source area before it is copied to the destination area.
 //  
-        bge.b   l2r_t2b                 // copy direction for source >= dest.
-r2l_b2t:
-
-        move.w  S_XMAX(a6),d0           // compute address of source low right corner
-        move.w  S_YMAX(a6),d1
-        bsr     s_xy2addr               // a0 -> end of source block
-
-        move.w  D_XMAX(a6),d0           // compute address of dest low right corner
-        move.w  D_YMAX(a6),d1
-        bsr     d_xy2addr               // a1 -> end of destination block
-        bra.b   set_fringe              // 
-
-l2r_t2b:
-
-        neg.w   d4                      // d4 <- SRC_WR (l2r)
-        neg.w   d6                      // d6 <- DST_WR (l2r)
-
-set_fringe:
-
-        move.w  d6,a5                   // set destination line length
-        movea.w d4,a4                   // set source line length
-
-        bsr     get_fringe              // get right and left fringe masks
-        move.w  d6,d2                   // set first fringe mask
-        swap    d6                      // set second fringe mask       
-//
-//  This bit block transfer handles the special case of "dot" alignment
-//  between the source and destination starting addresses(i.e. alignment
-//  within the word containing the starting point is the same for both 
-//  source and destination). Further restrictions limit the use of this special
-//  case transfer to the REPLACE write mode where the source line length has 
-//  to be 3 words or more.  
-//  Register useage is the following:     
-//
-//  d0 = fringe scratch register                a0 = source address
-//  d1 = fringe scratch register                a1 = destination address
-//  d2 = first fringe pattern           a2 = copy of source address
-//  d3 = word_copy loop count           a3 = copy of destination address
-//  d4 = plane loop count               a4 = offset to next source line 
-//  d5 = word_copy loop count           a5 = offset to next destination line
-//  d6 = second fringe pattern          a6 = stack frame pointer
-//  d7 = line loop count
-//
-        movea.l a0,a2                   // save source starting address 
-        movea.l a1,a3                   // save destination starting address 
-        subq.w  #1,B_HT(a6)             // adjust row count for loop
-        move.w  B_HT(a6),d7             // set row count for single plane loop
-        subq.w  #1,PLANE_CT(a6)         // adjust plane count for loop
-        move.w  INNER_CT(a6),d5         // get # of words in a source line
-        move.w  d5,d3                   // save word count for quick restore
-        tst.w   d4                      // determine copy direction
-        bpl.b   l2r_blit                // for left to right copy direction
-r2l_blit:
-//                                      // reorder 1st and 2nd fringe masks
-        move.w  PLANE_CT(a6),d4         // set plane count for outer most loop
-        bra.b   r2l_f1                  // copy the first line
-//
-//  Set up the block transfer for the next graphics plane.
-//
-r2l_plane:
-        adda.l  S_NXPL(a6),a2           // get source address for next gr. plane
-        adda.l  D_NXPL(a6),a3           // get dest. address for next gr. plane
-        movea.l a2,a0                   // set source address for line loop
-        movea.l a3,a1                   // set dest. address for line loop
-        move.w  B_HT(a6),d7             // set line count for line loop
-        bra.b   r2l_1st_line            // source & dest. addrs already set
-//
-//  Set up the block transfer for the next source and destination line.
-//
-r2l_line:
-        adda.w  a4,a0                   // get address of next source line
-        adda.w  a5,a1                   // get address of next dest. line
-r2l_1st_line:
-        move.w  d3,d5                   // reset counter for word copy loop
-//
-//  Apply the right fringe mask to the first source word and then copy to
-//  the first destination word.
-// 
-r2l_f1:
-
-        move.w  (a0),d0         // d0 <- 1st SOURCE word                         8
-        move.w  (a1),d1         // d1 <- 1st DESTINATION word                    8
-        eor.w   d1,d0           //                                               4
-        and.w   d6,d0           //                                               4
-        eor.w   d1,d0           //                                               4
-        move.w  d0,(a1)         // D' <- S                                       8
-//
-//  Directly copy from source to the destination up to the last source word.
-//
-r2l_word_copy:
-
-        move.w  -(a0),-(a1)       // DEST <- SOURCE                             12
-        dbra    d5,r2l_word_copy  //                                       (10)/14
-//
-//  Apply the left fringe mask to the last source word and then copy to
-//  the last destination word.
-// 
-r2l_f2:
-
-        move.w  -(a0),d0        // d0 <- SOURCE last word                        8
-        move.w  -(a1),d1        // d1 <- DESTINATION last word                   8
-        eor.w   d1,d0           //                                               4
-        and.w   d2,d0           //                                               4
-        eor.w   d1,d0           //                                               4
-        move.w  d0,(a1)         // D' <- S                                       8
-
-        dbra    d7,r2l_line     // do next row                             (10)/14
-        dbra    d4,r2l_plane    // do next plane
-
-        rts
-
-l2r_blit:
-        move.w  PLANE_CT(a6),d4         // set plane count for outer most loop
-        bra.b   l2r_f1                  // copy the first source line
-//
-//  Set up the block transfer for the next graphics plane.
-//
-l2r_plane:
-        adda.l  S_NXPL(a6),a2           // get source address for next gr. plane
-        adda.l  D_NXPL(a6),a3           // get dest. address for next gr. plane
-        movea.l a2,a0                   // set source address for line loop
-        movea.l a3,a1                   // set dest. address for line loop
-        move.w  B_HT(a6),d7             // set line count for line loop
-        bra.b   l2r_1st_line            // source & dest. addrs already set
-//
-//  Set up the block transfer for the next source and destination line.
-//
-l2r_line:
-        adda.w  a4,a0                   // get address of next source line
-        adda.w  a5,a1                   // get address of next dest. line
-l2r_1st_line:
-        move.w  d3,d5                   // reset counter for word copy loop
-//
-//  Apply the right fringe mask to the first source word and then copy to
-//  the first destination word.
-// 
-l2r_f1:
-
-        move.w  (a0)+,d0        // d0 <- 1st SOURCE word                         8
-        move.w  (a1),d1         // d1 <- 1st DESTINATION word                    8
-        eor.w   d1,d0           //                                               4
-        and.w   d2,d0           //                                               4
-        eor.w   d1,d0           //                                               4
-        move.w  d0,(a1)+        // D' <- S                                       8
-//
-//  Directly copy from source to the destination up to the last source word.
-//
-l2r_word_copy:
-
-        move.w  (a0)+,(a1)+       // DEST <- SOURCE                             12
-        dbra    d5,l2r_word_copy  //                                       (10)/14
-//
-//  Apply the left fringe mask to the last source word and then copy to
-//  the last destination word.
-// 
-l2r_f2:
-
-        move.w  (a0),d0         // d0 <- SOURCE last word                        8
-        move.w  (a1),d1         // d1 <- DESTINATION last word                   8
-        eor.w   d1,d0           //                                               4
-        and.w   d6,d0           //                                               4
-        eor.w   d1,d0           //                                               4
-        move.w  d0,(a1)         // D' <- S                                       8
-
-        dbra    d7,l2r_line     // do next row                             (10)/14
-        dbra    d4,l2r_plane    // do next plane
-
-        rts
-#else
         bcc     l2r_t2b                 // select direction based on order of addresses
 
 r2l_b2t:
@@ -1790,6 +1561,5 @@ sc_plane:
         dbra    d4,sc_mp_enter
         rts
 
-#endif
 
         .end

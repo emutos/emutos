@@ -341,6 +341,12 @@ void chk_esc(Vwk * vwk)
 {
     UWORD escfun = CONTRL[5];
 
+#if HAVE_BEZIER
+    if (escfun == 99) {
+        v_bez_qual(vwk);        /* set quality of bezier curves */
+        return;
+    }
+#endif
     if (escfun > ldri_escape)
         return;
     (*esctbl[escfun])(vwk);

@@ -1665,3 +1665,7 @@ Start... early ages
 
 2004-08-12
 - vdi/vdi_mouse.c: implemented cursor drawing in C (MAD)
+
+2004-08-14
+- vdi/*: eleminated use of global X1,Y1,X2,Y2 variables (MAD)
+         introduced structures Rect, Line, Point (MAD)

@@ -246,9 +246,11 @@ WORD gloc_key()
             retval = 1;                 // set button pressed flag
         } else {
             if (cur_ms_stat & 0x20) {   // if bit #5 set ...
+                Point * point = (Point*)PTSIN;
+
                 cur_ms_stat |= ~0x20;   // clear bit 5
-                X1 = GCURX;             // set _X1 = _GCURX
-                Y1 = GCURY;             // set _Y1 = _GCURY
+                point->x = GCURX;       // set X = GCURX
+                point->y = GCURY;       // set Y = GCURY
                 retval = 2;
             } else {
                 retval = 0;

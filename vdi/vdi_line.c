@@ -590,7 +590,13 @@ void hzline_nor(Vwk * vwk, UWORD *addr, int dx, int leftpart,
  */
 
 void habline(Vwk * vwk) {
-    horzline(vwk, X1, X2, Y1);
+    WORD x1, x2, y;
+    Line * line = (Line*)PTSIN;
+
+    x1 = line->x1;		/* fetch x-value of 1st endpoint. */
+    x2 = line->x2;		/* fetch x-value of 2nd endpoint. */
+    y = line->y1;		/* fetch y-value of 1st endpoint. */
+    horzline(vwk, x1, x2, y);
 }
 
 
@@ -639,9 +645,7 @@ void horzline(Vwk * vwk, WORD x1, WORD x2, WORD y) {
     patadd = vwk->multifill ? 16 : 0;     /* multi plane pattern offset */
 
     /* init adress counter */
-    addr = v_bas_ad;                    /* start of screen */
-    addr += (x1&0xfff0)>>shft_off;      /* add x coordinate part of addr */
-    addr += (LONG)y * v_lin_wr;         /* add y coordinate part of addr */
+    addr = get_start_addr(x, y);
 
     /* precalculate, what to draw */
     leftpart = x&0xf;
@@ -667,10 +671,10 @@ void horzline(Vwk * vwk, WORD x1, WORD x2, WORD y) {
 
 
 /*
- * v_pline -
+ * do_pline - the real thing
  */
 
-void v_pline(Vwk * vwk)
+void draw_pline(Vwk * vwk)
 {
     WORD l;
 
@@ -689,6 +693,23 @@ void v_pline(Vwk * vwk)
             draw_arrow(vwk);
     } else
         wideline(vwk);
+}
+
+
+
+/*
+ * v_pline - the wrapper
+ */
+
+void v_pline(Vwk * vwk)
+{
+#if HAVE_BEZIER
+    /* check, if we want to draw a bezier curve */
+    if (CONTRL[5] == 13 && vwk->bez_qual )        //FIXME: bez_qual ok??
+        v_bez(vwk);
+    else
+#endif
+        draw_pline(vwk);
 }
 
 
@@ -719,37 +740,37 @@ WORD clip_code(Vwk * vwk, WORD x, WORD y)
  * clip_line - helper function
  */
 
-BOOL clip_line(Vwk * vwk)
+BOOL clip_line(Vwk * vwk, Line * line)
 {
     WORD deltax, deltay, x1y1_clip_flag, x2y2_clip_flag, line_clip_flag;
     WORD *x, *y;
 
-    while ((x1y1_clip_flag = clip_code(vwk, X1, Y1)) |
-           (x2y2_clip_flag = clip_code(vwk, X2, Y2))) {
+    while ((x1y1_clip_flag = clip_code(vwk, line->x1, line->y1)) |
+           (x2y2_clip_flag = clip_code(vwk, line->x2, line->y2))) {
         if ((x1y1_clip_flag & x2y2_clip_flag))
             return (FALSE);
         if (x1y1_clip_flag) {
             line_clip_flag = x1y1_clip_flag;
-            x = &X1;
-            y = &Y1;
+            x = &line->x1;
+            y = &line->y1;
         } else {
             line_clip_flag = x2y2_clip_flag;
-            x = &X2;
-            y = &Y2;
+            x = &line->x2;
+            y = &line->y2;
         }
-        deltax = X2 - X1;
-        deltay = Y2 - Y1;
+        deltax = line->x2 - line->x1;
+        deltay = line->y2 - line->y1;
         if (line_clip_flag & 1) {       /* left ? */
-            *y = Y1 + mul_div(deltay, (vwk->xmn_clip - X1), deltax);
+            *y = line->y1 + mul_div(deltay, (vwk->xmn_clip - line->x1), deltax);
             *x = vwk->xmn_clip;
         } else if (line_clip_flag & 2) {        /* right ? */
-            *y = Y1 + mul_div(deltay, (vwk->xmx_clip - X1), deltax);
+            *y = line->y1 + mul_div(deltay, (vwk->xmx_clip - line->x1), deltax);
             *x = vwk->xmx_clip;
         } else if (line_clip_flag & 4) {        /* top ? */
-            *x = X1 + mul_div(deltax, (vwk->ymn_clip - Y1), deltay);
+            *x = line->x1 + mul_div(deltax, (vwk->ymn_clip - line->y1), deltay);
             *y = vwk->ymn_clip;
         } else if (line_clip_flag & 8) {        /* bottom ? */
-            *x = X1 + mul_div(deltax, (vwk->ymx_clip - Y1), deltay);
+            *x = line->x1 + mul_div(deltax, (vwk->ymx_clip - line->y1), deltay);
             *y = vwk->ymx_clip;
         }
     }
@@ -763,19 +784,24 @@ BOOL clip_line(Vwk * vwk)
 
 void polyline(Vwk * vwk)
 {
-    short i, j;
+    short i;
+    Line line;
 
-    j = 0;
+    Point * point = (Point*)PTSIN;
     LSTLIN = FALSE;
     for(i = CONTRL[1] - 1; i > 0; i--) {
+#if 0   // not needed anymore?!?
         if (i == 1)
             LSTLIN = TRUE;
-        X1 = PTSIN[j++];
-        Y1 = PTSIN[j++];
-        X2 = PTSIN[j];
-        Y2 = PTSIN[j+1];
-        if (!vwk->clip || clip_line(vwk))
-            abline(vwk);
+#endif
+        line.x1 = point->x;
+        line.y1 = point->y;
+        point++;                /* advance point by point */
+        line.x2 = point->x;
+        line.y2 = point->y;
+
+        if (!vwk->clip || clip_line(vwk, &line))
+            abline(vwk, &line);
     }
 }
 
@@ -797,7 +823,7 @@ void quad_xform(WORD quad, WORD x, WORD y, WORD *tx, WORD *ty)
     case 3:
         *tx = -x;
         break;
-    }                           /* End switch. */
+    }
 
     switch (quad) {
     case 1:
@@ -809,8 +835,8 @@ void quad_xform(WORD quad, WORD x, WORD y, WORD *tx, WORD *ty)
     case 4:
         *ty = -y;
         break;
-    }                           /* End switch. */
-}                               /* End "quad_xform". */
+    }
+}
 
 
 
@@ -849,13 +875,13 @@ void perp_off(WORD * px, WORD * py)
     v = 0;
     while (TRUE) {
         /* Check for new minimum, same minimum, or finished. */
-        if (((magnitude = ABS(u * y - v * x)) < min_val) ||
+        magnitude = ABS(u * y - v * x);
+        if ((magnitude < min_val) ||
             ((magnitude == min_val) && (ABS(x_val - y_val) > ABS(u - v)))) {
             min_val = magnitude;
             x_val = u;
             y_val = v;
         }
-        /* End if:  new minimum. */
         else
             break;
 
@@ -866,7 +892,6 @@ void perp_off(WORD * px, WORD * py)
             else
                 u--;
         }
-        /* End if:  doing top row. */
         else {
             if (pcircle[v + 1] >= u - 1) {
                 v++;
@@ -956,36 +981,37 @@ void do_circ(Vwk * vwk, WORD cx, WORD cy)
 
     /* Only perform the act if the circle has radius. */
     if (num_qc_lines > 0) {
-        /* Do the horizontal line through the center of the circle. */
+        Line * line = (Line*)PTSIN;
 
+        /* Do the horizontal line through the center of the circle. */
         pointer = q_circle;
-        X1 = cx - *pointer;
-        X2 = cx + *pointer;
-        Y1 = Y2 = cy;
-        if (clip_line(vwk))
-            abline(vwk);
+        line->x1 = cx - *pointer;
+        line->x2 = cx + *pointer;
+        line->y1 = cy;
+        line->y2 = cy;
+        if (clip_line(vwk, line))
+            horzline(vwk, line->x1, line->x2, line->y1);
 
         /* Do the upper and lower semi-circles. */
-
         for (k = 1; k < num_qc_lines; k++) {
             /* Upper semi-circle. */
-
             pointer = &q_circle[k];
-            X1 = cx - *pointer;
-            X2 = cx + *pointer;
-            Y1 = Y2 = cy - k;
-            if (clip_line(vwk)) {
-                abline(vwk);
+            line->x1 = cx - *pointer;
+            line->x2 = cx + *pointer;
+            line->y1 = cy - k;
+            line->y2 = cy - k;
+            if (clip_line(vwk, line)) {
+                horzline(vwk, line->x1, line->x2, line->y1);
                 pointer = &q_circle[k];
             }
 
             /* Lower semi-circle. */
-
-            X1 = cx - *pointer;
-            X2 = cx + *pointer;
-            Y1 = Y2 = cy + k;
-            if (clip_line(vwk))
-                abline(vwk);
+            line->x1 = cx - *pointer;
+            line->x2 = cx + *pointer;
+            line->y1 = cy + k;
+            line->y2 = cy + k;
+            if (clip_line(vwk, line))
+                horzline(vwk, line->x1, line->x2, line->y1);
         }                       /* End for. */
     }                           /* End if:  circle has positive radius. */
 }
@@ -1041,7 +1067,8 @@ void wideline(Vwk * vwk)
     WORD *pointer, x, y, d, d2;
 
     /* Don't attempt wide lining on a degenerate polyline */
-    if ((numpts = *(CONTRL + 1)) < 2)
+    numpts = CONTRL[1];
+    if (numpts < 2)
         return;
 
     if (vwk->line_width != line_cw) {
@@ -1102,15 +1129,15 @@ void wideline(Vwk * vwk)
                                    vertical. */
 
         /* Prepare the control and points parameters for the polygon call. */
-        *(CONTRL + 1) = 4;
+        CONTRL[1] = 4;
 
-        PTSIN = pointer = box;
 
         x = wx1;
         y = wy1;
         d = vx;
         d2 = vy;
 
+        PTSIN = pointer = box;
         *pointer++ = x + d;
         *pointer++ = y + d2;
         *pointer++ = x - d;
@@ -1140,7 +1167,7 @@ void wideline(Vwk * vwk)
 
     /* Restore the attribute environment. */
     r_fa_attr(vwk);
-} /* End "wline". */
+}
 
 
 
@@ -1239,10 +1266,8 @@ void arrow(Vwk * vwk, WORD * xy, WORD inc)
         dx = *ptr2 - *ptr1;
         dy = mul_div(*(ptr2 + 1) - *(ptr1 + 1), ysize, xsize);
 
-        /* Get the length of the vector connecting the point with the end
-           point. */
+        /* Get length of vector connecting the point with the end point. */
         /* If the vector is of sufficient length, the search is over. */
-
         if ((line_len = vec_len(ABS(dx), ABS(dy))) >= arrow_len)
             break;
     }                           /* End for:  over i. */
@@ -1342,7 +1367,7 @@ void arrow(Vwk * vwk, WORD * xy, WORD inc)
  *     LN_MASK rotated to proper alignment with (X2,Y2).
  */
 
-void abline (Vwk * vwk)
+void abline (Vwk * vwk, Line * line)
 {
     void *adr;                  /* using void pointer is much faster */
     UWORD x1,y1,x2,y2;          /* the coordinates */
@@ -1356,26 +1381,26 @@ void abline (Vwk * vwk)
     WORD *color;
 
 #if 0
-    if (Y1 == Y2) {
-        kprintf("Y = %d, MODE = %d.\n", Y1, vwk->wrt_mode);
-        //horzline(X1, X2, Y1);
+    if (line->y1 == line->y2) {
+        kprintf("Y = %d, MODE = %d.\n", line->y1, vwk->wrt_mode);
+        //horzline(X1, line->x2, line->y1);
         return;
     }
 #endif
 
     /* Make x axis always goind up */
-    if (X2 < X1) {
+    if (line->x2 < line->x1) {
         /* if delta x < 0 then draw from point 2 to 1 */
-        x1 = X2;
-        y1 = Y2;
-        x2 = X1;
-        y2 = Y1;
+        x1 = line->x2;
+        y1 = line->y2;
+        x2 = line->x1;
+        y2 = line->y1;
     } else {
         /* positive, start with first point */
-        x1 = X1;
-        y1 = Y1;
-        x2 = X2;
-        y2 = Y2;
+        x1 = line->x1;
+        y1 = line->y1;
+        x2 = line->x2;
+        y2 = line->y2;
     }
 
     dx = x2 - x1;
@@ -1390,9 +1415,7 @@ void abline (Vwk * vwk)
     }
     xinc = v_planes<<1;                 /* add v_planes WORDS */
 
-    adr = v_bas_ad;                     /* start of screen */
-    adr += (LONG)y1 * v_lin_wr;         /* add y coordinate part of addr */
-    adr += (x1&0xfff0)>>shft_off;       /* add x coordinate part of addr */
+    adr = get_start_addr(x1, y1);      /* init adress counter */
     msk = 0x8000 >> (x1&0xf);           /* initial bit position in WORD */
     linemask = LN_MASK;                 /* to avoid compiler warning */
     color = &FG_BP_1;

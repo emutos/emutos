@@ -22,32 +22,27 @@
 
 BOOL in_proc;                   /* flag, if we are still running */
 
+
+
 /*
  * arb_corner - copy and sort (arbitrate) the corners
  *
  * raster (ll, ur) format is desired.
  */
-void arb_corner(WORD * corners)
+void arb_corner(Rect * rect)
 {
-    /* Local declarations. */
-    WORD *xy1, *xy2;
-
     /* Fix the x coordinate values, if necessary. */
-    xy1 = corners;
-    xy2 = corners + 2;
-    if (*xy1 > *xy2) {
-        WORD temp = *xy1;
-        *xy1 = *xy2;
-        *xy2 = temp;
+    if (rect->x1 > rect->x2) {
+        WORD temp = rect->x1;
+        rect->x1 = rect->x2;
+        rect->x2 = temp;
     }
 
     /* Fix the y coordinate values, if necessary. */
-    xy1++;
-    xy2++;
-    if (*xy1 > *xy2) {
-        WORD temp = *xy1;
-        *xy1 = *xy2;
-        *xy2 = temp;
+    if (rect->y1 > rect->y2) {
+        WORD temp = rect->y1;
+        rect->y1 = rect->y2;
+        rect->y2 = temp;
     }
 }
 
@@ -58,28 +53,20 @@ void arb_corner(WORD * corners)
  *
  * traditional (ll, ur) format is desired.
  */
-void arb_corner_llur(WORD * corners)
+void arb_line(Line * line)
 {
-    /* Local declarations. */
-    WORD temp;
-    WORD *xy1, *xy2;
-
     /* Fix the x coordinate values, if necessary. */
-    xy1 = corners;
-    xy2 = corners + 2;
-    if (*xy1 > *xy2) {
-        temp = *xy1;
-        *xy1 = *xy2;
-        *xy2 = temp;
+    if (line->x1 > line->x2) {
+        WORD temp = line->x1;
+        line->x1 = line->x2;
+        line->x2 = temp;
     }
 
     /* Fix the y coordinate values, if necessary. */
-    xy1++;
-    xy2++;
-    if (*xy1 < *xy2) {
-        temp = *xy1;
-        *xy1 = *xy2;
-        *xy2 = temp;
+    if (line->y1 < line->y2) {
+        WORD temp = line->y1;
+        line->y1 = line->y2;
+        line->y2 = temp;
     }
 }
 
@@ -184,4 +171,17 @@ void timer_init(Vwk * vwk)
         Setexc(0x100, (long)tick_int);  // set etv_timer to tick_int
     set_sr(old_sr);                     // enable interrupts
 
+}
+
+
+void * get_start_addr(const WORD x, const WORD y)
+{
+    void * addr;
+
+    /* init adress counter */
+    addr = v_bas_ad;			/* start of screen */
+    addr += (x&0xfff0)>>shft_off;      	/* add x coordinate part of addr */
+    addr += (LONG)y * v_lin_wr;         /* add y coordinate part of addr */
+
+    return addr;
 }

@@ -13,6 +13,15 @@
 
 #include "vdi_asm.h"
 
+
+
+/* Conditionals for textblit */
+#define test0           0       /* if give program access to internal variables */
+#define test1           0       /* if using very large fonts (else, 8x16) */
+#define bytswap         0       /* if font words are byte swapped! */
+
+
+
 /////////////////////////////////////////////////////////////////////////
 //                                                                      //
 //        start date: 1 Oct 84                                          //
@@ -766,19 +775,12 @@ no_clear:
 //
         move.w  STYLE(a6),tmp_style(a6)
 //
-#if rev_vid
         clr.w   WRT_MOD(a6)             // replace mode for this blt
         move.w  #1,forecol(a6)          // foreground 1 for this blt
         clr.w   ambient(a6)             // background 0 for this blt
-#else
-        move.w  #4,WRT_MOD(a6)          // select replace write mode
-        clr.w   forecol(a6)             // foreground 0
-        clr.w   ambient(a6)             // background 0
-#endif
+
         move.w  #1,nbrplane(a6)         // 1 plane, natch
-#if !vme10
         move.w  #2,nextwrd(a6)          // plane offset is 2
-#endif
         andi.w  #SKEWM+THICKM,STYLE(a6) // only do thicken & skew
 //
         bsr     norm_blt                // blt source into buffer
@@ -898,16 +900,16 @@ mx_clipx:
         sub.w   XMX_CLI(a6),d0
         sub.w   d0,DELX(a6)
 
-#if !vme10
         bra     scrn_blt
 //
 //  Offset to next word in same plane
 //
 nxtword:
         .dc.b   2,4,0,8
-#endif
 //
-        .page
+
+
+
 /////////////////////////////////////////////////////////////////////////
 //  screen blt                                                          //
 //      put a block defined by s_form, _SOURCEX, _SOURCEY, _DELX, _DELY //
@@ -917,14 +919,10 @@ nxtword:
 scrn_blt:
         move.w  _TEXT_FG,forecol(a6)    // copy foreground color to temp
         move.w  buffc(a6),ambient(a6)   //
-#if vme10
-        move.w  _v_planes,nbrplane(a6)  // save # of graphic planes locally
-#else
         move.w  _v_planes,d0            // copy # of planes
         move.w  d0,nbrplane(a6)         // save in local
         move.b  nxtword-1(pc,d0.w),d0   // fetch offset from table (assumed:hi byte=0)
         move.w  d0,nextwrd(a6)          // save in local
-#endif
 //
         move.w  _SOURCEX,d0     
         move.w  d0,d2
@@ -1187,26 +1185,13 @@ wrmappin:
         .dc.b   op4,op4,op4,op4         // XOR mode
         .dc.b   op5,op5,op6,op6         // inverse transparent mode
 //
-#if !rev_vid
-        .dc.b   op7,op7                 // replace mode required for pre-blits
-#endif
 
-#if rev_vid
 toptable:
         .dc.l   top0,top3,top4,top7,top6,top1,topd
 twoptble:
         .dc.l   twop0,twop3,twop4,twop7,twop6,twop1,twopd
-//
-#else
-toptable:
-        .dc.l   topf,topc,top7,top4,top6,topd,top1,top3
-twoptble:
-        .dc.l   twopf,twopc,twop7,twop4,twop6,twopd,twop1
-        .dc.l   twop3
-//
-#endif
-        .page
-//
+
+
 plane_loop:
         move.w  WRT_MOD(a6),d0          // d0 = 0000xxxx ,_WRT_MODE
         lsr.w   forecol(a6)             // this plane's foreground bit 
@@ -1305,11 +1290,7 @@ next_plane:
         ble.b   no_more_planes          // loop for next plane
         movea.l sform(a6),a0
         movea.l dform(a6),a1
-#if vme10
-        adda.l  _v_pl_dspl,a1           // addr of next graphic plane
-#else
         addq.l  #2,a1                   // advance destination plane
-#endif
         move.l  a1,dform(a6)            // save dest. starting address
         btst.b  #SKEW,STYLE+1(a6)       // only skew screws up other planes
         beq.w   plane_loop              // br to short init if not skew
@@ -1375,10 +1356,6 @@ dbl_loop:
         lea.l   dbl_2wrd,a2
         move.l  a2,d5
         lea.l   dbl_1wrd,a3
-#if vme10
-        subq.w  #2,d7                   //adjust bytes between dest lines for
-//                                      //postincrement addressing  
-#endif
         bra.b   dbl_1st_scan
 //
 dbl_lp:
@@ -1413,18 +1390,11 @@ dblendr:
         jmp     (a5)                    //call special
 //
 dbl_1wrd:
-#if vme10
-        move.w  d1,(a1)+                //write 1st scan word 
-        move.w  d0,d1                   //get the other scan word
-//                                      // (it got shifted in)
-        move.w  (a1),d4                 //get next destination word
-#else
         move.w  d1,(a1)                 //write 1st scan word 
         move.w  d0,d1                   //get the other scan word
 //                                      // (it got shifted in)
         movea.w nextwrd(a6),a2          //get offset to next word
         move.w  (a1,a2.w),d4            //get next destination word
-#endif
 //
         move.w  rite_msk(a6),d2         //use right mask
 //
@@ -1432,12 +1402,8 @@ dbl_1wrd:
         jmp     (a4)                    //call logic op
 //
 dbl_2wrd:
-#if vme10
-        move.w  d1,(a1)                 //write 2nd scan word 
-#else
         move.w  nextwrd(a6),a2
         move.w  d1,(a1,a2.w)            //save the result
-#endif
 //
         dbra    d3,dbl_lp               //do next scan line of character
         bra.w   next_plane
@@ -1486,12 +1452,8 @@ mlt_left:
         jmp     (a5)                    //call specialwf
 //
 lft_lfrng:
-#if vme10
-        move.w  d1,(a1)+                //write 1st scan word  & fringe
-#else
         move.w  d1,(a1)                 //store the result
         adda.w  nextwrd(a6),a1          //advance destination ptr to next word
-#endif
 //
         move.w  rota_msk(a6),d2         //get mask for inner full words
         lea.l   lft_wrds,a3             //set write mode return address
@@ -1531,12 +1493,8 @@ word_lef:
         jmp     (a4)                    //call specialw
 //
 lft_wrds:
-#if vme10
-        move.w  d1,(a1)+                //write adjacent char. scan lines
-#else
         move.w  d1,(a1)                 //store the result
         adda.w  nextwrd(a6),a1          //advance destination to next word
-#endif
 //
         bra.b   word_lef                //go for more
 //
@@ -1592,12 +1550,8 @@ mlt_rite:
         jmp     (a5)                    //call specialwf
 //
 rgt_lfrng:
-#if vme10
-        move.w  d1,(a1)+                //write 1st char. scan line
-#else
         move.w  d1,(a1)                 //store the result
         adda.w  nextwrd(a6),a1          //advance destination ptr to next word
-#endif
 //
         move.w  rota_msk(a6),d2         //get mask for inner full words
         lea.l   rgt_wrds,a3             //set write mode return address
@@ -1633,12 +1587,8 @@ word_rit:
         jmp     (a4)                    //call specialw
 //
 rgt_wrds:
-#if vme10
-        move.w  d1,(a1)+                //write adjacent char. scans
-#else
         move.w  d1,(a1)                 //store the result
         adda.w  nextwrd(a6),a1          //advance destination to next word
-#endif
 //
         bra.b   word_rit                //go for more
 //
@@ -1660,7 +1610,6 @@ rgt_rfrng:
 //      Writing Mode Operations using fringe mask // 
 ///////////////////////////////////////////////////
 //      
-#if rev_vid
 top0:
         not.w   d2                      //mode 0 - D' = 0
         and.w   d2,d4
@@ -1702,62 +1651,12 @@ topd:
         and.w   d2,d1
         or.w    d4,d1
         jmp     (a3)
-#else
-//
-top1:
-        not.w   d2                      //mode 1 - D' = S and D
-        or.w    d2,d1
-        not.w   d2
-        and.w   d4,d1
-        jmp     (a3)
-//
-top3:
-        eor.w   d4,d1                   //mode 3 - D' = S (replace mode)
-        and.w   d2,d1
-        eor.w   d4,d1
-        jmp     (a3)
-//      
-top4:
-        and.w   d2,d1                   //mode 4 - D' = [not S] and D
-        not.w   d1
-        and.w   d4,d1
-        jmp     (a3)
-//
-top6:
-        and.w   d2,d1                   //mode 6 - D' = S xor D (xor mode)
-        eor.w   d4,d1
-        jmp     (a3)
-//
-top7:
-        and.w   d2,d1                   //mode 7 - D' = S or D (or mode)
-        or.w    d4,d1
-        jmp     (a3)
-//
-topc:
-        eor.w   d4,d1                   //mode 12 - D' = not S
-        and.w   d2,d1
-        eor.w   d4,d1
-        eor.w   d2,d1
-        jmp     (a3)
-//
-topd:
-        not.w   d1                      //mode 13 - D' = [not S] or D
-        and.w   d2,d1
-        or.w    d4,d1
-        jmp     (a3)
-//
-topf:
-        or.w    d2,d4                   //mode 15 - D' = 1
-        move.w  d4,d1
-        jmp     (a3)
-#endif
 //
         .page
 ///////////////////////////////////////////////////
 //      Word Writing Mode Operations             //
 ///////////////////////////////////////////////////
 //
-#if rev_vid
 twop0:
         moveq.l #0,d1                   //mode 0 - D' = 0
         jmp     (a3)
@@ -1786,44 +1685,9 @@ twopd:
         not.w   d1                      //mode 13 - D' = [not S] or D
         or.w    d4,d1
         jmp     (a3)
-//
-#else
-//
-twop1:
-        and.w   d4,d1                   //mode 1 - D' = S and D
-        jmp     (a3)
-//
-twop3:
-        jmp     (a3)                    //mode 3 - D' = S (replace mode)
-//
-twop4:
-        not.w   d1                      //mode 4 - D' = [not S] and D
-        and.w   d4,d1
-        jmp     (a3)
-//
-twop6:
-        eor.w   d4,d1                   //mode 6  - D' = S xor D
-        jmp     (a3)
-//
-twop7:
-        or.w    d4,d1                   //mode 7 - D' = S or D
-        jmp     (a3)
-//
-twopc:
-        not.w   d1                      //mode 12 - D' = not S
-        jmp     (a3)
-//
-twopd:
-        not.w   d1                      //mode 13 - D' = [not S] or D
-        or.w    d4,d1
-        jmp     (a3)
-//
-twopf:
-        moveq.l #-1,d1                  //mode 15 - D' = 1
-        jmp     (a3)
-#endif
-//
-        .page
+
+
+
 /////////////////////////
 //    special effect THICKEN
 //      on entry        68000   Description             8086
@@ -2102,11 +1966,7 @@ nxt_word:
         move.w  d2,rite_msk(a6)         //0h to right mask
         swap    d2
         move.w  d2,left_msk(a6)         //move right mask to left mask
-#if vme10
-        addq.w  #2,a1                   //get addr of next destination word
-#else
         adda.w  nextwrd(a6),a1          //bump next destination address
-#endif
         move.w  (a1),d4                 //get the word we're really doing
 //
         moveq.l #15,d0
@@ -2174,11 +2034,7 @@ wnxt_wrd:
         move.w  #0xFFFF,left_msk(a6)            //ran out of word
 //
         subq.w  #1,dest_wrd(a6)                 //so more is in the fringe
-#if vme10
-        addq.w  #2,a1                           //get next dest. word address
-#else
         adda.w  nextwrd(a6),a1                  //bump next destination address
-#endif
 //
         moveq.l #15,d2
         sub.w   d0,d2                           //d0 has old shif_cnt(a6)
@@ -2756,12 +2612,8 @@ concat:
 // in the shift table.  If the planes are arranged as separate, consecu-      
 // tive entities then divide the x-coordinate by 8 to get the number of bytes.                                                                     
 //
-#if vme10
-        lsr.w   #3,d2           // convert x-coordinate to offset
-#else
         move.b  _shft_off,d3    // get pre-calculated shift factor
         lsr.w   d3,d2           // convert x-coordinate to offset
-#endif
 
 //
 // Compute the offset to the desired word by adding the offset to the

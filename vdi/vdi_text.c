@@ -85,6 +85,8 @@ WORD rmcharx, rmchary;   /* add this to use up remainder     */
 void make_header(Vwk * vwk);
 WORD clc_dda(Vwk * vwk, WORD act, WORD req);
 
+
+
 void d_gtext(Vwk * vwk)
 {
     WORD count;
@@ -100,7 +102,7 @@ void d_gtext(Vwk * vwk)
 
     WORD temp;
     Fonthead *fnt_ptr = NULL;
-    WORD *pointer = NULL;
+    Point * point = NULL;
 
     /* some data copying for the assembler part */
     DDA_INC = vwk->dda_inc;
@@ -204,35 +206,35 @@ void d_gtext(Vwk * vwk)
             break;
         }
 
-        pointer = PTSIN;
+        point = (Point*)PTSIN;
         switch (vwk->chup) {
         case 0:
-            DESTX = *(pointer) - delh;
-            DESTY = *(pointer + 1) - delv;
+            DESTX = point->x - delh;
+            DESTY = point->y - delv;
             startx = DESTX;
             starty = DESTY + fnt_ptr->top + fnt_ptr->ul_size + 1;
             xfact = 0;
             yfact = 1;
             break;
         case 900:
-            DESTX = *(pointer) - delv;
-            DESTY = *(pointer + 1) + delh;
+            DESTX = point->x - delv;
+            DESTY = point->y + delh;
             startx = DESTX + fnt_ptr->top + fnt_ptr->ul_size + 1;
             starty = DESTY;
             xfact = 1;
             yfact = 0;
             break;
         case 1800:
-            DESTX = *(pointer) + delh;
-            DESTY = *(pointer + 1) - ((fnt_ptr->top + fnt_ptr->bottom) - delv);
+            DESTX = point->x + delh;
+            DESTY = point->y - ((fnt_ptr->top + fnt_ptr->bottom) - delv);
             startx = DESTX;
             starty = (DESTY + fnt_ptr->bottom) - (fnt_ptr->ul_size + 1);
             xfact = 0;
             yfact = -1;
             break;
         case 2700:
-            DESTX = *pointer - ((fnt_ptr->top + fnt_ptr->bottom) - delv);
-            DESTY = *(pointer + 1) - delh;
+            DESTX = point->x - ((fnt_ptr->top + fnt_ptr->bottom) - delv);
+            DESTY = point->y - delh;
             starty = DESTY;
             startx = (DESTX + fnt_ptr->bottom) - (fnt_ptr->ul_size + 1);
             xfact = -1;
@@ -288,15 +290,16 @@ void d_gtext(Vwk * vwk)
         }                   /* for j */
 
         if (vwk->style & F_UNDER) {
-            X1 = startx;
-            Y1 = starty;
+            Line * line = (Line*)PTSIN;
+            line->x1 = startx;
+            line->y1 = starty;
 
             if (vwk->chup % 1800 == 0) {
-                X2 = DESTX;
-                Y2 = Y1;
+                line->x2 = DESTX;
+                line->y2 = line->y1;
             } else {
-                X2 = X1;
-                Y2 = DESTY;
+                line->x2 = line->x1;
+                line->y2 = DESTY;
             }
             if (vwk->style & F_LIGHT)
                 LN_MASK = vwk->cur_font->lighten;
@@ -312,33 +315,33 @@ void d_gtext(Vwk * vwk)
             count = vwk->cur_font->ul_size;
             for (i = 0; i < count; i++) {
                 if (vwk->clip) {
-                    tx1 = X1;
-                    tx2 = X2;
-                    ty1 = Y1;
-                    ty2 = Y2;
+                    tx1 = line->x1;
+                    tx2 = line->x2;
+                    ty1 = line->y1;
+                    ty2 = line->y2;
 
-                    if (clip_line(vwk))
-                        abline(vwk);
+                    if (clip_line(vwk, line))
+                        abline(vwk, line);
 
-                    X1 = tx1;
-                    X2 = tx2;
-                    Y1 = ty1;
-                    Y2 = ty2;
+                    line->x1 = tx1;
+                    line->x2 = tx2;
+                    line->y1 = ty1;
+                    line->y2 = ty2;
                 } else
-                    abline(vwk);
+                    abline(vwk, line);
 
-                X1 += xfact;
-                X2 += xfact;
-                Y1 += yfact;
-                Y2 += yfact;
+                line->x1 += xfact;
+                line->x2 += xfact;
+                line->y1 += yfact;
+                line->y2 += yfact;
 
                 if (LN_MASK & 1)
                     LN_MASK = (LN_MASK >> 1) | 0x8000;
                 else
                     LN_MASK = LN_MASK >> 1;
-            } /* End for */
-        } /* End if underline */
-    } /* if count */
+            }
+        } 
+    }
 }
 
 
@@ -362,8 +365,8 @@ void trnsfont()
     addr = FBASE;
     cnt = (FWIDTH * DELY) << 1;
 
-//    for (i = cnt - 1; i > 0; i--) {             /* dbra optimized loop */
-    for (i = 1; i < cnt; i++) {
+    //for (i = 1; i < cnt; i++) {
+    for (i = cnt - 1; i >= 0; i--) {             /* dbra optimized loop */
         *addr=((*addr) << 8 | (*addr) >> 8);    /* swap bytes */
     }
 }
@@ -447,23 +450,6 @@ void text_init(Vwk * vwk)
     }
     DEV_TAB[5] = i;                     /* number of sizes */
     font_count = DEV_TAB[10] = ++j;   	/* number of faces */
-
-#if 0
-    /* initial settings */
-    vwk->cur_font = def_font;
-    vwk->loaded_fonts = NULLPTR;
-    vwk->num_fonts = font_count;	/* number of faces */
-
-    vwk->scrpt2 = scrtsiz;	/* set pointers to default buffers */
-    vwk->scrtchp = deftxbuf;
-
-    vwk->style = 0;        /* reset special effects */
-    vwk->scaled = FALSE;
-    vwk->h_align = 0;
-    vwk->v_align = 0;
-    vwk->chup = 0;
-    vwk->pts_mode = FALSE;
-#endif
 }
 
 void dst_height(Vwk * vwk)

@@ -12,14 +12,20 @@
 
 
 
-#ifndef VDIDEF_H
-#define VDIDEF_H
+#ifndef VDIDEFS_H
+#define VDIDEFS_H
 
 #include "portab.h"
 
 
-/* different maximum settings */
+#define HAVE_BEZIER 0   // switch on bezier capability
 
+/* GEMDOS function numbers */
+#define X_MALLOC 0x48
+#define X_MFREE 0x49
+
+
+/* different maximum settings */
 #define MAX_COLOR       16
 #define MX_LN_STYLE     7
 #define MX_LN_WIDTH     40
@@ -66,8 +72,6 @@
 #define MD_XOR      3
 #define MD_ERASE    4
 
-
-
 typedef struct Fonthead_ Fonthead;
 struct Fonthead_ {              /* descibes a font */
     WORD font_id;
@@ -106,7 +110,7 @@ typedef struct Vwk_ Vwk;
 struct Vwk_ {
     WORD chup;                  /* Character Up vector */
     WORD clip;                  /* Clipping Flag */
-    Fonthead *cur_font; /* Pointer to current font */
+    Fonthead *cur_font; 	/* Pointer to current font */
     WORD dda_inc;               /* Fraction to be added to the DDA */
     WORD multifill;             /* Multi-plane fill flag */
     UWORD patmsk;               /* Current pattern mask */
@@ -141,18 +145,34 @@ struct Vwk_ {
     WORD ud_patrn[4 * 16];      /* User defined pattern         */
     WORD v_align;               /* Current text vertical alignment  */
     WORD wrt_mode;              /* Current writing mode         */
-    WORD xfm_mode;              /* Transformation mode requested    */
+    WORD xfm_mode;              /* Transformation mode requested (NDC) */
     WORD xmn_clip;              /* Low x point of clipping rectangle    */
     WORD xmx_clip;              /* High x point of clipping rectangle   */
     WORD ymn_clip;              /* Low y point of clipping rectangle    */
     WORD ymx_clip;              /* High y point of clipping rectangle   */
+    /* newly added */
+    WORD bez_qual;              /* actual quality for bezier curves */
 };
 
-typedef struct
+typedef struct Rect_ Rect;
+struct Rect_
 {
     WORD x1,y1;
     WORD x2,y2;
-} RECT;
+};
+
+typedef struct Line_ Line;
+struct Line_
+{
+    WORD x1,y1;
+    WORD x2,y2;
+};
+
+typedef struct Point_ Point;
+struct Point_
+{
+    WORD x,y;
+};
 
 
 
@@ -192,7 +212,6 @@ extern WORD FG_BP_1, FG_BP_2, FG_BP_3, FG_BP_4;
 extern WORD LN_MASK, LSTLIN;
 extern WORD REQ_COL[3][MAX_COLOR];
 extern WORD MAP_COL[], REV_MAP_COL[];
-extern WORD X1, Y1, X2, Y2;
 extern WORD TERM_CH;
 
 /* Bit-Blt variables */
@@ -202,24 +221,24 @@ extern WORD COPYTRAN;
 /* Assembly Language Support Routines NEWLY ADDED */
 void text_blt();
 void xfm_crfm();
-void rectfill (Vwk *);
+void rectfill (Vwk * vwk, Rect * rect);
+
 
 WORD gloc_key();
 WORD gchc_key();
 WORD gchr_key();
 WORD gshift_s();
 
-BOOL clip_line(Vwk * vwk);
+BOOL clip_line(Vwk * vwk, Line * line);
 WORD vec_len(WORD x, WORD y);
-void arb_corner(WORD * corners);
-void arb_corner_llur(WORD * corners);
+void arb_corner(Rect * rect);
+void arb_line(Line * line);
 
 
 /* C Support routines */
 Vwk * get_vwk_by_handle(WORD);
+void * get_start_addr(const WORD x, const WORD y);
 
-//void cur_display();
-void cur_replace();
 void v_show_c(Vwk *);
 void v_hide_c(Vwk *);
 void v_clrwk(Vwk *);
@@ -234,7 +253,9 @@ void vex_curv(Vwk *);
 void vex_timv(Vwk *);
 
 /* drawing primitives */
-void abline(Vwk *);
+void abline (Vwk * vwk, Line * line);
+void draw_pline(Vwk * vwk);
+
 void arrow(Vwk *, WORD * xy, WORD inc);
 void horzline(Vwk * vwk, WORD x1, WORD x2, WORD y);
 void polygon(Vwk *);
@@ -255,6 +276,7 @@ void vdimouse_exit(Vwk *);
 void esc_exit(Vwk *);
 
 /* all VDI functions */
+
 /* As reference the TOS 1.0 start addresses are added */
 void v_opnwk(Vwk *);          /* 1   - fcb53e */
 void v_clswk(Vwk *);          /* 2   - fcb812 */
@@ -344,7 +366,11 @@ void dqt_name(Vwk *);         /* 130 - fce790 */
 
 void dqt_fontinfo(Vwk *);     /* 131 - fce820 */
 
-
+/* not in original TOS */
+void v_bez_qual(Vwk *);
+void v_bez_control(Vwk *);
+void v_bez_fill(Vwk *);
+void v_bez(Vwk *);
 
 
 #endif                          /* VDIDEF_H */
