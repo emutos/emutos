@@ -11,6 +11,7 @@
  */
 
 #include "natfeat.h"
+#include "kprint.h"
 
 static int hasNF;
 
@@ -72,4 +73,17 @@ long nfStdErr(const char *text)
 long get_xhdi_nfid(void)
 {
     return nfid_xhdi;
+}
+
+/* terminate the execution of the emulato if possible, else no-op */
+extern void nf_shutdown(void)
+{
+    if(hasNF) {
+        long shutdown_id = NFID("NF_SHUTDOWN");
+        if(shutdown_id) {
+            NFCall(shutdown_id);
+        } else {
+            kprintf("NF_SHUTDOWN not available\n");
+        }
+    }
 }

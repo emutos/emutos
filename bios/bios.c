@@ -345,6 +345,8 @@ void biosmain(void)
         trap1_pexec(4, "", pd, "");
     }
 
+    /* try to shutdown the machine if available */
+    nf_shutdown();
     kcprintf(_("System halted!\n"));
     halt();
 }

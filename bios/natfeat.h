@@ -1,4 +1,3 @@
-
 /*
  * natfeat.h - NatFeat header file
  *
@@ -36,5 +35,8 @@ extern long nfStdErr(const char *text);
 
 extern long get_xhdi_nfid(void);
 extern long xhdi_vec(void);
+
+/* terminate the execution of the emulato if possible, else no-op */
+extern void nf_shutdown(void);
 
 #endif /* _NATFEAT_H */
