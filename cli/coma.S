@@ -28,9 +28,9 @@
         .globl  _exeflg
         .globl  _jb
         .globl  _devector       // SCC  22 Mar 85
-        .globl  _emucon
+        .globl  _ui_start
 
-_emucon:
+_ui_start:
         move.l  #mystak,a5
         move.l  4(sp),-(a5)
         clr.l   -(a5)           // bogus return address

@@ -77,7 +77,8 @@ extern void cartscan(WORD);     /* found in startup.S */
 extern void strtautoexec(void); /* found in startup.S */
 extern void launchautoexec(PD *); /* found in startup.S */
 
-extern void emucon(void);       /* found in cli/coma.S - start of CLI */
+extern void ui_start(void);   /* found in cli/coma.S or aes/gemstart.S */
+                              /* it is the start addr. of  the user interface */
 
 long xmaddalt(long start, long size); /* found in bdos/mem.h */
 
@@ -177,8 +178,7 @@ void startup(void)
     nls_set_lang(get_lang_name());
     
 
-
-    exec_os = &emucon;          /* set start of console program */
+    exec_os = &ui_start;        /* set start of user interface */
 
     osinit();                   /* initialize BDOS */
   
@@ -257,7 +257,7 @@ void do_autoexec(void)
  * biosmain - c part of the bios init code
  *
  * Print some status messages
- * exec the shell command.prg
+ * exec the user interface (shell or aes)
  */
 
 void biosmain(void)

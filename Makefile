@@ -21,6 +21,21 @@
 #
 # Laurent.
 
+
+#
+# the country. should be a lowercase two-letter code as found in
+# the table in tools/mkheader.c and bios/country.c
+#
+
+COUNTRY = us
+
+#
+# Choose the user interface that should be included into EmuTOS
+# (0=command line "EmuCON" , 1=AES)
+
+WITH_AES = 0
+
+
 #
 # crude machine detection (Unix or Cygwin)
 #
@@ -42,13 +57,6 @@ LOCALCONF = -DLOCALCONF
 else
 LOCALCONF = 
 endif
-
-#
-# the country. should be a lowercase two-letter code as found in
-# the table in tools/mkheader.c and bios/country.c
-#
-
-COUNTRY = us
 
 # 
 # compilation flags
@@ -179,8 +187,17 @@ VDISOBJ  = $(VDISSRC:%.S=obj/%.o)
 AESCOBJ  = $(AESCSRC:%.c=obj/%.o)
 AESSOBJ  = $(AESSSRC:%.S=obj/%.o)
 
-SOBJ = $(BIOSSOBJ) $(BDOSSOBJ) $(UTILSOBJ) $(CONSSOBJ) $(VDISOBJ) $(AESSOBJ)
-COBJ = $(BIOSCOBJ) $(BDOSCOBJ) $(UTILCOBJ) $(CONSCOBJ) $(VDICOBJ) $(AESCOBJ)
+# Selects the user interface (EmuCON or AES):
+ifeq ($(WITH_AES),0)
+UICOBJ = $(CONSCOBJ)
+UISOBJ = $(CONSSOBJ)
+else
+UICOBJ = $(AESCOBJ)
+UISOBJ = $(AESSOBJ)
+endif
+
+COBJ = $(BIOSCOBJ) $(BDOSCOBJ) $(UTILCOBJ) $(VDICOBJ) $(UICOBJ)
+SOBJ = $(BIOSSOBJ) $(BDOSSOBJ) $(UTILSOBJ) $(VDISOBJ) $(UISOBJ)
 OBJECTS = $(SOBJ) $(COBJ) 
 
 #
