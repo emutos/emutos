@@ -23,6 +23,7 @@
 #include "gemerror.h"
 #include "string.h"
 #include "../bios/kprint.h"
+#include "../bios/processor.h"
 
 #define DBGPROC 0
 
@@ -302,7 +303,7 @@ static long do_xexec(char *s)
     rc = xpgmhdrld(s, &hdr, &fh);
     if(rc) {
 #if DBGPROC
-        kprintf("BDOS: xexec - error returned from xpgmld = %ld (0x%lx)\n",rc , rc);
+        kprintf("BDOS: xexec - error returned from xpgmhdrld = %ld (0x%lx)\n",rc , rc);
 #endif
         return(rc);
     }
@@ -373,6 +374,12 @@ static long do_xexec(char *s)
         xmfree((long)p);
         return(rc);
     }
+    
+    /* invalidate instruction cache for the TEXT segment only
+     * programs that jump into their DATA, BSS or HEAP are kindly invited 
+     * to do their cache management themselves.
+     */
+    invalidate_icache(((char *)p) + sizeof(PD), hdr.h01_tlen);
 
     if(flg != PE_LOAD) 
         proc_go(p);

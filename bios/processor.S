@@ -21,6 +21,7 @@
 /* References */
 
         .global _processor_init
+        .global _invalidate_icache
         .global _mcpu
         .global _fputype
         .global _detect_cpu
@@ -197,6 +198,35 @@ _processor_init:
 m68000:
         jsr     _detect_fpu
         move.l  d0,_fputype
+
+        cmp.b   #40,_mcpu+3
+        bne     done
+        
+// On a 68040 only, clear the instruction cache then activate it;
+// the data cache remains disabled.
+        nop
+        dc.w    0xf498          // cinva   ic
+        nop
+        move.l  #0x8000,d0
+        dc.l    0x4e7b0002      // movec   d0,cacr
+done:
+        rts
+
+/*
+ * void invalidate_icache(void *start, long length)
+ * invalidate the instruction cache for addresses in the specified zone.
+ *
+ * We're lazy here and invalidate all the cache. A real implementation
+ * would invalidate only the needed pages using several cinvp ic,(a0). 
+ * It is not worth the trouble for EmuTOS right now.
+ */
+
+_invalidate_icache:
+        cmp.b   #40,_mcpu+3
+        bne     done
+        nop
+        dc.w    0xf498          // cinva   ic
+        nop
         rts
 
 

@@ -387,9 +387,8 @@ _criter1:
 /*
  * _int_illegal - illegal instruction handler 
  *
- * We set up a handler on the 68010/20/30/40 to convert 'MOVE SR,...'
- * to 'MOVE CCR,...' at execution time, so that we can support one
- * release of 68XXX software.
+ * Convert an illegal 'MOVE CCR,...' to 'MOVE SR,...' 
+ * (see bios/processor.h for the full story)
  */
 
 _int_illegal:
@@ -397,10 +396,10 @@ _int_illegal:
         movea.l 10(sp),a0               // the offending address
         move.w  (a0),d0                 // the offending instruction
         andi.w  #0xffc0,d0              // isolate move from SR opcode
-        cmpi.w  #0x40c0,d0              // we don't care where "To" was
+        cmpi.w  #0x42c0,d0              // we don't care where "To" was
         bne     ii_back                 // Not a MOVE SR,XX instruction
 
-        ori.w   #0x200,(a0)             // make it MOVE CCR,XX
+        andi.w  #0xfdff,(a0)            // make it MOVE SR,XX
         movem.l (sp)+,d0/a0
         rte
 
@@ -413,9 +412,8 @@ ii_back:
 /*
  * _int_priv - privileged instruction handler
  *      
- * We set up a handler on the 68010/20/30/40 to convert 'MOVE SR,...'
- * to 'MOVE CCR,...' at execution time, so that we can support one
- * release of 680X0 software.
+ * Convert a priviledged 'MOVE SR,...' to 'MOVE CCR,...' 
+ * (see bios/processor.h for the full story)
  */
 
 _int_priv:
@@ -427,6 +425,16 @@ _int_priv:
         bne     pi_back                 // Not a MOVE SR,XX instruction
 
         ori.w   #0x200,(a0)             // make it MOVE CCR,XX
+        
+        cmp.b   #40,_mcpu+3
+        bne     pi_next
+        
+        // 68040 only, invalidate the line holding the opcode only
+        nop
+        dc.w    0xf488                  // cinvl   ic,(a0)
+        nop
+        
+pi_next:
         movem.l (sp)+,d0/a0
         rte
 
