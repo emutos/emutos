@@ -758,3 +758,8 @@ Start... early ages
 15. Apr. 2002
 - finally commited in Czech keyboard (LVL)
 
+16. Apr. 2002
+- bios/mousedrv.S - moved to vdi/mouse.drv, because it is not BIOS (MAD)
+- vdi/mousedrv.S - did put all non-graphical functions here (MAD)
+- vdi/vdimouse.S - did put all graphical functions here (MAD)
+

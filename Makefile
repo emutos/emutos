@@ -33,7 +33,7 @@ COUNTRY = us
 # Choose the user interface that should be included into EmuTOS
 # (0=command line "EmuCON" , 1=AES)
 
-WITH_AES = 0
+WITH_AES = 1
 
 
 #
@@ -104,7 +104,7 @@ BIOSCSRC = kprint.c xbios.c chardev.c blkdev.c bios.c clock.c \
            mouse.c initinfo.c cookie.c machine.c nvram.c country.c \
 	   fntlat2_6.c fntlat2_8.c fntlat2_16.c biosmem.c
 BIOSSSRC = tosvars.S startup.S lineavars.S vectors.S aciavecs.S \
-           processor.S memory.S linea.S conout.S mousedrv.S \
+           processor.S memory.S linea.S conout.S \
            detect.S panicasm.S \
            kprintasm.S
 
@@ -128,11 +128,11 @@ UTILSSRC = memset.S memmove.S nlsasm.S setjmp.S
 # source code in vdi/
 #
 
-VDICSRC = cbssdefs.c isin.c jmptbl.c lisastub.c lisatabl.c \
-          monobj.c monout.c opnwkram.c seedfill.c text.c cbssdefs.c
+VDICSRC = cbssdefs.c isin.c lisastub.c lisatabl.c monobj.c monout.c \
+          opnwkram.c seedfill.c text.c cbssdefs.c jmptbl.c 
 VDISSRC = entry.S bitblt.S bltfrag.S copyrfm.S esclisa.S  \
-          gsxasm1.S gsxasm2.S lisagem.S vdimouse.S newmono.S  \
-          textblt.S tranfm.S gsxvars.S
+          gsxasm1.S gsxasm2.S mousedrv.S lisagem.S vdimouse.S \
+          newmono.S textblt.S tranfm.S gsxvars.S
 
 #
 # source code in aes/

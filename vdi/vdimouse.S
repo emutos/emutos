@@ -20,37 +20,20 @@
 
 /* Locally Defined Constants and Variables */
 
-        .globl  vdimouse_init
-        .globl  vdimouse_exit
-
-        .globl  _vex_butv               // exchange button change vector
-        .globl  _vex_motv               // exchange mouse movement vector
-        .globl  _vex_curv               // exchange cursor change vector
-
-        .globl  _DIS_CUR                // display cursor routine
-        .globl  _HIDE_CUR               // hide cursor routine
-        .globl  _MOV_CUR                // move cursor routine
-        .globl  _XFM_CRFM               // set mouse form
-        .globl  vb_draw                 // vertical blank mouse draw routine
-        .globl  arrow_cdb               // default mouse definition
-        .globl  scrn_clip               // clip the cursor to the screen
-
-        .globl  _MOV_CUR        // External routines used here
-        .globl  _XFM_CRFM
+        .globl  _DIS_CUR        // display cursor routine
+        .globl  _HIDE_CUR       // hide cursor routine
+        .globl  _MOV_CUR        // move cursor routine
+        .globl  _XFM_CRFM       // set mouse form
+        .globl  vb_draw         // vertical blank mouse draw routine
+        .globl  arrow_cdb       // default mouse definition
 
         .globl  _GCHC_KEY
         .globl  _GCHR_KEY
         .globl  _GLOC_KEY
         .globl  _GSHIFT_S
 
-/* Local Constants */
-
-
 /* Externally Defined Labels */
 
-        .xdef   _user_but       // user button vector
-        .xdef   _user_mot       // user motion vector
-        .xdef   _user_cur       // user cursor vector
         .xdef   _newx           // New mouse x position
         .xdef   _newy           // New mouse y position
         .xdef   _draw_flag      // Non-zero means draw mouse form on vblank
@@ -63,7 +46,6 @@
         .xdef   _v_lin_wr       // number of bytes in a scan line
         .xdef   _v_bas_ad       // base address of video planes
         .xdef   _DEV_TAB        // address of device table
-        .xdef   _MOUSE_BT       // mouse button state
         .xdef   _MAP_COL        // color map table
         .xdef   cur_ms_stat     // current mouse status
         .xdef   mouse_cdb       // storage area for mouse form definition
@@ -77,80 +59,6 @@
         .xdef   save_area
         .xdef   save_stat
         .xdef   _mouse_flag     // Non-zero if mouse ints disabled
-
-
-
-/*
- * testmsg - print a test message
- */
-
-testmsg:
-        .ascii "================== mouse button was pressed.\n\0"
-        .even
-
-printtestmsg:
-        pea     testmsg
-        jsr     _kprintf
-        addq    #4,sp
-	rts
-
-/*
- * vdimouse_init - INITIALIZE MOUSE
- *
- * entry:          none
- * exit:           none
- * destroys:       a0
- */
-
-vdimouse_init:
-        /* Init _user_cur vector */
-        // lea.l   printtestmsg,a0
-        lea.l   just_rts,a0             
-        move.l  a0,_user_but            // just rts
-        move.l  a0,_user_mot            // just rts
-        move.l  #_MOV_CUR,_user_cur     // initialize user_cur vector
-
-        /* Move in the default mouse form (presently the arrow) */
-        move.l  _INTIN, -(sp)           // Save the intin pointer and make
-        move.l  #arrow_cdb, _INTIN      // it point to the arrow
-        bsr     _XFM_CRFM               // transform mouse
-        move.l  (sp)+, _INTIN           // Restore INTIN pointer
-
-	clr.l	d0
-        move.w  d0, _MOUSE_BT		// clear the mouse button state
-
-        move.b  d0, _cur_ms_stat	// clear the mouse status
-        move.b  d0, _mouse_flag		// clear the mouse flag
-        move.w  d0, _newx		// set cursor x-coordinate to 0
-        move.w  d0, _newx		// set cursor y-coordinate to 0
-        move.b  d0, _draw_flag		// clear the hide operations counter
-
-        /* Init mouse vbl interrupt */
-        move.l  _vblqueue, a0           // get VBL-queue address
-        move.l  #vb_draw, (a0)          // set GEM VBL-routine (in vdimouse.S)
-
-just_rts:
-        rts
-
-
-
-/*
- * vdimouse_exit - deinitialize/disable mouse
- *
- * Disables the mouse
- *
- * entry:          none
- * exit:           none
- * destroys:       a0
- */
- 
-vdimouse_exit:
-        /* Init _user_cur vector */
-        lea.l   just_rts,a0             
-        move.l  a0,_user_but            // just rts
-        move.l  a0,_user_mot            // just rts
-        move.l  a0,_user_cur            // just rts
-        rts
 
 
 
@@ -300,109 +208,6 @@ no_chg:
         rts
 
 /*
- * scrn_clip - This routine clips the x and y-coordinates of the cursor
- *
- * position to the limits of the screen.
- *
- *      Inputs:
- *         d0 = x coordinate
- *         d1 = y coordinate
- *
- *      Outputs:
- *         d0 = clipped to screen x
- *         d1 = clipped to screen y
- *
- *      Registers Modified: a0
- */
-
-/*
- *      If the new x-coordinate is less than 0 then the cursor will be
- *      placed off the left side of the screen so set its value to 0.
- */
-scrn_clip:
-        lea.l   _DEV_TAB,a0     // get address of device table
-        tst.w   d0              // is new x-coordinate < 0?
-        bge     cl_xmax         // nope - check if greater than maximum value
-        clr.w   d0              // yes - set it to 0
-        bra     cl_y            // now clip the y-coordinate
-
-/*
- *      If the new x-coordinate is greater than the maximum value then the
- *      cursor will be placed off the right side of the screen so set it
- *      to the maximum value.
- */
-cl_xmax:
-        cmp.w   (a0),d0         // is new x-coordinate > maximum value?
-        ble     cl_y            // nope - go clip the y-coordinate
-        move.w  (a0),d0         // yes - set it to the maximum value
-/*
- *      If the new y-coordinate is less than 0 then the cursor will be
- *      placed off the top side of the screen so set its value to 0.
- */
-cl_y:
-        tst.w   d1              // is new y-coordinate < 0?
-        bge     cl_ymax         // nope - check if greater than maximum value
-        clr.w   d1              // yes - set it to 0
-        rts
-
-/*
- *      If the new x-coordinate is greater than the maximum value then the
- *      cursor will be placed off the right side of the screen so set it
- *      to the maximum value.
- */
-cl_ymax:
-        cmp.w   2(a0),d1        // is new y-coordinate > maximum value?
-        ble     cl_done         // nope - done
-        move.w  2(a0),d1        // yes - set it to the maximum value
-cl_done:
-        rts
-
-
-
-/*      
- * mov_cur - moves the mouse cursor to its new location
- *           unless the cursor is currently hidden.
- *
- * Inputs:
- *    d0 = new x-coordinate for mouse cursor
- *    d1 = new y-coordinate for mouse cursor
- *
- * Outputs:        None
- *
- * Registers Modified:     None
- */
-
-/*
- *      Test the mouse cursor hide count.  If it is non-zero then we do
- *      not want to draw the cursor now.
- */
-_MOV_CUR:
-        tst.w   _HIDE_CNT       // is the cursor hidden?
-        bne     mov_cur1        // yes - don't draw it now
-
-/*
- *      The cursor is not currently hidden.  Save the new coordinates for the
- *      cursor, set a flag to signal the need to redraw it, and (if we have
- *      no timer or vertical blank tick) then call the routine that will
- *      remove the cursor from its current location and redraw it in the new
- *      one.  This is a critical region so all interrupts must be turned off.
- */
-        move.w  sr,-(sp)        // save current value of status register
-        ori.w   #0x0700,sr      // mask off all interrupts
-        
-        move.w  d0,_newx        // save new cursor x-coordinate
-        move.w  d1,_newy        // save new cursor y-coordinate
-        bset.b  #0,_draw_flag   // set the 'draw cursor' flag
-#if 0   // not in original TOS        (MAD)
-        bsr     vb_draw         // redraw the cursor
-#endif
-        move.w  (sp)+,sr        // restore the value of the status register
-mov_cur1:
-        rts
-
-
-
-/*
  * vb_draw - moves mouse cursor, GEM VBL routine
  *
  * It removes the mouse cursor from its current location, if necessary,
@@ -453,81 +258,6 @@ vblank_exit:
 
 vblank_noop:
         move.w  (sp)+, sr               // restore interrupt context
-        rts
-
-
-
-/*
- *     _vex_butv
- *
- *      This routine replaces the mouse button change vector with
- *      the address of a user-supplied routine.  The previous value
- *      is returned so that it also may be called when there is a
- *      change in the mouse button status.
- *
- *      Inputs:
- *         contrl[7], contrl[8] - pointer to user routine
- *
- *      Outputs:
- *         contrl[9], contrl[10] - pointer to old routine
- *
- *      Registers Modified:     a0
- */
-
-_vex_butv:
-        move.l  _CONTRL,a0      // get address of CONTRL array
-        move.l  _user_but,18(a0) // store old address in CONTRL
-        move.l  14(a0),_user_but // store new routine address
-        rts
-
-
-
-/*
- *    _vex_motv
- *
- *      This routine replaces the mouse coordinate change vector
- *      with the address of a user-supplied routine.  The previous
- *      value is returned so that it also may be called when there
- *      is a change in the mouse coordinates.
- *
- *      Inputs:
- *         contrl[7], contrl[8] - pointer to user routine
- *
- *      Outputs:
- *         contrl[9], contrl[10] - pointer to old routine
- *
- *      Registers Modified:     a0
- */
-
-_vex_motv:
-        move.l  _CONTRL,a0      // get address of CONTRL array
-        move.l  _user_mot,18(a0) // store old address in CONTRL
-        move.l  14(a0),_user_mot // store new routine address
-        rts
-
-
-
-/*
- *    _vex_curv
- *
- *      This routine replaces the mouse draw vector with the
- *      address of a user-supplied routine.  The previous value
- *      is returned so that it also may be called when the mouse
- *      is to be drawn.
- *
- *      Inputs:
- *         contrl[7], contrl[8] - pointer to user routine
- *
- *      Outputs:
- *         contrl[9], contrl[10] - pointer to old routine
- *
- *      Registers Modified:     a0
- */
-
-_vex_curv:
-        move.l  _CONTRL,a0      // get address of CONTRL array
-        move.l  _user_cur,18(a0) // store old address in CONTRL
-        move.l  14(a0),_user_cur // store new routine address
         rts
 
 
@@ -1380,5 +1110,7 @@ arrow_cdb:
         .dc.w   0x0300 //%0000001100000000
         .dc.w   0x0180 //%0000000110000000
         .dc.w   0x0000 //%0000000000000000
+
+
 
         .end

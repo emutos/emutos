@@ -31,9 +31,6 @@
 
 #define DBG_MOUSE 0
 
-#define MIN_THRESHOLD 1
-#define MAX_THRESHOLD 20        /* more seems not reasonable... */
-
 
 
 struct param rel_pblock;        /* mouse parameter block */
@@ -128,12 +125,11 @@ void Initmous(WORD type, struct param *param, PTR newvec)
     } else {                    /* if error */
         kbdvecs.mousevec = (void*) just_rts;    /* set dummy vector */
     }
-
-    //return (retval);             // Error  (in void function???)
 }
 
 
 
+#if 0    // mouse in now inited in VDI
 /*
  * mouse_init - Initialize mouse
  */
@@ -175,3 +171,4 @@ void mouse_exit (void)
     /* Set mouse interrupt routine via XBIOS call */
     Initmous(1, &rel_pblock, (PTR)&just_rts);
 }
+#endif
