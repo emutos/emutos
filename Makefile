@@ -62,11 +62,11 @@ BDOSSSRC = rwa.s
 # source code in util/
 #
 
-UTILCSRC = doprintf.c
+UTILCSRC = #doprintf.c  # commented out - not existing yet
 UTILSSRC = 
 
 #
-# everything sould work fine below.
+# everything should work fine below.
 # P for PATH
 
 PBIOSCSRC = $(BIOSCSRC:%=bios/%)
@@ -111,6 +111,9 @@ obj/%.o : util/%.c
 	${CC} ${CFLAGS} -Wall -c -Iutil $< -o $@
 
 obj/%.o : util/%.s
+	$(AS) $(ASFLAGS) $< -o $@
+
+obj/end.o : end.s
 	$(AS) $(ASFLAGS) $< -o $@
 
 #
