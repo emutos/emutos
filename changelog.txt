@@ -135,3 +135,9 @@ Start... early ages
 - 8x16 font in high rez
 - put all default exception vectors in bios/vectors.s
 - clear bss before calling C code.
+
+06. Oct. 2001
+- minor bug in vectors.s
+- linea stubs
+- SetScrren() in xbios.c
+- some malloc debug info.
