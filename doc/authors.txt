@@ -69,3 +69,5 @@ Henk Robbers <h.robbers@chello.nl>
 Jacques-Etienne Rahon "Kevin Flynn" <kevin.flynn@wanadoo.fr>
 - extensive demo testing on STeeM
 
+Patrice Mandin
+- Hints and patches for compiling EmuTOS with GCC 3.x

@@ -92,7 +92,7 @@ INDENT = indent -kr
 
 # Linker with relocation information and binary output (image)
 LD = $(CC) -nostartfiles -nostdlib
-LDFLAGS = -Xlinker -oformat -Xlinker binary -lgcc 
+LDFLAGS = -Xlinker --oformat -Xlinker binary -lgcc 
 LDFLAGS_T1 = -Xlinker -Ttext=0xfc0000 -Xlinker -Tbss=0x000000 
 LDFLAGS_T2 = -Xlinker -Ttext=0xe00000 -Xlinker -Tbss=0x000000 
 
@@ -395,7 +395,7 @@ emutos.st: mkflop$(EXE) bootsect.img ramtos.img
 	./mkflop$(EXE)
 
 bootsect.img : obj/bootsect.o
-	$(LD) -Xlinker -oformat -Xlinker binary -o $@ obj/bootsect.o
+	$(LD) -Xlinker --oformat -Xlinker binary -o $@ obj/bootsect.o
 
 mkflop$(EXE) : tools/mkflop.c
 	$(NATIVECC) -o $@ $<

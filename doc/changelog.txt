@@ -1700,3 +1700,6 @@ bios/vt52.c:   hardware independent rest of vt52 console (MAD)
 
 2004-10-19
 bios/conout.c: some integer overflow bugs fixed (MAD)
+
+2004-11-24
+- Makefile: Replaced "-oformat" by "--oformat" (THH)
