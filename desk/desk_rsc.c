@@ -124,9 +124,7 @@ static const TEDINFO desk_rs_tedinfo_rom[] = {
      IBM, 0, TE_LEFT, 4352, 0, 0, 12, 20},      /* 16 */
 
     {0L,
-     
-     (LONG)
-     N_("Parameters:  ____________________________________________________"),
+     (LONG)  N_("Parameters:  ____________________________________________________"),
      (LONG) "X",
      IBM, 0, TE_LEFT, 4352, 0, 0, 53, 66},      /* 17 */
 
@@ -839,723 +837,722 @@ static const OBJECT desk_rs_obj_rom[] = {
      OUTLINED,
      (long) 135424L,
      0, 0, 71, 10},
-    {
-     2, -1, -1, G_STRING,                   /*** 1 ***/
+
+   { 2, -1, -1, G_STRING,                   /*** 1 ***/
      NONE,
      NORMAL,
      (long) N_("OPEN APPLICATION"),
      3, 1, 16, 1},
-    {
-     3, -1, -1, G_FBOXTEXT,                 /*** 2 ***/
+
+   { 3, -1, -1, G_FBOXTEXT,                 /*** 2 ***/
      EDITABLE,
      NORMAL,
      (long) &desk_rs_tedinfo[16],
      9, 3, 19, 1},
-    {
-     4, -1, -1, G_FBOXTEXT,                 /*** 3 ***/
+
+   { 4, -1, -1, G_FBOXTEXT,                 /*** 3 ***/
      EDITABLE,
      NORMAL,
      (long) &desk_rs_tedinfo[17],
      3, 4, 65, 1},
-    {
-     5, -1, -1, G_BUTTON,                   /*** 4 ***/
+
+   { 5, -1, -1, G_BUTTON,                   /*** 4 ***/
      SELECTABLE | DEFAULT | EXIT,
      NORMAL,
      (long) rs_str_OK,
      51, 8, 8, 1},
-    {
-     6, -1, -1, G_BUTTON,                   /*** 5 ***/
+
+   { 6, -1, -1, G_BUTTON,                   /*** 5 ***/
      SELECTABLE | EXIT,
      NORMAL,
      (long) rs_str_Cancel,
      61, 8, 8, 1},
-    {
-     7, -1, -1, G_STRING,                   /*** 6 ***/
+
+   { 7, -1, -1, G_STRING,                   /*** 6 ***/
      NONE,
      NORMAL,
      (long) N_("Enter the name of the document you want"),
      3, 6, 39, 1},
-    {
-     8, -1, -1, G_STRING,                   /*** 7 ***/
+
+   { 8, -1, -1, G_STRING,                   /*** 7 ***/
      NONE,
      NORMAL,
      (long) N_("to load, or enter parameter values that"),
      3, 7, 39, 1},
-    {
-     0, -1, -1, G_STRING,                   /*** 8 ***/
+
+   { 0, -1, -1, G_STRING,                   /*** 8 ***/
      LASTOB,
      NORMAL,
      (long) N_("are acceptable to this application."),
      3, 8, 35, 1},
-    {
+
 #define TR7 103
 /* TREE 7 */
-     -1, 1, 10, G_BOX,                      /*** 0 ***/
+   { -1, 1, 10, G_BOX,                      /*** 0 ***/
      NONE,
      OUTLINED,
      (long) 135424L,
      0, 0, 59, 9},
-    {
-     2, -1, -1, G_STRING,                   /*** 1 ***/
+
+   { 2, -1, -1, G_STRING,                   /*** 1 ***/
      NONE,
      NORMAL,
      (long) N_("INSTALL DISK DRIVE"),
      3, 1, 18, 1},
-    {
-     3, -1, -1, G_FBOXTEXT,                 /*** 2 ***/
+
+   { 3, -1, -1, G_FBOXTEXT,                 /*** 2 ***/
      EDITABLE,
      NORMAL,
      (long) &desk_rs_tedinfo[18],
      3, 3, 20, 1},
-    {
-     4, -1, -1, G_FBOXTEXT,                 /*** 3 ***/
+
+   { 4, -1, -1, G_FBOXTEXT,                 /*** 3 ***/
      EDITABLE,
      NORMAL,
      (long) &desk_rs_tedinfo[19],
      9, 4, 25, 1},
-    {
-     5, -1, -1, G_STRING,                   /*** 4 ***/
+
+   { 5, -1, -1, G_STRING,                   /*** 4 ***/
      NONE,
      NORMAL,
      (long) N_("Disk type:"),
      10, 6, 10, 1},
-    {
-     8, 6, 7, G_IBOX,                       /*** 5 ***/
+
+   { 8, 6, 7, G_IBOX,                       /*** 5 ***/
      NONE,
      NORMAL,
      (long) 0L,
      20, 6, 24, 1},
-    {
-     7, -1, -1, G_BUTTON,                   /*** 6 ***/
+
+   { 7, -1, -1, G_BUTTON,                   /*** 6 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) N_("Floppy"),
      2, 0, 8, 1},
-    {
-     5, -1, -1, G_BUTTON,                   /*** 7 ***/
+
+   { 5, -1, -1, G_BUTTON,                   /*** 7 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) N_("Hard"),
      12, 0, 8, 1},
-    {
-     9, -1, -1, G_BUTTON,                   /*** 8 ***/
+
+   { 9, -1, -1, G_BUTTON,                   /*** 8 ***/
      SELECTABLE | EXIT,
      NORMAL,
      (long) rs_str_Install,
      47, 2, 8, 1},
-    {
-     10, -1, -1, G_BUTTON,                  /*** 9 ***/
+
+   { 10, -1, -1, G_BUTTON,                  /*** 9 ***/
      SELECTABLE | EXIT,
      NORMAL,
      (long) rs_str_Remove,
      47, 4, 8, 1},
-    {
-     0, -1, -1, G_BUTTON,                   /*** 10 ***/
+
+   { 0, -1, -1, G_BUTTON,                   /*** 10 ***/
      SELECTABLE | DEFAULT | EXIT | LASTOB,
      NORMAL,
      (long) rs_str_Cancel,
      47, 6, 8, 1},
-    {
+
 #define TR8 114
 /* TREE 8 */
-     -1, 1, 33, G_BOX,                      /*** 0 ***/
+
+   { -1, 1, 33, G_BOX,                      /*** 0 ***/
      NONE,
      OUTLINED,
      (long) 135424L,
-     0, 0, 64, 20},
-    {
-     2, -1, -1, G_STRING,                   /*** 1 ***/
+     0, 0, 64, 20 },
+
+   { 2, -1, -1, G_STRING,                   /*** 1 ***/
      NONE,
      NORMAL,
      (long) N_("CONFIGURE APPLICATION"),
-     3, 1, 21, 1},
-    {
-     3, -1, -1, G_FBOXTEXT,                 /*** 2 ***/
+     3, 1, 21, 1 },
+
+   { 3, -1, -1, G_FBOXTEXT,                 /*** 2 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[20],
-     4, 3, 32, 1},
-    {
-     4, -1, -1, G_STRING,                   /*** 3 ***/
+     4, 3, 32, 1 },
+
+   { 4, -1, -1, G_STRING,                   /*** 3 ***/
      NONE,
      NORMAL,
      (long) N_("Document types:"),
-     6, 4, 15, 1},
-    {
-     5, -1, -1, G_FBOXTEXT,                 /*** 4 ***/
+     6, 4, 15, 1 },
+
+   { 5, -1, -1, G_FBOXTEXT,                 /*** 4 ***/
      EDITABLE,
      NORMAL,
      (long) &desk_rs_tedinfo[21],
-     23, 4, 3, 1},
-    {
-     6, -1, -1, G_FBOXTEXT,                 /*** 5 ***/
+     23, 4, 3, 1 },
+
+   { 6, -1, -1, G_FBOXTEXT,                 /*** 5 ***/
      EDITABLE,
      NORMAL,
      (long) &desk_rs_tedinfo[22],
-     28, 4, 3, 1},
-    {
-     7, -1, -1, G_FBOXTEXT,                 /*** 6 ***/
+     28, 4, 3, 1 },
+
+   { 7, -1, -1, G_FBOXTEXT,                 /*** 6 ***/
      EDITABLE,
      NORMAL,
      (long) &desk_rs_tedinfo[23],
-     33, 4, 3, 1},
-    {
-     8, -1, -1, G_FBOXTEXT,                 /*** 7 ***/
+     33, 4, 3, 1 },
+
+   { 8, -1, -1, G_FBOXTEXT,                 /*** 7 ***/
      EDITABLE,
      NORMAL,
      (long) &desk_rs_tedinfo[24],
-     38, 4, 3, 1},
-    {
-     9, -1, -1, G_FBOXTEXT,                 /*** 8 ***/
+     38, 4, 3, 1 },
+
+   { 9, -1, -1, G_FBOXTEXT,                 /*** 8 ***/
      EDITABLE,
      NORMAL,
      (long) &desk_rs_tedinfo[25],
-     43, 4, 3, 1},
-    {
-     10, -1, -1, G_FBOXTEXT,                /*** 9 ***/
+     43, 4, 3, 1 },
+
+   { 10, -1, -1, G_FBOXTEXT,                /*** 9 ***/
      EDITABLE,
      NORMAL,
      (long) &desk_rs_tedinfo[26],
-     48, 4, 3, 1},
-    {
-     11, -1, -1, G_FBOXTEXT,                /*** 10 ***/
+     48, 4, 3, 1 },
+
+   { 11, -1, -1, G_FBOXTEXT,                /*** 10 ***/
      EDITABLE,
      NORMAL,
      (long) &desk_rs_tedinfo[27],
-     53, 4, 3, 1},
-    {
-     12, -1, -1, G_FBOXTEXT,                /*** 11 ***/
+     53, 4, 3, 1 },
+
+   { 12, -1, -1, G_FBOXTEXT,                /*** 11 ***/
      EDITABLE,
      NORMAL,
      (long) &desk_rs_tedinfo[28],
-     58, 4, 3, 1},
-    {
-     13, -1, -1, G_STRING,                  /*** 12 ***/
+     58, 4, 3, 1 },
+
+   { 13, -1, -1, G_STRING,                  /*** 12 ***/
      NONE,
      NORMAL,
      (long) N_("Application type:"),
-     4, 6, 17, 1},
-    {
-     17, 14, 16, G_IBOX,                    /*** 13 ***/
+     4, 6, 17, 1 },
+
+   { 17, 14, 16, G_IBOX,                    /*** 13 ***/
      NONE,
      NORMAL,
      (long) 4352L,
-     23, 6, 39, 1},
-    {
-     15, -1, -1, G_BUTTON,                  /*** 14 ***/
+     23, 6, 39, 1 },
+
+   { 15, -1, -1, G_BUTTON,                  /*** 14 ***/
      SELECTABLE | RBUTTON | TOUCHEXIT,
      NORMAL,
      (long) "GEM",
-     0, 0, 6, 1},
-    {
-     16, -1, -1, G_BUTTON,                  /*** 15 ***/
+     0, 0, 6, 1 },
+
+   { 16, -1, -1, G_BUTTON,                  /*** 15 ***/
      SELECTABLE | RBUTTON | TOUCHEXIT,
      NORMAL,
      (long) "DOS",
-     8, 0, 6, 1},
-    {
-     13, -1, -1, G_BUTTON,                  /*** 16 ***/
+     8, 0, 6, 1 },
+
+   { 13, -1, -1, G_BUTTON,                  /*** 16 ***/
      SELECTABLE | RBUTTON | TOUCHEXIT,
      NORMAL,
      (long) N_("DOS-takes parameters"),
-     16, 0, 22, 1},
-    {
-     18, -1, -1, G_STRING,                  /*** 17 ***/
+     16, 0, 22, 1 },
+
+   { 18, -1, -1, G_STRING,                  /*** 17 ***/
      NONE,
      NORMAL,
      (long) N_("Needs full memory?"),
-     3, 8, 18, 1},
-    {
-     21, 19, 20, G_IBOX,                    /*** 18 ***/
+     3, 8, 18, 1 },
+
+   { 21, 19, 20, G_IBOX,                    /*** 18 ***/
      NONE,
      NORMAL,
      (long) 4352L,
-     23, 8, 15, 1},
-    {
-     20, -1, -1, G_BUTTON,                  /*** 19 ***/
+     23, 8, 15, 1 },
+
+   { 20, -1, -1, G_BUTTON,                  /*** 19 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) rs_str_Yes,
-     0, 0, 6, 1},
-    {
-     18, -1, -1, G_BUTTON,                  /*** 20 ***/
+     0, 0, 6, 1 },
+
+   { 18, -1, -1, G_BUTTON,                  /*** 20 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) rs_str_No,
-     8, 0, 6, 1},
-    {
-     22, -1, -1, G_STRING,                  /*** 21 ***/
+     8, 0, 6, 1 },
+
+   { 22, -1, -1, G_STRING,                  /*** 21 ***/
      NONE,
      NORMAL,
      (long) N_("Icon type:"),
-     11, 10, 10, 1},
-    {
-     23, -1, -1, G_BOXTEXT,                 /*** 22 ***/
+     11, 10, 10, 1 },
+
+   { 23, -1, -1, G_BOXTEXT,                 /*** 22 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[29],
-     23, 10, 27, 1},
-    {
-     26, 24, 25, G_BOX,                     /*** 23 ***/
+     23, 10, 27, 1 },
+
+   { 26, 24, 25, G_BOX,                     /*** 23 ***/
      NONE,
      NORMAL,
      (long) 69888L,
-     23, 11, 24, 6,
-     },
-    {
-     25, -1, -1, G_BOX,                     /*** 24 ***/
+     23, 11, 24, 6 },
+
+   { 25, -1, -1, G_BOX,                     /*** 24 ***/
      NONE,
      NORMAL,
      (long) 69889L,
-     3, 1, 6, 4,
-     },
-    {
-     23, -1, -1, G_BOX,                     /*** 25 ***/
+     3, 1, 6, 4 },
+
+   { 23, -1, -1, G_BOX,                     /*** 25 ***/
      NONE,
      NORMAL,
      (long) 69889L,
-     12, 1, 6, 4,
-     },
-    {
-     31, 27, 29, G_BOX,                     /*** 26 ***/
+     12, 1, 6, 4 },
+
+   { 31, 27, 29, G_BOX,                     /*** 26 ***/
      TOUCHEXIT,
      NORMAL,
      (long) 69888L,
-     47, 11, 3, 6,
-     },
-    {
-     28, -1, -1, G_BOXCHAR,                 /*** 27 ***/
+     47, 11, 3, 6 },
+
+   { 28, -1, -1, G_BOXCHAR,                 /*** 27 ***/
      TOUCHEXIT,
      NORMAL,
      (long) 201396480L,
-     0, 0, 3, 2,
-     },
-    {
-     29, -1, -1, G_BOXCHAR,                 /*** 28 ***/
+     0, 0, 3, 2 },
+
+   { 29, -1, -1, G_BOXCHAR,                 /*** 28 ***/
      TOUCHEXIT,
      NORMAL,
      (long) 218173696L,
-     0, 4, 3, 2,
-     },
-    {
-     26, 30, 30, G_BOX,                     /*** 29 ***/
+     0, 4, 3, 2 },
+
+   { 26, 30, 30, G_BOX,                     /*** 29 ***/
      TOUCHEXIT,
      NORMAL,
      (long) 69905L,
-     0, 2, 3, 2,
-     },
-    {
-     29, -1, -1, G_BOX,                     /*** 30 ***/
+     0, 2, 3, 2 },
+
+   { 29, -1, -1, G_BOX,                     /*** 30 ***/
      TOUCHEXIT,
      NORMAL,
      (long) 69889L,
-     1024, 0, 258, 1},
-    {
-     32, -1, -1, G_BUTTON,                  /*** 31 ***/
+     1024, 0, 258, 1 },
+
+   { 32, -1, -1, G_BUTTON,                  /*** 31 ***/
      SELECTABLE | EXIT,
      NORMAL,
      (long) rs_str_Install,
-     30, 18, 9, 1},
-    {
-     33, -1, -1, G_BUTTON,                  /*** 32 ***/
+     30, 18, 9, 1 },
+
+   { 33, -1, -1, G_BUTTON,                  /*** 32 ***/
      SELECTABLE | EXIT,
      NORMAL,
      (long) rs_str_Remove,
-     42, 18, 8, 1},
-    {
-     0, -1, -1, G_BUTTON,                   /*** 33 ***/
+     42, 18, 8, 1 },
+
+   { 0, -1, -1, G_BUTTON,                   /*** 33 ***/
      SELECTABLE | EXIT | LASTOB,
      NORMAL,
      (long) rs_str_Cancel,
-     53, 18, 8, 1},
-    {
+     53, 18, 8, 1 },
+
 #define TR9 148
 /* TREE 9 */
-     -1, 1, 5, G_BOX,                       /*** 0 ***/
+
+   { -1, 1, 5, G_BOX,                       /*** 0 ***/
      NONE,
      OUTLINED,
      (long) 135424L,
-     0, 0, 34, 8},
-    {
-     2, -1, -1, G_STRING,                   /*** 1 ***/
+     0, 0, 34, 8 },
+
+   { 2, -1, -1, G_STRING,                   /*** 1 ***/
      NONE,
      NORMAL,
      (long) N_("COPY FOLDERS / ITEMS"),
-     3, 1, 20, 1},
-    {
-     3, -1, -1, G_FBOXTEXT,                 /*** 2 ***/
+     3, 1, 20, 1 },
+
+   { 3, -1, -1, G_FBOXTEXT,                 /*** 2 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[30],
-     3, 3, 22, 1},
-    {
-     4, -1, -1, G_FBOXTEXT,                 /*** 3 ***/
+     3, 3, 22, 1 },
+
+   { 4, -1, -1, G_FBOXTEXT,                 /*** 3 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[31],
-     5, 4, 20, 1},
-    {
-     5, -1, -1, G_BUTTON,                   /*** 4 ***/
+     5, 4, 20, 1 },
+
+   { 5, -1, -1, G_BUTTON,                   /*** 4 ***/
      SELECTABLE | DEFAULT | EXIT,
      NORMAL,
      (long) rs_str_OK,
-     13, 6, 8, 1},
-    {
-     0, -1, -1, G_BUTTON,                   /*** 5 ***/
+     13, 6, 8, 1 },
+
+   { 0, -1, -1, G_BUTTON,                   /*** 5 ***/
      SELECTABLE | EXIT | LASTOB,
      NORMAL,
      (long) rs_str_Cancel,
-     23, 6, 8, 1},
-    {
+     23, 6, 8, 1 },
+
 #define TR10 154
 /* TREE 10 */
-     -1, 1, 5, G_BOX,                       /*** 0 ***/
+
+   { -1, 1, 5, G_BOX,                       /*** 0 ***/
      NONE,
      OUTLINED,
      (long) 135424L,
-     0, 0, 30, 8},
-    {
-     2, -1, -1, G_STRING,                   /*** 1 ***/
+     0, 0, 30, 8 },
+
+   { 2, -1, -1, G_STRING,                   /*** 1 ***/
      NONE,
      NORMAL,
      (long) N_("DELETE FOLDERS / ITEMS"),
-     3, 1, 23, 1},
-    {
-     3, -1, -1, G_FBOXTEXT,                 /*** 2 ***/
+     3, 1, 23, 1 },
+
+   { 3, -1, -1, G_FBOXTEXT,                 /*** 2 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[32],
-     3, 3, 24, 1},
-    {
-     4, -1, -1, G_FBOXTEXT,                 /*** 3 ***/
+     3, 3, 24, 1 },
+
+   { 4, -1, -1, G_FBOXTEXT,                 /*** 3 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[33],
-     5, 4, 22, 1},
-    {
-     5, -1, -1, G_BUTTON,                   /*** 4 ***/
+     5, 4, 22, 1 },
+
+   { 5, -1, -1, G_BUTTON,                   /*** 4 ***/
      SELECTABLE | EXIT,
      NORMAL,
      (long) rs_str_OK,
-     9, 6, 8, 1},
-    {
-     0, -1, -1, G_BUTTON,                   /*** 5 ***/
+     9, 6, 8, 1 },
+
+   { 0, -1, -1, G_BUTTON,                   /*** 5 ***/
      SELECTABLE | DEFAULT | EXIT | LASTOB,
      NORMAL,
      (long) rs_str_Cancel,
-     19, 6, 8, 1},
-    {
+     19, 6, 8, 1 },
+
 #define TR11 160
 /* TREE 11 */
-     -1, 1, 6, G_BOX,                       /*** 0 ***/
+
+   { -1, 1, 6, G_BOX,                       /*** 0 ***/
      NONE,
      OUTLINED,
      (long) 135424L,
-     0, 0, 34, 8},
-    {
-     2, -1, -1, G_STRING,                   /*** 1 ***/
+     0, 0, 34, 8 },
+
+   { 2, -1, -1, G_STRING,                   /*** 1 ***/
      NONE,
      NORMAL,
      (long) N_("NAME CONFLICT DURING COPY"),
-     3, 1, 25, 1},
-    {
-     3, -1, -1, G_FBOXTEXT,                 /*** 2 ***/
+     3, 1, 25, 1 },
+
+   { 3, -1, -1, G_FBOXTEXT,                 /*** 2 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[34],
-     3, 3, 27, 1},
-    {
-     4, -1, -1, G_FBOXTEXT,                 /*** 3 ***/
+     3, 3, 27, 1 },
+
+   { 4, -1, -1, G_FBOXTEXT,                 /*** 3 ***/
      EDITABLE,
      NORMAL,
      (long) &desk_rs_tedinfo[35],
-     4, 4, 26, 1},
-    {
-     5, -1, -1, G_BUTTON,                   /*** 4 ***/
+     4, 4, 26, 1 },
+
+   { 5, -1, -1, G_BUTTON,                   /*** 4 ***/
      SELECTABLE | DEFAULT | EXIT,
      NORMAL,
      (long) rs_str_OK,
-     3, 6, 8, 1},
-    {
-     6, -1, -1, G_BUTTON,                   /*** 5 ***/
+     3, 6, 8, 1 },
+
+   { 6, -1, -1, G_BUTTON,                   /*** 5 ***/
      SELECTABLE | EXIT,
      NORMAL,
      (long) rs_str_Cancel,
-     13, 6, 8, 1},
-    {
-     0, -1, -1, G_BUTTON,                   /*** 6 ***/
+     13, 6, 8, 1 },
+
+   { 0, -1, -1, G_BUTTON,                   /*** 6 ***/
      SELECTABLE | EXIT | LASTOB,
      NORMAL,
      (long) N_("Stop"),
-     23, 6, 8, 1},
-    {
+     23, 6, 8, 1 },
+
 #define TR12 167
 /* TREE 12 */
-     -1, 1, 4, G_BOX,                       /*** 0 ***/
+
+   { -1, 1, 4, G_BOX,                       /*** 0 ***/
      NONE,
      OUTLINED,
      (long) 135424L,
-     0, 0, 27, 7},
-    {
-     2, -1, -1, G_STRING,                   /*** 1 ***/
+     0, 0, 27, 7 },
+
+   { 2, -1, -1, G_STRING,                   /*** 1 ***/
      NONE,
      NORMAL,
      (long) N_("NEW FOLDER"),
-     3, 1, 10, 1},
-    {
-     3, -1, -1, G_FBOXTEXT,                 /*** 2 ***/
+     3, 1, 10, 1 },
+
+   { 3, -1, -1, G_FBOXTEXT,                 /*** 2 ***/
      EDITABLE,
      NORMAL,
      (long) &desk_rs_tedinfo[36],
-     3, 3, 19, 1},
-    {
-     4, -1, -1, G_BUTTON,                   /*** 3 ***/
+     3, 3, 19, 1 },
+
+   { 4, -1, -1, G_BUTTON,                   /*** 3 ***/
      SELECTABLE | DEFAULT | EXIT,
      NORMAL,
      (long) rs_str_OK,
-     6, 5, 8, 1},
-    {
-     0, -1, -1, G_BUTTON,                   /*** 4 ***/
+     6, 5, 8, 1 },
+
+   { 0, -1, -1, G_BUTTON,                   /*** 4 ***/
      SELECTABLE | EXIT | LASTOB,
      NORMAL,
      (long) rs_str_Cancel,
-     16, 5, 8, 1},
-    {
+     16, 5, 8, 1 },
+
 #define TR13 172
 /* TREE 13 */
-     -1, 1, 38, G_BOX,                      /*** 0 ***/
+
+   { -1, 1, 38, G_BOX,                      /*** 0 ***/
      NONE,
      OUTLINED,
      (long) 135424L,
-     0, 0, 59, 21},
-    {
-     2, -1, -1, G_STRING,                   /*** 1 ***/
+     0, 0, 59, 21 },
+
+   { 2, -1, -1, G_STRING,                   /*** 1 ***/
      NONE,
      NORMAL,
      (long) N_("SET PREFERENCES"),
-     3, 1, 15, 1},
-    {
-     3, -1, -1, G_STRING,                   /*** 2 ***/
+     3, 1, 15, 1 },
+
+   { 3, -1, -1, G_STRING,                   /*** 2 ***/
      NONE,
      NORMAL,
      (long) N_("Confirm deletes?"),
-     6, 3, 16, 1},
-    {
-     6, 4, 5, G_IBOX,                       /*** 3 ***/
+     6, 3, 16, 1 },
+
+   { 6, 4, 5, G_IBOX,                       /*** 3 ***/
      NONE,
      NORMAL,
      (long) 0L,
-     24, 3, 12, 1},
-    {
-     5, -1, -1, G_BUTTON,                   /*** 4 ***/
+     24, 3, 12, 1 },
+
+   { 5, -1, -1, G_BUTTON,                   /*** 4 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) rs_str_Yes,
-     0, 0, 5, 1},
-    {
-     3, -1, -1, G_BUTTON,                   /*** 5 ***/
+     0, 0, 5, 1 },
+
+   { 3, -1, -1, G_BUTTON,                   /*** 5 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) rs_str_No,
-     7, 0, 5, 1},
-    {
-     7, -1, -1, G_STRING,                   /*** 6 ***/
+     7, 0, 5, 1 },
+
+   { 7, -1, -1, G_STRING,                   /*** 6 ***/
      NONE,
      NORMAL,
      (long) N_("Confirm copies?"),
-     7, 5, 15, 1},
-    {
-     10, 8, 9, G_IBOX,                      /*** 7 ***/
+     7, 5, 15, 1 },
+
+   { 10, 8, 9, G_IBOX,                      /*** 7 ***/
      NONE,
      NORMAL,
      (long) 0L,
-     24, 5, 12, 1},
-    {
-     9, -1, -1, G_BUTTON,                   /*** 8 ***/
+     24, 5, 12, 1 },
+
+   { 9, -1, -1, G_BUTTON,                   /*** 8 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) rs_str_Yes,
-     0, 0, 5, 1},
-    {
-     7, -1, -1, G_BUTTON,                   /*** 9 ***/
+     0, 0, 5, 1 },
+
+   { 7, -1, -1, G_BUTTON,                   /*** 9 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) rs_str_No,
-     7, 0, 5, 1},
-    {
-     11, -1, -1, G_STRING,                  /*** 10 ***/
+     7, 0, 5, 1 },
+
+   { 11, -1, -1, G_STRING,                  /*** 10 ***/
      NONE,
      NORMAL,
      (long) N_("Confirm overwrites?"),
-     3, 7, 19, 1},
-    {
-     14, 12, 13, G_IBOX,                    /*** 11 ***/
+     3, 7, 19, 1 },
+
+   { 14, 12, 13, G_IBOX,                    /*** 11 ***/
      NONE,
      NORMAL,
      (long) 0L,
-     24, 7, 12, 1},
-    {
-     13, -1, -1, G_BUTTON,                  /*** 12 ***/
+     24, 7, 12, 1 },
+
+   { 13, -1, -1, G_BUTTON,                  /*** 12 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) rs_str_Yes,
-     0, 0, 5, 1},
-    {
-     11, -1, -1, G_BUTTON,                  /*** 13 ***/
+     0, 0, 5, 1 },
+
+   { 11, -1, -1, G_BUTTON,                  /*** 13 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) rs_str_No,
-     7, 0, 5, 1},
-    {
-     15, -1, -1, G_STRING,                  /*** 14 ***/
+     7, 0, 5, 1 },
+
+   { 15, -1, -1, G_STRING,                  /*** 14 ***/
      NONE,
      NORMAL,
      (long) N_("Double-click speed:"),
-     3, 9, 19, 1},
-    {
-     21, 16, 20, G_IBOX,                    /*** 15 ***/
+     3, 9, 19, 1 },
+
+   { 21, 16, 20, G_IBOX,                    /*** 15 ***/
      NONE,
      NORMAL,
      (long) 0L,
-     24, 9, 31, 1},
-    {
-     17, -1, -1, G_BUTTON,                  /*** 16 ***/
+     24, 9, 31, 1 },
+
+   { 17, -1, -1, G_BUTTON,                  /*** 16 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) N_("Slow"),
-     0, 0, 7, 1},
-    {
-     18, -1, -1, G_BUTTON,                  /*** 17 ***/
+     0, 0, 7, 1 },
+
+   { 18, -1, -1, G_BUTTON,                  /*** 17 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) "2",
-     9, 0, 3, 1},
-    {
-     19, -1, -1, G_BUTTON,                  /*** 18 ***/
+     9, 0, 3, 1 },
+
+   { 19, -1, -1, G_BUTTON,                  /*** 18 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) "3",
-     14, 0, 3, 1},
-    {
-     20, -1, -1, G_BUTTON,                  /*** 19 ***/
+     14, 0, 3, 1 },
+
+   { 20, -1, -1, G_BUTTON,                  /*** 19 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) "4",
-     19, 0, 3, 1},
-    {
-     15, -1, -1, G_BUTTON,                  /*** 20 ***/
+     19, 0, 3, 1 },
+
+   { 15, -1, -1, G_BUTTON,                  /*** 20 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) N_("Fast"),
-     24, 0, 7, 1},
-    {
-     24, 22, 23, G_IBOX,                    /*** 21 ***/
+     24, 0, 7, 1 },
+
+   { 24, 22, 23, G_IBOX,                    /*** 21 ***/
      NONE,
      NORMAL,
      (long) 0L,
-     24, 11, 20, 1},
-    {
-     23, -1, -1, G_BUTTON,                  /*** 22 ***/
+     24, 11, 20, 1 },
+
+   { 23, -1, -1, G_BUTTON,                  /*** 22 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) N_("Click"),
-     0, 0, 8, 1},
-    {
-     21, -1, -1, G_BUTTON,                  /*** 23 ***/
+     0, 0, 8, 1 },
+
+   { 21, -1, -1, G_BUTTON,                  /*** 23 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) N_("No click"),
-     10, 0, 10, 1},
-    {
-     25, -1, -1, G_STRING,                  /*** 24 ***/
+     10, 0, 10, 1 },
+
+   { 25, -1, -1, G_STRING,                  /*** 24 ***/
      NONE,
      NORMAL,
      (long) N_("To drop down menus:"),
-     3, 11, 19, 1},
-    {
-     26, -1, -1, G_STRING,                  /*** 25 ***/
+     3, 11, 19, 1 },
+
+   { 26, -1, -1, G_STRING,                  /*** 25 ***/
      NONE,
      NORMAL,
      (long) N_("Sound effects:"),
-     8, 13, 14, 1},
-    {
-     29, 27, 28, G_IBOX,                    /*** 26 ***/
+     8, 13, 14, 1 },
+
+   { 29, 27, 28, G_IBOX,                    /*** 26 ***/
      NONE,
      NORMAL,
      (long) 0L,
-     24, 13, 12, 1},
-    {
-     28, -1, -1, G_BUTTON,                  /*** 27 ***/
+     24, 13, 12, 1 },
+
+   { 28, -1, -1, G_BUTTON,                  /*** 27 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) N_("On"),
-     0, 0, 5, 1},
-    {
-     26, -1, -1, G_BUTTON,                  /*** 28 ***/
+     0, 0, 5, 1 },
+
+   { 26, -1, -1, G_BUTTON,                  /*** 28 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) N_("Off"),
-     7, 0, 5, 1},
-    {
-     30, -1, -1, G_STRING,                  /*** 29 ***/
+     7, 0, 5, 1 },
+
+   { 30, -1, -1, G_STRING,                  /*** 29 ***/
      NONE,
      NORMAL,
      (long) N_("Time format:"),
-     10, 15, 12, 1},
-    {
-     33, 31, 32, G_IBOX,                    /*** 30 ***/
+     10, 15, 12, 1 },
+
+   { 33, 31, 32, G_IBOX,                    /*** 30 ***/
      NONE,
      NORMAL,
      (long) 0L,
-     24, 15, 20, 1},
-    {
-     32, -1, -1, G_BUTTON,                  /*** 31 ***/
+     24, 15, 20, 1 },
+
+   { 32, -1, -1, G_BUTTON,                  /*** 31 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) N_("12 Hour"),
-     0, 0, 9, 1},
-    {
-     30, -1, -1, G_BUTTON,                  /*** 32 ***/
+     0, 0, 9, 1 },
+
+   { 30, -1, -1, G_BUTTON,                  /*** 32 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) N_("24 Hour"),
-     11, 0, 9, 1},
-    {
-     34, -1, -1, G_STRING,                  /*** 33 ***/
+     11, 0, 9, 1 },
+
+   { 34, -1, -1, G_STRING,                  /*** 33 ***/
      NONE,
      NORMAL,
      (long) N_("Date format:"),
-     10, 17, 12, 1},
-    {
-     37, 35, 36, G_IBOX,                    /*** 34 ***/
+     10, 17, 12, 1 },
+
+   { 37, 35, 36, G_IBOX,                    /*** 34 ***/
      NONE,
      NORMAL,
      (long) 0L,
-     24, 17, 24, 1},
-    {
-     36, -1, -1, G_BUTTON,                  /*** 35 ***/
+     24, 17, 24, 1 },
+
+   { 36, -1, -1, G_BUTTON,                  /*** 35 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) N_("MM-DD-YY"),
-     0, 0, 11, 1},
-    {
-     34, -1, -1, G_BUTTON,                  /*** 36 ***/
+     0, 0, 11, 1 },
+
+   { 34, -1, -1, G_BUTTON,                  /*** 36 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) N_("DD-MM-YY"),
-     13, 0, 11, 1},
-    {
-     38, -1, -1, G_BUTTON,                  /*** 37 ***/
+     13, 0, 11, 1 },
+
+   { 38, -1, -1, G_BUTTON,                  /*** 37 ***/
      SELECTABLE | DEFAULT | EXIT,
      NORMAL,
      (long) rs_str_OK,
-     36, 19, 8, 1},
-    {
-     0, -1, -1, G_BUTTON,                   /*** 38 ***/
+     36, 19, 8, 1 },
+
+   { 0, -1, -1, G_BUTTON,                   /*** 38 ***/
      SELECTABLE | EXIT | LASTOB,
      NORMAL,
      (long) rs_str_Cancel,
-     47, 19, 8, 1}
+     47, 19, 8, 1 }
 };
 
 

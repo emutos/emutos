@@ -841,10 +841,11 @@ Start... early ages
   CONF_WITH_ACSI in include/config.h (LVL)
 - bios/tosvars.h: hz_200 declared as volatile (LVL)
 
-??. May. 2002
-- ??? changes made by Thomas in following files: ???
-  Makefile .cvsignore aes/crysbind.h aes/gem_rsc.c aes/gemgsxif.c 
-  aes/gemsuper.c bios/linea.S desk/desk_rsc.c
+05. May 2002
+- Makefile : Now linking with gcc instead of ld, so we don't depend
+  on a particular library folder (THH).
+- aes/gemsuper.c : Added a simple fsel_exinput() (THH).
+- Fixed AES keyboard bug (gsx_char() and strlencpy() have been wrong) (THH).
 
 10. May. 2002
 - bios/bios.c: changed the init order. ACSI now works on STonC and STonX.
@@ -878,4 +879,10 @@ Start... early ages
 18. May. 2002
 - vdi/text.c - act_siz implemented in C (asm commented out) (MAD)
 
+30. May 2002
+- aes/* - Removed all "REG"s in old function declarations, GCC seems to
+  have problems with "registered" parameters. This fixes the GEM dialog
+  bug that caused the text fields not to redraw correctly (THH).
+- aes/gemsuper.c - Changed the AES version back to 1.02, seems to work
+  better this way with most applications (THH).
 
