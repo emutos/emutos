@@ -1049,3 +1049,6 @@ Start... early ages
 - bios/bios.c bios/machine.[ch] bios/startup.S - int native_features 
   renamed to int has_natfeats (LVL)
 - bios/initinfo.c - changed wait time from 5 to 2 sec (MAD)
+
+21. Aug. 2002
+- doc/announce.txt - updated for release 0.5 (MAD)

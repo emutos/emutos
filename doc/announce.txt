@@ -1,7 +1,7 @@
 Dear Atari Community!
 
 
-We are happy to announce the first beta release of EmuTOS.
+We are happy to announce the second beta release of EmuTOS.
 
 
 INTRODUCTION
@@ -19,12 +19,14 @@ the OpenSource Gnu General Public Licence (GPL).
 
 DESCRIPTION
 
-EmuTOS is basically made up of four parts:
+EmuTOS is basically made up of six parts:
 
 - The BIOS, which is the basic input output system
 - The XBIOS, which provides the interface to the hardware
 - The BDOS, which are the high level OS routines, what you know as GEMDOS
-- The shell command.prg we use, as long we have no GEM
+- The VDI, the virtual device interface - means the screen driver
+- The AES, the application environment services or window manager
+- The desktop, which is the graphical shell to the user
 
 The BIOS and XBIOS code is our own developement. It is really written from
 scratch and implements nearly all of the TOS 1.0 BIOS functionality, and a
@@ -33,10 +35,16 @@ like printing, midi and serial stuff is missing for now, but may be
 implemented somewhere in the future.
 
 The GEMDOS part is based on Digital Research's GEMDOS sources, which were
-made available under GPL licence in 1999 by Caldera. None of the graphical
-parts like VDI and AES are implemented. Instead we plan to use fVDI and an
-extra AES, like XaAES (just on MiNT) which together with a desktop make
-the GEM you all know and love.
+made available under GPL licence in 1999 by Caldera. 
+
+The graphical parts like VDI and AES are now more or less fully
+implemented. They work in all the graphics modes of the original Atari
+ST. On some emulators EmuTOS can be patched to work with much bigger
+screen resolutions without any problems.
+
+The desktop is not as nice as the original one, but is pretty usable
+now for a start. You are free to use a more advanced desktop
+replacement any time. 
 
 Since EmuTOS just implements the TOS's functionality, you might want to
 use MiNT on it in order to run more modern software. EmuTOS is not an
@@ -64,7 +72,7 @@ HARDWARE
 
 Making EmuTOS running natively on a new hardware platform is more or less
 just a question of driver support for EmuTOS. The same for MiNT, if you'd
-like to have it running over EmuTOS.
+like to have it running on top of EmuTOS.
 
 This is the currently supported Hardware:
 
@@ -78,7 +86,7 @@ This is the currently supported Hardware:
 - PSG
 - ST shifter
 - STE shifter (partitially)
-- ACIAs, IKBD protocol (mouse not tested)
+- ACIAs, IKBD protocol, mouse
 - MegaST Real-Time Clock  (set clock not tested)
 - NVRAM (including RTC)
 - DMA sound
@@ -114,5 +122,3 @@ Your EmuTOS development team.
 --
 written by Martin Doering
 http://emutos.sourceforge.net/
-
-
