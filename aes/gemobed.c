@@ -27,7 +27,6 @@
 
 #include "gemoblib.h"
 #include "gemgraf.h"
-#include "gemglobe.h"
 #include "geminit.h"
 #include "gemrslib.h"
 #include "optimize.h"

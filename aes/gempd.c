@@ -24,7 +24,6 @@
 #include "gemlib.h"
 
 #include "gemdosif.h"
-#include "gemglobe.h"
 #include "geminit.h"
 #include "gemasm.h"
 #include "optimize.h"

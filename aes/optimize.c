@@ -21,7 +21,8 @@
 #include "machine.h"
 #include "taddr.h"
 #include "obdefs.h"
-
+#include "struct.h"
+#include "gemlib.h"
 #include "geminit.h"
 #include "gemrslib.h"
 #include "rectfunc.h"

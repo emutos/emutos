@@ -29,7 +29,7 @@
 #include "gemctrl.h"
 #include "gemmnlib.h"
 #include "gemaplib.h"
-#include "gemglobe.h"
+#include "geminit.h"
 #include "gemevlib.h"
 #include "gemwmlib.h"
 #include "gemasync.h"

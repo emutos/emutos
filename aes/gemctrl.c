@@ -29,7 +29,6 @@
 #include "geminput.h"
 #include "gemevlib.h"
 #include "gemwmlib.h"
-#include "gemglobe.h"
 #include "gemgraf.h"
 #include "gemmnlib.h"
 #include "geminit.h"

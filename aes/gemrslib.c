@@ -27,7 +27,6 @@
 
 #include "gemdos.h"
 #include "gemshlib.h"
-#include "gemglobe.h"
 #include "gemgraf.h"
 #include "geminit.h"
 

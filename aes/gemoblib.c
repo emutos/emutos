@@ -25,7 +25,7 @@
 #include "gemlib.h"
 #include "funcdef.h"
 
-#include "gemglobe.h"
+#include "geminit.h"
 #include "gemgsxif.h"
 #include "gemobjop.h"
 #include "gemgraf.h"
@@ -155,6 +155,15 @@ void ob_format(WORD just, BYTE *raw_str, BYTE *tmpl_str, BYTE *fmt_str)
           ptbeg += inc;
         } /* while */
 } /* ob_format */
+
+
+
+#if MC68K
+static WORD far_call(WORD (*fcode)(), LONG fdata)
+{
+        return (*fcode)(fdata);
+}
+#endif
 
 
 /*

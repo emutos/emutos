@@ -40,7 +40,6 @@
 #include "gemwmlib.h"
 #include "gemrslib.h"
 #include "gemshlib.h"
-#include "gemglobe.h"
 #include "gemfmalt.h"
 #include "gemdosif.h"
 #include "gemasm.h"

@@ -33,7 +33,6 @@
 #include "gemmnlib.h"
 #include "geminit.h"
 #include "gemgraf.h"
-#include "gemglobe.h"
 #include "gemfmlib.h"
 #include "gemevlib.h"
 #include "gemwmlib.h"

@@ -22,7 +22,7 @@
 
 #include "gemobjop.h"
 #include "gemwmlib.h"
-#include "gemglobe.h"
+#include "geminit.h"
 #include "optimize.h"
 #include "rectfunc.h"
 

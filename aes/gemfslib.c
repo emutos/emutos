@@ -31,7 +31,6 @@
 #include "gemfmlib.h"
 #include "gemgsxif.h"
 #include "gemgrlib.h"
-#include "gemglobe.h"
 #include "geminit.h"
 #include "gemsuper.h"
 #include "gemshlib.h"

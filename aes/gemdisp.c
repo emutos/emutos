@@ -30,7 +30,7 @@
 #include "gempd.h"
 #include "gemgsxif.h"
 #include "gemaplib.h"
-#include "gemglobe.h"
+#include "geminit.h"
 #include "gemflag.h"
 #include "gemasm.h"
 #include "optimize.h"

@@ -37,7 +37,7 @@
 #include "gemobed.h"
 #include "optimize.h"
 #include "gemfmalt.h"
-#include "gemglobe.h"
+#include "geminit.h"
 #include "gemmnlib.h"
 
 
