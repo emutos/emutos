@@ -90,7 +90,7 @@ void fatal(const char *fmt, ...)
   vfprintf(stderr, fmt, ap);
   fprintf(stderr, "\n");
   va_end(ap);
-  exit(1);
+  exit(EXIT_FAILURE);
 }
 
 /*
@@ -395,6 +395,7 @@ oh * o_new(void)
 
 void o_free(oh *o)
 {
+  (void)o;
   /* TODO */
 }
 
@@ -953,11 +954,14 @@ void pca_xgettext_gstring(void *this, str *s, char *fname, int lineno)
 
 void pca_xgettext_string(void *this, str *s)
 {
+  (void)this;
   s_free(s);
 }
 
 void pca_xgettext_other(void *this, int c)
 {
+  (void)this;
+  (void)c;
 }
 
 parse_c_action pca_xgettext[] = { {
@@ -981,6 +985,9 @@ void pca_translate_gstring(void *this, str *s, char *fname, int lineno)
   pcati *p = (pcati *) this;
   char *t;
   poe *e;
+
+  (void)fname;
+  (void)lineno;
   
   t = s_detach(s);
   e = o_find(p->o, t);
@@ -1705,7 +1712,7 @@ enum charset_code {
   unknown,
   latin1,
   latin2,
-  atarist,
+  atarist
   /* kamenicky, */
 };
 
@@ -1813,6 +1820,7 @@ void latin1_to_atarist(char *s)
 
 void converter_noop(char *s)
 {
+  (void)s;
 }
 
 typedef void(*converter_t)(char *);
@@ -2200,7 +2208,9 @@ int main(int argc, char **argv)
   } 
 usage:
   fprintf(stderr, "\
-Usage: " TOOLNAME " command\n\
+Usage: " TOOLNAME " command\n");
+
+  fprintf(stderr, "\
 Commands are:\n\
   xgettext       scans source files listed in POTFILES.in \n\
                  and (re)creates messages.pot\n\
@@ -2210,7 +2220,9 @@ Commands are:\n\
   translate xx from.c\n\
                  translates from.c into from.tr.c for language xx.\n\
   make           takes all languages listed in file LINGUAS \n\
-                 and creates the C file(s) for the project\n\
+                 and creates the C file(s) for the project\n");
+
+  fprintf(stderr, "\
 \n\
 Note: " 
 TOOLNAME 
@@ -2219,6 +2231,6 @@ with the original gettext. To have more control on your po files, \n\
 please use the original gettext utilities. You will still need this \n\
 tool to create the C file(s) at the end, though.\n");
   
-  exit(1);
+  exit(EXIT_FAILURE);
 }
 

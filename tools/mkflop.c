@@ -103,7 +103,7 @@ int mkflop(FILE *bootf, FILE *tosf, FILE *flopf)
   return 0;
 }
 
-int main(int argc, char **argv)
+int main(void)
 {
   FILE *bootf, *tosf, *flopf;
 
@@ -119,6 +119,6 @@ int main(int argc, char **argv)
 
 fail:
   fprintf(stderr, "something failed.\n");
-  exit(1);
+  exit(EXIT_FAILURE);
 }
   
