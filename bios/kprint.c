@@ -94,8 +94,15 @@ int kprintf(const char *fmt, ...)
 
 static int vkcprintf(const char *fmt, va_list ap)
 {
+#if 0
+  /* commented out, until one finds a way to know, from here,
+   * whether the vt52 console is running properly
+   */
   vkprintf(fmt, ap);
   return vcprintf(fmt, ap);
+#else
+  return vkprintf(fmt, ap);
+#endif
 }
 
 int kcprintf(const char *fmt, ...)
@@ -129,7 +136,8 @@ static const char *exc_messages[] = {
   "illegal exception", "divide by zero", 
   "datatype overflow (CHK)", 
   "trapv overflow bit error",
-  "privilege violation", "Trace", "LineA", "LineF" };
+  "privilege violation", "Trace", "LineA", "LineF" 
+};
   
 
 void dopanic(const char *fmt, ...)
