@@ -111,7 +111,7 @@ static void pair_start(const char *left)
     set_margin();
     n = cprintf(left);
     cprintf(": ");
-    while(n++ < 17) 
+    while(n++ < 14) 
         cprintf(" ");
     cprintf("\033b!");
 }
@@ -125,7 +125,7 @@ static void pair_end(void)
  * cprint_asctime shows boot date and time in YYYY/MM/DD HH:MM:SS format
  */
 
-void cprint_asctime()
+static void cprint_asctime()
 {
     int years, months, days;
     int hours, minutes, seconds;
@@ -146,10 +146,10 @@ void cprint_asctime()
 
 #ifdef TIMEOUT_ON_BOOT
 /* display help and wait for <TIMEOUT_ON_BOOT> seconds before boot continues */
-void draw_timeout_line()
+static void draw_timeout_line()
 {
 #if TIMEOUT_ON_BOOT > 0
-    char bar[]="                                       ";
+    char bar[]="                                  ";
     int barsize = sizeof(bar);
     int oldidx;
     long start = hz_200;
