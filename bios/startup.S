@@ -181,9 +181,9 @@ memdone:
  * get cartridge-type in d0, else use C glue.
  */
 
-msg_cart:
-        .ascii "BIOS: Cartridge has been initialized ...\n\0"
-        .even
+//msg_cart:
+//        .ascii "BIOS: Cartridge has been initialized ...\n\0"
+//        .even
 
 _cartscan:      
         move.w  4(sp),d0        
