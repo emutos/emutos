@@ -90,7 +90,7 @@
 
                 .ds.l   1       // -910 start angle
 _cur_font:      .ds.l   1       // -906 current VDI font
-                .ds.w   46      // -902
+                .ds.w   23      // -902
 
 
 /* The mouse form storage area: */
@@ -108,14 +108,12 @@ mask_form:      .ds.w   32      // -846 (cdb+10) Storage for mouse mask and curs
 
 _INQ_TAB:
                 .ds.w   45      // -782 information returned from a vq_extnd() 
-                .ds.w   1       // -694 reserved WORD
 
 
 /* Workstation information */
 
 _DEV_TAB:
                 .ds.w   45      // -692 information returned from a v_opnwk()
-                .ds.w   1       // -604 reserved WORD
 
 
 /* Mouse data */
@@ -159,7 +157,7 @@ sav_cxy:        .ds.w   2       // -338 save area for cursor cell coords.
 retsav:         .ds.l   1       // ??? I'm not sure if this is right here
 save_len:       .ds.w   1       // -330
 save_addr:      .ds.l   1       // -328 return address GEMDOS call
-save_stat:      .ds.l   1       // -324
+save_stat:      .ds.w   1       // -324
 
 /* Sprite save buffer */
 
