@@ -36,6 +36,8 @@ Start... early ages
 - Added _lbmove, _bfill, _bmove routines. (These were supposed to be in
   something called TOOLS.ARC which was not supplied by DRI.)
 
+===== MAD working on his own ===============================================
+
 01. May. 2001
 - Started working on GEMDOS -> EmuTOS
 
@@ -112,12 +114,14 @@ Start... early ages
 - Implemented extended TOS 1.02 header - no basepage set in STonX any longer!
 - Did put .org 0x4f2 in front of _sysbase: in tosvars.s
 
+===== Project created on Sourceforge ? ===================================
+
 25. Sep. 2001 
-- linea commented out of cartridge
-- added .even after .ascii strings (odd exception handlers); 
-- changed "dc.w 0" by '\0' at end of .ascii strings.  (rwa.s, startup.s)
-- padded tosvars.s so that _sysbase == 0x4F2
-- fixed (?) malloc() bug (due to missing prototype in fs.h)
+- linea commented out of cartridge (LVL)
+- added .even after .ascii strings (odd exception handlers) (LVL)
+- rwa.s, startup.s - changed "dc.w 0" by '\0' at end of .ascii strings (LVL)
+- padded tosvars.s so that _sysbase == 0x4F2 (LVL)
+- fixed (?) malloc() bug (due to missing prototype in fs.h) (LVL)
 - added/edited some copyright notices on top of files. (rwa.s, startup.s)
 
 26. Sep. 2001
@@ -130,16 +134,16 @@ Start... early ages
 - ensured that the MIDI acia was inited (for KBD to work on stonc) (LVL)
 
 05. Oct. 2001
-- Makefile
-- printf() clone for debug messages
-- 8x16 font in high rez
-- put all default exception vectors in bios/vectors.s
-- clear bss before calling C code.
+- Makefile (LVL)
+- printf() clone for debug messages (LVL)
+- 8x16 font in high rez (LVL)
+- put all default exception vectors in bios/vectors.s (LVL)
+- clear bss before calling C code. (LVL)
 
 06. Oct. 2001
-- minor bug in vectors.s
-- linea stubs
-- SetScrren() in xbios.c
+- minor bug in vectors.s (LVL)
+- linea stubs (LVL)
+- SetScreen() in xbios.c
 - some malloc debug info.
 - added missing util directory (MAD)
 - changed sysvarend to _bssend (it is the BSS, that ends! - got from DRI)
@@ -147,7 +151,7 @@ Start... early ages
 
 08. Oct. 2001
 - started iorec and kbdvbase stuff (aim is to reimplement kbd.c to
-  be compliant with the way TOS does it)
+  be compliant with the way TOS does it) (LVL)
 - some debug info in Malloc(), bios(5)
 
 09. Oct. 2001
@@ -199,7 +203,7 @@ Start... early ages
 - added bconout5 (raw console) (LVL)
 
 21. Oct. 2001
-- mfp xbios functions ; mfp init rewritten using xbios funcs. (LVL)
+- mfp xbios functions; mfp init rewritten using xbios funcs. (LVL)
 - vbl routine: added palette handling and vblqueue. (LVL)
 - misc. xbios routines (vsync, random, ...) (LVL)
 - warning free, automatic built date in command.prg (LVL)
@@ -220,12 +224,12 @@ Start... early ages
 - Changed all *.s assembler files to *.S, changed comments from "|" to "//"
 
 27. Oct. 2001
-- moved screen-related xbios functions in screen.c
-- added sound support (untested) in sound.c
-- added floppy support in floppy.c
-- started rewriting some of startup.c in C code (not completely done yet)
-- started cleaning old VME stuff in bios.c
-- native print is activated by a STONX_NATIVE_PRINT #define in config.h
+- moved screen-related xbios functions in screen.c (LVL)
+- added sound support (untested) in sound.c (LVL)
+- added floppy support in floppy.c (LVL)
+- started rewriting some of startup.c in C code (not completely done yet) (LVL)
+- started cleaning old VME stuff in bios.c (LVL)
+- native print is activated by a STONX_NATIVE_PRINT #define in config.h (LVL)
 
 28. Oct. 2001
 - emutos.img file now is 192 kb (MAD)
@@ -260,7 +264,7 @@ Start... early ages
 - added old VDI sources from DRI (not running yet)
 
 05. Nov. 2001.
-- added forgotten bios/processor.h
+- added forgotten bios/processor.h (MAD)
 
 06. Nov. 2001
 - US kbd default, optional DE and FR kbds, tools to add more KBD defs (LVL)
@@ -654,7 +658,7 @@ Start... early ages
 - vdi/* made prototypes, no warnings anymore, indented whole vdi (MAD) 
 - vdi/* jmptbl.c changed jumptables functions to void - arguments 
   are passed in arrays in VDI, not via stack.  (MAD)
-- vdi/lisagem.S partitially implemented mouse driver
+- vdi/lisagem.S partially implemented mouse driver
   
 13. Mar. 2002
 - bios/bios.c removed mouse_init. Done, when graphics is initialized (MAD)
@@ -662,7 +666,7 @@ Start... early ages
 15. Mar. 2002
 - vdi/lisagem.S - got the mousedriver working (MAD)
 - bios/mouse.c  - Added mouse_init - initial setup of mouse parameters (MAD)
-- bios/mousedrv.S - Seperated the mousedriver from VDI (MAD)
+- bios/mousedrv.S - Separated the mousedriver from VDI (MAD)
 - vdi/lisagem.S - Here is now just the VDI part of mousedriver setup (MAD)
 - bios/lineainit.c - implemented v_pl_dspl (bytes/plane) for VDI (MAD)
 - bios/screen.c - the last patch for real Falcon reverted because it caused
@@ -720,7 +724,7 @@ Start... early ages
 - added po/cs.po from Bohdan for Czech native language support  (MAD)
 
 08. Apr. 2002
-- bios/mousedrv.S - cleaned up a bit. (MAD) 
+- bios/mousedrv.S - cleaned up a bit (MAD) 
 - vdi/lisagem.S - did remove SR saving in tick_int, like in TOS (MAD)
 - aes/* - removed some warnings (MAD)
 - bdos/fs* - replaced NULPTR completely by NULLPTR  (MAD)
@@ -739,14 +743,14 @@ Start... early ages
 - Added additional application stack in aes/gemshlib.c so that it is now
   possible to start another application at least. However, it will still
   crash when it finishs. (THH)
-- Some minor bug fixes in aes and desk. (THH)
+- Some minor bug fixes in aes and desk (THH)
 - Disabled the autoexec stuff in bios/startup.S, I think creating a new
   baspage for that is not really necessary (THH).
 
 11. Apr. 2002
 - Finally found the other bug that caused EmuTOS to crash when running a
-  GEM application (dos_exec() was not reentrant). (THH)
-- Now linking desk_rsc.c into EmuTOS, too. (THH).
+  GEM application (dos_exec() was not reentrant) (THH)
+- Now linking desk_rsc.c into EmuTOS, too (THH)
 
 13. Apr. 2002
 - doc/vdibind.txt - added documentation for vdi routine implementation (MAD)
@@ -901,3 +905,9 @@ Start... early ages
 - bios/detect.S - removed, put into processor.S and vector.S (MAD)
 - bios/vectors.S - put exception stuff here in (mostly from startup.S). (MAD)
 
+22. Jun. 2002
+- Makefile - factored out some code for building sized images (LVL)
+- doc/changelog.txt - editorial changes back in the past (LVL)
+- doc/authors.txt - a first attempt. Please don't feel offended if I forgot
+  something. The idea is to be able in a second phase to remove the 'Authors' 
+  lines in our source file headers that IMHO are not truly meaningful (LVL)
