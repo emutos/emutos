@@ -173,13 +173,13 @@ void vdimouse_init()
 
     user_but = do_nothing;
     user_mot = do_nothing;
-    user_cur = mov_cur;        	/* initialize user_cur vector */
+    user_cur = mov_cur;         /* initialize user_cur vector */
 
     /* Move in the default mouse form (presently the arrow) */
-    pointer = INTIN; 		/* save INTIN */
+    pointer = INTIN;            /* save INTIN */
     INTIN = (WORD *)&arrow_cdb; /* it points to the arrow data */
     xfm_crfm();                 /* transform mouse */
-    INTIN = pointer;        	/* restore old value */
+    INTIN = pointer;            /* restore old value */
 
     MOUSE_BT = 0;               // clear the mouse button state
     cur_ms_stat = 0;            // clear the mouse status

@@ -82,7 +82,7 @@
         
 
 
-	.text
+        .text
         
 
 //
@@ -635,7 +635,7 @@ xbios_ent:              // Max. number of XBIOS entries
 
 
 
-	.bss
+        .bss
 /* save area for trap13/14. */
 save_beg:       ds.w    24*3    // d3-d7/a3-a7, sr, pc, vo = 24 words, 
                                 // multiplied by 3 ("3 level deep reentrant")
@@ -643,4 +643,4 @@ _save_area:                     // End of Save storage
 
 
 
-	.end
+        .end
