@@ -18,6 +18,7 @@
 #include "gemerror.h"
 #include "acsi.h"
 #include "string.h"
+#include "cookie.h"
 
 #include "xhdi.h"
  
@@ -27,6 +28,13 @@
 long nfid_xhdi;
 static long _NF_call  = 0x73014e75L;
 #define nfCall(n)       (((long (*)(long, ...))&_NF_call)n)
+
+/*=========================================================================*/
+
+void create_XHDI_cookie()
+{
+    cookie_add(COOKIE_XHDI, (long)xhdi_vec);
+}
 
 /*=========================================================================*/
 
