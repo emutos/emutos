@@ -631,3 +631,6 @@ Start... early ages
 
 03. Feb. 2002
 - bios/screen.c - do not change VIDEL freq by Shifter init code (joy)
+- bios/blkdev.c - buf must be incremented (thanks Laurent) (joy)
+                - getbpb no more divide by zero error (thanks Laurent) (joy)
+- bios/floppy.c - corrent blkdev[].unit init for floppy B: (thx Laurent) (joy)
