@@ -110,10 +110,10 @@ void v_pline()
     LN_MASK = (l < 6) ? LINE_STYLE[l] : work_ptr->ud_ls;
 
     l = work_ptr->line_color;
-    fg_bp[0] = (l & 1);
-    fg_bp[1] = (l & 2);
-    fg_bp[2] = (l & 4);
-    fg_bp[3] = (l & 8);
+    FG_BP_1 = (l & 1);
+    FG_BP_2 = (l & 2);
+    FG_BP_3 = (l & 4);
+    FG_BP_4 = (l & 8);
 
     if (work_ptr->line_width == 1) {
         pline();
@@ -502,10 +502,10 @@ void plygn()
     REG WORD *pointer, i, k;
 
     i = cur_work->fill_color;
-    fg_bp[0] = (i & 1);
-    fg_bp[1] = (i & 2);
-    fg_bp[2] = (i & 4);
-    fg_bp[3] = (i & 8);
+    FG_BP_1 = (i & 1);
+    FG_BP_2 = (i & 2);
+    FG_BP_3 = (i & 4);
+    FG_BP_4 = (i & 8);
     LSTLIN = FALSE;
 
     pointer = PTSIN;
@@ -755,10 +755,10 @@ void gdp_rbox()
         i = work_ptr->line_index;
         LN_MASK = (i < 6) ? LINE_STYLE[i] : work_ptr->ud_ls;
         i = work_ptr->line_color;
-        fg_bp[0] = (i & 1);
-        fg_bp[1] = (i & 2);
-        fg_bp[2] = (i & 4);
-        fg_bp[3] = (i & 8);
+        FG_BP_1 = (i & 1);
+        FG_BP_2 = (i & 2);
+        FG_BP_3 = (i & 4);
+        FG_BP_4 = (i & 8);
 
         if (work_ptr->line_width == 1) {
             pline();
@@ -1495,114 +1495,6 @@ void dsf_udpat()
 }
 
 
-#if 0
-/* Set pixel at x, y */
-inline void
-setpixel(UWORD *addr, UWORD offs, int linebit)
-{
-    UWORD noffs;
-
-    noffs = ~offs;
-
-    if (linebit) {
-        switch (WRT_MODE) {
-        case 0:              /* rep */
-            switch (v_planes) {
-            case 4:
-                if (fg_bp[3])
-                    *addr |= offs;
-                else
-                    *addr &= noffs;
-                addr++;
-                if (fg_bp[2])
-                    *addr |= offs;
-                else
-                    *addr &= noffs;
-                addr++;
-            case 2:
-                if (fg_bp[1])
-                    *addr |= offs;
-                else
-                    *addr &= noffs;
-                addr++;
-            default:
-                if (fg_bp[0])
-                    *addr |= offs;
-                else
-                    *addr &= noffs;
-            }
-            break;
-        case 1:              /* or */
-            switch (v_planes) {
-            case 4:
-                if (fg_bp[3])
-                    *addr |= offs;   // set bit
-                addr++;
-                if (fg_bp[2])
-                    *addr |= offs;   // set bit
-                addr++;
-            case 2:
-                if (fg_bp[1])
-                    *addr |= offs;   // set bit
-                addr++;
-            default:
-                if (fg_bp[0])
-                    *addr |= offs;   // set bit
-            }
-            break;
-        case 2:              /* xor */
-            switch (v_planes) {
-            case 4:
-                if (fg_bp[3])
-                    *addr ^= offs;   // xor bit
-                addr++;
-                if (fg_bp[2])
-                    *addr ^= offs;   // xor bit
-                addr++;
-            case 2:
-                if (fg_bp[1])
-                    *addr ^= offs;   // xor bit
-                addr++;
-            default:
-                if (fg_bp[0])
-                    *addr ^= offs;   // xor bit
-            }
-            break;
-        default:              /* reverse transparent */
-            switch (v_planes) {
-            case 4:
-                if (fg_bp[3])
-                    *addr &= noffs;
-                addr++;
-                if (fg_bp[2])
-                    *addr &= noffs;
-                addr++;
-            case 2:
-                if (fg_bp[1])
-                    *addr &= noffs;
-                addr++;
-            default:
-                if (fg_bp[0])
-                    *addr &= noffs;
-            }
-        }
-    } else {
-        if (WRT_MODE == 0) {
-            switch (v_planes) {
-            case 4:
-                *addr++ &= noffs;
-                *addr++ &= noffs;
-            case 2:
-                *addr++ &= noffs;
-            default:
-                *addr &= noffs;
-            }
-        }
-    }
-}
-#endif
-
-
 /*
  * abline - draw a line (general purpose)
  *
@@ -1645,6 +1537,7 @@ abline ()
     UWORD msk;
     int plane;
     UWORD linemask;             /* linestyle bits */
+    WORD *color;
 
     /* Make x axis always goind up */
     if (X2 < X1) {
@@ -1678,6 +1571,7 @@ abline ()
     adr += (x1&0xfff0)>>shft_off;      	/* add x coordinate part of addr */
     msk = 0x8000 >> (x1&0xf);          	/* initial bit position in WORD */
     linemask = LN_MASK;                 /* to avoid compiler warning */
+    color = &FG_BP_1;
 
     for (plane = v_planes-1; plane >= 0; plane-- ) {
         void *addr;
@@ -1686,14 +1580,8 @@ abline ()
         WORD  e2;		/* epsilon 2 */
         WORD  loopcnt;
         UWORD bit;
-        int thisplane;
 
         /* load values fresh for this bitplane */
-        if (fg_bp[plane])
-            thisplane = 1;
-        else
-            thisplane = 0;
-
         addr = adr;             /* initial start address for changes */
         bit = msk;		/* initial bit position in WORD */
         linemask = LN_MASK;
@@ -1705,7 +1593,7 @@ abline ()
 
             switch (WRT_MODE) {
             case 3:              /* reverse transparent  */
-                if (thisplane) {
+                if (*color) {
                     for (loopcnt=dx;loopcnt >= 0;loopcnt--) {
                         linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
                         if (linemask&0x0001)
@@ -1751,10 +1639,10 @@ abline ()
                 }
                 break;
             case 1:              /* or */
-                if (thisplane) {
+                if (*color) {
                     for (loopcnt=dx;loopcnt >= 0;loopcnt--) {
                         linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
-                        if (thisplane && linemask&0x0001)
+                        if (linemask&0x0001)
                             *(WORD*)addr |= bit;
                         bit = bit >> 1| bit << 15;
                         if (bit&0x8000)
@@ -1768,7 +1656,7 @@ abline ()
                 } else {
                     for (loopcnt=dx;loopcnt >= 0;loopcnt--) {
                         linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
-                        if (thisplane && linemask&0x0001)
+                        if (linemask&0x0001)
                             *(WORD*)addr &= ~bit;
                         bit = bit >> 1| bit << 15;
                         if (bit&0x8000)
@@ -1782,7 +1670,7 @@ abline ()
                 }
                 break;
             case 0:              /* not */
-                if (thisplane) {
+                if (*color) {
                     for (loopcnt=dx;loopcnt >= 0;loopcnt--) {
                         linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
                         if (linemask&0x0001)
@@ -1807,7 +1695,7 @@ abline ()
 
             switch (WRT_MODE) {
             case 3:              /* reverse transparent */
-                if (thisplane) {
+                if (*color) {
                     for (loopcnt=dy;loopcnt >= 0;loopcnt--) {
                         linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
                         if (linemask&0x0001)
@@ -1853,7 +1741,7 @@ abline ()
                 }
                 break;
             case 1:              /* or */
-                if (thisplane) {
+                if (*color) {
                     for (loopcnt=dy;loopcnt >= 0;loopcnt--) {
                         linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
                         if (linemask&0x0001)
@@ -1884,7 +1772,7 @@ abline ()
                 }
                 break;
             case 0:              /* rep */
-                if (!thisplane)
+                if (!*color)
                     linemask = ~linemask;
                 for (loopcnt=dy;loopcnt >= 0;loopcnt--) {
                     linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
@@ -1901,11 +1789,12 @@ abline ()
                             addr += xinc;
                     }
                 }
-                if (!thisplane)
+                if (!*color)
                     linemask = ~linemask;
             }
         }
         adr+=2;
+        color++;
     }
     LN_MASK = linemask;
 }
@@ -1969,7 +1858,7 @@ void st_fl_ptr()
 /*
  * hzline_rep - draw a horizontal line in replace mode
  *
- * This routine is used by habline() and boxfill()
+ * This routine is used by habline() and rectfill()
  */
 
 static
@@ -1981,8 +1870,10 @@ void hzline_rep(UWORD *addr, int dx, int leftpart, int rightpart, int patind)
     UWORD leftmask;
     int pixels;                   /* counting down the rest of dx */
     int bw;
+    int rest;
     int planes;
     int plane;
+    WORD *color;
     int patadd;               /* advance for multiplane patterns */
 
     /* init adress counter */
@@ -1992,19 +1883,23 @@ void hzline_rep(UWORD *addr, int dx, int leftpart, int rightpart, int patind)
     /* precalculate, what to draw */
     leftmask = ~(0xffff>>leftpart);     /* origin for not left fringe lookup */
     rightmask = 0x7fff>>rightpart;      /* origin for right fringe lookup */
+    rest = 16-leftpart;
 
+    color = &FG_BP_1;
+    //kprintf("planes %d\n", planes);
     for (plane = v_planes-1; plane >= 0; plane-- ) {
 
         /* load values fresh for this bitplane */
-        if (fg_bp[plane])
+        if (*color++)
             pattern = patptr[patind];
         else
             pattern = 0;
+
         adr = addr;
         pixels = dx;
 
         /* check, if the line is completely contained within one WORD */
-        if ((leftpart+pixels) < 16 ) {
+        if (pixels < rest ) {
             UWORD mask;
             UWORD d5;
             /* Isolate the necessary pixels */
@@ -2026,7 +1921,7 @@ void hzline_rep(UWORD *addr, int dx, int leftpart, int rightpart, int patind)
                 *adr = d5;         	/* write back the result */
 
                 adr += planes;;
-                pixels -= 16-leftpart;
+                pixels -= rest;
             }
             /* Full bytes */
             for (bw = pixels >> 4;bw>0;bw--) {
@@ -2058,7 +1953,7 @@ void hzline_rep(UWORD *addr, int dx, int leftpart, int rightpart, int patind)
  * of the mask with the source.  Bits that would be drawn with the background
  * color (black) are left unchanged.
  *
- * This routine is used by habline() and boxfill()
+ * This routine is used by habline() and rectfill()
  */
 
 static
@@ -2068,20 +1963,24 @@ void hzline_or(UWORD *addr, int dx, int leftpart, int rightpart, int patind)
     UWORD pattern;
     UWORD rightmask;
     UWORD leftmask;
+    WORD *color;
     int pixels;                   /* counting down the rest of dx */
     int bw;
     int planes;
     int plane;
     int patadd;               /* advance for multiplane patterns */
 
-    /* init adress counter */
+    /* init start values */
     planes = v_planes;
     patadd = multifill ? 16 : 0;     /* multi plane pattern offset */
+    color = &FG_BP_1;
 
     /* precalculate, what to draw */
     leftmask = ~(0xffff>>leftpart);     /* origin for not left fringe lookup */
     rightmask = 0x7fff>>rightpart;      /* origin for right fringe lookup */
 
+
+    //kprintf("or\n");
     for (plane = v_planes-1; plane >= 0; plane-- ) {
 
         /* load values fresh for this bitplane */
@@ -2090,7 +1989,7 @@ void hzline_or(UWORD *addr, int dx, int leftpart, int rightpart, int patind)
         pixels = dx;
         pattern = patptr[patind];
 
-        if (fg_bp[plane]) {
+        if (*color++) {
             /* check, if the line is completely contained within one WORD */
             if ((leftpart+pixels) < 16 ) {
                 UWORD mask;
@@ -2196,7 +2095,7 @@ void hzline_or(UWORD *addr, int dx, int leftpart, int rightpart, int patind)
 /*
  * hzline_rep - draw a horizontal line in xor mode
  *
- * This routine is used by habline() and boxfill()
+ * This routine is used by habline() and rectfill()
  */
 
 static
@@ -2220,6 +2119,7 @@ void hzline_xor(UWORD *addr, int dx, int leftpart, int rightpart, int patind)
     leftmask = ~(0xffff>>leftpart);     /* origin for not left fringe lookup */
     rightmask = 0x7fff>>rightpart;      /* origin for right fringe lookup */
 
+    //kprintf("xor\n");
     for (plane = v_planes-1; plane >= 0; plane-- ) {
 
         /* load values fresh for this bitplane */
@@ -2288,7 +2188,7 @@ void hzline_xor(UWORD *addr, int dx, int leftpart, int rightpart, int patind)
  * of the mask with the source.  Bits that would be drawn with the background
  * color (black) are left unchanged.
  *
- * This routine is used by habline() and boxfill()
+ * This routine is used by habline() and rectfill()
  */
 
 static
@@ -2298,6 +2198,7 @@ void hzline_nor(UWORD *addr, int dx, int leftpart, int rightpart, int patind)
     UWORD pattern;
     UWORD rightmask;
     UWORD leftmask;
+    WORD *color;
     int pixels;                   /* counting down the rest of dx */
     int bw;
     int planes;
@@ -2307,11 +2208,13 @@ void hzline_nor(UWORD *addr, int dx, int leftpart, int rightpart, int patind)
     /* init adress counter */
     planes = v_planes;
     patadd = multifill ? 16 : 0;     /* multi plane pattern offset */
+    color = &FG_BP_1;
 
     /* precalculate, what to draw */
     leftmask = ~(0xffff>>leftpart);     /* origin for not left fringe lookup */
     rightmask = 0x7fff>>rightpart;      /* origin for right fringe lookup */
 
+    //kprintf("nor\n");
     for (plane = v_planes-1; plane >= 0; plane-- ) {
 
         /* load values fresh for this bitplane */
@@ -2320,7 +2223,7 @@ void hzline_nor(UWORD *addr, int dx, int leftpart, int rightpart, int patind)
         pixels = dx;
         pattern = patptr[patind];
 
-        if (fg_bp[plane]) {
+        if (*color++) {
             pattern = ~pattern;
             /* check, if the line is completely contained within one WORD */
             if ((leftpart+pixels) < 16 ) {

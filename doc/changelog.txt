@@ -1104,3 +1104,6 @@ Start... early ages
                - fixed bugs in horizontal line drawing modes (MAD)
 - vdi/tranfm.S - removed from compile in Makefile (MAD)
 
+25. Sep. 2002 
+- vdi/monout.c - fixed bug in color setting (MAD)
+
