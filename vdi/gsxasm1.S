@@ -22,6 +22,18 @@
 
         .globl  _CLC_FLIT       // calculate fill intersections of vector list
         .globl  _clc_flit       // draw a filled polygone (for linea)
+        .globl  _vec_len        // compute length of a vector
+        .globl  _habline        // draw a horizontal line
+        .globl  _HABLINE        // draw a horizontal line
+        .globl  _abline        // draw a horizontal line
+        .globl  _ABLINE         // draw a line (general purpose)
+        .globl  concat          // convert x,y coordinates to buffer offsets
+        .globl  xline           // alternate entry to HABLINE
+        .globl  ortbl           // OR mask table for line drawing
+        .globl  lf_tab          // left fringe look-up table
+        .globl  htab            // jump table for drawing horizontal lines
+
+
 
 /*
  * Externally defined labels 
@@ -58,7 +70,6 @@
         .xdef   _v_lin_wr
 
         .xdef   _shft_off
-        .xdef   _habline
 
         .bss
         .even
@@ -234,21 +245,11 @@ draw_lp:
         subq.w  #1,d2
         cmp.w   d1,d2           // is start still to left of end?
         blt     dr_lp1          // nope - nothing to draw
-
-        move.w  d0,-(sp)        // save the number of pairs
-        move.l  a1,-(sp)        // save the pointer to the array
-#if 0
         move.w  d1,_X1          // store the adjusted endpoints
         move.w  d2,_X2
-        jsr     _habline       // draw the line segment
-#else
-        move.w  _Y1,d3          // fetch scan-line y.
-        move.w  d3,-(sp)        // Y1
-        move.w  d2,-(sp)        // X2
-        move.w  d1,-(sp)        // X1
-        jsr     _horzline       // draw the line segment
-        addq #6,sp
-#endif
+        move.w  d0,-(sp)        // save the number of pairs
+        move.l  a1,-(sp)        // save the pointer to the array
+        bsr     _HABLINE        // draw the line segment
         move.l  (sp)+,a1        // restore the pointer to the array
         move.w  (sp)+,d0        // restore the number of pairs
 dr_lp1:
@@ -289,23 +290,13 @@ drc_1:
         bgt     drc_end         // yes - nothing to draw
         move.w  d2,d4           // nope - clip right end of line
 drc_2:
+        move.w  d3,_X1          // save the endpoints
+        move.w  d4,_X2
         move.w  d0,-(sp)        // save the number of pairs
         move.w  d1,-(sp)        // save the clip values
         move.w  d2,-(sp)
         move.l  a1,-(sp)        // save pointer to the array
-
-#if 0
-        move.w  d3,_X1          // save the endpoints
-        move.w  d4,_X2
-        jsr     _habline        // draw the line segment
-#else
-        move.w  _Y1,d2          // fetch scan-line y.
-        move.w  d2,-(sp)        // Y1
-        move.w  d4,-(sp)        // X2
-        move.w  d3,-(sp)        // X1
-        jsr     _horzline       // draw the line segment
-        addq #6,sp
-#endif
+        bsr     _HABLINE        // fill the line segment
         move.l  (sp)+,a1        // restore the pointer to the array
         move.w  (sp)+,d2        // restore the clip values
         move.w  (sp)+,d1
@@ -377,5 +368,1537 @@ bs_out:
         rts
 
 
+
+/*
+ * concat - calculate screen offset
+ *
+ *
+ *
+ * This routine converts x and y coordinates into a physical
+ * offset to a word in the screen buffer and an index to the
+ * desired bit within that word.
+ *
+ * input:
+ *    d0.w = x coordinate.
+ *    d1.w = y coordinate.
+ *
+ * output:
+ *    d0.w = word index. (x mod 16)
+ *    d1.l = physical offset -- (y * bytes_per_line) + (x & xmask)>>xshift
+ *
+ * destroys:       nothing
+ */
+
+concat:
+        movem.w d2/d3,-(sp)     // save the registers that get clobbered
+
+/* Convert the y-coordinate into an offset to the start of the scan row. */
+
+        mulu.w  _v_lin_wr,d1    // compute offset to start of scan row
+
+//
+// Compute the bit offset into the desired word, save it, and remove
+// these bits from the x-coordinate.
+//
+        move.w  d0,d2           // save the x-coordinate for later
+        andi.w  #0x000f,d0      // bit offset = x-coordinate mod 16
+        andi.w  #0xfff0,d2      // clear bits for offset into word
+
+//
+// Convert the adjusted x-coordinate to a word offset into the current        
+// scan line.  If the planes are arranged in an interleaved fashion with      
+// a word for each plane then shift the x-coordinate by a value contained     
+// in the shift table.  If the planes are arranged as separate, consecu-      
+// tive entities then divide the x-coordinate by 8 to get the number of bytes.                                                                     
+//
+#if vme10
+        lsr.w   #3,d2           // convert x-coordinate to offset
+#else
+        move.b  _shft_off,d3    // get pre-calculated shift factor
+        lsr.w   d3,d2           // convert x-coordinate to offset
+#endif
+
+//
+// Compute the offset to the desired word by adding the offset to the
+// start of the scan line to the offset within the scan line, restore
+// the clobbered registers, and exit.
+//
+        ext.l   d2
+        add.l   d2,d1           // compute total offset into screen buffer
+        movem.w (sp)+,d2/d3     // restore the clobbered registers
+        rts
+
+
+
+/*
+ * ABLINE - draw a line (general purpose)
+ *
+ * This routine draws a line between (_X1,_Y1) and (_X2,_Y2)
+ * using Bresenham's algorithm.  The line is modified by the
+ * _LN_MASK and _WRT_MODE variables.  This routine handles all
+ * 3 video resolutions.
+ *
+ * Note that for line-drawing in GSX, the background color is
+ * always 0 (i.e., there is no user-settable background color).
+ * This fact allows coding short-cuts in the implementation of
+ * "replace" and "not" modes, resulting in faster execution of
+ * their inner loops.
+ *
+ * input:
+ *     _X1, _Y1, _X2, _Y2 = coordinates.
+ *     num_planes         = number of video planes. (resolution)
+ *     _LN_MASK           = line mask. (for dashed/dotted lines)
+ *     _WRT_MODE          = writing mode:
+ *                              0 => replace mode.
+ *                              1 => or mode.
+ *                              2 => xor mode.
+ *                              3 => not mode.
+ *
+ * output:
+ *     _LN_MASK rotated to proper alignment with (_X2,_Y2).
+ *
+ * destroys:
+ *     nothing (because of added wrapper)
+ */
+
+_abline:
+_ABLINE:
+        // A wrapper, to save the registers 
+        movem.l d2-d7/a2-a6,-(sp)
+        bsr.s   abline
+        movem.l (sp)+,d2-d7/a2-a6
+        rts
+
+//      Initialize the necessary pointers and counters and determine
+//      whether the line should be drawn using x1,y1 or x2,y2 as the
+//      starting point.
+//
+abline:
+        move.l  _v_bas_ad,a5    // get base address of first plane
+        lea     _FG_BP_1,a4     // get address of bit plane mask table
+#if vme10
+        move.w  _v_planes,d3    // get number of planes - 1
+        subq.w  #1,d3
+        moveq.l #2,d6           // get offset to next word in a plane
+        movea.l _v_pl_dspl,a1   // get offset to next video plane
+#else
+        move.w  _v_planes,d3    // get number of video planes
+        move.w  d3,d6           // save it
+        subq.w  #1,d3           // get number of planes - 1
+        add.w   d6,d6           // get offset to next word in plane
+        move.l  #0,a1
+        move.w  d6,a1
+#endif
+        move.w  _v_lin_wr,d7    // get offset to next scan in plane
+        move.w  _X2,d5          // compute delta x
+        sub.w   _X1,d5
+        bmi     swap            // if delta x < 0 then draw from point 2 to 1
+
+//
+//      The point at x1,y1 is to the left of the point at x2,y2 so we will
+//      draw the line using x1,y1 as the starting point.  Compute the address
+//      of the word in the plane that contains the first point in the line.
+//
+        move.w  _X1,d0          // delta x is positive - start from x1,y1
+        move.w  _Y1,d1
+        bsr     concat          // compute offset of x1,y1 into plane
+        adda.l  d1,a5           // get address of word containing first point
+
+//
+//      Compute the delta y of the line.  If the line is horizontal then
+//      draw the line using the routine HABLINE because we can draw the
+//      line much faster that way.
+//
+        move.w  _Y2,d4          // compute delta y
+        sub.w   _Y1,d4
+        bne     nothor          // branch if the line is not horizontal
+
+//
+//      We need to draw a horizontal line.  If we are in the exclusive or
+//      writing mode and this is not the last line in a polyline then
+//      decrement the x-coordinate of the ending point in order to prevent
+//      polylines from xor'ing themselves at the intersection points.
+//
+        cmpi.w  #2,_WRT_MODE    // in xor mode?
+        bne     xln_ok          // nope - don't adjust the line
+        tst.w   _LSTLIN         // last line in a polyline?
+        bne     xln_ok          // nope - don't adjust the line
+        tst.w   d5              // are the start and end points the same?
+        beq     xln_ok          // yes - don't adjust the line
+        subq.w  #1,_X2          // decrement the ending x-coordinate
+xln_ok:
+        bsr     xl_noswap       // call habline to draw the line fast
+        move.w  _X2,d0          // recompute delta x
+        sub.w   _X1,d0
+        bra     xl_out
+
+//
+//      The point at x1,y1 was to the right of the point at x2,y2 resulting
+//      in a negative delta x.  Since we only draw from left to right, use
+//      x2,y2 as the starting point for the line.  Compute the address of
+//      the word in the plane that contains the first point of the line.
+//
+swap:
+        move.w  _X2,d0          // delta x is negative - start from x2,y2
+        move.w  _Y2,d1
+        bsr     concat          // compute offset of x2,y2 into plane
+        adda.l  d1,a5           // get address of word containing first point
+        neg.w   d5              // get absolute value of delta x
+        move.w  _Y1,d4          // compute delta y
+        sub.w   _Y2,d4
+        bne     nothor          // branch if the line is not horizontal
+
+//
+//      We need to draw a horizontal line.  If we are in the exclusive or
+//      writing mode and this is not the last line in a polyline then
+//      decrement the x-coordinate of the ending point in order to prevent
+//      polylines from xor'ing themselves at the intersection points.
+//
+        cmpi.w  #2,_WRT_MODE    // in xor mode?
+        bne     xls_ok          // nope - don't adjust the line
+        tst.w   _LSTLIN         // last line in a polyline?
+        bne     xls_ok          // nope - don't adjust the line
+        tst.w   d5              // are the start and end points the same?
+        beq     xls_ok          // yes - don't adjust the line
+        addq.w  #1,_X2          // shorten the line from the starting end
+        addq.w  #1,d0           // increment the index into the word
+        andi.w  #0x0F,d0                // overflow into the next word?
+        bne     xls_ok          // nope
+        adda.w  d6,a5           // yes - increment pointer to next word
+xls_ok:
+        bsr     xl_swap         // call habline to draw the line fast
+        move.w  _X1,d0          // recompute delta x
+        sub.w   _X2,d0
+xl_out:
+        addq.w  #1,d0           // adjust for true length of the line segment
+        andi.w  #0x000F,d0      // get length mod 16
+        move.w  _LN_MASK,d1     // get the line style
+        rol.w   d0,d1           // rotate it to align the next line segment
+        move.w  d1,_LN_MASK     // save it for the next time through
+        rts
+
+//
+//      We want to draw a line that is not horizontal.  Test delta y to
+//      determine if the slope of the line is positive or negative.  If it
+//      is negative then make delta y positive and the offset to the next
+//      scan line negative.
+nothor:
+        bpl     abnorm          // branch if delta y is positive
+        neg.w   d4              // it's negative - get its absolute value
+        neg.w   d7              // negate the offset to the next scan line
+
+//
+//      The register usages at this point are as follows.
+//
+//      d7 = yinc.              a5 = ptr to 1st word of line.
+//      d6 = xinc.              a1 = offset to next plane (vme/10 only)
+//      d5 = dx.
+//      d4 = dy.
+//      d3 = (# of planes) - 1.
+//
+
+//
+//      Get the or mask for the current index into the word and compare
+//      delta x with delta y to determine which is greater.
+//
+abnorm:
+        asl.w   #1,d0           // convert the word index to a table index
+        move.w  ortbl(pc,d0.w),d0       // get the or mask
+        cmp.w   d4,d5           // which delta is larger?
+        bmi     dygtdx          // delta y - branch to separate code
+
+//
+//      We want to draw a line where delta x is greater than delta y so we
+//      will use the x-axis as the frame of reference.  Initialize the loop
+//      counter for plotting individual pixels, calculate the decision
+//      variables for Bresenham's Algorithm, and jump to the appropriate
+//      line drawing routine for the current writing mode.
+//
+dxgedy:
+        move.w  d5,d2           // loop count = # of pixels - 1
+        asl.w   #1,d4           // e1 = 2dy
+        move.w  d4,a3           // save e1
+        sub.w   d5,d4           // epsilon = 2dy - dx
+        move.w  d4,a2           // e2 = 2dy - 2dx
+        suba.w  d5,a2
+        move.w  _LN_MASK,d1     // get the line mask
+        move.w  _WRT_MODE,d5    // get the writing mode
+        asl.w   #2,d5           // convert it to a word offset
+        move.l  dxge(pc,d5.w),a0        // get address of mode service routine
+        move.w  d0,d5           // get the or table mask
+        not.w   d5              // complement it
+        jmp     (a0)            // go draw the line
+
+//
+//      The register usages at this point are as follows.
+//
+//      d7 = yinc.              a5 = ptr to destination.
+//      d6 = xinc.              a4 = ptr to _FG_BP_1.
+//      d5 = not or table mask. a3 = e1.
+//      d4 = epsilon.           a2 = e2.
+//      d3 = # of bit_planes - 1.
+//      d2 = line loop counter - 1.
+//      d1 = line mask.         a1 = offset to next plane (vme/10 only)
+//      d0 = or table mask.
+//
+
+/*
+ * OR Mask Table                               
+ */
+
+ortbl:          dc.w    0x8000
+                dc.w    0x4000
+                dc.w    0x2000
+                dc.w    0x1000
+                dc.w    0x0800
+                dc.w    0x0400
+                dc.w    0x0200
+                dc.w    0x0100
+                dc.w    0x0080
+                dc.w    0x0040
+                dc.w    0x0020
+                dc.w    0x0010
+                dc.w    0x0008
+                dc.w    0x0004
+                dc.w    0x0002
+                dc.w    0x0001
+
+/*
+ * Write Mode Address Table                                        
+ */
+
+dxge:
+#if rev_vid
+        dc.l    rep_dxge
+        dc.l    or_dxge
+        dc.l    xor_dxge
+        dc.l    nor_dxge
+#else
+        dc.l    rep_dxge
+        dc.l    nor_dxge
+        dc.l    xor_dxge
+        dc.l    or_dxge
+#endif
+
+
+
+/*
+ * rep_dxge - Line Drawing Routine for the Replace Mode
+ *
+ * Used, when Delta X is  greater than Delta Y
+ */
+
+// Save the registers that get clobbered and test whether the current plane 
+// should be written with the line style or 0's for the current drawing color.
+
+rep_dxge:
+        movem.w d0-d2/d4/d5,-(sp)       // save the registers that get clobbered
+        
+        move.l  a5,-(sp)
+        tst.w   (a4)+           // write this plane with pattern or 0's
+#if rev_vid
+        bne     r_dx_ltop       // use pattern
+#else
+        bne     r_dx_rev        // use inverted pattern
+#endif
+        clr.w   d1              // use 0's
+//
+//      If the current bit in the pattern is 0 then clear the current bit
+//      in the plane.  If it is 1 then set the bit in the plane.
+//
+#if !rev_vid
+r_dx_rev:
+        not.w   d1              // invert pattern for reverse video
+#endif
+r_dx_ltop:
+        rol.w   #1,d1           // put current bit of pattern in carry
+        bcc     r_dx_clr        // branch if bit is zero
+r_dx_set:
+        or.w    d0,(a5)         // bit in pattern is 1 - set bit in plane
+        bra     r_dx_xinc
+r_dx_clr:
+        and.w   d5,(a5)         // bit in pattern is 0 - clear bit in plane
+
+//
+//      Update the masks for clearing and setting bits.  If we have overflowed
+//      the current word then update the pointer to the next word in the plane.
+//
+r_dx_xinc:
+        ror.w   #1,d5           // rotate mask for clearing bits
+        ror.w   #1,d0           // rotate mask for setting bits
+        bcc     r_dx_yinc       // branch if no overflow to next word
+        adda.w  d6,a5           // overflowed word - bump pointer to next word
+
+//
+//      If the current value of epsilon is positive then add e2 to epsilon
+//      and increment y (by adding the offset to the next scan in the plane).
+//      Loop until all the bits in the line segment have been drawn.
+//
+r_dx_yinc:
+        tst.w   d4              // epsilon < 0?
+        bmi     r_dx_same1      // yes - don't increment y
+        add.w   a2,d4           // nope - epsilon = epsilon + e2
+        adda.w  d7,a5           // increment y
+        dbra    d2,r_dx_ltop    // loop until done with line segment
+
+//
+//      We are now done drawing the line in the current plane.  Restore the
+//      registers that were clobbered, update the pointer to the next plane,
+//      and test if any additional planes remain to be drawn.
+//
+r_dx_bp:
+        move.l  (sp)+,a5        // restore the clobbered registers
+        movem.w (sp)+,d0-d2/d4/d5
+#if vme10
+        adda.l  a1,a5           // update pointer to next plane
+#else
+        addq.w  #2,a5           // update pointer to next plane
+#endif
+        dbra    d3,rep_dxge     // loop until all planes are drawn
+        bra     abl_out         // take common exit
+
+//
+//      The current value of epsilon is negative so add e1 to epsilon.
+//      Loop until all the bits in the line segment have been drawn.
+//
+r_dx_same1:
+        add.w   a3,d4           // epsilon = epsilon + e1
+        dbra    d2,r_dx_ltop    // loop until done with line segment
+        bra     r_dx_bp         // done - check for more planes to draw
+
+
+
+/*
+ * or_dxge - Line Drawing Routine for the Transparent Mode
+ *
+ * Used, when Delta X is  greater than Delta Y
+ */
+
+// Save the registers that get clobbered and test whether the current
+// plane should be set or cleared for the current foreground color.
+or_dxge:
+        movem.w d0-d2/d4/d5,-(sp)       // save the registers that get clobbered
+        move.l  a5,-(sp)
+#if !rev_vid
+        not.w   d1              // complement the line style
+#endif
+        tst.w   (a4)+           // set bits in this plane for the fgnd color?
+#if rev_vid
+        beq     o_dx_0ltop      // nope - clear bits where mask = fgnd color
+#else
+        bne     o_dx_0ltop      // nope - clear bits where mask = fgnd color
+#endif
+//
+// If the current bit in the mask is set then set the current bit in the line
+// segment to acheive the desired foreground color.  Otherwise, do nothing.
+//
+o_dx_1ltop:
+        rol.w   #1,d1           // get next bit from mask (line style)
+        bcc     o_dx_1xinc      // it is 0 - do nothing
+        or.w    d0,(a5)         // it is 1 - set the current bit in the line
+
+//
+//      Update the mask for setting bits.  If we have overflowed the current
+//      word then update the pointer to the next word in the plane.
+//
+o_dx_1xinc:
+        ror.w   #1,d0           // rotate mask for setting bits
+        bcc     o_dx_1yinc      // branch if no overflow to next word
+        adda.w  d6,a5           // overflowed word - bump pointer to next word
+
+//
+//      If the current value of epsilon is positive then add e2 to epsilon
+//      and increment y (by adding the offset to the next scan in the plane).
+//      Loop until all the bits in the line segment have been drawn.
+//
+o_dx_1yinc:
+        tst.w   d4              // epsilon < 0?
+        bmi     o_dx_1same1     // yes - don't increment y
+        add.w   a2,d4           // nope - epsilon = epsilon +e2
+        adda.w  d7,a5           // increment y
+        dbra    d2,o_dx_1ltop   // loop until done with line segment
+
+//
+//      We are now done drawing the line in the current plane.  Restore the
+//      registers that were clobbered, update the pointer to the next plane,
+//      and test if any additional planes remain to be drawn.
+//
+o_dx_bp:
+        move.l  (sp)+,a5        // restore the clobbered registers
+        movem.w (sp)+,d0-d2/d4/d5
+#if vme10
+        adda.l  a1,a5           // update pointer to next plane
+#else
+        addq.w  #2,a5           // update pointer to next plane
+#endif
+        dbra    d3,or_dxge      // loop until all planes are drawn
+        bra     abl_out         // take common exit
+
+//
+//      The current value of epsilon is negative so add e1 to epsilon.
+//      Loop until all the bits in the line segment have been drawn.
+//
+o_dx_1same1:
+        add.w   a3,d4           // epsilon = epsilon + e1
+        dbra    d2,o_dx_1ltop   // loop until done with line segment
+        bra     o_dx_bp         // done - check for more planes to draw
+
+//
+//      If the current bit in the mask is set then clear the current bit in the
+//      line segment to acheive the desired foreground color.  Otherwise, do
+//      nothing.
+//
+o_dx_0ltop:
+        rol.w   #1,d1           // get next bit from mask (line style)
+        bcc     o_dx_0xinc      // it is 0 - do nothing
+        and.w   d5,(a5)         // it is 1 - clear the current bit in the line
+
+//
+//      Update the mask for clearing bits.  If we have overflowed the current
+//      word then update the pointer to the next word in the plane.
+//
+o_dx_0xinc:
+        ror.w   #1,d5           // rotate mask for clearing bits
+        bcs     o_dx_0yinc      // branch if no overflow to next word
+        adda.w  d6,a5           // overflowed word - bump pointer to next word
+
+//
+//      If the current value of epsilon is positive then add e2 to epsilon
+//      and increment y (by adding the offset to the next scan in the plane).
+//      Loop until all the bits in the line segment have been drawn.
+//
+o_dx_0yinc:
+        tst.w   d4              // epsilon < 0?
+        bmi     o_dx_0same1     // yes - don't increment y
+        add.w   a2,d4           // nope - epsilon = epsilon + e2
+        adda.w  d7,a5           // increment y
+        dbra    d2,o_dx_0ltop   // loop until done with line segment
+        bra     o_dx_bp         // done - check for more planes to draw
+
+//
+//      The current value of epsilon is negative so add e1 to epsilon.
+//      Loop until all the bits in the line segment have been drawn.
+//
+o_dx_0same1:
+        add.w   a3,d4           // epsilon = epsilon + e1
+        dbra    d2,o_dx_0ltop   // loop until done with line segment
+        bra     o_dx_bp         // done - check for more planes to draw
+
+
+/*
+ * xor_dxge - Line Drawing Routine for the Exclusive Or Mode
+ *
+ * Used, when Delta X is  greater than Delta Y
+ */
+
+//
+// Save the registers that get clobbered.
+//
+xor_dxge:
+        movem.w d0-d2/d4,-(sp)  // save the registers that get clobbered
+        move.l  a5,-(sp)
+
+//
+// If the endpoint at x2,y2 should be drawn then don't adjust the line.
+// If the line is a singularity (point) then do nothing.  If we are
+// drawing from x1,y1 then decrement the number of times to go through
+// the pixel drawing loop. If we are drawing from x2,y2 then update
+// epsilon and decrement the loop count without actually drawing the
+// first time through the loop.
+//
+        tst.w   _LSTLIN         // should the final endpoint be omitted?
+        beq     x_dx_ltop       // nope - don't adjust that endpoint
+        and.w   d2,d2           // is line a single point?
+        beq     x_dx_bp         // yes - don't even bother to draw it
+        movea.w _X2,a0          // compute delta x
+        cmpa.w  _X1,a0
+        blt     x_dx_xinc       // drawing from x2,y2 - don't draw first point
+        subq.w  #1,d2           // drawing from x1,y1 - don't draw last point
+
+//
+// If the current bit in the mask is set then exclusive or it with the
+// current bit in the line segment.  Otherwise, do nothing.
+//
+x_dx_ltop:
+        rol.w   #1,d1           // get next bit from mask (line style)
+        bcc     x_dx_xinc       // it is 0 - do nothing
+        eor.w   d0,(a5)         // it is 1 - xor it with bit in line
+
+//
+// Update the mask for exclusive or'ing bits.  If we have overflowed
+// the current word then update the pointer to the next word in the plane.
+//
+x_dx_xinc:
+        ror.w   #1,d0           // rotate mask for xor'ing bits
+        bcc     x_dx_yinc       // branch if no overflow to next word
+        adda.w  d6,a5           // overflow occurred - bump pointer to next word
+
+//
+// If the current value of epsilon is positive then add e2 to epsilon
+// and increment y (by adding the offset to the next scan in the plane).
+// Loop until all the bits in the line segment have been drawn.
+//
+x_dx_yinc:
+        tst.w   d4              // epsilon < 0?
+        bmi     x_dx_same1      // yes - don't increment y
+        add.w   a2,d4           // nope - epsilon = epsilon + e2
+        adda.w  d7,a5           // increment y
+        dbra    d2,x_dx_ltop    // loop until done with line segment
+
+//
+// We are now done drawing the line in the current plane.  Restore the
+// registers that were clobbered, update the pointer to the next plane,
+// and test if any additional planes remain to be drawn.
+//
+x_dx_bp:
+        move.l  (sp)+,a5        // restore the clobbered registers
+        movem.w (sp)+,d0-d2/d4
+#if vme10
+        adda.l  a1,a5           // update pointer to next plane
+#else
+        addq.w  #2,a5           // update pointer to next plane
+#endif
+        dbra    d3,xor_dxge     // loop until all planes are drawn
+
+//
+// General Purpose Exit For ABLINE -- Take the actual number of pixels
+// in the line segment (less 1 if in the xor mode and we are not drawing
+// the last segment in a polyline) modulo 16 and rotate left the line
+// style by that amount.  Save the new line style for next time through.
+//
+abl_out:
+        addq.w  #1,d2           // get number of pixels in the line
+        andi.w  #0x0F,d2                // get it mod 16
+        rol.w   d2,d1           // rotate left the line style that many bits
+        move.w  d1,_LN_MASK     // save the result for next time
+        rts
+
+//
+// The current value of epsilon is negative so add e1 to epsilon.
+// Loop until all the bits in the line segment have been drawn.
+//
+x_dx_same1:
+        add.w   a3,d4           // epsilon = epsilon + e1
+        dbra    d2,x_dx_ltop    // loop until done with line segment
+        bra     x_dx_bp         // done - check for more planes to draw
+
+
+
+/*
+ * nor_dxge - Line Drawing Routine for the Reverse Transparent Mode
+ *
+ * Used, when Delta X is  greater than Delta Y
+ */
+
+//
+// Draw a line in the reverse transparent mode by complementing the
+// line style and calling the code for drawing a line in the transparent
+// mode.
+//
+nor_dxge:
+        not.w   d1              // complement the line style
+        bsr     or_dxge         // call the transparent mode code to draw line
+        not.w   _LN_MASK        // restore the proper states of the style bits
+        rts
+
+        .page
+//
+// We want to draw a line where delta y is greater than delta x so we
+// will use the y-axis as the frame of reference.  Initialize the loop
+// counter for plotting individual pixels, calculate the decision
+// variables for Bresenham's Algorithm, and jump to the appropriate
+// line drawing routine for the current writing mode.
+//
+dygtdx:
+        exg     d4,d5           // swap delta x and delta y
+        move.w  d5,d2           // loop count = # of pixels - 1
+        asl.w   #1,d4           // e1 = 2dx
+        move.w  d4,a3           // save e1
+        sub.w   d5,d4           // epsilon = 2dx - dy
+        move.w  d4,a2           // e2 = 2dx - 2dy
+        suba.w  d5,a2
+        move.w  _LN_MASK,d1     // get the line mask
+        move.w  _WRT_MODE,d5    // get the writing mode
+        asl.w   #2,d5           // convert it to a word offset
+        move.l  dygt(pc,d5.w),a0        // get address of mode service routine
+        move.w  d0,d5           // get the or table mask
+        not.w   d5              // complement it
+        jmp     (a0)            // go draw the line
+
+//
+// The register usages at this point are as follows.
+//
+// d7 = yinc.                   a5 = ptr to destination.
+// d6 = xinc.                   a4 = ptr to _FG_BP_1.
+// d5 = not or table mask.      a3 = e1.
+// d4 = epsilon.                a2 = e2.
+// d3 = # of bit_planes - 1.
+// d2 = line loop counter - 1.
+// d1 = line mask.              a1 = offset to next plane (vme/10 only)
+// d0 = or table mask.
+//
+
+/////////////////////////////////////////////////////////////////////////
+//                                                                      //
+//      Write Mode Address Table                                        //
+//                                                                      //
+/////////////////////////////////////////////////////////////////////////
+dygt:
+#if rev_vid
+        dc.l    rep_dygt
+        dc.l    or_dygt
+        dc.l    xor_dygt
+        dc.l    nor_dygt
+#else
+        dc.l    rep_dygt
+        dc.l    nor_dygt
+        dc.l    xor_dygt
+        dc.l    or_dygt
+#endif
+
+
+/*
+ * rep_dygt - Line Drawing Routine for the Replace Mode
+ *
+ * Used, when Delta Y is greater than Delta X
+ */
+
+//
+// Save the registers that get clobbered and text whether the current
+// plane should be written with the line style or 0's for the current
+// drawing color.
+//
+rep_dygt:
+        movem.w d0-d2/d4/d5,-(sp)       // save the registers that get clobbered
+        move.l  a5,-(sp)
+        tst.w   (a4)+           // write this plane with pattern or 0's?
+#if rev_vid
+        bne     r_dy_ltop       // use pattern
+#else
+        bne     r_dy_rev        // use inverted pattern
+#endif
+        clr.w   d1              // use 0's
+//
+// If the current bit in the pattern is 0 then clear the current bit
+// in the plane.  If it is 1 then set the bit in the plane.
+//
+#if !rev_vid
+r_dy_rev:
+        not.w   d1              // invert pattern for reverse video
+#endif    
+r_dy_ltop:
+        rol.w   #1,d1           // put current bit of pattern in carry
+        bcc     r_dy_clr        // branch if bit is 0
+r_dy_set:
+        or.w    d0,(a5)         // bit in pattern is 1 - set bit in plane
+        bra     r_dy_yinc
+r_dy_clr:
+        and.w   d5,(a5)         // bit in pattern is 0 - clear bit in plane
+
+//
+// Increment y (by adding the offset to the next scan in the plane).
+// If the current value of epsilon is positive then add e2 to epsilon.
+//
+r_dy_yinc:
+        adda.w  d7,a5           // increment y
+        tst.w   d4              // epsilon < 0?
+        bmi     r_dy_same1      // yes - don't increment x
+        add.w   a2,d4           // nope - epsilon = epsilon + e2
+
+//
+// We have a step in x.  Update the masks for clearing and setting bits.
+// If we have overflowed the current word then update the pointer to the
+// next word in the plane.  Loop until all the bits in the line segment
+// have been drawn.
+//
+        ror.w   #1,d5           // rotate mask for clearing bits
+        ror.w   #1,d0           // rotate mask for setting bits
+        bcc     r_dy_llp_end    // branch if no overflow to next word
+        adda.w  d6,a5           // overflowed word - bump pointer to next word
+r_dy_llp_end:
+        dbra    d2,r_dy_ltop    // loop until done with line segment
+
+//
+// We are now done drawing the line in the current plane.  Restore the
+// registers that were clobbered, update the pointer to the next plane,
+// and test if any additional planes remain to be drawn.
+//
+r_dy_bp:
+        move.l  (sp)+,a5        // restore the clobbered registers
+        movem.w (sp)+,d0-d2/d4/d5
+#if vme10
+        adda.l  a1,a5           // update pointer to next plane
+#else
+        addq.w  #2,a5           // update pointer to next plane
+#endif
+        dbra    d3,rep_dygt     // loop until all planes are drawn
+        bra     abl_out         // take common exit
+
+//
+// The current value of epsilon is negative so add e1 to epsilon.
+// Loop until all the bits in the line segment have been drawn.
+//
+r_dy_same1:
+        add.w   a3,d4           // epsilon = epsilon + e1
+        dbra    d2,r_dy_ltop    // loop until done with line segment
+        bra     r_dy_bp         // done - check for more planes to draw
+
+/*
+ * or_dygt - Line Drawing Routine for the Replace Mode
+ *
+ * Used, when Delta X is greater than Delta Y
+ */
+
+//
+//      Save the registers that get clobbered and text whether the current
+//      plane should be set or cleared for the current foreground color.
+//
+or_dygt:
+        movem.w d0-d2/d4/d5,-(sp)       // save the registers that get clobbered
+        move.l  a5,-(sp)
+#if !rev_vid
+        not.w   d1              // complement the line style
+#endif
+        tst.w   (a4)+           // set bits in this plane for the fgnd color?
+#if rev_vid
+        beq     o_dy_0ltop      // nope - clear bits where mask = fgnd color
+#else
+        bne     o_dy_0ltop      // nope - clear bits where mask = fgnd color
+#endif
+//
+//      If the current bit in the mask is set then set the current bit in the
+//      line segment to acheive the desired foreground color.  Otherwise, do
+//      nothing.
+//
+o_dy_1ltop:
+        rol.w   #1,d1           // get next bit from mask (line style)
+        bcc     o_dy_1yinc      // it is 0 - do nothing
+        or.w    d0,(a5)         // it is 1 - set the current bit in the line
+
+//
+//      Increment y (by adding the offset to the next scan in the plane).
+//      If the current value of epsilon is positive then add e2 to epsilon.
+//
+o_dy_1yinc:
+        adda.w  d7,a5           // increment y
+        tst.w   d4              // epsilon < 0?
+        bmi     o_dy_1same1     // yes - don't increment x
+        add.w   a2,d4           // nope - epsilon = epsilon + e2
+
+//
+//      We have a step in x.  Update the mask for setting bits.  If we have
+//      overflowed the current word then update the pointer to the next word
+//      in the plane.  Loop until all bits in the line segment have been drawn.
+//
+        ror.w   #1,d0           // rotate mask for setting bits
+        bcc     o_dy_1llp_end   // branch if no overflow to next word
+        adda.w  d6,a5           // overflowed word - bump pointer to next word
+o_dy_1llp_end:
+        dbra    d2,o_dy_1ltop   // loop until done with line segment
+
+//
+//      We are now done drawing the line in the current plane.  Restore the
+//      registers that were clobbered, update the pointer to the next plane,
+//      and test if any additional planes remain to be drawn.
+//
+o_dy_bp:
+        move.l  (sp)+,a5        // restore the clobbered registers
+        movem.w (sp)+,d0-d2/d4/d5
+#if vme10
+        adda.l  a1,a5           // update pointer to next plane
+#else
+        addq.w  #2,a5           // update pointer to next plane
+#endif
+        dbra    d3,or_dygt      // loop until all planes are drawn
+        bra     abl_out         // take common exit
+
+//
+//      The current value of epsilon is negative so add e1 to epsilon.
+//      Loop until all the bits in the line segment have been drawn.
+//
+o_dy_1same1:
+        add.w   a3,d4           // epsilon = epsilon + e1
+        dbra    d2,o_dy_1ltop   // loop until done with line segment
+        bra     o_dy_bp         // done - check for more planes to draw
+
+//
+//      If the current bit in the mask is set then clear the current bit in the
+//      line segment to acheive the desired foreground color.  Otherwise, do
+//      nothing.
+//
+o_dy_0ltop:
+        rol.w   #1,d1           // get next bit from mask (line style)
+        bcc     o_dy_0yinc      // it is 0 - do nothing
+        and.w   d5,(a5)         // it is 1 - clear the current bit in the line
+
+//
+//      Increment y (by adding the offset to the next scan in the plane).
+//      If the current value of epsilon is positive then add e2 to epsilon.
+//
+o_dy_0yinc:
+        adda.w  d7,a5           // increment y
+        tst.w   d4              // epsilon < 0?
+        bmi     o_dy_0same1     // yes - don't increment x
+        add.w   a2,d4           // nope - epsilon = epsilon + e2
+
+//
+//      We have a step in x.  Update the mask for clearing bits.  If we have
+//      overflowed the current word then update the pointer to the next word
+//      in the plane.  Loop until all bits in the line segment have been drawn.
+//
+        ror.w   #1,d5           // rotate mask for clearing bits
+        bcs     o_dy_0llp_end   // branch if no overflow to next word
+        adda.w  d6,a5           // overflowed word - bump pointer to next word
+o_dy_0llp_end:
+        dbra    d2,o_dy_0ltop   // loop until done with line segment
+        bra     o_dy_bp         // done - check for more planes to draw
+
+//
+//      The current value of epsilon is negative so add e1 to epsilon.
+//      Loop until all the bits in the line segment have been drawn.
+//
+o_dy_0same1:
+        add.w   a3,d4           // epsilon = epsilon + e1
+        dbra    d2,o_dy_0ltop   // loop until done with line segment
+        bra     o_dy_bp
+
+
+/*
+ * xor_dygt - Line Drawing Routine for the Exclusive Or Mode 
+ *
+ * Used, when Delta Y is greater than Delta X
+ */
+
+//      Save the registers that get clobbered.
+xor_dygt:
+        movem.w d0-d2/d4,-(sp)  // save the registers that get clobbered
+        move.l  a5,-(sp)
+
+//
+//      If the endpoint at x2,y2 should be drawn then don't adjust the line.
+//      If the line is a singularity (point) then do nothing.  If we are
+//      drawing from x1,y1 then decrement the number of times to go through
+//      the pixel drawing loop. If we are drawing from x2,y2 then update
+//      epsilon and decrement the loop count without actually drawing the
+//      first time through the loop.
+//
+        tst.w   _LSTLIN         // should the final endpoint be omitted?
+        beq     x_dy_ltop       // nope - don't adjust that endpoint
+        and.w   d2,d2           // is line a single point?
+        beq     x_dy_bp         // yes - don't even bother to draw it
+        movea.w _X2,a0          // compute delta x
+        cmpa.w  _X1,a0
+        blt     x_dy_yinc       // drawing from x2,y2 - don't draw first point
+        subq.w  #1,d2           // drawing from x1,y1 - don't draw last point
+
+//
+//      If the current bit in the mask is set then exclusive or it with the
+//      current bit in the line segment.  Otherwise, do nothing.
+//
+x_dy_ltop:
+        rol.w   #1,d1           // get next bit from mask (line style)
+        bcc     x_dy_yinc       // it is 0 - do nothing
+        eor.w   d0,(a5)         // it is 1 - xor it with bit in line
+
+//
+//      Increment y (by adding the offset to the next scan in the plane).
+//      If the current value of epsilon is positive then add e2 to epsilon.
+//
+x_dy_yinc:
+        adda.w  d7,a5           // increment y
+        tst.w   d4              // epsilon < 0?
+        bmi     x_dy_same1      // yes - don't increment x
+        add.w   a2,d4           // nope - epsilon = epsilon + e2
+
+//
+//      Update the mask for exclusive or'ing bits.  If we have overflowed
+//      the current word then update the pointer to the next word in the plane.
+//
+        ror.w   #1,d0           // rotate mask for xor'ing bits
+        bcc     x_dy_llp_end    // branch if no overflow to next word
+        adda.w  d6,a5           // overflow occurred - bump pointer to next word
+x_dy_llp_end:
+        dbra    d2,x_dy_ltop    // loop until done with line segment
+
+//
+//      We are now done drawing the line in the current plane.  Restore the
+//      registers that were clobbered, update the pointer to the next plane,
+//      and test if any additional planes remain to be drawn.
+//
+x_dy_bp:
+        move.l  (sp)+,a5        // restore the clobbered registers
+        movem.w (sp)+,d0-d2/d4
+#if vme10
+        adda.l  a1,a5           // update pointer to next plane
+#else
+        addq.w  #2,a5           // update pointer to next plane
+#endif
+        dbra    d3,xor_dygt     // loop until all planes are drawn
+        bra     abl_out         // take common exit
+
+//
+//      The current value of epsilon is negative so add e1 to epsilon.
+//      Loop until all the bits in the line segment have been drawn.
+//
+x_dy_same1:
+        add.w   a3,d4           // epsilon = epsilon + e1
+        dbra    d2,x_dy_ltop    // loop until done with line segment
+        bra     x_dy_bp         // done - check for more planes to draw
+
+
+
+/*
+ * nor_dygt - Line Drawing Routine for the Reverse Transparent Mode
+ *
+ * Used, when Delta Y is greater than Delta X
+ */
+
+//
+//      Draw a line in the reverse transparent mode by complementing the
+//      line style and calling the code for drawing a line in the transparent
+//      mode.
+//
+nor_dygt:
+        not.w   d1              // complement the line style
+        bsr     or_dygt         // call the transparent mode code to draw line
+        not.w   _LN_MASK        // restore the proper states of the style bits
+        rts
+
+
+
+/*
+ * HABLINE - draw a horizontal line
+ *
+ * This routine draws a line between (_X1,_Y1) and (_X2,_Y1)
+ * using a left fringe, inner loop, right fringe bitblt algor-
+ * ithm.  The line is modified by the pattern and _WRT_MODE
+ * variables.  This routine handles all 3 video resolutions.
+ * Note that 2 entry points are provided for ABLINE.
+ *
+ * input:
+ *     _X1,_Y1,_X2  = coordinates.
+ *     _v_planes    = number of video planes. (resolution)
+ *     _patmsk      = index into pattern.
+ *     _patptr      = ptr to pattern.
+ *     _WRT_MODE    = writing mode:
+ *                        0 => replace mode.
+ *                        1 => or mode.
+ *                        2 => xor mode.
+ *                        3 => not mode.
+ *
+ * output:
+ *     nothing.
+ *
+ * destroys:
+ *     everything, but is just called from assembler
+ */
+
+//
+//      This is the entry point used by ABLINE when a horizontal line is
+//      to be drawn using the current line style.
+//
+xl_noswap:
+        lea     _LN_MASK,a0     // get the current line style
+        movea.l a1,a3           // get # of bytes between graphic planes
+        move.w  #0,a1           // line style is monoplaned - no offset
+        move.w  _X1,d4          // get starting x-coordinate
+        move.w  _X2,d2          // get ending x-coordinate
+        bra     xline
+
+//
+//      This is the entry point used by ABLINE when a horizontal line is
+//      to be drawn using the current line style but when the two endpoints
+//      need to be swapped.
+//
+xl_swap:
+        lea     _LN_MASK,a0     // get the current line style
+        movea.l a1,a3           // get # of bytes between graphic planes
+        move.w  #0,a1           // line style is monoplaned - no offset
+        move.w  _X2,d4          // get starting x-coordinate
+        move.w  _X1,d2          // get ending x-coordinate
+        bra     xline
+
+//
+//      Main entry point to _HABLINE
+//
+//      Compute the address of the word containing the starting point of
+//      the line to be drawn and the offset of the starting bit within the
+//      word.
+//
+_habline:
+_HABLINE:
+        movea.l _v_bas_ad,a5    // get base address of first video plane
+        lea     _FG_BP_1,a4     // get address of bit plane mask table
+#if vme10
+        move.w  _v_planes,d3    // get number of planes - 1
+        subq.w  #1,d3
+        move.l  _v_pl_dspl,a3   // get offset to next video plane
+#else
+        move.l  #0,a3
+        move.w  _v_planes,d3    // get number of planes
+        move.w  d3,a3
+        subq.w  #1,d3           // get number of planes - 1
+        adda.w  a3,a3           // get offset to next word in same plane
+#endif
+        move.w  _X1,d0          // get starting x-coordinate (input to concat)
+        move.w  d0,d4           // save it for later use
+        move.w  _Y1,d1          // get y-coordinate (input to concat)
+        move.w  d1,d5           // save it for later use
+        bsr     concat          // compute word offset and bit offset
+        adda.l  d1,a5           // compute actual address of starting word
+        move.w  _X2,d2          // get ending x-coordinate
+
+//
+//      Get the pattern with which the line is to be drawn.
+//
+        and.w   _patmsk,d5      // get index into pattern
+        asl.w   #1,d5           // convert to offset into pattern def table
+        move.l  _patptr,a0      // get pointer to start of pattern definition
+        adda.w  d5,a0           // get pointer to desired word of pattern def
+        move.w  #0,a1           // init offset to next plane of pattern to 0
+        tst.w   _multifill      // using multi-planed patterns?
+        beq     xline           // nope
+        move.w  #32,a1          // yes - offset = length of 1 plane of pat def
+
+//
+//      At this point the register usages are as follows:
+//
+//      d7 = scratch.           a5 = ptr to destination.
+//      d6 = scratch.           a4 = ptr to _FG_BP_1.
+//      d5 = scratch.           a3 = offset to next plane
+//      d4 = _X1.               a2 = scratch
+//      d3 = # of bit_planes - 1.
+//      d2 = _X2.               a1 = offset to next plane of fill pattern
+//      d1 = scratch            a0 = ptr to fill pattern
+//      d0 = _X1 and 0x000F.
+//
+
+//
+//      Compute the left and right fringe masks for the line.
+//
+xline:
+        asl.w   #1,d0           // convert bit offset of 1st bit to word index
+        move.w  lf_tab(pc,d0.w),d0      // get not of left fringe mask
+        not.w   d0              // invert bits of mask to proper value
+        move.w  d2,d7           // get ending x-coordinate
+        andi.w  #0x000F,d7      // get bit offset into its word
+        asl.w   #1,d7           // convert bit offset of last bit to word index
+        move.w  rf_tab(pc,d7.w),d7      // get right fringe mask
+
+//
+//      Compute the number of entire words to be written with the line.
+//
+        asr.w   #4,d4           // compute # of words preceeding starting point
+        asr.w   #4,d2           // compute # of words preceeding ending point
+        sub.w   d4,d2           // compute word offset between the endpoints
+        subq.w  #1,d2           // compute # of full words in line
+
+//
+//      If the number of full words in the line segment is negative then the
+//      two endpoints lie in the same word.  Combine the two fringe masks,
+//      set the inner loop count to 0, and modify the right fringe mask so
+//      that it will have no effect.
+//
+        bpl     hab_decode      // count >= 0 so this is a normal case
+        or.w    d7,d0           // combine fringe masks
+        clr.w   d2              // set inner loop count to 0
+        moveq   #-1,d7          // prevent right mask from affecting screen
+//
+//      Jump to the appropriate handling routine for the current write mode
+//      for both the general and special cases.
+//
+hab_decode:
+        move.w  _WRT_MODE,d5    // write mode used to select HABLINE entry 
+        asl.w   #2,d5           // convert to longword index
+        move.l  htab(pc,d5.w),a2        // get address of handling routine
+        jmp     (a2)            // jump to it
+
+//
+//      At this point the register usages are as follows:
+//
+//      d7 = right mask.        a5 = ptr to destination.
+//      d6 = scratch.           a4 = ptr to _FG_BP_1.
+//      d5 = scratch.           a3 = offset to next plane or next word in plane
+//      d4 = scratch.           a1 = offset to next bitplane's fill pattern
+//      d3 = # of bit_planes - 1.
+//      d2 = inner loop count.  a0 = ptr to fill pattern
+//      d1 = scratch
+//      d0 = left mask (or left "and" right masks).
+//
+
+/*
+ * Word Mask Table                                                
+ * 
+ * The table has been compacted by taking the one's complement of the left
+ * fringe table and combining it with the right fringe table.                                                  
+ */
+
+lf_tab:         dc.w    0xFFFF          // origin for not left fringe lookup.
+rf_tab:         dc.w    0x7FFF          // origin for right fringe lookup.
+                dc.w    0x3FFF
+                dc.w    0x1FFF
+                dc.w    0x0FFF
+                dc.w    0x07FF
+                dc.w    0x03FF
+                dc.w    0x01FF
+                dc.w    0x00FF
+                dc.w    0x007F
+                dc.w    0x003F
+                dc.w    0x001F
+                dc.w    0x000F
+                dc.w    0x0007
+                dc.w    0x0003
+                dc.w    0x0001
+                dc.w    0x0000
+
+/*
+ * HABLINE Mode Address Table 
+ *
+ * This table contains the jump addresses for the line drawing routines
+ * for the four writing modes.  
+ */
+
+htab:
+#if rev_vid
+        dc.l    rep_x
+        dc.l    or_x
+        dc.l    xor_x
+        dc.l    nor_x
+#else
+        dc.l    rep_x
+        dc.l    nor_x
+        dc.l    xor_x
+        dc.l    or_x
+#endif
+
+
+
+/*
+ * rep_x - Line Drawing Routine for Replace Mode  
+ */
+                           
+//
+//      Save the registers that are clobbered and test whether the current
+//      plane should be written with the line style or 0's.
+//
+rep_x:
+        move.w  d2,-(sp)        // save registers that get clobbered
+        move.l  a5,-(sp)
+        move.w  (a0),d1         // get line style or fill pattern
+
+        adda.w  a1,a0           // update line style/fill pattern pointer
+        tst.w   (a4)+           // write this plane with pattern or 0's?
+        bne     r_x_lf          // use pattern
+        clr.w   d1              // use 0's
+
+//
+//      Draw the left fringe.
+//
+r_x_lf:
+#if rev_vid
+        move.w  (a5),d5         // get source data
+#else
+        not.w   d1              // invert line style or fill pattern
+        move.w  (a5),d5         // get source data
+#endif
+
+        eor.w   d1,d5           // xor the pattern with the source
+        and.w   d0,d5           // isolate the bits outside the fringe
+        eor.w   d1,d5           // restore the bits outside the fringe
+#if vme10
+        move.w  d5,(a5)+        // write the fringe and advance to next word
+#else
+        move.w  d5,(a5)         // write the fringe
+        adda.w  a3,a5           // update pointer to next word in plane
+#endif
+
+//
+//      Inner Loop -- Draw the full words contained in the line.
+//
+        bra     rx_lend         // test if any entire words are to be drawn
+rx_ltop:
+#if vme10
+        move.w  d1,(a5)+        // write current word and advance to next
+#else
+        move.w  d1,(a5)         // write current word
+        adda.w  a3,a5           // update pointer to next word in plane
+#endif
+rx_lend:
+        dbra    d2,rx_ltop      // loop until done
+
+//
+//      Draw the right fringe.
+//
+        cmp.l   #-1,d7          // Do we really have to draw this part?
+        beq.s   rx_no_right     // If not skip it! (THH)
+
+        move.w  (a5),d5         // get source data
+        eor.w   d1,d5           // xor the pattern with the source
+        and.w   d7,d5           // isolate the bits outside the fringe
+        eor.w   d1,d5           // restore the bits outside the fringe
+        move.w  d5,(a5)         // write the fringe and advance to next word
+
+//
+//      We are now done drawing the line in the current plane.  Restore the
+//      registers that were clobbered, update the pointer to the next plane,
+//      and test whether any additional planes need to be drawn.
+//
+rx_no_right:
+        move.l  (sp)+,a5        // restore the clobbered registers
+        move.w  (sp)+,d2
+#if vme10
+        adda.l  a3,a5           // update pointer to next plane
+#else
+        addq.w  #2,a5           // update pointer to next plane
+#endif
+        dbra    d3,rep_x        // loop until all planes are drawn
+        rts
+
+/*
+ * or_x - Line Drawing Routine for Transparent Mode    
+ *
+ * This mode is not to be confused with a true 'or' mode.
+ */
+
+//
+// If the foreground color requires that bits in the current plane
+// be set then 'or' the mask with the source.  Otherwise, the fore-
+// ground color requires that bits in the current plane be cleared
+// so 'and' the complement of the mask with the source.  Bits that
+// would be drawn with the background color (black) are left unchanged.
+//
+
+//
+// Call a subroutine common to the transparent and reverse transparent
+// modes to draw the line segment.
+//
+or_x:
+        move.w  (a0),d1         // get current scan of pattern
+        bsr     or_nor          // draw the line segment
+        dbra    d3,or_x         // loop until all planes drawn
+        rts
+
+
+
+/*
+ * nor_x - Line Drawing Routine for Reverse Transparent Mode    
+ */
+                           
+//
+//      Get the one's complement of the pattern and call a subroutine
+//      common to the transparent and reverse transparent modes to draw
+//      the line segment.
+//
+nor_x:
+        move.w  (a0),d1         // get current scan of pattern
+        not.w   d1              // get one's complement of the pattern
+        bsr     or_nor          // draw the line segment
+        dbra    d3,nor_x        // loop until all planes drawn
+        rts
+
+
+
+/*
+ * or_nor - General Purpose Line Drawing Routine
+ *
+ * For Both Transparent and Reverse Transparent Writing Modes  
+ */
+
+//
+//      Save the registers that get clobbered and test whether the current
+//      plane should be set or cleared for the current foreground color.
+//
+or_nor:
+        movem.l d2/a5,-(sp)     // save registers that get clobbered
+        adda.w  a1,a0           // update pointer to next plane's pattern
+#if !rev_vid
+        not.w   d1              // get complement of mask with source
+#endif
+        tst.w   (a4)+           // set bits in this plane for the fgnd color?
+#if rev_vid
+        bne     o_x_lf1         // yes - or mask with source
+#else
+        beq     o_x_lf1         // yes - or mask with source
+#endif
+        not.w   d1              // nope - and complement of mask with source
+//
+//      Draw the left fringe by clearing bits in this plane.
+//
+o_x_lf0:
+        move.w  (a5),d5         // get source data
+        move.w  d5,d4           // save it
+        and.w   d1,d5           // and complement of mask with source
+        eor.w   d5,d4           // isolate changed bits
+        and.w   d0,d4           // isolate changed bits outside of fringe
+        eor.w   d4,d5           // restore them to original states
+#if vme10
+        move.w  d5,(a5)+        // write left fringe and step to next word
+#else
+        move.w  d5,(a5)         // write left fringe
+        adda.w  a3,a5           // update pointer to next word in plane
+#endif
+
+//
+//      Inner Loop -- Draw the full words contained in the line.
+//
+        bra     oxc_lend        // first test for any full words to be drawn
+oxc_ltop:
+#if vme10
+        and.w   d1,(a5)+        // clear all bits to contain foreground color
+#else
+        and.w   d1,(a5)         // clear all bits to contain foreground color
+        adda.w  a3,a5           // update pointer to next word in plane
+#endif
+
+oxc_lend:
+        dbra    d2,oxc_ltop     // loop until done
+
+//
+//      Draw the right fringe.
+//
+        cmp.l   #-1,d7          // Do we really have to draw this part?
+        beq.s   ox_no_right     // If not skip it! (THH)
+
+        move.w  (a5),d5         // get source data
+        move.w  d5,d4           // save it
+        and.w   d1,d5           // nope - and complement of mask with source
+ox_merge:
+        eor.w   d5,d4           // isolate changed bits
+        and.w   d7,d4           // isolate changed bits outside of pattern
+        eor.w   d4,d5           // restore them to original states
+        move.w  d5,(a5)         // write out right fringe
+
+//
+//      We are now done drawing the line in the current plane.  Restore the
+//      registers that were clobbered, update the pointer to the next plane,
+//      and test whether any additional planes need to be drawn.
+//
+ox_no_right:
+        movem.l (sp)+,d2/a5     // restore the clobbered registers
+#if vme10
+        adda.l  a3,a5           // update pointer to next plane
+#else
+        addq.w  #2,a5           // update pointer to next plane
+#endif
+        rts
+
+//
+//      Draw the left fringe by setting bits in this plane.
+//
+o_x_lf1:
+        move.w  (a5),d5         // get source data
+        move.w  d5,d4           // save it
+        or.w    d1,d5           // or mask with source
+        eor.w   d5,d4           // isolate changed bits
+        and.w   d0,d4           // isolate changed bits outside of fringe
+        eor.w   d4,d5           // restore them to original states
+#if vme10
+        move.w  d5,(a5)+        // write left fringe and step to next word
+#else
+        move.w  d5,(a5)         // write left fringe
+        adda.w  a3,a5           // update pointer to next word in plane
+#endif
+
+//
+//      Inner Loop -- Draw the full words contained in the line.
+//
+        bra     oxs_lend        // first test for any full words to be drawn
+
+oxs_ltop:
+#if vme10
+        or.w    d1,(a5)+        // set all bits to contain forground color
+#else
+        or.w    d1,(a5)         // clear all bits to contain foreground color
+        adda.w  a3,a5           // update pointer to next word in plane
+#endif
+
+oxs_lend:
+        dbra    d2,oxs_ltop     // loop until done
+
+//
+//      Draw the right fringe by setting bits in this plane.
+//
+        cmp.l   #-1,d7          // Do we really have to draw this part?
+        beq.s   ox_no_right     // If not skip it! (THH)
+
+        move.w  (a5),d5         // get source data
+        move.w  d5,d4           // save it
+        or.w    d1,d5           // or mask with source
+        bra     ox_merge        // jump to common code for setting and clearing
+
+
+
+/*
+ * xor_x - Line Drawing Routine for Exclusive Or Mode  
+ */
+
+//
+//      Save the registers that get clobbered.
+//
+xor_x:
+        movem.l d2/a5,-(sp)     // save registers that get clobbered
+        move.w  (a0),d1         // get line style or fill pattern
+        adda.w  a1,a0           // update line style/fill pattern pointer
+
+//
+//      Draw the left fringe.
+//
+x_x_lf:
+        move.w  (a5),d5         // get the source
+        move.w  d5,d4           // save it
+        eor.w   d1,d5           // xor the pattern with the source
+        eor.w   d5,d4           // xor result with source - now have pattern
+        and.w   d0,d4           // isolate changed bits outside of fringe
+        eor.w   d4,d5           // restore states of bits outside of fringe
+#if vme10
+        move.w  d5,(a5)+        // write left fringe and advance to next word
+#else
+        move.w  d5,(a5)         // write left fringe
+        adda.w  a3,a5           // update pointer to next word in plane
+#endif
+
+//
+//      Inner Loop -- Draw the full words contained in the line.
+//
+        bra     xx_lend         // test if any entire words are to be drawn
+
+xx_ltop:
+#if vme10
+        eor.w   d1,(a5)+        // draw current word and advance to next
+#else
+        eor.w   d1,(a5)         // draw current word
+        adda.w  a3,a5           // update pointer to next word in plane
+#endif
+xx_lend:
+        dbra    d2,xx_ltop      // loop until done
+
+//
+//      Draw the right fringe.
+//
+        cmp.l   #-1,d7          // Do we really have to draw this part?
+        beq.s   xx_no_right     // If not skip it! (THH)
+
+        move.w  (a5),d5         // get the source
+        move.w  d5,d4           // save it
+        eor.w   d1,d5           // xor the pattern with the source
+        eor.w   d5,d4           // xor result with source - now have pattern
+        and.w   d7,d4           // isolate changed bits outside of fringe
+        eor.w   d4,d5           // restore states of bits outside of fringe
+        move.w  d5,(a5)         // write out right fringe
+
+//
+//      We are now done drawing the line in the current plane.  Restore the
+//      registers that were clobbered, update the pointer to the next plane,
+//      and test whether any additional planes need to be drawn.
+//
+xx_no_right:
+        movem.l (sp)+,d2/a5     // restore the clobbered registers
+#if vme10
+        adda.l  a3,a5           // update pointer to next plane
+#else
+        addq.w  #2,a5           // update pointer to next plane
+#endif
+        dbra    d3,xor_x        // loop until all bit planes are drawn
+        rts
 
         .end

@@ -15,119 +15,266 @@
 
 //              public routines
 
-        .globl  _end_pts
-        .globl  concat          // convert x,y coordinates to buffer offsets
-                
+                .globl   _end_pts
+                .globl   _fill_line
+                .globl   _horzline
+                .globl   _get_pix
+                .globl   _put_pix
+                .globl   _RECTFILL
+                .globl   _rectfill
+
+//              external routines.
+
+                .xdef    concat
+                .xdef    xline
+
 //              external variables
 
-        .xdef   _X1
-        .xdef   _Y1
-        .xdef   _X2
-        .xdef   _Y2
-        .xdef   _WRT_MODE
-        .xdef   _PTSIN
-        .xdef   _INTIN
-        .xdef   _INTOUT
-        .xdef   retsav
-        .xdef   _search_color
-        .xdef   _seed_type
-        .xdef   _v_bas_ad
-        .xdef   _v_planes
-        .xdef   _v_lin_wr
+                .xdef   _X1
+                .xdef   _Y1
+                .xdef   _X2
+                .xdef   _Y2
+                .xdef   _WRT_MODE
+                .xdef   _patmsk
+                .xdef   _patptr
+                .xdef   _multifill
+                .xdef   _FG_BP_1
+                .xdef   _FG_BP_2
+                .xdef   _FG_BP_3
+                .xdef   _FG_BP_4
+                .xdef   _PTSIN
+                .xdef   _INTIN
+                .xdef   _INTOUT
+                .xdef   ortbl
+                .xdef   retsav
+                .xdef   _search_color
+                .xdef   _seed_type
+                .xdef   _v_bas_ad
+                .xdef   _v_planes
+                .xdef   _v_lin_wr
+                .xdef   lf_tab
 
-        .xdef   _FBASE
-        .xdef   _FWIDTH
-        .xdef   _DELY
-        .xdef   _INTIN
-        .xdef   _PTSIN
-        .xdef   _CLIP
-        .xdef   _XMN_CLIP
-        .xdef   _XMX_CLIP
-        .xdef   _YMN_CLIP
-        .xdef   _YMX_CLIP
+                .xdef   htab
+
+                .xdef   _FBASE
+                .xdef   _FWIDTH
+                .xdef   _DELY
+                .xdef   _INTIN
+                .xdef   _PTSIN
+                .xdef   _CLIP
+                .xdef   _XMN_CLIP
+                .xdef   _XMX_CLIP
+                .xdef   _YMN_CLIP
+                .xdef   _YMX_CLIP
 
 
                 .text                   // open program segment.
 
-/*
- * concat - calculate screen offset
- *
- *
- *
- * This routine converts x and y coordinates into a physical
- * offset to a word in the screen buffer and an index to the
- * desired bit within that word.
- *
- * input:
- *    d0.w = x coordinate.
- *    d1.w = y coordinate.
- *
- * output:
- *    d0.w = word index. (x mod 16)
- *    d1.l = physical offset -- (y * bytes_per_line) + (x & xmask)>>xshift
- *
- * destroys:       nothing
- */
 
-concat:
-        movem.w d2/d3,-(sp)     // save the registers that get clobbered
 
-/* Convert the y-coordinate into an offset to the start of the scan row. */
 
-        mulu.w  _v_lin_wr,d1    // compute offset to start of scan row
+//////////////
+//////////////
+////
+////    _put_pix:
+////            This routine plots a pixel for anybody (even BASIC).
+////
+////            input:  _INTIN(0) = pixel value.
+////                    _PTSIN(0) = x coordinate.
+////                    _PTSIN(1) = y coordinate.
+////
+////            output: none.
+////
+////            destroys: d0,d1,a0 & a1.
+////            destroys: d0,d1,a0,a1 & a2 for VME10.
+//////////////
+//////////////
 
-//
-// Compute the bit offset into the desired word, save it, and remove
-// these bits from the x-coordinate.
-//
-        move.w  d0,d2           // save the x-coordinate for later
-        andi.w  #0x000f,d0      // bit offset = x-coordinate mod 16
-        andi.w  #0xfff0,d2      // clear bits for offset into word
-
-//
-// Convert the adjusted x-coordinate to a word offset into the current        
-// scan line.  If the planes are arranged in an interleaved fashion with      
-// a word for each plane then shift the x-coordinate by a value contained     
-// in the shift table.  If the planes are arranged as separate, consecu-      
-// tive entities then divide the x-coordinate by 8 to get the number of bytes.                                                                     
-//
+_put_pix:
+                movem.l d2-d4,-(sp)
+                move.l  _PTSIN,a0       // fetch ptr to _PTSIN array.
+                move.w  (a0)+,d0        // fetch x coord.
+                move.w  (a0),d1         // fetch y coord.
+                jsr     concat          // convert to physical offset.
+                move.l  _v_bas_ad,a1    // fetch ptr to video base address.
+                adda.l  d1,a1           // base + offset.
 #if vme10
-        lsr.w   #3,d2           // convert x-coordinate to offset
-#else
-        move.b  _shft_off,d3    // get pre-calculated shift factor
-        lsr.w   d3,d2           // convert x-coordinate to offset
+                move.l   _v_pl_dspl,a2  // # of bytes between video planes
+                moveq.l #1,d4           // init for faster rotate instruction
+#endif
+                add.w   d0,d0           // word indexing.
+                lea     ortbl,a0
+                move.w  0(a0,d0.w),d0   // fetch the pixel word mask. (for setting bits)
+                move.w  d0,d1
+                not.w   d1              // not the mask. (for clearing bits)
+                move.w  _v_planes,d2    // fetch # of bit_planes.
+                subq.w  #1,d2           // # of bit_planes -1. (loop counter)
+                move.l  _INTIN,a0       // fetch ptr to _INTIN array.
+                move.w  (a0),d3         // fetch pixel value.
+#if !rev_vid
+                not.w   d3              // invert pixel value for reverse video
 #endif
 
-//
-// Compute the offset to the desired word by adding the offset to the
-// start of the scan line to the offset within the scan line, restore
-// the clobbered registers, and exit.
-//
-        ext.l   d2
-        add.l   d2,d1           // compute total offset into screen buffer
-        movem.w (sp)+,d2/d3     // restore the clobbered registers
-        rts
-/*
- * ortbl - or mas ktable 
- */
+#if vme10
+                bra.b   ppx_rot         // already have correct pixel address
+ppx_lp:         adda.l  a2,a1           // address of pixel in next video plane
+ppx_rot:        ror.w   d4,d3           // rotate pixel bit and put in carry.
+                bcc     ppx_clr         // if 0, clear the bit.
+                or.w    d0,(a1)         // if 1, set the bit.
+                dbra    d2,ppx_lp
+                bra.s   ppx_end
 
-ortbl:          dc.w    0x8000
-                dc.w    0x4000
-                dc.w    0x2000
-                dc.w    0x1000
-                dc.w    0x0800
-                dc.w    0x0400
-                dc.w    0x0200
-                dc.w    0x0100
-                dc.w    0x0080
-                dc.w    0x0040
-                dc.w    0x0020
-                dc.w    0x0010
-                dc.w    0x0008
-                dc.w    0x0004
-                dc.w    0x0002
-                dc.w    0x0001
+ppx_clr:        and.w   d1,(a1)         // clear the bit.
+                dbra    d2,ppx_lp
+#else
+ppx_lp:         ror.w   #1,d3           // rotate pixel bit and put in carry.
+                bcc     ppx_clr         // if 0, clear the bit.
+                or.w    d0,(a1)+        // if 1, set the bit.
+                dbra    d2,ppx_lp
+                bra.s   ppx_end
 
+ppx_clr:        and.w   d1,(a1)+        // clear the bit.
+                dbra    d2,ppx_lp
+#endif
+
+ppx_end:
+                movem.l (sp)+,d2-d4
+                rts
+
+                .page
+
+//////////////
+//////////////
+////                                                                          ////
+////    _get_pix:                                                             ////
+////            This routine gets a pixel for anybody (even BASIC).           ////
+////                                                                          ////
+////            input:  _PTSIN(0) = x coordinate.                             ////
+////                    _PTSIN(1) = y coordinate.                             ////
+////                                                                          ////
+////            output: d0 = pixel value.                                     ////
+////                                                                          ////
+////            destroys: d0,d1,d2,d3, & a0.                                  ////
+////            destroys: d0,d1,d2,d3,d4 & a0,a1,a2 for VME10.                ////
+//////////////
+//////////////
+
+_get_pix:       move.l  _PTSIN, a0      // fetch ptr to _PTSIN array.
+                move.w  (a0)+, d0       // fetch x coord.
+                move.w  (a0), d1        // fetch y coord.
+                jsr     concat          // convert to physical offset.
+                move.l  _v_bas_ad, a0   // fetch ptr to video base address.
+                adda.l  d1,a0           // base + offset.
+#if vme10
+                move.l   _v_pl_dspl,a2  // # of bytes between video planes
+#endif
+                add.w   d0, d0          // word indexing.
+                lea     ortbl, a1
+                move.w  0(a1,d0.w), d1  // fetch the pixel word mask.
+                move.w  _v_planes, d2   // fetch # of bit_planes.
+#if vme10
+                subq.w  #1,d2           // # of bit_planes - 1. (loop counter)
+                moveq.l #1,d4           // init for faster shift & or instr
+#else
+                move.w  d2, d0
+                add.w   d0, d0          // xinc.
+                subq.w  #1, d2          // # of bit_planes - 1. (loop counter)
+                adda.w  d0, a0          // point to highest-order bit_plane. (+2)
+#endif
+                moveq.l #0, d0          // init the value accumulator.
+                bra     gpxl_in
+#if vme10
+gpx_lp:         asl.w   d4,d0           // shift accumulator for next bit_plane.
+                adda.l  a2,a0           // address of pixel in next video plane
+gpxl_in:        move.w  (a0),d3         // fetch a bit
+#else
+gpx_lp:         asl.w   #1, d0          // shift accumulator for next bit_plane.
+gpxl_in:        move.w  -(a0), d3       // fetch a bit.
+#endif
+                and.w   d1, d3          // test the bit.
+                beq     gpxl_bot        // if 0, branch.
+#if vme10
+                or.w    d4, d0          // if 1, set value accumulator bit.
+#else
+                ori.w   #1, d0          // if 1, set value accumulator bit.
+#endif
+gpxl_bot:       dbra    d2,gpx_lp
+                rts
+
+
+
+
+//////////////
+//////////////
+////                                                                          ////
+////    _fill_line:                                                           ////
+////            This routine fills a line for "seedfill" using the "xline"    ////
+////    routine.                                                              ////
+////                                                                          ////
+////            input:  4(sp) = xleft.                                        ////
+////                    6(sp) = xright.                                       ////
+////                    8(sp) = y.                                            ////
+////                                                                          ////
+////            output: filled line.                                          ////
+////                                                                          ////
+////            destroys: everything.                                         ////
+////                                                                          ////
+//////////////
+//////////////
+//
+//
+_horzline:
+_fill_line:
+                move.l  _v_bas_ad,a5    // fetch video base address.
+                lea     _FG_BP_1,a4     // point to array of bit_plane values.
+#if vme10
+                move.w  _v_planes,d3    // d3 := xinc. (# of planes)
+                subq.w  #1,d3           // d3 := (# of planes) -1.
+                move.l  _v_pl_dspl,a3   // # of bytes between video planes
+#else
+                move.l  #0,a3
+                move.w  _v_planes,a3    // a3 := xinc. (# of planes)
+                move.w  a3,d3
+                adda.w  a3,a3           // word xinc.
+                subq.w  #1,d3           // d3 := (# of planes) -1.
+#endif
+                move.w  4(sp),d0        // fetch xleft. (input to concat)
+                move.w  d0,d4           // save for later.
+
+                move.w  8(sp),d1        // fetch y. (input to concat)
+                move.w  d1,d5           // save for later.
+                jsr     concat          // form physical offset.
+
+                adda.l  d1,a5           // base + physical offset.
+                move.w  6(sp),d2        // fetch xright.
+                and.w   _patmsk,d5      // compute pattern index.
+                asl.w   #1,d5           // word indexing.
+                move.l  _patptr,a0      // ptr to start of pattern.
+                adda.w  d5,a0           // index into pattern.
+                move.w  #0,a1           // default offset = 0.
+#if vme10
+                lea.l   xline,a2        // address of HABLINE entry point
+                tst.w   _multifill      // multi-plane fill pattern?
+                beq.b   xline_entry     // no, branch.
+                move.w  #32,a1          // yes, offset = 32.
+xline_entry:
+                jmp     (a2)            // fill the horizontal line with color.
+#else
+                tst.w   _multifill      // multi-plane fill pattern?
+                beq     xline           // no, branch.
+                move.w  #32,a1          // yes, offset = 32.
+//
+//      d4 = xleft.                     a5 = ptr to destination.
+//      d3 = # of bit_planes - 1        a4 = ptr to _FG_BP_1.
+//      d2 = xright.                    a3 = xinc.
+//       for VME10 software              a3 = # of bytes between video planes   
+//      d1 = fill pattern.              a1 = offset to next planes fill pattern
+//      d0 = xleft and 0x000F.           a0 = ptr to fill pattern. 
+//
+                bra     xline           // fill the horizontal line with color.
+#endif
+
+                .page
 
 //////////////
 //////////////
@@ -403,6 +550,223 @@ ep_is_search:   move.w  _seed_type, d0  // return segment is of search color
                 rts
 
 ep_ret0:        moveq.l #0,d0           // return(1). (success)
+                rts
+
+                .page
+
+//////////////
+//////////////
+////                                                                          ////
+////    _RECTFILL:                                                            ////
+////            This routine fills a rectangular area of the screen with a    ////
+////    pattern using a "bitblt" algorithm similar to "_HABLINE"'s.           ////
+////            Actually, this routine just clips and copies the inputs for   ////
+////    use by "BOX_FILL".                                                    ////
+////                                                                          ////
+////            input:  _X1       = x coord of upper left corner.             ////
+////                    _Y1       = y coord of upper left corner.             ////
+////                    _X2       = x coord of lower right corner.            ////
+////                    _Y2       = y coord of lower right corner.            ////
+////                    _CLIP     = clipping flag. (0 => no clipping.         ////
+////                    _XMN_CLIP = x clipping minimum.                       ////
+////                    _XMX_CLIP = x clipping maximum.                       ////
+////                    _YMN_CLIP = y clipping minimum.                       ////
+////                    _YMX_CLIP = y clipping maximum.                       ////
+////                                                                          ////
+////            output: _X1 = x coord of upper left corner.                   ////
+////                    _Y1 = y coord of upper left corner.                   ////
+////                    _X2 = x coord of lower right corner.                  ////
+////                    _Y2 = y coord of lower right corner.                  ////
+////                                                                          ////
+////            destroys: d0,d1,a0 & a1.                                      ////
+////                                                                          ////
+//////////////
+//////////////
+//
+_rectfill:
+_RECTFILL:
+                movem.l d2-d7/a2-a6,-(sp)       // restore registers
+                tst.w   _CLIP
+                beq     BOX_FILL                // if no clipping, just do it.
+//
+//      clipping.
+//
+                move.w  _XMN_CLIP,d0
+                move.w  _X1,d1
+                move.w  _X2,d2
+                cmp.w   d0,d1                   // is x1 >= xmn_clip?
+                bge     rf_xmx                  // yes, branch.
+                cmp.w   d0,d2                   // is x2 < xmn_clip
+                blt     rf_out                  // yes, branch. (clipped box is null)
+                move.w  d0,_X1                  // clip x1.
+rf_xmx:         move.w  _XMX_CLIP,d0
+                cmp.w   d0,d2                   // is x2 <= xmx_clip?
+                ble     rf_yclip                // yes, branch. (x clip is done)
+                cmp.w   d0,d1                   // is x1 > xmx_clip?
+                bgt     rf_out                  // yes, branch. (clipped box is null)
+                move.w  d0,_X2                  // clip x2.
+//
+rf_yclip:       move.w  _YMN_CLIP,d0
+                move.w  _Y1,d1
+                move.w  _Y2,d2
+                cmp.w   d0,d1                   // is y1 >= ymn_clip?
+                bge     rf_ymx                  // yes, branch.
+                cmp.w   d0,d2                   // is y2 < ymn_clip
+                blt     rf_out                  // yes, branch. (clipped box is null)
+                move.w  d0,_Y1                  // clip y1.
+rf_ymx:         move.w  _YMX_CLIP,d0
+                cmp.w   d0,d2                   // is y2 <= ymx_clip?
+                ble     BOX_FILL                // yes, branch. (y clip is done)
+                cmp.w   d0,d1                   // is y1 > ymx_clip?
+                bgt     rf_out                  // yes, branch. (clipped box is null)
+                move.w  d0,_Y2                  // clip y2.
+//
+//      fall through to BOX_FILL.
+//
+
+//////////////
+//////////////
+////                                                                          ////
+////    BOX_FILL:                                                             ////
+////            This routine fills a rectangular area of the screen with a    ////
+////    pattern using a "bitblt" algorithm similar to "_HABLINE"'s.           ////
+////            This routine handles all 3 video resolutions.                 ////
+////                                                                          ////
+////            input:  _X1 = x coord of upper left corner.                   ////
+////                    _Y1 = y coord of upper left corner.                   ////
+////                    _X2 = x coord of lower right corner.                  ////
+////                    _Y2 = y coord of lower right corner.                  ////
+////                    _WRT_MODE = writing mode.                             ////
+////                                                                          ////
+////            output: none.                                                 ////
+////                                                                          ////
+////            destroys: d0,d1,a0 & a1.                                      ////
+////                                                                          ////
+//////////////
+//////////////
+#define parm_size               16              // temporary stack area size 
+#define patindx                 14              // copy of current pattern index
+#define patmsk                  12              // copy of maximum pattern index
+#define v_lin_wr                10              // copy of # of bytes per scan line
+#define pat_start               6               // copy of pattern starting address
+#define pat_ptr                 2               // copy of pattern pointer
+#define pl_cnt                  0               // copy of video plane count
+
+BOX_FILL:
+                adda.w  #-parm_size,sp  // allocate temporary stack area
+                move.l  _v_bas_ad,a5    // fetch video base address.
+#if vme10
+                move.w  _v_planes,d3    // d3 := # of video planes.
+                subq.w  #1,d3           // d3 := (# of planes) -1.
+                move.l  _v_pl_dspl,a3    // # of bytes between video planes.
+#else
+                move.l  #0,a3
+                move.w  _v_planes,a3    // a3 := xinc. (# of planes)
+                move.w  a3,d3
+                adda.w  a3,a3           // word xinc.
+                subq.w  #1,d3           // d3 := (# of planes) -1.
+#endif
+                move.w  _X1,d0          // fetch X1. (input to concat)
+                move.w  d0,d4           // save for later.
+                move.w  _Y1,d1          // fetch Y1. (input to concat)
+                move.w  d1,d5           // save for later.
+                jsr     concat          // form physical offset.
+                adda.l  d1,a5           // base + physical offset.
+                move.w  _X2,d2          // fetch X2.
+                move.w  _Y2,d6          // fetch Y2.
+                sub.w   d5,d6           // line loop counter.
+                and.w   _patmsk,d5      // compute pattern index.
+                movea.l a5,a6           // save copy of destination address
+                move.w  d3,pl_cnt(sp)   // save copy of plane count on stack
+                move.w  d5,patindx(sp)  // save pattern index in low word
+                move.w  _v_lin_wr,v_lin_wr(sp) // save # bytes per scan line
+                move.w  _patmsk,patmsk(sp) // save max. pattern index on stack
+                asl.w   #1,d5           // word indexing.
+                move.l  _patptr,a0      // ptr to start of pattern.
+                move.l  a0,pat_start(sp) // save starting address of pattern 
+                adda.w  d5, a0          // point into pattern
+                move.l  a0,pat_ptr(sp)  // save on local frame. (current pattern ptr)
+                lea     lf_tab,a2       // point to fringe table.
+//
+//      d7 = scratch.           a5 = ptr to destination.
+//      d6 = line loop counter. a4 = ptr to _FG_BP_1.
+//      d5 = scratch.           a3 = xinc.
+////////////
+//       for VME10 software     a3 = # of bytes between video planes.         //
+////////////
+//      d4 = X1.                a2 = ptr to fringe table.
+//      d3 = # of bit_planes - 1.
+//      d2 = X2.                a0 = ptr to fill pattern.
+//      d1 = scratch.
+//      d0 = X1 and 0x000F.
+//
+                asl.w   #1,d0           // word index for left fringe.
+                move.w  0(a2,d0.w),d0   // fetch left fringe mask.
+                not.w   d0              // not left fringe mask.
+                clr.l   d7              // Important: Upper word of d7 must be 0! (THH)
+                move.w  d2,d7           // X2.
+                andi.w  #0x000F,d7      // X2 and 0x000F.
+                asl.w   #1,d7           // word index.
+                move.w  2(a2,d7.w),d7   // fetch not right fringe mask.
+                moveq.l #4,d5
+                lsr.w   d5,d4           // X1/16.
+                lsr.w   d5,d2           // X2/16.
+                sub.w   d4,d2           // X2/16 - X1/16.
+                subq.w  #1,d2           // inner loop count. (-1,0,>0.)
+//
+//                                      // -1 => X1 and X2 in same word.
+//                                      // 0  => 2 words, inner loop = 0.
+//                                      // >0 => LM,inner loop,RM.
+//
+                bpl     bf_cont         // >= 0 normal case.
+                addq.w  #1,d2           // loop count := 0.
+                or.w    d7,d0           // combine both masks.
+                moveq   #-1,d7          // prevent right mask from effecting screen.
+bf_cont:        move.w  _WRT_MODE,d5    // decode write mode.
+                asl.w   #2,d5           // longword indexing.
+                lea     htab,a2         // point to start of decode table.
+                movea.l 0(a2,d5.w),a2   // address of HABLINE writing mode fragment.
+                move.w  #0,a1           // default offset = 0.
+                tst.w   _multifill      // multi-plane fill pattern?
+                beq     bf_1st_line     // no, branch.
+                move.w  #32,a1          // yes, offset = 32.
+                bra.b   bf_1st_line
+//
+//                                 a6 = copy of ptr to destination.
+//      d7 = right mask.          a5 = ptr to destination.
+//      d6 = line loop counter.   a4 = ptr to _FG_BP_1.
+//      d5 = scratch.             a3 = xinc.
+////////////
+//       for VME10 software        a3 = # of bytes between video planes.       //
+////////////
+//      d4 = scratch.             a2 = ptr to HABLINE writing mode fragment.
+//      d3 = # of bit_planes - 1. a1 = offset to next bit-plane's fill pattern.
+//      d2 = inner loop count.    a0 = ptr to fill pattern.
+//      d1 = scratch.
+//      d0 = left mask (or left "and" right masks).
+//
+//
+bf_loop:
+                adda.w  v_lin_wr(sp),a6 // move down a line.
+                movea.l a6,a5           // set destination pointer
+
+                addq.w  #1,patindx(sp)  // increment pattern count.
+                addq.l  #2,pat_ptr(sp)  // increment pattern pointer.
+                move.w  patindx(sp),d3  // get pattern count
+                cmp.w   patmsk(sp),d3   // pattern count > pattern maximum?
+                ble.b   bf_pat          // no, branch.
+                move.l  pat_start(sp),pat_ptr(sp) // reset the pattern pointer
+                clr.w   patindx(sp)     // reset the pattern count.
+bf_pat:         movea.l pat_ptr(sp),a0  // point to the next line of pattern.
+                move.w  pl_cnt(sp),d3   // restore video plane count
+bf_1st_line:
+                lea     _FG_BP_1,a4     // set bit plane value pointer
+                jsr     (a2)            // draw a horizontal line.
+                dbra    d6,bf_loop      // rectangle loop.
+                adda.w  #parm_size,sp   // remove temporary stack variables
+
+rf_out:
+                movem.l (sp)+,d2-d7/a2-a6    // restore registers
                 rts
 
 

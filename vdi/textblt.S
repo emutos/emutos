@@ -454,7 +454,7 @@ _scrtsiz:
 //  exit:                                                       //
 //     d0    = DDA_INC                                          //
 /////////////////////////////////////////////////////////
-#if 0   // MAD: Now in text.c
+#if 1   // MAD: Now in text.c
 _CLC_DDA:
         lea.l   _T_SCLSTS,a0             //get address of text scaling flag
         move.w  6(sp),d0                //get requested size 
@@ -1121,7 +1121,8 @@ blt_done:
         .page
 
 
-
+	.data
+        
 /*
  * Word Mask Table                                                
  * 
@@ -1147,7 +1148,7 @@ rf_tab:         dc.w    0x7FFF          // origin for right fringe lookup.
                 dc.w    0x0001
                 dc.w    0x0000
 
-
+	.text
 
 /////////////////////////////////////////////////////////////////////////
 //   normal blt routine                                                 //

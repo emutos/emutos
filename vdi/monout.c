@@ -1508,7 +1508,7 @@ void dsf_udpat()
  */
 
 void
-abline ()
+xabline ()
 {
     void *adr;                  /* using void pointer is much faster */
     UWORD x1,y1,x2,y2;          /* the coordinates */
@@ -1837,6 +1837,7 @@ void st_fl_ptr()
 
 
 
+#if 0  //MAD: for now implemented in assembler
 /*
  * hzline_rep - draw a horizontal line in replace mode
  *
@@ -2427,6 +2428,7 @@ WORD get_pix()
 }
 
 
+
 /*
  * clipbox - Just clips and copies the inputs for use by "rectfill"
  *
@@ -2488,7 +2490,6 @@ WORD clipbox()
 }
 
 
-
 /*
  * rectfill - fills a rectangular area of the screen with a pattern
  *            using a "bitblt" algorithm similar to "_HABLINE"'s.
@@ -2526,12 +2527,9 @@ void rectfill ()
         if (!clipbox())
             return;
 
-    x1 = X1;
-    y1 = Y1;
-    x2 = X2;
-    y2 = Y2;
-
     /* sort x coordinates */
+    x1 = X1;
+    x2 = X2;
     if (x2 < x1) {
        x1 = X2;
        x2 = X1;
@@ -2539,6 +2537,8 @@ void rectfill ()
     dx = x2 - x1;             /* width of line */
 
     /* sort y coordinates */
+    y1 = Y1;
+    y2 = Y2;
     if (y2 < y1) {
         y1 = Y2;
         y2 = Y1;
@@ -2583,3 +2583,4 @@ void rectfill ()
         }
     }
 }
+#endif
