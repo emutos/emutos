@@ -247,10 +247,10 @@ VOID biosmain()
     cputs("[ OK ] COMMAND.PRG loading and going on ...\n\r");
 //    cputs("[ OK ] BENCH1.PRG loading and going on ...\n\r");
     trap_1( 0x4b , 0, "COMMAND.PRG" , "", env);
+//    trap_1( 0x4b , 0, "BENCH1.PRG" , "", env);
 
     cputs("[FAIL] HALT - should never be reached!\n\r");
     while(1) ;
-    kprint("[FAIL] Error in execution\n");
 }
 
 

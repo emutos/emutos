@@ -20,7 +20,7 @@
 
 | ==== External Declarations ================================================
 
-                .global _cons_out
+                .global _cputc
                 .global _blink
                 .global _esc_init
        
@@ -75,16 +75,6 @@
 
 
 |
-|       bell information:  data needed generate tones which simulates a bell
-|
-
-|        .equ    SNDCHIP,        0xFCDD80        | where the tone chip is located
-|        .equ    ACR,            0x17            | register on the tone chip
-|        .equ    SHFTREG,        0x15            | register on the tone chip
-|        .equ    LOLATCH,        0x11            | register on the tone chip
-|        .equ    HICOUNT,        0x13            | register on the tone chip
-
-|
 |       font header structure equates.
 |
 
@@ -132,15 +122,37 @@
                 .text                    | open program segment.
 
 
+msg_cputc:	
+	.ascii  "cputc: char is 0x%04x or  %c\n\0"
+	.even
+
+dbg_cputc:
+	move.w  d1,-(sp)
+	pea	msg_cputc
+	jsr     _kprintf
+	add.w	#6,sp
+
 
 | ==== cons_out - console output =============================================
-| Call as void cons_out(BYTE chr)
+| Call as void cons_out(WORD chr)
 
+_cputc:
+        move.w  4(sp), d1       | Get just character from stack
 
-_cons_out:
-        move.w  6(sp), d1       | Get character from bios call
 gsx_conout:                     | Gsx enters here
+|        andi.w  #0x7F, d1       | Limit to the chars we have
+        andi.w  #0xFF, d1       | Limit to the chars we have 
+
+	move.w  d1,-(sp)
+	move.w  d1,-(sp)
+	pea	msg_cputc
+	jsr     _kprintf
+	add.w	#8,sp
+
+        move.w  4(sp), d1       | Get just character from stack
         andi.w  #0xFF, d1       | Limit to the chars we have
+
+
         movea.l con_state, a0   |based on our state goto the correct
         jmp     (a0)            |stub routine
 
@@ -162,7 +174,7 @@ normal_ascii:
         cmp.b   #27, d1         | If escape character alter next state
         bne     handle_control  | else handle the control characters
 
-        move.l  #esc_ch1, con_state
+        move.l  #esc_ch1, con_state     | set constate to handle esc codes
         rts
 
 handle_control:
@@ -173,39 +185,27 @@ handle_control:
 
         lsl.w   #1, d1          | times 4 for longword addressing
         move.w  cntl_tab(pc,d1.w), a0
-        adda.l  #do_bell, a0
+        add.l   #do_bell, a0
         jmp     (a0)
 
 cntl_tab:
-        dc.w    do_bell-do_bell
-        dc.w    escD-do_bell
-        dc.w    do_tab-do_bell
-        dc.w    ascii_lf-do_bell
-        dc.w    ascii_lf-do_bell
-        dc.w    ascii_lf-do_bell
-        dc.w    ascii_cr-do_bell
-
+        dc.w    do_bell-do_bell    |        7 = bell
+        dc.w    escD-do_bell       |        8 = backspace
+        dc.w    do_tab-do_bell     |        9 = Horizontal tab
+        dc.w    ascii_lf-do_bell   |       10 = Line feed
+        dc.w    ascii_lf-do_bell   |       11 = Vertical tab (Treated as line feed)
+        dc.w    ascii_lf-do_bell   |       12 = Form Feed (Treated as line feed)
+        dc.w    ascii_cr-do_bell   |       13 = Carriage Return
+                                   |    
 exit_conout:
         rts
 
 
 
 | ==== do_bell - Ring the bell (not implemented) ============================
-| No bell on Lisa so it must be simulated
 
 do_bell:                         
-|        lea     SNDCHIP, a0     | get address at which the tone chip is loc
-|        or.b    #0x10, ACR(a0)
-|        move.b  #0xf0, SHFTREG(a0)
-|        moveq   #0,  d1                 | clear the d1 register
-|        move.b  #0xa6, d0               | This will specify the G note
-|        move.b  #11,  d1                | This will be duration note held
-|        move.b  d0, LOLATCH(a0)         |
-|        clr.b   HICOUNT(a0)             |
-|delay:  move.w  tempo, d2               |
-|loop8:  dbra    d2, loop8               |
-|        dbra    d1, delay               |
-|        and.b   #0xef, ACR(a0)          |
+|       bsr     ring_bell
         rts
 
 
@@ -388,7 +388,7 @@ escfn7:
 
 escH:
 escfn8:
-        moveq   #0,d0           | x coord.
+        moveq.l #0,d0           | x coord.   (fixed)
         move.w  d0,d1           | y coord.
         bra     move_cursor
 
@@ -421,7 +421,7 @@ escfn10:
         bsr     escf            | hide cursor.
         bsr     escj            | save cursor position.
         move.w  v_cur_cx,d1     | test current x.
-        btst.l  #0,d1           | even or odd?
+        btst    #0,d1           | even or odd?   (fixed btst.l)
         beq     ef10_blnk       | if even, branch.
         cmp.w   v_cel_mx,d1     | if odd, is x = x maximum?
         beq     ef10_space      | if so, just output a space.
@@ -660,7 +660,8 @@ escw:           bclr    #F_CEOL,v_stat_0 | clear the eol handling bit.
 
 | ==== ascii_cr - carriage return.===========================================
 
-ascii_cr:       move.w  v_cur_cy,d1
+ascii_cr:
+                move.w  v_cur_cy,d1
                 clr.w   d0              | beginning of current line.
                 bra     move_cursor
 
@@ -680,7 +681,10 @@ ascii_lf:       move.w  v_cur_cy,d0     | d0 := current cursor y.
 
 | ==== _blink - cursor blink interrupt routine.==============================
 
-_blink:         lea     v_stat_0,a0
+_blink:
+                rts     |(fix!!!)
+                
+                lea     v_stat_0,a0     | (need fix?)
                 btst    #F_CVIS,(a0)    | test visibility/semaphore bit.
                 beq     bl_out          | if invisible or blocked, return.
                 btst    #F_CFLASH,(a0)  | test flash bit.
@@ -735,7 +739,7 @@ alpha_cell:
         rts
 
 out_of_bounds:
-        moveq   #1,d3                   | z:0 -> invalid code. no address returned
+        moveq.l #1,d3                   | z:0 -> invalid code. no address returned
         rts
 
 
@@ -809,7 +813,7 @@ put_char:
 scroll_up:
 
         movem.l d0/d1/a1,-(sp)
-        moveq   #0,d1                   | top of screen.
+        moveq.l #0,d1                   | top of screen.(fixed)
         bsr     p_sc_up                 | do the scroll.
         movem.l (sp)+,d0/d1/a1
 
@@ -822,7 +826,8 @@ disp_cur:
         bsr     neg_cell                | else, display cursor.
         bset    #F_CSTATE,v_stat_0      | set state flag (cursor on).
         bset    #F_CVIS,v_stat_0        | set visibility bit...end of critical section.
-dc_out: rts
+dc_out: 
+        rts
 
 
 
@@ -886,7 +891,7 @@ plane4:
         swap    d0                      |put 1st bit in high word
         asr     #1, d5                  |shift plane 1 to cy
         negx.w  d0                      |fill with all 1's if cy
-|
+
         clr.l   d3                      |assume all 0's for planes 2 & 3
         asr.w   #1, d5
         negx.w  d3
@@ -1029,7 +1034,7 @@ y_disp:
         move.l  _v_bas_ad,a1            | d5 <- screen base address
         adda.l  d5,a1                   | d5 <- screen addr + Y disp
         adda.l  d3,a1                   | d5 <- cell address
-
+        add.w   v_cur_of, a1            | add offset from screen-begin (fix)
         rts
 
 
@@ -1081,12 +1086,12 @@ p_lp0:
 
 back_1:
         bcc     blk_invrt               | back:1  fore:0  =>  invert block
-        moveq   #-1,d3                  | all ones.
+        moveq.l #-1,d3                  | all ones.
         bra     blk_reg                 | back:1  fore:1  =>  all ones
 
 back_0:
         bcs     blk_xfer                | back:0  fore:1  =>  direct substitution
-        moveq   #0,d3                   | all zeroes.
+        moveq.l #0,d3                   | all zeroes.
 
 |                                       | back:0  fore:0  =>  all zeros
 
@@ -1183,7 +1188,7 @@ doit:   move.l  v_cur_ad,a1
         rts
 
 mc_semout:
-        bset    #F_CVIS,(a0)                    | end of critical section.
+|        bset    #F_CVIS,(a0)                    | end of critical section.(fixed)
 
 invisible:
         bsr     cell_addr
@@ -1230,6 +1235,7 @@ neg_cell:
 
 plane_loop:
 
+|        bset    #6,v_stat_0                | end of critical section.
         move.w  d4,d5                   | reset cell length counter
         move.l  a1,a4                   | a4 -> top of current dest plane
 
@@ -1241,6 +1247,7 @@ neg_loop:
 
         addq.w  #plane_offset,a1        | a1 -> top of block in next plane
         dbra    d6,plane_loop
+|        bclr    #6,v_stat_0                | end of critical section.
         rts
 
 
@@ -1300,12 +1307,11 @@ new_line:
 |       call carriage return routine
 |       call line feed routine
 
-        moveq   #1,d3                           | indicate that CR LF is required
+        moveq.l   #1,d3                           | indicate that CR LF is required
         rts
 
 
 inc_cell_ptr:
-
         addq.w  #1,d0                           | next cell to right
 
         btst    #0,d0                           | if X is even, move to next
@@ -1363,7 +1369,7 @@ next_word:
 p_sc_up:
         move.l  _v_bas_ad,a3    |get base addr to destination
         move.w  v_cel_wr,d3     |cell wrap to temp
-        mulu    d1,d3           |cell y nbr | cell wrap is destination offset
+        mulu.w    d1,d3           |cell y nbr | cell wrap is destination offset
         lea     (a3,d3.w),a3    |form destination add in a3
         neg.w   d1
         add.w   v_cel_my,d1     |form (max-1) - top row # for total rows to move
@@ -1372,13 +1378,13 @@ p_sc_up:
         mulu    d1,d3           |form # of bytes to move in d3
         asr.w   #2, d3          |divide by 4 for long byte moves
         bra     scrup1          |enter loop at test
-|
+
 scrup0:
         move.l  (a2)+,(a3)+     |move bytes
 scrup1:
         dbra    d3,scrup0       |loop til finished
-|
-|
+
+
         move.w  v_cel_my,d1     |bottom line cell address y to top/left cell
 scr_out:
         move.w  d1,d2           |for bottom/left cell too
@@ -1419,24 +1425,24 @@ scrdwn1:
 |
 
 gl_f_init:
-        move.w  FRM_HT(a0),d0           | fetch form height.
-        move.w  d0,v_cel_ht             | init cell height.
-        move.w  _v_lin_wr,d1            | fetch bytes/line.
+        move    FRM_HT(a0),d0           | fetch form height.
+        move    d0,v_cel_ht             | init cell height.
+        move    _v_lin_wr,d1            | fetch bytes/line.
         mulu    d0,d1
-        move.w  d1,v_cel_wr             | init cell wrap.
-        moveq   #0,d1
-        move.w  v_vt_rez,d1             | fetch vertical res.
+        move    d1,v_cel_wr             | init cell wrap.
+        moveq.l #0,d1
+        move    v_vt_rez,d1             | fetch vertical res.
         divu    d0,d1                   | vert res/cell height.
-        subq.w  #1,d1                   | 0 origin.
-        move.w  d1,v_cel_my             | init cell max y.
-        moveq   #0,d1
-        move.w  v_hz_rez,d1             | fetch horizontal res.
+        subq    #1,d1                   | 0 origin.
+        move    d1,v_cel_my             | init cell max y.
+        moveq.l #0,d1
+        move    v_hz_rez,d1             | fetch horizontal res.
         divu    CEL_WD(a0),d1           | hor res/cell width.
-        subq.w  #1,d1                   | 0 origin.
-        move.w  d1,v_cel_mx             | init cell max x.
-        move.w  FRM_WD(a0),v_fnt_wr     | init font wrap.
-        move.w  FIRST(a0),v_fnt_st      | init font start ADE.
-        move.w  LAST(a0),v_fnt_nd       | init font end ADE.
+        subq    #1,d1                   | 0 origin.
+        move    d1,v_cel_mx             | init cell max x.
+        move    FRM_WD(a0),v_fnt_wr     | init font wrap.
+        move    FIRST(a0),v_fnt_st      | init font start ADE.
+        move    LAST(a0),v_fnt_nd       | init font end ADE.
         move.l  PDAT(a0),v_fnt_ad       | init font data ptr.
         move.l  POFF(a0),v_off_ad       | init font offset ptr.
         rts
@@ -1448,24 +1454,25 @@ gl_f_init:
 _esc_init:
         move.b  sshiftmod, d0           | get video resolution
         and.w   #3, d0                  | isolate bits 0 and 1
-        cmp.w   #3, d0                  | is it 3?
+        cmp.w   #3, d0                  | is it 3 - color?
         bne     not3                    | no
-not3:
         move.w  #2, d0                  | set monochrome resolution
+not3:
         move.w  d0, -(sp)               | save resolution
         bsr     resolset                | set video resolution
         move.w  (sp)+, d0               | restore resolution
         
-        lea     _f8x8, a0               | Get pointer to 8x12 font header
-        cmp.w   #2, d0                  | High resolution?
-        bne     lowres                  | no, low resolution
-        lea     _f8x16, a0              | Get pointer to 8x12 font header
+|        lea     _f8x8, a0               | Get pointer to 8x8 font header
+|        cmp.w   #2, d0                  | High resolution?
+|        bne     lowres                  | no, low resolution
+        lea     _f8x16, a0              | Get pointer to 8x16 font header
 lowres:
         bsr     gl_f_init               | init the global font variables.
 
         move.w  #-1, v_col_fg           | foreground color := 15.
         moveq.l #0, d0
         move.w  d0, v_col_bg            | background color := 0.
+        
         move.w  d0, v_cur_cx            | cursor column 0
         move.w  d0, v_cur_cy            | cursor line 0
         move.w  d0, v_cur_of            | line offset 0
@@ -1477,9 +1484,10 @@ lowres:
         move.w  #1, disab_cnt           | cursor disabled 1 level deep.
 
         | ==== Clear screen =====
+        move.w  v_col_bg, d0            | load background color
         move.l  _memtop, a0             | Set start of RAM
 scr_loop:
-        move.l  d0, (a0)+               | set to background color
+        move.w  d0, (a0)+               | set to background color
         cmp.l   phystop, a0             | End of BSS reached?
         bne     scr_loop                | if not, clear next word
 
@@ -1500,14 +1508,13 @@ resolset:
 
         move.b  sbytes(pc, d0.w), d1    | Get the number of bytes per line
         move.w  d1, _v_lin_wr           | Set the line wrap
-        
 
         asl.w   #1, d0                  | resolution as word index
-        move.b  sresoly(pc, d0.w), d1   | Get the number of planes
-        move.w  d1, v_vt_rez            | Set the vertical resolution
+        move.w  sresoly(pc, d0.w), d1   | Get the vertical resolution
+        move.w  d1, v_vt_rez            | Set it
 
-        move.b  sresolx(pc, d0.w),d1    | Get the number of planes
-        move.w  d1, v_hz_rez            | Set the horizontal resolution
+        move.w  sresolx(pc, d0.w), d1   | Get the horizontal resolution
+        move.w  d1, v_hz_rez            | Set it
 
         rts
 

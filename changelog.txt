@@ -149,7 +149,11 @@ Start... early ages
 - started iorec and kbdvbase stuff (aim is to reimplement kbd.c to
   be compliant with the way TOS does it)
 - some debug info in Malloc(), bios(5)
+<<<<<<< changelog.txt
 - cleaned Makefile and end.s ("the end.s episode")
 
 09. Oct. 2001
-- copy paste error in linea stubs, startup.s
+- Got asm conout working - MiNT did run somewhat better (MAD)
+- Includes some more needed lineavars initialized (_esc_init) (MAD)
+- cleaned Makefile and end.s ("the end.s episode") (LVL)
+- copy paste error in linea stubs, startup.s (LVL)

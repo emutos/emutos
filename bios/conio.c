@@ -22,7 +22,12 @@
 
 
 /*==== external declarations for graphics =================================*/
+#if ASM_IMPLEMENTED
 extern void charblit(BYTE charcode, UWORD destx, UWORD desty);
+#endif
+
+extern void esc_init();
+extern void cputc(WORD);
 
 /*==== Defines ============================================================*/
 
@@ -167,8 +172,12 @@ VOID con_init()
     for (pos=0; pos<=MAXCOLS+1; pos++)  /* fill in constant tabstops */
         scrn_tbl.tabstop[pos]=tabs[pos];
 
+    esc_init();
+
     char_mask = INITATTR;       /*attribute & character mask  */
     cputs("[    ] Console has been initialized ...\r");
+
+
     cstatus(SUCCESS);
 }
 
@@ -217,6 +226,7 @@ LONG cons_in()
 
 
 
+#if ASM_IMPLEMENTED
 /*==== Position cursor at screen ==========================================*/
 
 VOID pos_cursor(short incr)
@@ -538,6 +548,17 @@ void cons_out(BYTE chr)
                 break;
 
     } /* end of switch(state) */
+}
+#endif
+
+
+
+void cons_out(BYTE chr)
+{
+    WORD what;
+
+    what=(WORD)chr;
+    cputc(what);
 }
 
 

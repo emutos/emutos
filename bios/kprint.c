@@ -134,8 +134,8 @@ halt:
 
 void cputs(char * s )
 {
-	while( *s )
-		cons_out( *s++ ) ;
+//    while( *s )
+//		cons_out( *s++ ) ;
 }
 
 void cstatus(ERROR status)
