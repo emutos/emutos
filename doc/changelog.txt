@@ -1649,3 +1649,6 @@ Start... early ages
 
 2004-08-02
 - po/cs.po: translated missing strings (joy)
+
+2004-08-03
+- bios/cookie.h: _FDC cookie now uses correct "ATC" identification string (THH)

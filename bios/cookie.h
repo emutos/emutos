@@ -56,9 +56,9 @@ struct cookie {
  * value of FDC cookie
  */
 
-#define FDC_0ATC    0x00A15443L
-#define FDC_1ATC    0x01A15443L
-#define FDC_2ATC    0x02A15443L
+#define FDC_0ATC    0x00415443L
+#define FDC_1ATC    0x01415443L
+#define FDC_2ATC    0x02415443L
 
 /* functions */
 
