@@ -60,7 +60,7 @@ void escfn1()
 
 void escfn2()
 {
-//    trap1(wntstr, "\ef\eE");   // hide alpha cursor
+    trap1(wntstr, "\ef\eE");   // hide alpha cursor
     v_clrwk();
 }
 
@@ -72,7 +72,7 @@ void escfn2()
 void escfn3()
 {
     v_clrwk();
-//    trap1(wntstr, "\eE\ee");   // show alpha cursor
+    trap1(wntstr, "\eE\ee");   // show alpha cursor
 }
 
 

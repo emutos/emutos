@@ -23,31 +23,11 @@
 #include        "proc.h"
 #include        "console.h"
 
-#ifdef  OLDCODE
-/* *************************** typeahead buffer ************************* */
-/*                                              */      /* EWF  12 Apr 85 */
-/* The following data structures are used for the typeahead buffer:       */
-/*                                                                        */
-long glbkbchar[3][KBBUFSZ];             /* The actual typeahead buffer    */
-                                        /* The 3 elements are prn,aux,con */
-char kbchar[3];                         /* size of typeahead buffer for   */
-                                        /* each element                   */
-long *insptr[3];                        /* insertion ptr for each buffer  */
-long *remptr[3];                        /* removal ptr for each buffer    */
-/* ********************************************************************** */
-#else
-/* *************************** typeahead buffer ************************* */
-/* The following data structures are used for the typeahead buffer:       */
-/*                                                                        */
-long glbkbchar[3][KBBUFSZ];             /* The actual typeahead buffer    */
-                                        /* The 3 elements are prn,aux,con */
-int     add[3] ;                        /*  index of add position         */
-int     remove[3] ;                     /*  index of remove position      */
-/* ********************************************************************** */
-#endif
-
+/* The following data structures are used for the typeahead buffer */
+long glbkbchar[3][KBBUFSZ];	/* The actual typeahead buffer */
+int add[3] ;     		/*  index of add position */
+int remove[3] ;             	/*  index of remove position */
 int glbcolumn[3];
-
 
 /* 
  * forward declarations (internal prototypes) 
@@ -90,12 +70,11 @@ static int backsp(int h, char *cbuf, int retlen, int col);
 
 
 
-/**
+/*
  * constat - console status
  *
  * @h - device handle
  */
-
 static long constat(int h)
 {
     if (h > BFHCON)
@@ -104,96 +83,61 @@ static long constat(int h)
     return( add[h] > remove[h] ? -1L : bconstat(h) );
 }
 
-/*****************************************************************************
-**
-** xconstat - 
-**      Function 0x0B - Console input status
-**
-**      Last modified   SCC     11 Aug 85
-**
-******************************************************************************
-*/
-
+/*
+ * xconstat - Function 0x0B - Console input status
+ */
 long xconstat(void)
 {
-        return(constat(HXFORM(run->p_uft[0])));
+    return(constat(HXFORM(run->p_uft[0])));
 }
 
-/*****************************************************************************
-**
-** xconostat -
-**      Function 0x10 - console output status
-**
-**      Last Modified   SCC     11 Aug 85
-******************************************************************************
-*/
-
+/*
+ * xconostat - Function 0x10 - console output status
+ */
 long xconostat(void)
 {
-        return(bconostat(HXFORM(run->p_uft[1])));
+    return(bconostat(HXFORM(run->p_uft[1])));
 }
 
-/*****************************************************************************
-**
-** xprtostat -
-**      Function 0x11 - Printer output status
-**
-**      Last modified   SCC     11 Aug 85
-******************************************************************************
-*/
-
+/*
+ * xprtostat - Function 0x11 - Printer output status
+ */
 long xprtostat(void)
 {
-        return(bconostat(HXFORM(run->p_uft[4])));
+    return(bconostat(HXFORM(run->p_uft[4])));
 }
 
-/*****************************************************************************
-**
-** xauxistat -
-**      Function 0x12 - Auxillary input status
-**
-**      Last modified   SCC     11 Aug 85
-******************************************************************************
-*/
-
+/*
+ * xauxistat - Function 0x12 - Auxillary input status
+ */
 long xauxistat(void)
 {
-        return(constat(HXFORM(run->p_uft[3])));
+    return(constat(HXFORM(run->p_uft[3])));
 }
 
-/*****************************************************************************
-**
-** xauxostat -
-**      Function 0x13 - Auxillary output status
-**
-**      Last modified   SCC     11 Aug 85
-******************************************************************************
-*/
-
+/*
+ * xauxostat - Function 0x13 - Auxillary output status
+ */
 long xauxostat(void)
 {
-        return(bconostat(HXFORM(run->p_uft[3])));
+    return(bconostat(HXFORM(run->p_uft[3])));
 }
 
-
-
-/**
- * conbrk - check for ctrl/s -  used internally
+/*
+ * conbrk - check for ctrl/s, used internally
  *
  * @h - device handle
  */
-
 static void conbrk(int h)
 {
     register long ch;
     register int stop, c;
 
     stop = 0;
-    if ( bconstat(h) )
+    if ( bconstat(h) ) {
         do {
             c = (ch = bconin(h)) & 0xFF;
-            if ( c == ctrlc )
-            {
+            if ( c == ctrlc ) {
                 buflush(h);     /* flush BDOS & BIOS buffers */
                 warmboot();
             }
@@ -202,41 +146,37 @@ static void conbrk(int h)
                 stop = 1;
             else if ( c == ctrlq )
                 stop = 0;
-            else if ( c == ctrlx )
-            {
+            else if ( c == ctrlx ) {
                 buflush(h);
                 glbkbchar[h][add[h]++ & KBBUFMASK] = ch;
             }
-            else
-            {
-                if ( add[h] < remove[h] + KBBUFSZ )
-                {
+            else {
+                if ( add[h] < remove[h] + KBBUFSZ ) {
                     glbkbchar[h][add[h]++ & KBBUFMASK] = ch;
                 }
-                else
-                {
+                else {
                     bconout(h, 7);
                 }
             }
         } while (stop);
+    }
 }
 
 
 
-/**
+/*
  * buflush - flush BDOS type-ahead buffer
  *
  * @h - device handle
  */
-
 static void buflush(int h)
 {
-        add[h] = remove[h] = 0;
+    add[h] = remove[h] = 0;
 }
 
 
 
-/**
+/*
  * conout - console output - used internally
  *
  * @h - device handle
@@ -248,94 +188,71 @@ static void conout(int h, int ch)
     bconout(h,ch);              /* output character to console */
     if (ch >= ' ')
         glbcolumn[h]++;         /* keep track of screen column */
-    else
-        if (ch == cr)
-            glbcolumn[h] = 0;
-        else
-            if (ch == bs) glbcolumn[h]--;
+    else if (ch == cr)
+        glbcolumn[h] = 0;
+    else if (ch == bs)
+        glbcolumn[h]--;
 }
 
 
 
-/*****************************************************************************
-**
-** xtabout -
-**      Function 0x02 - console output with tab expansion
-**
-**      Last modified   SCC     11 Aug 85
-******************************************************************************
-*/
-
+/*
+ * xtabout - Function 0x02 - console output with tab expansion
+ */
 void xtabout(int ch)
 {
-        tabout(HXFORM(run->p_uft[1]),ch);
+    tabout(HXFORM(run->p_uft[1]),ch);
 }
 
 
 
-/**
+/*
  * tabout -
  *
  * @h - device handle
  * @ch - character to output to console
  */
-
 void tabout(int h, int ch)
 {
     if (ch == tab)
-        do
+        do {
             conout(h,' ');
-        while (glbcolumn[h] & 7);
+        } while (glbcolumn[h] & 7);
     else
         conout(h,ch);
 }
 
 
 
-/**
+/*
  * cookdout - console output with tab and control character expansion
  *
  * @h - device handle
  * @ch - character to output to console
  */
-
 static void cookdout(int h, int ch)
 {
     if (ch == tab) tabout(h,ch); /* if tab, expand it   */
-    else
-    {
-        if ( ch < ' ' )
-        {
+    else {
+        if ( ch < ' ' ) {
             conout( h,'^' );
             ch |= 0x40;
         }
-    conout(h,ch);                       /* output the character */
+        conout(h,ch);                       /* output the character */
     }
 }
 
-/*****************************************************************************
-**
-** xauxout -
-**      Function 0x04 - auxillary output
-**
-**      Last modified   SCC     11 Aug 85
-******************************************************************************
-*/
-
+/*
+ * xauxout - Function 0x04 - auxillary output
+ */
 long xauxout(int ch)
 {
     return(  bconout(HXFORM(run->p_uft[3]),ch)  );
 }
 
-/*****************************************************************************
-**
-** xprtout -
-**      Function 0x05 - printer output
-**
-**      Last modified   SCC     11 Aug 85
-******************************************************************************
-*/
-
+/*
+ * xprtout - Function 0x05 - printer output
+ */
 long xprtout(int ch)
 {
     return(  bconout(HXFORM(run->p_uft[4]),ch)  ) ;
@@ -343,21 +260,18 @@ long xprtout(int ch)
 
 
 
-/**
+/*
  * getch - get character from device h
  *
  * @h - device handle
  */
-
 static long getch(int h)
 {
     long temp;
 
-    if ( add[h] > remove[h] )
-    {
+    if ( add[h] > remove[h] ) {
         temp = glbkbchar[h][remove[h]++ & KBBUFMASK];
-        if ( add[h] == remove[h] )
-        {
+        if ( add[h] == remove[h] ) {
             buflush(h);
         }
         return(temp);
@@ -368,22 +282,19 @@ static long getch(int h)
 
 
 
-/*****************************************************************************
-**
-** x7in -
-**      Function 0x07 - Direct console input without echo
-**
-**      Last modified   SCC     11 Aug 85
-******************************************************************************
-*/
+/*
+ * x7in - Function 0x07 - Direct console input without echo
+ */
 
 long x7in(void)
 {
     return(getch(HXFORM(run->p_uft[0])));
 }
 
-
-long conin(int h)               /* BDOS console input function */
+/*
+ * conin - BDOS console input function
+ */
+long conin(int h)              
 {
     long ch;
 
@@ -391,15 +302,9 @@ long conin(int h)               /* BDOS console input function */
     return(ch);
 }
 
-/*****************************************************************************
-**
-** xconin -
-**      Function 0x01 - console input
-**
-**      Last modified   SCC     16 Aug 85
-******************************************************************************
-*/
-
+/*
+ * xconin - Function 0x01 - console input
+ */
 long xconin(void)
 {
     int h;
@@ -409,15 +314,9 @@ long xconin(void)
     return( conin( h ) );
 }
 
-/*****************************************************************************
-**
-** x8in -
-**      Function 0x08 - Console input without echo
-**
-**      Last modified   SCC     24 Sep 85
-******************************************************************************
-*/
-
+/*
+ * x8in - Function 0x08 - Console input without echo
+ */
 long x8in(void)
 {
     register int h;
@@ -433,29 +332,17 @@ long x8in(void)
     }
 }
 
-/*****************************************************************************
-**
-** xauxin -
-**      Function 0x03 - Auxillary input
-**
-**      Last modified   SCC     11 Aug 85
-******************************************************************************
-*/
-
+/*
+ * xauxin - Function 0x03 - Auxillary input
+ */
 long xauxin(void)
 {
     return(bconin(HXFORM(run->p_uft[3])));
 }
 
-/*****************************************************************************
-**
-** rawconio -
-**      Function 0x06 - Raw console I/O
-**
-**      Last modified   SCC     11 Aug 85
-******************************************************************************
-*/
-
+/*
+ * rawconio - Function 0x06 - Raw console I/O
+ */
 long rawconio(int parm)
 {
     int i;
@@ -468,10 +355,9 @@ long rawconio(int parm)
     return 0; /* dummy */
 }
 
-/**
+/*
  * xprt_line - Function 0x09 - Print line up to nul with tab expansion
  */
-
 void xprt_line(char *p)
 {
     prt_line(HXFORM(run->p_uft[1]),p);
@@ -479,10 +365,9 @@ void xprt_line(char *p)
 
 
 
-/**
+/*
  * prt_line - print line to stdout
  */
-
 static void prt_line(int h, char *p)
 {
     while( *p ) tabout( h, *p++ );
@@ -490,18 +375,16 @@ static void prt_line(int h, char *p)
 
 
 
-/**********************************************/
-/* read line with editing and bounds checking */
-/**********************************************/
+/*
+ * read line with editing and bounds checking
+ */
 
 /* Two subroutines first */
-
 static void newline(int h, int startcol)
 {
     conout(h,cr);                       /* go to new line */
     conout(h,lf);
-    while(startcol)
-    {
+    while(startcol) {
         conout(h,' ');
         startcol -= 1;          /* start output at starting column */
     }
@@ -519,20 +402,18 @@ static int backsp(int h, char *cbuf, int retlen, int col)
                                 /* if buffer non-empty, decrease it by 1 */
     i = retlen;
     p = cbuf;
-    while (i--)                 /* calculate column position    */
-    {                           /*  across entire char buffer   */
+    while (i--)  {              /* calculate column position across entire char buffer */
         ch = *p++;              /* get next char                */
-        if ( ch == tab )
-        {
+        if ( ch == tab ) {
             col += 8;
             col &= ~7;          /* for tab, go to multiple of 8 */
         }
-        else if ( ch < ' ' ) col += 2;
-                                /* control chars put out 2 printable chars */
-        else col += 1;
+        else if ( ch < ' ' )
+            col += 2;           /* control chars put out 2 printable chars */
+        else
+            col += 1;
     }
-    while (glbcolumn[h] > col)
-    {
+    while (glbcolumn[h] > col) {
         conout(h,bs);           /* backspace until we get to proper column */
         conout(h,' ');
         conout(h,bs);
@@ -540,14 +421,11 @@ static int backsp(int h, char *cbuf, int retlen, int col)
     return(retlen);
 }
 
-/*****************************************************************************
-**
-** readline -
-**      Function 0x0A - Read console string into buffer
-******************************************************************************
-*/
-
-/* p is: max length, return length, buffer space */
+/*
+ * readline - Function 0x0A - Read console string into buffer
+ *
+ * p - max length, return length, buffer space
+ */
 void readline(char *p)
 {
     p[1] = cgets(HXFORM(run->p_uft[0]),(((int) p[0]) & 0xFF),&p[2]);
@@ -556,39 +434,39 @@ void readline(char *p)
 /* h is special handle denoting device number */
 int cgets(int h, int maxlen, char *buf)
 {
-        char ch;
-        int i,stcol,retlen;
+    char ch;
+    int i,stcol,retlen;
 
-        stcol = glbcolumn[h];           /* set up starting column */
-        for (retlen = 0; retlen < maxlen; )
-        {
-                switch(ch = getch(h))
-                {
-                        case cr:
-                        case lf: conout(h,cr); goto getout;
-                        case bs:
-                        case rub:
-                                retlen = backsp(h,buf,retlen,stcol);
-                                break;
-                        case ctrlc: warmboot();
-                        case ctrlx:
-                                do retlen = backsp(h,buf,retlen,stcol);
-                                while (retlen);
-                                break;
-                        case ctrlu:
-                                conout(h,'#'); 
-                                newline(h,stcol);
-                                retlen = 0;
-                                break;
-                        case ctrlr:
-                                conout(h,'#');
-                                newline(h,stcol);
-                                for (i=0; i < retlen; i++)
-                                        cookdout(h,buf[i]);
-                                break;
-                        default:
-                                cookdout(h,buf[retlen++] = ch);
-                }
+    stcol = glbcolumn[h];           /* set up starting column */
+    for (retlen = 0; retlen < maxlen; ) {
+        switch(ch = getch(h)) {
+        case cr:
+        case lf:
+            conout(h,cr);
+            return(retlen);
+        case bs:
+        case rub:
+            retlen = backsp(h,buf,retlen,stcol);
+            break;
+        case ctrlc: warmboot();
+        case ctrlx:
+            do retlen = backsp(h,buf,retlen,stcol);
+            while (retlen);
+            break;
+        case ctrlu:
+            conout(h,'#');
+            newline(h,stcol);
+            retlen = 0;
+            break;
+        case ctrlr:
+            conout(h,'#');
+            newline(h,stcol);
+            for (i=0; i < retlen; i++)
+                cookdout(h,buf[i]);
+            break;
+        default:
+            cookdout(h,buf[retlen++] = ch);
         }
-getout: return(retlen);
+    }
+    return(retlen);
 }

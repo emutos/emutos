@@ -448,7 +448,7 @@ void v_opnwk()
     ints_on();                          // enable interrupts
 
     vdimouse_init();                    // initialize mouse
-    cprintf("\033f");   		// FIXME: switch off cursor
+    //cprintf("\033f");   		// FIXME: switch off cursor
     escfn2();                           // enter graphics mode
 }
 
