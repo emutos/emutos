@@ -150,11 +150,11 @@ void biosinit()
     con_init();         /* initialize the system console */
 
     /* print, what has been done till now (fake) */
-    cputs("[ OK ] Entered supervisormode ...\n\r");
-    cputs("[ OK ] Configured memory ...\n\r");
-    cputs("[ OK ] Initialized video shifter ...\n\r");
-    cputs("[ OK ] Soundchip initialized ...\n\r");
-    cputs("[ OK ] Floppy deselected ...\n\r");
+    cprintf("[ OK ] Entered supervisormode ...\n\r");
+    cprintf("[ OK ] Configured memory ...\n\r");
+    cprintf("[ OK ] Initialized video shifter ...\n\r");
+    cprintf("[ OK ] Soundchip initialized ...\n\r");
+    cprintf("[ OK ] Floppy deselected ...\n\r");
 
     /* now do the remaining things */
     mfp_init();         /* init MFP and ACIAs */
@@ -218,17 +218,17 @@ void biosmain()
 {
 
 
-    cputs("[    ] BDOS setup works ....\r");
+    cprintf("[    ] BDOS setup works ....\r");
     if (trap_1( 0x30 ) < 0)     /* initial test, if BDOS works */
-        cputs("[FAIL]\n\r");
+        cprintf("[FAIL]\n\r");
     else
-        cputs("[ OK ]\n\r");
+        cprintf("[ OK ]\n\r");
 
     trap_1( 0x2b, os_dosdate);  /* set initial date in GEMDOS format */
-    cputs("[ OK ] Initial system date and time set ...\n\r");
+    cprintf("[ OK ] Initial system date and time set ...\n\r");
 
     trap_1( 0x0e , defdrv );    /* Set boot drive */
-    cputs("[ OK ] Boot disk drive set ...\n\r");
+    cprintf("[ OK ] Boot disk drive set ...\n\r");
 
     /* execute Reset-resistent PRGs */
 
@@ -244,12 +244,12 @@ void biosmain()
     /* load command.prg */
     
     /* check, if command.prg has loaded correctly */
-    cputs("[ OK ] COMMAND.PRG loading and going on ...\n\r");
-//    cputs("[ OK ] BENCH1.PRG loading and going on ...\n\r");
+    cprintf("[ OK ] COMMAND.PRG loading and going on ...\n\r");
+//    cprintf("[ OK ] BENCH1.PRG loading and going on ...\n\r");
     trap_1( 0x4b , 0, "COMMAND.PRG" , "", env);
 //    trap_1( 0x4b , 0, "BENCH1.PRG" , "", env);
 
-    cputs("[FAIL] HALT - should never be reached!\n\r");
+    cprintf("[FAIL] HALT - should never be reached!\n\r");
     while(1) ;
 }
 
