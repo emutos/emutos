@@ -28,6 +28,14 @@
 
 /*==== Defines ============================================================*/
 
+/* allowed values for Mxalloc mode: (defined in mem.h) */
+#define MX_STRAM 0
+#define MX_TTRAM 1
+
+/*==== External declarations ==============================================*/
+
+/* mxalloc (defined in bdos/mem.h) */
+long xmxalloc(long amount, int mode);
 
 
 /*
@@ -155,7 +163,13 @@ void initinfo()
     pair_start(_("CPU type")); cprintf("m680%02ld", mcpu); pair_end();
     pair_start(_("Machine")); cprintf(machine_name()); pair_end();
     pair_start(_("MMU available")); cprintf(_("No")); pair_end();
-    pair_start(_("Free memory")); cprintf(_("%ld bytes"), memtop-membot);
+    pair_start(_("Free memory"));
+        cprintf(_("%ld kB"), /* memtop-membot */ xmxalloc(-1L, MX_STRAM) >> 10);
+        {
+            long fastramsize = xmxalloc(-1L, MX_TTRAM);
+            if (fastramsize > 0)
+                cprintf(_(" ST-RAM, %ld kB TT-RAM"), fastramsize >> 10);
+        }
     pair_end();
     pair_start(_("Screen start")); cprintf("0x%lx", (long)v_bas_ad);
     pair_end();

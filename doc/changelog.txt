@@ -583,3 +583,5 @@ Start... early ages
 - put parallel and serial output funcs from asm to chardev.c (MAD)
 - put cpu_init(), cooki_init() and machine_init() to the beginning of the 
   C-startup procedure of bios.c (MAD)
+- TT-RAM is added to BDOS memory by calling Maddalt (should be changed) (joy)
+- free TT-RAM is displayed in initinfo.c (joy)

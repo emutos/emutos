@@ -82,6 +82,7 @@ extern void launchautoexec(PD *); /* found in startup.S */
 
 extern void emucon(void);       /* found in cli/coma.S - start of CLI */
 
+long xmaddalt(long start, long size); /* found in bdos/mem.h */
 
 /*==== Declarations =======================================================*/
 
@@ -195,6 +196,10 @@ void startup(void)
 
     font_init(); 		/* Init font related line-a variables */
 
+    /* add TT-RAM that was detected in memory.S */
+    if (ramtop > 0x1000000)
+        xmaddalt( 0x1000000, ramtop - 0x1000000);
+ 
     /* main BIOS */
     biosmain();
 
