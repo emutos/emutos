@@ -23,6 +23,7 @@
                 .global _cputc          // print a character for bios.c
 		.global _bconout5	// raw console output
                 .global _blink
+                .global _blink
                 .global normal_ascii    // default output type for linea.s
 
 
@@ -53,7 +54,6 @@
 
                 .xdef   _v_stat_0        // VIDEO CELL SYSTEM STATUS
                 .xdef   _v_cur_tim       // cursor blink timer
-                .xdef   v_period        // 
 
                 .xdef   _disab_cnt       // disable depth count. (>0 => disabled)
                 .xdef   sav_cxy         // save area for cursor coords.
@@ -534,7 +534,6 @@ escd:           bsr     esco            // erase from beginning of line.
 
 // ==== esce - Enable Cursor.=================================================
 
-_esce:
 esce:           tst.w   _disab_cnt       // if disable count is zero (cursor
                 beq     escc_out        // still shown) then return
                 clr.w   _disab_cnt       // 0 the disable counter.
@@ -689,8 +688,8 @@ _blink:
                 lea     _v_cur_tim,a1
                 subq.b  #1,(a1)         // decrement cursor flash timer.
                 bne     bl_out          // if <> 0, return.
-                move.b  #10,(a1)        // else reset timer.
-                bchg    #F_CSTATE,(a0)  // toggle cursor state.
+                move.b  _v_period, (a1) // else reset timer.
+                bchg    #F_CSTATE, (a0) // toggle cursor state.
                 bsr     comp_cr1        // complement cursor.
 bl_out:         rts
 

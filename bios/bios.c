@@ -24,6 +24,7 @@
 #include "config.h"
 #include "kprint.h"
 #include "tosvars.h"
+#include "lineavars.h"
 #include "initinfo.h"
 
 
@@ -301,6 +302,9 @@ void biosmain()
 
     /* show initial config information */
     initinfo();
+
+    /* switch on cursor via XBIOS*/
+    cursconf(1, 0);
 
     /* autoexec Prgs from AUTO folder */
     

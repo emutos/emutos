@@ -18,6 +18,7 @@
 #include "kprint.h"
 #include "iorec.h"     
 #include "tosvars.h"
+#include "lineavars.h"
 #include "ikbd.h"
 #include "midi.h"
 #include "mfp.h"
@@ -509,9 +510,9 @@ VOID xbios_14()
 WORD xbios_15(WORD function, WORD operand)
 {
 #if DBG_XBIOS
-    kprintf("XBIOS: Unimplemented function 0x15 ...\n");
+    kprintf("XBIOS: Cursconf()\n");
 #endif
-    return(0);
+    return cursconf(function, operand);
 }
 
 

@@ -24,12 +24,6 @@
 
 #define DBGBIOSC TRUE
 
-/*==== External declarations ==============================================*/
-
-extern void cputc(WORD);        /* found in conout.s */
-
-
-
 /*==== BIOS initialization ================================================*/
 /*
  * called from startup.s, this routine will do necessary bios initialization

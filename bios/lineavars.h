@@ -20,6 +20,16 @@
 #include "portab.h"
 
 
+
+// ==== Defines ==============================================================
+
+/* Bits for cursor state */
+#define M_CFLASH        0x0001  // cursor flash (0:disabled,  1:enabled)
+#define M_CSTATE        0x0002  // cursor flash state  (0:off, 1:on)
+#define M_CVIS          0x0004  // cursor visibility (0:invisible, 1:visible)
+
+
+
 /* Struct for different video mode parameters */
 typedef struct
 {
@@ -70,6 +80,8 @@ extern UWORD	v_cel_ht;	// cell height (width is 8)
 extern UWORD	v_cel_mx;	// needed by MiNT: columns on the screen minus 1
 extern UWORD	v_cel_my;	// needed by MiNT: rows on the screen minus 1
 extern UWORD	v_cel_wr;	// needed by MiNT: length (in bytes) of a line of characters
+
+extern WORD cursconf(WORD, WORD);       // XBIOS cursor configuration
 
 
 #define NEEDED 0

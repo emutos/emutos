@@ -117,9 +117,6 @@ void initinfo()
     set_margin(); cprintf("[ OK ] Screen start: \eb!0x%lx\eb/ \r\n", (long)v_bas_ad);
     set_margin(); cprintf("[ OK ] Boot drive :  \eb!%c:\eb/ \r\n", bootdev+65);
 
-    /* switch on cursor - Esc E */
-    cprintf("\ee");
-
     /* Just a seperator */
     cprintf("\n\r");
     set_line();
