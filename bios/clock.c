@@ -88,28 +88,36 @@ static struct myclkreg clkregs1, clkregs2;
 
 void detect_megartc(void)
 {
-  /* detect megartc. 
-   * I do it exactly like TOS 1.2 does, not trying to understand...
-   */
+  /* first check if the address is valid */
   has_megartc = 0;
 #if !NO_MEGARTC
   if (check_read_byte(CLK_BASE+1))
     has_megartc = 1;
 #endif /* NO_MEGARTC */
-
+  
+#if NEEDED
+  /* 
+   * Then this is what TOS 1.2 seems to do. However emulators like
+   * STonX do not accept writing to the RTC registers, even in the
+   * 'second bank' (if this is what setting rega := 9 means).
+   * For this reason it is commented out.
+   */
   if (has_megartc) {
+    /* use 'second bank' (?), write some test (?) values in registers */
     clk.rega = 9;
     clk.min_l = 10;
     clk.min_h = 5;
     if((clk.min_l != 10) || (clk.min_h != 5)) {
       has_megartc = 0;
     } else {
+      /* set back to 'first bank' (?), do some initialisation (?) */
       has_megartc = 1;
       clk.sec_l = 1;
       clk.rega = 8;
       clk.regb = 0;
     }
   }
+#endif /* NEEDED */
 }
 
 /*==== MegaRTC internal functions =========================================*/
@@ -506,107 +514,7 @@ static void isetdt(ULONG dt)
 }
 
 
-#if 0 /* old stuff */
-
-/*==== TIME - structure for passing time and date info ====================*/
-/*
-**  ti_year is the year in the current century.
-**
-**  the time indicated in this structure is the system base time.  If the
-**      current implementation is a multi-user type system, or one in a
-**      widely distributed network, then the base time should be something 
-**      based on GMT, with the system converting to local time as needed.  
-**      If, however, the implementation is a simple non-networking machine,
-**      the base time may be local time.
-**
-**  the driver does not know anything about normal calendar arithmetic or
-**      daylight savings time, or what century it is (that is up to the 
-**      system, or anything other than keeping an increment in ms, seconds, 
-**      minutes, etc from the base time with which it was
-**      initialized.
-*/
-
-#define TIME    struct _TimStruct
-
-TIME
-{
-        BYTE    ti_sec;         /*  seconds      (0-59)                 */
-        BYTE    ti_min;         /*  minutes      (0-59)                 */
-        BYTE    ti_hour;        /*  hours        (0-23)                 */
-        BYTE    ti_daymo;       /*  day of month (1-31)                 */
-        BYTE    ti_daywk;       /*  day of week  (1-7)          Sun = 1 */
-        BYTE    ti_mon;         /*  month of year(1-12)                 */
-        BYTE    ti_year;        /*  yr of century(0-99)                 */
-};
-
-
-/*==== Global variables ===================================================*/
-
-
-
-/*==== clk_int - keyboard interrupt service routine =========================*/
-/*
- *      clock Interrupt Service Routine for
- *      this routine is invoked upon receipt of an interrupt
- *      from the clock by the system.  it retrieves the
- *      convenient time.
- */
- 
-void    clkint(void)
-{
-    return;
-}
-
-
-
-/*==== clk_init - initialize the clock ====================================*/
-ERROR   clk_init(void)
-{
-    /* no initialization needed - throughpassed to unix clock */
-    return(SUCCESS);
-}
-
-
-
-/*==== clklox - clock as serial device ??? ================================*/
-
-void    clklox(LONG flags, LONG ticks)
-{
-    return;
-}
-
-
-
-/*==== clk_gettime - get current time from emulator (Mega ST clock) =======*/
-/*
-**  returns:
-**      TRUE if valid time returned
-**      FALSE if fail.
-*/
-
-BOOLEAN clk_gettime( register TIME *t)
-{
-
-    t->ti_sec = (clk.sec_h<<4)|clk.sec_l ;
-    t->ti_min = (clk.min_h<<4)|clk.min_l ;
-    t->ti_hour = (clk.hour_h<<4)|clk.hour_l ;
-    t->ti_daymo = (clk.day_h<<4)|clk.day_l ;
-    t->ti_daywk = clk.daywk ;
-    t->ti_mon = (clk.mon_h<<4)|clk.mon_l ;
-    t->ti_year = (clk.year_h<<4)|clk.year_l ;
-
-    return(TRUE);       /* in emulation always ok */
-}
-
-/*==== clk_settime - set the current clock ================================*/
-BOOLEAN clk_settime( register TIME t )
-{
-    return(TRUE);       /* Emulator allows no write to clock registers */
-}       
-
-
-#endif /* old stuff */
-
+/* internal BIOS function */
 
 void date_time(WORD flag, WORD *dt)
 {
