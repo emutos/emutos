@@ -22,6 +22,7 @@
 // ==== Misc. functions ======================================================
 
         .xdef   kprintf_init
+        .xdef   _natfeat_init
 
 
 // ==== startup.s - variables for memory  ====================================
@@ -80,8 +81,14 @@ clearbss:
         clr.l   (a0)+
         dbra    d0, clearbss
 
+        /* done early so that kprintf can use the native feature */
+        jsr     _natfeat_init
+
+#if 1 /* to be removed soon? */
         /* At this point, better initialize kprintf before we forget */
         jsr     kprintf_init
+#endif
+        
         /* This is it. C code and kprintf allowed past this point. */
 
 

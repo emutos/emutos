@@ -141,7 +141,11 @@ void startup(void)
     kprintf("beginning of BIOS startup\n");
 #endif
 
-    natfeat_init();     /* initialize Native Features, if available */
+    /* LVL - I moved natfeat_init() earlier in the boot sequence, just after
+     * clearing the BSS and just before initializing memory, so that kprintf
+     * be available to debug the memory initialisation.
+     *    natfeat_init();     * initialize Native Features, if available 
+     */
 
     /* first detect available hardware (video, sound etc.) */
     machine_detect();
