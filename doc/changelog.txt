@@ -1086,6 +1086,7 @@ Start... early ages
 - bios/linea.S - made CLC_FLIT as linea_6 working. (MAD) 
 
 18. Sep. 2002
-- vdi/monout.c - put_pix for linea reimplemented in C (MAD)
-               - get_pix for linea reimplemented in C (MAD)
+- vdi/monout.c - put_pix() for linea reimplemented in C (MAD)
+               - get_pix() for linea reimplemented in C (MAD)
+               - rectfill() implemented in C (MAD)
 

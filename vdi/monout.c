@@ -2343,3 +2343,102 @@ WORD get_pix()
     }
     return color;                       /* return the composed color value */
 }
+
+
+/*
+ * clipbox - Just clips and copies the inputs for use by "rectfill"
+ *
+ * input:
+ *     X1       = x coord of upper left corner.
+ *     Y1       = y coord of upper left corner.
+ *     X2       = x coord of lower right corner.
+ *     Y2       = y coord of lower right corner.
+ *     CLIP     = clipping flag. (0 => no clipping.
+ *     XMN_CLIP = x clipping minimum.
+ *     XMX_CLIP = x clipping maximum.
+ *     YMN_CLIP = y clipping minimum.
+ *     YMX_CLIP = y clipping maximum.
+ *
+ * output:
+ *     X1 = x coord of upper left corner.
+ *     Y1 = y coord of upper left corner.
+ *     X2 = x coord of lower right corner.
+ *     Y2 = y coord of lower right corner.
+ */
+
+static
+WORD clipbox()
+{
+    WORD x1, y1, x2, y2;
+
+    x1 = X1;
+    y1 = Y1;
+    x2 = X2;
+    y2 = Y2;
+
+    /* clip x coordinates */
+    if ( x1 < XMN_CLIP) {
+        if (x2 < XMX_CLIP) {
+            return(FALSE);             /* clipped box is null */
+        }
+        X1 = XMN_CLIP;
+    }
+    if ( x2 > XMX_CLIP) {
+        if (x1 > XMN_CLIP) {
+            return(FALSE);             /* clipped box is null */
+        }
+        X2 = XMX_CLIP;
+    }
+    /* clip y coordinates */
+    if ( y1 < YMN_CLIP) {
+        if (y2 < YMX_CLIP) {
+            return(FALSE);             /* clipped box is null */
+        }
+        Y1 = YMN_CLIP;
+    }
+    if ( y2 > YMX_CLIP) {
+        if (y1 > YMN_CLIP) {
+            return(FALSE);             /* clipped box is null */
+        }
+        Y2 = YMX_CLIP;
+    }
+    return (TRUE);
+}
+
+
+
+/*
+ * rectfill - fills a rectangular area of the screen with a pattern
+ *            using a "bitblt" algorithm similar to "_HABLINE"'s.
+ *
+ *            Actually, this routine just clips and copies the inputs for
+ *    use by "BOX_FILL".
+ *
+ * input:
+ *     X1       = x coord of upper left corner.
+ *     Y1       = y coord of upper left corner.
+ *     X2       = x coord of lower right corner.
+ *     Y2       = y coord of lower right corner.
+ *     CLIP     = clipping flag. (0 => no clipping.
+ *     XMN_CLIP = x clipping minimum.
+ *     XMX_CLIP = x clipping maximum.
+ *     YMN_CLIP = y clipping minimum.
+ *     YMX_CLIP = y clipping maximum.
+ *
+ * output:
+ *     X1 = x coord of upper left corner.
+ *     Y1 = y coord of upper left corner.
+ *     X2 = x coord of lower right corner.
+ *     Y2 = y coord of lower right corner.
+ */
+
+void rectfill ()
+{
+    if (!CLIP || clipbox())
+            box_fill();
+#if 0
+    if (CLIP)
+        if (!clipxy())
+            return;
+#endif
+}

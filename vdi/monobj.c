@@ -710,7 +710,7 @@ void dr_recfl()
     X2 = *pts_in++;
     Y2 = *pts_in;
 
-    RECTFILL();
+    rectfill();
 }                               /* End "dr_recfl". */
 
 

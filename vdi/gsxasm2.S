@@ -16,9 +16,8 @@
 //              public routines
 
                 .globl   _end_pts
-                .globl   _get_pix
-                .globl   _RECTFILL
-
+		.globl   _box_fill
+                
 //              external routines.
 
                 .xdef    concat
@@ -368,75 +367,6 @@ ep_ret0:        moveq.l #0,d0           // return(1). (success)
 //////////////
 //////////////
 ////                                                                          ////
-////    _RECTFILL:                                                            ////
-////            This routine fills a rectangular area of the screen with a    ////
-////    pattern using a "bitblt" algorithm similar to "_HABLINE"'s.           ////
-////            Actually, this routine just clips and copies the inputs for   ////
-////    use by "BOX_FILL".                                                    ////
-////                                                                          ////
-////            input:  _X1       = x coord of upper left corner.             ////
-////                    _Y1       = y coord of upper left corner.             ////
-////                    _X2       = x coord of lower right corner.            ////
-////                    _Y2       = y coord of lower right corner.            ////
-////                    _CLIP     = clipping flag. (0 => no clipping.         ////
-////                    _XMN_CLIP = x clipping minimum.                       ////
-////                    _XMX_CLIP = x clipping maximum.                       ////
-////                    _YMN_CLIP = y clipping minimum.                       ////
-////                    _YMX_CLIP = y clipping maximum.                       ////
-////                                                                          ////
-////            output: _X1 = x coord of upper left corner.                   ////
-////                    _Y1 = y coord of upper left corner.                   ////
-////                    _X2 = x coord of lower right corner.                  ////
-////                    _Y2 = y coord of lower right corner.                  ////
-////                                                                          ////
-////            destroys: d0,d1,a0 & a1.                                      ////
-////                                                                          ////
-//////////////
-//////////////
-//
-_RECTFILL:
-                movem.l d2-d7/a2-a6,-(sp)       // restore registers
-                tst.w   _CLIP
-                beq     BOX_FILL                // if no clipping, just do it.
-//
-//      clipping.
-//
-                move.w  _XMN_CLIP,d0
-                move.w  _X1,d1
-                move.w  _X2,d2
-                cmp.w   d0,d1                   // is x1 >= xmn_clip?
-                bge     rf_xmx                  // yes, branch.
-                cmp.w   d0,d2                   // is x2 < xmn_clip
-                blt     rf_out                  // yes, branch. (clipped box is null)
-                move.w  d0,_X1                  // clip x1.
-rf_xmx:         move.w  _XMX_CLIP,d0
-                cmp.w   d0,d2                   // is x2 <= xmx_clip?
-                ble     rf_yclip                // yes, branch. (x clip is done)
-                cmp.w   d0,d1                   // is x1 > xmx_clip?
-                bgt     rf_out                  // yes, branch. (clipped box is null)
-                move.w  d0,_X2                  // clip x2.
-//
-rf_yclip:       move.w  _YMN_CLIP,d0
-                move.w  _Y1,d1
-                move.w  _Y2,d2
-                cmp.w   d0,d1                   // is y1 >= ymn_clip?
-                bge     rf_ymx                  // yes, branch.
-                cmp.w   d0,d2                   // is y2 < ymn_clip
-                blt     rf_out                  // yes, branch. (clipped box is null)
-                move.w  d0,_Y1                  // clip y1.
-rf_ymx:         move.w  _YMX_CLIP,d0
-                cmp.w   d0,d2                   // is y2 <= ymx_clip?
-                ble     BOX_FILL                // yes, branch. (y clip is done)
-                cmp.w   d0,d1                   // is y1 > ymx_clip?
-                bgt     rf_out                  // yes, branch. (clipped box is null)
-                move.w  d0,_Y2                  // clip y2.
-//
-//      fall through to BOX_FILL.
-//
-
-//////////////
-//////////////
-////                                                                          ////
 ////    BOX_FILL:                                                             ////
 ////            This routine fills a rectangular area of the screen with a    ////
 ////    pattern using a "bitblt" algorithm similar to "_HABLINE"'s.           ////
@@ -461,6 +391,9 @@ rf_ymx:         move.w  _YMX_CLIP,d0
 #define pat_start               6               // copy of pattern starting address
 #define pat_ptr                 2               // copy of pattern pointer
 #define pl_cnt                  0               // copy of video plane count
+
+_box_fill:
+		movem.l d2-d7/a2-a6,-(sp)       // save registers
 
 BOX_FILL:
                 adda.w  #-parm_size,sp  // allocate temporary stack area
