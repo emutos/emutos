@@ -5,56 +5,52 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: EMUTOS beta\n"
-"POT-Creation-Date: 2002-07-01 22:48+0200\n"
-"PO-Revision-Date: 2002-07-01 23:12+0200\n"
+"POT-Creation-Date: 2003-02-08 22:53+0100\n"
+"PO-Revision-Date: 2003-02-08 22:54+0100\n"
 "Last-Translator: Laurent Vogel <lvl@club-internet.fr>\n"
 "Language-Team: French <fr@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: bios/bios.c:298
+#: bios/bios.c:308
 msgid "Please eject the floppy and hit RETURN"
 msgstr "Veuillez éjecter la disquette et taper ENTREE"
 
-#: bios/initinfo.c:164
+#: bios/initinfo.c:209
 msgid "EmuTOS Version"
 msgstr "EmuTOS Version"
 
-#: bios/initinfo.c:165
+#: bios/initinfo.c:210
 msgid "CPU type"
 msgstr "Type de CPU"
 
-#: bios/initinfo.c:166
+#: bios/initinfo.c:211
 msgid "Machine"
 msgstr "Machine"
 
-#: bios/initinfo.c:167
-msgid "MMU available"
-msgstr "MMU présente"
+#~msgid "MMU available"
+#~msgstr "MMU présente"
 
-#: bios/initinfo.c:167 desk/desk_rsc.c:30
+#: desk/desk_rsc.c:30
 msgid "No"
 msgstr "Non"
 
-#: bios/initinfo.c:168
-msgid "Free memory"
-msgstr "Mémoire libre"
+#~msgid "Free memory"
+#~msgstr "Mémoire libre"
 
 #~msgid "%ld bytes"
 #~msgstr "%ld octets"
 
-#: bios/initinfo.c:176
+#: bios/initinfo.c:226
 msgid "Screen start"
 msgstr "Début écran"
 
-#: bios/initinfo.c:188
-msgid "Boot drive"
-msgstr "Disque de boot"
+#~msgid "Boot drive"
+#~msgstr "Disque de boot"
 
-#: bios/initinfo.c:189
-msgid "Current time"
-msgstr "Heure"
+#~msgid "Current time"
+#~msgstr "Heure"
 
 #~msgid "CR to continue..."
 #~msgstr "ENTREE pour continuer..."
@@ -194,7 +190,7 @@ msgstr "Heure"
 #~msgid "Command not found."
 #~msgstr "Commande non trouvée."
 
-#: bios/bios.c:333
+#: bios/bios.c:343
 msgid ""
 "[FAIL] HALT - should never be reached!\n"
 msgstr ""
@@ -349,15 +345,14 @@ msgstr ""
 #~msgid "Unable to read bootsector file"
 #~msgstr "Impossible de lire le fichier de secteur d'amorçage"
 
-#: bios/initinfo.c:169
+#: bios/initinfo.c:214 bios/initinfo.c:221
 msgid "%ld kB"
 msgstr "%ld kB"
 
-#: bios/initinfo.c:173
-msgid " ST-RAM, %ld kB TT-RAM"
-msgstr " ST-RAM, %ld kB TT-RAM"
+#~msgid " ST-RAM, %ld kB TT-RAM"
+#~msgstr " ST-RAM, %ld kB TT-RAM"
 
-#: bios/initinfo.c:178
+#: bios/initinfo.c:228
 msgid "GEMDOS drives"
 msgstr "Lecteurs GEMDOS"
 
@@ -405,83 +400,83 @@ msgstr "Label de disque:  ___________"
 msgid "Number of folders:     _____"
 msgstr "Nombre de dossiers:   _____"
 
-#: desk/desk_rsc.c:280
+#: desk/desk_rsc.c:297
 msgid " Desk "
 msgstr " Bureau "
 
-#: desk/desk_rsc.c:286
+#: desk/desk_rsc.c:303
 msgid " File "
 msgstr " Fichier "
 
-#: desk/desk_rsc.c:292
+#: desk/desk_rsc.c:309
 msgid " Options "
 msgstr " Options "
 
-#: desk/desk_rsc.c:298
+#: desk/desk_rsc.c:315
 msgid " Arrange "
 msgstr " Rangement "
 
-#: desk/desk_rsc.c:316
+#: desk/desk_rsc.c:333
 msgid "  Desktop info...   "
 msgstr "  Infos bureau..."
 
-#: desk/desk_rsc.c:370
+#: desk/desk_rsc.c:387
 msgid "  Open"
 msgstr "  Ouvrir"
 
-#: desk/desk_rsc.c:376
+#: desk/desk_rsc.c:393
 msgid "  Info/Rename...  \007I"
 msgstr "  Info/Renommer..."
 
-#: desk/desk_rsc.c:388
+#: desk/desk_rsc.c:405
 msgid "  Delete...       \007D"
 msgstr "  Effacer..."
 
-#: desk/desk_rsc.c:394
+#: desk/desk_rsc.c:411
 msgid "  Format..."
 msgstr "  Formater..."
 
-#: desk/desk_rsc.c:406
+#: desk/desk_rsc.c:423
 msgid "  To Output       ^U"
 msgstr "  Vers output"
 
-#: desk/desk_rsc.c:412
+#: desk/desk_rsc.c:429
 msgid "  Exit to DOS     ^Q"
 msgstr "  Retour au DOS"
 
-#: desk/desk_rsc.c:424
+#: desk/desk_rsc.c:441
 msgid "  Install disk drive..."
 msgstr "  Installer un lecteur..."
 
-#: desk/desk_rsc.c:430
+#: desk/desk_rsc.c:447
 msgid "  Configure application...  \007A"
 msgstr "  Configure une application..."
 
-#: desk/desk_rsc.c:442
+#: desk/desk_rsc.c:459
 msgid "  Set preferences..."
 msgstr "  Préférences..."
 
-#: desk/desk_rsc.c:448
+#: desk/desk_rsc.c:465
 msgid "  Save desktop              \007V"
 msgstr "  Sauver le bureau"
 
-#: desk/desk_rsc.c:454
+#: desk/desk_rsc.c:471
 msgid "  Enter DOS commands        \007C"
 msgstr "  Commandes DOS"
 
-#: desk/desk_rsc.c:478
+#: desk/desk_rsc.c:495
 msgid "  Sort by name   \007N"
 msgstr "  Trier par nom"
 
-#: desk/desk_rsc.c:484
+#: desk/desk_rsc.c:501
 msgid "  Sort by type   \007P"
 msgstr "  trier par type"
 
-#: desk/desk_rsc.c:490
+#: desk/desk_rsc.c:507
 msgid "  Sort by size   \007Z"
 msgstr "  trier par taille"
 
-#: desk/desk_rsc.c:496
+#: desk/desk_rsc.c:513
 msgid "  Sort by date   \007T"
 msgstr "  trier par date"
 
@@ -545,174 +540,173 @@ msgstr "Nom actuel:  ________.___"
 msgid "Copy's name:  ________.___"
 msgstr "Nom de la copie:  ________.___"
 
-#: desk/desk_rsc.c:510
+#: desk/desk_rsc.c:527
 msgid "ITEM INFORMATION / RENAME"
 msgstr "INFORMATIONS / RENOMMER"
 
-#: desk/desk_rsc.c:540
+#: desk/desk_rsc.c:557
 msgid "Attributes:"
 msgstr "Attributs:"
 
-#: desk/desk_rsc.c:552
+#: desk/desk_rsc.c:569
 msgid "Read/Write"
 msgstr "Lire/écrire"
 
-#: desk/desk_rsc.c:558
+#: desk/desk_rsc.c:575
 msgid "Read-Only"
 msgstr "Lecture seule"
 
-#: desk/desk_rsc.c:584
+#: desk/desk_rsc.c:601
 msgid "DISK INFORMATION"
 msgstr "INFORMATIONS DISQUE"
 
-#: desk/desk_rsc.c:640
+#: desk/desk_rsc.c:657
 msgid "FOLDER INFORMATION"
 msgstr "INFORMATIONS DOSSIER"
 
-#: desk/desk_rsc.c:702
+#: desk/desk_rsc.c:719
 msgid "Version"
 msgstr "Version"
 
-#: desk/desk_rsc.c:720
-msgid "April 23, 2002"
-msgstr "23 Avril 2002"
+#~msgid "April 23, 2002"
+#~msgstr "23 Avril 2002"
 
-#: desk/desk_rsc.c:726
+#: desk/desk_rsc.c:743
 msgid "Copyright (c) 2002 by"
 msgstr "Copyright (c) 2002"
 
-#: desk/desk_rsc.c:738
+#: desk/desk_rsc.c:755
 msgid "The EmuTOS development team"
 msgstr "L'équipe de développment d'EmuTOS"
 
-#: desk/desk_rsc.c:744
+#: desk/desk_rsc.c:761
 msgid "Based on 'GPLed' sources"
 msgstr "Basé sur des sources GPL-isées"
 
-#: desk/desk_rsc.c:774
+#: desk/desk_rsc.c:791
 msgid "EmuTOS is distributed under the GPL"
 msgstr "EmuTOS est distribué sous licence GPL"
 
-#: desk/desk_rsc.c:780
+#: desk/desk_rsc.c:797
 msgid "See doc/license.txt for details"
 msgstr "(plus de détails dans doc/licence.txt)"
 
-#: desk/desk_rsc.c:794
+#: desk/desk_rsc.c:811
 msgid "NEW FOLDER INFORMATION"
 msgstr "INFO NOUVEAU DOSSIER"
 
-#: desk/desk_rsc.c:800
+#: desk/desk_rsc.c:817
 msgid "To create a new folder within the cur-"
 msgstr "Pour créer un nouveau dossier dans la"
 
-#: desk/desk_rsc.c:806
+#: desk/desk_rsc.c:823
 msgid "rent window, double-click on the New"
 msgstr "fenêtre en cours, double cliquer sur"
 
-#: desk/desk_rsc.c:812
+#: desk/desk_rsc.c:829
 msgid "Folder icon and complete the dialogue"
 msgstr "l'icône nouveau dossier et remplir les"
 
-#: desk/desk_rsc.c:818
+#: desk/desk_rsc.c:835
 msgid "that appears by entering the name of"
 msgstr "champs du dialogue qui apparaît avec"
 
-#: desk/desk_rsc.c:824
+#: desk/desk_rsc.c:841
 msgid "the folder you want to create."
 msgstr "le nom du dossier à créer."
 
-#: desk/desk_rsc.c:844
+#: desk/desk_rsc.c:861
 msgid "OPEN APPLICATION"
 msgstr "OUVRIR UNE APPLICATION"
 
-#: desk/desk_rsc.c:874
+#: desk/desk_rsc.c:891
 msgid "Enter the name of the document you want"
 msgstr "Entrez le nom du document à charger, ou"
 
-#: desk/desk_rsc.c:880
+#: desk/desk_rsc.c:897
 msgid "to load, or enter parameter values that"
 msgstr "entrez les valeurs de paramètres qui"
 
-#: desk/desk_rsc.c:886
+#: desk/desk_rsc.c:903
 msgid "are acceptable to this application."
 msgstr "conviennent pour cette application."
 
-#: desk/desk_rsc.c:900
+#: desk/desk_rsc.c:917
 msgid "INSTALL DISK DRIVE"
 msgstr "INSTALLER UN LECTEUR"
 
-#: desk/desk_rsc.c:918
+#: desk/desk_rsc.c:935
 msgid "Disk type:"
 msgstr "Type de lecteur:"
 
-#: desk/desk_rsc.c:930
+#: desk/desk_rsc.c:947
 msgid "Floppy"
 msgstr "Disquette"
 
-#: desk/desk_rsc.c:936
+#: desk/desk_rsc.c:953
 msgid "Hard"
 msgstr "D. dur"
 
-#: desk/desk_rsc.c:969
+#: desk/desk_rsc.c:986
 msgid "CONFIGURE APPLICATION"
 msgstr "CONFIGURER UNE APPLICATION"
 
-#: desk/desk_rsc.c:981
+#: desk/desk_rsc.c:998
 msgid "Document types:"
 msgstr "Types de document:"
 
-#: desk/desk_rsc.c:1035
+#: desk/desk_rsc.c:1052
 msgid "Application type:"
 msgstr "Type d'application:"
 
 #~msgid "DOS-takes parameters"
 #~msgstr "DOS avec paramètres"
 
-#: desk/desk_rsc.c:1065
+#: desk/desk_rsc.c:1082
 msgid "Needs full memory?"
 msgstr "toute la mémoire?"
 
-#: desk/desk_rsc.c:1089
+#: desk/desk_rsc.c:1106
 msgid "Icon type:"
 msgstr "Icône:"
 
-#: desk/desk_rsc.c:1176
+#: desk/desk_rsc.c:1193
 msgid "COPY FOLDERS / ITEMS"
 msgstr "COPIER DES DOSSIERS"
 
-#: desk/desk_rsc.c:1215
+#: desk/desk_rsc.c:1232
 msgid "DELETE FOLDERS / ITEMS"
 msgstr "EFFACER DES DOSSIERS"
 
-#: desk/desk_rsc.c:1254
+#: desk/desk_rsc.c:1271
 msgid "NAME CONFLICT DURING COPY"
 msgstr "CONFLIT DE NOM LORS DE LA COPIE"
 
-#: desk/desk_rsc.c:1284
+#: desk/desk_rsc.c:1301
 msgid "Stop"
 msgstr "Stop"
 
-#: desk/desk_rsc.c:1299
+#: desk/desk_rsc.c:1316
 msgid "NEW FOLDER"
 msgstr "NOUV DOSSIER"
 
-#: desk/desk_rsc.c:1332
+#: desk/desk_rsc.c:1349
 msgid "SET PREFERENCES"
 msgstr "PREFERENCES"
 
-#: desk/desk_rsc.c:1338
+#: desk/desk_rsc.c:1355
 msgid "Confirm deletes?"
 msgstr "Confirmer effacement?"
 
-#: desk/desk_rsc.c:1362
+#: desk/desk_rsc.c:1379
 msgid "Confirm copies?"
 msgstr "Confirmer la copie?"
 
-#: desk/desk_rsc.c:1386
+#: desk/desk_rsc.c:1403
 msgid "Confirm overwrites?"
 msgstr "Confirmer écrasement?"
 
-#: desk/desk_rsc.c:1410
+#: desk/desk_rsc.c:1427
 msgid "Double-click speed:"
 msgstr "Vitesse double-clic:"
 
@@ -722,87 +716,87 @@ msgstr "Vitesse double-clic:"
 #~msgid "Fast"
 #~msgstr "Rapide"
 
-#: desk/desk_rsc.c:1458
+#: desk/desk_rsc.c:1475
 msgid "Click"
 msgstr "Clic"
 
-#: desk/desk_rsc.c:1464
+#: desk/desk_rsc.c:1481
 msgid "No click"
 msgstr "Pas de clic"
 
-#: desk/desk_rsc.c:1470
+#: desk/desk_rsc.c:1487
 msgid "To drop down menus:"
 msgstr "Ouverture des menus:"
 
-#: desk/desk_rsc.c:1476
+#: desk/desk_rsc.c:1493
 msgid "Sound effects:"
 msgstr "Effets sonores:"
 
-#: desk/desk_rsc.c:1488
+#: desk/desk_rsc.c:1505
 msgid "On"
 msgstr "On"
 
-#: desk/desk_rsc.c:1494
+#: desk/desk_rsc.c:1511
 msgid "Off"
 msgstr "Off"
 
-#: desk/desk_rsc.c:1500
+#: desk/desk_rsc.c:1517
 msgid "Time format:"
 msgstr "Format heure:"
 
-#: desk/desk_rsc.c:1512
+#: desk/desk_rsc.c:1529
 msgid "12 Hour"
 msgstr "12 heures"
 
-#: desk/desk_rsc.c:1518
+#: desk/desk_rsc.c:1535
 msgid "24 Hour"
 msgstr "24 heures"
 
-#: desk/desk_rsc.c:1524
+#: desk/desk_rsc.c:1541
 msgid "Date format:"
 msgstr "Format date:"
 
-#: desk/desk_rsc.c:1536
+#: desk/desk_rsc.c:1553
 msgid "MM-DD-YY"
 msgstr "MM-JJ-AA"
 
-#: desk/desk_rsc.c:1542
+#: desk/desk_rsc.c:1559
 msgid "DD-MM-YY"
 msgstr "JJ-MM-AA"
 
-#: desk/desk_rsc.c:1580
+#: desk/desk_rsc.c:1597
 msgid "%L bytes used in %W items."
 msgstr "%L octets utilités par %W éléments."
 
-#: desk/desk_rsc.c:1581
+#: desk/desk_rsc.c:1598
 msgid "  Show as icons  \007S"
 msgstr "  Voir comme icônes"
 
-#: desk/desk_rsc.c:1582
+#: desk/desk_rsc.c:1599
 msgid "application"
 msgstr "application"
 
-#: desk/desk_rsc.c:1583
+#: desk/desk_rsc.c:1600
 msgid "documents"
 msgstr "documents"
 
-#: desk/desk_rsc.c:1585
+#: desk/desk_rsc.c:1602
 msgid "  Show as text   \007S"
 msgstr "  Voir comme texte"
 
-#: desk/desk_rsc.c:1598
+#: desk/desk_rsc.c:1615
 msgid "New Folder"
 msgstr "Nouv Dossier"
 
-#: desk/desk_rsc.c:1599
+#: desk/desk_rsc.c:1616
 msgid "Disk Drives:"
 msgstr "Lecteurs:"
 
-#: desk/desk_rsc.c:1602
+#: desk/desk_rsc.c:1619
 msgid "Free"
 msgstr "Libre"
 
-#: desk/desk_rsc.c:1604
+#: desk/desk_rsc.c:1621
 msgid "[1]["
 "The document type you selected is not|"
 "configured to work with a specific|"
@@ -816,7 +810,7 @@ msgstr "[1]["
 "\"Configure application\" pour associer|"
 "ce type de document à une application.][  OK  ]"
 
-#: desk/desk_rsc.c:1613
+#: desk/desk_rsc.c:1630
 msgid "[1]["
 "The GEM Desktop has no more available|"
 "windows.  Before you open a disk, close|"
@@ -826,7 +820,7 @@ msgstr "[1]["
 "disponible. Fermer une fenêtre|"
 "inutilisée avant d'ouvrir un disque.][  OK  ]"
 
-#: desk/desk_rsc.c:1618
+#: desk/desk_rsc.c:1635
 msgid "[1]["
 "Cannot find the FORMAT program.  If you|"
 "are using a dual-floppy system, you must|"
@@ -841,7 +835,7 @@ msgstr "[1]["
 "vous avez un disque dur, copiez FORMAT|"
 "sur la racine du disque dur.][  OK  ]"
 
-#: desk/desk_rsc.c:1627
+#: desk/desk_rsc.c:1644
 msgid "[3]["
 "Formatting will ERASE all|"
 "information on the disk in drive|"
@@ -854,7 +848,7 @@ msgstr "[3]["
 "%S:. Cliquez sur Annuler si vous ne|"
 "voulez pas perdre ces données.][  OK  |Annuler]"
 
-#: desk/desk_rsc.c:1636
+#: desk/desk_rsc.c:1653
 msgid "[3]["
 "You cannot copy a parent folder|"
 "into one of its child folders.][  OK  ]"
@@ -863,7 +857,7 @@ msgstr "[3]["
 "à l'intérieur d'un dossier contenu par|"
 "celui-ci.][  OK  ]"
 
-#: desk/desk_rsc.c:1639
+#: desk/desk_rsc.c:1656
 msgid "[3]["
 "If you are sure you want to|"
 "delete ALL the information on the|"
@@ -875,7 +869,7 @@ msgstr "[3]["
 "présentes sur le disque.|"
 "Sinon cliquez sur Annuler.][  OK  |Annuler]"
 
-#: desk/desk_rsc.c:1646
+#: desk/desk_rsc.c:1663
 msgid "[1]["
 "There is not enough space available|"
 "to configure this application.  To free|"
@@ -888,7 +882,7 @@ msgstr "[1]["
 "libérer de l'espace vous devez retirer|"
 "une application déjà configurée.][  OK  ]"
 
-#: desk/desk_rsc.c:1653
+#: desk/desk_rsc.c:1670
 msgid "[2]["
 "A folder with that name already|"
 "exists or your disk is full.|"
@@ -900,7 +894,7 @@ msgstr "[2]["
 "avec un autre nom ou annulez et|"
 "vérifiez la place disque disponible.][Annuler|Encore]"
 
-#: desk/desk_rsc.c:1660
+#: desk/desk_rsc.c:1677
 msgid "[1]["
 "This disk does not have enough room for|"
 "the information you are trying to copy.|"
@@ -912,7 +906,7 @@ msgstr "[1]["
 "Néanmoins certains éléments peuvent|"
 "avoir été copiés sur le disque.][  OK  ]"
 
-#: desk/desk_rsc.c:1667
+#: desk/desk_rsc.c:1684
 msgid "[3]["
 "The GEM Desktop cannot find the|"
 "documents DESKLO.ICN, DESKHI.ICN,|"
@@ -926,7 +920,7 @@ msgstr "[3]["
 "fichiers sont nécessaires pour lancer|"
 "le bureau GEM.][Annuler]"
 
-#: desk/desk_rsc.c:1676
+#: desk/desk_rsc.c:1693
 msgid "[3]["
 "To save your desktop, insert your|"
 "GEM DESKTOP disk into drive A:, close|"
@@ -939,7 +933,7 @@ msgstr "[3]["
 "cliquer sur OK. Cliquez sur Annuler si|"
 "vous ne voulez pas sauver le bureau.][  OK  |Annuler]"
 
-#: desk/desk_rsc.c:1685
+#: desk/desk_rsc.c:1702
 msgid "[3]["
 "Sorry, but you cannot place any more|"
 "folders inside of your current one.|"
@@ -952,7 +946,7 @@ msgstr "[3]["
 "documentation pour les limites sur|"
 "l'imbrication des dossiers.][Annuler]"
 
-#: desk/desk_rsc.c:1692
+#: desk/desk_rsc.c:1709
 msgid "[3]["
 "Sorry, but the Directory name you have|"
 "entered exceeds the maximum number of|"
@@ -1151,4 +1145,28 @@ msgstr "[3]["
 "et cliquez sur OK ou appuyer sur|"
 "ENTREE. Pour revenir au DOS cliquer sur|"
 "Annuler.][  OK  |Annuler]"
+
+#: bios/initinfo.c:159
+msgid "Hold <Control> to skip AUTO/ACC"
+msgstr "Touche CTRL => pas d'AUTO/ACC"
+
+#: bios/initinfo.c:161
+msgid "Hold <Alternate> to skip HDD"
+msgstr "Touche ALT => pas de disque dur"
+
+#: bios/initinfo.c:163
+msgid "Press any key to continue booting"
+msgstr "Taper une touche pour continuer"
+
+#: bios/initinfo.c:213
+msgid "Free ST-RAM"
+msgstr "ST-RAM libre"
+
+#: bios/initinfo.c:220
+msgid "Free FastRAM"
+msgstr "FastRAM libre"
+
+#: bios/initinfo.c:242
+msgid "Boot time"
+msgstr "Heure de démarrage"
 
