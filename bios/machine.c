@@ -39,12 +39,6 @@ int has_ste_shifter;
 int has_tt_shifter;
 int has_videl;
  
-/* 
- * Native Features provided by emulators
- * for some reason this is tested directly in startup.S
- */
-int has_natfeats;  
-
 /*
  * Tests video capabilities (STEnhanced Shifter, TT Shifter and VIDEL)
  */
@@ -190,7 +184,6 @@ void machine_detect(void)
   detect_vme();
   detect_megartc();
   // detect_nvram();  can't be called here due to the balloc()! :-(
-  detect_native_features();
 }
   
 void machine_init(void)
@@ -298,7 +291,7 @@ void machine_init(void)
   setvalue_fdc();
   cookie_add(COOKIE_FDC, cookie_fdc);
 
-  if (has_natfeats) {
+  if (has_natfeats()) {
     cookie_add(COOKIE_NATFEAT, (long)&natfeat_cookie);
   }
 
@@ -307,19 +300,12 @@ void machine_init(void)
 
 const char * machine_name(void)
 {
-/* NatFeat hack */
-#if 1
-    #define nf_getFullName(buffer, size) \
-            NFCall(NFID("NF_NAME") | 0x0001, (buffer), (unsigned long)(size))
+    static char buffer[80];
+    long bufsize;
 
-    char *nf_name_buf = phystop-64; /* how to alloc a bit of RAM? */
-
-    if (has_natfeats)
-        nf_getFullName(nf_name_buf, (long)63);
-
-    if (*nf_name_buf)
-        return nf_name_buf;
-#endif /* NatFeat hack */
+    bufsize = nfGetFullName(buffer, sizeof(buffer)-1);
+    if (bufsize > 0)
+        return buffer;
 
   switch(cookie_mch) {
   case MCH_ST:

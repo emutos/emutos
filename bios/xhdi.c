@@ -25,9 +25,6 @@
  
 #define DBG_XHDI        0
 
-/* NatFeats */
-long nfid_xhdi;
-
 /*=========================================================================*/
 
 void create_XHDI_cookie()
@@ -99,8 +96,8 @@ long XHInqTarget2(UWORD major, UWORD minor, ULONG *blocksize,
 #endif
 
     /* direct access to device */
-    if (nfid_xhdi) {
-        ret = NFCall(nfid_xhdi + XHINQTARGET2, (long)major, (long)minor, (long)blocksize, (long)deviceflags, (long)productname, (long)stringlen);
+    if (get_xhdi_nfid()) {
+        ret = NFCall(get_xhdi_nfid() + XHINQTARGET2, (long)major, (long)minor, (long)blocksize, (long)deviceflags, (long)productname, (long)stringlen);
         if (ret != EINVFN && ret != EUNDEV)
             return ret;
     }
@@ -132,8 +129,8 @@ long XHInqTarget(UWORD major, UWORD minor, ULONG *blocksize,
 
 long XHGetCapacity(UWORD major, UWORD minor, ULONG *blocks, ULONG *blocksize)
 {
-    if (nfid_xhdi) {
-        long ret = NFCall(nfid_xhdi + XHGETCAPACITY, (long)major, (long)minor, (long)blocks, (long)blocksize);
+    if (get_xhdi_nfid()) {
+        long ret = NFCall(get_xhdi_nfid() + XHGETCAPACITY, (long)major, (long)minor, (long)blocks, (long)blocksize);
         if (ret != EINVFN && ret != EUNDEV)
             return ret;
     }
@@ -154,8 +151,8 @@ long XHReadWrite(UWORD major, UWORD minor, UWORD rw, ULONG sector,
 #endif
 
     /* direct access to device */
-    if (nfid_xhdi) {
-        long ret = NFCall(nfid_xhdi + XHREADWRITE, (long)dev, (long)0, (long)rw, (long)sector, (long)count, buf);
+    if (get_xhdi_nfid()) {
+        long ret = NFCall(get_xhdi_nfid() + XHREADWRITE, (long)dev, (long)0, (long)rw, (long)sector, (long)count, buf);
         if (ret != EINVFN && ret != EUNDEV)
             return ret;
     }

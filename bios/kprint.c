@@ -18,11 +18,11 @@
 #include "kprint.h"
 #include "lineavars.h"
 #include "tosvars.h"
+#include "natfeat.h"
 
 /* extern declarations */
 
 extern void printout_stonx(char *);    /* in kprintasm.S */
-extern void printout_aranym(char *);
 
 extern void bconout2(WORD, UBYTE);
 
@@ -42,7 +42,6 @@ extern int doprintf(void (*outc)(int), const char *fmt, va_list ap);
  * called very early just after clearing the BSS.
  */
 #define NATIVE_PRINT_STONX 1
-#define NATIVE_PRINT_ARANYM 2
  
 int native_print_kind;
 
@@ -84,28 +83,29 @@ static void kprintf_outc_stonx(int c)
     printout_stonx(buf);
 }
 
-static void kprintf_outc_aranym(int c)
+static void kprintf_outc_natfeat(int c)
 {
     char buf[2];
     buf[0] = c;
     buf[1] = 0;
-    printout_aranym(buf);
+    nfStdErr(buf);
 }
 
 static int vkprintf(const char *fmt, va_list ap)
 {
-    switch(native_print_kind) {
-    case NATIVE_PRINT_STONX:
-        return doprintf(kprintf_outc_stonx, fmt, ap);
-    case NATIVE_PRINT_ARANYM:
-        return doprintf(kprintf_outc_aranym, fmt, ap);
-    default:
-        /* let us hope nobody is doing 'pretty-print' with kprintf by
-         * printing stuff till the amount of characters equals something,
-         * for it will generate an endless loop!
-         */
-        return 0;
+    if (is_nfStdErr()) {
+        return doprintf(kprintf_outc_natfeat, fmt, ap);
     }
+
+    else if (native_print_kind) {
+        return doprintf(kprintf_outc_stonx, fmt, ap);
+    }
+
+    /* let us hope nobody is doing 'pretty-print' with kprintf by
+     * printing stuff till the amount of characters equals something,
+     * for it will generate an endless loop!
+     */
+    return 0;
 }
 
 

@@ -135,10 +135,12 @@ things:
 ARAnyM
 ------
 
-To switch on the debugging output, set in include/config.h the
-parameter ARANYM_NATIVE_PRINT to 1 before building EmuTOS.
+For ARAnyM >= 0.7.0 enable the Native Features support by setting
+the DETECT_NATIVE_FEATURES parameter to 1 and also allow EmuTOS to call
+the STOP instruction to free host CPU by setting the
+USE_STOP_INSN_TO_FREE_HOST_CPU parameter to 1.
 
-use the 'falcon' Makefile target
+At last use the default (emutos2.img) or the 'falcon' Makefile target.
 
 
 Other emulators

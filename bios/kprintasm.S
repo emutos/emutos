@@ -15,7 +15,6 @@
         .global kprintf
 
         .global _printout_stonx
-        .global _printout_aranym
         
         .xdef   _kprintf
         .xdef   _native_print_kind
@@ -31,7 +30,6 @@
  * sets variable _native_print_kind:
  *   0: no native print detected
  *   1: STonX
- *   2: ARAnyM
  * 
  * Calling kprintf should only be done after:
  *   1/ the bss is cleared
@@ -48,18 +46,14 @@
         .equ vec_illegal, 0x10       // illegal exception vector
         .equ vec_linea, 0x28         // LineA exception vector
 
-#if STONX_NATIVE_PRINT + ARANYM_NATIVE_PRINT + DETECT_NATIVE_PRINT > 1
-#warning "please use only one STONX_, ARANYM_ "
+#if STONX_NATIVE_PRINT + DETECT_NATIVE_PRINT > 1
+#warning "please use only one STONX_ "
 #warning "and DETECT_NATIVE_PRINT options"
 #endif
 
 kprintf_init:
 #if STONX_NATIVE_PRINT
         move.l  #1,_native_print_kind
-        rts
-#endif
-#if ARANYM_NATIVE_PRINT
-        move.w  #2,_native_print_kind
         rts
 #endif
 #if DETECT_NATIVE_PRINT
@@ -78,19 +72,6 @@ kprintf_init:
 fail_stonx:
         move.l  a1,sp
         move.l  a0,vec_linea
-        // it failed, try ARAnyM
-        move.l  vec_illegal,a0
-        move.l  #fail_aranym,vec_illegal
-        pea     msg_empty
-        sub.l   #4,sp
-        dc.w    0x7135     // Jump to native printing subroutine
-        move.l  a1,sp
-        move.l  a0,vec_illegal
-        move.w  #2,_native_print_kind
-        rts
-fail_aranym:
-        move.l  a1,sp
-        move.l  a0,vec_illegal
 #endif  /* DETECT_NATIVE_PRINT */
         clr.w   _native_print_kind
         rts
@@ -100,13 +81,10 @@ msg_empty:
         .even
 
 
-// ==== STonX/ARAnyM - Native print routine for debugging ====================
+// ==== STonX - Native print routine for debugging ====================
 _printout_stonx:
         dc.w    0xa0ff     // Jump to native execution
         dc.l    0          // Printing subroutine
-        rts
-_printout_aranym:
-        dc.w    0x7135     // Jump to native printing subroutine
         rts
 
 

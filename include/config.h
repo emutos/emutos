@@ -39,16 +39,7 @@
 #define STONX_NATIVE_PRINT 0
 #endif
 
-/* set this to 1 if you run on ARAnyM >= 0.0.11
- * i.e. if the code:
- *   dc.w 0x7135
- * executes native function void print_native(char *string);
- */
-#ifndef ARANYM_NATIVE_PRINT
-#define ARANYM_NATIVE_PRINT 0
-#endif
-
-/* set this to 1 to try autodetect whether STonX or ARAnyM 
+/* set this to 1 to try autodetect whether STonX
  * native print is available (experimental).
  */
 #ifndef DETECT_NATIVE_PRINT

@@ -11,6 +11,9 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+#ifndef _NATFEAT_H
+#define _NATFEAT_H
+
 typedef struct
 {
         long magic;
@@ -18,10 +21,20 @@ typedef struct
         long (* nfCall)(long ID, ...);
 } NatFeatCookie;
 
-extern void detect_native_features(void);
 extern NatFeatCookie natfeat_cookie;
 
 #define NFID    natfeat_cookie.nfID
 #define NFCall  natfeat_cookie.nfCall
 
+extern void natfeat_init(void);
+extern int has_natfeats(void);
+
+extern long nfGetFullName(char *buffer, long size);
+
+extern int  is_nfStdErr(void);
+extern long nfStdErr(const char *text);
+
+extern long get_xhdi_nfid(void);
 extern long xhdi_vec(void);
+
+#endif /* _NATFEAT_H */

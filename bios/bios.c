@@ -47,6 +47,7 @@
 #include "blkdev.h"
 #include "parport.h"
 #include "string.h"
+#include "natfeat.h"
 
 
 
@@ -139,6 +140,8 @@ void startup(void)
 #if DBGBIOS
     kprintf("beginning of BIOS startup\n");
 #endif
+
+    natfeat_init();     /* initialize Native Features, if available */
 
     /* first detect available hardware (video, sound etc.) */
     machine_detect();

@@ -1272,3 +1272,10 @@ Start... early ages
   reset is now done on init. The last missing thing is to fetch the
   pre-selected boot resolution from the NVRAM and apply it. Until then
   the default boot resolution will be the 2-color mode (joy)
+
+7. Feb. 2003
+- bios/natfeats.c, natfeat.h, natfeat.S - general cleanup, library of NF
+  functions added (joy)
+- bios/kprint.c, kprintasm.S - ARAnyM code removed, NF support added (joy)
+- bios/machine.[ch], bios.c - updated for new NF library (joy)
+- Makefile, doc/install.txt, include/config.h - updated to support NF (joy)
