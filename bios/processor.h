@@ -15,7 +15,10 @@
  
 #include "portab.h"
 
-extern VOID frame_set(VOID);
+extern VOID processor_init(VOID);
+extern LONG mcpu;
+extern LONG fputype;
+extern WORD longframe;
 
 #endif /* PROCESSOR_H */
   

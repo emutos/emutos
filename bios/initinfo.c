@@ -21,6 +21,7 @@
 
 #include "lineavars.h"
 #include "tosvars.h"
+#include "machine.h"
 
 #include "initinfo.h"
 
@@ -125,13 +126,8 @@ void initinfo()
 
     pair_start(_("EmuTOS Ver.:  ")); cprintf(_("Alpha Version")); pair_end();
 
-    pair_start(_("CPU type:     "));
-    if (longframe)
-        cprintf("m68010-40");
-    else
-        cprintf("m68000");
-    pair_end();
-
+    pair_start(_("CPU type:     ")); cprintf("m680%02ld", mcpu); pair_end();
+    pair_start(_("Machine:      ")); cprintf(machine_name()); pair_end();
     pair_start(_("MMU avail.:   ")); cprintf(_("No")); pair_end();
     pair_start(_("Free memory:  ")); cprintf(_("%ld bytes"), memtop-membot);
     pair_end();

@@ -23,6 +23,11 @@
 
 extern void date_time(WORD flag, WORD *dt);
 
+/* interface for machine.c */
+
+extern int has_megartc;
+void detect_megartc(void);
+
 /* internal init */
 
 extern void clock_init(void);

@@ -32,12 +32,8 @@
 /*==== variables ==========================================================*/
 
 /* one if there is a MegaST real-time clock. */
-static int has_megartc;
+int has_megartc;
 
-
-/*==== Prototypes =========================================================*/
-
-static void megartc_init(void);
 
 /*==== Defines ============================================================*/
 
@@ -88,7 +84,7 @@ static struct myclkreg clkregs1, clkregs2;
 
 /*==== MegaRTC section ====================================================*/
 
-static void megartc_init(void)
+void detect_megartc(void)
 {
   /* detect megartc. 
    * I do it exactly like TOS 1.2 does, not trying to understand...
@@ -530,7 +526,6 @@ void date_time(WORD flag, WORD *dt)
 
 void clock_init(void)
 {
-  megartc_init();
   if( ! has_megartc ) {
     /* no megartc, the best we can do is set the date to the
      * OS creation date, time 0.

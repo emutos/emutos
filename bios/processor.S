@@ -15,59 +15,38 @@
 
 // ==== References ===========================================================
 
-        .global _frame_set              // Set long or shart frame
+	.global _processor_init
 
         .xdef   _longframe              // If not 0, use long stack frames
+	.global _mcpu
+	.global _fputype
 
-
-/*
- * _frame_set - Processor check and set _longframe
- *
- * First of all:  Are we executing on a 68000 or a 68010?
- * We find out by taking over the illegal instruction trap and then
- * executing a 'MOVE CCR,D0' which is not implemented on the 68000.
- * We will set a flag for use later on as we enter and exit the BDOS.
- * We also will set up a handler on the 68010 to convert 'MOVE SR,...'
- * to 'MOVE CCR,...' at execution time, so that we can support one
- * release of 68XXX software.
- */
- 
-_frame_set:
-        
-        movem.l d0-d7/a0-a6, -(sp)      // save registers
-        move.l	sp, ii_stksav		// save the current sp
-
-        clr.w	_longframe		// pre-clear processor flag
-
-	move.l	0x10, d0                // Get old illegal instruction vector
-	move.l	d0, ii_save             // save old vector
-	move.l	d0, ii_old              // save it for use in new ii_handler
-
-	move.l	#ii_tmp, 0x10		// exchange illegal instruction vector
-
-
-//        jmp     ii_tmp
-	move	ccr, d0			// So, can we execute this?
-
-	move.w	#1,_longframe		// yes, flag that we're on a 68010
-	move.l	#ii_handler, ii_save	// and set in our new handler
-
+	.xdef	_detect_cpu		// in detect.S, taken from FreeMiNT
+	.xdef	_detect_fpu
 
 /*
- * ii_tmp - Temporary illegal instruction handler
+ * void processor_init(void) - sets mcpu and fputype.
+ * if the cpu is not a bare 68000, installs an illegal exception
+ * handler to convert 'MOVE SR,...' to 'MOVE CCR,...' at execution time
  */
 
-ii_tmp:
-	move.l	ii_save, 0x10           // set new or old illegal vector
-
-	movea.l	ii_stksav, sp		// restore sp
-        movem.l (sp)+, d0-d7/a0-a6      // save registers
-
+_processor_init:
+	jsr	_detect_cpu
+	move.l	d0,_mcpu
+	beq	m68000
+// this is a 68010 or later
+	move.w	#1,_longframe
+	move.l	0x10,ii_old
+	move.l	#ii_handler,0x10
+m68000:
+	jsr	_detect_fpu
+	move.l	d0,_fputype
 	rts
 
 
+
 /*
- * ii_tmp - Temporary illegal instruction handler
+ * ii_handler - illegal instruction handler 
  */
 
 ii_handler:
@@ -92,12 +71,13 @@ not_SR:
 	.bss
 	.even
 
-ii_save:				// routine to set up as illegal
-	.ds.l	1			// instruction handler
 ii_old:
-	.ds.l	1
-ii_stksav:
-	.ds.l	1			// at osinit: save sp here
+	ds.l	1
+
+_mcpu:
+	ds.l	1
+_fputype:
+	ds.l	1
 
 
 // ===========================================================================
