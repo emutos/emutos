@@ -437,3 +437,5 @@ Start... early ages
 - did put usr2xfr/xfr2usr to bdos/fsio.c too (MAD)
 - CLI: added unix like commands mv, cp, pwd, format, clear, rmdir, mkdir (MAD)
 
+07. Feb. 2002
+- added GETBOOT bootsector extractor routine to EmuCON (MAD)
