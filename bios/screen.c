@@ -25,14 +25,10 @@ static void setphys(LONG addr);
 /* Define pallette */
 
 static WORD dflt_palette[] = {
-    VT_WHITE,   VT_RED,
-    VT_GREEN,   VT_YELLOW,
-    VT_BLUE,    VT_MAGENTA,
-    VT_CYAN,     VT_LTGRAY,
-    VT_GRAY,    VT_LTRED,
-    VT_LTGREEN, VT_LTYELLOW,
-    VT_LTBLUE,  VT_LTMAGENTA,
-    VT_LTCYAN,  VT_BLACK
+    RGB_WHITE,   RGB_RED,       RGB_GREEN,   RGB_YELLOW,
+    RGB_BLUE,    RGB_MAGENTA,   RGB_CYAN,    RGB_LTGRAY,
+    RGB_GRAY,    RGB_LTRED,     RGB_LTGREEN, RGB_LTYELLOW,
+    RGB_LTBLUE,  RGB_LTMAGENTA, RGB_LTCYAN,  RGB_BLACK
 };
 
 
