@@ -1297,3 +1297,4 @@ Start... early ages
   boot timeouts... (joy)
 - po/cs.po - Czech translation updated (joy)
 - bios/initinfo.c - moved up the time bar a few lines (MAD)
+- vdi/esclisa.S - used this instead of buggy vdiesc.c  (MAD)

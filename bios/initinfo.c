@@ -156,9 +156,9 @@ void draw_timeout_line()
     long timeout = TIMEOUT_ON_BOOT * 200UL;
     long end = start + timeout;
 
-    set_margin(); cprintf(_("Hold <Control> to skip AUTO/ACC loading"));
+    set_margin(); cprintf(_("Hold <Control> to skip AUTO/ACC"));
     cprintf("\r\n");
-    set_margin(); cprintf(_("Hold <Alternate> key to skip HDD boot"));
+    set_margin(); cprintf(_("Hold <Alternate> to skip HDD"));
     cprintf("\r\n");
     set_margin(); cprintf(_("Press any key to continue booting"));
     cprintf("\r\n");

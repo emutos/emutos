@@ -137,9 +137,9 @@ util_ssrc = memset.S memmove.S nlsasm.S setjmp.S miscasm.S stringasm.S
 #
 
 vdi_csrc = vdimain.c vdiinput.c monobj.c monout.c text.c seedfill.c \
-           bezier.c #vdiesc.c
+           bezier.c vdiesc.c
 vdi_ssrc = entry.S bitblt.S bltfrag.S copyrfm.S gsxasm1.S gsxasm2.S \
-           vdimouse.S textblt.S esclisa.S #tranfm.S
+           vdimouse.S textblt.S #esclisa.S #tranfm.S
 
 #
 # source code in aes/

@@ -20,7 +20,7 @@
 #include "screen.h"
 #include "machine.h"
 
-#define DBG_LINEA 1
+#define DBG_LINEA 0
 
 /*==== Global vars ========================================================*/
 
