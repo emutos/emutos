@@ -21,11 +21,7 @@ BIOS/XBIOS/BDOS
 - move nvram_init to machine_detect so it could be used in screen.c:videl_init
 
 Czech internationalisation
-- send Laurent or Martin the ISO latin 2 fonts in .FNT format
-- commit in the ISO latin 2 fonts in .c format
 - commit in czech keyboard layouts in .h format
-- commit in po/cs.po
-- remove current Kamenicky cz6x6.c, cz8x8.c, cz8x16.c 
 - update tables in bios/country.c and bios/lineainit.c
 
 VDI
