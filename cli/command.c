@@ -18,23 +18,19 @@
 #ifndef NO_ROM
 #include "nls.h"
 #include "string.h"
+#include "setjmp.h"
 #else
 #define _(a) a
 #define N_(a) a
 #endif
 
 extern long jmp_gemdos();
-extern long xlongjmp();
 extern long jmp_bios();
 extern long jmp_xbios();
 extern void in_term();
 extern void rm_term();
-extern long xsetjmp();
 extern void devector();
 
-#define NULLPTR (char *)0
-#define FALSE 0
-#define TRUE -1
 #define MAXARGS 20
 
 #define xrdchne() jmp_gemdos (0x08)
@@ -105,7 +101,7 @@ int rtrnFrmBat;
 int prgerr;
 int cmderr;
 
-long jb[3];
+jmp_buf jb;
 long compl_code;
 
 #define BUFSIZ 10000
@@ -162,7 +158,7 @@ void chk_redirect(struct rdb *r)
 void errout()
 {
     chk_redirect(rd_ptr);
-    xlongjmp(jb, -1);
+    longjmp(jb, 1);
 }
 
 
@@ -2282,7 +2278,7 @@ void cmain(char *bp)
     if (!cmd)
 	execBat((char *) &autoBat, &parm[0]);
 
-    if (xsetjmp(jb)) {
+    if (setjmp(jb)) {
 	for (i = 6; i <= 20; i++)
 	    xclose(i);
 	if (cmd) {

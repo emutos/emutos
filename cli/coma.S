@@ -25,8 +25,6 @@
         .globl  _jmp_gemdos
         .globl  _jmp_bios
         .globl  _jmp_xbios
-        .globl  _xsetjmp
-        .globl  _xlongjmp
         .globl  _exeflg
         .globl  _jb
         .globl  _devector       // SCC  22 Mar 85
@@ -123,7 +121,7 @@ itsme:
 
         move    #1,-(sp)
         move.l  #_jb,-(sp)
-        jsr     _xlongjmp
+        jsr     _longjmp
 
 mycrit: move.l  #aris,a0
         jsr     bprt
@@ -172,29 +170,6 @@ bprt:   clr.l   d0
         move.l  (sp)+,a0
         jmp     bprt
 nomoch: rts
-
-
-_xsetjmp: link  a6,#0
-        move.l  8(a6),a0
-        move.l  0(a6),(a0)+
-        lea     8(a6),a1
-        move.l  a1,(a0)+
-        move.l  4(a6),(a0)
-        clr.l   d0
-        unlk    a6
-        rts
-
-
-_xlongjmp: link a6,#0
-        move    12(a6),d0
-        tst     d0
-        bne     okrc
-        move    #1,d0
-okrc:   move.l  8(a6),a0
-        move.l  (a0)+,a6
-        move.l  (a0)+,a7
-        move.l  (a0),-(sp)
-        rts
 
 
 _jmp_bios:
