@@ -1839,6 +1839,12 @@ void desk_rs_init(void)
 
     /* translate and fix TEDINFO strings */
     xlate_fix_tedinfo(desk_rs_tedinfo, RS_NTED);
+
+#if TOS_VERSION < 0x200
+    /* Disable menu entry that toggles icon/text mode */
+    desk_rs_obj[TR0+ICONITEM].ob_state |= DISABLED;
+#endif
+
 }
 
 
