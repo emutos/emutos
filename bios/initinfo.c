@@ -4,6 +4,7 @@
  * Copyright (c) 2001 by Authors:
  *
  *  MAD     Martin Doering
+ *  joy     Petr Stehlik
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -24,7 +25,7 @@
 #include "lineavars.h"
 #include "tosvars.h"
 #include "machine.h"
-#include "clock.h"    /* for displaying current date and time */
+#include "clock.h"    /* for displaying boot date and time */
 
 #include "version.h"  /* the EMUTOS_VERSION string */
 
@@ -121,7 +122,7 @@ static void pair_end(void)
 }
 
 /*
- * cprint_asctime shows current date and time in YYYY/MM/DD HH:MM:SS format
+ * cprint_asctime shows boot date and time in YYYY/MM/DD HH:MM:SS format
  */
 
 void cprint_asctime()
@@ -142,6 +143,48 @@ void cprint_asctime()
     years = (system_time & 0x7F) + 1980;
     cprintf("%04d/%02d/%02d %02d:%02d:%02d", years, months, days, hours, minutes, seconds);
 }
+
+#ifdef TIMEOUT_ON_BOOT
+/* display help and wait for <TIMEOUT_ON_BOOT> seconds before boot continues */
+void draw_timeout_line()
+{
+#if TIMEOUT_ON_BOOT > 0
+    char bar[]="                                       ";
+    int barsize = sizeof(bar);
+    int oldidx;
+    long start = hz_200;
+    long timeout = TIMEOUT_ON_BOOT * 200UL;
+    long end = start + timeout;
+
+    cprintf("\r\n");
+    cprintf("\r\n");
+    cprintf("\r\n");
+    cprintf("\r\n");
+    cprintf("\r\n");
+    set_margin(); cprintf(_("Hold <Control> to skip AUTO/ACC loading"));
+    cprintf("\r\n");
+    set_margin(); cprintf(_("Hold <Alternate> key to skip HDD boot"));
+    cprintf("\r\n");
+    set_margin(); cprintf(_("Press any key to continue booting"));
+    cprintf("\r\n");
+
+    oldidx = -1;
+    while(hz_200 < end) {
+        int idx = (((hz_200 - start) * barsize) / timeout);
+        if (idx > oldidx) {
+            set_margin();
+            cprintf("\033p");
+            cprintf(bar + idx);
+            cprintf("\033q\033K\r");
+            oldidx = idx;
+        }
+        if (kbshift(-1) || bconstat2())
+            break;
+    }
+    if (bconstat2()) bconin2(); /* eat the keypress */
+#endif /* TIMEOUT_ON_BOOT > 0 */
+}
+#endif /* TIMEOUT_ON_BOOT */
 
 /*
  * initinfo - Show initial configuration at startup
@@ -171,15 +214,20 @@ void initinfo()
     pair_start(_("EmuTOS Version")); cprintf(EMUTOS_VERSION); pair_end();
     pair_start(_("CPU type")); cprintf("m680%02ld", mcpu); pair_end();
     pair_start(_("Machine")); cprintf(machine_name()); pair_end();
-    pair_start(_("MMU available")); cprintf(_("No")); pair_end();
-    pair_start(_("Free memory"));
+/*  pair_start(_("MMU available")); cprintf(_("No")); pair_end(); */
+    pair_start(_("Free ST-RAM"));
         cprintf(_("%ld kB"), /* memtop-membot */ xmxalloc(-1L, MX_STRAM) >> 10);
-        {
-            long fastramsize = xmxalloc(-1L, MX_TTRAM);
-            if (fastramsize > 0)
-                cprintf(_(" ST-RAM, %ld kB TT-RAM"), fastramsize >> 10);
-        }
     pair_end();
+
+    {
+        long fastramsize = xmxalloc(-1L, MX_TTRAM);
+        if (fastramsize > 0) {
+            pair_start(_("Free FastRAM"));
+            cprintf(_("%ld kB"), fastramsize >> 10);
+            pair_end();
+        }
+    }
+
     pair_start(_("Screen start")); cprintf("%p", v_bas_ad);
     pair_end();
     pair_start(_("GEMDOS drives"));
@@ -196,21 +244,16 @@ void initinfo()
        executed after the initinfo is printed:
     pair_start(_("Boot drive")); cprintf("%c:", bootdev+65); pair_end();
     */
-    pair_start(_("Current time")); cprint_asctime(); pair_end();
+    pair_start(_("Boot time")); cprint_asctime(); pair_end();
 
     /* Just a separator */
     cprintf("\n\r");
     set_line();
     cprintf("\n\r");
 
-    /* wait for 3 sec., before we start the GEM */
-    {
-        long future = hz_200 + (3 * 200);
-        while(hz_200 < future) {
-            if (kbshift(-1))
-                break;
-        }
-    }
+#ifdef TIMEOUT_ON_BOOT
+    draw_timeout_line();
+#endif
 }
 
 

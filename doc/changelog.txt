@@ -1280,5 +1280,19 @@ Start... early ages
 - bios/machine.[ch], bios.c - updated for new NF library (joy)
 - Makefile, doc/install.txt, include/config.h - updated to support NF (joy)
 
-21. Aug. 2002 
+07. Feb. 2003
 - doc/announce.txt - updated for release 0.6 (MAD)
+
+8. Feb. 2003
+- bios/natfeats.c - display the short emu name so that initinfo fits in
+  40 columns screen resolution (joy)
+- aes/geminit.c - check the Control key only once, not before loading each
+  accessory. The harddrives are so fast that it doesn't make sense to try
+  and skip only some accessories ;-) (joy)
+- bios/initinfo.c - corrected displaying of free RAM so it fits in 40 cols.
+  Also added a TOS like boot timeout with a little boot guide and a gfx
+  effect of countdown :-) (joy)
+- include/config.h - #define TIMEOUT_ON_BOOT here or in your localconf.h.
+  This was added especially to make Thothy happy - he doesn't like long
+  boot timeouts... (joy)
+
