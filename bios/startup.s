@@ -204,7 +204,7 @@
         .xdef   _init_mfp
         .xdef   _init_timer
         .xdef   _init_usart
-        .xdef   sysvarend
+        .xdef   _bssend
 
 | ==== lineavars.s - Graphics subsystem variables =============================
         .xdef   v_cel_mx
@@ -272,7 +272,7 @@ reseth:
 os_beg:
     dc.l    os_entry    | os_beg, base of os = _sysbase
 os_end: 
-    dc.l    sysvarend   | os_end, first byte RAM not used by OS
+    dc.l    _bssend     | os_end, first byte RAM not used by OS
 os_res1:        
     dc.l    _main       | os_res1, reserved
 os_magic:
@@ -328,7 +328,7 @@ noreset:
 | ==== Clear BSS before calling any C function ======================
 | the C part expects the bss to be cleared, so let's do this early
 	lea bssstart,a0
-	lea sysvarend-1,a1
+	lea _bssend-1,a1
 	move.l a1,d0
 	sub.l a0,d0
 	lsr.l #2,d0
