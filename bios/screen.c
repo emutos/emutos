@@ -77,6 +77,9 @@ void screen_init(void)
     if (rez == 1) {
         col_regs[3] = col_regs[15];
     }
+    else if (rez == 2) {
+        col_regs[1] = col_regs[15];
+    }
 
     v_bas_ad = (BYTE *) (phystop - 0x8000L);
     setphys((LONG) v_bas_ad);
