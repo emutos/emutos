@@ -779,3 +779,5 @@ Start... early ages
 - desk/* - removed/fixed all compiler warnings (MAD)
 - vdi/opnwkram - plane number and fonts corr. initialized (MAD)
 
+23. Apr. 2002
+- Makefile - fal_$(DESASS) removed on make clean (LVL)

@@ -494,6 +494,7 @@ clean:
 	rm -f bootsect.img emutos.st date.prg dumpkbd.prg keytbl2c$(EXE)
 	rm -f bug$(EXE) po/messages.pot util/langs.c bios/header.h
 	rm -f mkheader$(EXE) tounix$(EXE) $(TMPS) *.dsm
+	rm -f etosfalc.tmp fal_dsm.txt fal_map
 
 distclean: clean nodepend
 	rm -f Makefile.bak '.#'* */'.#'* 
