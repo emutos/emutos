@@ -1357,3 +1357,4 @@ Start... early ages
 20. Feb. 2003
 - bios/screen.[ch] - VIDEL color registers supported, EmuTOS can boot
   in 2, 4 or 16 colors now! (joy)
+- bios/screen.[ch] - setphys() safeguard check

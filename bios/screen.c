@@ -42,6 +42,8 @@ const static LONG videl_dflt_palette[] = {
     FRGB_LTBLUE, FRGB_LTMAGENTA, FRGB_LTCYAN, FRGB_BLACK
 };
 
+#define VRAM_SIZE  (has_videl ? get_videl_width() / 8L * get_videl_height() * get_videl_bpp() : 32000UL)
+
 
 /*
  * In the original TOS there used to be an early screen init, 
@@ -56,7 +58,6 @@ void screen_init(void)
     volatile LONG *fcol_regs = (LONG *) 0xffff9800;
     WORD rez;
     WORD i;
-    ULONG screen_size = 32000;  /* standard Shifter videoram size */
     ULONG screen_start;
 
     if (has_videl) {
@@ -68,10 +69,6 @@ void screen_init(void)
 
         /* set desired resolution (fetch it from NVRAM - TODO) */
         set_videl_vga640x480(1 /* or 2 or 4 */);
-
-        /* detect real videoram size from the current resolution */
-        screen_size = get_videl_width() / 8L * get_videl_height()
-                      * get_videl_bpp();
     }
     else {
         *(BYTE *) 0xffff820a = 2;   /* sync-mode to 50 hz pal, internal sync */
@@ -119,7 +116,7 @@ void screen_init(void)
     }
 
     /* videoram is placed just below the phystop */
-    screen_start = (ULONG)phystop - screen_size;
+    screen_start = (ULONG)phystop - VRAM_SIZE;
     /* round down to 256 byte boundary */
     screen_start &= 0x00ffff00;
     /* set new v_bas_ad */
@@ -132,6 +129,10 @@ void screen_init(void)
 
 static void setphys(LONG addr)
 {
+    if (addr > ((ULONG)phystop - VRAM_SIZE)) {
+        panic("VideoRAM covers ROM area!!\n");
+    }
+
     *(UBYTE *) 0xffff8201 = ((ULONG) addr) >> 16;
     *(UBYTE *) 0xffff8203 = ((ULONG) addr) >> 8;
     if (has_ste_shifter) {
