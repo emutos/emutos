@@ -120,10 +120,10 @@ UTILSSRC = memset.S memmove.S nlsasm.S setjmp.S
 #
 
 VDICSRC = cbssdefs.c isin.c jmptbl.c lisastub.c lisatabl.c \
-           monobj.c monout.c opnwkram.c seedfill.c text.c
+           monobj.c monout.c opnwkram.c seedfill.c text.c cbssdefs.c
 VDISSRC = entry.S bitblt.S bltfrag.S copyrfm.S esclisa.S  \
-          gsxasm1.S gsxasm2.S lisagem.S mouse.S newmono.S  \
-          textblt.S tranfm.S
+          gsxasm1.S gsxasm2.S lisagem.S vdimouse.S newmono.S  \
+          textblt.S tranfm.S gsxvars.S
 
 #
 # source code in cli/ for EmuTOS console EmuCON
@@ -161,8 +161,8 @@ CONSSOBJ = $(CONSSSRC:%.S=obj/%.o)
 VDICOBJ  = $(VDICSRC:%.c=obj/%.o)
 VDISOBJ  = $(VDISSRC:%.S=obj/%.o)
 
-SOBJ = $(BIOSSOBJ) $(BDOSSOBJ) $(UTILSOBJ) $(CONSSOBJ) #$(VDISOBJ) 
-COBJ = $(BIOSCOBJ) $(BDOSCOBJ) $(UTILCOBJ) $(CONSCOBJ) #$(VDICOBJ) 
+SOBJ = $(BIOSSOBJ) $(BDOSSOBJ) $(UTILSOBJ) $(CONSSOBJ) $(VDISOBJ) 
+COBJ = $(BIOSCOBJ) $(BDOSCOBJ) $(UTILCOBJ) $(CONSCOBJ) $(VDICOBJ) 
 OBJECTS = $(SOBJ) $(COBJ) 
 
 #
