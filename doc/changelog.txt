@@ -1614,4 +1614,9 @@ Start... early ages
 2004-06-23
 - vdi/blit.c: tuned. C-blit now just 6 times slower than asm version. (MAD)
 
+2004-06-26
+- doc/status.txt: updated to reflect successful run of recent EmuTOS on a 
+  MegaSTE (this is reported by Frédéric Pécourt who is curently testing EmuTOS
+  on a extension board of his own for the MegaSTE) (LVL)
+
 

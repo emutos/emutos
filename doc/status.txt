@@ -8,7 +8,7 @@ if possible add a line telling in which version it did run.
   --------------------+-------+-----+-----------+----------------
   Aranym              |  yes  | LVL |    Feb 03 | 
   Hatari              |  yes  |  ?  |  < Sep 02 |
-  MegaSTE (2MB RAM)   |  yes  | LVL | spring 02 | RAMTOS only
+  MegaSTE             |  yes  | (1) | 26 Jun 04 | RAMTOS only
   Pacifist v0.48      |  yes  | LVL | winter 01 |
   STonX 0.6.7.2       |  yes  | LVL | 9  Feb 03 | no autoboot
   STonC v0.8.1        |  yes  | LVL | 9  Feb 03 |
@@ -16,7 +16,7 @@ if possible add a line telling in which version it did run.
   TOSBox 1.10a        |   no  |  ?  |  < Sep 02 |
   WinSTon V0.1r2      |   no  |  ?  |  < Sep 02 |
 
-
+  (1) reported to LVL by Frédéric Pécourt
 
 Now lets talk about the different subsystems, and if they are implemented.
 
