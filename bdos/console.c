@@ -24,9 +24,9 @@
 #include        "console.h"
 
 /* The following data structures are used for the typeahead buffer */
-long glbkbchar[3][KBBUFSZ];	/* The actual typeahead buffer */
-int add[3] ;     		/*  index of add position */
-int remove[3] ;             	/*  index of remove position */
+long glbkbchar[3][KBBUFSZ];     /* The actual typeahead buffer */
+int add[3] ;                    /*  index of add position */
+int remove[3] ;                 /*  index of remove position */
 int glbcolumn[3];
 
 /* 

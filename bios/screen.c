@@ -290,7 +290,7 @@ UWORD get_videl_height()
  */
 void set_videl_vga640x480(int bitplanes)
 {
-	char *videlregs = (char *)0xff8200;
+        char *videlregs = (char *)0xff8200;
     int hdb[4] = {115, 138, 163, 171 };
     int hde[4] = {80, 107, 124, 132 };
     int lwidth[4] = {40, 80, 160, 320 };
