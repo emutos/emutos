@@ -17,7 +17,7 @@
 
 // ==== Defines ==============================================================
 
-        .equ    SUPSIZ, 4096            // size of supervisor stack in words
+        .equ    SUPSIZ, 8192            // size of supervisor stack in words
         .equ    _GSX_ENT, 0             // Entry to GEM (if graphically)
 
         .equ    TPASTART, 0xE000        // default start address of tpa area

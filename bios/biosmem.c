@@ -20,6 +20,10 @@ extern MD b_mdx;            /* found in startup.S */
 
 static int bmem_allowed;
 
+
+// MAD: This throws an error - it seems useless, anyway...
+//bmem_allowed = 0;
+
 void bmem_init(void)
 {
     m_start = os_end;

@@ -513,7 +513,8 @@ Start... early ages
 - fixed the amount of fastram printed in debug mode (joy)
 - set the C: in drvbits for the hacked up host access disk drive (joy)
 
-15. Jan. 2002
+15. Jan 2002
+- disabled the bmem_allowed bug what Petr found in bios/biosmem.c (MAD)
 - bios/detect.S: functions now keep register a2 intact (LVL)
 - bios/kprint.c: temporarily removed console print in panic, until one
   knows of a way to be certain that the concole is configured (LVL)
