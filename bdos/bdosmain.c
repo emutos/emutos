@@ -440,48 +440,48 @@ restrt:
         /* hard error processing */
         /* is this a media change ? */
 
-	if (rc == E_CHNG)
+        if (rc == E_CHNG)
         {
             /* first, out with the old stuff */
-	    dn = drvtbl[errdrv]->m_dtl;
-	    offree(drvtbl[errdrv]);
-	    xmfreblk(drvtbl[errdrv]);
-	    drvtbl[errdrv] = 0;
+            dn = drvtbl[errdrv]->m_dtl;
+            offree(drvtbl[errdrv]);
+            xmfreblk(drvtbl[errdrv]);
+            drvtbl[errdrv] = 0;
 
-	    if (dn)
-		freetree(dn);
+            if (dn)
+                freetree(dn);
 
-	    for (i = 0; i < 2; i++)
-		for (bx = bufl[i]; bx; bx = bx->b_link)
-		    if (bx->b_bufdrv == errdrv)
-			bx->b_bufdrv = -1;
+            for (i = 0; i < 2; i++)
+                for (bx = bufl[i]; bx; bx = bx->b_link)
+                    if (bx->b_bufdrv == errdrv)
+                        bx->b_bufdrv = -1;
 
-	    /* then, in with the new */
+            /* then, in with the new */
 
-	    b = (BPB *) getbpb(errdrv);
-	    if ( (long)b <= 0 ) /* M01.01.1007.01 */ /* M01.01.1024.01 */
-	    {				/*  M01.01.01	*/
-		drvsel &= ~(1<<errdrv); /*  M01.01.01	*/
-		if ( (long)b )		/* M01.01.1024.01 */
-		    return( (long)b );	/* M01.01.1024.01 */
-		return(rc);
-	    }				/*  M01.01.01	*/
+            b = (BPB *) getbpb(errdrv);
+            if ( (long)b <= 0 ) /* M01.01.1007.01 */ /* M01.01.1024.01 */
+            {                           /*  M01.01.01   */
+                drvsel &= ~(1<<errdrv); /*  M01.01.01   */
+                if ( (long)b )          /* M01.01.1024.01 */
+                    return( (long)b );  /* M01.01.1024.01 */
+                return(rc);
+            }                           /*  M01.01.01   */
 
-	    if(  log(b,errdrv)	)
-		return (ENSMEM);
+            if(  log(b,errdrv)  )
+                return (ENSMEM);
 
-	    rwerr = 0;
-	    errdrv = 0;
-	    goto restrt;
-	}
+            rwerr = 0;
+            errdrv = 0;
+            goto restrt;
+        }
 
-	/* else handle as hard error on disk for now */
+        /* else handle as hard error on disk for now */
 
-	for (i = 0; i < 2; i++)
-	    for (bx = bufl[i]; bx; bx = bx->b_link)
-		if (bx->b_bufdrv == errdrv)
-		    bx->b_bufdrv = -1;
-	return(rc);
+        for (i = 0; i < 2; i++)
+            for (bx = bufl[i]; bx; bx = bx->b_link)
+                if (bx->b_bufdrv == errdrv)
+                    bx->b_bufdrv = -1;
+        return(rc);
     }
 
     f = &funcs[fn];
@@ -494,138 +494,138 @@ restrt:
         if ( h > 0)
         { /* do std dev function from a file */
             switch(fn)
-	    {
-	    case 6:
-		if (pw[1] != 0xFF)
-		    goto rawout;
-	    case 1:
-	    case 3:
-	    case 7:
-	    case 8:
-		xread(h,1L,&ctmp);
-		return(ctmp);
+            {
+            case 6:
+                if (pw[1] != 0xFF)
+                    goto rawout;
+            case 1:
+            case 3:
+            case 7:
+            case 8:
+                xread(h,1L,&ctmp);
+                return(ctmp);
 
-	    case 2:
-	    case 4:
-	    case 5:
-		/*  M01.01.07  */
-		/*  write the char in the int at
-		 pw[1]	*/
-	    rawout:
-		xwrite( h , 1L , ((char*) &pw[1])+1 ) ;
-		return 0; /* dummy */
+            case 2:
+            case 4:
+            case 5:
+                /*  M01.01.07  */
+                /*  write the char in the int at
+                 pw[1]  */
+            rawout:
+                xwrite( h , 1L , ((char*) &pw[1])+1 ) ;
+                return 0; /* dummy */
 
-	    case 9:
-		pb2 = *((char **) &pw[1]);
-		while (*pb2) xwrite(h,1L,pb2++);
-		return 0; /* dummy */
+            case 9:
+                pb2 = *((char **) &pw[1]);
+                while (*pb2) xwrite(h,1L,pb2++);
+                return 0; /* dummy */
 
-	    case 10:
-		pb2 = *((char **) &pw[1]);
-		max = *pb2++;
-		p = pb2 + 1;
-		for (i = 0; max--; i++,p++)
-		{
-		    if (xread(h,1L,p) == 1)
-		    {
-			oscall(0x40,1,1L,p);
-			if (*p == 0x0d)
-			{	/* eat the lf */
-			    xread(h,1L,&ctmp);
-			    break;
-			}
-		    }
-		    else
-			break;
-		}
-		*pb2 = i;
-		return(0);
+            case 10:
+                pb2 = *((char **) &pw[1]);
+                max = *pb2++;
+                p = pb2 + 1;
+                for (i = 0; max--; i++,p++)
+                {
+                    if (xread(h,1L,p) == 1)
+                    {
+                        oscall(0x40,1,1L,p);
+                        if (*p == 0x0d)
+                        {       /* eat the lf */
+                            xread(h,1L,&ctmp);
+                            break;
+                        }
+                    }
+                    else
+                        break;
+                }
+                *pb2 = i;
+                return(0);
 
-	    case 11:
-	    case 16:
-	    case 17:
-	    case 18:
-	    case 19:
-		return(0xFF);
-	    }
-	}
+            case 11:
+            case 16:
+            case 17:
+            case 18:
+            case 19:
+                return(0xFF);
+            }
+        }
 
-	if ((fn == 10) || (fn == 9))
-	    typ = 1;
-	else
-	    typ = 0;
+        if ((fn == 10) || (fn == 9))
+            typ = 1;
+        else
+            typ = 0;
     }
 
     if (typ & 0x80)
     {
-	if (typ == 0x81)
-	    h = pw[3];
-	else
-	    h = pw[1];
+        if (typ == 0x81)
+            h = pw[3];
+        else
+            h = pw[1];
 
-	if (h >= NUMSTD)
-	    numl = (long) sft[h-NUMSTD].f_ofd;
-	else if (h >= 0)
-	{
+        if (h >= NUMSTD)
+            numl = (long) sft[h-NUMSTD].f_ofd;
+        else if (h >= 0)
+        {
             h = run->p_uft[h];
             if ( h > 0)
                 numl = (long) sft[h-NUMSTD].f_ofd;
-	    else
-		numl = h;
-	}
-	else
-	    numl = h;
+            else
+                numl = h;
+        }
+        else
+            numl = h;
 
-	if (!numl)
-	    return(EIHNDL); /* invalid handle: media change, etc */
+        if (!numl)
+            return(EIHNDL); /* invalid handle: media change, etc */
 
-	if (numl < 0)
-	{	/* prn, aux, con */
-		/* -3   -2   -1	 */
+        if (numl < 0)
+        {       /* prn, aux, con */
+                /* -3   -2   -1  */
 
-	    num = numl;
+            num = numl;
 
-	    /*	check for valid handle	*/ /* M01.01.0528.01 */
-	    if( num < -3 )
-		return( EIHNDL ) ;
+            /*  check for valid handle  */ /* M01.01.0528.01 */
+            if( num < -3 )
+                return( EIHNDL ) ;
 
-	    pb = (char **) &pw[4];
+            pb = (char **) &pw[4];
 
-	    /* only do things on read and write */
+            /* only do things on read and write */
 
-	    if (fn == 0x3f) /* read */
-	    {
-		if (pw[2])	/* disallow HUGE reads	    */
-		    return(0);
+            if (fn == 0x3f) /* read */
+            {
+                if (pw[2])      /* disallow HUGE reads      */
+                    return(0);
 
-		if (pw[3] == 1)
-		{
-		    **pb = conin(HXFORM(num));
-		    return(1);
-		}
+                if (pw[3] == 1)
+                {
+                    **pb = conin(HXFORM(num));
+                    return(1);
+                }
 
-		return(cgets(HXFORM(num),pw[3],*pb));
-	    }
+                return(cgets(HXFORM(num),pw[3],*pb));
+            }
 
-	    if (fn == 0x40) /* write */
-	    {
-		if (pw[2])	/* disallow HUGE writes     */
-		    return(0);
+            if (fn == 0x40) /* write */
+            {
+                if (pw[2])      /* disallow HUGE writes     */
+                    return(0);
 
-		pb2 = *pb;	/* char * is buffer address */
+                pb2 = *pb;      /* char * is buffer address */
 
 
-		for (i = 0; i < pw[3]; i++)
-		{
-		    if( num == H_Console )
-			tabout( HXFORM(num) , *pb2++ ) ;
-		    else
-		    {		/* M01.01.1029.01 */
-			rc = bconout( HXFORM(num), *pb2++ ) ;
-			if (rc < 0)
-			    return(rc);
-		    }
-		}
+                for (i = 0; i < pw[3]; i++)
+                {
+                    if( num == H_Console )
+                        tabout( HXFORM(num) , *pb2++ ) ;
+                    else
+                    {           /* M01.01.1029.01 */
+                        rc = bconout( HXFORM(num), *pb2++ ) ;
+                        if (rc < 0)
+                            return(rc);
+                    }
+                }
 
                 return(pw[3]);
             }

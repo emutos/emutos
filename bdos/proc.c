@@ -308,17 +308,17 @@ long    xexec(WORD flg, char *s, char *t, char *v)
         p->p_parent = run;
         spl = (long *) p->p_hitpa;
         *--spl = (long) p;
-        *--spl = 0L; 		/* bogus retadd */
+        *--spl = 0L;            /* bogus retadd */
 
         /* 10 regs (40 bytes) of zeroes  */
 
         for (i = 0; i < 10; i++)
             *--spl = 0L;
 
-        *--spl = p->p_tbase; 	/* text start */
-#if	!M0101082703
+        *--spl = p->p_tbase;    /* text start */
+#if     !M0101082703
         spw = (WORD *) spl;
-        *--spw = 0; 		/* startup status reg */
+        *--spw = 0;             /* startup status reg */
         spl = (long *) spw;
 #else
         *--(WORD *)spl = 0 ;
@@ -366,14 +366,14 @@ void    x0term(void)
  * terminate the current process and transfer control to the colling
  * process.  All files opened by the terminating process are closed.
  *
- * Function 0x4C	p_term
+ * Function 0x4C        p_term
  */
 
 void    xterm(UWORD rc)
 {
     PD *r;
 
-    (* (WORD(*)()) trap13(5,0x102,-1L))() ;	/*  call user term handler */
+    (* (WORD(*)()) trap13(5,0x102,-1L))() ;     /*  call user term handler */
 
     run = (r = run)->p_parent;
     ixterm( r );
