@@ -1357,4 +1357,8 @@ Start... early ages
 20. Feb. 2003
 - bios/screen.[ch] - VIDEL color registers supported, EmuTOS can boot
   in 2, 4 or 16 colors now! (joy)
-- bios/screen.[ch] - setphys() safeguard check
+- bios/screen.[ch] - setphys() safeguard check (joy)
+- bios/nvram.c - fixed wrong offset, added static buffer for nvram data (joy)
+- bios/machine.c - early initialization of nvram (joy)
+- bios/screen.c - make use of NVRAM boot resolution setting. Tested on
+  ARAnyM (aranym -e -r <X>) and should work also on real Falcon030. (joy)

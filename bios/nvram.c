@@ -19,8 +19,7 @@
 
 int has_nvram;
 
-/* a 50 byte buffer that will only be allocated if there is an NVRAM */
-static UBYTE *nvram_buf;
+static UBYTE nvram_buf[50];
 static int inited;
 
 /*
@@ -30,7 +29,6 @@ void detect_nvram(void)
 {
     if(check_read_byte(0xffff8961)) {
         has_nvram = 1;
-        nvram_buf = balloc(50);
         inited = 0;
     } else {
         has_nvram = 0;
@@ -143,7 +141,7 @@ WORD nvmaccess(WORD type, WORD start, WORD count, PTR buffer)
             /* TODO, wrong checksum, what do we do ? */
         }
     }
-    start += 14;
+
     switch(type) {
     case 0: /* read, from our buffer since it is already in memory */
         for(i = start ; i < start + count ; i++) {

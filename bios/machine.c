@@ -183,13 +183,11 @@ void machine_detect(void)
   detect_video();
   detect_vme();
   detect_megartc();
-  // detect_nvram();  can't be called here due to the balloc()! :-(
+  detect_nvram();
 }
   
 void machine_init(void)
 {
-  detect_nvram();
-
   /* this is detected by detect_cpu(), called from processor_init() */
   cookie_add(COOKIE_CPU, mcpu);
 

@@ -18,6 +18,7 @@
 #include "screen.h"
 #include "asm.h"
 #include "tosvars.h"
+#include "nvram.h"
 #include "kprint.h"
 
 /* private prototypes */
@@ -61,14 +62,22 @@ void screen_init(void)
     ULONG screen_start;
 
     if (has_videl) {
+        BYTE boot_resolution;
+        int bpp, ret;
+
         /* reset VIDEL on boot-up */
         /* first set the physbase to a safe memory */
         setphys(0x10000L);
         /* then change the resolution to 4-bit depth VGA */
         set_videl_vga640x480(4);
 
-        /* set desired resolution (fetch it from NVRAM - TODO) */
-        set_videl_vga640x480(1 /* or 2 or 4 */);
+        /* set desired resolution - fetch it from NVRAM */
+        ret = nvmaccess(0, 15, 1, (PTR)&boot_resolution);
+        if (ret == 0)
+            bpp = 1 << (boot_resolution & 7);
+        else
+            bpp = 1;
+        set_videl_vga640x480(bpp);
     }
     else {
         *(BYTE *) 0xffff820a = 2;   /* sync-mode to 50 hz pal, internal sync */
