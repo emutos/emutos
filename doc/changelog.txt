@@ -792,3 +792,6 @@ Start... early ages
 25. Apr. 2002
 - vdi/* - switched some more functions to lowercase (MAD)
 - vdi/text.c - ripped mono blitting (MAD)
+
+26. Apr. 2002
+- vdi/vmouse.c - implemented vex and some other mouse funcs in C (MAD)

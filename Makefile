@@ -129,7 +129,7 @@ UTILSSRC = memset.S memmove.S nlsasm.S setjmp.S
 #
 
 VDICSRC = cbssdefs.c isin.c lisastub.c lisatabl.c monobj.c monout.c \
-          opnwkram.c seedfill.c text.c cbssdefs.c jmptbl.c 
+          opnwkram.c seedfill.c text.c cbssdefs.c jmptbl.c vex.c vinput.c
 VDISSRC = entry.S bitblt.S bltfrag.S copyrfm.S esclisa.S  \
           gsxasm1.S gsxasm2.S mousedrv.S lisagem.S vdimouse.S \
           textblt.S tranfm.S gsxvars.S

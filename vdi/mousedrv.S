@@ -22,10 +22,6 @@
 
         .globl  _mouse_int      // mouse interrupt routine
 
-        .globl  _vex_butv       // exchange button change vector
-        .globl  _vex_motv       // exchange mouse movement vector
-        .globl  _vex_curv       // exchange cursor change vector
-
         /* Global variables declared here */
         .globl  _GCHC_KEY
         .globl  _GCHR_KEY
@@ -37,6 +33,10 @@
         .xdef   _DEV_TAB        // address of device table
         .xdef   _xfm_crfm
         .xdef   vb_draw
+
+        .xdef  _vex_butv       // exchange button change vector
+        .xdef  _vex_motv       // exchange mouse movement vector
+        .xdef  _vex_curv       // exchange cursor change vector
 
         /* External variables used here */
         .xdef   _CONTRL         // address of CONTRL array
@@ -294,43 +294,6 @@ ms_exit:
 
 
 /*
- * _GSHIFT_S - GET SHIFT STATE 
- * entry:          none
- * exit:           CTL/SHIFT/ALT status in d0
- * destroys:       nothing
- */
- 
-_GSHIFT_S:
-        move.w  #-1, -(sp)      // Ask BIOS for status of CTL-ALT-SHIFT
-        move.w  #0xB, -(sp)
-        trap    #13
-
-        addq.l  #4, sp          // Clean up the stack
-
-        andi.w  #0x000F, d0     // We only want the low 4 bits
-        rts
-
-
-
-/*
- * _GCHC_KEY - get choice for choice input
- *
- * entry:  none
- * exit:   d0=0    nothing happened
- *         d0=1    choice value
- *         d0=2    button pressed
- *
- * TERM_CH         16 bit char info
- */
-
-_GCHC_KEY:
-        moveq   #1,d0
-        move.w  d0, _TERM_CH
-        rts
-
-
-
-/*
  * _GCHR_KEY - get char for string input
  *
  * entry: none
@@ -474,82 +437,6 @@ _mov_cur:
         move.w  (sp)+,sr        // restore the value of the status register
 mov_cur1:
         rts
-
-
-
-/*
- *     _vex_butv
- *
- *      This routine replaces the mouse button change vector with
- *      the address of a user-supplied routine.  The previous value
- *      is returned so that it also may be called when there is a
- *      change in the mouse button status.
- *
- *      Inputs:
- *         contrl[7], contrl[8] - pointer to user routine
- *
- *      Outputs:
- *         contrl[9], contrl[10] - pointer to old routine
- *
- *      Registers Modified:     a0
- */
-
-_vex_butv:
-        move.l  _CONTRL,a0      // get address of CONTRL array
-        move.l  _user_but,18(a0) // store old address in CONTRL
-        move.l  14(a0),_user_but // store new routine address
-        rts
-
-
-
-/*
- *    _vex_motv
- *
- *      This routine replaces the mouse coordinate change vector
- *      with the address of a user-supplied routine.  The previous
- *      value is returned so that it also may be called when there
- *      is a change in the mouse coordinates.
- *
- *      Inputs:
- *         contrl[7], contrl[8] - pointer to user routine
- *
- *      Outputs:
- *         contrl[9], contrl[10] - pointer to old routine
- *
- *      Registers Modified:     a0
- */
-
-_vex_motv:
-        move.l  _CONTRL,a0      // get address of CONTRL array
-        move.l  _user_mot,18(a0) // store old address in CONTRL
-        move.l  14(a0),_user_mot // store new routine address
-        rts
-
-
-
-/*
- *    _vex_curv
- *
- *      This routine replaces the mouse draw vector with the
- *      address of a user-supplied routine.  The previous value
- *      is returned so that it also may be called when the mouse
- *      is to be drawn.
- *
- *      Inputs:
- *         contrl[7], contrl[8] - pointer to user routine
- *
- *      Outputs:
- *         contrl[9], contrl[10] - pointer to old routine
- *
- *      Registers Modified:     a0
- */
-
-_vex_curv:
-        move.l  _CONTRL,a0      // get address of CONTRL array
-        move.l  _user_cur,18(a0) // store old address in CONTRL
-        move.l  14(a0),_user_cur // store new routine address
-        rts
-
 
 
         .end

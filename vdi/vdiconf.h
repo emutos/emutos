@@ -25,7 +25,7 @@
 #define pattern         1       /* for selecting software which applies */
                                 /* a pattern to the source */
 
-#define handle 2                /* leave 2 for console input, change to 1 for auxin */
+#define handle 		2       /* leave 2 for console input, change to 1 for auxin */
 
 #define rev_vid         1       /* for selecting reverse video transform */
 
@@ -39,7 +39,7 @@
 
 /* Frame parameters - just for copyfrm.S and bitblt.S */
 
-#define FRAME_LEN                76
+#define FRAME_LEN   76
 
 #define B_WD       -76  // +00 width of block in pixels
 #define B_HT       -74  // +02 height of block in pixels
