@@ -130,7 +130,7 @@ extern void HIDE_CUR(), text_blt();
 extern void xfm_crfm(), XFM_UNDL(), COPY_RFM(), RECTFILL();
 
 extern WORD GLOC_KEY();
-extern WORD gchr_key();
+extern WORD gchc_key();
 extern WORD gchr_key();
 extern WORD gshift_s();
 
