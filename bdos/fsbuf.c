@@ -72,7 +72,7 @@ char *getrec(int recn, DMD *dm, int wrtflg)
     #define NEGATIVE_RECN -200      /* made up this value: has to be fixed */
     if (recn >= NEGATIVE_RECN)
         cl = recn >> dm->m_clrlog;  /*  calculate cluster nbr       */
-   	else
+        else
         cl = (unsigned)recn >> dm->m_clrlog;  /*  calculate cluster nbr       */
 
     if (cl < dm->m_dtl->d_strtcl)
