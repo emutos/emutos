@@ -1224,3 +1224,6 @@ Start... early ages
 
 16. Nov. 2002
 - aes/gemdisp.c - schedule() loop now sleeps with the STOP #2300 insn (joy)
+
+22. Nov. 2002
+- vdi/vdimain.c - change timer vectors to be used as pointers (MAD)

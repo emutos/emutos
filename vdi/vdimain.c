@@ -377,12 +377,12 @@ void tick_int(int u)
     if (!in_proc) {
         in_proc = 1;                    // set flag, that we are running
         // MAD: evtl. registers to stack
-        tim_addr(u);                    // call the timer vector
+        (*tim_addr)(u);                    // call the timer vector
         // and back from stack
     }
     in_proc = 0;                        // allow yet another trip through
     // MAD: evtl. registers to stack
-    tim_chain(u);                       // call the old timer vector too
+    (*tim_chain)(u);                       // call the old timer vector too
     // and back from stack
 }
 
