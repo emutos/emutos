@@ -157,7 +157,7 @@ Start... early ages
 - copy paste error in linea stubs, startup.s (LVL)
 
 10. Oct. 2001
-- EmuTOS now expects a cartridge of type 3, just as the original TOS. (THO)
+- EmuTOS now expects a cartridge of type 3, just as the original TOS. (THH)
 
 11. Oct. 2001
 - removed the cart directory and the cartridge - no longer needed (MAD)
@@ -186,7 +186,7 @@ Start... early ages
 - some progress on iorec, but still not in service (LVL)
 
 16. Oct. 2001
-- Fixed some bugs in bios.c (the bconoutx functions need 2 parameters!) (THO)
+- Fixed some bugs in bios.c (the bconoutx functions need 2 parameters!) (THH)
 
 19. Oct. 2001
 - Cleaned up and seperated memory initialisation in memory.s  (MAD)
@@ -244,10 +244,10 @@ Start... early ages
   This is not yet working (it seems command.c is not ROMable for now) 
 
 02. Nov. 2001
-- EmuCON is now working. (THO)
+- EmuCON is now working. (THH)
 - Implemented cursconf (XBIOS 0x15)  (MAD)
-- Removed F_IOCtl() and the MOUSE:, CLOCK: and NUL: devices.          (THO)
-- Mapped the CON:, AUX: and PRN: devices to Atari values (-1, -2, -3) (THO)
+- Removed F_IOCtl() and the MOUSE:, CLOCK: and NUL: devices.          (THH)
+- Mapped the CON:, AUX: and PRN: devices to Atari values (-1, -2, -3) (THH)
 - commented out XBIOS calls from command.c (for testing)
 
 03. Nov. 2001
@@ -640,11 +640,11 @@ Start... early ages
 
 07. Mar. 2002
 - Made the VDI compilable again... And it even seems already to work a little
-  bit (Thomas)
+  bit (THH)
 
 08. Mar. 2002
 - Cleaned up the AES sources, added prototypes and header files. The AES can
-  now be linked with the rest of EmuTOS. (Thomas)
+  now be linked with the rest of EmuTOS. (THH)
 
 11. Mar. 2002
 - vdi/lisastub.c cleaned up of warnings 
@@ -669,8 +669,14 @@ Start... early ages
                   black screen under ARAnyM (joy)
 17. Mar. 2002
 - vdi/* - corrected the swapped #defines to use Atari and/or VME10 (MAD)
-- You can now use the AES as user interface instead of EmuCON (Thomas)
+- You can now use the AES as user interface instead of EmuCON (THH)
   (by enabling it in the Makefile, however AES is not yet fully working)
 
 18. Mar. 2002
 - bios/kprint.c - registers are printed out to ease debugging (joy)
+
+20. Mar. 2002
+- The AES are now succeed in loading and running DESKTOP.APP from disk! (THH)
+- Moved some more VDI variables to lineavars.S (THH)
+- Cleaned up the VDI, it works now quite good in ST-HIGH resolution (THH)
+

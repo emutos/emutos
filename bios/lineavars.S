@@ -23,12 +23,14 @@
                 .globl  _cur_ms_stat
                 .globl  _disab_cnt
                 .globl  _draw_flag
+
                 .globl  m_cdb_bg
                 .globl  m_cdb_fg
                 .globl  m_pos_hx
                 .globl  m_pos_hy
                 .globl  mask_form
                 .globl  mouse_cdb
+
                 .globl  _mouse_flag
                 .globl  _newx
                 .globl  _newy
@@ -80,6 +82,9 @@
                 .globl  _num_qc_lines
                 .globl  _line_cw
 
+                .globl  _DEV_TAB
+                .globl  _INQ_TAB
+
 
 /* Font related VDI variables */
 
@@ -87,19 +92,31 @@
 _cur_font:      .ds.l   1       // -906 current VDI font
                 .ds.w   23      // -902
 
-/* Sprite definitio block for VDI */
 
-                .ds.w   37      // -856
-                
+/* The mouse form storage area: */
+
+mouse_cdb:
+m_pos_hx:       .ds.w   1       // -856 (cdb+0) Mouse hot spot - x coord
+m_pos_hy:       .ds.w   1       // -854 (cdb+2) Mouse hot spot - y coord
+                .ds.w   1       // -852 m_planes?
+m_cdb_bg:       .ds.w   1       // -850 (cdb+6) Mouse background color as pel value
+m_cdb_fg:       .ds.w   1       // -848 (cdb+8) Mouse foreground color as pel value
+mask_form:      .ds.w   32      // -846 (cdb+10) Storage for mouse mask and cursor
+
+
 /* Extended workstation information */
 
+_INQ_TAB:
                 .ds.w   45      // -782
+
 
 /* Workstation information */
 
+_DEV_TAB:
                 .ds.w   1       // -692 screen width in pixels
                 .ds.w   1       // -690 screen heigth in pixels
                 .ds.w   43      // -688 
+
 
 /* Mouse data */
 
@@ -245,7 +262,7 @@ _v_bytes_lin:   .ds.w   1       // -2   byte per screen line
                 .globl  _TEXT_FG
                 .globl  _scrtchp
                 .globl  _scrpt2
-                .globl  _v_pl_dspl
+
 
 // ==== Global GSX Variables =================================================
 
@@ -318,9 +335,6 @@ _scrpt2:        ds.w    1               // large buffer base offset
 _TEXT_BG:       ds.w    1               // text foreground color
 _COPYTRAN:      ds.w    1               // Flag for Copy-raster-form (<>0 = Transparent)
 _FILL_ABORT:    ds.l    1               // Adress of Routine for Test of break of contour fill function
-
-// ==== This stuff was added, it may be at a different address normally ======
-_v_pl_dspl:     ds.l    1
 
 
                 .end

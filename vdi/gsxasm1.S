@@ -19,6 +19,11 @@
 
 #include "vdiconf.h"
 
+//#undef vme10
+//#define vme10 1
+//#define _v_pl_dspl 2
+
+
 /////////////////////////////////////////////////////////////////////////
 //                                                                      //
 //                              GSXASM1.S                               //
@@ -30,7 +35,7 @@
         .globl  _SMUL_DIV       // signed integer multiply and divide
         .globl  _vec_len        // compute length of a vector
         .globl  _HABLINE        // draw a horizontal line
-        .globl  _ABLINE         // draw a line (general purpose)
+        .globl  __ABLINE        // draw a line (general purpose)
         .globl  concat          // convert x,y coordinates to buffer offsets
         .globl  xline           // alternate entry to HABLINE
         .globl  ortbl           // OR mask table for line drawing
@@ -73,7 +78,6 @@
         .xdef   _v_bas_ad
         .xdef   _v_planes
         .xdef   _v_lin_wr
-        .xdef   _v_pl_dspl
 
         .page
 /////////////////////////////////////////////////////////////////////////
@@ -488,7 +492,7 @@ bs_out:
         rts
 
         .page
-/////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
 //                                                                      //
 //      smul_div (m1,m2,d1)                                             //
 //                                                                      //
@@ -498,23 +502,23 @@ bs_out:
 //      m2 = unsigned 15 bit integer                                    //
 //      d1 = signed 16 bit integer                                      //
 //                                                                      //
-/////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
 
 _SMUL_DIV:
+        movem.l d2-d3,-(sp)
         moveq   #1,d1           // preload increment
-        move    6(sp),d0
-        muls    4(sp),d0        // m2 // m1
+        move.w  8+6(sp),d0
+        muls    8+4(sp),d0        // m2 // m1
         bpl     smd_1
         neg     d1              // negate increment
 smd_1:
-        move    8(sp),d2
+        move.w  8+8(sp),d2
         divs    d2,d0           // m2 // m1 / d1
         and     d2,d2           // test if divisor is negative
         bpl     smd_2
         neg     d1              // negate increment
         neg     d2              // make divisor positive
 smd_2:
-        move.l  d3,-(sp)
         move.l  d0,d3           // extract remainder
         swap    d3
         and     d3,d3           // test if remainder is negative
@@ -526,7 +530,7 @@ smd_3:
         blt     smd_4
         add     d1,d0           // add increment
 smd_4:
-        move.l  (sp)+,d3
+        movem.l  (sp)+,d2-d3
         rts
 
         .page
@@ -644,7 +648,7 @@ shf_tab:
 //      whether the line should be drawn using x1,y1 or x2,y2 as the
 //      starting point.
 //
-_ABLINE:
+__ABLINE:
         move.l  _v_bas_ad,a5    // get base address of first plane
         lea     _FG_BP_1,a4     // get address of bit plane mask table
 #if vme10
@@ -656,7 +660,9 @@ _ABLINE:
         move.w  _v_planes,d3    // get number of video planes
         move.w  d3,d6           // save it
         subq.w  #1,d3           // get number of planes - 1
-        asl.w   #1,d6           // get offset to next word in plane
+        add.w   d6,d6           // get offset to next word in plane
+        move.l  #0,a1
+        move.w  d6,a1
 #endif
         move.w  _v_lin_wr,d7    // get offset to next scan in plane
         move.w  _X2,d5          // compute delta x
@@ -1627,9 +1633,10 @@ _HABLINE:
         subq.w  #1,d3
         move.l  _v_pl_dspl,a3   // get offset to next video plane
 #else
-        movea.w _v_planes,a3    // get number of planes
-        move.w  a3,d3           // get number of planes - 1
-        subq.w  #1,d3
+        move.l  #0,a3
+        move.w  _v_planes,d3    // get number of planes
+        move.w  d3,a3
+        subq.w  #1,d3           // get number of planes - 1
         adda.w  a3,a3           // get offset to next word in same plane
 #endif
         move.w  _X1,d0          // get starting x-coordinate (input to concat)

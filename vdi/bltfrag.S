@@ -13,14 +13,6 @@
 #include "vdiconf.h"
 
 
-#define    SRC_WR            -2
-#define    DST_WR            -4
-#define    INNER_CT     -6
-
-#define    P_ADDR            -34        // address of pattern buffer
-#define    P_NXLN            -30        // offset to next line in pattern  (in bytes)
-#define    P_NXPL            -28        // offset to next plane in pattern (in bytes)
-#define    P_MASK            -26        // pattern index mask
 
 #define    F1OP       8
 #define    F2OP      22

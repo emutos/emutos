@@ -1,15 +1,13 @@
 /*
  * gsxvars.h - GSX system variables
  *
- * Copyright (c) 1999 Caldera, Inc. and Authors:
- *
+ * Copyright (c) 1999 Caldera, Inc.
+ *               2002 The EmuTOS development team
  *
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
  */
-
-#include "vdiconf.h"
 
 
 //***************************************************************************//
@@ -104,27 +102,6 @@ _FLIP_Y:        .ds.w   1               // (+68) Non-zero PTSOUT contains magnit
                 .ds.w   83
 _deftxbuf:      .ds.w   138             // (+236) scratch buffer for 8x16 (uses 276 bytes)
 
-
-/////////
-//      Non-Overlayable Variables
-/////////
-
-                .globl  m_cdb_bg
-                .globl  m_cdb_fg
-                .globl  m_pos_hx
-                .globl  m_pos_hy
-                .globl  mask_form
-                .globl  mouse_cdb
-
-// mouse_cdb must be declared out of order since things are equated to it
-
-mouse_cdb:                              // the mouse form storage area  (.ds.w   37)
-m_pos_hx:       .ds.w   1               // (+0) Mouse hot spot - x coord
-m_pos_hy:       .ds.w   1               // (+2) Mouse hot spot - y coord
-                .ds.w   1
-m_cdb_bg:       .ds.w   1               // (+6) Mouse background color as pel value
-m_cdb_fg:       .ds.w   1               // (+8) Mouse foreground color as pel value
-mask_form:      .ds.w   32              // (+10) Storage for mouse mask and cursor
 
 
                 .end

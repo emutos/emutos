@@ -13,7 +13,6 @@
 #include "vdiconf.h"
 
 
-        .xdef   _v_pl_dspl
 
 /////////////////////////////////////////////////////////////////////////
 //                                                                      //
@@ -135,7 +134,14 @@ s_physcl_dev:
         lsr.w   #1,d3                   //get # of words in raster line
         move.w  _DEV_TAB+2,d4           //get # of raster lines per plane - 1
         addq.w  #1,d4                   //get # of raster lines per plane
+#if vme10
         move.l  _v_pl_dspl,d5           //get # of bytes between video planes
+#else   // FIXME: The following 3 lines are just a guess    - Thomas
+        moveq.l #0,d5
+        move.w  _v_planes,d5            // get # of graphic planes
+        add.w   d5,d5                   // # bytes between words in same plane
+
+#endif
 //
 //  Determine if destination is a physical device or a raster area
 //
@@ -155,7 +161,14 @@ dest_form:
 //
 d_physcl_dev:
         movea.l _v_bas_ad,a3            //get screen starting adress
+#if vme10
         move.l  _v_pl_dspl,d6           //get # of bytes between video planes
+#else   // FIXME: The following 3 lines are just a guess    - Thomas
+        moveq.l #0,d5
+        move.w  _v_planes,d6            // get # of graphic planes
+        add.w   d6,d6                   // # bytes between words in same plane
+
+#endif
 //
 //  Calculate the size of the source plane in words
 //

@@ -56,7 +56,7 @@ extern UWORD v_lin_wr;          // line wrap = bytes per line
 extern UWORD v_hz_rez;          // screen horizontal resolution
 extern UWORD v_vt_rez;          // screen vertical resolution
 extern UWORD v_bytes_lin;       // width of line in bytes
-extern ULONG v_pl_dspl;         // width of one plane in bytes
+
 
 /* Font specific variables */
 extern UWORD *v_fnt_ad;         // address of current monospace font

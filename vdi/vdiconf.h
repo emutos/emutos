@@ -18,8 +18,8 @@
  * Flags for Conditional Assembly of Code
  */
 
-#define rbp             0       /* assemble for Atari ST (1=yes, 0=no) */
-#define vme10           1       /* assemble for Motorola VME/10 (1=yes, 0=no) */
+#define rbp             1       /* assemble for Atari ST (1=yes, 0=no) */
+#define vme10           0       /* assemble for Motorola VME/10 (1=yes, 0=no) */
 
 
 #define pattern         1       /* for selecting software which applies */

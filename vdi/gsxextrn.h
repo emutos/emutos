@@ -1,8 +1,8 @@
 /*
  * gsxextrn.h - External definitions
  *
- * Copyright (c) 1999 Caldera, Inc. and Authors:
- *
+ * Copyright (c) 1999 Caldera, Inc.
+ *               2002 The EmuTOS development team
  *
  *
  * This file is distributed under the GPL, version 2 or at your
@@ -18,6 +18,9 @@
 
 #include "fontdef.h"
 #include "attrdef.h"
+
+#include "asm.h"
+
 
 extern struct attribute virt_work;      /* Virtual workstation attributes */
 extern struct attribute *cur_work;      /* Pointer to current works attr. */
@@ -107,7 +110,13 @@ extern WORD COPYTRAN;
 
 /* Assembly Language Support Routines */
 
-extern void ABLINE(), HABLINE(), CLEARMEM();
+/* ABLINE destroys nearly all CPU registers, and since its a real beast
+   of function, I wasn't able to modify it so that it saves and restores
+   the registers - so I'm now using regsafe_call() here! */
+extern void _ABLINE();
+#define ABLINE()  regsafe_call(_ABLINE)
+
+extern void CLEARMEM();
 extern void CHK_ESC(), INIT_G(), DINIT_G();
 extern void CLC_FLIT();
 extern WORD CLC_DDA(WORD top, WORD height);

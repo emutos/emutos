@@ -49,7 +49,6 @@
         .xdef   _CONTRL         // address of CONTRL array
         .xdef   _v_planes       // number of video planes
         .xdef   _v_lin_wr       // number of bytes in a scan line
-        .xdef   _v_pl_dspl
         .xdef   _v_bas_ad       // base address of video planes
         .xdef   _DEV_TAB        // address of device table
         .xdef   _MOUSE_BT       // mouse button state
@@ -479,6 +478,7 @@ init:
         move.l  rtn_tab+04(pc,d7.w),a6  // get starting address of fetch routine
 #if rbp
         move.w  _v_planes,d7            // get # of graphic planes
+        moveq.l #0,d3
         move.w  d7,d3
         add.w   d3,d3                   // # bytes between words in same plane
 #else
@@ -520,6 +520,7 @@ new_plane:
 
 #if rbp
         addq.l  #2,d_addr(sp)           // update destination pointer
+                                        // FIXME: Use d3 here, too???
 #else
         add.l   d3,d_addr(sp)           // get address of next graphics plane
 #endif
@@ -749,7 +750,7 @@ cur_replace:
         movem.l d2-d5/a2-a5,-(sp)       // save registers used by 'C'
         bclr.b  #F_SAVRDY,save_stat     // does save area contain valid data ?
         beq     hang_it_up              // 0:nothing saved
-#if rbp
+#if 0 //rbp   //FIXME!
         move.w  save_len,d4             // d4 <- number of lines per plane
         move.w  d4,d2
         subq.w  #1,d2                   // d2 <- adjust counter for dbra
@@ -763,9 +764,9 @@ cur_replace:
         lea     save_area,a1            // a1 -> save area
 
         move.w  _v_planes,d5            // d5 <- resolution discriminator
-#if rbp
+#if 0 //rbp   //FIXME - the routine only crashes, so we're using the vme10 routine instead
         subq.w  #2,d5
-        bhi     lo_rez
+        bgt     lo_rez
         beq     md_rez
 
 hi_rez:
@@ -900,10 +901,18 @@ lo_lw_loop:
         move.l  a5,a0                   // a0 -> next line
 
         dbra    d2,lo_lw_loop
+
 #else
+
         subq.w  #1,d5                   // adjust plane count for loop
         movea.l a0,a5                   // save destination address
+#if vme10
         move.l  _v_pl_dspl,a3           // get # of bytes between gr. planes
+#else   // Ugly hack for the Atari:
+        move.l  #0,a3
+        move.w  _v_planes,a3
+        add.w   a3,a3
+#endif
         move.w  d4,d2                   // save # of lines/plane
         btst.b  #F_SAVWID,save_stat     // word or longword transfer?
         bne.b   lw_1st_line             // for longword transfer

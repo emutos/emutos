@@ -56,7 +56,6 @@
         .xdef   _v_lin_wr       // # of bytes in a single scan line
         .xdef   _TEXT_FG        // foreground color for text
         .xdef   _v_planes       // # of video planes
-        .xdef   _v_pl_dspl      // # of bytes per video plane
 
 
 /////////////////////////////////////////////////////////////////////////
@@ -237,7 +236,12 @@ bit_clr:
 //      jsr     mon_mode(pc,d7.w)       // call the service routine
         lea     mon_mode(pc,d7.w),a5    // get address of service routine
         jsr     (a5)            // call it
-        adda.l  _v_pl_dspl,a2    // get starting address in next plane
+#if vme10
+        adda.l  _v_pl_dspl,a2   // get starting address in next plane
+#else
+        addq.l  #2,a2           // FIXME: This is just a guess (and only works
+                                // in monochrome mode)  - Thomas
+#endif
         dbra    d0,mplan_lp     // loop until all planes drawn
 
 //

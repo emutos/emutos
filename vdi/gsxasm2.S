@@ -12,6 +12,10 @@
 
 #include "vdiconf.h"
 
+//#undef vme10
+//#define vme10 1
+//#define _v_pl_dspl 2
+
 
 //              public routines
 
@@ -106,22 +110,24 @@ swap_loop:      move.w  (a0), d1        // Get word
 
 //////////////
 //////////////
-////                                                                          ////
-////    _put_pix:                                                             ////
-////            This routine plots a pixel for anybody (even BASIC).          ////
-////                                                                          ////
-////            input:  _INTIN(0) = pixel value.                              ////
-////                    _PTSIN(0) = x coordinate.                             ////
-////                    _PTSIN(1) = y coordinate.                             ////
-////                                                                          ////
-////            output: none.                                                 ////
-////                                                                          ////
-////            destroys: d0,d1,d2,d3,a0,& a1.                                ////
-////            destroys: d0,d1,d2,d3,d4,a0,a1,&a2 for VME10.                 ////
+////
+////    _put_pix:
+////            This routine plots a pixel for anybody (even BASIC).
+////
+////            input:  _INTIN(0) = pixel value.
+////                    _PTSIN(0) = x coordinate.
+////                    _PTSIN(1) = y coordinate.
+////
+////            output: none.
+////
+////            destroys: d0,d1,a0 & a1.
+////            destroys: d0,d1,a0,a1 & a2 for VME10.
 //////////////
 //////////////
 
-_put_pix:       move.l  _PTSIN,a0       // fetch ptr to _PTSIN array.
+_put_pix:
+                movem.l d2-d4,-(sp)
+                move.l  _PTSIN,a0       // fetch ptr to _PTSIN array.
                 move.w  (a0)+,d0        // fetch x coord.
                 move.w  (a0),d1         // fetch y coord.
                 jsr     concat          // convert to physical offset.
@@ -153,7 +159,7 @@ ppx_rot:        ror.w   d4,d3           // rotate pixel bit and put in carry.
                 bcc     ppx_clr         // if 0, clear the bit.
                 or.w    d0,(a1)         // if 1, set the bit.
                 dbra    d2,ppx_lp
-                rts
+                bra.s   ppx_end
 
 ppx_clr:        and.w   d1,(a1)         // clear the bit.
                 dbra    d2,ppx_lp
@@ -162,11 +168,14 @@ ppx_lp:         ror.w   #1,d3           // rotate pixel bit and put in carry.
                 bcc     ppx_clr         // if 0, clear the bit.
                 or.w    d0,(a1)+        // if 1, set the bit.
                 dbra    d2,ppx_lp
-                rts
+                bra.s   ppx_end
 
 ppx_clr:        and.w   d1,(a1)+        // clear the bit.
                 dbra    d2,ppx_lp
 #endif
+
+ppx_end:
+                movem.l (sp)+,d2-d4
                 rts
 
                 .page
@@ -260,6 +269,7 @@ _fill_line:
                 subq.w  #1,d3           // d3 := (# of planes) -1.
                 move.l  _v_pl_dspl,a3   // # of bytes between video planes
 #else
+                move.l  #0,a3
                 move.w  _v_planes,a3    // a3 := xinc. (# of planes)
                 move.w  a3,d3
                 adda.w  a3,a3           // word xinc.
@@ -344,6 +354,7 @@ _end_pts:       move.w  6(sp),d1        // fetch y coordinate. (input to concat)
                 subq.w  #1,d3           // d3 := (# of planes) -1.
                 move.l  _v_pl_dspl,a3   // # of bytes between video planes
 #else
+                move.l  #0,a3
                 move.w  _v_planes,a3    // a3 := xinc. (# of planes)
                 move.w  a3,d3
                 adda.w  a3,a3           // word xinc.
@@ -431,7 +442,7 @@ rnl1:
 #if vme10
                 cmp.w   a6,d7           // and (x coord < x resolution).
 #else
-               cmp.w   d6,d7           // and (x coord < x resolution).
+                cmp.w   d6,d7           // and (x coord < x resolution).
 #endif
                 bgt     rt_nedge
 
@@ -691,6 +702,7 @@ BOX_FILL:       move.l  a6,-(sp)        // save C frame pointer
                 subq.w  #1,d3           // d3 := (# of planes) -1.
                 move.l  _v_pl_dspl,a3    // # of bytes between video planes.
 #else
+                move.l  #0,a3
                 move.w  _v_planes,a3    // a3 := xinc. (# of planes)
                 move.w  a3,d3
                 adda.w  a3,a3           // word xinc.
