@@ -25,6 +25,7 @@
 
 #include "ikbd.h"
 #include "midi.h"
+#include "mfp.h"
 
 /*==== Defines ============================================================*/
 #define	DBGBIOSC        TRUE
@@ -50,17 +51,13 @@
 extern WORD os_dosdate;    /* Time in DOS format */
 extern BYTE *biosts ;         /*  time stamp string */
 
-extern void c_init();         /* found in conio.c */
-extern LONG con_stat();      /* found in conio.c */
-extern LONG con_in ();       /* found in conio.c */
-extern WORD  shifty;           /* found in conio.c */
 
 
 #if HAVE_SIO
 extern LONG sinstat();		/* found in siostat.c */
 #endif
 
-extern void cputc(WORD);     /* found in vt52.c */
+extern void cputc(WORD);        /* found in conout.s */
 
 extern LONG format();		/* found in disk.c */
 
@@ -80,11 +77,7 @@ extern LONG drv_rw(WORD r_w,            /* found in startup.s */
                    WORD drive);
 
 
-extern void mfp_init(void);     /* found in mfp.c */
-extern void timer_init(void);   /* found in mfp.c */
-extern void usart_init(void);   /* found in mfp.c */
 extern void clk_init(void);     /* found in clock.c */
-extern void con_init(void);     /* found in conio.c */
 
 //EXTERN void siolox();
 //EXTERN void moulox();
@@ -198,9 +191,7 @@ void biosinit()
     cprintf("[ OK ] Floppy deselected ...\n\r");
 
     /* now do the remaining things */
-    mfp_init();         /* init MFP and ACIAs */
-    timer_init();       /* init MFP Timer A, B, C, D */
-    usart_init();       /* init USART */
+    mfp_init();         /* init MFP, timers, USART */
     kbd_init();         /* init keyboard, disable mouse and joystick */
     midi_init();        /* init MIDI acia so that kbd acia irq works */
     clk_init();         /* init clock (dummy for emulator) */
@@ -247,8 +238,8 @@ void biosinit()
     bconstat_vec[0] = bconstat0;
     bconstat_vec[1] = bconstat1;
     bconstat_vec[2] = bconstat2;
-    bconstat_vec[3] = bconstat3;
-    bconstat_vec[4] = bconstat4;
+    bconstat_vec[3] = bconstat4;    /* IKBD and MIDI bconstat swapped */
+    bconstat_vec[4] = bconstat3;
     bconstat_vec[5] = bconstat5;
     bconstat_vec[6] = bconstat6;
     bconstat_vec[7] = bconstat7;
@@ -508,8 +499,8 @@ LONG bios_8(WORD handle)	/* GEMBIOS character_output_status */
     if(handle>7)  return 0;     /* Illegal handle */
 
     /* compensate for a known BIOS bug: MIDI and IKBD are switched */
-    if(handle==3)  handle=4;
-    else if (handle==4)  handle=3;
+    /*    if(handle==3)  handle=4; else if (handle==4)  handle=3;  */
+    /* LVL: now done directly in the table */
 
     return bcostat_vec[handle]();
 }
@@ -565,15 +556,7 @@ LONG bios_a()
 
 LONG bios_b(WORD flag)
 {
-    WORD oldy;
-
-    if(flag == -1)
-        return(shifty);         /* return bitvector of shift state */
-
-    oldy = shifty;
-    shifty=flag;
-
-    return(oldy);
+    return kbshift(flag);
 }
 
 

@@ -5,14 +5,16 @@
  *
  * Authors:
  *  MAD     Martin Doering
+ *  LVL     Laurent Vogel
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
  */
 
+#ifndef _MFP_H
+#define _MFP_H
 
-
-#include	"portab.h"
+#include "portab.h"
 
 #define	IRQ_SPURIOUS      (IRQ_MACHSPEC | 0)
 
@@ -59,13 +61,6 @@
 
 #define INT_CLK   24576	    /* CLK while int_clk =2.456MHz and divide = 100 */
 #define INT_TICKS 246	    /* to make sched_time = 99.902... HZ */
-
-
-#define MFP_ENABLE	0
-#define MFP_PENDING	1
-#define MFP_SERVICE	2
-#define MFP_MASK	3
-
 
 
 
@@ -126,6 +121,47 @@ typedef struct
 
 
 /*==== Defines ============================================================*/
-# define MFP_BASE	((MFP *)(0x00fffa00L))
+#define MFP_BASE	((MFP *)(0x00fffa00L))
+
+#define B19600 0
+#define B9600  1
+#define B4800  2 
+#define B3600  3 
+#define B2400  4
+#define B2000  5
+#define B1800  6
+#define B1200  7
+#define B600   8
+#define B300   9
+#define B200   10
+#define B150   11
+#define B134   12
+#define B110   13
+#define B75    14
+#define B50    15 
 
 
+#define MFP_CTRL_NONE   0    /* no flow control */
+#define MFP_CTRL_SOFT   1    /* software flow control (XON/XOFF) */
+#define MFP_CTRL_HARD   2    /* hardware flow control (RTS/CTS) */
+#define MFP_CTRL_BOTH   3    /* XON/XOFF and RTS/CTS */
+
+extern WORD mfp_ctrl;
+
+/* "sieve" to get only the fourth interrupt, 0x1111 initially */
+extern WORD timer_c_sieve;
+
+/*==== Xbios functions ====================================================*/
+
+VOID mfpint(WORD num, LONG vector);
+VOID rsconf(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
+VOID jdisint(WORD num);
+VOID jenabint(WORD num);
+VOID xbtimer(WORD timer, WORD control, WORD data, LONG vector);
+
+/*==== internal functions =================================================*/
+
+VOID mfp_init(VOID);
+
+
+#endif /* _MFP_H */

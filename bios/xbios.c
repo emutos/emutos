@@ -14,12 +14,13 @@
 
 
 #include "portab.h"
-#include "gemerror.h"
 #include "kprint.h"
 #include "iorec.h"     
 #include "tosvars.h"
 #include "ikbd.h"
 #include "midi.h"
+#include "mfp.h"
+#include "asm.h"
  
 #define	DBG_XBIOS        1
 
@@ -160,11 +161,8 @@ VOID xbios_5(LONG logLoc, LONG physLoc, WORD rez)
       v_bas_ad = (char *)logLoc;
     }
     if(physLoc >= 0) {
-      *(UBYTE *)0xffff8201 = physLoc >> 16;
-      *(UBYTE *)0xffff8203 = physLoc >> 8;
-#if 0
-      *(UBYTE *)0xffff820d = physLoc;
-#endif
+      screenpt = (char *)physLoc;
+      /* will be set up at next VBL */
     }
     if(rez >= 0) {
       /* rez ignored for now */
@@ -175,7 +173,7 @@ VOID xbios_5(LONG logLoc, LONG physLoc, WORD rez)
 
 
 /*
- * xbios_6 - (setPallete) Set the contents of the hardware palette register
+ * xbios_6 - (setPalette) Set the contents of the hardware palette register
  *
  * (all 16 color entries) from the 16 words pointed to by 'palettePtr'.
  * 'paletteptr' MUST be on a word boundary. The palette assignment takes
@@ -186,8 +184,10 @@ VOID xbios_6(LONG palettePtr)
 
 {
 #if DBG_XBIOS
-    kprintf("XBIOS: Unimplemented function 0x06 ...\n");
+    kprintf("XBIOS: SetPalette(0x%08lx)\n", palettePtr);
 #endif
+    /* next VBL will do this */
+    colorptr = (WORD *)palettePtr;
 }
 
 
@@ -204,10 +204,35 @@ VOID xbios_6(LONG palettePtr)
 
 WORD xbios_7(WORD colorNum, WORD color)
 {
+  WORD rez = xbios_4();
+  WORD max;
+  WORD *palette = (WORD *)0xFFFF8240;
 #if DBG_XBIOS
-    kprintf("XBIOS: Unimplemented function 0x07 ...\n");
+  kprintf("XBIOS: Setcolor(0x%04x, 0x%04x)\n", colorNum, color);
 #endif
-    return(0);
+  switch(rez) {
+  case 0:
+    max = 15;
+    break;
+  case 1:
+    max = 3;
+    break;
+  case 2:
+    max = 1;
+    break;
+  default:
+    max = 0;
+  }
+  if(colorNum >= 0 && colorNum <= max) {
+    if(color == -1) {
+      return palette[colorNum] & 0x777;
+    } else {
+      palette[colorNum] = color;
+      return color & 0x777;
+    }
+  } else {
+    return 0;
+  }
 }
 
 
@@ -350,8 +375,9 @@ VOID xbios_c(WORD cnt, LONG ptr)
 VOID xbios_d(WORD interno, LONG vector)
 {
 #if DBG_XBIOS
-    kprintf("XBIOS: Unimplemented function 0x0d ...\n");
+    kprintf("XBIOS: Mfpint(0x%x, 0x%08lx)\n", interno, vector);
 #endif
+    mfpint(interno, vector);
 }
 
 
@@ -399,8 +425,9 @@ LONG xbios_e(WORD devno)
 VOID xbios_f(WORD speed, WORD flowctl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
 {
 #if DBG_XBIOS
-    kprintf("XBIOS: Unimplemented function 0x0f ...\n");
+    kprintf("XBIOS: Rsconf(...)\n");
 #endif
+    rsconf(speed, flowctl, ucr, rsr, tsr, scr);
 }
 
 
@@ -433,12 +460,22 @@ LONG xbios_10(LONG unshift, LONG shift, LONG capslock)
  * Bits 24..31 will be zero.
  */
 
+static ULONG rseed;
+
+extern volatile LONG hz_200;
+
 LONG xbios_11()
 {
 #if DBG_XBIOS
-    kprintf("XBIOS: Unimplemented function 0x11 ...\n");
+    kprintf("XBIOS: Random()\n");
 #endif
-    return(0);
+    if(rseed == 0) {
+      rseed = hz_200 << 16;
+      rseed += hz_200;
+    }
+    rseed *= 3141592621UL;
+    rseed ++;
+    return((rseed >> 8) & 0xFFFFFF);
 }
 
 
@@ -584,8 +621,9 @@ VOID xbios_19(WORD cnt, LONG ptr)
 VOID xbios_1a(WORD intno)
 {
 #if DBG_XBIOS
-    kprintf("XBIOS: Unimplemented function 0x1a ...\n");
+    kprintf("XBIOS: Jdisint(0x%x)\n", intno);
 #endif
+    jdisint(intno);
 }
 
 
@@ -597,8 +635,9 @@ VOID xbios_1a(WORD intno)
 VOID xbios_1b(WORD intno)
 {
 #if DBG_XBIOS
-    kprintf("XBIOS: Unimplemented function 0x1b ...\n");
+    kprintf("XBIOS: Jenabint(0x%x)\n", intno);
 #endif
+    jenabint(intno);
 }
 
 
@@ -650,8 +689,10 @@ VOID xbios_1e(WORD bitno)
 VOID xbios_1f(WORD timer, WORD control, WORD data, LONG vec)
 {
 #if DBG_XBIOS
-    kprintf("XBIOS: Unimplemented function 0x1f ...\n");
+    kprintf("XBIOS: xbtimer(%d, 0x%02x, 0x%02x, 0x%08lx)\n",
+	    timer, control, data, vec);
 #endif
+    xbtimer(timer, control, data, vec);
 }
 
 
@@ -692,8 +733,6 @@ WORD xbios_21(WORD config)
  * xbios_22 - (kbdvbase) Returns pointer to a kbdvecs structure
  *
  */
-
-extern LONG kbdvecs[];    /* in tosvars.s */
 
 LONG xbios_22()
 {
@@ -738,9 +777,17 @@ VOID xbios_24()
 
 VOID xbios_25()
 {
+    WORD old_sr;
+    LONG a;
+    volatile LONG frclock; 
 #if DBG_XBIOS
     kprintf("XBIOS: Unimplemented function 0x25 ...\n");
 #endif
+    old_sr = set_sr(0x0300);   /* allow VBL interrupt */
+    a = frclock;
+    while(frclock == a) 
+      ;
+    set_sr(old_sr);
 }
 
 

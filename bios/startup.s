@@ -83,6 +83,9 @@
 
         .global   memdone       	| return to, if memory config done
 
+	.global _int_timerc
+
+	
 | ==== VME/10 Specifics =============
         .globl  _no_device
         .globl  _rddat
@@ -302,8 +305,8 @@ os_dummy:
 
 
 | ==== Get into supervisor mode ==============================================
-_main:                                  | stunt to guarantee entry into supervisor mode
-        move    #0x2700,sr              | disable interrupts
+_main:                         | stunt to guarantee entry into supervisor mode
+        move    #0x2700,sr     | disable interrupts
 
 | ==== Reset all Hardware ====================================================
 
@@ -322,7 +325,6 @@ nodiag:
 
 | ==== Set up a supervisor stack ============================================
 
-| LVL   lea     _stkbot+SUPSIZ, sp      | Setup Supervisor Stack
         lea     _stktop, sp             | Setup Supervisor Stack
 
 
@@ -562,7 +564,6 @@ clrvbl:
         clr.l (a0)+                     | Clear VBL-QUEUE
         dbra d0, clrvbl                 | Loop
 
-|        bsr 0xfc21b4                   | MFP initialisieren
         move.w #1, vblsem               | don not execute vbl-routine
 
 
@@ -738,9 +739,57 @@ int_vbl:
         
         movem.l d0-d7/a0-a6, -(sp)      | save registers
         addq.l  #1, _vbclock            | count number of VBL interrupts
-        
-|        bsr    flopvbl                 | flopvbl routine not needed
-        
+
+	| detect rez change
+	| (not done)
+
+	| blink cursor
+	| TODO
+
+	| load new color palette
+	move.l	_colorptr,d0
+	beq	vbl_no_palette
+	move.l	d0,a0
+	lea	0xffff8240,a1
+	move.w	#15,d0
+vbl_palette_loop:
+	move.w	(a0)+,(a1)+
+	dbra	d0,vbl_palette_loop
+vbl_no_palette:	
+
+	| set new video address
+	move.l	_screenpt,d0
+	beq	vbl_no_screenpt
+	move.l	d0,_v_bas_ad
+	| move.b d0,0xffff820d
+	lsr.w	#8,d0
+	move.b	d0,0xffff8203
+	swap	d0
+	move.b	d0,0xffff8201
+vbl_no_screenpt:	
+
+	| flopvbl
+	| bsr    flopvbl                 | flopvbl routine not needed
+
+	| vblqueue
+	move.w	nvbls,d0
+	beq	vbl_no_queue
+	sub.w	#1,d0
+	move.l	_vblqueue,a0
+vbl_queue_loop:	
+	move.l	(a0)+,a1
+	cmp.l	#0,a1
+	beq	vbl_queue_next
+	movem.l	d0/a0,-(sp)
+	jsr	(a1)
+	movem.l	(sp)+,d0/a0
+vbl_queue_next:	
+	dbra	d0,vbl_queue_loop
+vbl_no_queue:
+	
+	| screen hardcopy
+	| (not done) 
+
         movem.l (sp)+, d0-d7/a0-a6      | save registers
 vbl_end:
         addq.l  #1, vblsem      |
@@ -770,16 +819,23 @@ int_timerb:
         rte             | Just a dummy
 
 | ==== Timer C interrupt handler ============================================
-int_timerc:
+_int_timerc:
+	
         addq.l  #1, _hz_200             | increment 200 Hz counter
-                                        | check for 4th call
-        movem.l d0-d7/a0-a6,-(sp)
+
+	rol.w   _timer_c_sieve          | check for 4th call
+	bpl	timerc_end
+
+        movem.l d0-d7/a0-a6,-(sp)       | save registers	
+        | TODO, repeat keys ?
+
         move.w  _timer_ms, -(sp)
         move.l  etv_timer, a0
-        jsr     (a0)                    | jump to etc_timer routine
+|        jsr     (a0)                    | jump to etc_timer routine
         addq.w  #2, sp                  | correct stack
         
         movem.l (sp)+,d0-d7/a0-a6
+timerc_end:			
         bclr    #5, 0xfffffa11          | clear interrupt service bit
         rte
         

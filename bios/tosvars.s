@@ -38,8 +38,8 @@
 	.global	vblsem        
 	.global	nvbls	       
 	.global	_vblqueue     
-	.global	colorptr      
-	.global	screenpt      
+	.global	_colorptr      
+	.global	_screenpt      
 	.global	_vbclock      
 	.global	_frclock      
 	.global	hdv_init      
@@ -178,8 +178,8 @@ _v_bas_ad:      ds.l    1	| screen base address
 vblsem:         ds.w    1
 nvbls:	        ds.w    1
 _vblqueue:      ds.l    1
-colorptr:       ds.l    1
-screenpt:       ds.l    1
+_colorptr:      ds.l    1
+_screenpt:      ds.l    1
 _vbclock:       ds.l    1
 _frclock:       ds.l    1
 hdv_init:       ds.l    1
