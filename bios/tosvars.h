@@ -15,8 +15,8 @@
  * C code.
  */
 
-#ifndef _TOSVARS_H
-#define _TOSVARS_H
+#ifndef H_TOSVARS_
+#define H_TOSVARS_
 
 #include "portab.h"
 
@@ -86,8 +86,8 @@ extern LONG ramtop;       /* top of fastram */
 #define RAMVALID_MAGIC 0x1357BD13
 extern LONG ramvalid;     /* indicates if fastram is present */
 
-/* if == 0x87654321, means that GEM is present ;
- * EmuTOS convention : if == 0x1234abcd, means that the TOS
+/* if == 0x87654321, means that GEM is present;
+ * EmuTOS convention: if == 0x1234abcd, means that the TOS
  * was booted from an autoboot floppy, and so asks to remove
  * the floppy before going on.
  */
@@ -113,7 +113,7 @@ void (*hdv_init)(void);
 void (*bell_hook)(void);
 void (*kcl_hook)(void);
 
-void (*etv_timer)(void);
+void (*etv_timer)(int);
 void (*etv_critic)(void);
 void (*etv_term)(void);
 void (*etv_xtra)(void);
@@ -133,7 +133,7 @@ struct kbdvecs
 };
 extern struct kbdvecs kbdvecs;
 
-#endif /* _TOSVARS_H */
+#endif /* H_TOSVARS_ */
 
 
 

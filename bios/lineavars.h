@@ -14,8 +14,8 @@
  * C code.
  */
 
-#ifndef _LINEAVARS_H
-#define _LINEAVARS_H
+#ifndef H_LINEAVARS_
+#define H_LINEAVARS_
 
 #include "portab.h"
 
@@ -85,13 +85,10 @@ extern UWORD    v_cel_wr;       // needed by MiNT: length (in bytes) of a line o
 
 extern WORD cursconf(WORD, WORD);       // XBIOS cursor configuration
 
-extern void     (*tim_addr)(void);      // timer interrupt vector
-extern void     (*tim_chain)(void);     // timer interrupt vector save
+extern void     (*tim_addr)(int);       // timer interrupt vector
+extern void     (*tim_chain)(int);      // timer interrupt vector save
 extern void     (*user_but)(void);      // user button vector
 extern void     (*user_cur)(void);      // user cursor vector
 extern void     (*user_mot)(void);      // user motion vector
 
-void (*etv_timer)(void);
-
-
-#endif /* _LINEAVARS_H */
+#endif /* H_LINEAVARS_ */

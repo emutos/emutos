@@ -295,10 +295,10 @@ static WORD INQ_TAB_rom[45] = {
  * do_nothing - doesn't do much  :-)
  */
 
-static void do_nothing()
+static void do_nothing_int(int u)
 {
+  (void)u;
 }
-
 
 
 void d_opnvwk()
@@ -372,17 +372,17 @@ void d_clsvwk()
  * The etv_timer does point to this routine
  */
  
-void tick_int()
+void tick_int(int u)
 {
     if (!in_proc) {
         in_proc = 1;                    // set flag, that we are running
         // MAD: evtl. registers to stack
-        tim_addr();                     // call the timer vector
+        tim_addr(u);                    // call the timer vector
         // and back from stack
     }
     in_proc = 0;                        // allow yet another trip through
     // MAD: evtl. registers to stack
-    tim_chain();                        // call the old timer vector too
+    tim_chain(u);                       // call the old timer vector too
     // and back from stack
 }
 
@@ -439,10 +439,10 @@ void v_opnwk()
 
     /* Now initialize the lower level things */
     in_proc = 0;                        // no vblanks in process
-    tim_addr = do_nothing;              // tick points to rts
+    tim_addr = do_nothing_int;              // tick points to rts
 
     ints_off();                         // disable interrupts
-    tim_chain = (void*)                 // save old vector
+    tim_chain = (void(*)(int))          // save old vector
         setexec(0x100, tick_int);       // set etv_timer to tick_int
     ints_on();                          // enable interrupts
 
