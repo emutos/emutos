@@ -1546,230 +1546,86 @@ void dsf_udpat()
 }
 
 
-#if 0 // FIXME: not fully implemented
-
-
-
-/*
- * word_offset - calculate word offset into screen buffer
- *
- * This routine converts x and y coordinates into a physical offset to a word
- * in the screen buffer.
- *
- * input:
- *     x coordinate.
- *     y coordinate.
- *
- * output:
- *     physical offset -- (y * bytes_per_line) + (x & xmask)>>xshift
- */
-
-ULONG word_offset(WORD x, WORD y)
-{
-    ULONG offset;
-    ULONG start;
-
-    /* Convert the y-coordinate into an offset to the start of the scan row. */
-    start = y * v_lin_wr;  // compute offset to start of scan row
-
-    // Convert the x-coordinate to a word offset into the current scan line.
-#if vme10
-    // If the planes are arranged as separate, consecutive entities
-    // then divide the x-coordinate by 8 to get the number of bytes.
-    offset = (x & 0xfff0) >> 3; 
-#else
-    // If the planes are arranged in an interleaved fashion with a word
-    // for each plane then shift the x-coordinate by a value contained
-    // in the shift table.
-    offset = (x & 0xfff0) >> shft_off;
-#endif
-// Compute the offset to the desired word by adding the offset to the
-// start of the scan line to the offset within the scan line.
-    return (start + offset);
-}
-
-
-
-/*
- * bit offset - calculate bit offset in screen
- *
- * This routine converts x coordinate into an index to the desired
- * bit within a word in screen memory.
- *
- * input:
- *     x coordinate.
- *
- * output:
- *     word index. (x mod 16)
- */
-
-
-WORD bit_offset(WORD x)
-{
-    return (x & 0x000f);        // bit offset = x-coordinate mod 16
-}
-
-
-
-
-/* Draw horizontal line from x1,y to x2,y including final point*/
-static void
-hzline()
-{
-    UWORD x1,x2,y;           /* the coordinates */
-    void *addr;
-    WORD offs;
-    WORD plane;
-
-    x1 = X1;
-    x2 = X2;
-    y = Y1;
-
-    for (plane=0; plane < v_planes; plane++) {
-//        if (!fg_bp[plane])
-//            linemask = 0;
-
-        /* calculate start addr from x/y-coordinates */
-        addr = v_bas_ad;	            	/* get base address of first plane */
-        addr += (LONG)y * v_lin_wr;         	/* y into scan row */
-        addr += (x1&0xfff0)>>shft_off;	/* shift x by a precalculated value */
-
-        /* set bits at calculated screen addresses */
-        switch (WRT_MODE) {
-        case 0:              /* replace */
-            while(x1 <= x2) {
-                kprintf("x : %d\n", x1);
-                offs = (1 << (15-(x1&0xf)));
-                *(WORD*)addr |= offs;   	/* set bit */
-                *(WORD*)addr &= ~offs;	/* clear bit */
-                if((++x1 & 0xf) == 0)       /* check WORD boundary */
-                    ++addr;
-            }
-            break;
-#if 1
-        case 1:              /* or */
-            while(x1 <= x2) {
-                offs = (1 << (15-(x1&0xf)));
-                *(WORD*)addr |= offs;	/* set bit */
-                if((++x1 & 0xf) == 0)       /* check WORD boundary */
-                    ++addr;
-            }
-            break;
-        case 2:              /* xor */
-            while(x1 <= x2) {
-                offs = (1 << (15-(x1&0xf)));
-                *(WORD*)addr ^= offs;   // xor bit
-                if((++x1 & 0xf) == 0)       /* check WORD boundary */
-                    ++addr;
-            }
-            break;
-        case 3:              /* reverse transparent */
-            while(x1 <= x2) {
-                offs = (1 << (15-(x1&0xf)));
-                *(WORD*)addr &= ~offs;   // clear bit
-                if((++x1 & 0xf) == 0)       /* check WORD boundary */
-                    ++addr;
-            }
-        }
-#endif
-        addr += 2;              /* advance to next plane */
-    }
-}
-
-/* Draw a vertical line from x,y1 to x,y2 including final point*/
-static void
-vtline()
-{
-    WORD x,y1,y2;           /* the coordinates */
-    void *addr;
-    void *add2;
-    WORD offs;
-    WORD plane;
-//    UWORD linemask;
-    int linebit;
-
-
-    x = X1;
-    y1 = Y1;
-    y2 = Y2;
-
-//    kprintf("x : %d\n", x);
-    kprintf("y1: %d\n", y1);
-//    kprintf("y2: %d\n", y2);
-    kprintf("\n");
-
-    /* convert x into index to the desired bit within word in screen mem. */
-    offs = (1 << (15-(x&0xf)));
-
-    /* calculate start addr from x/y-coordinates */
-    addr = v_bas_ad;	            /* get base address of first plane */
-    addr += ((LONG)y * v_lin_wr);         /* y into scan row */
-    addr += ((x&0xfff0)>>shft_off); /* shift x by a precalculated value */
-
-    /* for speed four extra implementations for every mode */
-    switch (WRT_MODE) {
-    case 0:              /* replace */
-        while(y1++ <= y2) {
-            kprintf("y1: %d\n", y1);
-            linebit = !!(LN_MASK & 0x8000);     /* get next bit of line style */
-            LN_MASK = (LN_MASK << 1) | linebit; /* roll LN_MASK */
-            add2 = addr;
-            for (plane=0; plane < v_planes; plane++) {
-                if (linebit && fg_bp[plane])
-                    *(WORD*)add2 |= offs;   // set bit
-                else
-                    *(WORD*)add2 &= ~offs;  // clear bit
-                add2 += 2;              /* next plane */
-            }
-            addr += v_lin_wr;       /* next scanline */
-        }
-        break;
-    case 1:              /* or */
-        while(y1++ <= y2) {
-            linebit = !!(LN_MASK & 0x8000);     /* get next bit of line style */
-            LN_MASK = (LN_MASK << 1) | linebit; /* roll LN_MASK */
-            for (plane=0; plane < v_planes; plane++) {
-                if (linebit && fg_bp[plane])
-                    *(WORD*)addr |= offs;   // set bit
-                addr += 2;              /* next plane */
-            }
-            addr += v_lin_wr;       /* next scanline */
-        }
-        break;
-    case 2:              /* xor */
-        while(y1++ <= y2) {
-            linebit = !!(LN_MASK & 0x8000);     /* get next bit of line style */
-            LN_MASK = (LN_MASK << 1) | linebit; /* roll LN_MASK */
-            for (plane=0; plane < v_planes; plane++) {
-                if (linebit && fg_bp[plane])
-                    *(WORD*)addr ^= offs;   //  xor bit
-                addr += 2;              /* next plane */
-            }
-            addr += v_lin_wr;       /* next scanline */
-        }
-        break;
-    case 3:              /* reverse transparent */
-        while(y1++ <= y2) {
-            linebit = !!(LN_MASK & 0x8000);     /* get next bit of line style */
-            LN_MASK = (LN_MASK << 1) | linebit; /* roll LN_MASK */
-            for (plane=0; plane < v_planes; plane++) {
-                if (linebit && fg_bp[plane])
-                    *(WORD*)addr &= ~offs;
-                addr += 2;              /* next plane */
-            }
-            addr += v_lin_wr;       /* next scanline */
-        }
-    }
-}
-#endif
-
 /* Set pixel at x, y */
-static void
+inline void
 drawpixel(UWORD x, UWORD y, int linebit)
 {
     void *addr;
     WORD offs;
-    WORD plane;
+
+    if (linebit) {  /* use pattern ?*/
+        /* calculate addr from x/y-coordinates */
+        addr = v_bas_ad;	            /* get base address of first plane */
+        addr += (LONG)y * v_lin_wr;         /* y into scan row */
+        addr += ((x&0xfff0)>>shft_off); /* shift x by a precalculated value */
+
+        /* convert x into index to the desired bit within word in screen mem. */
+        offs = (1 << (15-(x&0xf)));
+
+        switch (WRT_MODE) {
+        case 1:              /* or */
+            switch (v_planes) {
+            case 4:
+                if (fg_bp[3])
+                    *(WORD*)addr |= offs;   // set bit
+                addr += 2;
+                if (fg_bp[3])
+                    *(WORD*)addr |= offs;   // set bit
+                addr += 2;
+            case 2:
+                if (fg_bp[1])
+                    *(WORD*)addr |= offs;   // set bit
+                addr += 2;
+            case 1:
+                if (fg_bp[0])
+                    *(WORD*)addr |= offs;   // set bit
+            }
+            break;
+        case 2:              /* xor */
+            switch (v_planes) {
+            case 4:
+                if (fg_bp[3])
+                    *(WORD*)addr ^= offs;   // xor bit
+                addr += 2;
+                if (fg_bp[3])
+                    *(WORD*)addr ^= offs;   // xor bit
+                addr += 2;
+            case 2:
+                if (fg_bp[1])
+                    *(WORD*)addr ^= offs;   // xor bit
+                addr += 2;
+            case 1:
+                if (fg_bp[0])
+                    *(WORD*)addr ^= offs;   // xor bit
+            }
+            break;
+        case 3:              /* reverse transparent */
+            switch (v_planes) {
+            case 4:
+                if (fg_bp[3])
+                    *(WORD*)addr &= ~offs;
+                addr += 2;
+                if (fg_bp[3])
+                    *(WORD*)addr &= ~offs;
+                addr += 2;
+            case 2:
+                if (fg_bp[1])
+                    *(WORD*)addr &= ~offs;
+                addr += 2;
+            case 1:
+                if (fg_bp[0])
+                    *(WORD*)addr &= ~offs;
+            }
+        }
+    }
+}
+
+/* Set pixel at x, y */
+inline void
+drawpixel0(UWORD x, UWORD y, int linebit)
+{
+    void *addr;
+    WORD offs;
 
     /* calculate addr from x/y-coordinates */
     addr = v_bas_ad;	            /* get base address of first plane */
@@ -1779,46 +1635,52 @@ drawpixel(UWORD x, UWORD y, int linebit)
     /* convert x into index to the desired bit within word in screen mem. */
     offs = (1 << (15-(x&0xf)));
 
-    /* for speed four extra implementations for every mode */
-    switch (WRT_MODE) {
-    case 0:              /* replace */
-        for (plane=0; plane < v_planes; plane++) {
-            if (linebit && fg_bp[plane])  /* use pattern ?*/
-                *(WORD*)addr |= offs;   // set bit
+    if (linebit) {
+        switch (v_planes) {
+        case 4:
+            if (fg_bp[3])
+                *(WORD*)addr |= offs;
             else
-                *(WORD*)addr &= ~offs;  // clear bit
-            addr += 2;              /* advance to next plane */
+                *(WORD*)addr &= ~offs;
+            addr += 2;
+            if (fg_bp[3])
+                *(WORD*)addr |= offs;
+            else
+                *(WORD*)addr &= ~offs;
+            addr += 2;
+        case 2:
+            if (fg_bp[1])
+                *(WORD*)addr |= offs;
+            else
+                *(WORD*)addr &= ~offs;
+            addr += 2;
+        case 1:
+            if (fg_bp[0])
+                *(WORD*)addr |= offs;
+            else
+                *(WORD*)addr &= ~offs;
         }
-        break;
-    case 1:              /* or */
-        for (plane=0; plane < v_planes; plane++) {
-            if (linebit && fg_bp[plane])  /* use pattern ?*/
-                *(WORD*)addr |= offs;   // set bit
-            addr += 2;              /* advance to next plane */
-        }
-        break;
-    case 2:              /* xor */
-        for (plane=0; plane < v_planes; plane++) {
-            if (linebit && fg_bp[plane])  /* use pattern ?*/
-                *(WORD*)addr ^= offs;   // xor bit
-            addr += 2;              /* advance to next plane */
-        }
-        break;
-    case 3:              /* reverse transparent */
-        for (plane=0; plane < v_planes; plane++) {
-            if (linebit && fg_bp[plane])  /* use pattern ?*/
-                *(WORD*)addr &= ~offs;   // clear bit
-            addr += 2;              /* advance to next plane */
+    } else {
+        switch (v_planes) {
+        case 4:
+            *(WORD*)addr &= ~offs;
+            addr += 2;
+            *(WORD*)addr &= ~offs;
+            addr += 2;
+        case 2:
+            *(WORD*)addr &= ~offs;
+            addr += 2;
+        case 1:
+            *(WORD*)addr &= ~offs;
         }
     }
 }
 
-
 /*
  * abline - draw a line (general purpose)
  *
- * This routine draws a line between (_X1,_Y1) and (_X2,_Y2) using Bresenham's
- * algorithm.  The line is modified by the LN_MASK and WRT_MODE variables.
+ * This routine draws a line between (_X1,_Y1) and (_X2,_Y2).
+ * The line is modified by the LN_MASK and WRT_MODE variables.
  * This routine handles all 3 video resolutions.
  *
  * Note that for line-drawing the background color is always 0 (i.e., there
@@ -1843,33 +1705,19 @@ drawpixel(UWORD x, UWORD y, int linebit)
 void
 abline ()
 {
-    WORD x1,y1,x2,y2;           /* the coordinates */
+    UWORD x1,y1,x2,y2;           /* the coordinates */
     WORD dx;			/* width of rectangle around line */
     WORD dy;			/* height of rectangle around line */
+    WORD rem;			/* remainder */
     WORD xinc;			/* increment for moving x coordinate */
     WORD yinc;			/* increment for moving y coordinate */
-    WORD rem;			/* current remainder */
     int linebit;                /* actual bit of linestyle */
+
     x1 = X1;
     y1 = Y1;
     x2 = X2;
     y2 = Y2;
 
-    /* See if the line is horizontal or vertical. If so, then call
-     * special routines.
-     */
-#if 0
-    if (y1 == y2) {
-        /* call faster line drawing routine*/
-        hzline();
-        return;
-    }
-    if (x1 == x2) {
-        /* call faster line drawing routine*/
-        vtline();
-        return;
-    }
-#endif
     /* The line may be partially obscured. Do the draw line algorithm
      * checking each point against the clipping regions.
      */
@@ -1880,40 +1728,69 @@ abline ()
     xinc = (x2 > x1) ? 1 : -1;
     yinc = (y2 > y1) ? 1 : -1;
 
-    linebit = !!(LN_MASK & 0x8000);     /* get next bit of line style */
-    LN_MASK = (LN_MASK << 1) | linebit; /* roll LN_MASK */
-    drawpixel(x1, y1, linebit);
-    if (dx >= dy) {
-        rem = dx / 2;
-        for(;;) {
-            x1 += xinc;
-            rem += dy;
-            if (rem >= dx) {
-                rem -= dx;
-                y1 += yinc;
-            }
-            linebit = !!(LN_MASK & 0x8000);     /* get next bit of line style */
-            LN_MASK = (LN_MASK << 1) | linebit; /* roll LN_MASK */
-            drawpixel(x1, y1, linebit);
-            if(x1 == x2)
-                break;
-        }
-    } else {
-        rem = dy / 2;
-        for(;;) {
-            y1 += yinc;
-            rem += dx;
-            if (rem >= dy) {
-                rem -= dy;
+    if (WRT_MODE == 0) {                	/* replace */
+        if (dx >= dy) {
+            rem = dx / 2;
+            for (;;) {
+                linebit = !!(LN_MASK & 0x8000);     /* get next bit of line style */
+                LN_MASK = (LN_MASK << 1) | linebit; /* roll LN_MASK */
+                drawpixel0(x1, y1, linebit);
+                rem += dy;
+                if (rem >= dx) {
+                    rem -= dx;
+                    y1 += yinc;
+                }
+                if (x1 == x2)
+                    break;
                 x1 += xinc;
             }
-            linebit = !!(LN_MASK & 0x8000);     /* get next bit of line style */
-            LN_MASK = (LN_MASK << 1) | linebit; /* roll LN_MASK */
-            drawpixel(x1, y1, linebit);
-            if(y1 == y2)
-                break;
+        } else {
+            rem = dy / 2;
+            for (;;) {
+                linebit = !!(LN_MASK & 0x8000);     /* get next bit of line style */
+                LN_MASK = (LN_MASK << 1) | linebit; /* roll LN_MASK */
+                drawpixel0(x1, y1, linebit);
+                rem += dx;
+                if (rem >= dy) {
+                    rem -= dy;
+                    x1 += xinc;
+                }
+                if (y1 == y2)
+                    break;
+                y1 += yinc;
+            }
+        }
+    } else {
+        if (dx >= dy) {
+            rem = dx / 2;
+            for (;;) {
+                linebit = !!(LN_MASK & 0x8000);     /* get next bit of line style */
+                LN_MASK = (LN_MASK << 1) | linebit; /* roll LN_MASK */
+                drawpixel(x1, y1, linebit);
+                rem += dy;
+                if (rem >= dx) {
+                    rem -= dx;
+                    y1 += yinc;
+                }
+                if (x1 == x2)
+                    break;
+                x1 += xinc;
+            }
+        } else {
+            rem = dy / 2;
+            for (;;) {
+                linebit = !!(LN_MASK & 0x8000);     /* get next bit of line style */
+                LN_MASK = (LN_MASK << 1) | linebit; /* roll LN_MASK */
+                drawpixel(x1, y1, linebit);
+                rem += dx;
+                if (rem >= dy) {
+                    rem -= dy;
+                    x1 += xinc;
+                }
+                if (y1 == y2)
+                    break;
+                y1 += yinc;
+            }
         }
     }
 }
-
-
