@@ -1,9 +1,9 @@
 /*
  * linea.S - linea graphics stuff 
  *
- * Copyright (c) 2001 by Authors:
+ * Copyright (c) 2002 by Authors:
  *
- *  THO  Thomas Huth
+ *  THH  Thomas Huth
  *  MAD  Martin Doering
  *  LVL  Laurent Vogel
  *
@@ -14,6 +14,20 @@
 
 
 // ==== External Declarations ================================================
+
+        .xdef _put_pix
+        .xdef _get_pix
+        .xdef _ABLINE
+        .xdef _HABLINE
+        .xdef _RECTFILL
+        .xdef _text_blt
+        .xdef _DIS_CUR
+        .xdef _HIDE_CUR
+        .xdef _xfm_crfm
+        .xdef _COPY_RFM
+
+
+// ==== Global Declarations ================================================
 
         .global _int_linea              // entry for linea exception
 
@@ -30,6 +44,14 @@ _int_linea:
         bmi     wrong_linea
         cmp.w   linea_ents,d0
         bpl     wrong_linea
+
+        movem.l d0-d2/a0-a2,-(sp)
+        move.w  d0,-(sp)
+        pea     linea_msg
+        jsr     _kprintf              /* Print debugging information */
+        addq.l  #6,sp
+        movem.l (sp)+,d0-d2/a0-a2
+
         lea     linea_vecs,a0
         lsl.w   #2,d0
         move.l  0(a0,d0),a0
@@ -45,10 +67,14 @@ wrong_linea:
         jsr     _kprintf
         add.w   #10,sp
         rte
-wrong_linea_msg:        
+
+wrong_linea_msg:
         .ascii  "pc=0x%08lx: Line-A call number 0x%03x out of bounds\n\0"
         .even
 
+linea_msg:
+        .ascii  "Line-A #%x\n\0"
+        .even
 
 
 _linea_0:       
@@ -66,10 +92,10 @@ _linea_0:
 // was called using the line a opcode, or directly via its address.
 //
 
+
 _linea_1:
         move.w  #1,d0
         bra     linea_stub
-
 
 
 _linea_2:
@@ -77,11 +103,9 @@ _linea_2:
         bra     linea_stub
 
 
-
 _linea_3:
         move.w  #3,d0
         bra     linea_stub
-
 
 
 _linea_4:
@@ -89,11 +113,9 @@ _linea_4:
         bra     linea_stub
 
 
-
 _linea_5:
         move.w  #5,d0
         bra     linea_stub
-
 
 
 _linea_6:
@@ -101,11 +123,9 @@ _linea_6:
         bra     linea_stub
 
 
-
 _linea_7:
         move.w  #7,d0
         bra     linea_stub
-
 
 
 _linea_8:
@@ -113,11 +133,9 @@ _linea_8:
         bra     linea_stub
 
 
-
 _linea_9:
         move.w  #9,d0
         bra     linea_stub
-
 
 
 _linea_a:
@@ -125,11 +143,9 @@ _linea_a:
         bra     linea_stub
 
 
-
 _linea_b:
         move.w  #0xb,d0
         bra     linea_stub
-
 
 
 _linea_c:
@@ -137,17 +153,14 @@ _linea_c:
         bra     linea_stub
 
 
-
 _linea_d:
         move.w  #0xd,d0
         bra     linea_stub
 
 
-
 _linea_e:
         move.w  #0xe,d0
         bra     linea_stub
-
 
 
 _linea_f:
@@ -178,21 +191,21 @@ linea_stub_msg:
 
 linea_vecs:
         dc.l    _linea_0
-        dc.l    _linea_1
-        dc.l    _linea_2
-        dc.l    _linea_3
-        dc.l    _linea_4
-        dc.l    _linea_5
-        dc.l    _linea_6
-        dc.l    _linea_7
-        dc.l    _linea_8
-        dc.l    _linea_9
-        dc.l    _linea_a
-        dc.l    _linea_b
-        dc.l    _linea_c
-        dc.l    _linea_d
-        dc.l    _linea_e
-        dc.l    _linea_f
+        dc.l    _put_pix        /* _linea_1 */
+        dc.l    _get_pix        /* _linea_2 */
+        dc.l    _ABLINE         /* _linea_3 */
+        dc.l    _HABLINE        /* _linea_4 */
+        dc.l    _RECTFILL       /* _linea_5 */
+        dc.l    _linea_6        /* _plygn?? */
+        dc.l    _linea_7        /* _bit_blt? */
+        dc.l    _linea_8        /* _text_blt */
+        dc.l    _DIS_CUR        /* _linea_9 */
+        dc.l    _HIDE_CUR       /* _linea_a */
+        dc.l    _xfm_crfm       /* _linea_b */
+        dc.l    _linea_c        /* cur_replace??? */
+        dc.l    _linea_d        /* cur_display??? */
+        dc.l    _COPY_RFM       /* _linea_e */
+        dc.l    _linea_f        /* _d_contourfill?? */
 linea_ents:
         dc.w    (linea_ents-linea_vecs)/4
 

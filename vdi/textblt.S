@@ -559,7 +559,7 @@ act_exit:
 /////////////////////////////////////////////////////////////////////////
 //
 _text_blt:
-        movem.l d2-d7/a2-a6,-(sp)
+        movem.l d2-d7/a2-a5,-(sp)
         link    a6,#ramlen              //allocate stack for local variables
 //
         clr.w   swap_tmps(a6)           //temps not swapped yet RJG 4/13/85
@@ -680,14 +680,14 @@ add270:
         exg     d1,d3                   //DELX <-> DELY
 
         .page
-/////////////////////////////////////////
-//   Check_clip                                         //
-//                                                      //
-//     trivial accept and reject and set up buffer      //
-//     blt if char must be clipped                      //
-//     buffer blt if clip in x or y and skew            //
-//     buffer blt if clip in x and thicken              //
-/////////////////////////////////////////
+//////
+//   Check_clip
+//
+//     trivial accept and reject and set up buffer
+//     blt if char must be clipped
+//     buffer blt if clip in x or y and skew
+//     buffer blt if clip in x and thicken
+//////
 //
 chk_clip:
         moveq.l #0,d5                   //clear x clip flag (assume no clip)
@@ -778,9 +778,9 @@ preskew:
 
         .page
 /////////////////////////////////////////////////////////////////////////
-//  Copy the font character into the character buffer. Then manipulate  //
-//  the copy of the character as necessary for outlining, rotating or   //
-//  replicating.                                                                //
+//  Copy the font character into the character buffer. Then manipulate //
+//  the copy of the character as necessary for outlining, rotating or  //
+//  replicating.                                                       //
 /////////////////////////////////////////////////////////////////////////
 preblt:
         move.w  _SOURCEX,d0
@@ -941,11 +941,11 @@ chk_db:
         bsr     replicat                // double if DOUBLE nonzero
 
         .page
-/////////////////////////////////////////////////////////
-//  clipping                                                    //
-//      change SOURCEX, SOURCEY, DELX, DELY                     //
-//      based on DESTX, DESTY (UL corner of destination)        //
-/////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////
+//  clipping                                             //
+//      change SOURCEX, SOURCEY, DELX, DELY              //
+//      based on DESTX, DESTY (UL corner of destination) //
+///////////////////////////////////////////////////////////
 //
 do_clip:
         btst.b  #THICKEN,STYLE+1(a6)
@@ -1008,16 +1008,12 @@ mx_clipx:
         add.w   DELX(a6),d0
         subq.w  #1,d0           // make 0 relative
         cmp.w   XMX_CLI(a6),d0
-#if vme10
-        ble.b   scrn_blt
-#else
-        ble     xmx_fine
-#endif
+        ble     scrn_blt
 //clip x
         sub.w   XMX_CLI(a6),d0
         sub.w   d0,DELX(a6)
+
 #if !vme10
-xmx_fine:
         bra     scrn_blt
 //
 //  Offset to next word in same plane
@@ -1134,7 +1130,7 @@ ck270:
         add.w   d1,_DESTY               // move down by DELX
 blt_done:
         unlk    a6
-        movem.l (sp)+,d2-d7/a2-a6
+        movem.l (sp)+,d2-d7/a2-a5
         rts                             // return to "C"
 //
         .page
@@ -1254,11 +1250,11 @@ msk0:
         bra.w   plane_loop
 
         .page
-//////////////////////////////////////////////////////////////////
-//  writing mode mapping tables:        //
-//                              //
-//      fb=     00  01  10  11  //
-//////////////////////////////////////////////////////////////////
+////////////////////////////////////
+//  writing mode mapping tables:  //
+//                                //
+//      fb=     00  01  10  11    //
+////////////////////////////////////
 
 #define op0             4*0
 #define op1             4*1
@@ -1532,7 +1528,7 @@ dbl_2wrd:
 //
         .page
 /////////////////////////
-//    Multi - Left                              //
+//    Multi - Left     //
 /////////////////////////
 //
 left_loop:
@@ -1643,7 +1639,7 @@ lft_rfrng:
 
         .page
 /////////////////////////
-//   Multi - right                              //
+//   Multi - right     //
 /////////////////////////
 //
 rite_loop:
@@ -1745,7 +1741,7 @@ rgt_rfrng:
 
         .page
 ///////////////////////////////////////////////////
-//      Writing Mode Operations using fringe mask            // 
+//      Writing Mode Operations using fringe mask // 
 ///////////////////////////////////////////////////
 //      
 #if rev_vid
