@@ -129,3 +129,9 @@ Start... early ages
 01. Oct. 2001
 - ensured that the MIDI acia was inited (for KBD to work on stonc) (LVL)
 
+05. Oct. 2001
+- Makefile
+- printf() clone for debug messages
+- 8x16 font in high rez
+- put all default exception vectors in bios/vectors.s
+- clear bss before calling C code.
