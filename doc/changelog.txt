@@ -434,3 +434,5 @@ Start... early ages
 
 06. Jan. 2002
 - optimized divmod() in bdos/main.c (MAD)
+- did put usr2xfr/xfr2usr to bdos/fsio.c (MAD)
+

@@ -24,10 +24,42 @@
  * forward prototypes
  */
 
+static void xfr2usr(int n, char *s, char *d);
+static void usr2xfr(int n, char *d, char *s);
 static void addit(OFD *p, long siz, int flg);
 static long xrw(int wrtflg, OFD *p, long len, char *ubufr,
                 void (*bufxfr)(int, char *, char *));
 static void usrio(int rwflg, int num, int strt, char *ubuf, DMD *dm);
+
+
+/*
+ *  xfr2usr -
+ */
+
+inline void   xfr2usr(REG int n, REG char *s, REG char *d)
+{
+#if DBGFSIO
+    kprintf("BDOS: xfr2usr: %d\n", n);
+#endif
+    while (n--)
+        *d++ = *s++;
+}
+
+
+
+/*
+ *  usr2xfr -
+ */
+
+inline void    usr2xfr(REG int n, REG char *d, REG char *s)
+{
+#if DBGFSIO
+    kprintf("BDOS: usr2xfr: %d\n", n);
+#endif
+    while (n--)
+        *d++ = *s++;
+}
+
 
 
 /*
@@ -289,9 +321,7 @@ static long xrw(int wrtflg, OFD *p, long len, char *ubufr,
     long nbyts;
     long rc,bytpos,lenrec,lenmid;
 
-    /*
-     * determine where we currently are in the filef
-     */
+    /* determine where we currently are in the file */
 
     dm = p->o_dmd;                      /*  get drive media descriptor  */
 
@@ -305,9 +335,7 @@ static long xrw(int wrtflg, OFD *p, long len, char *ubufr,
     recn = divmod(&bytn,(long) p->o_curbyt,dm->m_rblog);
     recn += p->o_currec;
 
-    /*
-     * determine "header" of request.
-     */
+    /* determine "header" of request. */
 
     if (bytn) /* do header */
     {
@@ -330,10 +358,8 @@ static long xrw(int wrtflg, OFD *p, long len, char *ubufr,
         ubufr += lenxfr;
     }
 
-    /*
-     *  "header" complete.      See if there is a "tail".
-     *  After that, see if there is anything left in the middle.
-     */
+    /* "header" complete.      See if there is a "tail". */
+    /* After that, see if there is anything left in the middle. */
 
     lentail = len & dm->m_rbm;
 
@@ -405,9 +431,7 @@ mulio:
             }
         }  /*  end while  */
 
-        /*
-         *  do "tail" records
-         */
+        /* do "tail" records */
 
         if (tailrec)
         {

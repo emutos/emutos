@@ -91,10 +91,10 @@ static int backsp(int h, char *cbuf, int retlen, int col);
 
 static long constat(int h)
 {
-        if (h > BFHCON)
-                return(0);
+    if (h > BFHCON)
+        return(0);
 
-        return( add[h] > remove[h] ? -1L : bconstat(h) );
+    return( add[h] > remove[h] ? -1L : bconstat(h) );
 }
 
 /*****************************************************************************

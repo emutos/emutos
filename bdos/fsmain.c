@@ -12,6 +12,12 @@
 
 
 
+#include "portab.h"
+#include "fs.h"
+#include "bios.h"
+#include "mem.h"
+#include "gemerror.h"
+
 /*
 **
 ** GEMDOS file system
@@ -384,44 +390,11 @@
 
 
 
-#include "portab.h"
-#include "fs.h"
-#include "bios.h"
-#include "mem.h"
-#include "gemerror.h"
-
-
-
-
-/*
- *  xfr2usr -
- */
-
-void   xfr2usr(register int n, register char *s, register char *d)
-{
-    while (n--)
-        *d++ = *s++;
-}
-
-
-
-/*
- *  usr2xfr -
- */
-
-void    usr2xfr(register int n, register char *d, register char *s)
-{
-    while (n--)
-        *d++ = *s++;
-}
-
-
-
 /*
  *  uc - utility routine to return the upper-case of character passed in
  */
 
-char    uc(register char c)
+char    uc(REG char c)
 {
     return((c >= 'a') && (c <= 'z') ? c & 0x5F : c);
 }

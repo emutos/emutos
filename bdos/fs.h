@@ -17,6 +17,9 @@
 
 
 
+#ifndef _FS_H
+#define _FS_H
+
 /*
  *  fix conditionals
  */
@@ -479,8 +482,6 @@ FCB *scan(register DND *dnd, char *n, WORD att, LONG *posp);
  * in fsmain.c
  */
 
-void xfr2usr(int n, char *s, char *d);
-void usr2xfr(int n, char *d, char *s);
 char uc(register char c);
 char *xgetdta(void);
 void xsetdta(char *addr);
@@ -496,3 +497,5 @@ int  divmod(int *modp, long divdnd, int divsor);
 
 #define CL_DIR  0x0002
 #define CL_FULL 0x0004
+
+#endif /* _FS_H */
