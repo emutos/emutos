@@ -1377,3 +1377,6 @@ Start... early ages
 03. Mar. 2003
 - aes/geminit.c, gemshlib.c : Experimental support for #Z line in EMUDESK.INF
   to start another desktop instead of the ROM desktop. (THH)
+
+08. Mar. 2003
+- vdi/mounout.c - fixed bug in clipbox() (MAD)

@@ -1507,8 +1507,7 @@ void dsf_udpat()
  *     LN_MASK rotated to proper alignment with (X2,Y2).
  */
 
-void
-abline ()
+void abline ()
 {
     void *adr;                  /* using void pointer is much faster */
     UWORD x1,y1,x2,y2;          /* the coordinates */
@@ -1868,7 +1867,6 @@ void st_fl_ptr()
 
 
 
-#if 1  //MAD: for now implemented in assembler
 /*
  * hzline_rep - draw a horizontal line in replace mode
  *
@@ -2421,33 +2419,32 @@ WORD clipbox()
 
     /* clip x coordinates */
     if ( x1 < XMN_CLIP) {
-        if (x2 < XMX_CLIP) {
+        if (x2 < XMN_CLIP) {
             return(FALSE);             /* clipped box is null */
         }
         X1 = XMN_CLIP;
     }
     if ( x2 > XMX_CLIP) {
-        if (x1 > XMN_CLIP) {
+        if (x1 > XMX_CLIP) {
             return(FALSE);             /* clipped box is null */
         }
         X2 = XMX_CLIP;
     }
     /* clip y coordinates */
     if ( y1 < YMN_CLIP) {
-        if (y2 < YMX_CLIP) {
+        if (y2 < YMN_CLIP) {
             return(FALSE);             /* clipped box is null */
         }
         Y1 = YMN_CLIP;
     }
     if ( y2 > YMX_CLIP) {
-        if (y1 > YMN_CLIP) {
+        if (y1 > YMX_CLIP) {
             return(FALSE);             /* clipped box is null */
         }
         Y2 = YMX_CLIP;
     }
     return (TRUE);
 }
-
 
 /*
  * rectfill - fills a rectangular area of the screen with a pattern
@@ -2482,7 +2479,6 @@ void rectfill ()
     int yinc;
     int leftpart;
     int rightpart;
-
 
     if (CLIP)
         if (!clipbox())
@@ -2539,12 +2535,11 @@ void rectfill ()
         break;
     default: /* rep */
         for (y = y1; y <= y2; y++ ) {
-        hzline_rep(addr, dx, leftpart, rightmask, leftmask, y&patmsk);
+            hzline_rep(addr, dx, leftpart, rightmask, leftmask, y&patmsk);
             addr += yinc;           /* next scanline */
         }
     }
 }
-#endif
 
 
 
