@@ -18,7 +18,7 @@
 #include "tosvars.h"
 #include "mouse.h"
 
-#define DBG_BLIT 0
+#define DBG_BLIT 1
 #define C_BLIT 1        // decide, which implementation
 
 #if DBG_BLIT
@@ -136,7 +136,6 @@ void cpyfm(UWORD copytran)
         /* for a positive source address */
         info.s_form = src->fd_addr;
         info.s_nxwd = src->fd_nplanes * 2;
-        //info.s_nxln = src->fd_wdwidth * 2 * src->fd_h;
         info.s_nxln = src->fd_wdwidth * 2 * src->fd_nplanes;
     }
     else {
@@ -177,6 +176,7 @@ void cpyfm(UWORD copytran)
         /* is source area one plane? */
         if ( info.s_nxwd != 2 )
             return;    /* source must be mono plane */
+        info.s_nxpl = 0;		/* use only the first plane for the source */
 
         /* d6 <- background color */
         fg = INTIN[1];
@@ -396,11 +396,6 @@ void cpyfm(UWORD copytran)
 #endif
     /* for now call assembly routine */
     bit_blt();
-
-#if 0
-    CONTRL[N_PTSOUT] = 0;
-    CONTRL[N_INTOUT] = 0;
-#endif
 }
 
 
