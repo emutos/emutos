@@ -286,7 +286,6 @@ _fill_line:
                 asl.w   #1,d5           // word indexing.
                 move.l  _patptr,a0      // ptr to start of pattern.
                 adda.w  d5,a0           // index into pattern.
-//????                clr.w   a1              // default offset = 0.
                 move.w  #0,a1           // default offset = 0.
 #if vme10
                 lea.l   xline,a2        // address of HABLINE entry point
@@ -738,6 +737,7 @@ BOX_FILL:
                 asl.w   #1,d0           // word index for left fringe.
                 move.w  0(a2,d0.w),d0   // fetch left fringe mask.
                 not.w   d0              // not left fringe mask.
+                clr.l   d7              // Important: Upper word of d7 must be 0! (THH)
                 move.w  d2,d7           // X2.
                 andi.w  #0x000F,d7      // X2 and 0x000F.
                 asl.w   #1,d7           // word index.
@@ -754,13 +754,12 @@ BOX_FILL:
 //
                 bpl     bf_cont         // >= 0 normal case.
                 addq.w  #1,d2           // loop count := 0.
-                or      d7,d0           // combine both masks.
+                or.w    d7,d0           // combine both masks.
                 moveq   #-1,d7          // prevent right mask from effecting screen.
 bf_cont:        move.w  _WRT_MODE,d5    // decode write mode.
                 asl.w   #2,d5           // longword indexing.
                 lea     htab,a2         // point to start of decode table.
                 movea.l 0(a2,d5.w),a2   // address of HABLINE writing mode fragment.
-//????              clr.w   a1              // default offset = 0.
                 move.w  #0,a1           // default offset = 0.
                 tst.w   _multifill      // multi-plane fill pattern?
                 beq     bf_1st_line     // no, branch.

@@ -26,7 +26,6 @@
         .globl  _vec_len        // compute length of a vector
         .globl  _HABLINE        // draw a horizontal line
         .globl  _ABLINE         // draw a line (general purpose)
-        .globl  __ABLINE        // draw a line (general purpose)
         .globl  concat          // convert x,y coordinates to buffer offsets
         .globl  xline           // alternate entry to HABLINE
         .globl  ortbl           // OR mask table for line drawing
@@ -643,7 +642,7 @@ shf_tab:
 // Wrapper that also saves the CPU registers:
 _ABLINE:
         movem.l d2-d7/a2-a6,-(sp)
-        bsr.s   __ABLINE
+        bsr.s   abline
         movem.l (sp)+,d2-d7/a2-a6
         rts
 
@@ -651,7 +650,7 @@ _ABLINE:
 //      whether the line should be drawn using x1,y1 or x2,y2 as the
 //      starting point.
 //
-__ABLINE:
+abline:
         move.l  _v_bas_ad,a5    // get base address of first plane
         lea     _FG_BP_1,a4     // get address of bit plane mask table
 #if vme10
@@ -1827,6 +1826,9 @@ rx_lend:
 //
 //      Draw the right fringe.
 //
+        cmp.l   #-1,d7          // Do we really have to draw this part?
+        beq.s   rx_no_right     // If not skip it! (THH)
+
         move.w  (a5),d5         // get source data
         eor.w   d1,d5           // xor the pattern with the source
         and.w   d7,d5           // isolate the bits outside the fringe
@@ -1838,6 +1840,7 @@ rx_lend:
 //      registers that were clobbered, update the pointer to the next plane,
 //      and test whether any additional planes need to be drawn.
 //
+rx_no_right:
         move.l  (sp)+,a5        // restore the clobbered registers
         move.w  (sp)+,d2
 #if vme10
@@ -1954,6 +1957,9 @@ oxc_lend:
 //
 //      Draw the right fringe.
 //
+        cmp.l   #-1,d7          // Do we really have to draw this part?
+        beq.s   ox_no_right     // If not skip it! (THH)
+
         move.w  (a5),d5         // get source data
         move.w  d5,d4           // save it
         and.w   d1,d5           // nope - and complement of mask with source
@@ -1968,6 +1974,7 @@ ox_merge:
 //      registers that were clobbered, update the pointer to the next plane,
 //      and test whether any additional planes need to be drawn.
 //
+ox_no_right:
         movem.l (sp)+,d2/a5     // restore the clobbered registers
 #if vme10
         adda.l  a3,a5           // update pointer to next plane
@@ -2012,6 +2019,9 @@ oxs_lend:
 //
 //      Draw the right fringe by setting bits in this plane.
 //
+        cmp.l   #-1,d7          // Do we really have to draw this part?
+        beq.s   ox_no_right     // If not skip it! (THH)
+
         move.w  (a5),d5         // get source data
         move.w  d5,d4           // save it
         or.w    d1,d5           // or mask with source
@@ -2067,6 +2077,9 @@ xx_lend:
 //
 //      Draw the right fringe.
 //
+        cmp.l   #-1,d7          // Do we really have to draw this part?
+        beq.s   xx_no_right     // If not skip it! (THH)
+
         move.w  (a5),d5         // get the source
         move.w  d5,d4           // save it
         eor.w   d1,d5           // xor the pattern with the source
@@ -2080,6 +2093,7 @@ xx_lend:
 //      registers that were clobbered, update the pointer to the next plane,
 //      and test whether any additional planes need to be drawn.
 //
+xx_no_right:
         movem.l (sp)+,d2/a5     // restore the clobbered registers
 #if vme10
         adda.l  a3,a5           // update pointer to next plane

@@ -968,3 +968,10 @@ Start... early ages
 
 29. Jul. 2002
 - vdi/gsxvars.S - removed. Variables are in their related source (MAD)
+
+30. Jul. 2002
+- vdi/gsxasm*.c - Fixed bug in VDI that sometimes wrote to ROM area (THH).
+- aes/crysbind.h - Size of the addr_in array was not big enough for
+  fsel_exinput(). Now this AES call should work, too. (THH)
+- desk/deskapp.c - EMUDESK.INF is now always saved to the root directory of
+  the start drive. (THH)
