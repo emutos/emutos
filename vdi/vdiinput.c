@@ -12,8 +12,8 @@
 #include "portab.h"
 #include "gsxdef.h"
 #include "gsxextrn.h"
-#include "mouse.h"
 #include "vdiconf.h"
+#include "mouse.h"
 
 
 

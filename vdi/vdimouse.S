@@ -21,9 +21,10 @@
 /* Locally Defined Constants and Variables */
 
         .globl  _xfm_crfm       // set mouse form
+        .globl  _cur_replace  
 
         .globl  _DIS_CUR        // display cursor routine
-        .globl  _HIDE_CUR       // hide cursor routine
+//        .globl  _HIDE_CUR       // hide cursor routine
         .globl  vb_draw         // vertical blank mouse draw routine
         .globl  arrow_cdb       // default mouse definition
 
@@ -106,7 +107,7 @@ vb_draw:
  *      the old cursor, if one exists, from the screen.  Finally, redraw
  *      the cursor in its new location.
  */
-        bsr     cur_replace     // remove the old cursor from the screen
+        bsr     _cur_replace     // remove the old cursor from the screen
         bsr     cur_display     // redraw the cursor
 vblank_exit:
         rts
@@ -521,7 +522,7 @@ fg1bg1:
 
 
 /*
- * cur_replace - replace cursor with data in save area.
+ * _cur_replace - replace cursor with data in save area.
  *
  *  in:
  *
@@ -535,7 +536,7 @@ fg1bg1:
  *      clobbered:      d2.w,d3.w,d4.w,d5.w,a0.l,a1.l,a2.l,a3.l,a4.l,a5.l
  */
 
-cur_replace:
+_cur_replace:
         movem.l d2-d5/a2-a5,-(sp)       // save registers used by 'C'
         bclr.b  #F_SAVRDY,save_stat     // does save area contain valid data ?
         beq     cur_rep_end             // 0:nothing saved
@@ -702,6 +703,8 @@ cur_rep_end:
         movem.l (sp)+,d2-d5/a2-a5       // restore 'C' registers
         rts
 
+
+#if 0
 /*
  *    hide_cur
  *
@@ -739,7 +742,7 @@ _HIDE_CUR:
 hid_cur1:
         sub.b   #1,_mouse_flag  // re-enable mouse drawing
         rts
-
+#endif
 
 
 /*

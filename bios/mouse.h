@@ -76,8 +76,10 @@ extern WORD GCURY;              // mouse Y position
 extern WORD HIDE_CNT;           // Number of levels the mouse is hidden
 extern WORD MOUSE_BT;           // mouse button state
 
+/* Mouse related variables */
+extern WORD     newx;           // new mouse x&y position
+extern WORD     newy;           // new mouse x&y position
 extern BYTE     draw_flag;      // non-zero means draw mouse form on vblank
-extern BYTE     mouse_flag;     // non-zero, if mouse ints disabled
 extern BYTE     mouse_flag;     // non-zero, if mouse ints disabled
 extern BYTE     cur_ms_stat;    /* current mouse status */
 

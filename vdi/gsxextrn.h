@@ -121,7 +121,7 @@ extern WORD SMUL_DIV();
 /* Assembly Language Support Routines NEWLY ADDED */
 
 extern void DIS_CUR();
-extern void HIDE_CUR(), text_blt();
+extern void text_blt();
 extern void xfm_crfm(), XFM_UNDL(), COPY_RFM(), RECTFILL();
 
 extern WORD gloc_key();
@@ -135,6 +135,7 @@ extern WORD end_pts(WORD x, WORD y, WORD *xleftout, WORD *xrightout);
 
 /* C Support routines */
 
+extern void hide_cur();
 extern WORD isin();
 extern WORD icos();
 extern void text_init();

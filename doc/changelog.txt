@@ -861,3 +861,7 @@ Start... early ages
 14. May. 2002
 - vdi/vinput.c - renamed to vdiinput.c, should hold all input stuff (MAD)
 - vdi/vdiinput.c - implemented gloc_key in C, more will follow (MAD)
+
+16. May. 2002
+- vdi/vdimouse.S - moved/rewrote DIS_CUR to monobj.c:dis_cur()  (MAD)
+

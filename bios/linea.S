@@ -21,8 +21,8 @@
         .xdef _HABLINE
         .xdef _RECTFILL
         .xdef _text_blt
-        .xdef _DIS_CUR
-        .xdef _HIDE_CUR
+        .xdef _dis_cur
+        .xdef _hide_cur
         .xdef _xfm_crfm
         .xdef _COPY_RFM
 
@@ -200,7 +200,7 @@ linea_vecs:
         dc.l    _linea_7        /* _bit_blt? */
         dc.l    _linea_8        /* _text_blt */
         dc.l    _DIS_CUR        /* _linea_9 */
-        dc.l    _HIDE_CUR       /* _linea_a */
+        dc.l    _hide_cur       /* _linea_a */
         dc.l    _xfm_crfm       /* _linea_b */
         dc.l    _linea_c        /* cur_replace??? */
         dc.l    _linea_d        /* cur_display??? */

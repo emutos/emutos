@@ -85,14 +85,6 @@ extern UWORD    v_cel_wr;       // needed by MiNT: length (in bytes) of a line o
 
 extern WORD cursconf(WORD, WORD);       // XBIOS cursor configuration
 
-
-/* Mouse related variables */
-#if NEEDED
-extern WORD     newx;           // new mouse x&y position
-extern WORD     newy;           // new mouse x&y position
-extern BYTE     draw_flag;      // non-zero means draw mouse form on vblank
-extern BYTE     mouse_flag;     // non-zero, if mouse ints disabled
-#endif
 extern void     (*tim_addr)(void);      // timer interrupt vector
 extern void     (*tim_chain)(void);     // timer interrupt vector save
 extern void     (*user_but)(void);      // user button vector

@@ -14,6 +14,48 @@
 #include "portab.h"
 #include "gsxdef.h"
 #include "gsxextrn.h"
+#include "mouse.h"
+
+
+
+extern void cur_replace();
+
+
+/*
+ * hide_cur                                                               
+ *                                                                        
+ * This routine hides the mouse cursor if it has not already               
+ * been hidden.                                                            
+ *                                                                         
+ * Inputs:         None                                                    
+ *                                                                         
+ * Outputs:                                                                
+ *    hide_cnt = hide_cnt + 1                                              
+ *    draw_flag = 0                                                        
+ *                                                                         
+ * Registers Modified: a0                                                  
+ *                                                                         
+ *                                                                         
+ *                                                                         
+ */
+
+void hide_cur()
+{
+    mouse_flag += 1;            /* disable mouse redrawing */
+
+    /*
+     * Increment the counter for the number of hide operations performed.
+     * If this is the first one then remove the cursor from the screen.
+     * If not then do nothing, because the cursor wasn't on the screen.
+     */
+    HIDE_CNT += 1;		// increment it
+    if (HIDE_CNT == 1) {        // if cursor was not hidden...
+        cur_replace();          // remove the cursor from screen
+        draw_flag = 0;          // disable vb_draw routine
+    }
+
+    mouse_flag -= 1;       	/* re-enable mouse drawing */
+}
 
 
 
@@ -232,7 +274,7 @@ void v_locator()
         DIS_CUR();
         while ((i = gloc_key()) != 1) { /* loop till some event */
             if (i == 4) {       /* keyboard cursor? */
-                HIDE_CUR();     /* turn cursor off */
+                hide_cur();     /* turn cursor off */
                 GCURX = X1;
                 GCURY = Y1;
                 DIS_CUR();      /* turn cursor on */
@@ -245,7 +287,7 @@ void v_locator()
         pointer = PTSOUT;
         *pointer++ = X1;
         *pointer = Y1;
-        HIDE_CUR();
+        hide_cur();
     } else {
         i = gloc_key();
         pointer = CONTRL;
@@ -277,7 +319,7 @@ void v_locator()
 
         case 4:
             if (HIDE_CNT == 0) {
-                HIDE_CUR();
+                hide_cur();
                 pointer = PTSOUT;
                 *pointer++ = GCURX = X1;
                 *pointer = GCURY = Y1;
@@ -311,7 +353,7 @@ void v_show_c()
 /* HIDE CURSOR */
 void v_hide_c()
 {
-    HIDE_CUR();
+    hide_cur();
 }
 
 
@@ -627,3 +669,9 @@ void dr_recfl()
 
     RECTFILL();
 }                               /* End "dr_recfl". */
+
+
+
+
+
+
