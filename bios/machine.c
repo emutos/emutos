@@ -299,7 +299,7 @@ void machine_init(void)
   cookie_add(COOKIE_FDC, cookie_fdc);
 
   if (has_natfeats) {
-    cookie_add(COOKIE_NATFEAT, natfeat_cookie_struct);
+    cookie_add(COOKIE_NATFEAT, (long)&natfeat_cookie);
   }
 
   create_XHDI_cookie();
@@ -309,10 +309,8 @@ const char * machine_name(void)
 {
 /* NatFeat hack */
 #if 1
-    #define nfGetID(n)  (((long (*)(const char *))__nfID)n)
-    #define nfCall(n)   (((long (*)(long, ...))__nfCall)n)
     #define nf_getFullName(buffer, size) \
-            nfCall((nfGetID(("NF_NAME"))+1, (buffer), (unsigned long)(size)))
+            NFCall(NFID("NF_NAME") | 0x0001, (buffer), (unsigned long)(size))
 
     char *nf_name_buf = phystop-64; /* how to alloc a bit of RAM? */
 

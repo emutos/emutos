@@ -22,9 +22,7 @@
 
         
         .global	_detect_native_features
-        .global	_natfeat_cookie_struct
-        .global	___nfID
-        .global	___nfCall
+        .global	_natfeat_cookie
         .global	_xhdi_vec
         .xdef	_xhdi_handler
         .global _nfid_xhdi
@@ -78,16 +76,16 @@ natfeatdone:
 // ==== NatFeat cookie points here ===========================================
 // ===========================================================================
 
-_natfeat_cookie_struct:
+_natfeat_cookie:
         dc.l    0x20021021              // NatFeat magic constant
-        dc.l    ___nfID
-        dc.l    ___nfCall
+        dc.l    nfID
+        dc.l    nfCall
 
-___nfID:
+nfID:
         dc.w    0x7300
         rts
 
-___nfCall:
+nfCall:
         dc.w    0x7301
         rts
 

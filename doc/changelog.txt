@@ -1237,3 +1237,4 @@ Start... early ages
 14. Jan. 2004
 - bios/vectors.S - the scceenpt must be cleared after successful video
   registers update (joy)
+- NatFeat calling cleaned up - uses function pointers now (joy)

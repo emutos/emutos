@@ -27,7 +27,6 @@
 
 /* NatFeats */
 long nfid_xhdi;
-#define nfCall(n)       (((long (*)(long, ...))__nfCall)n)
 
 /*=========================================================================*/
 
@@ -101,7 +100,7 @@ long XHInqTarget2(UWORD major, UWORD minor, ULONG *blocksize,
 
     /* direct access to device */
     if (nfid_xhdi) {
-        ret = nfCall((nfid_xhdi + XHINQTARGET2, (long)major, (long)minor, (long)blocksize, (long)deviceflags, (long)productname, (long)stringlen));
+        ret = NFCall(nfid_xhdi + XHINQTARGET2, (long)major, (long)minor, (long)blocksize, (long)deviceflags, (long)productname, (long)stringlen);
         if (ret != EINVFN && ret != EUNDEV)
             return ret;
     }
@@ -134,7 +133,7 @@ long XHInqTarget(UWORD major, UWORD minor, ULONG *blocksize,
 long XHGetCapacity(UWORD major, UWORD minor, ULONG *blocks, ULONG *blocksize)
 {
     if (nfid_xhdi) {
-        long ret = nfCall((nfid_xhdi + XHGETCAPACITY, (long)major, (long)minor, (long)blocks, (long)blocksize));
+        long ret = NFCall(nfid_xhdi + XHGETCAPACITY, (long)major, (long)minor, (long)blocks, (long)blocksize);
         if (ret != EINVFN && ret != EUNDEV)
             return ret;
     }
@@ -156,7 +155,7 @@ long XHReadWrite(UWORD major, UWORD minor, UWORD rw, ULONG sector,
 
     /* direct access to device */
     if (nfid_xhdi) {
-        long ret = nfCall((nfid_xhdi + XHREADWRITE, (long)dev, (long)0, (long)rw, (long)sector, (long)count, buf));
+        long ret = NFCall(nfid_xhdi + XHREADWRITE, (long)dev, (long)0, (long)rw, (long)sector, (long)count, buf);
         if (ret != EINVFN && ret != EUNDEV)
             return ret;
     }

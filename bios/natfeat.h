@@ -11,8 +11,17 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-extern long xhdi_vec(void);
-extern long __nfID(void);
-extern long __nfCall(void);
-extern void natfeat_cookie_struct(void);
+typedef struct
+{
+	long magic;
+	long (* nfID)(const char *);
+	long (* nfCall)(long ID, ...);
+} NatFeatCookie;
+
 extern void detect_native_features(void);
+extern NatFeatCookie natfeat_cookie;
+
+#define NFID	natfeat_cookie.nfID
+#define NFCall	natfeat_cookie.nfCall
+
+extern long xhdi_vec(void);
