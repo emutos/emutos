@@ -51,7 +51,7 @@ static WORD plane_mask[4] = { 1, 3, 7, 15 };
 
 
 /* Prototypes local to this module */
-WORD get_seed(WORD xin, WORD yin, WORD * xleftout, WORD * xrightout);
+WORD get_seed(WORD xin, WORD yin, WORD *xleftout, WORD *xrightout);
 
 
 void d_contourfill()
@@ -74,12 +74,10 @@ void d_contourfill()
     if (search_color >= DEV_TAB[13])
         return;
 
-    else if (search_color < 0) {
+    if (search_color < 0) {
         search_color = get_pix();
         seed_type = 1;
-    }
-
-    else {
+    } else {
         /* We mandate that white is all bits on.  Since this yields 15     */
         /* in rom, we must limit it to how many planes there really are.   */
         /* Anding with the mask is only necessary when the driver supports */
@@ -161,20 +159,18 @@ void crunch_Q()
         Qptr = Qbottom;
 }
 
-WORD get_seed(xin, yin, xleftout, xrightout)    /* put seeds into Q if
-                                                   (xin,yin) */
-WORD xin, yin;                  /* is not of search_color        */
-WORD *xleftout, *xrightout;
+/*
+ * get_seed - put seeds into Q if (xin,yin) is not of search_color
+ */
+WORD get_seed(WORD xin, WORD yin, WORD *xleftout, WORD *xrightout)
 {
-
-    if (end_pts(xin, ABS(yin), xleftout, xrightout)) {  /* false if of
-                                                           search_color */
+    if (end_pts(xin, ABS(yin), xleftout, xrightout)) {  /* false if of search_color */
         for (Qtmp = Qbottom, Qhole = EMPTY; Qtmp < Qtop; Qtmp += 3) {
             if (((Q[Qtmp] ^ DOWN_FLAG) == yin) && (Q[Qtmp] != EMPTY)
                 && (Q[Qtmp + 1] == *xleftout))
 
-                /* we ran into another seed so remove it and fill the line */
             {
+                /* we ran into another seed so remove it and fill the line */
                 fill_line(*xleftout, *xrightout, ABS(yin));
                 Q[Qtmp] = EMPTY;
                 if ((Qtmp + 3) == Qtop)
@@ -196,11 +192,12 @@ WORD *xleftout, *xrightout;
         Q[Qtmp++] = *xleftout;
         Q[Qtmp] = *xrightout;
         return (1);             /* we put a seed in the Q */
-
     } /* if endpts() */
-    else
-        return (0);             /* we didnt put a seed in the Q */
-}                               /* get_seed */
+
+    return (0);	/* we didnt put a seed in the Q */
+} /* get_seed */
+
+
 
 void v_get_pixel()
 {

@@ -22,7 +22,6 @@
 
         .globl  _CLC_FLIT       // calculate fill intersections of vector list
         .globl  _clc_flit       // draw a filled polygone (for linea)
-//        .globl  _SMUL_DIV       // signed integer multiply and divide
         .globl  _vec_len        // compute length of a vector
         .globl  _HABLINE        // draw a horizontal line
         .globl  _ABLINE         // draw a line (general purpose)
@@ -88,6 +87,7 @@ _fill_buffer:   .ds.w   256             // must be 256 words or it will fail
 #define y2              6
 
 
+#if 0
 /*
  * _vec_len
  *
@@ -214,7 +214,7 @@ srch_end:
 vl_out:
         movem.l (sp)+,d2-d4     // restore used registers
         rts
-
+#endif
 
 
 /*

@@ -14,17 +14,17 @@
 
         .globl  bit_blt
 
-        .globl  f0_l2r_rt,f1_l2r_rt,f2_l2r_rt,fl_l2r_rt
-        .globl  f0_l2r_lf,f1_l2r_lf,f2_l2r_lf,fl_l2r_lf
-        .globl  f0_r2l_rt,f1_r2l_rt,f2_r2l_rt,fl_r2l_rt
-        .globl  f0_r2l_lf,f1_r2l_lf,f2_r2l_lf,fl_r2l_lf
+        .xdef  f0_l2r_rt,f1_l2r_rt,f2_l2r_rt,fl_l2r_rt
+        .xdef  f0_l2r_lf,f1_l2r_lf,f2_l2r_lf,fl_l2r_lf
+        .xdef  f0_r2l_rt,f1_r2l_rt,f2_r2l_rt,fl_r2l_rt
+        .xdef  f0_r2l_lf,f1_r2l_lf,f2_r2l_lf,fl_r2l_lf
 
-        .globl  f0_left,f0_right,f2_update,f1_dst,f1_drt,f2_dst,p1_update
+        .xdef   f0_left,f0_right,f2_update,f1_dst,f1_drt,f2_dst,p1_update
 
-        .globl  mode_00,mode_01,mode_02,mode_03
-        .globl  mode_04,mode_05,mode_06,mode_07
-        .globl  mode_08,mode_09,mode_10,mode_11
-        .globl  mode_12,mode_13,mode_14,mode_15
+        .xdef  mode_00,mode_01,mode_02,mode_03
+        .xdef  mode_04,mode_05,mode_06,mode_07
+        .xdef  mode_08,mode_09,mode_10,mode_11
+        .xdef  mode_12,mode_13,mode_14,mode_15
 
 // name:
 //      bitblt.s

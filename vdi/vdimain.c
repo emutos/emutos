@@ -114,7 +114,7 @@ void dqt_fontinfo();     /* 131 - fce820 */
 
 
 /* External declarations */
-extern struct attribute *trap();
+//extern struct attribute *trap();
 extern long trap13(int, ...);
 
 extern void escfn2();
@@ -295,7 +295,7 @@ void d_opnvwk()
     /* Allocate the memory for a virtual workstation.  If none available,
        exit */
 
-    new_work = trap(X_MALLOC, (LONG) (sizeof(struct attribute)));
+    new_work = (struct attribute *)trap1(X_MALLOC, (LONG) (sizeof(struct attribute)));
 
     if (new_work == NULLPTR) {  /* No work available */
         CONTRL[6] = 0;
@@ -347,7 +347,7 @@ void d_clsvwk()
          work_ptr = work_ptr->next_work);
 
     work_ptr->next_work = cur_work->next_work;
-    trap(X_MFREE, cur_work);
+    trap1(X_MFREE, cur_work);
 }
 
 
@@ -447,7 +447,7 @@ void v_clswk()
         cur_work = virt_work.next_work;
         do {
             next_work = cur_work->next_work;
-            trap(X_MFREE, cur_work);
+            trap1(X_MFREE, cur_work);
         } while ((cur_work = next_work));
     }
 

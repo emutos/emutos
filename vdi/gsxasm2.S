@@ -70,43 +70,6 @@
 
                 .text                   // open program segment.
 
-_trap:  move.l  (sp)+,retsav            // remove return address from stack
-        trap    #1                      // invoke GEMDOS 
-        movea.l retsav,a0               // get return address of caller 
-        jmp     (a0)                    // get there a lot faster then by
-//                                      // pushing and popping the stack        
-
-////////////
-//
-//      _trnsfont
-//              This routine converts a font to standard form
-//
-//              input:  _FWIDTH = width of font data in bytes.
-//                      _DELY   = number of scan lines in font.
-//                      _FBASE  = starting address of the font data.
-//
-//              output: none.
-//
-//              destroys: d0,d1 & a0.
-////////////
-
-
-_trnsfont:
-                move.l  d2,-(sp)
-                move.w  _FWIDTH, d0     // Width of a scan line in bytes times
-                mulu.w  _DELY, d0       // number of scan lines divided by two
-                lsr.w   #1, d0          // is number of words to byte swap
-                subq.w  #1, d0          // minus one for dbra
-
-                movea.l _FBASE, a0      // Starting address of the data
-                moveq.l #8,d2           // get shift count for swapping bytes
-swap_loop:      move.w  (a0), d1        // Get word
-                ror.w   d2, d1          // swap bytes(use faster instruction)
-                move.w  d1, (a0)+       // put it back
-                dbra    d0, swap_loop
-                move.l  (sp)+,d2
-                rts
-
 //////////////
 //////////////
 ////
@@ -276,11 +239,8 @@ _fill_line:
                 move.w  8(sp),d1        // fetch y. (input to concat)
                 move.w  d1,d5           // save for later.
                 jsr     concat          // form physical offset.
-#if vme10
+
                 adda.l  d1,a5           // base + physical offset.
-#else
-                adda.l  d1,a5           // base + physical offset.
-#endif
                 move.w  6(sp),d2        // fetch xright.
                 and.w   _patmsk,d5      // compute pattern index.
                 asl.w   #1,d5           // word indexing.
@@ -357,11 +317,8 @@ _end_pts:       move.w  6(sp),d1        // fetch y coordinate. (input to concat)
                 move.w  4(sp),d0        // fetch x coordinate. (input to concat)
                 move.w  d0,d7           // save for finding right endpoints
                 jsr     concat          // form physical offset.
-#if vme10
+
                 adda.l  d1,a5           // base + physical offset.
-#else
-                adda.l  d1,a5           // base + physical offset.
-#endif
 //
 //      d4 = scratch.                   a5 = ptr to word containing low-order pixel bit.
 //      d3 = # of bit_planes - 1        a4 = scratch.
@@ -384,12 +341,13 @@ _end_pts:       move.w  6(sp),d1        // fetch y coordinate. (input to concat)
 //
 //  Get color value of requested pixel.
 //
+px_lp:
 #if vme10
-px_lp:          asl.w   d6,d1           // shift accumulator for next bit_plane.
+		asl.w   d6,d1           // shift accumulator for next bit_plane.
                 adda.l  a3,a5           // point to same word in next bit plane
 pxl_in:         move.w  (a5),d4         // fetch a bit.
 #else
-px_lp:          asl.w   #1,d1           // shift accumulator for next bit_plane.
+                asl.w   #1,d1           // shift accumulator for next bit_plane.
 pxl_in:         move.w  -(a5),d4        // fetch a bit.
 #endif
                 and.w   d0,d4           // test the bit.
@@ -525,10 +483,11 @@ rt_nedge:       move.l  (sp)+,a5        // pop a5. (this subtracts 4 from offset
 
 lnedg_lp:       cmp.w   d1,d2           // while (pixel value <> search color)
                 bne     lt_nedge
+lnlp1:          
 #if vme10
-lnlp1:          cmp.w   a6, d7          // and (x coord inside viewport).
+                cmp.w   a6, d7          // and (x coord inside viewport).
 #else
-lnlp1:          cmp.w   d6, d7          // and (x coord inside viewport).
+                cmp.w   d6, d7          // and (x coord inside viewport).
 #endif
                 bmi     lt_nedge
                 subq.w  #1,d7           // decrement x coord.
@@ -546,12 +505,13 @@ ln_gpx:         movea.l a5,a2           // save a5.
                 moveq.l #0,d1           // clear the pixel value.
                 bra     lnpxl_in
 
+lnpx_lp:
 #if vme10
-lnpx_lp:        asl.w   d6,d1           // shift accumulator for next bit_plane.
+                asl.w   d6,d1           // shift accumulator for next bit_plane.
                 adda.l  a3,a5           // point to same word in next bit_plane.
 lnpxl_in:       move.w  (a5),d4         // fetch a bit.
 #else
-lnpx_lp:        asl.w   #1,d1           // shift accumulator for next bit_plane.
+                asl.w   #1,d1           // shift accumulator for next bit_plane.
 lnpxl_in:       move.w  -(a5),d4        // fetch a bit.
 #endif
                 and.w   d0,d4           // test the bit.

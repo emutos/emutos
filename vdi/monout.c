@@ -57,7 +57,7 @@ static WORD m_dmnd[] = { 1, 5, -4, 0, 0, -3, 4, 0, 0, 3, -4, 0 };
 
 
 /*
- * SMUL_DIV - signed integer multiply and divide
+ * smul_div - signed integer multiply and divide
  *
  * smul_div (m1,m2,d1)
  * 
@@ -68,7 +68,7 @@ static WORD m_dmnd[] = { 1, 5, -4, 0, 0, -3, 4, 0, 0, 3, -4, 0 };
  * d1 = signed 16 bit integer
  */
 
-int SMUL_DIV(m1,m2,d1)
+int smul_div(m1,m2,d1)
 {
     return (short)(((short)(m1)*(long)((short)(m2)))/(short)(d1));
 }
@@ -279,7 +279,7 @@ void v_gdp()
             xc = *xy_pointer;
             yc = *(xy_pointer + 1);
             xrad = *(xy_pointer + 4);
-            yrad = SMUL_DIV(xrad, xsize, ysize);
+            yrad = smul_div(xrad, xsize, ysize);
             del_ang = 3600;
             beg_ang = 0;
             end_ang = 3600;
@@ -451,16 +451,16 @@ WORD clip_line()
         deltax = X2 - X1;
         deltay = Y2 - Y1;
         if (line_clip_flag & 1) {       /* left ? */
-            *y = Y1 + SMUL_DIV(deltay, (XMN_CLIP - X1), deltax);
+            *y = Y1 + smul_div(deltay, (XMN_CLIP - X1), deltax);
             *x = XMN_CLIP;
         } else if (line_clip_flag & 2) {        /* right ? */
-            *y = Y1 + SMUL_DIV(deltay, (XMX_CLIP - X1), deltax);
+            *y = Y1 + smul_div(deltay, (XMX_CLIP - X1), deltax);
             *x = XMX_CLIP;
         } else if (line_clip_flag & 4) {        /* top ? */
-            *x = X1 + SMUL_DIV(deltax, (YMN_CLIP - Y1), deltay);
+            *x = X1 + smul_div(deltax, (YMN_CLIP - Y1), deltay);
             *y = YMN_CLIP;
         } else if (line_clip_flag & 8) {        /* bottom ? */
-            *x = X1 + SMUL_DIV(deltax, (YMX_CLIP - Y1), deltay);
+            *x = X1 + smul_div(deltax, (YMX_CLIP - Y1), deltay);
             *y = YMX_CLIP;
         }
     }
@@ -517,8 +517,9 @@ void plygn()
         pointer++;
         if (k < fill_miny)
             fill_miny = k;
-        else if (k > fill_maxy)
-            fill_maxy = k;
+        else
+            if (k > fill_maxy)
+                fill_maxy = k;
     }
     if (CLIP) {
         if (fill_miny < YMN_CLIP) {
@@ -633,6 +634,45 @@ static WORD Icos(WORD angle)
 
 
 
+short Isqrt(unsigned long x)
+{
+    unsigned long s1, s2;
+
+    if (x < 2)
+        return x;
+
+    s1 = x;
+    s2 = 2;
+    do {
+        s1 /= 2;
+        s2 *= 2;
+    } while (s1 > s2);
+
+    s2 = (s1 + (s2 / 2)) / 2;
+
+    do {
+        s1 = s2;
+        s2 = (x / s1 + s1) / 2;
+    } while (s1 > s2);
+
+    return (short)s1;
+}
+
+
+
+/*
+ * _vec_len
+ *
+ * This routine computes the length of a vector using the formula:
+ *
+ * sqrt(dx*dx + dy*dy)
+ */
+
+WORD vec_len(WORD dx, WORD dy)
+{
+    return (Isqrt(dx*dx + dy*dy));
+}
+
 /*
  * gdp_rbox - draws an rbox
  */
@@ -659,19 +699,19 @@ void gdp_rbox()
     if (xrad > rdeltax)
         xrad = rdeltax;
 
-    yrad = SMUL_DIV(xrad, xsize, ysize);
+    yrad = smul_div(xrad, xsize, ysize);
     if (yrad > rdeltay)
         yrad = rdeltay;
 
     pointer = PTSIN;
     *pointer++ = 0;
     *pointer++ = yrad;
-    *pointer++ = SMUL_DIV(Icos(675), xrad, 32767);
-    *pointer++ = SMUL_DIV(Isin(675), yrad, 32767);
-    *pointer++ = SMUL_DIV(Icos(450), xrad, 32767);
-    *pointer++ = SMUL_DIV(Isin(450), yrad, 32767);
-    *pointer++ = SMUL_DIV(Icos(225), xrad, 32767);
-    *pointer++ = SMUL_DIV(Isin(225), yrad, 32767);
+    *pointer++ = smul_div(Icos(675), xrad, 32767);
+    *pointer++ = smul_div(Isin(675), yrad, 32767);
+    *pointer++ = smul_div(Icos(450), xrad, 32767);
+    *pointer++ = smul_div(Isin(450), yrad, 32767);
+    *pointer++ = smul_div(Icos(225), xrad, 32767);
+    *pointer++ = smul_div(Isin(225), yrad, 32767);
     *pointer++ = xrad;
     *pointer = 0;
 
@@ -748,9 +788,9 @@ void gdp_arc()
 
     pointer = PTSIN;
     xrad = *(pointer + 6);
-    yrad = SMUL_DIV(xrad, xsize, ysize);
+    yrad = smul_div(xrad, xsize, ysize);
     clc_nsteps();
-    n_steps = SMUL_DIV(del_ang, n_steps, 3600);
+    n_steps = smul_div(del_ang, n_steps, 3600);
     if (n_steps == 0)
         return;
     xc = *pointer++;
@@ -806,7 +846,7 @@ void gdp_ell()
     if (cur_work->xfm_mode < 2)
         yrad = yres - yrad;
     clc_nsteps();
-    n_steps = SMUL_DIV(del_ang, n_steps, 3600);
+    n_steps = smul_div(del_ang, n_steps, 3600);
     if (n_steps == 0)
         return;
     clc_arc();
@@ -825,9 +865,9 @@ void clc_pts(WORD j)
     REG WORD *pointer;
 
     pointer = PTSIN;
-    k = SMUL_DIV(Icos(angle), xrad, 32767) + xc;
+    k = smul_div(Icos(angle), xrad, 32767) + xc;
     *(pointer + j) = k;
-    k = yc - SMUL_DIV(Isin(angle), yrad, 32767);        /* FOR RASTER CORDS. */
+    k = yc - smul_div(Isin(angle), yrad, 32767);        /* FOR RASTER CORDS. */
     *(pointer + j + 1) = k;
 }
 
@@ -852,7 +892,7 @@ void clc_arc()
     clc_pts(j);
     for (i = 1; i < n_steps; i++) {
         j += 2;
-        angle = SMUL_DIV(del_ang, i, n_steps) + start;
+        angle = smul_div(del_ang, i, n_steps) + start;
         clc_pts(j);
     }
     j += 2;
@@ -1076,8 +1116,8 @@ void wline()
         else {
             /* Find the offsets in x and y for a point perpendicular */
             /* to the line segment at the appropriate distance. */
-            k = SMUL_DIV(-vy, ysize, xsize);
-            vy = SMUL_DIV(vx, xsize, ysize);
+            k = smul_div(-vy, ysize, xsize);
+            vy = smul_div(vx, xsize, ysize);
             vx = k;
             perp_off(&vx, &vy);
         }                       /* End else:  neither horizontal nor
@@ -1403,7 +1443,7 @@ void arrow(WORD * xy, WORD inc)
 
         ptr1 += inc;
         dx = *ptr2 - *ptr1;
-        dy = SMUL_DIV(*(ptr2 + 1) - *(ptr1 + 1), ysize, xsize);
+        dy = smul_div(*(ptr2 + 1) - *(ptr1 + 1), ysize, xsize);
 
         /* Get the length of the vector connecting the point with the end
            point. */
@@ -1425,15 +1465,15 @@ void arrow(WORD * xy, WORD inc)
     /* Rotate the arrow-head height and base vectors.  Perform calculations */
     /* in 1000x space.                                                      */
 
-    ht_x = SMUL_DIV(arrow_len, SMUL_DIV(dx, 1000, line_len), 1000);
-    ht_y = SMUL_DIV(arrow_len, SMUL_DIV(dy, 1000, line_len), 1000);
-    base_x = SMUL_DIV(arrow_wid, SMUL_DIV(dy, -1000, line_len), 1000);
-    base_y = SMUL_DIV(arrow_wid, SMUL_DIV(dx, 1000, line_len), 1000);
+    ht_x = smul_div(arrow_len, smul_div(dx, 1000, line_len), 1000);
+    ht_y = smul_div(arrow_len, smul_div(dy, 1000, line_len), 1000);
+    base_x = smul_div(arrow_wid, smul_div(dy, -1000, line_len), 1000);
+    base_y = smul_div(arrow_wid, smul_div(dx, 1000, line_len), 1000);
 
     /* Transform the y offsets back to the correct aspect ratio space. */
 
-    ht_y = SMUL_DIV(ht_y, xsize, ysize);
-    base_y = SMUL_DIV(base_y, xsize, ysize);
+    ht_y = smul_div(ht_y, xsize, ysize);
+    base_y = smul_div(base_y, xsize, ysize);
 
     /* Save the vertice count */
 

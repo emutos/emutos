@@ -1029,5 +1029,10 @@ Start... early ages
 - vdi/gsxasm1.S - also needed reg-save wrapper added for vec_len (MAD)
 
 17. Aug. 2002
-- vdi/monout.c - SMUL_DIV now in C (part. from fVDI) (MAD)
+- vdi/monout.c - smul_div now in C (part. from fVDI) (MAD)
+               - pline optimized (from fVDI) (MAD)
+               - vec_len implemented in C (MAD)
+
+18. Aug. 2002
+- vdi/text.c - trnsfont implemented in C (MAD)
 
