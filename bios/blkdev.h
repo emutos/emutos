@@ -11,8 +11,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#ifndef H_BLKDEV_
-#define H_BLKDEV_
+#ifndef BLKDEV_H
+#define BLKDEV_H
 
 #include "portab.h"
 #include "bios.h"
@@ -178,5 +178,5 @@ extern BLKDEV blkdev[];
 extern UNIT devices[];  
 
 
-#endif /* H_BLKDEV_ */
+#endif /* BLKDEV_H */
 

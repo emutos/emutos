@@ -10,8 +10,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#ifndef H_KPRINT_
-#define H_KPRINT_
+#ifndef KPRINT_H
+#define KPRINT_H
 
 #include "portab.h"
 
@@ -49,5 +49,5 @@ extern void panic(const char *fmt, ...) PRINTF_STYLE NORETURN;
 /* halt the machine */
 extern void halt(void) NORETURN;
 
-#endif /* H_KPRINT_ */
+#endif /* KPRINT_H */
 

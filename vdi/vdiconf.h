@@ -11,8 +11,8 @@
 
 
 
-#ifndef H_VDICONF_
-#define H_VDICONF_
+#ifndef VDICONF_H
+#define VDICONF_H
 
 /*
  * Flags for Conditional Assembly of Code
@@ -102,4 +102,4 @@
 
 
 
-#endif                          /* H_VDICONF_ */
+#endif                          /* VDICONF_H */

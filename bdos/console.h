@@ -10,8 +10,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#ifndef H_CONSOLE_
-#define H_CONSOLE_
+#ifndef CONSOLE_H
+#define CONSOLE_H
 
 extern  int     add[3];
 extern  int     remove[3];
@@ -37,4 +37,4 @@ void tabout(int h, int ch);
 
 
 
-#endif /* H_CONSOLE_ */
+#endif /* CONSOLE_H */

@@ -11,8 +11,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#ifndef H_BIOSDEVS_
-#define H_BIOSDEVS_
+#ifndef BIOSDEVS_H
+#define BIOSDEVS_H
 
 #include        "portab.h"
 
@@ -68,5 +68,5 @@ extern LONG (*bcostat_vec[])(void);
 extern void chardev_init(void);
 extern void cputc(WORD);        /* found in conout.s */
  
-#endif /* H_BIOSDEVS_ */
+#endif /* BIOSDEVS_H */
 

@@ -17,8 +17,8 @@
 
 
 
-#ifndef H_FS_
-#define H_FS_
+#ifndef FS_H
+#define FS_H
 
 /*
  *  fix conditionals
@@ -492,4 +492,4 @@ OFD  *getofd(int h);
 #define CL_DIR  0x0002
 #define CL_FULL 0x0004
 
-#endif /* H_FS_ */
+#endif /* FS_H */

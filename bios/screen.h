@@ -10,8 +10,8 @@
  * option any later version.  See doc/license.txt for details.
  */
  
-#ifndef H_SCREEN_
-#define H_SCREEN_
+#ifndef SCREEN_H
+#define SCREEN_H
  
 #include "portab.h"
 #include "tosvars.h"
@@ -57,5 +57,5 @@ void vsync(void);
 #define RGB_WHITE     0x0777
 
 
-#endif /* H_SCREEN_ */
+#endif /* SCREEN_H */
 

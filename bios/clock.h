@@ -9,8 +9,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#ifndef H_CLOCK_
-#define H_CLOCK_
+#ifndef CLOCK_H
+#define CLOCK_H
 
 #include "portab.h"
 
@@ -37,5 +37,5 @@ extern void clock_init(void);
 extern void settime(LONG time);
 extern LONG gettime(void);
 
-#endif /* H_CLOCK_ */
+#endif /* CLOCK_H */
 

@@ -15,8 +15,8 @@
  * C code.
  */
 
-#ifndef H_TOSVARS_
-#define H_TOSVARS_
+#ifndef TOSVARS_H
+#define TOSVARS_H
 
 #include "portab.h"
 
@@ -133,7 +133,7 @@ struct kbdvecs
 };
 extern struct kbdvecs kbdvecs;
 
-#endif /* H_TOSVARS_ */
+#endif /* TOSVARS_H */
 
 
 

@@ -10,8 +10,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#ifndef H_MIDI_
-#define H_MIDI_
+#ifndef MIDI_H
+#define MIDI_H
 
 #include "portab.h"
 
@@ -27,4 +27,4 @@ extern void bconout3(WORD dev, WORD c);
 /* some xbios functions */
 extern void midiws(WORD cnt, LONG ptr);
 
-#endif /* H_MIDI_ */
+#endif /* MIDI_H */

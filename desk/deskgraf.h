@@ -1,6 +1,6 @@
 
-#ifndef H_DESKGRAF_
-#define H_DESKGRAF_
+#ifndef DESKGRAF_H
+#define DESKGRAF_H
 
 #include "gsxdefs.h"
 

@@ -14,8 +14,8 @@
  * C code.
  */
 
-#ifndef H_LINEAVARS_
-#define H_LINEAVARS_
+#ifndef LINEAVARS_H
+#define LINEAVARS_H
 
 #include "portab.h"
 
@@ -91,4 +91,4 @@ extern void     (*user_but)(void);      // user button vector
 extern void     (*user_cur)(void);      // user cursor vector
 extern void     (*user_mot)(void);      // user motion vector
 
-#endif /* H_LINEAVARS_ */
+#endif /* LINEAVARS_H */

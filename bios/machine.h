@@ -10,8 +10,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#ifndef H_MACHINE_
-#define H_MACHINE_
+#ifndef MACHINE_H
+#define MACHINE_H
 
 /*
  * some useful cookies.
@@ -58,5 +58,5 @@ void machine_init(void);
 const char * machine_name(void);
 
 
-#endif /* H_MACHINE_ */
+#endif /* MACHINE_H */
 

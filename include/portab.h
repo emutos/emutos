@@ -13,8 +13,8 @@
  * to keep them here.
  */
 
-#ifndef H_PORTAB_
-#define H_PORTAB_
+#ifndef PORTAB_H
+#define PORTAB_H
 
 
 
@@ -61,5 +61,5 @@ typedef short int       WORD ;                  /*  signed 16 bit word  */
 typedef unsigned short int UWORD ;              /*  unsigned 16 bit word*/
 typedef long            LONG ;                  /*  signed 32 bit word  */
 
-#endif /* H_PORTAB_ */
+#endif /* PORTAB_H */
 

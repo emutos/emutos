@@ -30,8 +30,8 @@
  * new macros below.
  */
 
-#ifndef H_ASM_
-#define H_ASM_
+#ifndef ASM_H
+#define ASM_H
 
 
 
@@ -145,4 +145,4 @@ __extension__                                       \
 })
 
 
-#endif /* H_ASM_ */
+#endif /* ASM_H */

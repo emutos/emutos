@@ -10,8 +10,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#ifndef H_SOUND_
-#define H_SOUND_
+#ifndef SOUND_H
+#define SOUND_H
 
 #include "portab.h"
  
@@ -39,4 +39,4 @@ void bell(void);
 /* play key click sound, called by keyboard interrupt */
 void keyclick(void);   
 
-#endif /* H_SOUND_ */
+#endif /* SOUND_H */

@@ -10,8 +10,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#ifndef H_ACIA_
-#define H_ACIA_
+#ifndef ACIA_H
+#define ACIA_H
 
 #include        "portab.h"
 
@@ -69,5 +69,5 @@ struct ACIA
 #define ikbd_acia (*(volatile struct ACIA*)ACIA_IKBD_BASE)
 #define midi_acia (*(volatile struct ACIA*)ACIA_MIDI_BASE)
 
-#endif /* H_ACIA_ */
+#endif /* ACIA_H */
 

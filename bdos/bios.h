@@ -12,8 +12,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#ifndef H_BIOS_
-#define H_BIOS_
+#ifndef BIOS_H
+#define BIOS_H
 
 
 /*
@@ -217,4 +217,4 @@ MPB
 
 
 
-#endif /* H_BIOS_ */
+#endif /* BIOS_H */

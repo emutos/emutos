@@ -11,8 +11,8 @@
 
 
 
-#ifndef H_FUNCDEF_
-#define H_FUNCDEF_
+#ifndef FUNCDEF_H
+#define FUNCDEF_H
 
 #include "portab.h"
 

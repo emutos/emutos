@@ -10,8 +10,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#ifndef H_FLOPPY_
-#define H_FLOPPY_
+#ifndef FLOPPY_H
+#define FLOPPY_H
 
 #include "portab.h"
  
@@ -53,4 +53,4 @@ UWORD getiword(UBYTE *addr);
 /* lowlevel floppy_rwabs */
 LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt, WORD sides, WORD dev);
 
-#endif /* H_FLOPPY_ */
+#endif /* FLOPPY_H */

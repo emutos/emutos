@@ -7,8 +7,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#ifndef H_TIME_
-#define H_TIME_
+#ifndef TIME_H
+#define TIME_H
 
 extern int time, date;  
 
@@ -20,4 +20,4 @@ long xsettime(int t);
 /* called to initialize the module */
 void time_init(void);
 
-#endif /* H_TIME_ */
+#endif /* TIME_H */

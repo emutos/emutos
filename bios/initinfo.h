@@ -11,8 +11,8 @@
 
 
 
-#ifndef H_INITINFO_
-#define H_INITINFO_
+#ifndef INITINFO_H
+#define INITINFO_H
 
 
 
@@ -20,4 +20,4 @@
 
 void initinfo(void);
 
-#endif /* H_INITINFO_ */
+#endif /* INITINFO_H */

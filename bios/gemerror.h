@@ -10,8 +10,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#ifndef H_GEMERROR_
-#define H_GEMERROR_
+#ifndef GEMERROR_H
+#define GEMERROR_H
 
 /* BIOS level errors */
 
@@ -57,5 +57,5 @@
 #define EPLFMT  -66L    /* invalid program load format                  */
 #define EGSBF   -67L    /* setblock failure due to growth restrictions  */
 
-#endif /* H_GEMERROR_ */
+#endif /* GEMERROR_H */
 

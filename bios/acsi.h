@@ -10,12 +10,12 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#ifndef H_ACSI_
-#define H_ACSI_
+#ifndef ACSI_H
+#define ACSI_H
 
 #include "portab.h"
 
 LONG acsi_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev);
 
-#endif /* H_ACSI_ */
+#endif /* ACSI_H */
 

@@ -10,8 +10,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#ifndef H_VECTORS_
-#define H_VECTORS_
+#ifndef VECTORS_H
+#define VECTORS_H
  
 #include "portab.h"
  

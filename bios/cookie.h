@@ -10,8 +10,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#ifndef H_COOKIE_
-#define H_COOKIE_
+#ifndef COOKIE_H
+#define COOKIE_H
  
 struct cookie {
         long tag;

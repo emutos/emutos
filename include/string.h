@@ -18,8 +18,8 @@
  * Nevertheless this header will only work with -mshort option.
  */
 
-#ifndef H_STRING_
-#define H_STRING_
+#ifndef STRING_H
+#define STRING_H
 
 #include "config.h"
 
@@ -77,5 +77,5 @@ void * memset(void *address, int c, long unsigned int size);
 /* clear memory */
 void bzero(void *address, long unsigned int size);
 
-#endif /* H_BTOOLS_ */
+#endif /* BTOOLS_H */
 

@@ -10,8 +10,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#ifndef H_NLS_
-#define H_NLS_
+#ifndef NLS_H
+#define NLS_H
 
 /* the gettext-like macros */
 
@@ -30,4 +30,4 @@ void nls_set_lang(const char *);
 const char *nls_nth_lang(int);
 int nls_num_of_langs(void);
 
-#endif /* H_NLS_ */
+#endif /* NLS_H */
