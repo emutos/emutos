@@ -1747,3 +1747,8 @@ bios/conout.c: some integer overflow bugs fixed (MAD)
 
 2004-12-15
 -  aes/gem_rsc.c: Changed background color of the desktop to green. (THH)
+
+2005-01-15
+- bios/disk.c: added DOS PTBL recognition (primary partitions only) (joy)
+- bios/xhdi.c: reformatted (joy)
+- bios/blkdev.[ch]: added flag for byteswap (unused yet, TODO) (joy)
