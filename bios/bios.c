@@ -132,12 +132,7 @@ void startup(void)
         os_end = (LONG) _edata;
     }
 
-    /* initialise some memory variables */
-    end_os = os_end;
-    membot = end_os;
-    //  exec_os = os_beg;
     exec_os = &emucon;            // set start of console program
-    memtop = (LONG) v_bas_ad;
 
     /* initialize BIOS memory management */
     bmem_init();      

@@ -16,22 +16,37 @@
 #include "kprint.h"
 #include "tosvars.h"
 
-extern MD b_mdx;            /* found in startup.S */
+
+
+extern MD themd;            /* BIOS memory descriptor (from tosvars.S) */
 
 static int bmem_allowed;
 
 
-// MAD: This throws an error - it seems useless, anyway...
-//bmem_allowed = 0;
-
+/*
+ * bmem_init - initialize some memory related variables
+ */
 void bmem_init(void)
 {
-    m_start = os_end;
-    m_length = memtop - m_start;
-    themd = (LONG) &b_mdx;
+    /* initialise some memory variables */
+    end_os = os_end;
+    membot = end_os;
+    memtop = v_bas_ad;
+
+    /* Fill out the first memory descriptor */
+    themd.m_link = (MD*) 0;     /* no next memory descriptor */
+    themd.m_start = os_end;
+    themd.m_length = memtop - themd.m_start;
+    themd.m_own = (PD*) 0;   	/* no owner's process descriptor */
+
     bmem_allowed = 1;
 }
 
+
+
+/*
+ * balloc - simple BIOS memory allocation
+ */
 void * balloc(LONG size)
 {
     void * ret;
@@ -39,12 +54,15 @@ void * balloc(LONG size)
     if(!bmem_allowed) {
         panic("balloc(%ld) at wrong time\n", size);
     }
-    if(m_length < size) {
+    if(themd.m_length < size) {
         panic("balloc(%ld): no memory\n", size);
     }
-    ret = (void*) m_start;
-    m_length -= size;
-    m_start += size;
+    ret = (void*) themd.m_start;
+
+    /* subtract needed memory from initial MD */
+    themd.m_length -= size;
+    themd.m_start += size;
+
     return ret;
 }
 
@@ -52,7 +70,7 @@ void getmpb(MPB * mpb)
 {
     bmem_allowed = 0; /* BIOS memory handling not allowed past this point */
 
-    mpb->mp_mfl = mpb->mp_rover = &b_mdx; /* free list/rover set to init MD */
+    mpb->mp_mfl = mpb->mp_rover = &themd;   /* free list/rover set to init MD */
     mpb->mp_mal = (MD *)0;                /* allocated list set to NULL */
 }
 

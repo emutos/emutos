@@ -286,7 +286,7 @@ static long do_xexec(char *s)
     if ( setjmp(errbuf) )
     {
         /* Free any memory allocated to this program. */
-        if (flg != 4)           /* did we allocate any memory? */
+        if (flg != PE_GO)           /* did we allocate any memory? */
             ixterm((PD*)t);             /*  yes - free it */
 
         longjmp(bakbuf,1);

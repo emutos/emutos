@@ -175,39 +175,6 @@ BCB
 
 
 
-/*
- *  MD - Memory Descriptor
- */
-
-#define MD struct _md
-
-MD
-{
-        MD      *m_link;  /* next MD, or NULL */
-        long    m_start;  /* start address of memory block */
-        long    m_length; /* number of bytes in memory block*/
-        PD      *m_own;   /* owner's process descriptor */
-} ;
-
-/*
- *  fields in Memory Descriptor
- */
-
-#define MF_FREE 1
-
-
-/*
- *  MPB - Memory Partition Block
- */
-
-#define MPB struct _mpb
-
-MPB
-{
-        MD      *mp_mfl;   /* memory free list */
-        MD      *mp_mal;   /* memory allocated list */
-        MD      *mp_rover; /* roving pointer */
-} ;
 
 
 #endif /* _BIOS_H */

@@ -20,43 +20,18 @@
         .equ    SUPSIZ, 8192            // size of supervisor stack in words
         .equ    _GSX_ENT, 0             // Entry to GEM (if graphically)
 
-        .equ    vec_divnull, 0x14       // division by zero interrupt vector
-        .equ    vec_linea, 0x28         // LineA interrupt vector
-        .equ    vec_hbl, 0x68           // HBL interrupt vector
-        .equ    vec_vbl, 0x70           // VBL interrupt vector
-        .equ    vec_mfp, 0x78           // MFP interrupt vector
-        .equ    vec_aes, 0x88           // AES interrupt vector
-
-        .equ    vec_bios, 0xb4          // BIOS interrupt vector
-        .equ    vec_xbios, 0xb8         // XBIOS interrupt vector
-        .equ    vec_acia, 0x118         // keyboard/Midi interrupt vector
-
 
 
 // ==== References ===========================================================
 
-        .global _os_dosdate             // OS entry point
-        .global _main           // OS entry point
-        .global _GSX_ENT
         .global _trap_1         // Calling GEMDOS from C
         .global _b_mdx          // used in bios.c
 
-        .global _run
 
-        .global _ara_DMAread
 
-        .global _criter
-        .global _criter1
 
-        .global memdone         // return to, if memory config done
 
         .global _cartscan
-        .global _os_end
-        .global _os_beg
-        .global _os_magic
-        .global _os_date
-        .global _os_pal
-        .global _os_dosdate
         
         .global _int_vbl
         .global _int_hbl
@@ -75,14 +50,8 @@
         .global _serial_vec
         .global _dump_scr
         
-        .global _m_start
-        .global _m_length
 
         .global _save_area
-        .global _int_timera
-        .global _int_timerb
-        .global _int_timerc
-        .global _int_timerd
 
         .global _load_cli        // load EmuCON
         
@@ -175,12 +144,6 @@ _stktop:                        // filled from top to bottom
         
 t1regsav:       dc.l    1   
 
-_b_mdx:                         // initial memory descriptor
-                dc.l    1
-_m_start:       dc.l    1       // start address of TPA
-_m_length:      dc.l    1       // length of TPA in byte
-                dc.l    1
-
 aexecsave:      dc.l    1       // save zone for autoexec
         
         
@@ -195,8 +158,15 @@ aexecsave:      dc.l    1       // save zone for autoexec
 
 // ==== OSHEADER =============================================================
 
-.global _shifty
-.global _run
+        .global _main           // OS entry point
+        .global _os_end
+        .global _os_beg
+        .global _os_magic
+        .global _os_date
+        .global _os_pal
+        .global _os_dosdate
+	.global _shifty
+	.global _run
 
 _os_entry:
     bra.s   _main       // os_entry, branch to _main
@@ -278,7 +248,8 @@ noreset:
  * modular using CDECL routines.
  */
         
-        bra     meminit                 // do/test memory config (needs sp)
+        .global memdone         // return to, if memory config done
+        bra     meminit         // do/test memory config (needs sp)
 memdone:
 
 /* 
@@ -521,14 +492,17 @@ _brkpt:
         bra.s   _brkpt  // never return
 
 // ==== Timer A interrupt handler ============================================
+        .global _int_timera
 _int_timera:
         rte             // Just a dummy
 
 // ==== Timer B interrupt handler ============================================
+        .global _int_timerb
 _int_timerb:
         rte             // Just a dummy
 
 // ==== Timer C interrupt handler ============================================
+        .global _int_timerc
 _int_timerc:
         
         addq.l  #1, _hz_200             // increment 200 Hz counter
@@ -554,6 +528,7 @@ timerc_end:
         
 
 // ==== Timer D interrupt handler ============================================
+        .global _int_timerd
 _int_timerd:
         rte             // Just a dummy
 
@@ -577,7 +552,8 @@ _rcvint:
 
 // ==== Critical error handler ===============================================
 // Just sets D0 (return code) to -1, end ends the subroutine
-
+        .global _criter
+        .global _criter1
 _criter:
         move.l  _criter, -(sp)  // etv_critic on stack
 _criter1:
@@ -587,6 +563,7 @@ _criter1:
 
 
 // ==== DMAread(LONG sector, WORD count, LONG buf, WORD dev) =================
+        .global _ara_DMAread
 _ara_DMAread:
         dc.w 0x7136
         rts

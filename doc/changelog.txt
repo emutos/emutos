@@ -578,3 +578,4 @@ Start... early ages
 
 22. Jan. 2002
 - untested ttram-compliant internal memory stuff in proc.c (LVL)
+- cleaned up bios/biosmem.c:bmem_init, removed old _b_mdx from startup.S (MAD)
