@@ -45,4 +45,16 @@ __extension__                               \
   retvalue;                                 \
 })
 
+/*
+ * stop
+ *   this is the m68k STOP #<imm> instruction
+ */
+
+#define stop								\
+__extension__								\
+({__asm__ volatile							\
+  ("stop #0x2000 ");						\
+})
+
+
 #endif /* _ASM_H */
