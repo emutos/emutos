@@ -1160,7 +1160,7 @@ Start... early ages
   NULL and NULLPTR be ((void*)0). Then we could replace NULLPTR by NULL and
   forget about NULLPTR... (LVL)
 
-18. Oct 2002
+18. Oct. 2002
 - genctables.awk - portable awk, country names need not be 2 chars long (LVL)
 - bios/processor.[hS] - 68040 instruction cache stuff (LVL)
 - bdos/proc.c - instruction cache invalidation on pexec (LVL)
@@ -1177,7 +1177,7 @@ Start... early ages
 - include/config.h - removed "i18nconf.h" from there, as it caused trouble 
   with tools needing "string.h" but not "i18nconf.h" (LVL)
 
-19. Oct 2002
+19. Oct. 2002
 - bios/bios.c - display initinfo before you start booting from a device
   so that users have time to press and hold the Alt key to skip the boot (joy)
 - bios/blkdev.c - added check for the Alt key (joy)
@@ -1189,13 +1189,17 @@ Start... early ages
 - bios/startup.S, bios/disk.c, bios/machine.c - NatFeat instruction codes
   changed to LineF $fe00/$fe01 (joy)
 
-20. Oct 2002
+20. Oct. 2002
 - bios/startup.S, bios/disk.c, bios/machine.c - NatFeat instruction codes
   changed back to good old $7300/$7301. The LineF interface requires
   the $fe0x instructions to be long words and I am not ready to accept
   such change of NatFeat calling convention. Sorry. (joy)
 
-28. Oct 2002
+28. Oct. 2002
 - bios/bios.c - loading of AUTO folder programs displayed on stderr console
   via new NF_STDERR (sorry for the mess in bios.c, the nf calling must be
   cleaned up somehow). (joy)
+
+31. Oct. 2002
+- Makefile - changed, so that vdi/lisaesc.S is used again (MAD)
+
