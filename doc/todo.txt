@@ -14,4 +14,4 @@
 - handle .PRG flag bits. Pexec should clear the BSS or the HEAP depending.
 - handle alternate RAM in proc.c; design an interface between memory and
   proc, and move mem-only functions from proc to memory
-- implement go_then_free pexec mode
+- Make cvsready should not alter the Makefile if it contains no deps
