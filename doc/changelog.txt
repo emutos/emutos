@@ -1055,3 +1055,6 @@ Start... early ages
 
 27. Aug. 2002
 - Makefile - replaced "-O2" by "-Os" for smaller size (MAD)
+
+01. Sep. 2002
+- doc/status - updated a bit (MAD)

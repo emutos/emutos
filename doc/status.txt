@@ -1,20 +1,20 @@
 This file documents the status of the single parts of EmuTOS
 
 Here is a quick list of supported emulators/hardware:
-(updated last 18. Nov. 2001)
+(updated last 01. Sep. 2002)
 
   emulator/machine          | ROM img | autoboot | boot.prg
   --------------------------+---------+----------+---------
+  Aranym (latest CVS vers.) |   yes   |    ?     |    ?
+  Hatari (latest CVS vers.) |   yes   |    ?     |    ?
+  MegaSTE (2MB RAM)         |   n/a   |   yes    |   yes   
+  Pacifist v0.48            |   yes   |   yes    |   yes   
   STonX, with cartridge     |   yes   |  no (1)  |   yes  
   STonC, with cartridge     |   yes   |   yes    |   yes   
   STonC, no cartridge       |   yes   |   yes    |   yes   
   STeem v1.5                |   yes   |   yes    |   yes   
-  WinSTon V0.1r2            |    no   |    no    |    no   
   TOSBox 1.10a              |    no   |    ?     |    ?    
-  Pacifist v0.48            |   yes   |   yes    |   yes   
-  real MegaSTE (2MB RAM)    |   n/a   |   yes    |   yes   
-  Hatari (latest CVS vers.) |   yes   |    ?     |    ?
-  Aranym (latest CVS vers.) |   yes   |    ?     |    ?
+  WinSTon V0.1r2            |    no   |    no    |    no   
 
 ROM img means:  Using the etos192k.img/etosfalc.img file as ROM
 
@@ -238,6 +238,8 @@ T tested and working on an emulator or real hardware
 
 ==== VDI ====================================================================
  
+ All TOS 1.0 calls are implemented.
+ 
  T      v_opnwk
  X      v_clswk
  T      v_opnvwk
@@ -356,5 +358,5 @@ T tested and working on an emulator or real hardware
 
 ==== AES ====================================================================
 
- Calls are implemented but not yet listed here.
+ All TOS 1.0 calls are implemented.
 
