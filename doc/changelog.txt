@@ -988,3 +988,6 @@ Start... early ages
 - bios/disk.[ch] - ARANYM_NATIVE_DISK does not crash other machines now.
                    Also it makes use of new ARAnyM XHDI function XHREADWRITE.
                    Harddisk is now read/write (if enabled in ARAnyM).
+
+07. Aug. 2002
+- po/cs.po - Bohdan's czech language translation of GEM (MAD)
