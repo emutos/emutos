@@ -18,11 +18,13 @@
 #include "ikbd.h"
 #include "tosvars.h"
 #include "btools.h"
+#include "detect.h"
+#include "nvram.h"
 
-/* set this to 1 to debug IKBD clock */
+/* set this to 1 to debug IKBD clock (you should also disable NVRAM) */
 #define NO_MEGARTC 0
 
-/* set this to 1 to alwaus use megartc */
+/* set this to 1 to not use IKBD clock */
 #define NO_IKBD_CLOCK 1
 
 
@@ -89,25 +91,25 @@ void detect_megartc(void)
   /* detect megartc. 
    * I do it exactly like TOS 1.2 does, not trying to understand...
    */
-#if NO_IKBD_CLOCK
-  has_megartc = 1;
-#else
-#if NO_MEGARTC
   has_megartc = 0;
-#else
-  clk.rega = 9;
-  clk.min_l = 10;
-  clk.min_h = 5;
-  if((clk.min_l != 10) || (clk.min_h != 5)) {
-    has_megartc = 0;
-  } else {
+#if !NO_MEGARTC
+  if (check_read_byte(CLK_BASE+1))
     has_megartc = 1;
-    clk.sec_l = 1;
-    clk.rega = 8;
-    clk.regb = 0;
-  }
 #endif /* NO_MEGARTC */
-#endif /* NO_IKBD_CLOCK */
+
+  if (has_megartc) {
+    clk.rega = 9;
+    clk.min_l = 10;
+    clk.min_h = 5;
+    if((clk.min_l != 10) || (clk.min_h != 5)) {
+      has_megartc = 0;
+    } else {
+      has_megartc = 1;
+      clk.sec_l = 1;
+      clk.rega = 8;
+      clk.regb = 0;
+    }
+  }
 }
 
 /*==== MegaRTC internal functions =========================================*/
@@ -118,7 +120,7 @@ void detect_megartc(void)
  */
 
 /* read the 13 non-control clock registers into clkregs1
- * read the reigisters twice, and returns only when the two reads 
+ * read the registers twice, and returns only when the two reads 
  * returned the same value.
  * This is because the MegaRTC clock is a very slow chip (32768 kHz)
  * and presumably the carry is not reported instantly when the
@@ -244,6 +246,107 @@ static void msetdt(ULONG dt)
   mdosetdate(dt>>16);
   mdosettime(dt);
   msetregs();
+}
+
+/*==== NVRAM RTC internal functions =======================================*/
+
+/*
+ * The MC146818 was used as the RTC and NVRAM in MegaSTE, TT and Falcon.
+ * You can find a header file in /usr/src/linux/include/linux/mc146818rtc.h
+ * Proper implementation of RTC functions is in linux/arch/m68k/atari/time.c.
+ * The code below is just my quick hack. It works but it could not be used
+ * for updating real RTC because it doesn't handle the control registers
+ * and also doesn't provide proper timing (32kHz device needs proper timing).
+ * Reading of RTC should be OK on real machines.
+ * (joy)
+ */
+#define NVRAM_RTC_SECONDS 0
+#define NVRAM_RTC_MINUTES 2
+#define NVRAM_RTC_HOURS   4
+#define NVRAM_RTC_DAYS    7
+#define NVRAM_RTC_MONTHS  8
+#define NVRAM_RTC_YEARS   9
+
+/*
+ * this is an interesting moment: we should detect the year offset in the RTC
+ * but it depends on the TOS version that wrote the value there.
+ * It seems that MegaSTE (regardless of TOS version) does have the offset 1970.
+ * But in the TT030 case it's unsure - with old TOS (3.01, 3.05) it's 1970, but
+ * with latest TT TOS (3.06) it's 1968. This is completely crazy and only Atari
+ * engineers could do something like that.
+ * With Falcon the situation is clear - the year offset is always 1968.
+ */
+#define TOS_VERSION 0x404	/* define the version that ran on this machine */
+static int nvram_rtc_year_offset = ((TOS_VERSION < 0x306) ? 1970 : 1968) - 1980;
+
+static void ndosettime(UWORD time)
+{
+  set_nvram_rtc(NVRAM_RTC_SECONDS, (time & 0x1F) * 2);
+  set_nvram_rtc(NVRAM_RTC_MINUTES, (time >> 5) & 0x2F);
+  set_nvram_rtc(NVRAM_RTC_HOURS, (time >> 11) & 0x1F);
+}
+
+
+static UWORD ndogettime(void)
+{
+  UWORD time;
+
+  time = get_nvram_rtc(NVRAM_RTC_SECONDS)
+    |  ( get_nvram_rtc(NVRAM_RTC_MINUTES) << 5)
+    |  ( get_nvram_rtc(NVRAM_RTC_HOURS) << 11) ;
+ 
+  return time;
+}
+
+
+static void ndosetdate(UWORD date)
+{
+  set_nvram_rtc(NVRAM_RTC_DAYS, date & 0x1F);
+  set_nvram_rtc(NVRAM_RTC_MONTHS, ((date >> 5) & 0xF)+1);
+  set_nvram_rtc(NVRAM_RTC_YEARS, (date >> 9) - nvram_rtc_year_offset);
+}
+
+static UWORD ndogetdate(void)
+{
+  UWORD date;
+
+  date = (get_nvram_rtc(NVRAM_RTC_DAYS) & 0x1F)
+    |  (((get_nvram_rtc(NVRAM_RTC_MONTHS)-1) & 0xF) << 5) 
+    |  ((get_nvram_rtc(NVRAM_RTC_YEARS) + nvram_rtc_year_offset) << 9);
+ 
+  return date;
+}
+
+/*==== NVRAM RTC high-level functions ======================================*/
+
+static void nsettime(UWORD time)
+{
+  ndosettime(time);
+}
+
+static UWORD ngettime(void)
+{
+  return ndogettime();
+}
+
+static void nsetdate(UWORD date)
+{
+  ndosetdate(date);
+}
+
+static UWORD ngetdate(void)
+{
+  return ndogetdate();
+}
+
+static ULONG ngetdt(void)
+{
+  return (((ULONG) ndogetdate()) << 16) | ndogettime();
+}
+
+static void nsetdt(ULONG dt)
+{
+  ndosettime(dt);
 }
 
 /*==== IKBD clock section =================================================*/
@@ -489,7 +592,23 @@ BOOLEAN	clk_settime( REG TIME t )
 
 void date_time(WORD flag, WORD *dt)
 {
-  if(has_megartc) {
+  if(has_nvram) {
+    switch(flag) {
+    case GET_DATE:
+      *dt = ngetdate();
+      break;
+    case SET_DATE:
+      nsetdate(*dt);
+      break;
+    case GET_TIME:
+      *dt = ngettime();
+      break;
+    case SET_TIME:
+      nsettime(*dt);
+      break;
+    }
+  }
+  else if(has_megartc) {
     switch(flag) {
     case GET_DATE:
       *dt = mgetdate();
@@ -504,7 +623,9 @@ void date_time(WORD flag, WORD *dt)
       msettime(*dt);
       break;
     }
-  } else {
+  }
+#if !NO_IKBD_CLOCK
+  else {
     switch(flag) {
     case GET_DATE:
       *dt = igetdate();
@@ -520,13 +641,14 @@ void date_time(WORD flag, WORD *dt)
       break;
     }
   }
+#endif /* !NO_IKBD_CLOCK */
 }
 
 /* internal init */
 
 void clock_init(void)
 {
-  if( ! has_megartc ) {
+  if( ! (has_nvram || has_megartc) ) {
     /* no megartc, the best we can do is set the date to the
      * OS creation date, time 0.
      */
@@ -538,7 +660,10 @@ void clock_init(void)
 
 void settime(LONG time)
 {
-  if(has_megartc) {
+  if(has_nvram) {
+    nsetdt(time);
+  }
+  else if(has_megartc) {
     msetdt(time);
   } else {
     isetdt(time);
@@ -547,7 +672,10 @@ void settime(LONG time)
 
 LONG gettime(void)
 {
-  if(has_megartc) {
+  if(has_nvram) {
+    return ngetdt();
+  }
+  else if(has_megartc) {
     return mgetdt();
   } else {
     return igetdt();
