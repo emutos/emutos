@@ -506,7 +506,7 @@ x20_usr:			| user mode entry point
 	beq	xu_0		| already have new SSP from
 |				| old USP, go handle 0L entry
 
-	addq.l	#1,d1		| check for -1L entry
+	subq.l	#1,d1		| check for +1L entry
 	beq	x20_inq 	| go handle inquiry
 
 	move.l	2(a0),a0	| get new SSP from parameter
@@ -533,7 +533,7 @@ x20_sup:
 	move.l	8(sp),d1	| get parameter
 	beq	xs_0		| go handle 0L entry
 
-	addq.l	#1,d1		| check for -1L entry
+	subq.l	#1,d1		| check for +1L entry
 	beq	x20_inq 	| go handle inquiry
 
 	move.l	8(sp),a1	| point to new SSP
