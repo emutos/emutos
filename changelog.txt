@@ -1,0 +1,331 @@
+Start... early ages
+
+16. May. 1985
+- GEMDOS 1.0 released by Digital Research, Inc.
+
+05. Jun. 1987  ACH	PROC.C
+- Problem - After physical disk error COMMAND.PRG gives "Command not
+  found." message for all subsequent external commands. Fix - Changed the
+  error handling code in  xexec() to always do an ixterm(t); on any disk
+  error, thus freeing memory.
+
+26. Jun. 1987  ACH	TIME.C & BIOS
+- To enable GEMDOS to take advantage of real-time clock/calendars a new
+  BIOS function (11h) has been added. Whenever the BDOS sets a new time
+  or date this function is called and, if the hardware supports it, the
+  real-time clock can be updated. When the BDOS needs the current time or
+  date the function is called to allow  the BIOS to update the internal
+  BDOS values. If there is no hardware clock the BIOS can  simply ignore
+  this call as the BDOS still maintains the time and date internally
+  based on the system tick.
+
+16. Sep. 1987  ACH	SUP.C
+- Problem - the internal date and time variables used to time stamp file
+  updates are set to 0 when the OS starts up.
+
+  Fix - Changed cinit() in SUP.C to call new BIOS date_time() function
+  (11h) so that the BIOS can initialise the internal variables from a 
+  hardware real-time clock, if supported.
+
+09. Oct. 1987 ACH	BDOSMAIN.C
+- Duplicate definition of supstk and SUPSIZ removed from this module.
+  (Duplicated in  PROC.C and FS.H.) If the supervisor stack is to be OEM 
+  configurable some more reliable method must be devised.
+
+19. Nov. 1987 ACH	RWA.A
+- Added _lbmove, _bfill, _bmove routines. (These were supposed to be in
+  something called TOOLS.ARC which was not supplied by DRI.)
+
+01. May. 2001
+- Started working on GEMDOS -> EmuTOS
+
+28. Jul. 2001 
+- Working on MFP initialization
+
+29. Jul. 2001
+- Implementing Cartridge system for work with STonX
+- Rewrite of vector setup
+
+30. Jul. 2001
+- rewrote some exception handlers
+- implemented VBL handler
+- implemented HBL handler
+- implemented keyboard interrupt handler
+
+04. Aug. 2001 
+- working on the keyboard interrupt routine
+
+05. Aug. 2001
+- got the keyboard interrupt running (wow!)
+
+06. Aug. 2001
+- got the keyboard queue running 
+
+07. Aug. 2001
+- Mega ST clock should work - could not test yet
+- Character blit implemented (not tested)
+- VT52 emulator implemented (not yet blitted to screen)
+
+10. Aug. 2001
+- Worked on character blitting (not tested)
+
+11. Aug. 2001
+- Got first real character blitted to screen
+- cons_out is basically working 
+
+12. Aug. 2001
+- Fighting much too long against a too small supervisor stack  :-(
+- Got scrolling much to slowly working
+
+13. Aug. 2001
+- scrolling now faster
+- worked on keyboard decoding for bconin (not tested)
+- fixed linker configuration in Makefile (libgcc forgotten)
+
+26. Aug. 2001
+- trying to bring BDOS and BIOS together
+
+29. Aug. 2001
+- integrating STonX native BIOS emulation to BIOS
+
+02. Sep. 2001 
+- found out, where the basepage is for DTA stuff
+
+04. Sep. 2001
+- got memory setup descritor working 
+- got the command loading running
+
+09. Sep. 2001
+- Uppercase/lowercase is now working
+- got old command.prg compiled and started and basically WORKING!!!
+- command.prg: directory navigation is working
+
+10. Sep. 2001
+- handlers for showing exceptions 0x08 - 0x20 written (atari's bombs)
+
+24. Sep. 2001
+- fixed bug in supervisor stack setup (stack was top of stack + size of stack)
+- Now no garbage in the diskbuffer -> clean screen while ls or dir executing
+
+25. Sep. 2001
+- os_pal changed to word width
+- Implemented extended TOS 1.02 header - no basepage set in STonX any longer!
+- Did put .org 0x4f2 in front of _sysbase: in tosvars.s
+
+25. Sep. 2001 
+- linea commented out of cartridge
+- added .even after .ascii strings (odd exception handlers); 
+- changed "dc.w 0" by '\0' at end of .ascii strings.  (rwa.s, startup.s)
+- padded tosvars.s so that _sysbase == 0x4F2
+- fixed (?) malloc() bug (due to missing prototype in fs.h)
+- added/edited some copyright notices on top of files. (rwa.s, startup.s)
+
+26. Sep. 2001
+- change a prototype for xmgetblk - now command.prg load other programs!
+
+30. Sep. 2001
+- changed XBIOS stubs to right declaration. (MAD)
+
+01. Oct. 2001
+- ensured that the MIDI acia was inited (for KBD to work on stonc) (LVL)
+
+05. Oct. 2001
+- Makefile
+- printf() clone for debug messages
+- 8x16 font in high rez
+- put all default exception vectors in bios/vectors.s
+- clear bss before calling C code.
+
+06. Oct. 2001
+- minor bug in vectors.s
+- linea stubs
+- SetScrren() in xbios.c
+- some malloc debug info.
+- added missing util directory (MAD)
+- changed sysvarend to _bssend (it is the BSS, that ends! - got from DRI)
+- added end.s with _bssend 
+
+08. Oct. 2001
+- started iorec and kbdvbase stuff (aim is to reimplement kbd.c to
+  be compliant with the way TOS does it)
+- some debug info in Malloc(), bios(5)
+
+09. Oct. 2001
+- Got asm conout working - MiNT did run somewhat better (MAD)
+- Includes some more needed lineavars initialized (_esc_init) (MAD)
+- cleaned Makefile and end.s ("the end.s episode") (LVL)
+- copy paste error in linea stubs, startup.s (LVL)
+
+10. Oct. 2001
+- EmuTOS now expects a cartridge of type 3, just as the original TOS. (THO)
+
+11. Oct. 2001
+- removed the cart directory and the cartridge - no longer needed (MAD)
+
+12. Oct. 2001
+- Initialised linea from startup.s (_esc_init -> _linea_init) (MAD)
+- Cleaned up conio.c
+- Cleaned up output stuff in bios.c
+- Put all linea stuff in bios/linea.s
+- Cleaned up some minor things in bdos/proc.c
+- Changed linea/graphics init in bios/startup.s
+- Set up half of memory config in bios/startup.s
+- pseudo reentrant bios xbios trap handler (LVL)
+- Supexec() (LVL)
+- bios device functions arrays (bconstat_vec, ...) (LVL)
+
+13. Oct. 2001
+- Fixed some minor errors while compilation (MAD)
+- Added more system vars in tosvars.s and fixed an error (no pun_ptr) (MAD)
+
+14. Oct. 2001
+- implemented full memory configuration - much much more memory now (MAD)
+- implemented cursor (not blinking - this was easy) (MAD)
+- Changed version string of command.prg  (MAD)
+- correct fnt8x8 (previous one useless) and fnt8x16 (last char offset) (LVL)
+- some progress on iorec, but still not in service (LVL)
+
+16. Oct. 2001
+- Fixed some bugs in bios.c (the bconoutx functions need 2 parameters!) (THO)
+
+19. Oct. 2001
+- Cleaned up and seperated memory initialisation in memory.s  (MAD)
+- Cleaned up command.prg (got rid of cpm code) (MAD)
+
+20. Oct. 2001
+- added memmove and memset, erasing bmove, xmovs and bfill in bdos (LVL)
+- midi and ikbd bios device functions; new ikbd interrupt (LVL)
+- started to clean some headers (removed abbrev.h, btools.h) (LVL)
+- added bconout5 (raw console) (LVL)
+
+21. Oct. 2001
+- mfp xbios functions ; mfp init rewritten using xbios funcs. (LVL)
+- vbl routine: added palette handling and vblqueue. (LVL)
+- misc. xbios routines (vsync, random, ...) (LVL)
+- warning free, automatic built date in command.prg (LVL)
+- still some headers cleaning in bios/ and include/ (LVL)
+
+22. Oct. 2001
+- Video mode can be set hard in startup.s to all three modes!!! (MAD)
+- Cursor is now blinking (thanks Laurent, for Timer stuff!) (MAD)
+- switched off debugging for public release in startup.s: _print (MAD)
+
+23. Oct. 2001
+- Video mode recognition works (mono/color) (MAD)
+- Emulated bigger screen resolutions work in mono mode  (MAD)
+
+===== Initial release 0.1 ===================================================
+
+24. Oct. 2001
+- Changed all *.s assembler files to *.S, changed comments from "|" to "//"
+
+27. Oct. 2001
+- moved screen-related xbios functions in screen.c
+- added sound support (untested) in sound.c
+- added floppy support in floppy.c
+- started rewriting some of startup.c in C code (not completely done yet)
+- started cleaning old VME stuff in bios.c
+- native print is activated by a STONX_NATIVE_PRINT #define in config.h
+
+28. Oct. 2001
+- emutos.img file now is 192 kb (MAD)
+- rewrote complete linea initialization in C (bios/lineainit.c) (MAD)
+
+31. Oct. 2001
+- a TOS in RAM loaded using gemdos boot.prg (LVL)
+- some memory fixes, got rid of end.o (LVL)
+- a TOS in RAM loaded using an autoboot floppy (LVL)
+
+01. Nov. 2001
+- removed old stuff from bios.c and startup.s (LVL)
+- fixed the BDOS-buffer-init bug: EmuTOS boots a real MegaSTE2!!! (LVL)
+- Removed hardcoded default drive #defines
+- added EmuCON (EmuTOS console, before command.prg) to EmuTOS      (MAD)
+  This is not yet working (it seems command.c is not ROMable for now) 
+
+02. Nov. 2001
+- EmuCON is now working. (THO)
+- Implemented cursconf (XBIOS 0x15)  (MAD)
+- Removed F_IOCtl() and the MOUSE:, CLOCK: and NUL: devices.          (THO)
+- Mapped the CON:, AUX: and PRN: devices to Atari values (-1, -2, -3) (THO)
+- commented out XBIOS calls from command.c (for testing)
+
+03. Nov. 2001
+- run AUTO folder prgs, run EmuCON using Pexec(5) (LVL)
+- localconf.h taken in consideration (LVL)
+- implemented processor check and set of _longframe in BIOS/BDOS (MAD)
+- IKBD and MegaRTC clock (setting time & date untested) (LVL)
+
+04. Nov. 2001
+- added old VDI sources from DRI (not running yet)
+
+05. Nov. 2001.
+- added forgotten bios/processor.h
+
+06. Nov. 2001
+- US kbd default, optional DE and FR kbds, tools to add more KBD defs (LVL)
+- changed joystick support in aciavecs.S (untested) (LVL)
+- Makefile (updated clean and distclean, BUILDDATE also for CYGWIN) (LVL)
+- Reimplemented bios/memory.S in a more readable manner   (MAD)
+
+07. Nov. 2001
+- Reimplemented bios/memory.S - is hopefully perfect now   (MAD)
+
+08. Nov. 2001
+- Added several ikbd-functions as base for mouse driver    (MAD)
+- changed ikbdws (now 2. arg is UBYTE *ptr instead of LONG) (MAD)
+
+11. Nov. 2001
+- Put portab.h to include/ for bdos AND bios   (MAD)
+- ripped out kprint() (it has been replaced by kprintf()  (MAD)
+
+13. Nov. 2001
+- Native Language support tools, french translation (LVL)
+- asm glue for kprintf in startup.S (LVL)
+
+15. Nov. 2001 
+- Native Language support, german translation (MAD)
+- introduced PTR in include/portab.h, which is a LONG (MAD)
+
+16. Nov. 2001
+- Fixed bug in font_ring init (MAD)
+
+18. Nov. 2001 
+- Initmous implemented (C part - no data from asm delivered yet)  (MAD)
+- removed -Tdata= from Makefile (LVL)
+- painfully ANSIfied bdos and removed nearly all warnings (LVL)
+- minor changes (LVL)
+
+21. Nov. 2001
+- Changed all 'char's in bdos/ to 'BYTE', other will follow (MAD)
+
+22. Nov. 2001
+- Partially implemented unused mouse driver in bios/mouse.c (MAD)
+
+24. Nov. 2001
+- machine detection up to the MegaSTE and cookie jar filled (LVL)
+- country setting now in Makefile, stored in header os_pal (LVL)
+- nvram overrides country setting if present (not tested) (LVL)
+- dates in EmuCON printed according to _IDT (LVL)
+- 0xffff820e used when ste shifter present (LVL)
+- added some xbios functions skeletons (LVL)
+- a cvs trick to ensure obj/ directory is created even with update -d -P (LVL)
+- floppy floprate() and flopfmt() untested (LVL)
+
+25. Nov. 2001
+- Worked on bios/mouse.c   (MAD)
+
+26. Nov. 2001 
+- got Initmous() working (thanks Laurent)  (MAD)
+- changed all "VOID"s to "void" in bios/*.[hc]  (MAD)
+
+27. Nov. 2001
+- solved bdos-broken-when-floppy bug (xlseek proto wad badly ansified) (LVL)
+- removed silly FOREVER, VOID, and others from portab.h (LVL)
+- crude mediach(), TODO section and error names in floppy.c (LVL)
+- static strcmp in util/nls.c conform to standard semantics (LVL)
+- cksum handling of nvram (LVL)
+- new 'hardware' section in status.txt (LVL)
+
+1. Dec. 2001
+- standalone command.prg (added replacement _() and N_()) (LVL)

@@ -15,7 +15,12 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+#ifndef NO_ROM
 #include "nls.h"
+#else
+#define _(a) a
+#define N_(a) a
+#endif
 
 extern long jmp_gemdos();
 extern long xlongjmp();
