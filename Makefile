@@ -4,22 +4,14 @@
 # some features like pattern substitution probably
 # require GNU-make.
 #
-# targets are:
-# - all:    creates emutos.img
-# - 192:    creates emutos as a 192kb rom image file
-# - 512:    creates a falcon compatible 512 kb rom image
-# - falcon: the same like above
-# - depend: updates dependencies file
-# - clean:  removes all compiled and tmeporary stuff
-# - show:   disassembles the emutos.img 
-# - tgz:    bundles all in a tgz archive.
+# for a list of main targets do  
+#   make help
 #
 # C code (C) and assembler (S) source go in directories 
-# bios/, bdos/, util/ ; To add source code files, update
+# bios/, bdos/, util/, ... ; To add source code files, update
 # the variables xxxxCSRC and xxxxSSRC below, 
 # where xxxx is one of BIOS, BDOS, UTIL.
 #
-# Laurent.
 
 
 #
@@ -99,7 +91,7 @@ NATIVECC = gcc -Wall
 # Note: tosvars.o must be first object linked.
 
 BIOSCSRC = kprint.c xbios.c chardev.c blkdev.c bios.c clock.c \
-           fnt8x16.c fnt8x8.c fnt6x6.c mfp.c version.c \
+           fnt8x16.c fnt8x8.c fnt6x6.c mfp.c version.c parport.c \
            midi.c ikbd.c sound.c floppy.c disk.c screen.c lineainit.c \
            mouse.c initinfo.c cookie.c machine.c nvram.c country.c \
 	   fntlat2_6.c fntlat2_8.c fntlat2_16.c biosmem.c acsi.c
@@ -238,7 +230,7 @@ help:
 	@echo "help    this help message"
 	@echo "all     emutos2.img, a TOS 2 ROM image (0xE00000)"
 	@echo "192     etos192k.img, EmuTOS ROM padded to size 192 KB (starting at 0xFC0000)"
-	@echo "256     etos256k.img, EmuTOS ROM padded to size 192 KB (starting at 0xE00000)"
+	@echo "256     etos256k.img, EmuTOS ROM padded to size 256 KB (starting at 0xE00000)"
 	@echo "512     etos512k.img, EmuTOS ROM padded to size 512 KB (starting at 0xE00000)" 
 	@echo "ram     ramtos.img + boot.prg, a RAM tos"
 	@echo "flop    emutos.st, a bootable floppy with RAM tos"
@@ -262,10 +254,18 @@ emutos2.img: $(OBJECTS)
 192: etos192k.img
 
 etos192k.img: emutos1.img
-	cp emutos1.img emutos.tmp
-	dd if=/dev/zero bs=1024 count=192 >> emutos.tmp    # Make real tos.img...
-	dd if=emutos.tmp of=$@ bs=1024 count=192           # with right length.
-	rm -f emutos.tmp
+	@goal=192 ; \
+	size=`wc -c < $<` ; \
+	if [ $$size -gt `expr $$goal \* 1024` ] ; \
+	then \
+	  echo EmuTOS too big for $${goal}K: size = $$size ; \
+	  false ; \
+	else \
+	  echo dd if=/dev/zero of=$@ bs=1024 count=$$goal ; \
+	  dd if=/dev/zero of=$@ bs=1024 count=$$goal ; \
+	  echo dd if=$< of=$@ conv=notrunc ; \
+	  dd if=$< of=$@ conv=notrunc ; \
+	fi
 
 #
 # 256kB Image
@@ -274,10 +274,19 @@ etos192k.img: emutos1.img
 256: etos256k.img
 
 etos256k.img: emutos2.img
-	cp emutos2.img emutos.tmp
-	dd if=/dev/zero bs=1024 count=256 >> emutos.tmp
-	dd if=emutos.tmp of=$@ bs=1024 count=256
-	rm -f emutos.tmp
+	@goal=256 ; \
+	size=`wc -c < $<` ; \
+	if [ $$size -gt `expr $$goal \* 1024` ] ; \
+	then \
+	  echo EmuTOS too big for $${goal}K: size = $$size ; \
+	  false ; \
+	else \
+	  echo dd if=/dev/zero of=$@ bs=1024 count=$$goal ; \
+	  dd if=/dev/zero of=$@ bs=1024 count=$$goal ; \
+	  echo dd if=$< of=$@ conv=notrunc ; \
+	  dd if=$< of=$@ conv=notrunc ; \
+	fi
+
 
 #
 # 512kB Image (for Aranym or Falcon)
@@ -287,10 +296,19 @@ etos256k.img: emutos2.img
 falcon: etos512k.img
 
 etos512k.img: emutos2.img
-	cp emutos2.img emutos.tmp
-	dd if=/dev/zero bs=1024 count=512 >> emutos.tmp    # Make real tos.img...
-	dd if=emutos.tmp of=$@ bs=1024 count=512           # with right length.
-	rm -f emutos.tmp
+	@goal=512 ; \
+	size=`wc -c < $<` ; \
+	if [ $$size -gt `expr $$goal \* 1024` ] ; \
+	then \
+	  echo EmuTOS too big for $${goal}K: size = $$size ; \
+	  false ; \
+	else \
+	  echo dd if=/dev/zero of=$@ bs=1024 count=$$goal ; \
+	  dd if=/dev/zero of=$@ bs=1024 count=$$goal ; \
+	  echo dd if=$< of=$@ conv=notrunc ; \
+	  dd if=$< of=$@ conv=notrunc ; \
+	fi
+
 
 #
 # ram - In two stages. first link EmuTOS to know the top address of bss, 
@@ -316,6 +334,9 @@ boot.prg: obj/minicrt.o obj/boot.o obj/bootasm.o
 #
 
 flop : emutos.st
+
+fd0:	emutos.st
+	dd if=$< of=/dev/fd0D360
 
 emutos.st: mkflop$(EXE) bootsect.img ramtos.img
 	./mkflop$(EXE)
@@ -364,6 +385,7 @@ po/messages.pot: bug$(EXE) po/POTFILES.in
 # OS header
 # (need_header is an ugly trick to make sure the header is generated 
 # each time)
+#
 
 need_header:
 	@touch $@
@@ -439,16 +461,16 @@ obj/%.o : desk/%.S
 	${CC} ${CFLAGS} -S -Iutil $< -o $@
 
 %.dsm : cli/%.c
-	${CC} ${CFLAGS} -S -Iutil $< -o $@
+	${CC} ${CFLAGS} -S -Ibios $< -o $@
 
 %.dsm : vdi/%.c
-	${CC} ${CFLAGS} -S -Iutil $< -o $@
+	${CC} ${CFLAGS} -S -Ibios $< -o $@
 
 %.dsm : aes/%.c
-	${CC} ${CFLAGS} -S -Iutil $< -o $@
+	${CC} ${CFLAGS} -S -Ibios $< -o $@
 
 %.dsm : desk/%.c
-	${CC} ${CFLAGS} -S -Iutil $< -o $@
+	${CC} ${CFLAGS} -S -Ibios -Iaes -Idesk/icons $< -o $@
 
 #
 # dsm, show
@@ -500,7 +522,7 @@ fal_$(DESASS): fal_map
 #
 
 clean:
-	rm -f obj/*.o obj/*.s *~ */*~ *~ core emutos.img map $(DESASS)
+	rm -f obj/*.o obj/*.s *~ */*~ *~ core emutos[12].img map $(DESASS)
 	rm -f ramtos.img boot.prg etos*.img mkflop$(EXE) 
 	rm -f bootsect.img emutos.st date.prg dumpkbd.prg keytbl2c$(EXE)
 	rm -f bug$(EXE) po/messages.pot util/langs.c bios/header.h
@@ -516,7 +538,7 @@ distclean: clean
 # checkindent - check for indent warnings, but do not alter files.
 #
 
-INDENTFILES = bdos/*.c bios/*.c util/*.c tools/*.c
+INDENTFILES = bdos/*.c bios/*.c util/*.c tools/*.c desk/*.c aes/*.c vdi/*.c
 
 checkindent:
 	@err=0 ; \
