@@ -105,15 +105,20 @@ memok:
 
 /*
  * memconf - Configure the memory (and clear it)
+ *
+ * We first test if EmuTOS runs on a Falcon by reading a Falcon
+ * hardware register. If so, we can use the Falcon register $ff8006 for
+ * memory setup. Note that we can't use $ff8006 to do the Falcon test
+ * since the STE does not generate a bus error when reading from this
+ * register, however it does not really have the $ff8006 register :-(
  */
 memconf:
-#if 1   // FIXME: set to 0 for Steem
-        /* detect if this is a Falcon by reading $ff8006 register (joy) */
-        pea     0xff8006
+        /* detect if this is a Falcon by reading $ff8282 register */
+        pea     0xffff8282
         bsr     _check_read_byte
         tst.w   d0
         bne     falcmemconf
-#endif
+
 /*
  * memconf for ST
  *
@@ -123,7 +128,7 @@ memconf:
  * set the memory config accordingly. No real memory check is done, 
  * because in emulators it should be always ok - hopefully!
  */
-        move.b  #0xa, 0xffff8001        // set hw to 2 banks by 2 mb
+        move.b  #0xa,0xffff8001       // set hw to 2 banks by 2 mb
 
         lea     0x000008, a0            // a0 points to 1. bank
         lea     0x200008, a1            // a1 points to 2. bank
@@ -199,7 +204,7 @@ falcmemconf:
         bne.s   less16
         move.l  #0x00E00000,d0
 less16: 
-	move.l  d0, _phystop            // highest address as phystop
+        move.l  d0, _phystop            // highest address as phystop
 
 
 
