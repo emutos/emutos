@@ -1110,4 +1110,8 @@ Start... early ages
 27. Sep. 2002 
 - vdi/monout.c - optimized horzline() and rectfill()  (MAD)
 
-
+29. Sep. 2002
+- make etoscpr.img makes experimental compressed-RAM-inside-ROM (LVL)
+- use make comprtest to test the compressor (LVL)
+- bios/memory.s - debug messages optional (LVL)
+- added -pedantic to $(NATIVECC) options, killed some warnings in tools (LVL)
