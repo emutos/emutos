@@ -287,7 +287,7 @@ void fun_desk2desk(WORD dobj)
         ANODE *source;
         ANODE *target;
         ICONBLK * lpicon;
-        char drvname[2];
+        WORD drive_letter;
 
         target = app_afind(1, 0, dobj, NULL, NULL);
         sobj  = 0;
@@ -306,9 +306,8 @@ void fun_desk2desk(WORD dobj)
                 if (target->a_type == AT_ISTRSH)
                 {
                         lpicon = (ICONBLK *)(G.g_screen[sobj].ob_spec);
-                        drvname[0] = lpicon->ib_char & 0xFF;
-                        drvname[1] = 0;
-                        cont = fun_alert(2, STDELDIS, (WORD*)drvname);
+                        drive_letter = lpicon->ib_char & 0x0FF;
+                        cont = fun_alert(2, STDELDIS, &drive_letter);
                 }
                 if (cont != 1) continue;
                 fun_file2any(sobj, NULL, target, NULL, dobj);

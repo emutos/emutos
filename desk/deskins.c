@@ -566,7 +566,7 @@ WORD ins_app(BYTE *pfname, ANODE *pa)
 
 #if MULTIAPP
         omemsz = pa->a_memreq;
-        merge_str(&memszstr[0], "%W", &omemsz);
+        sprintf(&memszstr[0], "%d", omemsz);
         inf_sset(tree, APMEMSZ, &memszstr[0]);
 #endif
 

@@ -55,16 +55,16 @@ SFCB
 /************************************************************************/
 /* m y _ i t o a                                                        */
 /************************************************************************/
-void my_itoa(UWORD number, BYTE *pnumstr)
+static void my_itoa(UWORD number, BYTE *pnumstr)
 {
         WORD            ii;
 
         for (ii = 0; ii < 2; pnumstr[ii++] = '0');
         pnumstr[2] = NULL;
         if (number > 9)
-          merge_str(pnumstr, "%W", &number);
+          sprintf(pnumstr, "%d", number);
         else
-          merge_str(pnumstr+1, "%W", &number);
+          sprintf(pnumstr+1, "%d", number);
 } /* my_itoa */
 
 
@@ -135,10 +135,7 @@ void fmt_date(UWORD date, BYTE *pdate)
 } /* fmt_date */
 
 
-        WORD
-ob_sfcb(psfcb, pfmt)
-        LONG            psfcb;
-        BYTE            *pfmt;
+static WORD ob_sfcb(LONG psfcb, BYTE *pfmt)
 {
         SFCB            sf;
         BYTE            *pdst, *psrc;
@@ -175,7 +172,7 @@ ob_sfcb(psfcb, pfmt)
         if (sf.sfcb_attr & F_SUBDIR)
           *psrc = NULL;
         else
-          merge_str(&psize_str[0], "%L", (void *)&sf.sfcb_size);
+          sprintf(&psize_str[0], "%ld", sf.sfcb_size);
         for(cnt = 8 - strlen(psrc); cnt--; *pdst++ = ' ');
         while (*psrc)
           *pdst++ = *psrc++;
@@ -273,7 +270,7 @@ void inf_finish(LONG tree, WORD dl_ok)
 *       Routine to get number of files and folders and stuff them in
 *       a dialog box.
 */
-WORD inf_fifo(LONG tree, WORD dl_fi,WORD  dl_fo, BYTE *ppath)
+WORD inf_fifo(LONG tree, WORD dl_fi, WORD dl_fo, BYTE *ppath)
 {
         WORD            junk, more;
         BYTE            nf_str[6], nd_str[6];
@@ -289,21 +286,17 @@ WORD inf_fifo(LONG tree, WORD dl_fi,WORD  dl_fo, BYTE *ppath)
           return(FALSE);
         G.g_ndirs--;
 
-        merge_str(&nf_str[0], "%L", (void *)&G.g_nfiles);
+        sprintf(&nf_str[0], "%ld", G.g_nfiles);
         inf_sset(tree, dl_fi, &nf_str[0]);
 
-        merge_str(&nd_str[0], "%L", (void *)&G.g_ndirs);
+        sprintf(&nd_str[0], "%ld", G.g_ndirs);
         inf_sset(tree, dl_fo, &nd_str[0]);
         return(TRUE);
 }
 
 
-        void
-inf_dttmsz(tree, pf, dl_dt, dl_tm, dl_sz, psize)
-        LONG            tree;
-        FNODE           *pf;
-        WORD            dl_dt, dl_tm, dl_sz;
-        LONG            *psize;
+static void inf_dttmsz(LONG tree, FNODE *pf, WORD dl_dt, WORD dl_tm,
+                       WORD dl_sz, LONG *psize)
 {
         BYTE            psize_str[9], ptime_str[7], pdate_str[7];
 
@@ -313,7 +306,7 @@ inf_dttmsz(tree, pf, dl_dt, dl_tm, dl_sz, psize)
         fmt_time(pf->f_time, &ptime_str[0]);
         inf_sset(tree, dl_tm, &ptime_str[0]);
 
-        merge_str(&psize_str[0], "%L", (void *)psize);
+        sprintf(&psize_str[0], "%ld", *psize);
         inf_sset(tree, dl_sz, &psize_str[0]);
 }
 
@@ -447,10 +440,10 @@ WORD inf_disk(BYTE dr_id)
           inf_sset(tree, DIDRIVE, &drive[0]);
           inf_sset(tree, DIVOLUME, &plab_str[0]);
 
-          merge_str(&puse_str[0], "%L", (void *)&G.g_size);
+          sprintf(&puse_str[0], "%ld", G.g_size);
           inf_sset(tree, DIUSED, &puse_str[0]);
           
-          merge_str(&pav_str[0], "%L", (void *)&avail);
+          sprintf(&pav_str[0], "%ld", avail);
           inf_sset(tree, DIAVAIL, &pav_str[0]);
 
           inf_finish(tree, DIOK);

@@ -1492,7 +1492,7 @@ WORD deskmain()
         pr_topmem = LOFFSET(pr_topmem);
 
         csize = (pr_topmem - pr_begdsk) >> 10;          /* K app space  */
-        merge_str(&memszstr[0], "%L", &csize);          /* to ASCII     */
+        sprintf(&memszstr[0], "%ld", csize);            /* to ASCII     */
         iac_strcop(G.a_trees[ADDINFO], DEMEMSIZ, ADDR(&memszstr[0]));
         
         proc_info(GEMPID,&junk1,&junk2,&pr_beggem,&csize,&templn,

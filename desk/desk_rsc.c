@@ -1609,7 +1609,7 @@ static OBJECT *desk_rs_trees[] = {
 
 
 char *desk_rs_fstr[] = {
-    N_("%L bytes used in %W items."),
+    N_("%ld bytes used in %d items."),
     N_("  Show as icons  \007S"),
     N_("application"),
     N_("documents"),
@@ -1648,14 +1648,14 @@ char *desk_rs_fstr[] = {
        "the root directory.][OK]"),
     N_("[3][Formatting will ERASE all|"
        "information on the disk in drive|"
-       "%S:.  Click on OK only if you don't|"
+       "%c:.  Click on OK only if you don't|"
        "mind losing the information on|"
        "this disk.][  OK  |Cancel]"),
     N_("[3][You cannot copy a parent folder|"
        "into one of its child folders.][  OK  ]"),
     N_("[3][If you are sure you want to|"
        "delete ALL the information on the|"
-       "disk in drive %S:, click on OK.|"
+       "disk in drive %c:, click on OK.|"
        "Otherwise, click on Cancel.][  OK  |Cancel]"),
     N_("[1][There is not enough space available|"
        "to configure this application.  To free|"

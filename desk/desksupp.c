@@ -792,21 +792,22 @@ void do_format(WORD curr)
 #if I8086
         WORD    foundit
 #endif
-        WORD    *wtemp;
         BYTE    msg[6];
         ANODE   *pa;
         FNODE   *pf;
+        WORD    drive_letter;
 
         pa = i_find(G.g_cwin, curr, &pf, &junk);
 
         if ( (pa) && (pa->a_type == AT_ISDISK) )
         {
-          msg[0] = pf->f_junk ;
-          msg[1] = NULL;
-          wtemp = (WORD *)&msg[0];
+          drive_letter = pf->f_junk;
 
-          ret = fun_alert(2, STFORMAT, (WORD *)&wtemp);
-          strcpy(&msg[1],":");
+          ret = fun_alert(2, STFORMAT, &drive_letter);
+
+          msg[0] = drive_letter;
+          msg[1] = ':';
+          msg[2] = 0;
 
           if (ret == 1)
           {

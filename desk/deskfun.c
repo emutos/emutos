@@ -44,16 +44,16 @@
 
 
 /*
-*       Routine to transfer a string that requires integrated variables
-*       that are merged in.  The resultant alert is then displayed;
-*/
-WORD fun_alert(WORD defbut, WORD stnum, WORD pwtemp[])
+ *  Routine to transfer a string that requires an integrated variable
+ *  that is merged in.  The resultant alert is then displayed;
+ */
+WORD fun_alert(WORD defbut, WORD stnum, WORD *pwtemp)
 {
         rsrc_gaddr(R_STRING, stnum, &G.a_alert);
-        if (pwtemp != (WORD *) 0)
+        if (pwtemp != (WORD *)0)
         {
           strcpy(&G.g_2text[0], (char *)G.a_alert);
-          merge_str(&G.g_1text[0], &G.g_2text[0], pwtemp);
+          sprintf(&G.g_1text[0], &G.g_2text[0], *pwtemp);
           G.a_alert = ADDR(&G.g_1text[0]);
         }
         return( form_alert(defbut, G.a_alert) );
@@ -444,10 +444,10 @@ void fun_drag(WORD src_wh, WORD dst_wh, WORD dst_ob, WORD dulx, WORD duly)
 */
 void fun_del(WNODE *pdw)
 {
-        WORD            src_ob, ret;
-        UWORD           *pwd;
-        ICONBLK         *spib;
-        BYTE            drvch[2], *ptmp;
+        WORD        src_ob, ret;
+        ICONBLK     *spib;
+        BYTE        *ptmp;
+        WORD        drive_letter;
 
         if (pdw->w_path->p_spec[0] != '@')
         {
@@ -468,18 +468,17 @@ void fun_del(WNODE *pdw)
               ptmp = &G.g_tmppth[0];
               while (*ptmp < 0x40)
                 ptmp++;
-              drvch[0] = *ptmp;
+              drive_letter = (UWORD)*ptmp;
             } /* if V_TEXT */
 /* */
             else
             {
               spib = get_spec(G.g_screen, src_ob);
-              drvch[0] = (0x00FF & spib->ib_char);
+              drive_letter = (0x00FF & spib->ib_char);
             } /* else */
-            drvch[1] = NULL;
-            pwd = (UWORD *) &drvch[0];
+
             graf_mouse(ARROW, 0x0L);
-            ret = fun_alert(2, STDELDIS, (WORD *)&pwd); /* FIXME: Is the 3rd parameter ok? */
+            ret = fun_alert(2, STDELDIS, &drive_letter);
             graf_mouse(HGLASS, 0x0L);
             if (ret == 1)
             {

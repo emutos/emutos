@@ -583,7 +583,7 @@ WORD d_doop(WORD op, LONG tree, WORD obj, BYTE *psrc_path, BYTE *pdst_path,
               if (tree)
               {
                 *pdcnt -= 1;
-                merge_str(&ml_dirs[0], "%W", pdcnt);
+                sprintf(&ml_dirs[0], "%d", *pdcnt);
                 inf_sset(tree, ml_dlfo, &ml_dirs[0]);
                 draw_fld(tree, ml_dlfo);
               }
@@ -652,7 +652,7 @@ WORD d_doop(WORD op, LONG tree, WORD obj, BYTE *psrc_path, BYTE *pdst_path,
               if (tree)
               {
                 *pfcnt -= 1;
-                merge_str(&ml_files[0], "%W", pfcnt);
+                sprintf(&ml_files[0], "%d", *pfcnt);
                 inf_sset(tree, ml_dlfi, &ml_files[0]);
                 draw_fld(tree, ml_dlfi);
               }
@@ -820,9 +820,9 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
 
         if (tree)
         {
-          merge_str(&ml_files[0], "%W", pfcnt);
+          sprintf(&ml_files[0], "%d", *pfcnt);
           inf_sset(tree, ml_dlfi, &ml_files[0]);
-          merge_str(&ml_dirs[0], "%W", pdcnt);
+          sprintf(&ml_dirs[0], "%d", *pdcnt);
           inf_sset(tree, ml_dlfo, &ml_dirs[0]);
           ml_havebox = TRUE;
           show_hide(FMD_START, tree);
@@ -939,7 +939,7 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
               if (tree)
               {
                 *pfcnt -= 1;
-                merge_str(&ml_files[0], "%W", pfcnt);
+                sprintf(&ml_files[0], "%d", *pfcnt);
                 inf_sset(tree, ml_dlfi, &ml_files[0]);
                 draw_fld(tree, ml_dlfi);
               } /* if tree */
