@@ -402,3 +402,9 @@ Start... early ages
 - corrected // notice in bios/startup.S - the meminit actually
   needs stack pointer - for both the bus error handler and for
   occasionals bsr kprintf (joy)
+
+01. Jan. 2002
+- FastRAM detection now uses proper CPU check (joy)
+- resetvec handling fixed (wrong check 'tst.b resetvec' removed) (joy)
+- cartridge is defined at $00fa0000, not $fffa0000 - fixed. (joy)
+- _check_read_byte now flushes pipelines at the correct places (joy)
