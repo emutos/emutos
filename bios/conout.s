@@ -126,28 +126,36 @@ msg_cputc:
 	.ascii  "cputc: char is 0x%04x or  %c\n\0"
 	.even
 
-dbg_cputc:
-	move.w  d1,-(sp)
-	pea	msg_cputc
-	jsr     _kprintf
-	add.w	#6,sp
 
 
 | ==== cons_out - console output =============================================
 | Call as void cons_out(WORD chr)
 
+|
+| LVL:	This wrapper is probably a bit pessimistic. The exact registers
+| to save should be examined in each routine... Anyway it works until
+| some assembler adept hase time to check all registers :-)
+|
 _cputc:
+	move.w  4(sp),d1
+	movem.l d2-d7/a2-a6,-(sp)
+	move.w  d1,-(sp)
+	bsr     cputc
+	add.w   #2,sp
+	movem.l (sp)+,d2-d7/a2-a6
+	rts
+
+cputc:		
         move.w  4(sp), d1       | Get just character from stack
 
 gsx_conout:                     | Gsx enters here
-|        andi.w  #0x7F, d1       | Limit to the chars we have
-        andi.w  #0xFF, d1       | Limit to the chars we have 
 
-	move.w  d1,-(sp)
-	move.w  d1,-(sp)
-	pea	msg_cputc
-	jsr     _kprintf
-	add.w	#8,sp
+| LVL   andi.w  #0xFF, d1       | Limit to the chars we have 
+| 	move.w  d1,-(sp)
+|	move.w  d1,-(sp)
+|	pea	msg_cputc
+|	jsr     _kprintf
+|	add.w	#8,sp
 
         move.w  4(sp), d1       | Get just character from stack
         andi.w  #0xFF, d1       | Limit to the chars we have
@@ -1450,6 +1458,11 @@ gl_f_init:
 
 
 | ==== _esc_init - escape initialization routine.============================
+
+	
+| LVL:	 checked that this routine only clobbers 'scratch' registers.
+| 	 if this routine calls other routines, please ensure this
+|        remains true.
 
 _esc_init:
         move.b  sshiftmod, d0           | get video resolution
