@@ -699,10 +699,10 @@ void dr_recfl()
 
     arb_corner(PTSIN, ULLR);
     fi = cur_work->fill_color;
-    FG_BP_1 = fi & 1;
-    FG_BP_2 = fi & 2;
-    FG_BP_3 = fi & 4;
-    FG_BP_4 = fi & 8;
+    fg_bp[0] = (fi & 1);
+    fg_bp[1] = (fi & 2);
+    fg_bp[2] = (fi & 4);
+    fg_bp[3] = (fi & 8);
 
     pts_in = PTSIN;
     X1 = *pts_in++;

@@ -1071,3 +1071,8 @@ Start... early ages
 
 09. Sep. 2002
 - vdi/monout.c - abline() in C more optimized (MAD)
+
+12. Sep. 2002
+- vdi/monout.c - abline() simplified (better for color) (MAD)
+               - habline() initially implemented (MAD)
+               

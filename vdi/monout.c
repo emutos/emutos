@@ -72,9 +72,9 @@ static WORD m_dmnd[] = { 1, 5, -4, 0, 0, -3, 4, 0, 0, 3, -4, 0 };
  * d1 = signed 16 bit integer
  */
 
-int smul_div(m1,m2,d1)
+int smul_div(WORD m1, WORD m2, WORD d1)
 {
-    return (short)(((short)(m1)*(long)((short)(m2)))/(short)(d1));
+    return (short)((m1 * (long)m2) / d1);
 }
 
 
@@ -111,10 +111,10 @@ void v_pline()
     LN_MASK = (l < 6) ? LINE_STYLE[l] : work_ptr->ud_ls;
 
     l = work_ptr->line_color;
-    FG_BP_1 = (l & 1);
-    FG_BP_2 = (l & 2);
-    FG_BP_3 = (l & 4);
-    FG_BP_4 = (l & 8);
+    fg_bp[0] = (l & 1);
+    fg_bp[1] = (l & 2);
+    fg_bp[2] = (l & 4);
+    fg_bp[3] = (l & 8);
 
     if (work_ptr->line_width == 1) {
         pline();
@@ -414,6 +414,7 @@ void vqf_attr()
 WORD code(WORD x, WORD y)
 {
     WORD clip_flag;
+
     clip_flag = 0;
     if (x < XMN_CLIP)
         clip_flag = 1;
@@ -502,10 +503,10 @@ void plygn()
     REG WORD *pointer, i, k;
 
     i = cur_work->fill_color;
-    FG_BP_1 = (i & 1);
-    FG_BP_2 = (i & 2);
-    FG_BP_3 = (i & 4);
-    FG_BP_4 = (i & 8);
+    fg_bp[0] = (i & 1);
+    fg_bp[1] = (i & 2);
+    fg_bp[2] = (i & 4);
+    fg_bp[3] = (i & 8);
     LSTLIN = FALSE;
 
     pointer = PTSIN;
@@ -755,10 +756,10 @@ void gdp_rbox()
         i = work_ptr->line_index;
         LN_MASK = (i < 6) ? LINE_STYLE[i] : work_ptr->ud_ls;
         i = work_ptr->line_color;
-        FG_BP_1 = (i & 1);
-        FG_BP_2 = (i & 2);
-        FG_BP_3 = (i & 4);
-        FG_BP_4 = (i & 8);
+        fg_bp[0] = (i & 1);
+        fg_bp[1] = (i & 2);
+        fg_bp[2] = (i & 4);
+        fg_bp[3] = (i & 8);
 
         if (work_ptr->line_width == 1) {
             pline();
@@ -923,57 +924,6 @@ void clc_arc()
 
     else
         plygn();
-}
-
-
-
-/*
- * st_fl_ptr -
- */
-
-void st_fl_ptr()
-{
-    REG WORD fi, pm;
-    REG WORD *pp = NULL;
-    REG struct attribute *work_ptr;
-
-    work_ptr = cur_work;
-    fi = work_ptr->fill_index;
-    pm = 0;
-    switch (work_ptr->fill_style) {
-    case 0:
-        pp = &HOLLOW;
-        break;
-
-    case 1:
-        pp = &SOLID;
-        break;
-
-    case 2:
-        if (fi < 8) {
-            pm = DITHRMSK;
-            pp = &DITHER[fi * (pm + 1)];
-        } else {
-            pm = OEMMSKPAT;
-            pp = &OEMPAT[(fi - 8) * (pm + 1)];
-        }
-        break;
-    case 3:
-        if (fi < 6) {
-            pm = HAT_0_MSK;
-            pp = &HATCH0[fi * (pm + 1)];
-        } else {
-            pm = HAT_1_MSK;
-            pp = &HATCH1[(fi - 6) * (pm + 1)];
-        }
-        break;
-    case 4:
-        pm = 0x000f;
-        pp = &work_ptr->ud_patrn[0];
-        break;
-    }
-    work_ptr->patptr = pp;
-    work_ptr->patmsk = pm;
 }
 
 
@@ -1548,118 +1498,110 @@ void dsf_udpat()
 
 /* Set pixel at x, y */
 inline void
-drawpixel(UWORD * addr, UWORD offs, int linebit)
+setpixel(UWORD *addr, UWORD offs, int linebit)
 {
-    if (linebit) {  /* use pattern ?*/
+    UWORD noffs;
+
+    noffs = ~offs;
+
+    if (linebit) {
         switch (WRT_MODE) {
         case 0:              /* rep */
             switch (v_planes) {
             case 4:
                 if (fg_bp[3])
-                    *(WORD*)addr |= offs;
+                    *addr |= offs;
                 else
-                    *(WORD*)addr &= ~offs;
+                    *addr &= noffs;
                 addr++;
                 if (fg_bp[2])
-                    *(WORD*)addr |= offs;
+                    *addr |= offs;
                 else
-                    *(WORD*)addr &= ~offs;
+                    *addr &= noffs;
                 addr++;
             case 2:
                 if (fg_bp[1])
-                    *(WORD*)addr |= offs;
+                    *addr |= offs;
                 else
-                    *(WORD*)addr &= ~offs;
+                    *addr &= noffs;
                 addr++;
-            case 1:
+            default:
                 if (fg_bp[0])
-                    *(WORD*)addr |= offs;
+                    *addr |= offs;
                 else
-                    *(WORD*)addr &= ~offs;
+                    *addr &= noffs;
             }
             break;
         case 1:              /* or */
             switch (v_planes) {
             case 4:
                 if (fg_bp[3])
-                    *(WORD*)addr++ |= offs;   // set bit
+                    *addr |= offs;   // set bit
+                addr++;
                 if (fg_bp[2])
-                    *(WORD*)addr++ |= offs;   // set bit
+                    *addr |= offs;   // set bit
+                addr++;
             case 2:
                 if (fg_bp[1])
-                    *(WORD*)addr++ |= offs;   // set bit
-            case 1:
+                    *addr |= offs;   // set bit
+                addr++;
+            default:
                 if (fg_bp[0])
-                    *(WORD*)addr |= offs;   // set bit
+                    *addr |= offs;   // set bit
             }
             break;
         case 2:              /* xor */
             switch (v_planes) {
             case 4:
                 if (fg_bp[3])
-                    *(WORD*)addr++ ^= offs;   // xor bit
+                    *addr ^= offs;   // xor bit
+                addr++;
                 if (fg_bp[2])
-                    *(WORD*)addr++ ^= offs;   // xor bit
+                    *addr ^= offs;   // xor bit
+                addr++;
             case 2:
                 if (fg_bp[1])
-                    *(WORD*)addr++ ^= offs;   // xor bit
-            case 1:
+                    *addr ^= offs;   // xor bit
+                addr++;
+            default:
                 if (fg_bp[0])
-                    *(WORD*)addr ^= offs;   // xor bit
+                    *addr ^= offs;   // xor bit
             }
             break;
-        case 3:              /* reverse transparent */
+        default:              /* reverse transparent */
             switch (v_planes) {
             case 4:
                 if (fg_bp[3])
-                    *(WORD*)addr++ &= ~offs;
+                    *addr &= noffs;
+                addr++;
                 if (fg_bp[2])
-                    *(WORD*)addr++ &= ~offs;
+                    *addr &= noffs;
+                addr++;
             case 2:
                 if (fg_bp[1])
-                    *(WORD*)addr++ &= ~offs;
-            case 1:
+                    *addr &= noffs;
+                addr++;
+            default:
                 if (fg_bp[0])
-                    *(WORD*)addr &= ~offs;
+                    *addr &= noffs;
             }
         }
     } else {
         if (WRT_MODE == 0) {
             switch (v_planes) {
             case 4:
-                *(WORD*)addr++ &= ~offs;
-                *(WORD*)addr++ &= ~offs;
+                *addr++ &= noffs;
+                *addr++ &= noffs;
             case 2:
-                *(WORD*)addr++ &= ~offs;
-            case 1:
-                *(WORD*)addr &= ~offs;
+                *addr++ &= noffs;
+            default:
+                *addr &= noffs;
             }
         }
     }
 }
 
-/* Set pixel at x, y */
-inline void
-monopixel(UWORD * addr, UWORD offs, int linebit)
-{
-    if (linebit) {  /* use pattern ?*/
-        switch (WRT_MODE) {
-        case 3:              /* reverse transparent */
-            *addr &= ~offs;
-            break;
-        case 2:              /* xor */
-            *addr ^= offs;
-            break;
-        case 1:              /* or */
-        case 0:              /* rep */
-            *addr |= offs;
-        }
-    } else {
-        if (WRT_MODE == 0) {
-            *addr &= ~offs;
-        }
-    }
-}
+
 
 /*
  * abline - draw a line (general purpose)
@@ -1694,15 +1636,12 @@ abline ()
     WORD dx;			/* width of rectangle around line */
     WORD dy;			/* height of rectangle around line */
     WORD rem;			/* remainder */
-    WORD xinc;			/* increment for moving x coordinate */
-    WORD yinc;			/* increment for moving y coordinate */
     void *yend;
     WORD xpart;
     void * ypart;
-    UWORD offs;
     LONG yadd;
+    UWORD offs;
     UWORD linemask;             /* linestyle bits */
-    int linebit;                /* actual bit of linestyle */
 
     x1 = X1;
     y1 = Y1;
@@ -1716,89 +1655,275 @@ abline ()
     dy = y2 - y1;
     if (dx < 0) dx = -dx;
     if (dy < 0) dy = -dy;
-    xinc = (x2 > x1) ? 1 : -1;
-    yinc = (y2 > y1) ? 1 : -1;
-    yadd = (LONG) yinc * v_lin_wr;
+    yadd = (y2 > y1) ? (LONG) v_lin_wr : (LONG) -1 * v_lin_wr;
+    dx += dx;
+    dy += dy;
 
-    offs = 0x8000 >> (x1&0xf);
     ypart = v_bas_ad + (LONG)y1 * v_lin_wr;     /* init adress counter */
-    yend = v_bas_ad + (LONG)y2 * v_lin_wr;     /* init adress counter */
-    xpart = (x1&0xfff0)>>shft_off;
+    yend = v_bas_ad + (LONG)y2 * v_lin_wr;	/* end address */
+    offs = 0x8000 >> (x1&0xf);                  /* initial bit position in WORD */
 
     linemask = LN_MASK;
 
-    if (v_planes == 1) {                	/* replace */
-        if (dx >= dy) {
-            rem = dx / 2;
+    if (dx >= dy) {
+        rem = -dx;
+        if (x2 > x1) {
             for (;;) {
+                xpart = (x1&0xfff0)>>shft_off;
                 linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
-                linebit = linemask & 1;
-                monopixel(ypart + xpart, offs, linebit);
+                setpixel(ypart + xpart, offs, linemask&1);
+                offs = offs >> 1| offs << 15;
                 if (x1 == x2)
                     break;
-                x1 += xinc;
-                xpart = (x1&0xfff0)>>3;
-                offs = 0x8000 >> (x1&0xf);
+                x1++;
                 rem += dy;
-                if (rem >= dx) {
+                if (rem >= 0) {
                     rem -= dx;
                     ypart += yadd;
                 }
             }
         } else {
-            rem = dy / 2;
             for (;;) {
+                xpart = (x1&0xfff0)>>shft_off;
                 linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
-                linebit = linemask & 1;
-                monopixel(ypart + xpart, offs, linebit);
-                if (ypart == yend)
+                setpixel(ypart + xpart, offs, linemask&1);
+                offs = offs << 1| offs >> 15;
+                if (x1 == x2)
                     break;
-                ypart += yadd;
-                rem += dx;
-                if (rem >= dy) {
-                    rem -= dy;
-                    x1 += xinc;
-                    offs = 0x8000 >> (x1&0xf);
-                    xpart = (x1&0xfff0)>>3;
+                x1--;
+                rem += dy;
+                if (rem >= 0) {
+                    rem -= dx;
+                    ypart += yadd;
                 }
             }
         }
     } else {
-        if (dx >= dy) {
-            rem = dx / 2;
+        rem = -dy;
+        xpart = (x1&0xfff0)>>shft_off;
+        if (x2 > x1) {
             for (;;) {
                 linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
-                linebit = linemask & 1;
-                drawpixel(ypart + xpart, offs, linebit);
-                if (x1 == x2)
-                    break;
-                x1 += xinc;
-                xpart = (x1&0xfff0)>>shft_off;
-                offs = 0x8000 >> (x1&0xf);
-                rem += dy;
-                if (rem >= dx) {
-                    rem -= dx;
-                    ypart += yadd;
-                }
-            }
-        } else {
-            rem = dy / 2;
-            for (;;) {
-                linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
-                linebit = linemask & 1;
-                drawpixel(ypart + xpart, offs, linebit);
+                setpixel(ypart + xpart, offs, linemask&1);
                 if (ypart == yend)
                     break;
                 ypart += yadd;
                 rem += dx;
-                if (rem >= dy) {
+                if (rem >= 0) {
                     rem -= dy;
-                    x1 += xinc;
-                    offs = 0x8000 >> (x1&0xf);
+                    x1++;
                     xpart = (x1&0xfff0)>>shft_off;
+                    offs = offs >> 1| offs << 15;
+                }
+            }
+        } else {
+            for (;;) {
+                linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                setpixel(ypart + xpart, offs, linemask&1);
+                if (ypart == yend)
+                    break;
+                ypart += yadd;
+                rem += dx;
+                if (rem >= 0) {
+                    rem -= dy;
+                    x1--;
+                    xpart = (x1&0xfff0)>>shft_off;
+                    offs = offs << 1| offs >> 15;
                 }
             }
         }
     }
     LN_MASK = linemask;
 }
+
+
+
+/*
+ * st_fl_ptr -
+ */
+
+void st_fl_ptr()
+{
+    REG WORD fi, pm;
+    REG WORD *pp = NULL;
+    REG struct attribute *work_ptr;
+
+    work_ptr = cur_work;
+    fi = work_ptr->fill_index;
+    pm = 0;
+    switch (work_ptr->fill_style) {
+    case 0:
+        pp = &HOLLOW;
+        break;
+
+    case 1:
+        pp = &SOLID;
+        break;
+
+    case 2:
+        if (fi < 8) {
+            pm = DITHRMSK;
+            pp = &DITHER[fi * (pm + 1)];
+        } else {
+            pm = OEMMSKPAT;
+            pp = &OEMPAT[(fi - 8) * (pm + 1)];
+        }
+        break;
+    case 3:
+        if (fi < 6) {
+            pm = HAT_0_MSK;
+            pp = &HATCH0[fi * (pm + 1)];
+        } else {
+            pm = HAT_1_MSK;
+            pp = &HATCH1[(fi - 6) * (pm + 1)];
+        }
+        break;
+    case 4:
+        pm = 0x000f;
+        pp = &work_ptr->ud_patrn[0];
+        break;
+    }
+    work_ptr->patptr = pp;
+    work_ptr->patmsk = pm;
+}
+
+
+
+#if 0  // new habline code
+inline void
+setmask(UWORD *addr, UWORD mask, UWORD patind)
+{
+    int plane;
+    UWORD pattern;
+    UWORD patadd;               /* advance for multiplane patterns */
+
+    patadd = multifill ? 16 : 0;     /* multi plane pattern */
+
+    for (plane = v_planes; plane > 0; plane-- ) {
+        UWORD d4;
+        UWORD d5;
+
+        if (fg_bp[plane])
+            pattern = patptr[patind];
+        else
+            pattern = 0;
+
+        d5 = d4 = *addr;    /* get data from screen address */
+
+        switch (WRT_MODE) {
+        case 3:  /* xor */
+            d5 ^= pattern;   /* xor the pattern with the source */
+            d4 ^= d5;        /* xor result with source - now have pattern */
+            d4 &= mask;      /* isolate changed bits outside of fringe */
+            d5 ^= d4;        /* restore states of bits outside of fringe */
+            break;
+        case 2:  /* nor */
+            pattern = ~pattern;   /* invert pattern */
+        case 1:  /* or */
+            d5 &= pattern;   /* and complement of mask with source */
+            d4 ^= d5;        /* isolate changed bits */
+            d4 &= mask;      /* isolate changed bits outside of fringe */
+            d5 ^= d4;        /* restore them to original states */
+            break;
+        default: /* rep */
+            d5 ^= pattern;   /* xor the pattern with the source */
+            d5 &= mask;      /* isolate the bits outside the fringe */
+            d5 ^= pattern;   /* restore the bits outside the fringe */
+        }
+        *addr = d5;         /* write back the result */
+    }
+    addr++; /* advance one WORD to next plane */
+    patind += patadd;
+}
+
+
+
+/* Table of masks used to isolate pixels within a byte */
+const UWORD masktab[] = {
+    0xFFFF, 0x7FFF, 0x3FFF, 0x1FFF,
+    0x0FFF, 0x07FF, 0x03FF, 0x01FF,
+    0x00FF, 0x007F, 0x003F, 0x001F,
+    0x000F, 0x0007, 0x0003, 0x0001,
+    0x00 };
+
+
+/*
+ * habline - draw a horizontal line
+ *
+ * This routine draws a line between (X1,Y1) and (X2,Y1)
+ * using a left fringe, inner loop, right fringe bitblt algor-
+ * ithm.  The line is modified by the pattern and WRT_MODE
+ * variables.  This routine handles all 3 video resolutions.
+ *
+ * input:
+ *     X1,Y1,X2  = coordinates.
+ *     v_planes    = number of video planes. (resolution)
+ *     patmsk      = index into pattern.
+ *     patptr      = ptr to pattern.
+ *     WRT_MODE    = writing mode:
+ *                        0 => replace mode.
+ *                        1 => or mode.
+ *                        2 => xor mode.
+ *                        3 => not mode.
+ */
+
+void habline() {
+    WORD x;
+    WORD y;
+    WORD w;
+    UWORD *addr;
+    UWORD mask;
+    UWORD rem;                  /* remainder */
+    WORD bw;
+    UWORD patind;               /* index into pattern table */
+
+    if (X2 > X1) {
+       w = X2 - X1;             /* width of line */
+       x = X1;
+    } else {
+        w = X1 - X2;            /* width of line */
+        x = X2;
+    }
+    y = Y1;
+
+    /* Get the pattern with which the line is to be drawn. */
+    patind = y&patmsk;               /* which pattern to start with */
+
+    /* init adress counter */
+    addr = (UWORD*)v_bas_ad + (LONG)y * v_lin_wr + ((x&0xfff0)>>shft_off);
+
+    rem = x&0xf;
+    mask  = masktab[rem];
+
+    /* check, if the line is completely contained within one WORD */
+    if ( (rem + w) < 16 ) {
+        /* Isolate the necessary pixels */
+        mask &= ~masktab[rem+w];
+        setmask(addr, mask, patind);
+        return;
+    }
+
+    /* Draw the left fringe */
+    if (rem) {
+        setmask(addr, mask, patind);
+        addr++;
+        w -= 16-rem;
+    }
+    if (w < 1)                                /* That it? */
+        return;
+
+    /* Full bytes */
+    for (bw = w >> 4;bw;bw--,addr++) {
+        setmask(addr, mask, patind);
+    }
+
+    /* Draw the right fringe */
+    rem = w&0xf;
+    if (rem) {              /* Partial byte afterwards */
+        addr+=bw;
+        mask = masktab[rem];
+        setmask(addr, mask, patind);
+    }
+}
+
+#endif
