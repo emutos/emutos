@@ -22,6 +22,7 @@
 #include "lineavars.h"
 #include "tosvars.h"
 #include "machine.h"
+#include "clock.h"    /* for displaying current date and time */
 
 #include "initinfo.h"
 
@@ -95,7 +96,30 @@ static void pair_end(void)
     cprintf("\033b/ \r\n");
 }
 
- /*
+/*
+ * cprint_asctime shows current date and time in YYYY/MM/DD HH:MM:SS format
+ */
+
+void cprint_asctime()
+{
+    int years, months, days;
+    int hours, minutes, seconds;
+    ULONG system_time = gettime();  // XBIOS directly (shouldn't use TRAP?)
+    seconds = (system_time & 0x1F) * 2;
+    system_time >>= 5;
+    minutes = system_time & 0x3F;
+    system_time >>= 6;
+    hours = system_time & 0x1F;
+    system_time >>= 5;
+    days = system_time & 0x1F;
+    system_time >>= 5;
+    months = (system_time & 0x0F) + 1;
+    system_time >>= 4;
+    years = (system_time & 0x7F) + 1980;
+    cprintf("%04d/%02d/%02d %02d:%02d:%02d", years, months, days, hours, minutes, seconds);
+}
+
+/*
  * initinfo - Show initial configuration at startup
  */
 
@@ -134,6 +158,7 @@ void initinfo()
     pair_start(_("Screen start: ")); cprintf("0x%lx", (long)v_bas_ad);
     pair_end();
     pair_start(_("Boot drive :  ")); cprintf("%c:", bootdev+65); pair_end();
+    pair_start(_("Curr. time :  ")); cprint_asctime(); pair_end();
 
     /* Just a separator */
     cprintf("\n\r");
