@@ -993,3 +993,7 @@ Start... early ages
 - po/cs.po - Bohdan's czech language translation of GEM (MAD)
 - vdi/ecslisa - unused, just left for reference for now (MAD)
 - vdi/vdiesc.c - implementation in C (MAD)
+
+09. Aug. 2002
+- bios/startup.S - Filled the remaining empty ROM header entries (THH).
+- aes/gemasm.S - Accessories are now working on CPUs >= 68010, too! (THH).

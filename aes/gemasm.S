@@ -68,6 +68,7 @@ _gotopgm:
 
         // get the basepage for the top of rlr
         movea.l _rlr,a0
+        movea.l PD_UDA(a0),a2
         movea.l PD_LDADDR(a0),a0
 
         // set the user stack to the top of BSS for this process
@@ -81,9 +82,10 @@ _gotopgm:
         move    a1,USP
             
         // jump to the start of TEXT segment, in user mode.
-        tst.w   _longframe
-        beq     gpgm_nolong
-        move.w  #0,-(SP)
+        tst.w   _longframe              // Is CPU>=68010 ?
+        beq.s   gpgm_nolong
+        subq.l  #2,0x3E(a2)             // Adjust stored stack pointer
+        move.w  #0,-(SP)                // Additional word on stack for rte
 gpgm_nolong:
         move.l  P_TBASE(a0),-(SP)
         move.w  savesr,-(SP)
