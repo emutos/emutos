@@ -284,7 +284,9 @@ static void msetdt(ULONG dt)
  * engineers could do something like that.
  * With Falcon the situation is clear - the year offset is always 1968.
  */
+#ifndef TOS_VERSION
 #define TOS_VERSION 0x404       /* define the version that ran on this machine */
+#endif
 const static int nvram_rtc_year_offset = ((TOS_VERSION < 0x306) ? 1970 : 1968) - 1980;
 
 static void ndosettime(UWORD time)

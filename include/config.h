@@ -108,6 +108,17 @@
 #define TOS_VERSION 0x206
 #endif
 
+/*
+ * With this switch you can control if some functions should be used as
+ * static-inlines. This is generally a good idea if your compiler supports
+ * this (a recent GCC does it!). It will shrink the size of the ROM since
+ * only very small functions will be used as static inlines, and it will
+ * also make the code faster!
+ */
+#ifndef USE_STATIC_INLINES
+#define USE_STATIC_INLINES 1
+#endif
+
 
 /* The keyboard and language are now set using
  *   make COUNTRY="xx" 

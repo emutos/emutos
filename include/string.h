@@ -21,17 +21,34 @@
 #ifndef _STRING_H
 #define _STRING_H
 
+#include "config.h"
+
 /* string routines */
+
+#if !(USE_STATIC_INLINES)
+char *strcpy(char *dest, const char *src);
+#endif
 
 unsigned long int strlen(const char *s);
 short strlencpy(char *dest, const char *src);
 char *strcat(char *dest, const char *src);
-char *strcpy(char *dest, const char *src);
 int strcmp(const char *a, const char *b);
 int strncmp(const char *a, const char *b, unsigned long int n);
 char *strchr(const char *s, int c);
 int toupper(int c);
 
+
+/* Inline string routines: */
+#if USE_STATIC_INLINES
+static inline char *strcpy(char *dest, const char *src) 
+{
+    register char *tmp = dest;
+ 
+    while( (*tmp++ = *src++) ) 
+        ;
+    return dest;
+}
+#endif
 
 /* block memory routines */
 

@@ -2,3 +2,5 @@ localconf.h
 makefile.dep
 tounix
 *.img
+mkheader
+bug

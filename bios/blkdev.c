@@ -15,6 +15,7 @@
 #define DBG_BLKDEV 0
 
 #include "portab.h"
+#include "string.h"
 #include "bios.h"
 #include "gemerror.h"
 #include "kprint.h"

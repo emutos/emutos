@@ -17,6 +17,20 @@
 
 #include "string.h"
 
+/* The following functions are either used as inlines in string.h
+   or here as normal functions */
+#if !(USE_STATIC_INLINES)
+char *strcpy(char *dest, const char *src) 
+{
+    register char *tmp = dest;
+ 
+    while( (*tmp++ = *src++) ) 
+        ;
+    return dest;
+}
+#endif
+
+
 unsigned long int strlen(const char *s)
 {
     int n;
@@ -31,15 +45,6 @@ char *strcat(char *dest, const char *src)
     while( *tmp++ ) 
         ;
     tmp --;
-    while( (*tmp++ = *src++) ) 
-        ;
-    return dest;
-}
-
-char *strcpy(char *dest, const char *src) 
-{
-    register char *tmp = dest;
- 
     while( (*tmp++ = *src++) ) 
         ;
     return dest;
