@@ -300,5 +300,12 @@ Start... early ages
 - Changed all 'char's in bdos/ to 'BYTE', other will follow (MAD)
 
 22. Nov. 2001
-- Partitially implemented unused mouse driver in bios/mouse.c (MAD)
+- Partially implemented unused mouse driver in bios/mouse.c (MAD)
 
+24. Nov. 2001
+- machine detection up to the MegaSTE and cookie jar filled (LVL)
+- country setting now in Makefile, stored in header os_pal (LVL)
+- nvram overrides country setting if present (not tested) (LVL)
+- dates in EmuCON printed according to _IDT (LVL)
+- 0xffff820e used when ste shifter present (LVL)
+- added some xbios functions skeletons (LVL)

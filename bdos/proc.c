@@ -136,8 +136,6 @@ long	xexec(WORD flg, BYTE *s, BYTE *t, BYTE *v)
 #if	!M0101082703
     WORD	*spw;
 #endif
-    /* unused     WORD cnt ; */
-
 
     m = env = 0L ;
 
