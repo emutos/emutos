@@ -425,8 +425,6 @@ LONG xbios_10(LONG unshift, LONG shift, LONG capslock)
 
 static ULONG rseed;
 
-extern volatile LONG hz_200;
-
 LONG random(void)
 {
 #if DBG_XBIOS

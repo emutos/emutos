@@ -44,7 +44,7 @@ extern void *phystop;
 
 extern WORD timer_ms;
 
-extern LONG hz_200;
+extern volatile LONG hz_200;
 extern void *dskbufp;
 extern WORD flock;
 extern WORD nflops;
