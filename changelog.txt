@@ -186,3 +186,6 @@ Start... early ages
 - Changed version string of command.prg
 - correct fnt8x8 (previous one useless) and fnt8x16 (last char offset) (LVL)
 - some progress on iorec, but still not in service (LVL)
+
+16. Oct. 2001
+- Fixed some bugs in bios.c (the bconoutx functions need 2 parameters!) (THO)

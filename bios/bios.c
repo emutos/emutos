@@ -136,14 +136,14 @@ LONG bconin5(void);
 LONG bconin6(void);
 LONG bconin7(void);
 
-void bconout0(BYTE);
-void bconout1(BYTE);
-void bconout2(BYTE);
-void bconout3(BYTE);
-void bconout4(BYTE);
-void bconout5(BYTE);
-void bconout6(BYTE);
-void bconout7(BYTE);
+void bconout0(WORD,WORD);
+void bconout1(WORD,WORD);
+void bconout2(WORD,WORD);
+void bconout3(WORD,WORD);
+void bconout4(WORD,WORD);
+void bconout5(WORD,WORD);
+void bconout6(WORD,WORD);
+void bconout7(WORD,WORD);
 
 LONG bcostat0(void);
 LONG bcostat1(void);
@@ -156,7 +156,7 @@ LONG bcostat7(void);
 
 extern LONG (*bconstat_vec[])(void);
 extern LONG (*bconin_vec[])(void);
-extern void (*bconout_vec[])(BYTE);
+extern void (*bconout_vec[])(WORD,WORD);
 extern LONG (*bcostat_vec[])(void);
 
 
@@ -411,9 +411,9 @@ LONG bios_2(WORD handle)
  * bconout  - Print character to output device
  */
 
-void bios_3(WORD handle, BYTE what)
+void bios_3(WORD handle, WORD what)
 {
-    bconout_vec[handle & 7](what);
+    bconout_vec[handle & 7](handle,what);
 }
 
 
@@ -496,7 +496,7 @@ LONG bios_7(WORD drive)
 
 
 /**
- * bconstat - Read status of output device
+ * bcostat - Read status of output device
  *
  * Returns status in D0.L:
  * -1	device is ready	      
@@ -507,7 +507,13 @@ LONG bios_7(WORD drive)
 
 LONG bios_8(WORD handle)	/* GEMBIOS character_output_status */
 {
-    return bcostat_vec[handle & 7]();
+    if(handle>7)  return 0;     /* Illegal handle */
+
+    /* compensate for a known BIOS bug: MIDI and IKBD are switched */
+    if(handle==3)  handle=4;
+    else if (handle==4)  handle=3;
+
+    return bcostat_vec[handle]();
 }
 
 /**
@@ -727,29 +733,29 @@ LONG bconin7(void)
   return 0;
 }
 
-void bconout0(BYTE b)
+void bconout0(WORD dev, WORD c)
 {
 }
-void bconout1(BYTE b)
+void bconout1(WORD dev, WORD c)
 {
 }
-void bconout2(BYTE b)
+void bconout2(WORD dev, WORD c)
 {
-  cputc(b);
+  cputc(c);
 }
-void bconout3(BYTE b)
-{
-}
-void bconout4(BYTE b)
+void bconout3(WORD dev, WORD c)
 {
 }
-void bconout5(BYTE b)
+void bconout4(WORD dev, WORD c)
 {
 }
-void bconout6(BYTE b)
+void bconout5(WORD dev, WORD c)
 {
 }
-void bconout7(BYTE b)
+void bconout6(WORD dev, WORD c)
+{
+}
+void bconout7(WORD dev, WORD c)
 {
 }
 
