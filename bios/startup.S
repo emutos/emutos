@@ -284,7 +284,7 @@ noreset:
  * modular using CDECL routines.
  */
 	
-        bra     meminit                 // do/test memory config (no sp used)
+        bra     meminit                 // do/test memory config (needs sp)
 memdone:
 
 /* 
