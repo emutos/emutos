@@ -223,14 +223,11 @@
         .bss
 
 
-save_beg:       ds.l    23      | Save storage for trap dispatcher        
+| save area for trap13/14.
+save_beg:       ds.w    24*3    | d3-d7/a3-a7, sr, pc, vo = 24 words, 
+				| multiplied by 3 ("3 level deep reentrant")
 save_area:                      | End of Save storage
 
-save_sp:        ds.l    1       | save stack pointer (within trap13/14)
-save_rt:        ds.l    1       | save return address (within trap13/14)
-save_sr:        ds.w    1       | save status register (within trap13/14)
-save_vo:        ds.w    1       | save vector-offset register (within trap13/14)
-        
 
         .org    0x167a
 diskbuf:        ds.b    1024    | 1 cluster disk buffer
@@ -979,18 +976,15 @@ xbios:
 | ==== Trap 13+14 handler ==================================================
 
 biosxbios:
-
+	move.l  savptr, a1     
         move.w  (sp)+,d0        | Status register -> d0
-        move.w  d0,save_sr      | and save in savesr
-        move.l  (sp)+,save_rt   | save return address
+        move.w  d0,-(a1)        | and save in save_area
+        move.l  (sp)+,-(a1)     | save return address
 |       tst.w   0x59E           | Check longframe sysvariable one day...
 |       beq.s   bx_nolongframe  | ...when we support CPU >=68000
-|       move.w  (sp)+,save_vo
+|       move.w  (sp)+,-(a1)
 | bx_nolongframe:
-        move.l  sp,save_sp      | save stack pointer
-        
-        move.l  savptr, a1
-        movem.l d3-d7/a3-a7, -(a1)      | Safety for routines
+        movem.l d3-d7/a3-a7, -(a1)      | regs, including stack pointer
         move.l  a1, savptr
         
         btst    #13,d0          | were we in user mode?
@@ -1009,17 +1003,15 @@ bx_sp_ok:
 
 bx_ret_exc:
         move.l  savptr, a1
-        movem.l (a1)+, d3-d7/a3-a7      | Get all registers back
-        move.l  a1, savptr
-
-        move.l  save_sp,sp      | restore original stack
+        movem.l (a1)+, d3-d7/a3-a7      | Get regs back, including sp
 |       tst.w   0x59E           | Check longframe again: Is CPU >= 68000?
 |       beq.s   bx_nolong2
-|       move.w  save_vo,-(sp)
+|       move.w  (a1)+,-(sp)
 | bx_nolong2:
-        move.l  save_rt,-(sp)
-        move.w  save_sr,-(sp)
-        rte                     | return with function # in D0
+        move.l  (a1)+,-(sp)
+        move.w  (a1)+,-(sp)
+        move.l  a1, savptr
+        rte                     | return with return value in D0
 
 
 | ==== Set userdefined exception vectors ====================================
