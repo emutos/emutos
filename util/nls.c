@@ -49,7 +49,7 @@ static int strcmp(const char *a, const char *b)
     b++;
   }
   if(*a == *b) return 0;
-  /* TODO */
+  if(*a < *b) return -1;
   return 1;
 }
 
