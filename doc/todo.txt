@@ -26,6 +26,8 @@ Czech internationalisation
 VDI
 - Check the various assembler routines that are called from C functions
   if they save and restore enough registers.
+- But in mouse painting code. The mouse coordinates are clipped right,
+  but not draw, if vertical rez > 400
 
 AES
 - desk_rsc.c and gem_rsc.c are not fully ROM save yet (the TEDINFO strings etc)

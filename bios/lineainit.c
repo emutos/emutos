@@ -261,7 +261,7 @@ void linea_init(void)
         v_hz_rez = video_mode[vmode].hz_rez;
         v_vt_rez = video_mode[vmode].vt_rez;
     }
-    v_lin_wr = v_hz_rez*v_planes/8;     /* bytes per line */
+    v_lin_wr = v_hz_rez / 8 * v_planes;     /* bytes per line */
     /*v_pl_dspl = (long)v_hz_rez*(long)v_vt_rez/8;*/     /* bytes per plane */
     v_bytes_lin = v_lin_wr;       /* I think v_bytes_lin = v_lin_wr (joy) */
 

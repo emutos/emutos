@@ -68,7 +68,7 @@ extern UWORD v_fnt_wr;          // font cell wrap
 extern struct font_head * def_font;     // actual font
 extern struct font_head * cur_font;     // actual font (VDI)
 
-extern UWORD font_count;                // all three fonts and NULL
+extern WORD font_count;                // all three fonts and NULL
 
 /*
  * font_ring is a struct of four pointers, each of which points to

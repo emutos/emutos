@@ -763,3 +763,9 @@ Start... early ages
 - vdi/mousedrv.S - did put all non-graphical functions here (MAD)
 - vdi/vdimouse.S - did put all graphical functions here (MAD)
 
+16. Apr. 2002
+- vdi/mousedrv.S - moved some more routines in there (MAD)
+
+18. Apr. 2002
+- vdi/opnwkram - added right screen coordinates to wk info (MAD)
+

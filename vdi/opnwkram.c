@@ -21,6 +21,14 @@ extern WORD DEV_TAB_rom[];
 extern WORD INQ_TAB_rom[];
 
 
+/* Screen related variables */
+extern UWORD v_planes;          // count of color planes
+extern UWORD v_lin_wr;          // line wrap : bytes per line
+extern UWORD v_hz_rez;          // screen horizontal resolution
+extern UWORD v_vt_rez;          // screen vertical resolution
+extern UWORD v_bytes_lin;       // width of line in bytes
+
+
 /* OPEN_WORKSTATION: */
 void v_opnwk()
 {
@@ -30,10 +38,16 @@ void v_opnwk()
     for (i = 0; i < 12; i++) {
         SIZ_TAB[i] = SIZ_TAB_rom[i];
     }
+
+
     for (i = 0; i < 45; i++) {
         DEV_TAB[i] = DEV_TAB_rom[i];
         INQ_TAB[i] = INQ_TAB_rom[i];
     }
+
+    /* Copy data from linea variables */
+    DEV_TAB[0] = v_hz_rez-1;
+    DEV_TAB[1] = v_vt_rez-1;
 
     /* Set up the initial font: */
     font_ring[1] = &f8x16;
@@ -55,6 +69,8 @@ void v_opnwk()
     chc_mode = 0;               /* default is request mode  */
     str_mode = 0;               /* default is request mode  */
 
+
+    /* mouse settings */
     HIDE_CNT = 1;               /* mouse is initially hidden */
 
     GCURX = DEV_TAB[0] / 2;     /* initialize the mouse to center */

@@ -22,15 +22,9 @@
 
         .globl  _DIS_CUR        // display cursor routine
         .globl  _HIDE_CUR       // hide cursor routine
-        .globl  _MOV_CUR        // move cursor routine
         .globl  _XFM_CRFM       // set mouse form
         .globl  vb_draw         // vertical blank mouse draw routine
         .globl  arrow_cdb       // default mouse definition
-
-        .globl  _GCHC_KEY
-        .globl  _GCHR_KEY
-        .globl  _GLOC_KEY
-        .globl  _GSHIFT_S
 
 /* Externally Defined Labels */
 
@@ -47,165 +41,24 @@
         .xdef   _v_bas_ad       // base address of video planes
         .xdef   _DEV_TAB        // address of device table
         .xdef   _MAP_COL        // color map table
-        .xdef   cur_ms_stat     // current mouse status
+
         .xdef   mouse_cdb       // storage area for mouse form definition
-        .xdef   m_pos_hx
-        .xdef   m_pos_hy
-        .xdef   m_cdb_bg
-        .xdef   m_cdb_fg
-        .xdef   mask_form
+        .xdef   m_pos_hx        // (cdb+0) Mouse hot spot - x coord
+        .xdef   m_pos_hy        // (cdb+2) Mouse hot spot - y coord
+        .xdef   m_planes        // (cdb+4) unused - Plane count for mouse pointer
+        .xdef   m_cdb_bg        // (cdb+6) Mouse background color as pel value
+        .xdef   m_cdb_fg        // (cdb+8) Mouse foreground color as pel value
+        .xdef   mask_form       // (cdb+10) Storage for mouse mask and cursor
+
+        .xdef   _mouse_flag     // Non-zero if mouse ints disabled
+        .xdef   cur_ms_stat     // current mouse status
+
         .xdef   save_addr
         .xdef   save_len
         .xdef   save_area
         .xdef   save_stat
-        .xdef   _mouse_flag     // Non-zero if mouse ints disabled
 
 
-
-/*
- * _GSHIFT_S - GET SHIFT STATE 
- * entry:          none
- * exit:           CTL/SHIFT/ALT status in d0
- * destroys:       nothing
- */
- 
-_GSHIFT_S:
-        move.w  #-1, -(sp)      // Ask BIOS for status of CTL-ALT-SHIFT
-        move.w  #0xB, -(sp)
-        trap    #13
-
-        addq.l  #4, sp          // Clean up the stack
-
-        andi.w  #0x000F, d0     // We only want the low 4 bits
-        rts
-
-
-
-/*
- * _GCHC_KEY - get choice for choice input
- *
- * entry:  none
- * exit:   d0=0    nothing happened
- *         d0=1    choice value
- *         d0=2    button pressed
- *
- * TERM_CH         16 bit char info
- */
-
-_GCHC_KEY:
-        moveq   #1,d0
-        move.w  d0, _TERM_CH
-        rts
-
-
-
-/*
- * _GCHR_KEY - get char for string input
- *
- * entry: none
- * exit:  d0=1     button pressed
- *        d0=0     nothing happened
- * 
- * TERM_CH         16 bit char info
- */
-
-_GCHR_KEY:
-        move.w  #2, -(sp)               // see if a character present at con
-        move.w  #1, -(sp)
-        trap    #13
-        addq.l  #4, sp
-
-        tst.w   d0
-        beq     no_char
-
-        move.w  #2, -(sp)               // get the character from console
-        move.w  #2, -(sp)               // call Bconin
-        trap    #13                     // BIOS
-        addq.l  #4, sp
-
-        move.l  d0, d1
-        swap    d1
-        lsl.w   #8, d1                  // scancode to bit 8-15
-        or.w    d1, d0                  // asciicode to bit 0-7
-
-        move.w  d0,_TERM_CH             // store char
-        move.l  #1,d0
-        rts
-no_char:
-        moveq.l #0,d0
-        rts
-
-
-
-/*
- * _GLOC_KEY - get locator key
- *
- * entry:  none
- * exit:   d0 = 0    - nothing
- *         d0 = 1    - button pressed
- *                     _TERM_CH = 16 bit char info
- *
- *         d0 = 2    - coordinate info
- *                     _X1 = new x
- *                     _Y1 = new y
- *         d0 = 4    - NOT IMPLIMENTED IN THIS VERSION
- */
-
-_GLOC_KEY:
-        move.b  _cur_ms_stat,d0
-        move.b  d0,d1           // save state
-        andi.b  #0xc0,d0        // mask out all but button status bits
-        beq     key_stat        // nothing go check key stat
-
-        move.b  d1, d0
-        btst    #6, d0
-        beq     notright
-
-        move.w  #0x20, _TERM_CH // send terminator code for left key
-        bra     clr_bt_stat
-notright:
-        move.w  #0x21,_TERM_CH  // send terminator code for left key
-
-clr_bt_stat:
-        andi.b  #0x23, d0                // clear mouse button status
-        move.b  d0, _cur_ms_stat  // store cleared state
-        move.w  #1, d0           // set button pressed flag
-        rts
-
-key_stat:
-        move.w  #2, -(sp)  // see if a character present at con
-        move.w  #1, -(sp)
-        trap    #13
-        addq.l  #4, sp
-
-        tst.w   d0
-        beq     mov_stat        // no char
-
-        move.w  #2, -(sp)       // get the character from console
-        move.w  #2, -(sp)       // call Bconin
-        trap    #13             // BIOS
-        addq.l  #4, sp
-        
-        move.l  d0, d1
-        swap    d1
-        lsl.w   #8, d1
-        or.w    d1, d0
-        move.w  d0, _TERM_CH     // store char
-        move.l  #1, d0
-        rts
-mov_stat:
-        bclr.l  #5,d1           // test and clear mouse motion flag 
-        beq     no_chg
-
-        move.b  d1, _cur_ms_stat  // save mouse stat
-        move.w  _GCURX, _X1      // set _X1 = _GCURX
-        move.w  _GCURY, _Y1      // set _Y1 = _GCURY
-        move.l  #2,d0
-        rts
-
-no_chg:  
-        move.l  #0,d0
-        rts
 
 /*
  * vb_draw - moves mouse cursor, GEM VBL routine
@@ -382,8 +235,6 @@ clip_down:
         addq.w  #1,d5
 
 get_addr:
-        move.w  _v_lin_wr,d4    // get number of bytes in a scan line
-        mulu    d4,d1           // compute offset to scan row
 /*
  *  Compute the bit offset into the desired word, save it, and remove
  *  these bits from the x-coordinate.
@@ -398,6 +249,8 @@ get_addr:
  *  in the shift table.  If the planes are arranged as separate, consecu-
  *  tive entities then divide the x-coordinate by 8 to get the number of bytes.
  */
+        move.w  _v_lin_wr,d4    // get number of bytes in a scan line
+        mulu.w  d4,d1           // compute offset to scan row
 #if rbp
         move.w  _v_planes,d3    // get number of planes
         move.b  shf_tab-1(pc,d3.w),d3   // get shift factor
@@ -413,11 +266,11 @@ get_addr:
  */
         add.w   d2,d1           // compute total offset into screen buffer
 
-        move.l  _v_bas_ad,a1            // get start addr. of 1st graphic plane
+        move.l  _v_bas_ad,a1    // get start addr. of 1st graphic plane
 #if rbp
-        adda.w  d1,a1                   // a1 -> destination
+        adda.w  d1,a1           // a1 -> destination
 #else
-        adda.l  d1,a1                   // get destination address
+        adda.l  d1,a1           // get destination address
 #endif
 /*
  *   optimize shift count and direction: choose shift routine
@@ -439,18 +292,18 @@ shift_lf:
 init:
         move.l  rtn_tab+00(pc,d7.w),a5  // get starting address of store routine
         move.l  rtn_tab+04(pc,d7.w),a6  // get starting address of fetch routine
+        move.w  _v_planes,d7            // get number of graphic planes
 #if rbp
-        move.w  _v_planes,d7            // get # of graphic planes
         moveq.l #0,d3
         move.w  d7,d3
         add.w   d3,d3                   // # bytes between words in same plane
 #else
-        move.w  _v_planes,d7            // get number of graphic planes
         move.l  _v_pl_dspl,d3           // get # bytes between graphic planes
 #endif
 
         move.l  a1,save_addr            // save area: origin of material
         move.w  d5,save_len             //           number of rows
+        
         lea     save_area,a2            // a2 -> save area buffer
         bset.b  #F_SAVRDY,(a4)          // flag the buffer as being loaded
 
@@ -693,9 +546,7 @@ fg1bg1:
 
 
 /*
- * purpose:
- *
- *      replace cursor with data in save area.
+ * cur_replace - replace cursor with data in save area.
  *
  *  in:
  *
@@ -713,6 +564,7 @@ cur_replace:
         movem.l d2-d5/a2-a5,-(sp)       // save registers used by 'C'
         bclr.b  #F_SAVRDY,save_stat     // does save area contain valid data ?
         beq     hang_it_up              // 0:nothing saved
+
 #if 0 //rbp   //FIXME!
         move.w  save_len,d4             // d4 <- number of lines per plane
         move.w  d4,d2
