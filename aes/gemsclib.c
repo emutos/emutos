@@ -35,53 +35,8 @@
 #include "string.h"
 
 
-#define NUM_SCRAPS      6
-
-
 GLOBAL LONG             ad_scrap;
-GLOBAL BYTE     *sc_types[NUM_SCRAPS] =
-                         {"CSV", "TXT", "GEM",
-                          "IMG", "DCA", "USR"};
-GLOBAL WORD     sc_bits[NUM_SCRAPS] =
-                         {SC_FTCSV,SC_FTTXT,SC_FTGEM,
-                          SC_FTIMG,SC_FTDCA,SC_FTUSR};
 
-
-
-
-WORD sc_clrd(WORD isread)
-{
-        LONG            ptmp, ptype;
-        WORD            bitvect, ii;
-
-        ptmp = ad_scrap;
-        while(LBGET(ptmp))                      /* find null            */
-          ptmp++;
-#ifdef USE_GEM_RSC
-        rs_gaddr(ad_sysglo, R_STRING, STSCRAP, &ptype);
-#else
-        ptype = (LONG) rs_fstr[STSCRAP];
-#endif
-        strcpy((char *) ptmp, (char *) ptype); 
-        ptype = ptmp + strlen((char *) ptype);  /* point just past '.'  */
-        bitvect = 0;
-        dos_sdta(ad_dta);                       /* make sure dta ok     */
-        for (ii = 0; ii < NUM_SCRAPS; ii++)
-        {
-          strcpy((char *) ptype, sc_types[ii]);    /* cat on file type     */
-          if (dos_sfirst(ad_scrap, F_SUBDIR))
-          {
-            if (isread)
-              bitvect |= sc_bits[ii];           /* set corresponding bit */
-            else
-              dos_delete((BYTE *)ad_scrap);     /* delete scrap.*       */
-          }
-        }
-        if ( !isread)
-          bitvect = TRUE;
-        LBSET(ptmp, 0);                         /* keep just path name  */
-        return(bitvect);
-}
 
 
 /************************************************************************/
@@ -89,19 +44,18 @@ WORD sc_clrd(WORD isread)
 /* sc_read() -- get info about current scrap directory                  */
 /*                                                                      */
 /*      copies the current scrap directory path to the passed-in        */
-/*      address and returns a bit vector with bits set for specific     */
-/*      file types present in the directory.  Looks for scrap.* files.  */
+/*      address and returns TRUE if a valid path has already been set.  */
 /*                                                                      */
 /************************************************************************/
 
 WORD sc_read(LONG pscrap)
 {
-        WORD            len;
+    WORD    len;
 
-        /* current scrap directory */
-        len = strlencpy((char *) pscrap, (char *) ad_scrap);      
-        strcpy((char *) pscrap+len, "\\");         /* cat on backslash  */
-        return( sc_clrd(TRUE) );
+    /* current scrap directory */
+    len = strlencpy((char *) pscrap, (char *) ad_scrap);      
+    strcpy((char *) pscrap+len, "\\");      /* cat on backslash  */
+    return( len != 0 );
 }
 
 
@@ -116,13 +70,13 @@ WORD sc_read(LONG pscrap)
 
 WORD sc_write(LONG pscrap)
 {
-        WORD            len;
+    WORD    len;
 
-        len = strlencpy((char *) ad_scrap, (char *) pscrap);      /* new scrap directory  */
-        if (LBGET(ad_scrap + --len) == '\\')    /* remove backslash     */
-          LBSET(ad_scrap + len, '\0');
-        dos_sdta(ad_dta);                       /* use our dta          */
-        return(dos_sfirst(ad_scrap, F_SUBDIR)); /* make sure path ok    */
+    len = strlencpy((char *) ad_scrap, (char *) pscrap);      /* new scrap directory  */
+    if (LBGET(ad_scrap + --len) == '\\')    /* remove backslash     */
+      LBSET(ad_scrap + len, '\0');
+    dos_sdta(ad_dta);                       /* use our dta          */
+    return(dos_sfirst(ad_scrap, F_SUBDIR)); /* make sure path ok    */
 }
 
 
@@ -130,12 +84,39 @@ WORD sc_write(LONG pscrap)
 /*                                                                      */
 /* sc_clear() -- delete scrap files from current scrap directory        */
 /*                                                                      */
-/*      Assumes *ad_scrap holds a valid directory path.  Returns TRUE   */
+/*      Assumes *ad_scrap holds a valid directory path.                 */
+/*      Returns TRUE on success.                                        */
 /*                                                                      */
 /************************************************************************/
 
 WORD sc_clear()
 {
-        return( sc_clrd(FALSE) );
+    LONG    ptmp;
+    WORD    found;
+    static char scrapmask[] = "\\SCRAP.*";
+
+    if(ad_scrap == NULL || LBGET(ad_scrap) == 0)
+      return FALSE;
+
+    ptmp = ad_scrap;
+    while(LBGET(ptmp))                      /* find null */
+      ptmp++;
+
+    strcpy((char *) ptmp, scrapmask);       /* Add mask */
+
+    dos_sdta(ad_dta);                       /* make sure dta ok */
+
+    found = dos_sfirst(ad_scrap, F_SUBDIR);
+    while(found)
+    {
+        strcpy((char *)ptmp + 1, ((char *)ad_dta + 30));  /* Add file name */
+        dos_delete((char *)ad_scrap);       /* delete scrap.* */
+        strcpy((char *) ptmp, scrapmask);   /* Add mask */
+        found = dos_snext();
+    }
+
+    LBSET(ptmp, 0);                         /* keep just path name */
+
+    return(TRUE);
 }
 

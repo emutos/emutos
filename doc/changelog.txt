@@ -1495,3 +1495,7 @@ Start... early ages
 2003-07-04
 - bios/bios.c: also initialize level int 0x11 to just RTE, not
   date_time (needed by Diablo-Emulator for  LM-laserprinter (MAD)
+
+2003-07-06
+- aes/gemsclib.c : Return value of sc_read() is now compatible to Atari GEM
+  again and sc_clear() now clears all scrap files in the clipboard. (THH)
