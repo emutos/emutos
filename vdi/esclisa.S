@@ -1,5 +1,5 @@
 /*
- * esclisa.S - GSX escapes for the LISA screen driver
+ * esclisa.S - GSX escapes for the screen driver
  *
  * Copyright (c) 1999 Caldera, Inc.
  *               2002 The EmuTOS development team
@@ -36,8 +36,8 @@
 #define null                    0x00    // ASCII null
 #define esc                     0x1B    // ASCII escape
 
-#define x_cells                 90      // # of columns of 8x14 character cells
-#define y_cells                 25      // # of rows of 8x14 character cells
+#define x_cells                 80      // # of columns of 8x16 character cells
+#define y_cells                 25      // # of rows of 8x16 character cells
 
 
 //

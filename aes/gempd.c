@@ -130,11 +130,11 @@ void insert_process(PD *pi, PD **root)
           *root = pi;
         }
 #else   /* The old function looks like this: */
-						/* find the end		*/
-	for ( p = (q = (PD *) root) -> p_link ; p ; p = (q = p) -> p_link); 
-						/* link him in		*/
-	pi->p_link = p;
-	q->p_link = pi;
+                                                /* find the end         */
+        for ( p = (q = (PD *) root) -> p_link ; p ; p = (q = p) -> p_link); 
+                                                /* link him in          */
+        pi->p_link = p;
+        q->p_link = pi;
 #endif
 }
 
