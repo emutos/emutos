@@ -77,6 +77,7 @@ aexecsave:      ds.l    1       // save zone for autoexec
         .global _os_date
         .global _os_pal
         .global _os_dosdate
+        .global _root
         .global _shifty
         .global _run
 
@@ -93,7 +94,7 @@ _os_end:
 os_res1:        
     dc.l    _main       // os_res1, reserved
 _os_magic:
-    dc.l    0x0         // os_magic, pointer to GEM's MUPB
+    dc.l    _ui_mupb    // os_magic, pointer to GEM's MUPB
 _os_date:
     dc.l    OS_DATE     // os_date, Date of system build
 _os_pal:        
@@ -101,13 +102,13 @@ _os_pal:
 _os_dosdate:
     dc.w    OS_DOSDATE  // os_date, Date of system build in GEMDOS format
 os_root:
-    dc.l    0x0         // Pointer to the GEMDOS mem pool - not yet supported
+    dc.l    _root       // Pointer to the GEMDOS mem pool - not yet supported
 os_kbshift:
     dc.l    _shifty     // Pointer to the keyboard shift keys states
 os_run:
     dc.l    _run        // Pointer to a pointer to the actual basepage
 os_dummy:
-    dc.l    0           // ??? _main should start at 0xfc0030, shouldn't it?
+    .ascii  "ETOS"      // _main should start at offset 0x30, shouldn't it?
 
 
 

@@ -20,6 +20,7 @@
 .globl _pgmld
 .globl _gemdos
 .globl _do_pexec
+.globl _ui_mupb
 
 
 .xdef _ad_stail
@@ -40,7 +41,6 @@ _ui_start:
         move.l  d0,_ad_stail
 
         // mshrink to the needed size for TEXT+DATA+BSS plus 256 bytes.
-        // ??? to what are set TEXT, DATA, BSS in bios.c ???
         move.l  0xC(a5),d0
         add.l   0x14(a5),d0
         add.l   0x1C(a5),d0
@@ -80,10 +80,12 @@ clrglotest:
         lea     _tikcod,a0
         move.l  a0,_tikaddr
 
-        // ??? set the stack to be _D + 0x74A, and store this in _D + 0x3E,
-        // then somebody changed their mind and finally set the stack 
-        // to be gemssp, without updating _D + 0x3E.
-        // (_D + 0x3E is ssp in D.uda[0])
+        // Originally we set the stack to be _D + 0x74A, and stored
+        // this in _D + 0x3E. (_D + 0x3E is ssp in D.uda[0])
+        // But when we really initialized the SSP like this, the stack
+        // will be overwritten by the first application that is started
+        // (see gemshlib.c). So we initialize the SSP to point at a new
+        // stack area, gemssp.
         movea.l #_D,a6
         movea.l a6,a5
         adda.l  #0x74A,a6
@@ -156,6 +158,16 @@ dopex_end:
         rts
 
 
+
+.data
+
+// The AES MUPB structure:
+_ui_mupb:
+        .dc.l   0x87654321      // Magic value
+        .dc.l   ui_bss_end      // End of AES' BSS (actually a dummy value)
+        .dc.l   _ui_start       // Start of AES code
+
+
 .bss
 
 
@@ -179,4 +191,6 @@ gemssp:
 
 saveregs:
         .ds.l   2
+
+ui_bss_end:
 

@@ -29,6 +29,8 @@
         .globl  _jb
         .globl  _devector       // SCC  22 Mar 85
         .globl  _ui_start
+        .globl  _ui_mupb
+
 
 _ui_start:
         move.l  #mystak,a5
@@ -220,20 +222,30 @@ aris:
         .ascii "(A)bort, (R)etry, or (I)gnore ?"
         .dc.b   0
 
-                .bss
-                .even
+// The CLI's MUPB structure:
+_ui_mupb:
+        .dc.l   0x87654321      // Magic value
+        .dc.l   ui_bss_end      // End of CLI's BSS (actually a dummy value)
+        .dc.l   _ui_start       // Start of CLI code
+
+
+        .bss
 
 savess:         .ds.l   1                                         
 ocrit:          .ds.l   1
 oterm:          .ds.l   1
 
 /* Saved return addresses for jumps to BIOS, XBIOS, GEMDOS */
-bios_ret:         .ds.l 1
-xbios_ret:        .ds.l 1
-gemdos_ret:       .ds.l   1
+bios_ret:       .ds.l   1
+xbios_ret:      .ds.l   1
+gemdos_ret:     .ds.l   1
 
                 .ds.l   800             // Stack space, growing backwards                         
 mystak:         .ds.l   1               // Stack for command.prg
+
+
+ui_bss_end:
+
         .end
 
 
