@@ -13,6 +13,30 @@
 #ifndef CONSOLE_H
 #define CONSOLE_H
 
+/******************************************
+**
+** BDOS level character device file handles
+**
+*******************************************
+*/
+
+#define H_Console       -1
+#define H_Aux           -2
+#define H_Print         -3
+
+
+/****************************************
+**
+** Character device handle conversion
+** (BDOS-type handle to BIOS-type handle)
+**
+*****************************************
+*/
+
+#define HXFORM(h)       (3+h)
+
+
+
 extern  int     add[3];
 extern  int     remove[3];
 

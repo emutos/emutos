@@ -20,15 +20,15 @@
  *  Bios Function Numbers
  */
 
-#define B_MDCHG         9               /*  media change                */
+//#define B_MDCHG         9               /*  media change                */
 
 /*
  * BIOS level character device handles
  */
 
-#define BFHPRN  0
-#define BFHAUX  1
-#define BFHCON  2
+//#define BFHPRN  0
+//#define BFHAUX  1
+//#define BFHCON  2
 
 
 /*
@@ -45,9 +45,9 @@
  *  code macros
  */
 
-#define ADDRESS_OF(x)   x
-#define INP             inp
-#define OUTP            outp
+//#define ADDRESS_OF(x)   x
+//#define INP             inp
+//#define OUTP            outp
 
 
 /*
@@ -62,8 +62,8 @@
  *      whether a displatch should occurr (TRUE) or not.
  */
 
-typedef BOOLEAN ISR ;           /*  interrupt service routine   */
-typedef ISR     (*PISR)() ;     /*  pointer to isr routines     */
+//typedef BOOLEAN ISR ;           /*  interrupt service routine   */
+//typedef ISR     (*PISR)() ;     /*  pointer to isr routines     */
 
 /*
  *  SSN - Sequential Sector Numbers
@@ -74,7 +74,7 @@ typedef ISR     (*PISR)() ;     /*  pointer to isr routines     */
  *      the same size as a physical sector.
  */
 
-typedef long    SSN ;
+//typedef long    SSN ;
 
 
 /*
@@ -163,18 +163,18 @@ BCB
  *  buffer type values
  */
 
-#define BT_FAT          0               /*  fat buffer                  */
-#define BT_ROOT         1               /*  root dir buffer             */
-#define BT_DIR          2               /*  other dir buffer            */
-#define BT_DATA         3               /*  data buffer                 */
+//#define BT_FAT          0               /*  fat buffer                  */
+//#define BT_ROOT         1               /*  root dir buffer             */
+//#define BT_DIR          2               /*  other dir buffer            */
+//#define BT_DATA         3               /*  data buffer                 */
 
 /*
  *  buffer list indexes
  */
 
 #define BI_FAT          0               /*  fat buffer list             */
-#define BI_ROOT         1               /*  root dir buffer list        */
-#define BI_DIR          1               /*  other dir buffer list       */
+//#define BI_ROOT         1               /*  root dir buffer list        */
+//#define BI_DIR          1               /*  other dir buffer list       */
 #define BI_DATA         1               /*  data buffer list            */
 
 
@@ -199,7 +199,7 @@ MD
  *  fields in Memory Descriptor
  */
 
-#define MF_FREE 1
+//#define MF_FREE 1
 
 
 /*

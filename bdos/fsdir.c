@@ -286,7 +286,6 @@ long xmkdir(char *s)
 
         /* write identifier */
 
-        /* LVL xmovs(22,dots,(char *)f2); */
         memcpy(f2, dots, 22);
         f2->f_attrib = FA_SUBDIR;
         f2->f_time = time;
@@ -301,7 +300,6 @@ long xmkdir(char *s)
 
         /* write parent entry .. */
 
-        /* LVL xmovs(22,dots2,(char *)f2); */
         memcpy(f2, dots, 22);
         f2->f_attrib = FA_SUBDIR;
         f2->f_time = time;
@@ -316,7 +314,6 @@ long xmkdir(char *s)
         swpw(cl);
         f2->f_clust = cl;
         f2->f_fileln = 0;
-        /* LVL xmovs(sizeof(OFD),(char *)f0,(char *)f); */
         memcpy(f, f0, sizeof(OFD));
         f->o_flag |= O_DIRTY;
         ixclose(f,CL_DIR | CL_FULL);    /* force flush and write */
@@ -1406,11 +1403,10 @@ static DND *makdnd(DND *p, FCB *b)
         p1->d_dirpos = fd->o_bytnum - 32;
         p1->d_time = b->f_time;
         p1->d_date = b->f_date;
-        /* LVL xmovs(11,(char *)b->f_name,(char *)p1->d_name); */
         memcpy(p1->d_name, b->f_name, 11);
 
 #if DBGFSDIR
-                kprintf("\n makdnd(%08lx)", (long)p1);
+        kprintf("\n makdnd(%08lx)", (long)p1);
 #endif
         return(p1);
 }

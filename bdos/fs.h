@@ -44,7 +44,6 @@
  */
 
 #define min(a,b) (((a) < (b)) ? (a) : (b))
-/* LVL define xmovs(n,s,d)      bmove(s,d,n) */
 
 /*
  *  Error handling
@@ -311,56 +310,33 @@ FTAB
 
 DTAINFO
 {
-    char  dt_name[12] ;         /*  file name: filename.typ     00-11   */
-    long  dt_pos ;              /*  dir position                12-15   */
-    DND   *dt_dnd ;             /*  pointer to DND              16-19   */
-    char  dt_attr ;             /*  attributes of file          20      */
+    char  dt_name[12];          /*  file name: filename.typ     00-11   */
+    long  dt_pos;               /*  dir position                12-15   */
+    DND   *dt_dnd;              /*  pointer to DND              16-19   */
+    char  dt_attr;              /*  attributes of file          20      */
                                 /*  --  below must not change -- [1]    */
-    char  dt_fattr ;            /*  attrib from fcb             21      */
-    int   dt_time ;             /*  time field from fcb         22-23   */
-    int   dt_date ;             /*  date field from fcb         24-25   */
-    long  dt_fileln ;           /*  file length field from fcb  26-29   */
-    char  dt_fname[14] ;        /*  file name from fcb          30-43   */
+    char  dt_fattr;             /*  attrib from fcb             21      */
+    int   dt_time;              /*  time field from fcb         22-23   */
+    int   dt_date;              /*  date field from fcb         24-25   */
+    long  dt_fileln;            /*  file length field from fcb  26-29   */
+    char  dt_fname[14];         /*  file name from fcb          30-43   */
 } ;                             /*    includes null terminator          */
 
 #include "bios.h"
 
 
-/******************************************
-**
-** BDOS level character device file handles
-**
-*******************************************
-*/
-
-#define H_Console       -1
-#define H_Aux           -2
-#define H_Print         -3
-
-
-/****************************************
-**
-** Character device handle conversion
-** (BDOS-type handle to BIOS-type handle)
-**
-*****************************************
-*/
-
-#define HXFORM(h)       (3+h)
-
 
 
 /* External Declarations */
 
-extern  DND     *dirtbl[] ;
-extern  DMD     *drvtbl[] ;
-extern  char    diruse[] ;
-extern  int     drvsel ;
-extern  PD      *run ;
-extern  int     logmsk[] ;
-extern  FTAB    sft[] ;
-extern  BCB     *bufl[2] ;              /*  in bios main.c              */
-extern  int     bios_dev[] ;            /*  in fsfioctl.c               */
+extern  DND     *dirtbl[];
+extern  DMD     *drvtbl[];
+extern  char    diruse[];
+extern  int     drvsel;
+extern  PD      *run;
+extern  int     logmsk[];
+extern  FTAB    sft[];
+extern  BCB     *bufl[2];              /*  in bios main.c              */
 
 
 

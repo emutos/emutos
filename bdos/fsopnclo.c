@@ -334,7 +334,6 @@ static long makopn(FCB *f, DND *dn, int h, int mod)
 
         if (p2)
         {       /* steal time,date,startcl,fileln */
-                /* LVL xmovs(12,&p2->o_time,&p->o_time); */
                 memcpy(&p->o_time, &p2->o_time, 12);
                 /* not used yet... TBA *********/      
                 p2->o_thread = p; 
