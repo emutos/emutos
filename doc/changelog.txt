@@ -509,3 +509,4 @@ Start... early ages
 - silly BIOS early memory init in biosmem.[ch], used in nvram (LVL)
 - changed some struct {...} foo [] = syntax that Indent didn't like (LVL)
 - removed from lineavars.h struct VIDEO_MODE used only inside lineainit.c (LVL)
+- fixed typos in bios-level memory (LVL) 
