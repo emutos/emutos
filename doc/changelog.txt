@@ -500,4 +500,5 @@ Start... early ages
            partition, of the whole drive (especially with floppy) etc.
            bdos/fsio.c still strikes - passes null pointer for rwabs buffer.
            That needs to be debugged (or maybe rewritten completely). (joy)
+- updated po/de.po, because of stupid translations by me (MAD)
 

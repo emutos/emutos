@@ -5,7 +5,7 @@
 
 #: bios/bios.c:368
 msgid "Please eject the floppy and hit RETURN"
-msgstr "Nimm die Floppy raus und drück RETURN"
+msgstr "Bitte Floppy entnehmen, dann RETURN drücken"
 
 #: bios/bios.c:409
 msgid ""
@@ -27,7 +27,7 @@ msgstr "CPU-Typ:      "
 
 #: bios/initinfo.c:167
 msgid "MMU avail.:   "
-msgstr "MMU verfügbar "
+msgstr "MMU verfügbar:"
 
 #: bios/initinfo.c:167
 msgid "No"
@@ -47,11 +47,11 @@ msgstr "Bildschirm ab:"
 
 #: bios/initinfo.c:172
 msgid "Boot drive :  "
-msgstr "Bootet von:   "
+msgstr "Bootet von :  "
 
 #: cli/command.c:681
 msgid "CR to continue..."
-msgstr "weiter mit CR... "
+msgstr "Weiter mit CR... "
 
 #: cli/command.c:696
 msgid "Wild cards not allowed in path name."
@@ -71,7 +71,7 @@ msgstr "EmuCON - Compiliert am "
 
 #: cli/command.c:710
 msgid "Type HELP for a list of commands."
-msgstr "Tippe HELP für eine Liste von Kommandos."
+msgstr "Tippe HELP für Kommando-Hilfe."
 
 #: cli/command.c:714
 msgid "Done."
@@ -79,7 +79,7 @@ msgstr "Fertig"
 
 #: cli/command.c:717
 msgid "Command is incompletely specified."
-msgstr "Kommando nicht komplett angegeben."
+msgstr "Kommando ist nicht komplett."
 
 #: cli/command.c:729
 msgid " to "

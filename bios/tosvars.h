@@ -56,6 +56,7 @@ extern WORD nvbls;
 extern WORD vblsem;
 extern LONG vbl_list[];
 extern LONG *vblqueue;
+//extern LONG **p_cookies
 
 
 extern LONG sysbase;
