@@ -449,11 +449,14 @@ void ldaccs()
         accroom = (laccroom + 0x0000000fL) >> 4;
         strcpy(&D.g_dir[0], rs_str(STACC));
         dos_sdta(ad_dta);
+
+        /* if Control is held down then skip loading of accs */
+        if ((kbshift(-1) & (1<<2)))
+          return;
+
         ret = TRUE;
         for(i=0; (i<NUM_ACCS) && (accroom > 0) && (ret); i++)
         {
-          if ((kbshift(-1) & (1<<2)))  /* if Control is held down */
-            continue;                  /* then skip loading of accs */
 
           ret = (i==0) ? dos_sfirst(ad_path, F_RDONLY) : dos_snext();
           if (ret)
