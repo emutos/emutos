@@ -107,8 +107,8 @@ ICONBLK gl_ilist[NUM_IBLKS] =
 #include <igfdskdh.icn>
 #include <igfoldmh.icn>
 #include <igfolddh.icn>
-#include <igfold3h.icn>
-#include <igflop3h.icn> /*x7*/
+#include <igtrshmh.icn>
+#include <igtrshdh.icn> /*x7*/
 /* Placeholders for future icons
 #include <IGRES4MH.ICN>
 #include <IGRES4DH.ICN>

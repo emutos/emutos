@@ -1502,7 +1502,7 @@ Start... early ages
 
 2003-07-12
 - po/es.po: added Spanish translation of EmuTOS, created by Gabriel Huertas
-  <gabrielhuertas@terra.es (joy)
+  <gabrielhuertas@terra.es> (joy)
 
 2003-07-13
 - bios/clock.c: NVRAM RTC year offset now detected from RTC_TOS_VER (joy)
@@ -1521,3 +1521,7 @@ Start... early ages
 2003-07-25
 - aes/gemstart.S: _dos_exec() still having problem. Had to increase
   the stack offset from 0x40 to 0x50 (joy)
+
+2003-07-27
+- desk/* : Fixed some of the "Desktop 1.2" patches and added three new menu
+  entries in the file menu that are needed to use this desktop mode. (THH)

@@ -67,10 +67,19 @@ GLOBAL ACCNODE  gl_caccs[3];
 
 
 /* We use this DESKTOP.INF here when we can't load that file from disk: */
+#ifndef DESK1
 static const char *desk_inf_data1 =
     "#E 9A 01\r\n"
     "#W 00 00 02 02 4C 0A 00 @\r\n"
     "#W 00 00 02 0D 4C 0A 00 @\r\n";
+#else
+static const char *desk_inf_data1 =
+    "#E 9A 01\r\n"
+    "#W 00 00 02 02 4C 0A 00 @\r\n"
+    "#W 00 00 02 04 4C 0A 00 @\r\n"
+    "#W 00 00 02 06 4C 0A 00 @\r\n"
+    "#W 00 00 02 0D 4C 0A 00 @\r\n";
+#endif
 
 static const char *desk_inf_data2 =
     "#F FF 28 @ *.*@ \r\n"

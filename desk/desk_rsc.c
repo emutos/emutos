@@ -255,7 +255,7 @@ static BITBLK desk_rs_bitblk[] = {
 static char rs_str_iconOrText[20];      /* was: "  xxxx xx xxxxx  xx" */
 
 
-#define RS_NOBS 211
+#define RS_NOBS 215
 
 OBJECT desk_rs_obj[RS_NOBS];
 
@@ -304,7 +304,7 @@ static const OBJECT desk_rs_obj_rom[] = {
      (long) N_(" Arrange "),
      21, 0, 9, 769},
 
-   { 0, 8, 33, G_IBOX,                          /*** 7 ***/
+   { 0, 8, 37, G_IBOX,                          /*** 7 ***/
      NONE,
      NORMAL,
      (long) 0L,
@@ -364,11 +364,11 @@ static const OBJECT desk_rs_obj_rom[] = {
      (long) "6",
      0, 7, 20, 1},
 
-   { 26, 18, 25, G_BOX,                         /*** 17 ***/
+   { 30, 18, 29, G_BOX,                         /*** 17 ***/
      NONE,
      NORMAL,
      (long) 16716032L,
-     8, 0, 21, 8},
+     8, 0, 21, 12},
 
    { 19, -1, -1, G_STRING,                      /*** 18 ***/
      NONE,
@@ -382,6 +382,7 @@ static const OBJECT desk_rs_obj_rom[] = {
      (long) N_("  Info/Rename...  \007I"),
      0, 1, 21, 1},
 
+
    { 21, -1, -1, G_STRING,                      /*** 20 ***/
      NONE,
      DISABLED,
@@ -391,118 +392,143 @@ static const OBJECT desk_rs_obj_rom[] = {
    { 22, -1, -1, G_STRING,                      /*** 21 ***/
      NONE,
      NORMAL,
-     (long) N_("  Delete...       \007D"),
+     (long) N_("  New Folder..."),
      0, 3, 21, 1},
 
    { 23, -1, -1, G_STRING,                      /*** 22 ***/
      NONE,
      NORMAL,
-     (long) N_("  Format..."),
+     (long) N_("  Close"),
      0, 4, 21, 1},
 
    { 24, -1, -1, G_STRING,                      /*** 23 ***/
      NONE,
-     DISABLED,
-     (long) "---------------------",
+     NORMAL,
+     (long) N_("  Close window"),
      0, 5, 21, 1},
+
 
    { 25, -1, -1, G_STRING,                      /*** 24 ***/
      NONE,
-     NORMAL,
-     (long) N_("  Execute EmuCON  ^Z"),
+     DISABLED,
+     (long) "---------------------",
      0, 6, 21, 1},
 
-   { 17, -1, -1, G_STRING,                      /*** 25 ***/
+   { 26, -1, -1, G_STRING,                      /*** 25 ***/
+     NONE,
+     NORMAL,
+     (long) N_("  Delete...       \007D"),
+     0, 7, 21, 1},
+
+   { 27, -1, -1, G_STRING,                      /*** 26 ***/
+     NONE,
+     NORMAL,
+     (long) N_("  Format..."),
+     0, 8, 21, 1},
+
+   { 28, -1, -1, G_STRING,                      /*** 27 ***/
+     NONE,
+     DISABLED,
+     (long) "---------------------",
+     0, 9, 21, 1},
+
+   { 29, -1, -1, G_STRING,                      /*** 28 ***/
+     NONE,
+     NORMAL,
+     (long) N_("  Execute EmuCON  ^Z"),
+     0, 10, 21, 1},
+
+   { 17, -1, -1, G_STRING,                      /*** 29 ***/
      NONE,
      NORMAL,
      (long) N_("  Shutdown        ^Q"),
-     0, 7, 21, 1},
+     0, 11, 21, 1},
 
-   { 33, 27, 32, G_BOX,                         /*** 26 ***/
+   { 37, 31, 36, G_BOX,                         /*** 30 ***/
      NONE,
      NORMAL,
      (long) 16716032L,
      14, 0, 31, 6},
 
-   { 28, -1, -1, G_STRING,                      /*** 27 ***/
+   { 32, -1, -1, G_STRING,                      /*** 31 ***/
      NONE,
      NORMAL,
      (long) N_("  Install disk drive..."),
      0, 0, 31, 1},
 
-   { 29, -1, -1, G_STRING,                      /*** 28 ***/
+   { 33, -1, -1, G_STRING,                      /*** 32 ***/
      NONE,
      NORMAL,
      (long) N_("  Configure application...  \007A"),
      0, 1, 31, 1},
 
-   { 30, -1, -1, G_STRING,                      /*** 29 ***/
+   { 34, -1, -1, G_STRING,                      /*** 33 ***/
      NONE,
      DISABLED,
      (long) "-------------------------------",
      0, 2, 31, 1},
 
-   { 31, -1, -1, G_STRING,                      /*** 30 ***/
+   { 35, -1, -1, G_STRING,                      /*** 34 ***/
      NONE,
      NORMAL,
      (long) N_("  Set preferences..."),
      0, 3, 31, 1},
 
-   { 32, -1, -1, G_STRING,                      /*** 31 ***/
+   { 36, -1, -1, G_STRING,                      /*** 35 ***/
      NONE,
      NORMAL,
      (long) N_("  Save desktop              \007V"),
      0, 4, 31, 1},
 
-   { 26, -1, -1, G_STRING,                      /*** 32 ***/
+   { 30, -1, -1, G_STRING,                      /*** 36 ***/
      NONE,
      DISABLED,
      (long) N_("  Change resolution         \007C"),
      0, 5, 31, 1},
 
-   { 7, 34, 39, G_BOX,                          /*** 33 ***/
+   { 7, 38, 43, G_BOX,                          /*** 37 ***/
      NONE,
      NORMAL,
      (long) 16716032L,
      23, 0, 20, 6},
 
-   { 35, -1, -1, G_STRING,                      /*** 34 ***/
+   { 39, -1, -1, G_STRING,                      /*** 38 ***/
      NONE,
      NORMAL,
      (long) rs_str_iconOrText,
      0, 0, 20, 1},
 
-   { 36, -1, -1, G_STRING,                      /*** 35 ***/
+   { 40, -1, -1, G_STRING,                      /*** 39 ***/
      NONE,
      DISABLED,
      (long) "--------------------",
      0, 1, 20, 1},
 
-   { 37, -1, -1, G_STRING,                      /*** 36 ***/
+   { 41, -1, -1, G_STRING,                      /*** 40 ***/
      NONE,
      NORMAL,
      (long) N_("  Sort by name   \007N"),
      0, 2, 20, 1},
 
-   { 38, -1, -1, G_STRING,                      /*** 37 ***/
+   { 42, -1, -1, G_STRING,                      /*** 41 ***/
      NONE,
      NORMAL,
      (long) N_("  Sort by type   \007P"),
      0, 3, 20, 1},
 
-   { 39, -1, -1, G_STRING,                      /*** 38 ***/
+   { 43, -1, -1, G_STRING,                      /*** 42 ***/
      NONE,
      NORMAL,
      (long) N_("  Sort by size   \007Z"),
      0, 4, 20, 1},
 
-   { 33, -1, -1, G_STRING,                      /*** 39 ***/
+   { 37, -1, -1, G_STRING,                      /*** 43 ***/
      LASTOB,
      NORMAL,
      (long) N_("  Sort by date   \007T"),
      0, 5, 20, 1},
 
-#define TR1 40
+#define TR1 44
 /* TREE 1 */
    { -1, 1, 11, G_BOX,                          /*** 0 ***/
      NONE,
@@ -576,7 +602,7 @@ static const OBJECT desk_rs_obj_rom[] = {
      (long) rs_str_Cancel,
      22, 9, 8, 1},
 
-#define TR2 52
+#define TR2 56
 /* TREE 2 */
    { -1, 1, 8, G_BOX,                           /*** 0 ***/
      NONE,
@@ -632,7 +658,7 @@ static const OBJECT desk_rs_obj_rom[] = {
      (long) rs_str_OK,
      26, 10, 8, 1},
 
-#define TR3 61
+#define TR3 65
 /* TREE 3 */
    { -1, 1, 8, G_BOX,                           /*** 0 ***/
      NONE,
@@ -688,7 +714,7 @@ static const OBJECT desk_rs_obj_rom[] = {
      (long) rs_str_OK,
      16, 9, 8, 1},
 
-#define TR4 70
+#define TR4 74
 /* TREE 4 */
    { -1, 1, 15, G_BOX,                      /*** 0 ***/
      NONE,
@@ -788,7 +814,7 @@ static const OBJECT desk_rs_obj_rom[] = {
      (long) N_("See doc/license.txt for details"),
      4, 15, 21, 1 },
 
-#define TR5 86
+#define TR5 90
 /* TREE 5 */
    { -1, 1, 7, G_BOX,                       /*** 0 ***/
      NONE,
@@ -838,7 +864,7 @@ static const OBJECT desk_rs_obj_rom[] = {
      (long) rs_str_OK,
      16, 9, 8, 1},
 
-#define TR6 94
+#define TR6 98
 /* TREE 6 */
    { -1, 1, 8, G_BOX,                       /*** 0 ***/
      NONE,
@@ -894,7 +920,7 @@ static const OBJECT desk_rs_obj_rom[] = {
      (long) N_("are acceptable to this application."),
      3, 8, 35, 1},
 
-#define TR7 103
+#define TR7 107
 /* TREE 7 */
    { -1, 1, 10, G_BOX,                      /*** 0 ***/
      NONE,
@@ -962,7 +988,7 @@ static const OBJECT desk_rs_obj_rom[] = {
      (long) rs_str_Cancel,
      29, 9, 8, 1},
 
-#define TR8 114
+#define TR8 118
 /* TREE 8 */
 
    { -1, 1, 33, G_BOX,                      /*** 0 ***/
@@ -1169,7 +1195,7 @@ static const OBJECT desk_rs_obj_rom[] = {
      (long) rs_str_Cancel,
      29, 21, 8, 1 },
 
-#define TR9 148
+#define TR9 152
 /* TREE 9 */
 
    { -1, 1, 5, G_BOX,                       /*** 0 ***/
@@ -1208,7 +1234,7 @@ static const OBJECT desk_rs_obj_rom[] = {
      (long) rs_str_Cancel,
      23, 6, 8, 1 },
 
-#define TR10 154
+#define TR10 158
 /* TREE 10 */
 
    { -1, 1, 5, G_BOX,                       /*** 0 ***/
@@ -1247,7 +1273,7 @@ static const OBJECT desk_rs_obj_rom[] = {
      (long) rs_str_Cancel,
      19, 6, 8, 1 },
 
-#define TR11 160
+#define TR11 164
 /* TREE 11 */
 
    { -1, 1, 6, G_BOX,                       /*** 0 ***/
@@ -1292,7 +1318,7 @@ static const OBJECT desk_rs_obj_rom[] = {
      (long) N_("Stop"),
      23, 6, 8, 1 },
 
-#define TR12 167
+#define TR12 171
 /* TREE 12 */
 
    { -1, 1, 4, G_BOX,                       /*** 0 ***/
@@ -1325,7 +1351,7 @@ static const OBJECT desk_rs_obj_rom[] = {
      (long) rs_str_Cancel,
      16, 5, 8, 1 },
 
-#define TR13 172
+#define TR13 176
 /* TREE 13 */
 
    { -1, 1, 38, G_BOX,                      /*** 0 ***/
@@ -1582,8 +1608,6 @@ static OBJECT *desk_rs_trees[] = {
 };
 
 
-#define RS_NFSTR 37
-
 char *desk_rs_fstr[] = {
     N_("%L bytes used in %W items."),
     N_("  Show as icons  \007S"),
@@ -1596,12 +1620,12 @@ char *desk_rs_fstr[] = {
     "DESKLO.ICN",
     "OUTPUT.APP",
     "????????.BAT",
-    "#FFF28 @ *.*@",
-    "#DFF02 @ *.*@",
-    "#G08FF *.APP@ @",
-    "#P08FF *.EXE@ @",
-    "#P08FF *.COM@ @",
-    "#P08FF *.BAT@ @",
+    "#F FF 28 @ *.*@",
+    "#D FF 02 @ *.*@",
+    "#G 08 FF *.APP@ @",
+    "#G 08 FF *.PRG@ @",
+    "#P 08 FF *.TTP@ @",
+    "#F 08 FF *.TOS@ @",
     "FORMAT.EXE",
     N_("New Folder"),
     N_("Disk Drives:"),
@@ -1664,6 +1688,12 @@ char *desk_rs_fstr[] = {
        "characters.  See your documentation for|"
        "limits on the number of characters you|"
        "can enter.][   OK   ]"),
+#ifdef DESK1
+    N_("[1][You cannot open the trash can icon|"
+       "into a window. To delete a disk,|"
+       "folder, document, or application,|"
+       "drag it to the trash can.][  OK  ]"),
+#endif
 };
 
 

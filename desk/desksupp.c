@@ -303,12 +303,23 @@ WORD do_diropen(WNODE *pw, WORD new_win, WORD curr_icon, WORD drv,
 #ifdef DESK1
         wind_set(pw->w_id, WF_INFO, ADDR(&pw->w_info[0]), 0, 0);
 #endif
+
                                                 /* do actual wind_open  */
+#ifdef DESK1
+        if (curr_icon)
+        {
+                do_wopen(new_win, pw->w_id, curr_icon, 
+                                pt->g_x, pt->g_y, pt->g_w, pt->g_h);
+                if (new_win)
+                        win_top(pw);
+        }
+#else
         do_wopen(new_win, pw->w_id, curr_icon, 
                                 pt->g_x, pt->g_y, pt->g_w, pt->g_h);
         if (new_win)
             win_top(pw);
-                                                        /* verify contents of   */
+#endif
+                                                /* verify contents of   */
                                                 /*   windows object list*/
                                                 /*   by building view   */
                                                 /*   and make it curr.  */
@@ -451,7 +462,7 @@ WORD do_dopen(WORD curr)
         ICONBLK         *pib;
 
         pib = (ICONBLK *) get_spec(G.g_screen, curr);
-        pw = win_alloc(0);
+        pw = win_alloc(curr);
         if (pw)
         {
           drv = (0x00ff & pib->ib_char);
@@ -635,13 +646,11 @@ WORD do_open(WORD curr)
                                          FALSE, TRUE);
 #endif
                 break;
-/* FIXME
 #ifdef DESK1
             case AT_ISTRSH:
-                form_alert(1, ini_str(STNOOPEN));
+                form_alert(1, (LONG)ini_str(STNOOPEN));
                 break;
 #endif
-*/
           }
         }
 

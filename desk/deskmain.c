@@ -80,8 +80,6 @@
 #define SPACE 0x20
 
 
-extern LONG     gemdos();
-
 
 GLOBAL BYTE     gl_amstr[4];
 GLOBAL BYTE     gl_pmstr[4];
@@ -128,7 +126,7 @@ GLOBAL WORD     ig_close;
 
 GLOBAL WORD     gl_apid;
 
-GLOBAL BYTE     ILL_ITEM[] = {L2ITEM,L3ITEM,L4ITEM,L5ITEM,0};
+GLOBAL BYTE     ILL_ITEM[] = {L1ITEM, L2ITEM, L3ITEM, L4ITEM, L5ITEM, 0};
 GLOBAL BYTE     ILL_FILE[] = {FORMITEM,IDSKITEM,0};
 GLOBAL BYTE     ILL_DOCU[] = {FORMITEM,IDSKITEM,IAPPITEM,0};
 GLOBAL BYTE     ILL_FOLD[] = {/*OUTPITEM,*/FORMITEM,IDSKITEM,IAPPITEM,0};
@@ -138,14 +136,14 @@ GLOBAL BYTE     ILL_NOSEL[] = {OPENITEM,SHOWITEM,FORMITEM,DELTITEM,
                                 IDSKITEM,IAPPITEM,0};
 GLOBAL BYTE     ILL_YSEL[] = {OPENITEM, IDSKITEM, FORMITEM, SHOWITEM, 0};
 
-/*#ifdef DESK1
-GLOBAL BYTE     ILL_TRASH[] = {OPENITEM,OUTPITEM,FORMITEM,IDSKITEM,IAPPITEM,0};
+#ifdef DESK1
+GLOBAL BYTE     ILL_TRASH[] = {OPENITEM,/*OUTPITEM,*/FORMITEM,IDSKITEM,IAPPITEM,0};
 GLOBAL BYTE     ILL_NOTOP[] = {NFOLITEM,CLOSITEM,CLSWITEM,0};
-GLOBAL BYTE     ILL_DESKTOP[] = {NFOLITEM,CLOSITEM,CLSWITEM,ICONITEM,TEXTITEM,
+GLOBAL BYTE     ILL_DESKTOP[] = {NFOLITEM,CLOSITEM,CLSWITEM,ICONITEM,/*TEXTITEM,*/
                                 NAMEITEM,DATEITEM,SIZEITEM,TYPEITEM,0};
-#endif*/
+#endif
 
-/* no easter egg
+/* easter egg */
 GLOBAL WORD     freq[]=
 {
         262, 349, 329, 293, 349, 392, 440, 392, 349, 329, 262, 293,
@@ -157,7 +155,7 @@ GLOBAL WORD     dura[]=
         4, 12, 4, 12, 4, 6, 2, 4, 4, 12, 4, 4, 
         4, 4, 4, 4, 4, 4, 4, 12, 4, 8, 4
 };
-*/
+
 
 
 GLOBAL WORD     gl_swtblks[3] =
@@ -167,26 +165,31 @@ GLOBAL WORD     gl_swtblks[3] =
         160
 };
 
-#ifndef DESK1
 GLOBAL LONG     ad_ptext;
 GLOBAL LONG     ad_picon;
 
+#ifndef DESK1
 GLOBAL GRECT    gl_savewin[NUM_WNODES]; /* preserve window x,y,w,h      */
 GLOBAL GRECT    gl_normwin;             /* normal (small) window size   */
 GLOBAL WORD     gl_open1st;             /* index of window to open 1st  */
 #endif
 GLOBAL BYTE     gl_defdrv;              /* letter of lowest drive       */
-#ifndef DESK1
+
 GLOBAL WORD     can_iapp;               /* TRUE if INSAPP enabled       */
 GLOBAL WORD     can_show;               /* TRUE if SHOWITEM enabled     */
 GLOBAL WORD     can_del;                /* TRUE if DELITEM enabled      */
 GLOBAL WORD     can_output;             /* TRUE if OUTPITEM endabled    */
-#endif
+
 GLOBAL WORD     gl_whsiztop;            /* wh of window fulled          */
 GLOBAL WORD     gl_idsiztop;            /* id of window fulled          */
 
 
 
+
+/* Function prototypes: */
+#ifndef DESK1
+void hot_close(WORD wh);
+#endif
 
 
 
@@ -360,12 +363,11 @@ void men_update(LONG tree)
                                                 /* enable all items     */
         for (item = OPENITEM; item <= PREFITEM; item++)
           menu_ienable(tree, item, TRUE);
-#ifndef DESK1
+
         can_iapp = TRUE;
         can_show = TRUE;
         can_del = TRUE;
         can_output = TRUE;
-#endif
                                                 /* disable some items   */
         men_list(tree, ILL_ITEM, FALSE);
 
@@ -382,37 +384,28 @@ void men_update(LONG tree)
                 else
                 {
                   pvalue = ILL_DOCU;
-#ifndef DESK1
                   can_iapp = FALSE;
-#endif
                 } 
                 break;
             case AT_ISFOLD:
                 pvalue = ILL_FOLD;
-#ifndef DESK1
                 can_iapp = FALSE;
                 can_output = FALSE;
-#endif
                 break;
             case AT_ISDISK:
                 pvalue = (appl->a_aicon == IG_FLOPPY) ? ILL_FDSK : ILL_HDSK;
-#ifndef DESK1
                 can_iapp = FALSE;
                 can_output = FALSE;
-#endif
                 break;
-/* FIXME
 #ifdef DESK1
-            case AT_ISTRSH:                    // Trash
+            case AT_ISTRSH:                    /* Trash */
                 pvalue = ILL_TRASH;
                 break;
 #endif
-*/
           } /* switch */
           men_list(tree, pvalue, FALSE);       /* disable certain items */
         } /* for */
 
-/* FIXME
 #ifdef DESK1
         if (win_ontop())
           pvalue = ILL_DESKTOP;
@@ -423,25 +416,20 @@ void men_update(LONG tree)
         else
           men_list(tree, pvalue, FALSE);
 #endif
-*/
 
         if ( nsel != 1 )
         {
           if (nsel)
           {
             pvalue = ILL_YSEL;
-#ifndef DESK1
             can_show = FALSE;
-#endif
           }
           else
           {
             pvalue = ILL_NOSEL;
-#ifndef DESK1
             can_show = FALSE;
             can_del = FALSE;
             can_iapp = FALSE;
-#endif
           }
           men_list(tree, pvalue, FALSE);
         } /* if */
@@ -456,8 +444,7 @@ void men_update(LONG tree)
 WORD do_deskmenu(WORD item)
 {
         WORD            done, touchob;
-/*      WORD            i;
-*/      LONG            tree;
+        LONG            tree;
 
         done = FALSE;
         switch( item )
@@ -472,9 +459,13 @@ WORD do_deskmenu(WORD item)
                   touchob &= 0x7fff;
                   if ( touchob == DEICON )
                   {
-/*                  for(i=0; i<23; i++)
+                    int i;
+                    for(i=0; i<23; i++)
+                    {
                       sound(TRUE, freq[i], dura[i]);
-*/                }
+                      evnt_timer(dura[i]*64, 0);
+                    }
+                  }
                   else
                     done = TRUE;
                 }   
@@ -519,10 +510,9 @@ WORD do_filemenu(WORD item)
                 if (curr)
                   do_info(curr);
                 break;
-/* FIXME
 #ifdef DESK1
           case NFOLITEM:
-                if (curr)
+                if (pw)
                   fun_mkdir(pw);
                 break;
           case CLOSITEM:
@@ -533,8 +523,19 @@ WORD do_filemenu(WORD item)
                 if (pw)
                   fun_close(pw, 1);
                 break;
+#else
+          case NFOLITEM:
+                if (pw)
+                  fun_mkdir(pw);
+                break;
+          case CLOSITEM:
+                hot_close(G.g_cwin);
+                break;
+          case CLSWITEM:
+                /* FIXME: Should rather return to drive selection */
+                hot_close(G.g_cwin);
+                break;
 #endif
-*/
           case DELTITEM:
                 if (curr)
                   fun_del(pw);
@@ -627,20 +628,14 @@ WORD do_filemenu(WORD item)
 WORD do_viewmenu(WORD item)
 {
         WORD            newview, newsort;
-#ifndef DESK1
         LONG            ptext;
-#endif
 
         newview = G.g_iview;
         newsort = G.g_isort;
         switch( item )
         {
           case ICONITEM:
-#ifdef DESK1
-                newview = V_ICON;
-#else
                 newview = (G.g_iview == V_ICON) ? V_TEXT : V_ICON;
-#endif
 #if TOS_VERSION < 0x200
                 newview = V_TEXT;   /* No icons in TOS 1.0x so we save space */
 #endif
@@ -663,15 +658,9 @@ WORD do_viewmenu(WORD item)
         {
           if (newview != G.g_iview)
           {
-#ifdef DESK1
-            menu_icheck(G.a_trees[ADMENU], G.g_viewpref, FALSE);
-            G.g_viewpref = item;
-            menu_icheck(G.a_trees[ADMENU], item, TRUE);
-#else
             G.g_iview = newview;
             ptext = (newview == V_TEXT) ? ad_picon : ad_ptext;
             menu_text(G.a_trees[ADMENU], ICONITEM, ptext);
-#endif
           }
           if (newsort != G.g_isort)
           {
@@ -889,7 +878,6 @@ WORD hndl_kbd(WORD thechar)
           case ESCAPE:
                 do_chkall(TRUE);
                 break;
-#ifndef DESK1  /* Hm, it would be nice to have that in Desk1, too! */
           case ALTA:    /* Options: Install App */
                 if (can_iapp)           /* if it's ok to install app    */
                 {
@@ -958,7 +946,6 @@ WORD hndl_kbd(WORD thechar)
                 menu_tnormal(G.a_trees[ADMENU], FILEMENU, FALSE);
                 done = hndl_menu(FILEMENU, QUITITEM);
                 break;
-#endif
         } /* switch */
         men_update(G.a_trees[ADMENU]);          /* clean up menu info   */
         return(done);
@@ -1124,9 +1111,7 @@ WORD hndl_msg()
 #endif
           case WM_CLOSED:
 #ifdef DESK1
-/* FIXME!
                 do_filemenu(CLOSITEM);
-*/
 #else
                 hot_close(G.g_rmsg[3]);
 #endif
@@ -1316,6 +1301,11 @@ void cnx_get(void)
         for (nw = 0; nw < NUM_WNODES; nw++)
         {
                 pws = &G.g_cnxsave.win_save[nw];
+
+                /* FIXME: There seems to be a bug somewhere that sets w or h to 0 */
+                if(pws->w_save <= 0)  pws->w_save = 160;
+                if(pws->h_save <= 0)  pws->h_save = 128;
+
                 if (pws->pth_save[0])
                 {
                         if ((pw = win_alloc(pws->obid_save)))
@@ -1460,10 +1450,9 @@ WORD deskmain()
           app_tran(ii);
         }
 
-#ifndef DESK1
         rsrc_gaddr(R_STRING, STASTEXT, &ad_ptext);
         rsrc_gaddr(R_STRING, STASICON, &ad_picon);
-#endif
+
                                                 /* These strings are    */
                                                 /* used by dr_code.  Can't */
                                                 /* get to resource then */
@@ -1521,15 +1510,9 @@ WORD deskmain()
         menu_bar(G.a_trees[ADMENU], TRUE);
         wind_update(END_UPDATE);
                                                 /* establish menu items */
-                                                /*   that need to be    */
-                                                /*   checked, check 'em */
-#ifdef DESK1
-        G.g_viewpref  = ICONITEM;
-        menu_icheck(G.a_trees[ADMENU], G.g_viewpref, TRUE);
-#else
         G.g_iview = V_ICON;
         menu_text(G.a_trees[ADMENU], ICONITEM, ad_ptext);
-#endif
+
         G.g_csortitem = NAMEITEM;
         menu_icheck(G.a_trees[ADMENU], G.g_csortitem, TRUE);
                                                 /* set up initial prefs */
@@ -1583,9 +1566,9 @@ WORD deskmain()
 #endif
                                                 /* turn mouse on        */
         desk_wait(FALSE);
+
                                                 /* loop handling user   */
                                                 /*   input until done   */
-
         while( !done )
         {
                                                 /* block for input      */

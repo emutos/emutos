@@ -14,24 +14,28 @@
 #define ABOUITEM        9
 #define OPENITEM        18
 #define SHOWITEM        19
-#define L2ITEM          20
-#define DELTITEM        21
-#define FORMITEM        22
-#define L3ITEM          23
-#define CLIITEM         24
-#define QUITITEM        25
-#define IDSKITEM        27
-#define IAPPITEM        28
-#define L5ITEM          29
-#define PREFITEM        30
-#define SAVEITEM        31
-#define RESITEM         32
-#define ICONITEM        34
-#define L4ITEM          35
-#define NAMEITEM        36
-#define TYPEITEM        37
-#define SIZEITEM        38
-#define DATEITEM        39
+#define L1ITEM          20
+#define NFOLITEM        21
+#define CLOSITEM        22
+#define CLSWITEM        23
+#define L2ITEM          24
+#define DELTITEM        25
+#define FORMITEM        26
+#define L3ITEM          27
+#define CLIITEM         28
+#define QUITITEM        29
+#define IDSKITEM        31
+#define IAPPITEM        32
+#define L5ITEM          33
+#define PREFITEM        34
+#define SAVEITEM        35
+#define RESITEM         36
+#define ICONITEM        38
+#define L4ITEM          39
+#define NAMEITEM        40
+#define TYPEITEM        41
+#define SIZEITEM        42
+#define DATEITEM        43
 
 #define ADFILEIN        1
 #define FITITLE         1
@@ -241,6 +245,10 @@
 #define STFO8DEE        35
 
 #define STDEEPPA        36
+
+#ifdef DESK1
+#define STNOOPEN        37
+#endif
 
 
 extern void desk_rs_init(void);

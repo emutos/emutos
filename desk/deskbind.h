@@ -25,43 +25,6 @@
 #define NUM_ADTREES 14
 #endif
 
-#define THESCREEN 0
-#define THEBAR 1
-#define THEACTIVE 2
-
-
-#define THEMENUS 7
-                                                        /* Desk Menu    */
-#define L1ITEM 10           
-#define DSK1ITEM 11
-#define DSK2ITEM 12          
-#define DSK3ITEM 13
-#define DSK4ITEM 14      
-#define DSK5ITEM 15     
-#define DSK6ITEM 16   
-#define FROOT 0
-#define FSTITLE 1
-#define FDIRECTORY 2
-#define FSELECTION 3
-#define FCLSBOX 4
-#define FTITLE 5
-#define FILEBOX 6
-#define F1NAME 7
-#define F2NAME 8
-#define F3NAME 9
-#define F4NAME 10
-#define F5NAME 11
-#define F6NAME 12
-#define F7NAME 13
-#define F8NAME 14
-#define F9NAME 15
-#define SCRLBAR 16
-#define FUPAROW 17
-#define FDNAROW 18
-#define FSVSLID 19
-#define FSVELEV 20
-#define OK 21
-#define CANCEL 22
 
 #ifndef ARROW
 #define ARROW 0x0
@@ -115,7 +78,7 @@ GLOBES
 
                                                 /* view related parms   */
 /*GLOBAL*/ WORD         g_num;                  /* number of points     */
-/*GLOBAL*/ WORD         *g_pxy;         /* outline pts to drag  */
+/*GLOBAL*/ WORD         *g_pxy;                 /* outline pts to drag  */
 /*GLOBAL*/ WORD         g_iview;                /* current view type    */
 /*GLOBAL*/ WORD         g_iwext;                /* w,h of extent of a   */
 /*GLOBAL*/ WORD         g_ihext;                /*   single iten        */
@@ -182,9 +145,6 @@ GLOBES
 /*GLOBAL*/ WORD         g_cwin;                 /* current window #     */
 /*GLOBAL*/ WORD         g_wlastsel;             /* window holding last  */
                                                 /*   selection          */
-#ifdef DESK1
-           WORD         g_viewpref;
-#endif
 /*GLOBAL*/ WORD         g_csortitem;            /* curr. sort item chked*/
 /*GLOBAL*/ WORD         g_ccopypref;            /* curr. copy pref.     */
 /*GLOBAL*/ WORD         g_cdelepref;            /* curr. delete pref.   */

@@ -167,11 +167,13 @@ WNODE *win_alloc()
           pw->w_pnrow = (pt->g_h - gl_hchar) / G.g_ihspc;
           pw->w_vncol = 0x0;
           pw->w_vnrow = 0x0;
-/* BugFix       */
-                                        /* 0x1000 = hot closer button   */
+#ifdef DESK1
+          pw->w_id = wind_create(WINDOW_STYLE, G.g_xdesk, G.g_ydesk, 
+                                 G.g_wdesk, G.g_hdesk);
+#else
           pw->w_id = wind_create(WINDOW_STYLE, G.g_xfull, G.g_yfull, 
                                  G.g_wfull, G.g_hfull);
-/* */
+#endif
           if (pw->w_id != -1)
           {
 #ifndef DESK1
