@@ -76,7 +76,7 @@ ASFLAGS = --register-prefix-optional -m68000 $(ASINC)
 # C compiler for MiNT
 CC = m68k-atari-mint-gcc
 INC = -Iinclude
-CFLAGS = -O -Wall -mshort -m68000 $(LOCALCONF) $(INC)
+CFLAGS = -O2 -fomit-frame-pointer -Wall -mshort -m68000 $(LOCALCONF) $(INC)
 
 CPPFLAGS = $(INC)
 
