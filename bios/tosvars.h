@@ -27,6 +27,7 @@ extern LONG proc_enum;
 extern LONG proc_usp;
 extern WORD proc_stk[];
 
+extern LONG memvalid;
 extern BYTE conterm;
 
 extern WORD cmdload;

@@ -27,6 +27,7 @@
         .global _etv_critic
         .global _etv_term
         .global _etv_xtra
+        .global _memvalid
         .global memvalid
         .global memctrl
         .global resvalid
@@ -177,6 +178,7 @@ _etv_timer:     ds.l    1       // GEM event timer vector
 _etv_critic:    ds.l    1       // GEM critical error handler
 _etv_term:      ds.l    1       // GEM program termination vector
 _etv_xtra:      ds.l    5       // GEM additional vectors (unused)
+_memvalid:
 memvalid:       ds.l    1       // memory conf valid, if 0x752019f3
         .org 0x424
 memctrl:        ds.b    1       // copy of contents of 0xff8001

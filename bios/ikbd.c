@@ -38,6 +38,7 @@
 #include "kprint.h"
 #include "tosvars.h"
 #include "lineavars.h"
+#include "tosvars.h"
 #include "iorec.h"
 #include "asm.h"
 #include "ikbd.h"
@@ -281,6 +282,16 @@ void kbd_int(WORD scancode)
 
     kprintf("Key-shift bits: 0x%02x\n", shifty);
 #endif
+
+    /* keyboard warm/cold start */
+    if ((scancode == 0x53)  /* Del key and shifty is Alt+Ctrl but not LShift */
+        && ((shifty & (MODE_ALT|MODE_CTRL|MODE_LSHIFT)) == (MODE_ALT|MODE_CTRL))) {
+        if (shifty & MODE_RSHIFT) {
+            /* Alt+Ctrl+RShift means cold start */
+            memvalid = 0;   /* enforce cold start by resetting memvalid */
+        }
+        os_entry();  /* restart system */
+    }
 
     if (scancode & KEY_RELEASED) {
         scancode &= ~KEY_RELEASED;      /* get rid of release bits */
