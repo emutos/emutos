@@ -19,6 +19,7 @@
 .globl _ui_start
 .globl _pgmld
 .globl _gemdos
+.globl _dos_exec
 .globl _ui_mupb
 
 
@@ -79,18 +80,13 @@ clrglotest:
         lea     _tikcod,a0
         move.l  a0,_tikaddr
 
-        // Originally we set the stack to be _D + 0x74A, and stored
+        // Initiallize the SSP to be _D + 0x74A, and also store
         // this in _D + 0x3E. (_D + 0x3E is ssp in D.uda[0])
-        // But when we really initialized the SSP like this, the stack
-        // will be overwritten by the first application that is started
-        // (see gemshlib.c). So we initialize the SSP to point at a new
-        // stack area, gemssp.
         movea.l #_D,a6
         movea.l a6,a5
         adda.l  #0x74A,a6
         move.l  a6,0x3E(a5)
-        //movea.l a6,sp
-        movea.l #gemssp,sp        // Set up new SSP
+        movea.l a6,sp
 
         // go in C
         jsr     _gem_main
@@ -107,7 +103,7 @@ clrglotest:
 
 
 
-
+// Execute a GEMDOS call (see gemdos.c).
 _gemdos:
         move.l  (SP)+,saveretaddr
         movem.l d2/a2,saveregs
@@ -126,6 +122,46 @@ _gemdos:
 gd_end:
         movem.l saveregs,d2/a2
         move.l  saveretaddr,-(SP)
+        rts
+
+
+// A wrapper around Pexec. We can't use the above function _gemdos for this
+// since _gemdos is not reentrant.
+_dos_exec:
+        jsr     _dsptch                 // Updates rlr->p_uda!
+        move.l  sp,d1
+        movem.l d2/a2,-(sp)             // Save registers
+
+        bsr     _cli
+        movea.l _rlr,a0
+        movea.l 8(a0),a0
+        move.l  0x3E(a0),-(sp)          // Save rlr->p_uda->u_spsuper
+        movea.l sp,a1
+        suba.l  #0x40,a1
+        move.l  a1,0x3E(a0)
+        bsr     _sti
+
+        movea.l d1,a1
+        move.l  14(a1),-(sp)            // Push parameters on the stack again...
+        move.l  10(a1),-(sp)
+        move.l  6(a1),-(sp)
+        move.w  4(a1),-(sp)
+        move.w  #0x4B,-(sp)
+        trap    #1                      // ... and execute the Pexec call!
+        lea     16(sp),sp
+
+        bsr     _cli
+        movea.l _rlr,a0
+        movea.l 8(a0),a0
+        move.l  (sp)+,0x3E(a0)          // Restore rlr->p_uda->u_spsuper
+        bsr     _sti
+
+        movem.l (sp)+,d2/a2
+        move.w  #1,_DOS_ERR
+        tst.l   d0
+        bmi.s   de_return
+        move.w  #0,_DOS_ERR
+de_return:
         rts
 
 
@@ -152,13 +188,9 @@ saveretaddr:
         .ds.l   1
 
 
-// Space for the Stacks:
-
+// Space for the user stack:
         .ds.b   256
 gemusp:
-
-        .ds.b   4096
-gemssp:
 
 
 saveregs:

@@ -450,7 +450,7 @@ OBJECT *rs_tree[] = {
 
 char *rs_fstr[] = {
         "PATH=",
-        "DESKTOP.APP",
+        "EMUDESK",      /* was: DESKTOP.APP */
         ".APP",
         "*.ACC",
         "0..9",

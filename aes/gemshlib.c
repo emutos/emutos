@@ -272,9 +272,6 @@ WORD sh_write(WORD doex, WORD isgem, WORD isover, LONG pcmd, LONG ptail)
 {
         SHELL           *psh;
 
-        kprintf("sh_write doex=%d - isgem=%d - isover=%d - pcmd=%s - ptail=%s\n",
-                doex,  isgem,  isover,  (char *)pcmd,  (char *)ptail);
-
         LBCOPY(ad_scmd, pcmd, 128);
         LBCOPY(ad_stail, ptail, 128);
         if (isover > 0)
@@ -297,10 +294,10 @@ WORD sh_write(WORD doex, WORD isgem, WORD isover, LONG pcmd, LONG ptail)
           if ( sh_find(ad_scmd) )
           {
 #if GEMDOS
-            dos_exec(ad_scmd, ad_envrn, ad_stail);
+            /* Normal Atari-GEM's shel_write does not support running PRGs directly! */
+            /*dos_exec(0, ad_scmd, ad_stail, ad_envrn);*/
 #else
-            dos_exec(ad_scmd, LHIWD(ad_envrn),
-                     ad_stail, ad_s1fcb, ad_s2fcb);
+            dos_exec(ad_scmd, LHIWD(ad_envrn), ad_stail, ad_s1fcb, ad_s2fcb);
 #endif
           }
           else
@@ -858,7 +855,6 @@ void sh_ldapp()
         WORD    ret, badtry, retry;
         SHELL   *psh;
         LONG    *ui_pd;
-        void    *uda_ssp_save;
 
 
         psh = &sh[rlr->p_pid];
@@ -914,50 +910,35 @@ void sh_ldapp()
 
             kprintf("starting %s\n",(char *)ad_scmd);
             if(psh->sh_isdef && strcmp((char *)ad_scmd,rs_str(STDESKTP)) == 0)
-            { /* Experimental starting of the ROM desktop: */
+            {
+              /* Start the ROM desktop: */
               sh_show(ad_scmd);
               p_nameit(rlr, sh_name(&D.s_cmd[0]));
 
               ui_pd = (LONG *) trap1_pexec(5, 0L , "", 0L);
               ui_pd[2] = (LONG) deskstart;
               ui_pd[3] = ui_pd[5] = ui_pd[7] = 0;
-              dsptch();  /* Updates rlr->p_uda! */
-              /* Save old stacks and set up new stacks so that AES' stacks
-                 won't be destroyed: */
-              uda_ssp_save = rlr->p_uda->u_spsuper;
-              rlr->p_uda->u_spsuper = &rlr->p_uda->u_supstk;
-              trap1_pexec(6, 0L, ui_pd, 0L);    /* Run the desktop */
-              rlr->p_uda->u_spsuper = uda_ssp_save;
+              dos_exec(6, 0L, (LONG)ui_pd, 0L);           /* Run the desktop */
             }
 #if WITH_CLI != 0
             else if(strcmp((char *)ad_scmd, "EMUCON") == 0)
-            { /* start the EmuCON shell - experimental! */
+            {
+              /* start the EmuCON shell: */
               ui_pd = (LONG *) trap1_pexec(5, 0L , "", 0L);
               ui_pd[2] = (LONG) coma_start;
               ui_pd[3] = ui_pd[5] = ui_pd[7] = 0;
-              dsptch();  /* Updates rlr->p_uda! */
-              /* Save old stacks and set up new stacks so that AES' stacks
-                 won't be destroyed: */
-              uda_ssp_save = rlr->p_uda->u_spsuper;
-              rlr->p_uda->u_spsuper = &rlr->p_uda->u_supstk;
-              trap1_pexec(6, 0L, ui_pd, 0L);    /* Run EmuCON */
-              rlr->p_uda->u_spsuper = uda_ssp_save;
+              dos_exec(6, 0L, (LONG)ui_pd, 0L);           /* Run EmuCON */
             }
 #endif
             else if ( sh_find(ad_scmd) )
-            { /* Run a normal application: */
+            {
+              /* Run a normal application: */
               sh_show(ad_scmd);
               p_nameit(rlr, sh_name(&D.s_cmd[0]));
               if (psh->sh_fullstep == 0)
               {
 #if GEMDOS
-                dsptch();  /* Updates rlr->p_uda! */
-                /* Save old stacks and set up new stacks so that AES' stacks
-                   won't be destroyed: */
-                uda_ssp_save = rlr->p_uda->u_spsuper;
-                rlr->p_uda->u_spsuper = &rlr->p_uda->u_supstk;
-                dos_exec(ad_scmd, ad_envrn, ad_stail);    /* Run the APP */
-                rlr->p_uda->u_spsuper = uda_ssp_save;
+                dos_exec(0, ad_scmd, ad_stail, ad_envrn);   /* Run the APP */
 
                 /* If the user ran an alternative desktop and quitted it,
                    return now to the default desktop: (experimental) */
@@ -975,7 +956,7 @@ void sh_ldapp()
               else if (psh->sh_fullstep == 1)
               {
 #if GEMDOS
-                dos_exec(ad_scmd, ad_envrn, ad_stail);
+                dos_exec(0, ad_scmd, ad_stail, ad_envrn);
 #else
                 gsx_exec(ad_scmd, LHIWD(ad_envrn), ad_stail, 
                          ad_s1fcb, ad_s2fcb);

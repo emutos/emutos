@@ -1436,3 +1436,9 @@ Start... early ages
 - cli/command.c - implemented prototypes for gemdos bindings (LVL)
 - bdos/fs.h - fixed DTA.dt_fname: the correct size is 14 bytes, not 12 (LVL)
 
+22. Apr. 2003
+- aes/gemshlib.c, aes/gemstart.S, aes/gemdos.c : Fixed problem with shel_write
+  when parameter isover was 0. (shel_write on the Atari-GEM does not execute a
+  program directly!). I also included a new dos_exec function that makes the
+  handling of the rlr->p_uda->u_spsuper problem much more easier (the new
+  dos_exec has basically been taken from the old Lisa-GEM). (THH)

@@ -165,34 +165,6 @@ LONG dos_lseek(WORD handle, WORD smode, LONG sofst)
 }
 
 
-
-void dos_exec(LONG pcspec, LONG segenv, LONG pcmdln)
-{
-        LONG retval;
-
-        /* This call once used the gemdos() function, too. */
-        /* But since this is not reentrant, we're using trap1_pexec now! */
-        /*gemdos(X_EXEC, 0, pcspec, pcmdln, segenv);*/
-
-        retval = trap1_pexec(0, (char*)pcspec, (char*)pcmdln, (char*)segenv);
-
-        if(retval < 0)
-        {
-            DOS_ERR = 1;
-            if((WORD)retval > 0xffe0)
-                DOS_AX = retval;
-            else
-                DOS_AX = (WORD)(~retval) - 0x1e;
-        }
-        else
-        {
-            DOS_ERR = 0;
-            DOS_AX = 0;
-        }
-}
-
-
-
 LONG dos_chdir(BYTE *pdrvpath)
 {
         return(gemdos(X_CHDIR,pdrvpath));
