@@ -1,7 +1,7 @@
 /*
  * blkdev.h - bios block devices
  *
- * Copyright (c) 2001 EmuTOS development team
+ * Copyright (c) 2001-2005 EmuTOS development team
  *
  * Authors:
  *  MAD   Martin Doering
@@ -114,7 +114,7 @@ UWORD compute_cksum(LONG buf);
 LONG blkdev_drvmap(void);
 LONG blkdev_avail(WORD dev);
 
-int add_partition(int dev, char id[], ULONG start, ULONG size);
+int add_partition(int dev, char id[], ULONG start, ULONG size, int byteswap);
 
 
 /*
@@ -156,6 +156,7 @@ struct _blkdev
     BPB         bpb;
     GEOMETRY    geometry;       /* this should probably belong to devices */
     BYTE        serial[3];      /* the serial number taken from the bootsector */
+    BYTE	byteswap;	/* if non-zero swap bytes on whole harddrive */
     int         unit;           /* 0,1 = floppies, 2-9 = ACSI, 10-17 = SCSI, 18-25 = IDE */
 };
 typedef struct _blkdev  BLKDEV;

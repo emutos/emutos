@@ -1,7 +1,7 @@
 /*
  * blkdev.c - BIOS block device functions
  *
- * Copyright (c) 2002 by Authors:
+ * Copyright (c) 2002-2005 by Authors:
  *
  *  MAD     Martin Doering
  *  joy     Petr Stehlik
@@ -123,7 +123,7 @@ LONG blkdev_hdv_boot(void)
 /*
  * Add a partitions details to the devices partition description.
  */
-int add_partition(int dev, char id[], ULONG start, ULONG size)
+int add_partition(int dev, char id[], ULONG start, ULONG size, int byteswap)
 {
     if (blkdevnum == BLKDEVNUM) {
         kprintf("Maximum number of partitions reached!\n");
@@ -143,6 +143,7 @@ int add_partition(int dev, char id[], ULONG start, ULONG size)
 
     blkdev[blkdevnum].unit  = dev + 2;
     blkdev[blkdevnum].valid = 1;
+    blkdev[blkdevnum].byteswap = byteswap;
 
     /* make just GEM/BGM partitions visible to applications */
 /*
