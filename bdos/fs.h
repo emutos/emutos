@@ -49,7 +49,6 @@ extern void s68l(long *);
 #define swp68(x) s68(&x)
 #define swp68l(x) s68l(&x)
 #define NULPTR ((void *) 0)
-// #define MGET(x) ((x *) xmgetblk((sizeof(x) + 15)>>4))
 #define bconstat(a) trap13(1,a)
 #define bconin(a) trap13(2,a)
 #define bconout(a,b) trap13(3,a,b)
@@ -57,13 +56,23 @@ extern void s68l(long *);
 #define bconostat(a) trap13(8,a)
 #define getbpb(a) trap13(7,a)
 #define getmpb(a) trap13(0,a)
-#define rwabs(a,b,c,d,e) if((rwerr=trap13(4,a,b,c,d,e))!=0) \
-{errdrv=e;longjmp(errbuf,rwerr);}
 
 #define min(a,b) (((a) < (b)) ? (a) : (b))
 /* LVL define xmovs(n,s,d)      bmove(s,d,n) */
 
+/*
+ *  Error handling
+ */
 
+#include "setjmp.h"
+
+extern  long    rwerr;
+extern  jmp_buf errbuf;
+extern  int     errdrv;
+extern  long    errcode;
+
+#define rwabs(a,b,c,d,e) if((rwerr=trap13(4,a,b,c,d,e))!=0) \
+{errdrv=e;errcode=rwerr;longjmp(errbuf,1);}
 
 /*
  *  Type declarations
@@ -103,7 +112,8 @@ PD      /* this is the basepage format */
     /* 0x20 */
     char *p_xdta;
     PD   *p_parent;             /* parent PD */
-    long p_0fill[1];
+    int  p_flags;
+    int  p_0fill[1];
     char *p_env;                /* at offset 2ch (eat your heart out, Lee) */
     /* 0x30 */
     char p_uft[NUMSTD];         /* index into sys file table for std files */
@@ -122,6 +132,10 @@ PD      /* this is the basepage format */
     char p_cmdlin[PDCLSIZE];
 } ;
 
+/* p_flags values: */
+#define PF_FASTLOAD  0x0001
+#define PF_TTRAMLOAD 0x0002
+#define PF_TTRAMMEM  0x0004
 
 
 /*
@@ -359,15 +373,11 @@ extern  int     drvsel ;
 extern  PD      *run ;
 extern  int     logmsk[] ;
 extern  FTAB    sft[] ;
-extern  long    rwerr ;
-extern  int     errdrv ;
-extern  long    errbuf[] ;              /*  in sup.c                    */
 extern  BCB     *bufl[2] ;              /*  in bios main.c              */
 extern  unsigned int    time, date ;
 extern  int     bios_dev[] ;            /*  in fsfioctl.c               */
 
 extern  long    trap13(int, ...);
-
 
 
 /*

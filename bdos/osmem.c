@@ -39,12 +39,18 @@
 #include "gemerror.h"
 
 /*
- *  osmptr -
+ *  local constants
  */
 
-// GLOBAL       
-int     osmptr;
+#define LENOSM 4000
 
+/*
+ *  internal variables
+ */
+
+static  int     osmptr;
+static  int     osmlen;
+static  int     osmem[LENOSM];
 
 /*
  *  root - root array for 'quick' pool.
@@ -56,15 +62,15 @@ int     osmptr;
 
 #define MAXQUICK        20
 // GLOBAL       
-int     *root[MAXQUICK];
+static  int     *root[MAXQUICK];
 
 /*
  *  local debug counters
  */
 
-long    dbgfreblk = 0 ;
-long    dbggtosm = 0 ;
-long    dbggtblk = 0 ;
+static  long    dbgfreblk = 0 ;
+static  long    dbggtosm = 0 ;
+static  long    dbggtblk = 0 ;
 
 
 /*
@@ -188,3 +194,11 @@ void    xmfreblk(void *m)
     }
 }
 
+/*
+ * called by bdosmain to initialise the OS memory pool.
+ */
+
+void osmem_init(void)
+{
+    osmlen = LENOSM;
+}

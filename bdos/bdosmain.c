@@ -31,13 +31,6 @@
 #include        "gemerror.h"
 #include        "../bios/kprint.h"
 
-/*
-**  local constants
-*/
-
-#define LENOSM 4000
-
-
 
 /*
 **  externals
@@ -77,16 +70,9 @@ long    S_SetVec(), S_GetVec();
 int oscnt;
 long uptime;
 int msec;
-long errbuf[3];
 
 /* 0 J  F  M  A  M  J  J  A  S  O  N  D */
 int nday[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
-
-
-MPB pmd;
-int osmlen;
-int osmem[LENOSM];
-
 
 
 /*
@@ -164,7 +150,7 @@ FND funcs[0x58] =
     { xauxistat, 0x82 },        /* 0x12 */
     { xauxostat, 0x82 },        /* 0x13 */
 
-    { ni,       0 },
+    { xmaddalt, 1 },    /* 0x14 */
     { ni,       0 },
     { ni,       0 },
     { ni,       0 },
@@ -226,7 +212,7 @@ FND funcs[0x58] =
     { xunlink,  1 },    /* 0x41 */
     { xlseek,   0x81 }, /* 0x42 */
     { (long(*)()) xchmod, 1 },  /* 0x43 */
-    { ni,       0 },    /* 0x44 */
+    { xmxalloc, 1 },    /* 0x44 */
     { dup,      0 },    /* 0x45 */
     { xforce,   0 },    /* 0x46 */
     { xgetdir,  1 },    /* 0x47 */
@@ -290,9 +276,9 @@ long    ni(void)
 
 void    cinit()
 {
+    osmem_init();
+    umem_init();
 
-    getmpb(&pmd);
-    osmlen = LENOSM;
     run = MGET(PD);
 #if DBGOSIF
     kprintf("BDOS: Address of basepage = %08lx\n", (LONG)&run);
@@ -434,9 +420,9 @@ restrt:
     if (fn > 0x57)
         return(EINVFN);
 
-    rc = setjmp(errbuf);
-    if ( rc )
+    if ( setjmp(errbuf) )
     {
+        rc = errcode;
         /* hard error processing */
         /* is this a media change ? */
 

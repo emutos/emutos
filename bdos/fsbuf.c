@@ -145,7 +145,8 @@ doio:   for (p = *(q = phdr); p->b_link; p = *(q = &p->b_link))
                 /* media definitely changed */
                 errdrv = b->b_bufdrv;
                 rwerr = E_CHNG; /* media change */
-                longjmp(errbuf,rwerr);
+		errcode = rwerr;
+                longjmp(errbuf,1);
             }
         }
     }

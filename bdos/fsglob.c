@@ -54,6 +54,7 @@ FTAB sft[OPNFILES];
  */
 
 long rwerr; 
+long errcode;
 
 
 
@@ -62,6 +63,7 @@ long rwerr;
  */
 
 int errdrv; 
+jmp_buf errbuf;
 
 
 

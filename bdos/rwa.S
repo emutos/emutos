@@ -122,8 +122,6 @@
 
         .global _s68
         .global _s68l
-        .global _setjmp
-        .global _longjmp
         .global _gouser
         .global _oscall
         .global _trap13
@@ -288,42 +286,7 @@ _s68l:
         rts
 
 
-
-
-
-//==== _setjmp ===============================================================
-
-        .text
-_setjmp:
-        link    a6,#0
-        move.l  8(a6),a0
-        move.l  0(a6),(a0)+
-        lea     8(a6),a1
-        move.l  a1,(a0)+
-        move.l  4(a6),(a0)
-        clr.l   d0
-        unlk    a6
-        rts
-
-
-
-//==== _longjmp ==============================================================
-
-        .text
-_longjmp:
-        link    a6,#0
-        move.l  12(a6),d0
-        tst.l   d0
-        bne     okrc
-
-        move    #1,d0
-okrc:
-        move.l  8(a6),a0
-        move.l  (a0)+,a6
-        move.l  (a0)+,a7
-        move.l  (a0),-(sp)
-        rts
-
+	
 //==== _enter - Front end of TRAP #1 handler =================================
 
         .text

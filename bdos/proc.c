@@ -37,7 +37,7 @@ static WORD envsize( char *env );
 
 PD      *run;           /* ptr to PD for current process */
 WORD    supstk[SUPSIZ]; /* common sup stack for all processes*/
-long    bakbuf[3];      /*  longjump buffer */
+jmp_buf bakbuf;         /* longjmp buffer */
 
 
 /**
@@ -181,17 +181,15 @@ static long do_xexec(char *s)
         }
     }
 
-    /* LVL xmovs(sizeof(errbuf),errbuf,bakbuf); */
     memcpy(bakbuf, errbuf, sizeof(errbuf));
 
-    rc = setjmp(errbuf);
-    if ( rc )
+    if ( setjmp(errbuf) )
     {
         /* Free any memory allocated to this program. */
         if (flg != 4)           /* did we allocate any memory? */
             ixterm((PD*)t);             /*  yes - free it */
 
-        longjmp(bakbuf,rc);
+        longjmp(bakbuf,1);
     }
 
     /* will we need memory and a psp ? */
@@ -322,6 +320,7 @@ static long do_xexec(char *s)
 #endif
         p = (PD *) t;
         p->p_parent = run;
+	p->p_flags = 0; /* TODO, handle PRG flags */
         spl = (long *) p->p_hitpa;
         *--spl = (long) p;
         *--spl = 0L;            /* bogus retadd */

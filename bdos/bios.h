@@ -228,8 +228,4 @@ MPB
 
 
 
-
-extern  long    setjmp(long *);
-extern  void    longjmp(long *, long);
-
 #endif /* _BIOS_H */

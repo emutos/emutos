@@ -27,13 +27,10 @@
  *  externals
  */
 
-extern  FTAB    sft[] ;
-extern  long    errbuf[3] ;                     /*  sup.c  */
-extern  MPB     pmd ;
-extern  int     osmem[] ;
-extern  int     osmlen ;
-extern  int     *root[20];
-extern  int     osmptr;
+extern  FTAB    sft[];
+extern  MPB     pmd;    /* the mem pool for the main user ST ram */
+extern  MPB     pmdtt;  /* the memory pool for the alternative TT ram */
+extern  int     has_ttram; /* 1 if alternative RAM has been declared to BDOS */
 
 /* 
  * in osmem.c
@@ -48,6 +45,9 @@ void *xmgetblk(int i);
 /*  xmfreblk - free up memory allocated through mgetblk */
 void xmfreblk(void *m);
 
+/* init os memory */
+void osmem_init(void);
+
 /*
  * in umem.c 
  */
@@ -58,6 +58,20 @@ long xmalloc(long amount);
 long xmfree(long addr);
 /* mshrink */
 long xsetblk(int n, void *blk, long len);
+/* mxalloc */
+long xmxalloc(long amount, int mode);
+
+/* allowed values for Mxalloc mode: */
+#define MX_STRAM 0
+#define MX_TTRAM 1
+#define MX_PREFSTRAM 2
+#define MX_PREFTTRAM 3
+
+/* declare additional memory */
+long xmaddalt(long start, long size);
+
+/* init user memory */
+void umem_init(void);
 
 /*
  * in iumem.c
