@@ -16,7 +16,10 @@
 #include "bios.h"
 #include "kprint.h"
 
-extern void printout(char *);
+/* extern declarations */
+
+extern void printout_stonx(char *);    /* in kprintasm.S */
+extern void printout_aranym(char *);
 
 extern void bconout2(WORD, UBYTE);
 
@@ -28,16 +31,18 @@ extern void bconout2(WORD, UBYTE);
 extern int doprintf(void (*outc)(int), const char *fmt, va_list ap);
 
 
-
-#define COMMENT 0
-#define MAXDMP 1024
 /*
  *  globals
  */
 
-//static  char  buffer[MAXDMP] ;
+/* this variable is filled by function kprint_init(), in kprintasm.S, 
+ * called very early just after clearing the BSS.
+ */
+#define NATIVE_PRINT_STONX 1
+#define NATIVE_PRINT_ARANYM 2
+ 
+int native_print_kind;
 
-// GLOBAL
 char    *kcrlf = "\n\r" ;
 
 /*==== cprintf - do formatted string output direct to the console ======*/
@@ -65,18 +70,36 @@ int cprintf(const char *fmt, ...)
 
 /*==== kprintf - do formatted ouput natively to the emulator ======*/
 
-
-static void kprintf_outc(int c)
+static void kprintf_outc_stonx(int c)
 {
   char buf[2];
   buf[0] = c;
   buf[1] = 0;
-  printout(buf);
+  printout_stonx(buf);
+}
+
+static void kprintf_outc_aranym(int c)
+{
+  char buf[2];
+  buf[0] = c;
+  buf[1] = 0;
+  printout_aranym(buf);
 }
 
 static int vkprintf(const char *fmt, va_list ap)
 {
-  return doprintf(kprintf_outc, fmt, ap);
+  switch(native_print_kind) {
+  case NATIVE_PRINT_STONX:
+    return doprintf(kprintf_outc_stonx, fmt, ap);
+  case NATIVE_PRINT_ARANYM:
+    return doprintf(kprintf_outc_aranym, fmt, ap);
+  default:
+    /* let us home nobody is doing 'pretty-print' with kprintf by
+     * printing stuff till the amount of characters equal something,
+     * for it will generate an endless loop!
+     */
+    return 0;
+  }
 }
 
 

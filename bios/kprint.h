@@ -43,7 +43,7 @@ extern void doassert(const char *, long, const char *, const char *);
 
 /* functions below implemented in panicasm.S */
 
-/* print a panic message bot via kprintf and cprintf, then halt */
+/* print a panic message both via kprintf and cprintf, then halt */
 extern void panic(const char *fmt, ...) PRINTF_STYLE NORETURN;
 
 /* halt the machine */

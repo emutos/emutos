@@ -1,5 +1,5 @@
 /*
- * startup.S - Emulator specific startup module.  To be linked in first!
+ * startup.S - EmuTOS startup module
  *
  * Copyright (c) 2001 by Authors:
  *
@@ -19,8 +19,6 @@
 
         .equ    SUPSIZ, 8192            // size of supervisor stack in words
         .equ    _GSX_ENT, 0             // Entry to GEM (if graphically)
-
-        .equ    TPASTART, 0xE000        // default start address of tpa area
 
         .equ    vec_divnull, 0x14       // division by zero interrupt vector
         .equ    vec_linea, 0x28         // LineA interrupt vector
@@ -43,11 +41,9 @@
         .global _trap_1         // Calling GEMDOS from C
         .global _b_mdx          // used in bios.c
 
-        .global _printout
-        .global kprintf         // asm glue, saves registers
-        .global _ara_DMAread
-
         .global _run
+
+        .global _ara_DMAread
 
         .global _criter
         .global _criter1
@@ -187,14 +183,12 @@ _m_length:      dc.l    1       // length of TPA in byte
 
 aexecsave:      dc.l    1       // save zone for autoexec
         
-kprintfsave:    dc.l    5       // save zone for kprintf
         
 // ===========================================================================
 // ==== TEXT segment (TOS image) =============================================
 // ===========================================================================
 
         .text
-        .org    0x000000
 
 
 
@@ -591,31 +585,12 @@ _criter1:
         rts                     // jump back to routine
         
 
-// ==== STonX/ARAnyM - Native print routine for debugging ====================
-_print:
-_printout:
-#if STONX_NATIVE_PRINT
-        dc.w 0xa0ff     // Jump to native execution
-        dc.l 0          // Printing subroutine
-#endif
-#if ARANYM_NATIVE_PRINT
-        dc.w 0x7135     // Jump to native printing subroutine
-#endif
-        rts
 
 // ==== DMAread(LONG sector, WORD count, LONG buf, WORD dev) =================
 _ara_DMAread:
         dc.w 0x7136
         rts
 
-// ==== ASM glue for kprintf =================================================
-kprintf:
-        move.l  (sp)+,kprintfsave+16
-        movem.l d0-d1/a0-a1,kprintfsave
-        jsr     _kprintf
-        movem.l kprintfsave,d0-d1/a0-a1
-        move.l  kprintfsave+16,-(sp)
-        rts
         
 
 // ==== Use cartridge, if present ============================================

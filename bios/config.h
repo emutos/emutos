@@ -47,6 +47,13 @@
 #define ARANYM_NATIVE_PRINT 0
 #endif
 
+/* set this to 1 to try autodetect whether STonX or ARAnyM 
+ * native print is available (experimental).
+ */
+#ifndef DETECT_NATIVE_PRINT
+#define DETECT_NATIVE_PRINT 0
+#endif
+
 /* set this to 1 if your emulator is capable of emulating properly the 
  * STOP opcode (used to spare host CPU burden during loops). This is
  * currently set to zero as STOP does not work well on all emulators.
