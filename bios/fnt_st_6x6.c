@@ -1,10 +1,7 @@
 /*
- * fnt-6x6.c - 6x6 font in standard format
+ * fnt_st_6x6.c - 6x6 font for Atari ST encoding
  *
- * Copyright (c) 2001 Lineo, Inc.
- *
- * Authors:
- *  MAD     Martin Doering
+ * Copyright (C) 2001, 02 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -15,12 +12,12 @@
 #include "portab.h"
 #include "fontdef.h"
 
-extern UWORD off_first[], dat_first[];
+static UWORD off_table[], dat_table[];
 
-struct font_head f6x6 ={
+struct font_head fnt_st_6x6 = {
     1,                  /*   WORD font_id       */
     8,                  /*   WORD point         */
-    "6x6 system font",          /*   BYTE name[32]      */
+    "6x6 system font",  /*   BYTE name[32]      */
     0,                  /*   UWORD first_ade    */
     255,                /*   UWORD last_ade     */
     4,                  /*   UWORD top          */
@@ -39,8 +36,8 @@ struct font_head f6x6 ={
     F_STDFORM | F_MONOSPACE,/*   UWORD flags        */
 
     0,                  /*   UBYTE *hor_table   */
-    off_first,          /*   UWORD *off_table   */
-    dat_first,          /*   UWORD *dat_table   */
+    off_table,          /*   UWORD *off_table   */
+    dat_table,          /*   UWORD *dat_table   */
     192,                /*   UWORD form_width   */
     6,                  /*   UWORD form_height  */
 
@@ -48,7 +45,7 @@ struct font_head f6x6 ={
     0                   /*   UWORD next_seg     */
 };
 
-UWORD off_first[257] =
+static UWORD off_table[] =
 {
     0x0, 0x6, 0xC, 0x12, 0x18, 0x1E, 0x24, 0x2A,
     0x30, 0x36, 0x3C, 0x42, 0x48, 0x4E, 0x54, 0x5A,
@@ -85,7 +82,7 @@ UWORD off_first[257] =
     0x600
 };
 
-UWORD dat_first[576] =
+static UWORD dat_table[576] =
 {
     0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
     0x0, 0x0, 0x0, 0x0, 0x44, 0x8A11, 0x920C, 0x1084,

@@ -1,11 +1,7 @@
 /*
- * fnt-8x16.c - 8x16 font in standard format
+ * fnt-8x16.c - 8x16 font for Atari ST encoding
  *
- * Copyright (c) 2001 EmuTOS Team
- *
- * Authors:
- *  LVL     Laurent Vogel
- *  MAD     Martin Doering
+ * Copyright (C) 2001, 02 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -16,9 +12,9 @@
 #include "portab.h"
 #include "fontdef.h"
 
-extern UWORD off_f8x16[], dat_f8x16[];
+static UWORD off_table[], dat_table[];
 
-struct font_head f8x16 ={
+struct font_head fnt_st_8x16 = {
     1,                  /* WORD font_id */
     10,                 /* WORD point */
     "8x16 system font", /* BYTE name[32] */
@@ -39,15 +35,15 @@ struct font_head f8x16 ={
     0x5555,             /* UWORD skew */
     F_STDFORM | F_MONOSPACE | F_DEFAULT,  /* UWORD flags */
     0,                  /* UBYTE *hor_table */
-    off_f8x16,          /* UWORD *off_table */
-    dat_f8x16,          /* UWORD *dat_table */
+    off_table,          /* UWORD *off_table */
+    dat_table,          /* UWORD *dat_table */
     256,                /* UWORD form_width */
     16,                 /* UWORD form_height */
     0,                  /* struct font * next_font */
     0                   /* UWORD next_seg */
 };
 
-UWORD off_f8x16[257] =
+static UWORD off_table[] =
 {
     0x0000, 0x0008, 0x0010, 0x0018, 0x0020, 0x0028, 0x0030, 0x0038, 
     0x0040, 0x0048, 0x0050, 0x0058, 0x0060, 0x0068, 0x0070, 0x0078, 
@@ -84,7 +80,7 @@ UWORD off_f8x16[257] =
     0x0800, 
 };
 
-UWORD dat_f8x16[] =
+static UWORD dat_table[] =
 {
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x1104, 
