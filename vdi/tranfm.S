@@ -119,11 +119,8 @@ s_physcl_dev:
         addq.w  #1,d4                   //get # of raster lines per plane
 #if vme10
         move.l  _v_pl_dspl,d5           //get # of bytes between video planes
-#else   // FIXME: The following 3 lines are just a guess    - Thomas
-        moveq.l #0,d5
-        move.w  _v_planes,d5            // get # of graphic planes
-        add.w   d5,d5                   // # bytes between words in same plane
-
+#else
+        moveq.l #2,d5                   // two bytes between video planes
 #endif
 
 /* Determine if destination is a physical device or a raster area */
@@ -146,11 +143,8 @@ d_physcl_dev:
         movea.l _v_bas_ad,a3            //get screen starting adress
 #if vme10
         move.l  _v_pl_dspl,d6           //get # of bytes between video planes
-#else   // FIXME: The following 3 lines are just a guess    - Thomas
-        moveq.l #0,d5
-        move.w  _v_planes,d6            // get # of graphic planes
-        add.w   d6,d6                   // # bytes between words in same plane
-
+#else
+        moveq.l #2,d6                   // two bytes between video planes
 #endif
 
 /* Calculate the size of the source plane in words */

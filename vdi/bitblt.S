@@ -558,13 +558,9 @@ s_xy2addr:
 #endif
 
         mulu    d3,d1                   // d1 <- y portion of offset
-        add.w   d0,d1                   // d1 <- byte offset into memory form
-
-#if vme10
+        add.l   d0,d1                   // d1 <- byte offset into memory form
         adda.l  d1,a0                   // a0 -> word containing (x,y)
-#else
-        add.w   d1,a0                   // a0 -> word containing (x,y)
-#endif
+
         rts
 
 d_xy2addr:
@@ -580,13 +576,9 @@ d_xy2addr:
         mulu    D_NXWD(a6),d0           // d0 <- x portion of offset
 #endif
         mulu    d3,d1                   // d1 <- y portion of offset
-        add.w   d0,d1                   // d1 <- byte offset into memory form
-
-#if vme10
+        add.l   d0,d1                   // d1 <- byte offset into memory form
         adda.l  d1,a1                   // a1 -> word containing (x,y)
-#else
-        add.w   d1,a1                   // a1 -> word containing (x,y)
-#endif
+
         rts
 
 .page

@@ -205,7 +205,7 @@ compare:
         move.w  d1,PLANE_CT(a6)         // save the total plane count
 
 #if !vme10
-        add.w   d0,d0                   // for device dependent forms NXWD=2//planes
+        add.w   d0,d0                   // for device dependent forms NXWD=2*planes
         move.w  d0,S_NXWD(a6)
         add.w   d1,d1
         move.w  d1,D_NXWD(a6)
