@@ -142,4 +142,6 @@ Start... early ages
 - SetScrren() in xbios.c
 - some malloc debug info.
 - added missing util directory (MAD)
+- changed sysvarend to _bssend (it is the BSS, that ends! - got from DRI)
+- added end.s with _bssend 
 
