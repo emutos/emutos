@@ -84,7 +84,9 @@ static WORD defdrv ;            /* default drive number (0 is a:, 2 is c:) */
 
 BYTE env[256];                  /* environment string, enough bytes??? */
 
-int is_ramtos;           /* 1 if the TOS is running in RAM */
+int is_ramtos;                  /* 1 if the TOS is running in RAM */
+
+int native_features;            /* 1 if NatFeats are present */
 
 
 
