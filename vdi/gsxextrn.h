@@ -61,7 +61,6 @@ extern BYTE shft_off;           /* once computed Offset into a Scan Line */
 extern WORD y, odeltay, deltay, deltay1, deltay2;
 extern WORD fill_miny, fill_maxy;
 extern WORD fil_intersect;
-extern WORD fill_buffer[];
 extern UWORD *patptr, patmsk;
 extern WORD multifill;
 
@@ -111,15 +110,12 @@ extern WORD COPYTRAN;
 /* Assembly Language Support Routines */
 
 extern void v_clrwk(void);
-extern void vex_butv(), vex_motv(), vex_curv(), vex_timv();
-extern void chk_esc();
 extern void CLC_FLIT();
-extern void bit_blt();
 
 /* Assembly Language Support Routines NEWLY ADDED */
 
 extern void text_blt();
-extern void xfm_crfm(), XFM_UNDL(), COPY_RFM(), rectfill();
+extern void xfm_crfm(), rectfill(), COPY_RFM();
 
 extern WORD gloc_key();
 extern WORD gchc_key();
@@ -132,13 +128,13 @@ extern WORD end_pts(WORD x, WORD y, WORD *xleftout, WORD *xrightout);
 
 /* C Support routines */
 
-extern WORD ACT_SIZ(WORD top);
 extern void cur_display();
 extern void cur_replace();
 extern void v_show_c();
 extern void v_hide_c();
 extern void abline();
 
+extern void chk_esc();
 extern void text_init();
 extern void st_fl_ptr();
 extern void screen();
@@ -149,8 +145,8 @@ extern void s_fa_attr();
 extern void arrow(WORD * xy, WORD inc);
 extern void crunch_Q();
 extern void init_wk();
+extern void vex_butv(), vex_motv(), vex_curv(), vex_timv();
 
-extern WORD VEC_LEN();
 
 
 #endif                          /* GSXEXTRN_H */

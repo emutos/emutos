@@ -13,27 +13,19 @@
 #include "vdiconf.h"
 
 
-//              public routines
+/* Globally used labels */
 
                 .globl   _end_pts
 
-//              external routines.
+/* Externally defined labels, which are referenced here */
 
                 .xdef    concat
 
-//              external variables
-
-                .xdef   ortbl
-                .xdef   retsav
                 .xdef   _search_color
                 .xdef   _seed_type
                 .xdef   _v_bas_ad
                 .xdef   _v_planes
-                .xdef   _v_lin_wr
 
-                .xdef   _FWIDTH
-                .xdef   _DELY
-                .xdef   _CLIP
                 .xdef   _XMN_CLIP
                 .xdef   _XMX_CLIP
                 .xdef   _YMN_CLIP
@@ -319,6 +311,30 @@ ep_is_search:   move.w  _seed_type, d0  // return segment is of search color
 
 ep_ret0:        moveq.l #0,d0           // return(1). (success)
                 rts
+
+
+
+/*
+ * OR Mask Table for line drawing
+ */
+
+ortbl:          dc.w    0x8000
+                dc.w    0x4000
+                dc.w    0x2000
+                dc.w    0x1000
+                dc.w    0x0800
+                dc.w    0x0400
+                dc.w    0x0200
+                dc.w    0x0100
+                dc.w    0x0080
+                dc.w    0x0040
+                dc.w    0x0020
+                dc.w    0x0010
+                dc.w    0x0008
+                dc.w    0x0004
+                dc.w    0x0002
+                dc.w    0x0001
+
 
 
                 .end

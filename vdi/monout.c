@@ -645,7 +645,7 @@ short Isqrt(unsigned long x)
 
 
 /*
- * _vec_len
+ * vec_len
  *
  * This routine computes the length of a vector using the formula:
  *

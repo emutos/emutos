@@ -16,65 +16,43 @@
 
         .text
 
-/*
- * Globally used labels 
- */
+/* Globally used labels */
 
         .globl  _CLC_FLIT       // calculate fill intersections of vector list
         .globl  _clc_flit       // draw a filled polygone (for linea)
-        .globl  _vec_len        // compute length of a vector
         .globl  _habline        // draw a horizontal line
-        .globl  _HABLINE        // draw a horizontal line
         .globl  concat          // convert x,y coordinates to buffer offsets
-        .globl  xline           // alternate entry to HABLINE
-        .globl  ortbl           // OR mask table for line drawing
-        .globl  lf_tab          // left fringe look-up table
-        .globl  htab            // jump table for drawing horizontal lines
+        .globl  _fill_buffer
 
 
 
-/*
- * Externally defined labels 
- */
+/* Externally defined labels, which are referenced here */
 
         .xdef   _CONTRL
-        .xdef   _INTOUT
         .xdef   _PTSIN
         .xdef   _CLIP
         .xdef   _XMN_CLIP
         .xdef   _XMX_CLIP
-        .xdef   _fill_buffer
         .xdef   _fil_intersect
-        .xdef   _multifill
-        .xdef   _TERM_CH
-
-        .xdef   _FG_BP_1
-        .xdef   _FG_BP_2
-        .xdef   _FG_BP_3
-        .xdef   _FG_BP_4
 
         .xdef   _X1
         .xdef   _X2
         .xdef   _Y1
         .xdef   _Y2
-        .xdef   _LSTLIN
-        .xdef   _LN_MASK
-        .xdef   _WRT_MODE
 
-        .xdef   _v_bas_ad
-        .xdef   _v_planes
         .xdef   _v_lin_wr
-
         .xdef   _shft_off
+
+
 
         .bss
         .even
-                .globl  _fill_buffer
+
 _fill_buffer:   .ds.w   256             // must be 256 words or it will fail
 
+
+
         .text
-
-
 
 /*
  * Local constants 
@@ -422,30 +400,6 @@ concat:
         add.l   d2,d1           // compute total offset into screen buffer
         movem.w (sp)+,d2/d3     // restore the clobbered registers
         rts
-
-
-
-
-/*
- * OR Mask Table                               
- */
-
-ortbl:          dc.w    0x8000
-                dc.w    0x4000
-                dc.w    0x2000
-                dc.w    0x1000
-                dc.w    0x0800
-                dc.w    0x0400
-                dc.w    0x0200
-                dc.w    0x0100
-                dc.w    0x0080
-                dc.w    0x0040
-                dc.w    0x0020
-                dc.w    0x0010
-                dc.w    0x0008
-                dc.w    0x0004
-                dc.w    0x0002
-                dc.w    0x0001
 
 
         .end
