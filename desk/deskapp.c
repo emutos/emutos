@@ -67,19 +67,13 @@ GLOBAL ACCNODE  gl_caccs[3];
 
 
 /* We use this DESKTOP.INF here when we can't load that file from disk: */
-#ifndef DESK1
-static const char *desk_inf_data1 =
-    "#E 9A 01\r\n"
-    "#W 00 00 02 02 4C 0A 00 @\r\n"
-    "#W 00 00 02 0D 4C 0A 00 @\r\n";
-#else
+
 static const char *desk_inf_data1 =
     "#E 9A 01\r\n"
     "#W 00 00 02 06 26 0C 00 @\r\n"
     "#W 00 00 02 08 26 0C 00 @\r\n"
     "#W 00 00 02 0A 26 0C 00 @\r\n"
     "#W 00 00 02 0D 26 0C 00 @\r\n";
-#endif
 
 static const char *desk_inf_data2 =
     "#F FF 28 @ *.*@ \r\n"
@@ -726,13 +720,12 @@ WORD app_start()
                         G.g_cnxsave.cdele_save = ( (envr & 0x10) != 0);
                         G.g_cnxsave.ccopy_save = ( (envr & 0x08) != 0);
                         G.g_cnxsave.cdclk_save = envr & 0x07;
+
                         pcurr = scan_2(pcurr, &envr);
-#ifndef DESK1
                         G.g_cnxsave.covwr_save = ( (envr & 0x10) == 0);
                         G.g_cnxsave.cmclk_save = ( (envr & 0x08) != 0);
                         G.g_cnxsave.cdtfm_save = ( (envr & 0x04) == 0);
                         G.g_cnxsave.ctmfm_save = ( (envr & 0x02) == 0);
-#endif
                         sound(FALSE, !(envr & 0x01), 0);
                         break;
             }
@@ -827,15 +820,12 @@ void app_save(WORD todisk)
         envr |= (G.g_cnxsave.ccopy_save) ? 0x08 : 0x00;
         envr |= G.g_cnxsave.cdclk_save;
         pcurr = save_2(pcurr, envr);
-#ifndef DESK1
+
         envr = (G.g_cnxsave.covwr_save) ? 0x00 : 0x10;
         envr |= (G.g_cnxsave.cmclk_save) ? 0x08 : 0x00;
         envr |= (G.g_cnxsave.cdtfm_save) ? 0x00 : 0x04;
         envr |= (G.g_cnxsave.ctmfm_save) ? 0x00 : 0x02;
         envr |= sound(FALSE, 0xFFFF, 0)  ? 0x00 : 0x01;
-#else
-        envr = sound(FALSE, 0xFFFF, 0)  ? 0x00 : 0x01;
-#endif
         pcurr = save_2(pcurr, envr );
 
         *pcurr++ = 0x0d;

@@ -469,16 +469,14 @@ menu_unregister(mid)
 }
 */
 
-/*
-        WORD
-menu_click(click, setit)
-        WORD    click, setit;
+
+WORD menu_click(WORD click, WORD setit)
 {
         MN_CLICK = click;
         MN_SETIT = setit;
         return( gem_if( MENU_CLICK ));
 }
-*/
+
 
                                         /* Object Manager               */
 WORD objc_add(LONG tree, WORD parent, WORD child)

@@ -482,7 +482,6 @@ WORD inf_pref()
         LWSET(OB_STATE(SPCCYES), cyes);
         LWSET(OB_STATE(SPCCNO), cno);
 
-#ifndef DESK1
         cyes = (G.g_covwrpref) ? SELECTED : NORMAL;
         cno = (G.g_covwrpref) ? NORMAL : SELECTED;
         LWSET(OB_STATE(SPCOWYES), cyes);
@@ -492,7 +491,6 @@ WORD inf_pref()
         cno = (G.g_cmclkpref) ? NORMAL : SELECTED;
         LWSET(OB_STATE(SPMNCLKY), cyes);
         LWSET(OB_STATE(SPMNCLKN), cno);
-#endif
 
         cyes = (G.g_ctimeform) ? SELECTED : NORMAL;
         cno = (G.g_ctimeform) ? NORMAL : SELECTED;
@@ -523,11 +521,9 @@ WORD inf_pref()
         {
           G.g_cdelepref = inf_what(tree, SPCDYES, SPCDNO);
           G.g_ccopypref = inf_what(tree, SPCCYES, SPCCNO);
-#ifndef DESK1
           G.g_covwrpref = inf_what(tree, SPCOWYES, SPCOWNO);
           G.g_cmclkpref = inf_what(tree, SPMNCLKY, SPMNCLKN);
-          /*G.g_cmclkpref = menu_click(G.g_cmclkpref, TRUE);*/ /* Disabled for the Atari version - THH */
-#endif
+          G.g_cmclkpref = menu_click(G.g_cmclkpref, TRUE);
           G.g_cdclkpref = inf_gindex(tree, SPDC1, 5);
           G.g_cdclkpref = evnt_dclick(G.g_cdclkpref, TRUE);
           sndefpref = inf_what(tree, SPSEYES, SPSENO);

@@ -800,8 +800,10 @@ void win_sinfo(WNODE *pwin)
         pn = pwin->w_path;
         rsrc_gaddr(R_STRING, STINFOST, (LONG *)&G.a_alert);
         strlencpy(G.g_1text, (char *)G.a_alert);
-/* FIXME!
-        merge_str(pwin->w_info, G.g_1text, pn->p_size, pn->p_count);
-*/
+
+        /* The following two lines originally looked like this: */
+        /*merge_str(pwin->w_info, G.g_1text, pn->p_size, pn->p_count);*/
+        merge_str(pwin->w_info, "%L", (void *)&pn->p_size);
+        merge_str(&pwin->w_info[strlen(pwin->w_info)], &G.g_1text[2], &pn->p_count);
 }
 #endif

@@ -144,7 +144,7 @@ GLOBAL BYTE     ILL_YSEL[] = {OPENITEM, IDSKITEM, FORMITEM, SHOWITEM, 0};
 #ifdef DESK1
 GLOBAL BYTE     ILL_TRASH[] = {OPENITEM,/*OUTPITEM,*/FORMITEM,IDSKITEM,IAPPITEM,0};
 GLOBAL BYTE     ILL_NOTOP[] = {NFOLITEM,CLOSITEM,CLSWITEM,0};
-GLOBAL BYTE     ILL_DESKTOP[] = {NFOLITEM,CLOSITEM,CLSWITEM,ICONITEM,/*TEXTITEM,*/
+GLOBAL BYTE     ILL_DESKTOP[] = {NFOLITEM,CLOSITEM,CLSWITEM,ICONITEM,
                                 NAMEITEM,DATEITEM,SIZEITEM,TYPEITEM,0};
 #endif
 
@@ -1186,12 +1186,10 @@ void cnx_put()
         G.g_cnxsave.ccopy_save = G.g_ccopypref;
         G.g_cnxsave.cdele_save = G.g_cdelepref;
         G.g_cnxsave.cdclk_save = G.g_cdclkpref;
-#ifndef DESK1
         G.g_cnxsave.covwr_save = G.g_covwrpref;
         G.g_cnxsave.cmclk_save = G.g_cmclkpref;
         G.g_cnxsave.ctmfm_save = G.g_ctimeform;
         G.g_cnxsave.cdtfm_save = G.g_cdateform;
-#endif
 
 #ifdef DESK1
         for (iwsave=0, iwin = 0; iwin < NUM_WNODES; iwin++)
@@ -1274,8 +1272,8 @@ void cnx_open(WORD idx)
 #ifdef DESK1
 void cnx_get(void)
 {
-        // DESKTOP v1.2: This function is a lot more involved
-        // because CNX_OPEN is no longer a separate function.
+        /* DESKTOP v1.2: This function is a lot more involved */
+        /* because CNX_OPEN is no longer a separate function. */
         WORD drv;
         WORD nw;
         WSAVE *pws;
@@ -1283,24 +1281,20 @@ void cnx_get(void)
         BYTE fname[9];
         BYTE fext[4];
                 
-// DESKTOP v1.2 does not set g_iview here
-//      G.g_iview = (G.g_cnxsave.vitem_save == 0) ? V_ICON : V_TEXT;
-        do_viewmenu(ICONITEM + G.g_cnxsave.vitem_save);
+        G.g_iview = (G.g_cnxsave.vitem_save == 0) ? V_TEXT : V_ICON;
+        do_viewmenu(ICONITEM);
         do_viewmenu(NAMEITEM + G.g_cnxsave.sitem_save);
         G.g_ccopypref = G.g_cnxsave.ccopy_save;
         G.g_cdelepref = G.g_cnxsave.cdele_save;
-//      G.g_covwrpref = G.g_cnxsave.covwr_save;
+        G.g_covwrpref = G.g_cnxsave.covwr_save;
         G.g_cdclkpref = G.g_cnxsave.cdclk_save;
-//      G.g_cmclkpref = G.g_cnxsave.cmclk_save; // Commented out bits not in DESKTOP v1.2
-//      G.g_ctimeform = G.g_cnxsave.ctmfm_save;
-//      G.g_cdateform = G.g_cnxsave.cdtfm_save;
+        G.g_cmclkpref = G.g_cnxsave.cmclk_save;
+        G.g_ctimeform = G.g_cnxsave.ctmfm_save;
+        G.g_cdateform = G.g_cnxsave.cdtfm_save;
         G.g_cdclkpref = evnt_dclick(G.g_cdclkpref, TRUE);
-//      G.g_cmclkpref = menu_click(G.g_cmclkpref, TRUE);
+        G.g_cmclkpref = menu_click(G.g_cmclkpref, TRUE);
 
-/* DESKTOP v1.2: Remove 2-window limit; and cnx_open() inlined.
-        cnx_open(gl_open1st);
-        cnx_open( abs(1 - gl_open1st) );
-        */
+        /* DESKTOP v1.2: Remove 2-window limit; and cnx_open() inlined. */
         for (nw = 0; nw < NUM_WNODES; nw++)
         {
                 pws = &G.g_cnxsave.win_save[nw];
@@ -1351,7 +1345,8 @@ void cnx_get()
         G.g_ctimeform = G.g_cnxsave.ctmfm_save;
         G.g_cdateform = G.g_cnxsave.cdtfm_save;
         G.g_cdclkpref = evnt_dclick(G.g_cdclkpref, TRUE);
-        /*G.g_cmclkpref = menu_click(G.g_cmclkpref, TRUE);*/ /* Disabled for the Atari version - THH */
+        G.g_cmclkpref = menu_click(G.g_cmclkpref, TRUE);
+
         cnx_open(gl_open1st);
         cnx_open( abs(1 - gl_open1st) );
         cnx_put();

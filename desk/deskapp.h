@@ -148,18 +148,16 @@ WSAVE
 #define CSAVE   struct context_save
 CSAVE
 {
-        WORD    sitem_save;
-        WORD    vitem_save;
-        WORD    ccopy_save;
-        WORD    cdele_save;
+        WORD    sitem_save;     /* Sort mode */
+        WORD    vitem_save;     /* Show files as icons or text */
+        WORD    ccopy_save;     /* Confirm copies */
+        WORD    cdele_save;     /* Confirm deletes */
+        WORD    covwr_save;     /* Confirm overwrite */
+        WORD    cdclk_save;     /* Double click speed */
+        WORD    cmclk_save;     /* Drop down menu click mode */
+        WORD    ctmfm_save;     /* Time format */
+        WORD    cdtfm_save;     /* Date format */
 #ifndef DESK1
-        WORD    covwr_save;
-#endif
-        WORD    cdclk_save;
-#ifndef DESK1
-        WORD    cmclk_save;
-        WORD    ctmfm_save;
-        WORD    cdtfm_save;
         WSAVE   win_save[2];
 #else
         WSAVE   win_save[4];
