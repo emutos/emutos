@@ -307,8 +307,11 @@ ANODE *i_find(WORD wh, WORD item, FNODE **ppf, WORD *pisapp)
 #ifdef DESK1
         if (!wh)        /* On desktop? */
         {
+            if (G.g_screen[item].ob_type == G_ICON)
                 pname = win_iname(item);
-                pa = app_afind(TRUE, -1, item, pname, pisapp);
+            else
+                pname = "";
+            pa = app_afind(TRUE, -1, item, pname, pisapp);
         }
         else
         {

@@ -1752,3 +1752,7 @@ bios/conout.c: some integer overflow bugs fixed (MAD)
 - bios/disk.c: added DOS PTBL recognition (primary partitions only) (joy)
 - bios/xhdi.c: reformatted (joy)
 - bios/blkdev.[ch]: added flag for byteswap (unused yet, TODO) (joy)
+
+2005-01-25
+- desk/deskmain.c, desk/deskwin.c: Fixed a bug that caused a crash when
+  dragging icons on the desktop. (THH)

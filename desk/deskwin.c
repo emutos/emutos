@@ -42,6 +42,8 @@
 #include "deskmain.h"
 #include "deskglob.h"
 
+#include "kprint.h"
+
 
 #define LEN_FNODE 45
 
@@ -760,7 +762,9 @@ BYTE *win_iname(WORD curr)
 {
         ICONBLK         *pib;
         BYTE            *ptext;
-        
+
+        assert(G.g_screen[curr].ob_type == G_ICON);
+
         pib = (ICONBLK *) LPOINTER(G.g_screen[curr].ob_spec);
         ptext = (BYTE *) LPOINTER(pib->ib_ptext);
         return( ptext );
