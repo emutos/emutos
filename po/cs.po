@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: EmuTOS 0.2a\n"
-"POT-Creation-Date: 2002-04-05 18:03+0200\n"
-"PO-Revision-Date: 2002-04-08 19:54GMT+1\n"
+"POT-Creation-Date: 2002-07-22 21:25+0200\n"
+"PO-Revision-Date: 2002-07-22 21:30+0200\n"
 "Last-Translator: Bohdan Milar <milarb@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -14,415 +14,730 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: KBabel 0.9.5\n"
 
-#: bios/bios.c:280
+#: bios/bios.c:297
 msgid "Please eject the floppy and hit RETURN"
 msgstr "Vysuòte prosím disketu a stisknìte RETURN"
 
-#: bios/bios.c:317
-msgid "[FAIL] HALT - should never be reached!\n"
-msgstr "[FAIL] HALT - nemìlo by nikdy nastat!\n"
+#: bios/bios.c:332
+msgid ""
+"[FAIL] HALT - should never be reached!\n"
+msgstr ""
+"[FAIL] HALT - nemìlo by nikdy nastat!\n"
 
-#: bios/initinfo.c:162
+#: bios/initinfo.c:170
 msgid "EmuTOS Version"
 msgstr "EmuTOS verze"
 
-#: bios/initinfo.c:162
-msgid "Alpha Version"
-msgstr "Alfa verze"
-
-#: bios/initinfo.c:163
+#: bios/initinfo.c:171
 msgid "CPU type"
 msgstr "Typ CPU"
 
-#: bios/initinfo.c:164
+#: bios/initinfo.c:172
 msgid "Machine"
 msgstr "Poèítaè"
 
-#: bios/initinfo.c:165
+#: bios/initinfo.c:173
 msgid "MMU available"
 msgstr "MMU dostupné"
 
-#: bios/initinfo.c:165
+#: bios/initinfo.c:173 desk/desk_rsc.c:30
 msgid "No"
 msgstr "Ne"
 
-#: bios/initinfo.c:166
+#: bios/initinfo.c:174
 msgid "Free memory"
 msgstr "Volná pamì»"
 
-#: bios/initinfo.c:167
+#: bios/initinfo.c:175
 msgid "%ld kB"
 msgstr "%ld kB"
 
-#: bios/initinfo.c:171
+#: bios/initinfo.c:179
 msgid " ST-RAM, %ld kB TT-RAM"
 msgstr " ST-RAM, %ld kB TT-RAM"
 
-#: bios/initinfo.c:174
+#: bios/initinfo.c:182
 msgid "Screen start"
 msgstr "Zaèátek obrazovky"
 
-#: bios/initinfo.c:176
+#: bios/initinfo.c:184
 msgid "GEMDOS drives"
 msgstr "Ovladaèe pro GEMDOS"
 
-#: bios/initinfo.c:186
+#: bios/initinfo.c:194
 msgid "Boot drive"
 msgstr "Zavádìcí disk"
 
-#: bios/initinfo.c:187
+#: bios/initinfo.c:195
 msgid "Current time"
 msgstr "Aktuální èas"
 
-#: cli/command.c:680
-msgid "CR to continue..."
-msgstr "CR pro pokraèování..."
-
-#: cli/command.c:695
-msgid "Wild cards not allowed in path name."
-msgstr "Náhradní znaky nejsou povoleny v názvu adresáøe."
-
-#: cli/command.c:698
-msgid "File Not Found."
-msgstr "Soubor nenalezen."
-
-#: cli/command.c:701
-msgid "Destination is not a valid wild card expresion."
-msgstr "Místo urèení není platným výrazem s náhradními znaky."
-
-#: cli/command.c:707
-msgid "EmuCON - Compiled on "
-msgstr "EmuCON - pøelo¾eno "
-
-#: cli/command.c:709
-msgid "Type HELP for a list of commands."
-msgstr "Napi¹te HELP pro seznam pøíkazù."
-
-#: cli/command.c:713
-msgid "Done."
-msgstr "Dokonèeno."
-
-#: cli/command.c:716
-msgid "Command is incompletely specified."
-msgstr "Pøíkaz je zadán neúplnì."
-
-#: cli/command.c:728
-msgid " to "
-msgstr " k "
-
-#: cli/command.c:744
-msgid "Wild cards not allowed in destination."
-msgstr "Náhradní znaky nejsou povoleny v místì urèení."
-
-#: cli/command.c:752
-msgid "# in the first non blank column is a comment."
-msgstr "# v prvním neprázdném sloupci je komentáø."
-
-#: cli/command.c:754
-msgid ""
-"CAT or TYPE filenm.ext\r\n"
-"\tWrites filenm.ext to standard output."
+#: aes/gem_rsc.c:36
+msgid "Selection:  ________.___"
 msgstr ""
-"CAT nebo TYPE soubor.ext\r\n"
-"\tVypí¹e soubor.ext na standardní výstup."
 
-#: cli/command.c:757
-msgid ""
-"CD [pathnm]\r\n"
-"\tWith pathnm it sets default for working directory.\r\n"
-"\tWithout pathnm displays current working directory."
+#: aes/gem_rsc.c:223
+msgid "ITEM SELECTOR"
 msgstr ""
-"CD [cesta]\r\n"
-"\tJe-li zadána cesta, nastaví ji jako pracovní adresáø.\r\n"
-"\tBez zadané cesty vypí¹e aktuální pracovní adresáø."
 
-#: cli/command.c:761
-msgid ""
-"CHMOD [pathnm/]filenm mode\r\n"
-"\tChanges the mode of the file specified in filenm to the\r\n"
-"\tvalue of mode.\tAcceptable values are < 7:\r\n"
-"\t\t0 - Normal File Entry\r\n"
-"\t\t1 - File is Read Only\r\n"
-"\t\t2 - File is Hidden from directory Search\r\n"
-"\t\t4 - File is System File"
+#: aes/gem_rsc.c:241 desk/desk_rsc.c:25
+msgid "OK"
 msgstr ""
-"CHMOD [cesta/]soubor re¾im\r\n"
-"\tZmìní re¾im souboru zadaného v polo¾ce soubor na\r\n"
-"\thodnotu uvedenou jako re¾im.\tPøípustné hodnoty jsou < 7:\r\n"
-"\t\t0 - Normální soubor\r\n"
-"\t\t1 - Soubor jen pro ètení\r\n"
-"\t\t2 - Soubor je skrytý pro hledání v adresáøi\r\n"
-"\t\t4 - Soubor je systémovým souborem"
 
-#: cli/command.c:770
-msgid "\tClears the screen."
-msgstr "\tSma¾e obrazovku."
-
-#: cli/command.c:771
-msgid ""
-"COPY source_file [destination_file]\r\n"
-"\tCopies source to destination."
+#: aes/gem_rsc.c:247 desk/desk_rsc.c:26
+msgid "Cancel"
 msgstr ""
-"COPY zdrojový_soubor [cílový_soubor]\r\n"
-"\tZkopíruje zdroj do cíle."
 
-#: cli/command.c:774
-msgid ""
-"DIR or LS [filenm.ext] [-f] [-d] [-t] [-w]\r\n"
-"\t-f - anything but directoryies.\r\n"
-"\t-d - directories only.\r\n"
-"\t-t - terse: names only.\r\n"
-"\t-w - wide: names only displayed horizontally."
+#: aes/gem_rsc.c:465
+msgid "Insert your GEM STARTUP disk"
 msgstr ""
-"DIR nebo LS [soubor.ext] [-f] [-d] [-t] [-w]\r\n"
-"\t-f - v¹echno kromì adresáøù.\r\n"
-"\t-d - pouze adresáøe.\r\n"
-"\t-t - struèný: pouze jména souborù.\r\n"
-"\t-w - ¹iroký: pouze jména zobrazena po øádcích."
 
-#: cli/command.c:783
-msgid "\tDisplays the value of the Completion Code for the last command."
-msgstr "\tZobrazí hodnotu návratového kódu posledního pøíkazu."
-
-#: cli/command.c:787
-msgid "\tExits CLI to invoking program."
-msgstr "\tOpustí CLI a spustí program."
-
-#: cli/command.c:789
-msgid ""
-"INIT [drive_spec:]\r\n"
-"\tReinitializes FAT entries this wiping disk."
+#: aes/gem_rsc.c:473
+msgid "[2]["
+"You cannot write to the disk in drive|"
+"%S: because it is physically write-|"
+"protected.  Before you Retry, remove|"
+"the write-protect tab or notch the|"
+"disk.][Cancel|Retry]"
 msgstr ""
-"INIT [zaøízení:]\r\n"
-"\tReinicializuje FAT záznamy daného smazaného disku."
 
-#: cli/command.c:792
-msgid ""
-"MD [subdirectory name]\r\n"
-"\tCreates a new subdirectory in current directory."
+#: aes/gem_rsc.c:480
+msgid "[2]["
+"Drive %S: is not responding.  You must|"
+"use the right kind of disk, insert it|"
+"correctly, and close the door.  If the|"
+"problem is with a hard disk, check the|"
+"disk's connections.][Cancel|Retry]"
 msgstr ""
-"MD [jméno podadresáøe]\r\n"
-"\tVytvoøí nový podadresáø v aktuálním adresáøi."
 
-#: cli/command.c:795
-msgid ""
-"MOVE source_file [destination_file]\r\n"
-"\tCopies source to destination and deletes source."
+#: aes/gem_rsc.c:489
+msgid "[2]["
+"Data on the disk in drive %S: may be|"
+"damaged.  You must use the right kind|"
+"of floppy disk; you must connect your|"
+"hard disk properly.][Cancel|Retry]"
 msgstr ""
-"MOVE zdrojový_soubor [cílový_soubor]\r\n"
-"\tZkopíruje zdroj do cíle a sma¾e zdroj."
 
-#: cli/command.c:799
-msgid ""
-"\tWrites 'CR to continue...' to standard output\r\n"
-"\tand waits for a carriage return from standard input."
+#: aes/gem_rsc.c:496
+msgid "[2]["
+"This application cannot read data on the|"
+"disk in drive %S:.  The disk must be|"
+"formatted, there must be power to the|"
+"disk drive, and the disk drive must be|"
+"physically connected to your computer.][Cancel|Retry]"
 msgstr ""
-"\tVypí¹e 'CR pro pokraèování...' na standardní výstup\r\n"
-"\ta èeká na návrat vozíku ze standardního vstupu."
 
-#: cli/command.c:803
-msgid ""
-"\tTurns command processing abort feature ON/OFF.\r\n"
-"\tIf PRGERR is ON and a .PRG file returns a non zero completion\r\n"
-"\tcode, all further processing will stop.  Usefull in .BAT files.\r\n"
-"\tDefault is ON."
+#: aes/gem_rsc.c:505
+msgid "[2]["
+"Your output device is not receiving|"
+"data. Before you Retry, make sure the|"
+"device has power, is on-line, and is|"
+"loaded with paper or film.][Cancel|Retry]"
 msgstr ""
-"\tZmìní pøíznak zru¹ení zpracování pøíkazu na ON/OFF.\r\n"
-"\tPokud je PRGERR na ON a soubor .PRG vrátí nenulový návratový\r\n"
-"\tkód, ve¹keré dal¹í zpracování bude zastaveno.  U¾iteèné v .BAT souborech.\r\n"
-"\tImplicitní je ON."
 
-#: cli/command.c:809
-msgid "\tDisables line wrap."
-msgstr "\tZablokuje zalomení øádky."
-
-#: cli/command.c:810
-msgid ""
-"PATH [;[pathnm]...]\r\n"
-"\tWith path name sets default path for batch and commands.\r\n"
-"\tWithout path name displays current path"
+#: aes/gem_rsc.c:512
+msgid "[3]["
+"An error has occurred with the|"
+"Graphics Environment Manager (GEM).|"
+"Please contact the EmuTOS Development|"
+"Team and submit a bug report.][Cancel]"
 msgstr ""
-"PATH [;[cesta]...]\r\n"
-"\tPøi udání cesty nastaví implicitní cestu pro dávky a pøíkazy.\r\n"
-"\tBez udání cesty zobrazí aktuální adresáø"
 
-#: cli/command.c:816
-msgid ""
-"REM or ECHO [\"string\"]\r\n"
-"\tStrips quotes and writes string to standard output.\r\n"
-"\tr is replaced by 13, /n by 10, /0 by 0x0.\r\n"
-"\t/c by 13 10, /anything is replaced by anything."
+#: aes/gem_rsc.c:519
+msgid "[2]["
+"This application cannot find the|"
+"folder or document you are trying to|"
+"open. Check the name you have entered.][  OK  ]"
 msgstr ""
-"REM nebo ECHO [\"øetìzec\"]\r\n"
-"\tOdstraní uvozovky a vypí¹e øetìzec na standardní výstup.\r\n"
-"\tr bude nahrazeno pomocí 13, /n pomocí 10, /0 pomocí 0x0.\r\n"
-"\t/c pomocí 13 10, /cokoli bude nahrazeno øetìzcem cokoli."
 
-#: cli/command.c:821
-msgid ""
-"REN source_file_nm [destination_file_nm]\r\n"
-"\tRenames source to destination."
+#: aes/gem_rsc.c:524
+msgid "[3]["
+"Your computer doesn't have enough|"
+"memory to run the GEM Desktop.][ Sorry ]"
 msgstr ""
-"REN zdrojový_soubor [cílový_soubor]\r\n"
-"\tPøejmenuje zdroj na cíl."
 
-#: cli/command.c:824
-msgid ""
-"RD [pathnm]\r\n"
-"\tRemoves named directory."
+#: aes/gem_rsc.c:527
+msgid "[1]["
+"This application doesn't have room to|"
+"open another document.  To make room,|"
+"close any documents you don't need.][  OK  ]"
 msgstr ""
-"RD [cesta]\r\n"
-"\tOdstraní uvedený adresáø."
 
-#: cli/command.c:827
-msgid ""
-"RM or DEL or ERA filenm [[filemn]...] [-q]\r\n"
-"\tRemoves named file from directory.\r\n"
-"\tIf the -q option is used, the CLI will display the question\r\n"
-"\tY/CR... and wait for a response."
+#: aes/gem_rsc.c:532
+msgid "[1]["
+"An item with this name already exists|"
+"in the folder, or the item is set to|"
+"Read-Only status. Use the \"Info/Rename\"|"
+"command to change the item's status.][  OK  ]"
 msgstr ""
-"RM nebo DEL nebo ERA soubor [[soubor]...] [-q]\r\n"
-"\tOdstraní uvedený soubor z adresáøe.\r\n"
-"\tJe-li pou¾ita volba -q, CLI zobrazí otázku\r\n"
-"\tY/CR... a vyèká na odpovìï."
 
-#: cli/command.c:832
-msgid ""
-"SHOW [drive_spec:]\r\n"
-"\tDisplays disk status for default drive or drive specified."
+#: aes/gem_rsc.c:539
+msgid "[1]["
+"The disk drive you have indicated does|"
+"not exist. Check the drive identifier|"
+"letter you entered.][Cancel]"
 msgstr ""
-"SHOW [zaøízení:]\r\n"
-"\tZobrazí stav implicitního nebo zadaného disku."
 
-#: cli/command.c:836
-msgid "\tDisplays current version of OS."
-msgstr "\tZobrazí aktuální verzi OS."
+#: aes/gem_rsc.c:544
+msgid "[1]["
+"You cannot delete the folder in|"
+"which you are currently working.][  OK  ]"
+msgstr ""
 
-#: cli/command.c:838
-msgid "\tEnables line wrap."
-msgstr "\tPovolí zalomení øádky."
+#: aes/gem_rsc.c:547
+msgid "[1]["
+"Your computer does not have enough|"
+"memory to run the application you|"
+"have selected.][  OK  ]"
+msgstr ""
 
-#: cli/command.c:936 cli/command.c:972
-msgid " DELETING "
-msgstr " MAZÁNÍ "
+#: aes/gem_rsc.c:552
+msgid "[3]["
+"DOS error #%W.][Cancel]"
+msgstr ""
 
-#: cli/command.c:955
-msgid "Error creating file."
-msgstr "Chyba pøi vytváøení souboru."
+#: aes/gem_rsc.c:553
+msgid "[3]["
+"Bad Function #][Cancel]"
+msgstr ""
 
-#: cli/command.c:957
-msgid "Cannot copy "
-msgstr "Nelze zkopírovat "
+#: aes/gem_rsc.c:554
+msgid "[3]["
+"To run the GEM Desktop, insert your|"
+"GEM DESKTOP disk in drive A and click|"
+"on OK or press Enter. To return to DOS,|"
+"click on Cancel.][  OK  |Cancel]"
+msgstr ""
 
-#: cli/command.c:959
-msgid " to itself."
-msgstr " na sebe sama."
+#: desk/desk_rsc.c:27
+msgid "Install"
+msgstr ""
 
-#: cli/command.c:961
-msgid "Error reading source file."
-msgstr "Chyba pøi ètení zdrojového souboru."
+#: desk/desk_rsc.c:28
+msgid "Remove"
+msgstr ""
 
-#: cli/command.c:963
-msgid "Disk full -- copy failed."
-msgstr "Plný disk - kopírování selhalo."
+#: desk/desk_rsc.c:29
+msgid "Yes"
+msgstr ""
 
-#: cli/command.c:1018
-msgid "Rename ALL files matching "
-msgstr "Pøejmenovat V©ECHNY soubory odpovídající "
+#: desk/desk_rsc.c:42 desk/desk_rsc.c:122 desk/desk_rsc.c:222
+msgid "Name:  ________.___"
+msgstr ""
 
-#: cli/command.c:1021 cli/command.c:1349
-msgid " (Y/CR)? "
-msgstr " (Y/CR)? "
+#: desk/desk_rsc.c:47
+msgid "Size in bytes:  ________"
+msgstr ""
 
-#: cli/command.c:1043
-msgid "  Rename Unsucessfull!"
-msgstr "  Pøejmenování neúspì¹né!"
+#: desk/desk_rsc.c:52
+msgid "Last modified:  __/__/__"
+msgstr ""
 
-#: cli/command.c:1100
-msgid "Directory of "
-msgstr "Adresáø "
+#: desk/desk_rsc.c:62
+msgid "Drive identifier:  _:"
+msgstr ""
 
-#: cli/command.c:1245
-msgid "Unable to change mode on subdirectorys or volumes."
-msgstr "Nelze zmìnit re¾im podadresáøù nebo svazkù."
+#: desk/desk_rsc.c:67
+msgid "Disk label:  ___________"
+msgstr ""
 
-#: cli/command.c:1251 cli/command.c:1256
-msgid "Invalid mode specification."
-msgstr "Neplatná specifikace re¾imu."
+#: desk/desk_rsc.c:72 desk/desk_rsc.c:107
+msgid "Number of folders:     _____"
+msgstr ""
 
-#: cli/command.c:1346
-msgid "Delete ALL files matching "
-msgstr "Smazat V©ECHNY soubory odpovídající "
+#: desk/desk_rsc.c:77 desk/desk_rsc.c:112
+msgid "Number of items:     _____"
+msgstr ""
 
-#: cli/command.c:1368
-msgid " << DELETED"
-msgstr " << SMAZÁNO"
+#: desk/desk_rsc.c:82 desk/desk_rsc.c:117
+msgid "Bytes used:  ________"
+msgstr ""
 
-#: cli/command.c:1848 cli/command.c:1866
-msgid " not found."
-msgstr " nenalezeno."
+#: desk/desk_rsc.c:87
+msgid "Bytes available:  ________"
+msgstr ""
 
-#: cli/command.c:1951
-msgid "Completion code for previous command = "
-msgstr "Návratový kód pøede¹lého pøíkazu = "
+#: desk/desk_rsc.c:92
+msgid "Folder name:  ________.___"
+msgstr ""
 
-#: cli/command.c:2002
-msgid "Directory not found."
-msgstr "Adresáø nenalezen."
+#: desk/desk_rsc.c:97
+msgid "Created:  __-__-__  "
+msgstr ""
 
-#: cli/command.c:2021 cli/command.c:2040
-msgid "Arg must be ON or OFF."
-msgstr "Parametr musí být ON nebo OFF."
+#: desk/desk_rsc.c:127
+msgid "Parameters:  ____________________________________________________"
+msgstr ""
 
-#: cli/command.c:2048
-msgid "Unable to make directory"
-msgstr "Nelze vytvoøit adresáø"
+#: desk/desk_rsc.c:132
+msgid "Drive identifier:  _"
+msgstr ""
 
-#: cli/command.c:2053
-msgid "Unable to remove directory"
-msgstr "Nelze odstranit adresáø"
+#: desk/desk_rsc.c:137
+msgid "Icon label:  ____________"
+msgstr ""
 
-#: cli/command.c:2071
-msgid "Allocation Information: Drive "
-msgstr "Informace o rozdìlení disku: Disk "
+#: desk/desk_rsc.c:142
+msgid "Application name:  ________.___"
+msgstr ""
 
-#: cli/command.c:2077
-msgid "Drive size in BYTES    "
-msgstr "Velikost disku v BYTECH    "
+#: desk/desk_rsc.c:192
+msgid "Folders to copy:  ____"
+msgstr ""
 
-#: cli/command.c:2079
-msgid "BYTES used on drive    "
-msgstr "BYTÙ pou¾itých na disku    "
+#: desk/desk_rsc.c:197
+msgid "Items to copy:  ____"
+msgstr ""
 
-#: cli/command.c:2082
-msgid "BYTES left on drive    "
-msgstr "BYTÙ zbývajících na disku    "
+#: desk/desk_rsc.c:202
+msgid "Folders to delete:  ____"
+msgstr ""
 
-#: cli/command.c:2084
-msgid "Total Units on Drive   "
-msgstr "Celkem jednotek na disku   "
+#: desk/desk_rsc.c:207
+msgid "Items to delete:  ____"
+msgstr ""
 
-#: cli/command.c:2086
-msgid "Free Units on Drive    "
-msgstr "Volných jednotek na disku    "
+#: desk/desk_rsc.c:212
+msgid "Current name:  ________.___"
+msgstr ""
 
-#: cli/command.c:2088
-msgid "Sectors per Unit   "
-msgstr "Sektorù na jednotku   "
+#: desk/desk_rsc.c:217
+msgid "Copy's name:  ________.___"
+msgstr ""
 
-#: cli/command.c:2090
-msgid "Bytes per Sector   "
-msgstr "Bytù na sektor   "
+#: desk/desk_rsc.c:280
+msgid " Desk "
+msgstr ""
 
-#: cli/command.c:2137
-msgid "Unable to create bootsector file"
-msgstr "Nelze vytvoøit soubor zavádìcího sektoru."
+#: desk/desk_rsc.c:286
+msgid " File "
+msgstr ""
 
-#: cli/command.c:2154
-msgid "Unable to read bootsector file"
-msgstr "Nelze èíst soubor zavádìcího sektoru."
+#: desk/desk_rsc.c:292
+msgid " Options "
+msgstr ""
 
-#: cli/command.c:2213
-msgid "Command not found."
-msgstr "Pøíkaz nenalezen."
+#: desk/desk_rsc.c:298
+msgid " Arrange "
+msgstr ""
+
+#: desk/desk_rsc.c:316
+msgid "  Desktop info...   "
+msgstr ""
+
+#: desk/desk_rsc.c:370
+msgid "  Open"
+msgstr ""
+
+#: desk/desk_rsc.c:376
+msgid "  Info/Rename...  \007I"
+msgstr ""
+
+#: desk/desk_rsc.c:388
+msgid "  Delete...       \007D"
+msgstr ""
+
+#: desk/desk_rsc.c:394
+msgid "  Format..."
+msgstr ""
+
+#: desk/desk_rsc.c:406
+msgid "  To Output       ^U"
+msgstr ""
+
+#: desk/desk_rsc.c:412
+msgid "  Exit to DOS     ^Q"
+msgstr ""
+
+#: desk/desk_rsc.c:424
+msgid "  Install disk drive..."
+msgstr ""
+
+#: desk/desk_rsc.c:430
+msgid "  Configure application...  \007A"
+msgstr ""
+
+#: desk/desk_rsc.c:442
+msgid "  Set preferences..."
+msgstr ""
+
+#: desk/desk_rsc.c:448
+msgid "  Save desktop              \007V"
+msgstr ""
+
+#: desk/desk_rsc.c:454
+msgid "  Enter DOS commands        \007C"
+msgstr ""
+
+#: desk/desk_rsc.c:478
+msgid "  Sort by name   \007N"
+msgstr ""
+
+#: desk/desk_rsc.c:484
+msgid "  Sort by type   \007P"
+msgstr ""
+
+#: desk/desk_rsc.c:490
+msgid "  Sort by size   \007Z"
+msgstr ""
+
+#: desk/desk_rsc.c:496
+msgid "  Sort by date   \007T"
+msgstr ""
+
+#: desk/desk_rsc.c:510
+msgid "ITEM INFORMATION / RENAME"
+msgstr ""
+
+#: desk/desk_rsc.c:540
+msgid "Attributes:"
+msgstr ""
+
+#: desk/desk_rsc.c:552
+msgid "Read/Write"
+msgstr ""
+
+#: desk/desk_rsc.c:558
+msgid "Read-Only"
+msgstr ""
+
+#: desk/desk_rsc.c:584
+msgid "DISK INFORMATION"
+msgstr ""
+
+#: desk/desk_rsc.c:640
+msgid "FOLDER INFORMATION"
+msgstr ""
+
+#: desk/desk_rsc.c:702
+msgid "Version"
+msgstr ""
+
+#: desk/desk_rsc.c:720
+msgid "April 23, 2002"
+msgstr ""
+
+#: desk/desk_rsc.c:726
+msgid "Copyright (c) 2002 by"
+msgstr ""
+
+#: desk/desk_rsc.c:738
+msgid "The EmuTOS development team"
+msgstr ""
+
+#: desk/desk_rsc.c:744
+msgid "Based on 'GPLed' sources"
+msgstr ""
+
+#: desk/desk_rsc.c:774
+msgid "EmuTOS is distributed under the GPL"
+msgstr ""
+
+#: desk/desk_rsc.c:780
+msgid "See doc/license.txt for details"
+msgstr ""
+
+#: desk/desk_rsc.c:794
+msgid "NEW FOLDER INFORMATION"
+msgstr ""
+
+#: desk/desk_rsc.c:800
+msgid "To create a new folder within the cur-"
+msgstr ""
+
+#: desk/desk_rsc.c:806
+msgid "rent window, double-click on the New"
+msgstr ""
+
+#: desk/desk_rsc.c:812
+msgid "Folder icon and complete the dialogue"
+msgstr ""
+
+#: desk/desk_rsc.c:818
+msgid "that appears by entering the name of"
+msgstr ""
+
+#: desk/desk_rsc.c:824
+msgid "the folder you want to create."
+msgstr ""
+
+#: desk/desk_rsc.c:844
+msgid "OPEN APPLICATION"
+msgstr ""
+
+#: desk/desk_rsc.c:874
+msgid "Enter the name of the document you want"
+msgstr ""
+
+#: desk/desk_rsc.c:880
+msgid "to load, or enter parameter values that"
+msgstr ""
+
+#: desk/desk_rsc.c:886
+msgid "are acceptable to this application."
+msgstr ""
+
+#: desk/desk_rsc.c:900
+msgid "INSTALL DISK DRIVE"
+msgstr ""
+
+#: desk/desk_rsc.c:918
+msgid "Disk type:"
+msgstr ""
+
+#: desk/desk_rsc.c:930
+msgid "Floppy"
+msgstr ""
+
+#: desk/desk_rsc.c:936
+msgid "Hard"
+msgstr ""
+
+#: desk/desk_rsc.c:969
+msgid "CONFIGURE APPLICATION"
+msgstr ""
+
+#: desk/desk_rsc.c:981
+msgid "Document types:"
+msgstr ""
+
+#: desk/desk_rsc.c:1035
+msgid "Application type:"
+msgstr ""
+
+#: desk/desk_rsc.c:1065
+msgid "Needs full memory?"
+msgstr ""
+
+#: desk/desk_rsc.c:1089
+msgid "Icon type:"
+msgstr ""
+
+#: desk/desk_rsc.c:1176
+msgid "COPY FOLDERS / ITEMS"
+msgstr ""
+
+#: desk/desk_rsc.c:1215
+msgid "DELETE FOLDERS / ITEMS"
+msgstr ""
+
+#: desk/desk_rsc.c:1254
+msgid "NAME CONFLICT DURING COPY"
+msgstr ""
+
+#: desk/desk_rsc.c:1284
+msgid "Stop"
+msgstr ""
+
+#: desk/desk_rsc.c:1299
+msgid "NEW FOLDER"
+msgstr ""
+
+#: desk/desk_rsc.c:1332
+msgid "SET PREFERENCES"
+msgstr ""
+
+#: desk/desk_rsc.c:1338
+msgid "Confirm deletes?"
+msgstr ""
+
+#: desk/desk_rsc.c:1362
+msgid "Confirm copies?"
+msgstr ""
+
+#: desk/desk_rsc.c:1386
+msgid "Confirm overwrites?"
+msgstr ""
+
+#: desk/desk_rsc.c:1410
+msgid "Double-click speed:"
+msgstr ""
+
+#: desk/desk_rsc.c:1458
+msgid "Click"
+msgstr ""
+
+#: desk/desk_rsc.c:1464
+msgid "No click"
+msgstr ""
+
+#: desk/desk_rsc.c:1470
+msgid "To drop down menus:"
+msgstr ""
+
+#: desk/desk_rsc.c:1476
+msgid "Sound effects:"
+msgstr ""
+
+#: desk/desk_rsc.c:1488
+msgid "On"
+msgstr ""
+
+#: desk/desk_rsc.c:1494
+msgid "Off"
+msgstr ""
+
+#: desk/desk_rsc.c:1500
+msgid "Time format:"
+msgstr ""
+
+#: desk/desk_rsc.c:1512
+msgid "12 Hour"
+msgstr ""
+
+#: desk/desk_rsc.c:1518
+msgid "24 Hour"
+msgstr ""
+
+#: desk/desk_rsc.c:1524
+msgid "Date format:"
+msgstr ""
+
+#: desk/desk_rsc.c:1536
+msgid "MM-DD-YY"
+msgstr ""
+
+#: desk/desk_rsc.c:1542
+msgid "DD-MM-YY"
+msgstr ""
+
+#: desk/desk_rsc.c:1580
+msgid "%L bytes used in %W items."
+msgstr ""
+
+#: desk/desk_rsc.c:1581
+msgid "  Show as icons  \007S"
+msgstr ""
+
+#: desk/desk_rsc.c:1582
+msgid "application"
+msgstr ""
+
+#: desk/desk_rsc.c:1583
+msgid "documents"
+msgstr ""
+
+#: desk/desk_rsc.c:1585
+msgid "  Show as text   \007S"
+msgstr ""
+
+#: desk/desk_rsc.c:1598
+msgid "New Folder"
+msgstr ""
+
+#: desk/desk_rsc.c:1599
+msgid "Disk Drives:"
+msgstr ""
+
+#: desk/desk_rsc.c:1602
+msgid "Free"
+msgstr ""
+
+#: desk/desk_rsc.c:1604
+msgid "[1]["
+"The document type you selected is not|"
+"configured to work with a specific|"
+"application.  Use the \"Configure|"
+"application\" command to associate this|"
+"document type with an application.][  OK  ]"
+msgstr ""
+
+#: desk/desk_rsc.c:1613
+msgid "[1]["
+"The GEM Desktop has no more available|"
+"windows.  Before you open a disk, close|"
+"a window you're not using.][  OK  ]"
+msgstr ""
+
+#: desk/desk_rsc.c:1618
+msgid "[1]["
+"Cannot find the FORMAT program.  If you|"
+"are using a dual-floppy system, you must|"
+"format disks from your DOS disk.  If you|"
+"are using a hard disk, copy FORMAT to |"
+"the root directory.][OK]"
+msgstr ""
+
+#: desk/desk_rsc.c:1627
+msgid "[3]["
+"Formatting will ERASE all|"
+"information on the disk in drive|"
+"%S:.  Click on OK only if you don't|"
+"mind losing the information on|"
+"this disk.][  OK  |Cancel]"
+msgstr ""
+
+#: desk/desk_rsc.c:1636
+msgid "[3]["
+"You cannot copy a parent folder|"
+"into one of its child folders.][  OK  ]"
+msgstr ""
+
+#: desk/desk_rsc.c:1639
+msgid "[3]["
+"If you are sure you want to|"
+"delete ALL the information on the|"
+"disk in drive %S:, click on OK.|"
+"Otherwise, click on Cancel.][  OK  |Cancel]"
+msgstr ""
+
+#: desk/desk_rsc.c:1646
+msgid "[1]["
+"There is not enough space available|"
+"to configure this application.  To free|"
+"up some space, you'll have to remove|"
+"one of your currently configured|"
+"applications.][  OK  ]"
+msgstr ""
+
+#: desk/desk_rsc.c:1653
+msgid "[2]["
+"A folder with that name already|"
+"exists or your disk is full.|"
+"Retry with a new name, or Cancel|"
+"and check the available disk space.][ Cancel | Retry ]"
+msgstr ""
+
+#: desk/desk_rsc.c:1660
+msgid "[1]["
+"This disk does not have enough room for|"
+"the information you are trying to copy.|"
+"Some items, however, may have been|"
+"copied to the disk.][  OK  ]"
+msgstr ""
+
+#: desk/desk_rsc.c:1667
+msgid "[3]["
+"The GEM Desktop cannot find the|"
+"documents DESKLO.ICN, DESKHI.ICN,|"
+"or DESKTOP.INF in the DOS search|"
+"path.  These documents are required|"
+"to run the GEM Desktop.][Cancel]"
+msgstr ""
+
+#: desk/desk_rsc.c:1676
+msgid "[3]["
+"To save your desktop, insert your|"
+"GEM DESKTOP disk into drive A:, close|"
+"the drive door, and click on OK.|"
+"Click on Cancel if you don't want to|"
+"save the desktop.][  OK  |Cancel]"
+msgstr ""
+
+#: desk/desk_rsc.c:1685
+msgid "[3]["
+"Sorry, but you cannot place any more|"
+"folders inside of your current one.|"
+"See your documentation for limits on|"
+"folders inside other folders.][Cancel]"
+msgstr ""
+
+#: desk/desk_rsc.c:1692
+msgid "[3]["
+"Sorry, but the Directory name you have|"
+"entered exceeds the maximum number of|"
+"characters.  See your documentation for|"
+"limits on the number of characters you|"
+"can enter.][   OK   ]"
+msgstr ""
 

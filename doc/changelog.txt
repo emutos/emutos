@@ -947,3 +947,7 @@ Start... early ages
 - bios/bios.c - priviledge exception ignored (LVL)
 - doc/authors.txt - updated and added email addresses (LVL)
 
+22. Jul. 2002 
+- po/de.po - two more german translations done (MAD)
+- po/cs.po - did bug update cs.po for new translations (MAD)
+

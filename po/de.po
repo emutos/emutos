@@ -73,11 +73,11 @@ msgstr "GEMDOS-Laufwerke"
 
 #: aes/gem_rsc.c:36
 msgid "Selection:  ________.___"
-msgstr ""
+msgstr "Auswahl:    ________.___"
 
 #: aes/gem_rsc.c:223
 msgid "ITEM SELECTOR"
-msgstr ""
+msgstr "AUSWAHL"
 
 #: aes/gem_rsc.c:241 desk/desk_rsc.c:25
 msgid "OK"
