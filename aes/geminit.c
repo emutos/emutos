@@ -158,21 +158,13 @@ WORD hex_dig(BYTE achar)
 *       Scan off and convert the next two hex digits and return with
 *       pcurr pointing one space past the end of the four hex digits
 */
-/*
-void scan_2(LONG pcurr, UWORD *pwd)
-{
-        UWORD           temp;
-        
-        temp = 0x0;
-        temp |= hex_dig( LBGET(pcurr++)) << 4;
-        temp |= hex_dig( LBGET(pcurr) );
-        *pwd = temp;
-}
-*/
 BYTE *scan_2(BYTE *pcurr, UWORD *pwd)
 {
-        UWORD           temp;
-        
+        UWORD   temp;
+
+        if (*pcurr==' ')
+          pcurr += 1;
+
         temp = 0x0;
         temp |= hex_dig(*pcurr++) << 4;
         temp |= hex_dig(*pcurr++);

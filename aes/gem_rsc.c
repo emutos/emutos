@@ -468,7 +468,7 @@ char *rs_fstr[] = {
         "GEM.RSC Release 3.0",
         "AVAILNUL",
         "SCRENMGR",
-        "C:\\DESKTOP.INF",
+        "C:\\EMUDESK.INF",
         "\\SCRAP.",
         N_("[2][You cannot write to the disk in drive|"
            "%S: because it is physically write-|"

@@ -194,18 +194,10 @@ WORD dos_gdir(WORD drive, BYTE *pdrvpath)
 }
 
 
-WORD dos_sdrv(WORD newdrv)
+LONG dos_sdrv(WORD newdrv)
 {
         return( gemdos(X_SETDRV,newdrv) );
 }
-
-
-/*
-WORD isdrive()
-{
-        return ( dos_sdrv( dos_gdrv() ) );
-}
-*/
 
 
 LONG dos_create(BYTE *name, WORD attr)

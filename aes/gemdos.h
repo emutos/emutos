@@ -20,7 +20,7 @@ LONG dos_lseek(WORD handle, WORD smode, LONG sofst);
 void dos_exec(LONG pcspec, LONG segenv, LONG pcmdln);
 LONG dos_chdir(BYTE *pdrvpath);
 WORD dos_gdir(WORD drive, BYTE *pdrvpath);
-WORD dos_sdrv(WORD newdrv);
+LONG dos_sdrv(WORD newdrv);
 LONG dos_create(BYTE *name, WORD attr);
 WORD dos_mkdir(BYTE *path);
 WORD dos_chmod(BYTE *name, WORD wrt, WORD mod);

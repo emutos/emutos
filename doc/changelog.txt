@@ -958,3 +958,10 @@ Start... early ages
 24. Jul. 2002
 - bios/vector.S - changed priv. instr. handler (MAD)
 - bios/bios.c - Now here all basic vector is done in vecs_init() (MAD)
+
+27. Jul. 2002
+- desk/deskapp.c - Enabled/fixed loading and saving of DESKTOP.INF, but
+  the file is now called EMUDESK.INF due to some incompatibilities with
+  the original GEM's DESKTOP.INF. Added automatic drive scanning when there
+  is no such file, too. (THH)
+- aes/gemfmlib.c - Dialogs can now be left by pressing ENTER, too. (THH)

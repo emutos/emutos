@@ -16,6 +16,11 @@
 *       -------------------------------------------------------------
 */
 
+#ifndef DESKAPP_H
+#define DESKAPP_H
+
+#include "config.h"
+
 
 #define AP_APPLOPEN 0
 #define AP_DATAOPEN 1
@@ -86,9 +91,13 @@
                                                 /*   file               */
 #define SIZE_BUFF 4096                          /* size of a string     */
                                                 /*   buffer             */
+
+#if TOS_VERSION < 0x200
+#define NUM_IBLKS 0
+#else
 #define NUM_IBLKS 72
-#define NUM_NAMICS ((NUM_IBLKS - 8)/2)          /* # of named icons     */
-                                                /*   possible           */
+#endif
+
 
 #define ANODE struct applstr
 ANODE
@@ -191,3 +200,5 @@ void app_save(WORD todisk);
 BYTE app_blddesk(void);
 ANODE *app_afind(WORD isdesk, WORD atype, WORD obid, BYTE *pname, WORD *pisapp);
 
+
+#endif  /* DESKAPP_H */

@@ -66,20 +66,18 @@ GLOBAL ACCNODE  gl_caccs[3];
 #endif
 
 
-/* I added a sample DESKTOP.INF here because of incompatibilities between
-   the different desktops of the different GEM versions... - THH */
+/* We use this DESKTOP.INF here when we can't load that file from disk: */
 static const char *desk_inf_data =
-    "#E9A01\r\n"
-    "#W000002024C0A00 @\r\n"
-    "#W0000020D4C0A00 @\r\n"
-    "#M000001FF A FLOPPY DISK@ @\r\n"
-    "#M000100FF C HARD DISK@ @\r\n"
-    "#D0000 0 000 @ @\r\n"
-    "#G08FF *.APP@ @\r\n"
-    "#G08FF *.PRG@ @\r\n"
-    "#P08FF *.TTP@ @\r\n"
-    "#F08FF *.TOS@ @\r\n"
-    "#T000403FF   TRASH@ @\r\n";
+    "#E 9A 01\r\n"
+    "#W 00 00 02 02 4C 0A 00 @\r\n"
+    "#W 00 00 02 0D 4C 0A 00 @\r\n"
+    "#F FF 28 @ *.*@ \r\n"
+    "#D FF 02 @ *.*@ \r\n"
+    "#G 08 FF *.APP@ @ \r\n"
+    "#G 08 FF *.PRG@ @ \r\n"
+    "#P 08 FF *.TTP@ @ \r\n"
+    "#F 08 FF *.TOS@ @ \r\n"
+    "#T 00 04 03 FF   TRASH@ @ \r\n";
 
 
 /************************************************************************/
@@ -212,8 +210,11 @@ BYTE uhex_dig(WORD wd)
 #ifdef NO_ROM
 BYTE *scan_2(BYTE *pcurr, UWORD *pwd)
 {
-        UWORD           temp;
-        
+        UWORD   temp;
+
+        if( *pcurr==' ' )
+          pcurr += 1;
+
         temp = 0x0;
         temp |= hex_dig(*pcurr++) << 4;
         temp |= hex_dig(*pcurr++);
@@ -234,6 +235,7 @@ extern BYTE *scan_2(BYTE *pcurr, UWORD *pwd);
 */
 BYTE *save_2(BYTE *pcurr, UWORD wd)
 {
+        *pcurr++ = ' ';
         *pcurr++ = uhex_dig((wd >> 4) & 0x000f);
         *pcurr++ = uhex_dig(wd & 0x000f);
         return( pcurr );
@@ -405,21 +407,30 @@ static WORD app_getfh(WORD openit, BYTE *pname, WORD attr)
         strcpy(&G.g_srcpth[0], pname);
         lp = ADDR(&G.g_srcpth[0]);
         tmpdrv = dos_gdrv();
+
         if (tmpdrv != gl_stdrv)
           dos_sdrv(gl_stdrv);
+
         if ( shel_find(lp) )
         {
           if (openit)
             handle = dos_open((BYTE *)lp, attr);
           else
             handle = dos_create((BYTE *)lp, attr);
-          if ( DOS_ERR )
-          {
-            handle = 0;
-          }
         }
+        else if(!openit)
+        {
+          handle = dos_create((BYTE *)lp, attr);
+        }
+        
+        if ( DOS_ERR )
+        {
+          handle = 0;
+        }
+
         if (tmpdrv != gl_stdrv)
           dos_sdrv(tmpdrv);
+
         return(handle);
 }
 
@@ -594,20 +605,34 @@ WORD app_start()
         shel_get(ADDR(&gl_afile[0]), SIZE_AFILE);
         if (gl_afile[0] != '#')                 /* invalid signature    */
         {                                       /*   so read from disk  */
-#if 0     /* We're ignoring the normal DESKTOP.INF and use our
-             built-in own data instead due to incompatibilities between
-             the different GEM versions - THH*/
           WORD fh;
           fh = app_getfh(TRUE, ini_str(STGEMAPP), 0x0);
-          if (!fh)
-            return(FALSE);
-          G.g_afsize = dos_read(fh, SIZE_AFILE, ADDR(&gl_afile[0]));
-          dos_close(fh);
-          gl_afile[G.g_afsize] = NULL;
-#else
-          G.g_afsize = strlen(desk_inf_data);
-          strcpy(gl_afile, desk_inf_data);
-#endif        
+          if (fh)
+          {
+            G.g_afsize = dos_read(fh, SIZE_AFILE, ADDR(&gl_afile[0]));
+            dos_close(fh);
+            gl_afile[G.g_afsize] = NULL;
+          }
+        }
+        /* If there's still no desktop.inf data, use built-in now: */
+        if (gl_afile[0] != '#')
+        {
+          LONG drivemask;
+          drivemask = dos_sdrv( dos_gdrv() ); 
+          strcpy(gl_afile, desk_inf_data);  /* Copy core data */
+          /* Scan for valid drives: */
+          for(i=0; i<32; i++)
+            if(drivemask&(1<<i))
+            {
+              x = strlen(gl_afile);
+              strcat(gl_afile, "#M 00 00 01 FF A DISK A@ @ \r\n");
+              gl_afile[x+4] += i & 4;    /* x position */
+              gl_afile[x+7] += i / 4;    /* y position */
+              if(i<=1)
+                gl_afile[x+10] = '0';    /* Floppy instead of hard disk icon */
+              gl_afile[x+15] = gl_afile[x+22] = 'A'+i;    /* Drive letter */
+            }
+          G.g_afsize = strlen(gl_afile);
         }
 
         wincnt = 0;
