@@ -545,4 +545,11 @@ Start... early ages
 - bios/floppy.c: some untested unique FDC track register bookkeeping (LVL)
 - made ramtop and ramvalid visible from C code (LVL)
 
-
+19. Jan. 2002
+- experimental autodetect ARAnyM or STonX native print (activated in 
+  bios/config.h) (LVL)
+- new setjmp/longjmp replacing older ones (LVL)
+- updated todo list (LVL)
+- started fastram support in bdos (LVL)
+- fixed some functino prototypes in bios.c (LVL)
+- removed cli/Makefile (LVL)

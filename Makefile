@@ -387,7 +387,6 @@ clean:
 
 distclean: clean nodepend
 	rm -f Makefile.bak '.#'* */'.#'* 
-	$(MAKE) -C cli clean
 
 #
 # indent - indents the files except when there are warnings
