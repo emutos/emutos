@@ -26,6 +26,7 @@
 #include "sound.h"
 #include "floppy.h"
 #include "clock.h"
+#include "nvram.h"
 #include "mouse.h"
 #include "asm.h"
  
@@ -792,4 +793,96 @@ VOID xbios_27()
     kprintf("XBIOS: Unimplemented function 0x27 ...\n");
 #endif
 }
+
+/*
+ * xbios_29 - (Floprate) 
+ */
+
+WORD xbios_29(WORD dev, WORD rate)
+{
+#if DBG_XBIOS
+    kprintf("XBIOS: Floprate\n");
+#endif
+#if IMPLEMENTED
+    return floprate(dev, rate);
+#else
+    return 0;
+#endif
+}
+
+/*
+ * xbios_2a - (DMAread) 
+ */
+
+LONG xbios_2a(LONG sector, WORD count, PTR buf, WORD dev)
+{
+#if DBG_XBIOS
+    kprintf("XBIOS: DMAread\n");
+#endif
+#if IMPLEMENTED
+    return dmaread(sector, count, buf, dev);
+#else
+    return -1;
+#endif
+}
+
+/*
+ * xbios_2b - (DMAwrite) 
+ */
+
+LONG xbios_2b(LONG sector, WORD count, PTR buf, WORD dev)
+{
+#if DBG_XBIOS
+    kprintf("XBIOS: DMAwrite\n");
+#endif
+#if IMPLEMENTED
+    return dmawrite(sector, count, buf, dev);
+#else
+    return -1;
+#endif
+}
+
+/*
+ * xbios_2c - (Bconmap) 
+ */
+
+LONG xbios_2c(WORD devno)
+{
+#if DBG_XBIOS
+    kprintf("XBIOS: Bconmap\n");
+#endif
+#if IMPLEMENTED
+    return bconmap(devno);
+#else
+    return 0x2c; /* return the function opcode */
+#endif
+}
+
+
+
+/*
+ * xbios_2e - (NVMaccess) 
+ */
+
+WORD xbios_2e(WORD op, WORD start, WORD count, PTR buffer)
+{
+#if DBG_XBIOS
+    kprintf("XBIOS: NVMaccess\n");
+#endif
+    return nvmaccess(op, start, count, (char *)buffer);
+}
+
+
+/*
+ * xbios_40 - (blitmode) 
+ */
+
+WORD xbios_40(WORD mode)
+{
+#if DBG_XBIOS
+    kprintf("XBIOS: Unimplemented function 0x40 ...\n");
+#endif
+    return 0;
+}
+
 
