@@ -296,7 +296,7 @@ static void msetdt(ULONG dt)
  * or ARAnyM then please define RTC_TOS_VER in your localconf.h.
  */
 #ifndef RTC_TOS_VER
-#define RTC_TOS_VER		(TOS_VERSION)
+#define RTC_TOS_VER             (TOS_VERSION)
 #endif
 const static int nvram_rtc_year_offset = ((RTC_TOS_VER < 0x306) ? 1970 : 1968) - 1980;
 

@@ -45,7 +45,7 @@
 /* bitblt declarations */
 typedef struct  bbpb
 {
-    UWORD   b_wd;	/* width of block to blit (pixels) */
+    UWORD   b_wd;       /* width of block to blit (pixels) */
     UWORD   b_ht;       /* height of block to blit (pixels) */
     UWORD   plane_ct;   /* number of planes to blit */
     UWORD   fg_col;     /* foreground colour */
@@ -93,22 +93,22 @@ FBBLTPBLK pblk;
 #define EVENWORD(s) (((s)+15) >> 4)
 
 /* just to reduce possible mistakes */
-#define ALL_WHITE(s,d)	(0x0000)
-#define S_AND_D(s,d)	((s) & (d))
-#define S_AND_NOTD(s,d)	((s) & ~(d))
-#define S_ONLY(s,d)	(s)
-#define NOTS_AND_D(s,d)	(~(s) & (d))
+#define ALL_WHITE(s,d)  (0x0000)
+#define S_AND_D(s,d)    ((s) & (d))
+#define S_AND_NOTD(s,d) ((s) & ~(d))
+#define S_ONLY(s,d)     (s)
+#define NOTS_AND_D(s,d) (~(s) & (d))
 #define D_ONLY(s,d)     (d)
-#define S_XOR_D(s,d)	((s) ^ (d))
-#define S_OR_D(s,d)	((s) | (d))
-#define NOT_SORD(s,d)	(~((s) | (d)))
-#define NOT_SXORD(s,d)	(~((s) ^ (d)))
-#define NOT_D(s,d)	(~(d))
-#define S_OR_NOTD(s,d)	((s) | ~(d))
-#define NOT_S(s,d)	(~(s))
-#define NOTS_OR_D(s,d)	(~(s) | (d))
-#define NOT_SANDD(s,d)	(~((s) & (d)))
-#define ALL_BLACK(s,d)	(0xffff)
+#define S_XOR_D(s,d)    ((s) ^ (d))
+#define S_OR_D(s,d)     ((s) | (d))
+#define NOT_SORD(s,d)   (~((s) | (d)))
+#define NOT_SXORD(s,d)  (~((s) ^ (d)))
+#define NOT_D(s,d)      (~(d))
+#define S_OR_NOTD(s,d)  ((s) | ~(d))
+#define NOT_S(s,d)      (~(s))
+#define NOTS_OR_D(s,d)  (~(s) | (d))
+#define NOT_SANDD(s,d)  (~((s) & (d)))
+#define ALL_BLACK(s,d)  (0xffff)
 
 
 static UWORD
