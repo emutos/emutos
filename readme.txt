@@ -6,9 +6,8 @@ build this stuff.
 Also you need to get it (more or less) running is STonX. But you have
 to do some changes in STonX. Possibly this will change later.
 
-EmuTOS now needs no change in STonX any longer. But you MUST use the
-cardridge.img, which is delivered with EmuTOS. This will possibly
-change later.
+EmuTOS now needs no change in STonX any longer. It will run on a
+normal STonX. 
 
 But, if you want to see debugging output in STonX, you need to
 implement a write_native function in gemdos.c of STonX:
