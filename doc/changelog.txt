@@ -616,3 +616,8 @@ Start... early ages
 
 28. Jan. 2002
 - 1-bit color depth on Falcon now in proper black-on-white colors (joy)
+- machine_init() split to two phases - machine_detect() can be called very
+  early() and new machine_init() creates cookies etc. (joy)
+- screen.c now detects proper screen size from VIDEL registers - there's no
+  more trash on the screen - the size is set to 640x480 (joy)
+- lineainit.c sets the variables according to proper screen resolution (joy)
