@@ -364,46 +364,7 @@ WORD gsx_char()
         intin[0] = 4;
         intin[1] = 2;
         gsx_ncode(33, 0, 2);
-#if MC68K
-/* CHANGED BACK TO OLD STYLE GSX CALL */
-        intin[0] = 1;
-        intin[1] = -1;
-        intin[2] = FALSE;        /* no echo */
-        gsx_ncode(31, FALSE, 3);
-        if (contrl[4])
-        {
-          switch(intout[0])
-          {
-            case 0x0008:  intout[0] = 0x0e08;
-                break;
-            case 0x0020:  intout[0] = 0x3920;
-                break;
-            case 0x0005:  intout[0] = 0x4800;
-                break;
-            case 0x0018:  intout[0] = 0x5000;
-                break;
-            case 0x0013:  intout[0] = 0x4b00;
-                break;
-            case 0x0004:  intout[0] = 0x4d00;
-                break;
-            case 0x007f:  intout[0] = 0x5300;
-                break;
-            case 0x0009:  intout[0] = 0x0f09;
-                break;
-            case 0x0001:  intout[0] = 0x0f00;
-                break;
-            case 0x000d:  intout[0] = 0x1c0d;
-                break;
-            case 0x001b:  intout[0] = 0x011b;
-                break;
-        
-          }
-          return(intout[0]);
-        }
-        else
-          return(0);
-#endif
-#if I8086
+
         intin[0] = -1;
         intin[1] = FALSE;        /* no echo */
         gsx_ncode(31, FALSE, 2);
@@ -411,7 +372,6 @@ WORD gsx_char()
           return(intout[0]);
         else
           return(0);
-#endif
 }
 
 

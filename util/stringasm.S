@@ -21,7 +21,7 @@
 _strlencpy:                
         movea.l 8(sp),a0
         movea.l 4(sp),a1
-        move.l  #1,d0
+        clr.l   d0
 lstcpy_loop:
         addq.w  #1,d0
         move.b  (a0)+,(a1)+
