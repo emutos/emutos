@@ -198,9 +198,9 @@ long    log(BPB *b, int drv)
         dm->m_recsiz = rsiz;        /*  set record (sector) size    */
         dm->m_numcl = b->numcl;     /*  set cluster size in records */
         dm->m_clrlog = log2(cs);            /*    and log of it             */
-        dm->m_clrm = logmsk[dm->m_clrlog];          /*  and mask of it      */
+        dm->m_clrm = (1L<<dm->m_clrlog)-1;          /*  and mask of it      */
         dm->m_rblog = log2(rsiz);           /*  set log of bytes/record     */
-        dm->m_rbm = logmsk[dm->m_rblog];            /*  and mask of it      */
+        dm->m_rbm = (1L<<dm->m_rblog)-1;            /*  and mask of it      */
         dm->m_clblog = log2(dm->m_clsizb);          /*  log of bytes/clus   */
 
         f->o_fileln = n * rsiz;     /*  size of file (root dir)     */
@@ -230,9 +230,8 @@ long    log(BPB *b, int drv)
 
 
 /*
-**      log2 -
-**          return log base 2 of n
-*/
+ * log2 - return log base 2 of n
+ */
 
 static int log2(int n)
 {

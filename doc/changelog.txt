@@ -431,3 +431,6 @@ Start... early ages
   be read from a file during Pexec() and that caused "invalid exec format"
   bugs. Actually most things in BDOS filesystem could never work! (joy)
 - "061a executable file format" debug print corrected: "601a ..." (joy)
+
+06. Jan. 2002
+- optimized divmod() in bdos/main.c (MAD)

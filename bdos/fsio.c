@@ -18,7 +18,7 @@
 #include        "gemerror.h"
 #include "../bios/kprint.h"
 
-#define DBGFSIO 1
+#define DBGFSIO 0
 
 /*
  * forward prototypes
@@ -303,9 +303,6 @@ static long xrw(int wrtflg, OFD *p, long len, char *ubufr,
      */
 
     recn = divmod(&bytn,(long) p->o_curbyt,dm->m_rblog);
-#if DBGFSIO
-    kprintf("xrw recn %d, bytn %d \n", recn, bytn);
-#endif
     recn += p->o_currec;
 
     /*
