@@ -1,9 +1,7 @@
 /*
- * vectors.S - default exception vectors
+ * vectors.S - exception vectors
  *
- * Copyright (c) 2001 by Authors:
- *
- *  LVL  Laurent Vogel
+ * Copyright (c) 2001-2002 by the EmuTOS Development Team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -96,13 +94,25 @@ set_uvec:
         dbra    d0, set_uvec
         rts
 
+/* this table holds the default exception vectors for vectors 2 to 63.
+ * thanks to the return address pushed by the bsr, any_vec is able
+ * to re-compute the vector number. For this reason, jumping back to
+ * the default vector after having attempted to e.g. overcome an
+ * illegal exception should best be made by jumping to the actual vector
+ * location (i.e. illg_vec below) and not directly to any_vec, as
+ * the former method will allow any_vec to display the correct vector
+ * number and report a meaningful panic message.
+ */
+	
 deflt_vec_table:
         bsr.s   any_vec         // vector 2
         bsr.s   any_vec
-        bsr.s   any_vec
+illg_vec:
+	bsr.s   any_vec
         bsr.s   any_vec         // vector 5
         bsr.s   any_vec
         bsr.s   any_vec
+priv_vec:
         bsr.s   any_vec
         bsr.s   any_vec
         bsr.s   any_vec         // vector 10
@@ -333,16 +343,6 @@ vbl_end:
 
 
 
-// ==== Timer A interrupt handler ============================================
-        .global _int_timera
-_int_timera:
-        rte             // Just a dummy
-
-// ==== Timer B interrupt handler ============================================
-        .global _int_timerb
-_int_timerb:
-        rte             // Just a dummy
-
 // ==== Timer C interrupt handler ============================================
         .global _int_timerc
 _int_timerc:
@@ -370,30 +370,6 @@ timerc_end:
         bclr    #5, 0xfffffa11          // clear interrupt service bit
         rte
         
-
-// ==== Timer D interrupt handler ============================================
-        .global _int_timerd
-_int_timerd:
-        rte             // Just a dummy
-
-
-
-// ==== txerror ==============================================================
-_txerror:
-        rte             // Just a dummy
-
-// ==== txerror ==============================================================
-_txrint:
-        rte             // Just a dummy
-
-// ==== txerror ==============================================================
-_rxerror:
-        rte             // Just a dummy
-
-// ==== txerror ==============================================================
-_rcvint:
-        rte             // Just a dummy
-
 
 
 // ==== Critical error handler ===============================================
@@ -430,8 +406,7 @@ _int_illegal:
 
 ii_back:
         movem.l (sp)+,d0/a0
-        move.l  any_vec,-(sp)            // use panic handler
-        rts
+	bra	illg_vec                // go directly to our panic handler
 
 
 
@@ -440,7 +415,7 @@ ii_back:
  *      
  * We set up a handler on the 68010/20/30/40 to convert 'MOVE SR,...'
  * to 'MOVE CCR,...' at execution time, so that we can support one
- * release of 68XXX software.
+ * release of 680X0 software.
  */
 
 _int_priv:
@@ -457,8 +432,7 @@ _int_priv:
 
 pi_back:
         movem.l (sp)+,d0/a0
-        move.l  any_vec,-(sp)            // use panic handler
-        rts
+        bra     priv_vec                // go directly to our panic handler
 
 
 
