@@ -25,6 +25,7 @@ struct keytbl keytbl_us = {
     keytbl_us_altnorm, 
     keytbl_us_altshft, 
     keytbl_us_altcaps, 
+    NULL
 };
 
 BYTE keytbl_us_norm[] = {

@@ -17,13 +17,9 @@
  */
 
 /*
- * LVL: I rewrote this, taking bits from kbd.c and kbq.c,
- * to be more compliant with the iorec stuff.
- *
  * not supported: 
  * - mouse move using alt-arrowkeys
  * - alt-help screen hardcopy
- * - alt-numeric-pad to enter characters by their ASCII code
  * - KEYTBL.TBL config with _AKP cookie (tos 5.00 and later)
  * - CLRHOME and INSERT in kbshift.
  */
@@ -229,6 +225,12 @@ void kb_timerc_int(void)
 
 /*=== interrupt routine support ===================================*/
 
+/* the number of the current dead key if any, else -1. */
+static int kb_dead;
+
+/* the decimal number collected in an alt_keypad sequence, or -1 */
+static int kb_altnum;
+
 /*
  * kbd_int : called by the interrupt routine for key events.
  */
@@ -273,6 +275,11 @@ void kbd_int(WORD scancode)
             break;
         case KEY_ALT:
             shifty &= ~MODE_ALT;        /* clear bit */
+            if(kb_altnum >= 0) {
+                ascii = kb_altnum & 0xFF;
+                kb_altnum = -1;
+                goto push_value;
+            }
             break;
         }
         /* The TOS does not return when ALT is set, to emulate
@@ -304,10 +311,21 @@ void kbd_int(WORD scancode)
             keyclick();
         return;
     }
-
+    
+    
     if (shifty & MODE_ALT) {
         BYTE *a;
-
+         
+        /* ALT-keypad means that char number */
+        if (scancode >= 103 && scancode <= 112) {
+            if (kb_altnum < 0) {
+                kb_altnum = 0;
+            }
+            kb_altnum *= 10;
+            kb_altnum += "\7\10\11\4\5\6\1\2\3\0" [scancode - 103];
+            return;
+        } 
+        
         if (shifty & MODE_SHIFT) {
             a = current_keytbl.altshft;
         } else if (shifty & MODE_CAPS) {
@@ -321,25 +339,35 @@ void kbd_int(WORD scancode)
         if (*a++) {
             ascii = *a;
         }
-    } else {
-        if (shifty & MODE_SHIFT) {
-            if (scancode >= 0x3B && scancode <= 0x44) {
-                scancode += 0x19;
-                goto push_value;
-            }
-            ascii = current_keytbl.shft[scancode];
-        } else if (shifty & MODE_CAPS) {
-            ascii = current_keytbl.caps[scancode];
-        } else {
-            ascii = current_keytbl.norm[scancode];
+    } else if (shifty & MODE_SHIFT) {
+        /* Fonction keys F1 to F10 */
+        if (scancode >= 0x3B && scancode <= 0x44) {
+            scancode += 0x19;
+            goto push_value;
         }
+        ascii = current_keytbl.shft[scancode];
+    } else if (shifty & MODE_CAPS) {
+        ascii = current_keytbl.caps[scancode];
+    } else {
+        ascii = current_keytbl.norm[scancode];
     }
 
     if (shifty & MODE_CTRL) {
         /* More complicated in TOS, but is it really necessary ? */
         ascii &= 0x1F;
+    } else if(kb_dead >= 0) {
+        BYTE *a = current_keytbl.dead[kb_dead];
+        while (*a && *a != ascii) {
+            a += 2;
+        }
+        if (*a++) {
+            ascii = *a;
+        } 
+        kb_dead = -1;
+    } else if(ascii <= DEAD(DEADMAX) && ascii >= DEAD(1)) {
+        kb_dead = ascii - DEAD(1);
+        return;
     }
-
 
   push_value:
     if (conterm & 1)
@@ -433,6 +461,9 @@ void kbd_init(void)
     kb_ticks = 0;
     kb_initial = 25;
     kb_repeat = 5;
+ 
+    kb_dead = -1;      /* not in a dead key sequence */
+    kb_altnum = -1;    /* not in an alt-numeric sequence */
 
     bioskeys();
 }

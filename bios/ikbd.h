@@ -10,22 +10,34 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#ifndef H_IKBD_
-#define H_IKBD_
+#ifndef IKBD_H
+#define IKBD_H
 
 #include "portab.h"
 
 extern BYTE shifty;
 
+/*
+ * dead key support: i.e. hitting ^ then a yields â.
+ * char codes DEAD(1) to DEAD(DEADMAX) included are reserved for dead 
+ * keys. table keytbl->dead[i-1], 1 <= i <= DEADMAX, gives the list of 
+ * couples of (before, after) char codes ended by zero.
+ */
+
+#define DEAD(a) (1+a)
+#define DEADMAX 7
+
 struct keytbl {
-  /* 128-sized array giving ascii codes for each scan code */
+  /* 128-sized array giving char codes for each scan code */
   BYTE *norm;
   BYTE *shft;
   BYTE *caps;
-  /* couples of (scan code, ascii code), ended by byte zero */
+  /* couples of (scan code, char code), ended by byte zero */
   BYTE *altnorm;
   BYTE *altshft;
   BYTE *altcaps;
+  /* table of at most eight dead key translation tables */
+  BYTE **dead;
 };
 
 /* initialise the ikbd */
@@ -59,6 +71,6 @@ extern void ikbdws(WORD cnt, LONG ptr);
 extern void ikbd_writeb(BYTE b);
 extern void ikbd_writew(WORD w);
 
-#endif /* H_IKBD_ */
+#endif /* IKBD_H */
 
 

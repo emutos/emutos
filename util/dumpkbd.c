@@ -241,6 +241,7 @@ void dump_tables(struct ktbl *ktbl, char *fname, char *name)
 "    keytbl_%s_altnorm, \n"
 "    keytbl_%s_altshft, \n"
 "    keytbl_%s_altcaps, \n"
+"    NULL, \n"
 "};\n"
 "\n",
             prefix, prefix, prefix, prefix, prefix, prefix,
