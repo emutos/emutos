@@ -1,8 +1,9 @@
 /*      DESK1.C         */
 /*      Routines specific to Desktop 1.x */
 /*
-*       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002 The EmuTOS development team
+*       Copyright 1999 Caldera Thin Clients, Inc. / Lineo Inc.
+*                 2001 John Elliott
+*                 2003 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -32,7 +33,7 @@
 #include "deskmain.h"
 #include "rectfunc.h"
 #include "dos.h"
-
+#include "desk_rsc.h"
 
 
 void zoom_closed(WORD close, WORD w_id, WORD xicon, WORD yicon)
@@ -49,10 +50,10 @@ void zoom_closed(WORD close, WORD w_id, WORD xicon, WORD yicon)
 
 WORD w_setpath(WNODE *pw, WORD drv, BYTE *path, BYTE *name, BYTE *ext)
 {
-        WORD icx, icy;  // bp10 bp12
-        GRECT rc;       // bp08 ich xoff yoff
+        WORD icx, icy;
+        GRECT rc;
         WORD res = 0;
-        
+
         wind_get(pw->w_id,WF_WXYWH, &rc.g_x, &rc.g_y, &rc.g_w, &rc.g_h);
         icx = rc.g_x + (rc.g_w / 2) - (G.g_wicon / 2);
         icy = rc.g_y + (rc.g_h / 2) - (G.g_hicon / 2);
@@ -61,9 +62,10 @@ WORD w_setpath(WNODE *pw, WORD drv, BYTE *path, BYTE *name, BYTE *ext)
         return res;
 }
 
+
 WORD true_closewnd(WNODE *pw)
 {
-        GRECT rc;       // ich xoff yoff bp10
+        GRECT rc;
         WORD  res = 0;
 
         wind_get(pw->w_id,WF_WXYWH, &rc.g_x, &rc.g_y, &rc.g_w, &rc.g_h);
@@ -122,19 +124,28 @@ void snap_disk(WORD x, WORD y, WORD *px, WORD *py)
         icw  = G.g_icw;
         xgrid  = x / icw;
         xoff = x % icw;
-        if (xoff <= (icw / 2)) *px = xgrid * icw;
-        else                               *px = (xgrid+1)*icw;
+
+        if (xoff <= (icw / 2))
+          *px = xgrid * icw;
+        else
+          *px = (xgrid+1)*icw;
+
         *px = min(gl_width - icw, *px);
-        if ( *px < (gl_width / 2)) *px += (gl_width % icw);
+        if ( *px < (gl_width / 2))
+          *px += (gl_width % icw);
 
         y -= G.g_ydesk;
         ich = G.g_ich;
         ygrid  = y / G.g_ich;
         yoff = y % G.g_ich;
-        if (yoff <= (ich / 2)) *py = ygrid     * ich;
-        else                                *py = (ygrid+1) * ich;
+
+        if (yoff <= (ich / 2))
+          *py = ygrid * ich;
+        else
+          *py = (ygrid+1) * ich;
+
         *py = min(G.g_hdesk - ich, *py);
-        if ( *py < (G.g_hdesk / 2)) *py += (G.g_hdesk % ich);
+        if (*py < (G.g_hdesk / 2))  *py += (G.g_hdesk % ich);
         *py += G.g_ydesk;
 }
 
@@ -162,7 +173,7 @@ WORD fun_file2desk(PNODE *pn_src, ANODE *an_dest, WORD dobj)
                 }
         }
         return fun_op(operation, pn_src, G.g_tmppth,
-                        0, 0, 0, 0);    // GEM/1 doesn't *have* the last 5 arguments!
+                      0, 0, 0, 0);    /* GEM/1 doesn't *have* the last 5 arguments! */
 }
 
 
@@ -188,7 +199,7 @@ WORD fun_file2win(PNODE *pn_src, BYTE  *spec, ANODE *an_dest, FNODE *fn_dest)
             strcat(p, "*.*");
         }
         return fun_op(OP_COPY, pn_src, G.g_tmppth,
-                        0, 0, 0, 0);    // GEM/1 doesn't *have* the last 5 arguments!
+                      0, 0, 0, 0);    /* GEM/1 doesn't *have* the last 5 arguments! */
 }
 
 void fun_win2desk(WORD wh, WORD obj)
@@ -205,11 +216,8 @@ void fun_win2desk(WORD wh, WORD obj)
 }
 
 
-WORD fun_file2any(WORD sobj,      // 12
-                          WNODE *wn_dest, // 14
-                          ANODE *an_dest, // 16
-                          FNODE *fn_dest, // 18
-                          WORD dobj)      // 1A
+WORD fun_file2any(WORD sobj, WNODE *wn_dest, ANODE *an_dest, FNODE *fn_dest,
+                  WORD dobj)
 {
         WORD okay = 0;
         FNODE *bp8;
@@ -221,7 +229,7 @@ WORD fun_file2any(WORD sobj,      // 12
         if (pn_src)
         {
                 okay = pn_active(pn_src);
-                if (okay == 0x12) {}    // Meaningless test for DOS error...
+                /*if (okay == 0x12) {}    // Meaningless test for DOS error...*/
                 if (pn_src->p_flist) 
                 {
                         for (bp8 = pn_src->p_flist; bp8; bp8 = bp8->f_next)
@@ -245,6 +253,7 @@ WORD fun_file2any(WORD sobj,      // 12
         return okay;
 }
 
+
 void fun_desk2win(WORD wh, WORD dobj) 
 {
         WNODE *wn_dest;
@@ -261,11 +270,7 @@ void fun_desk2win(WORD wh, WORD dobj)
                 an_src = i_find(0, sobj, &fn_src, &isapp);
                 if (an_src->a_type == AT_ISTRSH)
                 {
-#if 0  /* FIXME */
-                        fun_alert(1, STNODRA2);
-#else
-                        form_alert(1,(LONG)"[1][fun_desk2win:|Please don't do this][Ok]");
-#endif
+                        fun_alert(1, STNODRA2, NULLPTR);
                         continue;
                 }
                 copied = fun_file2any(sobj, wn_dest, an_dest, fn_dest, dobj);
@@ -290,14 +295,11 @@ void fun_desk2desk(WORD dobj)
         {       
                 source = i_find(0, sobj, &fn, &isapp);
                 
-                if (source == target) continue;
+                if (source == target)  continue;
+
                 if (source->a_type == AT_ISTRSH)
                 {
-#if 0  /* FIXME */
-                        fun_alert(1, STNOSTAK);
-#else
-                        form_alert(1,(LONG)"[1][fun_desk2desk:|Trash can not be|moved there][Ok]");
-#endif
+                        fun_alert(1, STNOSTAK, NULLPTR);
                         continue;
                 }
                 cont = 1;
@@ -306,11 +308,7 @@ void fun_desk2desk(WORD dobj)
                         lpicon = (ICONBLK *)(G.g_screen[sobj].ob_spec);
                         drvname[0] = lpicon->ib_char & 0xFF;
                         drvname[1] = 0;
-#if 0  /* FIXME */
-                        cont = fun_alert(2, STDELDIS, drvname);
-#else
-                        form_alert(1,(LONG)"[1][fun_desk2desk:|Please don't drag|this on the trash can][Ok]");
-#endif
+                        cont = fun_alert(2, STDELDIS, (WORD*)drvname);
                 }
                 if (cont != 1) continue;
                 fun_file2any(sobj, NULL, target, NULL, dobj);
@@ -323,18 +321,14 @@ WORD desk1_drag(WORD wh, WORD dest_wh, WORD sobj, WORD dobj, WORD mx, WORD my)
 {
         WORD done = 0;
 
-        if (wh) // Dragging something from window
+        if (wh) /* Dragging something from window */
         {
                 if (dest_wh) fun_drag(wh, dest_wh, dobj, mx, my);
                 else            
                 {
                         if (sobj == dobj)
                         {
-#if 0  /* FIXME */
-                                fun_alert(1, STNODRA1);
-#else
-                        form_alert(1,(LONG)"[1][FIXME:|desk1_drag][Ok]");
-#endif
+                                fun_alert(1, STNODRA1, NULLPTR);
                         }
                         else
                         {
@@ -342,13 +336,13 @@ WORD desk1_drag(WORD wh, WORD dest_wh, WORD sobj, WORD dobj, WORD mx, WORD my)
                         }
                 }
         }
-        else    // Dragging something from desk
+        else    /* Dragging something from desk */
         {
                 if (dest_wh)
                 {
                         fun_desk2win(dest_wh, dobj);
                 }
-                else    // Dragging from desk to desk
+                else    /* Dragging from desk to desk */
                 {
                         if (sobj != dobj) fun_desk2desk(dobj);
                 }

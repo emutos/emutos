@@ -247,8 +247,18 @@
 #define STDEEPPA        36
 
 #ifdef DESK1
+
 #define STNOOPEN        37
-#endif
+
+#define STTRINFO        38
+
+#define STNODRA1        39
+
+#define STNODRA2        40
+
+#define STNOSTAK        41
+
+#endif /* DESK1 */
 
 
 extern void desk_rs_init(void);

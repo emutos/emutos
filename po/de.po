@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: EMUTOS beta\n"
-"POT-Creation-Date: 2003-08-10 22:51+0200\n"
-"PO-Revision-Date: 2003-08-10 22:53+0200\n"
+"POT-Creation-Date: 2003-08-28 22:41+0200\n"
+"PO-Revision-Date: 2003-08-28 22:46+0200\n"
 "Last-Translator: Thomas Huth <thothy@users.sourceforge.net>\n"
 "Language-Team: German <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -88,11 +88,10 @@ msgid "[2]["
 "the write-protect tab or notch the|"
 "disk.][Cancel|Retry]"
 msgstr "[2]["
-"Medium in Laufwer %S kann nicht|"
+"Medium in Laufwerk %S kann nicht|"
 "beschrieben werden! Vor dem|"
 "nächsten Versuch bitte Schreibschutz|"
-"entfernen oder Medium wechseln.]"
-"[Abbruch|Nochmal]"
+"entfernen oder Medium wechseln.][Abbruch|Nochmal]"
 
 #: aes/gem_rsc.c:480
 msgid "[2]["
@@ -105,8 +104,7 @@ msgstr "[2]["
 "Laufwerk %S: antwortet nicht.  Es muss|"
 "der richtige Medientyp verwendet werden.|"
 "Wenn es sich um einen Festplatten-Fehler|"
-"handelt, bitte die Kabel prüfen.]"
-"[Abbruch|Nochmal]"
+"handelt, bitte die Kabel prüfen.][Abbruch|Nochmal]"
 
 #: aes/gem_rsc.c:489
 msgid "[2]["
@@ -386,9 +384,6 @@ msgstr "  Formatieren..."
 #~msgid "  To Output       ^U"
 #~msgstr "  An Ausgabe      ^U"
 
-#~msgid "  Exit to DOS     ^Q"
-#~msgstr "  Zurück zu DOS   ^Q"
-
 #: desk/desk_rsc.c:456
 msgid "  Install disk drive..."
 msgstr "  Installiere Laufwerk..."
@@ -404,9 +399,6 @@ msgstr "  Setze Einstellungen..."
 #: desk/desk_rsc.c:480
 msgid "  Save desktop              \007V"
 msgstr "  Sichere Desktop           \007V"
-
-#~msgid "  Enter DOS commands        \007C"
-#~msgstr "  DOS-Kommandos eingeben    \007C"
 
 #: desk/desk_rsc.c:510
 msgid "  Sort by name   \007N"
@@ -451,12 +443,6 @@ msgstr "ORDNER-INFORMATION"
 #: desk/desk_rsc.c:734
 msgid "Version"
 msgstr "Version"
-
-#~msgid "April 23, 2002"
-#~msgstr "09. July 2002"
-
-#~msgid "Copyright (c) 2002 by"
-#~msgstr "Copyright (c) 2002,"
 
 #: desk/desk_rsc.c:772
 msgid "The EmuTOS development team"
@@ -737,7 +723,7 @@ msgid "[3]["
 "Otherwise, click on Cancel.][  OK  |Cancel]"
 msgstr "[3]["
 "Beim Drücken von OK werden alle Daten|"
-"auf de, Medium in Laufwerk %S: gelöscht.|"
+"auf dem Medium in Laufwerk %S: gelöscht.|"
 "Sonst bitte Abbruch drücken.][  OK  |Abbruch]"
 
 #: desk/desk_rsc.c:1678
@@ -904,4 +890,48 @@ msgstr "[1]["
 "Datei zu löschen, einfach das ent-|"
 "sprechende Symbol auf den Mülleimer|"
 "ziehen.][  OK  ]"
+
+#: desk/desk_rsc.c:1741
+msgid "[1]["
+"The trash can is the destination to|"
+"which you drag the disks, folders,|"
+"documents, or applications that you|"
+"want to delete PERMANENTLY!][  OK  ]"
+msgstr "[1]["
+"In den Mülleimer können Laufwerke,|"
+"Ordner, Dokumente oder Programme|"
+"verschoben werden, um sie ENDGÜLTIG|"
+"zu löschen!][  OK  ]"
+
+#: desk/desk_rsc.c:1748
+msgid "[1]["
+"You cannot drag folders, documents, or|"
+"applications onto the Desktop.  However,|"
+"you can copy them to disks or drag them|"
+"to the trash.][  OK  ]"
+msgstr "[1]["
+"Ordner, Dokumente und Programme können|"
+"nicht auf dem Desktop abgelegt werden.|"
+"Statt dessen können sie auf ein Lauf-|"
+"werk kopiert oder in den Mülleimer|"
+"geworfen werden.][  OK  ]"
+
+#: desk/desk_rsc.c:1755
+msgid "[1]["
+"You cannot drag the trash can|"
+"into a window.][  OK  ]"
+msgstr "[1]["
+"Der Mülleimer kann nicht in|"
+"einem Fenster abgelegt werden.][  OK  ]"
+
+#: desk/desk_rsc.c:1758
+msgid "[1]["
+"You can drag the trash can to another|"
+"location on the GEM Desktop, but you|"
+"cannot place it on top of another icon.][  OK  ]"
+msgstr "[1]["
+"Der Mülleimer kann zwar auf dem|"
+"Desktop umhergeschoben werden, aber|"
+"er kann nicht auf einem anderen Ikon|"
+"abgelegt werden.][  OK  ]"
 

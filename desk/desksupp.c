@@ -704,15 +704,11 @@ WORD do_info(WORD curr)
                 inf_disk( pf->f_junk );
 #endif
                 break;
-/* FIXME
 #ifdef DESK1
             case AT_ISTRSH:
-                tree = G.a_trees[ADTRINFO];
-                inf_show(tree, 0);
-                tree[TRINFOK].ob_state = NORMAL;
+                fun_alert(1, STTRINFO, NULLPTR);
                 break;
 #endif
-*/
           }
         }
         return( FALSE );

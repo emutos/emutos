@@ -1693,6 +1693,19 @@ char *desk_rs_fstr[] = {
        "into a window. To delete a disk,|"
        "folder, document, or application,|"
        "drag it to the trash can.][  OK  ]"),
+    N_("[1][The trash can is the destination to|"
+        "which you drag the disks, folders,|"
+        "documents, or applications that you|"
+        "want to delete PERMANENTLY!][  OK  ]"),
+    N_("[1][You cannot drag folders, documents, or|"
+       "applications onto the Desktop.  However,|"
+       "you can copy them to disks or drag them|"
+       "to the trash.][  OK  ]"),
+    N_("[1][You cannot drag the trash can|"
+       "into a window.][  OK  ]"),
+    N_("[1][You can drag the trash can to another|"
+       "location on the GEM Desktop, but you|"
+       "cannot place it on top of another icon.][  OK  ]")
 #endif
 };
 
