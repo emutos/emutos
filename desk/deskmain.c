@@ -49,7 +49,6 @@
 #include "deskpro.h"
 #include "deskact.h"
 #include "desk1.h"
-#include "kprint.h"     // just for debugging
 
 
 #define abs(x) ( (x) < 0 ? -(x) : (x) )
@@ -1635,7 +1634,6 @@ WORD deskmain()
                                                 /* exit the gem AES     */
         appl_exit();
 
-        kprintf("Desktop shutting down!\n");
         return(TRUE);
 } /* main */
 
