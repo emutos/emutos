@@ -149,7 +149,8 @@ char dstNmPat[13];              /* dst file name specified in path */
 char path[67];                  /* lst of default path names */
 
 /* Forward declarations */
-void xCmdLn(char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl);
+void
+xCmdLn(char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl);
 
 
 
@@ -158,7 +159,8 @@ void xCmdLn(char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl);
  * if so restoring it to previous value.
  */
 
-void chk_redirect(struct rdb *r)
+void
+chk_redirect(struct rdb *r)
 {
     /* if a new standard in specified ... */
     if (r->nsi == -1) {
@@ -174,7 +176,8 @@ void chk_redirect(struct rdb *r)
 
 
 
-void errout(void)
+void
+errout(void)
 {
     chk_redirect(rd_ptr);
     longjmp(jb, 1);
@@ -184,7 +187,8 @@ void errout(void)
 /*
  * xncpmps - compare strings with n length
  */
-int xncmps(int n, char *s, char *d)
+int
+xncmps(int n, char *s, char *d)
 {
     while (n--)
         if (*s++ != *d++)
@@ -194,7 +198,8 @@ int xncmps(int n, char *s, char *d)
 
 
 
-void prthex(unsigned h)
+void
+prthex(unsigned h)
 {
     unsigned h2;
     if ((h2 = (h >> 4)))
@@ -209,7 +214,8 @@ void prthex(unsigned h)
 /* LVL using unsigned long int to stop gcc warning about
  * conflicting types for built-in function `strlen'
  */
-unsigned long int strlen(const char *s)
+unsigned long int
+strlen(const char *s)
 {
     int n;
 
@@ -224,7 +230,8 @@ unsigned long int strlen(const char *s)
  * pdl - print a decimal long value
  */
 
-void pdl(long d)
+void
+pdl(long d)
 {
     long d2;
     if ((d2 = d / 10))
@@ -238,7 +245,8 @@ void pdl(long d)
  * prtdecl - print a decimal long value, if it exists
  */
 
-void prtdecl(long d)
+void
+prtdecl(long d)
 {
     if (d)
         pdl(d);
@@ -248,7 +256,8 @@ void prtdecl(long d)
 
 
 
-void prtDclFmt(long d, int cnt, char *ch)
+void
+prtDclFmt(long d, int cnt, char *ch)
 {
     int i;
     long k, j;
@@ -266,7 +275,8 @@ void prtDclFmt(long d, int cnt, char *ch)
 
 
 
-void ucase(char *s)
+void
+ucase(char *s)
 {
     for (; *s; s++) {
         if ((*s >= 'a') && (*s <= 'z'))
@@ -290,7 +300,8 @@ void ucase(char *s)
  *
  */
 
-int gtFlNm(void)
+int
+gtFlNm(void)
 {
     /* First file request?      */
     if (WSrcReq != NULLPTR) {
@@ -332,7 +343,8 @@ int gtFlNm(void)
  * filExp  - ptr to file.ext part of pathExp
  */
 
-int chkDir(char *pathExp, char *dirExp, char *filExp)
+int
+chkDir(char *pathExp, char *dirExp, char *filExp)
 {
     int dirLen;
     int flExsists;
@@ -420,7 +432,8 @@ int chkDir(char *pathExp, char *dirExp, char *filExp)
  *
  */
 
-int chkDst(void)
+int
+chkDst(void)
 {
     int i = 0;
     char c;
@@ -475,7 +488,8 @@ doDstChk:
  *
  */
 
-int mkDst(void)
+int
+mkDst(void)
 {
     int i, k, ndx;
     int srcEqDst;
@@ -542,7 +556,8 @@ int mkDst(void)
  *  mkSrc - make source file name from directory path and file name.
  */
 
-void mkSrc(void)
+void
+mkSrc(void)
 {
     int i, j = 0;
 
@@ -560,18 +575,21 @@ void mkSrc(void)
  *  wrt - write to standard output
  */
 
-void wrt(const char *msg)
+void
+wrt(const char *msg)
 {
     xwrite(1, (long) strlen(msg), (char *)msg);
 }
 
-void wrtln(const char *msg)
+void
+wrtln(const char *msg)
 {
     wrt("\r\n");
     wrt(msg);
 }
 
-void wrtch(char ch)
+void
+wrtch(char ch)
 {
     char str[2];
 
@@ -586,7 +604,8 @@ void wrtch(char ch)
 extern long cookie_idt;         /* in bios/machine.c */
 #endif
 
-void wrtDate(int j)
+void
+wrtDate(int j)
 {
     int year = ((j >> 9) & 0x7F) + 80;
     int mon = ((j >> 5) & 0xF);
@@ -629,7 +648,8 @@ void wrtDate(int j)
     prtDclFmt((long) c, 2, "0");
 }
 
-void wrtTime(int j)
+void
+wrtTime(int j)
 {
     int hour = (j >> 11) & 0x1F;
     int min = (j >> 5) & 0x3F;
@@ -645,13 +665,15 @@ void wrtTime(int j)
 
 #if NO_ROM
 /* BUILDDATE is needed only for non-ROM command.prg */
-void wrtbdate(void)
+void
+wrtbdate(void)
 {
     wrt(BUILDDATE);
 }
 #else
 extern int os_dosdate;          /* in bios/startup.S */
-void wrtbdate(void)
+void
+wrtbdate(void)
 {
     wrtDate(os_dosdate);
 }
@@ -662,7 +684,8 @@ void wrtbdate(void)
  *  dspDir - display directory
  */
 
-void dspDir(char *p, char *dir)
+void
+dspDir(char *p, char *dir)
 {
     int i, j;
     char ch, tmpbuf[100];
@@ -694,7 +717,8 @@ void dspDir(char *p, char *dir)
  *  cr2cont - wait for cariage return before continuing.
  */
 
-void cr2cont(void)
+void
+cr2cont(void)
 {
     wrt(_("CR to continue..."));
     lin[0] = 126;
@@ -707,7 +731,8 @@ void cr2cont(void)
  *  dspMsg - display message
  */
 
-void dspMsg(int msg)
+void
+dspMsg(int msg)
 {
     switch (msg) {
     case 0:
@@ -867,7 +892,8 @@ SHOW [drive_spec:]\r\n\
  * getYes
  */
 
-int getYes(void)
+int
+getYes(void)
 {
     char inpStr[30];
 
@@ -887,7 +913,8 @@ int getYes(void)
  *  returns 0 if copyied ok
  *     -1 if copy failed
  */
-int copyCmd(char *src, char *dst, int move)
+int
+copyCmd(char *src, char *dst, int move)
 {
     int i, srcEqDst, fds, fdd;
     long nr, nw;
@@ -999,7 +1026,8 @@ int copyCmd(char *src, char *dst, int move)
  *  renmCmd - rename command
  */
 
-long renmCmd(char *src, char *dst)
+long
+renmCmd(char *src, char *dst)
 {
     int i;
     char srcSpc[67];
@@ -1077,7 +1105,8 @@ long renmCmd(char *src, char *dst)
 
 
 
-long dirCmd(char *argv[])
+long
+dirCmd(char *argv[])
 {
     char srcSpc[67];
     int i, j, k, n, att, *dt, filOnly, dirOnly, terse, wide;
@@ -1189,7 +1218,8 @@ long dirCmd(char *argv[])
 
 
 
-long pwdCmd(char *argv[])
+long
+pwdCmd(char *argv[])
 {
     int i, j;
     char ch, tmpbuf[100];
@@ -1214,7 +1244,8 @@ long pwdCmd(char *argv[])
 
 
 
-int mknum(char *str)
+int
+mknum(char *str)
 {
     int num, hex = 0;
     char ch;
@@ -1243,7 +1274,8 @@ int mknum(char *str)
 
 
 
-long chmodCmd(char *argv[])
+long
+chmodCmd(char *argv[])
 {
     char srcSpc[67];
     int i, att;
@@ -1289,7 +1321,8 @@ long chmodCmd(char *argv[])
 
 
 
-long typeCmd(char *argv[])
+long
+typeCmd(char *argv[])
 {
     char srcSpc[67];
     int i, n, fd;
@@ -1327,7 +1360,8 @@ long typeCmd(char *argv[])
 
 
 
-long delCmd(char *argv[])
+long
+delCmd(char *argv[])
 {
     char srcSpc[67];
     int i, j, k, query;
@@ -1409,7 +1443,8 @@ long delCmd(char *argv[])
 /*
  *  dspCL - display command line
  */
-void dspCL(char *argv[])
+void
+dspCL(char *argv[])
 {
     int i;
     dspMsg(14);
@@ -1426,7 +1461,8 @@ void dspCL(char *argv[])
 /*
  *  setPath - set execution path
  */
-void setPath(char *p)
+void
+setPath(char *p)
 {
     int i = 0;
 
@@ -1442,7 +1478,8 @@ void setPath(char *p)
 /*
  * execPrgm - execute program;
  */
-long execPrgm(char *s, char *cmdtl)
+long
+execPrgm(char *s, char *cmdtl)
 {
     char cmd[100], ch, *cmdptr;
     int k, i, j, gtpath, envLen;
@@ -1560,7 +1597,8 @@ long execPrgm(char *s, char *cmdtl)
 /*
  *  execBat - execute batch file
  */
-int execBat(char *s, char *parms[])
+int
+execBat(char *s, char *parms[])
 {
     long flHnd;
     int i, j, k, gtpath;
@@ -1620,7 +1658,8 @@ int execBat(char *s, char *parms[])
 
 
 
-void chk_sub(char *tl, char **parm)
+void
+chk_sub(char *tl, char **parm)
 {
     char ch, tmptl[167], *tmptl_ptr, *tmp_front, *tl_front, *parm_ptr;
 
@@ -1661,7 +1700,8 @@ void chk_sub(char *tl, char **parm)
 
 
 
-void chk_str(char *parm[])
+void
+chk_str(char *parm[])
 {
     int i = 0;
     char *parm_ptr, *tmp_ptr, ch;
@@ -1715,7 +1755,8 @@ void chk_str(char *parm[])
  *  readSi - read standard input
  */
 
-int readSi(char *lin)
+int
+readSi(char *lin)
 {
     int i, j;
 
@@ -1746,7 +1787,8 @@ int readSi(char *lin)
  *  readDsk - read from disk file
  */
 
-int readDsk(char *lin, long *flHnd)
+int
+readDsk(char *lin, long *flHnd)
 {
     int i, j;
     int chrFnd;
@@ -1778,7 +1820,8 @@ int readDsk(char *lin, long *flHnd)
  *  xCmdLn - execute command line.
  */
 
-void xCmdLn(char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl)
+void
+xCmdLn(char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl)
 {
     int pipe, bdChrs;
     int fs, fd;
@@ -2244,7 +2287,7 @@ again:
             xclose(rd.oldso);
             bExitFlag = 1;
             return;
-         }
+        }
     }
 }
 
@@ -2254,7 +2297,8 @@ again:
  * bp - Base page address
  */
 
-void cmain(char *bp)
+void
+cmain(char *bp)
 {
     char *parm[MAXARGS];
     char *tl;
@@ -2277,18 +2321,7 @@ void cmain(char *bp)
     if (!cmd)
         dspMsg(4);
 
-#if 0
-    i = 0;
-    while ((prntEnvPtr[i] + prntEnvPtr[i + 1]) != 0) {
-        /* if a path has been defined, don't count it. */
-        if (xncmps(5, &prntEnvPtr[i], "PATH=")) {
-            setPath(&prntEnvPtr[i + 5]);
-            break;
-        }
-        i++;
-    }
-#endif
-    for (i=0; (prntEnvPtr[i] + prntEnvPtr[i + 1]) == 0; i++) {
+    for (i=0; (prntEnvPtr[i] + prntEnvPtr[i + 1]) != 0; i++) {
         /* if a path has been defined, don't count it. */
         if (xncmps(5, &prntEnvPtr[i], "PATH=")) {
             setPath(&prntEnvPtr[i + 5]);

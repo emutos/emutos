@@ -35,7 +35,8 @@
                 .globl  _newx
                 .globl  _newy
                 .globl  retsav
-                .globl  sav_cxy
+                .globl  _sav_cur_x
+                .globl  _sav_cur_y
 
                 .globl  _save_addr
                 .globl  _save_area
@@ -156,16 +157,17 @@ _newy:          .ds.w   1
 _draw_flag:     .ds.b   1       // -340 non-zero means draw mouse form on vblank
 _mouse_flag:    .ds.b   1       // -339 non-zero if mouse ints disabled
 
-sav_cxy:        .ds.w   2       // -338 save area for cursor cell coords.
-retsav:         .ds.l   1       // ??? I'm not sure if this is right here
-
-_save_len:       .ds.w   1       // -330
-_save_addr:      .ds.l   1       // -328 return address GEMDOS call
-_save_stat:      .ds.w   1       // -324
+_sav_cur_x:     .ds.w   1       // -338 save area for cursor cell coords.
+_sav_cur_y:     .ds.w   1       // -336 save area for cursor cell coords.
+retsav:         .ds.l   1       // -334 I'm not sure if this is right here
+                              
+_save_len:      .ds.w   1       // -330
+_save_addr:     .ds.l   1       // -328 return address GEMDOS call
+_save_stat:     .ds.w   1       // -324
 
 /* Sprite save buffer */
 
-_save_area:      .ds.l   0x40    // -322
+_save_area:      .ds.l   0x40   // -322
 
 /* Timer vectors */
 

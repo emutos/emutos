@@ -26,7 +26,7 @@
 
 
 /* different maximum settings */
-#define MAX_PTSIN 256 		/* max. # of coordinate pairs, also asm.S! */
+#define MAX_PTSIN 256           /* max. # of coordinate pairs, also asm.S! */
 
 
 #define MAX_COLOR       16
@@ -113,7 +113,7 @@ typedef struct Vwk_ Vwk;
 struct Vwk_ {
     WORD chup;                  /* Character Up vector */
     WORD clip;                  /* Clipping Flag */
-    Fonthead *cur_font; 	/* Pointer to current font */
+    Fonthead *cur_font;         /* Pointer to current font */
     WORD dda_inc;               /* Fraction to be added to the DDA */
     WORD multifill;             /* Multi-plane fill flag */
     UWORD patmsk;               /* Current pattern mask */
@@ -139,7 +139,7 @@ struct Vwk_ {
     WORD mark_height;           /* Current marker height        */
     WORD mark_index;            /* Current marker style         */
     WORD mark_scale;            /* Current scale factor for marker data */
-    Vwk *next_work;        	/* Pointer to next virtual workstation  */
+    Vwk *next_work;             /* Pointer to next virtual workstation  */
     WORD num_fonts;             /* Total number of faces available  */
     WORD scaled;                /* TRUE if font scaled in any way   */
     Fonthead scratch_head;      /* Holder for the doubled font data */

@@ -65,7 +65,7 @@
         .global _savptr
         .global _nflops
         .global con_state
-        .global save_row
+        .global _save_row
         .global sav_context
         .global _bufl
         .global _hz_200
@@ -222,7 +222,7 @@ ____md:         ds.w    2       // space for additional memory descriptors
 _savptr:        ds.l    1       // pointer to BIOS save register block
 _nflops:        ds.w    1       // number of connected floppy drives
 con_state:      ds.l    1       // vector for screen output
-save_row:       ds.w    1       // temporary storage for cursor line pos.
+_save_row:      ds.w    1       // temporary storage for cursor line pos.
 sav_context:    ds.l    1       // ptr to save area for exception processing
 _bufl:          ds.l    2       // pointers to buffer ctrl blocks for GEMDOS 
 _hz_200:        ds.l    1       // counter for 20 hz system clock

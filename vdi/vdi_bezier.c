@@ -166,8 +166,8 @@ gen_segs(WORD *const array, WORD *px, const int bez_qual,
  */
 
 /* mode values for draw_segs() */
-#define FILL    9	/* v_pline() */
-#define NO_FILL 6	/* v_fill_area() */
+#define FILL    9       /* v_pline() */
+#define NO_FILL 6       /* v_fill_area() */
 
 static void
 draw_segs(Vwk * vwk, WORD nr_vertices, Point * point, WORD mode)
@@ -249,22 +249,22 @@ v_bez(Vwk * vwk, Point * ptsget, int nr_ptsin)
 
     i = 0;
     while(i < nr_ptsin) {
-        int flag = bezarr[i^1]; 	/* index with xor 1 to byte swap !! */
+        int flag = bezarr[i^1];         /* index with xor 1 to byte swap !! */
 
         if (IS_BEZ(flag)) {
             /* bezier start point found */
             if (i+3 >= nr_ptsin)
-                break; 			/* incomlete curve, omit it */
+                break;                  /* incomlete curve, omit it */
 
             if (IS_JUMP(flag))
-                total_jumps++;   	/* count jump point */
+                total_jumps++;          /* count jump point */
 
             /* generate line segments from bez points */
-            gen_segs(&ptsget->x, &ptsput->x, bez_qual, &xmin, &xmax, vwk->xfm_mode);	/* x coords */
-            gen_segs(&ptsget->y, &ptsput->y, bez_qual, &ymin, &ymax, vwk->xfm_mode);	/* y coords */
+            gen_segs(&ptsget->x, &ptsput->x, bez_qual, &xmin, &xmax, vwk->xfm_mode);    /* x coords */
+            gen_segs(&ptsget->y, &ptsput->y, bez_qual, &ymin, &ymax, vwk->xfm_mode);    /* y coords */
 
             /* skip to coord pairs at end of bez curve */
-            i += 3;	
+            i += 3;     
             ptsget += 3;
             total_vertices += vertices_per_bez-3;
             draw_segs(vwk, vertices_per_bez+1, ptsbuf, NO_FILL );
@@ -290,7 +290,7 @@ v_bez(Vwk * vwk, Point * ptsget, int nr_ptsin)
 
                 output_vertices++;
                 if ( IS_BEZ(flag) )
-                    break;		/* stop if a jump point is next */
+                    break;              /* stop if a jump point is next */
 
                 /* continue polyline */
                 i++;
@@ -365,7 +365,7 @@ v_bez_fill(Vwk * vwk, Point * ptsget, int nr_ptsin)
             gen_segs(&ptsget->y, &ptsput->y, bez_qual, &ymin, &ymax, vwk->xfm_mode);
 
             /* skip to coord pairs at end of bez curve */
-            i += 3;	
+            i += 3;     
             ptsget += 3;
             total_vertices += vertices_per_bez-3;
 
@@ -394,7 +394,7 @@ v_bez_fill(Vwk * vwk, Point * ptsget, int nr_ptsin)
 
                 output_vertices++;
                 if ( IS_BEZ(flag) )
-                    break;		/* stop if a jump point is next */
+                    break;              /* stop if a jump point is next */
 
                 /* continue polyline */
                 i++;
@@ -435,7 +435,7 @@ void
 v_bez_fill(Vwk * vwk, Point * ptsget, int nr_ptsin)
 {
     //WORD  const nr_ptsin = CONTRL[1];
-    const UBYTE *const bezarr = (UBYTE*)INTIN;	/* index with xor 1 to byte swap !! */
+    const UBYTE *const bezarr = (UBYTE*)INTIN;  /* index with xor 1 to byte swap !! */
     WORD bez_qual;
     WORD xmin, xmax, ymin, ymax;
     WORD total_vertices = nr_ptsin;
@@ -488,8 +488,8 @@ v_bez_fill(Vwk * vwk, Point * ptsget, int nr_ptsin)
 
                 output_vertices += vertices_per_bez+1;
                 total_vertices += vertices_per_bez-3;
-                gen_segs(&ptsget->x, &ptsput->x, bez_qual, &xmin, &xmax, vwk->xfm_mode);	/* x coords */
-                gen_segs(&ptsget->y, &ptsput->y, bez_qual, &ymin, &ymax, vwk->xfm_mode);	/* y coords */
+                gen_segs(&ptsget->x, &ptsput->x, bez_qual, &xmin, &xmax, vwk->xfm_mode);        /* x coords */
+                gen_segs(&ptsget->y, &ptsput->y, bez_qual, &ymin, &ymax, vwk->xfm_mode);        /* y coords */
                 ptsput = ptsbuf + output_vertices;
             }
             //assert( PTSIN + 2*i == ptsget );
@@ -507,7 +507,7 @@ v_bez_fill(Vwk * vwk, Point * ptsget, int nr_ptsin)
 
             do {
                 int t;
-                if ( output_vertices < INQ_TAB[14] ) {	/* need room for at least one more */
+                if ( output_vertices < INQ_TAB[14] ) {  /* need room for at least one more */
                     t = ptsget->x;
                     if ( t < xmin )
                         xmin = t;

@@ -16,7 +16,7 @@
 
         .globl  _bit_blt
 
-	.xdef  _info
+        .xdef  _info
 
 #define    F1OP       8
 #define    F2OP      22
@@ -903,9 +903,9 @@ _bit_blt:
         // A wrapper, so save and set up registers 
         movem.l d2-d7/a2-a5,-(sp)
 
-        lea 	_info, a6               // get info structure
+        lea     _info, a6               // get info structure
 
-        add.l	#FRAME_LEN, a6          // emulate link opcode 
+        add.l   #FRAME_LEN, a6          // emulate link opcode 
 
         move.w  S_XMIN(a6),d0           // clipped Xmin source
         move.w  D_XMIN(a6),d2           // clipped Xmin destination

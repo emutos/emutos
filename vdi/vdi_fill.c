@@ -377,7 +377,7 @@ bub_sort (WORD * buf, WORD count)
     int i, j;
 
     for (i = count-1; i > 0; i--) {
-        WORD * ptr = buf;	       	/* reset pointer to the array */
+        WORD * ptr = buf;               /* reset pointer to the array */
         for (j = 0; j < i; j++) {
             WORD val = *ptr++;   /* word */    /* get next value */
             if ( val > *ptr ) {    /* yes - do nothing */
@@ -404,24 +404,24 @@ bub_sort (WORD * buf, WORD count)
 static void
 clc_flit (Vwk * vwk, Point * point, WORD y, int vectors)
 {
-    WORD fill_buffer[256];	/* must be 256 words or it will fail */
-    WORD * bufptr;            	/* point to array of x-values. */
-    int intersections;		/* count of intersections */
+    WORD fill_buffer[256];      /* must be 256 words or it will fail */
+    WORD * bufptr;              /* point to array of x-values. */
+    int intersections;          /* count of intersections */
     int i;
 
     /* Initialize the pointers and counters. */
-    intersections = 0;	/* reset counter */
+    intersections = 0;  /* reset counter */
     bufptr = fill_buffer;
 
     /* find intersection points of scan line with poly edges. */
     for (i = vectors - 1; i >= 0; i--) {
         WORD x1, x2, y1, y2, dy;
 
-        x1 = point->x;		/* fetch x-value of 1st endpoint. */
-        y1 = point->y;		/* fetch y-value of 1st endpoint. */
+        x1 = point->x;          /* fetch x-value of 1st endpoint. */
+        y1 = point->y;          /* fetch y-value of 1st endpoint. */
         point++;
-        x2 = point->x;		/* fetch x-value of 2nd endpoint. */
-        y2 = point->y;		/* fetch y-value of 2nd endpoint. */
+        x2 = point->x;          /* fetch x-value of 2nd endpoint. */
+        y2 = point->y;          /* fetch y-value of 2nd endpoint. */
 
         /* if the current vector is horizontal, ignore it. */
         dy = y2 - y1;
@@ -429,8 +429,8 @@ clc_flit (Vwk * vwk, Point * point, WORD y, int vectors)
             LONG dy1, dy2;
 
             /* fetch scan-line y. */
-            dy1 = y - y1;   	/* d4 - delta y1. */
-            dy2 = y - y2;    	/* d3 - delta y2. */
+            dy1 = y - y1;       /* d4 - delta y1. */
+            dy2 = y - y2;       /* d3 - delta y2. */
 
             /*
              * Determine whether the current vector intersects with the scan
@@ -493,14 +493,14 @@ clc_flit (Vwk * vwk, Point * point, WORD y, int vectors)
 
             if ( x1 < vwk->xmn_clip ) {
                 if ( x2 < vwk->xmn_clip )
-                    continue;         	/* entire segment clipped left */
-                x1 = vwk->xmn_clip;		/* clip left end of line */
+                    continue;           /* entire segment clipped left */
+                x1 = vwk->xmn_clip;             /* clip left end of line */
             }
 
             if ( x2 > vwk->xmx_clip ) {
                 if ( x1 > vwk->xmx_clip )
-                    continue;         	/* entire segment clippped */
-                x2 = vwk->xmx_clip;		/* clip right end of line */
+                    continue;           /* entire segment clippped */
+                x2 = vwk->xmx_clip;             /* clip right end of line */
             }
             rect.x1 = x1;
             rect.y1 = y;
@@ -740,21 +740,21 @@ rectfill (Vwk * vwk, Rect * rect)
 static inline UWORD
 get_color (UWORD mask, UWORD * addr)
 {
-    UWORD color = 0;			/* clear the pixel value accumulator. */
+    UWORD color = 0;                    /* clear the pixel value accumulator. */
     WORD plane = v_planes;
 
     while(1) {
         /* test the bit. */
         if ( *--addr & mask )
-            color |= 1;		/* if 1, set color accumulator bit. */
+            color |= 1;         /* if 1, set color accumulator bit. */
 
         if ( --plane == 0 )
             break;
 
-        color <<= 1;		/* shift accumulator for next bit_plane. */
+        color <<= 1;            /* shift accumulator for next bit_plane. */
     }
 
-    return color; 	/* this is the color we are searching for */
+    return color;       /* this is the color we are searching for */
 }
 
 /*
@@ -775,8 +775,8 @@ pixelread(const WORD x, const WORD y)
 
     /* convert x,y to start adress and bit mask */
     addr = get_start_addr(x, y);
-    addr += v_planes;           	/* start at highest-order bit_plane */
-    mask = 0x8000 >> (x&0xf);		/* initial bit position in WORD */
+    addr += v_planes;                   /* start at highest-order bit_plane */
+    mask = 0x8000 >> (x&0xf);           /* initial bit position in WORD */
 
     return get_color(mask, addr);       /* return the composed color value */
 }
@@ -789,7 +789,7 @@ search_to_right (Vwk * vwk, WORD x, UWORD mask, const UWORD search_col, UWORD * 
         UWORD color;
 
         /* need to jump over interleaved bit_plane? */
-        mask = mask >> 1 | mask << 15;	/* roll right */
+        mask = mask >> 1 | mask << 15;  /* roll right */
         if ( mask & 0x8000 )
             addr += v_planes;
 
@@ -801,7 +801,7 @@ search_to_right (Vwk * vwk, WORD x, UWORD mask, const UWORD search_col, UWORD * 
 
     }
 
-    return x - 1;	/* output x coord -1 to endxright. */
+    return x - 1;       /* output x coord -1 to endxright. */
 }
 
 static inline UWORD
@@ -814,7 +814,7 @@ search_to_left (Vwk * vwk, WORD x, UWORD mask, const UWORD search_col, UWORD * a
         /* need to jump over interleaved bit_plane? */
         mask = mask >> 15 | mask << 1;  /* roll left */
         if ( mask & 0x0001 )
-            addr -= v_planes;		
+            addr -= v_planes;           
 
         /* search, while pixel color != search color */
         color = get_color(mask, addr);
@@ -823,7 +823,7 @@ search_to_left (Vwk * vwk, WORD x, UWORD mask, const UWORD search_col, UWORD * a
 
     }
 
-    return x + 1;	/* output x coord + 1 to endxleft. */
+    return x + 1;       /* output x coord + 1 to endxleft. */
 }
 
 /*
@@ -858,7 +858,7 @@ end_pts(Vwk * vwk, WORD x, WORD y, WORD *xleftout, WORD *xrightout,
 
     /* convert x,y to start adress and bit mask */
     addr = get_start_addr(x, y);
-    addr += v_planes;           	/* start at highest-order bit_plane */
+    addr += v_planes;                   /* start at highest-order bit_plane */
     mask = 0x8000 >> (x & 0x000f);   /* fetch the pixel mask. */
 
     /* get search color and the left and right end */
@@ -868,9 +868,9 @@ end_pts(Vwk * vwk, WORD x, WORD y, WORD *xleftout, WORD *xrightout,
 
     /* see, if the whole found segment is of search color? */
     if ( color != search_color ) {
-        return seed_type ^ 1;	/* return segment not of search color */
+        return seed_type ^ 1;   /* return segment not of search color */
     }
-    return seed_type ^ 0;	/* return segment is of search color */
+    return seed_type ^ 0;       /* return segment is of search color */
 }
 
 /* Prototypes local to this module */
@@ -882,16 +882,16 @@ get_seed(Vwk * vwk, WORD xin, WORD yin, WORD *xleftout, WORD *xrightout,
 void
 d_contourfill(Vwk * vwk)
 {
-    WORD newxleft;           	/* ends of line at oldy +       */
-    WORD newxright;          	/* the current direction    */
-    WORD oldxleft;           	/* left end of line at oldy     */
-    WORD oldxright;          	/* right end                    */
-    WORD oldy;               	/* the previous scan line       */
-    WORD xleft;              	/* temporary endpoints          */
-    WORD xright;             	/* */
-    WORD direction;          	/* is next scan line up or down */
-    BOOL notdone;            	/* does seedpoint==search_color */
-    BOOL gotseed;            	/* a seed was put in the Q      */
+    WORD newxleft;              /* ends of line at oldy +       */
+    WORD newxright;             /* the current direction    */
+    WORD oldxleft;              /* left end of line at oldy     */
+    WORD oldxright;             /* right end                    */
+    WORD oldy;                  /* the previous scan line       */
+    WORD xleft;                 /* temporary endpoints          */
+    WORD xright;                /* */
+    WORD direction;             /* is next scan line up or down */
+    BOOL notdone;               /* does seedpoint==search_color */
+    BOOL gotseed;               /* a seed was put in the Q      */
     BOOL seed_type;             /* indicates the type of fill */
 
     xleft = PTSIN[0];
@@ -1045,13 +1045,13 @@ get_seed(Vwk * vwk, WORD xin, WORD yin, WORD *xleftout, WORD *xrightout,
         } else
             qtmp = qhole;
 
-        queue[qtmp++] = yin;	/* put the y and endpoints in the Q */
+        queue[qtmp++] = yin;    /* put the y and endpoints in the Q */
         queue[qtmp++] = *xleftout;
         queue[qtmp] = *xrightout;
         return 1;             /* we put a seed in the Q */
     }
 
-    return 0; 		/* we didnt put a seed in the Q */
+    return 0;           /* we didnt put a seed in the Q */
 }
 
 
@@ -1096,7 +1096,7 @@ get_pix()
     const WORD x = PTSIN[0];
     const WORD y = PTSIN[1];
 
-    return pixelread(x,y);	/* return the composed color value */
+    return pixelread(x,y);      /* return the composed color value */
 }
 
 /*

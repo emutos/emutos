@@ -49,7 +49,7 @@
         .xdef   colorptr
         .xdef   screenpt
 
-        .xdef   _blink          // conout.s - Graphics output
+        .xdef   _blink          // conout.c - console output
 
 // Note: this scheme is designed to print the exception number
 // for vectors 2 to 63 even if working on a 32bit address bus. 
@@ -287,8 +287,9 @@ _int_vbl:
  
 vbl_nochg:
 #endif
-
-        bsr _blink                       // blink cursor
+        movem.l d0-d7/a0-a6, -(sp)      // save registers
+        jsr _blink                      // blink cursor
+        movem.l (sp)+, d0-d7/a0-a6      // restore registers
 
         // load new color palette
         move.l  _colorptr,d0

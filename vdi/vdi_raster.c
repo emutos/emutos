@@ -20,7 +20,7 @@
 
 
 #define DBG_BLIT 0      // see, what happens (a bit)
-#define ASM_BLIT 1  	// use bit_blt routine in assembler
+#define ASM_BLIT 1      // use bit_blt routine in assembler
 
 #if DBG_BLIT
 #include "kprint.h"
@@ -51,7 +51,7 @@ extern void bit_blt();
 #define PAT_FLAG        16
 
 /* PTSIN ARRAY OFFSETs */
-#define XMIN_S	0	// x of upper left of source rectangle
+#define XMIN_S  0       // x of upper left of source rectangle
 #define YMIN_S  1       // y of upper left of source rectangle
 #define XMAX_S  2       // x of lower right of source rectangle
 #define YMAX_S  3       // y of lower right of source rectangle
@@ -64,8 +64,8 @@ extern void bit_blt();
 
 /* passes parameters to bitblt */
 struct blit_frame {
-    WORD b_wd;		// +00 width of block in pixels
-    WORD b_ht;		// +02 height of block in pixels
+    WORD b_wd;          // +00 width of block in pixels
+    WORD b_ht;          // +02 height of block in pixels
     WORD plane_ct;     // +04 number of consequitive planes to blt
     UWORD fg_col;       // +06 foreground color (logic op table index:hi bit)
     UWORD bg_col;       // +08 background color (logic op table index:lo bit)
@@ -533,23 +533,23 @@ bit_blt ()
 #define mSkewNFSR    0x40
 
     const UBYTE skew_flags [8] = {
-        mSkewNFSR,		/* Source span < Destination span */
-        mSkewFXSR,		/* Source span > Destination span */
-        0,			/* Spans equal Shift Source right */
-	mSkewNFSR+mSkewFXSR,    /* Spans equal Shift Source left */
+        mSkewNFSR,              /* Source span < Destination span */
+        mSkewFXSR,              /* Source span > Destination span */
+        0,                      /* Spans equal Shift Source right */
+        mSkewNFSR+mSkewFXSR,    /* Spans equal Shift Source left */
 
         /* When Destination span is but a single word ... */
-        0,			/* Implies a Source span of no words */
-        mSkewFXSR,		/* Source span of two words */
-        0,			/* Skew flags aren't set if Source and */
-        0			/* Destination spans are both one word */
+        0,                      /* Implies a Source span of no words */
+        mSkewFXSR,              /* Source span of two words */
+        0,                      /* Skew flags aren't set if Source and */
+        0                       /* Destination spans are both one word */
     };
 
     /* Calculate Xmax coordinates from Xmin coordinates and width */
-    s_xmin = info.s_xmin;		/* d0<- src Xmin */
-    s_xmax = s_xmin + info.b_wd - 1;	/* d1<- src Xmax=src Xmin+width-1 */
-    d_xmin = info.d_xmin;		/* d2<- dst Xmin */
-    d_xmax = d_xmin + info.b_wd - 1;	/* d3<- dst Xmax=dstXmin+width-1 */
+    s_xmin = info.s_xmin;               /* d0<- src Xmin */
+    s_xmax = s_xmin + info.b_wd - 1;    /* d1<- src Xmax=src Xmin+width-1 */
+    d_xmin = info.d_xmin;               /* d2<- dst Xmin */
+    d_xmax = d_xmin + info.b_wd - 1;    /* d3<- dst Xmax=dstXmin+width-1 */
 
     /* Skew value is (destination Xmin mod 16 - source Xmin mod 16) */
     /* && 0x000F.  Three discriminators are used to determine the */
@@ -571,21 +571,21 @@ bit_blt ()
 
     skew_idx = 0x0000;  //default
 
-    s_xmin_off = s_xmin >> 4;		/* d0<- word offset to src Xmin */
-    s_xmax_off = s_xmax >> 4;		/* d1<- word offset to src Xmax */
+    s_xmin_off = s_xmin >> 4;           /* d0<- word offset to src Xmin */
+    s_xmax_off = s_xmax >> 4;           /* d1<- word offset to src Xmax */
     s_span = s_xmax_off - s_xmin_off;   /* d1<- Src span - 1 */
 
-    d_xmin_off = d_xmin >> 4;		/* d2<- word offset to dst Xmin */
-    d_xmax_off = d_xmax >> 4;		/* d3<- word offset to dst Xmax */
+    d_xmin_off = d_xmin >> 4;           /* d2<- word offset to dst Xmin */
+    d_xmax_off = d_xmax >> 4;           /* d3<- word offset to dst Xmax */
     d_span = d_xmax_off - d_xmin_off;   /* d3<- dst span - 1 */
 
     /* the last discriminator is the */
-    if ( d_span == s_span ) {    	/* equality of src and dst spans */
-        skew_idx |= 0x0002;   		/* d6[bit1]:1 => equal spans */
+    if ( d_span == s_span ) {           /* equality of src and dst spans */
+        skew_idx |= 0x0002;             /* d6[bit1]:1 => equal spans */
     }
 
     /* d4<- number of words in dst line */
-    blt->x_cnt = d_span + 1;		/* set value in BLiTTER */
+    blt->x_cnt = d_span + 1;            /* set value in BLiTTER */
 
     /* Endmasks derived from source Xmin mod 16 and source Xmax mod 16 */
     lendmask=0xffff>>(d_xmin%16);
@@ -594,8 +594,8 @@ bit_blt ()
     /* does destination just span a single word? */
     if ( !d_span ) {
         /* merge both end masks into Endmask1. */
-        lendmask &= rendmask;		/* d4<- single word end mask */
-        skew_idx |= 0x0004;			/* d6[bit2]:1 => single word dst */
+        lendmask &= rendmask;           /* d4<- single word end mask */
+        skew_idx |= 0x0004;                     /* d6[bit2]:1 => single word dst */
         /* The other end masks will be ignored by the BLiTTER */
     }
 
@@ -625,14 +625,14 @@ bit_blt ()
         blt->src_y_inc = -(info.s_nxln - info.s_nxwd * s_span);
         blt->dst_y_inc = -(info.d_nxln - info.d_nxwd * d_span);
 
-        blt->end_1 = rendmask;		/* left end mask */
-        blt->end_2 = 0xFFFF;		/* center end mask */
-        blt->end_3 = lendmask;		/* right end mask */
+        blt->end_1 = rendmask;          /* left end mask */
+        blt->end_2 = 0xFFFF;            /* center end mask */
+        blt->end_3 = lendmask;          /* right end mask */
 
         /* we start at maximum, d7<- Dst Xmax mod16 - Src Xmax mod16 */
         skew = (d_xmax & 0x0f) - (s_xmax & 0x0f);
         if (skew >= 0 )
-            skew_idx |= 0x0001;		/* d6[bit0]<- alignment flag */
+            skew_idx |= 0x0001;         /* d6[bit0]<- alignment flag */
     }
     else {
         /* offset between consecutive words in planes */
@@ -643,14 +643,14 @@ bit_blt ()
         blt->src_y_inc = info.s_nxln - info.s_nxwd * s_span;
         blt->dst_y_inc = info.d_nxln - info.d_nxwd * d_span;
 
-        blt->end_1 = lendmask;		/* left end mask */
-        blt->end_2 = 0xFFFF;		/* center end mask */
-        blt->end_3 = rendmask;		/* right end mask */
+        blt->end_1 = lendmask;          /* left end mask */
+        blt->end_2 = 0xFFFF;            /* center end mask */
+        blt->end_3 = rendmask;          /* right end mask */
 
         /* d7<- Dst Xmin mod16 - Src Xmin mod16 */
         skew = (d_xmin & 0x0f) - (s_xmin & 0x0f);
         if (skew < 0 )
-            skew_idx |= 0x0001;		/* d6[bit0]<- alignment flag */
+            skew_idx |= 0x0001;         /* d6[bit0]<- alignment flag */
 
     }
     /*
@@ -668,9 +668,9 @@ bit_blt ()
     for (plane = info.plane_ct-1; plane >= 0; plane--) {
         int op_tabidx;
 
-        blt->src_addr = s_addr;		/* load Source pointer to this plane */
-        blt->dst_addr = d_addr;		/* load Dest ptr to this plane   */
-        blt->y_cnt = info.b_ht;		/* load the line count   */
+        blt->src_addr = s_addr;         /* load Source pointer to this plane */
+        blt->dst_addr = d_addr;         /* load Dest ptr to this plane   */
+        blt->y_cnt = info.b_ht;         /* load the line count   */
 
         /* calculate operation for actual plane */
         op_tabidx = ((info.fg_col>>plane) & 0x0001 ) <<1;
@@ -679,8 +679,8 @@ bit_blt ()
 
         do_blit(blt);
 
-        s_addr += info.s_nxpl;		/* a0-> start of next src plane   */
-        d_addr += info.d_nxpl;		/* a1-> start of next dst plane   */
+        s_addr += info.s_nxpl;          /* a0-> start of next src plane   */
+        d_addr += info.d_nxpl;          /* a1-> start of next dst plane   */
     }
 }
 #endif   //ASM_BLIT
@@ -693,11 +693,11 @@ static void
 setup_pattern (Vwk * vwk, struct blit_frame * info)
 {
     /* multi-plane pattern? */
-    info->p_nxpl = 0;		/* next plane pattern offset default. */
+    info->p_nxpl = 0;           /* next plane pattern offset default. */
     if ( vwk->multifill ) {
-        info->p_nxpl = 32;	/* yes, next plane pat offset = 32. */
+        info->p_nxpl = 32;      /* yes, next plane pat offset = 32. */
     }
-    info->p_addr = vwk->patptr;	/* get pattern pointer */
+    info->p_addr = vwk->patptr; /* get pattern pointer */
     info->p_nxln = 2;        /* offset to next line in pattern */
     info->p_mask = 0xf;      /* pattern index mask */
 }
@@ -728,8 +728,8 @@ do_clip (Vwk * vwk, struct blit_frame * info)
         s_xmin -= d_xmin - clip;    /* subtract amount clipped in x */
         d_xmin = clip;               /* clip Xmin dest */
     }
-    info->s_xmin = s_xmin;	/* d0 <- clipped Xmin source */
-    info->d_xmin = d_xmin;	/* d2 <- clipped Xmin destination */
+    info->s_xmin = s_xmin;      /* d0 <- clipped Xmin source */
+    info->d_xmin = d_xmin;      /* d2 <- clipped Xmin destination */
 
     /* clip Xmax destination to window */
     d_xmax = PTSIN[XMAX_S] - s_xmin + d_xmin;
@@ -743,9 +743,9 @@ do_clip (Vwk * vwk, struct blit_frame * info)
     /* match source and destination rectangles */
     deltax = d_xmax - d_xmin;
     if ( deltax < 0 )
-        return TRUE;             	/* block entirely clipped */
+        return TRUE;                    /* block entirely clipped */
     info->b_wd = deltax + 1;
-    info->s_xmax = s_xmin + deltax;	/* d4 <- Xmax Source */
+    info->s_xmax = s_xmin + deltax;     /* d4 <- Xmax Source */
 
 
 
@@ -770,7 +770,7 @@ do_clip (Vwk * vwk, struct blit_frame * info)
     /* if Ymax dest > Ymax clip */
     if ( d_ymax > clip ) {
         /* clip Ymax dest */
-        d_ymax = clip;		/* d7 <- Xmax dest = Xmax clip */
+        d_ymax = clip;          /* d7 <- Xmax dest = Xmax clip */
     }
     info->d_ymax = d_ymax;
 
@@ -779,7 +779,7 @@ do_clip (Vwk * vwk, struct blit_frame * info)
     if ( deltay < 0 )
         return TRUE;             /* block entirely clipped */
     info->b_ht = deltay + 1;
-    info->s_ymax = s_ymin + deltay;		/* d5 <- Ymax Source */
+    info->s_ymax = s_ymin + deltay;             /* d5 <- Ymax Source */
 
     return FALSE;
 }
@@ -793,20 +793,20 @@ static void
 dont_clip (struct blit_frame * info)
 {
     /* source */
-    info->s_xmin = PTSIN[XMIN_S];	/* d0 x of upper left of source */
-    info->s_ymin = PTSIN[YMIN_S]; 	/* d1 y of upper left of source */
-    info->s_xmax = PTSIN[XMAX_S];	/* d4 x of lower right of source */
-    info->s_ymax = PTSIN[YMAX_S]; 	/* d5 y of lower right of source */
+    info->s_xmin = PTSIN[XMIN_S];       /* d0 x of upper left of source */
+    info->s_ymin = PTSIN[YMIN_S];       /* d1 y of upper left of source */
+    info->s_xmax = PTSIN[XMAX_S];       /* d4 x of lower right of source */
+    info->s_ymax = PTSIN[YMAX_S];       /* d5 y of lower right of source */
 
     /* width and height of block in pixels */
     info->b_wd = info->s_xmax - info->s_xmin + 1;
     info->b_ht = info->s_ymax - info->s_ymin + 1;
 
     /* destination */
-    info->d_xmin = PTSIN[XMIN_D];	/* d2 x of upper left of dest. */
-    info->d_ymin = PTSIN[YMIN_D]; 	/* d3 y of upper left of dest. */
-    info->d_xmax = PTSIN[XMAX_D];	/* d6 x of lower right of dest. */
-    info->d_ymax = PTSIN[YMAX_D]; 	/* d7 y of lower right of dest. */
+    info->d_xmin = PTSIN[XMIN_D];       /* d2 x of upper left of dest. */
+    info->d_ymin = PTSIN[YMIN_D];       /* d3 y of upper left of dest. */
+    info->d_xmax = PTSIN[XMAX_D];       /* d6 x of lower right of dest. */
+    info->d_ymax = PTSIN[YMAX_D];       /* d7 y of lower right of dest. */
 }
 
 /*
@@ -831,7 +831,7 @@ setup_info (Vwk * vwk, struct blit_frame * info)
     }
     else {
         /* source form is screen */
-        info->s_form = (UWORD*) v_bas_ad;		
+        info->s_form = (UWORD*) v_bas_ad;               
         info->s_nxwd = v_planes * 2;
         info->s_nxln = v_lin_wr;
     }
@@ -863,8 +863,8 @@ setup_info (Vwk * vwk, struct blit_frame * info)
     else
         dont_clip(info);
 
-    info->s_nxpl = 2;		/* next plane offset (source) */
-    info->d_nxpl = 2;		/* next plane offset (destination) */
+    info->s_nxpl = 2;           /* next plane offset (source) */
+    info->d_nxpl = 2;           /* next plane offset (destination) */
 
     /* only 4,2, and 1 planes are valid (destination) */
     return info->plane_ct & ~0x0007;
@@ -887,13 +887,13 @@ vdi_vro_cpyfm(Vwk * vwk)
 
     /* if mode is made up of more than the first 5 bits */
     if ( mode & ~0x001f )
-        return;                 	/* mode is invalid */
+        return;                         /* mode is invalid */
 
     /* check the pattern flag (bit 5) and revert to log op # */
-    info.p_addr = NULL;			/* clear pattern pointer */
+    info.p_addr = NULL;                 /* clear pattern pointer */
     if ( mode & PAT_FLAG ) {
-        mode &= ~PAT_FLAG;      	/* set bit to 0! */
-        setup_pattern(vwk, &info);	/* fill in pattern related stuff */
+        mode &= ~PAT_FLAG;              /* set bit to 0! */
+        setup_pattern(vwk, &info);      /* fill in pattern related stuff */
     }
 
     /* if true, the plane count is invalid or clipping took all! */
@@ -904,7 +904,7 @@ vdi_vro_cpyfm(Vwk * vwk)
     if ( info.s_nxwd != info.d_nxwd )
         return;
 
-    info.op_tab[0] = mode;	    /* fg:0 bg:0 */
+    info.op_tab[0] = mode;          /* fg:0 bg:0 */
     info.bg_col = 0;                /* bg:0 & fg:0 => only first OP_TAB */
     info.fg_col = 0;                /* entry will be referenced */
 
@@ -938,7 +938,7 @@ vdi_vrt_cpyfm(Vwk * vwk)
         return;                 /* mode is invalid */
 
     /* check the pattern flag (bit 5) and revert to log op # */
-    info.p_addr = NULL;		/* get pattern pointer*/
+    info.p_addr = NULL;         /* get pattern pointer*/
     if ( mode & PAT_FLAG ) {
         mode &= ~PAT_FLAG;      /* set bit to 0! */
         setup_pattern(vwk, &info);   /* fill in pattern related stuff */
@@ -958,7 +958,7 @@ vdi_vrt_cpyfm(Vwk * vwk)
     if ( info.s_nxwd != 2 )
         return;    /* source must be mono plane */
 
-    info.s_nxpl = 0;		/* use only one plane of source */
+    info.s_nxpl = 0;            /* use only one plane of source */
 
     /* d6 <- background color */
     fg_col = INTIN[1];
@@ -975,33 +975,33 @@ vdi_vrt_cpyfm(Vwk * vwk)
     /* mode == d2 */
     switch(mode) {
     case MD_TRANS:
-        info.op_tab[0] = 04;	/* fg:0 bg:0  D' <- [not S] and D */
-        info.op_tab[2] = 07;	/* fg:1 bg:0  D' <- S or D */
-        info.fg_col = fg_col;		/* were only interested in one color */
-        info.bg_col = 0;		/* save the color of interest */
+        info.op_tab[0] = 04;    /* fg:0 bg:0  D' <- [not S] and D */
+        info.op_tab[2] = 07;    /* fg:1 bg:0  D' <- S or D */
+        info.fg_col = fg_col;           /* were only interested in one color */
+        info.bg_col = 0;                /* save the color of interest */
         break;
 
     case MD_REPLACE:
         /* CHECK: bug, that colors are reversed? */
-        info.op_tab[0] = 00;	/* fg:0 bg:0  D' <- 0 */
-        info.op_tab[1] = 12;	/* fg:0 bg:1  D' <- not S */
-        info.op_tab[2] = 03;	/* fg:1 bg:0  D' <- S */
-        info.op_tab[3] = 15;	/* fg:1 bg:1  D' <- 1 */
-        info.bg_col = bg_col;		/* save fore and background colors */
+        info.op_tab[0] = 00;    /* fg:0 bg:0  D' <- 0 */
+        info.op_tab[1] = 12;    /* fg:0 bg:1  D' <- not S */
+        info.op_tab[2] = 03;    /* fg:1 bg:0  D' <- S */
+        info.op_tab[3] = 15;    /* fg:1 bg:1  D' <- 1 */
+        info.bg_col = bg_col;           /* save fore and background colors */
         info.fg_col = fg_col;
         break;
 
     case MD_XOR:
-        info.op_tab[0] = 06;	/* fg:0 bg:0  D' <- S xor D */
+        info.op_tab[0] = 06;    /* fg:0 bg:0  D' <- S xor D */
         info.bg_col = 0;
         info.fg_col = 0;
         break;
 
     case MD_ERASE:
-        info.op_tab[0] = 01;	/* fg:0 bg:0  D' <- S and D */
-        info.op_tab[1] = 13;	/* fg:0 bg:1  D' <- [not S] or D */
-        info.fg_col = 0;		/* were only interested in one color */
-        info.bg_col = bg_col;		/* save the color of interest */
+        info.op_tab[0] = 01;    /* fg:0 bg:0  D' <- S and D */
+        info.op_tab[1] = 13;    /* fg:0 bg:1  D' <- [not S] or D */
+        info.fg_col = 0;                /* were only interested in one color */
+        info.bg_col = bg_col;           /* save the color of interest */
         break;
 
     default:

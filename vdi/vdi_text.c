@@ -440,7 +440,7 @@ void text_init(Vwk * vwk)
         } while ((fnt_ptr = fnt_ptr->next_font));
     }
     DEV_TAB[5] = i;                     /* number of sizes */
-    font_count = DEV_TAB[10] = ++j;   	/* number of faces */
+    font_count = DEV_TAB[10] = ++j;     /* number of faces */
 }
 
 void dst_height(Vwk * vwk)
@@ -1250,7 +1250,7 @@ WORD clc_dda(Vwk * vwk, WORD act, WORD req)
         vwk->t_sclsts = 0;           /* we do scale down */
         /* check requested size */
         if ( req <= 0 ) {
-            req = 1;		/* if 0 then make it 1 (minimum value) */
+            req = 1;            /* if 0 then make it 1 (minimum value) */
         }
     }
     else {
@@ -1258,7 +1258,7 @@ WORD clc_dda(Vwk * vwk, WORD act, WORD req)
         req -= act;
         /* if larger than 2x? */
         if ( req >= act )
-            return -1;		/* put 0xFFFF in d0 (max value, 2x) */
+            return -1;          /* put 0xFFFF in d0 (max value, 2x) */
     }
 
     /* requested/actual: quotient = bits 15-0 */

@@ -59,6 +59,7 @@ extern LONG vbl_list[];
 extern LONG *vblqueue;
 extern volatile LONG frclock;
 //extern LONG **p_cookies
+extern WORD save_row;     /* saved row in escape Y command */
 
 
 extern LONG sysbase;

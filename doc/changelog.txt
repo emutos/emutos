@@ -1692,3 +1692,8 @@ vdi/vdi_mouse.c: implemented vex_wheelv() (MAD)
 bios/ikbd.c: keyboard repetition respects 1st bit of conterm (joy)
              conterm initialized (we never did that before) (joy)
 doc/bios.txt: fixed description of conterm bits (joy)
+
+2004-10-18
+bios/conout.S: removed from CVS (MAD)
+bios/conout.c: hardware dependent optimized console stuff (MAD)
+bios/vt52.c:   hardware independent rest of vt52 console (MAD)

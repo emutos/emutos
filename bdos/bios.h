@@ -154,8 +154,8 @@ BCB
     int b_bufdrv;       /*  unit for buffer             */
     int b_buftyp;       /*  buffer type                 */
     int b_bufrec;       /*  record number               */
-    BOOL b_dirty;	/*  true if buffer dirty        */
-    long b_dm;		/*  reserved for file system    */
+    BOOL b_dirty;       /*  true if buffer dirty        */
+    long b_dm;          /*  reserved for file system    */
     char *b_bufr;       /*  pointer to buffer           */
 } ;
 

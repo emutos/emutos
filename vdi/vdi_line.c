@@ -222,12 +222,12 @@ void draw_rect(const Vwk * vwk, const Rect * rect, const UWORD fillcolor) {
 
     /* Get the pattern with which the line is to be drawn. */
     planes = v_planes;
-    dx = rect->x2 - rect->x1 - 16;	/* width of line - one WORD */
-    addr = get_start_addr(rect->x1, rect->y1);	/* init adress counter */
-    patmsk = vwk->patmsk;			/* which pattern to start with */
-    patadd = vwk->multifill ? 16 : 0;     	/* multi plane pattern offset */
+    dx = rect->x2 - rect->x1 - 16;      /* width of line - one WORD */
+    addr = get_start_addr(rect->x1, rect->y1);  /* init adress counter */
+    patmsk = vwk->patmsk;                       /* which pattern to start with */
+    patadd = vwk->multifill ? 16 : 0;           /* multi plane pattern offset */
     leftpart = rect->x1 & 0xf;              /* left fringe */
-    rightpart = rect->x2 & 0xf;		/* right fringe */
+    rightpart = rect->x2 & 0xf;         /* right fringe */
     leftmask = ~(0xffff>>leftpart);     /* origin for not left fringe lookup */
     rightmask = 0x7fff>>rightpart;      /* origin for right fringe lookup */
     yinc = (v_lin_wr >> 1) - planes;
@@ -238,7 +238,7 @@ void draw_rect(const Vwk * vwk, const Rect * rect, const UWORD fillcolor) {
         case 3:  /* nor */
             for (y = rect->y1; y <= rect->y2; y++ ) {
                 int plane;
-                int patind = patmsk&y;		/* pattern to start with */
+                int patind = patmsk&y;          /* pattern to start with */
                 UWORD color = fillcolor;
 
                 /* init adress counter */
@@ -248,7 +248,7 @@ void draw_rect(const Vwk * vwk, const Rect * rect, const UWORD fillcolor) {
 
                     if (color & 0x0001) {
                         /* Isolate the necessary pixels */
-                        UWORD bits = *addr;	/* get data from screen address */
+                        UWORD bits = *addr;     /* get data from screen address */
                         UWORD help = bits;
                         bits |= ~pattern;       /* and complement of mask with source */
                         help ^= bits;           /* isolate changed bits */
@@ -257,7 +257,7 @@ void draw_rect(const Vwk * vwk, const Rect * rect, const UWORD fillcolor) {
                         *addr = bits;            /* write back the result */
                     } else {
                         /* Isolate the necessary pixels */
-                        UWORD bits = *addr;	/* get data from screen address */
+                        UWORD bits = *addr;     /* get data from screen address */
                         UWORD help = bits;
                         bits &= pattern;        /* and complement of mask with source */
                         help ^= bits;           /* isolate changed bits */
@@ -265,17 +265,17 @@ void draw_rect(const Vwk * vwk, const Rect * rect, const UWORD fillcolor) {
                         bits ^= help;           /* restore them to original states */
                         *addr = bits;            /* write back the result */
                     }
-                    addr++; 			/* advance one WORD to next plane */
+                    addr++;                     /* advance one WORD to next plane */
                     patind += patadd;
                     color >>= 1;
                 }
-                addr += yinc;           	/* next scanline */
+                addr += yinc;                   /* next scanline */
             }
             break;
         case 2:  /* xor */
             for (y = rect->y1; y <= rect->y2; y++ ) {
                 int plane;
-                int patind = patmsk&y;		/* pattern to start with */
+                int patind = patmsk&y;          /* pattern to start with */
 
                 for (plane = planes-1; plane >= 0; plane-- ) {
                     /* load values fresh for this bitplane */
@@ -299,7 +299,7 @@ void draw_rect(const Vwk * vwk, const Rect * rect, const UWORD fillcolor) {
         case 1:  /* or */
             for (y = rect->y1; y <= rect->y2; y++ ) {
                 int plane;
-                int patind = patmsk&y;		/* pattern to start with */
+                int patind = patmsk&y;          /* pattern to start with */
                 UWORD color = fillcolor;
 
                 for (plane = planes-1; plane >= 0; plane-- ) {
@@ -319,7 +319,7 @@ void draw_rect(const Vwk * vwk, const Rect * rect, const UWORD fillcolor) {
                         *addr = bits;            /* write back the result */
                     } else {
                         /* Isolate the necessary pixels */
-                        UWORD bits = *addr;	/* get data from screen address */
+                        UWORD bits = *addr;     /* get data from screen address */
                         UWORD help = bits;
                         bits &= ~pattern;        /* and complement of mask with source */
                         help ^= bits;           /* isolate changed bits */
@@ -336,7 +336,7 @@ void draw_rect(const Vwk * vwk, const Rect * rect, const UWORD fillcolor) {
             break;
         default: /* rep */
             for (y = rect->y1; y <= rect->y2; y++ ) {
-                int patind = patmsk&y;		/* pattern to start with */
+                int patind = patmsk&y;          /* pattern to start with */
                 int plane;
                 UWORD color = fillcolor;
 
@@ -371,7 +371,7 @@ void draw_rect(const Vwk * vwk, const Rect * rect, const UWORD fillcolor) {
         case 3:  /* nor */
             for (y = rect->y1; y <= rect->y2; y++ ) {
                 int plane;
-                int patind = patmsk&y;		/* pattern to start with */
+                int patind = patmsk&y;          /* pattern to start with */
                 UWORD color = fillcolor;
 
                 /* init adress counter */
@@ -388,7 +388,7 @@ void draw_rect(const Vwk * vwk, const Rect * rect, const UWORD fillcolor) {
 
                         /* Draw the left fringe */
                         if (leftmask) {
-                            UWORD bits = *adr; 	/* get data from screen address */
+                            UWORD bits = *adr;  /* get data from screen address */
                             UWORD help = bits;
                             bits |= pattern;    /* and complement of mask with source */
                             help ^= bits;       /* isolate changed bits */
@@ -406,7 +406,7 @@ void draw_rect(const Vwk * vwk, const Rect * rect, const UWORD fillcolor) {
                         }
                         /* Draw the right fringe */
                         if (~rightmask) {
-                            UWORD bits = *adr;	/* get data from screen address */
+                            UWORD bits = *adr;  /* get data from screen address */
                             UWORD help = bits;
                             bits |= pattern;    /* and complement of mask with source */
                             help ^= bits;       /* isolate changed bits */
@@ -420,13 +420,13 @@ void draw_rect(const Vwk * vwk, const Rect * rect, const UWORD fillcolor) {
 
                         /* Draw the left fringe */
                         if (leftmask) {
-                            UWORD bits = *adr; 	/* get data from screen address */
+                            UWORD bits = *adr;  /* get data from screen address */
                             UWORD help = bits;
-                            bits &= pattern;  	/* and complement of mask with source */
+                            bits &= pattern;    /* and complement of mask with source */
                             help ^= bits;       /* isolate changed bits */
-                            help &= leftmask; 	/* isolate changed bits outside of fringe */
+                            help &= leftmask;   /* isolate changed bits outside of fringe */
                             bits ^= help;       /* restore them to original states */
-                            *adr = bits;      	/* write back the result */
+                            *adr = bits;        /* write back the result */
 
                             adr += planes;
                             pixels -= leftpart;
@@ -438,16 +438,16 @@ void draw_rect(const Vwk * vwk, const Rect * rect, const UWORD fillcolor) {
                         }
                         /* Draw the right fringe */
                         if (~rightmask) {
-                            UWORD bits = *adr;	/* get data from screen address */
+                            UWORD bits = *adr;  /* get data from screen address */
                             UWORD help = bits;
-                            bits &= pattern;  	/* and complement of mask with source */
+                            bits &= pattern;    /* and complement of mask with source */
                             help ^= bits;       /* isolate changed bits */
-                            help &= rightmask;	/* isolate changed bits outside of fringe */
+                            help &= rightmask;  /* isolate changed bits outside of fringe */
                             bits ^= help;       /* restore them to original states */
-                            *adr = bits;      	/* write back the result */
+                            *adr = bits;        /* write back the result */
                         }
                     }
-                    addr++; 			/* advance one WORD to next plane */
+                    addr++;                     /* advance one WORD to next plane */
                     patind += patadd;
                     color >>= 1;
                 }
@@ -457,7 +457,7 @@ void draw_rect(const Vwk * vwk, const Rect * rect, const UWORD fillcolor) {
         case 2:  /* xor */
             for (y = rect->y1; y <= rect->y2; y++ ) {
                 int plane;
-                int patind = patmsk&y;		/* pattern to start with */
+                int patind = patmsk&y;          /* pattern to start with */
 
                 for (plane = planes-1; plane >= 0; plane-- ) {
                     /* load values fresh for this bitplane */
@@ -504,7 +504,7 @@ void draw_rect(const Vwk * vwk, const Rect * rect, const UWORD fillcolor) {
         case 1:  /* or */
             for (y = rect->y1; y <= rect->y2; y++ ) {
                 int plane;
-                int patind = patmsk&y;		/* pattern to start with */
+                int patind = patmsk&y;          /* pattern to start with */
                 UWORD color = fillcolor;
 
                 for (plane = planes-1; plane >= 0; plane-- ) {
@@ -518,7 +518,7 @@ void draw_rect(const Vwk * vwk, const Rect * rect, const UWORD fillcolor) {
 
                         /* Draw the left fringe */
                         if (leftmask) {
-                            UWORD bits = *adr;	/* get data from screen address */
+                            UWORD bits = *adr;  /* get data from screen address */
                             UWORD help = bits;
                             bits |= pattern;    /* and complement of mask with source */
                             help ^= bits;       /* isolate changed bits */
@@ -536,7 +536,7 @@ void draw_rect(const Vwk * vwk, const Rect * rect, const UWORD fillcolor) {
                         }
                         /* Draw the right fringe */
                         if (~rightmask) {
-                            UWORD bits = *adr;	/* get data from screen address */
+                            UWORD bits = *adr;  /* get data from screen address */
                             UWORD help = bits;
                             bits |= pattern;    /* and complement of mask with source */
                             help ^= bits;       /* isolate changed bits */
@@ -551,13 +551,13 @@ void draw_rect(const Vwk * vwk, const Rect * rect, const UWORD fillcolor) {
 
                         /* Draw the left fringe */
                         if (leftmask) {
-                            UWORD bits = *adr;	/* get data from screen address */
+                            UWORD bits = *adr;  /* get data from screen address */
                             UWORD help = bits;
-                            bits &= pattern;  	/* and complement of mask with source */
+                            bits &= pattern;    /* and complement of mask with source */
                             help ^= bits;       /* isolate changed bits */
-                            help &= leftmask; 	/* isolate changed bits outside of fringe */
+                            help &= leftmask;   /* isolate changed bits outside of fringe */
                             bits ^= help;       /* restore them to original states */
-                            *adr = bits;      	/* write back the result */
+                            *adr = bits;        /* write back the result */
 
                             adr += planes;;
                             pixels -= leftpart;
@@ -569,13 +569,13 @@ void draw_rect(const Vwk * vwk, const Rect * rect, const UWORD fillcolor) {
                         }
                         /* Draw the right fringe */
                         if (~rightmask) {
-                            UWORD bits = *adr;	/* get data from screen address */
+                            UWORD bits = *adr;  /* get data from screen address */
                             UWORD help = bits;
-                            bits &= pattern;  	/* and complement of mask with source */
+                            bits &= pattern;    /* and complement of mask with source */
                             help ^= bits;       /* isolate changed bits */
-                            help &= rightmask;	/* isolate changed bits outside of fringe */
+                            help &= rightmask;  /* isolate changed bits outside of fringe */
                             bits ^= help;       /* restore them to original states */
-                            *adr = bits;      	/* write back the result */
+                            *adr = bits;        /* write back the result */
                         }
                         pattern = ~pattern;
                     }
@@ -588,7 +588,7 @@ void draw_rect(const Vwk * vwk, const Rect * rect, const UWORD fillcolor) {
             break;
         default: /* rep */
             for (y = rect->y1; y <= rect->y2; y++ ) {
-                int patind = patmsk&y;		/* pattern to start with */
+                int patind = patmsk&y;          /* pattern to start with */
                 int plane;
                 UWORD color = fillcolor;
 
@@ -620,11 +620,11 @@ void draw_rect(const Vwk * vwk, const Rect * rect, const UWORD fillcolor) {
                     }
                     /* Draw the right fringe */
                     if (~rightmask) {
-                        UWORD bits = *adr;	/* get data from screen address */
-                        bits ^= pattern;  	/* xor the pattern with the source */
-                        bits &= rightmask;	/* isolate the bits outside the fringe */
-                        bits ^= pattern;  	/* restore the bits outside the fringe */
-                        *adr = bits;      	/* write back the result */
+                        UWORD bits = *adr;      /* get data from screen address */
+                        bits ^= pattern;        /* xor the pattern with the source */
+                        bits &= rightmask;      /* isolate the bits outside the fringe */
+                        bits ^= pattern;        /* restore the bits outside the fringe */
+                        *adr = bits;            /* write back the result */
                     }
                     addr++; /* advance one WORD to next plane */
                     patind += patadd;
@@ -715,7 +715,7 @@ BOOL clip_line(Vwk * vwk, Line * line)
         }
         deltax = line->x2 - line->x1;
         deltay = line->y2 - line->y1;
-        if (line_clip_flag & 1) {       	/* left ? */
+        if (line_clip_flag & 1) {               /* left ? */
             *y = line->y1 + mul_div(deltay, (vwk->xmn_clip - line->x1), deltax);
             *x = vwk->xmn_clip;
         } else if (line_clip_flag & 2) {        /* right ? */

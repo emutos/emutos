@@ -32,7 +32,7 @@ int linea_inited;
 
 /*==== External declarations ==============================================*/
 
-extern void con_state_init(void);       // from conout.S
+extern void con_state_init(void);       // from vt52.c
 
 
 /*==== Prototypes =========================================================*/
