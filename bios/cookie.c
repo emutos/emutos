@@ -44,7 +44,7 @@ void cookie_add(long tag, long value)
   jar->tag = tag;
   jar->value = value;
   jar[1].tag = 0;
-  jar[1].value = n-1;  
+  jar[1].value = n;  
 }
 
  
