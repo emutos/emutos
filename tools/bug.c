@@ -2,7 +2,7 @@
  * bug.c - Basic Unencumbering Gettext, a minimal gettext-like tool
  *         (any better name is welcome)
  *
- * Copyright (c) 2001 Laurent Vogel
+ * Copyright (c) 2001-2002 Laurent Vogel
  *
  * Authors:
  *  LVL   Laurent Vogel
@@ -15,10 +15,9 @@
  * Bugs and limitations:
  * - free comments in po files are put to the end when updating
  * - only _() and N_() macros are handled
- * - not 100% compatible with gettext po files
+ * - no fuzzy or printf-format parameters
  * - some weird messages
  * - trigraphs are not handled (this is a feature actually !)
- * 
  */
  
 /* 
@@ -27,9 +26,11 @@
  * - library support (errors, memory, ...)
  * - basic data structures (string, dynamic array, hash, ...)
  * - po-file data structure
+ * - po-file administrative data entry
  * - input file with line counting and ability to go backwards
  * - low level lexical parsing for sh-like and C syntax.
  * - high level parsers
+ * - charset conversion
  * - po file internal operations
  * - the three tool commands (xgettext, update, make)
  * - main()
@@ -39,7 +40,7 @@
  * TODO list
  * - better algorithm for merging po files (keep the order of entries)
  * - parse_po_file is a mess
- * - o_free()
+ * - memory is not freed correctly, esp. after xstrdup 
  * - use strerror() to report errors
  * - use #~ for old entries
  */
@@ -50,10 +51,12 @@
 #include <stdarg.h>
 #include <time.h>
 
-#define VERSION "0.1a"
+#define VERSION "0.2a"
  
 #define TOOLNAME "bug"
 #define DOCNAME  "doc/nls.txt"
+
+#define HERE fprintf(stderr, "%s:%d\n", __FUNCTION__, __LINE__);
 
 /* 
  * typedefs
@@ -117,13 +120,54 @@ char * xstrdup(char *s)
 }
 
 /*
- * now
+ * now - current date in gettext format (stolen from gettext)
  */
+
+#define TM_YEAR_ORIGIN 1900
+
+/* Yield A - B, measured in seconds.  */
+static long difftm (const struct tm *a, const struct tm *b)
+{
+  int ay = a->tm_year + (TM_YEAR_ORIGIN - 1);
+  int by = b->tm_year + (TM_YEAR_ORIGIN - 1);
+  /* Some compilers cannot handle this as a single return statement.  */
+  long days = (
+               /* difference in day of year  */
+               a->tm_yday - b->tm_yday
+               /* + intervening leap days  */
+               + ((ay >> 2) - (by >> 2))
+               - (ay / 100 - by / 100)
+               + ((ay / 100 >> 2) - (by / 100 >> 2))
+               /* + difference in years * 365  */
+               + (long) (ay - by) * 365l);
+
+  return 60l * (60l * (24l * days + (a->tm_hour - b->tm_hour))
+                + (a->tm_min - b->tm_min))
+         + (a->tm_sec - b->tm_sec);
+}
+
 
 char * now(void)
 {
-  time_t t = time(0);
-  return ctime(&t);  
+  time_t now;
+  struct tm local_time;
+  char tz_sign;
+  long tz_min;
+  char buf[40];
+  
+  time (&now);
+  local_time = *localtime (&now);
+  tz_sign = '+';
+  tz_min = difftm (&local_time, gmtime (&now)) / 60;
+  if (tz_min < 0) {
+    tz_min = -tz_min;
+    tz_sign = '-';
+  }
+  sprintf(buf, "%d-%02d-%02d %02d:%02d%c%02ld%02ld",
+    local_time.tm_year + TM_YEAR_ORIGIN, local_time.tm_mon + 1,
+          local_time.tm_mday, local_time.tm_hour, local_time.tm_min,
+          tz_sign, tz_min / 60, tz_min % 60);
+  return xstrdup(buf);
 }
 
 /*
@@ -408,7 +452,7 @@ typedef struct poe {
   int   kind;      /* kind of entry */
   char *comment;   /* free user comments */
   da   *refs;      /* the references to locations in code */
-  char *refstr;    /* a char containing the references */
+  char *refstr;    /* a char * representation of the references */
   char *msgstr;    /* the translation */
 } poe;
 
@@ -418,11 +462,112 @@ poe * poe_new(char *t)
   e->msgid.key = t;
   e->kind = KIND_NORM;
   e->comment = "";
-  e->refs = da_new();
+  e->refs = NULL;
   e->msgstr = "";
   e->refstr = "";
   return e;
 }
+
+
+/*
+ * gettext administrative entry, an entry with msgid empty, and 
+ * msgstr being specially formatted (example in doc/nls.txt)
+ */
+
+typedef struct {
+  char *pidvers;
+  char *potcrdate;
+  char *porevdate;
+  char *lasttrans;
+  char *langteam;
+  char *charset;
+  char *other;
+} ae_t;
+
+void update_ae(ae_t *a, ae_t *pot_ae)
+{
+  a->potcrdate = pot_ae->potcrdate;
+  a->porevdate = now();
+}
+
+void fill_pot_ae(ae_t *a)
+{
+  a->pidvers = "PACKAGE VERSION";
+  a->potcrdate = now();
+  a->porevdate = "YEAR-MO-DA HO:MI+ZONE";
+  a->lasttrans = "FULL NAME <EMAIL@ADDRESS>";
+  a->langteam = "LANGUAGE <LL@li.org>";
+  a->charset = "CHARSET";
+  a->other = "";
+}
+
+char * ae_to_string(ae_t *a)
+{
+  str *s = s_new();
+  s_addstr(s, "Project-Id-Version: "); s_addstr(s, a->pidvers); 
+  s_addstr(s, "\nPOT-Creation-Date: "); s_addstr(s, a->potcrdate); 
+  s_addstr(s, "\nPO-Revision-Date: "); s_addstr(s, a->porevdate); 
+  s_addstr(s, "\nLast-Translator: "); s_addstr(s, a->lasttrans); 
+  s_addstr(s, "\nLanguage-Team: "); s_addstr(s, a->langteam); 
+  s_addstr(s, "\nMIME-Version: 1.0\nContent-Type: text/plain; charset="); 
+  s_addstr(s, a->charset); 
+  s_addstr(s, "\nContent-Transfer-Encoding: 8bit\n");
+  s_addstr(s, a->other);
+  return s_detach(s);
+}
+
+static int ae_check_line(char **cc, char *start, char **end)
+{
+  char *c, *t;
+  int n = strlen(start);
+  int m;
+  c = *cc;
+  if(strncmp(c, start, n)) {
+    warn("Expecting \"%s\" in administrative entry", start);
+    return 0;
+  }
+  t = strchr(c+n, '\n');
+  if(t == NULL) {
+    warn("Fields in administrative entry must end with \\n");
+    return 0;
+  }
+  *cc = t + 1;
+  m = t - (c+n);
+  t = xmalloc(m+1);
+  memmove(t, c+n, m);
+  t[m] = 0;
+  *end = t;
+  return 1;
+}
+  
+int parse_ae(char *msgstr, ae_t *a)
+{
+  char *c = msgstr;
+  char *tmp;
+  if(!ae_check_line(&c, "Project-Id-Version: ", &a->pidvers)) goto fail;
+  if(!ae_check_line(&c, "POT-Creation-Date: ", &a->potcrdate)) goto fail;
+  if(!ae_check_line(&c, "PO-Revision-Date: ", &a->porevdate)) goto fail;
+  if(!ae_check_line(&c, "Last-Translator: ", &a->lasttrans)) goto fail;
+  if(!ae_check_line(&c, "Language-Team: ", &a->langteam)) goto fail;
+  if(!ae_check_line(&c, "MIME-Version: ", &tmp)) goto fail;
+  if(strcmp(tmp, "1.0")) {
+    warn("MIME version must be 1.0");
+    goto fail;
+  }
+  if(!ae_check_line(&c, "Content-Type: text/plain; charset=", &a->charset)) 
+    goto fail;
+  if(!ae_check_line(&c, "Content-Transfer-Encoding: ", &tmp)) goto fail;
+  if(strcmp(tmp, "8bit")) {
+    warn("Content-Transfer-Encoding must be 8bit");
+    goto fail;
+  }
+  a->other = xstrdup(c);
+  return 1;
+fail: 
+  warn("Error in administrative entry");
+  return 0;
+}
+
 
 /*
  * input files
@@ -824,6 +969,9 @@ void parse_c_file(char *fname, oh *o)
           o_insert(o, e);
         }
         r = ref_new(fname, lineno);
+        if(e->refs == 0) {
+          e->refs = da_new();
+        }
         da_add(e->refs, r);
       } else {
         iback(f);
@@ -859,6 +1007,8 @@ void parse_c_file(char *fname, oh *o)
   }
   ifclose(f);
 }
+
+
 
 /*
  * parse po files
@@ -953,8 +1103,11 @@ void parse_po_file(char *fname, oh *o)
       } else {
         if(refstr) {
           s_free(refstr);
+          warn("stray ref ignored in %s:%d", fname, f->lineno);
         }
-        warn("stray ref ignored in %s:%d", fname, f->lineno);
+        /* we will reach here when an entry is followed by more than one 
+         * empty line, at each additional empty line.
+         */
         continue;
       }
       e = poe_new(""); 
@@ -1045,6 +1198,10 @@ void parse_po_file(char *fname, oh *o)
       if(refstr) {
         e->refstr = s_detach(refstr);
         refstr = 0;
+      }
+      if(userstr) {
+        e->comment = s_detach(userstr);
+        userstr = 0;
       }
       o_insert(o, e);
     }
@@ -1206,7 +1363,7 @@ void po_convert_refs(oh *o)
       e->refstr = refs_to_str(e->refs);
       da_free(e->refs);
       e->refs = 0;
-    }
+    } 
   }
 }
       
@@ -1279,6 +1436,28 @@ void update(char *fname)
   n1 = o_len(o1);
   n2 = o_len(o2);
   o = o_new();
+  /* first, put an updated admin entry */
+  {
+    ae_t a1, a2;
+    e1 = o_find(o1, "");
+    e2 = o_find(o2, "");
+    if(e1 == NULL || !parse_ae(e1->msgstr, &a1)) {
+      fill_pot_ae(&a1);
+    }
+    if(e2 == NULL || !parse_ae(e2->msgstr, &a2)) {
+      warn("bad administrative entry, getting back that of the template");
+      a2 = a1;
+    }
+    update_ae(&a2, &a1);
+    e = poe_new("");
+    if(e2 != NULL) {
+      e->comment = e2->comment; /* keep the initial comment */
+    } 
+    e->kind = KIND_NORM;
+    e->msgstr = ae_to_string(&a2);
+    o_insert(o, e);
+  }
+  
   /* TODO, better algorithm to keep the order of entries... */
   
   /* first, update entries in the po file */
@@ -1286,9 +1465,11 @@ void update(char *fname)
     e2 = o_nth(o2, i2);
     if(e2->kind == KIND_COMM) {
       o_add(o, e2);
+    } else if(e2->msgid.key[0] == 0) {
+      /* the old admin entry - do nothing */
     } else {
       e = o_find(o1, e2->msgid.key);
-      if(e) {
+      if(e) { 
         e2->kind = KIND_NORM;
         e2->refstr = e->refstr;
         e2->refs = 0;
@@ -1310,10 +1491,12 @@ void update(char *fname)
   for(i1 = 0 ; i1 < n1 ; i1 ++) {
     e1 = o_nth(o1, i1);
     if(e1->kind == KIND_NORM) {
-      e = o_find(o2, e1->msgid.key);
-      if(!e) {
-        o_add(o, e1);
-        numuntransl++;
+      if(e1->msgid.key[0] != 0) {
+        e = o_find(o2, e1->msgid.key);
+        if(!e) {
+          o_add(o, e1);
+          numuntransl++;
+        }
       }
     }
   }
@@ -1343,11 +1526,23 @@ void xgettext(void)
   int i, n;
   FILE *f;
   char *fname;
+  ae_t a;
+  poe *e;
   
   d = da_new();
   parse_oipl_file("po/POTFILES.in", d);
   
   o = o_new();
+  
+  /* create the administrative entry */
+  fill_pot_ae(&a);
+  e = poe_new("");
+  e->kind = KIND_NORM;
+  e->msgstr = ae_to_string(&a);
+  e->comment = "# SOME DESCRIPTIVE TITLE.\n\
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.\n";
+  o_add(o, e);
+  
   n = da_len(d);
   for(i = 0 ; i < n ; i++) {
     parse_c_file(da_nth(d,i), o);
@@ -1360,19 +1555,75 @@ void xgettext(void)
   if(f == NULL) {
     fatal("couldn't create %s", fname);
   }
-  fprintf(f, "\
-# \n\
-# messages.pot - the reference template for other po files\n\
-# \n\
-# This file was generated by " TOOLNAME " on %s\
-# Do not change this file!\n\
-# \n\
-# For more info, refer to file " DOCNAME "\n\
-# \n\n", now());
-  
   print_po_file(f, o);
   fclose(f);
 }
+
+/*
+ * charset conversions
+ */
+
+
+/*
+ * charsets
+ */
+
+enum charset_code {
+  unknown,
+  latin1,
+  latin2,
+  atarist,
+  /* kamenicky, */
+};
+
+typedef enum charset_code cset_t;
+
+struct charset_info {
+  cset_t code;
+  char *name;
+};
+
+const struct charset_info charsets[] = {
+  { latin1, "latin1" },
+  { latin1, "ISO-8859-1" },
+  { latin2, "latin2" },
+  { latin2, "ISO-8859-2" },
+  { atarist, "atarist" },
+  /* { kamenicky, "Kamenicky" }, */
+};
+
+cset_t get_charset(char *name)
+{
+  int i;
+  int n = sizeof(charsets)/sizeof(*charsets);
+  for(i = 0 ; i < n ; i++) {
+    if(!strcmp(charsets[i].name, name)) {
+      return charsets[i].code;
+    }
+  }
+  warn("unknown charset %s", name);
+  fprintf(stderr, "known charsets are:\n");
+  for(i = 0 ; i < n ; i++) {
+    fprintf(stderr, "  %s\n", charsets[i].name);
+  }
+  return unknown;
+}
+
+char * get_charset_name(cset_t code)
+{
+  int i;
+  int n = sizeof(charsets)/sizeof(*charsets);
+  for(i = 0 ; i < n ; i++) {
+    if(charsets[i].code == code) {
+      return charsets[i].name;
+    }
+  }
+  return "unknown";
+}
+
+/*
+ * charset conversion
+ */
 
 /*
  * iso_to_atari : convert in situ iso latin 1 to atari ST encoding
@@ -1405,7 +1656,7 @@ unsigned char i2a[] = {
   0xb3, 0x97, 0xa3, 0x96, 0x81,  'y',  0,   0x98,
 }; 
 
-void iso_to_atari(char *s)
+void latin1_to_atarist(char *s)
 {
   unsigned c;
   int warned = 0;
@@ -1424,6 +1675,57 @@ void iso_to_atari(char *s)
     }
     s++;
   }
+}
+
+/*
+ * void latin2_to_kamenicky(char *s)
+ * {  
+ *   TODO
+ * }
+ */
+
+void converter_noop(char *s)
+{
+}
+
+typedef void(*converter_t)(char *);
+
+
+struct converter_info {
+  cset_t from;
+  cset_t to;
+  converter_t func;
+};
+
+const struct converter_info converters[] = {
+  { latin1, atarist, latin1_to_atarist },
+  /* { latin2, kamenicky, latin2_to_kamenicky }, */
+};
+
+converter_t get_converter(cset_t from, cset_t to)
+{
+  int i;
+  int n = sizeof(converters)/sizeof(*converters);
+  
+  if(from == to) {
+    return converter_noop;
+  }
+  
+  for(i = 0 ; i < n ; i++) {
+    if(from == converters[i].from && to == converters[i].to) {
+      return converters[i].func;
+    }
+  }
+  warn("unknown charset conversion %s..%s.", 
+    get_charset_name(from), 
+    get_charset_name(to));
+  fprintf(stderr, "known conversions are:\n");
+  for(i = 0 ; i < n ; i++) {
+    fprintf(stderr, "  %s..%s\n", 
+      get_charset_name(converters[i].from), 
+      get_charset_name(converters[i].to));
+  }
+  return converter_noop;
 }
 
 /*
@@ -1461,7 +1763,28 @@ int compute_th_value(char *t)
 /*
  * make a big langs.c file from all supplied lang names.
  */
+ 
 
+/* decomposes a string <lang><white><encoding>, returning
+ * 0 if s is badly formatted
+ */
+int parse_linguas_item(char *s, char *lang, cset_t *charset)
+{
+  if(*s <'a' || *s >= 'z') return 0;
+  *lang++ = *s++;
+  if(*s <'a' || *s >= 'z') return 0;
+  *lang++ = *s++;
+  *lang = 0;
+  if(*s != ' ' && *s != '\t') return 0;
+  while(*s == ' ' || *s == '\t') s++;
+  *charset = get_charset(s);
+  if(*charset != unknown) {
+    return 1;
+  } else {
+    return 0;
+  }
+}
+  
 void make(void)
 {
   da *d;
@@ -1472,9 +1795,15 @@ void make(void)
   poe *eref;
   char tmp[20];
   char *t;
+  char lang[3];
+  da *langs;
+  cset_t from_charset, to_charset;
+  converter_t converter;
   int numref = 0;   /* number of entries in the reference */
   int numtransl;    /* number of translated entries */
-      
+  
+  langs = da_new();
+  
   d = da_new();
   parse_oipl_file("po/LINGUAS", d);
   
@@ -1490,7 +1819,7 @@ void make(void)
 /*\n\
  * langs.c - tables for all languages\n\
  *\n\
- * This file was generated by " TOOLNAME " on %s\
+ * This file was generated by " TOOLNAME " version " VERSION " on %s\
  * Do not change this file!\n\
  *\n\
  * For more info, refer to file " DOCNAME "\n\
@@ -1528,15 +1857,34 @@ void make(void)
       th[j] = 0;
     }
     
-    /* read translations */
-    o = o_new();
+    /* obtain destination charset from LINGUAS */
     t = da_nth(d, i);
-    if(strlen(t) > 2) {
-      warn("bad lang name %s", t);
+    if(! parse_linguas_item(t, lang, &to_charset)) {
+      warn("po/LINGUAS: bad lang/charset specification \"%s\"", t);
       continue;
     }
-    sprintf(tmp, "po/%s.po", t);
+    
+    /* read translations */
+    o = o_new();
+    sprintf(tmp, "po/%s.po", lang);
     parse_po_file(tmp, o);
+    
+    { /* get the source charset from the po file */
+      ae_t a;
+      poe *e = o_find(o, "");
+      if(e == NULL || !parse_ae(e->msgstr, &a)) {
+        warn("%s: bad administrative entry", tmp);
+        continue;
+      }
+      from_charset = get_charset(a.charset);
+      if(from_charset == unknown) {
+        warn("%s: bad charset specification", tmp);
+        continue;
+      }
+    }
+    da_add(langs, xstrdup(lang));
+    
+    converter = get_converter(from_charset, to_charset);
     
     /* compare o to oref */
     numtransl = 0;
@@ -1551,8 +1899,8 @@ void make(void)
             th[a] = da_new();
           }
           da_add(th[a], eref->msgstr);
-          /* translate into atari encoding */
-          iso_to_atari(e->msgstr);
+          /* translate into destination encoding */
+          converter(e->msgstr);
           da_add(th[a], e->msgstr);
           numtransl++;
         } 
@@ -1561,15 +1909,15 @@ void make(void)
     
     /* print stats if some entries are missing */
     if(numtransl < numref) {
-      printf("lang %s: %d untranslated entries\n", t, numref - numtransl);
+      printf("lang %s: %d untranslated entries\n", lang, numref - numtransl);
     }
     
     /* dump the hash table */
-    fprintf(f, "/*\n * hash table for lang %s.\n */\n\n", t);
+    fprintf(f, "/*\n * hash table for lang %s.\n */\n\n", lang);
     for(j = 0 ; j < TH_SIZE ; j++) {
       if(th[j] != 0) {
         int ii, nn;
-        fprintf(f, "static char *msg_%s_hash_%d[] = {\n", t, j);
+        fprintf(f, "static char *msg_%s_hash_%d[] = {\n", lang, j);
         nn = da_len(th[j]);
         for(ii = 0 ; ii < nn ; ii+=2) {
           fprintf(f, "  %s, ", (char *) da_nth(th[j],ii));
@@ -1579,10 +1927,10 @@ void make(void)
         fprintf(f, "  0\n};\n\n");
       }
     }
-    fprintf(f, "static char **msg_%s[] = {\n", t);
+    fprintf(f, "static char **msg_%s[] = {\n", lang);
     for(j = 0 ; j < TH_SIZE ; j++) {
       if(th[j]) {
-        fprintf(f, "  msg_%s_hash_%d,\n", t, j);
+        fprintf(f, "  msg_%s_hash_%d,\n", lang, j);
         da_free(th[j]);
       } else {
         fprintf(f, "  0,\n");
@@ -1596,19 +1944,22 @@ void make(void)
   
   /* print a lang table */
   fprintf(f, "/*\n * the table of available langs.\n */\n\n");
+  n = da_len(langs);
   for(i = 0 ; i < n ; i++) {
-    t = da_nth(d, i);
+    t = da_nth(langs, i);
     fprintf(f, "\
 static struct lang_info lang_%s = { \"%s\", msg_%s };\n", t, t, t);
   }
   fprintf(f, "\n");  
   fprintf(f, "struct lang_info *langs[] = {\n");
   for(i = 0 ; i < n ; i++) {
-    t = da_nth(d, i);
+    t = da_nth(langs, i);
     fprintf(f, "  &lang_%s, \n", t);
   }
   fprintf(f, "  0,\n};\n\n");
   fclose(f);
+  da_free(langs);
+  da_free(d);
 }
 
 /*

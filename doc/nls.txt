@@ -46,7 +46,7 @@ A tool called "bug" is supplied. Bug does three operations:
 - update po-file: compares the supplied po-file to messages.pot
   and updates the po-file (adding for instance new entries
   for new translatable strings)
-- make: creates the C file(s) that will be liked to EmuTOS 
+- make: creates the C file(s) that will be linked to EmuTOS 
   to provide the translation hashes.
 
 
@@ -105,17 +105,18 @@ Files
 po/POTFILES.in is a list of C source files, one file per line,
 ignoring empty lines and lines beginning with #. 
 
-po/LINGUAS is a list of lowercase two letter language names,
-one name per line, ignoring empty lines and lines beginning with #. 
+po/LINGUAS gives the list of language names to consider, together
+with the charset name to which they will be displayed in the
+destination software.
 
 po/messages.pot and the various po/xx.po are po-files, described below.
 
 
-Format of po-file
-=================
+Format of po-files
+==================
 
 the po-file contains free comments (blocks of lines beginning with #),
-and entries. each entry has
+and entries. Each entry has
 - optional free comment lines, beginning with '# ' (sharp, space)
 - optional special comments, beginning with #, and whose second
   character is not a space
@@ -151,6 +152,34 @@ several "..." strings concatenated. Example:
   "ist: %s\n"
 
 
+Administrative entry
+====================
+
+The first entry in a po-file is the administrative entry.
+Its msgid is the empty string, and its msgstr contains
+lines in the form "Keyword: value\n". This is an example
+from the Czech GNU gettext po-file:
+
+  msgid ""
+  msgstr ""
+  "Project-Id-Version: GNU gettext 0.10.38\n"
+  "POT-Creation-Date: 2001-05-23 23:03+0200\n"
+  "PO-Revision-Date: 2001-08-18 15:22+0200\n"
+  "Last-Translator: Vladimir Michl <Vladimir.Michl@seznam.cz>\n"
+  "Language-Team: Czech <cs@li.org>\n"
+  "MIME-Version: 1.0\n"
+  "Content-Type: text/plain; charset=ISO-8859-2\n"
+  "Content-Transfer-Encoding: 8bit\n"
+
+The eight lines shown here are mandatory, in this order.
+Bug uses the charset given in "Content-Type". 
+The "POT-Creation-Date" field is set in po/messages.pot when 
+doing 'bug xgettext', and copied from po/messages.pot into the 
+po files when doing 'bug update'.
+the "PO-Revision-Date" field is set in po files when doing 
+'bug update'.
+
+
 Details
 =======
 
@@ -163,9 +192,26 @@ updating po-files will
 - comment out entries not found in messages.pot
 - add entries found in messages.pot, but missing from the 
   previous po-file
+- create an administrative entry if there is none
+- update the date fields of the administrative entry.
 The po-files are parsed entirely in memory, then written
 back to files. Any special string formatting will be lost.
 
+
+Hints
+=====
+
+GNU Emacs has a po mode that tend to annoy some people (including 
+myself). To prevent GNU Emacs from opening your po-file in po mode,
+put this text in your po-file's first line:
+
+  # -*-C-*-
+
+if your po-file in in ISO latin1 encoding, or a line like
+
+  # -*- mode: C; coding: iso-latin-2; -*-
+
+if your po-file is in another encoding (here, ISO latin 2).
 
 References
 ==========
@@ -173,6 +219,5 @@ References
 - the bug source code
 - the GNU gettext manual
 - GNU gettext tools
-
-
+- GNU recode, for the names of some charsets.
 
