@@ -49,6 +49,7 @@
         .xdef   _CONTRL         // address of CONTRL array
         .xdef   _v_planes       // number of video planes
         .xdef   _v_lin_wr       // number of bytes in a scan line
+        .xdef   _v_pl_dspl
         .xdef   _v_bas_ad       // base address of video planes
         .xdef   _DEV_TAB        // address of device table
         .xdef   _MOUSE_BT       // mouse button state
@@ -478,7 +479,7 @@ init:
         move.l  rtn_tab+04(pc,d7.w),a6  // get starting address of fetch routine
 #if !rbp
         move.w  _v_planes,d7            // get number of graphic planes
-        move.l  #v_pl_dspl,d3           // get # bytes between graphic planes
+        move.l  _v_pl_dspl,d3           // get # bytes between graphic planes
 #else
         move.w  _v_planes,d7            // get # of graphic planes
         move.w  d7,d3
@@ -765,7 +766,7 @@ cur_replace:
 #if !rbp
         subq.w  #1,d5                   // adjust plane count for loop
         movea.l a0,a5                   // save destination address
-        lea     v_pl_dspl,a3            // get # of bytes between gr. planes
+        move.l  _v_pl_dspl,a3           // get # of bytes between gr. planes
         move.w  d4,d2                   // save # of lines/plane
         btst.b  #F_SAVWID,save_stat     // word or longword transfer?
         bne.b   lw_1st_line             // for longword transfer

@@ -241,7 +241,7 @@ void linea_init(void)
 {
     WORD vmode;                 /* video mode */
 
-    vmode=(sshiftmod & 3);      /* Get video mode from hardware */
+    vmode = (sshiftmod & 3);      /* Get video mode from hardware */
 #if DBG_LINEA
     kprintf("vmode : %d\n", vmode);
 #endif
@@ -252,19 +252,21 @@ void linea_init(void)
         vmode=2;                /* Falcon should be handled special? */
     }
     if (has_videl) {
-        v_planes=get_videl_bpp();
-        v_hz_rez=get_videl_width();
-        v_vt_rez=get_videl_height();
+        v_planes = get_videl_bpp();
+        v_hz_rez = get_videl_width();
+        v_vt_rez = get_videl_height();
     }
     else {
-        v_planes=video_mode[vmode].planes;
-        v_hz_rez=video_mode[vmode].hz_rez;
-        v_vt_rez=video_mode[vmode].vt_rez;
+        v_planes = video_mode[vmode].planes;
+        v_hz_rez = video_mode[vmode].hz_rez;
+        v_vt_rez = video_mode[vmode].vt_rez;
     }
-    v_lin_wr=v_hz_rez*v_planes/8;
-    v_col_fg=video_mode[vmode].col_fg;
-    v_bytes_lin=v_lin_wr;       /* I think v_bytes_lin = v_lin_wr (joy) */
-    v_col_bg=0;
+    v_lin_wr = v_hz_rez*v_planes/8;     /* bytes per line */
+    v_pl_dspl = (long)v_hz_rez*(long)v_vt_rez/8;     /* bytes per plane */
+    v_bytes_lin = v_lin_wr;       /* I think v_bytes_lin = v_lin_wr (joy) */
+
+    v_col_fg = video_mode[vmode].col_fg;
+    v_col_bg = 0;
 
 #if DBG_LINEA
     kprintf("planes: %d\n", v_planes);

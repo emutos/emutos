@@ -22,6 +22,7 @@
         
         .globl  bit_blt
 
+	.xdef   _v_pl_dspl
 //
 //
 // title:
@@ -200,7 +201,7 @@ src_form:
         move.w  _v_planes,d0            // source form is screen
         move.w  _v_lin_wr,d4
 #if !vme10
-        move.l  #v_pl_dspl,S_NXPL(a6)   // set # bytes between source planes
+        move.l  _v_pl_dspl,S_NXPL(a6)   // set # bytes between source planes
 #endif
         bra     dst_form
 
@@ -229,7 +230,7 @@ dst_form:
         move.w  _v_planes,d1
         move.w  _v_lin_wr,d5
 #if !vme10
-        move.l  #v_pl_dspl,D_NXPL(a6)   // set # bytes between dest. planes
+        move.l  _v_pl_dspl,D_NXPL(a6)   // set # bytes between dest. planes
 #endif
         bra     compare
 

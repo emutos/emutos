@@ -245,6 +245,7 @@ _v_bytes_lin:   .ds.w   1       // -2   byte per screen line
                 .globl  _TEXT_FG
                 .globl  _scrtchp
                 .globl  _scrpt2
+                .globl  _v_pl_dspl
 
 // ==== Global GSX Variables =================================================
 
@@ -314,10 +315,12 @@ _scrtchp:       ds.l    1               // pointer to base of scratch buffer
 _scrpt2:        ds.w    1               // large buffer base offset
 
 // ==== Additional Atari specific things =====================================
-_TEXT_BG:        ds.w    1               // text foreground color
-_COPYTRAN:       ds.w    1               // Flag for Copy-raster-form (<>0 = Transparent)
-_FILL_ABORT:     ds.l    1               // Adress of Routine for Test of break of contour fill function
+_TEXT_BG:       ds.w    1               // text foreground color
+_COPYTRAN:      ds.w    1               // Flag for Copy-raster-form (<>0 = Transparent)
+_FILL_ABORT:    ds.l    1               // Adress of Routine for Test of break of contour fill function
 
+// ==== This stuff was added, it may be at a different address normally ======
+_v_pl_dspl:	ds.l    1
 
 
                 .end

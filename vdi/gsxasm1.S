@@ -73,6 +73,7 @@
         .xdef   _v_bas_ad
         .xdef   _v_planes
         .xdef   _v_lin_wr
+        .xdef   _v_pl_dspl
 
         .page
 /////////////////////////////////////////////////////////////////////////
@@ -655,7 +656,7 @@ _ABLINE:
         move.w  _v_planes,d3    // get number of planes - 1
         subq.w  #1,d3
         moveq.l #2,d6           // get offset to next word in a plane
-        movea.l #v_pl_dspl,a1   // get offset to next video plane
+        movea.l _v_pl_dspl,a1   // get offset to next video plane
 #endif
         move.w  _v_lin_wr,d7    // get offset to next scan in plane
         move.w  _X2,d5          // compute delta x
@@ -1629,7 +1630,7 @@ _HABLINE:
 #else
         move.w  _v_planes,d3    // get number of planes - 1
         subq.w  #1,d3
-        move.l  #v_pl_dspl,a3   // get offset to next video plane
+        move.l  _v_pl_dspl,a3   // get offset to next video plane
 #endif
         move.w  _X1,d0          // get starting x-coordinate (input to concat)
         move.w  d0,d4           // save it for later use

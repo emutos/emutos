@@ -56,6 +56,7 @@
         .xdef   _v_lin_wr       // # of bytes in a single scan line
         .xdef   _TEXT_FG        // foreground color for text
         .xdef   _v_planes       // # of video planes
+        .xdef   _v_pl_dspl      // # of bytes per video plane
 
 
 /////////////////////////////////////////////////////////////////////////
@@ -76,7 +77,6 @@
 //
 //      Constants for the Conditional Assembly of Code
 //
-#define v_pl_dspl              0x10000  // # of bytes between VME/10 video planes
 
 #define rev_vid                1        // for selecting reverse video style text
 
@@ -237,7 +237,7 @@ bit_clr:
 //      jsr     mon_mode(pc,d7.w)       // call the service routine
         lea     mon_mode(pc,d7.w),a5    // get address of service routine
         jsr     (a5)            // call it
-        adda.l  #v_pl_dspl,a2   // get starting address in next plane
+        adda.l  _v_pl_dspl,a2    // get starting address in next plane
         dbra    d0,mplan_lp     // loop until all planes drawn
 
 //

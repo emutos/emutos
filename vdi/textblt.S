@@ -44,6 +44,8 @@
         .globl  tddad
 #endif
 
+        .xdef   _v_pl_dspl
+
         .page
 /////////////////////////////////////////////////////////////////////////
 //  Text bit block transfer - TEXTBLT                                   //
@@ -1443,7 +1445,7 @@ next_plane:
 #if vme10
         addq.l  #2,a1                   // advance destination plane
 #else
-        adda.l  #v_pl_dspl,a1           // addr of next graphic plane
+        adda.l  _v_pl_dspl,a1           // addr of next graphic plane
 #endif
         move.l  a1,dform(a6)            // save dest. starting address
         btst.b  #SKEW,STYLE+1(a6)       // only skew screws up other planes

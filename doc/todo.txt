@@ -5,7 +5,6 @@ BIOS/XBIOS/BDOS
 - check that RAM disks work (an easy way to test bdos under STonX)
 - implement flopvbl (deselect idle drive), other TODOs in floppy.c
 - VDI: code cleanup, Makefile, esclisa and gsxvars like in EmuTOS
-- Go on with implementing mouse driver
 - auto programs are not run after reset
 - use extended argv specification in EmuCON
 - check that VEC_TIMER (vector number 0x100) is called by bios every 50th sec

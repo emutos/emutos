@@ -19,17 +19,13 @@
  */
 
 #define rbp             0       /* assemble for Atari ST (0=yes, 1=no) */
-#define vme10           1       /* assemble for Motorola VME/10 (0=yes, 1=no) */
+#define vme10           0       /* assemble for Motorola VME/10 (0=yes, 1=no) */
 
 
 #define pattern         1       /* for selecting software which applies */
                                 /* a pattern to the source */
 
 #define handle 2                /* leave 2 for console input, change to 1 for auxin */
-
-
-#define v_pl_dspl       0x10000 /* # of bytes between VME10 video planes */
-
 
 #define rev_vid         1       /* for selecting reverse video transform */
 

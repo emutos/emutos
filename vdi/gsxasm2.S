@@ -130,7 +130,7 @@ _put_pix:       move.l  _PTSIN,a0       // fetch ptr to _PTSIN array.
                 adda.w  d1,a1           // base + offset.
 #else
                 adda.l  d1,a1           // base + offset.
-                lea.l   v_pl_dspl,a2    // # of bytes between video planes
+                move.l   _v_pl_dspl,a2  // # of bytes between video planes
                 moveq.l #1,d4           // init for faster rotate instruction
 #endif
                 add.w   d0,d0           // word indexing.
@@ -196,7 +196,7 @@ _get_pix:       move.l  _PTSIN, a0      // fetch ptr to _PTSIN array.
                 adda.w  d1, a0          // base + offset.
 #else
                 adda.l  d1,a0           // base + offset.
-                lea.l   v_pl_dspl,a2    // # of bytes between video planes
+                move.l   _v_pl_dspl,a2  // # of bytes between video planes
 #endif
                 add.w   d0, d0          // word indexing.
                 lea     ortbl, a1
@@ -263,7 +263,7 @@ _fill_line:
 #else
                 move.w  _v_planes,d3    // d3 := xinc. (# of planes)
                 subq.w  #1,d3           // d3 := (# of planes) -1.
-                lea.l   v_pl_dspl,a3    // # of bytes between video planes
+                move.l  _v_pl_dspl,a3   // # of bytes between video planes
 #endif
                 move.w  4(sp),d0        // fetch xleft. (input to concat)
                 move.w  d0,d4           // save for later.
@@ -347,7 +347,7 @@ _end_pts:       move.w  6(sp),d1        // fetch y coordinate. (input to concat)
 #else
                 move.w  _v_planes,d3    // d3 := # of planes
                 subq.w  #1,d3           // d3 := (# of planes) -1.
-                lea.l   v_pl_dspl,a3    // # of bytes between video planes
+                move.l  _v_pl_dspl,a3   // # of bytes between video planes
 #endif
                 move.w  4(sp),d0        // fetch x coordinate. (input to concat)
                 move.w  d0,d7           // save for finding right endpoints
@@ -694,7 +694,7 @@ BOX_FILL:       move.l  a6,-(sp)        // save C frame pointer
 #else
                 move.w  _v_planes,d3    // d3 := # of video planes.
                 subq.w  #1,d3           // d3 := (# of planes) -1.
-                lea.l   v_pl_dspl,a3    // # of bytes between video planes.
+                move.l  _v_pl_dspl,a3    // # of bytes between video planes.
 #endif
                 move.w  _X1,d0          // fetch X1. (input to concat)
                 move.w  d0,d4           // save for later.
