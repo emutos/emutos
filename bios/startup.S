@@ -541,6 +541,11 @@ _ara_DMAread:
         dc.w 0x7136
         rts
 
+        .global _ara_XHDI
+_ara_XHDI:
+        dc.w 0x7137
+        rts
+
         
 
 // ==== Use cartridge, if present ============================================

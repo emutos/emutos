@@ -27,12 +27,11 @@
  * Global variables
  */
 
-BLKDEV blkdev[BLKDEVNUM];     /* enough for now? */
+BLKDEV blkdev[BLKDEVNUM];
+int blkdevnum;
 UNIT devices[UNITSNUM];
 
 static BYTE diskbuf[2*512];      /* buffer for 2 sectors */
-
-void disk_init(void);
 
 /*
  * blkdevs_init - BIOS block drive initialization
@@ -46,7 +45,7 @@ void blkdev_init(void)
     /* set the block buffer pointer to reserved memory */
     dskbufp = &diskbuf;
 #if DBG_BLKDEV
-    kprintf("diskbuf = %08lx\n", dskbufp);
+    kprintf("diskbuf = %08lx\n", (long)dskbufp);
 #endif
 
     /* setup booting related vectors */
@@ -61,9 +60,6 @@ void blkdev_init(void)
     /* floppy initialisation */
     floppy_init();
 
-    /* harddisk initialisation */
-    disk_init();
-
     /* setting drvbits */
     blkdev_hdv_init();
 }
@@ -72,14 +68,45 @@ void blkdev_init(void)
 /*
  * disk_init
  *
+ * Rescans all interfaces and adds all found partitions to blkdev and drvbits
+ *
  */
 
 void disk_init(void)
 {
-    devices[20+2].valid = 1;
-    devices[20+2].pssize = 512;
-    devices[20+2].size = 3000000;
-    atari_partition(20);
+        /* scan disk targets in the following order */
+    int targets[] = {16, 18, 17, 19, 20, 22, 21, 23,    /* IDE primary/secondary */
+                     8, 9, 10, 11, 12, 13, 14, 15,      /* SCSI */
+                     0, 1, 2, 3, 4, 5, 6, 7};           /* ACSI */
+    int i;
+
+    /* reset partitions - preserve just floppies */
+    blkdevnum = 2;
+    drvbits &= 0x03;
+
+    /* scan for attached harddrives and their partitions */
+    for(i = 0; i < (sizeof(targets) / sizeof(targets[0])); i++) {
+        ULONG blocksize;
+        ULONG blocks;
+        int major = targets[i];
+        int minor = 0;
+        int xbiosdev = major + 2;
+
+        if (! XHInqTarget(major, minor, &blocksize, NULL, NULL)) {
+            devices[xbiosdev].valid = 1;
+            devices[xbiosdev].pssize = blocksize;
+
+            if (! XHGetCapacity(major, minor, &blocks, NULL))
+                devices[xbiosdev].size = blocks;
+            else
+                devices[xbiosdev].size = 0;
+
+            /* scan for ATARI partitions on this harddrive */
+            atari_partition(major);
+        }
+        else
+            devices[xbiosdev].valid = 0;
+    }
 }
 
 /*
@@ -91,6 +118,8 @@ void blkdev_hdv_init(void)
 {
     /* call the real */
     flop_hdv_init();
+
+    disk_init();
 }
 
 
@@ -113,24 +142,35 @@ LONG blkdev_hdv_boot(void)
 /*
  * Add a partitions details to the devices partition description.
  */
-void add_partition(int dev, int minor, char id[], ULONG start, ULONG size)
+int add_partition(int dev, char id[], ULONG start, ULONG size)
 {
-    minor += 2; /* remove this when you remove floppy from blkdev */
-    blkdev[minor].id[0] = id[0];
-    blkdev[minor].id[1] = id[1];
-    blkdev[minor].id[2] = id[2];
-    blkdev[minor].id[3] = '\0';
-    blkdev[minor].start = start;
-    blkdev[minor].size   = size;
+    if (blkdevnum == BLKDEVNUM) {
+        kprintf("Maximum number of partitions reached!\n");
+        return -1;
+    }
+#if DBG_BLKDEV
+    kprintf(" %c=%c%c%c, start=%ld, size=%ld\n", 'A'+blkdevnum, id[0],
+                                                id[1], id[2], start, size);
+#endif
 
-    blkdev[minor].unit   = dev + 2;
-    blkdev[minor].valid   = 1;
+    blkdev[blkdevnum].id[0] = id[0];
+    blkdev[blkdevnum].id[1] = id[1];
+    blkdev[blkdevnum].id[2] = id[2];
+    blkdev[blkdevnum].id[3] = '\0';
+    blkdev[blkdevnum].start = start;
+    blkdev[blkdevnum].size  = size;
 
-    if (strcmp(blkdev[minor].id, "GEM") == 0
-        || strcmp(blkdev[minor].id, "BGM") == 0)
-        drvbits |= (1 << minor);  /* for now make just GEM/BGM partitions accessible */
+    blkdev[blkdevnum].unit  = dev + 2;
+    blkdev[blkdevnum].valid = 1;
 
-    kprintf(" %c=%c%c%c", 'A'+minor, id[0], id[1], id[2]);
+    /* make just GEM/BGM partitions visible to applications */
+    if (strcmp(blkdev[blkdevnum].id, "GEM") == 0
+        || strcmp(blkdev[blkdevnum].id, "BGM") == 0)
+        drvbits |= (1 << blkdevnum);
+
+    blkdevnum++;
+
+    return 0;
 }
 
 
@@ -165,10 +205,9 @@ LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG lrecnr
         lrecnr *= sectors;
 
         /* check if the count does fit to this partition */
-#if 0   /* requires the size of partition which is unknown for a floppy */
-        if ((lrecnr < 0) || ((lrecnr + lcount) >= blkdev[dev].size))
+        if ((lrecnr < 0) || (blkdev[dev].size > 0
+                             && (lrecnr + lcount) >= blkdev[dev].size))
             return ESECNF;  /* sector not found */
-#endif
 
         /* convert partition offset to absolute offset on a unit */
         lrecnr += blkdev[dev].start;
@@ -181,14 +220,13 @@ LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG lrecnr
 #endif
     }
     else {
-        if ((unit < 0) || unit >= UNITSNUM || !devices[unit].valid)
+        if (unit < 0 || unit >= UNITSNUM || !devices[unit].valid)
             return EUNDEV;  /* unknown device */
 
         /* check if the start & count values are valid for this device */
-#if 0   /* requires the size of disk device which is unknown for a floppy */
-        if ((lrecnr < 0) || ((lrecnr + lcount) >= devices[unit].size))   
+        if ((lrecnr < 0) || (devices[unit].size > 0
+                             && (lrecnr + lcount) >= devices[unit].size))
             return ESECNF;  /* sector not found */
-#endif
     }
 
     if (rw & RW_NORETRIES)

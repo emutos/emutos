@@ -173,6 +173,16 @@ void initinfo()
     pair_end();
     pair_start(_("Screen start")); cprintf("0x%lx", (long)v_bas_ad);
     pair_end();
+    pair_start(_("GEMDOS drives"));
+    {
+        int i;
+        int mask;
+        for(i=0, mask=1; i<26; i++, mask <<=1) {
+            if (drvbits & mask)
+                cprintf("%c", 'A'+i);
+        }
+    }
+    pair_end();
     pair_start(_("Boot drive")); cprintf("%c:", bootdev+65); pair_end();
     pair_start(_("Current time")); cprint_asctime(); pair_end();
 

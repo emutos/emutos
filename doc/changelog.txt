@@ -611,3 +611,5 @@ Start... early ages
 
 27. Jan. 2002
 - changed kcprintf() calls in panic() to vkcprintf for good CR/LF (MAD)
+- drive and partition scanning finished (joy)
+- initinfo shows the available gemdos logical drives (joy)

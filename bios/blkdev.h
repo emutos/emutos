@@ -24,8 +24,8 @@
 
 #define RWABS_RETRIES   1   /* on real machine might want to increase this */
 
-#define BLKDEVNUM   32  /* A: .. Z:, 1:..6: */
-#define UNITSNUM    23  /* 2xFDC, 8xACSI, 8xSCSI, 4xIDE, 1xARAnyM */
+#define BLKDEVNUM   32          /* A: .. Z:, 1:..6: */
+#define UNITSNUM    (2+24)  /* 2xFDC + 8xACSI + 8xSCSI + 8xIDE */
 
 struct bs {
   /*   0 */  UBYTE bra[2];
@@ -114,7 +114,7 @@ UWORD compute_cksum(LONG buf);
 LONG blkdev_drvmap(void);
 LONG blkdev_avail(WORD dev);
 
-void add_partition(int dev, int minor, char id[], ULONG start, ULONG size);
+int add_partition(int dev, char id[], ULONG start, ULONG size);
 
 
 /*
@@ -140,7 +140,7 @@ void add_partition(int dev, int minor, char id[], ULONG start, ULONG size);
 
 struct _blkdev
 {
-    UWORD       major;          /* XHDI */
+//    UWORD       major;          /* XHDI */
 //    UWORD     minor;          /* XHDI */
 //    UWORD     mode;           /* some flags */
 
@@ -153,10 +153,10 @@ struct _blkdev
     ULONG       size;           /* physical sectors */
 
     UWORD       valid;          /* device valid */
-        BPB     bpb;
-        GEOMETRY    geometry;   /* this should probably belong to devices */
-    BYTE    serial[3];  /* the serial number taken from the bootsector */
-        int             unit;           /* 0,1 = floppies, 2-9 = ACSI, 10-17 = SCSI, 18-21 = IDE */
+    BPB         bpb;
+    GEOMETRY    geometry;       /* this should probably belong to devices */
+    BYTE        serial[3];      /* the serial number taken from the bootsector */
+    int         unit;           /* 0,1 = floppies, 2-9 = ACSI, 10-17 = SCSI, 18-25 = IDE */
 };
 typedef struct _blkdev  BLKDEV;
 
@@ -164,8 +164,8 @@ typedef struct _blkdev  BLKDEV;
 struct _unit
 {
     int     valid;      /* unit valid */
-    ULONG       size;           /* number of physical sectors */
-    ULONG       pssize;         /* physical sector size */
+    ULONG   size;           /* number of physical sectors */
+    ULONG   pssize;         /* physical sector size */
     LONG    last_access;/* used in mediach only */
 };
 typedef struct _unit UNIT;

@@ -211,14 +211,14 @@ static void flopini(WORD dev)
     /* init blkdev and device with default parameters */
     blkdev[dev].valid = 1;
     blkdev[dev].start = 0;
-    blkdev[dev].size = 720;
-    blkdev[dev].geometry.sides = 2;             /* default geometry of 3.5" DD */
+    blkdev[dev].size = 0;           /* unknown size */
+    blkdev[dev].geometry.sides = 2; /* default geometry of 3.5" DD */
     blkdev[dev].geometry.spt = 9;
     blkdev[dev].unit = 0;
     devices[dev].valid = 1;
     devices[dev].pssize = 512;
-    devices[dev].size = 720;
-    devices[dev].last_access = 0;       /* never */
+    devices[dev].size = 0;          /* unknown size */
+    devices[dev].last_access = 0;   /* never accessed */
 
   } else {
   }
