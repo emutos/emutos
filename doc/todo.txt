@@ -11,7 +11,6 @@
 - check that VEC_CRITICALERR (0x101) is called when the BIOS encounters errors
 - should hitting control-c terminate the current process? if so, how?
 - is it really necessary to have both NULLPTR and NULPTR defined?
-- handle .PRG flag bits. Pexec should clear the BSS or the HEAP depending.
 - move mem-only routines out of proc.c into umem.c or iumem.c
-- Make cvsready should not alter the Makefile if it contains no deps
 - check that EmuCON understands 'exit' (useful in .BAT scripts)
+- EmuTOS prints in red in VIDEL

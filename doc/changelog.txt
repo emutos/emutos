@@ -595,3 +595,12 @@ Start... early ages
 25. Jan. 2002
 - Did put drvbit stuff into bios/blkdev.c (MAD)
 - cleaned up bios/bios.c a bit (MAD)
+
+26. Jan. 2002
+- make nodepend does not alter Makefile unnecessarily (faster CVS?) (LVL)
+- ramtos reloc address derived automatically (RAMTOS works again) (LVL)
+- bdos/pkgmld.c: PF_FASTLOAD implemented, deleted old implementation (LVL)
+- bdos/umem.c: has_ttram properly set in Maddalt() (LVL)
+- bdos/proc.c: deleted old Pexec implementation (LVL)
+- panic() prints on screen if linea is inited (LVL)
+- added new BDOS memory functions to doc/status.txt (LVL)

@@ -89,7 +89,7 @@ T tested and working on an emulator or real hardware
  T console
  X IKBD
  X MIDI
- X ascii 
+ T ascii 
 
 
 
@@ -194,6 +194,7 @@ T tested and working on an emulator or real hardware
  X 0x11 Cprnos
  X 0x12 Cauxis
  X 0x13 Cauxos
+ X 0x14 Maddalt
  X 0x19 Dgetdrv
  X 0x1a Fsetdta
  X 0x20 Super
@@ -218,13 +219,14 @@ T tested and working on an emulator or real hardware
  X 0x41 Fdelete
  X 0x42 Fseek
  X 0x43 Fattrib
+ X 0x44 Mxalloc
  X 0x45 Fdup
  X 0x46 Fforce
  X 0x47 Dgetpath
  X 0x48 Malloc
  X 0x49 Mfree
  X 0x4a Mshrink
- X 0x4b Pexec		(flag 6 not really handled)
+ X 0x4b Pexec
  X 0x4c Pterm
  X 0x4e Fsfirst
  X 0x4f Fsnext
