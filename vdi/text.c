@@ -29,19 +29,22 @@ extern WORD LITEMASK, SKEWMASK; /* special effects          */
 extern WORD WEIGHT;             /* special effects          */
 extern WORD R_OFF, L_OFF;       /* skew above and below baseline    */
 extern WORD TEXT_FG;
-extern WORD width, height;      /* extent of string set in dqt_extent   */
-extern WORD wordx, wordy;       /* add this to each space for interword */
-extern WORD rmword;             /* the number of pixels left over   */
-extern WORD rmwordx, rmwordy;   /* add this to use up remainder     */
-extern WORD charx, chary;       /* add this to each char for interchar  */
-extern WORD rmchar;             /* number of pixels left over       */
-extern WORD rmcharx, rmchary;   /* add this to use up remainder     */
 
 
 extern struct font_head fon6x6;         /* See bios/fntxxx.c */
 extern struct font_head fon8x8;         /* See bios/fntxxx.c */
 extern struct font_head fon8x16;        /* See bios/fntxxx.c */
 
+/* Global variables */
+WORD h_align;            /* Text horizontal alignment */
+WORD v_align;            /* Text vertical alignment */
+WORD width, height;      /* extent of string set in dqt_extent   */
+WORD wordx, wordy;       /* add this to each space for interword */
+WORD rmword;             /* the number of pixels left over   */
+WORD rmwordx, rmwordy;   /* add this to use up remainder     */
+WORD charx, chary;       /* add this to each char for interchar  */
+WORD rmchar;             /* number of pixels left over       */
+WORD rmcharx, rmchary;   /* add this to use up remainder     */
 
 
 /* Prototypes for this module */

@@ -22,32 +22,36 @@
 #define QSIZE 200
 #define QMAX QSIZE-1
 
-extern WORD seed_type;          /* indicates the type of fill   */
-extern WORD search_color;       /* the color of the border      */
-extern WORD Q[QSIZE];           /* storage for the seed points  */
-extern WORD Qbottom;            /* the bottom of the Q (zero)   */
-extern WORD Qtop;               /* points top seed +3           */
-extern WORD Qptr;               /* points to the active point   */
-extern WORD Qtmp;               /* */
-extern WORD Qhole;              /* an empty space in the Q      */
-extern WORD oldy;               /* the previous scan line       */
-extern WORD oldxleft;           /* left end of line at oldy     */
-extern WORD oldxright;          /* right end                    */
-extern WORD newxleft;           /* ends of line at oldy +       */
-extern WORD newxright;          /* the current direction    */
-extern WORD xleft;              /* temporary endpoints          */
-extern WORD xright;             /* */
-extern WORD direction;          /* is next scan line up or down */
-extern BOOLEAN notdone;         /* does seedpoint==search_color */
-extern BOOLEAN gotseed;         /* a seed was put in the Q      */
+
 
 extern WORD get_pix();
+
+/* Global variables */
+WORD seed_type;          /* indicates the type of fill   */
+WORD search_color;       /* the color of the border      */
+WORD Q[QSIZE];           /* storage for the seed points  */
+WORD Qbottom;            /* the bottom of the Q (zero)   */
+WORD Qtop;               /* points top seed +3           */
+WORD Qptr;               /* points to the active point   */
+WORD Qtmp;               /* */
+WORD Qhole;              /* an empty space in the Q      */
+WORD oldy;               /* the previous scan line       */
+WORD oldxleft;           /* left end of line at oldy     */
+WORD oldxright;          /* right end                    */
+WORD newxleft;           /* ends of line at oldy +       */
+WORD newxright;          /* the current direction    */
+WORD xleft;              /* temporary endpoints          */
+WORD xright;             /* */
+WORD direction;          /* is next scan line up or down */
+BOOLEAN notdone;         /* does seedpoint==search_color */
+BOOLEAN gotseed;         /* a seed was put in the Q      */
+
 
 static WORD plane_mask[4] = { 1, 3, 7, 15 };
 
 
 /* Prototypes local to this module */
-extern WORD get_seed(WORD xin, WORD yin, WORD * xleftout, WORD * xrightout);
+WORD get_seed(WORD xin, WORD yin, WORD * xleftout, WORD * xrightout);
 
 
 void d_contourfill()

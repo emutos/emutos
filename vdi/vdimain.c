@@ -144,7 +144,8 @@ extern UWORD v_bytes_lin;       // width of line in bytes
 
 
 
-BYTE in_proc;                   // flag, if we are still running
+BYTE in_proc;                   /* flag, if we are still running */
+WORD FLIP_Y;			/* True if magnitudes being returned */
 
 struct attribute virt_work;     /* attribute areas for workstations */
 WORD q_circle[MX_LN_WIDTH];     /* Holds the circle DDA */

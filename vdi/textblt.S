@@ -189,8 +189,7 @@
 /////////////////////////////////////////////////////////
 
         .globl  _deftxbuf       //base of scratch buffer
-        .globl  _scrtchp        //32-bit ptr to base of scratch buffer
-        .globl  _scrpt2         //16-bit offset to buffer partition
+        .globl  _scrtsiz
 
         .page
 /////////////////////////////////////////////////////////
@@ -324,26 +323,19 @@
 //               even offset respectively                               //
 /////////////////////////////////////////////////////////////////////////
 
-#if test2     // for testing use statically allocated char. buffer
 
-        .data
-//
-_deftxbu:
-        .ds.b   buf_siz
-//
-_scrtchp:
-        .dc.l   _deftxbu //char. buffer ptr (always points to base of scratch)
-//
-//   offset pointers, added to scratchp to form absolute buffer address
-//
-_scrpt2:
-        .dc.w   cel_siz         //large buffer base offset
-#endif
-#define _scrpt1 0
-//      .ds.w   0               //small buffer base offset 
-//
-        .page
-        
+
+	.bss
+_deftxbuf:
+	.ds.b   buf_siz 	// char. buffer
+
+	.data
+
+#define _scrpt1 0               // small buffer base offset 
+
+_scrtsiz:
+        .dc.w   cel_siz         // eat up some rom so value can be passed
+
         
         
 /////////////////////////////////////////////////////////////////////////
@@ -453,15 +445,7 @@ _scrpt2:
         .page
 
 
-#if !test2
-        .globl  _scrtsiz
-_scrtsiz:
-        .dc.w   cel_siz                 //eat up some rom so value can be passed
-#endif
 
-
-
-        .page
 /////////////////////////////////////////////////////////
 //  calculate DDA                                               //
 //                                                              //

@@ -14,7 +14,7 @@
 
 
         .globl  _COPY_RFM
-        .globl  _CLIP,_XMN_CLIP,_YMN_CLIP,_XMX_CLIP,_YMX_CLIP,_COPYTRAN,_patptr
+        .globl  _CLIP,_XMN_CLIP,_YMN_CLIP,_XMX_CLIP,_YMX_CLIP,_patptr
         .globl  _multifill
         
         .globl  bit_blt
@@ -25,7 +25,14 @@
         .xdef   _DEV_TAB,_MAP_COL
 
 
+        .bss
+        .even
+        
+        .globl  _COPYTRAN
+_COPYTRAN:      .ds.w   1
+        
 
+	.text
 //
 //
 // title:
@@ -472,4 +479,7 @@ bad_parameter:
         unlk    a6
         movem.l (sp)+,d2-d7/a2-a5
         rts
+        
+
+
         .end

@@ -70,7 +70,16 @@
         .xdef   _v_planes
         .xdef   _v_lin_wr
 
-        .page
+
+	.bss
+        .even
+                .globl  _fill_buffer
+_fill_buffer:   .ds.w   256             // must be 256 words or it will fail
+
+	.text
+
+
+
 /////////////////////////////////////////////////////////////////////////
 //                                                                      //
 //                      Local Constants                                 //

@@ -36,6 +36,9 @@ extern WORD scrtsiz;            /* Default offset to large text buffer */
 extern WORD scrpt2;             /* Offset to large text buffer */
 extern WORD *scrtchp;           /* Pointer to text scratch buffer */
 
+extern WORD h_align;            /* Text horizontal alignment */
+extern WORD v_align;            /* Text vertical alignment */
+
 extern WORD font_count;         /* Number of fonts in driver */
 
 extern struct font_head *cur_font;      /* Current font */
@@ -43,8 +46,6 @@ extern struct font_head *def_font;      /* Default font of open workstation */
 
 extern struct font_head *font_ring[];   /* Ring of available fonts */
 
-extern WORD h_align;            /* Text horizontal alignment */
-extern WORD v_align;            /* Text vertical alignment */
 extern WORD STYLE;              /* Requested text special effects */
 extern WORD DOUBLE;             /* True if current font scaled */
 extern WORD CHUP;               /* Text baseline vector */

@@ -965,3 +965,6 @@ Start... early ages
   the original GEM's DESKTOP.INF. Added automatic drive scanning when there
   is no such file, too. (THH)
 - aes/gemfmlib.c - Dialogs can now be left by pressing ENTER, too. (THH)
+
+29. Jul. 2002
+- vdi/gsxvars.S - removed. Variables are in their related source (MAD)
