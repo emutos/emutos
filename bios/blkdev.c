@@ -73,7 +73,7 @@ void blkdev_init(void)
  *
  */
 
-void disk_init(void)
+static void disk_init(void)
 {
         /* scan disk targets in the following order */
     int targets[] = {16, 18, 17, 19, 20, 22, 21, 23,    /* IDE primary/secondary */
@@ -134,10 +134,26 @@ LONG blkdev_hdv_boot(void)
     kprintf("drvbits = %08lx\n", drvbits);
 #endif
     /* boot eventually from a block device (floppy or harddisk) */
+
+    /* the actual boot device or better the order of several boot devices
+       should be configurable like for example in PC CMOS SETUP:
+       e.g. first CD-ROM, then IDE primary, then SCSI and floppy at last.
+       As we don't have such configuration yet there's a hardcoded order
+       for now: if C: exists use it as the boot device, otherwise boot from A:
+    */
+
+    if (blkdev_avail(2)) {  /* if drive C: is available */
+        bootdev = 2;        /* make it the boot drive */
+        return 0;           /* don't actually boot from the boot device
+    	                       as there is most probably a harddisk driver
+    	                       installed and that would require complete
+    	                       lowlevel IDE/ACSI/SCSI emulation. Luckily
+    	                       EmuTOS got its own internal hdd driver,
+    	                       so we don't need to execute the boot sector
+    	                       code and boot the drive at all! :-) */
+    }
+    bootdev = 0;            /* otherwise try to boot from floppy A: */
     return(flop_hdv_boot());
-#if DBG_BLKDEV
-    kprintf("drvbits = %08lx, bootdev = %d\n", drvbits, bootdev);
-#endif
 }
 
 /*
