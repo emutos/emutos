@@ -1,0 +1,23 @@
+This file documents the software, which runs on EmuTOS.
+
+Here is a quick list of supported software:
+(updated last 28. Nov. 2001)
+
+This is, what the first field of the following table means:
+
+ ?   - Not yet tested, but should run later
+ X   - Starting at least or running in any kind
+ T   - Tested and working on EmuTOS
+
+
+ System Software
+ ----------------------------------------------------------------------------
+
+ TOS Applications
+ ----------------------------------------------------------------------------
+
+ GEM Software (EmuTOS with MiNT, fVDI and XaAES)
+ ----------------------------------------------------------------------------
+
+--
+Your EmuTOS team
