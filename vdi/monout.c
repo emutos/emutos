@@ -2,8 +2,9 @@
  * monout.c - Graphical higher level output functions in C
  *
  * Copyright (c) 1999 Caldera, Inc. and Authors:
- *                    SCC
+ *               1999 Johan Klockars
  *               2002 The EmuTOS development team
+ *                    SCC
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -53,6 +54,24 @@ static WORD m_star[] = { 3, 2, 0, -3, 0, 3, 2, 3, 2, -3, -2, 2, 3, -2, -3, 2};
 static WORD m_square[] = { 1, 5, -4, -3, 4, -3, 4, 3, -4, 3, -4, -3 };
 static WORD m_cross[] = { 2, 2, -4, -3, 4, 3, 2, -4, 3, 4, -3 };
 static WORD m_dmnd[] = { 1, 5, -4, 0, 0, -3, 4, 0, 0, 3, -4, 0 };
+
+
+/*
+ * SMUL_DIV - signed integer multiply and divide
+ *
+ * smul_div (m1,m2,d1)
+ * 
+ * ( ( m1 * m2 ) / d1 ) + 1/2
+ *
+ * m1 = signed 16 bit integer
+ * m2 = unsigned 15 bit integer
+ * d1 = signed 16 bit integer
+ */
+
+int SMUL_DIV(m1,m2,d1)
+{
+    return (short)(((short)(m1)*(long)((short)(m2)))/(short)(d1));
+}
 
 
 
@@ -450,38 +469,30 @@ WORD clip_line()
 
 
 /*
- * pline - some function
+ * pline - draw a poly-line
  */
 
-void pline()
+void pline(void)
 {
-    WORD i, *old_pointer;
-    REG WORD *pointer;
+    short i, j;
 
-    LSTLIN = TRUE;
-    old_pointer = PTSIN;
-    for (i = (*(CONTRL + 1) - 1); i > 0; i--) {
+    j = 0;
+    LSTLIN = FALSE;
+    for(i = CONTRL[1] - 1; i > 0; i--) {
         if (i == 1)
-            LSTLIN = FALSE;
-
-        pointer = old_pointer;
-        X1 = *pointer++;
-        Y1 = *pointer++;
-        X2 = *pointer;
-        Y2 = *(pointer + 1);
-        old_pointer = pointer;
-        if (CLIP) {
-            if (clip_line())
-                ABLINE();
-        } else
+            LSTLIN = TRUE;
+        X1 = PTSIN[j++];
+        Y1 = PTSIN[j++];
+        X2 = PTSIN[j];
+        Y2 = PTSIN[j+1];
+        if (!CLIP || clip_line())
             ABLINE();
     }
 }
 
 
-
 /*
- * plygn - some function
+ * plygn - draw a filled polygone
  */
 
 void plygn()
@@ -987,7 +998,7 @@ void cir_dda()
 
 
 /*
- * wline -
+ * wline - draw a line with width >1
  */
 
 #define ABS(x) ((x) >= 0 ? (x) : -(x))
@@ -1429,9 +1440,8 @@ void arrow(WORD * xy, WORD inc)
     ptr1 = CONTRL;
     sav_contrl = *(ptr1 + 1);
 
-    /* Build a polygon to send to plygn.  Build into a local array first
-       since */
-    /* xy will probably be pointing to the PTSIN array. */
+    /* Build a polygon to send to plygn.  Build into a local array first */
+    /* since xy will probably be pointing to the PTSIN array. */
 
     *(ptr1 + 1) = 3;
     ptr1 = triangle;

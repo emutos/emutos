@@ -19,6 +19,7 @@
         .xdef _get_pix
         .xdef _ABLINE
         .xdef _HABLINE
+        .xdef _clcflit           // from vdi/gsxasm1.S
         .xdef _RECTFILL
         .xdef _text_blt
         .xdef _dis_cur
@@ -196,7 +197,7 @@ linea_vecs:
         dc.l    _ABLINE         /* _linea_3 */
         dc.l    _HABLINE        /* _linea_4 */
         dc.l    _RECTFILL       /* _linea_5 */
-        dc.l    _linea_6        /* _plygn?? */
+        dc.l    _linea_6        /* _clc_flit - does not work yet */
         dc.l    _linea_7        /* _bit_blt? */
         dc.l    _linea_8        /* _text_blt */
         dc.l    _dis_cur        /* _linea_9 */

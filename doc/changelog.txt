@@ -1028,4 +1028,6 @@ Start... early ages
 - vdi/gsxasm1.S - fixed bug in CLC_FLIT (no regs was saved) (MAD)
 - vdi/gsxasm1.S - also needed reg-save wrapper added for vec_len (MAD)
 
+17. Aug. 2002
+- vdi/monout.c - SMUL_DIV now in C (part. from fVDI) (MAD)
 

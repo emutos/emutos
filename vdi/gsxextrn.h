@@ -113,7 +113,6 @@ extern void v_clrwk(void);
 extern void vex_butv(), vex_motv(), vex_curv(), vex_timv();
 extern void chk_esc();
 extern void CLC_FLIT();
-extern WORD SMUL_DIV();
 
 /* Assembly Language Support Routines NEWLY ADDED */
 

@@ -21,7 +21,8 @@
  */
 
         .globl  _CLC_FLIT       // calculate fill intersections of vector list
-        .globl  _SMUL_DIV       // signed integer multiply and divide
+        .globl  _clc_flit       // draw a filled polygone (for linea)
+//        .globl  _SMUL_DIV       // signed integer multiply and divide
         .globl  _vec_len        // compute length of a vector
         .globl  _HABLINE        // draw a horizontal line
         .globl  _ABLINE         // draw a line (general purpose)
@@ -214,8 +215,10 @@ vl_out:
         movem.l (sp)+,d2-d4     // restore used registers
         rts
 
+
+
 /*
- * _CLC_FLIT                                                    
+ * _CLC_FLIT - draw a filled polygone
  *
  * This routine calculates the fill intersections for a list
  * of vectors.  The x-intersection of each vector with the
@@ -249,20 +252,20 @@ vl_out:
 _CLC_FLIT:
 	// A wrapper, so save the registers
         movem.l d2-d7/a2-a6,-(sp)
-        bsr.s   clc_flit
+        bsr.s   _clc_flit
         movem.l (sp)+,d2-d7/a2-a6
         rts
 
 //
 //      Initialize the pointers and counters.
 //
-clc_flit:
+_clc_flit:
         move.l  _CONTRL,a0      // fetch number of vectors.
         move.w  2(a0),d0
         subq.w  #1,d0           // minus 1 for dbra
-        move.l  _PTSIN,a0       // point to array of vertices.
-        lea     _fill_buffer,a1  // point to array of x-values.
-
+        move.l  _PTSIN,a0	// point to array of vertices.
+        lea     _fill_buffer,a1 // point to array of x-values.
+	move.w	#0,_fil_intersect       // reset counter
 //
 //      Determine if the current vector is horizontal.  If it is then
 //      ignore it.
@@ -365,7 +368,7 @@ sfi_cont:
 draw_lp:
         move.w  (a1)+,d1        // grab a pair of endpoints
         move.w  (a1)+,d2
-        addq.w  #1,d1           // adjust the endpoints
+	addq.w  #1,d1           // adjust the endpoints
         subq.w  #1,d2
         cmp.w   d1,d2           // is start still to left of end?
         blt     dr_lp1          // nope - nothing to draw
@@ -489,50 +492,6 @@ bs_noswap:
 bsl1_end:
         dbra    d1,bsl0_init    // one less value to sort next time
 bs_out:
-        rts
-
-
-
-/*
- * SMUL_DIV - signed integer multiply and divide
- *
- * smul_div (m1,m2,d1)
- * 
- * ( ( m1 * m2 ) / d1 ) + 1/2
- *
- * m1 = signed 16 bit integer
- * m2 = unsigned 15 bit integer
- * d1 = signed 16 bit integer
- */
-
-_SMUL_DIV:
-        movem.l d2-d3,-(sp)	// save registers
-        
-        moveq   #1,d1           // preload increment
-        move.w  8+6(sp),d0
-        muls    8+4(sp),d0      // m2 * m1
-        bpl     smd_1
-        neg     d1              // negate increment
-smd_1:
-        move.w  8+8(sp),d2
-        divs    d2,d0           // m2 * m1 / d1
-        and     d2,d2           // test if divisor is negative
-        bpl     smd_2
-        neg     d1              // negate increment
-        neg     d2              // make divisor positive
-smd_2:
-        move.l  d0,d3           // extract remainder
-        swap    d3
-        and     d3,d3           // test if remainder is negative
-        bpl     smd_3
-        neg     d3              // make remainder positive
-smd_3:
-        asl     #1,d3           // see if 2 * remainder is > divisor
-        cmp     d2,d3
-        blt     smd_4
-        add     d1,d0           // add increment
-smd_4:
-        movem.l  (sp)+,d2-d3 	// restore registers
         rts
 
 
