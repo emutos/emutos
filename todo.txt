@@ -5,11 +5,10 @@
 - pexec: loaded program's memory is not released after exit
 - Command.prg crashes, when commandline input is longer than line length
 - Scrolling is bad, if STonX uses some big color video resolutions  
-- implement mediach, and flopvbl (to deselect the drive when idle)
+- implement flopvbl (deselect idle drive), other TODOs in floppy.c
 - VDI: code cleanup, Makefile, esclisa and gsxvars like in EmuTOS
 - EmuTOS crashes, if it boots from some STeem generated floppy images
-- nvmaccess does not check the cksum
 - add clock driver for nvram clock
 -> are you sure? - Change char, int, long to BYTE, WORD, LONG
 - Go on with implementing mouse driver
-- BDOS still not working on a floppy
+- kpanic() and like should print on screen then use STOP opcode.

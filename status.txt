@@ -34,7 +34,28 @@ This is, what the first field of the following table means:
 X Fully implemented
 > Partially implemented
 ? status unknown
+t Fully implemented and partially tested
 T tested and working on an emulator or real hardware
+
+
+ Hardware initialisation
+ ----------------------------------------------------------------------------
+ > CPU setting (for CPU >= 68020, vbr, mmu, msp, isp, ... not inited)
+ > FPU (detected, is any initialisation needed?) 
+ T Memory controller
+ T DMA controller
+ t WD 1772 Floppy disk controller (write track not tested)
+ T MFP
+ T PSG
+ T ST shifter
+ t ACIAs, IKBD protocol (mouse not tested)
+ t MegaST Real-Time Clock  (set clock not tested)
+ > STE shifter
+ - Blitter
+ - Microwire
+ - DMA sound
+ > NVRAM (clock not implemented)
+
 
 
  BOOT sequence
@@ -43,7 +64,7 @@ T tested and working on an emulator or real hardware
  X execute reset routine
  X detect monitor type
  T detect graphics resolution
- T detect processor type, FPU type and hardware features
+ t detect processor type, FPU type and hardware features
  X setup a cookie jar with system cookies
    ...
  X init floppy drives
@@ -72,8 +93,8 @@ T tested and working on an emulator or real hardware
  - midierr
  - ikbderr
  X midi input
- X ikbd key events
- X IKBD clock
+ T ikbd key events
+ t IKBD clock           (set clock not tested)
  - mouse                (will be done as part of VDI)
  - joysticks            (is done by games - TOS does not have one)
 
@@ -90,7 +111,7 @@ T tested and working on an emulator or real hardware
  T 0x06 tickcal
  T 0x07 getbpb
  > 0x08 bcostat         (the function works for console only)
- X 0x09 mediach
+ > 0x09 mediach         (crude, floppy write-protect mode not monitored)
  X 0x0a drvmap		(the function works, but not the devices)
  X 0x0b kbshift
  X 0x11 date_time       (used by BDOS to get/set the date and time)
@@ -144,7 +165,7 @@ T tested and working on an emulator or real hardware
  - 0x2b DMAwrite
  - 0x2c Bconmap
 
- > 0x2e NVMaccess       (does not handle the cksum)
+ X 0x2e NVMaccess
 
  - 0x40 Blitmode
 
