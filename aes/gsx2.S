@@ -28,11 +28,12 @@
 .globl _i_lptr1
 .globl _m_lptr2
 
+        .text
+        
 _gsx2:
-LD628:
-            move.l  #_contrl,LEE5C
-            move.l  #LEE5C,D1
-            moveq   #0x73,D0
+            move.l  #_contrl,tmp_contrl
+            move.l  #tmp_contrl,d1
+            moveq   #0x73,d0
             trap    #2
             rts
 
@@ -48,50 +49,39 @@ LD628:
 ;
 ***************************************************************************
 */
+
+        
 _mul_div:
-LD63E:
-            link    A6,#0x00
-            move.w  0x0A(A6),D0
-            asl.w   #1,D0
-            muls    0x08(A6),D0
-            divs    0x0C(A6),D0
-            bmi     LD656
-            addq.w  #1,D0
-            bra     LD658
-LD656:
-            subq.w  #1,D0
-LD658:
-            asr.w   #1,D0
-            unlk    A6
-            rts
+        move.w  6(sp),d0
+        asl.w   #1,d0
+        muls    4(sp),d0
+        divs    8(sp),d0
+        bmi     mul_div_neg
+        addq.w  #1,d0
+        bra     mul_div_end
+mul_div_neg:
+        subq.w  #1,d0
+mul_div_end:    
+        asr.w   #1,d0
+        rts
+        
 
-
-_i_ptsin:
-LD678:
-            link    A6,#0x00
-            move.l  0x08(A6),LEE64
-            unlk    A6
-            rts
 _i_intin:
-LD688:
-            link    A6,#0x00
-            move.l  0x08(A6),LEE60
-            unlk    A6
-            rts
-_i_ptsout:
-LD698:
-            link    A6,#0x00
-            move.l  0x08(A6),LEE6C
-            unlk    A6
-            rts
+        move.l  4(sp),tmp_intin
+        rts
+_i_ptsin:
+        move.l  4(sp),tmp_ptsin
+        rts
 _i_intout:
-LD6A8:
-            link    A6,#0x00
-            move.l  0x08(A6),LEE68
-            unlk    A6
-            rts
+        move.l  4(sp),tmp_intout
+        rts
+_i_ptsout:
+        move.l  4(sp),tmp_ptsout
+        rts
+
 
 _i_ptr:
+_i_lptr1:
         move.l  4(sp),_contrl+14
         rts
 
@@ -99,31 +89,20 @@ _i_ptr2:
         move.l  4(sp),_contrl+18
         rts
 
-_i_lptr1:
-LD6D8:
-            link    A6,#0x00
-            move.l  0x08(A6),_contrl+14  /*L1332A*/
-            unlk    A6
-            rts
-
 _m_lptr2:
-LD6E8:
-            link    A6,#0x00
-            movea.l 0x08(A6),A0
-            move.l  _contrl+18,(A0)  /*L1332E*/
-            unlk    A6
-            rts
-
+        move.l  4(sp),a0
+        move.l  _contrl+18,(a0)
+        rts
 
 .bss
 
-LEE5C:
-            DS.B 4
-LEE60:
-            DS.B 4
-LEE64:
-            DS.B 4
-LEE68:
-            DS.B 4
-LEE6C:
-            DS.B 4
+tmp_contrl:
+        ds.l    1
+tmp_intin:
+        ds.l    1
+tmp_ptsin:
+        ds.l    1
+tmp_intout:
+        ds.l    1
+tmp_ptsout:
+        ds.l    1
