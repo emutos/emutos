@@ -410,7 +410,7 @@ VOID ikbd_reset(VOID)
 }
 
 /* Set mouse button action */
-VOID ikbd_mouse_button_action(int mode)
+VOID ikbd_mouse_button_action(WORD mode)
 {
     UBYTE cmd[2] = { 0x07, mode };
 
@@ -426,7 +426,7 @@ VOID ikbd_mouse_rel_pos(VOID)
 }
 
 /* Set absolute mouse position reporting */
-VOID ikbd_mouse_abs_pos(int xmax, int ymax)
+VOID ikbd_mouse_abs_pos(WORD xmax, WORD ymax)
 {
     BYTE cmd[5] = { 0x09, xmax>>8, xmax&0xFF, ymax>>8, ymax&0xFF };
 
@@ -434,7 +434,7 @@ VOID ikbd_mouse_abs_pos(int xmax, int ymax)
 }
 
 /* Set mouse keycode mode */
-VOID ikbd_mouse_kbd_mode(int dx, int dy)
+VOID ikbd_mouse_kbd_mode(WORD dx, WORD dy)
 {
     BYTE cmd[3] = { 0x0A, dx, dy };
 
@@ -442,7 +442,7 @@ VOID ikbd_mouse_kbd_mode(int dx, int dy)
 }
 
 /* Set mouse threshold */
-VOID ikbd_mouse_thresh(int x, int y)
+VOID ikbd_mouse_thresh(WORD x, WORD y)
 {
     BYTE cmd[3] = { 0x0B, x, y };
 
@@ -450,7 +450,7 @@ VOID ikbd_mouse_thresh(int x, int y)
 }
 
 /* Set mouse scale */
-VOID ikbd_mouse_scale(int x, int y)
+VOID ikbd_mouse_scale(WORD x, WORD y)
 {
     BYTE cmd[3] = { 0x0C, x, y };
 
@@ -458,7 +458,7 @@ VOID ikbd_mouse_scale(int x, int y)
 }
 
 /* Interrogate mouse position */
-VOID ikbd_mouse_pos_get(int *x, int *y)
+VOID ikbd_mouse_pos_get(WORD *x, WORD *y)
 {
     UBYTE cmd[1] = { 0x0D };
 
@@ -468,7 +468,7 @@ VOID ikbd_mouse_pos_get(int *x, int *y)
 }
 
 /* Load mouse position */
-VOID ikbd_mouse_pos_set(int x, int y)
+VOID ikbd_mouse_pos_set(WORD x, WORD y)
 {
     BYTE cmd[6] = { 0x0E, 0x00, x>>8, x&0xFF, y>>8, y&0xFF };
 
@@ -550,7 +550,7 @@ VOID ikbd_joystick_disable(VOID)
 }
 
 /* Time-of-day clock set */
-VOID ikbd_clock_set(int year, int month, int day, int hour, int minute, int second)
+VOID ikbd_clock_set(WORD year, WORD month, WORD day, WORD hour, WORD minute, WORD second)
 {
     BYTE cmd[7] = { 0x1B, year, month, day, hour, minute, second };
 
@@ -558,7 +558,7 @@ VOID ikbd_clock_set(int year, int month, int day, int hour, int minute, int seco
 }
 
 /* Interrogate time-of-day clock */
-VOID ikbd_clock_get(int *year, int *month, int *day, int *hour, int *minute, int second)
+VOID ikbd_clock_get(WORD *year, WORD *month, WORD *day, WORD *hour, WORD *minute, WORD second)
 {
     UBYTE cmd[1] = { 0x1C };
 
@@ -566,14 +566,14 @@ VOID ikbd_clock_get(int *year, int *month, int *day, int *hour, int *minute, int
 }
 
 /* Memory load */
-VOID ikbd_mem_write(int address, int size, BYTE *data)
+VOID ikbd_mem_write(WORD address, WORD size, BYTE *data)
 {
     kprintf("Attempt to write data into keyboard memory");
     while(1);
 }
 
 /* Memory read */
-VOID ikbd_mem_read(int address, BYTE data[6])
+VOID ikbd_mem_read(WORD address, BYTE data[6])
 {
     BYTE cmd[3] = { 0x21, address>>8, address&0xFF };
 
@@ -583,7 +583,7 @@ VOID ikbd_mem_read(int address, BYTE data[6])
 }
 
 /* Controller execute */
-VOID ikbd_exec(int address)
+VOID ikbd_exec(WORD address)
 {
     BYTE cmd[3] = { 0x22, address>>8, address&0xFF };
 
@@ -593,7 +593,7 @@ VOID ikbd_exec(int address)
 /* Status inquiries (0x87-0x9A) not yet implemented */
 
 /* Set the state of the caps lock led. */
-VOID atari_kbd_leds (unsigned int leds)
+VOID atari_kbd_leds (UWORD leds)
 {
     BYTE cmd[6] = {32, 0, 4, 1, 254 + ((leds & 4) != 0), 0};
 
@@ -628,5 +628,31 @@ VOID kbd_init(VOID)
     bioskeys();
 }
 
+
+
+/* mouse initialization */
+VOID mouse_init(WORD type, LONG param, VOID *vec)
+{
+#if IMPLEMENTED  /* This is not ready yet, sorry */
+    switch (type) {
+    case 0:
+        /* disable mouse */
+        ikbd_mouse_disable();
+        break;
+    case 1:
+        /* set relative mouse position reporting */
+        ikbd_mouse_rel_pos();
+        break;
+    case 2:
+        /* Set absolute mouse position reporting */
+        ikbd_mouse_abs_pos(v_hz_rez, v_vt_rez)
+            break;
+    case 4:
+        /* Set mouse keycode mode */
+        ikbd_mouse_kbd_mode(dx, dy)
+        break;
+    }
+#endif /* IMPLEMENTED */
+}
 
 

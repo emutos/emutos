@@ -59,8 +59,9 @@ VOID xbiosinit()
  * xbios_0 - (initmous) Initialize mouse packet handler
  */
 
-void xbios_0(WORD type, LONG param, LONG vec)
+VOID xbios_0(WORD type, LONG param, LONG vec)
 {
+    mouse_init(type, param, (VOID *)vec);
 #if DBG_XBIOS
     kprintf("XBIOS: Unimplemented function 0x00 ...\n");
 #endif
