@@ -1333,3 +1333,6 @@ Start... early ages
 - util/intmath.c - fixed bug in mul_div, circles work again (MAD)
 - po/de.po - updated (MAD)
 
+15. Feb. 2003
+- desk/deskapp.c - Icon masks are working now (THH).
+

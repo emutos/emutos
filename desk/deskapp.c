@@ -516,7 +516,8 @@ static WORD app_rdicon()
           }
           gsx_trans(dtmp, iwb, dtmp, iwb, ih);
         }
-#ifndef DESK1
+
+#if 0   /* The icon mask are wrong when this is enabled. - THH */
         for (i=0; i<last_icon; i++)
         {
           if ( i == IG_FOLDER )
@@ -531,7 +532,7 @@ static WORD app_rdicon()
                (i < (NUM_ANODES - 1)) )
             G.g_iblist[i].ib_pmask = G.g_iblist[ID_GENERIC].ib_pdata;
         }
-#endif /* DESK1 */
+#endif
 
 #endif /* TOS_VERSION >= 0x200 */
         return(TRUE);
