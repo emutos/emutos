@@ -185,7 +185,9 @@ void vsync(void)
 
     old_sr = set_sr(0x2300);    /* allow VBL interrupt */
     a = frclock;
+#if 0	/* disabled by joy - it was neverending loop */
     while (frclock == a)        /* TODO, we could use stop2300() later */
         ;
+#endif
     set_sr(old_sr);
 }
