@@ -442,7 +442,7 @@ void v_opnwk()
 
     ints_off();                         // disable interrupts
     tim_chain = (void(*)(int))          // save old vector
-        Setexc(0x100, (long)tick_int);	// set etv_timer to tick_int
+        Setexc(0x100, (long)tick_int);  // set etv_timer to tick_int
     ints_on();                          // enable interrupts
 
     vdimouse_init();                    // initialize mouse
@@ -468,7 +468,7 @@ void v_clswk()
 
     /* Now de-initialize the lower level things */
     ints_off();                         // disable interrupts
-    Setexc(0x100, (long)tim_chain);		// set etv_timer to tick_int
+    Setexc(0x100, (long)tim_chain);             // set etv_timer to tick_int
     ints_on();                          // enable interrupts
 
     vdimouse_exit();                    // initialize mouse

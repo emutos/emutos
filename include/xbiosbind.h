@@ -34,7 +34,7 @@ long Initmous(short type, long param, long vptr)
          movw    %1,sp@-;
          movw    #0x00,sp@-;
          trap    #14;
-         lea	sp@(6),sp "
+         lea    sp@(6),sp "
          : "=r"(retval)
          : "r"(_a), "r"(_b), "r"(_c)
          : "d0", "d1", "d2", "a0", "a1", "a2", "memory"
@@ -55,7 +55,7 @@ long Iorec(short dev)
          movw    %1,sp@-;
          movw    #0x0e,sp@-;
          trap    #14;
-         lea	sp@(4),sp "
+         lea    sp@(4),sp "
          : "=r"(retval)
          : "r"(_a)
          : "d0", "d1", "d2", "a0", "a1", "a2", "memory"
@@ -74,7 +74,7 @@ long Random()
         ("
          movw    #0x11,sp@-;
          trap    #14;
-         lea	sp@(2),sp "
+         lea    sp@(2),sp "
          : "=r"(retval)
          :
          : "d0", "d1", "d2", "a0", "a1", "a2", "memory"
@@ -95,7 +95,7 @@ long Settime(long time)
          movl    %1,sp@-;
          movw    #0x16,sp@-;
          trap    #14;
-         lea	sp@(6),sp "
+         lea    sp@(6),sp "
          : "=r"(retval)
          : "r"(_a)
          : "d0", "d1", "d2", "a0", "a1", "a2", "memory"
@@ -114,7 +114,7 @@ long Gettime()
         ("
          movw    #0x17,sp@-;
          trap    #14;
-         lea	sp@(2),sp "
+         lea    sp@(2),sp "
          : "=r"(retval)
          :
          : "d0", "d1", "d2", "a0", "a1", "a2", "memory"
@@ -133,7 +133,7 @@ long Kbdvbase()
         ("
          movw    #0x22,sp@-;
          trap    #14;
-         lea	sp@(2),sp "
+         lea    sp@(2),sp "
          : "=r"(retval)
          :
          : "d0", "d1", "d2", "a0", "a1", "a2", "memory"
@@ -154,7 +154,7 @@ long Supexec(long ptr)
          movl    %1,sp@-;
          movw    #0x26,sp@-;
          trap    #14;
-         lea	sp@(6),sp "
+         lea    sp@(6),sp "
          : "=r"(retval)
          : "r"(_a)
          : "d0", "d1", "d2", "a0", "a1", "a2", "memory"
@@ -175,7 +175,7 @@ long Bconmap(short dev)
          movw    %1,sp@-;
          movw    #0x2c,sp@-;
          trap    #14;
-         lea	sp@(4),sp "
+         lea    sp@(4),sp "
          : "=r"(retval)
          : "r"(_a)
          : "d0", "d1", "d2", "a0", "a1", "a2", "memory"

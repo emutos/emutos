@@ -1915,11 +1915,11 @@ void hzline_rep(UWORD *addr, int dx, int leftpart, UWORD rightmask, UWORD leftma
             UWORD bits;
             /* Draw the left fringe */
             if (leftmask) {
-                bits = *adr;		/* get data from screen address */
-                bits ^= pattern;	/* xor the pattern with the source */
-                bits &= leftmask;	/* isolate the bits outside the fringe */
-                bits ^= pattern;	/* restore the bits outside the fringe */
-                *adr = bits;		/* write back the result */
+                bits = *adr;            /* get data from screen address */
+                bits ^= pattern;        /* xor the pattern with the source */
+                bits &= leftmask;       /* isolate the bits outside the fringe */
+                bits ^= pattern;        /* restore the bits outside the fringe */
+                *adr = bits;            /* write back the result */
 
                 adr += planes;;
                 pixels -= 16;
@@ -2180,7 +2180,7 @@ void hzline_nor(UWORD *addr, int dx, int leftpart, UWORD rightmask, UWORD leftma
     WORD *color;
     int planes;
     int plane;
-    int patadd;			/* advance for multiplane patterns */
+    int patadd;                 /* advance for multiplane patterns */
 
     /* init adress counter */
     planes = v_planes;
@@ -2190,7 +2190,7 @@ void hzline_nor(UWORD *addr, int dx, int leftpart, UWORD rightmask, UWORD leftma
     for (plane = v_planes-1; plane >= 0; plane-- ) {
         UWORD *adr;
         UWORD pattern;
-        int pixels;		/* counting down the rest of dx */
+        int pixels;             /* counting down the rest of dx */
         int bw;
 
         /* load values fresh for this bitplane */

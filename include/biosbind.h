@@ -32,7 +32,7 @@ static inline void Getmpb(long ptr)
          movl    %1,sp@-;
          movw    #0,sp@-;
          trap    #13;
-         lea	sp@(6),sp "
+         lea    sp@(6),sp "
          : "=r"(retval)
          : "r"(_a)
          : "d0", "d1", "d2", "a0", "a1", "a2", "memory"
@@ -51,7 +51,7 @@ static inline short Bconstat(short dev)
          movw    %1,sp@-;
          movw    #1,sp@-;
          trap    #13;
-         lea	sp@(4),sp "
+         lea    sp@(4),sp "
          : "=r"(retval)
          : "r"(_a)
          : "d0", "d1", "d2", "a0", "a1", "a2", "memory"
@@ -68,10 +68,10 @@ static inline long Bconin(short dev)
 
     __asm__ __volatile__
         ("
-         movw	%1,sp@-;
-         movw	#2,sp@-;
-         trap	#13;
-         lea	sp@(4),sp "
+         movw   %1,sp@-;
+         movw   #2,sp@-;
+         trap   #13;
+         lea    sp@(4),sp "
          : "=r"(retval)
          : "r"(_a)
          : "d0", "d1", "d2", "a0", "a1", "a2", "memory"
@@ -89,11 +89,11 @@ static inline long Bconout(short dev, short c)
 
     __asm__ __volatile__
         ("
-         movw	%2,sp@-;
-         movw	%1,sp@-;
-         movw	#3,sp@-;
-         trap	#13;
-         lea	sp@(6),sp "
+         movw   %2,sp@-;
+         movw   %1,sp@-;
+         movw   #3,sp@-;
+         trap   #13;
+         lea    sp@(6),sp "
          : "=r"(retval)
          : "r"(_a), "r"(_b)
          : "d0", "d1", "d2", "a0", "a1", "a2", "memory"
@@ -115,14 +115,14 @@ static inline long Rwabs(short rwflag, long buf, short count,
 
     __asm__ __volatile__
         ("
-         movw	%5,sp@-;
-         movw	%4,sp@-;
-         movw	%3,sp@-;
-         movl	%2,sp@-;
-         movw	%1,sp@-;
-         movw	#4,sp@-;
-         trap	#13;
-         lea	sp@(14),sp "
+         movw   %5,sp@-;
+         movw   %4,sp@-;
+         movw   %3,sp@-;
+         movl   %2,sp@-;
+         movw   %1,sp@-;
+         movw   #4,sp@-;
+         trap   #13;
+         lea    sp@(14),sp "
          : "=r"(retval)
          : "r"(_a),"r"(_b),"r"(_c),"r"(_d),"r"(_e)
          : "d0", "d1", "d2", "a0", "a1", "a2", "memory"
@@ -144,7 +144,7 @@ static inline long Setexc(short vecnum, long vec )
          movw    %1,sp@-;
          movw    #5,sp@-;
          trap    #13;
-         lea	sp@(8),sp "
+         lea    sp@(8),sp "
          : "=r"(retval)
          : "r"(_a), "r"(_b)
          : "d0", "d1", "d2", "a0", "a1", "a2", "memory"
@@ -162,7 +162,7 @@ static inline long Tickcal()
         ("
          movw    #6,sp@-;
          trap    #13;
-         lea	sp@(2),sp "
+         lea    sp@(2),sp "
          : "=r"(retval)
          :
          : "d0", "d1", "d2", "a0", "a1", "a2", "memory"
@@ -179,10 +179,10 @@ static inline void * Getbpb(WORD dev)
 
     __asm__ __volatile__
         ("
-         movw	%1,sp@-;
-         movw	#7,sp@-;
-         trap	#13;
-         lea	sp@(4),sp "
+         movw   %1,sp@-;
+         movw   #7,sp@-;
+         trap   #13;
+         lea    sp@(4),sp "
          : "=r"(retval)
          : "r"(_a)
          : "d0", "d1", "d2", "a0", "a1", "a2", "memory"
@@ -202,7 +202,7 @@ static inline short Bcostat(short dev)
          movw    %1,sp@-;
          movw    #8,sp@-;
          trap    #13;
-         lea	sp@(4),sp "
+         lea    sp@(4),sp "
          : "=r"(retval)
          : "r"(_a)
          : "d0", "d1", "d2", "a0", "a1", "a2", "memory"
@@ -222,7 +222,7 @@ static inline short Mediach(short dev)
          movw    %1,sp@-;
          movw    #9,sp@-;
          trap    #13;
-         lea	sp@(4),sp "
+         lea    sp@(4),sp "
          : "=r"(retval)
          : "r"(_a)
          : "d0", "d1", "d2", "a0", "a1", "a2", "memory"
@@ -240,7 +240,7 @@ static inline long Drvmap()
         ("
          movw    #10,sp@-;
          trap    #13;
-         lea	sp@(2),sp "
+         lea    sp@(2),sp "
          : "=r"(retval)
          :
          : "d0", "d1", "d2", "a0", "a1", "a2", "memory"
@@ -260,7 +260,7 @@ static inline long Kbshift(short mode)
          movw    %1,sp@-;
          movw    #11,sp@-;
          trap    #13;
-         lea	sp@(4),sp "
+         lea    sp@(4),sp "
          : "=r"(retval)
          : "r"(_a)
          : "d0", "d1", "d2", "a0", "a1", "a2", "memory"
@@ -279,7 +279,7 @@ static inline long Getshift()
          movw    #-1,sp@-;
          movw    #11,sp@-;
          trap    #13;
-         lea	sp@(4),sp "
+         lea    sp@(4),sp "
          : "=r"(retval)
          :
          : "d0", "d1", "d2", "a0", "a1", "a2", "memory"
