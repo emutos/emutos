@@ -1,5 +1,5 @@
 /*
- * vectors.h - declarations for processor type check
+ * vectors.h - exception vectors, interrupt routines and system hooks
  *
  * Copyright (c) 2001 EmuTOS development team.
  *
@@ -30,6 +30,7 @@ extern void init_acia_vecs(void);
 extern void int_hbl(void);
 extern void int_vbl(void);
 extern void int_linea(void);
+extern void int_timerc(void);
 
 extern void gemtrap(void);
 extern void biostrap(void);
@@ -76,6 +77,13 @@ typedef void (*PFVOID)();
 #define VEC_BIOS    (*(PFVOID*)0xb4)    /* BIOS interrupt vector */
 #define VEC_XBIOS   (*(PFVOID*)0xb8)    /* XBIOS interrupt vector */
 #define VEC_ACIA   (*(PFVOID*)0x118)    /* keyboard/Midi interrupt vector */
+
+/* protect d2/a2 when calling external user-supplied code */
+
+LONG protect_v(LONG (*func)(void));
+LONG protect_w(LONG (*func)(WORD), WORD);
+LONG protect_ww(LONG (*func)(), WORD, WORD);
+LONG protect_wlwwwl(LONG (*func)(), WORD, LONG, WORD, WORD, WORD, LONG);
 
 #endif /* VECTORS_H */
   

@@ -215,7 +215,7 @@ WORD kbrate(WORD initial, WORD repeat)
 
 void kb_timerc_int(void)
 {
-    if(conterm & 2 == 0) return;
+    if((conterm & 2) == 0) return;
     if(kb_ticks <= 0) return;
     if(-- kb_ticks <= 0) {
         push_ikbdiorec(kb_last_key);
@@ -307,9 +307,10 @@ void kbd_int(WORD scancode)
         shifty |= MODE_ALT;     /* set bit */
         return;
     case KEY_CAPS:
+        if (conterm & 1) {
+            keyclick(KEY_CAPS);
+        }
         shifty ^= MODE_CAPS;    /* toggle bit */
-        if (conterm & 1)
-            keyclick();
         return;
     }
     
@@ -372,7 +373,7 @@ void kbd_int(WORD scancode)
 
   push_value:
     if (conterm & 1)
-        keyclick();
+        keyclick(scancode);
     value = ((LONG) scancode & 0xFF) << 16;
     value += ascii;
     if (conterm & 0x8) {

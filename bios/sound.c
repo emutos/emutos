@@ -15,6 +15,7 @@
 #include "psg.h"
 #include "tosvars.h"
 #include "asm.h"
+#include "vectors.h"
  
 /*
  * This is a straightforward implementation of PSG-related xbios routines.
@@ -185,14 +186,10 @@ const static UBYTE keyclicksnd[] = {
   0xFF, 0,
 };
 
-void bell(void) 
-{
-  bell_hook();
-}
 
-void keyclick(void) 
+void bell(void)
 {
-  kcl_hook();
+  protect_v((PFLONG) bell_hook);
 }
 
 static void do_bell(void)

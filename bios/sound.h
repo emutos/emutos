@@ -33,10 +33,14 @@ void snd_init(void);
 /* timer C int sound routine */
 extern void sndirq(void);
 
+/* the routines below are implemented in assembler in vectors.S, because
+ * a user routine hooked in these vectors might clobber registers D2/A2. 
+ */
+  
 /* play bell sound, called by bconout2 */
 void bell(void);     
 
 /* play key click sound, called by keyboard interrupt */
-void keyclick(void);   
+void keyclick(WORD scancode); 
 
 #endif /* SOUND_H */

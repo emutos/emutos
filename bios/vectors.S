@@ -24,10 +24,13 @@
         .global _check_read_byte
         .global _int_vbl
         .global _int_hbl
+        .global _int_timerc
         .global _int_illegal
         .global _int_priv
         .global _just_rts
         .global _just_rte
+        .global _bell
+        .global _keyclick
         .global _trap_save_area
 
                 
@@ -287,10 +290,8 @@ _int_vbl:
  
 vbl_nochg:
 #endif
-        movem.l d0-d7/a0-a6, -(sp)      // save registers
-        jsr _blink                      // blink cursor
-        movem.l (sp)+, d0-d7/a0-a6      // restore registers
-
+        jsr     _blink                  // blink cursor
+        
         // load new color palette
         move.l  _colorptr,d0
         beq     vbl_no_palette
@@ -350,7 +351,6 @@ vbl_end:
 
 
 // ==== Timer C interrupt handler ============================================
-        .global _int_timerc
 _int_timerc:
         
         addq.l  #1, _hz_200             // increment 200 Hz counter
@@ -528,7 +528,8 @@ _xbios_unimpl:
        rts
 
 
-/*
+/* ==== check_read_byte =====================================================
+ *
  * check_read_byte - Verify access to the memory pointed to by the ptr
  *
  * C call: int check_read_byte(long);
@@ -573,6 +574,82 @@ _just_rte:
         rte             
 
 
+/* ==== Glue for external vectors ===========================================
+ *
+ * EmuTOS uses d0-d1/a0-a1 as scratch registers. However the original TOS
+ * used d0-d2/a0-a2 as scratch registers. For this reason, when jumping into
+ * external user-supplied code we need to save/restore d2/a2. The routines 
+ * below provide the necessary assembler support.
+ */
+
+        .global  _protect_v
+        .global  _protect_w
+        .global  _protect_ww
+        .global  _protect_wlwwwl
+        
+/*
+ * LONG protect_v(LONG (*func)(void));
+ */
+
+_protect_v:
+        move.l   4(sp),a0
+        movem.l  d2/a2,-(sp)
+        jsr      (a0)
+        movem.l  (sp)+,d2/a2
+        rts
+
+/*
+ * LONG protect_w(LONG (*func)(WORD), WORD);
+ */
+
+_protect_w:
+        move.l   4(sp),a0
+        move.w   8(sp),d0
+        movem.l  d2/a2,-(sp)
+        move.w   d0,-(sp)
+        jsr      (a0)
+        addq.l   #2,sp
+        movem.l  (sp)+,d2/a2
+        rts
+
+/*
+ * LONG protect_ww(LONG (*func)(WORD), WORD, WORD);
+ */
+
+_protect_ww:
+        move.l   4(sp),a0
+        move.l   8(sp),d0
+        movem.l  d2/a2,-(sp)
+        move.l   d0,-(sp)
+        jsr      (a0)
+        addq.l   #4,sp
+        movem.l  (sp)+,d2/a2
+        rts
+
+
+/*
+ * LONG protect_wlwwwl(LONG (*func)(), WORD, LONG, WORD, WORD, WORD, LONG);
+ */
+
+_protect_wlwwwl:
+        movem.l  8(sp),d0-d1/a0-a1
+        movem.l  d2/a2,-(sp)
+        movem.l  d0-d1/a0-a1,-(sp)
+        move.l   28(sp),a0
+        jsr      (a0)
+        lea      16(sp),sp
+        movem.l  (sp)+,d2/a2
+        rts
+
+
+/* Compendium says that the scancode is supplied in register d0. */
+_keyclick:
+        move.w   4(sp),d0
+        movem.l  d2/a2,-(sp)
+        move.l   _kcl_hook,a0
+        jsr      (a0)
+        movem.l  (sp)+,d2/a2
+        rts
 
 // ==== Variables ============================================================
  
