@@ -693,4 +693,5 @@ Start... early ages
 
 28. Mar. 2002
 - bios/startup.S - changed the _dummyaes vector for fVDI (MAD)
+- bios/startup.S - changed label _dummyaes to _gemtrap (MAD)
 
