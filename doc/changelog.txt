@@ -951,3 +951,7 @@ Start... early ages
 - po/de.po - two more german translations done (MAD)
 - po/cs.po - did bug update cs.po for new translations (MAD)
 
+23. Jul. 2002
+- bios/vector.S - implemented priv. instr. handler (MAD)
+                - moved ill. and priv. instr. handlers here. (MAD)
+

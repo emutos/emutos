@@ -185,22 +185,15 @@ fexit:  move.l  a1,(0x2c).w     // restore Line-F
 
 /*
  * void processor_init(void) - sets mcpu and fputype.
- * if the cpu is not a bare 68000, installs an illegal exception
- * handler to convert 'MOVE SR,...' to 'MOVE CCR,...' at execution time
  */
 
 _processor_init:
         jsr     _detect_cpu
         move.l  d0,_mcpu
         beq     m68000
-// this is a 68010 or later
-        move.w  #1,_longframe
-        move.l  0x10,ii_old
-        move.l  #ii_handler,0x10
-#if 0   // FIXME: Enable privileged instruction fetcher and executor
-        move.l  0x20,ii_old
-        move.l  #pi_handler,0x20
-#endif
+
+
+        move.w  #1,_longframe   // this is a 68010 or later
 m68000:
         jsr     _detect_fpu
         move.l  d0,_fputype
@@ -208,68 +201,13 @@ m68000:
 
 
 
-/*
- * ii_handler - illegal instruction handler 
- */
-
-ii_handler:
-        movem.l d0/a0,-(sp)             // saving d0 and a0 while we test
-        movea.l 10(sp),a0               // the offending address
-        move.w  (a0),d0                 // the offending instruction
-        andi.w  #0xffc0,d0              // isolate move from SR opcode
-        cmpi.w  #0x40c0,d0              // we don't care where "To" was
-        bne     not_SR                  // Not a MOVE SR,XX instruction
-
-        ori.w   #0x200,(a0)             // make it MOVE CCR,XX
-        movem.l (sp)+,d0/a0
-        rte
-
-not_SR:
-        movem.l (sp)+,d0/a0
-        move.l  ii_old,-(sp)            // let OEM handle it
-jumpback:
-        rts
-
-
-
-#if 0   // FIXME: Enable privileged instruction fetcher and executor
-/*
- * pi_handler - privileged instruction handler 
- *
- * Does this work with longer instructions too? No!
- */
-
-pi_handler:
-        movem.l d0/a0,-(sp)  	// saving d0 and a0-a1 while we test
-
-        movea.l 10(sp),a0       // the offending address
-        move.w  (a0),pi_instr	// copy instruction to new place
-        move.w  jumpback, pi_rts 	// copy rts too
-        jsr	pi_instr        // jump to instr. copy in BSS
-
-        movem.l (sp)+,d0/a0
-        rte
-
-#endif
-
-
 // ==== Variables ============================================================
  
         .bss
         .even
 
-/* Here is a short piece of code, the copied privileged instruction */
-pi_instr:                       // priv. instruction stored for execution
-        ds.w    1
-pi_rts:                         // here is a rts instruction for return
-        ds.w    1
-ii_old:                         // save for illegal instruction handler
-        ds.l    1
-
-_mcpu:
-        ds.l    1
-_fputype:
-        ds.l    1
+_mcpu:		ds.l    1
+_fputype:       ds.l    1
 
 
 // ===========================================================================

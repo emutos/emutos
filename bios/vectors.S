@@ -70,9 +70,9 @@
         .text
         
 
-//
-// initialize the 62 exception vectors.
-//
+
+/* basically initialize the 62 exception vectors. */
+
 _init_exc_vec:
         clr.l   _proc_lives
         lea     deflt_vec_table, a0
@@ -83,9 +83,23 @@ set_vec:
         add.l   #2, a0
         dbra    d0, set_vec
         rts
-//
-// initialize the 192 user vectors.
-//
+
+/* set illegal and privileged instruction handlers */
+
+        tst.w   _longframe      	// Check processor type...
+        beq.s   m68000
+
+	/* this is a 68010 or later */
+        move.l  0x10,ii_old             // save old illegal instr. handler
+        move.l  #ii_handler,0x10        // set illegal instr. handler
+        move.l  0x20,pi_old             // save old privileged instr. handler
+        move.l  #pi_handler,0x20        // and set privileged instr. handler
+m68000:
+        rts
+
+
+/* initialize the 192 user vectors. */
+
 _init_user_vec: 
         lea     user_vec, a0
         lea     256, a1
@@ -406,7 +420,60 @@ _criter:
 _criter1:
         moveq.l #-1, d0         // Default error
         rts                     // jump back to routine
-        
+
+
+
+/*
+ * ii_handler - illegal instruction handler 
+ *
+ * We set up a handler on the 68010/20/30/40 to convert 'MOVE SR,...'
+ * to 'MOVE CCR,...' at execution time, so that we can support one
+ * release of 68XXX software.
+ */
+
+ii_handler:
+        movem.l d0/a0,-(sp)             // saving d0 and a0 while we test
+        movea.l 10(sp),a0               // the offending address
+        move.w  (a0),d0                 // the offending instruction
+        andi.w  #0xffc0,d0              // isolate move from SR opcode
+        cmpi.w  #0x40c0,d0              // we don't care where "To" was
+        bne     ii_back                 // Not a MOVE SR,XX instruction
+
+        ori.w   #0x200,(a0)             // make it MOVE CCR,XX
+        movem.l (sp)+,d0/a0
+        rte
+
+ii_back:
+        movem.l (sp)+,d0/a0
+        move.l  ii_old,-(sp)            // take old handler
+        rts
+
+
+
+/*
+ * pi_handler - privileged instruction handler
+ *	
+ * We set up a handler on the 68010/20/30/40 to convert 'MOVE SR,...'
+ * to 'MOVE CCR,...' at execution time, so that we can support one
+ * release of 68XXX software.
+ */
+
+pi_handler:
+        movem.l d0/a0,-(sp)             // saving d0 and a0 while we test
+        movea.l 10(sp),a0               // the offending address
+        move.w  (a0),d0                 // the offending instruction
+        andi.w  #0xffc0,d0              // isolate move from SR opcode
+        cmpi.w  #0x40c0,d0              // we don't care where "To" was
+        bne     pi_back                 // Not a MOVE SR,XX instruction
+
+        ori.w   #0x200,(a0)             // make it MOVE CCR,XX
+        movem.l (sp)+,d0/a0
+        rte
+
+pi_back:
+        movem.l (sp)+,d0/a0
+        move.l  pi_old,-(sp)            // take old handler
+        rts
 
 
 
@@ -639,12 +706,24 @@ _xbios_ent:              // Max. number of XBIOS entries
         .dc.w   (_xbios_ent-_xbios_vecs)/4
 #endif
 
+
+
+// ==== Variables ============================================================
+ 
         .bss
+        .even
+
 /* save area for trap13/14. */
 save_beg:       ds.w    24*3    // d3-d7/a3-a7, sr, pc, vo = 24 words, 
                                 // multiplied by 3 ("3 level deep reentrant")
 _save_area:                     // End of Save storage
 
+ii_old:		ds.l	1	// save for illegal instruction handler
+pi_old:         ds.l    1       // save for privileged instruction handler
 
+
+// ===========================================================================
+// ==== End ==================================================================
+// ===========================================================================
 
         .end
