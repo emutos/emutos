@@ -6,9 +6,6 @@
 
 #include "portab.h"
 #include "fontdef.h"
-#include "config.h"
-
-#if ! CONF_UNIQUE_COUNTRY
 
 static UWORD off_table[], dat_table[];
 
@@ -338,4 +335,3 @@ static UWORD dat_table[] =
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x007c, 0x3800, 
 };
 
-#endif /* ! CONF_UNIQUE_COUNTRY */

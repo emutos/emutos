@@ -24,7 +24,7 @@
 COUNTRY = us
 
 #
-# experimental, unique-country support: if UNIQUE is defined, then
+# Unique-country support: if UNIQUE is defined, then
 # EmuTOS will be built with only one country.
 #
 # example: make UNIQUE=fr 256
@@ -33,7 +33,6 @@ COUNTRY = us
 DEF =
 ifneq (,$(UNIQUE))
 COUNTRY = $(UNIQUE)
-DEF = -DCONF_UNIQUE_COUNTRY=1 -DCONF_NO_NLS=1
 endif
 
 #
@@ -100,13 +99,12 @@ NATIVECC = gcc -Wall
 
 # 
 # source code in bios/
-# Note: tosvars.o must be first object linked.
+# Note: tosvars.o must be the first object linked.
 
 BIOSCSRC = kprint.c xbios.c chardev.c blkdev.c bios.c clock.c \
-           fnt8x16.c fnt8x8.c fnt6x6.c mfp.c parport.c \
+           mfp.c parport.c biosmem.c acsi.c \
            midi.c ikbd.c sound.c floppy.c disk.c screen.c lineainit.c \
-           mouse.c initinfo.c cookie.c machine.c nvram.c country.c \
-	   fntlat2_6.c fntlat2_8.c fntlat2_16.c biosmem.c acsi.c
+           mouse.c initinfo.c cookie.c machine.c nvram.c country.c 
 BIOSSSRC = tosvars.S startup.S lineavars.S vectors.S aciavecs.S \
            processor.S memory.S linea.S conout.S panicasm.S kprintasm.S
 
@@ -179,6 +177,12 @@ aes_copts  = -Ibios
 desk_copts = -Ibios -Iaes -Idesk/icons
 
 #
+# country-specific settings
+#
+
+include country.mk
+
+#
 # everything should work fine below.
 # P for PATH
 
@@ -228,7 +232,7 @@ endif
 
 COBJ = $(BIOSCOBJ) $(BDOSCOBJ) $(UTILCOBJ) $(VDICOBJ) $(UICOBJ)
 SOBJ = $(BIOSSOBJ) $(BDOSSOBJ) $(UTILSOBJ) $(VDISOBJ) $(UISOBJ)
-OBJECTS = $(SOBJ) $(COBJ) 
+OBJECTS = $(SOBJ) $(COBJ) $(FONTOBJ)
 
 #
 # temporary variables, for internal Makefile use
@@ -260,33 +264,35 @@ help:
 	@echo "dsm     dsm.txt, an edited desassembly of emutos.img"
 	@echo "fdsm    fal_dsm.txt, like above, but for 0xE00000 ROMs"
 
+#
+#
+#
+
 emutos1.img: $(OBJECTS)
 	$(LD) -o $@ $(OBJECTS) $(LDFLAGS) $(LDFLAGS_T1)
 
 emutos2.img: $(OBJECTS)
 	$(LD) -o $@ $(OBJECTS) $(LDFLAGS) $(LDFLAGS_T2)
 
-
-
-
 #
 # generic sized images handling
 #
 
 define sized_image
-@goal=`echo $@ | sed -e 's/[^0-9]//g'` ; \
-size=`wc -c < $<` ; \
-if [ $$size -gt `expr $$goal \* 1024` ] ; \
+@goal=`echo $@ | sed -e 's/[^0-9]//g'`; \
+size=`wc -c < $<`; \
+if [ $$size -gt `expr $$goal \* 1024` ]; \
 then \
- rm -f $< ; \
-  echo EmuTOS too big for $${goal}K: size = $$size ; \
+  rm -f $<; \
+  goalbytes=`expr $${goal} \* 1024`; \
+  echo "EmuTOS too big for $${goal}K ($$goalbytes bytes): size = $$size"; \
   false ; \
 else \
-  echo dd if=/dev/zero of=$@ bs=1024 count=$$goal ; \
-  dd if=/dev/zero of=$@ bs=1024 count=$$goal ; \
-  echo dd if=$< of=$@ conv=notrunc ; \
-  dd if=$< of=$@ conv=notrunc ; \
-  rm -f $< ; \
+  echo dd if=/dev/zero of=$@ bs=1024 count=$$goal; \
+  dd if=/dev/zero of=$@ bs=1024 count=$$goal; \
+  echo dd if=$< of=$@ bs=1024 conv=notrunc; \
+  dd if=$< of=$@ bs=1024 conv=notrunc; \
+  rm -f $<; \
 fi
 endef
 
@@ -385,42 +391,128 @@ util/langs.c: $(POFILES) po/LINGUAS bug$(EXE) po/messages.pot
 	./bug$(EXE) make
 	mv langs.c $@
 
-obj/langs.o: include/config.h
+obj/langs.o: include/config.h include/i18nconf.h
 
 po/messages.pot: bug$(EXE) po/POTFILES.in
 	./bug$(EXE) xgettext
 
 #
-# Experimental mono-country translated EmuTOS
+# all binaries
 #
 
-ifneq (,$(UNIQUE))
+allbin: 
+	@echo building etos512k.img; \
+	make etos512k.img; \
+	for i in $(COUNTRIES); \
+	do \
+	  j=etos256$${i}.img; \
+	  echo building $$j; \
+	  make UNIQUE=$$i 256; \
+	  mv etos256k.img $$j; \
+	done
+
+all192:
+	@for i in $(COUNTRIES); \
+	do \
+	  j=etos192$${i}.img; \
+	  echo building $$j; \
+	  make DEF='-DTOS_VERSION=0x102' UNIQUE=$$i 192; \
+	  mv etos192k.img $$j; \
+	done
+
+
+#
+# Mono-country translated EmuTOS: translate files only if the language
+# is not 'us', and if a UNIQUE EmuTOS is requested. 
+#
+# If the '.tr.c' files are present the '.o' files are compiled from these
+# source files because the '%.o: %.tr.c' rule comes before the normal
+# '%.o: %.c' rule. 
+# Changing the settings of $(COUNTRY) or $(UNIQUE) will remove both 
+# the '.o' files (to force rebuilding them) and the '.tr.c' files 
+# (otherwise 'make UNIQUE=fr; make UNIQUE=us' falsely keeps the
+# .tr.c french translations). See target obj/country below.
+#
+
 TRANS_SRC = $(shell sed -e '/^[^a-z]/d;s/\.c/.tr&/' <po/POTFILES.in)
 
+ifneq (,$(UNIQUE))
+
+ifneq (us,$(ETOSLANG))
 emutos1.img emutos2.img: $(TRANS_SRC)
 
-%.tr.c : %.c po/$(COUNTRY).po bug$(EXE) po/LINGUAS obj/country
-	./bug$(EXE) translate $(COUNTRY) $<
-
+%.tr.c : %.c po/$(ETOSLANG).po bug$(EXE) po/LINGUAS obj/country
+	./bug$(EXE) translate $(ETOSLANG) $<
+endif
 endif
 
 #
-# obj/country contains the current value of $(COUNTRY). 
-# It changes if and only if $(COUNTRY) changes.
+# obj/country contains the current values of $(COUNTRY) and $(UNIQUE). 
+# whenever it changes, whatever necessary steps are taken so that the
+# correct files get re-compiled, even without doing make depend.
 #
 
-obj/country:
-	@echo $(COUNTRY) > last.tmp
-	@if [ ! -e obj/country ]; \
+needcountry.tmp:
+	@touch $@
+
+obj/country: needcountry.tmp
+	@rm -f needcountry.tmp
+	@echo $(COUNTRY) $(UNIQUE) > last.tmp; \
+	if [ -e $@ ]; \
 	then \
-	  mv last.tmp obj/country; \
-	else if cmp -s last.tmp obj/country; \
+	  if cmp -s last.tmp $@; \
 	  then \
 	    rm -f last.tmp; \
-	  else \
-	    mv last.tmp obj/country; \
-	  fi \
+	    exit 0; \
+	  fi; \
+	fi; \
+	mv last.tmp $@; \
+	for i in $(TRANS_SRC); \
+	do \
+	  j=obj/`basename $$i tr.c`o; \
+	  echo rm -f $$i $$j; \
+	  rm -f $$i $$j; \
+	done; \
+	echo rm -f include/i18nconf.h; \
+	rm -f include/i18nconf.h; 
+
+#
+# i18nconf.h - this file is automatically created by the Makefile. This
+# is done this way instead of simply passing the flags as -D on the 
+# command line because:
+# - the command line is shorter
+# - it allows #defining CONF_KEYB as KEYB_US with KEYB_US #defined elsewhere
+# - explicit dependencies can force rebuilding files that include it
+#
+
+ifneq (,$(UNIQUE))
+include/i18nconf.h:
+	@rm -f $@; touch $@
+	@echo \#define CONF_UNIQUE_COUNTRY 1 >> $@
+	@echo \#define CONF_NO_NLS 1 >> $@
+	@echo \#define CONF_LANG '"$(ETOSLANG)"' >> $@
+	@echo \#ifdef KEYB_$(ETOSKEYB) >> $@
+	@echo \#define CONF_KEYB KEYB_$(ETOSKEYB) >> $@
+	@echo \#endif >> $@
+	@echo \#ifdef CHARSET_$(ETOSCSET) >> $@
+	@echo \#define CONF_CHARSET CHARSET_$(ETOSCSET) >> $@
+	@echo \#endif >> $@
+	@if [ "x$(ETOSKEYB)" = "x" -o "x$(ETOSCSET)" = "x" ]; \
+	then \
+	  echo "Country $(COUNTRY) not properly specified in country.mk"; \
+	  false; \
 	fi
+else
+include/i18nconf.h:
+	@rm -f $@; touch $@
+	@echo \#define CONF_KEYB KEYB_ALL > $@
+	@echo \#define CONF_CHARSET CHARSET_ALL >> $@
+endif
+
+obj/country.o: include/i18nconf.h
+obj/langs.o: include/i18nconf.h
+obj/nls.o: include/i18nconf.h
+obj/nlsasm.o: include/i18nconf.h
 
 #
 # OS header
@@ -428,9 +520,9 @@ obj/country:
 
 obj/startup.o: bios/header.h
 
-obj/country.o: bios/header.h
+obj/country.o: bios/header.h 
 
-bios/header.h: mkheader$(EXE) obj/country
+bios/header.h: mkheader$(EXE) obj/country include/i18nconf.h
 	./mkheader$(EXE) $(COUNTRY)
 
 mkheader$(EXE): tools/mkheader.c
@@ -510,7 +602,7 @@ clean:
 	rm -f bootsect.img emutos.st date.prg dumpkbd.prg keytbl2c$(EXE)
 	rm -f bug$(EXE) po/messages.pot util/langs.c bios/header.h
 	rm -f mkheader$(EXE) tounix$(EXE) *.tmp *.dsm */*.tr.c 
-	rm -f makefile.dep fal_dsm.txt fal_map obj/country
+	rm -f makefile.dep fal_dsm.txt fal_map obj/country include/i18nconf.h
 
 distclean: clean
 	rm -f '.#'* */'.#'* 

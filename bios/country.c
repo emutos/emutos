@@ -20,12 +20,26 @@
 #include "nvram.h"
 #include "tosvars.h"
 
-#include "config.h"
+#include "config.h"  /* included after country.h because of i18nconf.h */
 #include "header.h"  /* contains the default country number */
 
 
 long cookie_idt;
 long cookie_akp;
+
+#if CONF_UNIQUE_COUNTRY
+const char *get_lang_name(void)
+{
+    return CONF_LANG;
+}
+
+void detect_akp_idt(void)
+{
+    cookie_akp = (OS_COUNTRY << 8) | CONF_KEYB;
+    cookie_idt = IDT_24H | IDT_DDMMYY | '/';
+}
+
+#else
 
 struct country_record {
     int country;      /* country code */
@@ -93,6 +107,8 @@ static int get_charset(void)
     return countries[i].charset;
 }
 
+#endif
+
 /*==== Keyboard layouts ===================================================*/
 
 /* To add a keyboard, please do the following:
@@ -107,16 +123,16 @@ static int get_charset(void)
 
 /* include here all available keyboard definitions */
 
-#if (!CONF_UNIQUE_COUNTRY) || (OS_COUNTRY == COUNTRY_US) 
+#if (CONF_KEYB == KEYB_ALL || CONF_KEYB == KEYB_US) 
 #include "keyb_us.h"
 #endif
-#if (!CONF_UNIQUE_COUNTRY) || (OS_COUNTRY == COUNTRY_DE) 
+#if (CONF_KEYB == KEYB_ALL || CONF_KEYB == KEYB_DE) 
 #include "keyb_de.h"
 #endif
-#if (!CONF_UNIQUE_COUNTRY) || (OS_COUNTRY == COUNTRY_FR) 
+#if (CONF_KEYB == KEYB_ALL || CONF_KEYB == KEYB_FR) 
 #include "keyb_fr.h"
 #endif
-#if (!CONF_UNIQUE_COUNTRY) || (OS_COUNTRY == COUNTRY_CZ) 
+#if (CONF_KEYB == KEYB_ALL || CONF_KEYB == KEYB_CZ) 
 #include "keyb_cz.h"
 #endif
 
@@ -128,16 +144,16 @@ struct kbd_record {
 };
 
 const static struct kbd_record avail_kbd[] = {
-#if (!CONF_UNIQUE_COUNTRY) || (OS_COUNTRY == COUNTRY_US) 
+#if (CONF_KEYB == KEYB_ALL || CONF_KEYB == KEYB_US) 
     { KEYB_US, &keytbl_us }, 
 #endif
-#if (!CONF_UNIQUE_COUNTRY) || (OS_COUNTRY == COUNTRY_DE) 
+#if (CONF_KEYB == KEYB_ALL || CONF_KEYB == KEYB_DE) 
     { KEYB_DE, &keytbl_de }, 
 #endif
-#if (!CONF_UNIQUE_COUNTRY) || (OS_COUNTRY == COUNTRY_FR) 
+#if (CONF_KEYB == KEYB_ALL || CONF_KEYB == KEYB_FR) 
     { KEYB_FR, &keytbl_fr },
 #endif
-#if (!CONF_UNIQUE_COUNTRY) || (OS_COUNTRY == COUNTRY_CZ) 
+#if (CONF_KEYB == KEYB_ALL || CONF_KEYB == KEYB_CZ) 
     { KEYB_CZ, &keytbl_cz }, 
 #endif
 };
@@ -187,8 +203,10 @@ struct charset_fonts {
 };
 
 const static struct charset_fonts font_sets[] = {
+#if (CONF_CHARSET == CHARSET_ALL || CONF_CHARSET == CHARSET_ST) 
     { CHARSET_ST, &f6x6, &f8x8, &f8x16 },
-#if ! CONF_UNIQUE_COUNTRY
+#endif
+#if (CONF_CHARSET == CHARSET_ALL || CONF_CHARSET == CHARSET_L2) 
     { CHARSET_L2, &latin2_6x6, &latin2_8x8, &latin2_8x16 }, 
 #endif
 };
@@ -197,7 +215,9 @@ void get_fonts(struct font_head **f6x6,
                struct font_head **f8x8, 
                struct font_head **f8x16)
 {
-    int i, j;
+    int j;
+#if ! CONF_UNIQUE_COUNTRY
+    int i;
     int charset = get_charset();
     
     /* find the index of the required charset in our font table */
@@ -207,7 +227,9 @@ void get_fonts(struct font_head **f6x6,
             break;
         }
     }
-
+#else
+    j = 0;
+#endif
     *f6x6 = (struct font_head *) font_sets[j].f6x6;
     *f8x8 = (struct font_head *) font_sets[j].f8x8;  
     *f8x16 = (struct font_head *) font_sets[j].f8x16;

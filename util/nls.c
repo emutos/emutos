@@ -29,7 +29,7 @@ void nls_set_lang(const char *s)
 
 const char *nls_nth_lang(int i)
 {
-  return "us";
+  return CONF_LANG;
 }
 
 int nls_num_of_langs(void)

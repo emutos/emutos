@@ -13,6 +13,8 @@
 #ifndef _CONFIG_H
 #define _CONFIG_H
 
+#include "i18nconf.h"
+
 /*
  * File localconf.h will be included if reported present by the Makefile.
  * Use it to put your local configuration. File localconf.h will not be 
@@ -71,27 +73,30 @@
 #define INIT_TIMER_D 1
 #endif
 
-/* Set this to 1 if you want the EmuTOS ROM to contain only one set
+/* The two parameters below are commented out, since the same result
+ * can now be obtained by simply doing
+ *
+ *   make UNIQUE=xx
+ *
+ * (the Makefile creates a file include/i18nconf.h that contains the 
+ * correct setting for those two parameters).
+ *
+ * Set this to 1 if you want the EmuTOS ROM to contain only one set
  * of keyboards and fonts. The keyboard and fonts will still be those
  * specified as usual (make COUNTRY=xx). 
- * This is used as an attempt to lower the total size of the ROM
- * for some emulators.
- */
-
-#ifndef CONF_UNIQUE_COUNTRY
-#define CONF_UNIQUE_COUNTRY 0
-#endif
-
-/* Set this to 1 if you do not want any Native Language Support (NLS)
+ *
+ * #ifndef CONF_UNIQUE_COUNTRY
+ * #define CONF_UNIQUE_COUNTRY 0
+ * #endif
+ *
+ * Set this to 1 if you do not want any Native Language Support (NLS)
  * included in EmuTOS. The only language will be default English.
- * This is used as an attempt to lower the total size of the ROM 
- * for some emulators.
+ *
+ * #ifndef CONF_NO_NLS
+ * #define CONF_NO_NLS 0
+ * #endif
  */
-
-#ifndef CONF_NO_NLS
-#define CONF_NO_NLS 0
-#endif
-
+ 
 /*
  * Set this to 1 to activate experimental ACSI support 
  */
