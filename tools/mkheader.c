@@ -34,7 +34,9 @@ struct country_info {
   int number;
   char *code;
   char *name;
-} countries [] = {
+};
+
+struct country_info countries[] = {
 /* defined in the compendium */
   {  0, "us", "USA" },
   {  1, "de", "Germany" },
