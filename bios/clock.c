@@ -289,7 +289,7 @@ static void igetregs(void)
 {
   iclk_ready = 0;
   iclkbuf.cmd = 0x1C;
-  ikbdws(0, (UBYTE*) &iclkbuf);
+  ikbdws(0, (PTR) &iclkbuf);
   /* wait until the interrupt receives the full packet */
   while(! iclk_ready) 
     ;
@@ -311,7 +311,7 @@ static void iresetregs(void)
 static void isetregs(void)
 {
   iclkbuf.cmd = 0x1B;
-  ikbdws(6, (UBYTE*) &iclkbuf);
+  ikbdws(6, (PTR) &iclkbuf);
 }
 
 static UWORD idogetdate(void)
