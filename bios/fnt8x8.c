@@ -11,8 +11,8 @@
 extern UWORD off_f8x8[], dat_f8x8[];
 
 struct font_head f8x8 ={
-    00001,  /* WORD font_id */
-    00009,  /* WORD point */
+    1,  /* WORD font_id */
+    9,  /* WORD point */
     "8x8 system font",  /*   BYTE name[32]	*/
     0,  /* WORD first_ade */
     255,  /* WORD last_ade */
@@ -33,11 +33,11 @@ struct font_head f8x8 ={
     0,			/*   UBYTE *hor_table	*/
     off_f8x8,		/*   UWORD *off_table	*/
     dat_f8x8,		/*   UWORD *dat_table	*/
-    00256,  /* UWORD form_width */
-    00008,  /* UWORD form_height */
+    256,  /* UWORD form_width */
+    8,  /* UWORD form_height */
     0,  /* struct font * next_font */
     0   /* UWORD next_seg */
-}
+};
 
 UWORD off_f8x8[257] =
 {
