@@ -215,7 +215,7 @@ static void flopini(WORD dev)
     blkdev[dev].size = 0;           /* unknown size */
     blkdev[dev].geometry.sides = 2; /* default geometry of 3.5" DD */
     blkdev[dev].geometry.spt = 9;
-    blkdev[dev].unit = 0;
+    blkdev[dev].unit = dev;
     devices[dev].valid = 1;
     devices[dev].pssize = 512;
     devices[dev].size = 0;          /* unknown size */
