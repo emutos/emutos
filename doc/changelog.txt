@@ -359,3 +359,16 @@ Start... early ages
 
 13. Dec. 2001
 - ripped out some ugly old gotos in bdos/fsbuf.c:packit() (MAD)
+
+15. Dec. 2001
+- tool tounix.c to convert to Unix line ending (LVL)
+- make cvsready to automate using expand, this tool, ... (LVL)
+- make checkindent, make indent; updated coding rules for indent use (LVL)
+- changed some files to remove indent warnings (did NOT indent files) (LVL)
+- replaced explicit TABs in strings by \t in command.c (LVL)
+- fixed bugs due to obsolete C code in command.c, and wrote a description of 
+  these bugs in doc/old_code to serve as a reference (LVL)
+- moved NORETURN to portab.h (LVL)
+- panic() now prints on the screen also. (LVL)
+- added assert() in kprint (LVL)
+- minor changes (LVL)

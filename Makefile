@@ -51,6 +51,9 @@ COUNTRY = us
 # compilation flags
 #
 
+# indent flags
+INDENT = indent -kr
+
 # not needed, job taken by mkheader.
 # BUILDDATE=$(shell LANG=C date +"%d. %b. %Y")
 
@@ -89,7 +92,7 @@ BIOSCSRC = kprint.c xbios.c chardev.c bios.c clock.c \
            midi.c ikbd.c sound.c floppy.c screen.c lineainit.c \
            mouse.c initinfo.c cookie.c machine.c nvram.c country.c
 BIOSSSRC = tosvars.S startup.S lineavars.S vectors.S aciavecs.S \
-           processor.S memory.S linea.S conout.S detect.S
+           processor.S memory.S linea.S conout.S detect.S panicasm.S
 
 #
 # source code in bdos/
@@ -351,14 +354,98 @@ $(DESASS): map
 
 clean:
 	rm -f obj/*.o obj/*.s *~ */*~ core emutos.img map $(DESASS)
-	rm -f ramtos.img boot.prg etos192.img etosfalc.img mkflop$(EXE) 
+	rm -f ramtos.img boot.prg etos192k.img etosfalc.img mkflop$(EXE) 
 	rm -f bootsect.img emutos.st date.prg dumpkbd.prg keytbl2c$(EXE)
 	rm -f bug$(EXE) po/messages.pot util/langs.c bios/header.h
-	rm -f mkheader$(EXE)
+	rm -f mkheader$(EXE) tounix$(EXE)
 
 distclean: clean nodepend
 	rm -f Makefile.bak '.#'* */'.#'* 
 	$(MAKE) -C cli clean
+
+#
+# indent - indents the files except when there are warnings
+# checkindent - check for indent warnings, but do not alter files.
+#
+
+TMP1=indent.tmp1
+TMP2=indent.tmp2
+EMPTY=indent.empty
+
+INDENTFILES = bdos/*.c bios/*.c util/*.c tools/*.c
+
+checkindent:
+	@err=0 ; \
+	touch $(EMPTY) ; \
+	for i in $(INDENTFILES) ; do \
+		$(INDENT) <$$i 2>$(TMP1) >/dev/null; \
+		if cmp -s $(TMP1) $(EMPTY) ; then : ; else\
+			err=`expr $$err + 1`; \
+			echo in $$i:; \
+			cat $(TMP1); \
+		fi \
+	done ; \
+	rm -f $(EMPTY) $(TMP1); \
+	if [ $$err -ne 0 ] ; then \
+		echo indent issued warnings on $$err 'file(s)'; \
+		false; \
+	else \
+		echo done.; \
+	fi
+	
+
+indent:
+	@err=0 ; \
+	touch $(EMPTY) ; \
+	for i in $(INDENTFILES) ; do \
+		$(INDENT) <$$i 2>$(TMP1) | expand >$(TMP2); \
+		if cmp -s $(TMP1) $(EMPTY) ; then \
+			if cmp -s $(TMP2) $$i ; then : ; else \
+				echo indenting $$i; \
+				mv $$i $$i~; \
+				mv $(TMP2) $$i; \
+			fi \
+		else \
+			err=`expr $$err + 1`; \
+			echo in $$i:; \
+			cat $(TMP1); \
+		fi \
+	done ; \
+	rm -f $(EMPTY) $(TMP1) $(TMP2); \
+	if [ $$err -ne 0 ] ; then \
+		echo $$err 'file(s)' untouched because of warnings; \
+		false; \
+	fi
+
+
+#
+# cvsready
+#
+
+expand:
+	@for i in `grep -l '	' */*.[chS]` ; do \
+		echo expanding $$i ; \
+		expand <$$i >$(TMP); \
+		mv $(TMP) $$i; \
+	done
+
+tounix$(EXE): tools/tounix.c
+	$(NATIVECC) -o $@ $<
+
+HERE = $(shell pwd)
+
+# LVL - I checked that both on Linux and Cygwin passing more than 10000 
+# arguments on the command line works fine. On other systems it might be 
+# necessary to adopt another technique, for example using an find | xargs 
+# approach like that below:
+#
+# crlf:	tounix$(EXE)
+#	find . -name CVS -prune -or -not -name '*~' | xargs $(HERE)/tounix$(EXE)
+
+crlf: tounix$(EXE)
+	./tounix$(EXE) * bios/* bdos/* doc/* util/* tools/* po/* include/*
+
+cvsready: expand crlf nodepend
 
 #
 # create a tgz archive named emutos-nnnnnn.tgz,
@@ -371,7 +458,7 @@ TGZ = $(shell echo $(HEREDIR)-`date +%y%m%d`|tr A-Z a-z).tgz
 
 tgz:	distclean
 	cd ..;\
-	tar -cf - --exclude '*CVS' --exclude 'doc' $(HEREDIR) | gzip -c -9 >$(TGZ)
+	tar -cf - --exclude '*CVS' $(HEREDIR) | gzip -c -9 >$(TGZ)
 
 #
 # automatic dependencies. (this is ugly)
