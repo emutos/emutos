@@ -13,7 +13,7 @@
 
 
 #include "portab.h"
-#include "gsxdef.h"
+#include "vdidef.h"
 #include "gsxextrn.h"
 
 #define EMPTY   0xffff

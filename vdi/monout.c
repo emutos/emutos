@@ -12,7 +12,7 @@
 
 
 #include "portab.h"
-#include "gsxdef.h"
+#include "vdidef.h"
 #include "gsxextrn.h"
 #include "tosvars.h"
 
@@ -22,6 +22,8 @@
 #define    HALFPI    900
 #define    PI        1800
 #define    TWOPI     3600
+
+
 
 extern void dr_recfl();
 

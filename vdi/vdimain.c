@@ -13,10 +13,8 @@
 
 #include "portab.h"
 #include "lineavars.h"
-#include "gsxdef.h"
+#include "vdidef.h"
 #include "gsxextrn.h"
-#include "fontdef.h"
-#include "attrdef.h"
 #include "styles.h"
 
 //#include "vdiconf.h"

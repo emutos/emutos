@@ -18,15 +18,32 @@
  * Flags for Conditional Assembly of Code
  */
 
-#define rbp             1       /* assemble for Atari ST (1=yes, 0=no) */
+
+/*
+ * The first, VME10, should always be equal to zero.  This causes the code
+ * generated to work for the contiguous plane memory layout.  The code
+ * switched out by these switches is for other memory layouts, and full
+ * source code is not provided to build a driver not intended for a
+ * contiguous plane layout.
+ */
 #define vme10           0       /* assemble for Motorola VME/10 (1=yes, 0=no) */
+#define rbp             1       /* assemble for Atari ST (1=yes, 0=no) */
 
 
 #define pattern         1       /* for selecting software which applies */
                                 /* a pattern to the source */
-
-//#define handle          2       /* leave 2 for console input, change to 1 for auxin */
-
+/*
+ * The rev_vid switch controls how the drawing algorithms treat the colors
+ * white and black.  The lisa has reverse video hardware, a 0 in memory is
+ * white on the screen a 1 in memory is black on the screen.  If the hardware
+ * you are using is not reverse video, set this switch to zero in all *.S
+ * modules.  This will cause the drawing code to emulate reverse video in
+ * software by clearing bits rather than setting them to draw black.
+ *
+ * In order to use reverse video, the procedure _v_clrwk, which is a Lisa
+ * dependent routine, must be modified to set all video memory to 1s rather
+ * than clear it to 0s.
+ */
 #define rev_vid         1       /* for selecting reverse video transform */
 
 /* Conditionals just for textblit */

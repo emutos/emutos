@@ -16,8 +16,7 @@
 
 #include "portab.h"
 
-#include "fontdef.h"
-#include "attrdef.h"
+#include "vdidef.h"
 
 #include "asm.h"
 
@@ -39,11 +38,8 @@ extern WORD *scrtchp;           /* Pointer to text scratch buffer */
 
 extern WORD font_count;         /* Number of fonts in driver */
 
-extern struct font_head first;  /* The small system font */
-
 extern struct font_head *cur_font;      /* Current font */
-extern struct font_head *def_font;      /* Default font from open workstation 
-                                         */
+extern struct font_head *def_font;      /* Default font of open workstation */
 
 extern struct font_head *font_ring[];   /* Ring of available fonts */
 
@@ -146,7 +142,6 @@ extern void s_fa_attr();
 extern void arrow(WORD * xy, WORD inc);
 extern void crunch_Q();
 extern void init_wk();
-/* C Support routines */
 
 extern WORD VEC_LEN();
 

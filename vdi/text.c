@@ -12,9 +12,8 @@
 
 
 #include "portab.h"
-#include "gsxdef.h"
+#include "vdidef.h"
 #include "gsxextrn.h"
-//#include "jmptbl.h"
 
 extern WORD clip_line();
 extern void trnsfont();

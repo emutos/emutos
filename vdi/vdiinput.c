@@ -10,9 +10,9 @@
 
 
 #include "portab.h"
-#include "gsxdef.h"
-#include "gsxextrn.h"
 #include "vdiconf.h"
+#include "vdidef.h"
+#include "gsxextrn.h"
 #include "tosvars.h"
 #include "lineavars.h"
 #include "mouse.h"

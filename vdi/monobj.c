@@ -12,7 +12,7 @@
 
 
 #include "portab.h"
-#include "gsxdef.h"
+#include "vdidef.h"
 #include "gsxextrn.h"
 #include "mouse.h"
 
