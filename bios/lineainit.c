@@ -60,7 +60,8 @@ struct charset_fonts {
 
 static struct charset_fonts font_sets[] = {
     { CHARSET_ST, &f6x6, &f8x8, &f8x16 },
-    { CHARSET_CZ, &cz6x6, &cz8x8, &cz8x16 },
+    /* { CHARSET_CZ, &cz6x6, &cz8x8, &cz8x16 }, */
+    /* { CHARSET_L2, &l26x6, &l28x8, &l28x16 }, */
 };
 
 

@@ -47,7 +47,7 @@
 
 /* charset codes - names in [brackets] are understood by GNU recode */
 #define CHARSET_ST 0   /* original [atarist] */
-#define CHARSET_CZ 1   /* [Kamenicky] charset, used in CZ */
+#define CHARSET_L2 1   /* [ISO-Latin-2] charset */
 
 /* IDT flag 24 hour: 0 = 12am/pm or 1 = 24 hour */
 #define IDT_12H   0x0000
