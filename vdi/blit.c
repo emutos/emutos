@@ -165,37 +165,37 @@ not_sord(UWORD s, UWORD d)
     return NOT_SORD(s,d);
 }
 
-static  UWORD
+static UWORD
 not_sxord(UWORD s, UWORD d)
 {
     return NOT_SXORD(s,d);
 }
 
-static  UWORD
+static UWORD
 not_d(UWORD s, UWORD d)
 {
     return NOT_D(s,d);
 }
 
-static  UWORD
+static UWORD
 s_or_notd(UWORD s, UWORD d)
 {
     return S_OR_NOTD(s,d);
 }
 
-static  UWORD
+static UWORD
 not_s(UWORD s, UWORD d)
 {
     return NOT_S(s,d);
 }
 
-static  UWORD
+static UWORD
 nots_or_d(UWORD s, UWORD d)
 {
     return NOTS_OR_D(s,d);
 }
 
-static  UWORD
+static UWORD
 not_sandd(UWORD s, UWORD d)
 {
     return NOT_SANDD(s,d);
@@ -228,23 +228,47 @@ UWORD (*logop_tab[16])(UWORD s, UWORD d) = {
 
 
 
+#if 1
+ULONG lshift(ULONG s)
+{
+    return s<<16;
+}
+#endif
+
+#if 0
+static inline ULONG lshift (register ULONG y)
+{
+    register UWORD x
+    __asm__ __volatile__
+        (
+         "swap %0;"
+         "clr.w %0;"
+         : "=d" (x)
+         : "0" (x)
+        );
+    return x;
+}
+#endif
+
+
 /*
  * bitblt - Generic bitblt for all interleaved resolutions
  */
-void 
+static inline void
 bit_blt(FBBLTPBLK * fbb )
 {
     WORD  pc;   /* plane counter */
     UWORD *dbase;
     UWORD *sbase;
-    WORD  snxline,dnxline;
-    WORD  snxword,dnxword;
+    WORD  snxline, dnxline;
+    WORD  snxword, dnxword;
     UWORD endmask1, endmask3;
     UWORD wordcnt, s_xmin16, s_xmax16, d_xmin16, d_xmax16;
     UWORD lendmsk=0xffff>>(fbb->d_xmin%16);
     UWORD rendmsk=~(0x7fff>>(fbb->d_xmax%16));
     WORD skew = (fbb->d_xmin - fbb->s_xmin) & 0x000f;
     UWORD prefetch = ((fbb->d_xmin%16) < (fbb->s_xmin%16));
+    UWORD (*logop[4])(UWORD s, UWORD d);
 
     /* precalculate some values for speed */
     s_xmin16 = fbb->s_xmin / 16;
@@ -342,31 +366,37 @@ bit_blt(FBBLTPBLK * fbb )
     kprintf("endmask1 is %x, endmask3 is %x\n", endmask1, endmask3);
 #endif
 
-    /* Blit each plane starting from the last */
-    for (pc=fbb->plane_ct-1, sbase+=pc*(fbb->s_nxpl>>1), dbase+=pc*(fbb->d_nxpl>>1);
-         pc >= 0 ;
-         pc--, sbase-=fbb->s_nxpl>>1, dbase-=fbb->d_nxpl>>1) {
-
-        UWORD (*logop)(UWORD s, UWORD d);
+    /* Pre-Fill logop[] table with operation modes for each plane */
+    for (pc=fbb->plane_ct-1; pc >= 0; pc--) {
         int op_tabidx;
 
         /* Calculate index into op_tab */
         op_tabidx = ((fbb->fg_col>>pc) & 0x0001 ) <<1;
         op_tabidx |= (fbb->bg_col>>pc) & 0x0001;
 
-        /* Get logic op function pointer for this plane from op_tab */
-        logop = logop_tab[fbb->op_tab[op_tabidx] & 0x000f];
+        logop[pc] = logop_tab[fbb->op_tab[op_tabidx] & 0x000f];
+    }
+
+    /* Blit each plane starting from the last */
+    for (pc=fbb->plane_ct-1, sbase+=pc*(fbb->s_nxpl>>1), dbase+=pc*(fbb->d_nxpl>>1);
+         pc >= 0 ;
+         pc--, sbase-=fbb->s_nxpl>>1, dbase-=fbb->d_nxpl>>1) {
+
+        UWORD (*op)(UWORD s, UWORD d);
+
+        op = logop[pc];
 
         if (snxword>=0) {
             /* left to right blit entered */
 
-            if (logop == s_only) {
+            /* This is just for speed */
+            if (snxword == dnxword && dnxword && logop[pc] == s_only) {
                 /* Just for replace mode, most often used! */
-                /* This is extra simplyfied code for speed */
-                int j;
+                int j, nxword;
                 UWORD *lsbase = sbase;
                 UWORD *ldbase = dbase;
 
+                nxword = snxword;
                 /* Do for each line in the blit */
                 for (j=fbb->b_ht-1; j>= 0; j--,
                 lsbase+=snxline, ldbase+=dnxline) {
@@ -378,36 +408,41 @@ bit_blt(FBBLTPBLK * fbb )
 
                     /* If source pixel on word boundary, don't prefetch */
                     if (prefetch) {
-                        sbuf=*s;
+                        sbuf = *s;
                         sbuf <<= 16;
-                        s += snxword;
+                        s += nxword;
                     }
 
                     /* Do first word */
                     sbuf |= *s;
-                    *d = *d & ~endmask1;
-                    *d |= (UWORD)(sbuf>>skew) & endmask1;
-
-                    /* One word blit */
-                    if (dnxword==0)
-                        continue;
+                    *d = (*d & ~endmask1) | ((sbuf>>skew) & endmask1);
 
                     /* Do middle words */
-                    for (i=wordcnt-1 ; i >= 0; i--) {
-                        s+=snxword;
+                    for (i=wordcnt-1; i >= 0; i--) {
+                        s += nxword;
+                        d += nxword;
                         sbuf <<= 16;
-                        sbuf |= *s;
-                        d+=dnxword;
-                        *d = (UWORD)(sbuf>>skew);
+#if 0
+                        /* just a try to make it faster... (MAD) */
+                        __asm__ __volatile__
+                            (
+                             "swap %0\n\t"
+                             "clr.w %0\n\t"
+                             :
+                             :
+                             : "0" (sbuf)
+                            );
+#endif
+                        sbuf |=  *s;
+                        *d = sbuf>>skew;
                     }
 
                     /* Do last word */
-                    s += snxword;
+                    s += nxword;
+                    d += nxword;
                     sbuf <<= 16;
                     sbuf |= *s;
-                    d += dnxword;
-                    *d = *d & ~endmask3;
-                    *d |= (UWORD)(sbuf>>skew) & endmask3;
+                    *d = (*d & ~endmask3) | ((sbuf>>skew) & endmask3);
                 }
             }
             else {
@@ -435,7 +470,7 @@ bit_blt(FBBLTPBLK * fbb )
                     /* Do first word */
                     sbuf |= *s;
                     *d &= ~endmask1;
-                    *d |= (*logop)((UWORD)(sbuf>>skew), *d) & endmask1;
+                    *d |= (*op)((UWORD)(sbuf>>skew), *d) & endmask1;
 
                     /* One word blit */
                     if (dnxword==0)
@@ -447,7 +482,7 @@ bit_blt(FBBLTPBLK * fbb )
                         d += dnxword;
                         sbuf <<= 16;
                         sbuf |=  *s;
-                        *d = (*logop)((UWORD)(sbuf>>skew), *d);
+                        *d = (*op)((UWORD)(sbuf>>skew), *d);
                     }
 
                     /* Do last word */
@@ -456,7 +491,7 @@ bit_blt(FBBLTPBLK * fbb )
                     sbuf <<= 16;
                     sbuf |= *s;
                     *d &= ~endmask3;
-                    *d |= (*logop)((UWORD)(sbuf>>skew), *d) & endmask3;
+                    *d |= (*op)((UWORD)(sbuf>>skew), *d) & endmask3;
                 }
             }
         }
@@ -481,14 +516,14 @@ bit_blt(FBBLTPBLK * fbb )
                 s += snxword;
                 sbuf |= UPPER((ULONG)*s);
                 *d &= ~endmask1;
-                *d |= (*logop)((UWORD)(sbuf>>skew), *d) & endmask1;
+                *d |= (*op)((UWORD)(sbuf>>skew), *d) & endmask1;
 
                 /* Do middle words */
                 for (i=wordcnt-1 ; i >= 0; i--) {
                     s += snxword;
                     d += dnxword;
                     sbuf = (sbuf>>16) | ((ULONG)*s<<16);
-                    *d = (*logop)((UWORD)(sbuf>>skew), *d);
+                    *d = (*op)((UWORD)(sbuf>>skew), *d);
                 }
 
                 /* Do last word */
@@ -496,7 +531,7 @@ bit_blt(FBBLTPBLK * fbb )
                 d += dnxword;
                 sbuf = (sbuf>>16) | ((ULONG)*s<<16);
                 *d &= ~endmask3;
-                *d |= (*logop)((UWORD)(sbuf>>skew), *d) & endmask3;
+                *d |= (*op)((UWORD)(sbuf>>skew), *d) & endmask3;
             }
         }
     }
@@ -595,6 +630,7 @@ do_rectclip(RECT *cor, RECT *clip)
 {
     fix_rect(cor);
 
+    /* check first if clipping takes away everything */
     if(((cor->x1 < clip->x1) && (cor->x2 < clip->x1)) ||
        ((cor->x1 > clip->x2) && (cor->x2 > clip->x2)) ||
        ((cor->y1 < clip->y1) && (cor->y2 < clip->y1)) ||
@@ -644,7 +680,7 @@ gen_cpyfm(int tran)
     dstcor->y2 = srccor->y2 - srccor->y1 + dstcor->y1;
     tmpcor = *dstcor;
 
-    /* check first if clipping takes away everything,
+    /* check first if clipping takes away everything, or
      if destination is the screen */
     if ((work_ptr->clip = *INTIN) != 0) {
         if(!dst->fd_addr && !do_rectclip(dstcor, (RECT *)&XMN_CLIP)) {
@@ -660,25 +696,25 @@ gen_cpyfm(int tran)
 
     /* choose, if transparent */
     if (tran) {
-        /* foreground and background colour to put block in */
-        fbb->fg_col = INTIN[1];
-        fbb->bg_col = INTIN[2];
-
         /* emulate the four modes with different combinations
          of the ordinary 15 bitblt modes. */
         switch(mode) {
         case MD_TRANS:
-            fbb->op_tab[0] = BM_NOTS_AND_D;
-            fbb->op_tab[1] = BM_NOTS_AND_D;
-            fbb->op_tab[2] = BM_S_OR_D;
+            fbb->op_tab[0] = BM_NOTS_AND_D;     // fg:0 bg:0  D' <- S and D
+            fbb->op_tab[1] = BM_NOTS_AND_D;     // fg:0 bg:1  D' <- [not S] or D
+            fbb->op_tab[2] = BM_S_OR_D;         
             fbb->op_tab[3] = BM_S_OR_D;
+            fbb->fg_col = MAP_COL[INTIN[1]];    // save the color of interest
+            fbb->bg_col = 0;                    // were only interested in one color
             break;
 
         case MD_XOR:
-            fbb->op_tab[0] = BM_S_XOR_D;
-            fbb->op_tab[1] = BM_S_XOR_D;
-            fbb->op_tab[2] = BM_S_XOR_D;
-            fbb->op_tab[3] = BM_S_XOR_D;
+            fbb->op_tab[0] = BM_S_XOR_D;        // fg:0 bg:0  D' <- S xor D
+            fbb->op_tab[1] = BM_S_XOR_D;        
+            fbb->op_tab[2] = BM_S_XOR_D;        
+            fbb->op_tab[3] = BM_S_XOR_D;        
+            fbb->fg_col = 0;                    // were not interested in any color
+            fbb->bg_col = 0;                    // were not interested in any color
             break;
 
         case MD_ERASE:
@@ -686,14 +722,18 @@ gen_cpyfm(int tran)
             fbb->op_tab[1] = BM_S_AND_D;
             fbb->op_tab[2] = BM_S_AND_D;
             fbb->op_tab[3] = BM_NOTS_OR_D;
+            fbb->fg_col = 0;                    // were only interested in one color
+            fbb->bg_col = MAP_COL[INTIN[2]];    // save the color of interest
             break;
 
         case MD_REPLACE:
         default: /* illegal mode specified, use replace mode */
-            fbb->op_tab[0] = BM_ALL_WHITE;
-            fbb->op_tab[1] = BM_NOT_S;
-            fbb->op_tab[2] = BM_S_ONLY;
-            fbb->op_tab[3] = BM_ALL_BLACK;
+            fbb->op_tab[0] = BM_ALL_WHITE;      // fg:0 bg:0  D' <- 0
+            fbb->op_tab[1] = BM_NOT_S;          // fg:0 bg:1  D' <- not S
+            fbb->op_tab[2] = BM_S_ONLY;         // fg:1 bg:0  D' <- S
+            fbb->op_tab[3] = BM_ALL_BLACK;      // fg:1 bg:1  D' <- 1
+            fbb->fg_col = MAP_COL[INTIN[1]];    // save the colors of interest
+            fbb->bg_col = MAP_COL[INTIN[2]];    // save the colors of interest
         }
     }
     else {
@@ -765,6 +805,7 @@ gen_cpyfm(int tran)
 
 
 
+#if 0
 /*
  * dro_cpyfm - copy raster opaque
  *
@@ -792,7 +833,7 @@ drt_cpyfm()
     /* transparent blit */
     gen_cpyfm(1);
 }
-
+#endif
 
 
 /*

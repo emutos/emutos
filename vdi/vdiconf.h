@@ -28,8 +28,6 @@
  */
 #define vme10           0       /* assemble for Motorola VME/10 (1=yes, 0=no) */
 
-#define pattern         1       /* for selecting software which applies */
-                                /* a pattern to the source */
 /*
  * The rev_vid switch controls how the drawing algorithms treat the colors
  * white and black.  The lisa has reverse video hardware, a 0 in memory is
@@ -48,8 +46,6 @@
 #define test0           0       /* if give program access to internal variables */
 #define test1           0       /* if using very large fonts (else, 8x16) */
 #define bytswap         0       /* if font words are byte swapped! */
-
-
 
 /* Frame parameters - just for copyfrm.S and bitblt.S */
 
@@ -99,7 +95,4 @@
 #define INNER_CT    -6  // +70 blt inner loop initial count
 #define DST_WR      -4  // +72 destination form wrap (in bytes)
 #define SRC_WR      -2  // +74 source form wrap (in bytes)
-
-
-
 #endif                          /* VDICONF_H */

@@ -1525,3 +1525,7 @@ Start... early ages
 2003-07-27
 - desk/* : Fixed some of the "Desktop 1.2" patches and added three new menu
   entries in the file menu that are needed to use this desktop mode. (THH)
+
+2003-07-29
+- vdi/blit.c: reactivated assembler implementation of vrt_cpyfm, 
+              vro_cpyfm and bit_blt till C is bug free  (MAD)
