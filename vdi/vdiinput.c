@@ -177,17 +177,17 @@ static void do_nothing()
 
 void vb_draw()
 {
-    ints_off();
+    WORD old_sr = set_sr(0x2700);  // disable interrupts
     if (draw_flag) {
         mousex = newx;          // get cursor x-coordinate
         mousey = newy;          // get cursor y-coordinate
-        ints_on();
+        set_sr(old_sr);
         if (!mouse_flag) {
             cur_replace();              // remove the old cursor from the screen
             cur_display();              // redraw the cursor
         }
     } else
-        ints_on();
+        set_sr(old_sr);
 
 }
 

@@ -17,6 +17,7 @@
 #include "styles.h"
 #include "kprint.h"
 #include "biosbind.h"
+#include "asm.h"
 
 
 
@@ -296,7 +297,7 @@ static WORD INQ_TAB_rom[45] = {
 
 static void do_nothing_int(int u)
 {
-  (void)u;
+    (void)u;
 }
 
 
@@ -390,6 +391,7 @@ void tick_int(int u)
 /* OPEN_WORKSTATION: */
 void v_opnwk()
 {
+    WORD old_sr;
     int i;
 
     /* We need to copy some initial table data from the ROM */
@@ -438,12 +440,12 @@ void v_opnwk()
 
     /* Now initialize the lower level things */
     in_proc = 0;                        // no vblanks in process
-    tim_addr = do_nothing_int;              // tick points to rts
+    tim_addr = do_nothing_int;          // tick points to rts
 
-    ints_off();                         // disable interrupts
+    old_sr = set_sr(0x2700);            // disable interrupts
     tim_chain = (void(*)(int))          // save old vector
         Setexc(0x100, (long)tick_int);  // set etv_timer to tick_int
-    ints_on();                          // enable interrupts
+    set_sr(old_sr);                     // enable interrupts
 
     vdimouse_init();                    // initialize mouse
     //cprintf("\033f");                 // FIXME: switch off cursor
@@ -455,6 +457,7 @@ void v_opnwk()
 /* CLOSE_WORKSTATION: */
 void v_clswk()
 {
+    WORD old_sr;
     struct attribute *next_work;
 
     if (virt_work.next_work != NULLPTR) {       /* Are there VWs to close */
@@ -467,9 +470,9 @@ void v_clswk()
 
 
     /* Now de-initialize the lower level things */
-    ints_off();                         // disable interrupts
-    Setexc(0x100, (long)tim_chain);             // set etv_timer to tick_int
-    ints_on();                          // enable interrupts
+    old_sr = set_sr(0x2700);            // disable interrupts
+    Setexc(0x100, (long)tim_chain);     // set etv_timer to tick_int
+    set_sr(old_sr);                     // enable interrupts
 
     vdimouse_exit();                    // initialize mouse
     escfn3();                           // back to console mode
@@ -733,16 +736,17 @@ void vex_curv()
 
 void vex_timv()
 {
+    WORD old_sr;
     LONG * pointer;
 
     pointer = (LONG*) &CONTRL[9];
 
-    ints_off();
+    old_sr = set_sr(0x2700);
 
     *pointer = (LONG) tim_addr;
     (LONG*)tim_addr = *--pointer;
 
-    ints_on();
+    set_sr(old_sr);
 
     INTOUT[0] = (WORD)Tickcal();
 }

@@ -20,9 +20,15 @@
  *   sets sr to the new value, and return the old sr value 
  * WORD get_sr(void);
  *   returns the current value of sr. the CCR bits are not meaningful.
+ * LONG get_sp(void);
+ *   returns the current value of sp. 
  * void stop2300(void);
  * void stop2500(void);
  *   the STOP immediate instruction
+ * void ints_off(void);
+ * void ints_on(void);
+ *   these are macros based on set_sr(), and requiring a local variable
+ *   declared as: WORD old_sr;
  * void regsafe_call(void *addr);
  *   Do a subroutine call with saving/restoring the CPU registers
  *
@@ -86,7 +92,7 @@ __extension__                               \
 
 /*
  * LONG get_sp(void);
- *   returns the current value of sr. 
+ *   returns the current value of sp. 
  */
 
 #define get_sp()                            \
@@ -100,35 +106,6 @@ __extension__                               \
   );                                        \
   retvalue;                                 \
 })
-
-
-
-/*
- * void ints_off(void);
- *   switches off interrupts, SR saved to stack
- */
-
-#define ints_off()      \
-__extension__           \
-({__asm__ volatile      \
-  ("move  sr, -(sp);    \
-    ori.w #0x0700, sr " \
-  );                    \
-})
-
-
-
-/*
- * void ints_on(void);
- *   switches interrupts on again, SR restored from stack
- */
-
-#define ints_on()       \
-__extension__           \
-({__asm__ volatile      \
-  ("move  (sp)+, sr "); \
-})
-
 
 
 /*
