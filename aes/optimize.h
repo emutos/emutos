@@ -17,7 +17,6 @@ void inf_fldset(LONG tree, WORD obj, UWORD testfld, UWORD testbit,
                 UWORD truestate, UWORD falsestate);
 WORD inf_gindex(LONG tree, WORD baseobj, WORD numobj);
 WORD inf_what(LONG tree, WORD ok, WORD cncl);
-void merge_str(BYTE *pdst, BYTE *ptmp, UWORD parms[]);
 WORD wildcmp(BYTE *pwld, BYTE *ptst);
 void ins_char(BYTE *str, WORD pos, BYTE chr, WORD tot_len);
 
