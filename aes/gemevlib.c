@@ -56,14 +56,13 @@ void ev_rets(WORD rets[])
         {
           rets[0] = pr_xrat;
           rets[1] = pr_yrat;
-          rets[2] = pr_button;
         }
         else
         {
           rets[0] = xrat;
           rets[1] = yrat;
-          rets[2] = button;
         }
+        rets[2] = pr_button;
         rets[3] = kstate;
         mtrans = 0;
 }
