@@ -13,6 +13,7 @@
 
 /*
  * Bugs and limitations:
+ * - double quotes within simple quotes are not handled
  * - free comments in po files are put to the end when updating
  * - only _() and N_() macros are handled
  * - no fuzzy or printf-format parameters
@@ -43,6 +44,9 @@
  * - memory is not freed correctly, esp. after xstrdup 
  * - use strerror() to report errors
  * - use #~ for old entries
+ * - split this into proper files
+ * - finish translate command
+ * - LINGUAS, POTFILES.in to be optionally specified on the command line
  */
 
 #include <stdio.h>
@@ -906,21 +910,118 @@ int try_c_string(IFILE *f)
 }
 
 
+
 /*
  * parse c files
  * put strings surrounded by _("...") or N_("...") into the ordered-hash
  * state means :
  * 0 outside names, 1 after 'N', 2 after '_', 3 after '(', 4 in a name
+ * when anything meaningful has been parsed, the corresponding structure of
+ * the action structure is called.
  */
+ 
+typedef struct parse_c_action {
+  void (*gstring)(void *this, str *s, char *fname, int lineno);
+  void (*string)(void *this, str *s);
+  void (*other)(void *this, int c);
+} parse_c_action;
 
-void parse_c_file(char *fname, oh *o)
+void pca_xgettext_gstring(void *this, str *s, char *fname, int lineno)
+{
+  oh *o = (oh *) this;
+  poe *e;
+  ref *r;
+  char *t;
+         
+  t = s_detach(s);
+  
+  /* add the string into the hash */
+  e = o_find(o, t);
+  if(e) {
+    /* the string already exists */
+    free(t);
+  } else {
+    e = poe_new(t);
+    o_insert(o, e);
+  }
+  r = ref_new(fname, lineno);
+  if(e->refs == 0) {
+    e->refs = da_new();
+  }
+  da_add(e->refs, r);
+}
+
+void pca_xgettext_string(void *this, str *s)
+{
+  s_free(s);
+}
+
+void pca_xgettext_other(void *this, int c)
+{
+}
+
+parse_c_action pca_xgettext[] = { {
+  pca_xgettext_gstring,
+  pca_xgettext_string,
+  pca_xgettext_other,
+} };
+
+void print_canon(FILE *, char *, char *);
+
+/* pcati - Parse C Action Translate Info */
+typedef struct pcati {
+  FILE *f;
+  void (*conv)(char *);
+  oh *o;
+} pcati;
+
+
+void pca_translate_gstring(void *this, str *s, char *fname, int lineno)
+{
+  pcati *p = (pcati *) this;
+  char *t;
+  poe *e;
+  
+  t = s_detach(s);
+  e = o_find(p->o, t);
+  if(e) {  /* if there is a translation, get it instead */
+    free(t);
+    t = xstrdup(e->msgstr);
+  }
+  p->conv(t);  /* convert the string, be it a translation or the original */
+  print_canon(p->f, t, "");
+  free(t);
+}
+
+void pca_translate_string(void *this, str *s)
+{
+  pcati *p = (pcati *) this;
+  char *t;
+  
+  t = s_detach(s);
+  print_canon(p->f, t, "");
+  free(t);
+}
+
+void pca_translate_other(void *this, int c)
+{
+  pcati *p = (pcati *) this;
+  
+  fputc(c, p->f);
+}
+
+parse_c_action pca_translate [] = { {
+  pca_translate_gstring,
+  pca_translate_string,
+  pca_translate_other,
+} } ;
+
+
+void parse_c_file(char *fname, parse_c_action *pca, void *this)
 {
   int c;
   int state;
-  poe *e;
-  ref *r;
   str *s;
-  char *t;
   int lineno;
         
   IFILE *f = ifopen(fname);
@@ -929,15 +1030,26 @@ void parse_c_file(char *fname, oh *o)
     return;
   }
 
+/* TODO - merge parse_c_comment into this, rewrite the parser */
+
   state = 0;
   for(;;) {
     c = inextc(f);
     if(c == EOF) {
       break;
     } else if(c == '/') {
-      iback(f);
-      try_c_comment(f);
+      c = inextc(f);
+      if(c == '/') {
+        pca->other(this, '\n');
+      }
+      ibackn(f,2);
+      c = '/';
       state = 0;
+      if(! try_c_comment(f)) {
+        pca->other(this, c);
+      } else {
+        pca->other(this, ' ');
+      }
     } else if(c == '\"') {
       if(state == 3) {
         /* this is a new gettext string */
@@ -951,63 +1063,55 @@ void parse_c_file(char *fname, oh *o)
           c = inextc(f);
         } while(c == '\"');
         if(c != ')') {
+          char *t = s_detach(s);
           warn("_(\"...\" with no closing )");
-          t = s_detach(s);
           warn("the string is %s", t);
           free(t);
           state = 0;
           continue;
         }
-        t = s_detach(s);
-        /* add the string into the hash */
-        e = o_find(o, t);
-        if(e) {
-          /* the string already exists */
-          free(t);
-        } else {
-          e = poe_new(t);
-          o_insert(o, e);
-        }
-        r = ref_new(fname, lineno);
-        if(e->refs == 0) {
-          e->refs = da_new();
-        }
-        da_add(e->refs, r);
+        /* handle the string */
+        pca->gstring(this, s, fname, lineno);
+        pca->other(this, ')');
       } else {
         iback(f);
-        try_c_string(f);
+        s = s_new();
+        get_c_string(f, s);
+        pca->string(this, s);
       }
-    } else if(c == '(') {
-      if(state == 2) {
-        state = 3;
-      } else {
-        state = 0;
-      }
-    } else if(c == '_') {
-      if(state < 2) {
-        state = 2;
-      } else {
-        state = 0;
-      }
-    } else if(c == 'N') {
-      if(state == 0) {
-        state = 1;
-      } else {
-        state = 4;
-      }
-    } else if(is_white(c)) {
-      if((state == 1) || (state == 4)) {
-        state = 0;
-      } 
-    } else if(is_letter(c) || is_digit(c)) {
-      state = 4;
     } else {
-      state = 0;
+      if(c == '(') {
+        if(state == 2) {
+          state = 3;
+        } else {
+          state = 0;
+        }
+      } else if(c == '_') {
+        if(state < 2) {
+          state = 2;
+        } else {
+          state = 0;
+        }
+      } else if(c == 'N') {
+        if(state == 0) {
+          state = 1;
+        } else {
+          state = 4;
+        }
+      } else if(is_white(c)) {
+        if((state == 1) || (state == 4)) {
+          state = 0;
+        } 
+      } else if(is_letter(c) || is_digit(c)) {
+        state = 4;
+      } else {
+        state = 0;
+      }
+      pca->other(this, c);
     }
   }
   ifclose(f);
 }
-
 
 
 /*
@@ -1275,15 +1379,34 @@ void parse_oipl_file(char *fname, da *d)
 
 /*
  * print string in canonical format
+ *
+ * NOTE: the 'canonical' format is modified for handling of
+ * the GEM Alert string specifications: if the string begins with
+ * [n][, where n is a digit, then the string will be cut after
+ * this initial [n][ and after every |.
  */
- 
+
+#define CANON_GEM_ALERT 1
+
 void print_canon(FILE *f, char *t, char *prefix)
 {
   unsigned a;
+#if CANON_GEM_ALERT
+  int gem_alert = 0;
+#endif /* CANON_GEM_ALERT */
   
   if(strchr(t, '\n')) {
     fprintf(f, "\"\"\n%s", prefix);
   }
+  
+#if CANON_GEM_ALERT
+  if(t[0] == '[' && t[1] >= '0' && t[1] <= '9' && t[2] == ']' && t[3] == '[') {
+    fprintf(f, "\"[%c][\"\n%s", t[1], prefix);
+    t += 4;
+    gem_alert = 1;
+  }
+#endif /* CANON_GEM_ALERT */
+
   fprintf(f, "\"");
   while(*t) {
     switch(*t) {
@@ -1298,6 +1421,16 @@ void print_canon(FILE *f, char *t, char *prefix)
     case '\t': fprintf(f, "\\t"); break;
     case '\"': 
     case '\\': fprintf(f, "\\%c", *t); break;
+#if CANON_GEM_ALERT
+    case '|':
+      if(gem_alert) {
+        fprintf(f, "%c\"\n%s\"", *t, prefix); break;
+      }
+      /* else fallthrough */
+    case ']':
+      gem_alert = 0;
+      /* fallthrough */
+#endif /* CANON_GEM_ALERT */
     default:
       a = ((unsigned)(*t))&0xFF;
       if((a < ' ') || (a >= 127 && a < 0xa0)) {
@@ -1545,7 +1678,7 @@ void xgettext(void)
   
   n = da_len(d);
   for(i = 0 ; i < n ; i++) {
-    parse_c_file(da_nth(d,i), o);
+    parse_c_file(da_nth(d,i), pca_xgettext, o);
   }
   
   po_convert_refs(o);
@@ -1592,7 +1725,7 @@ const struct charset_info charsets[] = {
   /* { kamenicky, "Kamenicky" }, */
 };
 
-cset_t get_charset(char *name)
+cset_t get_charset(const char *name)
 {
   int i;
   int n = sizeof(charsets)/sizeof(*charsets);
@@ -1759,9 +1892,10 @@ int compute_th_value(char *t)
  
 
 /* decomposes a string <lang><white><encoding>, returning
- * 0 if s is badly formatted
+ * 0 if s is badly formatted. 
+ * needs a 3-byte buffer in lang
  */
-int parse_linguas_item(char *s, char *lang, cset_t *charset)
+int parse_linguas_item(const char *s, char *lang, cset_t *charset)
 {
   if(*s <'a' || *s >= 'z') return 0;
   *lang++ = *s++;
@@ -1903,7 +2037,8 @@ void make(void)
     
     /* print stats if some entries are missing */
     if(numtransl < numref) {
-      printf("lang %s: %d untranslated entries\n", lang, numref - numtransl);
+      printf("lang %s: %d untranslated entr%s\n", 
+          lang, numref - numtransl, (numref - numtransl == 1)? "y" : "ies");
     }
     
     /* dump the hash table */
@@ -1957,6 +2092,86 @@ static struct lang_info lang_%s = { \"%s\", msg_%s };\n", t, t, t);
 }
 
 /*
+ * translate
+ */
+
+void translate(char *lang, char * from)
+{
+  FILE *g;
+  pcati p;
+  char *to;
+  char po[10];
+  cset_t from_charset, to_charset;
+   
+  { /* build destination filename */
+    int len = strlen(from);
+    if(len < 2 || from[len-1] != 'c' || from[len-2] != '.') {
+      warn("I only translate .c files");
+      return;
+    }
+    to = xmalloc(len+3);
+    strcpy(to, from);
+    strcpy(to+len-2, ".tr.c");
+  }
+  g = fopen(to, "w");
+  if(g == NULL) {
+    warn("cannot create %s\n", to);
+    return;
+  }
+  free(to);
+  p.f = g;
+  
+  to_charset = unknown;
+  { /* obtain destination charset from LINGUAS */
+    da *d = da_new();
+    int i, n;
+    parse_oipl_file("po/LINGUAS", d);
+
+    n = da_len(d);
+    for(i = 0 ; i < n ; i++) {
+      char *t = da_nth(d, i);
+      char l[3];
+      if(! parse_linguas_item(t, l, &to_charset)) {
+        warn("po/LINGUAS: bad lang/charset specification \"%s\"", t);
+      } else if(!strcmp(lang, l)) {
+        break;
+      }
+      to_charset = unknown;
+    }
+  } 
+  if(to_charset == unknown) {
+    warn("cannot find destination charset.");
+    return;
+  }     
+
+  /* read all translations */
+  p.o = o_new();
+  sprintf(po, "po/%s.po", lang);
+  parse_po_file(po, p.o);
+    
+  { /* get the source charset from the po file */
+    ae_t a;
+    poe *e = o_find(p.o, "");
+    if(e == NULL || !parse_ae(e->msgstr, &a)) {
+      warn("%s: bad administrative entry", po);
+      goto fail;
+    }
+    from_charset = get_charset(a.charset);
+    if(from_charset == unknown) {
+      warn("%s: bad charset specification", po);
+      goto fail;
+    }
+  }
+
+  p.conv = get_converter(from_charset, to_charset);
+ 
+  parse_c_file(from, pca_translate, &p);
+fail:
+  o_free(p.o);
+  fclose(g);
+}
+
+/*
  * main 
  */
 
@@ -1975,6 +2190,10 @@ int main(int argc, char **argv)
     if(argc != 2) goto usage;
     make();
     exit(0);
+  } else if(!strcmp(argv[1], "translate")) {
+    if(argc != 4) goto usage;
+    translate(argv[2], argv[3]);
+    exit(0);
   } else if(!strcmp(argv[1], "--version")) {
     printf("version " VERSION "\n");
     exit(0);
@@ -1988,6 +2207,8 @@ Commands are:\n\
   update xx.po   compares xx.po to the current messages.pot \n\
                  and creates a new xx.po (new entries added, old \n\
                  entries commented out)\n\
+  translate xx from.c
+                 translates from.c into from.tr.c for language xx.\n\
   make           takes all languages listed in file LINGUAS \n\
                  and creates the C file(s) for the project\n\
 \n\
