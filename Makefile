@@ -1,8 +1,15 @@
 #
-# Makefile suitable for Linux and Cygwin setups
+# Makefile - the EmuTOS overbloated Makefile
+#
+# Copyright (c) 2001, 02 EmuTOS development team.
+#
+# This file is distributed under the GPL, version 2 or at your
+# option any later version.  See doc/license.txt for details.
+#
+
+# The Makefile is suitable for Linux and Cygwin setups
 # only GCC (cross-mint) is supported. 
-# Some features like pattern substitution probably
-# require GNU-make.
+# Some features like pattern substitution probably require GNU-make. 
 #
 # for a list of main targets do  
 #   make help
@@ -65,6 +72,13 @@ LOCALCONF = -DLOCALCONF
 else
 LOCALCONF = 
 endif
+
+#
+# TOCLEAN will accumulate over thie Makefile the names of files to remove 
+# when doing make clean; temporary Makefile files are *.tmp
+#
+
+TOCLEAN = *~ */*~ $(CORE) *.tmp
 
 # 
 # compilation flags
@@ -237,14 +251,6 @@ SOBJ = $(BIOSSOBJ) $(BDOSSOBJ) $(UTILSOBJ) $(VDISOBJ) $(UISOBJ)
 OBJECTS = $(SOBJ) $(COBJ) $(FONTOBJ)
 
 #
-# temporary variables, for internal Makefile use
-# anything ending in .tmp will be removed by make clean.
-
-TMP1 = make1.tmp
-TMP2 = make2.tmp
-TMP3 = make3.tmp
-
-#
 # production targets 
 # 
 
@@ -272,6 +278,8 @@ help:
 # the maps must be built at the same time as the images, to enable
 # one generic target to deal with all edited desassembly.
 #
+
+TOCLEAN += *.img *.map
 
 emutos1.img emutos1.map: $(OBJECTS)
 	$(LD) -o emutos1.img -Xlinker -Map -Xlinker emutos1.map \
@@ -338,6 +346,8 @@ etos512k.img: emutos2.img
 # then use this value (taken from the map) to relocate the RamTOS. 
 #
 
+TOCLEAN += boot.prg
+
 ram: ramtos.img boot.prg
 
 ramtos.img ramtos.map: $(OBJECTS) emutos2.map 
@@ -386,9 +396,13 @@ uncompr$(EXE): tools/uncompr.c
 comprtest: compr$(EXE) uncompr$(EXE)
 	sh tools/comprtst.sh
 
+TOCLEAN += compr$(EXE) uncompr$(EXE)
+
 #
 # flop
 #
+
+TOCLEAN += emutos.st mkflop$(EXE)
 
 flop : emutos.st
 
@@ -408,15 +422,14 @@ mkflop$(EXE) : tools/mkflop.c
 # Misc utilities
 #
 
+TOCLEAN += date.prg dumpkbd.prg
+
 date.prg: obj/minicrt.o obj/doprintf.o obj/date.o
 	$(LD) -Xlinker -s -o $@ obj/minicrt.o obj/doprintf.o obj/date.o -lgcc
 
 dumpkbd.prg: obj/minicrt.o obj/memmove.o obj/dumpkbd.o obj/doprintf.o \
 	     obj/string.o
 	$(LD) -Xlinker -s -o $@ $^ -lgcc
-
-keytbl2c$(EXE) : tools/keytbl2c.c
-	$(NATIVECC) -o $@ $<
 
 #testflop.prg: obj/minicrt.o obj/doprintf.o obj/testflop.o
 #	$(LD) -Xlinker -s -o $@ $^ -lgcc
@@ -426,6 +439,8 @@ keytbl2c$(EXE) : tools/keytbl2c.c
 #
 
 POFILES = po/fr.po po/de.po po/cs.po
+
+TOCLEAN += bug$(EXE) util/langs.c po/messages.pot
 
 bug$(EXE): tools/bug.c
 	$(NATIVECC) -o $@ $<
@@ -479,6 +494,8 @@ all192:
 
 TRANS_SRC_CMD = sed -e '/^[^a-z]/d;s/\.c/.tr&/' <po/POTFILES.in
 
+TOCLEAN += */*.tr.c
+
 ifneq (,$(UNIQUE))
 
 ifneq (us,$(ETOSLANG))
@@ -494,6 +511,8 @@ endif
 # whenever it changes, whatever necessary steps are taken so that the
 # correct files get re-compiled, even without doing make depend.
 #
+
+TOCLEAN += obj/country
 
 needcountry.tmp:
 	@touch $@
@@ -528,6 +547,8 @@ obj/country: needcountry.tmp
 # - explicit dependencies can force rebuilding files that include it
 #
 
+TOCLEAN += include/i18nconf.h
+
 ifneq (,$(UNIQUE))
 include/i18nconf.h:
 	@rm -f $@; touch $@
@@ -560,8 +581,22 @@ obj/boot.o: include/i18nconf.h
 obj/dumpkbd.o: include/i18nconf.h
 
 #
+# ctables.h - the country tables, generated from country.mk, and only
+# included in bios/country.h
+#
+
+TOCLEAN += bios/ctables.h
+
+bios/ctables.h: country.mk tools/genctables.awk
+	awk -f tools/genctables.awk < country.mk > $@
+
+obj/country.o: bios/ctables.h
+
+#
 # OS header
 #
+
+TOCLEAN += bios/header.h mkheader$(EXE)
 
 obj/startup.o: bios/header.h
 
@@ -582,6 +617,8 @@ mkheader$(EXE): tools/mkheader.c
 # ASM source files in vdi/
 #
 
+TOCLEAN += obj/*.o */*.dsm
+
 obj/%.o : %.tr.c
 	$(CC) $(CFLAGS) -c $($(subst /,_,$(dir $<))copts) $< -o $@
 
@@ -598,15 +635,17 @@ obj/%.o : %.S
 # generic dsm handling
 #
 
+TOCLEAN += *.dsm *.dsm dsm.txt fal_dsm.txt
+
 %.dsm: %.map
 	vma=`grep '^.text' $< | sed -e 's/[^0]*//;s/ .*//'`; \
 	$(OBJDUMP) --target=binary --architecture=m68k \
 	  --adjust-vma=$$vma -D $(<:%.map=%.img) \
-	| sed -e '/:/!d;/^  /!d;s/^  //;s/^ /0/;s/:	/: /' > $(TMP1)
+	| sed -e '/:/!d;/^  /!d;s/^  //;s/^ /0/;s/:	/: /' > dsm.tmp
 	grep '^ \+0x' $< | sort \
-	| sed -e 's/^ *0x00//;s/  */:  /' > $(TMP2)
-	cat $(TMP1) $(TMP2) | LC_ALL=C sort > $@
-	rm $(TMP1) $(TMP2)
+	| sed -e 's/^ *0x00//;s/  */:  /' > map.tmp
+	cat dsm.tmp map.tmp | LC_ALL=C sort > $@
+	rm -f dsm.tmp map.tmp
 
 dsm.txt: emutos1.dsm
 	cp $< $@
@@ -625,25 +664,6 @@ fshow: fal_dsm.txt
 	cat fal_dsm.txt
 
 #
-# clean and distclean 
-# (distclean is called before creating a tgz archive)
-#
-
-clean:
-	rm -f obj/*.o obj/*.s *~ */*~ $(CORE) *.img *.map *.dsm *.tmp
-	rm -f dsm.txt fal_dsm.txt
-	rm -f boot.prg date.prg dumpkbd.prg emutos.st
-	rm -f mkflop$(EXE) keytbl2c$(EXE) tounix$(EXE) mkheader$(EXE)
-	rm -f bug$(EXE) po/messages.pot util/langs.c bios/header.h
-	rm -f */*.tr.c obj/country include/i18nconf.h
-	rm -f compr$(EXE) uncompr$(EXE)
-	rm -f makefile.dep 
-
-
-distclean: clean
-	rm -f '.#'* */'.#'* 
-
-#
 # indent - indents the files except when there are warnings
 # checkindent - check for indent warnings, but do not alter files.
 #
@@ -652,16 +672,15 @@ INDENTFILES = bdos/*.c bios/*.c util/*.c tools/*.c desk/*.c aes/*.c vdi/*.c
 
 checkindent:
 	@err=0 ; \
-	rm -f $(TMP3); touch $(TMP3); \
 	for i in $(INDENTFILES) ; do \
-		$(INDENT) <$$i 2>$(TMP1) >/dev/null; \
-		if cmp -s $(TMP1) $(TMP3) ; then : ; else\
+		$(INDENT) <$$i 2>err.tmp >/dev/null; \
+		if test -s err.tmp ; then \
 			err=`expr $$err + 1`; \
 			echo in $$i:; \
-			cat $(TMP1); \
+			cat err.tmp; \
 		fi \
 	done ; \
-	rm -f $(TMP1) $(TMP3); \
+	rm -f err.tmp; \
 	if [ $$err -ne 0 ] ; then \
 		echo indent issued warnings on $$err 'file(s)'; \
 		false; \
@@ -671,22 +690,21 @@ checkindent:
 
 indent:
 	@err=0 ; \
-	rm -f $(TMP3); touch $(TMP3); \
 	for i in $(INDENTFILES) ; do \
-		$(INDENT) <$$i 2>$(TMP1) | expand >$(TMP2); \
-		if cmp -s $(TMP1) $(TMP3) ; then \
-			if cmp -s $(TMP2) $$i ; then : ; else \
+		$(INDENT) <$$i 2>err.tmp | expand >indent.tmp; \
+		if ! test -s err.tmp ; then \
+			if ! cmp -s indent.tmp $$i ; then \
 				echo indenting $$i; \
 				mv $$i $$i~; \
-				mv $(TMP2) $$i; \
+				mv indent.tmp $$i; \
 			fi \
 		else \
 			err=`expr $$err + 1`; \
 			echo in $$i:; \
-			cat $(TMP1); \
+			cat err.tmp; \
 		fi \
 	done ; \
-	rm -f $(TMP1) $(TMP2) $(TMP3); \
+	rm -f err.tmp indent.tmp; \
 	if [ $$err -ne 0 ] ; then \
 		echo $$err 'file(s)' untouched because of warnings; \
 		false; \
@@ -697,11 +715,13 @@ indent:
 # cvsready
 #
 
+TOCLEAN += tounix$(EXE)
+
 expand:
 	@for i in `grep -l '	' */*.[chS]` ; do \
 		echo expanding $$i ; \
-		expand <$$i >$(TMP1); \
-		mv $(TMP1) $$i; \
+		expand <$$i >expand.tmp; \
+		mv expand.tmp $$i; \
 	done
 
 tounix$(EXE): tools/tounix.c
@@ -722,18 +742,14 @@ crlf: tounix$(EXE)
 cvsready: expand crlf
 
 #
-# create a tgz archive named emutos-nnnnnn.tgz,
-# where nnnnnn is the date.
+# create a tgz archive named project-nnnnnn.tgz, where nnnnnn is the date.
 #
 
-HERE = $(shell pwd)
-HEREDIR = $(shell basename $(HERE))
-TGZ = $(shell echo $(HEREDIR)-`date +%y%m%d`|tr A-Z a-z).tgz
-TGZEXCL = #--exclude aes --exclude vdi
-
 tgz:	distclean
-	cd ..;\
-	tar -cf - --exclude '*CVS' $(TGZEXCL) $(HEREDIR) | gzip -c -9 >$(TGZ)
+	@here=`pwd`; heredir=`basename $$here`; today=`date +%y%m%d`; \
+	tgz=`echo $$heredir-$$today | tr A-Z a-z`.tgz; echo cd ..; cd ..; \
+	echo "tar -cf - --exclude '*CVS' $$heredir | gzip -c -9 >$$tgz"; \
+	tar -cf - --exclude '*CVS' $$heredir | gzip -c -9 >$$tgz
 
 #
 # proposal to create an archive named emutos-0_2a.tgz when
@@ -757,13 +773,25 @@ release: distclean
 # file dependencies (makefile.dep)
 #
 
+TOCLEAN += makefile.dep
+
 depend: util/langs.c bios/header.h
 	( \
 	  $(CC) -MM $(INC) -Ibios -Iaes -Idesk/icons $(DEF) $(CSRC); \
 	  $(CC) -MM $(INC) $(DEF) $(SSRC) \
-	) | sed -e '/:/s,^,obj/,' >makefile.dep;
+	) | sed -e '/:/s,^,obj/,' >makefile.dep
 
 ifeq (makefile.dep,$(shell echo makefile.dep*))
 include makefile.dep
 endif
 
+#
+# clean and distclean 
+# (distclean is called before creating a tgz archive)
+#
+
+clean:
+	rm -f $(TOCLEAN)
+
+distclean: clean
+	rm -f '.#'* */'.#'* 

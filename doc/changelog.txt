@@ -1141,3 +1141,11 @@ Start... early ages
 - merged tools/keytbl2c and util/dumpkbd.c - now dumpkbd.prg directly 
   generates keyb_xx.h (LVL)
 - Makefile - fixed a bug in make depend (LVL)
+
+13. Oct. 2002
+- renamed font files, to allow a systematic handling of fonts (LVL)
+- bios/country.c - tables now generated from country.mk in bios/ctables.h (LVL)
+- Makefile - introduced $(TOCLEAN) that gradually stores the name of files 
+  to be removed when doing make clean, to make it harder to forget files
+  in make clean (LVL)
+- doc/country.txt - updated, but still not entirely satisfactory (LVL)

@@ -23,6 +23,43 @@
 #include "config.h"  /* included after country.h because of i18nconf.h */
 #include "header.h"  /* contains the default country number */
 
+/*
+ * country tables - we define the data structures here, then include the
+ * actual tables. The code reading these tables is below.
+ */
+
+struct country_record {
+    int country;      /* country code */
+    char *lang_name;  /* name used to retrieve translations */
+    int keyboard;     /* keyboard layout code */
+    int charset;      /* charset code */
+    int idt;          /* international date and time */
+};
+
+struct kbd_record {
+    int number;
+    struct keytbl *keytbl;
+};
+
+struct charset_fonts {
+    int charset;
+    const struct font_head *f6x6;
+    const struct font_head *f8x8;
+    const struct font_head *f8x16;
+};
+
+/* 
+ * ctables.h contains the following tables: 
+ * const static struct country_record countries[];
+ * const static struct kbd_record avail_kbd[];
+ * const static struct charset_fonts font_sets[];
+ */
+
+#include "ctables.h"
+
+/*
+ * 
+ */
 
 long cookie_idt;
 long cookie_akp;
@@ -41,24 +78,6 @@ void detect_akp_idt(void)
 
 #else
 
-struct country_record {
-    int country;      /* country code */
-    int keyboard;     /* keyboard layout code */
-    char *lang_name;  /* name used to retrieve translations */
-    int charset;      /* charset code */
-    int idt;         
-} ;
-
-const static struct country_record countries[] = {
-    { COUNTRY_US, KEYB_US, "us", CHARSET_ST, IDT_12H | IDT_MMDDYY | '/' }, 
-    { COUNTRY_DE, KEYB_DE, "de", CHARSET_ST, IDT_24H | IDT_DDMMYY | '/' }, 
-    { COUNTRY_FR, KEYB_FR, "fr", CHARSET_ST, IDT_24H | IDT_DDMMYY | '/' }, 
-    { COUNTRY_CZ, KEYB_CZ, "cs", CHARSET_L2, IDT_24H | IDT_DDMMYY | '/' }, 
-};
-
-/* this scheme is set to make it clear which country is partially
- * implemented and which is not 
- */
 static int get_country_index(int country_code)
 {
     int i;
@@ -111,105 +130,27 @@ static int get_charset(void)
 
 /*==== Keyboard layouts ===================================================*/
 
-/* To add a keyboard, please do the following:
- * - read doc/country.txt
- * - create a file bios/keyb_xx.h 
- *   (you may use supplied tool dumpkbd.prg)
- * - add a #include "keyb_xx.h" below
- * - add a line in the keyboard table in bios/country.h
- * - add a line in the table below. 
- */
-
-
-/* include here all available keyboard definitions */
-
-#if (CONF_KEYB == KEYB_ALL || CONF_KEYB == KEYB_US) 
-#include "keyb_us.h"
-#endif
-#if (CONF_KEYB == KEYB_ALL || CONF_KEYB == KEYB_DE) 
-#include "keyb_de.h"
-#endif
-#if (CONF_KEYB == KEYB_ALL || CONF_KEYB == KEYB_FR) 
-#include "keyb_fr.h"
-#endif
-#if (CONF_KEYB == KEYB_ALL || CONF_KEYB == KEYB_CZ) 
-#include "keyb_cz.h"
-#endif
-
-/* add the available keyboards in this table */
-
-struct kbd_record {
-    int number;
-    struct keytbl *keytbl;
-};
-
-const static struct kbd_record avail_kbd[] = {
-#if (CONF_KEYB == KEYB_ALL || CONF_KEYB == KEYB_US) 
-    { KEYB_US, &keytbl_us }, 
-#endif
-#if (CONF_KEYB == KEYB_ALL || CONF_KEYB == KEYB_DE) 
-    { KEYB_DE, &keytbl_de }, 
-#endif
-#if (CONF_KEYB == KEYB_ALL || CONF_KEYB == KEYB_FR) 
-    { KEYB_FR, &keytbl_fr },
-#endif
-#if (CONF_KEYB == KEYB_ALL || CONF_KEYB == KEYB_CZ) 
-    { KEYB_CZ, &keytbl_cz }, 
-#endif
-};
-
-
 void get_keytbl(struct keytbl **tbl)
 {
+    int j;
 #if ! CONF_UNIQUE_COUNTRY
     int i;
     int goal = get_kbd_number();   
 
-    for (i = 0; i < sizeof(avail_kbd) / sizeof(*avail_kbd); i++) {
+    for (i = j = 0 ; i < sizeof(avail_kbd) / sizeof(*avail_kbd) ; i++) {
         if (avail_kbd[i].number == goal) {
-            *tbl = avail_kbd[i].keytbl;
-            return;
+	    j = i;
+	    break;
         }
     }
-    /* if not found, use the default keyboard */
-    *tbl = &keytbl_us;
 #else
     /* use the unique keyboard anyway */
-    *tbl = avail_kbd[0].keytbl;
+    j = 0;
 #endif
+    *tbl = avail_kbd[j].keytbl;
 }
 
 /*==== Font tables ========================================================*/
-
-/* to add a set of fonts, please do the following:
- * - read doc/country.txt
- * - add a line in the charset names in bios/country.h
- * - add extern declaration referencing the fonts below
- * - add a line in the font_sets table below
- */
- 
-extern const struct font_head f8x16;
-extern const struct font_head f8x8;
-extern const struct font_head f6x6;
-extern const struct font_head latin2_8x16;
-extern const struct font_head latin2_8x8;
-extern const struct font_head latin2_6x6;
-
-struct charset_fonts {
-    int charset;
-    const struct font_head *f6x6;
-    const struct font_head *f8x8;
-    const struct font_head *f8x16;
-};
-
-const static struct charset_fonts font_sets[] = {
-#if (CONF_CHARSET == CHARSET_ALL || CONF_CHARSET == CHARSET_ST) 
-    { CHARSET_ST, &f6x6, &f8x8, &f8x16 },
-#endif
-#if (CONF_CHARSET == CHARSET_ALL || CONF_CHARSET == CHARSET_L2) 
-    { CHARSET_L2, &latin2_6x6, &latin2_8x8, &latin2_8x16 }, 
-#endif
-};
 
 void get_fonts(struct font_head **f6x6, 
                struct font_head **f8x8, 
