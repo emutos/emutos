@@ -17,6 +17,8 @@
 #include "kprint.h"
 #include "country.h"
 #include "string.h"
+#include "screen.h"
+#include "machine.h"
 
 #define DBG_LINEA 1
 
@@ -132,7 +134,6 @@ void init_fonts(WORD vmode)
 /* Settings for the different video modes */
 struct video_mode {
     UBYTE       planes;         // count of color planes (v_planes)
-    UBYTE       lin_wr;         // bytes per line (v_lin_wr)
     UWORD       hz_rez;         // screen horizontal resolution (v_hz_rez)
     UWORD       vt_rez;         // screen vertical resolution (v_vt_rez)
     UBYTE       col_fg;         // color number of initial foreground color
@@ -140,9 +141,9 @@ struct video_mode {
 
 
 static const struct video_mode video_mode[] = {
-    {4, 160, 320, 200, 15},        // 16 color mode
-    {2, 160, 640, 200, 3},         // 4 color mode
-    {1,  80, 640, 400, 1}          // monochrome mode
+    {4, 320, 200, 15},        // 16 color mode
+    {2, 640, 200, 3},         // 4 color mode
+    {1, 640, 400, 1}          // monochrome mode
 };
 
 
@@ -250,13 +251,20 @@ void linea_init(void)
         kprintf("video mode was: %d !\n", vmode);
         vmode=2;                /* Falcon should be handled special? */
     }
-    v_planes=video_mode[vmode].planes;
-    v_lin_wr=video_mode[vmode].lin_wr;
-    v_hz_rez=video_mode[vmode].hz_rez;
-    v_vt_rez=video_mode[vmode].vt_rez;
-    v_bytes_lin=video_mode[vmode].lin_wr;       /* I think v_bytes_lin = v_lin_wr (joy) */
-    v_col_bg=0;
+    if (has_videl) {
+        v_planes=get_videl_bpp();
+        v_hz_rez=get_videl_width();
+        v_vt_rez=get_videl_height();
+    }
+    else {
+        v_planes=video_mode[vmode].planes;
+        v_hz_rez=video_mode[vmode].hz_rez;
+        v_vt_rez=video_mode[vmode].vt_rez;
+    }
+    v_lin_wr=v_hz_rez*v_planes/8;
     v_col_fg=video_mode[vmode].col_fg;
+    v_bytes_lin=v_lin_wr;       /* I think v_bytes_lin = v_lin_wr (joy) */
+    v_col_bg=0;
 
 #if DBG_LINEA
     kprintf("planes: %d\n", v_planes);
