@@ -330,10 +330,15 @@ Start... early ages
 1. Dec. 2001
 - standalone command.prg (added replacement _() and N_()) (LVL)
 
-7. Dec. 2001 (joy)
+7. Dec. 2001
 - EmuTOS now recognizes Falcon (by detecting VIDEL) and TT030
-  (by detecting TT-Shifter).
-- NVRAM is actually initialized now. Added functions for accessing the RTC.
-- MegaRTC now checks whether there's the hardware present.
-- clock.c works with the RTC in NVRAM.
-- initinfo.c displays current date and time (sorry, no NLS enabled yet!)
+  (by detecting TT-Shifter). (joy)
+- NVRAM is actually initialized now. Added functions for accessing the RTC
+  in NVRAM. (joy)
+- MegaRTC now checks whether there's the hardware present. (joy)
+- clock.c works with the RTC in NVRAM. (joy)
+- initinfo.c displays current date and time (sorry, no NLS enabled yet!) (joy)
+
+8. Dec. 2001
+- NO_IKBD_CLOCK forgot to disable the XBIOS gettime(). Fixed by disabling
+  all lowlevel IKBD functions. STonX boots EmuTOS again. (joy)
