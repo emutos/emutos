@@ -1347,6 +1347,9 @@ Start... early ages
 - bios/bios.c, natfeat* - NF_SHUTDOWN tried before halting (LVL)
 
 18. Feb. 2003
-- bios/screen.c - Falcon VIDEL better supported. Shoud allow boot in colors
+- bios/screen.c - Falcon VIDEL better supported. Should allow boot in colors
   but there is still something wrong in the EmuTOS as it requires the rez_reg
   to be set (can't find out why) (joy)
+
+19. Feb. 2003
+- bios/screen.c - cleaned up the getrez a bit (MAD)

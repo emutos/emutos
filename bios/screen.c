@@ -46,9 +46,6 @@ void screen_init(void)
 {
     volatile BYTE *rez_reg = (BYTE *) 0xffff8260;
     volatile WORD *col_regs = (WORD *) 0xffff8240;
-    volatile struct {
-        BYTE gpip;
-    } *mfp = (void *) 0xfffffa01;
     WORD rez;
     WORD i;
     ULONG screen_size = 32000;  /* standard Shifter videoram size */
@@ -76,18 +73,14 @@ void screen_init(void)
         col_regs[i] = dflt_palette[i];
     }
 
-    if (has_videl) {
-        rez = getrez();
-        kprintf("Getrez=%d\n", rez);
-        *rez_reg = rez; /* why the hell the st_shift has to be set here??? */
-    }
-    else {
-        rez = *rez_reg;
+    /* Get the video mode */
+    rez = getrez();
+    kprintf("Getrez=%d\n", rez);
 
-        rez &= 3;
-        if (rez == 3) {
-            rez = 2;
-        }
+    if (!has_videl) {
+        volatile struct {
+            BYTE gpip;
+        } *mfp = (void *) 0xfffffa01;
 
         if ((mfp->gpip & 0x80) != 0) {
             /* color monitor */
@@ -97,9 +90,8 @@ void screen_init(void)
             if (rez < 2)
                 rez = 2;
         }
-
-        *rez_reg = rez;
     }
+    *rez_reg = rez;     /* why needed for Falcon? */
     sshiftmod = rez;
 
     if (rez == 1) {
@@ -155,6 +147,7 @@ LONG logbase(void)
 WORD getrez(void)
 {
     if (has_videl) {
+        /* Get the video mode for Falcon-hardware */
         int bpp = get_videl_bpp();
         switch(bpp) {
             case 1: return 2;
@@ -165,8 +158,16 @@ WORD getrez(void)
                 return 0;
        }
     }
-    else
-        return (*(UBYTE *) 0xffff8260);
+    else {
+        /* Get the video mode for ST-hardware */
+        WORD rez;
+
+        rez = (*(UBYTE *) 0xffff8260);
+        if (rez > 2) {
+            rez = 2;
+        }
+        return rez;
+    }
 }
 
 
