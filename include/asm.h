@@ -46,7 +46,6 @@ extern long trap1(int, ...);
 extern long trap13(int, ...);
 extern long trap14(int, ...);
 
-
 /*
  * WORD set_sr(WORD new); 
  *   sets sr to the new value, and return the old sr value 
@@ -76,6 +75,25 @@ __extension__                               \
 ({register short retvalue __asm__("d0");    \
   __asm__ volatile                          \
   ("move.w sr,d0 "                          \
+  : "=r"(retvalue)   /* outputs */          \
+  :                  /* inputs  */          \
+  : "d0"             /* clobbered regs */   \
+  );                                        \
+  retvalue;                                 \
+})
+
+
+
+/*
+ * LONG get_sp(void);
+ *   returns the current value of sr. 
+ */
+
+#define get_sp()                            \
+__extension__                               \
+({register LONG retvalue __asm__("d0");    \
+  __asm__ volatile                          \
+  ("move.l sp,d0 "                          \
   : "=r"(retvalue)   /* outputs */          \
   :                  /* inputs  */          \
   : "d0"             /* clobbered regs */   \
