@@ -48,6 +48,7 @@ set_vec:
 //
 _init_user_vec: 
         lea     user_vec, a0
+        lea     256, a1
         move.l  #191, d0
 set_uvec:
         move.l  a0, (a1)+

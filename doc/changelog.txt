@@ -525,3 +525,6 @@ Start... early ages
 - transferred getmpb from bios.c to biosmem.c (LVL)
 - bios/conout.S: fixed bconout5(c) bug when c >= 128 (LVL)
 - removed obsolete bios/keyboard.h include/btools.h (LVL)
+- in bios/vectors.S, init_user_vec no longer relies on the previous value of 
+  register a1 from init_exc_vec (LVL)
+
