@@ -130,12 +130,12 @@ _vdimouse_exit:
         move.l  #0, (a0)                // unset GEM VBL-routine
         
         /* Initialize mouse via XBIOS */
-        move.l  #-1, -(sp)              // no mouse interrupt routine
-        move.l  #-1, -(sp)              // no mouse parameter block
-        move.w  #0, -(sp)               // enable mouse in relative mode
-        move.w  #0, -(sp)               // Initmous
+        clr.l   -(sp)                   // no mouse interrupt routine
+        clr.l   -(sp)                   // no mouse parameter block
+        move.w  #0,-(sp)                // enable mouse in relative mode
+        move.w  #0,-(sp)                // Initmous
         trap    #14                     // call XBIOS
-        add.l   #12, sp                 // clean up the stack
+        lea     12(sp),sp               // clean up the stack
 
         rts
 
