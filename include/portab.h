@@ -95,7 +95,7 @@ typedef long            ERROR ;                 /*  error codes         */
 /****************************************************************************/
 /*      Miscellaneous Definitions:                                          */
 /****************************************************************************/
-#define NULLPTR (char *) 0              /*      Null pointer value          */
+#define NULLPTR (void*)0                /*      Null pointer value          */
 #define STDIN    0                      /*      Standard Input              */
 #define STDOUT   1                      /*      Standard Output             */
 #define STDERR   2                      /*      Standard Error              */

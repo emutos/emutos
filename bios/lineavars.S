@@ -18,8 +18,8 @@
 //      Negative line-a variables come first
 // ===========================================================================
 
-                .global _mdata
-                .global _cur_font
+                .globl  _mdata
+                .globl  _cur_font
                 .globl  cur_ms_stat
                 .globl  _disab_cnt
                 .globl  _draw_flag
@@ -64,9 +64,21 @@
                 .globl  _v_stat_0
                 .globl  _v_vt_rez
                 .globl  _v_bytes_lin
-                .global _def_font
-                .global _font_ring
-                .global _font_count
+                .globl  _GCURX
+                .globl  _GCURY
+                .globl  _HIDE_CNT
+                .globl  _MOUSE_BT
+                .globl  _TERM_CH
+                .globl  _chc_mode
+                .globl  _cur_work
+                .globl  _def_font
+                .globl  _font_ring
+                .globl  _font_count
+                .globl  _loc_mode
+                .globl  _str_mode
+                .globl  _val_mode
+                .globl  _num_qc_lines
+                .globl  _line_cw
 
 
 /* Font related VDI variables */
@@ -92,10 +104,10 @@ _cur_font:      .ds.l   1       // -906 current VDI font
 /* Mouse data */
 
 _mdata:                         // Block of mouse pointer data
-GCURX:          .ds.w   1       // -602 mouse X position
-GCURY:          .ds.w   1       // -600 mouse Y position
-M_HID_CT:       .ds.w   1       // -598 mouse show/hide reset flag
-MOUSE_BT:       .ds.w   1       // -596 mouse button state
+_GCURX:         .ds.w   1       // -602 mouse X position
+_GCURY:         .ds.w   1       // -600 mouse Y position
+_HIDE_CNT:      .ds.w   1       // -598 Number of levels the mouse is hidden
+_MOUSE_BT:      .ds.w   1       // -596 mouse button state
 
 /* RGB values for colors 0-15 */
 
@@ -105,18 +117,19 @@ REQ_COL:        .ds.w   48      // -594
 
 SIZ_TAB:        .ds.w   15      // -498 size table
 
-TERM_CH:        .ds.w   1       // -468 pressed key, aciii + scancode
-chc_mode:       .ds.w   1       // -466 input mode choice
-cur_work:       .ds.l   1       // -464 parameter block of current workst.
+_TERM_CH:       .ds.w   1       // -468 pressed key, aciii + scancode
+_chc_mode:      .ds.w   1       // -466 input mode choice
+_cur_work:      .ds.l   1       // -464 parameter block of current workst.
 _def_font:      .ds.l   1       // -460 default font
 _font_ring:     .ds.l   4       // -456 three pointers to sysfonts and NULL
 _font_count:    .ds.w   1       // -440 total numbers of fonts in font_ring
 
-                .ds.w   1       // -438
-                .ds.w   1       // -436 input mode, locator
-                .ds.b   84      // some space (input mode???)
-                .ds.w   1       // -352 input mode, string
-                .ds.w   1       // -350 input mode, valuator
+_line_cw:       .ds.w   1       // -438 Width associated with q_circle data
+_loc_mode:      .ds.w   1       // -436 input mode, locator
+                .ds.b   80      // some space (input mode???)
+_num_qc_lines:  .ds.w   1       // -354 Number of lines making up wide line - not sure if right here
+_str_mode:      .ds.w   1       // -352 input mode, string
+_val_mode:      .ds.w   1       // -350 input mode, valuator
 
 cur_ms_stat:    .ds.b   1       // -348 current mouse status
                 .ds.b   1
@@ -126,6 +139,7 @@ _newy:          .ds.w   1
 _draw_flag:     .ds.b   1       // -340 non-zero means draw mouse form on vblank
 _mouse_flag:    .ds.b   1       // -339 non-zero if mouse ints disabled
 sav_cxy:        .ds.w   2       // -338 save area for cursor cell coords.
+retsav:         .ds.l	1       // ??? I'm not sure if this is right here
 save_len:       .ds.w   1       // -330
 save_addr:      .ds.l   1       // -328 return address GEMDOS call
 save_stat:      .ds.w   1       // -324

@@ -20,9 +20,9 @@ extern WORD v_nop();                    /* 0   */
 
 extern WORD v_opnwk();                  /* 1   */
 extern WORD v_clswk();                  /* 2   */
-extern WORD CLEARMEM();                 /* 3   */
+extern void CLEARMEM();                 /* 3   */
 extern WORD v_updwk();                  /* 4   */
-extern WORD CHK_ESC();                  /* 5   */
+extern void CHK_ESC();                  /* 5   */
 
 extern WORD v_pline();                  /* 6   */
 extern WORD v_pmarker();                /* 7   */
@@ -57,11 +57,11 @@ extern WORD v_choice();                 /* 30  */
 extern WORD v_string();                 /* 31  */
 extern WORD vswr_mode();                /* 32  */
 extern WORD vsin_mode();                /* 33  */
-extern WORD vql_attributes();   /* 35  */
+extern WORD vql_attr();                 /* 35  */
 
-extern WORD vqm_attributes();   /* 36  */
-extern WORD vqf_attributes();   /* 37  */
-extern WORD dqt_attributes();   /* 38  */
+extern WORD vqm_attr();                 /* 36  */
+extern WORD vqf_attr();                 /* 37  */
+extern WORD dqt_attributes();           /* 38  */
 extern WORD dst_alignment();    /* 39  */
 
 extern WORD d_opnvwk();                 /* 100  */
@@ -78,7 +78,7 @@ extern WORD vsl_ends();                 /* 108  */
 extern WORD dro_cpyfm();                /* 109  */
 extern WORD TRAN_FM();                  /* 110  */
 
-extern WORD XFM_CRFM();                 /* 111  */
+extern void XFM_CRFM();                 /* 111  */
 extern WORD dsf_udpat();                /* 112  */
 extern WORD vsl_udsty();                /* 113  */
 extern WORD dr_recfl();                 /* 114  */
@@ -94,10 +94,10 @@ extern WORD drt_cpyfm();                /* 121  */
 extern WORD v_show_c();                 /* 122  */
 extern WORD v_hide_c();                 /* 123  */
 extern WORD vq_mouse_status();  /* 124  */
-extern WORD VEX_BUTV();                 /* 125  */
+extern void VEX_BUTV();                 /* 125  */
 
-extern WORD VEX_MOTV();                 /* 126  */
-extern WORD VEX_CURV();                 /* 127  */
+extern void VEX_MOTV();                 /* 126  */
+extern void VEX_CURV();                 /* 127  */
 extern WORD vq_key_s();                 /* 128  */
 extern WORD s_clip();                   /* 129  */
 extern WORD dqt_name();                 /* 130  */
