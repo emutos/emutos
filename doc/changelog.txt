@@ -1593,3 +1593,7 @@ Start... early ages
 - include/asm.h include/biosbind.h include/xbiosbind.h: fixed embedded asm 
   constructs (thanks to Patrice Mandin) (LVL)
 - po/fr.po: french translation updated (LVL) 
+
+2004-02-02
+- bios/cookie.c: cookie_add() was not checking jar size. Fixed. Also the jar
+  size increased to 20 entries (since EmuTOS takes 11 entries for itself).

@@ -18,7 +18,7 @@
   
 /* the default cookie jar, in the bss */
 
-static struct cookie dflt_jar[16];
+static struct cookie dflt_jar[20];
  
 void cookie_init(void)
 {
@@ -30,21 +30,25 @@ void cookie_init(void)
 
 void cookie_add(long tag, long value)
 {
-  long n;
+  long n, count;
   struct cookie *jar = CJAR;
   
   assert(jar != NULL);
-  
+
+  count = 0;
   while(jar->tag) {
     assert(jar->tag != tag);
-    jar ++;
+    count++;
+    jar++;
   }
   n = jar->value;
   assert(n != 0);
-  jar->tag = tag;
-  jar->value = value;
-  jar[1].tag = 0;
-  jar[1].value = n;  
+  if (count < (n-1)) {
+    jar->tag = tag;
+    jar->value = value;
+    jar[1].tag = 0;
+    jar[1].value = n;  
+  }
 }
 
  
