@@ -8,44 +8,48 @@ msgid "Please eject the floppy and hit RETURN"
 msgstr "Veuillez éjecter la disquette et taper ENTREE"
 
 #: bios/initinfo.c:152
-msgid "EmuTOS Ver.:  "
-msgstr "EmuTOS Vers.: "
+msgid "EmuTOS Version"
+msgstr "EmuTOS Version"
 
 #: bios/initinfo.c:152
 msgid "Alpha Version"
 msgstr "Alpha"
 
 #: bios/initinfo.c:154
-msgid "CPU type:     "
-msgstr "Type de CPU:  "
+msgid "CPU type"
+msgstr "Type de CPU"
 
 #: bios/initinfo.c:155
-msgid "Machine:      "
-msgstr "Machine:      "
+msgid "Machine"
+msgstr "Machine"
 
 #: bios/initinfo.c:156
-msgid "MMU avail.:   "
-msgstr "MMU présente: "
+msgid "MMU available"
+msgstr "MMU présente"
 
 #: bios/initinfo.c:156
 msgid "No"
 msgstr "Non"
 
 #: bios/initinfo.c:157
-msgid "Free memory:  "
-msgstr "Mém. libre:   "
+msgid "Free memory"
+msgstr "Mémoire libre"
 
 #: bios/initinfo.c:157
 msgid "%ld bytes"
 msgstr "%ld octets"
 
 #: bios/initinfo.c:159
-msgid "Screen start: "
-msgstr "Début écran:  "
+msgid "Screen start"
+msgstr "Début écran"
 
 #: bios/initinfo.c:161
-msgid "Boot drive :  "
-msgstr "Disque boot:  "
+msgid "Boot drive"
+msgstr "Disque de boot"
+
+#: bios/initinfo.c:162
+msgid "Current time"
+msgstr "Heure"
 
 #: cli/command.c:681
 msgid "CR to continue..."
@@ -395,10 +399,6 @@ msgid ""
 msgstr ""
 "SHOW [lecteur:]\r\n"
 "\tAffiche l'état du lecteur par défaut, ou du lecteur spécifié."
-
-#: bios/initinfo.c:162
-msgid "Curr. time :  "
-msgstr "Heure :       "
 
 #: cli/command.c:2138
 msgid "Unable to create bootsector file"

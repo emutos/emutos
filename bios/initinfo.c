@@ -89,9 +89,12 @@ static void set_line(void)
 
 static void pair_start(const char *left)
 {
+    int n;
     set_margin();
-    cprintf("[ OK ] ");
-    cprintf(left);
+    n = cprintf(left);
+    cprintf(": ");
+    while(n++ < 17) 
+        cprintf(" ");
     cprintf("\033b!");
 }
 
@@ -137,40 +140,27 @@ void initinfo()
     cprintf("\033b%c\033c%c", 15 + ' ', 0 + ' ');
 
     /* Now print the EmuTOS Logo */
-#if 0
-    set_margin();
-    cprintf("\ec!           \ec  \ec'          \ec   \ec'   \ec    \ec'    \ec \r\n");
-    set_margin();
-    cprintf("\ec! \ec                   \ec' \ec    \ec' \ec    \ec' \ec  \ec' \ec     \r\n");
-    set_margin();
-    cprintf("\ec!    \ec    \ec! \ec  \ec! \ec   \ec! \ec    \ec! \ec   \ec' \ec    \ec' \ec    \ec' \ec   \ec'   \ec  \r\n");
-    set_margin();
-    cprintf("\ec! \ec      \ec! \ec  \ec! \ec  \ec! \ec  \ec! \ec    \ec! \ec   \ec' \ec    \ec' \ec    \ec' \ec      \ec' \ec     \r\n");
-    set_margin();
-    cprintf("\ec!     \ec  \ec! \ec    \ec! \ec   \ec!   \ec    \ec' \ec     \ec'   \ec   \ec'    \ec  \r\n");
-#else
     print_art("11111111111 7777777777  777   7777");
     print_art("1                  7   7   7 7    ");
     print_art("1111   1 1  1   1  7   7   7  777 ");
     print_art("1     1 1 1 1   1  7   7   7     7");
     print_art("11111 1   1  111   7    777  7777 ");
-#endif
     
     /* Just a separator */
     cprintf("\n\r");
     set_line();
     cprintf("\n\r");
 
-    pair_start(_("EmuTOS Ver.:  ")); cprintf(_("Alpha Version")); pair_end();
-    pair_start(_("CPU type:     ")); cprintf("m680%02ld", mcpu); pair_end();
-    pair_start(_("Machine:      ")); cprintf(machine_name()); pair_end();
-    pair_start(_("MMU avail.:   ")); cprintf(_("No")); pair_end();
-    pair_start(_("Free memory:  ")); cprintf(_("%ld bytes"), memtop-membot);
+    pair_start(_("EmuTOS Version")); cprintf(_("Alpha Version")); pair_end();
+    pair_start(_("CPU type")); cprintf("m680%02ld", mcpu); pair_end();
+    pair_start(_("Machine")); cprintf(machine_name()); pair_end();
+    pair_start(_("MMU available")); cprintf(_("No")); pair_end();
+    pair_start(_("Free memory")); cprintf(_("%ld bytes"), memtop-membot);
     pair_end();
-    pair_start(_("Screen start: ")); cprintf("0x%lx", (long)v_bas_ad);
+    pair_start(_("Screen start")); cprintf("0x%lx", (long)v_bas_ad);
     pair_end();
-    pair_start(_("Boot drive :  ")); cprintf("%c:", bootdev+65); pair_end();
-    pair_start(_("Curr. time :  ")); cprint_asctime(); pair_end();
+    pair_start(_("Boot drive")); cprintf("%c:", bootdev+65); pair_end();
+    pair_start(_("Current time")); cprint_asctime(); pair_end();
 
     /* Just a separator */
     cprintf("\n\r");

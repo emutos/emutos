@@ -14,40 +14,40 @@ msgstr ""
 "HALT - sollte niemals erreicht werden!\n"
 
 #: bios/initinfo.c:164
-msgid "EmuTOS Ver.:  "
-msgstr "EmuTOS Ver.:  "
+msgid "EmuTOS Version"
+msgstr "EmuTOS Version"
 
 #: bios/initinfo.c:164
 msgid "Alpha Version"
 msgstr "Alpha Version"
 
 #: bios/initinfo.c:165
-msgid "CPU type:     "
-msgstr "CPU-Typ:      "
+msgid "CPU type"
+msgstr "CPU-Typ"
 
 #: bios/initinfo.c:167
-msgid "MMU avail.:   "
-msgstr "MMU verfügbar:"
+msgid "MMU available"
+msgstr "MMU verfügbar"
 
 #: bios/initinfo.c:167
 msgid "No"
 msgstr "Nein"
 
 #: bios/initinfo.c:168
-msgid "Free memory:  "
-msgstr "Speicher frei:"
+msgid "Free memory"
+msgstr "Speicher frei"
 
 #: bios/initinfo.c:168
 msgid "%ld bytes"
 msgstr "%ld byte "
 
 #: bios/initinfo.c:170
-msgid "Screen start: "
-msgstr "Bildschirm ab:"
+msgid "Screen start"
+msgstr "Bildschirm ab"
 
 #: bios/initinfo.c:172
-msgid "Boot drive :  "
-msgstr "Bootet von :  "
+msgid "Boot drive"
+msgstr "Bootet von"
 
 #: cli/command.c:681
 msgid "CR to continue..."
@@ -393,12 +393,12 @@ msgstr ""
 "\tZeigt den Status des angegeben oder des Standard-Laufwerks an."
 
 #: bios/initinfo.c:166
-msgid "Machine:      "
-msgstr "Rechner:      "
+msgid "Machine"
+msgstr "Rechner"
 
 #: bios/initinfo.c:173
-msgid "Curr. time :  "
-msgstr "Akt. Zeit  :  "
+msgid "Current time"
+msgstr "Aktuelle Zeit"
 
 #: cli/command.c:2138
 msgid "Unable to create bootsector file"
