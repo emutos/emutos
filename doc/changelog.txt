@@ -421,5 +421,5 @@ Start... early ages
 - fixed set_sr(0x0300) to 0x2300 in bios/screen.c:vsync() (LVL)
 - added get_sr() macro in include/asm.h (LVL)
 - renamed macro stop by stop2300, added the config variable in config.h (LVL)
+- changed stop() usage in bios/ikbd.c (LVL)
 - changed an explicit tab into \t in a string in command.c (LVL)
-
