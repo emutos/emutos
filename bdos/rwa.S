@@ -1,21 +1,23 @@
-
-//
-// rwa.s - GEMDOS assembler interface
-//
-// Copyright (c) 2001 Lineo, Inc.
-//
-// Authors:
-//  MAD  Martin Doering
-//
-// This file is distributed under the GPL, version 2 or at your
-// option any later version.  See doc/license.txt for details.
-//
+/*
+ * rwa.s - GEMDOS assembler interface
+ *
+ * Copyright (c) 1999 by Caldera Inc.
+ * Copyright (c) 1985, 2001 by Authors:
+ *
+ *  EWF  Eric W. Fleischman
+ *  JSL  Jason S. Loveman
+ *  SCC  Steven C. Cavender
+ *  ACH  Anthony C. Hay
+ *  MAD  Martin Doering
+ *
+ * This file is distributed under the GPL, version 2 or at your
+ * option any later version.  See doc/license.txt for details.
+ *
+ */
 
 
 
 //============================================================================
-//
-//  NOTE:	This MUST be assembled with AS68's "-t" option.
 //
 // Originally written by JSL.
 //
@@ -110,13 +112,6 @@
 //				to the one desired. Force mc68010 flag to true.
 //
 //	19 Nov 87	ACH	Moved _lbmove, _bfill, _bmove into this module.
-//
-// NAMES
-//
-//	EWF	Eric W. Fleischman
-//	JSL	Jason S. Loveman
-//	SCC	Steven C. Cavender
-//	ACH	Anthony C. Hay
 //
 //============================================================================
 

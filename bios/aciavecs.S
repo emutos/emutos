@@ -1,14 +1,15 @@
-// ===========================================================================
-// ==== aciavecs.s - exception handling for ikbd/midi acias.
-// ===========================================================================
-//
-// Copyright (c) 2001 Laurent Vogel.
-//
-// Authors:
-//  LVL  Laurent Vogel
-//
-// This file is distributed under the GPL, version 2 or at your
-// option any later version.  See doc/license.txt for details.
+/*
+ * aciavecs.S - exception handling for ikbd/midi acias.
+ *
+ * Copyright (c) 2001 by
+ *
+ * Authors:
+ *  LVL  Laurent Vogel
+ *
+ * This file is distributed under the GPL, version 2 or at your
+ * option any later version.  See doc/license.txt for details.
+ *
+ */
 
 // (following text is taken from the Atari Compendium, xbios(0x22)
 // 

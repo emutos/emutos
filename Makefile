@@ -101,21 +101,18 @@ obj/%.o : bios/%.c
 
 obj/%.o : bios/%.S
 	${CC} ${CFLAGS} -Wall -c -Ibios $< -o $@
-#	$(AS) $(ASFLAGS) $< -o $@
 
 obj/%.o : bdos/%.c
 	${CC} ${CFLAGS} -c -Ibdos $< -o $@
 
 obj/%.o : bdos/%.S
 	${CC} ${CFLAGS} -Wall -c -Ibios $< -o $@
-#	$(AS) $(ASFLAGS) $< -o $@
 
 obj/%.o : util/%.c
 	${CC} ${CFLAGS} -Wall -c -Iutil $< -o $@
 
 obj/%.o : util/%.S
 	${CC} ${CFLAGS} -Wall -c -Ibios $< -o $@
-#	$(AS) $(ASFLAGS) $< -o $@
 
 
 

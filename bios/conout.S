@@ -1,21 +1,19 @@
-// ===========================================================================
-// ==== conout.s - screen handling assembler routines                        
-// ===========================================================================
-//
-// Copyright (c) 2001 Lineo, Inc.
-// Copyright (c) 2001 Martin Doering.
-//
-// Authors:
-//  MAD  Martin Doering
-//  LMD  ???
-//  MSH  ???
-//  RJG  ???
-//  EWF  ???
-//  LVL  Laurent Vogel
-//
-// This file is distributed under the GPL, version 2 or at your
-// option any later version.  See doc/license.txt for details.
-//
+/*
+ * conout.S - screen handling assembler routines
+ *
+ * Copyright (c) 1985, 2001 by Authors:
+ *
+ *  MAD  Martin Doering
+ *  LVL  Laurent Vogel
+ *  LMD  ???
+ *  MSH  ???
+ *  RJG  ???
+ *  EWF  ???
+ *
+ * This file is distributed under the GPL, version 2 or at your
+ * option any later version.  See doc/license.txt for details.
+ *
+ */
 
 
 

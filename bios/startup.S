@@ -1,17 +1,16 @@
-// ===========================================================================
-// ==== startup.s - Emulator specific startup module.  To be linked in first!
-// ===========================================================================
-//
-// Copyright (c) 2001 Martin Doering.
-//
-// Authors:
-//  MAD  Martin Doering
-//  LVL  Laurent Vogel
-//  THO  Thomas Huth
-//
-// This file is distributed under the GPL, version 2 or at your
-// option any later version.  See doc/license.txt for details.
-//
+/*
+ * startup.S - Emulator specific startup module.  To be linked in first!
+ *
+ * Copyright (c) 2001 by Authors:
+ *
+ *  MAD  Martin Doering
+ *  LVL  Laurent Vogel
+ *  THO  Thomas Huth
+ *
+ * This file is distributed under the GPL, version 2 or at your
+ * option any later version.  See doc/license.txt for details.
+ *
+ */
 
 
 

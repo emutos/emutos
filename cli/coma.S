@@ -1,16 +1,17 @@
-//
-// coma.s - GEMDOS command interpreter assembly language interface
-//
-// Copyright (c) 2001 Lineo, Inc.
-//
-// Authors:
-//  JSL	Jason S. Loveman
-//  SCC	Steven C. Cavender
-//  MAD  Martin Doering
-//
-// This file is distributed under the GPL, version 2 or at your
-// option any later version.  See doc/license.txt for details.
-//
+/*
+ * coma.S - GEMDOS command interpreter assembly language interface
+ *
+ * Copyright (c) 1999 by Caldera Inc.
+ * Copyright (c) 1985, 2001 by Authors:
+ *
+ *  JSL  Jason S. Loveman
+ *  SCC  Steven C. Cavender
+ *  MAD  Martin Doering
+ *
+ * This file is distributed under the GPL, version 2 or at your
+ * option any later version.  See doc/license.txt for details.
+ *
+ */
 
 
 

@@ -1,6 +1,14 @@
-// ===========================================================================
-// ==== linea vars - Graphics related system variables
-// ===========================================================================
+/*
+ * lineavars.S - Graphics related system variables
+ *
+ * Copyright (c) 2001 by Authors:
+ *
+ *  THO  Thomas Huth
+ *
+ * This file is distributed under the GPL, version 2 or at your
+ * option any later version.  See doc/license.txt for details.
+ *
+ */
 
 
 

@@ -1,8 +1,21 @@
-// ===========================================================================
-// ==== memmove.s - a fast memmove and bcopy in 68000.
-// ===========================================================================
-
-// this is taken from Minix 1.5 copy_68k.s fast copy routine.
+/*
+ * memmove.S - a fast memmove and bcopy in 68000.
+ *
+ * Copyright (c) 2001 by Authors:
+ *
+ *  LVL  Laurent Vogel
+ *  DAL  Dale Schumacher
+ *  KS   Klamer Schutte
+ *  RAL  ???
+ *
+ * This file is distributed under the GPL, version 2 or at your
+ * option any later version.  See doc/license.txt for details.
+ *
+ */
+ 
+ 
+ 
+// This is taken from Minix 1.5 copy_68k.s fast copy routine.
 // extracted phys_copy() and converted to modern syntax, 
 // Laurent Vogel, october 2001.
 //

@@ -1,14 +1,16 @@
-// ===========================================================================
-// ==== vectors.s - default exception vectors
-// ===========================================================================
-//
-// Copyright (c) 2001 Laurent Vogel.
-//
-// Authors:
-//  LVL  Laurent Vogel
-//
-// This file is distributed under the GPL, version 2 or at your
-// option any later version.  See doc/license.txt for details.
+/*
+ * vectors.S - default exception vectors
+ *
+ * Copyright (c) 2001 by Authors:
+ *
+ *  LVL  Laurent Vogel
+ *
+ * This file is distributed under the GPL, version 2 or at your
+ * option any later version.  See doc/license.txt for details.
+ *
+ */
+
+
 
 // Note: this scheme is designed to print the exception number
 // for vectors 2 to 63 even if working on a 32bit address bus. 

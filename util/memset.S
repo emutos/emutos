@@ -1,20 +1,21 @@
-// ===========================================================================
-// memset.s - a quick memset() for 68000.
-// ===========================================================================
-//
-// Copyright (c) 2001 Laurent Vogel.
-//
-// Authors:
-//  LVL  Laurent Vogel
-//
-// This file is distributed under the GPL, version 2 or at your
-// option any later version.  See doc/license.txt for details.
-
-// This was inspired from Minix 1.5 kernel source copy68k.s.
-// Laurent Vogel, 14 february 2001.
-//
-// altered to m68k-atari-mint-as 68k syntax 12 september 2001
-
+/*
+ * memset.S - a quick memset() for 68000.
+ *
+ * Copyright (c) 2001 by Authors:
+ *
+ *  LVL  Laurent Vogel
+ *
+ * This file is distributed under the GPL, version 2 or at your
+ * option any later version.  See doc/license.txt for details.
+ *
+ * This was inspired from Minix 1.5 kernel source copy68k.s.
+ * Laurent Vogel, 14 february 2001.
+ *
+ * Altered to m68k-atari-mint-as 68k syntax 12 september 2001
+ */
+ 
+ 
+ 
 // ==== Defines ==============================================================
 
         .global _memset
