@@ -164,7 +164,7 @@ T tested and working on an emulator or real hardware
  - 0x24 prtblk          (useless - will not be implemented)
  X 0x25 vsync
  X 0x26 supexec
- - 0x27 puntaes         (useless - no AES available)
+ - 0x27 puntaes         (useless - will not be implemented)
 
  X 0x29 floprate
  X 0x2a DMAread
@@ -199,7 +199,6 @@ T tested and working on an emulator or real hardware
  X 0x19 Dgetdrv
  X 0x1a Fsetdta
  X 0x20 Super
- X 0x25 Ssetvec 	(extra, not in available TOS)
  X 0x2a Tgetdate
  X 0x2b Tsetdate
  X 0x2c Tgettime
@@ -207,7 +206,6 @@ T tested and working on an emulator or real hardware
  X 0x2f Fgetdta
  X 0x30 Sversion
  X 0x31 Ptermres
- X 0x35 Sgetvec 	(extra, not available in TOS)
  X 0x36 Dfree
  X 0x39 Dcreate
  X 0x3a Ddelete
@@ -235,9 +233,8 @@ T tested and working on an emulator or real hardware
  X 0x57 Fdatime
 
 
-
-==== VDI ====================================================================
- 
+ VDI functions
+ ----------------------------------------------------------------------------
  All TOS 1.0 calls are implemented.
  
  T      v_opnwk
@@ -356,7 +353,88 @@ T tested and working on an emulator or real hardware
  ?      v_write_meta
  ?      vm_filename
 
-==== AES ====================================================================
 
+ AES functions
+ ----------------------------------------------------------------------------
  All TOS 1.0 calls are implemented.
+
+ X      appl_init
+ X      appl_read
+ X      appl_write
+ X      appl_find
+ X      appl_tplay
+ X      appl_trecord
+ X      appl_bvset              (PC-GEM call)
+ X      appl_yield              (PC-GEM call)
+ X      appl_exit
+ X      evnt_keybd
+ X      evnt_button
+ X      evnt_mouse
+ X      evnt_mesag
+ X      evnt_timer
+ X      evnt_multi
+ X      evnt_dclick
+ X      menu_bar
+ X      menu_icheck
+ X      menu_ienable
+ X      menu_tnormal
+ X      menu_text
+ X      menu_register
+ X      menu_unregister         (PC-GEM call)
+ X      menu_click              (PC-GEM call)
+ X      objc_add
+ X      objc_delete
+ X      objc_draw
+ X      objc_find
+ X      objc_offset
+ X      objc_order
+ X      objc_edit
+ X      objc_change
+ X      form_do
+ X      form_dial
+ X      form_alert
+ X      form_error
+ X      form_center
+ X      form_keybd
+ X      form_button
+ X      graf_rubbox
+ X      graf_dragbox
+ X      graf_mbox
+ ?      graf_growbox
+ ?      graf_shrinkbox
+ X      graf_watchbox
+ X      graf_slidebox
+ X      graf_handle
+ X      graf_mouse
+ X      graf_mkstate
+ X      scrp_read
+ X      scrp_write
+ X      scrp_clear              (PC-GEM call)
+ >      fsel_exinput
+ X      fsel_input
+ X      wind_create
+ X      wind_open
+ X      wind_close
+ X      wind_delete
+ X      wind_get
+ X      wind_set
+ X      wind_find
+ X      wind_update
+ X      wind_calc
+ X      rsrc_load
+ X      rsrc_free
+ X      rsrc_gaddr
+ X      rsrc_saddr
+ X      rsrc_obfix
+ X      shel_read
+ X      shel_write
+ X      shel_get
+ X      shel_put
+ X      shel_find
+ X      shel_envrn
+ X      shel_rdef              (PC-GEM call)
+ X      shel_wdef              (PC-GEM call)
+ X      xgrf_stepcalc          (PC-GEM call)
+ X      xgrf_2box              (PC-GEM call)
+
 

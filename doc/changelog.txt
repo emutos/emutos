@@ -1058,3 +1058,6 @@ Start... early ages
 
 01. Sep. 2002
 - doc/status - updated a bit (MAD)
+
+03. Sep. 2002
+- bdos/bdosmain.c - Removed unused Setvec/Getvec functions. (THH)

@@ -2,6 +2,7 @@
  * bdosmain.c - GEMDOS main function dispatcher
  *
  * Copyright (c) 2001 Lineo, Inc.
+ *               2002 The EmuTOS development team
  *
  * Authors:
  *  EWF  Eric W. Fleischman
@@ -71,7 +72,6 @@ long xgetver(void);
  *  globals
  */
 
-long    S_SetVec(), S_GetVec();
 int oscnt;
 long uptime;
 int msec;
@@ -177,9 +177,7 @@ FND funcs[0x58] =
     { ni,       0 },
     { ni,       0 },
     { ni,       0 },
-
-    { S_SetVec, 1 },    /* 0x25 */
-
+    { ni,       0 },
     { ni,       0 },
     { ni,       0 },
     { ni,       0 },
@@ -199,8 +197,8 @@ FND funcs[0x58] =
     { ni,       0 },
     { ni,       0 },
     { ni,       0 },
+    { ni,       0 },
 
-    { S_GetVec, 0 },    /* 0x35 */
     { xgetfree, 1 },    /* 0x36 */
 
     { ni,       0 },
@@ -660,41 +658,6 @@ restrt:
     return(rc);
 }
 
-
-
-/******************************************************************************
-**
-** S_SetVec - Function 0x25:  Set exception vector n to address
-**
-**      Last modified   SCC     8 Aug 85
-**
-*******************************************************************************
-*/
-
-long    S_SetVec(n, address)
-int     n;
-long    address;
-{
-        if (address == -1L)                     /* disallow GET value           */
-                return (EINVFN);
-
-        return (trap13(5, n, address));         /* pass on to BIOS to set it in */
-}
-
-/******************************************************************************
-**
-** S_GetVec - Function 0x35:  Get exception vector n
-**
-**      Last modified   SCC     8 Aug 85
-**
-*******************************************************************************
-**/
-
-long    S_GetVec(n)
-int n;
-{
-        return (trap13(5, n, -1L));     /* pass to BIOS to get it       */
-}
 
 
 
