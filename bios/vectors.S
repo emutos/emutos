@@ -292,6 +292,7 @@ vbl_nochg:
         // load new color palette
         move.l  _colorptr,d0
         beq     vbl_no_palette
+        clr.l   _colorptr
         move.l  d0,a0
         lea     0xffff8240,a1
         move.w  #15,d0
