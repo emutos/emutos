@@ -671,3 +671,6 @@ Start... early ages
 - vdi/* - corrected the swapped #defines to use Atari and/or VME10 (MAD)
 - You can now use the AES as user interface instead of EmuCON (Thomas)
   (by enabling it in the Makefile, however AES is not yet fully working)
+
+18. Mar. 2002
+- bios/kprint.c - registers are printed out to ease debugging (joy)
