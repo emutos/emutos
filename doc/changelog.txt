@@ -1622,3 +1622,6 @@ Start... early ages
 2004-07-07
 - vdi/*: cleaned up unneeded assembler labels in VDI (MAD)
 
+2004-07-14
+- vdi/blit.c*: fixed vtr_cpyfm() and vro_cpyfm() and optimized clipping (MAD)
+
