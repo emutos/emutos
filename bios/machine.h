@@ -24,6 +24,7 @@ extern long cookie_snd;
 extern long cookie_swi;
 extern long cookie_idt;
 extern long cookie_akp;
+extern long cookie_frb;
 
 /*
  * these are != 0 if the feature is present

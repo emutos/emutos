@@ -25,6 +25,7 @@ long cookie_fdc;
 long cookie_snd;
 long cookie_mch;
 long cookie_swi;
+long cookie_frb;
 
 
 /*
@@ -232,6 +233,13 @@ void machine_init(void)
    * points to a 64k buffer that may be used by DMA device drivers to 
    * transfer memory between alternative RAM and ST RAM for DMA operations.  
    */
+  if (ramtop > 0) {
+    cookie_frb = balloc(64 * 1024UL);
+    cookie_add(COOKIE_FRB, cookie_frb);
+  }
+  else {
+    cookie_frb = 0;
+  }
    
   /* _FLK  The presence of this cookie indicates that file and record 
    * locking extensions to GEMDOS exist. The value field is a version 
