@@ -869,5 +869,5 @@ Start... early ages
 - vdi/mousedrv.S - deleted
 - util/miscasm.S - put trap1/13/14 to here from bdos/ for common use (MAD) 
 - include/asm.h - added trap1/13/14 calls as externals (MAD)
-
+- vdi/vdiinput.c - vdimouse_init() fixed (MAD)
 

@@ -160,7 +160,6 @@ static void do_nothing()
 
 
 
-#if 1
 /*
  * vdimouse_init - Initializes the mouse (VDI part)
  *
@@ -170,19 +169,17 @@ static void do_nothing()
 
 void vdimouse_init()
 {
-    LONG * pointer;             /* help for storing LONGs in INTIN */
-    LONG savelong;
+    WORD * pointer;             /* help for storing LONGs in INTIN */
 
     user_but = do_nothing;
     user_mot = do_nothing;
-    user_cur = mov_cur;        // initialize user_cur vector
+    user_cur = mov_cur;        	/* initialize user_cur vector */
 
     /* Move in the default mouse form (presently the arrow) */
-    pointer = (LONG*)&INTIN[0]; /* let it point to INTIN[0] */
-    savelong = *pointer;        /* save old value */
-    *pointer = (LONG)&arrow_cdb;        // it points to the arrow
-    xfm_crfm();                 // transform mouse
-    *pointer = savelong;        /* restore old value */
+    pointer = INTIN; 		/* save INTIN */
+    INTIN = (WORD *)&arrow_cdb; /* it points to the arrow data */
+    xfm_crfm();                 /* transform mouse */
+    INTIN = pointer;        	/* restore old value */
 
     MOUSE_BT = 0;               // clear the mouse button state
     cur_ms_stat = 0;            // clear the mouse status
@@ -191,8 +188,8 @@ void vdimouse_init()
     newx = 0;                   // set cursor x-coordinate to 0
     newy = 0;                   // set cursor y-coordinate to 0
 
-    pointer = vblqueue;         /* vblqueue points to start of vbl_list[] */
-    *pointer = (LONG)vb_draw;   /* set GEM VBL-routine to vbl_list[0] */
+    /* vblqueue points to start of vbl_list[] */
+    *vblqueue = (LONG)vb_draw;   /* set GEM VBL-routine to vbl_list[0] */
 
     /* Initialize mouse via XBIOS in relative mode */
     initmous(1, &arrow_cdb, mouse_int);
@@ -218,4 +215,3 @@ void vdimouse_exit()
     /* disable mouse via XBIOS */
     initmous(0, 0, 0);
 }
-#endif
