@@ -1237,7 +1237,7 @@ WORD clc_dda(WORD actual, WORD requested)
     }
 
     retval = requested;                 /* expand to LONG */
-    retval = retval << 16;              /* request size to high word(bits 31-16) */
+    retval = retval << 8;              /* request size to high word(bits 31-16) */
     return ((WORD)(retval / actual));   /* return the quotient as WORD */
 }
 

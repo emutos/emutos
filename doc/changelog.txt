@@ -1036,10 +1036,8 @@ Start... early ages
 18. Aug. 2002
 - vdi/text.c - trnsfont implemented in C (MAD)
 
-19. Aug. 2002
-- vdi/vdimain.c - precalculated shift offset shft_off for concat (MAD)
-
 20. Aug. 2002
+- vdi/vdimain.c - precalculated shift offset shft_off for concat (MAD)
 - Makefile, include/config.h, country.mk, bios/country.c - changed the way
   UNIQUE country EmuTOS are built. Now make unique 192 and 256k work for 
   all languages (e.g. make allbin; rm obj/*.o; make all192) but there is
@@ -1050,3 +1048,4 @@ Start... early ages
 - bios/clock.c - disabled nvram code for TOS1 192k ROMS (LVL)
 - bios/bios.c bios/machine.[ch] bios/startup.S - int native_features 
   renamed to int has_natfeats (LVL)
+- bios/initinfo.c - changed wait time from 5 to 2 sec (MAD)

@@ -199,9 +199,9 @@ void initinfo()
     set_line();
     cprintf("\n\r");
 
-    /* sleep(5) */
+    /* wait for 2 sec., before we start the GEM */
     {
-        long future = hz_200 + (5 * 200);
+        long future = hz_200 + (2 * 200);
         while(hz_200 < future)
             ;
     }

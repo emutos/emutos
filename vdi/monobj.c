@@ -725,7 +725,7 @@ void dr_recfl()
  */
 void v_cellarray()
 {
-    /* not implimented */
+    /* not implemented */
 }
 
 
@@ -735,7 +735,7 @@ void v_cellarray()
  */
 void vq_cellarray()
 {
-    /* not implimented */
+    /* not implemented */
 }
 
 
@@ -745,7 +745,7 @@ void vq_cellarray()
  */
 void vs_color()
 {
-    /* not implimented */
+    /* not implemented */
 }
 
 
@@ -755,7 +755,7 @@ void vs_color()
  */
 WORD vq_color()
 {
-    /* not implimented */
+    /* not implemented */
     return 0;
 }
 
