@@ -60,8 +60,8 @@ EXTERN WORD     gl_keepac;
 */
 void desk_clear(WORD wh)
 {
-        WNODE           *pw;
-        GRECT           c;
+        WNODE   *pw;
+        GRECT   c;
 
                                                 /* get current size     */
         wind_get(wh, WF_WXYWH, &c.g_x, &c.g_y, &c.g_w, &c.g_h);
@@ -82,8 +82,8 @@ void desk_clear(WORD wh)
 */
 void desk_verify(WORD wh, WORD changed)
 {
-        WNODE           *pw;
-        WORD            xc, yc, wc, hc;
+        WNODE   *pw;
+        WORD    xc, yc, wc, hc;
 
 #ifdef DESK1
         if (wh)
@@ -102,7 +102,7 @@ void desk_verify(WORD wh, WORD changed)
         }
 #ifdef DESK1
         }
-        else G.g_croot = 1;     // DESKTOP v1.2: The Desktop
+        else G.g_croot = 1;                     /* DESK v1.2: The Desktop */
 #endif
 
         G.g_cwin = wh;
@@ -113,10 +113,10 @@ void desk_verify(WORD wh, WORD changed)
 
 void do_wredraw(WORD w_handle, WORD xc, WORD yc, WORD wc, WORD hc)
 {
-        GRECT           clip_r, t;
-        WNODE           *pw;
-        LONG            tree;
-        WORD            root;
+        GRECT   clip_r, t;
+        WNODE   *pw;
+        LONG    tree;
+        WORD    root;
 
         tree = G.a_screen;
 
@@ -172,7 +172,7 @@ ICONBLK  *get_spec(OBJECT olist[], WORD obj)
 
 void do_xyfix(WORD *px, WORD *py)
 {
-        WORD            tx, ty, tw, th;
+        WORD    tx, ty, tw, th;
 
         wind_get(0, WF_WXYWH, &tx, &ty, &tw, &th);
         tx = *px;
@@ -196,11 +196,11 @@ void do_wopen(WORD new_win, WORD wh, WORD curr, WORD x, WORD y, WORD w, WORD h)
         get_xywh(G.g_screen, G.g_croot, &c.g_x, &c.g_y, &c.g_w, &c.g_h);
 
 #ifdef DESK1
-	/* Zooming box effect */
-	get_xywh(G.g_screen, curr, &d.g_x, &d.g_y, &d.g_w, &d.g_h);
-	d.g_x += c.g_x;
-	d.g_y += c.g_y;
-	graf_growbox(d.g_x, d.g_y, d.g_w, d.g_h, x, y, w, h);
+        /* Zooming box effect */
+        get_xywh(G.g_screen, curr, &d.g_x, &d.g_y, &d.g_w, &d.g_h);
+        d.g_x += c.g_x;
+        d.g_y += c.g_y;
+        graf_growbox(d.g_x, d.g_y, d.g_w, d.g_h, x, y, w, h);
 #endif
 
         act_chg(G.g_cwin, G.a_screen, G.g_croot, curr, &c, SELECTED, 
@@ -218,7 +218,7 @@ void do_wfull(WORD wh)
         WORD     tmp_wh, y;
         GRECT    temp;
 #endif
-        GRECT           curr, prev, full;
+        GRECT    curr, prev, full;
 
         gl_whsiztop = NIL;
         wind_get(wh, WF_CXYWH, &curr.g_x, &curr.g_y, &curr.g_w, &curr.g_h);
@@ -278,8 +278,8 @@ void do_wfull(WORD wh)
 WORD do_diropen(WNODE *pw, WORD new_win, WORD curr_icon, WORD drv,
                 BYTE *ppath, BYTE *pname, BYTE *pext, GRECT *pt, WORD redraw)
 {
-        WORD            ret;
-        PNODE           *tmp;
+        WORD    ret;
+        PNODE   *tmp;
                                                 /* convert to hourglass */
         graf_mouse(HGLASS, 0x0L);
                                                 /* open a path node     */
@@ -344,19 +344,13 @@ WORD do_diropen(WNODE *pw, WORD new_win, WORD curr_icon, WORD drv,
 /*
 *       Open an application
 */
-        WORD
-do_aopen(pa, isapp, curr, drv, ppath, pname)
-        ANODE           *pa;
-        WORD            isapp;
-        WORD            curr;
-        WORD            drv;
-        BYTE            *ppath;
-        BYTE            *pname;
+static WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, WORD drv,
+                     BYTE *ppath, BYTE *pname)
 {
-        WORD            ret, done;
-        WORD            isgraf, isover, isparm, uninstalled;
-        BYTE            *ptmp, *pcmd, *ptail;
-        BYTE            name[13];
+        WORD    ret, done;
+        WORD    isgraf, isover, isparm, uninstalled;
+        BYTE    *ptmp, *pcmd, *ptail;
+        BYTE    name[13];
 
         done = FALSE;
                                                 /* set flags            */
@@ -465,9 +459,9 @@ do_aopen(pa, isapp, curr, drv, ppath, pname)
 #ifdef DESK1
 WORD do_dopen(WORD curr)
 {
-        WORD            drv;
-        WNODE           *pw;
-        ICONBLK         *pib;
+        WORD    drv;
+        WNODE   *pw;
+        ICONBLK *pib;
 
         pib = (ICONBLK *) get_spec(G.g_screen, curr);
         pw = win_alloc(curr);
@@ -498,11 +492,11 @@ WORD do_dopen(WORD curr)
 void do_fopen(WNODE *pw, WORD curr, WORD drv, BYTE *ppath, BYTE *pname,
               BYTE *pext, WORD chkall, WORD redraw)
 {
-        GRECT    t;
-        WORD     ok;
-        BYTE     *pnew;
+        GRECT   t;
+        WORD    ok;
+        BYTE    *pnew;
 #ifndef DESK1
-        BYTE     *pp;
+        BYTE    *pp;
 #endif
         
         ok = TRUE;
@@ -597,12 +591,12 @@ void do_fopen(WNODE *pw, WORD curr, WORD drv, BYTE *ppath, BYTE *pname,
 */
 WORD do_open(WORD curr)
 {
-        WORD            done;
-        ANODE           *pa;
-        WNODE           *pw;
-        FNODE           *pf;
-        WORD            drv, isapp;
-        BYTE            path[66], name[9], ext[4];
+        WORD    done;
+        ANODE   *pa;
+        WNODE   *pw;
+        FNODE   *pf;
+        WORD    drv, isapp;
+        BYTE    path[66], name[9], ext[4];
 
         done = FALSE;
 
@@ -672,12 +666,12 @@ WORD do_open(WORD curr)
 */
 WORD do_info(WORD curr)
 {
-        WORD            ret, junk;
-        ANODE           *pa;
-        WNODE           *pw;
-        FNODE           *pf;
+        WORD    ret, junk;
+        ANODE   *pa;
+        WNODE   *pw;
+        FNODE   *pf;
 #ifndef DESK1
-        LONG            tree;
+        LONG    tree;
 #endif
 
         pa = i_find(G.g_cwin, curr, &pf, &junk);
@@ -721,74 +715,6 @@ WORD do_info(WORD curr)
         }
         return( FALSE );
 }
-
-#if MC68K
-
-/* don't need this routine */
-
-#else
-
-/*
-*       This routines purpose is to format a disk by execing a
-*       FORMAT.COM above us in memory.  Unfortunately, the ROM BIOS
-*       has a bug of using the contents of FORMAT's PSP while doing
-*       a Disk Verify function using INT 13h.  This forces us to 
-*       place the FORMAT we exec into a safe location in memory.
-*       The safe location is an address with segment values between
-*       x00x and xEDx. We fudge this on both side by 400 paragraphs.
-*       Thanks alot, Bill and Phil.
-*/
-/*      The MULTIAPP version of this routine is closely tied to the     */
-/*      routine pro_chcalc() in DESKPRO.C.  The high and low memory     */
-/*      boundaries have to be jimmied to force the channel allocator    */
-/*      to put FORMAT in the right place.                               */
-
-        VOID
-romerr(curr)
-        WORD            curr;
-{
-
-#if MULTIAPP
-
-        LONG            savelo, savehi;
-
-
-        savelo = pr_topdsk;
-        savehi = pr_topmem;
-
-        if ( (pr_topdsk & 0xff00) >= 0xe900)
-          pr_topdsk += 0x00001b00L;
-
-        pr_kbytes = 32;
-        pr_topmem = pr_topdsk + 0x8000l + pr_ssize;
-
-        if (pr_topmem <= savehi)
-          pro_run(FALSE, 3, -1, curr);
-
-        pr_topdsk = savelo;
-        pr_topmem = savehi;
-
-#else
-        UWORD           seg;
-        LONG            testform, lavail;
-
-        lavail = dos_avail();
-        testform = dos_alloc( lavail );
-        seg = testform >> 16;
-        dos_free(testform);
-        testform = 0x0L;
-        if ( ((seg << 4) & 0xff00) >= 0xe900)
-          testform = dos_alloc( 0x00001b00L );
-
-        pro_run(FALSE, 0, -1, curr);
-
-        if (testform)
-          dos_free(testform);
-
-#endif
-} /* romerr */
-
-#endif
 
 
 /*
@@ -859,10 +785,11 @@ void do_format(WORD curr)
 */
 void do_chkall(WORD redraw)
 {
-        WORD            ii;
-        WORD            drv;
-        BYTE            path[66], name[9], ext[4];
-        WNODE           *pw;
+        WORD    ii;
+        WORD    drv;
+        BYTE    path[66], name[9], ext[4];
+        WNODE   *pw;
+
         for(ii = 0; ii < NUM_WNODES; ii++)
         {
           pw = &G.g_wlist[ii];
@@ -873,10 +800,9 @@ void do_chkall(WORD redraw)
             do_fopen(pw, 0, drv, &path[0], &name[0], &ext[0], TRUE, redraw);
           }
           else
-{
+          {
             desk_verify(0, TRUE);
-
-}
+          }
         }
 } /* do_chkall */
 
