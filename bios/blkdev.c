@@ -41,7 +41,7 @@ void blkdev_init(void)
 {
     /* setup booting related vectors */
     hdv_boot    = blkdev_hdv_boot;
-    hdv_init    = blkdev_hdv_init;
+    hdv_init    = 0; // blkdev_hdv_init;
 
     /* setup general block device vectors */
     hdv_bpb     = blkdev_getbpb;
@@ -53,18 +53,22 @@ void blkdev_init(void)
 
     /* harddisk initialisation */
     // disk_init();
+
+    /* setting drvbits */
+    blkdev_hdv_init();
 }
 
 
 
 /*
- * blkdev_hdv_init - BIOS boot vector
+ * blkdev_hdv_init
  *
- * For now just floppy...
  */
 
 void blkdev_hdv_init(void)
 {
+	drvbits = 0;
+
     /* call the real */
     flop_hdv_init();
 
@@ -80,16 +84,12 @@ void blkdev_hdv_init(void)
 }
 
 
-
 /*
  * blkdev_hdv_boot - BIOS boot vector
  */
 
 LONG blkdev_hdv_boot(void)
 {
-    /* call hdv_init using the pointer - maybe vector is overloaded */
-    hdv_init();                     /* is flop_hdv_init in real... */
-
     return(flop_hdv_boot());
 
 
@@ -104,6 +104,7 @@ LONG blkdev_hdv_boot(void)
     return 0;
 #endif
 }
+
 
 /*
  * blkdev_rwabs - BIOS block device read/write vector
