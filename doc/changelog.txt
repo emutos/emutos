@@ -1565,3 +1565,7 @@ Start... early ages
 - desk/deskinf.c : Fixed a year-2k-bug and a buffer overflow when browsing a
   directory with huge files. (bugfixes based on John C. Elliott's FreeGEM
   desktop sources - thanks!). (THH)
+
+2003-09-06
+- desk/desksupp.c desk/desk1.c aes/gemgrlib.c aes/gemsuper.c :
+  graf_shrinkbox() and graf_growbox() have been enabled again. (THH)

@@ -120,21 +120,23 @@ void gr_stepcalc(WORD orgw, WORD orgh, GRECT *pt, WORD *pcx, WORD *pcy,
 
 
 
-void gr_xor(WORD clipped, WORD cnt, WORD cx, WORD cy, WORD cw, WORD ch,
-            WORD xstep, WORD ystep, WORD dowdht)
+static void gr_xor(WORD clipped, WORD cnt, WORD cx, WORD cy, WORD cw, WORD ch,
+                   WORD xstep, WORD ystep, WORD dowdht)
 {
         GRECT tmprect;
 
         do
         {
+          tmprect.g_x = cx;
+          tmprect.g_y = cy;
+          tmprect.g_w = cw;
+          tmprect.g_h = ch;
+
           if (clipped)
             gsx_xcbox(&tmprect);
           else
             gsx_xbox(&tmprect);
-          cx = tmprect.g_x;
-          cy = tmprect.g_y;
-          cw = tmprect.g_w;
-          ch = tmprect.g_h;
+
           cx -= xstep;
           cy -= ystep;
           if (dowdht)
@@ -302,11 +304,10 @@ void gr_movebox(WORD w, WORD h, WORD srcx, WORD srcy, WORD dstx, WORD dsty)
 *       centered within the rectangle and then expands to match the
 *       size of the rectangle.
 */
-/*
 void gr_growbox(GRECT *po, GRECT *pt)
 {
-        WORD            cx, cy;
-        WORD            cnt, xstep, ystep;
+        WORD    cx, cy;
+        WORD    cnt, xstep, ystep;
 
         gr_stepcalc(po->g_w, po->g_h, pt, &cx, &cy, &cnt, &xstep, &ystep);
         gr_movebox(po->g_w, po->g_h, po->g_x, po->g_y, cx, cy);
@@ -314,24 +315,22 @@ void gr_growbox(GRECT *po, GRECT *pt)
         po->g_y = cy;
         gr_2box(TRUE, cnt, po, xstep, ystep, TRUE);
 }
-*/
+
 
 /*
 *       Draw a box that shrinks from the rectangle given down around
 *       a small box centered within the rectangle and then moves to the
 *       origin point.
 */
-/*
 void gr_shrinkbox(GRECT *po, GRECT *pt)
 {
-        WORD            cx, cy;
-        WORD            cnt, xstep, ystep;
+        WORD    cx, cy;
+        WORD    cnt, xstep, ystep;
 
         gr_stepcalc(po->g_w, po->g_h, pt, &cx, &cy, &cnt, &xstep, &ystep);
         gr_2box(TRUE, cnt, pt, -xstep, -ystep, TRUE);
         gr_movebox(po->g_w, po->g_h, cx, cy, po->g_x, po->g_y);
 }
-*/
 
 
 WORD gr_watchbox(LONG tree, WORD obj, WORD instate, WORD outstate)

@@ -391,8 +391,8 @@ T tested and working on an emulator or real hardware
  X      graf_rubbox
  X      graf_dragbox
  X      graf_mbox
- ?      graf_growbox
- ?      graf_shrinkbox
+ T      graf_growbox
+ T      graf_shrinkbox
  X      graf_watchbox
  X      graf_slidebox
  X      graf_handle

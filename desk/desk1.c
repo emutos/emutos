@@ -42,8 +42,8 @@ void zoom_closed(WORD close, WORD w_id, WORD xicon, WORD yicon)
         wind_get(w_id, WF_WXYWH, &rc.g_x, &rc.g_y, &rc.g_w, &rc.g_h);
         if (close) wind_close(w_id);
 
-/*        graf_shrinkbox(xicon, yicon, G.g_wicon, G.g_hicon,
-                        rc.g_x, rc.g_y, rc.g_w, rc.g_h);*/
+        graf_shrinkbox(xicon, yicon, G.g_wicon, G.g_hicon,
+                       rc.g_x, rc.g_y, rc.g_w, rc.g_h);
 }
 
 

@@ -306,14 +306,10 @@ UWORD crysbind(WORD opcode, LONG pglobal, UWORD int_in[], UWORD int_out[], LONG 
                 gr_movebox(GR_I1, GR_I2, GR_I3, GR_I4, GR_I5, GR_I6);
                 break;
           case GRAF_GROWBOX:
-/*
-                gr_growbox(&GR_I1, &GR_I5);
-*/
+                gr_growbox((GRECT *)&GR_I1, (GRECT *)&GR_I5);
                 break;
           case GRAF_SHRINKBOX:
-/*
-                gr_shrinkbox(&GR_I1, &GR_I5);
-*/
+                gr_shrinkbox((GRECT *)&GR_I1, (GRECT *)&GR_I5);
                 break;
           case GRAF_WATCHBOX:
                 ret = gr_watchbox(GR_TREE, GR_OBJ, GR_INSTATE, GR_OUTSTATE);

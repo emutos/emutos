@@ -812,10 +812,8 @@ WORD graf_mbox(WORD w, WORD h, WORD srcx, WORD srcy, WORD dstx, WORD dsty)
 }
 
 
-/*      WORD
-graf_growbox(orgx, orgy, orgw, orgh, x, y, w, h)
-        WORD            orgx, orgy, orgw, orgh;
-        WORD            x, y, w, h;
+WORD graf_growbox(WORD orgx, WORD orgy, WORD orgw, WORD orgh,
+                  WORD x, WORD y, WORD w, WORD h)
 {
         GR_I1 = orgx;
         GR_I2 = orgy;
@@ -827,12 +825,10 @@ graf_growbox(orgx, orgy, orgw, orgh, x, y, w, h)
         GR_I8 = h;
         return( gem_if( GRAF_GROWBOX ) );
 }
-*/
 
-/*      WORD
-graf_shrinkbox(orgx, orgy, orgw, orgh, x, y, w, h)
-        WORD            orgx, orgy, orgw, orgh;
-        WORD            x, y, w, h;
+
+WORD graf_shrinkbox(WORD orgx, WORD orgy, WORD orgw, WORD orgh,
+                    WORD x, WORD y, WORD w, WORD h)
 {
         GR_I1 = orgx;
         GR_I2 = orgy;
@@ -844,7 +840,7 @@ graf_shrinkbox(orgx, orgy, orgw, orgh, x, y, w, h)
         GR_I8 = h;
         return( gem_if( GRAF_SHRINKBOX ) );
 }
-*/
+
 
 WORD graf_watchbox(LONG tree, WORD obj, UWORD instate, UWORD outstate)
 {

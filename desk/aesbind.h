@@ -56,6 +56,10 @@ WORD graf_rubbox(WORD xorigin, WORD yorigin, WORD wmin, WORD hmin,
 WORD graf_dragbox(WORD w, WORD h, WORD sx, WORD sy, WORD xc, WORD yc,
                   WORD wc, WORD hc, WORD *pdx, WORD *pdy);
 WORD graf_mbox(WORD w, WORD h, WORD srcx, WORD srcy, WORD dstx, WORD dsty);
+WORD graf_growbox(WORD orgx, WORD orgy, WORD orgw, WORD orgh,
+                  WORD x, WORD y, WORD w, WORD h);
+WORD graf_shrinkbox(WORD orgx, WORD orgy, WORD orgw, WORD orgh,
+                    WORD x, WORD y, WORD w, WORD h);
 WORD graf_watchbox(LONG tree, WORD obj, UWORD instate, UWORD outstate);
 WORD graf_slidebox(LONG tree, WORD parent, WORD obj, WORD isvert);
 WORD graf_handle(WORD *pwchar, WORD *phchar, WORD *pwbox, WORD *phbox);

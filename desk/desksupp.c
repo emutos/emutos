@@ -187,12 +187,24 @@ void do_xyfix(WORD *px, WORD *py)
 
 void do_wopen(WORD new_win, WORD wh, WORD curr, WORD x, WORD y, WORD w, WORD h)
 {
-        GRECT           c;
+        GRECT   c;
+#ifdef DESK1
+        GRECT   d;
+#endif
 
         do_xyfix(&x, &y);
         get_xywh(G.g_screen, G.g_croot, &c.g_x, &c.g_y, &c.g_w, &c.g_h);
+
+#ifdef DESK1
+	/* Zooming box effect */
+	get_xywh(G.g_screen, curr, &d.g_x, &d.g_y, &d.g_w, &d.g_h);
+	d.g_x += c.g_x;
+	d.g_y += c.g_y;
+	graf_growbox(d.g_x, d.g_y, d.g_w, d.g_h, x, y, w, h);
+#endif
+
         act_chg(G.g_cwin, G.a_screen, G.g_croot, curr, &c, SELECTED, 
-                        FALSE, TRUE, TRUE);
+                FALSE, TRUE, TRUE);
         if (new_win)
           wind_open(wh, x, y, w, h);
 
@@ -217,17 +229,13 @@ void do_wfull(WORD wh)
         if (rc_equal(&curr, &full))
         {
                 wind_set(wh, WF_CXYWH, prev.g_x, prev.g_y, prev.g_w, prev.g_h);
-/*
                 graf_shrinkbox(prev.g_x, prev.g_y, prev.g_w, prev.g_h,
-                                           full.g_x, full.g_y, full.g_w, full.g_h);
-*/
+                               full.g_x, full.g_y, full.g_w, full.g_h);
         }       
         else
         {
-/*
                 graf_growbox(curr.g_x, curr.g_y, curr.g_w, curr.g_h,
-                                         full.g_x, full.g_y, full.g_w, full.g_h);
-*/
+                             full.g_x, full.g_y, full.g_w, full.g_h);
                 wind_set(wh, WF_CXYWH, full.g_x, full.g_y, full.g_w, full.g_h);
         }
 #else /* DESK1 */
