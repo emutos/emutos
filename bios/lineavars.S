@@ -63,6 +63,7 @@
                 .globl  _v_off_ad
                 .globl  _v_stat_0
                 .globl  _v_vt_rez
+                .globl  _v_bytes_lin
                 .global _def_font
                 .global _font_ring
                 .global _font_count
@@ -164,7 +165,7 @@ _v_off_ad:      .ds.l   1       // -10  pointer to font offset table
 _v_stat_0:      .ds.b   1       // -6   video cell system status (was in words)
                 .ds.b   1       //      dummy
 _v_vt_rez:      .ds.w   1       // -4   vertical resolution in pixels
-BYTES_LN:       .ds.w   1       // -2   byte per screen line
+_v_bytes_lin:   .ds.w   1       // -2   byte per screen line
 
 
 

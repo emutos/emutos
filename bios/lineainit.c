@@ -146,12 +146,13 @@ void linea_init(void)
     /* set parameters for video mode */
     if (vmode >2){      /* Mode 3 == unvalid for ST (MAD) */
         kprintf("video mode was: %d !\n", vmode);
-        vmode=2;                /* Falcon should be handeled special? */
+        vmode=2;                /* Falcon should be handled special? */
     }
     v_planes=video_mode[vmode].planes;
     v_lin_wr=video_mode[vmode].lin_wr;
     v_hz_rez=video_mode[vmode].hz_rez;
     v_vt_rez=video_mode[vmode].vt_rez;
+    v_bytes_lin=video_mode[vmode].lin_wr;	/* I think v_bytes_lin = v_lin_wr (joy) */
 
 #if DBG_LINEA
     kprintf("planes: %d\n", v_planes);
