@@ -331,6 +331,9 @@ dumpkbd.prg: obj/minicrt.o obj/memmove.o obj/dumpkbd.o
 keytbl2c$(EXE) : tools/keytbl2c.c
 	$(NATIVECC) -o $@ $<
 
+testflop.prg: obj/minicrt.o obj/doprintf.o obj/testflop.o
+	$(LD) -s -o $@ $^ $(LDFLAGS)
+
 #
 # NLS support
 #
@@ -565,6 +568,24 @@ TGZEXCL = #--exclude aes --exclude vdi
 tgz:	distclean
 	cd ..;\
 	tar -cf - --exclude '*CVS' $(TGZEXCL) $(HEREDIR) | gzip -c -9 >$(TGZ)
+
+#
+# proposal to create an archive named emutos-0_2a.tgz when
+# the EMUTOS_VERSION equals "0.2a" in include/version.h
+#
+
+VERSION = $(shell grep EMUTOS_VERSION include/version.h | cut -f2 -d\")
+RELEASEDIR = emutos-$(VERSION)
+RELEASETGZ = $(shell echo $(RELEASEDIR) | tr A-Z. a-z_).tgz
+
+release: distclean
+	cd ..; \
+	tmp=tmp$$$$; mkdir $$tmp; cd $$tmp; \
+	ln -s ../$(HEREDIR) $(RELEASEDIR); \
+	tar -h -cf - --exclude '*CVS' $(TGZEXCL) $(RELEASEDIR) | \
+	gzip -c -9 >../$(RELEASETGZ) ;\
+	cd ..; rm -rf $$tmp
+
 
 #
 # automatic dependencies. (this is ugly)
