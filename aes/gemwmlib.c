@@ -113,7 +113,7 @@ GLOBAL LONG     gl_waspec[NUM_ELEM] =
 {
         0x00011101L,    /* W_BOX        */
         0x00011101L,    /* W_TITLE      */
-        0x12011101L,    /* W_CLOSER     */
+        0x05011101L,    /* W_CLOSER     */
         0x0L,           /* W_NAME       */
         0x07011101L,    /* W_FULLER     */
         0x0L,           /* W_INFO       */
@@ -121,13 +121,13 @@ GLOBAL LONG     gl_waspec[NUM_ELEM] =
         0x00001101L,    /* W_WORK       */
         0x06011101L,    /* W_SIZER      */
         0x00011101L,    /* W_VBAR       */
-        0x0C011101L,    /* W_UPARROW    */
-        0x0D011101L,    /* W_DNARROW    */
+        0x01011101L,    /* W_UPARROW    */
+        0x02011101L,    /* W_DNARROW    */
         0x00011111L,    /* W_VSLIDE     */
         0x00011101L,    /* W_VELEV      */
         0x00011101L,    /* W_HBAR       */
-        0x0F011101L,    /* W_LFARROW    */
-        0x0E011101L,    /* W_RTARROW    */
+        0x04011101L,    /* W_LFARROW    */
+        0x03011101L,    /* W_RTARROW    */
         0x00011111L,    /* W_HSLIDE     */
         0x00011101L     /* W_HELEV      */
 } ;
