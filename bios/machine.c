@@ -176,6 +176,7 @@ void machine_init(void)
   detect_video();
   detect_vme();
   detect_megartc();
+  detect_nvram();
   
   /* this is detected by detect_cpu(), called from processor_init() */
   cookie_add(COOKIE_CPU, mcpu);
