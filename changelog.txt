@@ -192,3 +192,4 @@ Start... early ages
 
 19. Oct. 2001
 - Cleaned up and seperated memory initialisation in memory.s
+- Cleaned up command.prg (got rid of cpm code)

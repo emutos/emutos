@@ -18,11 +18,6 @@
 	.globl	_in_term
 	.globl	_rm_term
 	.globl	_xbrkpt
-	.globl	_cpmopen
-	.globl	_cpmcreate
-	.globl	_cpmclose
-	.globl	_cpmread
-	.globl	_cpmwrite
 	.globl	_cmain
 	.globl	_div10
 	.globl	_mod10
@@ -229,125 +224,7 @@ _xoscall:
 	trap	#1
 	move.l	retshell,-(sp)
 	rts
-|
-parse:	lea	cpmfcb,a1
-	cmp.b	#'9',(a0)
-	bgt	nousr
-	move.b	(a0)+,d0
-	sub.b	#'0',d0
-	ext.w	d0
-	move	d0,d1
-	cmp.b	#':',(a0)
-	beq	dousr
-	cmp.b	#'9',(a0)
-	bgt	dousr
-	move.b	(a0)+,d0
-	sub.b	#'0',d0
-	ext.w	d0
-	mulu	#10,d1
-	add	d0,d1
-dousr:	move	#32,d0
-	trap	#2
-|	add	#1,a0
-nousr:	cmp.b	#':',(a0)
-	beq	nodrv
-	cmp.b	#':',1(a0)
-	bne	nodrv
-	move.b	(a0)+,d0
-	sub.b	#'@',d0
-	bra	gotdrv
-nodrv:	clr.b	d0
-gotdrv: move.b	d0,(a1)+	| store into fcb
-	cmp.b	#':',(a0)
-	bne	nownam
-	add	#1,a0
-nownam: move	#7,d1
-donam:	cmp.b	#'.',(a0)
-	beq	endnam
-	tst.b	(a0)
-	beq	endnam
-	move.b	(a0)+,(a1)+
-	dbf	d1,donam
-endnam: tst	d1
-	blt	nowext
-padnam: move.b	#' ',(a1)+
-	dbf	d1,padnam
-nowext: move	#2,d1
-	tst.b	(a0)
-	beq	doext
-	add	#1,a0
-doext:	tst.b	(a0)
-	beq	endext
-	move.b	(a0)+,(a1)+
-	dbf	d1,doext
-endext: tst	d1
-	blt	filfcb
-padext: move.b	#' ',(a1)+
-	dbf	d1,padext
-filfcb: move	#23,d1
-dofil:	clr.b	(a1)+
-	dbf	d1,dofil
-	rts
 
-_cpmopen:
-	link	a6,#0
-	movem.l d1-d7/a0-a5,-(sp)
-	move.l	8(a6),a0
-	bsr	parse
-	move.l	#cpmfcb,d1
-	move	#15,d0
-	trap	#2
-	clr.b	cpmfcb+32
-	movem.l (sp)+,d1-d7/a0-a5
-	unlk	a6
-	rts
-
-_cpmcreate:
-	link	a6,#0
-	movem.l d1-d7/a0-a5,-(sp)
-	move.l	8(a6),a0
-	bsr	parse
-	move.l	#cpmfcb,d1
-	move	#22,d0
-	trap	#2
-	movem.l (sp)+,d1-d7/a0-a5
-	unlk	a6
-	rts
-
-_cpmclose:
-	link	a6,#0
-	movem.l d1-d7/a0-a5,-(sp)
-	move.l	#cpmfcb,d1
-	move	#16,d0
-	trap	#2
-	movem.l (sp)+,d1-d7/a0-a5
-	unlk	a6
-	rts
-_cpmread:
-	link	a6,#0
-	movem.l d1-d7/a0-a5,-(sp)
-	move.l	8(a6),d1
-	move	#26,d0
-	trap	#2
-	move.l	#cpmfcb,d1
-	move	#20,d0
-	trap	#2
-	movem.l (sp)+,d1-d7/a0-a5
-	unlk	a6
-	rts
-
-_cpmwrite:
-	link	a6,#0
-	movem.l d1-d7/a0-a5,-(sp)
-	move.l	8(a6),d1
-	move	#26,d0
-	trap	#2
-	move.l	#cpmfcb,d1
-	move	#21,d0
-	trap	#2
-	movem.l (sp)+,d1-d7/a0-a5
-	unlk	a6
-	rts
 
 	.data
 aris:
@@ -363,9 +240,9 @@ ocrit:	.ds.l	1
 oterm:	.ds.l	1
 biosav: .ds.l	1
 retshell: .ds.l 1
-cpmfcb: .ds.b	36
-	.ds.l	800					  
-mystak: .ds.l	1
+
+	.ds.l	800		| Stack space, growing backwards			  
+mystak: .ds.l	1               | Stack for command.prg
 	.end
 
 

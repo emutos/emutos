@@ -617,7 +617,7 @@ void dspMsg (int msg)
     case 1: wrtln ("File Not Found."); break;
     case 2: wrtln ("Destination is not a valid wild card expresion."); break;
     case 3: wrtln ("******* TEST  CLI *******"); break;
-    case 4: wrtln ("Command v0.43 - 14. Oct. 2001");break;
+    case 4: wrtln ("Command - Version 19. Oct. 2001");break;
     case 5: wrt ("Done."); break;
     case 6: wrtln ("Command is incompletely specified.");break;
     case 7: wrt (srcFlNm); break;
@@ -2040,49 +2040,10 @@ void xCmdLn (char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl)
 		}
 		else dspMsg(6);
 	    }
-#if CPM_CALLS_IMPLEMENTED
-	    else if (xncmps(4,s,"GET"))
-            {
-                if (*nonStdIn)
-                    dspCL (&argv[0]);
-                ucase (p);
-                cpmopen(p);
-                fd = xcreat(argv[2],0x20);
-
-                do
-                {
-                    n = cpmread(buf);
-		    if (!n) xwrite(fd,128L,buf);
-		}
-		while (!n);
-
-		xclose(fd);
-		dspMsg(5);
-	    }
-#endif
 	    else if (xncmps(6,s,"PAUSE"))
 	    {
 		cr2cont();
 	    }
-#if CPM_CALLS_IMPLEMENTED
-	    else if (xncmps(4,s,"PUT"))
-	    {
-		if (*nonStdIn) dspCL (&argv[0]);
-		cpmcreat(argv[2]);
-		fd = xopen(p, 0);
-
-		do
-		{
-		    n = xread(fd,128L,buf);
-		    if (n > 0)
-			compl_code = cpmwrite(buf);
-		}
-		while (n > 0);
-
-		cpmclose();
-		dspMsg(5);
-	    }
-#endif
             else if (xncmps(5,s,"HELP")) dspMsg(17);
 #if IMPLEMENTED
             else if (xncmps(6,s,"BREAK")) xbrkpt();
