@@ -840,3 +840,20 @@ Start... early ages
   freezes the atari when no hard disk is present. Activate it by setting
   CONF_WITH_ACSI in include/config.h (LVL)
 - bios/tosvars.h: hz_200 declared as volatile (LVL)
+
+??. May. 2002
+- ??? changes made by Thomas in following files: ???
+  Makefile .cvsignore aes/crysbind.h aes/gem_rsc.c aes/gemgsxif.c 
+  aes/gemsuper.c bios/linea.S desk/desk_rsc.c
+
+10. May. 2002
+- bios/bios.c: changed the init order. ACSI now works on STonC and STonX.
+  (the trouble was, the DMA timeouts didn't work because the timer C was not
+  enabled at the time when disk initialisation occurred) (LVL)
+- added limited parallel port implementation (output only) (LVL)
+- indented some files (LVL)
+- bios/floppy.c: FastRAM floppy read/write (FRB usage was read-only); 
+  flopvbl added (but still no efficient mediach()) (LVL)
+- Makefile: added size checks for targets 192, 256, 512. (LVL)
+- vdi/gsxasm1.S: made __ABLINE externally visible (LVL)
+- updated some doc/ files (LVL)

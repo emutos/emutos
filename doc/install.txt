@@ -10,7 +10,7 @@ to build, simply do
 
     make
 
-This will create a TOS1 image file 'emutos.img', configured by
+This will create a TOS2 image file 'emutos2.img', configured by
 default for the US country. A list of the main Makefile targets is
 obtained by doing 
 
@@ -42,31 +42,31 @@ things:
 
 1. implement a write_native function in gemdos.c of STonX:
 
-/* Print string from emulated side */
-void write_native(char * addr)
-{
-    char buf[1024];
-    int n;
+    /* Print string from emulated side */
+    void write_native(char * addr)
+    {
+	char buf[1024];
+	int n;
 
-    for(n = 0 ; n < 1023 ; n++) {  /* Fill string char by char */
-        if ( (buf[n]=LM_UB(MEM(addr++))) == 0) break;
+	for(n = 0 ; n < 1023 ; n++) {  /* Fill string char by char */
+	    if ( (buf[n]=LM_UB(MEM(addr++))) == 0) break;
+	}
+	buf[1023] = 0;
+        fprintf(stderr,"%s", buf);
     }
-    buf[1023] = 0;
-    fprintf(stderr,"%s", buf);
-}
 
-void call_native(UL as, UL func)
-{
-#if 0
+    void call_native(UL as, UL func)
+    {
+    #if 0
 	fprintf(stderr,"Calling native %d\n",func);
-#endif
+    #endif
 	switch (func)
 	{
         case 0: /* Get the address, where string begins*/
-		write_native((char *)LM_UL(MEM(as)));
-		break;
-	case 1:
-.....
+            write_native((char *)LM_UL(MEM(as)));
+            break;
+        case 1:
+    ...
 
 (STonC release 0.8.0 and later already has this function)
 
@@ -85,9 +85,15 @@ use the 'falcon' Makefile target
 Other emulators
 ---------------
 
-Use 'make 192' to create etos192k.img, a file having the exact same
-size as TOS1 ROM images, for other emulators.
+By default the emutos2.img ROM image is not padded to a particular size.
+However some emulators expect ROM images with a fixed size of 192k, 
+or 256k, or 512k. for these emulators, Use 'make 256' or 'make 512' to 
+create etos256k.img and etos512k.img, ROM images padded to the specified size.
 
+Note: Since the inclusion of the AES and VDI, EmuTOS no longer can fit
+in a 192k image. If you want a 192k TOS1 ROM absolutely try 
+
+    make WITH_AES=0 192
 
 Hope this is all. AND: EmuTOS is not thought for the public right now.
 It is alpha!!! Although it may run well for you, it is not bug tested.
