@@ -328,7 +328,24 @@ obj/%.o : vdi/%.c
 obj/%.o : vdi/%.S
 	${CC} ${CFLAGS} -c $< -o $@
 
+#
+# make bios.dsm will create an assembly-only of bios.c
+#
 
+%.dsm : bios/%.c
+	${CC} ${CFLAGS} -S -Ibios $< -o $@
+
+%.dsm : bdos/%.c
+	${CC} ${CFLAGS} -S -Ibdos $< -o $@
+
+%.dsm : util/%.c
+	${CC} ${CFLAGS} -S -Iutil $< -o $@
+
+%.dsm : cli/%.c
+	${CC} ${CFLAGS} -S -Iutil $< -o $@
+
+%.dsm : vdi/%.c
+	${CC} ${CFLAGS} -S -Iutil $< -o $@
 
 #
 # dsm, show
@@ -364,7 +381,7 @@ clean:
 	rm -f ramtos.img boot.prg etos192k.img etosfalc.img mkflop$(EXE) 
 	rm -f bootsect.img emutos.st date.prg dumpkbd.prg keytbl2c$(EXE)
 	rm -f bug$(EXE) po/messages.pot util/langs.c bios/header.h
-	rm -f mkheader$(EXE) tounix$(EXE) $(TMPS)
+	rm -f mkheader$(EXE) tounix$(EXE) $(TMPS) *.dsm
 
 distclean: clean nodepend
 	rm -f Makefile.bak '.#'* */'.#'* 
