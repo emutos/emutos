@@ -242,7 +242,7 @@ void kbd_int(WORD scancode)
 
 
 #if DBG_KBD
-    kprint("================\n ");
+    kprintf("================\n ");
     kprintf("Key-scancode: 0x%02x\n", scancode & 0xff);
 
     kprintf("Key-shift bits: 0x%02x\n", shifty);

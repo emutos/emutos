@@ -1312,3 +1312,5 @@ Start... early ages
   to get rid of the STonX native print stuff as soon as I commit to STonX the
   quick natfeat implementation I just added to STonC (LVL)
 - natfeat_init() called in memory.S, for earlier availability of kprintf (LVL)
+- bios/bios.c - DBGAUTOBOOT added so that the AUTO crash is visible (joy)
+- bios/ikbd.c - corrected debug typo (joy)

@@ -54,6 +54,7 @@
 /*==== Defines ============================================================*/
 
 #define DBGBIOS 0               /* If you want debugging output */
+#define DBGAUTOBOOT 1           /* If you want to see AUTO folder loading */
 
 /*==== Forward prototypes =================================================*/
 
@@ -274,11 +275,11 @@ void autoexec(void)
         dta.name[12] = 0;
         strcat(path, dta.name);
 
-#if DBGBIOS
+#if DBGAUTOBOOT
         kprintf("Loading %s ... ", path);
 #endif
         trap1( 0x4b, 0, path, "", "");       /* Pexec */
-#if DBGBIOS
+#if DBGAUTOBOOT
         kprintf("[OK]\n");
 #endif
 
