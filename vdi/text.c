@@ -374,7 +374,7 @@ void dst_height()
         } while ((test_font = test_font->next_font));
     }
 
-  find_height:
+find_height:
 
     single_font = test_font;
     test_height = PTSIN[1];
@@ -510,7 +510,7 @@ void dst_point()
         } while ((test_font = test_font->next_font));
     }
 
-  find_height:
+find_height:
 
     double_font = single_font = test_font;
     test_height = INTIN[0];
@@ -623,7 +623,7 @@ void dst_font()
 
     test_font = &fon6x6;
 
-  find_height:
+find_height:
 
     /* Call down to the set text height routine to get the proper size */
 

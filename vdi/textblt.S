@@ -353,48 +353,24 @@ _scrpt2:
         //.offset 0
 
 #define buffa   -2              //for clip & prerotate blt
-
 #define buffb   -4              //for rotate
-
 #define buffc   -6              //for replicate
-
-
 #define sform   -10             //start of source form
-
 #define dform   -14             //start of destination form
-
-
 #define s_next  -16             //width of source form (formerly s_width)
-
 #define d_next  -18             //width of dest form (_v_lin_wr formerly used)
-
-
 #define width   -20             //width of area in pixels
-
 #define height  -22             //height of area in pixels
-
-
 #define tsdad   -24             //source dot address (pixel address, 0-15 word offset)
-
 #define tddad   -26             //destination dot address
-
-
 #define dest_wrd -28            //# full words between fringes (destination)
-
 #define src_wrd  -30            //# full words between fringes (source) (before thicken)
-
 #define src_wthk -32            //
-
 #define thk_msk  -34            //right fringe mask, before thicken
-
 #define rite_msk -36            //
-
 #define left_msk -38            //fringes of destination to be affected
-
 #define rota_msk -40            //overlap between words in inner loop
-
 #define shif_cnt -42            //shift count for use by left/right shift routines
-
 #define wrd_cnt  -44            //number inner loop words for left/right 
 
 /////////////////////////////////////////////////
@@ -402,13 +378,9 @@ _scrpt2:
 /////////////////////////////////////////////////
 
 #define thknjmp  -48            //vector for function after thicken
-
 #define litejmp  -52            //vector for function after light
-
 #define skewjmp  -56            //vector for function after skew
-
 #define thknjpwf -60            //vector for word fringe function after thicken
-
 #define litejpwf -64            //vector for word fringe function after light
 
 //////////////////////////////////////////////////
@@ -416,7 +388,6 @@ _scrpt2:
 //////////////////////////////////////////////////
 
 #define thknjpw  -68            //vector for word function after thicken
-
 #define litejpw  -72            //vector for word function after light
 
 /////////////////////////////////
@@ -424,13 +395,9 @@ _scrpt2:
 /////////////////////////////////
 
 #define smear    -74            //amount to increase width
-
 #define ambient  -76            //ambient temp
-
 #define lite_msk -78            //AND with this to get light effect
-
 #define skew_msk -80            //rotate this to check shift
-
 #define thknover -82            //overflow for word thicken
 
 /////////
@@ -438,9 +405,7 @@ _scrpt2:
 /////////
 
 #define forecol  -84            //foreground color temp
-
 #define nbrplane -86            //# of planes
-
 #define nextwrd  -88            //offset to next word in same
 
 /////////
@@ -448,9 +413,7 @@ _scrpt2:
 /////////
 
 #define tmp_delx -90            //temp DELX used by arbitrary scale of text
-
 #define tmp_dely -92            //temp DELY
-
 #define swap_tmps -94           //Non zero if we had to swap temps
 
 /////////////////////////////////////////////////////////////
@@ -458,19 +421,12 @@ _scrpt2:
 /////////////////////////////////////////////////////////////
 
 #define STYLE   -96
-
 #define WRT_MOD -98
-
 #define SKEWMAS -100
-
 #define DELX    -102
-
 #define DESTX   -104
-
 #define DELY    -106
-
 #define DESTY   -108
-
 #define CHUP    -110
 
 ///////////////////////////////////////////////
@@ -478,13 +434,9 @@ _scrpt2:
 ///////////////////////////////////////////////
 
 #define CLIP    -112
-
 #define XMN_CLI -114
-
 #define YMN_CLI -116
-
 #define XMX_CLI -118
-
 #define YMX_CLI -120
 
 //////////////////////////////////
@@ -492,11 +444,8 @@ _scrpt2:
 //////////////////////////////////
 
 #define tmp_style -122
-
 #define blt_flag  -124
-
 #define chup_flag -126
-
 #define ramlen    -126
 
         .text
