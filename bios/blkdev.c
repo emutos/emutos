@@ -32,6 +32,7 @@ UNIT devices[UNITSNUM];
 
 static BYTE diskbuf[2*512];      /* buffer for 2 sectors */
 
+void disk_init(void);
 
 /*
  * blkdevs_init - BIOS block drive initialization
@@ -61,13 +62,25 @@ void blkdev_init(void)
     floppy_init();
 
     /* harddisk initialisation */
-    // disk_init();
+    disk_init();
 
     /* setting drvbits */
     blkdev_hdv_init();
 }
 
 
+/*
+ * disk_init
+ *
+ */
+
+void disk_init(void)
+{
+    devices[20+2].valid = 1;
+    devices[20+2].pssize = 512;
+    devices[20+2].size = 3000000;
+    atari_partition(20);
+}
 
 /*
  * blkdev_hdv_init
@@ -76,20 +89,8 @@ void blkdev_init(void)
 
 void blkdev_hdv_init(void)
 {
-    drvbits = 0;
-
     /* call the real */
     flop_hdv_init();
-
-    /* hacked init values for my drive */
-    blkdev[2].valid = 1;
-    blkdev[2].start = 4;
-    blkdev[2].size = 65519;
-    blkdev[2].unit = 22;
-    devices[blkdev[2].unit].valid = 1;
-    devices[blkdev[2].unit].pssize = 512;
-    devices[blkdev[2].unit].size = 100000;
-    drvbits |= (1<<2);
 }
 
 
@@ -107,6 +108,29 @@ LONG blkdev_hdv_boot(void)
 #if DBG_BLKDEV
     kprintf("drvbits = %08lx, bootdev = %d\n", drvbits, bootdev);
 #endif
+}
+
+/*
+ * Add a partitions details to the devices partition description.
+ */
+void add_partition(int dev, int minor, char id[], ULONG start, ULONG size)
+{
+    minor += 2; /* remove this when you remove floppy from blkdev */
+    blkdev[minor].id[0] = id[0];
+    blkdev[minor].id[1] = id[1];
+    blkdev[minor].id[2] = id[2];
+    blkdev[minor].id[3] = '\0';
+    blkdev[minor].start = start;
+    blkdev[minor].size   = size;
+
+    blkdev[minor].unit   = dev + 2;
+    blkdev[minor].valid   = 1;
+
+    if (strcmp(blkdev[minor].id, "GEM") == 0
+        || strcmp(blkdev[minor].id, "BGM") == 0)
+        drvbits |= (1 << minor);  /* for now make just GEM/BGM partitions accessible */
+
+    kprintf(" %c=%c%c%c", 'A'+minor, id[0], id[1], id[2]);
 }
 
 

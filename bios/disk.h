@@ -20,4 +20,8 @@
 extern LONG DMAread(LONG sector, WORD count, LONG buf, WORD dev);
 extern LONG DMAwrite(LONG sector, WORD count, LONG buf, WORD dev);
 
+/* partition detection */
+
+int atari_partition(int bdev);
+
 #endif /* _DISK_H */

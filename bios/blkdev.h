@@ -24,7 +24,7 @@
 
 #define RWABS_RETRIES   1   /* on real machine might want to increase this */
 
-#define BLKDEVNUM   16  /* A: .. P: */
+#define BLKDEVNUM   32  /* A: .. Z:, 1:..6: */
 #define UNITSNUM    23  /* 2xFDC, 8xACSI, 8xSCSI, 4xIDE, 1xARAnyM */
 
 struct bs {
@@ -114,6 +114,7 @@ UWORD compute_cksum(LONG buf);
 LONG blkdev_drvmap(void);
 LONG blkdev_avail(WORD dev);
 
+void add_partition(int dev, int minor, char id[], ULONG start, ULONG size);
 
 
 /*
@@ -139,35 +140,25 @@ LONG blkdev_avail(WORD dev);
 
 struct _blkdev
 {
-#if EVER_NEEDED /* take it, if you need... */
-    UWORD	major;		/* XHDI */
-    UWORD	minor;		/* XHDI */
-    UWORD	mode;		/* some flags */
+    UWORD       major;          /* XHDI */
+//    UWORD     minor;          /* XHDI */
+//    UWORD     mode;           /* some flags */
 
-    UWORD	lock;		/* device in use */
+//    UWORD     lock;           /* device in use */
 
-    char	id[4];		/* XHDI partition id (GEM, BGM, RAW, \0D6, ...) */
-    UWORD	key;		/* XHDI key */
-#endif /* EVER_NEEDED */
+    char        id[4];          /* XHDI partition id (GEM, BGM, RAW, \0D6, ...) */
+//    UWORD     key;            /* XHDI key */
 
-    ULONG	start;		/* physical start sector */
-    ULONG	size;		/* physical sectors */
+    ULONG       start;          /* physical start sector */
+    ULONG       size;           /* physical sectors */
 
-    UWORD	valid;		/* device valid */
-	BPB     bpb;
-	GEOMETRY    geometry;   /* this should probably belong to devices */
+    UWORD       valid;          /* device valid */
+        BPB     bpb;
+        GEOMETRY    geometry;   /* this should probably belong to devices */
     BYTE    serial[3];  /* the serial number taken from the bootsector */
-	int		unit;		/* 0,1 = floppies, 2-9 = ACSI, 10-17 = SCSI, 18-21 = IDE */
+        int             unit;           /* 0,1 = floppies, 2-9 = ACSI, 10-17 = SCSI, 18-21 = IDE */
 };
-typedef struct _blkdev	BLKDEV;
-
-/* an idea how to assign partitions to a physical unit */
-typedef struct _partition       PARTITION;
-struct _partition
-{
-    BLKDEV          *blkdev;
-    PARTITION       *next;
-};
+typedef struct _blkdev  BLKDEV;
 
 /* physical unit (floppy/harddisk) identificator */
 struct _unit
@@ -176,8 +167,6 @@ struct _unit
     ULONG       size;           /* number of physical sectors */
     ULONG       pssize;         /* physical sector size */
     LONG    last_access;/* used in mediach only */
-    PARTITION *partitions;
-
 };
 typedef struct _unit UNIT;
 
