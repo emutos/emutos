@@ -596,7 +596,7 @@ long xsfirst(char *name, int att)
 			dirtbl[i] = dt->dt_dnd;
 
 #if DBGFSDIR
-			kprintf("\nxsfirst(DND=%08lx lock %d)", (long)dt->dt_dnd, i);
+			kprintf("\nxsfirst(DND=%08lx lock %d [at %d])", (long)dt->dt_dnd, diruse[i], i);
 #endif
 		}
 
@@ -634,10 +634,12 @@ long xsnext(void)
 				if (diruse[i] && dirtbl[i] == dt->dt_dnd)
 					break;
         	if (i != NCURDIR) {
+				--diruse[i];
+				if ( !diruse[i] )
+					dirtbl[i] = (DND*)NULLPTR;
 #if DBGFSDIR
-				kprintf("\n xsnext(DND=%08lx unlock %d)", (long)dt->dt_dnd, i);
-#endif				--diruse[i];
-				dirtbl[i] = (DND*)NULLPTR;
+				kprintf("\n xsnext(DND=%08lx unlock %d [at %d])", (long)dt->dt_dnd, diruse[i], i);
+#endif
 			}
 
 			return( ENMFIL ) ;

@@ -1251,3 +1251,7 @@ Start... early ages
   anything with non-floppy-standard cluster number (probably 720/1440)
   is considered to be 16-bit FAT. Without this patch 4 MB disk image
   formatted with TOS could not be used under EmuTOS. Now fixed (joy)
+
+21. Jan. 2003
+- bdos/fsfirst.c - yesterday's patch corrected (Standa)
+- bios/bios.c - the Setdta() should not be needed (Standa)

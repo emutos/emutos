@@ -287,7 +287,6 @@ void autoexec(void)
         if (has_natfeats)
             nf_stderr("[OK]\n");
 
-        trap1( 0x1a, &dta);                  /* Setdta */
         err = trap1( 0x4f );                 /* Fsnext */
     }
 }
