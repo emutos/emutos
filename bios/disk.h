@@ -20,18 +20,9 @@
 extern LONG DMAread(LONG sector, WORD count, LONG buf, WORD dev);
 extern LONG DMAwrite(LONG sector, WORD count, LONG buf, WORD dev);
 
-/* XHDI functions */
-
-extern LONG XHInqTarget(UWORD major, UWORD minor, ULONG *blocksize,
-                        ULONG *device_flags, char *product_name);
-extern LONG XHGetCapacity(UWORD major, UWORD minor, ULONG *blocks,
-                          ULONG *blocksize);
-
-#define XHREADWRITE      10
-#define XHGETCAPACITY    14
-
 /* partition detection */
 
+void disk_init(void);
 int atari_partition(int bdev);
 
 #endif /* DISK_H */

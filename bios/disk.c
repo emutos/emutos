@@ -18,17 +18,50 @@
 #include "asm.h"
 #include "blkdev.h"
 #include "config.h"
-#include "acsi.h"
 #include "kprint.h"
+#include "xhdi.h"
 
 /*==== External declarations ==============================================*/
 
-long nfid_xhdi;
+/*
+ * disk_init
+ *
+ * Rescans all interfaces and adds all found partitions to blkdev and drvbits
+ *
+ */
 
-/* NatFeats */
-static long _NF_call  = 0x73014e75L;
-#define nfCall(n)       (((long (*)(long, ...))&_NF_call)n)
+void disk_init(void)
+{
+        /* scan disk targets in the following order */
+    int targets[] = {16, 18, 17, 19, 20, 22, 21, 23,    /* IDE primary/secondary */
+                     8, 9, 10, 11, 12, 13, 14, 15,      /* SCSI */
+                     0, 1, 2, 3, 4, 5, 6, 7};           /* ACSI */
+    int i;
 
+    /* scan for attached harddrives and their partitions */
+    for(i = 0; i < (sizeof(targets) / sizeof(targets[0])); i++) {
+        ULONG blocksize;
+        ULONG blocks;
+        int major = targets[i];
+        int minor = 0;
+        int xbiosdev = major + 2;
+
+        if (! XHInqTarget(major, minor, &blocksize, NULL, NULL)) {
+            devices[xbiosdev].valid = 1;
+            devices[xbiosdev].pssize = blocksize;
+
+            if (! XHGetCapacity(major, minor, &blocks, NULL))
+                devices[xbiosdev].size = blocks;
+            else
+                devices[xbiosdev].size = 0;
+
+            /* scan for ATARI partitions on this harddrive */
+            atari_partition(major);
+        }
+        else
+            devices[xbiosdev].valid = 0;
+    }
+}
 
 /*
  * partition detection code
@@ -83,6 +116,9 @@ int atari_partition(int bdev)
     int part_fmt = 0; /* 0:unknown, 1:AHDI, 2:ICD/Supra */
 #endif
 
+    /* reset the sector buffer content */
+    bzero(sect, sizeof(sect));
+
     if (DMAread(0, 1, (long)sect, bdev))
         return -1;
 
@@ -127,6 +163,9 @@ int atari_partition(int bdev)
         printk(" XGM<");
         partsect = extensect = pi->st;
         while (1) {
+            /* reset the sector buffer content */
+            bzero(sect2, sizeof(sect2));
+
             if (DMAread(partsect, 1, (long)sect2, bdev)) {
                 printk (" block %ld read failed\n", partsect);
                 return 0;
@@ -186,97 +225,12 @@ int atari_partition(int bdev)
 
 /*=========================================================================*/
 
-
-static LONG scsi_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev)
-{
-    /* implement SCSI here */
-    return EUNDEV;
-}
-
-static LONG ide_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev)
-{
-    /* implement IDE here */
-    return EUNDEV;
-}
-
-static LONG dma_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev)
-{
-#if DBG_DISK
-    kprintf("XBIOS DMA%s(%ld, %d, 0x%08lx, %d)\n", 
-            rw ? "write" : "read", sector, count, buf, dev);
-#endif
-
-    /* direct access to device */
-    if (nfid_xhdi) {
-        long ret = nfCall((nfid_xhdi + XHREADWRITE, (long)dev, (long)0, (long)rw, (long)sector, (long)count, buf));
-        if (ret != EUNDEV)
-            return ret;
-    }
-
-    /* hardware access to device */
-    if (dev >= 0 && dev < 8) {
-        return acsi_rw(rw, sector, count, buf, dev);
-    }
-    else if (dev < 16) {
-        return scsi_rw(rw, sector, count, buf, dev);
-    }
-    else if (dev < 24) {
-        return ide_rw(rw, sector, count, buf, dev);
-    }
-    return EUNDEV;  /* unknown device */
-}
-
-
 LONG DMAread(LONG sector, WORD count, LONG buf, WORD dev)
 {
-    return dma_rw(0, sector, count, buf, dev);
+    return XHReadWrite(dev, 0, 0, sector, count, (void *)buf);
 }
 
 LONG DMAwrite(LONG sector, WORD count, LONG buf, WORD dev)
 {
-    return dma_rw(1, sector, count, buf, dev);
-}
-
-
-/*
- * XHDI implementation
- */
-
-LONG XHInqTarget(UWORD major, UWORD minor, ULONG *blocksize,
-                 ULONG *device_flags, char *product_name)
-{
-    int retval;
-    if (minor != 0)
-        return EUNDEV;
-
-    memset(sect, 0, sizeof(sect));
-    memset(sect2, 0xff, sizeof(sect));
-    retval = DMAread(0, 1, (long)sect, major);
-    if (! retval) {
-        if (blocksize) {
-            /* TODO could add some heuristic here based on difference 
-             * between sect and sect2 contents 
-             *   DMAread(0, 1, (long)sect2, major);
-             */
-            *blocksize = 512; 
-        }
-        if (device_flags)
-            *device_flags = 0;  /* not implemented yet */
-        if (product_name)
-            strcpy(product_name, "Generic Disk");
-    }
-
-    return retval;
-}
-
-LONG XHGetCapacity(UWORD major, UWORD minor, ULONG *blocks, ULONG *blocksize)
-{
-    if (nfid_xhdi) {
-        long ret = nfCall((nfid_xhdi + XHGETCAPACITY, (long)major, (long)minor, (long)blocks, (long)blocksize));
-        if (ret != EUNDEV)
-            return ret;
-    }
-
-    /* TODO could read the blocks from Atari root sector */
-    return EINVFN;
+    return XHReadWrite(dev, 0, 1, sector, count, (void *)buf);
 }
