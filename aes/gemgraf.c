@@ -417,6 +417,7 @@ void gsx_start()
         gl_nrows = gl_height / gl_hchar;
         gl_hbox = gl_hchar + 3;
         gl_wbox = (gl_hbox * gl_ws.ws_hpixel) / gl_ws.ws_wpixel;
+        if (gl_wbox < gl_wchar + 4) gl_wbox = gl_wchar + 4;
         vsl_type( 7 );
         g_vsl_width( 1 );
         vsl_udsty( 0xffff );
@@ -515,7 +516,7 @@ void gsx_tblt(WORD tb_f, WORD x, WORD y, WORD tb_nc)
                                 &gl_wchar, &gl_hchar );
             gl_font = tb_f;
           }
-          y += gl_hptschar - 1;
+          y += gl_hptschar /*- 1*/;
         }
 
         if (tb_f == SMALL)
@@ -527,7 +528,7 @@ void gsx_tblt(WORD tb_f, WORD x, WORD y, WORD tb_nc)
                                 &gl_wschar, &gl_hschar );
             gl_font = tb_f;
           }
-          y += gl_hsptschar - 1;
+          y += gl_hsptschar /*- 1*/;
         }
 
         contrl[0] = 8;          /* TEXT */
