@@ -46,27 +46,27 @@
 
 /*==== External declarations ==============================================*/
 extern WORD os_dosdate;    /* Time in DOS format */
-extern char *biosts ;         /*  time stamp string */
+extern BYTE *biosts ;         /*  time stamp string */
 
-extern VOID c_init();         /* found in conio.c */
-extern long con_stat();      /* found in conio.c */
-extern long con_in ();       /* found in conio.c */
-extern int  shifty;           /* found in conio.c */
+extern void c_init();         /* found in conio.c */
+extern LONG con_stat();      /* found in conio.c */
+extern LONG con_in ();       /* found in conio.c */
+extern WORD  shifty;           /* found in conio.c */
 
 
 #if HAVE_SIO
-extern long sinstat();		/* found in siostat.c */
+extern LONG sinstat();		/* found in siostat.c */
 #endif
 
-extern void con_out(char);     /* found in vt52.c */
+extern void cputc(WORD);     /* found in vt52.c */
 
-extern long format();		/* found in disk.c */
+extern LONG format();		/* found in disk.c */
 
 extern BPB vme_dpb [];		/* found in disk.c */
 
 extern LONG tticks;		/* found in startup.s */
 extern LONG trap_1();		/* found in startup.s */
-extern long drvbits;            /* found in startup.s */
+extern LONG drvbits;            /* found in startup.s */
 extern MD b_mdx;                /* found in startup.s */
 
 extern LONG drv_mediach(WORD drive);    /* found in startup.s */
@@ -78,38 +78,38 @@ extern LONG drv_rw(WORD r_w,            /* found in startup.s */
                    WORD drive);
 
 
-extern VOID mfp_init(VOID);     /* found in mfp.c */
-extern VOID timer_init(VOID);   /* found in mfp.c */
-extern VOID usart_init(VOID);   /* found in mfp.c */
-extern VOID kbd_init(VOID);     /* found in kbd.c */
-extern VOID midi_init(VOID);    /* found in midi.c */
-extern VOID kbq_init(VOID);     /* found in kbq.c */
-extern VOID clk_init(VOID);     /* found in clock.c */
-extern VOID con_init(VOID);     /* found in conio.c */
+extern void mfp_init(void);     /* found in mfp.c */
+extern void timer_init(void);   /* found in mfp.c */
+extern void usart_init(void);   /* found in mfp.c */
+extern void kbd_init(void);     /* found in kbd.c */
+extern void midi_init(void);    /* found in midi.c */
+extern void kbq_init(void);     /* found in kbq.c */
+extern void clk_init(void);     /* found in clock.c */
+extern void con_init(void);     /* found in conio.c */
 
-//EXTERN VOID siolox();
-//EXTERN VOID moulox();
-//EXTERN VOID clklox();
+//EXTERN void siolox();
+//EXTERN void moulox();
+//EXTERN void clklox();
 
-extern long oscall();           /* This jumps to BDOS */
-extern long osinit() ;
+extern LONG oscall();           /* This jumps to BDOS */
+extern LONG osinit() ;
 
 
 
 
 #if	DEFDRV == 0
-    static char env[] = "COMSPEC=a:\\command.prg\0";
+    static BYTE env[] = "COMSPEC=a:\\command.prg\0";
 #else
-    static char env[] = "COMSPEC=c:\\command.prg\0";
+    static BYTE env[] = "COMSPEC=c:\\command.prg\0";
 #endif
 
-static int defdrv = DEFDRV ;       /* default drive number (0 = a:, 2 = c:) */
+static WORD defdrv = DEFDRV ;       /* default drive number (0 = a:, 2 = c:) */
 
 /* BIOS table definitions */
-static int exist[4];          /* 1, if drive present */
-static int known[4];          /* 1, if disk logged-in */
+static WORD exist[4];          /* 1, if drive present */
+static WORD known[4];          /* 1, if disk logged-in */
 
-char secbuf[4][512];          /* sector buffers */
+BYTE secbuf[4][512];          /* sector buffers */
 
 BCB bcbx[4];    /* buffer control block array for each buffer */
 BCB *bufl[2];   /* buffer lists - two lists:  fat,dir / data */
@@ -124,7 +124,7 @@ PFI charvec[5];     /* array of vectors to logical interrupt handlers */
 **	that can be done in hi level lang.  startup.s has the rest.
 */
 
-VOID biosinit()
+void biosinit()
 {
     /*==== set up logical interrupt handlers for character devices =========*/
     charvec[0] = (PFI) 0;
@@ -214,7 +214,7 @@ VOID biosinit()
  *	exec the CLI
  */
 
-VOID biosmain()
+void biosmain()
 {
 
 
@@ -259,7 +259,7 @@ VOID biosmain()
  * bios_null - so lint wont complain
  */
 
-VOID bios_null(UWORD x , UWORD y , BYTE * ptr )
+void bios_null(UWORD x , UWORD y , BYTE * ptr )
 {
     x = y ;
     y = x ;
@@ -285,10 +285,10 @@ void bios_0(MPB *mpb)
 
 #if DBGBIOSC
     kprint("BIOS: getmpb m_start = ");
-    kputp((long*) b_mdx.m_start);
+    kputp((LONG*) b_mdx.m_start);
     kprint("\n");
     kprint("BIOS: getmpb m_length = ");
-    kputp((long*) b_mdx.m_length);
+    kputp((LONG*) b_mdx.m_length);
     kprint("\n");
 #endif
 }
@@ -343,7 +343,7 @@ LONG bios_1(WORD handle)	/* GEMBIOS character_input_status */
  * returns the character in the low byte.
  */
 
-LONG bios_2(int handle)
+LONG bios_2(WORD handle)
 {
     switch(handle & 3)          /* strip upper bits */
     {
@@ -365,12 +365,12 @@ LONG bios_2(int handle)
  * bconout  - Print character to output device
  */
 
-VOID bios_3(int handle, char what)
+void bios_3(WORD handle, BYTE what)
 {
     switch(handle & 7)          /* strip upper bits */
     {
     case h_PRT :
-#if 0
+#if IMPLEMENTED
 #if MVME410
         m410_out(what);		/* output char to parallel printer */
 #else
@@ -384,11 +384,11 @@ VOID bios_3(int handle, char what)
         break;
 
     case h_CON :
-        con_out(what);		/* output char to the screen	*/
+        cputc(what);		/* output char to the screen	*/
         break;
 
     default:
-        con_out(what);
+        cputc(what);
         break;
     }
 }
@@ -639,7 +639,7 @@ PFI bios_10(WORD handle, PFI address)
  * onto the stack for exception processing.
  */
 
-VOID nullint(WORD a)
+void nullint(WORD a)
 {
     WORD	*b ;
 

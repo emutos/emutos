@@ -130,13 +130,16 @@ halt:
   for(;;);
 }
 
+
+
 /*==== kputs - output a null terminated string direct to the console ======*/
 
 void cputs(char * s )
 {
-//    while( *s )
-//		con_out( *s++ ) ;
+    cprintf("%s", s);
 }
+
+
 
 void cstatus(ERROR status)
 {
