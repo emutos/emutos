@@ -533,11 +533,11 @@ OFD     *getofd(int h)
 */
 
 /* divsor is log2 of actual divisor */
-int     divmod(int *modp, int divdnd, long divsor)
+int     divmod(int *modp, long divdnd, int divsor)
 {
-        *modp = divdnd & logmsk[divsor];
+        *modp = (int)(divdnd & logmsk[divsor]);
 
-        return(divdnd >> divsor);
+        return (int)(divdnd >> divsor);
 }
 
 

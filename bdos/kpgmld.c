@@ -70,7 +70,7 @@ ERROR   xpgmld(char *s , PD *p )
     {
     case 0x0601a:
 #if DBGKPGMLD
-        kprintf("BDOS xpgmld: 0x061a executable file format!\n") ;
+        kprintf("BDOS xpgmld: 0x601a executable file format!\n") ;
 #endif
         r = pgmld01( h , p ) ;
 #if DBGKPGMLD

@@ -424,3 +424,10 @@ Start... early ages
 - changed stop() usage in bios/ikbd.c (LVL)
 - changed an explicit tab into \t in a string in command.c (LVL)
 - made cvsready (LVL)
+
+06. Jan. 2002
+- fixed BAD bug in fsmain.c - the divmod() long number (byte offset of lseek)
+  was stripped when converting to (int). Due to that relocation info couldn't
+  be read from a file during Pexec() and that caused "invalid exec format"
+  bugs. Actually most things in BDOS filesystem could never work! (joy)
+- "061a executable file format" debug print corrected: "601a ..." (joy)

@@ -488,7 +488,7 @@ long xsetdrv(int drv);
 long xgetdrv(void); 
 OFD  *makofd(register DND *p);
 OFD  *getofd(int h);
-int  divmod(int *modp, int divdnd, long divsor);
+int  divmod(int *modp, long divdnd, int divsor);
 
 
 
