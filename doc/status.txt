@@ -238,10 +238,10 @@ T tested and working on an emulator or real hardware
 
 ==== VDI ====================================================================
  
- ?      v_opnwk
- ?      v_clswk
- ?      v_opnvwk
- ?      v_clsvwk
+ X      v_opnwk
+ X      v_clswk
+ X      v_opnvwk
+ X      v_clsvwk
  ?      v_clrwk
  ?      v_updwk
  ?      vst_load_fonts
@@ -356,5 +356,5 @@ T tested and working on an emulator or real hardware
 
 ==== AES ====================================================================
 
- not implemented
- 
+ Calls are implemented but not yet listed here.
+
