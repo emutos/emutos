@@ -61,6 +61,7 @@ extern LONG *vblqueue;
 extern LONG sysbase;
 extern VOID os_entry(VOID);
 extern LONG os_beg;
+extern UWORD os_dosdate;
 extern VOID (*exec_os)(VOID);
 extern LONG end_os;
 extern LONG m_start;

@@ -25,6 +25,7 @@
 #include "screen.h"
 #include "sound.h"
 #include "floppy.h"
+#include "clock.h"
 #include "asm.h"
  
 #define	DBG_XBIOS        1
@@ -524,11 +525,12 @@ WORD xbios_15(WORD function, WORD operand)
  * date in the high word).
  */
 
-VOID xbios_16(LONG datetime)
+VOID xbios_16(ULONG datetime)
 {
 #if DBG_XBIOS
-    kprintf("XBIOS: Unimplemented function 0x16 ...\n");
+    kprintf("XBIOS: Settime()\n");
 #endif
+    settime(datetime);
 }
 
 
@@ -540,12 +542,12 @@ VOID xbios_16(LONG datetime)
  * (Time in the low word, date in the high word).
  */
 
-LONG xbios_17()
+ULONG xbios_17(void)
 {
 #if DBG_XBIOS
-    kprintf("XBIOS: Unimplemented function 0x17 ...\n");
+    kprintf("XBIOS: Gettime()\n");
 #endif
-    return(0);
+    return gettime();
 }
 
 
@@ -556,7 +558,7 @@ LONG xbios_17()
  * Restores powerup settings of keyboard translation tables.
  */
 
-VOID xbios_18()
+VOID xbios_18(void)
 {
 #if DBG_XBIOS
     kprintf("XBIOS: Bioskeys()\n");

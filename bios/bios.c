@@ -34,6 +34,7 @@
 #include "floppy.h"
 #include "sound.h"
 #include "screen.h"
+#include "clock.h"
 #include "vectors.h"
 #include "asm.h"
 #include "chardev.h"
@@ -53,7 +54,6 @@ void autoexec(void);
 
 /*==== External declarations ==============================================*/
 
-extern WORD os_dosdate;         /* Time in DOS format */
 extern BYTE *biosts ;           /*  time stamp string */
 
 
@@ -63,8 +63,6 @@ extern MD b_mdx;                /* found in startup.s */
 
 extern PD *run;                 /* see bdos/proc.c */
 
-
-extern void clk_init(void);     /* found in clock.c */
 
 extern LONG oscall();           /* This jumps to BDOS */
 extern LONG osinit();
@@ -196,7 +194,7 @@ void startup(void)
     mfp_init();         /* init MFP, timers, USART */
     kbd_init();         /* init keyboard, disable mouse and joystick */
     midi_init();        /* init MIDI acia so that kbd acia irq works */
-    clk_init();         /* init clock (dummy for emulator) */
+    clock_init();       /* init clock */
   
     /* initialize BDOS buffer list */
 
@@ -630,6 +628,15 @@ LONG bios_b(WORD flag)
     return kbshift(flag);
 }
 
+/*
+ * used by BDOS to ask for, or update, the time and date.
+ */
+
+
+VOID bios_11(WORD flag, WORD *dt)
+{
+    date_time(flag, dt);    /* clock.c */
+}
 
 
 

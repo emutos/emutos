@@ -102,6 +102,7 @@
         .xdef   _bios_e
         .xdef   _bios_f
         .xdef   _bios_10
+	.xdef   _bios_11
 
 
 // ==== tosvars.s - TOS System variables =====================================
@@ -713,7 +714,13 @@ bios_vecs:
         dc.l   _bios_9                 // media change?
         dc.l   _bios_a                 // what drives exist?
         dc.l   _bios_b                 // get/set alt-ctrl-shift status
-
+	dc.l   _just_rts	// unused bios_c
+	dc.l   _just_rts	// unused bios_d
+	dc.l   _just_rts	// unused bios_e
+	dc.l   _just_rts	// unused bios_f
+	dc.l   _just_rts	// unused bios_10
+	dc.l   _bios_11			// get/set date/time (used by BDOS)
+	
 bios_ent:               // Max. number of BIOS entries
         dc.w   (bios_ent-bios_vecs)/4
 

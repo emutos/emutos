@@ -39,7 +39,7 @@
 //  keyboard ports.
 //
 // LVL:	The following implementation is DIFFERENT from that of TOS.
-// And, right now, if is widely UNTESTED.
+// (TOS uses different buffers for the various IKBD packets)
 //
 
         .equ    vec_acia, 0x118         // keyboard/Midi interrupt vector
@@ -124,7 +124,6 @@ _vkbderr:
 _vmiderr:
 _statvec:
 _mousevec:
-_clockvec:
 _joyvec:
 	rts
 	

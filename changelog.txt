@@ -255,3 +255,4 @@ Start... early ages
 3. Nov. 2001
 - run AUTO folder prgs, run EmuCON using Pexec(5) (LVL)
 - localconf.h taken in consideration (LVL)
+- IKBD and MegaRTC clock (setting time & date untested) (LVL)
