@@ -19,6 +19,7 @@
  * Changed:
  * - removed Detection of Harun Scheutzows ST-ESCC
  * - have it assemble using option -m68000
+ * - address detection (nops for flushing the pipeline) (joy)
  * - 78 columns wide comments only
  *
  * below is the file. Must we keep the initial notice ?
@@ -59,11 +60,12 @@ _check_read_byte:
 	move.l	(8).w,a1
 	lea	berr.w(pc),a2
 	move.l	a2,(8).w
-	nop
-
 	clr.l	d0
+	nop					// flush pipeline
+
 	move.l	4(sp),a2
 	tst.b	(a2)
+	nop					// flush pipeline
 
 	moveq	#0x01,d0	// passed
 
