@@ -14,7 +14,7 @@
 
 
 #ifndef DBGUMEM
-#define DBGUMEM 1
+#define DBGUMEM 0
 #endif
 
 #include "portab.h"

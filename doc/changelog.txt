@@ -687,4 +687,6 @@ Start... early ages
 25. Mar. 2002
 - Included the GEM.RSC into the ROM (THH).
 
+26. Mar. 2002
+- bdos/biosmain.c - made DBGIFOS working by disabl. osif  (MAD)
 

@@ -17,6 +17,8 @@
 *       -------------------------------------------------------------
 */
 
+#include "config.h"
+
 #include "portab.h"
 #include "machine.h"
 #include "struct.h"
@@ -33,6 +35,7 @@
 #include "gemasm.h"
 #include "optimize.h"
 #include "gemdosif.h"
+#include "kprint.h"
 
 
 #define KEYSTOP 0x00002b1cL                     /* control backslash    */

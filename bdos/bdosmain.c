@@ -371,7 +371,7 @@ void    offree(DMD *d)
  *  osif -
  */
 
-#if     DBGOSIF
+#if 0     // was #if    DBGOSIF
 /*
  * if in debug mode, use this 'front end' so we can tell if we exit
  * from osif

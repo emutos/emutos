@@ -231,7 +231,7 @@ help:
 	@echo "dsm     dsm.txt, an edited desassembly of emutos.img"
 
 emutos.img: $(OBJECTS)
-	${LD} -oformat binary -o $@ $(OBJECTS) ${LDFLAGS} $(LDFLROM)
+	$(LD) -oformat binary -o $@ $(OBJECTS) $(LDFLAGS) $(LDFLROM)
 
 #
 # 192
@@ -365,22 +365,22 @@ obj/%.o : util/%.S
 	${CC} ${CFLAGS} -c -Ibios $< -o $@
 
 obj/%.o : cli/%.c
-	${CC} ${CFLAGS} -c $< -o $@
+	${CC} ${CFLAGS} -c -Ibios $< -o $@
 
 obj/%.o : cli/%.S
-	${CC} ${CFLAGS} -c $< -o $@
+	${CC} ${CFLAGS} -c -Ibios $< -o $@
 
 obj/%.o : vdi/%.c
-	${CC} ${CFLAGS} -c $< -o $@
+	${CC} ${CFLAGS} -c -Ibios $< -o $@
 
 obj/%.o : vdi/%.S
-	${CC} ${CFLAGS} -c $< -o $@
+	${CC} ${CFLAGS} -c -Ibios $< -o $@
 
 obj/%.o : aes/%.c
-	${CC} ${CFLAGS} -c $< -o $@
+	${CC} ${CFLAGS} -c -Ibios $< -o $@
 
 obj/%.o : aes/%.S
-	${CC} ${CFLAGS} -c $< -o $@
+	${CC} ${CFLAGS} -c -Ibios $< -o $@
 
 #
 # make bios.dsm will create an assembly-only of bios.c
