@@ -156,8 +156,8 @@ in a 192k image. If you want a 192k TOS1 ROM absolutely try
 
     make WITH_AES=0 192
 
-Hope this is all. AND: EmuTOS is not thought for the public right now.
-It is alpha!!! Although it may run well for you, it is not bug tested.
+Hope this is all. AND: EmuTOS is now beta Software. It may run well for
+many programs, but also may crash your computer. So be careful.
 
 
 Have success!

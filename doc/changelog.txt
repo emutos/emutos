@@ -1318,3 +1318,7 @@ Start... early ages
 10. Feb. 2003
 - bios/bios.c - now using the reentrant trap1_pexec() to load programs (THH)
 
+11. Feb. 2003
+- vdi/monout.c - bug in abline's C-implementation found (MAD)
+- vdi/*.c - enabled line drawing in C again (MAD)
+

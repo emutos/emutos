@@ -1508,7 +1508,7 @@ void dsf_udpat()
  */
 
 void
-xabline ()
+abline ()
 {
     void *adr;                  /* using void pointer is much faster */
     UWORD x1,y1,x2,y2;          /* the coordinates */
@@ -1520,6 +1520,14 @@ xabline ()
     int plane;
     UWORD linemask;             /* linestyle bits */
     WORD *color;
+
+#if 0
+    if (Y1 == Y2) {
+        kprintf("Y = %d, MODE = %d.\n", Y1, WRT_MODE);
+        //horzline(X1, X2, Y1);
+        return;
+    }
+#endif
 
     /* Make x axis always goind up */
     if (X2 < X1) {
@@ -1651,7 +1659,7 @@ xabline ()
                     }
                 }
                 break;
-            case 0:              /* not */
+            case 0:              /* rep */
                 if (*color) {
                     for (loopcnt=dx;loopcnt >= 0;loopcnt--) {
                         linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
@@ -1669,10 +1677,24 @@ xabline ()
                         }
                     }
                 }
+                else {
+                    for (loopcnt=dx;loopcnt >= 0;loopcnt--) {
+                        linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                        *(WORD*)addr &= ~bit;
+                        bit = bit >> 1| bit << 15;
+                        if (bit&0x8000)
+                            addr += xinc;
+                        eps += e1;
+                        if (eps >= 0 ) {
+                            eps -= e2;
+                            addr += yinc;       /* increment y */
+                        }
+                    }
+                }
             }
         } else {
             e1 = 2*dx;
-            eps = - dy;
+            eps = -dy;
             e2 = 2*dy;
 
             switch (WRT_MODE) {
@@ -1754,25 +1776,37 @@ xabline ()
                 }
                 break;
             case 0:              /* rep */
-                if (!*color)
-                    linemask = ~linemask;
-                for (loopcnt=dy;loopcnt >= 0;loopcnt--) {
-                    linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
-                    if (linemask&0x0001)
-                        *(WORD*)addr |= bit;
-                    else
-                        *(WORD*)addr &= ~bit;
-                    addr += yinc;
-                    eps += e1;
-                    if (eps >= 0 ) {
-                        eps -= e2;
-                        bit = bit >> 1| bit << 15;
-                        if (bit&0x8000)
-                            addr += xinc;
+                if (*color) {
+                    for (loopcnt=dy;loopcnt >= 0;loopcnt--) {
+                        linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                        if (linemask&0x0001)
+                            *(WORD*)addr |= bit;
+                        else
+                            *(WORD*)addr &= ~bit;
+                        addr += yinc;
+                        eps += e1;
+                        if (eps >= 0 ) {
+                            eps -= e2;
+                            bit = bit >> 1| bit << 15;
+                            if (bit&0x8000)
+                                addr += xinc;
+                        }
                     }
                 }
-                if (!*color)
-                    linemask = ~linemask;
+                else {
+                    for (loopcnt=dy;loopcnt >= 0;loopcnt--) {
+                        linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                        *(WORD*)addr &= ~bit;
+                        addr += yinc;
+                        eps += e1;
+                        if (eps >= 0 ) {
+                            eps -= e2;
+                            bit = bit >> 1| bit << 15;
+                            if (bit&0x8000)
+                                addr += xinc;
+                        }
+                    }
+                }
             }
         }
         adr+=2;
@@ -2280,7 +2314,7 @@ void hzline_nor(UWORD *addr, int dx, int leftpart, UWORD rightmask, UWORD leftma
  * This routine is just a wrapper for horzline.
  */
 
-void habline() {
+void xhabline() {
     horzline(X1, X2, Y1);
 }
 
@@ -2353,78 +2387,6 @@ void horzline(WORD x1, WORD x2, WORD y) {
     default: /* rep */
         hzline_rep(addr, dx, leftpart, rightmask, leftmask, patind);
     }
-}
-
-
-
-/*
- * put_pix - plot a pixel, just for linea
- *
- * input:
- *     INTIN(0) = pixel value.
- *     PTSIN(0) = x coordinate.
- *     PTSIN(1) = y coordinate.
- */
-
-void put_pix()
-{
-    UWORD *addr;
-    WORD x,y;
-    UWORD color;
-    UWORD bit;
-    int plane;
-
-    x = PTSIN[0];       /* fetch x coord. */
-    y = PTSIN[1];       /* fetch y coord. */
-    color = INTIN[0];   /* device dependent encoded color bits */
-
-    /* set adress and bit in the WORD for drawing */
-    addr = (UWORD*)(v_bas_ad + (LONG)y * v_lin_wr + ((x&0xfff0)>>shft_off));
-    bit = 0x8000 >> (x&0xf);            /* initial bit position in WORD */
-
-    for (plane = v_planes-1; plane >= 0; plane-- ) {
-        color = color >> 1| color << 15;        /* rotate color bits */
-        if (color&0x8000)
-            *addr++ |= bit;
-        else
-            *addr++ &= ~bit;
-    }
-}
-
-
-
-/*
- * get_pix - gets a pixel, just for linea!
- *
- * input:
- *     PTSIN(0) = x coordinate.
- *     PTSIN(1) = y coordinate.
- * output:
- *     pixel value
- */
-
-WORD get_pix()
-{
-    UWORD *addr;
-    WORD x,y;
-    UWORD color;
-    UWORD bit;
-    int plane;
-
-    x = PTSIN[0];       /* fetch x coord. */
-    y = PTSIN[1];       /* fetch y coord. */
-    color = 0;          /* start with empty color value */
-
-    /* set adress and bit in the WORD for drawing */
-    addr = (UWORD*)(v_bas_ad + (LONG)y * v_lin_wr + ((x&0xfff0)>>shft_off));
-    bit = 0x8000 >> (x&0xf);            /* initial bit position in WORD */
-
-    for (plane = v_planes-1; plane >= 0; plane-- ) {
-        if (*addr++ & bit)              /* mask out the questioned bit */
-            color |= 1;                 /* the bit was set in this plane */
-        color = color << 1;             /* next color bit */
-    }
-    return color;                       /* return the composed color value */
 }
 
 
@@ -2584,3 +2546,78 @@ void rectfill ()
     }
 }
 #endif
+
+
+#if 1
+/*
+ * put_pix - plot a pixel, just for linea
+ *
+ * input:
+ *     INTIN(0) = pixel value.
+ *     PTSIN(0) = x coordinate.
+ *     PTSIN(1) = y coordinate.
+ */
+
+void put_pix()
+{
+    UWORD *addr;
+    WORD x,y;
+    UWORD color;
+    UWORD bit;
+    int plane;
+
+    x = PTSIN[0];       /* fetch x coord. */
+    y = PTSIN[1];       /* fetch y coord. */
+    color = INTIN[0];   /* device dependent encoded color bits */
+
+    /* set adress and bit in the WORD for drawing */
+    addr = (UWORD*)(v_bas_ad + (LONG)y * v_lin_wr + ((x&0xfff0)>>shft_off));
+    bit = 0x8000 >> (x&0xf);            /* initial bit position in WORD */
+
+    for (plane = v_planes-1; plane >= 0; plane-- ) {
+        color = color >> 1| color << 15;        /* rotate color bits */
+        if (color&0x8000)
+            *addr++ |= bit;
+        else
+            *addr++ &= ~bit;
+    }
+}
+
+
+
+/*
+ * get_pix - gets a pixel, just for linea!
+ *
+ * input:
+ *     PTSIN(0) = x coordinate.
+ *     PTSIN(1) = y coordinate.
+ * output:
+ *     pixel value
+ */
+
+WORD get_pix()
+{
+    UWORD *addr;
+    WORD x,y;
+    UWORD color;
+    UWORD bit;
+    int plane;
+
+    x = PTSIN[0];       /* fetch x coord. */
+    y = PTSIN[1];       /* fetch y coord. */
+    color = 0;          /* start with empty color value */
+
+    /* set adress and bit in the WORD for drawing */
+    addr = (UWORD*)(v_bas_ad + (LONG)y * v_lin_wr + ((x&0xfff0)>>shft_off));
+    bit = 0x8000 >> (x&0xf);            /* initial bit position in WORD */
+
+    for (plane = v_planes-1; plane >= 0; plane-- ) {
+        if (*addr++ & bit)              /* mask out the questioned bit */
+            color |= 1;                 /* the bit was set in this plane */
+        color = color << 1;             /* next color bit */
+    }
+    return color;                       /* return the composed color value */
+}
+#endif
+
+
