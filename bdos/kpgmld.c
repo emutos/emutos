@@ -145,8 +145,13 @@ ERROR	pgmld01( h , pdptr )
 	**  initialize PD fields
 	*/
 
-	bmove( (char*)&pi->pi_tbase , (char*)&p->p_tbase , 6 * sizeof(long) ) ;
+	/* LVL bmove( (char*)&pi->pi_tbase , 
+         *            (char*)&p->p_tbase , 
+	 *	      6 * sizeof(long) ) ;
+	 */
+	memcpy(&p->p_tbase, &pi->pi_tbase, 6 * sizeof(long));
 
+	
 	/*  
 	**  read in the program file (text and data)
 	**  if there is an error reading in the file or if it is an abs
@@ -208,10 +213,11 @@ ERROR	pgmld01( h , pdptr )
 
 	if( pi->pi_blen != 0 )
 	{
-		*pi->pi_bbase = 0 ;
-		if( pi->pi_blen > 1 )
-			lbmove(pi->pi_bbase, pi->pi_bbase+1, pi->pi_blen-1) ;
-
+	  *pi->pi_bbase = 0 ;
+	  if( pi->pi_blen > 1 ) {
+	    /* LVL lbmove(pi->pi_bbase, pi->pi_bbase+1, pi->pi_blen-1) ; */
+	    bzero( pi->pi_bbase, pi->pi_blen);
+	  }
 	}
 
 	return( SUCCESS ) ;

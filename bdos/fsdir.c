@@ -275,7 +275,8 @@ long	xmkdir(s)
 
 	/* write identifier */
 
-	xmovs(22,dots,(BYTE *)f2);
+	/* LVL xmovs(22,dots,(BYTE *)f2); */
+	memcpy(f2, dots, 22);
 	f2->f_attrib = FA_SUBDIR;
 	f2->f_time = time;
 	swp68( f2->f_time ) ;		/*  M01.01.SCC.FS.04  */
@@ -289,7 +290,8 @@ long	xmkdir(s)
 
 	/* write parent entry .. */
 
-	xmovs(22,dots2,(BYTE *)f2);
+	/* LVL xmovs(22,dots2,(BYTE *)f2); */
+	memcpy(f2, dots, 22);
 	f2->f_attrib = FA_SUBDIR;
 	f2->f_time = time;
 	swp68( f2->f_time ) ;		/*  M01.01.SCC.FS.06  */
@@ -303,7 +305,8 @@ long	xmkdir(s)
 	swp68(cl);
 	f2->f_clust = cl;
 	f2->f_fileln = 0;
-	xmovs(sizeof(OFD),(BYTE *)f0,(BYTE *)f);
+	/* LVL xmovs(sizeof(OFD),(BYTE *)f0,(BYTE *)f); */
+	memcpy(f, f0, sizeof(OFD));
 	f->o_flag |= O_DIRTY;
 	ixclose(f,CL_DIR | CL_FULL);	/* force flush and write */
 	xmfreblk((BYTE*)f);
@@ -502,7 +505,8 @@ long	ixsfirst(char *name, REG WORD att, REG DTAINFO *addr)
 
     if (addr)
     {
-        bmove( s , (BYTE *)&addr->dt_name[0] , 12 ) ;
+        /* LVL bmove( s , (BYTE *)&addr->dt_name[0] , 12 ) ; */
+        memcpy(&addr->dt_name[0], s, 12);
         addr->dt_attr = att ;
         addr->dt_pos = pos ;
         addr->dt_dnd = dn ;
@@ -1315,7 +1319,8 @@ DND	*makdnd(p,b)
 	p1->d_dirpos = fd->o_bytnum - 32;
 	p1->d_time = b->f_time;
 	p1->d_date = b->f_date;
-	xmovs(11,(BYTE *)b->f_name,(BYTE *)p1->d_name);
+	/* LVL xmovs(11,(BYTE *)b->f_name,(BYTE *)p1->d_name); */
+	memcpy(p1->d_name, b->f_name, 11);
 
 	return(p1);
 }
@@ -1487,21 +1492,22 @@ makbuf(f,dt)
 	REG FCB 	*f;
 	REG DTAINFO	*dt ;
 {					/*  M01.01.03	*/
-	dt->dt_fattr = f->f_attrib ;
-	dt->dt_time = f->f_time ;
-	swp68(dt->dt_time) ;
-	dt->dt_date = f->f_date ;
-	swp68(dt->dt_date) ;
-	dt->dt_fileln = f->f_fileln ;
-	swp68l( dt->dt_fileln ) ;
+  dt->dt_fattr = f->f_attrib ;
+  dt->dt_time = f->f_time ;
+  swp68(dt->dt_time) ;
+  dt->dt_date = f->f_date ;
+  swp68(dt->dt_date) ;
+  dt->dt_fileln = f->f_fileln ;
+  swp68l( dt->dt_fileln ) ;
 
-	if( f->f_attrib & FA_VOL )
-	{
-		bmove( (BYTE *)&f->f_name[0] , (BYTE *)&dt->dt_fname[0] , 11 ) ;
-		dt->dt_fname[11] = NULL ;
-	}
-	else
-		packit(&f->f_name[0],&dt->dt_fname[0]);
+  if( f->f_attrib & FA_VOL )
+    {
+      /* LVL bmove( (BYTE *)&f->f_name[0] , (BYTE *)&dt->dt_fname[0] , 11 ); */
+      memcpy(&dt->dt_fname[0], &f->f_name[0], 11);
+      dt->dt_fname[11] = NULL ;
+    }
+  else
+    packit(&f->f_name[0],&dt->dt_fname[0]);
 }
 
 

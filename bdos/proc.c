@@ -159,7 +159,8 @@ long	xexec(WORD flg, char *s, char *t, char *v)
         }
     }
 
-    xmovs(sizeof(errbuf),errbuf,bakbuf);
+    /* LVL xmovs(sizeof(errbuf),errbuf,bakbuf); */
+    memcpy(bakbuf, errbuf, sizeof(errbuf));
 
     if (rc = setjmp(errbuf))
     {
@@ -204,8 +205,8 @@ long	xexec(WORD flg, char *s, char *t, char *v)
          **  now copy it
          */
 
-        bmove( v , e , i ) ;
-
+        /* LVL bmove( v , e , i ) ; */
+	memcpy(e, v, i);
 
         /*
          **  allocate base page

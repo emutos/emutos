@@ -141,9 +141,6 @@
 	.xdef	_tikfrk
 	.xdef	fstrt
 
-	.global	_lbmove
-	.global	_bfill
-	.global	_bmove
 	.global	_xsuper
 
 
@@ -296,78 +293,6 @@ _s68l:
 	rts
 
 
-_bfill:
-|******
-| Entry
-|	4(sp)	-> first byte in block
-|	8(sp)	=  BYTE value to fill with
-|	10(sp)	=  UWORD number of bytes to fill
-| Exit
-|	none
-
-	
-	move.l	4(sp), a0		| a0 -> block
-	move	8(sp), d0		| d0.b = byte to fill with
-	move	10(sp), d1		| d1.w = byte count
-	bra	f_test
-
-f_loop:
-	move.b	d0, (a0)+
-f_test:
-	dbf	d1, f_loop
-
-	rts
-
-
-
-_bmove:
-|******
-| Entry
-|	4(sp)	-> first byte in source block
-|	8(sp)	-> first byte in destination block
-|	C(sp)	=  UWORD number of bytes to copy
-| Exit
-|	none
-
-	
-	move.l	4(sp), a0		| a0 -> source block
-	move.l	8(sp), a1		| a1 -> destination block
-	move	12(sp), d0		| d0.w = byte count
-	bra	b_test
-
-b_loop:
-	move.b	(a0)+, (a1)+
-b_test:
-	dbf	d0, b_loop
-
-	rts
-
-
-
-_lbmove:
-|*******
-| Entry
-|	4(sp)	-> first byte in source block
-|	8(sp)	-> first byte in destination block
-|	C(sp)	=  LONG number of bytes to copy
-| Exit
-|	none
-
-	
-	move.l	4(sp), a0		| a0 -> source block
-	move.l	8(sp), a1		| a1 -> destination block
-	move.l	12(sp), d0
-	move	d0, d1			| d1.W = ls 16 bits of count
-	swap	d0			| d0.W = ms 16 bits of count
-	bra	lb_test
-
-lb_loop:
-	move.b	(a0)+, (a1)+
-lb_test:
-	dbf	d1, lb_loop
-	dbf	d0, lb_loop
-
-	rts
 
 
 

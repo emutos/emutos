@@ -51,7 +51,7 @@
 #include	"fs.h"
 #include	"bios.h"
 #include	"gemerror.h"
-
+#include "btools.h"      
 
 
 /*
@@ -314,7 +314,8 @@ long	makopn(f, dn, h, mod)
 
 	if (p2)
 	{	/* steal time,date,startcl,fileln */
-		xmovs(12,&p2->o_time,&p->o_time);
+	        /* LVL xmovs(12,&p2->o_time,&p->o_time); */
+	        memcpy(&p->o_time, &p2->o_time, 12);
 		/* not used yet... TBA *********/	/*<<<<<<<<<<<<<*/
 		p2->o_thread = p; 
 	}

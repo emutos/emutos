@@ -54,7 +54,7 @@
 #define rwabs(a,b,c,d,e) if((rwerr=trap13(4,a,b,c,d,e))!=0){errdrv=e;longjmp(errbuf,rwerr);}
 
 #define min(a,b) (((a) < (b)) ? (a) : (b))
-#define xmovs(n,s,d)	bmove(s,d,n)
+/* LVL define xmovs(n,s,d)	bmove(s,d,n) */
 
 /*
  *  Type declarations
