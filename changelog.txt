@@ -329,3 +329,7 @@ Start... early ages
 
 1. Dec. 2001
 - standalone command.prg (added replacement _() and N_()) (LVL)
+
+7. Dec. 2001
+- EmuTOS now recognizes Falcon (by detecting VIDEL) and TT030
+  (by detecting TT-Shifter). (joy)
