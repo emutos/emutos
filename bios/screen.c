@@ -33,7 +33,6 @@ static WORD dflt_palette[] = {
 };
 
 
-
 /*
  * In the original TOS there used to be an early screen init, 
  * before memory configuration. This is not used here, and all is
@@ -49,6 +48,17 @@ void screen_init(void)
     } *mfp = (void *) 0xfffffa01;
     WORD rez;
     WORD i;
+    ULONG screen_size = 32000;  /* standard Shifter videoram size */
+    ULONG screen_start;
+
+    if (has_videl) {
+        /* detect real videoram size from the current resolution */
+        /* the right thing to do would be to set the resolution based
+         * on info fetched from NVRAM
+         */
+        screen_size = get_videl_width() / 8L * get_videl_height()
+                      * get_videl_bpp();
+    }
 
     *(BYTE *) 0xffff820a = 2;   /* sync-mode to 50 hz pal, internal sync */
 
@@ -81,7 +91,13 @@ void screen_init(void)
         col_regs[1] = col_regs[15];
     }
 
-    v_bas_ad = (BYTE *) (phystop - 0x8000L);
+    /* videoram is placed just below the phystop */
+    screen_start = (ULONG)phystop - screen_size;
+    /* round down to 256 byte boundary */
+    screen_start &= 0x00ffff00;
+    /* set new v_bas_ad */
+    v_bas_ad = (BYTE *)screen_start;
+    /* correct phystop */
     setphys((LONG) v_bas_ad);
 }
 
@@ -198,3 +214,61 @@ void vsync(void)
     }
     set_sr(old_sr);
 }
+
+/*
+ * functions for VIDEL programming
+ */
+
+UWORD get_videl_bpp()
+{
+    UWORD f_shift = *(UWORD *)0xff8266;
+    UWORD st_shift = *(UWORD *)0xff8260;
+    /* to get bpp, we must examine f_shift and st_shift.
+     * f_shift is valid if any of bits no. 10, 8 or 4
+     * is set. Priority in f_shift is: 10 ">" 8 ">" 4, i.e.
+     * if bit 10 set then bit 8 and bit 4 don't care...
+     * If all these bits are 0 get display depth from st_shift
+     * (as for ST and STE)
+     */
+    int bits_per_pixel = 1;
+    if (f_shift & 0x400)         /* 2 colors */
+        bits_per_pixel = 1;
+    else if (f_shift & 0x100)    /* hicolor */
+        bits_per_pixel = 16;
+    else if (f_shift & 0x010)    /* 8 bitplanes */
+        bits_per_pixel = 8;
+    else if (st_shift == 0)
+        bits_per_pixel = 4;
+    else if (st_shift == 0x100)
+        bits_per_pixel = 2;
+    else                         /* if (st_shift == 0x200) */
+        bits_per_pixel = 1;
+
+    return bits_per_pixel;
+}
+
+UWORD get_videl_width()
+{
+    return (*(UWORD *)0xff8210) * 16 / get_videl_bpp();
+}
+
+UWORD get_videl_height()
+{
+    UWORD vdb = *(UWORD *)0xff82a8;
+    UWORD vde = *(UWORD *)0xff82aa;
+    UWORD vmode = *(UWORD *)0xff82c2;
+
+    /* visible y resolution:
+     * Graphics display starts at line VDB and ends at line
+     * VDE. If interlace mode off unit of VC-registers is
+     * half lines, else lines.
+     */
+    UWORD yres = vde - vdb;
+    if (!(vmode & 0x02))        /* interlace */
+        yres >>= 1;
+    if (vmode & 0x01)           /* double */
+        yres >>= 1;
+
+    return yres;
+}
+

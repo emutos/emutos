@@ -20,6 +20,9 @@
 void screen_init(void);
 
 /* misc routines */
+UWORD get_videl_bpp();
+UWORD get_videl_width();
+UWORD get_videl_height();
 
 
 /* xbios routines */
