@@ -717,8 +717,8 @@ static const OBJECT desk_rs_obj_rom[] = {
    { 6, -1, -1, G_STRING,                   /*** 5 ***/
      NONE,
      NORMAL,
-     (long) N_("April 23, 2002"),
-     13, 4, 24, 1 },
+     (long) __DATE__,
+     14|(4<<8), 4, 12, 1 },
 
    { 7, -1, -1, G_STRING,                   /*** 6 ***/
      NONE,
