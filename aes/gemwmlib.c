@@ -896,10 +896,9 @@ void w_update(WORD bottom, GRECT *pt, WORD top, WORD moved, WORD usetrue)
         gsx_mon();
 }
 
+
 #if SINGLAPP
-        VOID
-w_setmen(pid)
-        WORD            pid;
+void w_setmen(WORD pid)
 {
         WORD            npid;
 
@@ -927,7 +926,8 @@ w_menufix()
         pid = D.w_win[w_top()].w_owner->p_pid;
         w_setmen(pid);
 }
-#endif
+#endif /* SINGLEAPP */
+
 
 #if MULTIAPP
         VOID
@@ -967,19 +967,16 @@ w_setmen(pid)
 }
 
 
-        VOID
-w_newmenu(owner)
-        PD      *owner;
+void w_newmenu(PD *owner)
 {
         gl_newmenu = owner;
 }
 
+
 /*
 *       Routine to draw menu of top most window as the current menu bar.
 */
-        VOID
-w_menufix(rlr)
-        PD      *rlr;
+void w_menufix(PD *rlr)
 {
         WORD            pid;
 
@@ -990,8 +987,8 @@ w_menufix(rlr)
         }
 }
 
-        WORD
-w_clswin()
+
+WORD w_clswin()
 {
         WORD            i;
                                                 /* close any open winds */
@@ -1114,7 +1111,8 @@ w_windfix(npd)
         wm_update(FALSE);
         return(TRUE);
 }
-#endif
+#endif /* MULTIAPP */
+
 
 /*
 *       Draw the tree of windows given a major change in the some 

@@ -1,12 +1,13 @@
 /*      GEMDOSIF.S      */
 
 /*
-       Copyright 1999, Caldera Thin Clients, Inc.                      
-       This software is licenced under the GNU Public License.         
-       Please see LICENSE.TXT for further information.                 
-*/
-                  /* Historical Copyright */
-/*
+*       Copyright 1999, Caldera Thin Clients, Inc.
+*                 2002 The EmuTOS development team
+*
+*       This software is licenced under the GNU Public License.
+*       Please see LICENSE.TXT for further information.
+*
+*                 Historical Copyright
 *       -------------------------------------------------------------
 *       GEM Application Environment Services              Version 2.3
 *       Serial No.  XXXX-0000-654321              All Rights Reserved
@@ -14,7 +15,6 @@
 *       -------------------------------------------------------------
 */
 
-.globl _supret
 .globl _cli
 .globl _sti
 .globl _hsti
@@ -41,23 +41,28 @@
 
 
 
+
 _cli:
 L1D94:
             move    SR,LEAC2
             ori     #0x0700,SR
             rts
+
 _sti:
 L1DA0:
             move    LEAC2,SR
             rts
+
 _hcli:
 L1DA8:
             ori     #0x0700,SR
             rts
+
 _hsti:
 L1DAE:
             andi    #0xF8FF,SR
             rts
+
 
 /*
  DOS error trapping code.
@@ -117,116 +122,110 @@ L1F90:
             rts
 
 
-L2102:
-            cmpi.w  #0x00,D0
-            beq     _back
-            cmpi.w  #0xC8,D0
-            beq     L2126
-            cmpi.w  #0xC9,D0
-            beq     L2126
-            move.l  LED4E,-(SP)
-            rts
+
 _back:
 L211C:
-            move.w  #0x00,-(SP)
-            move.w  #0x4C,-(SP)   | Pterm
-            trap    #1
+        clr.w   -(SP)
+        move.w  #0x4C,-(SP)   // Pterm
+        trap    #1
+
+
+
+// **** Trap entry: ****
+L2102:
+        cmpi.w  #0x00,D0
+        beq     _back
+        cmpi.w  #0xC8,D0
+        beq.s   L2126
+        cmpi.w  #0xC9,D0
+        beq.s   L2126
+        move.l  LED4E,-(SP)
+        rts
+
 L2126:
-            bsr     _cli
-            move    USP,A0
-            movem.l D1-A6,-(A0)
-            move    A0,USP
-            movea.l _rlr,A6
-            movea.l 0x08(A6),A6
-            move.w  #0x01,(A6)
-            move.l  A0,0x42(A6)
-            move.l  SP,0x46(A6)
-            movea.l 0x3E(A6),SP
-            bsr     _sti
-            move.l  D1,-(SP)
-            move.w  #0x00,-(SP)
-            move.w  D0,-(SP)
-            movea.l #_super,A0
-            jsr     (A0)
+        bsr     _cli
+        move    USP,A0
+        movem.l D1-A6,-(A0)
+        move    A0,USP
 
-/*
-; return from gementry by calling supret
-;
-; stack is:
-;       temp space (word)
-;       bp (word)
-;       retadd to gementry (above)
-;       es:bx parm (long)
-; a6->  olda6           (super's link instruction)
-;       super automatic
-;       result (long) from function (to go in d0, axbx,esbx,or ax)
-;       p->err (word) from function (to go to d1, cx)
-; sp->  super retadd
-;
-*/
-_supret:
-L2160:
-     move.w  0x04(SP),D0
-     bsr     _cli
-     adda.l  #0x18,SP
-     movea.l _rlr,A0
-     movea.l 0x08(A0),A0
-     clr.w   (A0)
-     move.l  SP,0x3E(A0)
-     movea.l 0x46(A0),SP
-     movea.l 0x42(A0),A0
-     movem.l (A0)+,D1-A6
-     move    A0,USP
-     bsr     _sti
-     rte
+        movea.l _rlr,A6
+        movea.l 8(A6),A6
+        move.w  #1,(A6)
+        move.l  A0,0x42(A6)
+        move.l  SP,0x46(A6)     // strange place to store the SP in UDA???
+        movea.l 0x3E(A6),SP
+        bsr     _sti
 
-;
-;
+        move.l  D1,-(SP)
+        move.w  #0x00,-(SP)
+        move.w  D0,-(SP)
+        movea.l #_super,A0
+        jsr     (A0)
+
+supret:                             // return from gementry
+        bsr     _cli
+        addq.l  #8,SP
+
+        movea.l _rlr,A0
+        movea.l 8(A0),A0
+        clr.w   (A0)
+        move.l  SP,0x3E(A0)
+        movea.l 0x46(A0),SP
+        movea.l 0x42(A0),A0
+
+        movem.l (A0)+,D1-A6
+        move    A0,USP
+        bsr     _sti
+        rte
+
 
 
 _givecpm:
-L1EEA:
-            move.l  LED4E,0x88
-            rts
+        move.l  LED4E,0x88
+        rts
 _takecpm:
-L1EF6:
-            move.l  0x88,LED4E
-            move.l  #L2102,0x88
-            rts
+        move.l  0x88,LED4E
+        move.l  #L2102,0x88
+        rts
 
 
 _setdsss:
-L1EB4:
-            movea.l 0x04(SP),A1
-            move.w  #0x01,(A1)
-            rts
+        movea.l 0x04(SP),A1
+        move.w  #0x01,(A1)
+        rts
 
 
 
 _far_bcha:
-L2196:
-            move.l  SP,LED6E
-            lea     LEDDE,SP
-            movem.l D0-D2/A0-A2,-(SP)
-            move.w  D0,-(SP)
-            jsr     _b_click
-            addq.l  #2,SP
-            movem.l (SP)+,D0-D2/A0-A2
-            movea.l LED6E,SP
-            rts
+        move.l  SP,LED6E
+        lea     LEDDE,SP
+        movem.l D0-D2/A0-A2,-(SP)
+        move.w  D0,-(SP)
+        jsr     _b_click
+        addq.l  #2,SP
+        movem.l (SP)+,D0-D2/A0-A2
+        movea.l LED6E,SP
+        rts
+
 _far_mcha:
-L21BC:
-            move.l  SP,LED6E
-            lea     LEDDE,SP
-            movem.l D0-D2/A0-A2,-(SP)
-            move.w  D1,-(SP)
-            move.w  D0,-(SP)
-            move.l  #_mchange,-(SP)
-            jsr     _forkq
-            addq.l  #8,SP
-            movem.l (SP)+,D0-D2/A0-A2
-            movea.l LED6E,SP
-            rts
+        move.l  SP,LED6E
+        lea     LEDDE,SP
+        movem.l D0-D2/A0-A2,-(SP)
+
+#if 0   // Endianness problem with forkq ?   - Thomas
+        move.w  D1,-(SP)
+        move.w  D0,-(SP)
+#else
+        move.w  D0,-(SP)
+        move.w  D1,-(SP)
+#endif
+
+        move.l  #_mchange,-(SP)
+        jsr     _forkq
+        addq.l  #8,SP
+        movem.l (SP)+,D0-D2/A0-A2
+        movea.l LED6E,SP
+        rts
 
 /*
 ;
@@ -234,23 +233,20 @@ L21BC:
 ;
 */
 _drawrat:
-L21EA:
-            move.w  0x04(SP),D0
-            move.w  0x06(SP),D1
-            movea.l _drwaddr,A0
-            jsr     (A0)
-            rts
+        move.w  4(SP),D0
+        move.w  6(SP),D1
+        movea.l _drwaddr,A0
+        jsr     (A0)
+        rts
 
 
 
 
 _justretf:
-L21FC:
-            rts
+        rts
 
 
 _tikcod:
-L21FE:
         move.l  a7,LED72
         lea     LEE3E,a7
         tst.l   _CMP_TICK
@@ -258,7 +254,13 @@ L21FE:
         addq.l  #1,_NUM_TICK
         subq.l  #1,_CMP_TICK
         bne     L2234
+
+#if 0   // Endianess problem with forkq?
         move.l  _NUM_TICK,-(a7)
+#else
+        move.w  _NUM_TICK,-(a7)
+        move.w  _NUM_TICK+2,-(a7)
+#endif
         move.l  #_tchange,-(a7)
         jsr     _forkq
         addq.l  #8,a7
@@ -276,47 +278,41 @@ L2234:
 .data
 
 LE3EE:
-     DC.B 0x04,0x01,0x01,0x02,0x01,0x01,0x02,0x02,0x04,0x02,0x02,0x02,0x00,0x03,0x04,0x02
-     DC.B 0x06,0x00
+        .dc.b   0x04,0x01,0x01,0x02,0x01,0x01,0x02,0x02
+        .dc.b   0x04,0x02,0x02,0x02,0x00,0x03,0x04,0x02
+        .dc.b   0x06,0x00
 
 
 .bss
 
 LEAC2:
-            ds.b 2
+        .ds.w    1
 
 _crit_er:
 LED4A:
-            DS.B 4
+        .ds.l    1
 LED4E:
-            DS.B 4
+        .ds.l    1
 
 _drwaddr:
-LED66:
-            DS.B 4
+        .ds.l    1
 
 _tikaddr:
-LED6A:
-            DS.B 4
+        .ds.l    1
 LED6E:
-            DS.B 4
+        .ds.l    1
 
 LED72:
-        ds.b    4
+        .ds.l    1
 
 _tiksav:
-LED76:
-            DS.B 4
+        .ds.l    1
 _NUM_TICK:
-            DS.B 4
+        .ds.l    1
 _CMP_TICK:
-            DS.B 0x60
+        .ds.b    0x60
 LEDDE:
-            DS.B 0x60
+        .ds.b    0x60
 LEE3E:
-        ds.b    4
+        .ds.l    1
 
-
-_rlr:
-L132D0:
-            DS.B 4

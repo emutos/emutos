@@ -76,55 +76,39 @@ LB4:
 
 _gemdos:
 LF2:
-            move.l  (SP)+,LEA2C
+        move.l  (SP)+,LEA2C
 
-    movem.l d1-d7/a0-a6,saveregs
-/*
-    move.l  (SP),d0
-    move.l  d0,-(SP)
-    pea     errormsg
-    jsr     _cprintf
-    addq.l  #8,sp
-*/
-            move.w  #0,_DOS_ERR
-            move.w  #0,_DOS_AX
-            trap    #1
-            cmp.l   #0,D0
-            bge     L134
-            move.w  #0x01,_DOS_ERR
-            move.w  D0,_DOS_AX
-            cmp.w   #0xFFE0,D0
-            bgt     L134
-            not.w   _DOS_AX
-            subi.w  #0x1E,_DOS_AX
+        //movem.l d1-d3/a1-a3,saveregs
+
+        move.w  #0,_DOS_ERR
+        move.w  #0,_DOS_AX
+        trap    #1
+        cmp.l   #0,D0
+        bge     L134
+        move.w  #1,_DOS_ERR
+        move.w  D0,_DOS_AX
+        cmp.w   #0xFFE0,D0
+        bgt     L134
+        not.w   _DOS_AX
+        subi.w  #0x1E,_DOS_AX
 L134:
 
-    movem.l saveregs,d1-d7/a0-a6
+        //movem.l saveregs,d1-d3/a1-a3
 
-            move.l  LEA2C,-(SP)
-            rts
+        move.l  LEA2C,-(SP)
+        rts
 
-
-
-
-
-.data
-
-LE3E6:
-            DC.B 0
-
-errormsg:
-        .ascii  "GEMDOS: Nr=0x%x Parm=0x%x\n\0"
-        .even
 
 
 
 .bss
 
-LEA2C:
-            DS.B 4
 
-* Space for the Stack:
+LEA2C:
+        .ds.l   1
+
+
+// Space for the Stack:
         .ds.b   0x80
 LEABC:
 

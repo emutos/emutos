@@ -165,9 +165,9 @@ LONG dos_lseek(WORD handle, WORD smode, LONG sofst)
 
 
 
-void dos_exec(LONG pcspec, WORD segenv, LONG pcmdln)
+void dos_exec(LONG pcspec, LONG segenv, LONG pcmdln)
 {
-        gemdos(X_EXEC,segenv,pcspec,pcmdln,NULLPTR); 
+        gemdos(X_EXEC, 0, pcspec, pcmdln, segenv); 
 }       
 
 

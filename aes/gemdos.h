@@ -17,7 +17,7 @@ WORD dos_close(WORD handle);
 UWORD dos_read(WORD handle, UWORD cnt, LONG pbuffer);
 UWORD dos_write(WORD handle, UWORD cnt, LONG pbuffer);
 LONG dos_lseek(WORD handle, WORD smode, LONG sofst);
-void dos_exec(LONG pcspec, WORD segenv, LONG pcmdln);
+void dos_exec(LONG pcspec, LONG segenv, LONG pcmdln);
 LONG dos_chdir(BYTE *pdrvpath);
 WORD dos_gdir(WORD drive, BYTE *pdrvpath);
 WORD dos_sdrv(WORD newdrv);

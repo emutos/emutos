@@ -106,15 +106,36 @@ PD *pstart(void *pcode, BYTE *pfilespec, LONG ldaddr)
 
                                                 /* put pd pi into list  */
                                                 /*   *root at the end   */
-VOID insert_process(PD *pi, PD **root)
+void insert_process(PD *pi, PD **root)
 {
         REG PD          *p, *q;
-                                                /* find the end         */
-        for ( p = (q = (PD *) root) -> p_link ; p ; p = (q = p) -> p_link); 
-                                                /* link him in          */
-        pi->p_link = p;
-        q->p_link = pi;
-}
 
+#if 1   /* New version - hope it's better than the old one    - Thomas  */
+        q = *root;
+        p = 0;
+        pi->p_link = 0;
+                       
+        if( q != 0 )
+        {
+          p = q->p_link;
+          while(p)                              /* find the end         */
+          {
+            q = p;
+            p = q->p_link;
+          }
+          q->p_link = pi;                       /* link him in          */
+        }
+        else
+        {
+          *root = pi;
+        }
+#else   /* The old function looks like this: */
+						/* find the end		*/
+	for ( p = (q = (PD *) root) -> p_link ; p ; p = (q = p) -> p_link); 
+						/* link him in		*/
+	pi->p_link = p;
+	q->p_link = pi;
+#endif
+}
 
 

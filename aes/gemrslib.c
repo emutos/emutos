@@ -406,7 +406,6 @@ WORD rs_readit(LONG pglobal, LONG rsfname)
         {
           return(FALSE);
         }
-//cprintf("rs_readit: sh_find done\n");
                                                 /* init global          */
         rs_global = pglobal;
                                                 /* open then file and   */

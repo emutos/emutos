@@ -188,6 +188,7 @@ void gsx_init()
 }
 
 
+#if !GEMDOS
 void gsx_exec(LONG pcspec, WORD segenv, LONG pcmdln, LONG pfcb1, LONG pfcb2)
 {
         EXEC_BLK        exec;
@@ -208,6 +209,7 @@ void gsx_exec(LONG pcspec, WORD segenv, LONG pcmdln, LONG pfcb1, LONG pfcb2)
         contrl[5] = 1;
         gsx_ncode(-1, 0, 6);
 }
+#endif
 
 
 void gsx_resetmb()

@@ -508,25 +508,14 @@ void xif(LONG pcrys_blk)
 *       Supervisor entry point.  Stack frame must be exactly like
 *       this if supret is to work.
 */
-void super(/*LONG dummy,*/ LONG pcrys_blk)
+WORD super(LONG dummy, LONG pcrys_blk)
 {
         xif(pcrys_blk);
         
         if ( (gl_dspcnt++ % 10) == 0 )
           dsptch();
-        supret(0);
+
+        return(0);
 }
 
 
-#if 0
-/*
-*       Supervisor entry point.  Stack frame must be exactly like
-*       this if supret is to work.
-*/
-void nsuper(LONG pcrys_blk)
-{
-#if MULTIAPP
-        supret(0);
-#endif
-}
-#endif

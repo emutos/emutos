@@ -229,10 +229,6 @@ void disp()
 {
         REG PD          *p;
 
- void *tmpptr;
- tmpptr=rlr->p_uda;
- //cprintf("disp with fpcnt=%d and rlr-uda=0x%lx and rlr->plink=0x%lx\n",fpcnt,tmpptr,rlr->p_link);
-
 #if MULTIAPP
 skip:
 #endif
@@ -278,9 +274,11 @@ skip:
           pr_load(rlr->p_pid);
 #endif
 
- /*cprintf("disp: before switchto, p_uda= $%lx\n",rlr->p_uda);*/
- /* FIXME: rlr->p_uda seems sometimes to be NULL, there must be a bug somewhere! */
- if(rlr->p_uda==0)  switchto(tmpptr);    
+  /* FIXME: rlr->p_uda was sometimes NULL, there might be a bug somewhere! */
+  if(rlr->p_uda==0)
+  {
+    cprintf("disp : rlr->p_uda is NULL!\n");
+  }
 
         switchto(rlr->p_uda);
 }

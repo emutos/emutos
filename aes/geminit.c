@@ -492,8 +492,6 @@ void sh_addpath()
           LBCOPY(new_envr + fstlen + nplen, lp + oplen, oelen - fstlen);
         }
 
-  cprintf("New environment string is: %s\n", new_envr);
-
         ad_envrn = new_envr;                    /* remember new environ.*/
 }
 
@@ -682,7 +680,6 @@ void sh_rdinf()
         rs_gaddr(ad_sysglo, R_STRING, STINFPAT, &pfile);
         LBSET(pfile, D.s_cdir[0] );             /* set the drive        */
 
-  cprintf("sh_rdinf opening %s\n",pfile);
         fh = dos_open((BYTE *)pfile, ROPEN);
         if ( (!fh) || DOS_ERR)
           return;
@@ -826,7 +823,7 @@ void gem_main()
         for(i=totpds-1; i>=0; i--)
         {
           rlr = pd_index(i);
-          if (i < 2) 
+          if (i < 2)
           {
             rlr->p_uda = &D.g_intuda[i];
             rlr->p_cda = &D.g_intcda[i];
@@ -876,7 +873,6 @@ void gem_main()
                                                 /* load gem resource    */
                                                 /*   and fix it up      */
                                                 /*   before we go       */
-cprintf("gem_main: loading GEM.RSC...\n");
         if ( !rs_readit(ad_sysglo, ADDR("GEM.RSC")) ) 
         {
            /* bad resource load, so dive out */
@@ -884,7 +880,6 @@ cprintf("gem_main: loading GEM.RSC...\n");
         }
         else
         {
-cprintf("gem_main: succeeded in loading GEM.RSC...\n");
                                                 /* get mice forms       */
           rs_gaddr(ad_sysglo, R_BIPDATA, 3 + ARROW, &ad_armice);
           ad_armice = LLGET(ad_armice);

@@ -660,6 +660,8 @@ sh_chdef(psh)
 #endif
 }
 
+
+
 #if MULTIAPP
 /* 
 *       Special case DOS load
@@ -718,8 +720,8 @@ sh_dosexec()
         } 
 }
 
-        VOID
-sh_ldapp()
+
+void sh_ldapp()  /* for MULTIAPP */
 {
         WORD            ret;
         SHELL           *psh;
@@ -831,11 +833,11 @@ ldend:
           w_newmenu(ppd);
         }
 }
-#endif
+#endif /* MULTIAPP */
+
 
 #if SINGLAPP
-        VOID
-sh_ldapp()
+void sh_ldapp()
 {
         WORD            ret, badtry, retry;
         SHELL           *psh;
@@ -937,6 +939,7 @@ sh_ldapp()
 #endif
 
 
+
 void sh_main()
 {
 #if MULTIAPP
@@ -976,9 +979,10 @@ void sh_main()
           sh_toalpha();
 }
 
+
+
 #if MULTIAPP
-        VOID
-sh_ldacc()
+void sh_ldacc()
 {
         WORD            id, ii, ret;
         WORD            junk;

@@ -90,12 +90,7 @@ savestate:
             addq.b  #1,_indisp
 
             move    SR,-(SP)           // We'll later return with a RTE
-/*
-    move.l  sp,-(SP)
-    pea     infomsg
-    jsr     _cprintf
-    addq.l  #8,sp
-*/
+
             move    SR,LEAC0
             ori     #0x0700,SR
 
@@ -139,17 +134,8 @@ L1E58:
 L1E92:
             clr.b   _indisp
             move.w  LEAC0,(SP)
-/*
-    move.l  sp,-(SP)
-    pea     infomsg
-    jsr     _cprintf
-    addq.l  #8,sp
-*/
-            rte
 
-infomsg:
-        .ascii  "dsptch: SP=0x%lx\n\0"
-        .even
+            rte
 
 
 .bss
