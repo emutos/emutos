@@ -36,19 +36,30 @@
 WORD sound(WORD isfreq, WORD freq, WORD dura)
 {
     static UBYTE snddat[16];
+    static WORD disabled;
 
-    snddat[0] = 0;  snddat[1] = (125000L / freq);       /* channel A pitch lo */
-    snddat[2] = 1;  snddat[3] = (125000L / freq) >> 8;  /* channel A pitch hi */
-    snddat[4] = 7;  snddat[5] = (isfreq ? 0xFE : 0xFF);
-    snddat[6] = 8;  snddat[7] = 0x10;                   /* amplitude: envelop */
-    snddat[8] = 11;  snddat[9] = 0;                     /* envelope lo */
-    snddat[10] = 12;  snddat[11] = dura * 8;            /* envelope hi */
-    snddat[12] = 13;  snddat[13] = 9;                   /* envelope type */
-    snddat[14] = 0xFF;  snddat[15] = 0;
+    if (isfreq)     /* Play a sound? */
+    {
+      if (disabled)  return 1;
 
-    Dosound(snddat);
+      snddat[0] = 0;  snddat[1] = (125000L / freq);       /* channel A pitch lo */
+      snddat[2] = 1;  snddat[3] = (125000L / freq) >> 8;  /* channel A pitch hi */
+      snddat[4] = 7;  snddat[5] = (isfreq ? 0xFE : 0xFF);
+      snddat[6] = 8;  snddat[7] = 0x10;                   /* amplitude: envelop */
+      snddat[8] = 11;  snddat[9] = 0;                     /* envelope lo */
+      snddat[10] = 12;  snddat[11] = dura * 8;            /* envelope hi */
+      snddat[12] = 13;  snddat[13] = 9;                   /* envelope type */
+      snddat[14] = 0xFF;  snddat[15] = 0;
 
-    return(0);
+      Dosound(snddat);
+    }
+    else            /* else enable/disable sound */
+    {
+      if (freq != -1)
+        disabled = freq;
+    }
+
+    return(disabled);
 }
 
 
@@ -94,20 +105,6 @@ WORD rc_intersect(GRECT *p1, GRECT *p2)
         p2->g_h = th - ty;
         return( (tw > tx) && (th > ty) );
 }
-
-
-/*
-        WORD
-mid(lo, val, hi)
-        WORD            lo, val, hi;
-{
-        if (val < lo)
-          return(lo);
-        if (val > hi)
-          return(hi);
-        return(val);
-}
-*/
 
 
 BYTE *strscn(BYTE *ps, BYTE *pd, BYTE stop)
