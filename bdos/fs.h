@@ -306,12 +306,9 @@ DTAINFO
 *******************************************
 */
 
-#define H_Null		-1		/* not passed through to BIOS	*/
-#define H_Print 	-2
-#define H_Aux		-3
-#define H_Console	-4
-#define H_Clock 	-5
-#define H_Mouse 	-6
+#define H_Console	-1
+#define H_Aux		-2
+#define H_Print 	-3
 
 
 /****************************************
@@ -322,7 +319,8 @@ DTAINFO
 *****************************************
 */
 
-#define HXFORM(h)	bios_dev[-h-2]
+#define HXFORM(h)	(3+h)
+
 
 /**********************
 **
@@ -340,38 +338,6 @@ DTAINFO
 #define DIOCR(d,l,b)	trap13(0x0E,d,l,b)	/* Disk IOCtl Read	    */
 #define DIOCW(d,l,b)	trap13(0x0F,d,l,b)	/* Disk IOCtl Write	    */
 #define CVE(d,a)	trap13(0x10,d,a)	/* Char Vector Exchange     */
-
-
-/**********************
-**
-** F_IOCtl subfunctions
-**
-***********************
-*/
-
-#define XCVECTOR	-1			/* Exchange vector	    */
-#define GETINFO 	0			/* Get device info	    */
-#define SETINFO 	1			/* NOT IMPLEMENTED	    */
-#define CREADC		2			/* Character read control   */
-#define CWRITEC 	3			/* Character write control  */
-#define DREADC		4			/* Disk read control	    */
-#define DWRITEC 	5			/* Disk write control	    */
-#define INSTAT		6			/* Input status 	    */
-#define OUTSTAT 	7			/* Output status	    */
-#define REMEDIA 	8			/* Removeable indication    */
-
-/*************************
-**
-** Device information bits
-**
-**************************
-*/
-
-#define Is_Console	0x0003			/* Both stdin & stdout	    */
-#define Is_NUL		0x0004
-#define Is_Clock	0x0008
-#define Is_Character	0x00C0			/* Character is binary now  */
-#define Does_IOCtl	0x4000
 
 
 /*******************************

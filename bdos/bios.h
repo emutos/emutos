@@ -14,11 +14,6 @@
 
 
 
-#ifndef M0101080401
-#define M0101080401	1
-#endif
-
-
 /*
  *  externs declarations
  */
@@ -36,19 +31,9 @@ EXTERN	VOID	OUTP() ;
  * BIOS level character device handles
  */
 
-#if	M0101080401
 #define BFHPRN	0
 #define BFHAUX	1
 #define BFHCON	2
-#define BFHCLK	-1
-#define BFHMOU	-2
-#else
-#define BFHPRN	0
-#define BFHAUX	1
-#define BFHCON	2
-#define BFHCLK	3
-#define BFHMOU	4
-#endif
 
 
 /*

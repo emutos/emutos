@@ -52,7 +52,7 @@ extern long xforce(), xauxin(), xauxout(), xprtout();
 extern long x7in(), x8in(), xconostat(), xprtostat();
 extern long xauxistat(), xauxostat();
 extern long xgetdate(), xsetdate(), xgettime(), xsettime();
-extern long xsuper(), F_IOCtl();
+extern long xsuper();
 
 extern	int	add[3];
 extern	int	remove[3];
@@ -228,7 +228,7 @@ FND funcs[0x58] =
     xunlink,	1,	/* 0x41 */
     xlseek,	0x81,	/* 0x42 */
     xchmod,	1,	/* 0x43 */
-    ni,		0,/*F_IOCtl,	2,*/	/* 0x44 */
+    ni,		0,	/* 0x44 */
     dup,	0,	/* 0x45 */
     xforce,	0,	/* 0x46 */
     xgetdir,	1,	/* 0x47 */
@@ -546,9 +546,6 @@ restrt:
 	    }
 	}
 
-	if (h == H_Null)
-	    return ( 0 );
-
 	if ((fn == 10) || (fn == 9))
 	    typ = 1;
 	else
@@ -578,14 +575,13 @@ restrt:
 	    return(EIHNDL); /* invalid handle: media change, etc */
 
 	if (numl < 0)
-	{	/* nul, prn, aux, con, clock, mouse	*/
-	    /* -1	-2   -3   -4   -5     -6	*/
+	{	/* prn, aux, con */
+		/* -3   -2   -1	 */
 
-	    if ((num = numl) == H_Null)
-		return (0);	/* NUL: always returns 0    */
+	    num = numl;
 
 	    /*	check for valid handle	*/ /* M01.01.0528.01 */
-	    if( num < -6 )
+	    if( num < -3 )
 		return( EIHNDL ) ;
 
 	    pb = (char **) &pw[4];
@@ -636,18 +632,12 @@ restrt:
     if ((fn == 0x3d) || (fn == 0x3c))  /* open, create */
     {
 	p = *((char **) &pw[1]);
-	if (ncmps(5,p,"NUL:"))
+	if (ncmps(5,p,"CON:"))
 	    rc = 0xFFFFL;
-	else if (ncmps(5,p,"PRN:"))
-	    rc = 0xFFFEL;
 	else if (ncmps(5,p,"AUX:"))
+	    rc = 0xFFFEL;
+	else if (ncmps(5,p,"PRN:"))
 	    rc = 0xFFFDL;
-	else if (ncmps(5,p,"CON:"))
-	    rc = 0xFFFCL;
-	else if (ncmps(7,p,"CLOCK:"))
-	    rc = 0xFFFBL;
-	else if (ncmps(7,p,"MOUSE:"))
-	    rc = 0xFFFAL;
     }
     if (!rc)
     {

@@ -24,8 +24,6 @@
 #define BFHPRN	0
 #define BFHAUX	1
 #define BFHCON	2
-#define BFHCLK	3
-#define BFHMOU	4
 
 
 /*

@@ -333,32 +333,11 @@
 **  M00.14.01	ktb 02 Aug 85	Fix to xrw enabling proper deblocking of 
 **				requests where cluster sizes are not 2.
 **
-**  M00.16.01	scc 09 Aug 85	Start of modification to add F_IOCtl():
-**				Add use of B_16 equate to log().
-**				Added F_IOCtl().
-**
-**  M00.16.02	scc 11 Aug 85	Rename fixed/removeable media flag to B_FIX
-**				in F_IOCtl().
-**				Modified xmkdir() to deallocate DND it creates
+**  M00.16.02	scc 11 Aug 85	Modified xmkdir() to deallocate DND it creates
 **				if it cannot allocate the OFD immediately
 **				afterwards.
 **				Modified xchmod().  An 'if (!wrt)' was followed
 **				by an 'if (wrt)'.  Changed the latter to 'else'.
-**				Added bios_dev[] for conversion from BDOS level
-**				character device handel to BIOS level handle.
-**
-**  M00.16.03	scc 16 Aug 85	Modified F_IOCtl().  It was doing a handle
-**				transform even for functions that were being
-**				passed a drive number.
-**
-**  M00.16.04	scc 17 Aug 85	Modified Chk_Drv() to use temp int for return
-**				of GetDM().
-**				Modified F_IOCtl() to call Chk_Drv() once,
-**				rather than for each drive related function.
-**
-**  M00.16.05	scc 18 Aug 85	Modified F_IOCtl() to call constat() rather
-**				than CIStat(), and case outstat for new devs.
-**				Added extern for constat().
 **
 **  M00.01.01	ktb 19 Aug 85	Modified code in ixlseek which determines if
 **				we are on cluster boundary or not
@@ -379,8 +358,6 @@
 ** --------------------------------------------------------------------------
 **
 **  27 May 86 ktb M01.01.0527.04	moved xcmps to fsdir.c
-**  15 Sep 86 scc M01.01.0915.02	F_IOCtl:  check for error returns from
-**					GetBPB()
 **
 ** NOTES
 **	SCC	 4 Apr 85	Note about bcb management in getrec().
@@ -411,6 +388,7 @@
 #include	"fs.h"
 #include	"bios.h"		
 #include	"gemerror.h"
+
 
 
 
@@ -565,154 +543,5 @@ int	divmod(modp,divdnd,divsor)
 	return(divdnd >> divsor);
 }
 
-
-
-
-
-
-/*
-**  bios_dev - 
-**	Array of BIOS device handles.  Used by HXFORM macro
-**	to convert BDOS level handle to BIOS level handle.
-*/
-
-GLOBAL	int bios_dev[] = { BFHPRN, BFHAUX, BFHCON, BFHCLK, BFHMOU };
-
-
-/*****************************************************************************
-**
-** F_IOCtl - Function 0x44:  File, character and disk device I/O control
-**
-**	Last modified	SCC	9 Aug 85
-**
-*******************************************************************************
-*/
-
-long
-F_IOCtl(fn, h, n, buf)
-int	fn, n;
-int	h;
-char	*buf;
-{
-	register long	rv;			/* return value 	    */
-	register OFD	*pofd;			/* pointer to OFD	    */
-	BPB		*tmp ;
-
-	if ( (fn != DREADC) && (fn != DWRITEC) && (fn != REMEDIA) )
-	{					/* If handle,		    */
-		if (h >= 0)			/* If file handle,	    */
-		{
-		    h = syshnd( h );		/* Resolve it		    */
-		    if ((fn != GETINFO) && (fn != INSTAT) && (fn != OUTSTAT))
-			return(EINVFN); 	/* check subfunction number */
-		    pofd = sft[h].f_ofd;	/* Resolve OFD pointer	    */
-		}
-	}
-	else					/* 'h' is drive number	    */
-		if ( !Chk_Drv( &h )  )		/* Check for valid drive    */
-			return ( EDRIVE );
-
-	switch (fn)
-	{
-	    case XCVECTOR:			/* Exchange char vector     */
-		return (CVE(HXFORM(h),buf));
-
-	    case GETINFO:			/* Get device information   */
-		if (h >= 0)			/* For disk file:	    */
-		{
-						/* Init rv with drive number*/
-			rv = h = pofd->o_dmd->m_drvnum;
-			if (!DIOCR(h,0,0L))	/* 'or' in CONTROL bit	    */
-				rv |= Does_IOCtl;
-			return (rv);
-		}
-
-		/* else */			/* For character devices:   */
-		rv = Is_Character;
-
-		if (h == H_Null)
-			rv |= Is_NUL;
-		else
-		{
-			if (h == H_Console)
-				rv |= Is_Console;
-			else if (h == H_Clock)
-				rv |= Is_Clock;
-
-			if (!CIOCR(HXFORM(h),0,0L))
-				rv |= Does_IOCtl;
-		}
-
-		return (rv);
-
-	    case CREADC:			/* Read character control   */
-		return (CIOCR(HXFORM(h),n,buf));
-
-	    case CWRITEC:			/* Write character control  */
-		return (CIOCW(HXFORM(h),n,buf));
-
-	    case DREADC:			/* Read disk control string */
-		return (DIOCR(h,n,buf));
-
-	    case DWRITEC:			/* Write disk control string*/
-		return (DIOCW(h,n,buf));
-
-	    case INSTAT:			/* Get input status	    */
-		if (h < 0)			/* For Character Device:    */
-		{
-			if (h == H_Null)
-				return(0);
-
-			return (constat(HXFORM(h)));
-		}
-
-		/* else fall through to common code for disk files	    */
-
-	    case OUTSTAT:			/* Get output status	    */
-		if (h < 0)			/* For Character Device:    */
-		{
-			if (h == H_Null)
-				return(0);
-
-			return (COStat(HXFORM(h)));
-		}
-
-		/* else */			/* For disk file:	    */
-		return (pofd->o_bytnum != pofd->o_fileln);
-
-	    case REMEDIA:			/* Get removeable media sts */
-		tmp = GetBPB(h) ;
-
-		if (tmp == 0)			/* M01.01.0915.02 */
-			return(ERR);
-		if (tmp < 0)
-			return((long)tmp);
-
-		return( !(tmp->b_flags & B_FIX) ) ;
-
-	    default:				/* No function 1, etc. yet. */
-		return (EINVFN);
-	}
-}
-
-/******************************************************************************
-**
-** Chk_Drv - Check drive number
-**
-**	Utility routine used by F_IOCtl
-**
-*******************************************************************************
-*/
-
-int	Chk_Drv(d)				/* Check for valid drive.   */
-	int	*d;
-{
-	int map;
-
-	*d = *d ? *d-1 : run->p_curdrv; 	/* Resolve drive number     */
-	map = GetDM();
-
-	return( map & ( 1 << *d ) );		/* Check for existence	    */
-}
 
 
