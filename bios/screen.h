@@ -57,6 +57,22 @@ void vsync(void);
 #define RGB_LTYELLOW  0x0773
 #define RGB_WHITE     0x0777
 
+#define FRGB_BLACK     0x00000000
+#define FRGB_BLUE      0x000000ff
+#define FRGB_GREEN     0x00ff0000
+#define FRGB_CYAN      0x00ff00ff
+#define FRGB_RED       0xff000000
+#define FRGB_MAGENTA   0xff0000ff
+#define FRGB_LTGRAY    0xbbbb00bb
+#define FRGB_GRAY      0x88880088
+#define FRGB_LTBLUE    0x000000aa
+#define FRGB_LTGREEN   0x00aa0000
+#define FRGB_LTCYAN    0x00aa00aa
+#define FRGB_LTRED     0xaa000000
+#define FRGB_LTMAGENTA 0xaa0000aa
+#define FRGB_YELLOW    0xffff0000
+#define FRGB_LTYELLOW  0xaaaa0000
+#define FRGB_WHITE     0xffff00ff
 
 #endif /* SCREEN_H */
 
