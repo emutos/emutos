@@ -20,9 +20,9 @@
 void screen_init(void);
 
 /* misc routines */
-UWORD get_videl_bpp();
-UWORD get_videl_width();
-UWORD get_videl_height();
+UWORD get_videl_bpp(void);
+UWORD get_videl_width(void);
+UWORD get_videl_height(void);
 void set_videl_vga640x480(int bitplanes);
 
 

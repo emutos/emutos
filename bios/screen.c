@@ -293,7 +293,7 @@ void vsync(void)
  * functions for VIDEL programming
  */
 
-UWORD get_videl_bpp()
+UWORD get_videl_bpp(void)
 {
     UWORD f_shift = *(UWORD *)0xff8266;
     UWORD st_shift = *(UWORD *)0xff8260;
@@ -321,12 +321,12 @@ UWORD get_videl_bpp()
     return bits_per_pixel;
 }
 
-UWORD get_videl_width()
+UWORD get_videl_width(void)
 {
     return (*(UWORD *)0xff8210) * 16 / get_videl_bpp();
 }
 
-UWORD get_videl_height()
+UWORD get_videl_height(void)
 {
     UWORD vdb = *(UWORD *)0xff82a8;
     UWORD vde = *(UWORD *)0xff82aa;

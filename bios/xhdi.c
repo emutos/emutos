@@ -27,7 +27,7 @@
 
 /*=========================================================================*/
 
-void create_XHDI_cookie()
+void create_XHDI_cookie(void)
 {
     cookie_add(COOKIE_XHDI, (long)xhdi_vec);
 }

@@ -31,7 +31,7 @@
  * that can be done in hi level lang.  startup.s has the rest.
  */
 
-void chardev_init()
+void chardev_init(void)
 {
     /* initialise bios device functions */
 
