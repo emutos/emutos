@@ -61,8 +61,7 @@ static  int     osmem[LENOSM];
  */
 
 #define MAXQUICK        20
-// GLOBAL       
-static  int     *root[MAXQUICK];
+int     *root[MAXQUICK];
 
 /*
  *  local debug counters
