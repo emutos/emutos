@@ -15,6 +15,7 @@
 #include "vdidef.h"
 #include "gsxextrn.h"
 #include "mouse.h"
+#include "kprint.h"
 
 
 
@@ -771,3 +772,94 @@ void v_nop()
 
 
 
+#if 1
+/*
+ * vr_trnfm - Convert device (in-)dependant bitmaps
+ *
+ * Convert device independant bitmaps into device dependants and vice versa.
+ *
+ * The diference is, that in the device independant format the plaes are
+ * consecutive, while on the screen they are interleaved.
+ */
+void vr_trnfm()
+{
+    MFDB *src, *dst, help;
+    UWORD *sptr;
+    UWORD *dptr;
+    int plane;          /* plane loop counter */
+    int planes;         /* number of planes from source */
+    long word;           /* word loop counter */
+    long words;          /* number of words to process */
+    LONG splane_inc;    /* increase count for next source plane */
+    LONG dplane_inc;    /* increase count for next destination plane */
+    LONG sword_inc;    	/* increase count for next source word */
+    LONG dword_inc;     /* increase count for next destination word */
+
+    /* Get the pointers to the MFDBs */
+    src = *(MFDB **)&CONTRL[7];
+    dst = *(MFDB **)&CONTRL[9];
+
+    if( src->fd_addr == NULL || dst->fd_addr == NULL ) {
+        kprintf( "vr_trnfm: No Transformation address to/from screen!\n");
+    return;
+    }
+
+    if( src->fd_stand == dst->fd_stand ) {
+        kprintf("vr_trnfm: Same modes, no conversion!\n" );
+        return;
+    }
+    if( src->fd_stand ) {
+        /* Convert from independent to dependent */
+        dst->fd_stand = 1;       /* set dest to standard format */
+        sword_inc = 1;         			/* increase one word on src */
+        splane_inc = src->fd_wdwidth * src->fd_h; /* increase one word on src */
+        dword_inc = src->fd_nplanes;		/* increase one word on screen */
+        dplane_inc = 1;         		/* increase one word on screen */
+    } else {
+        /* Convert from dependent to independent */
+        dst->fd_stand = 0;       /* set dest to device specific format */
+        sword_inc = src->fd_nplanes;		/* increase planes words on screen */
+        splane_inc = 1;         		/* increase one word on screen */
+        dword_inc = 1;         			/* increase one word in dest */
+        dplane_inc = dst->fd_wdwidth * dst->fd_h; /* increase one plane words in dest */
+    }
+
+    /* do it */
+    sptr = (UWORD*)dst->fd_addr;
+    dptr = (UWORD*)src->fd_addr;
+    planes = src->fd_nplanes;
+    words = src->fd_wdwidth * src->fd_h;
+
+    /* Just work, if source and target address are different */
+    if (sptr != dptr) {
+        /* Transformation is hopefully completely non-overlapped */
+        for( plane = planes ; plane >= 0 ; plane-- ) {
+            for( word = words ; word >= 0 ; word-- ) {
+                *dptr = *sptr;  	/* copy WORD */
+                /* pointers are advanced in WORDs! */
+                sptr += sword_inc;
+                dptr += dword_inc;
+            }
+            /* now set pointers to new addresses for next plane */
+            sptr = (UWORD*)dst->fd_addr + splane_inc;
+            dptr = (UWORD*)src->fd_addr + dplane_inc;
+        }
+    } else {
+        //kprintf( "vr_trnfm: Source and target have same start address!\n");
+
+        dptr = &help;
+        /* Transformation is completely overlapped */
+        for( plane = planes ; plane >= 0 ; plane-- ) {
+            for( word = words ; word >= 0 ; word-- ) {
+                *dptr = *sptr;  	/* copy WORD */
+                /* pointers are advanced in WORDs! */
+                sptr += sword_inc;
+                dptr += dword_inc;
+            }
+            /* now set pointers to new addresses for next plane */
+            sptr = (UWORD*)dst->fd_addr + splane_inc;
+            dptr = (UWORD*)src->fd_addr + dplane_inc;
+        }
+    }
+}
+#endif

@@ -9,7 +9,7 @@
  */
 
 
-
+#if 0
 #include "vdiconf.h"
 
 
@@ -32,7 +32,7 @@
 
 /* Global Declarations */
 
-        .globl  _tran_fm       //TRANSFORFM FORM entry point
+        .globl  _vr_trnfm       //TRANSFORFM FORM entry point
 
 /* Global references */
 
@@ -45,7 +45,7 @@
 
 
 /*
- * xfm_crfm - Transform form
+ * vr_trnfm - Transform form
  *
  * This function transforms a raster area from standard format to
  * device-specific format or from device-specific to standard format.
@@ -72,7 +72,7 @@
  * Registers used  -  D0/D7, A0/A3
  */
 
-_tran_fm:
+_vr_trnfm:
         movem.l d2-d7/a2-a3,-(sp)       //save 'C' registers
 
 /* Get source and destination MFDB pointers from the user CONTROL array */
@@ -225,3 +225,4 @@ exit:
         rts                             //return to 'C' calling procedure
 
         .end
+#endif

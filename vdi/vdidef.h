@@ -58,6 +58,16 @@
 #define MAX_MKWD        SIZ_TAB[10]
 #define MAX_MKHT        SIZ_TAB[11]
 
+/* Defines for CONTRL[] */
+#define ROUTINE 0
+#define N_PTSIN 1
+#define N_PTSOUT 2
+#define N_INTIN 3
+#define N_INTOUT 4
+#define SUBROUTINE 5
+#define VDI_HANDLE 6
+
+
 
 
 /* font-header definitions */
@@ -157,6 +167,20 @@ struct attribute {
     WORD ymn_clip;              /* Low y point of clipping rectangle    */
     WORD ymx_clip;              /* High y point of clipping rectangle   */
 };
+
+/* Raster definitions */
+
+typedef struct {
+    void *fd_addr;
+    WORD fd_w;
+    WORD fd_h;
+    WORD fd_wdwidth;
+    WORD fd_stand;
+    WORD fd_nplanes;
+    WORD fd_r1;
+    WORD fd_r2;
+    WORD fd_r3;
+} MFDB;
 
 
 

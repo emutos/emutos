@@ -83,7 +83,7 @@ void dst_style();        /* 106 - fce278 */
 void dst_point();        /* 107 - fce132 */
 void vsl_ends();         /* 108 - fcabca */
 void dro_cpyfm();        /* 109 - fcb454 */
-void tran_fm();         /* 110 - fd1960 */
+void vr_trnfm();         /* 110 - fd1960 */
 
 void vro_cpyfm();        /* 111 - fd0770 */
 void dsf_udpat();        /* 112 - fcd5c0 */
@@ -803,7 +803,7 @@ void(*jmptb2[])() = {
     dst_point,          /* 107 */
     vsl_ends,           /* 108 */
     dro_cpyfm,          /* 109 */
-    tran_fm,            /* 110 */
+    vr_trnfm,           /* 110 */
     xfm_crfm,           /* 111 */
     dsf_udpat,          /* 112 */
     vsl_udsty,          /* 113 */
