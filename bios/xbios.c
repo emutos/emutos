@@ -31,7 +31,7 @@
 #include "mouse.h"
 #include "asm.h"
  
-#define DBG_XBIOS        1
+#define DBG_XBIOS        0
 
 
 

@@ -243,5 +243,6 @@
 #define STDEEPPA        36
 
 
-extern void desk_rsc_init();
+extern void desk_rsc_init(void);
+extern void desk_rs_init(void);
 

@@ -71,7 +71,9 @@ void ob_relxywh(LONG tree, WORD obj, GRECT *prect)
                                 /* get x,y,w,h for specified object     */
         LWCOPY(ADDR(prect), OB_X(obj), sizeof(GRECT) / 2);
 } /* ob_relxywh */
-
+#else
+void ob_actxywh(LONG tree, WORD obj, GRECT *p);
+void ob_relxywh(LONG tree, WORD obj, GRECT *prect);
 #endif /* NO_ROM */
 
 
@@ -306,7 +308,7 @@ void insa_elev(LONG tree, WORD nicon, WORD numics)
              (nicon * sizeof(BYTE *)) );
 #endif
 */
-        lp = cfg_icons_txt[nicon];
+        lp = (LONG)cfg_icons_txt[nicon];
 
         LSTCPY(ADDR(&gl_lngstr[0]), lp);
         inf_sset(tree, APFTITLE, &gl_lngstr[0] );

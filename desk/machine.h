@@ -210,7 +210,8 @@ EXTERN LONG     LLCS();
 #define LPOINTER /**/
                                                 /* return a long address*/
                                                 /*   of a short pointer */
-#define ADDR (long) /*!!!*/
+//#define ADDR (long) /*!!!*/
+#define ADDR(x) ((LONG) (x))
 
 
                                                 /* return a single byte */

@@ -273,9 +273,11 @@ LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt, WORD sides, WO
     WORD side;
     WORD sect;
     WORD err;
-  
-    kprintf("floppy_rw(rw %d, buf 0x%lx, cnt %d, recnr %ld, spt %d, sides %d, dev %d)\n",
-                       rw, buf, cnt, recnr, spt, sides, dev);
+
+#if DBG_FLOP
+    kprintf("floppy_rw(rw %d, buf 0x%lx, cnt %d, ", rw, buf, cnt);
+    kprintf("recnr %ld, spt %d, sides %d, dev %d)\n", recnr, spt, sides, dev);
+#endif
 
     if (dev < 0 || dev > 1) return EUNDEV;  /* unknown device */
     

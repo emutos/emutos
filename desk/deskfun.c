@@ -249,8 +249,9 @@ fun_wdst(pspath, pdspec, datype, pdf, dulx, duly, from_disk, src_ob, pdo_both)
         BYTE            *pwname1, *pwname2;
                                                 /* default case: don't  */
         *pdo_both = FALSE;                      /* redraw both windows  */
-                                                /* set up destination   */
-                                                /*   path name          */
+                                    		/* set up destination   */
+        					/*   path name          */
+        drv_ltr = 'A';
 /* BugFix       */
         if (G.g_iview == V_TEXT)
         {
@@ -344,6 +345,8 @@ fun_disk(src_ob, pdw, datype, pdf, dulx, duly)
         ICONBLK         *spib;
         PNODE           *pspath;
         BYTE            chr;
+
+        ret = FALSE;                            /* just initialize */
 
         if (G.g_iview == V_TEXT)
           chr = LBGET(G.g_udefs[src_ob].ub_parm); /* get drive from user obj */

@@ -774,3 +774,7 @@ Start... early ages
 - vdi/vdimouse.S - got mouse working for big screens (MAD)
 - vdi/* - got all other routines working for big screens too (MAD)
 - vdi/* - remove also many vme10 #ifdefs too (MAD)
+
+20. Apr. 2002
+- desk/* - removed/fixed all compiler warnings (MAD)
+
