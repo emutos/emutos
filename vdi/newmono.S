@@ -74,9 +74,9 @@
 //
 //	Constants for the Conditional Assembly of Code
 //
-v_pl_dspl	.equ	0x10000	// # of bytes between VME/10 video planes
+#define v_pl_dspl	       0x10000	// # of bytes between VME/10 video planes
 
-rev_vid		.equ	1	// for selecting reverse video style text
+#define rev_vid		       1	// for selecting reverse video style text
 
 	.page
 /////////////////////////////////////////////////////////////////////////

@@ -15,22 +15,22 @@
 /***************************************************************************/
 //  Equates for VME10       //
 /***************************************************************************/
-vme10		.equ	1	// for selecting VME10 specific software
-v_pl_dspl	.equ	0x10000	// # of bytes between VME10 video planes
-pattern		.equ	1	// for selecting software which applies
-//				// a pattern to the source
+#define   vme10	     1	// for selecting VME10 specific software
+#define   v_pl_dspl    0x10000	// # of bytes between VME10 video planes
+#define   pattern	     1	// for selecting software which applies
+//	     // a pattern to the source
 
-SRC_WR		equ	-2
-DST_WR		equ	-4
-INNER_CT	equ	-6
+#define    SRC_WR	     -2
+#define    DST_WR	     -4
+#define    INNER_CT     -6
 
-P_ADDR		equ	-34	// address of pattern buffer
-P_NXLN		equ	-30	// offset to next line in pattern  (in bytes)
-P_NXPL		equ	-28	// offset to next plane in pattern (in bytes)
-P_MASK		equ	-26	// pattern index mask
+#define    P_ADDR	     -34	// address of pattern buffer
+#define    P_NXLN	     -30	// offset to next line in pattern  (in bytes)
+#define    P_NXPL	     -28	// offset to next plane in pattern (in bytes)
+#define    P_MASK	     -26	// pattern index mask
 
-F1OP		equ	 8
-F2OP		equ	22
+#define    F1OP	      8
+#define    F2OP	     22
 
        	.globl 	mode_00,mode_01,mode_02,mode_03,mode_04,mode_05,mode_06,mode_07
 	.globl 	mode_08,mode_09,mode_10,mode_11,mode_12,mode_13,mode_14,mode_15

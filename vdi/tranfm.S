@@ -50,24 +50,24 @@
 //////////////////////////////////
 //  Equates	//
 //////////////////////////////////
-v_pl_dspl	.equ	0x10000		//# of bytes between video planes
-rev_vid		.equ	1		//for selecting reverse video transform
+#define v_pl_dspl		0x10000		//# of bytes between video planes
+#define rev_vid			1		//for selecting reverse video transform
 //
 //  MEMORY FORM DEFINITION BLOCK OFFSETS
 //
-MF_BAS_AD	.equ	0        	//memory form base address
+#define MF_BAS_AD		0        	//memory form base address
 //                                       //0 = physical device
-MF_WDTH_PIX	.equ	4        	//form width in pixels 
-MF_HGHT_PIX	.equ	6          	//form height in pixels
-MF_WRD_WDTH	.equ	8       	//form width in words
-MF_FORMAT	.equ	10	        //form format flag
+#define MF_WDTH_PIX		4        	//form width in pixels 
+#define MF_HGHT_PIX		6          	//form height in pixels
+#define MF_WRD_WDTH		8       	//form width in words
+#define MF_FORMAT		10	        //form format flag
 //                                       //0 = device specific, 1 = standard
-MF_PLANES	.equ	12	        //number of memory planes
+#define MF_PLANES		12	        //number of memory planes
 //
 //  CONTRL ARRAY OFFSETS
 //
-C_S_MFDB	.equ	14	        //pointer to source MFDB
-C_D_MFDB	.equ	18        	//pointer to destination MFDB
+#define C_S_MFDB		14	        //pointer to source MFDB
+#define C_D_MFDB		18        	//pointer to destination MFDB
 
 //////////////////////////////////////////////////
 //  Global Declarations	//

@@ -27,13 +27,13 @@
 	.xdef	_FLIP_Y
 	.xdef	_SCREEN
 
-ptsin_size      .equ   256      // max. # of elements allowed for PTSIN array
-ptsin_max       .equ   ptsin_size/2 // max. # of coordinate pairs for PTSIN array
-W_1             .equ   2        // byte offset to first element of an array 
-W_3             .equ   6        // byte offset to third element of an array
+#define ptsin_size         256      // max. # of elements allowed for PTSIN array
+#define ptsin_max          ptsin_size/2 // max. # of coordinate pairs for PTSIN array
+#define W_1                2        // byte offset to first element of an array
+#define W_3                6        // byte offset to third element of an array
 
 	.bss
-lcl_ptsin	.ds.w	ptsin_size
+lcl_ptsin:	.ds.w	ptsin_size
 
 	.text
 

@@ -14,11 +14,11 @@
 /***************************************************************************/
 //  Equates for VME10       //
 /***************************************************************************/
-vme10		.equ	0	// for selecting VME10 specific software
-v_pl_dspl	.equ	0x10000	// # of bytes between VME10 video planes
-pattern		.equ	1	// for selecting software which applies
+#define vme10           0       // for selecting VME10 specific software
+#define v_pl_dspl       0x10000 // # of bytes between VME10 video planes
+#define pattern         1	// for selecting software which applies
 //				// a pattern to the source
-rev_vid		.equ	1	// for selecting reverse video BLIT
+#define rev_vid	        1	// for selecting reverse video BLIT
 
 	.globl	bit_blt
 
@@ -65,69 +65,69 @@ rev_vid		.equ	1	// for selecting reverse video BLIT
 
 //       FRAME PARAMETERS
 
-B_WD		equ	-76	// width of block in pixels			    +00
-B_HT		equ	-74	// height of block in pixels			    +02 
+#define         	B_WD	 -76	// width of block in pixels			    +00
+#define         	B_HT	   -74	// height of block in pixels			    +02
 
-PLANE_CT	equ	-72	// number of consequitive planes to blt		    +04
+#define         	PLANE_CT   -72	// number of consequitive planes to blt		    +04
 
-FG_COL		equ	-70	// foreground color (logic op table index:hi bit)    +06
-BG_COL		equ	-68	// background color (logic op table index:lo bit)    +08
-OP_TAB		equ	-66	// logic ops for all fore and background combos	    +10
-S_XMIN		equ	-62	// minimum X: source				    +14
-S_YMIN		equ	-60	// minimum Y: source				    +16
-S_FORM		equ	-58	// source form base address			    +18
+#define         	FG_COL	   -70	// foreground color (logic op table index:hi bit)    +06
+#define         	BG_COL	   -68	// background color (logic op table index:lo bit)    +08
+#define         	OP_TAB	   -66	// logic ops for all fore and background combos	    +10
+#define         	S_XMIN	   -62	// minimum X: source				    +14
+#define         	S_YMIN	   -60	// minimum Y: source				    +16
+#define         	S_FORM	   -58	// source form base address			    +18
 
-ifne vme10
-S_NXWD		equ	-54	// offset to next word in line  (in bytes)	    +22
-S_NXLN		equ	-52	// offset to next line in plane (in bytes)	    +24
-S_NXPL		equ	-50	// offset to next plane from start of current plane  +26
-endc
+                ifne vme10
+#define         	S_NXWD	   -54	// offset to next word in line  (in bytes)	    +22
+#define         	S_NXLN	   -52	// offset to next line in plane (in bytes)	    +24
+#define         	S_NXPL	   -50	// offset to next plane from start of current plane  +26
+                endc
 
-ifeq vme10
-S_NXLN		equ	-54	// offset to next line in plane (in bytes)	    +22
-S_NXPL		equ	-52	// offset to next plane from start of current plane  +24
-endc
+                ifeq vme10
+#define         	S_NXLN	   -54	// offset to next line in plane (in bytes)	    +22
+#define         	S_NXPL	   -52	// offset to next plane from start of current plane  +24
+                endc
 
-D_XMIN		equ	-48	// minimum X: destination			    +28
-D_YMIN		equ	-46	// minimum Y: destination			    +30
-D_FORM		equ	-44	// destination form base address			    +32
+#define         	D_XMIN	   -48	// minimum X: destination			    +28
+#define         	D_YMIN	   -46	// minimum Y: destination			    +30
+#define         	D_FORM	   -44	// destination form base address			    +32
 
-ifne vme10
-D_NXWD		equ	-40	// offset to next word in line  (in bytes)	    +36
-D_NXLN		equ	-38	// offset to next line in plane (in bytes)	    +38
-D_NXPL		equ	-36	// offset to next plane from start of current plane  +40
-endc
+                ifne vme10
+#define         	D_NXWD	   -40	// offset to next word in line  (in bytes)	    +36
+#define         	D_NXLN	   -38	// offset to next line in plane (in bytes)	    +38
+#define         	D_NXPL	   -36	// offset to next plane from start of current plane  +40
+                endc
 
-ifeq vme10
-D_NXLN		equ	-40	// offset to next line in plane (in bytes)	    +36
-D_NXPL		equ	-38	// offset to next plane from start of current plane  +38
-endc
+                ifeq vme10
+#define         	D_NXLN	   -40	// offset to next line in plane (in bytes)	    +36
+#define         	D_NXPL	   -38	// offset to next plane from start of current plane  +38
+                endc
 
-P_ADDR		equ	-34	// address of pattern buffer   (0:no pattern)	    +42
-P_NXLN		equ	-30	// offset to next line in pattern  (in bytes)	    +46
-P_NXPL		equ	-28	// offset to next plane in pattern (in bytes)	    +48
-P_MASK		equ	-26	// pattern index mask				    +50
+#define         	P_ADDR	   -34	// address of pattern buffer   (0:no pattern)	    +42
+#define         	P_NXLN	   -30	// offset to next line in pattern  (in bytes)	    +46
+#define         	P_NXPL	   -28	// offset to next plane in pattern (in bytes)	    +48
+#define         	P_MASK	   -26	// pattern index mask				    +50
 
 //////					    //////
 //////   these parameters are internally set   //////
 //////					    //////
 
-P_INDX		equ	-24	// initial pattern index				    +52
+#define        	P_INDX	 -24	// initial pattern index				    +52
 
-S_ADDR		equ	-22	// initial source address 			    +54
-S_XMAX		equ	-18	// maximum X: source				    +58
-S_YMAX		equ	-16	// maximum Y: source				    +60
+#define        	S_ADDR	 -22	// initial source address 			    +54
+#define        	S_XMAX	 -18	// maximum X: source				    +58
+#define        	S_YMAX	 -16	// maximum Y: source				    +60
 
-D_ADDR		equ	-14	// initial destination address			    +62
-D_XMAX		equ	-10	// maximum X: destination			    +66
-D_YMAX		equ	-08	// maximum Y: destination			    +68
+#define        	D_ADDR	 -14	// initial destination address			    +62
+#define        	D_XMAX	 -10	// maximum X: destination			    +66
+#define        	D_YMAX	 -08	// maximum Y: destination			    +68
 
-INNER_CT	equ	-06	// blt inner loop initial count			    +70
-DST_WR		equ	-04	// destination form wrap (in bytes)		    +72
-SRC_WR		equ	-02	// source form wrap (in bytes)			    +74
+#define        	INNER_CT -06	// blt inner loop initial count			    +70
+#define        	DST_WR	 -04	// destination form wrap (in bytes)		    +72
+#define 		SRC_WR	-02	// source form wrap (in bytes)			    +74
 
 
-FRAME_LEN	equ	 76
+#define          FRAME_LEN      76
 
 
 .page

@@ -77,13 +77,13 @@ vme10	=	0		// flag for cond'l assembly of VME/10 code
 test	=	0		// flag for cond'l assembly of test changes
 rev_vid =	1		// for selecting reverse video line styles
 
-x1	.equ	0		// offsets used by CLC_FLIT for accessing
-y1	.equ	2		// parameters passed on the stack
-x2	.equ	4
-y2	.equ	6
+#define x1		0		// offsets used by CLC_FLIT for accessing
+#define y1		2		// parameters passed on the stack
+#define x2		4
+#define y2		6
 
 ifeq	vme10
-v_pl_dspl	.equ	0x10000	// size of vme/10 video plane
+#define v_pl_dspl		0x10000	// size of vme/10 video plane
 endc
 
 	.page

@@ -50,6 +50,7 @@ LD = m68k-atari-mint-ld
 LDFLAGS = -L/usr/lib/gcc-lib/m68k-atari-mint/2.95.3/mshort -lgcc
 LDFLROM = -Ttext=0xfc0000 -Tdata=0xfd0000 -Tbss=0x000000 
 LDFLRAM = -Ttext=0x10000 -Tdata=0x20000 -Tbss=0x000000 
+LDFLFAL = -Ttext=0xe00000 -Tdata=0xe40000 -Tbss=0x000000 
 
 
 # Assembler with options for Motorola like syntax (68000 cpu)
@@ -101,6 +102,16 @@ UTILCSRC = doprintf.c
 UTILSSRC = memset.S memmove.S
 
 #
+# source code in vdi/
+#
+
+VDICSRC = cbssdefs.c isin.c jmptbl.c lisastub.c lisatabl.c \
+           monobj.c monout.c opnwkram.c seedfill.c text.c
+VDISSRC = entry.S bitblt.S bltfrag.S copyrfm.S esclisa.S  \
+          gsxasm1.S gsxasm2.S lisagem.S mouse.S newmono.S  \
+          textblt.S tranfm.S
+
+#
 # source code in cli/ for EmuTOS console EmuCON
 #
 
@@ -117,11 +128,13 @@ PBDOSCSRC = $(BDOSCSRC:%=bdos/%)
 PBDOSSSRC = $(BDOSSSRC:%=bdos/%)
 PUTILCSRC = $(UTILCSRC:%=util/%)
 PUTILSSRC = $(UTILSSRC:%=util/%)
-PCONSCSRC = $(CONSCSRC:%=util/%)
-PCONSSSRC = $(CONSSSRC:%=util/%)
+PCONSCSRC = $(CONSCSRC:%=cli/%)
+PCONSSSRC = $(CONSSSRC:%=cli/%)
+PVDICSRC = $(VDICSRC:%=vdi/%)
+PVDISSRC = $(VDISSRC:%=vdi/%)
 
-CSRC = $(PBIOSCSRC) $(PBDOSCSRC) $(PUTILCSRC) $(PCONSCSRC)
-SSRC = $(PBIOSSSRC) $(PBDOSSSRC) $(PUTILSSRC) $(PCONSSSRC)
+CSRC = $(PBIOSCSRC) $(PBDOSCSRC) $(PUTILCSRC) $(PVDICSRC) $(PCONSCSRC)
+SSRC = $(PBIOSSSRC) $(PBDOSSSRC) $(PUTILSSRC) $(PVDISSRC) $(PCONSSSRC)
 
 BIOSCOBJ = $(BIOSCSRC:%.c=obj/%.o)
 BIOSSOBJ = $(BIOSSSRC:%.S=obj/%.o)
@@ -131,9 +144,11 @@ UTILCOBJ = $(UTILCSRC:%.c=obj/%.o)
 UTILSOBJ = $(UTILSSRC:%.S=obj/%.o)
 CONSCOBJ = $(CONSCSRC:%.c=obj/%.o)
 CONSSOBJ = $(CONSSSRC:%.S=obj/%.o)
+VDICOBJ  = $(VDICSRC:%.c=obj/%.o)
+VDISOBJ  = $(VDISSRC:%.S=obj/%.o)
 
-SOBJ = $(BIOSSOBJ) $(BDOSSOBJ) $(UTILSOBJ) $(CONSSOBJ)
-COBJ = $(BIOSCOBJ) $(BDOSCOBJ) $(UTILCOBJ) $(CONSCOBJ)
+SOBJ = $(BIOSSOBJ) $(BDOSSOBJ) $(UTILSOBJ) $(CONSSOBJ) #$(VDISOBJ) 
+COBJ = $(BIOSCOBJ) $(BDOSCOBJ) $(UTILCOBJ) $(CONSCOBJ) #$(VDICOBJ) 
 OBJECTS = $(SOBJ) $(COBJ) 
 
 #
@@ -148,6 +163,7 @@ help:
 	@echo "help    this help message"
 	@echo "all     emutos.img, a TOS 1 ROM image (0xFC0000)"
 	@echo "192     etos192k.img, i.e. emutos.img padded to size 192 KB"
+	@echo "falcon  etosfalc.img, i.e. emutos beginning at 0xe00000 
 	@echo "ram     ramtos.img + boot.prg, a RAM tos"
 	@echo "flop    emutos.st, a bootable floppy with RAM tos"
 	@echo "clean"
@@ -170,6 +186,21 @@ etos192k.img: emutos.img
 	cat empty.tmp >> emutos.tmp                    # Make real tos.img...
 	dd if=emutos.tmp of=$@ bs=1024 count=192       # with right length.
 	rm -f emutos.tmp empty.tmp
+
+#
+# Aranym or Falcon
+#
+
+falcon: etosfalc.img
+
+etosfalc.tmp: $(OBJECTS)
+	$(LD) -oformat binary -o $@ $(OBJECTS) $(LDFLAGS) $(LDFLFAL)
+
+etosfalc.img: etosfalc.tmp
+	dd if=/dev/zero of=empty.tmp bs=1024 count=512 
+	cat empty.tmp >> etosfalc.tmp                    # Make real tos.img...
+	dd if=etosfalc.tmp of=$@ bs=1024 count=512       # with right length.
+	rm -f etosfalc.tmp empty.tmp
 
 #
 # ram
@@ -234,6 +265,12 @@ obj/%.o : cli/%.c
 	${CC} ${CFLAGS} -Wall -c $< -o $@
 
 obj/%.o : cli/%.S
+	${CC} ${CFLAGS} -Wall -c $< -o $@
+
+obj/%.o : vdi/%.c
+	${CC} ${CFLAGS} -Wall -c $< -o $@
+
+obj/%.o : vdi/%.S
 	${CC} ${CFLAGS} -Wall -c $< -o $@
 
 

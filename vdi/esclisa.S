@@ -30,20 +30,20 @@
 
 // Local Constants
 
-ldri_escape	.equ	19	// last DRI escape = 19.
+#define ldri_escape		19	// last DRI escape = 19.
 
-null		.equ	0x00	// ASCII null
-esc		.equ	0x1B	// ASCII escape
+#define null			0x00	// ASCII null
+#define esc			0x1B	// ASCII escape
 
-x_cells		.equ	90	// # of columns of 8x14 character cells
-y_cells		.equ	25	// # of rows of 8x14 character cells
+#define x_cells			90	// # of columns of 8x14 character cells
+#define y_cells			25	// # of rows of 8x14 character cells
 
 
 //
 //	GEMDOS Function Codes
 //
-rawio		.equ	0x06	// raw i/o to standard input/output
-wntstr		.equ	0x09	// write null terminated string to std output
+#define rawio			0x06	// raw i/o to standard input/output
+#define wntstr			0x09	// write null terminated string to std output
 
 // Local Storage
 //	LISA BIOS Escape Sequences

@@ -37,9 +37,9 @@
 //									//
 /////////////////////////////////////////////////////////////////////////
 
-rbp		.equ	1	// assemble for Atari ST: 0 - yes, 1 - no
-vme10		.equ	0	// assemble for Motorola VME/10: 0 - yes, 1 - no
-rev_vid		.equ	1	// reverse video screen driver: 0 - yes, 1 - no
+#define rbp		       1	// assemble for Atari ST: 0 - yes, 1 - no
+#define vme10		       0	// assemble for Motorola VME/10: 0 - yes, 1 - no
+#define rev_vid		       1	// reverse video screen driver: 0 - yes, 1 - no
 
 /////////////////////////////////////////////////////////////////////////
 //									//
@@ -48,7 +48,7 @@ rev_vid		.equ	1	// reverse video screen driver: 0 - yes, 1 - no
 /////////////////////////////////////////////////////////////////////////
 
 ifeq	vme10
-v_pl_dspl	.equ	$10000	// # of bytes between VME/10 video planes
+#define v_pl_dspl	     $10000	// # of bytes between VME/10 video planes
 endc
 
 	.page
@@ -373,7 +373,7 @@ _VEX_CURV:
 
                              
                              
-RTN_REC	       	equ    	2//4		
+#define RTN_REC	    	2//4		
 
 
 //	fetching and saving a destination long word
@@ -525,12 +525,13 @@ endc
 	move.w	d5,save_len		//	     number of rows
 	lea	save_area,a2		// a2 -> save area buffer
 	bset.b	#F_SAVRDY,(a4)  	// flag the buffer as being loaded
-curs_parm	.equ	12		// bytes needed on stack for temp. vars
-cdb_fg		.equ	0		// mouse foreground colors
-cdb_bg		.equ	2		// mouse background colors
-crow_cnt	.equ	4		// number of cursor rows to be displayed
-cpl_size	.equ	6		// number of bytes in cursor plane
-d_addr		.equ	8		// destination starting address
+
+#define curs_parm		12		// bytes needed on stack for temp. vars
+#define cdb_fg			0		// mouse foreground colors
+#define cdb_bg			2		// mouse background colors
+#define crow_cnt		4		// number of cursor rows to be displayed
+#define cpl_size		6		// number of bytes in cursor plane
+#define d_addr			8		// destination starting address
 
 	adda.w	#-curs_parm,sp		// get temporary stack space
 	move.w	m_cdb_fg,cdb_fg(sp)	// get copy of mouse foreground colors
@@ -783,8 +784,8 @@ fg1bg1:
 //
 //	clobbered:	d2.w,d3.w,d4.w,d5.w,a0.l,a1.l,a2.l,a3.l,a4.l,a5.l
 
-F_SAVRDY	equ	0		// save buffer status flag: 0:empty  1:full
-F_SAVWID	equ	1		// saved line width	   0:word   1:longword
+#define F_SAVRDY       	0		// save buffer status flag: 0:empty  1:full
+#define F_SAVWID       	1		// saved line width	   0:word   1:longword
 
 cur_replace:
 	movem.l	d4-d5/a4-a5,-(sp)	// save registers used by 'C'

@@ -68,9 +68,9 @@
 ////////////////////////////////////////////////////////
 //  Equates for VME10       //
 ////////////////////////////////////////////////////////
-vme10		.equ	0	// for selecting VME10 specific software
-v_pl_dspl	.equ	0x10000	// # of bytes between VME10 video planes
-rev_vid		.equ	1	// for selecting reverse video specific code
+#define vme10			0	// for selecting VME10 specific software
+#define v_pl_dspl		0x10000	// # of bytes between VME10 video planes
+#define rev_vid			1	// for selecting reverse video specific code
 
 		.text			// open program segment.
 
@@ -695,13 +695,13 @@ rf_ymx:		move.w	_YMX_CLIP,d0
 ////									      ////
 //////////////
 //////////////
-parm_size	.equ	16		// temporary stack area size 
-patindx		.equ	14		// copy of current pattern index
-patmsk		.equ	12		// copy of maximum pattern index
-v_lin_wr	.equ	10		// copy of # of bytes per scan line
-pat_start	.equ	6		// copy of pattern starting address
-pat_ptr 	.equ	2		// copy of pattern pointer
-pl_cnt		.equ	0		// copy of video plane count
+#define parm_size		16		// temporary stack area size 
+#define patindx			14		// copy of current pattern index
+#define patmsk			12		// copy of maximum pattern index
+#define v_lin_wr		10		// copy of # of bytes per scan line
+#define pat_start		6		// copy of pattern starting address
+#define pat_ptr 		2		// copy of pattern pointer
+#define pl_cnt			0		// copy of video plane count
 
 BOX_FILL:	move.l	a6,-(sp)	// save C frame pointer
 		adda.w	#-parm_size,sp	// allocate temporary stack area

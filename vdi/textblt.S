@@ -30,18 +30,18 @@
 /////////////////////////////////////////////////////////////////////////
 //  Conditional assembly switches..					//
 /////////////////////////////////////////////////////////////////////////
-test0	        .equ	0	// if give program access to internal variables
-test1		.equ	0	// if using very large fonts (else, 8x16)
-test2		.equ	0	// if using initialized ram (.data) else, .bss
-bytswap		.equ	0	// if font words are byte swapped!
-vme10		.equ	0	// for selecting VME10 specific software
-rev_vid		.equ	1	// for selecting reverse video style text
+#define test0	        	0	// if give program access to internal variables
+#define test1			0	// if using very large fonts (else, 8x16)
+#define test2			0	// if using initialized ram (.data) else, .bss
+#define bytswap			0	// if font words are byte swapped!
+#define vme10			0	// for selecting VME10 specific software
+#define rev_vid			1	// for selecting reverse video style text
 
 ////////////////////////////////////////////////////////
 //  Equates for VME10       //
 ////////////////////////////////////////////////////////
 ifeq vme10
-v_pl_dspl	.equ	0x10000	// # of bytes between VME10 video planes
+#define v_pl_dspl		0x10000	// # of bytes between VME10 video planes
 endc
 
 	.page
@@ -131,22 +131,22 @@ endc
 /////////////////////////////////////////////////////////
 //   Style equates..						//
 /////////////////////////////////////////////////////////
-THICKM		.equ	0x1
-LIGHTM		.equ	0x2
-SKEWM		.equ	0x4
-UNDERM		.equ	0x8
-OUTLINEM	.equ	0x10
-SHADOWM		.equ	0x20
+#define THICKM		       0x1
+#define LIGHTM		       0x2
+#define SKEWM		       0x4
+#define UNDERM		       0x8
+#define OUTLINEM	       0x10
+#define SHADOWM		       0x20
 //
 //  Style equates converted to 68k bit numbers
 //  (bit number 0 is the least significant bit) 
 //
-THICKEN		.equ	0
-LIGHT		.equ	1
-SKEW		.equ	2
-UNDER		.equ	3
-OUTLINE		.equ	4
-SHADOW		.equ	5
+#define THICKEN		       0
+#define LIGHT		       1
+#define SKEW		       2
+#define UNDER		       3
+#define OUTLINE		       4
+#define SHADOW		       5
 
 	.page
 /////////////////////////////////////////////////////////
@@ -223,20 +223,20 @@ ifne	test1
 ////////////////////////////////////////////////////////////////////////
 //  test for very large font        //	
 ////////////////////////////////////////////////////////////////////////
-l_off		.equ	4		//left offset from skew
-r_off		.equ	17		//right offset from skew
-form_ht		.equ	43		//form height
-mxcelwd		.equ	150		//max.cell width (very wide for testing)
+#define l_off			4		//left offset from skew
+#define r_off			17		//right offset from skew
+#define form_ht			43		//form height
+#define mxcelwd			150		//max.cell width (very wide for testing)
 endc
 
 ifeq	test1
 //////////////////////////////////////////
 //  8x16 font data   //
 //////////////////////////////////////////
-l_off		.equ	2		//left offset from skew
-r_off		.equ	6		//right offset from skew
-form_ht		.equ	16		//form height
-mxcelwd		.equ	8		//maximum cell width
+#define l_off			2		//left offset from skew
+#define r_off			6		//right offset from skew
+#define form_ht			16		//form height
+#define mxcelwd			8		//maximum cell width
 endc
 
 //////
@@ -248,12 +248,12 @@ endc
 //  different ways in order to accommodate rotation. 			   //
 //////
 
-cel_ww	equ	((l_off+r_off+mxcelwd+15)/16)//2 //worst case # bytes/row 
+#define cel_ww	((l_off+r_off+mxcelwd+15)/16)*2 //worst case # bytes/row 
 //						//if width
-cel_wh	equ	l_off+r_off+mxcelwd	//cell "width" if used as height
+#define cel_wh	l_off+r_off+mxcelwd	//cell "width" if used as height
 //					//(90 rotation)
-cel_hh	equ	form_ht			//cell height if used as height
-cel_hw	equ	((form_ht+15)/16)//2	//cell "height" if used as width
+#define cel_hh	form_ht			//cell height if used as height
+#define cel_hw	((form_ht+15)/16)*2	//cell "height" if used as width
 //					//(90 rotation)
 /////////////////////////////////////////////////////////
 // The maximum of either:					//
@@ -265,42 +265,42 @@ cel_hw	equ	((form_ht+15)/16)//2	//cell "height" if used as width
 //  will be used for the basic buffer size.			//
 /////////////////////////////////////////////////////////
 
-cel_sz0	equ	cel_ww//cel_hh	//cell size if no rotation
-cel_sz9	equ	cel_wh//cel_hw	//cell size for 90 deg rotation
+#define cel_sz0	cel_ww*cel_hh	//cell size if no rotation
+#define cel_sz9	cel_wh*cel_hw	//cell size for 90 deg rotation
 
 /////////////////////////////////////////////////////////
 //  Select the maximum for the character buffer size.		//
 /////////////////////////////////////////////////////////
 
 ifge	cel_sz0-cel_sz9
-cel_siz		.equ	cel_sz0//2
+#define cel_siz		cel_sz0*2
 endc
 
 iflt	cel_sz0-cel_sz9
-cel_siz		.equ	cel_sz9//2
+#define cel_siz		cel_sz9*2
 endc
 
 /////////////////////////////////////////////////////////
 //  Doubled cell dimension calculations. 			//
 /////////////////////////////////////////////////////////
 
-cel2_ww		.equ	(((2//(l_off+r_off+mxcelwd))+3+15)/16)//2
-cel2_wh		.equ	(2//(l_off+r_off+mxcelwd))+2
-cel2_hh		.equ	(2//form_ht)+2
-cel2_hw		.equ	(((2//form_ht)+3+15)/16)//2
+#define cel2_ww		(((2*(l_off+r_off+mxcelwd))+3+15)/16)*2
+#define cel2_wh		(2*(l_off+r_off+mxcelwd))+2
+#define cel2_hh		(2*form_ht)+2
+#define cel2_hw		(((2*form_ht)+3+15)/16)*2
 //
-cel2_sz0	.equ	cel2_ww//cel2_hh	//doubled cell size, no rotation
-cel2_sz9	.equ	cel2_wh//cel2_hw	//doubled cell size, 90 deg rotation
+#define cel2_sz0	cel2_ww*cel2_hh	//doubled cell size, no rotation
+#define cel2_sz9	cel2_wh*cel2_hw	//doubled cell size, 90 deg rotation
 
 /////////////////////////////////////////////////////////////////////////
 //  Select the maximum size character buffer for doubled characters.     //
 /////////////////////////////////////////////////////////////////////////
 
 ifge	cel2_sz0-cel2_sz9
-cel2_siz	.equ	cel2_sz0
+#define cel2_siz	cel2_sz0
 endc
 iflt	cel2_sz0-cel2_sz9
-cel2_siz	.equ	cel2_sz9
+#define cel2_siz	     cel2_sz9
 endc
 
 /////////////////////////////////////////////////////////
@@ -310,17 +310,17 @@ endc
 /////////////////////////////////////////////////////////
 
 ifge	cel2_ww-cel2_hw
-out_add		.equ	cel2_ww+2
+#define out_add		cel2_ww+2
 endc
 iflt	cel2_ww-cel2_hw
-out_add		.equ	cel2_hw+2
+#define out_add		cel2_hw+2
 endc
 
 /////////////////////////////////////////////////////////
 //  Total buffer requirements are: cel_siz + cel2_siz + out_add	//
 /////////////////////////////////////////////////////////
 
-buf_siz		.equ	cel_siz+cel2_siz+out_add    //total byte requirement =
+#define buf_siz		cel_siz+cel2_siz+out_add    //total byte requirement =
 //						    // small + large buffer
 	.page
 /////////////////////////////////////////////////////////////////////////
@@ -351,10 +351,13 @@ _scrtchp:
 _scrpt2:
 	.dc.w	cel_siz		//large buffer base offset
 endc
-_scrpt1	equ	0
+#define _scrpt1	0
 //	.ds.w	0		//small buffer base offset 
 //
 	.page
+        
+        
+        
 /////////////////////////////////////////////////////////////////////////
 //	Local variables defined on the user stack.			//
 // NOTE: labels follow storage directives for use with LINK instruction  //
@@ -363,158 +366,158 @@ _scrpt1	equ	0
 	.offset	0
 
 	.ds.w	1		//for clip & prerotate blt
-buffa		equ	-//
+#define buffa		-
 	.ds.w	1		//for rotate
-buffb		equ	-//
+#define buffb		-
 	.ds.w	1		//for replicate
-buffc		equ	-//
+#define buffc		-
 
 
 
 	.ds.l	1		//start of source form
-sform		equ	-//
+#define sform		-
 	.ds.l	1		//start of destination form
-dform		equ	-//
+#define dform		-
 
 	.ds.w	1		//width of source form (formerly s_width)
-s_next		equ	-//
+#define s_next		-
 	.ds.w	1		//width of dest form (_v_lin_wr formerly used)
-d_next		equ	-//
+#define d_next		-
 
 	.ds.w	1		//width of area in pixels
-width		equ	-//
+#define width		-
 	.ds.w	1		//height of area in pixels
-height		equ	-//
+#define height		-
 
 
 	.ds.w	1		//source dot address
 // 				//(pixel address, 0-15 word offset)
-tsdad		equ	-//
+#define tsdad		-
 
 	.ds.w	1		//destination dot address
-tddad		equ	-//
+#define tddad		-
 //
 //
 	.ds.w	1		//# full words between fringes (destination)
-dest_wrd	equ	-//
+#define dest_wrd	-
 	.ds.w	1		//# full words between fringes (source)
 //				//(before thicken)
-src_wrd		equ	-//
+#define src_wrd		-
 	.ds.w	1		//
-src_wthk	equ	-//
+#define src_wthk	-
 	.ds.w	1		//right fringe mask, before thicken
-thk_msk		equ	-//
+#define thk_msk		-
 	.ds.w	1		//
-rite_msk	equ	-//
+#define rite_msk	-
 	.ds.w	1		//fringes of destination to be affected
-left_msk	equ	-//
+#define left_msk	-
 	.ds.w	1		//overlap between words in inner loop
-rota_msk	equ	-//
+#define rota_msk	-
 	.ds.w	1		//shift count for use by left/right shift routines
-shif_cnt	equ	-//
+#define shif_cnt	-
 	.ds.w	1		//number inner loop words for left/right 
-wrd_cnt		equ	-//
+#define wrd_cnt		-
 
 /////////////////////////////////////////
 //  Vectors that may contain a toptable entry.		//
 /////////////////////////////////////////
 	.ds.l	1		//vector for function after thicken
-thknjmp		equ	-//
+#define thknjmp		-
 	.ds.l	1		//vector for function after light
-litejmp		equ	-//
+#define litejmp		-
 	.ds.l	1		//vector for function after skew
-skewjmp		equ	-//
+#define skewjmp		-
 	.ds.l	1		//vector for word fringe function after thicken
-thknjpwf	equ	-//
+#define thknjpwf	-
 	.ds.l	1		//vector for word fringe function after light
-litejpwf	equ	-//
+#define litejpwf	-
 
 /////////////////////////////////////////
 //  Vectors that may contain twoptable entries.		//
 /////////////////////////////////////////
 	.ds.l	1		//vector for word function after thicken
-thknjpw		equ	-//
+#define thknjpw		-
 	.ds.l	1		//vector for word function after light
-litejpw		equ	-//
+#define litejpw		-
 
 /////////
 //  Masks for special effects.		//
 /////////
 	.ds.w	1		//amount to increase width
-smear		equ	-//
+#define smear		-
 	.ds.w	1		//ambient temp
-ambient		equ	-//
+#define ambient		-
 	.ds.w	1		//AND with this to get light effect
-lite_msk	equ	-//
+#define lite_msk	-
 	.ds.w	1		//rotate this to check shift
-skew_msk	equ	-//
+#define skew_msk	-
 	.ds.w	1		//overflow for word thicken
-thknover	equ	-//
+#define thknover	-
 
 /////////
 //  color temp & # of planes		//
 /////////
 	.ds.w	1		//foreground color temp
-forecol		equ	-//
+#define forecol		-
 	.ds.w	1		//# of planes
-nbrplane	equ	-//
+#define nbrplane	-
 	.ds.w	1		//offset to next word in same
-nextwrd		equ	-//
+#define nextwrd		-
 
 /////////
 //  arbitrary scale of text temps.	//
 /////////
 	.ds.w	1		//temp DELX used by arbitrary scale of text
-tmp_delx	equ	-//
+#define tmp_delx	-
 	.ds.w	1		//temp DELY
-tmp_dely	equ	-//
+#define tmp_dely	-
 	.ds.w	1		//Non zero if we had to swap temps
-swap_tmps	equ	-//
+#define swap_tmps	-
 
 /////////////////////////////////////////////////////////
 //  Working copies of often used external global varibles.	//
 /////////////////////////////////////////////////////////
 	.ds.w	1
-STYLE		.equ	-//
+#define STYLE		-
 	.ds.w	1
-WRT_MOD		.equ	-//
+#define WRT_MOD		-
 	.ds.w	1
-SKEWMAS		.equ	-//
+#define SKEWMAS		-
 	.ds.w	1
-DELX		.equ	-//
+#define DELX		-
 	.ds.w	1
-DESTX		.equ	-//
+#define DESTX		-
 	.ds.w	1 
-DELY		.equ	-//
+#define DELY		-
 	.ds.w	1
-DESTY		.equ	-//
+#define DESTY		-
 	.ds.w	1
-CHUP		.equ	-//
+#define CHUP		-
 
 /////////////////////////
 //  Working copies of the clipping variables	//
 /////////////////////////
 	.ds.w	1
-CLIP		.equ	-//
+#define CLIP		-
 	.ds.w	1
-XMN_CLI		.equ	-//
+#define XMN_CLI		-
 	.ds.w	1
-YMN_CLI		.equ	-//
+#define YMN_CLI		-
 	.ds.w	1
-XMX_CLI		.equ	-//
+#define XMX_CLI		-
 	.ds.w	1
-YMX_CLI		.equ	-//
+#define YMX_CLI		-
 //////////////////////////////////////////////////////////////////
 //  Temporary working variables	//
 //////////////////////////////////////////////////////////////////
 	.ds.w	1
-tmp_style	.equ	-//
+#define tmp_style	-
 	.ds.w	1
-blt_flag	.equ	-//
+#define blt_flag	-
 	.ds.w	1
-chup_flag	.equ	-//
+#define chup_flag	-
 
-ramlen		.equ	-//
+#define ramlen		-
 
 	.text
 	.page
@@ -1326,14 +1329,14 @@ msk0:
 //	fb=	00  01  10  11	//
 //////////////////////////////////////////////////////////////////
 
-op0	equ	4//0
-op1	equ	4//1
-op2	equ	4//2
-op3	equ	4//3
-op4	equ	4//4
-op5	equ	4//5
-op6	equ	4//6
-op7	equ	4//7
+#define op0		4*0
+#define op1		4*1
+#define op2		4*2
+#define op3		4*3
+#define op4		4*4
+#define op5		4*5
+#define op6		4*6
+#define op7		4*7
 
 wrmappin:
 	.dc.b	op0,op0,op1,op1		//replace mode

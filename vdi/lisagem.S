@@ -53,10 +53,10 @@
 		.xdef	user_cur
 		.xdef	user_mot
 
-handle	=	2		// leave 2 for console input, change to 1 for auxin
+#define handle 2		// leave 2 for console input, change to 1 for auxin
 
-screen_siz	=	8189
-v_base		=	0xF8000
+#define screen_siz     8189
+#define v_base	       0xF8000
 
 		.data
 copyright	dc.b	'GEMVDI V1.0  8/15/85'

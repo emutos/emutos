@@ -15,11 +15,11 @@
 /***************************************************************************/
 //  Equates for VME10       //
 /***************************************************************************/
-vme10		.equ	0	// for selecting VME10 specific software
-v_pl_dspl	.equ	0x10000	// # of bytes between VME10 video planes
-pattern		.equ	1	// for selecting software which applies
-//				// a pattern to the source
-rev_vid		.equ	1	// for selecting reverse video BLITS
+#define	vme10	  0	// for selecting VME10 specific software
+#define	v_pl_dspl 0x10000	// # of bytes between VME10 video planes
+#define	pattern	  1	// for selecting software which applies
+      		//	  // a pattern to the source
+#define	rev_vid	  1	// for selecting reverse video BLITS
 
 	.globl	_COPY_RFM
 	.globl	_CLIP,_XMN_CLIP,_YMN_CLIP,_XMX_CLIP,_YMX_CLIP,_COPYTRAN,_patptr
@@ -54,107 +54,107 @@ rev_vid		.equ	1	// for selecting reverse video BLITS
 
 //	MEMORY FORM DEFINITION BLOCK (MFDB) OFFSETS
 
-MF_BAS_AD	equ	00	// memory form base address (0: physical device)
-MF_WD_PIX	equ	04	// form width in pixels ( form width in words /16)
-MF_HT_PIX	equ	06	// form height in pixels
-MF_WD_WRD	equ	08	// form width in words
-MF_FORMAT	equ	10	// form format flag (0:device specific 1:standard)
-MF_PLANES	equ	12	// number of memory planes
+#define MF_BAS_AD		00	// memory form base address (0: physical device)
+#define MF_WD_PIX		04	// form width in pixels ( form width in words /16)
+#define MF_HT_PIX		06	// form height in pixels
+#define MF_WD_WRD		08	// form width in words
+#define MF_FORMAT		10	// form format flag (0:device specific 1:standard)
+#define MF_PLANES		12	// number of memory planes
 
 //	CONTRL ARRAY OFFSETS
 
-C_MFDB_S	equ	14	// pointer to source MFDB
-C_MFDB_D	equ	18	// pointer to destination MFDB
+#define C_MFDB_S		14	// pointer to source MFDB
+#define C_MFDB_D		18	// pointer to destination MFDB
 
 //	INTIN ARRAY OFFSETS
 
-I_LOG_OP	equ	00	// logic operation code
-I_COL_1		equ	02
-I_COL_0		equ	04
+#define I_LOG_OP		00	// logic operation code
+#define I_COL_1			02
+#define I_COL_0			04
 
 //	PTSIN ARRAY OFFSET
 
-P_XMIN_S	equ	00	// x-coordinate of upper left of source rectangle
-P_YMIN_S	equ	02	// y-coordinate of upper left of source rectangle
-P_XMAX_S	equ	04	// x-coordinate of lower right of source rectangle
-P_YMAX_S	equ	06	// y-coordinate of lower right of source rectangle
+#define P_XMIN_S		00	// x-coordinate of upper left of source rectangle
+#define P_YMIN_S		02	// y-coordinate of upper left of source rectangle
+#define P_XMAX_S		04	// x-coordinate of lower right of source rectangle
+#define P_YMAX_S		06	// y-coordinate of lower right of source rectangle
 
-P_XMIN_D	equ	08	// x-coordinate of upper left of destination rectangle
-P_YMIN_D	equ	10	// y-coordinate of upper left of destination rectangle
-P_XMAX_D	equ	12	// x-coordinate of lower right of destination rectangle
-P_YMAX_D	equ	14	// y-coordinate of lower right of destination rectangle
+#define P_XMIN_D		08	// x-coordinate of upper left of destination rectangle
+#define P_YMIN_D		10	// y-coordinate of upper left of destination rectangle
+#define P_XMAX_D		12	// x-coordinate of lower right of destination rectangle
+#define P_YMAX_D		14	// y-coordinate of lower right of destination rectangle
 
 
 //       FRAME PARAMETERS
 
-B_WD		equ	-76	// width of block in pixels			    +00
-B_HT		equ	-74	// height of block in pixels			    +02 
+#define B_WD			-76	// width of block in pixels			    +00
+#define B_HT			-74	// height of block in pixels			    +02 
 
-PLANE_CT	equ	-72	// number of consequitive planes to blt		    +04
+#define PLANE_CT		-72	// number of consequitive planes to blt		    +04
 
-FG_COL		equ	-70	// foreground color (logic op table index:hi bit)    +06
-BG_COL		equ	-68	// background color (logic op table index:lo bit)    +08
-OP_TAB		equ	-66	// logic ops for all fore and background combos	    +10
-S_XMIN		equ	-62	// minimum X: source				    +14
-S_YMIN		equ	-60	// minimum Y: source				    +16
-S_FORM		equ	-58	// source form base address			    +18
+#define FG_COL			-70	// foreground color (logic op table index:hi bit)    +06
+#define BG_COL			-68	// background color (logic op table index:lo bit)    +08
+#define OP_TAB			-66	// logic ops for all fore and background combos	    +10
+#define S_XMIN			-62	// minimum X: source				    +14
+#define S_YMIN			-60	// minimum Y: source				    +16
+#define S_FORM			-58	// source form base address			    +18
 
 ifne vme10
-S_NXWD		equ	-54	// offset to next word in line  (in bytes)	    +22
-S_NXLN		equ	-52	// offset to next line in plane (in bytes)	    +24
-S_NXPL		equ	-50	// offset to next plane from start of current plane  +26
+#define S_NXWD			-54	// offset to next word in line  (in bytes)	    +22
+#define S_NXLN			-52	// offset to next line in plane (in bytes)	    +24
+#define S_NXPL			-50	// offset to next plane from start of current plane  +26
 endc
 
 ifeq vme10
-S_NXLN		equ	-54	// offset to next line in plane (in bytes)	    +22
-S_NXPL		equ	-52	// offset to next plane from start of current plane  +24
+#define S_NXLN			-54	// offset to next line in plane (in bytes)	    +22
+#define S_NXPL			-52	// offset to next plane from start of current plane  +24
 endc
 
-D_XMIN		equ	-48	// minimum X: destination			    +28
-D_YMIN		equ	-46	// minimum Y: destination			    +30
-D_FORM		equ	-44	// destination form base address			    +32
+#define D_XMIN			-48	// minimum X: destination			    +28
+#define D_YMIN			-46	// minimum Y: destination			    +30
+#define D_FORM			-44	// destination form base address			    +32
 
 ifne vme10
-D_NXWD		equ	-40	// offset to next word in line  (in bytes)	    +36
-D_NXLN		equ	-38	// offset to next line in plane (in bytes)	    +38
-D_NXPL		equ	-36	// offset to next plane from start of current plane  +40
+#define D_NXWD			-40	// offset to next word in line  (in bytes)	    +36
+#define D_NXLN			-38	// offset to next line in plane (in bytes)	    +38
+#define D_NXPL			-36	// offset to next plane from start of current plane  +40
 endc
 
 ifeq vme10
-D_NXLN		equ	-40	// offset to next line in plane (in bytes)	    +36
-D_NXPL		equ	-38	// offset to next plane from start of current plane  +38
+#define D_NXLN			-40	// offset to next line in plane (in bytes)	    +36
+#define D_NXPL			-38	// offset to next plane from start of current plane  +38
 endc
 
-P_ADDR		equ	-34	// address of pattern buffer   (0:no pattern)	    +42
-P_NXLN		equ	-30	// offset to next line in pattern  (in bytes)	    +46
-P_NXPL		equ	-28	// offset to next plane in pattern (in bytes)	    +48
-P_MASK		equ	-26	// pattern index mask				    +50
+#define P_ADDR			-34	// address of pattern buffer   (0:no pattern)	    +42
+#define P_NXLN			-30	// offset to next line in pattern  (in bytes)	    +46
+#define P_NXPL			-28	// offset to next plane in pattern (in bytes)	    +48
+#define P_MASK			-26	// pattern index mask				    +50
 
 //////					    //////
 //////   these parameters are internally set   //////
 //////					    //////
 
-P_INDX		equ	-24	// initial pattern index				    +52
+#define P_INDX			-24	// initial pattern index				    +52
 
-S_ADDR		equ	-22	// initial source address 			    +54
-S_XMAX		equ	-18	// maximum X: source				    +58
-S_YMAX		equ	-16	// maximum Y: source				    +60
+#define S_ADDR			-22	// initial source address 			    +54
+#define S_XMAX			-18	// maximum X: source				    +58
+#define S_YMAX			-16	// maximum Y: source				    +60
 
-D_ADDR		equ	-14	// initial destination address			    +62
-D_XMAX		equ	-10	// maximum X: destination			    +66
-D_YMAX		equ	-08	// maximum Y: destination			    +68
+#define D_ADDR			-14	// initial destination address			    +62
+#define D_XMAX			-10	// maximum X: destination			    +66
+#define D_YMAX			-08	// maximum Y: destination			    +68
 
-INNER_CT	equ	-06	// blt inner loop initial count			    +70
-DST_WR		equ	-04	// destination form wrap (in bytes)		    +72
-SRC_WR		equ	-02	// source form wrap (in bytes)			    +74
+#define INNER_CT		-06	// blt inner loop initial count			    +70
+#define DST_WR			-04	// destination form wrap (in bytes)		    +72
+#define SRC_WR			-02	// source form wrap (in bytes)			    +74
 
 
-FRAME_LEN	equ	 76
+#define FRAME_LEN		 76
 
-DEV_COL		equ	 26	// offset in _DEV_TAB to number of colors
-PAT_FLAG	equ	  4	// flag:1 SOURCE and PATTERN   flag:0 SOURCE only
-mode05		.equ	  5	// write mode #5 (D' = D) => do nothing
-mode15		.equ	 15	// maximum write mode opcode
+#define DEV_COL			 26	// offset in _DEV_TAB to number of colors
+#define PAT_FLAG		  4	// flag:1 SOURCE and PATTERN   flag:0 SOURCE only
+#define mode05			  5	// write mode #5 (D' = D) => do nothing
+#define mode15			 15	// maximum write mode opcode
 
 _COPY_RFM:
 
