@@ -1404,3 +1404,5 @@ Start... early ages
 - bios/sound.c - Fixed a wrong byte in the system bell data. (THH)
 - include/xbiosbind.h - Added binding for Dosound(). (THH)
 - aes/optimize.c - sound() now really makes sound with Dosound()! (THH)
+- bios/biosmem.c - explanatory comment about memtop and membot added (LVL)
+

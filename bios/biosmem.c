@@ -29,10 +29,45 @@ extern int is_ramtos;           /* 1 if the TOS is running in RAM */
 
 /*
  * bmem_init - initialize some memory related variables
+ *
+ * when the TOS is in ROM, the ST RAM is used thus: 
+ *   0        400   end                         v_bas_ad   phystop
+ *   +---------+-----+------------------------------+--------+
+ *   | vectors | BSS | Transiant Program Area (TPA) | screen |
+ *   +---------+-----+------------------------------+--------+
+ * when it is in RAM, the memory map is:
+ *   0        400   end       _edata            v_bas_ad   phystop
+ *   +---------+-----+-----------+------------------+--------+
+ *   | vectors | BSS | TEXT+DATA |       TPA        | screen |
+ *   +---------+-----+-----------+------------------+--------+
+ *
+ * variables and symbols:
+ *   BYTE end[]      set by GNU LD: end of BSS
+ *   BYTE _etext[]   set by GNU LD: end of TEXT segment
+ *   BYTE _edata[]   set by GNU LD: end of DATA segment
+ *   LONG end_os     TOS variable in 0x4fa: start of the TPA
+ *   LONG os_end     header field in _sysbase+12: start of free RAM
+ *                   (set at end when compiling, patched in RAM TOS)
+ *   LONG membot     TOS variable in 0x432: bottom of TPA
+ *   LONG memtop     TOS variable in 0x436: top of TPA
+ *   LONG phystop    TOS variable in 0x43a: top of ST RAM
+ *
+ * For unknown reasons, it is reported that in the first RAM TOS membot
+ * and end_os id have different values. Here in EmuTOS we will always
+ * have: 
+ *   membot = end_os = os_end = start of TPA
+ *   memtop = end of TPA   
+ * 
  */
 void bmem_init(void)
 {
     LONG a;
+
+#if DBG_MEM
+    kprintf("_etext = 0x%08lx\n", (LONG)_etext);
+    kprintf("_edata = 0x%08lx\n", (LONG)_edata);
+    kprintf("end    = 0x%08lx\n", (LONG)end);
+#endif
 
     /* detect by looking at os_entry, if TOS in RAM */
     a = ((LONG) os_entry) & 0xffffff;
@@ -40,24 +75,14 @@ void bmem_init(void)
         is_ramtos = 0;
     } else {
         is_ramtos = 1;
-    }
-
-#if DBG_MEM
-    kprintf("_etext = 0x%08lx\n", (LONG)_etext);
-    kprintf("_edata = 0x%08lx\n", (LONG)_edata);
-    kprintf("end    = 0x%08lx\n", (LONG)end);
-#endif
-    if(is_ramtos) {
         /* patch TOS header */
         os_end = (LONG) _edata;
     }
 
-
     /* initialise some memory variables */
-    end_os = os_end;
-    membot = end_os;
-    memtop = (long) v_bas_ad;
-
+    membot = end_os = os_end; 
+    memtop = (LONG) v_bas_ad; 
+    
     /* Fill out the first memory descriptor */
     themd.m_link = (MD*) 0;     /* no next memory descriptor */
     themd.m_start = os_end;
