@@ -1,29 +1,20 @@
 This file documents the status of the single parts of EmuTOS
 
 Here is a quick list of supported emulators/hardware:
-(updated last 01. Sep. 2002)
+This table should be updated regularly. When indicating failure,
+if possible add a line telling in which version it did run.
 
-  emulator/machine          | ROM img | autoboot | boot.prg
-  --------------------------+---------+----------+---------
-  Aranym (latest CVS vers.) |   yes   |    ?     |    ?
-  Hatari (latest CVS vers.) |   yes   |    ?     |    ?
-  MegaSTE (2MB RAM)         |   n/a   |   yes    |   yes   
-  Pacifist v0.48            |   yes   |   yes    |   yes   
-  STonX, with cartridge     |   yes   |  no (1)  |   yes  
-  STonC, with cartridge     |   yes   |   yes    |   yes   
-  STonC, no cartridge       |   yes   |   yes    |   yes   
-  STeem v1.5                |   yes   |   yes    |   yes   
-  TOSBox 1.10a              |    no   |    ?     |    ?    
-  WinSTon V0.1r2            |    no   |    no    |    no   
-
-ROM img means:  Using the etos192k.img/etosfalc.img file as ROM
-
-autoboot means: Loading emutos.st disk from bootsector, then when prompted,
-                eject a: 
-
-boot.prg means: A FAT12 floppy containing ramtos.img and boot.prg 
-
-(1) because STonX does not allow to eject floppies.
+  emulator/machine    |  ok?  | who |   date    |  details
+  --------------------+-------+-----+-----------+----------------
+  Aranym              |  yes  |  ?  |  < Sep 02 | 
+  Hatari              |  yes  |  ?  |  < Sep 02 |
+  MegaSTE (2MB RAM)   |  yes  | LVL | spring 02 | RAMTOS only
+  Pacifist v0.48      |  yes  | LVL | winter 01 |
+  STonX 0.6.7.2       |  yes  | LVL | 30 Sep 02 | no autoboot
+  STonC v0.8.0        |  yes  | LVL | 29 Sep 02 |
+  STeem v2.0.6        |  yes  | LVL | 30 Sep 02 | 
+  TOSBox 1.10a        |   no  |  ?  |  < Sep 02 |
+  WinSTon V0.1r2      |   no  |  ?  |  < Sep 02 |
 
 
 
