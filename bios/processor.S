@@ -258,7 +258,7 @@ pi_handler:
         .bss
         .even
 
-/* Here is a short peace of code, the copied privileged instruction */
+/* Here is a short piece of code, the copied privileged instruction */
 pi_instr:                       // priv. instruction stored for execution
         ds.w    1
 pi_rts:                         // here is a rts instruction for return
