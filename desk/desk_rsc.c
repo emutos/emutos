@@ -9,8 +9,7 @@
  * This file contains the Desk's RSC data
  */
 
-#include <string.h>
-#include <version.h>
+#include "string.h"
 
 #include "portab.h"
 #include "obdefs.h"
@@ -19,7 +18,8 @@
 #include "gemdos.h"
 #include "kprint.h"
 #include "desk_rsc.h"
-
+#include "version.h"
+#include "lineavars.h"
 #include "nls.h"
 
 static const char rs_str_OK[] = N_("OK");
@@ -224,18 +224,8 @@ static const TEDINFO desk_rs_tedinfo_rom[] = {
      IBM, 0, TE_LEFT, 4352, 0, 0, 12, 20}       /* 36 */
 };
 
-
+/* EmuTOS logo as designed by Martin */
 static int rs_logo_img[] = {
-#if 0 /* old logo (one box with a black and a white rectange inside) */
-    0x3fff, 0xfffc, 0x7fff, 0xfffe, 0xe000, 0x0007, 0xc000, 0x0003,
-    0xc000, 0x0003, 0xc3f8, 0x1fc3, 0xc7fc, 0x3fe3, 0xc7fc, 0x3063,
-    0xc7fc, 0x3063, 0xc7fc, 0x3063, 0xc7fc, 0x3063, 0xc7fc, 0x3063,
-    0xc7fc, 0x3063, 0xc7fc, 0x3063, 0xc7fc, 0x3063, 0xc7fc, 0x3063,
-    0xc7fc, 0x3063, 0xc7fc, 0x3063, 0xc7fc, 0x3063, 0xc7fc, 0x3063,
-    0xc7fc, 0x3063, 0xc7fc, 0x3063, 0xc7fc, 0x3063, 0xc7fc, 0x3063,
-    0xc7fc, 0x3063, 0xc7fc, 0x3fe3, 0xc3f8, 0x1fc3, 0xc000, 0x0003,
-    0xc000, 0x0003, 0xe000, 0x0007, 0x7fff, 0xfffe, 0x3fff, 0xfffc
-#else /* EmuTOS logo as designed by Martin */
     0x0000, 0x0000, 0x0000, 0x0000, 
     0x0000, 0x0000, 0x0000, 0x0000, 
     0x0000, 0x0000, 0x000B, 0xD000, 
@@ -252,7 +242,6 @@ static int rs_logo_img[] = {
     0x3003, 0xC00C, 0x0000, 0x0000, 
     0x0000, 0x0000, 0x0000, 0x0000, 
     0x0000, 0x0000, 0x0000, 0x0000, 
-#endif
 };
 
 
@@ -722,7 +711,7 @@ static const OBJECT desk_rs_obj_rom[] = {
    { 4, -1, -1, G_STRING,                   /*** 3 ***/
      NONE,
      NORMAL,
-     (long) EMUTOS_VERSION,
+     (long) version,
      22, 2, 4, 1 },
 
    { 5, -1, -1, G_IMAGE,                    /*** 4 ***/
@@ -734,14 +723,16 @@ static const OBJECT desk_rs_obj_rom[] = {
    { 6, -1, -1, G_STRING,                   /*** 5 ***/
      NONE,
      NORMAL,
-     (long) __DATE__,
-     14|(4<<8), 4, 12, 1 },
+//     (long) __DATE__,
+     (long) "http://emutos.sourceforge.net",
+//     14|(4<<8), 4, 12, 1 },
+     5, 7, 20, 1 },
 
    { 7, -1, -1, G_STRING,                   /*** 6 ***/
      NONE,
      NORMAL,
-     (long) N_("Copyright (c) 2002 by"),
-     9, 6, 21, 1 },
+     (long) N_("Copyright (c) 2003 by"),
+     9, 4, 21, 1 },
 
    { 8, -1, -1, G_IMAGE,                    /*** 7 ***/
      TOUCHEXIT,
@@ -753,7 +744,7 @@ static const OBJECT desk_rs_obj_rom[] = {
      NONE,
      NORMAL,
      (long) N_("The EmuTOS development team"),
-     6, 7, 27, 1 },
+     6, 5, 27, 1 },
 
    { 10, -1, -1, G_STRING,                  /*** 9 ***/
      NONE,
@@ -1759,11 +1750,9 @@ void xlate_fix_tedinfo(TEDINFO *tedinfo, int nted)
     }
 }
 
-/* hack - change the sizes of the menus after translation
- *
- * DISCLAIMER: I wrote this by looking closely to the way the RSRC looks;
- * however I have no real knowledge of what a menu bar really is in terms 
- * of RSRC. So perhaps the code below just work by pure luck - LVL.
+/* change the sizes of the menus after translation 
+ * note - the code below is based on the assumption that the width of
+ * the system font is eight (documented as such in lineavars.h)
  */
 void adjust_menu(OBJECT *obj_array, WORD tree)
 {
@@ -1772,6 +1761,7 @@ void adjust_menu(OBJECT *obj_array, WORD tree)
 
     int i;  /* index in the menu bar */
     int j;  /* index in the array of pull downs */
+    int width = (v_hz_rez >> 3); /* screen witdh in chars */
     int x;  
     OBJECT *menu = OBJ(tree);
     OBJECT *mbar = OBJ(OBJ(menu->ob_head)->ob_head);
@@ -1779,7 +1769,7 @@ void adjust_menu(OBJECT *obj_array, WORD tree)
 
     x = 0; 
     j = pulls->ob_head;
-    for(i = mbar->ob_head ; i <= mbar->ob_tail ; i++) {
+    for (i = mbar->ob_head ; i <= mbar->ob_tail ; i++) {
         OBJECT *title = OBJ(i);
         int n = strlen( (char *) title->ob_spec);
         int k, m;
@@ -1787,34 +1777,33 @@ void adjust_menu(OBJECT *obj_array, WORD tree)
         title->ob_width = n;
 
         m = 0;
-        for(k = OBJ(j)->ob_head ; k <= OBJ(j)->ob_tail ; k++) {
+        for (k = OBJ(j)->ob_head ; k <= OBJ(j)->ob_tail ; k++) {
             OBJECT *item = OBJ(k);
             int n = strlen( (char *) item->ob_spec);
-            if(m < n) {
+            if (m < n) 
                 m = n;
-            }
         }
-        for(k = OBJ(j)->ob_head ; k <= OBJ(j)->ob_tail ; k++) {
+        
+        OBJ(j)->ob_x = 2+x;
+        
+        /* make sure the menu is not too far on the right of the screen */
+        if (OBJ(j)->ob_x + m >= width) {
+            OBJ(j)->ob_x = width - m;
+            m = (m-1) | 0x700;
+        }
+        
+        for (k = OBJ(j)->ob_head ; k <= OBJ(j)->ob_tail ; k++) {
             OBJECT *item = OBJ(k);
             item->ob_width = m;
         }
-
         OBJ(j)->ob_width = m;
-        OBJ(j)->ob_x = 2+x;
-
-        /* TODO - if the menu is too far on the right and goes out
-         * of the screen, shift in to the left.
-         *
-         * if(OBJ(j)->ob_x + m >= screen_width_expressed_in_chars) {
-         *     OBJ(j)->ob_x = ... - m;
-         * }
-         */
-
+        
         j = OBJ(j)->ob_next;
         x += n;
     }
     
     mbar->ob_width = x;
+#undef OBJ(a)
 }
 
 void desk_rs_init(void)
@@ -1828,6 +1817,12 @@ void desk_rs_init(void)
 
     /* translate strings in objects */
     xlate_obj_array(desk_rs_obj, RS_NOBS);
+
+    /* adjust slightly the about box for a CVS built */
+    if (version[0] == '(') {
+        desk_rs_obj[TR4+2].ob_spec = (long) "";
+        desk_rs_obj[TR4+3].ob_x = 12;
+    }
 
     /* adjust the size and coordinates of menu items */
     adjust_menu(desk_rs_obj, TR0);
@@ -1844,7 +1839,6 @@ void desk_rs_init(void)
     /* Disable menu entry that toggles icon/text mode */
     desk_rs_obj[TR0+ICONITEM].ob_state |= DISABLED;
 #endif
-
 }
 
 

@@ -1,7 +1,7 @@
 /*
  * version.h - the EmuTOS version string
  *
- * Copyright (c) 2002 EmuTOS development team
+ * Copyright (c) 2003 EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel
@@ -11,9 +11,10 @@
  */
 
 /*
- * this version string will be printed by initinfo.
- * furthermore it is used by the Makefile to generate a 
- * TGZ named after this version.
+ * this version string will be printed by initinfo and the about
+ * dialog in the desktop (the actual string is generated from
+ * the changelog so it is guaranteed to be accurate).
  */
 
-#define EMUTOS_VERSION "0.6"
+extern char version[];
+

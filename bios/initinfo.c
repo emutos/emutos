@@ -26,8 +26,7 @@
 #include "tosvars.h"
 #include "machine.h"
 #include "clock.h"    /* for displaying boot date and time */
-
-extern char version[];  /* the version string */
+#include "version.h"
 
 #include "initinfo.h"
 

@@ -1,25 +1,25 @@
 Start... early ages
 
-16. May. 1985
+1985-05-16
 - GEMDOS 1.0 released by Digital Research, Inc.
 
-05. Jun. 1987  ACH	PROC.C
+1987-06-05  ACH PROC.C
 - Problem - After physical disk error COMMAND.PRG gives "Command not
   found." message for all subsequent external commands. Fix - Changed the
   error handling code in  xexec() to always do an ixterm(t); on any disk
   error, thus freeing memory.
 
-26. Jun. 1987  ACH	TIME.C & BIOS
+1987-06-26  ACH TIME.C & BIOS
 - To enable GEMDOS to take advantage of real-time clock/calendars a new
   BIOS function (11h) has been added. Whenever the BDOS sets a new time
   or date this function is called and, if the hardware supports it, the
   real-time clock can be updated. When the BDOS needs the current time or
-  date the function is called to allow  the BIOS to update the internal
+  date the function is called to allow the BIOS to update the internal
   BDOS values. If there is no hardware clock the BIOS can  simply ignore
   this call as the BDOS still maintains the time and date internally
   based on the system tick.
 
-16. Sep. 1987  ACH	SUP.C
+1987-09-16  ACH SUP.C
 - Problem - the internal date and time variables used to time stamp file
   updates are set to 0 when the OS starts up.
 
@@ -27,96 +27,96 @@ Start... early ages
   (11h) so that the BIOS can initialise the internal variables from a 
   hardware real-time clock, if supported.
 
-09. Oct. 1987 ACH	BDOSMAIN.C
+1987-10-09  ACH BDOSMAIN.C
 - Duplicate definition of supstk and SUPSIZ removed from this module.
-  (Duplicated in  PROC.C and FS.H.) If the supervisor stack is to be OEM 
+  (Duplicated in PROC.C and FS.H.) If the supervisor stack is to be OEM 
   configurable some more reliable method must be devised.
 
-19. Nov. 1987 ACH	RWA.A
+1987-11-19  ACH RWA.A
 - Added _lbmove, _bfill, _bmove routines. (These were supposed to be in
   something called TOOLS.ARC which was not supplied by DRI.)
 
 ===== MAD working on his own ===============================================
 
-01. May. 2001
+2001-05-01
 - Started working on GEMDOS -> EmuTOS
 
-28. Jul. 2001 
+2001-07-28 
 - Working on MFP initialization
 
-29. Jul. 2001
+2001-07-29
 - Implementing Cartridge system for work with STonX
 - Rewrite of vector setup
 
-30. Jul. 2001
+2001-07-30
 - rewrote some exception handlers
 - implemented VBL handler
 - implemented HBL handler
 - implemented keyboard interrupt handler
 
-04. Aug. 2001 
+2001-09-04 
 - working on the keyboard interrupt routine
 
-05. Aug. 2001
+2001-09-05
 - got the keyboard interrupt running (wow!)
 
-06. Aug. 2001
+2001-09-06
 - got the keyboard queue running 
 
-07. Aug. 2001
+2001-09-07
 - Mega ST clock should work - could not test yet
 - Character blit implemented (not tested)
 - VT52 emulator implemented (not yet blitted to screen)
 
-10. Aug. 2001
+2001-09-10
 - Worked on character blitting (not tested)
 
-11. Aug. 2001
+2001-09-11
 - Got first real character blitted to screen
 - cons_out is basically working 
 
-12. Aug. 2001
+2001-09-12
 - Fighting much too long against a too small supervisor stack  :-(
 - Got scrolling much to slowly working
 
-13. Aug. 2001
+2001-09-13
 - scrolling now faster
 - worked on keyboard decoding for bconin (not tested)
 - fixed linker configuration in Makefile (libgcc forgotten)
 
-26. Aug. 2001
+2001-09-26
 - trying to bring BDOS and BIOS together
 
-29. Aug. 2001
+2001-09-29
 - integrating STonX native BIOS emulation to BIOS
 
-02. Sep. 2001 
+2001-09-02 
 - found out, where the basepage is for DTA stuff
 
-04. Sep. 2001
+2001-09-04
 - got memory setup descritor working 
 - got the command loading running
 
-09. Sep. 2001
+2001-09-09
 - Uppercase/lowercase is now working
 - got old command.prg compiled and started and basically WORKING!!!
 - command.prg: directory navigation is working
 
-10. Sep. 2001
+2001-09-10
 - handlers for showing exceptions 0x08 - 0x20 written (atari's bombs)
 
-24. Sep. 2001
+2001-09-24
 - fixed bug in supervisor stack setup (stack was top of stack + size of stack)
 - Now no garbage in the diskbuffer -> clean screen while ls or dir executing
 
-25. Sep. 2001
+2001-09-25
 - os_pal changed to word width
 - Implemented extended TOS 1.02 header - no basepage set in STonX any longer!
 - Did put .org 0x4f2 in front of _sysbase: in tosvars.s
 
 ===== Project created on Sourceforge ? ===================================
 
-25. Sep. 2001 
+2001-09-25 
 - linea commented out of cartridge (LVL)
 - added .even after .ascii strings (odd exception handlers) (LVL)
 - rwa.s, startup.s - changed "dc.w 0" by '\0' at end of .ascii strings (LVL)
@@ -124,23 +124,23 @@ Start... early ages
 - fixed (?) malloc() bug (due to missing prototype in fs.h) (LVL)
 - added/edited some copyright notices on top of files. (rwa.s, startup.s)
 
-26. Sep. 2001
+2001-09-26
 - change a prototype for xmgetblk - now command.prg load other programs!
 
-30. Sep. 2001
+2001-09-30
 - changed XBIOS stubs to right declaration. (MAD)
 
-01. Oct. 2001
+2001-10-01
 - ensured that the MIDI acia was inited (for KBD to work on stonc) (LVL)
 
-05. Oct. 2001
+2001-10-05
 - Makefile (LVL)
 - printf() clone for debug messages (LVL)
 - 8x16 font in high rez (LVL)
 - put all default exception vectors in bios/vectors.s (LVL)
 - clear bss before calling C code. (LVL)
 
-06. Oct. 2001
+2001-10-06
 - minor bug in vectors.s (LVL)
 - linea stubs (LVL)
 - SetScreen() in xbios.c
@@ -149,24 +149,24 @@ Start... early ages
 - changed sysvarend to _bssend (it is the BSS, that ends! - got from DRI)
 - added end.s with _bssend 
 
-08. Oct. 2001
+2001-10-08
 - started iorec and kbdvbase stuff (aim is to reimplement kbd.c to
   be compliant with the way TOS does it) (LVL)
 - some debug info in Malloc(), bios(5)
 
-09. Oct. 2001
+2001-10-09
 - Got asm conout working - MiNT did run somewhat better (MAD)
 - Includes some more needed lineavars initialized (_esc_init) (MAD)
 - cleaned Makefile and end.s ("the end.s episode") (LVL)
 - copy paste error in linea stubs, startup.s (LVL)
 
-10. Oct. 2001
+2001-10-10
 - EmuTOS now expects a cartridge of type 3, just as the original TOS. (THH)
 
-11. Oct. 2001
+2001-10-11
 - removed the cart directory and the cartridge - no longer needed (MAD)
 
-12. Oct. 2001
+2001-10-12
 - Initialised linea from startup.s (_esc_init -> _linea_init) (MAD)
 - Cleaned up conio.c
 - Cleaned up output stuff in bios.c
@@ -178,52 +178,52 @@ Start... early ages
 - Supexec() (LVL)
 - bios device functions arrays (bconstat_vec, ...) (LVL)
 
-13. Oct. 2001
+2001-10-13
 - Fixed some minor errors while compilation (MAD)
 - Added more system vars in tosvars.s and fixed an error (no pun_ptr) (MAD)
 
-14. Oct. 2001
+2001-10-14
 - implemented full memory configuration - much much more memory now (MAD)
 - implemented cursor (not blinking - this was easy) (MAD)
 - Changed version string of command.prg  (MAD)
 - correct fnt8x8 (previous one useless) and fnt8x16 (last char offset) (LVL)
 - some progress on iorec, but still not in service (LVL)
 
-16. Oct. 2001
+2001-10-16
 - Fixed some bugs in bios.c (the bconoutx functions need 2 parameters!) (THH)
 
-19. Oct. 2001
+2001-10-19
 - Cleaned up and seperated memory initialisation in memory.s  (MAD)
 - Cleaned up command.prg (got rid of cpm code) (MAD)
 
-20. Oct. 2001
+2001-10-20
 - added memmove and memset, erasing bmove, xmovs and bfill in bdos (LVL)
 - midi and ikbd bios device functions; new ikbd interrupt (LVL)
 - started to clean some headers (removed abbrev.h, btools.h) (LVL)
 - added bconout5 (raw console) (LVL)
 
-21. Oct. 2001
+2001-10-21
 - mfp xbios functions; mfp init rewritten using xbios funcs. (LVL)
 - vbl routine: added palette handling and vblqueue. (LVL)
 - misc. xbios routines (vsync, random, ...) (LVL)
 - warning free, automatic built date in command.prg (LVL)
 - still some headers cleaning in bios/ and include/ (LVL)
 
-22. Oct. 2001
+2001-10-22
 - Video mode can be set hard in startup.s to all three modes!!! (MAD)
 - Cursor is now blinking (thanks Laurent, for Timer stuff!) (MAD)
 - switched off debugging for public release in startup.s: _print (MAD)
 
-23. Oct. 2001
+2001-10-23
 - Video mode recognition works (mono/color) (MAD)
 - Emulated bigger screen resolutions work in mono mode  (MAD)
 
 ===== Initial release 0.1 ===================================================
 
-24. Oct. 2001
+2001-10-24
 - Changed all *.s assembler files to *.S, changed comments from "|" to "//"
 
-27. Oct. 2001
+2001-10-27
 - moved screen-related xbios functions in screen.c (LVL)
 - added sound support (untested) in sound.c (LVL)
 - added floppy support in floppy.c (LVL)
@@ -231,82 +231,82 @@ Start... early ages
 - started cleaning old VME stuff in bios.c (LVL)
 - native print is activated by a STONX_NATIVE_PRINT #define in config.h (LVL)
 
-28. Oct. 2001
+2001-10-28
 - emutos.img file now is 192 kb (MAD)
 - rewrote complete linea initialization in C (bios/lineainit.c) (MAD)
 
-31. Oct. 2001
+2001-10-31
 - a TOS in RAM loaded using gemdos boot.prg (LVL)
 - some memory fixes, got rid of end.o (LVL)
 - a TOS in RAM loaded using an autoboot floppy (LVL)
 
-01. Nov. 2001
+2001-11-01
 - removed old stuff from bios.c and startup.s (LVL)
 - fixed the BDOS-buffer-init bug: EmuTOS boots a real MegaSTE2!!! (LVL)
 - Removed hardcoded default drive #defines
 - added EmuCON (EmuTOS console, before command.prg) to EmuTOS      (MAD)
   This is not yet working (it seems command.c is not ROMable for now) 
 
-02. Nov. 2001
+2001-11-02
 - EmuCON is now working. (THH)
 - Implemented cursconf (XBIOS 0x15)  (MAD)
 - Removed F_IOCtl() and the MOUSE:, CLOCK: and NUL: devices.          (THH)
 - Mapped the CON:, AUX: and PRN: devices to Atari values (-1, -2, -3) (THH)
 - commented out XBIOS calls from command.c (for testing)
 
-03. Nov. 2001
+2001-11-03
 - run AUTO folder prgs, run EmuCON using Pexec(5) (LVL)
 - localconf.h taken in consideration (LVL)
 - implemented processor check and set of _longframe in BIOS/BDOS (MAD)
 - IKBD and MegaRTC clock (setting time & date untested) (LVL)
 
-04. Nov. 2001
+2001-11-04
 - added old VDI sources from DRI (not running yet)
 
-05. Nov. 2001.
+2001-11-05
 - added forgotten bios/processor.h (MAD)
 
-06. Nov. 2001
+2001-11-06
 - US kbd default, optional DE and FR kbds, tools to add more KBD defs (LVL)
 - changed joystick support in aciavecs.S (untested) (LVL)
 - Makefile (updated clean and distclean, BUILDDATE also for CYGWIN) (LVL)
 - Reimplemented bios/memory.S in a more readable manner   (MAD)
 
-07. Nov. 2001
+2001-11-07
 - Reimplemented bios/memory.S - is hopefully perfect now   (MAD)
 
-08. Nov. 2001
+2001-11-08
 - Added several ikbd-functions as base for mouse driver    (MAD)
 - changed ikbdws (now 2. arg is UBYTE *ptr instead of LONG) (MAD)
 
-11. Nov. 2001
+2001-11-11
 - Put portab.h to include/ for bdos AND bios   (MAD)
 - ripped out kprint() (it has been replaced by kprintf()  (MAD)
 
-13. Nov. 2001
+2001-11-13
 - Native Language support tools, french translation (LVL)
 - asm glue for kprintf in startup.S (LVL)
 
-15. Nov. 2001 
+2001-11-15 
 - Native Language support, german translation (MAD)
 - introduced PTR in include/portab.h, which is a LONG (MAD)
 
-16. Nov. 2001
+2001-11-16
 - Fixed bug in font_ring init (MAD)
 
-18. Nov. 2001 
+2001-11-18 
 - Initmous implemented (C part - no data from asm delivered yet)  (MAD)
 - removed -Tdata= from Makefile (LVL)
 - painfully ANSIfied bdos and removed nearly all warnings (LVL)
 - minor changes (LVL)
 
-21. Nov. 2001
+2001-11-21
 - Changed all 'char's in bdos/ to 'BYTE', other will follow (MAD)
 
-22. Nov. 2001
+2001-11-22
 - Partially implemented unused mouse driver in bios/mouse.c (MAD)
 
-24. Nov. 2001
+2001-11-24
 - machine detection up to the MegaSTE and cookie jar filled (LVL)
 - country setting now in Makefile, stored in header os_pal (LVL)
 - nvram overrides country setting if present (not tested) (LVL)
@@ -316,14 +316,14 @@ Start... early ages
 - a cvs trick to ensure obj/ directory is created even with update -d -P (LVL)
 - floppy floprate() and flopfmt() untested (LVL)
 
-25. Nov. 2001
+2001-11-25
 - Worked on bios/mouse.c   (MAD)
 
-26. Nov. 2001 
+2001-11-26 
 - got Initmous() working (thanks Laurent)  (MAD)
 - changed all "VOID"s to "void" in bios/*.[hc]  (MAD)
 
-27. Nov. 2001
+2001-11-27
 - solved bdos-broken-when-floppy bug (xlseek proto wad badly ansified) (LVL)
 - removed silly FOREVER, VOID, and others from portab.h (LVL)
 - crude mediach(), TODO section and error names in floppy.c (LVL)
@@ -331,7 +331,7 @@ Start... early ages
 - cksum handling of nvram (LVL)
 - new 'hardware' section in status.txt (LVL)
 
-28. Nov. 2001
+2001-11-28
 - Did put all *.txt files in doc/, except this.   (MAD)
 
 07. Dec. 2001
@@ -407,21 +407,21 @@ Start... early ages
   needs stack pointer - for both the bus error handler and for
   occasionals bsr kprintf (joy)
 
-01. Jan. 2002
+2002-01-01
 - FastRAM detection now uses proper CPU check (joy)
 - resetvec handling fixed (wrong check 'tst.b resetvec' removed) (joy)
 - cartridge is defined at $00fa0000, not $fffa0000 - fixed. (joy)
 - _check_read_byte now flushes pipelines at the correct places (joy)
 
-03. Jan. 2002
+2002-01-03
 - replaced "REG" by register in bios/ and bdos/  (MAD)
 - made bdos/kpgmld.c better readable (MAD)
 
-04. Jan. 2002 
+2002-01-04 
 - made bdos/fsio.c better readable (MAD)
 - bios/memory.S makes use of routines in bios/detect.S (joy)
 
-05. Jan. 2002
+2002-01-05
 - fixed set_sr(0x0300) to 0x2300 in bios/screen.c:vsync() (LVL)
 - added get_sr() macro in include/asm.h (LVL)
 - renamed macro stop by stop2300, added the config variable in config.h (LVL)
@@ -429,19 +429,19 @@ Start... early ages
 - changed an explicit tab into \t in a string in command.c (LVL)
 - made cvsready (LVL)
 
-06. Jan. 2002
+2002-01-06
 - fixed BAD bug in fsmain.c - the divmod() long number (byte offset of lseek)
   was stripped when converting to (int). Due to that relocation info couldn't
   be read from a file during Pexec() and that caused "invalid exec format"
   bugs. Actually most things in BDOS filesystem could never work! (joy)
 - "061a executable file format" debug print corrected: "601a ..." (joy)
 
-06. Jan. 2002
+2002-01-06
 - optimized divmod() and moved it to bdos/fsio.c (MAD) 
 - did put usr2xfr/xfr2usr to bdos/fsio.c too (MAD)
 - CLI: added unix like commands mv, cp, pwd, format, clear, rmdir, mkdir (MAD)
 
-07. Jan. 2002
+2002-01-07
 - added GETBOOT bootsector extractor routine to EmuCON (MAD)
 - fixed COPY/MOVE/CP/MV command (MAD)
 - fixed NVRAM RTC getting/setting date (month is already 1..12) (joy)
@@ -450,12 +450,12 @@ Start... early ages
 - fixed LineA v_bytes_lin variable (Clocky works now) (joy)
 
 
-08. Jan. 2002
+2002-01-08
 - hopefully fixed vsync() - I had omitted 'extern' in the declaration
   'volatile LONG frclock;' inside the routine. (LVL)
 - updated fr translations (LVL)
 
-09. Jan. 2002
+2002-01-09
 - bug now tells the number of untranslated entries in po files (LVL)
 - make ikbd.dsm creates the 'gcc -S' output of file bios/ikbd.c (LVL)
 - initinfo logo code rewritten: it's easier to change the picture now (LVL)
@@ -466,12 +466,12 @@ Start... early ages
 - german translation updated (MAD)
 - added doc/bugs.txt, entries from doc/todo.txt (MAD)
 
-10. Jan. 2002
+2002-01-10
 - bios/floppy.c: renamed flop_hdv_boot to flop_bootcheck
                  renamed do_hdv_boot to flop_hdv_boot 
                  should boot now after warmstart... (MAD)
 
-13. Jan. 2002
+2002-01-13
 - bios/floppy.c: moved BIOS functions (rwabs, getbpb, mediach) to blkdev.c
                  moved geometry from finfo to blkdev struct
                  moved last_access to devices struct
@@ -506,7 +506,7 @@ Start... early ages
            That needs to be debugged (or maybe rewritten completely). (joy)
 - updated po/de.po, because of stupid translations by me (MAD)
 
-14. Jan. 2002
+2002-01-14
 - foreground color now inited in lineainit.c (LVL)
 - CZ fonts (first phase - next will have a correct font_ring) (LVL)
 - wrote doc/country.txt, an overview of country-dependent stuff (LVL)
@@ -517,7 +517,7 @@ Start... early ages
 - fixed the amount of fastram printed in debug mode (joy)
 - set the C: in drvbits for the hacked up host access disk drive (joy)
 
-15. Jan 2002
+2002-01-15
 - disabled the bmem_allowed bug what Petr found in bios/biosmem.c (MAD)
 - bios/detect.S: functions now keep register a2 intact (LVL)
 - bios/kprint.c: temporarily removed console print in panic, until one
@@ -537,7 +537,7 @@ Start... early ages
 - bios/bios.c - increased the fixed size sector cache to 4kB sector. That's
   enough for partitions smaller than 512MB. Ideally it should be 32kB (joy).
 
-16. Jan. 2002
+2002-01-16
 - aes and vdi not exported in make tgz (LVL)
 - bios/clock.c: enabled MegaRTC clock by commenting out validity test (LVL)
 - bios/clock.c: removed old commented-out code (LVL)
@@ -549,7 +549,7 @@ Start... early ages
 - bios/floppy.c: some untested unique FDC track register bookkeeping (LVL)
 - made ramtop and ramvalid visible from C code (LVL)
 
-19. Jan. 2002
+2002-01-19
 - experimental autodetect ARAnyM or STonX native print (activated in 
   bios/config.h) (LVL)
 - new setjmp/longjmp replacing older ones (LVL)
@@ -560,7 +560,7 @@ Start... early ages
 - implemented the font_ring as 3 lists of linked fontheaders (MAD)
 - documented all tosvars in bios/tosvar.h till 0x5b0 (MAD)
 
-20. Jan. 2002
+2002-01-20
 - in bios/lineainit.c there is now the sysfonts array for linea.
   font_ring is not longer used by linea (MAD).
 - keyboard reset (Alt+Ctrl+Del(+RShift)) implemented (joy)
@@ -572,7 +572,7 @@ Start... early ages
 - blkdev.h: retrying in emulator is not necessary (joy)
 - blkdev.c: 16-bit recn should work now (joy)
 
-21. Jan. 2002
+2002-01-21
 - in bios/lineainit.c: removed font_ring initialization (MAD)
 - re-wrote completely Pexec() for header flags support. I kept the old routine
   for reference, but ultimately it will go away. Fastram is allocated when 
@@ -580,7 +580,7 @@ Start... early ages
   be changed as well); Pexec() flag 6 supported. I did not test on Fastram but
   all of autoexec, EmuCON, loading progs from C: and A: work. (LVL)
 
-22. Jan. 2002
+2002-01-22
 - untested ttram-compliant internal memory stuff in proc.c (LVL)
 - cleaned up bios/biosmem.c:bmem_init, removed old _b_mdx from startup.S (MAD)
 - put diskbuf from startup.S to floppy.c, made dskbufp a pointer (MAD)
@@ -591,16 +591,16 @@ Start... early ages
 - free TT-RAM is displayed in initinfo.c (joy)
 - put diskbuf to blkdev.c (MAD)
 
-23. Jan. 2002
+2002-01-23
 - Did move the BCB and bufl_init to bdos/fsbuf.c (MAD)
 - updated po/de.po po/fr.po for Fast-RAM texts (MAD)
 - did put BPB in bios/blkdev.h (MAD)
 
-25. Jan. 2002
+2002-01-25
 - Did put drvbit stuff into bios/blkdev.c (MAD)
 - cleaned up bios/bios.c a bit (MAD)
 
-26. Jan. 2002
+2002-01-26
 - make nodepend does not alter Makefile unnecessarily (faster CVS?) (LVL)
 - ramtos reloc address derived automatically (RAMTOS works again) (LVL)
 - bdos/pkgmld.c: PF_FASTLOAD implemented, deleted old implementation (LVL)
@@ -613,12 +613,12 @@ Start... early ages
 - a check for Control key added to the AUTO folder execution (joy)
 - #if ARANYM_NATIVE_DISK added to bios/disk.c - so it doesn't kill STonX (joy)
 
-27. Jan. 2002
+2002-01-27
 - changed kcprintf() calls in panic() to vkcprintf for good CR/LF (MAD)
 - drive and partition scanning finished (joy)
 - initinfo shows the available gemdos logical drives (joy)
 
-28. Jan. 2002
+2002-01-28
 - 1-bit color depth on Falcon now in proper black-on-white colors (joy)
 - machine_init() split to two phases - machine_detect() can be called very
   early() and new machine_init() creates cookies etc. (joy)
@@ -627,43 +627,43 @@ Start... early ages
 - lineainit.c sets the variables according to proper screen resolution (joy)
 - fixed BDOS 16-bit FAT - integer computing was overflowing in fsdrive.c (joy)
 
-30. Jan. 2002
+2002-01-30
 - bdos/osmem.c variables init fixed. (joy)
 - bios/blkdev.c - mediach returns "not changed" status for hard drives (joy)
 - bios/machine.c - _FRB buffer for DMA operations to FastRAM added (joy)
 - bios/floppy.c - floppy rwabs now use _FRB if destination is in FastRAM (joy)
 
-03. Feb. 2002
+2002-02-03
 - bios/screen.c - do not change VIDEL freq by Shifter init code (joy)
 - bios/blkdev.c - buf must be incremented (thanks Laurent) (joy)
                 - getbpb no more divide by zero error (thanks Laurent) (joy)
 - bios/floppy.c - corrent blkdev[].unit init for floppy B: (thx Laurent) (joy)
 
-06. Mar. 2002
+2002-03-06
 - bios/machine.c - got rid of some compiler warnings
 
-07. Mar. 2002
+2002-03-07
 - Made the VDI compilable again... And it even seems already to work a little
   bit (THH)
 
-08. Mar. 2002
+2002-03-08
 - Cleaned up the AES sources, added prototypes and header files. The AES can
   now be linked with the rest of EmuTOS. (THH)
 
-11. Mar. 2002
+2002-03-11
 - vdi/lisastub.c cleaned up of warnings 
 - vdi/gsxextrn.h added prototypes
 
-12. Mar. 2002
+2002-03-12
 - vdi/* made prototypes, no warnings anymore, indented whole vdi (MAD) 
 - vdi/* jmptbl.c changed jumptables functions to void - arguments 
   are passed in arrays in VDI, not via stack.  (MAD)
 - vdi/lisagem.S partially implemented mouse driver
   
-13. Mar. 2002
+2002-03-13
 - bios/bios.c removed mouse_init. Done, when graphics is initialized (MAD)
 
-15. Mar. 2002
+2002-03-15
 - vdi/lisagem.S - got the mousedriver working (MAD)
 - bios/mouse.c  - Added mouse_init - initial setup of mouse parameters (MAD)
 - bios/mousedrv.S - Separated the mousedriver from VDI (MAD)
@@ -671,46 +671,46 @@ Start... early ages
 - bios/lineainit.c - implemented v_pl_dspl (bytes/plane) for VDI (MAD)
 - bios/screen.c - the last patch for real Falcon reverted because it caused
                   black screen under ARAnyM (joy)
-17. Mar. 2002
+2002-03-17
 - vdi/* - corrected the swapped #defines to use Atari and/or VME10 (MAD)
 - You can now use the AES as user interface instead of EmuCON (THH)
   (by enabling it in the Makefile, however AES is not yet fully working)
 
-18. Mar. 2002
+2002-03-18
 - bios/kprint.c - registers are printed out to ease debugging (joy)
 
-20. Mar. 2002
+2002-03-20
 - The AES are now succeed in loading and running DESKTOP.APP from disk! (THH)
 - Moved some more VDI variables to lineavars.S (THH)
 - Cleaned up the VDI, it works now quite good in ST-HIGH resolution (THH)
 
-21. Mar. 2002
+2002-03-21
 - doc/changelog.txt - added vdi/ and aes/ to the tgz target (MAD)
 - doc/license.txt   - added GPL for EmuTOS (MAD)
 
-25. Mar. 2002
+2002-03-25
 - Included the GEM.RSC into the ROM (THH).
 
-26. Mar. 2002
+2002-03-26
 - bdos/biosmain.c - made DBGIFOS working by disabl. osif  (MAD)
 - bdos/umem.c  switched off DBGUMEM and assert by default (MAD)
 
-28. Mar. 2002
+2002-03-28
 - bios/startup.S - changed the _dummyaes vector for fVDI (MAD)
 - bios/startup.S - changed label _dummyaes to _gemtrap (MAD)
 
-01. Apr. 2002
+2002-04-01
 - vdi/lisagem.S - SR switched on for timer interrupt (MAD)
 - bios/startup.S - did switch on the etv_timer interrupt vector (MAD)
 
-02. Apr. 2002
+2002-04-02
 - vdi/lisagem.S - put mouse drawing additionally to timer_int (MAD)
 - vdi/lisagem.S - put _CLEARMEM to vdi/monout.c (MAD)
 
-04. Apr. 2002
+2002-04-04
 - desk/*  -  Added the desktop sources (THH).
 
-05. Apr. 2002
+2002-04-05
 - newer bug - handles different encoding for different languages (LVL)
 - added administrative entry in fr.po and de.po (LVL)
 - encoding specified in po/LINGUAS (LVL)
@@ -723,13 +723,13 @@ Start... early ages
 - misc involuntary whitespace changes in some files (LVL)
 - added po/cs.po from Bohdan for Czech native language support  (MAD)
 
-08. Apr. 2002
+2002-04-08
 - bios/mousedrv.S - cleaned up a bit (MAD) 
 - vdi/lisagem.S - did remove SR saving in tick_int, like in TOS (MAD)
 - aes/* - removed some warnings (MAD)
 - bdos/fs* - replaced NULPTR completely by NULLPTR  (MAD)
 
-09. Apr. 2002
+2002-04-09
 - vdi/vdimouse.S - renamed all VEX* functions to lower case (MAD)
 - vdi/lisagem.S - renamed EX_TIMV to vex_timv (MAD)
 - removed Kamenicky fonts (LVL)
@@ -739,7 +739,7 @@ Start... early ages
 - Makefile: fixed typo for desktop obj files (LVL)
 - added some const keywords here and there (LVL)
 
-10. Apr. 2002
+2002-04-10
 - Added additional application stack in aes/gemshlib.c so that it is now
   possible to start another application at least. However, it will still
   crash when it finishs. (THH)
@@ -747,63 +747,63 @@ Start... early ages
 - Disabled the autoexec stuff in bios/startup.S, I think creating a new
   baspage for that is not really necessary (THH).
 
-11. Apr. 2002
+2002-04-11
 - Finally found the other bug that caused EmuTOS to crash when running a
   GEM application (dos_exec() was not reentrant) (THH)
 - Now linking desk_rsc.c into EmuTOS, too (THH)
 
-13. Apr. 2002
+2002-04-13
 - doc/vdibind.txt - added documentation for vdi routine implementation (MAD)
 - doc/vdimouse.S - put all mouse related stuff here in (MAD)
 
-14. Apr. 2002
+2002-04-14
 - bios/lineavars.S - corrected length and memory position of vars (MAD)
 
-15. Apr. 2002
+2002-04-15
 - finally commited in Czech keyboard (LVL)
 
-16. Apr. 2002
+2002-04-16
 - bios/mousedrv.S - moved to vdi/mouse.drv, because it is not BIOS (MAD)
 - vdi/mousedrv.S - did put all non-graphical functions here (MAD)
 - vdi/vdimouse.S - did put all graphical functions here (MAD)
 
-16. Apr. 2002
+2002-04-16
 - vdi/mousedrv.S - moved some more routines in there (MAD)
 
-18. Apr. 2002
+2002-04-18
 - vdi/opnwkram - added right screen coordinates to wk info (MAD)
 
-20. Apr. 2002
+2002-04-20
 - vdi/vdimouse.S - used concat routine for screen offset calculation (MAD)
 - vdi/vdimouse.S - got mouse working for big screens (MAD)
 - vdi/* - got all other routines working for big screens too (MAD)
 - vdi/* - remove also many vme10 #ifdefs too (MAD)
 
-20. Apr. 2002
+2002-04-20
 - desk/* - removed/fixed all compiler warnings (MAD)
 - vdi/opnwkram - plane number and fonts corr. initialized (MAD)
 
-23. Apr. 2002
+2002-04-23
 - Makefile - fal_$(DESASS) removed on make clean (LVL)
 - Fixed text and mouse drawing in VDI color mode (THH).
 - Improved the desktop's about dialog (THH).
 - bios/startup.S - VBL video mode change written (disabled) (MAD)
 
-24. Apr. 2002
+2002-04-24
 - vdi/* - switched some jmptbl functions to lowercase (MAD)
 - vdi/bezier - added raw bezier code from PC GEM's GDOS - not yet working (MAD)
 
-25. Apr. 2002
+2002-04-25
 - vdi/* - switched some more functions to lowercase (MAD)
 - vdi/text.c - ripped mono blitting (MAD)
 
-26. Apr. 2002
+2002-04-26
 - vdi/vmouse.c - implemented vex and some other mouse funcs in C (MAD)
 - util/miscasm.S - added for smaller asm routines (MAD)
 - bdos/umem.c - added missing break in a case that is responsible
                 for returning free memory - now everything works OK! (joy)
 
-27. Apr. 2002
+2002-04-27
 - vdi/*.S - changed // back to * inside comments (LVL)
 - aes/large.S - moved LSTCPY to util/stringasm.S named strlencpy (LVL)
 - aes/optimopt.S - replaced strchk by strcmp (LVL)
@@ -814,7 +814,7 @@ Start... early ages
 - updated some todo items (LVL)
 - aes/ - wrote comments trying to understand how the processes work (LVL)
 
-28. Apr. 2002
+2002-04-28
 - desk/desk_rsc.c - added string translation using gettext (LVL)
 - po/fr.po - updated FR translations to include desktop strings (LVL)
 - vdi/vdimain.c - VDI startup and other stuff  (MAD)
@@ -823,7 +823,7 @@ Start... early ages
 - vdi/lisagem.S -> vdimain.c, file deleted (MAD)
 - vdi/txtblit.S - CLC_DDA now in C in text.c:clc_dda  (MAD)
 
-29. Apr. 2002
+2002-04-29
 - bios/config.h - moved to include/config.h (LVL)
 - include/config.h - set CONF_NO_NLS = 1 to disable NLS completely (LVL)
 - bios/country.c - moved keyb and font selection tables here from ikbd.c and
@@ -833,25 +833,25 @@ Start... early ages
 - renamed back CS into CZ to please Petr; did not alter po/cs.po (LVL)
 - vdi/vinput.c - rewrote some key stuff in C (MAD)
 
-02. May. 2002
+2002-05-02
 - Added John Elliott's "Desktop 1.2" patches - it's not enabled yet since
   it is quite instable, but you can enable it by compiling with "-DDESK1"
   and adding desk/desk1.c to your Makefile (THH).
 
-04. May. 2002
+2002-05-04
 - po/POTFILES.in - removed cli files (LVL)
 - added experimental ACSI support in acsi.c; it does work on STonC but
   freezes the atari when no hard disk is present. Activate it by setting
   CONF_WITH_ACSI in include/config.h (LVL)
 - bios/tosvars.h: hz_200 declared as volatile (LVL)
 
-05. May 2002
+2002-05-05
 - Makefile : Now linking with gcc instead of ld, so we don't depend
   on a particular library folder (THH).
 - aes/gemsuper.c : Added a simple fsel_exinput() (THH).
 - Fixed AES keyboard bug (gsx_char() and strlencpy() have been wrong) (THH).
 
-10. May. 2002
+2002-05-10
 - bios/bios.c: changed the init order. ACSI now works on STonC and STonX.
   (the trouble was, the DMA timeouts didn't work because the timer C was not
   enabled at the time when disk initialisation occurred) (LVL)
@@ -863,11 +863,11 @@ Start... early ages
 - vdi/gsxasm1.S: made __ABLINE externally visible (LVL)
 - updated some doc/ files (LVL)
 
-14. May. 2002
+2002-05-14
 - vdi/vinput.c - renamed to vdiinput.c, should hold all input stuff (MAD)
 - vdi/vdiinput.c - implemented gloc_key in C, more will follow (MAD)
 
-16. May. 2002
+2002-05-16
 - vdi/vdimouse.S - moved/rewrote DIS_CUR to monobj.c:dis_cur()  (MAD)
 - vdi/vdiinput.c - moved/rewrote vdimouse_init/exit to here (MAD)
 - vdi/vdimouse.S - move rest of asm routines from mousedrv.S to here (MAD)
@@ -876,14 +876,14 @@ Start... early ages
 - include/asm.h - added trap1/13/14 calls as externals (MAD)
 - vdi/vdiinput.c - vdimouse_init() fixed (MAD)
 
-17. May. 2002
+2002-05-17
 - vdi/*.c - replaced all gotos by other constructs (MAD)
 - vdi/lisastubs - removed, put into vdi/monobj.c for less files (MAD)
 
-18. May. 2002
+2002-05-18
 - vdi/text.c - act_siz implemented in C (asm commented out) (MAD)
 
-30. May 2002
+2002-05-30
 - aes/* - Removed all "REG"s in old function declarations, GCC seems to
   have problems with "registered" parameters. This fixes the GEM dialog
   bug that caused the text fields not to redraw correctly (THH).
@@ -898,25 +898,25 @@ Start... early ages
 - vdi/attrib.h - moved to vdi/vdidef.h (MAD)
 - vdi/fontdef.h - integrated in vdi/vdidef.h (MAD)
 
-15. Jun. 2002
+2002-06-15
 - bios/memory.S - separated Falcon and ST stuff, still a memconfig bug? (MAD)
 
-16. Jun. 2002
+2002-06-16
 - bios/detect.S - removed, put into processor.S and vector.S (MAD)
 - bios/vectors.S - put exception stuff here in (mostly from startup.S). (MAD)
 
-22. Jun. 2002
+2002-06-22
 - Makefile - factored out some code for building sized images (LVL)
 - doc/changelog.txt - editorial changes back in the past (LVL)
 - doc/authors.txt - a first attempt. Please don't feel offended if I forgot
   something. The idea is to be able in a second phase to remove the 'Authors' 
   lines in our source file headers that IMHO are not truly meaningful (LVL)
 
-23. Jun. 2002
+2002-06-23
 - include/config.h - Added TOS_VERSION define to switch TOS versions and
   to reduce size if compiling a 192kB image (THH)
 
-01. Jul. 2002
+2002-07-01
 - doc/processor.h - added some documentation about processor handling (LVL)
 - tools/bug.c 
   - prints "entry" instead of "entries" when only one entry (LVL)
@@ -936,40 +936,40 @@ Start... early ages
 - bios/version.c - removed, was commented out for some time now (LVL)
 - po/de.po - some german translations done (MAD)
 
-09. Jul. 2002
+2002-07-09
 - po/de.po - all german translations done (MAD)
 
-19. Jul. 2002
+2002-07-19
 - bios/processor.S - added skeleton for privileged instruction handler (MAD)
 
-20. Jul. 2002
+2002-07-20
 - bios/ikbd.[ch], bios/vectors.S - added key repeat (LVL)
 - bios/bios.c - priviledge exception ignored (LVL)
 - doc/authors.txt - updated and added email addresses (LVL)
 
-22. Jul. 2002 
+2002-07-22 
 - po/de.po - two more german translations done (MAD)
 - po/cs.po - did bug update cs.po for new translations (MAD)
 
-23. Jul. 2002
+2002-07-23
 - bios/vector.S - implemented priv. instr. handler (MAD)
                 - moved ill. and priv. instr. handlers here. (MAD)
 
-24. Jul. 2002
+2002-07-24
 - bios/vector.S - changed priv. instr. handler (MAD)
 - bios/bios.c - Now here all basic vector is done in vecs_init() (MAD)
 
-27. Jul. 2002
+2002-07-27
 - desk/deskapp.c - Enabled/fixed loading and saving of DESKTOP.INF, but
   the file is now called EMUDESK.INF due to some incompatibilities with
   the original GEM's DESKTOP.INF. Added automatic drive scanning when there
   is no such file, too. (THH)
 - aes/gemfmlib.c - Dialogs can now be left by pressing ENTER, too. (THH)
 
-29. Jul. 2002
+2002-07-29
 - vdi/gsxvars.S - removed. Variables are in their related source (MAD)
 
-30. Jul. 2002
+2002-07-30
 - vdi/gsxasm*.c - Fixed bug in VDI that sometimes wrote to ROM area (THH).
 - aes/crysbind.h - Size of the addr_in array was not big enough for
   fsel_exinput(). Now this AES call should work, too. (THH)
@@ -980,21 +980,21 @@ Start... early ages
 - vdi/vdimouse.S - removed rbp, used !vme10 instead (MAD)
 - vdi/gsxdef.h - empty, deleted  (MAD)
 
-30. Jul. 2002
+2002-07-30
 - vdi/vdiinput.c - fixed bug in vb_draw routine (MAD)
 
-01. Aug. 2002
+2002-09-01
 - bios/blkdev.c - booting from harddisk enabled (joy)
 - bios/disk.[ch] - ARANYM_NATIVE_DISK does not crash other machines now.
                    Also it makes use of new ARAnyM XHDI function XHREADWRITE.
                    Harddisk is now read/write (if enabled in ARAnyM).
 
-07. Aug. 2002
+2002-09-07
 - po/cs.po - Bohdan's czech language translation of GEM (MAD)
 - vdi/ecslisa - unused, just left for reference for now (MAD)
 - vdi/vdiesc.c - implementation in C (MAD)
 
-09. Aug. 2002
+2002-09-09
 - bios/startup.S - Filled the remaining empty ROM header entries (THH).
 - aes/gemasm.S - Accessories are now working on CPUs >= 68010, too! (THH).
 - bios/fntlat2_*.c - Czech language okay (make COUNTRY=cz) but file now is
@@ -1002,7 +1002,7 @@ Start... early ages
   cz country on a <256k emulator; UNIQUE cz does not work yet (LVL)
 - bios/startup.S - deleted unused function vidchng() (MAD)
 
-11. Aug. 2002
+2002-09-11
 - bios/startup.S - added NatFeat detection code (joy)
 - bios/bios.c - added 'int native_features' flag (please move elsewhere as 
   appropriate - it's definitely not bios related but will be used mostly
@@ -1017,26 +1017,26 @@ Start... early ages
   interruptable by a keypress. Would be nice if it was possible to jump
   to the EmuShell instead of booting the GEM by pressing a key. (joy)
 
-14. Aug. 2002
+2002-09-14
 - desk/icons - removed unnecessary 48x24 icons, added sed scripts to help edit
   icons (LVL)
 - desk/desk_rsc.c - menu items are automatically adjusted to the right size
   after translation; I don't think this hack would work in the general case
   but for the current desktop it works fine (no sub-menus, icons, ...) (LVL)
 
-16. Aug. 2002
+2002-09-16
 - vdi/gsxasm1.S - fixed bug in CLC_FLIT (no regs was saved) (MAD)
 - vdi/gsxasm1.S - also needed reg-save wrapper added for vec_len (MAD)
 
-17. Aug. 2002
+2002-09-17
 - vdi/monout.c - smul_div now in C (part. from fVDI) (MAD)
                - pline optimized (from fVDI) (MAD)
                - vec_len implemented in C (MAD)
 
-18. Aug. 2002
+2002-09-18
 - vdi/text.c - trnsfont implemented in C (MAD)
 
-20. Aug. 2002
+2002-09-20
 - vdi/vdimain.c - precalculated shift offset shft_off for concat (MAD)
 - Makefile, include/config.h, country.mk, bios/country.c - changed the way
   UNIQUE country EmuTOS are built. Now make unique 192 and 256k work for 
@@ -1050,73 +1050,73 @@ Start... early ages
   renamed to int has_natfeats (LVL)
 - bios/initinfo.c - changed wait time from 5 to 2 sec (MAD)
 
-21. Aug. 2002
+2002-09-21
 - doc/announce.txt - updated for release 0.5 (MAD)
 
-27. Aug. 2002
+2002-09-27
 - Makefile - replaced "-O2" by "-Os" for smaller size (MAD)
 
-01. Sep. 2002
+2002-09-01
 - doc/status - updated a bit (MAD)
 
-03. Sep. 2002
+2002-09-03
 - bdos/bdosmain.c - Removed unused Setvec/Getvec functions. (THH)
 - vdi/monout.c - abline() in C part. implemented (commented out) (MAD)
 
-05. Sep. 2002
+2002-09-05
 - vdi/monout.c - abline() in C compl. implemented (MAD)
 
-06. Sep. 2002
+2002-09-06
 - vdi/monout.c - abline() in C optimized (MAD)
 
-09. Sep. 2002
+2002-09-09
 - vdi/monout.c - abline() in C more optimized (MAD)
 
-12. Sep. 2002
+2002-09-12
 - vdi/monout.c - abline() simplified (better for color) (MAD)
                - habline() initially implemented (MAD)
                
-15. Sep. 2002
+2002-09-15
 - vdi/monout.c - abline() always starts with smaller x value (MAD)
                - habline() fully implemented in C (MAD)
                
-17. Sep. 2002
+2002-09-17
 - vdi/monout.c - abline() new old algorithm and bug free (MAD)
                - abline() opt. (color now faster, than old asm) (MAD)
 - bios/linea.S - made CLC_FLIT as linea_6 working. (MAD) 
 
-18. Sep. 2002
+2002-09-18
 - vdi/monout.c - put_pix() for linea reimplemented in C (MAD)
                - get_pix() for linea reimplemented in C (MAD)
                - rectfill() implemented in C (MAD)
 
-20. Sep. 2002
+2002-09-20
 - vdi/monout.c - abline() bugs fixed. Thanks, Johan! (MAD)
 
-21. Sep. 2002 
+2002-09-21 
 - vdi/tranfm.S - vr_trnfm() implemented in assembler (MAD)
 - vdi/monout.c - rectfill() in C (MAD)
                - habline() uses same sub-routines as rectfill() (MAD)
 - vdi/gsxasm1.S - concat() moved to gsxasm2.S, where it is used (MAD)
 
-22. Sep. 2002 
+2002-09-22 
 - vdi/monout.c - replaced asm vr_trnfm() by Johan's impl. in C (MAD)
                - fixed bugs in horizontal line drawing modes (MAD)
 - vdi/tranfm.S - removed from compile in Makefile (MAD)
 
-25. Sep. 2002 
+2002-09-25 
 - vdi/monout.c - fixed bug in color setting (MAD)
 
-27. Sep. 2002 
+2002-09-27 
 - vdi/monout.c - optimized horzline() and rectfill()  (MAD)
 
-29. Sep. 2002
+2002-09-29
 - make etoscpr.img makes experimental compressed-RAM-inside-ROM (LVL)
 - use make comprtest to test the compressor (LVL)
 - bios/memory.s - debug messages optional (LVL)
 - added -pedantic to $(NATIVECC) options, killed some warnings in tools (LVL)
 
-30. Sep. 2002
+2002-09-30
 - tools/compr.c et al - added a header in the compressed data, for a cleaner
   handling of the destination address in ROM (LVL)
 - Makefile - code factorisation, various optimisations, foo.dsm is 
@@ -1126,7 +1126,7 @@ Start... early ages
   of update of individual entries (LVL)
 - doc/install.txt - documented some of the current makefile targets (LVL)
 
-05. Oct. 2002
+2002-10-05
 - renamed _FOO_H into H_FOO_ for standard C compliance (I kept the script 
   which did it in case anybody wants to change back or again) (LVL)
 - bdos/time.[ch] - regrouped stuff here, and connected it to _evt_timer (LVL)
@@ -1137,12 +1137,12 @@ Start... early ages
 - bios.c - commented out illegal error setting, as I don't think it does the
   right thing [changing a move SR, to CCR, is done by the priv stuff] (LVL)
 
-12. Oct. 2002
+2002-10-12
 - merged tools/keytbl2c and util/dumpkbd.c - now dumpkbd.prg directly 
   generates keyb_xx.h (LVL)
 - Makefile - fixed a bug in make depend (LVL)
 
-13. Oct. 2002
+2002-10-13
 - renamed font files, to allow a systematic handling of fonts (LVL)
 - bios/country.c - tables now generated from country.mk in bios/ctables.h (LVL)
 - Makefile - introduced $(TOCLEAN) that gradually stores the name of files 
@@ -1150,7 +1150,7 @@ Start... early ages
   in make clean (LVL)
 - doc/country.txt - updated, but still not entirely satisfactory (LVL)
 
-14. Oct. 2002
+2002-10-14
 - Makefile - some more optimisations: removed tedious $(PBIOSCSRC) stuff;
   less sub-processes are launched (e.g. grep | sed | sort | sort replaced
   by the more logical sed | sort ... sometimes you just see when things
@@ -1160,7 +1160,7 @@ Start... early ages
   NULL and NULLPTR be ((void*)0). Then we could replace NULLPTR by NULL and
   forget about NULLPTR... (LVL)
 
-18. Oct. 2002
+2002-10-18
 - genctables.awk - portable awk, country names need not be 2 chars long (LVL)
 - bios/processor.[hS] - 68040 instruction cache stuff (LVL)
 - bdos/proc.c - instruction cache invalidation on pexec (LVL)
@@ -1177,7 +1177,7 @@ Start... early ages
 - include/config.h - removed "i18nconf.h" from there, as it caused trouble 
   with tools needing "string.h" but not "i18nconf.h" (LVL)
 
-19. Oct. 2002
+2002-10-19
 - bios/bios.c - display initinfo before you start booting from a device
   so that users have time to press and hold the Alt key to skip the boot (joy)
 - bios/blkdev.c - added check for the Alt key (joy)
@@ -1189,25 +1189,25 @@ Start... early ages
 - bios/startup.S, bios/disk.c, bios/machine.c - NatFeat instruction codes
   changed to LineF $fe00/$fe01 (joy)
 
-20. Oct. 2002
+2002-10-20
 - bios/startup.S, bios/disk.c, bios/machine.c - NatFeat instruction codes
   changed back to good old $7300/$7301. The LineF interface requires
   the $fe0x instructions to be long words and I am not ready to accept
   such change of NatFeat calling convention. Sorry. (joy)
 
-28. Oct. 2002
+2002-10-28
 - bios/bios.c - loading of AUTO folder programs displayed on stderr console
   via new NF_STDERR (sorry for the mess in bios.c, the nf calling must be
   cleaned up somehow). (joy)
 
-31. Oct. 2002
+2002-10-31
 - Makefile - changed, so that vdi/lisaesc.S is used again (MAD)
 - aes/gemdosif.S - changed to lowercase and put _back after entry (MAD)
 
-02. Nov. 2002
+2002-11-02
 - aes/geminit.c - held Ctrl key causes not loading the ACCs (joy)
 
-03. Nov. 2002
+2002-11-03
 - bios/xhdi.[ch] - XHDI implemented - allows running FreeMiNT (joy)
 - bios/disk.c - some functions moved to the xhdi.c (joy)
 - bios/blkdev.c - initialization order changed (joy)
@@ -1215,31 +1215,31 @@ Start... early ages
 - bios/startup.S - XHDI entry point (joy)
 - bios/initinfo.c - missing #include (joy)
 
-07. Nov. 2002
+2002-11-07
 - util/intmath.c - central impl. of (s)mul_div()    (MAD)
 - aes/gemdosif.h - change tikaddr and tiksav to void *  (MAD)
 
-09. Nov. 2002
+2002-11-09
 - aes/gemgsxif.c - changed i_lptr1 to use just one argument (MAD)
 
-16. Nov. 2002
+2002-11-16
 - aes/gemdisp.c - schedule() loop now sleeps with the STOP #2300 insn (joy)
 
-22. Nov. 2002
+2002-11-22
 - vdi/vdimain.c - change timer vectors to be used as pointers (MAD)
 
-13. Jan. 2003
+2003-01-13
 - bios/natfeat.[hS] - NatFeat stuff moved to separate files (joy)
 - bios/startup.S, bios/machine.c - cleaned up (joy)
 - "__NF" cookie now contains pointer to the NatFeat structure with
   function pointers (joy)
 
-14. Jan. 2003
+2003-01-14
 - bios/vectors.S - the screenpt must be cleared after successful video
   registers update (joy)
 - NatFeat calling cleaned up - uses function pointers now (joy)
 
-20. Jan. 2003
+2003-01-20
 - bdos/fsdir.c - Fsfirst/Fsnext nesting fixed. This was a very important
   fix since without this the AUTO folder processing didn't work (Standa)
 - bdos/proc.c - local or global variable referenced? Fixed by a wild
@@ -1252,20 +1252,20 @@ Start... early ages
   is considered to be 16-bit FAT. Without this patch 4 MB disk image
   formatted with TOS could not be used under EmuTOS. Now fixed (joy)
 
-21. Jan. 2003
+2003-01-21
 - bdos/fsfirst.c - yesterday's patch corrected (Standa)
 - bios/bios.c - the Setdta() should not be needed (Standa)
 
-29. Jan. 2003
+2003-01-29
 - bdos/kpgmld.c - cleaned interface with proc.c a little bit (LVL)
 - bdos/proc.c - yet another cleanup of the xexec() implementation; there
   should be no memory leak any more in case of IO error, but of course this
   feature is untested as of now (LVL)
 
-1. Feb. 2003
+2003-02-01
 - bios/ikbd.[ch] - dead keys fixed, backspace seems to work okay now (LVL)
 
-6. Feb. 2003
+2003-02-06
 - bios/bios.c - natfeat printing changed back to kprintf (joy)
 - bios/screen.[ch] - a routine for programming VIDEL to produce any of
   bitplane modes on VGA monitor with 640x480 res. added. Also proper VIDEL
@@ -1273,17 +1273,17 @@ Start... early ages
   pre-selected boot resolution from the NVRAM and apply it. Until then
   the default boot resolution will be the 2-color mode (joy)
 
-7. Feb. 2003
+2003-02-07
 - bios/natfeats.c, natfeat.h, natfeat.S - general cleanup, library of NF
   functions added (joy)
 - bios/kprint.c, kprintasm.S - ARAnyM code removed, NF support added (joy)
 - bios/machine.[ch], bios.c - updated for new NF library (joy)
 - Makefile, doc/install.txt, include/config.h - updated to support NF (joy)
 
-07. Feb. 2003
+2003-02-07
 - doc/announce.txt - updated for release 0.6 (MAD)
 
-8. Feb. 2003
+2003-02-08
 - bios/natfeats.c - display the short emu name so that initinfo fits in
   40 columns screen resolution (joy)
 - aes/geminit.c - check the Control key only once, not before loading each
@@ -1302,7 +1302,7 @@ Start... early ages
 - vdi/vdiesc.c - used this again  (MAD)
 - po/de.po - updated (MAD)
 
-9. Feb. 2003
+2003-02-09
 - doc/annouce.txt - minor english language rewording (LVL)
 - po/fr.po - updated (LVL)
 - include/version.h - set to 0.6 (LVL)
@@ -1315,14 +1315,14 @@ Start... early ages
 - bios/bios.c - DBGAUTOBOOT added so that the AUTO crash is visible (joy)
 - bios/ikbd.c - corrected debug typo (joy)
 
-10. Feb. 2003
+2003-02-10
 - bios/bios.c - now using the reentrant trap1_pexec() to load programs (THH)
 
-11. Feb. 2003
+2003-02-11
 - vdi/monout.c - bug in abline's C-implementation found (MAD)
 - vdi/*.c - enabled line drawing in C again (MAD)
 
-12. Feb. 2003
+2003-02-12
 - bios/ikbd.c - initial settings of conterm hopefully fixes the hotkeys
   in XaAES (joy)
 - Fixed some bugs in EmuCON (for example the initial Mshrink was not working).
@@ -1333,7 +1333,7 @@ Start... early ages
 - util/intmath.c - fixed bug in mul_div, circles work again (MAD)
 - po/de.po - updated (MAD)
 
-15. Feb. 2003
+2003-02-15
 - desk/deskapp.c - Icon masks are working now (THH).
 - po/fr.po - updated. I think we should put back the EmuCON strings in it, 
   since we now have decided to put back the console in EmuTOS. The size will 
@@ -1346,15 +1346,15 @@ Start... early ages
   done, the version in the desk info menu is still taken from version.h) (LVL)
 - bios/bios.c, natfeat* - NF_SHUTDOWN tried before halting (LVL)
 
-18. Feb. 2003
+2003-02-18
 - bios/screen.c - Falcon VIDEL better supported. Should allow boot in colors
   but there is still something wrong in the EmuTOS as it requires the rez_reg
   to be set (can't find out why) (joy)
 
-19. Feb. 2003
+2003-02-19
 - bios/screen.c - cleaned up the getrez a bit (MAD)
 
-20. Feb. 2003
+2003-02-20
 - bios/screen.[ch] - VIDEL color registers supported, EmuTOS can boot
   in 2, 4 or 16 colors now! (joy)
 - bios/screen.[ch] - setphys() safeguard check (joy)
@@ -1364,35 +1364,35 @@ Start... early ages
   ARAnyM (aranym -e -r <X>) and should work also on real Falcon030. (joy)
 - doc/announce.txt - updated for 0.6 release (MAD)
 
-21. Feb. 2003
+2003-02-21
 - bios/lineainit.c - quick patch to get 8x16 font in all resolutions with
   screen height >= 400 (joy)
 - include/config.h - boot countdown time increased to 8 seconds (joy)
 - po/cs.po - updated (joy)
 
-27. Feb. 2003
+2003-02-27
 - vdi/* - found bug in C-pattern filling, enabled again (MAD)
 - Makefile - EmuCON is compiled in by default now (MAD)
 
-03. Mar. 2003
+2003-03-03
 - aes/geminit.c, gemshlib.c : Experimental support for #Z line in EMUDESK.INF
   to start another desktop instead of the ROM desktop. (THH)
 
-08. Mar. 2003
+2003-03-08
 - vdi/mounout.c - fixed bug in clipbox() (MAD)
 
-10. Mar. 2003
+2003-03-10
 - bdos/time.c - implemented Tgettime() and Tgetdate() (MAD)
 
-22. Mar. 2003
+2003-03-22
 - bdos/bdosmain.c - ripped out unused oscnt variable (MAD)
 - bdos/bdosmain.c - added two wrappers to avoid compiler warnings (MAD)
 - include/bindbios.h - now use fully prototyped inline BIOS bindings (MAD)
 
-23. Mar. 2003
+2003-03-23
 - include/xbindbios.h - now use fully prototyped inline XBIOS bindings (MAD)
 
-12. Apr. 2003
+2003-04-12
 - bios/screen.c - some debug prints (LVL)
 - bios/vectors.S - the new palette pointer to load during VBL now erased when
   loaded (previously it was loaded at every VBL!) (LVL)
@@ -1400,16 +1400,16 @@ Start... early ages
   MIDI_DEBUG_PRINT flag activated (to get debug prints e.g. on Steem) (LVL)
 - fixed some .cvsignore files (LVL)
 
-13. Apr. 2003
+2003-04-13
 - bios/sound.c - Fixed a wrong byte in the system bell data. (THH)
 - include/xbiosbind.h - Added binding for Dosound(). (THH)
 - aes/optimize.c - sound() now really makes sound with Dosound()! (THH)
 - bios/biosmem.c - explanatory comment about memtop and membot added (LVL)
 
-17. Apr. 2003
+2003-04-17
 - util/boot.c - removed 192k size limitation in RAMTOS loader (LVL)
 
-19. Apr. 2003
+2003-04-19
 - bdos/proc.c - proc_go() now better documented (LVL)
 - tools/mkheader.awk - simpler and smaller replacement of mkheader.c (LVL)
 - doc/country.txt - updated following removal of mkheader.c (LVL)
@@ -1429,24 +1429,31 @@ Start... early ages
 - bios/panicasm.S - made panic message a little bit more robust (LVL)
 - bios/kprint.c - fixed dopanic() (LVL)
 
-21. Apr. 2003
+2003-04-21
 - bios/initinfo.c bios/bios.c - hitting 'C' during initinfo launches an early
   EmuCON, as a first step towards what Petr really wants (?) (LVL)
 - Makefile - bug no longer unnecessarily built when making UNIQUE=us (LVL)
 - cli/command.c - implemented prototypes for gemdos bindings (LVL)
 - bdos/fs.h - fixed DTA.dt_fname: the correct size is 14 bytes, not 12 (LVL)
 
-22. Apr. 2003
+2003-04-22
 - aes/gemshlib.c, aes/gemstart.S, aes/gemdos.c : Fixed problem with shel_write
   when parameter isover was 0. (shel_write on the Atari-GEM does not execute a
   program directly!). I also included a new dos_exec function that makes the
   handling of the rlr->p_uda->u_spsuper problem much more easier (the new
   dos_exec has basically been taken from the old Lisa-GEM). (THH)
 
-24. Apr. 2003
+2003-04-24
 - aes/gemsuper.c, aes/crysbind.h, aes/gemwmlib.c : Added wind_new() function
   (called wm_new internally). TeraDesk seems now to be working fine. (THH)
 
-01. May. 2003
+2003-05-01
 - doc/authors.txt - historic part fixed (LVL)
+
+2003-05-05
+- bdos/* - minor header cleaning (LVL)
+- desk/desk_rsc.c bios/initinfo.h include/version.h - version consistently
+  extracted from the changelog; EmuTOS URL added in about dialog (LVL)
+- doc/changelog.txt - converted dates to ISO YYYY-MM-DD format (LVL)
+- desk/desk_rsc.c - menu sizes adjusted so that they fit in the screen (LVL)
 
