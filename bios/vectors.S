@@ -64,6 +64,7 @@
         .xdef   _proc_usp       
         .xdef   _proc_stk       
         
+        .xdef   _stktop
 
 
         .text
@@ -173,31 +174,31 @@ priv_vec:
 user_vec:
         pea     deflt_vec_table(pc)
 
-// at this point, stack contains
+// at this point, stack contains:
 // 0:exception vector address 4:sr 6:pc
+// we copy debug data in the structure at address 0x380, then go in dopanic()
 any_vec:
         move.w  #0x2700, sr
-        movem.l d0-d7, _proc_dregs
-        move.l  (sp)+, d0
-        movem.l a0-a7, _proc_aregs
+        // dump the registers, including USP
+        movem.l d0-d7/a0-a6,_proc_dregs
+        move    usp,a0
+        move.l  a0,_proc_usp
+        // compute and dump the exception number
+        move.l  (sp)+,d0
+        // dump the correct value for sp
+        move.l  sp,_proc_aregs+28
         lea     deflt_vec_table(pc), a0
         sub.l   a0, d0
         lsr.l   #1, d0
         add.l   #1, d0
         move.l  d0, _proc_enum
-        move    usp, a0
-        move.l  a0, _proc_usp
-        lea     _proc_stk, a0
-        move.l  a7, a1
-        move.l  (a1)+, (a0)+
-        move.l  (a1)+, (a0)+
-        move.l  (a1)+, (a0)+
-        move.l  (a1)+, (a0)+
-        move.l  (a1)+, (a0)+
-        move.l  (a1)+, (a0)+
-        move.l  (a1)+, (a0)+
-        move.l  (a1)+, (a0)+
+        // dump 16 words from the stack
+        movem.l (sp),d0-d7
+        movem.l d0-d7,_proc_stk
+        // magic value
         move.l  #0x12345678, _proc_lives
+        // restore a sane stack
+        lea     _stktop,sp
         jmp     _dopanic
 
 

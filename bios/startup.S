@@ -25,6 +25,7 @@
         
         .global _os_entry
         .global _cartscan
+        .global _stktop
 
 // ==== tosvars.s - TOS System variables =====================================
                 

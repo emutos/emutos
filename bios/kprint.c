@@ -173,20 +173,25 @@ static const char *exc_messages[] = {
     "privilege violation", "Trace", "LineA", "LineF"
 };
 
+#define numberof(a) (sizeof(a)/sizeof(*a))
 
 void dopanic(const char *fmt, ...)
 {
-    if(proc_lives != 0x12345678) {
-        kprintf("No saved info in dopanic; halted.\n");
+    /* wrap the cursor */
+    cprintf("\033v\r\n");
+    /* TODO use sane screen settings (color, address) */
+    
+    if (proc_lives != 0x12345678) {
+        kcprintf("No saved info in dopanic; halted.\n");
         halt();
     }
     kcprintf("Panic: ");
-    if(proc_enum == 0) {
+    if (proc_enum == 0) {
         va_list ap;
         va_start(ap, fmt);
         vkcprintf(fmt, ap);
         va_end(ap);
-    } else if(proc_enum == 2 || proc_enum == 3) {
+    } else if (proc_enum == 2 || proc_enum == 3) {
         struct {
             WORD misc;
             LONG address;
@@ -198,13 +203,7 @@ void dopanic(const char *fmt, ...)
                  exc_messages[proc_enum], s->misc, s->address);
         kcprintf("opcode = 0x%04x, sr = 0x%04x, pc = 0x%08lx\n",
                  s->opcode, s->sr, s->pc);
-        kcprintf("Aregs: %08lx %08lx %08lx %08lx  %08lx %08lx %08lx %08lx\n",
-                 proc_aregs[0], proc_aregs[1], proc_aregs[2], proc_aregs[3], 
-                 proc_aregs[4], proc_aregs[5], proc_aregs[6], proc_aregs[7]);
-        kcprintf("Dregs: %08lx %08lx %08lx %08lx  %08lx %08lx %08lx %08lx\n",
-                 proc_dregs[0], proc_dregs[1], proc_dregs[2], proc_dregs[3], 
-                 proc_dregs[4], proc_dregs[5], proc_dregs[6], proc_dregs[7]);
-    } else if(proc_enum >= 4 && proc_enum < sizeof(exc_messages)) {
+    } else if (proc_enum >= 4 && proc_enum < numberof(exc_messages)) {
         struct {
             WORD sr;
             LONG pc;
@@ -216,9 +215,15 @@ void dopanic(const char *fmt, ...)
             WORD sr;
             LONG pc;
         } *s = (void *)proc_stk;
-        kprintf("Exception number %d. sr = 0x%04x, pc = 0x%08lx\n",
+        kcprintf("Exception number %d. sr = 0x%04x, pc = 0x%08lx\n",
                 (int) proc_enum, s->sr, s->pc);
     }
+    kcprintf("Aregs: %08lx %08lx %08lx %08lx  %08lx %08lx %08lx %08lx\n",
+             proc_aregs[0], proc_aregs[1], proc_aregs[2], proc_aregs[3], 
+             proc_aregs[4], proc_aregs[5], proc_aregs[6], proc_aregs[7]);
+    kcprintf("Dregs: %08lx %08lx %08lx %08lx  %08lx %08lx %08lx %08lx\n",
+             proc_dregs[0], proc_dregs[1], proc_dregs[2], proc_dregs[3], 
+             proc_dregs[4], proc_dregs[5], proc_dregs[6], proc_dregs[7]);
     kcprintf("Processor halted.\n");
     halt();
 }
