@@ -19,7 +19,8 @@
 #include        "kbd.h"   /* function clear_kbdint() */
 
 
-/*==== Prototypes =========================================================*/
+/*==== External declarations ==============================================*/
+extern VOID clear_kbdint(VOID);        /* from mfp.c */
 
 /*==== Defines ============================================================*/
 #define ACIA_MIDI_BASE (0xfffffc04L)
@@ -55,7 +56,7 @@ VOID	midiint(VOID)
     midiqadd((KBQENTRY)(data & 0xFF));   /* put into queue as WORD */
 #endif
 
-    kprint("BIOS: MIDI event happened ...");
+    kprintf("BIOS: MIDI event happened ...");
     clear_kbdint();      /* signal end of interrupt */
     
 }
@@ -70,7 +71,7 @@ VOID	midiint(VOID)
  
 void midi_init(VOID)
 {
-    cputs("[    ] MIDI ACIA initialized ...\r");
+    cprintf("[    ] MIDI ACIA initialized ...\r");
 
     /* initialize midi ACIA */
     acia.ctrl =

@@ -175,3 +175,6 @@ Start... early ages
 - pseudo reentrant bios xbios trap handler
 - Supexec()
 - bios device functions arrays (bconstat_vec, ...)
+
+13. Oct. 2001
+- Fixed some minor errors while compilation (MAD)

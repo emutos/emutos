@@ -38,10 +38,10 @@ typedef	BYTE	KBSCN ; /* type for kbd scan code */
 **  external declarations
 */
 
-EXTERN VOID kbd_init(VOID) ;
-EXTERN ERROR kbd_select(VOID) ;
-EXTERN ERROR kbd_disab(VOID) ;
-EXTERN VOID mode_chg(VOID) ;
-EXTERN VOID	kbd_int(VOID) ;
-EXTERN KBCHAR kbd_read(VOID) ;
+extern VOID kbd_init(VOID) ;
+extern ERROR kbd_select(VOID) ;
+extern ERROR kbd_disab(VOID) ;
+extern VOID mode_chg(VOID) ;
+extern VOID kbd_int(VOID) ;
+extern KBCHAR kbd_read(VOID) ;
 

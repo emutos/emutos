@@ -446,6 +446,75 @@ long    xchmod(p,wrt,mod)
 
 
 /*
+ *  ixsfirst - search for first dir entry that matches pattern
+ *	search first for matching name, into specified address.  if
+ *	address = 0L, caller wants search only, no buffer info
+ *
+ * Arguments:
+ *   *name - name of file to match
+ *   att   - attribute of file
+ *   *addr - ptr to dta info
+ *
+ *  returns:
+ *	error code.
+ */
+
+long	ixsfirst(char *name, REG WORD att, REG DTAINFO *addr)
+{
+    char *s;			/*  M01.01.03			*/
+    DND	*dn;
+    FCB	*f;
+    long pos;
+
+    if (att != 8)
+        att |= 0x21;
+
+
+#if	M0101071401
+    if ( (long)(dn = findit(name,&s,0))  < 0 )		/* M01.01.1212.01 */
+        return( (long)dn );
+
+    if ( dn == (DND*)NULLPTR )					/* M01.01.1214.01 */
+        return( EFILNF );
+#else
+    if ((long)(dn = findit(name,&s,0)) < 0) 		/* M01.01.1212.01 */
+        return( dn );
+    if (!dn)						/* M01.01.1214.01 */
+        return( EFILNF );
+#endif
+
+    /* now scan for filename from start of directory */
+
+    pos = 0;
+
+#if	M0101071401
+    if(  (f = scan(dn,s,att,&pos))	==  (FCB*)NULLPTR  )
+        return(EFILNF);
+#else
+    if (dn)
+    {
+        if (!(f = scan(dn,s,att,&pos)))
+            return(EFILNF);
+    }
+    else
+        return(EFILNF);
+#endif
+
+    if (addr)
+    {
+        bmove( s , (BYTE *)&addr->dt_name[0] , 12 ) ;
+        addr->dt_attr = att ;
+        addr->dt_pos = pos ;
+        addr->dt_dnd = dn ;
+        makbuf( f , addr ) ;
+    }
+
+    return(E_OK);
+}
+
+
+
+/*
  *  xsfirst - search first for matching name, into dta
  *
  *	Function 0x4E	f_sfirst
@@ -719,75 +788,6 @@ long	xgetdir(buf,drv) /*+ return text of current dir into specified buffer */
 	*--buf = 0;	/* null as last char, not slash */
 
 	return(E_OK);
-}
-
-
-
-/*
- *  ixsfirst - search for first dir entry that matches pattern
- *	search first for matching name, into specified address.  if
- *	address = 0L, caller wants search only, no buffer info
- *
- * Arguments:
- *   *name - name of file to match
- *   att   - attribute of file
- *   *addr - ptr to dta info
- *
- *  returns:
- *	error code.
- */
-
-long	ixsfirst(char *name, REG WORD att, REG DTAINFO *addr)
-{
-    char *s;			/*  M01.01.03			*/
-    DND	*dn;
-    FCB	*f;
-    long pos;
-
-    if (att != 8)
-        att |= 0x21;
-
-
-#if	M0101071401
-    if ( (long)(dn = findit(name,&s,0))  < 0 )		/* M01.01.1212.01 */
-        return( (long)dn );
-
-    if ( dn == (DND*)NULLPTR )					/* M01.01.1214.01 */
-        return( EFILNF );
-#else
-    if ((long)(dn = findit(name,&s,0)) < 0) 		/* M01.01.1212.01 */
-        return( dn );
-    if (!dn)						/* M01.01.1214.01 */
-        return( EFILNF );
-#endif
-
-    /* now scan for filename from start of directory */
-
-    pos = 0;
-
-#if	M0101071401
-    if(  (f = scan(dn,s,att,&pos))	==  (FCB*)NULLPTR  )
-        return(EFILNF);
-#else
-    if (dn)
-    {
-        if (!(f = scan(dn,s,att,&pos)))
-            return(EFILNF);
-    }
-    else
-        return(EFILNF);
-#endif
-
-    if (addr)
-    {
-        bmove( s , (BYTE *)&addr->dt_name[0] , 12 ) ;
-        addr->dt_attr = att ;
-        addr->dt_pos = pos ;
-        addr->dt_dnd = dn ;
-        makbuf( f , addr ) ;
-    }
-
-    return(E_OK);
 }
 
 
