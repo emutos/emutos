@@ -82,6 +82,8 @@
 	.global _int_timerc
 	.global _int_timerd
 
+        .global _load_cli        // load EmuCON
+        
 // ==== From bios.c ==========================================================
 
         .xdef   _bios_0
@@ -612,8 +614,7 @@ bx_nolong2:
         move.l  a1, _savptr
         rte                     // return with return value in D0
 
-forever:
-        jmp     forever
+
 
 
 

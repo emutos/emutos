@@ -28,6 +28,7 @@ EXE = .exe
 else
 # ordinary Unix stuff
 EXE = 
+BUILDDATE=$(shell LANG=C date +"%d. %b. %Y")
 endif
 
 # 
@@ -50,7 +51,7 @@ ASFLAGS = --register-prefix-optional -m68000 $(ASINC)
 CC = m68k-atari-mint-gcc
 INC = -Iinclude
 # no -Wall for bdos right now...
-CFLAGS = -O -mshort -m68000 $(INC) 
+CFLAGS = -O -mshort -m68000  -DBUILDDATE="\"$(BUILDDATE)\"" $(INC) 
 
 CPPFLAGS = $(INC)
 CPP = $(CC) -E -x assembler
@@ -89,6 +90,13 @@ UTILCSRC = doprintf.c
 UTILSSRC = memset.S memmove.S
 
 #
+# source code in cli/ for EmuTOS console EmuCON
+#
+
+CONSCSRC = command.c
+CONSSSRC = coma.S
+
+#
 # everything should work fine below.
 # P for PATH
 
@@ -98,9 +106,11 @@ PBDOSCSRC = $(BDOSCSRC:%=bdos/%)
 PBDOSSSRC = $(BDOSSSRC:%=bdos/%)
 PUTILCSRC = $(UTILCSRC:%=util/%)
 PUTILSSRC = $(UTILSSRC:%=util/%)
+PCONSCSRC = $(CONSCSRC:%=util/%)
+PCONSSSRC = $(CONSSSRC:%=util/%)
 
-CSRC = $(PBIOSCSRC) $(PBDOSCSRC) $(PUTILCSRC)
-SSRC = $(PBIOSSSRC) $(PBDOSSSRC) $(PUTILSSRC)
+CSRC = $(PBIOSCSRC) $(PBDOSCSRC) $(PUTILCSRC) $(PCONSCSRC)
+SSRC = $(PBIOSSSRC) $(PBDOSSSRC) $(PUTILSSRC) $(PCONSSSRC)
 
 BIOSCOBJ = $(BIOSCSRC:%.c=obj/%.o)
 BIOSSOBJ = $(BIOSSSRC:%.S=obj/%.o)
@@ -108,9 +118,11 @@ BDOSCOBJ = $(BDOSCSRC:%.c=obj/%.o)
 BDOSSOBJ = $(BDOSSSRC:%.S=obj/%.o)
 UTILCOBJ = $(UTILCSRC:%.c=obj/%.o)
 UTILSOBJ = $(UTILSSRC:%.S=obj/%.o)
+CONSCOBJ = $(CONSCSRC:%.c=obj/%.o)
+CONSSOBJ = $(CONSSSRC:%.S=obj/%.o)
 
-SOBJ = $(BIOSSOBJ) $(BDOSSOBJ) $(UTILSOBJ)
-COBJ = $(BIOSCOBJ) $(BDOSCOBJ) $(UTILCOBJ)
+SOBJ = $(BIOSSOBJ) $(BDOSSOBJ) $(UTILSOBJ) $(CONSSOBJ)
+COBJ = $(BIOSCOBJ) $(BDOSCOBJ) $(UTILCOBJ) $(CONSCOBJ)
 OBJECTS = $(SOBJ) $(COBJ) 
 
 #
@@ -196,6 +208,12 @@ obj/%.o : util/%.c
 
 obj/%.o : util/%.S
 	${CC} ${CFLAGS} -Wall -c -Ibios $< -o $@
+
+obj/%.o : cli/%.c
+	${CC} ${CFLAGS} -Wall -c $< -o $@
+
+obj/%.o : cli/%.S
+	${CC} ${CFLAGS} -Wall -c $< -o $@
 
 
 

@@ -242,5 +242,8 @@ Start... early ages
 - removed old stuff from bios.c and startup.s (LVL)
 - fixed the BDOS-buffer-init bug: EmuTOS boots a real MegaSTE2!!! (LVL)
 - Removed hardcoded default drive #defines
+- added EmuCON (EmuTOS console, before command.prg) to EmuTOS      (MAD)
+  This is not yet working (it seems command.c is not ROMable for now) 
+
 
 

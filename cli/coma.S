@@ -23,7 +23,7 @@
 	.globl	_div10
 	.globl	_mod10
 	.globl	_xoscall
-	.globl	_bios
+//	.globl	_bios
 	.globl	_xsetjmp
 	.globl	_xlongjmp
 	.globl	_exeflg
@@ -31,9 +31,10 @@
 	.globl	_devector					// SCC  22 Mar 85
 	.globl	_super						// JSL  20 Mar 85
 	.globl	_user						// JSL  20 Mar 85
-	.globl	_cli
-_cli:
-_main:	move.l	#mystak,a5
+	.globl	_emucon
+//_main:
+_emucon:
+      	move.l	#mystak,a5
 	move.l	4(sp),-(a5)
 	clr.l	-(a5)		// bogus return address
 	move.l	a5,sp
@@ -198,11 +199,11 @@ okrc:	move.l	8(a6),a0
 	move.l	(a0),-(sp)
 	rts
 //
-_bios:	move.l	(sp)+,biosav
-	trap	#13
-	move.l	biosav,-(sp)
-	rts
-//
+//_bios:	move.l	(sp)+,biosav
+//	trap	#13
+//	move.l	biosav,-(sp)
+//	rts
+
 _div10: link	a6,#0
 	move.l	8(a6),d0
 	divu	#10,d0

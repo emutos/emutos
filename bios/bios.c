@@ -66,6 +66,7 @@ extern LONG osinit();
 extern void linea_init(void);   /* found in linea.S */
 extern void cartscan(WORD);     /* found in startup.S */
 
+extern void emucon(void);       /* found in cli/coma.S - start of CLI */
 
 /*==== Declarations =======================================================*/
 
@@ -77,7 +78,7 @@ int is_ramtos;
 /* Drive specific declarations */
 static WORD defdrv ;            /* default drive number (0 = a:, 2 = c:) */
 
-static BYTE env[256];            /* environment string, enough bytes??? */
+BYTE env[256];                  /* environment string, enough bytes??? */
 
 
 /*==== BOOT ===============================================================*/
@@ -120,7 +121,8 @@ void startup(void)
   /* initialise some memory variables */
   end_os = os_end;
   membot = end_os;
-  exec_os = os_beg;
+//  exec_os = os_beg;
+  exec_os = &emucon;            // set start of console program
   memtop = (LONG) v_bas_ad;
 
   m_start = os_end;
@@ -262,6 +264,8 @@ void bufl_init(void)
 
 void biosmain()
 {
+    VOID (*newexec_os)(VOID);
+
     trap_1( 0x30 );              /* initial test, if BDOS works */
 
     trap_1( 0x2b, os_dosdate);  /* set initial date in GEMDOS format */
@@ -298,8 +302,13 @@ void biosmain()
 
     /* clear commandline */
     
-    /* load command.prg */
+    /* Jump to the EmuCON - for now not loaded via pexec (hack) */
     trap_1( 0x4b , 0, "COMMAND.PRG" , "", env);
+
+//    newexec_os=(VOID*)trap_1( 0x4b , 5, "" , "", env)+8;
+//    newexec_os=exec_os;
+
+    trap_1( 0x4b , 4, "" , "", env);
 
     cprintf("[FAIL] HALT - should never be reached!\n\r");
     while(1) ;

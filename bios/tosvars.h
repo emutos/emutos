@@ -59,7 +59,7 @@ extern LONG *vblqueue;
 extern LONG sysbase;
 extern VOID os_entry(VOID);
 extern LONG os_beg;
-extern LONG exec_os;
+extern VOID (*exec_os)(VOID);
 extern LONG end_os;
 extern LONG m_start;
 extern LONG m_length;

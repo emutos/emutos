@@ -619,7 +619,7 @@ void dspMsg (int msg)
     case 1: wrtln ("File Not Found."); break;
     case 2: wrtln ("Destination is not a valid wild card expresion."); break;
     case 3: wrtln ("******* TEST  CLI *******"); break;
-    case 4: wrtln ("Command - Compiled on " BUILDDATE);break;
+    case 4: wrtln ("EmuCON - Compiled on " BUILDDATE);break;
     case 5: wrt ("Done."); break;
     case 6: wrtln ("Command is incompletely specified.");break;
     case 7: wrt (srcFlNm); break;
