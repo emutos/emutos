@@ -1,5 +1,5 @@
 /*
- *  biosc.c - C portion of BIOS initialization and front end
+ *  bios.c - C portion of BIOS initialization and front end
  *
  * Copyright (c) 2001 Lineo, Inc. and
  *
@@ -38,32 +38,11 @@
 #include "chardev.h"
 
 /*==== Defines ============================================================*/
-#define OLDSTUFF 0
 
-#if OLDSTUFF
-#define DBGBIOSC        TRUE
-
-#define  HAVE_CON  TRUE
-#define  HAVE_SER  FALSE
-#define  HAVE_PAR  FALSE
-#define  HAVE_MOU  FALSE
-#define  HAVE_DSK  FALSE
-
-#ifndef COMMENT
-#define COMMENT 0
-#endif
-
-#define M0101060301     FALSE
-
-#define PRTVER 0        /* set true to print bdos & bios time/date version */
-
-#define SUPSIZ 1024     /* common supervisor stack size (in words) */
-
-#endif /* OLDSTUFF */
 
 /*==== Forward prototypes =================================================*/
 
-void biosinit(void);
+void bufl_init(void);
 void biosmain(void);
 
 
@@ -73,30 +52,9 @@ extern WORD os_dosdate;    /* Time in DOS format */
 extern BYTE *biosts ;         /*  time stamp string */
 
 
-#if OLDSTUFF
-
-#if HAVE_SIO
-extern LONG sinstat();          /* found in siostat.c */
-#endif
-
-extern LONG format();           /* found in disk.c */
-
-extern BPB vme_dpb [];          /* found in disk.c */
-
-#endif /* OLDSTUFF */
-
-extern LONG tticks;             /* found in startup.s */
 extern LONG trap_1();           /* found in startup.s */
 extern LONG drvbits;            /* found in startup.s */
 extern MD b_mdx;                /* found in startup.s */
-
-extern LONG drv_mediach(WORD drive);    /* found in startup.s */
-extern LONG drv_bpb(WORD drive);        /* found in startup.s */
-extern LONG drv_rw(WORD r_w,            /* found in startup.s */
-                   BYTE *adr,
-                   WORD numb,
-                   WORD first,
-                   WORD drive);
 
 
 extern void clk_init(void);     /* found in clock.c */
@@ -106,15 +64,6 @@ extern LONG osinit();
 
 extern void linea_init(void);    /* found in linea.S */
 extern void cartscan(WORD);      /* found in startup.S */
-
-extern void chardev_init();      /* found in chardev.c */
-
-/* Arrays of BIOS function pointers for fast function calling */
-extern LONG (*bconstat_vec[])(void);
-extern LONG (*bconin_vec[])(void);
-extern void (*bconout_vec[])(WORD, WORD);
-extern LONG (*bcostat_vec[])(void);
-
 
 
 /*==== Declarations =======================================================*/
@@ -134,22 +83,6 @@ static BYTE env[] = "COMSPEC=c:\\command.prg\0";
 
 /* Drive specific declarations */
 static WORD defdrv ;       /* default drive number (0 = a:, 2 = c:) */
-
-#if OLDSTUFF
-
-/* BIOS drive table definitions */
-static WORD exist[4];          /* 1, if drive present */
-static WORD known[4];          /* 1, if disk logged-in */
-
-BYTE secbuf[4][512];          /* sector buffers */
-
-BCB bcbx[4];    /* buffer control block array for each buffer */
-BCB *bufl[2];   /* buffer lists - two lists:  fat,dir / data */
-
-#endif /* OLDSTUFF */
-
-PFI charvec[5];     /* array of vectors to logical interrupt handlers */
-
 
 
 /*==== BOOT ===============================================================*/
@@ -245,59 +178,53 @@ void startup(void)
   linea_init();
 
   vblsem = 1;
-  biosinit();
+
+    /* initialize BIOS components */
+
+    chardev_init();     /* Initialize character devices */
+    mfp_init();         /* init MFP, timers, USART */
+    kbd_init();         /* init keyboard, disable mouse and joystick */
+    midi_init();        /* init MIDI acia so that kbd acia irq works */
+    clk_init();         /* init clock (dummy for emulator) */
   
-  osinit();
+    /* initialize BDOS buffer list */
+
+    bufl_init();
+
+    /* initialize BDOS */
+
+    osinit();
   
-  set_sr(0x2300);
+    set_sr(0x2300);
   
-  VEC_BIOS = bios;
-  (*(PFVOID*)0x7C) = brkpt;   /* ??? */
+    VEC_BIOS = bios;
+    (*(PFVOID*)0x7C) = brkpt;   /* ??? */
   
-  kprintf("BIOS: Last test point reached ...\n");
+    kprintf("BIOS: Last test point reached ...\n");
   
-  cartscan(3);
-  
-  biosmain();
-  
-  for(;;);
+    cartscan(3);
+
+     /* main BIOS */
+ 
+    biosmain();
+
+    for(;;);
 
 }
 
-
-
-/*==== BIOS initialization ================================================*/
 /*
- *      called from startup.s, this routine will do necessary bios initialization
- *      that can be done in hi level lang.  startup.s has the rest.
+ * bufl_init - BDOS buffer list initialization
+ *
+ * LVL - This should really go in BDOS...
  */
 
-void biosinit()
+static BYTE secbuf[4][512];          /* sector buffers */
+
+static BCB bcbx[4];    /* buffer control block array for each buffer */
+extern BCB *bufl[];    /* buffer lists - two lists:  fat,dir / data */
+
+void bufl_init(void)
 {
-    /*==== set up logical interrupt handlers for character devices =========*/
-    chardev_init();             /* Initialize character devices */
-
-
-    /* Are these still needed? (MAD) */
-    charvec[0] = (PFI) 0;
-    charvec[1] = (PFI) 0;   /* siolox - disabled */
-    charvec[2] = (PFI) 0;
-    charvec[3] = (PFI) 0;   /* clklox - disabled */
-    charvec[4] = (PFI) 0;   /* moulox - disabled */
-
-#if OLDSTUFF
-
-    /* initialize drive variables */
-    exist[0] = 0;       /* Drive A present */
-    exist[1] = 0;       /* Drive B not present */
-    exist[2] = 1;       /* Drive C present */
-    exist[3] = 0;       /* Drive D not present */
-
-    known[0] = 0;       /* not loggend in */
-    known[1] = 0;       /* not loggend in */
-    known[2] = 0;       /* not loggend in */
-    known[3] = 0;       /* not loggend in */
-
     /* set up sector buffers */
 
     bcbx[0].b_link = &bcbx[1];
@@ -321,35 +248,8 @@ void biosinit()
     
     bufl[BI_FAT] = &bcbx[0];                    /* fat buffers */
     bufl[BI_DATA] = &bcbx[2];                   /* dir/data buffers */
-
-#endif /* OLDSTUFF */
-
-    /* initialize components */
-
-    mfp_init();         /* init MFP, timers, USART */
-    kbd_init();         /* init keyboard, disable mouse and joystick */
-    midi_init();        /* init MIDI acia so that kbd acia irq works */
-    clk_init();         /* init clock (dummy for emulator) */
-
-  
-#if OLDSTUFF
-
-#if HAVE_SIO
-    m400init();   /* initialize the serial I/O ports */
-#endif
-
-#if HAVE_PAR
-    m410_init();  /* initialize the parallel printer ports */
-#endif
-
-#if HAVE_DSK
-    initdsks();   /* send disk config info to disk controller */
-#endif
-
-#endif /* OLDSTUFF */
-
-    /* returning to assembler patch OS via cartridge */
 }
+
 
 
 /*
@@ -361,8 +261,6 @@ void biosinit()
 
 void biosmain()
 {
-    /* print, what has been done till now (fake) */
-
     trap_1( 0x30 );              /* initial test, if BDOS works */
 
     trap_1( 0x2b, os_dosdate);  /* set initial date in GEMDOS format */
@@ -402,18 +300,6 @@ void biosmain()
     while(1) ;
 }
 
-
-
-/**
- * bios_null - so lint wont complain
- */
-
-void bios_null(UWORD x , UWORD y , BYTE * ptr )
-{
-    x = y ;
-    y = x ;
-    ++ptr ;
-}
 
 
 
@@ -516,15 +402,12 @@ void bios_3(WORD handle, BYTE what)
 
 LONG bios_4(WORD r_w, LONG adr, WORD numb, WORD first, WORD drive)
 {
-#if 0
-    /* implemented by STonX */
-    return(drv_rw(r_w, adr, numb, first, drive));
-#else
-    kprintf("rwabs(rw = %d, addr = 0x%08lx, count = 0x%04x, sect = 0x%04x"
-            ", dev = 0x%04x)\n",
+#if DBGBIOSC
+    kprintf("BIOS rwabs(rw = %d, addr = 0x%08lx, count = 0x%04x, "
+            "sect = 0x%04x, dev = 0x%04x)\n",
             r_w, adr, numb, first, drive);
-    return hdv_rw(r_w, adr, numb, first, drive);
 #endif
+    return hdv_rw(r_w, adr, numb, first, drive);
 }
 
 
@@ -617,12 +500,7 @@ LONG bios_8(WORD handle)        /* GEMBIOS character_output_status */
 
 LONG bios_9(WORD drv)
 {
-#if 0
-    /* Implemented by STonX -  STonX can not change Floppies */
-    return(drv_mediach(drv));
-#else
     return hdv_mediach(drv);
-#endif
 }
 
 
@@ -665,78 +543,5 @@ LONG bios_b(WORD flag)
 }
 
 
-
-/**
- * bios_c - character device control channel input
- */
-
-LONG bios_c(WORD handle, WORD length, BYTE *buffer)
-{
-    return(ERR);
-}
-
-
-
-/**
- * bios_d - character device control channel output
- */
-
-LONG bios_d(WORD handle, WORD length, BYTE *buffer)
-{
-    return(ERR);
-}
-
-
-
-/**
- * bios_e - block device control channel input
- */
-
-LONG bios_e(WORD drive, WORD length, BYTE *buffer)
-{
-    return(ERR);
-}
-
-
-
-/**
- * bios_f - block device control channel output
- */
-
-LONG bios_f(WORD drive, WORD length, BYTE *buffer)
-{
-    if ((drive == 0) || (drive == 1))
-    {
-        if ((length == 1) && (buffer[0] == 1))  /* disk format */
-        {
-#if IMPLEMENTED
-            return(format(drive));
-#else
-            return(E_OK);
-#endif
-        }
-    }
-    return( EBADRQ ) ;
-}
-
-
-
-/**
- * bios_10 - character device exchange logical interrupt vector
- */
-
-PFI bios_10(WORD handle, PFI address)
-{
-    PFI temp;
-
-    if (handle < 5)     /* note hard-coded device count */
-    {
-        temp = charvec[handle];
-        if (address != (PFI)-1)
-            charvec[handle] = address;
-        return(temp);
-    }
-    return((PFI)ERR);
-}
 
 

@@ -238,3 +238,6 @@ Start... early ages
 - some memory fixes, got rid of end.o (LVL)
 - a TOS in RAM loaded using an autoboot floppy (LVL)
 
+1. Nov. 2001
+- removed old stuff from bios.c and startup.s (LVL)
+- fixed the BDOS-buffer-init bug: EmuTOS boots a real MegaSTE2!!! (LVL)

@@ -23,7 +23,7 @@
  *	(in bios.c)
  */
 
-BCB *bufl[2];
+extern BCB *bufl[];
 
 
 extern		void _osinit();

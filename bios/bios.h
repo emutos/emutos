@@ -18,14 +18,6 @@
 
 
 /*
- *  Bios Function Numbers
- */
-
-#define B_MDCHG 	9		/*  media change		*/
-
-
-
-/*
  * BIOS level character device handles
  */
 
