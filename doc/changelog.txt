@@ -985,3 +985,6 @@ Start... early ages
 
 01. Aug. 2002
 - bios/blkdev.c - booting from harddisk enabled (joy)
+- bios/disk.[ch] - ARANYM_NATIVE_DISK does not crash other machines now.
+                   Also it makes use of new ARAnyM XHDI function XHREADWRITE.
+                   Harddisk is now read/write (if enabled in ARAnyM).
