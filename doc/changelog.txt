@@ -356,3 +356,6 @@ Start... early ages
 12. Dec. 2001
 - changed todo.txt: b/w display bug is bug in STonX (MAD)
 - changed bios/conout.S to C like comment style (MAD)
+
+13. Dec. 2001
+- ripped out some ugly old gotos in bdos/fsbuf.c:packit() (MAD)
