@@ -581,17 +581,13 @@ clrvbl:
         jsr     _osinit
         
 
-| ==== Test, if Cartridge of type 0 ========================================
-
-        clr.l   d0              | after interrupts are enabled
-        bsr     cartscan
-
+| ==== Now initialize the BDOS =============================================
 
         move    #0x2300,sr         | enable Interrupts 
         
         move.l  #_brkpt, 0x7c           | set nmi to do an illegal instruction
         move.l  #bios, 0xb4             | revector bios entry = trap #13
-        move.l  #0xfa0404, 0x84         | revector bdos entry = trap #1
+
 |               move.l  #defcrit, v101          | default crit error:        bios13, fnct 5
 |               move.l  #defterm, v102          | terminate handler:         bios13, fnct 5
 |               move.l  #fix_SR, 0x20           | privilege violation
@@ -600,6 +596,10 @@ clrvbl:
         bsr _kprint
         addq #4,sp
 
+| ==== Test, if Cartridge of type 3 ========================================
+
+        moveq.l #3,d0              | just before GEMDOS starts!
+        bsr     cartscan
 
 
 | ==== Now really start the BDOS ===========================================

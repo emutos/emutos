@@ -157,3 +157,6 @@ Start... early ages
 - Includes some more needed lineavars initialized (_esc_init) (MAD)
 - cleaned Makefile and end.s ("the end.s episode") (LVL)
 - copy paste error in linea stubs, startup.s (LVL)
+
+10. Oct. 2001
+- EmuTOS now expects a cartridge of type 3, just as the original TOS. (THO)

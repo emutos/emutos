@@ -5,8 +5,8 @@
 |
 | Authors:
 |  NIN   Marinos Yannikos
-|  MAD   Martin Doering 
-|  LVL   Laurent Vogel
+|  MAD   Martin Doering
+|  THO   Thomas Huth
 |
 | This file is distributed under the GPL, version 2 or at your
 | option any later version.  See COPYING file for details.
@@ -27,8 +27,8 @@
 
 cart_beg:
 	dc.l 0xabcdef42
-	dc.l 0                   | cartridge of type 0
-	dc.l init+0x01000000     | cartridge init (24 bit + 1 byte)
+	dc.l 0                   | next program header (0 = no other program)
+	dc.l init+0x08000000     | cartridge init (24 bit, upper byte = type)
 	dc.l start               | program to execute
 	dc.w 0                   | time (unused)
 	dc.w 0                   | date (unused)
@@ -41,21 +41,21 @@ cart_beg:
 | init - Initialization of STonX native functions
 
 init:	
-	pea initmsg
-	bsr print
-	addq #4,sp
+|	pea initmsg
+|	bsr print
+|	addq #4,sp
 
         		| set _bootdev, _nflops and _drvbits
 	dc.w 0xa0ff     | jump native 
 	dc.l 3          | disk_init (from native.c)
+	dc.w 0xa000
 
 	dc.w 0xa0ff     | jump native
 	dc.l 9	        | Initialize (from native.c)
         
-| LVL: either use the three lines, or comment them out completely.
-|	dc.w 0xa000     | put right value in d0 for Init_Linea().
-|	dc.w 0xa0ff     | jump native 
-|	dc.l 10 	| Init_Linea (from native.c)
+	dc.w 0xa000
+	dc.w 0xa0ff     | jump native 
+	dc.l 10 	| Init_Linea (from native.c)
         
 | now set up some patched vectors
 	move.l #disk_rw, 0x476.w	
@@ -65,7 +65,7 @@ init:
 	move.l #mediach, 0x47e.w
 	move.l #vidchng, 0x46e.w
 
-	move #0x30, -(sp)   | get TOS version (whatfor?!?)
+	move #0x30, -(sp)   | get TOS version (then STonX can intercept trap #1)
 	trap #1             | call GEMDOS
 	addq #2, sp
 
@@ -77,10 +77,9 @@ init:
                     
 	rts
 
-	.even
 initmsg:
-	.ascii "CART: init - cartridge initialization\n"
-	dc.w 0
+	.ascii "CART: init - cartridge initialization\n\0"
+        .even
 
 
 
@@ -116,8 +115,8 @@ hdv_init:
 	rts
 
 hdvinitmsg:
-	.ascii "CART: hdv_init\n"
-	dc.w 0
+	.ascii "CART: hdv_init\n\0"
+	.even
 
 
 
@@ -143,8 +142,8 @@ boot:
 	rts
 
 bootmsg:
-	.ascii "CART: hdv_boot\n"
-	dc.w 0
+	.ascii "CART: hdv_boot\n\0"
+	.even
 
 
 
@@ -161,8 +160,8 @@ disk_bpb:
 	rts
 
 bpbmsg:
-	.ascii "CART: hdv_bpb\n"
-	dc.w 0
+	.ascii "CART: hdv_bpb\n\0"
+	.even
 
 
 
@@ -178,8 +177,8 @@ disk_rw:
 	rts
 
 diskrwmsg:
-	.ascii "CART: disk_rw\n"
-	dc.w 0
+	.ascii "CART: disk_rw\n\0"
+	.even
 
 
 
@@ -369,7 +368,17 @@ reloc:                          | load and relocate the code
 	move.l a3,d0
 	tst.w 254(a5)
 	bne.s relocdone
-	move.l (a4)+,d7
+
+|	move.l (a4)+,d7 	| Seems sometimes not to be word aligned :-(
+	move.b (a4)+,d7
+	lsl.w #8,d7
+	move.b (a4)+,d7
+	swap d7
+	move.b (a4)+,d7
+	lsl.w #8,d7
+	move.b (a4)+,d7
+	tst.l d7
+
 	beq.s relocdone
 	add.l d7,a3
 	moveq #0,d7
@@ -397,13 +406,14 @@ cleardone:
 	move.l a5,d0
 	movem.l (sp)+,a3-a5/d6-d7
 	rts
+
 gemdosmsg:
-	.ascii "GEMDOS call\n"
-	dc.w 0
+	.ascii "GEMDOS call\n\0"
+	.even
 
 oldgemdosmsg:
-	.ascii "GEMDOS fallback to TOS routines ...\n"
-	dc.w 0
+	.ascii "GEMDOS fallback to TOS routines...\n\0"
+	.even
 
 
 |============================================================================
@@ -518,21 +528,19 @@ conf_text:
 	dc.l t_cold
 	dc.l t_quit
 	dc.l 0
+
 t_warm:
-	.ascii "Warm reset"
-	dc.w 0
+	.ascii "Warm reset\0"
 t_cold:
-	.ascii "Cold reset"
-	dc.w 0
+	.ascii "Cold reset\0"
 t_quit:
-	.ascii "Quit STonX"
-	dc.w 0
+	.ascii "Quit STonX\0"
 t_return:
-	.ascii "Return to emulator"
-	dc.w 0
+	.ascii "Return to emulator\0"
 t_test:
-	.ascii "CART: ========= TEST ============"
-	dc.w 0
+	.ascii "CART: ========= TEST ============\0"
+
+	.even
 i_on:
 	dc.l 0x1b700000
 i_off:
