@@ -199,7 +199,7 @@ static ERROR	pgmld01( FH h , PD *pdptr )
 
 		flen = (long)p->p_hitpa - (long)pi->pi_bbase;	/* M01.01.0925.01 */
 
-		FOREVER
+		for(;;)
 		{	/*  read in more relocation info  */
 			if( (r = xread(h,flen,pi->pi_bbase)) <= 0 ) /* M01.01.0925.01 */
 				break ;

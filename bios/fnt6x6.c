@@ -15,7 +15,7 @@
 #include "portab.h"
 #include "fontdef.h"
 
-EXTERN	UWORD	off_first[], dat_first[];
+extern UWORD off_first[], dat_first[];
 
 struct font_head f6x6 ={
     1,			/*   WORD font_id	*/

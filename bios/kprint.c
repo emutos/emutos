@@ -39,7 +39,8 @@ extern int doprintf(void (*outc)(int), const char *fmt, va_list ap);
 
 //static  char	buffer[MAXDMP] ;
 
-GLOBAL	char	*kcrlf = "\n\r" ;
+// GLOBAL
+char	*kcrlf = "\n\r" ;
 
 /*==== cprintf - do formatted string output direct to the console ======*/
 
@@ -130,7 +131,7 @@ void panic(void)
     goto halt;
   } 
 halt:
-  for(;;);
+  for(;;); /* TODO, use stop instruction */
 }
 
 
@@ -156,7 +157,7 @@ void kpanic(const char * fmt, ...)
     va_start(ap, fmt);
     doprintf(kprintf_outc, fmt, ap);
     va_end(ap);
-    while(1);
+    for(;;); /* TODO, use stop instruction */
 }
 
 

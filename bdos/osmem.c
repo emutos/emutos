@@ -42,7 +42,8 @@
  *  osmptr -
  */
 
-GLOBAL	int	osmptr;
+// GLOBAL	
+int	osmptr;
 
 
 /*
@@ -54,7 +55,8 @@ GLOBAL	int	osmptr;
  */
 
 #define MAXQUICK	20
-GLOBAL	int	*root[MAXQUICK];
+// GLOBAL	
+int	*root[MAXQUICK];
 
 /*
  *  local debug counters
@@ -155,7 +157,7 @@ void	*xmgetblk(int i)
  *  xmfreblk - free up memory allocated through mgetblk
  */
 
-VOID	xmfreblk(void *m)
+void	xmfreblk(void *m)
 {
     int	i;
 

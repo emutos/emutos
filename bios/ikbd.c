@@ -47,6 +47,7 @@
 #define DBG_KBD 0
 
 
+
 /* scancode definitions */
 #define KEY_RELEASED 0x80     /* This bit set, when key-release scancode */
 

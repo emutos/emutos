@@ -15,12 +15,6 @@
 #ifndef _BIOS_H
 #define _BIOS_H
 
-/*
- *  externs declarations
- */
-
-EXTERN	BYTE	INP() ;
-EXTERN	VOID	OUTP() ;
 
 /*
  *  Bios Function Numbers
@@ -236,6 +230,6 @@ MPB
 
 
 extern	long	setjmp(long *);
-extern	VOID	longjmp(long *, long);
+extern	void	longjmp(long *, long);
 
 #endif /* _BIOS_H */

@@ -94,8 +94,6 @@ void midiws(WORD cnt, LONG ptr)
  
 void midi_init(void)
 {
-//    cprintf("[    ] MIDI ACIA initialized ...\r");
-
     /* initialize midi ACIA */
     midi_acia.ctrl =
         ACIA_RESET;     /* master reset */

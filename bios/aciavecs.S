@@ -17,15 +17,15 @@
 //
 // typedef struct
 // {
-//   VOID (*midivec)( UBYTE data );  /* MIDI Input */
-//   VOID (*vkbderr)( UBYTE data );  /* IKBD Error */
-//   VOID (*vmiderr)( UBYTE data );  /* MIDI Error */
-//   VOID (*statvec)(char *buf);     /* IKBD Status */
-//   VOID (*mousevec)(char *buf);    /* IKBD Mouse */
-//   VOID (*clockvec)(char *buf);    /* IKBD Clock */
-//   VOID (*joyvec)(char *buf);      /* IKBD Joystick */
-//   VOID (*midisys)( VOID );        /* Main MIDI Vector */
-//   VOID (*ikbdsys)( VOID );        /* Main IKBD Vector */
+//   void (*midivec)( UBYTE data );  /* MIDI Input */
+//   void (*vkbderr)( UBYTE data );  /* IKBD Error */
+//   void (*vmiderr)( UBYTE data );  /* MIDI Error */
+//   void (*statvec)(char *buf);     /* IKBD Status */
+//   void (*mousevec)(char *buf);    /* IKBD Mouse */
+//   void (*clockvec)(char *buf);    /* IKBD Clock */
+//   void (*joyvec)(char *buf);      /* IKBD Joystick */
+//   void (*midisys)( void );        /* Main MIDI Vector */
+//   void (*ikbdsys)( void );        /* Main IKBD Vector */
 // } KBDVECS;
 //
 //- midivec is called with the received data byte in d0. 

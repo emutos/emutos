@@ -29,7 +29,8 @@
 **  drvtbl -
 */
 
-GLOBAL	DMD *drvtbl[16];
+// GLOBAL
+DMD *drvtbl[16];
 
 
 /*
@@ -38,7 +39,8 @@ GLOBAL	DMD *drvtbl[16];
 **	  1, 2, 4, 8, 16, 32, 64, 128  256, 512, 1024, 2048 ... 
 */
 
-GLOBAL	int logmsk[] = {  0, 1, 3, 7, 15, 31, 63, 127, 255, 511, 1023, 2047,
+// GLOBAL
+int logmsk[] = {  0, 1, 3, 7, 15, 31, 63, 127, 255, 511, 1023, 2047,
 		 4095, 8191, 16383, 32767 } ;
 
 
@@ -46,26 +48,30 @@ GLOBAL	int logmsk[] = {  0, 1, 3, 7, 15, 31, 63, 127, 255, 511, 1023, 2047,
 **  sft -
 */
 
-GLOBAL	FTAB sft[OPNFILES];
+// GLOBAL	
+FTAB sft[OPNFILES];
 
 
 /*
 **  rwerr -  hard error number currently in progress 
 */
 
-GLOBAL	long rwerr; 
+// GLOBAL	
+long rwerr; 
 
 /*
 **  errdrv -  drive on which error occurred 
 */
 
-GLOBAL	int errdrv; 
+// GLOBAL	
+int errdrv; 
 
 
 /*
 **  time - , date - who knows why this is here?
 */
 
-GLOBAL	unsigned int	time, date ;
+// GLOBAL	
+unsigned int	time, date ;
 
 

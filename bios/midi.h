@@ -16,15 +16,15 @@
 #include "portab.h"
 
 /* initialise the MIDI ACIA */
-extern void midi_init(VOID);
+extern void midi_init(void);
 
 /* some bios functions */
-extern LONG bconstat3(VOID);
-extern LONG bconin3(VOID);
-extern LONG bcostat3(VOID);
-extern VOID bconout3(WORD dev, WORD c);
+extern LONG bconstat3(void);
+extern LONG bconin3(void);
+extern LONG bcostat3(void);
+extern void bconout3(WORD dev, WORD c);
 
 /* some xbios functions */
-extern VOID midiws(WORD cnt, LONG ptr);
+extern void midiws(WORD cnt, LONG ptr);
 
 #endif /* _MIDI_H */

@@ -319,4 +319,11 @@ Start... early ages
 - got Initmous() working (thanks Laurent)  (MAD)
 - changed all "VOID"s to "void" in bios/*.[hc]  (MAD)
 
+27. Nov. 2001
+- solved bdos-broken-when-floppy bug (xlseek proto wad badly ansified) (LVL)
+- removed silly FOREVER, VOID, and others from portab.h (LVL)
+- crude mediach(), TODO section and error names in floppy.c (LVL)
+- static strcmp in util/nls.c conform to standard semantics (LVL)
+- cksum handling of nvram (LVL)
+- new 'hardware' section in status.txt (LVL)
 
