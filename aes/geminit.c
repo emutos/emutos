@@ -52,6 +52,7 @@
 #include "gemsuper.h"
 #include "geminput.h"
 #include "gemmnlib.h"
+#include "optimize.h"
 
 
 /*
@@ -358,7 +359,7 @@ sndcli(pfilespec, paccroom)
         LONG            ldaddr;
 
 
-        strcpy(pfilespec, &D.s_cmd[0]);
+        strcpy(&D.s_cmd[0], pfilespec);
 
         handle = dos_open( ad_scmd, ROPEN );
         if (!DOS_ERR)
@@ -397,7 +398,7 @@ ldaccs()
 
         laccroom = dos_avail() - 0x00033800L - gsx_mcalc();
         accroom = (laccroom + 0x0000000fL) >> 4;
-        strcpy(rs_str(STACC), &D.g_dir[0]);
+        strcpy(&D.g_dir[0], rs_str(STACC));
         dos_sdta(ad_dta);
         ret = TRUE;
         for(i=0; (i<NUM_ACCS) && (accroom > 0) && (ret); i++)
@@ -551,7 +552,7 @@ sh_init()
                                                 /* append .APP if no    */
                                                 /*   extension given    */
             if (need_ext)
-              strcpy(rs_str(STGEM), pdst);
+              strcpy(pdst, rs_str(STGEM));
             else
               *pdst = NULL;
             pdst = &D.s_cmd[0];
@@ -712,12 +713,15 @@ void gem_main()
                                                 /* load gem resource    */
                                                 /*   and fix it up      */
                                                 /*   before we go       */
+cprintf("gem_main: loading GEM.RSC...\n");
         if ( !rs_readit(ad_sysglo, ADDR("GEM.RSC")) ) 
         {
            /* bad resource load, so dive out */
+cprintf("gem_main: failed to load GEM.RSC...\n");
         }
         else
         {
+cprintf("gem_main: succeeded in loading GEM.RSC...\n");
                                                 /* get mice forms       */
           rs_gaddr(ad_sysglo, R_BIPDATA, 3 + ARROW, &ad_armice);
           ad_armice = LLGET(ad_armice);

@@ -16,15 +16,14 @@
 */
 
 
-//.globl _main
-.globl _gem_startup
+.globl _ui_start
 .globl _pgmld
 .globl _gemdos
 
         .text
 
 //_main:
-_gem_startup:
+_ui_start:
         movea.l a7,a5
         movea.l #LEABC,a7
         movea.l 4(a5),a5
@@ -96,12 +95,13 @@ LB4:
 _gemdos:
 LF2:
             move.l  (SP)+,LEA2C
-/*
-        move.l  (SP),-(SP)
-        pea     errormsg
-        jsr     _kprintf
-        addq.l  #8,sp
-*/
+
+    move.l  (SP),d0
+    move.l  d0,-(SP)
+    pea     errormsg
+    jsr     _cprintf
+    addq.l  #8,sp
+
             move.w  #0,_DOS_ERR
             move.w  #0,_DOS_AX
             trap    #1

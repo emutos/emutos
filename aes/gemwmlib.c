@@ -175,11 +175,8 @@ void w_obadd(OBJECT olist[], WORD parent, WORD child)
 }
 
 
-        VOID
-w_setup(ppd, w_handle, kind)
-        PD              *ppd;
-        WORD            w_handle;
-        WORD            kind;
+
+void w_setup(PD *ppd, WORD w_handle, WORD kind)
 {
         REG WINDOW      *pwin;
 
@@ -192,10 +189,8 @@ w_setup(ppd, w_handle, kind)
 }
 
 
-        WORD
-*w_getxptr(which, w_handle)
-        WORD            which;
-        REG WORD        w_handle;
+
+WORD *w_getxptr(WORD which, WORD w_handle)
 {
         switch(which)
         {
@@ -211,13 +206,10 @@ w_setup(ppd, w_handle, kind)
         }
 }
 
-/* Get the size (x,y,w,h) of the window                         */
 
-        VOID
-w_getsize(which, w_handle, pt)
-        REG WORD        which;
-        WORD            w_handle;
-        REG GRECT       *pt;
+
+/* Get the size (x,y,w,h) of the window */
+void w_getsize(WORD which, WORD w_handle, GRECT *pt)
 {
         rc_copy(w_getxptr(which, w_handle), pt);
         if ( (which == WS_TRUE) && pt->g_w && pt->g_h)
@@ -228,11 +220,8 @@ w_getsize(which, w_handle, pt)
 }
 
 
-        VOID
-w_setsize(which, w_handle, pt)
-        WORD            which;
-        WORD            w_handle;
-        GRECT           *pt;
+
+void w_setsize(WORD which, WORD w_handle, GRECT *pt)
 {
         rc_copy(pt, w_getxptr(which, w_handle));
 }
@@ -1363,8 +1352,7 @@ w_owns(w_handle, po, pt, poutwds)
 /*
 *       Start the window manager up by initializing internal variables.
 */
-        VOID
-wm_start()
+void wm_start()
 {
         REG WORD        i;
         REG ORECT       *po;
@@ -1752,9 +1740,7 @@ wm_set(w_handle, w_field, pinwds)
 *       the mouse is in.
 */
 
-        WORD
-wm_find(x, y)
-        WORD            x, y;
+WORD wm_find(WORD x, WORD y)
 {
         return( ob_find(gl_wtree, 0, 2, x, y) );
 }
@@ -1766,9 +1752,7 @@ wm_find(x, y)
 *       pipe or is making some other direct screen update based on his current
 *       rectangle list.
 */
-        VOID
-wm_update(beg_update)
-        REG WORD        beg_update;
+void wm_update(WORD beg_update)
 {
 
         if ( beg_update < 2)
@@ -1796,12 +1780,8 @@ wm_update(beg_update)
 *       including the Border Area and the Kind of window desired, calculate
 *       the result size of the window Work Area.
 */
-        VOID
-wm_calc(wtype, kind, x, y, w, h, px, py, pw, ph)
-        WORD            wtype;
-        REG UWORD       kind;
-        WORD            x, y, w, h;
-        WORD            *px, *py, *pw, *ph;
+void wm_calc(WORD wtype, UWORD kind, WORD x, WORD y, WORD w, WORD h,
+             WORD *px, WORD *py, WORD *pw, WORD *ph)
 {
         REG WORD        tb, bb, lb, rb;
 

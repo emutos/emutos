@@ -123,7 +123,7 @@ LSTCMP(lst, rst)
           pend++;
         else
         {
-          strcpy("A:\\*.*", pstr);
+          strcpy(pstr, "A:\\*.*");
           pstr[0] += (BYTE) dos_gdrv();
           pend = pstr + 3;
         }
@@ -192,7 +192,7 @@ fs_active(ppath, pspec, pcount)
 
         if (gl_shdrive)
         {
-          strcpy("\007 A:", &gl_dta[29]);
+          strcpy(&gl_dta[29], "\007 A:");
           for(i=0; i<16; i++)
           {
             if ( (gl_bvdisk >> i) & 0x0001 )
@@ -522,18 +522,18 @@ fs_input(pipath, pisel, pbutton)
           gsx_mxmy(&mx, &my);
         
           fpath_len = LSTCPY(ad_locstr, ad_fpath);
-          if ( !strcmp(&D.g_dir[0], &locstr[0]) )
+          if ( strcmp(&D.g_dir[0], &locstr[0])!=0 )
           {
             fs_sel(sel, NORMAL);
             if ( (touchob == FSOK) ||
                  (touchob == FSCANCEL) )
               ob_change(tree, touchob, NORMAL, TRUE);
-            strcpy(&locstr[0], &D.g_dir[0]);
+            strcpy(&D.g_dir[0], &locstr[0]);
             pspec = fs_pspec(&D.g_dir[0], &D.g_dir[fpath_len]);     
 /*          LSTCPY(ad_fpath, ADDR(&D.g_dir[0])); */
             fs_sset(tree, FSDIRECT, ADDR(&D.g_dir[0]), &ad_fpath, &temp_len);
             pstr = fs_pspec(&locstr[0], &locstr[fpath_len]);        
-            strcpy("*.*", pstr);
+            strcpy(pstr, "*.*");
             fs_newdir(ad_ftitle, ad_locstr, pspec, tree, &count, elevpos);
             curr = elevpos;
             sel = touchob = elevpos = 0;
@@ -625,9 +625,9 @@ dofelev:        fm_own(TRUE);
                     {
                                                 /* append in folder name*/
                       pstr = fs_pspec(&locstr[0], &locstr[fpath_len]);
-                      strcpy(pstr - 1, &gl_tmp2[0]);
+                      strcpy(&gl_tmp2[0], pstr - 1);
                       unfmt_str(&gl_tmp1[1], pstr);
-                      strcat(&gl_tmp2[0], pstr);
+                      strcat(pstr, &gl_tmp2[0]);
                     }
                     firsttime = TRUE;
                   }
@@ -643,7 +643,7 @@ dofelev:        fm_own(TRUE);
                   {
                     pstr = fs_back(&locstr[0], pstr);
                     if (*pstr == '\\')
-                      strcpy(pspec, pstr);
+                      strcpy(pstr, pspec);
                   }
                   else
                   {

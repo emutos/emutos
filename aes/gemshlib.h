@@ -15,4 +15,7 @@ extern LONG     ad_pfile;
 
 extern WORD     gl_shgem;
 
+
+WORD sh_find(LONG pspec);
+
 #endif

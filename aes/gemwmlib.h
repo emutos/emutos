@@ -19,10 +19,18 @@ extern WORD     gl_wtop;
 extern LONG     gl_wtree;
 extern LONG     gl_awind;
 
-/* FIXME: Add more prototypes here */
 void w_nilit(WORD num, OBJECT olist[]);
+void w_getsize(WORD which, WORD w_handle, GRECT *pt);
+
 void ap_sendmsg(WORD ap_msg[], WORD type, PD *towhom,
                 WORD w3, WORD w4, WORD w5, WORD w6, WORD w7);
+
+void wm_start();
+
+WORD wm_find(WORD x, WORD y);
+void wm_update(WORD beg_update);
+void wm_calc(WORD wtype, UWORD kind, WORD x, WORD y, WORD w, WORD h,
+             WORD *px, WORD *py, WORD *pw, WORD *ph);
 
 
 #endif

@@ -312,7 +312,7 @@ ob_delit(idx)
 {
         if (D.g_rawstr[idx])
         {
-          strcpy(&D.g_rawstr[idx+1], &D.g_rawstr[idx]);
+          strcpy(&D.g_rawstr[idx], &D.g_rawstr[idx+1]);
           return(FALSE);
         }
         return(TRUE);

@@ -23,23 +23,12 @@
 #include "obdefs.h"
 #include "gemlib.h"
 
+#include "gemdosif.h"
+#include "gemglobe.h"
 
-/* ---------- added for metaware compiler ---------- */
-                                                /* in OPTIMOPT.C        */
-#if I8086
-EXTERN VOID     movs();
-#endif
-EXTERN WORD     strcmp();
-EXTERN VOID     bfill();
-
-EXTERN VOID     setdsss();                      /* in DOSIF.A86         */
-EXTERN VOID     psetup();
-
-/* -------------------------------------------------- */
-
-EXTERN THEGLO   D;                              /* in GLOBAL.C          */
 
 EXTERN WORD     totpds;
+
 
 
 PD *pd_index(WORD i)
@@ -61,7 +50,7 @@ PD *fpdnm(BYTE *pname, UWORD pid)
           if (pname != NULLPTR)
           {
             movs(8, p->p_name, &temp[0]);
-            if (strcmp(pname, &temp[0]) )
+            if( strcmp(pname, &temp[0])==0 )
               return(p);
           }
           else

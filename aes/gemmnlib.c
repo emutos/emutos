@@ -658,7 +658,7 @@ mn_register(pid, pstr)
             *ptmp = NULL;
             ptmp--;
           } 
-          strcat(" ", desk_str[openda]);
+          strcat(desk_str[openda], " ");
 
           menu_fixup(&rlr->p_name[0]);
           return(openda);

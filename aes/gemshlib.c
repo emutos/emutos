@@ -352,7 +352,7 @@ sh_envrn(ppath, psrch)
             if (((last == NULL) || (last == 0xFF)) && (tmp == loc2[0]))
             {
               LBCOPY(ADDR(&loc1[0]), lp, len);
-              if ( strcmp(&loc1[0], &loc2[1]) )
+              if ( strcmp(&loc1[0], &loc2[1])==0 )
               {
                 lp += len;
                 break;
@@ -439,9 +439,7 @@ sh_path(whichone, dp, pname)
 *       current directory and then looks down the search path.
 */
 
-        WORD
-sh_find(pspec)
-        LONG            pspec;
+WORD sh_find(LONG pspec)
 {
         WORD            path;
         BYTE            gotdir, *pname, tmpname[66];
@@ -453,11 +451,11 @@ sh_find(pspec)
         gotdir = (pname != &D.g_dir[0]);
         if (!gotdir)
         {
-          strcpy(pname, &tmpname[0]);           /* save name            */
+          strcpy(&tmpname[0], pname);           /* save name            */
           sh_curdir(ad_path);                   /* get current drive/dir*/
           if (D.g_dir[3] != NULL)               /* if not at root       */
-            strcat("\\", &D.g_dir[0]);          /*  add foreslash       */
-          strcat(&tmpname[0], &D.g_dir[0]);     /* append name to drive */
+            strcat(&D.g_dir[0], "\\");          /*  add foreslash       */
+          strcat(&D.g_dir[0], &tmpname[0]);     /* append name to drive */
         }
                                                 /* and directory.       */
         path = 0;
@@ -588,7 +586,7 @@ sh_fixtail(iscpm)
                                                 /* null over carriage ret*/
           s_tail[i + len + 1] = NULL;
                                                 /* copy down space,tail */
-          strcpy(&s_tail[i+1], &s_tail[i]);
+          strcpy(&s_tail[i], &s_tail[i+1]);
         }
         else
         {
@@ -686,7 +684,7 @@ sh_chdef(psh)
           psh->sh_fullstep = 0;
           dos_sdrv(psh->sh_cdir[0] - 'A');
           dos_chdir(ADDR(&psh->sh_cdir[0]));
-          strcpy(&psh->sh_desk[0], &D.s_cmd[0]);
+          strcpy(&D.s_cmd[0], &psh->sh_desk[0]);
         }
 #if GEMDOS
         else
@@ -767,11 +765,11 @@ sh_ldapp()
                 
         psh = &sh[rlr->p_pid];
 #if GEMDOS
-        strcpy(ad_scdir,sh_apdir);              /* initialize sh_apdir  */
+        strcpy(sh_apdir, ad_scdir);             /* initialize sh_apdir  */
 #endif
 
-        strcpy(rs_str(STDESKTP), &psh->sh_desk[0]);
-        strcpy(&D.s_cdir[0], &psh->sh_cdir[0]);
+        strcpy(&psh->sh_desk[0], rs_str(STDESKTP));
+        strcpy(&psh->sh_cdir[0], &D.s_cdir[0]);
 
 ldagain:
         sh_chdef(psh);
@@ -879,12 +877,12 @@ sh_ldapp()
 
         psh = &sh[rlr->p_pid];
 #if GEMDOS
-        strcpy(ad_scdir,sh_apdir);              /* initialize sh_apdir  */
+        strcpy(sh_apdir, ad_scdir);             /* initialize sh_apdir  */
 #endif
         badtry = 0;     
 
-        strcpy(rs_str(STDESKTP), &psh->sh_desk[0]);
-        strcpy(&D.s_cdir[0], &psh->sh_cdir[0]);
+        strcpy(&psh->sh_desk[0], rs_str(STDESKTP));
+        strcpy(&psh->sh_cdir[0], &D.s_cdir[0]);
         do
         {
           sh_chdef(psh);

@@ -23,7 +23,6 @@ GLOBAL UWORD    DOS_AX; /* really a "DOS_RET"   */
 GLOBAL UWORD    DOS_ERR;
 
 EXTERN  LONG    gemdos();
-BYTE *          str_copy();
 
 
 #define X_TABOUT 0x02
@@ -77,189 +76,153 @@ WORD pgmld(WORD handle, BYTE *pname, LONG **ldaddr)
 }
 
 
-        /*VOID*/
-chrout(chr)
-        WORD    chr;
+/*
+void chrout(WORD chr)
 {
         return( gemdos(X_TABOUT,chr) );
 }
-        BYTE
-rawcon(parm)
-        WORD    parm;
+*/
+
+/*
+BYTE rawcon(WORD parm)
 {
         return( (BYTE)gemdos(X_RAWCON, parm) );
 }
+*/
 
-        /*VOID*/
-prt_chr(chr)
-        WORD    chr;
+/*
+void prt_chr(WORD chr)
 {
         return( gemdos(X_PRTOUT,chr) );
 }
+*/
 
-        /*VOID*/
-dos_func(function, parm)
-        UWORD           function;
-        LONG            parm;
+
+/*
+void dos_func(UWORD function, LONG parm)
 {
         return( gemdos(function,parm) );
 }
+*/
 
-        WORD
-dos_gdrv()
+
+WORD dos_gdrv()
 {
         return( gemdos(X_GETDRV) );
 }
 
-        /*VOID*/
-dos_sdta(ldta)
-        LONG            ldta;
+
+void dos_sdta(LONG ldta)
 {
-        return(gemdos(X_SETDTA,ldta));
+        gemdos(X_SETDTA,ldta);
 }
 
-        WORD
-dos_sfirst(pspec, attr)
-        LONG            pspec;
-        WORD            attr;
+
+WORD dos_sfirst(LONG pspec, WORD attr)
 {
         return(!gemdos(X_SFIRST,pspec,attr));
 }
 
-        WORD
-dos_snext()
+WORD dos_snext()
 {
         return(!gemdos(X_SNEXT));
 }
 
-        WORD
-dos_open(pname, access)
-        BYTE            *pname;
-        WORD            access;
+
+WORD dos_open(BYTE *pname, WORD access)
 {
         LONG            ret;
 
         ret = gemdos(X_OPEN,pname,access);
-//kprintf("dos_open: handle=0x%x\n",(int)ret);
+
         if (DOS_ERR)
           return(FALSE);
         else
           return((UWORD)ret);
 }
 
-        WORD
-dos_close(handle)
-        WORD            handle;
+WORD dos_close(WORD handle)
 {
         return( gemdos(X_CLOSE,handle) );
 }
 
-        UWORD
-dos_read(handle, cnt, pbuffer)
-        WORD            handle;
-        UWORD           cnt;
-        LONG            pbuffer;
+
+UWORD dos_read(WORD handle, UWORD cnt, LONG pbuffer)
 {
-//kprintf("Dos_read: cnt=0x%x\n",(int)cnt);
         return(gemdos(X_READ,handle,(ULONG)cnt,pbuffer));
 }
 
-        UWORD
-dos_write(handle, cnt, pbuffer)
-        WORD            handle;
-        UWORD           cnt;
-        LONG            pbuffer;
+UWORD dos_write(WORD handle, UWORD cnt, LONG pbuffer)
 {
         return(gemdos(X_WRITE,handle,(ULONG)cnt,pbuffer));
 }
 
-        LONG
-dos_lseek(handle, smode, sofst)
-        WORD            handle;
-        WORD            smode;
-        LONG            sofst;
+
+LONG dos_lseek(WORD handle, WORD smode, LONG sofst)
 {
         return( gemdos(X_LSEEK,sofst, handle, smode) );
 }
 
 
-#if 1
-                                                /* just for an example  */
-        VOID
-dos_exec(pcspec, segenv, pcmdln)
-        LONG            pcspec;
-        WORD            segenv;
-        LONG            pcmdln;
+
+void dos_exec(LONG pcspec, WORD segenv, LONG pcmdln)
 {
         gemdos(X_EXEC,segenv,pcspec,pcmdln,NULLPTR); 
 }       
-#endif
 
 
-        LONG
-dos_chdir(pdrvpath)
-        LONG            pdrvpath;
+
+LONG dos_chdir(LONG pdrvpath)
 {
         return(gemdos(X_CHDIR,pdrvpath));
 }
 
-        WORD
-dos_gdir(drive, pdrvpath)
-        WORD            drive;
-        REG BYTE *      pdrvpath;
+
+WORD dos_gdir(WORD drive, BYTE *pdrvpath)
 {
         REG WORD ret;
 
         ret = gemdos(X_GETDIR,pdrvpath,drive);
         if (pdrvpath[0] == '\\')
-          str_copy(&pdrvpath[1],pdrvpath);      /* remove leading '\' */
+          strcpy(pdrvpath, &pdrvpath[1]);      /* remove leading '\' */
         return(ret);
 }
 
-        WORD
-dos_sdrv(newdrv)
-        WORD            newdrv;
+
+WORD dos_sdrv(WORD newdrv)
 {
         return( gemdos(X_SETDRV,newdrv) );
 }
 
-        WORD
-isdrive()
+
+/*
+WORD isdrive()
 {
         return ( dos_sdrv( dos_gdrv() ) );
 }
+*/
 
 
-        LONG
-dos_create(name, attr)
-        BYTE    *name;
-        WORD    attr;
+LONG dos_create(BYTE *name, WORD attr)
 {
         return(gemdos(X_CREAT,name,attr));
 }
 
 
-        WORD
-dos_mkdir(path,attr)
-        BYTE    *path;
-        WORD    attr;
+WORD dos_mkdir(BYTE *path, WORD attr)
 {
         gemdos(X_MKDIR,path);
         return( !DOS_ERR );
 }
 
-        WORD
-dos_chmod(name,wrt,mod)
-        BYTE    *name;
-        WORD    wrt,mod;
+
+WORD dos_chmod(BYTE *name, WORD wrt, WORD mod)
 {
         return( gemdos(X_CHMOD,name,wrt,mod) );
 }
 
 
-        WORD
-dos_set(h,time,date)
-        UWORD   h,time,date;
+WORD dos_set(UWORD h, UWORD time, UWORD date)
 {
         UWORD   buf[2];
 
@@ -267,10 +230,10 @@ dos_set(h,time,date)
         buf[1] = date;
         return( gemdos(X_GSDTOF,&buf[0],h,TRUE) );
 }
-        WORD
-dos_label(drive,plabel)
-        BYTE    drive;
-        BYTE    *plabel;
+
+
+#if 0
+WORD dos_label(BYTE drive, BYTE *plabel)
 {
         BYTE    buf[50];                /* 44 bytes used        */
         BYTE    path[8];
@@ -279,28 +242,27 @@ dos_label(drive,plabel)
         for (i=0;i<50;)
           buf[i++] = 0;
         gemdos(X_SETDTA,&buf[0]);
-        str_copy(" :\\*.*",path);
+        strcpy(path, " :\\*.*");
         path[0] = (drive + 'A') - 1;
         if (!gemdos(X_SFIRST,path,0x08))
         {
-          str_copy(&buf[30],plabel);
+          strcpy(plabel, &buf[30]);
           return(TRUE);
         }
         else
           return(FALSE);
 }
+#endif
 
-        LONG
-dos_delete(name)
-        BYTE    *name;
+
+LONG dos_delete(BYTE *name)
 {
         return (gemdos(X_UNLINK,name) );
 }
 
-        WORD
-dos_space(drv,ptotal, pavail)
-        WORD    drv;
-        LONG    *ptotal, *pavail;
+
+#if 0
+WORD dos_space(WORD drv, LONG *ptotal, LONG *pavail)
 {
         LONG    buf[4];
         LONG    mult;
@@ -311,18 +273,16 @@ dos_space(drv,ptotal, pavail)
         *pavail = mult * buf[0];
         return(TRUE);
 }
+#endif
 
-        WORD
-dos_rename(p1,p2)
-        BYTE    *p1;
-        BYTE    *p2;
+
+WORD dos_rename(BYTE *p1, BYTE *p2)
 {
         return(gemdos(X_RENAME,0x0,p1,p2) );
 }
 
-        WORD
-dos_rmdir(path)
-        BYTE    *path;
+
+WORD dos_rmdir(BYTE *path)
 {
         return ( gemdos(X_RMDIR,path) );
 }
@@ -354,11 +314,3 @@ WORD dos_free(LONG maddr)
         return( gemdos(X_MFREE,maddr) );
 }
 
-        BYTE
-*str_copy(ps, pd)
-        REG BYTE        *ps, *pd;
-{
-        while(*pd++ = *ps++)
-          ;
-        return(pd);
-}
