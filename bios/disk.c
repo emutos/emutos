@@ -26,7 +26,7 @@
 long nfid_xhdi;
 
 /* NatFeats */
-static long _NF_call  = 0xfe014e75L;
+static long _NF_call  = 0x73014e75L;
 #define nfCall(n)       (((long (*)(long, ...))&_NF_call)n)
 
 

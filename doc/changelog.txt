@@ -1185,6 +1185,12 @@ Start... early ages
 - bios/bios.c - check for Ctrl key fixed (hold it to skip AUTO\*.PRG) (joy)
 - bios/initinfo.c - delay can be interrupted by Shift/Ctrl/Alt keys (joy)
 - bios/cookie.c - number of free slots corrected (joy)
-- bios/machine.c - COOKIE_NATFEAT created
+- bios/machine.c - COOKIE_NATFEAT created (joy)
 - bios/startup.S, bios/disk.c, bios/machine.c - NatFeat instruction codes
-  changed to LineF $fe00/$fe01
+  changed to LineF $fe00/$fe01 (joy)
+
+20. Oct 2002
+- bios/startup.S, bios/disk.c, bios/machine.c - NatFeat instruction codes
+  changed back to good old $7300/$7301. The LineF interface requires
+  the $fe0x instructions to be long words and I am not ready to accept
+  such change of NatFeat calling convention. Sorry. (joy)
