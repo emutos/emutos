@@ -1296,3 +1296,4 @@ Start... early ages
   This was added especially to make Thothy happy - he doesn't like long
   boot timeouts... (joy)
 - po/cs.po - Czech translation updated (joy)
+- bios/initinfo.c - moved up the time bar a few lines (MAD)
