@@ -1538,3 +1538,7 @@ Start... early ages
 - tools/bug.c Makefile: bug produces util/langs.c directly; bug no longer
   complains about unknown charsets. (LVL)
 
+2003-08-11
+- po/de.po: Added missing strings and adjusted some of the form_alert strings
+  to the 40 characters per line limit. (THH)
+- aes/gemrslib.c: rs_str() now uses gettext(), too. (THH)
