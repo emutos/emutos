@@ -33,7 +33,7 @@ COUNTRY = us
 # Choose the user interface that should be included into EmuTOS
 # (0=command line "EmuCON" , 1=AES)
 
-WITH_AES = 0
+WITH_AES = 1
 
 
 #
@@ -129,7 +129,7 @@ UTILSSRC = memset.S memmove.S nlsasm.S setjmp.S
 #
 
 VDICSRC = cbssdefs.c isin.c jmptbl.c lisastub.c lisatabl.c \
-           monobj.c monout.c opnwkram.c seedfill.c text.c cbssdefs.c
+          monobj.c monout.c opnwkram.c seedfill.c text.c cbssdefs.c
 VDISSRC = entry.S bitblt.S bltfrag.S copyrfm.S esclisa.S  \
           gsxasm1.S gsxasm2.S lisagem.S vdimouse.S newmono.S  \
           textblt.S tranfm.S gsxvars.S

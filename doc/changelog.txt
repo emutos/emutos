@@ -747,3 +747,6 @@ Start... early ages
 - Finally found the other bug that caused EmuTOS to crash when running a
   GEM application (dos_exec() was not reentrant). (THH)
 - Now linking desk_rsc.c into EmuTOS, too. (THH).
+
+13. Apr. 2002
+- doc/vdibind.txt - added documentation for vdi routine implementation (MAD)

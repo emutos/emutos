@@ -65,7 +65,7 @@ _mouse_int:
 no_left:
         move.b  _cur_ms_stat,d1  // get previous mouse state
 
-        andi.w  #3,d1           // mask out state codes bits 6,7
+        and.w   #3,d1           // mask out state codes bits 6,7
         cmp.b   d1,d0           // has button state changed
         beq     xy_update       // no go test x,y change
 

@@ -33,6 +33,8 @@
 #ifndef _ASM_H
 #define _ASM_H
 
+
+
 /*
  * WORD set_sr(WORD new); 
  *   sets sr to the new value, and return the old sr value 
@@ -69,6 +71,36 @@ __extension__                               \
   retvalue;                                 \
 })
 
+
+
+/*
+ * void ints_off(void);
+ *   switches off interrupts, SR saved to stack
+ */
+
+#define ints_off()      \
+__extension__           \
+({__asm__ volatile      \
+  ("move  sr, -(sp);    \
+    ori.w #0x0700, sr " \
+  );                    \
+})
+
+
+
+/*
+ * void ints_on(void);
+ *   switches interrupts on again, SR restored from stack
+ */
+
+#define ints_on()	\
+__extension__           \
+({__asm__ volatile      \
+  ("move  (sp)+, sr "); \
+})
+
+
+
 /*
  * void stop2x00(void)
  *   the m68k STOP immediate instruction
@@ -85,6 +117,8 @@ __extension__                                   \
 ({__asm__ volatile                              \
   ("stop #0x2500 ");                            \
 })
+
+
 
 /*
  * void regsafe_call(void *addr)
