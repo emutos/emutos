@@ -91,7 +91,7 @@ static void detect_vme(void)
 
 /* DIP switches */
 
-static void detect_swi(void)
+static void setvalue_swi(void)
 {
   if(has_ste_shifter) {
     cookie_swi = (*(WORD *)0xffff9200)>>8;
@@ -102,7 +102,7 @@ static void detect_swi(void)
 
 /* video type */
 
-static void detect_vdo(void)
+static void setvalue_vdo(void)
 {
   if(has_videl) {
     cookie_vdo = 0x00030000L;
@@ -121,7 +121,7 @@ static void detect_vdo(void)
 
 /* machine type */
 
-static void detect_mch(void)
+static void setvalue_mch(void)
 {
   if(has_videl) {
     cookie_mch = MCH_FALCON;
@@ -144,7 +144,7 @@ static void detect_mch(void)
 
 /* SND */
 
-static void detect_snd(void)
+static void setvalue_snd(void)
 {
   /* always at least a PSG */
   cookie_snd = 1;
@@ -157,7 +157,7 @@ static void detect_snd(void)
 
 /* FDC */
 
-static void detect_fdc(void)
+static void setvalue_fdc(void)
 {
   /* LVL - This is what I understood of my search on 
    * comp.sys.atari.st.tech, archives, but I do not claim 
@@ -171,13 +171,18 @@ static void detect_fdc(void)
 }
 
 
-void machine_init(void)
+void machine_detect(void)
 {
   detect_video();
   detect_vme();
   detect_megartc();
-  detect_nvram();
+  // detect_nvram();  can't be called here due to the balloc()! :-(
+}
   
+void machine_init(void)
+{
+  detect_nvram();
+
   /* this is detected by detect_cpu(), called from processor_init() */
   cookie_add(COOKIE_CPU, mcpu);
 
@@ -190,7 +195,7 @@ void machine_init(void)
    * 0x00030000  Falcon030 
    */
 
-  detect_vdo();
+  setvalue_vdo();
   cookie_add(COOKIE_VDO, cookie_vdo);
 
   /* this is detected by detect_fpu(), called from processor_init() */
@@ -202,7 +207,7 @@ void machine_init(void)
    * will be represented by other cookies.  
    */
 
-  detect_swi();
+  setvalue_swi();
   cookie_add(COOKIE_SWI, cookie_swi);
 
   /* _SND
@@ -215,11 +220,11 @@ void machine_init(void)
    * 0x10 DSP 
    */
   
-  detect_snd();
+  setvalue_snd();
   cookie_add(COOKIE_SND, cookie_snd);
 
   /* _MCH */
-  detect_mch();
+  setvalue_mch();
   cookie_add(COOKIE_MCH, cookie_mch);
 
    
@@ -269,7 +274,7 @@ void machine_init(void)
    * behaves like part of the system.
    */
    
-  detect_fdc();
+  setvalue_fdc();
   cookie_add(COOKIE_FDC, cookie_fdc);
 }
 

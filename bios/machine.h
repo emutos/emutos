@@ -30,6 +30,7 @@ extern long cookie_akp;
  */
 
 extern int has_ste_shifter;
+extern int has_videl;
 extern int has_vme;
 extern int has_megartc;   /* in clock.c */
 extern int has_nvram;     /* in nvram.c */
@@ -45,8 +46,10 @@ extern long fputype;
  * functions
  */
 
-/* initialise the machine, and fill the cookie jar */
+/* detect the available hardware machine */
+void machine_detect(void);
 
+/* initialise the machine, and fill the cookie jar */
 void machine_init(void);
 
 /* print the name of the machine */

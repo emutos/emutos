@@ -107,6 +107,9 @@ void startup(void)
     kprintf("beginning of BIOS startup\n");
 #endif
 
+    /* first detect available hardware (video, sound etc.) */
+    machine_detect();
+
     /* First cut memory for screen, rest goes in memory descriptor */
     screen_init();              /* detect monitor type, ... */
 
