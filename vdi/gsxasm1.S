@@ -235,19 +235,19 @@ draw_lp:
         cmp.w   d1,d2           // is start still to left of end?
         blt     dr_lp1          // nope - nothing to draw
 
-	move.w  d0,-(sp)        // save the number of pairs
+        move.w  d0,-(sp)        // save the number of pairs
         move.l  a1,-(sp)        // save the pointer to the array
 #if 0
-	move.w  d1,_X1          // store the adjusted endpoints
+        move.w  d1,_X1          // store the adjusted endpoints
         move.w  d2,_X2
         jsr     _habline       // draw the line segment
 #else
         move.w  _Y1,d3          // fetch scan-line y.
         move.w  d3,-(sp)        // Y1
         move.w  d2,-(sp)        // X2
-	move.w  d1,-(sp)        // X1
+        move.w  d1,-(sp)        // X1
         jsr     _horzline       // draw the line segment
-	addq #6,sp
+        addq #6,sp
 #endif
         move.l  (sp)+,a1        // restore the pointer to the array
         move.w  (sp)+,d0        // restore the number of pairs
@@ -302,9 +302,9 @@ drc_2:
         move.w  _Y1,d2          // fetch scan-line y.
         move.w  d2,-(sp)        // Y1
         move.w  d4,-(sp)        // X2
-	move.w  d3,-(sp)        // X1
+        move.w  d3,-(sp)        // X1
         jsr     _horzline       // draw the line segment
-	addq #6,sp
+        addq #6,sp
 #endif
         move.l  (sp)+,a1        // restore the pointer to the array
         move.w  (sp)+,d2        // restore the clip values
