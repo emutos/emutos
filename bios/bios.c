@@ -65,9 +65,7 @@ extern BYTE *biosts ;           /*  time stamp string */
 
 
 extern LONG trap_1(WORD, ...);  /* found in startup.s */
-extern MD b_mdx;                /* found in startup.s */
 
-extern PD *run;                 /* see bdos/proc.c */
 
 
 /* unused extern LONG oscall();    This jumps to BDOS */
@@ -327,11 +325,6 @@ void biosmain(void)
 void bios_0(MPB *mpb)
 {
     getmpb(mpb); 
-
-#if DBGBIOS
-    kprintf("BIOS: getmpb m_start  = %08lx\n", (LONG) b_mdx.m_start);
-    kprintf("BIOS: getmpb m_length = %08lx\n", (LONG) b_mdx.m_length);
-#endif
 }
 
 

@@ -88,6 +88,10 @@ void * balloc(LONG size)
     themd.m_length -= size;
     themd.m_start += size;
 
+#if DBG_MEM
+    kprintf("BIOS: getmpb m_start  = %08lx\n", (LONG) themd.m_start);
+    kprintf("BIOS: getmpb m_length = %08lx\n", (LONG) themd.m_length);
+#endif
     return ret;
 }
 

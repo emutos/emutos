@@ -594,4 +594,4 @@ Start... early ages
 
 25. Jan. 2002
 - Did put drvbit stuff into bios/blkdev.c (MAD)
-
+- cleaned up bios/bios.c a bit (MAD)
