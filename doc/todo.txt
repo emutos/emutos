@@ -13,4 +13,10 @@
 - is it really necessary to have both NULLPTR and NULPTR defined?
 - move mem-only routines out of proc.c into umem.c or iumem.c
 - check that EmuCON understands 'exit' (useful in .BAT scripts)
-- EmuTOS prints in red in VIDEL
+- improve Mediach()
+- implement full XHDI 1.30
+- add proper VIDEL init and selectable resolutions
+- boot from C: (and make it selectable)
+- Alt key pressed during boot should skip harddisk driver init
+- rewrite nvram.c so it wouldn't need balloc(50) (no checksum necessary)
+- move nvram_init to machine_detect so it could be used in screen.c:videl_init

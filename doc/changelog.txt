@@ -625,4 +625,6 @@ Start... early ages
 
 30. Jan. 2002
 - bdos/osmem.c variables init fixed. (joy)
-- bios/blkdev.c - mediach returns "not changed" status for hard drives (joy).
+- bios/blkdev.c - mediach returns "not changed" status for hard drives (joy)
+- bios/machine.c - _FRB buffer for DMA operations to FastRAM added (joy)
+- bios/floppy.c - floppy rwabs now use _FRB if destination is in FastRAM (joy)
