@@ -153,24 +153,6 @@ BCB
         BYTE    *b_bufr;        /*  pointer to buffer           */
 } ;
 
-/*
- *  buffer type values
- */
-
-#define BT_FAT          0               /*  fat buffer                  */
-#define BT_ROOT         1               /*  root dir buffer             */
-#define BT_DIR          2               /*  other dir buffer            */
-#define BT_DATA         3               /*  data buffer                 */
-
-/*
- *  buffer list indexes
- */
-
-#define BI_FAT          0               /*  fat buffer list             */
-#define BI_ROOT         1               /*  root dir buffer list        */
-#define BI_DIR          1               /*  other dir buffer list       */
-#define BI_DATA         1               /*  data buffer list            */
-
 #endif
 
 

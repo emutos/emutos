@@ -586,3 +586,6 @@ Start... early ages
 - TT-RAM is added to BDOS memory by calling Maddalt (should be changed) (joy)
 - free TT-RAM is displayed in initinfo.c (joy)
 - put diskbuf to blkdev.c (MAD)
+
+23. Jan. 2002
+- Did move the BCB and bufl_init to bdos/fsbuf.c (MAD)

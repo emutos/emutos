@@ -16,6 +16,7 @@
 
 
 
+#if 0
 /*
  *  bufl - buffer lists
  *      two lists:  fat,dir / data
@@ -24,7 +25,7 @@
  */
 
 extern BCB *bufl[];
-
+#endif
 
 extern          void _osinit();
 

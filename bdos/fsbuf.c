@@ -20,6 +20,48 @@
 
 
 /*
+ * bufl_init - BDOS buffer list initialization
+ *
+ * LVL - This should really go in BDOS...
+ */
+
+static BYTE secbuf[4][4096]; /* sector buffers: 16kB is TOS 4.0x limit though
+                                when set here as [4][16384] the BDOS goes
+                                crazy. 4kB is enough for my 500 MB partition */
+
+static BCB bcbx[4];    /* buffer control block array for each buffer */
+extern BCB *bufl[];    /* buffer lists - two lists:  fat,dir / data */
+
+void bufl_init(void)
+{
+    /* set up sector buffers */
+
+    bcbx[0].b_link = &bcbx[1];
+    bcbx[2].b_link = &bcbx[3];
+
+    /* make BCBs invalid */
+
+    bcbx[0].b_bufdrv = -1;
+    bcbx[1].b_bufdrv = -1;
+    bcbx[2].b_bufdrv = -1;
+    bcbx[3].b_bufdrv = -1;
+
+    /* initialize buffer pointers in BCBs */
+
+    bcbx[0].b_bufr = &secbuf[0][0];
+    bcbx[1].b_bufr = &secbuf[1][0];
+    bcbx[2].b_bufr = &secbuf[2][0];
+    bcbx[3].b_bufr = &secbuf[3][0];
+
+    /* initialize the buffer list pointers */
+    
+    bufl[BI_FAT] = &bcbx[0];                    /* fat buffers */
+    bufl[BI_DATA] = &bcbx[2];                   /* dir/data buffers */
+}
+
+
+
+/*
  * flush -
  *
  * NOTE: rwabs() is a macro that includes a longjmp() which is executed

@@ -276,6 +276,7 @@ long    ni(void)
 
 void    cinit()
 {
+    bufl_init();                /* initialize BDOS buffer list */
     osmem_init();
     umem_init();
 

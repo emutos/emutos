@@ -12,7 +12,7 @@
 
 
 
-#define DBG_BLKDEV
+#define DBG_BLKDEV 0
 
 #include "portab.h"
 #include "bios.h"
