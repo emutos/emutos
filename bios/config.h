@@ -55,6 +55,9 @@
 /* Set DEFAULT_LANG to a two character lowercase string 
  * identifying the language name.
  * (see doc/nls.txt for details)
+ * "us" - american english
+ * "fr" - french
+ * "de" - german
  */
 #ifndef DEFAULT_LANG
 #define DEFAULT_LANG "us"

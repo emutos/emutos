@@ -282,3 +282,6 @@ Start... early ages
 13. Nov. 2001
 - Native Language support tools, french translation (LVL)
 - asm glue for kprintf in startup.S (LVL)
+
+15. Nov. 2001 
+- Native Language support, german translation (MAD)
