@@ -418,6 +418,25 @@ LONG bios_4(WORD r_w, BYTE *adr, WORD numb, WORD first, WORD drive)
 }
 
 
+/**
+ * Setexec - set exception vector
+ *
+ */
+
+LONG bios_5(WORD num, LONG vector)
+{
+  LONG oldvector;
+  LONG *addr = (LONG *) (4L * num);
+  oldvector = *addr;
+
+  kprintf("Bios 5: Setexec(num = 0x%x, vector = 0x%08lx)\n", num, vector);
+
+  if(vector != -1) {
+    *addr = vector;
+  }
+  return oldvector;
+}
+
 
 /**
  * tickcal - Time between two systemtimer calls
