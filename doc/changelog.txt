@@ -1646,3 +1646,6 @@ Start... early ages
 2004-08-01
 - vdi/*:           make more use of vwk struct's member variables (MAD)
 - vdi/vdi_mouse.c: implemented xfm_crfm in C (MAD)
+
+2004-08-02
+- po/cs.po: translated missing strings (joy)
