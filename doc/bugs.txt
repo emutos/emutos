@@ -2,4 +2,3 @@
 - EmuTOS crashes, if it boots from some STeem generated floppy images
 - auto programs are not run after reset with STonX cartridge (STonX's bug)
 - bad font, if run in STonX in mono and Y-resolution => 400 (STonX's bug)
-- the rounded rectangle seems to be not just round at the corners (MAD)
