@@ -32,26 +32,28 @@
 
 #include "string.h"
 
+/* returns the PD for the given index */
 PD *pd_index(WORD i)
 {
         return( (i<2) ? &D.g_intpd[i] : &D.g_extpd[i-2] );
 }
 
-
+/* returns the PD for the given name, or if pname is NULL for the given pid */
 PD *fpdnm(BYTE *pname, UWORD pid)
 {
         WORD            i;
         BYTE            temp[9];
         PD              *p;
 
-        temp[8] = NULL;
+        temp[8] = 0;
         for(i=0; i<totpds; i++)
         {
           p = pd_index(i);
           if (pname != NULLPTR)
           {
-            movs(8, p->p_name, &temp[0]);
-            if( strcmp(pname, &temp[0])==0 )
+            /* TODO - strncmp */
+            memcpy(temp, p->p_name, 8); 
+            if( strcmp(pname, temp)==0 )
               return(p);
           }
           else
@@ -62,41 +64,46 @@ PD *fpdnm(BYTE *pname, UWORD pid)
 }
 
 
-PD *getpd()
+static PD *getpd()
 {
         REG PD          *p;
-                                                /* we got all our       */
-                                                /*   memory so link it  */
+                                                
+        /* we got all our memory so link it  */
         p = pd_index(curpid);
         p->p_pid = curpid++;
-                                                /* initialize his DS&SS */
-                                                /*   registers so       */
-                                                /*   stproc works       */
-        setdsss(p->p_uda);
-                                                /* return the pd we got */
+                                            
+        /* was: setdsss(p->p_uda); */
+        p->p_uda->u_insuper = 1;
+        
+        /* return the pd we got */
         return(p);
 }
 
 
+/* name a PD from the 8 first chars of the given string, stopping at the first
+ * '.' (remove the file extension)
+ */
 void p_nameit(PD *p, BYTE *pname)
 {
         memset(p->p_name, ' ', 8);
-        strscn(pname, &p->p_name[0], '.');
+        strscn(pname, p->p_name, '.');
 }
 
 
 PD *pstart(void *pcode, BYTE *pfilespec, LONG ldaddr)
 {
         REG PD          *px;
-                                                /* create process to    */
-                                                /*   execute it         */
+                                               
+        /* create process to execute it */
         px = getpd();
         px->p_ldaddr = ldaddr;
                                                 /* copy in name of file */
         p_nameit(px, pfilespec);
-                                                /* cs, ip, use 0 flags  */
+
+        /* set pcode to be the return address when this process runs */
         psetup(px, pcode);
                                                 /* link him up          */
+        /* put it on top of the drl list */
         px->p_stat &= ~WAITIN;
         px->p_link = drl;
         drl = px;

@@ -27,14 +27,20 @@
 
 //_main:
 _ui_start:
+        // obtain our basepage address
         movea.l sp,a5
-        movea.l #gemusp,sp
         movea.l 4(a5),a5
 
+        // set our temporary user stack (needed to call Super ?)
+        movea.l #gemusp,sp
+
+        // ad_stail is the address to the cmdline buffer in our basepage
         move.l  a5,d0
         add.l   #0x80,d0
         move.l  d0,_ad_stail
 
+        // mshrink to the needed size for TEXT+DATA+BSS plus 256 bytes.
+        // ??? to what are set TEXT, DATA, BSS in bios.c ???
         move.l  0xC(a5),d0
         add.l   0x14(a5),d0
         add.l   0x1C(a5),d0
@@ -46,38 +52,55 @@ _ui_start:
         trap    #1
         lea     12(sp),sp
 
+        // old_gem_ssp = super(0)
         clr.l  -(sp)
         move.w  #0x20,-(sp)
         trap    #1                      // Switch to supervisor mode
         move.l  d0,old_gem_ssp
 
+        // ad_envrn = the pointer to the environ string
         move.l  0x2C(a5),_ad_envrn
 
+        // clear the 'global memory' zone whose size is determined by
+        // routine size_theglo :-)
         jsr     _size_theglo
         movea.l #_D,a0
         clr.l   d1
-        bra     LB4
-LB2:
+        bra     clrglotest
+clrgloloop:
         move.w  d1,(a0)+
-LB4:
-        dbmi    d0,LB2
+clrglotest:
+        dbmi    d0,clrgloloop
+
+        // _drwaddr ??? set to just_rts
         lea     _justretf,a0
         move.l  a0,_drwaddr
+
+        // _tikaddr ??? set to tikcod
         lea     _tikcod,a0
         move.l  a0,_tikaddr
+
+        // ??? set the stack to be _D + 0x74A, and store this in _D + 0x3E,
+        // then somebody changed their mind and finally set the stack 
+        // to be gemssp, without updating _D + 0x3E.
+        // (_D + 0x3E is ssp in D.uda[0])
         movea.l #_D,a6
         movea.l a6,a5
         adda.l  #0x74A,a6
         move.l  a6,0x3E(a5)
         //movea.l a6,sp
         movea.l #gemssp,sp        // Set up new SSP
+
+        // go in C
         jsr     _gem_main
 
+        // Super() to go back to user more
         move.l  old_gem_ssp,-(sp)
         move.w  #0x20,-(sp)
         trap    #1
         addq.w  #6,sp
 
+        // Pterm0()
         move.l  #0,-(sp)
         trap    #1
 

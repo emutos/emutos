@@ -36,30 +36,27 @@
 .globl _CMP_TICK
 .globl _NUM_TICK
 .globl _drwaddr
-.globl LEAC2
+.globl savesr
 .globl _tikcod
 
 
 
-
+/* disable interrupts */
 _cli:
-L1D94:
-            move    SR,LEAC2
+            move    SR,savesr
             ori     #0x0700,SR
             rts
 
+/* restore interrupt pask as it was before cli() */
 _sti:
-L1DA0:
-            move    LEAC2,SR
+            move    savesr,SR
             rts
 
 _hcli:
-L1DA8:
             ori     #0x0700,SR
             rts
 
 _hsti:
-L1DAE:
             andi    #0xF8FF,SR
             rts
 
@@ -69,7 +66,7 @@ L1DAE:
 */
 _retake:
 L1F0C:
-            move.l  #L2102,0x88
+            move.l  #_aestrap,0x88
             move.l  #_err_tra,D0
 L1F1C:
             move.l  D0,-(SP)
@@ -132,14 +129,14 @@ L211C:
 
 
 // **** Trap entry: ****
-L2102:
+_aestrap:
         cmpi.w  #0x00,D0
         beq     _back
         cmpi.w  #0xC8,D0
         beq     L2126
         cmpi.w  #0xC9,D0
         beq     L2126
-        move.l  LED4E,-(SP)
+        move.l  savetrap2,-(SP)
         rts
 
 L2126:
@@ -178,20 +175,14 @@ supret:                             // return from gementry
 
 
 _givecpm:
-        move.l  LED4E,0x88
+        move.l  savetrap2,0x88
         rts
 _takecpm:
-        move.l  0x88,LED4E
-        move.l  #L2102,0x88
+        move.l  0x88,savetrap2
+        move.l  #_aestrap,0x88
         rts
 
-
-_setdsss:
-        movea.l 0x04(SP),A1
-        move.w  #0x01,(A1)
-        rts
-
-
+        
 
 _far_bcha:
         move.l  SP,LED6E
@@ -275,9 +266,8 @@ LEAC2:
         .ds.w    1
 
 _crit_er:
-LED4A:
         .ds.l    1
-LED4E:
+savetrap2:
         .ds.l    1
 
 _drwaddr:

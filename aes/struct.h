@@ -91,12 +91,12 @@ UDA
 #if MC68K
 UDA
 {
-        WORD    u_insuper;              /* in supervisor flag           */ 
-        ULONG   u_regs[15];             /* d0-d7, a0-a6                 */
-        ULONG   *u_spsuper;             /* supervisor stack             */
-        ULONG   *u_spuser;              /* user stack                   */
-        ULONG   u_super[STACK_SIZE];
-        ULONG   u_supstk;
+        WORD    u_insuper;              /*   0  in supervisor flag       */ 
+        ULONG   u_regs[15];             /*   2  d0-d7, a0-a6             */
+        ULONG   *u_spsuper;             /*  3E  supervisor stack         */
+        ULONG   *u_spuser;              /*  42  user stack               */
+        ULONG   u_super[STACK_SIZE];    /*  44  */
+        ULONG   u_supstk;               /* 1F4  */
 } ;
 #endif
 
@@ -125,27 +125,27 @@ EVB             /* event block structure */
 
 PD 
 {
-        PD      *p_link;
-        PD      *p_thread;
-        UDA     *p_uda;
+        PD      *p_link;        /*  0 */
+        PD      *p_thread;      /*  4 */
+        UDA     *p_uda;         /*  8 */
 
-        BYTE    p_name[8];
+        BYTE    p_name[8];      /*  C */
 
-        CDA     *p_cda;         /* cio data area        */
-        LONG    p_ldaddr;       /* long addr. of load   */
-        WORD    p_pid;
-        WORD    p_stat;
+        CDA     *p_cda;         /* 14  cio data area        */
+        LONG    p_ldaddr;       /* 18  long addr. of load   */
+        WORD    p_pid;          /* 1C */
+        WORD    p_stat;         /* 1E */
 
-        EVSPEC  p_evbits;       /* event bits in use    */
-        EVSPEC  p_evwait;       /* event wait mask      */
-        EVSPEC  p_evflg;        /* event flags          */
+        EVSPEC  p_evbits;       /* 20  event bits in use    */
+        EVSPEC  p_evwait;       /* 22  event wait mask      */
+        EVSPEC  p_evflg;        /* 24  event flags          */
 
-        EVB     *p_evlist;
-        EVB     *p_qdq;
-        EVB     *p_qnq;
-        LONG    p_qaddr;
-        WORD    p_qindex;       
-        BYTE    p_queue[QUEUE_SIZE];
+        EVB     *p_evlist;      /* 28 */
+        EVB     *p_qdq;         /* 2C */
+        EVB     *p_qnq;         /* 30 */
+        LONG    p_qaddr;        /* 34 */
+        WORD    p_qindex;       /* 38 */
+        BYTE    p_queue[QUEUE_SIZE];   /* 3A */
 } ;
 
 

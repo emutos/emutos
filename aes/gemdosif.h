@@ -31,7 +31,6 @@ extern WORD justretf();
 
 extern void givecpm();
 extern void takecpm();
-extern void setdsss(void *p);
 
 extern void takeerr();
 extern void giveerr();

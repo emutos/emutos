@@ -13,8 +13,14 @@
 *       -------------------------------------------------------------
 */
 
-                                                /* in BASE88.C          */
-extern PD       *rlr, *drl, *nrl;
+
+
+/* Ready List Root - a list of PDs linked by the p_link field, terminated 
+ * by zero [see gempd.c function insert_process]
+ */
+extern PD       *rlr;
+
+extern PD       *drl, *nrl;
 extern EVB      *eul, *dlr, *zlr;
 
 #if I8086
@@ -22,7 +28,12 @@ extern UWORD    elinkoff;
 #else
 extern LONG     elinkoff;
 #endif
+
+/* In Dispatch - a byte whose value is zero when not in function 
+ * dsptch, and 1 when between dsptch ... switchto function calls
+ */
 extern BYTE     indisp;
+
 extern WORD     fpt, fph, fpcnt;                /* forkq tail, head,    */
                                                 /*   count              */
 extern SPB      wind_spb;

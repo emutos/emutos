@@ -77,7 +77,7 @@ void forkq(void (*fcode)(), LONG fdata)
 }
 
 
-void disp_act(PD *p)
+static void disp_act(PD *p)
 {      
                                                 /* process is ready,    */
                                                 /*   so put him on RLR  */
@@ -86,7 +86,7 @@ void disp_act(PD *p)
 }
 
 
-void mwait_act(PD *p)
+static void mwait_act(PD *p)
 {       
                                                 /* sleep on nrl if      */
                                                 /*   event flags are    */
@@ -105,7 +105,7 @@ void mwait_act(PD *p)
 
 
 
-void forker()
+void forker(void)
 {
         REG FPD         *f;
         REG PD          *oldrl;
@@ -165,7 +165,7 @@ void forker()
 }
 
 
-void chkkbd()
+void chkkbd(void)
 {
         REG WORD        achar, kstat;
                                                 /* poll keybd           */
@@ -190,7 +190,7 @@ void chkkbd()
 
 
 
-void schedule()
+static void schedule(void)
 {
         REG PD          *p;
 
@@ -226,6 +226,8 @@ void schedule()
 /*   rlr -> p_uda -> dparam is used by the action routines              */
 /*                                                                      */
 /************************************************************************/
+
+/* routine disp called from dsptch(). 
 
 void disp()
 {

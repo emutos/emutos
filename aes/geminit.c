@@ -186,9 +186,11 @@ BYTE *scan_2(BYTE *pcurr, UWORD *pwd)
 
 void ini_dlongs()
 {
+/*
 #if I8086
         REG LONG        ad_dseg;
 #endif
+*/
 #if MULTIAPP
         WORD            ii;
 #endif
@@ -202,48 +204,50 @@ void ini_dlongs()
                                                 /*   so new environment */
                                                 /*   can be copied here */
 #if I8086
-        ad_ssave = LLCS() + LW(start);
-                                                /* init. long pointer   */
-                                                /*   to global array    */
-                                                /*   which is used by   */
-                                                /*   resource calls     */
-        ad_dseg = ADDR(&D.g_sysglo[0]) & 0xFFFF0000L;
-        ad_sysglo = ad_dseg + LW(&D.g_sysglo[0]);
-        ad_windspb = ad_dseg + LW(&wind_spb);
-        ad_mouse = ad_dseg + LW(&gl_mouse[0]);
-                                                /* gemfslib longs       */
-        ad_tmp1 = ad_dseg + LW(&gl_tmp1[0]);
-        ad_tmp2 = ad_dseg + LW(&gl_tmp2[0]);
-                                                /* gemrslib             */
-        ad_hdrbuff = ad_dseg + LW(&hdr_buff[0]);
-                                                /* gemoblib             */
-        ad_valstr = ad_dseg + LW(&D.g_valstr[0]);
-        ad_fmtstr = ad_dseg + LW(&D.g_fmtstr[0]);
-        ad_rawstr = ad_dseg + LW(&D.g_rawstr[0]);
-        ad_tmpstr = ad_dseg + LW(&D.g_tmpstr[0]);
-        ad_edblk = ad_dseg + LW(&edblk);
-        ad_bi = ad_dseg + LW(&bi);
-        ad_ib = ad_dseg + LW(&ib);
-
-        D.s_cmd = (BYTE *) &pqueue[0];
-        ad_scmd = ad_dseg + LW(D.s_cmd);
-                                                /* put scrap and some   */
-                                                /*   other arrays at    */
-                                                /*   at top of the      */
-                                                /*   screen mgr stack   */
-        ps = D.g_scrap = (BYTE *) &usuper[0];
-        ad_scrap = ad_dseg + LW(ps);
-        D.s_cdir = ps += 82;
-        ad_scdir = ad_dseg + LW(ps);
-        D.g_loc1 = ps = &gl_1loc[0];
-        ad_g1loc = ad_dseg + LW(ps);
-        D.g_loc2 = ps = &gl_2loc[0];
-        ad_g2loc = ad_dseg + LW(ps);
-        D.g_dir = ps = &gl_dir[0];
-        ad_path = ad_dseg + LW(ps);
-        D.g_dta = ps = &gl_dta[0];
-        ad_dta = ad_dseg + LW(ps);
-        ad_fsdta = ad_dseg + LW(&gl_dta[30]);
+        /*        
+                  ad_ssave = LLCS() + LW(start);
+                  // init. long pointer   
+                  //   to global array    
+                  //   which is used by   
+                  //   resource calls     
+                  ad_dseg = ADDR(&D.g_sysglo[0]) & 0xFFFF0000L;
+                  ad_sysglo = ad_dseg + LW(&D.g_sysglo[0]);
+                  ad_windspb = ad_dseg + LW(&wind_spb);
+                  ad_mouse = ad_dseg + LW(&gl_mouse[0]);
+                  // gemfslib longs       *
+                  ad_tmp1 = ad_dseg + LW(&gl_tmp1[0]);
+                  ad_tmp2 = ad_dseg + LW(&gl_tmp2[0]);
+                  // gemrslib             
+                  ad_hdrbuff = ad_dseg + LW(&hdr_buff[0]);
+                  // gemoblib             
+                  ad_valstr = ad_dseg + LW(&D.g_valstr[0]);
+                  ad_fmtstr = ad_dseg + LW(&D.g_fmtstr[0]);
+                  ad_rawstr = ad_dseg + LW(&D.g_rawstr[0]);
+                  ad_tmpstr = ad_dseg + LW(&D.g_tmpstr[0]);
+                  ad_edblk = ad_dseg + LW(&edblk);
+                  ad_bi = ad_dseg + LW(&bi);
+                  ad_ib = ad_dseg + LW(&ib);
+                  
+                  D.s_cmd = (BYTE *) &pqueue[0];
+                  ad_scmd = ad_dseg + LW(D.s_cmd);
+                  // put scrap and some   
+                  //   other arrays at    
+                  //   at top of the      
+                  //   screen mgr stack   
+                  ps = D.g_scrap = (BYTE *) &usuper[0];
+                  ad_scrap = ad_dseg + LW(ps);
+                  D.s_cdir = ps += 82;
+                  ad_scdir = ad_dseg + LW(ps);
+                  D.g_loc1 = ps = &gl_1loc[0];
+                  ad_g1loc = ad_dseg + LW(ps);
+                  D.g_loc2 = ps = &gl_2loc[0];
+                  ad_g2loc = ad_dseg + LW(ps);
+                  D.g_dir = ps = &gl_dir[0];
+                  ad_path = ad_dseg + LW(ps);
+                  D.g_dta = ps = &gl_dta[0];
+                  ad_dta = ad_dseg + LW(ps);
+                  ad_fsdta = ad_dseg + LW(&gl_dta[30]);
+        */
 #endif
 #if MC68K
                                                 /* init. long pointer   */
@@ -307,20 +311,22 @@ void ini_dlongs()
 }
 
 
-#if I8086
-        WORD
-sizeglo()
+/*
+ *#if I8086
+ *
+ *        WORD
+ *sizeglo()*
+ *{
+ *        return(sizeof(THEGLO) );
+ *}
+ *#endif
+ */
+     
+LONG size_theglo(void)
 {
-        return(sizeof(THEGLO) );
+    return( sizeof(THEGLO)/2 );
 }
-#endif
-#if MC68K
-        LONG
-size_theglo()
-{
-        return( sizeof(THEGLO)/2 );
-}
-#endif
+
 
 
 /*
@@ -347,20 +353,22 @@ void ev_init(EVB evblist[], WORD cnt)
 /*
 *       Create a local process for the routine and start him executing.
 *       Also do all the initialization that is required.
+* TODO - get rid of this.
 */
-PD *iprocess(BYTE *pname, void (*routine)())
+static PD *iprocess(BYTE *pname, void (*routine)())
 {
         REG ULONG       ldaddr;
 
-                                                /* figure out load addr */
-#if I8086
-        ldaddr = LLCS() + ((ULONG) routine);
-#endif
-#if MC68K
+        /* figure out load addr */
+
+        /* #if I8086
+         * ldaddr = LLCS() + ((ULONG) routine);
+         * #endif
+         */
+
         ldaddr = (ULONG) routine;
-#endif
-                                                /*   create process to  */
-                                                /*   execute it         */
+
+        /* create process to execute it */
         return( pstart(routine, pname, ldaddr) );
 }
 
@@ -841,17 +849,22 @@ void gem_main()
         if (totpds > 2)
           ev_init(&D.g_extevb[0], NUM_EEVBS);
 
-                                                /* initialize list      */
-                                                /*   and unused lists   */
-        nrl = drl = NULLPTR;
-        dlr = zlr = NULLPTR;
-        fph = fpt = fpcnt = 0;
                                                 /* initialize sync      */
                                                 /*   blocks             */
         wind_spb.sy_tas = 0;
         wind_spb.sy_owner = NULLPTR;
         wind_spb.sy_wait = 0;
-                                                /* init initial process */
+
+        /*
+         * init processes - TODO: should go in gempd or gemdisp.
+         */ 
+
+        /* initialize list and unused lists   */
+        nrl = drl = NULLPTR;
+        dlr = zlr = NULLPTR;
+        fph = fpt = fpcnt = 0;
+                                                
+        /* init initial process */
         for(i=totpds-1; i>=0; i--)
         {
           rlr = pd_index(i);
@@ -879,6 +892,9 @@ void gem_main()
         curpid = 0;
         rlr->p_pid = curpid++;
         rlr->p_link = NULLPTR;
+
+        /* end of process init */
+
                                                 /* restart the tick     */
 #if I8086
         sti();

@@ -808,3 +808,4 @@ Start... early ages
 - util/stringasm.S - added strlencpy and strchr (LVL)
 - aes/gsx2.S - cleaned up, gave better names to labels (LVL)
 - updated some todo items (LVL)
+- aes/ - wrote comments trying to understand how the processes work (LVL)
