@@ -207,18 +207,24 @@ Start... early ages
 - warning free, automatic built date in command.prg (LVL)
 - still some headers cleaning in bios/ and include/ (LVL)
 
-22. Okt. 2001
+22. Oct. 2001
 - Video mode can be set hard in startup.s to all three modes!!! (MAD)
 - Cursor is now blinking (thanks Laurent, for Timer stuff!) (MAD)
 - switched off debugging for public release in startup.s: _print (MAD)
 
-23. Okt. 2001
+23. Oct. 2001
 - Video mode recognition works (mono/color) (MAD)
 - Emulated bigger screen resolutions work in mono mode  (MAD)
 
 ===== Initial release 0.1 ===================================================
 
-24. Okt. 2001
+24. Oct. 2001
 - Changed all *.s assembler files to *.S, changed comments from "|" to "//"
 
-
+27. Oct. 2001
+- moved screen-related xbios functions in screen.c
+- added sound support (untested) in sound.c
+- added floppy support in floppy.c
+- started rewriting some of startup.c in C code (not completely done yet)
+- started cleaning old VME stuff in bios.c
+- native print is activated by a STONX_NATIVE_PRINT #define in config.h

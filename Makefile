@@ -28,7 +28,7 @@ LDFLAGS = -Ttext=0xfc0000 -Tdata=0xfd0000 -Tbss=0x000000 \
 	-L/usr/lib/gcc-lib/m68k-atari-mint/2.95.3/mshort -lgcc
 
 # Assembler with options for Motorola like syntax (68000 cpu)
-AS = m68k-atari-mint-as
+AS = m68k-atari-mint-gcc -x assembler
 ASINC = -Iinclude
 ASFLAGS = --register-prefix-optional -m68000 $(ASINC) 
 
@@ -38,6 +38,9 @@ INC = -Iinclude
 # no -Wall for bdos right now...
 CFLAGS = -O -mshort -m68000 $(INC) 
 
+CPPFLAGS = $(INC)
+CPP = $(CC) -E -x assembler
+
 # The objdump utility (disassembler)
 OBJDUMP=m68k-atari-mint-objdump
 
@@ -45,8 +48,8 @@ OBJDUMP=m68k-atari-mint-objdump
 # source code in bios/
 # Note: tosvars.o must be first object linked.
 
-BIOSCSRC = kprint.c xbios.c chardev.c bios.c clock.c fnt8x8.c fnt8x16.c mfp.c \
-           version.c midi.c ikbd.c
+BIOSCSRC = kprint.c xbios.c chardev.c bios.c clock.c fnt8x8.c fnt8x16.c \
+           mfp.c version.c midi.c ikbd.c sound.c floppy.c screen.c
 BIOSSSRC = tosvars.S startup.S lineavars.S vectors.S aciavecs.S \
            memory.S linea.S conout.S
 
@@ -129,7 +132,7 @@ show: emutos.img
 #
 
 clean:
-	rm -f obj/*.o *~ */*~ core emutos.img
+	rm -f obj/*.o obj/*.s *~ */*~ core emutos.img
 
 distclean: clean
 	rm -f Makefile.bak
