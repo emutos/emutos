@@ -9,8 +9,9 @@
 .globl _psetup
 .globl _gotopgm
 .globl _dsptch
-.globl _savestat
 .globl _switchto
+
+.xdef _rlr
 
 
 .text
@@ -34,13 +35,13 @@
 _psetup:
             move    SR,LEAC4
             ori     #0x0700,SR
-            movea.l 0x04(SP),A0
-            move.l  0x08(SP),D0
-            movea.l 0x08(A0),A1
-            movea.l 0x3E(A1),A2
-            move.l  D0,-(A2)
-            move.w  #0x2000,-(A2)
-            move.l  A2,0x3E(A1)
+            movea.l 4(SP),A0
+            move.l  8(SP),D0
+            movea.l 8(A0),A0
+            movea.l 0x3E(A0),A1
+            move.l  D0,-(A1)
+            move.w  #0x2000,-(A1)
+            move.l  A1,0x3E(A0)
             move    LEAC4,SR
             rts
 
@@ -62,53 +63,57 @@ L1DB4:
             move    A1,USP
             tst.w   _longframe
             beq     L1DEC
-            move.w  0x00,-(SP)
+            move.w  #0,-(SP)        //??? Was:   move.w 0,-(sp)
 L1DEC:
-            move.l  0x08(A0),-(SP)
+            move.l  8(A0),-(SP)
             move.w  LEAC2,-(SP)
             eori.w  #0x2000,(SP)
             rte
 
+
+/*
+ * dsptch() is a machine (& compiler) dependent routine which:
+ *      1) saves any flags that will be trashed
+ *      2) if (indisp) restore flags, return to dsptch caller
+ *      3) otherwise 
+ *              save machine state, 
+ *              jump to disp
+ */
+
+
 _dsptch:
-L1D80:
             tst.b   _indisp
-            beq     L1D8A
+            beq     savestate
             rts
-L1D8A:
-            move    SR,-(SP)
-            move.l  A0,-(SP)
-            jmp     _disp
 
+savestate:
+            addq.b  #1,_indisp
 
-
-_savestat:
-L1DFC:
+            move    SR,-(SP)           // We'll later return with a RTE
+/*
+    move.l  sp,-(SP)
+    pea     infomsg
+    jsr     _cprintf
+    addq.l  #8,sp
+*/
             move    SR,LEAC0
             ori     #0x0700,SR
-            tst.b   _indisp
-            beq     L1E14
-            unlk    A6
-            movea.l (SP)+,A0
-            rte
-L1E14:
-            link    A6,#0x00
-            addq.b  #1,_indisp
-            movea.l 0x08(A6),A6
+
+            move.l  A6,-(SP)
+
+            movea.l _rlr,A6            // Get pointer to rlr PD structure
+            movea.l 8(a6),A6           // Get pointer to UDA structure
+
             lea     0x3A(A6),A6
-            movem.l D0-A5,-(A6)
-            movea.l (SP),A5
-            move.l  (A5),0x38(A6)
-            move.l  0x04(A5),0x20(A6)
-            lea     0x08(A5),A5
-            move.l  A5,0x3C(A6)
-            move    USP,A5
-            move.l  A5,0x40(A6)
-            movea.l SP,A6
-            unlk    A6
-            movea.l (SP),A0
+            movem.l D0-A5,-(A6)        // Save registers D0-A5 in UDA struct
+            move.l  (SP)+,0x38(A6)     // Save old A6 in UDA struct
+            move.l  SP,0x3C(A6)        // Save old SSP in UDA struct
+            move.l  USP,A5
+            move.l  A5,0x40(A6)        // Save old USP in UDA struct
+
             lea     LED46,SP
             move    LEAC0,SR
-            jmp     (A0)
+            jmp     _disp
 
 
 _switchto:
@@ -116,28 +121,35 @@ L1E58:
             move    SR,LEAC0
             ori     #0x0700,SR
             addq.l  #4,SP
-            movea.l (SP),SP
-            addq.l  #2,SP
+
+            movea.l (SP),SP             // Restore register from UDA struct
+            addq.l  #2,SP               // by abusing the SP as a index reg
             movem.l (SP)+,D0-A5
-            movea.l 0x08(SP),A6
+            movea.l 8(SP),A6
             move    A6,USP
             movea.l (SP)+,A6
             movea.l (SP),SP
+
             tst.w   _longframe
             beq     L1E92
             move.w  (SP),-(SP)
-            move.w  0x04(SP),0x02(SP)
-            move.w  0x06(SP),0x04(SP)
-            move.w  #0x00,0x06(SP)
+            move.w  4(SP),2(SP)
+            move.w  6(SP),4(SP)
+            move.w  #0,6(SP)
 L1E92:
             clr.b   _indisp
             move.w  LEAC0,(SP)
+/*
+    move.l  sp,-(SP)
+    pea     infomsg
+    jsr     _cprintf
+    addq.l  #8,sp
+*/
             rte
 
-
-
-.data
-
+infomsg:
+        .ascii  "dsptch: SP=0x%lx\n\0"
+        .even
 
 
 .bss

@@ -465,10 +465,20 @@ void sh_addpath()
                                                 /* get ptr to initial   */
                                                 /*   PATH=              */
         sh_envrn(ADDR(&lp), ADDR(rs_str(STPATH)));
+
+        if(lp)
+        {
                                                 /* first part length    */
-        oplen = LSTRLEN(lp);                    /* length of actual path */
-        fstlen = lp - ad_envrn + oplen;         /* len thru end of path */
-        LBCOPY(new_envr, ad_envrn, fstlen);
+          oplen = LSTRLEN(lp);                  /* length of actual path */
+
+          fstlen = lp - ad_envrn + oplen;       /* len thru end of path */
+          LBCOPY(new_envr, ad_envrn, fstlen);
+        }
+        else
+        {
+          oplen = fstlen = 0;
+        }
+
         if (oplen)
         {
           LBSET(new_envr + fstlen, ';');        /* to splice in new path */
@@ -477,7 +487,12 @@ void sh_addpath()
 
         LBCOPY(new_envr + fstlen, np, nplen);   /* splice on more path  */
                                                 /* copy rest of environ */
-        LBCOPY(new_envr + fstlen + nplen, lp + oplen, oelen - fstlen);
+        if(lp)
+        {
+          LBCOPY(new_envr + fstlen + nplen, lp + oplen, oelen - fstlen);
+        }
+
+  cprintf("New environment string is: %s\n", new_envr);
 
         ad_envrn = new_envr;                    /* remember new environ.*/
 }
@@ -526,6 +541,7 @@ void sh_init()
         psrc = s_tail = &D.g_dir[0];            /* reuse part of globals*/
         LBCOPY(ADDR(&s_tail[0]), ad_stail, 128);
         cnt = *psrc++;
+
         if (cnt)
         {
                                                 /* null-terminate it    */
@@ -666,6 +682,7 @@ void sh_rdinf()
         rs_gaddr(ad_sysglo, R_STRING, STINFPAT, &pfile);
         LBSET(pfile, D.s_cdir[0] );             /* set the drive        */
 
+  cprintf("sh_rdinf opening %s\n",pfile);
         fh = dos_open((BYTE *)pfile, ROPEN);
         if ( (!fh) || DOS_ERR)
           return;
@@ -746,7 +763,9 @@ void all_run()
 
                                                 /* let all the acc's run*/
           for(i=0; i<NUM_ACCS; i++)
+          {
                   dsptch();
+          }
                                                 /* then get in the wait */
                                                 /*   line               */
           wm_update(TRUE);
@@ -763,7 +782,7 @@ void gem_main()
         for (i=0; i<NUM_PDS; i++)
           sh[i].sh_loadable = FALSE;
 #endif
-        totpds = NUM_PDS;                       /* always               */
+        totpds = NUM_PDS;
 
                                                 /* init longs           */
         ini_dlongs();
@@ -857,15 +876,15 @@ void gem_main()
                                                 /* load gem resource    */
                                                 /*   and fix it up      */
                                                 /*   before we go       */
-//cprintf("gem_main: loading GEM.RSC...\n");
+cprintf("gem_main: loading GEM.RSC...\n");
         if ( !rs_readit(ad_sysglo, ADDR("GEM.RSC")) ) 
         {
            /* bad resource load, so dive out */
-//cprintf("gem_main: failed to load GEM.RSC...\n");
+           cprintf("gem_main: failed to load GEM.RSC...\n");
         }
         else
         {
-//cprintf("gem_main: succeeded in loading GEM.RSC...\n");
+cprintf("gem_main: succeeded in loading GEM.RSC...\n");
                                                 /* get mice forms       */
           rs_gaddr(ad_sysglo, R_BIPDATA, 3 + ARROW, &ad_armice);
           ad_armice = LLGET(ad_armice);
@@ -939,6 +958,7 @@ void gem_main()
                                                 /*   data should not    */
                                                 /*   overlay this code  */
           sh_main();
+
 #if MULTIAPP
                                                 /* fixup memory         */
           pr_load(SCR_MGR);

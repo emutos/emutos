@@ -228,15 +228,10 @@ void schedule()
 void disp()
 {
         REG PD          *p;
-/* savestate() is a machine (& compiler) dependent routine which:
- *      1) saves any flags that will be trashed by the TAS
- *      2) if (indisp) restore flags, return to dsptch caller
- *      3) otherwise 
- *              save machine state, 
- *              return to dsptch here 
-*/
 
-        savestat(rlr->p_uda);
+ void *tmpptr;
+ tmpptr=rlr->p_uda;
+ //cprintf("disp with fpcnt=%d and rlr-uda=0x%lx and rlr->plink=0x%lx\n",fpcnt,tmpptr,rlr->p_link);
 
 #if MULTIAPP
 skip:
@@ -244,7 +239,8 @@ skip:
                                                 /* take the process p   */
                                                 /*   off the ready list */
                                                 /*   root               */
-        rlr = (p=rlr) -> p_link;
+        p = rlr;
+        rlr = p->p_link;
                                                 /* based on the state   */
                                                 /*   of the process p   */
                                                 /*   do something       */
@@ -255,7 +251,7 @@ skip:
                                                 /* run through and      */
                                                 /*   execute all the    */
                                                 /*   fork processes     */
-        do 
+        do
         {
           if (fpcnt)
             forker();
@@ -281,6 +277,11 @@ skip:
         else
           pr_load(rlr->p_pid);
 #endif
+
+ /*cprintf("disp: before switchto, p_uda= $%lx\n",rlr->p_uda);*/
+ /* FIXME: rlr->p_uda seems sometimes to be NULL, there must be a bug somewhere! */
+ if(rlr->p_uda==0)  switchto(tmpptr);    
+
         switchto(rlr->p_uda);
 }
 

@@ -20,6 +20,7 @@
 .globl _pgmld
 .globl _gemdos
 
+.xdef _ad_stail
         .text
 
 //_main:
@@ -27,11 +28,11 @@ _ui_start:
         movea.l a7,a5
         movea.l #LEABC,a7
         movea.l 4(a5),a5
-/*
+
         move.l  a5,d0
         add.l   #0x80,d0
-        move.l  d0,_ad_ctai
-*/
+        move.l  d0,_ad_stail
+
         move.l  0xC(a5),d0
         add.l   0x14(a5),d0
         add.l   0x1C(a5),d0
@@ -48,12 +49,7 @@ _ui_start:
         trap    #1
         addq.w  #6,a7
         move.l  0x2C(a5),_ad_envrn
-/*
-        move.w  #0,_gl_resc
-        move.w  #1,_gl_rest
-        move.w  #1,_gl_resp
-        move.l  #0,_system_
-*/
+
         jsr     _size_theglo
         movea.l #_D,a0
         clr.l   d1
@@ -81,6 +77,8 @@ LB4:
 _gemdos:
 LF2:
             move.l  (SP)+,LEA2C
+
+    movem.l d1-d7/a0-a6,saveregs
 /*
     move.l  (SP),d0
     move.l  d0,-(SP)
@@ -100,6 +98,9 @@ LF2:
             not.w   _DOS_AX
             subi.w  #0x1E,_DOS_AX
 L134:
+
+    movem.l saveregs,d1-d7/a0-a6
+
             move.l  LEA2C,-(SP)
             rts
 
@@ -122,19 +123,6 @@ errormsg:
 
 LEA2C:
             DS.B 4
-/*
-_system_:
-        ds.b    4
-
-_gl_rest:
-        ds.b    2
-
-_gl_resc:
-        ds.b    2
-
-_gl_resp:
-        ds.b    2
-*/
 
 * Space for the Stack:
         .ds.b   0x80

@@ -70,12 +70,12 @@ typedef struct moblk
 #define THEACTIVE 2
 
 /*!!!*//* Sozobon C has problems with the following macro, so I changed this... */
-#if I8086
+//#if I8086
 #define THEMENUS ( LWGET(OB_TAIL(THESCREEN)) )
-#endif
-#if MC68K
-#define THEMENUS ( (WORD) *((WORD *)( OB_TAIL(THESCREEN) )) )
-#endif
+//#endif
+//#if MC68K
+//#define THEMENUS ( (WORD) *((WORD *)( OB_TAIL(THESCREEN) )) )
+//#endif
 
 /*** STATE DEFINITIONS FOR menu_state ***********************************/
 
@@ -433,42 +433,42 @@ typedef struct sh_struct
 #define THEGLO struct glstr
 THEGLO
 {
-/* GLOBAL */ UDA        g_intuda[2];                    /* must be 1st  */
-/* GLOBAL */ PD         g_intpd[2];
-/* GLOBAL */ CDA        g_intcda[2];
-/* GLOBAL */ EVB        g_intevb[NUM_IEVBS];
+ UDA        g_intuda[2];                    /* must be 1st  */
+ PD         g_intpd[2];
+ CDA        g_intcda[2];
+ EVB        g_intevb[NUM_IEVBS];
 
-/* GLOBAL */ BYTE       *g_scrap;
-/* GLOBAL */ BYTE       *g_loc1;
-/* GLOBAL */ BYTE       *g_loc2;
-/* GLOBAL */ BYTE       *g_dir;
-/* GLOBAL */ BYTE       *g_dta;
-/* GLOBAL */ BYTE       *s_cdir;
-/* GLOBAL */ BYTE       *s_cmd;
+ BYTE       *g_scrap;
+ BYTE       *g_loc1;
+ BYTE       *g_loc2;
+ BYTE       *g_dir;
+ BYTE       *g_dta;
+ BYTE       *s_cdir;
+ BYTE       *s_cmd;
 
-/* GLOBAL */ FPD        g_fpdx[NFORKS];
-/* GLOBAL */ ORECT      g_olist[NUM_ORECT];
+ FPD        g_fpdx[NFORKS];
+ ORECT      g_olist[NUM_ORECT];
 
-/* GLOBAL */ BYTE       g_rawstr[MAX_LEN];
-/* GLOBAL */ BYTE       g_tmpstr[MAX_LEN];
-/* GLOBAL */ BYTE       g_valstr[MAX_LEN];
-/* GLOBAL */ BYTE       g_fmtstr[MAX_LEN];
+ BYTE       g_rawstr[MAX_LEN];
+ BYTE       g_tmpstr[MAX_LEN];
+ BYTE       g_valstr[MAX_LEN];
+ BYTE       g_fmtstr[MAX_LEN];
 
-/* GLOBAL */ BYTE       *g_fslist[NM_FILES];
+ BYTE       *g_fslist[NM_FILES];
 #if MULTIAPP
-/* GLOBAL */ BYTE       g_fsnames[LEN_FSNAME * NM_FILES];
+ BYTE       g_fsnames[LEN_FSNAME * NM_FILES];
 #endif
 
-/* GLOBAL */ UWORD      g_sysglo[G_SIZE];
+ UWORD      g_sysglo[G_SIZE];
 
-/* GLOBAL */ WINDOW     w_win[NUM_WIN];
+ WINDOW     w_win[NUM_WIN];
                                                 /* all but 1st 2 pds,   */
                                                 /*   cdas, and udas     */
                                                 /*   may not be used    */
-/* GLOBAL */ EVB        g_extevb[NUM_EEVBS];
-/* GLOBAL */ UDA        g_extuda[NUM_PDS-2];
-/* GLOBAL */ PD         g_extpd[NUM_PDS-2];
-/* GLOBAL */ CDA        g_extcda[NUM_PDS-2];
+ EVB        g_extevb[NUM_EEVBS];
+ UDA        g_extuda[NUM_PDS-2];
+ PD         g_extpd[NUM_PDS-2];
+ CDA        g_extcda[NUM_PDS-2];
 };
 
 

@@ -5,7 +5,6 @@
 extern void psetup(PD *p, void *codevalue);
 extern void  gotopgm();
 extern void  dsptch();
-extern void  savestat();
 extern void switchto(UDA *puda);
 
 #endif
