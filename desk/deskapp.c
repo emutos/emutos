@@ -17,6 +17,8 @@
 *       -------------------------------------------------------------
 */
 
+#include <string.h>
+
 #include "portab.h"
 #include "machine.h"
 #include "obdefs.h"
@@ -42,23 +44,12 @@
 #include "deskglob.h"
 #include "deskmain.h"
 #include "icons.h"
+#include "desk1.h"
 
-#include "string.h"
 
 #define MIN_WINT 4
 #define MIN_HINT 2
 
-
-
-/*
-#if ALCYON
-GLOBAL BYTE     *gl_pstart;
-#endif
-
-#if I8086
-GLOBAL WORD     gl_pstart;
-#endif
-*/
 
 
 GLOBAL WORD     gl_poffset;
@@ -81,12 +72,13 @@ static const char *desk_inf_data =
     "#W000002024C0A00 @\r\n"
     "#W0000020D4C0A00 @\r\n"
     "#M000001FF A FLOPPY DISK@ @\r\n"
-    "#M000000FF C HARD DISK@ @\r\n"
+    "#M000100FF C HARD DISK@ @\r\n"
     "#D0000 0 000 @ @\r\n"
     "#G08FF *.APP@ @\r\n"
     "#G08FF *.PRG@ @\r\n"
     "#P08FF *.TTP@ @\r\n"
-    "#F08FF *.TOS@ @\r\n";
+    "#F08FF *.TOS@ @\r\n"
+    "#T000403FF   TRASH@ @\r\n";
 
 
 /************************************************************************/
@@ -572,16 +564,17 @@ static WORD app_rdicon()
 */
 WORD app_start()
 {
-        WORD            i, x, y, w, h;
+        WORD            i, x, y;
+#ifndef DESK1
+        WORD            w, h;
+#endif
         ANODE           *pa;
         WSAVE           *pws;
         BYTE            *pcurr, *ptmp, prevdisk;
         WORD            envr, xcnt, ycnt, xcent, wincnt;
 #if MULTIAPP
-        WORD            numaccs;
+        WORD            numaccs = 0;
         BYTE            *savbuff;
-        
-        numaccs = 0;
 #endif          
                                                 /* remember start drive */
         gl_stdrv = dos_gdrv();

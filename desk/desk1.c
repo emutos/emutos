@@ -27,6 +27,10 @@
 #include "deskglob.h"
 #include "aesbind.h"
 #include "deskgraf.h"
+#include "desksupp.h"
+#include "deskfun.h"
+#include "deskmain.h"
+#include "rectfunc.h"
 #include "dos.h"
 
 
@@ -53,7 +57,7 @@ WORD w_setpath(WNODE *pw, WORD drv, BYTE *path, BYTE *name, BYTE *ext)
         icx = rc.g_x + (rc.g_w / 2) - (G.g_wicon / 2);
         icy = rc.g_y + (rc.g_h / 2) - (G.g_hicon / 2);
         zoom_closed(0, pw->w_id, icx, icy);
-        do_fopen(pw, 0, drv, path, name, ext);  
+        do_fopen(pw, 0, drv, path, name, ext, FALSE, TRUE);  
         return res;
 }
 
@@ -61,14 +65,13 @@ WORD true_closewnd(WNODE *pw)
 {
         GRECT rc;       // ich xoff yoff bp10
         WORD  res = 0;
-        // DESKTOP v1.2 also has 3 unused WORD variables here!
 
         wind_get(pw->w_id,WF_WXYWH, &rc.g_x, &rc.g_y, &rc.g_w, &rc.g_h);
         zoom_closed(1, pw->w_id, G.g_screen[pw->w_obid].ob_x, 
                         G.g_screen[pw->w_obid].ob_y);
         pn_close(pw->w_path);
         win_free(pw);
-        do_chkall();
+        do_chkall(TRUE);
         return res;
 }
 
@@ -137,9 +140,7 @@ void snap_disk(WORD x, WORD y, WORD *px, WORD *py)
 
 
 
-WORD fun_file2desk(PNODE *pn_src,       // 0E
-                          ANODE *an_dest,       // 10
-                          WORD dobj)            // 12
+WORD fun_file2desk(PNODE *pn_src, ANODE *an_dest, WORD dobj)
 {
         ICONBLK *dicon;
         WORD operation;
@@ -152,7 +153,7 @@ WORD fun_file2desk(PNODE *pn_src,       // 0E
                         case AT_ISDISK:
                                 dicon = (ICONBLK *)G.g_screen[dobj].ob_spec;
                                 G.g_tmppth[0] = dicon->ib_char & 0xFF;
-                                strcpy(G.g_tmppth + 1, ":\*.*");
+                                strcpy(G.g_tmppth + 1, ":\\*.*");
                                 operation = OP_COPY;
                                 break;
                         case AT_ISTRSH: 
@@ -160,16 +161,13 @@ WORD fun_file2desk(PNODE *pn_src,       // 0E
                                 break;
                 }
         }
-        fun_op(operation, pn_src, G.g_tmppth,
+        return fun_op(operation, pn_src, G.g_tmppth,
                         0, 0, 0, 0);    // GEM/1 doesn't *have* the last 5 arguments!
 }
 
 
 
-WORD fun_file2win(PNODE *pn_src,        // 0a
-                          BYTE  *spec,          // 0c
-                          ANODE *an_dest,       // 0e
-                          FNODE *fn_dest)       // 10
+WORD fun_file2win(PNODE *pn_src, BYTE  *spec, ANODE *an_dest, FNODE *fn_dest)
 {
         BYTE *p;
         strcpy(G.g_tmppth, spec);
@@ -182,11 +180,14 @@ WORD fun_file2win(PNODE *pn_src,        // 0a
         if (p) *p = 0;
         if (an_dest && an_dest->a_type == AT_ISFOLD)
         {
-                strcpy(p, fn_dest->f_name);
-                strcat(p, "\\*.*");
+            strcpy(p, fn_dest->f_name);
+            strcat(p, "\\*.*");
         }
-        else strcat(p, "*.*");
-        fun_op(OP_COPY, pn_src, G.g_tmppth,
+        else
+        {
+            strcat(p, "*.*");
+        }
+        return fun_op(OP_COPY, pn_src, G.g_tmppth,
                         0, 0, 0, 0);    // GEM/1 doesn't *have* the last 5 arguments!
 }
 
@@ -263,7 +264,7 @@ void fun_desk2win(WORD wh, WORD dobj)
 #if 0  /* FIXME */
                         fun_alert(1, STNODRA2);
 #else
-                        form_alert(1,(LONG)"[1][FIXME:|fun_desk2win][Ok]");
+                        form_alert(1,(LONG)"[1][fun_desk2win:|Please don't do this][Ok]");
 #endif
                         continue;
                 }
@@ -295,7 +296,7 @@ void fun_desk2desk(WORD dobj)
 #if 0  /* FIXME */
                         fun_alert(1, STNOSTAK);
 #else
-                        form_alert(1,(LONG)"[1][FIXME:|fun_desk2desk a][Ok]");
+                        form_alert(1,(LONG)"[1][fun_desk2desk:|Trash can not be|moved there][Ok]");
 #endif
                         continue;
                 }
@@ -308,7 +309,7 @@ void fun_desk2desk(WORD dobj)
 #if 0  /* FIXME */
                         cont = fun_alert(2, STDELDIS, drvname);
 #else
-                        form_alert(1,(LONG)"[1][FIXME:|fun_desk2desk b][Ok]");
+                        form_alert(1,(LONG)"[1][fun_desk2desk:|Please don't drag|this on the trash can][Ok]");
 #endif
                 }
                 if (cont != 1) continue;

@@ -16,6 +16,8 @@
 *       -------------------------------------------------------------
 */
 
+#include <string.h>
+
 #include "portab.h"
 #include "machine.h"
 #include "obdefs.h"
@@ -41,8 +43,7 @@
 #include "deskrsrc.h"
 #include "deskdir.h"
 #include "icons.h"
-
-#include "string.h"
+#include "desk1.h"
 
 
 

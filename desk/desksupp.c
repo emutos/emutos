@@ -42,6 +42,7 @@
 #include "deskmain.h"
 #include "deskglob.h"
 #include "deskgraf.h"
+#include "desk1.h"
 
 
 #if MULTIAPP
@@ -201,8 +202,11 @@ void do_wopen(WORD new_win, WORD wh, WORD curr, WORD x, WORD y, WORD w, WORD h)
 
 void do_wfull(WORD wh)
 {
-        WORD            tmp_wh, y;
-        GRECT           curr, prev, full, temp;
+#ifndef DESK1
+        WORD     tmp_wh, y;
+        GRECT    temp;
+#endif
+        GRECT           curr, prev, full;
 
         gl_whsiztop = NIL;
         wind_get(wh, WF_CXYWH, &curr.g_x, &curr.g_y, &curr.g_w, &curr.g_h);
@@ -475,10 +479,12 @@ WORD do_dopen(WORD curr)
 void do_fopen(WNODE *pw, WORD curr, WORD drv, BYTE *ppath, BYTE *pname,
               BYTE *pext, WORD chkall, WORD redraw)
 {
-        GRECT           t;
-        WORD            ok;
-        BYTE            *pp, *pnew;
-
+        GRECT    t;
+        WORD     ok;
+        BYTE     *pnew;
+#ifndef DESK1
+        BYTE     *pp;
+#endif
         
         ok = TRUE;
         pnew = ppath;
@@ -653,7 +659,9 @@ WORD do_info(WORD curr)
         ANODE           *pa;
         WNODE           *pw;
         FNODE           *pf;
+#ifndef DESK1
         LONG            tree;
+#endif
 
         pa = i_find(G.g_cwin, curr, &pf, &junk);
         pw = win_find(G.g_cwin);

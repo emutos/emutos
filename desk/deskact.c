@@ -38,6 +38,7 @@
 #include "deskglob.h"
 #include "deskmain.h"
 #include "desksupp.h"
+#include "desk1.h"
 
 
 #define LEN_FNODE 45

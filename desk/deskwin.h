@@ -79,4 +79,6 @@ void win_shwall();
 WORD win_isel(OBJECT olist[], WORD root, WORD curr);
 BYTE *win_iname(WORD curr);
 void win_sname(WNODE *pw);
-
+#ifdef DESK1
+void win_sinfo(WNODE *pwin);
+#endif

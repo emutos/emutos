@@ -169,12 +169,9 @@ WORD fun_mkdir(WNODE *pw_node)
 } /* fun_mkdir */
 
 
-        WORD
-fun_op(op, pspath, pdest, dulx, duly, from_disk, src_ob)
-        WORD            op;
-        PNODE           *pspath;
-        BYTE            *pdest;
-        WORD            dulx, duly, from_disk, src_ob;
+
+WORD fun_op(WORD op, PNODE *pspath, BYTE *pdest, WORD dulx, WORD duly,
+            WORD from_disk, WORD src_ob)
 {
         WORD            fcnt, dcnt;
         LONG            size;
