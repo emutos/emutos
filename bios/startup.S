@@ -333,17 +333,17 @@ _strtautoexec:
  */
 
 subroutine_call:
-	move.w	#0xffff,-(a7)		// Mark old stack
-	move.w	#0x88,-(a7)		// Set up a 'Trap #2' on the stack
-	pea	return_here
-	move	sr,-(a7)
-	bra	dispatch_entry		// Just after the d0 == 0x73 check
+        move.w  #0xffff,-(a7)           // Mark old stack
+        move.w  #0x88,-(a7)             // Set up a 'Trap #2' on the stack
+        pea     return_here
+        move    sr,-(a7)
+        bra     dispatch_entry          // Just after the d0 == 0x73 check
 return_here:
-	cmp.w	#0xffff,(a7)+
-	beq	was_020
-	addq.l	#2,a7			// Skip 0x88 if not >= '020
+        cmp.w   #0xffff,(a7)+
+        beq     was_020
+        addq.l  #2,a7                   // Skip 0x88 if not >= '020
 was_020:
-	rts
+        rts
 
 
 
@@ -356,15 +356,15 @@ was_020:
  */
 
 _gemtrap:
-	cmp.w	#0x73,d0		// VDI call?
-	bne	no_vdi
+        cmp.w   #0x73,d0                // VDI call?
+        bne     no_vdi
 dispatch_entry:
-	jsr	_GSX_ENTRY
-	rte
+        jsr     _GSX_ENTRY
+        rte
 
 no_vdi:
-	cmp.w	#0xc8,d0		// AES call?
-	bne	no_aes
+        cmp.w   #0xc8,d0                // AES call?
+        bne     no_aes
 
         move.l  d1,a0                   // check, what AES call
         move.l  (a0),a1
@@ -373,31 +373,31 @@ no_vdi:
 
         move.l  4(a0),a1                // fake appl_init()
         clr.l   (a1)
-	rte
+        rte
 
 no_aes:
-	cmp.w	#0xfffe,d0		// vq_gdos call?
-	beq	what_gdos
+        cmp.w   #0xfffe,d0              // vq_gdos call?
+        beq     what_gdos
         
-	cmp.w	#0xffff,d0		// query for jsr:able address?
-	beq	query
+        cmp.w   #0xffff,d0              // query for jsr:able address?
+        beq     query
 
 #if 0
-	move.l	vdi_address,-(a7)	// Continue to next in chain
-	rts
+        move.l  vdi_address,-(a7)       // Continue to next in chain
+        rts
 #endif        
 
-	bra	failgem                 // should take this out!
+        bra     failgem                 // should take this out!
 
 
 
 what_gdos:
-	move.l	#-2, d0			// -2  -  no GDOS installed
-	rte
+        move.l  #-2, d0                 // -2  -  no GDOS installed
+        rte
 
 query:
-	move.l	#subroutine_call,d0	// Someone doesn't like Trap #2
-	rte
+        move.l  #subroutine_call,d0     // Someone doesn't like Trap #2
+        rte
 
 
 
@@ -554,7 +554,7 @@ _int_timerc:
         
         addq.l  #1, _hz_200             // increment 200 Hz counter
 
-	rol.w   _timer_c_sieve          // check for 4th call
+        rol.w   _timer_c_sieve          // check for 4th call
         bpl     timerc_end
 
         movem.l d0-d7/a0-a6,-(sp)       // save registers       

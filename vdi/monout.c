@@ -50,7 +50,7 @@ void perp_off(WORD * px, WORD * py);
 
 void v_clrwk()
 {
-    UBYTE * addr;            	/* pointer to screen longword */
+    UBYTE * addr;               /* pointer to screen longword */
 
     /* clear the screen */
     for (addr = v_bas_ad; addr < (UBYTE *)phystop; addr++) {

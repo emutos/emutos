@@ -58,7 +58,7 @@
  */
  
 just_rts:
-	rts
+        rts
         
         
 
@@ -92,7 +92,7 @@ _GSHIFT_S:
 _EX_TIMV:
         move.l  _CONTRL,a0
 
-        move    sr, -(sp)	// Disable interrupts
+        move    sr, -(sp)       // Disable interrupts
         ori.w   #0x0700, sr
 
         move.l  _tim_addr,18(a0)
@@ -132,16 +132,16 @@ tick_int:
         ori.w   #0x0700, sr
 #endif
 
-	move.l  _tim_addr,a0            // Invoke user routine
+        move.l  _tim_addr,a0            // Invoke user routine
         jsr     (a0)
 
-	bsr	vb_draw			// see if the mouse needs drawing
+        bsr     vb_draw                 // see if the mouse needs drawing
 
 #if 1 //NEEDED
         move    (sp)+, SR               // Restore interrupt context
 #endif
         movem.l (sp)+, d0-d7/a0-a6
-       	clr.b	in_proc			// allow yet another trip through
+        clr.b   in_proc                 // allow yet another trip through
 timer_exit:
         move.l  _tim_chain, -(sp)       // Call the old timer vector too
         rts
@@ -224,7 +224,7 @@ vdimouse_init:
 
 
 #if 1 // is done in tick_int later (MAD)
-	/* Init mouse vbl interrupt */
+        /* Init mouse vbl interrupt */
         move.l  _vblqueue, a0           // get VBL-queue address
         move.l  #vb_draw, (a0)          // set GEM VBL-routine (in vdimouse.S)
 #endif        
