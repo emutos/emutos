@@ -6,7 +6,6 @@ BIOS/XBIOS/BDOS
 - check that RAM disks work
 - misc. TODOs in floppy.c
 - VDI: code cleanup, Makefile, esclisa and gsxvars like in EmuTOS
-- auto programs are not run after reset
 - use extended argv specification in EmuCON
 - check that VEC_CRITICALERR (0x101) is called when the BIOS encounters errors
 - should hitting control-c terminate the current process? if so, how?
@@ -14,11 +13,6 @@ BIOS/XBIOS/BDOS
 - EmuCON should allow 'exit' in .BAT scripts?
 - improve Mediach()
 - implement full XHDI 1.30
-- add proper VIDEL init and selectable resolutions
-- boot from C: (and make it selectable)
-- Alt key pressed during boot should skip harddisk driver init
-- rewrite nvram.c so it wouldn't need balloc(50) (no checksum necessary)
-- move nvram_init to machine_detect so it could be used in screen.c:videl_init
 - loop callibration needed for various delays in centronics and DMA ports
 
 

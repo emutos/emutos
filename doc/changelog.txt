@@ -1503,3 +1503,11 @@ Start... early ages
 2003-07-12
 - po/es.po: added Spanish translation of EmuTOS, created by Gabriel Huertas
   <gabrielhuertas@terra.es (joy)
+
+2003-07-13
+- bios/clock.c: NVRAM RTC year offset now detected from RTC_TOS_VER (joy)
+- include/config.h: RTC_TOS_VER documented but not defined by default (joy)
+- Makefile: new target 'aranym' added - it defines all required features.
+  The 'falcon' target was removed (I don't believe current EmuTOS would
+  work on real Falcon) (joy)
+- doc/todo.txt: removed a couple of entries that I believe were done (joy)
