@@ -25,14 +25,15 @@
         
         .global _os_entry
         .global _cartscan
-
+        .global	_xhdi_vec
+        .xdef	_xhdi_handler
         .global _nfid_xhdi
 
 // ==== tosvars.s - TOS System variables =====================================
                 
         .xdef   resvalid      
         .xdef   resvector     
-        .xdef   _kprintf
+//        .xdef   _kprintf
 
 // ==== machine.c - Native Features flag =====================================
 
@@ -245,6 +246,10 @@ cartover:
         rts
 
 
+
+        dc.l    0x27011992              // XHDI magic constant
+_xhdi_vec:
+        jmp     _xhdi_handler
 
         .end
 
