@@ -6,9 +6,14 @@
  * Authors:
  *  LVL   Laurent Vogel
  *  MAD   Martin Doering
+ *        Robert de Vries (Linux m68k)
+ *        Bjoern Brauel   (Linux m68k)
+ *        Roman Hodek     (Linux m68k)
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
+ *
+ * Some code I got from Linux m68k, thanks to the authors! (MAD)
  */
 
 /*
@@ -236,7 +241,7 @@ LONG bconin2(VOID)
   return value;
 }
 
-static void push_ikbdiorec(LONG value)
+static VOID push_ikbdiorec(LONG value)
 {
   ikbdiorec.tail += 4;
   if(ikbdiorec.tail >= ikbdiorec.size) {
@@ -385,23 +390,224 @@ VOID bconout4(WORD dev, WORD c)
 }
 
 /* cnt = number of bytes to send less one */
-VOID ikbdws(WORD cnt, LONG ptr)
+VOID ikbdws(WORD cnt, UBYTE * ptr)
 {
-  UBYTE *p = (UBYTE *)ptr;
   while(cnt-- >= 0) {
-    bconout4(0, *p++);
+    bconout4(0, *ptr++);
   }
 }
 
 
-#define send_ikbd_acia(c) bconout4(0,c)
+/* Reset (without touching the clock) */
+VOID ikbd_reset(VOID)
+{
+    UBYTE cmd[2] = { 0x80, 0x01 };
+    
+    ikbdws(2, cmd);
+
+    /* if all's well code 0xF1 is returned, else the break codes of
+       all keys making contact */
+}
+
+/* Set mouse button action */
+VOID ikbd_mouse_button_action(int mode)
+{
+    UBYTE cmd[2] = { 0x07, mode };
+
+    ikbdws(2, cmd);
+}
+
+/* Set relative mouse position reporting */
+VOID ikbd_mouse_rel_pos(VOID)
+{
+    UBYTE cmd[1] = { 0x08 };
+
+    ikbdws(1, cmd);
+}
+
+/* Set absolute mouse position reporting */
+VOID ikbd_mouse_abs_pos(int xmax, int ymax)
+{
+    BYTE cmd[5] = { 0x09, xmax>>8, xmax&0xFF, ymax>>8, ymax&0xFF };
+
+    ikbdws(5, cmd);
+}
+
+/* Set mouse keycode mode */
+VOID ikbd_mouse_kbd_mode(int dx, int dy)
+{
+    BYTE cmd[3] = { 0x0A, dx, dy };
+
+    ikbdws(3, cmd);
+}
+
+/* Set mouse threshold */
+VOID ikbd_mouse_thresh(int x, int y)
+{
+    BYTE cmd[3] = { 0x0B, x, y };
+
+    ikbdws(3, cmd);
+}
+
+/* Set mouse scale */
+VOID ikbd_mouse_scale(int x, int y)
+{
+    BYTE cmd[3] = { 0x0C, x, y };
+
+    ikbdws(3, cmd);
+}
+
+/* Interrogate mouse position */
+VOID ikbd_mouse_pos_get(int *x, int *y)
+{
+    UBYTE cmd[1] = { 0x0D };
+
+    ikbdws(1, cmd);
+
+    /* wait for returning bytes */
+}
+
+/* Load mouse position */
+VOID ikbd_mouse_pos_set(int x, int y)
+{
+    BYTE cmd[6] = { 0x0E, 0x00, x>>8, x&0xFF, y>>8, y&0xFF };
+
+    ikbdws(6, cmd);
+}
+
+/* Set Y=0 at bottom */
+VOID ikbd_mouse_y0_bot(VOID)
+{
+    UBYTE cmd[1] = { 0x0F };
+
+    ikbdws(1, cmd);
+}
+
+/* Set Y=0 at top */
+VOID ikbd_mouse_y0_top(VOID)
+{
+    UBYTE cmd[1] = { 0x10 };
+
+    ikbdws(1, cmd);
+}
+
+/* Resume */
+VOID ikbd_resume(VOID)
+{
+    UBYTE cmd[1] = { 0x11 };
+
+    ikbdws(1, cmd);
+}
+
+/* Disable mouse */
+VOID ikbd_mouse_disable(VOID)
+{
+    UBYTE cmd[1] = { 0x12 };
+
+    ikbdws(1, cmd);
+}
+
+/* Pause output */
+VOID ikbd_pause(VOID)
+{
+    UBYTE cmd[1] = { 0x13 };
+
+    ikbdws(1, cmd);
+}
+
+/* Set joystick event reporting */
+VOID ikbd_joystick_event_on(VOID)
+{
+    UBYTE cmd[1] = { 0x14 };
+
+    ikbdws(1, cmd);
+}
+
+/* Set joystick interrogation mode */
+VOID ikbd_joystick_event_off(VOID)
+{
+    UBYTE cmd[1] = { 0x15 };
+
+    ikbdws(1, cmd);
+}
+
+/* Joystick interrogation */
+VOID ikbd_joystick_get_state(VOID)
+{
+    UBYTE cmd[1] = { 0x16 };
+
+    ikbdws(1, cmd);
+}
+
+/* some joystick routines not in yet (0x18-0x19) */
+
+/* Disable joysticks */
+VOID ikbd_joystick_disable(VOID)
+{
+    UBYTE cmd[1] = { 0x1A };
+
+    ikbdws(1, cmd);
+}
+
+/* Time-of-day clock set */
+VOID ikbd_clock_set(int year, int month, int day, int hour, int minute, int second)
+{
+    BYTE cmd[7] = { 0x1B, year, month, day, hour, minute, second };
+
+    ikbdws(7, cmd);
+}
+
+/* Interrogate time-of-day clock */
+VOID ikbd_clock_get(int *year, int *month, int *day, int *hour, int *minute, int second)
+{
+    UBYTE cmd[1] = { 0x1C };
+
+    ikbdws(1, cmd);
+}
+
+/* Memory load */
+VOID ikbd_mem_write(int address, int size, BYTE *data)
+{
+    kprintf("Attempt to write data into keyboard memory");
+    while(1);
+}
+
+/* Memory read */
+VOID ikbd_mem_read(int address, BYTE data[6])
+{
+    BYTE cmd[3] = { 0x21, address>>8, address&0xFF };
+
+    ikbdws(3, cmd);
+
+    /* receive data and put it in data */
+}
+
+/* Controller execute */
+VOID ikbd_exec(int address)
+{
+    BYTE cmd[3] = { 0x22, address>>8, address&0xFF };
+
+    ikbdws(3, cmd);
+}
+
+/* Status inquiries (0x87-0x9A) not yet implemented */
+
+/* Set the state of the caps lock led. */
+VOID atari_kbd_leds (unsigned int leds)
+{
+    BYTE cmd[6] = {32, 0, 4, 1, 254 + ((leds & 4) != 0), 0};
+
+    ikbdws(6, cmd);
+}
+
+
 
 /*
  *	FUNCTION:  This routine resets the keyboard,
  *	  configures the MFP so we can get interrupts
  */
  
-VOID	kbd_init(VOID)
+VOID kbd_init(VOID)
 {
     /* initialize ikbd ACIA */
     ikbd_acia.ctrl =
@@ -414,13 +620,13 @@ VOID	kbd_init(VOID)
         ACIA_D8N1S;  /* 8 bit, 1 stop, no parity */
 
     /* initialize the IKBD */
-#if 1
-    send_ikbd_acia(0x80);   /* reset IKBD */
-    send_ikbd_acia(0x01);   /* also... */
+    ikbd_reset();
 
-    send_ikbd_acia(0x12);  /* disable mouse */
-    send_ikbd_acia(0x1A);  /* disable joystick */
-#endif
+    ikbd_joystick_disable();
+    ikbd_mouse_disable();
 
     bioskeys();
 }
+
+
+

@@ -44,6 +44,6 @@ extern LONG kbshift(WORD flag);
 /* some xbios functions */
 extern LONG keytbl(LONG norm, LONG shft, LONG caps);
 extern VOID bioskeys(VOID);
-extern VOID ikbdws(WORD cnt, LONG ptr);
+extern VOID ikbdws(WORD cnt, UBYTE *ptr);
 
 #endif /* _IKBD_H */

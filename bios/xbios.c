@@ -577,7 +577,7 @@ VOID xbios_19(WORD cnt, LONG ptr)
 #if DBG_XBIOS
     kprintf("XBIOS: Midiws(0x%04x, 0x%08lx)\n", cnt, ptr);
 #endif
-    ikbdws(cnt, ptr);
+    ikbdws(cnt, (UBYTE*) ptr);
 }
 
 
