@@ -1,7 +1,7 @@
 #
 # Makefile suitable for Linux and Cygwin setups
 # only GCC (cross-mint) is supported. 
-# some features like pattern substitution probably
+# Some features like pattern substitution probably
 # require GNU-make.
 #
 # for a list of main targets do  
@@ -9,8 +9,10 @@
 #
 # C code (C) and assembler (S) source go in directories 
 # bios/, bdos/, util/, ... ; To add source code files, update
-# the variables xxxxCSRC and xxxxSSRC below, 
-# where xxxx is one of BIOS, BDOS, UTIL.
+# the variables XXXXCSRC and XXXXSSRC below; each directories has
+# a different set of build flags indicated in variables 
+# xxxx_copts and xxxx_sopts below. 
+# Here xxxx is the directory name, and XXXX is the same in uppercase.
 #
 
 
@@ -20,6 +22,19 @@
 #
 
 COUNTRY = us
+
+#
+# experimental, unique-country support: if UNIQUE is defined, then
+# EmuTOS will be built with only one country.
+#
+# example: make UNIQUE=fr 256
+#
+
+DEF =
+ifneq (,$(UNIQUE))
+COUNTRY = $(UNIQUE)
+DEF = -DCONF_UNIQUE_COUNTRY=1 -DCONF_NO_NLS=1
+endif
 
 #
 # Choose the user interface that should be included into EmuTOS
@@ -57,9 +72,6 @@ endif
 # indent flags
 INDENT = indent -kr
 
-# not needed, job taken by mkheader.
-# BUILDDATE=$(shell LANG=C date +"%d. %b. %Y")
-
 # Linker with relocation information and binary output (image)
 LD = m68k-atari-mint-gcc -nostartfiles -nostdlib
 LDFLAGS = -Xlinker -oformat -Xlinker binary -lgcc
@@ -69,14 +81,14 @@ LDFLAGS_T2 = -Xlinker -Ttext=0xe00000 -Xlinker -Tbss=0x000000
 # (relocation for RAM TOS is derived dynamically from the BSS size)
 
 # Assembler with options for Motorola like syntax (68000 cpu)
-AS = m68k-atari-mint-gcc -x assembler
-ASINC = -Iinclude
-ASFLAGS = --register-prefix-optional -m68000 $(ASINC) 
+# AS = m68k-atari-mint-gcc -x assembler
+# ASINC = -Iinclude
+# ASFLAGS = --register-prefix-optional -m68000 $(ASINC) 
 
 # C compiler for MiNT
 CC = m68k-atari-mint-gcc
 INC = -Iinclude
-CFLAGS = -O2 -fomit-frame-pointer -Wall -mshort -m68000 $(LOCALCONF) $(INC)
+CFLAGS = -O2 -fomit-frame-pointer -Wall -mshort -m68000 $(DEF) $(LOCALCONF) $(INC)
 
 CPPFLAGS = $(INC)
 
@@ -150,6 +162,20 @@ DESKSSRC = deskstart.S
 
 CONSCSRC = command.c
 CONSSSRC = coma.S
+
+#
+# specific CC -c options for specific directories
+#
+
+vpath % bios:bdos:util:cli:vdi:aes:desk
+
+bios_copts =
+bdos_copts =
+util_copts = -Ibios
+cli_copts  = -Ibios
+vdi_copts  = -Ibios
+aes_copts  = -Ibios
+desk_copts = -Ibios -Iaes -Idesk/icons
 
 #
 # everything should work fine below.
@@ -240,14 +266,37 @@ emutos2.img: $(OBJECTS)
 	$(LD) -o $@ $(OBJECTS) $(LDFLAGS) $(LDFLAGS_T2)
 
 
+
+
+#
+# generic sized images handling
+#
+
+define sized_image
+@goal=`echo $@ | sed -e 's/[^0-9]//g'` ; \
+size=`wc -c < $<` ; \
+if [ $$size -gt `expr $$goal \* 1024` ] ; \
+then \
+ rm -f $< ; \
+  echo EmuTOS too big for $${goal}K: size = $$size ; \
+  false ; \
+else \
+  echo dd if=/dev/zero of=$@ bs=1024 count=$$goal ; \
+  dd if=/dev/zero of=$@ bs=1024 count=$$goal ; \
+  echo dd if=$< of=$@ conv=notrunc ; \
+  dd if=$< of=$@ conv=notrunc ; \
+  rm -f $< ; \
+fi
+endef
+
 #
 # 192kB Image
 #
 
 192: etos192k.img
 
-etos192k.tmp: emutos1.img
-	cp $< $@
+etos192k.img: emutos1.img
+	$(sized_image)
 
 #
 # 256kB Image
@@ -255,8 +304,8 @@ etos192k.tmp: emutos1.img
 
 256: etos256k.img
 
-etos256k.tmp: emutos2.img
-	cp $< $@
+etos256k.img: emutos2.img
+	$(sized_image)
 
 #
 # 512kB Image (for Aranym or Falcon)
@@ -265,28 +314,8 @@ etos256k.tmp: emutos2.img
 512: etos512k.img
 falcon: etos512k.img
 
-etos512k.tmp: emutos2.img
-	cp $< $@
-
-#
-# generic sized images handling
-#
-
-%k.img: %k.tmp
-	@goal=`echo $@ | sed -e 's/[^0-9]//g'` ; \
-	size=`wc -c < $<` ; \
-	if [ $$size -gt `expr $$goal \* 1024` ] ; \
-	then \
-	  rm -f $< ; \
-	  echo EmuTOS too big for $${goal}K: size = $$size ; \
-	  false ; \
-	else \
-	  echo dd if=/dev/zero of=$@ bs=1024 count=$$goal ; \
-	  dd if=/dev/zero of=$@ bs=1024 count=$$goal ; \
-	  echo dd if=$< of=$@ conv=notrunc ; \
-	  dd if=$< of=$@ conv=notrunc ; \
-	  rm -f $< ; \
-	fi
+etos512k.img: emutos2.img
+	$(sized_image)
 
 
 #
@@ -361,95 +390,69 @@ po/messages.pot: bug$(EXE) po/POTFILES.in
 	./bug$(EXE) xgettext
 
 #
-# OS header
-# (need_header is an ugly trick to make sure the header is generated 
-# each time)
+# Experimental mono-country translated EmuTOS
+#
+	
+ifneq (,$(UNIQUE))
+TRANS_SRC = $(shell sed -e '/^[^a-z]/d;s/\.c/.tr&/' <po/POTFILES.in)
+
+emutos1.img emutos2.img: $(TRANS_SRC)
+
+%.tr.c : %.c po/$(COUNTRY).po bug$(EXE) po/LINGUAS obj/country
+	./bug$(EXE) translate $(COUNTRY) $<
+
+endif
+
+#
+# obj/country contains the current value of $(COUNTRY). 
+# It changes if and only if $(COUNTRY) changes.
 #
 
-need_header:
-	@touch $@
+obj/country:
+	@echo $(COUNTRY) > last.tmp
+	@if [ ! -e obj/country ]; \
+	then \
+	  mv last.tmp obj/country; \
+	else if cmp -s last.tmp obj/country; \
+	  then \
+	    rm -f last.tmp; \
+	  else \
+	    mv last.tmp obj/country; \
+	  fi \
+	fi
+
+#
+# OS header
+#
 
 obj/startup.o: bios/header.h
 
 obj/country.o: bios/header.h
 
-bios/header.h: mkheader$(EXE) need_header
+bios/header.h: mkheader$(EXE) obj/country
 	./mkheader$(EXE) $(COUNTRY)
-	@rm -f need_header
 
 mkheader$(EXE): tools/mkheader.c
 	$(NATIVECC) -o $@ $<
 
 #
-# automatic build rules
+# build rules - the little black magic here allows for e.g.
+# $(bios_copts) to specify additional options for C source files
+# in bios/, and $(vdi_sopts) to specify additional options for
+# ASM source files in vdi/
 #
 
-obj/%.o : bios/%.c
-	${CC} ${CFLAGS} -c -Ibios $< -o $@
+obj/%.o : %.tr.c
+	$(CC) $(CFLAGS) -c $($(subst /,_,$(dir $<))copts) $< -o $@
 
-obj/%.o : bios/%.S
-	${CC} ${CFLAGS} -c -Ibios $< -o $@
+obj/%.o : %.c
+	$(CC) $(CFLAGS) -c $($(subst /,_,$(dir $<))copts) $< -o $@
 
-obj/%.o : bdos/%.c
-	${CC} ${CFLAGS} -c -Ibdos $< -o $@
+obj/%.o : %.S
+	$(CC) $(CFLAGS) -c $($(subst /,_,$(dir $<))sopts) $< -o $@
 
-obj/%.o : bdos/%.S
-	${CC} ${CFLAGS} -c -Ibios $< -o $@
-
-obj/%.o : util/%.c
-	${CC} ${CFLAGS} -c -Iutil $< -o $@
-
-obj/%.o : util/%.S
-	${CC} ${CFLAGS} -c -Ibios $< -o $@
-
-obj/%.o : cli/%.c
-	${CC} ${CFLAGS} -c -Ibios $< -o $@
-
-obj/%.o : cli/%.S
-	${CC} ${CFLAGS} -c -Ibios $< -o $@
-
-obj/%.o : vdi/%.c
-	${CC} ${CFLAGS} -c -Ibios $< -o $@
-
-obj/%.o : vdi/%.S
-	${CC} ${CFLAGS} -c -Ibios $< -o $@
-
-obj/%.o : aes/%.c
-	${CC} ${CFLAGS} -c -Ibios $< -o $@
-
-obj/%.o : aes/%.S
-	${CC} ${CFLAGS} -c $< -o $@
-
-obj/%.o : desk/%.c
-	${CC} ${CFLAGS} -c -Ibios -Iaes -Idesk/icons $< -o $@
-
-obj/%.o : desk/%.S
-	${CC} ${CFLAGS} -c -Iaes $< -o $@
-
-#
-# make bios.dsm will create an assembly-only of bios.c
-#
-
-%.dsm : bios/%.c
-	${CC} ${CFLAGS} -S -Ibios $< -o $@
-
-%.dsm : bdos/%.c
-	${CC} ${CFLAGS} -S -Ibdos $< -o $@
-
-%.dsm : util/%.c
-	${CC} ${CFLAGS} -S -Iutil $< -o $@
-
-%.dsm : cli/%.c
-	${CC} ${CFLAGS} -S -Ibios $< -o $@
-
-%.dsm : vdi/%.c
-	${CC} ${CFLAGS} -S -Ibios $< -o $@
-
-%.dsm : aes/%.c
-	${CC} ${CFLAGS} -S -Ibios $< -o $@
-
-%.dsm : desk/%.c
-	${CC} ${CFLAGS} -S -Ibios -Iaes -Idesk/icons $< -o $@
+%.dsm : %.c
+	$(CC) $(CFLAGS) -S $($(subst /,_,$(dir $<))copts) $< -o $@
 
 #
 # dsm, show
@@ -501,13 +504,12 @@ fal_$(DESASS): fal_map
 #
 
 clean:
-	rm -f obj/*.o obj/*.s *~ */*~ *~ core emutos[12].img map $(DESASS)
+	rm -f obj/*.o obj/*.s *~ */*~ core emutos[12].img map $(DESASS)
 	rm -f ramtos.img boot.prg etos*.img mkflop$(EXE) 
 	rm -f bootsect.img emutos.st date.prg dumpkbd.prg keytbl2c$(EXE)
 	rm -f bug$(EXE) po/messages.pot util/langs.c bios/header.h
-	rm -f mkheader$(EXE) tounix$(EXE) *.tmp *.dsm
-	rm -f emutos.tmp fal_dsm.txt fal_map
-	rm -f makefile.dep
+	rm -f mkheader$(EXE) tounix$(EXE) *.tmp *.dsm */*.tr.c 
+	rm -f makefile.dep fal_dsm.txt fal_map obj/country
 
 distclean: clean
 	rm -f '.#'* */'.#'* 
