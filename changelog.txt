@@ -266,3 +266,5 @@ Start... early ages
 - US kbd default, optional DE and FR kbds, tools to add more KBD defs (LVL)
 - changed joystick support in aciavecs.S (untested) (LVL)
 - Makefile (updated clean and distclean, BUILDDATE also for CYGWIN) (LVL)
+- Reimplemented bios/memory.S in a more readable kind   (MAD)
+
