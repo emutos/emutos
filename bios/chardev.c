@@ -85,10 +85,6 @@ void chardev_init()
 
 /* BIOS devices - bconstat functions */
 
-LONG bconstat0(void)
-{
-  return 0;
-}
 
 LONG bconstat1(void)
 {
@@ -119,10 +115,6 @@ LONG bconstat7(void)
 
 /* BIOS devices - bconin functions */
 
-LONG bconin0(void)
-{
-  return 0;
-}
 LONG bconin1(void)
 {
   return 0;
@@ -148,10 +140,6 @@ LONG bconin7(void)
 
 /* BIOS devices - bconout functions */
 
-void bconout0(WORD dev, WORD b)
-{
-}
-
 void bconout1(WORD dev, WORD b)
 {
 }
@@ -172,11 +160,6 @@ void bconout7(WORD dev, WORD b)
 
 
 /* BIOS devices - bcostat functions */
-
-LONG bcostat0(void)
-{
-  return -1;
-}
 
 LONG bcostat1(void)
 {
