@@ -190,6 +190,12 @@ void dopanic(const char *fmt, ...)
                  exc_messages[proc_enum], s->misc, s->address);
         kcprintf("opcode = 0x%04x, sr = 0x%04x, pc = 0x%08lx\n",
                  s->opcode, s->sr, s->pc);
+        kcprintf("Aregs: %08lx %08lx %08lx %08lx  %08lx %08lx %08lx %08lx\n",
+                 proc_aregs[0], proc_aregs[1], proc_aregs[2], proc_aregs[3], 
+                 proc_aregs[4], proc_aregs[5], proc_aregs[6], proc_aregs[7]);
+        kcprintf("Dregs: %08lx %08lx %08lx %08lx  %08lx %08lx %08lx %08lx\n",
+                 proc_dregs[0], proc_dregs[1], proc_dregs[2], proc_dregs[3], 
+                 proc_dregs[4], proc_dregs[5], proc_dregs[6], proc_dregs[7]);
     } else if(proc_enum >= 4 && proc_enum < sizeof(exc_messages)) {
         struct {
             WORD sr;
