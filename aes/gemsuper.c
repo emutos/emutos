@@ -40,6 +40,9 @@
 #include "gemrslib.h"
 #include "gemshlib.h"
 #include "gemglobe.h"
+#include "gemfmalt.h"
+#include "gemdosif.h"
+#include "gemasm.h"
 
 
 #define CONTROL LLGET(pcrys_blk)
@@ -87,7 +90,7 @@ UWORD crysbind(WORD opcode, LONG pglobal, UWORD int_in[], UWORD int_out[], LONG 
 /*              LLSET(pglobal, 0x00010200L);
 */
                 LWSET(pglobal+4, rlr->p_pid);
-                sh_desk(0, pglobal+6);
+                sh_deskf(0, pglobal+6);
                 LWSET(pglobal+20, gl_nplanes);
                 LLSET(pglobal+22, ADDR(&D));
                 LWSET(pglobal+26, gl_bvdisk);
@@ -134,7 +137,8 @@ UWORD crysbind(WORD opcode, LONG pglobal, UWORD int_in[], UWORD int_out[], LONG 
                 ret = ev_button(B_CLICKS, B_MASK, B_STATE, &EV_MX);
                 break;
           case EVNT_MOUSE:
-                ret = ev_mouse(&MO_FLAGS, &EV_MX);
+                /* FIXME: Ugly MOBLK pointer typecasting: */
+                ret = ev_mouse((MOBLK *)&MO_FLAGS, &EV_MX);
                 break;
           case EVNT_MESAG:
 #if MULTIAPP
@@ -157,7 +161,8 @@ if ((MB_MASK == 3) && (MB_STATE == 1))
 
 }
           tree = HW(MB_CLICKS) | LW((MB_MASK << 8) | MB_STATE);
-                ret = ev_multi(MU_FLAGS, &MMO1_FLAGS, &MMO2_FLAGS, 
+                /* FIXME: Ugly MOBLK pointer typecasting: */
+                ret = ev_multi(MU_FLAGS, (MOBLK *)&MMO1_FLAGS, (MOBLK *)&MMO2_FLAGS, 
                         maddr, tree, MME_PBUFF, &EV_MX);
                 break;
           case EVNT_DCLICK:
@@ -211,7 +216,8 @@ if ((MB_MASK == 3) && (MB_STATE == 1))
                 ob_delete(OB_TREE, OB_DELOB);
                 break;
           case OBJC_DRAW:
-                gsx_sclip(&OB_XCLIP);
+                /* FIXME: Ugly typecasting: */
+                gsx_sclip((GRECT *)&OB_XCLIP);
                 ob_draw(OB_TREE, OB_DRAWOB, OB_DEPTH);
                 break;
           case OBJC_FIND:
@@ -230,7 +236,8 @@ if ((MB_MASK == 3) && (MB_STATE == 1))
                 ret = ob_edit(OB_TREE, OB_OBJ, OB_CHAR, &OB_ODX, OB_KIND);
                 break;
           case OBJC_CHANGE:
-                gsx_sclip(&OB_XCLIP);
+                /* FIXME: Ugly typecasting: */
+                gsx_sclip((GRECT *)&OB_XCLIP);
                 ob_change(OB_TREE, OB_DRAWOB, OB_NEWSTATE, OB_REDRAW);
                 break;
                                 /* Form Manager                         */
@@ -238,7 +245,8 @@ if ((MB_MASK == 3) && (MB_STATE == 1))
                 ret = fm_do(FM_FORM, FM_START);
                 break;
           case FORM_DIAL:
-                ret = fm_dial(FM_TYPE, &FM_X);
+                /* FIXME: Ugly typecasting: */
+                ret = fm_dial(FM_TYPE, (GRECT *)&FM_X);
                 break;
           case FORM_ALERT:
                 ret = fm_alert(FM_DEFBUT, FM_ASTRING);
@@ -247,7 +255,8 @@ if ((MB_MASK == 3) && (MB_STATE == 1))
                 ret = fm_error(FM_ERRNUM);
                 break;
           case FORM_CENTER:
-                ob_center(FM_FORM, &FM_XC);
+                /* FIXME: Ugly typecasting: */
+                ob_center(FM_FORM, (GRECT *)&FM_XC);
                 break;
           case FORM_KEYBD:
                 gsx_sclip(&gl_rfull);
@@ -290,16 +299,17 @@ if ((MB_MASK == 3) && (MB_STATE == 1))
 #endif
                                 /* Graphics Manager                     */
           case GRAF_RUBBOX:
-                  gr_rubbox(GR_I1, GR_I2, GR_I3, GR_I4, 
-                                        &GR_O1, &GR_O2);
-                  break;
+                gr_rubbox(GR_I1, GR_I2, GR_I3, GR_I4, 
+                          &GR_O1, &GR_O2);
+                break;
           case GRAF_DRAGBOX:
-                  gr_dragbox(GR_I1, GR_I2, GR_I3, GR_I4, &GR_I5, 
-                                        &GR_O1, &GR_O2);
-                  break;
+                /* FIXME: Ugly typecasting: */
+                gr_dragbox(GR_I1, GR_I2, GR_I3, GR_I4, (GRECT *)&GR_I5, 
+                           &GR_O1, &GR_O2);
+                break;
           case GRAF_MBOX:
-                  gr_movebox(GR_I1, GR_I2, GR_I3, GR_I4, GR_I5, GR_I6);
-                  break;
+                gr_movebox(GR_I1, GR_I2, GR_I3, GR_I4, GR_I5, GR_I6);
+                break;
           case GRAF_GROWBOX:
 /*
                 gr_growbox(&GR_I1, &GR_I5);
@@ -362,10 +372,12 @@ if ((MB_MASK == 3) && (MB_STATE == 1))
                 break;
                                 /* Window Manager                       */
           case WIND_CREATE:
-                ret = wm_create(WM_KIND, &WM_WX);
+                /* FIXME: Ugly typecasting: */
+                ret = wm_create(WM_KIND, (GRECT *)&WM_WX);
                 break;
           case WIND_OPEN:
-                wm_open(WM_HANDLE, &WM_WX);
+                /* FIXME: Ugly typecasting: */
+                wm_open(WM_HANDLE, (GRECT *)&WM_WX);
                 break;
           case WIND_CLOSE:
                 wm_close(WM_HANDLE);
@@ -408,22 +420,22 @@ if ((MB_MASK == 3) && (MB_STATE == 1))
                 break;
                                 /* Shell Manager                        */
           case SHEL_READ:
-                ret = sh_read(SH_PCMD, SH_PTAIL);
+                sh_read(SH_PCMD, SH_PTAIL);
                 break;
           case SHEL_WRITE:
                 ret = sh_write(SH_DOEX, SH_ISGR, SH_ISCR, SH_PCMD, SH_PTAIL);
                 break;
           case SHEL_GET:
-                ret = sh_get(SH_PBUFFER, SH_LEN);
+                sh_get(SH_PBUFFER, SH_LEN);
                 break;
           case SHEL_PUT:
-                ret = sh_put(SH_PDATA, SH_LEN);
+                sh_put(SH_PDATA, SH_LEN);
                 break;
           case SHEL_FIND:
                 ret = sh_find(SH_PATH);
                 break;
           case SHEL_ENVRN:
-                ret = sh_envrn(SH_PATH, SH_SRCH);
+                sh_envrn(SH_PATH, SH_SRCH);
                 break;
           case SHEL_RDEF:
                 sh_rdef(SH_LPCMD, SH_LPDIR);
@@ -432,11 +444,13 @@ if ((MB_MASK == 3) && (MB_STATE == 1))
                 sh_wdef(SH_LPCMD, SH_LPDIR);
                 break;
           case XGRF_STEPCALC:
-                gr_stepcalc( XGR_I1, XGR_I2, &XGR_I3, &XGR_O1,
+                /* FIXME: Ugly GRECT pinter typecast: */
+                gr_stepcalc( XGR_I1, XGR_I2, (GRECT *)&XGR_I3, &XGR_O1,
                    &XGR_O2, &XGR_O3, &XGR_O4, &XGR_O5 );
                 break;
           case XGRF_2BOX:
-                gr_2box(XGR_I4, XGR_I1, &XGR_I6, XGR_I2,
+                /* FIXME: Ugly GRECT pointer typecasting: */
+                gr_2box(XGR_I4, XGR_I1, (GRECT *)&XGR_I6, XGR_I2,
                         XGR_I3, XGR_I5 );
                 break;
           default:

@@ -21,10 +21,14 @@ extern LONG     gl_datree;
 extern OBJECT   M_DESK[];
 
 
-void mn_clsda(void);
 UWORD do_chg(LONG tree, WORD iitem, UWORD chgvalue,
              WORD dochg, WORD dodraw, WORD chkdisabled);
 WORD mn_do(WORD *ptitle, WORD *pitem);
+
+void mn_bar(LONG tree, WORD showit, WORD pid);
+void mn_clsda(void);
+WORD mn_register(WORD pid, LONG pstr);
+void mn_unregister(WORD da_id);
 
 
 #endif

@@ -18,7 +18,7 @@ UWORD dos_read(WORD handle, UWORD cnt, LONG pbuffer);
 UWORD dos_write(WORD handle, UWORD cnt, LONG pbuffer);
 LONG dos_lseek(WORD handle, WORD smode, LONG sofst);
 void dos_exec(LONG pcspec, WORD segenv, LONG pcmdln);
-LONG dos_chdir(LONG pdrvpath);
+LONG dos_chdir(BYTE *pdrvpath);
 WORD dos_gdir(WORD drive, BYTE *pdrvpath);
 WORD dos_sdrv(WORD newdrv);
 LONG dos_create(BYTE *name, WORD attr);
@@ -30,6 +30,7 @@ WORD dos_rename(BYTE *p1, BYTE *p2);
 WORD dos_rmdir(BYTE *path);
 
 LONG dos_alloc(LONG nbytes);
+LONG dos_avail();
 WORD dos_free(LONG maddr);
 
 #endif

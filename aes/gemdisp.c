@@ -40,8 +40,6 @@
 
 
 #if MULTIAPP
-EXTERN VOID             ap_accexit();
-EXTERN VOID             psetup();
 GLOBAL LONG             gl_prret;
 GLOBAL LONG             gl_prpid;
 EXTERN WORD             gl_ldpid;
@@ -54,7 +52,7 @@ GLOBAL PD               *gl_displock = 0;
 
 /* forkq puts a fork block with a routine in the fork ring      */
 
-void forkq(WORD (*fcode)(), WORD lodata, WORD hidata)
+void forkq(void (*fcode)(), WORD lodata, WORD hidata)
 {
         REG FPD         *f;
                                                 /* q a fork process,    */
@@ -182,7 +180,7 @@ void chkkbd()
              (kstat != kstate) )
           {
             cli();
-            forkq( (WORD (*)())kchange, achar, kstat);
+            forkq( (void (*)())kchange, achar, kstat);
             sti();
           }
         }

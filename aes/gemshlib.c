@@ -38,11 +38,11 @@
 #include "gemflag.h"
 #include "gemglobe.h"
 #include "geminit.h"
+#include "gemrslib.h"
+#include "optimopt.h"
 
 
 #if MULTIAPP
-EXTERN PD       *fpdnm();
-EXTERN WORD     mn_ppdtoid();
 EXTERN PD       *desk_ppd[];
 EXTERN BYTE     *desk_str[];
 EXTERN WORD     gl_dacnt;
@@ -50,18 +50,11 @@ EXTERN WORD     gl_mnpds[];
 EXTERN PD       *gl_mnppd;
 EXTERN LONG     menu_tree[];
 EXTERN WORD     gl_pids;                /* bit vector of pids used      */
-EXTERN VOID     acancel();
-EXTERN VOID     apret();
 EXTERN PD       *gl_lastnpd;
 EXTERN WORD     gl_numaccs;
 EXTERN ACCNODE  gl_caccs[];
 EXTERN WORD     proc_msg[8];
-#endif
 
-WORD            sh_find();
-
-
-#if MULTIAPP
 GLOBAL WORD     nulp_msg[8];
 GLOBAL LONG     gl_efnorm, gl_efsave;
 GLOBAL LONG     gl_strtaes;
@@ -96,19 +89,22 @@ GLOBAL LONG     ad_pfile;
 GLOBAL WORD     gl_shgem;
 
 
+/* Prototypes: */
+WORD sh_find(LONG pspec);
 
-        VOID
-sh_read(pcmd, ptail)
-        LONG            pcmd, ptail;
+
+
+
+
+void sh_read(LONG pcmd, LONG ptail)
 {
         LBCOPY(pcmd, ad_scmd, 128);
         LBCOPY(ptail, ad_stail, 128);
 }
 
 
-        VOID
-sh_curdir(ppath)
-        LONG    ppath;
+
+void sh_curdir(LONG ppath)
 {
         WORD    drive;
                                                 /* remember current     */
@@ -117,8 +113,137 @@ sh_curdir(ppath)
         LBSET(ppath++, (drive + 'A') );
         LBSET(ppath++, ':');
         LBSET(ppath++, '\\');
-        dos_gdir( drive+1, ppath );
+        dos_gdir( drive+1, (BYTE *)ppath );
 }
+
+
+
+BYTE *sh_parse(BYTE *psrc, BYTE *pfcb)
+{
+        REG BYTE        *ptmp;
+        BYTE            *sfcb;
+        BYTE            drv;
+
+        sfcb = pfcb;
+                                                /* scan off white space */
+        while ( (*psrc) &&
+                (*psrc == ' ') )
+          psrc++;
+        if (*psrc == NULL)
+          return(psrc);
+                                                /* remember the start   */
+        ptmp = psrc;
+                                                /* look for a colon     */
+        while ( (*psrc) &&
+                (*psrc != ' ') &&
+                (*psrc != ':') )
+          psrc++;
+                                                /* pick off drive letter*/
+        drv = 0;
+        if ( *psrc == ':' )
+        {
+          drv = toupper(*(psrc - 1)) - 'A' + 1;
+          psrc++;
+        }
+        else
+          psrc = ptmp;
+        *pfcb++ = drv;
+        if (*psrc == NULL)
+          return(psrc);
+                                                /* scan off filename    */
+        while ( (*psrc) &&
+                (*psrc != ' ') &&
+                (*psrc != '*') &&
+                (*psrc != '.') &&
+                (pfcb <= &sfcb[8]) )
+          *pfcb++ = toupper(*psrc++);
+                                                /* pad out with blanks  */
+        while ( pfcb <= &sfcb[8] )
+          *pfcb++ = (*psrc == '*') ? ('?') : (' ');
+        if (*psrc == '*')
+          psrc++;
+                                                /* scan off file ext.   */
+        if ( *psrc == '.')
+        {
+          psrc++;
+          while ( (*psrc) &&
+                  (*psrc != ' ') &&
+                  (*psrc != '*') &&
+                  (pfcb <= &sfcb[11]) )
+            *pfcb++ = toupper(*psrc++);
+        }
+        while ( pfcb <= &sfcb[11] )
+          *pfcb++ = (*psrc == '*') ? ('?') : (' ');
+        if (*psrc == '*')
+          psrc++;
+                                                /* return pointer to    */
+                                                /*   remainder of line  */
+        return(psrc);
+}
+
+
+
+/*
+*       Routine to fix up the command tail and parse FCBs for a coming
+*       exec.
+*/
+void sh_fixtail(WORD iscpm)
+{
+        REG WORD        i;
+        WORD            len;
+        BYTE            *s_tail;
+        BYTE            *ptmp;
+        BYTE            s_fcbs[32];
+                                                /* reuse part of globals*/
+        s_tail = &D.g_dir[0];
+        i = 0;
+
+        if (iscpm)
+        {
+          s_tail[i++] = NULL;
+          ptmp = &D.s_cmd[0];
+          while ( (*ptmp) &&
+                  (*ptmp != '.') )
+            s_tail[i++] = *ptmp++;
+        }
+
+        LBCOPY(ADDR(&s_tail[i]), ad_stail, 128 - i);
+
+        if (iscpm)
+        {
+                                                /* pick up the length   */
+          len = s_tail[i];
+                                                /* null over carriage ret*/
+          s_tail[i + len + 1] = NULL;
+                                                /* copy down space,tail */
+          strcpy(&s_tail[i], &s_tail[i+1]);
+        }
+        else
+        {
+                                                /* zero the fcbs        */
+          bfill(32, 0, &s_fcbs[0]);
+          bfill(11, ' ',  &s_fcbs[1]);
+          bfill(11, ' ',  &s_fcbs[17]);
+                                                /* parse the fcbs       */
+          if ( s_tail[0] )
+          {
+            s_tail[ 1 + s_tail[0] ] = NULL;
+            ptmp = sh_parse(&s_tail[1], &s_fcbs[0]);
+            if (*ptmp != NULL)
+              sh_parse(ptmp, &s_fcbs[16]);
+            s_tail[ 1 + s_tail[0] ] = 0x0d;
+          }
+#if GEMDOS
+#else
+                                                /* copy into true fcbs  */
+          LBCOPY(ad_s1fcb, ADDR(&s_fcbs[0]), 16); 
+          LBCOPY(ad_s2fcb, ADDR(&s_fcbs[16]), 16); 
+#endif
+        }
+                                                /* copy into true tail  */
+        LBCOPY(ad_stail, ADDR(s_tail), 128);
+}
+
 
 
 /*
@@ -131,15 +256,9 @@ sh_curdir(ppath)
 *               isover = 1  then run over DESKTOP
 *               isover = 2  then run over AES and DESKTOP
 */
-        WORD
-sh_write(doex, isgem, isover, pcmd, ptail)
-        WORD            doex, isgem, isover;
-        LONG            pcmd, ptail;
+WORD sh_write(WORD doex, WORD isgem, WORD isover, LONG pcmd, LONG ptail)
 {
         SHELL           *psh;
-#if GEMDOS
-        WORD            drive;
-#endif
 
         LBCOPY(ad_scmd, pcmd, 128);
         LBCOPY(ad_stail, ptail, 128);
@@ -180,10 +299,7 @@ sh_write(doex, isgem, isover, pcmd, ptail)
 *       Used by the DESKTOP to recall 1024 bytes worth of previously
 *       'put' desktop-context information.
 */
-        VOID
-sh_get(pbuffer, len)
-        LONG            pbuffer;
-        WORD            len;
+void sh_get(LONG pbuffer, WORD len)
 {
         LBCOPY(pbuffer, ad_ssave, len);
 }
@@ -193,10 +309,7 @@ sh_get(pbuffer, len)
 *       Used by the DESKTOP to save away 1024 bytes worth of desktop-
 *       context information.
 */
-        VOID
-sh_put(pdata, len)
-        LONG            pdata;
-        WORD            len;
+void sh_put(LONG pdata, WORD len)
 {
         LBCOPY(ad_ssave, pdata, len);
 }
@@ -206,8 +319,7 @@ sh_put(pdata, len)
 *       Convert the screen to graphics-mode in preparation for the 
 *       running of a GEM-based graphic application.
 */
-        VOID
-sh_tographic()
+void sh_tographic()
 {
                                                 /* retake ints that may */
                                                 /*   have been stepped  */
@@ -236,8 +348,7 @@ sh_tographic()
 *       Convert the screen and system back to alpha-mode in preparation for
 *       the running of a DOS-based character application.
 */
-        VOID
-sh_toalpha()
+void sh_toalpha()
 {
                                                 /* put mouse to arrow   */
         gsx_mfset(ad_armice);
@@ -259,11 +370,8 @@ sh_toalpha()
 
 
 
-        VOID
-sh_draw(lcmd, start, depth)
-        LONG            lcmd;
-        WORD            start;
-        WORD            depth;
+
+void sh_draw(LONG lcmd, WORD start, WORD depth)
 {
         LONG            tree;
         SHELL           *psh;
@@ -281,9 +389,8 @@ sh_draw(lcmd, start, depth)
 
 
 
-        VOID
-sh_show(lcmd)
-        LONG            lcmd;
+
+void sh_show(LONG lcmd)
 {
         WORD            i;
         
@@ -296,9 +403,7 @@ sh_show(lcmd)
 *       Routine to take a full path, and scan back from the end to 
 *       find the starting byte of the particular filename
 */
-        BYTE
-*sh_name(ppath)
-        REG BYTE        *ppath;
+BYTE *sh_name(BYTE *ppath)
 {
         REG BYTE        *pname;
 
@@ -317,10 +422,7 @@ sh_show(lcmd)
 *       a long pointer to the character after the string if it is found. 
 *       Otherwise, return a NULLPTR
 */
-        VOID
-sh_envrn(ppath, psrch)
-        LONG            ppath;
-        REG LONG        psrch;
+void sh_envrn(LONG ppath, LONG psrch)
 {
         LONG            lp, ad_loc1;
         WORD            len, findend;
@@ -349,7 +451,7 @@ sh_envrn(ppath, psrch)
           }
           else
           {
-            if (((last == NULL) || (last == 0xFF)) && (tmp == loc2[0]))
+            if (((last == NULL) || (last == -1)) && (tmp == loc2[0]))
             {
               LBCOPY(ADDR(&loc1[0]), lp, len);
               if ( strcmp(&loc1[0], &loc2[1])==0 )
@@ -376,15 +478,13 @@ sh_envrn(ppath, psrch)
 *       paths to find.
 */
 
-        WORD
-sh_path(whichone, dp, pname)
-        WORD            whichone;
-        LONG            dp;
-        REG BYTE        *pname;
+WORD sh_path(WORD whichone, LONG dp, BYTE *pname)
 {
         REG BYTE        tmp, last;
         LONG            lp;
         REG WORD        i;
+
+        last = 0;
                                                 /* find PATH= in the    */
                                                 /*   command tail which */
                                                 /*   is a double null-  */
@@ -484,145 +584,13 @@ WORD sh_find(LONG pspec)
 }
 
 
-        BYTE
-*sh_parse(psrc, pfcb)
-        REG BYTE        *psrc;
-        REG BYTE        *pfcb;
-{
-        REG BYTE        *ptmp;
-        BYTE            *sfcb;
-        BYTE            drv;
-
-        sfcb = pfcb;
-                                                /* scan off white space */
-        while ( (*psrc) &&
-                (*psrc == ' ') )
-          *psrc++;
-        if (*psrc == NULL)
-          return(psrc);
-                                                /* remember the start   */
-        ptmp = psrc;
-                                                /* look for a colon     */
-        while ( (*psrc) &&
-                (*psrc != ' ') &&
-                (*psrc != ':') )
-          *psrc++;
-                                                /* pick off drive letter*/
-        drv = 0;
-        if ( *psrc == ':' )
-        {
-          drv = toupper(*(psrc - 1)) - 'A' + 1;
-          psrc++;
-        }
-        else
-          psrc = ptmp;
-        *pfcb++ = drv;
-        if (*psrc == NULL)
-          return(psrc);
-                                                /* scan off filename    */
-        while ( (*psrc) &&
-                (*psrc != ' ') &&
-                (*psrc != '*') &&
-                (*psrc != '.') &&
-                (pfcb <= &sfcb[8]) )
-          *pfcb++ = toupper(*psrc++);
-                                                /* pad out with blanks  */
-        while ( pfcb <= &sfcb[8] )
-          *pfcb++ = (*psrc == '*') ? ('?') : (' ');
-        if (*psrc == '*')
-          psrc++;
-                                                /* scan off file ext.   */
-        if ( *psrc == '.')
-        {
-          psrc++;
-          while ( (*psrc) &&
-                  (*psrc != ' ') &&
-                  (*psrc != '*') &&
-                  (pfcb <= &sfcb[11]) )
-            *pfcb++ = toupper(*psrc++);
-        }
-        while ( pfcb <= &sfcb[11] )
-          *pfcb++ = (*psrc == '*') ? ('?') : (' ');
-        if (*psrc == '*')
-          psrc++;
-                                                /* return pointer to    */
-                                                /*   remainder of line  */
-        return(psrc);
-}
-
-
-/*
-*       Routine to fix up the command tail and parse FCBs for a coming
-*       exec.
-*/
-        VOID
-sh_fixtail(iscpm)
-        WORD            iscpm;
-{
-        REG WORD        i;
-        WORD            len;
-        BYTE            *s_tail;
-        BYTE            *ptmp;
-        BYTE            s_fcbs[32];
-                                                /* reuse part of globals*/
-        s_tail = &D.g_dir[0];
-        i = 0;
-
-        if (iscpm)
-        {
-          s_tail[i++] = NULL;
-          ptmp = &D.s_cmd[0];
-          while ( (*ptmp) &&
-                  (*ptmp != '.') )
-            s_tail[i++] = *ptmp++;
-        }
-
-        LBCOPY(ADDR(&s_tail[i]), ad_stail, 128 - i);
-
-        if (iscpm)
-        {
-                                                /* pick up the length   */
-          len = s_tail[i];
-                                                /* null over carriage ret*/
-          s_tail[i + len + 1] = NULL;
-                                                /* copy down space,tail */
-          strcpy(&s_tail[i], &s_tail[i+1]);
-        }
-        else
-        {
-                                                /* zero the fcbs        */
-          bfill(32, 0, &s_fcbs[0]);
-          bfill(11, ' ',  &s_fcbs[1]);
-          bfill(11, ' ',  &s_fcbs[17]);
-                                                /* parse the fcbs       */
-          if ( s_tail[0] )
-          {
-            s_tail[ 1 + s_tail[0] ] = NULL;
-            ptmp = sh_parse(&s_tail[1], &s_fcbs[0]);
-            if (*ptmp != NULL)
-              sh_parse(ptmp, &s_fcbs[16]);
-            s_tail[ 1 + s_tail[0] ] = 0x0d;
-          }
-#if GEMDOS
-#else
-                                                /* copy into true fcbs  */
-          LBCOPY(ad_s1fcb, ADDR(&s_fcbs[0]), 16); 
-          LBCOPY(ad_s2fcb, ADDR(&s_fcbs[16]), 16); 
-#endif
-        }
-                                                /* copy into true tail  */
-        LBCOPY(ad_stail, ADDR(s_tail), 128);
-}
 
 
 /*
 *       Read the default application to invoke.
 */
 
-        VOID
-sh_rdef(lpcmd, lpdir)
-        LONG            lpcmd;
-        LONG            lpdir;
+void sh_rdef(LONG lpcmd, LONG lpdir)
 {
         SHELL           *psh;
 
@@ -637,10 +605,7 @@ sh_rdef(lpcmd, lpdir)
 *       Write the default application to invoke
 */
 
-        VOID
-sh_wdef(lpcmd, lpdir)
-        LONG            lpcmd;
-        LONG            lpdir;
+void sh_wdef(LONG lpcmd, LONG lpdir)
 {
         SHELL           *psh;
 
@@ -683,7 +648,7 @@ sh_chdef(psh)
           psh->sh_isdef = psh->sh_isgem = TRUE;
           psh->sh_fullstep = 0;
           dos_sdrv(psh->sh_cdir[0] - 'A');
-          dos_chdir(ADDR(&psh->sh_cdir[0]));
+          dos_chdir((BYTE *)ADDR(&psh->sh_cdir[0]));
           strcpy(&D.s_cmd[0], &psh->sh_desk[0]);
         }
 #if GEMDOS
@@ -877,7 +842,7 @@ sh_ldapp()
 
         psh = &sh[rlr->p_pid];
 #if GEMDOS
-        strcpy(sh_apdir, ad_scdir);             /* initialize sh_apdir  */
+        strcpy(sh_apdir, (BYTE *)ad_scdir);     /* initialize sh_apdir  */
 #endif
         badtry = 0;     
 
@@ -971,8 +936,8 @@ sh_ldapp()
 }
 #endif
 
-        VOID
-sh_main()
+
+void sh_main()
 {
 #if MULTIAPP
         WORD            ii;

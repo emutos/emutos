@@ -27,10 +27,12 @@
 
 #include "gemoblib.h"
 #include "gemgraf.h"
-#include "optimize.h"
 #include "gemglobe.h"
 #include "geminit.h"
-
+#include "gemrslib.h"
+#include "optimize.h"
+#include "optimopt.h"
+#include "rectfunc.h"
 
 #define BACKSPACE 0x0E08                        /* backspace            */
 #define SPACE 0x3920                            /* ASCII <space>        */
@@ -422,7 +424,7 @@ WORD ob_edit(LONG tree, WORD obj, WORD in_char, WORD *idx, WORD kind)
 
                             if (pos < (edblk.te_txtlen - 2) )
                             {
-                              bfill(pos - *idx, SPACE, &D.g_rawstr[*idx]);
+                              bfill(pos - *idx, ' ', &D.g_rawstr[*idx]);
                               D.g_rawstr[pos] = NULL;
                               *idx = pos;
                               no_redraw = FALSE;

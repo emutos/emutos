@@ -122,15 +122,6 @@ void rs_obfix(LONG tree, WORD curob)
 }
 
 
-BYTE *rs_str(UWORD stnum)
-{
-        LONG            ad_string;
-
-        rs_gaddr(ad_sysglo, R_STRING, stnum, &ad_string);
-        LSTCPY(ad_g1loc, ad_string);
-        return( &D.g_loc1[0] );
-}
-
 
 LONG get_sub(WORD rsindex, WORD rtype, WORD rsize)
 {
@@ -156,6 +147,8 @@ LONG get_addr(UWORD rstype, UWORD rsindex)
         ULONG           junk;
 
         valid = TRUE;
+        rt = size = 0;
+
         switch(rstype)
         {
           case R_TREE:
@@ -413,12 +406,12 @@ WORD rs_readit(LONG pglobal, LONG rsfname)
         {
           return(FALSE);
         }
-cprintf("rs_readit: sh_find done\n");
+//cprintf("rs_readit: sh_find done\n");
                                                 /* init global          */
         rs_global = pglobal;
                                                 /* open then file and   */
                                                 /*   read the header    */
-        fd = dos_open( ad_scmd, RMODE_RD);
+        fd = dos_open((BYTE *)ad_scmd, RMODE_RD);
 
         if ( !DOS_ERR )
           dos_read(fd, HDR_LENGTH, ADDR(&hdr_buff[0]));
@@ -484,5 +477,15 @@ WORD rs_load(LONG pglobal, LONG rsfname)
         if (ret)
           rs_fixit(pglobal);
         return(ret);
+}
+
+
+BYTE *rs_str(UWORD stnum)
+{
+        LONG            ad_string;
+
+        rs_gaddr(ad_sysglo, R_STRING, stnum, &ad_string);
+        LSTCPY(ad_g1loc, ad_string);
+        return( &D.g_loc1[0] );
 }
 

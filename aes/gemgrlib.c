@@ -28,6 +28,12 @@
 #include "gemwmlib.h"
 #include "gemoblib.h"
 #include "geminput.h"
+#include "gemgsxif.h"
+#include "gemasm.h"
+#include "gsx2.h"
+#include "optimopt.h"
+#include "rectfunc.h"
+#include "optimize.h"
 
 
 /*
@@ -38,17 +44,24 @@
 */
 WORD gr_stilldn(WORD out, WORD x, WORD y, WORD w, WORD h)
 {
-        WORD            rets[6];
-                                        /* compiler had better  */
-                                        /*   put the values out,*/
-                                        /*   x, y, w, h in the  */
-                                        /*   right order on the */
-                                        /*   stack to form a    */
-                                        /*   MOBLK              */
+        WORD     rets[6];
+        MOBLK    tmpmoblk;
+        WORD     which;
+
         dsptch();
-        if ( MU_BUTTON & ev_multi(MU_KEYBD | MU_BUTTON | MU_M1, &out, 
-                NULLPTR, 0x0L, 0x0001ff00L, 0x0L, &rets[0]) )
+
+        which = ev_multi(MU_KEYBD | MU_BUTTON | MU_M1, &tmpmoblk, 
+                NULLPTR, 0x0L, 0x0001ff00L, 0x0L, &rets[0]);
+
+        out = tmpmoblk.m_out;
+        x = tmpmoblk.m_x;
+        y = tmpmoblk.m_y;
+        w = tmpmoblk.m_w;
+        h = tmpmoblk.m_h;
+
+        if ( which & MU_BUTTON )
           return(FALSE);
+
         return(TRUE);
 } /* gr_stilldn */
 
@@ -68,7 +81,7 @@ void gr_clamp(WORD xorigin, WORD yorigin, WORD wmin, WORD hmin,
 }
 
 
-void gr_scale(WORD xdist, WORD ydist, WORD *pcnt, int *pxstep, int *pystep)
+void gr_scale(WORD xdist, WORD ydist, WORD *pcnt, WORD *pxstep, WORD *pystep)
 {
         REG WORD        i;
         REG WORD        dist;
@@ -109,12 +122,18 @@ void gr_stepcalc(WORD orgw, WORD orgh, GRECT *pt, WORD *pcx, WORD *pcy,
 void gr_xor(WORD clipped, WORD cnt, WORD cx, WORD cy, WORD cw, WORD ch,
             WORD xstep, WORD ystep, WORD dowdht)
 {
+        GRECT tmprect;
+
         do
         {
           if (clipped)
-            gsx_xcbox(&cx);
+            gsx_xcbox(&tmprect);
           else
-            gsx_xbox(&cx);
+            gsx_xbox(&tmprect);
+          cx = tmprect.g_x;
+          cy = tmprect.g_y;
+          cw = tmprect.g_w;
+          ch = tmprect.g_h;
           cx -= xstep;
           cy -= ystep;
           if (dowdht)
@@ -261,9 +280,10 @@ void gr_2box(WORD flag1, WORD cnt, GRECT *pt, WORD xstep, WORD ystep, WORD flag2
 
 void gr_movebox(WORD w, WORD h, WORD srcx, WORD srcy, WORD dstx, WORD dsty)
 {
-        REG WORD        signx, signy;
-        WORD            cnt, xstep, ystep;
-        GRECT           t;
+        REG WORD    signx, signy;
+        WORD        cnt;
+        WORD        xstep, ystep;
+        GRECT       t;
 
         r_set(&t, srcx, srcy, w, h);
 

@@ -59,7 +59,7 @@ void doq(WORD donq, PD *p, QPB *m)
               if ( (om[0] == WM_REDRAW) &&
                    (nm[3] == om[3]) )
               {
-                rc_union(&nm[4], &om[4]);
+                rc_union((GRECT *)&nm[4], (GRECT *)&om[4]);  /* FIXME: Ugly pointer typecasting */
                 n = 0;
               }
               else

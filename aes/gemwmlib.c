@@ -26,6 +26,7 @@
 #include "gemlib.h"
 
 #include "gempd.h"
+#include "gemaplib.h"
 #include "gemflag.h"
 #include "gemoblib.h"
 #include "gemwrect.h"
@@ -37,8 +38,12 @@
 #include "gemevlib.h"
 #include "gemwmlib.h"
 #include "gemgsxif.h"
-#include "optimopt.h"
+#include "gemobjop.h"
+#include "gemctrl.h"
+#include "gsx2.h"
 #include "rectfunc.h"
+#include "optimopt.h"
+#include "optimize.h"
 #include "gemwmlib.h"
 
 
@@ -195,20 +200,24 @@ void w_setup(PD *ppd, WORD w_handle, WORD kind)
 
 
 
-WORD *w_getxptr(WORD which, WORD w_handle)
+GRECT *w_getxptr(WORD which, WORD w_handle)
 {
+        /* FIXME: Probably remove the GRECT typecasts in this function */
+
         switch(which)
         {
           case WS_CURR:
           case WS_TRUE:
-                return( &W_TREE[w_handle].ob_x );
+                return( (GRECT *)&W_TREE[w_handle].ob_x );
           case WS_PREV:
-                return( &D.w_win[w_handle].w_xprev );
+                return( (GRECT *)&D.w_win[w_handle].w_xprev );
           case WS_WORK:
-                return( &D.w_win[w_handle].w_xwork );
+                return( (GRECT *)&D.w_win[w_handle].w_xwork );
           case WS_FULL:
-                return( &D.w_win[w_handle].w_xfull );
+                return( (GRECT *)&D.w_win[w_handle].w_xfull );
         }
+
+        return 0;
 }
 
 
@@ -232,13 +241,14 @@ void w_setsize(WORD which, WORD w_handle, GRECT *pt)
 }
 
 
-        VOID
-w_adjust(parent, obj, x, y, w, h)
-        WORD            parent;
-        REG WORD        obj;
-        WORD            x, y, w, h;
+
+void w_adjust( WORD parent, WORD obj, WORD x, WORD y,  WORD w, WORD h)
 {
-        rc_copy(&x, &W_ACTIVE[obj].ob_x);
+        W_ACTIVE[obj].ob_x = x;
+        W_ACTIVE[obj].ob_y = y;
+        W_ACTIVE[obj].ob_width = w;
+        W_ACTIVE[obj].ob_height = h;
+        
         W_ACTIVE[obj].ob_head = W_ACTIVE[obj].ob_tail = NIL;
         w_obadd(&W_ACTIVE[ROOT], parent, obj);
 }
@@ -262,18 +272,13 @@ w_hvassign(isvert, parent, obj, vx, vy, hx, hy, w, h)
 *       this window.
 */
 
-do_walk(wh, tree, obj, depth, pc)
-        REG WORD        wh;
-        LONG            tree;
-        WORD            obj;
-        WORD            depth;
-        REG GRECT       *pc;
+void do_walk(WORD wh, LONG tree, WORD obj, WORD depth, GRECT *pc)
 {
         REG ORECT       *po;
         GRECT           t;
         
         if ( wh == NIL )
-          return(TRUE);
+          return;
                                                 /* clip to screen       */
         if (pc)
           rc_intersect(&gl_rfull, pc);
@@ -282,7 +287,10 @@ do_walk(wh, tree, obj, depth, pc)
                                                 /* walk owner rect list */
         for(po=D.w_win[wh].w_rlist; po; po=po->o_link)
         {
-          rc_copy(&po->o_x, &t);
+          t.g_x = po->o_x;
+          t.g_y = po->o_y;
+          t.g_w = po->o_w;
+          t.g_h = po->o_h;
                                                 /* intersect owner rect */
                                                 /*   with clip rect's   */
           if ( rc_intersect(pc, &t) )
@@ -535,7 +543,7 @@ void w_setactive()
 }
 
 
-WORD w_bldactive(WORD w_handle)
+void w_bldactive(WORD w_handle)
 {
         WORD            istop, issub;
         REG WORD        kind;
@@ -547,7 +555,7 @@ WORD w_bldactive(WORD w_handle)
         WINDOW          *pw;
 
         if (w_handle == NIL)
-          return(TRUE);
+          return;
 
         pw = &D.w_win[w_handle];
                                                 /* set if it is on top  */
@@ -569,7 +577,7 @@ WORD w_bldactive(WORD w_handle)
         issub = ( (pw->w_flags & VF_SUBWIN) &&
                   (D.w_win[gl_wtop].w_flags & VF_SUBWIN) );
         w_getsize(WS_CURR, w_handle, &t);
-        rc_copy(&t, &W_ACTIVE[W_BOX].ob_x);
+        rc_copy(&t, (GRECT *)&W_ACTIVE[W_BOX].ob_x); /* FIXME: typecast */
         offx = t.g_x;
         offy = t.g_y;
                                                 /* do title area        */
@@ -678,20 +686,20 @@ void ap_sendmsg(WORD ap_msg[], WORD type, PD *towhom,
 *       Walk down ORECT list and accumulate the union of all the owner
 *       rectangles.
 */
-        WORD    
-w_union(po, pt)
-        REG ORECT       *po;
-        REG GRECT       *pt;
+WORD w_union(ORECT *po, GRECT *pt)
 {
         if (!po)
           return(FALSE);
 
-        rc_copy(&po->o_x, pt);
+        pt->g_x = po->o_x;
+        pt->g_y = po->o_y;
+        pt->g_w = po->o_w;
+        pt->g_h = po->o_h;
 
         po = po->o_link;
         while (po)
         {
-          rc_union(&po->o_x, pt);
+          rc_union((GRECT *)&po->o_x, pt);  /* FIXME: typecast */
           po = po->o_link;
         }
         return(TRUE);
@@ -1117,10 +1125,7 @@ w_windfix(npd)
 *       the rectangle that needs to be cleaned up.
 */
 
-        WORD
-draw_change(w_handle, pt)
-        REG WORD        w_handle;
-        REG GRECT       *pt;
+void draw_change(WORD w_handle, GRECT *pt)
 {
         GRECT           c, pprev;
         REG GRECT       *pw;
@@ -1139,7 +1144,7 @@ draw_change(w_handle, pt)
                         pt->g_x, pt->g_y, pt->g_w, pt->g_h, 
                         &pw->g_x, &pw->g_y, &pw->g_w, &pw->g_h);
                                                 /* update rect. lists   */
-        everyobj(gl_wtree, ROOT, NIL, newrect, 0, 0, MAX_DEPTH);
+        everyobj(gl_wtree, ROOT, NIL, (void(*)())newrect, 0, 0, MAX_DEPTH);
                                                 /* remember oldtop      */
         oldtop = gl_wtop;
         gl_wtop = W_TREE[ROOT].ob_tail;
@@ -1191,7 +1196,7 @@ draw_change(w_handle, pt)
             if ( (w_handle != W_TREE[ROOT].ob_tail) ||
                  (w_handle == oldtop) )
 
-              return(TRUE);
+              return;
                                                 /* say when borders will*/
                                                 /*   change             */
             diffbord = !( (D.w_win[oldtop].w_flags & VF_SUBWIN) &&
@@ -1216,7 +1221,7 @@ draw_change(w_handle, pt)
                  (wasclr) )
             {
               w_clipdraw(gl_wtop, 0, MAX_DEPTH, 1);
-              return(TRUE);
+              return;
             }
           }
           else
@@ -1324,19 +1329,18 @@ draw_change(w_handle, pt)
 *       Walk down ORECT list looking for the next rect that still has
 *       size when clipped with the passed in clip rectangle.
 */
-        VOID    
-w_owns(w_handle, po, pt, poutwds)
-        WORD            w_handle;
-        REG ORECT       *po;
-        GRECT           *pt;
-        REG WORD        *poutwds;
+void w_owns(WORD w_handle, ORECT *po, GRECT *pt, WORD *poutwds)
 {
         while (po)
         {
-          rc_copy(&po->o_x, &poutwds[0]);
+          poutwds[0] = po->o_x;
+          poutwds[1] = po->o_y;
+          poutwds[2] = po->o_w;
+          poutwds[3] = po->o_h;
           D.w_win[w_handle].w_rnext = po = po->o_link;
-          if ( (rc_intersect(pt, &poutwds[0])) &&
-               (rc_intersect(&gl_rfull, &poutwds[0]))  )
+          /* FIXME: GRECT typecasting again */
+          if ( (rc_intersect(pt, (GRECT *)&poutwds[0])) &&
+               (rc_intersect(&gl_rfull, (GRECT *)&poutwds[0]))  )
             return;
         }
         poutwds[2] = poutwds[3] = 0;
@@ -1423,10 +1427,7 @@ void wm_start()
 *
 */
 
-        WORD
-wm_create(kind, pt)
-        WORD            kind;
-        GRECT           *pt;
+WORD wm_create(WORD kind, GRECT *pt)
 {
         REG WORD        i;
 
@@ -1472,13 +1473,11 @@ wm_opcl(wh, pt, isadd)
         wm_update(FALSE);
 }
 
+
 /*
 *       Opens a window from a created but closed state.
 */
-        VOID
-wm_open(w_handle, pt)
-        WORD            w_handle;
-        GRECT           *pt;
+void wm_open(WORD w_handle, GRECT *pt)
 {
         wm_opcl(w_handle, pt, TRUE);
 }
@@ -1488,9 +1487,7 @@ wm_open(w_handle, pt)
 *       Closes a window from an open state.
 */
 
-        VOID
-wm_close(w_handle)
-        WORD            w_handle;
+void wm_close(WORD w_handle)
 {
         wm_opcl(w_handle, &gl_rzero, FALSE);
 }
@@ -1501,9 +1498,7 @@ wm_close(w_handle)
 *       by another application or by the same application.
 */
 
-        VOID
-wm_delete(w_handle)
-        WORD            w_handle;
+void wm_delete(WORD w_handle)
 {
         newrect(gl_wtree, w_handle);            /* give back recs.      */
         w_setsize(WS_CURR, w_handle, &gl_rscreen);
@@ -1522,11 +1517,7 @@ wm_delete(w_handle)
 *       Gives information about the current window to the application
 *       that owns it.
 */
-        VOID
-wm_get(w_handle, w_field, poutwds)
-        REG WORD        w_handle;
-        WORD            w_field;
-        REG WORD        *poutwds;
+void wm_get(WORD w_handle, WORD w_field, WORD *poutwds)
 {
         REG WORD        which;
         GRECT           t;
@@ -1570,7 +1561,7 @@ wm_get(w_handle, w_field, poutwds)
                 w_owns(w_handle, po, &t, &poutwds[0]);
                 break;
           case WF_SCREEN:
-                gsx_mret(&poutwds[0], &poutwds[2]);
+                gsx_mret((LONG *)&poutwds[0], (LONG *)&poutwds[2]);
                 break;
           case WF_TATTRB:
                 poutwds[0] = D.w_win[w_handle].w_flags >> 3;
@@ -1631,11 +1622,7 @@ wm_mktop(w_handle)
 *       positions. 
 */
 
-        VOID
-wm_set(w_handle, w_field, pinwds)
-        REG WORD        w_handle;
-        REG WORD        w_field;
-        REG WORD        *pinwds;
+void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
 {
         WORD            which, liketop, i;
         REG WORD        wbar;
@@ -1667,7 +1654,7 @@ wm_set(w_handle, w_field, pinwds)
                 ob_order(gl_wtree, w_handle, NIL);
                                                 /* fall thru    */
           case WF_CXYWH:
-                draw_change(w_handle, &pinwds[0]);
+                draw_change(w_handle, (GRECT *)&pinwds[0]);
                 break;
           case WF_TOP:
                 if (w_handle != gl_wtop)

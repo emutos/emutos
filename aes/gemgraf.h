@@ -62,6 +62,7 @@ void gsx_gclip(GRECT *pt);
 WORD gsx_chkclip(GRECT *pt);
 void gsx_cline(UWORD x1, UWORD y1, UWORD x2, UWORD y2);
 void gsx_attr(UWORD text, UWORD mode, UWORD color);
+void gsx_xbox(GRECT *pt);
 void gsx_xcbox(GRECT *pt);
 void gsx_fix(FDB *pfd, LONG theaddr, WORD wb, WORD h);
 void gsx_blt(LONG saddr, UWORD sx, UWORD sy, UWORD swb,

@@ -53,6 +53,7 @@
 #include "geminput.h"
 #include "gemmnlib.h"
 #include "optimize.h"
+#include "optimopt.h"
 
 
 /*
@@ -133,6 +134,38 @@ GLOBAL LONG     ad_scdir;
 GLOBAL BYTE     gl_logdrv;
 
 
+
+/*
+*       Convert a single hex ASCII digit to a number
+*/
+WORD hex_dig(BYTE achar)
+{
+        if ( (achar >= '0') && (achar <= '9') )
+          return(achar - '0');  
+        else
+        {
+          achar = toupper(achar);
+          if ( (achar >= 'A') && (achar <= 'F') )
+             return(achar - 'A' + 10);  
+          else
+            return(NULL);
+        }
+}
+
+
+/*
+*       Scan off and convert the next two hex digits and return with
+*       pcurr pointing one space past the end of the four hex digits
+*/
+void scan_2(LONG pcurr, UWORD *pwd)
+{
+        UWORD           temp;
+        
+        temp = 0x0;
+        temp |= hex_dig( LBGET(pcurr++)) << 4;
+        temp |= hex_dig( LBGET(pcurr) );
+        *pwd = temp;
+}
 
 
 
@@ -300,7 +333,7 @@ void ev_init(EVB evblist[], WORD cnt)
 *       Create a local process for the routine and start him executing.
 *       Also do all the initialization that is required.
 */
-PD *iprocess(BYTE *pname, WORD (*routine)())
+PD *iprocess(BYTE *pname, void (*routine)())
 {
         REG ULONG       ldaddr;
 
@@ -349,10 +382,10 @@ void sndcli(BYTE *pfilespec, WORD *paccroom)     /* paccroom in paragraphs*/
 
         strcpy(&D.s_cmd[0], pfilespec);
 
-        handle = dos_open( ad_scmd, ROPEN );
+        handle = dos_open( (BYTE *)ad_scmd, ROPEN );
         if (!DOS_ERR)
         {
-          err_ret = pgmld(handle, &D.s_cmd[0], &ldaddr /*, paccroom*/);
+          err_ret = pgmld(handle, &D.s_cmd[0], (LONG **)&ldaddr /*, paccroom*/);
           dos_close(handle);
                                                 /* create process to    */
                                                 /*   execute it         */
@@ -452,7 +485,7 @@ void sh_addpath()
 
 
 
-void sh_desk(WORD obj, LONG plong)
+void sh_deskf(WORD obj, LONG plong)
 {
         REG LONG        tree;
 
@@ -475,7 +508,7 @@ void sh_init()
 #endif
         psh = &sh[0];
 
-        sh_desk(2, ADDR(&ad_pfile));
+        sh_deskf(2, ADDR(&ad_pfile));
                                                 /* add in internal      */
                                                 /*   search paths with  */
                                                 /*   right drive letter */
@@ -540,7 +573,7 @@ void sh_init()
                 pend++;
               }
               dos_sdrv(D.s_cmd[0] -'A');
-              dos_chdir(ad_scmd);
+              dos_chdir((BYTE *)ad_scmd);
               *pdst++ = '\\';
             }
             need_ext = TRUE;
@@ -575,7 +608,7 @@ void sh_init()
                   psrc++;
 */
             if (*psrc == ' ')
-              *psrc++;
+              psrc++;
                                               /* the batch file allows  */
                                               /*  three arguments       */
                                               /*  one for a gem app     */
@@ -633,7 +666,7 @@ void sh_rdinf()
         rs_gaddr(ad_sysglo, R_STRING, STINFPAT, &pfile);
         LBSET(pfile, D.s_cdir[0] );             /* set the drive        */
 
-        fh = dos_open(pfile, ROPEN);
+        fh = dos_open((BYTE *)pfile, ROPEN);
         if ( (!fh) || DOS_ERR)
           return;
                                                 /* NOTE BENE all disk info */
@@ -812,8 +845,8 @@ void gem_main()
                                                 /*   and the keyboard.  */
                                                 /*   it has a pid == 1  */
         gl_dacnt = 0;
-        gl_mowner = ctl_pd = 
-                iprocess("SCRENMGR", ctlmgr);
+        gl_mowner = ctl_pd = iprocess("SCRENMGR", ctlmgr);
+
 #if MULTIAPP
         if (totpds > 2)
         {
@@ -824,15 +857,15 @@ void gem_main()
                                                 /* load gem resource    */
                                                 /*   and fix it up      */
                                                 /*   before we go       */
-cprintf("gem_main: loading GEM.RSC...\n");
+//cprintf("gem_main: loading GEM.RSC...\n");
         if ( !rs_readit(ad_sysglo, ADDR("GEM.RSC")) ) 
         {
            /* bad resource load, so dive out */
-cprintf("gem_main: failed to load GEM.RSC...\n");
+//cprintf("gem_main: failed to load GEM.RSC...\n");
         }
         else
         {
-cprintf("gem_main: succeeded in loading GEM.RSC...\n");
+//cprintf("gem_main: succeeded in loading GEM.RSC...\n");
                                                 /* get mice forms       */
           rs_gaddr(ad_sysglo, R_BIPDATA, 3 + ARROW, &ad_armice);
           ad_armice = LLGET(ad_armice);
@@ -926,37 +959,4 @@ cprintf("gem_main: succeeded in loading GEM.RSC...\n");
         sti();
 }
 
-
-
-/*
-*       Convert a single hex ASCII digit to a number
-*/
-WORD hex_dig(BYTE achar)
-{
-        if ( (achar >= '0') && (achar <= '9') )
-          return(achar - '0');  
-        else
-        {
-          achar = toupper(achar);
-          if ( (achar >= 'A') && (achar <= 'F') )
-             return(achar - 'A' + 10);  
-          else
-            return(NULL);
-        }
-}
-
-
-/*
-*       Scan off and convert the next two hex digits and return with
-*       pcurr pointing one space past the end of the four hex digits
-*/
-void scan_2(LONG pcurr, UWORD *pwd)
-{
-        UWORD           temp;
-        
-        temp = 0x0;
-        temp |= hex_dig( LBGET(pcurr++)) << 4;
-        temp |= hex_dig( LBGET(pcurr) );
-        *pwd = temp;
-}
 

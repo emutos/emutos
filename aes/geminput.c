@@ -32,6 +32,9 @@
 #include "gemglobe.h"
 #include "gemevlib.h"
 #include "gemwmlib.h"
+#include "gemasync.h"
+#include "gemdisp.h"
+#include "rectfunc.h"
 
 
 #define MB_DOWN 0x01
@@ -83,7 +86,7 @@ void post_mb(WORD ismouse, EVB *elist, WORD parm1, WORD parm2);
 */
 UWORD in_mrect(MOBLK *pmo)
 { 
-        return( pmo->m_out != inside(xrat, yrat, &pmo->m_x) );
+        return( pmo->m_out != inside(xrat, yrat, (GRECT *)&pmo->m_x) );
 }
 
 
@@ -114,7 +117,7 @@ WORD chk_ctrl(REG WORD mx, REG WORD my)
         {
           if ( (D.w_win[gl_wtop].w_flags & VF_SUBWIN) &&
                (D.w_win[wh].w_flags & VF_SUBWIN) &&
-               (inside(mx, my, &D.w_win[wh].w_xwork)) )
+               (inside(mx, my, (GRECT *)&D.w_win[wh].w_xwork)) )
             return(1);
           else
             return(-1);
@@ -170,7 +173,7 @@ VOID b_click(REG WORD state)
               gl_bdely = gl_dclick;
             }
             else
-              forkq(bchange, state, 1);
+              forkq( (void(*)())bchange, state, 1);
           }
                                                 /* update true state of */
                                                 /*   the mouse          */
@@ -197,10 +200,10 @@ VOID b_delay(WORD amnt)
           gl_bdely -= amnt;
           if ( !(gl_bdely) )
           {
-            forkq(bchange, gl_bdesired, gl_bclick);
+            forkq( (void(*)())bchange, gl_bdesired, gl_bclick);
             if (gl_bdesired != gl_btrue)
             {
-              forkq(bchange, gl_btrue, 1);
+              forkq( (void(*)())bchange, gl_btrue, 1);
             }
           }
         }
@@ -451,7 +454,7 @@ void mchange(WORD rx, WORD ry)
         if ( (gl_mowner != ctl_pd) &&
              (button == 0x0) &&
              (gl_mntree) &&
-             (in_mrect(&gl_ctwait.m_out)) )
+             (in_mrect(&gl_ctwait)) )
           gl_mowner = ctl_pd;
         post_mb(TRUE, gl_mowner->p_cda->c_msleep, xrat, yrat);
 }
@@ -469,7 +472,8 @@ WORD inorout(REG EVB *e, REG WORD rx, REG WORD ry)
         mo.m_y = LLOWD(e->e_parm);
         mo.m_w = LHIWD(e->e_return);
         mo.m_h = LLOWD(e->e_return);
-        return( mo.m_out != inside(rx, ry, &mo.m_x) );
+        /* FIXME: The following GRECT*-typecast is not very nice */
+        return( mo.m_out != inside(rx, ry, (GRECT *)&mo.m_x) );
 }
 
 /*
@@ -553,7 +557,7 @@ void adelay(EVB *e, LONG c)
           NUM_TICK = 0x0L;
         }
         e->e_flag |= EVDELAY;
-        q = (BYTE *) &dlr - elinkoff;
+        q = (EVB *) ((BYTE *) &dlr - elinkoff);
         for (p = dlr; p; p = (q = p) -> e_link)
         {
           if (c <= (LONG) p->e_parm)
@@ -606,7 +610,7 @@ void amouse(EVB *e, LONG pmo)
                                                /* if already in (or out) */
                                                /* signal immediately     */
         if ( (rlr == gl_mowner) &&
-             (in_mrect(&mob.m_out)) )
+             (in_mrect(&mob)) )
           azombie(e, 0);
         else
         {

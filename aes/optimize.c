@@ -23,6 +23,9 @@
 #include "obdefs.h"
 
 #include "geminit.h"
+#include "gemrslib.h"
+#include "rectfunc.h"
+#include "optimopt.h"
 
 
 GLOBAL BYTE     gl_rsname[16];
@@ -30,8 +33,9 @@ GLOBAL BYTE     gl_rsname[16];
 
 WORD sound(WORD isfreq, WORD freq, WORD dura)
 {
-        WORD            cnt;
 #if 0
+        WORD            cnt;
+
         intin[0] = freq;
         intin[1] = dura;
         if (isfreq)
@@ -280,6 +284,8 @@ void merge_str(BYTE *pdst, BYTE *ptmp, UWORD parms[])
         WORD            digit;
 
         num = 0;
+        lvalue = 0;
+
         while(*ptmp)
         {
           if (*ptmp != '%')
@@ -309,11 +315,12 @@ void merge_str(BYTE *pdst, BYTE *ptmp, UWORD parms[])
                 do_value = TRUE;
                 break;
               case 'S':
-                psrc = (BYTE *) parms[num]; 
 #if MC68K
+                psrc = (BYTE *) *((LONG *)&parms[num]);  /*???*/
                 num += 2;
 #endif
 #if I8086
+                psrc = (BYTE *) parms[num]; 
                 num++;
 #endif  
                 while(*psrc)

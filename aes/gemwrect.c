@@ -22,8 +22,9 @@
 
 #include "gemobjop.h"
 #include "gemwmlib.h"
-#include "optimize.h"
 #include "gemglobe.h"
+#include "optimize.h"
+#include "rectfunc.h"
 
 
 #define TOP 0
@@ -146,8 +147,9 @@ void mkrect(LONG tree, WORD wh)
                                                 /*   breaking other     */
                                                 /*   this windows rects */
         new = &gl_mkrect;
-                                                /*                      */
-        r = (p = &pwin->w_rlist)->o_link;
+
+        p = (ORECT *)&pwin->w_rlist;
+        r = p->o_link;
                                                 /* redo rectangle list  */
         while ( r )
         {
@@ -189,7 +191,7 @@ void newrect(LONG tree, WORD wh)
         pwin->w_flags &= ~VF_BROKEN;
                                                 /* if no size then      */
                                                 /*   return             */
-        w_getsize(WS_TRUE, wh, &gl_mkrect.o_x);
+        w_getsize(WS_TRUE, wh, (GRECT *)&gl_mkrect.o_x);
         if ( !(gl_mkrect.o_w && gl_mkrect.o_h) )
           return;
                                                 /* init. a global orect */
@@ -199,12 +201,12 @@ void newrect(LONG tree, WORD wh)
                                                 /* break other window's */
                                                 /*   rects with our     */
                                                 /*   current rect       */
-        everyobj(tree, ROOT, wh, mkrect, 0, 0, MAX_DEPTH);
+        everyobj(tree, ROOT, wh, (void(*)())mkrect, 0, 0, MAX_DEPTH);
                                                 /* get an orect in this */
                                                 /*   windows list       */
         new = get_orect();
         new->o_link  = (ORECT *) 0x0;
-        w_getsize(WS_TRUE, wh, &new->o_x);
+        w_getsize(WS_TRUE, wh, (GRECT *)&new->o_x);
         pwin->w_rlist = new;
 }
 

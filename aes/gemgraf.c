@@ -23,12 +23,15 @@
 #include "gsxdefs.h"
 #include "funcdef.h"
 
-#include "optimize.h"
 #include "gemgraf.h"
 #include "gemgsxif.h"
-
+#include "optimize.h"
+#include "optimopt.h"
+#include "gsx2.h"
+#include "rectfunc.h"
 
 #define ORGADDR 0x0L
+
                                                 /* in GSXBIND.C         */
 #define vsf_interior( x )       gsx_1code(S_FILL_STYLE, x)
 #define vsl_type( x )           gsx_1code(S_LINE_TYPE, x)
@@ -487,7 +490,7 @@ void gsx_tcalc(WORD font, LONG ptext, WORD *ptextw, WORD *ptexth, WORD *pnumchs)
                                                 /*   width of the text  */
                                                 /*   string in pixels   */
 
-        *pnumchs = LBWMOV(ad_intin, ptext);
+        *pnumchs = LBWMOV((WORD *)ad_intin, (BYTE *)ptext);
         *ptextw = min(*ptextw, *pnumchs * wc );
                                                 /* figure out the height*/
                                                 /*   of the text        */

@@ -57,6 +57,7 @@
 *       v_opnvwk( pwork_in, phandle, pwork_out )
 */
 
+#define GRAFMEM         0xFFFFFFFFl
 
 
 GLOBAL WORD  intout[45];
@@ -72,10 +73,12 @@ GLOBAL WORD  gl_moff;                /* counting semaphore   */
 GLOBAL LONG  gl_mlen;
 GLOBAL WORD  gl_graphic;
 
-ULONG        gsx_gbufflen();         /* forward decl.        */
 
 
-#define GRAFMEM         0xFFFFFFFFl
+/* Some local Prototypes: */
+void   g_v_opnwk(WORD *pwork_in, WORD *phandle, WS *pwork_out );
+ULONG  gsx_gbufflen(void);
+void gsx_setmb(void *boff, void *moff, LONG *pdrwaddr);
 
 
 
@@ -428,11 +431,11 @@ ULONG gsx_gbufflen()
 
 /* This function was formally only called v_opnwk, but there was a
    conflict with the VDI then, so I renamed it to g_v_opnwk  - Thomas */
-void g_v_opnwk(WORD *pwork_in, WORD *phandle, WORD *pwork_out )
+void g_v_opnwk(WORD *pwork_in, WORD *phandle, WS *pwork_out )
 {
         WORD            *ptsptr;
 
-        ptsptr = pwork_out + 45;
+        ptsptr = ((WORD *)pwork_out) + 45;
         i_ptsout( ptsptr );     /* set ptsout to work_out array */
         i_intin( pwork_in );    /* set intin to point to callers data  */
         i_intout( pwork_out );  /* set intout to point to callers data */
@@ -481,7 +484,7 @@ void vst_height(WORD height, WORD *pchr_width, WORD *pchr_height,
 }
 
 
-void vr_recfl(WORD *pxyarray, WORD *pdesMFDB)
+void vr_recfl(WORD *pxyarray, FDB *pdesMFDB)
 {
         i_ptr( pdesMFDB );
         i_ptsin( pxyarray );
@@ -501,7 +504,7 @@ void vro_cpyfm(WORD wr_mode, WORD *pxyarray, FDB *psrcMFDB, FDB *pdesMFDB )
 }
 
 
-void vrt_cpyfm(WORD wr_mode, WORD *pxyarray, WORD *psrcMFDB, WORD *pdesMFDB,
+void vrt_cpyfm(WORD wr_mode, WORD *pxyarray, FDB *psrcMFDB, FDB *pdesMFDB,
                WORD fgcolor, WORD bgcolor)
 {
         intin[0] = wr_mode;
@@ -515,7 +518,7 @@ void vrt_cpyfm(WORD wr_mode, WORD *pxyarray, WORD *psrcMFDB, WORD *pdesMFDB,
 }
 
 
-void vrn_trnfm(WORD *psrcMFDB, WORD *pdesMFDB)
+void vrn_trnfm(FDB *psrcMFDB, FDB *pdesMFDB)
 {
         i_ptr( psrcMFDB );
         i_ptr2( pdesMFDB );

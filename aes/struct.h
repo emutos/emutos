@@ -166,7 +166,7 @@ SPB
 
 FPD
 {
-        WORD    (*f_code)();
+        void    (*f_code)();
         LONG    f_data;
 } ;
 

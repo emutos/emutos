@@ -25,9 +25,10 @@
 
 #include "gemdosif.h"
 #include "gemglobe.h"
-
-
-EXTERN WORD     totpds;
+#include "geminit.h"
+#include "gemasm.h"
+#include "optimize.h"
+#include "optimopt.h"
 
 
 
@@ -84,7 +85,7 @@ VOID p_nameit(PD *p, BYTE *pname)
 }
 
 
-PD *pstart(BYTE *pcode, BYTE *pfilespec, LONG ldaddr)
+PD *pstart(void *pcode, BYTE *pfilespec, LONG ldaddr)
 {
         REG PD          *px;
                                                 /* create process to    */

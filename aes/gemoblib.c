@@ -29,6 +29,9 @@
 #include "gemgsxif.h"
 #include "gemobjop.h"
 #include "gemgraf.h"
+#include "optimopt.h"
+#include "rectfunc.h"
+
                                                 /* in GSXBIND.C         */
 #define vsf_color( x )          gsx_1code(S_FILL_COLOR, x)
 
@@ -43,6 +46,59 @@ GLOBAL LONG     ad_ib;
 GLOBAL TEDINFO  edblk;
 GLOBAL BITBLK   bi;
 GLOBAL ICONBLK  ib;
+
+
+
+/*
+*       Routine to find the x,y offset of a particular object relative
+*       to the physical screen.  This involves accumulating the offsets
+*       of all the objects parents up to and including the root.
+*/
+void ob_offset(LONG tree, WORD obj, WORD *pxoff, WORD *pyoff)
+{
+        WORD            junk;
+        LONG            px;
+
+        *pxoff = *pyoff = 0;
+        do
+        {
+                                                /* have our parent--    */
+                                                /*  add in his x, y     */
+          *pxoff += LWGET(px = OB_X(obj));
+          *pyoff += LWGET(px + 0x02L);
+          obj = get_par(tree, obj, &junk);
+        } while ( obj != NIL );
+}
+
+
+/************************************************************************/
+/* o b _ r e l x y w h                                                  */
+/************************************************************************/
+void ob_relxywh(LONG tree, WORD obj, GRECT *pt)
+{
+        LWCOPY(ADDR(pt), OB_X(obj), sizeof(GRECT)/2);
+} /* ob_relxywh */
+
+
+/************************************************************************/
+/* o b _ a c t x y w h                                                  */
+/************************************************************************/
+void ob_actxywh(LONG tree, WORD obj, GRECT *pt)
+{
+        LONG            pw;
+
+        ob_offset(tree, obj, &pt->g_x, &pt->g_y);
+        pt->g_w = LWGET(pw = OB_WIDTH(obj));    
+        pt->g_h = LWGET(pw + 0x02L);    
+} /* ob_actxywh */
+
+
+
+void ob_setxywh(LONG tree, WORD obj, GRECT *pt)
+{
+        LWCOPY(OB_X(obj), ADDR(pt), sizeof(GRECT)/2);
+}
+
 
 
 /*
@@ -112,10 +168,10 @@ WORD ob_user(LONG tree, WORD obj, GRECT *pt, LONG spec, WORD curr_state, WORD ne
         pb.pb_obj = obj;
         pb.pb_prevstate = curr_state;
         pb.pb_currstate = new_state;
-        rc_copy(pt, &pb.pb_x); 
-        gsx_gclip(&pb.pb_xc);
+        rc_copy(pt, (GRECT *)&pb.pb_x);  /* FIXME: Ugly typecasting */
+        gsx_gclip((GRECT *)&pb.pb_xc);   /* FIXME: dito */
         pb.pb_parm = LLGET(spec+4);
-        return(  far_call(LLGET(spec), ADDR(&pb)) );
+        return(  far_call( (WORD(*)())LLGET(spec), ADDR(&pb)) );
 }
 
 
@@ -123,11 +179,7 @@ WORD ob_user(LONG tree, WORD obj, GRECT *pt, LONG spec, WORD curr_state, WORD ne
 /*
 *       Routine to draw an object from an object tree.
 */
-        VOID
-just_draw(tree, obj, sx, sy)
-        REG LONG        tree;
-        REG WORD        obj;
-        REG WORD        sx, sy;
+void  just_draw(LONG tree, WORD obj, WORD sx, WORD sy)
 {
         WORD            bcol, tcol, ipat, icol, tmode, th;
         WORD            state, obtype, len, flags;
@@ -258,7 +310,7 @@ just_draw(tree, obj, sx, sy)
                 ib.ib_ytext += t.g_y; 
                 gr_gicon(state, ib.ib_pmask, ib.ib_pdata, ib.ib_ptext,
                   ib.ib_char, ib.ib_xchar, ib.ib_ychar,
-                  &ib.ib_xicon, &ib.ib_xtext);
+                  (GRECT *)&ib.ib_xicon, (GRECT *)&ib.ib_xtext);  /* FIXME: Ugly typecasting */
                 state &= ~SELECTED;
                 break;
             case G_USERDEF:
@@ -270,7 +322,7 @@ just_draw(tree, obj, sx, sy)
              (obtype == G_TITLE) ||
              (obtype == G_BUTTON) )
         {
-          len = LBWMOV(ad_intin, spec);
+          len = LBWMOV((WORD *)ad_intin, (BYTE *)spec);
           if (len)
           { 
             gsx_attr(TRUE, MD_TRANS, BLACK);
@@ -347,7 +399,7 @@ void ob_draw(LONG tree, WORD obj, WORD depth)
           sx = sy = 0;
 
         gsx_moff();
-        everyobj(tree, obj, last, just_draw, sx, sy, depth);
+        everyobj(tree, obj, last, (void(*)())just_draw, sx, sy, depth);
         gsx_mon();
 }
 
@@ -652,55 +704,4 @@ UWORD ob_fs(LONG tree, WORD ob, WORD *pflag)
         *pflag = LWGET(OB_FLAGS(ob));
         return( LWGET(OB_STATE(ob)) );
 }
-
-
-/************************************************************************/
-/* o b _ a c t x y w h                                                  */
-/************************************************************************/
-void ob_actxywh(LONG tree, WORD obj, GRECT *pt)
-{
-        LONG            pw;
-
-        ob_offset(tree, obj, &pt->g_x, &pt->g_y);
-        pt->g_w = LWGET(pw = OB_WIDTH(obj));    
-        pt->g_h = LWGET(pw + 0x02L);    
-} /* ob_actxywh */
-
-
-/************************************************************************/
-/* o b _ r e l x y w h                                                  */
-/************************************************************************/
-void ob_relxywh(LONG tree, WORD obj, GRECT *pt)
-{
-        LWCOPY(ADDR(pt), OB_X(obj), sizeof(GRECT)/2);
-} /* ob_relxywh */
-
-
-void ob_setxywh(LONG tree, WORD obj, GRECT *pt)
-{
-        LWCOPY(OB_X(obj), ADDR(pt), sizeof(GRECT)/2);
-}
-
-
-/*
-*       Routine to find the x,y offset of a particular object relative
-*       to the physical screen.  This involves accumulating the offsets
-*       of all the objects parents up to and including the root.
-*/
-void ob_offset(LONG tree, WORD obj, WORD *pxoff, WORD *pyoff)
-{
-        WORD            junk;
-        LONG            px;
-
-        *pxoff = *pyoff = 0;
-        do
-        {
-                                                /* have our parent--    */
-                                                /*  add in his x, y     */
-          *pxoff += LWGET(px = OB_X(obj));
-          *pyoff += LWGET(px + 0x02L);
-          obj = get_par(tree, obj, &junk);
-        } while ( obj != NIL );
-}
-
 

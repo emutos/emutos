@@ -78,7 +78,7 @@ BYTE ob_sst(LONG tree, WORD obj, LONG *pspec, WORD *pstate, WORD *ptype,
 }
 
 
-void everyobj(LONG tree, WORD this, WORD last, WORD (*routine)(),
+void everyobj(LONG tree, WORD this, WORD last, void (*routine)(),
               WORD startx, WORD starty, WORD maxdep)
 {
         REG WORD        tmp1;

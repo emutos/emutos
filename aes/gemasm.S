@@ -60,7 +60,7 @@ L1DB4:
             move.l  A0,-(A1)
             move.l  #_back,-(A1)
             move    A1,USP
-            tst.w   is68010
+            tst.w   _longframe
             beq     L1DEC
             move.w  0x00,-(SP)
 L1DEC:
@@ -123,7 +123,7 @@ L1E58:
             move    A6,USP
             movea.l (SP)+,A6
             movea.l (SP),SP
-            tst.w   is68010
+            tst.w   _longframe
             beq     L1E92
             move.w  (SP),-(SP)
             move.w  0x04(SP),0x02(SP)
@@ -142,9 +142,6 @@ L1E92:
 
 .bss
 
-is68010:
-LEA30:
-            DS.B 2
 
 LEAC0:
             DS.B 2

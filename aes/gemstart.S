@@ -42,21 +42,7 @@ _ui_start:
         move.w  #0x4A,-(a7)
         trap    #1
         adda.l  #0xC,a7
-/* 68010 test disabled at the moment... */
-/*
-        clr.w   is68010
-        movea.l a7,a0
-        movea.l 0x20,a1
-        move.l  #L5A,0x20
-        move    sr,d0
-        bra     L66
-L5A:
-        move.w  #0x1,is68010
-        andi.w  #0xDFFF,sr
-L66:
-        move.l  a1,0x20
-        movea.l a0,a7
-*/
+
         move.l  a7,-(a7)
         move.w  #0x20,-(a7)
         trap    #1

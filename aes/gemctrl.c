@@ -34,10 +34,11 @@
 #include "gemmnlib.h"
 #include "geminit.h"
 #include "gemgsxif.h"
-#include "rectfunc.h"
 #include "gemgrlib.h"
 #include "gemoblib.h"
+#include "gemasm.h"
 #include "optimopt.h"
+#include "rectfunc.h"
 
 
 
@@ -56,9 +57,6 @@ EXTERN WORD     sh_chmsg();
 #if FIXLATER
 EXTERN WORD     mn_indextoid();
 #endif
-
-                                                /* in ASM.A86           */
-EXTERN WORD     dsptch();
 
 
 GLOBAL MOBLK    gl_ctwait;                      /* MOBLK telling if menu*/

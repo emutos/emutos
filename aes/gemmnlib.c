@@ -34,6 +34,8 @@
 #include "geminput.h"
 #include "gemsuper.h"
 #include "gemctrl.h"
+#include "gempd.h"
+#include "rectfunc.h"
 
 
 GLOBAL LONG     gl_mntree;
@@ -208,7 +210,8 @@ menu_fixup(pname)
         pob->ob_type = G_BOX;
         pob->ob_state = pob->ob_flags = 0x0;
         pob->ob_spec = 0x00FF1100L;
-        ob_actxywh(tree, gl_dabox, &pob->ob_x);
+        /* FIXME: Ugly GRECT typecast: */
+        ob_actxywh(tree, gl_dabox, (GRECT *)&pob->ob_x);
         pob->ob_x = gl_width - pob->ob_width - ta.g_x;
 
         cnt = (gl_dacnt) ? (2 + gl_dacnt) : 1;
@@ -242,7 +245,7 @@ menu_fixup(pname)
           }
           else
             pob->ob_spec = LLGET(OB_SPEC(gl_dabox+i));
-          rc_copy(&t, &pob->ob_x);
+          rc_copy(&t, (GRECT *)&pob->ob_x);  /* FIXME: Ugly GRECT typecasting */
           t.g_y += gl_hchar;
         }
                                                 /* link back to root    */
@@ -264,7 +267,8 @@ rect_change(tree, prmob, iob, x)
         WORD            iob;
         WORD            x;
 {
-        ob_actxywh(tree, iob, &prmob->m_x);
+        /* FIXME: Ugly GRECT typecast: */
+        ob_actxywh(tree, iob, (GRECT *)&prmob->m_x);
         prmob->m_out = x;
 }
 
@@ -561,11 +565,7 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
 *       global variable gl_mntree which is used in CTLMGR88.C is also
 *       set or reset.
 */
-        VOID
-mn_bar(tree, showit, pid)
-        REG LONG        tree;
-        WORD            showit;
-        WORD            pid;
+void mn_bar(LONG tree, WORD showit, WORD pid)
 {
         PD              *p;
 
@@ -577,7 +577,8 @@ mn_bar(tree, showit, pid)
           menu_tree[pid] = gl_mntree = tree;
           menu_fixup(&p->p_name[0]);
           LWSET(OB_WIDTH(1), gl_width - LWGET(OB_X(1)));
-          ob_actxywh(gl_mntree, THEACTIVE, &gl_ctwait.m_x);
+          /* FIXME: remove GRECT typecasting.... */
+          ob_actxywh(gl_mntree, THEACTIVE, (GRECT *)&gl_ctwait.m_x);
           gsx_sclip(&gl_rzero);
           ob_draw(gl_mntree, THEBAR, MAX_DEPTH);
           gsx_cline(0, gl_hbox - 1, gl_width - 1, gl_hbox - 1);
@@ -585,7 +586,7 @@ mn_bar(tree, showit, pid)
         else
         {
           menu_tree[pid] = gl_mntree = 0x0L;
-          rc_copy(&gl_rmenu, &gl_ctwait.m_x);
+          rc_copy(&gl_rmenu, (GRECT *)&gl_ctwait.m_x); /* FIXME: Ugly typecast again */
         }
                                                 /* make ctlmgr fix up   */
                                                 /*   the size of rect   */
@@ -611,15 +612,13 @@ void mn_clsda()
 }
 #endif
 
+
 /*
 *       Routine to register a desk accessory item on the menu bar.
 *       The return value is the object index of the menu item that
 *       was added.
 */
-        WORD
-mn_register(pid, pstr)
-        REG WORD        pid;
-        REG LONG        pstr;
+WORD mn_register(WORD pid, LONG pstr)
 {
         WORD            openda;
         WORD            len;
@@ -669,9 +668,7 @@ mn_register(pid, pstr)
 /*
 *       Routine to unregister a desk accessory item on the menu bar.
 */
-        VOID
-mn_unregister(da_id)
-        WORD            da_id;
+void mn_unregister(WORD da_id)
 {
         WORD i, j;
 

@@ -68,7 +68,7 @@ WORD sc_clrd(WORD isread)
             if (isread)
               bitvect |= sc_bits[ii];           /* set corresponding bit */
             else
-              dos_delete(ad_scrap);             /* delete scrap.*       */
+              dos_delete((BYTE *)ad_scrap);     /* delete scrap.*       */
           }
         }
         if ( !isread)

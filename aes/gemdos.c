@@ -172,7 +172,7 @@ void dos_exec(LONG pcspec, WORD segenv, LONG pcmdln)
 
 
 
-LONG dos_chdir(LONG pdrvpath)
+LONG dos_chdir(BYTE *pdrvpath)
 {
         return(gemdos(X_CHDIR,pdrvpath));
 }
@@ -299,11 +299,11 @@ LONG dos_alloc(LONG nbytes)
         return(ret);
 }
 
+
 /*
 *       Returns the amount of memory available in bytes
 */
-        LONG
-dos_avail()
+LONG dos_avail()
 {
         return( gemdos( X_MALLOC, -1L) );
 }

@@ -94,6 +94,8 @@ EXTERN WORD     LBWMOV();
 
 #define LSTRLEN(p) strlen((char *)p)
 
+extern WORD LBWMOV(WORD *pdst, BYTE *psrc);
+
 #endif /* MC68K */
 
 

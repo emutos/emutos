@@ -147,13 +147,13 @@ VOID ap_tplay(REG LONG pbuff, WORD length, WORD scale)
                 f.f_code = 0;
                 break;
             case MCHNG:
-                f.f_code = (WORD (*)(VOID))mchange;
+                f.f_code = (void(*)())mchange;
                 break;
             case BCHNG:
-                f.f_code = (WORD (*)(VOID))bchange;
+                f.f_code = (void(*)())bchange;
                 break;
             case KCHNG:
-                f.f_code = (WORD (*)(VOID))kchange;
+                f.f_code = (void(*)())kchange;
                 break;
           }
                                                 /* play it              */
