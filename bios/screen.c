@@ -12,7 +12,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
+#include "machine.h"
 #include "screen.h"
 #include "asm.h"
 
@@ -60,10 +60,10 @@ VOID screen_init(VOID)
         rez = 2;
     }
     if((mfp->gpip & 0x80) != 0) {
-      /* color monitor */
-      if(rez == 2) rez = 0;
+        /* color monitor */
+        if(rez == 2) rez = 0;
     } else {
-      if(rez < 2) rez = 2;
+        if(rez < 2) rez = 2;
     }
     
     *rez_reg = rez;
@@ -83,6 +83,9 @@ static void setphys(LONG addr)
 {
     *(UBYTE *)0xffff8201 = ((ULONG)addr) >> 16;
     *(UBYTE *)0xffff8203 = ((ULONG)addr) >> 8;
+    if(has_ste_shifter) {
+        *(UBYTE *)0xffff820d = ((ULONG)addr);
+    }
 }
 
 /* xbios routines */
@@ -95,9 +98,9 @@ LONG physbase(void)
     addr <<= 8;
     addr += *(UBYTE *)0xffff8203;
     addr <<= 8;
-#if 0      /* The low byte only exists on STE, TT and Falcon */
-    addr += *(UBYTE *)0xffff820D;  
-#endif
+    if(has_ste_shifter) {
+        addr += *(UBYTE *)0xffff820D;  
+    }
 
     return(addr);
 }
@@ -137,6 +140,7 @@ WORD setcolor(WORD colorNum, WORD color)
 {
   WORD rez = getrez();
   WORD max;
+  WORD mask;
   WORD *palette = (WORD *)0xffff8240;
   switch(rez) {
   case 0:
@@ -151,12 +155,17 @@ WORD setcolor(WORD colorNum, WORD color)
   default:
     max = 0;
   }
+  if(has_ste_shifter) {
+    mask = 0xfff;
+  } else {
+    mask = 0x777;
+  }
   if(colorNum >= 0 && colorNum <= max) {
-    if(color == -1) {
-      return palette[colorNum] & 0x777;
+    if(color == -1) {     
+      return palette[colorNum] & mask;
     } else {
       palette[colorNum] = color;
-      return color & 0x777;
+      return color & mask;
     }
   } else {
     return 0;
