@@ -19,10 +19,12 @@
 
 #include "portab.h"
 #include "bios.h"
-#include "abbrev.h"
 #include "gemerror.h"
 #include "config.h"
 #include "kprint.h"
+
+#include "ikbd.h"
+#include "midi.h"
 
 /*==== Defines ============================================================*/
 #define	DBGBIOSC        TRUE
@@ -81,9 +83,6 @@ extern LONG drv_rw(WORD r_w,            /* found in startup.s */
 extern void mfp_init(void);     /* found in mfp.c */
 extern void timer_init(void);   /* found in mfp.c */
 extern void usart_init(void);   /* found in mfp.c */
-extern void kbd_init(void);     /* found in kbd.c */
-extern void midi_init(void);    /* found in midi.c */
-extern void kbq_init(void);     /* found in kbq.c */
 extern void clk_init(void);     /* found in clock.c */
 extern void con_init(void);     /* found in conio.c */
 
@@ -136,14 +135,14 @@ LONG bconin5(void);
 LONG bconin6(void);
 LONG bconin7(void);
 
-void bconout0(WORD,WORD);
-void bconout1(WORD,WORD);
-void bconout2(WORD,WORD);
-void bconout3(WORD,WORD);
-void bconout4(WORD,WORD);
-void bconout5(WORD,WORD);
-void bconout6(WORD,WORD);
-void bconout7(WORD,WORD);
+void bconout0(WORD, WORD);
+void bconout1(WORD, WORD);
+void bconout2(WORD, WORD);
+void bconout3(WORD, WORD);
+void bconout4(WORD, WORD);
+void bconout5(WORD, WORD);
+void bconout6(WORD, WORD);
+void bconout7(WORD, WORD);
 
 LONG bcostat0(void);
 LONG bcostat1(void);
@@ -156,7 +155,7 @@ LONG bcostat7(void);
 
 extern LONG (*bconstat_vec[])(void);
 extern LONG (*bconin_vec[])(void);
-extern void (*bconout_vec[])(WORD,WORD);
+extern void (*bconout_vec[])(WORD, WORD);
 extern LONG (*bcostat_vec[])(void);
 
 
@@ -189,7 +188,7 @@ void biosinit()
 
 /*==== initialize components ==============================================*/
 
-    con_init();         /* initialize the system console */
+/*    con_init();          initialize the system console */
 
     /* print, what has been done till now (fake) */
     cprintf("[ OK ] Entered supervisormode ...\n\r");
@@ -202,7 +201,6 @@ void biosinit()
     mfp_init();         /* init MFP and ACIAs */
     timer_init();       /* init MFP Timer A, B, C, D */
     usart_init();       /* init USART */
-    kbq_init() ;        /* init keyboard queue */
     kbd_init();         /* init keyboard, disable mouse and joystick */
     midi_init();        /* init MIDI acia so that kbd acia irq works */
     clk_init();         /* init clock (dummy for emulator) */
@@ -411,9 +409,9 @@ LONG bios_2(WORD handle)
  * bconout  - Print character to output device
  */
 
-void bios_3(WORD handle, WORD what)
+void bios_3(WORD handle, BYTE what)
 {
-    bconout_vec[handle & 7](handle,what);
+    bconout_vec[handle & 7](handle, what);
 }
 
 
@@ -496,7 +494,7 @@ LONG bios_7(WORD drive)
 
 
 /**
- * bcostat - Read status of output device
+ * bconstat - Read status of output device
  *
  * Returns status in D0.L:
  * -1	device is ready	      
@@ -675,14 +673,6 @@ LONG bconstat1(void)
 {
   return 0;
 }
-LONG bconstat2(void)
-{
-  return con_stat();
-}
-LONG bconstat3(void)
-{
-  return 0;
-}
 LONG bconstat4(void)
 {
   return 0;
@@ -708,14 +698,6 @@ LONG bconin1(void)
 {
   return 0;
 }
-LONG bconin2(void)
-{
-  return con_in();
-}
-LONG bconin3(void)
-{
-  return 0;
-}
 LONG bconin4(void)
 {
   return 0;
@@ -733,29 +715,20 @@ LONG bconin7(void)
   return 0;
 }
 
-void bconout0(WORD dev, WORD c)
+void bconout0(WORD dev, WORD b)
 {
 }
-void bconout1(WORD dev, WORD c)
+void bconout1(WORD dev, WORD b)
 {
 }
-void bconout2(WORD dev, WORD c)
+void bconout2(WORD dev, WORD b)
 {
-  cputc(c);
+  cputc(b);
 }
-void bconout3(WORD dev, WORD c)
-{
-}
-void bconout4(WORD dev, WORD c)
+void bconout6(WORD dev, WORD b)
 {
 }
-void bconout5(WORD dev, WORD c)
-{
-}
-void bconout6(WORD dev, WORD c)
-{
-}
-void bconout7(WORD dev, WORD c)
+void bconout7(WORD dev, WORD b)
 {
 }
 
@@ -768,14 +741,6 @@ LONG bcostat1(void)
   return -1;
 }
 LONG bcostat2(void)
-{
-  return -1;
-}
-LONG bcostat3(void)
-{
-  return -1;
-}
-LONG bcostat4(void)
 {
   return -1;
 }

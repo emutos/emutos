@@ -82,24 +82,13 @@ init_acia_vecs:
 	move.w	#0,midiibuftl
 	move.w	#0x20,midiibuflo
 	move.w	#0x60,midiibufhi
-	
+	move.b	#0,kbdbuf
 	rts
 	
-| ==== Int 0x118 - exception for keyboard interrupt ================
+| ==== Int 0x118 - midi/kbd interrupt routine ================
 |
-| LVL: this is Martin's original one, which I'm keeping until the
-| new one works.
-int_acia:
-        movem.l d0-d7/a0-a6,-(sp)
-        move    sr,-(sp)                | save status register
-        ori     #0x2700,sr              | turn off all interrupts
-        jsr     _kbd_int                | call the C routine to do the work
-        ori     #0x2300,sr              | turn on interrupts
-        move    (sp)+,sr                | restore status register
-        movem.l (sp)+,d0-d7/a0-a6
-        rte
 
-new_int_acia:
+int_acia:
 	| save scratch regs
 	movem.l d0-d1/a0-a1,-(sp)
 	
@@ -117,8 +106,18 @@ int_acia_loop:
 	rte
 
 _midivec:
-	| TODO, push data on midi iorec.
-	rts
+	| push byte data in d0 into midi iorec.
+	move.w	midiibuftl,d1
+	add.w	#1,d1
+	cmp.w	midiibufsz,d1
+	blt	1f
+	move.l	#0,d1
+1:	cmp.w	midiibufhd,d1
+	beq 	1f
+	lea	midiibufbuf,a0
+	move.b	d0,0(a0,d1.w)
+	move.w	d1,midiibuftl
+1:	rts
 	
 _vkbderr:
 _vmiderr:
@@ -151,10 +150,21 @@ _ikbdsys:
 	bpl	just_rts		| not interrupting
 	| TODO (?): check errors (buffer full ?)
 	move.b	ikbd_acia_data,d0
+	
+	movem.l d0/d1/a0/a1,-(sp)
+	bra 1f
+2:	.ascii  "IKBD data = 0x%02x\n\0"
+	.even
+1:	move.w	d0,-(sp)
+	pea 	2b
+	jsr 	_kprintf
+	add.w 	#6,sp
+	movem.l (sp)+,d0/d1/a0/a1
+
 	tst.b	kbdbuf
 	bne	in_packet	| kbdbuf[0] != 0, we are receiving a packet
 	cmp.w	#0xf6,d0
-	bmi	key_event	| byte < 0xf6, a key press or release event
+	blt	key_event	| byte < 0xf6, a key press or release event
 	sub.b	#0xf6,d0
 	move.b	kbd_length_table(pc,d0),kbdlength
 	move.b	#1,kbdindex
@@ -164,9 +174,10 @@ kbd_length_table:
 	dc.b	8, 6, 3, 3, 3, 3, 7, 3, 2, 2
 
 key_event:
-	move.b	d1,d0
 	move.w	d0,-(sp)
-	| TODO, call a C routine to do the job 	
+	| call the C routine in newkbc.c to do the work.
+	jsr 	_kbd_int
+	add.w   #2,sp
 	rts
 	
 in_packet:

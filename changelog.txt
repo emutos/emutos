@@ -193,3 +193,7 @@ Start... early ages
 19. Oct. 2001
 - Cleaned up and seperated memory initialisation in memory.s
 - Cleaned up command.prg (got rid of cpm code)
+- added memmove and memset, erasing bmove, xmovs and bfill in bdos (LVL)
+- midi and ikbd bios device functions; new ikbd interrupt (LVL)
+- started to clean some headers (removed abbrev.h, btools.h) (LVL)
+- added bconout5 (raw console) (LVL)

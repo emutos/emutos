@@ -14,22 +14,20 @@
 
 #include	"portab.h"
 
-/*==== Defines ============================================================*/
-
 /*==== Structs ============================================================*/
 
 #define IOREC struct iorec
 
 IOREC {
-  void *ibuf;            /* input buffer */
-  WORD ibufsize;          /* buffer size */
-  WORD ibifhd;            /* head index */
-  WORD ibuftl;            /* tail index */
-  WORD ibuflow;           /* low water mark */
-  WORD ibufhi;            /* high water mark */
+  void *buf;            /* input buffer */
+  WORD size;            /* buffer size */
+  WORD head;            /* head index */
+  WORD tail;            /* tail index */
+  WORD low;             /* low water mark */
+  WORD high;            /* high water mark */
 };
 
-IOREC *rs232iorec, *ikbdiorec, *midiiorec;
+extern IOREC rs232iorec, ikbdiorec, midiiorec;
 
 /*==== Functions ==========================================================*/
 

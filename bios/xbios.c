@@ -1,7 +1,7 @@
 /*
- *  biosc.c - C portion of XBIOS initialization and front end
+ * xbios.c - C portion of XBIOS initialization and front end
  *
- * Copyright (c) 2001 Martin Doering
+ * Copyright (c) 2001 EmuTOS development team
  *
  * Authors:
  *  MAD     Martin Doering
@@ -14,22 +14,15 @@
 
 
 #include "portab.h"
-#include "abbrev.h"
 #include "gemerror.h"
 #include "kprint.h"
 #include "iorec.h"     
-
-
+#include "tosvars.h"
+#include "ikbd.h"
+#include "midi.h"
+ 
 #define	DBG_XBIOS        1
 
-
-
-/*
- *  external declarations
- */
-
-/* extern char	*biosts ;*/	/*  time stamp string */
-extern UBYTE *v_bas_ad;
 
 
 
@@ -49,7 +42,7 @@ VOID xbiosinit()
      */
 
 #if DBG_XBIOS
-    kprintf("XBIOS: Initialization ...\n");
+    kprint("XBIOS: Initialization ...\n");
 #endif
 }
 
@@ -339,8 +332,9 @@ VOID xbios_b()
 VOID xbios_c(WORD cnt, LONG ptr)
 {
 #if DBG_XBIOS
-    kprintf("XBIOS: Unimplemented function 0x0c ...\n");
+    kprintf("XBIOS: Midiws(0x%04x, 0x%08lx)\n", cnt, ptr);
 #endif
+    midiws(cnt, ptr);
 }
 
 
@@ -371,19 +365,19 @@ LONG xbios_e(WORD devno)
 #if DBG_XBIOS
     kprintf("XBIOS: Iorec(%d)\n", devno);
 #endif
-    switch(devno) 
-      {
-      case 0:
-	return (LONG) rs232iorec;
-      case 1:
-	return (LONG) ikbdiorec;
-      case 2:
-	return (LONG) midiiorec;
-      default:
-	kprintf("Iorec(%d) : bad input device\n", devno);
-	return -1;
-      }
-
+    switch(devno) {
+    case 0:
+        return (LONG) &rs232iorec;
+    case 1:
+        return (LONG) &ikbdiorec;
+    case 2:
+        return (LONG) &midiiorec;
+    default:
+#if DBG_XBIOS
+	      kprintf("Iorec(%d) : bad input device\n", devno);
+#endif
+	      return -1;
+    }
 }
 
 
@@ -425,9 +419,10 @@ VOID xbios_f(WORD speed, WORD flowctl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
 LONG xbios_10(LONG unshift, LONG shift, LONG capslock)
 {
 #if DBG_XBIOS
-    kprintf("XBIOS: Unimplemented function 0x10 ...\n");
+    kprintf("XBIOS: Keytbl(0x%08lx, 0x%08lx, 0x%08lx)\n",
+            unshift, shift, capslock);
 #endif
-    return(-1);
+    return keytbl(unshift, shift, capslock);
 }
 
 
@@ -561,8 +556,9 @@ LONG xbios_17()
 VOID xbios_18()
 {
 #if DBG_XBIOS
-    kprintf("XBIOS: Unimplemented function 0x18 ...\n");
+    kprintf("XBIOS: Bioskeys()\n");
 #endif
+    bioskeys();
 }
 
 
@@ -574,8 +570,9 @@ VOID xbios_18()
 VOID xbios_19(WORD cnt, LONG ptr)
 {
 #if DBG_XBIOS
-    kprintf("XBIOS: Unimplemented function 0x19 ...\n");
+    kprintf("XBIOS: Midiws(0x%04x, 0x%08lx)\n", cnt, ptr);
 #endif
+    ikbdws(cnt, ptr);
 }
 
 

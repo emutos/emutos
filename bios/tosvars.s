@@ -49,7 +49,7 @@
 	.global	hdv_boot      
 	.global	hdv_mediach   
 	.global	_cmdload      
-	.global	conterm       
+	.global	_conterm       
 	.global	themd	       
 	.global	____md        
 	.global	savptr        
@@ -189,7 +189,7 @@ hdv_rw:         ds.l    1
 hdv_boot:       ds.l    1
 hdv_mediach:    ds.l    1
 _cmdload:       ds.w    1
-conterm:        ds.b    1
+_conterm:       ds.b    1
 	.org 0x48e
 themd:	        ds.l    4
 ____md:         ds.w    2

@@ -19,8 +19,13 @@
 #endif
 
 extern void printout(char *);
-extern void con_out(char);
 
+extern void bconout2(WORD, UBYTE);
+void con_out(char c)
+{
+  bconout2(2,c);
+}
+  
 /* doprintf implemented in doprintf.c. 
  * This is an OLD one, and does not support floating point 
  */

@@ -62,3 +62,9 @@ struct ACIA
     UBYTE dummy2;
 };
 
+#define ACIA_IKBD_BASE (0xfffffc00L)
+#define ACIA_MIDI_BASE (0xfffffc04L)
+
+#define ikbd_acia (*(volatile struct ACIA*)ACIA_IKBD_BASE)
+#define midi_acia (*(volatile struct ACIA*)ACIA_MIDI_BASE)
+

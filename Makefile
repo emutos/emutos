@@ -45,8 +45,8 @@ OBJDUMP=m68k-atari-mint-objdump
 # source code in bios/
 # Note: tosvars.o must be first object linked.
 
-BIOSCSRC = conio.c kbd.c kprint.c xbios.c \
-         bios.c clock.c fnt8x8.c fnt8x16.c kbq.c mfp.c version.c midi.c
+BIOSCSRC = kprint.c xbios.c bios.c clock.c fnt8x8.c fnt8x16.c mfp.c \
+           version.c midi.c ikbd.c
 BIOSSSRC = tosvars.s startup.s lineavars.s vectors.s aciavecs.s \
            memory.s linea.s conout.s
 
@@ -64,7 +64,7 @@ BDOSSSRC = rwa.s
 #
 
 UTILCSRC = doprintf.c 
-UTILSSRC = 
+UTILSSRC = memset.s memmove.s
 
 #
 # everything should work fine below.
@@ -167,4 +167,3 @@ depend:
 	mv Makefile.new Makefile
 
 # DO NOT DELETE
-

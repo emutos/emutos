@@ -5,6 +5,7 @@
  *
  * Authors:
  *  MAD   Martin Doering
+ *  LVL   Laurent Vogel
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -12,55 +13,77 @@
 
 
 
-#include	"portab.h"
-#include	"bios.h"
-#include	"kprint.h"
-#include        "acia.h"
-#include        "kbd.h"   /* function clear_kbdint() */
+#include "portab.h"
+#include "bios.h"
+#include "kprint.h"
+#include "acia.h"
+#include "iorec.h"
+#include "asm.h"
+#include "midi.h"
 
 
-/*==== External declarations ==============================================*/
-extern VOID clear_kbdint(VOID);        /* from mfp.c */
+/*==== MIDI bios functions =========================================*/
 
-/*==== Defines ============================================================*/
-#define ACIA_MIDI_BASE (0xfffffc04L)
-
-#define acia (*(volatile struct ACIA*)ACIA_MIDI_BASE)
-
-
-/*==== Send Byte to keyboard ACIA =========================================*/
-VOID    send_midi_acia(unsigned char c)
+LONG bconstat3(VOID)
 {
-    while((acia.ctrl & 0x02)){};
-    acia.data = c;
+  if(midiiorec.head == midiiorec.tail) {
+    return 0;   /* iorec empty */
+  } else {
+    return -1;  /* not empty => input available */
+  }
 }
 
- 
-
-/*==== midiint - keyboard interrupt service routine =========================*/
-/*
- *	MIDI Interrupt Service Routine for
- *	this routine is invoked upon receipt of an interrupt
- *	from the keyboard by the system.  it retrieves the
- *	scan code and, if no error was detected,
- *	puts the scan code into a queue to be retrieved at a more
- *	convenient time.
- */
- 
-VOID	midiint(VOID)
+LONG bconin3(VOID)
 {
-    REG UBYTE data;         /* byte received from MIDI */
+  WORD old_sr;
+  LONG value;
 
-    data = acia.data;            /* fetch the byte */
-#if IMPLEMENTED
-    midiqadd((KBQENTRY)(data & 0xFF));   /* put into queue as WORD */
-#endif
-
-    kprintf("BIOS: MIDI event happened ...");
-    clear_kbdint();      /* signal end of interrupt */
-    
+  while(!bconstat3()) 
+    ;
+  /* disable interrupts */
+  old_sr = set_sr(0x2700);
+  
+  midiiorec.head ++;
+  if(midiiorec.head >= midiiorec.size) {
+    midiiorec.head = 0;
+  }
+  value = *(UBYTE *)(midiiorec.buf+midiiorec.head);
+  
+  /* restore interrupts */
+  set_sr(old_sr);
+  return value;
 }
 
+
+/* can we send a byte to the MIDI ACIA ? */
+LONG bcostat3(VOID)
+{
+  if(midi_acia.ctrl & ACIA_TDRE) {
+    return -1;  /* OK */
+  } else {
+    /* Data register not empty */
+    return 0;   /* not OK */
+  }
+}
+
+/* send a byte to the MIDI ACIA */
+VOID bconout3(WORD dev, WORD c)
+{
+  while(! bcostat3())
+    ;
+  midi_acia.data = c;
+}
+
+/*==== MIDI xbios function =========================================*/
+
+/* cnt = number of bytes to send less one */
+VOID midiws(WORD cnt, LONG ptr)
+{
+  UBYTE *p = (UBYTE *)ptr;
+  while(cnt-- >= 0) {
+    bconout3(0, *p++);
+  }
+}
 
 
 /*==== midi_init - initialize the MIDI acia ==================*/
@@ -74,10 +97,10 @@ void midi_init(VOID)
     cprintf("[    ] MIDI ACIA initialized ...\r");
 
     /* initialize midi ACIA */
-    acia.ctrl =
+    midi_acia.ctrl =
         ACIA_RESET;     /* master reset */
 
-    acia.ctrl =
+    midi_acia.ctrl =
         ACIA_RID|       /* disable interrupts */
         ACIA_RLTID|     /* RTS low, TxINT disabled */
         ACIA_DIV16|     /* clock/16 */

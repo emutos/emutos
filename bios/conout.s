@@ -11,6 +11,7 @@
 |  MSH  ???
 |  RJG  ???
 |  EWF  ???
+|  LVL  Laurent Vogel
 |
 | This file is distributed under the GPL, version 2 or at your
 | option any later version.  See doc/license.txt for details.
@@ -21,6 +22,7 @@
 | ==== External Declarations ================================================
 
                 .global _cputc          | print a character for bios.c
+		.global _bconout5	| raw console output
                 .global _blink
                 .global normal_ascii    | default output type for linea.s
 
@@ -129,6 +131,15 @@ _cputc:
 	movem.l (sp)+,d2-d7/a2-a6
 	rts
 
+| LVL   raw console output.
+_bconout5:
+	move.w	6(sp),d1
+	movem.l d2-d7/a2-a6,-(sp)
+	bsr     ascii_out
+	movem.l (sp)+,d2-d7/a2-a6
+	rts
+
+	
 cputc:		
         move.w  4(sp), d1       | Get just character from stack
 
