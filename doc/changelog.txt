@@ -352,3 +352,7 @@ Start... early ages
 - added many of the lacking linea-variables (MAD)
 - fixed int overflow bug in scrolling in bios/consout.S:p_sc_up (MAD)
 - changed scrolling to use memmove (better?) (MAD)
+
+12. Dec. 2001
+- changed todo.txt: b/w display bug is bug in STonX (MAD)
+- changed bios/conout.S to C like comment style (MAD)

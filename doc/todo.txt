@@ -9,4 +9,3 @@
 - EmuTOS crashes, if it boots from some STeem generated floppy images
 - Go on with implementing mouse driver
 - kpanic() and like should print on screen then use STOP opcode.
-- font blit is bad, if STonX uses big mono video resolutions  

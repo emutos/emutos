@@ -15,58 +15,56 @@
  *
  */
 
+
+
 #define HAVE_MEMMOVE 1
+#define DBG_CONOUT 0
 
-// ==== External Declarations ================================================
+/* External Declarations */
 
-	        .global _con_state_init // initialize linea graphics subsystem
-                .global _cputc          // print a character for bios.c
-		.global _bconout5	// raw console output
-                .global _blink
-                .global _blink
-                .global normal_ascii    // default output type for linea.s
+        .global _con_state_init // initialize linea graphics subsystem
+        .global _cputc          // print a character for bios.c
+        .global _bconout5       // raw console output
+        .global _blink
+        .global _blink
+        .global normal_ascii    // default output type for linea.s
 
-
-
-// ==== References ===========================================================
+/* References */
                 
-                .xdef   _v_planes       // number of planes
-                .xdef   _v_lin_wr       // line wrap
-                .xdef   _v_cel_ht        // cell height (width is 8)
-                .xdef   _v_cel_mx        // maximum cell # in x (minimum is 0)
-                .xdef   _v_cel_my        // maximum cell # in y (minimum is 0)
-                .xdef   _v_cel_wr        // cell wrap
+        .xdef   _v_planes       // number of planes
+        .xdef   _v_lin_wr       // line wrap
+        .xdef   _v_cel_ht       // cell height (width is 8)
+        .xdef   _v_cel_mx       // maximum cell # in x (minimum is 0)
+        .xdef   _v_cel_my       // maximum cell # in y (minimum is 0)
+        .xdef   _v_cel_wr       // cell wrap
 
-                .xdef   _v_fnt_ad        // address of current monospace font
-                .xdef   _v_fnt_nd        // ascii code of last cell in font
-                .xdef   _v_fnt_st        // ascii code of first cell in font
-                .xdef   _v_fnt_wr        // font cell wrap
-                .xdef   _v_off_ad        // address of font offset table
+        .xdef   _v_fnt_ad       // address of current monospace font
+        .xdef   _v_fnt_nd       // ascii code of last cell in font
+        .xdef   _v_fnt_st       // ascii code of first cell in font
+        .xdef   _v_fnt_wr       // font cell wrap
+        .xdef   _v_off_ad       // address of font offset table
 
-                .xdef   _v_col_fg        // current foreground color
-                .xdef   _v_col_bg        // current background color
-                .xdef   _v_cur_of        // cursor offset
-                .xdef   _v_cur_cx        // current cursor cell x
-                .xdef   _v_cur_cy        // current cursor cell y 
-                .xdef   _v_cur_ad        // current cursor address
+        .xdef   _v_col_fg       // current foreground color
+        .xdef   _v_col_bg       // current background color
+        .xdef   _v_cur_of       // cursor offset
+        .xdef   _v_cur_cx       // current cursor cell x
+        .xdef   _v_cur_cy       // current cursor cell y 
+        .xdef   _v_cur_ad       // current cursor address
 
-                .xdef   _v_bas_ad       // screen base address
+        .xdef   _v_bas_ad       // screen base address
 
-                .xdef   _v_stat_0        // VIDEO CELL SYSTEM STATUS
-                .xdef   _v_cur_tim       // cursor blink timer
+        .xdef   _v_stat_0       // VIDEO CELL SYSTEM STATUS
+        .xdef   _v_cur_tim      // cursor blink timer
 
-                .xdef   _disab_cnt       // disable depth count. (>0 => disabled)
-                .xdef   sav_cxy         // save area for cursor coords.
+        .xdef   _disab_cnt      // disable depth count. (>0 => disabled)
+        .xdef   sav_cxy         // save area for cursor coords.
 
-                .xdef   save_row        // saved row in escape Y command
-                .xdef   con_state       // state of conout state machine
-
-
-//                .data
-//tempo:  .dc.w   0xc00   // used for bell simulation
+        .xdef   save_row        // saved row in escape Y command
+        .xdef   con_state       // state of conout state machine
 
 
-// ==== Defines ==============================================================
+
+/* Defines for cursor */
 
         .equ    M_CFLASH,       0x0001  // cursor flash         0:disabled
         .equ    F_CFLASH,       0       //                      1:enabled
@@ -78,11 +76,11 @@
         .equ    F_CVIS,         2       //                      1:visible
 
 
-
-// The visibility flag is also used as a semaphore to prevent
-// the interrupt-driven cursor blink logic from colliding with
-// escape function/sequence cursor drawing activity.
-//
+/*
+ * The visibility flag is also used as a semaphore to prevent
+ * the interrupt-driven cursor blink logic from colliding with
+ * escape function/sequence cursor drawing activity.
+ */
 
         .equ    M_CEOL,         0x0008  // cursor end of line handling   0:overwrite
         .equ    F_CEOL,         3       //                               1:wrap
@@ -97,56 +95,56 @@
         .equ    plane_offset,   2       // ???
 
 
-
-// ===========================================================================
-// ==== Text segment =========================================================
-// ===========================================================================
-                .text                    // open program segment.
+        .text                    // open program segment.
 
 
-msg_cputc:	
-	.ascii  "cputc: char is 0x%04x or  %c\n\0"
-	.even
+#if DBG_CONOUT
+msg_cputc:      
+        .ascii  "cputc: char is 0x%04x or  %c\n\0"
+        .even
+#endif
 
 
-
-// ==== cons_out - console output =============================================
-// Call as void cons_out(WORD chr)
-
-//
-// LVL:	This wrapper is probably a bit pessimistic. The exact registers
-// to save should be examined in each routine... Anyway it works until
-// some assembler adept hase time to check all registers :-)
-//
+/*
+ * cons_out - console output 
+ *
+ * Call as void cons_out(WORD chr)
+ *
+ * LVL: This wrapper is probably a bit pessimistic. The exact registers
+ * to save should be examined in each routine... Anyway it works until
+ * some assembler adept hase time to check all registers :-)
+ */
 _cputc:
-	move.w  4(sp),d1
-	movem.l d2-d7/a2-a6,-(sp)
-	move.w  d1,-(sp)
-	bsr     cputc
-	add.w   #2,sp
-	movem.l (sp)+,d2-d7/a2-a6
-	rts
+        move.w  4(sp),d1
+        movem.l d2-d7/a2-a6,-(sp)
+        move.w  d1,-(sp)
+        bsr     cputc
+        add.w   #2,sp
+        movem.l (sp)+,d2-d7/a2-a6
+        rts
 
 // LVL   raw console output.
 _bconout5:
-	move.w	6(sp),d1
-	movem.l d2-d7/a2-a6,-(sp)
-	bsr     ascii_out
-	movem.l (sp)+,d2-d7/a2-a6
-	rts
+        move.w  6(sp),d1
+        movem.l d2-d7/a2-a6,-(sp)
+        bsr     ascii_out
+        movem.l (sp)+,d2-d7/a2-a6
+        rts
 
-	
-cputc:		
+        
+cputc:          
         move.w  4(sp), d1       // Get just character from stack
 
 gsx_conout:                     // Gsx enters here
 
-// LVL   andi.w  #0xFF, d1       // Limit to the chars we have 
-// 	move.w  d1,-(sp)
-//	move.w  d1,-(sp)
-//	pea	msg_cputc
-//	jsr     _kprintf
-//	add.w	#8,sp
+#if DBG_CONOUT
+        andi.w  #0xFF, d1       // Limit to the chars we have (LVL)
+        move.w  d1,-(sp)
+        move.w  d1,-(sp)
+        pea     msg_cputc
+        jsr     _kprintf
+        add.w   #8,sp
+#endif
 
         move.w  4(sp), d1       // Get just character from stack
         andi.w  #0xFF, d1       // Limit to the chars we have
@@ -159,8 +157,9 @@ normal_ascii:
         cmp.w   #0x20, d1       // If the character is printable ascii
         bge     ascii_out       // go print it.
 
-// We handle the following control characters as special.  All others are thrown
-// away.
+// We handle the following control characters as special.
+// All others are thrown away.
+//
 //        7 = bell
 //        8 = backspace
 //        9 = Horizontal tab
@@ -201,16 +200,18 @@ exit_conout:
 
 
 
-// ==== do_bell - Ring the bell (in sound.c) =================================
-
+/*
+ * do_bell - Ring the bell (in sound.c) 
+ */
 do_bell:                         
         bsr     _bell
         rts
 
 
 
-// ==== do_tab - calculate the tabulator values ==============================
-
+/*
+ * do_tab - calculate the tabulator values
+ */
 do_tab:
         move    _v_cur_cx, d0
         andi.w  #0xFFF8, d0
@@ -220,8 +221,9 @@ do_tab:
 
 
 
-// ==== esc_ch1 -  Handle the first character of an escape sequence ==========
-
+/*
+ * esc_ch1 -  Handle the first character of an escape sequence 
+ */
 esc_ch1:
         move.l  #normal_ascii, con_state // Most functions only 2 chars so set
         sub.w   #0x41, d1               // state to normal ascii.  Bias by low
@@ -327,15 +329,17 @@ bw_tab:
 
 
 
-// ==== escE - Clear Screen and Home Cursor.==================================
-
+/*
+ * escE - Clear Screen and Home Cursor.
+ */
 escE:           bsr     escfn8          // home cursor.
                 bra     escfn9          // clear screen.
 
 
 
-// ==== escA - Alpha Cursor Up ===============================================
-
+/*
+ * escA - Alpha Cursor Up 
+ */
 escA:
 escfn4:         move.w  _v_cur_cy,d1     // d1 := current cursor y.
                 beq     esc_out         // if at top of screen, branch.
@@ -345,8 +349,9 @@ escA1:          subq.w  #1,d1           // move the cursor up.
 
 
 
-// ==== escB - Alpha Cursor Down =============================================
-
+/*
+ * escB - Alpha Cursor Down
+ */
 escB:
 escfn5:
         move.w  _v_cur_cy,d1     // d1 := current cursor y.
@@ -358,8 +363,9 @@ escfn5:
 
 
 
-// ==== escC - Alpha Cursor Right ============================================
-
+/*
+ * escC - Alpha Cursor Right 
+ */
 escC:
 escfn6:
         move.w  _v_cur_cx,d0     // d0 := current cursor x.
@@ -371,8 +377,9 @@ escfn6:
 
 
 
-// ==== escD - Alpha Cursor Left =============================================
-
+/*
+ * escD - Alpha Cursor Left
+ */
 escD:
 escfn7:
         move.w  _v_cur_cx,d0     // d0 := current cursor x.
@@ -383,8 +390,9 @@ escfn7:
 
 
 
-// ==== escH - Home Alpha Cursor =============================================
-
+/*
+ * escH - Home Alpha Cursor
+ */
 escH:
 escfn8:
         moveq.l #0,d0           // x coord.   (fixed)
@@ -393,8 +401,9 @@ escfn8:
 
 
 
-// ==== escJ - Erase to End of Screen ========================================
-
+/*
+ * escJ - Erase to End of Screen
+ */
 escJ:
 escfn9:
         bsr     escfn10         // erase to end of line.
@@ -411,8 +420,9 @@ escfn9:
 
 
 
-// ==== escK - Erase to End of Line.==========================================
-
+/*
+ * escK - Erase to End of Line.
+ */
 escK:
 escfn10:
         bclr    #F_CEOL,_v_stat_0 // test and clear EOL handling bit. (overwrite)
@@ -450,8 +460,9 @@ ef10_space:
 
 
 
-// ==== escp - Reverse Video On ==============================================
-
+/*
+ * escp - Reverse Video On
+ */
 escp:
 escfn13:
         bset    #F_REVID,_v_stat_0 // set the reverse bit.
@@ -460,8 +471,9 @@ esc_out:
 
 
 
-// ==== escq - Reverse Video Off.=============================================
-
+/*
+ * escq - Reverse Video Off.
+ */
 escq:
 escfn14:
         bclr    #F_REVID,_v_stat_0 // clear the reverse bit.
@@ -469,8 +481,9 @@ escfn14:
 
 
 
-// ==== escI - Reverse Index =================================================
-
+/*
+ * escI - Reverse Index
+ */
 escI:
         move.w  _v_cur_cy,d1     // d1 := current cursor y.
         bne     escA1           // if not at top of screen, branch.
@@ -482,8 +495,9 @@ escI:
 
 
 
-// ==== escL - Insert Line.===================================================
-
+/*
+ * escL - Insert Line.
+ */
 escL:           bsr     escf            // hide cursor.
                 move.w  _v_cur_cy,d1     // line to begin scrolling down.
                 bsr     p_sc_dwn        // scroll down 1 line & blank current line.
@@ -494,8 +508,9 @@ esclmout:       clr.w   d0
 
 
 
-// ==== escM - Delete Line.===================================================
-
+/*
+ * escM - Delete Line.
+ */
 escM:           bsr     escf            // hide cursor.
                 move.w  _v_cur_cy,d1     // line to begin scrolling up.
                 bsr     p_sc_up         // scroll up 1 line & blank bottom line.
@@ -503,24 +518,27 @@ escM:           bsr     escf            // hide cursor.
 
 
 
-// ==== escb - Set Foreground Color.==========================================
-
+/*
+ * escb - Set Foreground Color.
+ */
 escb:           and.w   #0x0F,d0        // low-order bits only.
                 move.w  d0,_v_col_fg     // set the foreground color.
                 rts
 
 
 
-// ==== escc - Set Background Color.==========================================
-
+/*
+ * escc - Set Background Color.
+ */
 escc:           and.w   #0x0F,d0        // low-order bits only.
                 move.w  d0,_v_col_bg     // set the background color.
 escc_out:       rts
 
 
 
-// ==== escd - Erase from Beginning of Page.==================================
-
+/*
+ * escd - Erase from Beginning of Page.
+ */
 escd:           bsr     esco            // erase from beginning of line.
                 move.w  _v_cur_cy,d2     // first line?
                 beq     escc_out        // yes, done.
@@ -532,8 +550,9 @@ escd:           bsr     esco            // erase from beginning of line.
 
 
 
-// ==== esce - Enable Cursor.=================================================
-
+/*
+ * esce - Enable Cursor.
+ */
 esce:           tst.w   _disab_cnt       // if disable count is zero (cursor
                 beq     escc_out        // still shown) then return
                 clr.w   _disab_cnt       // 0 the disable counter.
@@ -551,9 +570,7 @@ enc_flsh:       bsr     comp_cr1        // show cursor.
                 bset    #F_CVIS,(a0)    // set visibility/semaphore bit.
                 rts                     // let interrupt routine show the cursor.
 
-//
-// Enable Cursor (counted depth).          //
-//
+// Enable Cursor (counted depth).         
 
 cntesce:        tst.w   _disab_cnt       // if disable count is zero (cursor
                 beq     escc_out        // still shown) then return
@@ -563,8 +580,9 @@ cntesce:        tst.w   _disab_cnt       // if disable count is zero (cursor
 
 
 
-// ==== escf - Disable Cursor.================================================
-
+/*
+ * escf - Disable Cursor.
+ */
 escf:           addq.w  #1,_disab_cnt    // increment the disable counter.
                 lea     _v_stat_0,a0
                 bclr    #F_CVIS,(a0)    // test and clear the visible state bit.
@@ -578,8 +596,9 @@ escf:           addq.w  #1,_disab_cnt    // increment the disable counter.
 
 
 
-// ==== escj - Save Cursor Position.==========================================
-
+/*
+ * escj - Save Cursor Position.
+ */
 escj:           bset    #F_SVPOS,_v_stat_0 // set "position saved" status bit.
                 lea     sav_cxy,a0
                 move.w  _v_cur_cx,(a0)+
@@ -588,8 +607,9 @@ escj:           bset    #F_SVPOS,_v_stat_0 // set "position saved" status bit.
 
 
 
-// ==== esck - Restore Cursor Position.=======================================
-
+/*
+ * esck - Restore Cursor Position.
+ */
 esck:           bclr    #F_SVPOS,_v_stat_0 // clear "position saved" status bit.
                 beq     escfn8          // if position was not saved, home cursor.
                 lea     sav_cxy,a0
@@ -599,8 +619,9 @@ esck:           bclr    #F_SVPOS,_v_stat_0 // clear "position saved" status bit.
 
 
 
-// ==== escl - Erase Entire Line.=============================================
-
+/*
+ * escl - Erase Entire Line.
+ */
 escl:           bsr     escf            // hide cursor.
                 move.w  _v_cur_cy,d1
                 move.w  d1,d2
@@ -614,8 +635,9 @@ escl:           bsr     escf            // hide cursor.
 
 
 
-// ==== esco - Erase from Beginning of Line.==================================
-
+/*
+ * esco - Erase from Beginning of Line.
+ */
 esco:           bsr     escf            // hide cursor.
                 bsr     escj            // save cursor position.
                 move.w  _v_cur_cx,d2     // test current x.
@@ -642,22 +664,25 @@ esco_space:     move.w  #0x20,d1        // output a space.
 
 
 
-// ==== escv - Wrap at End of Line.===========================================
-
+/*
+ * escv - Wrap at End of Line.
+ */
 escv:           bset    #F_CEOL,_v_stat_0 // set the eol handling bit.
                 rts
 
 
 
-// ==== escw - Discard at End of Line.========================================
-
+/*
+ * escw - Discard at End of Line.
+ */
 escw:           bclr    #F_CEOL,_v_stat_0 // clear the eol handling bit.
                 rts
 
 
 
-// ==== ascii_cr - carriage return.===========================================
-
+/*
+ * ascii_cr - carriage return.
+ */
 ascii_cr:
                 move.w  _v_cur_cy,d1
                 clr.w   d0              // beginning of current line.
@@ -665,8 +690,9 @@ ascii_cr:
 
 
 
-// ==== ascii_lf - line feed.=================================================
-
+/*
+ * ascii_lf - line feed.
+ */
 ascii_lf:       move.w  _v_cur_cy,d0     // d0 := current cursor y.
                 cmp.w   _v_cel_my,d0     // at bottom of screen?
                 bne     escB            // no, branch.
@@ -677,8 +703,9 @@ ascii_lf:       move.w  _v_cur_cy,d0     // d0 := current cursor y.
 
 
 
-// ==== _blink - cursor blink interrupt routine.==============================
-
+/*
+ * _blink - cursor blink interrupt routine.
+ */
 _blink:
                 lea     _v_stat_0,a0     // (need fix?)
                 btst    #F_CVIS,(a0)    // test visibility/semaphore bit.
@@ -695,26 +722,22 @@ bl_out:         rts
 
 
 
-// ===========================================================================
-//      alpha_cell
-//
-// purpose:
-//
-//     given an offset value, retrieve the address of the
-//     source cell
-//
-// latest update:
-//
-//       25-sep-84
-// in:
-//       d1.w      source cell code
-// out:
-//       D3.w            validity flag.  =0:valid  <>0:invalid
-//       zero flag       z:0 -> invalid code. no address returned  (ne)
-//                       z:1 -> valid address returned             (eq)
-//       a0.l      points to first byte of source cell if code was valid
-// ===========================================================================
-
+/*
+ * alpha_cell - retrieve the address of the source cell
+ *
+ * Given an offset value.
+ *
+ * latest update:
+ *
+ *       25-sep-84
+ * in:
+ *       d1.w      source cell code
+ * out:
+ *       D3.w            validity flag.  =0:valid  <>0:invalid
+ *       zero flag       z:0 -> invalid code. no address returned  (ne)
+ *                       z:1 -> valid address returned             (eq)
+ *       a0.l      points to first byte of source cell if code was valid
+ */
 alpha_cell:
         move.w  _v_fnt_st,d3
         cmp.w   d3,d1                   // test against limits
@@ -740,26 +763,15 @@ out_of_bounds:
 
 
 
-// ===========================================================================
-// name:
-//     ascii_out
-//
-// purpose:
-//
-//     this routine interfaces with the BIOS.
-//     it prints an ascii character on the screen as if
-//     there was a dumb terminal out there.
-//
-// latest update:
-//
-//       14-nov-84
-// in:
-//
-//       d1.w      ascii code for character
-// out:
-//       clobbered:      everything imaginable except
-// ===========================================================================
-
+/*
+ * ascii_out - prints an ascii character on the screen
+ *
+ * in:
+ *
+ *       d1.w      ascii code for character
+ * out:
+ *       clobbered:      everything imaginable except
+ */
 ascii_out:
         bsr     alpha_cell              // a0 -> the character source
         beq     char_ok
@@ -827,27 +839,25 @@ dc_out:
 
 
 
-// ===========================================================================
-//
-//       title: Blank blt
-//
-//  This routine fills a cell-word aligned region with the background
-//  color.  The rectangular region is specified by a top/left cell x,y
-//  and a bottom/right cell x,y, inclusive.  Routine assumes top/left x is even
-//  and bottom/right x is odd for cell-word alignment.
-//
-// in:
-//       d1(31:16)       top/left cell y position
-//       d1(15:00)       top/left cell x position (must be even)
-//       d2(31:16)       bottom/right cell y position
-//       d2(15:00)       bottom/right cell x position (must be odd)
-//
-// out:
-//       none
-//
-//       destroyed:  d0.w,d1.l,d2.l,d3.w,d5.w,a1.l,a2.l
-// ===========================================================================
-
+/*
+ * blnk_blt - Fills region with the background color.
+ *
+ * This routine fills a cell-word aligned region with the background
+ * color.  The rectangular region is specified by a top/left cell x,y
+ * and a bottom/right cell x,y, inclusive.  Routine assumes top/left x is even
+ * and bottom/right x is odd for cell-word alignment.
+ *
+ * in:
+ *       d1(31:16)       top/left cell y position
+ *       d1(15:00)       top/left cell x position (must be even)
+ *       d2(31:16)       bottom/right cell y position
+ *       d2(15:00)       bottom/right cell x position (must be odd)
+ *
+ * out:
+ *       none
+ *
+ *       destroyed:  d0.w,d1.l,d2.l,d3.w,d5.w,a1.l,a2.l
+ */
 blnk_blt:
         sub.l   d1,d2                   //form cell delta x, delta y in d2
         move    d1,d0                   //get cell x for cell_addr call
@@ -959,29 +969,25 @@ plane1x:
 
 
 
-// ===========================================================================
-// name:
-//        cell_addr
-//
-// purpose:
-//
-//       convert cell X,Y to a screen address. also clip cartesian coordinates
-//       to the limits of the current screen.
-//
-// latest update:
-//
-//       18-sep-84
-// in:
-//
-//       d0.w      cell X
-//       d1.w      cell Y
-//
-// out:
-//       a1      points to first byte of cell
-//
-//       destroyed:      d3.l,d5.l
-// ===========================================================================
-
+/*
+ * cell_addr - convert cell X,Y to a screen address.
+ *
+ * convert cell X,Y to a screen address. also clip cartesian coordinates
+ * to the limits of the current screen.
+ *
+ * latest update:
+ *
+ *       18-sep-84
+ * in:
+ *
+ *       d0.w      cell X
+ *       d1.w      cell Y
+ *
+ * out:
+ *       a1      points to first byte of cell
+ *
+ *       destroyed:      d3.l,d5.l
+ */
 cell_addr:
 
 //       check bounds against screen limits
@@ -1035,32 +1041,23 @@ y_disp:
 
 
 
-// ===========================================================================
-// name:
-//        cell_xfer
-//
-// purpose:
-//
-//       This routine performs a byte aligned block transfer for the purpose of
-//       manipulating monospaced byte-wide text. the routine maps an single
-//       plane arbitrarilly long byte-wide image to a multi-plane bit map.
-//       all transfers are byte aligned.
-//
-// latest update:
-//
-//       25-sep-84
-//
-// in:
-//       a0.l      points to contiguous source block (1 byte wide)
-//       a1.l      points to destination (1st plane, top of block)
-//
-// out:
-//       a4      points to byte below this cell's bottom
-//
-//       destroyed:      a1.l,a3.l,d3.w,d4.w,d5.w,d6.w,d7.l
-//
-// ===========================================================================
-
+/*
+ * cell_xfer - Performs a byte aligned block transfer.
+ *
+ * This routine performs a byte aligned block transfer for the purpose of
+ * manipulating monospaced byte-wide text. the routine maps an single
+ * plane arbitrarilly long byte-wide image to a multi-plane bit map.
+ * all transfers are byte aligned.
+ *
+ * in:
+ *       a0.l      points to contiguous source block (1 byte wide)
+ *       a1.l      points to destination (1st plane, top of block)
+ *
+ * out:
+ *       a4      points to byte below this cell's bottom
+ *
+ *       destroyed:      a1.l,a3.l,d3.w,d4.w,d5.w,d6.w,d7.l
+ */
 cell_xfer:
         move.w  _v_fnt_wr,a2
         move.w  _v_lin_wr,a3
@@ -1127,27 +1124,18 @@ blk_invrt:                              // inject the inverted source block
         rts
 
 
-// ===========================================================================
-//
-// name:
-//        move_cursor
-//
-// purpose:
-//
-//       move the cursor and update global parameters
-//       erase the old cursor (if necessary) and draw new cursor (if necessary)
-//
-// latest update:
-//
-//       14-nov-84
-// in:
-//       d0.w    new cell X coordinate
-//       d1.w    new cell Y coordinate
-//
-//       destroyed:      a1.l,a2.l,a4.l,d4.w,d5.w,d6.w
-//
-// ===========================================================================
-
+/*
+ * move_cursor - move the cursor.
+ *
+ * move the cursor and update global parameters
+ * erase the old cursor (if necessary) and draw new cursor (if necessary)
+ *
+ * in:
+ *       d0.w    new cell X coordinate
+ *       d1.w    new cell Y coordinate
+ *
+ * destroyed:      a1.l,a2.l,a4.l,d4.w,d5.w,d6.w
+ */
 escY:
 move_cursor:
 
@@ -1194,32 +1182,23 @@ invisible:
 
 
 
-// ===========================================================================
-//
-// name:
-//        neg_cell
-//
-// purpose:
-//
-//       This routine negates the contents of an arbitrarily tall byte wide cell
-//       composed of an arbitrary number of (atari styled) bit-planes.
-//       cursor display can be acomplished via this procedure. since a second negation
-//       restores the original cell condition, there is no need to save the contents
-//       beneath the cursor block.
-//
-// latest update:
-//
-//       24-sep-84
-//
-// in:
-//       a1.l      points to destination (1st plane, top of block)
-//
-// out:
-//
-//       destroyed:      d4.w,d5.w,d6.w,a1.l,a2.l,a4.l
-//
-// ===========================================================================
-
+/*
+ * neg_cell - negates 
+ *
+ * This routine negates the contents of an arbitrarily tall byte wide cell
+ * composed of an arbitrary number of (atari styled) bit-planes.
+ * Cursor display can be acomplished via this procedure. since a second
+ * negation restores the original cell condition, there is no need to save 
+ * the contents beneath the cursor block.
+ *
+ * in:
+ *     a1.l      points to destination (1st plane, top of block)
+ *
+ * out:
+ *
+ * destroyed:
+ *     d4.w,d5.w,d6.w,a1.l,a2.l,a4.l
+ */
 neg_cell:
 
         move.w  _v_lin_wr,a2
@@ -1248,40 +1227,33 @@ neg_loop:
 
 
 
-// ===========================================================================
-//
-// next_cell
-//
-// purpose:
-//       return the next cell address given the current position and screen constraints
-//
-// latest update:
-//       19-sep-84
-//
-// in:
-//       d0.w      cell X
-//       d1.w      cell Y
-//
-//       a1.l      points to current cell top
-//
-// out:
-//       d0.w      next cell X
-//       d1.w      next cell Y
-//       d3.w      =0:    no wrap condition exists
-//                 <>0:   CR LF required (position has not been updated)
-//
-//       a1.l      points to first byte of next cell
-//
-//
-//       destroyed:      d3.l,d5.l
-//
-// ===========================================================================
-
+/*
+ * next_cell - Return the next cell address.
+ *
+ * Return the next cell address given the current position and screen constraints
+ *
+ * in:
+ *     d0.w      cell X
+ *     d1.w      cell Y
+ *
+ *     a1.l      points to current cell top
+ *
+ * out:
+ *     d0.w      next cell X
+ *     d1.w      next cell Y
+ *     d3.w      =0:    no wrap condition exists
+ *               <>0:   CR LF required (position has not been updated)
+ *
+ *     a1.l      points to first byte of next cell
+ *
+ *
+ * destroyed:
+ *     d3.l,d5.l
+ */
 next_cell:
 
 
 //       check bounds against screen limits
-
 
         cmp.w   _v_cel_mx,d0
         bne     inc_cell_ptr                    // increment cell ptr
@@ -1329,39 +1301,31 @@ next_word:
         clr.w   d3                              // indicate no wrap
         rts
 
-// ===========================================================================
-//
-//       title: Scroll
-//
-//  programmer: Dave Staugas
-//
-//        date: 24 sept 84
-//               14 nov 84 - last update.
-//
-//   Scroll copies a source region as wide as the screen to an overlapping
-//   destination region on a one cell-height offset basis.  Two entry points
-//   are provided:  Partial-lower scroll-up, partial-lower scroll-down.
-//   Partial-lower screen operations require the cell y # indicating the 
-//   top line where scrolling will take place.
-//
-//   After the copy is performed, any non-overlapping area of the previous
-//   source region is "erased" by calling blnk_blt which fills the area
-//   with the background color.
-//
-//   Parameters passed in registers:
-//
-//  in:
-//       d1.w            cell y of cell line to be used as top line in scroll
-//
-// out:
-//       none
-//
-//
-//       destroyed:
-//               d0.w,d1.l,d2.l,d3.l,d5.w,a1.l,a2.l,a3.l
-//
-// ===========================================================================
-
+/*
+ * p_sc_up - Scroll upwards
+ *
+ * Scroll copies a source region as wide as the screen to an overlapping
+ * destination region on a one cell-height offset basis.  Two entry points
+ * are provided:  Partial-lower scroll-up, partial-lower scroll-down.
+ * Partial-lower screen operations require the cell y # indicating the 
+ * top line where scrolling will take place.
+ *
+ * After the copy is performed, any non-overlapping area of the previous
+ * source region is "erased" by calling blnk_blt which fills the area
+ * with the background color.
+ *
+ * Parameters passed in registers:
+ *
+ * in:
+ *     d1.w            cell y of cell line to be used as top line in scroll
+ *
+ * out:
+ *     none
+ *
+ *
+ * destroyed:
+ *     d0.w,d1.l,d2.l,d3.l,d5.w,a1.l,a2.l,a3.l
+ */
 p_sc_up:
         move.l  _v_bas_ad,a3    //get base addr to destination
         move.w  _v_cel_wr,d3     //cell wrap to temp
@@ -1374,11 +1338,11 @@ p_sc_up:
         mulu    d1,d3           //form # of bytes to move in d3
 
 #if HAVE_MEMMOVE
- 	move.l  d3,-(sp)        // move memory
-	move.l  a2,-(sp)
-	move.l  a3,-(sp)
-	jsr     _memmove
-	add.w	#12,sp
+        move.l  d3,-(sp)        // move memory
+        move.l  a2,-(sp)
+        move.l  a3,-(sp)
+        jsr     _memmove
+        add.w   #12,sp
 #else
         asr.l   #2, d3          //divide by 4 for long byte moves
         bra     scrup1          //enter loop at test
@@ -1397,10 +1361,12 @@ scr_out:
         clr.w   d1              //top/left starts at left edge
         move.w  _v_cel_mx,d2     //maximum x for right edge on bottom/right
         bra     blnk_blt        //exit thru blank out
-//
-//  Partial scroll down entry point:
-//
-//
+
+
+
+/*
+ * p_sc_dwn - Scroll (partitially) downwards
+ */
 p_sc_dwn:
         move.l  _v_bas_ad,a3    // screen base addr to source
         move.w  _v_cel_my,d3     // max cell y # in d3
@@ -1414,11 +1380,11 @@ p_sc_dwn:
         mulu    d0,d3           // form # of bytes to move in d3
 
 #if HAVE_MEMMOVE
- 	move.l  d3,-(sp)        // move memory
-	move.l  a3,-(sp)
-	move.l  a2,-(sp)
-	jsr     _memmove
-	add.w	#12,sp
+        move.l  d3,-(sp)        // move memory
+        move.l  a3,-(sp)
+        move.l  a2,-(sp)
+        jsr     _memmove
+        add.w   #12,sp
 #else
         asr.l   #2,d3           // divide by 4 for long byte moves
         bra     scrdwn1         // enter loop at test
@@ -1434,17 +1400,12 @@ scrdwn1:
 /*
  * _con_state_init - initialize the conout state machine
  */
-
 _con_state_init:
         move.l  #normal_ascii, con_state // Init conout state machine
 
         rts
 
 
-
-// ===========================================================================
-// ==== End ==================================================================
-// ===========================================================================
 
         .end
 
