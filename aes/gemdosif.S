@@ -285,9 +285,9 @@ _tiksav:
 _NUM_TICK:
         .ds.l    1
 _CMP_TICK:
-        .ds.b    0x60
+        .ds.b    0x80
 LEDDE:
-        .ds.b    0x60
+        .ds.b    0x80
 LEE3E:
         .ds.l    1
 

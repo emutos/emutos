@@ -839,10 +839,10 @@ void w_update(WORD bottom, GRECT *pt, WORD top, WORD moved, WORD usetrue)
                 /* CHANGED 1/10/86 LKW  */
                 /* w_clipdraw(top, 0, MAX_DEPTH, 2); !* from FALSE to 2      *! */
                 //w_clipdraw(top, 0, MAX_DEPTH, usetrue);
-                kprintf("=== WIND_OPEN1 \n");
+//                kprintf("=== WIND_OPEN1 \n");
                 w_cpwalk(top, 0, MAX_DEPTH, usetrue);	/* let appl. draw inside*/
                 w_redraw(top, pt);
-                kprintf("=== WIND_OPEN2 \n");
+//                kprintf("=== WIND_OPEN2 \n");
             }
             /* scan to find prev    */
             i = bottom;

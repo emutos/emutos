@@ -42,7 +42,7 @@ BYTE ob_sst(LONG tree, WORD obj, LONG *pspec, WORD *pstate, WORD *ptype,
         *pflags = tmp.ob_flags;
         *pspec = tmp.ob_spec;
 
-        kprintf("Wert = %lx \n", *pspec);
+        //kprintf("Wert = %lx \n", *pspec);
 
         if (*pflags & INDIRECT)
           *pspec = LLGET(tmp.ob_spec);
