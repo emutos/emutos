@@ -19,7 +19,8 @@
 #include "tosvars.h"
 #include "country.h"
 #include "clock.h"
- 
+#include "xhdi.h"
+
 
 long cookie_vdo;
 long cookie_fdc;
@@ -301,6 +302,7 @@ void machine_init(void)
     cookie_add(COOKIE_NATFEAT, cookie_natfeat);
   }
 
+  create_XHDI_cookie();
 }
 
 const char * machine_name(void)
