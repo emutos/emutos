@@ -25,7 +25,7 @@
 
 void vsl_type()
 {
-    REG WORD li;
+    WORD li;
 
     CONTRL[4] = 1;
 
@@ -44,7 +44,7 @@ void vsl_type()
 
 void vsl_width()
 {
-    REG WORD w, *pts_out;
+    WORD w, *pts_out;
 
     /* Limit the requested line width to a reasonable value. */
     w = PTSIN[0];
@@ -71,9 +71,9 @@ void vsl_width()
 
 void vsl_ends()
 {
-    REG WORD lb, le;
-    REG WORD *pointer;
-    REG struct attribute *work_ptr;
+    WORD lb, le;
+    WORD *pointer;
+    struct attribute *work_ptr;
 
     *(CONTRL + 4) = 2;
 
@@ -100,7 +100,7 @@ void vsl_ends()
 
 void vsl_color()
 {
-    REG WORD lc;
+    WORD lc;
 
     *(CONTRL + 4) = 1;
     lc = *(INTIN);
@@ -118,8 +118,8 @@ void vsl_color()
 
 void vsm_height()
 {
-    REG WORD h, *pts_out;
-    REG struct attribute *work_ptr;
+    WORD h, *pts_out;
+    struct attribute *work_ptr;
 
     /* Limit the requested marker height to a reasonable value. */
     h = PTSIN[1];
@@ -148,7 +148,7 @@ void vsm_height()
  */
 void vsm_type()
 {
-    REG WORD i;
+    WORD i;
 
     i = INTIN[0] - 1;
     i = ((i >= MAX_MARK_INDEX) || (i < 0)) ? 2 : i;
@@ -164,7 +164,7 @@ void vsm_type()
 
 void vsm_color()
 {
-    REG WORD i;
+    WORD i;
 
     i = INTIN[0];
     i = ((i >= DEV_TAB[13]) || (i < 0)) ? 1 : i;
@@ -181,7 +181,7 @@ void vsm_color()
 
 void vsf_interior()
 {
-    REG WORD fs;
+    WORD fs;
 
     CONTRL[4] = 1;
     fs = *INTIN;
@@ -196,8 +196,8 @@ void vsf_interior()
 /* S_FILL_INDEX: */
 void vsf_style()
 {
-    REG WORD fi;
-    REG struct attribute *work_ptr;
+    WORD fi;
+    struct attribute *work_ptr;
 
     CONTRL[4] = 1;
     fi = *INTIN;
@@ -221,7 +221,7 @@ void vsf_style()
 /* S_FILL_COLOR: */
 void vsf_color()
 {
-    REG WORD fc;
+    WORD fc;
 
     *(CONTRL + 4) = 1;
     fc = *INTIN;
@@ -300,7 +300,7 @@ void hide_cur()
 void v_locator()
 {
     WORD i;
-    REG WORD *pointer;
+    WORD *pointer;
 
     *INTIN = 1;
 
@@ -408,7 +408,7 @@ void v_hide_c()
 
 void vq_mouse()
 {
-    REG WORD *pointer;
+    WORD *pointer;
 
     INTOUT[0] = MOUSE_BT;
 
@@ -494,7 +494,7 @@ void vq_key_s()
 /* SET_WRITING_MODE: */
 void vswr_mode()
 {
-    REG WORD wm;
+    WORD wm;
 
     CONTRL[4] = 1;
     wm = INTIN[0] - 1;
@@ -509,7 +509,7 @@ void vswr_mode()
 /* SET_INPUT_MODE: */
 void vsin_mode()
 {
-    REG WORD i, *int_in;
+    WORD i, *int_in;
 
     CONTRL[4] = 1;
 
@@ -543,7 +543,7 @@ void vsin_mode()
 /* INQUIRE INPUT MODE: */
 void vqi_mode()
 {
-    REG WORD *int_out;
+    WORD *int_out;
 
     *(CONTRL + 4) = 1;
 
@@ -575,8 +575,8 @@ void vqi_mode()
 /* ST_FILLPERIMETER: */
 void vsf_perimeter()
 {
-    REG WORD *int_out;
-    REG struct attribute *work_ptr;
+    WORD *int_out;
+    struct attribute *work_ptr;
 
     work_ptr = cur_work;
     int_out = INTOUT;
@@ -604,8 +604,8 @@ void vsl_udsty()
 void arb_corner(WORD * corners, WORD type)
 {
     /* Local declarations. */
-    REG WORD temp, typ;
-    REG WORD *xy1, *xy2;
+    WORD temp, typ;
+    WORD *xy1, *xy2;
 
     /* Fix the x coordinate values, if necessary. */
 
@@ -641,8 +641,8 @@ void arb_corner(WORD * corners, WORD type)
 /* Set Clip Region */
 void s_clip()
 {
-    REG WORD *xy, rtemp;
-    REG struct attribute *work_ptr;
+    WORD *xy, rtemp;
+    struct attribute *work_ptr;
 
     work_ptr = cur_work;
     if ((work_ptr->clip = *INTIN) != 0) {
@@ -673,12 +673,11 @@ void s_clip()
 
 void dr_recfl()
 {
-    REG WORD fi, *pts_in;
+    WORD fi, *pts_in;
 
     /* Perform arbitrary corner fix-ups and invoke the rectangle fill routine 
      */
 
-    arb_corner(PTSIN, ULLR);
     fi = cur_work->fill_color;
     fg_bp[0] = (fi & 1);
     fg_bp[1] = (fi & 2);
@@ -686,6 +685,7 @@ void dr_recfl()
     fg_bp[3] = (fi & 8);
 
     pts_in = PTSIN;
+    arb_corner(pts_in, ULLR);
     X1 = *pts_in++;
     Y1 = *pts_in++;
     X2 = *pts_in++;

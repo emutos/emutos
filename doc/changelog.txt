@@ -1627,5 +1627,5 @@ Start... early ages
 
 2004-07-18
 - vdi/seedfill.c: implemented end_pts() in C, no gsxasm1.S anymore (MAD)
-
+- vdi/monobj.c: fixed gdp_rbox() for correctly rounded corners (MAD)
 

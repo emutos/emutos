@@ -84,8 +84,8 @@ void v_clrwk()
 
 void v_pline()
 {
-    REG WORD l;
-    REG struct attribute *work_ptr;
+    WORD l;
+    struct attribute *work_ptr;
 
     work_ptr = cur_work;
     l = work_ptr->line_index;
@@ -129,8 +129,8 @@ void v_pmarker()
     WORD i, j, num_lines, num_vert, x_center, y_center, sav_points[10];
     WORD sav_index, sav_color, sav_width, sav_beg, sav_end;
     WORD *mrk_ptr, *old_ptsin, scale, num_points, *src_ptr;
-    REG WORD h, *pts_in, *m_ptr;
-    REG struct attribute *work_ptr;
+    WORD h, *pts_in, *m_ptr;
+    struct attribute *work_ptr;
 
     /* Save the current polyline attributes which will be used. */
 
@@ -225,8 +225,8 @@ void v_fillarea()
 void v_gdp()
 {
     WORD i, ltmp_end, rtmp_end;
-    REG WORD *xy_pointer;
-    REG struct attribute *work_ptr;
+    WORD *xy_pointer;
+    struct attribute *work_ptr;
 
     i = *(CONTRL + 5);
     xy_pointer = PTSIN;
@@ -319,8 +319,8 @@ void v_gdp()
 
 void vql_attr()
 {
-    REG WORD *pointer;
-    REG struct attribute *work_ptr;
+    WORD *pointer;
+    struct attribute *work_ptr;
 
     pointer = INTOUT;
     work_ptr = cur_work;
@@ -345,8 +345,8 @@ void vql_attr()
 
 void vqm_attr()
 {
-    REG WORD *pointer;
-    REG struct attribute *work_ptr;
+    WORD *pointer;
+    struct attribute *work_ptr;
 
     pointer = INTOUT;
     work_ptr = cur_work;
@@ -372,8 +372,8 @@ void vqm_attr()
 
 void vqf_attr()
 {
-    REG WORD *pointer;
-    REG struct attribute *work_ptr;
+    WORD *pointer;
+    struct attribute *work_ptr;
 
     pointer = INTOUT;
     work_ptr = cur_work;
@@ -417,7 +417,7 @@ WORD code(WORD x, WORD y)
 WORD clip_line()
 {
     WORD deltax, deltay, x1y1_clip_flag, x2y2_clip_flag, line_clip_flag;
-    REG WORD *x, *y;
+    WORD *x, *y;
 
     while ((x1y1_clip_flag = code(X1, Y1)) |
            (x2y2_clip_flag = code(X2, Y2))) {
@@ -481,7 +481,7 @@ void pline(void)
 
 void plygn()
 {
-    REG WORD *pointer, i, k;
+    WORD *pointer, i, k;
 
     i = cur_work->fill_color;
     FG_BP_1 = (i & 1);
@@ -663,14 +663,12 @@ WORD vec_len(WORD dx, WORD dy)
 
 void gdp_rbox()
 {
-    REG WORD i, j;
+    WORD i, j;
     WORD rdeltax, rdeltay;
-    REG struct attribute *work_ptr;
-    REG WORD *pointer = NULL;
+    struct attribute *work_ptr;
+    WORD *pointer = PTSIN;
 
     arb_corner(pointer, LLUR);
-
-    pointer = PTSIN;
     X1 = *pointer++;
     Y1 = *pointer++;
     X2 = *pointer++;
@@ -760,7 +758,7 @@ void gdp_rbox()
 
 void gdp_arc()
 {
-    REG WORD *pointer;
+    WORD *pointer;
 
     pointer = INTIN;
 
@@ -813,7 +811,7 @@ void clc_nsteps()
 
 void gdp_ell()
 {
-    REG WORD *pointer;
+    WORD *pointer;
 
     pointer = INTIN;
     beg_ang = *pointer++;
@@ -846,7 +844,7 @@ void gdp_ell()
 void clc_pts(WORD j)
 {
     WORD k;
-    REG WORD *pointer;
+    WORD *pointer;
 
     pointer = PTSIN;
     k = mul_div(Icos(angle), xrad, 32767) + xc;
@@ -864,7 +862,7 @@ void clc_pts(WORD j)
 void clc_arc()
 {
     WORD i, j;
-    REG WORD *cntl_ptr, *xy_ptr;
+    WORD *cntl_ptr, *xy_ptr;
 
     if (CLIP) {
         if (((xc + xrad) < XMN_CLIP) || ((xc - xrad) > XMX_CLIP) ||
@@ -916,7 +914,7 @@ void clc_arc()
 void cir_dda()
 {
     WORD i, j;
-    REG WORD *xptr, *yptr, x, y, d;
+    WORD *xptr, *yptr, x, y, d;
 
     /* Calculate the number of vertical pixels required. */
     d = cur_work->line_width;
@@ -984,8 +982,8 @@ void wline()
 
     WORD *old_ptsin, *src_ptr;
 
-    REG WORD *pointer, x, y, d, d2;
-    REG struct attribute *work_ptr;
+    WORD *pointer, x, y, d, d2;
+    struct attribute *work_ptr;
 
     /* Don't attempt wide lining on a degenerate polyline */
 
@@ -1106,7 +1104,7 @@ void wline()
 
 void perp_off(WORD * px, WORD * py)
 {
-    REG WORD *vx, *vy, *pcircle, u, v;
+    WORD *vx, *vy, *pcircle, u, v;
     WORD x, y, quad, magnitude, min_val;
     WORD x_val = 0;
     WORD y_val = 0;
@@ -1211,7 +1209,7 @@ void quad_xform(WORD quad, WORD x, WORD y, WORD *tx, WORD *ty)
 void do_circ(WORD cx, WORD cy)
 {
     WORD k;
-    REG WORD *pointer;
+    WORD *pointer;
 
     /* Only perform the act if the circle has radius. */
     if (num_qc_lines > 0) {
@@ -1257,7 +1255,7 @@ void do_circ(WORD cx, WORD cy)
 
 void s_fa_attr()
 {
-    REG struct attribute *work_ptr;
+    struct attribute *work_ptr;
 
     /* Set up the fill area attribute environment. */
     work_ptr = cur_work;
@@ -1283,7 +1281,7 @@ void s_fa_attr()
 
 void r_fa_attr()
 {
-    REG struct attribute *work_ptr;
+    struct attribute *work_ptr;
 
     /* Restore the fill area attribute environment. */
     work_ptr = cur_work;
@@ -1304,7 +1302,7 @@ void do_arrow()
 {
     WORD x_start, y_start;
     WORD new_x_start, new_y_start;
-    REG WORD *pts_in;
+    WORD *pts_in;
 
     /* Set up the attribute environment. */
     s_fa_attr();
@@ -1351,7 +1349,7 @@ void arrow(WORD * xy, WORD inc)
     WORD dx, dy;
     WORD base_x, base_y, ht_x, ht_y;
     WORD *old_ptsin;
-    REG WORD *ptr1, *ptr2, temp, i;
+    WORD *ptr1, *ptr2, temp, i;
 
     line_len = dx = dy = 0;
 
@@ -1457,8 +1455,8 @@ void arrow(WORD * xy, WORD inc)
 
 void dsf_udpat()
 {
-    REG WORD *sp, *dp, i, count;
-    REG struct attribute *work_ptr;
+    WORD *sp, *dp, i, count;
+    struct attribute *work_ptr;
 
     work_ptr = cur_work;
     count = CONTRL[3];
@@ -1822,9 +1820,9 @@ void abline ()
 
 void st_fl_ptr()
 {
-    REG WORD fi, pm;
-    REG WORD *pp = NULL;
-    REG struct attribute *work_ptr;
+    WORD fi, pm;
+    WORD *pp = NULL;
+    struct attribute *work_ptr;
 
     work_ptr = cur_work;
     fi = work_ptr->fill_index;
