@@ -20,12 +20,13 @@
 
 /* Locally Defined Constants and Variables */
 
+        .globl  _vex_butv               // exchange button change vector
+        .globl  _vex_motv               // exchange mouse movement vector
+        .globl  _vex_curv               // exchange cursor change vector
+
         .globl  _DIS_CUR                // display cursor routine
         .globl  _HIDE_CUR               // hide cursor routine
         .globl  _MOV_CUR                // move cursor routine
-        .globl  _VEX_BUTV               // exchange button change vector
-        .globl  _VEX_MOTV               // exchange mouse movement vector
-        .globl  _VEX_CURV               // exchange cursor change vector
         .globl  _XFM_CRFM               // set mouse form
         .globl  vb_draw                 // vertical blank mouse draw routine
         .globl  arrow_cdb               // default mouse definition
@@ -241,7 +242,7 @@ vblank_noop:
  *      Registers Modified:     a0
  */
 
-_VEX_BUTV:
+_vex_butv:
         move.l  _CONTRL,a0      // get address of CONTRL array
         move.l  _user_but,18(a0) // store old address in CONTRL
         move.l  14(a0),_user_but // store new routine address
@@ -266,7 +267,7 @@ _VEX_BUTV:
  *      Registers Modified:     a0
  */
 
-_VEX_MOTV:
+_vex_motv:
         move.l  _CONTRL,a0      // get address of CONTRL array
         move.l  _user_mot,18(a0) // store old address in CONTRL
         move.l  14(a0),_user_mot // store new routine address
@@ -291,7 +292,7 @@ _VEX_MOTV:
  *      Registers Modified:     a0
  */
 
-_VEX_CURV:
+_vex_curv:
         move.l  _CONTRL,a0      // get address of CONTRL array
         move.l  _user_cur,18(a0) // store old address in CONTRL
         move.l  14(a0),_user_cur // store new routine address

@@ -127,8 +127,8 @@ extern WORD SMUL_DIV();
 
 extern void DIS_CUR();
 extern void HIDE_CUR(), TEXT_BLT();
-extern void XFM_CRFM(), XFM_UNDL(), COPY_RFM(), VEX_CURV();
-extern void VEX_BUTV(), VEX_MOTV(), RECTFILL();
+extern void XFM_CRFM(), XFM_UNDL(), COPY_RFM(), RECTFILL();
+extern void vex_butv(), vex_motv(), vex_curv(), vex_timv();
 
 extern WORD GSHIFT_S();
 extern WORD GLOC_KEY();

@@ -726,6 +726,8 @@ Start... early ages
 - bdos/fs* - replaced NULPTR completely by NULLPTR  (MAD)
 
 09. Apr. 2002
+- vdi/vdimouse.S - renamed all VEX* functions to lower case (MAD)
+- vdi/lisagem.S - renamed EX_TIMV to vex_timv (MAD)
 - removed Kamenicky fonts (LVL)
 - added ISO latin2 fonts (LVL)
 - added CS po file (LVL)

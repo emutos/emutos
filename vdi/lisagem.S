@@ -14,7 +14,7 @@
 /* Global declarations */
 
         .globl  _DINIT_G
-        .globl  _EX_TIMV
+        .globl  _vex_timv
         .globl  _GCHC_KEY
         .globl  _GCHR_KEY
         .globl  _GLOC_KEY
@@ -82,14 +82,14 @@ _GSHIFT_S:
 
 
 /*
- * _EX_TIMV - exchange timer interrupt vector
+ * _vex_timv - exchange timer interrupt vector
  * 
  * entry:          new vector in CONTRL[7-8]
  * exit:           old vector in CONTRL[9-10]
  * destroys:       a0
  */
 
-_EX_TIMV:
+_vex_timv:
         move.l  _CONTRL,a0
 
         move    sr, -(sp)       // Disable interrupts

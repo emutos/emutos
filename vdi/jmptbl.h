@@ -94,10 +94,10 @@ extern void drt_cpyfm();        /* 121  */
 extern void v_show_c();         /* 122  */
 extern void v_hide_c();         /* 123  */
 extern void vq_mouse_status();  /* 124  */
-extern void VEX_BUTV();         /* 125  */
+extern void vex_butv();         /* 125  */
 
-extern void VEX_MOTV();         /* 126  */
-extern void VEX_CURV();         /* 127  */
+extern void vex_motv();         /* 126  */
+extern void vex_curv();         /* 127  */
 extern void vq_key_s();         /* 128  */
 extern void s_clip();           /* 129  */
 extern void dqt_name();         /* 130  */

@@ -73,15 +73,21 @@ void(*jmptb2[])() = {
     vqi_mode,
     dqt_extent,
     dqt_width,
-    EX_TIMV,
+    vex_timv,           /* in lisagem.S */
     dt_loadfont,
     dt_unloadfont,
     drt_cpyfm,
     v_show_c,
     v_hide_c,
     vq_mouse_status,
-    VEX_BUTV,
-    VEX_MOTV, VEX_CURV, vq_key_s, s_clip, dqt_name, dqt_fontinfo};
+    vex_butv,           /* in vdimouse.S */
+    vex_motv,           /* in vdimouse.S */
+    vex_curv,           /* in vdimouse.S */
+    vq_key_s,
+    s_clip,
+    dqt_name,
+    dqt_fontinfo
+};
 
 /************************************************************************
  *    Screen Driver Entry Point                                         *
