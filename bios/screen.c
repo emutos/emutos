@@ -12,6 +12,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+#include "config.h"  
 #include "machine.h"
 #include "screen.h"
 #include "asm.h"
@@ -22,7 +23,7 @@ static void setphys(LONG addr);
 
 /* determine monitor type, ... */
 
-/* Define pallette */
+/* Define palette */
 
 static WORD dflt_palette[] = {
     RGB_WHITE, RGB_RED, RGB_GREEN, RGB_YELLOW,
@@ -181,13 +182,16 @@ void vsync(void)
 {
     WORD old_sr;
     LONG a;
-    volatile LONG frclock;
+    extern volatile LONG frclock;
 
     old_sr = set_sr(0x2300);    /* allow VBL interrupt */
     a = frclock;
-#if 0	/* disabled by joy - it was neverending loop */
-    while (frclock == a)        /* TODO, we could use stop2300() later */
+    while (frclock == a) {
+#if USE_STOP_INSN_TO_FREE_HOST_CPU
+        stop2300();
+#else
         ;
 #endif
+    }
     set_sr(old_sr);
 }
