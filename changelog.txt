@@ -167,4 +167,5 @@ Start... early ages
 12. Oct. 2001
 - Initialised linea from startup.s (_esc_init -> _linea_init) (MAD)
 - Cleaned up conio.c
-
+- Cleaned up output stuff in bios.c
+- Put all linea stuff in bios/linea.s

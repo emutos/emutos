@@ -20,16 +20,13 @@
 
 | ==== External Declarations ================================================
 
-                .global _cputc
+                .global _cputc          | print a character for bios.c
                 .global _blink
-                .global _linea_init
-       
+                .global normal_ascii    | default output type for linea.s
+
 
 
 | ==== References ===========================================================
-                .xdef   _f8x8           | font header
-                .xdef   _f8x16          | font header
-                .xdef   sshiftmod        | mode/bits of shift/modifyer keys
                 
                 .xdef   _v_planes       | number of planes
                 .xdef   _v_lin_wr       | line wrap
@@ -72,19 +69,6 @@
 
 
 | ==== Defines ==============================================================
-
-
-|
-|       font header structure equates.
-|
-
-        .equ    FIRST,          36
-        .equ    LAST,           38
-        .equ    CEL_WD,         52
-        .equ    POFF,           72
-        .equ    PDAT,           76
-        .equ    FRM_WD,         80
-        .equ    FRM_HT,         82
 
         .equ    M_CFLASH,       0x0001  | cursor flash         0:disabled
         .equ    F_CFLASH,       0       |                      1:enabled
@@ -1423,126 +1407,6 @@ scrdwn0:
 scrdwn1:
         dbra    d3,scrdwn0      | do all
         bra     scr_out
-
-
-
-| gl_f_init - font globals initialization routine ===========================
-|
-| input:
-|   a0 = ptr to system font header
-|
-
-gl_f_init:
-        move    FRM_HT(a0),d0           | fetch form height.
-        move    d0,v_cel_ht             | init cell height.
-        move    _v_lin_wr,d1            | fetch bytes/line.
-        mulu    d0,d1
-        move    d1,v_cel_wr             | init cell wrap.
-        moveq.l #0,d1
-        move    v_vt_rez,d1             | fetch vertical res.
-        divu    d0,d1                   | vert res/cell height.
-        subq    #1,d1                   | 0 origin.
-        move    d1,v_cel_my             | init cell max y.
-        moveq.l #0,d1
-        move    v_hz_rez,d1             | fetch horizontal res.
-        divu    CEL_WD(a0),d1           | hor res/cell width.
-        subq    #1,d1                   | 0 origin.
-        move    d1,v_cel_mx             | init cell max x.
-        move    FRM_WD(a0),v_fnt_wr     | init font wrap.
-        move    FIRST(a0),v_fnt_st      | init font start ADE.
-        move    LAST(a0),v_fnt_nd       | init font end ADE.
-        move.l  PDAT(a0),v_fnt_ad       | init font data ptr.
-        move.l  POFF(a0),v_off_ad       | init font offset ptr.
-        rts
-
-
-
-| ==== _esc_init - escape initialization routine.============================
-
-	
-| LVL:	 checked that this routine only clobbers 'scratch' registers.
-| 	 if this routine calls other routines, please ensure this
-|        remains true.
-
-_linea_init:
-        move.b  sshiftmod, d0           | get video resolution
-        and.w   #3, d0                  | isolate bits 0 and 1
-        cmp.w   #3, d0                  | is it 3 - color?
-        bne     not3                    | no
-        move.w  #2, d0                  | set monochrome resolution
-not3:
-        move.w  d0, -(sp)               | save resolution
-        bsr     resolset                | set video resolution
-        move.w  (sp)+, d0               | restore resolution
-        
-|        lea     _f8x8, a0               | Get pointer to 8x8 font header
-|        cmp.w   #2, d0                  | High resolution?
-|        bne     lowres                  | no, low resolution
-        lea     _f8x16, a0              | Get pointer to 8x16 font header
-lowres:
-        bsr     gl_f_init               | init the global font variables.
-
-        move.w  #-1, v_col_fg           | foreground color := 15.
-        moveq.l #0, d0
-        move.w  d0, v_col_bg            | background color := 0.
-        
-        move.w  d0, v_cur_cx            | cursor column 0
-        move.w  d0, v_cur_cy            | cursor line 0
-        move.w  d0, v_cur_of            | line offset 0
-        move.l  _v_bas_ad, a0           | get base address of screen
-        move.l  a0, v_cur_ad            | home cursor.
-        move.b  #1, v_stat_0            | invisible, flash, nowrap, normal video.
-        move.b  #30, v_cur_tim          | .5 second blink counter (@60 Hz vblank).
-        move.b  #30, v_period           | .5 second blink rate (@60 Hz vblank).
-        move.w  #1, disab_cnt           | cursor disabled 1 level deep.
-
-        | ==== Clear screen =====
-        move.w  v_col_bg, d0            | load background color
-        move.l  _memtop, a0             | Set start of RAM
-scr_loop:
-        move.w  d0, (a0)+               | set to background color
-        cmp.l   phystop, a0             | End of BSS reached?
-        bne     scr_loop                | if not, clear next word
-
-        move.l  #normal_ascii, con_state | Init conout state machine
-
-|        bra     esce                    | Show the cursor
-        rts
-
-
-
-| ==== resolset - set video resolution ======================================
-
-resolset:
-        moveq.l #0, d1                  
-
-        move.b  splanes(pc, d0.w), d1   | Get the number of planes
-        move.w  d1, _v_planes           | save it
-
-        move.b  sbytes(pc, d0.w), d1    | Get the number of bytes per line
-        move.w  d1, _v_lin_wr           | Set the line wrap
-
-        asl.w   #1, d0                  | resolution as word index
-        move.w  sresoly(pc, d0.w), d1   | Get the vertical resolution
-        move.w  d1, v_vt_rez            | Set it
-
-        move.w  sresolx(pc, d0.w), d1   | Get the horizontal resolution
-        move.w  d1, v_hz_rez            | Set it
-
-        rts
-
-
-| ==== screenpar - Screen parameters ========================================
-
-splanes:
-        dc.b    4,2,1                   | count of color planes (_v_planes)
-sbytes:
-        dc.b    160,160,80              | bytes per line (_v_lin_wr)
-sresoly:
-        dc.w    200,200,400             | screen vertical resolution (v_vt_rez)
-sresolx:
-        dc.w    320,640,640             | screen horiz resolution (v_hz_rez)
-        
 
 
 

@@ -497,6 +497,7 @@ initsnd:
         addq #4,sp
 
 | ==== Setting up Line-a variables ==========================================
+
         bsr _linea_init
 
 | ==== vector setup =========================================================
@@ -549,43 +550,28 @@ clrvbl:
 
 
 | ==== Test, if Cartridge of type 2 =========================================
+
 |       moveq.l #2, d0          | after interrupts are enabled
 |       bsr     cartscan
 
-
-
-| ==== STonX - initialize disk parameters ===================================
-|                       | set _bootdev, _nflops and _drvbits
-|       dc.w 0xa0ff     | jump native 
-|       dc.l 3          | disk_init (from native.c)
-|
-|       dc.w 0xa0ff     | jump native
-|       dc.l 9          | Initialize (from native.c)
-|        
-|       dc.w 0xa0ff     | jump native 
-|       dc.l 10         | Init_Linea (from native.c)
-|
-
-
 | ==== Now initialize the BIOS =============================================
+
         jsr     _biosinit                
 
-
-
 | ==== Now initialize the BDOS =============================================
+
         jsr     _osinit
-        
 
 | ==== Now initialize the BDOS =============================================
 
-        move    #0x2300,sr         | enable Interrupts 
+        move    #0x2300,sr              | enable Interrupts 
         
         move.l  #_brkpt, 0x7c           | set nmi to do an illegal instruction
         move.l  #bios, 0xb4             | revector bios entry = trap #13
 
-|               move.l  #defcrit, v101          | default crit error:        bios13, fnct 5
-|               move.l  #defterm, v102          | terminate handler:         bios13, fnct 5
-|               move.l  #fix_SR, 0x20           | privilege violation
+|               move.l  #defcrit, v101  | default crit error:        bios13, fnct 5
+|               move.l  #defterm, v102  | terminate handler:         bios13, fnct 5
+|               move.l  #fix_SR, 0x20   | privilege violation
 
         pea msg_test
         bsr _kprint
@@ -685,139 +671,7 @@ just_rte:
         rte		
 
 
-| ==== Line-A handler ===============================
-int_linea:
-	move.l  2(sp),a0
-	move.l  a0,a1
-	clr.l   d0
-	move.w  (a0)+,d0
-	move.l  a0,2(sp)
-	and.w   #0xFFF,d0
-	tst.w   d0
-	bmi     wrong_linea
-	cmp.w   linea_ents,d0
-	bpl	wrong_linea
-	lea     linea_vecs,a0
-	lsl.w   #2,d0
-	move.l  0(a0,d0),a0
-	jsr     (a0)
-linea_dispatch_pc:	
-	rte
-wrong_linea:
-	move.w  d0,-(sp)
-	sub.w   #2,a0
-	move.l  a0,-(sp)
-	pea	wrong_linea_msg
-	jsr     _kprintf
-	add.w	#10,sp
-	rte
-wrong_linea_msg:	
-	.ascii  "pc=0x%08lx: Line-A call number 0x%03x out of bounds\n\0"
-	.even
 
-_linea_0:	
-	| a0 contains the base address for line a variables
-	lea	line_a_vars,a0
-	move.l  a0,d0
-	| a1 is a pointer to the three system font headers
-	move.l  font_ring,a1
-	move.l  (a1),a1
-	| a2 is a pointer to a table of the Line-A routines
-	lea     linea_vecs,a2
-	rts
-
-|
-| These are stubs for linea :
-| the stub will print the pc of the caller, whether the function
-| was called using the line a opcode, or directly via its address.
-|
-_linea_1:
-	move.w	#1,d0
-	bra	linea_stub
-_linea_2:
-	move.w	#2,d0
-	bra	linea_stub
-_linea_3:
-	move.w	#3,d0
-	bra	linea_stub
-_linea_4:
-	move.w	#4,d0
-	bra	linea_stub
-_linea_5:
-	move.w	#5,d0
-	bra	linea_stub
-_linea_6:
-	move.w	#6,d0
-	bra	linea_stub
-_linea_7:
-	move.w	#7,d0
-	bra	linea_stub
-_linea_8:
-	move.w	#8,d0
-	bra	linea_stub
-_linea_9:
-	move.w	#9,d0
-	bra	linea_stub
-_linea_a:
-	move.w	#0xa,d0
-	bra	linea_stub
-_linea_b:
-	move.w	#0xb,d0
-	bra	linea_stub
-_linea_c:
-	move.w	#0xc,d0
-	bra	linea_stub
-_linea_d:
-	move.w	#0xd,d0
-	bra	linea_stub
-_linea_e:
-	move.w	#0xe,d0
-	bra	linea_stub
-_linea_f:
-	move.w	#0xf,d0
-	bra	linea_stub
-linea_stub:
-	move.l  (sp),d1
-	sub.l   #linea_dispatch_pc,d1
-	and.l   #0xFFFFFF,d1
-	bne	1f
-	move.l  a1,a0
-	bra     2f
-1:	move.l  (sp),a0
-2:	move.w  d0,-(sp)
-	move.l  a0,-(sp)	
-	pea	linea_stub_msg
-	jsr	_kprintf
-	add.w	#10,sp
-	rts
-linea_stub_msg:
-	.ascii	"pc=0x%08lx: unimplemented Line-A call number 0x%03x\n\0"
-	.even
-	
-linea_vecs:
-	dc.l	_linea_0
-	dc.l	_linea_1
-	dc.l	_linea_2
-	dc.l	_linea_3
-	dc.l	_linea_4
-	dc.l	_linea_5
-	dc.l	_linea_6
-	dc.l	_linea_7
-	dc.l	_linea_8
-	dc.l	_linea_9
-	dc.l	_linea_a
-	dc.l	_linea_b
-	dc.l	_linea_c
-	dc.l	_linea_d
-	dc.l	_linea_e
-	dc.l	_linea_f
-linea_ents:
-	dc.w    (linea_ents-linea_vecs)/4
-
-
-
-	
-	
 | ==== Int 0x68 - HBL interrupt =============================================
 int_hbl:
         move.w  d0, -(sp)       | save d0
