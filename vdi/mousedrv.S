@@ -17,8 +17,8 @@
 
 
         /* globl routines declared here */
-        .globl  vdimouse_init
-        .globl  vdimouse_exit
+        .globl  _vdimouse_init
+        .globl  _vdimouse_exit
 
         .globl  _mouse_int      // mouse interrupt routine
 
@@ -64,14 +64,14 @@
 
 
 /*
- * vdimouse_init - INITIALIZE MOUSE
+ * _vdimouse_init - INITIALIZE MOUSE
  *
  * entry:          none
  * exit:           none
  * destroys:       a0
  */
 
-vdimouse_init:
+_vdimouse_init:
         /* Init _user_cur vector */
         lea.l   just_rts,a0             
         move.l  a0,_user_but            // just rts
@@ -121,7 +121,7 @@ just_rts:
  * destroys:       a0
  */
  
-vdimouse_exit:
+_vdimouse_exit:
         /* Init _user_cur vector */
         lea.l   just_rts,a0             
         move.l  a0,_user_but            // just rts

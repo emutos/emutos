@@ -31,14 +31,20 @@ void vex_motv();
 void vex_curv();
 void vex_timv();
 void init_wk();
-
+void tick_int();
 
 
 /* External declarations */
 extern struct attribute *trap();
 extern long trap13(int, ...);
 
-#define tickcal() (WORD)trap13(0x06)            /* ms between timer C calls */
+extern void escfn2();
+extern void escfn3();
+extern void vdimouse_init();
+extern void vdimouse_exit();
+
+#define tickcal() trap13(0x06)          /* ms between timer C calls */
+#define setexec(a,b) trap13(0x05, a,b)	/* change exception vector */
 
 #define X_MALLOC 0x48
 #define X_MFREE 0x49
@@ -55,6 +61,21 @@ extern UWORD v_lin_wr;          // line wrap : bytes per line
 extern UWORD v_hz_rez;          // screen horizontal resolution
 extern UWORD v_vt_rez;          // screen vertical resolution
 extern UWORD v_bytes_lin;       // width of line in bytes
+
+
+
+BYTE in_proc;                   // flag, if we are still running
+
+
+
+/*
+ * do_nothing - doesn't do much  :-)
+ */
+
+void do_nothing()
+{
+}
+
 
 
 void d_opnvwk()
@@ -157,12 +178,10 @@ void v_opnwk()
     init_wk();
 
     /* Input must be initialized here and not in init_wk */
-
     loc_mode = 0;               /* default is request mode  */
     val_mode = 0;               /* default is request mode  */
     chc_mode = 0;               /* default is request mode  */
     str_mode = 0;               /* default is request mode  */
-
 
     /* mouse settings */
     HIDE_CNT = 1;               /* mouse is initially hidden */
@@ -170,7 +189,18 @@ void v_opnwk()
     GCURX = DEV_TAB[0] / 2;     /* initialize the mouse to center */
     GCURY = DEV_TAB[1] / 2;
 
-    gfx_init();                 /* go into graphics mode */
+
+    /* Now initialize the lower level things */
+    in_proc = 0;                        // no vblanks in process
+    tim_addr = do_nothing;              // tick points to rts
+
+    ints_off();                         // disable interrupts
+    tim_chain = (void*)                 // save old vector
+        setexec(0x100, tick_int);	// set etv_timer to tick_int
+    ints_on();                          // enable interrupts
+
+    vdimouse_init();			// initialize mouse
+    escfn2();				// enter graphics mode
 }
 
 
@@ -188,7 +218,14 @@ void v_clswk()
         } while ((cur_work = next_work));
     }
 
-    gfx_exit();
+
+    /* Now de-initialize the lower level things */
+    ints_off();                         // disable interrupts
+    setexec(0x100, tim_chain);		// set etv_timer to tick_int
+    ints_on();                          // enable interrupts
+
+    vdimouse_exit();			// initialize mouse
+    escfn3();				// back to console mode
 }
 
 
@@ -356,6 +393,28 @@ void init_wk()
 
 
 /*
+ * tick_int -  VDI Timer interrupt routine
+ *
+ * The etv_timer does point to this routine
+ */
+ 
+void tick_int()
+{
+    if (!in_proc) {
+        in_proc = 1;                    // set flag, that we are running
+        // MAD: evtl. registers to stack
+        tim_addr();			// call the timer vector
+        // and back from stack
+    }
+    in_proc = 0;                        // allow yet another trip through
+    // MAD: evtl. registers to stack
+    tim_chain();                        // call the old timer vector too
+    // and back from stack
+}
+
+
+
+/*
  * vex_butv
  *
  * This routine replaces the mouse button change vector with
@@ -453,5 +512,5 @@ void vex_timv()
 
     ints_on();
 
-    INTOUT[0] = tickcal();
+    INTOUT[0] = (WORD)tickcal();
 }

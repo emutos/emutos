@@ -14,8 +14,8 @@
 
         .text
         .globl  _chk_esc
-        .globl  escfn2
-        .globl  escfn3
+        .globl  _escfn2
+        .globl  _escfn3
 
 // External Variables
 
@@ -104,26 +104,26 @@ _chk_esc:
 //                                                                      //
 /***************************************************************************/
 esctbl:
-        dc.w    escfn0-esctbl
-        dc.w    escfn1-esctbl
-        dc.w    escfn2-esctbl
-        dc.w    escfn3-esctbl
-        dc.w    escfn4-esctbl
-        dc.w    escfn5-esctbl
-        dc.w    escfn6-esctbl
-        dc.w    escfn7-esctbl
-        dc.w    escfn8-esctbl
-        dc.w    escfn9-esctbl
-        dc.w    escfn10-esctbl
-        dc.w    escfn11-esctbl
-        dc.w    escfn12-esctbl
-        dc.w    escfn13-esctbl
-        dc.w    escfn14-esctbl
-        dc.w    escfn15-esctbl
-        dc.w    escfn16-esctbl
-        dc.w    escfn17-esctbl
-        dc.w    escfn18-esctbl
-        dc.w    escfn19-esctbl
+        dc.w    _escfn0-esctbl
+        dc.w    _escfn1-esctbl
+        dc.w    _escfn2-esctbl
+        dc.w    _escfn3-esctbl
+        dc.w    _escfn4-esctbl
+        dc.w    _escfn5-esctbl
+        dc.w    _escfn6-esctbl
+        dc.w    _escfn7-esctbl
+        dc.w    _escfn8-esctbl
+        dc.w    _escfn9-esctbl
+        dc.w    _escfn10-esctbl
+        dc.w    _escfn11-esctbl
+        dc.w    _escfn12-esctbl
+        dc.w    _escfn13-esctbl
+        dc.w    _escfn14-esctbl
+        dc.w    _escfn15-esctbl
+        dc.w    _escfn16-esctbl
+        dc.w    _escfn17-esctbl
+        dc.w    _escfn18-esctbl
+        dc.w    _escfn19-esctbl
         .page
 /***************************************************************************/
 //                                                                      //
@@ -143,12 +143,12 @@ esctbl:
 //                                                                      //
 /***************************************************************************/
 
-escfn1:
+_escfn1:
         move.w  #2,8(a0)        // 2 integers are returned
         movea.l _INTOUT,a0      // get address of INTOUT array
         move.w  #y_cells,(a0)+  // write max row number to array
         move.w  #x_cells,(a0)   // write max column number to array
-escfn0:
+_escfn0:
 esc_out:
         rts
 
@@ -169,7 +169,7 @@ esc_out:
 //                                                                      //
 /***************************************************************************/
 
-escfn2:
+_escfn2:
         lea     curs_off,a0     // get address of cursor off esc seq
         bsr     esc_to_gemdos   // jump to common code to access gemdos
         jmp     _v_clrwk
@@ -192,7 +192,7 @@ escfn2:
 //                                                                      //
 /***************************************************************************/
 
-escfn3:
+_escfn3:
         jsr     _v_clrwk
         lea     curs_on, a0     // get address of exit graphics mode esc seq
         bra     esc_to_gemdos   // jump to common code to access gemdos
@@ -211,7 +211,7 @@ escfn3:
 //                                                                      //
 /***************************************************************************/
 
-escfn4:
+_escfn4:
         lea     cur_up,a0       // get address of cursor up escape sequence
 esc_to_gemdos:
         move.l  a0,-(a7)        // put address of character string on stack
@@ -235,7 +235,7 @@ esc_to_gemdos:
 //                                                                      //
 /***************************************************************************/
 
-escfn5:
+_escfn5:
         lea     cur_dn,a0       // get address of cursor down escape sequence
         bra     esc_to_gemdos   // jump to common code to access gemdos
 
@@ -254,7 +254,7 @@ escfn5:
 //                                                                      //
 /***************************************************************************/
 
-escfn6:
+_escfn6:
         lea     cur_rt,a0       // get address of cursor right escape sequence
         bra     esc_to_gemdos   // jump to common code to access gemdos
 
@@ -273,7 +273,7 @@ escfn6:
 //                                                                      //
 /***************************************************************************/
 
-escfn7:
+_escfn7:
         lea     cur_lt,a0       // get address of cursor left escape sequence
         bra     esc_to_gemdos   // jump to common code to access gemdos
 
@@ -292,7 +292,7 @@ escfn7:
 //                                                                      //
 /***************************************************************************/
 
-escfn8:
+_escfn8:
         lea     cur_home,a0     // get address of cursor home escape sequence
         bra     esc_to_gemdos   // jump to common code to access gemdos
 
@@ -312,7 +312,7 @@ escfn8:
 //                                                                      //
 /***************************************************************************/
 
-escfn9:
+_escfn9:
         lea     clr_eos,a0      // get address of clear to eos escape sequence
         bra     esc_to_gemdos   // jump to common code to access gemdos
 
@@ -332,7 +332,7 @@ escfn9:
 //                                                                      //
 /***************************************************************************/
 
-escfn10:
+_escfn10:
         lea     clr_eol,a0      // get address of clear to eol escape sequence
         bra     esc_to_gemdos   // jump to common code to access gemdos
 
@@ -355,7 +355,7 @@ escfn10:
 //                                                                      //
 /***************************************************************************/
 
-escfn11:
+_escfn11:
         movea.l _INTIN,a0       // get address of _INTIN array
         move.w  (a0)+,d0        // get row number
         add.b   #0x20, d0       // bias by space
@@ -389,7 +389,7 @@ escfn11:
 //      to test test for strings with 0 length and to predecrement the
 //      character count so that we will not display 1 character too many.
 //
-escfn12:
+_escfn12:
         move.w  6(a0),d0        // get the character count
         movea.l _INTIN,a0       // get address of the character array
         subq.w  #4,a7           // put space on stack for gemdos parameters
@@ -424,7 +424,7 @@ ef12_lend:
 //                                                                      //
 /***************************************************************************/
 
-escfn13:
+_escfn13:
         lea     entr_rvid,a0    // get address enter reverse video
         bra     esc_to_gemdos   // jump to common code to access gemdos
         .page
@@ -442,7 +442,7 @@ escfn13:
 //                                                                      //
 /***************************************************************************/
 
-escfn14:
+_escfn14:
         lea     exit_rvid,a0    // get address enter reverse video
         bra     esc_to_gemdos   // jump to common code to access gemdos
 
@@ -463,7 +463,7 @@ escfn14:
 //                                                                      //
 /***************************************************************************/
 
-escfn15:
+_escfn15:
         move.w  #2,8(a0)        // 2 integers are returned
         movea.l _INTOUT,a0      // get address of _INTOUT array
         clr.w   (a0)+           // return something
@@ -489,7 +489,7 @@ escfn15:
 //                                                                      //
 /***************************************************************************/
 
-escfn16:
+_escfn16:
         move.w  #1,8(a0)        // 1 integer is returned
         movea.l _INTOUT,a0      // get address of _INTOUT array
         move.w  #1,(a0)         // there is a mouse
@@ -512,7 +512,7 @@ escfn16:
 //                                                                      //
 /***************************************************************************/
 
-escfn17:
+_escfn17:
         rts
 
         .page
@@ -533,7 +533,7 @@ escfn17:
 //                                                                      //
 /***************************************************************************/
 
-escfn18:
+_escfn18:
         move.l  _INTIN, -(sp)   // save callers paramater block
         move.l  #zero,_INTIN    // INTIN[0] == 0 => show regardless
         jsr     _v_show_c       // display the graphics cursor
@@ -554,6 +554,6 @@ escfn18:
 //                                                                      //
 /***************************************************************************/
 
-escfn19:
+_escfn19:
         jmp     _v_hide_c       // hide the graphics cursor
         .end
