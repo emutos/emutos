@@ -15,16 +15,7 @@
 #include "processor.h"
  
 #include "kprint.h"
- 
-#define DBG_COOKIE 0
- 
-#if DBG_COOKIE
-#define fatal(a) kpanic(a)
-#else
-#define fatal(a) /* ??? */
-#endif
- 
- 
+  
 /* the default cookie jar, in the bss */
 
 static struct cookie dflt_jar[16];
@@ -42,24 +33,18 @@ void cookie_add(long tag, long value)
   long n;
   struct cookie *jar = CJAR;
   
-  if(!jar) {
-    fatal("cookie jar not inited"); 
-  }
+  assert(jar != NULL);
   
   while(jar->tag) {
-    if(jar->tag == tag) {
-      fatal("tag already there"); 
-    } 
+    assert(jar->tag != tag);
     jar ++;
   }
-  if((n = jar->value)) {
-    jar->tag = tag;
-    jar->value = value;
-    jar[1].tag = 0;
-    jar[1].value = n-1;
-  } else {
-    fatal("no room left in cookie jar"); 
-  }
+  n = jar->value;
+  assert(n != 0);
+  jar->tag = tag;
+  jar->value = value;
+  jar[1].tag = 0;
+  jar[1].value = n-1;  
 }
 
  
