@@ -54,6 +54,7 @@
 #include "gemerror.h"
 #include "string.h"      
 #include "mem.h"
+#include "time.h"
 
 /*
  * forward prototypes

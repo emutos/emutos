@@ -3,9 +3,6 @@
  *
  * Copyright (c) 2001 Lineo, Inc.
  *
- * Authors:
- *  xxx <xxx@xxx>
- *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
  */
@@ -40,15 +37,41 @@ NAMES
         ACH     Anthony C. Hay (DR UK)
 */
 
-extern  int     time, date;             /* declared in fs.c */
-extern  int     nday[];                 /* declared in sup.c */
-
+#include "time.h"
 #include "portab.h"
 #include "gemerror.h"
-#include "bios.h"
+#include "asm.h"
 
-extern  long    trap13(int, ...);               /* direct bios calls */
+int date;
+int time;
 
+/*
+ * BIOS interface  
+ * I didn't put it in a header because only this file is interested.
+ */
+
+/* the address of the vector in TOS vars */
+extern void (*etv_timer)(int);
+
+#define date_time(op,var) trap13(0x11,(int)(op),(int*)(var))
+
+#define GET_TIME        0
+#define SET_TIME        1
+#define GET_DATE        2
+#define SET_DATE        3
+
+
+/*
+ * private declarations
+ */
+
+static void tikfrk(int n);
+
+static int nday[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+
+/* static long uptime; */
+
+static int msec;
 
 /****************************/
 /* Function 0x2A:  Get date */
@@ -138,4 +161,91 @@ long    xsettime(int t)
 
     return E_OK;
 }
+
+
+/*
+ *  time_init
+ */
+
+
+void time_init(void)
+{
+    date_time(GET_DATE, &date);
+    date_time(GET_TIME, &time);
+    
+    etv_timer = tikfrk;
+}
+
+
+/*
+ *  tikfrk -
+ */
+
+static void tikfrk(int n)
+{
+    int curmo;
+
+/*  uptime += n; */
+
+    msec += n;
+    if (msec >= 2000)
+    {
+        /* update time */
+
+        msec -= 2000;
+        time++;
+
+        if ((time & 0x1F) != 30)
+            return;
+
+        time &= 0xFFE0;
+        time += 0x0020;
+
+        if ((time & 0x7E0) != (60 << 5))
+            return;
+
+        time &= 0xF81F;
+        time += 0x0800;
+
+        if ((time & 0xF800) != (24 << 11))
+            return;
+
+        time = 0;
+
+        /* update date */
+
+        if ((date & 0x001F) == 31)
+            goto datok;
+
+        date++;                 /* bump day */
+
+        if ((date & 0x001F) <= 28)
+            return;
+
+        if ((curmo = (date >> 5) & 0x0F) == 2)
+        {
+            /* 2100 is the next non-leap year divisible by 4, so OK */
+            if (!(date & 0x0600)) {
+                if ((date & 0x001F) <= 29)
+                    return;
+                else
+                    goto datok;
+            }
+        }
+
+        if ((date & 0x001F) <= nday[curmo])
+            return;
+
+    datok:
+        date &= 0xFFE0;         /* bump month */
+        date += 0x0021;
+
+        if ((date & 0x01E0) <= (12 << 5))
+            return;
+
+        date &= 0xFE00;         /* bump year */
+        date += 0x0221;
+    }
+}
+
 
