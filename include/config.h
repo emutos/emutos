@@ -96,7 +96,7 @@
  */
 
 #ifndef CONF_WITH_ACSI
-#define CONF_WITH_ACSI 0
+#define CONF_WITH_ACSI 1
 #endif
 
 
