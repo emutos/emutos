@@ -103,12 +103,12 @@ set_uvec:
  * the former method will allow any_vec to display the correct vector
  * number and report a meaningful panic message.
  */
-	
+        
 deflt_vec_table:
         bsr.s   any_vec         // vector 2
         bsr.s   any_vec
 illg_vec:
-	bsr.s   any_vec
+        bsr.s   any_vec
         bsr.s   any_vec         // vector 5
         bsr.s   any_vec
         bsr.s   any_vec
@@ -406,7 +406,7 @@ _int_illegal:
 
 ii_back:
         movem.l (sp)+,d0/a0
-	bra	illg_vec                // go directly to our panic handler
+        bra     illg_vec                // go directly to our panic handler
 
 
 

@@ -123,10 +123,10 @@
         .global _gouser
         .global _oscall
 
-	.global _enter
-	.global _old_trap2
-	.global _bdos_trap2
-	
+        .global _enter
+        .global _old_trap2
+        .global _bdos_trap2
+        
         .xdef   _osif
         .xdef   _xterm
         .xdef   _run
@@ -325,9 +325,9 @@ xs_scram:
 // gemdos(20) inquiry mode entry point
 
 x20_inq:
-	moveq.l #0,d0           // return 0L for user mode
-	btst.b  #5,(sp)         // supervisor mode?
-	beq     xi_exit         // no, user mode
+        moveq.l #0,d0           // return 0L for user mode
+        btst.b  #5,(sp)         // supervisor mode?
+        beq     xi_exit         // no, user mode
         subq.l  #1,d0           // return -1L for sup mode
 xi_exit:
         bra     fix_rte

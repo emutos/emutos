@@ -128,7 +128,7 @@ void vecs_init(void)
     /* These just for advanced 680x0 processors */
     if (longframe) {
         VEC_PRIVLGE = int_priv;         /* set priv. instr. handler */
-	//    VEC_ILLEGAL = int_illegal;      /* set ill. instr. handler */
+        //    VEC_ILLEGAL = int_illegal;      /* set ill. instr. handler */
     }
 }
 
