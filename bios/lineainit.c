@@ -44,24 +44,23 @@ extern void con_state_init(void);       // from conout.S
  * - add a line in the font_sets table below
  */
  
-extern struct font_head f8x16;
-extern struct font_head f8x8;
-extern struct font_head f6x6;
-extern struct font_head cz8x16;
-extern struct font_head cz8x8;
-extern struct font_head cz6x6;
+extern const struct font_head f8x16;
+extern const struct font_head f8x8;
+extern const struct font_head f6x6;
+extern const struct font_head latin2_8x16;
+extern const struct font_head latin2_8x8;
+extern const struct font_head latin2_6x6;
 
 struct charset_fonts {
     int charset;
-    struct font_head *f6x6;
-    struct font_head *f8x8;
-    struct font_head *f8x16;
+    const struct font_head *f6x6;
+    const struct font_head *f8x8;
+    const struct font_head *f8x16;
 };
 
-static struct charset_fonts font_sets[] = {
+const static struct charset_fonts font_sets[] = {
     { CHARSET_ST, &f6x6, &f8x8, &f8x16 },
-    /* { CHARSET_CZ, &cz6x6, &cz8x8, &cz8x16 }, */
-    /* { CHARSET_L2, &l26x6, &l28x8, &l28x16 }, */
+    { CHARSET_L2, &latin2_6x6, &latin2_8x8, &latin2_8x16 }, 
 };
 
 
@@ -102,8 +101,8 @@ void init_fonts(WORD vmode)
     memmove(&fon8x16, font_sets[j].f8x16, sizeof(struct font_head));
 
     /* now in RAM, chain the font headers to a linked list */
-    fon6x6.next_font = &f8x8;
-    fon8x8.next_font = &f8x16;
+    fon6x6.next_font = &fon8x8;
+    fon8x8.next_font = &fon8x16;
     fon8x16.next_font = 0;
 
     /* set current font depending on the video mode */
