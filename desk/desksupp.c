@@ -22,7 +22,7 @@
 #include "obdefs.h"
 #include "taddr.h"
 #include "dos.h"
-#include "desktop.h"
+#include "desk_rsc.h"
 #include "infodef.h"
 #include "gembind.h"
 #include "deskapp.h"

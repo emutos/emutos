@@ -26,7 +26,7 @@
 #include "deskfpd.h"
 #include "deskwin.h"
 #include "infodef.h"
-#include "desktop.h"
+#include "desk_rsc.h"
 #include "deskbind.h"
 
 #include "optimize.h"

@@ -23,7 +23,7 @@
 #include "deskfpd.h"
 #include "deskwin.h"
 #include "infodef.h"
-#include "desktop.h"
+#include "desk_rsc.h"
 #include "gembind.h"
 #include "deskbind.h"
 

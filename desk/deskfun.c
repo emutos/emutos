@@ -23,7 +23,7 @@
 #include "obdefs.h"
 #include "dos.h"
 #include "infodef.h"
-#include "desktop.h"
+#include "desk_rsc.h"
 #include "deskapp.h"
 #include "deskfpd.h"
 #include "deskwin.h"
