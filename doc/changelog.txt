@@ -604,3 +604,4 @@ Start... early ages
 - bdos/proc.c: deleted old Pexec implementation (LVL)
 - panic() prints on screen if linea is inited (LVL)
 - added new BDOS memory functions to doc/status.txt (LVL)
+- added make target 512 and some related hints in Makefile (MAD)

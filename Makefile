@@ -5,11 +5,14 @@
 # require GNU-make.
 #
 # targets are:
-# - all: creates emutos.img
+# - all:    creates emutos.img
+# - 192:    creates emutos as a 192kb rom image file
+# - 512:    creates a falcon compatible 512 kb rom image
+# - falcon: the same like above
 # - depend: updates automatic dependencies
-# - clean
-# - show: disassembles the emutos.img 
-# - tgz: bundles all in a tgz archive.
+# - clean:  removes all compiled and tmeporary stuff
+# - show:   disassembles the emutos.img 
+# - tgz:    bundles all in a tgz archive.
 #
 # C code (C) and assembler (S) source go in directories 
 # bios/, bdos/, util/ ; To add source code files, update
@@ -212,6 +215,7 @@ etos192k.img: emutos.img
 # Aranym or Falcon
 #
 
+512: etosfalc.img
 falcon: etosfalc.img
 
 etosfalc.tmp: $(OBJECTS)
@@ -386,7 +390,7 @@ $(DESASS): map
 #
 
 clean:
-	rm -f obj/*.o obj/*.s *~ */*~ core emutos.img map $(DESASS)
+	rm -f obj/*.o obj/*.s *~ */*~ *~ core emutos.img map $(DESASS)
 	rm -f ramtos.img boot.prg etos192k.img etosfalc.img mkflop$(EXE) 
 	rm -f bootsect.img emutos.st date.prg dumpkbd.prg keytbl2c$(EXE)
 	rm -f bug$(EXE) po/messages.pot util/langs.c bios/header.h
