@@ -75,6 +75,7 @@ void font_init(void)
     kprintf("================\n");
     kprintf("fontad: %ld\n", (LONG)def_font);
     kprintf("planes: %d\n", v_planes);
+    kprintf("bytes_lin: %d\n", v_bytes_lin);
     kprintf("lin_wr: %d\n", v_lin_wr);
     kprintf("hz_rez: %d\n", v_hz_rez);
     kprintf("vt_rez: %d\n", v_vt_rez);

@@ -10,7 +10,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#define DBG_FLOP 1
+#define DBG_FLOP 0
 
 #include "portab.h"
 #include "gemerror.h"

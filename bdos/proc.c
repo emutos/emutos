@@ -22,7 +22,7 @@
 #include "btools.h"
 #include "../bios/kprint.h"
 
-#define DBGPROC 1
+#define DBGPROC 0
 
 /*
  * forward prototypes

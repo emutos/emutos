@@ -104,103 +104,103 @@ BYTE env[256];                  /* environment string, enough bytes??? */
  
 void startup(void)
 {
-  WORD i;
-  LONG a;
+    WORD i;
+    LONG a;
 
 #if DBGBIOS
-  kprintf("beginning of BIOS startup\n");
+    kprintf("beginning of BIOS startup\n");
 #endif
-  
-  snd_init();     /* Reset Soundchip, deselect floppies */
-  screen_init();  /* detect monitor type, ... */
-  
-  /* detect if TOS in RAM */
-  a = ((LONG) os_entry) & 0xffffff;
-  if( a == 0xe00000L || a == 0xfc0000L ) {
-    is_ramtos = 0;
-  } else {
-    is_ramtos = 1;
-  }
+
+    snd_init();     /* Reset Soundchip, deselect floppies */
+    screen_init();  /* detect monitor type, ... */
+
+    /* detect if TOS in RAM */
+    a = ((LONG) os_entry) & 0xffffff;
+    if( a == 0xe00000L || a == 0xfc0000L ) {
+        is_ramtos = 0;
+    } else {
+        is_ramtos = 1;
+    }
 
 #if DBGBIOS
-  kprintf("_etext = 0x%08lx\n", (LONG)_etext);
-  kprintf("_edata = 0x%08lx\n", (LONG)_edata);
-  kprintf("end    = 0x%08lx\n", (LONG)end);
+    kprintf("_etext = 0x%08lx\n", (LONG)_etext);
+    kprintf("_edata = 0x%08lx\n", (LONG)_edata);
+    kprintf("end    = 0x%08lx\n", (LONG)end);
 #endif
-  if(is_ramtos) {
-    /* patch TOS header */
-    os_end = (LONG) _edata;
-  }
+    if(is_ramtos) {
+        /* patch TOS header */
+        os_end = (LONG) _edata;
+    }
 
-  /* initialise some memory variables */
-  end_os = os_end;
-  membot = end_os;
-//  exec_os = os_beg;
-  exec_os = &emucon;            // set start of console program
-  memtop = (LONG) v_bas_ad;
+    /* initialise some memory variables */
+    end_os = os_end;
+    membot = end_os;
+    //  exec_os = os_beg;
+    exec_os = &emucon;            // set start of console program
+    memtop = (LONG) v_bas_ad;
 
-  m_start = os_end;
-  m_length = memtop - m_start;
-  themd = (LONG) &b_mdx;
-  
-  /* setup default exception vectors */
-  init_exc_vec();
+    m_start = os_end;
+    m_length = memtop - m_start;
+    themd = (LONG) &b_mdx;
+
+    /* setup default exception vectors */
+    init_exc_vec();
 
 
-  init_user_vec();
-  
-  /* initialise some vectors */
-  VEC_HBL = int_hbl;
-  VEC_VBL = int_vbl;
-  VEC_AES = dummyaes;
-  VEC_BIOS = biostrap;
-  VEC_XBIOS = xbiostrap;
-  VEC_LINEA = int_linea;
-  VEC_ILLEGAL = brkpt;
-  
-  processor_init();  /* Set CPU type, VEC_ILLEGAL, longframe and FPU type */
-  cookie_init();     /* sets a cookie jar */
-  machine_init();    /* detect hardware features and fill the cookie jar */
+    init_user_vec();
 
-  init_acia_vecs();
-  
-  VEC_DIVNULL = just_rte;
-  
-  /* floppy related vectors */
-  floppy_init();
+    /* initialise some vectors */
+    VEC_HBL = int_hbl;
+    VEC_VBL = int_vbl;
+    VEC_AES = dummyaes;
+    VEC_BIOS = biostrap;
+    VEC_XBIOS = xbiostrap;
+    VEC_LINEA = int_linea;
+    VEC_ILLEGAL = brkpt;
 
-  /* are these useful ?? */
-  prt_stat = print_stat;
-  prt_vec = print_vec;
-  aux_stat = serial_stat;
-  aux_vec = serial_vec;
-  dump_vec = dump_scr;
-  
-  /* misc. variables */
+    processor_init();  /* Set CPU type, VEC_ILLEGAL, longframe and FPU type */
+    cookie_init();     /* sets a cookie jar */
+    machine_init();    /* detect hardware features and fill the cookie jar */
+
+    init_acia_vecs();
+
+    VEC_DIVNULL = just_rte;
+
+    /* floppy related vectors */
+    floppy_init();
+
+    /* are these useful ?? */
+    prt_stat = print_stat;
+    prt_vec = print_vec;
+    aux_stat = serial_stat;
+    aux_vec = serial_vec;
+    dump_vec = dump_scr;
+
+    /* misc. variables */
 #if DBGBIOS
-  kprintf("diskbuf = %08lx\n", (LONG)diskbuf);
+    kprintf("diskbuf = %08lx\n", (LONG)diskbuf);
 #endif
-  dumpflg = -1;
-  sysbase = (LONG) os_entry;
-  
-  savptr = (LONG) save_area;
-  
-  /* some more variables */
-  etv_timer = just_rts;
-  etv_critic = criter1; 
-  etv_term = just_rts;
-  
-  /* setup VBL queue */
-  nvbls = 8;
-  vblqueue = vbl_list;
-  for(i = 0 ; i < 8 ; i++) {
-    vbl_list[i] = 0;
-  }
+    dumpflg = -1;
+    sysbase = (LONG) os_entry;
 
-  /* init linea */
-  linea_init();
+    savptr = (LONG) save_area;
 
-  vblsem = 1;
+    /* some more variables */
+    etv_timer = just_rts;
+    etv_critic = criter1;
+    etv_term = just_rts;
+
+    /* setup VBL queue */
+    nvbls = 8;
+    vblqueue = vbl_list;
+    for(i = 0 ; i < 8 ; i++) {
+        vbl_list[i] = 0;
+    }
+
+    /* init linea */
+    linea_init();       /* Init screen related line-a variables */
+
+    vblsem = 1;
 
     /* initialize BIOS components */
 
@@ -232,7 +232,8 @@ void startup(void)
 
     cartscan(3);
 
-    font_init();
+    font_init();        /* Init font related line-a variables */
+
     /* main BIOS */
     biosmain();
 
@@ -380,6 +381,7 @@ void biosmain()
     /* execute Reset-resistent PRGs */
 
     
+    font_init();                /* again, to fake STonX */
     initinfo();                 /* show initial config information */
     
     cursconf(1, 0);             /* switch on cursor via XBIOS*/
