@@ -353,7 +353,8 @@ void biosmain()
 
     trap_1( 0x30 );              /* initial test, if BDOS works */
 
-    trap_1( 0x2b, os_dosdate);  /* set initial date in GEMDOS format */
+    if (! (has_megartc || has_nvram))
+        trap_1( 0x2b, os_dosdate);  /* set initial date in GEMDOS format */
 
     /* if TOS in RAM booted from an autoboot floppy, ask to remove the
      * floppy before going on.
