@@ -245,7 +245,9 @@ void startup(void)
  * LVL - This should really go in BDOS...
  */
 
-static BYTE secbuf[4][4096/*512*/]; /* sector buffers: 4kB is just enough for <512MB partition */
+static BYTE secbuf[4][4096]; /* sector buffers: 16kB is TOS 4.0x limit though
+                                when set here as [4][16384] the BDOS goes
+                                crazy. 4kB is enough for my 500 MB partition */
 
 static BCB bcbx[4];    /* buffer control block array for each buffer */
 extern BCB *bufl[];    /* buffer lists - two lists:  fat,dir / data */
