@@ -986,4 +986,4 @@ xx_no_right:
         dbra    d3,xor_x        // loop until all bit planes are drawn
         rts
 
-	.end
+        .end
