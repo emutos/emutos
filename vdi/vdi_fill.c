@@ -1,0 +1,1144 @@
+/*
+ * 
+ *
+ * Copyright 1982 by Digital Research Inc.  All rights reserved.
+ * Copyright 1999 by Caldera, Inc. and Authors:
+ * Copyright 2002 by The EmuTOS development team
+ *
+ * This file is distributed under the GPL, version 2 or at your
+ * option any later version.  See doc/license.txt for details.
+ */
+
+
+
+#include "portab.h"
+#include "vdi_defs.h"
+#include "tosvars.h"
+#include "lineavars.h"
+
+#define EMPTY   0xffff
+#define DOWN_FLAG 0x8000
+#define QSIZE 200
+#define QMAX QSIZE-1
+
+
+
+/* prototypes */
+void crunch_queue();
+
+
+
+/* Global variables */
+static WORD seed_type;          /* indicates the type of fill   */
+UWORD search_color;       /* the color of the border      */
+
+
+/* some kind of stack for the segments to fill */
+WORD queue[QSIZE];       /* storage for the seed points  */
+WORD qbottom;            /* the bottom of the queue (zero)   */
+WORD qtop;               /* points top seed +3           */
+WORD qptr;               /* points to the active point   */
+WORD qtmp;
+WORD qhole;              /* an empty space in the queue */
+
+
+/* the six predefined line styles */
+UWORD LINE_STYLE[6] = { 0xFFFF, 0xFFF0, 0xC0C0, 0xFF18, 0xFF00, 0xF191 };
+
+/* the storage for the used defined fill pattern */
+UWORD UDPATMSK = 0xF;
+
+UWORD ROM_UD_PATRN[16] = {
+    0x07E0, 0x0FF0, 0x1FD8, 0x1808, 0x1808, 0x1008, 0x1E78, 0x1348,
+    0x1108, 0x0810, 0x0B70, 0x0650, 0x07A0, 0x1E20, 0x1BC0, 0x1800
+};
+
+UWORD OEMMSKPAT = 7;
+UWORD OEMPAT[128] = {
+    /* Brick */
+    0xFFFF, 0x8080, 0x8080, 0x8080, 0xFFFF, 0x0808, 0x0808, 0x0808,
+    /* Diagonal Bricks */
+    0x2020, 0x4040, 0x8080, 0x4141, 0x2222, 0x1414, 0x0808, 0x1010,
+    /* Grass */
+    0x0000, 0x0000, 0x1010, 0x2828, 0x0000, 0x0000, 0x0101, 0x8282,
+    /* Trees */
+    0x0202, 0x0202, 0xAAAA, 0x5050, 0x2020, 0x2020, 0xAAAA, 0x0505,
+    /* Dashed x's */
+    0x4040, 0x8080, 0x0000, 0x0808, 0x0404, 0x0202, 0x0000, 0x2020,
+    /* Cobble Stones */
+    0x6606, 0xC6C6, 0xD8D8, 0x1818, 0x8181, 0x8DB1, 0x0C33, 0x6000,
+    /* Sand */
+    0x0000, 0x0000, 0x0400, 0x0000, 0x0010, 0x0000, 0x8000, 0x0000,
+    /* Rough Weave */
+    0xF8F8, 0x6C6C, 0xC6C6, 0x8F8F, 0x1F1F, 0x3636, 0x6363, 0xF1F1,
+    /* Quilt */
+    0xAAAA, 0x0000, 0x8888, 0x1414, 0x2222, 0x4141, 0x8888, 0x0000,
+    /* Paterned Cross */
+    0x0808, 0x0000, 0xAAAA, 0x0000, 0x0808, 0x0000, 0x8888, 0x0000,
+    /* Balls */
+    0x7777, 0x9898, 0xF8F8, 0xF8F8, 0x7777, 0x8989, 0x8F8F, 0x8F8F,
+    /* Verticle Scales */
+    0x8080, 0x8080, 0x4141, 0x3E3E, 0x0808, 0x0808, 0x1414, 0xE3E3,
+    /* Diagonal scales */
+    0x8181, 0x4242, 0x2424, 0x1818, 0x0606, 0x0101, 0x8080, 0x8080,
+    /* Checker Board */
+    0xF0F0, 0xF0F0, 0xF0F0, 0xF0F0, 0x0F0F, 0x0F0F, 0x0F0F, 0x0F0F,
+    /* Filled Diamond */
+    0x0808, 0x1C1C, 0x3E3E, 0x7F7F, 0xFFFF, 0x7F7F, 0x3E3E, 0x1C1C,
+    /* Herringbone */
+    0x1111, 0x2222, 0x4444, 0xFFFF, 0x8888, 0x4444, 0x2222, 0xFFFF
+};
+
+UWORD DITHRMSK = 3;              /* mask off all but four scans */
+UWORD DITHER[32] = {
+    0x0000, 0x4444, 0x0000, 0x1111,     /* intensity level 2 */
+    0x0000, 0x5555, 0x0000, 0x5555,     /* intensity level 4 */
+    0x8888, 0x5555, 0x2222, 0x5555,     /* intensity level 6 */
+    0xAAAA, 0x5555, 0xAAAA, 0x5555,     /* intensity level 8 */
+    0xAAAA, 0xDDDD, 0xAAAA, 0x7777,     /* intensity level 10 */
+    0xAAAA, 0xFFFF, 0xAAAA, 0xFFFF,     /* intensity level 12 */
+    0xEEEE, 0xFFFF, 0xBBBB, 0xFFFF,     /* intensity level 14 */
+    0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF      /* intensity level 16 */
+};
+
+UWORD HAT_0_MSK = 7;
+UWORD HATCH0[48] = {
+    /* narrow spaced + 45 */
+    0x0101, 0x0202, 0x0404, 0x0808, 0x1010, 0x2020, 0x4040, 0x8080,
+    /* medium spaced thick 45 deg */
+    0x6060, 0xC0C0, 0x8181, 0x0303, 0x0606, 0x0C0C, 0x1818, 0x3030,
+    /* medium +-45 deg */
+    0x4242, 0x8181, 0x8181, 0x4242, 0x2424, 0x1818, 0x1818, 0x2424,
+    /* medium spaced vertical */
+    0x8080, 0x8080, 0x8080, 0x8080, 0x8080, 0x8080, 0x8080, 0x8080,
+    /* medium spaced horizontal */
+    0xFFFF, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    /* medium spaced cross */
+    0xFFFF, 0x8080, 0x8080, 0x8080, 0x8080, 0x8080, 0x8080, 0x8080
+};
+
+UWORD HAT_1_MSK = 0xF;
+UWORD HATCH1[96] = {
+    /* wide +45 deg */
+    0x0001, 0x0002, 0x0004, 0x0008, 0x0010, 0x0020, 0x0040, 0x0080,
+    0x0100, 0x0200, 0x0400, 0x0800, 0x1000, 0x2000, 0x4000, 0x8000,
+    /* widely spaced thick 45 deg */
+    0x8003, 0x0007, 0x000E, 0x001C, 0x0038, 0x0070, 0x00E0, 0x01C0,
+    0x0380, 0x0700, 0x0E00, 0x1C00, 0x3800, 0x7000, 0x0E000, 0x0C001,
+    /* widely +- 45 deg */
+    0x8001, 0x4002, 0x2004, 0x1008, 0x0810, 0x0420, 0x0240, 0x0180,
+    0x0180, 0x0240, 0x0420, 0x0810, 0x1008, 0x2004, 0x4002, 0x8001,
+    /* widely spaced vertical */
+    0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
+    0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000, 0x8000,
+    /* widely spaced horizontal */
+    0xFFFF, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+    /* widely spaced horizontal/vert cross */
+    0xFFFF, 0x8080, 0x8080, 0x8080, 0x8080, 0x8080, 0x8080, 0x8080,
+    0xFFFF, 0x8080, 0x8080, 0x8080, 0x8080, 0x8080, 0x8080, 0x8080,
+};
+
+UWORD HOLLOW = 0;
+UWORD SOLID = 0xFFFF;
+/*
+ * dsf_udpat - Update pattern
+ */
+
+void dsf_udpat(Vwk * vwk)
+{
+    WORD *sp, *dp, i, count;
+
+    count = CONTRL[3];
+
+    if (count == 16)
+        vwk->multifill = 0;        /* Single Plane Pattern */
+    else if (count == (INQ_TAB[4] * 16))
+        vwk->multifill = 1;        /* Valid Multi-plane pattern */
+    else
+        return;             /* Invalid pattern, return */
+
+    sp = INTIN;
+    dp = &vwk->ud_patrn[0];
+    for (i = 0; i < count; i++)
+        *dp++ = *sp++;
+}
+
+
+
+/*
+ * vsf_interior - Set fill style
+ */
+
+void vsf_interior(Vwk * vwk)
+{
+    WORD fs;
+
+    CONTRL[4] = 1;
+    fs = *INTIN;
+    if ((fs > MX_FIL_STYLE) || (fs < 0))
+        fs = 0;
+    *INTOUT = vwk->fill_style = fs;
+    st_fl_ptr(vwk);
+}
+
+
+
+/* S_FILL_INDEX: */
+void vsf_style(Vwk * vwk)
+{
+    WORD fi;
+
+    CONTRL[4] = 1;
+    fi = *INTIN;
+
+    if (vwk->fill_style == 2) {
+        if ((fi > MX_FIL_PAT_INDEX) || (fi < 1))
+            fi = 1;
+    } else {
+        if ((fi > MX_FIL_HAT_INDEX) || (fi < 1))
+            fi = 1;
+    }
+    vwk->fill_index = (*INTOUT = fi) - 1;
+    st_fl_ptr(vwk);
+}
+
+
+
+/* S_FILL_COLOR: */
+void vsf_color(Vwk * vwk)
+{
+    WORD fc;
+
+    *(CONTRL + 4) = 1;
+    fc = *INTIN;
+    if ((fc >= DEV_TAB[13]) || (fc < 0))
+        fc = 1;
+
+    *INTOUT = fc;
+    vwk->fill_color = MAP_COL[fc];
+}
+
+
+
+/* ST_FILLPERIMETER: */
+void vsf_perimeter(Vwk * vwk)
+{
+    WORD *int_out;
+
+    int_out = INTOUT;
+
+    if (*INTIN == 0) {
+        *int_out = 0;
+        vwk->fill_per = FALSE;
+    } else {
+        *(int_out) = 1;
+        vwk->fill_per = TRUE;
+    }
+    CONTRL[4] = 1;
+}
+
+
+
+void dr_recfl(Vwk * vwk)
+{
+    WORD fi, *pts_in;
+
+    /* Perform arbitrary corner fix-ups and invoke rectangle fill routine */
+    fi = vwk->fill_color;
+    fg_bp[0] = (fi & 1);
+    fg_bp[1] = (fi & 2);
+    fg_bp[2] = (fi & 4);
+    fg_bp[3] = (fi & 8);
+
+    pts_in = PTSIN;
+    arb_corner(pts_in);
+    X1 = *pts_in++;
+    Y1 = *pts_in++;
+    X2 = *pts_in++;
+    Y2 = *pts_in;
+
+    rectfill();
+}                               /* End "dr_recfl". */
+
+
+
+/*
+ * v_cellarray - Draw a square of sqares (just color devices)
+ */
+void v_cellarray(Vwk * vwk)
+{
+    /* not implemented */
+}
+
+
+
+/*
+ * vq_cellarray -
+ */
+void vq_cellarray(Vwk * vwk)
+{
+    /* not implemented */
+}
+
+
+
+/*
+ * vql_attr - Inquire current fill area attributes
+ */
+
+void vqf_attr(Vwk * vwk)
+{
+    WORD *pointer;
+
+    pointer = INTOUT;
+    *pointer++ = vwk->fill_style;
+    *pointer++ = REV_MAP_COL[vwk->fill_color];
+    *pointer++ = vwk->fill_index + 1;
+    *pointer++ = WRT_MODE + 1;
+    *pointer = vwk->fill_per;
+
+    *(CONTRL + 4) = 5;
+}
+
+
+
+/*
+ * st_fl_ptr - set fill pattern?
+ */
+
+void st_fl_ptr(Vwk * vwk)
+{
+    WORD fi, pm;
+    WORD *pp = NULL;
+
+    fi = vwk->fill_index;
+    pm = 0;
+    switch (vwk->fill_style) {
+    case 0:
+        pp = &HOLLOW;
+        break;
+
+    case 1:
+        pp = &SOLID;
+        break;
+
+    case 2:
+        if (fi < 8) {
+            pm = DITHRMSK;
+            pp = &DITHER[fi * (pm + 1)];
+        } else {
+            pm = OEMMSKPAT;
+            pp = &OEMPAT[(fi - 8) * (pm + 1)];
+        }
+        break;
+    case 3:
+        if (fi < 6) {
+            pm = HAT_0_MSK;
+            pp = &HATCH0[fi * (pm + 1)];
+        } else {
+            pm = HAT_1_MSK;
+            pp = &HATCH1[(fi - 6) * (pm + 1)];
+        }
+        break;
+    case 4:
+        pm = 0x000f;
+        pp = &vwk->ud_patrn[0];
+        break;
+    }
+    vwk->patptr = pp;
+    vwk->patmsk = pm;
+}
+
+
+
+/*
+ * bub_sort - sorts an array of words
+ *
+ * This routine bubble-sorts an array of words into ascending order.
+ *
+ * input:
+ *     buf   - ptr to start of array.
+ *     count - number of words in array.
+ */
+
+inline void bub_sort (WORD * buf, WORD count)
+{
+    int i, j;
+
+    for (i = count-1; i > 0; i--) {
+        WORD * ptr = buf;	       	/* reset pointer to the array */
+        for (j = 0; j < i; j++) {
+            WORD val = *ptr++;   /* word */    /* get next value */
+            if ( val > *ptr ) {    /* yes - do nothing */
+                *(ptr-1) = *ptr;   /* word */    /* nope - swap them */
+                *ptr = val;   /* word */
+            }
+        }
+    }
+}
+
+
+
+/*
+ * clc_flit - draw a filled polygon
+ *
+ * (Sutherland and Hodgman Polygon Clipping Algorithm)
+ *
+ * For each non-horizontal scanline crossing poly, do:
+ *   - find intersection points of scan line with poly edges.
+ *   - Sort intersections left to right
+ *   - Draw pixels between each pair of points (x coords) on the scan line
+ */
+
+void clc_flit (Vwk * vwk)
+{
+    WORD fill_buffer[256];	/* must be 256 words or it will fail */
+    WORD * bufptr;            	/* point to array of x-values. */
+    WORD * xy;
+    int vectors;       		/* count of vectors. */
+    int intersections;		/* count of intersections */
+    int i;
+
+    /* Initialize the pointers and counters. */
+    intersections = 0;	/* reset counter */
+    bufptr = fill_buffer;
+    vectors = CONTRL[1];	/* d0 - fetch number of vectors. */
+    xy = PTSIN;   /* word */    /* point to array of vertices. */
+
+    /* find intersection points of scan line with poly edges. */
+    for (i = vectors - 1; i >= 0; i--) {
+        WORD x1, x2, y1, y2, dy;
+
+        x1 = *xy++;		/* fetch x-value of 1st endpoint. */
+        y1 = *xy++;		/* fetch y-value of 1st endpoint. */
+        x2 = *xy++;		/* fetch x-value of 2nd endpoint. */
+        y2 = *xy++;		/* fetch y-value of 2nd endpoint. */
+
+        /* if the current vector is horizontal, ignore it. */
+        dy = y2 - y1;
+        if ( dy ) {
+            LONG dy1, dy2;
+
+            /* fetch scan-line y. */
+            dy1 = Y1 - y1;   	/* d4 - delta y1. */
+            dy2 = Y1 - y2;    	/* d3 - delta y2. */
+
+            /*
+             * Determine whether the current vector intersects with the scan
+             * line we wish to draw.  This test is performed by computing the
+             * y-deltas of the two endpoints from the scan line.
+             * If both deltas have the same sign, then the line does
+             * not intersect and can be ignored.  The origin for this
+             * test is found in Newman and Sproull.
+             */
+            if ((dy1 < 0) != (dy2 < 0)) {
+                /* fill edge buffer with x-values */
+                int dx = x2 - x1;
+                if ( dx < 0 ) {
+                    *bufptr++ = dy2 * dx / dy + x2;
+                }
+                else {
+                    *bufptr++ = dy1 * dx / dy + x1;
+                }
+                intersections++;
+            }
+        }
+        /* one vector back - let the last ending point be our next start */
+        xy -= 2;
+    }
+
+    /*
+     * All of the points of intersection have now been found.  If there
+     * were none then there is nothing more to do.  Otherwise, sort the
+     * list of points of intersection in ascending order.
+     * (The list contains only the x-coordinates of the points.)
+     */
+
+    /* anything to do? */
+    if (intersections == 0)
+        return;
+
+    /* bubblesort the intersections, if it makes sense */
+    if ( intersections > 1 )
+        bub_sort(fill_buffer, intersections);
+
+    if (CLIP) {
+        /* Clipping is in force.  Once the endpoints of the line segment have */
+        /* been adjusted for the border, clip them to the left and right sides */
+        /* of the clipping rectangle. */
+
+        /* The x-coordinates of each line segment are adjusted so that the */
+        /* border of the figure will not be drawn with the fill pattern. */
+
+        /* loop through buffered points */
+        WORD * ptr = fill_buffer;
+        for (i = intersections / 2 - 1; i >= 0; i--) {
+            WORD x1, x2;
+
+            /* grab a pair of adjusted intersections */
+            x1 = *ptr++ + 1;
+            x2 = *ptr++ - 1;
+
+            /* do nothing, if starting point greater than ending point */
+            if ( x1 > x2 )
+                continue;
+
+            if ( x1 < XMN_CLIP  ) {
+                if ( x2 < XMN_CLIP )
+                    continue;         	/* entire segment clipped left */
+                x1 = XMN_CLIP;		/* clip left end of line */
+            }
+
+            if ( x2 > XMX_CLIP  ) {
+                if ( x1 > XMX_CLIP )
+                    continue;         	/* entire segment clippped */
+                x2 = XMX_CLIP;		/* clip right end of line */
+            }
+            horzline(x1, x2, Y1);
+        }
+    }
+    else {
+        /* Clipping is not in force.  Draw from point to point. */
+
+        /* This code has been modified from the version in the screen driver. */
+        /* The x-coordinates of each line segment are adjusted so that the */
+        /* border of the figure will not be drawn with the fill pattern.  If */
+        /* the starting point is greater than the ending point then nothing is */
+        /* done. */
+
+        /* loop through buffered points */
+        WORD * ptr = fill_buffer;
+        for (i = intersections / 2 - 1; i >= 0; i--) {
+            WORD x1, x2;
+
+            /* grab a pair of adjusted endpoints */
+            x1 = *ptr++ + 1 ;   /* word */
+            x2 = *ptr++ - 1 ;   /* word */
+
+            /* If starting point greater than ending point, nothing is done. */            /* is start still to left of end? */
+            if ( x1 <= x2 ) {
+                horzline(x1, x2, Y1);    /* draw the line segment */
+            }
+        }
+    }
+}
+/*
+ * plygn - draw a filled polygone
+ */
+
+void polygon(Vwk * vwk)
+{
+    WORD *pointer, i, k;
+    WORD fill_maxy, fill_miny;
+
+    i = vwk->fill_color;
+    FG_BP_1 = (i & 1);
+    FG_BP_2 = (i & 2);
+    FG_BP_3 = (i & 4);
+    FG_BP_4 = (i & 8);
+    LSTLIN = FALSE;
+
+    pointer = PTSIN;
+    pointer++;
+
+    fill_maxy = fill_miny = *pointer++;
+    pointer++;
+
+    for (i = (*(CONTRL + 1) - 1); i > 0; i--) {
+        k = *pointer++;
+        pointer++;
+        if (k < fill_miny)
+            fill_miny = k;
+        else
+            if (k > fill_maxy)
+                fill_maxy = k;
+    }
+    if (CLIP) {
+        if (fill_miny < YMN_CLIP) {
+            if (fill_maxy >= YMN_CLIP) {        /* plygon starts before clip */
+                fill_miny = YMN_CLIP - 1;       /* plygon partial overlap */
+                if (fill_miny < 1)
+                    fill_miny = 1;
+            } else
+                return;         /* plygon entirely before clip */
+        }
+        if (fill_maxy > YMX_CLIP) {
+            if (fill_miny <= YMX_CLIP)  /* plygon ends after clip */
+                fill_maxy = YMX_CLIP;   /* plygon partial overlap */
+            else
+                return;         /* plygon entirely after clip */
+        }
+    }
+    k = *(CONTRL + 1) * 2;
+    pointer = PTSIN;
+    *(pointer + k) = *pointer;
+    *(pointer + k + 1) = *(pointer + 1);
+    for (Y1 = fill_maxy; Y1 > fill_miny; Y1--) {
+        clc_flit(vwk);
+    }
+    if (vwk->fill_per == TRUE) {
+        LN_MASK = 0xffff;
+        (*(CONTRL + 1))++;
+        polyline(vwk);
+    }
+}
+
+
+
+/*
+ * v_fillarea . Fill an area
+ */
+
+void v_fillarea(Vwk * vwk)
+{
+    polygon(vwk);
+}
+
+
+
+/*
+ * clipbox - Just clips and copies the inputs for use by "rectfill"
+ *
+ * input:
+ *     X1       = x coord of upper left corner.
+ *     Y1       = y coord of upper left corner.
+ *     X2       = x coord of lower right corner.
+ *     Y2       = y coord of lower right corner.
+ *     CLIP     = clipping flag. (0 => no clipping.)
+ *     XMN_CLIP = x clipping minimum.
+ *     XMX_CLIP = x clipping maximum.
+ *     YMN_CLIP = y clipping minimum.
+ *     YMX_CLIP = y clipping maximum.
+ *
+ * output:
+ *     X1 = x coord of upper left corner.
+ *     Y1 = y coord of upper left corner.
+ *     X2 = x coord of lower right corner.
+ *     Y2 = y coord of lower right corner.
+ */
+
+static
+WORD clipbox()
+{
+    WORD x1, y1, x2, y2;
+
+    x1 = X1;
+    y1 = Y1;
+    x2 = X2;
+    y2 = Y2;
+
+    /* clip x coordinates */
+    if ( x1 < XMN_CLIP) {
+        if (x2 < XMN_CLIP) {
+            return(FALSE);             /* clipped box is null */
+        }
+        X1 = XMN_CLIP;
+    }
+    if ( x2 > XMX_CLIP) {
+        if (x1 > XMX_CLIP) {
+            return(FALSE);             /* clipped box is null */
+        }
+        X2 = XMX_CLIP;
+    }
+    /* clip y coordinates */
+    if ( y1 < YMN_CLIP) {
+        if (y2 < YMN_CLIP) {
+            return(FALSE);             /* clipped box is null */
+        }
+        Y1 = YMN_CLIP;
+    }
+    if ( y2 > YMX_CLIP) {
+        if (y1 > YMX_CLIP) {
+            return(FALSE);             /* clipped box is null */
+        }
+        Y2 = YMX_CLIP;
+    }
+    return (TRUE);
+}
+
+
+
+/*
+ * rectfill - fills a rectangular area of the screen with a pattern
+ *            using a "bitblt" algorithm similar to "_HABLINE"'s.
+ *
+ * input:
+ *     X1       = x coord of upper left corner.
+ *     Y1       = y coord of upper left corner.
+ *     X2       = x coord of lower right corner.
+ *     Y2       = y coord of lower right corner.
+ *     CLIP     = clipping flag. (0 => no clipping.
+ *     XMN_CLIP = x clipping minimum.
+ *     XMX_CLIP = x clipping maximum.
+ *     YMN_CLIP = y clipping minimum.
+ *     YMX_CLIP = y clipping maximum.
+ *
+ * output:
+ *     X1 = x coord of upper left corner.
+ *     Y1 = y coord of upper left corner.
+ *     X2 = x coord of lower right corner.
+ *     Y2 = y coord of lower right corner.
+ */
+
+void hzline_rep(UWORD *, int, int, UWORD, UWORD, WORD);
+void hzline_or(UWORD *, int, int, UWORD, UWORD, WORD);
+void hzline_xor(UWORD *, int, int, UWORD, UWORD, WORD);
+void hzline_nor(UWORD *, int, int, UWORD, UWORD, WORD);
+
+void rectfill ()
+{
+    WORD x1, y1, x2, y2;
+    WORD y;
+    UWORD leftmask;
+    UWORD rightmask;
+    void *addr;
+    int dx, dy;
+    int yinc;
+    int leftpart;
+    int rightpart;
+
+    if (CLIP)
+        if (!clipbox())
+            return;
+
+    /* sort x coordinates */
+    x1 = X1;
+    x2 = X2;
+    if (x2 < x1) {
+       x1 = X2;
+       x2 = X1;
+    }
+    dx = x2 - x1;             /* width of line */
+
+    /* sort y coordinates */
+    y1 = Y1;
+    y2 = Y2;
+    if (y2 < y1) {
+        y1 = Y2;
+        y2 = Y1;
+    }
+    dy = y2 - y1;             /* width of line */
+
+    /* precalculate masks for left and right fringe */
+    leftpart = x1&0xf;
+    rightpart = (x1+dx)&0xf;
+    leftmask = ~(0xffff>>leftpart);     /* origin for not left fringe lookup */
+    rightmask = 0x7fff>>rightpart;      /* origin for right fringe lookup */
+
+    /* init adress counter */
+    addr = v_bas_ad;                    /* start of screen */
+    addr += (x1&0xfff0)>>shft_off;      /* add x coordinate part of addr */
+    addr += (LONG)y1 * v_lin_wr;                /* add y coordinate part of addr */
+    yinc = v_lin_wr;                    /* y coordinate increase */
+
+    switch (WRT_MODE) {
+    case 3:  /* nor */
+        for (y = y1; y <= y2; y++ ) {
+            hzline_nor(addr, dx, leftpart, rightmask, leftmask, y&patmsk);
+            addr += yinc;           /* next scanline */
+        }
+        break;
+    case 2:  /* xor */
+        for (y = y1; y <= y2; y++ ) {
+            hzline_xor(addr, dx, leftpart, rightmask, leftmask, y&patmsk);
+            addr += yinc;           /* next scanline */
+        }
+        break;
+    case 1:  /* or */
+        for (y = y1; y <= y2; y++ ) {
+            hzline_or(addr, dx, leftpart, rightmask, leftmask, y&patmsk);
+            addr += yinc;           /* next scanline */
+        }
+        break;
+    default: /* rep */
+        for (y = y1; y <= y2; y++ ) {
+            hzline_rep(addr, dx, leftpart, rightmask, leftmask, y&patmsk);
+            addr += yinc;           /* next scanline */
+        }
+    }
+}
+
+
+
+/*
+ * get_color - Get color value of requested pixel.
+ */
+static inline UWORD
+get_color (UWORD mask, UWORD * addr)
+{
+    UWORD color = 0;			/* clear the pixel value accumulator. */
+    WORD plane = v_planes;
+
+    while(1) {
+        /* test the bit. */
+        if ( *--addr & mask )
+            color |= 1;		/* if 1, set color accumulator bit. */
+
+        if ( --plane == 0 )
+            break;
+
+        color <<= 1;		/* shift accumulator for next bit_plane. */
+    }
+
+    return color; 	/* this is the color we are searching for */
+}
+
+/*
+ * pixelread - gets a pixel's color index value
+ *
+ * input:
+ *     PTSIN(0) = x coordinate.
+ *     PTSIN(1) = y coordinate.
+ * output:
+ *     pixel value
+ */
+
+static UWORD
+pixelread(WORD x, WORD y)
+{
+    UWORD *addr;
+    UWORD mask;
+
+    /* convert x,y to start adress and bit mask */
+    addr = (UWORD*)(v_bas_ad + (LONG)y * v_lin_wr + ((x&0xfff0)>>shft_off));
+    addr += v_planes;           	/* start at highest-order bit_plane */
+    mask = 0x8000 >> (x&0xf);		/* initial bit position in WORD */
+
+    return get_color(mask, addr);       /* return the composed color value */
+}
+
+static inline UWORD
+search_to_right (WORD x, UWORD mask, const UWORD search_col, UWORD * addr)
+{
+    /* is x coord < x resolution ? */
+    while( x++ < XMX_CLIP ) {
+        UWORD color;
+
+        /* need to jump over interleaved bit_plane? */
+        mask = mask >> 1 | mask << 15;	/* roll right */
+        if ( mask & 0x8000 )
+            addr += v_planes;
+
+        /* search, while pixel color != search color */
+        color = get_color(mask, addr);
+        if ( search_col != color ) {
+            break;
+        }
+
+    }
+
+    return x - 1;	/* output x coord -1 to endxright. */
+}
+
+static inline UWORD
+search_to_left (WORD x, UWORD mask, const UWORD search_col, UWORD * addr)
+{
+    /* Now, search to the left. */
+    while (x-- > XMN_CLIP) {
+        UWORD color;
+
+        /* need to jump over interleaved bit_plane? */
+        mask = mask >> 15 | mask << 1;  /* roll left */
+        if ( mask & 0x0001 )
+            addr -= v_planes;		
+
+        /* search, while pixel color != search color */
+        color = get_color(mask, addr);
+        if ( search_col != color )
+            break;
+
+    }
+
+    return x + 1;	/* output x coord + 1 to endxleft. */
+}
+
+/*
+ * end_pts - find the endpoints of a section of solid color
+ *
+ *   (for the _seed_fill routine.)
+ *
+ * input:  4(sp) = xstart.
+ *         6(sp) = ystart.
+ *         8(sp) = ptr to endxleft.
+ *         C(sp) = ptr to endxright.
+ *
+ * output: endxleft  := left endpoint of solid color.
+ *         endxright := right endpoint of solid color.
+ *         d0        := success flag.
+ *             0 => no endpoints or xstart on edge.
+ *             1 => endpoints found.
+ */
+
+WORD
+end_pts(WORD x, WORD y, WORD *xleftout, WORD *xrightout)
+{
+    UWORD color;
+    UWORD * addr;
+    UWORD mask;
+
+    /* see, if we are in the y clipping range */
+    if ( y < YMN_CLIP || y > YMX_CLIP)
+        return 0;
+
+    /* convert x,y to start adress and bit mask */
+    addr = (UWORD*)(v_bas_ad + (LONG)y * v_lin_wr + ((x&0xfff0)>>shft_off));
+    addr += v_planes;           	/* start at highest-order bit_plane */
+    mask = 0x8000 >> (x & 0x000f);   /* fetch the pixel mask. */
+
+    /* get search color and the left and right end */
+    color = get_color (mask, addr);
+    *xrightout = search_to_right (x, mask, color, addr);
+    *xleftout = search_to_left (x, mask, color, addr);
+
+    /* see, if the whole found segment is of search color? */
+    if ( color != search_color ) {
+        return seed_type ^ 1;	/* return segment not of search color */
+    }
+    return seed_type ^ 0;	/* return segment is of search color */
+}
+
+/* Prototypes local to this module */
+WORD get_seed(WORD xin, WORD yin, WORD *xleftout, WORD *xrightout);
+
+
+void
+d_contourfill(Vwk * vwk)
+{
+    REG WORD fc;
+    WORD newxleft;           /* ends of line at oldy +       */
+    WORD newxright;          /* the current direction    */
+    WORD oldxleft;           /* left end of line at oldy     */
+    WORD oldxright;          /* right end                    */
+    WORD oldy;               /* the previous scan line       */
+    WORD xleft;              /* temporary endpoints          */
+    WORD xright;             /* */
+    WORD direction;          /* is next scan line up or down */
+    BOOL notdone;            /* does seedpoint==search_color */
+    BOOL gotseed;            /* a seed was put in the Q      */
+
+    xleft = PTSIN[0];
+    oldy = PTSIN[1];
+
+    if (xleft < XMN_CLIP || xleft > XMX_CLIP ||
+        oldy < YMN_CLIP  || oldy > YMX_CLIP)
+        return;
+
+    search_color = INTIN[0];
+
+    /* Range check the color and convert the index to a pixel value */
+    if (search_color >= DEV_TAB[13])
+        return;
+
+    if (search_color < 0) {
+        search_color = pixelread(xleft,oldy);
+        seed_type = 1;
+    } else {
+        const WORD plane_mask[] = { 1, 3, 7, 15 };
+
+        /*
+         * We mandate that white is all bits on.  Since this yields 15
+         * in rom, we must limit it to how many planes there really are.
+         * Anding with the mask is only necessary when the driver supports
+         * move than one resolution.
+         */
+        search_color =
+            (MAP_COL[search_color] & plane_mask[INQ_TAB[4] - 1]);
+        seed_type = 0;
+    }
+
+    /* Initialize the line drawing parameters */
+    fc = vwk->fill_color;
+    FG_BP_1 = (fc & 1);
+    FG_BP_2 = (fc & 2);
+    FG_BP_3 = (fc & 4);
+    FG_BP_4 = (fc & 8);
+
+    LSTLIN = FALSE;
+
+    notdone = end_pts(xleft, oldy, &oldxleft, &oldxright);
+
+    qptr = qbottom = 0;
+    qtop = 3;                   /* one above highest seed point */
+    queue[0] = (oldy | DOWN_FLAG);
+    queue[1] = oldxleft;
+    queue[2] = oldxright;           /* stuff a point going down into the Q */
+
+    if (notdone) {
+        /* couldn't get point out of Q or draw it */
+        while (1) {
+            direction = (oldy & DOWN_FLAG) ? 1 : -1;
+            gotseed = get_seed(oldxleft, (oldy + direction),
+                               &newxleft, &newxright);
+
+            if ((newxleft < (oldxleft - 1)) && gotseed) {
+                xleft = oldxleft;
+                while (xleft > newxleft)
+                    get_seed(--xleft, oldy ^ DOWN_FLAG, &xleft, &xright);
+            }
+            while (newxright < oldxright)
+                gotseed = get_seed(++newxright, oldy + direction, &xleft,
+                                   &newxright);
+            if ((newxright > (oldxright + 1)) && gotseed) {
+                xright = oldxright;
+                while (xright < newxright)
+                    get_seed(++xright, oldy ^ DOWN_FLAG, &xleft, &xright);
+            }
+
+            /* Eventually jump out here */
+            if (qtop == qbottom)
+                break;
+
+            while (queue[qptr] == EMPTY) {
+                qptr += 3;
+                if (qptr == qtop)
+                    qptr = qbottom;
+            }
+
+            oldy = queue[qptr];
+            queue[qptr++] = EMPTY;
+            oldxleft = queue[qptr++];
+            oldxright = queue[qptr++];
+            if (qptr == qtop)
+                crunch_queue();
+
+            horzline(oldxleft, oldxright, ABS(oldy));
+        }
+    }
+}                               /* end of fill() */
+
+/*
+ * crunch_queue - move qtop down to remove unused seeds
+ */
+void
+crunch_queue()
+{
+    while ((queue[qtop - 3] == EMPTY) && (qtop > qbottom))
+        qtop -= 3;
+    if (qptr >= qtop)
+        qptr = qbottom;
+}
+
+/*
+ * get_seed - put seeds into Q, if (xin,yin) is not of search_color
+ */
+WORD
+get_seed(WORD xin, WORD yin, WORD *xleftout, WORD *xrightout)
+{
+    if (end_pts(xin, ABS(yin), xleftout, xrightout)) {
+        /* false if of search_color */
+        for (qtmp = qbottom, qhole = EMPTY; qtmp < qtop; qtmp += 3) {
+            /* see, if we ran into another seed */
+            if ( ((queue[qtmp] ^ DOWN_FLAG) == yin) && (queue[qtmp] != EMPTY) &&
+                (queue[qtmp + 1] == *xleftout) )
+
+            {
+                /* we ran into another seed so remove it and fill the line */
+                horzline(*xleftout, *xrightout, ABS(yin));
+                queue[qtmp] = EMPTY;
+                if ((qtmp + 3) == qtop)
+                    crunch_queue();
+                return 0;
+            }
+            if ((queue[qtmp] == EMPTY) && (qhole == EMPTY))
+                qhole = qtmp;
+        }
+
+        if (qhole == EMPTY) {
+            if ((qtop += 3) > QMAX) {
+                qtmp = qbottom;
+                qtop -= 3;
+            }
+        } else
+            qtmp = qhole;
+
+        queue[qtmp++] = yin;	/* put the y and endpoints in the Q */
+        queue[qtmp++] = *xleftout;
+        queue[qtmp] = *xrightout;
+        return 1;             /* we put a seed in the Q */
+    }
+
+    return 0; 		/* we didnt put a seed in the Q */
+}
+
+
+
+void
+v_get_pixel(Vwk * vwk)
+{
+    WORD pel;
+    WORD *int_out;
+    const WORD x = PTSIN[0];       /* fetch x coord. */
+    const WORD y = PTSIN[1];       /* fetch y coord. */
+
+    /* Get the requested pixel */
+    pel = (WORD)pixelread(x,y);
+
+    int_out = INTOUT;
+    *int_out++ = pel;
+
+    /* Correct the pel value for the number of planes so it is a standard
+       value */
+
+    if ((INQ_TAB[4] == 1 && pel) || (INQ_TAB[4] == 2 && pel == 3))
+        pel = 15;
+
+    *int_out = REV_MAP_COL[pel];
+    CONTRL[4] = 2;
+}
+
+
+
+/*
+ * get_pix - gets a pixel (just for linea!)
+ *
+ * input:
+ *     PTSIN(0) = x coordinate.
+ *     PTSIN(1) = y coordinate.
+ * output:
+ *     pixel value
+ */
+
+WORD
+get_pix()
+{
+    const WORD x = PTSIN[0];
+    const WORD y = PTSIN[1];
+
+    return pixelread(x,y);	/* return the composed color value */
+}
+
+/*
+ * put_pix - plot a pixel (just for linea!)
+ *
+ * input:
+ *     INTIN(0) = pixel value.
+ *     PTSIN(0) = x coordinate.
+ *     PTSIN(1) = y coordinate.
+ */
+
+void
+put_pix()
+{
+    UWORD *addr;
+    WORD x,y;
+    UWORD color;
+    UWORD mask;
+    int plane;
+
+    x = PTSIN[0];       /* fetch x coord. */
+    y = PTSIN[1];       /* fetch y coord. */
+    color = INTIN[0];   /* device dependent encoded color bits */
+
+    /* convert x,y to start adress and bit mask */
+    addr = (UWORD*)(v_bas_ad + (LONG)y * v_lin_wr + ((x&0xfff0)>>shft_off));
+    mask = 0x8000 >> (x&0xf);            /* initial bit position in WORD */
+
+    for (plane = v_planes-1; plane >= 0; plane-- ) {
+        color = color >> 1| color << 15;        /* rotate color bits */
+        if (color&0x8000)
+            *addr++ |= mask;
+        else
+            *addr++ &= ~mask;
+    }
+}

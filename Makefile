@@ -144,10 +144,11 @@ util_ssrc = memset.S memmove.S nlsasm.S setjmp.S miscasm.S stringasm.S
 # source code in vdi/
 #
 
-vdi_csrc = vdimain.c vdiinput.c monobj.c monout.c text.c seedfill.c \
-           bezier.c vdiesc.c blit.c
-vdi_ssrc = entry.S vdimouse.S textblt.S bitblt.S bltfrag.S 
-           # esclisa.S tranfm.S copyrfm.S gsxasm2.S gsxasm1.S 
+vdi_csrc = vdi_main.c vdi_control.c vdi_esc.c vdi_fill.c vdi_gdp.c \
+           vdi_line.c vdi_marker.c vdi_misc.c vdi_mouse.c vdi_raster.c \
+           vdi_input.c vdi_text.c
+vdi_ssrc = vdi_asm.S vdi_blit.S vdi_tblit.S
+
 
 #
 # source code in aes/

@@ -1,5 +1,5 @@
 /*
- * blit.c - Blitting routines
+ * vdi_raster.c - Blitting routines
  *
  * Copyright 2003 The EmuTOS development team
  * Copyright 2002 Joachim Hoenig (blitter)
@@ -11,14 +11,15 @@
 
 
 #include "portab.h"
-#include "vdidef.h"
+#include "vdi_defs.h"
 #include "lineavars.h"
-#include "gsxextrn.h"
 #include "tosvars.h"
-#include "mouse.h"
+//#include "mouse.h"
+
+
+
 
 #define DBG_BLIT 1      // see, what happens (a bit)
-#define ASM_CPYFM 0     // use cpy_fm routine in assembler
 #define ASM_BLIT 1  	// use bit_blt routine in assembler
 
 #if DBG_BLIT
@@ -116,7 +117,7 @@ struct blit_frame info;     /* holds some internal info for bit_blt */
  * The major difference is, that in the device independant format the planes
  * are consecutive, while on the screen they are interleaved.
  */
-void vr_trnfm()
+void vr_trnfm(Vwk * vwk)
 {
     MFDB *src_mfdb, *dst_mfdb;
     WORD *src;
@@ -669,7 +670,6 @@ void bit_blt ()
 #endif   //ASM_BLIT
 
 
-#if !ASM_CPYFM
 /*
  * setup_pattern - if bit 5 of mode is set, use pattern with blit
  */
@@ -850,7 +850,6 @@ static BOOL setup_info (struct blit_frame * info)
     /* only 4,2, and 1 planes are valid (destination) */
     return info->plane_ct & ~0x0007;
 }
-#endif
 
 /*
  * vdi_vro_cpyfm - copy raster opaque
@@ -858,19 +857,12 @@ static BOOL setup_info (struct blit_frame * info)
  * This function copies a rectangular raster area from source form to
  * destination form using the logic operation specified by the application.
  */
-void vdi_vro_cpyfm()
+void vdi_vro_cpyfm(Vwk * vwk)
 {
-#if ASM_CPYFM
-    arb_corner(PTSIN, ULLR);
-    arb_corner((PTSIN + 4), ULLR);
-    /* this needs copyrfm.S in Makefile */
-    COPYTRAN = 0;
-    COPY_RFM();
-#else
     WORD mode;
 
-    arb_corner(PTSIN, ULLR);
-    arb_corner((PTSIN + 4), ULLR);
+    arb_corner(PTSIN);
+    arb_corner(PTSIN + 4);
     mode = INTIN[0];
 
     /* if mode is made up of more than the first 5 bits */
@@ -898,7 +890,6 @@ void vdi_vro_cpyfm()
 
     /* call assembly blit routine or C-implementation */
     bit_blt();
-#endif
 }
 
 
@@ -911,22 +902,14 @@ void vdi_vro_cpyfm()
  * are specified in the INTIN array.
  */
 
-void vdi_vrt_cpyfm()
+void vdi_vrt_cpyfm(Vwk * vwk)
 {
-#if ASM_CPYFM
-    /* transparent blit */
-    arb_corner(PTSIN, ULLR);
-    arb_corner((PTSIN + 4), ULLR);
-    /* this needs copyrfm.S in Makefile */
-    COPYTRAN = 0xFFFF;
-    COPY_RFM();
-#else
     WORD mode;
     WORD fg_col, bg_col;
 
     /* transparent blit */
-    arb_corner(PTSIN, ULLR);
-    arb_corner((PTSIN + 4), ULLR);
+    arb_corner(PTSIN);
+    arb_corner(PTSIN + 4);
     mode = INTIN[0];
 
     /* if mode is made up of more than the first 5 bits */
@@ -1006,9 +989,4 @@ void vdi_vrt_cpyfm()
 
     /* call assembly blit routine or C-implementation */
     bit_blt();
-
-#endif
 }
-
-
-

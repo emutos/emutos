@@ -11,7 +11,7 @@
 
 
 
-#include "vdiconf.h"
+#include "vdi_asm.h"
 
 /////////////////////////////////////////////////////////////////////////
 //                                                                      //
@@ -174,16 +174,16 @@
 //  Hardware dependent variables referenced.                    //
 /////////////////////////////////////////////////////////
 
-        .globl  _v_bas_ad       //base address of graphic plane
-        .globl  _v_lin_wr       //size of a scan line in bytes
-        .globl  _v_planes       //number of graphic planes
+        .xdef  _v_bas_ad       //base address of graphic plane
+        .xdef  _v_lin_wr       //size of a scan line in bytes
+        .xdef  _v_planes       //number of graphic planes
 
 /////////////////////////////////////////////////////////
 //  Character buffer variables referenced.                      //
 /////////////////////////////////////////////////////////
 
-        .globl  _deftxbuf       //base of scratch buffer
-        .globl  _scrtsiz
+        .xdef  _deftxbuf       //base of scratch buffer
+        .xdef  _scrtsiz
 
         .page
 /////////////////////////////////////////////////////////
@@ -436,104 +436,6 @@ _scrtsiz:
 #define ramlen    -126
 
         .text
-        .page
-
-
-
-/////////////////////////////////////////////////////////
-//  calculate DDA                                               //
-//                                                              //
-//  entry:                                                      //
-//     4(sp) = actual size                                      //
-//     6(sp) = requested size                                   //
-//  exit:                                                       //
-//     d0    = DDA_INC                                          //
-/////////////////////////////////////////////////////////
-#if 1   // MAD: Now in text.c
-_CLC_DDA:
-        lea.l   _T_SCLSTS,a0             //get address of text scaling flag
-        move.w  6(sp),d0                //get requested size 
-        move.w  4(sp),d1                //get actual size    
-        cmp.w   d1,d0                   //if actual =< requested
-        ble.b   small_DDA               //  then scale down
-//
-        move.w  #1,(a0)                 //set enlarge indicator
-        sub.w   d1,d0
-        cmp.w   d1,d0                   //larger than 2x?
-        blt.b   calc_DDA                //for less than 2x
-big_DDA:
-        moveq.l #-1,d0                  //put 0xFFFF in d0 (max value, 2x)
-        rts
-//
-small_DDA:
-        clr.w   (a0)                    //clear enlarge indicator (scale down)
-        tst.w   d0                      //check requested size
-        bgt.b   calc_DDA                //br if non-zero
-        moveq.l #1,d0                   //if 0 then make it 1 (minimum value)
-calc_DDA:
-        swap    d0                      //request size to high word(bits 31-16)
-        clr.w   d0                      //zero out low word(bits 15-0)
-        divu    d1,d0                   //requested/actual: quotient = bits 15-0
-//                                      //remainder = bits 31-16
-        rts                             //return to 'C' calling procedure
-
-#endif
-
-
-
-        .page
-#if 0   //MAD: now in text.c:act_siz
-////
-//  Actual sizer routine
-//
-//  entry:
-//    4(sp) = size to scale (DELY)
-//  exit:
-//    d0    = actual size
-////
-_act_siz:
-        move.w  4(sp),d1                //get parameter to be scaled 
-        movem.w d2-d3,-(sp)             //save c regs
-        move.w  #32767,d2               //d2 = accumulator = 1/2      
-        move.w  _DDA_INC,d3             //d3 = dda_inc               
-        cmpi.w  #0xFFFF,d3               //DDA at max. value of 2x?
-        beq.b   size_double             //for DDA with 2x value 
-        moveq.l #0,d0                   //d0 = new count
-        subq.w  #1,d1                   //adjust count for loop 
-        bmi.b   act_exit                //if it was 0, just exit
-        btst.b  #0,_T_SCLSTS+1           //check for shrink
-        beq.b   size_small_loop         //br if so
-size_loop:
-        add.w   d3,d2                   //else, enlarge
-        bcc.b   size_time1
-        addq.w  #1,d0
-size_time1:
-        addq.w  #1,d0
-        dbra    d1,size_loop
-        bra.b   act_exit
-//
-size_double:
-        move.w  d1,d0
-        lsl.w   #1,d0                   //d0 = size * 2
-        bra.b   act_exit
-//
-size_small_loop:
-        add.w   d3,d2
-        bcc.b   sz_sm_1
-        addq.w  #1,d0
-sz_sm_1:
-        dbra    d1,size_small_loop
-//
-        tst.w   d0                      //if d0 = 0, then make = 1
-        bgt.b   act_exit
-        moveq.l #1,d0
-act_exit:
-        movem.w (sp)+,d2-d3
-        rts
-#endif
-
-
-        .page
 /////////////////////////////////////////////////////////////////////////
 //   Global TEXTBLT entry point                                         //
 /////////////////////////////////////////////////////////////////////////

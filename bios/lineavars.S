@@ -204,7 +204,7 @@ _v_bytes_lin:   .ds.w   1       // -2   byte per screen line
 
                 .globl  line_a_vars
 
-                .globl  local_pb
+                .globl  _local_pb  // local parameter block for VDI
                 .globl  _CONTRL
                 .globl  _INTIN
                 .globl  _PTSIN
@@ -270,7 +270,7 @@ line_a_vars:                            // This is the base line-a pointer
 _v_planes:      ds.w    1               // +0   number of video planes.
 _v_lin_wr:      ds.w    1               // +2   number of bytes/video line.
 
-local_pb:
+_local_pb:
 _CONTRL:        ds.l    1               // +4   ptr to the CONTRL array.
 _INTIN:         ds.l    1               // +8   ptr to the INTIN array.
 _PTSIN:         ds.l    1               // +12  ptr to the PTSIN array.

@@ -91,4 +91,18 @@ extern void     (*user_but)(void);      // user button vector
 extern void     (*user_cur)(void);      // user cursor vector
 extern void     (*user_mot)(void);      // user motion vector
 
+/* Mouse specific externals */
+extern WORD GCURX;              // mouse X position
+extern WORD GCURY;              // mouse Y position
+extern WORD HIDE_CNT;           // Number of levels the mouse is hidden
+extern WORD MOUSE_BT;           // mouse button state
+
+/* Mouse related variables */
+extern WORD     newx;           // new mouse x&y position
+extern WORD     newy;           // new mouse x&y position
+extern BYTE     draw_flag;      // non-zero means draw mouse form on vblank
+extern BYTE     mouse_flag;     // non-zero, if mouse ints disabled
+extern BYTE     cur_ms_stat;    /* current mouse status */
+
+
 #endif /* LINEAVARS_H */

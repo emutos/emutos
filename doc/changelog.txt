@@ -1634,3 +1634,11 @@ Start... early ages
 
 2004-07-25
 - vdi/monout.c: implemented clc_flit in C, no more gsxasm1.S (MAD)
+- vdi/*.S:      removed files, that are no longer needed:
+                copyrfm.S gsxasm1.S gsxasm2.S esclisa.S tranfm.S (MAD)
+2004-07-27
+- vdi/text.c: fixed the clc_dda function (MAD)
+
+2004-07-31
+- vdi/*: pass pointer to vwk to all VDI functions (MAD)
+- vdi/*: refactored/renamed all VDI files (MAD)

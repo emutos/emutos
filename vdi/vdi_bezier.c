@@ -16,6 +16,9 @@
 
 /*
  *   $Log$
+ *   Revision 1.3  2002/04/28 19:56:03  mdoering
+ *   CLC_DDA now in C in text.c:clc_dda
+ *
  *   Revision 1.2  2002/04/27 08:48:05  lvl
  *   make cvsready
  *

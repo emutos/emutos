@@ -9,8 +9,8 @@
 
 
 
-#include "vdiconf.h"
-#include "gsxextrn.h"
+#include "portab.h"
+#include "vdi_defs.h"
 #include "asm.h"
 
 
@@ -30,7 +30,7 @@
  * escfn0 - Don't know, what it does...
  */
 
-void escfn0()
+void escfn0(Vwk * vwk)
 {
 }
 
@@ -45,7 +45,7 @@ void escfn0()
  *   INTOUT[1] = maximum character cell column
  */
 
-void escfn1()
+void escfn1(Vwk * vwk)
 {
     CONTRL[4] = 2;              // 2 integers are returned
     INTOUT[0] = 25;             // write max row number to array
@@ -58,10 +58,10 @@ void escfn1()
  * escfn2 - exit the alpha mode and enter the graphics mode.
  */
 
-void escfn2()
+void escfn2(Vwk * vwk)
 {
     trap1(wntstr, "\033f\033E");   // hide alpha cursor
-    v_clrwk();
+    v_clrwk(vwk);
 }
 
 
@@ -69,9 +69,9 @@ void escfn2()
 /*
  * escfn3 - enter the alpha mode and exit the graphics mode.
  */
-void escfn3()
+void escfn3(Vwk * vwk)
 {
-    v_clrwk();
+    v_clrwk(vwk);
     trap1(wntstr, "\033E\033e");   // show alpha cursor
 }
 
@@ -81,7 +81,7 @@ void escfn3()
  * escfn4 - moves the alpha cursor up one line.  
  */
 
-void escfn4()
+void escfn4(Vwk * vwk)
 {
     trap1(wntstr, "\033A");   
 }
@@ -92,7 +92,7 @@ void escfn4()
  * escfn5 - moves the alpha cursor down one line.
  */
 
-void escfn5()
+void escfn5(Vwk * vwk)
 {
     trap1(wntstr, "\033B");
 }
@@ -103,7 +103,7 @@ void escfn5()
  * escfn6 - moves the alpha cursor right one column.
  */
 
-void escfn6()
+void escfn6(Vwk * vwk)
 {
     trap1(wntstr, "\033C");
 }
@@ -114,7 +114,7 @@ void escfn6()
  * escfn7 - moves the alpha cursor left one column.
  */
 
-void escfn7()
+void escfn7(Vwk * vwk)
 {
     trap1(wntstr, "\033D");
 }
@@ -125,7 +125,7 @@ void escfn7()
  * escfn8 - moves the alpha cursor home.
  */
 
-void escfn8()
+void escfn8(Vwk * vwk)
 {
     trap1(wntstr, "\033H");
 }
@@ -136,7 +136,7 @@ void escfn8()
  * escfn9 - clears screen from cursor position to the end of the screen.
  */
 
-void escfn9()
+void escfn9(Vwk * vwk)
 {
     trap1(wntstr, "\033J");
 }
@@ -147,7 +147,7 @@ void escfn9()
  * escfn10 - clears screen from cursor position to the end of the line.
  */
 
-void escfn10()
+void escfn10(Vwk * vwk)
 {
     trap1(wntstr, "\033K");      // cursor down
 }
@@ -165,7 +165,7 @@ void escfn10()
  *   INTIN[1] = cursor column (0 - max_x_cell)
  */
 
-void escfn11()
+void escfn11(Vwk * vwk)
 {
     char out[5];
 
@@ -190,7 +190,7 @@ void escfn11()
  *   INTIN = character array
  */
 
-void escfn12()
+void escfn12(Vwk * vwk)
 {
     int cnt;
     char *chr;
@@ -209,7 +209,7 @@ void escfn12()
  * escfn13 - switch to reverse video
  */
 
-void escfn13()
+void escfn13(Vwk * vwk)
 {
     trap1(wntstr, "\033p");      /* enter reverse video */
 }
@@ -220,7 +220,7 @@ void escfn13()
  * escfn14 - switch to normal video
  */
 
-void escfn14()
+void escfn14(Vwk * vwk)
 {
     trap1(wntstr, "\033q");      /* enter reverse video */
 }
@@ -234,7 +234,7 @@ void escfn14()
  * is not readilly available.
  */
 
-void escfn15()
+void escfn15(Vwk * vwk)
 {
     CONTRL[4] = 2;              // 2 integers are returned
     INTOUT[0] = 0;              // dummy
@@ -251,7 +251,7 @@ void escfn15()
  *   INTOUT[0] = 1  (mouse is available)
  */
 
-void escfn16()
+void escfn16(Vwk * vwk)
 {
     CONTRL[4] = 1;              // 2 integers are returned
     INTOUT[0] = 1;              // there is a mouse
@@ -265,7 +265,7 @@ void escfn16()
  * This function is currently just a stub.
  */
 
-void escfn17()
+void escfn17(Vwk * vwk)
 {
 }
 
@@ -275,10 +275,10 @@ void escfn17()
  * escfn18 - displays the graphics cursor at its current address.
  */
 
-void escfn18()
+void escfn18(Vwk * vwk)
 {
     INTIN[0] = 0;       /* show regardless */
-    v_show_c();         /* display the graphics cursor */
+    v_show_c(vwk);         /* display the graphics cursor */
 }
 
 
@@ -287,14 +287,14 @@ void escfn18()
  * escfn19 - hides the graphics cursor.
  */
 
-void escfn19()
+void escfn19(Vwk * vwk)
 {
-    v_hide_c();         /* hide the graphics cursor */
+    v_hide_c(vwk);         /* hide the graphics cursor */
 }
 
 
 
-void (*esctbl[])(void) =
+void (*esctbl[])(Vwk *) =
 {
     escfn0,
     escfn1,
@@ -337,14 +337,25 @@ void (*esctbl[])(void) =
  *   PTSOUT[]  = array of output vertices.
  */
 
-void chk_esc()
+void chk_esc(Vwk * vwk)
 {
     UWORD escfun = CONTRL[5];
 
     if (escfun > ldri_escape)
         return;
-    (*esctbl[escfun])();
+    (*esctbl[escfun])(vwk);
 }
 
 
 
+void esc_init(Vwk * vwk)
+{
+    escfn2(vwk);
+}
+
+
+
+void esc_exit(Vwk * vwk)
+{
+    escfn3(vwk);
+}
