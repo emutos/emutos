@@ -74,18 +74,17 @@ void screen_init(void)
         rez = 2;
     }
 
-    if (! has_videl) {
-        if ((mfp->gpip & 0x80) != 0) {
-            /* color monitor */
-            if (rez == 2)
-                rez = 0;
-        } else {
-            if (rez < 2)
-                rez = 2;
-        }
-
-        *rez_reg = rez;
+    if ((mfp->gpip & 0x80) != 0) {
+        /* color monitor */
+        if (rez == 2)
+            rez = 0;
+    } else {
+        if (rez < 2)
+            rez = 2;
     }
+
+    if (! has_videl)
+        *rez_reg = rez;  /* on real Falcon this could cause trouble (?) */
     sshiftmod = rez;
 
     if (rez == 1) {
