@@ -1697,3 +1697,6 @@ doc/bios.txt: fixed description of conterm bits (joy)
 bios/conout.S: removed from CVS (MAD)
 bios/conout.c: hardware dependent optimized console stuff (MAD)
 bios/vt52.c:   hardware independent rest of vt52 console (MAD)
+
+2004-10-19
+bios/conout.c: some integer overflow bugs fixed (MAD)

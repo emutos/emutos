@@ -588,17 +588,17 @@ next_cell()
 void
 scroll_up(int top_line)
 {
-    int count;
+    ULONG count;
     UBYTE * src, * dst;
 
     /* screen base addr + cell y nbr * cell wrap */
-    dst = v_bas_ad + top_line * v_cel_wr;
+    dst = v_bas_ad + (ULONG)top_line * v_cel_wr;
 
     /* form source address from cell wrap + base address */
     src = dst + v_cel_wr;
 
     /* form # of bytes to move */
-    count = v_cel_wr * (v_cel_my - top_line);
+    count = (ULONG)v_cel_wr * (v_cel_my - top_line);
 
     /* move BYTEs of memory*/
     memmove(dst, src, count);
@@ -616,17 +616,17 @@ scroll_up(int top_line)
 void
 scroll_down(int start_line)
 {
-    int count;
+    ULONG count;
     UBYTE * src, * dst;
 
     /* screen base addr + offset for bottom of second to last cell row */
-    src = v_bas_ad + v_cel_my * v_cel_wr;
+    src = v_bas_ad + (ULONG)v_cel_my * v_cel_wr;
 
     /* form destination from source + cell wrap */
     dst = src + v_cel_wr;
 
     /* form # of bytes to move */
-    count = v_cel_wr * (v_cel_my - start_line);
+    count = (ULONG)v_cel_wr * (v_cel_my - start_line);
 
     /* move BYTEs of memory*/
     memmove(dst, src, count);
