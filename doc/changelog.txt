@@ -439,3 +439,5 @@ Start... early ages
 
 07. Feb. 2002
 - added GETBOOT bootsector extractor routine to EmuCON (MAD)
+- fixed COPY/MOVE/CP/MV command (MAD)
+

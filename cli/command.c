@@ -686,7 +686,7 @@ void cr2cont()
 
 
 /*
- *  dspMsg - dsplay message
+ *  dspMsg - display message
  */
 
 void dspMsg(int msg)
@@ -2134,7 +2134,9 @@ void xCmdLn(char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl)
 		    fd = xopen(argv[2], 1);
 		    xwrite(fd, 540L, buf);
 		    xclose(fd);
-		}
+                } else
+                    wrt(_("Unable to create bootsector file"));
+
 		dspMsg(5);
 	    }
 
@@ -2144,31 +2146,35 @@ void xCmdLn(char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl)
 		ucase(p);
 		drv = *p - 'A';
 		fd = xopen(argv[2], 0);
-		xread(fd, 540L, buf);
-		xclose(fd);
-		rwabs(1, &buf[28], 1, 0, drv);
+                if (fd >= 0) {
+                    xread(fd, 540L, buf);
+                    xclose(fd);
+                    rwabs(1, &buf[28], 1, 0, drv);
+                } else {
+                    compl_code=fd;
+                    wrt(_("Unable to read bootsector file"));
+                }
 		dspMsg(5);
 	    }
 
 	    else if (xncmps(5, s, "COPY") || xncmps(5, s, "MOVE") ||
 		     xncmps(3, s, "CP") || xncmps(3, s, "MV")) {
-		if (*nonStdIn)
-		    dspCL(&argv[0]);
-		if (argc >= 1) {
-		    compl_code =
-			copyCmd(p, argv[2], xncmps(5, s, "MOVE") ? 1 : 0);
-		    {
-			compl_code = -1;
-		    }
-		} else
-		    dspMsg(6);
+                if (*nonStdIn)
+                    dspCL(&argv[0]);
+                if (argc >= 1) {
+                    compl_code =
+                        copyCmd(p, argv[2], xncmps(5, s, "MOVE") ? 1 : 0);
+                } else {
+                    compl_code = -1;
+                    dspMsg(6);
+                }
 	    } else if (xncmps(6, s, "PAUSE")) {
 		cr2cont();
 	    } else if (xncmps(5, s, "HELP"))
 		dspMsg(17);
 #ifdef NO_ROM
 	    else if (xncmps(5, s, "EXIT")) {
-	      exit:
+exit:
 		if (*nonStdIn)
 		    dspCL(&argv[0]);
 		xclose(rd.oldsi);
@@ -2214,11 +2220,11 @@ void xCmdLn(char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl)
 	}
 	chk_redirect(&rd);
 
-      again:
-	/*if command coming from outside the command int exit */
+again:
+	/* if command coming from outside the command int exit */
 #ifdef NO_ROM
-	if ((long) outsd_tl)
-	    goto exit;
+        if ((long) outsd_tl)
+            goto exit;
 #endif
     }
 }
@@ -2252,6 +2258,7 @@ void cmain(char *bp)
     if (!cmd)
 	dspMsg(4);
 
+#if 0
     i = 0;
     while ((prntEnvPtr[i] + prntEnvPtr[i + 1]) != 0) {
 	/* if a path has been defined, don't count it. */
@@ -2261,7 +2268,14 @@ void cmain(char *bp)
 	}
 	i++;
     }
-
+#endif
+    for (i=0; (prntEnvPtr[i] + prntEnvPtr[i + 1]) == 0; i++) {
+        /* if a path has been defined, don't count it. */
+        if (xncmps(5, &prntEnvPtr[i], "PATH=")) {
+	    setPath(&prntEnvPtr[i + 5]);
+	    break;
+	}
+    }
     if (!cmd)
 	execBat((char *) &autoBat, &parm[0]);
 
