@@ -43,7 +43,7 @@ T tested and working on an emulator or real hardware
  ----------------------------------------------------------------------------
  > CPU setting (for CPU >= 68020, vbr, mmu, msp, isp, ... not inited)
  > FPU (detected, is any initialisation needed?) 
- T Memory controller
+ T Memory controller (both ST and Falcon)
  T DMA controller
  t WD 1772 Floppy disk controller (write track not tested)
  T MFP
@@ -52,10 +52,14 @@ T tested and working on an emulator or real hardware
  t ACIAs, IKBD protocol (mouse not tested)
  t MegaST Real-Time Clock  (set clock not tested)
  > STE shifter
+ t NVRAM (including RTC)
+ - Videl
  - Blitter
  - Microwire
  - DMA sound
- > NVRAM (clock not implemented)
+ - DSP
+ - SCC
+ - IDE
 
 
 
