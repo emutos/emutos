@@ -325,7 +325,7 @@ long xmkdir(char *s)
         return(E_OK);
 }
 
-
+
 /*
 **  xrmdir - remove (delete) a directory 
 **
@@ -358,9 +358,8 @@ long xrmdir(char *p)
                 return( EACCDN ) ;
 
         for( i = 1 ; i <= NCURDIR ; i++ )       /*  Can't delete in use  */
-                if( diruse[i] )
-                        if( dirtbl[i] == d )
-                                return( EACCDN ) ;
+                if( diruse[i] && dirtbl[i] == d )
+                    return( EACCDN ) ;
          
         /*  end M01.01.SCC.FS.09  */
 
@@ -510,13 +509,18 @@ long ixsfirst(char *name, register WORD att, register DTAINFO *addr)
         return(EFILNF);
 #endif
 
+#if DBGFSDIR
+    kprintf("\nixfirst(%s, DND=%08lx, DTA=%08lx)", s, (long)dn, (long)addr);
+#endif
     if (addr)
     {
         memcpy(&addr->dt_name[0], s, 12);
         addr->dt_attr = att ;
         addr->dt_pos = pos ;
         addr->dt_dnd = dn ;
+
         makbuf( f , addr ) ;
+
     }
 
     return(E_OK);
@@ -534,7 +538,7 @@ long ixsfirst(char *name, register WORD att, register DTAINFO *addr)
 
 long xsfirst(char *name, int att)
 {
-        long    ixsfirst() ;
+        long    result;
         DTAINFO *dt;                                            /* M01.01.1209.01 */
 
         dt = (DTAINFO *)(run->p_xdta);                          /* M01.01.1209.01 */
@@ -542,7 +546,61 @@ long xsfirst(char *name, int att)
         /* set an indication of 'uninitialized DTA' */
         dt->dt_dnd = (DND*)NULLPTR;                                     /* M01.01.1209.01 */
 
-        return( ixsfirst(name , att , dt) ) ;                   /* M01.01.1209.01 */
+#if DBGFSDIR
+		kprintf("\nxsfirst(%s, DTA=%08lx)", name, (long)dt);
+#endif
+        result = ixsfirst(name , att , dt);                   /* M01.01.1209.01 */
+
+		/* check whether the name is a search mask or a pure filename */
+		{
+			int     is_mask;
+			char    *n_char;
+			register int i;
+
+			is_mask = 0;
+			n_char = &dt->dt_name[0];
+			for (i=0; i < 11 ; i++) {
+				if ( *n_char == '*' || *n_char == '?' ) {
+					is_mask = 1;
+					break;
+				}
+				n_char++;
+			}
+
+#if DBGFSDIR
+			kprintf("\nxsfirst(DTA->dt_name %s DND=%08lx)", dt->dt_name, (long)dt->dt_dnd);
+#endif
+			/* no lock is needed on error or in case of the filename */
+			if ( result < 0 || is_mask == 0 )
+				return result;
+
+			/* lock the directory if success */
+
+			/* search whether it is locked or not */
+			for (i = 1; i < NCURDIR; i++)
+				if (diruse[i] && dirtbl[i] == dt->dt_dnd)
+					break;
+
+			/* if not search for free entry */
+			if (i == NCURDIR) {
+				for (i = 1; i < NCURDIR; i++)
+                	if (!diruse[i])
+						break;
+			}
+
+			/* no empty entry found nor locked - no system memory */
+			if (i == NCURDIR)
+                return (ENSMEM);
+
+			diruse[i]++;
+			dirtbl[i] = dt->dt_dnd;
+
+#if DBGFSDIR
+			kprintf("\nxsfirst(DND=%08lx lock %d)", (long)dt->dt_dnd, i);
+#endif
+		}
+
+		return result;
 }
 
 /*
@@ -564,17 +622,33 @@ long xsnext(void)
         if ( dt->dt_dnd == (DND*)NULLPTR )                              /* M01.01.1209.01 */
                 return( ENMFIL );                               /* M01.01.1209.01 */
 
+#if DBGFSDIR
+		kprintf("\n xsnext(pos=%ld DTA=%08lx DND=%08lx)", dt->dt_pos, (long)dt, (long)dt->dt_dnd);
+#endif
         f = scan( dt->dt_dnd, &dt->dt_name[0], dt->dt_attr, &dt->dt_pos ) ;
 
-        if( f == (FCB*)NULLPTR )
-                return( ENMFIL ) ;
+        if( f == (FCB*)NULLPTR ) {
+			/* unlock the DND entry in case it was locked */
+			register int i;
+	       	for (i = 1; i < NCURDIR; i++)
+				if (diruse[i] && dirtbl[i] == dt->dt_dnd)
+					break;
+        	if (i != NCURDIR) {
+#if DBGFSDIR
+				kprintf("\n xsnext(DND=%08lx unlock %d)", (long)dt->dt_dnd, i);
+#endif				--diruse[i];
+				dirtbl[i] = (DND*)NULLPTR;
+			}
+
+			return( ENMFIL ) ;
+		}
 
         makbuf(f,(DTAINFO *)run->p_xdta);
         return(E_OK);
 
 }
 
-
+
 /*
 **  xgsdtof - get/set date/time of file into of from buffer
 **
@@ -609,7 +683,7 @@ void xgsdtof(int *buf, int h, int wrt)
 }
 
 
-
+
 #ifdef  NEWCODE
 /*  M01.01.03  */
 #define isnotdelim(x)   ((x) && (x!='*') && (x!=SLASH) && (x!='.') && (x!=' '))
@@ -705,7 +779,7 @@ void builds(char *s1, char *s2)
         for( ; i < 3 ; i++ )
                 *s2++ = c;
 }
-
+
 #else
 
 /*      
@@ -752,7 +826,7 @@ void builds(char *s1, char *s2)
 #endif
 
 
-
+
 /*
 **  xrename - rename a file, 
 **      oldpath p1, new path p2
@@ -830,7 +904,7 @@ long xrename(int n, char *p1, char *p2)
 
         return(ixclose(fd,CL_DIR));
 }
-
+
 /*      
 **  xchdir - change current dir to path p (extended cd n:=[a:][\bin])
 **
@@ -977,7 +1051,7 @@ FCB     *dirinit(DND *dn)
         return(f1);
 }
 
-
+
 /*
 **  dopath -
 **
@@ -1036,7 +1110,9 @@ DND     *findit(char *name, char **sp, int dflag)
     /* crack directory and drive */
 
     n = name;
-
+#if DBGFSDIR
+	kprintf("\n findit(%s)", n);
+#endif
     if ((long)(p = dcrack(&n)) <= 0)                    /* M01.01.1214.01 */
         return( p );
 
@@ -1213,9 +1289,12 @@ FCB     *scan(register DND *dnd, char *n, WORD att, LONG *posp)
                 }
 
                 if ( (m = match( name , fcb->f_name )) )
-                        break;
+					break;
         }
 
+#if DBGFSDIR
+		kprintf("\n   scan(pos=%ld DND=%08lx DNDfoundFile=%08lx name=%s name1=%s, %d)", (long)fd->o_bytnum, (long)dnd, (long)dnd1, fcb->f_name, name, m);
+#endif
         /* restore directory scanning pointer */
 
         if( *posp != -1L )
@@ -1226,7 +1305,7 @@ FCB     *scan(register DND *dnd, char *n, WORD att, LONG *posp)
         **  then return a pointer to a deleted fcb.  Otherwise, if there was
         **  no match, return a null pointer
         */
- 
+
         if (!m)
         {       /*  assumes that (*n != 0xe5) (if posp == -1)  */
                 if( fcb && (*n == (char)0xe5) )
@@ -1246,7 +1325,7 @@ FCB     *scan(register DND *dnd, char *n, WORD att, LONG *posp)
         return(fcb);
 }
 
-
+
 /*
 **  makdnd - make a child subdirectory of directory p
 **              M01.01.SCC.FS.07
@@ -1266,7 +1345,6 @@ static DND *makdnd(DND *p, FCB *b)
         **  scavenge a DND at this level if we can find one that has not 
         **  d_left 
         */
-
         for (prev = &p->d_left; (p1 = *prev) ; prev = &p1->d_right)
         {
                 if (!p1->d_left)
@@ -1275,10 +1353,14 @@ static DND *makdnd(DND *p, FCB *b)
 
                         in_use = 0;
                         for (i = 1; i < NCURDIR; i++)
-                                if (diruse[i])
-                                        if (dirtbl[i] == p1)
-                                                in_use = 1;
+                                if (diruse[i] && dirtbl[i] == p1) {
+                                    in_use = 1;
+									break;
+								}
 
+#if DBGFSDIR
+						kprintf("\n makdnd check dirtbl (%d)", in_use);
+#endif
                         if( !in_use && p1->d_files == NULLPTR )
                         {       /*  M01.01.KTB.SCC.02  */
                                 /* clean out this DND for reuse */
@@ -1299,6 +1381,9 @@ static DND *makdnd(DND *p, FCB *b)
 
         if (!p1)
         {
+#if DBGFSDIR
+                kprintf("\n makdnd new");
+#endif
                 if (!(p1 = MGET(DND)))
                         return ( (DND *) 0 );   /* ran out of system memory */
 
@@ -1321,12 +1406,15 @@ static DND *makdnd(DND *p, FCB *b)
         /* LVL xmovs(11,(char *)b->f_name,(char *)p1->d_name); */
         memcpy(p1->d_name, b->f_name, 11);
 
+#if DBGFSDIR
+		kprintf("\n makdnd(%08lx)", (long)p1);
+#endif
         return(p1);
 }
 
 
 
-/*      
+/*
  *  dcrack - parse out start of 1st path element, get DND
  *      if needed, logs in the drive specified (explicitly or implicitly) in
  *      the path spec pointed to by 'np', parses out the first path element
@@ -1506,7 +1594,7 @@ static void makbuf(FCB *f, DTAINFO *dt)
 }
 
 
-
+
 /*  
 **  xcmps - utility routine to compare two 11-character strings
 **
@@ -1541,7 +1629,7 @@ static DND *getdnd(char *n, DND *d)
 
 }
 
-
+
 /*
 **  freednd - free an allocated and linked-in DND
 **

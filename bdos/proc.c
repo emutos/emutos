@@ -386,7 +386,7 @@ static long do_xexec(char *s)
     return (long) p;
 }
 
-static void init_pd(PD *p, char *t, long max, MD *env)
+static void init_pd(PD *p, char *tt, long max, MD *env)
 {
     int i;
     WORD h;
@@ -419,8 +419,8 @@ static void init_pd(PD *p, char *t, long max, MD *env)
 
     /* copy tail */
     b = &p->p_cmdlin[0] ;
-    for( i = 0 ; (i < PDCLSIZE)  && (*t) ; i++ )
-        *b++ = *t++;
+    for( i = 0 ; (i < PDCLSIZE)  && (*tt) ; i++ )
+        *b++ = *tt++;
 
     *b++ = 0;
     t = (char *) p;
