@@ -1178,10 +1178,13 @@ Start... early ages
   with tools needing "string.h" but not "i18nconf.h" (LVL)
 
 19. Oct 2002
-- bios/bios.c - display initinfo before you start booting from a device (joy)
+- bios/bios.c - display initinfo before you start booting from a device
   so that users have time to press and hold the Alt key to skip the boot (joy)
 - bios/blkdev.c - added check for the Alt key (joy)
 - bios/initinfo.c - can't display the boot device - it's unknown ATM (joy)
-- bios/bios.c - fixed the check for Ctrl key (hold it to skip AUTO\*.PRG) (joy)
+- bios/bios.c - check for Ctrl key fixed (hold it to skip AUTO\*.PRG) (joy)
 - bios/initinfo.c - delay can be interrupted by Shift/Ctrl/Alt keys (joy)
 - bios/cookie.c - number of free slots corrected (joy)
+- bios/machine.c - COOKIE_NATFEAT created
+- bios/startup.S, bios/disk.c, bios/machine.c - NatFeat instruction codes
+  changed to LineF $fe00/$fe01
