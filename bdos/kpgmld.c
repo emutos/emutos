@@ -24,7 +24,7 @@
 #include "../bios/kprint.h"
 
 
-#define DBGKPGMLD 1
+#define DBGKPGMLD 0
 
 /*
  * private macros
