@@ -532,3 +532,17 @@ Start... early ages
   under STonX again. (joy)
 - bios/bios.c - increased the fixed size sector cache to 4kB sector. That's
   enough for partitions smaller than 512MB. Ideally it should be 32kB (joy).
+
+16. Jan. 2002
+- aes and vdi not exported in make tgz (LVL)
+- bios/clock.c: enabled MegaRTC clock by commenting out validity test (LVL)
+- bios/clock.c: removed old commented-out code (LVL)
+- removed unused bdos/bdos.h (LVL)
+- bdos/proc.c: setjmp warnings avoided by turning params into static vars (LVL)
+- updated doc/install.txt (LVL)
+- removed [ OK ] in initinfo, expanded abbreviated messages, and modified
+  fr.po and de.po (LVL)
+- bios/floppy.c: some untested unique FDC track register bookkeeping (LVL)
+- made ramtop and ramvalid visible from C code (LVL)
+
+
