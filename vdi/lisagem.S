@@ -103,15 +103,15 @@ just_rts:
 _EX_TIMV:
         move.l  _CONTRL,a0
 
-#if 0
-        move    sr, -(sp)               // Disable interrupts
+        move    sr, -(sp)	// Disable interrupts
         ori.w   #0x0700, sr
-#endif
+
         move.l  _tim_addr,18(a0)
         move.l  14(a0),_tim_addr
-        //move    (sp)+,sr
 
-        move.w  #6,-(sp)       // Get number of milliseconds per tick
+        move    (sp)+,sr
+
+        move.w  #6,-(sp)        // Get tickcal (milliseconds per tick)
         trap    #13
         addq.l  #2,sp
 
@@ -138,7 +138,7 @@ tick_int:
         move.b  #1,in_proc
 
         movem.l d0-d7/a0-a6, -(sp)
-#if NEEDED
+#if NEEDED  // not in original TOS 1.0 (MAD)
         move    sr, -(sp)               // Disable interrupts
         ori.w   #0x0700, sr
 #endif
@@ -151,7 +151,7 @@ tick_int:
 #endif
         movem.l (sp)+, d0-d7/a0-a6
 timer_exit:
-        move.l  _tim_chain, -(sp)       
+        move.l  _tim_chain, -(sp)       // Call the old timer vector too
         rts
 
 
@@ -169,10 +169,9 @@ _INIT_G:
 
         move.l  #just_rts,_tim_addr     // Tick points to rts
 
-#if 0
         move    sr, -(sp)               // Disable interrupts
         ori.w   #0x0700, sr
-#endif
+
         pea     tick_int
         move.w  #0x100, -(sp)           // etv_timer
         move.w  #5, -(sp)               // call setexc via
@@ -181,7 +180,7 @@ _INIT_G:
 
         move.l  d0, _tim_chain          // save old timer int vector
 
-        //move    (sp)+, sr             // Restore interrupt context
+        move    (sp)+, sr               // Restore interrupt context
 
         bsr     vdimouse_init              // initialize mouse
                                         /* TODO: switch off cursor */

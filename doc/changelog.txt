@@ -695,3 +695,5 @@ Start... early ages
 - bios/startup.S - changed the _dummyaes vector for fVDI (MAD)
 - bios/startup.S - changed label _dummyaes to _gemtrap (MAD)
 
+01. Apr. 2002
+- vdi/lisagem.S - SR switched on for timer interrupt (MAD)
