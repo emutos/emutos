@@ -198,7 +198,7 @@
 	.xdef	_init_mfp
 	.xdef	_init_timer
 	.xdef	_init_usart
-
+	.xdef   sysvarend
 
 | ==== lineavars.s - Graphics subsystem variables =============================
 	.xdef	v_cel_mx
@@ -236,8 +236,6 @@ m_length:	.dc.l	1       | length of TPA in byte
 		.dc.l	1
 
 _tticks:	.dc.l	1
-
-sysvarend:
 
 | ===========================================================================
 | ==== TEXT segment (TOS image) =============================================
@@ -292,7 +290,8 @@ _main:					| stunt to guarantee entry into supervisor mode
 	reset				| Reset all hardware
 
 | ==== Set up a supervisor stack ============================================
-       	lea	_stkbot+SUPSIZ, sp	| Setup Supervisor Stack
+| LVL   lea	_stkbot+SUPSIZ, sp	| Setup Supervisor Stack
+       	lea	_stktop, sp      	| Setup Supervisor Stack
 
 	pea msg_start	| Print, what's going on
 	bsr _kprint

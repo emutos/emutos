@@ -86,33 +86,29 @@ BDOSSOBJ = $(BDOSSSRC:%.s=obj/%.o)
 UTILCOBJ = $(UTILCSRC:%.c=obj/%.o)
 UTILSOBJ = $(UTILSSRC:%.s=obj/%.o)
 
-#
-# the order is important (?): startup.o has to be first.
-#
-
 SOBJ = $(BIOSSOBJ) $(BDOSSOBJ) $(UTILSOBJ)
 COBJ = $(BIOSCOBJ) $(BDOSCOBJ) $(UTILCOBJ)
-OBJECTS = $(SOBJ) $(COBJ)
+OBJECTS = $(SOBJ) $(COBJ) 
 
 all:	emutos.img
 	
-emutos.img: $(OBJECTS)
-	${LD} -oformat binary -o $@ $(OBJECTS) ${LDFLAGS}
+emutos.img: $(OBJECTS) obj/end.o
+	${LD} -oformat binary -o $@ $(OBJECTS) ${LDFLAGS} obj/end.o
 
 obj/%.o : bios/%.c
-	${CC} ${CFLAGS} -Wall -c $< -o $@
+	${CC} ${CFLAGS} -Wall -c -Ibios $< -o $@
 
 obj/%.o : bios/%.s
 	$(AS) $(ASFLAGS) $< -o $@
 
 obj/%.o : bdos/%.c
-	${CC} ${CFLAGS} -c $< -o $@
+	${CC} ${CFLAGS} -c -Ibdos $< -o $@
 
 obj/%.o : bdos/%.s
 	$(AS) $(ASFLAGS) $< -o $@
 
 obj/%.o : util/%.c
-	${CC} ${CFLAGS} -Wall -c $< -o $@
+	${CC} ${CFLAGS} -Wall -c -Iutil $< -o $@
 
 obj/%.o : util/%.s
 	$(AS) $(ASFLAGS) $< -o $@
@@ -133,7 +129,7 @@ clean:
 	rm -f obj/*.o *~ */*~ core emutos.img
 
 distclean: clean
-	rm Makefile.bak
+	rm -f Makefile.bak
 	$(MAKE) -C cart clean
 	$(MAKE) -C cli clean
 
@@ -147,7 +143,8 @@ HEREDIR = $(shell basename $(HERE))
 TGZ = $(shell echo $(HEREDIR)-`date +%y%m%d`|tr A-Z a-z).tgz
 
 tgz:	distclean
-	(cd ..; tar cf - $(HEREDIR)) | gzip -c -9 >../$(TGZ)
+	cd ..;\
+	tar -cf - --exclude '*CVS' $(HEREDIR)) | gzip -c -9 >$(TGZ)
 
 #
 # automatic dependencies. (this is ugly)
