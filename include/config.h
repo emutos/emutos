@@ -53,6 +53,13 @@
 #define DETECT_NATIVE_FEATURES 1
 #endif
 
+/* set this to 1 to redirect debug prints on MIDI out, for emulator
+ * without ANY native debug print capabilities.
+ * This overrides ..._NATIVE_PRINT and DETECT_NATIVE_FEATURES flags.
+ */
+#ifndef MIDI_DEBUG_PRINT
+#define MIDI_DEBUG_PRINT 0
+#endif
 
 /* set this to 1 if your emulator is capable of emulating properly the 
  * STOP opcode (used to spare host CPU burden during loops). This is

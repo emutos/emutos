@@ -1,7 +1,7 @@
 /*
- *  dbgbios.c - bios debug routines
+ * kprint.c - our own printf variants (mostly for debug purposes)
  *
- * Copyright (c) 2001 Lineo, Inc.
+ * Copyright (c) 2001-2003 The EmuTOS Development Team
  *
  * Authors:
  *  MAD     Martin Doering
@@ -19,12 +19,14 @@
 #include "lineavars.h"
 #include "tosvars.h"
 #include "natfeat.h"
+#include "config.h"
 
 /* extern declarations */
 
 extern void printout_stonx(char *);    /* in kprintasm.S */
 
 extern void bconout2(WORD, UBYTE);
+extern void bconout3(WORD, UBYTE);
 
   
 /* doprintf implemented in doprintf.c. 
@@ -83,6 +85,13 @@ static void kprintf_outc_stonx(int c)
     printout_stonx(buf);
 }
 
+#if MIDI_DEBUG_PRINT
+static void kprintf_outc_midi(int c)
+{
+    bconout3(3,c);
+}
+#endif
+
 static void kprintf_outc_natfeat(int c)
 {
     char buf[2];
@@ -93,14 +102,19 @@ static void kprintf_outc_natfeat(int c)
 
 static int vkprintf(const char *fmt, va_list ap)
 {
+#if MIDI_DEBUG_PRINT
+    /* use midi port instead of other native debug capabilities */
+    return doprintf(kprintf_outc_midi, fmt, ap);
+#endif
+
     if (is_nfStdErr()) {
         return doprintf(kprintf_outc_natfeat, fmt, ap);
     }
 
     else if (native_print_kind) {
         return doprintf(kprintf_outc_stonx, fmt, ap);
-    }
-
+    } 
+    
     /* let us hope nobody is doing 'pretty-print' with kprintf by
      * printing stuff till the amount of characters equals something,
      * for it will generate an endless loop!
