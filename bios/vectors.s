@@ -129,7 +129,7 @@ any_vec:
 	lea	deflt_vec_table(pc), a0
 	sub.l	a0, d0
 	lsr.l	#1, d0
-	add.l	#2, d0
+	add.l	#1, d0
 	move.l	d0, _proc_enum
 	move	usp, a0
 	move.l	a0, _proc_usp
