@@ -139,8 +139,8 @@ void get_keytbl(struct keytbl **tbl)
 
     for (i = j = 0 ; i < sizeof(avail_kbd) / sizeof(*avail_kbd) ; i++) {
         if (avail_kbd[i].number == goal) {
-	    j = i;
-	    break;
+            j = i;
+            break;
         }
     }
 #else

@@ -1,9 +1,18 @@
 #
-# the country tables.
+# country.mk - the country tables
 #
+# Copyright (c) 2002 EmuTOS development team.
+#
+# This file is distributed under the GPL, version 2 or at your
+# option any later version.  See doc/license.txt for details.
+#
+
 # this file is included in the Makefile to build unique-country ROMs.
-# also in the future it might serve as source to fill the table 
-# currently in bios/country.c
+#
+# indormation in lines below serve also as source to fill the tables 
+# needed by bios/country.c (tables generated in bios/ctables.h). For
+# each country there should be a four line paragraph giving the language,
+# keyboard code, charset and IDT.
 #
 
 i18n_us_lang = us
