@@ -1,5 +1,5 @@
 /*
- * monout.c - Monochrome output functions
+ * monout.c - Graphical higher level output functions in C
  *
  * Copyright (c) 1999 Caldera, Inc. and Authors:
  *                    SCC
@@ -56,7 +56,12 @@ void v_clrwk()
 
 
 
-/* POLYLINE: */
+/*
+ * v_clrwk - clear screen
+ *
+ * Screen is cleared between v_bas_ad and phystop.
+ */
+
 void v_pline()
 {
     REG WORD l;
@@ -81,7 +86,11 @@ void v_pline()
         wline();
 }
 
-/* POLYMARKER: */
+
+
+/*
+ * v_pmarker - Polymarker
+ */
 
 void v_pmarker()
 {
@@ -180,14 +189,19 @@ void v_pmarker()
     work_ptr->line_end = sav_end;
 }
 
-/* FILLED_AREA: */
+/*
+ * v_fillarea . Fill an area
+ */
 
 void v_fillarea()
 {
     plygn();
 }
 
-/*  GDP: */
+/*
+ * v_gdp - Major opcode for graphics device primitives
+ */
+
 void v_gdp()
 {
     WORD i, ltmp_end, rtmp_end;
@@ -277,7 +291,12 @@ void v_gdp()
     }
 }
 
-/* INQUIRE CURRENT POLYLINE ATTRIBUTES */
+
+
+/*
+ * vql_attr - Inquire current polyline attributes
+ */
+
 void vql_attr()
 {
     REG WORD *pointer;
@@ -298,7 +317,12 @@ void vql_attr()
     *(pointer + 4) = 3;
 }
 
-/* INQUIRE CURRENT Polymarker ATTRIBUTES */
+
+
+/*
+ * vql_attr - Inquire current polymarker attributes
+ */
+
 void vqm_attr()
 {
     REG WORD *pointer;
@@ -320,7 +344,12 @@ void vqm_attr()
     FLIP_Y = 1;
 }
 
-/* INQUIRE CURRENT Fill Area ATTRIBUTES */
+
+
+/*
+ * vql_attr - Inquire current fill area attributes
+ */
+
 void vqf_attr()
 {
     REG WORD *pointer;
@@ -338,6 +367,11 @@ void vqf_attr()
 }
 
 
+
+/*
+ * code - helper function
+ */
+
 WORD code(WORD x, WORD y)
 {
     WORD clip_flag;
@@ -353,6 +387,11 @@ WORD code(WORD x, WORD y)
     return (clip_flag);
 }
 
+
+
+/*
+ * clip_line - helper function
+ */
 
 WORD clip_line()
 {
@@ -392,6 +431,10 @@ WORD clip_line()
 }
 
 
+/*
+ * pline - some function
+ */
+
 void pline()
 {
     WORD i, *old_pointer;
@@ -417,6 +460,11 @@ void pline()
     }
 }
 
+
+
+/*
+ * plygn - some function
+ */
 
 void plygn()
 {
@@ -474,6 +522,11 @@ void plygn()
     }
 }
 
+
+
+/*
+ * gdp_rbox - draws an rbox
+ */
 
 void gdp_rbox()
 {
@@ -566,6 +619,12 @@ void gdp_rbox()
     return;
 }
 
+
+
+/*
+ * gdp_arc - draw an arc
+ */
+
 void gdp_arc()
 {
     REG WORD *pointer;
@@ -591,6 +650,12 @@ void gdp_arc()
     return;
 }
 
+
+
+/*
+ * clc_nsteps - calculates
+ */
+
 void clc_nsteps()
 {
     if (xrad > yrad)
@@ -606,6 +671,12 @@ void clc_nsteps()
     }
     return;
 }
+
+
+
+/*
+ * gdp_ell - draws an ell
+ */
 
 void gdp_ell()
 {
@@ -634,7 +705,12 @@ void gdp_ell()
 }
 
 
-void Calc_pts(WORD j)
+
+/*
+ * clc_pts - calculates
+ */
+
+void clc_pts(WORD j)
 {
     WORD k;
     REG WORD *pointer;
@@ -646,6 +722,11 @@ void Calc_pts(WORD j)
     *(pointer + j + 1) = k;
 }
 
+
+
+/*
+ * clc_arc - calculates
+ */
 
 void clc_arc()
 {
@@ -659,21 +740,21 @@ void clc_arc()
     }
     start = angle = beg_ang;
     i = j = 0;
-    Calc_pts(j);
+    clc_pts(j);
     for (i = 1; i < n_steps; i++) {
         j += 2;
         angle = SMUL_DIV(del_ang, i, n_steps) + start;
-        Calc_pts(j);
+        clc_pts(j);
     }
     j += 2;
     i = n_steps;
     angle = end_ang;
-    Calc_pts(j);
+    clc_pts(j);
 
-/*----------------------------------------------------------------------*/
-/* If pie wedge draw to center and then close. If arc or circle, do     */
-/* nothing because loop should close circle.                            */
-/*----------------------------------------------------------------------*/
+    /*
+     * If pie wedge draw to center and then close. If arc or circle, do
+     * nothing because loop should close circle.
+     */
 
     cntl_ptr = CONTRL;
     xy_ptr = PTSIN;
@@ -694,6 +775,10 @@ void clc_arc()
 }
 
 
+
+/*
+ * st_fl_ptr -
+ */
 
 void st_fl_ptr()
 {
@@ -740,7 +825,11 @@ void st_fl_ptr()
     work_ptr->patmsk = pm;
 }
 
-/* Moved the circle DDA code that was in vsl_width() here. */
+
+
+/*
+ * cir_dda - Used in wline()
+ */
 
 void cir_dda()
 {
@@ -801,6 +890,12 @@ void cir_dda()
         x = y + 1;
     }                           /* End for loop. */
 }
+
+
+
+/*
+ * wline -
+ */
 
 #define ABS(x) ((x) >= 0 ? (x) : -(x))
 
@@ -937,6 +1032,11 @@ void wline()
 }                               /* End "wline". */
 
 
+
+/*
+ * perp_off -
+ */
+
 void perp_off(WORD * px, WORD * py)
 {
     REG WORD *vx, *vy, *pcircle, u, v;
@@ -1004,6 +1104,11 @@ void perp_off(WORD * px, WORD * py)
 }                               /* End "perp_off". */
 
 
+
+/*
+ * quad_xform - Transform according to the quadrant.
+ */
+
 void quad_xform(WORD quad, WORD x, WORD y, WORD *tx, WORD *ty)
 {
     switch (quad) {
@@ -1031,6 +1136,11 @@ void quad_xform(WORD quad, WORD x, WORD y, WORD *tx, WORD *ty)
     }                           /* End switch. */
 }                               /* End "quad_xform". */
 
+
+
+/*
+ * do_circ - draw a circle
+ */
 
 void do_circ(WORD cx, WORD cy)
 {
@@ -1075,6 +1185,11 @@ void do_circ(WORD cx, WORD cy)
 }                               /* End "do_circ". */
 
 
+
+/*
+ * s_fa_attr - Save the fill area attribute
+ */
+
 void s_fa_attr()
 {
     REG struct attribute *work_ptr;
@@ -1097,6 +1212,11 @@ void s_fa_attr()
 }                               /* End "s_fa_attr". */
 
 
+
+/*
+ * r_fa_attr - Restore the fill area attribute
+ */
+
 void r_fa_attr()
 {
     REG struct attribute *work_ptr;
@@ -1110,6 +1230,12 @@ void r_fa_attr()
     work_ptr->line_beg = s_begsty;
     work_ptr->line_end = s_endsty;
 }                               /* End "r_fa_attr". */
+
+
+
+/*
+ * do_arrow - Draw an arrow
+ */
 
 void do_arrow()
 {
@@ -1149,6 +1275,12 @@ void do_arrow()
     /* Restore the attribute environment. */
     r_fa_attr();
 }                               /* End "do_arrow". */
+
+
+
+/*
+ * arrow - Draw an arrow
+ */
 
 void arrow(WORD * xy, WORD inc)
 {
@@ -1257,120 +1389,11 @@ void arrow(WORD * xy, WORD inc)
     }                           /* End while. */
 }                               /* End "arrow". */
 
-void init_wk()
-{
-    REG WORD l;
-    REG WORD *pointer, *src_ptr;
-    REG struct attribute *work_ptr;
 
-    pointer = INTIN;
-    pointer++;
-    work_ptr = cur_work;
 
-    l = *pointer++;             /* INTIN[1] */
-    work_ptr->line_index = ((l > MX_LN_STYLE) || (l < 0)) ? 0 : l - 1;
-
-    l = *pointer++;             /* INTIN[2] */
-    if ((l >= DEV_TAB[13]) || (l < 0))
-        l = 1;
-    work_ptr->line_color = MAP_COL[l];
-
-    l = *pointer++ - 1;         /* INTIN[3] */
-    work_ptr->mark_index = ((l >= MAX_MARK_INDEX) || (l < 0)) ? 2 : l;
-
-    l = *pointer++;             /* INTIN[4] */
-    if ((l >= DEV_TAB[13]) || (l < 0))
-        l = 1;
-    work_ptr->mark_color = MAP_COL[l];
-
-    /* You always get the default font */
-
-    pointer++;                  /* INTIN[5] */
-
-    l = *pointer++;             /* INTIN[6] */
-    if ((l >= DEV_TAB[13]) || (l < 0))
-        l = 1;
-    work_ptr->text_color = MAP_COL[l];
-
-    work_ptr->mark_height = DEF_MKHT;
-    work_ptr->mark_scale = 1;
-
-    l = *pointer++;             /* INTIN[7] */
-    work_ptr->fill_style = ((l > MX_FIL_STYLE) || (l < 0)) ? 0 : l;
-
-    l = *pointer++;             /* INTIN[8] */
-    if (work_ptr->fill_style == 2)
-        l = ((l > MX_FIL_PAT_INDEX) || (l < 1)) ? 1 : l;
-    else
-        l = ((l > MX_FIL_HAT_INDEX) || (l < 1)) ? 1 : l;
-    work_ptr->fill_index = l;
-
-    l = *pointer++;             /* INTIN[9] */
-    if ((l >= DEV_TAB[13]) || (l < 0))
-        l = 1;
-    work_ptr->fill_color = MAP_COL[l];
-
-    work_ptr->xfm_mode = *pointer;      /* INTIN[10] */
-
-    st_fl_ptr();                /* set the fill pattern as requested */
-
-    work_ptr->wrt_mode = 0;     /* default is replace mode */
-    work_ptr->line_width = DEF_LWID;
-    work_ptr->line_beg = 0;     /* default to squared ends */
-    work_ptr->line_end = 0;
-
-    work_ptr->fill_per = TRUE;
-
-    work_ptr->xmn_clip = 0;
-    work_ptr->ymn_clip = 0;
-    work_ptr->xmx_clip = DEV_TAB[0];
-    work_ptr->ymx_clip = DEV_TAB[1];
-    work_ptr->clip = 0;
-
-    work_ptr->cur_font = def_font;
-
-    work_ptr->loaded_fonts = NULLPTR;
-
-    work_ptr->scrpt2 = scrtsiz;
-    work_ptr->scrtchp = deftxbuf;
-
-    work_ptr->num_fonts = font_count;
-
-    work_ptr->style = 0;        /* reset special effects */
-    work_ptr->scaled = FALSE;
-    work_ptr->h_align = 0;
-    work_ptr->v_align = 0;
-    work_ptr->chup = 0;
-    work_ptr->pts_mode = FALSE;
-
-    /* move default user defined pattern to RAM */
-
-    src_ptr = ROM_UD_PATRN;
-    pointer = &work_ptr->ud_patrn[0];
-
-    for (l = 0; l < 16; l++)
-        *pointer++ = *src_ptr++;
-
-    work_ptr->multifill = 0;
-
-    work_ptr->ud_ls = LINE_STYLE[0];
-
-    pointer = CONTRL;
-    *(pointer + 2) = 6;
-    *(pointer + 4) = 45;
-
-    pointer = INTOUT;
-    src_ptr = DEV_TAB;
-    for (l = 0; l < 45; l++)
-        *pointer++ = *src_ptr++;
-
-    pointer = PTSOUT;
-    src_ptr = SIZ_TAB;
-    for (l = 0; l < 12; l++)
-        *pointer++ = *src_ptr++;
-
-    FLIP_Y = 1;
-}
+/*
+ * dsf_udpat - Update pattern
+ */
 
 void dsf_udpat()
 {

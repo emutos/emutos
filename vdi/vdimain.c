@@ -30,6 +30,7 @@ void vex_butv();
 void vex_motv();
 void vex_curv();
 void vex_timv();
+void init_wk();
 
 
 
@@ -235,6 +236,125 @@ void vq_extnd()
 
 }
 
+
+
+void init_wk()
+{
+    REG WORD l;
+    REG WORD *pointer, *src_ptr;
+    REG struct attribute *work_ptr;
+
+    pointer = INTIN;
+    pointer++;
+    work_ptr = cur_work;
+
+    l = *pointer++;             /* INTIN[1] */
+    work_ptr->line_index = ((l > MX_LN_STYLE) || (l < 0)) ? 0 : l - 1;
+
+    l = *pointer++;             /* INTIN[2] */
+    if ((l >= DEV_TAB[13]) || (l < 0))
+        l = 1;
+    work_ptr->line_color = MAP_COL[l];
+
+    l = *pointer++ - 1;         /* INTIN[3] */
+    work_ptr->mark_index = ((l >= MAX_MARK_INDEX) || (l < 0)) ? 2 : l;
+
+    l = *pointer++;             /* INTIN[4] */
+    if ((l >= DEV_TAB[13]) || (l < 0))
+        l = 1;
+    work_ptr->mark_color = MAP_COL[l];
+
+    /* You always get the default font */
+
+    pointer++;                  /* INTIN[5] */
+
+    l = *pointer++;             /* INTIN[6] */
+    if ((l >= DEV_TAB[13]) || (l < 0))
+        l = 1;
+    work_ptr->text_color = MAP_COL[l];
+
+    work_ptr->mark_height = DEF_MKHT;
+    work_ptr->mark_scale = 1;
+
+    l = *pointer++;             /* INTIN[7] */
+    work_ptr->fill_style = ((l > MX_FIL_STYLE) || (l < 0)) ? 0 : l;
+
+    l = *pointer++;             /* INTIN[8] */
+    if (work_ptr->fill_style == 2)
+        l = ((l > MX_FIL_PAT_INDEX) || (l < 1)) ? 1 : l;
+    else
+        l = ((l > MX_FIL_HAT_INDEX) || (l < 1)) ? 1 : l;
+    work_ptr->fill_index = l;
+
+    l = *pointer++;             /* INTIN[9] */
+    if ((l >= DEV_TAB[13]) || (l < 0))
+        l = 1;
+    work_ptr->fill_color = MAP_COL[l];
+
+    work_ptr->xfm_mode = *pointer;      /* INTIN[10] */
+
+    st_fl_ptr();                /* set the fill pattern as requested */
+
+    work_ptr->wrt_mode = 0;     /* default is replace mode */
+    work_ptr->line_width = DEF_LWID;
+    work_ptr->line_beg = 0;     /* default to squared ends */
+    work_ptr->line_end = 0;
+
+    work_ptr->fill_per = TRUE;
+
+    work_ptr->xmn_clip = 0;
+    work_ptr->ymn_clip = 0;
+    work_ptr->xmx_clip = DEV_TAB[0];
+    work_ptr->ymx_clip = DEV_TAB[1];
+    work_ptr->clip = 0;
+
+    work_ptr->cur_font = def_font;
+
+    work_ptr->loaded_fonts = NULLPTR;
+
+    work_ptr->scrpt2 = scrtsiz;
+    work_ptr->scrtchp = deftxbuf;
+
+    work_ptr->num_fonts = font_count;
+
+    work_ptr->style = 0;        /* reset special effects */
+    work_ptr->scaled = FALSE;
+    work_ptr->h_align = 0;
+    work_ptr->v_align = 0;
+    work_ptr->chup = 0;
+    work_ptr->pts_mode = FALSE;
+
+    /* move default user defined pattern to RAM */
+
+    src_ptr = ROM_UD_PATRN;
+    pointer = &work_ptr->ud_patrn[0];
+
+    for (l = 0; l < 16; l++)
+        *pointer++ = *src_ptr++;
+
+    work_ptr->multifill = 0;
+
+    work_ptr->ud_ls = LINE_STYLE[0];
+
+    pointer = CONTRL;
+    *(pointer + 2) = 6;
+    *(pointer + 4) = 45;
+
+    pointer = INTOUT;
+    src_ptr = DEV_TAB;
+    for (l = 0; l < 45; l++)
+        *pointer++ = *src_ptr++;
+
+    pointer = PTSOUT;
+    src_ptr = SIZ_TAB;
+    for (l = 0; l < 12; l++)
+        *pointer++ = *src_ptr++;
+
+    FLIP_Y = 1;
+}
+
+
+
 /*
  * vex_butv
  *
@@ -248,8 +368,6 @@ void vq_extnd()
  *
  * Outputs:
  *    contrl[9], contrl[10] - pointer to old routine
- *
- * Registers Modified:     a0
  */
 
 void vex_butv()
@@ -275,8 +393,6 @@ void vex_butv()
  *
  *  Outputs:
  *     contrl[9], contrl[10] - pointer to old routine
- *
- *  Registers Modified:     a0
  */
 
 void vex_motv()
@@ -304,7 +420,6 @@ void vex_motv()
  * Outputs:
  *    contrl[9], contrl[10] - pointer to old routine
  *
- * Registers Modified:     a0
  */
 
 void vex_curv()
@@ -323,7 +438,6 @@ void vex_curv()
  * 
  * entry:          new vector in CONTRL[7-8]
  * exit:           old vector in CONTRL[9-10]
- * destroys:       a0
  */
 
 void vex_timv()
