@@ -54,6 +54,9 @@ version.o: version.c
 kbd.o: kbd.c
 	${CC} ${CFLAGS} -c $?
 
+midi.o: midi.c
+	${CC} ${CFLAGS} -c $?
+
 conio.o: conio.c
 	${CC} ${CFLAGS} -c $?
 

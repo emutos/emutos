@@ -14,7 +14,7 @@ LDFLAGS = -Ttext=0xfc0000 -Tdata=0xfd0000 -Tbss=0x000000 -L/usr/lib/gcc-lib/m68k
 #LDFLAGS =
 
 BIOSOBJS =	tosvars.o startup.o  charblit.o \
-		kbd.o kbq.o mfp.o clock.o \
+		kbd.o midi.o kbq.o mfp.o clock.o \
 		bios.o conio.o kprint.o xbios.o \
                 fnt8x12.o version.o lineavars.o
 

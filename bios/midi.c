@@ -15,18 +15,16 @@
 #include	"portab.h"
 #include	"bios.h"
 #include	"kprint.h"
+#include        "acia.h"
+#include        "kbd.h"   /* function clear_kbdint() */
 
 
 /*==== Prototypes =========================================================*/
 
 /*==== Defines ============================================================*/
-#define ACIA_IKBD_BASE (0xfffffc04L)
+#define ACIA_MIDI_BASE (0xfffffc04L)
 
-#define acia (*(volatile struct ACIA*)ACIA_BASE)
-
-/*==== Global variables ===================================================*/
-BYTE    scancode;
-
+#define acia (*(volatile struct ACIA*)ACIA_MIDI_BASE)
 
 
 /*==== Send Byte to keyboard ACIA =========================================*/
@@ -38,24 +36,9 @@ VOID    send_midi_acia(unsigned char c)
 
  
 
-
-/****************************************************************************
-**  kbdecode - DECODE A SCANCODE FROM THE KEYBOARD
-**
-**	FUNCTION:  decode the scancode received from the keyboard
-**		   and return the corresponding character.
-**
-*/
-
-KBCHAR	mididecode(KBQENTRY kbqe , UWORD *status )
-{
-        return(0);
-}
-
-
 /*==== midiint - keyboard interrupt service routine =========================*/
 /*
- *	keyboard Interrupt Service Routine for
+ *	MIDI Interrupt Service Routine for
  *	this routine is invoked upon receipt of an interrupt
  *	from the keyboard by the system.  it retrieves the
  *	scan code and, if no error was detected,
@@ -65,63 +48,39 @@ KBCHAR	mididecode(KBQENTRY kbqe , UWORD *status )
  
 VOID	midiint(VOID)
 {
-    MFP *mfp=mfp_base;          /* set base address of MFP */
-    REG UBYTE scancode;         /* scan code received from keyboard */
+    REG UBYTE data;         /* byte received from MIDI */
 
-    scancode = acia.data;            /* fetch the character */
+    data = acia.data;            /* fetch the byte */
 #if IMPLEMENTED
-    midiqadd((KBQENTRY)(scancode=0x00ff));/* put into queue as WORD */
+    midiqadd((KBQENTRY)(data & 0xFF));   /* put into queue as WORD */
 #endif
 
     kprint("BIOS: MIDI event happened ...");
-    mfp->isrb = ~0x40;                   /* signal end of interrupt */
+    clear_kbdint();      /* signal end of interrupt */
+    
 }
 
 
 
-/*==== kbread - get a character from the keyboard queue. ==================*/
+/*==== midi_init - initialize the MIDI acia ==================*/
 /*
- *	Someone wants to read the keyboard.  So we see if there is any
- *	chars in the keyboard queue.  If so, we decode it and give it
- *	to the caller.  Otherwise, we return -1.
- */
-
-KBCHAR	kbread(VOID)
-{
-    KBQENTRY	kbqent ;
-    KBCHAR	kbchar ;
-    UWORD	status ;
-
-    while( kbqdel( &kbqent ) )
-    {
-        kbchar = kbdecode( kbqent , &status ) ;
-        if( status == IN_CHAR )
-            return( kbchar ) ;
-    }
-
-    /*  no valid characters available  */
-
-    return( -1L ) ;
-}
-
-
-
-/*==== kbinit - initialize the keyboard ===================================*/
-/*
- *	FUNCTION:  This routine resets the keyboard,
- *	  configures the MFP so we can get interrupts
+ *	FUNCTION:  This routine is needed for the keyboard to
+ *      work, since the IRQ is shared between both ACIAs.
  */
  
-ERROR	kbd_init(VOID)
+void midi_init(VOID)
 {
+    cputs("[    ] MIDI ACIA initialized ...\r");
 
-    /* initialize queue and set interrupt vector */
-//    midiqinit() ;         /* init kbq  			*/
+    /* initialize midi ACIA */
+    acia.ctrl =
+        ACIA_RESET;     /* master reset */
 
-    /* initialize acias */
-    acia.ctrl = 0x03; /* master reset */
-    acia.ctrl = 0x15; /* no interrupts, clock/16, 8 bit, 1 stop, no parity */
+    acia.ctrl =
+        ACIA_RID|       /* disable interrupts */
+        ACIA_RLTID|     /* RTS low, TxINT disabled */
+        ACIA_DIV16|     /* clock/16 */
+        ACIA_D8N1S;  /* 8 bit, 1 stop, no parity */
 
-
-    return(SUCCESS);
+    cstatus(SUCCESS);
 }
