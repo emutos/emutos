@@ -23,8 +23,8 @@
 
 /*==== External declarations ==============================================*/
 
-extern LONG ara_DMAread(LONG sector, WORD count, LONG buf, WORD dev);    /* in startup.S */
-extern LONG ara_XHDI(WORD function, ...);
+extern LONG ara_XHDI(WORD function, ...);    /* in startup.S */
+extern int native_print_kind;	/* hack to detect if aranym is present */
 
 
 /*
@@ -204,11 +204,6 @@ static LONG dma_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev)
             rw ? "write" : "read", sector, count, buf, dev);
 #endif
 
-#if ARANYM_NATIVE_DISK
-    /* direct access to host device */
-    if (rw == 0)
-        return ara_DMAread(sector, count, buf, dev);
-#endif
     if (dev >= 0 && dev < 8) {
         return acsi_rw(rw, sector, count, buf, dev);
     }
@@ -222,18 +217,23 @@ static LONG dma_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev)
 }
 
 
-
-/*
- * This file contains all disk-related xbios routines.
- */
-
 LONG DMAread(LONG sector, WORD count, LONG buf, WORD dev)
 {
+#if ARANYM_NATIVE_DISK
+    /* direct access to host device */
+    if (native_print_kind == 2)
+        return ara_XHDI(XHREADWRITE, dev, 0, 0, sector, count, buf);
+#endif
     return dma_rw(0, sector, count, buf, dev);
 }
 
 LONG DMAwrite(LONG sector, WORD count, LONG buf, WORD dev)
 {
+#if ARANYM_NATIVE_DISK
+    /* direct access to host device */
+    if (native_print_kind == 2)
+        return ara_XHDI(XHREADWRITE, dev, 0, 1, sector, count, buf);
+#endif
     return dma_rw(1, sector, count, buf, dev);
 }
 
@@ -272,8 +272,10 @@ LONG XHInqTarget(UWORD major, UWORD minor, ULONG *blocksize,
 LONG XHGetCapacity(UWORD major, UWORD minor, ULONG *blocks, ULONG *blocksize)
 {
 #if ARANYM_NATIVE_DISK
+    if (native_print_kind == 2) {
     /* direct access to host device */
-    return ara_XHDI(XHGETCAPACITY, major, minor, blocks, blocksize);
+        return ara_XHDI(XHGETCAPACITY, major, minor, blocks, blocksize);
+    }
 #endif
     /* TODO could read the blocks from Atari root sector */
     return EINVFN;
