@@ -251,7 +251,7 @@ vl_out:
  */
  
 _CLC_FLIT:
-	// A wrapper, so save the registers
+        // A wrapper, so save the registers
         movem.l d2-d7/a2-a6,-(sp)
         bsr.s   _clc_flit
         movem.l (sp)+,d2-d7/a2-a6
@@ -264,9 +264,9 @@ _clc_flit:
         move.l  _CONTRL,a0      // fetch number of vectors.
         move.w  2(a0),d0
         subq.w  #1,d0           // minus 1 for dbra
-        move.l  _PTSIN,a0	// point to array of vertices.
+        move.l  _PTSIN,a0       // point to array of vertices.
         lea     _fill_buffer,a1 // point to array of x-values.
-	move.w	#0,_fil_intersect       // reset counter
+        move.w  #0,_fil_intersect       // reset counter
 //
 //      Determine if the current vector is horizontal.  If it is then
 //      ignore it.
@@ -369,7 +369,7 @@ sfi_cont:
 draw_lp:
         move.w  (a1)+,d1        // grab a pair of endpoints
         move.w  (a1)+,d2
-	addq.w  #1,d1           // adjust the endpoints
+        addq.w  #1,d1           // adjust the endpoints
         subq.w  #1,d2
         cmp.w   d1,d2           // is start still to left of end?
         blt     dr_lp1          // nope - nothing to draw
@@ -590,7 +590,7 @@ concat:
  */
 
 _ABLINE:
-	// A wrapper, to save the registers 
+        // A wrapper, to save the registers 
         movem.l d2-d7/a2-a6,-(sp)
         bsr.s   abline
         movem.l (sp)+,d2-d7/a2-a6
@@ -1155,13 +1155,13 @@ dygtdx:
 //
 // The register usages at this point are as follows.
 //
-// d7 = yinc.              	a5 = ptr to destination.
-// d6 = xinc.              	a4 = ptr to _FG_BP_1.
-// d5 = not or table mask. 	a3 = e1.
-// d4 = epsilon.           	a2 = e2.
+// d7 = yinc.                   a5 = ptr to destination.
+// d6 = xinc.                   a4 = ptr to _FG_BP_1.
+// d5 = not or table mask.      a3 = e1.
+// d4 = epsilon.                a2 = e2.
 // d3 = # of bit_planes - 1.
 // d2 = line loop counter - 1.
-// d1 = line mask.         	a1 = offset to next plane (vme/10 only)
+// d1 = line mask.              a1 = offset to next plane (vme/10 only)
 // d0 = or table mask.
 //
 

@@ -154,13 +154,13 @@ WORD q_circle[MX_LN_WIDTH];     /* Holds the circle DDA */
 /* Shift Table for Computing Offsets into a Scan Line (interleaved planes) */
 
 static const BYTE shft_tab [] = {
-    3,	// 1 plane
+    3,  // 1 plane
     2,  // 2 planes
     0,  // not used
     1   // 4 planes
 };
 
-BYTE shft_off;			// once computed Offset into a Scan Line
+BYTE shft_off;                  // once computed Offset into a Scan Line
 #endif
 
 /* GDP variables */

@@ -317,7 +317,7 @@ void trnsfont()
 
 //    for (i = cnt - 1; i > 0; i--) {             /* dbra optimized loop */
     for (i = 1; i < cnt; i++) {
-        *addr=((*addr) << 8 | (*addr) >> 8);	/* swap bytes */
+        *addr=((*addr) << 8 | (*addr) >> 8);    /* swap bytes */
     }
 }
 

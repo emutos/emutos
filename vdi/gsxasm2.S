@@ -341,7 +341,7 @@ _end_pts:       move.w  6(sp),d1        // fetch y coordinate. (input to concat)
 //
 px_lp:
 #if vme10
-		asl.w   d6,d1           // shift accumulator for next bit_plane.
+                asl.w   d6,d1           // shift accumulator for next bit_plane.
                 adda.l  a3,a5           // point to same word in next bit plane
 pxl_in:         move.w  (a5),d4         // fetch a bit.
 #else

@@ -194,7 +194,7 @@ WORD get_seed(WORD xin, WORD yin, WORD *xleftout, WORD *xrightout)
         return (1);             /* we put a seed in the Q */
     } /* if endpts() */
 
-    return (0);	/* we didnt put a seed in the Q */
+    return (0); /* we didnt put a seed in the Q */
 } /* get_seed */
 
 
