@@ -17,24 +17,18 @@
 
 
         /* globl routines declared here */
-        .globl  _mov_cur
-        .globl  _vdimouse_exit
-        .globl  _vdimouse_init
-
+        .globl  _mov_cur        // set's new x/y coordinates
         .globl  _mouse_int      // mouse interrupt routine
 
         /* Global variables declared here */
-        .globl  _GLOC_KEY
-
 
         /* External routines used here */
         .xdef   _DEV_TAB        // address of device table
         .xdef   _xfm_crfm
         .xdef   _vb_draw
-
-        .xdef  _vex_butv       // exchange button change vector
-        .xdef  _vex_motv       // exchange mouse movement vector
-        .xdef  _vex_curv       // exchange cursor change vector
+        .xdef   _user_but       // user button vector
+        .xdef   _user_mot       // user motion vector
+        .xdef   _user_cur       // user cursor vector
 
         /* External variables used here */
         .xdef   _CONTRL         // address of CONTRL array
@@ -50,96 +44,11 @@
         .xdef   _mouse_flag     // Non-zero if mouse ints disabled
         .xdef   _newx           // New mouse x position
         .xdef   _newy           // New mouse y position
-        .xdef   _user_but       // user button vector
-        .xdef   _user_mot       // user motion vector
-        .xdef   _user_cur       // user cursor vector
 
 
 
 
         .text
-
-
-#if 0
-/*
- * _vdimouse_init - INITIALIZE MOUSE
- *
- * entry:          none
- * exit:           none
- * destroys:       a0
- */
-
-_vdimouse_init:
-        /* Init _user_cur vector */
-        lea.l   just_rts,a0             
-        move.l  a0,_user_but            // just rts
-        move.l  a0,_user_mot            // just rts
-        move.l  #_mov_cur,_user_cur     // initialize user_cur vector
-
-
-        /* Move in the default mouse form (presently the arrow) */
-        move.l  _INTIN, -(sp)           // Save the intin pointer and make
-        move.l  #_arrow_cdb, _INTIN      // it point to the arrow
-        bsr     _xfm_crfm               // transform mouse
-        move.l  (sp)+, _INTIN           // restore INTIN pointer
-
-        clr.l   d0
-        move.w  d0, _MOUSE_BT           // clear the mouse button state
-
-        move.b  d0, _cur_ms_stat        // clear the mouse status
-        move.b  d0, _mouse_flag         // clear the mouse flag
-        move.b  d0, _draw_flag          // clear the hide operations counter
-        move.w  d0, _newx               // set cursor x-coordinate to 0
-        move.w  d0, _newx               // set cursor y-coordinate to 0
-
-        /* Init mouse vbl interrupt */
-        move.l  _vblqueue, a0           // get VBL-queue address
-        move.l  #_vb_draw, (a0)          // set GEM VBL-routine
-        
-        /* Initialize mouse via XBIOS */
-        pea     _mouse_int              // mouse interrupt routine
-        pea     _arrow_cdb               // mouse parameter block
-        move.w  #1, -(sp)               // enable mouse in relative mode
-        move.w  #0, -(sp)               // Initmous
-        trap    #14                     // call XBIOS
-        add.l   #12, sp                 // clean up the stack
-
-just_rts:
-        rts
-
-
-/*
- * vdimouse_exit - deinitialize/disable mouse
- *
- * Disables the mouse
- *
- * entry:          none
- * exit:           none
- * destroys:       a0
- */
- 
-_vdimouse_exit:
-        /* Init _user_cur vector */
-        lea.l   just_rts,a0             
-        move.l  a0,_user_but            // just rts
-        move.l  a0,_user_mot            // just rts
-        move.l  a0,_user_cur            // just rts
-
-        /* Init mouse vbl interrupt */
-        move.l  _vblqueue, a0           // get VBL-queue address
-        move.l  #0, (a0)                // unset GEM VBL-routine
-        
-        /* Initialize mouse via XBIOS */
-        clr.l   -(sp)                   // no mouse interrupt routine
-        clr.l   -(sp)                   // no mouse parameter block
-        move.w  #0,-(sp)                // enable mouse in relative mode
-        move.w  #0,-(sp)                // Initmous
-        trap    #14                     // call XBIOS
-        lea     12(sp),sp               // clean up the stack
-
-        rts
-
-#endif
 
 
 /*
@@ -328,77 +237,6 @@ mov_cur1:
 
 
 
-#if 0   // MAD: hopefully replaced by vinput.c:gloc_key
-/*
- * _GLOC_KEY - get locator key
- *
- * entry:  none
- * exit:   d0 = 0    - nothing
- *         d0 = 1    - button pressed
- *                     _TERM_CH = 16 bit char info
- *
- *         d0 = 2    - coordinate info
- *                     _X1 = new x
- *                     _Y1 = new y
- *         d0 = 4    - NOT IMPLIMENTED IN THIS VERSION
- */
-
-_GLOC_KEY:
-        move.b  _cur_ms_stat,d0
-        move.b  d0,d1           // save state
-        andi.b  #0xc0,d0        // mask out all but button status bits
-        beq     key_stat        // nothing go check key stat
-
-        move.b  d1, d0
-        btst    #6, d0
-        beq     notright
-
-        move.w  #0x20, _TERM_CH // send terminator code for left key
-        bra     clr_bt_stat
-notright:
-        move.w  #0x21,_TERM_CH  // send terminator code for left key
-
-clr_bt_stat:
-        andi.b  #0x23, d0                // clear mouse button status
-        move.b  d0, _cur_ms_stat  // store cleared state
-        move.w  #1, d0           // set button pressed flag
-        rts
-
-key_stat:
-        move.w  #2, -(sp)  // see if a character present at con
-        move.w  #1, -(sp)
-        trap    #13
-        addq.l  #4, sp
-
-        tst.w   d0
-        beq     mov_stat        // no char
-
-        move.w  #2, -(sp)       // get the character from console
-        move.w  #2, -(sp)       // call Bconin
-        trap    #13             // BIOS
-        addq.l  #4, sp
-        
-        move.l  d0, d1
-        swap    d1
-        lsl.w   #8, d1
-        or.w    d1, d0
-        move.w  d0, _TERM_CH     // store char
-        move.l  #1, d0
-        rts
-mov_stat:
-        bclr.l  #5,d1           // test and clear mouse motion flag 
-        beq     no_chg
-
-        move.b  d1, _cur_ms_stat  // save mouse stat
-        move.w  _GCURX, _X1      // set _X1 = _GCURX
-        move.w  _GCURY, _Y1      // set _Y1 = _GCURY
-        move.l  #2,d0
-        rts
-
-no_chg:  
-        move.l  #0,d0
-        rts
-#endif
 
 
         .end

@@ -124,24 +124,24 @@ WORD gloc_key()
     ULONG ch;
 
     if (cur_ms_stat & 0xc0) {           // some button status bits set?
-        if (cur_ms_stat & 0x40)		// if bit 6 set
-            TERM_CH = 0x21;          	// send terminator code for left key
+        if (cur_ms_stat & 0x40)         // if bit 6 set
+            TERM_CH = 0x21;             // send terminator code for left key
         else
-            TERM_CH = 0x20;          	// send terminator code for right key
+            TERM_CH = 0x20;             // send terminator code for right key
         cur_ms_stat &= 0x23;            // clear mouse button status (bit 6/7)
         retval = 1;                     // set button pressed flag
     } else {                            // check key stat
         if (bconstat(2)) {              // see if a character present at con
             ch = bconin(2);
             TERM_CH = (WORD)
-                (ch >> 8)|  	        // scancode down to bit 8-15
-                (ch & 0xff);        	// asciicode to bit 0-7
+                (ch >> 8)|              // scancode down to bit 8-15
+                (ch & 0xff);            // asciicode to bit 0-7
             retval = 1;                 // set button pressed flag
         } else {
             if (cur_ms_stat & 0x20) {   // if bit #5 set ...
                 cur_ms_stat |= ~0x20;   // clear bit 5
-                X1 = GCURX;		// set _X1 = _GCURX
-                Y1 = GCURY;      	// set _Y1 = _GCURY
+                X1 = GCURX;             // set _X1 = _GCURX
+                Y1 = GCURY;             // set _Y1 = _GCURY
                 retval = 2;
             } else {
                 retval = 0;
@@ -184,18 +184,18 @@ void vdimouse_init()
     pointer = (LONG*)&INTIN[0]; /* let it point to INTIN[0] */
     savelong = *pointer;        /* save old value */
     *pointer = (LONG)&arrow_cdb;        // it points to the arrow
-    xfm_crfm();			// transform mouse
+    xfm_crfm();                 // transform mouse
     *pointer = savelong;        /* restore old value */
 
     MOUSE_BT = 0;               // clear the mouse button state
     cur_ms_stat = 0;            // clear the mouse status
-    mouse_flag = 0;		// clear the mouse flag
-    draw_flag = 0;		// clear the hide operations counter
-    newx = 0;			// set cursor x-coordinate to 0
-    newy = 0;			// set cursor y-coordinate to 0
+    mouse_flag = 0;             // clear the mouse flag
+    draw_flag = 0;              // clear the hide operations counter
+    newx = 0;                   // set cursor x-coordinate to 0
+    newy = 0;                   // set cursor y-coordinate to 0
 
     pointer = vblqueue;         /* vblqueue points to start of vbl_list[] */
-    *pointer = (LONG)vb_draw;	/* set GEM VBL-routine to vbl_list[0] */
+    *pointer = (LONG)vb_draw;   /* set GEM VBL-routine to vbl_list[0] */
 
     /* Initialize mouse via XBIOS in relative mode */
     initmous(1, &arrow_cdb, mouse_int);
@@ -216,7 +216,7 @@ void vdimouse_exit()
     user_cur = do_nothing;
 
     pointer = vblqueue;         /* vblqueue points to start of vbl_list[] */
-    *pointer = (LONG)vb_draw;	/* set GEM VBL-routine to vbl_list[0] */
+    *pointer = (LONG)vb_draw;   /* set GEM VBL-routine to vbl_list[0] */
 
     /* disable mouse via XBIOS */
     initmous(0, 0, 0);

@@ -48,13 +48,13 @@ void hide_cur()
      * If this is the first one then remove the cursor from the screen.
      * If not then do nothing, because the cursor wasn't on the screen.
      */
-    HIDE_CNT += 1;		// increment it
+    HIDE_CNT += 1;              // increment it
     if (HIDE_CNT == 1) {        // if cursor was not hidden...
         cur_replace();          // remove the cursor from screen
         draw_flag = 0;          // disable vb_draw routine
     }
 
-    mouse_flag -= 1;       	/* re-enable mouse drawing */
+    mouse_flag -= 1;            /* re-enable mouse drawing */
 }
 
 

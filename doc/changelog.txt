@@ -865,4 +865,9 @@ Start... early ages
 16. May. 2002
 - vdi/vdimouse.S - moved/rewrote DIS_CUR to monobj.c:dis_cur()  (MAD)
 - vdi/vdiinput.c - moved/rewrote vdimouse_init/exit to here (MAD)
+- vdi/vdimouse.S - move rest of asm routines from mousedrv.S to here (MAD)
+- vdi/mousedrv.S - deleted
+- util/miscasm.S - put trap13/14 to here from bdos/ for common use (MAD)
+- include/asm.h - added trap13/14 calls as externals (MAD)
+
 
