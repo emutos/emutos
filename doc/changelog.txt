@@ -384,3 +384,13 @@ Start... early ages
 20. Dec. 2001
 - added "stop" macro to include/asm.h as Laurent suggested (joy)
 - added calling the "stop" in bios/ikbd.c (surrounded by #ifdef) (joy)
+
+28. Dec. 2001
+- added Falcon memconf routine (joy)
+- corrected the memtop in the memconf clear routine to 14MB (joy)
+- added memval3 check/set (joy)
+- added ramtop/ramvalid set (no FastRAM for now) (joy)
+- added run-time check for Falcon MMU that fires a bus error
+  on non-Falcon machines. This makes use of stack so the notice
+  in bios/startup.S about meminit not using sp is not correct (joy)
+- updated status.txt (the hw init paragraph) (joy)
