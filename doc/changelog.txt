@@ -742,3 +742,8 @@ Start... early ages
 - Some minor bug fixes in aes and desk. (THH)
 - Disabled the autoexec stuff in bios/startup.S, I think creating a new
   baspage for that is not really necessary (THH).
+
+11. Apr. 2002
+- Finally found the other bug that caused EmuTOS to crash when running a
+  GEM application (dos_exec() was not reentrant). (THH)
+- Now linking desk_rsc.c into EmuTOS, too. (THH).

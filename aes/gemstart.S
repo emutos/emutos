@@ -19,7 +19,7 @@
 .globl _ui_start
 .globl _pgmld
 .globl _gemdos
-.globl _deskpexec
+.globl _do_pexec
 
 
 .xdef _ad_stail
@@ -86,42 +86,50 @@ LB4:
 
 _gemdos:
         move.l  (SP)+,saveretaddr
-
         movem.l d2/a2,saveregs
 
         move.w  #0,_DOS_ERR
         move.w  #0,_DOS_AX
         trap    #1
         cmp.l   #0,D0
-        bge     L134
+        bge.s   gd_end
         move.w  #1,_DOS_ERR
         move.w  D0,_DOS_AX
         cmp.w   #0xFFE0,D0
-        bgt     L134
+        bgt.s   gd_end
         not.w   _DOS_AX
         subi.w  #0x1E,_DOS_AX
-L134:
-
+gd_end:
         movem.l saveregs,d2/a2
-
         move.l  saveretaddr,-(SP)
         rts
 
 
 /*
-   This function starts the ROM desktop, parameter is its basepage that
-   must already have been created.
+   GEMDOS Pexec() call. This version is reentrant unlike most others!
 */
-_deskpexec:
+_do_pexec:
         movem.l d2/a2,-(sp)
-        clr.l   -(sp)
-        move.l  16(sp),-(sp)    // Push parameter on the stack again for pexec
-        clr.l   -(sp)
-        move.w  #4,-(sp)
+        move.l  22(sp),-(sp)    // Push parameter on the stack again for pexec
+        move.l  22(sp),-(sp)
+        move.l  22(sp),-(sp)
+        move.w  24(sp),-(sp)
         move.w  #0x4b,-(sp)
         trap    #1              // Pexec
         lea     16(sp),sp
         movem.l (sp)+,d2/a2
+
+        move.w  #0,_DOS_ERR
+        move.w  #0,_DOS_AX
+        cmp.l   #0,D0
+        bge.s   dopex_end
+        move.w  #1,_DOS_ERR
+        move.w  D0,_DOS_AX
+        cmp.w   #0xFFE0,D0
+        bgt.s   dopex_end
+        not.w   _DOS_AX
+        subi.w  #0x1E,_DOS_AX
+dopex_end:
         rts
 
 

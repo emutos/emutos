@@ -22,7 +22,8 @@
 GLOBAL UWORD    DOS_AX; /* really a "DOS_RET"   */
 GLOBAL UWORD    DOS_ERR;
 
-extern  LONG    gemdos();
+extern LONG gemdos();
+extern LONG do_pexec(WORD mode, LONG p1, LONG p2, LONG p3);  /* in gemstart.S */
 
 
 #define X_TABOUT 0x02
@@ -167,7 +168,11 @@ LONG dos_lseek(WORD handle, WORD smode, LONG sofst)
 
 void dos_exec(LONG pcspec, LONG segenv, LONG pcmdln)
 {
+#if 0
         gemdos(X_EXEC, 0, pcspec, pcmdln, segenv); 
+#else
+        do_pexec(0, pcspec, pcmdln, segenv);
+#endif
 }       
 
 

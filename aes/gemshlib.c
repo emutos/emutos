@@ -91,14 +91,13 @@ GLOBAL LONG     ad_pfile;
 GLOBAL WORD     gl_shgem;
 
 
-static LONG     userstack[256];
 
 
 
 /* Prototypes: */
 WORD sh_find(LONG pspec);
 extern void deskstart();        /* see ../desk/deskstart.S */
-extern void deskpexec(void *);  /* see gemstart.S */
+extern LONG do_pexec(WORD mode, LONG p1, LONG p2, LONG p3);  /* in gemstart.S */
 extern LONG trap_1(WORD, ...);  /* found in ../bios/startup.S */
 
 
@@ -847,7 +846,7 @@ void sh_ldapp()
         WORD    ret, badtry, retry;
         SHELL   *psh;
         LONG    *desk_pd;
-        void    *uda_ssp_save, *uda_usp_save;
+        void    *uda_ssp_save;
 
         psh = &sh[rlr->p_pid];
 #if GEMDOS
@@ -896,25 +895,21 @@ void sh_ldapp()
             retry = FALSE;
 
             kprintf("starting %s\n",(char *)ad_scmd);
-            if(strcmp((char *)ad_scmd,"DESKTOP.APP")==0)
+            if(strcmp((char *)ad_scmd,rs_str(STDESKTP))==0)
             { /* Experimental starting of the ROM desktop:  - THH*/
               sh_show(ad_scmd);
               p_nameit(rlr, sh_name(&D.s_cmd[0]));
 
-              desk_pd = (LONG *) trap_1( 0x4b , 5, "" , "", "");
+              desk_pd = (LONG *) do_pexec(5, 0L , (LONG)"", 0L);
               desk_pd[2] = (LONG) deskstart;
               desk_pd[3] = desk_pd[5] = desk_pd[7] = 0;
-              kprintf("starting desktop pd=$%lx\n",(LONG)desk_pd);
-              dsptch();  /* Needed for filling the rlr->p_uda with right values - THH */
-              /* Save old stacks and set up new stacks to not overwrite the AES' stack */
+              dsptch();  /* Updates rlr->p_uda! */
+              /* Save old stacks and set up new stacks so that AES' stacks
+                 won't be destroyed: */
               uda_ssp_save = rlr->p_uda->u_spsuper;
               rlr->p_uda->u_spsuper = &rlr->p_uda->u_supstk;
-              uda_usp_save = rlr->p_uda->u_spuser;
-              rlr->p_uda->u_spuser = &userstack[250];
-              deskpexec(desk_pd);    /* Run the desktop */
+              do_pexec(4, 0L, (LONG)desk_pd, 0L);    /* Run the desktop */
               rlr->p_uda->u_spsuper = uda_ssp_save;
-              rlr->p_uda->u_spuser = uda_usp_save;
-              kprintf("desktop finished\n");
             }
             else
             if ( sh_find(ad_scmd) )
@@ -924,17 +919,13 @@ void sh_ldapp()
               if (psh->sh_fullstep == 0)
               {
 #if GEMDOS
-                dsptch();  /* Needed for filling the rlr->p_uda with right values - THH */
-                /* Set up a new uda-stacks to not overwrite the AES' stacks */
+                dsptch();  /* Updates rlr->p_uda! */
+                /* Save old stacks and set up new stacks so that AES' stacks
+                   won't be destroyed: */
                 uda_ssp_save = rlr->p_uda->u_spsuper;
                 rlr->p_uda->u_spsuper = &rlr->p_uda->u_supstk;
-                uda_usp_save = rlr->p_uda->u_spuser;
-                rlr->p_uda->u_spuser = &userstack[250];
-                kprintf("starting application\n");
                 dos_exec(ad_scmd, ad_envrn, ad_stail);    /* Run the APP */
-                kprintf("application finished\n");
                 rlr->p_uda->u_spsuper = uda_ssp_save;
-                rlr->p_uda->u_spuser = uda_usp_save;
 #else
                 dos_exec(ad_scmd, LHIWD(ad_envrn), ad_stail, 
                          ad_s1fcb, ad_s2fcb);

@@ -25,6 +25,9 @@ Czech internationalisation
 - update tables in bios/country.c and bios/lineainit.c
 
 VDI
-- line drawing around boxes seems to be bad
+- Check the various assembler routines that are called from C functions
+  if they save and restore enough registers.
 
 AES
+- desk_rsc.c and gem_rsc.c are not fully ROM save yet (the TEDINFO strings etc)
+

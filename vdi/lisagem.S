@@ -132,8 +132,8 @@ tick_int:
         jsr     (a0)
 
         movem.l (sp)+, d0-d7/a0-a6
-timer_exit:
         clr.b   in_proc                 // allow yet another trip through
+timer_exit:
         move.l  _tim_chain, -(sp)       // Call the old timer vector too
         rts
 
