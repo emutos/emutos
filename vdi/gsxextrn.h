@@ -128,7 +128,7 @@ extern WORD gchr_key();
 extern WORD gshift_s();
 
 extern WORD vec_len(WORD x, WORD y);
-extern void fill_line(WORD left, WORD right, WORD val);
+extern void horzline(WORD x1, WORD x2, WORD y);
 extern WORD end_pts(WORD x, WORD y, WORD *xleftout, WORD *xrightout);
 
 /* C Support routines */

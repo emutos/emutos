@@ -194,8 +194,8 @@ linea_vecs:
         dc.l    _linea_0
         dc.l    _put_pix        /* _linea_1 */
         dc.l    _get_pix        /* _linea_2 */
-        dc.l    _linea_3        /* _ABLINE */
-        dc.l    _HABLINE        /* _linea_4 */
+        dc.l    _abline         /* _linea_3 */
+        dc.l    _habline        /* _linea_4 */
         dc.l    _RECTFILL       /* _linea_5 */
         dc.l    _linea_6        /* _clc_flit - does not work yet */
         dc.l    _linea_7        /* _bit_blt? */

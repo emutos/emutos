@@ -145,7 +145,7 @@ void d_contourfill()
             if (Qptr == Qtop)
                 crunch_Q();
 
-            fill_line(oldxleft, oldxright, ABS(oldy));
+            horzline(oldxleft, oldxright, ABS(oldy));
         }
     }
 }                               /* end of fill() */
@@ -171,7 +171,7 @@ WORD get_seed(WORD xin, WORD yin, WORD *xleftout, WORD *xrightout)
 
             {
                 /* we ran into another seed so remove it and fill the line */
-                fill_line(*xleftout, *xrightout, ABS(yin));
+                horzline(*xleftout, *xrightout, ABS(yin));
                 Q[Qtmp] = EMPTY;
                 if ((Qtmp + 3) == Qtop)
                     crunch_Q();
