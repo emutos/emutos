@@ -54,7 +54,7 @@ struct country_info countries[] = {
   { 12, "dk", "Denmark" }, 
   { 13, "sa", "Saudi Arabia" },
   { 14, "nl", "Holland" }, 
-  { 15, "cs", "Czech Republic" },  
+  { 15, "cz", "Czech Republic" },  
   { 16, "hu", "Hungary" },  
   { 17, "sk", "Slovak Republic" },
 };
@@ -158,6 +158,9 @@ void make_header(int country_number)
   fprintf(f, "\
 /* the country number << 1 and the PAL/NTSC flag */\n\
 #define OS_PAL %s\n\n", os_pal(buf, country_number));
+  fprintf(f, "\
+/* the country number only (used by country.c) */\n\
+#define OS_COUNTRY %d\n\n", country_number);
   fprintf(f, "\
 /* the build date in GEMDOS format */\n\
 #define OS_DOSDATE %s\n\n", os_dosdate(buf, &t));
