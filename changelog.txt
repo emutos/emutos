@@ -238,25 +238,29 @@ Start... early ages
 - some memory fixes, got rid of end.o (LVL)
 - a TOS in RAM loaded using an autoboot floppy (LVL)
 
-1. Nov. 2001
+01. Nov. 2001
 - removed old stuff from bios.c and startup.s (LVL)
 - fixed the BDOS-buffer-init bug: EmuTOS boots a real MegaSTE2!!! (LVL)
 - Removed hardcoded default drive #defines
 - added EmuCON (EmuTOS console, before command.prg) to EmuTOS      (MAD)
   This is not yet working (it seems command.c is not ROMable for now) 
 
-2. Nov. 2001
+02. Nov. 2001
 - EmuCON is now working. (THO)
 - Implemented cursconf (XBIOS 0x15)  (MAD)
 - Removed F_IOCtl() and the MOUSE:, CLOCK: and NUL: devices.          (THO)
 - Mapped the CON:, AUX: and PRN: devices to Atari values (-1, -2, -3) (THO)
 - commented out XBIOS calls from command.c (for testing)
 
-3. Nov. 2001
+03. Nov. 2001
 - run AUTO folder prgs, run EmuCON using Pexec(5) (LVL)
 - localconf.h taken in consideration (LVL)
 - implemented processor check and set of _longframe in BIOS/BDOS (MAD)
 - IKBD and MegaRTC clock (setting time & date untested) (LVL)
 
-4. Nov. 2001
+04. Nov. 2001
 - added old VDI sources from DRI (not running yet)
+
+05. Nov. 2001.
+- added forgotten bios/processor.h
+
