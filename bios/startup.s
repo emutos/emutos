@@ -298,29 +298,43 @@ os_dummy:
 | ==== Get into supervisor mode ==============================================
 _main:                                  | stunt to guarantee entry into supervisor mode
         move    #0x2700,sr              | disable interrupts
+
+| ==== Reset all Hardware ====================================================
+
         reset                           | Reset all hardware
+
+| ==== Check for diagnostic cartridge =======================================
+
+        .equ    cart_base,      0xfffa0000
+
+        cmp.l   #0xfa52235f, cart_base  | magic - is cartridge present?
+        bne     memconf                 | no -> memconf
+        lea     memconf(pc), a6         | load return address
+        jmp     cart_base+4              | execute diagnostig cartridge
+
+| ==== Clear BSS before calling any C function ======================
+|| the C part expects the bss to be cleared, so let's do this early
+| Better not, because some values may be needed after a reset!!! (MAD)
+
+	lea bssstart,a0
+	lea _bssend-1,a1
+	move.l a1,d0
+	sub.l a0,d0
+	lsr.l #2,d0
+clearbss:
+	clr.l (a0)+
+	dbra d0,clearbss
+
+
 
 | ==== Set up a supervisor stack ============================================
 
 | LVL   lea     _stkbot+SUPSIZ, sp      | Setup Supervisor Stack
         lea     _stktop, sp             | Setup Supervisor Stack
 
-        pea msg_start   | Print, what's going on
-        bsr _kprint
-        addq #4,sp
-
-| ==== Reset peripherals =====================================================
-
-        reset
-
-| ==== Check for diagnostic cartridge =======================================
-
-        .equ    cart_base,      0x00fa0000
-
-        cmp.l   #0xfa52235f, cart_base  | magic - is cartridge present?
-        bne     memconf                 | no -> cartover
-        lea     memconf(pc), a6         | load return address
-        jmp     cart_base+4              | execute diagnostig cartridge
+|        pea msg_start   | Print, what's going on
+|        bsr _kprint
+|        addq #4,sp
 
 | ==== Check, if old memory config can be used ==============================
 
@@ -335,7 +349,7 @@ memgoon:
 resetvec:
        cmpi.l 	#0x31415926, resvalid	| Jump to resetvector?
        bne.s 	noreset    		| No --> noreset
-       move.l 	resvector, d0		| Yes: resvec to d0
+       move.l 	resvector, d0		| Yes: old resvec to d0
        tst.b 	resvector		| Is it valid?
        bne.s 	noreset                	| No --> noreset
        btst 	#0, d0			| Address odd ?
@@ -345,94 +359,23 @@ resetvec:
        jmp 	(a0)			| jump to resvec
 noreset:
 
-| ==== Clear BSS before calling any C function ======================
-| the C part expects the bss to be cleared, so let's do this early
-	lea bssstart,a0
-	lea _bssend-1,a1
-	move.l a1,d0
-	sub.l a0,d0
-	lsr.l #2,d0
-clearbss:
-	clr.l (a0)+
-	dbra d0,clearbss
+| ==== Reset Soundchip =======================================================
+initsnd:
+        lea     0xffff8800, a0  | base address of PSG Soundchip
+        move.b  #7, (a0)        | port A and B          
+        move.b  #0xC0, 2(a0)    | set to output           
+        move.b  #0xE, (a0)      | port A                
 
+|        pea msg_sound   | Print, what's going on
+|        bsr _kprint
+|        addq #4,sp
 
-| ==== Set all cpu-interrupts to dummy handler ==============================
-| We currently are experiencing an unexpected cpu interrupt.  We will
-| set the vector addresses of these interrupts to a known location.
+| ==== Reset Floppy =========================================================
+        move.b  #7, 2(a0)       | deselect floppy
 
-	jsr init_exc_vec		| LVL: moved in vectors.s
-
-
-
-| ==== Set unassigned user interrupts to dummy handler ======================
-|      	move.l	SAVECT,-(sp)		| save software abort vector
-
-	jsr init_user_vec		| LVL: moved in vectors.s
-
-|      	move.l	(sp)+,SAVECT		| restore software abort vector
-
-	pea msg_main	| Print, what's going on
-	bsr _kprint
-	addq #4,sp
-
-
-
-| ==== Set memory (hard for now) ============================================
-
-
-| ==== Find out memory size for TPA =========================================
-| The memory configuration is found out by running into bus-errors, if memory
-| is not present at a tested address. Therefor a special buserror-handler is
-| temporarely installed. Works just for 4mb or more till now. (MAD)
-
-        clr.l   d6
-        move.b  #0x0f, d6               | set hw to 2 banks by 2 mb
-        move.b  d6, 0xffff8001          | set hw to 2 banks by 2 mb
-        move.b  d6, memctrl             | set copy of hw memory config
-
-       	move.l	0x00000008, a0	      	| save old bus error vector
-       	move.l	#bus_error, 0x00000008 	| and put in our temporary handler
-       	move.l	sp, a1			| save the current SP
-
-       	move.l	#TPASTART, m_start	| set up default values
-       	move.l	#TPALENGTH, m_length	| for internal memory
-
-|    	move.w	#0, 0x180000		| do we have memory here?
-       	move.l	#0x40000, m_length	| and length (for 256K initially)
-
-|      	move.w	#0, 0x1C0000		| memory at 2nd 256K boundary? 
-	move.l	#0x80000, m_length	| yes, assume 512K at this step
-
-|	move.w	#0, 0x200000		| memory at 3rd 256K boundary?
-	move.l	#0xC0000, m_length	| yes, assume 3/4M at this step
-
-|	move.w	#0, 0x200000		| memory at 3rd 256K boundary?
-|	move.l	#0xE00000, m_length	| yes, assume 14M at this step
-
-bus_error:
-       	move.l	a0, 0x00000008          | restore old bus error vector
-       	move.l	a1,sp			| and old stack pointer
-
-       	move.l	m_start,a0		| clear TPA
-       	move.l	m_length,d0		| get byte count
-       	lsr.l	#1,d0			| make word count
-       	subq.l	#1,d0			| pre-decrement for DBRA use
-       	clr.w	d1			| handy zero
-
-parity_loop:
-       	move.w	d1,(a0)+		| clear word
-       	dbra	d0,parity_loop
-	
-        move.l  #0x400000, phystop      | set memory to 4 mb
-        move.l  #0x752019f3, memvalid   | set memvalid to ok
-        move.l  #0x237698aa, memval2    | set memval2 to ok
-
-        move.l  #_b_mdx, themd          | write addr of MDB to sysvar themd
-                                        | defined in bios.c
-        pea msg_mem     | Print, what's going on
-        bsr _kprint
-        addq #4,sp
+|        pea msg_floppy  | Print, what's going on
+|        bsr _kprint
+|        addq #4,sp
 
 | ==== Set shifter to pal ===================================================
 
@@ -440,7 +383,7 @@ parity_loop:
         
 | ==== Set color palette ====================================================
 
-        lea    0xff8240, a1     | video-shifter 
+        lea    0xffff8240, a1     | video-shifter 
         move.w #0xf, d0         | loop for 16 colors
         lea    colorpal, a0     | color palette to a0
 loadcol:
@@ -448,9 +391,150 @@ loadcol:
         dbra   d0, loadcol      | next value   
 
 
+| ==== Set temporary screenmem address 0x10000 to videoshifter ==============
+        
+        move.b  #0x1, 0xffff8201 | set hw video base high word
+        move.b  #0x0, 0xffff8203 | set hw video base low word
+
+| ==== Check, if memory configuration is valid ==============================
+
+        move.b  memctrl, d6
+        move.l  phystop, d5
+        lea     memok, a6
+        bra     memval
+memok:
+        beq     aftermem
+
+| ==== Find out memory size for TPA =========================================
+| The memory configuration is found out by running into bus-errors, if memory
+| is not present at a tested address. Therefor a special buserror-handler is
+| temporarely installed. Works just for 4mb or more till now. (MAD)
+
+        clr.w   d6                      | start value form controller
+        move.b  #0xa, 0xffff8001        | set hw to 2 banks by 2 mb
+
+        movea.w #8, a0                  | startoffset for test
+        lea     0x200008, a1            | a1 to 2. bank
+        clr.w   d0                      | first test bitpattern
+
+wrt_patt1:      
+        move.w  d0, (a0)+               | write to both memory banks
+        move.w  d0, (a1)+
+        add.w   #0xfa54, d0             | bitpattern
+        cmpa.l  #0x200, a0              | till adr. 0x200
+        bne.s   wrt_patt1
+
+        move.l  #0x200000, d1           | d1 to 2. bank
+bank1:
+        lsr.w   #2, d6
+
+        movea.w #0x208, a0
+        lea     after1(pc), a5          | save return address
+        bra     memtest                 | memory test
+after1:
+        beq.s   nextbank                | ok 128k
+
+        movea.w #0x408, a0
+        lea     after2(pc), a5          | save return address
+        bra     memtest                 | memory test
+after2:
+        beq.s   conf2mb                 | ok 512k
+
+        movea.w #8, a0
+        lea     after3(pc), a5          | save return address
+        bra     memtest                 | memory test
+after3:
+        bne.s   nextbank
+
+        addq.w  #4, d6
+conf2mb:
+        addq.w  #4, d6                  | configuration value to 2 mbyte
+
+nextbank:
+        sub.l   #0x200000, d1           | next bank
+        beq.s   bank1                   | test for bank 1.
+  
+  
+        move.b  d6, 0xffff8001          | program memorycontroller
+
+        movea.l 8, a4                   | save bus-error vector
+        lea     buserror(pc), a0        | adr. new  bus error routine
+
+        move.l  a0, 8                   | set for test where memory bank ends
+        move.w  #0xfb55, d3             | start-bitpattern
+        move.l  #0x20000, d7            | startadr: 128 k
+        movea.l d7, a0
+
+teston:
+        movea.l a0, a1
+        move.w  d0, d2
+        moveq   #0x2a, d1               | 43 worte
+
+loopmem1:
+        move.w  d2, -(a1)
+        add.w   d3, d2
+        dbra    d1, loopmem1
+        movea.l a0, a1
+        moveq   #0x2a, d1
+
+loopmem2:
+        cmp.w   -(a1), d0
+        bne.s   buserror
+        clr.w   (a1)
+        add.w   d3, d0
+        dbra    d1, loopmem2            | test next word
+        adda.l  d7, a0
+        bra.s   teston                  | weiter testen
+
+
+buserror:
+        suba.l  d7, a0
+        move.l  a0, d5
+      	move.l	a4, 0x00000008          | restore old bus error vector
+        movea.l d5, a0
+        move.l  #0x400, d4              | lowest address for clearing
+
+        movem.l emptylong(pc), d0-d3    | empty bytes for d-register clearing
+clearmem:
+        movem.l d0-d3, -(a0)            | delete 16 bytes
+        cmpa.l  d4, a0                  | lowest address reached?
+        bne.s   clearmem
+        suba.l  a5, a5
+  
+| ==== Set memory configuration to sysvars ==================================
+
+        move.b  d6, memctrl             | memctrl
+        move.l  d5, phystop             | higest address as phystop
+        move.l  #0x752019f3, memvalid   | set memvalid to ok
+        move.l  #0x237698aa, memval2    | set memval2 to ok
+
+aftermem:
+
+
+
+| this is easier... (MAD)
+|bus_error:
+|      	move.l	a0, 0x00000008          | restore old bus error vector
+|      	move.l	a1,sp			| and old stack pointer
+|
+|      	move.l	m_start,a0		| clear TPA
+|      	move.l	m_length,d0		| get byte count
+|      	lsr.l	#1,d0			| make word count
+|      	subq.l	#1,d0			| pre-decrement for DBRA use
+|      	clr.w	d1			| handy zero
+|
+|parity_loop:
+|      	move.w	d1,(a0)+		| clear word
+|      	dbra	d0,parity_loop
+	
+
+|        pea msg_mem     | Print, what's going on
+|        bsr _kprint
+|        addq #4,sp
+
 | ==== Detect and set graphics resolution ===================================
 
-        move.b 0xff8260, d0     | Get video resolution from pseudo Hw
+        move.b 0xffff8260, d0     | Get video resolution from pseudo Hw
         and.b #3,d0             | Isolate bits 0 and 1
         cmp.b #3,d0             | Bits 0 and 1 set = invalid
         bne.s setscrnres        | no -->
@@ -458,18 +542,18 @@ loadcol:
 setscrnres:
         move.b d0, sshiftmod    | Set in sysvar
 
-        move.b #2, 0xff8260     | Hardware set to highres
+        move.b #2, 0xffff8260     | Hardware set to highres
         move.b #2, sshiftmod    | Set in sysvar
 
 |       jsr 0xfca7c4            | Init screen (video driver???)
 
-        cmp.b #1, sshiftmod            | middle resolution?
-        bne.s initmidres               | nein, -->
-        move.w 0xff825e, 0xff8246      | Copy Color 16->4 kopieren
+        cmp.b #1, sshiftmod             | middle resolution?
+        bne.s initmidres                | nein, -->
+        move.w 0xffff825e, 0xffff8246   | Copy Color 16->4 kopieren
 
 initmidres:
-        move.l  #_main, swv_vec  | Set Swv_vec (vector res change) to Reset
-        move.w  #1, vblsem         | vblsem: VBL freigeben
+        move.l  #_main, swv_vec | Set Swv_vec (vector res change) to Reset
+        move.w  #1, vblsem      | vblsem: VBL freigeben
 
 
 |       pea 0xfffffa00  | Print, what's going on
@@ -496,15 +580,48 @@ initmidres:
         move.b  _v_bas_ad+1, 0xffff8201 | set hw video base high word
         move.b  _v_bas_ad+2, 0xffff8203 | set hw video base low word
 
+
         pea msg_shift   | Print, what's going on
         bsr _kprint
         addq #4,sp
 
 | ==== Set memory width to sysvars ==========================================
+
         move.l  os_end, end_os          | end_os
+        move.l  end_os, _membot         | end_os to _membot
         move.l  os_beg, exec_os         | exec_os
         move.l  _v_bas_ad, _memtop      | _v_bas_ad to _memtop
-        move.l  end_os, _membot         | end_os to _membot
+
+| ==== Set memory config to initial memory descriptor =======================
+
+        move.l  #TPASTART, m_start      | set up default values
+
+        move.l  _memtop, d0             | calculate length of TPA
+        sub.l   #TPASTART, d0
+        move.l  d0, m_length            | set length of TPA in byte
+
+        move.l  #_b_mdx, themd          | write addr of MDB to sysvar themd
+                                        | defined in bios.c
+
+| ==== Set all cpu-interrupts to dummy handler ==============================
+| We currently are experiencing an unexpected cpu interrupt.  We will
+| set the vector addresses of these interrupts to a known location.
+
+	jsr init_exc_vec		| LVL: moved in vectors.s
+
+
+
+| ==== Set unassigned user interrupts to dummy handler ======================
+|      	move.l	SAVECT,-(sp)		| save software abort vector
+
+	jsr init_user_vec		| LVL: moved in vectors.s
+
+|      	move.l	(sp)+,SAVECT		| restore software abort vector
+
+|	pea msg_main	| Print, what's going on
+|	bsr _kprint
+|	addq #4,sp
+
 
 
 | ==== Clear RAM ============================================================
@@ -526,25 +643,8 @@ initmidres:
         bsr _kprint
         addq #4,sp
 
-| ==== Reset Soundchip =======================================================
-initsnd:
-        lea     0xffff8800, a0  | base address of PSG Soundchip
-        move.b  #7, (a0)        | port A and B          
-        move.b  #0xC0, 2(a0)    | set to output           
-        move.b  #0xE, (a0)      | port A                
-
-        pea msg_sound   | Print, what's going on
-        bsr _kprint
-        addq #4,sp
-
-| ==== Reset Floppy =========================================================
-        move.b  #7, 2(a0)       | deselect floppy
-
-        pea msg_floppy  | Print, what's going on
-        bsr _kprint
-        addq #4,sp
-
 | ==== vector setup =========================================================
+
         move.l #int_vbl, vec_vbl        | Vbl-interr
         move.l #int_hbl, vec_hbl        | Hbl-interr
         move.l #dummyaes, vec_aes       | Trap #2  (AES, almost dummy)
@@ -555,6 +655,7 @@ initsnd:
         move.l #just_rte, vec_divnull   | Division by zero to rte
 
 | ==== disk related vectors =================================================
+
         move.l  #_drv_init, hdv_init    | Initialize Harddrive
         move.l  #_drv_rw, hdv_rw        | Read/write sectors
         move.l  #_drv_bpb, hdv_bpb      | Get BIOS parameter Block
@@ -562,6 +663,7 @@ initsnd:
         move.l  #_drv_boot, hdv_boot    | Get boot device
 
 | ==== Some other vectors ===================================================
+
         move.l  #print_stat, prt_stat   |
         move.l  #print_vec, prt_vec     |
         move.l  #serial_stat, aux_stat  |
@@ -625,6 +727,26 @@ clrvbl:
 
         moveq.l #3,d0              | just before GEMDOS starts!
         bsr     cartscan
+
+
+| ==== Do some informational output ========================================
+
+        move.l  phystop, -(sp)  | Show physical memory
+        move.l  phystop, -(sp)  | Show physical memory
+        pea     msg_physmem
+        bsr     _cprintf
+        addq    #8, sp
+
+        move.l  _memtop, -(sp)   | Show start address of user memory
+        move.l  os_end, -(sp) | Show start address of user memory
+        pea     msg_usermem
+        bsr     _cprintf
+        add     #12, sp
+
+        move.l  _v_bas_ad, -(sp)| Show start address of screen
+        pea     msg_scradr
+        bsr     _cprintf
+        addq    #8,sp
 
 
 | ==== Now really start the BDOS ===========================================
@@ -718,9 +840,27 @@ just_rte:
 
 
 
+| ==== Test memory ==========================================================
+
+memtest:
+        add.l   d1, a0
+        clr.w   d0
+        lea     0x1f8(a0), a1
+memtloop:
+        cmp.w   (a0)+, d0
+        bne     memerr
+        add.w   #0xfa54, d0
+        cmp.l   a0, a1
+        bne     memtloop
+        
+memerr:
+        jmp     (a5)
+
+
+
 | ==== Check if memory configuration valid ==================================
 memval:
-        sub.l   a5, a5                      | clear a5
+        sub.l   a5, a5                  | clear a5
         cmp.l   #0x752019f3, memvalid   | magic in memvalid ?
         bne     memback
         cmp.l   #0x237698aa, memvalid   | magic in memval2 ?
@@ -1131,8 +1271,6 @@ msg_start:
         dc.w 0
 msg_main:
         .ascii "BIOS: Entered supervisor mode...\n\0"
-msg_mem:
-        .ascii "BIOS: Configured memory ...\n\0"
 msg_shift:
         .ascii "BIOS: Initialized shifter ...\n\0"
 msg_clrbss:
@@ -1163,6 +1301,15 @@ msg_key:
         .ascii "BIOS: Key pressed or released ...\n\0"
         .even
         
+
+msg_physmem:
+        .ascii "[ OK ] Found %ld (0x%lx) byte of physical memory ...\r\n\0"
+msg_usermem:
+        .ascii "[ OK ] User memory from 0x%lx to 0x%lx ...\r\n\0"
+msg_scradr:
+        .ascii "[ OK ] Screen starts at address 0x%lx ...\r\n\0"
+
+
 int_test:
         dc.l    0x88888888
         dc.w    0
@@ -1176,6 +1323,12 @@ colorpal:
         dc.w    0x0007, 0x0707, 0x0077, 0x0555
         dc.w    0x0333, 0x0733, 0x0373, 0x0773
         dc.w    0x0337, 0x0737, 0x0377, 0x0000
+
+emptylong:
+        dc.l    0
+        dc.l    0
+        dc.l    0
+        dc.l    0
 
 tiggle:
         .dc.b   0
