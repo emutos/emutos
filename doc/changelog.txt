@@ -367,8 +367,15 @@ Start... early ages
 - changed some files to remove indent warnings (did NOT indent files) (LVL)
 - replaced explicit TABs in strings by \t in command.c (LVL)
 - fixed bugs due to obsolete C code in command.c, and wrote a description of 
-  these bugs in doc/old_code to serve as a reference (LVL)
+  these bugs in doc/old_code.txt to serve as a reference (LVL)
 - moved NORETURN to portab.h (LVL)
-- panic() now prints on the screen also. (LVL)
+- panic() now prints on the screen also (LVL)
 - added assert() in kprint (LVL)
 - minor changes (LVL)
+
+19. Dec. 2001
+- reworked tounix tool to handle temp file and error cases better (LVL)
+- TMP variables in Makefile (LVL)
+- unix line ending (doc/nls.txt, util/boot.c, tools/mkflop.c) (LVL)
+- removed bios/kdump.c and bios/oldstuff (LVL)
+- removed old dump stuff in bios/kprint (LVL)
