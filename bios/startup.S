@@ -591,12 +591,15 @@ _criter1:
         rts                     // jump back to routine
         
 
-// ==== STonX - Native print routine for debugging ===========================
+// ==== STonX/ARAnyM - Native print routine for debugging ====================
 _print:
 _printout:
 #if STONX_NATIVE_PRINT
         dc.w 0xa0ff     // Jump to native execution
         dc.l 0          // Printing subroutine
+#endif
+#if ARANYM_NATIVE_PRINT
+		dc.w 0x7135     // Jump to native printing subroutine
 #endif
         rts
 
