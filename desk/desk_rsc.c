@@ -44,9 +44,9 @@ static const TEDINFO desk_rs_tedinfo_rom[] = {
      IBM, 0, TE_LEFT, 4352, 0, 0, 12, 20},      /* 0 */
 
     {0L,
-     (LONG) N_("Size in bytes:  ________"),
+     (LONG) N_("Size in bytes:  __________"),
      (LONG) "9",
-     IBM, 0, TE_RIGHT, 4352, 0, 0, 9, 25},      /* 1 */
+     IBM, 0, TE_RIGHT, 4352, 0, 0, 11, 27},     /* 1 */
 
     {0L,
      (LONG) N_("Last modified:  __/__/__"),
@@ -79,14 +79,14 @@ static const TEDINFO desk_rs_tedinfo_rom[] = {
      IBM, 0, TE_RIGHT, 4352, 0, 0, 6, 27},      /* 7 */
 
     {0L,
-     (LONG) N_("Bytes used:  ________"),
+     (LONG) N_("Bytes used:  __________"),
      (LONG) "9",
-     IBM, 0, TE_RIGHT, 4352, 0, 0, 9, 22},      /* 8 */
+     IBM, 0, TE_RIGHT, 4352, 0, 0, 11, 24},      /* 8 */
 
     {0L,
-     (LONG) N_("Bytes available:  ________"),
+     (LONG) N_("Bytes available:  __________"),
      (LONG) "9",
-     IBM, 0, TE_RIGHT, 4352, 0, 0, 9, 27},      /* 9 */
+     IBM, 0, TE_RIGHT, 4352, 0, 0, 11, 29},      /* 9 */
 
     {0L,
      (LONG) N_("Folder name:  ________.___"),
@@ -114,9 +114,9 @@ static const TEDINFO desk_rs_tedinfo_rom[] = {
      IBM, 0, TE_RIGHT, 4352, 0, 0, 6, 27},      /* 14 */
 
     {0L,
-     (LONG) N_("Bytes used:  ________"),
+     (LONG) N_("Bytes used:  __________"),
      (LONG) "9",
-     IBM, 0, TE_RIGHT, 4352, 0, 0, 9, 22},      /* 15 */
+     IBM, 0, TE_RIGHT, 4352, 0, 0, 11, 24},      /* 15 */
 
     {0L,
      (LONG) N_("Name:  ________.___"),
@@ -552,7 +552,7 @@ static const OBJECT desk_rs_obj_rom[] = {
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[1],
-     2, 4, 24, 1},
+     2, 4, 26, 1},
 
    { 5, -1, -1, G_FBOXTEXT,                     /*** 4 ***/
      NONE,
@@ -644,13 +644,13 @@ static const OBJECT desk_rs_obj_rom[] = {
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[8],
-     10, 7, 21, 1},
+     10, 7, 23, 1},
 
    { 8, -1, -1, G_FBOXTEXT,                     /*** 7 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[9],
-     5, 8, 26, 1},
+     5, 8, 28, 1},
 
    { 0, -1, -1, G_BUTTON,                       /*** 8 ***/
      SELECTABLE | DEFAULT | EXIT | LASTOB,
@@ -706,7 +706,7 @@ static const OBJECT desk_rs_obj_rom[] = {
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[15],
-     9, 7, 21, 1},
+     9, 7, 23, 1},
 
    { 0, -1, -1, G_BUTTON,                       /*** 8 ***/
      SELECTABLE | DEFAULT | EXIT | LASTOB,

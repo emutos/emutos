@@ -181,7 +181,7 @@ static WORD ob_sfcb(LONG psfcb, BYTE *pfmt)
           *psrc = 0;
         else
         {
-          LONG size = sf.sfcb_size;
+          ULONG size = sf.sfcb_size;
           static const char *fix[4] = { "", "K", "M", "G" };
           int fi = 0;  
           while (size >= 10000000L && fi <= 3)
@@ -189,7 +189,7 @@ static WORD ob_sfcb(LONG psfcb, BYTE *pfmt)
             size = (size + 1023) / 1024;
             fi += 1;
           }
-          sprintf(psize_str, "%ld", size);
+          sprintf(psize_str, "%lu", size);
           strcat(psize_str, fix[fi]);
         }
         for(cnt = 8 - strlen(psrc); cnt--; *pdst++ = ' ');
@@ -314,9 +314,9 @@ WORD inf_fifo(LONG tree, WORD dl_fi, WORD dl_fo, BYTE *ppath)
 
 
 static void inf_dttmsz(LONG tree, FNODE *pf, WORD dl_dt, WORD dl_tm,
-                       WORD dl_sz, LONG *psize)
+                       WORD dl_sz, ULONG size)
 {
-        BYTE            psize_str[9], ptime_str[7], pdate_str[7];
+        BYTE    psize_str[11], ptime_str[7], pdate_str[7];
 
         fmt_date(pf->f_date, &pdate_str[0]);
         inf_sset(tree, dl_dt, &pdate_str[0]);
@@ -324,7 +324,7 @@ static void inf_dttmsz(LONG tree, FNODE *pf, WORD dl_dt, WORD dl_tm,
         fmt_time(pf->f_time, &ptime_str[0]);
         inf_sset(tree, dl_tm, &ptime_str[0]);
 
-        sprintf(&psize_str[0], "%ld", *psize);
+        sprintf(&psize_str[0], "%lu", size);
         inf_sset(tree, dl_sz, &psize_str[0]);
 }
 
@@ -350,7 +350,7 @@ WORD inf_file(BYTE *ppath, FNODE *pfnode)
 
         inf_sset(tree, FINAME, &poname[0]);
 
-        inf_dttmsz(tree, pfnode, FIDATE, FITIME, FISIZE, &pfnode->f_size);
+        inf_dttmsz(tree, pfnode, FIDATE, FITIME, FISIZE, pfnode->f_size);
 
         inf_fldset(tree, FIRONLY, pfnode->f_attr, F_RDONLY,SELECTED, NORMAL);
         inf_fldset(tree, FIRWRITE, pfnode->f_attr, F_RDONLY,NORMAL,SELECTED);
@@ -421,7 +421,7 @@ WORD inf_folder(BYTE *ppath, FNODE *pf)
           fmt_str(&pf->f_name[0], &fname[0]);
           inf_sset(tree, FOLNAME, &fname[0]);
 
-          inf_dttmsz(tree, pf, FOLDATE, FOLTIME, FOLSIZE, &G.g_size);
+          inf_dttmsz(tree, pf, FOLDATE, FOLTIME, FOLSIZE, G.g_size);
           inf_finish(tree, FOLOK);
         }
         return(TRUE);
@@ -433,11 +433,11 @@ WORD inf_folder(BYTE *ppath, FNODE *pf)
 /************************************************************************/
 WORD inf_disk(BYTE dr_id)
 {
-        LONG            tree;
-        LONG            total, avail;
-        WORD            more;
-        BYTE            puse_str[9], pav_str[9], plab_str[12];
-        BYTE            drive[2];
+        LONG    tree;
+        LONG    total, avail;
+        WORD    more;
+        BYTE    puse_str[11], pav_str[11], plab_str[12];
+        BYTE    drive[2];
         
         graf_mouse(HGLASS, 0x0L);
         tree = G.a_trees[ADDISKIN];
@@ -458,10 +458,10 @@ WORD inf_disk(BYTE dr_id)
           inf_sset(tree, DIDRIVE, &drive[0]);
           inf_sset(tree, DIVOLUME, &plab_str[0]);
 
-          sprintf(&puse_str[0], "%ld", G.g_size);
+          sprintf(&puse_str[0], "%lu", G.g_size);
           inf_sset(tree, DIUSED, &puse_str[0]);
           
-          sprintf(&pav_str[0], "%ld", avail);
+          sprintf(&pav_str[0], "%lu", avail);
           inf_sset(tree, DIAVAIL, &pav_str[0]);
 
           inf_finish(tree, DIOK);

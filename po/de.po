@@ -266,8 +266,8 @@ msgid "Name:  ________.___"
 msgstr "Name:  ________.___"
 
 #: desk/desk_rsc.c:47
-msgid "Size in bytes:  ________"
-msgstr "Größe in Bytes:  ________"
+msgid "Size in bytes:  __________"
+msgstr "Größe in Bytes:  __________"
 
 #: desk/desk_rsc.c:52
 msgid "Last modified:  __/__/__"
@@ -290,12 +290,12 @@ msgid "Number of items:     _____"
 msgstr "Anzahl der Dateien:     _____"
 
 #: desk/desk_rsc.c:82 desk/desk_rsc.c:117
-msgid "Bytes used:  ________"
-msgstr "Genutzte Bytes:  ________"
+msgid "Bytes used:  __________"
+msgstr "Bytes benutzt:  __________"
 
 #: desk/desk_rsc.c:87
-msgid "Bytes available:  ________"
-msgstr "Freie Bytes:  ________"
+msgid "Bytes available:  __________"
+msgstr "Bytes frei:  __________"
 
 #: desk/desk_rsc.c:92
 msgid "Folder name:  ________.___"

@@ -1575,3 +1575,8 @@ Start... early ages
   been places at the bottom instead of the right of the box. fm_alert() also
   uses right clipping now, so there should be no more crashes when using a
   form-alert box in ST-LOW resolution. (THH)
+
+2003-10-06
+- desk/desk_rsc.c desk/deskinf.c po/*.po : Increased the size of some strings
+  so that the desktop can also display the size information of huge files.
+  Up to 4GB should be working now.  (THH)
