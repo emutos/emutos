@@ -113,7 +113,7 @@ proc_stk: 	ds.w	16	| 16 words from exception stack
 
 | ==== Start of System variables ============================================
 	.org 0x400		|
-etv_timer:      ds.l    1        |
+etv_timer:      ds.l    1       |
 etv_critic:     ds.l    1
 etv_term:       ds.l    1
 etv_xtra:       ds.l    5
@@ -136,7 +136,7 @@ palmode:        ds.w    1
 defshiftmod:    ds.w    1
 sshiftmod:     	ds.b    1
 	.org 0x44e
-_v_bas_ad:      ds.l    1
+_v_bas_ad:      ds.l    1	| screen base address  
 vblsem:         ds.w    1
 nvbls:	        ds.w    1
 _vblqueue:      ds.l    1
