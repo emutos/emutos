@@ -86,3 +86,12 @@ int strncmp(const char *a, const char *b, unsigned long int n)
 }
 #endif /* NEEDED */
 
+
+int toupper(int c)
+{
+    if(c>='a' && c<='z')
+        return(c-'a'+'A');
+    else
+        return(c);
+}
+

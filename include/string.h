@@ -29,6 +29,8 @@ char *strcpy(char *dest, const char *src);
 int strcmp(const char *a, const char *b);
 int strncmp(const char *a, const char *b, unsigned long int n);
 
+int toupper(int c);
+
 
 /* block memory routines */
 
