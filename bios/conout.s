@@ -2,11 +2,15 @@
 | ==== conout.s - screen handling assembler routines                        
 | ===========================================================================
 |
+| Copyright (c) 2001 Lineo, Inc.
 | Copyright (c) 2001 Martin Doering.
 |
 | Authors:
 |  MAD  Martin Doering
-|  LVL  Laurent Vogel
+|  LMD  ???
+|  MSH  ???
+|  RJG  ???
+|  EWF  ???
 |
 | This file is distributed under the GPL, version 2 or at your
 | option any later version.  See doc/license.txt for details.
@@ -16,9 +20,9 @@
 
 | ==== External Declarations ================================================
 
-                globl   _con_out
-                globl   _blink
-                globl   _esc_init
+                .global _con_out
+                .global _blink
+                .global _esc_init
        
 
 
@@ -59,8 +63,8 @@
                 .xdef   con_state       | state of conout state machine
 
 
-                .data
-tempo:  .dc.w   0xc00   | used for bell simulation
+|                .data
+|tempo:  .dc.w   0xc00   | used for bell simulation
 
 
 | ==== Defines ==============================================================
@@ -114,6 +118,7 @@ tempo:  .dc.w   0xc00   | used for bell simulation
 
         .equ    BFHCON,         2       | console device
 
+        .equ    plane_offset,   2       | ???
 
 
 
@@ -238,7 +243,7 @@ get_column:
         move.l  #normal_ascii, con_state
         bra     escY
 
-check_low_case
+check_low_case:
         sub.w   #0x21, d1               | see if b to w
         bmi     exit_conout
         cmp.w   #21, d1
@@ -646,17 +651,17 @@ escv:           bset    #F_CEOL,v_stat_0 | set the eol handling bit.
 escw:           bclr    #F_CEOL,v_stat_0 | clear the eol handling bit.
                 rts
 
-|||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-|       carriage return.                                |
-|||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+
+| ==== ascii_cr - carriage return.===========================================
 
 ascii_cr:       move.w  v_cur_cy,d1
                 clr.w   d0              | beginning of current line.
                 bra     move_cur
 
-|||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-|       line feed.                                      |
-|||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+
+| ==== ascii_lf - line feed.=================================================
 
 ascii_lf:       move.w  v_cur_cy,d0     | d0 := current cursor y.
                 cmp.w   v_cel_my,d0     | at bottom of screen?
@@ -666,9 +671,9 @@ ascii_lf:       move.w  v_cur_cy,d0     | d0 := current cursor y.
                 bsr     p_sc_up         | scroll up 1 line & blank current line.
                 bra     cntesce         | show cursor.
 
-|||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-|       cursor blink interrupt routine.                 |
-|||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+
+| ==== _blink - cursor blink interrupt routine.==============================
 
 _blink:         lea     v_stat_0,a0
                 btst    #F_CVIS,(a0)    | test visibility/semaphore bit.
@@ -683,7 +688,9 @@ _blink:         lea     v_stat_0,a0
                 bsr     comp_cr1        | complement cursor.
 bl_out:         rts
 
-|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+
+| ===========================================================================
 |      alpha_cell
 |
 | purpose:
@@ -701,7 +708,7 @@ bl_out:         rts
 |       zero flag       z:0 -> invalid code. no address returned  (ne)
 |                       z:1 -> valid address returned             (eq)
 |       a0.l      points to first byte of source cell if code was valid
-|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+| ===========================================================================
 
 alpha_cell:
         move.w  v_fnt_st,d3
@@ -726,7 +733,9 @@ out_of_bounds:
         moveq   #1,d3                   | z:0 -> invalid code. no address returned
         rts
 
-|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+
+| ===========================================================================
 | name:
 |     ascii_out
 |
@@ -744,7 +753,7 @@ out_of_bounds:
 |       d1.w      ascii code for character
 | out:
 |       clobbered:      everything imaginable except
-|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+| ===========================================================================
 
 ascii_out:
         bsr     alpha_cell              | a0 -> the character source
@@ -810,14 +819,11 @@ disp_cur:
         bset    #F_CVIS,v_stat_0        | set visibility bit...end of critical section.
 dc_out: rts
 
-|
 
 
-|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+| ===========================================================================
 |
 |       title: Blank blt
-|
-|        date: 24 sept 84
 |
 |  This routine fills a cell-word aligned region with the background
 |  color.  The rectangular region is specified by a top/left cell x,y
@@ -834,7 +840,7 @@ dc_out: rts
 |       none
 |
 |       destroyed:  d0.w,d1.l,d2.l,d3.w,d5.w,a1.l,a2.l
-|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+| ===========================================================================
 
 blnk_blt:
         sub.l   d1,d2                   |form cell delta x, delta y in d2
@@ -945,7 +951,9 @@ plane1x:
         dbra    d2,plane1y              |do all rows in region
         rts
 
-|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+
+| ===========================================================================
 | name:
 |        cell_addr
 |
@@ -966,7 +974,7 @@ plane1x:
 |       a1      points to first byte of cell
 |
 |       destroyed:      d3.l,d5.l
-|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+| ===========================================================================
 
 cell_addr:
 
@@ -1019,8 +1027,9 @@ y_disp:
 
         rts
 
-|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-|
+
+
+| ===========================================================================
 | name:
 |        cell_xfer
 |
@@ -1044,10 +1053,7 @@ y_disp:
 |
 |       destroyed:      a1.l,a3.l,d3.w,d4.w,d5.w,d6.w,d7.l
 |
-|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-
-plane_offset    equ     2
-
+| ===========================================================================
 
 cell_xfer:
         move.w  v_fnt_wr,a2
@@ -1115,7 +1121,7 @@ blk_invrt:                              | inject the inverted source block
         rts
 
 
-|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+| ===========================================================================
 |
 | name:
 |        move_cursor
@@ -1133,7 +1139,8 @@ blk_invrt:                              | inject the inverted source block
 |       d1.w    new cell Y coordinate
 |
 |       destroyed:      a1.l,a2.l,a4.l,d4.w,d5.w,d6.w
-|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+|
+| ===========================================================================
 
 escY:
 move_cursor:
@@ -1180,7 +1187,8 @@ invisible:
         rts
 
 
-|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+| ===========================================================================
 |
 | name:
 |        neg_cell
@@ -1203,8 +1211,8 @@ invisible:
 | out:
 |
 |       destroyed:      d4.w,d5.w,d6.w,a1.l,a2.l,a4.l
-|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-
+|
+| ===========================================================================
 
 neg_cell:
 
@@ -1231,19 +1239,17 @@ neg_loop:
         rts
 
 
-|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+| ===========================================================================
 |
-| name:
-|        next_cell
-|
+| next_cell
 |
 | purpose:
-|
 |       return the next cell address given the current position and screen constraints
 |
 | latest update:
-|
 |       19-sep-84
+|
 | in:
 |       d0.w      cell X
 |       d1.w      cell Y
@@ -1260,8 +1266,8 @@ neg_loop:
 |
 |
 |       destroyed:      d3.l,d5.l
-|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-
+|
+| ===========================================================================
 
 next_cell:
 
@@ -1316,7 +1322,7 @@ next_word:
         clr.w   d3                              | indicate no wrap
         rts
 
-|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+| ===========================================================================
 |
 |       title: Scroll
 |
@@ -1347,7 +1353,7 @@ next_word:
 |       destroyed:
 |               d0.w,d1.l,d2.l,d3.l,d5.w,a1.l,a2.l,a3.l
 |
-|||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+| ===========================================================================
 
 p_sc_up:
         move.l  _v_bas_ad,a3    |get base addr to destination
@@ -1399,9 +1405,9 @@ scrdwn1:
         dbra    d3,scrdwn0      |do all
         bra     scr_out
 
-|||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-|       escape initialization routine.                  |
-|||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+
+| ==== _esc_init - escape initialization routine.============================
 
 _esc_init:
                 move.w  #90, _v_lin_wr          | Set the line wrap
@@ -1435,10 +1441,13 @@ scr_loop:       move.l  d0, (a0)+               | Clear the screen
 
                 bra     esce                    | Show the cursor
 
-|||||||||||||||||||||||||||||||||||||||||||||||||||||||||
-|       font globals initialization routine.            |
-|               input: a0 = ptr to system font header.  |
-|||||||||||||||||||||||||||||||||||||||||||||||||||||||||
+
+
+| gl_f_init - font globals initialization routine ===========================
+|
+| input:
+|   a0 = ptr to system font header
+|
 
 gl_f_init:      move.w  FRM_HT(a0),d0           | fetch form height.
                 move.w  d0,v_cel_ht             | init cell height.
