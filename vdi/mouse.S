@@ -11,6 +11,8 @@
 
 
 
+#include "vdiconf.h"
+
         .text
 /////////////////////////////////////////////////////////////////////////
 //                                                                      //
@@ -33,23 +35,10 @@
         .page
 /////////////////////////////////////////////////////////////////////////
 //                                                                      //
-//              Flags for Conditional Assembly of Code                  //
-//                                                                      //
-/////////////////////////////////////////////////////////////////////////
-
-#define rbp                    1        // assemble for Atari ST: 0 - yes, 1 - no
-#define vme10                  0        // assemble for Motorola VME/10: 0 - yes, 1 - no
-#define rev_vid                1        // reverse video screen driver: 0 - yes, 1 - no
-
-/////////////////////////////////////////////////////////////////////////
-//                                                                      //
 //                      Local Constants                                 //
 //                                                                      //
 /////////////////////////////////////////////////////////////////////////
 
-ifeq    vme10
-#define v_pl_dspl            $10000     // # of bytes between VME/10 video planes
-endc
 
         .page
 /////////////////////////////////////////////////////////////////////////
@@ -184,7 +173,7 @@ _MOV_CUR:
 //      one.  This is a critical region so all interrupts must be turned off.
 //
         move.w  SR,-(sp)        // save current value of status register
-        ori.w   #$0700,SR       // mask off all interrupts
+        ori.w   #0x0700,SR       // mask off all interrupts
         move.w  d0,newx         // save new cursor x-coordinate
         move.w  d1,newy         // save new cursor y-coordinate
         bset.b  #0,draw_flag    // set the 'draw cursor' flag
@@ -221,7 +210,7 @@ mov_cur1:
 //
 vb_draw:
         move.w  SR,-(sp)        // save current value of status register
-        ori.w   #$0700,SR       // mask off all interrupts
+        ori.w   #0x0700,SR       // mask off all interrupts
         bclr.b  #0,draw_flag    // draw the cursor?
         beq     vblank_noop     // nope - done
 
@@ -373,7 +362,7 @@ _VEX_CURV:
 
                              
                              
-#define RTN_REC         2//4            
+#define RTN_REC         2*4            
 
 
 //      fetching and saving a destination long word
@@ -398,7 +387,7 @@ shf_tab:
         dc.b    2                       // 2 planes
         dc.b    0                       // not used
         dc.b    1                       // 4 planes
-endc
+#endif
 cur_display:
         movem.l d4-d7/a4-a6,-(sp)       // save registers used by 'C'
         clr.w   d7                      // init entry & store routine index
@@ -421,10 +410,10 @@ clip_x:
 
 clip_left:
         addi.w  #16,d0                  // get address of right word
-        moveq.l #RTN_REC//1,d7          // index left clip routine addresses
+        moveq.l #RTN_REC*1,d7          // index left clip routine addresses
         bra     clip_y
 clip_right:
-        moveq.l #RTN_REC//2,d7          // index to right clip routine addresses
+        moveq.l #RTN_REC*2,d7          // index to right clip routine addresses
 
 clip_y:
         lea     mask_form,a0            // a3 -> MASK/FORM for cursor
@@ -460,8 +449,8 @@ get_addr:
 //  these bits from the x-coordinate.
 //
         move.w  d0,d2           // save the x-coordinate for later
-        andi.w  #$000F,d0       // bit offset = x-coordinate mod 16
-        andi.w  #$FFF0,d2       // clear bits for offset into word
+        andi.w  #0x000F,d0       // bit offset = x-coordinate mod 16
+        andi.w  #0xFFF0,d2       // clear bits for offset into word
 //
 //  Convert the adjusted x-coordinate to a word offset into the current
 //  scan line.  If the planes are arranged in an interleaved fashion with
@@ -469,14 +458,13 @@ get_addr:
 //  in the shift table.  If the planes are arranged as separate, consecu-
 //  tive entities then divide the x-coordinate by 8 to get the number of bytes.
 //
-ifeq    rbp
+#ifndef rbp
+        lsr.w   #3,d2           // convert x-coordinate to offset
+#else
         move.w  _v_planes,d3    // get number of planes
         move.b  shf_tab-1(pc,d3.w),d3   // get shift factor
         lsr.w   d3,d2           // convert x-coordinate to offset
-endc
-ifne    rbp
-        lsr.w   #3,d2           // convert x-coordinate to offset
-endc
+#endif
 //
 //  Compute the offset to the desired word by adding the offset to the
 //  start of the scan line to the offset within the scan line, restore
@@ -485,12 +473,11 @@ endc
         add.w   d2,d1           // compute total offset into screen buffer
 
         move.l  _v_bas_ad,a1            // get start addr. of 1st graphic plane
-ifeq rbp
-        adda.w  d1,a1                   // a1 -> destination
-endc
-ifne rbp
+#ifndev rbp
         adda.l  d1,a1                   // get destination address
-endc
+#else
+        adda.w  d1,a1                   // a1 -> destination
+#endif
 //
 //   optimize shift count and direction: choose shift routine
 //
@@ -511,15 +498,14 @@ shift_lf:
 init:
         move.l  rtn_tab+00(pc,d7.w),a5  // get starting address of store routine
         move.l  rtn_tab+04(pc,d7.w),a6  // get starting address of fetch routine
-ifeq rbp
+#ifndef rbp
+        move.w  _v_planes,d7            // get number of graphic planes
+        move.l  #v_pl_dspl,d3           // get # bytes between graphic planes
+#else
         move.w  _v_planes,d7            // get # of graphic planes
         move.w  d7,d3
         add.w   d3,d3                   // # bytes between words in same plane
-endc
-ifne rbp
-        move.w  _v_planes,d7            // get number of graphic planes
-        move.l  #v_pl_dspl,d3           // get # bytes between graphic planes
-endc
+#endif
 
         move.l  a1,save_addr            // save area: origin of material
         move.w  d5,save_len             //           number of rows
@@ -555,12 +541,11 @@ new_plane:
         move.w  crow_cnt(sp),d5         // get # of displayable cursor rows
         suba.w  cpl_size(sp),a0         // starting address of cursor source
 
-ifeq rbp                  
-        addq.l  #2,d_addr(sp)           // update destination pointer
-endc
-ifne rbp
+#ifndef rbp
         add.l   d3,d_addr(sp)           // get address of next graphics plane
-endc
+#else
+        addq.l  #2,d_addr(sp)           // update destination pointer
+#endif
         movea.l d_addr(sp),a1           // current destination address
 //
 //  Logic routine selection is based on the foreground and background colors
@@ -586,20 +571,18 @@ p_next_plane:
 //
 //  Entry addresses for the logic operation routines.
 //
-ifne rev_vid
 fgbg_op:
+#ifndef rev_vid
         dc.l    fg0bg0                  // foreground = 0, background = 0
         dc.l    fg0bg1                  // foreground = 0, background = 1
         dc.l    fg1bg0                  // foreground = 1, background = 0
         dc.l    fg1bg1                  // foreground = 1, background = 1
-endc
-ifeq rev_vid
-fgbg_op:
+#else
         dc.l    fg1bg1                  // foreground = 0, background = 0
         dc.l    fg1bg0                  // foreground = 0, background = 1
         dc.l    fg0bg1                  // foreground = 1, background = 0
         dc.l    fg0bg0                  // foreground = 1, background = 1
-endc
+#endif
 
 .page
 
@@ -617,32 +600,26 @@ endc
 
 
 //      fetch/store/advance row:  long word
-ifeq rbp
 fetch_lw:
-
+#ifndef rbp
+        move.l  (a1),d2
+#else
         move.w  (a1),d2
         swap    d2
         move.w  (a1,d3.w),d2            // d2(31:00) <- destination
-endc
-ifne rbp
-fetch_lw:
-        move.l  (a1),d2
-endc    
+#endif
         move.l  d2,(a2)+                // save original destination
         
         jmp     (a3)                    // a3 -> alignment routine
 
-ifeq rbp
-store_lw:                                               
-
+store_lw:
+#ifndef rbp
+        move.l  d2,(a1)
+#else
         move.w  d2,(a1,d3.w)
         swap    d2
         move.w  d2,(a1)                 // send long word to screen
-endc
-ifne rbp
-store_lw:
-        move.l  d2,(a1)
-endc
+#endif
         add.w   d4,a1                   // a1 -> next row of destination
 
 enter_lw:
@@ -791,22 +768,57 @@ cur_replace:
         movem.l d4-d5/a4-a5,-(sp)       // save registers used by 'C'
         bclr.b  #F_SAVRDY,save_stat     // does save area contain valid data ?
         beq     hang_it_up              // 0:nothing saved
-ifeq rbp
+#ifndef rbp
+        move.w  save_len,d4             // get number of cursor lines per plane
+        subq.w  #1,d4                   // adjust for loop counter
+#else
         move.w  save_len,d4             // d4 <- number of lines per plane
         move.w  d4,d2
         subq.w  #1,d2                   // d2 <- adjust counter for dbra
-endc
-ifne rbp
-        move.w  save_len,d4             // get number of cursor lines per plane
-        subq.w  #1,d4                   // adjust for loop counter
-endc
+#endif
         move.w  _v_lin_wr,d3            // d3 <- dy wrap value
 
         move.l  save_addr,a0            // a0 -> destination
         lea     save_area,a1            // a1 -> save area
 
         move.w  _v_planes,d5            // d5 <- resolution discriminator
-ifeq rbp
+#ifndef rbp
+        subq.w  #1,d5                   // adjust plane count for loop
+        movea.l a0,a5                   // save destination address
+        lea     v_pl_dspl,a3            // get # of bytes between gr. planes
+        move.w  d4,d2                   // save # of lines/plane
+        btst.b  #F_SAVWID,save_stat     // word or longword transfer?
+        bne.b   lw_1st_line             // for longword transfer
+        bra.b   wd_1st_line             // for word transfer
+
+v_wd_plane:
+        adda.l  a3,a5                   // point to next graphics plane
+        movea.l a5,a0                   // new destination address
+        move.w  d4,d2                   // restore # of lines to be written
+        bra.b   wd_1st_line             // restore 1st dest.line for this plane
+v_wd_loop:
+        adda.w  d3,a0                   // next scan line of destination
+wd_1st_line:
+        move.w  (a1)+,(a0)              // restore one destination line
+        dbra    d2,v_wd_loop            // next line in save buffer 
+        dbra    d5,v_wd_plane           // set up for next graphics plane
+        movem.l (sp)+,d4-d5/a4-a5       // restore 'C' registers
+        rts
+
+v_lw_plane:
+        adda.l  a3,a5                   // point to next graphics plane
+        movea.l a5,a0                   // new destination address
+        move.w  d4,d2                   // restore # of lines to be written
+        bra.b   lw_1st_line             // restore 1st dest.line for this plane
+v_lw_loop:
+        adda.w  d3,a0                   // next scan line of destination 
+lw_1st_line:
+        move.l  (a1)+,(a0)              // restore one destination line
+        dbra    d2,v_lw_loop            // next line in save buffer
+        dbra    d5,v_lw_plane           // set up for next graphics plane
+        movem.l (sp)+,d4-d5/a4-a5       // restore 'C' registers
+        rts
+#else
         subq.w  #2,d5
         bhi     lo_rez
         beq     md_rez
@@ -943,44 +955,9 @@ lo_lw_loop:
         move.l  a5,a0                   // a0 -> next line
                         
         dbra    d2,lo_lw_loop
-endc
-ifne rbp
-        subq.w  #1,d5                   // adjust plane count for loop
-        movea.l a0,a5                   // save destination address
-        lea     v_pl_dspl,a3            // get # of bytes between gr. planes
-        move.w  d4,d2                   // save # of lines/plane
-        btst.b  #F_SAVWID,save_stat     // word or longword transfer?
-        bne.b   lw_1st_line             // for longword transfer
-        bra.b   wd_1st_line             // for word transfer
+#endif
 
-v_wd_plane:
-        adda.l  a3,a5                   // point to next graphics plane
-        movea.l a5,a0                   // new destination address
-        move.w  d4,d2                   // restore # of lines to be written
-        bra.b   wd_1st_line             // restore 1st dest.line for this plane
-v_wd_loop:
-        adda.w  d3,a0                   // next scan line of destination
-wd_1st_line:
-        move.w  (a1)+,(a0)              // restore one destination line
-        dbra    d2,v_wd_loop            // next line in save buffer 
-        dbra    d5,v_wd_plane           // set up for next graphics plane
-        movem.l (sp)+,d4-d5/a4-a5       // restore 'C' registers
-        rts
 
-v_lw_plane:
-        adda.l  a3,a5                   // point to next graphics plane
-        movea.l a5,a0                   // new destination address
-        move.w  d4,d2                   // restore # of lines to be written
-        bra.b   lw_1st_line             // restore 1st dest.line for this plane
-v_lw_loop:
-        adda.w  d3,a0                   // next scan line of destination 
-lw_1st_line:
-        move.l  (a1)+,(a0)              // restore one destination line
-        dbra    d2,v_lw_loop            // next line in save buffer
-        dbra    d5,v_lw_plane           // set up for next graphics plane
-        movem.l (sp)+,d4-d5/a4-a5       // restore 'C' registers
-        rts
-endc
 hang_it_up:
 
         rts
@@ -1100,10 +1077,10 @@ _XFM_CRFM:
         move.l  _INTIN,a0       // get address of new cursor definition block
         lea     mouse_cdb,a1    // get address of old cursor definition block
         move.w  (a0)+,d0        // get x-offset of mouse hot spot
-        andi.w  #$000f,d0       // get offset mod 16
+        andi.w  #0x000f,d0       // get offset mod 16
         move.w  d0,m_pos_hx     // save x-offset of mouse hot spot
         move.w  (a0)+,d0        // get y-offset of mouse hot spot
-        andi.w  #$000f,d0       // get offset mod 16
+        andi.w  #0x000f,d0       // get offset mod 16
         move.w  d0,m_pos_hy     // save y-offset of mouse hot spot
         addq.w  #2,a0           // skip over plane count
         move.w  (a0)+,d0        // get the mask color index

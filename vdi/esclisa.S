@@ -11,6 +11,8 @@
 
 
 
+#include "vdiconf.h"
+
         .text
         .globl  _CHK_ESC
         .globl  escfn2

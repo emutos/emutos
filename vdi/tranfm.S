@@ -11,6 +11,8 @@
 
 
 
+#include "vdiconf.h"
+
 /////////////////////////////////////////////////////////////////////////
 //                                                                      //
 //                              TRANFM.S                                //
@@ -47,11 +49,7 @@
 //                                                                      //
 /////////////////////////////////////////////////////////////////////////
 
-//////////////////////////////////
-//  Equates     //
-//////////////////////////////////
-#define v_pl_dspl               0x10000         //# of bytes between video planes
-#define rev_vid                 1               //for selecting reverse video transform
+
 //
 //  MEMORY FORM DEFINITION BLOCK OFFSETS
 //
@@ -181,12 +179,11 @@ tran_type:
         subq.w  #1,d4                   //adjust # of words per source plane
         move.w  d4,d0                   //save # of words per source plane
         cmpa.l  a0,a3                   //source address = dest. address?
-ifne rev_vid
+#ifndef rev_vid
         beq.b   exit                    //for completely overlapped transform
-endc
-ifeq rev_vid
+#else
         beq.b   in_place                //for completely overlapped transform
-endc
+#endif
 //
 //  Transformation is completely non-overlapped
 //
@@ -200,23 +197,21 @@ out_plane:
         movea.l d6,a0                   //address of next source plane
         movea.l d7,a3                   //address of next dest. plane
         move.w  d0,d4                   //# of words to transform
-ifne rev_vid
 out_loop:
+#ifndef rev_vid
         move.w  (a0)+,(a3)+             //word of source written to destination
-endc
-ifeq rev_vid
-out_loop:
+#else
         move.w  (a0)+,d1                //word of source needs to be inverted
         not.w   d1                      //invert source word
         move.w  d1,(a3)+                //write inverted source to destination
-endc
+#endif
         dbra    d4,out_loop             //next word of source
         dbra    d2,out_plane            //transform next plane of source
         bra.b   exit                    //all through with transformation
 //
 //  Transformation is completely overlapped
 //
-ifeq rev_vid
+#ifdef rev_vid
 in_place:
         move.l  a0,d6                   //save source starting address
         bra.b   in_loop                 //transform first plane
@@ -228,7 +223,7 @@ in_loop:
         not.w   (a0)+                   //word of source written to destination
         dbra    d4,in_loop              //next word of source
         dbra    d2,in_plane             //transform next plane of source
-endc
+#endif
 //                                      //all through with transformation
 //
 exit:

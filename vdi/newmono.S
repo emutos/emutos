@@ -11,6 +11,8 @@
 
 
 
+#include "vdiconf.h"
+
 /////////////////////////////////////////////////////////////////////////
 //                                                                      //
 //      This module contains the mono-spaced text blt for displays      //
@@ -261,7 +263,7 @@ blt_fail:
 //                                                                      //
 /////////////////////////////////////////////////////////////////////////
 
-ifne rev_vid
+#ifndef rev_vid
 mon_mode:
         dc.w    mon_zer-mon_mode        // replace mode         0
         dc.w    mon_set0-mon_mode       // transparent mode     0
@@ -271,8 +273,7 @@ mon_mode:
         dc.w    mon_set1-mon_mode       // transparent mode     1
         dc.w    mon_xor-mon_mode        // exclusive or (xor)   1
         dc.w    mon_not1-mon_mode       // reverse transparent  1
-endc
-ifeq rev_vid
+#else
 mon_mode:
         dc.w    mon_zer-mon_mode        // replace mode         0
         dc.w    mon_set1-mon_mode       // transparent mode     0
@@ -282,7 +283,7 @@ mon_mode:
         dc.w    mon_set0-mon_mode       // transparent mode     1
         dc.w    mon_xor-mon_mode        // exclusive or (xor)   1
         dc.w    mon_not0-mon_mode       // reverse transparent  1
-endc
+#endif
 
         .page
 /////////////////////////////////////////////////////////////////////////
@@ -323,12 +324,12 @@ mon_zer1:
 //
 mon_zer:
         move.w  d2,d6           // get character loop count
-ifne rev_vid
+#ifndef rev_vid
         clr.b   d7              // get a byte of 0's
-endc
-ifne rev_vid
+#endif
+#ifndef rev_vid
         moveq.l #-1,d7          // get a long word of 1's
-endc
+#endif
 //
 //      Loop clearing the current scan of all the characters in the string.
 //      When that is done then loop to clear the next scan of the characters.
@@ -390,14 +391,13 @@ mon_rep:
 //
 mon_rep2:
         move.w  (a5)+,d7        // get next character code
-ifne rev_vid
+#ifndef rev_vid
         move.b  0(a4,d7.w),(a6)+        // move scan byte from table to screen
-endc
-ifeq rev_vid
+#else
         move.b  0(a4,d7.w),d7   // move scan byte from table to register
         not.b   d7              // invert scan byte to get reverse video
         move.b  d7,(a6)+        // move reverse video scan byte to screen
-endc
+#endif
         dbra    d6,mon_rep2     // loop until all characters drawn
         dbra    d5,mon_rep1     // loop until all scans drawn
         rts

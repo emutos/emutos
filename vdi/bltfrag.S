@@ -12,12 +12,8 @@
 
 
 
-/***************************************************************************/
-//  Equates for VME10       //
-/***************************************************************************/
-#define   vme10      1  // for selecting VME10 specific software
-#define   v_pl_dspl    0x10000  // # of bytes between VME10 video planes
-#define   pattern            1  // for selecting software which applies
+#include "vdiconf.h"
+
 //           // a pattern to the source
 
 #define    SRC_WR            -2
@@ -140,9 +136,9 @@ f0_right:
 f1_r2l_rt:
 
         move.w  (a0),d0         // d0 <- SOURCE 1st word                                 8
-ifne vme10
+#ifndef vme10
         adda.w  d2,a0           // a0 -> SOURCE 2nd word                                 8
-endc
+#endif
         swap    d0              // d0(31:16) <- 1st SRC word                     4
 
 
@@ -150,16 +146,13 @@ endc
 //      fetch 1 Source word.
 //      store 1 Destination fringe.
 //      shift right to achieve a net left shift.
-ifne vme10
 f0_r2l_rt:
 
+#ifndef vme10
         move.w  (a0),d0         // d0(31:16) <- most recent SOURCE word          8
-endc
-ifeq vme10
-f0_r2l_rt:
-
+#else
         move.w  -(a0),d0        // d0(31:16) <- most recent SOURCE word          8
-endc
+#endif
         swap    d0              // d0(15:00) <- 1st SOURCE word or garbage       4
 
         move.l  d0,d1           // d1(31:16) <- set up for INNER LOOP            4
@@ -179,9 +172,9 @@ endc
 f1_r2l_lf:
 
         move.w  (a0),d0         // d0 <- 1st SOURCE word                                 8
-ifne vme10
+#ifndef vme10
         adda.w  d2,a0           // a0 -> 2nd SOURCE word                                 8
-endc
+#endif
         swap    d0              // d0(31:16) <- SRC word                                 4
 
 
@@ -189,16 +182,13 @@ endc
 //      fetch 1 Source word.
 //      store 1 Destination fringe.
 //      rotate left.
-ifne vme10
 f0_r2l_lf:
+#ifndef vme10
 
         move.w  (a0),d0         // d0(15:00) <- SRC wrd                          8
-endc
-ifeq vme10
-f0_r2l_lf:
-
+#else
         move.w  -(a0),d0        // d0(15:00) <- SRC wrd                          8
-endc
+#endif
         move.l  d0,d1           // set up d1(31:16) for inner loop               4
         swap    d1              // d1(31:16) <- 1st word for bit pump            4
 
@@ -222,15 +212,13 @@ f1_l2r_rt:
 //      fetch 1 Source word.
 //      store 1 Destination fringe.
 //      rotate right.
-ifne vme10
 f0_l2r_rt:
 
+#ifndef vme10
         move.w  (a0),d0         // d0(15:00) <- SRC 2nd word (new)               8
-endc
-ifeq vme10
-f0_l2r_rt:
+#else
         move.w  (a0)+,d0        // d0(15:00) <- SRC 2nd word (new)               8
-endc
+#endif
         move.l  d0,d1           // set up d1(31:16) for inner loop               4
         swap    d1              // d1(31:16) <- SOURCE 2nd word                  4
 
@@ -244,17 +232,14 @@ endc
 //      fetch 2 Source words.
 //      store 1 Destination fringe.
 //      shift left.
-ifne vme10
 f1_l2r_lf:
 
+#ifndef vme10
         move.w  (a0),d0         // d0 <- SOURCE 1st word                                 8
         adda.w  d2,a0           // a0 -> SOURCE 2nd word                                 8
-endc
-ifeq vme10
-f1_l2r_lf:
-
+#else
         move.w  (a0)+,d0        // d0 <- SOURCE 1st word                                 8
-endc
+#endif
         swap    d0              //                                               4
 
 
@@ -262,16 +247,13 @@ endc
 //      fetch 1 Source word.
 //      store 1 Destination fringe.
 //      shift left to achieve a net right shift.
-ifne vme10
 f0_l2r_lf:
 
+#ifndef vme10
         move.w  (a0),d0         // d0(31:16) <- SOURCE 2nd word (new)            8
-endc
-ifeq vme10
-f0_l2r_lf:
-
+#else     
         move.w  (a0)+,d0        // d0(31:16) <- SOURCE 2nd word (new)            8
-endc
+#endif
         swap    d0              // d0(15:00) <- SOURCE 1st word (old)            4
 
         move.l  d0,d1           // d1(31:16) <- set up for INNER LOOP            4
@@ -287,22 +269,18 @@ endc
 //////                       //////
 //////   INNER LOOP FRAGMENTS   //////
 //////                       //////
-ifne vme10
 i1_r2l_rt:
 
+#ifndef vme10
         adda.w  d2,a0           // a0 -> new SOURCE word                                 8
         adda.w  d3,a1           // a1 -> new DESTINATION word                    8
         move.l  d1,d0           // d0(31:16) <- old SOURCE word                  4
         move.w  (a0),d0         // d0(15:00) <- old SOURCE word                  8
-
-endc
-
-ifeq vme10
-i1_r2l_rt:
+#else
         adda.w  d3,a1           // a1 -> new DESTINATION word                    8
         move.l  d1,d0           // d0(31:16) <- old SOURCE word                  4
         move.w  -(a0),d0        // d0(15:00) <- old SOURCE word                  8
-endc
+#endif
         swap    d0              // d0(31:16) <- new SOURCE word                  4
         move.l  d0,d1           // d1(31:16) <- new SOURCE word (unaligned)      4
 
@@ -311,21 +289,18 @@ endc
         jmp     (a2)            // write aligned SOURCE to DESTINATION           8
 
 
-ifne vme10
 i1_r2l_lf:
 
+#ifndef vme10
         adda.w  d2,a0           // a0 -> new SOURCE word                                 8
         adda.w  d3,a1           // a1 -> new DESTINATION word                    8
         move.l  d1,d0           // d0(31:16) <- old SOURCE word                  4
         move.w  (a0),d0         // d0(15:00) <- new SOURCE word                  8
-
-endc
-ifeq vme10
-i1_r2l_lf:
+#else
         adda.w  d3,a1           // a1 -> new DESTINATION word                    8
         move.l  d1,d0           // d0(31:16) <- old SOURCE word                  4
         move.w  -(a0),d0        // d0(15:00) <- new SOURCE word                  8
-endc
+#endif
         move.l  d0,d1           // d0(31:16) <- old SOURCE word                  4
         swap    d1              // d1(31:16) <- new SOURCE word (unaligned)      4
 
@@ -334,26 +309,20 @@ endc
         jmp     (a2)            // write aligned SOURCE to DESTINATION           8
 
 
-ifne vme10
 i1_l2r_rt:
 
+#ifndef vme10
         adda.w  d2,a0           // a0 -> new SOURCE word                                 8
         adda.w  d3,a1           // a1 -> new DESTINATION word                    8
 
         move.l  d1,d0           // d0(31:16) <- old SOURCE word                  4
-
         move.w  (a0),d0         // d0(15:00) <- new SOURCE word                  8
-endc
-
-ifeq vme10
-i1_l2r_rt:
-
+#else
         adda.w  d3,a1           // a1 -> new DESTINATION word                    8
 
         move.l  d1,d0           // d0(31:16) <- old SOURCE word                  4
-
         move.w  (a0)+,d0        // d0(15:00) <- new SOURCE word                  8
-endc
+#endif
         move.l  d0,d1           // d0(31:16) <- old SOURCE word                  4
         swap    d1              // d1(31:16) <- new SOURCE word (unaligned)      4
 
@@ -362,24 +331,19 @@ endc
         jmp     (a2)            // write aligned SOURCE to DESTINATION           8
 
 
-ifne vme10
 i1_l2r_lf:
 
+#ifndef vme10
         adda.w  d2,a0           // a0 -> new SOURCE word                                 8
         adda.w  d3,a1           // a1 -> new DESTINATION word                    8
 
         move.l  d1,d0           // d0(31:16) <- old SOURCE word                  4
-
         move.w  (a0),d0         // d0(15:00) <- old SOURCE word                  8
-endc
-
-ifeq vme10
-i1_l2r_lf:
-
+#else
         adda.w  d3,a1           // a1 -> new DESTINATION word                    8
         move.l  d1,d0           // d0(31:16) <- old SOURCE word                  4
         move.w  (a0)+,d0        // d0(15:00) <- old SOURCE word                  8
-endc
+#endif
         swap    d0              // d0(31:16) <- new SOURCE word                  4
         move.l  d0,d1           // d1(31:16) <- new SOURCE word (unaligned)      4
 
@@ -400,16 +364,15 @@ endc
 f2_r2l_rt:
 
         dbra    d5,i1_r2l_rt    // do another INNER LOOP cycle             (10)/14
-ifne vme10
+#ifndef vme10
         adda.w  d2,a0           // a0 -> last SOURCE word                        8
 
         move.l  d1,d0           // d0(31:16) <- next to last SOURCE word                 4
         move.w  (a0),d0         // d0(15:00) <- last SOURCE word                         8
-endc
-ifeq vme10
+#else
         move.l  d1,d0           // d0(31:16) <- next to last SOURCE word                 4
         move.w  -(a0),d0        // d0(15:00) <- last SOURCE word                         8
-endc
+#endif
         ror.l   d4,d0           // d0(31:16) <- alligned SRC: new|old         8-24
 
         bra     f2_flush        // send fringe to DESTINATION                   10
@@ -419,16 +382,15 @@ endc
 f2_r2l_lf:
 
         dbra    d5,i1_r2l_lf    // do another INNER LOOP cycle             (10)/14
-ifne vme10
+#ifndef vme10
         adda.w  d2,a0           // a0 -> new SOURCE word                                 8
 
         move.l  d1,d0           // d0(31:16) <- next to last SOURCE word                 4
         move.w  (a0),d0         // d0(15:00) <- last SOURCE word                         8
-endc
-ifeq vme10
+#else
         move.l  d1,d0           // d0(31:16) <- next to last SOURCE word                 4
         move.w  -(a0),d0        // d0(15:00) <- last SOURCE word                         8
-endc  
+#endif  
         rol.l   d4,d0           // d0(15:00) <- alligned SRC: new|old         8-24
 
         bra     f2_out          // send fringe to DESTINATION                   10
@@ -439,9 +401,9 @@ f2_l2r_rt:
 
         dbra    d5,i1_l2r_rt    // do another INNER LOOP cycle             (10)/14
 
-ifne vme10
+#ifndef vme10
         adda.w  d2,a0           // a0 -> new SOURCE word                                 8
-endc
+#endif
 
         move.l  d1,d0           // d0(31:16) <- next to last SOURCE word                 4
         move.w  (a0),d0         // d0(15:00) <- last SOURCE word                         8
@@ -456,9 +418,9 @@ f2_l2r_lf:
 
         dbra    d5,i1_l2r_lf    // do another INNER LOOP cycle             (10)/14
 
-ifne vme10
+#ifndef vme10
         adda.w  d2,a0           // a0 -> new SOURCE word                                 8
-endc
+#endif
 
         move.l  d1,d0           // d0(31:16) <- next to last SOURCE word                 4
         move.w  (a0),d0         // d0(15:00) <- last SOURCE word                         8
@@ -488,17 +450,17 @@ fl_r2l_lf:
 fl_l2r_rt:
 
         dbra    d5,i1_l2r_rt    // do another INNER LOOP cycle             (10)/14
-ifeq vme10
+#ifdef vme10
         subq.w  #2,a0           // correct for last postincrement
-endc
+#endif
         bra     f2_flush        //                                              10
 
 fl_l2r_lf:
 
         dbra    d5,i1_l2r_lf    // do another INNER LOOP cycle             (10)/14
-ifeq vme10
+#ifdef vme10
         subq.w  #2,a0           // correct for last postincrement
-endc
+#endif
 ////////        bra     f2_flush        // fall through to f2_flush                     10
 
 

@@ -11,6 +11,8 @@
 
 
 
+#include "vdiconf.h"
+
 //////////
 //      This file contains the variables used by GSX (GEM VDI) gleaned from  //
 //      the source files for ROMming.                                        //

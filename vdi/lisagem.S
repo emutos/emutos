@@ -11,6 +11,8 @@
 
 
 
+#include "vdiconf.h"
+
                 .globl  _CLEARMEM       // globl routines declared here
                 .globl  _DINIT_G
                 .globl  _EX_TIMV
@@ -53,18 +55,15 @@
                 .xdef   user_cur
                 .xdef   user_mot
 
-#define handle 2                // leave 2 for console input, change to 1 for auxin
-
-#define screen_siz     8189
-#define v_base         0xF8000
 
                 .data
-copyright       dc.b    'GEMVDI V1.0  8/15/85'
-                dc.b    'Lisa 2/5 Screen Driver'
-                dc.b    'Serial No. XXXX-0000-654321 '
-                dc.b    'All Rights Reserved'
-                dc.b    'Copyright (C) 1985 '
-                dc.b    'Digital Research Inc.'
+copyright:
+        dc.b    'GEMVDI V1.0  8/15/85'
+        dc.b    'Lisa 2/5 Screen Driver'
+        dc.b    'Serial No. XXXX-0000-654321 '
+        dc.b    'All Rights Reserved'
+        dc.b    'Copyright (C) 1985 '
+        dc.b    'Digital Research Inc.'
 
                 .text
 //////

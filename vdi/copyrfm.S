@@ -12,14 +12,8 @@
 
 
 
-/***************************************************************************/
-//  Equates for VME10       //
-/***************************************************************************/
-#define vme10     0     // for selecting VME10 specific software
-#define v_pl_dspl 0x10000       // # of bytes between VME10 video planes
-#define pattern   1     // for selecting software which applies
-                //        // a pattern to the source
-#define rev_vid   1     // for selecting reverse video BLITS
+#include "vdiconf.h"
+
 
         .globl  _COPY_RFM
         .globl  _CLIP,_XMN_CLIP,_YMN_CLIP,_XMX_CLIP,_YMX_CLIP,_COPYTRAN,_patptr
@@ -99,31 +93,27 @@
 #define S_YMIN                  -60     // minimum Y: source                                +16
 #define S_FORM                  -58     // source form base address                         +18
 
-ifne vme10
+#ifndef vme10
 #define S_NXWD                  -54     // offset to next word in line  (in bytes)          +22
 #define S_NXLN                  -52     // offset to next line in plane (in bytes)          +24
 #define S_NXPL                  -50     // offset to next plane from start of current plane  +26
-endc
-
-ifeq vme10
+#else
 #define S_NXLN                  -54     // offset to next line in plane (in bytes)          +22
 #define S_NXPL                  -52     // offset to next plane from start of current plane  +24
-endc
+#endif
 
 #define D_XMIN                  -48     // minimum X: destination                           +28
 #define D_YMIN                  -46     // minimum Y: destination                           +30
 #define D_FORM                  -44     // destination form base address                            +32
 
-ifne vme10
+#ifndef vme10
 #define D_NXWD                  -40     // offset to next word in line  (in bytes)          +36
 #define D_NXLN                  -38     // offset to next line in plane (in bytes)          +38
 #define D_NXPL                  -36     // offset to next plane from start of current plane  +40
-endc
-
-ifeq vme10
+#else
 #define D_NXLN                  -40     // offset to next line in plane (in bytes)          +36
 #define D_NXPL                  -38     // offset to next plane from start of current plane  +38
-endc
+#endif
 
 #define P_ADDR                  -34     // address of pattern buffer   (0:no pattern)       +42
 #define P_NXLN                  -30     // offset to next line in pattern  (in bytes)       +46
@@ -183,7 +173,7 @@ pat_parm:
         
         move.w  #02,P_NXLN(a6)
         move.w  #0xF,P_MASK(a6)
-endc
+#endif
 
 no_pattern:
         cmpi.w  #mode15,d2              // is user write mode valid?
@@ -210,27 +200,25 @@ src_form:
         move.l  _v_bas_ad,d6
         move.w  _v_planes,d0            // source form is screen
         move.w  _v_lin_wr,d4
-ifeq vme10
+#ifdef vme10
         move.l  #v_pl_dspl,S_NXPL(a6)   // set # bytes between source planes
-endc
+#endif
         bra     dst_form
 
-ifne vme10
 src_calc:
+#ifndef vme10
         move.w  MF_PLANES(a5),d0        // d0 <- source plane count
         move.w  MF_WD_WRD(a5),d4
         add.w   d4,d4
         mulu    d0,d4                   // d4 <- form wrap (in bytes)
-endc
-ifeq vme10
-src_calc:
+#else
         move.w  MF_PLANES(a5),d0        // d0 <- source plane count
         ble.w   bad_parameter           // pl. count must be a positive integer
         move.w  MF_WD_WRD(a5),d4        // get # of words in source form line
         ble.w   bad_parameter           // must be a positive integer
         add.w   d4,d4                   // get # of bytes in source form line
         clr.l   S_NXPL(a6)              // set # bytes between source planes
-endc
+#endif
 
 dst_form:
         move.l  MF_BAS_AD(a4),d7        // if destination is screen, use default
@@ -241,48 +229,45 @@ dst_form:
         move.l  _v_bas_ad,d7
         move.w  _v_planes,d1
         move.w  _v_lin_wr,d5
-ifeq vme10
+#ifdef vme10
         move.l  #v_pl_dspl,D_NXPL(a6)   // set # bytes between dest. planes
-endc
+#endif
         bra     compare
 
-ifne vme10
 dst_calc:
+#ifndef vme10
         move.w  MF_PLANES(a4),d1        // d1 <- destination plane count
         move.w  MF_WD_WRD(a4),d5
         add.w   d5,d5
         mulu    d1,d5                   // d5 <- form wrap (in bytes)
-endc
-ifeq vme10
-dst_calc:
+#else
         move.w  MF_PLANES(a4),d1        // d1 <- destination plane count
         ble.w   bad_parameter           // pl. count must be a positive integer
         move.w  MF_WD_WRD(a4),d5        // get # of words in dest. form line
         ble.w   bad_parameter           // must be a positive integer
         add.w   d5,d5                   // get # of bytes in dest. form line
         clr.l   D_NXPL(a6)              // set # bytes between dest. planes
-endc
+#endif
 
-ifne vme10
 compare:
+#ifndef vme10
         moveq.l #%10110,d3              // only 4,2, and 1 are valid (destination)
         btst    d1,d3                   // 
         beq     bad_parameter           // 
-endc
-ifeq vme10
+#else
 compare:
         andi.w  #%0011,d1               // valid dest. plane count is 1,2, or 3
         beq.w   bad_parameter           // for invalid dest. plane count
-endc
+#endif
 
         move.w  d1,PLANE_CT(a6)         // save the total plane count
 
-ifne vme10
+#ifndef vme10
         add.w   d0,d0                   // for device dependent forms NXWD=2//planes
         move.w  d0,S_NXWD(a6)
         add.w   d1,d1
         move.w  d1,D_NXWD(a6)
-endc
+#endif
 
         move.w  d4,S_NXLN(a6)
         move.w  d5,D_NXLN(a6)
@@ -292,10 +277,10 @@ endc
         andi.b  #0xfe,d7                        // force least significant bit to zero
         move.l  d7,D_FORM(a6)           // dest. form addr. is now word aligned
 
-ifne vme10
+#ifndef vme10
         moveq.l #2,d4                   // d4 <- next plane offset (source)
         moveq.l #2,d5                   // d5 <- next plane offset (destination)
-endc
+#endif
         tst.w   _COPYTRAN
         beq     standard_blt_ops
 //
@@ -303,14 +288,12 @@ endc
 //  from source form to a color area. A writing mode and color indices for
 //  both 0's and 1's are specified in the INTIN array.
 //
-ifne vme10
 tran_blt_ops:
+#ifndef vme10
         cmpi.w  #02,d0
-endc
-ifeq vme10
-tran_blt_ops:
+#else
         cmpi.w  #01,d0                  // is source area one plane?
-endc
+#endif
         bne     bad_parameter           // source must be mono plane
 
         clr.w   d4                      // use only the first plane for the source
@@ -391,18 +374,16 @@ standard_blt_ops:
 
         move.b  d2,OP_TAB+00(a6)        // fg:0 bg:0
 
-ifne vme10      
 the_clipper:
+#ifndef vme10
         move.w  d4,S_NXPL(a6)           // save inter plane value
         move.w  d5,D_NXPL(a6)
 //   stoke up the stack frame
         move.l  _PTSIN,a2               // a2 -> PTSIN array
-endc
-ifeq vme10
-the_clipper:
+#else
 //   stoke up the stack frame
         move.l  _PTSIN,a2               // a2 -> PTSIN array
-endc
+#endif
         tst.w   _CLIP
         beq     dont_clip               // if clipping is disabled, skip the clip
 
