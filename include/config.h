@@ -71,6 +71,27 @@
 #define INIT_TIMER_D 1
 #endif
 
+/* Set this to 1 if you want the EmuTOS ROM to contain only one set
+ * of keyboards and fonts. The keyboard and fonts will still be those
+ * specified as usual (make COUNTRY=xx). 
+ * This is used as an attempt to lower the total size of the ROM
+ * for some emulators.
+ */
+
+#ifndef CONF_UNIQUE_COUNTRY
+#define CONF_UNIQUE_COUNTRY 0
+#endif
+
+/* Set this to 1 if you do not want any Native Language Support (NLS)
+ * included in EmuTOS. The only language will be default English.
+ * This is used as an attempt to lower the total size of the ROM 
+ * for some emulators.
+ */
+
+#ifndef CONF_NO_NLS
+#define CONF_NO_NLS 0
+#endif
+
 /* The keyboard and language are now set using
  *   make LOCALE="xx" 
  * where xx is a lowercase two-letter country code as
