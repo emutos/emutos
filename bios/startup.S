@@ -565,7 +565,7 @@ _int_timerc:
         
         move.w  _timer_ms, -(sp)
         move.l  _etv_timer, a0
-//        jsr     (a0)                    // jump to etc_timer routine
+        jsr     (a0)                    // jump to etv_timer routine
         addq.w  #2, sp                  // correct stack
         
         movem.l (sp)+,d0-d7/a0-a6

@@ -697,3 +697,5 @@ Start... early ages
 
 01. Apr. 2002
 - vdi/lisagem.S - SR switched on for timer interrupt (MAD)
+- bios/startup.S - did switch on the etv_timer interrupt vector (MAD)
+

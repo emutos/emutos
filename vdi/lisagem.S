@@ -143,7 +143,7 @@ tick_int:
         ori.w   #0x0700, sr
 #endif
 
-        move.l  _tim_addr,a0            // Invoke user routine
+	move.l  _tim_addr,a0            // Invoke user routine
         jsr     (a0)
 
 #if NEEDED

@@ -95,6 +95,19 @@ int is_ramtos;           /* 1 if the TOS is running in RAM */
 
 /*==== BOOT ===============================================================*/
 
+
+/*
+ * testprint - printing routine for tests
+ */
+void testprint(void)
+{
+#if 1 // DBGBIOS
+    kprintf("...\n");
+#endif
+}
+
+
+
 /*
  * Taken from startup.s, and rewritten in C.
  * 
