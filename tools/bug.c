@@ -1960,7 +1960,9 @@ void make(void)
  * For more info, refer to file " DOCNAME "\n\
  */\n\n", now());
   
-  fprintf(f, "#include \"config.h\"\n\n#if ! CONF_NO_NLS\n\n");
+  fprintf(f, "#include \"config.h\"\n");
+  fprintf(f, "#include \"i18nconf.h\"\n\n");
+  fprintf(f, "#if ! CONF_NO_NLS\n\n");
   fprintf(f, "#include \"langs.h\"\n\n");
   
   /* generate the default strings table, and store the

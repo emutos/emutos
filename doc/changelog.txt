@@ -1325,8 +1325,8 @@ Start... early ages
 12. Feb. 2003
 - bios/ikbd.c - initial settings of conterm hopefully fixes the hotkeys
   in XaAES (joy)
-- Fixed some bugs in EmuCON. Not it is als possible to quit it with "EXIT"
-  again. (THH)
+- Fixed some bugs in EmuCON (for example the initial Mshrink was not working).
+  Now it is also possible to quit it with "EXIT" again. (THH)
 - EmuCON can now be compiled into EmuTOS together with the AES/Desktop and
-  it can even be executed from the Desktop! (THH)
-
+  it can even be executed from the Desktop now! (THH)
+- tools/bug.c - Added missing include file. (THH)
