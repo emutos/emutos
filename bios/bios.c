@@ -204,11 +204,16 @@ void startup(void)
 
 /*
  * autoexec - run programs in auto folder
+ *
+ * skip this if user holds the Control key down
  */
 
 void autoexec(void)
 {
     PD *pd;
+
+    if (kbshift(-1) & 0x02)             /* check if Control is held down */
+        return;
 
     if( ! blkdev_avail(bootdev) )       /* check, if bootdev available */
         return;
