@@ -2271,3 +2271,75 @@ void horzline(WORD x1, WORD x2, WORD y) {
         }
     }
 }
+
+
+
+/*
+ * put_pix - plot a pixel, just for linea
+ *
+ * input:
+ *     INTIN(0) = pixel value.
+ *     PTSIN(0) = x coordinate.
+ *     PTSIN(1) = y coordinate.
+ */
+
+void put_pix()
+{
+    UWORD *addr;
+    WORD x,y;
+    UWORD color;
+    UWORD bit;
+    int plane;
+
+    x = PTSIN[0];       /* fetch x coord. */
+    y = PTSIN[1];       /* fetch y coord. */
+    color = INTIN[0];   /* device dependent encoded color bits */
+
+    /* set adress and bit in the WORD for drawing */
+    addr = (UWORD*)(v_bas_ad + (LONG)y * v_lin_wr + ((x&0xfff0)>>shft_off));
+    bit = 0x8000 >> (x&0xf);          	/* initial bit position in WORD */
+
+    for (plane = v_planes-1; plane >= 0; plane-- ) {
+        color = color >> 1| color << 15;        /* rotate color bits */
+        if (color&0x8000)
+            *addr++ |= bit;
+        else
+            *addr++ &= ~bit;
+    }
+}
+
+
+
+/*
+ * get_pix - gets a pixel, just for linea!
+ *
+ * input:
+ *     PTSIN(0) = x coordinate.
+ *     PTSIN(1) = y coordinate.
+ * output:
+ *     pixel value
+ */
+
+WORD get_pix()
+{
+    UWORD *addr;
+    WORD x,y;
+    UWORD color;
+    UWORD bit;
+    int plane;
+
+    x = PTSIN[0];       /* fetch x coord. */
+    y = PTSIN[1];       /* fetch y coord. */
+    color = 0;		/* start with empty color value */
+
+    /* set adress and bit in the WORD for drawing */
+    addr = (UWORD*)(v_bas_ad + (LONG)y * v_lin_wr + ((x&0xfff0)>>shft_off));
+    bit = 0x8000 >> (x&0xf);          	/* initial bit position in WORD */
+
+    for (plane = v_planes-1; plane >= 0; plane-- ) {
+        if (*addr++ & bit)              /* mask out the questioned bit */
+            color |= 1;                 /* the bit was set in this plane */
+        color = color << 1;		/* next color bit */
+    }
+    return color;                       /* return the composed color value */
+}

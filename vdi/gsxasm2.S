@@ -16,9 +16,7 @@
 //              public routines
 
                 .globl   _end_pts
-                .globl   _fill_line
                 .globl   _get_pix
-                .globl   _put_pix
                 .globl   _RECTFILL
 
 //              external routines.
@@ -88,136 +86,6 @@ ortbl:          dc.w    0x8000
                 dc.w    0x0002
                 dc.w    0x0001
 
-
-//////////////
-//////////////
-////
-////    _put_pix:
-////            This routine plots a pixel for anybody (even BASIC).
-////
-////            input:  _INTIN(0) = pixel value.
-////                    _PTSIN(0) = x coordinate.
-////                    _PTSIN(1) = y coordinate.
-////
-////            output: none.
-////
-////            destroys: d0,d1,a0 & a1.
-////            destroys: d0,d1,a0,a1 & a2 for VME10.
-//////////////
-//////////////
-
-_put_pix:
-                movem.l d2-d4,-(sp)
-                move.l  _PTSIN,a0       // fetch ptr to _PTSIN array.
-                move.w  (a0)+,d0        // fetch x coord.
-                move.w  (a0),d1         // fetch y coord.
-                jsr     concat          // convert to physical offset.
-                move.l  _v_bas_ad,a1    // fetch ptr to video base address.
-                adda.l  d1,a1           // base + offset.
-#if vme10
-                move.l   _v_pl_dspl,a2  // # of bytes between video planes
-                moveq.l #1,d4           // init for faster rotate instruction
-#endif
-                add.w   d0,d0           // word indexing.
-                lea     ortbl,a0
-                move.w  0(a0,d0.w),d0   // fetch the pixel word mask. (for setting bits)
-                move.w  d0,d1
-                not.w   d1              // not the mask. (for clearing bits)
-                move.w  _v_planes,d2    // fetch # of bit_planes.
-                subq.w  #1,d2           // # of bit_planes -1. (loop counter)
-                move.l  _INTIN,a0       // fetch ptr to _INTIN array.
-                move.w  (a0),d3         // fetch pixel value.
-#if !rev_vid
-                not.w   d3              // invert pixel value for reverse video
-#endif
-
-#if vme10
-                bra.b   ppx_rot         // already have correct pixel address
-ppx_lp:         adda.l  a2,a1           // address of pixel in next video plane
-ppx_rot:        ror.w   d4,d3           // rotate pixel bit and put in carry.
-                bcc     ppx_clr         // if 0, clear the bit.
-                or.w    d0,(a1)         // if 1, set the bit.
-                dbra    d2,ppx_lp
-                bra.s   ppx_end
-
-ppx_clr:        and.w   d1,(a1)         // clear the bit.
-                dbra    d2,ppx_lp
-#else
-ppx_lp:         ror.w   #1,d3           // rotate pixel bit and put in carry.
-                bcc     ppx_clr         // if 0, clear the bit.
-                or.w    d0,(a1)+        // if 1, set the bit.
-                dbra    d2,ppx_lp
-                bra.s   ppx_end
-
-ppx_clr:        and.w   d1,(a1)+        // clear the bit.
-                dbra    d2,ppx_lp
-#endif
-
-ppx_end:
-                movem.l (sp)+,d2-d4
-                rts
-
-                .page
-
-//////////////
-//////////////
-////                                                                          ////
-////    _get_pix:                                                             ////
-////            This routine gets a pixel for anybody (even BASIC).           ////
-////                                                                          ////
-////            input:  _PTSIN(0) = x coordinate.                             ////
-////                    _PTSIN(1) = y coordinate.                             ////
-////                                                                          ////
-////            output: d0 = pixel value.                                     ////
-////                                                                          ////
-////            destroys: d0,d1,d2,d3, & a0.                                  ////
-////            destroys: d0,d1,d2,d3,d4 & a0,a1,a2 for VME10.                ////
-//////////////
-//////////////
-
-_get_pix:       move.l  _PTSIN, a0      // fetch ptr to _PTSIN array.
-                move.w  (a0)+, d0       // fetch x coord.
-                move.w  (a0), d1        // fetch y coord.
-                jsr     concat          // convert to physical offset.
-                move.l  _v_bas_ad, a0   // fetch ptr to video base address.
-                adda.l  d1,a0           // base + offset.
-#if vme10
-                move.l   _v_pl_dspl,a2  // # of bytes between video planes
-#endif
-                add.w   d0, d0          // word indexing.
-                lea     ortbl, a1
-                move.w  0(a1,d0.w), d1  // fetch the pixel word mask.
-                move.w  _v_planes, d2   // fetch # of bit_planes.
-#if vme10
-                subq.w  #1,d2           // # of bit_planes - 1. (loop counter)
-                moveq.l #1,d4           // init for faster shift & or instr
-#else
-                move.w  d2, d0
-                add.w   d0, d0          // xinc.
-                subq.w  #1, d2          // # of bit_planes - 1. (loop counter)
-                adda.w  d0, a0          // point to highest-order bit_plane. (+2)
-#endif
-                moveq.l #0, d0          // init the value accumulator.
-                bra     gpxl_in
-#if vme10
-gpx_lp:         asl.w   d4,d0           // shift accumulator for next bit_plane.
-                adda.l  a2,a0           // address of pixel in next video plane
-gpxl_in:        move.w  (a0),d3         // fetch a bit
-#else
-gpx_lp:         asl.w   #1, d0          // shift accumulator for next bit_plane.
-gpxl_in:        move.w  -(a0), d3       // fetch a bit.
-#endif
-                and.w   d1, d3          // test the bit.
-                beq     gpxl_bot        // if 0, branch.
-#if vme10
-                or.w    d4, d0          // if 1, set value accumulator bit.
-#else
-                ori.w   #1, d0          // if 1, set value accumulator bit.
-#endif
-gpxl_bot:       dbra    d2,gpx_lp
-                rts
-
-                .page
 
 //////////////
 //////////////
