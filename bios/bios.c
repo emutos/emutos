@@ -168,8 +168,7 @@ void startup(void)
     VEC_DIVNULL = just_rte;
 
     /* floppy and harddisk initialisation */
-    //blkdevs_init();
-    floppy_init();
+    blkdev_init();
 
     /* are these useful ?? */
     prt_stat = print_stat;
@@ -364,26 +363,29 @@ void biosmain()
      * floppy before going on.
      */
     if(is_ramtos) {
-      if(os_magic == OS_MAGIC_EJECT) {
-        cprintf(_("Please eject the floppy and hit RETURN"));
-        bconin2();
-      }
+        if(os_magic == OS_MAGIC_EJECT) {
+            cprintf(_("Please eject the floppy and hit RETURN"));
+            bconin2();
+        }
     }
 
-#if DBGBIOS
+#if DBG_BLKDEV
     kprintf("drvbits = %08lx\n", drvbits);
 #endif
-    do_hdv_boot();
-#if DBGBIOS
+    /* boot eventuelly from a block device (floppy or harddisk) */
+    blkdev_hdv_boot();
+#if DBG_BLKDEV
     kprintf("drvbits = %08lx, bootdev = %d\n", drvbits, bootdev);
 #endif
+
     defdrv = bootdev;
     trap_1( 0x0e , defdrv );    /* Set boot drive */
 
     /* execute Reset-resistent PRGs */
-
     
+#if 0
     font_init();                /* again, to fake STonX */
+#endif
     initinfo();                 /* show initial config information */
     
     cursconf(1, 0);             /* switch on cursor via XBIOS*/

@@ -21,6 +21,7 @@
 #include "mfp.h"
 #include "asm.h"
 #include "tosvars.h"
+#include "blkdev.h"
  
 #include "kprint.h"
 
@@ -101,6 +102,8 @@ struct bs {
 /* set/get intel words */
 static void setiword(UBYTE *addr, UWORD value);
 static UWORD getiword(UBYTE *addr);
+
+static LONG flop_bootcheck(void);
 
 /* floppy read/write */
 static WORD floprw(LONG buf, WORD rw, WORD dev, 
@@ -187,35 +190,36 @@ extern WORD flock;
 
 static struct bpb flop_bpb[2];
 
-/*==== floppy_init (called by startup) ====================================*/
-
-void floppy_init(void)
-{
-  hdv_boot = flop_hdv_boot;
-  hdv_init = flop_hdv_init;
-  hdv_bpb =  flop_getbpb;
-  hdv_rw = flop_rwabs;
-  hdv_mediach = flop_mediach;
-  fverify = 0xff;
-  seekrate = 3;
-  dskbufp = (LONG) diskbuf;
-}
-
 /*==== hdv_init and hdv_boot ==============================================*/
 
 void flop_hdv_init(void)
 {
-  nflops = 0;
-  cur_dev = -1;
-  finfo[0].cur_track = -1;
-  finfo[0].sides = -1;
-  finfo[0].rate = seekrate;
-  finfo[1].cur_track = -1;
-  finfo[1].sides = -1;
-  finfo[1].rate = seekrate;
-  flopini(0);
-  flopini(1);  
+    /* set floppy specific stuff */
+    fverify = 0xff;
+    seekrate = 3;
+    dskbufp = (LONG) diskbuf;
+
+    nflops = 0;
+    cur_dev = -1;
+    finfo[0].cur_track = -1;
+    finfo[0].sides = -1;
+    finfo[0].rate = seekrate;
+    finfo[1].cur_track = -1;
+    finfo[1].sides = -1;
+    finfo[1].rate = seekrate;
+    flopini(0);
+    flopini(1);
 }
+
+void floppy_init(void)
+{
+    /* set floppy specific stuff from floppy init */
+    fverify = 0xff;
+    seekrate = 3;
+    dskbufp = (LONG) diskbuf;
+}
+
+
 
 static void flopini(WORD dev)
 {
@@ -244,46 +248,44 @@ static void flopini(WORD dev)
 }
 
 
-void do_hdv_boot(void)
+LONG flop_hdv_boot(void)
 {
-  LONG err;
+    LONG err;
 
-  /* call hdv_boot using the pointer */
-  err = hdv_boot();
-  kprintf("hdv_boot returns %ld\n", err);
-  if(err == 0) {
-    /* if bootable, jump in it */
-    ((void (*)(void))dskbufp)();
-  }
+    /* call hdv_boot using the pointer */
+    err = flop_bootcheck();
+    kprintf("hdv_boot returns %ld\n", err);
+    if(err == 0) {
+        /* if bootable, jump in it */
+        ((void (*)(void))dskbufp)();
+    }
+    return err;         /* may never be reached, if booting */
 }
   
 
-LONG flop_hdv_boot(void)
+LONG flop_bootcheck(void)
 {
-  struct bs *b = (struct bs *) dskbufp;
-  WORD err;
-  WORD cksum; 
-  
-  /* call hdv_init using the pointer */
-  hdv_init();
-  
-  if(nflops ==0) {
-    return 2;    /* no drive */
-  }
-  if(bootdev >= nflops) {
-    return 2;    /* couldn't load */
-  }
-  
-  err = floprw((LONG)b, RW_READ, bootdev, 1, 0, 0, 1);
-  if(err) {
-    return 3;    /* unreadable */
-  }
-  cksum = compute_cksum((LONG) b);
-  if(cksum == 0x1234) {
-    return 0;    /* bootable */
-  } else {
-    return 4;    /* not valid boot sector */
-  }
+    struct bs *b = (struct bs *) dskbufp;
+    WORD err;
+    WORD cksum;
+
+    if(nflops ==0) {
+        return 2;    /* no drive */
+    }
+    if(bootdev >= nflops) {
+        return 2;    /* couldn't load */
+    }
+
+    err = floprw((LONG)b, RW_READ, bootdev, 1, 0, 0, 1);
+    if(err) {
+        return 3;    /* unreadable */
+    }
+    cksum = compute_cksum((LONG) b);
+    if(cksum == 0x1234) {
+        return 0;    /* bootable */
+    } else {
+        return 4;    /* not valid boot sector */
+    }
 }
  
 

@@ -25,7 +25,7 @@
  * Defines
  */
 
-#define DBGBIOSC TRUE
+#define DBG_BLKDEV 1
 
 
 
@@ -59,16 +59,25 @@ void blkdev_init(void)
 {
     int drv;                    /* device counter for init */
 
-    /* first setup all vectors as dummy vectors */
-    for (drv=0; drv<BLKDEVNUM; drv++) {
+    /* first setup all vectors for floppy A: and B: */
+    for (drv=0; drv<=2; drv++) {
+        blkdev[drv].getbpb = &flop_getbpb;
+        blkdev[drv].rwabs = &flop_rwabs;
+        blkdev[drv].mediach = &flop_mediach;
+    }
+
+    /* Then setup all vectors as dummy vectors - later harddisk */
+    for (drv=2; drv<BLKDEVNUM; drv++) {
         blkdev[drv].getbpb = &dummy_getbpb;
         blkdev[drv].rwabs = &dummy_rwabs;
         blkdev[drv].mediach = &dummy_mediach;
     }
 
-    /* setup all the bios vectors */
-    hdv_boot    = blkdev_boot;
-    hdv_init    = blkdev_init;
+    /* setup booting related vectors */
+    hdv_boot    = blkdev_hdv_boot;
+    hdv_init    = blkdev_hdv_init;
+
+    /* setup general block device vectors */
     hdv_bpb     = blkdev_getbpb;
     hdv_rw      = blkdev_rwabs;
     hdv_mediach = blkdev_mediach;
@@ -84,27 +93,47 @@ void blkdev_init(void)
 
 
 /*
- * blkdev_boot - BIOS boot vector
+ * blkdev_hdv_init - BIOS boot vector
+ *
+ * For now just floppy...
  */
 
-LONG blkdev_boot(void)
+void blkdev_hdv_init(void)
 {
-    int drv;                    /* device counter for init */
-
-    /* first setup all vectors as dummy vectors */
-    for (drv=0; drv<BLKDEVNUM; drv++) {
-#if NOTYET
-        if (blkdev[drv].boot() >= 0 )
-            break;
-#endif
-    }
-    return 0;
+    /* call the real */
+    flop_hdv_init();
 }
 
 
 
 /*
- * blkdev_getbpb - Get BIOS parameter block function
+ * blkdev_hdv_boot - BIOS boot vector
+ */
+
+LONG blkdev_hdv_boot(void)
+{
+    /* call hdv_init using the pointer - maybe vector is overloaded */
+    hdv_init();                 	/* is flop_hdv_init in real... */
+
+    return(flop_hdv_boot());
+
+
+#if IMPLEMENTED
+    int drv;                    	/* device counter for init */
+
+    /* Loop through all devices, see, if they boot */
+    for (drv=0; drv<BLKDEVNUM; drv++) {
+        if (blkdev[drv].boot() >= 0 )   /* See, if device did boot */
+            break;                      /* if yes, break */
+    }
+    return 0;
+#endif
+}
+
+
+
+/*
+ * blkdev_getbpb - Get BIOS parameter block vector
  */
 
 LONG blkdev_getbpb(WORD dev)
@@ -115,7 +144,7 @@ LONG blkdev_getbpb(WORD dev)
 
 
 /*
- * blkdev_rwabs - BIOS block device dummy read/write function
+ * blkdev_rwabs - BIOS block device dummy read/write vector
  */
 
 LONG blkdev_rwabs(WORD r_w, LONG adr, WORD numb, WORD first, WORD dev)
@@ -126,7 +155,7 @@ LONG blkdev_rwabs(WORD r_w, LONG adr, WORD numb, WORD first, WORD dev)
 
 
 /*
- * blkdev_mediach - dummy BIOS media change function
+ * blkdev_mediach - dummy BIOS media change vector
  */
 
 LONG blkdev_mediach(WORD dev)
@@ -137,33 +166,14 @@ LONG blkdev_mediach(WORD dev)
 
 
 /*
- * dummy_boot - dummy BIOS boot
- */
-
-LONG dummy_boot(WORD dev)
-{
-    return EUNDEV;  /* unknown device */
-}
-
-
-
-/*
- * dummy_init - dummy BIOS device init function
- */
-
-LONG dummy_init(WORD dev)
-{
-    return EUNDEV;  /* unknown device */
-}
-
-
-
-/*
  * dummy_getbpb - dummy get BIOS parameter block function
  */
 
 LONG dummy_getbpb(WORD dev)
 {
+#if DBG_BLKDEV
+    kprintf("BIOS: dummy_getbpb from drive %d\n", dev);
+#endif
     return EUNDEV;  /* unknown device */
 }
 
@@ -175,6 +185,9 @@ LONG dummy_getbpb(WORD dev)
 
 LONG dummy_rwabs(WORD r_w, LONG adr, WORD numb, WORD first, WORD dev)
 {
+#if DBG_BLKDEV
+    kprintf("BIOS: dummy_rwabs from drive %d\n", dev);
+#endif
     return EUNDEV;  /* unknown device */
 }
 
@@ -186,5 +199,8 @@ LONG dummy_rwabs(WORD r_w, LONG adr, WORD numb, WORD first, WORD dev)
 
 LONG dummy_mediach(WORD dev)
 {
+#if DBG_BLKDEV
+    kprintf("BIOS: dummy_mediach from drive %d\n", dev);
+#endif
     return EUNDEV;  /* unknown device */
 }

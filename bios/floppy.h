@@ -75,7 +75,7 @@ extern UWORD compute_cksum(LONG buf);
 /* call hdv_boot() and execute bootsector */
 extern void do_hdv_boot(void);  
 
-/* initialise hdv_* vectors and floppy parameters */
+/* initialise floppy parameters */
 extern void floppy_init(void);
 
 #endif /* _FLOPPY_H */

@@ -28,9 +28,12 @@
  * Prototypes
  */
 
-/* general block device functions */
+/* Init block device vectors */
 void blkdev_init(void);
-LONG blkdev_boot(void);
+
+/* general block device functions */
+void blkdev_hdv_init(void);
+LONG blkdev_hdv_boot(void);
 LONG blkdev_getbpb(WORD dev);
 LONG blkdev_rwabs(WORD r_w, LONG adr, WORD numb, WORD first, WORD dev);
 LONG blkdev_mediach(WORD dev);

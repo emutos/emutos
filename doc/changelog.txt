@@ -461,3 +461,8 @@ Start... early ages
 - added general block device functions in bios/blkdev.c (MAD)
 - german translation updated (MAD)
 - added doc/bugs.txt, entries from doc/todo.txt (MAD)
+
+10. Jan. 2002
+- bios/floppy.c: renamed flop_hdv_boot to flop_bootcheck
+                 renamed do_hdv_boot to flop_hdv_boot 
+                 should boot now after warmstart... (MAD)
