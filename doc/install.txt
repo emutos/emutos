@@ -25,7 +25,7 @@ or
 or
     make COUNTRY=de
 
-Finally, some settings can be configured in the file bios/config.h.
+Finally, some settings can be configured in the file include/config.h.
 
 
 Emulator-specific notes
@@ -70,13 +70,13 @@ void call_native(UL as, UL func)
 
 (STonC release 0.8.0 and later already has this function)
 
-2. Switch on the debugging output by setting, in bios/config.h, the
+2. Switch on the debugging output by setting, in include/config.h, the
    parameter STONX_NATIVE_PRINT to 1 before building EmuTOS.
 
 ARAnyM
 ------
 
-To switch on the debugging output, set in bios/config.h the
+To switch on the debugging output, set in include/config.h the
 parameter ARANYM_NATIVE_PRINT to 1 before building EmuTOS.
 
 use the 'falcon' Makefile target
