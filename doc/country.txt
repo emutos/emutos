@@ -80,7 +80,12 @@ New country check list
 - if a specific charset is needed, 
   - add a line in the charset table in bios/country.h
   - provide C source code fonts for this charset (you may use 
-    tool fntconv to create the C files)
+    tool fntconv to create the C files, available from Laurent's 
+    page at http://lvogel.free.fr).
+    => IMPORTANT NOTICE: the GEM will crash if the values in the 
+    => font header are not as follow: 
+    =>    font_id = 1
+    =>    flags = F_STDFORM | F_DEFAULT | F_MONOSPACE
   - add the new C source codes to the Makefile
   - update the font table in bios/country.c
   - check if this charset is known by GNU recode and if not
@@ -94,4 +99,3 @@ New country check list
 
 Note: adding a new charset makes it mandatory to also add a new keyboard
 and a new language.
-

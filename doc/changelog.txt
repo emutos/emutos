@@ -997,3 +997,6 @@ Start... early ages
 09. Aug. 2002
 - bios/startup.S - Filled the remaining empty ROM header entries (THH).
 - aes/gemasm.S - Accessories are now working on CPUs >= 68010, too! (THH).
+- bios/fntlat2_*.c - Czech language okay (make COUNTRY=cz) but file now is
+  too big for 256k: comment out another country in po/LINGUAS to try out
+  cz country on a <256k emulator; UNIQUE cz does not work yet (LVL)
