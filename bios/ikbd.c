@@ -215,6 +215,7 @@ WORD kbrate(WORD initial, WORD repeat)
 
 void kb_timerc_int(void)
 {
+    if(conterm & 2 == 0) return;
     if(kb_ticks <= 0) return;
     if(-- kb_ticks <= 0) {
         push_ikbdiorec(kb_last_key);
@@ -465,6 +466,7 @@ void kbd_init(void)
     kb_dead = -1;      /* not in a dead key sequence */
     kb_altnum = -1;    /* not in an alt-numeric sequence */
 
+    conterm = 7;       /* keyclick and autorepeat on by default */
     conterm |= 0x8;    /* add Kbshift state to Bconin value */
 
     bioskeys();
