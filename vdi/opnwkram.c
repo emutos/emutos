@@ -15,11 +15,6 @@
 #include "gsxextrn.h"
 #include "lineavars.h"
 
-/* fonts once set up in lineainit.c */
-extern struct font_head fon8x16;
-extern struct font_head fon8x8;
-extern struct font_head fon6x6;
-
 extern WORD SIZ_TAB_rom[];
 extern WORD DEV_TAB_rom[];
 extern WORD INQ_TAB_rom[];
@@ -58,9 +53,6 @@ void v_opnwk()
         DEV_TAB[13] = 2<<(v_planes-1);
     else
         DEV_TAB[13] = 256;
-
-    /* Set up the initial font ring */
-    font_ring[1] = &fon8x16;
 
     cur_work = &virt_work;
     CONTRL[6] = virt_work.handle = 1;

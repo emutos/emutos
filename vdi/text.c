@@ -311,10 +311,9 @@ void text_init()
     SIZ_TAB[2] = 0;             // maximal char width
     SIZ_TAB[3] = 0;             // maximal char heigh
 
-    /* Initialize the font ring.  font_ring[1] is setup before entering here */
-    /* since it contains the font which varies with the screen resolution.   */
-
+    /* Initialize the font ring. */
     font_ring[0] = &fon6x6;
+    font_ring[1] = &fon8x8;
     font_ring[2] = NULLPTR;
     font_ring[3] = NULLPTR;
 
@@ -358,7 +357,7 @@ void text_init()
         } while ((fnt_ptr = fnt_ptr->next_font));
     }
 
-    DEV_TAB[5] = i;             /* number of sizes */
+    DEV_TAB[5] = i;             	/* number of sizes */
     font_count = DEV_TAB[10] = ++j;     /* number of faces */
 
     cur_font = def_font;
