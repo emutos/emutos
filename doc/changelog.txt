@@ -434,5 +434,6 @@ Start... early ages
 
 06. Jan. 2002
 - optimized divmod() and moved it to bdos/fsio.c (MAD) 
-- did put usr2xfr/xfr2usr to bdos/fsio.c (MAD)
+- did put usr2xfr/xfr2usr to bdos/fsio.c too (MAD)
+- CLI: added unix like commands mv, cp, pwd, format, clear, rmdir, mkdir (MAD)
 

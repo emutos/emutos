@@ -169,10 +169,14 @@ void errout ()
 }
 
 
-
+/*
+ * xncpmps - compare strings with n length
+ */
 int xncmps(int n, char *s, char *d)
 {
-    while (n--) if (*s++ != *d++) return(0);
+    while (n--)
+        if (*s++ != *d++)
+            return(0);
     return(1);
 }
 
@@ -1123,6 +1127,32 @@ long dirCmd (char * argv[])
 
 
 
+long pwdCmd (char * argv[])
+{
+    int i, j;
+    char ch, tmpbuf[100];
+
+    i = xgetdrv();
+    ch = i + 'A';
+    j = 0;
+
+    xwrite (1, 1L, &ch);
+    wrt (":");
+
+    xgetdir (&tmpbuf, i+1);
+    if (tmpbuf[0] == 0)
+    {
+        tmpbuf[0] = '\\';
+        tmpbuf[1] = 0;
+    }
+    wrt (tmpbuf);
+
+    dspMsg (12);
+    return (compl_code);
+}
+
+
+
 int mknum (char *str)
 {
     int num, hex = 0;
@@ -1449,30 +1479,40 @@ long execPrgm (char *s, char *cmdtl)
     for (i = 0; (cmd[i] = *s); s++, i++)
         if (*s == '.') tlNtFnd = 0;
 
+    /* put ".prg" at the end of command, if not there */
     if (tlNtFnd)
         for (j = 0; (cmd[i] = prgTail[j]); i++, j++);
 
+    /* see, if absolute PATH is given */
     i = 0;
     gtpath = -1;
-    while ((ch = cmd[i++])) if ((ch == ':') || (ch == '\\')) gtpath = 0;
+    while ((ch = cmd[i++]))
+        if ((ch == ':') || (ch == '\\'))
+            gtpath = 0;
 
     exeflg = 1;
-//#if 0
+
     rm_term();
-//#endif
+
     cmdptr = (char *)&cmd;
     j = 0;
     Cursconf(0, 0);         /* XBIOS switch cursor off before command */
+
+    /* Loop through semicolon seperated command line */
     while (((err = xexec(0, cmdptr, cmdtl, envPtr)) == -33) && (gtpath))
     {
         k = j;
         if (path [j])
         {
-            while ((path[j]) && (path[j] != ';')) j++;
-            for (i = 0; k < j; k++, i++) buf[i] = path[k];
-            if (buf[i - 1] != '\\') buf[i++] = '\\';
+            while ((path[j]) && (path[j] != ';'))
+                j++;
+            for (i = 0; k < j; k++, i++)
+                buf[i] = path[k];
+            if (buf[i - 1] != '\\')
+                buf[i++] = '\\';
             k = 0;
-            while (cmd[k]) buf[i++] = cmd[k++];
+            while (cmd[k])
+                buf[i++] = cmd[k++];
             buf[i] = 0;
             cmdptr = &buf[0];
             if (!(path[j]))
@@ -1482,9 +1522,9 @@ long execPrgm (char *s, char *cmdtl)
         }
         else gtpath = 0;
     }
-//#if 0
+
     in_term();
-//#endif
+
     exeflg = 0;
     xmfree(envPtr);
     Cursconf(1, 0);         /* XBIOS switch cursor off before command */
@@ -1917,6 +1957,12 @@ void xCmdLn (char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl)
                     dspCL (&argv[0]);
                 compl_code = dirCmd (&argv[0]);
             }
+            else if (xncmps(4,s,"PWD"))
+            {
+                if (*nonStdIn)
+                    dspCL (&argv[0]);
+                compl_code = pwdCmd (&argv[0]);
+            }
             else if (xncmps (6,s,"CHMOD"))
             {
                 if (*nonStdIn)
@@ -1955,12 +2001,12 @@ void xCmdLn (char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl)
                 }
             }
 
-            else if (xncmps(4,s,"CAT") || xncmps(4,s,"TYPE"))
+            else if (xncmps(4,s,"CAT") || xncmps(5,s,"TYPE"))
             {
                 if (*nonStdIn) dspCL (&argv[0]);
                 compl_code = typeCmd (&argv[0]);
             }
-            else if ((xncmps(4,s,"REM")) || (xncmps(4, s, "ECHO")))
+            else if ((xncmps(4,s,"REM")) || (xncmps(5, s, "ECHO")))
             {
                 chk_str (&argv[1]);
                 i = 1;
@@ -2026,19 +2072,20 @@ void xCmdLn (char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl)
                 }
             }
 
-            else if (xncmps(3,s,"MD"))
+            else if (xncmps(3,s,"MD") || xncmps(6,s,"MKDIR"))
             {
                 if (*nonStdIn) dspCL (&argv[0]);
                 if ((compl_code = xmkdir(p)) != 0)
                     wrt (_("Unable to make directory"));
             }
-            else if (xncmps(3,s,"RD"))
+            else if (xncmps(3,s,"RD") || xncmps(6,s,"RMDIR"))
             {
                 if (*nonStdIn) dspCL (&argv[0]);
                 if ((compl_code = xrmdir(p)) != 0)
                     wrt (_("Unable to remove directory"));
             }
-            else if (xncmps(3,s,"RM") || xncmps(4,s,"DEL") || xncmps(4,s,"ERA"))
+            else if (xncmps(3,s,"RM") || xncmps(4,s,"DEL") ||
+                     xncmps(4,s,"ERA"))
             {
                 if (*nonStdIn) dspCL (&argv[0]);
                 compl_code = delCmd (&argv[0]);
@@ -2074,7 +2121,7 @@ void xCmdLn (char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl)
                 prtDclFmt ((long)sbuf[2], 8, " ");
             }
 
-            else if (xncmps(5,s,"INIT"))
+            else if (xncmps(5,s,"INIT") || xncmps(7,s,"FORMAT"))
             {
                 if (*nonStdIn) dspCL (&argv[0]);
                 for (i=0; i < BUFSIZ; i++) buf[i] = 0;
@@ -2115,7 +2162,8 @@ void xCmdLn (char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl)
                 dspMsg(5);
             }
 
-            else if ((xncmps(5,s,"COPY")) || (xncmps(5,s,"MOVE")))
+            else if (xncmps(5,s,"COPY") || xncmps(5,s,"MOVE") ||
+                     xncmps(3,s,"CP")   || xncmps(3,s,"MV"))
             {
                 if (*nonStdIn) dspCL (&argv[0]);
                 if (argc >= 1)
@@ -2163,7 +2211,7 @@ void xCmdLn (char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl)
                 xwrite(1,2L,"\033w");
                 dspMsg(5);
             }
-            else if (xncmps(4,s,"CLS"))
+            else if (xncmps(4,s,"CLS") || xncmps(6,s,"CLEAR"))
                 xwrite(1,4L,"\033H\033J");
             else
             {
