@@ -36,6 +36,12 @@ long cookie_frb;
 int has_ste_shifter;
 int has_tt_shifter;
 int has_videl;
+ 
+/* 
+ * Native Features provided by emulators
+ * for some reason this is tested directly in startup.S
+ */
+int has_natfeats;  
 
 /*
  * Tests video capabilities (STEnhanced Shifter, TT Shifter and VIDEL)
@@ -296,14 +302,14 @@ const char * machine_name(void)
 #if 1
     static long _NF_getid = 0x73004e75L;    /* make NatFeat global not static */
     static long _NF_call  = 0x73014e75L;
-    #define nfGetID(n)	(((long (*)(const char *))&_NF_getid)n)
-    #define nfCall(n)	(((long (*)(long, ...))&_NF_call)n)
+    #define nfGetID(n)  (((long (*)(const char *))&_NF_getid)n)
+    #define nfCall(n)   (((long (*)(long, ...))&_NF_call)n)
     #define nf_getFullName(buffer, size) \
-	    (((long (*)(long, char *, unsigned long))&_NF_call)(nfGetID(("NF_NAME"))+1, (buffer), (unsigned long)(size)))
-    extern int native_features;     /* should be included in some global *.h */
+            (((long (*)(long, char *, unsigned long))&_NF_call)(nfGetID(("NF_NAME"))+1, (buffer), (unsigned long)(size)))
+
     char *nf_name_buf = phystop-64; /* how to alloc a bit of RAM? */
 
-    if (native_features)
+    if (has_natfeats)
         nf_getFullName(nf_name_buf, (long)63);
 
     if (*nf_name_buf)

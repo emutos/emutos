@@ -1,11 +1,7 @@
 /*
  * startup.S - EmuTOS startup module
  *
- * Copyright (c) 2001 by Authors:
- *
- *  MAD  Martin Doering
- *  LVL  Laurent Vogel
- *  THH  Thomas Huth
+ * Copyright (c) 2001, 02 by the EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -38,9 +34,9 @@
         .xdef   resvector     
         .xdef   _kprintf
 
-// ==== bios.c - Native Features flag ========================================
+// ==== machine.c - Native Features flag =====================================
 
-        .xdef   _native_features
+        .xdef   _has_natfeats
         
 // ==== memory.s - variables for memory  =====================================
 
@@ -190,7 +186,7 @@ memdone:
         move.l  d0,_nfid_xhdi
         move.l  a1,sp
         move.l  a0,vec_illegal
-        move.w  #1,_native_features
+        move.w  #1,_has_natfeats
         bra     natfeatdone
 
 nf_xhdi_name:
@@ -202,7 +198,7 @@ fail_natfeat:
         move.l  a0,vec_illegal
 #endif  /* DETECT_NATIVE_FEATURES */
         clr.l   _nfid_xhdi
-        clr.w   _native_features
+        clr.w   _has_natfeats
 natfeatdone:
 
 /* 
