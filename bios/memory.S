@@ -4,6 +4,7 @@
  * Copyright (c) 2001 by Authors:
  *
  *  MAD  Martin Doering
+ *  joy  Petr Stehlik
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -96,14 +97,9 @@ memok:
  
 memconf:
         /* detect if this is a Falcon by reading $ff8006 register (joy) */
-
         /* The test fires a bus error on non-Falcon machines.
          * The bus error fills a couple of words on the temporary stack.
-         * If we wanted to avoid stack usage we would have to abandon
-         * this run-time check and go with #ifdef FALCON...
          */
-        moveq   #0, d7                  // clear flag of 32-bit address CPU
-
         lea     8.w, a0
         move.l  (a0), a1
         move.l  #fbuserr, (a0)          // set up a new bus error handler
@@ -114,7 +110,6 @@ memconf:
         nop
         move.w  0xffff8006.w, d0        // read the Falcon MMU register
         nop
-        moveq   #1, d7                  // Falcon is known to have 68030+
 fbuserr:
         move.l  a0, sp                  // restore SP
         move.w  d1, sr                  // restore SR
@@ -218,35 +213,40 @@ setmem:
         move.l  #0x5555aaaa, memval3    // set memval3 to ok
 
 /*
- * TT-RAM (FastRAM)
+ * TT-RAM (FastRAM) detection (joy)
  * This alternate RAM begins at 16MB boundary ($1000000)
  */
         /* clear MB counter */
         moveq   #0, d6
 
         /* test CPU - FastRAM is possible on 68020+ (32-bit address space) */
-        /* the CPU type test is missing here. I am using a work-around by
-         * setting the D7 register in the Falcon MMU detection to nonzero.
-         * This hack should be removed and proper CPU detection should be added.
-         * (joy)
-         */
-        tst.w   d7
+        lea     0x10.w, a0
+        move.l  (a0), a1
+        move.l  #illeg, (a0)            // set up a new illegal insn handler
+        move.w  sr, d2                  // remember SR
+        or.w    #0x700, sr              // disable interrupts
+        move.l  sp, a0                  // remember SP
+        clr.l   d0
+        nop
+        dc.l    0x4e7a1002              // movec cacr,d1 (valid on 68020+)
+        nop
+        moveq   #1, d0
+illeg:
+        move.l  a0, sp                  // restore SP
+        move.w  d2, sr                  // restore SR
+        move.l  a1, 0x10.w              // restore original illegal insn handler
+        tst.w   d0
         beq     setramtop
 
-        /* disable IRQ */
-        move.w  sr, d1
-        or.w    #0x700, sr
-
-        /* set up alternate bus error handler */
-        move.l  sp, a6
+        move.w  sr, d1                  // remember SR
+        or.w    #0x700, sr              // disable interrupts
+        move.l  sp, a6                  // remember SP
         move.l  8.w, a5
-        move.l  #tbuserr, 8.w
+        move.l  #tbuserr, 8.w           // set up a new bus error handler
 
-        /* start from 16MB boundary */
-        lea     0x1000000, a0
+        lea     0x1000000, a0           // start from 16MB boundary
 
-        /* test by blocks of 1MB size */
-        move.l  #1024*1024, d0
+        move.l  #1024*1024, d0          // test by blocks of 1MB size
 
 loop:
         lea     (a0,d0.l), a1
@@ -255,14 +255,10 @@ loop:
         add.l   d0, a0
         cmp.l   #2048, d6                // 2048 MB of FastRAM should be enough
         blt.s   loop
-
-        /* alternate bus error handler here */
 tbuserr:
-        move.l  a5, 8.w
-        move.l  a6, sp
-
-        /* enable IRQ */
-        move.w  d1, sr
+        move.l  a5, 8.w                  // restore original bus error handler
+        move.l  a6, sp                   // restore SP
+        move.w  d1, sr                   // restore SR
 
 setramtop:
         /* test MB counter */
