@@ -86,9 +86,6 @@ BYTE env[256];                  /* environment string, enough bytes??? */
 
 int is_ramtos;                  /* 1 if the TOS is running in RAM */
 
-int native_features;            /* 1 if NatFeats are present */
-
-
 
 /*==== BOOT ===============================================================*/
 
@@ -128,7 +125,8 @@ void vecs_init(void)
     /* These just for advanced 680x0 processors */
     if (longframe) {
         VEC_PRIVLGE = int_priv;         /* set priv. instr. handler */
-        //    VEC_ILLEGAL = int_illegal;      /* set ill. instr. handler */
+    } else {
+        VEC_ILLEGAL = int_illegal;      /* set ill. instr. handler */
     }
 }
 
@@ -199,7 +197,6 @@ void startup(void)
     /* initialize BIOS components */
 
     chardev_init();     /* Initialize character devices */
-    // LVL done earlier  mfp_init(); /* init MFP, timers, USART */
     parport_init();     /* parallel port */
     kbd_init();         /* init keyboard, disable mouse and joystick */
     midi_init();        /* init MIDI acia so that kbd acia irq works */
