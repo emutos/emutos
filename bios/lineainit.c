@@ -111,11 +111,13 @@ void init_fonts(WORD vmode)
     sysfonts[2]= &fon8x16;
     sysfonts[3]=NULL;
 
+#if 0 /* No VDI functionality provided anymore - use fVDI instead */
     /* Initialize the VDI font_ring as an struct of now linked font lists */
     font_ring.first_list = &fon6x6;
     font_ring.second_list = &fon6x6;
     font_ring.gdos_list = &fon6x6;
     font_ring.null_list = 0;
+#endif
 
 }
 
