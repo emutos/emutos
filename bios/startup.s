@@ -377,22 +377,25 @@ clearbss:
         bsr _kprint
         addq #4,sp
 
-| ==== Set videoshifter to PAL ==============================================
-        move.b #2, 0xff820a   | sync-mode to 50 hz pal, internal sync
+| ==== Set shifter to pal ===================================================
+
+        move.b #2, 0xff820a     | sync-mode to 50 hz pal, internal sync
         
-|        lea    0xff8240, a1  | video-shifter 
-|        move.w         #0xf, d0        | set 16 colors
-|        lea    colorpal, a0    | color palette to a0
-|loadcol:
-|       move.w  (a0)+,(a1)+     | set color value         
-|        dbra   d0, loadcol     | next value   
+| ==== Set color palette ====================================================
+
+        lea    0xff8240, a1     | video-shifter 
+        move.w #0xf, d0         | loop for 16 colors
+        lea    colorpal, a0     | color palette to a0
+loadcol:
+        move.w  (a0)+,(a1)+     | set color value         
+        dbra   d0, loadcol      | next value   
 
 
 | ==== Detect and set graphics resolution ===================================
 
         move.b 0xff8260, d0     | Get video resolution from pseudo Hw
         and.b #3,d0             | Isolate bits 0 and 1
-        cmp.b #3,d0             | Bits 0,1 set = invalid
+        cmp.b #3,d0             | Bits 0 and 1 set = invalid
         bne.s setscrnres        | no -->
         moveq #2,d0             | yes, set highres, make valid
 setscrnres:
@@ -400,11 +403,12 @@ setscrnres:
 
         move.b #2, 0xff8260     | Hardware set to highres
         move.b #2, sshiftmod    | Set in sysvar
-|        jsr 0xfca7c4           | Init screen (video driver???)
 
-|        cmp.b #1, sshiftmod            | middle resolution?
-|        bne.s initmidres               | nein, -->
-|        move.w 0xff825e, 0xff8246      | Copy Color 16->4 kopieren
+|       jsr 0xfca7c4            | Init screen (video driver???)
+
+        cmp.b #1, sshiftmod            | middle resolution?
+        bne.s initmidres               | nein, -->
+        move.w 0xff825e, 0xff8246      | Copy Color 16->4 kopieren
 
 initmidres:
         move.l  #_main, swv_vec  | Set Swv_vec (vector res change) to Reset
@@ -457,26 +461,9 @@ clrbss:
         bsr _kprint
         addq #4,sp
 
-| ==== Clear screen =========================================================
-        move.l  _memtop, a0             | Set start of RAM
-clrscn:
-        move.w  #0xffff, (a0)+                   | Clear actual word
-|               clr.w   (a0)+                   | Clear actual word
-        cmp.l   phystop, a0             | End of BSS reached?
-        bne     clrscn                  | if not, clear next word
+| ==== Setting up Line-a variables and clear screen =========================
 
-
-        pea msg_clrscn  | Print, what's going on
-        bsr _kprint
-        addq #4,sp
-
-|       pea phystop     | Print, what's going on
-|       bsr _kputl
-|       addq #4,sp
-
-
-
-
+        bsr _linea_init
 
 | ==== Reset Soundchip =======================================================
 initsnd:
@@ -495,10 +482,6 @@ initsnd:
         pea msg_floppy  | Print, what's going on
         bsr _kprint
         addq #4,sp
-
-| ==== Setting up Line-a variables ==========================================
-
-        bsr _linea_init
 
 | ==== vector setup =========================================================
         move.l #int_vbl, vec_vbl        | Vbl-interr
