@@ -1737,10 +1737,13 @@ bios/conout.c: some integer overflow bugs fixed (MAD)
 - aes/gem*.c: wider slidebars (grep "anemic slidebars" to see the previous 
   code where the slide bars were not as wide as their containing box) (LVL)
 
-2004-12-16
+2004-12-13
 - bios/fontdef.h: removed (MAD)
 - bios/font.c: now contains (nearly) all font related stuff (MAD)
 - bios/font.h: headers for that (MAD)
 - bios/lineainit.c: stripped down to pure screen setting (MAD)
 - bios/lineavars.h: put font and vt52 related stuff in seperate files (MAD)
 - bios/lineainit.c: ripped out color setting (MAD)
+
+2004-12-15
+-  aes/gem_rsc.c: Changed background color of the desktop to green. (THH)

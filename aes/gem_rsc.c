@@ -422,7 +422,7 @@ static const OBJECT rs_obj_rom[] = {
         { -1, 1, 2, G_BOX,                        /*** 0 ***/
         NONE,
         NORMAL,
-        (long) 4420L,
+        (long) 0x00001143L,
         0, 0, 80, 25 },
 
         { 2, -1, -1, G_BOX,                       /*** 1 ***/
