@@ -510,7 +510,7 @@ VOID xbios_14()
 WORD xbios_15(WORD function, WORD operand)
 {
 #if DBG_XBIOS
-    kprintf("XBIOS: Cursconf()\n");
+    kprintf("XBIOS: Cursconf( 0x%04x, 0x%04x )\n", function, operand);
 #endif
     return cursconf(function, operand);
 }

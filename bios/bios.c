@@ -311,10 +311,8 @@ void biosmain()
     /* clear environment string */
     env[0]='\0';
 
-    /* clear commandline */
-    
     /* Jump to the EmuCON - for now not loaded via pexec (hack) */
-    trap_1( 0x4b , 0, "COMMAND.PRG" , "", env);
+//    trap_1( 0x4b , 0, "COMMAND.PRG" , "", env);
 
     /* If there is no COMMAND.PRG, start the default (ROM) shell: */
     /*shell_pd = (PD *)trap_1( 0x4b , 5, "" , "", env);*/ /* Pexec(5) does not yet exists */

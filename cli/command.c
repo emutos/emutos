@@ -19,6 +19,7 @@
 extern long xoscall();
 extern long xlongjmp();
 extern long bios();
+extern long xbios();
 extern void in_term();
 extern void rm_term();
 extern long xsetjmp();
@@ -56,8 +57,11 @@ extern void devector();
 #define xmalloc(a) xoscall(0x48,a);
 #define xmfree(a) xoscall(0x49,a);
 #define xattrib(a,b,c) xoscall(0x43,a,b,c)
+
 #define getbpb(a) bios(7,a)
 #define rwabs(a,b,c,d,e) bios(4,a,b,c,d,e)
+
+#define Cursconf(a,b) xbios(0x15,a,b)
 
 #define BPB struct _bpb
 BPB /* bios parameter block */
@@ -1374,6 +1378,7 @@ long execPrgm (char *s, char *cmdtl)
 #endif
     cmdptr = (char *)&cmd;
     j = 0;
+//    Cursconf(0, 0);         /* XBIOS switch cursor off before command */
     while ((((err = xexec(0, cmdptr, cmdtl, envPtr)) & 0xFFFFFFFF) == -33) && (gtpath))
     {
 	k = j;
@@ -1398,6 +1403,7 @@ long execPrgm (char *s, char *cmdtl)
 #endif
     exeflg = 0;
     xmfree(envPtr);
+//    Cursconf(1, 0);         /* XBIOS switch cursor off before command */
 
     return (err);
 }
