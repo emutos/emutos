@@ -19,7 +19,7 @@
         .xdef _get_pix
         .xdef _abline
         .xdef _habline
-        .xdef _CLC_FLIT           // from vdi/gsxasm1.S
+        .xdef _clc_flit           // from vdi/gsxasm1.S
         .xdef _RECTFILL
 //        .xdef bit_blt
         .xdef _text_blt
@@ -190,7 +190,7 @@ linea_stub:
 linea_stub_msg:
         .ascii  "pc=0x%08lx: unimplemented Line-A call number 0x%03x\n\0"
         .even
-        
+
 
 
 linea_vecs:
@@ -200,8 +200,8 @@ linea_vecs:
         dc.l    _abline         /* _linea_3 */
         dc.l    _habline        /* _linea_4 */
         dc.l    _rectfill       /* _linea_5 */
-        dc.l    _CLC_FLIT       /* _clc_flit - does not work yet */
-        dc.l    _linea_7        /* _bit_blt? */
+        dc.l    _clc_flit       /* _linea_6 */
+        dc.l    _linea_7        /* _bit_blt */
         dc.l    _linea_8        /* _text_blt */
         dc.l    _dis_cur        /* _linea_9 */
         dc.l    _hide_cur       /* _linea_a */

@@ -151,11 +151,8 @@ WORD q_circle[MX_LN_WIDTH];     /* Holds the circle DDA */
 
 
 /* GDP variables */
-WORD angle, beg_ang, del_ang, deltay, deltay1, deltay2, end_ang;
+WORD angle, beg_ang, del_ang, deltay, end_ang;
 WORD start, xc, xrad, y, yc, yrad;
-
-/* Fill Area variables */
-WORD fil_intersect, fill_maxy, fill_miny, n_steps, odeltay;
 
 /* Wide line attribute save areas */
 WORD s_begsty, s_endsty, s_fil_col, s_fill_per, s_patmsk;

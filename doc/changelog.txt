@@ -1629,3 +1629,8 @@ Start... early ages
 - vdi/seedfill.c: implemented end_pts() in C, no gsxasm2.S anymore (MAD)
 - vdi/monobj.c: fixed gdp_rbox() for correctly rounded corners (MAD)
 
+2004-07-20
+- vdi/gsxasm1.S: concat moved to textblt.S - just used here anymore (MAD)
+
+2004-07-25
+- vdi/monout.c: implemented clc_flit in C, no more gsxasm1.S (MAD)

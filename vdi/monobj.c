@@ -600,15 +600,16 @@ void vsl_udsty()
 }
 
 
-
+/*
+ * arb_corner - copy and sort (arbitrate) the corners
+ */
 void arb_corner(WORD * corners, WORD type)
 {
     /* Local declarations. */
-    WORD temp, typ;
+    WORD temp;
     WORD *xy1, *xy2;
 
     /* Fix the x coordinate values, if necessary. */
-
     xy1 = corners;
     xy2 = corners + 2;
     if (*xy1 > *xy2) {
@@ -617,24 +618,18 @@ void arb_corner(WORD * corners, WORD type)
         *xy2 = temp;
     }
 
-
-
-    /* End if:  "x" values need to be swapped. */
-    /* Fix y values based on whether traditional (ll, ur) or raster-op */
-    /* (ul, lr) format is desired.                                     */
-    xy1++;                      /* they now point to corners[1] and
-                                   corners[3] */
+    /* Fix the y coordinate values, if necessary. */
+    xy1++;
     xy2++;
 
-    typ = type;
-
-    if (((typ == LLUR) && (*xy1 < *xy2)) ||
-        ((typ == ULLR) && (*xy1 > *xy2))) {
+    /* see, if traditional (ll, ur) or raster-op (ul, lr) format is desired. */
+    if (((type == LLUR) && (*xy1 < *xy2)) ||
+        ((type == ULLR) && (*xy1 > *xy2))) {
         temp = *xy1;
         *xy1 = *xy2;
         *xy2 = temp;
-    }                           /* End if:  "y" values need to be swapped. */
-}                               /* End "arb_corner". */
+    }
+}
 
 
 

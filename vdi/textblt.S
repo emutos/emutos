@@ -142,13 +142,8 @@
 
         .globl  _text_blt
         .globl  _CLC_DDA
+        .globl  concat          // convert x,y coordinates to buffer offsets
         //.globl  _act_siz
-
-/////////////////////////////////////////////////////////
-//   Global routines referenced by this module.        //
-/////////////////////////////////////////////////////////
-
-        .globl  concat
 
 /////////////////////////////////////////////////////////
 //  Global variables referenced by this module.        //      
@@ -2812,4 +2807,67 @@ out_loop:
 srt_lin:
         dbra    d6,out_edge
         rts
+
+
+/*
+ * concat - calculate screen offset
+ *
+ *
+ *
+ * This routine converts x and y coordinates into a physical
+ * offset to a word in the screen buffer and an index to the
+ * desired bit within that word.
+ *
+ * input:
+ *    d0.w = x coordinate.
+ *    d1.w = y coordinate.
+ *
+ * output:
+ *    d0.w = word index. (x mod 16)
+ *    d1.l = physical offset -- (y * bytes_per_line) + (x & xmask)>>xshift
+ *
+ * destroys:       nothing
+ */
+
+concat:
+        movem.w d2/d3,-(sp)     // save the registers that get clobbered
+
+/* Convert the y-coordinate into an offset to the start of the scan row. */
+
+        mulu.w  _v_lin_wr,d1    // compute offset to start of scan row
+
+//
+// Compute the bit offset into the desired word, save it, and remove
+// these bits from the x-coordinate.
+//
+        move.w  d0,d2           // save the x-coordinate for later
+        andi.w  #0x000f,d0      // bit offset = x-coordinate mod 16
+        andi.w  #0xfff0,d2      // clear bits for offset into word
+
+//
+// Convert the adjusted x-coordinate to a word offset into the current        
+// scan line.  If the planes are arranged in an interleaved fashion with      
+// a word for each plane then shift the x-coordinate by a value contained     
+// in the shift table.  If the planes are arranged as separate, consecu-      
+// tive entities then divide the x-coordinate by 8 to get the number of bytes.                                                                     
+//
+#if vme10
+        lsr.w   #3,d2           // convert x-coordinate to offset
+#else
+        move.b  _shft_off,d3    // get pre-calculated shift factor
+        lsr.w   d3,d2           // convert x-coordinate to offset
+#endif
+
+//
+// Compute the offset to the desired word by adding the offset to the
+// start of the scan line to the offset within the scan line, restore
+// the clobbered registers, and exit.
+//
+        ext.l   d2
+        add.l   d2,d1           // compute total offset into screen buffer
+        movem.w (sp)+,d2/d3     // restore the clobbered registers
+        rts
+
+
+
         .end

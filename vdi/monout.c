@@ -45,6 +45,7 @@ void clc_arc();
 void quad_xform(WORD quad, WORD x, WORD y, WORD *tx, WORD *ty);
 void do_circ(WORD cx, WORD cy);
 void perp_off(WORD * px, WORD * py);
+void clc_flit ();
 
 //static void drawpixel(UWORD x, UWORD y, int linebit);
 void abline();
@@ -57,6 +58,11 @@ static WORD m_star[] = { 3, 2, 0, -3, 0, 3, 2, 3, 2, -3, -2, 2, 3, -2, -3, 2};
 static WORD m_square[] = { 1, 5, -4, -3, 4, -3, 4, 3, -4, 3, -4, -3 };
 static WORD m_cross[] = { 2, 2, -4, -3, 4, 3, 2, -4, 3, 4, -3 };
 static WORD m_dmnd[] = { 1, 5, -4, 0, 0, -3, 4, 0, 0, 3, -4, 0 };
+
+
+/* Fill Area variables */
+//WORD fil_intersect;     /* also used by assembler part */
+WORD n_steps;
 
 
 
@@ -448,7 +454,7 @@ WORD clip_line()
             *y = YMX_CLIP;
         }
     }
-    return (TRUE);              /* segment now cliped  */
+    return (TRUE);              /* segment now clipped  */
 }
 
 
@@ -482,6 +488,7 @@ void pline(void)
 void plygn()
 {
     WORD *pointer, i, k;
+    WORD fill_maxy, fill_miny;
 
     i = cur_work->fill_color;
     FG_BP_1 = (i & 1);
@@ -526,8 +533,7 @@ void plygn()
     *(pointer + k) = *pointer;
     *(pointer + k + 1) = *(pointer + 1);
     for (Y1 = fill_maxy; Y1 > fill_miny; Y1--) {
-        fil_intersect = 0;
-        CLC_FLIT();
+        clc_flit();
     }
     if (cur_work->fill_per == TRUE) {
         LN_MASK = 0xffff;
@@ -2541,3 +2547,174 @@ void rectfill ()
 
 
 
+/*
+ * bub_sort - sorts an array of words
+ *
+ * This routine bubble-sorts an array of words into ascending order.
+ *
+ * input:
+ *     buf   - ptr to start of array.
+ *     count - number of words in array.
+ */
+
+inline void bub_sort (WORD * buf, WORD count)
+{
+    int i, j;
+
+    for (i = count-1; i > 0; i--) {
+        WORD * ptr = buf;	       	/* reset pointer to the array */
+        for (j = 0; j < i; j++) {
+            WORD val = *ptr++;   /* word */    /* get next value */
+            if ( val > *ptr ) {    /* yes - do nothing */
+                *(ptr-1) = *ptr;   /* word */    /* nope - swap them */
+                *ptr = val;   /* word */
+            }
+        }
+    }
+}
+
+
+
+/*
+ * clc_flit - draw a filled polygon
+ *
+ * (Sutherland and Hodgman Polygon Clipping Algorithm)
+ *
+ * For each non-horizontal scanline crossing poly, do:
+ *   - find intersection points of scan line with poly edges.
+ *   - Sort intersections left to right
+ *   - Draw pixels between each pair of points (x coords) on the scan line
+ */
+
+void clc_flit ()
+{
+    WORD fill_buffer[256];	/* must be 256 words or it will fail */
+    WORD * bufptr;            	/* point to array of x-values. */
+    WORD * xy;
+    int vectors;       		/* count of vectors. */
+    int intersections;		/* count of intersections */
+    int i;
+
+    /* Initialize the pointers and counters. */
+    intersections = 0;	/* reset counter */
+    bufptr = fill_buffer;
+    vectors = CONTRL[1];	/* d0 - fetch number of vectors. */
+    xy = PTSIN;   /* word */    /* point to array of vertices. */
+
+    /* find intersection points of scan line with poly edges. */
+    for (i = vectors - 1; i >= 0; i--) {
+        WORD x1, x2, y1, y2, dy;
+
+        x1 = *xy++;		/* fetch x-value of 1st endpoint. */
+        y1 = *xy++;		/* fetch y-value of 1st endpoint. */
+        x2 = *xy++;		/* fetch x-value of 2nd endpoint. */
+        y2 = *xy++;		/* fetch y-value of 2nd endpoint. */
+
+        /* if the current vector is horizontal, ignore it. */
+        dy = y2 - y1;
+        if ( dy ) {
+            LONG dy1, dy2;
+
+            /* fetch scan-line y. */
+            dy1 = Y1 - y1;   	/* d4 - delta y1. */
+            dy2 = Y1 - y2;    	/* d3 - delta y2. */
+
+            /*
+             * Determine whether the current vector intersects with the scan
+             * line we wish to draw.  This test is performed by computing the
+             * y-deltas of the two endpoints from the scan line.
+             * If both deltas have the same sign, then the line does
+             * not intersect and can be ignored.  The origin for this
+             * test is found in Newman and Sproull.
+             */
+            if ((dy1 < 0) != (dy2 < 0)) {
+                /* fill edge buffer with x-values */
+                int dx = x2 - x1;
+                if ( dx < 0 ) {
+                    *bufptr++ = dy2 * dx / dy + x2;
+                }
+                else {
+                    *bufptr++ = dy1 * dx / dy + x1;
+                }
+                intersections++;
+            }
+        }
+        /* one vector back - let the last ending point be our next start */
+        xy -= 2;
+    }
+
+    /*
+     * All of the points of intersection have now been found.  If there
+     * were none then there is nothing more to do.  Otherwise, sort the
+     * list of points of intersection in ascending order.
+     * (The list contains only the x-coordinates of the points.)
+     */
+
+    /* anything to do? */
+    if (intersections == 0)
+        return;
+
+    /* bubblesort the intersections, if it makes sense */
+    if ( intersections > 1 )
+        bub_sort(fill_buffer, intersections);
+
+    if (CLIP) {
+        /* Clipping is in force.  Once the endpoints of the line segment have */
+        /* been adjusted for the border, clip them to the left and right sides */
+        /* of the clipping rectangle. */
+
+        /* The x-coordinates of each line segment are adjusted so that the */
+        /* border of the figure will not be drawn with the fill pattern. */
+
+        /* loop through buffered points */
+        WORD * ptr = fill_buffer;
+        for (i = intersections / 2 - 1; i >= 0; i--) {
+            WORD x1, x2;
+
+            /* grab a pair of adjusted intersections */
+            x1 = *ptr++ + 1;
+            x2 = *ptr++ - 1;
+
+            /* do nothing, if starting point greater than ending point */
+            if ( x1 > x2 )
+                continue;
+
+            if ( x1 < XMN_CLIP  ) {
+                if ( x2 < XMN_CLIP )
+                    continue;         	/* entire segment clipped left */
+                x1 = XMN_CLIP;		/* clip left end of line */
+            }
+
+            if ( x2 > XMX_CLIP  ) {
+                if ( x1 > XMX_CLIP )
+                    continue;         	/* entire segment clippped */
+                x2 = XMX_CLIP;		/* clip right end of line */
+            }
+            horzline(x1, x2, Y1);
+        }
+    }
+    else {
+        /* Clipping is not in force.  Draw from point to point. */
+
+        /* This code has been modified from the version in the screen driver. */
+        /* The x-coordinates of each line segment are adjusted so that the */
+        /* border of the figure will not be drawn with the fill pattern.  If */
+        /* the starting point is greater than the ending point then nothing is */
+        /* done. */
+
+        /* loop through buffered points */
+        WORD * ptr = fill_buffer;
+        for (i = intersections / 2 - 1; i >= 0; i--) {
+            WORD x1, x2;
+
+            /* grab a pair of adjusted endpoints */
+            x1 = *ptr++ + 1 ;   /* word */
+            x2 = *ptr++ - 1 ;   /* word */
+
+            /* If starting point greater than ending point, nothing is done. */            /* is start still to left of end? */
+            if ( x1 <= x2 ) {
+                horzline(x1, x2, Y1);    /* draw the line segment */
+            }
+        }
+    }
+}

@@ -57,20 +57,14 @@ extern BYTE shft_off;           /* once computed Offset into a Scan Line */
 
 
 /* filled area variables */
-
-extern WORD y, odeltay, deltay, deltay1, deltay2;
-extern WORD fill_miny, fill_maxy;
-extern WORD fil_intersect;
 extern UWORD *patptr, patmsk;
 extern WORD multifill;
 
 /* gdp area variables */
-
 extern WORD xc, yc, xrad, yrad, del_ang, beg_ang, end_ang;
 extern WORD start, angle, n_steps;
 
 /* attribute environment save variables */
-
 extern WORD s_fill_per, *s_patptr, s_patmsk;
 extern WORD s_begsty, s_endsty, s_fil_col;
 
@@ -110,7 +104,7 @@ extern WORD COPYTRAN;
 /* Assembly Language Support Routines */
 
 extern void v_clrwk(void);
-extern void CLC_FLIT();
+//extern void CLC_FLIT();
 
 /* Assembly Language Support Routines NEWLY ADDED */
 
