@@ -21,7 +21,7 @@
 #include "clock.h"
 #include "natfeat.h"
 #include "xhdi.h"
-
+#include "string.h"
 
 long cookie_vdo;
 long cookie_fdc;
@@ -127,7 +127,7 @@ static void setvalue_vdo(void)
 }
 
 /* detect ARAnyM */
-#define ARANYM_NAME	"aranym"
+#define ARANYM_NAME     "aranym"
 static int is_it_aranym(void)
 {
   return (strncasecmp(machine_name(), ARANYM_NAME, strlen(ARANYM_NAME)) == 0);

@@ -1846,7 +1846,7 @@ void adjust_menu(OBJECT *obj_array, WORD tree)
     }
     
     mbar->ob_width = x;
-#undef OBJ(a)
+#undef OBJ
 }
 
 void desk_rs_init(void)

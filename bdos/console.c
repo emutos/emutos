@@ -243,7 +243,7 @@ static void cookdout(int h, int ch)
  */
 long xauxout(int ch)
 {
-    return(  Bconout(HXFORM(run->p_uft[3]),ch)  );
+    return Bconout(HXFORM(run->p_uft[3]), ch);
 }
 
 /*
@@ -251,7 +251,24 @@ long xauxout(int ch)
  */
 long xprtout(int ch)
 {
-    return(  Bconout(HXFORM(run->p_uft[4]),ch)  ) ;
+#if 0 
+    /* TODO - depending whether Bconout() returns a value or not,
+     * use Bcostat() or not. 
+     * Some doc (Le livre du développeur - the developper's book) says:
+     *   void Bconout(); void Cauxout(); int Cprnout();
+     * the BDOS code assumes that Bconout() returns a value;
+     * our current BIOS code doesn't.
+     */
+    int h = HXFORM(run->p_uft[4]);
+    if (Bcostat(h) == -1L) {
+        Bconout(h, ch);
+        return -1L;
+    } else {
+        return 0L;
+    }
+#else
+    return Bconout(HXFORM(run->p_uft[4]), ch);
+#endif
 }
 
 

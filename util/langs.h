@@ -1,7 +1,7 @@
 /*
  * langs.h - internal definitions for the nls translations tables
  *
- * Copyright (c) 2001 Laurent Vogel
+ * Copyright (c) 2001 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel
@@ -20,4 +20,4 @@ struct lang_info {
 
 extern struct lang_info *langs[];
  
-#endif LANGS_H
+#endif /* LANGS_H */

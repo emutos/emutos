@@ -51,7 +51,7 @@ WORD sound(WORD isfreq, WORD freq, WORD dura)
       snddat[12] = 13;  snddat[13] = 9;                   /* envelope type */
       snddat[14] = 0xFF;  snddat[15] = 0;
 
-      Dosound(snddat);
+      Dosound((LONG)snddat);
     }
     else            /* else enable/disable sound */
     {

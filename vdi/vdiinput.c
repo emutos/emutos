@@ -38,7 +38,7 @@ extern void s68l(long *);
  
 WORD gshift_s()
 {
-    return (Getshift() & 0x000f);
+    return (Kbshift(-1) & 0x000f);
 }
 
 
