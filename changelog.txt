@@ -274,3 +274,6 @@ Start... early ages
 08. Nov. 2001
 - Added several ikbd-functions as base for mouse driver    (MAD)
 - changed ikbdws (now 2. arg is UBYTE *ptr instead of LONG) (MAD)
+
+11. Nov. 2001
+- Put portab.h to include/ for bdos AND bios   (MAD)

@@ -51,7 +51,6 @@
 #if 0
     (*(void (*)())0x118) = my_0x118_irq;
     #define PFI (int (*)())
-#endif
 
 typedef int	(*PFI)() ;	/*  from K & R, pg 141		*/
 
@@ -60,6 +59,9 @@ typedef int	(*PFI)() ;	/*  from K & R, pg 141		*/
  */
 
 typedef long	ERROR ; 	/*  error types 		*/
+
+#endif
+
 
 /*
  *  SSN - Sequential Sector Numbers

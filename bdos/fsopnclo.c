@@ -47,11 +47,33 @@
 */
 
 
-#include	"gportab.h"
-#include	"fs.h"
-#include	"bios.h"
-#include	"gemerror.h"
+#include "portab.h"
+#include "fs.h"
+#include "bios.h"
+#include "gemerror.h"
 #include "btools.h"      
+
+
+/*
+**  used in calls to sftsrch to distinguish which field we are matching on
+*/
+
+#define SFTOFD		0
+#define SFTOWNER	1
+
+/*
+**  SFTOFDSRCH - search sft for entry with matching OFD ptr
+**	call sftsrch with correct parms
+*/
+
+#define SFTOFDSRCH(o)	sftsrch( SFTOFD , (char *) o )
+
+/*
+**  SFTOWNSRCH - search sft for entry with matching PD
+**	call sftsrch with correct parms
+*/
+
+#define SFTOWNSRCH(p)	sftsrch( SFTOWN , (char *) p )
 
 
 /*
@@ -331,6 +353,70 @@ long	makopn(f, dn, h, mod)
 
 	return(h);
 }
+
+
+
+/*
+**  sftosrch - search the sft for an entry with the specified OFD
+**  returns:
+**	ptr to the matching sft, or
+**	NULL
+*/
+
+FTAB	*sftsrch( field , ptr )
+	int	field ; 	/*  which field to match on		*/
+	char	*ptr ;		/*  ptr to match on			*/
+{
+	REG FTAB	*sftp ; /*  scan ptr for sft			*/
+	REG int 	i ;
+	REG OFD 	*ofd ;
+	REG PD		*pd ;
+
+	switch( field )
+	{
+		case SFTOFD:
+			for( i = 0 , sftp = sft , ofd = (OFD *) ptr ;
+			     i < OPNFILES  &&  sftp->f_ofd != ofd ; 
+			     ++i, ++sftp ) 
+				;
+			break ;
+		case SFTOWNER:
+			for( i = 0 , sftp = sft , pd = (PD *) ptr ;
+			     i < OPNFILES  &&  sftp->f_own != pd ; 
+			     ++i, ++sftp ) 
+				;
+			break ;
+		default:
+			i = OPNFILES ;	/* setup for null return  */
+	}
+	return( i >= OPNFILES ? (FTAB *)NULLPTR : sftp ) ;	/* M01.01.1023.03 */
+}
+/*
+**  sftdel - delete an entry from the sft
+**	delete the entry from the sft.	If no other entries in the sft
+**	have the same ofd, free up the OFD, also.
+*/
+
+VOID	sftdel( sftp )
+	FTAB	*sftp ;
+{
+	REG FTAB	*s ;
+	REG OFD 	*ofd ;
+
+	/*  clear out the entry  */
+
+	ofd = (s=sftp)->f_ofd ;
+
+	s->f_ofd = 0 ;
+	s->f_own = 0 ;
+	s->f_use = 0 ;
+
+	/*  if no other sft entries with same OFD, delete ofd  */
+
+	if( SFTOFDSRCH( ofd ) == (FTAB *)NULLPTR )	/* M01.01.1023.03 */
+		xmfreblk( (int *) ofd ) ;
+}
+
 
 
 /*
@@ -617,87 +703,5 @@ BOOLEAN match1( ref , test )
 }
 
 
-/*
-**  used in calls to sftsrch to distinguish which field we are matching on
-*/
 
-#define SFTOFD		0
-#define SFTOWNER	1
-
-/*
-**  SFTOFDSRCH - search sft for entry with matching OFD ptr
-**	call sftsrch with correct parms
-*/
-
-#define SFTOFDSRCH(o)	sftsrch( SFTOFD , (char *) o )
-
-/*
-**  SFTOWNSRCH - search sft for entry with matching PD
-**	call sftsrch with correct parms
-*/
-
-#define SFTOWNSRCH(p)	sftsrch( SFTOWN , (char *) p )
-
-
-/*
-**  sftosrch - search the sft for an entry with the specified OFD
-**  returns:
-**	ptr to the matching sft, or
-**	NULL
-*/
-
-FTAB	*sftsrch( field , ptr )
-	int	field ; 	/*  which field to match on		*/
-	char	*ptr ;		/*  ptr to match on			*/
-{
-	REG FTAB	*sftp ; /*  scan ptr for sft			*/
-	REG int 	i ;
-	REG OFD 	*ofd ;
-	REG PD		*pd ;
-
-	switch( field )
-	{
-		case SFTOFD:
-			for( i = 0 , sftp = sft , ofd = (OFD *) ptr ;
-			     i < OPNFILES  &&  sftp->f_ofd != ofd ; 
-			     ++i, ++sftp ) 
-				;
-			break ;
-		case SFTOWNER:
-			for( i = 0 , sftp = sft , pd = (PD *) ptr ;
-			     i < OPNFILES  &&  sftp->f_own != pd ; 
-			     ++i, ++sftp ) 
-				;
-			break ;
-		default:
-			i = OPNFILES ;	/* setup for null return  */
-	}
-	return( i >= OPNFILES ? (FTAB *)NULLPTR : sftp ) ;	/* M01.01.1023.03 */
-}
-
-/*
-**  sftdel - delete an entry from the sft
-**	delete the entry from the sft.	If no other entries in the sft
-**	have the same ofd, free up the OFD, also.
-*/
-
-VOID	sftdel( sftp )
-	FTAB	*sftp ;
-{
-	REG FTAB	*s ;
-	REG OFD 	*ofd ;
-
-	/*  clear out the entry  */
-
-	ofd = (s=sftp)->f_ofd ;
-
-	s->f_ofd = 0 ;
-	s->f_own = 0 ;
-	s->f_use = 0 ;
-
-	/*  if no other sft entries with same OFD, delete ofd  */
-
-	if( SFTOFDSRCH( ofd ) == (FTAB *)NULLPTR )	/* M01.01.1023.03 */
-		xmfreblk( (int *) ofd ) ;
-}
 

@@ -43,7 +43,7 @@ NAMES
 extern	int	time, date;		/* declared in fs.c */
 extern	int	nday[]; 		/* declared in sup.c */
 
-#include "gportab.h"
+#include "portab.h"
 #include "gemerror.h"
 #include "bios.h"
 

@@ -11,7 +11,7 @@
  */
 
 
-#include "gportab.h"
+#include "portab.h"
 #include "bios.h"
 
 

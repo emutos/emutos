@@ -105,6 +105,4 @@ void midi_init(VOID)
         ACIA_RLTID|     /* RTS low, TxINT disabled */
         ACIA_DIV16|     /* clock/16 */
         ACIA_D8N1S;  /* 8 bit, 1 stop, no parity */
-
-//    cstatus(SUCCESS);
 }

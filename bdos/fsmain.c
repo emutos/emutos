@@ -384,7 +384,7 @@
 
 
 
-#include	"gportab.h"
+#include	"portab.h"
 #include	"fs.h"
 #include	"bios.h"		
 #include	"gemerror.h"

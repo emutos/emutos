@@ -24,7 +24,7 @@
 /* console output */
 extern int cprintf(const char *fmt, ...) PRINTF_STYLE;
 extern void cputs( char *s );
-extern void cstatus(long status);
+//extern void cstatus(long status);
 
 /* native debugging output */
 extern int kprintf(const char *fmt, ...) PRINTF_STYLE;

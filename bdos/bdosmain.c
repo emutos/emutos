@@ -22,7 +22,7 @@
 
 
 
-#include	"gportab.h"		/*  M01.01.05  */
+#include	"portab.h"		/*  M01.01.05  */
 #include	"fs.h"
 #include	"bios.h"
 #include	"gemerror.h"

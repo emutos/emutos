@@ -147,6 +147,7 @@ void cputs(char * s )
 
 
 
+#if 0
 void cstatus(ERROR status)
 {
     switch (status) {
@@ -157,7 +158,7 @@ void cstatus(ERROR status)
         cputs("[FAIL]\n\r");
     }
 }
-
+#endif
 
 /*
  *  kprint - prints natively to emulator

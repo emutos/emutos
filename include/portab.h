@@ -11,6 +11,9 @@
  */
 
 
+#ifndef _PORTAB_H
+#define _PORTAB_H
+
 /*
  *  17 Jan 86 - ktb
  *	Starting to convert this to 'gportab.h', which will have env defines
@@ -49,7 +52,7 @@
 #define ALCYON2 	2
 #define LATTICE 	5
 
-#define COMPILER	ALCYON1
+//#define COMPILER	ALCYON1
 
 /*
 **	The constant "ALCYON" (without numeric suffix), implies 'any of the
@@ -98,7 +101,7 @@ typedef int		BOOL ;			/*  same as boolean	*/
 typedef short int	WORD ;			/*  signed 16 bit word	*/
 typedef unsigned short int UWORD ;		/*  unsigned 16 bit word*/
 typedef long		LONG ;			/*  signed 32 bit word	*/
-typedef int		VOID ;			/*  returns no value	*/
+typedef void		VOID ;			/*  returns no value	*/
 typedef int		DEFAULT ;		/*  return def value	*/
 typedef float		FLOAT ; 		/*  floating point	*/
 typedef double		DOUBLE ;		/*  double precision	*/
@@ -120,4 +123,6 @@ typedef LONG		(*PFL)() ;		/*  ptr to func ret long*/
 
 /****************************************************************************/
 /****************************************************************************/
+
+#endif /* _PORTAB_H */
 

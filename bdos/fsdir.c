@@ -124,7 +124,7 @@
 */
 
 
-#include	"gportab.h"
+#include	"portab.h"
 #include	"fs.h"
 #include	"bios.h"		/*  M01.01.01			*/
 #include	"gemerror.h"
@@ -606,6 +606,147 @@ long	xgsdtof(buf,h,wrt)
 
 
 
+#ifdef	NEWCODE
+/*  M01.01.03  */
+#define isnotdelim(x)	((x) && (x!='*') && (x!=SLASH) && (x!='.') && (x!=' '))
+
+#define MAXFNCHARS	8
+
+
+/*	
+**  builds - build a directory style file spec from a portion of a path name
+**	the string at 's1' is expected to be a path spec in the form of 
+**	(xxx/yyy/zzz).	*builds* will take the string and crack it
+**	into the form 'ffffffffeee' where 'ffffffff' is a non-terminated
+**	string of characters, padded on the right, specifying the filename
+**	portion of the file spec.  (The file spec terminates with the first
+**	occurrence of a SLASH or NULL, the filename portion of the file spec
+**	terminates with SLASH, NULL, PERIOD or WILDCARD-CHAR).	'eee' is the
+**	file extension portion of the file spec, and is terminated with 
+**	any of the above.  The file extension portion is left justified into 
+**	the last three characters of the destination (11 char) buffer, but is
+**	padded on the right.  The padding character depends on whether or not
+**	the filename or file extension was terminated with a separator
+**	(NULL, SLASH, PERIOD) or a WILDCARD-CHAR.
+**
+*/
+
+VOID	builds( s1 , s2 )
+	REG char	*s1,		/*  source			*/
+			*s2;		/*  s2 dest			*/
+{
+	REG int i;
+	char	c;
+
+	/*
+	** copy filename part of pathname to destination buffer until a
+	**	delimiter is found
+	*/
+
+	for( i = 0 ; (i < MAXFNCHARS) && isnotdelim(*s1) ; i++ )
+		*s2++ = uc(*s1++) ;
+
+	/*
+	**  if we have reached the max number of characters for the filename
+	**	part, skip the rest until we reach a delimiter
+	*/
+
+	if( i == MAXFNCHARS )
+		while (*s1 && (*s1 != '.') && (*s1 != SLASH))
+			s1++;
+
+	/*
+	**  if the current character is a wildcard character, set the padding
+	**	char with a "?" (wildcard), otherwise replace it with a space
+	*/
+
+	c =    (*s1 == '*')  ?	'?'  :	' '   ;
+
+
+	if (*s1 == '*') 		/*  skip over wildcard char	*/
+		s1++;
+
+	if (*s1 == '.') 		/*  skip over extension delim	*/
+		s1++;
+
+	/*
+	**  now that we've parsed out the filename part, pad out the
+	**	destination with "?" wildcard chars
+	*/
+
+	for( ; i < MAXFNCHARS ; i++ )
+		*s2++ = c;
+
+	/*
+	**  copy extension part of file spec up to max number of characters
+	**	or until we find a delimiter
+	*/
+
+	for( i = 0 ; i < 3 && isnotdelim(*s1) ; i++ )
+		*s2++ = uc(*s1++);
+
+	/*
+	**  if the current character is a wildcard character, set the padding
+	**	char with a "?" (wildcard), otherwise replace it with a space
+	*/
+
+	c = ((*s1 == '*') ? '?' : ' ');
+
+	/*
+	**  pad out the file extension
+	*/
+
+	for( ; i < 3 ; i++ )
+		*s2++ = c;
+}
+
+#else
+
+/*	
+**  builds -
+**
+**	Last modified	LTG	23 Jul 85
+*/
+
+VOID	builds(s1,s2)
+	char *s1,*s2; /* s1 is source, s2 dest */
+{
+	int i;
+	char c;
+
+	for (i=0; (i<8) && (*s1) && (*s1 != '*') && (*s1 != SLASH) &&
+	    (*s1 != '.') && (*s1 != ' '); i++)
+		*s2++ = uc(*s1++);
+
+	if (i == 8)
+		while (*s1 && (*s1 != '.') && (*s1 != SLASH))
+			s1++;
+
+	c = ((*s1 == '*') ? '?' : ' ');
+
+	if (*s1 == '*')
+		s1++;
+
+	if (*s1 == '.')
+		s1++;
+
+	for (; i < 8; i++)
+		*s2++ = c;
+
+	for (i=0;(i<3) && (*s1) && (*s1 != '*') && (*s1 != SLASH) &&
+	    (*s1 != '.') && (*s1 != ' '); i++)
+		*s2++ = uc(*s1++);
+
+	c = ((*s1 == '*') ? '?' : ' ');
+
+	for (; i < 3; i++)
+		*s2++ = c;
+}
+
+#endif
+
+
+
 /*
 **  xrename - rename a file, 
 **	oldpath p1, new path p2
@@ -832,147 +973,6 @@ FCB	*dirinit(dn)
 	bzero( s1 , num ) ;
 	return(f1);
 }
-
-
-#ifdef	NEWCODE
-/*  M01.01.03  */
-#define isnotdelim(x)	((x) && (x!='*') && (x!=SLASH) && (x!='.') && (x!=' '))
-
-#define MAXFNCHARS	8
-
-
-/*	
-**  builds - build a directory style file spec from a portion of a path name
-**	the string at 's1' is expected to be a path spec in the form of 
-**	(xxx/yyy/zzz).	*builds* will take the string and crack it
-**	into the form 'ffffffffeee' where 'ffffffff' is a non-terminated
-**	string of characters, padded on the right, specifying the filename
-**	portion of the file spec.  (The file spec terminates with the first
-**	occurrence of a SLASH or NULL, the filename portion of the file spec
-**	terminates with SLASH, NULL, PERIOD or WILDCARD-CHAR).	'eee' is the
-**	file extension portion of the file spec, and is terminated with 
-**	any of the above.  The file extension portion is left justified into 
-**	the last three characters of the destination (11 char) buffer, but is
-**	padded on the right.  The padding character depends on whether or not
-**	the filename or file extension was terminated with a separator
-**	(NULL, SLASH, PERIOD) or a WILDCARD-CHAR.
-**
-*/
-
-VOID	builds( s1 , s2 )
-	REG char	*s1,		/*  source			*/
-			*s2;		/*  s2 dest			*/
-{
-	REG int i;
-	char	c;
-
-	/*
-	** copy filename part of pathname to destination buffer until a
-	**	delimiter is found
-	*/
-
-	for( i = 0 ; (i < MAXFNCHARS) && isnotdelim(*s1) ; i++ )
-		*s2++ = uc(*s1++) ;
-
-	/*
-	**  if we have reached the max number of characters for the filename
-	**	part, skip the rest until we reach a delimiter
-	*/
-
-	if( i == MAXFNCHARS )
-		while (*s1 && (*s1 != '.') && (*s1 != SLASH))
-			s1++;
-
-	/*
-	**  if the current character is a wildcard character, set the padding
-	**	char with a "?" (wildcard), otherwise replace it with a space
-	*/
-
-	c =    (*s1 == '*')  ?	'?'  :	' '   ;
-
-
-	if (*s1 == '*') 		/*  skip over wildcard char	*/
-		s1++;
-
-	if (*s1 == '.') 		/*  skip over extension delim	*/
-		s1++;
-
-	/*
-	**  now that we've parsed out the filename part, pad out the
-	**	destination with "?" wildcard chars
-	*/
-
-	for( ; i < MAXFNCHARS ; i++ )
-		*s2++ = c;
-
-	/*
-	**  copy extension part of file spec up to max number of characters
-	**	or until we find a delimiter
-	*/
-
-	for( i = 0 ; i < 3 && isnotdelim(*s1) ; i++ )
-		*s2++ = uc(*s1++);
-
-	/*
-	**  if the current character is a wildcard character, set the padding
-	**	char with a "?" (wildcard), otherwise replace it with a space
-	*/
-
-	c = ((*s1 == '*') ? '?' : ' ');
-
-	/*
-	**  pad out the file extension
-	*/
-
-	for( ; i < 3 ; i++ )
-		*s2++ = c;
-}
-
-#else
-
-/*	
-**  builds -
-**
-**	Last modified	LTG	23 Jul 85
-*/
-
-VOID	builds(s1,s2)
-	char *s1,*s2; /* s1 is source, s2 dest */
-{
-	int i;
-	char c;
-
-	for (i=0; (i<8) && (*s1) && (*s1 != '*') && (*s1 != SLASH) &&
-	    (*s1 != '.') && (*s1 != ' '); i++)
-		*s2++ = uc(*s1++);
-
-	if (i == 8)
-		while (*s1 && (*s1 != '.') && (*s1 != SLASH))
-			s1++;
-
-	c = ((*s1 == '*') ? '?' : ' ');
-
-	if (*s1 == '*')
-		s1++;
-
-	if (*s1 == '.')
-		s1++;
-
-	for (; i < 8; i++)
-		*s2++ = c;
-
-	for (i=0;(i<3) && (*s1) && (*s1 != '*') && (*s1 != SLASH) &&
-	    (*s1 != '.') && (*s1 != ' '); i++)
-		*s2++ = uc(*s1++);
-
-	c = ((*s1 == '*') ? '?' : ' ');
-
-	for (; i < 3; i++)
-		*s2++ = c;
-}
-
-#endif
-
 
 
 /*

@@ -13,7 +13,7 @@
 
 
 
-#include "gportab.h"
+#include "portab.h"
 #include "bdos.h"
 #include "fs.h"
 #include "bios.h"
@@ -259,7 +259,7 @@ LONG	pgfix01( nrelbytes , pi )
 			cp += 0xfe ;
 		else
 		{
-#if	COMPILER == ALCYON
+#if COMPILER == ALCYON
 			/*  get the byte at rp, don't sign ext, add to cp  */
 			cp += 0x00ff & (long)(*rp) ;		/* [1]	*/
 #else

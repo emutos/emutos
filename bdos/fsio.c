@@ -12,7 +12,7 @@
 
 
 
-#include	"gportab.h"
+#include	"portab.h"
 #include	"fs.h"
 #include	"bios.h"		/*  M01.01.01			*/
 #include	"gemerror.h"
@@ -240,6 +240,29 @@ long	ixwrite(p,len,ubufr)
 }
 
 /*
+**  addit -
+**	update the OFD for the file to reflect the fact that 'siz' bytes
+**	have been written to it.
+*/
+
+VOID	addit(p,siz,flg)
+	REG OFD *p;
+	REG long siz;
+	int flg; /* update curbyt ? (yes if less than 1 cluster transferred) */
+{
+	p->o_bytnum += siz;
+
+	if (flg)
+		p->o_curbyt += siz;
+
+	if (p->o_bytnum > p->o_fileln)
+	{
+		p->o_fileln = p->o_bytnum;
+		p->o_flag |= O_DIRTY;
+	}
+}
+
+/*
 **  xrw - read/write 'len' bytes from/to the file indicated by the OFD at 'p'.
 **
 **  details
@@ -433,29 +456,6 @@ mulio:				if (nrecs)
 eof:	rc = p->o_bytnum - bytpos;
 exit:	return(rc);
 
-}
-
-/*
-**  addit -
-**	update the OFD for the file to reflect the fact that 'siz' bytes
-**	have been written to it.
-*/
-
-VOID	addit(p,siz,flg)
-	REG OFD *p;
-	REG long siz;
-	int flg; /* update curbyt ? (yes if less than 1 cluster transferred) */
-{
-	p->o_bytnum += siz;
-
-	if (flg)
-		p->o_curbyt += siz;
-
-	if (p->o_bytnum > p->o_fileln)
-	{
-		p->o_fileln = p->o_bytnum;
-		p->o_flag |= O_DIRTY;
-	}
 }
 
 /*

@@ -16,7 +16,7 @@
 
 
 
-#include	"gportab.h"			/*  M01.01.02		*/
+#include	"portab.h"			/*  M01.01.02		*/
 #include	"fs.h"
 #include	"bios.h"			/*  M01.01.01		*/
 
