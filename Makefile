@@ -31,6 +31,16 @@ EXE =
 BUILDDATE=$(shell LANG=C date +"%d. %b. %Y")
 endif
 
+#
+# test for localconf.h
+#
+
+ifeq (localconf.h,$(shell ls localconf.h))
+LOCALCONF = -DLOCALCONF
+else
+LOCALCONF = 
+endif
+
 # 
 # compilation flags
 #
@@ -51,7 +61,7 @@ ASFLAGS = --register-prefix-optional -m68000 $(ASINC)
 CC = m68k-atari-mint-gcc
 INC = -Iinclude
 # no -Wall for bdos right now...
-CFLAGS = -O -mshort -m68000  -DBUILDDATE="\"$(BUILDDATE)\"" $(INC) 
+CFLAGS = -O -mshort -m68000 $(LOCALCONF) -DBUILDDATE="\"$(BUILDDATE)\"" $(INC) 
 
 CPPFLAGS = $(INC)
 CPP = $(CC) -E -x assembler
