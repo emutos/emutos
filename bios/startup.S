@@ -554,7 +554,7 @@ _int_timerc:
         
         addq.l  #1, _hz_200             // increment 200 Hz counter
 
-        rol.w   _timer_c_sieve          // check for 4th call
+	rol.w   _timer_c_sieve          // check for 4th call
         bpl     timerc_end
 
         movem.l d0-d7/a0-a6,-(sp)       // save registers       

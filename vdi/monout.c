@@ -14,12 +14,17 @@
 #include "portab.h"
 #include "gsxdef.h"
 #include "gsxextrn.h"
-
+#include "tosvars.h"
 #define X_MALLOC 0x48
 #define X_MFREE 0x49
 
+
+
+
 extern struct attribute *trap();
 extern void dr_recfl();
+
+
 
 /* Prototypes local to this module */
 void do_arrow();
@@ -37,7 +42,25 @@ void perp_off(WORD * px, WORD * py);
 
 
 
-/* EXTENDED INQUIRE */
+/*
+ * v_clrwk - clear screen
+ *
+ * Screen is cleared between v_bas_ad and phystop.
+ */
+
+void v_clrwk()
+{
+    UBYTE * addr;            	/* pointer to screen longword */
+
+    /* clear the screen */
+    for (addr = v_bas_ad; addr < (UBYTE *)phystop; addr++) {
+        *addr = 0;             /* clear the long word */
+    }
+}
+
+
+
+    /* EXTENDED INQUIRE */
 void vq_extnd()
 {
     REG WORD i;

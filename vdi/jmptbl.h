@@ -20,7 +20,7 @@ extern void v_nop();            /* 0   */
 
 extern void v_opnwk();          /* 1   */
 extern void v_clswk();          /* 2   */
-extern void CLEARMEM();         /* 3   */
+extern void v_clrwk();          /* 3   */
 extern void v_updwk();          /* 4   */
 extern void CHK_ESC();          /* 5   */
 

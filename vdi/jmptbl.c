@@ -19,7 +19,7 @@ void (*jmptb1[])() = {
     v_opnwk,
     v_clswk,
 
-    CLEARMEM,
+    v_clrwk,
     v_nop,
     CHK_ESC,
     v_pline,

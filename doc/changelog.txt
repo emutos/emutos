@@ -699,3 +699,8 @@ Start... early ages
 - vdi/lisagem.S - SR switched on for timer interrupt (MAD)
 - bios/startup.S - did switch on the etv_timer interrupt vector (MAD)
 
+02. Apr. 2002
+- vdi/lisagem.S - put mouse drawing additionally to timer_int (MAD)
+- vdi/lisagem.S - put _CLEARMEM to vdi/monout.c (MAD)
+
+

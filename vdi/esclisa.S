@@ -25,7 +25,7 @@
 
 // External Routines
 
-        .xdef   _CLEARMEM
+        .xdef   _v_clrwk
         .xdef   _v_show_c
         .xdef   _v_hide_c
 
@@ -154,6 +154,8 @@ escfn1:
 escfn0:
 esc_out:
         rts
+
+
         .page
 /***************************************************************************/
 //                                                                      //
@@ -173,7 +175,9 @@ esc_out:
 escfn2:
         lea     curs_off,a0     // get address of cursor off esc seq
         bsr     esc_to_gemdos   // jump to common code to access gemdos
-        bra     _CLEARMEM
+        jmp     _v_clrwk
+
+
 
         .page
 /***************************************************************************/
@@ -192,7 +196,7 @@ escfn2:
 /***************************************************************************/
 
 escfn3:
-        bsr     _CLEARMEM
+        jsr     _v_clrwk
         lea     curs_on, a0     // get address of exit graphics mode esc seq
         bra     esc_to_gemdos   // jump to common code to access gemdos
         .page

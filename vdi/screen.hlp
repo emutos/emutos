@@ -30,6 +30,6 @@ screen.  If the hardware you are using is not reverse video, set this switch to
 zero in all .S modules.  This will cause the drawing code to emulate reverse
 video in software by clearing bits rather than setting them to draw black.
 
-     In order to use reverse video, the procedure _CLEARMEM, which is a Lisa
+     In order to use reverse video, the procedure _v_clrwk, which is a Lisa
 dependent routine, must be modified to set all video memory to 1s rather than
 clear it to 0s.

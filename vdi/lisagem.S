@@ -11,7 +11,8 @@
 #include "vdiconf.h"
 
 
-        .globl  _CLEARMEM       // globl routines declared here
+/* Global declarations */
+
         .globl  _DINIT_G
         .globl  _EX_TIMV
         .globl  _GCHC_KEY
@@ -23,11 +24,12 @@
         .globl  _MOV_CUR        // External routines used here
         .globl  _XFM_CRFM
         .globl  scrn_clip
-        .globl  vb_draw
         .globl  escfn2          // enter graphics mode
         .globl  escfn3          // exit graphics mode
 
-        .xdef   _CONTRL         // External variables used here
+/* External declarations */
+
+        .xdef   _CONTRL     
         .xdef   _GCURX
         .xdef   _GCURY
         .xdef   _HIDE_CNT
@@ -52,6 +54,15 @@
 
 
 /*
+ * just_rts - just return
+ */
+ 
+just_rts:
+	rts
+        
+        
+
+/*
  * _GSHIFT_S - GET SHIFT STATE 
  * entry:          none
  * exit:           CTL/SHIFT/ALT status in d0
@@ -66,28 +77,6 @@ _GSHIFT_S:
         addq.l  #4, sp          // Clean up the stack
 
         andi.w  #0x000F, d0     // We only want the low 4 bits
-        rts
-
-
-
-/*
- * _CLEARMEM - CLEAR SCREEN
- *
- * entry:          none
- * exit:           none
- * destroys:       d0/a0
- */
-
-_CLEARMEM:
-        move.l  _v_bas_ad,a0
-        move.w  #32000/4,d0    // FIXME!!!
-        moveq.l #0,d1
-
-scr_loop:
-        move.l  d1,(a0)+
-        dbra    d0,scr_loop
-
-just_rts:
         rts
 
 
@@ -138,7 +127,7 @@ tick_int:
         move.b  #1,in_proc
 
         movem.l d0-d7/a0-a6, -(sp)
-#if NEEDED  // not in original TOS 1.0 (MAD)
+#if 1 //NEEDED  // not in original TOS 1.0 (MAD)
         move    sr, -(sp)               // Disable interrupts
         ori.w   #0x0700, sr
 #endif
@@ -146,10 +135,13 @@ tick_int:
 	move.l  _tim_addr,a0            // Invoke user routine
         jsr     (a0)
 
-#if NEEDED
+	bsr	vb_draw			// see if the mouse needs drawing
+
+#if 1 //NEEDED
         move    (sp)+, SR               // Restore interrupt context
 #endif
         movem.l (sp)+, d0-d7/a0-a6
+       	clr.b	in_proc			// allow yet another trip through
 timer_exit:
         move.l  _tim_chain, -(sp)       // Call the old timer vector too
         rts
@@ -161,7 +153,7 @@ timer_exit:
  *
  * entry:          none
  * exit:           none
- * destroys:       see CLEARMEM
+ * destroys:       see _v_clrwk
  */
 
 _INIT_G:
@@ -193,7 +185,7 @@ _INIT_G:
  *
  * entry:          none
  * exit:           none
- * destroys:       see CLEARMEM
+ * destroys:       see _v_clrwk
  */
 
 _DINIT_G:
@@ -206,6 +198,57 @@ _DINIT_G:
         bsr     vdimouse_exit           // de-initialize mouse
         bra     escfn3                  // clear screen
                                         // TODO: switch cursor on
+
+
+
+/*
+ * vdimouse_init - INITIALIZE MOUSE
+ *
+ * entry:          none
+ * exit:           none
+ * destroys:       a0
+ */
+
+vdimouse_init:
+        /* Init _user_cur vector */
+        lea.l   just_rts,a0             
+        move.l  a0,_user_but            // just rts
+        move.l  a0,_user_mot            // just rts
+        move.l  #_MOV_CUR,_user_cur     // initialize user_cur vector
+
+        /* Move in the default mouse form (presently the arrow) */
+        move.l  _INTIN, -(sp)           // Save the intin pointer and make
+        move.l  #arrow_cdb, _INTIN      // it point to the arrow
+        bsr     _XFM_CRFM               // transform mouse
+        move.l  (sp)+, _INTIN           // Restore INTIN pointer
+
+
+#if 1 // is done in tick_int later (MAD)
+	/* Init mouse vbl interrupt */
+        move.l  _vblqueue, a0           // get VBL-queue address
+        move.l  #vb_draw, (a0)          // set GEM VBL-routine (in vdimouse.S)
+#endif        
+        rts
+
+
+
+/*
+ * vdimouse_exit - deinitialize/disable mouse
+ *
+ * Disables the mouse
+ *
+ * entry:          none
+ * exit:           none
+ * destroys:       a0
+ */
+ 
+vdimouse_exit:
+        /* Init _user_cur vector */
+        lea.l   just_rts,a0             
+        move.l  a0,_user_but            // just rts
+        move.l  a0,_user_mot            // just rts
+        move.l  a0,_user_cur            // just rts
+        rts
 
 
 
@@ -261,56 +304,6 @@ _GCHR_KEY:
         rts
 no_char:
         moveq.l #0,d0
-        rts
-
-
-
-/*
- * vdimouse_init - INITIALIZE MOUSE
- *
- * entry:          none
- * exit:           none
- * destroys:       a0
- */
-
-vdimouse_init:
-        /* Init _user_cur vector */
-        lea.l   just_rts,a0             
-        move.l  a0,_user_but            // just rts
-        move.l  a0,_user_mot            // just rts
-        move.l  #_MOV_CUR,_user_cur     // initialize user_cur vector
-
-        /* Move in the default mouse form (presently the arrow) */
-        move.l  _INTIN, -(sp)           // Save the intin pointer and make
-        move.l  #arrow_cdb, _INTIN      // it point to the arrow
-        bsr     _XFM_CRFM               // transform mouse
-        move.l  (sp)+, _INTIN           // Restore INTIN pointer
-
-
-        /* Init mouse vbl interrupt */
-        move.l  _vblqueue, a0           // get VBL-queue address
-        move.l  #vb_draw, (a0)          // set GEM VBL-routine (in vdimouse.S)
-        
-        rts
-
-
-
-/*
- * vdimouse_exit - deinitialize/disable mouse
- *
- * Disables the mouse
- *
- * entry:          none
- * exit:           none
- * destroys:       a0
- */
- 
-vdimouse_exit:
-        /* Init _user_cur vector */
-        lea.l   just_rts,a0             
-        move.l  a0,_user_but            // just rts
-        move.l  a0,_user_mot            // just rts
-        move.l  a0,_user_cur            // just rts
         rts
 
 

@@ -116,7 +116,7 @@ extern WORD COPYTRAN;
 extern void _ABLINE();
 #define ABLINE()  regsafe_call(_ABLINE)
 
-extern void CLEARMEM();
+extern void v_clrwk(void);
 extern void CHK_ESC(), INIT_G(), DINIT_G();
 extern void CLC_FLIT();
 extern WORD CLC_DDA(WORD top, WORD height);
