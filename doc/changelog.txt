@@ -1090,3 +1090,6 @@ Start... early ages
                - get_pix() for linea reimplemented in C (MAD)
                - rectfill() implemented in C (MAD)
 
+20. Sep. 2002
+- vdi/monout.c - abline() bugs fixed. Thanks, Johan! (MAD)
+

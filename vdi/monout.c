@@ -1677,6 +1677,7 @@ abline ()
     adr += (LONG)y1 * v_lin_wr;		/* add y coordinate part of addr */
     adr += (x1&0xfff0)>>shft_off;      	/* add x coordinate part of addr */
     msk = 0x8000 >> (x1&0xf);          	/* initial bit position in WORD */
+    linemask = LN_MASK;                 /* to avoid compiler warning */
 
     for (plane = v_planes-1; plane >= 0; plane-- ) {
         void *addr;
@@ -1703,11 +1704,11 @@ abline ()
             e2 = 2*dx;
 
             switch (WRT_MODE) {
-            case 3:              /* not */
+            case 3:              /* reverse transparent  */
                 if (thisplane) {
                     for (loopcnt=dx;loopcnt >= 0;loopcnt--) {
                         linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
-                        if (thisplane && linemask&0x0001)
+                        if (linemask&0x0001)
                             *(WORD*)addr &= ~bit;
                         bit = bit >> 1| bit << 15;
                         if (bit&0x8000)
@@ -1721,15 +1722,8 @@ abline ()
                 } else {
                     for (loopcnt=dx;loopcnt >= 0;loopcnt--) {
                         linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
-                    }
-                }
-                break;
-            case 2:              /* xor */
-                if (thisplane) {
-                    for (loopcnt=dx;loopcnt >= 0;loopcnt--) {
-                        linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
-                        if (thisplane && linemask&0x0001)
-                            *(WORD*)addr ^= bit;
+                        if (linemask&0x0001)
+                            *(WORD*)addr |= bit;
                         bit = bit >> 1| bit << 15;
                         if (bit&0x8000)
                             addr += xinc;
@@ -1739,9 +1733,20 @@ abline ()
                             addr += yinc;       /* increment y */
                         }
                     }
-                } else {
-                    for (loopcnt=dx;loopcnt >= 0;loopcnt--) {
-                        linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                }
+                break;
+            case 2:              /* xor */
+                for (loopcnt=dx;loopcnt >= 0;loopcnt--) {
+                    linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                    if (linemask&0x0001)
+                        *(WORD*)addr ^= bit;
+                    bit = bit >> 1| bit << 15;
+                    if (bit&0x8000)
+                        addr += xinc;
+                    eps += e1;
+                    if (eps >= 0 ) {
+                        eps -= e2;
+                        addr += yinc;       /* increment y */
                     }
                 }
                 break;
@@ -1763,52 +1768,49 @@ abline ()
                 } else {
                     for (loopcnt=dx;loopcnt >= 0;loopcnt--) {
                         linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                        if (thisplane && linemask&0x0001)
+                            *(WORD*)addr &= ~bit;
+                        bit = bit >> 1| bit << 15;
+                        if (bit&0x8000)
+                            addr += xinc;
+                        eps += e1;
+                        if (eps >= 0 ) {
+                            eps -= e2;
+                            addr += yinc;       /* increment y */
+                        }
                     }
                 }
-            break;
-        case 0:              /* not */
-            if (thisplane) {
-                for (loopcnt=dx;loopcnt >= 0;loopcnt--) {
-                    linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
-                    if (linemask&0x0001)
-                        *(WORD*)addr |= bit;
-                    else
-                        *(WORD*)addr &= ~bit;
-                    bit = bit >> 1| bit << 15;
-                    if (bit&0x8000)
-                        addr += xinc;
-                    eps += e1;
-                    if (eps >= 0 ) {
-                        eps -= e2;
-                        addr += yinc;       /* increment y */
-                    }
-                }
-            } else {
-                for (loopcnt=dx;loopcnt >= 0;loopcnt--) {
-                    linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
-                    *(WORD*)addr &= ~bit;
-                    bit = bit >> 1| bit << 15;
-                    if (bit&0x8000)
-                        addr += xinc;
-                    eps += e1;
-                    if (eps >= 0 ) {
-                        eps -= e2;
-                        addr += yinc;       /* increment y */
+                break;
+            case 0:              /* not */
+                if (thisplane) {
+                    for (loopcnt=dx;loopcnt >= 0;loopcnt--) {
+                        linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                        if (linemask&0x0001)
+                            *(WORD*)addr |= bit;
+                        else
+                            *(WORD*)addr &= ~bit;
+                        bit = bit >> 1| bit << 15;
+                        if (bit&0x8000)
+                            addr += xinc;
+                        eps += e1;
+                        if (eps >= 0 ) {
+                            eps -= e2;
+                            addr += yinc;       /* increment y */
+                        }
                     }
                 }
             }
-        }
         } else {
             e1 = 2*dx;
             eps = - dy;
             e2 = 2*dy;
 
             switch (WRT_MODE) {
-            case 3:              /* not */
+            case 3:              /* reverse transparent */
                 if (thisplane) {
                     for (loopcnt=dy;loopcnt >= 0;loopcnt--) {
                         linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
-                        if (thisplane && linemask&0x0001)
+                        if (linemask&0x0001)
                             *(WORD*)addr &= ~bit;
                         addr += yinc;
                         eps += e1;
@@ -1822,15 +1824,8 @@ abline ()
                 } else {
                     for (loopcnt=dy;loopcnt >= 0;loopcnt--) {
                         linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
-                    }
-                }
-                break;
-            case 2:              /* xor */
-                if (thisplane) {
-                    for (loopcnt=dy;loopcnt >= 0;loopcnt--) {
-                        linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
-                        if (thisplane && linemask&0x0001)
-                            *(WORD*)addr ^= bit;
+                        if (linemask&0x0001)
+                            *(WORD*)addr |= bit;
                         addr += yinc;
                         eps += e1;
                         if (eps >= 0 ) {
@@ -1840,9 +1835,20 @@ abline ()
                                 addr += xinc;
                         }
                     }
-                } else {
-                    for (loopcnt=dy;loopcnt >= 0;loopcnt--) {
-                        linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                }
+                break;
+            case 2:              /* xor */
+                for (loopcnt=dy;loopcnt >= 0;loopcnt--) {
+                    linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                    if (linemask&0x0001)
+                        *(WORD*)addr ^= bit;
+                    addr += yinc;
+                    eps += e1;
+                    if (eps >= 0 ) {
+                        eps -= e2;
+                        bit = bit >> 1| bit << 15;
+                        if (bit&0x8000)
+                            addr += xinc;
                     }
                 }
                 break;
@@ -1850,7 +1856,7 @@ abline ()
                 if (thisplane) {
                     for (loopcnt=dy;loopcnt >= 0;loopcnt--) {
                         linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
-                        if (thisplane && linemask&0x0001)
+                        if (linemask&0x0001)
                             *(WORD*)addr |= bit;
                         addr += yinc;
                         eps += e1;
@@ -1864,16 +1870,7 @@ abline ()
                 } else {
                     for (loopcnt=dy;loopcnt >= 0;loopcnt--) {
                         linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
-                    }
-                }
-                break;
-            case 0:              /* rep */
-                if (thisplane) {
-                    for (loopcnt=dy;loopcnt >= 0;loopcnt--) {
-                        linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
                         if (linemask&0x0001)
-                            *(WORD*)addr |= bit;
-                        else
                             *(WORD*)addr &= ~bit;
                         addr += yinc;
                         eps += e1;
@@ -1884,25 +1881,33 @@ abline ()
                                 addr += xinc;
                         }
                     }
-                } else {
-                    for (loopcnt=dy;loopcnt >= 0;loopcnt--) {
-                        linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                }
+                break;
+            case 0:              /* rep */
+                if (!thisplane)
+                    linemask = ~linemask;
+                for (loopcnt=dy;loopcnt >= 0;loopcnt--) {
+                    linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
+                    if (linemask&0x0001)
+                        *(WORD*)addr |= bit;
+                    else
                         *(WORD*)addr &= ~bit;
-                        addr += yinc;
-                        eps += e1;
-                        if (eps >= 0 ) {
-                            eps -= e2;
-                            bit = bit >> 1| bit << 15;
-                            if (bit&0x8000)
-                                addr += xinc;
-                        }
+                    addr += yinc;
+                    eps += e1;
+                    if (eps >= 0 ) {
+                        eps -= e2;
+                        bit = bit >> 1| bit << 15;
+                        if (bit&0x8000)
+                            addr += xinc;
                     }
                 }
+                if (!thisplane)
+                    linemask = ~linemask;
             }
         }
         adr+=2;
-        LN_MASK = linemask;
     }
+    LN_MASK = linemask;
 }
 
 

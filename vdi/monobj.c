@@ -772,7 +772,7 @@ void v_nop()
 
 
 
-#if 1
+#if 0
 /*
  * vr_trnfm - Convert device (in-)dependant bitmaps
  *
