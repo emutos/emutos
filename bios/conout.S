@@ -15,7 +15,7 @@
  *
  */
 
-
+#define HAVE_MEMMOVE 1
 
 // ==== External Declarations ================================================
 
@@ -1372,6 +1372,14 @@ p_sc_up:
         move.w  _v_cel_wr,d3     //cell wrap to temp d3
         lea     (a3,d3.w),a2    //form source address from cell wrap + base address
         mulu    d1,d3           //form # of bytes to move in d3
+
+#if HAVE_MEMMOVE
+ 	move.l  d3,-(sp)        // move memory
+	move.l  a2,-(sp)
+	move.l  a3,-(sp)
+	jsr     _memmove
+	add.w	#12,sp
+#else
         asr.l   #2, d3          //divide by 4 for long byte moves
         bra     scrup1          //enter loop at test
 
@@ -1379,7 +1387,7 @@ scrup0:
         move.l  (a2)+,(a3)+     //move bytes
 scrup1:
         dbra    d3,scrup0       //loop til finished
-
+#endif
 
         move.w  _v_cel_my,d1     //bottom line cell address y to top/left cell
 scr_out:
@@ -1404,12 +1412,21 @@ p_sc_dwn:
         neg.w   d0              // do tricky subtract
         add.w   _v_cel_my,d0     //   to form # of cell rows to move
         mulu    d0,d3           // form # of bytes to move in d3
-        asr.w   #2,d3           // divide by 4 for long byte moves
+
+#if HAVE_MEMMOVE
+ 	move.l  d3,-(sp)        // move memory
+	move.l  a3,-(sp)
+	move.l  a2,-(sp)
+	jsr     _memmove
+	add.w	#12,sp
+#else
+        asr.l   #2,d3           // divide by 4 for long byte moves
         bra     scrdwn1         // enter loop at test
 scrdwn0:
         move.l  -(a3),-(a2)     // scroll bytes
 scrdwn1:
         dbra    d3,scrdwn0      // do all
+#endif
         bra     scr_out
 
 
