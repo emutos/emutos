@@ -15,11 +15,12 @@
 #include "machine.h"
 #include "detect.h"
 #include "nvram.h"
+#include "biosmem.h"
 
 int has_nvram;
 
-/* don't know how to declare this only when an NVRAM is detected :-( */
-static UBYTE buf[48];
+/* a 50 byte buffer that will only be allocated if there is an NVRAM */
+static UBYTE *nvram_buf;
 static int inited;
 
 /*
@@ -29,6 +30,7 @@ void detect_nvram(void)
 {
     if(check_read_byte(0xffff8961)) {
         has_nvram = 1;
+	nvram_buf = balloc(50);
         inited = 0;
     } else {
         has_nvram = 0;
@@ -80,14 +82,14 @@ static UWORD compute_sum(void)
 
     sum = 0;
     for(i = 0 ; i < 48 ; i+=2) {
-        sum += (buf[i] << 8) | buf[i+1];
+        sum += (nvram_buf[i] << 8) | nvram_buf[i+1];
     }
     return sum;
 }
 
 static UWORD get_sum(void)
 {
-    return (buf[48] << 8 ) | buf[49];
+    return (nvram_buf[48] << 8 ) | nvram_buf[49];
 }
 
 static void set_sum(UWORD sum)
@@ -96,9 +98,9 @@ static void set_sum(UWORD sum)
     volatile UBYTE * data_reg = (volatile UBYTE *)0xffff8963;
     
     *addr_reg = 62;
-    *data_reg = buf[48] = sum >> 8;
+    *data_reg = nvram_buf[48] = sum >> 8;
     *addr_reg = 63;
-    *data_reg = buf[49] = sum;
+    *data_reg = nvram_buf[49] = sum;
 }
 
 /*
@@ -125,7 +127,7 @@ WORD nvmaccess(WORD type, WORD start, WORD count, PTR buffer)
         for(i = 0 ; i < 50 ; i++) {
             *addr_reg = i + 14;
             *data_reg = 0;
-            buf[i] = 0;
+            nvram_buf[i] = 0;
         }
         inited = 1;
         return 0;
@@ -134,7 +136,7 @@ WORD nvmaccess(WORD type, WORD start, WORD count, PTR buffer)
     if(! inited) {
         for(i = 0 ; i < 50 ; i++) {
             *addr_reg = i + 14;
-            buf[i] = *data_reg;
+            nvram_buf[i] = *data_reg;
         }
         inited = 1;
         if(compute_sum() != get_sum()) {
@@ -145,13 +147,13 @@ WORD nvmaccess(WORD type, WORD start, WORD count, PTR buffer)
     switch(type) {
     case 0: /* read, from our buffer since it is already in memory */
         for(i = start ; i < start + count ; i++) {
-            *ubuffer++ = buf[i];
+            *ubuffer++ = nvram_buf[i];
         }
         break;
     case 1: /* write, in our buffer and in the memory */
         for(i = start ; i < start + count ; i++) {
             *addr_reg = i + 14;
-            *data_reg = buf[i] = *ubuffer++; 
+            *data_reg = nvram_buf[i] = *ubuffer++; 
         }
         set_sum(compute_sum());
         /* TODO - verify ? */
