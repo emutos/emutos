@@ -529,7 +529,7 @@ cvsready: expand crlf nodepend
 HERE = $(shell pwd)
 HEREDIR = $(shell basename $(HERE))
 TGZ = $(shell echo $(HEREDIR)-`date +%y%m%d`|tr A-Z a-z).tgz
-TGZEXCL = --exclude aes --exclude vdi
+TGZEXCL = #--exclude aes --exclude vdi
 
 tgz:	distclean
 	cd ..;\

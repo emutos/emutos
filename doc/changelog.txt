@@ -680,3 +680,8 @@ Start... early ages
 - Moved some more VDI variables to lineavars.S (THH)
 - Cleaned up the VDI, it works now quite good in ST-HIGH resolution (THH)
 
+21. Mar. 2002
+- doc/changelog.txt - added vdi/ and aes/ to the tgz target (MAD)
+- doc/license.txt   - added GPL for EmuTOS (MAD)
+
+(MAD)

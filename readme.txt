@@ -8,6 +8,7 @@ doc/nls.txt        - How to add a native language or use one
 doc/coding.txt     - EmuTOS coding standards (never used :-)
 doc/old_code.txt   - For developers, a museum of bugs due to old C language
 doc/changelog.txt  - What is going on with EmuTOS
+doc/license.txt    - The FSF General Public License for EmuTOS
 
 --
 Your EmuTOS team - http://emutos.sourceforge.net
