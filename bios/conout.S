@@ -44,20 +44,20 @@
                 .xdef   v_fnt_wr        // font cell wrap
                 .xdef   v_off_ad        // address of font offset table
 
-                .xdef   v_col_fg        // current foreground color
-                .xdef   v_col_bg        // current background color
-                .xdef   v_cur_of        // cursor offset
-                .xdef   v_cur_cx        // current cursor cell x
-                .xdef   v_cur_cy        // current cursor cell y 
-                .xdef   v_cur_ad        // current cursor address
+                .xdef   _v_col_fg        // current foreground color
+                .xdef   _v_col_bg        // current background color
+                .xdef   _v_cur_of        // cursor offset
+                .xdef   _v_cur_cx        // current cursor cell x
+                .xdef   _v_cur_cy        // current cursor cell y 
+                .xdef   _v_cur_ad        // current cursor address
 
                 .xdef   _v_bas_ad       // screen base address
 
-                .xdef   v_stat_0        // VIDEO CELL SYSTEM STATUS
-                .xdef   v_cur_tim       // cursor blink timer
+                .xdef   _v_stat_0        // VIDEO CELL SYSTEM STATUS
+                .xdef   _v_cur_tim       // cursor blink timer
                 .xdef   v_period        // 
 
-                .xdef   disab_cnt       // disable depth count. (>0 => disabled)
+                .xdef   _disab_cnt       // disable depth count. (>0 => disabled)
                 .xdef   sav_cxy         // save area for cursor coords.
 
                 .xdef   save_row        // saved row in escape Y command
@@ -214,10 +214,10 @@ do_bell:
 // ==== do_tab - calculate the tabulator values ==============================
 
 do_tab:
-        move    v_cur_cx, d0
+        move    _v_cur_cx, d0
         andi.w  #0xFFF8, d0
         addq    #8, d0
-        move    v_cur_cy, d1
+        move    _v_cur_cy, d1
         bra     escY
 
 
@@ -339,10 +339,10 @@ escE:           bsr     escfn8          // home cursor.
 // ==== escA - Alpha Cursor Up ===============================================
 
 escA:
-escfn4:         move.w  v_cur_cy,d1     // d1 := current cursor y.
+escfn4:         move.w  _v_cur_cy,d1     // d1 := current cursor y.
                 beq     esc_out         // if at top of screen, branch.
 escA1:          subq.w  #1,d1           // move the cursor up.
-                move.w  v_cur_cx,d0     // d0 & d1 are inputs to "move_cursor".
+                move.w  _v_cur_cx,d0     // d0 & d1 are inputs to "move_cursor".
                 bra     move_cursor     // update cursor position and globals.
 
 
@@ -351,11 +351,11 @@ escA1:          subq.w  #1,d1           // move the cursor up.
 
 escB:
 escfn5:
-        move.w  v_cur_cy,d1     // d1 := current cursor y.
+        move.w  _v_cur_cy,d1     // d1 := current cursor y.
         cmp.w   v_cel_my,d1
         beq     esc_out         // if at bottom of screen, branch.
         addq.w  #1,d1           // move the cursor down.
-        move.w  v_cur_cx,d0     // d0 & d1 are inputs to "move_cursor".
+        move.w  _v_cur_cx,d0     // d0 & d1 are inputs to "move_cursor".
         bra     move_cursor     // update cursor position and globals.
 
 
@@ -364,11 +364,11 @@ escfn5:
 
 escC:
 escfn6:
-        move.w  v_cur_cx,d0     // d0 := current cursor x.
+        move.w  _v_cur_cx,d0     // d0 := current cursor x.
         cmp.w   v_cel_mx,d0
         beq     esc_out         // if at right edge of screen, branch.
         addq.w  #1,d0           // move the cursor right.
-        move.w  v_cur_cy,d1     // d0 & d1 are inputs to "move_cursor".
+        move.w  _v_cur_cy,d1     // d0 & d1 are inputs to "move_cursor".
         bra     move_cursor     // update cursor position and globals.
 
 
@@ -377,10 +377,10 @@ escfn6:
 
 escD:
 escfn7:
-        move.w  v_cur_cx,d0     // d0 := current cursor x.
+        move.w  _v_cur_cx,d0     // d0 := current cursor x.
         beq     esc_out         // if at left edge of screen, branch.
         subq.w  #1,d0           // move the cursor left.
-        move.w  v_cur_cy,d1     // d0 & d1 are inputs to "move_cursor".
+        move.w  _v_cur_cy,d1     // d0 & d1 are inputs to "move_cursor".
         bra     move_cursor     // update cursor position and globals.
 
 
@@ -400,7 +400,7 @@ escfn8:
 escJ:
 escfn9:
         bsr     escfn10         // erase to end of line.
-        move.w  v_cur_cy,d1
+        move.w  _v_cur_cy,d1
         cmp.w   v_cel_my,d1     // last line?
         beq     esc_out         // yes, done.
         addq.w  #1,d1           // no, drop down a line.
@@ -417,21 +417,21 @@ escfn9:
 
 escK:
 escfn10:
-        bclr    #F_CEOL,v_stat_0 // test and clear EOL handling bit. (overwrite)
+        bclr    #F_CEOL,_v_stat_0 // test and clear EOL handling bit. (overwrite)
         move.w  sr,-(sp)        // save result of test.
         bsr     escf            // hide cursor.
         bsr     escj            // save cursor position.
-        move.w  v_cur_cx,d1     // test current x.
+        move.w  _v_cur_cx,d1     // test current x.
         btst    #0,d1           // even or odd?   (fixed btst.l)
         beq     ef10_blnk       // if even, branch.
         cmp.w   v_cel_mx,d1     // if odd, is x = x maximum?
         beq     ef10_space      // if so, just output a space.
         move.w  #0x20,d1        // else output a space &
         bsr     ascii_out
-        move.w  v_cur_cx,d1
+        move.w  _v_cur_cx,d1
 ef10_blnk:
         swap    d1              // blank to end of line.
-        move.w  v_cur_cy,d1
+        move.w  _v_cur_cy,d1
         move.w  d1,d2
         swap    d1              // upper left coords.
         swap    d2
@@ -440,7 +440,7 @@ ef10_blnk:
 ef10_out:
         move.w  (sp)+,ccr       // restore result of EOL test.
         beq     ef10_done       // if it was overwrite, just exit.
-        bset    #F_CEOL,v_stat_0 // else set it back to wrap.
+        bset    #F_CEOL,_v_stat_0 // else set it back to wrap.
 ef10_done:
         bsr     esck            // restore cursor position.
         bra     cntesce         // show cursor.
@@ -456,7 +456,7 @@ ef10_space:
 
 escp:
 escfn13:
-        bset    #F_REVID,v_stat_0 // set the reverse bit.
+        bset    #F_REVID,_v_stat_0 // set the reverse bit.
 esc_out:
         rts
 
@@ -466,7 +466,7 @@ esc_out:
 
 escq:
 escfn14:
-        bclr    #F_REVID,v_stat_0 // clear the reverse bit.
+        bclr    #F_REVID,_v_stat_0 // clear the reverse bit.
         rts
 
 
@@ -474,9 +474,9 @@ escfn14:
 // ==== escI - Reverse Index =================================================
 
 escI:
-        move.w  v_cur_cy,d1     // d1 := current cursor y.
+        move.w  _v_cur_cy,d1     // d1 := current cursor y.
         bne     escA1           // if not at top of screen, branch.
-        move.w  v_cur_cx, -(sp) // save current x position
+        move.w  _v_cur_cx, -(sp) // save current x position
         bsr     escL            // Insert a line
         move.w  (sp)+, d0
         moveq.l #0, d1
@@ -487,10 +487,10 @@ escI:
 // ==== escL - Insert Line.===================================================
 
 escL:           bsr     escf            // hide cursor.
-                move.w  v_cur_cy,d1     // line to begin scrolling down.
+                move.w  _v_cur_cy,d1     // line to begin scrolling down.
                 bsr     p_sc_dwn        // scroll down 1 line & blank current line.
 esclmout:       clr.w   d0
-                move.w  v_cur_cy,d1
+                move.w  _v_cur_cy,d1
                 bsr     move_cursor     // move cursor to beginning of line.
                 bra     cntesce         // show cursor.
 
@@ -499,7 +499,7 @@ esclmout:       clr.w   d0
 // ==== escM - Delete Line.===================================================
 
 escM:           bsr     escf            // hide cursor.
-                move.w  v_cur_cy,d1     // line to begin scrolling up.
+                move.w  _v_cur_cy,d1     // line to begin scrolling up.
                 bsr     p_sc_up         // scroll up 1 line & blank bottom line.
                 bra     esclmout
 
@@ -508,7 +508,7 @@ escM:           bsr     escf            // hide cursor.
 // ==== escb - Set Foreground Color.==========================================
 
 escb:           and.w   #0x0F,d0        // low-order bits only.
-                move.w  d0,v_col_fg     // set the foreground color.
+                move.w  d0,_v_col_fg     // set the foreground color.
                 rts
 
 
@@ -516,7 +516,7 @@ escb:           and.w   #0x0F,d0        // low-order bits only.
 // ==== escc - Set Background Color.==========================================
 
 escc:           and.w   #0x0F,d0        // low-order bits only.
-                move.w  d0,v_col_bg     // set the background color.
+                move.w  d0,_v_col_bg     // set the background color.
 escc_out:       rts
 
 
@@ -524,7 +524,7 @@ escc_out:       rts
 // ==== escd - Erase from Beginning of Page.==================================
 
 escd:           bsr     esco            // erase from beginning of line.
-                move.w  v_cur_cy,d2     // first line?
+                move.w  _v_cur_cy,d2     // first line?
                 beq     escc_out        // yes, done.
                 subq.w  #1,d2           // no, move up a line.
                 swap    d2
@@ -537,15 +537,15 @@ escd:           bsr     esco            // erase from beginning of line.
 // ==== esce - Enable Cursor.=================================================
 
 _esce:
-esce:           tst.w   disab_cnt       // if disable count is zero (cursor
+esce:           tst.w   _disab_cnt       // if disable count is zero (cursor
                 beq     escc_out        // still shown) then return
-                clr.w   disab_cnt       // 0 the disable counter.
-esceok:         lea     v_stat_0,a0
+                clr.w   _disab_cnt       // 0 the disable counter.
+esceok:         lea     _v_stat_0,a0
                 btst    #F_CFLASH,(a0)  // else, see if flashing is enabled.
                 bne     enc_flsh        // if enabled, branch.
 comp_cur:       bset    #F_CVIS,(a0)    // set visibility bit.
-comp_cr1:       move.w  v_cur_cx,d0     // fetch x and y coords.
-                move.w  v_cur_cy,d1
+comp_cr1:       move.w  _v_cur_cx,d0     // fetch x and y coords.
+                move.w  _v_cur_cy,d1
                 bsr     cell_addr
                 bra     neg_cell        // complement cursor.
 
@@ -558,9 +558,9 @@ enc_flsh:       bsr     comp_cr1        // show cursor.
 // Enable Cursor (counted depth).          //
 //
 
-cntesce:        tst.w   disab_cnt       // if disable count is zero (cursor
+cntesce:        tst.w   _disab_cnt       // if disable count is zero (cursor
                 beq     escc_out        // still shown) then return
-                subq.w  #1,disab_cnt    // decrement the disable counter.
+                subq.w  #1,_disab_cnt    // decrement the disable counter.
                 beq     esceok          // if 0, do the enable.
                 rts
 
@@ -568,8 +568,8 @@ cntesce:        tst.w   disab_cnt       // if disable count is zero (cursor
 
 // ==== escf - Disable Cursor.================================================
 
-escf:           addq.w  #1,disab_cnt    // increment the disable counter.
-                lea     v_stat_0,a0
+escf:           addq.w  #1,_disab_cnt    // increment the disable counter.
+                lea     _v_stat_0,a0
                 bclr    #F_CVIS,(a0)    // test and clear the visible state bit.
                 beq     escc_out        // if already invisible, just return.
                 btst    #F_CFLASH,(a0)  // else, see if flashing is enabled.
@@ -583,17 +583,17 @@ escf:           addq.w  #1,disab_cnt    // increment the disable counter.
 
 // ==== escj - Save Cursor Position.==========================================
 
-escj:           bset    #F_SVPOS,v_stat_0 // set "position saved" status bit.
+escj:           bset    #F_SVPOS,_v_stat_0 // set "position saved" status bit.
                 lea     sav_cxy,a0
-                move.w  v_cur_cx,(a0)+
-                move.w  v_cur_cy,(a0)   // save the x and y coords of cursor.
+                move.w  _v_cur_cx,(a0)+
+                move.w  _v_cur_cy,(a0)   // save the x and y coords of cursor.
                 rts
 
 
 
 // ==== esck - Restore Cursor Position.=======================================
 
-esck:           bclr    #F_SVPOS,v_stat_0 // clear "position saved" status bit.
+esck:           bclr    #F_SVPOS,_v_stat_0 // clear "position saved" status bit.
                 beq     escfn8          // if position was not saved, home cursor.
                 lea     sav_cxy,a0
                 move.w  (a0)+,d0
@@ -605,7 +605,7 @@ esck:           bclr    #F_SVPOS,v_stat_0 // clear "position saved" status bit.
 // ==== escl - Erase Entire Line.=============================================
 
 escl:           bsr     escf            // hide cursor.
-                move.w  v_cur_cy,d1
+                move.w  _v_cur_cy,d1
                 move.w  d1,d2
                 swap    d1
                 clr.w   d1              // upper left coords. (0,y)
@@ -621,16 +621,16 @@ escl:           bsr     escf            // hide cursor.
 
 esco:           bsr     escf            // hide cursor.
                 bsr     escj            // save cursor position.
-                move.w  v_cur_cx,d2     // test current x.
+                move.w  _v_cur_cx,d2     // test current x.
                 beq     esco_space      // if x = x minimum, just output a space.
                 btst    #0,d2           // x even or odd?
                 bne     esco_blnk       // if odd, branch.
                 move.w  #0x20,d1        // else output a space &
                 bsr     ascii_out
-                move.w  v_cur_cx,d2
+                move.w  _v_cur_cx,d2
                 subq.w  #2,d2           // back up 2 spaces.
 esco_blnk:      swap    d2              // blank to end of line.
-                move.w  v_cur_cy,d2
+                move.w  _v_cur_cy,d2
                 move.w  d2,d1
                 swap    d2              // lower right coords. (x,y)
                 swap    d1
@@ -647,14 +647,14 @@ esco_space:     move.w  #0x20,d1        // output a space.
 
 // ==== escv - Wrap at End of Line.===========================================
 
-escv:           bset    #F_CEOL,v_stat_0 // set the eol handling bit.
+escv:           bset    #F_CEOL,_v_stat_0 // set the eol handling bit.
                 rts
 
 
 
 // ==== escw - Discard at End of Line.========================================
 
-escw:           bclr    #F_CEOL,v_stat_0 // clear the eol handling bit.
+escw:           bclr    #F_CEOL,_v_stat_0 // clear the eol handling bit.
                 rts
 
 
@@ -662,7 +662,7 @@ escw:           bclr    #F_CEOL,v_stat_0 // clear the eol handling bit.
 // ==== ascii_cr - carriage return.===========================================
 
 ascii_cr:
-                move.w  v_cur_cy,d1
+                move.w  _v_cur_cy,d1
                 clr.w   d0              // beginning of current line.
                 bra     move_cursor
 
@@ -670,7 +670,7 @@ ascii_cr:
 
 // ==== ascii_lf - line feed.=================================================
 
-ascii_lf:       move.w  v_cur_cy,d0     // d0 := current cursor y.
+ascii_lf:       move.w  _v_cur_cy,d0     // d0 := current cursor y.
                 cmp.w   v_cel_my,d0     // at bottom of screen?
                 bne     escB            // no, branch.
                 bsr     escf            // yes, hide cursor.
@@ -683,12 +683,12 @@ ascii_lf:       move.w  v_cur_cy,d0     // d0 := current cursor y.
 // ==== _blink - cursor blink interrupt routine.==============================
 
 _blink:
-                lea     v_stat_0,a0     // (need fix?)
+                lea     _v_stat_0,a0     // (need fix?)
                 btst    #F_CVIS,(a0)    // test visibility/semaphore bit.
                 beq     bl_out          // if invisible or blocked, return.
                 btst    #F_CFLASH,(a0)  // test flash bit.
                 beq     bl_out          // if not flashing, return.
-                lea     v_cur_tim,a1
+                lea     _v_cur_tim,a1
                 subq.b  #1,(a1)         // decrement cursor flash timer.
                 bne     bl_out          // if <> 0, return.
                 move.b  #10,(a1)        // else reset timer.
@@ -770,28 +770,28 @@ ascii_out:
 
 char_ok:
 
-        move.l  v_cur_ad,a1             // a1 -> the destination
+        move.l  _v_cur_ad,a1             // a1 -> the destination
 
-        move.w  v_col_bg,d7
+        move.w  _v_col_bg,d7
         swap    d7
-        move.w  v_col_fg,d7
+        move.w  _v_col_fg,d7
 
 
-        btst    #F_REVID,v_stat_0
+        btst    #F_REVID,_v_stat_0
         beq     put_char
 
         swap    d7                      // reverse fore and background
 
 put_char:
 
-        bclr    #F_CVIS,v_stat_0        // test and clear visibility bit ... semaphore.
+        bclr    #F_CVIS,_v_stat_0        // test and clear visibility bit ... semaphore.
         move.w  sr,-(sp)                // save result of test.
 
         bsr     cell_xfer               // put the cell out (this covers the cursor)
 
-        move.l  v_cur_ad,a1
-        move.w  v_cur_cx,d0
-        move.w  v_cur_cy,d1
+        move.l  _v_cur_ad,a1
+        move.w  _v_cur_cx,d0
+        move.w  _v_cur_cy,d1
 
         bsr     next_cell               // advance the cursor
         beq     disp_cur
@@ -817,14 +817,14 @@ scroll_up:
         movem.l (sp)+,d0/d1/a1
 
 disp_cur:
-        move.l  a1,v_cur_ad             // update cursor address
-        move.w  d0,v_cur_cx             // update the cursor coordinates
-        move.w  d1,v_cur_cy             //   "     "    "        "
+        move.l  a1,_v_cur_ad             // update cursor address
+        move.w  d0,_v_cur_cx             // update the cursor coordinates
+        move.w  d1,_v_cur_cy             //   "     "    "        "
         move.w  (sp)+,ccr               // restore result of visibility test.
         beq     dc_out                  // if invisible, just return.
         bsr     neg_cell                // else, display cursor.
-        bset    #F_CSTATE,v_stat_0      // set state flag (cursor on).
-        bset    #F_CVIS,v_stat_0        // set visibility bit...end of critical section.
+        bset    #F_CSTATE,_v_stat_0      // set state flag (cursor on).
+        bset    #F_CVIS,_v_stat_0        // set visibility bit...end of critical section.
 dc_out: 
         rts
 
@@ -877,7 +877,7 @@ b1:
         subq.w  #1,d2                   // d2 = # of lines in region -1
 
         clr.l   d0                      //assume 0 background color
-        move.w  v_col_bg,d5             //background color to d5
+        move.w  _v_col_bg,d5             //background color to d5
         cmpi.w  #2,_v_planes            //test for 1, 2 or 4 planes
         bmi     mono                    //br if monochrome
         beq     plane2                  //br if 2 planes
@@ -1033,7 +1033,7 @@ y_disp:
         move.l  _v_bas_ad,a1            // d5 <- screen base address
         adda.l  d5,a1                   // d5 <- screen addr + Y disp
         adda.l  d3,a1                   // d5 <- cell address
-        add.w   v_cur_of, a1            // add offset from screen-begin (fix)
+        add.w   _v_cur_of, a1            // add offset from screen-begin (fix)
         rts
 
 
@@ -1163,12 +1163,12 @@ escYY:  cmp.w   v_cel_my,d1     // clip y.
         bls     escYok          // no, branch.
         move.w  v_cel_my,d1     // yes.
 
-escYok: move.w  d0,v_cur_cx
-        move.w  d1,v_cur_cy
+escYok: move.w  d0,_v_cur_cx
+        move.w  d1,_v_cur_cy
 
 //       erase old cursor (if cursor is presently visible)
 
-        lea     v_stat_0,a0
+        lea     _v_stat_0,a0
         btst    #F_CVIS,(a0)                    // is cursor visible?
         beq     invisible                       // no, branch.
         btst    #F_CFLASH,(a0)                  // is cursor flashing?
@@ -1177,13 +1177,13 @@ escYok: move.w  d0,v_cur_cx
         btst    #F_CSTATE,(a0)                  // is cursor presently displayed ?
         beq     mc_semout                       // no, branch.
 
-doit:   move.l  v_cur_ad,a1
+doit:   move.l  _v_cur_ad,a1
         bsr     neg_cell                        // erase present cursor
 
         bsr     cell_addr
-        move.l  a1,v_cur_ad
+        move.l  a1,_v_cur_ad
         bsr     neg_cell                        // write new cursor
-        bset    #F_CVIS,v_stat_0                // end of critical section.
+        bset    #F_CVIS,_v_stat_0                // end of critical section.
         rts
 
 mc_semout:
@@ -1191,7 +1191,7 @@ mc_semout:
 
 invisible:
         bsr     cell_addr
-        move.l  a1,v_cur_ad
+        move.l  a1,_v_cur_ad
 
         rts
 
@@ -1234,7 +1234,7 @@ neg_cell:
 
 plane_loop:
 
-//        bset    #6,v_stat_0                // end of critical section.
+//        bset    #6,_v_stat_0                // end of critical section.
         move.w  d4,d5                   // reset cell length counter
         move.l  a1,a4                   // a4 -> top of current dest plane
 
@@ -1246,7 +1246,7 @@ neg_loop:
 
         addq.w  #plane_offset,a1        // a1 -> top of block in next plane
         dbra    d6,plane_loop
-//        bclr    #6,v_stat_0                // end of critical section.
+//        bclr    #6,_v_stat_0                // end of critical section.
         rts
 
 
@@ -1289,7 +1289,7 @@ next_cell:
         cmp.w   v_cel_mx,d0
         bne     inc_cell_ptr                    // increment cell ptr
 
-        btst    #F_CEOL,v_stat_0
+        btst    #F_CEOL,_v_stat_0
         bne     new_line
 
 

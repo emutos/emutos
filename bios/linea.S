@@ -289,43 +289,11 @@ _con_state_init:
 
 
 /*
- * _color_init - initialize the system colors
- */
-
-_color_init:
-        move.w  #-1, v_col_fg           // foreground color := 15.
-        move.w  #0, v_col_bg            // background color := 0.
-
-        rts
-
-
-
-/*
- * _cur_init - initialize the vt52 cursor
- */
-
-_cur_init:
-        moveq.l #0, d0
-        move.w  d0, v_cur_cx            // cursor column 0
-        move.w  d0, v_cur_cy            // cursor line 0
-        move.w  d0, v_cur_of            // line offset 0
-        move.l  _v_bas_ad, a0           // get base address of screen
-        move.l  a0, v_cur_ad            // home cursor.
-        move.b  #1, v_stat_0            // invisible, flash, nowrap, normal video.
-        move.b  #30, v_cur_tim          // .5 second blink counter (@60 Hz vblank).
-        move.b  #30, v_period           // .5 second blink rate (@60 Hz vblank).
-        move.w  #1, disab_cnt           // cursor disabled 1 level deep.
-	
-        rts
-
-
-
-/*
  * _clear_screen - Clear the screen
  */
  
 _clear_screen:
-        move.w  v_col_bg, d0            // load background color
+        move.w  _v_col_bg, d0            // load background color
         move.l  _memtop, a0             // Set start of RAM
 scr_loop:
         move.w  d0, (a0)+               // set to background color

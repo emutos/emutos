@@ -170,3 +170,4 @@ VOID vsync(VOID)
       ;
     set_sr(old_sr);
 }
+

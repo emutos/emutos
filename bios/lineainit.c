@@ -12,6 +12,7 @@
 
 
 #include "tosvars.h"
+#include "lineavars.h"
 #include "fontdef.h"
 #include "kprint.h"
 
@@ -22,8 +23,6 @@
 /* Just used, if functions are assembler coded */
 extern void font_init(struct font_head *);
 extern void con_state_init(void);
-extern void color_init(void);
-extern void cur_init(void);
 extern void resol_set(BYTE);
 extern void clear_screen(void);
 
@@ -67,6 +66,7 @@ void clear_screen(void)
 }
 
 
+
 /*
  * font_init - font ring  initialization
  */
@@ -97,35 +97,25 @@ void linea_init(void)
     if (video_mode == 2)
     {
         font_init(&f8x16);
-        kprintf("======= lineaInit reached\n");
     }
     else
         font_init(&f8x8);
 
+    /* Initial color settings */
+    v_col_fg=0xffff;			// foreground color
+    v_col_bg=0x0000;			// background color
 
-#if IMPLEMENTED
+    /* Initial cursor settings */
+    v_cur_cx=0;				// cursor to column 0
+    v_cur_cy=0;				// cursor to line 0
+    v_cur_of=0;				// line offset is 0
+    v_cur_ad=v_bas_ad;                 	// set cursor to begin of screen
 
-    /* Color settings */
-    v_col_fg=-1;			// foreground color := 15.
-    v_col_bg=0;				// background color := 0.
-
-    /* Cursor settings */
-    v_cur_cx=0;				// cursor column 0
-    v_cur_cy=0;				// cursor line 0
-    v_cur_of=0;				// line offset 0
-    v_cur_ad=_v_cur_ad;                 // set cursor to begin of screen
-    v_stat_0=1;				// invisible, flash, nowrap, normal video.
+    v_stat_0=1;				// cursor invisible, flash,
+    					// nowrap, normal video.
     v_cur_tim=30;			// .5 second blink counter (@60 Hz vblank).
     v_period=30;			// .5 second blink rate (@60 Hz vblank).
     disab_cnt=1;               		// cursor disabled 1 level deep.
-#else
-    /* Initialize colors */
-    color_init();
-
-    /* Cursor settings */
-    cur_init();
-
-#endif /* IMPLEMENTED */
 
     /* Clear screen with foreground color */
     clear_screen();

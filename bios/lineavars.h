@@ -1,69 +1,53 @@
 /*
- * lineavars.S - Graphics related system variables
+ * lineavars.h - name of linea graphics related variables
  *
  * Copyright (c) 2001 by Authors:
  *
- *  THO  Thomas Huth
+ *  MAD   Martin Doering
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
- *
  */
 
+/*
+ * Put in this file only the low-mem vars actually used by
+ * C code.
+ */
+
+#ifndef _LINEAVARS_H
+#define _LINEAVARS_H
+
+#include "portab.h"
+
+#define NEEDED 0
 
 
-		.bss
+/* Color related variables */
+extern WORD v_col_bg;           // current background color
+extern WORD v_col_fg;		// current foreground color
+
+/* Cursor related variables */
+extern VOID os_entry(VOID);
+extern LONG v_cur_ad;		// current cursor address
+extern WORD v_cur_of;		// cursor offset
+extern WORD v_cur_cx;		// current cursor cell x
+extern WORD v_cur_cy;		// current cursor cell y
+extern BYTE v_cur_tim;		// cursor blink timer.
+
+extern BYTE v_period;		//
+extern WORD disab_cnt;		// disable depth count. (>0 => disabled)
+extern BYTE v_stat_0;		// video cell system status
+
+
+/* Screen related variables */
+
+
+
+#if NEEDED
 
 // ===========================================================================
 //	Negative line-a variables come first
 // ===========================================================================
-
-		.globl	cur_ms_stat
-		.globl	_disab_cnt
-		.globl	draw_flag
-		.globl	m_cdb_bg
-		.globl	m_cdb_fg
-		.globl	m_pos_hx
-		.globl	m_pos_hy
-		.globl	mask_form
-		.globl	mouse_cdb
-		.globl	mouse_flag
-		.globl	newx
-		.globl	newy
-		.globl	retsav
-		.globl	sav_cxy
-		.globl	save_addr
-		.globl	save_area
-		.globl	save_len
-		.globl	save_stat
-		.globl	tim_addr
-		.globl	tim_chain
-		.globl	user_but
-		.globl	user_cur
-		.globl	user_mot
-		.globl	v_cel_ht
-		.globl	v_cel_mx
-		.globl	v_cel_my
-		.globl	v_cel_wr
-		.globl	_v_col_bg
-		.globl	_v_col_fg
-		.globl	_v_cur_ad
-		.globl	_v_cur_of
-		.globl	_v_cur_cx
-		.globl	_v_cur_cy
-		.globl	_v_period
-		.globl	_v_cur_tim
-		.globl	v_fnt_ad
-		.globl	v_fnt_nd
-		.globl	v_fnt_st
-		.globl	v_fnt_wr
-		.globl	v_hz_rez
-		.globl	v_off_ad
-		.globl	_v_stat_0
-		.globl	v_vt_rez
-		.global font_ring
-	
-// **FIXME: There are still lots of variables missing here...**
 
 GCURX:		.ds.w	1	// -602	MiNT needs GCURX and GCURY
 GCURY:		.ds.w	1	// -600	(the current mouse position)
@@ -82,7 +66,7 @@ ini_font_count:	.ds.w	1	// -440
 
 cur_ms_stat:	.ds.b	1	// -348	current mouse status
 		.ds.b	1
-_disab_cnt:	.ds.w	1	// -346  disable depth count. (>0 => disabled)
+disab_cnt:	.ds.w	1	// -346  disable depth count. (>0 => disabled)
 newx:		.ds.w	1	// -344	new mouse x&y position
 newy:		.ds.w	1
 draw_flag:	.ds.b	1	// -340	non-zero means draw mouse form on vblank
@@ -101,21 +85,13 @@ v_cel_ht:	.ds.w	1	// -46   cell height (width is 8)
 v_cel_mx:	.ds.w	1	// -44	needed by MiNT: columns on the screen minus 1
 v_cel_my:	.ds.w	1	// -42	needed by MiNT: rows on the screen minus 1
 v_cel_wr:	.ds.w	1	// -40	needed by MiNT: length (in bytes) of a line of characters
-_v_col_bg:	.ds.w	1	// -38   current background color 
-_v_col_fg:	.ds.w	1	// -36   current foreground color 
-_v_cur_ad:	.ds.l	1	// -34   current cursor address  
-_v_cur_of:	.ds.w	1	// -30
-_v_cur_cx:	.ds.w	1	// -28   current cursor cell x 
-_v_cur_cy:	.ds.w	1	// -26   current cursor cell y
-_v_period:	.ds.b	1	// -24
-_v_cur_tim:	.ds.b	1	// -23   cursor blink timer.
 v_fnt_ad:	.ds.l	1	// -22   address of current monospace font
 v_fnt_nd:	.ds.w	1	// -18   ascii code of last cell in font
 v_fnt_st:	.ds.w	1	// -16   ascii code of first cell in font
 v_fnt_wr:	.ds.w	1	// -14   font cell wrap 
 v_hz_rez:	.ds.w	1	// -12   horizontal pixel resolution
 v_off_ad:	.ds.l	1	// -10   address of font offset table
-_v_stat_0:	.ds.b	1	// -6    video cell system status (was in words)
+v_stat_0:	.ds.b	1	// -6    video cell system status (was in words)
                 .ds.b	1	//       dummy
 v_vt_rez:	.ds.w	1	// -4    vertical pixel resolution 
 BYTES_LN:	.ds.w	1	// -2
@@ -126,64 +102,6 @@ BYTES_LN:	.ds.w	1	// -2
 // ==== Normal line-a variables now follow
 // ===========================================================================
 
-		.globl	line_a_vars
-
-		.globl	local_pb
-		.globl	_CONTRL
-		.globl	_INTIN
-		.globl	_PTSIN
-		.globl	_INTOUT
-		.globl	_PTSOUT
-
-		.globl	_FG_BP_1
-		.globl	_FG_BP_2
-		.globl	_FG_BP_3
-		.globl	_FG_BP_4
-
-		.globl	_X1
-		.globl	_X2
-		.globl	_Y1
-		.globl	_Y2
-		.globl	_LSTLIN
-		.globl	_LN_MASK
-		.globl	_WRT_MODE
-
-		.globl	_v_planes
-		.globl	_v_lin_wr
-                
-		.globl	_patptr
-		.globl	_patmsk
-
-		.globl	_CLIP
-		.globl	_XMN_CLIP
-		.globl	_XMX_CLIP
-		.globl	_YMN_CLIP
-		.globl	_YMX_CLIP
-
-		.globl	_multifill
-		.globl	_XACC_DDA
-		.globl	_DDA_INC
-		.globl	_T_SCLSTS
-		.globl	_MONO_STATUS
-		.globl	_SOURCEX
-		.globl	_SOURCEY
-		.globl	_DESTX
-		.globl	_DESTY
-		.globl	_DELX
-		.globl	_DELY
-		.globl	_FBASE
-		.globl	_FWIDTH
-		.globl	_STYLE
-		.globl	_LITEMASK
-		.globl	_SKEWMASK
-		.globl	_WEIGHT
-		.globl	_R_OFF
-		.globl	_L_OFF
-		.globl	_DOUBLE
-		.globl	_CHUP
-		.globl	_TEXT_FG
-		.globl	_scrtchp
-		.globl	_scrpt2
 
 // ==== Global GSX Variables =================================================
 
@@ -257,6 +175,6 @@ _TEXT_BG:	 ds.w	 1		 // text foreground color
 _COPYTRAN:	 ds.w	 1		 // Flag for Copy-raster-form (<>0 = Transparent)
 _FILL_ABORT:	 ds.l	 1		 // Adress of Routine for Test of break of contour fill function
 
+#endif /* NEEDED */
 
-
-		.end
+#endif /* _LINEAVARS_H */
