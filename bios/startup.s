@@ -114,13 +114,14 @@
 
 | ==== tosvars.s - TOS System variables =====================================
 
-        .xdef   bssstrt 
-        .xdef   proc_lives      
-        .xdef   proc_dregs      
-        .xdef   proc_aregs      
-        .xdef   proc_enum       
-        .xdef   proc_usp        
-        .xdef   proc_stk        
+	.xdef	bssstrt	
+	.xdef   bssstart
+	.xdef	_proc_lives	
+	.xdef	_proc_dregs	
+	.xdef	_proc_aregs	
+	.xdef	_proc_enum	
+	.xdef	_proc_usp	
+	.xdef	_proc_stk	
                 
         .xdef   etv_timer     
         .xdef   etv_critic    
@@ -207,9 +208,13 @@
 
 | ==== lineavars.s - Graphics subsystem variables =============================
         .xdef   v_cel_mx
-        .xdef   v_cel_my
-        .xdef   v_cel_wr
-        
+	.xdef   v_cel_my
+	.xdef   v_cel_wr
+	
+| ==== vectors.s - Default exception vectors =============================
+	.xdef	init_exc_vec
+	.xdef	init_user_vec
+	
 
 | ===========================================================================
 | ==== BSS segment ==========================================================
@@ -307,59 +312,48 @@ _main:                                  | stunt to guarantee entry into supervis
 
 | ==== Reset vector =========================================================
 resetvec:
-       cmpi.l   #0x31415926, resvalid   | Jump to resetvector?
-       bne.s    cpu_int_set             | No --> cpu_int_set
-       move.l   resvector, d0           | Yes: resvec to d0
-       tst.b    resvector               | Is it valid?
-       bne.s    cpu_int_set             | No --> cpu_int_set
-       btst     #0, d0                  | Address odd ?
-       bne.s    cpu_int_set             | Yes --> cpu_int_set
-       movea.l d0, a0                   | resvec
-       lea      resetvec(pc), a6        | save return address
-       jmp      (a0)                    | jump to resvec
+       cmpi.l 	#0x31415926, resvalid	| Jump to resetvector?
+       bne.s 	noreset    		| No --> noreset
+       move.l 	resvector, d0		| Yes: resvec to d0
+       tst.b 	resvector		| Is it valid?
+       bne.s 	noreset                	| No --> noreset
+       btst 	#0, d0			| Address odd ?
+       bne.s 	noreset    		| Yes --> noreset
+       movea.l  d0, a0			| resvec
+       lea 	resetvec(pc), a6        | save return address
+       jmp 	(a0)			| jump to resvec
+noreset:
+
+| ==== Clear BSS before calling any C function ======================
+| the C part expects the bss to be cleared, so let's do this early
+	lea bssstart,a0
+	lea sysvarend-1,a1
+	move.l a1,d0
+	sub.l a0,d0
+	lsr.l #2,d0
+clearbss:
+	clr.l (a0)+
+	dbra d0,clearbss
 
 
 | ==== Set all cpu-interrupts to dummy handler ==============================
 | We currently are experiencing an unexpected cpu interrupt.  We will
 | set the vector addresses of these interrupts to a known location.
 
-cpu_int_set:
-        move.l  #0, a0
-        move.l  #excepth, a1            | 
-xresintr:
-        move.l  a1, (a0)+                | set vector, increase pointer
-        cmp.l   #0x100, a0               | Last vector reached?
-        blt     xresintr                | if not, take next vector
+	jsr init_exc_vec		| LVL: moved in vectors.s
 
 
 
 | ==== Set unassigned user interrupts to dummy handler ======================
-|               move.l  SAVECT,-(sp)            | save software abort vector
-user_int_set:
+|      	move.l	SAVECT,-(sp)		| save software abort vector
 
-        move.l  #0x100, a0              | start with 1st user vector
-        move.l  #excepth, a1            | address of dummy interupt handler
-resintr: 
-        move.l  a1, (a0)+               | set new vector and bump ptr
-        cmp.l   #0x400, a0              | have we reached #0x400?
-        blt     resintr                 | if not, get next user vector
+	jsr init_user_vec		| LVL: moved in vectors.s
 
-|               move.l  (sp)+,SAVECT            | restore software abort vector
+|      	move.l	(sp)+,SAVECT		| restore software abort vector
 
-        pea msg_main    | Print, what's going on
-        bsr _kprint
-        addq #4,sp
-
-
-| ==== Set special exception handlers for error handling ====================
-        move.l  #err_bus, 0x08          | bus error
-        move.l  #err_addr, 0x0c         | address error
-        move.l  #err_illg, 0x10         | illegal instruction error
-        move.l  #err_div0, 0x14         | division by zero error
-        move.l  #err_chk, 0x18          | datatype boundaries error
-        move.l  #err_trpv, 0x1c         | trapv overflow bit error
-        move.l  #err_priv, 0x20         | privilege error
-
+	pea msg_main	| Print, what's going on
+	bsr _kprint
+	addq #4,sp
 
 
 
@@ -503,17 +497,6 @@ initsnd:
 
 
 
-| ==== Set Exceptions to known handler ======================================
-|       lea excepth, a1                 | Exception handler + bomb routine
-|       adda.l #0x2000000,a1            | #2 -#63
-|       lea 8,a0                        | Pointer to exeptions
-|       move.w #0x3d,d0                 | d0 = loop counter
-|loop_ex:
-|       move.l a1, (a0)+                | Set exeption routine
-|       adda.l #0x1000000, a1           | Increase Vectorno.
-|       dbra d0, loop_ex
-
-
 | ==== Setting up Line-a variables ==========================================
         move.w  #79,v_cel_mx            | 80 columns at the moment
         move.w  #24,v_cel_my            | 25 rows at the moment
@@ -526,9 +509,9 @@ initsnd:
         move.l #dummyaes, vec_aes       | Trap #2  (AES, almost dummy)
         move.l #bios, vec_bios          | Trap #13 (BIOS)
         move.l #xbios, vec_xbios        | trap #14 (XBIOS)
-        move.l #int_linea, vec_linea            | Line-A
+        move.l #int_linea, vec_linea    | Line-A
         move.l #int_kbd, vec_kbd        | keyboard interrupt vector (ACIAs)
-        move.l #excepth, vec_divnull    | Division by zero to rte
+        move.l #just_rte, vec_divnull   | Division by zero to rte
 
 | ==== disk related vectors =================================================
         move.l  #_drv_init, hdv_init    | Initialize Harddrive
@@ -616,6 +599,8 @@ clrvbl:
         bsr _kprint
         addq #4,sp
 
+
+
 | ==== Now really start the BDOS ===========================================
         jsr     _biosmain
 
@@ -697,6 +682,10 @@ dump_scr:
 
 just_rts:       
         rts             | Just a dummy
+
+| ==== just rte for divide by zero ==========================
+just_rte:
+        rte		
 
 
 | ==== Our new Line-A handler ===============================
@@ -1048,133 +1037,10 @@ _bsetvec:
 vsplt:  
         rts                     | return with d0 = old vector
 
-| ==== Exception handler ====================================================
-excepth:
-        move.l (a7), proc_enum          | Exeptionnr. to 0x3c4
-        movem.l d0-d7/a0-a6,-(sp)
-
-        pea dummy_vec_msg
-        bsr _kprint
-        addq #4,sp
-
-|        pea proc_enum
-|        bsr _kputl
-|       addq #4,sp
-
-        pea cr
-        bsr _kprint
-        addq #4,sp
-
-|       clr.l   d0
-        movem.l (sp)+,d0-d7/a0-a6
-        rte
 
 forever:
         jmp     forever
 
-
-
-dummy_vec_msg:
-        .ascii "BIOS: Panic - not yet implemented vector!\0"
-        .even
-
-
-
-|
-| err_bus - bus error vector
-|
-err_bus:
-        pea msg_buserr
-        bsr _kprint
-        addq #4,sp
-        jmp     forever
-msg_buserr:
-        .ascii "BIOS: Panic - bus error!\n\0"
-        .even
-        
-
-
-|
-| err_addr - address error vector
-|
-err_addr:
-        pea msg_addrerr
-        bsr _kprint
-        addq #4,sp
-        jmp     forever
-msg_addrerr:
-        .ascii "BIOS: Panic - address error!\n\0"
-        .even
-        
-
-
-|
-| err_illg - illegal instruction error vector
-|
-err_illg:
-        pea msg_illgerr
-        bsr _kprint
-        addq #4,sp
-        jmp     forever
-msg_illgerr:
-        .ascii "BIOS: Panic - illegal instruction error!\n\0"
-        .even
-        
-
-
-|
-| err_div0 - division by zero error vector
-|
-err_div0:
-        pea msg_div0err
-        bsr _kprint
-        addq #4,sp
-        jmp     forever
-msg_div0err:
-        .ascii "BIOS: Panic - division by zero error!\n\0"
-        .even
-        
-
-
-|
-| err_chk - datatype overflow error vector
-|
-err_chk:
-        pea msg_chkerr
-        bsr _kprint
-        addq #4,sp
-        jmp     forever
-msg_chkerr:
-        .ascii "BIOS: Panic - datatype overflow error!\n\0"
-        .even
-        
-
-
-|
-| err_trpv - trapv overflow bit error vector
-|
-err_trpv:
-        pea msg_trpverr
-        bsr _kprint
-        addq #4,sp
-        jmp     forever
-msg_trpverr:
-        .ascii "BIOS: Panic - trapv overflow bit error !\n\0"
-        .even
-        
-
-
-|
-| err_trpv - privilege error vector
-|
-err_priv:
-        pea msg_priverr
-        bsr _kprint
-        addq #4,sp
-        jmp     forever
-msg_priverr:
-        .ascii "BIOS: Panic - privilege error (super command in user mode)!\n\0"
-        .even
 
 
 

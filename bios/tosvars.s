@@ -6,12 +6,13 @@
 	.global _vec_118
 
 	.global bssstrt
-	.global	proc_lives
-	.global	proc_dregs	
-	.global	proc_aregs	
-	.global	proc_enum	
-	.global	proc_usp	
-	.global	proc_stk	
+	.global bssstart
+	.global	_proc_lives
+	.global	_proc_dregs	
+	.global	_proc_aregs	
+	.global	_proc_enum	
+	.global	_proc_usp	
+	.global	_proc_stk	
                 
 	.global	etv_timer     
 	.global	etv_critic    
@@ -104,12 +105,12 @@ bssstrt:
 
 | ==== Start of Exception related variables =================================
 	.org	0x380
-proc_lives:	ds.l	1       | Validates system crash page, if 0x12345678
-proc_dregs:	ds.l    8	| Saved registers d0-d7
-proc_aregs:	ds.l	8	| Saved registers a0-a7
-proc_enum:	ds.l	1	| Vector number of crash exception
-proc_usp:	ds.l	1	| Saved user stackpointer
-proc_stk: 	ds.w	16	| 16 words from exception stack
+_proc_lives:	ds.l	1       | Validates system crash page, if 0x12345678
+_proc_dregs:	ds.l    8	| Saved registers d0-d7
+_proc_aregs:	ds.l	8	| Saved registers a0-a7
+_proc_enum:	ds.l	1	| Vector number of crash exception
+_proc_usp:	ds.l	1	| Saved user stackpointer
+_proc_stk: 	ds.w	16	| 16 words from exception stack
 
 | ==== Start of System variables ============================================
 	.org 0x400		|
@@ -206,7 +207,8 @@ joyvec:		ds.l	1	| joystick-routinee
 midisys:	ds.l	1	| MIDI-systemvector
 ikbdsys:	ds.l	1	| IKBD-systemvector
 
-
+| memory past this address will be cleared on startup or on reset.
+bssstart:
 
 | ===========================================================================
 | ==== End ==================================================================
