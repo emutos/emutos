@@ -685,8 +685,6 @@ ascii_lf:       move.w  v_cur_cy,d0     | d0 := current cursor y.
 | ==== _blink - cursor blink interrupt routine.==============================
 
 _blink:
-                rts     |(fix!!!)
-                
                 lea     v_stat_0,a0     | (need fix?)
                 btst    #F_CVIS,(a0)    | test visibility/semaphore bit.
                 beq     bl_out          | if invisible or blocked, return.
@@ -695,7 +693,7 @@ _blink:
                 lea     v_cur_tim,a1
                 subq.b  #1,(a1)         | decrement cursor flash timer.
                 bne     bl_out          | if <> 0, return.
-                move.b  #30,(a1)        | else reset timer.
+                move.b  #10,(a1)        | else reset timer.
                 bchg    #F_CSTATE,(a0)  | toggle cursor state.
                 bsr     comp_cr1        | complement cursor.
 bl_out:         rts

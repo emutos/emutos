@@ -152,15 +152,15 @@ _ikbdsys:
 	| TODO (?): check errors (buffer full ?)
 	move.b	ikbd_acia_data,d0
 	
-	movem.l d0/d1/a0/a1,-(sp)
-	bra 1f
-2:	.ascii  "IKBD data = 0x%02x\n\0"
-	.even
-1:	move.w	d0,-(sp)
-	pea 	2b
-	jsr 	_kprintf
-	add.w 	#6,sp
-	movem.l (sp)+,d0/d1/a0/a1
+|	movem.l d0/d1/a0/a1,-(sp)
+|	bra 1f
+|2:	.ascii  "IKBD data = 0x%02x\n\0"
+|	.even
+|1:	move.w	d0,-(sp)
+|	pea 	2b
+|	jsr 	_kprintf
+|	add.w 	#6,sp
+|	movem.l (sp)+,d0/d1/a0/a1
 
 	tst.b	kbdbuf
 	bne	in_packet	| kbdbuf[0] != 0, we are receiving a packet

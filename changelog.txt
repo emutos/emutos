@@ -182,8 +182,8 @@ Start... early ages
 
 14. Oct. 2001
 - implemented full memory configuration - much much more memory now (MAD)
-- implemented cursor (not blinking - this was easy) 
-- Changed version string of command.prg
+- implemented cursor (not blinking - this was easy) (MAD)
+- Changed version string of command.prg  (MAD)
 - correct fnt8x8 (previous one useless) and fnt8x16 (last char offset) (LVL)
 - some progress on iorec, but still not in service (LVL)
 
@@ -191,8 +191,8 @@ Start... early ages
 - Fixed some bugs in bios.c (the bconoutx functions need 2 parameters!) (THO)
 
 19. Oct. 2001
-- Cleaned up and seperated memory initialisation in memory.s
-- Cleaned up command.prg (got rid of cpm code)
+- Cleaned up and seperated memory initialisation in memory.s  (MAD)
+- Cleaned up command.prg (got rid of cpm code) (MAD)
 
 20. Oct. 2001
 - added memmove and memset, erasing bmove, xmovs and bfill in bdos (LVL)
@@ -208,4 +208,5 @@ Start... early ages
 - still some headers cleaning in bios/ and include/ (LVL)
 
 22. Okt. 2001
-- Video mode can be set hard in startup.s to all three modes - working!!!
+- Video mode can be set hard in startup.s to all three modes!!! (MAD)
+- Cursor is now blinking (thanks Laurent, for Timer stuff!) (MAD)

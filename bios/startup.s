@@ -212,7 +212,11 @@
         
 | ==== lineavars.s - Graphics subsystem variables ===========================
 
-	.xdef	font_ring
+	.xdef	font_ring   
+	
+| ==== conout.s - Graphics output ===========================================
+
+	.xdef	_blink
 	
 | ==== vectors.s - Default exception vectors ================================
 
@@ -735,8 +739,7 @@ int_vbl:
 	| detect rez change
 	| (not done)
 
-	| blink cursor
-	| TODO
+	bsr _blink                       | blink cursor
 
 	| load new color palette
 	move.l	_colorptr,d0
