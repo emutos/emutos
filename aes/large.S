@@ -16,46 +16,25 @@
 */
 
 
-.globl _LSTCPY
 .globl _LBWMOV
 
-
-*       copy from src to dest until and including a null in the 
-*       source string
-
-*       len = LSTCPY(pdst, psrc)
-
-_LSTCPY:
-LD6FA:
-            movea.l 0x08(SP),A0
-            movea.l 0x04(SP),A1
-            clr.l   D0
-LD704:
-            addq.b  #1,D0
-            move.b  (A0)+,(A1)+
-            bne     LD704
-            subq.w  #1,D0
-            rts
-
-
-
-*       expand from bytes to words until you hit a null also return
-*       the number of characters moved
-*
-*       LBWMOV(pdstoff, pdstseg, psrcoff, psrcseg)
-*
+/*
+ *       WORD LBWMOV(WORD *pdst, const UBYTE *psrc)
+ *
+ *       expand from unsigned bytes to words until you hit a null. 
+ *       return the number of characters moved
+ */
 
 _LBWMOV:
-LD70E:
             movea.l 0x08(SP),A0
             movea.l 0x04(SP),A1
             clr.l   D0
-            clr.l   D1
-LD71A:
+            clr.w   D1
+lbwmov_loop:
             move.b  (A0)+,D1
-            beq     LD724
+            beq     lbwmov_exit
             move.w  D1,(A1)+
-            addq.b  #1,D0
-            bra     LD71A
-LD724:
+            addq.w  #1,D0
+            bra     lbwmov_loop
+lbwmov_exit:
             rts
