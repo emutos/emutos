@@ -47,7 +47,7 @@ OBJDUMP=m68k-atari-mint-objdump
 
 BIOSCSRC = charblit.c conio.c kbd.c kprint.c xbios.c \
          bios.c clock.c fnt8x16.c kbq.c mfp.c version.c midi.c
-BIOSSSRC = tosvars.s startup.s lineavars.s vectors.s
+BIOSSSRC = tosvars.s startup.s lineavars.s vectors.s aciavecs.s
 
 #
 # source code in bdos/
@@ -62,7 +62,7 @@ BDOSSSRC = rwa.s
 # source code in util/
 #
 
-UTILCSRC = #doprintf.c  # commented out - not existing yet
+UTILCSRC = doprintf.c 
 UTILSSRC = 
 
 #
@@ -91,7 +91,7 @@ COBJ = $(BIOSCOBJ) $(BDOSCOBJ) $(UTILCOBJ)
 OBJECTS = $(SOBJ) $(COBJ) 
 
 all:	emutos.img
-	
+
 emutos.img: $(OBJECTS) obj/end.o
 	${LD} -oformat binary -o $@ $(OBJECTS) ${LDFLAGS} obj/end.o
 
@@ -113,9 +113,6 @@ obj/%.o : util/%.c
 obj/%.o : util/%.s
 	$(AS) $(ASFLAGS) $< -o $@
 
-obj/end.o : end.s
-	$(AS) $(ASFLAGS) $< -o $@
-
 #
 # show
 # Does just work without -oformat binary of Linker!!!
@@ -127,7 +124,7 @@ show: emutos.img
 # clean and distclean 
 # (distclean is called before creating a tgz archive)
 #
-	
+
 clean:
 	rm -f obj/*.o *~ */*~ core emutos.img
 
@@ -140,19 +137,19 @@ distclean: clean
 # create a tgz archive named emutos-nnnnnn.tgz,
 # where nnnnnn is the date.
 #
-	
+
 HERE = $(shell pwd)
 HEREDIR = $(shell basename $(HERE))
 TGZ = $(shell echo $(HEREDIR)-`date +%y%m%d`|tr A-Z a-z).tgz
 
 tgz:	distclean
 	cd ..;\
-	tar -cf - --exclude '*CVS' $(HEREDIR) | gzip -c -9 >$(TGZ)
+	tar -cf - --exclude '*CVS' --exclude 'doc' $(HEREDIR) | gzip -c -9 >$(TGZ)
 
 #
 # automatic dependencies. (this is ugly)
 #
-	
+
 depend: 
 	cp Makefile Makefile.bak
 	chmod +w Makefile
