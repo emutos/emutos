@@ -268,7 +268,7 @@ is_ipl0:
 
 _int_vbl:
         addq.l  #1, _frclock            // increase num of happened ints
-        subq.l  #1, _vblsem             // check vblsem
+        subq.w  #1, _vblsem             // check vbl semaphore
         bmi     vbl_end                 // if VBl routine disabled -> end
         
         movem.l d0-d7/a0-a6, -(sp)      // save registers
@@ -345,7 +345,7 @@ vbl_no_queue:
 
         movem.l (sp)+, d0-d7/a0-a6      // restore registers
 vbl_end:
-        addq.l  #1, _vblsem      //
+        addq.w  #1,_vblsem
         rte
 
 
