@@ -13,6 +13,7 @@
 #include "portab.h"
 #include "cookie.h"
 #include "machine.h"
+#include "biosmem.h"
 #include "detect.h"
 #include "nvram.h"
 #include "tosvars.h"
@@ -234,7 +235,7 @@ void machine_init(void)
    * transfer memory between alternative RAM and ST RAM for DMA operations.  
    */
   if (ramtop > 0) {
-    cookie_frb = balloc(64 * 1024UL);
+    cookie_frb = (long)balloc(64 * 1024UL);
     cookie_add(COOKIE_FRB, cookie_frb);
   }
   else {

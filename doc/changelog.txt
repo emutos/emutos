@@ -634,3 +634,6 @@ Start... early ages
 - bios/blkdev.c - buf must be incremented (thanks Laurent) (joy)
                 - getbpb no more divide by zero error (thanks Laurent) (joy)
 - bios/floppy.c - corrent blkdev[].unit init for floppy B: (thx Laurent) (joy)
+
+06. Mar. 2002
+- bios/machine.c - got rid of some compiler warnings

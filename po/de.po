@@ -3,7 +3,7 @@
 # de.po: the translations in german language
 # 
 
-#: bios/bios.c:271
+#: bios/bios.c:277
 msgid "Please eject the floppy and hit RETURN"
 msgstr "Bitte Floppy entnehmen, dann RETURN drücken"
 
@@ -44,7 +44,7 @@ msgstr "Speicher frei"
 msgid "Screen start"
 msgstr "Bildschirm ab"
 
-#: bios/initinfo.c:176
+#: bios/initinfo.c:186
 msgid "Boot drive"
 msgstr "Bootet von"
 
@@ -395,7 +395,7 @@ msgstr ""
 msgid "Machine"
 msgstr "Rechner"
 
-#: bios/initinfo.c:177
+#: bios/initinfo.c:187
 msgid "Current time"
 msgstr "Aktuelle Zeit"
 
@@ -414,4 +414,8 @@ msgstr "%ld kB"
 #: bios/initinfo.c:171
 msgid " ST-RAM, %ld kB TT-RAM"
 msgstr " ST-RAM, %ld kB TT-RAM"
+
+#: bios/initinfo.c:176
+msgid "GEMDOS drives"
+msgstr "GEMDOS-Laufwerke"
 
