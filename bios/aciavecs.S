@@ -184,6 +184,8 @@ in_packet:
         bge     got_packet
         move.b  d1,kbdindex
         rts
+
+
 // now I've got a packet in buffer kbdbuf, of length kbdlength.
 got_packet:
         move.l  #0,d0
