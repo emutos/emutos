@@ -49,7 +49,7 @@ void arb_corner(Rect * rect)
 
 
 /*
- * arb_corner - copy and sort (arbitrate) the corners
+ * arb_line - copy and sort (arbitrate) the lines coordinates
  *
  * traditional (ll, ur) format is desired.
  */
@@ -67,6 +67,21 @@ void arb_line(Line * line)
         WORD temp = line->y1;
         line->y1 = line->y2;
         line->y2 = temp;
+    }
+}
+
+
+
+/*
+ * arb_hzline - copy and sort (arbitrate) the line x coordinates
+ */
+void arb_hzline(Line * line)
+{
+    /* Fix the x coordinate values, if necessary. */
+    if (line->x1 > line->x2) {
+        WORD temp = line->x1;
+        line->x1 = line->x2;
+        line->x2 = temp;
     }
 }
 

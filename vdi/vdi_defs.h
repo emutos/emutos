@@ -154,6 +154,23 @@ struct Vwk_ {
     WORD bez_qual;              /* actual quality for bezier curves */
 };
 
+
+typedef struct Hzline_ Hzline;
+struct Hzline_
+{
+    UWORD *addr;
+    int dx;
+    int leftpart;
+    int rightpart;
+    WORD patind;
+    int patadd;
+    UWORD color;
+    UWORD rightmask;
+    UWORD leftmask;
+};
+
+
+
 typedef struct Rect_ Rect;
 struct Rect_
 {
@@ -257,7 +274,8 @@ void abline (Vwk * vwk, Line * line);
 void draw_pline(Vwk * vwk);
 
 void arrow(Vwk *, WORD * xy, WORD inc);
-void horzline(Vwk * vwk, WORD x1, WORD x2, WORD y);
+void horzline(const Vwk * vwk, Line * line);
+void draw_rect(const Vwk * vwk, const Rect * rect, const UWORD fillcolor);
 void polygon(Vwk *);
 void polyline(Vwk *);
 void wideline(Vwk *);

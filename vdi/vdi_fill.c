@@ -29,6 +29,7 @@
 
 /* prototypes */
 void crunch_queue();
+static BOOL clipbox(Vwk * vwk, Rect * rect);
 
 
 
@@ -249,19 +250,15 @@ void vsf_perimeter(Vwk * vwk)
 
 void dr_recfl(Vwk * vwk)
 {
-    WORD fi;
-    Rect * rect;
+    Rect * rect = (Rect*)PTSIN;
+
+    if (vwk->clip)
+        if (!clipbox(vwk, rect))
+            return;
 
     /* Perform arbitrary corner fix-ups and invoke rectangle fill routine */
-    fi = vwk->fill_color;
-    fg_bp[0] = (fi & 1);
-    fg_bp[1] = (fi & 2);
-    fg_bp[2] = (fi & 4);
-    fg_bp[3] = (fi & 8);
-
-    rect = (Rect*)PTSIN;
     arb_corner(rect);
-    rectfill(vwk, rect);
+    draw_rect(vwk, rect, vwk->fill_color);
 }
 
 
@@ -476,6 +473,7 @@ void clc_flit (Vwk * vwk, WORD y)
         WORD * ptr = fill_buffer;
         for (i = intersections / 2 - 1; i >= 0; i--) {
             WORD x1, x2;
+            Line line;
 
             /* grab a pair of adjusted intersections */
             x1 = *ptr++ + 1;
@@ -496,7 +494,11 @@ void clc_flit (Vwk * vwk, WORD y)
                     continue;         	/* entire segment clippped */
                 x2 = vwk->xmx_clip;		/* clip right end of line */
             }
-            horzline(vwk, x1, x2, y);
+            line.x1 = x1;
+            line.y1 = y;
+            line.x2 = x2;
+            line.y2 = y;
+            horzline(vwk, &line);
         }
     }
     else {
@@ -512,6 +514,7 @@ void clc_flit (Vwk * vwk, WORD y)
         WORD * ptr = fill_buffer;
         for (i = intersections / 2 - 1; i >= 0; i--) {
             WORD x1, x2;
+            Line line;
 
             /* grab a pair of adjusted endpoints */
             x1 = *ptr++ + 1 ;   /* word */
@@ -519,7 +522,11 @@ void clc_flit (Vwk * vwk, WORD y)
 
             /* If starting point greater than ending point, nothing is done. */            /* is start still to left of end? */
             if ( x1 <= x2 ) {
-                horzline(vwk, x1, x2, y);    /* draw the line segment */
+                line.x1 = x1;
+                line.y1 = y;
+                line.x2 = x2;
+                line.y2 = y;
+                horzline(vwk, &line);    /* draw the line segment */
             }
         }
     }
@@ -660,6 +667,7 @@ BOOL clipbox(Vwk * vwk, Rect * rect)
 
 
 
+#if 0
 /*
  * rectfill - fills a rectangular area of the screen with a pattern
  *            using a "bitblt" algorithm similar to "_HABLINE"'s.
@@ -682,84 +690,17 @@ BOOL clipbox(Vwk * vwk, Rect * rect)
  *     Y2 = y coord of lower right corner.
  */
 
-void hzline_rep(Vwk *, UWORD *, int, int, UWORD, UWORD, WORD);
-void hzline_or(Vwk *, UWORD *, int, int, UWORD, UWORD, WORD);
-void hzline_xor(Vwk *, UWORD *, int, int, UWORD, UWORD, WORD);
-void hzline_nor(Vwk *, UWORD *, int, int, UWORD, UWORD, WORD);
-
 void rectfill (Vwk * vwk, Rect * rect)
 {
-    WORD x1, y1, x2, y2;
-    WORD y;
-    UWORD leftmask;
-    UWORD rightmask;
-    UWORD mypatmsk;
-    void *addr;
-    int dx, dy;
-    int yinc;
-    int leftpart;
-    int rightpart;
-
     if (vwk->clip)
         if (!clipbox(vwk, rect))
             return;
 
-    /* sort x coordinates */
-    x1 = rect->x1;
-    x2 = rect->x2;
-    if (x2 < x1) {
-       x1 = rect->x2;
-       x2 = rect->x1;
-    }
-    dx = x2 - x1;             /* width of line */
-
-    /* sort y coordinates */
-    y1 = rect->y1;
-    y2 = rect->y2;
-    if (y2 < y1) {
-        y1 = rect->y2;
-        y2 = rect->y1;
-    }
-    dy = y2 - y1;             /* width of line */
-
-    /* precalculate masks for left and right fringe */
-    leftpart = x1&0xf;
-    rightpart = x2&0xf;
-    leftmask = ~(0xffff>>leftpart);     /* origin for not left fringe lookup */
-    rightmask = 0x7fff>>rightpart;      /* origin for right fringe lookup */
-
-    /* init adress counter */
-    addr = get_start_addr(x1, y1);
-    yinc = v_lin_wr;                    /* y coordinate increase */
-    mypatmsk = vwk->patmsk;
-
-    switch (vwk->wrt_mode) {
-    case 3:  /* nor */
-        for (y = y1; y <= y2; y++ ) {
-            hzline_nor(vwk, addr, dx, leftpart, rightmask, leftmask, y&mypatmsk);
-            addr += yinc;           /* next scanline */
-        }
-        break;
-    case 2:  /* xor */
-        for (y = y1; y <= y2; y++ ) {
-            hzline_xor(vwk, addr, dx, leftpart, rightmask, leftmask, y&mypatmsk);
-            addr += yinc;           /* next scanline */
-        }
-        break;
-    case 1:  /* or */
-        for (y = y1; y <= y2; y++ ) {
-            hzline_or(vwk, addr, dx, leftpart, rightmask, leftmask, y&mypatmsk);
-            addr += yinc;           /* next scanline */
-        }
-        break;
-    default: /* rep */
-        for (y = y1; y <= y2; y++ ) {
-            hzline_rep(vwk, addr, dx, leftpart, rightmask, leftmask, y&mypatmsk);
-            addr += yinc;           /* next scanline */
-        }
-    }
+    /* do the real work... */
+    arb_corner(rect);
+    draw_rect(vwk, rect, vwk->fill_color);
 }
-
+#endif
 
 
 /*
@@ -968,6 +909,7 @@ d_contourfill(Vwk * vwk)
     if (notdone) {
         /* couldn't get point out of Q or draw it */
         while (1) {
+            Line line;
             direction = (oldy & DOWN_FLAG) ? 1 : -1;
             gotseed = get_seed(vwk, oldxleft, (oldy + direction),
                                &newxleft, &newxright);
@@ -1003,7 +945,11 @@ d_contourfill(Vwk * vwk)
             if (qptr == qtop)
                 crunch_queue();
 
-            horzline(vwk, oldxleft, oldxright, ABS(oldy));
+            line.x1 = oldxleft;
+            line.y1 = ABS(oldy);
+            line.x2 = oldxright;
+            line.y2 = ABS(oldy);
+            horzline(vwk, &line);
         }
     }
 }                               /* end of fill() */
@@ -1035,7 +981,14 @@ get_seed(Vwk * vwk, WORD xin, WORD yin, WORD *xleftout, WORD *xrightout)
 
             {
                 /* we ran into another seed so remove it and fill the line */
-                horzline(vwk, *xleftout, *xrightout, ABS(yin));
+                Line line;
+
+                line.x1 = *xleftout;
+                line.y1 = ABS(yin);
+                line.x2 = *xrightout;
+                line.y2 = ABS(yin);
+                horzline(vwk, &line);
+
                 queue[qtmp] = EMPTY;
                 if ((qtmp + 3) == qtop)
                     crunch_queue();

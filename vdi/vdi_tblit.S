@@ -15,6 +15,7 @@
 
 
 
+
 /* Conditionals for textblit */
 #define test0           0       /* if give program access to internal variables */
 #define test1           0       /* if using very large fonts (else, 8x16) */

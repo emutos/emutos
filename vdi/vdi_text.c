@@ -69,8 +69,6 @@ extern Fonthead fon8x8;         /* See bios/fntxxx.c */
 extern Fonthead fon8x16;        /* See bios/fntxxx.c */
 
 /* Global variables */
-//WORD h_align;            /* Text horizontal alignment */
-//WORD v_align;            /* Text vertical alignment */
 WORD width, height;      /* extent of string set in dqt_extent   */
 WORD wordx, wordy;       /* add this to each space for interword */
 WORD rmword;             /* the number of pixels left over   */
@@ -81,7 +79,6 @@ WORD rmcharx, rmchary;   /* add this to use up remainder     */
 
 
 /* Prototypes for this module */
-
 void make_header(Vwk * vwk);
 WORD clc_dda(Vwk * vwk, WORD act, WORD req);
 
@@ -306,12 +303,6 @@ void d_gtext(Vwk * vwk)
             else
                 LN_MASK = 0xffff;
 
-            temp = TEXT_FG;
-            FG_BP_1 = temp & 1;
-            FG_BP_2 = temp & 2;
-            FG_BP_3 = temp & 4;
-            FG_BP_4 = temp & 8;
-
             count = vwk->cur_font->ul_size;
             for (i = 0; i < count; i++) {
                 if (vwk->clip) {
@@ -522,7 +513,6 @@ void dst_height(Vwk * vwk)
  * exit:
  *   actual size
  */
-
 WORD act_siz(Vwk * vwk, WORD top)
 {
     UWORD size;
@@ -1242,37 +1232,6 @@ void dt_unloadfont(Vwk * vwk)
 }
 
 
-#if 0
-/*
- * clc_dda - calculate DDA
- *
- * returns the quotient requested/actual
- */
-
-WORD clc_dda(Vwk * vwk, WORD actual, WORD requested)
-{
-    ULONG retval;                       /* unsigned return value */
-
-    if (actual <= requested) {
-        /* scale down */
-        vwk->t_sclsts = 0;                   /* clear enlarge indicator */
-        if (!requested)                 /* if requested 0 ... */
-            requested = 1;              /* then make it 1 (minimum value) */
-    } else {                            /* small DDA */
-        /* scale up */
-        vwk->t_sclsts = 1;                   /* set enlarge indicator */
-
-        requested -= actual;            /* larger than 2x? FIXME: Keep half value ??? */
-        if (requested >= actual)
-            return -1;                  /* error, (max value, 2x) */
-    }
-
-    retval = requested;                 /* expand to LONG */
-    retval = retval << 8;              /* request size to high word(bits 31-16) */
-    return ((WORD)(retval / actual));   /* return the quotient as WORD */
-}
-#else
-
 
 /*
  * input:
@@ -1305,4 +1264,3 @@ WORD clc_dda(Vwk * vwk, WORD act, WORD req)
     /* requested/actual: quotient = bits 15-0 */
     return (WORD)(((ULONG)req << 16) / act);
 }
-#endif

@@ -1669,3 +1669,7 @@ Start... early ages
 2004-08-14
 - vdi/*: eleminated use of global X1,Y1,X2,Y2 variables (MAD)
          introduced structures Rect, Line, Point (MAD)
+
+2004-08-16
+- vdi/vdi_line.c: optimized horizontal line drawing (MAD)
+- vdi/vdi_fill.c: unified rectfill with the above (MAD)
