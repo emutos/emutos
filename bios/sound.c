@@ -19,7 +19,7 @@
 /*
  * This is a straightforward implementation of PSG-related xbios routines.
  * 
- * Note: some care has to be exerted when accessing the PDG registers.
+ * Note: some care has to be exerted when accessing the PSG registers.
  * Areas using the PSG are:
  * - xbios sound and floppy routines
  * - floppy VBL interrupt (to deselect floppy drives, in port A)
