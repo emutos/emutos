@@ -215,16 +215,27 @@ _sysbase:       ds.l    1
 _shell_p:       ds.l    1
 end_os:         ds.l    1
 exec_os:        ds.l    1
-dump_vec:       ds.l    1
-prt_stat:       ds.l    1
-prt_vec:        ds.l    1
-aux_stat:       ds.l    1
-aux_vec:        ds.l    1
-memval3:        ds.l    1
-_bconstat_vec:  ds.l    8
-_bconin_vec:    ds.l    8
-_bcostat_vec:   ds.l    8
-_bconout_vec:   ds.l    8
+
+	.org 0x502
+dump_vec:       ds.l    1       |Pointer to screen dump routine
+prt_stat:       ds.l    1       |prv_lsto
+prt_vec:        ds.l    1       |prv_lst
+aux_stat:       ds.l    1       |prv_auxo
+aux_vec:        ds.l    1       |prv_aux
+pun_ptr:        ds.l    1       | If AHDI, pointer to pun_info  
+memval3:        ds.l    1       |If $5555AAAA, reset
+_bconstat_vec:  ds.l    8       |8 Pointers to input-status routines
+_bconin_vec:    ds.l    8       |8 Pointers to input routines
+_bcostat_vec:   ds.l    8       |8 Pointers to output-status routines
+_bconout_vec:   ds.l    8       |8 Pointers to output routines
+_longframe:     ds.w    1       |If not 0, then not 68000 - use long stack frames
+_p_cookies:     ds.l    1       |Pointer to cookie jar
+ramtop:         ds.l    1       |Pointer to end of FastRam
+ramvalid:       ds.l    1       |Validates ramtop if $1357BD13
+bell_hook:      ds.l    1       |Pointer to routine for system bell
+kcl_hook:       ds.l    1       |Pointer to routine for system keyclick
+	.org 0x5b4
+
 
 | ==== IOREC BUFFERS ======================================================
 | Table of input-output buffersfor rs232 in, rs232 out, kdb in, midi in
