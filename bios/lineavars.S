@@ -139,7 +139,7 @@ _newy:          .ds.w   1
 _draw_flag:     .ds.b   1       // -340 non-zero means draw mouse form on vblank
 _mouse_flag:    .ds.b   1       // -339 non-zero if mouse ints disabled
 sav_cxy:        .ds.w   2       // -338 save area for cursor cell coords.
-retsav:         .ds.l	1       // ??? I'm not sure if this is right here
+retsav:         .ds.l   1       // ??? I'm not sure if this is right here
 save_len:       .ds.w   1       // -330
 save_addr:      .ds.l   1       // -328 return address GEMDOS call
 save_stat:      .ds.w   1       // -324

@@ -65,7 +65,7 @@ WORD OEMPAT[128] = {
     0x1111, 0x2222, 0x4444, 0xFFFF, 0x8888, 0x4444, 0x2222, 0xFFFF
 };
 
-WORD DITHRMSK = 3;                              /* mask off all but four scans */
+WORD DITHRMSK = 3;              /* mask off all but four scans */
 WORD DITHER[32] = {
     0x0000, 0x4444, 0x0000, 0x1111,     /* intensity level 2 */
     0x0000, 0x5555, 0x0000, 0x5555,     /* intensity level 4 */

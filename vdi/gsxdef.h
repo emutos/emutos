@@ -24,7 +24,7 @@
 #define MX_FIL_HAT_INDEX        12
 #define MX_FIL_PAT_INDEX        24
 #define MAX_MODE        3
-#define MAX_ARC_CT      70                      /* maximum number of points on circle */
+#define MAX_ARC_CT      70      /* maximum number of points on circle */
 
 #define LLUR 0
 #define ULLR 1
@@ -46,4 +46,4 @@
 #define MAX_MKWD        SIZ_TAB[10]
 #define MAX_MKHT        SIZ_TAB[11]
 
-#endif /* GSXDEF_H */
+#endif  /* GSXDEF_H */

@@ -18,8 +18,8 @@
  * Flags for Conditional Assembly of Code
  */
 
-#define rbp             0        /* assemble for Atari ST (0=yes, 1=no) */
-#define vme10           1        /* assemble for Motorola VME/10 (0=yes, 1=no) */
+#define rbp             0       /* assemble for Atari ST (0=yes, 1=no) */
+#define vme10           1       /* assemble for Motorola VME/10 (0=yes, 1=no) */
 
 
 #define pattern         1       /* for selecting software which applies */
@@ -40,4 +40,4 @@
 #define bytswap         0       /* if font words are byte swapped! */
 
 
-#endif /* _VDICONF_H */
+#endif                          /* _VDICONF_H */

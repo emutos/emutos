@@ -89,4 +89,4 @@
 #define I_FONT_INFO             131
 
 
-#endif /* FUNCDEF_H */
+#endif  /* FUNCDEF_H */
