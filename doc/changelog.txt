@@ -771,3 +771,4 @@ Start... early ages
 
 20. Apr. 2002
 - vdi/vdimouse.S - used concat routine for screen offset calculation (MAD)
+- vdi/vdimouse.S - got mouse working for big screens (MAD)

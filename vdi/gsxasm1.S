@@ -530,51 +530,49 @@ smd_4:
         movem.l  (sp)+,d2-d3
         rts
 
-        .page
-/////////////////////////////////////////////////////////////////////////
-//                                                                      //
-//      concat                                                          //
-//                                                                      //
-//      This routine converts x and y coordinates into a physical       //
-//      offset to a word in the screen buffer and an index to the       //
-//      desired bit within that word.                                   //
-//                                                                      //
-//      input:                                                          //
-//         d0.w = x coordinate.                                         //
-//         d1.w = y coordinate.                                         //
-//                                                                      //
-//      output:                                                         //
-//         d0.w = word index. (x mod 16)                                //
-//         d1.w = physical offset -- (y//bytes_per_line)                        //
-//                                      + (x & xmask)>>xshift           //
-//                                                                      //
-//      destroys:       nothing                                         //
-//                                                                      //
-/////////////////////////////////////////////////////////////////////////
 
-//
-//      Save the registers that get clobbered and convert the y-coordinate
-//      into an offset to the start of the desired scan row.
-//
+
+/*
+ * concat - calculate screen offset
+ *
+ *
+ *
+ * This routine converts x and y coordinates into a physical
+ * offset to a word in the screen buffer and an index to the
+ * desired bit within that word.
+ *
+ * input:
+ *    d0.w = x coordinate.
+ *    d1.w = y coordinate.
+ *
+ * output:
+ *    d0.w = word index. (x mod 16)
+ *    d1.w = physical offset -- (y * bytes_per_line) + (x & xmask)>>xshift
+ *
+ * destroys:       nothing
+ */
+
 concat:
         movem.w d2/d3,-(sp)     // save the registers that get clobbered
-        mulu    _v_lin_wr,d1    // compute offset to scan row
+
+/* Convert the y-coordinate into an offset to the start of the scan row. */
+
+        mulu.w  _v_lin_wr,d1    // compute offset to start of scan row
 
 //
-//      Compute the bit offset into the desired word, save it, and remove
-//      these bits from the x-coordinate.
+// Compute the bit offset into the desired word, save it, and remove
+// these bits from the x-coordinate.
 //
         move.w  d0,d2           // save the x-coordinate for later
-        andi.w  #0x000F,d0      // bit offset = x-coordinate mod 16
-        andi.w  #0xFFF0,d2      // clear bits for offset into word
+        andi.w  #0x000f,d0      // bit offset = x-coordinate mod 16
+        andi.w  #0xfff0,d2      // clear bits for offset into word
 
 //
-//      Convert the adjusted x-coordinate to a word offset into the current
-//      scan line.  If the planes are arranged in an interleaved fashion with
-//      a word for each plane then shift the x-coordinate by a value contained
-//      in the shift table.  If the planes are arranged as separate, consecu-
-//      tive entities then divide the x-coordinate by 8 to get the number of
-//      bytes.
+// Convert the adjusted x-coordinate to a word offset into the current        
+// scan line.  If the planes are arranged in an interleaved fashion with      
+// a word for each plane then shift the x-coordinate by a value contained     
+// in the shift table.  If the planes are arranged as separate, consecu-      
+// tive entities then divide the x-coordinate by 8 to get the number of bytes.                                                                     
 //
 #if vme10
         lsr.w   #3,d2           // convert x-coordinate to offset
@@ -594,18 +592,16 @@ concat:
         rts
 
 #if !vme10
-/////////////////////////////////////////////////////////////////////////
-//                                                                      //
-//      Shift Table for Computing Offsets into a Scan Line When         //
-//      the Video Planes Are Interleaved                                //
-//                                                                      //
-/////////////////////////////////////////////////////////////////////////
+/* Shift Table for Computing Offsets into a Scan Line (interleaved planes) */
+
 shf_tab:
         dc.b    3                       // 1 plane
         dc.b    2                       // 2 planes
         dc.b    0                       // not used
         dc.b    1                       // 4 planes
 #endif
+
+
 
         .page
 /////////////////////////////////////////////////////////////////////////

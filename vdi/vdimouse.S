@@ -233,15 +233,13 @@ get_addr:
  *  Compute the bit offset into the desired word, save it, and remove
  *  these bits from the x-coordinate.
  */
-	jsr concat              // calculate offset
 
         move.w  _v_lin_wr,d4    // get number of bytes in a scan line
         move.l  _v_bas_ad,a1    // get start addr. of 1st graphic plane
-#if rbp
-        adda.w  d1,a1           // a1 -> destination
-#else
+
+	jsr concat              // calculate offset
         adda.l  d1,a1           // get destination address
-#endif
+
 /*
  *   optimize shift count and direction: choose shift routine
  */
