@@ -269,7 +269,7 @@ $(DESASS): map emutos.img
 clean:
 	rm -f obj/*.o obj/*.s *~ */*~ core emutos.img map $(DESASS)
 	rm -f ramtos.img boot.prg etos192.img mkflop$(EXE) bootsect.img
-	rm -f emutos.st
+	rm -f emutos.st date.prg
 
 distclean: clean nodepend
 	rm -f Makefile.bak
