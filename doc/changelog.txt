@@ -667,7 +667,7 @@ Start... early ages
 - bios/lineainit.c - implemented v_pl_dspl (bytes/plane) for VDI (MAD)
 - bios/screen.c - the last patch for real Falcon reverted because it caused
                   black screen under ARAnyM (joy)
-
 17. Mar. 2002
+- vdi/* - corrected the swapped #defines to use Atari and/or VME10 (MAD)
 - You can now use the AES as user interface instead of EmuCON (Thomas)
   (by enabling it in the Makefile, however AES is not yet fully working)

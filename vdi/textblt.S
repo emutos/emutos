@@ -934,7 +934,7 @@ no_clear:
         clr.w   ambient(a6)             // background 0
 #endif
         move.w  #1,nbrplane(a6)         // 1 plane, natch
-#if vme10
+#if !vme10
         move.w  #2,nextwrd(a6)          // plane offset is 2
 #endif
         andi.w  #SKEWM+THICKM,STYLE(a6) // only do thicken & skew
@@ -1052,14 +1052,14 @@ mx_clipx:
         subq.w  #1,d0           // make 0 relative
         cmp.w   XMX_CLI(a6),d0
 #if vme10
-        ble     xmx_fine
-#else
         ble.b   scrn_blt
+#else
+        ble     xmx_fine
 #endif
 //clip x
         sub.w   XMX_CLI(a6),d0
         sub.w   d0,DELX(a6)
-#if vme10
+#if !vme10
 xmx_fine:
         bra     scrn_blt
 //
@@ -1080,12 +1080,12 @@ scrn_blt:
         move.w  _TEXT_FG,forecol(a6)    // copy foreground color to temp
         move.w  buffc(a6),ambient(a6)   //
 #if vme10
+        move.w  _v_planes,nbrplane(a6)  // save # of graphic planes locally
+#else
         move.w  _v_planes,d0            // copy # of planes
         move.w  d0,nbrplane(a6)         // save in local
         move.b  nxtword-1(pc,d0.w),d0   // fetch offset from table (assumed:hi byte=0)
         move.w  d0,nextwrd(a6)          // save in local
-#else
-        move.w  _v_planes,nbrplane(a6)  // save # of graphic planes locally
 #endif
 //
         move.w  _SOURCEX,d0     
@@ -1123,9 +1123,9 @@ scrn_blt:
 //
         move.l  _v_bas_ad,a1
 #if vme10
-        adda.w  d1,a1                   // a1 -> screen destination
-#else
         adda.l  d1,a1                   // screen dest. addr. for x,y coordinate
+#else
+        adda.w  d1,a1                   // a1 -> screen destination
 #endif
 //
         move.l  a1,dform(a6)            // save character destination address
@@ -1443,9 +1443,9 @@ next_plane:
         movea.l dform(a6),a1
 //????
 #if vme10
-        addq.l  #2,a1                   // advance destination plane
-#else
         adda.l  _v_pl_dspl,a1           // addr of next graphic plane
+#else
+        addq.l  #2,a1                   // advance destination plane
 #endif
         move.l  a1,dform(a6)            // save dest. starting address
         btst.b  #SKEW,STYLE+1(a6)       // only skew screws up other planes
@@ -1512,7 +1512,7 @@ dbl_loop:
         lea.l   dbl_2wrd,a2
         move.l  a2,d5
         lea.l   dbl_1wrd,a3
-#if !vme10
+#if vme10
         subq.w  #2,d7                   //adjust bytes between dest lines for
 //                                      //postincrement addressing  
 #endif
@@ -1549,20 +1549,18 @@ dblendr:
 //
         jmp     (a5)                    //call special
 //
-#if vme10
 dbl_1wrd:
-
+#if vme10
+        move.w  d1,(a1)+                //write 1st scan word 
+        move.w  d0,d1                   //get the other scan word
+//                                      // (it got shifted in)
+        move.w  (a1),d4                 //get next destination word
+#else
         move.w  d1,(a1)                 //write 1st scan word 
         move.w  d0,d1                   //get the other scan word
 //                                      // (it got shifted in)
         movea.w nextwrd(a6),a2          //get offset to next word
         move.w  (a1,a2.w),d4            //get next destination word
-#else
-dbl_1wrd:
-        move.w  d1,(a1)+                //write 1st scan word 
-        move.w  d0,d1                   //get the other scan word
-//                                      // (it got shifted in)
-        move.w  (a1),d4                 //get next destination word
 #endif
 //
         move.w  rite_msk(a6),d2         //use right mask
@@ -1570,13 +1568,12 @@ dbl_1wrd:
         exg     a3,d5                   //set write mode return address
         jmp     (a4)                    //call logic op
 //
-#if vme10
 dbl_2wrd:
+#if vme10
+        move.w  d1,(a1)                 //write 2nd scan word 
+#else
         move.w  nextwrd(a6),a2
         move.w  d1,(a1,a2.w)            //save the result
-#else
-dbl_2wrd:
-        move.w  d1,(a1)                 //write 2nd scan word 
 #endif
 //
         dbra    d3,dbl_lp               //do next scan line of character
@@ -1627,10 +1624,10 @@ mlt_left:
 //
 lft_lfrng:
 #if vme10
+        move.w  d1,(a1)+                //write 1st scan word  & fringe
+#else
         move.w  d1,(a1)                 //store the result
         adda.w  nextwrd(a6),a1          //advance destination ptr to next word
-#else
-        move.w  d1,(a1)+                //write 1st scan word  & fringe
 #endif
 //
         move.w  rota_msk(a6),d2         //get mask for inner full words
@@ -1672,10 +1669,10 @@ word_lef:
 //
 lft_wrds:
 #if vme10
+        move.w  d1,(a1)+                //write adjacent char. scan lines
+#else
         move.w  d1,(a1)                 //store the result
         adda.w  nextwrd(a6),a1          //advance destination to next word
-#else
-        move.w  d1,(a1)+                //write adjacent char. scan lines
 #endif
 //
         bra.b   word_lef                //go for more
@@ -1733,10 +1730,10 @@ mlt_rite:
 //
 rgt_lfrng:
 #if vme10
+        move.w  d1,(a1)+                //write 1st char. scan line
+#else
         move.w  d1,(a1)                 //store the result
         adda.w  nextwrd(a6),a1          //advance destination ptr to next word
-#else
-        move.w  d1,(a1)+                //write 1st char. scan line
 #endif
 //
         move.w  rota_msk(a6),d2         //get mask for inner full words
@@ -1774,10 +1771,10 @@ word_rit:
 //
 rgt_wrds:
 #if vme10
+        move.w  d1,(a1)+                //write adjacent char. scans
+#else
         move.w  d1,(a1)                 //store the result
         adda.w  nextwrd(a6),a1          //advance destination to next word
-#else
-        move.w  d1,(a1)+                //write adjacent char. scans
 #endif
 //
         bra.b   word_rit                //go for more
@@ -2244,9 +2241,9 @@ nxt_word:
         swap    d2
         move.w  d2,left_msk(a6)         //move right mask to left mask
 #if vme10
-        adda.w  nextwrd(a6),a1          //bump next destination address
-#else
         addq.w  #2,a1                   //get addr of next destination word
+#else
+        adda.w  nextwrd(a6),a1          //bump next destination address
 #endif
         move.w  (a1),d4                 //get the word we're really doing
 //
@@ -2316,9 +2313,9 @@ wnxt_wrd:
 //
         subq.w  #1,dest_wrd(a6)                 //so more is in the fringe
 #if vme10
-        adda.w  nextwrd(a6),a1                  //bump next destination address
-#else
         addq.w  #2,a1                           //get next dest. word address
+#else
+        adda.w  nextwrd(a6),a1                  //bump next destination address
 #endif
 //
         moveq.l #15,d2

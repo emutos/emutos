@@ -77,73 +77,13 @@
 #define P_XMAX_D                12      // x-coordinate of lower right of destination rectangle
 #define P_YMAX_D                14      // y-coordinate of lower right of destination rectangle
 
-
-//       FRAME PARAMETERS
-
-#define B_WD                    -76     // width of block in pixels                         +00
-#define B_HT                    -74     // height of block in pixels                        +02 
-
-#define PLANE_CT                -72     // number of consequitive planes to blt             +04
-
-#define FG_COL                  -70     // foreground color (logic op table index:hi bit)    +06
-#define BG_COL                  -68     // background color (logic op table index:lo bit)    +08
-#define OP_TAB                  -66     // logic ops for all fore and background combos     +10
-#define S_XMIN                  -62     // minimum X: source                                +14
-#define S_YMIN                  -60     // minimum Y: source                                +16
-#define S_FORM                  -58     // source form base address                         +18
-
-#if vme10
-#define S_NXWD                  -54     // offset to next word in line  (in bytes)          +22
-#define S_NXLN                  -52     // offset to next line in plane (in bytes)          +24
-#define S_NXPL                  -50     // offset to next plane from start of current plane  +26
-#else
-#define S_NXLN                  -54     // offset to next line in plane (in bytes)          +22
-#define S_NXPL                  -52     // offset to next plane from start of current plane  +24
-#endif
-
-#define D_XMIN                  -48     // minimum X: destination                           +28
-#define D_YMIN                  -46     // minimum Y: destination                           +30
-#define D_FORM                  -44     // destination form base address                            +32
-
-#if vme10
-#define D_NXWD                  -40     // offset to next word in line  (in bytes)          +36
-#define D_NXLN                  -38     // offset to next line in plane (in bytes)          +38
-#define D_NXPL                  -36     // offset to next plane from start of current plane  +40
-#else
-#define D_NXLN                  -40     // offset to next line in plane (in bytes)          +36
-#define D_NXPL                  -38     // offset to next plane from start of current plane  +38
-#endif
-
-#define P_ADDR                  -34     // address of pattern buffer   (0:no pattern)       +42
-#define P_NXLN                  -30     // offset to next line in pattern  (in bytes)       +46
-#define P_NXPL                  -28     // offset to next plane in pattern (in bytes)       +48
-#define P_MASK                  -26     // pattern index mask                               +50
-
-//////                                         //////
-//////   these parameters are internally set   //////
-//////                                         //////
-
-#define P_INDX                  -24     // initial pattern index                                    +52
-
-#define S_ADDR                  -22     // initial source address                           +54
-#define S_XMAX                  -18     // maximum X: source                                +58
-#define S_YMAX                  -16     // maximum Y: source                                +60
-
-#define D_ADDR                  -14     // initial destination address                      +62
-#define D_XMAX                  -10     // maximum X: destination                           +66
-#define D_YMAX                   -8     // maximum Y: destination                           +68
-
-#define INNER_CT                 -6     // blt inner loop initial count                     +70
-#define DST_WR                   -4     // destination form wrap (in bytes)                 +72
-#define SRC_WR                   -2     // source form wrap (in bytes)                      +74
-
-
-#define FRAME_LEN                76
+/* Frame specific */
 
 #define DEV_COL                  26     // offset in _DEV_TAB to number of colors
 #define PAT_FLAG                  4     // flag:1 SOURCE and PATTERN   flag:0 SOURCE only
 #define mode05                    5     // write mode #5 (D' = D) => do nothing
 #define mode15                   15     // maximum write mode opcode
+
 
 _COPY_RFM:
 
@@ -200,7 +140,7 @@ src_form:
         move.l  _v_bas_ad,d6
         move.w  _v_planes,d0            // source form is screen
         move.w  _v_lin_wr,d4
-#if !vme10
+#if vme10
         move.l  _v_pl_dspl,S_NXPL(a6)   // set # bytes between source planes
 #endif
         bra     dst_form
@@ -208,16 +148,16 @@ src_form:
 src_calc:
 #if vme10
         move.w  MF_PLANES(a5),d0        // d0 <- source plane count
-        move.w  MF_WD_WRD(a5),d4
-        add.w   d4,d4
-        mulu    d0,d4                   // d4 <- form wrap (in bytes)
-#else
-        move.w  MF_PLANES(a5),d0        // d0 <- source plane count
         ble.w   bad_parameter           // pl. count must be a positive integer
         move.w  MF_WD_WRD(a5),d4        // get # of words in source form line
         ble.w   bad_parameter           // must be a positive integer
         add.w   d4,d4                   // get # of bytes in source form line
         clr.l   S_NXPL(a6)              // set # bytes between source planes
+#else
+        move.w  MF_PLANES(a5),d0        // d0 <- source plane count
+        move.w  MF_WD_WRD(a5),d4
+        add.w   d4,d4
+        mulu    d0,d4                   // d4 <- form wrap (in bytes)
 #endif
 
 dst_form:
@@ -229,7 +169,7 @@ dst_form:
         move.l  _v_bas_ad,d7
         move.w  _v_planes,d1
         move.w  _v_lin_wr,d5
-#if !vme10
+#if vme10
         move.l  _v_pl_dspl,D_NXPL(a6)   // set # bytes between dest. planes
 #endif
         bra     compare
@@ -237,31 +177,31 @@ dst_form:
 dst_calc:
 #if vme10
         move.w  MF_PLANES(a4),d1        // d1 <- destination plane count
-        move.w  MF_WD_WRD(a4),d5
-        add.w   d5,d5
-        mulu    d1,d5                   // d5 <- form wrap (in bytes)
-#else
-        move.w  MF_PLANES(a4),d1        // d1 <- destination plane count
         ble.w   bad_parameter           // pl. count must be a positive integer
         move.w  MF_WD_WRD(a4),d5        // get # of words in dest. form line
         ble.w   bad_parameter           // must be a positive integer
         add.w   d5,d5                   // get # of bytes in dest. form line
         clr.l   D_NXPL(a6)              // set # bytes between dest. planes
+#else
+        move.w  MF_PLANES(a4),d1        // d1 <- destination plane count
+        move.w  MF_WD_WRD(a4),d5
+        add.w   d5,d5
+        mulu    d1,d5                   // d5 <- form wrap (in bytes)
 #endif
 
 compare:
 #if vme10
+        andi.w  #3,d1                   // valid dest. plane count is 1,2, or 3
+        beq.w   bad_parameter           // for invalid dest. plane count
+#else
         moveq.l #0x16,d3                // only 4,2, and 1 are valid (destination)
         btst    d1,d3                   // 
         beq     bad_parameter           // 
-#else
-        andi.w  #3,d1                   // valid dest. plane count is 1,2, or 3
-        beq.w   bad_parameter           // for invalid dest. plane count
 #endif
 
         move.w  d1,PLANE_CT(a6)         // save the total plane count
 
-#if vme10
+#if !vme10
         add.w   d0,d0                   // for device dependent forms NXWD=2//planes
         move.w  d0,S_NXWD(a6)
         add.w   d1,d1
@@ -276,7 +216,7 @@ compare:
         andi.b  #0xfe,d7                        // force least significant bit to zero
         move.l  d7,D_FORM(a6)           // dest. form addr. is now word aligned
 
-#if vme10
+#if !vme10
         moveq.l #2,d4                   // d4 <- next plane offset (source)
         moveq.l #2,d5                   // d5 <- next plane offset (destination)
 #endif
@@ -289,9 +229,9 @@ compare:
 //
 tran_blt_ops:
 #if vme10
-        cmpi.w  #02,d0
+        cmpi.w  #01,d0
 #else
-        cmpi.w  #01,d0                  // is source area one plane?
+        cmpi.w  #02,d0                  // is source area one plane?
 #endif
         bne     bad_parameter           // source must be mono plane
 
@@ -374,7 +314,7 @@ standard_blt_ops:
         move.b  d2,OP_TAB+00(a6)        // fg:0 bg:0
 
 the_clipper:
-#if vme10
+#if !vme10
         move.w  d4,S_NXPL(a6)           // save inter plane value
         move.w  d5,D_NXPL(a6)
 #endif

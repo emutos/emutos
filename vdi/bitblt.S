@@ -56,68 +56,6 @@
 //              rectangle height, rectangle width, number of planes
 
 
-//       FRAME PARAMETERS
-
-#define                 B_WD       -76  // width of block in pixels                         +00
-#define                 B_HT       -74  // height of block in pixels                        +02
-
-#define                 PLANE_CT   -72  // number of consequitive planes to blt             +04
-
-#define                 FG_COL     -70  // foreground color (logic op table index:hi bit)    +06
-#define                 BG_COL     -68  // background color (logic op table index:lo bit)    +08
-#define                 OP_TAB     -66  // logic ops for all fore and background combos     +10
-#define                 S_XMIN     -62  // minimum X: source                                +14
-#define                 S_YMIN     -60  // minimum Y: source                                +16
-#define                 S_FORM     -58  // source form base address                         +18
-
-#if vme10
-#define                 S_NXWD     -54  // offset to next word in line  (in bytes)          +22
-#define                 S_NXLN     -52  // offset to next line in plane (in bytes)          +24
-#define                 S_NXPL     -50  // offset to next plane from start of current plane  +26
-#else
-#define                 S_NXLN     -54  // offset to next line in plane (in bytes)          +22
-#define                 S_NXPL     -52  // offset to next plane from start of current plane  +24
-#endif
-
-#define                 D_XMIN     -48  // minimum X: destination                           +28
-#define                 D_YMIN     -46  // minimum Y: destination                           +30
-#define                 D_FORM     -44  // destination form base address                            +32
-
-#if vme10
-#define                 D_NXWD     -40  // offset to next word in line  (in bytes)          +36
-#define                 D_NXLN     -38  // offset to next line in plane (in bytes)          +38
-#define                 D_NXPL     -36  // offset to next plane from start of current plane  +40
-#else
-#define                 D_NXLN     -40  // offset to next line in plane (in bytes)          +36
-#define                 D_NXPL     -38  // offset to next plane from start of current plane  +38
-#endif
-
-#define                 P_ADDR     -34  // address of pattern buffer   (0:no pattern)       +42
-#define                 P_NXLN     -30  // offset to next line in pattern  (in bytes)       +46
-#define                 P_NXPL     -28  // offset to next plane in pattern (in bytes)       +48
-#define                 P_MASK     -26  // pattern index mask                               +50
-
-
-/* these parameters are internally set */
-
-#define         P_INDX   -24    // initial pattern index                                    +52
-
-#define         S_ADDR   -22    // initial source address                           +54
-#define         S_XMAX   -18    // maximum X: source                                +58
-#define         S_YMAX   -16    // maximum Y: source                                +60
-
-#define         D_ADDR   -14    // initial destination address                      +62
-#define         D_XMAX   -10    // maximum X: destination                           +66
-#define         D_YMAX   -8     // maximum Y: destination                           +68
-
-#define         INNER_CT -6     // blt inner loop initial count                     +70
-#define         DST_WR   -4     // destination form wrap (in bytes)                 +72
-#define         SRC_WR   -2     // source form wrap (in bytes)                      +74
-
-
-#define          FRAME_LEN      76
-
-
 
 //  in:
 //      a6.l    points to 76 byte parameter block
@@ -242,9 +180,9 @@ start_addr:
         bsr     s_xy2addr               // a0 -> start of block
 
 #if vme10
-        mulu    S_NXWD(a6),d7           // d7 <- row width offset (source)
-#else
         asl.w   #1,d7                   // get source row width in bytes
+#else
+        mulu    S_NXWD(a6),d7           // d7 <- row width offset (source)
 #endif
         sub.w   d3,d7                   // d7 <- SRC_WR (for r2l xfer)
 
@@ -255,9 +193,9 @@ start_addr:
         bsr     d_xy2addr               // a1 -> start of block
 
 #if vme10
-        mulu    D_NXWD(a6),d6           // d6 <- row width offset (destination)
-#else
         asl.w   #1,d6                   // get destination row width in bytes
+#else
+        mulu    D_NXWD(a6),d6           // d6 <- row width offset (destination)
 #endif
 
         sub.w   d3,d6                   // d6 <- DST_WR (row width-form wrap: r2l xfer)
@@ -303,9 +241,6 @@ big_fringe:
         bsr     get_fringe
 
 #if vme10
-        move.w  S_NXWD(a6),d2           // d2 <- source increment
-        move.w  D_NXWD(a6),d3           // d3 <- destination increment
-#else
 //
 //  Without expanding jump tables and adding duplicate code to BLTFRAG.S
 //  predecrement and postincrement addressing modes can't be used to
@@ -313,6 +248,9 @@ big_fringe:
 //
         moveq.l #2,d2                   // number of bytes between source words
         moveq.l #2,d3                   // number of bytes between dest. words
+#else
+        move.w  S_NXWD(a6),d2           // d2 <- source increment
+        move.w  D_NXWD(a6),d3           // d3 <- destination increment
 #endif
 
         btst.l  #2,d5                   // r2l case => swap fringes
@@ -456,9 +394,9 @@ np_cont:
         move.l  S_ADDR(a6),a0           // a0 -> next source plane
 
 #if vme10
-        add.w   S_NXPL(a6),a0
-#else
         add.l   S_NXPL(a6),a0
+#else
+        add.w   S_NXPL(a6),a0
 #endif
 
         move.l  a0,S_ADDR(a6)
@@ -466,9 +404,9 @@ np_cont:
         move.l  D_ADDR(a6),a1           // a1 -> next destination plane
 
 #if vme10
-        add.w   D_NXPL(a6),a1
-#else
         add.l   D_NXPL(a6),a1
+#else
+        add.w   D_NXPL(a6),a1
 #endif
 
         move.l  a1,D_ADDR(a6)
@@ -617,20 +555,20 @@ s_xy2addr:
         move.w  S_NXLN(a6),d3           // d3 <- inter line offset
 
 #if vme10
-        lsr.w   #4,d0                   // d0 <- X word count
-        mulu    S_NXWD(a6),d0           // d0 <- x portion of offset
-#else
         andi.w  #0xfff0,d0              // x masked for byte displacement
         lsr.w   #3,d0                   // x displacement in bytes
+#else
+        lsr.w   #4,d0                   // d0 <- X word count
+        mulu    S_NXWD(a6),d0           // d0 <- x portion of offset
 #endif
 
         mulu    d3,d1                   // d1 <- y portion of offset
         add.w   d0,d1                   // d1 <- byte offset into memory form
 
 #if vme10
-        add.w   d1,a0                   // a0 -> word containing (x,y)
-#else
         adda.l  d1,a0                   // a0 -> word containing (x,y)
+#else
+        add.w   d1,a0                   // a0 -> word containing (x,y)
 #endif
         rts
 
@@ -640,19 +578,19 @@ d_xy2addr:
         move.w  D_NXLN(a6),d3           // d3 <- inter line offset
 
 #if vme10
-        lsr.w   #4,d0                   // d0 <- X word count
-        mulu    D_NXWD(a6),d0           // d0 <- x portion of offset
-#else
         andi.w  #0xfff0,d0              // x masked for byte displacement
         lsr.w   #3,d0                   // x displacement in bytes
+#else
+        lsr.w   #4,d0                   // d0 <- X word count
+        mulu    D_NXWD(a6),d0           // d0 <- x portion of offset
 #endif
         mulu    d3,d1                   // d1 <- y portion of offset
         add.w   d0,d1                   // d1 <- byte offset into memory form
 
 #if vme10
-        add.w   d1,a1                   // a1 -> word containing (x,y)
-#else
         adda.l  d1,a1                   // a1 -> word containing (x,y)
+#else
+        add.w   d1,a1                   // a1 -> word containing (x,y)
 #endif
         rts
 
@@ -672,13 +610,13 @@ word_blt:
         move.w  d0,INNER_CT(a6)         // save initial count
 
 #if vme10
+        asl.w   #1,d4                   // get source row width in bytes(l2r)
+        asl.w   #1,d6                   // get dest.row width in bytes(l2r)
+#else
         move.w  S_NXWD(a6),d5           // d5 <- next word increment (l2r src)
         mulu    d5,d4                   // d4 <- row width offset in bytes (src)
         move.w  D_NXWD(a6),d7           // d7 <- next word increment (l2r dest)
         mulu    d7,d6                   // d6 <- row width offset in bytes (dst)
-#else
-        asl.w   #1,d4                   // get source row width in bytes(l2r)
-        asl.w   #1,d6                   // get dest.row width in bytes(l2r)
 #endif
 
         move.w  S_XMIN(a6),d0           // compute address of destination block
@@ -698,118 +636,6 @@ word_blt:
         bcc     l2r_t2b                 // select direction based on order of addresses
 
 #if vme10
-        bcc     l2r_t2b                 // select direction based on order of addresses
-
-r2l_b2t:
-
-        move.w  S_XMAX(a6),d0           // compute address of source low right corner
-        move.w  S_YMAX(a6),d1
-        bsr     s_xy2addr               // a0 -> end of source block
-
-        move.w  D_XMAX(a6),d0           // compute address of dest low right corner
-        move.w  D_YMAX(a6),d1
-        bsr     d_xy2addr               // a1 -> end of destination block
-
-        neg.w   d5                      // d2 <- next word increment (r2l source)
-        neg.w   d7                      // d5 <- next word increment (r2l destination)
-
-        bra     set_fringe
-
-l2r_t2b:
-
-        neg.w   d4                      // d4 <- SRC_WR (l2r)
-        neg.w   d6                      // d6 <- DST_WR (l2r)
-
-set_fringe:
-
-        move.w  d5,d2                   // d2 <- source inter word increment
-        move.w  d7,d3                   // d3 <- destination inter word increment
-
-        move.w  d4,a4                   // source wrap       (SRC_WR)
-        move.w  d6,a5                   // destination wrap  (DST_WR)
-
-        bsr     get_fringe
-
-        tst.w   d2                      // d2<0 => r2l. swap masks
-        bpl     fringe_ok
-
-        swap    d6
-
-fringe_ok:
-
-//   set up word to word increment values  
-
-        move.l  a0,S_ADDR(a6)           // save source address for other planes
-        move.l  a1,D_ADDR(a6)           // save destination address for other planes
-
-        move.w  B_HT(a6),d7             // d7 <- row count
-
-        move.w  PLANE_CT(a6),d4
-
-        bra     sc_plane
-
-
-//  fast word aligned blt. general case: multiple planes
-
-
-sc_mp_f1:
-
-        move.w  (a0),d0         // d0 <- 1st SOURCE word                                 8
-        move.w  (a1),d1         // d1 <- 1st DESTINATION word                    8
-        eor.w   d1,d0           //                                               4
-        and.w   d6,d0           //                                               4
-        eor.w   d1,d0           //                                               4
-        move.w  d0,(a1)         // D' <- S                                       8
-
-        adda.w  d2,a0           // a0 -> 2nd SOURCE word                                 8
-        adda.w  d3,a1           // a1 -> 2nd DESTINATION word                    8
-
-sc_mp_loop:
-
-        move.w  (a0),(a1)       // DEST <- SOURCE                               12
-
-        adda.w  d2,a0           // a0 -> next SOURCE word                        8
-        adda.w  d3,a1           // a1 -> next DESTINATION word                   8
-
-        dbra    d5,sc_mp_loop   // (10)/14
-
-sc_mp_f2:
-
-        swap    d6              // d6 <- second fringe                           4
-        move.w  (a0),d0         // d0 <- SOURCE last word                        8
-        move.w  (a1),d1         // d1 <- DESTINATION last word                   8
-        eor.w   d1,d0           //                                               4
-        and.w   d6,d0           //                                               4
-        eor.w   d1,d0           //                                               4
-        move.w  d0,(a1)         // D' <- S                                       8
-        swap    d6              // d6 <- first fringe                            4
-
-        add.w   a4,a0           // a0 -> next SOURCE row                                 8
-        add.w   a5,a1           // a1 -> next DESTINATION row                    8
-
-sc_mp_enter:
-
-        move.w  INNER_CT(a6),d5 // reinitialize inner loop counter              12
-        dbra    d7,sc_mp_f1     // do next row                             (10)/14
-
-
-        move.w  B_HT(a6),d7     // d7 <- row counter
-
-        move.l  S_ADDR(a6),a0   // advance to next plane
-        move.l  D_ADDR(a6),a1
-
-        add.w   S_NXPL(a6),a0
-        add.w   D_NXPL(a6),a1   
-
-        move.l  a0,S_ADDR(a6)
-        move.l  a1,D_ADDR(a6)
-
-sc_plane:
-
-        dbra    d4,sc_mp_enter
-        rts
-
-#else
 
 //
 //  Source to destination copy direction will either be from:
@@ -986,6 +812,118 @@ l2r_f2:
         dbra    d4,l2r_plane    // do next plane
 
         rts
+#else
+        bcc     l2r_t2b                 // select direction based on order of addresses
+
+r2l_b2t:
+
+        move.w  S_XMAX(a6),d0           // compute address of source low right corner
+        move.w  S_YMAX(a6),d1
+        bsr     s_xy2addr               // a0 -> end of source block
+
+        move.w  D_XMAX(a6),d0           // compute address of dest low right corner
+        move.w  D_YMAX(a6),d1
+        bsr     d_xy2addr               // a1 -> end of destination block
+
+        neg.w   d5                      // d2 <- next word increment (r2l source)
+        neg.w   d7                      // d5 <- next word increment (r2l destination)
+
+        bra     set_fringe
+
+l2r_t2b:
+
+        neg.w   d4                      // d4 <- SRC_WR (l2r)
+        neg.w   d6                      // d6 <- DST_WR (l2r)
+
+set_fringe:
+
+        move.w  d5,d2                   // d2 <- source inter word increment
+        move.w  d7,d3                   // d3 <- destination inter word increment
+
+        move.w  d4,a4                   // source wrap       (SRC_WR)
+        move.w  d6,a5                   // destination wrap  (DST_WR)
+
+        bsr     get_fringe
+
+        tst.w   d2                      // d2<0 => r2l. swap masks
+        bpl     fringe_ok
+
+        swap    d6
+
+fringe_ok:
+
+//   set up word to word increment values  
+
+        move.l  a0,S_ADDR(a6)           // save source address for other planes
+        move.l  a1,D_ADDR(a6)           // save destination address for other planes
+
+        move.w  B_HT(a6),d7             // d7 <- row count
+
+        move.w  PLANE_CT(a6),d4
+
+        bra     sc_plane
+
+
+//  fast word aligned blt. general case: multiple planes
+
+
+sc_mp_f1:
+
+        move.w  (a0),d0         // d0 <- 1st SOURCE word                                 8
+        move.w  (a1),d1         // d1 <- 1st DESTINATION word                    8
+        eor.w   d1,d0           //                                               4
+        and.w   d6,d0           //                                               4
+        eor.w   d1,d0           //                                               4
+        move.w  d0,(a1)         // D' <- S                                       8
+
+        adda.w  d2,a0           // a0 -> 2nd SOURCE word                                 8
+        adda.w  d3,a1           // a1 -> 2nd DESTINATION word                    8
+
+sc_mp_loop:
+
+        move.w  (a0),(a1)       // DEST <- SOURCE                               12
+
+        adda.w  d2,a0           // a0 -> next SOURCE word                        8
+        adda.w  d3,a1           // a1 -> next DESTINATION word                   8
+
+        dbra    d5,sc_mp_loop   // (10)/14
+
+sc_mp_f2:
+
+        swap    d6              // d6 <- second fringe                           4
+        move.w  (a0),d0         // d0 <- SOURCE last word                        8
+        move.w  (a1),d1         // d1 <- DESTINATION last word                   8
+        eor.w   d1,d0           //                                               4
+        and.w   d6,d0           //                                               4
+        eor.w   d1,d0           //                                               4
+        move.w  d0,(a1)         // D' <- S                                       8
+        swap    d6              // d6 <- first fringe                            4
+
+        add.w   a4,a0           // a0 -> next SOURCE row                                 8
+        add.w   a5,a1           // a1 -> next DESTINATION row                    8
+
+sc_mp_enter:
+
+        move.w  INNER_CT(a6),d5 // reinitialize inner loop counter              12
+        dbra    d7,sc_mp_f1     // do next row                             (10)/14
+
+
+        move.w  B_HT(a6),d7     // d7 <- row counter
+
+        move.l  S_ADDR(a6),a0   // advance to next plane
+        move.l  D_ADDR(a6),a1
+
+        add.w   S_NXPL(a6),a0
+        add.w   D_NXPL(a6),a1   
+
+        move.l  a0,S_ADDR(a6)
+        move.l  a1,D_ADDR(a6)
+
+sc_plane:
+
+        dbra    d4,sc_mp_enter
+        rts
+
 #endif
 
         .end

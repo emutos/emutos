@@ -127,11 +127,11 @@ _put_pix:       move.l  _PTSIN,a0       // fetch ptr to _PTSIN array.
                 jsr     concat          // convert to physical offset.
                 move.l  _v_bas_ad,a1    // fetch ptr to video base address.
 #if vme10
-                adda.w  d1,a1           // base + offset.
-#else
                 adda.l  d1,a1           // base + offset.
                 move.l   _v_pl_dspl,a2  // # of bytes between video planes
                 moveq.l #1,d4           // init for faster rotate instruction
+#else
+                adda.w  d1,a1           // base + offset.
 #endif
                 add.w   d0,d0           // word indexing.
                 lea     ortbl,a0
@@ -147,15 +147,6 @@ _put_pix:       move.l  _PTSIN,a0       // fetch ptr to _PTSIN array.
 #endif
 
 #if vme10
-ppx_lp:         ror.w   #1,d3           // rotate pixel bit and put in carry.
-                bcc     ppx_clr         // if 0, clear the bit.
-                or.w    d0,(a1)+        // if 1, set the bit.
-                dbra    d2,ppx_lp
-                rts
-
-ppx_clr:        and.w   d1,(a1)+        // clear the bit.
-                dbra    d2,ppx_lp
-#else
                 bra.b   ppx_rot         // already have correct pixel address
 ppx_lp:         adda.l  a2,a1           // address of pixel in next video plane
 ppx_rot:        ror.w   d4,d3           // rotate pixel bit and put in carry.
@@ -165,6 +156,15 @@ ppx_rot:        ror.w   d4,d3           // rotate pixel bit and put in carry.
                 rts
 
 ppx_clr:        and.w   d1,(a1)         // clear the bit.
+                dbra    d2,ppx_lp
+#else
+ppx_lp:         ror.w   #1,d3           // rotate pixel bit and put in carry.
+                bcc     ppx_clr         // if 0, clear the bit.
+                or.w    d0,(a1)+        // if 1, set the bit.
+                dbra    d2,ppx_lp
+                rts
+
+ppx_clr:        and.w   d1,(a1)+        // clear the bit.
                 dbra    d2,ppx_lp
 #endif
                 rts
@@ -193,40 +193,40 @@ _get_pix:       move.l  _PTSIN, a0      // fetch ptr to _PTSIN array.
                 jsr     concat          // convert to physical offset.
                 move.l  _v_bas_ad, a0   // fetch ptr to video base address.
 #if vme10
-                adda.w  d1, a0          // base + offset.
-#else
                 adda.l  d1,a0           // base + offset.
                 move.l   _v_pl_dspl,a2  // # of bytes between video planes
+#else
+                adda.w  d1, a0          // base + offset.
 #endif
                 add.w   d0, d0          // word indexing.
                 lea     ortbl, a1
                 move.w  0(a1,d0.w), d1  // fetch the pixel word mask.
                 move.w  _v_planes, d2   // fetch # of bit_planes.
 #if vme10
+                subq.w  #1,d2           // # of bit_planes - 1. (loop counter)
+                moveq.l #1,d4           // init for faster shift & or instr
+#else
                 move.w  d2, d0
                 add.w   d0, d0          // xinc.
                 subq.w  #1, d2          // # of bit_planes - 1. (loop counter)
                 adda.w  d0, a0          // point to highest-order bit_plane. (+2)
-#else
-                subq.w  #1,d2           // # of bit_planes - 1. (loop counter)
-                moveq.l #1,d4           // init for faster shift & or instr
 #endif
                 moveq.l #0, d0          // init the value accumulator.
                 bra     gpxl_in
 #if vme10
-gpx_lp:         asl.w   #1, d0          // shift accumulator for next bit_plane.
-gpxl_in:        move.w  -(a0), d3       // fetch a bit.
-#else
 gpx_lp:         asl.w   d4,d0           // shift accumulator for next bit_plane.
                 adda.l  a2,a0           // address of pixel in next video plane
 gpxl_in:        move.w  (a0),d3         // fetch a bit
+#else
+gpx_lp:         asl.w   #1, d0          // shift accumulator for next bit_plane.
+gpxl_in:        move.w  -(a0), d3       // fetch a bit.
 #endif
                 and.w   d1, d3          // test the bit.
                 beq     gpxl_bot        // if 0, branch.
 #if vme10
-                ori.w   #1, d0          // if 1, set value accumulator bit.
-#else
                 or.w    d4, d0          // if 1, set value accumulator bit.
+#else
+                ori.w   #1, d0          // if 1, set value accumulator bit.
 #endif
 gpxl_bot:       dbra    d2,gpx_lp
                 rts
@@ -256,14 +256,14 @@ _fill_line:
                 move.l  _v_bas_ad,a5    // fetch video base address.
                 lea     _FG_BP_1,a4     // point to array of bit_plane values.
 #if vme10
+                move.w  _v_planes,d3    // d3 := xinc. (# of planes)
+                subq.w  #1,d3           // d3 := (# of planes) -1.
+                move.l  _v_pl_dspl,a3   // # of bytes between video planes
+#else
                 move.w  _v_planes,a3    // a3 := xinc. (# of planes)
                 move.w  a3,d3
                 adda.w  a3,a3           // word xinc.
                 subq.w  #1,d3           // d3 := (# of planes) -1.
-#else
-                move.w  _v_planes,d3    // d3 := xinc. (# of planes)
-                subq.w  #1,d3           // d3 := (# of planes) -1.
-                move.l  _v_pl_dspl,a3   // # of bytes between video planes
 #endif
                 move.w  4(sp),d0        // fetch xleft. (input to concat)
                 move.w  d0,d4           // save for later.
@@ -272,9 +272,9 @@ _fill_line:
                 move.w  d1,d5           // save for later.
                 jsr     concat          // form physical offset.
 #if vme10
-                adda.w  d1,a5           // base + physical offset.
-#else
                 adda.l  d1,a5           // base + physical offset.
+#else
+                adda.w  d1,a5           // base + physical offset.
 #endif
                 move.w  6(sp),d2        // fetch xright.
                 and.w   _patmsk,d5      // compute pattern index.
@@ -284,6 +284,13 @@ _fill_line:
 //????                clr.w   a1              // default offset = 0.
                 move.w  #0,a1           // default offset = 0.
 #if vme10
+                lea.l   xline,a2        // address of HABLINE entry point
+                tst.w   _multifill      // multi-plane fill pattern?
+                beq.b   xline_entry     // no, branch.
+                move.w  #32,a1          // yes, offset = 32.
+xline_entry:
+                jmp     (a2)            // fill the horizontal line with color.
+#else
                 tst.w   _multifill      // multi-plane fill pattern?
                 beq     xline           // no, branch.
                 move.w  #32,a1          // yes, offset = 32.
@@ -296,13 +303,6 @@ _fill_line:
 //      d0 = xleft and 0x000F.           a0 = ptr to fill pattern. 
 //
                 bra     xline           // fill the horizontal line with color.
-#else
-                lea.l   xline,a2        // address of HABLINE entry point
-                tst.w   _multifill      // multi-plane fill pattern?
-                beq.b   xline_entry     // no, branch.
-                move.w  #32,a1          // yes, offset = 32.
-xline_entry:
-                jmp     (a2)            // fill the horizontal line with color.
 #endif
 
                 .page
@@ -340,22 +340,22 @@ _end_pts:       move.w  6(sp),d1        // fetch y coordinate. (input to concat)
 //
                 move.l  _v_bas_ad,a5    // fetch video base address.
 #if vme10
+                move.w  _v_planes,d3    // d3 := # of planes
+                subq.w  #1,d3           // d3 := (# of planes) -1.
+                move.l  _v_pl_dspl,a3   // # of bytes between video planes
+#else
                 move.w  _v_planes,a3    // a3 := xinc. (# of planes)
                 move.w  a3,d3
                 adda.w  a3,a3           // word xinc.
                 subq.w  #1,d3           // d3 := (# of planes) -1.
-#else
-                move.w  _v_planes,d3    // d3 := # of planes
-                subq.w  #1,d3           // d3 := (# of planes) -1.
-                move.l  _v_pl_dspl,a3   // # of bytes between video planes
 #endif
                 move.w  4(sp),d0        // fetch x coordinate. (input to concat)
                 move.w  d0,d7           // save for finding right endpoints
                 jsr     concat          // form physical offset.
 #if vme10
-                adda.w  d1,a5           // base + physical offset.
-#else
                 adda.l  d1,a5           // base + physical offset.
+#else
+                adda.w  d1,a5           // base + physical offset.
 #endif
 //
 //      d4 = scratch.                   a5 = ptr to word containing low-order pixel bit.
@@ -371,38 +371,38 @@ _end_pts:       move.w  6(sp),d1        // fetch y coordinate. (input to concat)
                 move.w  d3,a1           // save # of bit_planes - 1.
                 move.l  a5,a2           // save pixel word pointer.
 #if vme10
-                adda.w  a3,a5           // point to highest-order bit_plane. (+2)
-#else
                 moveq.l #1,d6           // init for faster shift and or instrs.
+#else
+                adda.w  a3,a5           // point to highest-order bit_plane. (+2)
 #endif
                 bra     pxl_in
 //
 //  Get color value of requested pixel.
 //
 #if vme10
-px_lp:          asl.w   #1,d1           // shift accumulator for next bit_plane.
-pxl_in:         move.w  -(a5),d4        // fetch a bit.
-#else
 px_lp:          asl.w   d6,d1           // shift accumulator for next bit_plane.
                 adda.l  a3,a5           // point to same word in next bit plane
 pxl_in:         move.w  (a5),d4         // fetch a bit.
+#else
+px_lp:          asl.w   #1,d1           // shift accumulator for next bit_plane.
+pxl_in:         move.w  -(a5),d4        // fetch a bit.
 #endif
                 and.w   d0,d4           // test the bit.
                 beq     pxl_bot         // if 0, branch.
 #if vme10
-                ori.w   #1,d1           // if 1, set value accumulator bit.
-#else
                 or.w    d6,d1           // if 1, set value accumulator bit.
+#else
+                ori.w   #1,d1           // if 1, set value accumulator bit.
 #endif
 pxl_bot:        dbra    d3,px_lp
 //
                 move.l  a2,a5           // restore the pixel word pointer.
                 move.w  a1,d3           // restore the # of bit_planes - 1.
 #if vme10
-                move.w  _XMX_CLIP,d6    // fetch right side of x viewport
-#else
                 move.l  a6,-(sp)        // save 'C' frame pointer
                 movea.w _XMX_CLIP,a6    // fetch right side of x viewport
+#else
+                move.w  _XMX_CLIP,d6    // fetch right side of x viewport
 #endif
                 move.l  a5,-(sp)        // push a5. (this adds 4 to the parameter offsets)
 
@@ -429,48 +429,48 @@ rnedg_lp:       cmp.w   d1,d2           // while (pixel value <> search color)
                 bne     rt_nedge
 rnl1:
 #if vme10
-               cmp.w   d6,d7           // and (x coord < x resolution).
-#else
                 cmp.w   a6,d7           // and (x coord < x resolution).
+#else
+               cmp.w   d6,d7           // and (x coord < x resolution).
 #endif
                 bgt     rt_nedge
 
                 addq.w  #1,d7           // increment x coord.
 #if vme10
-                ror.w   #1,d0           // "increment" the pixel mask and a5.
-#else
                 ror.w   d6,d0           // "increment" the pixel mask and a5.
+#else
+                ror.w   #1,d0           // "increment" the pixel mask and a5.
 #endif
                 bcc     rn_gpx          // if no wrap, branch.
 #if vme10
-                adda.w  a3,a5           // else point to next bit_plane 0.
-#else
                 addq.w  #2,a5           // point to next word in same bit_plane 
+#else
+                adda.w  a3,a5           // else point to next bit_plane 0.
 #endif
 rn_gpx:         movea.l a5,a2           // save a5.
 
 //      Now, search to the right.
 
                 moveq.l #0,d1           // clear the pixel value.
-#if vme10
+#if !vme10
                 adda.w  a3,a5           // point to highest-order bit_plane. (+2)
 #endif
                 bra     rnpxl_in
 
 #if vme10
-rnpx_lp:        asl.w   #1,d1           // shift accumulator for next bit_plane.
-rnpxl_in:       move.w  -(a5),d4        // fetch a bit.
-#else
 rnpx_lp:        asl.w   d6,d1           // shift accumulator for next bit_plane.
                 adda.l  a3,a5           // point to same word in next bit_plane.
 rnpxl_in:       move.w  (a5),d4         // fetch a bit
+#else
+rnpx_lp:        asl.w   #1,d1           // shift accumulator for next bit_plane.
+rnpxl_in:       move.w  -(a5),d4        // fetch a bit.
 #endif
                 and.w   d0,d4           // test the bit.
                 beq     rnpxl_bot       // if 0, branch.
 #if vme10
-                ori.w   #1,d1           // if 1, set value accumulator bit.
-#else
                 or.w    d6,d1           // if 1, set value accumulator bit.
+#else
+                ori.w   #1,d1           // if 1, set value accumulator bit.
 #endif            
 rnpxl_bot:      dbra    d3,rnpx_lp
                 move.l  a2,a5           // restore the pixel word pointer.
@@ -478,23 +478,23 @@ rnpxl_bot:      dbra    d3,rnpx_lp
                 bra     rnedg_lp
 
 rt_nedge:       move.l  (sp)+,a5        // pop a5. (this subtracts 4 from offsets)
-#if vme10
+#if !vme10
                 adda.w  a3,a5           // to use predecrement addressing.
 #endif
                 subq.w  #1,d7           // backup the x coord by 1.
 #if vme10
-                movea.l 12(sp),a4       // fetch ptr to endxright.
-#else
                 movea.l 16(sp),a4       // fetch ptr to endxright.
+#else
+                movea.l 12(sp),a4       // fetch ptr to endxright.
 #endif
                 move.w  d7,(a4)         // output x coord to endxright.
                 move.l  a5,a2           // save a5.
 #if vme10
-                move.w  4(sp),d7        // fetch x coord again.
-                move.w  _XMN_CLIP, d6   // fetch left side of x viewport
-#else
                 move.w  8(sp),d7        // fetch x coord again.
                 move.w  _XMN_CLIP, a6   // fetch left side of x viewport
+#else
+                move.w  4(sp),d7        // fetch x coord again.
+                move.w  _XMN_CLIP, d6   // fetch left side of x viewport
 #endif
                 move.w  a0,d0           // restore pixel mask.
 
@@ -521,18 +521,18 @@ rt_nedge:       move.l  (sp)+,a5        // pop a5. (this subtracts 4 from offset
 lnedg_lp:       cmp.w   d1,d2           // while (pixel value <> search color)
                 bne     lt_nedge
 #if vme10
-lnlp1:          cmp.w   d6, d7          // and (x coord inside viewport).
-#else
 lnlp1:          cmp.w   a6, d7          // and (x coord inside viewport).
+#else
+lnlp1:          cmp.w   d6, d7          // and (x coord inside viewport).
 #endif
                 bmi     lt_nedge
                 subq.w  #1,d7           // decrement x coord.
                 rol.w   d6,d0           // "decrement" the pixel mask and a5.
                 bcc     ln_gpx          // if no wrap, branch.
 #if vme10
-                suba.w  a3,a5           // else point to previous bit_plane 0.
-#else
                 subq.w  #2,a5           // point to next word in same bit_plane 
+#else
+                suba.w  a3,a5           // else point to previous bit_plane 0.
 #endif
 ln_gpx:         movea.l a5,a2           // save a5.
 
@@ -542,19 +542,19 @@ ln_gpx:         movea.l a5,a2           // save a5.
                 bra     lnpxl_in
 
 #if vme10
-lnpx_lp:        asl.w   #1,d1           // shift accumulator for next bit_plane.
-lnpxl_in:       move.w  -(a5),d4        // fetch a bit.
-#else
 lnpx_lp:        asl.w   d6,d1           // shift accumulator for next bit_plane.
                 adda.l  a3,a5           // point to same word in next bit_plane.
 lnpxl_in:       move.w  (a5),d4         // fetch a bit.
+#else
+lnpx_lp:        asl.w   #1,d1           // shift accumulator for next bit_plane.
+lnpxl_in:       move.w  -(a5),d4        // fetch a bit.
 #endif
                 and.w   d0,d4           // test the bit.
                 beq     lnpxl_bot       // if 0, branch.
 #if vme10
-                ori.w   #1,d1           // if 1, set value accumulator bit.
-#else
                 or.w    d6,d1           // if 1, set value accumulator bit.
+#else
+                ori.w   #1,d1           // if 1, set value accumulator bit.
 #endif
 lnpxl_bot:      dbra    d3,lnpx_lp
                 move.l  a2,a5           // restore the pixel word pointer.
@@ -562,7 +562,7 @@ lnpxl_bot:      dbra    d3,lnpx_lp
                 bra     lnedg_lp
 
 lt_nedge:       addq.w  #1,d7           // backup the x coord by 1.
-#if !vme10
+#if vme10
                 movea.l (sp)+,a6        // restore 'C' frame pointer
 #endif    
                 movea.l 8(sp),a4        // fetch ptr to endxleft.
@@ -687,14 +687,14 @@ BOX_FILL:       move.l  a6,-(sp)        // save C frame pointer
                 adda.w  #-parm_size,sp  // allocate temporary stack area
                 move.l  _v_bas_ad,a5    // fetch video base address.
 #if vme10
+                move.w  _v_planes,d3    // d3 := # of video planes.
+                subq.w  #1,d3           // d3 := (# of planes) -1.
+                move.l  _v_pl_dspl,a3    // # of bytes between video planes.
+#else
                 move.w  _v_planes,a3    // a3 := xinc. (# of planes)
                 move.w  a3,d3
                 adda.w  a3,a3           // word xinc.
                 subq.w  #1,d3           // d3 := (# of planes) -1.
-#else
-                move.w  _v_planes,d3    // d3 := # of video planes.
-                subq.w  #1,d3           // d3 := (# of planes) -1.
-                move.l  _v_pl_dspl,a3    // # of bytes between video planes.
 #endif
                 move.w  _X1,d0          // fetch X1. (input to concat)
                 move.w  d0,d4           // save for later.
@@ -702,9 +702,9 @@ BOX_FILL:       move.l  a6,-(sp)        // save C frame pointer
                 move.w  d1,d5           // save for later.
                 jsr     concat          // form physical offset.
 #if vme10
-                adda.w  d1,a5           // base + physical offset.
-#else
                 adda.l  d1,a5           // base + physical offset.
+#else
+                adda.w  d1,a5           // base + physical offset.
 #endif
                 move.w  _X2,d2          // fetch X2.
                 move.w  _Y2,d6          // fetch Y2.

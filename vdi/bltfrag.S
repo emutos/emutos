@@ -133,7 +133,7 @@ f0_right:
 f1_r2l_rt:
 
         move.w  (a0),d0         // d0 <- SOURCE 1st word                                 8
-#if vme10
+#if !vme10
         adda.w  d2,a0           // a0 -> SOURCE 2nd word                                 8
 #endif
         swap    d0              // d0(31:16) <- 1st SRC word                     4
@@ -146,9 +146,9 @@ f1_r2l_rt:
 f0_r2l_rt:
 
 #if vme10
-        move.w  (a0),d0         // d0(31:16) <- most recent SOURCE word          8
-#else
         move.w  -(a0),d0        // d0(31:16) <- most recent SOURCE word          8
+#else
+        move.w  (a0),d0         // d0(31:16) <- most recent SOURCE word          8
 #endif
         swap    d0              // d0(15:00) <- 1st SOURCE word or garbage       4
 
@@ -169,7 +169,7 @@ f0_r2l_rt:
 f1_r2l_lf:
 
         move.w  (a0),d0         // d0 <- 1st SOURCE word                                 8
-#if vme10
+#if !vme10
         adda.w  d2,a0           // a0 -> 2nd SOURCE word                                 8
 #endif
         swap    d0              // d0(31:16) <- SRC word                                 4
@@ -181,10 +181,9 @@ f1_r2l_lf:
 //      rotate left.
 f0_r2l_lf:
 #if vme10
-
-        move.w  (a0),d0         // d0(15:00) <- SRC wrd                          8
-#else
         move.w  -(a0),d0        // d0(15:00) <- SRC wrd                          8
+#else
+        move.w  (a0),d0         // d0(15:00) <- SRC wrd                          8
 #endif
         move.l  d0,d1           // set up d1(31:16) for inner loop               4
         swap    d1              // d1(31:16) <- 1st word for bit pump            4
@@ -212,9 +211,9 @@ f1_l2r_rt:
 f0_l2r_rt:
 
 #if vme10
-        move.w  (a0),d0         // d0(15:00) <- SRC 2nd word (new)               8
-#else
         move.w  (a0)+,d0        // d0(15:00) <- SRC 2nd word (new)               8
+#else
+        move.w  (a0),d0         // d0(15:00) <- SRC 2nd word (new)               8
 #endif
         move.l  d0,d1           // set up d1(31:16) for inner loop               4
         swap    d1              // d1(31:16) <- SOURCE 2nd word                  4
@@ -232,10 +231,10 @@ f0_l2r_rt:
 f1_l2r_lf:
 
 #if vme10
+        move.w  (a0)+,d0        // d0 <- SOURCE 1st word                                 8
+#else
         move.w  (a0),d0         // d0 <- SOURCE 1st word                                 8
         adda.w  d2,a0           // a0 -> SOURCE 2nd word                                 8
-#else
-        move.w  (a0)+,d0        // d0 <- SOURCE 1st word                                 8
 #endif
         swap    d0              //                                               4
 
@@ -247,9 +246,9 @@ f1_l2r_lf:
 f0_l2r_lf:
 
 #if vme10
-        move.w  (a0),d0         // d0(31:16) <- SOURCE 2nd word (new)            8
-#else     
         move.w  (a0)+,d0        // d0(31:16) <- SOURCE 2nd word (new)            8
+#else     
+        move.w  (a0),d0         // d0(31:16) <- SOURCE 2nd word (new)            8
 #endif
         swap    d0              // d0(15:00) <- SOURCE 1st word (old)            4
 
@@ -269,14 +268,14 @@ f0_l2r_lf:
 i1_r2l_rt:
 
 #if vme10
+        adda.w  d3,a1           // a1 -> new DESTINATION word                    8
+        move.l  d1,d0           // d0(31:16) <- old SOURCE word                  4
+        move.w  -(a0),d0        // d0(15:00) <- old SOURCE word                  8
+#else
         adda.w  d2,a0           // a0 -> new SOURCE word                                 8
         adda.w  d3,a1           // a1 -> new DESTINATION word                    8
         move.l  d1,d0           // d0(31:16) <- old SOURCE word                  4
         move.w  (a0),d0         // d0(15:00) <- old SOURCE word                  8
-#else
-        adda.w  d3,a1           // a1 -> new DESTINATION word                    8
-        move.l  d1,d0           // d0(31:16) <- old SOURCE word                  4
-        move.w  -(a0),d0        // d0(15:00) <- old SOURCE word                  8
 #endif
         swap    d0              // d0(31:16) <- new SOURCE word                  4
         move.l  d0,d1           // d1(31:16) <- new SOURCE word (unaligned)      4
@@ -289,14 +288,14 @@ i1_r2l_rt:
 i1_r2l_lf:
 
 #if vme10
+        adda.w  d3,a1           // a1 -> new DESTINATION word                    8
+        move.l  d1,d0           // d0(31:16) <- old SOURCE word                  4
+        move.w  -(a0),d0        // d0(15:00) <- new SOURCE word                  8
+#else
         adda.w  d2,a0           // a0 -> new SOURCE word                                 8
         adda.w  d3,a1           // a1 -> new DESTINATION word                    8
         move.l  d1,d0           // d0(31:16) <- old SOURCE word                  4
         move.w  (a0),d0         // d0(15:00) <- new SOURCE word                  8
-#else
-        adda.w  d3,a1           // a1 -> new DESTINATION word                    8
-        move.l  d1,d0           // d0(31:16) <- old SOURCE word                  4
-        move.w  -(a0),d0        // d0(15:00) <- new SOURCE word                  8
 #endif
         move.l  d0,d1           // d0(31:16) <- old SOURCE word                  4
         swap    d1              // d1(31:16) <- new SOURCE word (unaligned)      4
@@ -309,16 +308,14 @@ i1_r2l_lf:
 i1_l2r_rt:
 
 #if vme10
-        adda.w  d2,a0           // a0 -> new SOURCE word                                 8
         adda.w  d3,a1           // a1 -> new DESTINATION word                    8
-
-        move.l  d1,d0           // d0(31:16) <- old SOURCE word                  4
-        move.w  (a0),d0         // d0(15:00) <- new SOURCE word                  8
-#else
-        adda.w  d3,a1           // a1 -> new DESTINATION word                    8
-
         move.l  d1,d0           // d0(31:16) <- old SOURCE word                  4
         move.w  (a0)+,d0        // d0(15:00) <- new SOURCE word                  8
+#else
+        adda.w  d2,a0           // a0 -> new SOURCE word                                 8
+        adda.w  d3,a1           // a1 -> new DESTINATION word                    8
+        move.l  d1,d0           // d0(31:16) <- old SOURCE word                  4
+        move.w  (a0),d0         // d0(15:00) <- new SOURCE word                  8
 #endif
         move.l  d0,d1           // d0(31:16) <- old SOURCE word                  4
         swap    d1              // d1(31:16) <- new SOURCE word (unaligned)      4
@@ -331,15 +328,14 @@ i1_l2r_rt:
 i1_l2r_lf:
 
 #if vme10
-        adda.w  d2,a0           // a0 -> new SOURCE word                                 8
-        adda.w  d3,a1           // a1 -> new DESTINATION word                    8
-
-        move.l  d1,d0           // d0(31:16) <- old SOURCE word                  4
-        move.w  (a0),d0         // d0(15:00) <- old SOURCE word                  8
-#else
         adda.w  d3,a1           // a1 -> new DESTINATION word                    8
         move.l  d1,d0           // d0(31:16) <- old SOURCE word                  4
         move.w  (a0)+,d0        // d0(15:00) <- old SOURCE word                  8
+#else
+        adda.w  d2,a0           // a0 -> new SOURCE word                                 8
+        adda.w  d3,a1           // a1 -> new DESTINATION word                    8
+        move.l  d1,d0           // d0(31:16) <- old SOURCE word                  4
+        move.w  (a0),d0         // d0(15:00) <- old SOURCE word                  8
 #endif
         swap    d0              // d0(31:16) <- new SOURCE word                  4
         move.l  d0,d1           // d1(31:16) <- new SOURCE word (unaligned)      4
@@ -362,13 +358,13 @@ f2_r2l_rt:
 
         dbra    d5,i1_r2l_rt    // do another INNER LOOP cycle             (10)/14
 #if vme10
+        move.l  d1,d0           // d0(31:16) <- next to last SOURCE word                 4
+        move.w  -(a0),d0        // d0(15:00) <- last SOURCE word                         8
+#else
         adda.w  d2,a0           // a0 -> last SOURCE word                        8
 
         move.l  d1,d0           // d0(31:16) <- next to last SOURCE word                 4
         move.w  (a0),d0         // d0(15:00) <- last SOURCE word                         8
-#else
-        move.l  d1,d0           // d0(31:16) <- next to last SOURCE word                 4
-        move.w  -(a0),d0        // d0(15:00) <- last SOURCE word                         8
 #endif
         ror.l   d4,d0           // d0(31:16) <- alligned SRC: new|old         8-24
 
@@ -380,13 +376,13 @@ f2_r2l_lf:
 
         dbra    d5,i1_r2l_lf    // do another INNER LOOP cycle             (10)/14
 #if vme10
+        move.l  d1,d0           // d0(31:16) <- next to last SOURCE word                 4
+        move.w  -(a0),d0        // d0(15:00) <- last SOURCE word                         8
+#else
         adda.w  d2,a0           // a0 -> new SOURCE word                                 8
 
         move.l  d1,d0           // d0(31:16) <- next to last SOURCE word                 4
         move.w  (a0),d0         // d0(15:00) <- last SOURCE word                         8
-#else
-        move.l  d1,d0           // d0(31:16) <- next to last SOURCE word                 4
-        move.w  -(a0),d0        // d0(15:00) <- last SOURCE word                         8
 #endif  
         rol.l   d4,d0           // d0(15:00) <- alligned SRC: new|old         8-24
 
@@ -398,7 +394,7 @@ f2_l2r_rt:
 
         dbra    d5,i1_l2r_rt    // do another INNER LOOP cycle             (10)/14
 
-#if vme10
+#if !vme10
         adda.w  d2,a0           // a0 -> new SOURCE word                                 8
 #endif
 
@@ -415,7 +411,7 @@ f2_l2r_lf:
 
         dbra    d5,i1_l2r_lf    // do another INNER LOOP cycle             (10)/14
 
-#if vme10
+#if !vme10
         adda.w  d2,a0           // a0 -> new SOURCE word                                 8
 #endif
 
@@ -447,7 +443,7 @@ fl_r2l_lf:
 fl_l2r_rt:
 
         dbra    d5,i1_l2r_rt    // do another INNER LOOP cycle             (10)/14
-#if !vme10
+#if vme10
         subq.w  #2,a0           // correct for last postincrement
 #endif
         bra     f2_flush        //                                              10
@@ -455,7 +451,7 @@ fl_l2r_rt:
 fl_l2r_lf:
 
         dbra    d5,i1_l2r_lf    // do another INNER LOOP cycle             (10)/14
-#if !vme10
+#if vme10
         subq.w  #2,a0           // correct for last postincrement
 #endif
 ////////        bra     f2_flush        // fall through to f2_flush                     10
