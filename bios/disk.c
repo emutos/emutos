@@ -80,6 +80,12 @@ void disk_init(void)
    least one of the primary entries is ok this way */
 static int VALID_PARTITION(struct partition_info *pi, unsigned long hdsiz)
 {
+#if DBG_DISK
+    kprintf("disk.c: checking if a partition is valid...\n");
+    kprintf("        flag: %s\n", (pi->flg & 1) ? "OK" : "Failed" );
+    kprintf("        partition start (%ld <= %ld): %s\n", pi->st, hdsiz, (pi->st <= hdsiz) ? "OK" : "Failed" );
+    kprintf("        partition end (%ld <= %ld): %s\n", pi->st + pi->siz, hdsiz, (pi->st + pi->siz <= hdsiz) ? "OK" : "Failed" );
+#endif
     return ((pi->flg & 1) &&
      // isalnum(pi->id[0]) && isalnum(pi->id[1]) && isalnum(pi->id[2]) &&
      pi->st <= hdsiz &&

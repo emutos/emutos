@@ -1511,3 +1511,4 @@ Start... early ages
   The 'falcon' target was removed (I don't believe current EmuTOS would
   work on real Falcon) (joy)
 - doc/todo.txt: removed a couple of entries that I believe were done (joy)
+- bios/disk.c: added debug kprintf's to partition detection code (joy)
