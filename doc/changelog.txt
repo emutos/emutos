@@ -978,4 +978,4 @@ Start... early ages
 - bios/lineavars.S - unneeded _TEXT_BG, _COPYTRAN, _FILL_ABORT removed (MAD)
 - vdi/* - some mouse cursor stuff implemented in C (MAD)
 - vdi/vdimouse.S - removed rbp, used !vme10 instead (MAD)
-
+- vdi/gsxdef.h - empty, deleted  (MAD)

@@ -89,7 +89,7 @@ void vsl_ends()
     work_ptr = cur_work;
     *pointer++ = work_ptr->line_beg = lb;
     *pointer = work_ptr->line_end = le;
-} /* End "vsl_ends". */
+}
 
 
 
