@@ -1512,3 +1512,7 @@ Start... early ages
   work on real Falcon) (joy)
 - doc/todo.txt: removed a couple of entries that I believe were done (joy)
 - bios/disk.c: added debug kprintf's to partition detection code (joy)
+
+2003-07-21
+- aes/gemstart.S: _dos_exec() - jsr _dsptch removed on THH suggestion.
+  This fixes the EmuDesk Shutdown crash I was experiencing (joy)
