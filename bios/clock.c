@@ -20,6 +20,11 @@
 #include "string.h"
 #include "vectors.h"
 #include "nvram.h"
+#include "config.h"
+ 
+#if TOS_VERSION < 0x200
+#define NO_NVRAM 1
+#endif
 
 /* set this to 1 to debug IKBD clock (you should also disable NVRAM) */
 #define NO_MEGARTC 0
@@ -258,6 +263,8 @@ static void msetdt(ULONG dt)
 
 /*==== NVRAM RTC internal functions =======================================*/
 
+#if ! NO_NVRAM
+
 /*
  * The MC146818 was used as the RTC and NVRAM in MegaSTE, TT and Falcon.
  * You can find a header file in /usr/src/linux/include/linux/mc146818rtc.h
@@ -358,6 +365,8 @@ static void nsetdt(ULONG dt)
 {
   ndosettime(dt);
 }
+
+#endif /* ! NO_NVRAM */
 
 /*==== IKBD clock section =================================================*/
 
@@ -520,6 +529,7 @@ static void isetdt(ULONG dt)
 
 void date_time(WORD flag, WORD *dt)
 {
+#if ! NO_NVRAM
   if(has_nvram) {
     switch(flag) {
     case GET_DATE:
@@ -536,7 +546,9 @@ void date_time(WORD flag, WORD *dt)
       break;
     }
   }
-  else if(has_megartc) {
+  else 
+#endif /* ! NO_NVRAM */
+  if(has_megartc) {
     switch(flag) {
     case GET_DATE:
       *dt = mgetdate();
@@ -586,10 +598,13 @@ void clock_init(void)
 
 void settime(LONG time)
 {
+#if ! NO_NVRAM
   if(has_nvram) {
     nsetdt(time);
   }
-  else if(has_megartc) {
+  else 
+#endif /* ! NO_NVRAM */
+  if(has_megartc) {
     msetdt(time);
   }
   else {
@@ -599,10 +614,13 @@ void settime(LONG time)
 
 LONG gettime(void)
 {
+#if ! NO_NVRAM
   if(has_nvram) {
     return ngetdt();
   }
-  else if(has_megartc) {
+  else 
+#endif /* ! NO_NVRAM */
+  if(has_megartc) {
     return mgetdt();
   }
   else {
