@@ -433,6 +433,6 @@ Start... early ages
 - "061a executable file format" debug print corrected: "601a ..." (joy)
 
 06. Jan. 2002
-- optimized divmod() in bdos/main.c (MAD)
+- optimized divmod() and moved it to bdos/fsio.c (MAD) 
 - did put usr2xfr/xfr2usr to bdos/fsio.c (MAD)
 

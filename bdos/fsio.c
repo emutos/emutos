@@ -24,8 +24,9 @@
  * forward prototypes
  */
 
-static void xfr2usr(int n, char *s, char *d);
-static void usr2xfr(int n, char *d, char *s);
+void xfr2usr(int n, char *s, char *d);
+void usr2xfr(int n, char *d, char *s);
+static int divmod(int *modp, long divdnd, int divsor);
 static void addit(OFD *p, long siz, int flg);
 static long xrw(int wrtflg, OFD *p, long len, char *ubufr,
                 void (*bufxfr)(int, char *, char *));
@@ -36,11 +37,8 @@ static void usrio(int rwflg, int num, int strt, char *ubuf, DMD *dm);
  *  xfr2usr -
  */
 
-inline void   xfr2usr(REG int n, REG char *s, REG char *d)
+void xfr2usr(int n, char *s, char *d)
 {
-#if DBGFSIO
-    kprintf("BDOS: xfr2usr: %d\n", n);
-#endif
     while (n--)
         *d++ = *s++;
 }
@@ -51,13 +49,28 @@ inline void   xfr2usr(REG int n, REG char *s, REG char *d)
  *  usr2xfr -
  */
 
-inline void    usr2xfr(REG int n, REG char *d, REG char *s)
+void usr2xfr(int n, char *d, char *s)
 {
-#if DBGFSIO
-    kprintf("BDOS: usr2xfr: %d\n", n);
-#endif
     while (n--)
         *d++ = *s++;
+}
+
+
+
+/*
+ * divmod - do divide and modulo arithmetic
+ *
+ * the divide is accomplished with the log2 shift factor passed in as
+ * as psuedo divisor, the remainder (modulo) is left in the varable
+ * pointed to by the third argument.
+ */
+
+/* divsor is log2 of actual divisor */
+static int divmod(int *modp, long divdnd, int divsor)
+{
+    *modp = (int)(divdnd % (1L<<divsor));
+
+    return (int)(divdnd >> divsor);
 }
 
 

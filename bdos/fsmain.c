@@ -394,7 +394,7 @@
  *  uc - utility routine to return the upper-case of character passed in
  */
 
-char    uc(REG char c)
+char    uc(char c)
 {
     return((c >= 'a') && (c <= 'z') ? c & 0x5F : c);
 }
@@ -493,23 +493,5 @@ OFD     *makofd(register DND *p)
 OFD     *getofd(int h)
 {
     return(sft[syshnd(h)].f_ofd);
-}
-
-
-
-/*
- * divmod - do divide and modulo arithmetic
- *
- * the divide is accomplished with the log2 shift factor passed in as
- * as psuedo divisor, the remainder (modulo) is left in the varable
- * pointed to by the third argument.
- */
-
-/* divsor is log2 of actual divisor */
-int     divmod(int *modp, long divdnd, int divsor)
-{
-    *modp = (int)(divdnd % (1L<<divsor));
-
-    return (int)(divdnd >> divsor);
 }
 
