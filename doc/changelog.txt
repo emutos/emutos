@@ -379,3 +379,4 @@ Start... early ages
 - unix line ending (doc/nls.txt, util/boot.c, tools/mkflop.c) (LVL)
 - removed bios/kdump.c and bios/oldstuff (LVL)
 - removed old dump stuff in bios/kprint (LVL)
+- updated readme.txt (LVL)

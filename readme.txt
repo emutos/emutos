@@ -6,6 +6,7 @@ doc/todo.txt       - Things, where we would like your help
 doc/software.txt   - Software, that is know to run on EmuTOS
 doc/nls.txt        - How to add a native language or use one
 doc/coding.txt     - EmuTOS coding standards (never used :-)
+doc/old_code.txt   - For developers, a museum of bugs due to old C language
 doc/changelog.txt  - What is going on with EmuTOS
 
 --
