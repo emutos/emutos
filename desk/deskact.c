@@ -70,10 +70,8 @@ static WORD gr_obfind(LONG tree, WORD root, WORD mx, WORD my)
 *       Return TRUE as long as the mouse is down.  Block until the
 *       mouse moves into or out of the specified rectangle.
 */
-        WORD
-gr_isdown(out, x, y, w, h, pmx, pmy, pbutton, pkstate)
-        WORD            out, x, y, w, h;
-        WORD            *pmx, *pmy, *pbutton, *pkstate;
+static WORD gr_isdown(WORD out, WORD x, WORD y, WORD w, WORD h,
+                      WORD *pmx, WORD *pmy, WORD *pbutton, WORD *pkstate)
 {
 
         WORD            flags;
@@ -90,12 +88,7 @@ gr_isdown(out, x, y, w, h, pmx, pmy, pbutton, pkstate)
 } /* gr_isdown */
 
 
-        void
-gr_accobs(tree, root, pnum, pxypts)
-        LONG            tree;
-        WORD            root;
-        WORD            *pnum;
-        WORD            *pxypts;
+static void gr_accobs(LONG tree, WORD root, WORD *pnum, WORD *pxypts)
 {
         WORD            i;
         OBJECT          *olist;
