@@ -209,6 +209,8 @@
         .xdef   _bssend
         .xdef   _linea_init
 
+        .xdef   _longframe
+        
 | ==== lineavars.s - Graphics subsystem variables =============================
 	.xdef	font_ring
 		
@@ -680,14 +682,16 @@ dummyaes:
         move.l 4(a0),a1
         clr.l (a1)
         rte
+
 failgemmsg:
         .ascii "unimplemented gem call.\n\0"
         .even
 failgem:
         pea failgemmsg
         jsr _kprint
-1:
-        bra 1b
+        addq #4,sp
+
+        bra everloop            | Loop forever, if GEM call not implemented
 
 
 
@@ -746,18 +750,18 @@ int_vbl:
 |       bsr _kprint
 |       addq #4,sp
 
-        addq.l  #1, _frclock    | increase num of happened ints
-        subq.l  #1, vblsem      | check vblsem
-        bmi     vbl_end         | if VBl routine disabled -> end
+        addq.l  #1, _frclock            | increase num of happened ints
+        subq.l  #1, vblsem              | check vblsem
+        bmi     vbl_end                 | if VBl routine disabled -> end
         
         movem.l d0-d7/a0-a6, -(sp)      | save registers
-        addq.l  #1, _vbclock    | count number of VBL interrupts
+        addq.l  #1, _vbclock            | count number of VBL interrupts
         
-|        bsr    flopvbl         | flopvbl routine not needed
+|        bsr    flopvbl                 | flopvbl routine not needed
         
         movem.l (sp)+, d0-d7/a0-a6      | save registers
 vbl_end:
-        addq.l  #1, vblsem      | 
+        addq.l  #1, vblsem      |
         rte
 
 
@@ -980,7 +984,7 @@ biosxbios:
         move.w  (sp)+,d0        | Status register -> d0
         move.w  d0,-(a1)        | and save in save_area
         move.l  (sp)+,-(a1)     | save return address
-|       tst.w   0x59E           | Check longframe sysvariable one day...
+|       tst.w   _longframe      | Check _longframe sysvariable one day...
 |       beq.s   bx_nolongframe  | ...when we support CPU >=68000
 |       move.w  (sp)+,-(a1)
 | bx_nolongframe:
@@ -1004,7 +1008,7 @@ bx_sp_ok:
 bx_ret_exc:
         move.l  savptr, a1
         movem.l (a1)+, d3-d7/a3-a7      | Get regs back, including sp
-|       tst.w   0x59E           | Check longframe again: Is CPU >= 68000?
+|       tst.w   _longframe      | Check longframe again: Is CPU >= 68000?
 |       beq.s   bx_nolong2
 |       move.w  (a1)+,-(sp)
 | bx_nolong2:
