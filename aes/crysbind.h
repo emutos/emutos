@@ -85,7 +85,8 @@
 #define SCRP_WRITE 81
 #define SCRP_CLEAR 82
                                 /* File Selector Manager                */
-#define FSEL_INPUT 90
+#define FSEL_INPUT    90
+#define FSEL_EXINPUT  91
                                 /* Window Manager                       */
 #define WIND_CREATE 100
 #define WIND_OPEN 101

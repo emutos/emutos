@@ -14,103 +14,81 @@
 #include "portab.h"
 #include "obdefs.h"
 #include "gemrslib.h"
+#include "gemdos.h"
 
 
-static char rs_s0[] = "a..zA..Z ";
-static char rs_s2[] = "a..zA..Z0..9 ";
-static char rs_s1[] = "a..zA..Z ";
-static char rs_s3[] = "a..zA..Z0..9 ";
-static char rs_s4[] = "_ ________.___ ";
-static char rs_s6[] = "xF";
-static char rs_s5[] = "_ ________.___ ";
-static char rs_s7[] = "xF";
-static char rs_s8[] = "_ ________.___ ";
-static char rs_s9[] = "xF";
-static char rs_s10[] = "_ ________.___ ";
-static char rs_s11[] = "xF";
-static char rs_s12[] = "_ ________.___ ";
-static char rs_s13[] = "xF";
-static char rs_s14[] = "_ ________.___ ";
-static char rs_s15[] = "xF";
-static char rs_s16[] = "_ ________.___ ";
-static char rs_s17[] = "xF";
-static char rs_s18[] = "_ ________.___ ";
-static char rs_s19[] = "xF";
-static char rs_s20[] = "_ ________.___ ";
-static char rs_s21[] = "xF";
-static char rs_s22[] = "\200";
-static char rs_s23[] = "\200";
-static char rs_s24[] = "\200";
+static const char rs_str_fstmplt[] = "_ ________.___ ";
+static const char rs_str_xF[] = "xF";
 
 
 #define RS_NTED 13
 
 TEDINFO rs_tedinfo[RS_NTED];
 
-static TEDINFO rs_tedinfo_rom[] = {
-        { (LONG)"__________________________________________",
-        (LONG)"Directory:  __________________________________________",
+static const TEDINFO rs_tedinfo_rom[] = {
+        { 0L,
+        (LONG)"______________________________________",
         (LONG)"P",
-        IBM, 1, TE_LEFT, 4352, 0, 0, 43, 55 },
+        IBM, 1, TE_LEFT, 4352, 0, 0, 39, 39 },
 
-        { (LONG)"___________",
+        { 0L,
         (LONG)"Selection:  ________.___",
         (LONG)"f",
         IBM, 1, TE_LEFT, 4352, 0, 0, 12, 25 },
 
-        { (LONG)"\0@@@@@@@@@@@@@@@@@",
+        { 0L,
         (LONG)"__________________",
         (LONG)"F",
         IBM, 6, TE_CNTR, 4352, 0, -1, 19, 19 },
 
-        { (LONG)"@12345678901",
-        (LONG)rs_s4,
-        (LONG)rs_s6,
+        { 0L,
+        (LONG)rs_str_fstmplt,
+        (LONG)rs_str_xF,
         IBM, 1, TE_LEFT, 4352, 0, 0, 13, 16 },
 
-        { (LONG)"@22345678901",
-        (LONG)rs_s5,
-        (LONG)rs_s7,
+        { 0L,
+        (LONG)rs_str_fstmplt,
+        (LONG)rs_str_xF,
         IBM, 1, TE_LEFT, 4352, 0, 0, 13, 16 },
 
-        { (LONG)"@32345678901",
-        (LONG)rs_s8,
-        (LONG)rs_s9,
+        { 0L,
+        (LONG)rs_str_fstmplt,
+        (LONG)rs_str_xF,
         IBM, 1, TE_LEFT, 4352, 0, 0, 13, 16 },
 
-        { (LONG)"@42345678901",
-        (LONG)rs_s10,
-        (LONG)rs_s11,
+        { 0L,
+        (LONG)rs_str_fstmplt,
+        (LONG)rs_str_xF,
         IBM, 1, TE_LEFT, 4352, 0, 0, 13, 16 },
 
-        { (LONG)"@52345678901",
-        (LONG)rs_s12,
-        (LONG)rs_s13,
+        { 0L,
+        (LONG)rs_str_fstmplt,
+        (LONG)rs_str_xF,
         IBM, 1, TE_LEFT, 4352, 0, 0, 13, 16 },
 
-        { (LONG)"@62345678901",
-        (LONG)rs_s14,
-        (LONG)rs_s15,
+        { 0L,
+        (LONG)rs_str_fstmplt,
+        (LONG)rs_str_xF,
         IBM, 1, TE_LEFT, 4352, 0, 0, 13, 16 },
 
-        { (LONG)"@72345678901",
-        (LONG)rs_s16,
-        (LONG)rs_s17,
+        { 0L,
+        (LONG)rs_str_fstmplt,
+        (LONG)rs_str_xF,
         IBM, 1, TE_LEFT, 4352, 0, 0, 13, 16 },
 
-        { (LONG)"@82345678901",
-        (LONG)rs_s18,
-        (LONG)rs_s19,
+        { 0L,
+        (LONG)rs_str_fstmplt,
+        (LONG)rs_str_xF,
         IBM, 1, TE_LEFT, 4352, 0, 0, 13, 16 },
 
-        { (LONG)"@92345678901",
-        (LONG)rs_s20,
-        (LONG)rs_s21,
+        { 0L,
+        (LONG)rs_str_fstmplt,
+        (LONG)rs_str_xF,
         IBM, 1, TE_LEFT, 4352, 0, 0, 13, 16 },
 
-        { (LONG)rs_s22,
-        (LONG)rs_s23,
-        (LONG)rs_s24,
+        { (LONG)"\200",
+        (LONG)"\200",
+        (LONG)"\200",
         IBM, 1, TE_CNTR, 4352, 0, 1, 2, 2 }
 };
 
@@ -229,14 +207,14 @@ char msg_but_3[20];
 
 OBJECT rs_obj[RS_NOBS];
 
-static OBJECT rs_obj_rom[] = {
+static const OBJECT rs_obj_rom[] = {
 #define TR0 0
 /* TREE 0 */
         { -1, 1, 6, G_BOX,                        /*** 0 ***/
         NONE,
         SHADOWED,
         (long) 69888L,
-        0, 0, 1083, 1554 },
+        0, 0, 40+(4<<8), 20+(6<<8) },
 
         { 2, -1, -1, G_STRING,                    /*** 1 ***/
         NONE,
@@ -248,36 +226,36 @@ static OBJECT rs_obj_rom[] = {
         EDITABLE,
         NORMAL,
         (long) &rs_tedinfo[0],
-        3, 3, 54, 1 },
+        1, 3, 38, 1 },
 
         { 4, -1, -1, G_FBOXTEXT,                  /*** 3 ***/
         EDITABLE,
         NORMAL,
         (long) &rs_tedinfo[1],
-        33, 5, 24, 1 },
+        1, 5, 24, 1 },
 
         { 5, -1, -1, G_BUTTON,                    /*** 4 ***/
         SELECTABLE|DEFAULT|EXIT,
         NORMAL,
         (long) "OK",
-        49, 13, 8, 1 },
+        28, 15, 8, 1 },
 
         { 6, -1, -1, G_BUTTON,                    /*** 5 ***/
         SELECTABLE|EXIT,
         NORMAL,
         (long) "Cancel",
-        49, 15, 8, 1 },
+        28, 17, 8, 1 },
 
         { 0, 7, 14, G_IBOX,                       /*** 6 ***/
         NONE,
         NORMAL,
         (long) 4352L,
-        3, 5, 278, 268 },
+        2, 7, 22+(1<<8), 12+(1<<8) },
 
         { 8, -1, -1, G_BOXCHAR,                   /*** 7 ***/
         TOUCHEXIT,
         NORMAL,
-        (long) 318705921L,
+        (long) 0x05FF1101L,
         0, 0, 2, 1 },
 
         { 9, -1, -1, G_FBOXTEXT,                  /*** 8 ***/
@@ -295,13 +273,13 @@ static OBJECT rs_obj_rom[] = {
         { 11, -1, -1, G_BOXCHAR,                  /*** 10 ***/
         TOUCHEXIT,
         NORMAL,
-        (long) 201396480L,
+        (long) 0x01011100L,
         0, 0, 3, 2 },
 
         { 12, -1, -1, G_BOXCHAR,                  /*** 11 ***/
         TOUCHEXIT,
         NORMAL,
-        (long) 218173696L,
+        (long) 0x02011100L,
         0, 9, 3, 2 },
 
         { 9, 13, 13, G_BOX,                       /*** 12 ***/
@@ -475,14 +453,14 @@ char *rs_fstr[] = {
         ".APP",
         "*.ACC",
         "0..9",
-        rs_s0,
-        rs_s2,
+        "a..zA..Z ",
+        "a..zA..Z0..9 ",
         "a..zA..Z0..9 $#&@!%()-{}'`_^~\\?*:.,",
         "a..zA..Z0..9 $#&@!%()-{}'`_^~\\:",
         "a..zA..Z0..9 $#&@!%()-{}'`_^~:?*",
         "a..zA..Z0..9 $#&@!%()-{}'`_^~",
-        rs_s1,
-        rs_s3,
+        "a..zA..Z ",
+        "a..zA..Z0..9 ",
         "Insert your GEM STARTUP disk",
         "C:\\GEMAPPS\\GEMSYS;C:\\GEMAPPS;C:\\",
         "C:\\CLIPBRD",
@@ -537,11 +515,46 @@ BITBLK rs_fimg[] = {
 
 
 
+
+extern int count_chars(char *str, char c);    /* see desk_rsc.c */
+
+
+
 void gem_rsc_init()
 {
-        /* Copy data from ROM to RAM: */
-        memcpy(rs_obj, rs_obj_rom, RS_NOBS*sizeof(OBJECT));
-        memcpy(rs_tedinfo, rs_tedinfo_rom, RS_NTED*sizeof(TEDINFO));
+    long len;
+    int i, j;
+    char *tedinfptr;
+
+    /* Copy data from ROM to RAM: */
+    memcpy(rs_obj, rs_obj_rom, RS_NOBS*sizeof(OBJECT));
+    memcpy(rs_tedinfo, rs_tedinfo_rom, RS_NTED*sizeof(TEDINFO));
+
+    /* Fix TEDINFO strings: */
+    len = 0;
+    for (i = 0; i < RS_NTED; i++) {
+        if (rs_tedinfo[i].te_ptext == 0) {
+            /* Count number of '_' in strings ( +1 for \0 at the end ): */
+            len += count_chars((char *)rs_tedinfo[i].te_ptmplt, '_') + 1;
+        }
+    }
+    tedinfptr = (char *) dos_alloc(len);        /* Get memory */
+    for (i = 0; i < RS_NTED; i++) {
+        if (rs_tedinfo[i].te_ptext == 0) {
+            rs_tedinfo[i].te_ptext = (LONG) tedinfptr;
+            *tedinfptr++ = '@'; /* First character of uninitialized string */
+            len = count_chars((char *)rs_tedinfo[i].te_ptmplt, '_');
+            for (j = 0; j < len; j++) {
+                *tedinfptr++ = '_';     /* Set other characters to '_' */
+            }
+            *tedinfptr++ = 0;   /* Final 0 */
+        }
+    }
+    /* The first three TEDINFOs don't use a '@' as first character: */
+    *(char *)rs_tedinfo[0].te_ptext = '_';
+    *(char *)rs_tedinfo[1].te_ptext = '_';
+    *(char *)rs_tedinfo[2].te_ptext = 0;
+
 }
 
 

@@ -1623,7 +1623,7 @@ char *desk_rs_fstr[] = {
 
 
 /* Counts the occurance of c in str */
-static int count_chars(char *str, char c)
+int count_chars(char *str, char c)
 {
     int count;
 
@@ -1661,10 +1661,13 @@ void desk_rs_init(void)
         switch(obj->ob_type) {
         case G_TEXT:
         case G_BOXTEXT:
-        case G_STRING:
         case G_FTEXT:
-        case G_BUTTON:
         case G_FBOXTEXT:
+            ((TEDINFO *)obj->ob_spec)->te_ptmplt = 
+                (LONG) gettext((char *)(((TEDINFO *)obj->ob_spec)->te_ptmplt));
+            break;
+        case G_STRING:
+        case G_BUTTON:
         case G_TITLE:
             obj->ob_spec = (LONG) gettext( (char *) obj->ob_spec);
             break;
