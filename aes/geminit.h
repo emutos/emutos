@@ -25,6 +25,8 @@ extern BYTE     gl_logdrv;
 
 extern WORD     totpds;
 
+extern THEGLO   D;
+
 
 void all_run(void);
 void sh_deskf(WORD obj, LONG plong);

@@ -42,7 +42,6 @@
 #include "gemgraf.h"
 #include "gemevlib.h"
 #include "gemwmlib.h"
-#include "gemglobe.h"
 #include "gemfslib.h"
 #include "gemoblib.h"
 #include "gemsclib.h"
@@ -57,15 +56,6 @@
 
 #include "string.h"
 
-/*
-*       In an effort to save bytes, the initialization code in this module
-*       and in GEMSTART.A86 that precedes this will be overlayed with data.
-*       Actually the overlapping of data must stop prior to the call to 
-*       sh_main() at the bottom of this module, so we can get back to the 
-*       routine that called us.
-*       HOWEVER, THIS DOES NOT WORK IN 68K. This data area is static and must
-*       be apart of bss for 68k.
-*/
 
 #define ROPEN 0
 
@@ -109,6 +99,7 @@ EXTERN VOID     start();
                                                 /* trick in 68k land    */
 #endif
 
+/* Some global variables: */
 
 GLOBAL WORD     totpds;
 
@@ -133,6 +124,23 @@ GLOBAL BYTE     usuper[128];
 GLOBAL WORD     gl_mouse[37];
 GLOBAL LONG     ad_scdir;
 GLOBAL BYTE     gl_logdrv;
+
+GLOBAL PD       *rlr, *drl, *nrl;
+GLOBAL EVB      *eul, *dlr, *zlr;
+
+#if I8086
+GLOBAL UWORD    elinkoff;
+#else
+GLOBAL LONG     elinkoff;
+#endif
+GLOBAL BYTE     indisp;
+
+GLOBAL WORD     fpt, fph, fpcnt;                /* forkq tail, head,    */
+                                                /*   count              */
+GLOBAL SPB      wind_spb;
+GLOBAL WORD     curpid;
+
+GLOBAL THEGLO   D;
 
 
 
