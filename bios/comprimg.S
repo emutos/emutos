@@ -17,12 +17,10 @@
 #include "header.h"
 #include "config.h"
         
-        .text
 
-
-/* to be sure not to have any trouble when loading the actual image
- * in RAM, just set the stack to the top of the exception vector zone.
- * we won't need that much of a stack anyway.
+/* To be sure not to have any trouble when loading the actual image
+ * in RAM, just set the stack around the top of the exception vector 
+ * zone.  We won't need that much of a stack anyway.
  */
 _stktop = 0x380
 
@@ -43,24 +41,26 @@ _stktop = 0x380
         .global resvalid
         .global _longframe
 
-_longframe = 0x59E
-resvector = 0x42A
 memvalid = 0x420
-memval2 = 0x43A
 memctrl = 0x424
-memval3 = 0x51A
 resvalid = 0x426
+resvector = 0x42A
 _phystop = 0x42E
+memval2 = 0x43A
+memval3 = 0x51A
+_longframe = 0x59E
 _ramtop = 0x5A4
 _ramvalid = 0x5A8
         
-// memory past this address will be cleared on startup or on reset.
-bssstart = 0x600
-
+        .bss
+        .org 0x5AC
+bssstart = .
 
 /*
  * OSHEADER
  */
+ 
+        .text
 
         .global _main           // OS entry point
         .global _os_end
@@ -73,7 +73,6 @@ bssstart = 0x600
         .global _shifty
         .global _run
 
-_end = 0
 _ui_mupb = 0
 _root = 0
 _shifty = 0
@@ -164,51 +163,34 @@ memdone:
  * looking for 'CMPR' after the end of the compiled binary
  */
         lea     __edata,a0
-
+        move.l  cmpr,d0
+        bra     find
+cmpr:
+        .ascii  "CMPR"
 findloop:
-        move.l  a0,a2
-        addq.l  #1,a0
-        move.w  #3,d0
-        lea     cmpr,a1
-sameloop:
-        cmp.b   (a2)+,(a1)+
+        addq.l  #2,a0
+find:
+        move.l  (a0),d1
+        cmp.l   d0,d1
         bne     findloop
-        dbra    d0,sameloop
+        addq.l  #4,a0
 
-/* okay, now a2 is just after 'CMPR', that's the start of compressed data
- * We're just cheating a little bit and read directly inside compressed data
- * here to find out the address in the header. 
+/* okay, now a0 is just after 'CMPR', that's the start of compressed data.
+ * It points to a header containing the address to where we must 
+ * decompress, and the length of uncompressed data. 
+ * Let's just pass all this to uncompress()
  */
-        move.l  a2,a0
-        tst.b   (a2)+
-        bge     next
-        /* first verbatim chunk has more than 127 bytes */
-        addq.l  #1,a2
-next:
-        /* just look at header+8, it contains the destination address */
-        addq.l  #8,a2
-        
-        /* push the source address (still a0) */
-        move.l  a0,-(sp) 
-        
-        /* copy the destination address */
-        subq.l  #4,sp
-        move.b  (a2)+,(sp)
-        move.b  (a2)+,1(sp)
-        move.b  (a2)+,2(sp)
-        move.b  (a2)+,3(sp)
+        move.l  a0,-(sp)
         
         jsr     _uncompr
 
-        /* jump at start of RAMTOS. The destination address is still
+        /* jump at start of RAMTOS. The address of the header is still
          * on the stack.
          */
-        move.l  (sp),a0
+        move.l  (sp)+,a0
+        move.l  (a0),a0
         jmp     (a0)
         
-cmpr:   
-        .ascii  "CMPR"
-
 
 /*
  * stubs
@@ -228,7 +210,7 @@ _kprintf:
  *    move.l d0,-(sp)   
  *    jsr p   
  * prints d0 in hexadecimal
- *     jsr h    
+ *    jsr h    
  * prints "H %08lx" the current pc
  */
 
@@ -314,6 +296,4 @@ berr:   move.l  a1,(8).w
         nop
         rts
 
-// make sure there is some data section (?)
-        .data
-        dc.b    0
+

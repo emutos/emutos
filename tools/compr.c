@@ -7,6 +7,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+#define VERSION "0.2"
+ 
 /*
  * This is a very naïve compressor. It is best described by the
  * algorithm implemented in the decompressor:
@@ -72,18 +74,92 @@ static void fatal(int with_errno, const char *fmt, ...)
   exit(EXIT_FAILURE);
 }
 
+int verbose = 0;
+
 static long total = 0;
 
 void * xmalloc(size_t s)
 {
   void * a = malloc(s);
-  if(a == NULL)
-    fatal(0, "out of memory (asking for %ld, total %ld)",
-      (long)s, (long)total);
-  total += s;
+  if(a == NULL) {
+    if(verbose > 1) {
+      fatal(0, "out of memory (asking for %ld, total %ld)",
+        (long)s, (long)total);
+    } else {
+      fatal(0, "out of memory");
+    }
+  }
+  if(verbose > 1) total += s;
   return a;
 }
 
+/*
+ * non-failing, error-reporting stdio FILE stuff
+ */
+
+typedef struct xfile {
+  FILE *f;
+  char fname[1];
+} XFILE; 
+
+XFILE *xfopen(const char *fname, const char *mode)
+{
+  int len = strlen(fname);
+  XFILE *f = xmalloc(sizeof(*f) + len);
+  f->f = fopen(fname, mode);
+  if(f->f == NULL) {
+    fatal(1, "cannot open %s", fname);
+  }
+  memcpy(f->fname, fname, len+1);
+  return f;
+}
+
+int xfclose(XFILE *f)
+{
+  if(fclose(f->f)) {
+    fatal(1, "cannot close %s", f->fname);
+  }
+  free(f);
+  return 0;
+}
+
+size_t xfread(void *buf, size_t a, size_t b, XFILE * f)
+{
+  size_t count = fread(buf, a, b, f->f);
+  if(ferror(f->f)) {
+    fatal(1, "read error on %s", f->fname);
+  }
+  return count;
+}
+
+size_t xfwrite(void *buf, size_t a, size_t b, XFILE * f)
+{
+  size_t count = fwrite(buf, a, b, f->f);
+  if(ferror(f->f)) {
+    fatal(1, "write error on %s", f->fname);
+  }
+  return count;
+}
+
+long xftell(XFILE *f)
+{
+  long t = ftell(f->f);
+  if(t < 0) {
+    fatal(0, "cannot ftell on %s", f->fname);
+  }
+  return t;
+}
+
+int xfseek(XFILE *f, long offset, int whence)
+{
+  if(fseek(f->f, offset, whence)) {
+    fatal(1, "cannot fseek on %s", f->fname);
+  }
+  return 0;
+}
+
+
+  
 #if INT_MAX >= 2147483647
 typedef int index_t;
 typedef unsigned int uhash_t;
@@ -259,15 +335,18 @@ void hash_remove_old(hash *h, index_t min_x)
  * output file 
  */
  
-FILE *ofile;
+XFILE *ofile;
 
 void out_byte(uchar c) { 
-  putc(c, ofile);
+  xfwrite(&c, 1, 1, ofile);
 }
 
 void out_num(int a) { 
+#if DEBUG
   if(a < 0 || a >= 0x8000) 
     fatal(0, "out_num(0x%x)", a);
+#endif
+  
   if(a < 128) {
     out_byte(a);
   } else {
@@ -293,11 +372,6 @@ void compress(void)
   
   index_t verb_x = 0;
   int current_n = 0;
-
-  out_byte('C');
-  out_byte('M');
-  out_byte('P');
-  out_byte('R');
 
   for(i = 0 ; i < len - z ; i++) {
     hcell *hp = hash_find_add(h, i);
@@ -362,12 +436,12 @@ void compress(void)
     } 
     
     if(--remove_timeout <= 0) {
-      fprintf(stderr, ".");
+      if(verbose) fprintf(stderr, ".");
       remove_timeout = 0x7FFF;
       hash_remove_old(h, i-0x7FFF);
     }
   }
-  fprintf(stderr, "\n");
+  if(verbose) fprintf(stderr, "\n");
   /* emit pending verbatim data */
   i = len;
   while(verb_x + 0x7FFF < i) {
@@ -390,35 +464,24 @@ void compress(void)
 
 void read_all(const char *fname, uchar **buf, index_t *len)
 {
-  char c;
-  int err;
-  FILE *f;
+  XFILE *f;
   size_t count;
   
-  f = fopen(fname, "rb");
-  if(f == NULL) 
-    fatal(1, "cannot open %s", fname);
+  f = xfopen(fname, "rb");
   
-  *len = 0 ;
-  while(1 == fread(&c, 1, 1, f)) {
-    (*len)++;
-  }
-  
-  err = fseek(f, 0L, SEEK_SET);
-  if(err < 0) 
-    fatal(1, "cannot seek back on %s", fname);
-  count = *len;
+  xfseek(f, 0L, SEEK_END);
+  count = xftell(f);
+  xfseek(f, 0L, SEEK_SET);
   *buf = xmalloc(count);
-  if(count != fread(*buf, 1, count, f)) 
+  *len = count;
+  if(count != xfread(*buf, 1, count, f)) 
     fatal(1, "short read on %s", fname);
-  err = fclose(f);
-  if(err) 
-    fatal(1, "cannot fclose %s", fname);
+  xfclose(f);
 }
 
 int percent(long a, long b)
 {
-  if(a <= 0 || b >= a) {
+  if(a <= 0 || a <= b) {
     return 0;
   } else if(a < LONG_MAX / 100) {
     return (a-b)*100/a;
@@ -429,24 +492,85 @@ int percent(long a, long b)
   }
 }
 
+void usage(int exit_value)
+{
+  fprintf(stderr, "usage: compr -v * [ --rom <loader> ] <in> <out>\n");
+  exit(exit_value);
+}
+
+void do_it(char *lfname, char *ifname, char *ofname)
+{
+  ofile = xfopen(ofname, "wb");
+  
+  if(lfname != NULL) {
+    /* first copy the loader to the beginning of the output file */
+    XFILE *lfile = xfopen(lfname, "rb");
+    for(;;) {
+      char buf[0x4000];
+      size_t len = xfread(buf, 1, sizeof buf, lfile);
+      if(len <= 0) break;
+      xfwrite(buf, 1, len, ofile);
+    }
+    xfclose(lfile);
+  }
+  
+  read_all(ifname, &buf, &len);
+  
+  if(lfname != NULL) {
+    /* align to even boundary */
+    long len = xftell(ofile);
+    if(len & 1) out_byte(0);
+  }
+  
+  /* append "CMPR" */
+  out_byte('C'); out_byte('M'); out_byte('P'); out_byte('R'); 
+  
+  if(lfname != NULL) {
+    /* destination-address, len */
+    uchar *a = buf+8;
+    out_byte(*a++); out_byte(*a++); out_byte(*a++); out_byte(*a++); 
+    out_long(len);
+  } 
+  
+  compress();
+  
+  /* print stats just for fun */
+  if(verbose)
+  { 
+    long olen = xftell(ofile);
+    printf("len = %ld, olen = %ld, saved %ld (%d%%)\n", 
+        (long)len, (long)olen, (long)len-olen, percent(len, olen));
+  }
+  if(verbose > 1) {
+    printf("total memory allocated %ld\n", total);
+  }
+  
+  xfclose(ofile);
+}
+
 int main(int argc, char **argv)
 {
-  long olen;
-  if(argc != 3) 
-    fatal(0, "usage: %s in out", argv[0]);
-  read_all(argv[1], &buf, &len);
-  ofile = fopen(argv[2], "wb");
-  if(ofile == NULL) 
-    fatal(1, "cannot open %s", argv[2]);
-  compress();
-  olen = ftell(ofile);
-  if(olen < 0) 
-    fatal(1, "cannot ftell %s", argv[2]);
-  if(fclose(ofile)) 
-    fatal(1, "cannot close %s", argv[2]);
-  printf("len = %ld, olen = %ld, saved %ld (%d%%)\n", 
-         (long)len, (long)olen, (long)len-olen, percent(len, olen));
-  printf("total memory allocated %ld\n", total);
+  int i;
+  for(i = 1; i < argc ; i++) {
+    char *a = argv[i];
+    if(!strcmp(a, "--help")) {
+      usage(0);
+    } else if(!strcmp(a, "--version")) {
+      printf("version " VERSION "\n");
+      exit(0);
+    } else if(!strcmp(a, "-v") || !strcmp(a, "--verbose")) {
+      verbose++;
+    } else if(!strcmp(a, "--rom")) {
+      if(i + 4 != argc) usage(EXIT_FAILURE);
+      do_it(argv[i+1], argv[i+2], argv[i+3]);
+      break;
+    } else if (i + 2 == argc) {
+      do_it(NULL, argv[i], argv[i+1]);
+      break;
+    } else {
+      usage(EXIT_FAILURE);
+    }
+  }
   exit(0);
 }
 

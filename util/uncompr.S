@@ -48,13 +48,19 @@
         .text
 
 /*
- * void uncompr(void * dest, void * src)
+ * struct header {
+ *   void * destination_address;
+ *   long uncompressed_length;
+ * };
+ *
+ * void uncompr(struct header * header);
  */
         
         .global _uncompr
 _uncompr:
-        move.l  4(sp),a1    // dest
-        move.l  8(sp),a0    // src
+        move.l  4(sp),a0  // src
+        move.l  (a0)+,a1  // dest
+        addq.l  #4,a0     // this implementation does not care of the length
 
         moveq.l #0,d0   // upper word of d0 will be zero from now on.
 
@@ -114,4 +120,4 @@ copyloop:
         dbra    d0,copyloop
 ret:
         rts
-        
+
