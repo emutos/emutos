@@ -18,7 +18,7 @@
 #include "asm.h"
 #include "blkdev.h"
 #include "config.h"
- 
+#include "acsi.h"
 #include "kprint.h"
 
 /*==== External declarations ==============================================*/
@@ -184,11 +184,6 @@ int atari_partition(int bdev)
 
 /*=========================================================================*/
 
-static LONG acsi_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev)
-{
-    /* implement ACSI here */
-    return EUNDEV;
-}
 
 static LONG scsi_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev)
 {
@@ -205,7 +200,8 @@ static LONG ide_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev)
 static LONG dma_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev)
 {
 #if DBG_DISK
-    kprintf("XBIOS DMA%s(%ld, %d, %ld, %d)\n", rw ? "write" : "read", sector, count, buf, dev);
+    kprintf("XBIOS DMA%s(%ld, %d, 0x%08lx, %d)\n", 
+            rw ? "write" : "read", sector, count, buf, dev);
 #endif
 
 #if ARANYM_NATIVE_DISK
@@ -258,8 +254,11 @@ LONG XHInqTarget(UWORD major, UWORD minor, ULONG *blocksize,
     retval = DMAread(0, 1, (long)sect, major);
     if (! retval) {
         if (blocksize) {
-            DMAread(0, 1, (long)sect2, major);
-            *blocksize = 512;   /* TODO could add some heuristic here based on difference between sect and sect2 contents */
+            /* TODO could add some heuristic here based on difference 
+             * between sect and sect2 contents 
+             *   DMAread(0, 1, (long)sect2, major);
+             */
+            *blocksize = 512; 
         }
         if (device_flags)
             *device_flags = 0;  /* not implemented yet */

@@ -92,6 +92,14 @@
 #define CONF_NO_NLS 0
 #endif
 
+/* Set this to 1 to activate experimental ACSI support 
+ */
+
+#ifndef CONF_WITH_ACSI
+#define CONF_WITH_ACSI 0
+#endif
+
+
 /* The keyboard and language are now set using
  *   make LOCALE="xx" 
  * where xx is a lowercase two-letter country code as
