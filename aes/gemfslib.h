@@ -16,6 +16,7 @@ extern BYTE     gl_tmp2[];
 extern WORD     gl_shdrive;
 extern WORD     gl_fspos;
 
+WORD fs_input(LONG pipath, LONG pisel, WORD *pbutton);
 
 
 #endif

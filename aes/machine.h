@@ -2,11 +2,13 @@
 /*      GEM20                   12/17/85                Lowell Webster  */
 
 /*
-*       Copyright 1999, Caldera Thin Clients, Inc.                      
+*       Copyright 1999, Caldera Thin Clients, Inc.
+*                 2002 The EmuTOS development team
+*
 *       This software is licenced under the GNU Public License.         
-*       Please see LICENSE.TXT for further information.                 
-*                                                                       
-*                  Historical Copyright                                 
+*       Please see LICENSE.TXT for further information.
+*
+*                  Historical Copyright
 *       -------------------------------------------------------------
 *       GEM Application Environment Services              Version 2.3
 *       Serial No.  XXXX-0000-654321              All Rights Reserved
@@ -29,6 +31,7 @@
 #define MULTIAPP 0
 #define SINGLAPP 1
 
+
 #if SINGLAPP
 #define NUM_WIN 8               /* 8 for main app and 3 desk accs       */
 
@@ -40,6 +43,7 @@
                                 /* requires new string array    */
                                 /*   in gemmnlib.c if num != 9  */
 #endif
+
 
 #if MULTIAPP
 #define NUM_WIN 12              /* 12 for 11 process entries            */
@@ -81,6 +85,7 @@ EXTERN WORD     LBWMOV();
 
 #endif /* I8086 */
 
+
 #if MC68K
                                                 /* Use memcpy to copy bytes: */
 #define LWCOPY(dest,src,len) memcpy((void *)(dest), (void*)(src), (len)*2)
@@ -92,21 +97,21 @@ EXTERN WORD     LBWMOV();
 #endif /* MC68K */
 
 
-/*EXTERN WORD   LSTCPY();*/
+extern WORD  LSTCPY(LONG pdst, LONG psrc);
                                                 /* coerce short ptr to  */
                                                 /*   low word  of long  */
 #define LW(x) ( (LONG)((UWORD)(x)) )
                                                 /* coerce short ptr to  */
                                                 /*   high word  of long */
 #define HW(x) ((LONG)((UWORD)(x)) << 16)
-/*EXTERN LONG   HW();*/
+
                                                 /* return low word of   */
                                                 /*   a long value       */
 #define LLOWD(x) ((UWORD)(x))
                                                 /* return high word of  */
                                                 /*   a long value       */
 #define LHIWD(x) ((UWORD)(x >> 16))
-/*EXTERN WORD   LHIWD();*/
+
                                                 /* return low byte of   */
                                                 /*   a word value       */
 #define LLOBT(x) ((BYTE)(x & 0x00ff))
@@ -114,7 +119,9 @@ EXTERN WORD     LBWMOV();
                                                 /*   a word value       */
 #define LHIBT(x) ((BYTE)( (x >> 8) & 0x00ff))
 
+
 /************************************************************************/
+
 
 #if I8086
 
@@ -187,6 +194,7 @@ EXTERN LONG     LLCS();
 
 /************************************************************************/
 
+
 #if MC68K
 
                                                 /* return a long address*/
@@ -244,10 +252,6 @@ EXTERN LONG     LLCS();
 
 #endif /* MC68K */
 
-/*
-EXTERN VOID dbg();
-EXTERN VOID dump();
-*/
 
 
 #if MC68K

@@ -47,9 +47,7 @@ GLOBAL WORD     sc_bits[NUM_SCRAPS] =
 
 
 
-        WORD
-sc_clrd(isread)
-        WORD            isread;
+WORD sc_clrd(WORD isread)
 {
         LONG            ptmp, ptype;
         WORD            bitvect, ii;
@@ -79,6 +77,7 @@ sc_clrd(isread)
         return(bitvect);
 }
 
+
 /************************************************************************/
 /*                                                                      */
 /* sc_read() -- get info about current scrap directory                  */
@@ -89,9 +88,7 @@ sc_clrd(isread)
 /*                                                                      */
 /************************************************************************/
 
-        WORD
-sc_read(pscrap)
-        LONG            pscrap;
+WORD sc_read(LONG pscrap)
 {
         WORD            len;
 
@@ -99,6 +96,7 @@ sc_read(pscrap)
         LSTCPY(pscrap+len, ADDR("\\"));         /* cat on backslash     */
         return( sc_clrd(TRUE) );
 }
+
 
 /************************************************************************/
 /*                                                                      */
@@ -109,9 +107,7 @@ sc_read(pscrap)
 /*                                                                      */
 /************************************************************************/
 
-        WORD
-sc_write(pscrap)
-        LONG            pscrap;
+WORD sc_write(LONG pscrap)
 {
         WORD            len;
 
@@ -122,6 +118,7 @@ sc_write(pscrap)
         return(dos_sfirst(ad_scrap, F_SUBDIR)); /* make sure path ok    */
 }
 
+
 /************************************************************************/
 /*                                                                      */
 /* sc_clear() -- delete scrap files from current scrap directory        */
@@ -130,8 +127,7 @@ sc_write(pscrap)
 /*                                                                      */
 /************************************************************************/
 
-        WORD
-sc_clear()
+WORD sc_clear()
 {
         return( sc_clrd(FALSE) );
 }

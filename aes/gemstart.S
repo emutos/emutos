@@ -95,13 +95,13 @@ LB4:
 _gemdos:
 LF2:
             move.l  (SP)+,LEA2C
-
+/*
     move.l  (SP),d0
     move.l  d0,-(SP)
     pea     errormsg
     jsr     _cprintf
     addq.l  #8,sp
-
+*/
             move.w  #0,_DOS_ERR
             move.w  #0,_DOS_AX
             trap    #1

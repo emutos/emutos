@@ -26,7 +26,6 @@
 #include "gem.h"
 
 #include "gemdos.h"
-#include "optimize.h"
 #include "gemoblib.h"
 #include "gemgraf.h"
 #include "gemfmlib.h"
@@ -36,6 +35,10 @@
 #include "geminit.h"
 #include "gemsuper.h"
 #include "gemshlib.h"
+#include "gsx2.h"
+#include "optimize.h"
+#include "optimopt.h"
+#include "rectfunc.h"
 
 
 #define NM_NAMES (F9NAME-F1NAME+1)
@@ -161,7 +164,7 @@ fs_add(thefile, fs_index)
 
         len = LSTCPY(ad_fsnames + (LONG) fs_index, 
                         ad_fsdta - (LONG) 1);
-        D.g_fslist[thefile] = (BYTE *) fs_index;
+        D.g_fslist[thefile] = (BYTE *) ((LONG)fs_index);
         fs_index += len + 2;
 
         return(fs_index);
@@ -291,7 +294,8 @@ fs_format(tree, currtop, count)
 {
         REG WORD        i, cnt;
         REG WORD        y, h, th;
-        LONG            adtext, tlen;
+        LONG            adtext;
+        WORD            tlen;
                                                 /* build in real text   */
                                                 /*   strings            */
         gl_fspos = currtop;                     /* save new position    */
@@ -369,8 +373,8 @@ fs_nscroll(tree, psel, curr, count, touchob, n)
           fs_sel(*psel, NORMAL);
           *psel = 0;
           fs_format(tree, curr, count);
-          gsx_gclip(&r[1].g_x);
-          ob_actxywh(tree, F1NAME, &r[0].g_x);
+          gsx_gclip(&r[1]);
+          ob_actxywh(tree, F1NAME, &r[0]);
 
           if (( neg = (diffcurr < 0)) != 0 )
             diffcurr = -diffcurr;
@@ -397,7 +401,7 @@ fs_nscroll(tree, psel, curr, count, touchob, n)
           r[0].g_h *= diffcurr;
           for(i=0; i<2; i++)
           {
-            gsx_sclip(&r[i].g_x);
+            gsx_sclip(&r[i]);
             ob_draw(tree, ((i) ? FSVSLID : FILEBOX), MAX_DEPTH);
           }
         }
@@ -452,10 +456,7 @@ fs_newdir(ftitle, fpath, pspec, tree, pcount, pos)
 *       or change of path, and returns to the application with
 *       the selected path, filename, and exit button.
 */
-        WORD
-fs_input(pipath, pisel, pbutton)
-        LONG            pipath, pisel;
-        WORD            *pbutton;
+WORD fs_input(LONG pipath, LONG pisel, WORD *pbutton)
 {
         REG WORD        touchob, value, fnum;
         WORD            curr, count, sel;
@@ -470,6 +471,7 @@ fs_input(pipath, pisel, pbutton)
 
         LONG            dummy; /*!!!*/
 
+        curr = 0;
                                         /* get out quick if path is     */
                                         /*   nullptr or if pts to null. */
         if (pipath == 0x0L)

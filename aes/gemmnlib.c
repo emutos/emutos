@@ -278,14 +278,14 @@ rect_change(tree, prmob, iob, x)
 *       is set.
 */
 
-        UWORD
-do_chg(tree, iitem, chgvalue, dochg, dodraw, chkdisabled)
-        REG LONG        tree;                   /* tree that holds item */
-        WORD            iitem;                  /* item to affect       */
-        REG UWORD       chgvalue;               /* bit value to change  */
-        WORD            dochg;                  /* set or reset value   */
-        WORD            dodraw;                 /* draw resulting change*/
-        WORD            chkdisabled;            /* only if item enabled */
+UWORD do_chg(LONG tree, WORD iitem, UWORD chgvalue,
+             WORD dochg, WORD dodraw, WORD chkdisabled)
+/* tree:         tree that holds item */
+/* iitem:        item to affect       */
+/* chgvalue:     bit value to change  */
+/* dochg:        set or reset value   */
+/* dodraw:       draw resulting change*/
+/* chkdisabled:  only if item enabled */
 {
         REG UWORD       curr_state;
 
@@ -380,9 +380,8 @@ menu_down(ititle)
 }
 
 
-        WORD
-mn_do(ptitle, pitem)
-        WORD            *ptitle, *pitem;
+
+WORD mn_do(WORD *ptitle, WORD *pitem)
 {
         REG LONG        tree;
         LONG            buparm, cur_tree, last_tree;
@@ -600,8 +599,7 @@ mn_bar(tree, showit, pid)
 *       Routine to tell all desk accessories that the currently running
 *       application is about to terminate.
 */
-        VOID
-mn_clsda()
+void mn_clsda()
 {
         REG WORD        i;
 

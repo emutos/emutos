@@ -28,11 +28,8 @@
 
 
 
-        VOID
-doq(donq, p, m)
-        WORD            donq;
-        REG PD          *p;
-        QPB             *m;
+
+void doq(WORD donq, PD *p, QPB *m)
 {
         REG WORD        n, index;
         REG WORD        *om, *nm;
@@ -94,11 +91,8 @@ doq(donq, p, m)
 }
 
 
-        VOID
-aqueue(isqwrite, e, lm)
-        WORD            isqwrite;
-        REG EVB         *e;
-        LONG            lm;
+
+void aqueue(WORD isqwrite, EVB *e, LONG lm)
 {
         REG PD          *p;
         REG QPB         *m;

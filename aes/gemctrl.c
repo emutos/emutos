@@ -35,6 +35,10 @@
 #include "geminit.h"
 #include "gemgsxif.h"
 #include "rectfunc.h"
+#include "gemgrlib.h"
+#include "gemoblib.h"
+#include "optimopt.h"
+
 
 
 #define FIXLATER        0
@@ -405,7 +409,7 @@ void ctlmgr()
                                                 /* set defaults for     */
                                                 /*  multi wait          */
         gl_ctwait.m_out = FALSE;
-        rc_copy(&gl_rmenu, &gl_ctwait.m_x);
+        rc_copy(&gl_rmenu, (GRECT *)&gl_ctwait.m_x);
         while(TRUE)
         {
                                                 /* fix up ctrl rect     */

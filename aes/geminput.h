@@ -26,6 +26,8 @@ void set_ctrl(GRECT *pt);
 void get_ctrl(GRECT *pt);
 void get_mown(PD **pmown);
 void set_mown(PD *mp);
+UWORD dq(CQUEUE *qptr);
+void fq();
 void evremove(EVB *e, UWORD ret);
 
 void kchange(UWORD ch, WORD kstat);

@@ -21,11 +21,15 @@ extern LONG     gl_awind;
 
 void w_nilit(WORD num, OBJECT olist[]);
 void w_getsize(WORD which, WORD w_handle, GRECT *pt);
+void w_drawdesk(GRECT *pc);
+void w_setactive(void);
+WORD w_bldactive(WORD w_handle);
 
 void ap_sendmsg(WORD ap_msg[], WORD type, PD *towhom,
                 WORD w3, WORD w4, WORD w5, WORD w6, WORD w7);
+void w_update(WORD bottom, GRECT *pt, WORD top, WORD moved, WORD usetrue);
 
-void wm_start();
+void wm_start(void);
 
 WORD wm_find(WORD x, WORD y);
 void wm_update(WORD beg_update);

@@ -133,12 +133,6 @@ GLOBAL LONG     ad_scdir;
 GLOBAL BYTE     gl_logdrv;
 
 
-/* Prototypes: */
-void sh_rdinf();
-void sh_desk(WORD obj, LONG plong);
-void all_run();
-
-
 
 
 
@@ -264,6 +258,7 @@ void ini_dlongs()
 
 }
 
+
 #if I8086
         WORD
 sizeglo()
@@ -279,19 +274,17 @@ size_theglo()
 }
 #endif
 
+
 /*
 *       called from startup code to get the stack for process 0
 */
-        WORD
-sizeuda()
+WORD sizeuda()
 {
         return( sizeof(UDA) - sizeof(WORD) );
 }
 
-        VOID
-ev_init(evblist, cnt)
-        EVB             evblist[];
-        WORD            cnt;
+
+void ev_init(EVB evblist[], WORD cnt)
 {
         WORD            i;
 
@@ -302,14 +295,12 @@ ev_init(evblist, cnt)
         }
 }
 
+
 /*
 *       Create a local process for the routine and start him executing.
 *       Also do all the initialization that is required.
 */
-        PD
-*iprocess(pname, routine)
-        BYTE            *pname;
-        WORD            (*routine)();
+PD *iprocess(BYTE *pname, WORD (*routine)())
 {
         REG ULONG       ldaddr;
 
@@ -329,8 +320,7 @@ ev_init(evblist, cnt)
 /*
 *       Start up the file selector by initializing the fs_tree
 */
-        VOID
-fs_start()
+void fs_start()
 {
         LONG            tree;
 
@@ -349,10 +339,8 @@ fs_start()
 *       decremented by the size of the accessory image.  If the
 *       accessory is too big to fit it will be not be loaded.
 */
-        VOID
-sndcli(pfilespec, paccroom)
-        REG BYTE        *pfilespec;
-        WORD            *paccroom;                      /* in paragraphs*/
+
+void sndcli(BYTE *pfilespec, WORD *paccroom)     /* paccroom in paragraphs*/
 {
         REG WORD        handle;
         WORD            err_ret;
@@ -373,6 +361,8 @@ sndcli(pfilespec, paccroom)
         }
 }
 
+
+
 /*
 *       Routine to load in desk accessory's.  Files by the name of *.ACC
 *       will be loaded, if there is sufficient room for them in the system.
@@ -388,8 +378,7 @@ sndcli(pfilespec, paccroom)
 *       FOR GEM2.0 max is 192kb
 *       0x33800
 */
-        VOID
-ldaccs()
+void ldaccs()
 {
         REG WORD        i;
         WORD            ret;
@@ -410,8 +399,9 @@ ldaccs()
 }
 #endif
 
-        VOID
-sh_addpath()
+
+
+void sh_addpath()
 {
         LONG            lp, np, new_envr;
         WORD            oelen, oplen, nplen, fstlen;
@@ -459,8 +449,20 @@ sh_addpath()
         ad_envrn = new_envr;                    /* remember new environ.*/
 }
 
-        VOID
-sh_init()
+
+
+
+void sh_desk(WORD obj, LONG plong)
+{
+        REG LONG        tree;
+
+        tree = ad_stdesk;
+        LLSET(plong, LLGET(OB_SPEC(obj)));
+}
+
+
+
+void sh_init()
 {
         WORD            cnt, need_ext;
         BYTE            *psrc, *pdst, *pend;
@@ -608,6 +610,115 @@ sh_init()
 #endif
 }
 
+
+
+/*
+*       Routine to read the desktop.inf file from the \gemdesk
+*       directory and set the bvdisk and bvhard variables
+*       so that apps and accessories can always use this data.
+*/
+void sh_rdinf()
+{
+        WORD    fh, size, ishdisk;
+        LONG    pcurr;
+        WORD    bvdisk, bvhard, bvect, env;
+        LONG    pfile;
+        BYTE    tmp;
+        WORD    i;
+
+#if MULTIAPP
+        BYTE            *pstr;
+#endif
+
+        rs_gaddr(ad_sysglo, R_STRING, STINFPAT, &pfile);
+        LBSET(pfile, D.s_cdir[0] );             /* set the drive        */
+
+        fh = dos_open(pfile, ROPEN);
+        if ( (!fh) || DOS_ERR)
+          return;
+                                                /* NOTE BENE all disk info */
+                                                /*  MUST be within INF_SIZE*/
+                                                /*  bytes from beg of file */
+        size = dos_read(fh, INF_SIZE, ad_ssave);
+        dos_close(fh);
+        if (DOS_ERR)
+          return;
+        pcurr = ad_ssave;
+        bvdisk = bvhard = 0x0;
+#if MULTIAPP
+        gl_numaccs = 0x0;
+#endif
+        LBSET(pcurr + (ULONG)size, NULL);       /* set end to NULL      */
+        while ( LBGET(pcurr) != NULL)
+        {
+          if ( LBGET(pcurr++) != '#' )
+            continue;
+          else if ( (tmp = LBGET(pcurr)) == 'M')
+          {
+                                        /* #M000001FF B FLOPPY DISK@ @  */
+            pcurr += 5;                 /* convert the icon number      */
+            scan_2(pcurr, &ishdisk);
+            pcurr += 5;                 /* get the disk letter          */
+            bvect = ((UWORD) 0x8000) >> ((UWORD) ( LBGET(pcurr) - 'A'));
+            bvdisk |= bvect;
+            if (ishdisk == IG_HARD)
+              bvhard |= bvect;
+          }
+          else if ( tmp == 'E')         /* #E3A11                       */
+          {                             /* desktop environment          */
+            pcurr++;
+            scan_2(pcurr, &env);
+            ev_dclick(env & 0x07, TRUE);
+            pcurr += 2;
+            scan_2(pcurr, &env);
+            gl_mnclick = ((env & 0x08) != 0);
+            sound(FALSE, !(env & 0x01), 0);
+          }
+#if MULTIAPP
+          else if ( tmp == 'A')         /* test for accessories */
+          {
+                                        /* #A59 CALCLOCK.ACC@   */
+            pcurr++;
+            scan_2(pcurr, &(gl_caccs[gl_numaccs].acc_swap));
+            pcurr += 3;
+            pstr = &gl_caccs[gl_numaccs].acc_name[0];
+            while( (tmp = LBGET(pcurr++)) != '@')
+              *pstr++ = tmp;
+            *pstr = NULL;
+            gl_numaccs++;
+          }
+#endif    
+        }
+        gl_bvdisk = bvdisk;
+        gl_bvhard = bvhard;
+                                        /* clean up tmp buffer          */
+        pcurr = ad_ssave;
+        for(i = 0; i < (INF_SIZE / 2); i++)
+        {
+          LWSET(pcurr, 0x0);
+          pcurr += 2;
+        }
+}
+
+
+
+
+/*
+*       Give everyone a chance to run, at least once
+*/
+       
+void all_run()
+{
+        WORD            i;
+
+                                                /* let all the acc's run*/
+          for(i=0; i<NUM_ACCS; i++)
+                  dsptch();
+                                                /* then get in the wait */
+                                                /*   line               */
+          wm_update(TRUE);
+          wm_update(FALSE);
+}
 
 
 
@@ -815,39 +926,12 @@ cprintf("gem_main: succeeded in loading GEM.RSC...\n");
         sti();
 }
 
-/*
-*       Give everyone a chance to run, at least once
-*/
-       
-void all_run()
-{
-        WORD            i;
-
-                                                /* let all the acc's run*/
-          for(i=0; i<NUM_ACCS; i++)
-                  dsptch();
-                                                /* then get in the wait */
-                                                /*   line               */
-          wm_update(TRUE);
-          wm_update(FALSE);
-}
-
-
-void sh_desk(WORD obj, LONG plong)
-{
-        REG LONG        tree;
-
-        tree = ad_stdesk;
-        LLSET(plong, LLGET(OB_SPEC(obj)));
-}
 
 
 /*
 *       Convert a single hex ASCII digit to a number
 */
-        WORD
-hex_dig(achar)
-        BYTE            achar;
+WORD hex_dig(BYTE achar)
 {
         if ( (achar >= '0') && (achar <= '9') )
           return(achar - '0');  
@@ -861,14 +945,12 @@ hex_dig(achar)
         }
 }
 
+
 /*
 *       Scan off and convert the next two hex digits and return with
 *       pcurr pointing one space past the end of the four hex digits
 */
-        VOID
-scan_2(pcurr, pwd)
-        LONG            pcurr;
-        UWORD           *pwd;
+void scan_2(LONG pcurr, UWORD *pwd)
 {
         UWORD           temp;
         
@@ -876,93 +958,5 @@ scan_2(pcurr, pwd)
         temp |= hex_dig( LBGET(pcurr++)) << 4;
         temp |= hex_dig( LBGET(pcurr) );
         *pwd = temp;
-}
-
-/*
-*       Routine to read the desktop.inf file from the \gemdesk
-*       directory and set the bvdisk and bvhard variables
-*       so that apps and accessories can always use this data.
-*/
-void sh_rdinf()
-{
-        WORD    fh, size, ishdisk;
-        LONG    pcurr;
-        WORD    bvdisk, bvhard, bvect, env;
-        LONG    pfile;
-        BYTE    tmp;
-        WORD    i;
-
-#if MULTIAPP
-        BYTE            *pstr;
-#endif
-
-        rs_gaddr(ad_sysglo, R_STRING, STINFPAT, &pfile);
-        LBSET(pfile, D.s_cdir[0] );             /* set the drive        */
-
-        fh = dos_open(pfile, ROPEN);
-        if ( (!fh) || DOS_ERR)
-          return;
-                                                /* NOTE BENE all disk info */
-                                                /*  MUST be within INF_SIZE*/
-                                                /*  bytes from beg of file */
-        size = dos_read(fh, INF_SIZE, ad_ssave);
-        dos_close(fh);
-        if (DOS_ERR)
-          return;
-        pcurr = ad_ssave;
-        bvdisk = bvhard = 0x0;
-#if MULTIAPP
-        gl_numaccs = 0x0;
-#endif
-        LBSET(pcurr + (ULONG)size, NULL);       /* set end to NULL      */
-        while ( LBGET(pcurr) != NULL)
-        {
-          if ( LBGET(pcurr++) != '#' )
-            continue;
-          else if ( (tmp = LBGET(pcurr)) == 'M')
-          {
-                                        /* #M000001FF B FLOPPY DISK@ @  */
-            pcurr += 5;                 /* convert the icon number      */
-            scan_2(pcurr, &ishdisk);
-            pcurr += 5;                 /* get the disk letter          */
-            bvect = ((UWORD) 0x8000) >> ((UWORD) ( LBGET(pcurr) - 'A'));
-            bvdisk |= bvect;
-            if (ishdisk == IG_HARD)
-              bvhard |= bvect;
-          }
-          else if ( tmp == 'E')         /* #E3A11                       */
-          {                             /* desktop environment          */
-            pcurr++;
-            scan_2(pcurr, &env);
-            ev_dclick(env & 0x07, TRUE);
-            pcurr += 2;
-            scan_2(pcurr, &env);
-            gl_mnclick = ((env & 0x08) != 0);
-            sound(FALSE, !(env & 0x01), 0);
-          }
-#if MULTIAPP
-          else if ( tmp == 'A')         /* test for accessories */
-          {
-                                        /* #A59 CALCLOCK.ACC@   */
-            pcurr++;
-            scan_2(pcurr, &(gl_caccs[gl_numaccs].acc_swap));
-            pcurr += 3;
-            pstr = &gl_caccs[gl_numaccs].acc_name[0];
-            while( (tmp = LBGET(pcurr++)) != '@')
-              *pstr++ = tmp;
-            *pstr = NULL;
-            gl_numaccs++;
-          }
-#endif    
-        }
-        gl_bvdisk = bvdisk;
-        gl_bvhard = bvhard;
-                                        /* clean up tmp buffer          */
-        pcurr = ad_ssave;
-        for(i = 0; i < (INF_SIZE / 2); i++)
-        {
-          LWSET(pcurr, 0x0);
-          pcurr += 2;
-        }
 }
 

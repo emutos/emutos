@@ -33,6 +33,13 @@
 #include "geminit.h"
 #include "gemgraf.h"
 #include "gemglobe.h"
+#include "gemfmlib.h"
+#include "gemevlib.h"
+#include "gemwmlib.h"
+#include "gemgsxif.h"
+#include "optimopt.h"
+#include "rectfunc.h"
+#include "gemwmlib.h"
 
 
 #define DESKWH  0x0
@@ -48,8 +55,6 @@ EXTERN LONG     ad_sysmenu;
 #if SINGLAPP
 #define NUM_MWIN NUM_WIN
 #endif
-
-WORD            w_bldactive();
 
 
 
@@ -295,9 +300,7 @@ do_walk(wh, tree, obj, depth, pc)
 *       set of windows.
 */
 
-        VOID
-w_drawdesk(pc)
-        REG GRECT       *pc;
+void w_drawdesk(GRECT *pc)
 {
         REG LONG        tree;
         REG WORD        depth;
@@ -509,14 +512,14 @@ w_bldbar(kind, istop, w_bar, sl_value, sl_size, x, y, w, h)
         }
 }
 
-        WORD
-w_top()
+
+WORD w_top()
 {
         return( (gl_wtop != NIL) ? gl_wtop : DESKWH );
 }
 
-        VOID
-w_setactive()
+
+void w_setactive()
 {
         GRECT           d;
         REG WORD        wh;
@@ -531,9 +534,8 @@ w_setactive()
           ct_chgown(ppd, &d);
 }
 
-        WORD
-w_bldactive(w_handle)
-        REG WORD        w_handle;
+
+WORD w_bldactive(WORD w_handle)
 {
         WORD            istop, issub;
         REG WORD        kind;
@@ -834,13 +836,7 @@ w_move(w_handle, pstop, prc)
 *       borders.
 */
 
-        VOID
-w_update(bottom, pt, top, moved, usetrue)
-        REG WORD        bottom;
-        REG GRECT       *pt;
-        REG WORD        top;
-        WORD            moved;
-        WORD            usetrue;
+void w_update(WORD bottom, GRECT *pt, WORD top, WORD moved, WORD usetrue)
 {
         REG WORD        i, ni;
         REG WORD        done;
@@ -1581,7 +1577,7 @@ wm_get(w_handle, w_field, poutwds)
                 break;
         }
         if (which != -1)
-          w_getsize(which, w_handle, &poutwds[0]);
+          w_getsize(which, w_handle, (GRECT *)&poutwds[0]);
 }
 
         WORD

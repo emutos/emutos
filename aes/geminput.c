@@ -288,7 +288,7 @@ VOID nq(UWORD ch, REG CQUEUE *qptr)
 /*
 *       DeQueue a a character from a circular keyboard buffer.
 */
-UWORD dq(REG CQUEUE *qptr)
+UWORD dq(CQUEUE *qptr)
 {
         REG WORD        q2;
 
@@ -303,7 +303,7 @@ UWORD dq(REG CQUEUE *qptr)
 /*
 *       Flush the characters from a circular keyboard buffer.
 */
-VOID fq()
+void fq()
 {
         while (rlr->p_cda->c_q.c_cnt)
           dq(&rlr->p_cda->c_q);

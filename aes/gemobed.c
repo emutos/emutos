@@ -63,10 +63,8 @@ ob_getsp(tree, obj, pted)
         LBCOPY(ADDR(pted), spec, sizeof(TEDINFO));
 }
 
-        VOID
-ob_center(tree, pt)
-        LONG            tree;
-        GRECT           *pt;
+
+void ob_center(LONG tree, GRECT *pt)
 {
         REG WORD        xd, yd, wd, hd;
         REG LONG        plong;

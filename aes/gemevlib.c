@@ -27,6 +27,7 @@
 #include "gemdisp.h"
 #include "geminput.h"
 #include "gemaplib.h"
+#include "geminit.h"
 
 
 
@@ -138,8 +139,6 @@ WORD ev_multi(WORD flags, MOBLK *pmo1, MOBLK *pmo2, LONG tmcount,
         SHELL           *psh;
         LONG            ljunk;
 
-        which = 0;
-
         pid = rlr->p_pid;
         psh = &sh[pid];
         if ( psh->sh_state & SHRINK )           /* shrink accessory     */
@@ -152,6 +151,7 @@ WORD ev_multi(WORD flags, MOBLK *pmo1, MOBLK *pmo2, LONG tmcount,
                                                 /* say nothing has      */
                                                 /*   happened yet       */
         what = 0x0;
+        which = 0;
                                                 /* do a pre-check for a */
                                                 /*   keystroke & then   */
                                                 /*   clear out the forkq*/

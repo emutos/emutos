@@ -30,15 +30,14 @@
 #include "gemaplib.h"
 #include "gemglobe.h"
 #include "gemflag.h"
+#include "gemdisp.h"
+#include "gemasm.h"
+#include "optimize.h"
+#include "gemdosif.h"
+
 
 #define KEYSTOP 0x00002b1cL                     /* control backslash    */
 
-                                                /* in GEMASM.S          */
-EXTERN          savestat();
-EXTERN          switchto();
-
-EXTERN          sti();                          /* in DOSIF.A86         */
-EXTERN          cli();
 
 #if MULTIAPP
 EXTERN VOID             ap_accexit();
@@ -132,7 +131,7 @@ void forker()
           if (gl_recd)
           {
                                                   /* check for stop key */
-            if ( (g.f_code == kchange) &&
+            if ( ((void *)g.f_code == (void *)kchange) &&
                  ((g.f_data & 0x0000ffffL) == KEYSTOP) )
               gl_recd = FALSE;
                                                 /* if still recording   */
@@ -145,7 +144,7 @@ void forker()
                                                 /*   then coalesce them */ 
                                                 /*   else record the    */
                                                 /*   event              */
-              if ( (g.f_code == tchange) &&
+              if ( ((void *)g.f_code == (void *)tchange) &&
                    (LLGET(gl_rbuf - sizeof(FPD)) == (LONG)tchange) )
               {
                 amt = g.f_data + LLGET(gl_rbuf-sizeof(LONG));
@@ -183,7 +182,7 @@ void chkkbd()
              (kstat != kstate) )
           {
             cli();
-            forkq(kchange, achar, kstat);
+            forkq( (WORD (*)())kchange, achar, kstat);
             sti();
           }
         }

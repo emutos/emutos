@@ -2,11 +2,13 @@
 /*      merge High C vers. w. 2.2 & 3.0         8/19/87         mdf     */ 
 
 /*
-*       Copyright 1999, Caldera Thin Clients, Inc.                      
-*       This software is licenced under the GNU Public License.         
-*       Please see LICENSE.TXT for further information.                 
-*                                                                       
-*                  Historical Copyright                                 
+*       Copyright 1999, Caldera Thin Clients, Inc.
+*                 2002 The EmuTOS development team
+*
+*       This software is licenced under the GNU Public License.
+*       Please see LICENSE.TXT for further information.
+*
+*                  Historical Copyright
 *       -------------------------------------------------------------
 *       GEM Application Environment Services              Version 2.3
 *       Serial No.  XXXX-0000-654321              All Rights Reserved
@@ -27,6 +29,15 @@
 #include "geminput.h"
 #include "gemflag.h"
 #include "gemevlib.h"
+#include "gemgsxif.h"
+#include "gemwmlib.h"
+#include "gemmnlib.h"
+#include "gemdosif.h"
+#include "gemasm.h"
+#include "gemdisp.h"
+#include "gemsclib.h"
+#include "gemrslib.h"
+
 
 #define TCHNG 0
 #define BCHNG 1
@@ -146,8 +157,8 @@ VOID ap_tplay(REG LONG pbuff, WORD length, WORD scale)
                 break;
           }
                                                 /* play it              */
-          if (f.f_code)
-            forkq(f.f_code, f.f_data);
+          if (f.f_code)      /* FIXME: Hope the endianess is okay here: */
+            forkq(f.f_code, LLOWD(f.f_data), LHIWD(f.f_data));
                                                 /* let someone else     */
                                                 /*   hear it and respond*/
           dsptch();
@@ -163,8 +174,8 @@ WORD ap_trecd(REG LONG pbuff, REG WORD length)
         REG WORD        i;
         REG WORD        code;
         WORD            (*proutine)(VOID);
-        
-        
+
+        code = -1;
                                                 /* start recording in   */
                                                 /*   forker()           */
         cli();

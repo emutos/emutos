@@ -24,6 +24,11 @@
 #include "gemlib.h"
 
 #include "geminput.h"
+#include "gemflag.h"
+#include "gemqueue.h"
+#include "optimopt.h"
+#include "gemasm.h"
+
 
 
 void signal(EVB *e)
@@ -63,7 +68,7 @@ void azombie(EVB *e, UWORD ret)
         e->e_link = zlr;
         if ( zlr )
           zlr->e_pred = e;
-        e->e_pred = (BYTE *) &zlr - elinkoff;
+        e->e_pred = (EVB *)(((BYTE *) &zlr) - elinkoff);
         zlr = e;
         e->e_flag = COMPLETE;
         signal(e);
@@ -75,7 +80,7 @@ void evinsert(EVB *e, EVB **root)
         REG EVB         *p, *q;
                                                 /* insert event block   */
                                                 /*   on list            */
-        q = (BYTE *) root - elinkoff ;
+        q = (EVB *)((BYTE *) root - elinkoff) ;
         p = *root;
         e->e_pred = q;
         q->e_link = e;

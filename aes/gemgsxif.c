@@ -78,10 +78,6 @@ ULONG        gsx_gbufflen();         /* forward decl.        */
 #define GRAFMEM         0xFFFFFFFFl
 
 
-/* Prototypes: */
-void gsx_wsopen();
-void gsx_setmb(void *boff, void *moff, LONG *pdrwaddr);
-
 
 
 
@@ -112,10 +108,7 @@ void gsx_mfree()
 }
 
 
-        void
-gsx_mret(pmaddr, pmlen)
-        LONG            *pmaddr;
-        LONG            *pmlen;
+void gsx_mret(LONG *pmaddr, LONG *pmlen)
 {
         if (gl_tmp.fd_addr == GRAFMEM)
         {
@@ -130,10 +123,7 @@ gsx_mret(pmaddr, pmlen)
 }
 
 
-        void
-gsx_ncode(code, n, m)
-        WORD            code;
-        WORD            n, m;
+void gsx_ncode(WORD code, WORD n, WORD m)
 {
         contrl[0] = code;
         contrl[1] = n;
@@ -142,14 +132,46 @@ gsx_ncode(code, n, m)
         gsx2();
 }
 
-        void
-gsx_1code(code, value)
-        WORD            code;
-        WORD            value;
+
+void gsx_1code(WORD code, WORD value)
 {
         intin[0] = value;
         gsx_ncode(code, 0, 1);
 }
+
+
+
+void gsx_wsopen()
+{
+        WORD            i;
+
+        for(i=0; i<10; i++)
+          intin[i] = 1;
+        intin[10] = 2;                  /* device coordinate space */
+        g_v_opnwk( &intin[0], &gl_handle, &gl_ws );
+        gl_graphic = TRUE;
+}
+
+
+void gsx_wsclose()
+{
+        gsx_ncode(CLOSE_WORKSTATION, 0, 0);
+}
+
+
+void ratinit()
+{
+        gsx_1code(SHOW_CUR, 0);
+        gl_moff = 0;
+}
+
+
+void ratexit()
+{
+        gsx_moff();
+}
+
+
 
 
 void gsx_init()
@@ -162,13 +184,8 @@ void gsx_init()
         yrat = ptsout[1];
 }
 
-        void
-gsx_exec(pcspec, segenv, pcmdln, pfcb1, pfcb2)
-        LONG            pcspec;
-        WORD            segenv;
-        LONG            pcmdln;
-        LONG            pfcb1;
-        LONG            pfcb2;
+
+void gsx_exec(LONG pcspec, WORD segenv, LONG pcmdln, LONG pfcb1, LONG pfcb2)
 {
         EXEC_BLK        exec;
         LONG            lpstr;
@@ -224,43 +241,9 @@ void gsx_graphic(WORD tographic)
 }
 
 
-void gsx_wsopen()
-{
-        WORD            i;
 
-        for(i=0; i<10; i++)
-          intin[i] = 1;
-        intin[10] = 2;                  /* device coordinate space */
-        g_v_opnwk( &intin[0], &gl_handle, &gl_ws );
-        gl_graphic = TRUE;
-}
-
-
-void gsx_wsclose()
-{
-        gsx_ncode(CLOSE_WORKSTATION, 0, 0);
-}
-
-
-void ratinit()
-{
-        gsx_1code(SHOW_CUR, 0);
-        gl_moff = 0;
-}
-
-
-void ratexit()
-{
-        gsx_moff();
-}
-
-
-        void
-bb_set(sx, sy, sw, sh, pts1, pts2, pfd, psrc, pdst)
-        REG WORD        sx, sy, sw, sh;
-        REG WORD        *pts1, *pts2;
-        FDB             *pfd;
-        FDB             *psrc, *pdst;
+void bb_set(WORD sx, WORD sy, WORD sw, WORD sh, WORD *pts1, WORD *pts2,
+            FDB *pfd, FDB *psrc, FDB *pdst)
 {
         WORD            oldsx;
 
@@ -290,18 +273,14 @@ bb_set(sx, sy, sw, sh, pts1, pts2, pfd, psrc, pdst)
 }
 
 
-        void
-bb_save(ps)
-        GRECT           *ps;
+void bb_save(GRECT *ps)
 {       
         bb_set(ps->g_x, ps->g_y, ps->g_w, ps->g_h, &ptsin[0], &ptsin[4], 
                 &gl_src, &gl_src, &gl_tmp);
 }
 
 
-        void
-bb_restore(pr)
-        GRECT           *pr;
+void bb_restore(GRECT *pr)
 {
         bb_set(pr->g_x, pr->g_y, pr->g_w, pr->g_h, &ptsin[4], &ptsin[0], 
                 &gl_dst, &gl_tmp, &gl_dst);
@@ -333,9 +312,7 @@ WORD gsx_tick(LONG tcode, LONG *ptsave)
 }
 
 
-        void
-gsx_mfset(pmfnew)
-        LONG            pmfnew;
+void gsx_mfset(LONG pmfnew)
 {
         gsx_moff();
         if (!gl_ctmown)
@@ -346,19 +323,19 @@ gsx_mfset(pmfnew)
 }
 
 
-        void
-gsx_mxmy(pmx, pmy)
-        WORD            *pmx, *pmy;
+void gsx_mxmy(WORD *pmx, WORD *pmy)
 {
         *pmx = xrat;
         *pmy = yrat;
 }
 
 
+/*
 WORD gsx_button()
 {
         return( button );
 }
+*/
 
 
 WORD gsx_kstate()
@@ -479,10 +456,7 @@ void g_v_pline(WORD  count, WORD *pxyarray )
 }
 
 
-        void
-vst_clip( clip_flag, pxyarray )
-        REG WORD        clip_flag;
-        WORD            *pxyarray;
+void vst_clip(WORD clip_flag, WORD *pxyarray )
 {
         WORD            value;
 
@@ -494,13 +468,8 @@ vst_clip( clip_flag, pxyarray )
 }
 
 
-        void
-vst_height( height, pchr_width, pchr_height, pcell_width, pcell_height )
-        WORD    height;
-        WORD    *pchr_width;
-        WORD    *pchr_height;
-        WORD    *pcell_width;
-        WORD    *pcell_height;
+void vst_height(WORD height, WORD *pchr_width, WORD *pchr_height,
+                WORD *pcell_width, WORD *pcell_height)
 {
         ptsin[0] = 0;
         ptsin[1] = height;
@@ -512,10 +481,7 @@ vst_height( height, pchr_width, pchr_height, pcell_width, pcell_height )
 }
 
 
-        void
-vr_recfl( pxyarray, pdesMFDB )
-        WORD    *pxyarray;
-        WORD    *pdesMFDB;
+void vr_recfl(WORD *pxyarray, WORD *pdesMFDB)
 {
         i_ptr( pdesMFDB );
         i_ptsin( pxyarray );
@@ -535,13 +501,8 @@ void vro_cpyfm(WORD wr_mode, WORD *pxyarray, FDB *psrcMFDB, FDB *pdesMFDB )
 }
 
 
-        void
-vrt_cpyfm( wr_mode, pxyarray, psrcMFDB, pdesMFDB, fgcolor, bgcolor )
-        WORD    wr_mode;
-        WORD    *pxyarray;
-        WORD    *psrcMFDB;
-        WORD    *pdesMFDB;
-        WORD    fgcolor, bgcolor;
+void vrt_cpyfm(WORD wr_mode, WORD *pxyarray, WORD *psrcMFDB, WORD *pdesMFDB,
+               WORD fgcolor, WORD bgcolor)
 {
         intin[0] = wr_mode;
         intin[1] = fgcolor;
@@ -554,10 +515,7 @@ vrt_cpyfm( wr_mode, pxyarray, psrcMFDB, pdesMFDB, fgcolor, bgcolor )
 }
 
 
-        void
-vrn_trnfm( psrcMFDB, pdesMFDB )
-        WORD    *psrcMFDB;
-        WORD    *pdesMFDB;
+void vrn_trnfm(WORD *psrcMFDB, WORD *pdesMFDB)
 {
         i_ptr( psrcMFDB );
         i_ptr2( pdesMFDB );

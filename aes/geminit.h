@@ -23,4 +23,7 @@ extern WORD     gl_mouse[37];
 extern LONG     ad_scdir;
 extern BYTE     gl_logdrv;
 
+
+void all_run(void);
+
 #endif

@@ -70,9 +70,8 @@ MLOCAL WORD     ml_pwlv[] =
                 {0x0102,0x0102,0x0102,0x0101,0x0002,0x0001};
 
 
-        VOID
-fm_own(beg_ownit)
-        WORD            beg_ownit;
+
+void fm_own(WORD beg_ownit)
 {
 
         if (beg_ownit)
@@ -161,12 +160,7 @@ fm_inifld(tree, start_fld)
 }
 
 
-        WORD
-fm_keybd(tree, obj, pchar, pnew_obj)
-        LONG            tree;
-        WORD            obj;
-        WORD            *pchar;
-        WORD            *pnew_obj;
+WORD fm_keybd(LONG tree, WORD obj, WORD *pchar, WORD *pnew_obj)
 {
         WORD            direction;
                                                 /* handle character     */
@@ -205,12 +199,7 @@ fm_keybd(tree, obj, pchar, pnew_obj)
 
 
 
-        WORD
-fm_button(tree, new_obj, clks, pnew_obj)
-        REG LONG        tree;
-        REG WORD        new_obj;
-        WORD            clks;
-        WORD            *pnew_obj;
+WORD fm_button(LONG tree, WORD new_obj, WORD clks, WORD *pnew_obj)
 {
         REG WORD        tobj;
         WORD            orword;
@@ -296,10 +285,7 @@ fm_button(tree, new_obj, clks, pnew_obj)
 *       form.  The cursor is placed at the starting field.  This routine
 *       returns the object that caused the exit to occur
 */
-        WORD
-fm_do(tree, start_fld)
-        REG LONG        tree;
-        WORD            start_fld;
+WORD fm_do(LONG tree, WORD start_fld)
 {
         REG WORD        edit_obj;
         WORD            next_obj;
@@ -378,10 +364,7 @@ fm_do(tree, start_fld)
 *       Form DIALogue routine to handle visual effects of drawing and
 *       undrawing a dialogue
 */
-        WORD 
-fm_dial(fmd_type, pt)
-        REG WORD        fmd_type;
-        REG GRECT       *pt;
+WORD fm_dial(WORD fmd_type, GRECT *pt)
 {
                                                 /* adjust tree position */
         gsx_sclip(&gl_rscreen);
@@ -404,11 +387,8 @@ fm_dial(fmd_type, pt)
         return(TRUE);
 }
 
-        WORD
-fm_show(string, pwd, level)
-        WORD            string;
-        UWORD           *pwd;
-        WORD            level;
+
+WORD fm_show(WORD string, UWORD *pwd, WORD level)
 {
         BYTE            *alert;
         LONG            ad_alert;
@@ -425,10 +405,7 @@ fm_show(string, pwd, level)
 
                                 /* TRO 9/20/84  - entered from dosif    */
                                 /* when a DOS error occurs              */
-        WORD
-eralert(n, d)   
-        WORD            n;              /* n = alert #, 0-5     */      
-        WORD            d;              /* d = drive code       */
+WORD eralert(WORD n, WORD d)    /* n = alert #, 0-5  ;  d = drive code  */
 {
         WORD            ret, level;
         WORD            *drive_let;
@@ -442,16 +419,14 @@ eralert(n, d)
         pwd = (ml_pwlv[n] & 0xFF00) ? &drive_let : 0;
 
         ct_mouse(TRUE);
-        ret = fm_show(ml_alrt[n], pwd, level);
+        ret = fm_show(ml_alrt[n], (UWORD *)pwd, level);
         ct_mouse(FALSE);
 
         return (ret != 1);
 }
 
 
-        WORD
-fm_error(n)
-        WORD             n;             /* n = dos error number */
+WORD fm_error(WORD n)             /* n = dos error number */
 {
         WORD            ret, string;
 

@@ -26,13 +26,12 @@
 #include "gemasync.h"
 #include "geminput.h"
 #include "gemdosif.h"
+#include "gemasm.h"
 
 
-EXTERN      dsptch();                       /* in ASM.A86           */
 
 
-
-VOID tchange(REG LONG c)                        /* c=number of ticks that have gone by  */
+void tchange(LONG c)            /* c=number of ticks that have gone by  */
 {
         REG EVB         *d;
         REG LONG        c1;
@@ -72,7 +71,7 @@ VOID tchange(REG LONG c)                        /* c=number of ticks that have g
 }
 
 
-WORD tak_flag(REG SPB *sy)
+WORD tak_flag(SPB *sy)
 {
                                                 /* count up             */
         sy->sy_tas++;
@@ -91,7 +90,7 @@ WORD tak_flag(REG SPB *sy)
 }
 
 
-VOID amutex(REG EVB *e, LONG ls)
+void amutex(EVB *e, LONG ls)
 {
         REG SPB         *sy;
                                                 /* sy - points to sync  */
@@ -106,7 +105,7 @@ VOID amutex(REG EVB *e, LONG ls)
 }
 
 
-VOID unsync(REG SPB *sy)
+void unsync(SPB *sy)
 {
         REG EVB         *p;
                                                 /* internal unsync must */

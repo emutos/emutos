@@ -32,11 +32,6 @@
                                                 /* in GSXBIND.C         */
 #define vsf_color( x )          gsx_1code(S_FILL_COLOR, x)
 
-/* ------------- added for metaware compiler --------- */
-GLOBAL VOID     ob_actxywh();
-GLOBAL VOID     ob_relxywh();
-GLOBAL VOID     ob_offset();
-/* ------------------------------------------- */
 
 GLOBAL LONG     ad_tmpstr;
 GLOBAL LONG     ad_rawstr;
@@ -54,10 +49,7 @@ GLOBAL ICONBLK  ib;
 *       Routine to take an unformatted raw string and based on a
 *       template string build a formatted string.
 */
-        VOID
-ob_format(just, raw_str, tmpl_str, fmt_str)
-        WORD            just;
-        BYTE            *raw_str, *tmpl_str, *fmt_str;
+void ob_format(WORD just, BYTE *raw_str, BYTE *tmpl_str, BYTE *fmt_str)
 {
         REG BYTE        *pfbeg, *ptbeg, *prbeg;
         BYTE            *pfend, *ptend, *prend;
@@ -112,14 +104,7 @@ ob_format(just, raw_str, tmpl_str, fmt_str)
 *       routine.
 */
 
-        WORD
-ob_user(tree, obj, pt, spec, curr_state, new_state)
-        LONG            tree;
-        WORD            obj;
-        GRECT           *pt;
-        LONG            spec;
-        WORD            curr_state;
-        WORD            new_state;
+WORD ob_user(LONG tree, WORD obj, GRECT *pt, LONG spec, WORD curr_state, WORD new_state)
 {
         PARMBLK         pb;
 
@@ -349,10 +334,7 @@ just_draw(tree, obj, sx, sy)
 /*
 *       Object draw routine that walks tree and draws appropriate objects.
 */
-        VOID
-ob_draw(tree, obj, depth)
-        REG LONG        tree;
-        WORD            obj, depth;
+void ob_draw(LONG tree, WORD obj, WORD depth)
 {
         WORD            last, pobj;
         WORD            sx, sy;
@@ -415,12 +397,7 @@ get_prev(tree, parent, obj)
 /************************************************************************/
 /* o b _ f i n d                                                        */
 /************************************************************************/
-        WORD
-ob_find(tree, currobj, depth, mx, my)
-        REG LONG        tree;
-        REG WORD        currobj;
-        REG WORD        depth;
-        WORD            mx, my;
+WORD ob_find(LONG tree, WORD currobj, WORD depth, WORD mx, WORD my)
 {
         WORD            lastfound;
         WORD            dosibs, done, junk;
@@ -492,10 +469,7 @@ ob_find(tree, currobj, depth, mx, my)
 *       is added at the end of the parent's current sibling list.
 *       It is also initialized.
 */
-        VOID
-ob_add(tree, parent, child)
-        REG LONG        tree;
-        REG WORD        parent, child;
+void ob_add(LONG tree, WORD parent, WORD child)
 {
         REG WORD        lastkid;
         REG LONG        ptail;
@@ -520,13 +494,11 @@ ob_add(tree, parent, child)
         }
 } /* ob_add */
 
+
 /*
 *       Routine to delete an object from the tree.
 */
-        VOID
-ob_delete(tree, obj)
-        REG LONG        tree;
-        REG WORD        obj;
+void ob_delete(LONG tree, WORD obj)
 {
         REG WORD        parent;
         WORD            prev, nextsib;
@@ -575,11 +547,7 @@ ob_delete(tree, obj)
 *       siblings in the tree.  0 is the head of the list and NIL
 *       is the tail of the list.
 */
-        VOID
-ob_order(tree, mov_obj, new_pos)
-        REG LONG        tree;
-        REG WORD        mov_obj;
-        WORD            new_pos;
+void ob_order(LONG tree, WORD mov_obj, WORD new_pos)
 {
         REG WORD        parent;
         WORD            chg_obj, ii, junk;
@@ -630,12 +598,7 @@ ob_order(tree, mov_obj, new_pos)
 *       Routine to change the state of an object and redraw that
 *       object using the current clip rectangle.
 */
-        VOID
-ob_change(tree, obj, new_state, redraw)
-        REG LONG        tree;
-        REG WORD        obj;
-        UWORD           new_state;
-        WORD            redraw;
+void ob_change(LONG tree, WORD obj, UWORD new_state, WORD redraw)
 {
         WORD            flags, obtype, th;
         GRECT           t;
@@ -684,11 +647,7 @@ ob_change(tree, obj, new_state, redraw)
 } /* ob_change */
 
 
-        UWORD
-ob_fs(tree, ob, pflag)
-        LONG            tree;
-        WORD            ob;
-        WORD            *pflag;
+UWORD ob_fs(LONG tree, WORD ob, WORD *pflag)
 {
         *pflag = LWGET(OB_FLAGS(ob));
         return( LWGET(OB_STATE(ob)) );
@@ -698,11 +657,7 @@ ob_fs(tree, ob, pflag)
 /************************************************************************/
 /* o b _ a c t x y w h                                                  */
 /************************************************************************/
-        VOID
-ob_actxywh(tree, obj, pt)
-        REG LONG        tree;
-        REG WORD        obj;
-        REG GRECT       *pt;
+void ob_actxywh(LONG tree, WORD obj, GRECT *pt)
 {
         LONG            pw;
 
@@ -715,21 +670,13 @@ ob_actxywh(tree, obj, pt)
 /************************************************************************/
 /* o b _ r e l x y w h                                                  */
 /************************************************************************/
-        VOID
-ob_relxywh(tree, obj, pt)
-        LONG            tree;
-        WORD            obj;
-        GRECT           *pt;
+void ob_relxywh(LONG tree, WORD obj, GRECT *pt)
 {
         LWCOPY(ADDR(pt), OB_X(obj), sizeof(GRECT)/2);
 } /* ob_relxywh */
 
 
-        VOID
-ob_setxywh(tree, obj, pt)
-        LONG            tree;
-        WORD            obj;
-        GRECT           *pt;
+void ob_setxywh(LONG tree, WORD obj, GRECT *pt)
 {
         LWCOPY(OB_X(obj), ADDR(pt), sizeof(GRECT)/2);
 }
@@ -740,11 +687,7 @@ ob_setxywh(tree, obj, pt)
 *       to the physical screen.  This involves accumulating the offsets
 *       of all the objects parents up to and including the root.
 */
-        VOID
-ob_offset(tree, obj, pxoff, pyoff)
-        REG LONG        tree;
-        REG WORD        obj;
-        REG WORD        *pxoff, *pyoff;
+void ob_offset(LONG tree, WORD obj, WORD *pxoff, WORD *pyoff)
 {
         WORD            junk;
         LONG            px;

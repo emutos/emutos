@@ -27,7 +27,15 @@
 
 #include "gemgsxif.h"
 #include "gemoblib.h"
+#include "gemobed.h"
 #include "geminit.h"
+#include "gemrslib.h"
+#include "gemgraf.h"
+#include "gemfmlib.h"
+#include "gemwmlib.h"
+#include "optimopt.h"
+#include "rectfunc.h"
+
 
 #define MSG_OFF 2
 #define BUT_OFF 7
@@ -36,7 +44,7 @@
 #define MAX_MSGLEN 40
 #define INTER_WSPACE 1
 #define INTER_HSPACE 0
-                                                /* in GSXIF.C           */
+
 
 
 GLOBAL BYTE     gl_nils[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
@@ -194,9 +202,7 @@ fm_build(tree, haveicon, nummsg, mlenmsg, numbut, mlenbut)
 }
 
 
-fm_alert(defbut, palstr)
-        WORD            defbut;
-        LONG            palstr;
+WORD fm_alert(WORD defbut, LONG palstr)
 {
         REG WORD        i;
         WORD            inm, nummsg, mlenmsg, numbut, mlenbut;

@@ -36,9 +36,7 @@
 *       Return TRUE as long as the mouse is down.  Block until the
 *       mouse moves into or out of the specified rectangle.
 */
-        WORD
-gr_stilldn(out, x, y, w, h)
-        WORD            out, x, y, w, h;
+WORD gr_stilldn(WORD out, WORD x, WORD y, WORD w, WORD h)
 {
         WORD            rets[6];
                                         /* compiler had better  */
@@ -54,29 +52,23 @@ gr_stilldn(out, x, y, w, h)
         return(TRUE);
 } /* gr_stilldn */
 
-        VOID
-gr_setup(color)
-        WORD            color;
+
+void gr_setup(WORD color)
 {
         gsx_sclip(&gl_rscreen);
         gsx_attr(FALSE, MD_XOR, color);
 }
 
-        VOID
-gr_clamp(xorigin, yorigin, wmin, hmin, pneww, pnewh)
-        WORD            xorigin, yorigin;
-        WORD            wmin, hmin;
-        WORD            *pneww, *pnewh;
+
+void gr_clamp(WORD xorigin, WORD yorigin, WORD wmin, WORD hmin,
+              WORD *pneww, WORD *pnewh)
 {
         *pneww = max(xrat - xorigin + 1, wmin);
         *pnewh = max(yrat - yorigin + 1, hmin);
 }
 
-        VOID
-gr_scale(xdist, ydist, pcnt, pxstep, pystep)
-        REG WORD        xdist, ydist;
-        WORD            *pcnt;
-        REG             *pxstep, *pystep;
+
+void gr_scale(WORD xdist, WORD ydist, WORD *pcnt, int *pxstep, int *pystep)
 {
         REG WORD        i;
         REG WORD        dist;
@@ -99,12 +91,9 @@ gr_scale(xdist, ydist, pcnt, pxstep, pystep)
 }
 
 
-        VOID
-gr_stepcalc(orgw, orgh, pt, pcx, pcy, pcnt, pxstep, pystep)
-        WORD            orgw, orgh;
-        REG GRECT       *pt;
-        REG WORD        *pcx, *pcy;
-        WORD            *pcnt, *pxstep, *pystep;
+
+void gr_stepcalc(WORD orgw, WORD orgh, GRECT *pt, WORD *pcx, WORD *pcy,
+                 WORD *pcnt, WORD *pxstep, WORD *pystep)
 {
         *pcx = (pt->g_w/2) - (orgw/2);
         *pcy = (pt->g_h/2) - (orgh/2);
@@ -116,13 +105,9 @@ gr_stepcalc(orgw, orgh, pt, pcx, pcy, pcnt, pxstep, pystep)
 }
 
 
-        VOID
-gr_xor(clipped, cnt, cx, cy, cw, ch, xstep, ystep, dowdht)
-        WORD            clipped;
-        WORD            cnt;
-        WORD            cx, cy, cw, ch;
-        REG WORD        xstep, ystep;
-        WORD            dowdht;
+
+void gr_xor(WORD clipped, WORD cnt, WORD cx, WORD cy, WORD cw, WORD ch,
+            WORD xstep, WORD ystep, WORD dowdht)
 {
         do
         {
@@ -141,11 +126,8 @@ gr_xor(clipped, cnt, cx, cy, cw, ch, xstep, ystep, dowdht)
 }
 
 
-        VOID
-gr_draw(have2box, po, poff)
-        WORD            have2box;
-        REG GRECT       *po;
-        REG GRECT       *poff;
+
+void gr_draw(WORD have2box, GRECT *po, GRECT *poff)
 {
         GRECT           t;
 
@@ -159,10 +141,7 @@ gr_draw(have2box, po, poff)
 }
 
 
-        WORD
-gr_wait(po, poff)
-        REG GRECT       *po;
-        REG GRECT       *poff;
+WORD gr_wait(GRECT *po, GRECT *poff)
 {
         REG WORD        have2box;
         REG WORD        down;
@@ -188,12 +167,8 @@ gr_wait(po, poff)
 *       another corner based on mouse movement until the button comes
 *       up.  Also draw a second box offset from the stretching box.
 */
-        VOID
-gr_rubwind(xorigin, yorigin, wmin, hmin, poff, pwend, phend)
-        WORD            xorigin, yorigin;
-        WORD            wmin, hmin;
-        GRECT           *poff;
-        WORD            *pwend, *phend;
+void gr_rubwind(WORD xorigin, WORD yorigin, WORD wmin, WORD hmin,
+                GRECT *poff, WORD *pwend, WORD *phend)
 {
         WORD            down;
         GRECT           o;
@@ -222,11 +197,8 @@ gr_rubwind(xorigin, yorigin, wmin, hmin, poff, pwend, phend)
 *       another corner based on mouse movement until the button comes
 *       up.  This is also called a rubber-band box.
 */
-        VOID
-gr_rubbox(xorigin, yorigin, wmin, hmin, pwend, phend)
-        WORD            xorigin, yorigin;
-        WORD            wmin, hmin;
-        WORD            *pwend, *phend;
+void gr_rubbox(WORD xorigin, WORD yorigin, WORD wmin, WORD hmin,
+               WORD *pwend, WORD *phend)
 {
         gr_rubwind(xorigin, yorigin, wmin, hmin, &gl_rzero, pwend, phend);
 }
@@ -242,12 +214,7 @@ gr_rubbox(xorigin, yorigin, wmin, hmin, pwend, phend)
 *       box should not be able to be dragged out of the contraining
 *       rectangle.
 */
-        VOID
-gr_dragbox(w, h, sx, sy, pc, pdx, pdy)
-        WORD            w, h;
-        REG WORD        sx, sy;
-        GRECT           *pc;
-        WORD            *pdx, *pdy;
+void gr_dragbox(WORD w, WORD h, WORD sx, WORD sy, GRECT *pc, WORD *pdx, WORD *pdy)
 {
         WORD            offx, offy, down;
         GRECT           o;
@@ -274,13 +241,8 @@ gr_dragbox(w, h, sx, sy, pc, pdx, pdy)
 } /* gr_dragbox */
 
 
-        VOID
-gr_2box(flag1, cnt, pt, xstep, ystep, flag2)
-        WORD            flag1;
-        WORD            cnt;
-        GRECT           *pt;
-        WORD            xstep, ystep;
-        WORD            flag2;
+
+void gr_2box(WORD flag1, WORD cnt, GRECT *pt, WORD xstep, WORD ystep, WORD flag2)
 {
         REG WORD        i;
 
@@ -297,11 +259,7 @@ gr_2box(flag1, cnt, pt, xstep, ystep, flag2)
 *       left corner is at src_x, src_y to a point at dst_x, dst_y
 */
 
-        VOID
-gr_movebox(w, h, srcx, srcy, dstx, dsty)
-        WORD            w, h;
-        REG WORD        srcx, srcy;
-        WORD            dstx, dsty;
+void gr_movebox(WORD w, WORD h, WORD srcx, WORD srcy, WORD dstx, WORD dsty)
 {
         REG WORD        signx, signy;
         WORD            cnt, xstep, ystep;
@@ -360,12 +318,8 @@ gr_shrinkbox(po, pt)
 }
 */
 
-        WORD
-gr_watchbox(tree, obj, instate, outstate)
-        REG LONG        tree;
-        REG WORD        obj;
-        WORD            instate;
-        WORD            outstate;
+
+WORD gr_watchbox(LONG tree, WORD obj, WORD instate, WORD outstate)
 {
         REG WORD        out;
         REG WORD        state;
@@ -386,12 +340,8 @@ gr_watchbox(tree, obj, instate, outstate)
 }
 
 
-        WORD
-gr_slidebox(tree, parent, obj, isvert)
-        REG LONG        tree;
-        WORD            parent;
-        WORD            obj;
-        WORD            isvert;
+
+WORD gr_slidebox(LONG tree, WORD parent, WORD obj, WORD isvert)
 {
         GRECT           t, c;
         WORD            divnd, divis;
