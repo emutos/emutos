@@ -784,14 +784,14 @@ static const OBJECT desk_rs_obj_rom[] = {
      5, -1, -1, G_STRING,		    /*** 4 ***/
      NONE,
      NORMAL,
-     (long) "Release 3.0",
-     19, 4, 11, 1},
+     (long) "EmuTOS Release 0.1",
+     15, 4, 11, 1},
     {
      6, -1, -1, G_STRING,		    /*** 5 ***/
      NONE,
      NORMAL,
-     (long) "   December 7, 1987   ",
-     13, 5, 23, 1},
+     (long) "April 21, 2002",
+     17, 5, 23, 1},
     {
      7, -1, -1, G_STRING,		    /*** 6 ***/
      NONE,

@@ -15,7 +15,10 @@
 #include "gsxextrn.h"
 #include "lineavars.h"
 
-extern struct font_head f8x16;
+/* fonts once set up in lineainit.c */
+extern struct font_head fon8x16;
+extern struct font_head fon8x8;
+extern struct font_head fon6x6;
 
 extern WORD SIZ_TAB_rom[];
 extern WORD DEV_TAB_rom[];
@@ -40,7 +43,6 @@ void v_opnwk()
         SIZ_TAB[i] = SIZ_TAB_rom[i];
     }
 
-
     for (i = 0; i < 45; i++) {
         DEV_TAB[i] = DEV_TAB_rom[i];
         INQ_TAB[i] = INQ_TAB_rom[i];
@@ -49,9 +51,19 @@ void v_opnwk()
     /* Copy data from linea variables */
     DEV_TAB[0] = v_hz_rez-1;
     DEV_TAB[1] = v_vt_rez-1;
+    INQ_TAB[4] = v_planes;
 
-    /* Set up the initial font: */
-    font_ring[1] = &f8x16;
+    /* Calculate colors allowed at one time */
+    if (INQ_TAB[4] < 8)
+        DEV_TAB[13] = 2<<(v_planes-1);
+    else
+        DEV_TAB[13] = 256;
+
+    /* Set up the initial font, depending on vertical resolution */
+    if (v_vt_rez < 400)
+        font_ring[1] = &fon8x8;
+    else
+        font_ring[1] = &fon8x16;
 
     cur_work = &virt_work;
     CONTRL[6] = virt_work.handle = 1;

@@ -39,8 +39,9 @@ extern WORD rmchar;             /* number of pixels left over       */
 extern WORD rmcharx, rmchary;   /* add this to use up remainder     */
 
 
-extern struct font_head f6x6;   /* See bios/fntxxx.c */
-#define firstfnt f6x6
+extern struct font_head fon6x6;   	/* See bios/fntxxx.c */
+extern struct font_head fon8x8;   	/* See bios/fntxxx.c */
+extern struct font_head fon8x16;	/* See bios/fntxxx.c */
 
 
 
@@ -305,19 +306,19 @@ void text_init()
     WORD id_save;
     REG struct font_head *fnt_ptr, **chain_ptr;
 
-    SIZ_TAB[0] = 32767;
-    SIZ_TAB[1] = 32767;
-    SIZ_TAB[2] = 0;
-    SIZ_TAB[3] = 0;
+    SIZ_TAB[0] = 32767;         // minimal char width
+    SIZ_TAB[1] = 32767;         // minimal char height
+    SIZ_TAB[2] = 0;             // maximal char width
+    SIZ_TAB[3] = 0;             // maximal char heigh
 
     /* Initialize the font ring.  font_ring[1] is setup before entering here */
     /* since it contains the font which varies with the screen resolution.   */
 
-    font_ring[0] = &firstfnt;
+    font_ring[0] = &fon6x6;
     font_ring[2] = NULLPTR;
     font_ring[3] = NULLPTR;
 
-    id_save = firstfnt.font_id;
+    id_save = fon6x6.font_id;
 
     chain_ptr = font_ring;
     i = 0;
@@ -630,7 +631,7 @@ void dst_font()
     /* If we fell through the loop, we could not find the face. */
     /* Default to the system font.                  */
 
-    test_font = &firstfnt;
+    test_font = &fon8x8;
 
   find_height:
 
@@ -854,7 +855,7 @@ void dqt_name()
 
     /* The element is out of bounds use the system font */
 
-    tmp_font = &firstfnt;
+    tmp_font = &fon8x8;
 
   found_element:
 

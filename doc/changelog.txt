@@ -777,4 +777,5 @@ Start... early ages
 
 20. Apr. 2002
 - desk/* - removed/fixed all compiler warnings (MAD)
+- vdi/opnwkram - plane number and fonts corr. initialized (MAD)
 
