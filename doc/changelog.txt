@@ -1115,3 +1115,13 @@ Start... early ages
 - use make comprtest to test the compressor (LVL)
 - bios/memory.s - debug messages optional (LVL)
 - added -pedantic to $(NATIVECC) options, killed some warnings in tools (LVL)
+
+30. Sep. 2002
+- tools/compr.c et al - added a header in the compressed data, for a cleaner
+  handling of the destination address in ROM (LVL)
+- Makefile - code factorisation, various optimisations, foo.dsm is 
+  desassembly for foo.img (LVL)
+- util/comprtst.sh - changed . t into sh -f t for portability (LVL)
+- doc/status.txt - changed the table of supported emulators, to include date 
+  of update of individual entries (LVL)
+- doc/install.txt - documented some of the current makefile targets (LVL)

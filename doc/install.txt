@@ -1,7 +1,8 @@
 Installing:
 
 You will need the (cross-)gcc toolchain from the sparemint pages to
-build this stuff. You will also probably need GNU make.
+build this stuff. You will also probably need GNU make as the Makefile
+currently tends to make more and more abuse of advanced make features.
 
 building EmuTOS
 ===============
@@ -26,6 +27,64 @@ or
     make COUNTRY=de
 
 Finally, some settings can be configured in the file include/config.h.
+
+A complete list of targets
+==========================
+
+emutos binaries
+---------------
+
+emutos1.img   emutos binary relocated at 0xfc0000. might be bigger than 192k.
+emutos2.img   emutos binary relocated at 0xe00000
+etos192k.img  emutos1.img padded to 192k, if smaller (else the target fails)
+etos256k.img  emutos2.img padded to 256k, if smaller (else the target fails)
+etos512k.img  emutos2.img padded to 512k, if smaller (else the target fails)
+ecpr192k.img  ramtos.img compressed, and installed in an auto-decompressing
+              192k image, if not bigger (else the target fails)
+ecpr256k.img  ramtos.img compressed, and installed in an auto-decompressing
+              256k image, if not bigger (else the target fails)
+ramtos.img    emutos binary relocated to the smallest possible RAM address
+              not used as BSS byt the current code.
+compr1.img    the loader used to decompress ramtos, relocated at 0xfc0000
+compr2.img    the loader used to decompress ramtos, relocated at 0xE00000
+allbin        generates some 256k and 512k binaries
+all192        genearates some 192k binaries. WARNING: do make clean first.
+
+binary targets modifyers
+------------------------
+
+nothing       same as COUNTRY=us
+COUNTRY=xx    all countries in the binary, country xx being the default
+UNIQUE=xx     a smaller binary with only support for country xx
+DEF='-DTOS_VERSION=0x102' 
+              used to generate smaller binaries with only support for a
+              subset of functionalities. WARNING: do make clean first.
+
+utility targets
+---------------
+
+emutos.st     the image of a 360k single-sided floppy on which there is
+              an autobootable ramtos.img
+boot.prg      ramtos.img loader as a GEMDOS program
+fd0           dd emutos.st on a floppy (linux-specific)
+
+debug targets
+-------------
+
+emutos1.dsm, emutos2.dsm, ramtos.dsm, compr1.dsm, compr2.dsm: the edited
+desassembly of the respective .img files
+
+foo.dsm: the result of gcc -S made on */foo.c
+
+CVS-related targets
+-------------------
+
+depend       generates dependencies
+clean        cleans all generated files
+distclean    as clean + deletes also some temporary editor files
+cvsready     ensure the files have a proper, canonic, format for CVS
+checkindent  try 'indent' without altering the files
+indent       indent all files - never done yet :-(
 
 
 Emulator-specific notes
