@@ -33,7 +33,7 @@ COUNTRY = us
 # Choose the user interface that should be included into EmuTOS
 # (0=command line "EmuCON" , 1=AES)
 
-WITH_AES = 0
+WITH_AES = 1
 
 
 #

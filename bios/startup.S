@@ -27,7 +27,8 @@
 // ==== References ===========================================================
 
         .global _trap_1         // call GEMDOS from C
-        .global _dummyaes       // call AES (not implemented)
+
+        .global _gemtrap        // call VDI/AES
         .global _biostrap       // call BIOS from C
         .global _xbiostrap      // call XBIOS from C
 
@@ -314,27 +315,95 @@ _strtautoexec:
         rts
 
         
-// ===========================================================================
-// ==== dummy aes ============================================================
-// ===========================================================================
 
-//
-// implements only appl_init(), returns 0, to tell Mint that GEM
-// is not running.
-//
 
-_dummyaes:
-        cmp.w   #0x73,d0
-        beq     vec_vdi
-        cmp.w   #0xc8,d0
-        bne     failgem
-        move.l  d1,a0
+/*
+ * subroutine_call - Fake a subroutine call into fVDI (which assumes a Trap)
+ *
+ * The address of this routine is returned if d0 == $ffff on Trap #2 entry.
+ * Mainly used by NVDI
+ * 
+ * The sub_vdi function that is called when fVDI has been booted
+ * (rather than run from the desktop) actually makes use of that
+ * stored 'call the VDI without going through Trap #2'-address that
+ * was returned earlier by Trap#2/$ffff.
+ * I'd completely forgotten about that and it means that your VDI
+ * must indeed provide a useful result from that call. If it's not
+ * already there, do what I do in fVDI to make it simple:
+ */
+
+subroutine_call:
+	move.w	#0xffff,-(a7)		// Mark old stack
+	move.w	#0x88,-(a7)		// Set up a 'Trap #2' on the stack
+	pea	return_here
+	move	sr,-(a7)
+	bra	dispatch_entry		// Just after the d0 == 0x73 check
+return_here:
+	cmp.w	#0xffff,(a7)+
+	beq	was_020
+	addq.l	#2,a7			// Skip 0x88 if not >= '020
+was_020:
+	rts
+
+
+
+/*
+ * _gemtrap - dispatches between VDI, AES and others
+ *
+ * For AES it implements only appl_init().
+ *
+ * returns 0, to tell Mint that GEM is not running.
+ */
+
+_gemtrap:
+	cmp.w	#0x73,d0		// VDI call?
+	bne	no_vdi
+dispatch_entry:
+	jsr	_GSX_ENTRY
+	rte
+
+no_vdi:
+	cmp.w	#0xc8,d0		// AES call?
+	bne	no_aes
+
+        move.l  d1,a0                   // check, what AES call
         move.l  (a0),a1
-        cmp.w   #0x0a,(a1)
+        cmp.w   #0x0a,(a1)              // check, if appl_init() ?
         bne     failgem
-        move.l  4(a0),a1
+
+        move.l  4(a0),a1                // fake appl_init()
         clr.l   (a1)
-        rte
+	rte
+
+no_aes:
+	cmp.w	#0xfffe,d0		// vq_gdos call?
+	beq	what_gdos
+        
+	cmp.w	#0xffff,d0		// query for jsr:able address?
+	beq	query
+
+#if 0
+	move.l	vdi_address,-(a7)	// Continue to next in chain
+	rts
+#endif        
+
+	bra	failgem                 // should take this out!
+
+
+
+what_gdos:
+	move.l	#-2, d0			// -2  -  no GDOS installed
+	rte
+
+query:
+	move.l	#subroutine_call,d0	// Someone doesn't like Trap #2
+	rte
+
+
+
+/*
+ * failgem - print a message, that call is not implemented
+ */
 
 failgemmsg:
         .ascii "unimplemented gem call.\n\0"
@@ -348,10 +417,9 @@ everloop:
         bra everloop            // Loop forever, if GEM call not implemented
 
 
-// Jump to the VDI:
-vec_vdi:
-        jsr     _GSX_ENTRY
-        rte
+
+
+
 
 
 

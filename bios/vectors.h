@@ -30,9 +30,11 @@ extern void init_acia_vecs(void);
 extern void int_hbl(void);
 extern void int_vbl(void);
 extern void int_linea(void);
-extern void dummyaes(void);
+
+extern void gemtrap(void);
 extern void biostrap(void);
 extern void xbiostrap(void);
+
 extern void just_rte(void);
 
 /* are these useful ? */

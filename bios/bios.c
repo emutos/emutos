@@ -127,10 +127,13 @@ void startup(void)
     /* initialise some vectors */
     VEC_HBL = int_hbl;
     VEC_VBL = int_vbl;
-    VEC_AES = dummyaes;
+
+    VEC_AES = gemtrap;
     VEC_BIOS = biostrap;
     VEC_XBIOS = xbiostrap;
+
     VEC_LINEA = int_linea;
+
     /* LVL   VEC_ILLEGAL = brkpt; I don't understand why this is needed.
      * a vector was already setup by init_exc_vec().
      */
