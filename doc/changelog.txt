@@ -628,3 +628,6 @@ Start... early ages
 - bios/blkdev.c - mediach returns "not changed" status for hard drives (joy)
 - bios/machine.c - _FRB buffer for DMA operations to FastRAM added (joy)
 - bios/floppy.c - floppy rwabs now use _FRB if destination is in FastRAM (joy)
+
+03. Feb. 2002
+- bios/screen.c - do not change VIDEL freq by Shifter init code (joy)

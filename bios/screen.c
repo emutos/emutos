@@ -59,8 +59,9 @@ void screen_init(void)
         screen_size = get_videl_width() / 8L * get_videl_height()
                       * get_videl_bpp();
     }
-
-    *(BYTE *) 0xffff820a = 2;   /* sync-mode to 50 hz pal, internal sync */
+    else {
+        *(BYTE *) 0xffff820a = 2;   /* sync-mode to 50 hz pal, internal sync */
+    }
 
     for (i = 0; i < 16; i++) {
         col_regs[i] = dflt_palette[i];
@@ -72,16 +73,19 @@ void screen_init(void)
     if (rez == 3) {
         rez = 2;
     }
-    if ((mfp->gpip & 0x80) != 0) {
-        /* color monitor */
-        if (rez == 2)
-            rez = 0;
-    } else {
-        if (rez < 2)
-            rez = 2;
-    }
 
-    *rez_reg = rez;
+    if (! has_videl) {
+        if ((mfp->gpip & 0x80) != 0) {
+            /* color monitor */
+            if (rez == 2)
+                rez = 0;
+        } else {
+            if (rez < 2)
+                rez = 2;
+        }
+
+        *rez_reg = rez;
+    }
     sshiftmod = rez;
 
     if (rez == 1) {
