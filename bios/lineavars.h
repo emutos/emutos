@@ -29,18 +29,6 @@
 #define M_CVIS          0x0004  // cursor visibility (0:invisible, 1:visible)
 
 
-
-/* Struct for different video mode parameters */
-typedef struct
-{
-    UBYTE       planes;         // count of color planes (v_planes)
-    UBYTE       lin_wr;         // bytes per line (v_lin_wr)
-    UWORD       hz_rez;         // screen horizontal resolution (v_hz_rez)
-    UWORD       vt_rez;         // screen vertical resolution (v_vt_rez)
-} VIDEO_MODE;
-
-
-
 /* Color related variables */
 extern WORD v_col_bg;           // current background color
 extern WORD v_col_fg;           // current foreground color
