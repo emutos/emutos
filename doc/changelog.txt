@@ -1392,3 +1392,11 @@ Start... early ages
 23. Mar. 2003
 - include/xbindbios.h - now use fully prototyped inline XBIOS bindings (MAD)
 
+12. Apr. 2003
+- bios/screen.c - some debug prints (LVL)
+- bios/vectors.S - the new palette pointer to load during VBL now erased when
+  loaded (previously it was loaded at every VBL!) (LVL)
+- include/config.h, bios/kprint.c - kprintf() prints to MIDI out port when
+  MIDI_DEBUG_PRINT flag activated (to get debug prints e.g. on Steem) (LVL)
+- fixed some .cvsignore files (LVL)
+

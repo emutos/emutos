@@ -6,3 +6,6 @@ tounix
 mkheader
 bug
 local.mk
+dsm.txt
+fal_dsm.txt
+*.dsm
