@@ -24,6 +24,7 @@
 #if DBG_BLIT
 #include "kprint.h"
 #endif
+#include "kprint.h"
 
 
 /* bitblt modes */
@@ -909,10 +910,6 @@ void bit_blt ()
     d_xmin = info.d_xmin;		/* d2<- dst Xmin */
     d_xmax = d_xmin + info.b_wd - 1;	/* d3<- dst Xmax=dstXmin+width-1 */
 
-    /* Endmasks derived from source Xmin mod 16 and source Xmax mod 16 */
-    lendmask=0xffff>>(d_xmin%16);
-    rendmask=~(0x7fff>>(d_xmax%16));
-
     /* Skew value is (destination Xmin mod 16 - source Xmin mod 16) */
     /* && 0x000F.  Three discriminators are used to determine the */
     /* states of FXSR and NFSR flags: */
@@ -921,21 +918,17 @@ void bit_blt ()
     /* 1: Source Xmin mod 16 >  Destination Xmin mod 16 */
 
     /* bit 1     0: SrcXmax/16-SrcXmin/16 <> DstXmax/16-DstXmin/16 */
-    /* Source span      Destination span */
-    /* 1: SrcXmax/16-SrcXmin/16 == DstXmax/16-DstXmin/16 */
+    /*                       Source span      Destination span */
+    /*           1: SrcXmax/16-SrcXmin/16 == DstXmax/16-DstXmin/16 */
 
     /* bit 2     0: multiple word Destination span */
-    /* 1: single word Destination span */
+    /*           1: single word Destination span */
 
     /* These flags form an offset into a skew flag table yielding */
     /* correct FXSR and NFSR flag states for the given source and */
     /* destination alignments */
 
-    /* d7<- Dst Xmin mod16 - Src Xmin mod16 */
-    skew = (d_xmin & 0x0f) - (s_xmin & 0x0f);
-
-    /* if Sx&F > Dx&F then cy:1 else cy:0 */
-    skew_idx = (skew < 0) ? 0x0001 : 0x0000; /* d6[bit0]<- alignment flag */
+    skew_idx = 0x0000;  //default
 
     s_xmin_off = s_xmin >> 4;		/* d0<- word offset to src Xmin */
     s_xmax_off = s_xmax >> 4;		/* d1<- word offset to src Xmax */
@@ -945,18 +938,6 @@ void bit_blt ()
     d_xmax_off = d_xmax >> 4;		/* d3<- word offset to dst Xmax */
     d_span = d_xmax_off - d_xmin_off;   /* d3<- dst span - 1 */
 
-    /* does destination just span a single word? */
-    if ( !d_span ) {
-        /* merge both end masks into Endmask1. */
-        lendmask &= rendmask;		/* d4<- single word end mask */
-        skew_idx |= 0x0004;			/* d6[bit2]:1 => single word dst */
-        /* The other end masks will be ignored by the BLiTTER */
-    }
-
-    blt_end_1 = lendmask;		/* left end mask */
-    blt_end_2 = 0xFFFF;			/* center end mask */
-    blt_end_3 = rendmask;		/* right end mask */
-
     /* the last discriminator is the */
     if ( d_span == s_span ) {    	/* equality of src and dst spans */
         skew_idx |= 0x0002;   		/* d6[bit1]:1 => equal spans */
@@ -965,31 +946,67 @@ void bit_blt ()
     /* d4<- number of words in dst line */
     blt_x_cnt = d_span + 1;		/* set value in BLiTTER */
 
-    /* Calculate Source starting address */
-    s_addr = (ULONG)info.s_form
-        + info.s_ymin * info.s_nxln
-        + s_xmin_off * info.s_nxwd;
-
-    /* d4<- offset between consecutive words in Src plane */
+    /* offset between consecutive words in planes */
     blt_src_x_inc = info.s_nxwd;
-
-    /* Src_Yinc is the offset in bytes from the last word of one Source */
-    /* line to the first word of the next Source line */
-    blt_src_y_inc = info.s_nxln - info.s_nxwd * s_span;
-
-
-    /* Calculate Destination starting address */
-    d_addr = (ULONG)info.d_form
-        + info.d_ymin * info.d_nxln
-        + d_xmin_off * info.d_nxwd;
-
-    /* d4<- offset between consecutive words in Src plane */
     blt_dst_x_inc = info.d_nxwd;
 
-    /* Dst_Yinc is the offset in bytes from the last word of one
-     * Destination line to the first word of the next Dest. line */
+    /* offset in bytes from the last word of one line to the
+     first word of the next one */
+    blt_src_y_inc = info.s_nxln - info.s_nxwd * s_span;
     blt_dst_y_inc = info.d_nxln - info.d_nxwd * d_span;
 
+    /* Endmasks derived from source Xmin mod 16 and source Xmax mod 16 */
+    lendmask=0xffff>>(d_xmin%16);
+    rendmask=~(0x7fff>>(d_xmax%16));
+
+    /* does destination just span a single word? */
+    if ( !d_span ) {
+        /* merge both end masks into Endmask1. */
+        lendmask &= rendmask;		/* d4<- single word end mask */
+        skew_idx |= 0x0004;			/* d6[bit2]:1 => single word dst */
+        /* The other end masks will be ignored by the BLiTTER */
+    }
+
+    /* Calculate starting addresses */
+    s_addr = (ULONG)info.s_form
+        + (ULONG)info.s_ymin * (ULONG)info.s_nxln
+        + (ULONG)s_xmin_off * (ULONG)info.s_nxwd;
+    d_addr = (ULONG)info.d_form
+        + (ULONG)info.d_ymin * (ULONG)info.d_nxln
+        + (ULONG)d_xmin_off * (ULONG)info.d_nxwd;
+
+    if (s_addr < d_addr ) {
+        s_addr = (ULONG)info.s_form
+            + (ULONG)info.s_ymax * (ULONG)info.s_nxln
+            + (ULONG)s_xmax_off * (ULONG)info.s_nxwd;
+        d_addr = (ULONG)info.d_form
+            + (ULONG)info.d_ymax * (ULONG)info.d_nxln
+            + (ULONG)d_xmax_off * (ULONG)info.d_nxwd;
+
+        /* offset between consecutive words in planes */
+        blt_src_x_inc = -blt_src_x_inc;
+        blt_dst_x_inc = -blt_dst_x_inc;
+        blt_src_y_inc = -blt_src_y_inc;
+        blt_dst_y_inc = -blt_dst_y_inc;
+
+        blt_end_1 = rendmask;		/* left end mask */
+        blt_end_2 = 0xFFFF;		/* center end mask */
+        blt_end_3 = lendmask;		/* right end mask */
+
+        /* d7<- Dst Xmin mod16 - Src Xmin mod16 */
+        skew = (d_xmax & 0x0f) - (s_xmax & 0x0f);
+        skew_idx |= (skew < 0) ? 0x0000 : 0x0001; /* d6[bit0]<- alignment flag */
+    }
+    else {
+        blt_end_1 = lendmask;		/* left end mask */
+        blt_end_2 = 0xFFFF;		/* center end mask */
+        blt_end_3 = rendmask;		/* right end mask */
+
+        /* d7<- Dst Xmin mod16 - Src Xmin mod16 */
+        skew = (d_xmin & 0x0f) - (s_xmin & 0x0f);
+        skew_idx |= (skew < 0) ? 0x0001 : 0x0000; /* d6[bit0]<- alignment flag */
+
+    }
     /*
      * The low nibble of the difference in Source and Destination alignment
      * is the skew value.  Use the skew flag index to reference FXSR and
