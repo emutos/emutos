@@ -251,6 +251,11 @@ WORD inf_what(LONG tree, WORD ok, WORD cncl)
 
 /*
  * merge_str - merge in integrated variables
+ *
+ * Note: It currently does not work with a variable amount of parameters
+ * like it seems to be used in the original GEM sources!
+ * => merge_str() should probably rather be replaced with a proper
+ * implementation of sprintf() one day!
  */
 void merge_str(BYTE *pdst, BYTE *ptmp, UWORD parms[])
 {
@@ -294,7 +299,7 @@ void merge_str(BYTE *pdst, BYTE *ptmp, UWORD parms[])
                 break;
               case 'S':
 #if MC68K
-                psrc = (BYTE *) *((LONG *)&parms[num]);  /*???*/
+                psrc = (BYTE *) &parms[num];  /*???*/
                 num += 2;
 #endif
 #if I8086
