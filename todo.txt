@@ -10,4 +10,5 @@
 - implement mediach, and flopvbl (to deselect the drive when idle)
 - allow international printed messages
 - handle international keyboards
-
+- the ROM EmuCON does not lauch commands when booting on a floppy 
+  (the autoexec'd command.prg still does)
