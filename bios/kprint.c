@@ -5,6 +5,7 @@
  *
  * Authors:
  *  MAD     Martin Doering
+ *  LVL     Laurent Vogel
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -15,6 +16,7 @@
 #include "portab.h"
 #include "bios.h"
 #include "kprint.h"
+#include "lineavars.h"
 
 /* extern declarations */
 
@@ -94,8 +96,8 @@ static int vkprintf(const char *fmt, va_list ap)
   case NATIVE_PRINT_ARANYM:
     return doprintf(kprintf_outc_aranym, fmt, ap);
   default:
-    /* let us home nobody is doing 'pretty-print' with kprintf by
-     * printing stuff till the amount of characters equal something,
+    /* let us hope nobody is doing 'pretty-print' with kprintf by
+     * printing stuff till the amount of characters equals something,
      * for it will generate an endless loop!
      */
     return 0;
@@ -117,15 +119,12 @@ int kprintf(const char *fmt, ...)
 
 static int vkcprintf(const char *fmt, va_list ap)
 {
-#if 0
-  /* commented out, until one finds a way to know, from here,
-   * whether the vt52 console is running properly
-   */
-  vkprintf(fmt, ap);
-  return vcprintf(fmt, ap);
-#else
-  return vkprintf(fmt, ap);
-#endif
+  if(linea_inited) {
+    vkprintf(fmt, ap);
+    return vcprintf(fmt, ap);
+  } else {
+    return vkprintf(fmt, ap);
+  }
 }
 
 int kcprintf(const char *fmt, ...)
@@ -169,7 +168,6 @@ void dopanic(const char *fmt, ...)
     kprintf("No saved info in dopanic; halted.\n");
     halt();
   } 
-  /* TODO, make sure the vt52 stuff is ready and wrapping */
   kcprintf("Panic: ");
   if(proc_enum == 0) {
     va_list ap;

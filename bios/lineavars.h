@@ -29,6 +29,10 @@
 #define M_CVIS          0x0004  // cursor visibility (0:invisible, 1:visible)
 
 
+// ==== Variables ============================================================
+
+extern int linea_inited;        // will be set to 1 by linea_init()
+
 /* Color related variables */
 extern WORD v_col_bg;           // current background color
 extern WORD v_col_fg;           // current foreground color

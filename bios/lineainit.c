@@ -19,7 +19,14 @@
 #include "string.h"
 
 #define DBG_LINEA 1
-/*==== Defines ============================================================*/
+
+/*==== Global vars ========================================================*/
+
+/* this will be set to 1 by linea_init();
+ * kprintf will check this variable, to display panic messages on screen
+ * also.
+ */
+int linea_inited;
 
 /*==== External declarations ==============================================*/
 
@@ -275,5 +282,7 @@ void linea_init(void)
     disab_cnt=1;                        // cursor disabled 1 level deep.
 
     /* Init conout state machine */
-    con_state_init();                       // set initial state
+    con_state_init();                   // set initial state
+
+    linea_inited = 1;
 }
