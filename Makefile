@@ -538,8 +538,6 @@ obj/country.o: include/i18nconf.h
 obj/langs.o: include/i18nconf.h
 obj/nls.o: include/i18nconf.h
 obj/nlsasm.o: include/i18nconf.h
-obj/boot.o: include/i18nconf.h
-obj/dumpkbd.o: include/i18nconf.h
 
 #
 # ctables.h - the country tables, generated from country.mk, and only

@@ -19,8 +19,8 @@
 #include "country.h"
 #include "nvram.h"
 #include "tosvars.h"
-
-#include "config.h"  /* included after country.h because of i18nconf.h */
+#include "i18nconf.h"
+#include "config.h"
 #include "header.h"  /* contains the default country number */
 
 /*

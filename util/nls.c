@@ -15,6 +15,7 @@
 #include "nls.h"
 #include "langs.h"
 #include "string.h"
+#include "i18nconf.h"
 #include "config.h"
 
 #if CONF_NO_NLS

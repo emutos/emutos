@@ -1159,3 +1159,20 @@ Start... early ages
   I would like to replace NULL-used-to-mean-char-zero by '\0' and have
   NULL and NULLPTR be ((void*)0). Then we could replace NULLPTR by NULL and
   forget about NULLPTR... (LVL)
+
+18. Oct 2002
+- genctables.awk - portable awk, country names need not be 2 chars long (LVL)
+- bios/processor.[hS] - 68040 instruction cache stuff (LVL)
+- bdos/proc.c - instruction cache invalidation on pexec (LVL)
+- bios/vectors.S - illegal instruction handler now changes move-from-CCR to
+  move-from-SR (LVL)
+- bios/bios.c - illegal instruction handler only called on a bare 68000 (LVL)
+- Makefile - if a file local.mk is found, it will be included at the end just 
+  before targets clean and distclean, for optional individual targets (LVL)
+- ikbd.[ch] - dead keys (see keyb_fr.h for an example of how to configure 
+  the keyboard to use it); ALT-keypad to enter chars by decimal numbers (LVL)
+- added "%p" in printf format string to print pointers as 0x%08lx (LVL)
+- changed again H_FOO_ to FOO_H (sorry about this, I won't change it 
+  a third time) (LVL)
+- include/config.h - removed "i18nconf.h" from there, as it caused trouble 
+  with tools needing "string.h" but not "i18nconf.h" (LVL)
