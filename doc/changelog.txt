@@ -1487,3 +1487,7 @@ Start... early ages
 - readme.txt : made ready for binary releases  (MAD)
 
 * Release: 0.7
+
+2003-06-26
+- bios/bios.c: initialize unknown level interrupts to just RTE (not bombs)
+  (joy)

@@ -125,6 +125,10 @@ void vecs_init(void)
     VEC_XBIOS = xbiostrap;
     VEC_LINEA = int_linea;
     VEC_DIVNULL = just_rte;     /* just return for this */
+    VEC_LEVEL1 = just_rte;     /* just return for this */
+    VEC_LEVEL3 = just_rte;     /* just return for this */
+    VEC_LEVEL5 = just_rte;     /* just return for this */
+    VEC_LEVEL6 = just_rte;     /* just return for this */
     VEC_NMI = int_illegal;      /* MAD: Set NMI to illegal instr. */
 
     /* These just for advanced 680x0 processors */

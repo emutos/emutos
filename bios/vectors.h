@@ -65,8 +65,12 @@ typedef void (*PFVOID)();
 #define VEC_DIVNULL (*(PFVOID*)0x14)    /* division by zero exception vector */
 #define VEC_PRIVLGE (*(PFVOID*)0x20)    /* priviledge exception vector */
 #define VEC_LINEA   (*(PFVOID*)0x28)    /* LineA interrupt vector */
+#define VEC_LEVEL1  (*(PFVOID*)0x64)    /* Level 1 interrupt */
 #define VEC_HBL     (*(PFVOID*)0x68)    /* HBL interrupt vector */
+#define VEC_LEVEL3  (*(PFVOID*)0x6c)    /* Level 3 interrupt */
 #define VEC_VBL     (*(PFVOID*)0x70)    /* VBL interrupt vector */
+#define VEC_LEVEL5  (*(PFVOID*)0x74)    /* Level 5 interrupt */
+#define VEC_LEVEL6  (*(PFVOID*)0x78)    /* Level 6 interrupt */
 #define VEC_NMI     (*(PFVOID*)0x7c)    /* NMI - not maskable interrupt */
 #define VEC_AES     (*(PFVOID*)0x88)    /* AES interrupt vector */
 #define VEC_BIOS    (*(PFVOID*)0xb4)    /* BIOS interrupt vector */
