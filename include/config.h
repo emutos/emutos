@@ -46,6 +46,14 @@
 #define DETECT_NATIVE_PRINT 0
 #endif
 
+/* set this to 1 to detect, and (if detected) use native features provided
+ * by the standard "native features" interface. 
+ */
+#ifndef DETECT_NATIVE_FEATURES
+#define DETECT_NATIVE_FEATURES 1
+#endif
+
+
 /* set this to 1 if your emulator is capable of emulating properly the 
  * STOP opcode (used to spare host CPU burden during loops). This is
  * currently set to zero as STOP does not work well on all emulators.
