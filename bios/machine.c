@@ -70,7 +70,7 @@ static void detect_video(void)
   /* test if we have Falcon VIDEL by testing for f030_xreg */
   has_videl = 0;
   if (check_read_byte(0xffff8282))
-        has_videl = 1;
+    has_videl = 1;
 }
 
 /* vme */
@@ -96,7 +96,10 @@ static void detect_vme(void)
 static void setvalue_swi(void)
 {
   if(has_ste_shifter) {
-    cookie_swi = (*(WORD *)0xffff9200)>>8;
+    /* this generates bus errors on some machines/emulators
+     * TODO: investigate.
+     * cookie_swi = (*(WORD *)0xffff9200)>>8;
+     */
   } else {
     cookie_swi = 0x7F;
   }
@@ -229,7 +232,7 @@ void machine_init(void)
   setvalue_mch();
   cookie_add(COOKIE_MCH, cookie_mch);
 
-   
+
   /* _FRB  This cookie is present when alternative RAM is present. It 
    * points to a 64k buffer that may be used by DMA device drivers to 
    * transfer memory between alternative RAM and ST RAM for DMA operations.  
@@ -282,7 +285,7 @@ void machine_init(void)
    * 'ATC' - Fully compatible interface built in a way that
    * behaves like part of the system.
    */
-   
+
   setvalue_fdc();
   cookie_add(COOKIE_FDC, cookie_fdc);
 }
