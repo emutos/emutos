@@ -540,11 +540,6 @@ void polygon(Vwk * vwk)
     WORD *pointer, i, k, y;
     WORD fill_maxy, fill_miny;
 
-    i = vwk->fill_color;
-    FG_BP_1 = (i & 1);
-    FG_BP_2 = (i & 2);
-    FG_BP_3 = (i & 4);
-    FG_BP_4 = (i & 8);
     LSTLIN = FALSE;
 
     pointer = PTSIN;
@@ -553,7 +548,8 @@ void polygon(Vwk * vwk)
     fill_maxy = fill_miny = *pointer++;
     pointer++;
 
-    for (i = (*(CONTRL + 1) - 1); i > 0; i--) {
+    /* find out the total min and max y values */
+    for (i = CONTRL[1] - 1; i > 0; i--) {
         k = *pointer++;
         pointer++;
         if (k < fill_miny)
@@ -562,6 +558,7 @@ void polygon(Vwk * vwk)
             if (k > fill_maxy)
                 fill_maxy = k;
     }
+
     if (vwk->clip) {
         if (fill_miny < vwk->ymn_clip) {
             if (fill_maxy >= vwk->ymn_clip) {        /* plygon starts before clip */
@@ -578,7 +575,8 @@ void polygon(Vwk * vwk)
                 return;         /* plygon entirely after clip */
         }
     }
-    k = *(CONTRL + 1) * 2;
+
+    k = CONTRL[1] * 2;
     pointer = PTSIN;
     *(pointer + k) = *pointer;
     *(pointer + k + 1) = *(pointer + 1);
@@ -587,7 +585,7 @@ void polygon(Vwk * vwk)
     }
     if (vwk->fill_per == TRUE) {
         LN_MASK = 0xffff;
-        (*(CONTRL + 1))++;
+        CONTRL[1]++;
         polyline(vwk);
     }
 }
@@ -600,7 +598,15 @@ void polygon(Vwk * vwk)
 
 void v_fillarea(Vwk * vwk)
 {
-    polygon(vwk);
+#if 0
+#if HAVE_BEZIER
+    /* check, if we want to draw a filled bezier curve */
+    if (CONTRL[5] == 13 && vwk->bez_qual )
+        v_bez_fill(vwk);
+    else
+#endif
+#endif
+        polygon(vwk);
 }
 
 

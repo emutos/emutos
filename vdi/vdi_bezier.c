@@ -16,7 +16,7 @@
 #include "vdi_defs.h"
 #include "biosbind.h"
 #include "asm.h"        /* for malloc */
-#include "kprint.h"
+//#include "kprint.h"
 
 
 #if HAVE_BEZIER
@@ -102,14 +102,15 @@ gen_segs(WORD *const array, WORD *px, const int bez_qual,
     x0 = labs(array[0]);
     while( x0 >= (0x7fffffffL>>q) )
         q--, qd++;
+
     x0 = (((LONG)array[0]) << q) + (1L << (q - 1));
 
     for(i = 1 << bez_qual; i > 0; i--) {
         x = (WORD)(x0 >> q);
         *px = x;
-        if( x < *pmin )
+        if ( x < *pmin )
             *pmin = x;
-        if( x > *pmax )
+        if ( x > *pmax )
             *pmax = x;
         px+=2;
 
@@ -140,9 +141,9 @@ gen_segs(WORD *const array, WORD *px, const int bez_qual,
 
     /** add the last point .. */
     *px = x = array[6];
-    if( x < *pmin )
+    if ( x < *pmin )
         *pmin = x;
-    if( x > *pmax )
+    if ( x > *pmax )
         *pmax = x;
 }
 
@@ -160,35 +161,72 @@ gen_segs(WORD *const array, WORD *px, const int bez_qual,
 #define NO_FILL 6	/* v_fill_area() */
 
 static void
-draw_segs(Vwk * vwk, WORD nr_vertices, WORD * xptsin, WORD mode)
+draw_segs(Vwk * vwk, WORD nr_vertices, Point * point, WORD mode)
 {
-    //WORD * ptsin_sav = PTSIN;
-
-    //assert( mode == FILL || mode == NO_FILL );
-    while( nr_vertices >= 2 ) {
-        CONTRL[0] = mode;        /* opcode for v_pline/v_fill_area */
-        CONTRL[2] = 0;           /* entries in intin[] */
-        CONTRL[1] = nr_vertices > INQ_TAB[14] ? INQ_TAB[14]: nr_vertices; /* entries in ptsin[] */
+    if ( nr_vertices >= 2 ) {
+        if (nr_vertices > INQ_TAB[14])
+            nr_vertices = INQ_TAB[14];
 
         /* output to driver, converting ndc if necessary */
-        if (mode == FILL)
-            v_fillarea(vwk);
-        else
-            draw_pline(vwk);
+        if (mode == FILL) {
+            WORD * ptssav = PTSIN;
+            WORD nptsav = CONTRL[1];
 
-        if( nr_vertices > INQ_TAB[14] ) {
-            // FIXME??
-            PTSIN += 2 * (INQ_TAB[14]-1); /* include end point in next call */
+            // FIXME: must be really integrated, not wrapped!
+            ptssav = PTSIN;
+            PTSIN = (WORD*)point;
+            CONTRL[1] = nr_vertices;
+            polygon(vwk);
+            CONTRL[1] = nptsav;
+            PTSIN = ptssav;;
         }
-        nr_vertices -= INQ_TAB[14]-1;
+        else
+        {
+            short i;
+            Line line;
+
+            LSTLIN = FALSE;
+            for(i = nr_vertices - 1; i > 0; i--) {
+                line.x1 = point->x;
+                line.y1 = point->y;
+                point++;                /* advance point by point */
+                line.x2 = point->x;
+                line.y2 = point->y;
+
+                if (!vwk->clip || clip_line(vwk, &line))
+                    abline(vwk, &line);
+            }
+        }
     }
-    //PTSIN = ptsin_sav;          // really needed?
 }
 
 
 /*
  * v_bez - draw a bezier curve
+ *
+ * outputs a (possibly disjoint) series of bezier curves & poly lines.
+ *
+ * Each element in bezarr[] is a flag that controls the behaviour of the
+ * corresponding input point.
+ *
+ * If bit 0 (ie ls bit) of the flag is set to one, the corresponding
+ * point and the next three points define a bezier curve:
+ *         1. start point
+ *         2. 1st control point
+ *         3. 2nd control point
+ *         4. end point
+ *
+ * If bit 0 is zero, the corresponding point is part of a polyline.
+ *
+ * If bit 1 is set, the corresponding point starts a new disconnected
+ * bezier curve.
+ *
+ * Note: The C function calls are as described here, but internally the C
+ * libraries byte swap bezarr[] for intel compatible format.
+ * If you are not using the C library, but directly programming the VDI
+ * interface, you need to do the byte swapping yourself.
  */
+
 void
 v_bez(Vwk * vwk)
 {
@@ -200,8 +238,9 @@ v_bez(Vwk * vwk)
     WORD total_vertices = nr_ptsin;
     WORD total_jumps = 0;
     UWORD vertices_per_bez;
-    WORD *ptsin = PTSIN;
-    UWORD xptsin[256];
+    Point ptsbuf[MAX_PTSIN];
+    Point * ptsget = (Point*)PTSIN;
+    Point * ptsput = ptsbuf;;
 
     bez_qual = vwk->bez_qual;
     vertices_per_bez = 1 << bez_qual;
@@ -221,39 +260,42 @@ v_bez(Vwk * vwk)
                 total_jumps++;   /* count jump point */
 
             /* generate line segments from bez points */
-            gen_segs(ptsin, xptsin, bez_qual, &xmin, &xmax, vwk->xfm_mode);	/* x coords */
-            gen_segs(ptsin+1, xptsin+1, bez_qual, &ymin, &ymax, vwk->xfm_mode);	/* y coords */
+            gen_segs(&ptsget->x, &ptsput->x, bez_qual, &xmin, &xmax, vwk->xfm_mode);	/* x coords */
+            gen_segs(&ptsget->y, &ptsput->y, bez_qual, &ymin, &ymax, vwk->xfm_mode);	/* y coords */
             i += 3;	/* skip to coord pairs at end of bez curve */
-            ptsin += 6;
+            ptsget += 3;
             total_vertices += vertices_per_bez-3;
-            draw_segs(vwk, vertices_per_bez+1, xptsin, NO_FILL );
+            draw_segs(vwk, vertices_per_bez+1, ptsbuf, NO_FILL );
         }
         else {
             /* polyline */
             WORD output_vertices = 0;
-            WORD *const ptsin0 = ptsin;
+            Point * point = ptsget;
             do {
                 int t;
 
-                t = ptsin[0];
-                if( t < xmin )
+                t = point->x;
+                if ( t < xmin )
                     xmin = t;
-                if( t > xmax )
+                if ( t > xmax )
                     xmax = t;
-                t = ptsin[1];
-                if( t < ymin )
-                    ymin = t;
-                if( t > ymax )
-                    ymax = t;
-                output_vertices++;
-                if( IS_BEZ(flag) )
-                    break;
 
-                /* continue polyline, stop if a jump point is next */
+                t = point->y;
+                if ( t < ymin )
+                    ymin = t;
+                if ( t > ymax )
+                    ymax = t;
+
+                output_vertices++;
+                if ( IS_BEZ(flag) )
+                    break;		/* stop if a jump point is next */
+
+                /* continue polyline */
                 i++;
                 if (i >= nr_ptsin)
                     break;
-                ptsin += 2;
+
+                ptsget += 1;
                 {
                     int old_flag = flag;
                     flag = bezarr[i^1];
@@ -261,7 +303,7 @@ v_bez(Vwk * vwk)
                         total_jumps++;   /* count jump point */
                 }
             } while( !IS_JUMP(flag) );
-            draw_segs(vwk, output_vertices, ptsin0, NO_FILL);
+            draw_segs(vwk, output_vertices, point, NO_FILL);
         }
 
     }
@@ -279,6 +321,9 @@ v_bez(Vwk * vwk)
 
 /*
  * v_bez_fill - draw a filled bezier curve
+ *
+ * It is similar to v_bez(), but it forms a closed contour and fills
+ * it with the current fill pattern.
  */
 void
 v_bez_fill(Vwk * vwk)
@@ -291,109 +336,117 @@ v_bez_fill(Vwk * vwk)
     WORD total_jumps = 0;
     WORD vertices_per_bez;
     WORD i, i0;
-    WORD *ptsin;
-    WORD *ptsin0;
-    WORD *xptsin;
-    //WORD *xptsin0;
-    WORD xptsin0[256];
+    Point *ptsget;
+    Point *ptsget0;
+    Point *ptsput;
+    Point ptsbuf[MAX_PTSIN];
     WORD nr_bez;
     UWORD output_vertices = 0;
-
-    //kprintf("called v_bez_fill...\n");
 
     bez_qual = vwk->bez_qual;
     vertices_per_bez = 1 << bez_qual;
     xmin = ymin = 32767;
     xmax = ymax = 0;
 
-    xptsin = xptsin0;
+    ptsput = ptsbuf;
 
     nr_bez = 0;
     i = i0 = 0;
-    ptsin0 = ptsin = PTSIN;
-    while( i<nr_ptsin ) {
+    ptsget0 = ptsget = (Point*)PTSIN;
+    while( i < nr_ptsin ) {
         int flag = bezarr[i^1];
 
-        if( IS_BEZ( flag ) ) {
-            if( i+3 >= nr_ptsin ) break;   /* incomlete curve, omit it */
+        if ( IS_BEZ( flag ) ) {
+            if ( i+3 >= nr_ptsin ) break;   /* incomlete curve, omit it */
 
-            if( IS_JUMP(flag) ) total_jumps++;   /* count jump point */
+            if ( IS_JUMP(flag) ) total_jumps++;   /* count jump point */
 
-            /* keep this curve within nr vertices for the driver's ptsin[]
+            /* keep this curve within nr vertices for the driver's ptsget[]
              ** with one spare for the end point */
-            if( output_vertices+vertices_per_bez+1 > INQ_TAB[14] ) {
-                if( bez_qual > MIN_QUAL ) {
+            if ( output_vertices+vertices_per_bez+1 > INQ_TAB[14] ) {
+                if ( bez_qual > MIN_QUAL ) {
                     /* try reduce bezier quality & start this polygon again */
                     bez_qual--;
                     i = i0;
-                    ptsin = ptsin0;
-                    xptsin = xptsin0;
+                    ptsget = ptsget0;
+                    ptsput = ptsbuf;
                     output_vertices = 0;
                     continue;
                 }
                 /* too bad if we get here. refuse to add vertices to output */
             }
             else {
-                if( i!=i0 ) {
+                if ( i != i0 ) {
                     /* the end point will be copied in again */
-                    xptsin -= 2;
+                    ptsput -= 1;
                     output_vertices--;
-                } /* if */
+                }
 
                 output_vertices += vertices_per_bez+1;
                 total_vertices += vertices_per_bez-3;
-                gen_segs( ptsin, xptsin, bez_qual, &xmin, &xmax, vwk->xfm_mode);	/* x coords */
-                gen_segs( ptsin+1, xptsin+1, bez_qual, &ymin, &ymax, vwk->xfm_mode);	/* y coords */
-                xptsin = xptsin0 + 2*output_vertices;
-            } /* if */
-            //assert( PTSIN + 2*i == ptsin );
+                gen_segs(&ptsget->x, &ptsput->x, bez_qual, &xmin, &xmax, vwk->xfm_mode);	/* x coords */
+                gen_segs(&ptsget->y, &ptsput->y, bez_qual, &ymin, &ymax, vwk->xfm_mode);	/* y coords */
+                ptsput = ptsbuf + output_vertices;
+            }
+            //assert( PTSIN + 2*i == ptsget );
             i+=3;
-            ptsin += 6;
+            ptsget += 3;
             flag = bezarr[i^1];
         }
         else {     /** polyline **/
 
-            if( i!=i0 ) {
+            if ( i != i0 ) {
                 /* the end point will be copied in again */
-                xptsin -= 2;
+                ptsput -= 1;
                 output_vertices--;
-            } /* if */
+            }
 
             do {
                 int t;
-                if( output_vertices < INQ_TAB[14] ) {	/* need room for at least one more */
-                    t = ptsin[0];
-                    if( t < xmin ) xmin = t;
-                    if( t > xmax ) xmax = t;
-                    *xptsin++ = t;
-                    t = ptsin[1];
-                    if( t < ymin ) ymin = t;
-                    if( t > ymax ) ymax = t;
-                    *xptsin++ = t;
+                if ( output_vertices < INQ_TAB[14] ) {	/* need room for at least one more */
+                    t = ptsget->x;
+                    if ( t < xmin )
+                        xmin = t;
+                    if ( t > xmax )
+                        xmax = t;
+                    ptsput->x = t;
+
+                    t = ptsget->y;
+                    if ( t < ymin )
+                        ymin = t;
+                    if ( t > ymax )
+                        ymax = t;
+                    ptsput->y = t;
+
+                    ptsput++;
                     output_vertices++;
                 }
 
-                //assert( xptsin0 + 2*output_vertices == xptsin );
-                //assert( PTSIN + 2*i == ptsin );
-                if( IS_BEZ(flag) )
+                //assert( ptsbuf + output_vertices == ptsput );
+                //assert( PTSIN + 2*i == ptsget );
+                if ( IS_BEZ(flag) )
                     break;
                 i++;
-                ptsin += 2;
-                if( i>=nr_ptsin )
+                ptsget += 2;
+                if ( i >= nr_ptsin )
                     break;
+
                 /* continue polyline, stop if a jump point is next */
                 {
                     int old_flag = flag;
                     flag = bezarr[i^1];
-                    if( !IS_JUMP(old_flag) && IS_JUMP(flag) ) total_jumps++;   /* count jump point */
+                    if ( !IS_JUMP(old_flag) && IS_JUMP(flag) ) total_jumps++;   /* count jump point */
                 }
             } while( !IS_JUMP(flag) );
         }
 
-        if( i>=nr_ptsin || IS_JUMP(flag) ) {
-            draw_segs(vwk, output_vertices, xptsin0, FILL);
+        if ( i >= nr_ptsin || IS_JUMP(flag) ) {
+            draw_segs(vwk, output_vertices, ptsget0, FILL);
             bez_qual = vwk->bez_qual;
-            i0 = i; ptsin0 = ptsin; xptsin = xptsin0; output_vertices = 0;
+            i0 = i;
+            ptsget0 = ptsget;
+            ptsput = ptsbuf;
+            output_vertices = 0;
         }
     }
 
@@ -408,20 +461,20 @@ v_bez_fill(Vwk * vwk)
 
 }
 
-/********************* end of bezier.c *********************/
-
-
 
 
 /*
  * v_bez_control - implement vdi function v_bez_control
  *
- * just return bez quality to indicate bezier functions are available
+ * simply returns the bezier quality set for the current workstation.
+ * It can be used by your application to test if the GDOS supports
+ * bezier functions. We do not support the use of this function to
+ * enable or disable bezier curves.
  */
+
 void
 v_bez_control(Vwk * vwk)
 {
-    //kprintf("called v_bez_control...\n");
     INTOUT[0] = vwk->bez_qual;
     CONTRL[4] = 1;
 }
@@ -429,6 +482,12 @@ v_bez_control(Vwk * vwk)
 
 /*
  * v_bez_qual -  set bezier quality
+ *
+ * sets the quality of a bezier curve.  A bezier curve is generated
+ * as a series of short straight line segments.  A high quality
+ * bezier curve is made from many short straight lines, whereas a
+ * lower quality bezier curve has fewer longer straight line segments.
+ * Higher quality bezier curves thus appear smoother, but are slower.
  *
  * note: bez_qual > 7 will cause overflow in gen_segs()
  */
@@ -438,10 +497,9 @@ void
 v_bez_qual(Vwk * vwk)
 {
     int q = INTIN[2];
-    //kprintf("called v_bez_qual...\n");
-    if( q >= 95 )
+    if ( q >= 95 )
         q = 7;
-    else if( q<5 )
+    else if ( q<5 )
         q = MIN_QUAL;
     else
         q = (q>>4) + 1;

@@ -1673,3 +1673,8 @@ Start... early ages
 2004-08-16
 - vdi/vdi_line.c: optimized horizontal line drawing (MAD)
 - vdi/vdi_fill.c: unified rectfill with the above (MAD)
+
+2004-08-19
+- vdi/vdi_bezier.c: implemented not filled bezier curves (MAD)
+                    filled onces also, but not integrated (MAD)
+                    

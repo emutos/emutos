@@ -26,6 +26,9 @@
 
 
 /* different maximum settings */
+#define MAX_PTSIN 256 		/* max. # of coordinate pairs, also asm.S! */
+
+
 #define MAX_COLOR       16
 #define MX_LN_STYLE     7
 #define MX_LN_WIDTH     40

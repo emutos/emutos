@@ -639,11 +639,6 @@ void draw_rect(const Vwk * vwk, const Rect * rect, const UWORD fillcolor) {
 
 void draw_pline(Vwk * vwk)
 {
-    WORD l;
-
-    l = vwk->line_index;
-    LN_MASK = (l < 6) ? LINE_STYLE[l] : vwk->ud_ls;
-
     if (vwk->line_width == 1) {
         polyline(vwk);
         if ((vwk->line_beg | vwk->line_end) & ARROWED)
@@ -660,6 +655,11 @@ void draw_pline(Vwk * vwk)
 
 void v_pline(Vwk * vwk)
 {
+    WORD l;
+
+    l = vwk->line_index;
+    LN_MASK = (l < 6) ? LINE_STYLE[l] : vwk->ud_ls;
+
 #if HAVE_BEZIER
     /* check, if we want to draw a bezier curve */
     if (CONTRL[5] == 13 && vwk->bez_qual )        //FIXME: bez_qual ok??
@@ -1212,7 +1212,7 @@ void arrow(Vwk * vwk, WORD * xy, WORD inc)
     /* Find the first point which is not so close to the end point that it */
     /* will be obscured by the arrowhead.                                  */
 
-    temp = *(CONTRL + 1);
+    temp = CONTRL[1];
     for (i = 1; i < temp; i++) {
         /* Find the deltas between the next point and the end point.
            Transform */
@@ -1276,7 +1276,7 @@ void arrow(Vwk * vwk, WORD * xy, WORD inc)
 
     /* Restore the vertex count. */
 
-    *(CONTRL + 1) = sav_contrl;
+    CONTRL[1] = sav_contrl;
 
     /* Adjust the end point and all points skipped. */
 
