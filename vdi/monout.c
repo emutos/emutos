@@ -18,7 +18,7 @@
 #include "lineavars.h"
 #include "tosvars.h"
 #include "kprint.h"
-
+#include "intmath.h"
 
 
 /* Definitions for sine and cosinus */
@@ -58,24 +58,6 @@ static WORD m_square[] = { 1, 5, -4, -3, 4, -3, 4, 3, -4, 3, -4, -3 };
 static WORD m_cross[] = { 2, 2, -4, -3, 4, 3, 2, -4, 3, 4, -3 };
 static WORD m_dmnd[] = { 1, 5, -4, 0, 0, -3, 4, 0, 0, 3, -4, 0 };
 
-
-
-/*
- * smul_div - signed integer multiply and divide
- *
- * smul_div (m1,m2,d1)
- * 
- * ( ( m1 * m2 ) / d1 ) + 1/2
- *
- * m1 = signed 16 bit integer
- * m2 = unsigned 15 bit integer
- * d1 = signed 16 bit integer
- */
-
-int smul_div(WORD m1, WORD m2, WORD d1)
-{
-    return (short)((m1 * (long)m2) / d1);
-}
 
 
 /*
@@ -280,7 +262,7 @@ void v_gdp()
             xc = *xy_pointer;
             yc = *(xy_pointer + 1);
             xrad = *(xy_pointer + 4);
-            yrad = smul_div(xrad, xsize, ysize);
+            yrad = mul_div(xrad, xsize, ysize);
             del_ang = 3600;
             beg_ang = 0;
             end_ang = 3600;
@@ -453,16 +435,16 @@ WORD clip_line()
         deltax = X2 - X1;
         deltay = Y2 - Y1;
         if (line_clip_flag & 1) {       /* left ? */
-            *y = Y1 + smul_div(deltay, (XMN_CLIP - X1), deltax);
+            *y = Y1 + mul_div(deltay, (XMN_CLIP - X1), deltax);
             *x = XMN_CLIP;
         } else if (line_clip_flag & 2) {        /* right ? */
-            *y = Y1 + smul_div(deltay, (XMX_CLIP - X1), deltax);
+            *y = Y1 + mul_div(deltay, (XMX_CLIP - X1), deltax);
             *x = XMX_CLIP;
         } else if (line_clip_flag & 4) {        /* top ? */
-            *x = X1 + smul_div(deltax, (YMN_CLIP - Y1), deltay);
+            *x = X1 + mul_div(deltax, (YMN_CLIP - Y1), deltay);
             *y = YMN_CLIP;
         } else if (line_clip_flag & 8) {        /* bottom ? */
-            *x = X1 + smul_div(deltax, (YMX_CLIP - Y1), deltay);
+            *x = X1 + mul_div(deltax, (YMX_CLIP - Y1), deltay);
             *y = YMX_CLIP;
         }
     }
@@ -701,19 +683,19 @@ void gdp_rbox()
     if (xrad > rdeltax)
         xrad = rdeltax;
 
-    yrad = smul_div(xrad, xsize, ysize);
+    yrad = mul_div(xrad, xsize, ysize);
     if (yrad > rdeltay)
         yrad = rdeltay;
 
     pointer = PTSIN;
     *pointer++ = 0;
     *pointer++ = yrad;
-    *pointer++ = smul_div(Icos(675), xrad, 32767);
-    *pointer++ = smul_div(Isin(675), yrad, 32767);
-    *pointer++ = smul_div(Icos(450), xrad, 32767);
-    *pointer++ = smul_div(Isin(450), yrad, 32767);
-    *pointer++ = smul_div(Icos(225), xrad, 32767);
-    *pointer++ = smul_div(Isin(225), yrad, 32767);
+    *pointer++ = mul_div(Icos(675), xrad, 32767);
+    *pointer++ = mul_div(Isin(675), yrad, 32767);
+    *pointer++ = mul_div(Icos(450), xrad, 32767);
+    *pointer++ = mul_div(Isin(450), yrad, 32767);
+    *pointer++ = mul_div(Icos(225), xrad, 32767);
+    *pointer++ = mul_div(Isin(225), yrad, 32767);
     *pointer++ = xrad;
     *pointer = 0;
 
@@ -790,9 +772,9 @@ void gdp_arc()
 
     pointer = PTSIN;
     xrad = *(pointer + 6);
-    yrad = smul_div(xrad, xsize, ysize);
+    yrad = mul_div(xrad, xsize, ysize);
     clc_nsteps();
-    n_steps = smul_div(del_ang, n_steps, 3600);
+    n_steps = mul_div(del_ang, n_steps, 3600);
     if (n_steps == 0)
         return;
     xc = *pointer++;
@@ -848,7 +830,7 @@ void gdp_ell()
     if (cur_work->xfm_mode < 2)
         yrad = yres - yrad;
     clc_nsteps();
-    n_steps = smul_div(del_ang, n_steps, 3600);
+    n_steps = mul_div(del_ang, n_steps, 3600);
     if (n_steps == 0)
         return;
     clc_arc();
@@ -867,9 +849,9 @@ void clc_pts(WORD j)
     REG WORD *pointer;
 
     pointer = PTSIN;
-    k = smul_div(Icos(angle), xrad, 32767) + xc;
+    k = mul_div(Icos(angle), xrad, 32767) + xc;
     *(pointer + j) = k;
-    k = yc - smul_div(Isin(angle), yrad, 32767);        /* FOR RASTER CORDS. */
+    k = yc - mul_div(Isin(angle), yrad, 32767);        /* FOR RASTER CORDS. */
     *(pointer + j + 1) = k;
 }
 
@@ -894,7 +876,7 @@ void clc_arc()
     clc_pts(j);
     for (i = 1; i < n_steps; i++) {
         j += 2;
-        angle = smul_div(del_ang, i, n_steps) + start;
+        angle = mul_div(del_ang, i, n_steps) + start;
         clc_pts(j);
     }
     j += 2;
@@ -1067,8 +1049,8 @@ void wline()
         else {
             /* Find the offsets in x and y for a point perpendicular */
             /* to the line segment at the appropriate distance. */
-            k = smul_div(-vy, ysize, xsize);
-            vy = smul_div(vx, xsize, ysize);
+            k = mul_div(-vy, ysize, xsize);
+            vy = mul_div(vx, xsize, ysize);
             vx = k;
             perp_off(&vx, &vy);
         }                       /* End else:  neither horizontal nor
@@ -1394,7 +1376,7 @@ void arrow(WORD * xy, WORD inc)
 
         ptr1 += inc;
         dx = *ptr2 - *ptr1;
-        dy = smul_div(*(ptr2 + 1) - *(ptr1 + 1), ysize, xsize);
+        dy = mul_div(*(ptr2 + 1) - *(ptr1 + 1), ysize, xsize);
 
         /* Get the length of the vector connecting the point with the end
            point. */
@@ -1416,15 +1398,15 @@ void arrow(WORD * xy, WORD inc)
     /* Rotate the arrow-head height and base vectors.  Perform calculations */
     /* in 1000x space.                                                      */
 
-    ht_x = smul_div(arrow_len, smul_div(dx, 1000, line_len), 1000);
-    ht_y = smul_div(arrow_len, smul_div(dy, 1000, line_len), 1000);
-    base_x = smul_div(arrow_wid, smul_div(dy, -1000, line_len), 1000);
-    base_y = smul_div(arrow_wid, smul_div(dx, 1000, line_len), 1000);
+    ht_x = mul_div(arrow_len, mul_div(dx, 1000, line_len), 1000);
+    ht_y = mul_div(arrow_len, mul_div(dy, 1000, line_len), 1000);
+    base_x = mul_div(arrow_wid, mul_div(dy, -1000, line_len), 1000);
+    base_y = mul_div(arrow_wid, mul_div(dx, 1000, line_len), 1000);
 
     /* Transform the y offsets back to the correct aspect ratio space. */
 
-    ht_y = smul_div(ht_y, xsize, ysize);
-    base_y = smul_div(base_y, xsize, ysize);
+    ht_y = mul_div(ht_y, xsize, ysize);
+    base_y = mul_div(base_y, xsize, ysize);
 
     /* Save the vertice count */
 

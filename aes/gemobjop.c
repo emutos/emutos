@@ -21,6 +21,7 @@
 #include "machine.h"
 #include "obdefs.h"
 #include "taddr.h"
+#include "../bios/kprint.h"
 
 
 LONG obaddr(LONG tree, WORD obj, WORD fld_off)
@@ -40,6 +41,8 @@ BYTE ob_sst(LONG tree, WORD obj, LONG *pspec, WORD *pstate, WORD *ptype,
         pt->g_h = tmp.ob_height;
         *pflags = tmp.ob_flags;
         *pspec = tmp.ob_spec;
+
+        kprintf("Wert = %lx \n", *pspec);
 
         if (*pflags & INDIRECT)
           *pspec = LLGET(tmp.ob_spec);
@@ -142,36 +145,33 @@ sibling:
 
 
 /*
-*       Routine that will find the parent of a given object.  The
-*       idea is to walk to the end of our siblings and return
-*       our parent.  If object is the root then return NIL as parent.
-*       Also have this routine return the immediate next object of
-*       this object.
-*
-*
-
-*/
+ * Routine that will find the parent of a given object.  The
+ * idea is to walk to the end of our siblings and return
+ * our parent.  If object is the root then return NIL as parent.
+ * Also have this routine return the immediate next object of
+ * this object.
+ */
 WORD get_par(LONG tree, WORD obj, WORD *pnobj)
 {
-        register WORD   pobj;
-        register WORD   nobj;
+    register WORD   pobj;
+    register WORD   nobj;
 
-        pobj = obj;
-        nobj = NIL;
-        if (obj == ROOT)
-          pobj = NIL;
-        else
+    pobj = obj;
+    nobj = NIL;
+    if (obj == ROOT)
+        pobj = NIL;
+    else
+    {
+        do
         {
-          do
-          {
             obj = pobj;
             pobj = LWGET(OB_NEXT(obj));
             if (nobj == NIL)
-              nobj = pobj;
-          } while ( (pobj >= ROOT) && (LWGET(OB_TAIL(pobj)) != obj) );
-        }
-        *pnobj = nobj;
-        return(pobj);
+                nobj = pobj;
+        } while ( (pobj >= ROOT) && (LWGET(OB_TAIL(pobj)) != obj) );
+    }
+    *pnobj = nobj;
+    return(pobj);
 } /* get_par */
 
 

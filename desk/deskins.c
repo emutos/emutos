@@ -45,6 +45,7 @@
 #include "deskdir.h"
 #include "icons.h"
 #include "desk1.h"
+#include "intmath.h"
 
 
 

@@ -944,6 +944,7 @@ WORD wind_open(WORD handle, WORD wx, WORD wy, WORD ww, WORD wh)
         WM_WY = wy;
         WM_WW = ww;
         WM_WH = wh;
+        //kprintf("wx=%d, wy=%d, ww=%d, wh=%d, handle=%d !\n", wx, wy, ww, wh, handle);
         return( gem_if( WIND_OPEN ) );
 }
 

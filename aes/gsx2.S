@@ -1,19 +1,13 @@
-/*      GSX2.S  */
-
 /*
-       Copyright 1999, Caldera Thin Clients, Inc.                      
-       This software is licenced under the GNU Public License.         
-       Please see LICENSE.TXT for further information.                 
-                                                                       
-                  Historical Copyright                                 
-*/
-/*
-*       -------------------------------------------------------------
-*       GEM Application Environment Services              Version 2.3
-*       Serial No.  XXXX-0000-654321              All Rights Reserved
-*       Copyright (C) 1986                      Digital Research Inc.
-*       -------------------------------------------------------------
-*/
+ * gsx2.S - assembler part of AES's VDI interface
+ *
+ * Copyright 2002, The EmuTOS development team
+ *           1999, Caldera Thin Clients, Inc.
+ *           1987, Digital Research Inc.
+ *
+ * This file is distributed under the GPL, version 2 or at your
+ * option any later version.  See doc/license.txt for details.
+ */
 
 
 
@@ -31,41 +25,16 @@
         .text
         
 _gsx2:
-            move.l  #_contrl,tmp_contrl
-            move.l  #tmp_contrl,d1
-            moveq   #0x73,d0
-            trap    #2
-            rts
+        move.l  #_contrl,tmp_contrl
+        move.l  #tmp_contrl,d1
+        moveq   #0x73,d0
+        trap    #2
+        rts
+
 
 /*
-***************************************************************************
-;
-; MUL_DIV (m1,m2,d1)
-;
-;        ( ( ( m1 * 2 * m2 ) / d1 ) + 1 ) / 2   
-;       m1 = signed 16 bit integer
-;       m2 = unsigned 15 bit integer
-;       d1 = signed 16 bit integer
-;
-***************************************************************************
-*/
-
-        
-_mul_div:
-        move.w  6(sp),d0
-        asl.w   #1,d0
-        muls    4(sp),d0
-        divs    8(sp),d0
-        bmi     mul_div_neg
-        addq.w  #1,d0
-        bra     mul_div_end
-mul_div_neg:
-        subq.w  #1,d0
-mul_div_end:    
-        asr.w   #1,d0
-        rts
-        
-
+ * Fill routines for the normal Array pointers 
+ */
 _i_intin:
         move.l  4(sp),tmp_intin
         rts
@@ -96,6 +65,11 @@ _m_lptr2:
 
 .bss
 
+
+
+/*
+ * Storage for the normal Array pointers of AES
+ */
 tmp_contrl:
         ds.l    1
 tmp_intin:

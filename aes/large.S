@@ -1,19 +1,14 @@
-/*      LARGE.S */
-
 /*
-*       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002 The EmuTOS development team
-*
-*       This software is licenced under the GNU Public License.
-*       Please see LICENSE.TXT for further information.
-*
-*                  Historical Copyright
-*       -------------------------------------------------------------
-*       GEM Application Environment Services              Version 2.3
-*       Serial No.  XXXX-0000-654321              All Rights Reserved
-*       Copyright (C) 1986                      Digital Research Inc.
-*       -------------------------------------------------------------
-*/
+ * large.S
+ *
+ * Copyright 2002, The EmuTOS development team
+ *           1999, Caldera Thin Clients, Inc.
+ *           1987, Digital Research Inc.
+ *
+ * This file is distributed under the GPL, version 2 or at your
+ * option any later version.  See doc/license.txt for details.
+ */
+
 
 
 .globl _LBWMOV

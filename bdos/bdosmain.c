@@ -19,7 +19,7 @@
 
 
 
-#define DBGOSIF 0
+#define DBGOSIF 1
 
 
 

@@ -128,7 +128,7 @@ bdos_ssrc = rwa.S
 # source code in util/
 #
 
-util_csrc = doprintf.c nls.c langs.c string.c
+util_csrc = doprintf.c nls.c langs.c string.c intmath.c
 util_ssrc = memset.S memmove.S nlsasm.S setjmp.S miscasm.S stringasm.S
 
 #

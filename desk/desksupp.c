@@ -307,8 +307,8 @@ WORD do_diropen(WNODE *pw, WORD new_win, WORD curr_icon, WORD drv,
         do_wopen(new_win, pw->w_id, curr_icon, 
                                 pt->g_x, pt->g_y, pt->g_w, pt->g_h);
         if (new_win)
-          win_top(pw);
-                                                /* verify contents of   */
+            win_top(pw);
+                                                        /* verify contents of   */
                                                 /*   windows object list*/
                                                 /*   by building view   */
                                                 /*   and make it curr.  */

@@ -1,9 +1,14 @@
-/* GEMASM.S */
 /*
-;       Copyright 1999, Caldera Thin Clients, Inc.                      
-;       This software is licenced under the GNU Public License.         
-;       Please see LICENSE.TXT for further information.                 
-*/                                                                       
+ * gemasm.S - assembler part of GEM
+ *
+ * Copyright 2002, The EmuTOS development team
+ *           1999, Caldera Thin Clients, Inc.
+ *           1987, Digital Research Inc.
+ *
+ * This file is distributed under the GPL, version 2 or at your
+ * option any later version.  See doc/license.txt for details.
+ */
+
 
 
 .globl _psetup

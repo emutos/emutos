@@ -1,17 +1,12 @@
-/* gemdosif.S
+/*
+ * gemdosif.S - Assembler part of the GEMDOS interface
  *
- * Copyright 1999, Caldera Thin Clients, Inc.
- *           2002 The EmuTOS development team
+ * Copyright 2002, The EmuTOS development team
+ *           1999, Caldera Thin Clients, Inc.
+ *           1987, Digital Research Inc.
  *
- * This software is licenced under the GNU Public License.
- * Please see LICENSE.TXT for further information.
- *
- * Historical Copyright
- * -------------------------------------------------------------
- * GEM Application Environment Services              Version 2.3
- * Serial No.  XXXX-0000-654321              All Rights Reserved
- * Copyright (C) 1987                      Digital Research Inc.
- * -------------------------------------------------------------
+ * This file is distributed under the GPL, version 2 or at your
+ * option any later version.  See doc/license.txt for details.
  */
 
 
@@ -44,22 +39,22 @@
 
 /* disable interrupts */
 _cli:
-            move    sr,savesr
-            ori     #0x0700,sr
-            rts
+	move    sr,savesr
+        ori     #0x0700,sr
+        rts
 
 /* restore interrupt mask as it was before cli() */
 _sti:
-            move    savesr,sr
-            rts
+        move    savesr,sr
+        rts
 
 _hcli:
-            ori     #0x0700,sr
-            rts
+        ori     #0x0700,sr
+        rts
 
 _hsti:
-            andi    #0xF8FF,sr
-            rts
+        andi    #0xF8FF,sr
+        rts
 
 
 /*
@@ -67,57 +62,61 @@ _hsti:
 */
 _retake:
 L1F0C:
-            move.l  #_aestrap,0x88
-            move.l  #_err_tra,d0
+        move.l  #_aestrap,0x88
+        move.l  #_err_tra,d0
 L1F1C:
-            move.l  d0,-(sp)
-            move.w  #0x0101,-(sp)
-            move.w  #0x05,-(sp)
-            trap    #13
-            addq.w  #8,sp
-            rts
+        move.l  d0,-(sp)
+        move.w  #0x0101,-(sp)
+        move.w  #0x05,-(sp)
+        trap    #13
+        addq.w  #8,sp
+        rts
+        
 _giveerr:
 L1F2C:
-            move.l  _crit_er,d0
-            bra     L1F1C
+        move.l  _crit_er,d0
+        bra     L1F1C
+        
 _takeerr:
 L1F34:
-            moveq   #-1,d0
-            bsr     L1F1C
-            move.l  d0,_crit_er
-            move.l  #_err_tra,d0
-            bra     L1F1C
+        moveq   #-1,d0
+        bsr     L1F1C
+        move.l  d0,_crit_er
+        move.l  #_err_tra,d0
+        bra     L1F1C
+        
 _err_tra:
 L1F46:
-            move.w  0x04(sp),d0
-            move.w  0x06(sp),d1
-            movem.l d3-d7/a3-a6,-(sp)
-            movea.l #LE3EE,a1
-            move.w  d0,-(sp)
-            bne     L1F62
-            movea.w #0x00,a0
-            bra     L1F70
+        move.w  0x04(sp),d0
+        move.w  0x06(sp),d1
+        movem.l d3-d7/a3-a6,-(sp)
+        movea.l #LE3EE,a1
+        move.w  d0,-(sp)
+        bne     L1F62
+        movea.w #0x00,a0
+        bra     L1F70
+        
 L1F62:
-            not.w   d0
-            movea.w d0,a0
-            cmp.w   #0x11,d0
-            ble     L1F70
-            movea.w #0x00,a0
+        not.w   d0
+        movea.w d0,a0
+        cmp.w   #0x11,d0
+        ble     L1F70
+        movea.w #0x00,a0
 L1F70:
-            move.b  0x00(a0,a1.l),d0
-            move.w  d1,-(sp)
-            move.w  d0,-(sp)
-            jsr     _eralert
-            addq.l  #4,sp
-            move.w  (sp)+,d1
-            ext.l   d1
-            cmp.w   #0x00,d0
-            beq     L1F90
-            move.l  #0x010000,d1
+        move.b  0x00(a0,a1.l),d0
+        move.w  d1,-(sp)
+        move.w  d0,-(sp)
+        jsr     _eralert
+        addq.l  #4,sp
+        move.w  (sp)+,d1
+        ext.l   d1
+        cmp.w   #0x00,d0
+        beq     L1F90
+        move.l  #0x010000,d1
 L1F90:
-            move.l  d1,d0
-            movem.l (sp)+,d3-d7/a3-a6
-            rts
+        move.l  d1,d0
+        movem.l (sp)+,d3-d7/a3-a6
+        rts
 
 
 

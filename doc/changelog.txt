@@ -1214,3 +1214,10 @@ Start... early ages
 - bios/machine.c - add XHDI cookie to the jar (joy)
 - bios/startup.S - XHDI entry point (joy)
 - bios/initinfo.c - missing #include (joy)
+
+07. Nov. 2002
+- util/intmath.c - central impl. of (s)mul_div()    (MAD)
+- aes/gemdosif.h - change tikaddr and tiksav to void *  (MAD)
+
+09. Nov. 2002
+- aes/gemgsxif.c - changed i_lptr1 to use just one argument (MAD)

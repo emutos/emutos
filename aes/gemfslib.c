@@ -1,20 +1,14 @@
-/*      GEMFSLIB.C      5/14/84 - 07/16/85      Lee Lorenzen            */
-/*      merge High C vers. w. 2.2               8/21/87         mdf     */ 
-
 /*
-*       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002 The EmuTOS development team
-*
-*       This software is licenced under the GNU Public License.
-*       Please see LICENSE.TXT for further information.
-*
-*                  Historical Copyright
-*       -------------------------------------------------------------
-*       GEM Application Environment Services              Version 2.3
-*       Serial No.  XXXX-0000-654321              All Rights Reserved
-*       Copyright (C) 1987                      Digital Research Inc.
-*       -------------------------------------------------------------
-*/
+ * gemfslib.c - 
+ *
+ * Copyright 1999, Caldera Thin Clients, Inc.
+ *           2002 by EmuTOS development team.
+ *
+ * This file is distributed under the GPL, version 2 or at your
+ * option any later version.  See doc/license.txt for details.
+ */
+
+
 
 #include "portab.h"
 #include "machine.h"
@@ -40,7 +34,7 @@
 #include "rectfunc.h"
 
 #include "string.h"
-
+#include "intmath.h"
 
 #define NM_NAMES (F9NAME-F1NAME+1)
 #define NAME_OFFSET F1NAME

@@ -35,7 +35,7 @@ void gsx_graphic(WORD tographic);
 void bb_save(GRECT *ps);
 void bb_restore(GRECT *pr);
 
-WORD gsx_tick(LONG tcode, LONG *ptsave);
+WORD gsx_tick(void *tcode, void *ptsave);
 void gsx_mfset(LONG pmfnew);
 
 void gsx_mxmy(WORD *pmx, WORD *pmy);

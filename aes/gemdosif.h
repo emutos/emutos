@@ -5,8 +5,8 @@
 
 extern LONG     drwaddr;
 
-extern LONG     tikaddr;
-extern LONG     tiksav;
+extern void *   tikaddr;
+extern void *   tiksav;
 
 extern LONG     NUM_TICK;                       /* number of ticks      */
                                                 /*   since last sample  */

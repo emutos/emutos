@@ -791,179 +791,163 @@ void sh_rdinf()
 
 
 
-
 /*
-*       Give everyone a chance to run, at least once
-*/
-       
+ * Give everyone a chance to run, at least once
+ */
 void all_run()
 {
-        WORD            i;
+    WORD            i;
 
-                                                /* let all the acc's run*/
-          for(i=0; i<NUM_ACCS; i++)
-          {
-                  dsptch();
-          }
-                                                /* then get in the wait */
-                                                /*   line               */
-          wm_update(TRUE);
-          wm_update(FALSE);
+    /* let all the acc's run*/
+    for(i=0; i<NUM_ACCS; i++)
+    {
+        dsptch();
+    }
+    /* then get in the wait line */
+    wm_update(TRUE);
+    wm_update(FALSE);
 }
 
 
 
 void gem_main()
 {
-        WORD            i;
-        LONG            tmpadbi;
+    WORD            i;
+    LONG            tmpadbi;
 #if MULTIAPP
-        for (i=0; i<NUM_PDS; i++)
-          sh[i].sh_loadable = FALSE;
+    for (i=0; i<NUM_PDS; i++)
+        sh[i].sh_loadable = FALSE;
 #endif
 
-        totpds = NUM_PDS;
-        ml_ocnt = 0;
+    totpds = NUM_PDS;
+    ml_ocnt = 0;
 
-                                                /* init longs           */
-        ini_dlongs();
-                                                /* no ticks during init */
+
+    ini_dlongs();               /* init longs */
 #if I8086
-        cli();
+    cli();                      /* no ticks during init */
 #endif
 #if MC68K
-        hcli();
-#endif  
-                                                /* take the 0efh int.   */
-        takecpm();
-                                                /* init event recorder  */
-        gl_recd = FALSE;
-        gl_rlen = 0;
-        gl_rbuf = 0x0L;
-                                                /* initialize pointers  */
-                                                /*   to heads of event  */
-                                                /*   list and thread    */
-                                                /*   list               */
-        elinkoff = (BYTE *) &(D.g_intevb[0].e_link) - (BYTE *) &(D.g_intevb[0]);
-                                                /* link up all the evb's*/
-                                                /*   to the event unused*/
-                                                /*   list               */
-        eul = NULLPTR;
-        ev_init(&D.g_intevb[0], NUM_IEVBS);
-        if (totpds > 2)
-          ev_init(&D.g_extevb[0], NUM_EEVBS);
+    hcli();
+#endif
+    takecpm();                  /* take the 0efh int. */
 
-                                                /* initialize sync      */
-                                                /*   blocks             */
-        wind_spb.sy_tas = 0;
-        wind_spb.sy_owner = NULLPTR;
-        wind_spb.sy_wait = 0;
+    /* init event recorder  */
+    gl_recd = FALSE;
+    gl_rlen = 0;
+    gl_rbuf = 0x0L;
+    /* initialize pointers to heads of event list and thread list */
+    elinkoff = (BYTE *) &(D.g_intevb[0].e_link) - (BYTE *) &(D.g_intevb[0]);
 
-        /*
-         * init processes - TODO: should go in gempd or gemdisp.
-         */ 
+    /* link up all the evb's to the event unused list */
+    eul = NULLPTR;
+    ev_init(&D.g_intevb[0], NUM_IEVBS);
+    if (totpds > 2)
+        ev_init(&D.g_extevb[0], NUM_EEVBS);
 
-        /* initialize list and unused lists   */
-        nrl = drl = NULLPTR;
-        dlr = zlr = NULLPTR;
-        fph = fpt = fpcnt = 0;
-                                                
-        /* init initial process */
-        for(i=totpds-1; i>=0; i--)
+    /* initialize sync blocks */
+    wind_spb.sy_tas = 0;
+    wind_spb.sy_owner = NULLPTR;
+    wind_spb.sy_wait = 0;
+
+    /*
+     * init processes - TODO: should go in gempd or gemdisp.
+     */
+
+    /* initialize list and unused lists   */
+    nrl = drl = NULLPTR;
+    dlr = zlr = NULLPTR;
+    fph = fpt = fpcnt = 0;
+
+    /* init initial process */
+    for(i=totpds-1; i>=0; i--)
+    {
+        rlr = pd_index(i);
+        if (i < 2)
         {
-          rlr = pd_index(i);
-          if (i < 2)
-          {
             rlr->p_uda = &D.g_intuda[i];
             rlr->p_cda = &D.g_intcda[i];
-          }
-          else
-          {
-            rlr->p_uda = &D.g_extuda[i-2];
-            rlr->p_cda = &D.g_extcda[i-2];
-          }
-          rlr->p_qaddr = ADDR(&rlr->p_queue[0]);
-          rlr->p_qindex = 0;
-          memset(rlr->p_name, ' ', 8);
-                                                /* if not rlr then      */
-                                                /*   initialize his     */
-                                                /*   stack pointer      */
-          if (i != 0)
-            rlr->p_uda->u_spsuper = &rlr->p_uda->u_supstk;
-          rlr->p_pid = i;
-          rlr->p_stat = 0;
-        }
-        curpid = 0;
-        rlr->p_pid = curpid++;
-        rlr->p_link = NULLPTR;
-
-        /* end of process init */
-
-                                                /* restart the tick     */
-#if I8086
-        sti();
-#endif
-#if MC68K
-        hsti();
-#endif  
-                                                /* screen manager       */
-                                                /*   process init. this */
-                                                /*   process starts out */
-                                                /*   owning the mouse   */
-                                                /*   and the keyboard.  */
-                                                /*   it has a pid == 1  */
-        gl_dacnt = 0;
-        gl_mowner = ctl_pd = iprocess("SCRENMGR", ctlmgr);
-
-#if MULTIAPP
-        if (totpds > 2)
-        {
-          for (i=0; i<NUM_ACCS; i++)
-            iprocess("AVAILNUL", &nulmgr);
-        }
-#endif
-                                                /* load gem resource    */
-                                                /*   and fix it up      */
-                                                /*   before we go       */
-#ifdef USE_GEM_RSC
-        if ( !rs_readit(ad_sysglo, ADDR("GEM.RSC")) ) 
-        {
-           /* bad resource load, so dive out */
-           cprintf("gem_main: failed to load GEM.RSC...\n");
         }
         else
+        {
+            rlr->p_uda = &D.g_extuda[i-2];
+            rlr->p_cda = &D.g_extcda[i-2];
+        }
+        rlr->p_qaddr = ADDR(&rlr->p_queue[0]);
+        rlr->p_qindex = 0;
+        memset(rlr->p_name, ' ', 8);
+        /* if not rlr then initialize his stack pointer */
+        if (i != 0)
+            rlr->p_uda->u_spsuper = &rlr->p_uda->u_supstk;
+        rlr->p_pid = i;
+        rlr->p_stat = 0;
+    }
+    curpid = 0;
+    rlr->p_pid = curpid++;
+    rlr->p_link = NULLPTR;
+
+    /* end of process init */
+
+    /* restart the tick     */
+#if I8086
+    sti();
+#endif
+#if MC68K
+    hsti();
+#endif
+    /*
+     * screen manager process init. this process starts out owning the mouse
+     * and the keyboard. it has a pid == 1
+     */
+    gl_dacnt = 0;
+    gl_mowner = ctl_pd = iprocess("SCRENMGR", ctlmgr);
+
+#if MULTIAPP
+    if (totpds > 2)
+    {
+        for (i=0; i<NUM_ACCS; i++)
+            iprocess("AVAILNUL", &nulmgr);
+    }
+#endif
+    /* load gem resource and fix it up before we go */
+#ifdef USE_GEM_RSC
+    if ( !rs_readit(ad_sysglo, ADDR("GEM.RSC")) )
+    {
+        /* bad resource load, so dive out */
+        cprintf("gem_main: failed to load GEM.RSC...\n");
+    }
+    else
 #else
         gem_rsc_init();
 #endif
-        {
-                                                /* get mice forms       */
+    {
+        /* get mice forms       */
 #ifdef USE_GEM_RSC
-          rs_gaddr(ad_sysglo, R_BIPDATA, 3 + ARROW, &ad_armice);
-          rs_gaddr(ad_sysglo, R_BIPDATA, 3 + HGLASS, &ad_hgmice);
+        rs_gaddr(ad_sysglo, R_BIPDATA, 3 + ARROW, &ad_armice);
+        rs_gaddr(ad_sysglo, R_BIPDATA, 3 + HGLASS, &ad_hgmice);
 #else
-          ad_armice = (LONG) &rs_fimg[3+ARROW];
-          ad_hgmice = (LONG) &rs_fimg[3+HGLASS];
+        ad_armice = (LONG) &rs_fimg[3+ARROW];
+        ad_hgmice = (LONG) &rs_fimg[3+HGLASS];
 #endif
-          ad_armice = LLGET(ad_armice);
-          ad_hgmice = LLGET(ad_hgmice);
-                                                /* init button stuff    */
-          gl_btrue = 0x0;
-          gl_bdesired = 0x0;
-          gl_bdely = 0x0;
-          gl_bclick = 0x0;
+        ad_armice = LLGET(ad_armice);
+        ad_hgmice = LLGET(ad_hgmice);
 
-          gl_logdrv = dos_gdrv() + 'A';         /* boot directory       */
-                                                /* do gsx open work     */
-                                                /*   station            */
-          gsx_init();
-                                                /* load all desk acc's  */
+        /* init button stuff    */
+        gl_btrue = 0x0;
+        gl_bdesired = 0x0;
+        gl_bdely = 0x0;
+        gl_bclick = 0x0;
+
+        gl_logdrv = dos_gdrv() + 'A';   /* boot directory       */
+        gsx_init();                     /* do gsx open work station */
+
 #if SINGLAPP
-          if (totpds > 2)
+        /* load all desk acc's  */
+        if (totpds > 2)
             ldaccs();
 #endif
-                                                /* fix up icons         */
-          for(i=0; i<3; i++)
-          {
+        /* fix up icons         */
+        for(i=0; i<3; i++) {
 #ifdef USE_GEM_RSC
             rs_gaddr(ad_sysglo, R_BITBLK, i, &tmpadbi);
 #else
@@ -971,80 +955,88 @@ void gem_main()
 #endif
             LBCOPY(ad_bi, tmpadbi, sizeof(BITBLK));
             gsx_trans(bi.bi_pdata, bi.bi_wb, bi.bi_pdata, bi.bi_wb, bi.bi_hl);
-          }
-                                                /* take the critical err*/
-                                                /*   handler int.       */
-          cli();
-          takeerr();
-          sti();
-                                                /* go into graphic mode */
-          sh_tographic();
-                                                /* take the tick int.   */
-          cli();
-          gl_ticktime = gsx_tick(tikaddr, &tiksav);
-          sti();
-                                                /* set init. click rate */
-          ev_dclick(3, TRUE);
-                                                /* fix up the GEM rsc.  */
-                                                /*   file now that we   */
-                                                /*   have an open WS    */ 
+        }
+
+        /* take the critical err handler int. */
+        cli();
+        takeerr();
+        sti();
+
+        /* go into graphic mode */
+        sh_tographic();
+
+        /* take the tick int.   */
+        cli();
+        gl_ticktime = gsx_tick(tikaddr, &tiksav);
+        sti();
+
+        /* set init. click rate */
+        ev_dclick(3, TRUE);
+
+        /* fix up the GEM rsc. file now that we have an open WS */
 #ifdef USE_GEM_RSC
-          rs_fixit(ad_sysglo);
-                                                /* get st_desk ptr      */
-          rs_gaddr(ad_sysglo, R_TREE, 2, &ad_stdesk);   
+        rs_fixit(ad_sysglo);
+
+        /* get st_desk ptr */
+        rs_gaddr(ad_sysglo, R_TREE, 2, &ad_stdesk);
 #else
-          gem_rsc_fixit();
-                                                /* get st_desk ptr      */
-          ad_stdesk = (LONG) rs_tree[2];
+        gem_rsc_fixit();
+
+        /* get st_desk ptr */
+        ad_stdesk = (LONG) rs_tree[2];
 #endif
-                                                /* init. window vars.   */
-          wm_start();
-                                                /* startup gem libs     */
-          fs_start();
-                                                /* remember current     */
-                                                /*   desktop directory  */
-          sh_curdir(ad_scdir);
-                                                /* read the desktop.inf */
-                                                /* 2/20/86 LKW          */
+        /* init. window vars. */
+        wm_start();
+
+        /* startup gem libs */
+        fs_start();
+
+        /* remember current desktop directory */
+        sh_curdir(ad_scdir);
+
+        /* read the desktop.inf */
+        /* 2/20/86 LKW          */
 #if SINGLAPP
-          sh_rdinf();
+        sh_rdinf();
 #endif
-                                                /* off we go !!!        */
-          dsptch();
-                                                /* let them run         */
-          all_run();
-                                                /* init for shell loop  */
-                                                /*   up thru here it is */
-                                                /*   okay for system    */
-                                                /*   to overlay this    */
-                                                /*   initialization code*/
-          sh_init();
-                                                /* main shell loop      */
-                                                /*   from here on down  */
-                                                /*   data should not    */
-                                                /*   overlay this code  */
-          sh_main();
+        /* off we go !!!        */
+        dsptch();
+
+        /* let them run         */
+        all_run();
+
+        /*
+         * init for shell loop up thru here it is okay for system to
+         * overlay this initialization code
+         */
+        sh_init();
+
+        /*
+         * main shell loop. From here on down data should not overlay
+         * this code
+         */
+        sh_main();
 
 #if MULTIAPP
-                                                /* fixup memory         */
-          pr_load(SCR_MGR);
+        /* fixup memory */
+        pr_load(SCR_MGR);
 #endif
-                                                /* free up resource     */
-                                                /*   space              */
+        /* free up resource space */
 #ifdef USE_GEM_RSC
-          rs_free(ad_sysglo);
+        rs_free(ad_sysglo);
 #endif
-                                                /* give back the tick   */
-          cli();
-          gl_ticktime = gsx_tick(tiksav, &tiksav);
-          sti();
-                                                /* close workstation    */
-          gsx_wsclose();
-        }
-                                                /* return GEM's 0xEF int*/
+        /* give back the tick   */
         cli();
-        givecpm();
+        gl_ticktime = gsx_tick(tiksav, &tiksav);
         sti();
+        /* close workstation    */
+        gsx_wsclose();
+    }
+
+    /* return GEM's 0xEF int*/
+    cli();
+    givecpm();
+    sti();
 }
 
 

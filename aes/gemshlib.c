@@ -850,6 +850,7 @@ void sh_ldapp()
         LONG    *desk_pd;
         void    *uda_ssp_save;
 
+
         psh = &sh[rlr->p_pid];
 #if GEMDOS
         strcpy(sh_apdir, (BYTE *)ad_scdir);     /* initialize sh_apdir  */
@@ -877,6 +878,7 @@ void sh_ldapp()
           }
                                                 /* fix up/parse cmd tail*/ 
           sh_fixtail(psh->sh_fullstep == 2);
+          kprintf("Going on1...\n");
           sh_draw(ad_scmd, 0, 0);               /* redraw the desktop   */
 
                                                 /* clear his desk field */

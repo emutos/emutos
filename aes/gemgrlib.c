@@ -35,6 +35,7 @@
 #include "rectfunc.h"
 #include "optimize.h"
 
+#include "intmath.h"
 
 /*
 *       Routine to watch the mouse while the button is down and

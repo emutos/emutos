@@ -33,6 +33,7 @@
 #include "rectfunc.h"
 
 #include "string.h"
+#include "kprint.h"     // just for debugging
 
                                                 /* in GSXBIND.C         */
 #define vsf_color( x )          gsx_1code(S_FILL_COLOR, x)
@@ -200,7 +201,6 @@ void  just_draw(LONG tree, WORD obj, WORD sx, WORD sy)
         GRECT           t, c;
 
         ch = ob_sst(tree, obj, &spec, &state, &obtype, &flags, &t, &th);
-
 
         if ( (flags & HIDETREE) ||
              (spec == -1L) )
@@ -395,8 +395,8 @@ void  just_draw(LONG tree, WORD obj, WORD sx, WORD sy)
 
 
 /*
-*       Object draw routine that walks tree and draws appropriate objects.
-*/
+ *      Object draw routine that walks tree and draws appropriate objects.
+ */
 void ob_draw(LONG tree, WORD obj, WORD depth)
 {
         WORD            last, pobj;
@@ -404,6 +404,7 @@ void ob_draw(LONG tree, WORD obj, WORD depth)
 
         pobj = get_par(tree, obj, &last);
 
+        kprintf("It does not work without this kprintf...\n");
         if (pobj != NIL)
           ob_offset(tree, pobj, &sx, &sy);
         else
@@ -696,9 +697,9 @@ void ob_change(LONG tree, WORD obj, UWORD new_state, WORD redraw)
             }
           }
 
-          if (redraw)
+          if (redraw) {
               just_draw(tree, obj, t.g_x, t.g_y);
-
+          }
 
           gsx_mon();
         }

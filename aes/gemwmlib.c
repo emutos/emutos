@@ -44,8 +44,10 @@
 #include "optimopt.h"
 #include "optimize.h"
 #include "gemwmlib.h"
+#include "kprint.h"
 
 #include "string.h"
+#include "intmath.h"
 
 #define DESKWH  0x0
 
@@ -806,62 +808,58 @@ WORD w_move(WORD w_handle, WORD *pstop, GRECT *prc)
 
 
 /*
-*       Draw windows from top to bottom.  If top is 0, then start at
-*       the topmost window.  If bottom is 0, then start at the 
-*       bottomost windwo.  For the first window drawn, just do the
-*       insides, since DRAW_CHANGE has already drawn the outside
-*       borders.
-*/
+ * Draw windows from top to bottom.  If top is 0, then start at the topmost
+ * window.  If bottom is 0, then start at the bottomost window.  For the
+ * first window drawn, just do the insides, since DRAW_CHANGE has already
+ * drawn the outside borders.
+ */
 
 void w_update(WORD bottom, GRECT *pt, WORD top, WORD moved, WORD usetrue)
 {
-        register WORD   i, ni;
-        register WORD   done;
-                                                /* limit to screen      */
-        rc_intersect(&gl_rfull, pt);
-        gsx_moff();
-                                                /* update windows from  */
-                                                /*   top to bottom      */
-        if (bottom == DESKWH)
-          bottom = W_TREE[ROOT].ob_head;
-                                                /* if there are windows */
-        if (bottom != NIL)
-        {
-                                                /* start at the top     */ 
-          if (top == DESKWH) 
+    WORD   i, ni;
+    WORD   done;
+
+    /* limit to screen */
+    rc_intersect(&gl_rfull, pt);
+    gsx_moff();
+    /* update windows from top to bottom */
+    if (bottom == DESKWH)
+        bottom = W_TREE[ROOT].ob_head;
+    /* if there are windows */
+    if (bottom != NIL) {
+        /* start at the top     */
+        if (top == DESKWH)
             top = W_TREE[ROOT].ob_tail;
-                                                /* draw windows from    */
-                                                /*   top to bottom      */
-          do
-          {
-                                                
-            if ( !((moved) && (top == gl_wtop)) )
-            {
-                                                /* set clip and draw    */
-                                                /*   a window's border  */
-              gsx_sclip(pt);
-                                                /* CHANGED 1/10/86 LKW  */
-/*            w_clipdraw(top, 0, MAX_DEPTH, 2); !* from FALSE to 2      *!
-*/
-              w_cpwalk(top, 0, MAX_DEPTH, usetrue);
-                                                /* let appl. draw inside*/
-              w_redraw(top, pt);
+        /* draw windows from    */
+        /*   top to bottom      */
+        do {
+            if ( !((moved) && (top == gl_wtop)) ) {
+                /* set clip and draw a window's border  */
+                gsx_sclip(pt);
+                /* CHANGED 1/10/86 LKW  */
+                /* w_clipdraw(top, 0, MAX_DEPTH, 2); !* from FALSE to 2      *! */
+                //w_clipdraw(top, 0, MAX_DEPTH, usetrue);
+                kprintf("=== WIND_OPEN1 \n");
+                w_cpwalk(top, 0, MAX_DEPTH, usetrue);	/* let appl. draw inside*/
+                w_redraw(top, pt);
+                kprintf("=== WIND_OPEN2 \n");
             }
-                                                /* scan to find prev    */
+            /* scan to find prev    */
             i = bottom;
             done = (i == top);
+            //kprintf("=== WIND_OPEN i = %x\n", i);
             while (i != top)
             {
-              ni = W_TREE[i].ob_next;
-              if (ni == top)
-                top = i;
-              else
-                i = ni;
+                ni = W_TREE[i].ob_next;
+                if (ni == top)
+                    top = i;
+                else
+                    i = ni;
             }
-          }
-          while( !done );
         }
-        gsx_mon();
+        while( !done );
+    }
+    gsx_mon();
 }
 
 

@@ -32,6 +32,7 @@
 #include "optimize.h"
 #include "rectfunc.h"
 #include "gsx2.h"
+#include "intmath.h"
 #include "aesbind.h"
 #include "deskobj.h"
 #include "deskgraf.h"
