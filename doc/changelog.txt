@@ -606,3 +606,5 @@ Start... early ages
 - added new BDOS memory functions to doc/status.txt (LVL)
 - added make target 512 and some related hints in Makefile (MAD)
 - added code for Atari disk partitions detecting (unfinished yet) (joy)
+- a check for Control key added to the AUTO folder execution (joy)
+- #if ARANYM_NATIVE_DISK added to bios/disk.c - so it doesn't kill STonX (joy)
