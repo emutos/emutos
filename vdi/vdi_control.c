@@ -24,7 +24,7 @@
 #define X_MALLOC 0x48
 #define X_MFREE 0x49
 
-
+Vwk virt_work;     /* attribute areas for workstations */
 
 /*
  * SIZ_TAB - Returns text, line and marker sizes in device coordinates
@@ -129,6 +129,20 @@ WORD DEV_TAB_rom[45] = {
 
 
 
+Vwk * get_vwk_by_handle(WORD handle)
+{
+    Vwk * vwk = &virt_work;
+
+    /* Find the attribute area which matches the handle */
+    do {
+        if (handle == vwk->handle)
+            return vwk;
+    } while ((vwk = vwk->next_work));
+
+    return NULL;
+}
+
+
 /*
  * vs_color - set color index table
  */
@@ -154,7 +168,8 @@ void s_clip(Vwk * vwk)
 {
     WORD *xy, rtemp;
 
-    if ((vwk->clip = *INTIN) != 0) {
+    vwk->clip = *INTIN;
+    if (vwk->clip) {
         xy = PTSIN;
         arb_corner(xy);
 
@@ -170,12 +185,11 @@ void s_clip(Vwk * vwk)
         rtemp = *xy;
         vwk->ymx_clip = (rtemp > DEV_TAB[1]) ? DEV_TAB[1] : rtemp;
     } else {
-        vwk->clip = 0;
         vwk->xmn_clip = 0;
         vwk->ymn_clip = 0;
         vwk->xmx_clip = xres;
         vwk->ymx_clip = yres;
-    }                           /* End else:  clipping turned off. */
+    }
 }
 
 
@@ -220,7 +234,6 @@ void init_wk(Vwk * vwk)
     vwk->mark_color = MAP_COL[l];
 
     /* You always get the default font */
-
     pointer++;                  /* INTIN[5] */
 
     l = *pointer++;             /* INTIN[6] */
@@ -263,19 +276,7 @@ void init_wk(Vwk * vwk)
     vwk->ymx_clip = DEV_TAB[1];
     vwk->clip = FALSE;
 
-    vwk->cur_font = def_font;
-    vwk->loaded_fonts = NULLPTR;
-    vwk->num_fonts = font_count;
-
-    vwk->scrpt2 = scrtsiz;
-    vwk->scrtchp = deftxbuf;
-
-    vwk->style = 0;        /* reset special effects */
-    vwk->scaled = FALSE;
-    vwk->h_align = 0;
-    vwk->v_align = 0;
-    vwk->chup = 0;
-    vwk->pts_mode = FALSE;
+    text_init2(vwk);
 
     /* move default user defined pattern to RAM */
     src_ptr = ROM_UD_PATRN;
@@ -397,19 +398,9 @@ void v_opnwk(Vwk * vwk)
 
     line_cw = -1;               /* invalidate current line width */
 
-    text_init(vwk);                /* initialize the SIZ_TAB info */
+    text_init(vwk);             /* initialize the SIZ_TAB info */
+
     init_wk(vwk);
-
-    /* Input must be initialized here and not in init_wk */
-    loc_mode = 0;               /* default is request mode  */
-    val_mode = 0;               /* default is request mode  */
-    chc_mode = 0;               /* default is request mode  */
-    str_mode = 0;               /* default is request mode  */
-
-    /* mouse settings */
-    HIDE_CNT = 1;               /* mouse is initially hidden */
-    GCURX = DEV_TAB[0] / 2;     /* initialize the mouse to center */
-    GCURY = DEV_TAB[1] / 2;
 
     timer_init(vwk);
     vdimouse_init(vwk);		/* initialize mouse */
@@ -468,41 +459,39 @@ void v_clrwk(Vwk * vwk)
 
 void vq_extnd(Vwk * vwk)
 {
-    REG WORD i;
-    REG WORD *dp, *sp;
+    WORD i;
+    WORD *dst, *src;
 
-    dp = CONTRL;
-    *(dp + 2) = 6;
-    *(dp + 4) = 45;
+    CONTRL[2] = 6;
+    CONTRL[4] = 45;
 
     flip_y = 1;
-
-    dp = PTSOUT;
-
+    dst = PTSOUT;
     if (*(INTIN) == 0) {
-        sp = SIZ_TAB;
+        src = SIZ_TAB;
         for (i = 0; i < 12; i++)
-            *dp++ = *sp++;
+            *dst++ = *src++;
 
-        sp = DEV_TAB;
+        src = DEV_TAB;
     }
-
     else {
-        *dp++ = vwk->xmn_clip;       /* PTSOUT[0] */
-        *dp++ = vwk->ymn_clip;       /* PTSOUT[1] */
-        *dp++ = vwk->xmx_clip;       /* PTSOUT[2] */
-        *dp++ = vwk->ymx_clip;       /* PTSOUT[3] */
+        /* copy the clipping ranges to PTSOUT */
+        *dst++ = vwk->xmn_clip;       /* PTSOUT[0] */
+        *dst++ = vwk->ymn_clip;       /* PTSOUT[1] */
+        *dst++ = vwk->xmx_clip;       /* PTSOUT[2] */
+        *dst++ = vwk->ymx_clip;       /* PTSOUT[3] */
 
         for (i = 4; i < 12; i++)
-            *dp++ = 0;
+            *dst++ = 0;
 
-        sp = INQ_TAB;
+        src = INQ_TAB;
+        INQ_TAB[19] = vwk->clip;      /* now update INQTAB */
     }
 
-    dp = INTOUT;
+    /* copy DEV_TAB or INQ_TAB to INTOUT */
+    dst = INTOUT;
     for (i = 0; i < 45; i++)
-        *dp++ = *sp++;
-
+        *dst++ = *src++;
 }
 
 

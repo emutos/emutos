@@ -17,35 +17,18 @@
 
 
 
-/* External declarations */
-//extern struct attribute *trap();
-//extern long trap13(int, ...);
-
-extern void escfn2();
-extern void escfn3();
-extern void vdimouse_init();
-extern void vdimouse_exit();
-extern WORD ** local_pb;
-
-//#define tickcal() trap13(0x06)          /* ms between timer C calls */
-//#define setexec(a,b) trap13(0x05, a,b)  /* change exception vector */
-
 #define ptsin_size 256          // max. # of elements allowed for PTSIN array
 #define ptsin_max  ptsin_size/2 // max. # of coordinate pairs for PTSIN array
 
 WORD lcl_ptsin[ptsin_size];
-WORD ** usr_pb;
 WORD flip_y;                    /* True if magnitudes being returned */
-
-Vwk virt_work;     /* attribute areas for workstations */
 WORD q_circle[MX_LN_WIDTH];     /* Holds the circle DDA */
-
 
 /* GDP variables */
 WORD angle, beg_ang, del_ang, deltay, end_ang;
 WORD start, xc, xrad, y, yc, yrad;
 
-struct font_head *cur_font;     /* Pointer to current font */
+//struct font_head *cur_font;     /* Pointer to current font */
 
 
 
@@ -143,7 +126,6 @@ void(*jmptb2[])(Vwk *) = {
 void screen()
 {
     WORD opcode, handle;
-    BOOL found;
     Vwk *vwk = NULL;
 
     /* get workstation handle */
@@ -154,53 +136,20 @@ void screen()
     CONTRL[4] = 0;
 
     flip_y = 0;
-
     opcode = CONTRL[0];
+
+    /* is it open work or vwork? */
     if (opcode != 1 && opcode != 100) {
-
-        /* Find the attribute area which matches the handle */
-        vwk = &virt_work;
-
-        found = 0;
-        do {
-            found = (handle == vwk->handle);
-        } while (!found && (vwk = vwk->next_work));
-
-        /* handle is invalid if we fall through, so exit */
-        if (!found)
+        /* Find the vwk which matches the handle, if there */
+        vwk = get_vwk_by_handle(handle);
+        if (!vwk)
             return;
 
         /* This copying is done for assembler routines */
-        INQ_TAB[19] = CLIP = vwk->clip;
-        XMN_CLIP = vwk->xmn_clip;
-        YMN_CLIP = vwk->ymn_clip;
-        XMX_CLIP = vwk->xmx_clip;
-        YMX_CLIP = vwk->ymx_clip;
-
-        WRT_MODE = vwk->wrt_mode;
-
         if (vwk->fill_style != 4)       /* multifill just for user */
             vwk->multifill = 0;
-
-        font_ring[2] = vwk->loaded_fonts;
-
-        DEV_TAB[10] = vwk->num_fonts;
-
-        DDA_INC = vwk->dda_inc;
-        T_SCLSTS = vwk->t_sclsts;
-        DOUBLE = vwk->scaled;
-
-        cur_font = vwk->cur_font;
-
-        MONO_STATUS = F_MONOSPACE & cur_font->flags;
-        scrpt2 = vwk->scrpt2;
-        scrtchp = vwk->scrtchp;
-        STYLE = vwk->style;
-        h_align = vwk->h_align;
-        v_align = vwk->v_align;
-        CHUP = vwk->chup;
     }
-    /* end if open work or vwork */
+
     if (opcode >= 1 && opcode <= 39) {
         (*jmptb1[opcode - 1]) (vwk);
     }

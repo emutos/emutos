@@ -18,7 +18,6 @@
 #include "portab.h"
 
 
-
 /* different maximum settings */
 
 #define MAX_COLOR       16
@@ -37,10 +36,6 @@
 #define SQUARED 0
 #define ARROWED 1
 #define CIRCLED 2
-
-#define LLUR 0
-#define ULLR 1
-
 
 /* aliases for different table positions */
 #define xres            DEV_TAB[0]
@@ -71,28 +66,10 @@
 #define MD_XOR      3
 #define MD_ERASE    4
 
-//#define ABS(v) (v & 0x7FFF)
-#define ABS(x) ((x) >= 0 ? (x) : -(x))
 
 
-
-/* font-header definitions */
-
-/* fh_flags   */
-#define F_DEFAULT 1             /* this is the default font (face and size) */
-#define F_HORZ_OFF  2           /* there are left and right offset tables */
-#define F_STDFORM  4            /* is the font in standard format */
-#define F_MONOSPACE 8           /* is the font monospaced */
-
-/* style bits */
-#define F_THICKEN 1
-#define F_LIGHT 2
-#define F_SKEW  4
-#define F_UNDER 8
-#define F_OUTLINE 16
-#define F_SHADOW        32
-
-struct font_head {              /* descibes a font */
+typedef struct Fonthead_ Fonthead;
+struct Fonthead_ {              /* descibes a font */
     WORD font_id;
     WORD point;
     BYTE name[32];
@@ -119,7 +96,7 @@ struct font_head {              /* descibes a font */
     UWORD form_width;
     UWORD form_height;
 
-    struct font_head *next_font;        /* pointer to next font */
+    Fonthead *next_font;        /* pointer to next font */
     UWORD font_seg;
 };
 
@@ -127,39 +104,38 @@ struct font_head {              /* descibes a font */
 /* Structure to hold data for a virtual workstation */
 typedef struct Vwk_ Vwk;
 struct Vwk_ {
-    WORD chup;                  /* Character Up vector          */
-    WORD clip;                  /* Clipping Flag            */
-    struct font_head *cur_font; /* Pointer to current font      */
-    WORD dda_inc;               /* Fraction to be added to the DDA  */
-    WORD multifill;             /* Multi-plane fill flag        */
-    UWORD patmsk;               /* Current pattern mask         */
-    UWORD *patptr;              /* Current pattern pointer      */
-    WORD pts_mode;              /* TRUE if height set in points mode    */
-    WORD *scrtchp;              /* Pointer to text scratch buffer   */
-    WORD scrpt2;                /* Offset to large text buffer      */
-    WORD style;                 /* Current text style           */
-    WORD t_sclsts;              /* TRUE if scaling up           */
-    WORD fill_color;            /* Current fill color (PEL value)   */
-    WORD fill_index;            /* Current fill index           */
-    WORD fill_per;              /* TRUE if fill area outlined       */
-    WORD fill_style;            /* Current fill style           */
-    WORD h_align;               /* Current text horizontal alignment    */
+    WORD chup;                  /* Character Up vector */
+    WORD clip;                  /* Clipping Flag */
+    Fonthead *cur_font; /* Pointer to current font */
+    WORD dda_inc;               /* Fraction to be added to the DDA */
+    WORD multifill;             /* Multi-plane fill flag */
+    UWORD patmsk;               /* Current pattern mask */
+    UWORD *patptr;              /* Current pattern pointer */
+    WORD pts_mode;              /* TRUE if height set in points mode */
+    WORD *scrtchp;              /* Pointer to text scratch buffer */
+    WORD scrpt2;                /* Offset to large text buffer */
+    WORD style;                 /* Current text style */
+    WORD t_sclsts;              /* TRUE if scaling up */
+    WORD fill_color;            /* Current fill color (PEL value) */
+    WORD fill_index;            /* Current fill index */
+    WORD fill_per;              /* TRUE if fill area outlined */
+    WORD fill_style;            /* Current fill style */
+    WORD h_align;               /* Current text horizontal alignment */
     WORD handle;                /* The handle this attribute area is for */
-    WORD line_beg;              /* Beginning line endstyle      */
-    WORD line_color;            /* Current line color (PEL value)   */
-    WORD line_end;              /* Ending line endstyle         */
-    WORD line_index;            /* Current line style           */
-    WORD line_width;            /* Current line width           */
-    struct font_head *loaded_fonts;     /* Pointer to first loaded font     */
+    WORD line_beg;              /* Beginning line endstyle */
+    WORD line_color;            /* Current line color (PEL value) */
+    WORD line_end;              /* Ending line endstyle */
+    WORD line_index;            /* Current line style */
+    WORD line_width;            /* Current line width */
+    Fonthead *loaded_fonts;     /* Pointer to first loaded font     */
     WORD mark_color;            /* Current marker color (PEL value)     */
     WORD mark_height;           /* Current marker height        */
     WORD mark_index;            /* Current marker style         */
     WORD mark_scale;            /* Current scale factor for marker data */
-    Vwk *next_work;        /* Pointer to next virtual
-                                           workstation  */
+    Vwk *next_work;        	/* Pointer to next virtual workstation  */
     WORD num_fonts;             /* Total number of faces available  */
     WORD scaled;                /* TRUE if font scaled in any way   */
-    struct font_head scratch_head;      /* Holder for the doubled font data */
+    Fonthead scratch_head;      /* Holder for the doubled font data */
     WORD text_color;            /* Current text color (PEL value)   */
     WORD ud_ls;                 /* User defined linestyle       */
     WORD ud_patrn[4 * 16];      /* User defined pattern         */
@@ -181,42 +157,11 @@ typedef struct
 
 
 /* External definitions for internal use */
-extern Vwk virt_work;      	/* Virtual workstation attributes */
-//extern Vwk *cur_work;      	/* Pointer to current works attr. */
-
-extern WORD DDA_INC;            /* the fraction to be added to the DDA */
-extern WORD T_SCLSTS;           /* 0 if scale down, 1 if enlarge */
-
-extern WORD MONO_STATUS;        /* True if current font monospaced */
-
-extern WORD deftxbuf[];         /* Default text scratch buffer */
-extern WORD scrtsiz;            /* Default offset to large text buffer */
-
-extern WORD scrpt2;             /* Offset to large text buffer */
-extern WORD *scrtchp;           /* Pointer to text scratch buffer */
-
 extern WORD flip_y;             /* True if magnitudes being returned */
-extern WORD h_align;            /* Text horizontal alignment */
-extern WORD v_align;            /* Text vertical alignment */
-
-extern WORD font_count;         /* Number of fonts in driver */
-
-extern struct font_head *cur_font;      /* Current font */
-extern struct font_head *def_font;      /* Default font of open workstation */
-
-extern struct font_head *font_ring[];   /* Ring of available fonts */
-
-extern WORD STYLE;              /* Requested text special effects */
-extern WORD DOUBLE;             /* True if current font scaled */
-extern WORD CHUP;               /* Text baseline vector */
-
 extern WORD line_cw;            /* Linewidth for current circle */
 extern WORD num_qc_lines, q_circle[];
-
 extern WORD val_mode, chc_mode, loc_mode, str_mode;
-
 extern BYTE shft_off;           /* once computed Offset into a Scan Line */
-
 
 /* filled area variables */
 //extern UWORD *patptr, patmsk;
@@ -231,7 +176,6 @@ extern WORD start, angle, n_steps;
 extern WORD s_begsty, s_endsty, s_fil_col;
 
 /* These are still needed for text blitting */
-extern WORD CLIP, XMN_CLIP, XMX_CLIP, YMN_CLIP, YMX_CLIP;
 extern UWORD LINE_STYLE[];
 extern UWORD DITHER[];
 extern UWORD HATCH0[], HATCH1[], OEMPAT[];
@@ -251,14 +195,10 @@ extern WORD fg_bp[4];           /* points to ... */
 extern WORD FG_BP_1, FG_BP_2, FG_BP_3, FG_BP_4;
 
 extern WORD LN_MASK, LSTLIN;
-extern WORD HIDE_CNT;
-extern WORD MOUSE_BT;
-extern WORD WRT_MODE;
 extern WORD REQ_COL[3][MAX_COLOR];
 extern WORD MAP_COL[], REV_MAP_COL[];
 extern WORD X1, Y1, X2, Y2;
-extern WORD GCURX, GCURY, TERM_CH;
-extern WORD mousex, mousey;
+extern WORD TERM_CH;
 
 /* Bit-Blt variables */
 extern WORD COPYTRAN;
@@ -279,7 +219,10 @@ WORD vec_len(WORD x, WORD y);
 void arb_corner(WORD * corners);
 void arb_corner_llur(WORD * corners);
 
+
 /* C Support routines */
+Vwk * get_vwk_by_handle(WORD);
+
 void cur_display();
 void cur_replace();
 void v_show_c(Vwk *);
@@ -308,6 +251,7 @@ WORD Isqrt(ULONG x);
 
 /* initialization of subsystems */
 void text_init(Vwk *);
+void text_init2(Vwk *);
 void timer_init(Vwk *);
 void vdimouse_init(Vwk *);
 void esc_init(Vwk *);

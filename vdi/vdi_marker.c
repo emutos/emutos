@@ -179,20 +179,15 @@ void v_pmarker(Vwk * vwk)
 
 void vqm_attr(Vwk * vwk)
 {
-    WORD *pointer;
+    INTOUT[0] = vwk->mark_index;
+    INTOUT[1] = REV_MAP_COL[vwk->mark_color];
+    INTOUT[2] = vwk->wrt_mode + 1;
 
-    pointer = INTOUT;
-    *pointer++ = vwk->mark_index;
-    *pointer++ = REV_MAP_COL[vwk->mark_color];
-    *pointer = WRT_MODE + 1;
+    PTSOUT[0] = 0;
+    PTSOUT[1] = vwk->mark_height;
 
-    pointer = PTSOUT;
-    *pointer++ = 0;
-    *pointer = vwk->mark_height;
-
-    pointer = CONTRL;
-    *(pointer + 4) = 3;
-    *(pointer + 2) = 1;
+    CONTRL[4] = 3;
+    CONTRL[2] = 1;
     flip_y = 1;
 }
 

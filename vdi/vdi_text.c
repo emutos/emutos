@@ -15,9 +15,20 @@
 #include "vdi_defs.h"
 
 
+//extern Fonthead *cur_font;      /* Current font */
+extern Fonthead *def_font;      /* Default font of open workstation */
+extern Fonthead *font_ring[];   /* Ring of available fonts */
 
-//extern void trnsfont();
-extern void dqt_extent();
+
+/* linea-variables used for text_blt in assembler */
+extern WORD CLIP, XMN_CLIP, XMX_CLIP, YMN_CLIP, YMX_CLIP;
+extern WORD DDA_INC;            /* the fraction to be added to the DDA */
+extern WORD T_SCLSTS;           /* 0 if scale down, 1 if enlarge */
+extern WORD MONO_STATUS;        /* True if current font monospaced */
+extern WORD STYLE;              /* Requested text special effects */
+extern WORD DOUBLE;             /* True if current font scaled */
+extern WORD CHUP;               /* Text baseline vector */
+extern WORD WRT_MODE;
 
 extern WORD XACC_DDA;           /* accumulator for x DDA        */
 extern WORD SOURCEX, SOURCEY;   /* upper left of character in font file */
@@ -31,13 +42,35 @@ extern WORD R_OFF, L_OFF;       /* skew above and below baseline    */
 extern WORD TEXT_FG;
 
 
-extern struct font_head fon6x6;         /* See bios/fntxxx.c */
-extern struct font_head fon8x8;         /* See bios/fntxxx.c */
-extern struct font_head fon8x16;        /* See bios/fntxxx.c */
+/* font-header definitions */
+
+/* fh_flags   */
+#define F_DEFAULT 1             /* this is the default font (face and size) */
+#define F_HORZ_OFF  2           /* there are left and right offset tables */
+#define F_STDFORM  4            /* is the font in standard format */
+#define F_MONOSPACE 8           /* is the font monospaced */
+
+/* style bits */
+#define F_THICKEN 1
+#define F_LIGHT 2
+#define F_SKEW  4
+#define F_UNDER 8
+#define F_OUTLINE 16
+#define F_SHADOW        32
+
+extern WORD font_count;         /* Number of fonts in driver */
+extern WORD deftxbuf[];         /* Default text scratch buffer */
+extern WORD scrtsiz;            /* Default offset to large text buffer */
+extern WORD scrpt2;             /* Offset to large text buffer */
+extern WORD *scrtchp;           /* Pointer to text scratch buffer */
+
+extern Fonthead fon6x6;         /* See bios/fntxxx.c */
+extern Fonthead fon8x8;         /* See bios/fntxxx.c */
+extern Fonthead fon8x16;        /* See bios/fntxxx.c */
 
 /* Global variables */
-WORD h_align;            /* Text horizontal alignment */
-WORD v_align;            /* Text vertical alignment */
+//WORD h_align;            /* Text horizontal alignment */
+//WORD v_align;            /* Text vertical alignment */
 WORD width, height;      /* extent of string set in dqt_extent   */
 WORD wordx, wordy;       /* add this to each space for interword */
 WORD rmword;             /* the number of pixels left over   */
@@ -49,8 +82,8 @@ WORD rmcharx, rmchary;   /* add this to use up remainder     */
 
 /* Prototypes for this module */
 
-void make_header();
-WORD clc_dda(WORD act, WORD req);
+void make_header(Vwk * vwk);
+WORD clc_dda(Vwk * vwk, WORD act, WORD req);
 
 void d_gtext(Vwk * vwk)
 {
@@ -66,23 +99,40 @@ void d_gtext(Vwk * vwk)
     WORD justified;
 
     WORD temp;
-    struct font_head *fnt_ptr = NULL;
+    Fonthead *fnt_ptr = NULL;
     WORD *pointer = NULL;
+
+    /* some data copying for the assembler part */
+    DDA_INC = vwk->dda_inc;
+    T_SCLSTS = vwk->t_sclsts;
+    DOUBLE = vwk->scaled;;
+    MONO_STATUS = F_MONOSPACE & vwk->cur_font->flags;
+    WRT_MODE = vwk->wrt_mode;
+
+    CLIP = vwk->clip;
+    XMN_CLIP = vwk->xmn_clip;
+    YMN_CLIP = vwk->ymn_clip;
+    XMX_CLIP = vwk->xmx_clip;
+    YMX_CLIP = vwk->ymx_clip;
+    STYLE = vwk->style;
+    CHUP = vwk->chup;
+    scrpt2 = vwk->scrpt2;
+    scrtchp = vwk->scrtchp;
 
     count = CONTRL[3];
     if (count > 0) {
 
-        fnt_ptr = cur_font;     /* Get current font pointer in register */
+        fnt_ptr = vwk->cur_font;     /* Get current font pointer in register */
 
-        justified = (*CONTRL == 11);
+        justified = (CONTRL[0] == 11);
 
-        if (STYLE & F_THICKEN)
+        if (vwk->style & F_THICKEN)
             WEIGHT = fnt_ptr->thicken;
 
-        if (STYLE & F_LIGHT)
+        if (vwk->style & F_LIGHT)
             LITEMASK = fnt_ptr->lighten;
 
-        if (STYLE & F_SKEW) {
+        if (vwk->style & F_SKEW) {
             L_OFF = fnt_ptr->left_offset;
             R_OFF = fnt_ptr->right_offset;
             SKEWMASK = fnt_ptr->skew;
@@ -94,7 +144,7 @@ void d_gtext(Vwk * vwk)
         FBASE = fnt_ptr->dat_table;
         FWIDTH = fnt_ptr->form_width;
 
-        switch (h_align) {
+        switch (vwk->h_align) {
         case 0:
             delh = 0;
             break;
@@ -104,7 +154,7 @@ void d_gtext(Vwk * vwk)
                 PTSOUT = extent;
                 dqt_extent(vwk);
                 PTSOUT = old_ptr;
-                *(CONTRL + 2) = 0;
+                CONTRL[2] = 0;
             }
             delh = width / 2;
             break;
@@ -114,13 +164,13 @@ void d_gtext(Vwk * vwk)
                 PTSOUT = extent;
                 dqt_extent(vwk);
                 PTSOUT = old_ptr;
-                *(CONTRL + 2) = 0;
+                CONTRL[2] = 0;
             }
             delh = width;
             break;
         }
 
-        if (STYLE & F_SKEW) {
+        if (vwk->style & F_SKEW) {
             d1 = fnt_ptr->left_offset;
             d2 = fnt_ptr->right_offset;
         } else {
@@ -128,7 +178,7 @@ void d_gtext(Vwk * vwk)
             d2 = 0;
         }
 
-        switch (v_align) {
+        switch (vwk->v_align) {
         case 0:
             delv = fnt_ptr->top;
             delh += d1;
@@ -155,7 +205,7 @@ void d_gtext(Vwk * vwk)
         }
 
         pointer = PTSIN;
-        switch (CHUP) {
+        switch (vwk->chup) {
         case 0:
             DESTX = *(pointer) - delh;
             DESTY = *(pointer + 1) - delv;
@@ -199,7 +249,6 @@ void d_gtext(Vwk * vwk)
             temp = INTIN[j];
 
             /* If the character is out of range for this font make it a ? */
-
             if ((temp < fnt_ptr->first_ade) || (temp > fnt_ptr->last_ade))
                 temp = 63;
             temp -= fnt_ptr->first_ade;
@@ -212,7 +261,7 @@ void d_gtext(Vwk * vwk)
 
             text_blt();
 
-            fnt_ptr = cur_font;     /* restore reg var */
+            fnt_ptr = vwk->cur_font;     /* restore reg var */
 
             if (justified) {
                 DESTX += charx;
@@ -238,19 +287,19 @@ void d_gtext(Vwk * vwk)
 
         }                   /* for j */
 
-        if (STYLE & F_UNDER) {
+        if (vwk->style & F_UNDER) {
             X1 = startx;
             Y1 = starty;
 
-            if (CHUP % 1800 == 0) {
+            if (vwk->chup % 1800 == 0) {
                 X2 = DESTX;
                 Y2 = Y1;
             } else {
                 X2 = X1;
                 Y2 = DESTY;
             }
-            if (STYLE & F_LIGHT)
-                LN_MASK = cur_font->lighten;
+            if (vwk->style & F_LIGHT)
+                LN_MASK = vwk->cur_font->lighten;
             else
                 LN_MASK = 0xffff;
 
@@ -260,7 +309,7 @@ void d_gtext(Vwk * vwk)
             FG_BP_3 = temp & 4;
             FG_BP_4 = temp & 8;
 
-            count = cur_font->ul_size;
+            count = vwk->cur_font->ul_size;
             for (i = 0; i < count; i++) {
                 if (vwk->clip) {
                     tx1 = X1;
@@ -321,11 +370,30 @@ void trnsfont()
 
 
 
+void text_init2(Vwk * vwk)
+{
+    vwk->cur_font = def_font;
+    vwk->loaded_fonts = NULLPTR;
+    vwk->scrpt2 = scrtsiz;
+    vwk->scrtchp = deftxbuf;
+    vwk->num_fonts = font_count;
+
+    vwk->style = 0;        /* reset special effects */
+    vwk->scaled = FALSE;
+    vwk->h_align = 0;
+    vwk->v_align = 0;
+    vwk->chup = 0;
+    vwk->pts_mode = FALSE;
+
+    font_ring[2] = vwk->loaded_fonts;
+    DEV_TAB[10] = vwk->num_fonts;
+}
+
 void text_init(Vwk * vwk)
 {
     WORD i, j;
     WORD id_save;
-    struct font_head *fnt_ptr, **chain_ptr;
+    Fonthead *fnt_ptr, **chain_ptr;
 
     SIZ_TAB[0] = 32767;         // minimal char width
     SIZ_TAB[1] = 32767;         // minimal char height
@@ -377,21 +445,35 @@ void text_init(Vwk * vwk)
 
         } while ((fnt_ptr = fnt_ptr->next_font));
     }
-
     DEV_TAB[5] = i;                     /* number of sizes */
-    font_count = DEV_TAB[10] = ++j;     /* number of faces */
+    font_count = DEV_TAB[10] = ++j;   	/* number of faces */
 
-    cur_font = def_font;
+#if 0
+    /* initial settings */
+    vwk->cur_font = def_font;
+    vwk->loaded_fonts = NULLPTR;
+    vwk->num_fonts = font_count;	/* number of faces */
+
+    vwk->scrpt2 = scrtsiz;	/* set pointers to default buffers */
+    vwk->scrtchp = deftxbuf;
+
+    vwk->style = 0;        /* reset special effects */
+    vwk->scaled = FALSE;
+    vwk->h_align = 0;
+    vwk->v_align = 0;
+    vwk->chup = 0;
+    vwk->pts_mode = FALSE;
+#endif
 }
 
 void dst_height(Vwk * vwk)
 {
-    struct font_head **chain_ptr;
-    struct font_head *test_font, *single_font;
+    Fonthead **chain_ptr;
+    Fonthead *test_font, *single_font;
     WORD *pointer, font_id, test_height;
     BYTE found;
 
-    font_id = cur_font->font_id;
+    font_id = vwk->cur_font->font_id;
     vwk->pts_mode = FALSE;
 
     /* Find the smallest font in the requested face */
@@ -406,8 +488,7 @@ void dst_height(Vwk * vwk)
 
     single_font = test_font;
     test_height = PTSIN[1];
-    if (vwk->xfm_mode == 0)        /* If NDC transformation, swap y
-                                           coordinate */
+    if (vwk->xfm_mode == 0)     /* If NDC transformation, swap y coordinate */
         test_height = DEV_TAB[1] + 1 - test_height;
 
     /* Traverse the chains and find the font closest to the size requested. */
@@ -421,15 +502,13 @@ void dst_height(Vwk * vwk)
     } while ((test_font = *chain_ptr++));
 
     /* Set up environment for this font in the non-scaled case */
-    vwk->cur_font = cur_font = single_font;
+    vwk->cur_font = single_font;
     vwk->scaled = FALSE;
 
     if (single_font->top != test_height) {
-        DDA_INC = vwk->dda_inc =
-            clc_dda(single_font->top, test_height);
-        vwk->t_sclsts = T_SCLSTS;
-        make_header();
-        single_font = cur_font;
+        vwk->dda_inc = clc_dda(vwk, single_font->top, test_height);
+        make_header(vwk);
+        single_font = vwk->cur_font;
     }
 
     CONTRL[2] = 2;
@@ -458,28 +537,26 @@ void dst_height(Vwk * vwk)
  *   actual size
  */
 
-WORD act_siz(WORD top)
+WORD act_siz(Vwk * vwk, WORD top)
 {
     UWORD size;
     UWORD accu;
     UWORD retval;
     UWORD i;
 
-
-    if (DDA_INC == 0xffff) {
+    if (vwk->dda_inc == 0xffff) {
         /* double size */
         return ((WORD)(top<<1));
     }
-
     size = (UWORD)(top - 1);
     accu = 0x7fff;
     retval = 0;
 
-    if (T_SCLSTS) {
+    if (vwk->t_sclsts) {
         /* enlarge */
         for (i = size; i >= 0; --i) {
-            accu += DDA_INC;
-            if (accu < DDA_INC) {
+            accu += vwk->dda_inc;
+            if (accu < vwk->dda_inc) {
                 // Not sz_sm_1 stuff here
                 retval++;
             }
@@ -488,8 +565,8 @@ WORD act_siz(WORD top)
     } else {
         /* scale down */
         for (i = size; i >= 0; --i) {
-            accu += DDA_INC;
-            if (accu < DDA_INC) {
+            accu += vwk->dda_inc;
+            if (accu < vwk->dda_inc) {
                 // Not sz_sm_1 stuff here
                 retval++;
             }
@@ -518,7 +595,7 @@ void copy_name(BYTE * source, BYTE * dest)
 
 void make_header(Vwk * vwk)
 {
-    struct font_head *source_font, *dest_font;
+    Fonthead *source_font, *dest_font;
 
     source_font = vwk->cur_font;
     dest_font = &vwk->scratch_head;
@@ -531,7 +608,7 @@ void make_header(Vwk * vwk)
     dest_font->first_ade = source_font->first_ade;
     dest_font->last_ade = source_font->last_ade;
 
-    if (DDA_INC == 0xFFFF) {
+    if (vwk->dda_inc == 0xFFFF) {
         dest_font->top = source_font->top * 2 + 1;
         dest_font->ascent = source_font->ascent * 2 + 1;
         dest_font->half = source_font->half * 2 + 1;
@@ -544,17 +621,17 @@ void make_header(Vwk * vwk)
         dest_font->thicken = source_font->thicken * 2;
         dest_font->ul_size = source_font->ul_size * 2;
     } else {
-        dest_font->top = act_siz(source_font->top);
-        dest_font->ascent = act_siz(source_font->ascent);
-        dest_font->half = act_siz(source_font->half);
-        dest_font->descent = act_siz(source_font->descent);
-        dest_font->bottom = act_siz(source_font->bottom);
-        dest_font->max_char_width = act_siz(source_font->max_char_width);
-        dest_font->max_cell_width = act_siz(source_font->max_cell_width);
-        dest_font->left_offset = act_siz(source_font->left_offset);
-        dest_font->right_offset = act_siz(source_font->right_offset);
-        dest_font->thicken = act_siz(source_font->thicken);
-        dest_font->ul_size = act_siz(source_font->ul_size);
+        dest_font->top = act_siz(vwk, source_font->top);
+        dest_font->ascent = act_siz(vwk, source_font->ascent);
+        dest_font->half = act_siz(vwk, source_font->half);
+        dest_font->descent = act_siz(vwk, source_font->descent);
+        dest_font->bottom = act_siz(vwk, source_font->bottom);
+        dest_font->max_char_width = act_siz(vwk, source_font->max_char_width);
+        dest_font->max_cell_width = act_siz(vwk, source_font->max_cell_width);
+        dest_font->left_offset = act_siz(vwk, source_font->left_offset);
+        dest_font->right_offset = act_siz(vwk, source_font->right_offset);
+        dest_font->thicken = act_siz(vwk, source_font->thicken);
+        dest_font->ul_size = act_siz(vwk, source_font->ul_size);
     }
 
     dest_font->lighten = source_font->lighten;
@@ -569,23 +646,22 @@ void make_header(Vwk * vwk)
     dest_font->form_height = source_font->form_height;
 
     vwk->scaled = TRUE;
-    vwk->cur_font = cur_font = dest_font;
+    vwk->cur_font = dest_font;
 }
 
 
 void dst_point(Vwk * vwk)
 {
     WORD font_id;
-    struct font_head **chain_ptr, *double_font;
-    struct font_head *test_font, *single_font;
+    Fonthead **chain_ptr, *double_font;
+    Fonthead *test_font, *single_font;
     WORD *pointer, test_height, height;
     BYTE found;
 
-    font_id = cur_font->font_id;
+    font_id = vwk->cur_font->font_id;
     vwk->pts_mode = TRUE;
 
     /* Find the smallest font in the requested face */
-
     chain_ptr = font_ring;
     found = 0;
     while (!found && (test_font = *chain_ptr++)) {
@@ -599,7 +675,6 @@ void dst_point(Vwk * vwk)
 
     /* Traverse the chains and find the font closest to the size requested */
     /* and closest to half the size requested.                 */
-
     do {
         while (((height = test_font->point) <= test_height)
                && (test_font->font_id == font_id)) {
@@ -613,25 +688,23 @@ void dst_point(Vwk * vwk)
     } while ((test_font = *chain_ptr++));
 
     /* Set up environment for this font in the non-scaled case */
-
-    cur_font = vwk->cur_font = single_font;
+    vwk->cur_font = single_font;
     vwk->scaled = FALSE;
 
     if (single_font->point != test_height) {
         height = double_font->point * 2;
 
         if ((height > single_font->point) && (height <= test_height)) {
-            DDA_INC = vwk->dda_inc = 0xFFFF;
+            vwk->dda_inc = 0xFFFF;
             vwk->t_sclsts = 1;
             vwk->cur_font = double_font;
             make_header(vwk);
-            single_font = cur_font;
+            single_font = vwk->cur_font;
         }
     }
 
-    pointer = CONTRL;
-    *(pointer + 4) = 1;
-    *(pointer + 2) = 2;
+    CONTRL[4] = 1;
+    CONTRL[2] = 2;
 
     INTOUT[0] = single_font->point;
 
@@ -682,10 +755,10 @@ void dst_font(Vwk * vwk)
 {
     WORD *old_intin, point, *old_ptsout, dummy[4], *old_ptsin;
     WORD face;
-    struct font_head *test_font, **chain_ptr;
+    Fonthead *test_font, **chain_ptr;
     BYTE found;
 
-    test_font = cur_font;
+    test_font = vwk->cur_font;
     point = test_font->point;
     dummy[1] = test_font->top;
     face = INTIN[0];
@@ -705,8 +778,7 @@ void dst_font(Vwk * vwk)
         test_font = &fon6x6;
 
     /* Call down to the set text height routine to get the proper size */
-
-    vwk->cur_font = cur_font = test_font;
+    vwk->cur_font = test_font;
 
     old_intin = INTIN;
     old_ptsin = PTSIN;
@@ -725,7 +797,7 @@ void dst_font(Vwk * vwk)
 
     CONTRL[2] = 0;
     CONTRL[4] = 1;
-    INTOUT[0] = cur_font->font_id;
+    INTOUT[0] = vwk->cur_font->font_id;
 }
 
 
@@ -745,10 +817,10 @@ void dst_color(Vwk * vwk)
 void dqt_attributes(Vwk * vwk)
 {
     WORD *pointer, temp;
-    struct font_head *fnt_ptr;
+    Fonthead *fnt_ptr;
 
     pointer = INTOUT;
-    fnt_ptr = cur_font;
+    fnt_ptr = vwk->cur_font;
 
     *pointer++ = fnt_ptr->font_id;      /* INTOUT[0] */
     *pointer++ = REV_MAP_COL[vwk->text_color];     /* INTOUT[1] */
@@ -763,9 +835,8 @@ void dqt_attributes(Vwk * vwk)
     *pointer++ = fnt_ptr->max_cell_width;
     *pointer = temp + fnt_ptr->bottom + 1;
 
-    pointer = CONTRL;
-    *(pointer + 2) = 2;
-    *(pointer + 4) = 6;
+    CONTRL[2] = 2;
+    CONTRL[4] = 6;
     flip_y = 1;
 }
 
@@ -774,11 +845,11 @@ void dqt_extent(Vwk * vwk)
 {
     WORD i, chr, table_start;
     WORD *pointer;
-    struct font_head *fnt_ptr;
+    Fonthead *fnt_ptr;
 
     WORD cnt;
 
-    fnt_ptr = cur_font;
+    fnt_ptr = vwk->cur_font;
     pointer = INTIN;
 
     width = 0;
@@ -790,17 +861,17 @@ void dqt_extent(Vwk * vwk)
         width += fnt_ptr->off_table[chr + 1] - fnt_ptr->off_table[chr];
     }
 
-    if (DOUBLE) {
-        if (DDA_INC == 0xFFFF)
+    if (vwk->scaled) {
+        if (vwk->dda_inc == 0xFFFF)
             width *= 2;
         else
-            width = act_siz(width);
+            width = act_siz(vwk, width);
     }
 
-    if ((STYLE & F_THICKEN) && !(fnt_ptr->flags & F_MONOSPACE))
+    if ((vwk->style & F_THICKEN) && !(fnt_ptr->flags & F_MONOSPACE))
         width += cnt * fnt_ptr->thicken;
 
-    if (STYLE & F_SKEW)
+    if (vwk->style & F_SKEW)
         width += fnt_ptr->left_offset + fnt_ptr->right_offset;
 
     height = fnt_ptr->top + fnt_ptr->bottom + 1;
@@ -808,7 +879,7 @@ void dqt_extent(Vwk * vwk)
     CONTRL[2] = 4;
 
     pointer = PTSOUT;
-    switch (CHUP) {
+    switch (vwk->chup) {
     case 0:
         *pointer++ = 0;
         *pointer++ = 0;
@@ -858,13 +929,12 @@ void dqt_width(Vwk * vwk)
 {
     WORD k;
     WORD *pointer;
-    struct font_head *fnt_ptr;
+    Fonthead *fnt_ptr;
 
-    fnt_ptr = cur_font;
+    fnt_ptr = vwk->cur_font;
     pointer = PTSOUT;
 
     /* Set that there is no horizontal offset */
-
     *(pointer + 2) = 0;
     *(pointer + 4) = 0;
 
@@ -875,11 +945,11 @@ void dqt_width(Vwk * vwk)
         INTOUT[0] = k;
         k -= fnt_ptr->first_ade;
         *(pointer) = fnt_ptr->off_table[k + 1] - fnt_ptr->off_table[k];
-        if (DOUBLE) {
-            if (DDA_INC == 0xFFFF)
+        if (vwk->scaled) {
+            if (vwk->dda_inc == 0xFFFF)
                 *pointer *= 2;
             else
-                *pointer = act_siz(*pointer);
+                *pointer = act_siz(vwk, *pointer);
         }
 
         if (fnt_ptr->flags & F_HORZ_OFF) {
@@ -888,9 +958,8 @@ void dqt_width(Vwk * vwk)
         }
     }
 
-    pointer = CONTRL;
-    *(pointer + 2) = 3;
-    *(pointer + 4) = 1;
+    CONTRL[2] = 3;
+    CONTRL[4] = 1;
     flip_y = 1;
 }
 
@@ -901,11 +970,11 @@ void dqt_name(Vwk * vwk)
     WORD i, element;
     BYTE *name;
     WORD *int_out;
-    struct font_head *tmp_font;
+    Fonthead *tmp_font;
     BYTE found;
 
     WORD font_id;
-    struct font_head **chain_ptr;
+    Fonthead **chain_ptr;
 
     element = INTIN[0];
     chain_ptr = font_ring;
@@ -940,9 +1009,9 @@ void dqt_name(Vwk * vwk)
 void dqt_fontinfo(Vwk * vwk)
 {
     WORD *pointer;
-    struct font_head *fnt_ptr;
+    Fonthead *fnt_ptr;
 
-    fnt_ptr = cur_font;
+    fnt_ptr = vwk->cur_font;
 
     pointer = INTOUT;
     *pointer++ = fnt_ptr->first_ade;
@@ -952,14 +1021,14 @@ void dqt_fontinfo(Vwk * vwk)
     *pointer++ = fnt_ptr->max_cell_width;
     *pointer++ = fnt_ptr->bottom;
 
-    if (STYLE & F_THICKEN)
+    if (vwk->style & F_THICKEN)
         *pointer++ = fnt_ptr->thicken;
     else
         *pointer++ = 0;
 
     *pointer++ = fnt_ptr->descent;
 
-    if (STYLE & F_SKEW) {
+    if (vwk->style & F_SKEW) {
         *pointer++ = fnt_ptr->left_offset;
         *pointer++ = fnt_ptr->half;
         *pointer++ = fnt_ptr->right_offset;
@@ -973,9 +1042,8 @@ void dqt_fontinfo(Vwk * vwk)
     *pointer++ = 0;
     *pointer = fnt_ptr->top;
 
-    pointer = CONTRL;
-    *(pointer + 2) = 5;
-    *(pointer + 4) = 2;
+    CONTRL[2] = 5;
+    CONTRL[4] = 2;
     flip_y = 1;
 }
 
@@ -1021,7 +1089,7 @@ void d_justified(Vwk * vwk)
             direction = 1;
 
         if (interchar) {
-            expand = cur_font->max_cell_width / 2;
+            expand = vwk->cur_font->max_cell_width / 2;
             if (delword > expand) {
                 delword = expand;
                 rmword = 0;
@@ -1033,7 +1101,7 @@ void d_justified(Vwk * vwk)
             width += (delword * spaces) + (rmword * direction);
         }
 
-        switch (CHUP) {
+        switch (vwk->chup) {
         case 0:
             wordx = delword;
             wordy = 0;
@@ -1075,7 +1143,7 @@ void d_justified(Vwk * vwk)
         } else
             direction = 1;
 
-        switch (CHUP) {
+        switch (vwk->chup) {
         case 0:
             charx = delchar;
             chary = 0;
@@ -1121,7 +1189,7 @@ void dt_loadfont(Vwk * vwk)
 {
     WORD id, count, *control;
 
-    struct font_head *first_font;
+    Fonthead *first_font;
 
     /* Init some common variables */
     control = CONTRL;
@@ -1139,29 +1207,24 @@ void dt_loadfont(Vwk * vwk)
     /* CONTRL[10-11] = Pointer to first font    */
 
     /* Init the global structures           */
-
     vwk->scrpt2 = *(control + 9);
     vwk->scrtchp = (WORD *) *((LONG *) (control + 7));
 
-    first_font = (struct font_head *) *((LONG *) (control + 10));
+    first_font = (Fonthead *) *((LONG *) (control + 10));
     vwk->loaded_fonts = first_font;
 
     /* Find out how many distinct font id numbers have just been linked in. */
-
     id = -1;
     count = 0;
 
     do {
-
         /* Update the count of font id numbers, if necessary. */
-
         if (first_font->font_id != id) {
             id = first_font->font_id;
             count++;
         }
 
         /* Make sure the font is in device specific format. */
-
         if (!(first_font->flags & F_STDFORM)) {
             FBASE = first_font->dat_table;
             FWIDTH = first_font->form_width;
@@ -1172,9 +1235,11 @@ void dt_loadfont(Vwk * vwk)
         first_font = first_font->next_font;
     } while (first_font);
 
-    /* Update the device table count of faces. */
+    font_ring[2] = vwk->loaded_fonts;
 
+    /* Update the device table count of faces. */
     vwk->num_fonts += count;
+    DEV_TAB[10] = vwk->num_fonts;
     INTOUT[0] = count;
 }
 
@@ -1183,9 +1248,11 @@ void dt_unloadfont(Vwk * vwk)
 {
     /* Since we always unload all fonts, this is easy. */
     vwk->loaded_fonts = NULLPTR;   /* No fonts installed */
+    font_ring[2] = vwk->loaded_fonts;
     vwk->scrpt2 = scrtsiz; /* Reset pointers to default buffers */
     vwk->scrtchp = deftxbuf;
     vwk->num_fonts = font_count;   /* Reset font count to default */
+    DEV_TAB[10] = vwk->num_fonts;
 }
 
 
@@ -1196,18 +1263,18 @@ void dt_unloadfont(Vwk * vwk)
  * returns the quotient requested/actual
  */
 
-WORD clc_dda(WORD actual, WORD requested)
+WORD clc_dda(Vwk * vwk, WORD actual, WORD requested)
 {
     ULONG retval;                       /* unsigned return value */
 
     if (actual <= requested) {
         /* scale down */
-        T_SCLSTS = 0;                   /* clear enlarge indicator */
+        vwk->t_sclsts = 0;                   /* clear enlarge indicator */
         if (!requested)                 /* if requested 0 ... */
             requested = 1;              /* then make it 1 (minimum value) */
     } else {                            /* small DDA */
         /* scale up */
-        T_SCLSTS = 1;                   /* set enlarge indicator */
+        vwk->t_sclsts = 1;                   /* set enlarge indicator */
 
         requested -= actual;            /* larger than 2x? FIXME: Keep half value ??? */
         if (requested >= actual)
@@ -1218,7 +1285,7 @@ WORD clc_dda(WORD actual, WORD requested)
     retval = retval << 8;              /* request size to high word(bits 31-16) */
     return ((WORD)(retval / actual));   /* return the quotient as WORD */
 }
-#endif
+#else
 
 
 /*
@@ -1231,18 +1298,18 @@ WORD clc_dda(WORD actual, WORD requested)
  *   returns the quotient * 256
  */
 
-WORD clc_dda(WORD act, WORD req)
+WORD clc_dda(Vwk * vwk, WORD act, WORD req)
 {
     /* if actual =< requested */
     if ( act <= req ) {
-        T_SCLSTS = 0;           /* we do scale down */
+        vwk->t_sclsts = 0;           /* we do scale down */
         /* check requested size */
         if ( req <= 0 ) {
             req = 1;		/* if 0 then make it 1 (minimum value) */
         }
     }
     else {
-        T_SCLSTS = 1;           /* we do scale up */
+        vwk->t_sclsts = 1;           /* we do scale up */
         req -= act;
         /* if larger than 2x? */
         if ( req >= act )
@@ -1252,4 +1319,4 @@ WORD clc_dda(WORD act, WORD req)
     /* requested/actual: quotient = bits 15-0 */
     return (WORD)(((ULONG)req << 16) / act);
 }
-
+#endif

@@ -44,6 +44,10 @@ extern WORD m_cdb_bg;       // (cdb+6) Mouse background color as pel value
 extern WORD m_cdb_fg;       // (cdb+8) Mouse foreground color as pel value
 extern UWORD mask_form;     // (cdb+10) Storage for mouse mask and cursor
 
+extern WORD HIDE_CNT;
+extern WORD MOUSE_BT;
+extern WORD GCURX, GCURY;
+extern WORD mousex, mousey;
 
 
 /* Default Mouse Cursor Definition */
@@ -455,6 +459,17 @@ void xfm_crfm (Vwk * vwk)
 
 void vdimouse_init(Vwk * vwk)
 {
+    /* Input must be initialized here and not in init_wk */
+    loc_mode = 0;               /* default is request mode  */
+    val_mode = 0;               /* default is request mode  */
+    chc_mode = 0;               /* default is request mode  */
+    str_mode = 0;               /* default is request mode  */
+
+    /* mouse settings */
+    HIDE_CNT = 1;               /* mouse is initially hidden */
+    GCURX = DEV_TAB[0] / 2;     /* initialize the mouse to center */
+    GCURY = DEV_TAB[1] / 2;
+
     user_but = do_nothing;
     user_mot = do_nothing;
     user_cur = mov_cur;         /* initialize user_cur vector */

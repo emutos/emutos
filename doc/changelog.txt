@@ -1657,3 +1657,8 @@ Start... early ages
 - bios/tosvars.S: kbdvec added in order to satisfy FreeMiNT 1.16.1 that
                   relies on an undocumented TOS >= 2.0 feature (joy)
 - bios/aciavecs.S: jump to ikbd.c via the kbdvec with scancode in d0 (joy)
+
+2004-08-05
+- vdi/vdi_main.c: eleminated most doubleing to Assembler variables (MAD)
+- vdi/vdi_text:   isolated text specific stuff in vdi_text.c (MAD)
+- vdi/vdi_defs.h: more cleaned up (MAD)

@@ -19,6 +19,13 @@
 
 
 
+#define ABS(x) ((x) >= 0 ? (x) : -(x))
+
+
+/* the six predefined line styles */
+UWORD LINE_STYLE[6] = { 0xFFFF, 0xFFF0, 0xC0C0, 0xFF18, 0xFF00, 0xF191 };
+
+
 /* Wide line attribute save areas */
 WORD s_begsty, s_endsty, s_fil_col, s_fill_per;
 WORD *s_patptr;
@@ -127,20 +134,15 @@ void vsl_color(Vwk * vwk)
 
 void vql_attr(Vwk * vwk)
 {
-    WORD *pointer;
+    INTOUT[0] = vwk->line_index + 1;
+    INTOUT[1] = REV_MAP_COL[vwk->line_color];
+    INTOUT[2] = vwk->wrt_mode + 1;
 
-    pointer = INTOUT;
-    *pointer++ = vwk->line_index + 1;
-    *pointer++ = REV_MAP_COL[vwk->line_color];
-    *pointer = WRT_MODE + 1;
+    PTSOUT[0] = vwk->line_width;
+    PTSOUT[1] = 0;
 
-    pointer = PTSOUT;
-    *pointer++ = vwk->line_width;
-    *pointer = 0;
-
-    pointer = CONTRL;
-    *(pointer + 2) = 1;
-    *(pointer + 4) = 3;
+    CONTRL[2] = 1;
+    CONTRL[4] = 3;
 }
 
 
@@ -647,7 +649,7 @@ void horzline(Vwk * vwk, WORD x1, WORD x2, WORD y) {
     leftmask = ~(0xffff>>leftpart);     /* origin for not left fringe lookup */
     rightmask = 0x7fff>>rightpart;      /* origin for right fringe lookup */
 
-    switch (WRT_MODE) {
+    switch (vwk->wrt_mode) {
     case 3:  /* nor */
         hzline_nor(vwk, addr, dx, leftpart, rightmask, leftmask, patind);
         break;
@@ -836,12 +838,12 @@ void perp_off(WORD * px, WORD * py)
 
     quad_xform(quad, *vx, *vy, &x, &y);
 
-    /* Traverse the circle in a dda-like manner and find the coordinate pair */
-    /* (u, v) such that the magnitude of (u*y - v*x) is minimized.  In case
-       of */
-    /* a tie, choose the value which causes (u - v) to be minimized.  If not */
-    /* possible, do something. */
-
+    /*
+     * Traverse the circle in a dda-like manner and find the coordinate
+     * pair (u, v) such that the magnitude of (u*y - v*x) is minimized.
+     * In case of a tie, choose the value which causes (u - v) to be
+     * minimized.  If not possible, do something.
+     */
     min_val = 32767;
     u = *pcircle;
     v = 0;
@@ -991,10 +993,6 @@ void do_circ(Vwk * vwk, WORD cx, WORD cy)
 
 
 /*
- * wline - draw a line with width >1
- */
-
-/*
  * s_fa_attr - Save the fill area attribute
  */
 
@@ -1031,6 +1029,10 @@ void r_fa_attr(Vwk * vwk)
 
 
 
+/*
+ * wideline - draw a line with width >1
+ */
+
 void wideline(Vwk * vwk)
 {
     WORD i, k, box[10];         /* box two high to close polygon */
@@ -1052,7 +1054,6 @@ void wideline(Vwk * vwk)
     s_fa_attr(vwk);
 
     /* Initialize the starting point for the loop. */
-
     old_ptsin = pointer = PTSIN;
     wx1 = *pointer++;
     wy1 = *pointer++;
@@ -1062,38 +1063,34 @@ void wideline(Vwk * vwk)
     if (s_begsty != SQUARED) {
         do_circ(vwk, wx1, wy1);
     }
+
     /* Loop over the number of points passed in. */
-
     for (i = 1; i < numpts; i++) {
-        /* Get the ending point for the line segment and the vector from the */
-        /* start to the end of the segment.                                  */
-
+        /* Get ending point for line segment */
         pointer = src_ptr;
         wx2 = *pointer++;
         wy2 = *pointer++;
         src_ptr = pointer;
 
+        /* Get vector from start to end of the segment. */
         vx = wx2 - wx1;
         vy = wy2 - wy1;
 
         /* Ignore lines of zero length. */
-
         if ((vx == 0) && (vy == 0))
             continue;
 
-        /* Calculate offsets to fatten the line.  If the line segment is */
-        /* horizontal or vertical, do it the simple way.                 */
-
+        /* Calculate offsets to fatten the line. */
         if (vx == 0) {
+            /* line is horizontal - do it the simple way */
             vx = q_circle[0];
             vy = 0;
         }
-        /* End if:  vertical. */
         else if (vy == 0) {
+            /* line is vertical - do it the simple way */
             vx = 0;
             vy = num_qc_lines - 1;
         }
-        /* End else if:  horizontal. */
         else {
             /* Find the offsets in x and y for a point perpendicular */
             /* to the line segment at the appropriate distance. */
@@ -1105,7 +1102,6 @@ void wideline(Vwk * vwk)
                                    vertical. */
 
         /* Prepare the control and points parameters for the polygon call. */
-
         *(CONTRL + 1) = 4;
 
         PTSIN = pointer = box;
@@ -1140,11 +1136,11 @@ void wideline(Vwk * vwk)
         /* end point becomes the starting point for the next line segment. */
         wx1 = wx2;
         wy1 = wy2;
-    }                           /* End for:  over number of points. */
+    } /* End for:  over number of points. */
 
     /* Restore the attribute environment. */
     r_fa_attr(vwk);
-}                               /* End "wline". */
+} /* End "wline". */
 
 
 
@@ -1361,7 +1357,7 @@ void abline (Vwk * vwk)
 
 #if 0
     if (Y1 == Y2) {
-        kprintf("Y = %d, MODE = %d.\n", Y1, WRT_MODE);
+        kprintf("Y = %d, MODE = %d.\n", Y1, vwk->wrt_mode);
         //horzline(X1, X2, Y1);
         return;
     }
@@ -1419,7 +1415,7 @@ void abline (Vwk * vwk)
             eps = -dx;
             e2 = 2*dx;
 
-            switch (WRT_MODE) {
+            switch (vwk->wrt_mode) {
             case 3:              /* reverse transparent  */
                 if (*color) {
                     for (loopcnt=dx;loopcnt >= 0;loopcnt--) {
@@ -1535,7 +1531,7 @@ void abline (Vwk * vwk)
             eps = -dy;
             e2 = 2*dy;
 
-            switch (WRT_MODE) {
+            switch (vwk->wrt_mode) {
             case 3:              /* reverse transparent */
                 if (*color) {
                     for (loopcnt=dy;loopcnt >= 0;loopcnt--) {

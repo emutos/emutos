@@ -97,7 +97,10 @@
 //              T_SCLST - word                                          //
 //                0 if scale down, 1 if enlarge                         //
 /////////////////////////////////////////////////////////////////////////
-        .page
+
+
+
+
 /////////////////////////////////////////////////////////////////////////
 //  process:    The main process of textblt does the following:         //
 //                { load source word (a0.l)                             //
@@ -113,7 +116,9 @@
 //                 alteration of the destination outside the            //
 //                 fringes.                                             //
 /////////////////////////////////////////////////////////////////////////
-        .page
+
+
+
 /////////////////////////////////////////////////////////
 //   Style equates..                                   //
 /////////////////////////////////////////////////////////
@@ -135,13 +140,11 @@
 #define OUTLINE                4
 #define SHADOW                 5
 
-        .page
 /////////////////////////////////////////////////////////
 //   Global routines defined in this module.           //
 /////////////////////////////////////////////////////////
 
         .globl  _text_blt
-        .globl  _CLC_DDA
         .globl  concat          // convert x,y coordinates to buffer offsets
         //.globl  _act_siz
 
@@ -149,23 +152,25 @@
 //  Global variables referenced by this module.        //      
 /////////////////////////////////////////////////////////
 
-        .globl  _SOURCEX,_SOURCEY
-        .globl  _DESTX,_DESTY
-        .globl  _DELX,_DELY
-        .globl  _FBASE
-        .globl  _FWIDTH
-        .globl  _WRT_MODE
-        .globl  _STYLE
-        .globl  _R_OFF,_L_OFF
-        .globl  _WEIGHT,_LITEMASK,_SKEWMASK
-        .globl  _DOUBLE
-        .globl  _CHUP
-        .globl  _CLIP
-        .globl  _MONO_STATUS
-        .globl  _XACC_DD
-        .globl  _DDA_INC
-        .globl  _T_SCLSTS
-        .globl  _TEXT_FG        //foreground color, text
+        .xdef  _SOURCEX,_SOURCEY
+        .xdef  _DESTX,_DESTY
+        .xdef  _DELX,_DELY
+        .xdef  _FBASE
+        .xdef  _FWIDTH
+        .xdef  _WRT_MODE
+        .xdef  _STYLE
+        .xdef  _R_OFF,_L_OFF
+        .xdef  _WEIGHT,_LITEMASK,_SKEWMASK
+        .xdef  _DOUBLE
+        .xdef  _CHUP
+        .xdef  _CLIP
+        .xdef  _MONO_STATUS
+        .xdef  _T_SCLSTS
+        .xdef  _TEXT_FG        //foreground color, text
+        .xdef  _XMN_CLIP,_XMX_CLIP
+        .xdef  _YMN_CLIP,_YMX_CLIP
+        .xdef  _XACC_DD
+        .xdef  _DDA_INC
 
 
 /////////////////////////////////////////////////////////
@@ -175,8 +180,6 @@
         .xdef  _v_bas_ad       //base address of graphic plane
         .xdef  _v_lin_wr       //size of a scan line in bytes
         .xdef  _v_planes       //number of graphic planes
-        .xdef  _XMN_CLIP,_XMX_CLIP
-        .xdef  _YMN_CLIP,_YMX_CLIP
 
 /////////////////////////////////////////////////////////
 //  Character buffer variables referenced.                      //

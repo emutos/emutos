@@ -23,6 +23,10 @@
 
 
 
+#define ABS(v) (v & 0x7FFF)
+
+
+
 /* prototypes */
 void crunch_queue();
 
@@ -41,9 +45,6 @@ WORD qptr;               /* points to the active point   */
 WORD qtmp;
 WORD qhole;              /* an empty space in the queue */
 
-
-/* the six predefined line styles */
-UWORD LINE_STYLE[6] = { 0xFFFF, 0xFFF0, 0xC0C0, 0xFF18, 0xFF00, 0xF191 };
 
 /* the storage for the used defined fill pattern */
 UWORD UDPATMSK = 0xF;
@@ -298,10 +299,10 @@ void vqf_attr(Vwk * vwk)
     *pointer++ = vwk->fill_style;
     *pointer++ = REV_MAP_COL[vwk->fill_color];
     *pointer++ = vwk->fill_index + 1;
-    *pointer++ = WRT_MODE + 1;
+    *pointer++ = vwk->wrt_mode + 1;
     *pointer = vwk->fill_per;
 
-    *(CONTRL + 4) = 5;
+    CONTRL[4] = 5;
 }
 
 
@@ -604,15 +605,15 @@ void v_fillarea(Vwk * vwk)
  * clipbox - Just clips and copies the inputs for use by "rectfill"
  *
  * input:
- *     X1       = x coord of upper left corner.
- *     Y1       = y coord of upper left corner.
- *     X2       = x coord of lower right corner.
- *     Y2       = y coord of lower right corner.
- *     CLIP     = clipping flag. (0 => no clipping.)
- *     XMN_CLIP = x clipping minimum.
- *     XMX_CLIP = x clipping maximum.
- *     YMN_CLIP = y clipping minimum.
- *     YMX_CLIP = y clipping maximum.
+ *     X1        = x coord of upper left corner.
+ *     Y1        = y coord of upper left corner.
+ *     X2        = x coord of lower right corner.
+ *     Y2        = y coord of lower right corner.
+ *     vwk->clip = clipping flag. (0 => no clipping.)
+ *     vwk->xmn_clip = x clipping minimum.
+ *     vwk->xmx_clip = x clipping maximum.
+ *     vwk->ymn_clip = y clipping minimum.
+ *     vwk->ymx_clip = y clipping maximum.
  *
  * output:
  *     X1 = x coord of upper left corner.
@@ -671,11 +672,11 @@ BOOL clipbox(Vwk * vwk)
  *     Y1       = y coord of upper left corner.
  *     X2       = x coord of lower right corner.
  *     Y2       = y coord of lower right corner.
- *     CLIP     = clipping flag. (0 => no clipping.
- *     XMN_CLIP = x clipping minimum.
- *     XMX_CLIP = x clipping maximum.
- *     YMN_CLIP = y clipping minimum.
- *     YMX_CLIP = y clipping maximum.
+ *     vwk->clip = clipping flag. (0 => no clipping.)
+ *     vwk->xmn_clip = x clipping minimum.
+ *     vwk->xmx_clip = x clipping maximum.
+ *     vwk->ymn_clip = y clipping minimum.
+ *     vwk->ymx_clip = y clipping maximum.
  *
  * output:
  *     X1 = x coord of upper left corner.
@@ -737,7 +738,7 @@ void rectfill (Vwk * vwk)
     yinc = v_lin_wr;                    /* y coordinate increase */
     mypatmsk = vwk->patmsk;
 
-    switch (WRT_MODE) {
+    switch (vwk->wrt_mode) {
     case 3:  /* nor */
         for (y = y1; y <= y2; y++ ) {
             hzline_nor(vwk, addr, dx, leftpart, rightmask, leftmask, y&mypatmsk);
@@ -800,7 +801,7 @@ get_color (UWORD mask, UWORD * addr)
  */
 
 static UWORD
-pixelread(WORD x, WORD y)
+pixelread(const WORD x, const WORD y)
 {
     UWORD *addr;
     UWORD mask;
@@ -1082,9 +1083,7 @@ v_get_pixel(Vwk * vwk)
     int_out = INTOUT;
     *int_out++ = pel;
 
-    /* Correct the pel value for the number of planes so it is a standard
-       value */
-
+    /* Correct pel value for number of planes so it is a standard value */
     if ((INQ_TAB[4] == 1 && pel) || (INQ_TAB[4] == 2 && pel == 3))
         pel = 15;
 
