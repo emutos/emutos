@@ -192,8 +192,8 @@ mov_cur1:
 /* If we do not need to draw the cursor now then just exit. */
 
 vb_draw:
-        move.w  SR,-(sp)        // save current value of status register
-        ori.w   #0x0700,SR      // mask off all interrupts
+        move.w  sr,-(sp)        // save current value of status register
+        ori.w   #0x0700,sr      // mask off all interrupts
         bclr.b  #0,_draw_flag   // draw the cursor?
         beq     vblank_noop     // nope - done
 
@@ -220,7 +220,7 @@ vblank_exit:
         rts
 
 vblank_noop:
-        move.w  (sp)+, SR               // restore interrupt context
+        move.w  (sp)+, sr               // restore interrupt context
         rts
 
 

@@ -108,44 +108,31 @@ just_rts:
  */
 
 _INIT_G:
-        clr.b   in_proc         // no vblanks in process
+        clr.b   in_proc			// no vblanks in process
 
         move.l  #just_rts,_tim_addr     // Tick points to rts
 
-// FIXME: This clock setup does not work on the Atari   - Thomas
-#if 0
-        clr.w   -(sp)                   // get a handle to the clock
-        pea     clock                   // device
-        move.w  #0x3d, -(sp)
-        trap    #1
-        move.w  d0, clock_handle
-        addq.l  #8, sp
+        move    sr, -(sp)               // Disable interrupts
+        ori.w   #0x0700, sr
 
-        move    SR, -(sp)               // Disable interrupts
-        ori.w   #0x0700, SR
+        pea     tick_int
+        move.w	#0x100, -(sp)           // etv_timer
+        move.w  #5, -(sp)               // call setexc via
+        trap    #13                     // BIOS
+        add.l   #8, sp                 // clean up stack
 
-        pea     tick_int                // Get character vector for
-        clr.w   -(sp)                   // the clock using IOCTL function
-        move.w  d0, -(sp)
-        move.w  #-1, -(sp)
-        move.w  #0x44, -(sp)
-        trap    #1
+        move.l  d0, _tim_chain            // save old timer int vector
 
-        move.l  d0, tim_chain           // Set up chain before ints go on
+        move    (sp)+, sr               // Restore interrupt context
 
-        add.l   #12, sp                 // clean up stack
-
-        move    (sp)+, SR               // Restore interrupt context
-#endif
-
-        bsr     mouse_init
-
-        bra     escfn2
+        bsr     mouse_init              // initialize mouse
+        				/* TODO: switch off cursor */
+        bra     escfn2                  // clear screen
 
 
 
 /*
- * _EX_TIMV -  EXCHANGE TIMER VECTOR
+ * _EX_TIMV - exchange timer interrupt vector
  * 
  * entry:          new vector in CONTRL[7-8]
  * exit:           old vector in CONTRL[9-10]
@@ -155,11 +142,11 @@ _INIT_G:
 _EX_TIMV:
         move.l  _CONTRL,a0
 
-        move    SR,-(sp)       // Disable interrupts
-        ori.w   #0x0700,SR
+        move    sr,-(sp)       // Disable interrupts
+        ori.w   #0x0700,sr
         move.l  _tim_addr,18(a0)
         move.l  14(a0),_tim_addr
-        move    (sp)+,SR
+        move    (sp)+,sr
 
         move.w  #6,-(sp)       // Get number of milliseconds per tick
         trap    #13
@@ -175,6 +162,8 @@ _EX_TIMV:
 /*
  * tick_int -  Timer interrupt routine 
  *
+ * The etv_timer does point to this routine
+ *
  *  entry:          none
  *  exit:           none
  *  destroys:       none
@@ -186,27 +175,29 @@ tick_int:
         move.b  #1,in_proc
 
         movem.l d0-d7/a0-a6, -(sp)
-        move    SR, -(sp)               // Disable interrupts
-        ori.w   #0x0700, SR
+        move    sr, -(sp)               // Disable interrupts
+        ori.w   #0x0700, sr
 
         move.l  _tim_addr,a0            // Invoke user routine
         jsr     (a0)
 
         move    (sp)+, SR               // Restore interrupt context
 
+#if 0
 // see if the mouse needs drawing
 
         bsr     vb_draw
-        clr.b   in_proc         //allow yet another trip through
+        clr.b   in_proc         	//allow yet another trip through
+#endif
         movem.l (sp)+, d0-d7/a0-a6
 timer_exit:
-//      move.l  tim_chain, -(sp)  // FIXME: Add a Atari compatible interrupt routine
+        move.l  _tim_chain, -(sp) 	
         rts
 
 
 
 /*
- * _DINIT_G - DEINITIALIZE GRAPHICS
+ * _DINIT_G - deinitialize graphics
  *
  * entry:          none
  * exit:           none
@@ -214,23 +205,15 @@ timer_exit:
  */
 
 _DINIT_G:
-// FIXME: Again not Atari compatible...   - Thomas
-#if 0
-        move.l  tim_chain, -(sp)        // reset timer vector
-        clr.w   -(sp)
-        move.w  clock_handle, -(sp)
-        move.w  #-1, -(sp)
-        move.w  #0x44, -(sp)
-        trap    #1
-        add.l   #12, sp
+	move.l	_tim_chain, -(sp)       // restore old timer int vector
+        move.w	#0x100, -(sp)           // etv_timer
+        move.w  #5, -(sp)               // call setexc via
+        trap    #13                     // BIOS
+        add.l   #8, sp                  // clean up stack
 
-        move.w  clock_handle, -(sp)     // close the handle to the
-        move.w  #0x3E, -(sp)            // clock device
-        trap    #1
-        addq.l  #4, sp
-#endif
         bsr     dinit_mouse             // de-initialize mouse
-        bra     escfn3
+        bra     escfn3			// clear screen
+                                        // TODO: switch cursor on
 
 
 
@@ -263,7 +246,7 @@ _GCHC_KEY:
  */
 
 _GCHR_KEY:
-        move.w  #handle, -(sp)  // see if a character present at aux port
+        move.w  #2, -(sp)		// see if a character present at con
         move.w  #1, -(sp)
         trap    #13
         addq.l  #4, sp
@@ -271,17 +254,16 @@ _GCHR_KEY:
         tst.w   d0
         beq     no_char
 
-        move.w  #handle, -(sp)  // get the character
-        move.w  #2, -(sp)       // from auxin
+        move.w  #2, -(sp)  		// get the character from Bconin
         trap    #13
         addq.l  #4, sp
 
         move.l  d0, d1
         swap    d1
-        lsl.w   #8, d1
-        or.w    d1, d0
+        lsl.w   #8, d1			// scancode to bit 8-15
+        or.w    d1, d0                  // asciicode to bit 0-7
 
-        move.w  d0,_TERM_CH     // store char
+        move.w  d0,_TERM_CH     	// store char
         move.l  #1,d0
         rts
 no_char:
@@ -320,7 +302,12 @@ mouse_init:
         move.b  d0,_mouse_flag  	// interrupts can happen
         move.b  d0,_draw_flag   	// No action yet on vblank
 
-	// Here evntually init additional things (MAD)
+	lea	_mdata, a0              // begin off mouse data (lineavars)
+        move.w	d0, (a0)+               // set mouse x (_newx) to 0
+        move.w	d0, (a0)+               // set mouse y (_newy) to 0
+        move.b	d0, (a0)                // set draw flag (_draw_flag) to 0
+	move.l	_vblqueue, a0           // get VBL-queue address
+        move.l	#vb_draw, (a0)          // set GEM VBL-routine (in vdimouse.S)
         
         move    sr, -(sp)               // Disable interrupts
         ori.w   #0x0700, sr
@@ -554,7 +541,6 @@ delta_y:        ds.b    1       // change in y pos. 2's comp
 // Clock and mouse device handles and names - not usable on the Atari...  - Thomas
 #if 0
 
-tim_chain       ds.l    1
 mouse_chain:    ds.l    1
 clock_handle    ds.w    1
 mouse_handle    ds.w    1
