@@ -61,13 +61,13 @@ _coma_start:
         clr.l   -(sp)
         move.w  #0x20,-(sp)
         trap    #1
-        //addq.w   #6,sp
+        addq.l  #6,sp
         move.l  d0,save_ssp
 #endif /* ! NO_ROM */
         
         move.l  #mycrit,-(sp)
-        move    #0x101,-(sp)                                   
-        move    #5,-(sp)
+        move.w  #0x101,-(sp)                                   
+        move.w  #5,-(sp)
         trap    #13             // set/get critical error
         add.l   #8,sp
         move.l  d0,ocrit
