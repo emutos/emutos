@@ -386,6 +386,7 @@ static inline UWORD bcd2int(UBYTE a)
 
 static void igetregs(void)
 {
+#if !NO_IKBD_CLOCK
   iclk_ready = 0;
   iclkbuf.cmd = 0x1C;
   ikbdws(0, (PTR) &iclkbuf);
@@ -394,10 +395,12 @@ static void igetregs(void)
     ;
 
   kprintf("iclkbuf: year = %x, month = %x\n", iclkbuf.year, iclkbuf.month);
+#endif /* !NO_IKBD_CLOCK */
 }
 
 static void iresetregs(void)
 {
+#if !NO_IKBD_CLOCK
   iclkbuf.cmd   = 0x1B;
   iclkbuf.year  = 0xFF;
   iclkbuf.month = 0xFF;
@@ -405,20 +408,27 @@ static void iresetregs(void)
   iclkbuf.hour  = 0xFF;
   iclkbuf.min   = 0xFF;
   iclkbuf.sec   = 0xFF;
+#endif /* !NO_IKBD_CLOCK */
 }
 
 static void isetregs(void)
 {
+#if !NO_IKBD_CLOCK
   iclkbuf.cmd = 0x1B;
   ikbdws(6, (PTR) &iclkbuf);
+#endif /* !NO_IKBD_CLOCK */
 }
 
 static UWORD idogetdate(void)
 {
   UWORD date;
 
+#if !NO_IKBD_CLOCK
   date = ( bcd2int(iclkbuf.year) << 9) 
     | ( bcd2int(iclkbuf.month) << 5 ) | bcd2int(iclkbuf.day);
+#else
+  date = os_dosdate; /* default date if no IKBD clock */
+#endif /* !NO_IKBD_CLOCK */
   return date;
 }
 
@@ -426,23 +436,31 @@ static UWORD idogettime(void)
 {
   UWORD time;
 
+#if !NO_IKBD_CLOCK
   time = ( bcd2int(iclkbuf.sec) >> 1 )
     | ( bcd2int(iclkbuf.min) << 5 ) | ( bcd2int(iclkbuf.hour) << 11 ) ;
+#else
+  time = 0;	/* default time if no IKBD clock */
+#endif /* !NO_IKBD_CLOCK */
   return time;
 }
 
 static void idosettime(UWORD time) 
 {
+#if !NO_IKBD_CLOCK
   iclkbuf.sec = int2bcd( (time << 1) & 0x3f );
   iclkbuf.min = int2bcd( (time >> 5) & 0x3f );
   iclkbuf.hour = int2bcd( (time >> 11) & 0x1f );
+#endif /* !NO_IKBD_CLOCK */
 }
 
 static void idosetdate(UWORD date) 
 {
+#if !NO_IKBD_CLOCK
   iclkbuf.year = int2bcd( (date >> 9) & 0x7f );
   iclkbuf.month = int2bcd( (date >> 5) & 0xf );
   iclkbuf.day = int2bcd( date & 0x1f );
+#endif /* !NO_IKBD_CLOCK */
 }
 
 
@@ -624,7 +642,6 @@ void date_time(WORD flag, WORD *dt)
       break;
     }
   }
-#if !NO_IKBD_CLOCK
   else {
     switch(flag) {
     case GET_DATE:
@@ -641,7 +658,6 @@ void date_time(WORD flag, WORD *dt)
       break;
     }
   }
-#endif /* !NO_IKBD_CLOCK */
 }
 
 /* internal init */
@@ -665,7 +681,8 @@ void settime(LONG time)
   }
   else if(has_megartc) {
     msetdt(time);
-  } else {
+  }
+  else {
     isetdt(time);
   }
 }
@@ -677,7 +694,8 @@ LONG gettime(void)
   }
   else if(has_megartc) {
     return mgetdt();
-  } else {
+  }
+  else {
     return igetdt();
   }
 }
