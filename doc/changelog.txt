@@ -1061,3 +1061,4 @@ Start... early ages
 
 03. Sep. 2002
 - bdos/bdosmain.c - Removed unused Setvec/Getvec functions. (THH)
+- vdi/monout.c - abline() in C part. implemented (commented out) (MAD)

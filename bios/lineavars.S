@@ -211,6 +211,7 @@ _v_bytes_lin:   .ds.w   1       // -2   byte per screen line
                 .globl  _INTOUT
                 .globl  _PTSOUT
 
+                .globl  _fg_bp
                 .globl  _FG_BP_1
                 .globl  _FG_BP_2
                 .globl  _FG_BP_3
@@ -281,6 +282,7 @@ _PTSOUT:        ds.l    1               // +20  ptr to the PTSOUT array.
 //      as an array (to allow post-increment addressing).  They must be contiguous!!
 // ===========================================================================
 
+_fg_bp:
 _FG_BP_1:       ds.w    1               // foreground bit_plane #1 value.
 _FG_BP_2:       ds.w    1               // foreground bit_plane #2 value.
 _FG_BP_3:       ds.w    1               // foreground bit_plane #3 value.

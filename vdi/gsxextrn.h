@@ -93,6 +93,7 @@ extern WORD INQ_TAB[];          /* extended inquire values */
 
 extern WORD *CONTRL, *INTIN, *PTSIN, *INTOUT, *PTSOUT;
 
+extern WORD fg_bp[4];           /* points to ... */
 extern WORD FG_BP_1, FG_BP_2, FG_BP_3, FG_BP_4;
 
 extern WORD LN_MASK, LSTLIN;

@@ -59,66 +59,6 @@ static WORD m_dmnd[] = { 1, 5, -4, 0, 0, -3, 4, 0, 0, 3, -4, 0 };
 
 
 /*
- * word_offset - calculate word offset into screen buffer
- *
- * This routine converts x and y coordinates into a physical offset to a word
- * in the screen buffer.
- *
- * input:
- *     x coordinate.
- *     y coordinate.
- *
- * output:
- *     physical offset -- (y * bytes_per_line) + (x & xmask)>>xshift
- */
-
-ULONG word_offset(WORD x, WORD y)
-{
-    ULONG offset;
-    ULONG start;
-
-    /* Convert the y-coordinate into an offset to the start of the scan row. */
-    start = y * v_lin_wr;  // compute offset to start of scan row
-
-    // Convert the x-coordinate to a word offset into the current scan line.
-#if vme10
-    // If the planes are arranged as separate, consecutive entities
-    // then divide the x-coordinate by 8 to get the number of bytes.
-    offset = (x & 0xfff0) >> 3;
-#else
-    // If the planes are arranged in an interleaved fashion with a word
-    // for each plane then shift the x-coordinate by a value contained
-    // in the shift table.
-    offset = (x & 0xfff0) >> shft_off;
-#endif
-// Compute the offset to the desired word by adding the offset to the
-// start of the scan line to the offset within the scan line.
-    return (start + offset);
-}
-
-
-
-/*
- * bit offset - calculate bit offset in screen
- *
- * This routine converts x coordinate into an index to the desired
- * bit within a word in screen memory.
- *
- * input:
- *     x coordinate.
- *
- * output:
- *     word index. (x mod 16)
- */
-
-
-WORD bit_offset(WORD x)
-{
-    return (x & 0x000f);        // bit offset = x-coordinate mod 16
-}
-
-
-/*
  * smul_div - signed integer multiply and divide
  *
  * smul_div (m1,m2,d1)
@@ -1604,3 +1544,264 @@ void dsf_udpat()
     for (i = 0; i < count; i++)
         *dp++ = *sp++;
 }
+
+
+#if 0 // FIXME: not fully implemented
+
+/*
+ * word_offset - calculate word offset into screen buffer
+ *
+ * This routine converts x and y coordinates into a physical offset to a word
+ * in the screen buffer.
+ *
+ * input:
+ *     x coordinate.
+ *     y coordinate.
+ *
+ * output:
+ *     physical offset -- (y * bytes_per_line) + (x & xmask)>>xshift
+ */
+
+ULONG word_offset(WORD x, WORD y)
+{
+    ULONG offset;
+    ULONG start;
+
+    /* Convert the y-coordinate into an offset to the start of the scan row. */
+    start = y * v_lin_wr;  // compute offset to start of scan row
+
+    // Convert the x-coordinate to a word offset into the current scan line.
+#if vme10
+    // If the planes are arranged as separate, consecutive entities
+    // then divide the x-coordinate by 8 to get the number of bytes.
+    offset = (x & 0xfff0) >> 3;
+#else
+    // If the planes are arranged in an interleaved fashion with a word
+    // for each plane then shift the x-coordinate by a value contained
+    // in the shift table.
+    offset = (x & 0xfff0) >> shft_off;
+#endif
+// Compute the offset to the desired word by adding the offset to the
+// start of the scan line to the offset within the scan line.
+    return (start + offset);
+}
+
+
+
+/*
+ * bit offset - calculate bit offset in screen
+ *
+ * This routine converts x coordinate into an index to the desired
+ * bit within a word in screen memory.
+ *
+ * input:
+ *     x coordinate.
+ *
+ * output:
+ *     word index. (x mod 16)
+ */
+
+
+WORD bit_offset(WORD x)
+{
+    return (x & 0x000f);        // bit offset = x-coordinate mod 16
+}
+
+
+
+
+/*
+ * ABLINE - draw a line (general purpose)
+ *
+ * This routine draws a line between (_X1,_Y1) and (_X2,_Y2)
+ * using Bresenham's algorithm.  The line is modified by the
+ * _LN_MASK and _WRT_MODE variables.  This routine handles all
+ * 3 video resolutions.
+ *
+ * Note that for line-drawing in GSX, the background color is
+ * always 0 (i.e., there is no user-settable background color).
+ * This fact allows coding short-cuts in the implementation of
+ * "replace" and "not" modes, resulting in faster execution of
+ * their inner loops.
+ *
+ * input:
+ *     X1, Y1, X2, Y2 = coordinates.
+ *     num_planes         = number of video planes. (resolution)
+ *     LN_MASK           = line mask. (for dashed/dotted lines)
+ *     WRT_MODE          = writing mode:
+ *                              0 => replace mode.
+ *                              1 => or mode.
+ *                              2 => xor mode.
+ *                              3 => not mode.
+ *
+ * output:
+ *     LN_MASK rotated to proper alignment with (X2,Y2).
+ */
+
+/*
+ * Write Mode Address Table                                        
+ */
+
+#if 0 //FIXME
+#if rev_vid
+void (*dxge[])(void) = {
+    rep_dxge,
+    or_dxge,
+    xor_dxge,
+    nor_dxge
+}
+#else
+void (*dxge[])(void) = {
+    rep_dxge,
+    nor_dxge,
+    xor_dxge,
+    or_dxge
+}
+#endif
+
+#if rev_vid
+void (*dygt[])(void) = {
+    rep_dygt,
+    or_dygt,
+    xor_dygt,
+    nor_dygt
+}
+#else
+void (*dygt[])(void) = {
+    rep_dygt,
+    nor_dygt,
+    xor_dygt,
+    or_dygt
+}
+#endif
+#endif
+
+
+void abline()
+{
+    WORD	*scnaddr;       /* address in the actual plane */
+    UWORD	bitindex;       /* bit index in actual word */
+    WORD        dx;		/* offset to next scanline in plane */
+    WORD        dy;		/* offset to next scanline in plane */
+    WORD        xinc;		/* offset to next ... */
+    WORD        yinc;		/* offset to next scanline in plane */
+
+    WORD        epsilon;      	/* epsilon */
+    WORD        eps;		/* epsilon */
+    WORD        e1;		/* epsilon 1 */
+    WORD        e2;		/* epsilon 2 */
+
+    /* for drawing function */
+    UWORD 	linemask;
+    UWORD 	ormask;          /* mask for to or */
+    UWORD 	*destword;
+    UWORD 	plane;
+    UWORD 	loopcnt;
+
+#if vme10
+    /* unimplemented */
+#else
+    xinc = v_planes * 2;       	/* number of video planes * 2 bytes */
+#endif
+    yinc = v_lin_wr;		/* get offset to next scan in plane */
+    scnaddr = (WORD*)v_bas_ad;	/* get base address of first plane */
+
+    dx = X2 - X1;               /* calculate x delta */
+
+    /* if delta x < 0 then draw from point 2 to 1 */
+    if (dx < 0) {
+        /* if negative start with second point */
+        scnaddr += word_offset(X2,Y2);  /* compute start addr in plane */
+        bitindex = bit_offset(X2);      /* get bit in this word */
+        dx = -dx;			/* get absolute value of delta x */
+        dy = Y1 - Y2;			/* calculate y delta */
+    } else {
+        /* positive, start with first point */
+        scnaddr += word_offset(X1,Y1);  /* compute start addr in plane */
+        bitindex = bit_offset(X1);      /* get bit in this word */
+        dy = Y2 - Y1;			/* calculate y delta */
+    }
+
+    if (dy == 0) {
+        /* draw horizontal line */
+        yinc = 0;
+    }
+
+    /* see in which direction we go, up or down */
+    if (dy < 0) {
+        dy = -dy;                        /* get absolute value of delta y */
+        yinc = -yinc;                    /* reverse the direction */
+    }
+
+    /* Here start the real work ofSet some parameters for  drawing */
+    ormask = 0x8000 >> bitindex;          /* left bit is the 1st. on screen */
+    linemask = LN_MASK;
+    destword=scnaddr;
+
+    /* compare, which delta is bigger */
+    if (dx > dy ) {
+        /*
+         * We want to draw a line where delta x is greater than delta y
+         * so we will use the x-axis as the frame of reference.
+         */
+        e1 = 2 * dy;
+        epsilon = 2*dy - dx;
+        e2 = 2*dy - 2*dx;
+
+        /* loop through the planes */
+        for (plane=0; plane < v_planes; plane++) {
+
+            /* write this plane with pattern or 0's? */
+            if (!fg_bp[plane]) {
+                linemask = 0;
+            }
+
+            /* Loop until all the bits in the line segment have been drawn. */
+            for (loopcnt = dx ; 0 < loopcnt; loopcnt++) {
+                eps = epsilon;          /* load fresh epsilon value */
+                // If the current bit in the pattern is 0 then clear the current bit
+                // in the plane.  If it is 1 then set the bit in the plane.
+
+                if (linemask&0x8000) {
+                    /* bit in pattern is 0 - clear bit in plane */
+                    *destword &= ~ormask;
+                } else {
+                    /* bit in pattern is 1 - set bit in plane */
+                    *destword |= ormask;
+                }
+                linemask = linemask << 1;   // rotate mask for setting bits
+                destword += yinc;       /* increment y */
+
+                if (eps < 0 ) {
+                    eps += e1;
+                } else {
+                    // We have a step in x.
+                    eps += e2;
+                    // Update the masks for clearing and setting bits.
+                    // If we have overflowed the current word then update the pointer to the
+                    // next word in the plane.
+
+                    if (ormask&0x0001) {
+                        destword += xinc;	/* overflow, goto next word */
+                    }
+                    ormask = ormask >> 1;   // rotate mask for setting bits
+                }
+            }
+            destword+=2;         // update pointer to next plane
+        }
+    } else {
+        /*
+         * We want to draw a line where delta y is greater than delta x
+         * so we will use the y-axis as the frame of reference.
+         */
+        e1 = 2 * dx;
+        epsilon = 2*dx - dy;
+        e2 = 2*dy - 2*dx;
+    }
+}
+
+
+void rep_dxge()
+{
+}
+#endif
