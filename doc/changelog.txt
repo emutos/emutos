@@ -1107,3 +1107,7 @@ Start... early ages
 25. Sep. 2002 
 - vdi/monout.c - fixed bug in color setting (MAD)
 
+27. Sep. 2002 
+- vdi/monout.c - optimized horzline() and rectfill()  (MAD)
+
+
