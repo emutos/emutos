@@ -17,6 +17,7 @@
 #include "bios.h"
 #include "kprint.h"
 #include "lineavars.h"
+#include "vt52.h"
 #include "tosvars.h"
 #include "natfeat.h"
 #include "config.h"
@@ -137,7 +138,7 @@ int kprintf(const char *fmt, ...)
 
 static int vkcprintf(const char *fmt, va_list ap)
 {
-    if(linea_inited) {
+    if(vt52_initialized) {
         vkprintf(fmt, ap);
         return vcprintf(fmt, ap);
     } else {

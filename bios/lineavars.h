@@ -31,8 +31,6 @@
 
 // ==== Variables ============================================================
 
-extern int linea_inited;        // will be set to 1 by linea_init()
-
 /* Color related variables */
 extern WORD v_col_bg;           // current background color
 extern WORD v_col_fg;           // current foreground color
@@ -58,32 +56,6 @@ extern UWORD v_lin_wr;          // line wrap : bytes per line
 extern UWORD v_hz_rez;          // screen horizontal resolution
 extern UWORD v_vt_rez;          // screen vertical resolution
 extern UWORD v_bytes_lin;       // width of line in bytes
-
-
-/* Font specific variables */
-extern UWORD *v_fnt_ad;         // address of current monospace font
-extern UWORD *v_off_ad;         // address of font offset table
-extern UWORD v_fnt_nd;          // ascii code of last cell in font
-extern UWORD v_fnt_st;          // ascii code of first cell in font
-extern UWORD v_fnt_wr;          // font cell wrap
-
-extern struct font_head * def_font;     // actual font
-extern struct font_head * cur_font;     // actual font (VDI)
-
-extern WORD font_count;                // all three fonts and NULL
-
-/*
- * font_ring is a struct of four pointers, each of which points to
- * a list of font headers linked together to form a string.
- */
-
-extern struct font_head *font_ring[4];   /* Ring of available fonts */
-
-/* Cell specific stuff */
-extern UWORD    v_cel_ht;       // cell height (width is 8)
-extern UWORD    v_cel_mx;       // needed by MiNT: columns on the screen minus 1
-extern UWORD    v_cel_my;       // needed by MiNT: rows on the screen minus 1
-extern UWORD    v_cel_wr;       // needed by MiNT: length (in bytes) of a line of characters
 
 extern WORD cursconf(WORD, WORD);       // XBIOS cursor configuration
 

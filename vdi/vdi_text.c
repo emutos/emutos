@@ -15,7 +15,6 @@
 #include "vdi_defs.h"
 
 
-//extern Fonthead *cur_font;      /* Current font */
 extern Fonthead *def_font;      /* Default font of open workstation */
 extern Fonthead *font_ring[];   /* Ring of available fonts */
 

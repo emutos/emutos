@@ -22,7 +22,8 @@
 #include "nls.h"
 #include "ikbd.h"
 
-#include "lineavars.h"
+//#include "lineavars.h"
+#include "font.h"
 #include "tosvars.h"
 #include "machine.h"
 #include "clock.h"    /* for displaying boot date and time */

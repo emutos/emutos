@@ -25,6 +25,7 @@
 #include "kprint.h"
 #include "tosvars.h"
 #include "lineavars.h"
+#include "vt52.h"
 #include "processor.h"
 #include "initinfo.h"
 #include "machine.h"
@@ -69,7 +70,6 @@ extern BYTE *biosts;           /*  time stamp string */
 extern LONG osinit(void);
 
 extern void linea_init(void);   /* found in lineainit.c */
-extern void font_init(void);    /* found in lineainit.c */
 extern void cartscan(WORD);     /* found in startup.S */
 extern void strtautoexec(void); /* found in startup.S */
 extern void launchautoexec(PD *); /* found in startup.S */
@@ -210,11 +210,14 @@ void startup(void)
      */
     set_sr(0x2500);
   
-    /* floppy and harddisk initialisation */
-    blkdev_init();
+    blkdev_init();      /* floppy and harddisk initialisation */
 
-    /* init linea */
-    linea_init();       /* Init screen related line-a variables */
+    /* these routines must be called in the given order */
+
+    linea_init();       /* initialize screen related line-a variables */
+    font_init();	/* initialize font ring */
+    font_set_default();	/* set default font */
+    vt52_init();        /* initialize the vt52 console */
 
     vblsem = 1;
 
@@ -222,7 +225,7 @@ void startup(void)
 
     chardev_init();     /* Initialize character devices */
     parport_init();     /* parallel port */
-    //mouse_init();       /* init mouse driver */
+    //mouse_init();     /* init mouse driver */
     clock_init();       /* init clock */
     nls_init();         /* init native language support */
     nls_set_lang(get_lang_name());
@@ -240,7 +243,7 @@ void startup(void)
 
     cartscan(3);
 
-    font_init();                /* Init font related line-a variables */
+    font_set_default();	/* set default font again, if screen changed  */
 
     /* add TT-RAM that was detected in memory.S */
     if (ramtop > 0x1000000)

@@ -128,7 +128,9 @@ static int get_charset(void)
 
 #endif
 
-/*==== Keyboard layouts ===================================================*/
+/*
+ * get_keytbl - initialize country dependant keyboard layouts
+ */
 
 void get_keytbl(struct keytbl **tbl)
 {
@@ -150,28 +152,31 @@ void get_keytbl(struct keytbl **tbl)
     *tbl = avail_kbd[j].keytbl;
 }
 
-/*==== Font tables ========================================================*/
+/*
+ * get_fonts - initialize country dependant font tables
+ */
 
 void get_fonts(struct font_head **f6x6, 
                struct font_head **f8x8, 
                struct font_head **f8x16)
 {
-    int j;
+    int j = 0;
+
 #if ! CONF_UNIQUE_COUNTRY
     int i;
     int charset = get_charset();
     
     /* find the index of the required charset in our font table */
-    for(i = j = 0 ; i < sizeof(font_sets)/sizeof(*font_sets) ; i++) {
+    for(i = 0; i < sizeof(font_sets)/sizeof(*font_sets) ; i++) {
         if( font_sets[i].charset == charset ) {
             j = i; 
             break;
         }
     }
-#else
-    j = 0;
 #endif
+
     *f6x6 = (struct font_head *) font_sets[j].f6x6;
     *f8x8 = (struct font_head *) font_sets[j].f8x8;  
     *f8x16 = (struct font_head *) font_sets[j].f8x16;
 }
+

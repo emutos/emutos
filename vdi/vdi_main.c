@@ -27,10 +27,6 @@ WORD flip_y;                    /* True if magnitudes being returned */
 WORD angle, beg_ang, del_ang, deltay, end_ang;
 WORD start, xc, xrad, y, yc, yrad;
 
-//struct font_head *cur_font;     /* Pointer to current font */
-
-
-
 /* Some color tables */
 WORD MAP_COL[MAX_COLOR] =
     { 0, 15, 1, 2, 4, 6, 3, 5, 7, 8, 9, 10, 12, 14, 11, 13 };

@@ -14,7 +14,7 @@
 #define COUNTRY_H
 
 #include "ikbd.h"
-#include "fontdef.h"
+#include "font.h"
 
 /* a list of country codes */
 #include "ctrycodes.h"

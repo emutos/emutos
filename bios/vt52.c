@@ -14,6 +14,7 @@
 
 #include "portab.h"
 #include "lineavars.h"
+#include "font.h"
 #include "tosvars.h"            /* for save_row */
 #include "sound.h"              /* for bell() */
 #include "string.h"
@@ -68,6 +69,10 @@ static void get_column(WORD);
 
 
 void (*con_state)(WORD);        /* state of conout state machine */
+
+
+
+BOOL vt52_initialized;  /* checked by kprintf for safety */
 
 
 
@@ -815,8 +820,22 @@ blink ()
  */
 
 void
-con_state_init()
+vt52_init()
 {
+    /* Initial cursor settings */
+    v_cur_cx = 0;                         // cursor to column 0
+    v_cur_cy = 0;                         // cursor to line 0
+    v_cur_of = 0;                         // line offset is 0
+    v_cur_ad = v_bas_ad;                  // set cursor to begin of screen
+
+    v_stat_0 = M_CFLASH;                  // cursor invisible, flash,
+                                        // nowrap, normal video.
+    cursconf(4, 30);                    // .5 second blink rate (@60 Hz vblank).
+    v_cur_tim = v_period;                 // load initial value to blink timer
+    disab_cnt = 1;                        // cursor disabled 1 level deep.
+
     con_state = normal_ascii;       /* Init conout state machine */
+
+    vt52_initialized = TRUE;
 }
 

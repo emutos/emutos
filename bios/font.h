@@ -1,28 +1,28 @@
 /*
- * fontdef.h - font-header definitions
+ * font.h - font specific definitions
  *
  * Copyright (c) 2001 Lineo, Inc.
+ * Copyright (c) 2004 by Authors:
  *
- * Authors:
  *  MAD     Martin Doering
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
  */
 
-#ifndef FONTDEF_H
-#define FONTDEF_H
+#ifndef FONT_H
+#define FONT_H
 
 #include "portab.h"
 
-/* fh_flags   */
+/* font header flags */
 
 #define F_DEFAULT 1     /* this is the default font (face and size) */
 #define F_HORZ_OFF  2   /* there are left and right offset tables */
 #define F_STDFORM  4    /* is the font in standard format */
 #define F_MONOSPACE 8   /* is the font monospaced */
 
-/* style bits */
+/* font style bits */
 
 #define F_THICKEN 1
 #define F_LIGHT 2
@@ -31,7 +31,32 @@
 #define F_OUTLINE 16
 #define F_SHADOW        32
 
-struct font_head {              /* descibes a font */
+/* font specific linea variables */
+
+extern UWORD *v_fnt_ad;         // address of current monospace font
+extern UWORD *v_off_ad;         // address of font offset table
+extern UWORD v_fnt_nd;          // ascii code of last cell in font
+extern UWORD v_fnt_st;          // ascii code of first cell in font
+extern UWORD v_fnt_wr;          // font cell wrap
+
+/* character cell specific linea variables */
+
+extern UWORD    v_cel_ht;       // cell height (width is 8)
+extern UWORD    v_cel_mx;       // needed by MiNT: columns on the screen minus 1
+extern UWORD    v_cel_my;       // needed by MiNT: rows on the screen minus 1
+extern UWORD    v_cel_wr;       // needed by MiNT: length (in bytes) of a line of characters
+
+/*
+ * font_ring is a struct of four pointers, each of which points to
+ * a list of font headers linked together to form a string.
+ */
+
+extern struct font_head *font_ring[4];  /* Ring of available fonts */
+extern WORD font_count;                	// all three fonts and NULL
+
+/* the font header descibes a font */
+
+struct font_head {              
     WORD font_id;
     WORD point;
     BYTE name[32];
@@ -62,4 +87,11 @@ struct font_head {              /* descibes a font */
     UWORD font_seg;
 };
 
-#endif /* FONTDEF_H */
+
+
+/* prototypes */
+
+void font_init();               /* initialize BIOS font ring */
+void font_set_default();     	/* choose the default font */
+
+#endif /* FONT_H */
