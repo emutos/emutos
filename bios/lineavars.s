@@ -40,8 +40,10 @@
 		.globl	v_col_bg
 		.globl	v_col_fg
 		.globl	v_cur_ad
+		.globl	v_cur_of
 		.globl	v_cur_cx
 		.globl	v_cur_cy
+		.globl	v_period
 		.globl	v_cur_tim
 		.globl	v_fnt_ad
 		.globl	v_fnt_nd
