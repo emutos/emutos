@@ -10,14 +10,12 @@
 
 
 
-
 #include "portab.h"
 #include "lineavars.h"
 #include "vdidef.h"
 #include "gsxextrn.h"
 #include "styles.h"
 #include "kprint.h"
-
 #include "biosbind.h"
 
 

@@ -25,7 +25,7 @@
 #include "blkdev.h"
 #include "string.h"
 #include "kprint.h"
-#include "xbios.h"  /* random() */
+#include "xbiosbind.h"  /* random() */
 
 
 /*==== Introduction =======================================================*/
@@ -369,7 +369,7 @@ void protobt(LONG buf, LONG serial, WORD type, WORD exec)
     } else {
         if(serial >= 0x1000000) {
             /* create a random serial */
-            serial = random();
+            serial = Random();
         }
         /* set this serial */
         b->serial[0] = serial>>16;

@@ -40,7 +40,7 @@ NAMES
 #include "time.h"
 #include "portab.h"
 #include "gemerror.h"
-#include "asm.h"
+#include "xbiosbind.h"
 
 
 
@@ -52,8 +52,10 @@ NAMES
 /* the address of the vector in TOS vars */
 extern void (*etv_timer)(int);
 
+#if 0
 #define Settime()  trap14(16)
 #define Gettime()  trap14(17)
+#endif
 
 #define GET_TIME        0
 #define SET_TIME        1
@@ -73,10 +75,11 @@ static int nday[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
 static int msec;
 
-/****************************/
-/* Function 0x2A:  Get date */
-/****************************/
 
+
+/*
+ * xgetdate - Function 0x2A:  Get date
+ */
 long    xgetdate(void)
 {
     UWORD date;
@@ -87,16 +90,12 @@ long    xgetdate(void)
 }
 
 
-/****************************/
-/* Function 0x2B:  Set date */
-/****************************/
-
-
+/*
+ * xsetdate - Function 0x2B:  Set date
+ */
 #define DAY_BM          0x001F
 #define MTH_BM          0x01E0
 #define YRS_BM          0xFE00
-
-
 long    xsetdate(int d)
 {
     UWORD date;
@@ -130,10 +129,10 @@ long    xsetdate(int d)
 }
 
 
-/****************************/
-/* Function 0x2C:  Get time */
-/****************************/
 
+/*
+ * xgettime - Function 0x2C:  Get time
+ */
 long    xgettime(void)
 {
     UWORD time;
@@ -144,17 +143,14 @@ long    xgettime(void)
 }
 
 
-/****************************/
-/* Function 0x2D:  Set time */
-/****************************/
 
-
+/*
+ * xsettime - Function 0x2D:  Set time
+ */
 /* Bit masks for the various fields in the time variable. */
 #define SEC_BM          0x001F
 #define MIN_BM          0x07E0
 #define HRS_BM          0xF800
-
-
 long    xsettime(int t)
 {
     UWORD time;

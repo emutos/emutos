@@ -28,8 +28,6 @@ extern struct param arrow_cdb;
 extern void s68(int *);
 extern void s68l(long *);
 
-#define initmous(a,b,c) trap14(0x00,a,b,c)
-
 
 
 /*
@@ -227,7 +225,7 @@ void vdimouse_init()
     *vblqueue = (LONG)vb_draw;   /* set GEM VBL-routine to vbl_list[0] */
 
     /* Initialize mouse via XBIOS in relative mode */
-    initmous(1, &arrow_cdb, mouse_int);
+    Initmous(1, &arrow_cdb, mouse_int);
 }
 
 
@@ -248,7 +246,7 @@ void vdimouse_exit()
     *pointer = (LONG)vb_draw;   /* set GEM VBL-routine to vbl_list[0] */
 
     /* disable mouse via XBIOS */
-    initmous(0, 0, 0);
+    Initmous(0, 0, 0);
 }
 
 

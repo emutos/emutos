@@ -31,8 +31,10 @@
 #include "mouse.h"
 #include "asm.h"
 #include "vectors.h"
+#if 0
 #include "xbios.h"
- 
+#endif
+
 #define DBG_XBIOS        0
 
 

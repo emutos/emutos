@@ -13,12 +13,12 @@
 /* initializes the xbios */
 void xbiosinit(void);
 
+#if 0
 /* misc XBIOS functions */
-
 LONG iorec(WORD devno);
 LONG random(void);
 LONG kbdvbase(void);
 LONG supexec(LONG codeptr);
 LONG bconmap(WORD devno);
-
+#endif
 #endif /* XBIOS_H */

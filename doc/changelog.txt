@@ -1387,5 +1387,8 @@ Start... early ages
 22. Mar. 2003
 - bdos/bdosmain.c - ripped out unused oscnt variable (MAD)
 - bdos/bdosmain.c - added two wrappers to avoid compiler warnings (MAD)
-- include/bindbios.h - now use fully prototyped BIOS bindings (MAD)
+- include/bindbios.h - now use fully prototyped inline BIOS bindings (MAD)
+
+23. Mar. 2003
+- include/xbindbios.h - now use fully prototyped inline XBIOS bindings (MAD)
 

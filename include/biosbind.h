@@ -12,6 +12,9 @@
 
 
 
+#ifndef BIOSBIND_H
+#define BIOSBIND_H
+ 
 /*
  * BIOS calls (trap13)
  *
@@ -283,3 +286,5 @@ static inline long Getshift()
         );
     return retval;
 }
+
+#endif
