@@ -122,70 +122,31 @@
 
         .global _gouser
         .global _oscall
-        .global _trap13
-        .global __osinit
 
+	.global _enter
+	.global _old_trap2
+	.global _bdos_trap2
+	
         .xdef   _osif
         .xdef   _xterm
-        .xdef   _cinit
         .xdef   _run
-        .xdef   _tikfrk
         .xdef   fstrt
         .xdef   _longframe              // If not 0, use long stack frames
 
         .global _xsuper
 
 
-//==== BIOS functions ========================================================
-
-        .equ    x_vector, 5
-        .equ    cve, 16
-
-        .equ    BFHCLK, -1              // BIOS handle for tick
-
-
-//==== __osinit - Initialize OS exeception vectors, etc. =====================
-
-        .text
-
-__osinit:
-//      move.w  #0, mc68010             // flag that we're not on a 68010
-        subq.l  #8, sp
-
-        move.l  #_enter,4(sp)           // take over the handling of TRAP #1
-        move.w  #0x21,2(sp)
-        move.w  #x_vector,(sp)
-        trap    #13
-
-        move.l  #ground_it,4(sp)        // take over the handling of TRAP #2
-        move.w  #0x22,2(sp)
-        move.w  #x_vector,(sp)
-        trap    #13
-        move.l  d0,old_2                // save old TRAP #2 handler
-
-        move.l  #tikhnd,4(sp)           // set clock vector
-        move.w  #BFHCLK,2(sp)           // handle for clock
-        move.w  #cve,(sp)               // character vector exchange
-        trap    #13
-        add.l   #8,sp
-
-        jsr     _cinit
-        rts
-
-        .ascii  "Copyright 2001, EmuTOS team\0"
-        .even
-
-//==== ground_it - trap 2 entry point ========================================
+//==== bdos_trap2 - trap 2 entry point =======================================
 //
 // This minimal interface connects the entry point for a system where the AES
 // and VDI are already in memory.
 //
 
-ground_it:                              
+_bdos_trap2:                              
         tst.w   d0
         beq     oterm
 
-        move.l  old_2,-(sp)
+        move.l  _old_trap2,-(sp)
         rts
 
 oterm:  move.l  #fstrt,sp
@@ -193,60 +154,25 @@ oterm:  move.l  #fstrt,sp
         jsr     _xterm
         rte
 
-ii_handler:
-        movem.l d0/a0,-(sp)             // saving d0 and a0 while we test
-        movea.l 10(sp),a0               // the offending address
-        move.w  (a0),d0                 // the offending instruction
-        andi.w  #0xffc0,d0              // isolate move from SR opcode
-        cmpi.w  #0x40c0,d0              // we don't care where "To" was
-        bne     not_SR                  // Not a MOVE SR,XX instruction
-
-        ori.w   #0x200,(a0)             // make it MOVE CCR,XX
-        movem.l (sp)+,d0/a0
-        rte
-
-not_SR:
-        movem.l (sp)+,d0/a0
-        move.l  ii_old,-(sp)            // let OEM handle it
-        rts
 
         .bss
         .even
 
-//mc68010:                              // 0 = 68000, 1 = 68010
-//      .ds.w   1
 
-old_2:
+_old_trap2:
         .ds.l   1                       // old TRAP #2 handler
 
-ii_save:                                // routine to set up as illegal
-        .ds.l   1                       // instruction handler
-ii_old:
-        .ds.l   1
-ii_stksav:
-        .ds.l   1                       // at osinit: save sp here
-
-
-
-//==== tikhnd - logical tick interrupt handler ===============================
-
         .text
-tikhnd:
-        move.w  0xA(sp),-(sp)   // get tick value.  ignore flags
-        jsr     _tikfrk         // call interrupt handler extension
-        addq.l  #2,sp           // clear the stack
-        rts
 
 
 
 //==== _enter - Front end of TRAP #1 handler =================================
 
-        .text
 _enter:
-        bsr     _fix_trap
+        bsr     fix_trap
 
         btst.b  #5,(sp)         // are we in supervisor mode?
-        bne     enter_1         // yes, go check sup stack
+        bne     enter_sup       // yes, go check sup stack
 
         move.l  usp,a0          // no, check user stack
         cmp.w   #0x20,(a0)      // toggle/inquire state?
@@ -254,7 +180,7 @@ _enter:
 
         bra     enter_2
 
-enter_1:
+enter_sup:
                                 // next line is 68000 specific
         cmp.w   #0x20,6(sp)     // toggle/inquire state?
         beq     x20_sup         // yes, go perform function
@@ -264,14 +190,14 @@ enter_2:
         move.l  _run,a6
         movem.l d0/a3-a5,0x68(a6)
         move.l  (sp)+,0x78(a6)  // olda6
-        move    (sp)+,d0        // status reg
+        move.w  (sp)+,d0        // status reg
         move.l  (sp)+,a4        // retadd
         btst    #13,d0          // if he is in system state, use his stack
         bne     systk
         move.l  usp,a5
         movem.l d1-d7/a0-a2,-(a5)
         move.l  a4,-(a5)        // retadd
-        move    d0,-(a5)        // sr
+        move.w  d0,-(a5)        // sr
         move.l  sp,a0
         move.l  a0,-(a5)
         move.l  a5,0x7c(a6)
@@ -282,7 +208,7 @@ enter_2:
 // he was using his own ssp
 systk:  movem.l d1-d7/a0-a2,-(sp)
         move.l  a4,-(sp)
-        move    d0,-(sp)
+        move.w  d0,-(sp)
         move.l  usp,a0
         move.l  a0,-(sp)
         move.l  sp,0x7c(a6)
@@ -303,7 +229,7 @@ _gouser:
         move.l  d0,0x68(a5)
         move.l  0x7c(a5),a6     // stack pointer (maybe usp, maybe ssp)
         move.l  (a6)+,a4        // other stack pointer
-        move    (a6)+,d0
+        move.w  (a6)+,d0
         move.l  (a6)+,a3        // retadd
         movem.l (a6)+,d1-d7/a0-a2
         btst    #13,d0
@@ -314,7 +240,7 @@ gousr:  move.l  a3,-(sp)
         move    d0,-(sp)
         movem.l 0x68(a5),d0/a3-a6
 
-        bra     _fix_rte
+        bra     fix_rte
 
 retsys: move.l  a6,sp
         move.l  a4,usp
@@ -327,11 +253,13 @@ retsys: move.l  a6,sp
 fstrt:
         .ds.l   1
 
-
+        .text
 
 //==== function 0x20 handler - toggle/inquire processor/stack state ==========
 
-        .text
+//msg_super:
+//      .ascii "BDOS: xsuper - switching to supervisor mode ...\n\0"
+//      .even
 _xsuper:
 //      pea msg_super
 //      bsr _kprint
@@ -339,7 +267,7 @@ _xsuper:
 x20_usr:                        // user mode entry point
         move.l  2(a0),d1        // get parameter
         beq     xu_0            // already have new SSP from
-//                              // old USP, go handle 0L entry
+                                // old USP, go handle 0L entry
 
         subq.l  #1,d1           // check for +1L entry
         beq     x20_inq         // go handle inquiry
@@ -353,16 +281,13 @@ xu_0:
         move.l  sp,d0           // set return value (old SSP)
         move.l  a0,sp           // set new SSP
 
-        bra     _fix_rte
-
-
-msg_super:
-        .ascii "BDOS: xsuper - switching to supervisor mode ...\n\0"
-        .even
+        bra     fix_rte
 
 
 
-// supervisor mode entry point
+
+
+// supervisor mode gemdos(20) entry point
 
 x20_sup:
         move.l  8(sp),d1        // get parameter
@@ -395,23 +320,20 @@ xs_exit:
 xs_scram:
         andi.w  #0xDFFF,(sp)    // set user mode
 
-        bra     _fix_rte
+        bra     fix_rte
 
-// inquiry mode entry point
+// gemdos(20) inquiry mode entry point
 
 x20_inq:
-        move.l  #0x2000,d0      // set up test mask
-        and.w   (sp),d0         // check the supervisor state
-        beq     xi_exit         // return 0L for user mode
-
-        move.l  #-1,d0          // return -1L for sup mode
-
+	moveq.l #0,d0           // return 0L for user mode
+	btst.b  #5,(sp)         // supervisor mode?
+	beq     xi_exit         // no, user mode
+        subq.l  #1,d0           // return -1L for sup mode
 xi_exit:
-        bra     _fix_rte
+        bra     fix_rte
 
 //==== call dosjr from within itself (or from linked-in shell) ===============
 
-        .text
 _oscall:
         link    a6,#0
         move.l  a0,-(sp)
@@ -423,10 +345,9 @@ _oscall:
         unlk    a6
         rts
 
-//==== _fix_trap - make 68010 exception stack frame look like a 68000 frame ==
+//==== fix_trap - make 68010 exception stack frame look like a 68000 frame ===
 
-        .text
-_fix_trap:
+fix_trap:
         tst.w   _longframe      // check processor type
         beq     ft_exit
 
@@ -441,14 +362,13 @@ ft_exit:
 
 
 
-//==== _fix_rte - restore a 68010 exception stack frame ======================
+//==== fix_rte - restore a 68010 exception stack frame =======================
 
-        .text
-_fix_rte:
+fix_rte:
         tst.w   _longframe      // check processor type
         beq     fr_exit
 
-        sub.l   #2,sp           // resverve a hole on top of the stack
+        sub.l   #2,sp           // reserve a hole on top of the stack
         move.w  2(sp),(sp)      // move SR
         move.w  4(sp),2(sp)     // msw of return address of TRAP
         move.w  6(sp),4(sp)     // lsw of return address of TRAP
