@@ -499,9 +499,12 @@ static void proc_go(PD *p)
     /* store this new stack in the saved a7 field of the PD */
     p->p_areg[7-3] = (long) sp;
     
-#if 0
+#if 1
     /* the following settings are not documented, and hence theoretically 
      * the assignments below are not necessary.
+     * However, many programs test if A0 = 0 to check if they are running
+     * as a normal program or as an accessory, so we need to clear at least
+     * this register!
      */
     {   /* d1-d7/a0-a2 and dummy return address set to zero */
         int i;
