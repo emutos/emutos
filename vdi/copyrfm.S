@@ -146,7 +146,7 @@
 
 _COPY_RFM:
 
-        movem.l d4-d7/a4-a5,-(sp)
+        movem.l d2-d7/a2-a5,-(sp)
         link    a6,#-FRAME_LEN
 
 //   test for legal logic ops and set color (if op 16)
@@ -526,6 +526,6 @@ max_save:
 nop_exit:
 bad_parameter:
         unlk    a6
-        movem.l (sp)+,d4-d7/a4-a5
+        movem.l (sp)+,d2-d7/a2-a5
         rts
         .end

@@ -348,6 +348,7 @@ _VEX_CURV:
  *      a4.l    thread to logic fragment
  *      a5.l    thread to storage segment
  *
+ *      d2.w
  *      d3.w    offset to next word
  *      d4.w    form wrap offset
  *      d5.w    row counter
@@ -358,7 +359,7 @@ _VEX_CURV:
 
 
 cur_display:
-        movem.l d4-d7/a4-a6,-(sp)       // save registers used by 'C'
+        movem.l d2-d7/a2-a6,-(sp)       // save registers used by 'C'
         clr.w   d7                      // init entry & store routine index
         lea     _DEV_TAB,a2             // get address of the DEVICE TABLE
         lea     save_stat,a4            // get address of status flags for
@@ -542,13 +543,13 @@ p_next_plane:
 
         dbra    d7,new_plane            // draw cursor in next graphic plane
         adda.w  #curs_parm,sp           // remove temp. variables from stack
-        movem.l (sp)+,d4-d7/a4-a6       // restore 'C' registers
+        movem.l (sp)+,d2-d7/a2-a6       // restore 'C' registers
         rts
 /*
  *  Entry addresses for the logic operation routines.
  */
 fgbg_op:
-#ifndef rev_vid
+#if rev_vid
         dc.l    fg0bg0                  // foreground = 0, background = 0
         dc.l    fg0bg1                  // foreground = 0, background = 1
         dc.l    fg1bg0                  // foreground = 1, background = 0
@@ -745,7 +746,7 @@ fg1bg1:
  */
 
 cur_replace:
-        movem.l d4-d5/a4-a5,-(sp)       // save registers used by 'C'
+        movem.l d2-d5/a2-a5,-(sp)       // save registers used by 'C'
         bclr.b  #F_SAVRDY,save_stat     // does save area contain valid data ?
         beq     hang_it_up              // 0:nothing saved
 #if !rbp
@@ -782,7 +783,7 @@ wd_1st_line:
         move.w  (a1)+,(a0)              // restore one destination line
         dbra    d2,v_wd_loop            // next line in save buffer
         dbra    d5,v_wd_plane           // set up for next graphics plane
-        movem.l (sp)+,d4-d5/a4-a5       // restore 'C' registers
+        movem.l (sp)+,d2-d5/a2-a5       // restore 'C' registers
         rts
 
 v_lw_plane:
@@ -796,7 +797,7 @@ lw_1st_line:
         move.l  (a1)+,(a0)              // restore one destination line
         dbra    d2,v_lw_loop            // next line in save buffer
         dbra    d5,v_lw_plane           // set up for next graphics plane
-        movem.l (sp)+,d4-d5/a4-a5       // restore 'C' registers
+        movem.l (sp)+,d2-d5/a2-a5       // restore 'C' registers
         rts
 #else
         subq.w  #2,d5
@@ -1040,7 +1041,7 @@ dis_cur1:
  *
  *      Outputs:        None
  *
- *      Registers Modified:
+ *      Registers Modified:   d0, a0-a3
  */
 
 /*
@@ -1048,6 +1049,7 @@ dis_cur1:
  *      spot and the new color indices for the mouse mask and data.
  */
 _XFM_CRFM:
+        movem.l a2-a3,-(sp)
         add.b   #1,_mouse_flag  // disable updates while redefining cursor
         move.l  _INTIN,a0       // get address of new cursor definition block
         lea     mouse_cdb,a1    // get address of old cursor definition block
@@ -1090,6 +1092,7 @@ xfm_move_loop:
         move.w  (a2)+,(a1)+     // get next word of data
         dbra    d0,xfm_move_loop        // loop until all data is stored
         sub.b   #1,_mouse_flag  // re-enable mouse drawing
+        movem.l (sp)+,a2-a3
         rts
 
         .data
@@ -1126,22 +1129,21 @@ arrow_cdb:
         .dc.w   0x03B0 //%0000001111000000
         .dc.w   0x0000 //%0000000000000000
 
-//FIXME: Compute all right values here:
-        .dc.w   0 //%0100000000000000       // foreground definition
-        .dc.w   0 //%0110000000000000
-        .dc.w   0 //%0111000000000000
-        .dc.w   0 //%0111100000000000
-        .dc.w   0 //%0111110000000000
-        .dc.w   0 //%0111111000000000
-        .dc.w   0 //%0111111100000000
-        .dc.w   0 //%0111111110000000
-        .dc.w   0 //%0111110000000000
-        .dc.w   0 //%0110110000000000
-        .dc.w   0 //%0100011000000000
-        .dc.w   0 //%0000011000000000
-        .dc.w   0 //%0000001100000000
-        .dc.w   0 //%0000001100000000
-        .dc.w   0 //%0000000110000000
+        .dc.w   0x4000 //%0100000000000000       // foreground definition
+        .dc.w   0x6000 //%0110000000000000
+        .dc.w   0x7000 //%0111000000000000
+        .dc.w   0x7800 //%0111100000000000
+        .dc.w   0x7B00 //%0111110000000000
+        .dc.w   0x7E00 //%0111111000000000
+        .dc.w   0x7F00 //%0111111100000000
+        .dc.w   0x7F80 //%0111111110000000
+        .dc.w   0x7B00 //%0111110000000000
+        .dc.w   0x6B00 //%0110110000000000
+        .dc.w   0x4600 //%0100011000000000
+        .dc.w   0x0600 //%0000011000000000
+        .dc.w   0x0300 //%0000001100000000
+        .dc.w   0x0300 //%0000001100000000
+        .dc.w   0x0180 //%0000000110000000
         .dc.w   0x0000 //%0000000000000000
 
         .end

@@ -99,12 +99,12 @@ just_rts:       rts
 ///////////////////////////////////////////////
 
 _INIT_G:
+
               // These variables are currently already initialized by the bios...
-              /*
-                move.l  #v_base,_v_bas_ad
-                move.w  #90,_v_lin_wr
-                move.w  #1,_v_planes
-              */
+
+              //  move.l  #v_base,_v_bas_ad
+              //  move.w  #90,_v_lin_wr
+              //  move.w  #1,_v_planes
 
                 clr.b   in_proc         // no vblanks in process
 
@@ -305,7 +305,7 @@ mouse_init:
 //      INIT MOUSE INTERUPT VARIABLES
 
                 moveq   #0,d0
-                move.b  d0,cur_ms_stat // init cur_mouse_stat
+                move.b  d0,cur_ms_stat  // init cur_mouse_stat
                 move.b  d0,_mouse_flag  // interrupts can happen
                 move.b  d0,_draw_flag   // No action yet on vblank
 

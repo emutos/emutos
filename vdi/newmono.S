@@ -127,7 +127,7 @@
 //      the general case text blt.
 //
 _MONO8XHT:
-        movem.l d3-d7/a3-a6,-(a7)       // save registers used by C
+        movem.l d2-d7/a2-a6,-(a7)       // save registers used by C
         move.w  _DESTX,d0       // get x-coordinate of destination
         move.w  d0,d2           // get a temporary copy
         andi.w  #7,d2           // is the destination byte-aligned?
@@ -246,7 +246,7 @@ bit_clr:
 blt_pass:
         moveq   #1,d0           // signal successful completion
 mono_exit:
-        movem.l (a7)+,d3-d7/a3-a6       // restore registers used by C
+        movem.l (a7)+,d2-d7/a2-a6       // restore registers used by C
         rts
 
 //

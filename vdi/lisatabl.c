@@ -2,8 +2,7 @@
  * lisatabl.c -
  *
  * Copyright (c) 1999 Caldera, Inc. and Authors:
- *
- *
+ *               2002 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -23,52 +22,53 @@
 
 WORD plane_mask[4] = { 1, 3, 7, 15 };
 
-WORD DEV_TAB[45] = {
-        719,                                            /* 0    x resolution                 */
-        363,                                            /* 1    y resolution                 */
-        0,                                                      /* 2    device precision 0=exact,1=not exact */
-        305,                                            /* 3    width of pixel               */
-        415,                                            /* 4    heigth of pixel              */
-        1,                                                      /* 5    character sizes              */
-        MX_LN_STYLE,                            /* 6    linestyles                   */
-        0,                                                      /* 7    linewidth                */
-        6,                                                      /* 8    marker types                 */
-        8,                                                      /* 9    marker size              */
-        1,                                                      /* 10   text font                */
-        MX_FIL_PAT_INDEX,                       /* 11  area patterns                */
-        MX_FIL_HAT_INDEX,                       /* 12  crosshatch patterns          */
-        2,                                                      /* 13   colors at one time           */
-        10,                                                     /* 14   number of GDP's              */
-        1,                                                      /* 15   GDP bar                  */
-        2,                                                      /* 16   GDP arc                  */
-        3,                                                      /* 17   GDP pic                  */
-        4,                                                      /* 18   GDP circle               */
-        5,                                                      /* 19   GDP ellipse              */
-        6,                                                      /* 20   GDP elliptical arc           */
-        7,                                                      /* 21   GDP elliptical pie           */
-        8,                                                      /* 22   GDP rounded rectangle            */
-        9,                                                      /* 23   GDP filled rounded rectangle         */
-        10,                                                     /* 24   GDP #justified text          */
-        3,                                                      /* 25   GDP #1                   */
-        0,                                                      /* 26   GDP #2                   */
-        3,                                                      /* 27   GDP #3                   */
-        3,                                                      /* 28   GDP #4                   */
-        3,                                                      /* 29   GDP #5                   */
-        0,                                                      /* 30   GDP #6                   */
-        3,                                                      /* 31   GDP #7                   */
-        0,                                                      /* 32   GDP #8                   */
-        3,                                                      /* 33   GDP #9                   */
-        2,                                                      /* 34   GDP #10                  */
-        0,                                                      /* 35   Color capability             */
-        1,                                                      /* 36   Text Rotation                */
-        1,                                                      /* 37   Polygonfill              */
-        0,                                                      /* 38   Cell Array               */
-        2,                                                      /* 39   Pallette size                */
-        2,                                                      /* 40   # of locator devices 1 = mouse       */
-        1,                                                      /* 41   # of valuator devices            */
-        1,                                                      /* 42   # of choice devices          */
-        1,                                                      /* 43   # of string devices          */
-        2                                                       /* 44   Workstation Type 2 = out/in      */
+WORD DEV_TAB[45];
+WORD DEV_TAB_rom[45] = {
+        639,                            /* 0    x resolution             */
+        399,                            /* 1    y resolution             */
+        0,                              /* 2    device precision 0=exact,1=not exact */
+        372,                            /* 3    width of pixel           */
+        372,                            /* 4    heigth of pixel          */
+        1,                              /* 5    character sizes          */
+        MX_LN_STYLE,                    /* 6    linestyles               */
+        0,                              /* 7    linewidth                */
+        6,                              /* 8    marker types             */
+        8,                              /* 9    marker size              */
+        1,                              /* 10   text font                */
+        MX_FIL_PAT_INDEX,               /* 11  area patterns             */
+        MX_FIL_HAT_INDEX,               /* 12  crosshatch patterns       */
+        2,                              /* 13   colors at one time       */
+        10,                             /* 14   number of GDP's          */
+        1,                              /* 15   GDP bar                  */
+        2,                              /* 16   GDP arc                  */
+        3,                              /* 17   GDP pic                  */
+        4,                              /* 18   GDP circle               */
+        5,                              /* 19   GDP ellipse              */
+        6,                              /* 20   GDP elliptical arc       */
+        7,                              /* 21   GDP elliptical pie       */
+        8,                              /* 22   GDP rounded rectangle    */
+        9,                              /* 23   GDP filled rounded rectangle */
+        10,                             /* 24   GDP #justified text      */
+        3,                              /* 25   GDP #1                   */
+        0,                              /* 26   GDP #2                   */
+        3,                              /* 27   GDP #3                   */
+        3,                              /* 28   GDP #4                   */
+        3,                              /* 29   GDP #5                   */
+        0,                              /* 30   GDP #6                   */
+        3,                              /* 31   GDP #7                   */
+        0,                              /* 32   GDP #8                   */
+        3,                              /* 33   GDP #9                   */
+        2,                              /* 34   GDP #10                  */
+        0,                              /* 35   Color capability         */
+        1,                              /* 36   Text Rotation            */
+        1,                              /* 37   Polygonfill              */
+        0,                              /* 38   Cell Array               */
+        2,                              /* 39   Pallette size            */
+        2,                              /* 40   # of locator devices 1 = mouse */
+        1,                              /* 41   # of valuator devices    */
+        1,                              /* 42   # of choice devices      */
+        1,                              /* 43   # of string devices      */
+        2                               /* 44   Workstation Type 2 = out/in */
 };
 
 /************************************************************/
@@ -76,43 +76,44 @@ WORD DEV_TAB[45] = {
 /* returns text,line and marker sizes in device coordinates */
 /************************************************************/
 
-WORD SIZ_TAB[12] = {
-        0,                                                      /* 0    min char width          */
-        7,                                                      /* 1    min char height         */
-        0,                                                      /* 2    max char width          */
-        7,                                                      /* 3    max char height         */
-        1,                                                      /* 4    min line width          */
-        0,                                                      /* 5    reserved 0          */
-        MX_LN_WIDTH,                            /* 6    max line width          */
-        0,                                                      /* 7    reserved 0          */
-        15,                                                     /* 8    min marker width        */
-        11,                                                     /* 9    min marker height       */
-        120,                                            /* 10   max marker width        */
-        88,                                                     /* 11   max marker height       */
+WORD SIZ_TAB[12];
+WORD SIZ_TAB_rom[12] = {
+        0,                              /* 0    min char width          */
+        7,                              /* 1    min char height         */
+        0,                              /* 2    max char width          */
+        7,                              /* 3    max char height         */
+        1,                              /* 4    min line width          */
+        0,                              /* 5    reserved 0          */
+        MX_LN_WIDTH,                    /* 6    max line width          */
+        0,                              /* 7    reserved 0          */
+        15,                             /* 8    min marker width        */
+        11,                             /* 9    min marker height       */
+        120,                            /* 10   max marker width        */
+        88,                             /* 11   max marker height       */
 };
 
-WORD INQ_TAB[45] = {
-        1,                                                      /* 0  type of alpha/graphic controllers */
-        1,                                                      /* 1  number of background colors  */
-        0x1F,                                           /* 2  text styles supported        */
-        0,                                                      /* 3  scale rasters = false        */
-        1,                                                      /* 4  number of planes         */
-        0,                                                      /* 5  video lookup table       */
-        50,                                                     /* 6  performance factor????       */
-        1,                                                      /* 7  contour fill capability      */
-        1,                                                      /* 8  character rotation capability    */
-        4,                                                      /* 9  number of writing modes      */
-        2,                                                      /* 10 highest input mode       */
-        1,                                                      /* 11 text alignment flag      */
-        0,                                                      /* 12 Inking capability        */
-        0,                                                      /* 13 rubber banding           */
-        128,                                            /* 14 maximum vertices - must agree with
-                                                                   entry.s */
-        -1,                                                     /* 15 maximum intin            */
-        1,                                                      /* 16 number of buttons on MOUSE   */
-        0,                                                      /* 17 styles for wide lines            */
-        0,                                                      /* 18 writing modes for wide lines     */
-        0,                                                      /* 19 filled in with clipping flag     */
+WORD INQ_TAB[45];
+WORD INQ_TAB_rom[45] = {
+        1,                              /* 0  type of alpha/graphic controllers */
+        1,                              /* 1  number of background colors  */
+        0x1F,                           /* 2  text styles supported        */
+        0,                              /* 3  scale rasters = false        */
+        1,                              /* 4  number of planes         */
+        0,                              /* 5  video lookup table       */
+        50,                             /* 6  performance factor????       */
+        1,                              /* 7  contour fill capability      */
+        1,                              /* 8  character rotation capability    */
+        4,                              /* 9  number of writing modes      */
+        2,                              /* 10 highest input mode       */
+        1,                              /* 11 text alignment flag      */
+        0,                              /* 12 Inking capability        */
+        0,                              /* 13 rubber banding           */
+        128,                            /* 14 maximum vertices - must agree with entry.s */
+        -1,                             /* 15 maximum intin            */
+        1,                              /* 16 number of buttons on MOUSE   */
+        0,                              /* 17 styles for wide lines            */
+        0,                              /* 18 writing modes for wide lines     */
+        0,                              /* 19 filled in with clipping flag     */
         0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0,
         0, 0, 0, 0, 0, 0, 0, 0,

@@ -37,10 +37,10 @@
 //                                                                      //
 //      Procedure Name  vr_trnfm( handle, psrcMFDB, pdesMFDB )          //
 //                                                                      //
-//      Data Types      WORD vr_trnfm()//                               //
-//                      WORD handle//                                   //
-//                      WORD //psrcMFDB//                                       //
-//                      WORD //pdesMFDB//                                       //
+//      Data Types      WORD vr_trnfm()                                 //
+//                      WORD handle                                     //
+//                      WORD *psrcMFDB                                  //
+//                      WORD *pdesMFDB                                  //
 //                                                                      //
 //      Input Arguments handle = contrl[6]                              //
 //                      psrcMFDB = contrl[7-8]                          //
@@ -49,32 +49,32 @@
 /////////////////////////////////////////////////////////////////////////
 
 
-//
+
 //  MEMORY FORM DEFINITION BLOCK OFFSETS
-//
+
 #define MF_BAS_AD               0               //memory form base address
-//                                       //0 = physical device
+                                                //0 = physical device
 #define MF_WDTH_PIX             4               //form width in pixels 
 #define MF_HGHT_PIX             6               //form height in pixels
 #define MF_WRD_WDTH             8               //form width in words
 #define MF_FORMAT               10              //form format flag
-//                                       //0 = device specific, 1 = standard
+                                                //0 = device specific, 1 = standard
 #define MF_PLANES               12              //number of memory planes
-//
+
 //  CONTRL ARRAY OFFSETS
-//
+
 #define C_S_MFDB                14              //pointer to source MFDB
 #define C_D_MFDB                18              //pointer to destination MFDB
 
-//////////////////////////////////////////////////
+//////////////////////////
 //  Global Declarations //
-//////////////////////////////////////////////////
+//////////////////////////
 
                 .globl  _TRAN_FM        //TRANSFORFM FORM entry point
 
-//////////////////////////////////////////////////
+//////////////////////////
 //  Global references   //
-//////////////////////////////////////////////////
+//////////////////////////
 
                 .globl  _CONTRL         //CONTRL array address
                 .globl  _v_bas_ad       //address of first plane of video screen
@@ -91,12 +91,12 @@
 //  Get source and destination MFDB pointers from the user CONTROL array
 //
 _TRAN_FM:
-        movem.l d4-d7,-(sp)             //save 'C' registers
+        movem.l d2-d7/a2-a3,-(sp)       //save 'C' registers
         movea.l _CONTRL,a0              //get CONTROL array address
         move.l  C_S_MFDB(a0),d0         //get source MFDB address
         bmi.w   exit                    //for an invalid address
         moveq.l #-1,d1                  //get mask of all ones
-        andi.b  #0xfe,d1                        //clear least significant bit of mask
+        andi.b  #0xfe,d1                //clear least significant bit of mask
         and.b   d1,d0                   //force source ptr. even word alignment
         movea.l d0,a1                   //source MFDB pointer
         move.l  C_D_MFDB(a0),d0         //get destination MFDB address
@@ -109,7 +109,7 @@ _TRAN_FM:
         move.l  MF_BAS_AD(a1),d0        //get source form starting address
         bmi.w   exit                    //for an invalid address
         and.l   d1,d0                   //force source addr. even word alignment
-        beq.b   s_physcl_dev            //for a physical device
+        beq.s   s_physcl_dev            //for a physical device
 //
 //  Source is device independent( raster area ).
 //
@@ -121,7 +121,7 @@ _TRAN_FM:
         ble.w   exit                    //for an invalid form width
         clr.l   d5                      //indicate consequetive planes
         movea.l d0,a0                   //source form starting address
-        bra.b   dest_form               //get destination form parameters
+        bra.s   dest_form               //get destination form parameters
 //
 //  Source is device dependent( physical device ).
 //
@@ -141,13 +141,13 @@ dest_form:
         move.l  MF_BAS_AD(a2),d0        //get destination form starting addr.
         bmi.w   exit                    //for an invalid destination address
         and.l   d1,d0                   //force dest. addr. even word alignment
-        beq.b   d_physcl_dev            //for a physical device
+        beq.s   d_physcl_dev            //for a physical device
 //
 //  Destination is device independent( raster area ).
 //
         movea.l d0,a3                   //get destination starting address
         clr.l   d6                      //indicate consequetive planes
-        bra.b   plane_len               //calculate words per source plane
+        bra.s   plane_len               //calculate words per source plane
 //
 //  Destination is device dependent( physical device ).
 //
@@ -165,9 +165,9 @@ plane_len:
 //  MFDB format flag.
 //
         tst.w   MF_FORMAT(a1)           //source format flag zero or one?
-        bne.b   clr_flag                //for source format flag = 1
+        bne.s   clr_flag                //for source format flag = 1
         move.w  #1,MF_FORMAT(a2)        //set dest. format flag to one
-        bra.b   tran_type               //determine transformation type
+        bra.s   tran_type               //determine transformation type
 clr_flag:
         clr.w   MF_FORMAT(a2)           //set dest. format flag to zero
 //
@@ -181,9 +181,9 @@ tran_type:
         move.w  d4,d0                   //save # of words per source plane
         cmpa.l  a0,a3                   //source address = dest. address?
 #if rev_vid
-        beq.b   exit                    //for completely overlapped transform
+        beq.s   exit                    //for completely overlapped transform
 #else
-        beq.b   in_place                //for completely overlapped transform
+        beq.s   in_place                //for completely overlapped transform
 #endif
 //
 //  Transformation is completely non-overlapped
@@ -191,7 +191,7 @@ tran_type:
 out_of_place:
         move.l  a0,d6                   //save source starting address
         move.l  a3,d7                   //save destination starting address
-        bra.b   out_loop                //transform first plane
+        bra.s   out_loop                //transform first plane
 out_plane:
         add.l   d5,d6                   //advance to next source plane
         add.l   d3,d7                   //advance to next dest. plane
@@ -208,14 +208,14 @@ out_loop:
 #endif
         dbra    d4,out_loop             //next word of source
         dbra    d2,out_plane            //transform next plane of source
-        bra.b   exit                    //all through with transformation
+        bra     exit                    //all through with transformation
 //
 //  Transformation is completely overlapped
 //
 #if !rev_vid
 in_place:
         move.l  a0,d6                   //save source starting address
-        bra.b   in_loop                 //transform first plane
+        bra.s   in_loop                 //transform first plane
 in_plane:
         add.l   d5,d6                   //advance to next source plane
         movea.l d6,a0                   //address of next source plane
@@ -225,9 +225,9 @@ in_loop:
         dbra    d4,in_loop              //next word of source
         dbra    d2,in_plane             //transform next plane of source
 #endif
-//                                      //all through with transformation
-//
+                                        //all through with transformation
 exit:
-        movem.l (sp)+,d4-d7             //restore 'C' registers
+        movem.l (sp)+,d2-d7/a2-a3       //restore 'C' registers
         rts                             //return to 'C' calling procedure
+
         .end

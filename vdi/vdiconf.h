@@ -18,7 +18,7 @@
  * Flags for Conditional Assembly of Code
  */
 
-#define rbp             1        /* assemble for Atari ST (1=yes, 0=no) */
+#define rbp             0        /* assemble for Atari ST (0=yes, 1=no) */
 #define vme10           1        /* assemble for Motorola VME/10 (0=yes, 1=no) */
 
 
@@ -27,10 +27,9 @@
 
 #define handle 2                /* leave 2 for console input, change to 1 for auxin */
 
-//#if ?vme10
+
 #define v_pl_dspl       0x10000 /* # of bytes between VME10 video planes */
-#define v_base          0xF8000
-//#endif
+
 
 #define rev_vid         1       /* for selecting reverse video transform */
 

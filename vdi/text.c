@@ -3,8 +3,7 @@
  *
  * Copyright 1982 by Digital Research Inc.  All rights reserved.
  * Copyright (c) 1999 Caldera, Inc. and Authors:
- *
- *  SCC
+ *               2002 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -39,7 +38,8 @@ extern WORD rmchar;                             /* number of pixels left over   
 extern WORD rmcharx, rmchary;   /* add this to use up remainder     */
 
 
-extern struct font_head f6x6;  /* See bios/fnt6x6.c */
+extern struct font_head f8x8;  /* See bios/fntxxx.c */
+#define firstfnt f8x8
 
 
 void d_gtext()
@@ -306,11 +306,11 @@ void text_init()
         /* Initialize the font ring.  font_ring[1] is setup before entering here */
         /* since it contains the font which varies with the screen resolution.   */
 
-        font_ring[0] = &f6x6;
+        font_ring[0] = &firstfnt;
         font_ring[2] = NULLPTR;
         font_ring[3] = NULLPTR;
 
-        id_save = f6x6.font_id;
+        id_save = firstfnt.font_id;
 
         chain_ptr = font_ring;
         i = 0;
@@ -325,8 +325,7 @@ void text_init()
                                 id_save = fnt_ptr->font_id;
                         }
 
-                        if (fnt_ptr->font_id == 1) {    /* Update SIZ_TAB if system
-                                                                                           font */
+                        if (fnt_ptr->font_id == 1) {    /* Update SIZ_TAB if system font */
                                 if (SIZ_TAB[0] > fnt_ptr->max_char_width)
                                         SIZ_TAB[0] = fnt_ptr->max_char_width;
 
@@ -624,7 +623,7 @@ void dst_font()
         /* If we fell through the loop, we could not find the face. */
         /* Default to the system font.                  */
 
-        test_font = &f6x6;
+        test_font = &firstfnt;
 
   find_height:
 
@@ -848,7 +847,7 @@ void dqt_name()
 
         /* The element is out of bounds use the system font */
 
-        tmp_font = &f6x6;
+        tmp_font = &firstfnt;
 
   found_element:
 

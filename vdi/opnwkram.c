@@ -1,9 +1,8 @@
 /*
  * opnwkram.c - Open physical workstation
  *
- * Copyright (c) 1999 Caldera, Inc. and Authors:
- *
- *  SCC
+ * Copyright (c) 1999 Caldera, Inc.
+ *               2002 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -17,9 +16,28 @@
 
 extern struct font_head f8x16;
 
+extern WORD SIZ_TAB_rom[];
+extern WORD DEV_TAB_rom[];
+extern WORD INQ_TAB_rom[];
+
+
 /* OPEN_WORKSTATION: */
 void v_opnwk()
 {
+        int i;
+
+        /* We need to copy some initial table data from the ROM */
+        for(i=0; i<12; i++)
+        {
+            SIZ_TAB[i] = SIZ_TAB_rom[i];
+        }
+        for(i=0; i<45; i++)
+        {
+            DEV_TAB[i] = DEV_TAB_rom[i];
+            INQ_TAB[i] = INQ_TAB_rom[i];
+        }
+
+        /* Set up the initial font: */
         font_ring[1] = &f8x16;
 
         cur_work = &virt_work;

@@ -1,9 +1,8 @@
 /*
  * jmptbl.c - Jumptable for VDI functions
  *
- * Copyright (c) 1999 Caldera, Inc. and Authors:
- *
- *
+ * Copyright (c) 1999 Caldera, Inc.
+ *               2002 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -17,7 +16,7 @@
 #include    "jmptbl.h"
 
 WORD(*jmptb1[])() = {
-        v_opnwk,
+                v_opnwk,
                 v_clswk,
                 CLEARMEM,
                 v_nop,
@@ -52,10 +51,14 @@ WORD(*jmptb1[])() = {
                 vswr_mode,
                 vsin_mode,
                 v_nop,
-                vql_attr, vqm_attr, vqf_attr, dqt_attributes, dst_alignment};
+                vql_attr,
+                vqm_attr,
+                vqf_attr,
+                dqt_attributes,
+                dst_alignment };
 
 WORD(*jmptb2[])() = {
-        d_opnvwk,
+                d_opnvwk,
                 d_clsvwk,
                 vq_extnd,
                 d_contourfill,
@@ -82,7 +85,12 @@ WORD(*jmptb2[])() = {
                 v_hide_c,
                 vq_mouse_status,
                 VEX_BUTV,
-                VEX_MOTV, VEX_CURV, vq_key_s, s_clip, dqt_name, dqt_fontinfo,};
+                VEX_MOTV,
+                VEX_CURV,
+                vq_key_s,
+                s_clip,
+                dqt_name,
+                dqt_fontinfo };
 
 /************************************************************************
 *    Screen Driver Entry Point                                          *
@@ -97,6 +105,8 @@ void SCREEN()
         r = *(control + 6);
 
         opcode = *control;
+
+        //cprintf("SCREEN opcode=%d\n", opcode);
 
         /* no ints out & no pts out */
 
@@ -168,4 +178,5 @@ void SCREEN()
                 opcode -= 100;
                 (*jmptb2[opcode]) ();
         }
+
 }

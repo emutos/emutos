@@ -324,28 +324,34 @@ _strtautoexec:
 //
 
 _dummyaes:
-        cmp.l #0xc8,d0
-        bne failgem
-        move.l d1,a0
-        move.l (a0),a1
-        cmp.w #0x0a,(a1)
-        bne failgem
-        move.l 4(a0),a1
-        clr.l (a1)
+        cmp.w   #0x73,d0
+        beq     vec_vdi
+        cmp.w   #0xc8,d0
+        bne     failgem
+        move.l  d1,a0
+        move.l  (a0),a1
+        cmp.w   #0x0a,(a1)
+        bne     failgem
+        move.l  4(a0),a1
+        clr.l   (a1)
         rte
 
 failgemmsg:
         .ascii "unimplemented gem call.\n\0"
         .even
 failgem:
-        pea failgemmsg
-        jsr _kprintf
-        addq #4,sp
+        pea     failgemmsg
+        jsr     _kprintf
+        addq    #4,sp
 
 everloop:       
         bra everloop            // Loop forever, if GEM call not implemented
 
 
+// Jump to the VDI:
+vec_vdi:
+        jsr     _GSX_ENTRY
+        rte
 
 
 
