@@ -2392,7 +2392,7 @@ repexit2:
 //
 //
 yloop:
-        movem.w d3-d4/d6,-(sp)                  //save some regs
+        movem.l d3-d4/d6,-(sp)                  //save some regs
         movea.l a0,a3
         movea.l a1,a4
         movea.l d7,a5
@@ -2463,7 +2463,7 @@ incsrc:
         dbra    d5,innerlp
 repdone:
         move.w  d0,(a1)
-        movem.w (sp)+,d3-d4/d6
+        movem.l (sp)+,d3-d4/d6
         movea.l a3,a0
         movea.l a4,a1
         adda.w  d1,a1
@@ -2592,7 +2592,7 @@ srt_lin:
  */
 
 concat:
-        movem.w d2/d3,-(sp)     // save the registers that get clobbered
+        movem.l d2/d3,-(sp)     // save the registers that get clobbered
 
 /* Convert the y-coordinate into an offset to the start of the scan row. */
 
@@ -2623,7 +2623,7 @@ concat:
 //
         ext.l   d2
         add.l   d2,d1           // compute total offset into screen buffer
-        movem.w (sp)+,d2/d3     // restore the clobbered registers
+        movem.l (sp)+,d2/d3     // restore the clobbered registers
         rts
 
 
