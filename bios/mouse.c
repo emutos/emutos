@@ -36,12 +36,16 @@
 
 
 
+struct param rel_pblock;        /* mouse parameter block */
+
+
+
 /*
  * mouse_init - mouse initialization
  *
  */
 
-void Initmous(WORD type, PTR param, PTR newvec)
+void Initmous(WORD type, struct param *param, PTR newvec)
 {
     long retval = -1;           /* ok, if it stays so... */
     struct param *p =
@@ -50,15 +54,15 @@ void Initmous(WORD type, PTR param, PTR newvec)
     switch (type) {
 
     case 0:
-        ikbd_writeb(0x12);	/* disable mouse */
+        ikbd_writeb(0x12);      /* disable mouse */
         break;
 
     case 1:
         /* Parameters for relative mouse movement */
         if (param != NULL) {
-            ikbd_writeb(0x08);		/* set relative  mouse mode */
+            ikbd_writeb(0x08);          /* set relative  mouse mode */
 
-            ikbd_writeb(0x0b);		/* set relative treshhold */
+            ikbd_writeb(0x0b);          /* set relative treshhold */
             ikbd_writeb(p->xparam);
             ikbd_writeb(p->yparam);
         }
@@ -67,16 +71,16 @@ void Initmous(WORD type, PTR param, PTR newvec)
     case 2:
         /* Parameters for absolute mouse movement */
         if (param != NULL) {
-            ikbd_writeb(0x09);		/* set absolute position */
+            ikbd_writeb(0x09);          /* set absolute position */
             ikbd_writew(p->xmax);
             ikbd_writew(p->ymax);
 
-            ikbd_writeb(0x0c);		/* set mouse scale */
+            ikbd_writeb(0x0c);          /* set mouse scale */
             ikbd_writeb(p->xparam);
             ikbd_writeb(p->yparam);
 
-            ikbd_writeb(0x0e);     	/* set initial position */
-            ikbd_writeb(0x00);		/* dummy */
+            ikbd_writeb(0x0e);          /* set initial position */
+            ikbd_writeb(0x00);          /* dummy */
             ikbd_writew(p->xinitial);
             ikbd_writew(p->yinitial);
         }
@@ -98,7 +102,7 @@ void Initmous(WORD type, PTR param, PTR newvec)
          */
         
         if (param != NULL) {
-            ikbd_writeb(0x0a);		/* set keyboard mode */
+            ikbd_writeb(0x0a);          /* set keyboard mode */
             ikbd_writeb(p->xparam);
             ikbd_writeb(p->yparam);
         }
@@ -111,19 +115,63 @@ void Initmous(WORD type, PTR param, PTR newvec)
         
         if (param != NULL) {
             if (p->topmode == IN_YBOT)
-                ikbd_writeb(0x10); 	/* set top to y=0 */
+                ikbd_writeb(0x0f);      /* set bottom to y=0 */
             if (p->topmode == IN_YTOP)
-                ikbd_writeb(0x0f); 	/* set bottom to y=0 */
+                ikbd_writeb(0x10);      /* set top to y=0 */
 
-            ikbd_writeb(0x07);		/* set mouse button reaction */
+            ikbd_writeb(0x07);          /* set mouse button reaction */
             ikbd_writeb(p->buttons);
         }
         if (newvec != NULL)
             kbdvecs.mousevec = (void*)newvec;   /* set mouse vector */
 
     } else {                    /* if error */
-        kbdvecs.mousevec = (void*) just_rts;	/* set dummy vector */
+        kbdvecs.mousevec = (void*) just_rts;    /* set dummy vector */
     }
 
     //return (retval);             // Error  (in void function???)
+}
+
+
+
+/*
+ * mouse_init - Initialize mouse
+ */
+
+void mouse_init(void)
+{
+    /* Init vectors with initial dummy routines to do nothing */
+    user_but = &just_rts;
+    user_mot = &just_rts;
+    user_cur = &just_rts;
+
+    /* Init mouse interrupt variables */
+    cur_ms_stat = 0;            /* init cur_mouse_stat */
+    mouse_flag = 0;             /* interrupts can happen */
+    draw_flag = 0;              /* No action yet on vblank */
+
+    GCURX = 0;                  /* set initial mouse x to 0 */
+    GCURY = 0;                  /* set mouse y (_GCURY) to 0 */
+    HIDE_CNT = 0;               /* set draw flag (_HIDE_CNT) to 0 */
+
+    /* Initialize initial mouse parameter block */
+    rel_pblock.topmode = 0;     /* Y=0 at the top of the screen */
+    rel_pblock.buttons = 0;     /* Generate interrupts on make and break */
+    rel_pblock.xparam = 1;      /* Mouse x threshold */
+    rel_pblock.yparam = 1;      /* Mouse y threshold */
+
+    /* Set mouse interrupt routine via XBIOS call */
+    Initmous(1, &rel_pblock, (PTR)&mouse_int);
+}
+
+/*
+ * mouse_exit - deinitialize/disable mouse
+ *
+ * Disables the mouse
+ */
+ 
+void mouse_exit (void)
+{
+    /* Set mouse interrupt routine via XBIOS call */
+    Initmous(1, &rel_pblock, (PTR)&just_rts);
 }

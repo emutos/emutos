@@ -20,7 +20,7 @@
 
                 .globl  _mdata
                 .globl  _cur_font
-                .globl  cur_ms_stat
+                .globl  _cur_ms_stat
                 .globl  _disab_cnt
                 .globl  _draw_flag
                 .globl  m_cdb_bg
@@ -131,7 +131,7 @@ _num_qc_lines:  .ds.w   1       // -354 Number of lines making up wide line - no
 _str_mode:      .ds.w   1       // -352 input mode, string
 _val_mode:      .ds.w   1       // -350 input mode, valuator
 
-cur_ms_stat:    .ds.b   1       // -348 current mouse status
+_cur_ms_stat:   .ds.b   1       // -348 current mouse status
                 .ds.b   1
 _disab_cnt:     .ds.w   1       // -346 disable depth count. (>0 => disabled)
 _newx:          .ds.w   1       // -344 new mouse x&y position

@@ -660,4 +660,8 @@ Start... early ages
 - bios/bios.c removed mouse_init. Done, when graphics is initialized (MAD)
 
 15. Mar. 2002
-- vdi/lisagem.S, got the mousedriver working
+- vdi/lisagem.S - got the mousedriver working (MAD)
+- bios/mouse.c  - Added mouse_init - initial setup of mouse parameters (MAD)
+- bios/mousedrv.S - Seperated the mousedriver from VDI (MAD)
+- vdi/lisagem.S - Here is now just the VDI part of mousedriver setup (MAD)
+

@@ -67,7 +67,7 @@ void xbios_0(WORD type, PTR param, PTR vec)
 #if DBG_XBIOS
     kprintf("XBIOS: Initmous\n");
 #endif
-    Initmous(type, param, vec);
+    Initmous(type, (struct param *)param, vec);
 }
 
 

@@ -28,7 +28,6 @@
         .globl  _VEX_CURV               // exchange cursor change vector
         .globl  _XFM_CRFM               // set mouse form
         .globl  vb_draw                 // vertical blank mouse draw routine
-        .globl  rel_pblock              // mouse parameter block
         .globl  arrow_cdb               // default mouse definition
         .globl  scrn_clip               // clip the cursor to the screen
 
@@ -1099,15 +1098,6 @@ xfm_move_loop:
 
         .data
 
-
-
-/* Parameter Block for a Relative Mouse BIOS Call */
-
-rel_pblock:
-        .dc.b   0       // Y=0 at the top of the screen
-        .dc.b   0       // Generate interrupts on make and break
-        .dc.b   1       // Mouse x threshold
-        .dc.b   1       // Mouse y threshold
 
 
 /* Default Mouse Cursor Definition */

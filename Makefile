@@ -96,7 +96,8 @@ BIOSCSRC = kprint.c xbios.c chardev.c blkdev.c bios.c clock.c \
            mouse.c initinfo.c cookie.c machine.c nvram.c country.c \
 	   cz6x6.c cz8x8.c cz8x16.c biosmem.c
 BIOSSSRC = tosvars.S startup.S lineavars.S vectors.S aciavecs.S \
-           processor.S memory.S linea.S conout.S detect.S panicasm.S \
+           processor.S memory.S linea.S conout.S mousedrv.S \
+           detect.S panicasm.S \
            kprintasm.S
 
 #
