@@ -20,15 +20,9 @@
  *   sets sr to the new value, and return the old sr value 
  * WORD get_sr(void);
  *   returns the current value of sr. the CCR bits are not meaningful.
- * LONG get_sp(void);
- *   returns the current value of sp. 
  * void stop2300(void);
  * void stop2500(void);
  *   the STOP immediate instruction
- * void ints_off(void);
- * void ints_on(void);
- *   these are macros based on set_sr(), and requiring a local variable
- *   declared as: WORD old_sr;
  * void regsafe_call(void *addr);
  *   Do a subroutine call with saving/restoring the CPU registers
  *
@@ -58,55 +52,36 @@ extern long trap1_pexec(short mode, const char * path,
  *   sets sr to the new value, and return the old sr value 
  */
 
-#define set_sr(a)                           \
-__extension__                               \
-({register short retvalue __asm__("d0");    \
-  short _a = (short)(a);                    \
-  __asm__ volatile                          \
-  ("move.w sr,d0;                           \
-    move.w %1,sr "                          \
-  : "=r"(retvalue)   /* outputs */          \
-  : "d"(_a)          /* inputs  */          \
-  : "d0"             /* clobbered regs */   \
-  );                                        \
-  retvalue;                                 \
+#define set_sr(a)                         \
+__extension__                             \
+({short _r, _a = (a);                     \
+  __asm__ __volatile__                    \
+  ("move.w sr,%0\n\t"                     \
+   "move.w %1,sr"                         \
+  : "=&dm"(_r)       /* outputs */        \
+  : "ndm"(_a)        /* inputs  */        \
+  : "cc"             /* clobbered */      \
+  );                                      \
+  _r;                                     \
 })
+
 
 /*
  * WORD get_sr(void); 
  *   returns the current value of sr. 
  */
 
-#define get_sr()                            \
-__extension__                               \
-({register short retvalue __asm__("d0");    \
-  __asm__ volatile                          \
-  ("move.w sr,d0 "                          \
-  : "=r"(retvalue)   /* outputs */          \
-  :                  /* inputs  */          \
-  : "d0"             /* clobbered regs */   \
-  );                                        \
-  retvalue;                                 \
+#define get_sr()                          \
+__extension__                             \
+({short _r;                               \
+  __asm__ volatile                        \
+  ("move.w sr,%0"                         \
+  : "=dm"(_r)        /* outputs */        \
+  :                  /* inputs  */        \
+  );                                      \
+  _r;                                     \
 })
 
-
-
-/*
- * LONG get_sp(void);
- *   returns the current value of sp. 
- */
-
-#define get_sp()                            \
-__extension__                               \
-({register LONG retvalue __asm__("d0");    \
-  __asm__ volatile                          \
-  ("move.l sp,d0 "                          \
-  : "=r"(retvalue)   /* outputs */          \
-  :                  /* inputs  */          \
-  : "d0"             /* clobbered regs */   \
-  );                                        \
-  retvalue;                                 \
-})
 
 
 /*
@@ -114,16 +89,14 @@ __extension__                               \
  *   the m68k STOP immediate instruction
  */
 
-#define stop2300()                              \
-__extension__                                   \
-({__asm__ volatile                              \
-  ("stop #0x2300 ");                            \
+#define stop2300()                        \
+__extension__                             \
+({__asm__ volatile ("stop #0x2300");      \
 })
 
-#define stop2500()                              \
-__extension__                                   \
-({__asm__ volatile                              \
-  ("stop #0x2500 ");                            \
+#define stop2500()                        \
+__extension__                             \
+({__asm__ volatile ("stop #0x2500");      \
 })
 
 
@@ -133,11 +106,11 @@ __extension__                                   \
  *   Saves all registers to the stack, calls the function
  *   that addr points to, and restores the registers afterwards.
  */
-#define regsafe_call(addr)                          \
-__extension__                                       \
-({__asm__ volatile ("movem.l d0-d7/a0-a6,-(sp) ");  \
-  ((void (*)(void))addr)();                         \
-  __asm__ volatile ("movem.l (sp)+,d0-d7/a0-a6 ");  \
+#define regsafe_call(addr)                         \
+__extension__                                      \
+({__asm__ volatile ("movem.l d0-d7/a0-a6,-(sp)");  \
+  ((void (*)(void))addr)();                        \
+  __asm__ volatile ("movem.l (sp)+,d0-d7/a0-a6");  \
 })
 
 

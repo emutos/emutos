@@ -1,10 +1,11 @@
 /*
- * biosbind..h - Bindings for BIOS access
+ * biosbind.h - Bindings for BIOS access
  *
  * Copyright (c) 2001 EmuTOS development team
  *
  * Authors:
  *  MAD   Martin Doering
+ *  LVL   Laurent Vogel
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -14,277 +15,153 @@
 
 #ifndef BIOSBIND_H
 #define BIOSBIND_H
- 
-/*
- * BIOS calls (trap13)
- *
- * For the void functions the return value may be not needed.
- * Just don't know how to not use it.  :-)
- */
 
-static inline void Getmpb(long ptr)
+#define Getmpb(a) bios_v_l(0x0,a)
+#define Bconstat(a) bios_w_w(0x1,a)
+#define Bconin(a) bios_l_w(0x2,a)
+#define Bconout(a,b) bios_l_ww(0x3,a,b)
+#define Rwabs(a,b,c,d,e) bios_l_wlwww(0x4,a,b,c,d,e)
+#define Setexec(a,b) bios_l_wl(0x5,a,b)
+#define Setexc(a,b) bios_l_wl(0x5,a,b)
+#define Tickcal() bios_l_v(0x6)
+#define Getbpb(a) bios_l_w(0x7,a)
+#define Bcostat(a) bios_l_w(0x8,a)
+#define Mediach(a) bios_l_w(0x9,a)
+#define Drvmap() bios_l_v(0xa)
+#define Kbshift(a) bios_l_w(0xb,a)
+#define Getshift(a) bios_l_w(0xb,a)
+
+
+
+static inline void bios_v_l(int op, long a)
 {
-    register long retval __asm__("d0");
-    long  _a = (long) ptr;
+    __asm__ __volatile__ (
+        "move.l  %1,-(sp)\n\t"
+        "move.w  %0,-(sp)\n\t"
+        "trap    #13\n\t"
+        "addq.l  #6,sp"
+         : 
+         : "nr"(op), "ir"(a)
+         : "d0", "d1", "d2", "a0", "a1", "a2", "memory", "cc"
+        );
+}
 
-    __asm__ __volatile__
-        ("
-         movl    %1,sp@-;
-         movw    #0,sp@-;
-         trap    #13;
-         lea    sp@(6),sp "
-         : "=r"(retval)
-         : "r"(_a)
-         : "d0", "d1", "d2", "a0", "a1", "a2", "memory"
+static inline void bios_v_ww(int op, short a, short b)
+{
+    __asm__ __volatile__ (
+        "move.w  %2,-(sp)\n\t"
+        "move.w  %1,-(sp)\n\t"
+        "move.w  %0,-(sp)\n\t"
+        "trap    #13\n\t"
+        "addq.l  #6,sp"
+         : 
+         : "nr"(op), "nr"(a), "nr"(b) 
+         : "d0", "d1", "d2", "a0", "a1", "a2", "memory", "cc"
         );
 }
 
 
 
-static inline short Bconstat(short dev)
+static inline short bios_w_w(int op, short a)
 {
     register long retval __asm__("d0");
-    short _a = dev;
 
-    __asm__ __volatile__
-        ("
-         movw    %1,sp@-;
-         movw    #1,sp@-;
-         trap    #13;
-         lea    sp@(4),sp "
+    __asm__ __volatile__ (
+        "move.w  %2,-(sp)\n\t"
+        "move.w  %1,-(sp)\n\t"
+        "trap    #13\n\t"
+        "addq.l  #4,sp"
          : "=r"(retval)
-         : "r"(_a)
-         : "d0", "d1", "d2", "a0", "a1", "a2", "memory"
-        );
-    return retval;
-}
-
-
-
-static inline long Bconin(short dev)
-{
-    register long retval __asm__("d0");
-    short _a = dev;
-
-    __asm__ __volatile__
-        ("
-         movw   %1,sp@-;
-         movw   #2,sp@-;
-         trap   #13;
-         lea    sp@(4),sp "
-         : "=r"(retval)
-         : "r"(_a)
-         : "d0", "d1", "d2", "a0", "a1", "a2", "memory"
+         : "nr"(op), "nr"(a) 
+         : "d1", "d2", "a0", "a1", "a2", "memory", "cc"
         );
     return retval;
 }
 
-
-
-static inline long Bconout(short dev, short c)
+static inline long bios_l_v(int op)
 {
     register long retval __asm__("d0");
-    short _a = dev;
-    short _b = c;
 
-    __asm__ __volatile__
-        ("
-         movw   %2,sp@-;
-         movw   %1,sp@-;
-         movw   #3,sp@-;
-         trap   #13;
-         lea    sp@(6),sp "
+    __asm__ __volatile__ (
+        "move.w  %1,-(sp)\n\t"
+        "trap    #13\n\t"
+        "addq.l  #2,sp"
          : "=r"(retval)
-         : "r"(_a), "r"(_b)
-         : "d0", "d1", "d2", "a0", "a1", "a2", "memory"
+         : "nr"(op)
+         : "d1", "d2", "a0", "a1", "a2", "memory", "cc"
         );
     return retval;
 }
 
-
-
-static inline long Rwabs(short rwflag, long buf, short count,
-                  short recno, short dev)
+static inline long bios_l_w(int op, short a)
 {
     register long retval __asm__("d0");
-    short _a = rwflag;
-    long  _b = (long) buf;
-    short _c = count;
-    short _d = recno;
-    short _e = dev;
 
-    __asm__ __volatile__
-        ("
-         movw   %5,sp@-;
-         movw   %4,sp@-;
-         movw   %3,sp@-;
-         movl   %2,sp@-;
-         movw   %1,sp@-;
-         movw   #4,sp@-;
-         trap   #13;
-         lea    sp@(14),sp "
+    __asm__ __volatile__ (
+        "move.w  %2,-(sp)\n\t"
+        "move.w  %1,-(sp)\n\t"
+        "trap    #13\n\t"
+        "addq.l  #4,sp"
          : "=r"(retval)
-         : "r"(_a),"r"(_b),"r"(_c),"r"(_d),"r"(_e)
-         : "d0", "d1", "d2", "a0", "a1", "a2", "memory"
+         : "nr"(op), "nr"(a) 
+         : "d1", "d2", "a0", "a1", "a2", "memory", "cc"
         );
     return retval;
 }
 
-
-
-static inline long Setexc(short vecnum, long vec )
+static inline long bios_l_ww(int op, short a, short b)
 {
     register long retval __asm__("d0");
-    short _a = vecnum;
-    long  _b = (long) vec;
 
-    __asm__ __volatile__
-        ("
-         movl    %2,sp@-;
-         movw    %1,sp@-;
-         movw    #5,sp@-;
-         trap    #13;
-         lea    sp@(8),sp "
+    __asm__ __volatile__ (
+        "move.w  %3,-(sp)\n\t"
+        "move.w  %2,-(sp)\n\t"
+        "move.w  %1,-(sp)\n\t"
+        "trap    #13\n\t"
+        "addq.l  #6,sp"
          : "=r"(retval)
-         : "r"(_a), "r"(_b)
-         : "d0", "d1", "d2", "a0", "a1", "a2", "memory"
+         : "nr"(op), "nr"(a), "nr"(b)
+         : "d1", "d2", "a0", "a1", "a2", "memory", "cc"
         );
     return retval;
 }
 
-
-
-static inline long Tickcal()
+static inline long bios_l_wl(int op, short a, long b)
 {
     register long retval __asm__("d0");
 
-    __asm__ __volatile__
-        ("
-         movw    #6,sp@-;
-         trap    #13;
-         lea    sp@(2),sp "
+    __asm__ __volatile__ (
+        "move.l  %3,-(sp)\n\t"
+        "move.w  %2,-(sp)\n\t"
+        "move.w  %1,-(sp)\n\t"
+        "trap    #13\n\t"
+        "addq.l  #8,sp"
          : "=r"(retval)
-         :
-         : "d0", "d1", "d2", "a0", "a1", "a2", "memory"
+         : "nr"(op), "nr"(a), "ir"(b)
+         : "d1", "d2", "a0", "a1", "a2", "memory", "cc"
         );
     return retval;
 }
 
-
-
-static inline void * Getbpb(WORD dev)
+static inline long 
+bios_l_wlwww(int op, short a, long b, short c, short d, short e)
 {
     register long retval __asm__("d0");
-    short _a = dev;
 
-    __asm__ __volatile__
-        ("
-         movw   %1,sp@-;
-         movw   #7,sp@-;
-         trap   #13;
-         lea    sp@(4),sp "
+    __asm__ __volatile__ (
+        "move.w  %6,-(sp)\n\t"
+        "move.w  %5,-(sp)\n\t"
+        "move.w  %4,-(sp)\n\t"
+        "move.l  %3,-(sp)\n\t"
+        "move.w  %2,-(sp)\n\t"
+        "move.w  %1,-(sp)\n\t"
+        "trap    #13\n\t"
+        "lea     14(sp),sp"
          : "=r"(retval)
-         : "r"(_a)
-         : "d0", "d1", "d2", "a0", "a1", "a2", "memory"
-        );
-    return (void *)retval;
-}
-
-
-
-static inline short Bcostat(short dev)
-{
-    register long retval __asm__("d0");
-    short _a = dev;
-
-    __asm__ __volatile__
-        ("
-         movw    %1,sp@-;
-         movw    #8,sp@-;
-         trap    #13;
-         lea    sp@(4),sp "
-         : "=r"(retval)
-         : "r"(_a)
-         : "d0", "d1", "d2", "a0", "a1", "a2", "memory"
+         : "nr"(op), "nr"(a), "ir"(b), "nr"(c), "nr"(d), "nr"(e)
+         : "d1", "d2", "a0", "a1", "a2", "memory", "cc"
         );
     return retval;
 }
 
-
-
-static inline short Mediach(short dev)
-{
-    register long retval __asm__("d0");
-    short _a = dev;
-
-    __asm__ __volatile__
-        ("
-         movw    %1,sp@-;
-         movw    #9,sp@-;
-         trap    #13;
-         lea    sp@(4),sp "
-         : "=r"(retval)
-         : "r"(_a)
-         : "d0", "d1", "d2", "a0", "a1", "a2", "memory"
-        );
-    return retval;
-}
-
-
-
-static inline long Drvmap()
-{
-    register long retval __asm__("d0");
-
-    __asm__ __volatile__
-        ("
-         movw    #10,sp@-;
-         trap    #13;
-         lea    sp@(2),sp "
-         : "=r"(retval)
-         :
-         : "d0", "d1", "d2", "a0", "a1", "a2", "memory"
-        );
-    return retval;
-}
-
-
-
-static inline long Kbshift(short mode)
-{
-    register long retval __asm__("d0");
-    short _a = mode;
-
-    __asm__ __volatile__
-        ("
-         movw    %1,sp@-;
-         movw    #11,sp@-;
-         trap    #13;
-         lea    sp@(4),sp "
-         : "=r"(retval)
-         : "r"(_a)
-         : "d0", "d1", "d2", "a0", "a1", "a2", "memory"
-        );
-    return retval;
-}
-
-
-
-static inline long Getshift()
-{
-    register long retval __asm__("d0");
-
-    __asm__ __volatile__
-        ("
-         movw    #-1,sp@-;
-         movw    #11,sp@-;
-         trap    #13;
-         lea    sp@(4),sp "
-         : "=r"(retval)
-         :
-         : "d0", "d1", "d2", "a0", "a1", "a2", "memory"
-        );
-    return retval;
-}
-
-#endif
+#endif /* BIOSBIND_H */
