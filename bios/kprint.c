@@ -21,6 +21,14 @@
 extern void printout(char *);
 extern void cons_out(char);
 
+/* doprintf implemented in doprintf.c. 
+ * This is an OLD one, and does not support floating point 
+ */
+#include <stdarg.h>
+extern int doprintf(void (*outc)(int), const char *fmt, va_list ap);
+
+
+
 #define	COMMENT	0
 #define MAXDMP 1024
 /*
@@ -31,6 +39,96 @@ static  char	buffer[MAXDMP] ;
 
 GLOBAL	char	*kcrlf = "\n\r" ;
 
+/*==== cprintf - do formatted string output direct to the console ======*/
+
+int cprintf(const char *fmt, ...)
+{
+  int n;
+  va_list ap;
+  va_start(ap, fmt);
+  n = doprintf((void(*)(int))cons_out, fmt, ap);
+  va_end(ap);
+  return n;
+}
+
+
+/*==== kprintf - do formatted ouput natively to the emulator ======*/
+
+static void kprintf_outc(int c)
+{
+  char buf[2];
+  buf[0] = c;
+  buf[1] = 0;
+  printout(buf);
+}
+
+int kprintf(const char *fmt, ...)
+{
+  int n;
+  va_list ap;
+  va_start(ap, fmt);
+  n = doprintf(kprintf_outc, fmt, ap);
+  va_end(ap);
+  return n;
+}
+
+/*==== panic - display information found in 0x380 and halt ======*/
+
+extern LONG proc_lives;
+extern LONG proc_dregs[];	
+extern LONG proc_aregs[];	
+extern LONG proc_enum;	
+extern LONG proc_usp;	
+extern WORD proc_stk[];
+
+static const char *exc_messages[] = {
+  "", "", "bus error", "address error", 
+  "illegal exception", "divide by zero", 
+  "datatype overflow (CHK)", 
+  "trapv overflow bit error",
+  "privilege violation", "Trace", "LineA", "LineF" };
+  
+
+void panic(void)
+{
+  kprintf("[BIOS] Panic.\n"); 
+  if(proc_lives != 0x12345678) {
+    kprintf("No saved info ; halted.\n");
+    goto halt;
+  } 
+  if(proc_enum == 2 || proc_enum == 3) {
+    struct {
+      WORD misc;
+      LONG address;
+      WORD opcode;
+      WORD sr;
+      LONG pc;
+    } *s = (void *)proc_stk;
+    kprintf("%s. misc = 0x%04x, address = 0x%08lx\n",
+      exc_messages[proc_enum], s->misc, s->address);
+    kprintf("opcode = 0x%04x, sr = 0x%04x, pc = 0x%08lx\n",
+      s->opcode, s->sr, s->pc);
+    goto halt;
+  } else if(proc_enum >= 4 && proc_enum < sizeof(exc_messages)) {
+    struct {
+      WORD sr;
+      LONG pc;
+    } *s = (void *)proc_stk;
+    kprintf("%s. sr = 0x%04x, pc = 0x%08lx\n",
+      exc_messages[proc_enum], s->sr, s->pc);
+    goto halt;
+  } else {
+    struct {
+      WORD sr;
+      LONG pc;
+    } *s = (void *)proc_stk;
+    kprintf("Exception number %d. sr = 0x%04x, pc = 0x%08lx\n",
+      proc_enum, s->sr, s->pc);
+    goto halt;
+  } 
+halt:
+  for(;;);
+}
 
 /*==== kputs - output a null terminated string direct to the console ======*/
 
