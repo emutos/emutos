@@ -193,7 +193,16 @@ Start... early ages
 19. Oct. 2001
 - Cleaned up and seperated memory initialisation in memory.s
 - Cleaned up command.prg (got rid of cpm code)
+
+20. Oct. 2001
 - added memmove and memset, erasing bmove, xmovs and bfill in bdos (LVL)
 - midi and ikbd bios device functions; new ikbd interrupt (LVL)
 - started to clean some headers (removed abbrev.h, btools.h) (LVL)
 - added bconout5 (raw console) (LVL)
+
+21. Oct. 2001
+- mfp xbios functions ; mfp init rewritten using xbios funcs. (LVL)
+- vbl routine: added palette handling and vblqueue. (LVL)
+- misc. xbios routines (vsync, random, ...) (LVL)
+- warning free, automatic built date in command.prg (LVL)
+- still some headers cleaning in bios/ and include/ (LVL)
