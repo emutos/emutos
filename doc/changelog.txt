@@ -787,3 +787,4 @@ Start... early ages
 
 24. Apr. 2002
 - vdi/* - switched some jmptbl functions to lowercase (MAD)
+- vdi/bezier - added raw bezier code from PC GEM's GDOS - not yet working (MAD)
