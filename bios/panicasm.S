@@ -10,6 +10,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+#include "config.h"
+
 
   .text
   
@@ -51,9 +53,11 @@ _panic:
  * simply halt the machine.
  */
 _halt:
+#if USE_STOP_INSN_TO_FREE_HOST_CPU
   // first try 'STOP'
   stop    #0x2700
   // a normal 680x0 CPU would have halted already, but just in case:
+#endif
 forever:
   bra     forever
 

@@ -12,12 +12,13 @@
  */
 
 
+#include "config.h"
+#include "portab.h"
+#include "bios.h"
+#include "kprint.h"
+#include "mfp.h"
+#include "tosvars.h"
 
-#include        "portab.h"
-#include        "bios.h"
-#include        "kprint.h"
-#include        "mfp.h"
-#include        "tosvars.h"
 
 /* the acia interrupt, in aciavecs.s */
 extern void int_acia(void);
@@ -38,6 +39,8 @@ WORD mfp_ctrl;
 
 /* "sieve", to get only the fourth interrupt */
 WORD timer_c_sieve;
+
+
 
 /*==== kbinit - initialize the MFP ========================================*/
  
@@ -96,7 +99,10 @@ void    mfp_init (void)
     xbtimer(2, 0x50, 192, (LONG)int_timerc); 
     
     /* timer D */
+#if INIT_TIMER_D
     rsconf(B9600, 0, 0x98, 1, 1, 0);
+#endif
+
     /* TODO, flow control */
 }
  

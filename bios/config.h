@@ -62,7 +62,16 @@
 #define USE_STOP_INSN_TO_FREE_HOST_CPU 0
 #endif
 
-/* The keyboard ans language are now set using
+/* Set this to 1 if you want  Timer-D to be initialized.
+ * We don't need Timer-D yet, but some software might depend on an
+ * initialized Timer-D. On the other side, a running timer D is yet
+ * another task for an emulator, e.g. Hatari slows down with it :-(
+ */
+#ifndef INIT_TIMER_D
+#define INIT_TIMER_D 1
+#endif
+
+/* The keyboard and language are now set using
  *   make LOCALE="xx" 
  * where xx is a lowercase two-letter country code as
  * found in the table in bios/country.c
