@@ -18,8 +18,6 @@
 
 #include "vdidef.h"
 
-#include "asm.h"
-
 
 extern struct attribute virt_work;      /* Virtual workstation attributes */
 extern struct attribute *cur_work;      /* Pointer to current works attr. */
