@@ -90,7 +90,7 @@
 **                                      xmkdir() when it cannot be fully created.
 **                                      Also, zero out parent DND's d_left if we've
 **                                      gotten that far.  Also made a number of changes
-**                                      from NULL to NULPTR where we really wanted a
+**                                      from NULL to NULLPTR where we really wanted a
 **                                      long zero.
 **
 **   7 Nov 1986 scc M01.01.1107.01      Added code to xmkdir() to check for and disallow
@@ -242,7 +242,7 @@ long xmkdir(char *s)
         fd = f->o_dirfil;
 
         ixlseek(fd,f->o_dirbyt);
-        b = (FCB *) ixread(fd,32L,NULPTR);
+        b = (FCB *) ixread(fd,32L,NULLPTR);
 
         /* is the total path length >= 64 chars? */     /* M01.01.1107.01 */
 
@@ -255,7 +255,7 @@ long xmkdir(char *s)
                 return ( EACCDN );
         }
 
-        if( (dn = makdnd(f->o_dnode,b)) == NULPTR )
+        if( (dn = makdnd(f->o_dnode,b)) == NULLPTR )
         {
                 ixdel( f->o_dnode, b, f->o_dirbyt );    /* M01.01.1103.01 */
                 return (ENSMEM);
@@ -264,7 +264,7 @@ long xmkdir(char *s)
         if( (dn->d_ofd = f0 = makofd(dn)) == (OFD*)NULLPTR )
         {
                 ixdel( f->o_dnode, b, f->o_dirbyt );    /* M01.01.1103.01 */
-                f->o_dnode->d_left = NULPTR;            /* M01.01.1103.01 */
+                f->o_dnode->d_left = NULLPTR;            /* M01.01.1103.01 */
                 xmfreblk((char *)dn);
                 return (ENSMEM);
         }
@@ -274,7 +274,7 @@ long xmkdir(char *s)
         if (nextcl(f0,1))
         {
                 ixdel( f->o_dnode, b, f->o_dirbyt );    /* M01.01.1103.01 */
-                f->o_dnode->d_left = NULPTR;            /* M01.01.1103.01 */
+                f->o_dnode->d_left = NULLPTR;            /* M01.01.1103.01 */
                 freednd(dn);                    /* M01.01.1031.02 */
                 return(EACCDN);
         }
@@ -369,7 +369,7 @@ long xrmdir(char *p)
         ixlseek(fd,0x40L);
         do
         {
-                if (!(f = (FCB *) ixread(fd,32L,NULPTR)))
+                if (!(f = (FCB *) ixread(fd,32L,NULLPTR)))
                         break;
         } while (f->f_name[0] == (char)0x0e5);
 
@@ -402,7 +402,7 @@ long xrmdir(char *p)
         d1 = d->d_parent;
         xmfreblk((char *)d);
         ixlseek((f2 = fd->o_dirfil),(pos = fd->o_dirbyt));
-        f = (FCB *) ixread(f2,32L,NULPTR);
+        f = (FCB *) ixread(f2,32L,NULLPTR);
 
         return(ixdel(d1,f,pos));
 }
@@ -800,7 +800,7 @@ long xrename(int n, char *p1, char *p2)
         if (dn1 != dn2)
         {
                 /* get old attribute */
-                f = (FCB *) ixread(fd,32L,NULPTR);
+                f = (FCB *) ixread(fd,32L,NULLPTR);
                 att = f->f_attrib;
                 /* erase (0xe5) old file */
                 ixlseek(fd,f1->o_dirbyt);
@@ -1084,7 +1084,7 @@ DND     *findit(char *name, char **sp, int dflag)
 
         /*
          **  check all subdirectories at this level.  if we run out
-         **     of siblings in the DND list (p->d_right == NULPTR), then
+         **     of siblings in the DND list (p->d_right == NULLPTR), then
          **     we should rescan the whole directory and make sure they
          **     are all logged in.
          */
@@ -1093,7 +1093,7 @@ DND     *findit(char *name, char **sp, int dflag)
         {
             newp = p->d_right ; /*  next sibling        */
 
-            if(newp == NULPTR)  /* if no more siblings  */
+            if(newp == NULLPTR)  /* if no more siblings  */
             {
                 p = 0;
                 if (pp)
@@ -1189,7 +1189,7 @@ FCB     *scan(register DND *dnd, char *n, WORD att, LONG *posp)
         **  scan thru the directory file, looking for a match
         */
 
-        while ((fcb = (FCB *) ixread(fd,32L,NULPTR)) && (fcb->f_name[0]))
+        while ((fcb = (FCB *) ixread(fd,32L,NULLPTR)) && (fcb->f_name[0]))
         {
                 /* 
                 **  Add New DND.
@@ -1208,7 +1208,7 @@ FCB     *scan(register DND *dnd, char *n, WORD att, LONG *posp)
                         dnd1 = getdnd( &fcb->f_name[0] , dnd ) ;
                         if (!dnd1)
                                 if (!(dnd1 = makdnd(dnd,fcb)))
-                                        return( NULPTR ) ;
+                                        return( NULLPTR ) ;
                 }
 
                 if ( (m = match( name , fcb->f_name )) )
@@ -1278,7 +1278,7 @@ static DND *makdnd(DND *p, FCB *b)
                                         if (dirtbl[i] == p1)
                                                 in_use = 1;
 
-                        if( !in_use && p1->d_files == NULPTR )
+                        if( !in_use && p1->d_files == NULLPTR )
                         {       /*  M01.01.KTB.SCC.02  */
                                 /* clean out this DND for reuse */
 
@@ -1537,7 +1537,7 @@ static DND *getdnd(char *n, DND *d)
                 if( xcmps( n , &dnd->d_name[0] ) )
                         return( dnd ) ;
         }
-        return( (DND*)NULPTR ) ;
+        return( (DND*)NULLPTR ) ;
 
 }
 

@@ -10,7 +10,6 @@ BIOS/XBIOS/BDOS
 - check that VEC_TIMER (vector number 0x100) is called by bios every 50th sec
 - check that VEC_CRITICALERR (0x101) is called when the BIOS encounters errors
 - should hitting control-c terminate the current process? if so, how?
-- is it really necessary to have both NULLPTR and NULPTR defined?
 - move mem-only routines out of proc.c into umem.c or iumem.c
 - check that EmuCON understands 'exit' (useful in .BAT scripts)
 - improve Mediach()

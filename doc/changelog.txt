@@ -720,4 +720,7 @@ Start... early ages
 - added po/cs.po from Bohdan for Czech native language support  (MAD)
 
 08. Apr. 2002
-- bios/mousedrv.S cleaned up a bit. (MAD)
+- bios/mousedrv.S - cleaned up a bit. (MAD) 
+- vdi/lisagem.S - did remove SR saving in tick_int, like in TOS (MAD)
+- aes/* - removed some warnings (MAD)
+- bdos/fs* - replaced NULPTR completely by NULLPTR  (MAD)

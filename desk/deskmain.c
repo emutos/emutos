@@ -46,6 +46,7 @@
 #include "deskfun.h"
 #include "deskpro.h"
 #include "deskact.h"
+#include "kprint.h"     // just for debugging
 
 
 #define abs(x) ( (x) < 0 ? -(x) : (x) )

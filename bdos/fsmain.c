@@ -236,22 +236,22 @@
 **                              Modifiedixwrite()toreturnEACCDNerriftry
 **                              to write file opend as read only.
 **
-**                              Modified getdmd() to return NULPTR if MGET 
+**                              Modified getdmd() to return NULLPTR if MGET 
 **                              failed.
 **
 **                              Modified log() to return a long indicating 
 **                              ENSMEM if getdmd() failed.
 **
-**                              Modified makofd() to return NULPTR if MGET 
+**                              Modified makofd() to return NULLPTR if MGET 
 **                              fails.
 **
-**                              Modified makdnd() to return NULPTR if MGET 
+**                              Modified makdnd() to return NULLPTR if MGET 
 **                              fails.
 ** 
 **                              Modified makopn() to return ENSMEM if MGET 
 **                              fails.
 **
-**                              Modified scan() to return NULPTR if makofd()
+**                              Modified scan() to return NULLPTR if makofd()
 **                              or makdnd() fails.
 **
 **                              Modified xcreate() to return (ENSMEM) if 

@@ -40,6 +40,7 @@
 #include "geminit.h"
 #include "gemrslib.h"
 #include "optimopt.h"
+#include "kprint.h"     // just for debugging
 
 
 #if MULTIAPP
@@ -886,7 +887,7 @@ void sh_ldapp()
           {
             retry = FALSE;
             /* Experimental starting of the ROM desktop:  - THH*/
-            kprintf("starting %s\n",ad_scmd);
+            kprintf("starting %s\n",(char *)ad_scmd);
             if(strcmp((char *)ad_scmd,"DESKTOP.APP")==0)
             {
               extern void deskstart();

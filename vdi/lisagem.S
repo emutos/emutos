@@ -127,22 +127,13 @@ tick_int:
         move.b  #1,in_proc
 
         movem.l d0-d7/a0-a6, -(sp)
-#if 1 //NEEDED  // not in original TOS 1.0 (MAD)
-        move    sr, -(sp)               // Disable interrupts
-        ori.w   #0x0700, sr
-#endif
 
         move.l  _tim_addr,a0            // Invoke user routine
         jsr     (a0)
 
-        bsr     vb_draw                 // see if the mouse needs drawing
-
-#if 1 //NEEDED
-        move    (sp)+, SR               // Restore interrupt context
-#endif
         movem.l (sp)+, d0-d7/a0-a6
-        clr.b   in_proc                 // allow yet another trip through
 timer_exit:
+        clr.b   in_proc                 // allow yet another trip through
         move.l  _tim_chain, -(sp)       // Call the old timer vector too
         rts
 
@@ -223,7 +214,7 @@ vdimouse_init:
         move.l  (sp)+, _INTIN           // Restore INTIN pointer
 
 
-#if 1 // is done in tick_int later (MAD)
+#if 0 // is done in tick_int, like in TOS (MAD)
         /* Init mouse vbl interrupt */
         move.l  _vblqueue, a0           // get VBL-queue address
         move.l  #vb_draw, (a0)          // set GEM VBL-routine (in vdimouse.S)

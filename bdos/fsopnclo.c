@@ -191,7 +191,7 @@ long ixcreat(char *name, char attr)
         ixwrite(fd,11L,a);      /* write name, set dirty flag */
         ixclose(fd,CL_DIR);     /* partial close to flush */
         ixlseek(fd,pos);
-        s = (char*) ixread(fd,32L,NULPTR);
+        s = (char*) ixread(fd,32L,NULLPTR);
         f2 = rc = opnfil((FCB*)s,dn, ((f->f_attrib & FA_RO) ? 0 : 2));
 
         if (rc < 0)

@@ -33,7 +33,7 @@ COUNTRY = us
 # Choose the user interface that should be included into EmuTOS
 # (0=command line "EmuCON" , 1=AES)
 
-WITH_AES = 0
+WITH_AES = 1
 
 
 #
@@ -469,7 +469,7 @@ $(DESASS): map
 
 clean:
 	rm -f obj/*.o obj/*.s *~ */*~ *~ core emutos.img map $(DESASS)
-	rm -f ramtos.img boot.prg etos192k.img etosfalc.img mkflop$(EXE) 
+	rm -f ramtos.img boot.prg etos*.img mkflop$(EXE) 
 	rm -f bootsect.img emutos.st date.prg dumpkbd.prg keytbl2c$(EXE)
 	rm -f bug$(EXE) po/messages.pot util/langs.c bios/header.h
 	rm -f mkheader$(EXE) tounix$(EXE) $(TMPS) *.dsm

@@ -170,7 +170,7 @@ mov_cur1:
 
 
 /*
- * vb_draw - moves mouse cursor
+ * vb_draw - moves mouse cursor, GEM VBL routine
  *
  * It removes the mouse cursor from its current location, if necessary,
  * * and redraws it at a new location.
