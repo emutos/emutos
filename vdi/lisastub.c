@@ -13,20 +13,20 @@
 
 v_cellarray()
 {
-}								/* not implimented              */
+}                                                               /* not implimented              */
 
 vq_cellarray()
 {
-}								/* mot implimented          */
+}                                                               /* mot implimented          */
 
 vs_color()
 {
-}								/* not implimented              */
+}                                                               /* not implimented              */
 
 vq_color()
 {
-}								/* not implimented              */
+}                                                               /* not implimented              */
 
 v_nop()
 {
-}								/* dummy funtion            */
+}                                                               /* dummy funtion            */

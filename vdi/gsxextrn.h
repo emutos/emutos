@@ -11,41 +11,46 @@
 
 
 
+#ifndef _GSXEXTRN_H
+#define _GSXEXTRN_H
+
+#include "portab.h"
+
 #include "fontdef.h"
 #include "attrdef.h"
 
-EXTERN struct attribute virt_work;	/* Virtual workstation attributes */
-EXTERN struct attribute *cur_work;	/* Pointer to current works attr. */
+EXTERN struct attribute virt_work;      /* Virtual workstation attributes */
+EXTERN struct attribute *cur_work;      /* Pointer to current works attr. */
 
-EXTERN WORD DDA_INC;		/* the fraction to be added to the DDA */
-EXTERN WORD T_SCLSTS;		/* 0 if scale down, 1 if enlarge */
+EXTERN WORD DDA_INC;                    /* the fraction to be added to the DDA */
+EXTERN WORD T_SCLSTS;                   /* 0 if scale down, 1 if enlarge */
 
-extern WORD FLIP_Y;		/* True if magnitudes being returned */
-extern WORD MONO_STATUS;	/* True if current font monospaced */
+extern WORD FLIP_Y;                             /* True if magnitudes being returned */
+extern WORD MONO_STATUS;                /* True if current font monospaced */
 
-EXTERN BYTE deftxbuf[];		/* Default text scratch buffer */
-extern WORD scrtsiz;		/* Default offset to large text buffer */
+EXTERN BYTE deftxbuf[];                 /* Default text scratch buffer */
+extern WORD scrtsiz;                    /* Default offset to large text buffer */
 
-extern WORD scrpt2;		/* Offset to large text buffer */
-extern BYTE *scrtchp;		/* Pointer to text scratch buffer */
+extern WORD scrpt2;                             /* Offset to large text buffer */
+extern BYTE *scrtchp;                   /* Pointer to text scratch buffer */
 
-extern WORD ini_font_count;	/* Number of fonts in driver */
+extern WORD ini_font_count;             /* Number of fonts in driver */
 
-EXTERN struct font_head first;	/* The small system font */
+EXTERN struct font_head first;  /* The small system font */
 
-EXTERN struct font_head *cur_font;	/* Current font */
-EXTERN struct font_head *def_font;	/* Default font from open workstation 
-					 */
+EXTERN struct font_head *cur_font;      /* Current font */
+EXTERN struct font_head *def_font;      /* Default font from open workstation 
+                                                                         */
 
-EXTERN struct font_head *font_ring[];	/* Ring of available fonts */
+EXTERN struct font_head *font_ring[];   /* Ring of available fonts */
 
-extern WORD h_align;		/* Text horizontal alignment */
-extern WORD v_align;		/* Text vertical alignment */
-extern WORD STYLE;		/* Requested text special effects */
-extern WORD DOUBLE;		/* True if current font scaled */
-extern WORD CHUP;		/* Text baseline vector */
+extern WORD h_align;                    /* Text horizontal alignment */
+extern WORD v_align;                    /* Text vertical alignment */
+extern WORD STYLE;                              /* Requested text special effects */
+extern WORD DOUBLE;                             /* True if current font scaled */
+extern WORD CHUP;                               /* Text baseline vector */
 
-extern WORD line_cw;		/* Linewidth for current circle */
+extern WORD line_cw;                    /* Linewidth for current circle */
 extern WORD num_qc_lines, q_circle[];
 
 extern WORD val_mode, chc_mode, loc_mode, str_mode;
@@ -79,9 +84,9 @@ extern WORD HOLLOW;
 extern WORD HAT_0_MSK, HAT_1_MSK;
 extern WORD DITHRMSK, OEMMSKPAT;
 
-extern WORD DEV_TAB[];		/* initial intout array for open workstation */
-extern WORD SIZ_TAB[];		/* initial ptsout array for open workstation */
-extern WORD INQ_TAB[];		/* extended inquire values */
+extern WORD DEV_TAB[];                  /* initial intout array for open workstation */
+extern WORD SIZ_TAB[];                  /* initial ptsout array for open workstation */
+extern WORD INQ_TAB[];                  /* extended inquire values */
 
 extern WORD *CONTRL, *INTIN, *PTSIN, *INTOUT, *PTSOUT;
 
@@ -125,3 +130,6 @@ extern WORD screen();
 /* C Support routines */
 
 extern WORD VEC_LEN();
+
+
+#endif  /* GSXEXTRN_H */

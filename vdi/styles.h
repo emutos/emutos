@@ -11,7 +11,10 @@
 
 
 
-/* styles.h */
+#ifndef _STYLES_H
+#define _STYLES_H
+
+#include "portab.h"
 
 /* the six predefined line styles */
 
@@ -62,16 +65,16 @@ WORD OEMPAT[128] = {
     0x1111, 0x2222, 0x4444, 0xFFFF, 0x8888, 0x4444, 0x2222, 0xFFFF
 };
 
-WORD DITHRMSK = 3;		/* mask off all but four scans */
+WORD DITHRMSK = 3;                              /* mask off all but four scans */
 WORD DITHER[32] = {
-    0x0000, 0x4444, 0x0000, 0x1111,	/* intensity level 2 */
-    0x0000, 0x5555, 0x0000, 0x5555,	/* intensity level 4 */
-    0x8888, 0x5555, 0x2222, 0x5555,	/* intensity level 6 */
-    0xAAAA, 0x5555, 0xAAAA, 0x5555,	/* intensity level 8 */
-    0xAAAA, 0xDDDD, 0xAAAA, 0x7777,	/* intensity level 10 */
-    0xAAAA, 0xFFFF, 0xAAAA, 0xFFFF,	/* intensity level 12 */
-    0xEEEE, 0xFFFF, 0xBBBB, 0xFFFF,	/* intensity level 14 */
-    0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF	/* intensity level 16 */
+    0x0000, 0x4444, 0x0000, 0x1111,     /* intensity level 2 */
+    0x0000, 0x5555, 0x0000, 0x5555,     /* intensity level 4 */
+    0x8888, 0x5555, 0x2222, 0x5555,     /* intensity level 6 */
+    0xAAAA, 0x5555, 0xAAAA, 0x5555,     /* intensity level 8 */
+    0xAAAA, 0xDDDD, 0xAAAA, 0x7777,     /* intensity level 10 */
+    0xAAAA, 0xFFFF, 0xAAAA, 0xFFFF,     /* intensity level 12 */
+    0xEEEE, 0xFFFF, 0xBBBB, 0xFFFF,     /* intensity level 14 */
+    0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF      /* intensity level 16 */
 };
 
 WORD HAT_0_MS = 7;
@@ -114,3 +117,6 @@ WORD HATCH1[96] = {
 
 WORD HOLLOW = 0;
 WORD SOLID = 0xFFFF;
+
+
+#endif
