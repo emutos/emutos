@@ -1279,3 +1279,6 @@ Start... early ages
 - bios/kprint.c, kprintasm.S - ARAnyM code removed, NF support added (joy)
 - bios/machine.[ch], bios.c - updated for new NF library (joy)
 - Makefile, doc/install.txt, include/config.h - updated to support NF (joy)
+
+21. Aug. 2002 
+- doc/announce.txt - updated for release 0.6 (MAD)

@@ -1,19 +1,38 @@
 Dear Atari Community!
 
 
-We are happy to announce the second beta release of EmuTOS.
+We are happy to announce the third beta release of EmuTOS
+
+EmuTOS 0.6 --- 9. Feb. 2003
 
 
 INTRODUCTION
 
 EmuTOS is a singleuser singletasking operating system for the 32 bit Atari
-computer emulators. It is thought as a replacement for the TOS-images you
-usually need today for using emulators and it is also running on some real
-hardware, like the Atari Mega STE. All is open and maybe it is also running
-on totally new machines in the future.
+computers and emulators. It is thought as a replacement for the
+TOS-images you usually need today for using emulators and it is also
+running on some real hardware, like the Atari Mega STE. All is open and
+maybe it is also running on totally new machines in the future.
 
-EmuTOS is beeing developed for more than a year now and is licensed under
-the OpenSource Gnu General Public Licence (GPL).
+EmuTOS is beeing developed for nearly two years now and is licensed
+under the OpenSource Gnu General Public Licence (GPL).
+
+
+
+CHANGES SINCE LAST RELEASE
+
+- Working vr_trnfm implementation
+- Native feature interface for emulators
+- Correct usage of 68040 instruction cache
+- Dead key support
+- Boot delay with info screen (hold Alt key to skip boot)
+- Hold Ctrl key at boot causes not loading the ACCs
+- XHDI implemented (allows running FreeMiNT)
+- Frees CPU in emulators, when not used (STOP instruction)
+- Better VIDEL support
+- Support for Diskimages up to 4 Mb
+- Up to 16 color mode in 640x480 in Aranym
+- Many bugfixes and much more done
 
 
 
@@ -44,7 +63,7 @@ screen resolutions without any problems.
 
 The desktop is not as nice as the original one, but is pretty usable
 now for a start. You are free to use a more advanced desktop
-replacement any time. 
+replacement any time, like it is teradesk for example.
 
 Since EmuTOS just implements the TOS's functionality, you might want to
 use MiNT on it in order to run more modern software. EmuTOS is not an
@@ -56,11 +75,13 @@ EMULATION AND FUTURE PLATFORM
 
 EmuTOS and MiNT cooperate well. For the future we plan, that both can make
 use of a yet to implement standard native call interface for emulators.
-When running EmuTOS in an emulator, this interface will provide access to
-use the power of the underlying OS kernel. It may allow using modern 3D
-graphics cards, will provide fast native filesystem access and will enable
-you to use networking with all bells and wistles - and many things more
-you always dreamed of.
+EmuTOS itself still uses this new standard native interface for all
+its supported native functions. When running EmuTOS in an emulator,
+this interface will provide access to use the power of the underlying
+OS kernel. It may allow using modern 3D graphics cards, will provide
+fast native filesystem access and will enable you to use networking
+with all bells and wistles - and many things more you always dreamed
+of. This all will at first get possible on the Aranym platform.
 
 This is, what EmuTOS is made for: A free OS, that can evolve. Progress has
 been fast up to now, because we have a small, but enthusiastic development
@@ -90,7 +111,7 @@ This is the currently supported Hardware:
 - MegaST Real-Time Clock  (set clock not tested)
 - NVRAM (including RTC)
 - DMA sound
-
+- The native feature interface to some degree
 
 
 AVAILABILITY
