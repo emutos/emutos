@@ -1021,7 +1021,7 @@ WORD wind_calc(WORD wctype, UWORD kind, WORD x, WORD y, WORD w, WORD h,
 
 
                                         /* Resource Manager             */
-#if 1
+#if 0
 /* We only need this when desktop is compiled as a standalone app and uses
    an external DESKTOP.RSC */
 WORD rsrc_load(LONG rsname)

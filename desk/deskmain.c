@@ -1144,11 +1144,11 @@ WORD deskmain()
         desk_wait(TRUE);
         wind_update(END_UPDATE);
                                                 /* initialize resources */
-#if 1
+#if 0
         if( !rsrc_load(ADDR("DESKTOP.RSC")) )
         {
           form_alert(1,ADDR("[3][ Can not load | the DESKTOP.RSC ][Cancel]"));
-          /*appl_exit();*/
+          appl_exit();
           return(FALSE);
         }
 #else

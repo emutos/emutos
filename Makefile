@@ -151,8 +151,8 @@ AESSSRC = gemstart.S gemdosif.S gemasm.S gsx2.S large.S optimopt.S
 
 DESKCSRC = deskact.c deskapp.c deskdir.c deskfpd.c deskfun.c \
     deskglob.c deskinf.c deskins.c deskmain.c deskobj.c deskpro.c \
-    deskrsrc.c desksupp.c deskwin.c gembind.c icons.c
-    #taddr.c deskgraf.c deskgsx.c desk_rsc.c
+    deskrsrc.c desksupp.c deskwin.c gembind.c icons.c desk_rsc.c
+    #taddr.c deskgraf.c deskgsx.c
 DESKSSRC = deskstart.S
 
 #
