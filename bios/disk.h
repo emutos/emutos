@@ -27,6 +27,7 @@ extern LONG XHInqTarget(UWORD major, UWORD minor, ULONG *blocksize,
 extern LONG XHGetCapacity(UWORD major, UWORD minor, ULONG *blocks,
                           ULONG *blocksize);
 
+#define XHREADWRITE      10
 #define XHGETCAPACITY    14
 
 /* partition detection */
