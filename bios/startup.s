@@ -21,7 +21,6 @@
         .equ    _GSX_ENT, 0             | Entry to GEM (if graphically)
 
         .equ    TPASTART, 0xE000        | default start address of tpa area
-	.equ	TPALENGTH, 0x30000-TPASTART | length of tpa area - from 0x30000 down to TPASTART
 
         .equ    vec_divnull, 0x14       | division by zero interrupt vector
         .equ    vec_linea, 0x28         | LineA interrupt vector
@@ -212,8 +211,9 @@
         .xdef   _longframe
         
 | ==== lineavars.s - Graphics subsystem variables =============================
+
 	.xdef	font_ring
-		
+	
 | ==== vectors.s - Default exception vectors =============================
 	.xdef	init_exc_vec
 	.xdef	init_user_vec
@@ -751,7 +751,7 @@ clrvbl:
 
 | ==== Now really start the BDOS ===========================================
 
-        jsr     _biosmain          | go and start our shell
+        jsr     _biosmain       | go and start our shell
 
 
 | ==== Get lost forever... =================================================

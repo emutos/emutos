@@ -254,7 +254,6 @@ scr_loop:
 
         move.l  #normal_ascii, con_state | Init conout state machine
 
-|        bra     esce                    | Show the cursor
         rts
 
 

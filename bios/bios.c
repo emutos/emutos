@@ -296,38 +296,29 @@ void biosinit()
 
 void biosmain()
 {
-
-
-    cprintf("[    ] BDOS setup works ....\r");
-    if (trap_1( 0x30 ) < 0)     /* initial test, if BDOS works */
-        cprintf("[FAIL]\n\r");
-    else
-        cprintf("[ OK ]\n\r");
+    trap_1( 0x30 );              /* initial test, if BDOS works */
+    cprintf("[ OK ] BDOS setup works ....\r\n");
 
     trap_1( 0x2b, os_dosdate);  /* set initial date in GEMDOS format */
-    cprintf("[ OK ] Initial system date and time set ...\n\r");
+    cprintf("[ OK ] Initial system date and time set ...\r\n");
 
     trap_1( 0x0e , defdrv );    /* Set boot drive */
-    cprintf("[ OK ] Boot disk drive set ...\n\r");
+    cprintf("[ OK ] Boot disk drive set ...\r\n");
 
     /* execute Reset-resistent PRGs */
 
-    /* switch on cursor */
-    
+    /* switch on cursor - Esc E */
+    cprintf("\ee");
+
     /* autoexec Prgs from AUTO folder */
     
     /* clear environment string */
 
-    
     /* clear commandline */
     
     /* load command.prg */
-    
-    /* check, if command.prg has loaded correctly */
     cprintf("[ OK ] COMMAND.PRG loading and going on ...\n\r");
-//    cprintf("[ OK ] BENCH1.PRG loading and going on ...\n\r");
     trap_1( 0x4b , 0, "COMMAND.PRG" , "", env);
-//    trap_1( 0x4b , 0, "BENCH1.PRG" , "", env);
 
     cprintf("[FAIL] HALT - should never be reached!\n\r");
     while(1) ;

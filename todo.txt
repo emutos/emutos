@@ -7,4 +7,5 @@
 - complete vt52 console, in low, med, high rez.
 - low-level floppy support (rwabs, booting a floppy)
 - command.prg does echo some things to console
+- pexec: loaded program's memory is not released after exit
 

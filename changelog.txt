@@ -181,5 +181,7 @@ Start... early ages
 - Added more system vars in tosvars.s and fixed an error (no pun_ptr) (MAD)
 
 14. Oct. 2001
-- implemented full memory configuration (MAD)
+- implemented full memory configuration - much much more memory now (MAD)
+- implemented cursor (not blinking - this was easy) 
+- Changed version string of command.prg
 
