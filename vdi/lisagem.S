@@ -454,9 +454,9 @@ no_chg:
         
 /*
  * int_mouse - Mouse interrupt routine
- * entry:  8(sp) = address of mouse buffer
- * exit:           none                   
- * destroys:       nothing                
+ * entry:  	a0 = address of mouse buffer
+ * exit:        none                   
+ * destroys:    nothing                
  */
  
 int_mouse:
@@ -470,6 +470,8 @@ int_mouse:
         cmp.b   #0xf8, d1               // relative packet header?
 
         bne     ms_done
+
+	//move.l	#1,(0xff8400)   // is a mouse packet, generates bus error
 
 	and.w   #3, d0          // isolate mouse buttons
         lsr.b   #1, d0          // left button pressed?
@@ -486,7 +488,7 @@ no_left:
         move.w  d1,-(sp)        // save previous mouse state
         move.l  _user_but,a1    // get user routine address
 #if 0
-	move    sr, -(sp)               // Disable interrupts
+	move    sr, -(sp)       // Disable interrupts
         ori.w   #0x0700, sr
 #endif
         jsr     (a1)

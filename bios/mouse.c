@@ -111,9 +111,9 @@ void Initmous(WORD type, PTR param, PTR newvec)
         
         if (param != NULL) {
             if (p->topmode == IN_YBOT)
-                ikbd_writeb(0x0f); 	/* set bottom to y=0 */
-            if (p->topmode == IN_YTOP)
                 ikbd_writeb(0x10); 	/* set top to y=0 */
+            if (p->topmode == IN_YTOP)
+                ikbd_writeb(0x0f); 	/* set bottom to y=0 */
 
             ikbd_writeb(0x07);		/* set mouse button reaction */
             ikbd_writeb(p->buttons);

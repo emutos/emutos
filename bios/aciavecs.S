@@ -157,9 +157,9 @@ _ikbdsys:
         
         tst.b   kbdbuf
         bne     in_packet       // kbdbuf[0] != 0, we are receiving a packet
-        cmp.w   #0xf6,d0
+        cmp.w   #0xf6,d0        // is byte a packet header?
         blt     key_event       // byte < 0xf6, a key press or release event
-        sub.b   #0xf6,d0
+        sub.b   #0xf6,d0        // make 1st packet byte a switch choice
         move.b  kbd_length_table(pc,d0),kbdlength
         move.b  #1,kbdindex
         move.b  d0,kbdbuf
@@ -190,6 +190,7 @@ in_packet:
 got_packet:
         move.l  #0,d0
         move.b  (a0),d0
+        add.b   #0xf6,(a0)      // restore 1st packet byte to original value
         add.w   d0,d0
         add.w   d0,d0
         move.l  packet_switch(pc,d0),a0

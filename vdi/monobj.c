@@ -11,21 +11,11 @@
 
 
 
-/***********************************************************************
- *                                                                     *
- *                         MONOBJ.C                                    *
- *                                                                     *
- ***********************************************************************/
-
 #include "portab.h"
 #include "gsxdef.h"
 #include "gsxextrn.h"
 
-/************************************************************************
- *      All comments of the form "SCC  date  VW" note changes made to   *
- *      support virtual workstations                                    *
- *                                                                      *
- ************************************************************************/
+
 
 /* S_LINE_TYPE: */
 void vsl_type()
@@ -40,6 +30,8 @@ void vsl_type()
 
     *INTOUT = (cur_work->line_index = li) + 1;
 }
+
+
 
 /* S_LINE_WIDTH: */
 void vsl_width()
@@ -66,6 +58,8 @@ void vsl_width()
     *pts_out = 0;
 }
 
+
+
 /* S_END_STYLE: */
 void vsl_ends()
 {
@@ -88,7 +82,9 @@ void vsl_ends()
     work_ptr = cur_work;
     *pointer++ = work_ptr->line_beg = lb;
     *pointer = work_ptr->line_end = le;
-}                               /* End "vsl_ends". */
+} /* End "vsl_ends". */
+
+
 
 /* S_LINE_COLOR: */
 void vsl_color()
@@ -102,6 +98,8 @@ void vsl_color()
     *(INTOUT) = lc;
     cur_work->line_color = MAP_COL[lc];
 }
+
+
 
 /* S_MARKER_SCALE */
 void vsm_height()
@@ -129,9 +127,9 @@ void vsm_height()
     *pts_out++ = h * DEF_MKWD;
     *pts_out = h * DEF_MKHT;
     FLIP_Y = 1;
-}
+} /* End "vsm_height". */
 
-/* End "vsm_height". */
+
 
 /* S_MARK_TYPE */
 void vsm_type()
@@ -143,6 +141,8 @@ void vsm_type()
     INTOUT[0] = (cur_work->mark_index = i) + 1;
     CONTRL[4] = 1;
 }
+
+
 
 /* S_MARK_COLOR */
 void vsm_color()
@@ -157,6 +157,7 @@ void vsm_color()
 }
 
 
+
 /* S_FILL_STYLE: */
 void vsf_interior()
 {
@@ -169,6 +170,8 @@ void vsf_interior()
     *INTOUT = cur_work->fill_style = fs;
     st_fl_ptr();
 }
+
+
 
 /* S_FILL_INDEX: */
 void vsf_style()
@@ -193,6 +196,8 @@ void vsf_style()
     st_fl_ptr();
 }
 
+
+
 /* S_FILL_COLOR: */
 void vsf_color()
 {
@@ -206,6 +211,8 @@ void vsf_color()
     *INTOUT = fc;
     cur_work->fill_color = MAP_COL[fc];
 }
+
+
 
 /* LOCATOR_INPUT: */
 void v_locator()
@@ -286,6 +293,8 @@ void v_locator()
     }
 }
 
+
+
 /* SHOW CURSOR */
 void v_show_c()
 {
@@ -297,12 +306,15 @@ void v_show_c()
     DIS_CUR();
 }
 
-/* HIDE CURSOR */
 
+
+/* HIDE CURSOR */
 void v_hide_c()
 {
     HIDE_CUR();
 }
+
+
 
 /* RETURN MOUSE BUTTON STATUS */
 void vq_mouse_status()
@@ -320,10 +332,14 @@ void vq_mouse_status()
     *pointer = GCURY;
 }
 
+
+
 /* VALUATOR_INPUT: */
 void v_valuator()
 {
 }
+
+
 
 /* CHOICE_INPUT: */
 void v_choice()
@@ -343,6 +359,8 @@ void v_choice()
             *(INTOUT + 1) = TERM_CH & 0x00ff;
     }
 }
+
+
 
 /* STRING_INPUT: */
 void v_string()
@@ -373,12 +391,16 @@ void v_string()
     }
 }
 
+
+
 /* Return Shift, Control, Alt State */
 void vq_key_s()
 {
     CONTRL[4] = 1;
     INTOUT[0] = GSHIFT_S();
 }
+
+
 
 /* SET_WRITING_MODE: */
 void vswr_mode()
@@ -392,6 +414,8 @@ void vswr_mode()
 
     INTOUT[0] = (cur_work->wrt_mode = wm) + 1;
 }
+
+
 
 /* SET_INPUT_MODE: */
 void vsin_mode()
@@ -425,6 +449,8 @@ void vsin_mode()
     }
 }
 
+
+
 /* INQUIRE INPUT MODE: */
 void vqi_mode()
 {
@@ -455,6 +481,8 @@ void vqi_mode()
     }
 }
 
+
+
 /* ST_FILLPERIMETER: */
 void vsf_perimeter()
 {
@@ -474,11 +502,14 @@ void vsf_perimeter()
     CONTRL[4] = 1;
 }
 
+
+
 /* ST_UD_LINE_STYLE: */
 void vsl_udsty()
 {
     cur_work->ud_ls = *INTIN;
 }
+
 
 
 void arb_corner(WORD * corners, WORD type)
@@ -517,6 +548,7 @@ void arb_corner(WORD * corners, WORD type)
 }                               /* End "arb_corner". */
 
 
+
 /* Set Clip Region */
 void s_clip()
 {
@@ -549,6 +581,7 @@ void s_clip()
 }
 
 
+
 void dro_cpyfm()
 {
     arb_corner(PTSIN, ULLR);
@@ -557,6 +590,8 @@ void dro_cpyfm()
     COPY_RFM();
 }                               /* End "dr_cpyfm". */
 
+
+
 void drt_cpyfm()
 {
     arb_corner(PTSIN, ULLR);
@@ -564,6 +599,8 @@ void drt_cpyfm()
     COPYTRAN = 0xFFFF;
     COPY_RFM();
 }                               /* End "dr_cpyfm". */
+
+
 
 void dr_recfl()
 {

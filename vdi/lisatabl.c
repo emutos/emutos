@@ -1,8 +1,10 @@
 /*
  * lisatabl.c -
  *
- * Copyright (c) 1999 Caldera, Inc. and Authors:
+ * Copyright (c) 1999 Caldera, Inc.
  *               2002 The EmuTOS development team
+ * Authors:
+ *   MAD   Martin Doering
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -10,15 +12,15 @@
 
 
 
-/************************************************************/
-/*                                                          */
-/*              DEV, SIZ, INQ tables converted to 'c'       */
-/*                                                          */
-/************************************************************/
-
 #include "portab.h"
 #include "gsxdef.h"
 #include "styles.h"
+
+
+
+/*
+ * DEV, SIZ, INQ tables converted to 'c'
+ */
 
 WORD plane_mask[4] = { 1, 3, 7, 15 };
 
@@ -71,10 +73,13 @@ WORD DEV_TAB_rom[45] = {
     2                           /* 44   Workstation Type 2 = out/in */
 };
 
-/************************************************************/
-/* size_table                                               */
-/* returns text,line and marker sizes in device coordinates */
-/************************************************************/
+
+
+/*
+ * size_table
+ *
+ * returns text, line and marker sizes in device coordinates
+ */
 
 WORD SIZ_TAB[12];
 WORD SIZ_TAB_rom[12] = {
@@ -120,19 +125,17 @@ WORD INQ_TAB_rom[45] = {
     0, 0, 0, 0
 };
 
-/**********************************************************/
-/*                                                        */
-/* Marker definitions.                                    */
-/*                                                        */
-/**********************************************************/
+
+
+/*
+ * Marker definitions.
+ */
 
 WORD m_dot[] = { 1, 2, 0, 0, 0, 0 };
 
 WORD m_plus[] = { 2, 2, 0, -3, 0, 3, 2, -4, 0, 4, 0 };
 
-WORD m_star[] = { 3, 2, 0, -3, 0, 3, 2, 3,
-    2, -3, -2, 2, 3, -2, -3, 2
-};
+WORD m_star[] = { 3, 2, 0, -3, 0, 3, 2, 3, 2, -3, -2, 2, 3, -2, -3, 2};
 
 WORD m_square[] = { 1, 5, -4, -3, 4, -3, 4, 3, -4, 3, -4, -3 };
 

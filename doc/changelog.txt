@@ -658,3 +658,6 @@ Start... early ages
   
 13. Mar. 2002
 - bios/bios.c removed mouse_init. Done, when graphics is initialized (MAD)
+
+15. Mar. 2002
+- vdi/lisagem.S, got the mousedriver working

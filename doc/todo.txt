@@ -1,3 +1,4 @@
+BIOS/XBIOS/BDOS
 - implement XBIOS calls
 - implement linea functions
 - merge identical headers, and put them all in an include directory (?)
@@ -20,3 +21,9 @@
 - Alt key pressed during boot should skip harddisk driver init
 - rewrite nvram.c so it wouldn't need balloc(50) (no checksum necessary)
 - move nvram_init to machine_detect so it could be used in screen.c:videl_init
+
+
+VDI
+- line drawing around boxes seems to be bad
+
+AES
