@@ -45,6 +45,7 @@
 #include "asm.h"
 #include "chardev.h"
 #include "blkdev.h"
+#include "parport.h"
 #include "string.h"
 
 
@@ -115,7 +116,6 @@ void testprint(void)
  
 void startup(void)
 {
-    WORD i;
 
 #if DBGBIOS
     kprintf("beginning of BIOS startup\n");
@@ -150,14 +150,6 @@ void startup(void)
      * a vector was already setup by init_exc_vec().
      */
 
-    snd_init();                 /* Reset Soundchip, deselect floppies */
-    init_acia_vecs();           /* Init ACIAs and their vecs */
-
-    VEC_DIVNULL = just_rte;
-
-    /* floppy and harddisk initialisation */
-    blkdev_init();
-
     /* misc. variables */
     dumpflg = -1;
     sysbase = (LONG) os_entry;
@@ -172,9 +164,29 @@ void startup(void)
     /* setup VBL queue */
     nvbls = 8;
     vblqueue = vbl_list;
-    for(i = 0 ; i < 8 ; i++) {
-        vbl_list[i] = 0;
+    {
+        int i;
+        for(i = 0 ; i < 8 ; i++) {
+            vbl_list[i] = 0;
+        }
     }
+
+
+    mfp_init();         /* init MFP, timers, USART */
+    snd_init();                 /* Reset Soundchip, deselect floppies */
+    init_acia_vecs();           /* Init ACIAs and their vecs */
+
+    VEC_DIVNULL = just_rte;
+
+    /* Now that the MFP is configured, allow MFP interrupts (we need a
+     * Timer C for DMA timeouts in floppy and harddisk initialisation)
+     * Note: the sound init must be done before allowing timer C ints,
+     * because of dosound stuff in the timer C interrupt routine.
+     */
+    set_sr(0x2500);
+  
+    /* floppy and harddisk initialisation */
+    blkdev_init();
 
     /* init linea */
     linea_init();       /* Init screen related line-a variables */
@@ -184,7 +196,8 @@ void startup(void)
     /* initialize BIOS components */
 
     chardev_init();     /* Initialize character devices */
-    mfp_init();         /* init MFP, timers, USART */
+    // LVL done earlier  mfp_init(); /* init MFP, timers, USART */
+    parport_init();     /* parallel port */
     kbd_init();         /* init keyboard, disable mouse and joystick */
     midi_init();        /* init MIDI acia so that kbd acia irq works */
     //mouse_init();       /* init mouse driver */
@@ -235,12 +248,12 @@ void startup(void)
 void autoexec(void)
 {
     struct {
-      BYTE reserved[21];
-      BYTE attr;
-      WORD time;
-      WORD date;
-      LONG size;
-      BYTE name[14];
+        BYTE reserved[21];
+        BYTE attr;
+        WORD time;
+        WORD date;
+        LONG size;
+        BYTE name[14];
     } dta;
     BYTE path[30];
     WORD err;
