@@ -444,3 +444,8 @@ Start... early ages
 - fixed printing of current time at bootup (month is already 1..12) (joy)
 - disabled vsync() neverending loop (MonST works now) (joy)
 - fixed LineA v_bytes_lin variable (Clocky works now) (joy)
+
+08. Jan. 2002
+- hopefully fixed vsync() - I had omitted 'extern' in the declaration
+  'volatile LONG frclock;' inside the routine. (LVL)
+- updated fr translations (LVL)
