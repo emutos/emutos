@@ -44,14 +44,13 @@ extern void *phystop;
 extern WORD timer_ms;
 
 extern LONG hz_200;
-extern LONG dskbufp;  
+extern void *dskbufp;
 extern WORD flock;
 extern WORD nflops;
 extern LONG drvbits;
 extern WORD bootdev;
 extern WORD fverify;
 extern WORD seekrate;
-extern BYTE diskbuf[];
 extern WORD dumpflg;
 extern WORD nvbls;
 extern WORD vblsem;

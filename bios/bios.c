@@ -171,9 +171,6 @@ void startup(void)
     dump_vec = dump_scr;
 
     /* misc. variables */
-#if DBGBIOS
-    kprintf("diskbuf = %08lx\n", (LONG)diskbuf);
-#endif
     dumpflg = -1;
     sysbase = (LONG) os_entry;
 

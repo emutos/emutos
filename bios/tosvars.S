@@ -93,7 +93,6 @@
         .global _ramtop
         .global _ramvalid
 
-        .global _diskbuf
         .global _supstk
 
         .global rs232ibufbuf

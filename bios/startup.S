@@ -41,7 +41,6 @@
         .global _os_entry
         .global _just_rts
         .global _just_rte
-        .global _diskbuf
         .global _brkpt
         
         .global _print_stat
@@ -135,10 +134,6 @@ save_beg:       ds.w    24*3    // d3-d7/a3-a7, sr, pc, vo = 24 words,
 _save_area:                     // End of Save storage
 
 
-// LVL - this .org directive can only be used in tosvars.S      
-//        .org    0x167a
-_diskbuf:       ds.b    1024    // 1 cluster disk buffer
-//        .org    0x45b8
 _stkbot:        ds.w    SUPSIZ  // Supervisor stack
 _stktop:                        // filled from top to bottom
         
@@ -156,7 +151,9 @@ aexecsave:      dc.l    1       // save zone for autoexec
 
 
 
-// ==== OSHEADER =============================================================
+/*
+ * OSHEADER
+ */
 
         .global _main           // OS entry point
         .global _os_end
@@ -200,17 +197,19 @@ os_dummy:
 
 
 
-// ==== Get into supervisor mode ==============================================
+/*
+ * Get in supervisor mode and reset all Hardware
+ */
+ 
 _main:                         // stunt to guarantee entry into supervisor mode
         move    #0x2700,sr     // disable interrupts
-
-// ==== Reset all Hardware ====================================================
-
-        reset                           // Reset all hardware
+        reset                  // reset all hardware
 
 
 
-// ==== Check for diagnostic cartridge =======================================
+/*
+ * Check for diagnostic cartridge
+ */
 
         .equ    cart_base,      0x00fa0000
 
@@ -227,7 +226,10 @@ nodiag:
 
 
 
-// ==== Reset vector =========================================================
+/*
+ * Check, if we should jump to a reset vector after warmboot
+ */
+
 resetvec:
        cmpi.l   #0x31415926, resvalid   // Jump to resetvector?
        bne.s    noreset                 // No --> noreset
@@ -240,24 +242,20 @@ resetvec:
        jmp      (a0)                    // jump to resvec
 noreset:
 
-// ==== Check, if old memory config can be used ==============================
-
 /* 
  * LVL - I put back the mem configuration early, to be able to use
  * the stack, so that the rest of boot sequence can be made more
  * modular using CDECL routines.
  */
-        
+
         .global memdone         // return to, if memory config done
         bra     meminit         // do/test memory config (needs sp)
 memdone:
 
 /* 
  * From now, the stack is allowed, and C code can be used.
- *
+ * The startup goes on in bios.c
  */
-
-// ==== Rest of boot in bios.c ===============================================
 
         jmp     _startup
 
