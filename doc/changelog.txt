@@ -1367,3 +1367,5 @@ Start... early ages
 21. Feb. 2003
 - bios/lineainit.c - quick patch to get 8x16 font in all resolutions with
   screen height >= 400 (joy)
+- include/config.h - boot countdown time increased to 8 seconds (joy)
+- po/cs.po - updated (joy)

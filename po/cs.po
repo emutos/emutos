@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: EmuTOS 0.2a\n"
-"POT-Creation-Date: 2003-02-08 00:35+0100\n"
-"PO-Revision-Date: 2003-02-08 00:35+0100\n"
+"POT-Creation-Date: 2003-02-22 00:25+0100\n"
+"PO-Revision-Date: 2003-02-22 00:31+0100\n"
 "Last-Translator: Bohdan Milar <milarb@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -14,25 +14,24 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: KBabel 0.9.5\n"
 
-#: bios/bios.c:308
+#: bios/bios.c:313
 msgid "Please eject the floppy and hit RETURN"
 msgstr "Vysuòte prosím disketu a stisknìte RETURN"
 
-#: bios/bios.c:343
-msgid ""
-"[FAIL] HALT - should never be reached!\n"
-msgstr ""
-"[FAIL] HALT - nemìlo by nikdy nastat!\n"
+#~msgid ""
+#~"[FAIL] HALT - should never be reached!\n"
+#~msgstr ""
+#~"[FAIL] HALT - nemìlo by nikdy nastat!\n"
 
-#: bios/initinfo.c:214
+#: bios/initinfo.c:209
 msgid "EmuTOS Version"
 msgstr "EmuTOS verze"
 
-#: bios/initinfo.c:215
+#: bios/initinfo.c:210
 msgid "CPU type"
 msgstr "Typ CPU"
 
-#: bios/initinfo.c:216
+#: bios/initinfo.c:211
 msgid "Machine"
 msgstr "Poèítaè"
 
@@ -46,20 +45,20 @@ msgstr "Ne"
 #~msgid "Free memory"
 #~msgstr "Volná pamì»"
 
-#: bios/initinfo.c:219 bios/initinfo.c:226
+#: bios/initinfo.c:214 bios/initinfo.c:221
 msgid "%ld kB"
 msgstr "%ld kB"
 
 #~msgid " ST-RAM, %ld kB TT-RAM"
 #~msgstr " ST-RAM, %ld kB TT-RAM"
 
-#: bios/initinfo.c:231
+#: bios/initinfo.c:226
 msgid "Screen start"
-msgstr "Zaèátek obrazovky"
+msgstr "Zaèátek obrazu"
 
-#: bios/initinfo.c:233
+#: bios/initinfo.c:228
 msgid "GEMDOS drives"
-msgstr "Jednotky GEMDOSu"
+msgstr "Disky GEMDOSu"
 
 #~msgid "Boot drive"
 #~msgstr "Zavádìcí disk"
@@ -389,13 +388,11 @@ msgstr "  Smazat...       \007D"
 msgid "  Format..."
 msgstr "  Formátovat..."
 
-#: desk/desk_rsc.c:423
-msgid "  To Output       ^U"
-msgstr "  Na výstup       ^U"
+#~msgid "  To Output       ^U"
+#~msgstr "  Na výstup       ^U"
 
-#: desk/desk_rsc.c:429
-msgid "  Exit to DOS     ^Q"
-msgstr "  Návrat do DOSu  ^Q"
+#~msgid "  Exit to DOS     ^Q"
+#~msgstr "  Návrat do DOSu  ^Q"
 
 #: desk/desk_rsc.c:441
 msgid "  Install disk drive..."
@@ -413,9 +410,8 @@ msgstr "  Nastavení..."
 msgid "  Save desktop              \007V"
 msgstr "  Ulo¾it nastavení          \007V"
 
-#: desk/desk_rsc.c:471
-msgid "  Enter DOS commands        \007C"
-msgstr "  Vlo¾it pøíkazy DOSu       \007C"
+#~msgid "  Enter DOS commands        \007C"
+#~msgstr "  Vlo¾it pøíkazy DOSu       \007C"
 
 #: desk/desk_rsc.c:495
 msgid "  Sort by name   \007N"
@@ -843,27 +839,51 @@ msgstr "[3]["
 "poètu znakù, které je mo¾né pou¾ít|"
 "pro jména.][   OK   ]"
 
-#: bios/initinfo.c:164
-msgid "Hold <Control> to skip AUTO/ACC loading"
-msgstr "Podr¾ <Control> pro pøeskoèení AUTO/ACC"
+#~msgid "Hold <Control> to skip AUTO/ACC loading"
+#~msgstr "Podr¾ <Control> pro pøeskoèení AUTO/ACC"
 
-#: bios/initinfo.c:166
-msgid "Hold <Alternate> key to skip HDD boot"
-msgstr "Podr¾ <Alternate> pro pøeskoèení HDD"
+#~msgid "Hold <Alternate> key to skip HDD boot"
+#~msgstr "Podr¾ <Alternate> pro pøeskoèení HDD"
 
-#: bios/initinfo.c:168
+#: bios/initinfo.c:163
 msgid "Press any key to continue booting"
 msgstr "Stiskni libovolnou klávesu pro start"
 
-#: bios/initinfo.c:218
+#: bios/initinfo.c:213
 msgid "Free ST-RAM"
 msgstr "Volná ST-RAM"
 
-#: bios/initinfo.c:225
+#: bios/initinfo.c:220
 msgid "Free FastRAM"
 msgstr "Volná FastRAM"
 
-#: bios/initinfo.c:247
+#: bios/initinfo.c:242
 msgid "Boot time"
 msgstr "Èas startu"
+
+#: bios/bios.c:350
+msgid ""
+"System halted!\n"
+msgstr ""
+"Systém zastaven!\n"
+
+#: bios/initinfo.c:159
+msgid "Hold <Control> to skip AUTO/ACC"
+msgstr "Podr¾ <Ctrl> a pøeskoè AUTO/ACC"
+
+#: bios/initinfo.c:161
+msgid "Hold <Alternate> to skip HDD"
+msgstr "Podr¾ <Alt> k pøeskoèení HDD"
+
+#: desk/desk_rsc.c:423
+msgid "  Execute EmuCON  ^Z"
+msgstr "  Spustit EmuCON  ^Z"
+
+#: desk/desk_rsc.c:429
+msgid "  Shutdown        ^Q"
+msgstr "  Vypnout         ^Q"
+
+#: desk/desk_rsc.c:471
+msgid "  Change resolution         \007C"
+msgstr "  Zmìna rozli¹ení           \007C"
 
