@@ -35,8 +35,8 @@ int has_ttram;
 
 /* internal variables */
 
-static long start_stram;
-static long end_stram;
+long start_stram;
+long end_stram;
 
 
 /*

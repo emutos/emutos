@@ -575,3 +575,6 @@ Start... early ages
   requested but it is still not freed (the *term routines in proc need to
   be changed as well); Pexec() flag 6 supported. I did not test on Fastram but
   all of autoexec, EmuCON, loading progs from C: and A: work. (LVL)
+
+22. Jan. 2002
+- untested ttram-compliant internal memory stuff in proc.c (LVL)

@@ -48,6 +48,72 @@ WORD    supstk[SUPSIZ]; /* common sup stack for all processes*/
 static jmp_buf bakbuf;         /* longjmp buffer */
 
 
+/*
+ * memory internal routines
+ * 
+ * These violate the encapsulation of the memory internal structure.
+ * Could perhaps better go in the memory part.
+ */
+
+static MPB *find_mpb(void *addr);
+static void free_all_owned(PD *p, MPB *mpb);
+static void set_owner(void *addr, PD *p, MPB *mpb);
+static void reserve_block(void *addr, MPB *mpb);
+
+static MPB *find_mpb(void *addr)
+{
+    if(((long)addr) >= start_stram && ((long)addr) <= end_stram) {
+        return &pmd;
+    } else if(has_ttram) {
+        return &pmdtt;
+    } else {
+        /* returning NULL would mean check for NULL in all mpb functions */
+        return &pmd;
+    }
+}
+
+/* reserve a block, i.e. remove it from the allocated list */
+static void reserve_block(void *addr, MPB *mpb)
+{
+    MD *m,**q;
+
+    for (m = *(q = &mpb->mp_mal); m ; m = *q) {
+        if (m->m_own == run) {
+            *q = m->m_link; /* pouf ! like magic */
+            xmfreblk(m);
+        } else {
+            q = &m->m_link;
+        }
+    }
+}
+
+/* free each item in the allocated list, that is owned by 'p' */
+static void free_all_owned(PD *p, MPB *mpb)
+{
+    MD *m, **q;
+
+    for( m = *( q = &mpb->mp_mal ) ; m ; m = *q ) {
+        if (m->m_own == p) {
+            *q = m->m_link;
+            freeit(m,mpb);
+        } else {
+            q = &m->m_link;
+        }
+    }
+}
+    
+/* change the memory owner based on the block address */
+static void set_owner(void *addr, PD *p, MPB *mpb)
+{
+    MD *m;
+    for( m = mpb->mp_mal ; m ; m = m->m_link ) {
+        if(m->m_start == (long)addr) {
+            m->m_own = p;
+            return;
+        }  
+    }
+}
+
 /**
  * ixterm - terminate a process
  *
@@ -58,7 +124,6 @@ static jmp_buf bakbuf;         /* longjmp buffer */
 
 static void     ixterm( PD *r )
 {
-    register MD *m, **q;
     register WORD h;
     register WORD i;
 
@@ -83,31 +148,11 @@ static void     ixterm( PD *r )
 
     /* free each item in the allocated list, that is owned by 'r' */
 
-    for( m = *( q = &pmd.mp_mal ) ; m ; m = *q )
-        {
-            if (m->m_own == r)
-            {
-                *q = m->m_link;
-                freeit(m,&pmd);
-            }
-            else
-                q = &m->m_link;
-        }
+    free_all_owned(r, &pmd);
+    if(has_ttram) 
+        free_all_owned(r, &pmdtt);
 }
 
-/* change memory owner based on the block address
- * this should really go in the memory sub-part.
- */
-static void set_owner(void *addr, PD *p)
-{
-    MD *m;
-    for( m = pmd.mp_mal ; m ; m = m->m_link ) {
-        if(m->m_start == (long)addr) {
-            m->m_own = p;
-            return;
-        }  
-    }
-}
 
 /*
  * envsize - determine size of env area
@@ -211,8 +256,8 @@ static long do_xexec(char *s)
     case PE_GOTHENFREE:
         /* set the owner of the memory to be this process */
         p = (PD *)t;
-        set_owner(p, p);
-        set_owner(p->p_env, p);
+        set_owner(p, p, find_mpb(p));
+        set_owner(p->p_env, p, find_mpb(p->p_env));
         /* fall through */
     case PE_GO:
         proc_go((PD *)t);
@@ -703,18 +748,9 @@ void    xterm(UWORD rc)
 
 WORD    xtermres(long blkln, WORD rc)
 {
-    MD *m,**q;
-
     xsetblk(0,run,blkln);
 
-    for (m = *(q = &pmd.mp_mal); m ; m = *q)
-        if (m->m_own == run)
-        {
-            *q = m->m_link; /* pouf ! like magic */
-            xmfreblk(m);
-        }
-        else
-            q = &m->m_link;
+    reserve_block(run, find_mpb(run));
 
     xterm(rc);
 }
