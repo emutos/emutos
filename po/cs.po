@@ -5,8 +5,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: EmuTOS 0.2a\n"
-"POT-Creation-Date: 2002-07-22 21:25+0200\n"
-"PO-Revision-Date: 2002-08-02 10:44GMT\n"
+"POT-Creation-Date: 2003-02-08 00:35+0100\n"
+"PO-Revision-Date: 2003-02-08 00:35+0100\n"
 "Last-Translator: Bohdan Milar <milarb@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -14,61 +14,58 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: KBabel 0.9.5\n"
 
-#: bios/bios.c:297
+#: bios/bios.c:308
 msgid "Please eject the floppy and hit RETURN"
 msgstr "Vysuòte prosím disketu a stisknìte RETURN"
 
-#: bios/bios.c:332
-msgid "[FAIL] HALT - should never be reached!\n"
-msgstr "[FAIL] HALT - nemìlo by nikdy nastat!\n"
+#: bios/bios.c:343
+msgid ""
+"[FAIL] HALT - should never be reached!\n"
+msgstr ""
+"[FAIL] HALT - nemìlo by nikdy nastat!\n"
 
-#: bios/initinfo.c:170
+#: bios/initinfo.c:214
 msgid "EmuTOS Version"
 msgstr "EmuTOS verze"
 
-#: bios/initinfo.c:171
+#: bios/initinfo.c:215
 msgid "CPU type"
 msgstr "Typ CPU"
 
-#: bios/initinfo.c:172
+#: bios/initinfo.c:216
 msgid "Machine"
 msgstr "Poèítaè"
 
-#: bios/initinfo.c:173
-msgid "MMU available"
-msgstr "MMU dostupné"
+#~msgid "MMU available"
+#~msgstr "MMU dostupné"
 
-#: bios/initinfo.c:173 desk/desk_rsc.c:30
+#: desk/desk_rsc.c:30
 msgid "No"
 msgstr "Ne"
 
-#: bios/initinfo.c:174
-msgid "Free memory"
-msgstr "Volná pamì»"
+#~msgid "Free memory"
+#~msgstr "Volná pamì»"
 
-#: bios/initinfo.c:175
+#: bios/initinfo.c:219 bios/initinfo.c:226
 msgid "%ld kB"
 msgstr "%ld kB"
 
-#: bios/initinfo.c:179
-msgid " ST-RAM, %ld kB TT-RAM"
-msgstr " ST-RAM, %ld kB TT-RAM"
+#~msgid " ST-RAM, %ld kB TT-RAM"
+#~msgstr " ST-RAM, %ld kB TT-RAM"
 
-#: bios/initinfo.c:182
+#: bios/initinfo.c:231
 msgid "Screen start"
 msgstr "Zaèátek obrazovky"
 
-#: bios/initinfo.c:184
+#: bios/initinfo.c:233
 msgid "GEMDOS drives"
-msgstr "Ovladaèe pro GEMDOS"
+msgstr "Jednotky GEMDOSu"
 
-#: bios/initinfo.c:194
-msgid "Boot drive"
-msgstr "Zavádìcí disk"
+#~msgid "Boot drive"
+#~msgstr "Zavádìcí disk"
 
-#: bios/initinfo.c:195
-msgid "Current time"
-msgstr "Aktuální èas"
+#~msgid "Current time"
+#~msgstr "Aktuální èas"
 
 #: aes/gem_rsc.c:36
 msgid "Selection:  ________.___"
@@ -91,31 +88,27 @@ msgid "Insert your GEM STARTUP disk"
 msgstr "Vlo¾te startovací disketu GEM"
 
 #: aes/gem_rsc.c:473
-msgid ""
-"[2]["
+msgid "[2]["
 "You cannot write to the disk in drive|"
 "%S: because it is physically write-|"
 "protected.  Before you Retry, remove|"
 "the write-protect tab or notch the|"
 "disk.][Cancel|Retry]"
-msgstr ""
-"[2]["
+msgstr "[2]["
 "Není mo¾né zapisovat na disketu|"
 "v jednotce %S:, proto¾e je fyzicky|"
-"chránìna proti zápisu.  Pøed zvolením| "
-"Znovu odstraòte nálepku nebo zakryjte|"
+"chránìna proti zápisu.  Pøed zvolením|"
+" Znovu odstraòte nálepku nebo zakryjte|"
 "otvor na disketì.][Zru¹it|Znovu]"
 
 #: aes/gem_rsc.c:480
-msgid ""
-"[2]["
+msgid "[2]["
 "Drive %S: is not responding.  You must|"
 "use the right kind of disk, insert it|"
 "correctly, and close the door.  If the|"
 "problem is with a hard disk, check the|"
 "disk's connections.][Cancel|Retry]"
-msgstr ""
-"[2]["
+msgstr "[2]["
 "Jednotka %S: nereaguje.  Je tøeba|"
 "pou¾ít správný typ disku, vlo¾it jej|"
 "správnì do mechaniky, pøíp. zavøít.|"
@@ -123,29 +116,25 @@ msgstr ""
 "pøipojení disku.][Zru¹it|Znovu]"
 
 #: aes/gem_rsc.c:489
-msgid ""
-"[2]["
+msgid "[2]["
 "Data on the disk in drive %S: may be|"
 "damaged.  You must use the right kind|"
 "of floppy disk; you must connect your|"
 "hard disk properly.][Cancel|Retry]"
-msgstr ""
-"[2]["
+msgstr "[2]["
 "Data na disku %S: jsou mo¾ná|"
 "po¹kozena.  Je tøeba pou¾ít správný|"
 "typ diskety; harddisk musí být|"
 "správnì pøipojen.][Zru¹it|Znovu]"
 
 #: aes/gem_rsc.c:496
-msgid ""
-"[2]["
+msgid "[2]["
 "This application cannot read data on the|"
 "disk in drive %S:.  The disk must be|"
 "formatted, there must be power to the|"
 "disk drive, and the disk drive must be|"
 "physically connected to your computer.][Cancel|Retry]"
-msgstr ""
-"[2]["
+msgstr "[2]["
 "Aplikace nemù¾e èíst data z disku|"
 "v jednotce %S:.  Zkontrolujte, zda je|"
 "disk naformátován, jednotka pøipojena|"
@@ -153,140 +142,116 @@ msgstr ""
 "k poèítaèi.][Zru¹it|Znovu]"
 
 #: aes/gem_rsc.c:505
-msgid ""
-"[2]["
+msgid "[2]["
 "Your output device is not receiving|"
 "data. Before you Retry, make sure the|"
 "device has power, is on-line, and is|"
 "loaded with paper or film.][Cancel|Retry]"
-msgstr ""
-"[2]["
+msgstr "[2]["
 "Výstupní zaøízení nepøijímá data.|"
 "data. Pøed zvolením Znovu se ujistìte,|"
 "¾e je zaøízení napájeno, je v re¾imu|"
 "on-line a zda má papír nebo film.][Zru¹it|Znovu]"
 
 #: aes/gem_rsc.c:512
-msgid ""
-"[3]["
+msgid "[3]["
 "An error has occurred with the|"
 "Graphics Environment Manager (GEM).|"
 "Please contact the EmuTOS Development|"
 "Team and submit a bug report.][Cancel]"
-msgstr ""
-"[3]["
+msgstr "[3]["
 "Objevila se chyba v Mana¾eru|"
 "grafického prostøedí (GEM).  Kontaktujte|"
 "prosím vývojový tým EmuTOSu a podejte|"
 "zprávu o chybì.][Zru¹it]"
 
 #: aes/gem_rsc.c:519
-msgid ""
-"[2]["
+msgid "[2]["
 "This application cannot find the|"
 "folder or document you are trying to|"
 "open. Check the name you have entered.][  OK  ]"
-msgstr ""
-"[2]["
+msgstr "[2]["
 "Aplikace nemù¾e najít adresáø nebo|"
 "dokument, který se sna¾íte otevøít.|"
 "Zkontrolujte zadané jméno.][  OK  ]"
 
 #: aes/gem_rsc.c:524
-msgid ""
-"[3]["
+msgid "[3]["
 "Your computer doesn't have enough|"
 "memory to run the GEM Desktop.][ Sorry ]"
-msgstr ""
-"[3]["
+msgstr "[3]["
 "Poèítaè nemá dostatek pamìti ke|"
 "spu¹tìní GEM Desktopu.][ Lituji ]"
 
 #: aes/gem_rsc.c:527
-msgid ""
-"[1]["
+msgid "[1]["
 "This application doesn't have room to|"
 "open another document.  To make room,|"
 "close any documents you don't need.][  OK  ]"
-msgstr ""
-"[1]["
+msgstr "[1]["
 "Tato aplikace nemá dostatek pamìti pro|"
 "otevøení dal¹ího souboru.  K uvolnìní pamìti|"
 "zavøete soubory, které právì nepotøebujete.][  OK  ]"
 
 #: aes/gem_rsc.c:532
-msgid ""
-"[1]["
+msgid "[1]["
 "An item with this name already exists|"
 "in the folder, or the item is set to|"
 "Read-Only status. Use the \"Info/Rename\"|"
 "command to change the item's status.][  OK  ]"
-msgstr ""
-"[1]["
+msgstr "[1]["
 "Polo¾ka tohoto jména v daném adresáøi|"
 "existuje nebo je pouze ke ètení.|"
 "Pou¾ijte pøíkaz \"Info/Jméno\" ke zmìnì|"
 "statusu této polo¾ky.][  OK  ]"
 
 #: aes/gem_rsc.c:539
-msgid ""
-"[1]["
+msgid "[1]["
 "The disk drive you have indicated does|"
 "not exist. Check the drive identifier|"
 "letter you entered.][Cancel]"
-msgstr ""
-"[1]["
+msgstr "[1]["
 "Po¾adovaný disk neexistuje.|"
 "Zkontrolujte zadané písmeno|"
 "oznaèující jednotku.][Zru¹it]"
 
 #: aes/gem_rsc.c:544
-msgid ""
-"[1]["
+msgid "[1]["
 "You cannot delete the folder in|"
 "which you are currently working.][  OK  ]"
-msgstr ""
-"[1]["
+msgstr "[1]["
 "Není mo¾né smazat adresáø, který|"
 "je právì nastaven jako pracovní.][  OK  ]"
 
 #: aes/gem_rsc.c:547
-msgid ""
-"[1]["
+msgid "[1]["
 "Your computer does not have enough|"
 "memory to run the application you|"
 "have selected.][  OK  ]"
-msgstr ""
-"[1]["
+msgstr "[1]["
 "Poèítaè nemá dostatek|"
 "volné pamìti ke spu¹tìní|"
 "zvolené aplikace.][  OK  ]"
 
 #: aes/gem_rsc.c:552
-msgid ""
-"[3]["
+msgid "[3]["
 "DOS error #%W.][Cancel]"
-msgstr ""
-"[3]["
+msgstr "[3]["
 "DOS chyba #%W.][Zru¹it]"
 
 #: aes/gem_rsc.c:553
-msgid ""
-"[3]["
+msgid "[3]["
 "Bad Function #][Cancel]"
-msgstr ""
-"[3]["
+msgstr "[3]["
 "Chybná funkce #][Zru¹it]"
 
 #: aes/gem_rsc.c:554
-msgid ""
-"[3]["
+msgid "[3]["
 "To run the GEM Desktop, insert your|"
 "GEM DESKTOP disk in drive A and click|"
 "on OK or press Enter. To return to DOS,|"
 "click on Cancel.][  OK  |Cancel]"
-msgstr ""
-"[3]["
+msgstr "[3]["
 "Pro spu¹tìní GEM Desktopu vlo¾te disketu|"
 "GEM DESKTOP do jednotky A a kliknìte|"
 "na OK nebo stisknìte Return. Pro návrat do|"
@@ -388,521 +353,517 @@ msgstr "Aktuální jméno:  ________.___"
 msgid "Copy's name:  ________.___"
 msgstr "Jméno kopie:  ________.___"
 
-#: desk/desk_rsc.c:280
+#: desk/desk_rsc.c:297
 msgid " Desk "
 msgstr " Desk "
 
-#: desk/desk_rsc.c:286
+#: desk/desk_rsc.c:303
 msgid " File "
 msgstr " Soubor "
 
-#: desk/desk_rsc.c:292
+#: desk/desk_rsc.c:309
 msgid " Options "
 msgstr " Volby "
 
-#: desk/desk_rsc.c:298
+#: desk/desk_rsc.c:315
 msgid " Arrange "
 msgstr " Uspoøádání "
 
-#: desk/desk_rsc.c:316
+#: desk/desk_rsc.c:333
 msgid "  Desktop info...   "
 msgstr "  Info o desktopu..."
 
-#: desk/desk_rsc.c:370
+#: desk/desk_rsc.c:387
 msgid "  Open"
 msgstr "  Otevøít"
 
-#: desk/desk_rsc.c:376
+#: desk/desk_rsc.c:393
 msgid "  Info/Rename...  \007I"
 msgstr "  Info/Jméno...   \007I"
 
-#: desk/desk_rsc.c:388
+#: desk/desk_rsc.c:405
 msgid "  Delete...       \007D"
 msgstr "  Smazat...       \007D"
 
-#: desk/desk_rsc.c:394
+#: desk/desk_rsc.c:411
 msgid "  Format..."
 msgstr "  Formátovat..."
 
-#: desk/desk_rsc.c:406
+#: desk/desk_rsc.c:423
 msgid "  To Output       ^U"
 msgstr "  Na výstup       ^U"
 
-#: desk/desk_rsc.c:412
+#: desk/desk_rsc.c:429
 msgid "  Exit to DOS     ^Q"
 msgstr "  Návrat do DOSu  ^Q"
 
-#: desk/desk_rsc.c:424
+#: desk/desk_rsc.c:441
 msgid "  Install disk drive..."
 msgstr "  Pøihlásit disk..."
 
-#: desk/desk_rsc.c:430
+#: desk/desk_rsc.c:447
 msgid "  Configure application...  \007A"
 msgstr "  Instalovat aplikaci...    \007A"
 
-#: desk/desk_rsc.c:442
+#: desk/desk_rsc.c:459
 msgid "  Set preferences..."
 msgstr "  Nastavení..."
 
-#: desk/desk_rsc.c:448
+#: desk/desk_rsc.c:465
 msgid "  Save desktop              \007V"
 msgstr "  Ulo¾it nastavení          \007V"
 
-#: desk/desk_rsc.c:454
+#: desk/desk_rsc.c:471
 msgid "  Enter DOS commands        \007C"
 msgstr "  Vlo¾it pøíkazy DOSu       \007C"
 
-#: desk/desk_rsc.c:478
+#: desk/desk_rsc.c:495
 msgid "  Sort by name   \007N"
 msgstr "  Podle jména    \007N"
 
-#: desk/desk_rsc.c:484
+#: desk/desk_rsc.c:501
 msgid "  Sort by type   \007P"
 msgstr "  Podle typu     \007P"
 
-#: desk/desk_rsc.c:490
+#: desk/desk_rsc.c:507
 msgid "  Sort by size   \007Z"
 msgstr "  Podle bytù     \007Z"
 
-#: desk/desk_rsc.c:496
+#: desk/desk_rsc.c:513
 msgid "  Sort by date   \007T"
 msgstr "  Podle data     \007T"
 
-#: desk/desk_rsc.c:510
+#: desk/desk_rsc.c:527
 msgid "ITEM INFORMATION / RENAME"
 msgstr "INFORMACE / PØEJMENOVÁNÍ"
 
-#: desk/desk_rsc.c:540
+#: desk/desk_rsc.c:557
 msgid "Attributes:"
 msgstr "Atributy:"
 
-#: desk/desk_rsc.c:552
+#: desk/desk_rsc.c:569
 msgid "Read/Write"
 msgstr "Ètení/zápis"
 
-#: desk/desk_rsc.c:558
+#: desk/desk_rsc.c:575
 msgid "Read-Only"
 msgstr "Jen ètení"
 
-#: desk/desk_rsc.c:584
+#: desk/desk_rsc.c:601
 msgid "DISK INFORMATION"
 msgstr "INFORMACE O DISKU"
 
-#: desk/desk_rsc.c:640
+#: desk/desk_rsc.c:657
 msgid "FOLDER INFORMATION"
 msgstr "INFORMACE O ODRESÁØI"
 
-#: desk/desk_rsc.c:702
+#: desk/desk_rsc.c:719
 msgid "Version"
 msgstr "Verze"
 
-#: desk/desk_rsc.c:720
-msgid "April 23, 2002"
-msgstr "23. Dubna 2002"
+#~msgid "April 23, 2002"
+#~msgstr "23. Dubna 2002"
 
-#: desk/desk_rsc.c:726
+#: desk/desk_rsc.c:743
 msgid "Copyright (c) 2002 by"
 msgstr "Copyright (c) 2002"
 
-#: desk/desk_rsc.c:738
+#: desk/desk_rsc.c:755
 msgid "The EmuTOS development team"
 msgstr "Vývojový tým EmuTOSu"
 
-#: desk/desk_rsc.c:744
+#: desk/desk_rsc.c:761
 msgid "Based on 'GPLed' sources"
 msgstr "Zalo¾eno na 'GPL' zdrojích"
 
-#: desk/desk_rsc.c:774
+#: desk/desk_rsc.c:791
 msgid "EmuTOS is distributed under the GPL"
 msgstr "EmuTOS je ¹íøen pod licencí GPL"
 
-#: desk/desk_rsc.c:780
+#: desk/desk_rsc.c:797
 msgid "See doc/license.txt for details"
 msgstr "Detaily viz doc/license.txt"
 
-#: desk/desk_rsc.c:794
+#: desk/desk_rsc.c:811
 msgid "NEW FOLDER INFORMATION"
 msgstr "INFORMACE O NOVÉM ADRESÁØI"
 
-#: desk/desk_rsc.c:800
+#: desk/desk_rsc.c:817
 msgid "To create a new folder within the cur-"
 msgstr "K vytvoøení nového adresáøe v aktu-"
 
-#: desk/desk_rsc.c:806
+#: desk/desk_rsc.c:823
 msgid "rent window, double-click on the New"
 msgstr "álním oknì dvakrát kliknìte na ikonu"
 
-#: desk/desk_rsc.c:812
+#: desk/desk_rsc.c:829
 msgid "Folder icon and complete the dialogue"
 msgstr "Nový adresáø a do dialogu, který se"
 
-#: desk/desk_rsc.c:818
+#: desk/desk_rsc.c:835
 msgid "that appears by entering the name of"
 msgstr "objeví, zadejte jméno adresáøe, který"
 
-#: desk/desk_rsc.c:824
+#: desk/desk_rsc.c:841
 msgid "the folder you want to create."
 msgstr "se chystáte vytvoøit."
 
-#: desk/desk_rsc.c:844
+#: desk/desk_rsc.c:861
 msgid "OPEN APPLICATION"
 msgstr "SPUSTIT APLIKACI"
 
-#: desk/desk_rsc.c:874
+#: desk/desk_rsc.c:891
 msgid "Enter the name of the document you want"
 msgstr "Zadejte jméno dokumentu, který má být"
 
-#: desk/desk_rsc.c:880
+#: desk/desk_rsc.c:897
 msgid "to load, or enter parameter values that"
 msgstr "naèten k zadání parametrù pøijatelných"
 
-#: desk/desk_rsc.c:886
+#: desk/desk_rsc.c:903
 msgid "are acceptable to this application."
 msgstr "pro tuto aplikaci."
 
-#: desk/desk_rsc.c:900
+#: desk/desk_rsc.c:917
 msgid "INSTALL DISK DRIVE"
 msgstr "PØIHLÁSIT DISK"
 
-#: desk/desk_rsc.c:918
+#: desk/desk_rsc.c:935
 msgid "Disk type:"
 msgstr "Typ disku:"
 
-#: desk/desk_rsc.c:930
+#: desk/desk_rsc.c:947
 msgid "Floppy"
 msgstr "Disketa"
 
-#: desk/desk_rsc.c:936
+#: desk/desk_rsc.c:953
 msgid "Hard"
 msgstr "Harddisk"
 
-#: desk/desk_rsc.c:969
+#: desk/desk_rsc.c:986
 msgid "CONFIGURE APPLICATION"
 msgstr "NASTAVENÍ APLIKACE"
 
-#: desk/desk_rsc.c:981
+#: desk/desk_rsc.c:998
 msgid "Document types:"
 msgstr "Typy dokumentù:"
 
-#: desk/desk_rsc.c:1035
+#: desk/desk_rsc.c:1052
 msgid "Application type:"
 msgstr "Typ aplikace:"
 
-#: desk/desk_rsc.c:1065
+#: desk/desk_rsc.c:1082
 msgid "Needs full memory?"
 msgstr "Potøebuje celou pamì»?"
 
-#: desk/desk_rsc.c:1089
+#: desk/desk_rsc.c:1106
 msgid "Icon type:"
 msgstr "Typ ikony:"
 
-#: desk/desk_rsc.c:1176
+#: desk/desk_rsc.c:1193
 msgid "COPY FOLDERS / ITEMS"
 msgstr "KOPÍROVÁNÍ ADRESÁØÙ / POLO®EK"
 
-#: desk/desk_rsc.c:1215
+#: desk/desk_rsc.c:1232
 msgid "DELETE FOLDERS / ITEMS"
 msgstr "MAZÁNÍ ADRESÁØÙ / POLO®EK"
 
-#: desk/desk_rsc.c:1254
+#: desk/desk_rsc.c:1271
 msgid "NAME CONFLICT DURING COPY"
 msgstr "KONFLIKT JMEN BÌHEM KOPÍROVÁNÍ"
 
-#: desk/desk_rsc.c:1284
+#: desk/desk_rsc.c:1301
 msgid "Stop"
 msgstr "Zastavit"
 
-#: desk/desk_rsc.c:1299
+#: desk/desk_rsc.c:1316
 msgid "NEW FOLDER"
 msgstr "NOVÝ ADRESÁØ"
 
-#: desk/desk_rsc.c:1332
+#: desk/desk_rsc.c:1349
 msgid "SET PREFERENCES"
 msgstr "NASTAVENÍ"
 
-#: desk/desk_rsc.c:1338
+#: desk/desk_rsc.c:1355
 msgid "Confirm deletes?"
 msgstr "Potvrdit mazání?"
 
-#: desk/desk_rsc.c:1362
+#: desk/desk_rsc.c:1379
 msgid "Confirm copies?"
 msgstr "Potvrdit kopírování?"
 
-#: desk/desk_rsc.c:1386
+#: desk/desk_rsc.c:1403
 msgid "Confirm overwrites?"
 msgstr "Potvrdit pøepis?"
 
-#: desk/desk_rsc.c:1410
+#: desk/desk_rsc.c:1427
 msgid "Double-click speed:"
 msgstr "Rychlost dvojkliku:"
 
-#: desk/desk_rsc.c:1458
+#: desk/desk_rsc.c:1475
 msgid "Click"
 msgstr "Kliknutí"
 
-#: desk/desk_rsc.c:1464
+#: desk/desk_rsc.c:1481
 msgid "No click"
 msgstr "Bez kliknutí"
 
-#: desk/desk_rsc.c:1470
+#: desk/desk_rsc.c:1487
 msgid "To drop down menus:"
 msgstr "Do padacího menu:"
 
-#: desk/desk_rsc.c:1476
+#: desk/desk_rsc.c:1493
 msgid "Sound effects:"
 msgstr "Zvukové efekty:"
 
-#: desk/desk_rsc.c:1488
+#: desk/desk_rsc.c:1505
 msgid "On"
 msgstr "Ano"
 
-#: desk/desk_rsc.c:1494
+#: desk/desk_rsc.c:1511
 msgid "Off"
 msgstr "Ne"
 
-#: desk/desk_rsc.c:1500
+#: desk/desk_rsc.c:1517
 msgid "Time format:"
 msgstr "Formát èasu:"
 
-#: desk/desk_rsc.c:1512
+#: desk/desk_rsc.c:1529
 msgid "12 Hour"
 msgstr "12 hodin"
 
-#: desk/desk_rsc.c:1518
+#: desk/desk_rsc.c:1535
 msgid "24 Hour"
 msgstr "24 hodin"
 
-#: desk/desk_rsc.c:1524
+#: desk/desk_rsc.c:1541
 msgid "Date format:"
 msgstr "Formát data:"
 
-#: desk/desk_rsc.c:1536
+#: desk/desk_rsc.c:1553
 msgid "MM-DD-YY"
 msgstr "MM-DD-RR"
 
-#: desk/desk_rsc.c:1542
+#: desk/desk_rsc.c:1559
 msgid "DD-MM-YY"
 msgstr "DD-MM-RR"
 
-#: desk/desk_rsc.c:1580
+#: desk/desk_rsc.c:1597
 msgid "%L bytes used in %W items."
 msgstr "%L bytù v %W polo¾kách."
 
-#: desk/desk_rsc.c:1581
+#: desk/desk_rsc.c:1598
 msgid "  Show as icons  \007S"
 msgstr "  Jako ikony     \007S"
 
-#: desk/desk_rsc.c:1582
+#: desk/desk_rsc.c:1599
 msgid "application"
 msgstr "aplikace"
 
-#: desk/desk_rsc.c:1583
+#: desk/desk_rsc.c:1600
 msgid "documents"
 msgstr "dokumenty"
 
-#: desk/desk_rsc.c:1585
+#: desk/desk_rsc.c:1602
 msgid "  Show as text   \007S"
 msgstr "  Jako text      \007S"
 
-#: desk/desk_rsc.c:1598
+#: desk/desk_rsc.c:1615
 msgid "New Folder"
 msgstr "Nový adresáø"
 
-#: desk/desk_rsc.c:1599
+#: desk/desk_rsc.c:1616
 msgid "Disk Drives:"
 msgstr "Jednotky:"
 
-#: desk/desk_rsc.c:1602
+#: desk/desk_rsc.c:1619
 msgid "Free"
 msgstr "Volných"
 
-#: desk/desk_rsc.c:1604
-msgid ""
-"[1]["
+#: desk/desk_rsc.c:1621
+msgid "[1]["
 "The document type you selected is not|"
 "configured to work with a specific|"
 "application.  Use the \"Configure|"
 "application\" command to associate this|"
 "document type with an application.][  OK  ]"
-msgstr ""
-"[1]["
+msgstr "[1]["
 "Zvolený typ dokumentu není nastaven|"
 "pro pou¾ití ¾ádnou aplikací.  Pou¾ijte|"
 "pøíkaz \"Nastavení aplikace\"|"
 "k asociování tohoto typu souboru|"
 "s nìjakou aplikací.][  OK  ]"
 
-#: desk/desk_rsc.c:1613
-msgid ""
-"[1]["
+#: desk/desk_rsc.c:1630
+msgid "[1]["
 "The GEM Desktop has no more available|"
 "windows.  Before you open a disk, close|"
 "a window you're not using.][  OK  ]"
-msgstr ""
-"[1]["
+msgstr "[1]["
 "GEM Desktop ji¾ nemù¾e otevøít více|"
 "oken.  Pøed otevøením disku zavøete|"
 "okno, které nepou¾íváte.][  OK  ]"
 
-#: desk/desk_rsc.c:1618
-msgid ""
-"[1]["
+#: desk/desk_rsc.c:1635
+msgid "[1]["
 "Cannot find the FORMAT program.  If you|"
 "are using a dual-floppy system, you must|"
 "format disks from your DOS disk.  If you|"
 "are using a hard disk, copy FORMAT to |"
 "the root directory.][OK]"
-msgstr ""
-"[1]["
+msgstr "[1]["
 "Není mo¾né najít program FORMAT.  Pokud|"
 "pou¾íváte dvì disketové jednotky, je|"
 "tøeba formátovat z diskety s DOSem.|"
 "Pokud máte harddisk, zkopírujte FORMAT|"
 "do koøenového adersáøe.][OK]"
 
-#: desk/desk_rsc.c:1627
-msgid ""
-"[3]["
+#: desk/desk_rsc.c:1644
+msgid "[3]["
 "Formatting will ERASE all|"
 "information on the disk in drive|"
 "%S:.  Click on OK only if you don't|"
 "mind losing the information on|"
 "this disk.][  OK  |Cancel]"
-msgstr ""
-"[3]["
+msgstr "[3]["
 "Formátování SMA®E v¹echna|"
 "data na disketì v jednotce|"
 "%S:.  Kliknìte na OK pouze pokud|"
 "vám nevadí ztráta v¹ech dat|"
 "na tomto disku.][  OK  |Zru¹it]"
 
-#: desk/desk_rsc.c:1636
-msgid ""
-"[3]["
+#: desk/desk_rsc.c:1653
+msgid "[3]["
 "You cannot copy a parent folder|"
 "into one of its child folders.][  OK  ]"
-msgstr ""
-"[3]["
+msgstr "[3]["
 "Není mo¾né zkopírovat nadøazený|"
 "adresáø do jeho podadresáøe.][  OK  ]"
 
-#: desk/desk_rsc.c:1639
-msgid ""
-"[3]["
+#: desk/desk_rsc.c:1656
+msgid "[3]["
 "If you are sure you want to|"
 "delete ALL the information on the|"
 "disk in drive %S:, click on OK.|"
 "Otherwise, click on Cancel.][  OK  |Cancel]"
-msgstr ""
-"[3]["
+msgstr "[3]["
 "Pokud jste si jistý, ¾e chcete|"
 "smazat V©ECHNY informace z disku|"
 "v jednotce %S:, kliknìte na OK.|"
 "Jinak kliknìte na Zru¹it.][  OK  |Zru¹it]"
 
-#: desk/desk_rsc.c:1646
-msgid ""
-"[1]["
+#: desk/desk_rsc.c:1663
+msgid "[1]["
 "There is not enough space available|"
 "to configure this application.  To free|"
 "up some space, you'll have to remove|"
 "one of your currently configured|"
 "applications.][  OK  ]"
-msgstr ""
-"[1]["
+msgstr "[1]["
 "Není dostatek pamìti k nastavení|"
 "této aplikace.  K uvolnìní|"
 "nìjakého místa je tøeba odstranit|"
 "jednu z døíve nastavených|"
 "aplikací.][  OK  ]"
 
-#: desk/desk_rsc.c:1653
-msgid ""
-"[2]["
+#: desk/desk_rsc.c:1670
+msgid "[2]["
 "A folder with that name already|"
 "exists or your disk is full.|"
 "Retry with a new name, or Cancel|"
 "and check the available disk space.][ Cancel | Retry ]"
-msgstr ""
-"[2]["
+msgstr "[2]["
 "Adresáø tohoto jména ji¾ existuje|"
-"nebo je disk plný. Zkuste jiné"
-"jméno nebo kliknìte na Zru¹it|"
+"nebo je disk plný. Zkuste jinéjméno nebo kliknìte na Zru¹it|"
 "a provìøte volné místo na disku.][ Zru¹it | Znovu ]"
 
-#: desk/desk_rsc.c:1660
-msgid ""
-"[1]["
+#: desk/desk_rsc.c:1677
+msgid "[1]["
 "This disk does not have enough room for|"
 "the information you are trying to copy.|"
 "Some items, however, may have been|"
 "copied to the disk.][  OK  ]"
-msgstr ""
-"[1]["
+msgstr "[1]["
 "Na disku není dostatek místa pro|"
 "informaci, kterou se sna¾íte kopírovat.|"
 "Nicménì nìkteré polo¾ky mohly ji¾ být|"
 "na disk nakopírovány.][  OK  ]"
 
-#: desk/desk_rsc.c:1667
-msgid ""
-"[3]["
+#: desk/desk_rsc.c:1684
+msgid "[3]["
 "The GEM Desktop cannot find the|"
 "documents DESKLO.ICN, DESKHI.ICN,|"
 "or DESKTOP.INF in the DOS search|"
 "path.  These documents are required|"
 "to run the GEM Desktop.][Cancel]"
-msgstr ""
-"[3]["
+msgstr "[3]["
 "GEM Desktop nemù¾e najít soubory|"
 "DESKLO.ICN, DESKHI.ICN nebo|"
 "DESKTOP.INF v cestì známé DOSu.|"
 "Tyto soubory jsou vy¾adovány|"
 "pro spu¹tìní GEM Desktopu.][Zru¹it]"
 
-#: desk/desk_rsc.c:1676
-msgid ""
-"[3]["
+#: desk/desk_rsc.c:1693
+msgid "[3]["
 "To save your desktop, insert your|"
 "GEM DESKTOP disk into drive A:, close|"
 "the drive door, and click on OK.|"
 "Click on Cancel if you don't want to|"
 "save the desktop.][  OK  |Cancel]"
-msgstr ""
-"[3]["
+msgstr "[3]["
 "K ulo¾ení nastavení vlo¾te disketu|"
 "GEM DESKTOP do jednotky A:, zavøete|"
 "dvíøka a kliknìte na OK. Na Zru¹it|"
 "kliknìte v pøípadì, ¾e nastavení|"
 "ulo¾it nechcete.][  OK  |Zru¹it]"
 
-#: desk/desk_rsc.c:1685
-msgid ""
-"[3]["
+#: desk/desk_rsc.c:1702
+msgid "[3]["
 "Sorry, but you cannot place any more|"
 "folders inside of your current one.|"
 "See your documentation for limits on|"
 "folders inside other folders.][Cancel]"
-msgstr ""
-"[3]["
+msgstr "[3]["
 "Lituji, ale do tohoto adresáøe není|"
 "mo¾né umístit více podadresáøù.|"
 "Pøeètìte si dokumentaci o limitech pro|"
 "umis»ování podadresáøù v adresáøích.][Zru¹it]"
 
-#: desk/desk_rsc.c:1692
-msgid ""
-"[3]["
+#: desk/desk_rsc.c:1709
+msgid "[3]["
 "Sorry, but the Directory name you have|"
 "entered exceeds the maximum number of|"
 "characters.  See your documentation for|"
 "limits on the number of characters you|"
 "can enter.][   OK   ]"
-msgstr ""
-"[3]["
+msgstr "[3]["
 "Lituji, ale zadané jméno adresáøe|"
 "pøekraèuje maximální povolenou délku.|"
 "Pøe¹tìte si dokumentaci o limitech|"
 "poètu znakù, které je mo¾né pou¾ít|"
 "pro jména.][   OK   ]"
+
+#: bios/initinfo.c:164
+msgid "Hold <Control> to skip AUTO/ACC loading"
+msgstr "Podr¾ <Control> pro pøeskoèení AUTO/ACC"
+
+#: bios/initinfo.c:166
+msgid "Hold <Alternate> key to skip HDD boot"
+msgstr "Podr¾ <Alternate> pro pøeskoèení HDD"
+
+#: bios/initinfo.c:168
+msgid "Press any key to continue booting"
+msgstr "Stiskni libovolnou klávesu pro start"
+
+#: bios/initinfo.c:218
+msgid "Free ST-RAM"
+msgstr "Volná ST-RAM"
+
+#: bios/initinfo.c:225
+msgid "Free FastRAM"
+msgstr "Volná FastRAM"
+
+#: bios/initinfo.c:247
+msgid "Boot time"
+msgstr "Èas startu"
 

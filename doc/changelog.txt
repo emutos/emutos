@@ -1295,4 +1295,4 @@ Start... early ages
 - include/config.h - #define TIMEOUT_ON_BOOT here or in your localconf.h.
   This was added especially to make Thothy happy - he doesn't like long
   boot timeouts... (joy)
-
+- po/cs.po - Czech translation updated (joy)
