@@ -128,7 +128,7 @@ void vecs_init(void)
     /* These just for advanced 680x0 processors */
     if (longframe) {
         VEC_PRIVLGE = int_priv;         /* set priv. instr. handler */
-        VEC_ILLEGAL = int_illegal;      /* set ill. instr. handler */
+	//    VEC_ILLEGAL = int_illegal;      /* set ill. instr. handler */
     }
 }
 
@@ -162,7 +162,7 @@ void startup(void)
     savptr = (LONG) save_area;
 
     /* some more variables */
-    etv_timer = just_rts;
+    etv_timer = (void(*)(int)) just_rts;
     etv_critic = criter1;
     etv_term = just_rts;
 
