@@ -557,6 +557,69 @@ void wrtch (char ch)
     wrt (str);
 }
 
+#if NO_ROM
+#define cookie_idt ( 0x100 | '/' )
+#else
+extern long cookie_idt;  /* in bios/machine.c */
+#endif
+
+void wrtDate(int j)
+{
+    int year = ((j>>9) & 0x7F) + 80;
+    int mon = ((j>>5) & 0xF);
+    int day = (j & 0x1F);
+    char sep = cookie_idt & 0xFF;
+    int a, b, c;
+    
+#if 1
+    if(year >= 100) year -= 100;
+#endif
+    
+		switch((cookie_idt >> 8) & 3) {
+    default:
+    case 0:  /* MMDDYY */
+        a = mon; b = day; c = year; break;
+    case 1:  /* DDMMYY */
+        a = day; b = mon; c = year; break;
+    case 2:  /* YYMMDD */
+        a = year; b = mon; c = day;  break;
+    case 3:  /* YYDDMM */
+        a = year; b = day; c = mon; break;
+		}
+    prtDclFmt ((long) a, 2, "0");
+		wrtch(sep);
+		prtDclFmt ((long) b, 2, "0");
+		wrtch(sep);
+		prtDclFmt ((long) c, 2, "0");
+}
+
+void wrtTime(int j)
+{
+    int hour = (j >> 11) & 0x1F;
+    int min = (j >> 5) & 0x3F;
+    int sec = (j & 0x1F) << 1;
+    
+		prtDclFmt ((long) hour, 2, "0");
+		wrt (":");
+		prtDclFmt ((long) min, 2, "0");
+		wrt (":");
+		prtDclFmt ((long) sec, 2, "0");
+}
+
+
+#if NO_ROM
+/* BUILDDATE is needed only for non-ROM command.prg */
+void wrtbdate(void) 
+{
+    wrt( BUILDDATE );
+}
+#else
+extern int os_dosdate;   /* in bios/startup.S */
+void wrtbdate(void) 
+{
+    wrtDate(os_dosdate);
+}
+#endif
 
 
 /*
@@ -623,7 +686,7 @@ void dspMsg (int msg)
     case 2: wrtln (_("Destination is not a valid wild card expresion.")); 
         break;
     case 3: wrtln ("******* TEST  CLI *******"); break;
-    case 4: wrtln (_("EmuCON - Compiled on ")); wrt( BUILDDATE);
+    case 4: wrtln (_("EmuCON - Compiled on ")); wrtbdate();
             wrtln (_("Type HELP for a list of commands."));
             wrtln (""); break;
     case 5: wrt (_("Done.")); break;
@@ -1024,20 +1087,12 @@ long dirCmd (char * argv[])
 
 		dt = (int *)&srchb[24];
 		j = *dt;
-		prtDclFmt ((long)((j>>5) & 0xF ), 2, "0");
-		wrt("/");
-		prtDclFmt ((long)(j & 0x1F), 2, "0");
-		wrt("/");
-		prtDclFmt ((long)(((j>>9) & 0x7F) + 80), 2, "0");
+		wrtDate(j);
 		wrt ("	");
 
 		dt = (int *)&srchb[22];
 		j = *dt;
-		prtDclFmt ((long) ((j>>11) & 0x1F), 2, "0");
-		wrt (":");
-		prtDclFmt ((long) ((j>>5) & 0x3F), 2, "0");
-		wrt (":");
-		prtDclFmt ((long) ((j & 0x1F) << 1), 2, "0");
+		wrtTime(j);
 		wrt ("	");
 
 		att = srchb[21];
