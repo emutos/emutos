@@ -42,8 +42,7 @@ NAMES
 #include "gemerror.h"
 #include "asm.h"
 
-int date;
-int time;
+
 
 /*
  * BIOS interface  
@@ -53,7 +52,8 @@ int time;
 /* the address of the vector in TOS vars */
 extern void (*etv_timer)(int);
 
-#define date_time(op,var) trap13(0x11,(int)(op),(int*)(var))
+#define Settime()  trap14(16)
+#define Gettime()  trap14(17)
 
 #define GET_TIME        0
 #define SET_TIME        1
@@ -79,7 +79,10 @@ static int msec;
 
 long    xgetdate(void)
 {
-    date_time(GET_DATE, &date);         /* allow bios to update date */
+    UWORD date;
+
+    /* call XBIOS and mask out*/
+    date = (Gettime() >> 16) & 0xffff;
     return date;
 }
 
@@ -96,7 +99,9 @@ long    xgetdate(void)
 
 long    xsetdate(int d)
 {
-int     curmo, day;
+    UWORD date;
+
+    int     curmo, day;
 
     curmo = ((d >> 5) & 0x0F);
     day = d & DAY_BM;
@@ -117,7 +122,9 @@ int     curmo, day;
             return ERR;
 
     date = d;                           /* ok, assign that value to date */
-    date_time(SET_DATE, &date);         /* tell bios about new date */
+
+    // FIXME: Use XBIOS instead
+    //date_time(SET_DATE, &date);         /* tell bios about new time */
 
     return E_OK;
 }
@@ -129,7 +136,10 @@ int     curmo, day;
 
 long    xgettime(void)
 {
-    date_time(GET_TIME, &time);         /* bios may update time if it wishes */
+    UWORD time;
+
+    /* call XBIOS and mask out*/
+    time = Gettime() & 0xffff;
     return time;
 }
 
@@ -147,6 +157,8 @@ long    xgettime(void)
 
 long    xsettime(int t)
 {
+    UWORD time;
+
     if ((t & SEC_BM) >= 30)
         return ERR;
 
@@ -157,7 +169,8 @@ long    xsettime(int t)
         return ERR;
 
     time = t;
-    date_time(SET_TIME, &time);         /* tell bios about new time */
+    // FIXME: Use XBIOS instead
+    //date_time(SET_TIME, &time);         /* tell bios about new time */
 
     return E_OK;
 }
@@ -165,13 +178,17 @@ long    xsettime(int t)
 
 /*
  *  time_init
+ *
+ * No need for emulators to set a time initially - hopefully
  */
-
 
 void time_init(void)
 {
+    //FIXME: possibly need to implement something here later
+#if 0
     date_time(GET_DATE, &date);
     date_time(GET_TIME, &time);
+#endif
     
     etv_timer = tikfrk;
 }
