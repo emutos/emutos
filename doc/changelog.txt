@@ -1400,3 +1400,7 @@ Start... early ages
   MIDI_DEBUG_PRINT flag activated (to get debug prints e.g. on Steem) (LVL)
 - fixed some .cvsignore files (LVL)
 
+13. Apr. 2003
+- bios/sound.c - Fixed a wrong byte in the system bell data. (THH)
+- include/xbiosbind.h - Added binding for Dosound(). (THH)
+- aes/optimize.c - sound() now really makes sound with Dosound()! (THH)

@@ -124,6 +124,26 @@ long Gettime()
 
 
 
+static inline long Dosound(void* sndptr)
+{
+    register long retval __asm__("d0");
+    long  _a = (long) sndptr;
+
+    __asm__ __volatile__
+        ("
+         movl    %1,sp@-;
+         movw    #0x20,sp@-;
+         trap    #14;
+         lea    sp@(6),sp "
+         : "=r"(retval)
+         : "r"(_a)
+         : "d0", "d1", "d2", "a0", "a1", "a2", "memory"
+        );
+    return retval;
+}
+
+
+
 static inline
 long Kbdvbase()
 {

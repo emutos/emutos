@@ -29,48 +29,27 @@
 #include "optimopt.h"
 
 #include "string.h"
+#include "xbiosbind.h"
 
-GLOBAL BYTE     gl_rsname[16];
 
 
 WORD sound(WORD isfreq, WORD freq, WORD dura)
 {
-#if 0
-        WORD            cnt;
+    static UBYTE snddat[16];
 
-        intin[0] = freq;
-        intin[1] = dura;
-        if (isfreq)
-        {
-                                                /* make a sound         */
-          contrl[5] = 61;
-          cnt = 2;
-        }
-        else
-        {
-                                                /* get / set mute status*/
-          contrl[5] = 62;
-          cnt = 1;
-        }
-        gsx_ncode(5, 0, cnt);
-        return(intout[0]);
-#endif
-        return(0);
+    snddat[0] = 0;  snddat[1] = (125000L / freq);       /* channel A pitch lo */
+    snddat[2] = 1;  snddat[3] = (125000L / freq) >> 8;  /* channel A pitch hi */
+    snddat[4] = 7;  snddat[5] = (isfreq ? 0xFE : 0xFF);
+    snddat[6] = 8;  snddat[7] = 0x10;                   /* amplitude: envelop */
+    snddat[8] = 11;  snddat[9] = 0;                     /* envelope lo */
+    snddat[10] = 12;  snddat[11] = dura * 8;            /* envelope hi */
+    snddat[12] = 13;  snddat[13] = 9;                   /* envelope type */
+    snddat[14] = 0xFF;  snddat[15] = 0;
+
+    Dosound(snddat);
+
+    return(0);
 }
-
-
-#if 0
-WORD bit_num(UWORD flag)
-{
-        WORD            i;
-        UWORD           test;
-
-        if ( !flag )
-          return(-1);
-        for (i=0,test=1; !(flag & test); test <<= 1,i++);
-        return(i);
-}
-#endif
 
 
 void rc_constrain(GRECT *pc, GRECT *pt)
@@ -460,6 +439,8 @@ void ins_char(BYTE *str, WORD pos, BYTE chr, WORD tot_len)
 *       Used to get strings of 16 bytes or less from resource.
 */
 #if MULTIAPP
+GLOBAL BYTE  gl_rsname[16];
+
 BYTE *op_gname(WORD index)
 {
         LONG    pname;
