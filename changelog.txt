@@ -172,3 +172,6 @@ Start... early ages
 - Cleaned up some minor things in bdos/proc.c
 - Changed linea/graphics init in bios/startup.s
 - Set up half of memory config in bios/startup.s
+- pseudo reentrant bios xbios trap handler
+- Supexec()
+- bios device functions arrays (bconstat_vec, ...)
