@@ -18,6 +18,7 @@
 #include "screen.h"
 #include "asm.h"
 #include "tosvars.h"
+#include "kprintf.h"
 
 /* private prototypes */
 
@@ -75,26 +76,30 @@ void screen_init(void)
         col_regs[i] = dflt_palette[i];
     }
 
-    rez = *rez_reg;
-
-    rez &= 3;
-    if (rez == 3) {
-        rez = 2;
+    if (has_videl) {
+        rez = getrez();
+        kprintf("Getrez=%d\n", rez);
+        *rez_reg = rez; /* why the hell the st_shift has to be set here??? */
     }
+    else {
+        rez = *rez_reg;
 
-    if ((mfp->gpip & 0x80) != 0) {
-        /* color monitor */
-        if (rez == 2)
-            rez = 0;
-    } else {
-        if (rez < 2)
+        rez &= 3;
+        if (rez == 3) {
             rez = 2;
+        }
+
+        if ((mfp->gpip & 0x80) != 0) {
+            /* color monitor */
+            if (rez == 2)
+                rez = 0;
+        } else {
+            if (rez < 2)
+                rez = 2;
+        }
+
+        *rez_reg = rez;
     }
-
-    if (has_videl)   /* enforce mono mode on Videl */
-        rez = 2;     /* FIXME: replace with proper screen depth detection */
-
-    *rez_reg = rez;  /* on real Falcon this could cause trouble (?) */
     sshiftmod = rez;
 
     if (rez == 1) {
@@ -149,7 +154,19 @@ LONG logbase(void)
 
 WORD getrez(void)
 {
-    return (*(UBYTE *) 0xffff8260);
+    if (has_videl) {
+        int bpp = get_videl_bpp();
+        switch(bpp) {
+            case 1: return 2;
+            case 2: return 1;
+            case 4: return 0;
+            default:
+                kprintf("Problem - unsupported colour depth\n");
+                return 0;
+       }
+    }
+    else
+        return (*(UBYTE *) 0xffff8260);
 }
 
 
@@ -253,7 +270,7 @@ UWORD get_videl_bpp()
         bits_per_pixel = 4;
     else if (st_shift == 0x100)
         bits_per_pixel = 2;
-    else                         /* if (st_shift == 0x200) */
+    else /* if (st_shift == 0x200) */
         bits_per_pixel = 1;
 
     return bits_per_pixel;
@@ -290,7 +307,7 @@ UWORD get_videl_height()
  */
 void set_videl_vga640x480(int bitplanes)
 {
-        char *videlregs = (char *)0xff8200;
+    char *videlregs = (char *)0xff8200;
     int hdb[4] = {115, 138, 163, 171 };
     int hde[4] = {80, 107, 124, 132 };
     int lwidth[4] = {40, 80, 160, 320 };
@@ -341,7 +358,13 @@ void set_videl_vga640x480(int bitplanes)
     videlregs[0xc1] = 134;
     videlregs[0x66] = 0;
     videlregs[0x67] = 0;
-
+/*
+    switch(bitplanes) {
+        case 1: videlregs[0x60] = 2; break;
+        case 2: videlregs[0x60] = 1; break;
+        case 4: videlregs[0x60] = 0; break;
+   	}
+*/
     videlregs[0x66] = fsm[idx] >> 8;
     videlregs[0x67] = fsm[idx] & 0xff;
 }
