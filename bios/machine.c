@@ -32,12 +32,17 @@ long cookie_swi;
  */
 
 int has_ste_shifter;
+int has_tt_shifter;
+int has_videl;
 
-/* test if we have an STe Shifter by testing that register 820d
- * works (put a value, read other reg, read again, and compare)
+/*
+ * Tests video capabilities (STEnhanced Shifter, TT Shifter and VIDEL)
  */
-static void detect_ste_shifter(void)
+static void detect_video(void)
 {
+ /* test if we have an STe Shifter by testing that register 820d
+  * works (put a value, read other reg, read again, and compare)
+  */
   volatile BYTE *ste_reg = (BYTE *) 0xffff820d;
   volatile BYTE *other_reg1 = (BYTE *) 0xffff8203;
   volatile WORD *other_reg2 = (WORD *) 0xffff8240;
@@ -54,6 +59,16 @@ static void detect_ste_shifter(void)
       has_ste_shifter = 1;
     } 
   }
+
+  /* test if we have a TT Shifter by testing for TT color palette */
+  has_tt_shifter = 0;
+  if (check_read_byte(0xffff8400))
+    has_tt_shifter = 1;
+
+  /* test if we have Falcon VIDEL by testing for f030_xreg */
+  has_videl = 0;
+  if (check_read_byte(0xffff8282))
+  	has_videl = 1;
 }
 
 /* vme */
@@ -89,27 +104,41 @@ static void detect_swi(void)
 
 static void detect_vdo(void)
 {
-  if(has_ste_shifter) {
-    cookie_vdo = 0x00010000L;
-  } else {
-    cookie_vdo = 0x00000000L;
-  } 
+  if(has_videl) {
+    cookie_vdo = 0x00030000L;
+  }
+  else if(has_tt_shifter) {
+    cookie_vdo = 0x00020000L;
+  }
+  else {
+    if(has_ste_shifter) {
+      cookie_vdo = 0x00010000L;
+    } else {
+      cookie_vdo = 0x00000000L;
+    } 
+  }
 }
 
 /* machine type */
 
 static void detect_mch(void)
 {
-  /* TT30 and Falcon not tested yet */
-  
-  if(has_ste_shifter) {
-    if(has_vme) {
-      cookie_mch = MCH_MSTE;
+  if(has_videl) {
+    cookie_mch = MCH_FALCON;
+  }
+  else if(has_tt_shifter) {
+    cookie_mch = MCH_TT;
+  }
+  else {
+    if(has_ste_shifter) {
+      if(has_vme) {
+        cookie_mch = MCH_MSTE;
+      } else {
+        cookie_mch = MCH_STE;
+      }
     } else {
-      cookie_mch = MCH_STE;
+      cookie_mch = MCH_ST;
     }
-  } else {
-    cookie_mch = MCH_ST;
   }
 }
 
@@ -144,7 +173,7 @@ static void detect_fdc(void)
 
 void machine_init(void)
 {
-  detect_ste_shifter();
+  detect_video();
   detect_vme();
   detect_megartc();
   
