@@ -426,7 +426,7 @@ static const OBJECT desk_rs_obj_rom[] = {
    { 17, -1, -1, G_STRING,                      /*** 25 ***/
      NONE,
      NORMAL,
-     (long) N_("  Exit to DOS     ^Q"),
+     (long) N_("  Shutdown        ^Q"),
      0, 7, 21, 1},
 
    { 33, 27, 32, G_BOX,                         /*** 26 ***/
@@ -468,7 +468,7 @@ static const OBJECT desk_rs_obj_rom[] = {
    { 26, -1, -1, G_STRING,                      /*** 32 ***/
      NONE,
      NORMAL,
-     (long) N_("  Enter DOS commands        \007C"),
+     (long) N_("  Enter shell commands      \007C"),
      0, 5, 31, 1},
 
    { 7, 34, 39, G_BOX,                          /*** 33 ***/
