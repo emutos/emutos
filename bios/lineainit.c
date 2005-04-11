@@ -56,17 +56,17 @@ static const struct video_mode video_mode[] = {
 
 void linea_init(void)
 {
-    WORD vmode;                 	/* video mode */
+    WORD vmode;                         /* video mode */
 
-    vmode = (sshiftmod & 3);    	/* Get video mode from hardware */
+    vmode = (sshiftmod & 3);            /* Get video mode from hardware */
 #if DBG_LINEA
     kprintf("vmode : %d\n", vmode);
 #endif
 
     /* set parameters for video mode */
-    if (vmode > 2) {      		/* Mode 3 == unvalid for ST (MAD) */
+    if (vmode > 2) {                    /* Mode 3 == unvalid for ST (MAD) */
         kprintf("video mode was: %d !\n", vmode);
-        vmode=2;                	/* Falcon should be handled special? */
+        vmode=2;                        /* Falcon should be handled special? */
     }
     if (has_videl) {
         v_planes = get_videl_bpp();
@@ -85,7 +85,7 @@ void linea_init(void)
      * (used for screen modes that have the planes arranged in an
      *  interleaved fashion with a word for each plane). */
     if (v_planes <= 4)
-	shft_off = shft_tab[v_planes - 1];
+        shft_off = shft_tab[v_planes - 1];
 
 #if DBG_LINEA
     kprintf("planes: %d\n", v_planes);

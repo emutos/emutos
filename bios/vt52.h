@@ -17,9 +17,9 @@
 
 #include "portab.h"
 
-BOOL vt52_initialized;  	/* checked by kprintf for safety */
+BOOL vt52_initialized;          /* checked by kprintf for safety */
 
-void vt52_init();		/* initialize the vt52 console */
+void vt52_init();               /* initialize the vt52 console */
 WORD cursconf(WORD, WORD);      /* XBIOS cursor configuration */
 
 #endif VT52_H

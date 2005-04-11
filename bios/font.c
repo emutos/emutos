@@ -74,9 +74,9 @@ void font_set_default()
     struct font_head *font;
 
     if (v_vt_rez < 400)
-	font = &fon8x8;
+        font = &fon8x8;
     else
-	font = &fon8x16;
+        font = &fon8x16;
 
     v_cel_ht = font->form_height;
     v_cel_wr = v_lin_wr * font->form_height;

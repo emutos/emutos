@@ -838,10 +838,10 @@ cursconf(WORD function, WORD operand)
 {
     switch (function) {
     case 0:
-        cursor_off();			/* set cursor unvisible */
+        cursor_off();                   /* set cursor unvisible */
         break;
     case 1:
-        cursor_on();               	/* set cursor visible */
+        cursor_on();                    /* set cursor visible */
         break;
     case 2:
         v_stat_0 &= ~M_CFLASH;          /* unset cursor flash bit */
@@ -853,7 +853,7 @@ cursconf(WORD function, WORD operand)
         v_period = operand;             /* set cursor flash interval */
         break;
     case 5:
-	return(v_period);               /* set cursor flash interval */
+        return(v_period);               /* set cursor flash interval */
     }
     return 0;
 }
@@ -874,7 +874,7 @@ vt52_init()
     v_cur_ad = v_bas_ad;                // set cursor to begin of screen
 
     v_stat_0 = M_CFLASH;                // cursor invisible, flash,
-                               		// nowrap, normal video.
+                                        // nowrap, normal video.
     cursconf(4, 30);                    // .5 second blink rate (@60 Hz vblank).
     v_cur_tim = v_period;               // load initial value to blink timer
     disab_cnt = 1;                      // cursor disabled 1 level deep.
@@ -882,17 +882,17 @@ vt52_init()
     /* set foreground color depending on color depth */
     switch (v_planes) {
     case 1:
-	v_col_fg = 1;
-	break;
+        v_col_fg = 1;
+        break;
     case 2:
-	v_col_fg = 3;
-	break;
+        v_col_fg = 3;
+        break;
     default:
-	v_col_fg = 15;
+        v_col_fg = 15;
     }
     v_col_bg = 0;
 
-    con_state = normal_ascii;       	/* Init conout state machine */
+    con_state = normal_ascii;           /* Init conout state machine */
 
     vt52_initialized = TRUE;
 }

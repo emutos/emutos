@@ -52,7 +52,7 @@ extern UWORD    v_cel_wr;       // needed by MiNT: length (in bytes) of a line o
  */
 
 extern struct font_head *font_ring[4];  /* Ring of available fonts */
-extern WORD font_count;                	// all three fonts and NULL
+extern WORD font_count;                 // all three fonts and NULL
 
 /* the font header descibes a font */
 
@@ -92,6 +92,6 @@ struct font_head {
 /* prototypes */
 
 void font_init();               /* initialize BIOS font ring */
-void font_set_default();     	/* choose the default font */
+void font_set_default();        /* choose the default font */
 
 #endif /* FONT_H */
