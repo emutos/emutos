@@ -880,6 +880,6 @@ msgid "Press 'C' to run an early console"
 msgstr "Pulse 'C' para correr en una cónsola primitiva"
 
 #: desk/desk_rsc.c:734
-msgid "Copyright (c) 2003 by"
-msgstr "Copyright (c) 2003, Equipo EmuTOS, Tr. Español Gabriel Huertas"
+msgid "Copyright (c) 2005 by"
+msgstr "Copyright (c) 2005, Equipo EmuTOS, Tr. Español Gabriel Huertas"
 

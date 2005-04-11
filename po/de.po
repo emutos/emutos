@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: EMUTOS beta\n"
 "POT-Creation-Date: 2003-08-28 22:41+0200\n"
-"PO-Revision-Date: 2003-08-28 22:46+0200\n"
+"PO-Revision-Date: 2005-04-11 15:04+0200\n"
 "Last-Translator: Thomas Huth <thothy@users.sourceforge.net>\n"
 "Language-Team: German <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -287,11 +287,11 @@ msgstr "Anzahl der Ordner:     _____"
 
 #: desk/desk_rsc.c:77 desk/desk_rsc.c:112
 msgid "Number of items:     _____"
-msgstr "Anzahl der Dateien:     _____"
+msgstr "Anzahl der Dateien:  _____"
 
 #: desk/desk_rsc.c:82 desk/desk_rsc.c:117
 msgid "Bytes used:  __________"
-msgstr "Bytes benutzt:  __________"
+msgstr "Bytes belegt:  __________"
 
 #: desk/desk_rsc.c:87
 msgid "Bytes available:  __________"
@@ -335,7 +335,7 @@ msgstr "Zu löschende Ordner:  ____"
 
 #: desk/desk_rsc.c:207
 msgid "Items to delete:  ____"
-msgstr "Zu löschende Dateien:  ____"
+msgstr "Zu löschende Dateien: ____"
 
 #: desk/desk_rsc.c:212
 msgid "Current name:  ________.___"
@@ -394,7 +394,7 @@ msgstr "  Konfiguriere Anwendung... \007A"
 
 #: desk/desk_rsc.c:474
 msgid "  Set preferences..."
-msgstr "  Setze Einstellungen..."
+msgstr "  Voreinstellungen..."
 
 #: desk/desk_rsc.c:480
 msgid "  Save desktop              \007V"
@@ -426,7 +426,7 @@ msgstr "Attribute:"
 
 #: desk/desk_rsc.c:584
 msgid "Read/Write"
-msgstr "Lesen/Schreiben"
+msgstr "Les/Schreib"
 
 #: desk/desk_rsc.c:590
 msgid "Read-Only"
@@ -558,23 +558,23 @@ msgstr "NEUER ORDNER"
 
 #: desk/desk_rsc.c:1366
 msgid "SET PREFERENCES"
-msgstr "SETZE EINSTELLUNGEN"
+msgstr "VOREINSTELLUNGEN"
 
 #: desk/desk_rsc.c:1372
 msgid "Confirm deletes?"
-msgstr "Bestätige Löschen?"
+msgstr "Löschbestätigung?"
 
 #: desk/desk_rsc.c:1396
 msgid "Confirm copies?"
-msgstr "Bestätige Kopieren?"
+msgstr "Kopierbestätigung?"
 
 #: desk/desk_rsc.c:1420
 msgid "Confirm overwrites?"
-msgstr "Bestätige Überschreiben?"
+msgstr "Überschreibbestätigung?"
 
 #: desk/desk_rsc.c:1444
 msgid "Double-click speed:"
-msgstr "Doppelklick-Geschwindigkeit:"
+msgstr "Doppelklickrate:"
 
 #: desk/desk_rsc.c:1492
 msgid "Click"
@@ -586,7 +586,7 @@ msgstr "Kein Klick"
 
 #: desk/desk_rsc.c:1504
 msgid "To drop down menus:"
-msgstr "Um Menüs herunterzuklappen:"
+msgstr "Menüs anzeigen bei:"
 
 #: desk/desk_rsc.c:1510
 msgid "Sound effects:"
@@ -863,8 +863,8 @@ msgid "Press 'C' to run an early console"
 msgstr "Drücke 'C' für die Konsole"
 
 #: desk/desk_rsc.c:760
-msgid "Copyright (c) 2003 by"
-msgstr "Copyright (c) 2003, "
+msgid "Copyright (c) 2005 by"
+msgstr "Copyright (c) 2005, "
 
 #: desk/desk_rsc.c:395
 msgid "  New Folder..."
