@@ -274,7 +274,7 @@ void set_mown(PD *mp)
 /*
 *       EnQueue a a character on a circular keyboard buffer.
 */
-void nq(UWORD ch, CQUEUE *qptr)
+static void nq(UWORD ch, CQUEUE *qptr)
 {
         if (qptr->c_cnt < KBD_SIZE)
         {
@@ -349,7 +349,7 @@ void post_keybd(CDA *c, UWORD ch)
 *       when button initially goes down, or when it is moved with the
 *       mouse button down.
 */
-void chkown()
+static void chkown(void)
 {
         register WORD   val;
 
@@ -408,7 +408,7 @@ void m_forkq(WORD (*fcode)(), WORD ratx, WORD raty)
 */
 
 
-void m_drawit()
+static void m_drawit(void)
 {
   dr_doit = FALSE;
   dr_invdi = TRUE;
@@ -459,10 +459,9 @@ void mchange(WORD rx, WORD ry)
 
 
 
-
-WORD inorout(EVB *e, WORD rx, WORD ry)
+static WORD inorout(EVB *e, WORD rx, WORD ry)
 {
-        MOBLK           mo;
+        MOBLK   mo;
                                                 /* in or out of         */
                                                 /*   specified rectangle*/
         mo.m_out = ((e->e_flag & EVMOUT) != 0x0);
