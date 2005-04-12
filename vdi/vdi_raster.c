@@ -27,7 +27,7 @@
 #endif
 #include "kprint.h"
 
-extern void bit_blt();
+extern void bit_blt(void);
 
 /* bitblt modes */
 #define BM_ALL_WHITE   0

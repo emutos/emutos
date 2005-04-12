@@ -29,11 +29,9 @@ struct font_head fon6x6;
 
 /*
  * font_init - set default font to linea, font ring initialization
- *
- * smallfont - on 320x200 resolution a small font is used.
  */
 
-void font_init(BOOL smallfont)
+void font_init(void)
 {
     struct font_head *f6x6, *f8x8, *f8x16;
   

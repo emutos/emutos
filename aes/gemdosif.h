@@ -19,22 +19,22 @@ extern LONG     CMP_TICK;                       /* indicates to tick    */
                                                 /*   tchange            */
 
 
-extern void cli();
-extern void sti();
+extern void cli(void);
+extern void sti(void);
 
-extern void hcli();
-extern void hsti();
+extern void hcli(void);
+extern void hsti(void);
 
-extern WORD far_bcha();
-extern WORD far_mcha();
-extern WORD justretf();
+extern WORD far_bcha(void);
+extern WORD far_mcha(void);
+extern WORD justretf(void);
 
-extern void givecpm();
-extern void takecpm();
+extern void givecpm(void);
+extern void takecpm(void);
 
-extern void takeerr();
-extern void giveerr();
-extern void retake();
+extern void takeerr(void);
+extern void giveerr(void);
+extern void retake(void);
 
 extern void drawrat(WORD newx, WORD newy);
 

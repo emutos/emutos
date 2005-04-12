@@ -91,7 +91,7 @@ struct font_head {
 
 /* prototypes */
 
-void font_init();               /* initialize BIOS font ring */
-void font_set_default();        /* choose the default font */
+void font_init(void);           /* initialize BIOS font ring */
+void font_set_default(void);    /* choose the default font */
 
 #endif /* FONT_H */

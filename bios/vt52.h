@@ -17,9 +17,11 @@
 
 #include "portab.h"
 
-BOOL vt52_initialized;          /* checked by kprintf for safety */
+BOOL vt52_initialized;                  /* checked by kprintf for safety */
 
-void vt52_init();               /* initialize the vt52 console */
-WORD cursconf(WORD, WORD);      /* XBIOS cursor configuration */
+extern void vt52_init(void);            /* initialize the vt52 console */
+extern WORD cursconf(WORD, WORD);       /* XBIOS cursor configuration */
+
+extern void cputc(WORD);
 
 #endif /* VT52_H */

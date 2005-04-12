@@ -34,8 +34,8 @@ void create_XHDI_cookie(void)
 
 /*=========================================================================*/
 
-long XHInqDev2(UWORD drv, UWORD *major, UWORD *minor, ULONG *start,
-               BPB *bpb, ULONG *blocks, char *partid)
+static long XHInqDev2(UWORD drv, UWORD *major, UWORD *minor, ULONG *start,
+                      BPB *bpb, ULONG *blocks, char *partid)
 {
     long pstart = blkdev[drv].start;
     int mediachange = 0;
@@ -79,16 +79,16 @@ long XHInqDev2(UWORD drv, UWORD *major, UWORD *minor, ULONG *start,
    return E_OK;
 }
 
-long XHInqDev(UWORD drv, UWORD *major, UWORD *minor, ULONG *start,
-              BPB *bpb)
+static long XHInqDev(UWORD drv, UWORD *major, UWORD *minor, ULONG *start,
+                     BPB *bpb)
 {
     return XHInqDev2(drv, major, minor, start, bpb, NULL, NULL);
 }
 
 /*=========================================================================*/
 
-long XHInqTarget2(UWORD major, UWORD minor, ULONG *blocksize,
-                  ULONG *deviceflags, char *productname, UWORD stringlen)
+static long XHInqTarget2(UWORD major, UWORD minor, ULONG *blocksize,
+                         ULONG *deviceflags, char *productname, UWORD stringlen)
 {
 #if DBG_XHDI
     kprintf("XHInqTarget2(%d.%d)\n", major, minor); 

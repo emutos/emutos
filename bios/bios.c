@@ -17,7 +17,6 @@
  */
 
 
-
 #include "portab.h"
 #include "bios.h"
 #include "gemerror.h"
@@ -63,6 +62,9 @@ void bufl_init(void);
 void biosmain(void);
 void autoexec(void);
 
+void startup(void);
+LONG bios_do_unimpl(WORD number);
+
 /*==== External declarations ==============================================*/
 
 extern BYTE *biosts;           /*  time stamp string */
@@ -96,22 +98,10 @@ int is_ramtos;                  /* 1 if the TOS is running in RAM */
 
 
 /*
- * testprint - printing routine for tests
- */
-void testprint(void)
-{
-#if 1 // DBGBIOS
-    kprintf("...\n");
-#endif
-}
-
-
-
-/*
  * setup all vectors
  */
  
-void vecs_init(void)
+static void vecs_init(void)
 {
     /* setup default exception vectors */
     init_exc_vec();
@@ -413,7 +403,7 @@ void bios_0(MPB *mpb)
  *   0  device is not ready
  */
 
-LONG bconstat(WORD handle)        /* GEMBIOS character_input_status */
+static LONG bconstat(WORD handle)        /* GEMBIOS character_input_status */
 {
     return protect_v(bconstat_vec[handle & 7]);
 }
@@ -440,7 +430,7 @@ LONG bios_1(WORD handle)
  * returns the character in the low byte.
  */
 
-LONG bconin(WORD handle)
+static LONG bconin(WORD handle)
 {
     return protect_v(bconin_vec[handle & 7]);
 }
@@ -456,7 +446,7 @@ LONG bios_2(WORD handle)
  * bconout  - Print character to output device
  */
 
-void bconout(WORD handle, BYTE what)
+static void bconout(WORD handle, BYTE what)
 {
     protect_ww((PFLONG)(bconout_vec[handle & 7]), handle, what);
 }
@@ -485,7 +475,7 @@ void bios_3(WORD handle, BYTE what)
  * drive = drive #: 0 = A:, 1 = B:, etc
  */
 
-LONG lrwabs(WORD r_w, LONG adr, WORD numb, WORD first, WORD drive, LONG lfirst)
+static LONG lrwabs(WORD r_w, LONG adr, WORD numb, WORD first, WORD drive, LONG lfirst)
 {
     return protect_wlwwwl((PFLONG)hdv_rw, r_w, adr, numb, first, drive, lfirst);
 }
@@ -510,7 +500,7 @@ LONG bios_4(WORD r_w, LONG adr, WORD numb, WORD first, WORD drive, LONG lfirst)
  *
  */
 
-LONG setexec(WORD num, LONG vector)
+static LONG setexec(WORD num, LONG vector)
 {
     LONG oldvector;
     LONG *addr = (LONG *) (4L * num);
@@ -536,7 +526,7 @@ LONG bios_5(WORD num, LONG vector)
  * tickcal - Time between two systemtimer calls
  */
 
-LONG tickcal(void)
+static LONG tickcal(void)
 {
     return(20L);        /* system timer is 50 Hz so 20 ms is the period */
 }
@@ -560,7 +550,7 @@ LONG bios_6(void)
  *  drive - drive  (0 = A:, 1 = B:, etc)
  */
 
-LONG getbpb(WORD drive)
+static LONG getbpb(WORD drive)
 {
     return protect_w(hdv_bpb, drive);
 }
@@ -583,7 +573,7 @@ LONG bios_7(WORD drive)
 
 /* handle  = 0:PRT 1:AUX 2:CON 3:MID 4:KEYB */
 
-LONG bcostat(WORD handle)        /* GEMBIOS character_output_status */
+static LONG bcostat(WORD handle)        /* GEMBIOS character_output_status */
 {
     if(handle>7)
         return 0;               /* Illegal handle */
@@ -614,7 +604,7 @@ LONG bios_8(WORD handle)
  * where "changed" = "removed"
  */
 
-LONG mediach(WORD drv)
+static LONG mediach(WORD drv)
 {
     return protect_w(hdv_mediach, drv);
 }
@@ -635,7 +625,7 @@ LONG bios_9(WORD drv)
  * physical drive, it should return both bits set if a floppy is present.
  */
 
-LONG drvmap(void)
+static LONG drvmap(void)
 {
     return blkdev_drvmap();
 }
@@ -698,7 +688,7 @@ LONG bios_do_unimpl(WORD number)
     return 0;
 }
 
-extern LONG bios_unimpl();
+extern LONG bios_unimpl(void);
 
 
 

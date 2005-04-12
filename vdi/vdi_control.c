@@ -227,7 +227,7 @@ void vswr_mode(Vwk * vwk)
 
 
 
-void init_wk(Vwk * vwk)
+static void init_wk(Vwk * vwk)
 {
     WORD l;
     WORD *pointer, *src_ptr;

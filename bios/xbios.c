@@ -32,9 +32,7 @@
 #include "mouse.h"
 #include "asm.h"
 #include "vectors.h"
-#if 0
 #include "xbios.h"
-#endif
 
 #define DBG_XBIOS        0
 
@@ -51,7 +49,7 @@
  * bios initialization that can be done in hi level lang. startup.s has
  * the rest.
  */
-
+#if 0
 void xbiosinit(void)
 {
     /*
@@ -62,7 +60,7 @@ void xbiosinit(void)
     kprintf("XBIOS: Initialization ...\n");
 #endif
 }
-
+#endif
 
 
 
@@ -332,7 +330,7 @@ void xbios_d(WORD interno, LONG vector)
  * xbios_e - (iorec) Returns pointer to a serial device's input buffer record.
  */
 
-LONG iorec(WORD devno)
+static LONG iorec(WORD devno)
 {
     switch(devno) {
     case 0:
@@ -413,7 +411,7 @@ LONG xbios_10(LONG unshift, LONG shift, LONG capslock)
 
 static ULONG rseed;
 
-LONG random(void)
+static LONG random(void)
 {
     if(rseed == 0) {
         rseed = hz_200 << 16;
@@ -680,7 +678,7 @@ void xbios_20(LONG ptr)
  *
  */
  
-LONG kbdvbase(void)
+static LONG kbdvbase(void)
 {
     return (LONG) &kbdvecs;
 }
@@ -740,7 +738,7 @@ void xbios_25(void)
  * with GEMDOS get/set supervisor mode call.
  */
 
-LONG supexec(LONG codeptr)
+static LONG supexec(LONG codeptr)
 {
     return ((LONG(*)(void))codeptr)();
 }
@@ -805,7 +803,7 @@ LONG xbios_2b(LONG sector, WORD count, PTR buf, WORD dev)
  * xbios_2c - (Bconmap) 
  */
 
-LONG bconmap(WORD devno)
+static LONG bconmap(WORD devno)
 {
     /* TODO, should we implement it? */
 #if IMPLEMENTED
@@ -860,7 +858,7 @@ LONG xbios_do_unimpl(WORD number)
     return 0;
 }
 
-extern LONG xbios_unimpl();
+extern LONG xbios_unimpl(void);
 
 
 /*

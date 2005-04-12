@@ -144,7 +144,6 @@ int nextcl(OFD *p, int wrtflg)
         CLNO    i ;
         CLNO    rover ;
         CLNO    cl,cl2 ;                                /*  M01.01.03   */
-        CLNO    getcl() ;
 
         cl = p->o_curcl;
         dm = p->o_dmd;

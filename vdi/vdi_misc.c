@@ -82,6 +82,7 @@ void arb_line(Line * line)
 /*
  * arb_hzline - copy and sort (arbitrate) the line x coordinates
  */
+#if 0
 void arb_hzline(Line * line)
 {
     /* Fix the x coordinate values, if necessary. */
@@ -91,7 +92,7 @@ void arb_hzline(Line * line)
         line->x2 = temp;
     }
 }
-
+#endif
 
 
 WORD Isqrt(ULONG x)
@@ -126,7 +127,7 @@ WORD Isqrt(ULONG x)
  * The etv_timer does point to this routine
  */
  
-void tick_int(int u)
+static void tick_int(int u)
 {
     if (!in_proc) {
         in_proc = 1;                    // set flag, that we are running

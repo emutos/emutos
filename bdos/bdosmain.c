@@ -294,7 +294,7 @@ void    osinit(void)
  *  ncmps -  compare two text strings, ingoreing case.
  */
 
-int     ncmps(int n, char *s, char *d)
+static int ncmps(int n, char *s, char *d)
 {
     while (n--)
         if (uc(*s++) != uc(*d++))
@@ -309,7 +309,7 @@ int     ncmps(int n, char *s, char *d)
  *  freetree -  free the directory node tree
  */
 
-void    freetree(DND *d)
+static void freetree(DND *d)
 {
     int i;
 
@@ -336,7 +336,7 @@ void    freetree(DND *d)
  *  offree -
  */
 
-void    offree(DMD *d)
+static void offree(DMD *d)
 {
     int i;
     OFD *f;
@@ -356,14 +356,12 @@ void    offree(DMD *d)
  * These both are just wrappers for some BIOS function. They are made
  * to avoid the 'clobbered by longjmp or vfork' compiler warnings!
  */
-static
-BPB *   MyGetbpb(errdrv)
+static BPB * MyGetbpb(WORD errdrv)
 {
     return (BPB *) Getbpb(errdrv);
 }
 
-static
-long    MyBconout(short dev, short c)
+static long MyBconout(short dev, short c)
 {
     return Bconout(dev, c);
 }
@@ -653,8 +651,4 @@ restrt:
     }
     return(rc);
 }
-
-
-
-
 

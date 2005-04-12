@@ -32,7 +32,7 @@
 static void neg_cell(UBYTE *);
 static UBYTE * cell_addr(int, int);
 static void cell_xfer(UBYTE *, UBYTE *);
-static BOOL next_cell();
+static BOOL next_cell(void);
 
 
 
@@ -536,8 +536,7 @@ invert_cell(int x, int y)
  *     true  - CR LF required (position has not been updated)
  */
 
-static BOOL
-next_cell()
+static BOOL next_cell(void)
 {
     /* check bounds against screen limits */
     if ( v_cur_cx == v_cel_mx ) {               /* increment cell ptr */

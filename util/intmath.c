@@ -10,7 +10,7 @@
 
 
 #include "portab.h"
-
+#include "intmath.h"
 
 
 /*
@@ -25,7 +25,7 @@
  * d1 = signed 16 bit integer
  */
 
-int mul_div(WORD m1, UWORD m2, WORD d1)
+WORD mul_div(WORD m1, UWORD m2, WORD d1)
 {
     return (WORD)(((WORD)(m1)*(LONG)((WORD)(m2))) / (WORD)d1);
 }

@@ -156,13 +156,13 @@ void vql_attr(Vwk * vwk)
  *
  * This routine is just a wrapper for horzline.
  */
-
+#if 0
 void habline(Vwk * vwk) {
     Line * line = (Line*)PTSIN;
 
     horzline(vwk, line);
 }
-
+#endif
 
 
 /*
@@ -672,8 +672,7 @@ void v_pline(Vwk * vwk)
 /*
  * clip_code - helper function
  */
-
-WORD clip_code(Vwk * vwk, WORD x, WORD y)
+static WORD clip_code(Vwk * vwk, WORD x, WORD y)
 {
     WORD clip_flag;
 
@@ -688,7 +687,6 @@ WORD clip_code(Vwk * vwk, WORD x, WORD y)
         clip_flag += 8;
     return (clip_flag);
 }
-
 
 
 /*
@@ -759,8 +757,7 @@ void polyline(Vwk * vwk, Point * point, int count)
 /*
  * quad_xform - Transform according to the quadrant.
  */
-
-void quad_xform(WORD quad, WORD x, WORD y, WORD *tx, WORD *ty)
+static void quad_xform(WORD quad, WORD x, WORD y, WORD *tx, WORD *ty)
 {
     switch (quad) {
     case 1:
@@ -793,7 +790,7 @@ void quad_xform(WORD quad, WORD x, WORD y, WORD *tx, WORD *ty)
  * perp_off -
  */
 
-void perp_off(WORD * px, WORD * py)
+static void perp_off(WORD * px, WORD * py)
 {
     WORD *vx, *vy, *pcircle, u, v;
     WORD x, y, quad, magnitude, min_val;
@@ -862,7 +859,7 @@ void perp_off(WORD * px, WORD * py)
  * cir_dda - Used in wideline()
  */
 
-void cir_dda(Vwk * vwk)
+static void cir_dda(Vwk * vwk)
 {
     WORD i, j;
     WORD *xptr, *yptr, x, y, d;
@@ -923,7 +920,7 @@ void cir_dda(Vwk * vwk)
  * do_circ - draw a circle
  */
 
-void do_circ(Vwk * vwk, WORD cx, WORD cy)
+static void do_circ(Vwk * vwk, WORD cx, WORD cy)
 {
     WORD k;
     WORD *pointer;
@@ -1127,7 +1124,7 @@ WORD vec_len(WORD dx, WORD dy)
  * arrow - Draw an arrow
  */
 
-void draw_arrow(Vwk * vwk, Point * point, int inc)
+static void draw_arrow(Vwk * vwk, Point * point, int inc)
 {
     WORD arrow_len, arrow_wid, line_len;
     WORD dx, dy;

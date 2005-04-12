@@ -250,15 +250,15 @@ extern BYTE     cur_ms_stat;    /* current mouse status */
 
 
 /* Assembly Language Support Routines NEWLY ADDED */
-void text_blt();
-void xfm_crfm();
+void text_blt(void);
+void xfm_crfm(Vwk * vwk);
 void rectfill (Vwk * vwk, Rect * rect);
 
 
-WORD gloc_key();
-WORD gchc_key();
-WORD gchr_key();
-WORD gshift_s();
+WORD gloc_key(void);
+WORD gchc_key(void);
+WORD gchr_key(void);
+WORD gshift_s(void);
 
 BOOL clip_line(Vwk * vwk, Line * line);
 WORD vec_len(WORD x, WORD y);

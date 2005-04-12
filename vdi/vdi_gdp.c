@@ -27,7 +27,7 @@
 /* Prototypes local to this module */
 void gdp_rbox(Vwk * vwk);
 void gdp_arc(Vwk * vwk);
-int  clc_nsteps();
+int  clc_nsteps(void);
 void gdp_ell(Vwk * vwk);
 void clc_arc(Vwk * vwk, int steps);
 void quad_xform(WORD quad, WORD x, WORD y, WORD *tx, WORD *ty);
@@ -120,7 +120,7 @@ static WORD Icos(WORD angle)
  * clc_pts - calculates
  */
 
-void clc_pts(WORD j)
+static void clc_pts(WORD j)
 {
     WORD k;
     WORD *pointer;
@@ -230,7 +230,7 @@ void v_gdp(Vwk * vwk)
         del_ang = 3600;
         beg_ang = 0;
         end_ang = 3600;
-        clc_arc(vwk, clc_nsteps(vwk));
+        clc_arc(vwk, clc_nsteps(/*vwk*/));
         break;
 
     case 5:         /* GDP ELLIPSE */
@@ -243,7 +243,7 @@ void v_gdp(Vwk * vwk)
         del_ang = 3600;
         beg_ang = 0;
         end_ang = 0;
-        clc_arc(vwk, clc_nsteps(vwk));
+        clc_arc(vwk, clc_nsteps(/*vwk*/));
         break;
 
     case 6:         /* GDP ELLIPTICAL ARC */
@@ -387,7 +387,7 @@ void gdp_arc(Vwk * vwk)
     pointer = PTSIN;
     xrad = *(pointer + 6);
     yrad = mul_div(xrad, xsize, ysize);
-    steps = clc_nsteps(vwk);
+    steps = clc_nsteps(/*vwk*/);
     steps = mul_div(del_ang, steps, 3600);
     if (steps == 0)
         return;
@@ -403,7 +403,7 @@ void gdp_arc(Vwk * vwk)
  * clc_nsteps - calculates
  */
 
-int clc_nsteps()
+int clc_nsteps(void)
 {
     int steps;
 
@@ -446,13 +446,11 @@ void gdp_ell(Vwk * vwk)
     yrad = *pointer;
     if (vwk->xfm_mode < 2)
         yrad = yres - yrad;
-    steps = clc_nsteps(vwk);
+    steps = clc_nsteps(/*vwk*/);
     steps = mul_div(del_ang, steps, 3600);
     if (steps == 0)
         return;
     clc_arc(vwk, steps);
     return;
 }
-
-
 

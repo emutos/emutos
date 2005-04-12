@@ -20,6 +20,8 @@
 
 #define DBG_LINEA 0
 
+/* Forward prototypes */
+void linea_init(void);
 
 
 /* Shift table for computing offsets into a scan line (interleaved planes) */

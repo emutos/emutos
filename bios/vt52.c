@@ -19,52 +19,53 @@
 #include "sound.h"              /* for bell() */
 #include "string.h"
 #include "conout.h"
-
+#include "vt52.h"
 
 
 /*
  * internal prototypes
  */
 
-static void nop();
-static void cursor_up();
-static void cursor_down();
-static void cursor_left();
-static void cursor_right();
-static void clear_and_home();
-static void cursor_home();
-static void reverse_linefeed();
-static void erase_to_eos();
-static void erase_to_eol();
-static void insert_line();
-static void delete_line();
+static void nop(void);
+static void cursor_up(void);
+static void cursor_down(void);
+static void cursor_left(void);
+static void cursor_right(void);
+static void clear_and_home(void);
+static void cursor_home(void);
+static void reverse_linefeed(void);
+static void erase_to_eos(void);
+static void erase_to_eol(void);
+static void insert_line(void);
+static void delete_line(void);
 
-static void set_fg();
-static void set_bg();
-static void erase_from_home();
-static void cursor_off();
-static void cursor_on();
-static void cursor_on_cnt();
-static void save_cursor_pos();
-static void restore_cursor_pos();
-static void erase_line();
-static void erase_to_eol();
-static void erase_from_bol();
-static void reverse_video_on();
-static void reverse_video_off();
-static void line_wrap_on();
-static void line_wrap_off();
+static void set_fg(void);
+static void set_bg(void);
+static void erase_from_home(void);
+static void cursor_off(void);
+static void cursor_on(void);
+static void cursor_on_cnt(void);
+static void save_cursor_pos(void);
+static void restore_cursor_pos(void);
+static void erase_line(void);
+static void erase_to_eol(void);
+static void erase_from_bol(void);
+static void reverse_video_on(void);
+static void reverse_video_off(void);
+static void line_wrap_on(void);
+static void line_wrap_off(void);
 
-static void do_bell();
-static void do_tab();
-static void ascii_lf();
-static void ascii_cr();
+static void do_bell(void);
+static void do_tab(void);
+static void ascii_lf(void);
+static void ascii_cr(void);
 
 /* handlers for the console state machine */
 static void esc_ch1(WORD);
 static void get_row(WORD);
 static void get_column(WORD);
 
+void blink(void);
 
 
 
@@ -77,7 +78,7 @@ BOOL vt52_initialized;  /* checked by kprintf for safety */
 
 
 /* jumptable for ESC + uppercase character */
-void (*am_tab[])() = {
+void (*am_tab[])(void) = {
     cursor_up,          /* Cursor Up */
     cursor_down,        /* Cursor Down */
     cursor_right,       /* Cursor Right */
@@ -95,7 +96,7 @@ void (*am_tab[])() = {
 
 
 /* jumptable for ESC + lowercase character */
-void (*bw_tab[])() = {
+void (*bw_tab[])(void) = {
     set_fg,             /* Set foreground color (1 more char) */
     set_bg,             /* Set background color (1 more char) */
     erase_from_home,    /* Erase from beginning of page */
@@ -121,7 +122,7 @@ void (*bw_tab[])() = {
 };
 
 /* jumptable for ASCII control codes */
-void (*cntl_tab[])() = {
+void (*cntl_tab[])(void) = {
     do_bell,            /* 7 = bell */
     cursor_left,        /* 8 = backspace */
     do_tab,             /* 9 = Horizontal tab */
@@ -144,17 +145,6 @@ cputc(WORD ch)
     (*con_state)(ch & 0xff);
 }
 
-
-
-/*
- * bconout5 - raw console output.
- */
-
-void
-bconout5 (WORD ch)
-{
-    ascii_out(ch);
-}
 
 
 /*
@@ -199,7 +189,7 @@ normal_ascii(WORD ch)
 
 
 static void
-nop()
+nop(void)
 {
     return;
 }
@@ -213,7 +203,7 @@ nop()
  */
 
 static void
-do_bell () {
+do_bell(void) {
     if (conterm & 4) {
         bell();
     }
@@ -226,7 +216,7 @@ do_bell () {
  */
 
 static void
-do_tab () {
+do_tab(void) {
     move_cursor((v_cur_cx & 0xfff8) + 8, v_cur_cy);
 }
 
@@ -320,14 +310,14 @@ get_bg_col (WORD ch)
 
 
 static void
-set_fg ()
+set_fg(void)
 {
     con_state = get_fg_col;             /* Next char is the FG color */
 }
 
 
 static void
-set_bg ()
+set_bg(void)
 {
     con_state = get_bg_col;             /* Next char is the BG color */
 }
@@ -342,7 +332,7 @@ set_bg ()
  */
 
 static void
-clear_and_home ()
+clear_and_home(void)
 {
     move_cursor(0, 0);                          /* cursor home */
     blank_out (0, 0, v_cel_mx, v_cel_my);        /* clear screen. */
@@ -355,7 +345,7 @@ clear_and_home ()
  */
 
 static void
-cursor_up ()
+cursor_up (void)
 {
     if ( v_cur_cy )
         move_cursor(v_cur_cx, v_cur_cy - 1);
@@ -369,7 +359,7 @@ cursor_up ()
  */
 
 static void
-cursor_down ()
+cursor_down (void)
 {
     if ( v_cur_cy != v_cel_my)
         move_cursor(v_cur_cx, v_cur_cy + 1);
@@ -382,7 +372,7 @@ cursor_down ()
  */
 
 static void
-cursor_right ()
+cursor_right (void)
 {
     if ( v_cur_cx != v_cel_mx)
         move_cursor(v_cur_cx + 1, v_cur_cy);   
@@ -395,7 +385,7 @@ cursor_right ()
  */
 
 static void
-cursor_left ()
+cursor_left (void)
 {
     if ( v_cur_cx )
         move_cursor(v_cur_cx - 1, v_cur_cy);
@@ -408,7 +398,7 @@ cursor_left ()
  */
 
 static void
-cursor_home ()
+cursor_home (void)
 {
     move_cursor(0, 0);
 }
@@ -420,7 +410,7 @@ cursor_home ()
  */
 
 static void
-erase_to_eos ()
+erase_to_eos (void)
 {
     erase_to_eol();    /* erase to end of line. */
 
@@ -439,7 +429,7 @@ erase_to_eos ()
  */
 
 static void
-erase_to_eol ()
+erase_to_eol (void)
 {
     BOOL wrap = v_stat_0 & M_CEOL;      /* save line wrap status */
     v_stat_0 &= ~M_CEOL;    /* clear EOL handling bit. (overwrite) */
@@ -472,7 +462,7 @@ erase_to_eol ()
  */
 
 static void
-reverse_video_on ()
+reverse_video_on (void)
 {
     v_stat_0 |= M_REVID;    /* set the reverse bit. */
 }
@@ -486,7 +476,7 @@ reverse_video_on ()
  */
 
 static void
-reverse_video_off ()
+reverse_video_off (void)
 {
     v_stat_0 &= ~M_REVID;    /* clear the reverse bit. */
 }
@@ -497,7 +487,7 @@ reverse_video_off ()
  * reverse_linefeed - Reverse Index
  */
 static void
-reverse_linefeed ()
+reverse_linefeed (void)
 {
     /* if not at top of screen */
     if ( v_cur_cy ) {
@@ -517,7 +507,7 @@ reverse_linefeed ()
  */
 
 static void
-insert_line ()
+insert_line (void)
 {
     cursor_off();               /* hide cursor. */
     scroll_down(v_cur_cy);      /* scroll down 1 line & blank current line. */
@@ -532,7 +522,7 @@ insert_line ()
  */
 
 static void
-delete_line ()
+delete_line (void)
 {
     cursor_off();               /* hide cursor. */
     scroll_up(v_cur_cy);        /* scroll up 1 line & blank bottom line. */
@@ -547,7 +537,7 @@ delete_line ()
  */
 
 static void
-erase_from_home ()
+erase_from_home (void)
 {
     erase_from_bol();    /* erase from beginning of line. */
 
@@ -566,7 +556,7 @@ erase_from_home ()
  */
 
 static void
-do_cnt_esce ()
+do_cnt_esce (void)
 {
     /* see if flashing is enabled. */
     if ( v_stat_0 & M_CFLASH ) {
@@ -588,7 +578,7 @@ do_cnt_esce ()
  */
 
 static void
-cursor_on()
+cursor_on(void)
 {
     /* if disable count is zero (cursor still shown) then return */
     if ( !disab_cnt )
@@ -605,7 +595,7 @@ cursor_on()
  */
 
 static void
-cursor_on_cnt()
+cursor_on_cnt(void)
 {
     /* if disable count is zero (cursor still shown) then return */
     if ( !disab_cnt )
@@ -623,7 +613,7 @@ cursor_on_cnt()
  */
 
 static void
-cursor_off ()
+cursor_off (void)
 {
     disab_cnt++;                        /* increment the disable counter */
 
@@ -651,7 +641,7 @@ cursor_off ()
  */
 
 static void
-save_cursor_pos ()
+save_cursor_pos (void)
 {
     v_stat_0 |= M_SVPOS;    /* set "position saved" status bit. */
 
@@ -667,7 +657,7 @@ save_cursor_pos ()
  */
 
 static void
-restore_cursor_pos ()
+restore_cursor_pos (void)
 {
     if ( v_stat_0 & M_SVPOS )
         move_cursor(sav_cur_x, sav_cur_y);      /* move to saved position. */
@@ -686,7 +676,7 @@ restore_cursor_pos ()
  */
 
 static void
-erase_line ()
+erase_line (void)
 {
     cursor_off();               /* hide cursor. */
     blank_out (0, v_cur_cy, v_cel_mx, v_cur_cy);   /* blank whole line. */
@@ -704,7 +694,7 @@ erase_line ()
  */
 
 static void
-erase_from_bol ()
+erase_from_bol (void)
 {
     cursor_off();               /* hide cursor. */
     save_cursor_pos();          /* save cursor position. */
@@ -732,7 +722,7 @@ erase_from_bol ()
  * line_wrap_on() - Wrap at End of Line.
  */
 static void
-line_wrap_on()
+line_wrap_on(void)
 {
     v_stat_0 |= M_CEOL;    /* set the eol handling bit. */
 }
@@ -743,7 +733,7 @@ line_wrap_on()
  * line_wrap_off - Discard at End of Line.
  */
 static void
-line_wrap_off()
+line_wrap_off(void)
 {
     v_stat_0 &= ~M_CEOL;    /* clear the eol handling bit. */
 }
@@ -754,7 +744,7 @@ line_wrap_off()
  * ascii_cr - carriage return.
  */
 static void
-ascii_cr ()
+ascii_cr (void)
 {
     /* beginning of current line. */
     move_cursor(0, v_cur_cy);
@@ -766,7 +756,7 @@ ascii_cr ()
  * ascii_lf - line feed.
  */
 static void
-ascii_lf ()
+ascii_lf (void)
 {
     /* at bottom of screen? */
     if ( v_cur_cy != v_cel_my )
@@ -787,7 +777,7 @@ ascii_lf ()
  */
 
 void
-blink ()
+blink (void)
 {
     /* test visibility/semaphore bit. */
     if (!(v_stat_0 & M_CVIS) )
@@ -865,7 +855,7 @@ cursconf(WORD function, WORD operand)
  */
 
 void
-vt52_init()
+vt52_init(void)
 {
     /* Initial cursor settings */
     v_cur_cx = 0;                       // cursor to column 0

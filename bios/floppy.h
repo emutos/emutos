@@ -41,6 +41,8 @@ extern WORD floprate(WORD dev, WORD rate);
 
 /* internal functions */
 
+extern void flopvbl(void);
+
 /* call hdv_boot() and execute bootsector */
 extern void do_hdv_boot(void);  
 

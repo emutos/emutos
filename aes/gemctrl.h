@@ -9,6 +9,6 @@ extern WORD     gl_wa[];
 
 void ct_chgown(PD *mpd, GRECT *pr);
 void ct_mouse(WORD grabit);
-void ctlmgr();
+void ctlmgr(void);
 
 #endif

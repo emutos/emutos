@@ -66,7 +66,6 @@ extern LONG (*bcostat_vec[])(void);
 /* internal init routine */
 
 extern void chardev_init(void);
-extern void cputc(WORD);        /* found in conout.s */
  
 #endif /* BIOSDEVS_H */
 

@@ -10,15 +10,20 @@
 #ifndef XBIOS_H
 #define XBIOS_H
  
+#if 0
+
 /* initializes the xbios */
 void xbiosinit(void);
 
-#if 0
 /* misc XBIOS functions */
 LONG iorec(WORD devno);
 LONG random(void);
 LONG kbdvbase(void);
 LONG supexec(LONG codeptr);
 LONG bconmap(WORD devno);
+
 #endif
+
+LONG xbios_do_unimpl(WORD number);
+
 #endif /* XBIOS_H */

@@ -17,19 +17,19 @@ extern LONG  gl_mlen;
 extern WORD  gl_graphic;
 
 
-ULONG gsx_mcalc();
-void gsx_malloc();
-void gsx_mfree();
+ULONG gsx_mcalc(void);
+void gsx_malloc(void);
+void gsx_mfree(void);
 
 void gsx_mret(LONG *pmaddr, LONG *pmlen);
 void gsx_ncode(WORD code, WORD n, WORD m);
 void gsx_1code(WORD code, WORD value);
 
-void gsx_wsclose();
+void gsx_wsclose(void);
 
-void ratinit();
-void ratexit();
-void gsx_init();
+void ratinit(void);
+void ratexit(void);
+void gsx_init(void);
 void gsx_exec(LONG pcspec, WORD segenv, LONG pcmdln, LONG pfcb1, LONG pfcb2);
 void gsx_graphic(WORD tographic);
 void bb_save(GRECT *ps);
@@ -39,10 +39,10 @@ WORD gsx_tick(void *tcode, void *ptsave);
 void gsx_mfset(LONG pmfnew);
 
 void gsx_mxmy(WORD *pmx, WORD *pmy);
-WORD gsx_kstate();
-void gsx_mon();
-void gsx_moff();
-WORD gsx_char();
+WORD gsx_kstate(void);
+void gsx_mon(void);
+void gsx_moff(void);
+WORD gsx_char(void);
 
 void g_v_pline(WORD  count, WORD *pxyarray );
 void vst_clip(WORD clip_flag, WORD *pxyarray );

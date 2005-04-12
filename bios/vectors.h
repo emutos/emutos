@@ -57,10 +57,10 @@ extern void int_priv(void);
 extern WORD trap_save_area[];
 
 /* pointer to function returning LONG */
-typedef LONG (*PFLONG)();
+typedef LONG (*PFLONG)(void);
 
 /* pointer to function returning VOID */
-typedef void (*PFVOID)();
+typedef void (*PFVOID)(void);
 
 #define VEC_ILLEGAL (*(PFVOID*)0x10)    /* illegal instruction vector */
 #define VEC_DIVNULL (*(PFVOID*)0x14)    /* division by zero exception vector */
@@ -82,8 +82,8 @@ typedef void (*PFVOID)();
 
 LONG protect_v(LONG (*func)(void));
 LONG protect_w(LONG (*func)(WORD), WORD);
-LONG protect_ww(LONG (*func)(), WORD, WORD);
-LONG protect_wlwwwl(LONG (*func)(), WORD, LONG, WORD, WORD, WORD, LONG);
+LONG protect_ww(LONG (*func)(void), WORD, WORD);
+LONG protect_wlwwwl(LONG (*func)(void), WORD, LONG, WORD, WORD, WORD, LONG);
 
 #endif /* VECTORS_H */
   

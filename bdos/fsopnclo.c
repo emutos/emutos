@@ -265,40 +265,6 @@ ixopen(char *name, int mod)
 
 
 /*
-**  opnfil - does the real work in opening a file
-**
-**      Error returns
-**              ENHNDL
-**
-**      NOTES:
-**              make a pointer to the ith entry of sft 
-**              make i a register int.
-*/
-
-static long opnfil(FCB *f, DND *dn, int mod)
-{
-        register int i;
-        int h;
-
-        long    makopn() ;
-
-        /* find free sft handle */
-        for (i = 0; i < OPNFILES; i++)
-                if( !sft[i].f_own )
-                        break;
-
-        if (i == OPNFILES)
-                return(ENHNDL);
-
-        sft[i].f_own = run;
-        sft[i].f_use = 1;
-        h = i+NUMSTD;
-
-        return(makopn(f, dn, h, mod));
-}
-
-
-/*
 **  makopn - make an open file for sft handle h 
 **
 **      Last modified   SCC     8 Apr 85
@@ -349,6 +315,38 @@ static long makopn(FCB *f, DND *dn, int h, int mod)
         }
 
         return(h);
+}
+
+
+/*
+**  opnfil - does the real work in opening a file
+**
+**      Error returns
+**              ENHNDL
+**
+**      NOTES:
+**              make a pointer to the ith entry of sft 
+**              make i a register int.
+*/
+
+static long opnfil(FCB *f, DND *dn, int mod)
+{
+        register int i;
+        int h;
+
+        /* find free sft handle */
+        for (i = 0; i < OPNFILES; i++)
+                if( !sft[i].f_own )
+                        break;
+
+        if (i == OPNFILES)
+                return(ENHNDL);
+
+        sft[i].f_own = run;
+        sft[i].f_use = 1;
+        h = i+NUMSTD;
+
+        return(makopn(f, dn, h, mod));
 }
 
 

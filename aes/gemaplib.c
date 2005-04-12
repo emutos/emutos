@@ -37,6 +37,7 @@
 #include "gemdisp.h"
 #include "gemsclib.h"
 #include "gemrslib.h"
+#include "gemaplib.h"
 
 #include "string.h"
 

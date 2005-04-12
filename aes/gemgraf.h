@@ -71,7 +71,7 @@ void gsx_blt(LONG saddr, UWORD sx, UWORD sy, UWORD swb,
 void bb_screen(WORD scrule, WORD scsx, WORD scsy, WORD scdx, WORD scdy,
                WORD scw, WORD sch);
 void gsx_trans(LONG saddr, UWORD swb, LONG daddr, UWORD dwb, UWORD h);
-void gsx_start();
+void gsx_start(void);
 void bb_fill(WORD mode, WORD fis, WORD patt, WORD hx, WORD hy, WORD hw, WORD hh);
 void gsx_tblt(WORD tb_f, WORD x, WORD y, WORD tb_nc);
 void gr_inside(GRECT *pt, WORD th);

@@ -143,6 +143,6 @@ extern char    * rs_fstr[];
 extern BITBLK    rs_fimg[];
 
 
-extern void gem_rsc_init();
-extern void gem_rsc_fixit();
+extern void gem_rsc_init(void);
+extern void gem_rsc_fixit(void);
 

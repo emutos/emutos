@@ -222,6 +222,8 @@ static UWORD mdogetdate(void)
 
 /*==== MegaRTC high-level functions ========================================*/
 
+#if 0  /* currently unused */
+
 static void msettime(UWORD time)
 {
   mgetregs();
@@ -248,6 +250,8 @@ static UWORD mgetdate(void)
   return mdogetdate();
 }
 
+#endif
+
 static ULONG mgetdt(void)
 {
   mgetregs();
@@ -260,6 +264,7 @@ static void msetdt(ULONG dt)
   mdosettime(dt);
   msetregs();
 }
+
 
 /*==== NVRAM RTC internal functions =======================================*/
 
@@ -319,13 +324,14 @@ static UWORD ndogettime(void)
   return time;
 }
 
-
+#if 0 /* currently unused */
 static void ndosetdate(UWORD date)
 {
   set_nvram_rtc(NVRAM_RTC_DAYS, date & 0x1F);
   set_nvram_rtc(NVRAM_RTC_MONTHS, (date >> 5) & 0xF);
   set_nvram_rtc(NVRAM_RTC_YEARS, (date >> 9) - nvram_rtc_year_offset);
 }
+#endif
 
 static UWORD ndogetdate(void)
 {
@@ -339,6 +345,8 @@ static UWORD ndogetdate(void)
 }
 
 /*==== NVRAM RTC high-level functions ======================================*/
+
+#if 0 /* currently unused */
 
 static void nsettime(UWORD time)
 {
@@ -359,6 +367,8 @@ static UWORD ngetdate(void)
 {
   return ndogetdate();
 }
+
+#endif
 
 static ULONG ngetdt(void)
 {
@@ -421,6 +431,7 @@ static void igetregs(void)
 #endif /* !NO_IKBD_CLOCK */
 }
 
+#if 0  /* currently unused */
 static void iresetregs(void)
 {
 #if !NO_IKBD_CLOCK
@@ -433,6 +444,7 @@ static void iresetregs(void)
   iclkbuf.sec   = 0xFF;
 #endif /* !NO_IKBD_CLOCK */
 }
+#endif
 
 static void isetregs(void)
 {
@@ -489,6 +501,7 @@ static void idosetdate(UWORD date)
 
 /*==== Ikbd Clock high-level functions ====================================*/
 
+#if 0  /* currently unused */
 static void isettime(UWORD time)
 {
   iresetregs();
@@ -514,6 +527,7 @@ static UWORD igetdate(void)
   igetregs();
   return idogetdate();
 }
+#endif
 
 static ULONG igetdt(void)
 {
@@ -530,7 +544,7 @@ static void isetdt(ULONG dt)
 
 
 /* internal BIOS function */
-
+#if 0
 void date_time(WORD flag, WORD *dt)
 {
 #if ! NO_NVRAM
@@ -585,6 +599,8 @@ void date_time(WORD flag, WORD *dt)
     }
   }
 }
+#endif
+
 
 /* internal init */
 

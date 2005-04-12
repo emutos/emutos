@@ -92,8 +92,6 @@ static int divmod(int *modp, long divdnd, int divsor)
 long    xlseek(long n, int h, int flg)
 {
     OFD *f;
-    long        ixlseek() ;
-
 
     f = getofd(h);
     if ( !f )

@@ -993,7 +993,6 @@ xch:    if (p[1] == ':')
 long    xgetdir(char *buf, int drv) 
 {
         DND     *p;
-        char    *dopath();
         int     len;                                            /* M01.01.1024.02 */
 
         drv = (drv == 0) ? run->p_curdrv : drv-1 ;

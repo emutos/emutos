@@ -38,7 +38,7 @@
 #include "gemasm.h"
 #include "optimopt.h"
 #include "rectfunc.h"
-
+#include "gemctrl.h"
 
 
 #define FIXLATER        0
@@ -89,7 +89,7 @@ static WORD             gl_tmpmoff;
 /*
  * Send message and wait for the mouse button to come up
  */
-void ct_msgup(WORD message, PD *owner, WORD wh, WORD m1, WORD m2, WORD m3, WORD m4)
+static void ct_msgup(WORD message, PD *owner, WORD wh, WORD m1, WORD m2, WORD m3, WORD m4)
 {
         if (message == NULL)
           return;
@@ -108,7 +108,7 @@ void ct_msgup(WORD message, PD *owner, WORD wh, WORD m1, WORD m2, WORD m3, WORD 
 }
 
 
-void hctl_window(WORD w_handle, WORD mx, WORD my)
+static void hctl_window(WORD w_handle, WORD mx, WORD my)
 {
         GRECT           t, f, pt;
         WORD            x, y, w, h, ii;
@@ -273,7 +273,7 @@ doelev:         message = (cpt == W_HELEV) ? WM_HSLID : WM_VSLID;
 }
 
 
-void hctl_rect()
+static void hctl_rect(void)
 {
         WORD            title, item;
         register WORD   mesag;
@@ -407,7 +407,7 @@ hctl_mesag(pmbuf)
 *       the system.
 */
 
-void ctlmgr()
+void ctlmgr(void)
 {
         register WORD   ev_which;
         WORD            rets[6];

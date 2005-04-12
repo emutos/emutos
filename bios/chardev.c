@@ -12,14 +12,15 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
-
 #include "portab.h"
 #include "bios.h"
 #include "gemerror.h"
 #include "kprint.h"
 #include "tosvars.h"
 #include "chardev.h"
+#include "conout.h"
+#include "vt52.h"
+
 
 /*==== Defines ============================================================*/
 
@@ -147,6 +148,12 @@ void bconout1(WORD dev, WORD b)
 void bconout2(WORD dev, WORD b)
 {
   cputc(b);
+}
+
+/* bconout5 - raw console output. */
+void bconout5(WORD dev, WORD ch)
+{
+    ascii_out(ch);
 }
 
 void bconout6(WORD dev, WORD b)

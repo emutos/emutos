@@ -28,11 +28,12 @@
 #include "gemqueue.h"
 #include "optimopt.h"
 #include "gemasm.h"
+#include "gemasync.h"
 
 #include "string.h"
 
 
-void signal(EVB *e)
+static void signal(EVB *e)
 {
         register PD     *p, *p1, *q1;
 
@@ -91,7 +92,7 @@ void evinsert(EVB *e, EVB **root)
 }
 
 
-void takeoff(EVB *p)
+static void takeoff(EVB *p)
 {
         register LONG   c;
 

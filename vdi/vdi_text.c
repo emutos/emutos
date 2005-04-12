@@ -80,7 +80,7 @@ WORD rmcharx, rmchary;   /* add this to use up remainder     */
 /* Prototypes for this module */
 void make_header(Vwk * vwk);
 WORD clc_dda(Vwk * vwk, WORD act, WORD req);
-
+WORD act_siz(Vwk * vwk, WORD top);
 
 
 void d_gtext(Vwk * vwk)
@@ -347,7 +347,7 @@ void d_gtext(Vwk * vwk)
  *     FBASE  = starting address of the font data.
  */
 
-void trnsfont()
+static void trnsfont(void)
 {
     WORD cnt, i;
     UWORD *addr;
@@ -555,7 +555,7 @@ WORD act_siz(Vwk * vwk, WORD top)
 
 
 
-void copy_name(BYTE * source, BYTE * dest)
+static void copy_name(BYTE * source, BYTE * dest)
 {
     WORD i;
     BYTE *sptr, *dptr;

@@ -15,6 +15,8 @@
 #include "vdi_defs.h"
 #include "kprint.h"
 
+/* forward prototypes */
+void screen(void);
 
 
 #define ptsin_size 256          // max. # of elements allowed for PTSIN array
@@ -121,7 +123,7 @@ void(*jmptb2[])(Vwk *) = {
  * screen - Screen driver entry point
  */
 
-void screen()
+void screen(void)
 {
     WORD opcode, handle;
     Vwk *vwk = NULL;

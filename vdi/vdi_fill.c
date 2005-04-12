@@ -28,7 +28,7 @@
 
 
 /* prototypes */
-void crunch_queue();
+void crunch_queue(void);
 static BOOL clipbox(Vwk * vwk, Rect * rect);
 
 
@@ -371,7 +371,7 @@ st_fl_ptr(Vwk * vwk)
  *     count - number of words in array.
  */
 
-inline void
+static inline void
 bub_sort (WORD * buf, WORD count)
 {
     int i, j;
@@ -844,7 +844,7 @@ search_to_left (Vwk * vwk, WORD x, UWORD mask, const UWORD search_col, UWORD * a
  *         seed_type  indicates the type of fill
  */
 
-WORD
+static WORD
 end_pts(Vwk * vwk, WORD x, WORD y, WORD *xleftout, WORD *xrightout,
         BOOL seed_type)
 {
@@ -999,7 +999,7 @@ d_contourfill(Vwk * vwk)
  * crunch_queue - move qtop down to remove unused seeds
  */
 void
-crunch_queue()
+crunch_queue(void)
 {
     while ((queue[qtop - 3] == EMPTY) && (qtop > qbottom))
         qtop -= 3;
@@ -1095,15 +1095,16 @@ v_get_pixel(Vwk * vwk)
  * output:
  *     pixel value
  */
-
+#if 0
 WORD
-get_pix()
+get_pix(void)
 {
     const WORD x = PTSIN[0];
     const WORD y = PTSIN[1];
 
     return pixelread(x,y);      /* return the composed color value */
 }
+#endif
 
 /*
  * put_pix - plot a pixel (just for linea!)
@@ -1113,9 +1114,9 @@ get_pix()
  *     PTSIN(0) = x coordinate.
  *     PTSIN(1) = y coordinate.
  */
-
-void
-put_pix()
+#if 0
+static void
+put_pix(void)
 {
     UWORD *addr;
     WORD x,y;
@@ -1139,3 +1140,4 @@ put_pix()
             *addr++ &= ~mask;
     }
 }
+#endif
