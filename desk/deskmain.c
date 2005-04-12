@@ -383,7 +383,7 @@ void men_update(LONG tree)
         for (item = 0; (item = win_isel(G.g_screen, G.g_croot, item)) != 0;
              nsel++)
         {
-          appl = i_find(G.g_cwin, item, (FNODE **)&pjunk, &isapp);
+          appl = i_find(G.g_cwin, item, (FNODE **)(void*)&pjunk, &isapp);
           switch (appl->a_type)
           {
             case AT_ISFILE:

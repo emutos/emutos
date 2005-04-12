@@ -946,18 +946,24 @@ d_contourfill(Vwk * vwk)
 
             if ((newxleft < (oldxleft - 1)) && gotseed) {
                 xleft = oldxleft;
-                while (xleft > newxleft)
-                    get_seed(vwk, --xleft, oldy ^ DOWN_FLAG,
+                while (xleft > newxleft) {
+                    --xleft;
+                    get_seed(vwk, xleft, oldy ^ DOWN_FLAG,
                              &xleft, &xright, seed_type);
+                }
             }
-            while (newxright < oldxright)
-                gotseed = get_seed(vwk, ++newxright, oldy + direction,
+            while (newxright < oldxright) {
+                ++newxright;
+                gotseed = get_seed(vwk, newxright, oldy + direction,
                                    &xleft, &newxright, seed_type);
+            }
             if ((newxright > (oldxright + 1)) && gotseed) {
                 xright = oldxright;
-                while (xright < newxright)
-                    get_seed(vwk, ++xright, oldy ^ DOWN_FLAG,
+                while (xright < newxright) {
+                    ++xright;
+                    get_seed(vwk, xright, oldy ^ DOWN_FLAG,
                              &xleft, &xright, seed_type);
+                }
             }
 
             /* Eventually jump out here */

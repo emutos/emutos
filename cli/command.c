@@ -1206,7 +1206,7 @@ dirCmd(char *argv[])
                 pl = (long *) &srchb[26];
                 prtDclFmt((long) *pl, 6, " ");
             }
-          skip:
+          skip: ;
         }
         while (gtFlNm());
         wrtln("");
@@ -1737,7 +1737,7 @@ chk_str(char *parm[])
                     tmp_ptr = parm_ptr;
                     while ((*tmp_ptr = *(tmp_ptr + 1)))
                         tmp_ptr++;
-                  skip:
+                  skip: ;
                 }
 
                 else {

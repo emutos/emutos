@@ -159,7 +159,7 @@ void vex_timv(Vwk * vwk)
     old_sr = set_sr(0x2700);
 
     *pointer = (LONG) tim_addr;
-    (LONG*)tim_addr = *--pointer;
+    tim_addr = (void (*)(int)) *--pointer;
 
     set_sr(old_sr);
 

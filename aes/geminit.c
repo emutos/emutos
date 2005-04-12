@@ -413,7 +413,7 @@ void sndcli(BYTE *pfilespec, WORD *paccroom)     /* paccroom in paragraphs*/
         handle = dos_open( (BYTE *)ad_scmd, ROPEN );
         if (!DOS_ERR)
         {
-          err_ret = pgmld(handle, &D.s_cmd[0], (LONG **)&ldaddr /*, paccroom*/);
+          err_ret = pgmld(handle, &D.s_cmd[0], (LONG **)(void*)&ldaddr /*, paccroom*/);
           dos_close(handle);
                                                 /* create process to    */
                                                 /*   execute it         */

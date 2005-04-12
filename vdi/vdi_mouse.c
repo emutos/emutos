@@ -121,7 +121,7 @@ static Mcdb arrow_cdb = {
  * do_nothing - doesn't do much  :-)
  */
 
-static void do_nothing()
+static void do_nothing(void)
 {
 }
 
@@ -167,7 +167,7 @@ void dis_cur()
  *    draw_flag = 0
  */
 
-void hide_cur()
+void hide_cur(void)
 {
     mouse_flag += 1;            /* disable mouse redrawing */
 
@@ -338,7 +338,7 @@ void vex_butv(Vwk * vwk)
 
     pointer = (LONG*)&CONTRL[9];
     *pointer = (LONG)user_but;
-    (LONG*)user_but = *--pointer;
+    user_but = (void (*)(void)) *--pointer;
 }
 
 
@@ -363,7 +363,7 @@ void vex_motv(Vwk * vwk)
 
     pointer = (LONG*) &CONTRL[9];
     *pointer = (LONG) user_mot;
-    (LONG*)user_mot = *--pointer;
+    user_mot = (void (*)(void)) *--pointer;
 }
 
 
@@ -390,7 +390,7 @@ void vex_curv(Vwk * vwk)
 
     pointer = (LONG*) &CONTRL[9];
     *pointer = (LONG) user_cur;
-    (LONG*)user_cur = *--pointer;
+    user_cur = (void (*)(void)) *--pointer;
 }
 
 
@@ -417,7 +417,7 @@ void vex_wheelv(Vwk * vwk)
 
     pointer = (LONG*) &CONTRL[9];
     *pointer = (LONG) user_wheel;
-    (LONG*)user_wheel = *--pointer;
+    user_wheel = (void (*)(void)) *--pointer;
 }
 
 
@@ -713,7 +713,7 @@ void cur_display (WORD x, WORD y)
     save_stat |= 1;             /* flag the buffer as being loaded */
 
     save_w = &save_area;        /* a2 -> save area buffer */
-    save_l = (ULONG*)&save_area;/* a2 -> save area buffer */
+    save_l = (ULONG*)(void*)&save_area; /* a2 -> save area buffer */
 
     cdb_bg = m_cdb_bg;          /* get mouse background color bits */
     cdb_fg = m_cdb_fg;          /* get mouse foreground color bits */
@@ -842,7 +842,7 @@ void cur_replace ()
     /* word or longword ? */
     if (save_stat & 2 ) {
         /* longword ? */
-        ULONG * src = (ULONG*)&save_area;/* a2 -> save area buffer */
+        ULONG * src = (ULONG*)(void*)&save_area;/* a2 -> save area buffer */
 
         /* plane controller, draw cursor in each graphic plane */
         for (plane = v_planes - 1; plane >= 0; plane--) {

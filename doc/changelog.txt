@@ -1761,3 +1761,8 @@ bios/conout.c: some integer overflow bugs fixed (MAD)
 - desk/desk_rsc.c: Changed the string and button sizes in the desktop dialogs
   so that the non-english versions of EmuTOS look much better. (THH)
 - po/*.po: Slightly updated the language files. (THH)
+
+2005-04-12
+- vdi/vdi_fill.c vdi/vdi_misc.c vdi/vdi_fill.c desk/deskmain.c cli/command.c
+  bios/vt52.h  bios/floppy.c aes/geminit.c: Applied patches from Markus
+  Oberhumer that fix emutos compilation when using GCC 3.3.5. (THH)

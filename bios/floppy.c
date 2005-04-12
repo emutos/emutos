@@ -415,6 +415,7 @@ void protobt(LONG buf, LONG serial, WORD type, WORD exec)
         break;
     default:
         /* unknown */
+        break;
     }
 }
 
