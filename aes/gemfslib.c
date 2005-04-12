@@ -28,6 +28,7 @@
 #include "geminit.h"
 #include "gemsuper.h"
 #include "gemshlib.h"
+#include "gemfslib.h"
 #include "gsx2.h"
 #include "optimize.h"
 #include "optimopt.h"

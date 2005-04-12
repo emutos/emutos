@@ -28,7 +28,7 @@
 #include "geminput.h"
 #include "gemaplib.h"
 #include "geminit.h"
-
+#include "gemevlib.h"
 
 
 /* Global variables: */
@@ -50,7 +50,7 @@ extern SHELL    sh[];
 *       Stuff the return array with the mouse x, y, button, and keyboard
 *       state.
 */
-void ev_rets(WORD rets[])
+static void ev_rets(WORD rets[])
 {
         if (mtrans)
         {

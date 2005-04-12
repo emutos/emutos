@@ -93,10 +93,6 @@ GLOBAL GRECT    gl_rcenter;
 GLOBAL GRECT    gl_rmenu;
 
 
-/* Prototypes: */
-void gsx_xline(WORD ptscount, WORD *ppoints );
-
-
 
 /*
 *       Routine to set the clip rectangle.  If the w,h of the clip
@@ -149,6 +145,32 @@ WORD gsx_chkclip(GRECT *pt)
         }
         return(TRUE);
 }
+
+
+static void gsx_xline(WORD ptscount, WORD *ppoints)
+{
+        static  WORD    hztltbl[2] = { 0x5555, 0xaaaa };
+        static  WORD    verttbl[4] = { 0x5555, 0xaaaa, 0xaaaa, 0x5555 };
+        WORD            *linexy,i;
+        WORD            st;
+
+        for ( i = 1; i < ptscount; i++ )
+        {
+          if ( *ppoints == *(ppoints + 2) )
+          {
+            st = verttbl[( (( *ppoints) & 1) | ((*(ppoints + 1) & 1 ) << 1))];
+          }     
+          else
+          {
+            linexy = ( *ppoints < *( ppoints + 2 )) ? ppoints : ppoints + 2;
+            st = hztltbl[( *(linexy + 1) & 1)];
+          }
+          vsl_udsty( st );
+          g_v_pline( 2, ppoints );
+          ppoints += 2;
+        }
+        vsl_udsty( 0xffff );
+}       
 
 
 /*
@@ -229,7 +251,7 @@ void gsx_attr(UWORD text, UWORD mode, UWORD color)
 /*
 *       Routine to set up the points for drawing a box.
 */
-void gsx_bxpts(GRECT *pt)
+static void gsx_bxpts(GRECT *pt)
 {
         ptsin[0] = pt->g_x;
         ptsin[1] = pt->g_y;
@@ -247,7 +269,7 @@ void gsx_bxpts(GRECT *pt)
 /*
 *       Routine to draw a box using the current attributes.
 */
-void gsx_box(GRECT *pt)
+static void gsx_box(GRECT *pt)
 {
         gsx_bxpts(pt);
         g_v_pline( 5, &ptsin[0] );
@@ -457,30 +479,31 @@ void bb_fill(WORD mode, WORD fis, WORD patt, WORD hx, WORD hy, WORD hw, WORD hh)
 }
 
 
-UWORD ch_width(WORD fn)
+static UWORD ch_width(WORD fn)
 {
         if (fn == IBM)
-          return(gl_wchar);
+          return gl_wchar;
         if (fn == SMALL)
-          return(gl_wschar);
-        return(0);
+          return gl_wschar;
+        return 0;
 }
 
 
 
-UWORD ch_height(WORD fn)
+static UWORD ch_height(WORD fn)
 {
         if (fn == IBM)
-          return(gl_hchar);
+          return gl_hchar;
         if (fn == SMALL)
-          return(gl_hschar);
-        return(0);
+          return gl_hschar;
+        return 0;
 }
 
 
-void gsx_tcalc(WORD font, LONG ptext, WORD *ptextw, WORD *ptexth, WORD *pnumchs)
+static void gsx_tcalc(WORD font, LONG ptext, WORD *ptextw, WORD *ptexth,
+                      WORD *pnumchs)
 {
-        WORD            wc, hc;
+        WORD  wc, hc;
 
         wc = ch_width(font);
         hc = ch_height(font);
@@ -502,7 +525,7 @@ void gsx_tcalc(WORD font, LONG ptext, WORD *ptextw, WORD *ptexth, WORD *pnumchs)
 
 void gsx_tblt(WORD tb_f, WORD x, WORD y, WORD tb_nc)
 {
-        WORD            pts_height;
+        WORD  pts_height;
 
         if (tb_f == IBM)
         {
@@ -540,32 +563,6 @@ void gsx_tblt(WORD tb_f, WORD x, WORD y, WORD tb_nc)
         gsx2();
 }
 
-
-
-void gsx_xline(WORD ptscount, WORD *ppoints )
-{
-        static  WORD    hztltbl[2] = { 0x5555, 0xaaaa };
-        static  WORD    verttbl[4] = { 0x5555, 0xaaaa, 0xaaaa, 0x5555 };
-        WORD            *linexy,i;
-        WORD            st;
-
-        for ( i = 1; i < ptscount; i++ )
-        {
-          if ( *ppoints == *(ppoints + 2) )
-          {
-            st = verttbl[( (( *ppoints) & 1) | ((*(ppoints + 1) & 1 ) << 1))];
-          }     
-          else
-          {
-            linexy = ( *ppoints < *( ppoints + 2 )) ? ppoints : ppoints + 2;
-            st = hztltbl[( *(linexy + 1) & 1)];
-          }
-          vsl_udsty( st );
-          g_v_pline( 2, ppoints );
-          ppoints += 2;
-        }
-        vsl_udsty( 0xffff );
-}       
 
 /*
 *       Routine to convert a rectangle to its inside dimensions.
@@ -692,7 +689,7 @@ void gr_crack(UWORD color, WORD *pbc, WORD *ptc, WORD *pip, WORD *pic, WORD *pmd
 }
 
 
-void gr_gblt(LONG pimage, GRECT *pi, WORD col1, WORD col2)
+static void gr_gblt(LONG pimage, GRECT *pi, WORD col1, WORD col2)
 {
         gsx_blt(pimage, 0, 0, pi->g_w/8, 0x0L, pi->g_x, pi->g_y, 
                         gl_width/8, pi->g_w, pi->g_h, MD_TRANS,

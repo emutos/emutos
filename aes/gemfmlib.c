@@ -39,6 +39,7 @@
 #include "gemfmalt.h"
 #include "geminit.h"
 #include "gemmnlib.h"
+#include "gemfmlib.h"
 
 
 #define FORWARD 0
@@ -105,10 +106,10 @@ void fm_own(WORD beg_ownit)
 
 
 /*
-*       Routine to find the next editable text field, or a field that
-*       is marked as a default return field.
-*/
-WORD find_obj(LONG tree, WORD start_obj, WORD which)
+ *  Routine to find the next editable text field, or a field that
+ *  is marked as a default return field.
+ */
+static WORD find_obj(LONG tree, WORD start_obj, WORD which)
 {
         register WORD   obj, flag, state, inc;
         WORD            theflag;
@@ -148,7 +149,7 @@ WORD find_obj(LONG tree, WORD start_obj, WORD which)
 
 
 
-WORD fm_inifld(LONG tree, WORD start_fld)
+static WORD fm_inifld(LONG tree, WORD start_fld)
 {
                                                 /* position cursor on   */
                                                 /*   the starting field */

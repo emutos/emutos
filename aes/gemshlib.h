@@ -32,6 +32,6 @@ WORD sh_find(LONG pspec);
 void sh_rdef(LONG lpcmd, LONG lpdir);
 void sh_wdef(LONG lpcmd, LONG lpdir);
 
-void sh_main();
+void sh_main(void);
 
 #endif

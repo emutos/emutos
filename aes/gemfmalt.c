@@ -36,6 +36,7 @@
 #include "optimize.h"
 #include "optimopt.h"
 #include "rectfunc.h"
+#include "gemfmalt.h"
 
 
 #define MSG_OFF 2
@@ -58,8 +59,8 @@ LONG     ad_nils;
 *       Routine to break a string into smaller strings.  Breaks occur
 *       whenever an | or a ] is encountered.
 */
-void fm_strbrk(LONG tree, LONG palstr, WORD stroff, WORD *pcurr_id,
-               WORD *pnitem, WORD *pmaxlen)
+static void fm_strbrk(LONG tree, LONG palstr, WORD stroff, WORD *pcurr_id,
+                      WORD *pnitem, WORD *pmaxlen)
 {
         register WORD   nitem, curr_id;
         register WORD   len, maxlen;
@@ -119,8 +120,8 @@ void fm_strbrk(LONG tree, LONG palstr, WORD stroff, WORD *pcurr_id,
 *               2nd button = Cancel
 */
 
-void fm_parse(LONG tree, LONG palstr, WORD *picnum, WORD *pnummsg,
-              WORD *plenmsg, WORD *pnumbut, WORD *plenbut)
+static void fm_parse(LONG tree, LONG palstr, WORD *picnum, WORD *pnummsg,
+                     WORD *plenmsg, WORD *pnumbut, WORD *plenbut)
 {
         WORD            curr_id;
 
@@ -133,8 +134,8 @@ void fm_parse(LONG tree, LONG palstr, WORD *picnum, WORD *pnummsg,
 }
 
 
-void fm_build(LONG tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
-              WORD numbut, WORD mlenbut)
+static void fm_build(LONG tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
+                     WORD numbut, WORD mlenbut)
 {
         register WORD   i, k;
         GRECT           al, ic, bt, ms;

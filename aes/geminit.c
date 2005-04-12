@@ -51,6 +51,7 @@
 #include "gemsuper.h"
 #include "geminput.h"
 #include "gemmnlib.h"
+#include "geminit.h"
 #include "optimize.h"
 #include "optimopt.h"
 
@@ -186,7 +187,7 @@ BYTE *scan_2(BYTE *pcurr, UWORD *pwd)
 }
 
 
-void ini_dlongs()
+static void ini_dlongs(void)
 {
 /*
 #if I8086
@@ -334,13 +335,15 @@ LONG size_theglo(void)
 /*
 *       called from startup code to get the stack for process 0
 */
-WORD sizeuda()
+/*
+WORD sizeuda(void)
 {
         return( sizeof(UDA) - sizeof(WORD) );
 }
+*/
 
 
-void ev_init(EVB evblist[], WORD cnt)
+static void ev_init(EVB evblist[], WORD cnt)
 {
         WORD            i;
 
@@ -378,7 +381,7 @@ static PD *iprocess(BYTE *pname, void (*routine)())
 /*
 *       Start up the file selector by initializing the fs_tree
 */
-void fs_start()
+static void fs_start(void)
 {
         LONG            tree;
 
@@ -401,7 +404,7 @@ void fs_start()
 *       accessory is too big to fit it will be not be loaded.
 */
 
-void sndcli(BYTE *pfilespec, WORD *paccroom)     /* paccroom in paragraphs*/
+static void sndcli(BYTE *pfilespec, WORD *paccroom)   /* paccroom in paragraphs*/
 {
         register WORD   handle;
         WORD            err_ret;
@@ -439,7 +442,7 @@ void sndcli(BYTE *pfilespec, WORD *paccroom)     /* paccroom in paragraphs*/
 *       FOR GEM2.0 max is 192kb
 *       0x33800
 */
-void ldaccs()
+static void ldaccs(void)
 {
         register WORD   i;
         WORD            ret;
@@ -468,7 +471,7 @@ void ldaccs()
 
 
 
-void sh_addpath()
+static void sh_addpath(void)
 {
         LONG    lp, np, new_envr;
         WORD    oelen, oplen, nplen, fstlen;
@@ -548,13 +551,13 @@ void sh_deskf(WORD obj, LONG plong)
 
 
 
-void sh_init()
+static void sh_init(void)
 {
-        WORD            cnt, need_ext;
-        BYTE            *psrc, *pdst, *pend;
-        BYTE            *s_tail;
-        SHELL           *psh;
-        BYTE            savch;
+        WORD    cnt, need_ext;
+        BYTE    *psrc, *pdst, *pend;
+        BYTE    *s_tail;
+        SHELL   *psh;
+        BYTE    savch;
 
 #if MULTIAPP
         gl_pids = 0;
@@ -704,7 +707,7 @@ void sh_init()
 *       directory and set the bvdisk and bvhard variables
 *       so that apps and accessories can always use this data.
 */
-void sh_rdinf()
+void sh_rdinf(void)
 {
         WORD    fh, size, ishdisk;
         LONG    pcurr;
@@ -812,9 +815,9 @@ void sh_rdinf()
 /*
  * Give everyone a chance to run, at least once
  */
-void all_run()
+void all_run(void)
 {
-    WORD            i;
+    WORD  i;
 
     /* let all the acc's run*/
     for(i=0; i<NUM_ACCS; i++)
@@ -828,10 +831,10 @@ void all_run()
 
 
 
-void gem_main()
+void gem_main(void)
 {
-    WORD            i;
-    LONG            tmpadbi;
+    WORD    i;
+    LONG    tmpadbi;
 #if MULTIAPP
     for (i=0; i<NUM_PDS; i++)
         sh[i].sh_loadable = FALSE;

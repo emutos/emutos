@@ -145,9 +145,9 @@ void gsx_1code(WORD code, WORD value)
 
 
 
-void gsx_wsopen()
+static void gsx_wsopen(void)
 {
-    WORD            i;
+    WORD  i;
 
     for(i=0; i<10; i++)
         intin[i] = 1;
@@ -158,28 +158,28 @@ void gsx_wsopen()
 
 
 
-void gsx_wsclose()
+void gsx_wsclose(void)
 {
     gsx_ncode(CLOSE_WORKSTATION, 0, 0);
 }
 
 
 
-void ratinit()
+void ratinit(void)
 {
     gsx_1code(SHOW_CUR, 0);
     gl_moff = 0;
 }
 
 
-void ratexit()
+void ratexit(void)
 {
     gsx_moff();
 }
 
 
 
-void gsx_init()
+void gsx_init(void)
 {
     gsx_wsopen();
     gsx_start();
@@ -216,7 +216,7 @@ void gsx_exec(LONG pcspec, WORD segenv, LONG pcmdln, LONG pfcb1, LONG pfcb2)
 
 
 
-void gsx_resetmb()
+static void gsx_resetmb(void)
 {
     i_lptr1( (void*)old_bcode );
     gsx_ncode(BUT_VECX, 0, 0);
@@ -252,8 +252,8 @@ void gsx_graphic(WORD tographic)
 
 
 
-void bb_set(WORD sx, WORD sy, WORD sw, WORD sh, WORD *pts1, WORD *pts2,
-            FDB *pfd, FDB *psrc, FDB *pdst)
+static void bb_set(WORD sx, WORD sy, WORD sw, WORD sh, WORD *pts1, WORD *pts2,
+                   FDB *pfd, FDB *psrc, FDB *pdst)
 {
     WORD            oldsx;
 

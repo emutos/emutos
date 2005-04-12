@@ -29,6 +29,7 @@
 #include "gemoblib.h"
 #include "geminput.h"
 #include "gemgsxif.h"
+#include "gemgrlib.h"
 #include "gemasm.h"
 #include "gsx2.h"
 #include "optimopt.h"
@@ -43,7 +44,7 @@
 *       Return TRUE as long as the mouse is down.  Block until the
 *       mouse moves into or out of the specified rectangle.
 */
-WORD gr_stilldn(WORD out, WORD x, WORD y, WORD w, WORD h)
+static WORD gr_stilldn(WORD out, WORD x, WORD y, WORD w, WORD h)
 {
         WORD     rets[6];
         MOBLK    tmpmoblk;
@@ -67,22 +68,23 @@ WORD gr_stilldn(WORD out, WORD x, WORD y, WORD w, WORD h)
 } /* gr_stilldn */
 
 
-void gr_setup(WORD color)
+static void gr_setup(WORD color)
 {
         gsx_sclip(&gl_rscreen);
         gsx_attr(FALSE, MD_XOR, color);
 }
 
 
-void gr_clamp(WORD xorigin, WORD yorigin, WORD wmin, WORD hmin,
-              WORD *pneww, WORD *pnewh)
+static void gr_clamp(WORD xorigin, WORD yorigin, WORD wmin, WORD hmin,
+                     WORD *pneww, WORD *pnewh)
 {
         *pneww = max(xrat - xorigin + 1, wmin);
         *pnewh = max(yrat - yorigin + 1, hmin);
 }
 
 
-void gr_scale(WORD xdist, WORD ydist, WORD *pcnt, WORD *pxstep, WORD *pystep)
+static void gr_scale(WORD xdist, WORD ydist, WORD *pcnt,
+                     WORD *pxstep, WORD *pystep)
 {
         register WORD   i;
         register WORD   dist;
@@ -149,9 +151,9 @@ static void gr_xor(WORD clipped, WORD cnt, WORD cx, WORD cy, WORD cw, WORD ch,
 
 
 
-void gr_draw(WORD have2box, GRECT *po, GRECT *poff)
+static void gr_draw(WORD have2box, GRECT *po, GRECT *poff)
 {
-        GRECT           t;
+        GRECT   t;
 
         gsx_xbox(po);
         if (have2box)
@@ -163,7 +165,7 @@ void gr_draw(WORD have2box, GRECT *po, GRECT *poff)
 }
 
 
-WORD gr_wait(GRECT *po, GRECT *poff)
+static WORD gr_wait(GRECT *po, GRECT *poff)
 {
         register WORD   have2box;
         register WORD   down;
@@ -192,8 +194,8 @@ WORD gr_wait(GRECT *po, GRECT *poff)
 void gr_rubwind(WORD xorigin, WORD yorigin, WORD wmin, WORD hmin,
                 GRECT *poff, WORD *pwend, WORD *phend)
 {
-        WORD            down;
-        GRECT           o;
+        WORD    down;
+        GRECT   o;
 
         
         wm_update(TRUE);
@@ -236,10 +238,11 @@ void gr_rubbox(WORD xorigin, WORD yorigin, WORD wmin, WORD hmin,
 *       box should not be able to be dragged out of the contraining
 *       rectangle.
 */
-void gr_dragbox(WORD w, WORD h, WORD sx, WORD sy, GRECT *pc, WORD *pdx, WORD *pdy)
+void gr_dragbox(WORD w, WORD h, WORD sx, WORD sy, GRECT *pc,
+                WORD *pdx, WORD *pdy)
 {
-        WORD            offx, offy, down;
-        GRECT           o;
+        WORD    offx, offy, down;
+        GRECT   o;
 
         wm_update(TRUE);
         gr_setup(BLACK);

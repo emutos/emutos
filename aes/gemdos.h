@@ -8,10 +8,10 @@ extern UWORD    DOS_ERR;
 
 WORD pgmld(WORD handle, BYTE *pname, LONG **ldaddr);
 
-WORD dos_gdrv();
+WORD dos_gdrv(void);
 void dos_sdta(LONG ldta);
 WORD dos_sfirst(LONG pspec, WORD attr);
-WORD dos_snext();
+WORD dos_snext(void);
 WORD dos_open(BYTE *pname, WORD access);
 WORD dos_close(WORD handle);
 UWORD dos_read(WORD handle, UWORD cnt, LONG pbuffer);
@@ -32,7 +32,7 @@ WORD dos_rename(BYTE *p1, BYTE *p2);
 WORD dos_rmdir(BYTE *path);
 
 LONG dos_alloc(LONG nbytes);
-LONG dos_avail();
+LONG dos_avail(void);
 WORD dos_free(LONG maddr);
 
 #endif

@@ -60,6 +60,7 @@ extern GRECT    gl_rmenu;
 void gsx_sclip(GRECT *pt);
 void gsx_gclip(GRECT *pt);
 WORD gsx_chkclip(GRECT *pt);
+void gsx_pline(WORD offx, WORD offy, WORD cnt, WORD *pts);
 void gsx_cline(UWORD x1, UWORD y1, UWORD x2, UWORD y2);
 void gsx_attr(UWORD text, UWORD mode, UWORD color);
 void gsx_xbox(GRECT *pt);

@@ -12,7 +12,6 @@
 
 
 .globl _gsx2
-.globl _mul_div
 .globl _i_ptsin
 .globl _i_intin
 .globl _i_ptsout

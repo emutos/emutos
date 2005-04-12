@@ -27,7 +27,7 @@
 #include "geminput.h"
 #include "gemdosif.h"
 #include "gemasm.h"
-
+#include "gemflag.h"
 
 
 

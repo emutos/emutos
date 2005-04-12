@@ -233,7 +233,7 @@ static void schedule(void)
 
 /* routine disp called from dsptch(). */
 
-void disp()
+void disp(void)
 {
         register PD     *p;
 
