@@ -1773,3 +1773,6 @@ Start... early ages
 - bios/nvram.c: Added patch from Gerhard Stoll that checks for valid parameters
   in the function nvmaccess(). (THH)
 - po/es.po: Added up-to-date translations from Gabriel Huertas. (THH)
+- bios/tosvars.*: Fixed annoying bug: The two system variables _bell_hook and
+  _kcl_hook were linked at a wrong position due to a missing ".global" in the
+  assembler file and a missing "extern" in the header file. (THH)

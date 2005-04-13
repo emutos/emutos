@@ -33,7 +33,6 @@ extern BYTE conterm;
 extern WORD cmdload;
 
 extern UBYTE *v_bas_ad;
-//extern LONG kbdvecs[];
 
 extern WORD *colorptr;
 extern UBYTE *screenpt;
@@ -105,19 +104,19 @@ extern void (*dump_vec)(void);
 
 /* indirect BIOS vectors */
 
-LONG (*hdv_rw)(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG lrecnr);
-LONG (*hdv_bpb)(WORD dev);
-LONG (*hdv_mediach)(WORD dev);
-LONG (*hdv_boot)(void);
-void (*hdv_init)(void);
+extern LONG (*hdv_rw)(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG lrecnr);
+extern LONG (*hdv_bpb)(WORD dev);
+extern LONG (*hdv_mediach)(WORD dev);
+extern LONG (*hdv_boot)(void);
+extern void (*hdv_init)(void);
 
-void (*bell_hook)(void);
-void (*kcl_hook)(void);
+extern void (*bell_hook)(void);
+extern void (*kcl_hook)(void);
 
-void (*etv_timer)(int);
-void (*etv_critic)(void);
-void (*etv_term)(void);
-void (*etv_xtra)(void);
+extern void (*etv_timer)(int);
+extern void (*etv_critic)(void);
+extern void (*etv_term)(void);
+extern void (*etv_xtra)(void);
 
 
 struct kbdvecs

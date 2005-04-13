@@ -90,6 +90,8 @@
         .global _longframe
         .global _ramtop
         .global _ramvalid
+        .global _bell_hook
+        .global _kcl_hook
 
         .global _supstk
 
