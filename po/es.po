@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: EMUTOS beta\n"
 "POT-Creation-Date: 2005-04-11 17:18+0200\n"
-"PO-Revision-Date: 2005-04-11 17:24+0200\n"
+"PO-Revision-Date: 2005-04-13 17:24+0200\n"
 "Last-Translator: Gabriel Huertas <gabrielhuertas@terra.es>\n"
 "Language-Team: Español <dr.worst@terra.es>\n"
 "MIME-Version: 1.0\n"
@@ -75,7 +75,7 @@ msgstr "CANCELAR"
 
 #: aes/gem_rsc.c:465
 msgid "Insert your GEM STARTUP disk"
-msgstr "Inserte el disgo de arranque del GEM"
+msgstr "Inserte el disco de arranque del GEM"
 
 #: aes/gem_rsc.c:473
 msgid "[2]["
@@ -832,7 +832,7 @@ msgstr "Mantenga pulsado <Alt> para saltarse el disco duro"
 msgid ""
 "System halted!\n"
 msgstr ""
-"System ¡Sistema detenido!\n"
+"¡Sistema detenido!\n"
 
 #: desk/desk_rsc.c:438
 msgid "  Execute EmuCON  ^Z"
@@ -852,19 +852,19 @@ msgstr "Pulse 'C' para correr en una cónsola primitiva"
 
 #: desk/desk_rsc.c:760
 msgid "Copyright (c) 2005 by"
-msgstr "Copyright (c) 2005, Equipo EmuTOS, Tr. Español G. Huertas"
+msgstr "Copyright (c) 2005,"
 
 #: desk/desk_rsc.c:395
 msgid "  New Folder..."
-msgstr "  New Folder..."
+msgstr "  Nueva Carpeta..."
 
 #: desk/desk_rsc.c:401
 msgid "  Close"
-msgstr "  Close"
+msgstr "  Cerrar"
 
 #: desk/desk_rsc.c:407
 msgid "  Close window"
-msgstr "  Close window"
+msgstr "  Cerrar ventana"
 
 #: desk/desk_rsc.c:1734
 msgid "[1]["
@@ -873,10 +873,10 @@ msgid "[1]["
 "folder, document, or application,|"
 "drag it to the trash can.][  OK  ]"
 msgstr "[1]["
-"You cannot open the trash can icon|"
-"into a window. To delete a disk,|"
-"folder, document, or application,|"
-"drag it to the trash can.][  OK  ]"
+"No se puede abrir la papelera|"
+"para borrar un disco,carpeta |"
+"documento o aplicación, |"
+"arrástrelo hacia la papelera.][  OK  ]"
 
 #: desk/desk_rsc.c:1741
 msgid "[1]["
@@ -885,10 +885,10 @@ msgid "[1]["
 "documents, or applications that you|"
 "want to delete PERMANENTLY!][  OK  ]"
 msgstr "[1]["
-"The trash can is the destination to|"
-"which you drag the disks, folders,|"
-"documents, or applications that you|"
-"want to delete PERMANENTLY!][  OK  ]"
+"Todo lo que evíe a la papelera,|"
+"discos, carpetas, ficheros etc, |"
+"será borrado de forma PERMANENTE|"
+"¡SEA CUIDADOSO!][  OK  ]"
 
 #: desk/desk_rsc.c:1748
 msgid "[1]["
@@ -897,18 +897,18 @@ msgid "[1]["
 "you can copy them to disks or drag them|"
 "to the trash.][  OK  ]"
 msgstr "[1]["
-"You cannot drag folders, documents, or|"
-"applications onto the Desktop.  However,|"
-"you can copy them to disks or drag them|"
-"to the trash.][  OK  ]"
+"No se pueden llevar carpetas, ficheros|"
+"o aplicaciones al escritorio, aunque,|"
+"si a discos para copiar o a papelera|"
+"para borrar.][  OK  ]"
 
 #: desk/desk_rsc.c:1755
 msgid "[1]["
 "You cannot drag the trash can|"
 "into a window.][  OK  ]"
 msgstr "[1]["
-"You cannot drag the trash can|"
-"into a window.][  OK  ]"
+"No es posible situar la papelera|"
+"dentro de una ventana.][  OK  ]"
 
 #: desk/desk_rsc.c:1758
 msgid "[1]["
@@ -916,7 +916,7 @@ msgid "[1]["
 "location on the GEM Desktop, but you|"
 "cannot place it on top of another icon.][  OK  ]"
 msgstr "[1]["
-"You can drag the trash can to another|"
-"location on the GEM Desktop, but you|"
-"cannot place it on top of another icon.][  OK  ]"
+"Puede mover la papelera dentro del |"
+"escritorio GEM, pero no colocarla|"
+"encima de otro icono.][  OK  ]"
 

@@ -1772,3 +1772,4 @@ Start... early ages
 2005-04-13
 - bios/nvram.c: Added patch from Gerhard Stoll that checks for valid parameters
   in the function nvmaccess(). (THH)
+- po/es.po: Added up-to-date translations from Gabriel Huertas. (THH)
