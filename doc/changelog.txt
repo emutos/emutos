@@ -334,7 +334,7 @@ Start... early ages
 2001-11-28
 - Did put all *.txt files in doc/, except this.   (MAD)
 
-07. Dec. 2001
+2001-12-07
 - EmuTOS now recognizes Falcon (by detecting VIDEL) and TT030
   (by detecting TT-Shifter). (joy)
 - NVRAM is actually initialized now. Added functions for accessing the RTC
@@ -343,28 +343,28 @@ Start... early ages
 - clock.c works with the RTC in NVRAM. (joy)
 - initinfo.c displays current date and time (sorry, no NLS enabled yet!) (joy)
 
-08. Dec. 2001
+2001-12-08
 - NO_IKBD_CLOCK forgot to disable the XBIOS gettime(). Fixed by disabling
   all lowlevel IKBD functions. STonX boots EmuTOS again. (joy)
 - changed back all BYTE to char in bdos/*.[ch] (MAD)
 - added/marked up some comments in bios/nvram.c (MAD)
 
-09. Dec. 2001
+2001-12-09
 - standalone command.prg (added replacement _() and N_()) (LVL)
 
-11. Dec. 2001
+2001-12-11
 - added many of the lacking linea-variables (MAD)
 - fixed int overflow bug in scrolling in bios/consout.S:p_sc_up (MAD)
 - changed scrolling to use memmove (better?) (MAD)
 
-12. Dec. 2001
+2001-12-12
 - changed todo.txt: b/w display bug is bug in STonX (MAD)
 - changed bios/conout.S to C like comment style (MAD)
 
-13. Dec. 2001
+2001-12-13
 - ripped out some ugly old gotos in bdos/fsbuf.c:packit() (MAD)
 
-15. Dec. 2001
+2001-12-15
 - tool tounix.c to convert to Unix line ending (LVL)
 - make cvsready to automate using expand, this tool, ... (LVL)
 - make checkindent, make indent; updated coding rules for indent use (LVL)
@@ -377,7 +377,7 @@ Start... early ages
 - added assert() in kprint (LVL)
 - minor changes (LVL)
 
-19. Dec. 2001
+2001-12-19
 - reworked tounix tool to handle temp file and error cases better (LVL)
 - TMP variables in Makefile (LVL)
 - unix line ending (doc/nls.txt, util/boot.c, tools/mkflop.c) (LVL)
@@ -385,11 +385,11 @@ Start... early ages
 - removed old dump stuff in bios/kprint (LVL)
 - updated readme.txt (LVL)
 
-20. Dec. 2001
+2001-12-20
 - added "stop" macro to include/asm.h as Laurent suggested (joy)
 - added calling the "stop" in bios/ikbd.c (surrounded by #ifdef) (joy)
 
-28. Dec. 2001
+2001-12-28
 - added Falcon memconf routine (joy)
 - corrected the memtop in the memconf clear routine to 14MB (joy)
 - added memval3 check/set (joy)
@@ -399,7 +399,7 @@ Start... early ages
   in bios/startup.S about meminit not using sp is not correct (joy)
 - updated status.txt (the hw init paragraph) (joy)
 
-31. Dec. 2001
+2001-12-31
 - added FastRAM (TT-RAM) detection to bios/memory.S. Right now
   it is called if Falcon MMU was detected but generally I need
   to detect CPU type so it would work on TT as well. (joy)
@@ -1679,27 +1679,27 @@ Start... early ages
                     filled onces also, but not integrated (MAD)
                     
 2004-08-19
-bios/processor.S: added coldfire test in detect_cpu (MAD)
+- bios/processor.S: added coldfire test in detect_cpu (MAD)
 
 2004-08-26
-vdi/*.c: ripped off some more global variables (MAD)
-vdi/fill.c: fixed fills to use fill color, not line color (MAD)
+- vdi/*.c: ripped off some more global variables (MAD)
+- vdi/fill.c: fixed fills to use fill color, not line color (MAD)
 
 2004-10-08
-vdi/vdi_mouse.c: implemented vex_wheelv() (MAD)
+- vdi/vdi_mouse.c: implemented vex_wheelv() (MAD)
 
 2004-10-09
-bios/ikbd.c: keyboard repetition respects 1st bit of conterm (joy)
-             conterm initialized (we never did that before) (joy)
-doc/bios.txt: fixed description of conterm bits (joy)
+- bios/ikbd.c: keyboard repetition respects 1st bit of conterm (joy)
+               conterm initialized (we never did that before) (joy)
+- doc/bios.txt: fixed description of conterm bits (joy)
 
 2004-10-18
-bios/conout.S: removed from CVS (MAD)
-bios/conout.c: hardware dependent optimized console stuff (MAD)
-bios/vt52.c:   hardware independent rest of vt52 console (MAD)
+- bios/conout.S: removed from CVS (MAD)
+- bios/conout.c: hardware dependent optimized console stuff (MAD)
+- bios/vt52.c:   hardware independent rest of vt52 console (MAD)
 
 2004-10-19
-bios/conout.c: some integer overflow bugs fixed (MAD)
+- bios/conout.c: some integer overflow bugs fixed (MAD)
 
 2004-11-24
 - Makefile: Replaced "-oformat" by "--oformat" (THH)
@@ -1768,3 +1768,7 @@ bios/conout.c: some integer overflow bugs fixed (MAD)
   Oberhumer that fix emutos compilation when using GCC 3.3.5. (THH)
 - */*.c */*.h: Started to implement proper prototypes for all functions (to
   compile EmuTOS with -Wmissing-prototypes and -Wstrict-prototypes). (THH)
+
+2005-04-13
+- bios/nvram.c: Added patch from Gerhard Stoll that checks for valid parameters
+  in the function nvmaccess(). (THH)

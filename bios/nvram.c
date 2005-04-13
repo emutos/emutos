@@ -138,9 +138,13 @@ WORD nvmaccess(WORD type, WORD start, WORD count, PTR buffer)
         }
         inited = 1;
         if(compute_sum() != get_sum()) {
-            /* TODO, wrong checksum, what do we do ? */
+            /* wrong checksum, return error code */
+            return -12;
         }
     }
+
+    if (ubuffer == NULL || start < 0 || count < 1 || (start + count) > 49)
+        return -5;
 
     switch(type) {
     case 0: /* read, from our buffer since it is already in memory */
@@ -151,14 +155,14 @@ WORD nvmaccess(WORD type, WORD start, WORD count, PTR buffer)
     case 1: /* write, in our buffer and in the memory */
         for(i = start ; i < start + count ; i++) {
             *addr_reg = i + 14;
-            *data_reg = nvram_buf[i] = *ubuffer++; 
+            *data_reg = nvram_buf[i] = *ubuffer++;
         }
         set_sum(compute_sum());
         /* TODO - verify ? */
         break;
     default:
-        /* TODO, wrong operation code! */
-        return -1;
+        /* wrong operation code! */
+        return -5;
     }
     return 0;
 }
