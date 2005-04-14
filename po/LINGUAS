@@ -13,3 +13,6 @@ fr atarist
 de atarist
 cs latin2
 es atarist
+
+# FIXME: What about greek?
+gr latin1
