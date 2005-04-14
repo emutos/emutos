@@ -155,7 +155,7 @@ struct _blkdev
     UWORD       valid;          /* device valid */
     BPB         bpb;
     GEOMETRY    geometry;       /* this should probably belong to devices */
-    BYTE        serial[3];      /* the serial number taken from the bootsector */
+    UBYTE       serial[3];      /* the serial number taken from the bootsector */
     BYTE        byteswap;       /* if non-zero swap bytes on whole harddrive */
     int         unit;           /* 0,1 = floppies, 2-9 = ACSI, 10-17 = SCSI, 18-25 = IDE */
 };

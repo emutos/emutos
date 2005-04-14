@@ -1780,3 +1780,5 @@ Start... early ages
 2005-04-14
 - po/es.po: Some more updates from Gabriel Huertas. (THH)
 - country.mk: Enabled spanish language. (THH)
+- bios/blkdev.h: Fixed a signed/unsigned comparison problem that occured in
+  the function blkdev_mediach() when it checks the serial number. (THH)
