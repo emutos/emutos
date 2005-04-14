@@ -14,7 +14,7 @@ BIOS/XBIOS/BDOS
 - improve Mediach()
 - implement full XHDI 1.30
 - loop callibration needed for various delays in centronics and DMA ports
-
+- bdos/time.c: Use XBIOS time functions instead of date_time().
 
 Internationalisation
 - fix rsc sizes to some reasonable default sizes for all languages ?
@@ -28,10 +28,12 @@ VDI
   but not drawn, if vertical rez > 400
 - The linemask for dashed lines is not calculated correct, depending on 
   the internal calculations of increase in x direction, like in original TOS.
+- It seems so that it is not possible to change the color palette at the moment
 
 AES
-- desk_rsc.c and gem_rsc.c are not fully ROM save yet (the TEDINFO strings etc)
-- automatically display drives as set in drvbits ?
+- Check if all strings in desk_rsc.c and gem_rsc.c are fully ROM save (the
+  TEDINFO strings etc).
 
 DESK
-- ability to run TTP with parameters
+- Add a dialog for resolution switching
+- Add a dialog for formating floppy disks
