@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: EMUTOS beta\n"
 "POT-Creation-Date: 2005-04-11 17:18+0200\n"
-"PO-Revision-Date: 2005-04-14 10:00+0200\n"
+"PO-Revision-Date: 2005-04-14 13:30+0200\n"
 "Last-Translator: Gabriel Huertas <gabrielhuertas@terra.es>\n"
 "Language-Team: Español <dr.worst@terra.es>\n"
 "MIME-Version: 1.0\n"
@@ -366,7 +366,7 @@ msgstr "  Info/Renombrar... \007I"
 
 #: desk/desk_rsc.c:420
 msgid "  Delete...       \007D"
-msgstr "  Borrar...       \007D"
+msgstr "  Borrar...         \007D"
 
 #: desk/desk_rsc.c:426
 msgid "  Format..."
@@ -710,7 +710,7 @@ msgid "[3]["
 "disk in drive %c:, click on OK.|"
 "Otherwise, click on Cancel.][  OK  |Cancel]"
 msgstr "[3]["
-"Si está seguro de querer borrar toda|"
+"Si realmente quiere borrar toda|"
 "información de la unidad %c: pulse|"
 "OK, si no, Cancelar][  OK  |Cancelar]"
 
@@ -822,11 +822,11 @@ msgstr "Tiempo de arranque"
 
 #: bios/initinfo.c:160
 msgid "Hold <Control> to skip AUTO/ACC"
-msgstr "Mantenga pulsado <Control> para saltarse los AUTO/ACC"
+msgstr "<Control> para saltar AUTO/ACC"
 
 #: bios/initinfo.c:162
 msgid "Hold <Alternate> to skip HDD"
-msgstr "Mantenga pulsado <Alt> para saltarse el disco duro"
+msgstr "<Alt> no iniciar disco duro"
 
 #: bios/bios.c:378
 msgid ""
@@ -840,7 +840,7 @@ msgstr "  Ejecutar EmuCON   ^Z"
 
 #: desk/desk_rsc.c:444
 msgid "  Shutdown        ^Q"
-msgstr "  Cerrar sistema   ^Q"
+msgstr "  Cerrar sistema    ^Q"
 
 #: desk/desk_rsc.c:486
 msgid "  Change resolution         \007C"
