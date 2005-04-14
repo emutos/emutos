@@ -6,11 +6,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: EMUTOS beta\n"
 "POT-Creation-Date: 2005-04-11 17:18+0200\n"
-"PO-Revision-Date: 2005-04-13 17:24+0200\n"
+"PO-Revision-Date: 2005-04-14 10:00+0200\n"
 "Last-Translator: Gabriel Huertas <gabrielhuertas@terra.es>\n"
 "Language-Team: Español <dr.worst@terra.es>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ISO-8859-15\n"
+"Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #: bios/bios.c:332
@@ -266,11 +266,11 @@ msgstr "Última modificación:  __/__/__"
 
 #: desk/desk_rsc.c:62
 msgid "Drive identifier:  _:"
-msgstr "Identificador de unidad:  _:"
+msgstr "Letra de unidad:  _:"
 
 #: desk/desk_rsc.c:67
 msgid "Disk label:  ___________"
-msgstr "Etiqueta del disco:  ___________"
+msgstr "Etiqueta disco:  ___________"
 
 #: desk/desk_rsc.c:72 desk/desk_rsc.c:107
 msgid "Number of folders:     _____"
@@ -362,11 +362,11 @@ msgstr "  Abrir"
 
 #: desk/desk_rsc.c:382
 msgid "  Info/Rename...  \007I"
-msgstr "  Info/Renombrar...  \007I"
+msgstr "  Info/Renombrar... \007I"
 
 #: desk/desk_rsc.c:420
 msgid "  Delete...       \007D"
-msgstr "  Borrar...      \007D"
+msgstr "  Borrar...       \007D"
 
 #: desk/desk_rsc.c:426
 msgid "  Format..."
@@ -378,7 +378,7 @@ msgstr "  Instalar unidad de disco..."
 
 #: desk/desk_rsc.c:462
 msgid "  Configure application...  \007A"
-msgstr "  Configurar aplicación... \007A"
+msgstr "  Configurar aplicación...  \007A"
 
 #: desk/desk_rsc.c:474
 msgid "  Set preferences..."
@@ -390,19 +390,19 @@ msgstr "  Salvar Desktop            \007V"
 
 #: desk/desk_rsc.c:510
 msgid "  Sort by name   \007N"
-msgstr "  Ordenar por nombre \007N"
+msgstr "  Ordenar por nombre  \007N"
 
 #: desk/desk_rsc.c:516
 msgid "  Sort by type   \007P"
-msgstr "  Ordenar por tipo       \007P"
+msgstr "  Ordenar por tipo    \007P"
 
 #: desk/desk_rsc.c:522
 msgid "  Sort by size   \007Z"
-msgstr "  Ordenar por tamaño    \007Z"
+msgstr "  Ordenar por tamaño  \007Z"
 
 #: desk/desk_rsc.c:528
 msgid "  Sort by date   \007T"
-msgstr "  Ordenar por fecha     \007T"
+msgstr "  Ordenar por fecha   \007T"
 
 #: desk/desk_rsc.c:542
 msgid "ITEM INFORMATION / RENAME"
@@ -442,11 +442,11 @@ msgstr "Basado en fuentes GPL"
 
 #: desk/desk_rsc.c:808
 msgid "EmuTOS is distributed under the GPL"
-msgstr "EmuTOS se distribuye bajo licencia GPL"
+msgstr "EmuTOS se distribuye bajo GPL"
 
 #: desk/desk_rsc.c:814
 msgid "See doc/license.txt for details"
-msgstr "Lea doc/licencia.txt para más detalle"
+msgstr "Lea licencia.txt para más detalle"
 
 #: desk/desk_rsc.c:828
 msgid "NEW FOLDER INFORMATION"
@@ -494,7 +494,7 @@ msgstr "INSTALAR UNIDAD DE DISCO"
 
 #: desk/desk_rsc.c:952
 msgid "Disk type:"
-msgstr "Tipo de disco:"
+msgstr "Tipo disco:"
 
 #: desk/desk_rsc.c:964
 msgid "Floppy"
@@ -562,7 +562,7 @@ msgstr "¿Confirma sobreescribir?"
 
 #: desk/desk_rsc.c:1444
 msgid "Double-click speed:"
-msgstr "Velocidad de doble pulsación:"
+msgstr "Velocidad de click:"
 
 #: desk/desk_rsc.c:1492
 msgid "Click"
@@ -602,7 +602,7 @@ msgstr "24 Horas"
 
 #: desk/desk_rsc.c:1558
 msgid "Date format:"
-msgstr "Formato de fechas:"
+msgstr "Formato fecha:"
 
 #: desk/desk_rsc.c:1570
 msgid "MM-DD-YY"
@@ -844,7 +844,7 @@ msgstr "  Cerrar sistema   ^Q"
 
 #: desk/desk_rsc.c:486
 msgid "  Change resolution         \007C"
-msgstr " Cambiar resolución         \007C"
+msgstr "  Cambiar resolución        \007C"
 
 #: bios/initinfo.c:165
 msgid "Press 'C' to run an early console"

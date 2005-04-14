@@ -1776,3 +1776,7 @@ Start... early ages
 - bios/tosvars.*: Fixed annoying bug: The two system variables _bell_hook and
   _kcl_hook were linked at a wrong position due to a missing ".global" in the
   assembler file and a missing "extern" in the header file. (THH)
+
+2005-04-14
+- po/es.po: Some more updates from Gabriel Huertas. (THH)
+- country.mk: Enabled spanish language. (THH)

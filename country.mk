@@ -40,7 +40,12 @@ i18n_gr_keyb = GR
 i18n_gr_cset = GR
 i18n_gr_idt  = IDT_24H | IDT_DDMMYY | '/'
 
-COUNTRIES = us de fr cz gr
+i18n_es_lang = es
+i18n_es_keyb = US
+i18n_es_cset = ST
+i18n_es_idt  = IDT_24H | IDT_DDMMYY | '/'
+
+COUNTRIES = us de fr cz gr es
 
 # 
 
