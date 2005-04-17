@@ -1587,7 +1587,7 @@ execPrgm(char *s, char *cmdtl)
 
     exeflg = 0;
     xmfree(envPtr);
-    Cursconf(1, 0);             /* XBIOS switch cursor off before command */
+    Cursconf(1, 0);             /* XBIOS switch cursor on after command */
 
     return (err);
 }
@@ -2346,6 +2346,8 @@ cmain(char *bp)
     }
 
     bExitFlag = 0;
+
+    Cursconf(1, 0);             /* XBIOS switch cursor on */
 
     do {
         k = 0;

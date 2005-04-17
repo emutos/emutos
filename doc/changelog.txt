@@ -1782,3 +1782,7 @@ Start... early ages
 - country.mk: Enabled spanish language. (THH)
 - bios/blkdev.h: Fixed a signed/unsigned comparison problem that occured in
   the function blkdev_mediach() when it checks the serial number. (THH)
+
+2005-04-18
+- bios/bios.c bios/initinfo.c cli/command.c: Screen is now cleared after the
+  boot splashscreen and cursor blinking is turned off. (THH)

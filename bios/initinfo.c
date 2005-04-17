@@ -260,6 +260,9 @@ void initinfo(void)
 #ifdef TIMEOUT_ON_BOOT
     draw_timeout_line();
 #endif
+
+    /* Clear screen before booting and disable cursor blinking */
+    cprintf("\033E\033f");
 }
 
 

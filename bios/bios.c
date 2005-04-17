@@ -332,10 +332,8 @@ void biosmain(void)
     defdrv = bootdev;
     trap1( 0x0e , defdrv );    /* Set boot drive */
 
-    /* execute Reset-resistent PRGs */
+    /* TODO: execute Reset-resistent PRGs ? */
 
-    cursconf(1, 0);             /* switch on cursor via XBIOS*/
-    
 #if WITH_CLI
     if (early_cli) {            /* run an early console */
         PD *pd = (PD *) trap1_pexec(5, "", "", null_env);
