@@ -77,7 +77,6 @@ GLOBAL LONG     gl_datree;
 GLOBAL OBJECT   M_DESK[3+NUM_DESKACC];
 
 #if MULTIAPP
-EXTERN SHELL    sh[];
 
 OBJECT  gl_sysmenu[10] = {
 -1,  1,  4,  G_IBOX, NONE, NORMAL,       0x0L, 0, 0, 80, 25, /* SCREEN   */
@@ -95,7 +94,7 @@ mn_init() /* initialize default menu */
         WORD    i;
 
         if (gl_mninit)
-    return;
+          return;
         ad_sysmenu = ADDR(gl_sysmenu);
         for (i=0; i<=4; i++)
           rs_obfix(ad_sysmenu, i);
@@ -106,10 +105,7 @@ mn_init() /* initialize default menu */
 
 
 
-        WORD
-menu_sub(ptree, ititle)
-        LONG            *ptree;
-        WORD            ititle;
+static WORD menu_sub(LONG *ptree, WORD ititle)
 {
         LONG            tree;
         WORD            imenu;
@@ -133,10 +129,10 @@ menu_sub(ptree, ititle)
 
 
 
-
 /*
 *       Routine to find a desk accessory id number given a process descriptor.
 */
+#if 0  /* unused */
 WORD mn_getda(PD *ppd)
 {
         register WORD   i;
@@ -148,10 +144,10 @@ WORD mn_getda(PD *ppd)
         }
         return(0);
 }
+#endif
 
 
-
-void menu_fixup(BYTE *pname)
+static void menu_fixup(BYTE *pname)
 {
         register OBJECT *pob;
         GRECT           t;
@@ -219,7 +215,7 @@ void menu_fixup(BYTE *pname)
 /*
 *       Change a mouse-wait rectangle based on an object's size.
 */
-void rect_change(LONG tree, MOBLK *prmob, WORD iob, WORD x)
+static void rect_change(LONG tree, MOBLK *prmob, WORD iob, WORD x)
 {
         ob_actxywh(tree, iob, (GRECT *)&prmob->m_x);
         prmob->m_out = x;

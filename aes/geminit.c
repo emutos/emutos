@@ -80,17 +80,6 @@
 #if MULTIAPP
 GLOBAL WORD     gl_numaccs;
 GLOBAL ACCNODE  gl_caccs[3];            /* max 3 accessories    */
-
-EXTERN PD       *inulmgr();
-EXTERN VOID     nulmgr();
-EXTERN WORD     gl_mnpds[];
-EXTERN WORD     desk_root[];
-EXTERN LONG     menu_tree[];
-EXTERN LONG     desk_tree[];
-EXTERN PD       *desk_ppd[];
-EXTERN LONG     desk_acc[];
-EXTERN WORD     nulp_msg[];
-EXTERN WORD     gl_pids;
 #endif
 
                                                 /* in GEMINIT.C         */

@@ -54,10 +54,6 @@
 #if MULTIAPP
 #define NUM_MWIN NUM_WIN+1
 #define INACROOT NUM_WIN
-EXTERN WORD     shrunk;
-EXTERN SHELL    sh[];
-EXTERN LONG     ad_armice;
-EXTERN LONG     ad_sysmenu;
 #endif
 #if SINGLAPP
 #define NUM_MWIN NUM_WIN

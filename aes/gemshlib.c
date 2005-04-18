@@ -58,24 +58,11 @@
 
 
 #if MULTIAPP
-EXTERN PD       *desk_ppd[];
-EXTERN BYTE     *desk_str[];
-EXTERN WORD     gl_dacnt;
-EXTERN WORD     gl_mnpds[];
-EXTERN PD       *gl_mnppd;
-EXTERN LONG     menu_tree[];
-EXTERN WORD     gl_pids;                /* bit vector of pids used      */
-EXTERN PD       *gl_lastnpd;
-EXTERN WORD     gl_numaccs;
-EXTERN ACCNODE  gl_caccs[];
-EXTERN WORD     proc_msg[8];
-
 GLOBAL WORD     nulp_msg[8];
 GLOBAL LONG     gl_efnorm, gl_efsave;
 GLOBAL LONG     gl_strtaes;
 GLOBAL LONG     gl_endaes;
 GLOBAL LONG     gl_enddesktop;
-GLOBAL WORD     gl_ldpid = -1;
 #endif
 
 GLOBAL SHELL    sh[NUM_PDS];
@@ -711,7 +698,6 @@ void sh_dosexec()
           ret = pr_load(pid);
 
           sh[pid].sh_loadable = FALSE;
-          gl_ldpid = 1;/* screen manager is automatically load after dos */
           switch(ret)  /* app by the gdos                                */
           {
             case PR_TERMINATED:

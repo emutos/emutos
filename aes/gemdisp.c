@@ -45,10 +45,6 @@
 #if MULTIAPP
 GLOBAL LONG             gl_prret;
 GLOBAL LONG             gl_prpid;
-EXTERN WORD             gl_ldpid;
-EXTERN SHELL            sh[];
-EXTERN LONG             gl_mntree;
-EXTERN PD               *gl_mnppd;
 GLOBAL PD               *gl_displock = 0;
 #endif
 
