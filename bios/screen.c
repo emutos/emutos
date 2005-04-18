@@ -206,8 +206,7 @@ void setscreen(LONG logLoc, LONG physLoc, WORD rez)
         v_bas_ad = (char *) logLoc;
     }
     if (physLoc >= 0) {
-        screenpt = (char *) physLoc;
-        /* will be set up at next VBL */
+        setphys(physLoc);
     }
     if (rez >= 0) {
         defshiftmod = rez;

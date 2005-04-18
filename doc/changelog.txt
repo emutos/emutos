@@ -1786,3 +1786,5 @@ Start... early ages
 2005-04-18
 - bios/bios.c bios/initinfo.c cli/command.c: Screen is now cleared after the
   boot splashscreen and cursor blinking is turned off. (THH)
+- bios/screen.c: Fixed bug in Setscreen() - it must not use screenpt but it must
+  set the new physical screen address immediatly. (THH)
