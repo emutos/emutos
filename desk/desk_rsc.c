@@ -1822,9 +1822,9 @@ void adjust_menu(OBJECT *obj_array, WORD tree)
         m = 0;
         for (k = OBJ(j)->ob_head ; k <= OBJ(j)->ob_tail ; k++) {
             OBJECT *item = OBJ(k);
-            int n = strlen( (char *) item->ob_spec);
-            if (m < n) 
-                m = n;
+            int l = strlen( (char *) item->ob_spec);
+            if (m < l) 
+                m = l;
         }
         
         OBJ(j)->ob_x = 2+x;
