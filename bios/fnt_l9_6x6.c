@@ -12,7 +12,7 @@ static UWORD off_table[], dat_table[];
 const struct font_head fnt_l9_6x6 = {
     1,  /* font_id */
     8,  /* point */
-    "6x6 system font",  /*   BYTE name[32]	*/
+    "6x6 system font",  /* BYTE name[32] */
     0,  /* first_ade */
     255,  /* last_ade */
     4,  /* top */
