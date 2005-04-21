@@ -205,7 +205,7 @@ extern BYTE shft_off;           /* once computed Offset into a Scan Line */
 
 /* gdp area variables */
 extern WORD xc, yc, xrad, yrad, del_ang, beg_ang, end_ang;
-extern WORD start, angle, n_steps;
+extern WORD angle, n_steps;
 
 /* attribute environment save variables */
 extern WORD s_begsty, s_endsty, s_fil_col;

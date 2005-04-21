@@ -140,7 +140,7 @@ static void clc_pts(WORD j)
 
 void clc_arc(Vwk * vwk, int steps)
 {
-    WORD i, j;
+    WORD i, j, start;
     Point * point;
 
     if (vwk->clip) {

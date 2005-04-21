@@ -1793,3 +1793,4 @@ Start... early ages
 - bios/fnt_l9_*.c: Added the Latin-9 fonts. (THH)
 - po/LINGUAS po/es.po bios/country.h country.mk: Now using the Latin-9 fonts
   for the Spanish translation. (THH)
+- Fixed some linking errors when compiling with "-fno-common". (THH)

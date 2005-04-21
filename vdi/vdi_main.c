@@ -9,7 +9,6 @@
  */
 
 
-
 #include "portab.h"
 #include "lineavars.h"
 #include "vdi_defs.h"
@@ -26,8 +25,8 @@ WORD lcl_ptsin[ptsin_size];
 WORD flip_y;                    /* True if magnitudes being returned */
 
 /* GDP variables */
-WORD angle, beg_ang, del_ang, deltay, end_ang;
-WORD start, xc, xrad, y, yc, yrad;
+WORD angle, beg_ang, del_ang, end_ang;
+WORD xc, xrad, yc, yrad;
 
 /* Some color tables */
 WORD MAP_COL[MAX_COLOR] =

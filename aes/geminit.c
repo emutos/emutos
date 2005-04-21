@@ -87,7 +87,7 @@ GLOBAL ACCNODE  gl_caccs[3];            /* max 3 accessories    */
 EXTERN VOID     start();
 #endif
 #if MC68K
-        BYTE    start[SIZE_AFILE];              /* can't play the same  */
+static BYTE     start[SIZE_AFILE];              /* can't play the same  */
                                                 /* trick in 68k land    */
 #endif
 

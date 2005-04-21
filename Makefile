@@ -100,9 +100,9 @@ LDFLAGS_T2 = -Xlinker -Ttext=0xe00000 -Xlinker -Tbss=0x000000
 CC = m68k-atari-mint-gcc
 INC = -Iinclude
 OPTFLAGS = -Os -fomit-frame-pointer
-WARNFLAGS = -Wall #-Wmissing-prototypes -Wstrict-prototypes #-Werror
-CFLAGS =  $(OPTFLAGS) $(WARNFLAGS) -mshort -m68000 $(DEF) $(LOCALCONF) $(INC) \
-  -DWITH_AES=$(WITH_AES) -DWITH_CLI=$(WITH_CLI)
+WARNFLAGS = -Wall #-fno-common -Wshadow -Wmissing-prototypes -Wstrict-prototypes #-Werror
+CFLAGS =  $(OPTFLAGS) $(WARNFLAGS) -ffreestanding -mshort -m68000 $(DEF) \
+  $(LOCALCONF) $(INC) -DWITH_AES=$(WITH_AES) -DWITH_CLI=$(WITH_CLI)
 
 CPPFLAGS = $(INC)
 

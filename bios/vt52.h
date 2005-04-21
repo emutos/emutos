@@ -11,13 +11,12 @@
  */
 
 
-
 #ifndef VT52_H
 #define VT52_H
 
 #include "portab.h"
 
-BOOL vt52_initialized;                  /* checked by kprintf for safety */
+extern BOOL vt52_initialized;           /* checked by kprintf for safety */
 
 extern void vt52_init(void);            /* initialize the vt52 console */
 extern WORD cursconf(WORD, WORD);       /* XBIOS cursor configuration */
