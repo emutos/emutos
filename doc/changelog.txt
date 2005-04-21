@@ -1788,3 +1788,8 @@ Start... early ages
   boot splashscreen and cursor blinking is turned off. (THH)
 - bios/screen.c: Fixed bug in Setscreen() - it must not use screenpt but it must
   set the new physical screen address immediatly. (THH)
+
+2005-04-21
+- bios/fnt_l9_*.c: Added the Latin-9 fonts. (THH)
+- po/LINGUAS po/es.po bios/country.h country.mk: Now using the Latin-9 fonts
+  for the Spanish translation. (THH)
