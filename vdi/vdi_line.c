@@ -252,7 +252,7 @@ void draw_rect(const Vwk * vwk, const Rect * rect, const UWORD fillcolor) {
                         UWORD help = bits;
                         bits |= ~pattern;       /* and complement of mask with source */
                         help ^= bits;           /* isolate changed bits */
-                        help &= ~(leftmask | rightmask);          /* isolate changed bits outside of fringe */
+                        help &= leftmask | rightmask;          /* isolate changed bits outside of fringe */
                         bits ^= help;           /* restore them to original states */
                         *addr = bits;            /* write back the result */
                     } else {
@@ -392,7 +392,7 @@ void draw_rect(const Vwk * vwk, const Rect * rect, const UWORD fillcolor) {
                             UWORD help = bits;
                             bits |= pattern;    /* and complement of mask with source */
                             help ^= bits;       /* isolate changed bits */
-                            help &= ~leftmask;  /* isolate changed bits outside of fringe */
+                            help &= leftmask;   /* isolate changed bits outside of fringe */
                             bits ^= help;       /* restore them to original states */
                             *adr = bits;        /* write back the result */
 
@@ -410,7 +410,7 @@ void draw_rect(const Vwk * vwk, const Rect * rect, const UWORD fillcolor) {
                             UWORD help = bits;
                             bits |= pattern;    /* and complement of mask with source */
                             help ^= bits;       /* isolate changed bits */
-                            help &= ~rightmask; /* isolate changed bits outside of fringe */
+                            help &= rightmask;  /* isolate changed bits outside of fringe */
                             bits ^= help;       /* restore them to original states */
                             *adr = bits;        /* write back the result */
                         }

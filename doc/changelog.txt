@@ -1794,3 +1794,8 @@ Start... early ages
 - po/LINGUAS po/es.po bios/country.h country.mk: Now using the Latin-9 fonts
   for the Spanish translation. (THH)
 - Fixed some linking errors when compiling with "-fno-common". (THH)
+
+2005-04-25
+- vdi/vdi_line.c: Changed draw_rect() a little bit (which is used for drawing
+  filled polygons) so that the game "Ballerburg" now looks normal again. Well,
+  I hope this change doesn't break anything else... (THH)
