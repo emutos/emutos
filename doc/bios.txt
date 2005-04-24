@@ -3353,7 +3353,7 @@
 
 
          $3d Fopen(name, mode) [8]
-             char *name;;
+             char *name;
              WORD mode;
                    Open a file.  Mode is  0,  1  or  2  for  read,
                    write,  and  read/write.  Returns a handle or a

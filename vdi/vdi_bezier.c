@@ -240,7 +240,7 @@ v_bez(Vwk * vwk, Point * ptsget, int nr_ptsin)
     UWORD vertices_per_bez;
     Point ptsbuf[MAX_PTSIN];
     //Point * ptsget = (Point*)PTSIN;
-    Point * ptsput = ptsbuf;;
+    Point * ptsput = ptsbuf;
 
     bez_qual = vwk->bez_qual;
     vertices_per_bez = 1 << bez_qual;
@@ -341,7 +341,7 @@ v_bez_fill(Vwk * vwk, Point * ptsget, int nr_ptsin)
     WORD output_vertices = 0;
     Point ptsbuf[MAX_PTSIN];
     //Point * ptsget = (Point*)PTSIN;
-    Point * ptsput = ptsbuf;;
+    Point * ptsput = ptsbuf;
 
     bez_qual = vwk->bez_qual;
     vertices_per_bez = 1 << bez_qual;

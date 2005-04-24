@@ -30,9 +30,9 @@ void arrow(Vwk * vwk, Point * point, int count);
 UWORD LINE_STYLE[6] = { 0xFFFF, 0xFFF0, 0xC0C0, 0xFF18, 0xFF00, 0xF191 };
 static WORD q_circle[MX_LN_WIDTH];     /* Holds the circle DDA */
 
-
 /* Wide line attribute save areas */
-WORD s_begsty, s_endsty, s_fil_col, s_fill_per;
+static WORD s_begsty, s_endsty, s_fil_col, s_fill_per;
+
 
 /* ST_UD_LINE_STYLE: */
 void vsl_udsty(Vwk * vwk)
@@ -477,7 +477,7 @@ void draw_rect(const Vwk * vwk, const Rect * rect, const UWORD fillcolor) {
                         bits ^= help;           /* restore states of bits outside of fringe */
                         *adr = bits;            /* write back the result */
 
-                        adr += planes;;
+                        adr += planes;
                         pixels -= leftpart;
                     }
                     /* Full bytes */
@@ -526,7 +526,7 @@ void draw_rect(const Vwk * vwk, const Rect * rect, const UWORD fillcolor) {
                             bits ^= help;       /* restore them to original states */
                             *adr = bits;        /* write back the result */
 
-                            adr += planes;;
+                            adr += planes;
                             pixels -= leftpart;
                         }
                         /* Full bytes */
@@ -559,7 +559,7 @@ void draw_rect(const Vwk * vwk, const Rect * rect, const UWORD fillcolor) {
                             bits ^= help;       /* restore them to original states */
                             *adr = bits;        /* write back the result */
 
-                            adr += planes;;
+                            adr += planes;
                             pixels -= leftpart;
                         }
                         /* Full bytes */
@@ -1573,6 +1573,4 @@ void abline (Vwk * vwk, Line * line)
     }
     LN_MASK = linemask;
 }
-
-
 

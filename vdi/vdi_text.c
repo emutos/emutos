@@ -67,14 +67,14 @@ extern Fonthead fon6x6;         /* See bios/fntxxx.c */
 extern Fonthead fon8x8;         /* See bios/fntxxx.c */
 extern Fonthead fon8x16;        /* See bios/fntxxx.c */
 
-/* Global variables */
-WORD width, height;      /* extent of string set in dqt_extent   */
-WORD wordx, wordy;       /* add this to each space for interword */
-WORD rmword;             /* the number of pixels left over   */
-WORD rmwordx, rmwordy;   /* add this to use up remainder     */
-WORD charx, chary;       /* add this to each char for interchar  */
-WORD rmchar;             /* number of pixels left over       */
-WORD rmcharx, rmchary;   /* add this to use up remainder     */
+/* Local variables */
+static WORD width, height;      /* extent of string set in dqt_extent   */
+static WORD wordx, wordy;       /* add this to each space for interword */
+static WORD rmword;             /* the number of pixels left over   */
+static WORD rmwordx, rmwordy;   /* add this to use up remainder     */
+static WORD charx, chary;       /* add this to each char for interchar  */
+static WORD rmchar;             /* number of pixels left over       */
+static WORD rmcharx, rmchary;   /* add this to use up remainder     */
 
 
 /* Prototypes for this module */
@@ -103,7 +103,7 @@ void d_gtext(Vwk * vwk)
     /* some data copying for the assembler part */
     DDA_INC = vwk->dda_inc;
     T_SCLSTS = vwk->t_sclsts;
-    DOUBLE = vwk->scaled;;
+    DOUBLE = vwk->scaled;
     MONO_STATUS = F_MONOSPACE & vwk->cur_font->flags;
     WRT_MODE = vwk->wrt_mode;
 
