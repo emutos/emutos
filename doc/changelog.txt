@@ -1803,3 +1803,5 @@ Start... early ages
 2005-04-26
 - vdi_asm.S/vdi_mouse.c: Support for mouse wheel (vex_wheelv) via Eiffel
   style IKBD status packets. (JKL)
+- bios/fnt_l9_*.c: Fixed a problem with the Spanish fonts - added some missing
+  characters. (THH)
