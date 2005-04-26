@@ -115,6 +115,7 @@ intin_ok:
 
         .globl  _mov_cur        // set's new x/y coordinates
         .globl  _mouse_int      // mouse interrupt routine
+        .globl  _wheel_int      // wheel interrupt routine
 
         .globl  _cur_replace  
         .globl  _cur_display
@@ -142,10 +143,12 @@ intin_ok:
         .xdef   _user_but       // user button vector
         .xdef   _user_mot       // user motion vector
         .xdef   _user_cur       // user cursor vector
+        .xdef   _user_wheel     // user wheel vector
 
         .xdef   _DEV_TAB        // address of device table
         .xdef   _MAP_COL        // color map table
 
+        .xdef   _old_statvec    // previous IKBD status packet vector
 
 
         .text
@@ -298,6 +301,58 @@ ms_done:
         movem.l (sp)+,d0-d7/a0-a6       // restore old registers
 ms_exit:
         rts
+
+
+
+/*
+ * _wheel_int - Mouse wheel interrupt routine
+ * entry:       a0 = address of IKBD status packet buffer from aciavecs.S
+ * exit:        none                   
+ * destroys:    nothing                
+ */
+
+_wheel_int:
+        movem.l d0-d1/a0-a1,-(sp)        // Save only necessary registers
+
+        // Could this be a wheel packet?
+        lea     wheel_ikbd_packet(pc),a1
+        moveq   #0,d0
+        moveq   #5,d1
+wheel_check:
+        move.b  (a0)+,d0
+        cmp.b   (a1)+,d0
+        dbne    d1,wheel_check
+        bne     wheel_exit
+
+        move.b  (a0)+,d0
+        sub.b   #0x59,d0
+        bmi     wheel_exit
+        cmp.b   #3,d0
+        bhi     wheel_exit
+
+        move.w  d0,d1
+        lsr.b   #1,d0                    // Wheel number
+
+        and.w   #1,d1                    // 0 - up,  1 - down
+        add.w   d1,d1                    // 0 - up,  2 - down
+        neg.w   d1                       // 0 - up, -2 - down
+        addq.w  #1,d1                    // 1 - up, -1 - down
+
+        movem.l d2-d7/a2-a6,-(sp)        // Save remaining register to be safe
+        move.l  _user_wheel,a1
+        jsr     (a1)
+        movem.l (sp)+,d2-d7/a2-a6
+                
+        movem.l (sp)+,d0-d1/a0-a1
+        rts                              // Packet has been dealt with
+
+wheel_exit:
+        movem.l (sp)+,d0-d1/a0-a1
+        move.l  _old_statvec,-(sp)       // Go to old IKBD status vector
+        rts
+
+wheel_ikbd_packet:
+        dc.b    0x05,0x00,0x00,0x00,0x00,0x00
 
 
 

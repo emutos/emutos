@@ -1799,3 +1799,7 @@ Start... early ages
 - vdi/vdi_line.c: Changed draw_rect() a little bit (which is used for drawing
   filled polygons) so that the game "Ballerburg" now looks normal again. Well,
   I hope this change doesn't break anything else... (THH)
+
+2005-04-26
+- vdi_asm.S/vdi_mouse.c: Support for mouse wheel (vex_wheelv) via Eiffel
+  style IKBD status packets. (JKL)

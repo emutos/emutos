@@ -45,6 +45,7 @@ void cur_display (WORD x, WORD y);
 void cur_replace(void);
 
 extern void mouse_int(void);    /* mouse interrupt routine */
+extern void wheel_int(char *);  /* wheel interrupt routine */
 extern void mov_cur(void);      /* user button vector */
 extern void vb_draw(void);      /* user button vector */
 
@@ -70,6 +71,7 @@ extern WORD save_len;           /* number of lines to be returned */
 
 /* FIXME: should go to linea variables */
 void     (*user_wheel)(void);   /* user provided mouse wheel vector */
+void     (*old_statvec)(char *);  /* original IKBD status packet routine */
 
 
 
@@ -504,6 +506,8 @@ void xfm_crfm (Vwk * vwk)
 
 void vdimouse_init(Vwk * vwk)
 {
+    struct kbdvecs *kbd_vectors;
+
     /* Input must be initialized here and not in init_wk */
     loc_mode = 0;               /* default is request mode  */
     val_mode = 0;               /* default is request mode  */
@@ -518,6 +522,7 @@ void vdimouse_init(Vwk * vwk)
     user_but = do_nothing;
     user_mot = do_nothing;
     user_cur = mov_cur;         /* initialize user_cur vector */
+    user_wheel = do_nothing;
 
     /* Move in the default mouse form (presently the arrow) */
     set_mouse_form(vwk, &arrow_cdb);    /* transform mouse */
@@ -534,6 +539,10 @@ void vdimouse_init(Vwk * vwk)
 
     /* Initialize mouse via XBIOS in relative mode */
     Initmous(1, (LONG)&arrow_cdb, (LONG)mouse_int);
+
+    kbd_vectors = (struct kbdvecs *)Kbdvbase();
+    old_statvec = kbd_vectors->statvec;
+    kbd_vectors->statvec = wheel_int;
 }
 
 
@@ -545,16 +554,21 @@ void vdimouse_init(Vwk * vwk)
 void vdimouse_exit(Vwk * vwk)
 {
     LONG * pointer;             /* help for storing LONGs in INTIN */
+    struct kbdvecs *kbd_vectors;
 
     user_but = do_nothing;
     user_mot = do_nothing;
     user_cur = do_nothing;
+    user_wheel = do_nothing;
 
     pointer = vblqueue;         /* vblqueue points to start of vbl_list[] */
     *pointer = (LONG)vb_draw;   /* set GEM VBL-routine to vbl_list[0] */
 
     /* disable mouse via XBIOS */
     Initmous(0, 0, 0);
+
+    kbd_vectors = (struct kbdvecs *)Kbdvbase();
+    kbd_vectors->statvec = old_statvec;
 }
 
 
