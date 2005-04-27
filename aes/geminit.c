@@ -706,10 +706,6 @@ void sh_rdinf(void)
         WORD    i;
         char    tmpstr[MAX_LEN];
 
-#if MULTIAPP
-        BYTE            *pstr;
-#endif
-
 #ifdef USE_GEM_RSC
         rs_gaddr(ad_sysglo, R_STRING, STINFPAT, &pfile);
 #else
@@ -764,19 +760,20 @@ void sh_rdinf(void)
             BYTE *tmpptr1, *tmpptr2;
             pcurr += 5;
             tmpptr1 = (BYTE *)pcurr;
-            tmpptr2 = sh_name((BYTE *)pcurr);
-            while(LBGET(pcurr) != '@')
+            while (LBGET(pcurr) != 0 && LBGET(pcurr) != '@')
               ++pcurr;
-            *(tmpptr2-1) = *(BYTE *)pcurr = 0;
+            *(BYTE *)pcurr = 0;
+            tmpptr2 = sh_name(tmpptr1);
+            *(tmpptr2-1) = 0;
             kprintf("Found #Z entry in EMUDESK.INF with path=%s and prg=%s\n",
-                    tmpptr1,tmpptr2);
+                    tmpptr1, tmpptr2);
             sh_wdef((LONG)tmpptr2, (LONG)tmpptr1);
             ++pcurr;
           }
 #if MULTIAPP
           else if (tmp == 'A')          /* test for accessories */
-          {
-                                        /* #A 59 CALCLOCK.ACC@  */
+          {                             /* #A 59 CALCLOCK.ACC@  */
+            BYTE  *pstr;
             pcurr++;
             scan_2((BYTE *)pcurr, &(gl_caccs[gl_numaccs].acc_swap));
             pcurr += 4;
