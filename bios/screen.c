@@ -130,10 +130,15 @@ void screen_init(void)
     screen_start = (ULONG)phystop - VRAM_SIZE;
     /* round down to 256 byte boundary */
     screen_start &= 0x00ffff00;
+    /* Original TOS leaves a gap of 768 bytes between screen ram and phys_top...
+     * ... we normally don't need that, but some old software relies on that fact,
+     * so we use this gap, too. */
+    if (!has_videl)
+        screen_start -= 0x300;
     /* set new v_bas_ad */
     v_bas_ad = (BYTE *)screen_start;
     /* correct phystop */
-    setphys((LONG) v_bas_ad);
+    setphys(screen_start);
 }
 
 /* misc routines */

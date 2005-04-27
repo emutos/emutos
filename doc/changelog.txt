@@ -1809,3 +1809,4 @@ Start... early ages
   characters. (THH)
 - aes/geminit.c: The "#Z" line in EMUDESK.INF now also works if it is not the
   last line in that file. (THH)
+- bios/screen.c: Added gap between screen ram and phys_top. (THH)
