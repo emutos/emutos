@@ -41,17 +41,11 @@
 #include "gemctrl.h"
 
 
-#define FIXLATER        0
-
 
 #define THEDESK 3
 
 #define MBDOWN 0x0001
 #define BELL 0x07                               /* bell                 */
-
-#if FIXLATER
-extern WORD     mn_indextoid();
-#endif
 
 
 /* Global variables: */
@@ -278,9 +272,6 @@ static void hctl_rect(void)
         WORD            title, item;
         register WORD   mesag;
         register PD     *owner;
-#if SINGLAPP
-        WORD            ii;
-#endif
         
         if ( gl_mntree != 0x0L )
         {
@@ -296,14 +287,15 @@ static void hctl_rect(void)
               {
                 item -= 3;
                 owner = desk_ppd[item];
-#if FIXLATER
-        /* use w, new mnlib      */
+#if 0
+                /* use w, new mnlib      */
                 item  = mn_indextoid(item);
 #endif
                 do_chg(gl_mntree, title, SELECTED, FALSE, TRUE, TRUE);
 #if SINGLAPP
                 if (gl_wtop >= 0 )
                 {
+                  WORD  ii;
                   ct_msgup(WM_UNTOPPED, D.w_win[gl_wtop].w_owner, gl_wtop,
                           0, 0, 0, 0);
                   for (ii=0; ii<NUM_ACCS; ii++)
@@ -316,7 +308,7 @@ static void hctl_rect(void)
                                         /* release screen so apps can   */
                                         /*  get it.                     */
                 ct_mouse(FALSE);
-        
+
                 mesag = sh_chmsg(owner);
                                         /* get screen back to keep ctrl */
                                         /*  manager happy.              */
@@ -339,19 +331,11 @@ static void hctl_rect(void)
 *       Control change of ownership to this rectangle and this process.
 *       Doing the control rectangle first is important.
 */
-#if FIXLATER
-void ct_chgown(PD *mpd, PD *cpd, GRECT *pr)
-#else
 void ct_chgown(PD *mpd, GRECT *pr)
-#endif
 {
         set_ctrl(pr);
         if (!gl_ctmown)
-#if FIXLATER
-          set_mown(mpd, cpd); 
-#else
-          set_mown(mpd); 
-#endif
+          set_mown(mpd);
 }
 
 
@@ -380,9 +364,7 @@ void ct_mouse(WORD grabit)
 }
 
 #if MULTIAPP
-        VOID
-hctl_mesag(pmbuf)
-        WORD            pmbuf[];
+void hctl_mesag(WORD pmbuf[])
 {
         PD      *ppd;
         WORD    mesag;
