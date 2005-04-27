@@ -1320,9 +1320,16 @@ void wm_start()
 #if MULTIAPP
         mn_init();
 #endif
+
+#if 0
                                                 /* init default owner   */
                                                 /*  to be screen mgr.   */
         ppd = fpdnm(NULLPTR, SCR_MGR);
+#else
+                                                /* init default owner   */
+                                                /* to be current process*/
+        ppd = rlr;
+#endif
                                                 /* init owner rects.    */
         or_start();
                                                 /* init window extent   */
