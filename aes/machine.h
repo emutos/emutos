@@ -200,8 +200,8 @@ EXTERN LONG     LLCS();
 #if MC68K
 
                                                 /* return a long address*/
-                                                /*   of a short pointer */
-#define ADDR (long) /*!!!*/
+                                                /*   of a pointer       */
+#define ADDR(x) ((LONG)(x))
 
 
                                                 /* return a single byte */

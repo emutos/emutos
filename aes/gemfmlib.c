@@ -60,7 +60,6 @@
 
 
 /* Global variables: */
-LONG     ad_g2loc;
 WORD     ml_ocnt;    /* Needs to be 0 initially! */
 
 
@@ -391,16 +390,16 @@ WORD fm_dial(WORD fmd_type, GRECT *pt)
 
 WORD fm_show(WORD string, UWORD *pwd, WORD level)
 {
-        BYTE            *alert;
-        LONG            ad_alert;
+        BYTE    *alert;
+        BYTE    *ad_alert;
 
-        ad_alert = (LONG) ADDR( alert = rs_str(string) );
+        ad_alert = alert = rs_str(string);
         if (pwd)
         {
           sprintf(&D.g_loc2[0], alert, *pwd);
-          ad_alert = ad_g2loc;
+          ad_alert = &D.g_loc2[0];
         }
-        return( fm_alert(level, ad_alert) );
+        return( fm_alert(level, (LONG)ad_alert) );
 }
 
 

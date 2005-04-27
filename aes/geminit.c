@@ -95,7 +95,6 @@ static BYTE     start[SIZE_AFILE];              /* can't play the same  */
 
 GLOBAL WORD     totpds;
 
-GLOBAL LONG     ad_g1loc;
 GLOBAL LONG     ad_hdrbuff;
 GLOBAL LONG     ad_valstr;
 
@@ -250,9 +249,6 @@ static void ini_dlongs(void)
         ad_sysglo = ADDR(&D.g_sysglo[0]);
         ad_windspb = ADDR(&wind_spb);
         ad_mouse = ADDR(&gl_mouse[0]);
-                                                /* gemfslib longs       */
-        ad_tmp1 = ADDR(&gl_tmp1[0]);
-        ad_tmp2 = ADDR(&gl_tmp2[0]);
                                                 /* gemrslib             */
         ad_hdrbuff = ADDR(&hdr_buff[0]);
                                                 /* gemoblib             */
@@ -274,10 +270,8 @@ static void ini_dlongs(void)
         ad_scrap = ADDR(ps);
         D.s_cdir = ps += 82;
         ad_scdir = ADDR(ps);
-        D.g_loc1 = ps = &gl_1loc[0];
-        ad_g1loc = ADDR(ps);
-        D.g_loc2 = ps = &gl_2loc[0];
-        ad_g2loc = ADDR(ps);
+        D.g_loc1 = &gl_1loc[0];
+        D.g_loc2 = &gl_2loc[0];
         D.g_dir = ps = &gl_dir[0];
         ad_path = ADDR(ps);
         D.g_dta = ps = &gl_dta[0];

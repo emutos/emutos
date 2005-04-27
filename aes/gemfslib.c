@@ -49,9 +49,7 @@ GLOBAL LONG     ad_fsnames;
 GLOBAL LONG     ad_fsdta;
 GLOBAL GRECT    gl_rfs;
 
-GLOBAL LONG     ad_tmp1;
 GLOBAL BYTE     gl_tmp1[LEN_FSNAME];
-GLOBAL LONG     ad_tmp2;
 GLOBAL BYTE     gl_tmp2[LEN_FSNAME];
 
 GLOBAL WORD     gl_shdrive;
@@ -280,8 +278,8 @@ static void fs_format(LONG tree, WORD currtop, WORD count)
             gl_tmp1[0] = ' ';
             gl_tmp1[1] = NULL;
           }
-          fs_sset(tree, NAME_OFFSET+i, ad_tmp1, &adtext, &tlen);
-          LWSET(OB_TYPE(NAME_OFFSET+i), 
+          fs_sset(tree, NAME_OFFSET+i, ADDR(&gl_tmp1[0]), &adtext, &tlen);
+          LWSET(OB_TYPE(NAME_OFFSET+i),
                 ((gl_shdrive) ? G_BOXTEXT : G_FBOXTEXT) );
           LWSET(OB_STATE(NAME_OFFSET+i), NORMAL);
         }
@@ -464,7 +462,7 @@ WORD fs_input(LONG pipath, LONG pisel, WORD *pbutton)
         fs_sset(tree, FSDIRECT, pipath, &ad_fpath, &temp_len);
         strcpy(gl_tmp1, (char *) pisel);
         fmt_str(&gl_tmp1[0], &gl_tmp2[0]);
-        fs_sset(tree, FSSELECT, ad_tmp2, &ad_fname, &fname_len);
+        fs_sset(tree, FSSELECT, ADDR(&gl_tmp2[0]), &ad_fname, &fname_len);
                                                 /* set clip and start   */
                                                 /*   form fill-in by    */
                                                 /*   drawing the form   */
@@ -573,7 +571,7 @@ dofelev:        fm_own(TRUE);
                   }
                                                 /* get string and see   */
                                                 /*   if file or folder  */
-                  fs_sget(tree, touchob, ad_tmp1);
+                  fs_sget(tree, touchob, ADDR(&gl_tmp1[0]));
                   if (gl_tmp1[0] == ' ')
                   {
                                                 /* copy to selection    */
