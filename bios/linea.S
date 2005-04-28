@@ -136,16 +136,16 @@ _linea_8:
         move.w  #8,d0
         bra     linea_stub
 
-
+/*
 _linea_9:
         move.w  #9,d0
         bra     linea_stub
-
-
+*/
+/*
 _linea_a:
         move.w  #0xa,d0
         bra     linea_stub
-
+*/
 
 _linea_b:
         move.w  #0xb,d0
@@ -187,6 +187,7 @@ linea_stub:
         jsr     _kprintf
         add.w   #10,sp
         rts
+
 linea_stub_msg:
         .ascii  "pc=0x%08lx: unimplemented Line-A call number 0x%03x\n\0"
         .even
@@ -204,8 +205,8 @@ linea_vecs:
         dc.l    _linea_6        /* _clc_flit */
         dc.l    _linea_7        /* _bit_blt */
         dc.l    _linea_8        /* _text_blt */
-        dc.l    _linea_9        /* _dis_cur */
-        dc.l    _linea_a        /* _hide_cur */
+        dc.l    _dis_cur        /* $9 - _dis_cur */
+        dc.l    _hide_cur       /* $A - _hide_cur */
         dc.l    _linea_b        /* _xfm_crfm */
         dc.l    _linea_c        /* cur_replace??? */
         dc.l    _linea_d        /* cur_display??? */

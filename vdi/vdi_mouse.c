@@ -43,11 +43,14 @@ struct Mcdb_ {
 /* prototypes */
 void cur_display (WORD x, WORD y);
 void cur_replace(void);
+void vb_draw(void);             /* user button vector */
+void dis_cur(void);
+void hide_cur(void);
 
 extern void mouse_int(void);    /* mouse interrupt routine */
 extern void wheel_int(char *);  /* wheel interrupt routine */
 extern void mov_cur(void);      /* user button vector */
-extern void vb_draw(void);      /* user button vector */
+
 
 /* global storage area for mouse form definition */
 /* as long, as we use parts in assembler, we need these */
@@ -142,7 +145,7 @@ static void do_nothing(void)
  *      draw_flag = 0
  */
 
-static void dis_cur(void)
+void dis_cur(void)
 {
     mouse_flag += 1;            // disable mouse redrawing
     HIDE_CNT -= 1;              // decrement hide operations counter
@@ -169,7 +172,7 @@ static void dis_cur(void)
  *    draw_flag = 0
  */
 
-static void hide_cur(void)
+void hide_cur(void)
 {
     mouse_flag += 1;            /* disable mouse redrawing */
 
