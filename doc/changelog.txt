@@ -1817,3 +1817,6 @@ Start... early ages
   programs did not receive mouse button events. (THH)
 - bios/linea.S vdi/vdi_mouse.c: Enabled the Line-A functions dis_cur & hide_cur
   again (they still seem to work fine and are needed for GFA Basic). (THH)
+
+2005-04-29
+- po/gr.po: Added George Nakos' update for the Greek translation. (THH)

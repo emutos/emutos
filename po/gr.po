@@ -1,10 +1,23 @@
 # Greek translation
 # George Nakos, ggn@atari.org, 2003.
+# Revision on 29-04-2005. After reading again what I did
+# in 2003, I would like to add the following disclaimer:
+# "I, George Nakos, don't use this translation at all, even
+# though I author it and support it (not so frequently). My
+# personal opinion is that most of the messages below translate
+# very poorly to Greek, even though they are gramatically and
+# syntax sound (typos excluded). My personal involvement with
+# the EMUTOS team is the inclusion of the Greek language on it,
+# with the hope of (EMUTOS) being used on a future computer, so
+# it'll have Greek support out of the box. This was done just
+# for completeness, so if another Greek user finds some of the
+# following strings incorrect or not to his liking, he should
+# feel free to modify them and correct any typos."
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: 2003-07-29 21:42+0200\n"
-"PO-Revision-Date: 2003-09-02 20:16+0200\n"
+"PO-Revision-Date: 2005-04-29 15:40+0200\n"
 "Last-Translator: George Nakos <ggn@atari.org>\n"
 "Language-Team: None\n"
 "MIME-Version: 1.0\n"
@@ -30,7 +43,7 @@ msgstr "˜«ã©«œ <Alternate> š ˜ ¤˜ §˜¨˜¡á£¯œ«œ HDD"
 
 #: bios/initinfo.c:164
 msgid "Press 'C' to run an early console"
-msgstr "˜«ã©«œ 'C' š ˜ ¤˜ «¨â¥œ«œ £ ˜ §¨é £ ¡¦¤©æ¢˜"
+msgstr "˜«ã©«œ 'C' š ˜ ¤˜ «¨â¥œ«œ §¨é £˜ £å˜ ¡¦¤©æ¢˜"
 
 #: bios/initinfo.c:167
 msgid "Press any key to continue booting"
@@ -832,7 +845,7 @@ msgid "[3]["
 "See your documentation for limits on|"
 "folders inside other folders.][Cancel]"
 msgstr "[3]["
-"Š¬§¦ç£˜©«œ, ˜¢¢á ›œ¤ £§¦¨œå«˜ ¤˜ ™á¢œ«œ|"
+"Š¬§¦ç£˜©«œ, ˜¢¢á ›œ¤ £§¦¨œå«œ ¤˜ ™á¢œ«œ|"
 "§˜¨˜§á¤à ­á¡œ¢¦¬ª £â©˜ ©«¦¤ «¨â®¦¤«˜.|"
 "ƒœå«œ «¦ documentation š ˜ «˜ æ¨ ˜ ©«¦¬ª|"
 "­á¡œ¢¦¬ª £â©˜ ©œ á¢¢¦¬ª ­á¡œ¢¦¬ª.][ê¡¬¨¦]"
@@ -853,15 +866,15 @@ msgstr "[3]["
 
 #: desk/desk_rsc.c:395
 msgid "  New Folder..."
-msgstr "  New Folder..."
+msgstr "  Nâ¦ª ”á¡ª¢¦ª..."
 
 #: desk/desk_rsc.c:401
 msgid "  Close"
-msgstr "  Close"
+msgstr "  ‰¢œå© £¦"
 
 #: desk/desk_rsc.c:407
 msgid "  Close window"
-msgstr "  Close window"
+msgstr "  ‰¢œå© £¦ §˜¨˜Ÿç¨¦¬"
 
 #: desk/desk_rsc.c:1734
 msgid "[1]["
@@ -870,10 +883,10 @@ msgid "[1]["
 "folder, document, or application,|"
 "drag it to the trash can.][  OK  ]"
 msgstr "[1]["
-"You cannot open the trash can icon|"
-"into a window. To delete a disk,|"
-"folder, document, or application,|"
-"drag it to the trash can.][  OK  ]"
+"ƒœ¤ £§¦¨œå«œ ¤˜ ˜¤¦å¥œ«œ «¦ œ ¡¦¤å› ¦|"
+"«à¤ ©¡¦¬§ › é¤ ©œ §˜¨áŸ¬¨¦. ‚ ˜ ¤˜|"
+"©™ã©œ«œ â¤˜ ­á¡œ¢¦, ˜¨®œå¦ ã œ­˜¨£¦šã,|"
+"©ç¨«œ «¦ ©«¦¤ ¡á›¦ ˜§¦¨¨ £á«à¤.][  OK  ]"
 
 #: desk/desk_rsc.c:1741
 msgid "[1]["
@@ -882,10 +895,10 @@ msgid "[1]["
 "documents, or applications that you|"
 "want to delete PERMANENTLY!][  OK  ]"
 msgstr "[1]["
-"The trash can is the destination to|"
-"which you drag the disks, folders,|"
-"documents, or applications that you|"
-"want to delete PERMANENTLY!][  OK  ]"
+" ¡á›¦ª ˜§¦¨¨ £á«à¤ œå¤˜  «¦ œ ¡¦¤å› ¦|"
+"©«¦ ¦§¦å¦ ™áœ«œ › ©¡â«œª, ­á¡œ¢¦¬ª,|"
+"˜¨®œå˜, ã œ­˜¨£¦šâª §¦¬ Ÿâ¢œ«œ ¤˜|"
+"©™ã©œ«œ ‹Œˆ‹€!][  OK  ]"
 
 #: desk/desk_rsc.c:1748
 msgid "[1]["
@@ -894,18 +907,18 @@ msgid "[1]["
 "you can copy them to disks or drag them|"
 "to the trash.][  OK  ]"
 msgstr "[1]["
-"You cannot drag folders, documents, or|"
-"applications onto the Desktop.  However,|"
-"you can copy them to disks or drag them|"
-"to the trash.][  OK  ]"
+"ƒœ¤ £§¦¨œå«œ ¤˜ ™á¢œ«œ ­˜¡â¢¦¬ª, ˜¨®œå˜ ã|"
+"œ­˜¨£¦šâª ©«¤ œ§ ­á¤œ ˜ œ¨š˜©å˜ª.  î£àª,|"
+"£§¦¨œå«œ ¤˜ «˜ ˜¤« š¨á¯œ«œ ©œ ›å©¡¦¬ª ã|"
+"¤˜ «˜ ™á¢œ«œ ©«¦¤ ¡á›¦ ˜§¦¨¨ £á«à¤.][  OK  ]"
 
 #: desk/desk_rsc.c:1755
 msgid "[1]["
 "You cannot drag the trash can|"
 "into a window.][  OK  ]"
 msgstr "[1]["
-"You cannot drag the trash can|"
-"into a window.][  OK  ]"
+"ƒœ¤ £§¦¨œå«œ ¤˜ ™á¢œ«œ «¦¤ ¡á›¦|"
+"˜§¦¨¨ £á«à¤ ©œ â¤˜ §˜¨áŸ¬¨¦.][  OK  ]"
 
 #: desk/desk_rsc.c:1758
 msgid "[1]["
@@ -913,7 +926,8 @@ msgid "[1]["
 "location on the GEM Desktop, but you|"
 "cannot place it on top of another icon.][  OK  ]"
 msgstr "[1]["
-"You can drag the trash can to another|"
-"location on the GEM Desktop, but you|"
-"cannot place it on top of another icon.][  OK  ]"
+"‹§¦¨œå«œ ¤˜ ™á¢œ«œ «¦¤ ¡á›¦|"
+"˜§¦¨¨ £á«à¤ ©œ á¢¢ «¦§¦Ÿœ©å˜ ©«¦|"
+"GEM Desktop, ˜¢¢á ›œ¤ £§¦¨œå«œ ¤˜|"
+"«¦¤ «¦§¦Ÿœ«ã©œ«œ §á¤à ©œ á¢¢¦ œ ¡¦¤å› ¦.][  OK  ]"                                       
 
