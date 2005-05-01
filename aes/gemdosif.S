@@ -90,7 +90,7 @@ L1F46:
         move.w  0x04(sp),d0
         move.w  0x06(sp),d1
         movem.l d3-d7/a3-a6,-(sp)
-        movea.l #LE3EE,a1
+        movea.l #err_tbl,a1
         move.w  d0,-(sp)
         bne     L1F62
         movea.w #0x00,a0
@@ -184,19 +184,19 @@ _takecpm:
         
 
 _far_bcha:
-        move.l  sp,LED6E
-        lea     LEDDE,sp
+        move.l  sp,gstksave
+        lea     gstack,sp
         movem.l d0-d2/a0-a2,-(sp)
         move.w  d0,-(sp)
         jsr     _b_click
         addq.l  #2,sp
         movem.l (sp)+,d0-d2/a0-a2
-        movea.l LED6E,sp
+        movea.l gstksave,sp
         rts
 
 _far_mcha:
-        move.l  sp,LED6E
-        lea     LEDDE,sp
+        move.l  sp,gstksave
+        lea     gstack,sp
         movem.l d0-d2/a0-a2,-(sp)
 
         move.w  d1,-(sp)
@@ -205,7 +205,7 @@ _far_mcha:
         jsr     _forkq
         addq.l  #8,sp
         movem.l (sp)+,d0-d2/a0-a2
-        movea.l LED6E,sp
+        movea.l gstksave,sp
         rts
 
 /*
@@ -228,8 +228,8 @@ _justretf:
 
 
 _tikcod:
-        move.l  a7,LED72
-        lea     LEE3E,a7
+        move.l  a7,tstksave
+        lea     tstack,a7
         tst.l   _CMP_TICK
         beq     L2234
         addq.l  #1,_NUM_TICK
@@ -244,7 +244,7 @@ L2234:
         move.w  #1,-(a7)
         jsr     _b_delay
         addq.l  #2,a7
-        movea.l LED72,a7
+        movea.l tstksave,a7
         movea.l _tiksav,a0
         jsr     (a0)
         rts
@@ -253,10 +253,10 @@ L2234:
 
 .data
 
-LE3EE:
-        .dc.b   0x04,0x01,0x01,0x02,0x01,0x01,0x02,0x02
-        .dc.b   0x04,0x02,0x02,0x02,0x00,0x03,0x04,0x02
-        .dc.b   0x06,0x00
+err_tbl:
+        .dc.b   4,1,1,2,1,1,2,2
+        .dc.b   4,2,2,2,0,3,4,2
+        .dc.b   6,0
 
 
 .bss
@@ -274,10 +274,10 @@ _drwaddr:
 
 _tikaddr:
         .ds.l    1
-LED6E:
+gstksave:
         .ds.l    1
 
-LED72:
+tstksave:
         .ds.l    1
 
 _tiksav:
@@ -285,9 +285,12 @@ _tiksav:
 _NUM_TICK:
         .ds.l    1
 _CMP_TICK:
+        .ds.l    1
+
         .ds.b    0x80
-LEDDE:
+gstack:                         // gsx stack for mouse
+
         .ds.b    0x80
-LEE3E:
+tstack:                         // tick stack
         .ds.l    1
 
