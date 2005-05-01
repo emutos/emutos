@@ -57,17 +57,16 @@
 
 GLOBAL WORD     gl_bvdisk;
 GLOBAL WORD     gl_bvhard;
-GLOBAL WORD     gl_dspcnt;
 GLOBAL WORD     gl_mnpds[NUM_PDS];
 GLOBAL WORD     gl_mnclick;
 
-
+static WORD     dspcnt;
 static LONG     ad_rso;
 
 
 
 #if SINGLAPP
-UWORD crysbind(WORD opcode, LONG pglobal, UWORD int_in[], UWORD int_out[], LONG addr_in[])
+static UWORD crysbind(WORD opcode, LONG pglobal, UWORD int_in[], UWORD int_out[], LONG addr_in[])
 #endif
 #if MULTIAPP
 UWORD crysbind(WORD opcode, LONG pglobal, UWORD int_in[], UWORD int_out[], LONG addr_in[], LONG addr_out[])
@@ -103,7 +102,7 @@ UWORD crysbind(WORD opcode, LONG pglobal, UWORD int_in[], UWORD int_out[], LONG 
                                                 /* reset dispatcher     */
                                                 /*  count to let the app*/
                                                 /*  run a while.        */
-                gl_dspcnt = NULL;
+                dspcnt = 0;
                 ret = ap_init();
                 break;
           case APPL_READ:
@@ -467,7 +466,7 @@ UWORD crysbind(WORD opcode, LONG pglobal, UWORD int_in[], UWORD int_out[], LONG 
 *       routine.
 */
 
-void xif(LONG pcrys_blk)
+static void xif(LONG pcrys_blk)
 {
         UWORD           control[C_SIZE];
         UWORD           int_in[I_SIZE];
@@ -507,14 +506,14 @@ void xif(LONG pcrys_blk)
 *       Supervisor entry point.  Stack frame must be exactly like
 *       this if supret is to work.
 */
-WORD super(LONG pcrys_blk)
+WORD super(WORD cx, LONG pcrys_blk)
 {
-        xif(pcrys_blk);
+        if (cx == 200)
+          xif(pcrys_blk);
 
-        if ( (gl_dspcnt++ % 10) == 0 )
+        if ((dspcnt++ % 8) == 0 || cx == 201)
           dsptch();
 
-        return(0);
+        return 0;
 }
-
 

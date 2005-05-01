@@ -4,7 +4,6 @@
 
 extern WORD     gl_bvdisk;
 extern WORD     gl_bvhard;
-extern WORD     gl_dspcnt;
 extern WORD     gl_mnpds[];
 extern WORD     gl_mnclick;
 

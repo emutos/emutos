@@ -1820,3 +1820,7 @@ Start... early ages
 
 2005-04-29
 - po/gr.po: Added George Nakos' update for the Greek translation. (THH)
+
+2005-05-01
+- aes/gemsuper.* aes/gemdosif.S: Slightly improved the super() function (the
+  AES trap entry point function). (THH)

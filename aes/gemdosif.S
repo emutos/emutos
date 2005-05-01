@@ -123,12 +123,12 @@ L1F90:
 
 // **** Trap entry: ****
 _aestrap:
-        cmpi.w  #0x00,d0
-        beq     _back
+        tst.w   d0
+        beq.s   _back
         cmpi.w  #0xC8,d0
-        beq     L2126
+        beq.s   L2126
         cmpi.w  #0xC9,d0
-        beq     L2126
+        beq.s   L2126
         move.l  savetrap2,-(sp)
         rts
 
@@ -153,8 +153,9 @@ L2126:
         bsr     _sti                    // restore interrupt mask
 
         move.l  d1,-(sp)                // addr of parameter
+        move.w  d0,-(sp)                // 200 or 201
         jsr     _super                  // jump to supervisor mode
-        addq.l  #4,sp                   // restore stack pointer
+        addq.l  #6,sp                   // restore stack pointer
 
 supret:                                 // return from gementry
         bsr     _cli                    // mask out interrupts
