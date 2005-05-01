@@ -67,10 +67,10 @@
 
 
 /*******  LOCALS  **********************/
-LONG    rs_hdr;
-LONG    rs_global;
-char    tmprsfname[128];
-UWORD   hdr_buff[HDR_LENGTH/2];
+static LONG    rs_hdr;
+static LONG    rs_global;
+static char    tmprsfname[128];
+static UWORD   hdr_buff[HDR_LENGTH/2];
 
 
 
@@ -79,7 +79,7 @@ UWORD   hdr_buff[HDR_LENGTH/2];
 *       If column or width is 80 then convert to rightmost column or 
 *       full screen width. 
 */
-void fix_chpos(LONG pfix, WORD offset)
+static void fix_chpos(LONG pfix, WORD offset)
 {
         WORD    coffset;
         WORD    cpos;
@@ -127,7 +127,7 @@ void rs_obfix(LONG tree, WORD curob)
 
 
 
-LONG get_sub(WORD rsindex, WORD rtype, WORD rsize)
+static LONG get_sub(WORD rsindex, WORD rtype, WORD rsize)
 {
         UWORD           offset;
 
@@ -140,8 +140,8 @@ LONG get_sub(WORD rsindex, WORD rtype, WORD rsize)
 
 /*
  *      return address of given type and index, INTERNAL ROUTINE
-*/
-LONG get_addr(UWORD rstype, UWORD rsindex)
+ */
+static LONG get_addr(UWORD rstype, UWORD rsindex)
 {
         register LONG   psubstruct;
         register WORD   size;
@@ -217,7 +217,7 @@ LONG get_addr(UWORD rstype, UWORD rsindex)
 } /* get_addr() */
 
 
-LONG fix_long(LONG plong)
+static LONG fix_long(LONG plong)
 {
         register LONG   lngval;
 
@@ -233,7 +233,7 @@ LONG fix_long(LONG plong)
 }
 
 
-void fix_trindex()
+static void fix_trindex(void)
 {
         register WORD   ii;
         register LONG   ptreebase;
@@ -252,13 +252,11 @@ void fix_trindex()
 }
 
 
-void fix_objects()
+static void fix_objects(void)
 {
         register WORD   ii;
         register WORD   obtype;
-        register LONG   psubstruct;
-        WORD            len;
-        LONG            farstr;
+        LONG            psubstruct;
 
         for (ii = NUM_OBS-1; ii >= 0; ii--)
         {
@@ -269,26 +267,12 @@ void fix_objects()
                (obtype != G_IBOX) &&
                (obtype != G_BOXCHAR) )
             fix_long(ROB_SPEC);
-                                                /* fix up menu divider  */
-          if ( (obtype == G_STRING) &&
-               (LWGET( ROB_STATE ) & DISABLED) )
-          {
-            farstr = LLGET(ROB_SPEC);
-            len = LSTRLEN(farstr);
-            if ( (LBGET(farstr) == '-') &&
-                 (LBGET(farstr + (ULONG)len - 1) == '-') )
-            {
-              while(len--)
-                LBSET(farstr++, 0x13);
-            }
-          }
-                
         }
 }
 
 
 
-void fix_nptrs(WORD cnt, WORD type)
+static void fix_nptrs(WORD cnt, WORD type)
 {
         register WORD   i;
 
@@ -297,14 +281,14 @@ void fix_nptrs(WORD cnt, WORD type)
 }
 
 
-WORD fix_ptr(WORD type, WORD index)
+static WORD fix_ptr(WORD type, WORD index)
 {
         return( fix_long( get_addr(type, index) ) != 0x0L );
 }
 
 
 
-void fix_tedinfo()
+static void fix_tedinfo(void)
 {
         register WORD   ii, i;
         register LONG   psubstruct;
@@ -341,7 +325,7 @@ void fix_tedinfo()
 *       Set global addresses that are used by the resource library sub-
 *       routines
 */
-void rs_sglobe(LONG pglobal)
+static void rs_sglobe(LONG pglobal)
 {
         rs_global = pglobal;
         rs_hdr = LLGET(APP_LO1RESV);
@@ -400,7 +384,7 @@ WORD rs_saddr(LONG pglobal, UWORD rtype, UWORD rindex, LONG rsaddr)
 *       case of the GEM resource file this workstation will not have
 *       been loaded into memory yet.
 */
-WORD rs_readit(LONG pglobal, LONG rsfname)
+static WORD rs_readit(LONG pglobal, LONG rsfname)
 {
         WORD    ibcnt;
         UWORD   rslsize, fd, ret;

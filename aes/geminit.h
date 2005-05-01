@@ -2,7 +2,6 @@
 #ifndef GEMINIT_H
 #define GEMINIT_H
 
-extern LONG     ad_hdrbuff;
 extern LONG     ad_valstr;
 
 extern LONG     ad_sysglo;

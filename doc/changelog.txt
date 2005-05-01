@@ -1824,3 +1824,4 @@ Start... early ages
 2005-05-01
 - aes/gemsuper.* aes/gemdosif.S: Slightly improved the super() function (the
   AES trap entry point function). (THH)
+- aes/gemrslib.c: Menu dividers now look normal again. (THH)

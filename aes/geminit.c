@@ -95,9 +95,7 @@ static BYTE     start[SIZE_AFILE];              /* can't play the same  */
 
 GLOBAL WORD     totpds;
 
-GLOBAL LONG     ad_hdrbuff;
 GLOBAL LONG     ad_valstr;
-
 
 GLOBAL LONG     ad_sysglo;
 GLOBAL LONG     ad_armice;
@@ -249,8 +247,6 @@ static void ini_dlongs(void)
         ad_sysglo = ADDR(&D.g_sysglo[0]);
         ad_windspb = ADDR(&wind_spb);
         ad_mouse = ADDR(&gl_mouse[0]);
-                                                /* gemrslib             */
-        ad_hdrbuff = ADDR(&hdr_buff[0]);
                                                 /* gemoblib             */
         ad_valstr = ADDR(&D.g_valstr[0]);
         ad_fmtstr = ADDR(&D.g_fmtstr[0]);
