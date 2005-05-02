@@ -270,28 +270,15 @@ _int_vbl:
         addq.l  #1, _frclock            // increase num of happened ints
         subq.w  #1, _vblsem             // check vbl semaphore
         bmi     vbl_end                 // if VBl routine disabled -> end
-        
+
         movem.l d0-d7/a0-a6, -(sp)      // save registers
         addq.l  #1, _vbclock            // count number of VBL interrupts
 
-#if 0   // MAD: does not work with Aranym for now - disabled
-        // detect emulator friendly rez change (for now just ST modes)
-        move.b  0xffff8260,d0           // get shifter mode
-        and.b   #3, d0                  // isolate first 2 bits
-        move.w  _defshiftmod, d1        // get new mode
-        and.b   #3, d1                  // isolate first 2 bits
-        cmp.b   d0, d1                  // has mode changed?
-        beq     vbl_nochg               // no...
-        
-        move.b  d1, _sshiftmod          // set new mode to tosvars
-        move.b  d1, 0xffff8260          // and to HW
-        move.l  _swv_vec, a0            // video mode change vector
-        jmp (a0)                        // is normally reset
- 
-vbl_nochg:
-#endif
+        // TODO: Check for monitor switching on normal ST(E) here,
+        // and jump to _swv_vec if necessary...
+
         jsr     _blink                  // blink cursor
-        
+
         // load new color palette
         move.l  _colorptr,d0
         beq     vbl_no_palette

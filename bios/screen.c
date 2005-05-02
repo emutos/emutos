@@ -20,12 +20,13 @@
 #include "tosvars.h"
 #include "nvram.h"
 #include "kprint.h"
+#include "vt52.h"
 
 #define DBG_SCREEN 0
 
-/* private prototypes */
 
-static void setphys(LONG addr);
+extern void linea_init(void);   /* found in lineainit.c */
+
 
 /* determine monitor type, ... */
 
@@ -46,6 +47,22 @@ const static LONG videl_dflt_palette[] = {
 };
 
 #define VRAM_SIZE  (has_videl ? get_videl_width() / 8L * get_videl_height() * get_videl_bpp() : 32000UL)
+
+
+/* Set physical screen address */
+
+static void setphys(LONG addr)
+{
+    if (addr > ((ULONG)phystop - VRAM_SIZE)) {
+        panic("VideoRAM covers ROM area!!\n");
+    }
+
+    *(UBYTE *) 0xffff8201 = ((ULONG) addr) >> 16;
+    *(UBYTE *) 0xffff8203 = ((ULONG) addr) >> 8;
+    if (has_ste_shifter) {
+        *(UBYTE *) 0xffff820d = ((ULONG) addr);
+    }
+}
 
 
 /*
@@ -141,20 +158,6 @@ void screen_init(void)
     setphys(screen_start);
 }
 
-/* misc routines */
-
-static void setphys(LONG addr)
-{
-    if (addr > ((ULONG)phystop - VRAM_SIZE)) {
-        panic("VideoRAM covers ROM area!!\n");
-    }
-
-    *(UBYTE *) 0xffff8201 = ((ULONG) addr) >> 16;
-    *(UBYTE *) 0xffff8203 = ((ULONG) addr) >> 8;
-    if (has_ste_shifter) {
-        *(UBYTE *) 0xffff820d = ((ULONG) addr);
-    }
-}
 
 /* xbios routines */
 
@@ -187,6 +190,7 @@ WORD getrez(void)
             case 1: return 2;
             case 2: return 1;
             case 4: return 0;
+            case 8: return 7;
             default:
                 kprintf("Problem - unsupported colour depth\n");
                 return 0;
@@ -213,8 +217,16 @@ void setscreen(LONG logLoc, LONG physLoc, WORD rez)
     if (physLoc >= 0) {
         setphys(physLoc);
     }
-    if (rez >= 0) {
-        defshiftmod = rez;
+    if (rez >= 0 && rez < 8) {
+        if (!has_videl && rez != 3) {    /* Videl modes are not supported yet */
+            if (!has_tt_shifter)
+                rez &= 3;
+            /* Set new resolution: */
+            *(UBYTE *)0xffff8260 = sshiftmod = rez;
+            /* Re-initialize line-a, VT52 etc: */
+            linea_init();
+            /*vt52_init();*/
+        }
     }
 }
 

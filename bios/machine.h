@@ -31,6 +31,7 @@ extern long cookie_frb;
  */
 
 extern int has_ste_shifter;
+extern int has_tt_shifter;
 extern int has_videl;
 extern int has_vme;
 extern int has_megartc;   /* in clock.c */

@@ -1825,3 +1825,7 @@ Start... early ages
 - aes/gemsuper.* aes/gemdosif.S: Slightly improved the super() function (the
   AES trap entry point function). (THH)
 - aes/gemrslib.c: Menu dividers now look normal again. (THH)
+
+2005-05-02
+- bios/screen.c: Added screen switching support to the Setscreen() XBIOS
+  function (for ST screen modes only at the moment). (THH)
