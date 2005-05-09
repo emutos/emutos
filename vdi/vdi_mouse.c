@@ -41,11 +41,9 @@ struct Mcdb_ {
 };
 
 /* prototypes */
-void cur_display (WORD x, WORD y);
+void cur_display(WORD x, WORD y);
 void cur_replace(void);
 void vb_draw(void);             /* user button vector */
-void dis_cur(void);
-void hide_cur(void);
 
 extern void mouse_int(void);    /* mouse interrupt routine */
 extern void wheel_int(char *);  /* wheel interrupt routine */
@@ -145,14 +143,16 @@ static void do_nothing(void)
  *      draw_flag = 0
  */
 
-void dis_cur(void)
+static void dis_cur(void)
 {
     mouse_flag += 1;            // disable mouse redrawing
     HIDE_CNT -= 1;              // decrement hide operations counter
-    if (HIDE_CNT <= 0) {
-        HIDE_CNT = 0;           // if hide counter < 0
+    if (HIDE_CNT == 0) {
         cur_display(GCURX, GCURY);          // display the cursor
         draw_flag = 0;          // disable vbl drawing routine
+    }
+    else if (HIDE_CNT < 0) {
+        HIDE_CNT = 0;           // hide counter should not become negative
     }
     mouse_flag -= 1;            // re-enable mouse drawing
 }
@@ -172,7 +172,7 @@ void dis_cur(void)
  *    draw_flag = 0
  */
 
-void hide_cur(void)
+static void hide_cur(void)
 {
     mouse_flag += 1;            /* disable mouse redrawing */
 
