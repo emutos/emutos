@@ -99,77 +99,77 @@ _linea_0:
 
 _linea_1:
         move.w  #1,d0
-        bra     linea_stub
+        bra.s   linea_stub
 
 
 _linea_2:
         move.w  #2,d0
-        bra     linea_stub
+        bra.s   linea_stub
 
 
 _linea_3:
         move.w  #3,d0
-        bra     linea_stub
+        bra.s   linea_stub
 
 
 _linea_4:
         move.w  #4,d0
-        bra     linea_stub
+        bra.s   linea_stub
 
 
 _linea_5:
         move.w  #5,d0
-        bra     linea_stub
+        bra.s   linea_stub
 
 
 _linea_6:
         move.w  #6,d0
-        bra     linea_stub
+        bra.s   linea_stub
 
 
 _linea_7:
         move.w  #7,d0
-        bra     linea_stub
+        bra.s   linea_stub
 
 
 _linea_8:
         move.w  #8,d0
-        bra     linea_stub
+        bra.s   linea_stub
 
 /*
 _linea_9:
         move.w  #9,d0
-        bra     linea_stub
+        bra.s   linea_stub
 */
 /*
 _linea_a:
         move.w  #0xa,d0
-        bra     linea_stub
+        bra.s   linea_stub
 */
 
 _linea_b:
         move.w  #0xb,d0
-        bra     linea_stub
+        bra.s   linea_stub
 
 
 _linea_c:
         move.w  #0xc,d0
-        bra     linea_stub
+        bra.s   linea_stub
 
 
 _linea_d:
         move.w  #0xd,d0
-        bra     linea_stub
+        bra.s   linea_stub
 
 
 _linea_e:
         move.w  #0xe,d0
-        bra     linea_stub
+        bra.s   linea_stub
 
 
 _linea_f:
         move.w  #0xf,d0
-        bra     linea_stub
+        bra.s   linea_stub
 
 
 
@@ -205,8 +205,8 @@ linea_vecs:
         dc.l    _linea_6        /* _clc_flit */
         dc.l    _linea_7        /* _bit_blt */
         dc.l    _linea_8        /* _text_blt */
-        dc.l    _dis_cur        /* $9 - _dis_cur */
-        dc.l    _hide_cur       /* $A - _hide_cur */
+        dc.l    _v_show_c       /* $9 - _dis_cur */
+        dc.l    _v_hide_c       /* $A - _hide_cur */
         dc.l    _linea_b        /* _xfm_crfm */
         dc.l    _linea_c        /* cur_replace??? */
         dc.l    _linea_d        /* cur_display??? */
