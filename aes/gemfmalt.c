@@ -26,6 +26,7 @@
 #include "gem_rsc.h"
 
 #include "gemgsxif.h"
+#include "gemctrl.h"
 #include "gemoblib.h"
 #include "gemobed.h"
 #include "geminit.h"
@@ -266,8 +267,12 @@ WORD fm_alert(WORD defbut, LONG palstr)
                                                 /* draw the alert       */
         gsx_sclip(&d);
         ob_draw(tree, ROOT, MAX_DEPTH);
+                                                /* turn on the mouse    */
+        ct_mouse(TRUE);
                                                 /* let user pick button */
         i = fm_do(tree, 0);
+                                                /* turn off mouse if necessary */
+        ct_mouse(FALSE);
                                                 /* restore saved screen */
         gsx_sclip(&d);
         bb_restore(&d);

@@ -416,9 +416,7 @@ WORD eralert(WORD n, WORD d)    /* n = alert #, 0-5  ;  d = drive code  */
         level = (ml_pwlv[n] & 0x00FF);
         pwd = (ml_pwlv[n] & 0xFF00) ? &drive_let : NULLPTR;
 
-        ct_mouse(TRUE);
         ret = fm_show(ml_alrt[n], pwd, level);
-        ct_mouse(FALSE);
 
         return (ret != 1);
 }

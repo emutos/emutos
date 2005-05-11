@@ -1833,3 +1833,7 @@ Start... early ages
 2005-05-09
 - bios/linea.S: Line-A #9 must be v_show_c() and not dis_cur(). (THH)
 - vdi/vdi_mouse.c: Mouse must not be displayed again if it is already visible.
+
+2005-05-11
+- aes/gemfmalt.c: Mouse pointer is now always turned on while displaying a
+  "form_alert" alert box. (THH)
