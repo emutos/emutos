@@ -93,53 +93,10 @@
         .global _bell_hook
         .global _kcl_hook
 
-        .global _supstk
-
         .global rs232ibufbuf
         .global rs232obufbuf
         .global ikbdibufbuf
         .global midiibufbuf
-        .global _rs232iorec
-        .global rs232ibuf
-        .global rs232ibufsz
-        .global rs232ibufhd
-        .global rs232ibuftl
-        .global rs232ibuflo
-        .global rs232ibufhi
-        .global rs232obuf
-        .global rs232obufsz
-        .global rs232obufhd
-        .global rs232obuftl
-        .global rs232obuflo
-        .global rs232obufhi
-        .global _ikbdiorec
-        .global ikbdibuf
-        .global ikbdibufsz
-        .global ikbdibufhd
-        .global ikbdibuftl
-        .global ikbdibuflo
-        .global ikbdibufhi
-        .global _midiiorec
-        .global midiibuf
-        .global midiibufsz
-        .global midiibufhd
-        .global midiibuftl
-        .global midiibuflo
-        .global midiibufhi
-
-        .global kbdvec
-        .global _kbdvecs
-        .global midivec
-        .global vkbderr
-        .global vmiderr
-        .global statvec
-        .global mousevec
-        .global clockvec
-        .global joyvec  
-        .global midisys
-        .global ikbdsys
-        .global ikbdstate
-        .global kbdlength
 
         .global _sdata          // start adress of data section
 
@@ -256,70 +213,6 @@ _bell_hook:     ds.l    1       // pointer to routine for system bell
 _kcl_hook:      ds.l    1       // pointer to routine for system keyclick
         .org 0x5b4
 
-
-// ==== IOREC BUFFERS ======================================================
-// Table of input-output buffersfor rs232 in, rs232 out, kdb in, midi in
-        .org    0xa0e
-rs232ibufbuf:   
-        .org    0xb0e
-rs232obufbuf:
-        .org    0xc0e
-ikbdibufbuf:
-        .org    0xd0e
-midiibufbuf:    
-        .org    0xd8e
-
-// ==== IORECS =============================================================
-// Table of input-output records for rs232 in, rs232 out, kdb in, midi in
-        .org    0xd8e
-_rs232iorec:
-rs232ibuf:      ds.l    1
-rs232ibufsz:    ds.w    1
-rs232ibufhd:    ds.w    1
-rs232ibuftl:    ds.w    1
-rs232ibuflo:    ds.w    1
-rs232ibufhi:    ds.w    1
-rs232obuf:      ds.l    1
-rs232obufsz:    ds.w    1
-rs232obufhd:    ds.w    1
-rs232obuftl:    ds.w    1
-rs232obuflo:    ds.w    1
-rs232obufhi:    ds.w    1
-_ikbdiorec:
-ikbdibuf:       ds.l    1
-ikbdibufsz:     ds.w    1
-ikbdibufhd:     ds.w    1
-ikbdibuftl:     ds.w    1
-ikbdibuflo:     ds.w    1
-ikbdibufhi:     ds.w    1
-_midiiorec:
-midiibuf:       ds.l    1
-midiibufsz:     ds.w    1
-midiibufhd:     ds.w    1
-midiibuftl:     ds.w    1
-midiibuflo:     ds.w    1
-midiibufhi:     ds.w    1
-
-        
-// ==== KBDVBASE =============================================================
-// Table of routines for managing midi and keyboard data
-// in packets from IKBD (shown by A0 und 4(sp))
-// (see aciavecs.S)
-        .org 0xdcc
-kbdvec:         ds.l    1       // must be right before _kbdvecs
-_kbdvecs:       
-midivec:        ds.l    1       // MIDI input
-vkbderr:        ds.l    1       // keyboard error
-vmiderr:        ds.l    1       // MIDI-Error
-statvec:        ds.l    1       // IKBD-Status
-mousevec:       ds.l    1       // mouse-routine
-clockvec:       ds.l    1       // time-routine
-joyvec:         ds.l    1       // joystick-routinee
-midisys:        ds.l    1       // MIDI-systemvector
-ikbdsys:        ds.l    1       // IKBD-systemvector
-ikbdstate:      ds.b    1       // action to take upon packet completion 
-kbdlength:      ds.b    1       // number of bytes remaining in current packet
-        .even
 
         
 // memory past this address will be cleared on startup or on reset.

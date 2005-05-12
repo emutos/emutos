@@ -1837,3 +1837,8 @@ Start... early ages
 2005-05-11
 - aes/gemfmalt.c: Mouse pointer is now always turned on while displaying a
   "form_alert" alert box. (THH)
+
+2005-05-12
+- bios/tosvars.S aciavecs.S: Moved kbdvbase and iorec structures and buffers
+  from tosvars.S to aciavecs.S since the are not officialially documented
+  system variables. (THH)

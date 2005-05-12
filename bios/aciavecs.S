@@ -82,7 +82,78 @@
 
         .global _init_acia_vecs
         .global _int_acia
-        
+
+        .global _kbdvecs
+
+        .global _rs232iorec
+        .global _ikbdiorec
+        .global _midiiorec
+
+
+        .bss
+
+// ==== IOREC BUFFERS ======================================================
+// Table of input-output buffersfor rs232 in, rs232 out, kdb in, midi in
+
+rs232ibufbuf:   ds.b    0x100
+rs232obufbuf:   ds.b    0x100
+ikbdibufbuf:    ds.b    0x100
+midiibufbuf:    ds.b    0x80
+
+
+// ==== IORECS =============================================================
+// Table of input-output records for rs232 in, rs232 out, kdb in, midi in
+
+_rs232iorec:
+rs232ibuf:      ds.l    1
+rs232ibufsz:    ds.w    1
+rs232ibufhd:    ds.w    1
+rs232ibuftl:    ds.w    1
+rs232ibuflo:    ds.w    1
+rs232ibufhi:    ds.w    1
+rs232obuf:      ds.l    1
+rs232obufsz:    ds.w    1
+rs232obufhd:    ds.w    1
+rs232obuftl:    ds.w    1
+rs232obuflo:    ds.w    1
+rs232obufhi:    ds.w    1
+_ikbdiorec:
+ikbdibuf:       ds.l    1
+ikbdibufsz:     ds.w    1
+ikbdibufhd:     ds.w    1
+ikbdibuftl:     ds.w    1
+ikbdibuflo:     ds.w    1
+ikbdibufhi:     ds.w    1
+_midiiorec:
+midiibuf:       ds.l    1
+midiibufsz:     ds.w    1
+midiibufhd:     ds.w    1
+midiibuftl:     ds.w    1
+midiibuflo:     ds.w    1
+midiibufhi:     ds.w    1
+
+
+// ==== KBDVBASE =============================================================
+// This is now the table of routines for managing midi and keyboard data
+// in packets from IKBD (shown by A0 und 4(sp))
+
+kbdvec:         ds.l    1       // must be right before _kbdvecs
+_kbdvecs:       
+midivec:        ds.l    1       // MIDI input
+vkbderr:        ds.l    1       // keyboard error
+vmiderr:        ds.l    1       // MIDI-Error
+statvec:        ds.l    1       // IKBD-Status
+mousevec:       ds.l    1       // mouse-routine
+clockvec:       ds.l    1       // time-routine
+joyvec:         ds.l    1       // joystick-routinee
+midisys:        ds.l    1       // MIDI-systemvector
+ikbdsys:        ds.l    1       // IKBD-systemvector
+ikbdstate:      ds.b    1       // action to take upon packet completion 
+kbdlength:      ds.b    1       // number of bytes remaining in current packet
+        .even
+
+
+
         .text
                 
 _init_acia_vecs:
@@ -216,6 +287,7 @@ kbdindex:
         ds.w    1   // position of next byte in buffer
 kbdbuf: ds.b    8   // buffer where packets are being reconstructed
 joybuf: ds.b    3        
+
         .text
 
 _kbdvec:

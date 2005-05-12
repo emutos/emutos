@@ -121,7 +121,7 @@ bios_csrc = kprint.c xbios.c chardev.c blkdev.c bios.c clock.c \
             midi.c ikbd.c sound.c floppy.c disk.c screen.c lineainit.c \
             mouse.c initinfo.c cookie.c machine.c nvram.c country.c \
             xhdi.c natfeats.c font.c conout.c vt52.c
-bios_ssrc = tosvars.S startup.S lineavars.S vectors.S aciavecs.S \
+bios_ssrc = tosvars.S startup.S aciavecs.S vectors.S lineavars.S \
             processor.S memory.S linea.S panicasm.S kprintasm.S \
             natfeat.S
 
