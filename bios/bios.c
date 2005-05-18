@@ -444,13 +444,13 @@ LONG bios_2(WORD handle)
  * bconout  - Print character to output device
  */
 
-static void bconout(WORD handle, BYTE what)
+static void bconout(WORD handle, WORD what)
 {
     protect_ww((PFLONG)(bconout_vec[handle & 7]), handle, what);
 }
 
 #if DBGBIOS
-void bios_3(WORD handle, BYTE what)
+void bios_3(WORD handle, WORD what)
 {
     bconout(handle, what);
 }
