@@ -33,7 +33,9 @@ VDI
 AES
 - Check if all strings in desk_rsc.c and gem_rsc.c are fully ROM save (the
   TEDINFO strings etc).
+- Bug: Mouse is not moving in some old programs like GFA-Basic
 
 DESK
 - Add a dialog for resolution switching
 - Add a dialog for formating floppy disks
+- Support for loading DESKTOP.INF (needs remapping of the icon indices)
