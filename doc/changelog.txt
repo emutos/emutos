@@ -1842,3 +1842,8 @@ Start... early ages
 - bios/tosvars.S aciavecs.S: Moved kbdvbase and iorec structures and buffers
   from tosvars.S to aciavecs.S since the are not officialially documented
   system variables. (THH)
+
+2005-05-19
+- bios/bios.c: Bconout() did not work correctly with characters >= 128. (THH)
+- bios/startup.S: Changed the size of the initial stack from 16384 to 2048
+  bytes - that is still more than enough, I hope. (THH)

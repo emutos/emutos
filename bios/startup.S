@@ -17,7 +17,7 @@
 
 // ==== Defines ==============================================================
 
-        .equ    SUPSIZ, 8192            // size of supervisor stack in words
+        .equ    SUPSIZ, 1024    // size of supervisor stack in words
 
 
 // ==== References ===========================================================
