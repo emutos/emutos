@@ -5,7 +5,6 @@
 #include "struct.h"
 #include "gemlib.h"
 
-extern WORD     dr_invdi, dr_xrat, dr_yrat, dr_doit;
 extern WORD     button, xrat, yrat, kstate, mclick, mtrans;
 extern WORD     pr_button, pr_xrat, pr_yrat, pr_mclick;
 

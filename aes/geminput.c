@@ -40,7 +40,6 @@
 #define MB_DOWN 0x01
 
 
-GLOBAL WORD     dr_invdi, dr_xrat, dr_yrat, dr_doit;
 GLOBAL WORD     button, xrat, yrat, kstate, mclick, mtrans;
 GLOBAL WORD     pr_button, pr_xrat, pr_yrat, pr_mclick;
 
@@ -394,29 +393,6 @@ WORD downorup(WORD new, LONG buparm)
 }
 
 
-/*
-void m_forkq(WORD (*fcode)(), WORD ratx, WORD raty)
-{
-  if ((dr_invdi) || (drawrat(ratx, raty)))
-  {
-    dr_xrat = ratx;
-    dr_yrat = raty;
-    dr_doit = TRUE;
-  }
-  forkq(fcode, ratx, raty);
-}
-*/
-
-
-static void m_drawit(void)
-{
-  dr_doit = FALSE;
-  dr_invdi = TRUE;
-  drawrat(dr_xrat, dr_yrat);
-  dr_invdi = FALSE;
-}
-
-
 void mchange(WORD rx, WORD ry)
 {
                                                 /* zero out button wait */
@@ -432,17 +408,11 @@ void mchange(WORD rx, WORD ry)
                                                 /* xrat, yrat hold true */
         xrat = rx;
         yrat = ry;
-
-        if (gl_play || !dr_doit)    /* Added dr_doit  - Thomas */
-        {
-          dr_doit = TRUE;
-          dr_xrat = rx;
-          dr_yrat = ry;
-        }
-
                                                 /* post the event       */
-        if (dr_doit)
-          m_drawit();
+        if (gl_play)
+        {
+            drawrat(rx, ry);
+        }
                                                 /* give mouse to screen */
                                                 /*   handler when not   */
                                                 /*   button down and    */

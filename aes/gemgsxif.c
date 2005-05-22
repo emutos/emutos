@@ -75,7 +75,6 @@ GLOBAL WORD  gl_graphic;
 /* Some local Prototypes: */
 void  g_v_opnwk(WORD *pwork_in, WORD *phandle, WS *pwork_out );
 ULONG  gsx_gbufflen(void);
-void gsx_setmb(void *boff, void *moff, LONG *pdrwaddr);
 
 
 
@@ -178,6 +177,40 @@ void ratexit(void)
 }
 
 
+static void gsx_setmb(void *boff, void *moff, LONG *pdrwaddr)
+{
+    i_lptr1( boff );
+    gsx_ncode(BUT_VECX, 0, 0);
+    m_lptr2( &old_bcode );
+
+    i_lptr1( moff );
+    gsx_ncode(MOT_VECX, 0, 0);
+    m_lptr2( &old_mcode );
+
+/* not used in Atari GEM:
+    i_lptr1( justretf );
+    gsx_ncode(CUR_VECX, 0, 0);
+    m_lptr2( pdrwaddr );
+*/
+}
+
+
+
+static void gsx_resetmb(void)
+{
+    i_lptr1( (void*)old_bcode );
+    gsx_ncode(BUT_VECX, 0, 0);
+
+    i_lptr1( (void*)old_mcode );
+    gsx_ncode(MOT_VECX, 0, 0);
+
+/* not used in Atari GEM:
+    i_lptr1( (void*)drwaddr );
+    gsx_ncode(CUR_VECX, 0, 0);
+*/
+}
+
+
 
 void gsx_init(void)
 {
@@ -187,6 +220,28 @@ void gsx_init(void)
     gsx_ncode(MOUSE_ST, 0, 0);
     xrat = ptsout[0];
     yrat = ptsout[1];
+}
+
+
+
+void gsx_graphic(WORD tographic)
+{
+    if (gl_graphic != tographic)
+    {
+        gl_graphic = tographic;
+        if (gl_graphic)
+        {
+            contrl[5] = 2;
+            gsx_ncode(5, 0, 0);
+            gsx_setmb(far_bcha, far_mcha, &drwaddr);
+        }
+        else
+        {
+            contrl[5] = 3;
+            gsx_ncode(5, 0, 0);
+            gsx_resetmb();
+        }
+    }
 }
 
 
@@ -213,42 +268,6 @@ void gsx_exec(LONG pcspec, WORD segenv, LONG pcmdln, LONG pfcb1, LONG pfcb2)
     gsx_ncode(-1, 0, 6);
 }
 #endif
-
-
-
-static void gsx_resetmb(void)
-{
-    i_lptr1( (void*)old_bcode );
-    gsx_ncode(BUT_VECX, 0, 0);
-
-    i_lptr1( (void*)old_mcode );
-    gsx_ncode(MOT_VECX, 0, 0);
-
-    i_lptr1( (void*)drwaddr );
-    gsx_ncode(CUR_VECX, 0, 0);
-}
-
-
-
-void gsx_graphic(WORD tographic)
-{
-    if (gl_graphic != tographic)
-    {
-        gl_graphic = tographic;
-        if (gl_graphic)
-        {
-            contrl[5] = 2;
-            gsx_ncode(5, 0, 0);
-            gsx_setmb(far_bcha, far_mcha, &drwaddr);
-        }
-        else
-        {
-            contrl[5] = 3;
-            gsx_ncode(5, 0, 0);
-            gsx_resetmb();
-        }
-    }
-}
 
 
 
@@ -296,23 +315,6 @@ void bb_restore(GRECT *pr)
 {
     bb_set(pr->g_x, pr->g_y, pr->g_w, pr->g_h, &ptsin[4], &ptsin[0],
            &gl_dst, &gl_tmp, &gl_dst);
-}
-
-
-
-void gsx_setmb(void *boff, void *moff, LONG *pdrwaddr)
-{
-    i_lptr1( boff );
-    gsx_ncode(BUT_VECX, 0, 0);
-    m_lptr2( &old_bcode );
-
-    i_lptr1( moff );
-    gsx_ncode(MOT_VECX, 0, 0);
-    m_lptr2( &old_mcode );
-
-    i_lptr1( justretf );
-    gsx_ncode(CUR_VECX, 0, 0);
-    m_lptr2( pdrwaddr );
 }
 
 

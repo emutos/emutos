@@ -1847,3 +1847,7 @@ Start... early ages
 - bios/bios.c: Bconout() did not work correctly with characters >= 128. (THH)
 - bios/startup.S: Changed the size of the initial stack from 16384 to 2048
   bytes - that is still more than enough, I hope. (THH)
+
+2005-05-22
+- aes/gemgsxif.c aes/geminput.*: Fixed the problem that the mouse was not
+  moving in certain programs. (THH)
