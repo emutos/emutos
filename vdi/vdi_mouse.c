@@ -601,6 +601,7 @@ void vb_draw()
 {
     WORD old_sr = set_sr(0x2700);       // disable interrupts
     if (draw_flag) {
+        draw_flag = FALSE;
         set_sr(old_sr);
         if (!mouse_flag) {
             cur_replace();              // remove the old cursor from the screen
