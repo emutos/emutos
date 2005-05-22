@@ -61,10 +61,9 @@ _hsti:
  DOS error trapping code.
 */
 _retake:
-L1F0C:
         move.l  #_aestrap,0x88
         move.l  #_err_tra,d0
-L1F1C:
+call_err:
         move.l  d0,-(sp)
         move.w  #0x0101,-(sp)
         move.w  #0x05,-(sp)
@@ -73,20 +72,17 @@ L1F1C:
         rts
         
 _giveerr:
-L1F2C:
         move.l  _crit_er,d0
-        bra     L1F1C
+        bra     call_err
         
 _takeerr:
-L1F34:
         moveq   #-1,d0
-        bsr     L1F1C
+        bsr     call_err
         move.l  d0,_crit_er
         move.l  #_err_tra,d0
-        bra     L1F1C
+        bra     call_err
         
 _err_tra:
-L1F46:
         move.w  0x04(sp),d0
         move.w  0x06(sp),d1
         movem.l d3-d7/a3-a6,-(sp)
@@ -209,6 +205,7 @@ _far_mcha:
         movea.l gstksave,sp
         rts
 
+
 /*
 ;
 ;       drawrat(newx, newy)
@@ -217,11 +214,8 @@ _far_mcha:
 _drawrat:
         move.w  4(sp),d0
         move.w  6(sp),d1
-        movea.l _drwaddr,a0
-        jsr     (a0)
-        rts
-
-
+        move.l  _drwaddr,-(sp)
+        rts                     // Jump to vector stored in _drwaddr
 
 
 _justretf:
@@ -229,26 +223,25 @@ _justretf:
 
 
 _tikcod:
-        move.l  a7,tstksave
-        lea     tstack,a7
+        move.l  sp,tstksave
+        lea     tstack,sp
         tst.l   _CMP_TICK
         beq     L2234
         addq.l  #1,_NUM_TICK
         subq.l  #1,_CMP_TICK
         bne     L2234
 
-        move.l  _NUM_TICK,-(a7)
-        move.l  #_tchange,-(a7)
+        move.l  _NUM_TICK,-(sp)
+        move.l  #_tchange,-(sp)
         jsr     _forkq
-        addq.l  #8,a7
+        addq.l  #8,sp
 L2234:
-        move.w  #1,-(a7)
+        move.w  #1,-(sp)
         jsr     _b_delay
-        addq.l  #2,a7
-        movea.l tstksave,a7
-        movea.l _tiksav,a0
-        jsr     (a0)
-        rts
+        addq.l  #2,sp
+        movea.l tstksave,sp
+        move.l  _tiksav,-(sp)
+        rts                     // Jump to vector stored in _tiksav
 
 
 

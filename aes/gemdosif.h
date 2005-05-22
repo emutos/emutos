@@ -25,9 +25,9 @@ extern void sti(void);
 extern void hcli(void);
 extern void hsti(void);
 
-extern WORD far_bcha(void);
-extern WORD far_mcha(void);
-extern WORD justretf(void);
+extern void far_bcha(void);
+extern void far_mcha(void);
+extern void justretf(void);
 
 extern void givecpm(void);
 extern void takecpm(void);
