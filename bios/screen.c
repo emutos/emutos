@@ -20,6 +20,7 @@
 #include "tosvars.h"
 #include "nvram.h"
 #include "kprint.h"
+#include "font.h"
 #include "vt52.h"
 
 #define DBG_SCREEN 0
@@ -225,7 +226,8 @@ void setscreen(LONG logLoc, LONG physLoc, WORD rez)
             *(UBYTE *)0xffff8260 = sshiftmod = rez;
             /* Re-initialize line-a, VT52 etc: */
             linea_init();
-            /*vt52_init();*/
+            font_set_default();
+            vt52_init();
         }
     }
 }
