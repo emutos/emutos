@@ -368,7 +368,6 @@ void v_get_pixel(Vwk *);      /* 105 - fd1906 */
 void dst_style(Vwk *);        /* 106 - fce278 */
 void dst_point(Vwk *);        /* 107 - fce132 */
 void vsl_ends(Vwk *);         /* 108 - fcabca */
-void dro_cpyfm(Vwk *);        /* 109 - fcb454 */
 void vr_trnfm(Vwk *);         /* 110 - fd1960 */
 
 void vdi_vro_cpyfm(Vwk *);    /* 111 - fd0770 */
