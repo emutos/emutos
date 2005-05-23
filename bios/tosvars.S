@@ -1,9 +1,7 @@
 /*
  * tosvars.S - TOS System variables
  *
- * Copyright (c) 2001 by Authors:
- *
- *  MAD  Martin Doering
+ * Copyright (c) 2005 by the EmuTOS development team.
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -213,6 +211,13 @@ _bell_hook:     ds.l    1       // pointer to routine for system bell
 _kcl_hook:      ds.l    1       // pointer to routine for system keyclick
         .org 0x5b4
 
+
+// Memory below 0x800 is only accessible in supervisor mode on the ST.
+// We have to make sure that nothing is linked into this region that might
+// be accessed from user mode, too.
+// (So the gap between 0x5b4 and 0x800 could be filled with system variables
+//  or a buffer that are only accessed in supervisor mode.)
+        .org 0x800
 
         
 // memory past this address will be cleared on startup or on reset.
