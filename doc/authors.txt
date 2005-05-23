@@ -9,17 +9,17 @@ Major 'historical' parts are:
 - BDOS, VDI, CLI - it comes from the latest known GEMDOS version from 
   Digital Research (later versions seem to have been developped by Atari). 
 - AES, desktop - The C source code for GEM comes from the x86 version.
-- some GEM assembler files come from the AES in the Apple LISA.
+- Some GEM assembler files come from the AES for the Apple LISA.
 
-All this historical part was released under the General Public License by 
+All these historical parts were released under the General Public License by 
 Caldera, Inc. in mid april 2000 (?)
-(For the record, Caldera bought it from Novell in 1997 along with DR-DOS;
-Later Caldera disappeared and this is the copyright notice refers to Lineo)
+(For the record, Caldera bought it from Novell in 1997 along with DR-DOS; later
+ Caldera disappeared and this is the copyright notice that refers to Lineo)
 
 Minor borrowed stuff:
 - the printf and memcpy stuff was inspired from the Minix kernel and library;
 - the processor detection is taken from the MiNT kernel;
-- Bug includes parts of the original gettext source code;
+- "Bug" includes parts of the original gettext source code;
 - some low-level hardware stuff comes from the Linux kernel;
 
 
@@ -31,7 +31,7 @@ Martin Doering (MAD) <mdoering@mucl.de>
 - project initiator and manager; 
 - memory setup, VT52 console, linea, mouse
 - virtually everything not modified later by the other fellows
-  
+
 Petr Stehlik (joy) <pstehlik@sophics.cz>
 - bios disk interface, BDOS filesystem
 - Falcon and ARAnyM support
@@ -48,11 +48,17 @@ Laurent Vogel (LVL) <lvl@club-internet.fr>
 Bohdan Milar <milarb@volny.cz>
 - Czech translation
 
+Gabriel Huertas
+- Spanish translation
+
+George Nakos
+- Greek translation
+
 
 Thanks also to all Mailing list contributors for their help, and 
 especially:
 
-Frank Neumann <fneumann@cs.uni-magdeburg.de> 
+Frank Naumann <fnaumann@cs.uni-magdeburg.de> 
 - MiNT
 
 Stanislav Opichal <opichals@seznam.cz>,
@@ -71,3 +77,6 @@ Jacques-Etienne Rahon "Kevin Flynn" <kevin.flynn@wanadoo.fr>
 
 Patrice Mandin
 - Hints and patches for compiling EmuTOS with GCC 3.x
+
+Eero Tamminen
+- Many bug reports and testing

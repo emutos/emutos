@@ -1827,8 +1827,8 @@ Start... early ages
 - aes/gemrslib.c: Menu dividers now look normal again. (THH)
 
 2005-05-02
-- bios/screen.c: Added screen switching support to the Setscreen() XBIOS
-  function (for ST screen modes only at the moment). (THH)
+- bios/screen.c: Added screen resolution switching support to the Setscreen()
+  XBIOS function (for ST screen modes only at the moment). (THH)
 
 2005-05-09
 - bios/linea.S: Line-A #9 must be v_show_c() and not dis_cur(). (THH)
