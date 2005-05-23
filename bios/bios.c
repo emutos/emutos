@@ -58,23 +58,14 @@
 
 /*==== Forward prototypes =================================================*/
 
-void bufl_init(void);
 void biosmain(void);
-void autoexec(void);
-
-void startup(void);
 LONG bios_do_unimpl(WORD number);
 
 /*==== External declarations ==============================================*/
 
-extern BYTE *biosts;           /*  time stamp string */
-
-extern LONG osinit(void);
-
+extern LONG osinit(void);       /* found in bdosmain.c */
 extern void linea_init(void);   /* found in lineainit.c */
 extern void cartscan(WORD);     /* found in startup.S */
-extern void strtautoexec(void); /* found in startup.S */
-extern void launchautoexec(PD *); /* found in startup.S */
 
 extern void ui_start(void);   /* found in cli/coma.S or aes/gemstart.S */
                               /* it is the start addr. of the user interface */
@@ -129,15 +120,16 @@ static void vecs_init(void)
     }
 }
 
+
 /*
- * Taken from startup.s, and rewritten in C.
+ * Initialize the BIOS
  */
- 
-void startup(void)
+
+static void bios_init(void)
 {
 
 #if DBGBIOS
-    kprintf("beginning of BIOS startup\n");
+    kprintf("beginning of BIOS init\n");
 #endif
 
     /* LVL - I moved natfeat_init() earlier in the boot sequence, just after
@@ -233,17 +225,9 @@ void startup(void)
 
     cartscan(3);
 
-    /* This had been just used for StonX' cartrige hacks */
-    //font_set_default();       /* set default font again, if screen changed  */
-
     /* add TT-RAM that was detected in memory.S */
     if (ramtop > 0x1000000)
         xmaddalt( 0x1000000, ramtop - 0x1000000);
- 
-    /* main BIOS */
-    biosmain();
-
-    halt();
 }
 
 
@@ -258,7 +242,7 @@ void startup(void)
  * to use GEMDOS calls here!
  */
 
-void autoexec(void)
+static void autoexec(void)
 {
     struct {
         BYTE reserved[21];
@@ -307,7 +291,7 @@ void autoexec(void)
 
 void biosmain(void)
 {
-    /* PD *shell_pd, com_pd; */
+    bios_init();                /* Initialize the BIOS */ 
 
     trap1( 0x30 );              /* initial test, if BDOS works */
 

@@ -1,7 +1,7 @@
 /*
  * startup.S - EmuTOS startup module
  *
- * Copyright (c) 2001, 02 by the EmuTOS development team
+ * Copyright (c) 2001-2005 by the EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -51,10 +51,9 @@
 
 _stkbot:        ds.w    SUPSIZ  // Supervisor stack
 _stktop:                        // filled from top to bottom
-        
-aexecsave:      ds.l    1       // save zone for autoexec
-        
-        
+
+
+
 // ===========================================================================
 // ==== TEXT segment (TOS image) =============================================
 // ===========================================================================
@@ -169,10 +168,10 @@ memdone:
 
 /* 
  * From now, the stack is allowed, and C code can be used.
- * The startup goes on in bios.c
+ * The BIOS startup goes on in bios.c
  */
 
-        jmp     _startup
+        jmp     _biosmain
 
 
 /*

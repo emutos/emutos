@@ -1851,3 +1851,9 @@ Start... early ages
 2005-05-22
 - aes/gemgsxif.c aes/geminput.*: Fixed the problem that the mouse was not
   moving in certain programs. (THH)
+
+2005-05-23
+- bios/screen.c: Setscreen() now also reinitializes the font settings when the
+  resolution changes. (THH)
+- bios/bios.c startup.S: Some code cleanup - renamed startup() to bios_init(),
+  removed unused code, etc. (THH)
