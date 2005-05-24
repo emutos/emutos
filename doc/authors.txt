@@ -75,8 +75,12 @@ Henk Robbers <h.robbers@chello.nl>
 Jacques-Etienne Rahon "Kevin Flynn" <kevin.flynn@wanadoo.fr>
 - extensive demo testing on STeeM
 
-Patrice Mandin
+Patrice Mandin and Markus Oberhumer
 - Hints and patches for compiling EmuTOS with GCC 3.x
 
 Eero Tamminen
 - Many bug reports and testing
+
+Gerhard Stoll
+- Improved our nvmaccess() function
+- TOS hypertext

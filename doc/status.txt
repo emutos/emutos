@@ -7,10 +7,10 @@ if possible add a line telling in which version it did run.
   emulator/machine    |  ok?  | who |   date    |  details
   --------------------+-------+-----+-----------+----------------
   Aranym              |  yes  | LVL |    Feb 03 | 
-  Hatari              |  yes  |  ?  |  < Sep 02 |
+  Hatari              |  yes  | THH | 24 Mar 05 |
   MegaSTE             |  yes  | (1) | 26 Jun 04 | RAMTOS only
   Pacifist v0.48      |  yes  | LVL | winter 01 |
-  STonX 0.6.7.2       |  yes  | LVL | 9  Feb 03 | no autoboot
+  STonX 0.6.7.6       |  yes  | THH | 24 Mar 05 |
   STonC v0.8.1        |  yes  | LVL | 9  Feb 03 |
   STeem v2.0.6        |  yes  | LVL | 30 Sep 02 | 
   TOSBox 1.10a        |   no  |  ?  |  < Sep 02 |
@@ -121,7 +121,7 @@ T tested and working on an emulator or real hardware
  X 0x02 physBase
  X 0x03 logBase
  X 0x04 getRez
- > 0x05 setScreen       (the resolution change is ignored)
+ > 0x05 setscreen       (only ST resolutions supported at the moment)
  X 0x06 setPallete
  X 0x07 setColor
  X 0x08 floprd
@@ -428,5 +428,4 @@ T tested and working on an emulator or real hardware
  X      shel_wdef              (PC-GEM call)
  X      xgrf_stepcalc          (PC-GEM call)
  X      xgrf_2box              (PC-GEM call)
-
 

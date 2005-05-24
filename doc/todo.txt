@@ -1,11 +1,10 @@
 BIOS/XBIOS/BDOS
 - implement XBIOS calls
-- implement linea functions
+- implement Line-A functions
 - merge identical headers, and put them all in an include directory (?)
 - reduce the number of 'extern' in .c files
 - check that RAM disks work
 - misc. TODOs in floppy.c
-- VDI: code cleanup, Makefile, esclisa and gsxvars like in EmuTOS
 - use extended argv specification in EmuCON
 - check that VEC_CRITICALERR (0x101) is called when the BIOS encounters errors
 - should hitting control-c terminate the current process? if so, how?
@@ -24,8 +23,6 @@ Internationalisation
 VDI
 - Check the various assembler routines that are called from C functions
   if they save and restore enough registers.
-- Bug in mouse painting code. The mouse coordinates are clipped right,
-  but not drawn, if vertical rez > 400
 - The linemask for dashed lines is not calculated correct, depending on 
   the internal calculations of increase in x direction, like in original TOS.
 - It seems so that it is not possible to change the color palette at the moment
@@ -33,7 +30,6 @@ VDI
 AES
 - Check if all strings in desk_rsc.c and gem_rsc.c are fully ROM save (the
   TEDINFO strings etc).
-- Bug: Mouse is not moving in some old programs like GFA-Basic
 
 DESK
 - Add a dialog for resolution switching

@@ -1,4 +1,5 @@
 - Command.prg crashes, when commandline input is longer than line length
 - EmuTOS crashes, if it boots from some STeem generated floppy images
 - auto programs are not run after reset with STonX cartridge (STonX's bug)
-- bad font, if run in STonX in mono and Y-resolution => 400 (STonX's bug)
+- Changing the VDI color palette is not possible
+- Drag-and-drop does not work in the freeware game "Risky"
