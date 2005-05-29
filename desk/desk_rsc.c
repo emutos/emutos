@@ -252,7 +252,7 @@ static BITBLK desk_rs_bitblk[] = {
 
 
 
-static char rs_str_iconOrText[20];      /* was: "  xxxx xx xxxxx  xx" */
+static char rs_str_iconOrText[32];      /* was: "  xxxx xx xxxxx  xx" */
 
 
 #define RS_NOBS 215
