@@ -53,7 +53,7 @@
 
 kprintf_init:
 #if STONX_NATIVE_PRINT
-        move.l  #1,_native_print_kind
+        move.w  #1,_native_print_kind
         rts
 #endif
 #if DETECT_NATIVE_PRINT
