@@ -1840,7 +1840,7 @@ Start... early ages
 
 2005-05-12
 - bios/tosvars.S aciavecs.S: Moved kbdvbase and iorec structures and buffers
-  from tosvars.S to aciavecs.S since the are not officialially documented
+  from tosvars.S to aciavecs.S since they are not officialially documented
   system variables. (THH)
 
 2005-05-19
@@ -1857,3 +1857,10 @@ Start... early ages
   resolution changes. (THH)
 - bios/bios.c startup.S: Some code cleanup - renamed startup() to bios_init(),
   removed unused code, etc. (THH)
+
+2005-05-30
+- desk/desk_rsc.c: Increased the size of a string buffer so that Greek and
+  Spanish translations don't cause a buffer overflow anymore.
+- Updated the documentation for version 0.8
+
+* Release: 0.8

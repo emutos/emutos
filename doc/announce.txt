@@ -1,37 +1,35 @@
 Dear Atari Community!
 
 
-We are happy to announce the third beta release of EmuTOS
+We are happy to announce a new public release of EmuTOS:
 
-EmuTOS 0.7 --- 3. Jun. 2003
+EmuTOS 0.8 --- May 30th, 2005
 
 
 INTRODUCTION
 
 EmuTOS is a single-user single-tasking operating system for the 32 bit Atari
-computers and emulators. It can be used as a replacement for the TOS-images 
+computers and emulators. It can be used as a replacement for the TOS images 
 typically needed today for using emulators and it is also running on some
-real hardware, like the Atari Mega STE. As all the source code is open and 
-free it is could even run on totally new machines in the future.
-
-EmuTOS has been developed for nearly two years now and is licensed
-under the OpenSource Gnu General Public Licence (GPL).
+real hardware, like the Atari Mega STE. All the source code is open and 
+free, licensed under the GNU General Public License (GPL).
 
 
 
 CHANGES SINCE LAST RELEASE
 
-- experimental support for #Z line in EMUDESK.INF to start another desktop
-- bug in VDI's clipping routine fixed
-- bug in C-pattern filling removed
-- now really makes sound with Dosound()
-- EmuCON is now usable from the desktop via a menu
-- hitting 'C' during initinfo launches an early EmuCON
-- programs can now be started and left from an external desktop program
-- programs can now see, if they are started as accessory
-- the working linea-functions are now usable from the autofolder too
-- fixed a problem with mouse buttons in certain programs (Thing, Pixart, ...)
-- ... and many minor improvements you will not see
+- Improved GEM desktop (more comfortable, many bugs fixed, ...)
+- New translations: Spanish and Greek.
+- Most parts of the VDI have been rewritten in C for better maintainability.
+- Nearly all Line-A functions have been removed/disabled (deprecated API).
+- EmuTOS can now be compiled with GCC 3.x, too.
+- graf_shrinkbox() and graf_growbox() have been enabled again.
+- form-alert boxes now also work in ST low resolution.
+- The AES behave much closer to the original Atari AES than before, so much
+  more old programs are working now.
+- And lots of other bug fixes and minor improvements
+
+Have a look at the changelog.txt for more detailed information.
 
 
 DESCRIPTION
@@ -59,7 +57,7 @@ screen resolutions without any problems.
 
 The desktop is not as nice as the original one, but is pretty usable
 now for a start. You are free to use a more advanced desktop
-replacement any time, like teradesk for example.
+replacement any time, like Teradesk for example.
 
 Since EmuTOS just implements the TOS's functionality, you might want to
 use MiNT on it in order to run more modern software. EmuTOS is not an
@@ -74,14 +72,10 @@ call interface for emulators.
 EmuTOS itself still uses this new standard native interface for all its 
 supported native functions. When running EmuTOS in an emulator, this
 interface will provide access to use the power of the underlying OS kernel.
-It may allow using modern 3D graphics cards, providesfast native filesystem 
-access and will enable you to use networking with all bells and wistles - 
+It may allow using modern graphics cards, provides fast native filesystem 
+access and will enable you to use networking with all bells and whistles - 
 and many things more you always dreamed of. This all will at first get 
 possible on the Aranym platform.
-
-This is, what EmuTOS is made for: A free OS, that can evolve. Progress has
-been fast up to now, because we have a small, but enthusiastic development
-team and are eager to see EmuTOS running with GEM and all.
 
 
 
@@ -104,9 +98,8 @@ This is the currently supported Hardware:
 - ST shifter
 - STE shifter (partitially)
 - ACIAs, IKBD protocol, mouse
-- MegaST Real-Time Clock  (set clock not tested)
+- MegaST Real-Time Clock (set clock not tested)
 - NVRAM (including RTC)
-- DMA sound
 - The native feature interface to some degree
 
 
@@ -138,4 +131,4 @@ Your EmuTOS development team.
 
 --
 written by Martin Doering
-http://emutos.sourceforge.net/
+http://emutos.sourceforge.net/en/
