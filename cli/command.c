@@ -358,7 +358,7 @@ chkDir(char *pathExp, char *dirExp, char *filExp)
     /*directory length = path length to start with. */
     dirLen = pathLen;
 
-    /* Loop thru path expresion from end looking for delimeters and the 1st char. */
+    /* Loop thru path expression from end looking for delimeters and the 1st char. */
     do {
         if ((c = pathExp[dirLen]) == '*')
             wildFnd = TRUE;
@@ -366,7 +366,7 @@ chkDir(char *pathExp, char *dirExp, char *filExp)
     while ((c != ':') && (c != '\\') && (dirLen--));
     dirLen++;
 
-    /* IF nothing specified defalult to wild expresion. */
+    /* IF nothing specified default to wild card expression. */
     if ((pathLen == 0) ||
         (pathExp[pathLen - 1] == '\\') || (pathExp[pathLen - 1] == ':')) {
         while ((pathExp[pathLen] = wildExp[i])) {
@@ -394,17 +394,17 @@ chkDir(char *pathExp, char *dirExp, char *filExp)
                 /*Tackon a path seperator. */
                 pathExp[dirLen++] = '\\';
 
-                /* copy wild card expresion into spec'd path and file name. */
+                /* copy wild card expression into spec'd path and file name. */
                 for (i = 0; i <= wildLen; i++)
 
-                    /* onto end of path expresion. */
+                    /* onto end of path expression. */
                     pathExp[i + dirLen] = wildExp[i];
 
                 flExsists = -1;
             }
         }
     }
-    /* copy path exp into directory expresion. */
+    /* copy path exp into directory expression. */
     for (pathLen = 0; pathLen < dirLen; pathLen++)
         if ((dirExp[pathLen] = pathExp[pathLen]) == '*')
             return -3;
@@ -742,7 +742,7 @@ dspMsg(int msg)
         wrtln(_("File Not Found."));
         break;
     case 2:
-        wrtln(_("Destination is not a valid wild card expresion."));
+        wrtln(_("Destination is not a valid wild card expression."));
         break;
     case 3:
         wrtln("******* TEST  CLI *******");
@@ -817,7 +817,7 @@ COPY source_file [destination_file]\r\n\
 \tCopies source to destination."));
         wrtln(_("\
 DIR or LS [filenm.ext] [-f] [-d] [-t] [-w]\r\n\
-\t-f - anything but directoryies.\r\n\
+\t-f - anything but directories.\r\n\
 \t-d - directories only.\r\n\
 \t-t - terse: names only.\r\n\
 \t-w - wide: names only displayed horizontally."));
@@ -832,7 +832,7 @@ DIR or LS [filenm.ext] [-f] [-d] [-t] [-w]\r\n\
 
         wrtln(_("\
 INIT [drive_spec:]\r\n\
-\tReinitializes FAT entries this wiping disk."));
+\tReinitializes FAT entries thus wiping the disk."));
         wrtln(_("\
 MD [subdirectory name]\r\n\
 \tCreates a new subdirectory in current directory."));
@@ -860,7 +860,7 @@ PATH [;[pathnm]...]\r\n\
         wrtln(_("\
 REM or ECHO [\"string\"]\r\n\
 \tStrips quotes and writes string to standard output.\r\n\
-\tr is replaced by 13, /n by 10, /0 by 0x0.\r\n\
+\t/r is replaced by 13, /n by 10, /0 by 0x0.\r\n\
 \t/c by 13 10, /anything is replaced by anything."));
         wrtln(_("\
 REN source_file_nm [destination_file_nm]\r\n\
