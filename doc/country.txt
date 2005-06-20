@@ -107,6 +107,7 @@ New country check list
     existing Atari ST with the correct keyboard)
 - if a specific language is needed,
   - follow the instructions in doc/nls.txt
+    (add a new *.po file to the po/ directory and add an entry in po/LINGUAS)
 
 Note: adding a new charset makes it mandatory to also add a new keyboard
 and a new language.

@@ -30,8 +30,13 @@ VDI
 AES
 - Check if all strings in desk_rsc.c and gem_rsc.c are fully ROM save (the
   TEDINFO strings etc).
+- Windows don't resize/move correctly when EmuTOS is build with UNIQUE=xx (?)
 
 DESK
 - Add a dialog for resolution switching
 - Add a dialog for formating floppy disks
 - Support for loading DESKTOP.INF (needs remapping of the icon indices)
+
+CLI
+- Output redirection with '>' seems not to work right
+- Needs a lot of memory due to static buffers ("char buf[10000]" etc.)

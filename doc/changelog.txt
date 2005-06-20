@@ -1864,3 +1864,7 @@ Start... early ages
 - Updated the documentation for version 0.8
 
 * Release: 0.8
+
+2005-06-20
+- cli/command.c: Fixed some typos (thanks to Eero Tammien for the patch). (THH)
+- po/fi.po: Added Finnish translation made by Eero Tammien. (THH)
