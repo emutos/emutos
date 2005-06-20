@@ -45,7 +45,12 @@ i18n_es_keyb = US
 i18n_es_cset = L9
 i18n_es_idt  = IDT_24H | IDT_DDMMYY | '/'
 
-COUNTRIES = us de fr cz gr es
+i18n_fi_lang = fi
+i18n_fi_keyb = US
+i18n_fi_cset = ST
+i18n_fi_idt  = IDT_24H | IDT_DDMMYY | '/'
+
+COUNTRIES = us de fr cz gr es fi
 
 # 
 
