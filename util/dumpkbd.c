@@ -1,7 +1,7 @@
 /*
  * dumpkbd.c : dump the TOS keyboard tables into a KEYTBL.TBL file format
  *
- * Copyright (c) 2001-02 EmuTOS development team
+ * Copyright (c) 2001-2005 EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -16,6 +16,7 @@
 
 #include <stdarg.h>
 extern int doprintf(void (*outc)(int), const char *fmt, va_list ap);
+void exit(int status);
 
 struct file { int f; };
 #define FILE struct file
@@ -41,22 +42,6 @@ static int vfprintf(FILE *f, const char *fmt, va_list ap)
     return doprintf(fprintf_outc, fmt, ap);
 }
 
-static char * stdio_s;
-
-static void sprintf_outc(int c)
-{
-    *stdio_s++ = c;
-}
-
-static int vsprintf(char *s, const char *fmt, va_list ap)
-{
-    int ret;
-    stdio_s = s;
-    ret = doprintf(sprintf_outc, fmt, ap);
-    *stdio_s = 0;
-    return ret;
-}
-
 int printf(const char *fmt, ...)
 {
     int n;
@@ -77,15 +62,6 @@ int fprintf(FILE *f, const char *fmt, ...)
     return n;
 }
 
-int sprintf(char *s, const char *fmt, ...)
-{
-    int n;
-    va_list ap;
-    va_start(ap, fmt);
-    n = vsprintf(s, fmt, ap);
-    va_end(ap);
-    return n;
-}
 
 static struct { char *mode; int m ; } fopen_table[] = {
   { "r", 0 }, { "rb", 0 }, { "w", 1 }, { "wb", 1 }, 
@@ -305,6 +281,7 @@ int main(int argc, char **argv)
     dump_tables(&ktbl, fname, name);
 
     printf("Done\n");
-    exit(0);
+
+    return 0;
 }
   

@@ -141,7 +141,7 @@ int sprintf(char *str, const char *fmt, ...)
     int n;
     va_list ap;
 
-    if(sprintf_flag)  panic("sprintf is not reentrant!\n");
+    /*if (sprintf_flag)  panic("sprintf is not reentrant!\n");*/
 
     sprintf_flag += 1;
     sprintf_str = str;
