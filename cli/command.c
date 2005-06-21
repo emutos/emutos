@@ -1946,11 +1946,21 @@ xCmdLn(char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl)
                 } else {
                     xunlink(tl1);
                     newso = xcreat(tl1, 0);
-                    rd.nso = -1;
                 }
-                rd.oldso = dup(1);
-                xforce(1, (int) newso);
-                xclose((int) newso);
+                if (newso < 0) {
+                    wrt("Can not open file.\r\n");
+                    break;
+                }
+                if ((rd.oldso = dup(1)) < 0) {
+                    /*wrt("Can not dup stdout.\r\n");*/
+                    rd.oldso = -1;  /* fake old handle = console */
+                }
+                if (xforce(1, (int)newso) < 0) {
+                    wrt("Can not force stdout to new channel.\r\n");
+                    xclose(newso);
+                    break;
+                }
+                xclose((int)newso);
                 if (concat)
                     xf_seek(0L, 1, 2);
                 rd.nso = -1;
