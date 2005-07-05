@@ -39,17 +39,10 @@ CLI
 - Needs a lot of memory due to static buffers ("char buf[10000]" etc.)
 - use extended argv specification in EmuCON
 - EmuCON should allow 'exit' in .BAT scripts?
-
+- Input/Output redirection does not work well (problems with spaces after
+  the ">" for example).
 
 Bug report from Eero:
-- Could some EmuTOS dialogs be widened so that translations
-  fit into them:
-  - Delete folders / files dialog
-  - Box for the "Soundeffects:" "On" in Preferences dialog
-  - Nameconflict dialog (during copy)
-- Additionally positioning (beginning) of strings in the disk and folder
-  information dialogs is very wierd.  It would be much easier to translate the
-  texts if dialog RSC e.g. would expect that each string is of same lenght.
 - Format:
   Doesn't do anything.
   I think it should give warning about missing FORMAT program as
