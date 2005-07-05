@@ -1,7 +1,7 @@
 /*
  * country.h - _AKP, _IDT and country-dependant configuration
  *
- * Copyright (c) 2001 EmuTOS development team.
+ * Copyright (c) 2001-2005 EmuTOS development team.
  *
  * Authors:
  *  LVL     Laurent Vogel
@@ -26,6 +26,7 @@
 #define KEYB_FR 2
 #define KEYB_CZ 3
 #define KEYB_GR 4
+#define KEYB_SE 5
 
 /* charset codes - names in [brackets] are understood by GNU recode */
 #define CHARSET_ALL -1
