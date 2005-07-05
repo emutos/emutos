@@ -55,7 +55,10 @@ BEGIN {
     print "#define OS_DATE 0x" year month day "\n"
     
     print "/* the country number << 1 and the PAL/NTSC flag */"
-    print "#define OS_PAL (2 * COUNTRY_" uccountry ")\n"
+    if (uccountry == "US")
+        printf "#define OS_PAL (2 * COUNTRY_US)\n"
+    else
+        print "#define OS_PAL (2 * COUNTRY_" uccountry " + 1)\n"
 
     print "/* the country number only (used by country.c) */"
     print "#define OS_COUNTRY COUNTRY_" uccountry "\n"
