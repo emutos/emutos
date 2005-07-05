@@ -676,37 +676,37 @@ static const OBJECT desk_rs_obj_rom[] = {
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[10],
-     8, 3, 26, 1},
+     8, 3, 28, 1},
 
    { 4, -1, -1, G_FBOXTEXT,                     /*** 3 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[11],
-     12, 4, 20, 1},
+     7, 4, 20, 1},
 
    { 5, -1, -1, G_FBOXTEXT,                     /*** 4 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[12],
-     31, 4, 8, 1},
+     26, 4, 8, 1},
 
    { 6, -1, -1, G_FBOXTEXT,                     /*** 5 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[13],
-     2, 5, 28, 1},
+     4, 5, 30, 1},
 
    { 7, -1, -1, G_FBOXTEXT,                     /*** 6 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[14],
-     4, 6, 26, 1},
+     4, 6, 30, 1},
 
    { 8, -1, -1, G_FBOXTEXT,                     /*** 7 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[15],
-     9, 7, 28, 1},
+     4, 7, 30, 1},
 
    { 0, -1, -1, G_BUTTON,                       /*** 8 ***/
      SELECTABLE | DEFAULT | EXIT | LASTOB,
@@ -1214,13 +1214,13 @@ static const OBJECT desk_rs_obj_rom[] = {
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[30],
-     3, 3, 28, 1 },
+     2, 3, 30, 1 },
 
    { 4, -1, -1, G_FBOXTEXT,                 /*** 3 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[31],
-     3, 4, 28, 1 },
+     2, 4, 30, 1 },
 
    { 5, -1, -1, G_BUTTON,                   /*** 4 ***/
      SELECTABLE | DEFAULT | EXIT,
@@ -1241,25 +1241,25 @@ static const OBJECT desk_rs_obj_rom[] = {
      NONE,
      OUTLINED,
      (long) 135424L,
-     0, 0, 30, 8 },
+     0, 0, 34, 8 },
 
    { 2, -1, -1, G_STRING,                   /*** 1 ***/
      NONE,
      NORMAL,
      (long) N_("DELETE FOLDERS / ITEMS"),
-     3, 1, 23, 1 },
+     2, 1, 26, 1 },
 
    { 3, -1, -1, G_FBOXTEXT,                 /*** 2 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[32],
-     2, 3, 26, 1 },
+     2, 3, 30, 1 },
 
    { 4, -1, -1, G_FBOXTEXT,                 /*** 3 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[33],
-     2, 4, 26, 1 },
+     2, 4, 30, 1 },
 
    { 5, -1, -1, G_BUTTON,                   /*** 4 ***/
      SELECTABLE | EXIT,
@@ -1286,19 +1286,19 @@ static const OBJECT desk_rs_obj_rom[] = {
      NONE,
      NORMAL,
      (long) N_("NAME CONFLICT DURING COPY"),
-     3, 1, 25, 1 },
+     2, 1, 25, 1 },
 
    { 3, -1, -1, G_FBOXTEXT,                 /*** 2 ***/
      NONE,
      NORMAL,
      (long) &desk_rs_tedinfo[34],
-     3, 3, 27, 1 },
+     3, 3, 28, 1 },
 
    { 4, -1, -1, G_FBOXTEXT,                 /*** 3 ***/
      EDITABLE,
      NORMAL,
      (long) &desk_rs_tedinfo[35],
-     4, 4, 26, 1 },
+     3, 4, 30, 1 },
 
    { 5, -1, -1, G_BUTTON,                   /*** 4 ***/
      SELECTABLE | DEFAULT | EXIT,
@@ -1376,7 +1376,7 @@ static const OBJECT desk_rs_obj_rom[] = {
      NONE,
      NORMAL,
      (long) 0L,
-     25, 3, 12, 1 },
+     26, 3, 12, 1 },
 
    { 5, -1, -1, G_BUTTON,                   /*** 4 ***/
      SELECTABLE | RBUTTON,
@@ -1388,7 +1388,7 @@ static const OBJECT desk_rs_obj_rom[] = {
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) rs_str_No,
-     7, 0, 5, 1 },
+     6, 0, 5, 1 },
 
    { 7, -1, -1, G_STRING,                   /*** 6 ***/
      NONE,
@@ -1400,7 +1400,7 @@ static const OBJECT desk_rs_obj_rom[] = {
      NONE,
      NORMAL,
      (long) 0L,
-     25, 5, 12, 1 },
+     26, 5, 12, 1 },
 
    { 9, -1, -1, G_BUTTON,                   /*** 8 ***/
      SELECTABLE | RBUTTON,
@@ -1412,7 +1412,7 @@ static const OBJECT desk_rs_obj_rom[] = {
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) rs_str_No,
-     7, 0, 5, 1 },
+     6, 0, 5, 1 },
 
    { 11, -1, -1, G_STRING,                  /*** 10 ***/
      NONE,
@@ -1424,7 +1424,7 @@ static const OBJECT desk_rs_obj_rom[] = {
      NONE,
      NORMAL,
      (long) 0L,
-     25, 7, 12, 1 },
+     26, 7, 12, 1 },
 
    { 13, -1, -1, G_BUTTON,                  /*** 12 ***/
      SELECTABLE | RBUTTON,
@@ -1436,7 +1436,7 @@ static const OBJECT desk_rs_obj_rom[] = {
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) rs_str_No,
-     7, 0, 5, 1 },
+     6, 0, 5, 1 },
 
    { 15, -1, -1, G_STRING,                  /*** 14 ***/
      NONE,
@@ -1514,19 +1514,19 @@ static const OBJECT desk_rs_obj_rom[] = {
      NONE,
      NORMAL,
      (long) 0L,
-     22, 13, 12, 1 },
+     21, 13, 13, 1 },
 
    { 28, -1, -1, G_BUTTON,                  /*** 27 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) N_("On"),
-     0, 0, 5, 1 },
+     0, 0, 6, 1 },
 
    { 26, -1, -1, G_BUTTON,                  /*** 28 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) N_("Off"),
-     6, 0, 5, 1 },
+     7, 0, 5, 1 },
 
    { 30, -1, -1, G_STRING,                  /*** 29 ***/
      NONE,

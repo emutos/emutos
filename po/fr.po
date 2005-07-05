@@ -481,7 +481,7 @@ msgstr "Octets disponibles:  __________"
 
 #: desk/desk_rsc.c:92
 msgid "Folder name:  ________.___"
-msgstr "Nom de dossier:  ________.___"
+msgstr "Nom de dossier: ________.___"
 
 #: desk/desk_rsc.c:97
 msgid "Created:  __-__-__  "
@@ -525,7 +525,7 @@ msgstr "Nom actuel:  ________.___"
 
 #: desk/desk_rsc.c:217
 msgid "Copy's name:  ________.___"
-msgstr "Nom de la copie:  ________.___"
+msgstr "Nom de la copie: ________.___"
 
 #: desk/desk_rsc.c:542
 msgid "ITEM INFORMATION / RENAME"

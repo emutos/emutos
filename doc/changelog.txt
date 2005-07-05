@@ -1873,3 +1873,6 @@ Start... early ages
 - tools/tos-lang-change.c: Added Eero Tamminen's TOS language change program.
 - country.mk bios/country.h bios/keyb_se.h: Added Swedish/Finnish keyboard
   table (THH).
+- tools/mkheader.awk: Fixed OS_PAL to contain the right PAL/NTSC flag. (THH)
+- desk/desk_rsc.c: Adjusted some dialog string positions so that the Finnish
+  and French translation fit better into the dialogs. (THH)
