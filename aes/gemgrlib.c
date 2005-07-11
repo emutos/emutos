@@ -52,14 +52,14 @@ static WORD gr_stilldn(WORD out, WORD x, WORD y, WORD w, WORD h)
 
         dsptch();
 
+        tmpmoblk.m_out = out;
+        tmpmoblk.m_x = x;
+        tmpmoblk.m_y = y;
+        tmpmoblk.m_w = w;
+        tmpmoblk.m_h = h;
+
         which = ev_multi(MU_KEYBD | MU_BUTTON | MU_M1, &tmpmoblk, 
                 NULLPTR, 0x0L, 0x0001ff00L, 0x0L, &rets[0]);
-
-        out = tmpmoblk.m_out;
-        x = tmpmoblk.m_x;
-        y = tmpmoblk.m_y;
-        w = tmpmoblk.m_w;
-        h = tmpmoblk.m_h;
 
         if ( which & MU_BUTTON )
           return(FALSE);

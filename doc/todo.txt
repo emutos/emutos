@@ -28,7 +28,6 @@ VDI
 AES
 - Check if all strings in desk_rsc.c and gem_rsc.c are fully ROM save (the
   TEDINFO strings etc).
-- Windows don't resize/move correctly when EmuTOS is build with UNIQUE=xx (?)
 
 DESK
 - Add a dialog for resolution switching

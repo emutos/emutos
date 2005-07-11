@@ -1876,3 +1876,7 @@ Start... early ages
 - tools/mkheader.awk: Fixed OS_PAL to contain the right PAL/NTSC flag. (THH)
 - desk/desk_rsc.c: Adjusted some dialog string positions so that the Finnish
   and French translation fit better into the dialogs. (THH)
+
+2005-07-11
+- aes/gemgrlib.c: Fixed stupid bug that prevented window dragging when EmuTOS
+  was build with UNIQUE=xx option. (THH)
