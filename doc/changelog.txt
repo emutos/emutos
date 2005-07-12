@@ -1880,3 +1880,9 @@ Start... early ages
 2005-07-11
 - aes/gemgrlib.c: Fixed stupid bug that prevented window dragging when EmuTOS
   was build with UNIQUE=xx option. (THH)
+
+2005-07-12
+- bios/startup.S: Changed size of initial stack back to > 8000 words. This is
+  a work-around for some strange crashes with FreeMiNT and GFA-Basic. Someday,
+  somebody with a lot of spare time should try to find the real cause for these
+  crashes... (THH)

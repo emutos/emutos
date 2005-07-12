@@ -17,8 +17,11 @@
 
 // ==== Defines ==============================================================
 
-        .equ    SUPSIZ, 1024    // size of supervisor stack in words
+        .equ    SUPSIZ, 8500    // size of supervisor stack in words
 
+        // Note: 1024 words should normally be enough for the stack, but
+        // there were some strange problems with FreeMiNT and GFA-Basic
+        // when it was so small, so I changed it back to > 8000 words...
 
 // ==== References ===========================================================
 
