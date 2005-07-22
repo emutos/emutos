@@ -1,9 +1,7 @@
 /*
- * 
- *
  * Copyright 1982 by Digital Research Inc.  All rights reserved.
- * Copyright 1999 by Caldera, Inc. and Authors:
- * Copyright 2002 by The EmuTOS development team
+ * Copyright 1999 by Caldera, Inc.
+ * Copyright 2002-2005 by The EmuTOS development team.
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -18,17 +16,38 @@
 //#include "kprint.h"
 #include "biosbind.h"
 #include "asm.h"
+#include "string.h"
+#include "machine.h"
+#include "xbiosbind.h"
 
 
+Vwk virt_work;          /* attribute areas for workstations */
 
-Vwk virt_work;     /* attribute areas for workstations */
+WORD vcolors[256][3];   /* VDI color palette */
+static const WORD initial_palette[16][3] = {
+    { 1000, 1000, 1000 },
+    { 0, 0, 0 },
+    { 1000, 0, 0 },
+    { 0, 1000, 0 },
+    { 0, 0, 1000 },
+    { 0, 1000, 1000 },
+    { 1000, 1000, 0 },
+    { 1000, 0, 1000 },
+    { 733, 733, 733 },
+    { 533, 533, 533 },
+    { 667, 0, 0 },
+    { 0, 667, 0 },
+    { 0, 0, 667 },
+    { 0, 667, 667 },
+    { 667, 667, 0 },
+    { 667, 0, 667 }
+};
 
 /*
  * SIZ_TAB - Returns text, line and marker sizes in device coordinates
  */
-
 WORD SIZ_TAB[12];
-static WORD SIZ_TAB_rom[12] = {
+static const WORD SIZ_TAB_rom[12] = {
     0,                          /* 0    min char width          */
     7,                          /* 1    min char height         */
     0,                          /* 2    max char width          */
@@ -46,7 +65,7 @@ static WORD SIZ_TAB_rom[12] = {
 
 
 /* Here's the template INQ_TAB, see lineavars.S for the normal INQ_TAB */
-static WORD INQ_TAB_rom[45] = {
+static const WORD INQ_TAB_rom[45] = {
     1,                  /* 0  - type of alpha/graphic controllers */
     1,                  /* 1  - number of background colors  */
     0x1F,               /* 2  - text styles supported        */
@@ -98,7 +117,7 @@ static WORD INQ_TAB_rom[45] = {
 
 
 /* Here's the template DEV_TAB, see lineavars.S for the normal DEV_TAB! */
-WORD DEV_TAB_rom[45] = {
+static const WORD DEV_TAB_rom[45] = {
     639,                        /* 0    x resolution             */
     399,                        /* 1    y resolution             */
     0,                          /* 2    device precision 0=exact,1=not exact */
@@ -162,12 +181,68 @@ Vwk * get_vwk_by_handle(WORD handle)
 }
 
 
+/* Create a ST palette color value from VDI palette color */
+static int vdi2stcol(int col)
+{
+    col = col * 3 / 200;
+    col = ((col & 1) << 3) | (col >> 1);  // Shift lowest bit to top
+
+    return col;
+}
+
+
+/* Create a VDI palette color value from ST palette color */
+static int st2vdicol(int col)
+{
+    col = ((col & 0x7) << 1) | ((col >> 3) & 0x1);
+    col = col * 200 / 3;
+    return col;
+}
+
+
 /*
  * vs_color - set color index table
  */
 void vs_color(Vwk * vwk)
 {
-    /* not implemented */
+    int colnum, i, r, g, b;
+
+    colnum = INTIN[0];
+
+    /* Check for valid color index */
+    if (colnum < 0 || colnum >= DEV_TAB[13])
+    {
+        /* It was out of range */
+        return;
+    }
+
+    /* Check if color values are in range and copy them to vcolors array */
+    for (i = 1; i <= 3; i++)
+    {
+        if (INTIN[i] > 1000)
+            INTIN[i] = 1000;
+        else if (INTIN[i] < 0)
+            INTIN[i] = 0;
+        vcolors[colnum][i-1] = INTIN[i];
+    }
+
+    if (has_videl)
+    {
+        /* TODO: not implemented */
+    }
+    else if (has_tt_shifter)
+    {
+        /* TODO: not implemented */
+    }
+    else
+    {
+        /* ST and STE shifter: */
+        colnum = MAP_COL[colnum];
+        r = vdi2stcol(INTIN[1]);
+        g = vdi2stcol(INTIN[2]);
+        b = vdi2stcol(INTIN[3]);
+        Setcolor(colnum, (r << 8) | (g << 4) | b);
+    }
 }
 
 
@@ -177,7 +252,45 @@ void vs_color(Vwk * vwk)
  */
 void vq_color(Vwk * vwk)
 {
-    /* not implemented */
+    int colnum, c;
+
+    colnum = INTIN[0];
+
+    INTOUT[1] = INTOUT[2] = INTOUT[3] = 0;      // Default values
+
+    /* Check for valid color index */
+    if (colnum < 0 || colnum >= DEV_TAB[13])
+    {
+        /* It was out of range */
+        INTOUT[0] = -1;
+        return;
+    }
+
+    if (INTIN[1] == 0)
+    {
+        INTOUT[1] = vcolors[colnum][0];
+        INTOUT[2] = vcolors[colnum][1];
+        INTOUT[3] = vcolors[colnum][2];
+    }
+    else if (has_videl)
+    {
+        /* TODO: not implemented */
+    }
+    else if (has_tt_shifter)
+    {
+        /* TODO: not implemented */
+    }
+    else
+    {
+        /* ST and STE shifter */
+        colnum = MAP_COL[colnum];
+        c = Setcolor(colnum, -1);
+        INTOUT[1] = st2vdicol(c >> 8);
+        INTOUT[2] = st2vdicol(c >> 4);
+        INTOUT[3] = st2vdicol(c);
+    }
+
+    INTOUT[0] = 0;
 }
 
 
@@ -398,6 +511,8 @@ void v_opnwk(Vwk * vwk)
         DEV_TAB[i] = DEV_TAB_rom[i];
         INQ_TAB[i] = INQ_TAB_rom[i];
     }
+
+    memcpy(vcolors, initial_palette, sizeof(initial_palette));
 
     /* Copy data from linea variables */
     DEV_TAB[0] = v_hz_rez-1;

@@ -255,7 +255,7 @@ T tested and working on an emulator or real hardware
  ?      v_rfbox
  ?      v_justified
  ?      vswr_mode
- ?      vs_color
+ >      vs_color
  ?      vsl_type
  ?      vsl_udsty
  ?      vsl_width
@@ -299,7 +299,7 @@ T tested and working on an emulator or real hardware
  T      vex_curv
  ?      vq_key_s
  ?      vq_extnd
- ?      vq_color
+ >      vq_color
  ?      vql_attributes
  ?      vqm_attributes
  ?      vqf_attributes

@@ -14,8 +14,6 @@ BIOS/XBIOS/BDOS
 - bdos/time.c: Use XBIOS time functions instead of date_time().
 
 Internationalisation
-- fix rsc sizes to some reasonable default sizes for all languages ?
-  (or dynamically resize the dialogs ???)
 - bugs in tools/bug.c; more things should be configurable on the command line
 
 VDI
@@ -23,7 +21,7 @@ VDI
   if they save and restore enough registers.
 - The linemask for dashed lines is not calculated correct, depending on 
   the internal calculations of increase in x direction, like in original TOS.
-- It seems so that it is not possible to change the color palette at the moment
+- vs_color and vq_color don't work with TT shifter and Falcon Videl yet.
 
 AES
 - Check if all strings in desk_rsc.c and gem_rsc.c are fully ROM save (the

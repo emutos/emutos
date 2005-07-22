@@ -1886,3 +1886,6 @@ Start... early ages
   a work-around for some strange crashes with FreeMiNT and GFA-Basic. Someday,
   somebody with a lot of spare time should try to find the real cause for these
   crashes... (THH)
+
+2005-07-22
+- vdi/vdi_control.c: Implemented vs_color and vq_color (for ST/STE). (THH)
