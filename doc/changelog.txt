@@ -1893,3 +1893,5 @@ Start... early ages
 2005-07-24
 - vdi/vdi_control.c vdi_col.c: Moved vs_color and vq_color to a new file and
   improved vq_color a little bit. (THH)
+- desk/desksupp.c: Fixed do_format() so that the desktop can now load
+  FORMAT.PRG to format floppy disks. (THH)

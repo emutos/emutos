@@ -12,5 +12,5 @@ void do_fopen(WNODE *pw, WORD curr, WORD drv, BYTE *ppath, BYTE *pname,
               BYTE *pext, WORD chkall, WORD redraw);
 WORD do_open(WORD curr);
 WORD do_info(WORD curr);
-void do_format(WORD curr);
+int do_format(WORD curr);
 void do_chkall(WORD redraw);

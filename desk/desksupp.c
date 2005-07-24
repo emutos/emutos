@@ -720,23 +720,27 @@ WORD do_info(WORD curr)
 /*
 *       Format the currently selected disk.
 */
-void do_format(WORD curr)
+int do_format(WORD curr)
 {
         WORD    junk, ret;
-#if I8086
-        WORD    foundit
-#endif
+        WORD    foundit;
+        int     done;
         BYTE    msg[6];
         ANODE   *pa;
         FNODE   *pf;
         WORD    drive_letter;
 
+        done = 0;
+
         pa = i_find(G.g_cwin, curr, &pf, &junk);
 
         if ( (pa) && (pa->a_type == AT_ISDISK) )
         {
+#ifdef DESK1
+          drive_letter = (get_spec(G.g_screen, curr)->ib_char) & 0xFF;
+#else
           drive_letter = pf->f_junk;
-
+#endif
           ret = fun_alert(2, STFORMAT, &drive_letter);
 
           msg[0] = drive_letter;
@@ -745,11 +749,6 @@ void do_format(WORD curr)
 
           if (ret == 1)
           {
-#if MC68K
-            ret = pro_cmd( ini_str(STDKFRM1), &msg[0], TRUE);
-            if (ret)
-              /*done =*/ pro_run(FALSE, FALSE, G.g_cwin, curr);
-#else
             strcpy(&G.g_cmd[0],ini_str(STDKFRM1));
             foundit = shel_find(G.a_cmd);
             if (!foundit)
@@ -757,25 +756,21 @@ void do_format(WORD curr)
               strcpy(&G.g_cmd[0], ini_str(STDKFRM2));
               foundit = shel_find(G.a_cmd);
             }
+
             if (foundit)
             {
               strcpy(&G.g_tail[1], &msg[0]);
-
-              takedos();
-              takekey();
-              takevid();
-
-              romerr(curr);
-              givevid();
-              givekey();
-              givedos();
+              pro_run(TRUE, TRUE, G.g_cwin, curr);
+              done = 1;
             } /* if */
             else
               fun_alert(1, STNOFRMT, NULLPTR);
-#endif
+
             graf_mouse(ARROW, 0x0L);    
           } /* if ret */
         } /* if */
+
+        return done;
 } /* do_format */
 
 

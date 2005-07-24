@@ -29,7 +29,6 @@ AES
 
 DESK
 - Add a dialog for resolution switching
-- Add a dialog for formating floppy disks
 - Support for loading DESKTOP.INF (needs remapping of the icon indices)
 
 CLI
@@ -40,12 +39,6 @@ CLI
   the ">" for example).
 
 Bug report from Eero:
-- Format:
-  Doesn't do anything.
-  I think it should give warning about missing FORMAT program as
-  there's such a dialog in the .po file (adding the dialog was also
-  mentioned in the todo.txt).   Or it could just say that it removes the
-  disk contents, it doesn't reformat it (i.e. does the 'init' command).
 - Rename emuconf.inf to end up with .ttp and click to the file:
   EmuTOS says that my machine doesn't have enough memory
   to run the program... (should say that it's not executable)

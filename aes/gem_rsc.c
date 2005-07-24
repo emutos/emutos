@@ -194,14 +194,14 @@ static int rs_b0img[] = {
 
 
 
-char msg_str_1[40];         /* Strings for the alert box */
-char msg_str_2[40];
-char msg_str_3[40];
-char msg_str_4[40];
-char msg_str_5[40];
-char msg_but_1[20];
-char msg_but_2[20];
-char msg_but_3[20];
+char msg_str_1[41];         /* Strings for the alert box */
+char msg_str_2[41];
+char msg_str_3[41];
+char msg_str_4[41];
+char msg_str_5[41];
+char msg_but_1[21];
+char msg_but_2[21];
+char msg_but_3[21];
 
 
 #define RS_NOBS 37

@@ -134,41 +134,33 @@ GLOBAL BYTE     ILL_ITEM[] = {L1ITEM, L2ITEM, L3ITEM, L4ITEM, L5ITEM, 0};
 
 GLOBAL BYTE     ILL_FILE[] = {FORMITEM,IDSKITEM,0};
 GLOBAL BYTE     ILL_DOCU[] = {FORMITEM,IDSKITEM,IAPPITEM,0};
-GLOBAL BYTE     ILL_FOLD[] = {/*OUTPITEM,*/FORMITEM,IDSKITEM,IAPPITEM,0};
-GLOBAL BYTE     ILL_FDSK[] = {/*OUTPITEM,*/IAPPITEM,0};
-GLOBAL BYTE     ILL_HDSK[] = {FORMITEM,/*OUTPITEM,*/IAPPITEM,0};
+GLOBAL BYTE     ILL_FOLD[] = {FORMITEM,IDSKITEM,IAPPITEM,0};
+GLOBAL BYTE     ILL_FDSK[] = {IAPPITEM,0};
+GLOBAL BYTE     ILL_HDSK[] = {FORMITEM,IAPPITEM,0};
 GLOBAL BYTE     ILL_NOSEL[] = {OPENITEM,SHOWITEM,FORMITEM,DELTITEM,
                                 IDSKITEM,IAPPITEM,0};
 GLOBAL BYTE     ILL_YSEL[] = {OPENITEM, IDSKITEM, FORMITEM, SHOWITEM, 0};
 
 #ifdef DESK1
-GLOBAL BYTE     ILL_TRASH[] = {OPENITEM,/*OUTPITEM,*/FORMITEM,IDSKITEM,IAPPITEM,0};
+GLOBAL BYTE     ILL_TRASH[] = {OPENITEM,FORMITEM,IDSKITEM,IAPPITEM,0};
 GLOBAL BYTE     ILL_NOTOP[] = {NFOLITEM,CLOSITEM,CLSWITEM,0};
 GLOBAL BYTE     ILL_DESKTOP[] = {NFOLITEM,CLOSITEM,CLSWITEM,ICONITEM,
                                 NAMEITEM,DATEITEM,SIZEITEM,TYPEITEM,0};
 #endif
 
 /* easter egg */
-GLOBAL WORD     freq[]=
+static const GLOBAL WORD  freq[]=
 {
         262, 349, 329, 293, 349, 392, 440, 392, 349, 329, 262, 293,
         349, 262, 262, 293, 330, 349, 465, 440, 392, 349, 698
 };
 
-GLOBAL WORD     dura[]=
+static const GLOBAL WORD  dura[]=
 {
         4, 12, 4, 12, 4, 6, 2, 4, 4, 12, 4, 4, 
         4, 4, 4, 4, 4, 4, 4, 12, 4, 8, 4
 };
 
-
-
-GLOBAL WORD     gl_swtblks[3] =
-{
-        160,
-        160,
-        160
-};
 
 GLOBAL LONG     ad_ptext;
 GLOBAL LONG     ad_picon;
@@ -183,7 +175,6 @@ GLOBAL BYTE     gl_defdrv;              /* letter of lowest drive       */
 GLOBAL WORD     can_iapp;               /* TRUE if INSAPP enabled       */
 GLOBAL WORD     can_show;               /* TRUE if SHOWITEM enabled     */
 GLOBAL WORD     can_del;                /* TRUE if DELITEM enabled      */
-GLOBAL WORD     can_output;             /* TRUE if OUTPITEM endabled    */
 
 GLOBAL WORD     gl_whsiztop;            /* wh of window fulled          */
 GLOBAL WORD     gl_idsiztop;            /* id of window fulled          */
@@ -375,7 +366,6 @@ void men_update(LONG tree)
         can_iapp = TRUE;
         can_show = TRUE;
         can_del = TRUE;
-        can_output = TRUE;
                                                 /* disable some items   */
         men_list(tree, ILL_ITEM, FALSE);
 
@@ -398,12 +388,10 @@ void men_update(LONG tree)
             case AT_ISFOLD:
                 pvalue = ILL_FOLD;
                 can_iapp = FALSE;
-                can_output = FALSE;
                 break;
             case AT_ISDISK:
                 pvalue = (appl->a_aicon == IG_FLOPPY) ? ILL_FDSK : ILL_HDSK;
                 can_iapp = FALSE;
-                can_output = FALSE;
                 break;
 #ifdef DESK1
             case AT_ISTRSH:                    /* Trash */
@@ -547,63 +535,8 @@ WORD do_filemenu(WORD item)
                 break;
           case FORMITEM:
                 if (curr)
-                  do_format(curr);
+                  done = do_format(curr);
                 break;   
-
-#if 0  /* Currently unused since we do not support a OUTPUT.APP atm */
-          case OUTPITEM:
-
-                /* build cmd tail that looks like this:         */
-                /* C:\path\*.*,file.ext,file.ext,file.ext       */
-                G.g_tail[1] = NULL;
-                if (pw && curr)
-                {
-                  strcpy(&G.g_tail[1], &pw->w_path->p_spec[0]);
-                  pdst = &G.g_tail[strlen(G.g_tail)];
-                                        /* check for no path defined    */
-                  if (pw->w_path->p_spec[0] == '@')
-                    G.g_tail[1] = gl_defdrv;
-                                                /* while there are      */
-                                                /*   filenames append   */
-                                                /*   them in            */
-                  first = TRUE;
-                  while(curr)
-                  {
-                    if (first)
-                    {
-                      while (*pdst != '\\')
-                        pdst--;
-                      pdst++;
-                      *pdst = NULL;
-                      first = FALSE;
-                    }
-                    else
-                    {
-                      pdst--;
-                      *pdst++ = ',';
-                    }
-                    i_find(G.g_cwin, curr, &pf, &junk);
-                    strcpy(pdst, &pf->f_name[0]);
-                    pdst += strlen(pdst);
-                                                /* if there is room for */
-                                                /*   another filename &;*/
-                                                /*   then go fetch it   */ 
-                    if ( (&G.g_tail[127] - pdst) > 16 )
-                      curr = win_isel(G.g_screen, G.g_croot, curr);
-                    else
-                      curr = 0;
-                  } /* while */
-                } /* if pw */
-                strcpy(&G.g_cmd[0], ini_str(STGEMOUT));
-#if MULTIAPP
-                pa = app_afind(FALSE, AT_ISFILE, -1, &G.g_cmd[0], &junk);
-                pr_kbytes = (pa ? pa->a_memreq : 256);
-                pro_run(TRUE, -1, -1, -1);
-#else
-                done = pro_run(TRUE, TRUE, -1, -1);
-#endif
-                break;
-#endif  /* if 0 */
 
           case CLIITEM:                         /* Start EmuCON */
                 G.g_tail[0] = G.g_tail[1] = 0;
@@ -933,15 +866,6 @@ WORD hndl_kbd(WORD thechar)
                 menu_tnormal(G.a_trees[ADMENU], VIEWMENU, FALSE);
                 done = hndl_menu(VIEWMENU, SIZEITEM);
                 break;
-/* Currently unused:
-          case CNTLU:
-                if (can_output)
-                {
-                  menu_tnormal(G.a_trees[ADMENU], FILEMENU, FALSE);
-                  done = hndl_menu(FILEMENU, OUTPITEM);
-                }
-                break;
-*/
 #if WITH_CLI != 0
           case CNTLZ:
                 menu_tnormal(G.a_trees[ADMENU], FILEMENU, FALSE);
