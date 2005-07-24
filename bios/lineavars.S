@@ -73,6 +73,8 @@
                 .globl  _GCURY
                 .globl  _HIDE_CNT
                 .globl  _MOUSE_BT
+                .globl  _REQ_COL
+                .globl  _SIZ_TAB
                 .globl  _TERM_CH
                 .globl  _chc_mode
                 .globl  _cur_work
@@ -129,11 +131,11 @@ _MOUSE_BT:      .ds.w   1       // -596 mouse button state
 
 /* RGB values for colors 0-15 */
 
-REQ_COL:        .ds.w   48      // -594 48 WORDs of RGB data (color registers)
+_REQ_COL:       .ds.w   48      // -594 48 WORDs of RGB data (color registers)
 
 /* Workstation PTSOUT information */
 
-SIZ_TAB:        .ds.w   15      // -498 size table
+_SIZ_TAB:       .ds.w   15      // -498 size table
 
 _TERM_CH:       .ds.w   1       // -468 pressed key, aciii + scancode
 _chc_mode:      .ds.w   1       // -466 input mode choice

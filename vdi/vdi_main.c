@@ -28,12 +28,6 @@ WORD flip_y;                    /* True if magnitudes being returned */
 WORD angle, beg_ang, del_ang, end_ang;
 WORD xc, xrad, yc, yrad;
 
-/* Some color tables */
-WORD MAP_COL[MAX_COLOR] =
-    { 0, 15, 1, 2, 4, 6, 3, 5, 7, 8, 9, 10, 12, 14, 11, 13 };
-
-WORD REV_MAP_COL[MAX_COLOR] =
-    { 0, 2, 3, 6, 4, 7, 5, 8, 9, 10, 11, 14, 12, 15, 13, 1 };
 
 /* Two main jumptables for VDI functions */
 void (*jmptb1[])(Vwk *) = {

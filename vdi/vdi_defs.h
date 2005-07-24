@@ -1,10 +1,8 @@
 /*
  * vdidef.h - Definitions for virtual workstations
  *
- * Copyright (c) 1999 Caldera, Inc.
- *
- * Authors:
- *  xxx <xxx@xxx>
+ * Copyright 1999 by Caldera, Inc.
+ * Copyright 2005 by The EmuTOS development team.
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -18,7 +16,7 @@
 #include "portab.h"
 
 
-#define HAVE_BEZIER 0   // switch on bezier capability
+#define HAVE_BEZIER 0           /* switch on bezier capability */
 
 /* GEMDOS function numbers */
 #define X_MALLOC 0x48
@@ -227,24 +225,22 @@ extern WORD INQ_TAB[];          /* extended inquire values */
 extern WORD *CONTRL, *INTIN, *PTSIN, *INTOUT, *PTSOUT;
 
 extern WORD LN_MASK, LSTLIN;
-extern WORD REQ_COL[3][MAX_COLOR];
-extern WORD MAP_COL[], REV_MAP_COL[];
 extern WORD TERM_CH;
 
 /* Bit-Blt variables */
 extern WORD COPYTRAN;
 
 /* Mouse specific externals */
-extern WORD GCURX;              // mouse X position
-extern WORD GCURY;              // mouse Y position
-extern WORD HIDE_CNT;           // Number of levels the mouse is hidden
-extern WORD MOUSE_BT;           // mouse button state
+extern WORD GCURX;              /* mouse X position */
+extern WORD GCURY;              /* mouse Y position */
+extern WORD HIDE_CNT;           /* Number of levels the mouse is hidden */
+extern WORD MOUSE_BT;           /* mouse button state */
 
 /* Mouse related variables */
-extern WORD     newx;           // new mouse x&y position
-extern WORD     newy;           // new mouse x&y position
-extern BYTE     draw_flag;      // non-zero means draw mouse form on vblank
-extern BYTE     mouse_flag;     // non-zero, if mouse ints disabled
+extern WORD     newx;           /* new mouse x&y position */
+extern WORD     newy;           /* new mouse x&y position */
+extern BYTE     draw_flag;      /* non-zero means draw mouse form on vblank */
+extern BYTE     mouse_flag;     /* non-zero, if mouse ints disabled */
 extern BYTE     cur_ms_stat;    /* current mouse status */
 
 
@@ -324,7 +320,6 @@ void v_cellarray(Vwk *);      /* 10  - fca4e6 */
 void v_gdp(Vwk *);            /* 11  - fcba46 */
 void dst_height(Vwk *);       /* 12  - fcde96 */
 void dst_rotation(Vwk *);     /* 13  - fce308 */
-void vs_color(Vwk *);         /* 14  - fd1a00 */
 void vsl_type(Vwk *);         /* 15  - fcab20 */
 
 void vsl_width(Vwk *);        /* 16  - fcab6a */
@@ -339,7 +334,6 @@ void vsf_interior(Vwk *);     /* 23  - fcada8 */
 void vsf_style(Vwk *);        /* 24  - fcadf4 */
 void vsf_color(Vwk *);        /* 25  - fcae5c */
 
-void vq_color(Vwk *);         /* 26  - fd1ab2 */
 void vq_cellarray(Vwk *);     /* 27  - fca4e6 */
 void v_locator(Vwk *);        /* 28  - fcaeac */
 void v_valuator(Vwk *);       /* 29  - fcb042 */
@@ -403,6 +397,9 @@ void v_bez_qual(Vwk *);
 void v_bez_control(Vwk *);
 void v_bez(Vwk *vwk, Point * points, int count);
 void v_bez_fill(Vwk *vwk, Point * points, int count);
+
+
+#include "vdi_col.h"
 
 
 #endif                          /* VDIDEF_H */

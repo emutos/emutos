@@ -145,7 +145,7 @@ util_ssrc = memset.S memmove.S nlsasm.S setjmp.S miscasm.S stringasm.S
 # source code in vdi/
 #
 
-vdi_csrc = vdi_main.c vdi_control.c vdi_esc.c vdi_fill.c vdi_gdp.c \
+vdi_csrc = vdi_main.c vdi_col.c vdi_control.c vdi_esc.c vdi_fill.c vdi_gdp.c \
            vdi_line.c vdi_marker.c vdi_misc.c vdi_mouse.c vdi_raster.c \
            vdi_input.c vdi_text.c vdi_bezier.c
 vdi_ssrc = vdi_asm.S vdi_blit.S vdi_tblit.S

@@ -1889,3 +1889,7 @@ Start... early ages
 
 2005-07-22
 - vdi/vdi_control.c: Implemented vs_color and vq_color (for ST/STE). (THH)
+
+2005-07-24
+- vdi/vdi_control.c vdi_col.c: Moved vs_color and vq_color to a new file and
+  improved vq_color a little bit. (THH)

@@ -17,36 +17,15 @@
 #include "biosbind.h"
 #include "asm.h"
 #include "string.h"
-#include "machine.h"
-#include "xbiosbind.h"
 
 
 Vwk virt_work;          /* attribute areas for workstations */
 
-WORD vcolors[256][3];   /* VDI color palette */
-static const WORD initial_palette[16][3] = {
-    { 1000, 1000, 1000 },
-    { 0, 0, 0 },
-    { 1000, 0, 0 },
-    { 0, 1000, 0 },
-    { 0, 0, 1000 },
-    { 0, 1000, 1000 },
-    { 1000, 1000, 0 },
-    { 1000, 0, 1000 },
-    { 733, 733, 733 },
-    { 533, 533, 533 },
-    { 667, 0, 0 },
-    { 0, 667, 0 },
-    { 0, 0, 667 },
-    { 0, 667, 667 },
-    { 667, 667, 0 },
-    { 667, 0, 667 }
-};
 
 /*
- * SIZ_TAB - Returns text, line and marker sizes in device coordinates
+ * template for SIZ_TAB - Returns text, line and marker sizes in device
+ * coordinates. See lineavars.S for SIZE_TAB itself.
  */
-WORD SIZ_TAB[12];
 static const WORD SIZ_TAB_rom[12] = {
     0,                          /* 0    min char width          */
     7,                          /* 1    min char height         */
@@ -178,119 +157,6 @@ Vwk * get_vwk_by_handle(WORD handle)
     } while ((vwk = vwk->next_work));
 
     return NULL;
-}
-
-
-/* Create a ST palette color value from VDI palette color */
-static int vdi2stcol(int col)
-{
-    col = col * 3 / 200;
-    col = ((col & 1) << 3) | (col >> 1);  // Shift lowest bit to top
-
-    return col;
-}
-
-
-/* Create a VDI palette color value from ST palette color */
-static int st2vdicol(int col)
-{
-    col = ((col & 0x7) << 1) | ((col >> 3) & 0x1);
-    col = col * 200 / 3;
-    return col;
-}
-
-
-/*
- * vs_color - set color index table
- */
-void vs_color(Vwk * vwk)
-{
-    int colnum, i, r, g, b;
-
-    colnum = INTIN[0];
-
-    /* Check for valid color index */
-    if (colnum < 0 || colnum >= DEV_TAB[13])
-    {
-        /* It was out of range */
-        return;
-    }
-
-    /* Check if color values are in range and copy them to vcolors array */
-    for (i = 1; i <= 3; i++)
-    {
-        if (INTIN[i] > 1000)
-            INTIN[i] = 1000;
-        else if (INTIN[i] < 0)
-            INTIN[i] = 0;
-        vcolors[colnum][i-1] = INTIN[i];
-    }
-
-    if (has_videl)
-    {
-        /* TODO: not implemented */
-    }
-    else if (has_tt_shifter)
-    {
-        /* TODO: not implemented */
-    }
-    else
-    {
-        /* ST and STE shifter: */
-        colnum = MAP_COL[colnum];
-        r = vdi2stcol(INTIN[1]);
-        g = vdi2stcol(INTIN[2]);
-        b = vdi2stcol(INTIN[3]);
-        Setcolor(colnum, (r << 8) | (g << 4) | b);
-    }
-}
-
-
-
-/*
- * vq_color - query color index table
- */
-void vq_color(Vwk * vwk)
-{
-    int colnum, c;
-
-    colnum = INTIN[0];
-
-    INTOUT[1] = INTOUT[2] = INTOUT[3] = 0;      // Default values
-
-    /* Check for valid color index */
-    if (colnum < 0 || colnum >= DEV_TAB[13])
-    {
-        /* It was out of range */
-        INTOUT[0] = -1;
-        return;
-    }
-
-    if (INTIN[1] == 0)
-    {
-        INTOUT[1] = vcolors[colnum][0];
-        INTOUT[2] = vcolors[colnum][1];
-        INTOUT[3] = vcolors[colnum][2];
-    }
-    else if (has_videl)
-    {
-        /* TODO: not implemented */
-    }
-    else if (has_tt_shifter)
-    {
-        /* TODO: not implemented */
-    }
-    else
-    {
-        /* ST and STE shifter */
-        colnum = MAP_COL[colnum];
-        c = Setcolor(colnum, -1);
-        INTOUT[1] = st2vdicol(c >> 8);
-        INTOUT[2] = st2vdicol(c >> 4);
-        INTOUT[3] = st2vdicol(c);
-    }
-
-    INTOUT[0] = 0;
 }
 
 
@@ -512,8 +378,6 @@ void v_opnwk(Vwk * vwk)
         INQ_TAB[i] = INQ_TAB_rom[i];
     }
 
-    memcpy(vcolors, initial_palette, sizeof(initial_palette));
-
     /* Copy data from linea variables */
     DEV_TAB[0] = v_hz_rez-1;
     DEV_TAB[1] = v_vt_rez-1;
@@ -530,6 +394,8 @@ void v_opnwk(Vwk * vwk)
     vwk->next_work = NULLPTR;
 
     line_cw = -1;               /* invalidate current line width */
+
+    init_colors();              /* Initialize palette etc. */
 
     text_init(vwk);             /* initialize the SIZ_TAB info */
 
