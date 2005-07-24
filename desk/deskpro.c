@@ -37,56 +37,6 @@
 #include "desksupp.h"
 
 
-#if MULTIAPP
-GLOBAL WORD     pr_kbytes;
-GLOBAL LONG     pr_beggem;              /* first paragraph of AES       */
-GLOBAL LONG     pr_begacc;              /* first paragraph of acces.    */
-GLOBAL LONG     pr_begdsk;              /* first paragraph of desktop   */
-GLOBAL LONG     pr_topdsk;              /* first paragraph above desktop  */
-GLOBAL LONG     pr_topmem;              /* next paragraph above free area */
-GLOBAL LONG     pr_ssize;               /* size of channel system overhead */
-GLOBAL LONG     pr_itbl;                /* base of GDOS default int table  */
-EXTERN WORD     gl_fmemflg;
-
-EXTERN WORD     proc_create();
-EXTERN WORD     proc_run();
-EXTERN WORD     fun_alert();
-#endif
-
-
-
-#if MULTIAPP
-
-#define LMIN(x,y) ((x)<(y)?(x):(y))
-
-
-        /* in pro_chcalc long addresses are flattened out with no segment */
-
-void pro_chcalc(LONG appsize, LONG *begaddr, LONG *chsize)
-{
-        static LONG     begfree = 0l;
-        LONG            maxmem;
-
-        if (appsize == -1)                      /* full step    */
-        {
-          *begaddr = LSEGOFF(pr_beggem); 
-          *chsize = pr_topmem - pr_beggem;
-          return;
-        }
-        if ((begfree >= pr_topmem) || (begfree < pr_topdsk))
-          begfree = pr_topdsk;  
-        
-        maxmem = pr_topmem - pr_begdsk;
-        *chsize = LMIN(appsize+pr_ssize, maxmem);
-
-        if ((begfree + *chsize) < pr_topmem)
-          *begaddr = LSEGOFF(begfree);
-        else
-          *begaddr = LSEGOFF(pr_topmem - *chsize);
-        begfree += *chsize;     
-}
-#endif
-
 
 WORD pro_chdir(WORD drv, BYTE *ppath)
 {
@@ -118,56 +68,6 @@ WORD pro_chdir(WORD drv, BYTE *ppath)
 } /* pro_chdir */
 
 
-WORD pro_cmd(BYTE *psubcmd, BYTE *psubtail, WORD exitflag)
-{
-        LONG            lp;
-        WORD            i, ii, drv;
-        BYTE            save_ch;
-
-        shel_envrn(ADDR(&lp), ADDR("COMSPEC="));
-        if (lp)
-        {
-          strcpy(&G.g_cmd[0], (char *)lp);
-/* BugFix       */
-          if (!exitflag)
-          {
-            i = 0;
-            while(G.g_cmd[i] != '\\')   /* find first backslash         */
-              i++;
-                                /* change to drive specified by COMSPEC */
-            drv = G.g_cmd[i - 2] - 'A';
-            dos_sdrv(drv);
-                                /* chdir to path specified by COMSPEC   */
-/* mdf */
-            ii = strlen(&G.g_cmd[0]);
-            while(G.g_cmd[--ii] != '\\');       /* find last backslash  */
-            if (i == ii)                /* root directory?              */
-              ii++;                     /* keep backslash in path name  */
-/* *** */
-            save_ch = G.g_cmd[ii];      /* save char for later          */
-            G.g_cmd[ii] = NULL;         /* make a null-term. string     */
-            dos_chdir((BYTE *)ADDR(&G.g_cmd[0])); /* change to that dir.*/
-            G.g_cmd[ii] = save_ch;      /* put the char back            */
-          }
-/* */
-          if (exitflag)
-          {
-#if PCDOS
-            strcpy(&G.g_tail[1], "/C ");
-#endif
-            strcat(&G.g_tail[1], psubcmd);
-            strcat(&G.g_tail[1], " ");
-            strcat(&G.g_tail[1], psubtail);
-          }
-          else
-            G.g_tail[1] = NULL;
-          return(TRUE);
-        } /* if lp */
-        else
-          return(FALSE);
-} /* pro_cmd */
-
-
 WORD pro_exec(WORD isgraf, WORD isover, LONG pcmd, LONG ptail)
 {
         WORD            ret;
@@ -186,10 +86,7 @@ WORD pro_exec(WORD isgraf, WORD isover, LONG pcmd, LONG ptail)
             pro_chcalc((LONG)-1, &begaddr, &csize);
           else
             pro_chcalc((LONG)pr_kbytes << 10, &begaddr, &csize);
-/*
-dbg("NEW START ADDRESS = %X\r\n", begaddr);
-dbg("NEW CHANNEL SIZE  = %X\r\n", csize);
-*/
+
           ret = proc_create(begaddr, csize, 1, isgraf, &chnum);
           if (!ret)
           {
@@ -199,12 +96,6 @@ dbg("NEW CHANNEL SIZE  = %X\r\n", csize);
           if (isover == 2)
             gl_fmemflg |= (1 << chnum);
 
-/*
-dbg("CREATE = %d\r\n", ret);
-dbg("CHNUM  = %d\r\n", chnum);
-dbg("PCMD   = %s\r\n", pcmd);
-dbg("PTAIL  = %s\r\n", ptail);
-*/
           ret = proc_run(chnum, isgraf, isover, pcmd, ptail);
           if (isover==3)
             ret = 0;
@@ -215,7 +106,7 @@ dbg("PTAIL  = %s\r\n", ptail);
         if (!ret)
           graf_mouse(ARROW, 0x0L);
         return( ret );
-} /*  */
+} /* pro_exec */
 
 
 WORD pro_run(WORD isgraf, WORD isover, WORD wh, WORD curr)

@@ -196,7 +196,7 @@
 
 #define STGEMOUT        9
 
-#define STGEMBAT        10
+/*#define STGEMBAT        10*/     /* unused */
 
 #define ST1STD          11
 

@@ -1619,7 +1619,7 @@ char *desk_rs_fstr[] = {
     "A:\\EMUDESK.INF",
     "DESKLO.ICN",
     "OUTPUT.APP",
-    "????????.BAT",
+    NULL,           /* unused */
     "#F FF 28 @ *.*@",
     "#D FF 02 @ *.*@",
     "#G 08 FF *.APP@ @",
@@ -1631,8 +1631,8 @@ char *desk_rs_fstr[] = {
     N_("Disk Drives:"),
     "am",
     "pm",
-    N_("Free"),
-    "Free",
+    NULL,           /* unused */
+    NULL,           /* unused */
     N_("[1][The document type you selected is not|"
        "configured to work with a specific|"
        "application.  Use the \"Configure|"

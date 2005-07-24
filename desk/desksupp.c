@@ -349,8 +349,7 @@ static WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, WORD drv,
 {
         WORD    ret, done;
         WORD    isgraf, isover, isparm, uninstalled;
-        BYTE    *ptmp, *pcmd, *ptail;
-        BYTE    name[13];
+        BYTE    *pcmd, *ptail;
 
         done = FALSE;
                                                 /* set flags            */
@@ -413,25 +412,6 @@ static WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, WORD drv,
             ret = FALSE;
           } /* else */
         } /* else */
-                                                /* see if it is a       */
-                                                /*   batch file         */
-        if ( wildcmp( ini_str(STGEMBAT), pcmd) )
-        {
-                                                /* if is app. then copy */
-                                                /*   typed in parameter */
-                                                /*   tail, else it was  */
-                                                /*   a document installed*/
-                                                /*   to run a batch file*/
-          strcpy(&G.g_1text[0], (isapp) ? &G.g_tail[1] : ptail);
-          ptmp = &name[0];
-          pname = pcmd;
-          while ( *pname != '.' )
-            *ptmp++ = *pname++;
-          *ptmp = NULL;
-          ret = pro_cmd(&name[0], &G.g_1text[0], TRUE);
-          pcmd = &G.g_cmd[0];
-          ptail = &G.g_tail[1];
-        } /* if */
                                                 /* user wants to run    */
                                                 /*   another application*/
         if (ret)
