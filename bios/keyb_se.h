@@ -87,14 +87,26 @@ BYTE keytbl_se_caps[] = {
  */
 
 BYTE keytbl_se_altnorm[] = {
+    0x1a, '[',
+    0x1b, ']',
+    0x28, '`',
+    0x2b, '^',
     0,
 };
 
 BYTE keytbl_se_altshft[] = {
+    0x1a, '{',
+    0x1b, '}',
+    0x28, '~',
+    0x2b, '@',
     0,
 };
 
 BYTE keytbl_se_altcaps[] = {
+    0x1a, '[',
+    0x1b, ']',
+    0x28, '`',
+    0x2b, '^',
     0,
 };
 

@@ -1895,3 +1895,7 @@ Start... early ages
   improved vq_color a little bit. (THH)
 - desk/desksupp.c: Fixed do_format() so that the desktop can now load
   FORMAT.PRG to format floppy disks. (THH)
+
+2005-08-08
+- bios/keyb_se.h: Added bracket keys for Swedish/Finnish keyboards - thanks to
+  Eero for the information about the right locations of the keys. (THH)
