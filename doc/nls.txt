@@ -2,6 +2,7 @@
 nls.txt - native language support for EmuTOS, 
 or how having printf("welcome") display "willkommen".
 
+
 Principle
 =========
 
@@ -35,6 +36,7 @@ declarations, as in the following example:
 
 translatable strings not immediately translated by _(...) need
 to be translated using gettext explicitely.
+
 
 Operations
 ==========
@@ -212,6 +214,14 @@ if your po-file in in ISO latin1 encoding, or a line like
   # -*- mode: C; coding: iso-latin-2; -*-
 
 if your po-file is in another encoding (here, ISO latin 2).
+
+When translating a *.po file, please note that some strings are limited
+in size. For example, the texts used in a "form_alert" box are limited
+to five lines with 40 characters each. Each of the three buttons of such
+a "form_alert" box is limited to 20 characters.
+You should always check the translated text in EmuTOS to see if it looks
+as you expected it.
+
 
 References
 ==========

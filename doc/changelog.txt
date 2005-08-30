@@ -1899,3 +1899,6 @@ Start... early ages
 2005-08-08
 - bios/keyb_se.h: Added bracket keys for Swedish/Finnish keyboards - thanks to
   Eero for the information about the right locations of the keys. (THH)
+
+2005-08-30
+- po/de.po: Fixed some form_alert strings that were too big. (THH)
