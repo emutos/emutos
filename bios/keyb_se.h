@@ -82,10 +82,6 @@ BYTE keytbl_se_caps[] = {
 };
 
 
-/* TODO - the tables below were not filled by the tool.
- * they should contain couples of (scan code, char code), ended by zero.
- */
-
 BYTE keytbl_se_altnorm[] = {
     0x1a, '[',
     0x1b, ']',
