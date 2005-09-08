@@ -1902,3 +1902,10 @@ Start... early ages
 
 2005-08-30
 - po/de.po: Fixed some form_alert strings that were too big. (THH)
+
+2005-09-08
+  Patches by Roger Crettol:
+- bdos/proc.c bdos/rwa.S: Correctly pass register D0 to _gouser in processing
+  gemdos xterm (0x4C) call - was broken
+- bios/keyb_sg.h bios/country.h country.mk: Support for swiss german keyboard
+- cli/command.c: Revised ECHO, suppressing extra newlines in batch mode
