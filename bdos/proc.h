@@ -53,7 +53,6 @@ LONG kpgmld(PD *p, FH h, PGMHDR01 *hd);
  */
 
 void gouser(void)  NORETURN;  
+void termuser(void)  NORETURN;  
 
 #endif /* PROC_H */
-
-

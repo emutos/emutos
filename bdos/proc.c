@@ -553,8 +553,13 @@ void    xterm(UWORD rc)
 
     run = run->p_parent;
     ixterm(p);
+    /* gouser() will store the current value of D0 in the active PD
+     * so it cannot be used here. See proc_go() above.
+     * termuser() will enter the gouser() code at the proper place.
+     * sep 2005 RCL
+     */
     run->p_dreg[0] = rc;
-    gouser();
+    termuser();
 }
 
 

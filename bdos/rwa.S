@@ -120,6 +120,7 @@
 
 //==== Global References =====================================================
 
+        .global _termuser
         .global _gouser
         .global _oscall
 
@@ -227,7 +228,7 @@ callos: move.l  a0,-(sp)        // push parm pointer
 _gouser:
         move.l  _run,a5
         move.l  d0,0x68(a5)
-        move.l  0x7c(a5),a6     // stack pointer (maybe usp, maybe ssp)
+ggusr:  move.l  0x7c(a5),a6     // stack pointer (maybe usp, maybe ssp)
         move.l  (a6)+,a4        // other stack pointer
         move.w  (a6)+,d0
         move.l  (a6)+,a3        // retadd
@@ -246,6 +247,14 @@ retsys: move.l  a6,sp
         move.l  a4,usp
         bra     gousr
 
+        // attempting to fix a problem where return codes provided by
+        // xterm [ 0x4C ] aren't correctly passed back to the parent.
+        // this is entered from C code as termuser()
+        // aug 2005, RCL
+_termuser:
+        move.l  _run,a5
+        bra     ggusr
+        
         .bss
         .even
 
