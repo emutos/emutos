@@ -50,7 +50,12 @@ i18n_fi_keyb = SE
 i18n_fi_cset = ST
 i18n_fi_idt  = IDT_24H | IDT_DDMMYY | '/'
 
-COUNTRIES = us de fr cz gr es fi
+i18n_sg_lang = de
+i18n_sg_keyb = SG
+i18n_sg_cset = ST
+i18n_sg_idt  = IDT_24H | IDT_DDMMYY | '/'
+
+COUNTRIES = us de fr cz gr es fi sg
 
 # 
 

@@ -27,6 +27,7 @@
 #define KEYB_CZ 3
 #define KEYB_GR 4
 #define KEYB_SE 5
+#define KEYB_SG 6
 
 /* charset codes - names in [brackets] are understood by GNU recode */
 #define CHARSET_ALL -1
