@@ -2053,10 +2053,12 @@ xCmdLn(char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl)
                 chk_str(&argv[1]);
                 i = 1;
                 while (*argv[i]) {
+                    if (i > 1)
+                        wrt(" ");
                     wrt(argv[i++]);
-                    wrt(" ");
                 }
-                dspMsg(12);
+                if (!*nonStdIn)             // newline only in interactive mode
+                    dspMsg(12);     // aug 2005 RCL
             }
 
             else if (xncmps(3, s, "CD")) {
@@ -2276,12 +2278,14 @@ xCmdLn(char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl)
                 if (!(execBat(s, (char **) &argv))) {
                     if ((compl_code = execPrgm(s, cmdtl)) == -32)
                         errout();
-                    else if ((compl_code > 0) && prgerr)
-                        errout();
-                    else if (compl_code < 0) {
-                        wrt(_("Command not found."));
-                        if (prgerr)
+                    else {
+                        if ((compl_code > 0) && prgerr)
                             errout();
+                        else if (compl_code < 0) {
+                            wrt(_("Command not found."));
+                            if (prgerr)
+                                errout();
+                        }
                     }
                 }
             }
