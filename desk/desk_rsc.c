@@ -1615,11 +1615,11 @@ char *desk_rs_fstr[] = {
     N_("documents"),
     "FORMAT.PRG",
     N_("  Show as text   \007S"),
-    "DESKHI.ICN",
+    NULL,                       /* unused, was "DESKHI.ICN" */
     "A:\\EMUDESK.INF",
-    "DESKLO.ICN",
-    "OUTPUT.APP",
-    NULL,           /* unused */
+    NULL,                       /* unused, was "DESKLO.ICN" */
+    NULL,                       /* unused, was "OUTPUT.APP" */
+    NULL,                       /* unused, was "????????.BAT" */
     "#F FF 28 @ *.*@",
     "#D FF 02 @ *.*@",
     "#G 08 FF *.APP@ @",
@@ -1631,8 +1631,8 @@ char *desk_rs_fstr[] = {
     N_("Disk Drives:"),
     "am",
     "pm",
-    NULL,           /* unused */
-    NULL,           /* unused */
+    NULL,                       /* unused, was "Free" */
+    NULL,                       /* unused, was "Free" */
     N_("[1][The document type you selected is not|"
        "configured to work with a specific|"
        "application.  Use the \"Configure|"

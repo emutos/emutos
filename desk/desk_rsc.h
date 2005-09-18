@@ -188,13 +188,13 @@
 
 #define STASTEXT        5
 
-#define STGEMHIC        6
+/*#define STGEMHIC        6*/     /* unused */
 
 #define STGEMAPP        7
 
-#define STGEMLOI        8
+/*#define STGEMLOI        8*/     /* unused */
 
-#define STGEMOUT        9
+/*#define STGEMOUT        9*/     /* unused */
 
 /*#define STGEMBAT        10*/     /* unused */
 
