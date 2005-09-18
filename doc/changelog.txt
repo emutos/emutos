@@ -1909,3 +1909,9 @@ Start... early ages
   gemdos xterm (0x4C) call - was broken
 - bios/keyb_sg.h bios/country.h country.mk: Support for swiss german keyboard
 - cli/command.c: Revised ECHO, suppressing extra newlines in batch mode
+
+2005-09-18
+- desk/desk_rsc.c: Removed some more unused strings. (THH)
+- doc/authors.txt doc/announce.txt: Updates for version 0.8.1 (THH)
+
+* Release: 0.8.1

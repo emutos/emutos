@@ -80,7 +80,13 @@ Patrice Mandin and Markus Oberhumer
 
 Eero Tamminen
 - Many bug reports and testing
+- Finnish translation and keyboard mapping
 
 Gerhard Stoll
 - Improved our nvmaccess() function
 - TOS hypertext
+
+Roger Crettol
+- Found and fixed a bug in GEMDOS Pterm() function.
+- Support for swiss german keyboard
+- Some EmuCON improvements
