@@ -335,8 +335,9 @@ wheel_check:
 
         and.w   #1,d1                    // 0 - up,  1 - down
         add.w   d1,d1                    // 0 - up,  2 - down
-        neg.w   d1                       // 0 - up, -2 - down
-        addq.w  #1,d1                    // 1 - up, -1 - down
+//      neg.w   d1                       // 0 - up, -2 - down
+//      addq.w  #1,d1                    // 1 - up, -1 - down
+        subq.w  #1,d1                    // -1 - up, 1 - down
 
         movem.l d2-d7/a2-a6,-(sp)        // Save remaining register to be safe
         move.l  _user_wheel,a1

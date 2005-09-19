@@ -1915,3 +1915,6 @@ Start... early ages
 - doc/authors.txt doc/announce.txt: Updates for version 0.8.1 (THH)
 
 * Release: 0.8.1
+
+2005-09-19
+- vdi/vdi_asm.S: reversed mouse wheel direction, now Milan compatible (joy)
