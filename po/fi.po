@@ -1,8 +1,10 @@
+# translation of fi.po to Suomi
+# Eero Tamminen <eerot@sf>, 2005.
 msgid ""
 msgstr ""
 "Project-Id-Version: fi\n"
 "POT-Creation-Date: 2003-08-28 22:41+0200\n"
-"PO-Revision-Date: 2005-06-20 13:00+0300\n"
+"PO-Revision-Date: 2005-10-02 23:14+0300\n"
 "Last-Translator: Eero Tamminen <eerot@sf>\n"
 "Language-Team: Suomi\n"
 "MIME-Version: 1.0\n"
@@ -49,7 +51,7 @@ msgstr "Valinta:    ________.___"
 
 #: aes/gem_rsc.c:223
 msgid "ITEM SELECTOR"
-msgstr "TIEDOSTOVALITSIN"
+msgstr "TIEDOSTON VALINTA"
 
 #: aes/gem_rsc.c:241 desk/desk_rsc.c:25
 msgid "OK"
@@ -57,7 +59,7 @@ msgstr "OK"
 
 #: aes/gem_rsc.c:247 desk/desk_rsc.c:26
 msgid "Cancel"
-msgstr "Peru"
+msgstr "Kumoa"
 
 #: aes/gem_rsc.c:465
 msgid "Insert your GEM STARTUP disk"
@@ -76,7 +78,7 @@ msgstr ""
 "Et voi kirjoittaa %c: asemalle,|"
 "koska se on kirjoitussuojattu!|"
 "Poista kirjoitussuojaus ennen|"
-"kuin yrität uudelleen.][Peru|Uudestaan]"
+"kuin yrität uudelleen.][Kumoa|Uudestaan]"
 
 #: aes/gem_rsc.c:480
 msgid ""
@@ -92,7 +94,7 @@ msgstr ""
 "käyttää oikeantyyppistä levykettä|"
 "ja laittaa se asemaan oikein.  Jos|"
 "ongelma koskee kovalevyä, tarkista|"
-"sen liitännät.][Peru|Uudestaan]"
+"sen liitännät.][Kumoa|Uudestaan]"
 
 #: aes/gem_rsc.c:489
 msgid ""
@@ -107,7 +109,7 @@ msgstr ""
 "saattavat olla viallisia.  Sinun|"
 "pitää käyttää oikean tyyppistä|"
 "levykettä ja kovalevyn tapauksessa|"
-"kiinnittää sen liittimet oikein.][Peru|Uudelleen]"
+"kiinnittää sen liittimet oikein.][Kumoa|Uudelleen]"
 
 #: aes/gem_rsc.c:496
 msgid ""
@@ -119,11 +121,11 @@ msgid ""
 "physically connected to your computer.][Cancel|Retry]"
 msgstr ""
 "[2]["
-"Ohjelma ei pysty lukemaan asemassa|"
+"Sovellus ei pysty lukemaan asemassa|"
 "%c: olevia tietoja.  Levykkeen|"
 "pitää olla formatoitu, aseman pitää|"
 "olla päällä ja fyysisesti liitetty|"
-"koneeseesi.][Peru|Uudelleen]"
+"tietokoneeseesi.][Kumoa|Uudelleen]"
 
 #: aes/gem_rsc.c:505
 msgid ""
@@ -137,7 +139,7 @@ msgstr ""
 "Tulostuslaitteesi ei vastaanota|"
 "tietoja. Varmista, että laite on|"
 "päällä ja, että siinä on paperia|"
-"ennen uutta yritystä.][Peru|Uudelleen]"
+"ennen uutta yritystä.][Kumoa|Uudelleen]"
 
 #: aes/gem_rsc.c:512
 msgid ""
@@ -148,8 +150,9 @@ msgid ""
 "Team and submit a bug report.][Cancel]"
 msgstr ""
 "[3]["
-"GEM virhe.  Ota yhteyttä|"
-"EmuTOS kehittäjiin.][Peru]"
+"GEM-virhe.  Ota yhteyttä|"
+"EmuTOS-kehittäjiin ja anna|"
+"virheraportti.][Kumoa]"
 
 #: aes/gem_rsc.c:519
 msgid ""
@@ -159,7 +162,7 @@ msgid ""
 "open. Check the name you have entered.][  OK  ]"
 msgstr ""
 "[2]["
-"Ohjelma ei löydä hakemistoa tai|"
+"Sovellus ei löydä hakemistoa tai|"
 "tiedostoa, jota yrität aukaista.|"
 "Tarkista antamasi nimi.][  OK  ]"
 
@@ -182,7 +185,7 @@ msgid ""
 "close any documents you don't need.][  OK  ]"
 msgstr ""
 "[1]["
-"Ohjelmalla ei ole riittävästi|"
+"Sovelluksella ei ole riittävästi|"
 "tilaa uudelle dokumentille.  Tee|"
 "tilaa sulkemalla dokumentit,|"
 "joita et tarvitse.][  OK  ]"
@@ -210,7 +213,7 @@ msgid ""
 msgstr ""
 "[1]["
 "Antamaasi asemaa ei ole.  Tarkista|"
-"antamasi asematunnus.][Peru]"
+"antamasi aseman tunnus.][Kumoa]"
 
 #: aes/gem_rsc.c:544
 msgid ""
@@ -231,7 +234,7 @@ msgid ""
 msgstr ""
 "[1]["
 "Koneessasi ei ole riittävästi|"
-"muistia valitsemasi ohjelman|"
+"muistia valitsemasi sovelluksen|"
 "käynnistykseen.][  OK  ]"
 
 #: aes/gem_rsc.c:552
@@ -240,7 +243,7 @@ msgid ""
 "DOS error #%d.][Cancel]"
 msgstr ""
 "[3]["
-"DOS-virhe #%d.][Peru]"
+"DOS-virhe #%d.][Kumoa]"
 
 #: aes/gem_rsc.c:553
 msgid ""
@@ -248,7 +251,7 @@ msgid ""
 "Bad Function #][Cancel]"
 msgstr ""
 "[3]["
-"Tuntematon funktionumero #][Peru]"
+"Tuntematon funktionumero #][Kumoa]"
 
 #: aes/gem_rsc.c:554
 msgid ""
@@ -263,7 +266,7 @@ msgstr ""
 "laita GEM DESKTOP -levyke asemaan|"
 "A ja klikkaa OK tai paina Enter.|"
 "Palataksesi komentoriville,|"
-"klikkaa Peru.][  OK  |Peru]"
+"klikkaa Kumoa.][  OK  |Kumoa]"
 
 #: desk/desk_rsc.c:27
 msgid "Install"
@@ -291,7 +294,7 @@ msgstr "Viimeksi muutettu:  __/__/__"
 
 #: desk/desk_rsc.c:62
 msgid "Drive identifier:  _:"
-msgstr "Asematunnus:  _:"
+msgstr "Aseman tunnus:  _:"
 
 #: desk/desk_rsc.c:67
 msgid "Disk label:  ___________"
@@ -327,7 +330,7 @@ msgstr "Parametrit:  ____________________________________________________"
 
 #: desk/desk_rsc.c:132
 msgid "Drive identifier:  _"
-msgstr "Asematunnus:  _"
+msgstr "Aseman tunnus:  _"
 
 #: desk/desk_rsc.c:137
 msgid "Icon label:  ____________"
@@ -335,7 +338,7 @@ msgstr "Ikonin nimi:  ____________"
 
 #: desk/desk_rsc.c:142
 msgid "Application name:  ________.___"
-msgstr "Ohjelman nimi:  ________.___"
+msgstr "Sovelluksen nimi:  ________.___"
 
 #: desk/desk_rsc.c:192
 msgid "Folders to copy:  ____"
@@ -367,7 +370,7 @@ msgstr " EmuTOS "
 
 #: desk/desk_rsc.c:292
 msgid " File "
-msgstr " Tiedosto "
+msgstr " Arkisto "
 
 #: desk/desk_rsc.c:298
 msgid " Options "
@@ -379,7 +382,7 @@ msgstr " Järjestä "
 
 #: desk/desk_rsc.c:322
 msgid "  Desktop info...   "
-msgstr "  Työpöydän tiedot...   "
+msgstr "  Ohjelmasta...   "
 
 #: desk/desk_rsc.c:376
 msgid "  Open"
@@ -387,7 +390,7 @@ msgstr "  Avaa"
 
 #: desk/desk_rsc.c:382
 msgid "  Info/Rename...  \007I"
-msgstr "  Tiedot/Nimeä...  \007I"
+msgstr "  Näytä tiedot...  \007I"
 
 #: desk/desk_rsc.c:420
 msgid "  Delete...       \007D"
@@ -399,39 +402,39 @@ msgstr "  Alusta..."
 
 #: desk/desk_rsc.c:456
 msgid "  Install disk drive..."
-msgstr "  Asenna levyasema..."
+msgstr "  Määritä levyasema..."
 
 #: desk/desk_rsc.c:462
 msgid "  Configure application...  \007A"
-msgstr "  Aseta ohjelma...    \007A"
+msgstr "  Määritä sovellus...       \007A"
 
 #: desk/desk_rsc.c:474
 msgid "  Set preferences..."
-msgstr "  Muuta asetuksia..."
+msgstr "  Määritä asetukset..."
 
 #: desk/desk_rsc.c:480
 msgid "  Save desktop              \007V"
-msgstr "  Tallenna työpöytä   \007V"
+msgstr "  Talleta työpöytä          \007V"
 
 #: desk/desk_rsc.c:510
 msgid "  Sort by name   \007N"
-msgstr "  Nimen mukaan      \007N"
+msgstr "  Nimi           \007N"
 
 #: desk/desk_rsc.c:516
 msgid "  Sort by type   \007P"
-msgstr "  Tyypin mukaan     \007P"
+msgstr "  Tyyppi         \007P"
 
 #: desk/desk_rsc.c:522
 msgid "  Sort by size   \007Z"
-msgstr "  Koon mukaan       \007Z"
+msgstr "  Koko           \007Z"
 
 #: desk/desk_rsc.c:528
 msgid "  Sort by date   \007T"
-msgstr "  Päiväyksen mukaan \007T"
+msgstr "  Päiväys        \007T"
 
 #: desk/desk_rsc.c:542
 msgid "ITEM INFORMATION / RENAME"
-msgstr "TIEDOT / UUDELLEENNIMEÄ"
+msgstr "TIEDOT / UUDELLEENNIMEÄMINEN"
 
 #: desk/desk_rsc.c:572
 msgid "Attributes:"
@@ -459,7 +462,7 @@ msgstr "Versio"
 
 #: desk/desk_rsc.c:772
 msgid "The EmuTOS development team"
-msgstr "EmuTOS-kehittäjät"
+msgstr "   EmuTOS-kehittäjät"
 
 #: desk/desk_rsc.c:778
 msgid "Based on 'GPLed' sources"
@@ -471,7 +474,7 @@ msgstr "EmuTOSia levitetään GPL-lisenssillä"
 
 #: desk/desk_rsc.c:814
 msgid "See doc/license.txt for details"
-msgstr "lisätiedot, doc/license.txt"
+msgstr "Lisätiedot, katso doc/license.txt"
 
 #: desk/desk_rsc.c:828
 msgid "NEW FOLDER INFORMATION"
@@ -499,7 +502,7 @@ msgstr "jonka haluat luoda."
 
 #: desk/desk_rsc.c:878
 msgid "OPEN APPLICATION"
-msgstr "AVAA OHJELMA"
+msgstr "AVAA SOVELLUS"
 
 #: desk/desk_rsc.c:908
 msgid "Enter the name of the document you want"
@@ -511,15 +514,15 @@ msgstr "avata, tai anna parametreja,"
 
 #: desk/desk_rsc.c:920
 msgid "are acceptable to this application."
-msgstr "jotka tämä ohjelma hyväksyy."
+msgstr "jotka tämä sovellus hyväksyy."
 
 #: desk/desk_rsc.c:934
 msgid "INSTALL DISK DRIVE"
-msgstr "ASENNA LEVYASEMA"
+msgstr "MÄÄRITÄ LEVYASEMA"
 
 #: desk/desk_rsc.c:952
 msgid "Disk type:"
-msgstr "Levyn tyyppi:"
+msgstr "Tyyppi:"
 
 #: desk/desk_rsc.c:964
 msgid "Floppy"
@@ -531,7 +534,7 @@ msgstr "Kovalevy"
 
 #: desk/desk_rsc.c:1003
 msgid "CONFIGURE APPLICATION"
-msgstr "ASETA OHJELMA"
+msgstr "MÄÄRITÄ SOVELLUS"
 
 #: desk/desk_rsc.c:1015
 msgid "Document types:"
@@ -539,7 +542,7 @@ msgstr "Tiedostotyypit:"
 
 #: desk/desk_rsc.c:1069
 msgid "Application type:"
-msgstr "Ohjelmatyyppi:"
+msgstr "Sovellustyyppi:"
 
 #: desk/desk_rsc.c:1099
 msgid "Needs full memory?"
@@ -551,11 +554,11 @@ msgstr "Ikonityyppi:"
 
 #: desk/desk_rsc.c:1210
 msgid "COPY FOLDERS / ITEMS"
-msgstr "KOPIOI KANSIOITA / TIEDOSTOJA"
+msgstr "KOPIOIN KANSIOT / TIEDOSTOT"
 
 #: desk/desk_rsc.c:1249
 msgid "DELETE FOLDERS / ITEMS"
-msgstr "POISTA KANSIOITA / TIEDOSTOJA"
+msgstr "POISTAN KANSIOT / TIEDOSTOT"
 
 #: desk/desk_rsc.c:1288
 msgid "NAME CONFLICT DURING COPY"
@@ -571,19 +574,19 @@ msgstr "UUSI KANSIO"
 
 #: desk/desk_rsc.c:1366
 msgid "SET PREFERENCES"
-msgstr "MUUTA ASETUKSIA"
+msgstr "MÄÄRITÄ ASETUKSET"
 
 #: desk/desk_rsc.c:1372
 msgid "Confirm deletes?"
-msgstr "Vahvista poistot?"
+msgstr "Vahvista poisto:"
 
 #: desk/desk_rsc.c:1396
 msgid "Confirm copies?"
-msgstr "Vahvista kopioinnit?"
+msgstr "Vahvista kopiointi:"
 
 #: desk/desk_rsc.c:1420
 msgid "Confirm overwrites?"
-msgstr "Vahvista ylikirjoitukset?"
+msgstr "Vahvista ylikirjoitus:"
 
 #: desk/desk_rsc.c:1444
 msgid "Double-click speed:"
@@ -643,11 +646,11 @@ msgstr "%ld tavua käytetty %d tiedostoon."
 
 #: desk/desk_rsc.c:1613
 msgid "  Show as icons  \007S"
-msgstr "  Näytä ikoneina    \007S"
+msgstr "  Näytä ikoneina \007S"
 
 #: desk/desk_rsc.c:1614
 msgid "application"
-msgstr "ohjelma"
+msgstr "sovellus"
 
 #: desk/desk_rsc.c:1615
 msgid "documents"
@@ -680,10 +683,10 @@ msgid ""
 msgstr ""
 "[1]["
 "Valitsemasi tiedostotyyppi ei ole|"
-"asetettu millekään ohjelmalle.|"
-"Käytä \"Aseta ohjelma\" komentoa|"
+"asetettu millekään sovellukselle.|"
+"Käytä \"Määritä sovellus\" komentoa|"
 "liittääksesi tämän tiedostotyypin|"
-"johonkin ohjelmaan.][  OK  ]"
+"johonkin sovellukseen.][  OK  ]"
 
 #: desk/desk_rsc.c:1645
 msgid ""
@@ -708,7 +711,7 @@ msgid ""
 "the root directory.][OK]"
 msgstr ""
 "[1]["
-"FORMAT-ohjelmaa ei löydy.  Jos käytät|"
+"FORMAT-sovellusta ei löydy.  Jos käytät|"
 "kahta levykeasemaa, sinun pitää|"
 "alustaa| levykkeet DOS-levykkeeltäsi.|"
 "Jos käytät| kovalevyä, kopioi FORMAT|"
@@ -727,7 +730,7 @@ msgstr ""
 "Alustus poistaa KAIKKI tiedot|"
 "asemasta %c:.  Klikkaa OK:ta|"
 "vain jos tietosi voidaan|"
-"hävittää tältä levyltä.][  OK  |Peru]"
+"hävittää tältä levyltä.][  OK  |Kumoa]"
 
 #: desk/desk_rsc.c:1668
 msgid ""
@@ -751,7 +754,7 @@ msgstr ""
 "Jos olet varma, että haluat|"
 "poistaa KAIKKI tiedot levyltä|"
 "asemassa %c:, klikkaa OK.|"
-"Muutoin klikkaa Peru.][  OK  |Peru]"
+"Muutoin klikkaa Kumoa.][  OK  |Kumoa]"
 
 #: desk/desk_rsc.c:1678
 msgid ""
@@ -763,11 +766,11 @@ msgid ""
 "applications.][  OK  ]"
 msgstr ""
 "[1]["
-"Tämän ohjelman asetukseen ei ole|"
+"Tämän sovelluksen määritykseen ei ole|"
 "riittävästi tilaa.  Vapauttaaksesi|"
 "tilaa, sinun pitää poistaa jokin|"
-"tällä hetkellä asetetuista|"
-"ohjelmista.][  OK  ]"
+"tällä hetkellä määritetyistä|"
+"sovelluksista.][  OK  ]"
 
 #: desk/desk_rsc.c:1685
 msgid ""
@@ -780,8 +783,8 @@ msgstr ""
 "[2]["
 "Annetun niminen kansio on jo|"
 "olemassa, tai levy on täysi.|"
-"Yritä uutta nimeä, tai Peru|"
-"ja tarkista vapaa levytila.][ Peru | Uudelleen ]"
+"Yritä uutta nimeä, tai Kumoa|"
+"ja tarkista vapaa levytila.][ Kumoa | Uudelleen ]"
 
 #: desk/desk_rsc.c:1692
 msgid ""
@@ -812,7 +815,7 @@ msgstr ""
 "DESKLO.ICN, DESKHI.ICN, tai|"
 "DESKTOP.INF tiedostoja.  Näitä|"
 "tarvitaan GEM-työpöydän|"
-"käynnistämiseen.][Peru]"
+"käynnistämiseen.][Kumoa]"
 
 #: desk/desk_rsc.c:1708
 msgid ""
@@ -825,9 +828,9 @@ msgid ""
 msgstr ""
 "[3]["
 "Tallentaaksesi työpöydän, laita|"
-"GEM DESKTOP -levyke asemaan A,|"
-"ja klikkaa OK.  Klikkaa Peru, jos|"
-"et halua tallentaa työpöytää.][  OK  |Peru]"
+"GEM DESKTOP -levyke asemaan A, ja|"
+"klikkaa OK.  Klikkaa Kumoa, jos|"
+"et halua tallentaa työpöytää.][  OK  |Kumoa]"
 
 #: desk/desk_rsc.c:1717
 msgid ""
@@ -841,7 +844,7 @@ msgstr ""
 "Valitettavasti et voi lisätä|"
 "useampia kansioita nykyisen sisään.|"
 "Dokumentaatio selittää rajoitukset|"
-"kansioille kansioiden sisällä.][Peru]"
+"kansioille kansioiden sisällä.][Kumoa]"
 
 #: desk/desk_rsc.c:1724
 msgid ""
@@ -896,7 +899,7 @@ msgstr "  Pysäytä systeemi ^Q"
 
 #: desk/desk_rsc.c:486
 msgid "  Change resolution         \007C"
-msgstr "  Vaihda resoluutiota \007C"
+msgstr "  Vaihda resoluutiota       \007C"
 
 #: bios/initinfo.c:164
 msgid "Press 'C' to run an early console"
@@ -929,8 +932,8 @@ msgstr ""
 "[1]["
 "Et voi aukaista roskakori-ikonia.|"
 "Poistaaksesi levykkeen, kansion,|"
-"tiedoston tai ohjelman, vedä se|"
-"roskakoriin.][  OK  ]"
+"tiedoston tai sovelluksen, vedä|"
+"se roskakoriin.][  OK  ]"
 
 #: desk/desk_rsc.c:1741
 msgid ""
@@ -942,7 +945,7 @@ msgid ""
 msgstr ""
 "[1]["
 "Voit vetää roskakoriin levykkeet,|"
-"kansiot, tiedostot ja ohjelmat,|"
+"kansiot, tiedostot ja sovellukset,|"
 "jotka haluat poistaa PYSYVÄSTI!][  OK  ]"
 
 #: desk/desk_rsc.c:1748
@@ -955,7 +958,7 @@ msgid ""
 msgstr ""
 "[1]["
 "Et voi vetää kansioita, tiedostoja|"
-"tai ohjelmia työpöydälle.  Voit|"
+"tai sovelluksia työpöydälle.  Voit|"
 "kuitenkin kopioida niitä levyille|"
 "tai vetää ne roskakoriin.][  OK  ]"
 
@@ -980,5 +983,4 @@ msgstr ""
 "Voit siirtää roskakorin muualle|"
 "GEM työpöydälläsi, muttet toisen|"
 "ikonin päälle.][  OK  ]"
-
 

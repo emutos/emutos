@@ -1918,3 +1918,6 @@ Start... early ages
 
 2005-09-19
 - vdi/vdi_asm.S: reversed mouse wheel direction, now Milan compatible (joy)
+
+2005-10-04
+- po/fi.po: Eero Tamminen has updated the Finnish translation. (THH)
