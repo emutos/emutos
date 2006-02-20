@@ -1923,12 +1923,15 @@ Start... early ages
 - po/fi.po: Eero Tamminen has updated the Finnish translation. (THH)
 
 2006-02-20
-- bdos/iumem.c: some conditional debugging added (SOP)
 - bdos/kpgmld.c: kpgm_relocate() added (SOP)
-- bdos/proc.c: PE_RELOCATE mode added (SOP)
-- bdos/proc.h: PE_RELOCATE Pexec mode defined (SOP)
-- bdos/umem.c: some conditional debugging added (SOP)
+- bdos/proc.h: PE_RELOCATE Pexec mode 50 defined (SOP)
+- bdos/proc.c: PE_RELOCATE mode added - it gets raw TOS executable data
+  (the complete mint.prg) and relocates it as if it was loaded normally. (SOP)
+- bdos/{umem.c, iumem.c}: some conditional debugging added (SOP)
 - bios/bios.c: bootstrap() added - loads and starts MiNT kernel from emulator
-  via BOOTSTRAP NatFeat (SOP)
+  via BOOTSTRAP NatFeat.
+  Also added a safety call to Setdta() after loading an AUTO program. Fixes
+  problem with loading programs after BETADOS.PRG (it probably scratched
+  the DTA buffer upon starting thus the consequent Fsnext() didn't work) (SOP)
 - bios/natfeat.[ch]: nf_bootstrap(), nf_getbootdrive() added (SOP)
 
