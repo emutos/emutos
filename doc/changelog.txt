@@ -1934,4 +1934,5 @@ Start... early ages
   problem with loading programs after BETADOS.PRG (it probably scratched
   the DTA buffer upon starting thus the consequent Fsnext() didn't work) (SOP)
 - bios/natfeat.[ch]: nf_bootstrap(), nf_getbootdrive() added (SOP)
+- Makefile: dd in cygwin needs binary flags (SOP)
 

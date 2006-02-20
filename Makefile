@@ -60,10 +60,12 @@ ifneq (,$(findstring CYGWIN,$(shell uname)))
 # CYGWIN-dependent stuff
 EXE = .exe
 CORE = *.stackdump
+DDOPTS = iflag=binary oflag=binary
 else
 # ordinary Unix stuff
 EXE = 
 CORE = core
+DDOPTS =
 endif
 
 #
@@ -286,7 +288,7 @@ then \
   false; \
 else \
   dd if=/dev/zero of=$@ bs=1024 count=$$goal 2>/dev/null; \
-  dd if=$< of=$@ conv=notrunc 2>/dev/null; \
+  dd if=$< of=$@ conv=notrunc $(DDOPTS) 2>/dev/null; \
   echo "$@ done"; \
 fi
 endef
