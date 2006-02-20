@@ -76,7 +76,7 @@ long get_xhdi_nfid(void)
 }
 
 /* terminate the execution of the emulato if possible, else no-op */
-extern void nf_shutdown(void)
+void nf_shutdown(void)
 {
     if(hasNF) {
         long shutdown_id = NFID("NF_SHUTDOWN");
@@ -87,3 +87,32 @@ extern void nf_shutdown(void)
         }
     }
 }
+
+/* load a new OS kernel into the memory to 'addr' ('size' bytes available) */
+long nf_bootstrap(char *addr, long size)
+{
+    if(hasNF) {
+        long bootstrap_id = NFID("BOOTSTRAP");
+        if(bootstrap_id) {
+            return NFCall(bootstrap_id, addr, size);
+        } else {
+            kprintf("BOOTSTRAP natfeat not available\n");
+        }
+    }
+    return 0;
+}
+
+/* get the boot drive number */
+char nf_getbootdrive(void)
+{
+    if(hasNF) {
+        long bootstrap_id = NFID("BOOTSTRAP");
+        if(bootstrap_id) {
+            return NFCall(bootstrap_id | 0x0001);
+        } else {
+            kprintf("BOOTSTRAP natfeat not available\n");
+        }
+    }
+    return 0;
+}
+

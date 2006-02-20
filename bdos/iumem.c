@@ -165,6 +165,11 @@ void freeit(MD *m, MPB *mp)
         if (m->m_start <= p->m_start)
             break;
 
+#if     DBG_IUMEM
+    kprintf("BDOS: freeit - amount = %08lx\n", m->m_length);
+    kprintf("BDOS: freeit - mp = %08lx\n", (LONG)m->m_start);
+#endif
+
     m->m_link = p;
 
     if (q)

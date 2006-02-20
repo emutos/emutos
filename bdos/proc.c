@@ -216,6 +216,22 @@ long xexec(WORD flag, char *path, char *tail, char *env)
 
     /* first branch - actions that do not require loading files */
     switch(flag) {
+    case PE_RELOCATE: 
+        p = (PD *) tail;
+        rc = kpgm_relocate(p, (long)path);
+        if(rc) {
+            D(("BDOS: xexec - kpgm_relloc returned %ld (0x%lx)\n", rc, rc));
+            freeit((MD*)p->p_env, &pmd);
+            return(rc);
+        }
+
+        /* invalidate instruction cache for the TEXT segment only
+         * programs that jump into their DATA, BSS or HEAP are kindly invited 
+         * to do their cache management themselves.
+         */
+        invalidate_icache( p+1, p->p_tlen);
+
+        return (long) p;
     case PE_BASEPAGE:        
         /* just create a basepage */
         env_md = alloc_env(env);
@@ -482,7 +498,7 @@ static void proc_go(PD *p)
 {
     struct gouser_stack *sp;
 
-    D(("BDOS: xexec - trying to load (and execute) a command ...\n"));
+    D(("BDOS: xexec - trying to load (and execute) a process on 0x%lx...\n", p->p_tbase));
     p->p_parent = run;
         
     /* create a stack at the end of the TPA */

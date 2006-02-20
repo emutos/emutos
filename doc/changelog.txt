@@ -1921,3 +1921,14 @@ Start... early ages
 
 2005-10-04
 - po/fi.po: Eero Tamminen has updated the Finnish translation. (THH)
+
+2006-02-20
+- bdos/iumem.c: some conditional debugging added (SOP)
+- bdos/kpgmld.c: kpgm_relocate() added (SOP)
+- bdos/proc.c: PE_RELOCATE mode added (SOP)
+- bdos/proc.h: PE_RELOCATE Pexec mode defined (SOP)
+- bdos/umem.c: some conditional debugging added (SOP)
+- bios/bios.c: bootstrap() added - loads and starts MiNT kernel from emulator
+  via BOOTSTRAP NatFeat (SOP)
+- bios/natfeat.[ch]: nf_bootstrap(), nf_getbootdrive() added (SOP)
+

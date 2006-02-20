@@ -39,4 +39,9 @@ extern long xhdi_vec(void);
 /* terminate the execution of the emulato if possible, else no-op */
 extern void nf_shutdown(void);
 
+/* load a new OS kernel into the memory to 'addr' ('size' bytes available) */
+extern long nf_bootstrap(char *addr, long size);
+extern char nf_getbootdrive(void);
+
+
 #endif /* _NATFEAT_H */

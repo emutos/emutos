@@ -38,7 +38,7 @@
  */
 
 static LONG     pgmld01(FH h, PD *pdptr, PGMHDR01 *hd);
-static LONG     pgfix01(LONG nrelbytes, PGMINFO *pi);
+static LONG     pgfix01(UBYTE *lastcp, LONG nrelbytes , PGMINFO *pi);
 
 /*
  * kpgmhdrld - load program header
@@ -104,13 +104,6 @@ LONG   kpgmld(PD *p, FH h, PGMHDR01 *hd )
 }
 
 
-
-
-/*
- *  lastcp - used to keep track of the code ptr between pgmld01 and pgfix01
- */
-
-static char *lastcp ;
 
 
 /*
@@ -219,8 +212,6 @@ static LONG     pgmld01( FH h , PD *pdptr, PGMHDR01 *hd)
 
         *((long *)(cp)) += (long)pi->pi_tbase ; /*  1st fixup     */
 
-        lastcp = cp ;                           /*  for pgfix01() */
-
         flen = (long)p->p_hitpa - (long)pi->pi_bbase;   /* M01.01.0925.01 */
 
         for(;;)
@@ -231,7 +222,7 @@ static LONG     pgmld01( FH h , PD *pdptr, PGMHDR01 *hd)
                 break ;
 
             /*  do fixups using that info  */
-            r = pgfix01( r , pi );
+            r = pgfix01( cp, r , pi );
             if( r <= 0 )
                 break ;
         }
@@ -274,7 +265,7 @@ static LONG     pgmld01( FH h , PD *pdptr, PGMHDR01 *hd)
  *  pi        - program info pointer
  */
 
-static LONG     pgfix01( LONG nrelbytes , PGMINFO *pi )
+static LONG     pgfix01( UBYTE *lastcp, LONG nrelbytes , PGMINFO *pi )
 {
     register UBYTE      *cp ;           /*  code pointer                */
     register UBYTE      *rp ;           /*  relocation info pointer     */
@@ -306,6 +297,93 @@ static LONG     pgfix01( LONG nrelbytes , PGMINFO *pi )
         ++rp ;
     }
 
-    lastcp = cp ;                       /*  save code pointer           */
     return(  ++n == 0  ? 1 : SUCCESS  ) ;
+}
+
+
+LONG kpgm_relocate( PD *p, long length)
+{
+    char      *cp;
+    LONG      *rp;
+    LONG      flen;
+    PGMINFO   pinfo;
+    PGMINFO   *pi;
+    PGMHDR01  *hd;
+    UWORD     abs_flag;
+
+#if DBGKPGMLD
+    kprintf("BDOS kpgm_relocate: lotpa: 0x%lx hitpa: 0x%lx len: 0x%lx \n", p->p_lowtpa, p->p_hitpa, length) ;
+#endif
+
+    hd = (PGMHDR01*)( ((char*)(p+1)) + 2 );
+    pi = &pinfo;
+    abs_flag = hd->h01_abs;
+
+    pi->pi_tlen=hd->h01_tlen;
+    pi->pi_dlen=hd->h01_dlen;
+    flen = pi->pi_tlen + pi->pi_dlen;
+
+    pi->pi_blen = hd->h01_blen ;
+    pi->pi_slen = hd->h01_slen ;
+    pi->pi_tpalen = p->p_hitpa - p->p_lowtpa - sizeof(PD) ;
+    pi->pi_tbase = (char *) (p+1) ;     /*  1st byte after PD   */
+    pi->pi_bbase = pi->pi_tbase + flen ;
+    pi->pi_dbase = pi->pi_tbase + pi->pi_tlen ;
+
+    /* move the code to the right position (after the PD - basepage) */
+    memmove( p+1, (char*)(p+1) +2+sizeof(PGMHDR01), flen);
+
+#if DBGKPGMLD
+    kprintf("BDOS kpgm_relocate: tlen, dlen, slen: 0x%lx 0x%lx 0x%lx\n", pi->pi_tlen, pi->pi_dlen, pi->pi_slen) ;
+    kprintf("BDOS kpgm_relocate: flen: 0x%lx 0x%lx\n", flen, pi->pi_tpalen) ;
+#endif
+    /*
+     * see if there is enough room to load in the file, then see if
+     * the requested bss space is larger than the space we have to offer
+     */
+
+    if( flen > pi->pi_tpalen  ||  pi->pi_tpalen-flen < pi->pi_blen ) {
+#if DBGKPGMLD
+        kprintf("BDOS kpgm_relocate: ENSMEM\n") ;
+#endif
+        return( ENSMEM ) ;
+    }
+
+#if DBGKPGMLD
+    kprintf("BDOS kpgm_relocate: abs:    0x%x\n", abs_flag) ;
+#endif
+
+    /* initialize PD fields */
+
+    memcpy(&p->p_tbase, &pi->pi_tbase, 6 * sizeof(long));
+
+    if( abs_flag )
+        return( SUCCESS ) ;
+
+    /* rellocation information present */
+    rp = (LONG*) (pi->pi_tbase+2+sizeof(PGMHDR01)+flen+pi->pi_slen);
+    if ( *rp ) {
+        cp = pi->pi_tbase + *rp++;
+
+        /*  make sure we didn't wrap memory or overrun the bss  */
+        if(  cp < pi->pi_tbase  ||  cp >= pi->pi_bbase  )
+            return( EPLFMT ) ;
+
+        *((long *)(cp)) += (long)pi->pi_tbase ; /*  1st fixup     */
+
+        /* move the rellocation info to the pi_bbase */
+        length -= ((long)rp) - (long)pi->pi_tbase;
+        memmove( pi->pi_bbase, rp, length );
+
+        /* fixup with the relloc information available */
+        pgfix01( cp, length, pi);
+    }
+
+    /* clear the whole heap */
+    flen = (long)p->p_hitpa - (long)pi->pi_bbase;
+    if(flen > 0) {
+        bzero(pi->pi_bbase, flen);
+    }
+
+    return( SUCCESS ) ;
 }

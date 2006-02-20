@@ -149,7 +149,7 @@ long    xsetblk(int n, void *blk, long len)
     MPB *mpb;
 
 #if DBGUMEM
-    kprintf("BDOS: Mshrink(0x%08lx, 0x%08lx)", (long) blk, len);
+    kprintf("BDOS: Mshrink(0x%08lx, 0x%08lx)\n", (long) blk, len);
 #endif
     if(((long)blk) >= start_stram && ((long)blk) <= end_stram) {
         mpb = &pmd;
@@ -225,7 +225,7 @@ long    xmxalloc(long amount, int mode)
     long ret_value;
 
 #if DBGUMEM
-    kprintf("BDOS: xmxalloc(0x%08lx, %d)", amount, mode);
+    kprintf("BDOS: xmxalloc(0x%08lx, %d)\n", amount, mode);
     assert(has_ttram || mode == MX_STRAM);
 #endif
 

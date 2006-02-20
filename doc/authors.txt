@@ -54,6 +54,8 @@ Gabriel Huertas
 George Nakos
 - Greek translation
 
+Stanislav Opichal (SOP) <opichals@seznam.cz>
+- FreeMiNT kernel bootstrap via BOOTSTRAP NatFeat
 
 Thanks also to all Mailing list contributors for their help, and 
 especially:
@@ -61,7 +63,6 @@ especially:
 Frank Naumann <fnaumann@cs.uni-magdeburg.de> 
 - MiNT
 
-Stanislav Opichal <opichals@seznam.cz>,
 Ctirad Fertr <phanatic@volny.cz>,
 Milan Jurik <M.Jurik@sh.cvut.cz>
 - the ARanyM team

@@ -31,6 +31,7 @@ extern  PD      *run;
 #define PE_GO         4
 #define PE_BASEPAGE   5
 #define PE_GOTHENFREE 6
+#define PE_RELOCATE   50
 
 /*
  * in proc.c
@@ -47,6 +48,7 @@ WORD xtermres(long blkln, WORD rc);
 
 LONG kpgmhdrld(char *s, PGMHDR01 *hd, FH *h);
 LONG kpgmld(PD *p, FH h, PGMHDR01 *hd);
+LONG kpgm_relocate( PD *p, long length); /* SOP */
 
 /*
  * in rwa.S

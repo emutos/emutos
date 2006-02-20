@@ -74,6 +74,7 @@ extern void coma_start(void);
 #endif
 
 extern long xmaddalt(long start, long size); /* found in bdos/mem.h */
+extern long xsetblk(int n, void *blk, long len); /* found in bdos/mem.h */
 
 /*==== Declarations =======================================================*/
 
@@ -231,6 +232,38 @@ static void bios_init(void)
 }
 
 
+static void bootstrap(void)
+{
+    /* start the kernel provided by the emulator */
+    PD *pd;
+    LONG length;
+    LONG r;
+
+    /* allocate space */
+    pd = (PD *) trap1_pexec(5, "mint.prg", "", null_env);
+
+    /* get the TOS executable from the emulator */
+    length = nf_bootstrap( (char*)pd->p_lowtpa + sizeof(PD), (long)pd->p_hitpa - pd->p_lowtpa);
+
+    /* free the allocated space if something is wrong */
+    if ( length <= 0 ) {
+        /* free the process area by Mshrink( p, 0); */
+        xsetblk( 0, pd, 0);
+        return;
+    }
+
+    /* relocate the loaded executable */
+    r = trap1_pexec(50, (char*)length, pd, "");
+    if ( r != (LONG)pd ) {
+        return;
+    }
+
+    /* set the boot drive for the new OS to use */
+    bootdev = nf_getbootdrive();
+
+    /* execute the relocated process */
+    trap1_pexec(4, "", pd, "");
+}
 
 
 /*
@@ -258,6 +291,8 @@ static void autoexec(void)
     if (kbshift(-1) & 0x04)             /* check if Control is held down */
         return;
 
+    bootstrap();			/* try to boot the new OS kernel directly */
+
     if( ! blkdev_avail(bootdev) )       /* check, if bootdev available */
         return;
 
@@ -276,6 +311,9 @@ static void autoexec(void)
         kprintf("[OK]\n");
 #endif
 
+        /* Setdta. BetaDOS corrupted the AUTO load if the Setdta
+         * not here again */
+        trap1( 0x1a, &dta);
         err = trap1( 0x4f );                 /* Fsnext */
     }
 }
@@ -293,10 +331,10 @@ void biosmain(void)
 {
     bios_init();                /* Initialize the BIOS */ 
 
-    trap1( 0x30 );              /* initial test, if BDOS works */
+    trap1( 0x30 );              /* initial test, if BDOS works: Sversion() */
 
     if (! (has_megartc || has_nvram))
-        trap1( 0x2b, os_dosdate);  /* set initial date in GEMDOS format */
+        trap1( 0x2b, os_dosdate);  /* set initial date in GEMDOS format: Tsetdate() */
 
     /* if TOS in RAM booted from an autoboot floppy, ask to remove the
      * floppy before going on.
@@ -314,7 +352,7 @@ void biosmain(void)
     blkdev_hdv_boot();
 
     defdrv = bootdev;
-    trap1( 0x0e , defdrv );    /* Set boot drive */
+    trap1( 0x0e , defdrv );    /* Set boot drive: Dsetdrv(defdrv) */
 
     /* TODO: execute Reset-resistent PRGs ? */
 
