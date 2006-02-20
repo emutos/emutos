@@ -1935,4 +1935,7 @@ Start... early ages
   the DTA buffer upon starting thus the consequent Fsnext() didn't work) (SOP)
 - bios/natfeat.[ch]: nf_bootstrap(), nf_getbootdrive() added (SOP)
 - Makefile: dd in cygwin needs binary flags (SOP)
+- po/fr.po: Patrice Mandin translated cli/command.c to French and says that
+  NLS is broken since untranslated CLI crashes (instead of falling back
+  to English as Laurent designed it) (joy)
 
