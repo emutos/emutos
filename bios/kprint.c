@@ -21,6 +21,7 @@
 #include "tosvars.h"
 #include "natfeat.h"
 #include "config.h"
+#include "processor.h"
 
 /* extern declarations */
 
@@ -199,11 +200,51 @@ void dopanic(const char *fmt, ...)
             WORD opcode;
             WORD sr;
             LONG pc;
-        } *s = (void *)proc_stk;
+        } *s000 = (void *)proc_stk;
+
+        struct {
+            WORD sr;
+            LONG pc;
+            WORD format_word;
+            LONG effective_address;
+            WORD misc;
+            WORD wb3s, wb2s, wb1s;
+            LONG address;
+        } *s040 = (void *)proc_stk;
+
+        WORD misc, sr, opcode;
+        LONG address, pc;
+
+        switch(mcpu) {
+            case 40:
+               misc = s040->misc;
+               sr = s040->sr;
+               address = s040->address;
+               pc = s040->pc;
+               /* we could read the opcode from *pc, like below
+               opcode = *(WORD *)pc;
+               but it would not work on real 68040 most probably due to 
+               instruction pre-fetch and could also cause a recursive death
+               if the pc pointed to an illegal memory location */
+               opcode = 0x0000;
+               break;
+
+            default:
+               misc = s000->misc;
+               sr = s000->sr;
+               opcode = s000->opcode;
+               pc = s000->pc;
+               address = s000->address;
+        }
         kcprintf("%s. misc = 0x%04x, address = 0x%08lx\n",
-                 exc_messages[proc_enum], s->misc, s->address);
-        kcprintf("opcode = 0x%04x, sr = 0x%04x, pc = 0x%08lx\n",
-                 s->opcode, s->sr, s->pc);
+                 exc_messages[proc_enum], misc, address);
+        if (mcpu == 40) {
+            kcprintf("sr = 0x%04x, pc = 0x%08lx\n", sr, pc);
+        }
+        else {
+            kcprintf("opcode = 0x%04x, sr = 0x%04x, pc = 0x%08lx\n",
+                     opcode, sr, pc);
+        }
     } else if (proc_enum >= 4 && proc_enum < numberof(exc_messages)) {
         struct {
             WORD sr;

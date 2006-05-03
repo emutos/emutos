@@ -1939,3 +1939,5 @@ Start... early ages
   NLS is broken since untranslated CLI crashes (instead of falling back
   to English as Laurent designed it) (joy)
 
+2006-05-03
+- bios/kprint.c: fix bus error register printout for MC68040 (joy)
