@@ -1945,5 +1945,4 @@ Start... early ages
 2006-05-05
 - bios/vectors.S: _int_hbl handler had incorrectly commented the internal
   logic. And then Andreas noticed the misplaced jump label that could cause
-  crash if IPL was 1 or 2. Doh - it would have actually crashed for any
-  nonzero IPL! This code could never run on a HW with HBL! (joy)
+  system crash if IPL was 1 or 2. (joy)
