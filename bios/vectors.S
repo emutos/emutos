@@ -251,11 +251,11 @@ query:
 _int_hbl:
         move.w  d0, -(sp)       // save d0
         move.w  2(sp), d0       // get status register from stack
-        and.w   #0x0700, d0     // isolate just PIL-mask from sr
-        bne     is_ipl0         // if IPL0, then end
+        and.w   #0x0700, d0     // isolate just IPL-mask from sr
+        bne     is_ipl          // if IPL is nonzero, then end
         or.w    #0x0300, 2(sp)  // else set IPL3 in status register
+is_ipl:
         move.w  (sp)+, d0       // restore d0
-is_ipl0:
         rte
 
 
