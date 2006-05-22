@@ -116,3 +116,17 @@ char nf_getbootdrive(void)
     return 0;
 }
 
+/* get the boot drive number */
+long nf_getbootstrap_args(char *addr, long size)
+{
+    if(hasNF) {
+        long bootstrap_id = NFID("BOOTSTRAP");
+        if(bootstrap_id) {
+            return NFCall(bootstrap_id | 0x0002, addr, size);
+        } else {
+            kprintf("BOOTSTRAP natfeat not available\n");
+        }
+    }
+    return 0;
+}
+

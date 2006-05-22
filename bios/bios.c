@@ -238,9 +238,13 @@ static void bootstrap(void)
     PD *pd;
     LONG length;
     LONG r;
+    char args[128];
+
+    args[0] = '\0';
+    nf_getbootstrap_args(args, sizeof(args));
 
     /* allocate space */
-    pd = (PD *) trap1_pexec(5, "mint.prg", "", null_env);
+    pd = (PD *) trap1_pexec(5, "mint.prg", args, null_env);
 
     /* get the TOS executable from the emulator */
     length = nf_bootstrap( (char*)pd->p_lowtpa + sizeof(PD), (long)pd->p_hitpa - pd->p_lowtpa);

@@ -41,6 +41,8 @@ extern void nf_shutdown(void);
 
 /* load a new OS kernel into the memory to 'addr' ('size' bytes available) */
 extern long nf_bootstrap(char *addr, long size);
+/* return the OS kernel arguments to be passed to 'addr' ('size' bytes available) */
+extern long nf_getbootstrap_args(char *addr, long size);
 extern char nf_getbootdrive(void);
 
 
