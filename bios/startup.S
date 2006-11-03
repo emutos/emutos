@@ -135,14 +135,6 @@ nodiag:
 
 
 /*
- * Set up a supervisor stack 
- */
-
-        lea     _stktop, sp             // Setup Supervisor Stack
-
-
-
-/*
  * Check, if we should jump to a reset vector after warmboot
  */
 
@@ -158,15 +150,28 @@ resetvec:
        jmp      (a0)                    // jump to resvec
 noreset:
 
+
 /* 
- * LVL - I put back the mem configuration early, to be able to use
- * the stack, so that the rest of boot sequence can be made more
- * modular using CDECL routines.
+ * memory configuration
  */
 
         .global memdone         // return to, if memory config done
-        bra     meminit         // do/test memory config (needs sp)
+        bra     meminit         // do/test memory config (and clear it)
 memdone:
+
+
+/*
+ * Set up a supervisor stack 
+ */
+
+        lea     _stktop, sp             // Setup Supervisor Stack
+
+
+/*
+ * initialize kprintf (for debug prints)
+ */
+
+        jsr     kprintf_init
 
 
 /* 
