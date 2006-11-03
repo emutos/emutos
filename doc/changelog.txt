@@ -1950,3 +1950,20 @@ Start... early ages
 2006-05-22
 - bios/natfeat*: nf_getbootstrap_arg() added (SOP)
 - bios/bios.c: bootstrap arguments added (SOP)
+
+2006-11-03
+- bios/bios.c: natfeat_init() called as the very first thing in bios_init()
+  so that first kprintf() can make use of the NF output, if available (joy)
+- bios/startup.S: do not set supervisor stack before meminit as you don't
+  know yet if there is any RAM at all. Also RAM might be cleared in meminit()
+  eventually so you can't rely on the stack, anyway. Also kprintf_init()
+  is now called here (before it was hidden in meminit()). (joy)
+- bios/memory.S: main new feature is that all RAM is now cleared upon cold
+  boot (if memvalid flags are not set correctly). This should ensure that
+  EmuTOS does not crash during boot when it copies color registers from
+  (previously uninitialized) memory to HW regs in VBL routine.
+  kprintf() is no longer used here since it's too early (stack is not set
+  yet because it would be overwritten, also all variables would be cleared).
+  New #define ST_MMU and FALCON_MMU introduced. We should IMHO separate
+  these routines and not include them in one EmuTOS binary. I doubt anyone
+  would want to run ST EmuTOS on Falcon or vice-versa. (joy)
