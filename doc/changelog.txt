@@ -1967,3 +1967,6 @@ Start... early ages
   New #define ST_MMU and FALCON_MMU introduced. We should IMHO separate
   these routines and not include them in one EmuTOS binary. I doubt anyone
   would want to run ST EmuTOS on Falcon or vice-versa. (joy)
+
+2006-11-18
+- bios/memory.S: don't clear non-existing FastRAM (joy, thanks to Milan)
