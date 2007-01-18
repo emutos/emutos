@@ -1,11 +1,11 @@
 /*
  * xbios.c - C portion of XBIOS initialization and front end
  *
- * Copyright (c) 2001 by
+ * Copyright (c) 2001, 2007 by
  *
  * Authors:
  *  MAD     Martin Doering
- *  THO     Thomas Huth
+ *  THH     Thomas Huth
  *  LVL     Laurent Vogel
  *
  * This file is distributed under the GPL, version 2 or at your
@@ -843,6 +843,23 @@ WORD xbios_2e(WORD op, WORD start, WORD count, PTR buffer)
 /* unimplemented */
 
 
+#if DBG_XBIOS
+WORD xbios_50(WORD mode)
+{
+    kprintf("XBIOS: EsetShift\n");
+    return esetshift(mode);
+}
+#endif
+
+#if DBG_XBIOS
+WORD xbios_51(WORD mode)
+{
+    kprintf("XBIOS: EgetShift\n");
+    return egetshift();
+}
+#endif
+
+
 /*
  * xbios_unimpl
  *
@@ -939,6 +956,23 @@ const PFLONG xbios_vecs[] = {
     xbios_unimpl,   /* 3e */
     xbios_unimpl,   /* 3f */
     xbios_unimpl,   /* 40 blitmode */
+    xbios_unimpl,   /* 41 */
+    xbios_unimpl,   /* 42 */
+    xbios_unimpl,   /* 43 */
+    xbios_unimpl,   /* 44 */
+    xbios_unimpl,   /* 45 */
+    xbios_unimpl,   /* 46 */
+    xbios_unimpl,   /* 47 */
+    xbios_unimpl,   /* 48 */
+    xbios_unimpl,   /* 49 */
+    xbios_unimpl,   /* 4a */
+    xbios_unimpl,   /* 4b */
+    xbios_unimpl,   /* 4c */
+    xbios_unimpl,   /* 4d */
+    xbios_unimpl,   /* 4e */
+    xbios_unimpl,   /* 4f */
+    VEC(xbios_50, esetshift),   /* 50 */
+    VEC(xbios_51, egetshift),   /* 51 */
 };
 
 const short xbios_ent = sizeof(xbios_vecs) / sizeof(PFLONG);

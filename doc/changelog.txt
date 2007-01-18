@@ -1970,3 +1970,8 @@ Start... early ages
 
 2006-11-18
 - bios/memory.S: don't clear non-existing FastRAM (joy, thanks to Milan)
+
+2007-01-18
+- bios/screen.c bios/xbios: Implemented XBIOS functions EsetShift() and
+  EgetShift() for setting and getting TT shifter mode. (THH)
+

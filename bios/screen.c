@@ -1,11 +1,11 @@
 /*
  * screen.c - low-level screen routines
  *
- * Copyright (c) 2001-2003 EmuTOS development team
+ * Copyright (c) 2001, 2007 EmuTOS development team
  *
  * Authors:
  *  MAD   Martin Doering
- *  THO   Thomas Huth
+ *  THH   Thomas Huth
  *  LVL   Laurent Vogel
  *  joy   Petr Stehlik
  *
@@ -219,16 +219,20 @@ void setscreen(LONG logLoc, LONG physLoc, WORD rez)
         setphys(physLoc);
     }
     if (rez >= 0 && rez < 8) {
-        if (!has_videl && rez != 3) {    /* Videl modes are not supported yet */
-            if (!has_tt_shifter)
-                rez &= 3;
-            /* Set new resolution: */
+        if (rez < 3) {
+            /* ST compatible resolution */
             *(UBYTE *)0xffff8260 = sshiftmod = rez;
-            /* Re-initialize line-a, VT52 etc: */
-            linea_init();
-            font_set_default();
-            vt52_init();
         }
+        else if (has_tt_shifter) {
+            *(UBYTE *)0xffff8262 = rez;
+        }
+        else if (has_videl) {
+            /* Videl modes are not supported yet */
+        }
+        /* Re-initialize line-a, VT52 etc: */
+        linea_init();
+        font_set_default();
+        vt52_init();
     }
 }
 
@@ -306,6 +310,37 @@ void vsync(void)
     }
     set_sr(old_sr);
 }
+
+
+/*
+ * Set TT shifter mode
+ */
+WORD esetshift(WORD mode)
+{
+    volatile WORD *resreg = (WORD *)0xffff8262;
+    WORD oldmode;
+
+    if (!has_tt_shifter)
+        return -32;
+
+    oldmode = *resreg;
+    *resreg = mode;
+
+    return oldmode;
+}
+
+
+/*
+ * Get TT shifter mode
+ */
+WORD egetshift(void)
+{
+    if (!has_tt_shifter)
+        return -32;
+
+    return *(WORD *)0xffff8262;
+}
+
 
 /*
  * functions for VIDEL programming
