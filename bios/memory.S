@@ -38,12 +38,12 @@
 // ==== tosvars.s - TOS System variables =====================================
 
 
-        .xdef   memctrl       
-        .xdef   _phystop       
+        .xdef   memctrl
+        .xdef   _phystop
 
-        .xdef   memvalid      
-        .xdef   memval2       
-        .xdef   memval3       
+        .xdef   memvalid
+        .xdef   memval2
+        .xdef   memval3
 
         .xdef   _ramtop
         .xdef   _ramvalid
@@ -262,6 +262,23 @@ f_cleared:
         cmp.w   #20,d0                  // 68020 or better?
         blt     setramtop               // no -> skip the whole FastRAM stuff
 
+        /* Can we access FastRAM region? */
+        pea     0x1000400
+        bsr     _check_read_byte
+        tst.w   d0
+        beq     setramtop
+
+        /* Check wether we are really on a 32 bit machine or if we warp around: */
+        lea     0x400.w,a0
+        lea     0x1000400,a3
+        move.l  #0x12345678,d0
+        move.l  d0,(a0)
+        clr.l   (a3)
+        cmp.l   (a0),d0                 // Value destroyed => Warp around?
+        bne     setramtop               // yes, skip fast ram check
+        clr.l   (a0)
+
+        /* No warp around detected, let's scan for FastRAM: */
         lea     0x1000000, a3           // start from 16MB boundary
         move.l  #1024*1024, d3          // test by blocks of 1MB size
 loop:
@@ -298,7 +315,7 @@ tt_cleared:
 /*
  * setmemok - Set the "memory config is valid" flags
  */
-  
+
 setmemok:
         /* make memory config valid */
         move.l  #0x752019f3, memvalid   // set memvalid to ok

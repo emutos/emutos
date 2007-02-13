@@ -1975,3 +1975,7 @@ Start... early ages
 - bios/screen.c bios/xbios: Implemented XBIOS functions EsetShift() and
   EgetShift() for setting and getting TT shifter mode. (THH)
 
+2007-02-13
+- bios/mmory.S: Check wether machine can really handle 32 address bits before
+  setting up the FastRAM. EmuTOS now works in Falcon mode on Hatari again (THH)
+
