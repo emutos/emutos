@@ -1,7 +1,7 @@
 /*
  * acsi.c - Atari Simple Computer Interface (ACSI) support
  *
- * Copyright (c) 2002 EmuTOS development team
+ * Copyright (c) 2002, 2007 EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel
@@ -36,7 +36,7 @@ LONG acsi_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev)
 static void hdc_start_dma_read(int count);
 static void hdc_start_dma_write(int count);
 static int timeout_gpip(LONG delay);
-static void dma_send_byte(BYTE data, BYTE control);
+static void dma_send_byte(UBYTE data, UBYTE control);
 static int do_acsi_rw(WORD rw, LONG sect, WORD cnt, LONG buf, WORD dev);
 
 /*
@@ -179,7 +179,7 @@ timeout:
     return -1;
 }
 
-static void dma_send_byte(BYTE data, BYTE control)
+static void dma_send_byte(UBYTE data, UBYTE control)
 {
     DMA->control = control;
     DMA->data = data;

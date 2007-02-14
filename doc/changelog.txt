@@ -1979,3 +1979,6 @@ Start... early ages
 - bios/mmory.S: Check wether machine can really handle 32 address bits before
   setting up the FastRAM. EmuTOS now works in Falcon mode on Hatari again (THH)
 
+2007-02-14
+- bios/acsi.c: Fixed ACSI driver to also work with Hatari (THH)
+
