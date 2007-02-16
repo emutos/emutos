@@ -1,7 +1,7 @@
 /*
  * nvram.c - Non-Volatile RAM access
  *
- * Copyright (c) 2001 EmuTOS development team.
+ * Copyright (c) 2001, 2007 EmuTOS development team.
  *
  * Authors:
  *  LVL     Laurent Vogel
@@ -75,14 +75,14 @@ void set_nvram_rtc(int index, int data)
  */
 static UWORD compute_sum(void)
 {
-    UWORD sum;
+    UBYTE sum;
     int i;
 
     sum = 0;
-    for(i = 0 ; i < 48 ; i+=2) {
-        sum += (nvram_buf[i] << 8) | nvram_buf[i+1];
+    for(i = 0 ; i < 48 ; i++) {
+        sum += nvram_buf[i];
     }
-    return sum;
+    return (~sum << 8) | sum;
 }
 
 static UWORD get_sum(void)
@@ -94,7 +94,7 @@ static void set_sum(UWORD sum)
 {
     volatile UBYTE * addr_reg = (volatile UBYTE *)0xffff8961;
     volatile UBYTE * data_reg = (volatile UBYTE *)0xffff8963;
-    
+
     *addr_reg = 62;
     *data_reg = nvram_buf[48] = sum >> 8;
     *addr_reg = 63;

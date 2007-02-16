@@ -1982,3 +1982,8 @@ Start... early ages
 2007-02-14
 - bios/acsi.c: Fixed ACSI driver to also work with Hatari (THH)
 
+2007-02-16
+- bios/screen.c: Added sanity check - EmuTOS only supports up to 16 colors, so
+  do not set 256 or 16-bit color mode during boot! (THH)
+- bios/nvram.c: NVRAM checksum calculation was wrong - fixed now. (THH)
+
