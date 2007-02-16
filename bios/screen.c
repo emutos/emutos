@@ -97,6 +97,8 @@ void screen_init(void)
             bpp = 1 << (boot_resolution & 7);
         else
             bpp = 1;
+        if (bpp > 4)
+            bpp = 4;                /* We only support up to 16 colors atm. */
         set_videl_vga640x480(bpp);
     }
     else {
@@ -259,7 +261,7 @@ WORD setcolor(WORD colorNum, WORD color)
     WORD max;
     WORD mask;
     WORD *palette = (WORD *) 0xffff8240;
-    
+
 #if DBG_SCREEN
     kprintf("Setcolor(0x%04x, 0x%04x)\n", colorNum, color);
 #endif
@@ -349,7 +351,7 @@ WORD egetshift(void)
 UWORD get_videl_bpp(void)
 {
     UWORD f_shift = *(UWORD *)0xff8266;
-    UWORD st_shift = *(UWORD *)0xff8260;
+    UBYTE st_shift = *(UBYTE *)0xff8260;
     /* to get bpp, we must examine f_shift and st_shift.
      * f_shift is valid if any of bits no. 10, 8 or 4
      * is set. Priority in f_shift is: 10 ">" 8 ">" 4, i.e.
@@ -366,9 +368,9 @@ UWORD get_videl_bpp(void)
         bits_per_pixel = 8;
     else if (st_shift == 0)
         bits_per_pixel = 4;
-    else if (st_shift == 0x100)
+    else if (st_shift == 0x1)
         bits_per_pixel = 2;
-    else /* if (st_shift == 0x200) */
+    else /* if (st_shift == 0x2) */
         bits_per_pixel = 1;
 
     return bits_per_pixel;
