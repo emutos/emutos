@@ -24,7 +24,6 @@ void screen_init(void);
 UWORD get_videl_bpp(void);
 UWORD get_videl_width(void);
 UWORD get_videl_height(void);
-void set_videl_vga640x480(int bitplanes);
 
 
 /* xbios routines */
@@ -32,13 +31,14 @@ void set_videl_vga640x480(int bitplanes);
 LONG physbase(void);
 LONG logbase(void);
 WORD getrez(void);
-void setscreen(LONG logLoc, LONG physLoc, WORD rez);
+void setscreen(LONG logLoc, LONG physLoc, WORD rez, WORD videlmode);
 void setpalette(LONG palettePtr);
 WORD setcolor(WORD colorNum, WORD color);
 void vsync(void);
 WORD esetshift(WORD mode);
 WORD egetshift(void);
-
+UWORD vsetmode(WORD mode);
+WORD vmontype(void);
 
 
 /* pallette color definitions */

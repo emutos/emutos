@@ -16,7 +16,7 @@
 
 #include "portab.h"
 #include "kprint.h"
-#include "iorec.h"     
+#include "iorec.h"
 #include "tosvars.h"
 #include "lineavars.h"
 #include "vt52.h"
@@ -149,11 +149,11 @@ WORD xbios_4(void)
  */
 
 #if DBG_XBIOS
-void xbios_5(LONG logLoc, LONG physLoc, WORD rez)
+void xbios_5(LONG logLoc, LONG physLoc, WORD rez, WORD videlmode)
 {
     kprintf("XBIOS: SetScreen(log = 0x%08lx, phys = 0x%08lx, rez = 0x%04x)\n",
            logLoc, physLoc, rez);
-    setscreen(logLoc, physLoc, rez);
+    setscreen(logLoc, physLoc, rez, videlmode);
 }
 #endif
 
@@ -973,6 +973,14 @@ const PFLONG xbios_vecs[] = {
     xbios_unimpl,   /* 4f */
     VEC(xbios_50, esetshift),   /* 50 */
     VEC(xbios_51, egetshift),   /* 51 */
+    xbios_unimpl,   /* 52 */
+    xbios_unimpl,   /* 53 */
+    xbios_unimpl,   /* 54 */
+    xbios_unimpl,   /* 55 */
+    xbios_unimpl,   /* 56 */
+    xbios_unimpl,   /* 57 */
+    VEC(vsetmode, vsetmode),   /* 58 */
+    VEC(vmontype, vmontype),   /* 59 */
 };
 
 const short xbios_ent = sizeof(xbios_vecs) / sizeof(PFLONG);

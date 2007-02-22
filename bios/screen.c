@@ -82,24 +82,18 @@ void screen_init(void)
     ULONG screen_start;
 
     if (has_videl) {
-        BYTE boot_resolution;
-        int bpp, ret;
+        UWORD boot_resolution;
+        int ret;
 
         /* reset VIDEL on boot-up */
         /* first set the physbase to a safe memory */
         setphys(0x10000L);
-        /* then change the resolution to 4-bit depth VGA */
-        set_videl_vga640x480(4);
 
         /* set desired resolution - fetch it from NVRAM */
-        ret = nvmaccess(0, 15, 1, (PTR)&boot_resolution);
-        if (ret == 0)
-            bpp = 1 << (boot_resolution & 7);
-        else
-            bpp = 1;
-        if (bpp > 4)
-            bpp = 4;                /* We only support up to 16 colors atm. */
-        set_videl_vga640x480(bpp);
+        ret = nvmaccess(0, 14, 2, (PTR)&boot_resolution);
+        if (ret != 0)
+            boot_resolution = 0x03a;    /* Default resolution */
+        vsetmode(boot_resolution);
     }
     else {
         *(BYTE *) 0xffff820a = 2;   /* sync-mode to 50 hz pal, internal sync */
@@ -212,7 +206,7 @@ WORD getrez(void)
 }
 
 
-void setscreen(LONG logLoc, LONG physLoc, WORD rez)
+void setscreen(LONG logLoc, LONG physLoc, WORD rez, WORD videlmode)
 {
     if (logLoc >= 0) {
         v_bas_ad = (char *) logLoc;
@@ -229,7 +223,8 @@ void setscreen(LONG logLoc, LONG physLoc, WORD rez)
             *(UBYTE *)0xffff8262 = rez;
         }
         else if (has_videl) {
-            /* Videl modes are not supported yet */
+            if (rez == 3)
+                vsetmode(videlmode);
         }
         /* Re-initialize line-a, VT52 etc: */
         linea_init();
@@ -401,27 +396,23 @@ UWORD get_videl_height(void)
     return yres;
 }
 
+
 /*
- * this routine can set VIDEL to 1,2,4 or 8 bitplanes mode
- * on VGA in 640x480 resolution
+ * this routine can set VIDEL to 1,2,4 or 8 bitplanes mode on VGA
  */
-void set_videl_vga640x480(int bitplanes)
+void set_videl_vga(int mode)
 {
-    char *videlregs = (char *)0xff8200;
-    int hdb[4] = {115, 138, 163, 171 };
-    int hde[4] = {80, 107, 124, 132 };
-    int lwidth[4] = {40, 80, 160, 320 };
-    int fsm[4] = { 0x400, 0, 0, 16 };
-    int vmd[4] = { 8, 4, 8, 8};
+    char *videlregs = (char *)0xffff8200;
+    int hdb_40[5] = { 0x73, 0x0a, 0x8a, 0x9a, 0xac };
+    int hdb_80[5] = { 0x73, 0x0e, 0xa3, 0xab, 0xac };
+    int hde_40[5] = { 0x50, 0x09, 0x6b, 0x7b, 0x91 };
+    int hde_80[5] = { 0x50, 0x0d, 0x7c, 0x84, 0x91 };
+    int lwidth[5] = { 40, 80, 160, 320, 640 };
+    int fsm[5] = { 0x400, 0, 0, 16, 256 };
+    int vmd[5] = { 8, 4, 8, 8, 4 };
     int idx;
 
-    switch(bitplanes) {
-        case 1: idx = 0; break;
-        case 2: idx = 1; break;
-        case 4: idx = 2; break;
-        case 8: idx = 3; break;
-        default: idx = 0;
-    }
+    idx = mode & 0x7;
 
     videlregs[0x0a] = 2;
     videlregs[0x82] = 0;
@@ -431,9 +422,15 @@ void set_videl_vga640x480(int bitplanes)
     videlregs[0x86] = 0;
     videlregs[0x87] = 21;
     videlregs[0x88] = 2;
-    videlregs[0x89] = hdb[idx];
+    if (mode & 8)   /* 40/80 columns */
+        videlregs[0x89] = hdb_80[idx];
+    else
+        videlregs[0x89] = hdb_40[idx];
     videlregs[0x8a] = 0;
-    videlregs[0x8b] = hde[idx];
+    if (mode & 8)   /* 40/80 columns */
+        videlregs[0x8b] = hde_80[idx];
+    else
+        videlregs[0x8b] = hde_40[idx];
     videlregs[0x8c] = 0;
     videlregs[0x8d] = 150;
     videlregs[0xa2] = 4;
@@ -450,10 +447,14 @@ void set_videl_vga640x480(int bitplanes)
     videlregs[0xad] = 21;
     videlregs[0x0e] = 0;
     videlregs[0x0f] = 0;
-    videlregs[0x10] = lwidth[idx] >> 8;
-    videlregs[0x11] = lwidth[idx] & 0xff;
-    videlregs[0xc2] = 0;
-    videlregs[0xc3] = vmd[idx];
+    if (mode & 8)   /* 40/80 columns */
+        *(UWORD *)&videlregs[0x10] = lwidth[idx];
+    else
+        *(UWORD *)&videlregs[0x10] = lwidth[idx] / 2;
+    if (mode & 0x100)          /* Doublescan */
+        *(UWORD *)&videlregs[0xc2] = vmd[idx] + 1;
+    else
+        *(UWORD *)&videlregs[0xc2] = vmd[idx];
     videlregs[0xc0] = 1;
     videlregs[0xc1] = 134;
     videlregs[0x66] = 0;
@@ -463,6 +464,43 @@ void set_videl_vga640x480(int bitplanes)
     videlregs[0x67] = fsm[idx] & 0xff;
 
     /* special support for STE 4 color mode */
-    if (bitplanes == 2)
+    if ((mode & 7) == 1)
         videlregs[0x60] = 1;
+}
+
+
+/*
+ * Set Falcon video mode
+ */
+UWORD vsetmode(WORD mode)
+{
+    static WORD oldmode;
+    WORD ret;
+
+    if (!has_videl)
+        return -32;
+
+    if (mode == -1)
+        return oldmode;
+
+    //if (mode & 0x10)   /* VGA mode? */
+        set_videl_vga(mode);
+    //else
+    //    set_videl_rgb(mode);
+
+    ret = oldmode;
+    oldmode = mode;
+
+    return oldmode;
+}
+
+/*
+ * Get Videl monitor type
+ */
+WORD vmontype(void)
+{
+    if (!has_videl)
+        return -32;
+
+    return ((*(UBYTE *)0xffff8006) >> 6) & 3;
 }

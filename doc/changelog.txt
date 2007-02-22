@@ -1987,3 +1987,7 @@ Start... early ages
   do not set 256 or 16-bit color mode during boot! (THH)
 - bios/nvram.c: NVRAM checksum calculation was wrong - fixed now. (THH)
 
+2007-02-22
+- bios/screen.c bios/xbios.c: Experimental implementation of vsetmode (for VGA
+  only at the moment). (THH)
+
