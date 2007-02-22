@@ -293,7 +293,7 @@ static void autoexec(void)
     if (kbshift(-1) & 0x04)             /* check if Control is held down */
         return;
 
-    bootstrap();			/* try to boot the new OS kernel directly */
+    bootstrap();                        /* try to boot the new OS kernel directly */
 
     if( ! blkdev_avail(bootdev) )       /* check, if bootdev available */
         return;
