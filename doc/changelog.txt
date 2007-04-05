@@ -1991,3 +1991,8 @@ Start... early ages
 - bios/screen.c bios/xbios.c: Experimental implementation of vsetmode (for VGA
   only at the moment). (THH)
 
+2007-04-05
+- desk/desk_rsc.c po/*.po: Updated the year in the copyright statement. (THH)
+
+* Release: 0.8.2
+

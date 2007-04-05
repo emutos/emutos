@@ -3,7 +3,7 @@ Dear Atari Community!
 
 We are happy to announce a new public release of EmuTOS:
 
-EmuTOS 0.8.1 --- September 18th, 2005
+EmuTOS 0.8.2 -- April 5th, 2007
 
 
 INTRODUCTION
@@ -18,16 +18,16 @@ free, licensed under the GNU General Public License (GPL).
 
 CHANGES SINCE LAST RELEASE
 
-- Improved GEM desktop (more comfortable, many bugs fixed, ...)
-- New translations: Spanish and Greek.
-- Most parts of the VDI have been rewritten in C for better maintainability.
-- Nearly all Line-A functions have been removed/disabled (deprecated API).
-- EmuTOS can now be compiled with GCC 3.x, too.
-- graf_shrinkbox() and graf_growbox() have been enabled again.
-- form-alert boxes now also work in ST low resolution.
-- The AES behave much closer to the original Atari AES than before, so much
-  more old programs are working now.
-- And lots of other bug fixes and minor improvements
+- Mouse wheel direction is now Milan compatible.
+- Updated Finnish translation.
+- GEMDOS Pexec mode 50 PE_RELOCATE defined- it gets raw TOS executable data
+  and relocates it as if it was loaded normally.
+- Fixed possible system crash in HBL handler.
+- Cleaned up & fixed memory initialization code
+- New XBIOS functions for TT shifter: EsetShift, EgetShift
+- Fixed a bug in the ACSI driver (now works with Hatari!).
+- NVRAM checksum calculation was wrong - it's fixed now.
+- New XBIOS functions for Falcon Videl: Vsetmode (VGA only) and Vmontype.
 
 Have a look at the changelog.txt for more detailed information.
 
