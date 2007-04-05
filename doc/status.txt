@@ -109,7 +109,7 @@ T tested and working on an emulator or real hardware
  T 0x07 getbpb
  > 0x08 bcostat         (the function works for console only)
  > 0x09 mediach         (crude, floppy write-protect mode not monitored)
- X 0x0a drvmap		(the function works, but not the devices)
+ X 0x0a drvmap          (the function works, but not the devices)
  X 0x0b kbshift
  X 0x11 date_time       (used by BDOS to get/set the date and time)
 
@@ -121,7 +121,7 @@ T tested and working on an emulator or real hardware
  X 0x02 physBase
  X 0x03 logBase
  X 0x04 getRez
- > 0x05 setscreen       (only ST resolutions supported at the moment)
+ > 0x05 setscreen       (not fully tested)
  X 0x06 setPallete
  X 0x07 setColor
  X 0x08 floprd
@@ -165,6 +165,12 @@ T tested and working on an emulator or real hardware
  X 0x2e NVMaccess
 
  - 0x40 Blitmode
+
+ X 0x50 EsetShift       (for TT shifter only)
+ X 0x51 EgetShift       (for TT shifter only)
+
+ > 0x58 Vsetmode        (for Falcon Videl only)
+ X 0x59 Vmontype        (for Falcon Videl only)
 
 
  GEMDOS Functions
