@@ -757,7 +757,7 @@ static const OBJECT desk_rs_obj_rom[] = {
    { 7, -1, -1, G_STRING,                   /*** 6 ***/
      NONE,
      NORMAL,
-     (long) N_("Copyright (c) 2005 by"),
+     (long) N_("Copyright (c) 2007 by"),
      9, 4, 21, 1 },
 
    { 8, -1, -1, G_IMAGE,                    /*** 7 ***/

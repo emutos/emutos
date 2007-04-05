@@ -897,8 +897,8 @@ msgid "  Close window"
 msgstr "  Zavøít okno"
 
 #: desk/desk_rsc.c:760
-msgid "Copyright (c) 2005 by"
-msgstr "Copyright (c) 2005"
+msgid "Copyright (c) 2007 by"
+msgstr "Copyright (c) 2007"
 
 #: desk/desk_rsc.c:1734
 msgid "[1]["
