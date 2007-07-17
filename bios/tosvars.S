@@ -1,7 +1,7 @@
 /*
  * tosvars.S - TOS System variables
  *
- * Copyright (c) 2005 by the EmuTOS development team.
+ * Copyright (c) 2005-2007 by the EmuTOS development team.
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -80,6 +80,7 @@
         .global _prt_vec
         .global _aux_stat
         .global _aux_vec
+        .global _pun_ptr
         .global memval3
         .global _bconstat_vec
         .global _bconin_vec
@@ -197,7 +198,7 @@ _prt_stat:      ds.l    1       // pointer to prv_lsto
 _prt_vec:       ds.l    1       // pointer to prv_lst
 _aux_stat:      ds.l    1       // pointer to prv_auxo
 _aux_vec:       ds.l    1       // pointer to prv_aux
-pun_ptr:        ds.l    1       // if AHDI, pointer to pun_info  
+_pun_ptr:       ds.l    1       // if AHDI, pointer to pun_info  
 memval3:        ds.l    1       // if $5555aaaa, reset
 _bconstat_vec:  ds.l    8       // 8 pointers to input-status routines
 _bconin_vec:    ds.l    8       // 8 pointers to input routines

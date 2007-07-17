@@ -94,6 +94,8 @@ extern LONG ramvalid;     /* indicates if fastram is present */
 #define OS_MAGIC_EJECT 0x1234abcd
 extern LONG os_magic;
 
+extern LONG pun_ptr;
+
 extern LONG savptr;
 
 extern void (*prt_stat)(void);

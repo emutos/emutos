@@ -1,7 +1,7 @@
 /*
  * blkdev.c - BIOS block device functions
  *
- * Copyright (c) 2002-2005 by Authors:
+ * Copyright (c) 2002-2007 by Authors:
  *
  *  MAD     Martin Doering
  *  joy     Petr Stehlik
@@ -35,6 +35,8 @@ UNIT devices[UNITSNUM];
 
 static BYTE diskbuf[2*512];      /* buffer for 2 sectors */
 
+PUN_INFO pun_info;
+
 /*
  * blkdevs_init - BIOS block drive initialization
  *
@@ -66,6 +68,47 @@ void blkdev_init(void)
     blkdev_hdv_init();
 }
 
+/* currently the only valid information in the PUN_INFO is the max_sect_siz */
+/* which is exactly what FreeMiNT was missing and was complaining about... */
+void pun_info_setup(void)
+{
+    int i;
+    BPB *bpb;
+
+    /* set PUN_INFO */
+    pun_info.puns = blkdevnum;
+    pun_info.max_sect_siz = 512;
+
+    /* floppy A: */
+    pun_info.pun[0] = 0;    /* FIXME */
+    pun_info.partition_start[0] = 0;
+    
+    /* floppy B: */
+    pun_info.pun[1] = 0;    /* FIXME */
+    pun_info.partition_start[1] = 0;
+    
+    /* disks C: - P: */
+    for(i = 2; i < 16; i++) {
+        pun_info.pun[i] = 0;    /* FIXME */
+        pun_info.partition_start[i] = 0;    /* FIXME */
+
+        bpb = (BPB *)blkdev_getbpb(i);
+        if (bpb != NULL && bpb->recsiz > (int)pun_info.max_sect_siz) {
+            pun_info.max_sect_siz = bpb->recsiz;
+        }
+    }
+
+    pun_info.cookie = 0x41484449L; /* AHDI */
+    pun_info.cookie_ptr = &pun_info.cookie;
+    pun_info.version_num = 0x300;      /* AHDI v3.00 */
+
+    pun_ptr = (LONG)&pun_info;
+
+#if 1 /* DBG_BLKDEV */
+    kprintf("PUN INFO: max sector size = %d\n", pun_info.max_sect_siz);
+#endif
+}
+
 /*
  * blkdev_hdv_init
  *
@@ -81,6 +124,8 @@ void blkdev_hdv_init(void)
     drvbits &= 0x03;
 
     disk_init();
+
+    pun_info_setup();
 }
 
 
@@ -417,3 +462,7 @@ UWORD compute_cksum(LONG buf)
     }
     return sum;
 }
+
+/*
+vim:et:ts=4:sw=4:
+*/
