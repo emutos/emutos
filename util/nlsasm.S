@@ -98,6 +98,7 @@ hash_next:
         lsl.w   #2,d0
         move.l  _nls_hash,a0
         move.l  (a0,d0.w),a0
+        cmp     #0,a0
         bne     search
 // not in hash, return original string
 not_found:

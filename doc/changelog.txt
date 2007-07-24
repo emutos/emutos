@@ -2000,3 +2000,6 @@ Start... early ages
 - bios/blkdev.[ch]: PUN_INFO structure added to satisfy FreeMiNT that wants
   to know the max sector size for setting up disk buffer. (joy)
 - tosvars.[Sh]: export pun_ptr for setting up the PUN_INFO struct. (joy)
+
+2007-07-24
+- util/nlsasm.S: beware, movea.l does NOT set flags! Caused crashes.. (joy)
