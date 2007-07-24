@@ -2003,3 +2003,9 @@ Start... early ages
 
 2007-07-24
 - util/nlsasm.S: beware, movea.l does NOT set flags! Caused crashes.. (joy)
+- util/nlsasm.S: empty string was not translated correctly and that was
+  causing scary crashes. Fixed by explicit check for empty string.
+  Intentionally not cached in the RAM cache since the empty strings are
+  often replaced with something else at runtime. The cache can be rather
+  dangerous in this respect... (joy)
+

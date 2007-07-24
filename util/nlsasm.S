@@ -50,8 +50,15 @@ _gettext_init:
                 
 _gettext:
         tst.l   _nls_hash
-        bne     next
+        bne     empty
         move.l  4(sp),d0
+        rts
+empty:
+/* check for empty string - often used in RSC - must return original address */
+        move.l  4(sp),a0
+        tst.b   (a0)
+        bne     next
+        move.l  a0,d0
         rts
 next:
 #if USE_RAM_HASH
