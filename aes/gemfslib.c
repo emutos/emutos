@@ -430,6 +430,7 @@ WORD fs_input(LONG pipath, LONG pisel, WORD *pbutton)
         LONG            dummy; /*!!!*/
 
         curr = 0;
+        count = 0;
                                         /* get out quick if path is     */
                                         /*   nullptr or if pts to null. */
         if (pipath == 0x0L)
