@@ -13,27 +13,20 @@
 #include "i18nconf.h"
 #include "config.h"
 
-#if CONF_NO_NLS
 
-        .global _gettext
+#if !CONF_NO_NLS
 
-_gettext:
-        move.l  4(sp),d0
-        rts
-
-#else /* ! CONF_NO_NLS */
-        
 // set this to one to first hash addresses in RAM before
 // computing actual string hashes. (experimental)
- 
+
 #define USE_RAM_HASH 1
- 
+
         .global _gettext
         .global _gettext_init
-                
+
         .xdef   _nls_hash       // current hash
         .xdef   _memset
-        
+
         .text
 
 _gettext_init:

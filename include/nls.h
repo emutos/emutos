@@ -13,12 +13,19 @@
 #ifndef NLS_H
 #define NLS_H
 
+#include "i18nconf.h"
+
 /* the gettext-like macros */
 
-#define _(a) gettext(a)
 #define N_(a) a
 
+#if CONF_NO_NLS
+# define _(a) (a)
+# define gettext(a) (a)    /* Disable NLS / gettext completely */
+#else
+# define _(a) gettext(a)
 const char *gettext(const char *);
+#endif
 
 /* initialisation */
 

@@ -2013,3 +2013,5 @@ Start... early ages
 - vdi/vdi_control.c: Fixed v_clrwk() - the function now calculates the screen
   size in a proper way. (THH)
 - vdi/vdi_defs.h cli/command.c: Fixes for compiling EmuTOS with GCC 4.2. (THH)
+- include/nls.h util/nlsasm.S: Small size optimization - Do not use gettext()
+  at all anymore when CONF_NO_NLS is set during "make UNIQUE=xx" (THH)
