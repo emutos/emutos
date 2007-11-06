@@ -2009,3 +2009,6 @@ Start... early ages
   often replaced with something else at runtime. The cache can be rather
   dangerous in this respect... (joy)
 
+2007-11-06
+- vdi/vdi_control.c: Fixed v_clrwk() - the function now calculates the screen
+  size in a proper way. (THH)

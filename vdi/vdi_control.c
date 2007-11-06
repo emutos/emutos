@@ -1,7 +1,7 @@
 /*
  * Copyright 1982 by Digital Research Inc.  All rights reserved.
  * Copyright 1999 by Caldera, Inc.
- * Copyright 2002-2005 by The EmuTOS development team.
+ * Copyright 2002-2007 by The EmuTOS development team.
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -431,15 +431,19 @@ void v_clswk(Vwk * vwk)
 /*
  * v_clrwk - clear screen
  *
- * Screen is cleared between v_bas_ad and phystop.
+ * Screen is cleared from the base address v_bas_ad.
  */
 
 void v_clrwk(Vwk * vwk)
 {
-    UBYTE * addr;               /* pointer to screen longword */
+    ULONG *addr;               /* pointer to screen longword */
+    ULONG *endaddr;
 
+    /* Calculate screen end */
+    endaddr = (ULONG *)((ULONG)v_bas_ad + (ULONG)v_lin_wr * (DEV_TAB[1]+1));
+  
     /* clear the screen */
-    for (addr = v_bas_ad; addr < (UBYTE *)phystop; addr++) {
+    for (addr = (ULONG*)v_bas_ad; addr < endaddr; addr++) {
         *addr = 0;             /* clear the long word */
     }
 }
