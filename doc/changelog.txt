@@ -2015,6 +2015,7 @@ Start... early ages
 - vdi/vdi_defs.h cli/command.c: Fixes for compiling EmuTOS with GCC 4.2. (THH)
 - include/nls.h util/nlsasm.S: Small size optimization - Do not use gettext()
   at all anymore when CONF_NO_NLS is set during "make UNIQUE=xx" (THH)
-- util/nlsasm.S: Hack for compiling EmuTOS with GCC 4.2. This compiler sometimes
-  expects return values for pointers to be passed back in A0 instead of D0.
-  So gettext() has been changed to satisfy this requirement. (THH)
+- util/nlsasm.S aes/optimopt.S: Hack for compiling EmuTOS with GCC 4.2.
+  This compiler sometimes expects return values for pointers to be passed back
+  in A0 instead of D0. So gettext() and scasb() have now been changed to
+  satisfy this requirement. (THH)

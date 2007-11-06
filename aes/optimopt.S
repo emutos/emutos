@@ -149,7 +149,7 @@ scasb_loop:
         cmp.b   d1,d0
         bne     scasb_loop
 scasb_end:
+        subq.l  #1,a0
         move.l  a0,d0
-        subq.l  #1,d0
         rts
 
