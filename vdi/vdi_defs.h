@@ -197,16 +197,13 @@ struct Point_
 /* External definitions for internal use */
 extern WORD flip_y;             /* True if magnitudes being returned */
 extern WORD line_cw;            /* Linewidth for current circle */
-extern WORD num_qc_lines, q_circle[];
+extern WORD num_qc_lines;
 extern WORD val_mode, chc_mode, loc_mode, str_mode;
 extern BYTE shft_off;           /* once computed Offset into a Scan Line */
 
 /* gdp area variables */
 extern WORD xc, yc, xrad, yrad, del_ang, beg_ang, end_ang;
 extern WORD angle, n_steps;
-
-/* attribute environment save variables */
-extern WORD s_begsty, s_endsty, s_fil_col;
 
 /* These are still needed for text blitting */
 extern UWORD LINE_STYLE[];

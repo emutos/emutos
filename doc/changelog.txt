@@ -2012,3 +2012,4 @@ Start... early ages
 2007-11-06
 - vdi/vdi_control.c: Fixed v_clrwk() - the function now calculates the screen
   size in a proper way. (THH)
+- vdi/vdi_defs.h cli/command.c: Fixes for compiling EmuTOS with GCC 4.2. (THH)

@@ -30,18 +30,18 @@ extern long jmp_xbios(int, ...);
 extern void in_term(void);
 extern void rm_term(void);
 
-#define jmp_gemdos_v    ((long(*)(int))jmp_gemdos)
-#define jmp_gemdos_w    ((long(*)(int,int))jmp_gemdos)
-#define jmp_gemdos_l    ((long(*)(int,long))jmp_gemdos)
-#define jmp_gemdos_p    ((long(*)(int,void*))jmp_gemdos)
-#define jmp_gemdos_ww   ((long(*)(int,int,int))jmp_gemdos)
-#define jmp_gemdos_lw   ((long(*)(int,long,int))jmp_gemdos)
-#define jmp_gemdos_pw   ((long(*)(int,void*,int))jmp_gemdos)
-#define jmp_gemdos_wpp  ((long(*)(int,int,void*,void*))jmp_gemdos)
-#define jmp_gemdos_wlp  ((long(*)(int,int,long,void*))jmp_gemdos)
-#define jmp_gemdos_lww  ((long(*)(int,long,int,int))jmp_gemdos)
-#define jmp_gemdos_pww  ((long(*)(int,void*,int,int))jmp_gemdos)
-#define jmp_gemdos_wppp ((long(*)(int,int,void*,void*,void*))jmp_gemdos)
+#define jmp_gemdos_v(a)         jmp_gemdos((WORD)(a))
+#define jmp_gemdos_w(a,b)       jmp_gemdos((WORD)(a),(WORD)(b))
+#define jmp_gemdos_l(a,b)       jmp_gemdos((WORD)(a),(LONG)(b))
+#define jmp_gemdos_p(a,b)       jmp_gemdos((WORD)(a),(void*)(b))
+#define jmp_gemdos_ww(a,b,c)    jmp_gemdos((WORD)(a),(WORD)(b),(WORD)(c))
+#define jmp_gemdos_lw(a,b,c)    jmp_gemdos((WORD)(a),(LONG)(b),(WORD)(c))
+#define jmp_gemdos_pw(a,b,c)    jmp_gemdos((WORD)(a),(void*)(b),(WORD)(c))
+#define jmp_gemdos_wpp(a,b,c,d)    jmp_gemdos((WORD)(a),(WORD)(b),(void*)(c),(void*)(d))
+#define jmp_gemdos_wlp(a,b,c,d)    jmp_gemdos((WORD)(a),(WORD)(b),(LONG)(c),(void*)(d))
+#define jmp_gemdos_lww(a,b,c,d)    jmp_gemdos((WORD)(a),(LONG)(b),(WORD)(c),(WORD)(d))
+#define jmp_gemdos_pww(a,b,c,d)    jmp_gemdos((WORD)(a),(void*)(b),(WORD)(c),(WORD)(d))
+#define jmp_gemdos_wppp(a,b,c,d,e) jmp_gemdos((WORD)(a),(WORD)(b),(void*)(c),(void*)(d),(void*)(e))
 
 #define xrdchne() jmp_gemdos_v(0x08)
 #define xecho(a) jmp_gemdos_w(0x02,a)
@@ -71,15 +71,19 @@ extern void rm_term(void);
 #define xmfree(a) jmp_gemdos_p(0x49,a);
 #define xattrib(a,b,c) jmp_gemdos_pww(0x43,a,b,c)
 
-#define jmp_bios_w     ((long(*)(int,int))jmp_bios)
-#define jmp_bios_wpwww ((long(*)(int,int,void*,int,int,int))jmp_bios)
+
+#define jmp_bios_w(a,b)     jmp_bios((WORD)(a),(WORD)(b))
+#define jmp_bios_wpwww(a,b,c,d,e,f) \
+          jmp_bios((WORD)(a),(WORD)(b),(void*)(c),(WORD)(d),(WORD)(e),(WORD)(f))
  
 #define getbpb(a) jmp_bios_w(7,a)
 #define rwabs(a,b,c,d,e) jmp_bios_wpwww(4,a,b,c,d,e)
 
-#define jmp_xbios_ww   ((long(*)(int,int,int))jmp_xbios)
+
+#define jmp_xbios_ww(a,b,c)   jmp_xbios((WORD)(a),(WORD)(b),(WORD)(c))
 
 #define Cursconf(a,b) jmp_xbios_ww(0x15,a,b)
+
 
 #define MAXARGS 20
 
