@@ -23,7 +23,7 @@ IOREC {
   void *buf;            /* input buffer */
   WORD size;            /* buffer size */
   WORD head;            /* head index */
-  WORD tail;            /* tail index */
+  volatile WORD tail;   /* tail index */
   WORD low;             /* low water mark */
   WORD high;            /* high water mark */
 };
