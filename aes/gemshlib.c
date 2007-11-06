@@ -472,8 +472,9 @@ void sh_envrn(LONG ppath, LONG psrch)
             else
               findend = TRUE;
           }
-          } while( tmp );
-          if (!tmp)
+        } while( tmp );
+
+        if (!tmp)
                 lp = 0x0L;
 
         LLSET(ppath, lp);
