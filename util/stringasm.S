@@ -18,14 +18,14 @@
  * as strcpy but returns the length ot the string instead.
  */
 
-_strlencpy:                
+_strlencpy:
         movea.l 8(sp),a0
         movea.l 4(sp),a1
         clr.l   d0
 lstcpy_loop:
         addq.w  #1,d0
         move.b  (a0)+,(a1)+
-        bne     lstcpy_loop
+        bne.s   lstcpy_loop
         subq.w  #1,d0
         rts
 
@@ -40,13 +40,13 @@ _strchr:
         move.w  8(sp),d1
 strchr_loop:
         move.b  (a0)+,d0
-        beq     strchr_null
+        beq.s   strchr_null
         cmp.b   d1,d0
-        bne     strchr_loop
+        bne.s   strchr_loop
+        subq.l  #1,a0
         move.l  a0,d0
-        subq.l  #1,d0
         rts
 strchr_null:
-        move.l  #0,d0
+        moveq.l #0,d0
+        movea.l d0,a0
         rts
-        
