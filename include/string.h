@@ -59,19 +59,14 @@ int memcmp(const void * s1, const void * s2, unsigned long int n);
 /* moves length bytes from src to dst. returns dst as passed.
  * the behaviour is undefined if the two regions overlap.
  */
-void * memcpy(void * dst, 
-              const void * src, 
-              long unsigned int length);
+void memcpy(void * dst, const void * src, 
+            long unsigned int length);
        
 /* moves length bytes from src to dst, performing correctly 
  * if the two regions overlap. returns dst as passed.
  */
-void * memmove(void * dst,
-               const void * src, 
-               long unsigned int length);
-
-/* same as memmove save for the order of arguments. */
-void * bcopy(void * src, void * dst, long unsigned int size);
+void memmove(void * dst, const void * src, 
+             long unsigned int length);
 
 /* fills with byte c, returns the given address. */
 void * memset(void *address, int c, long unsigned int size);

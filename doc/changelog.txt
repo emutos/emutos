@@ -2019,3 +2019,7 @@ Start... early ages
   This compiler sometimes expects return values for pointers to be passed back
   in A0 instead of D0. So gettext() and scasb() have now been changed to
   satisfy this requirement. (THH)
+
+2007-11-08
+- util/memmove.S include/string.h: Removed the deprecated and unused function
+  bcopy. (THH)

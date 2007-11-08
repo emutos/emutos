@@ -1,5 +1,5 @@
 /*
- * memmove.S - a fast memmove and bcopy in 68000.
+ * memmove.S - a fast memmove / memcpy in 68000.
  *
  * Copyright (c) 2001 by Authors:
  *
@@ -51,19 +51,9 @@
 
         .global _memmove
         .global _memcpy
-        .global _bcopy
 
         .text
 
-//
-// void * bcopy(void * src, void *dst, size_t size);
-// same as memmove save for the order of arguments.
-
-_bcopy:
-        move.l   4(sp),a0        // load source pointer
-        move.l   8(sp),a1        // load destination pointer     
-        bra      memmove
-        
 // 
 // void * memmove(void * dst, void * src, size_t length);
 // moves length bytes from src to dst, performing correctly 
