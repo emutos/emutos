@@ -53,7 +53,7 @@ _memset:
 memset:           
         move.l   a0,d1
         btst     #0,d1
-        beq      even
+        beq.s    even
         move.b   d7,(a0)+
         sub.l    #1,d0
 even:
@@ -73,7 +73,7 @@ even:
         move.l   d7,a5
         move.b   d0,d1                 // count mod 256
         lsr.l    #8,d0                 // count div 256
-        bra      end256
+        bra.s    end256
 loop256:
         lea      256(a0),a0           
         movem.l  d2-d7/a1-a5,-(a0)     // zero 11x4 bytes
@@ -89,10 +89,10 @@ end256:
         beq      done                  // more? no.
         and.b    #0x3F,d1              // + count mod 64
         lsr.b    #6,d0                 // + count div 64
-        bra      end64
+        bra.s    end64
 done:
         movem.l  (a7)+,d2-d6/a2-a5     // restore regs for movem use
-        bra end
+        bra.s    end
 loop64:
         movem.l  d2-d7/a4-a5,(a0)      // zero 8x4 bytes
         movem.l  d2-d7/a4-a5,32(a0)    // zero 8x4 bytes
@@ -106,13 +106,13 @@ zero4:
         move.b   d0,d1                 // +
         and.b    #3,d1                 // +
         lsr.b    #2,d0                 // +
-        bra      end4
+        bra.s    end4
 loop4:
         move.l   d7,(a0)+
 end4:
         dbra     d0,loop4              // decrement count, test and loop
         move.l   d1,d0                 // remainder becomes new count
-        bra      end1
+        bra.s    end1
 loop1:
         move.b   d7,(a0)+
 end1:
