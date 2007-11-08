@@ -436,16 +436,13 @@ void v_clswk(Vwk * vwk)
 
 void v_clrwk(Vwk * vwk)
 {
-    ULONG *addr;               /* pointer to screen longword */
-    ULONG *endaddr;
+    ULONG size;
 
-    /* Calculate screen end */
-    endaddr = (ULONG *)((ULONG)v_bas_ad + (ULONG)v_lin_wr * (DEV_TAB[1]+1));
-  
+    /* Calculate screen size */
+    size = (ULONG)v_lin_wr * (DEV_TAB[1] + 1);
+
     /* clear the screen */
-    for (addr = (ULONG*)v_bas_ad; addr < endaddr; addr++) {
-        *addr = 0;             /* clear the long word */
-    }
+    memset(v_bas_ad, 0, size);
 }
 
 

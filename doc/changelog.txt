@@ -2023,3 +2023,6 @@ Start... early ages
 2007-11-08
 - util/memmove.S include/string.h: Removed the deprecated and unused function
   bcopy. (THH)
+- util/stringasm.S: Patched strchr() for GCC 4.2. (THH)
+- vdi/vdi_control.c: Now using memset() in v_clrwk() to clear the screen - this
+  is hopefully a little bit faster than the former dumb loop. (THH)
