@@ -153,6 +153,7 @@ int doprintf(void (*outc)(int), const char *fmt, va_list ap)
       break;
     case 'D':
       lflag++;
+    case 'i':
     case 'd':
       if (lflag) {
         l = va_arg(ap, long);
