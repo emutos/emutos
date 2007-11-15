@@ -15,6 +15,8 @@ extern LONG     ad_pfile;
 
 extern WORD     gl_shgem;
 
+extern WORD     gl_changerez;
+extern WORD     gl_nextrez;
 
 void sh_read(LONG pcmd, LONG ptail);
 void sh_curdir(LONG ppath);

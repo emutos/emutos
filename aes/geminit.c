@@ -6,7 +6,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002 The EmuTOS development team
+*                 2002, 2007 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -29,6 +29,7 @@
 #include "crysbind.h"
 #include "gem_rsc.h"
 #include "dos.h"
+#include "xbiosbind.h"
 
 #include "gemgsxif.h"
 #include "gemdosif.h"
@@ -819,6 +820,7 @@ void gem_main(void)
     totpds = NUM_PDS;
     ml_ocnt = 0;
 
+    gl_changerez = FALSE;
 
     ini_dlongs();               /* init longs */
 #if I8086
@@ -906,16 +908,17 @@ void gem_main(void)
             iprocess("AVAILNUL", &nulmgr);
     }
 #endif
+
     /* load gem resource and fix it up before we go */
-#ifdef USE_GEM_RSC
+#ifndef USE_GEM_RSC
+    gem_rsc_init();
+#else
     if ( !rs_readit(ad_sysglo, ADDR("GEM.RSC")) )
     {
         /* bad resource load, so dive out */
         cprintf("gem_main: failed to load GEM.RSC...\n");
     }
     else
-#else
-        gem_rsc_init();
 #endif
     {
         /* get mice forms       */
@@ -1026,8 +1029,19 @@ void gem_main(void)
         cli();
         gl_ticktime = gsx_tick(tiksav, &tiksav);
         sti();
+
         /* close workstation    */
         gsx_wsclose();
+
+        if (gl_changerez)
+        {
+            /* Change resolution before starting over again... */
+            if (gl_changerez == 1)
+            {
+                Setscreen(-1L, -1L, gl_nextrez-2);
+            }
+            /* TODO: Support for Falcon screen modes */
+        }
     }
 
     /* return GEM's 0xEF int*/

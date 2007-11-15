@@ -2,7 +2,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002 The EmuTOS development team
+*                 2002, 2007 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -26,7 +26,9 @@
 .xdef _ad_stail
         .text
 
-//_main:
+//////////////////////////////////////////////////////////////////////////////
+// AES start-up code
+//////////////////////////////////////////////////////////////////////////////
 _ui_start:
         // obtain our basepage address
         movea.l sp,a5
@@ -61,6 +63,7 @@ _ui_start:
         // ad_envrn = the pointer to the environ string
         move.l  0x2C(a5),_ad_envrn
 
+aes_restart:
         // clear the 'global memory' zone whose size is determined by
         // routine size_theglo :-)
         jsr     _size_theglo
@@ -91,6 +94,11 @@ clrglotest:
         // go in C
         jsr     _gem_main
 
+        // Check for resolution change - if so start over again
+        move.w  _gl_changerez,d0
+        tst.w   d0
+        bne     aes_restart
+
         // Super() to go back to user more
         move.l  old_gem_ssp,-(sp)
         move.w  #0x20,-(sp)
@@ -103,7 +111,9 @@ clrglotest:
 
 
 
+//////////////////////////////////////////////////////////////////////////////
 // Execute a GEMDOS call (see gemdos.c).
+//////////////////////////////////////////////////////////////////////////////
 _gemdos:
         move.l  (SP)+,saveretaddr
         movem.l d2/a2,saveregs
@@ -125,8 +135,10 @@ gd_end:
         rts
 
 
+//////////////////////////////////////////////////////////////////////////////
 // A wrapper around Pexec. We can't use the above function _gemdos for this
 // since _gemdos is not reentrant.
+//////////////////////////////////////////////////////////////////////////////
 _dos_exec:
         move.l  sp,d1
         movem.l d2/a2,-(sp)             // Save registers

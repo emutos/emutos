@@ -1,5 +1,5 @@
 /*
- *       Copyright 2002 The EmuTOS development team
+ *       Copyright 2002, 2007 The EmuTOS development team
  *
  *       This software is licenced under the GNU Public License.
  *       Please see LICENSE.TXT for further information.
@@ -482,7 +482,7 @@ static const OBJECT desk_rs_obj_rom[] = {
 
    { 30, -1, -1, G_STRING,                      /*** 36 ***/
      NONE,
-     DISABLED,
+     NORMAL,
      (long) N_("  Change resolution         \007C"),
      0, 5, 31, 1},
 

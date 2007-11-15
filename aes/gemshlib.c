@@ -4,7 +4,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002 The EmuTOS development team
+*                 2002, 2007 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -90,6 +90,11 @@ GLOBAL LONG     ad_pfile;
 
 GLOBAL WORD     gl_shgem;
 
+/* Resolution settings:
+ * changerez: 0=no change, 1=change ST resolution, 2=change Falcon resolution
+ * nextrez: Stores the resolution for Setscreen() */
+GLOBAL WORD     gl_changerez;
+GLOBAL WORD     gl_nextrez;
 
 
 
@@ -269,8 +274,18 @@ WORD sh_write(WORD doex, WORD isgem, WORD isover, LONG pcmd, LONG ptail)
 {
         SHELL           *psh;
 
+        if (doex == 5)  /* Change resolution */
+        {
+          gl_changerez = 1 + isover;
+          gl_nextrez = isgem;
+          strcpy((char*)ad_scmd, "");
+          strcpy((char*)ad_stail, "");
+          return TRUE;
+        }
+
         LBCOPY(ad_scmd, pcmd, 128);
         LBCOPY(ad_stail, ptail, 128);
+
         if (isover > 0)
         {
                                                 /* stepaside to run     */
@@ -673,180 +688,6 @@ void sh_chdef(SHELL *psh)
 
 
 
-#if MULTIAPP
-/* 
-*       Special case DOS load
-*       Used from pr_exec when loading a dos app
-*/
-void sh_dosexec()
-{
-        WORD            done;
-        PD              *owner;
-        WORD            mbuff[8];
-        WORD            pid;
-        WORD            ret;
-
-        pid = rlr->p_pid;
-
-        pr_exec(pid, ad_scmd, ad_stail, ad_envrn, ad_s1fcb, ad_s2fcb);
-
-        done = FALSE;
-        while (!done)
-        {
-/**/      sh_toalpha();
-          
-          sh[pid].sh_loadable = TRUE;
-          ret = pr_load(pid);
-
-          sh[pid].sh_loadable = FALSE;
-          switch(ret)  /* app by the gdos                                */
-          {
-            case PR_TERMINATED:
-            case PR_FAILURE:
-/**/          sh_tographic();
-
-              done = TRUE;
-              break;
-            case PR_OKGEM:
-
-              owner = desk_ppd[pr_retid()];
-              w_newmenu(owner); 
-/**/          if (sh[owner->p_pid].sh_isgem)
-              { 
-                sh_tographic(); 
-                w_windfix(owner);
-              }                                                         
-
-              if (sh[owner->p_pid].sh_isacc || !sh[owner->p_pid].sh_isgem)
-                ap_sendmsg(proc_msg, AC_OPEN, owner, 0, pr_retid(), 0, 0, 0);
-          } 
-          if (!done)
-          {
-            mbuff[0] = 0;
-            while (mbuff[0] != AC_OPEN)
-              ap_rdwr(MU_MESAG, rlr, 16, ADDR(&mbuff[0]) );
-          }
-        } 
-}
-
-
-void sh_ldapp()  /* for MULTIAPP */
-{
-        WORD            ret;
-        SHELL           *psh;
-        PD              *ppd;
-        BYTE            name[11];
-        WORD            isacc;
-        WORD            da_id;
-                
-        psh = &sh[rlr->p_pid];
-#if GEMDOS
-        /* initialize sh_apdir */
-        strcpy((char *) sh_apdir, (char *) ad_scdir); 
-#endif
-
-        strcpy(&psh->sh_desk[0], rs_str(STDESKTP));
-        strcpy(&psh->sh_cdir[0], &D.s_cdir[0]);
-
-ldagain:
-        sh_chdef(psh);
-                                        /* set up so that we will exec  */
-                                        /*   the default next time      */
-                                        /*   unless the application does*/
-                                        /*   a set command      */
-        psh->sh_dodef = TRUE;
-        isacc = psh->sh_isacc;
-        if ( !sh_find(ad_scmd) )
-        {
-                                        /* error, cant find app or acc  */
-          goto ldend;
-        }
-        if (!isacc)
-          sh_show(ad_scmd);
-        sh_fixtail(psh->sh_fullstep == 2);
-                                        /* take the old guy's windows   */
-                                        /*  out of the W_TREE           */
-        w_windfix(rlr);
-        w_setmen(rlr->p_pid);
-                                        /* clear his desk field */
-        desk_tree[rlr->p_pid] = 0x0L;
-        p_nameit(rlr, sh_name(&D.s_cmd[0]));
-        if ( !isacc)
-        {
-          name[0] = name[1] = ' ';
-          movs(8, &rlr->p_name[0], &name[2]);
-          name[10] = NULL;
-          gl_mnpds[rlr->p_pid] = mn_register(rlr->p_pid, ADDR(&name[0]));
-        }
-        psh->sh_loadable = TRUE;
-                                        /* normal dos exec if gem app   */
-                                        /*  or if dos app that is an acc*/
-        if (psh->sh_isgem)
-        {       
-                                        /* make sure channel is clean   */  
-          pr_load(rlr->p_pid);
-          LLSET(0xefL * 4, LLCS() | LW(&cpmcod));
-                                        /* exec app into channel        */
-          dos_exec(ad_scmd, LHIWD(ad_envrn), ad_stail, 
-                   ad_s1fcb, ad_s2fcb);
-        }
-        else if (isacc)                 /* dos app that is an acc       */
-        {                               /*  this must come back here    */
-                                        /*  without any switch key( + ) */
-                                        /*  having been depressed.      */
-          pr_exec(rlr->p_pid, ad_scmd, ad_stail,
-                  ad_envrn, ad_s1fcb, ad_s2fcb);
-          pr_load(rlr->p_pid);
-        }
-        else                            /* normal DOS app               */
-          sh_dosexec();
-
-        if (psh->sh_isacc)
-        {
-          acancel(rlr->p_evbits);       /* cancel his event's           */
-          if (rlr->p_evflg)
-            apret(rlr->p_evflg);
-        }
-        psh->sh_loadable = FALSE;
-        psh->sh_state = NULL;
-        psh->sh_isgem = TRUE;
-                                        /* take all the items out of    */
-                                        /*  the DESKTOP menue           */
-        while ( (da_id = mn_ppdtoid(rlr)) != NIL )
-          mn_unregister( da_id );
-
-        gl_mnpds[rlr->p_pid] = 0x0;
-                                        /* set name to availnul         */
-        p_nameit(rlr, op_gname(STAVAIL) );
-        desk_tree[rlr->p_pid] = 0x0L;
-                                        /* if the current process has   */
-                                        /*  done a sh_write to load a   */
-                                        /*  process in place of itself, */
-                                        /*  then we must clear out his  */
-                                        /*  old windows and load in the */
-                                        /*  new app.                    */
-        if (psh->sh_doexec)
-        {
-          oldwfix(rlr, TRUE);
-          goto ldagain;
-        }
-
-ldend:  
-        pr_delete(rlr->p_pid);                  /* close the channel*/
-        if(rlr->p_pid != 0x0 )
-        {
-          w_clswin();                   /* close rlr's windows          */
-          ppd = fpdnm(NULLPTR, 0x0);    /* get pd *                     */
-          if (isacc)
-            gl_lastnpd = NULLPTR;       /* force redraws if acc abort   */
-          w_windfix(ppd);               /* make desktop's windows active*/
-          w_newmenu(ppd);
-        }
-}
-#endif /* MULTIAPP */
-
-
-#if SINGLAPP
 void sh_ldapp()
 {
         WORD    ret, badtry, retry;
@@ -985,10 +826,9 @@ void sh_ldapp()
 
           desk_tree[rlr->p_pid] = 0x0L;         /* clear his desk field */
 
-        } while(psh->sh_doexec);
+        } while(psh->sh_doexec && !gl_changerez);
 
 }
-#endif
 
 
 
@@ -1030,30 +870,3 @@ void sh_main()
         if (gl_shgem)
           sh_toalpha();
 }
-
-
-
-#if MULTIAPP
-void sh_ldacc()
-{
-        WORD            id, ii, ret;
-        WORD            junk;
-        ULONG           caddr, csize, endmem, cssize;
-
-        for(ii = 0; ii < gl_numaccs; ii++)
-        {
-          prc_create(gl_endaes, 0x00010000L, FALSE, TRUE, &id);
-          ret = pr_run(id, TRUE, SH_ACC, ADDR(&gl_caccs[ii].acc_name[0]),
-                       ad_stail);
-          if (ret)
-          {
-            pr_info(id, &junk, &junk, &caddr, &csize, &endmem, &cssize);
-            gl_endaes = caddr + (csize << 12);  /* + (cssize << 12);*/
-          }
-          else
-            pr_delete(id);
-        }
-}
-#endif
-
-

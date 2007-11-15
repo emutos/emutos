@@ -3,7 +3,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002 The EmuTOS development team
+*                 2002, 2007 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -19,6 +19,7 @@
 #include <string.h>
 
 #include "config.h"
+#include "xbiosbind.h"
 #include "portab.h"
 #include "machine.h"
 #include "obdefs.h"
@@ -688,8 +689,12 @@ WORD do_optnmenu(WORD item)
                 desk_wait(FALSE);
                 break;
           case RESITEM:
-                form_alert(1,ADDR("[3][Sorry, changing the |resolution isn't"
-                                  "|supported yet.][Ok]"));
+                rebld = form_alert(1, ADDR("[2][Switch resolution?][Yes|No]"));
+                if (rebld == 1)
+                {
+                        shel_write(5, (Getrez()==1?2:3), 0, NULL, NULL);
+                        done = TRUE;
+                }
                 break;
         }
         return(done);
