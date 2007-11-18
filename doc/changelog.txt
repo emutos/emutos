@@ -2031,3 +2031,7 @@ Start... early ages
 - aes/geminit.c aes/gemshlib.* aes/gemstart.S desk/desk_rsc.c desk/deskmain.c:
   Added the possibility to change the resolution between ST-low and ST-medium
   resolution (highly experimental!). (THH)
+
+2007-11-19
+- vdi/vdi_col.c: Palette is now initialized during v_opnwk() and added color
+  mapping for 4 color mode (ST medium resolution). (THH)
