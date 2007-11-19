@@ -45,7 +45,6 @@ _gettext:
         tst.l   _nls_hash
         bne     empty
         move.l  4(sp),d0
-        move.l  d0,a0      // Required for GCC 4.2
         rts
 empty:
 /* check for empty string - often used in RSC - must return original address */
@@ -77,7 +76,6 @@ rh_try:
         bra     rh_not_found
 rh_found:
         move.l  (a0)+,d0
-        move.l  d0,a0      // Required for GCC 4.2
         rts
 rh_not_found:
 #endif  /* USE_RAM_HASH */
@@ -108,7 +106,6 @@ not_found:
 #if USE_RAM_HASH
         jmp     store_ram_hash
 #else
-        move.l  d0,a0      // Required for GCC 4.2
         rts
 #endif
         
@@ -159,7 +156,6 @@ srh_free_slot:
 srh_end:
         move.l  a1,d0
 #endif /* USE_RAM_HASH */
-        move.l  d0,a0      // Required for GCC 4.2
         rts
         
 

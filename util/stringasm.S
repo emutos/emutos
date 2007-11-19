@@ -48,5 +48,4 @@ strchr_loop:
         rts
 strchr_null:
         moveq.l #0,d0
-        movea.l d0,a0
         rts
