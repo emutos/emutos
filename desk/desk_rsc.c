@@ -482,7 +482,7 @@ static const OBJECT desk_rs_obj_rom[] = {
 
    { 30, -1, -1, G_STRING,                      /*** 36 ***/
      NONE,
-     NORMAL,
+     DISABLED,
      (long) N_("  Change resolution         \007C"),
      0, 5, 31, 1},
 

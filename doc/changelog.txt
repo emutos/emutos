@@ -2035,3 +2035,8 @@ Start... early ages
 2007-11-19
 - vdi/vdi_col.c: Palette is now initialized during v_opnwk() and added color
   mapping for 4 color mode (ST medium resolution). (THH)
+- util/nlsasm.S util/stringasm.S: Removed A0-return-value hacks since there
+  is a version of of GCC 4.2 (ported by Olivier Landemarre) which does not
+  suffer from this annoying A0 "bug". (THH)
+- desk/desk_rsc.c: Disable menu entry for changing resolution again - it is
+  still way too incomplete for the public. (THH)
