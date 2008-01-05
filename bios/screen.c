@@ -150,7 +150,7 @@ void screen_init(void)
     if (!has_videl)
         screen_start -= 0x300;
     /* set new v_bas_ad */
-    v_bas_ad = (BYTE *)screen_start;
+    v_bas_ad = (UBYTE *)screen_start;
     /* correct phystop */
     setphys(screen_start);
 }
@@ -209,7 +209,7 @@ WORD getrez(void)
 void setscreen(LONG logLoc, LONG physLoc, WORD rez, WORD videlmode)
 {
     if (logLoc >= 0) {
-        v_bas_ad = (char *) logLoc;
+        v_bas_ad = (UBYTE *) logLoc;
     }
     if (physLoc >= 0) {
         setphys(physLoc);
@@ -400,7 +400,7 @@ UWORD get_videl_height(void)
 /*
  * this routine can set VIDEL to 1,2,4 or 8 bitplanes mode on VGA
  */
-void set_videl_vga(int mode)
+static void set_videl_vga(int mode)
 {
     char *videlregs = (char *)0xffff8200;
     int hdb_40[5] = { 0x73, 0x0a, 0x8a, 0x9a, 0xac };
@@ -483,10 +483,15 @@ UWORD vsetmode(WORD mode)
     if (mode == -1)
         return oldmode;
 
-    //if (mode & 0x10)   /* VGA mode? */
-        set_videl_vga(mode);
-    //else
-    //    set_videl_rgb(mode);
+    if (!(mode & 0x10))   /* RBG/TV mode? */
+    {
+        /* We currently only support VGA screen modes...
+         * ... so let's flip the double-scan bit to get
+         * at least some more usable results here. */
+        mode ^= 0x100;
+    }
+
+    set_videl_vga(mode);
 
     ret = oldmode;
     oldmode = mode;
