@@ -34,17 +34,40 @@
 #define ASM_H
 
 
-
-extern void swp68w(int *);
-extern void swp68l(long *);
-
-#define swpw(x) swp68w(&x)
-#define swpl(x) swp68l(&x)
-
 /* OS entry points implemented in util/miscasm.S */
 extern long trap1(int, ...);
 extern long trap1_pexec(short mode, const char * path, 
   const void * tail, const char * env);
+
+
+/*
+ * WORD swpw(WORD val); 
+ *   swap endianess of val, 16 bits only.
+ */
+
+#define swpw(a)                           \
+  __asm__ __volatile__                    \
+  ("ror   #8,%0\n\t"                      \
+  : "=d"(a)          /* outputs */        \
+  : "0"(a)           /* inputs  */        \
+  : "cc"             /* clobbered */      \
+  )                                       \
+
+
+/*
+ * WORD swpw(WORD val); 
+ *   swap endianess of val, 16 bits only.
+ */
+
+#define swpl(a)                           \
+  __asm__ __volatile__                    \
+  ("ror   #8,%0\n\t"                      \
+   "swap  %0\n\t"                         \
+   "ror   #8,%0\n\t"                      \
+  : "=d"(a)          /* outputs */        \
+  : "0"(a)           /* inputs  */        \
+  : "cc"             /* clobbered */      \
+  )                                       \
 
 
 /*

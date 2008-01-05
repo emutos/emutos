@@ -11,45 +11,10 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
-
-        .global _swp68w         // swap bytes in a word 
-        .global _swp68l         // swap word & bytes in long
-
         .global _trap1          // call GEMDOS
         .global _trap13         // call BIOS
         .global _trap14         // call XBIOS
         .global _trap1_pexec    // Reentrant Pexec call
-
-
-        .text
-
-
-
-/*
- * _s68 - swap bytes in a word 
- */
-
-_swp68w:
-        move.l  4(sp),a0
-        move    (a0),d0
-        ror     #8,d0
-        move    d0,(a0)
-        rts
-
-
-/*
- * _s68 - swap word & bytes in long
- */
-
-_swp68l:
-        move.l  4(sp),a0
-        move.l  (a0),d0
-        ror     #8,d0
-        swap    d0
-        ror     #8,d0
-        move.l  d0,(a0)
-        rts
 
 
 /*

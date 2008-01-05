@@ -2040,3 +2040,9 @@ Start... early ages
   suffer from this annoying A0 "bug". (THH)
 - desk/desk_rsc.c: Disable menu entry for changing resolution again - it is
   still way too incomplete for the public. (THH)
+
+2008-01-05
+- bios/screen.c: Since we only support VGA resolutions by now, toggle the
+  double-scan bit in vsetmode when a RGB mode is requested. (THH)
+- include/asm.h util/miscasm.S: Changed macros for swapping the endianess of
+  a variable to use inline assembler - that's faster and less code. (THH)
