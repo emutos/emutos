@@ -213,7 +213,7 @@ BYTE uhex_dig(WORD wd)
 *       pcurr pointing one space past the end of the four hex digits
 */
 #ifdef NO_ROM
-BYTE *scan_2(BYTE *pcurr, UWORD *pwd)
+BYTE *scan_2(BYTE *pcurr, WORD *pwd)
 {
         UWORD   temp;
 
@@ -231,7 +231,7 @@ BYTE *scan_2(BYTE *pcurr, UWORD *pwd)
 }
 #else
 /* We're using scan_2 from the AES sources: */
-extern BYTE *scan_2(BYTE *pcurr, UWORD *pwd);
+extern BYTE *scan_2(BYTE *pcurr, WORD *pwd);
 #endif
 
 

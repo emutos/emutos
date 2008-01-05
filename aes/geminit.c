@@ -156,7 +156,7 @@ WORD hex_dig(BYTE achar)
 *       Scan off and convert the next two hex digits and return with
 *       pcurr pointing one space past the end of the four hex digits
 */
-BYTE *scan_2(BYTE *pcurr, UWORD *pwd)
+BYTE *scan_2(BYTE *pcurr, WORD *pwd)
 {
         UWORD   temp;
 
@@ -384,7 +384,7 @@ static void fs_start(void)
 *       accessory is too big to fit it will be not be loaded.
 */
 
-static void sndcli(BYTE *pfilespec, WORD *paccroom)   /* paccroom in paragraphs*/
+static void sndcli(BYTE *pfilespec, UWORD *paccroom)   /* paccroom in paragraphs*/
 {
         register WORD   handle;
         WORD            err_ret;
