@@ -1291,7 +1291,7 @@ void cnx_get()
 WORD deskmain()
 {
         WORD            ii, done, flags;
-        WORD            ev_which, mx, my, button, kstate, kret, bret;
+        UWORD           ev_which, mx, my, button, kstate, kret, bret;
 #ifndef DESK1
         WSAVE           *pws;
 #endif

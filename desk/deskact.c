@@ -71,12 +71,12 @@ static WORD gr_obfind(LONG tree, WORD root, WORD mx, WORD my)
 *       mouse moves into or out of the specified rectangle.
 */
 static WORD gr_isdown(WORD out, WORD x, WORD y, WORD w, WORD h,
-                      WORD *pmx, WORD *pmy, WORD *pbutton, WORD *pkstate)
+                      UWORD *pmx, UWORD *pmy, UWORD *pbutton, UWORD *pkstate)
 {
 
         WORD            flags;
         UWORD           ev_which;
-        WORD            kret, bret;
+        UWORD           kret, bret;
 
         flags = MU_BUTTON | MU_M1;
         ev_which = evnt_multi(flags, 0x01, 0xff, 0x00, out, x, y, w, h,
@@ -204,7 +204,7 @@ static WORD gr_bwait(GRECT *po, WORD mx, WORD my, WORD numpts, WORD *xylnpts,
                      WORD numobs, WORD *xyobpts)
 {
         WORD    down;
-        WORD    ret[4];
+        UWORD   ret[4];
 
         /* Since the desktop and the AES currently share the same VDI work-
          * station, we have to reset the clipping and drawing mode here */
@@ -378,7 +378,8 @@ void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD *pdulx, WORD *pduly,
         WNODE   *pw;
         WORD    root, state, curr_wh, curr_root, curr_sel, dst_wh;
         WORD    overwhite, l_mx, l_my;
-        WORD    down, button, keystate, junk, ret[4];
+        WORD    down, button, keystate, junk;
+        UWORD   ret[4];
         FNODE   *pf;
         ANODE   *pa;
 
