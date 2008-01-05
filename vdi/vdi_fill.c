@@ -319,7 +319,7 @@ void
 st_fl_ptr(Vwk * vwk)
 {
     WORD fi, pm;
-    WORD *pp = NULL;
+    UWORD *pp = NULL;
 
     fi = vwk->fill_index;
     pm = 0;
@@ -352,7 +352,7 @@ st_fl_ptr(Vwk * vwk)
         break;
     case 4:
         pm = 0x000f;
-        pp = &vwk->ud_patrn[0];
+        pp = (UWORD *)&vwk->ud_patrn[0];
         break;
     }
     vwk->patptr = pp;

@@ -38,7 +38,7 @@
  */
 
 static LONG     pgmld01(FH h, PD *pdptr, PGMHDR01 *hd);
-static LONG     pgfix01(UBYTE *lastcp, LONG nrelbytes , PGMINFO *pi);
+static LONG     pgfix01(void *lastcp, LONG nrelbytes , PGMINFO *pi);
 
 /*
  * kpgmhdrld - load program header
@@ -127,7 +127,7 @@ static LONG     pgmld01( FH h , PD *pdptr, PGMHDR01 *hd)
     register PGMINFO    *pi ;
     register PD         *p ;
     PGMINFO             pinfo ;
-    char                *cp ;
+    BYTE                *cp ;
     LONG                relst ;
     LONG                flen ;
     LONG                r ;
@@ -265,7 +265,7 @@ static LONG     pgmld01( FH h , PD *pdptr, PGMHDR01 *hd)
  *  pi        - program info pointer
  */
 
-static LONG     pgfix01( UBYTE *lastcp, LONG nrelbytes , PGMINFO *pi )
+static LONG     pgfix01( void *lastcp, LONG nrelbytes , PGMINFO *pi )
 {
     register UBYTE      *cp ;           /*  code pointer                */
     register UBYTE      *rp ;           /*  relocation info pointer     */
@@ -274,10 +274,10 @@ static LONG     pgfix01( UBYTE *lastcp, LONG nrelbytes , PGMINFO *pi )
     register LONG       tbase ;         /*  base addr of text segment   */
 
     cp = lastcp ;
-    rp = pi->pi_bbase ;
+    rp = (UBYTE *)pi->pi_bbase ;
     n = nrelbytes ;
     tbase = (LONG) pi->pi_tbase ;
-    bbase = pi->pi_bbase ;
+    bbase = (UBYTE *)pi->pi_bbase ;
 
     while( n--  &&      *rp != 0 )
     {
@@ -303,7 +303,7 @@ static LONG     pgfix01( UBYTE *lastcp, LONG nrelbytes , PGMINFO *pi )
 
 LONG kpgm_relocate( PD *p, long length)
 {
-    char      *cp;
+    BYTE      *cp;
     LONG      *rp;
     LONG      flen;
     PGMINFO   pinfo;
