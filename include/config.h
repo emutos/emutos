@@ -61,12 +61,16 @@
 #define MIDI_DEBUG_PRINT 0
 #endif
 
-/* set this to 1 if your emulator is capable of emulating properly the 
- * STOP opcode (used to spare host CPU burden during loops). This is
- * currently set to zero as STOP does not work well on all emulators.
+/* Set this to 1 if your emulator is capable of emulating properly the 
+ * STOP opcode (used to spare host CPU burden during loops).
+ * Set to zero for all emulators which do not properly support STOP opcode.
  */
 #ifndef USE_STOP_INSN_TO_FREE_HOST_CPU
-#define USE_STOP_INSN_TO_FREE_HOST_CPU 0
+# if TOS_VERSION < 0x200
+#  define USE_STOP_INSN_TO_FREE_HOST_CPU 0
+# else
+#  define USE_STOP_INSN_TO_FREE_HOST_CPU 1
+# endif
 #endif
 
 /* Set this to 1 if you want  Timer-D to be initialized.
@@ -117,19 +121,6 @@
 #ifndef TOS_VERSION
 #define TOS_VERSION 0x206
 #endif
-
-/*
- * NVRAM RTC (real time clock) needs to know the TOS version that wrote
- * the initial year offset to your NVRAM. By default EmuTOS uses
- * the TOS_VERSION value but this is not working on real TT030 or Falcon
- * machines since you can't increase the TOS_VERSION to 0x306 or 0x404
- * (many newer TOS functions are not defined and badly written programs
- * that check for TOS version only start failing then).
- * The solution is to define the RTC_TOS_VER independently and set it
- * to the version of original TOS that runs on your machine and updates
- * your NVRAM RTC.
- */
-/* #define RTC_TOS_VER 0x404 */
 
 /*
  * Define the boot timeout in seconds. The higher the number the better
