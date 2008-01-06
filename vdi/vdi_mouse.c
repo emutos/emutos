@@ -3,7 +3,7 @@
  *
  * Copyright 1982 by Digital Research Inc.  All rights reserved.
  * Copyright 1999 by Caldera, Inc. and Authors:
- * Copyright 2002 by The EmuTOS development team
+ * Copyright 2002-2008 by The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -85,19 +85,19 @@ static Mcdb arrow_cdb = {
         0xE000, //%1110000000000000
         0xF000, //%1111000000000000
         0xF800, //%1111100000000000
-        0xFB00, //%1111110000000000
+        0xFC00, //%1111110000000000
         0xFE00, //%1111111000000000
         0xFF00, //%1111111100000000
         0xFF80, //%1111111110000000
-        0xFFB0, //%1111111111000000
+        0xFFC0, //%1111111111000000
         0xFE00, //%1111111000000000
         0xFE00, //%1111111000000000
         0xEF00, //%1110111100000000
         0x0F00, //%0000111100000000
         0x0780, //%0000011110000000
         0x0780, //%0000011110000000
-        0x03B0, //%0000001111000000
-        0x0000 //%0000000000000000
+        0x03C0, //%0000001111000000
+        0x0000  //%0000000000000000
     },
     /* foreground definition */
     {
@@ -105,18 +105,18 @@ static Mcdb arrow_cdb = {
         0x6000, //%0110000000000000
         0x7000, //%0111000000000000
         0x7800, //%0111100000000000
-        0x7B00, //%0111110000000000
+        0x7C00, //%0111110000000000
         0x7E00, //%0111111000000000
         0x7F00, //%0111111100000000
         0x7F80, //%0111111110000000
-        0x7B00, //%0111110000000000
-        0x6B00, //%0110110000000000
+        0x7C00, //%0111110000000000
+        0x6C00, //%0110110000000000
         0x4600, //%0100011000000000
         0x0600, //%0000011000000000
         0x0300, //%0000001100000000
         0x0300, //%0000001100000000
         0x0180, //%0000000110000000
-        0x0000 //%0000000000000000
+        0x0000  //%0000000000000000
     }
 };
 
@@ -683,7 +683,7 @@ void cur_display (WORD x, WORD y)
     else {
         /* check for need to clip on right side */
         /* compare to width of screen(maximum x value) */
-        if ( x > (DEV_TAB[0] - 15) ) {
+        if ( x >= (DEV_TAB[0] - 15) ) {
             op = 2;             /* index to right clip routine addresses */
         }
         else {

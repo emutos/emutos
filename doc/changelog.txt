@@ -2052,3 +2052,4 @@ Start... early ages
   TOS version >= 2.00 is compiled. (THH)
 - bios/clock.c: Got rid of RTC_TOS_VER - the year offset in the NVRAM is now
   autodetected. (THH)
+- vdi/vdi_mouse.c: Fixed off-by-one bug in VDI mouse driver. (THH)
