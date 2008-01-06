@@ -2046,3 +2046,9 @@ Start... early ages
   double-scan bit in vsetmode when a RGB mode is requested. (THH)
 - include/asm.h util/miscasm.S: Changed macros for swapping the endianess of
   a variable to use inline assembler - that's faster and less code. (THH)
+
+2008-01-06
+- include/config.h: STOP instruction will now be used by default when a
+  TOS version >= 2.00 is compiled. (THH)
+- bios/clock.c: Got rid of RTC_TOS_VER - the year offset in the NVRAM is now
+  autodetected. (THH)

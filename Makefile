@@ -323,7 +323,7 @@ etos256k.img: emutos2.img
 
 aranym:
 	@echo building ARAnyM EmuTOS in etos512k.img; \
-	make DEF='-DRTC_TOS_VER=0x404 -DUSE_STOP_INSN_TO_FREE_HOST_CPU=1 -DCONF_WITH_ACSI=0' 512; \
+	make DEF='-DUSE_STOP_INSN_TO_FREE_HOST_CPU=1 -DCONF_WITH_ACSI=0' 512;
 
 512: etos512k.img
 falcon: help

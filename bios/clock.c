@@ -1,10 +1,13 @@
 /*
  * clock.c - BIOS time and date routines
  *
- * Copyright (c) 2001 by Authors:
+ * Copyright (c) 2001-2008 EmuTOS development team
  *
+ * Authors:
  *  MAD   Martin Doering
  *  LVL   Laurent Vogel
+ *  THH   Thomas Huth
+ *  joy   Petr Stehlik
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -21,7 +24,10 @@
 #include "vectors.h"
 #include "nvram.h"
 #include "config.h"
- 
+#include "machine.h"
+#include "cookie.h"
+
+
 #if TOS_VERSION < 0x200
 #define NO_NVRAM 1
 #endif
@@ -295,15 +301,10 @@ static void msetdt(ULONG dt)
  * with latest TT TOS (3.06) it's 1968. This is completely crazy and only Atari
  * engineers could do something like that.
  * With Falcon TOS 4.0x the situation is clear - the offset is always 1968.
- *
- * If you want to run EmuTOS (which has currently set the TOS version 
- * to 0x206 in include/config.h) on a real TT030 with newer TOS or on a Falcon
- * or ARAnyM then please define RTC_TOS_VER in your localconf.h.
+ * So we try to figure out the machine we're running on in clock_init and set
+ * the year offset accordingly to what we've detected.
  */
-#ifndef RTC_TOS_VER
-#define RTC_TOS_VER             (TOS_VERSION)
-#endif
-const static int nvram_rtc_year_offset = ((RTC_TOS_VER < 0x306) ? 1970 : 1968) - 1980;
+static int nvram_rtc_year_offset;
 
 static void ndosettime(UWORD time)
 {
@@ -606,6 +607,18 @@ void date_time(WORD flag, WORD *dt)
 
 void clock_init(void)
 {
+#if ! NO_NVRAM
+  if(has_nvram) {
+    /* On Mega-STE and early TTs the year offset in the NVRAM is different */
+    if (cookie_mch < MCH_TT || (cookie_mch == MCH_TT && TOS_VERSION <= 0x0305)) {
+        nvram_rtc_year_offset = 1970 - 1980;
+    }
+    else {
+        nvram_rtc_year_offset = 1968 - 1980;
+    }
+  }
+#endif /* ! NO_NVRAM */
+
   if( ! (has_nvram || has_megartc) ) {
     /* no megartc, the best we can do is set the date to the
      * OS creation date, time 0.
@@ -647,5 +660,3 @@ LONG gettime(void)
     return igetdt();
   }
 }
-
-
