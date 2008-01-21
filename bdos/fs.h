@@ -56,8 +56,25 @@ extern  jmp_buf errbuf;
 extern  int     errdrv;
 extern  long    errcode;
 
-#define longjmp_rwabs(a,b,c,d,e) if((rwerr=Rwabs(a,b,c,d,e))!=0) \
-{errdrv=e;errcode=rwerr;longjmp(errbuf,1);}
+#define longjmp_rwabs(flg,buf,cnt,rec,dev)            \
+    /* if (rec <= 65534) */                                 \
+    {                                                 \
+        if ((rwerr=Rwabs(flg,buf,cnt,rec,dev,0))!=0)  \
+        {                                             \
+             errdrv=dev; errcode=rwerr;               \
+             longjmp(errbuf,1);                       \
+        }                                             \
+    }                                                 
+    /*
+    else                                              \
+    {                                                 \
+        if ((rwerr=Rwabs(flg,buf,cnt,-1,dev,rec))!=0) \
+        {                                             \
+             errdrv=dev; errcode=rwerr;               \
+             longjmp(errbuf,1);                       \
+        }                                             \
+    }                                                 \
+    */
 
 /*
  *  Type declarations
@@ -72,7 +89,7 @@ extern  long    errcode;
 #define DMD     struct  _dmd
 #define CLNO    int             /*  cluster number M01.01.03    */
 #define RECNO   int             /*  record number M01.01.03     */
-                                /*** this should be changed to a long!! ***/
+                                /*  FIXME: this should be changed to a long! */
 #define FH      unsigned int            /*  file handle M01.01.04       */
 
 /*
@@ -233,7 +250,7 @@ DND /* directory node descriptor */
 
 DMD /* drive media block */
 {
-    int    m_recoff[3]; /*  record offsets for fat,dir,data     */
+    RECNO  m_recoff[3]; /*  record offsets for fat,dir,data     */
     int    m_drvnum;    /*  drive number for this media         */
     RECNO  m_fsiz;      /*  fat size in records M01.01.03       */
     RECNO  m_clsiz;     /*  cluster size in records M01.01.03   */
@@ -402,7 +419,7 @@ void bufl_init(void);
 /* ??? */
 void flush(BCB *b);
 /* return the ptr to the buffer containing the desired record */
-char *getrec(int recn, DMD *dm, int wrtflg);
+char *getrec(RECNO recn, DMD *dm, int wrtflg);
 /* pack into user buffer */
 char *packit(register char *s, register char *d);
 

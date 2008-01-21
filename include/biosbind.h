@@ -20,7 +20,7 @@
 #define Bconstat(a) bios_w_w(0x1,a)
 #define Bconin(a) bios_l_w(0x2,a)
 #define Bconout(a,b) bios_l_ww(0x3,a,b)
-#define Rwabs(a,b,c,d,e) bios_l_wlwww(0x4,a,b,c,d,e)
+#define Rwabs(a,b,c,d,e,lrec) bios_l_wlwwwl(0x4,a,b,c,d,e,lrec)
 #define Setexec(a,b) bios_l_wl(0x5,a,b)
 #define Setexc(a,b) bios_l_wl(0x5,a,b)
 #define Tickcal() bios_l_v(0x6)
@@ -144,11 +144,12 @@ static inline long bios_l_wl(int op, short a, long b)
 }
 
 static inline long 
-bios_l_wlwww(int op, short a, long b, short c, short d, short e)
+bios_l_wlwwwl(int op, short a, long b, short c, short d, short e, long f)
 {
     register long retval __asm__("d0");
 
     __asm__ __volatile__ (
+        "move.l  %7,-(sp)\n\t"
         "move.w  %6,-(sp)\n\t"
         "move.w  %5,-(sp)\n\t"
         "move.w  %4,-(sp)\n\t"
@@ -156,9 +157,9 @@ bios_l_wlwww(int op, short a, long b, short c, short d, short e)
         "move.w  %2,-(sp)\n\t"
         "move.w  %1,-(sp)\n\t"
         "trap    #13\n\t"
-        "lea     14(sp),sp"
+        "lea     18(sp),sp"
          : "=r"(retval)
-         : "nr"(op), "nr"(a), "ir"(b), "nr"(c), "nr"(d), "nr"(e)
+         : "nr"(op), "nr"(a), "ir"(b), "nr"(c), "nr"(d), "nr"(e), "ir"(f)
          : "d1", "d2", "a0", "a1", "a2", "memory", "cc"
         );
     return retval;
