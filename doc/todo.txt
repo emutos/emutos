@@ -1,4 +1,5 @@
 BIOS/XBIOS/BDOS
+- fix the scary crashes for disk partitions > 255 MB
 - implement XBIOS calls
 - implement Line-A functions
 - merge identical headers, and put them all in an include directory (?)
