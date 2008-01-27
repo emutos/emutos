@@ -1,25 +1,31 @@
-BIOS/XBIOS/BDOS
-- fix the scary crashes for disk partitions > 255 MB
-- implement XBIOS calls
-- implement Line-A functions
+BIOS/XBIOS
+- implement missing XBIOS calls
+  (e.g. the Falcon Videl and TT shifter video functions)
+- add support for Falcon RGB screen modes
+- implement Line-A functions (really necessary?? Line-A is obsolete!)
 - merge identical headers, and put them all in an include directory (?)
 - reduce the number of 'extern' in .c files
 - check that RAM disks work
 - misc. TODOs in floppy.c
 - check that VEC_CRITICALERR (0x101) is called when the BIOS encounters errors
-- should hitting control-c terminate the current process? if so, how?
-- move mem-only routines out of proc.c into umem.c or iumem.c
 - improve Mediach()
 - implement full XHDI 1.30
 - loop callibration needed for various delays in centronics and DMA ports
+- for some reasons, the initial stack size (SUPSIZ in bios/startup.S) must be
+  bigger than 6000 words, or GFA Basic and MiNT will crash. This should be
+  fixed (so much space is really not needed here!).
+
+BDOS (GEMDOS)
+- fix the scary crashes for disk partitions > 255 MB
+- RECNO should be long, not int
+- should hitting control-c terminate the current process? if so, how?
+- move mem-only routines out of proc.c into umem.c or iumem.c
 - bdos/time.c: Use XBIOS time functions instead of date_time().
 
 Internationalisation
 - bugs in tools/bug.c; more things should be configurable on the command line
 
 VDI
-- Check the various assembler routines that are called from C functions
-  if they save and restore enough registers.
 - The linemask for dashed lines is not calculated correct, depending on 
   the internal calculations of increase in x direction, like in original TOS.
 - vs_color and vq_color don't work with TT shifter and Falcon Videl yet.
@@ -27,9 +33,11 @@ VDI
 AES
 - Check if all strings in desk_rsc.c and gem_rsc.c are fully ROM save (the
   TEDINFO strings etc).
+- Add proper support for screen resolution switching.
 
 DESK
 - Add a dialog for resolution switching
+- Add a dialog for configuring the NVRAM (keyboard, languages, ...)
 - Support for loading DESKTOP.INF (needs remapping of the icon indices)
 
 CLI
