@@ -457,6 +457,7 @@ po/messages.pot: bug$(EXE) po/POTFILES.in
 allbin: 
 	@echo building etos512k.img; \
 	make etos512k.img; \
+	$(RM) obj/*.o; \
 	for i in $(COUNTRIES); \
 	do \
 	  j=etos256$${i}.img; \
