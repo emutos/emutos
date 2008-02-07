@@ -52,17 +52,6 @@ NAMES
 /* the address of the vector in TOS vars */
 extern void (*etv_timer)(int);
 
-#if 0
-#define Settime()  trap14(16)
-#define Gettime()  trap14(17)
-#endif
-
-#define GET_TIME        0
-#define SET_TIME        1
-#define GET_DATE        2
-#define SET_DATE        3
-
-
 /*
  * private declarations
  */
@@ -82,8 +71,6 @@ static int msec;
  */
 long    xgetdate(void)
 {
-    UWORD date;
-
     /* call XBIOS and mask out*/
     date = (Gettime() >> 16) & 0xffff;
     return date;
@@ -98,8 +85,6 @@ long    xgetdate(void)
 #define YRS_BM          0xFE00
 long    xsetdate(int d)
 {
-    UWORD date;
-
     int     curmo, day;
 
     curmo = ((d >> 5) & 0x0F);
@@ -122,8 +107,7 @@ long    xsetdate(int d)
 
     date = d;                           /* ok, assign that value to date */
 
-    // FIXME: Use XBIOS instead
-    //date_time(SET_DATE, &date);         /* tell bios about new time */
+    Settime((((ULONG)date)<<16)|((ULONG)time)); /* tell bios about new date */
 
     return E_OK;
 }
@@ -135,8 +119,6 @@ long    xsetdate(int d)
  */
 long    xgettime(void)
 {
-    UWORD time;
-
     /* call XBIOS and mask out*/
     time = Gettime() & 0xffff;
     return time;
@@ -153,8 +135,6 @@ long    xgettime(void)
 #define HRS_BM          0xF800
 long    xsettime(int t)
 {
-    UWORD time;
-
     if ((t & SEC_BM) >= 30)
         return ERR;
 
@@ -165,8 +145,8 @@ long    xsettime(int t)
         return ERR;
 
     time = t;
-    // FIXME: Use XBIOS instead
-    //date_time(SET_TIME, &time);         /* tell bios about new time */
+
+    Settime((((ULONG)date)<<16)|((ULONG)time)); /* tell bios about new time */
 
     return E_OK;
 }
@@ -174,17 +154,12 @@ long    xsettime(int t)
 
 /*
  *  time_init
- *
- * No need for emulators to set a time initially - hopefully
  */
 
 void time_init(void)
 {
-    //FIXME: possibly need to implement something here later
-#if 0
-    date_time(GET_DATE, &date);
-    date_time(GET_TIME, &time);
-#endif
+    date = xgetdate();
+    time = xgettime();
     
     etv_timer = tikfrk;
 }
@@ -260,5 +235,3 @@ static void tikfrk(int n)
         date += 0x0221;
     }
 }
-
-

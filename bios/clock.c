@@ -36,7 +36,7 @@
 #define NO_MEGARTC 0
 
 /* set this to 1 to not use IKBD clock */
-#define NO_IKBD_CLOCK 1
+#define NO_IKBD_CLOCK 0
 
 
 /*==== External declarations ==============================================*/
@@ -102,8 +102,11 @@ void detect_megartc(void)
   /* first check if the address is valid */
   has_megartc = 0;
 #if !NO_MEGARTC
-  if (check_read_byte(CLK_BASE+1))
-    has_megartc = 1;
+  if (check_read_byte(CLK_BASE+1)) {
+    if ((UBYTE)clk.sec_l < 10 && (UBYTE)clk.sec_h < 10) {
+      has_megartc = 1;
+    }
+  }
 #endif /* NO_MEGARTC */
   
 #if NEEDED
@@ -460,7 +463,7 @@ static UWORD idogetdate(void)
   UWORD date;
 
 #if !NO_IKBD_CLOCK
-  date = ( bcd2int(iclkbuf.year) << 9) 
+  date = ( (bcd2int(iclkbuf.year)-80) << 9) 
     | ( bcd2int(iclkbuf.month) << 5 ) | bcd2int(iclkbuf.day);
 #else
   date = os_dosdate; /* default date if no IKBD clock */
@@ -493,7 +496,7 @@ static void idosettime(UWORD time)
 static void idosetdate(UWORD date) 
 {
 #if !NO_IKBD_CLOCK
-  iclkbuf.year = int2bcd( (date >> 9) & 0x7f );
+  iclkbuf.year = int2bcd( ((date >> 9) & 0x7f) + 80 );
   iclkbuf.month = int2bcd( (date >> 5) & 0xf );
   iclkbuf.day = int2bcd( date & 0x1f );
 #endif /* !NO_IKBD_CLOCK */
@@ -542,65 +545,6 @@ static void isetdt(ULONG dt)
   idosettime(dt);
   isetregs();
 }
-
-
-/* internal BIOS function */
-#if 0
-void date_time(WORD flag, WORD *dt)
-{
-#if ! NO_NVRAM
-  if(has_nvram) {
-    switch(flag) {
-    case GET_DATE:
-      *dt = ngetdate();
-      break;
-    case SET_DATE:
-      nsetdate(*dt);
-      break;
-    case GET_TIME:
-      *dt = ngettime();
-      break;
-    case SET_TIME:
-      nsettime(*dt);
-      break;
-    }
-  }
-  else 
-#endif /* ! NO_NVRAM */
-  if(has_megartc) {
-    switch(flag) {
-    case GET_DATE:
-      *dt = mgetdate();
-      break;
-    case SET_DATE:
-      msetdate(*dt);
-      break;
-    case GET_TIME:
-      *dt = mgettime();
-      break;
-    case SET_TIME:
-      msettime(*dt);
-      break;
-    }
-  }
-  else {
-    switch(flag) {
-    case GET_DATE:
-      *dt = igetdate();
-      break;
-    case SET_DATE:
-      isetdate(*dt);
-      break;
-    case GET_TIME:
-      *dt = igettime();
-      break;
-    case SET_TIME:
-      isettime(*dt);
-      break;
-    }
-  }
-}
-#endif
 
 
 /* internal init */

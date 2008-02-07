@@ -20,7 +20,6 @@ BDOS (GEMDOS)
 - RECNO should be long, not int
 - should hitting control-c terminate the current process? if so, how?
 - move mem-only routines out of proc.c into umem.c or iumem.c
-- bdos/time.c: Use XBIOS time functions instead of date_time().
 
 Internationalisation
 - bugs in tools/bug.c; more things should be configurable on the command line

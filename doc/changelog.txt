@@ -2057,3 +2057,7 @@ Start... early ages
 2008-01-21
 - include/biosbind.h bdos/fs.h: Added support for the extended Rwabs call,
   with lrecno parameter. (THH)
+
+2008-02-07
+- bdos/time.c bios/clock.c: Cleaned up and fixed BIOS and GEMDOS time and
+  date functions, IKBD clock basically works now, too. (THH)
