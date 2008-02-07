@@ -3,7 +3,7 @@ Dear Atari Community!
 
 We are happy to announce a new public release of EmuTOS:
 
-EmuTOS 0.8.2 -- April 5th, 2007
+EmuTOS 0.8.3 -- February 7th, 2008
 
 
 INTRODUCTION
@@ -18,16 +18,15 @@ free, licensed under the GNU General Public License (GPL).
 
 CHANGES SINCE LAST RELEASE
 
-- Mouse wheel direction is now Milan compatible.
-- Updated Finnish translation.
-- GEMDOS Pexec mode 50 PE_RELOCATE defined- it gets raw TOS executable data
-  and relocates it as if it was loaded normally.
-- Fixed possible system crash in HBL handler.
-- Cleaned up & fixed memory initialization code
-- New XBIOS functions for TT shifter: EsetShift, EgetShift
-- Fixed a bug in the ACSI driver (now works with Hatari!).
-- NVRAM checksum calculation was wrong - it's fixed now.
-- New XBIOS functions for Falcon Videl: Vsetmode (VGA only) and Vmontype.
+- Support for the PUN_INFO structure for block devices
+- Bugfixes in the i18n functions
+- The VDI function v_clrwk() has been fixed
+- Improved VDI color palette functions
+- The standard etos512k.img can now also be used on Aranym
+  (no more special build required)
+- EmuTOS can now be compiled with GCC 4.2, too (not very well tested though)
+- Fixed off-by-one bug in VDI mouse driver
+- Improved XBIOS clock functions (IKBD clock is now working, too)
 
 Have a look at the changelog.txt for more detailed information.
 

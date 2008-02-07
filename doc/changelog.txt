@@ -2061,3 +2061,5 @@ Start... early ages
 2008-02-07
 - bdos/time.c bios/clock.c: Cleaned up and fixed BIOS and GEMDOS time and
   date functions, IKBD clock basically works now, too. (THH)
+
+* Release: 0.8.3
