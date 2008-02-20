@@ -14,6 +14,7 @@ BIOS/XBIOS
 - for some reasons, the initial stack size (SUPSIZ in bios/startup.S) must be
   bigger than 6000 words, or GFA Basic and MiNT will crash. This should be
   fixed (so much space is really not needed here!).
+- make EmuTOS MMU aware and let it set up correct MMU tree
 
 BDOS (GEMDOS)
 - fix the scary crashes for disk partitions > 255 MB
@@ -51,5 +52,5 @@ Bug report from Eero:
   EmuTOS says that my machine doesn't have enough memory
   to run the program... (should say that it's not executable)
 - If I copy a file twice from one dir to another, I don't get the name
-  conflict dialog.  If I do it within the same dialog, I get the error
+  conflict dialog.  If I do it within the same dir, I get the error
   dialog.
