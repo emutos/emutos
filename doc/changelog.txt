@@ -2063,3 +2063,7 @@ Start... early ages
   date functions, IKBD clock basically works now, too. (THH)
 
 * Release: 0.8.3
+
+2008-03-26
+- bios/clock.c: EmuTOS did not work on STonX anymore due to a bug in the RTC
+  detection. (THH)

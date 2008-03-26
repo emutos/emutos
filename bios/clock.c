@@ -99,11 +99,11 @@ static struct myclkreg clkregs1, clkregs2;
 
 void detect_megartc(void)
 {
-  /* first check if the address is valid */
   has_megartc = 0;
 #if !NO_MEGARTC
+  /* first check if the address is valid */
   if (check_read_byte(CLK_BASE+1)) {
-    if ((UBYTE)clk.sec_l < 10 && (UBYTE)clk.sec_h < 10) {
+    if ((UBYTE)clk.sec_l != 0xff && (UBYTE)clk.sec_h != 0xff) {
       has_megartc = 1;
     }
   }
@@ -424,12 +424,16 @@ static inline UWORD bcd2int(UBYTE a)
 static void igetregs(void)
 {
 #if !NO_IKBD_CLOCK
+  long delay;
   iclk_ready = 0;
   iclkbuf.cmd = 0x1C;
   ikbdws(0, (PTR) &iclkbuf);
+
   /* wait until the interrupt receives the full packet */
-  while(! iclk_ready) 
-    ;
+  delay = 8000000;
+  while(!iclk_ready && delay > 0) {
+    --delay;
+  }
 
   kprintf("iclkbuf: year = %x, month = %x\n", iclkbuf.year, iclkbuf.month);
 #endif /* !NO_IKBD_CLOCK */
