@@ -2072,3 +2072,5 @@ Start... early ages
 - bdos/fsmain.c: Dsetdrv returned an error code in case the specified drive
   number was invalid. However, it must return the drive mask of the available
   drives instead. (THH)
+- bdos/floppy.c bdos/acsi.c: According to the Profibuch and Scheibenkleister,
+  the DMA address registers must be written in a certain order. (THH)

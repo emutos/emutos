@@ -868,9 +868,9 @@ static void set_fdc_reg(WORD reg, WORD value)
 
 static void set_dma_addr(ULONG addr)
 {
-    DMA->addr_high = addr>>16;
-    DMA->addr_med = addr>>8;
     DMA->addr_low = addr;
+    DMA->addr_med = addr>>8;
+    DMA->addr_high = addr>>16;
 }
 
 /* the fdc_start_dma_*() functions toggle the dma write bit, to
@@ -902,8 +902,6 @@ static void fdc_start_dma_write(WORD count)
 static void delay(void)
 {
     WORD delay = 30;
-    while(--delay);
+    while (--delay)
+	    asm volatile (" nop ");
 }
-
-
-

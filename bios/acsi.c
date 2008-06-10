@@ -139,9 +139,9 @@ static int do_acsi_rw(WORD rw, LONG sector, WORD cnt, LONG buf, WORD dev)
     flock = -1;
     
     /* load DMA base address */
-    DMA->addr_high = buf>>16;
-    DMA->addr_med = buf>>8;
     DMA->addr_low = buf;
+    DMA->addr_med = buf>>8;
+    DMA->addr_high = buf>>16;
     
     if(rw) {
         hdc_start_dma_write(cnt);
