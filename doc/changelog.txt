@@ -2067,3 +2067,8 @@ Start... early ages
 2008-03-26
 - bios/clock.c: EmuTOS did not work on STonX anymore due to a bug in the RTC
   detection. (THH)
+
+2008-06-11
+- bdos/fsmain.c: Dsetdrv returned an error code in case the specified drive
+  number was invalid. However, it must return the drive mask of the available
+  drives instead. (THH)

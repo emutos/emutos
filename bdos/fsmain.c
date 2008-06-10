@@ -2,9 +2,7 @@
  * fsmain.c - GEMDOS file system notes and misc routines          
  *
  * Copyright (c) 2001 Lineo, Inc.
- *
- * Authors:
- *  xxx <xxx@xxx>
+ *               2002-2008 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -436,13 +434,15 @@ long    xsetdrv(int drv)
 
     drvmap = Drvmap();
 
-    if( drvmap & (1<<drv)  )
+    if( drvmap & (1<<drv) )
     {
         run->p_curdrv = drv ;
         return( drvmap ) ;
     }
 
-    return( EDRIVE );
+    /*return( EDRIVE );*/
+    /* Real TOS always returns the drive map, so do we now: */
+    return( drvmap ) ;
 }
 
 
