@@ -1,7 +1,7 @@
 /*
  *  chardev.c - BIOS character device funtions
  *
- * Copyright (c) 2001 by
+ * Copyright (c) 2001-2008 by the EmuTOS Development Team
  *
  * Authors:
  *  THO     Thomas Huth
@@ -20,6 +20,7 @@
 #include "chardev.h"
 #include "conout.h"
 #include "vt52.h"
+#include "mfp.h"
 
 
 /*==== Defines ============================================================*/
@@ -89,7 +90,12 @@ void chardev_init(void)
 
 LONG bconstat1(void)
 {
-  return 0;
+    /* Character available in the serial input buffer? */
+    /* FIXME: We should rather use Iorec() for this... */
+    if (MFP_BASE->rsr & 0x80)
+        return -1;
+    else
+        return 0;
 }
 
 LONG bconstat4(void)
@@ -118,8 +124,14 @@ LONG bconstat7(void)
 
 LONG bconin1(void)
 {
-  return 0;
+    /* Wait for character at the serial line */
+    while(!bconstat1()) ;
+
+    /* Return character...
+     * FIXME: We should rather use Iorec() for this... */
+    return MFP_BASE->udr;
 }
+
 LONG bconin4(void)
 {
   return 0;
@@ -143,6 +155,11 @@ LONG bconin7(void)
 
 void bconout1(WORD dev, WORD b)
 {
+    /* Wait transmit buffer to become empty */
+    while(!bcostat1()) ;
+
+	/* Output to RS232 interface */
+	MFP_BASE->udr = (char)b;
 }
 
 void bconout2(WORD dev, WORD b)
@@ -170,7 +187,10 @@ void bconout7(WORD dev, WORD b)
 
 LONG bcostat1(void)
 {
-  return -1;
+    if (MFP_BASE->tsr & 0x80)
+        return -1;
+    else
+        return 0;
 }
 
 LONG bcostat2(void)

@@ -2074,3 +2074,7 @@ Start... early ages
   drives instead. (THH)
 - bdos/floppy.c bdos/acsi.c: According to the Profibuch and Scheibenkleister,
   the DMA address registers must be written in a certain order. (THH)
+
+2008-06-13
+- bios/chardev.c bios/kprint.c bios/mfp.c: Added experimental support for the
+  MFP UART input and output. (THH)

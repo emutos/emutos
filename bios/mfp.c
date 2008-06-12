@@ -68,12 +68,8 @@ void    mfp_init (void)
     mfp->tcdr = 0x00;
     mfp->tddr = 0x00;
 
-    mfp->scr = 0x00;
-
-    mfp->ucr = 0x00;
     mfp->rsr = 0x00;
     mfp->tsr = 0x00;
-    mfp->udr = 0x00;
 
     /* initialize the MFP */
     mfp->vr = 0x48;      /* vectors 0x40 to 0x4F, software end of interrupt */
@@ -85,9 +81,7 @@ void    mfp_init (void)
     xbtimer(2, 0x50, 192, (LONG)int_timerc); 
     
     /* timer D */
-#if INIT_TIMER_D
-    rsconf(B9600, 0, 0x98, 1, 1, 0);
-#endif
+    rsconf(B9600, 0, 0x88, 1, 1, 0);
 
     /* TODO, flow control */
 }
@@ -132,15 +126,15 @@ void rsconf(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
 {
     MFP *mfp=MFP_BASE;   /* set base address of MFP */
 
+    if(baud >= 0 && baud < 16) {
+        setup_timer(3, rsconf_data[baud].control, rsconf_data[baud].data);
+    }
+
     if(ctrl >= 0) mfp_ctrl = ctrl;
     if(ucr >= 0) mfp->ucr = ucr;
     if(rsr >= 0) mfp->rsr = rsr;
     if(tsr >= 0) mfp->tsr = tsr;
     if(scr >= 0) mfp->scr = scr;
-    
-    if(baud >= 0 && baud < 16) {
-        setup_timer(3, rsconf_data[baud].control, rsconf_data[baud].data);
-    }
 }
 
 void jdisint(WORD num)

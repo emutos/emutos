@@ -53,9 +53,16 @@
 #define DETECT_NATIVE_FEATURES 1
 #endif
 
+/* set this to 1 to redirect debug prints on RS232 out, for emulator
+ * without any native debug print capabilities or real hardware.
+ */
+#ifndef RS232_DEBUG_PRINT
+#define RS232_DEBUG_PRINT 0
+#endif
+
 /* set this to 1 to redirect debug prints on MIDI out, for emulator
  * without ANY native debug print capabilities.
- * This overrides ..._NATIVE_PRINT and DETECT_NATIVE_FEATURES flags.
+ * This overrides previous debug print settings.
  */
 #ifndef MIDI_DEBUG_PRINT
 #define MIDI_DEBUG_PRINT 0
@@ -71,15 +78,6 @@
 # else
 #  define USE_STOP_INSN_TO_FREE_HOST_CPU 1
 # endif
-#endif
-
-/* Set this to 1 if you want  Timer-D to be initialized.
- * We don't need Timer-D yet, but some software might depend on an
- * initialized Timer-D. On the other side, a running timer D is yet
- * another task for an emulator, e.g. Hatari slows down with it :-(
- */
-#ifndef INIT_TIMER_D
-#define INIT_TIMER_D 1
 #endif
 
 /* The two parameters below are commented out, since the same result

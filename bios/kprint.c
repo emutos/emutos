@@ -1,7 +1,7 @@
 /*
  * kprint.c - our own printf variants (mostly for debug purposes)
  *
- * Copyright (c) 2001-2003 The EmuTOS Development Team
+ * Copyright (c) 2001-2008 The EmuTOS Development Team
  *
  * Authors:
  *  MAD     Martin Doering
@@ -22,15 +22,13 @@
 #include "natfeat.h"
 #include "config.h"
 #include "processor.h"
+#include "chardev.h"
 
 /* extern declarations */
 
 extern void printout_stonx(char *);    /* in kprintasm.S */
 
-extern void bconout2(WORD, UBYTE);
-extern void bconout3(WORD, UBYTE);
 
-  
 /* doprintf implemented in doprintf.c. 
  * This is an OLD one, and does not support floating point 
  */
@@ -45,7 +43,6 @@ extern int doprintf(void (*outc)(int), const char *fmt, va_list ap);
 /* this variable is filled by function kprint_init(), in kprintasm.S, 
  * called very early just after clearing the BSS.
  */
-#define NATIVE_PRINT_STONX 1
  
 int native_print_kind;
 
@@ -79,14 +76,6 @@ int cprintf(const char *fmt, ...)
 
 /*==== kprintf - do formatted ouput natively to the emulator ======*/
 
-static void kprintf_outc_stonx(int c)
-{
-    char buf[2];
-    buf[0] = c;
-    buf[1] = 0;
-    printout_stonx(buf);
-}
-
 #if MIDI_DEBUG_PRINT
 static void kprintf_outc_midi(int c)
 {
@@ -94,6 +83,14 @@ static void kprintf_outc_midi(int c)
 }
 #endif
 
+#if RS232_DEBUG_PRINT
+static void kprintf_outc_rs232(int c)
+{
+    bconout1(1, c);
+}
+#endif
+
+#if DETECT_NATIVE_FEATURES
 static void kprintf_outc_natfeat(int c)
 {
     char buf[2];
@@ -101,25 +98,45 @@ static void kprintf_outc_natfeat(int c)
     buf[1] = 0;
     nfStdErr(buf);
 }
+#endif
+
+#if STONX_NATIVE_PRINT || DETECT_NATIVE_PRINT
+static void kprintf_outc_stonx(int c)
+{
+    char buf[2];
+    buf[0] = c;
+    buf[1] = 0;
+    printout_stonx(buf);
+}
+#endif
+
 
 static int vkprintf(const char *fmt, va_list ap)
 {
+#if DETECT_NATIVE_FEATURES
+    if (is_nfStdErr()) {
+        return doprintf(kprintf_outc_natfeat, fmt, ap);
+    }
+#endif
+
+#if STONX_NATIVE_PRINT || DETECT_NATIVE_PRINT
+    if (native_print_kind) {
+        ret = doprintf(kprintf_outc_stonx, fmt, ap);
+    } 
+#endif
+
 #if MIDI_DEBUG_PRINT
     /* use midi port instead of other native debug capabilities */
     return doprintf(kprintf_outc_midi, fmt, ap);
 #endif
 
-    if (is_nfStdErr()) {
-        return doprintf(kprintf_outc_natfeat, fmt, ap);
-    }
+#if RS232_DEBUG_PRINT
+    return doprintf(kprintf_outc_rs232, fmt, ap);
+#endif
 
-    else if (native_print_kind) {
-        return doprintf(kprintf_outc_stonx, fmt, ap);
-    } 
-    
     /* let us hope nobody is doing 'pretty-print' with kprintf by
      * printing stuff till the amount of characters equals something,
-     * for it will generate an endless loop!
+     * for it will generate an endless loop if return value is zero!
      */
     return 0;
 }
