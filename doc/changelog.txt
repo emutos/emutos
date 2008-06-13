@@ -2078,3 +2078,6 @@ Start... early ages
 2008-06-13
 - bios/chardev.c bios/kprint.c bios/mfp.c: Added experimental support for the
   MFP UART input and output. (THH)
+- bios/floppy.c bios/acsi.c: The timeout_gpip() function was declared twice,
+  in acsi.c and floppy.c. Merged them now into one function only. Thanks to
+  Jens Caroll for the hint! (THH)
