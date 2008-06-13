@@ -49,5 +49,9 @@ struct dma {
 #define DMA_SCNOT0  0x0002          /* sector count not 0 */
 #define DMA_DATREQ  0x0004          /* FDC data request signal */
 
+
+/* function which returns 1 if the timeout elapsed before the gpip changed */
+extern int timeout_gpip(LONG delay);  /* delay in milliseconds */
+
 #endif /* DMA_H */
 

@@ -35,7 +35,6 @@ LONG acsi_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev)
 
 static void hdc_start_dma_read(int count);
 static void hdc_start_dma_write(int count);
-static int timeout_gpip(LONG delay);
 static void dma_send_byte(UBYTE data, UBYTE control);
 static int do_acsi_rw(WORD rw, LONG sect, WORD cnt, LONG buf, WORD dev);
 
@@ -184,21 +183,6 @@ static void dma_send_byte(UBYTE data, UBYTE control)
     DMA->control = control;
     DMA->data = data;
 }
-
-/* returns 1 if the timeout (milliseconds) elapsed before gpip went low */
-static int timeout_gpip(LONG delay)
-{
-    MFP *mfp = MFP_BASE;
-    LONG next = hz_200 + delay/5;
-
-    while(hz_200 < next) {
-        if((mfp->gpip & 0x20) == 0) {
-            return 0;
-        }
-    }
-    return 1;
-}
-
 
 
 /* the hdc_start_dma_*() functions toggle the DMA write bit, to

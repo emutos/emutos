@@ -99,8 +99,7 @@ static void select(WORD dev, WORD side);
 /* sets the track, returns 0 or error. rate is the step rate */
 static WORD set_track(WORD track, WORD rate);
 
-/* returns 1 if the timeout elapsed before the gpip changed */
-static WORD timeout_gpip(LONG delay);  /* delay in milliseconds */
+/* the timeout we wait for the gpip bit to change */
 #define TIMEOUT 1500L   /* default one second and a half */
 
 /* access to dma and fdc registers */
@@ -828,10 +827,11 @@ static WORD set_track(WORD track, WORD rate)
 }
 
 /* returns 1 if the timeout (milliseconds) elapsed before gpip went low */
-static WORD timeout_gpip(LONG delay)
+int timeout_gpip(LONG delay)
 {
     MFP *mfp = MFP_BASE;
     LONG next = hz_200 + delay/5;
+
     while(hz_200 < next) {
         if((mfp->gpip & 0x20) == 0) {
             return 0;
