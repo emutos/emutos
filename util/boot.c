@@ -11,6 +11,7 @@
  */
 
 #include <osbind.h>
+#include <stdlib.h>
 
 extern void bootasm(long dest, char *src, long count);
 extern long getbootsize(void);
