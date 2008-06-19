@@ -777,15 +777,15 @@ tgz:	distclean
 
 TOCLEAN += makefile.dep
 
-depend: util/langs.c bios/header.h
+makefile.dep: util/langs.c bios/header.h
 	( \
 	  $(CC) -MM $(INC) -Ibios -Iaes -Idesk/icons $(DEF) $(CSRC); \
 	  $(CC) -MM $(INC) $(DEF) $(SSRC) \
 	) | sed -e '/:/s,^,obj/,' >makefile.dep
 
-ifneq (,$(wildcard makefile.dep))
-include makefile.dep
-endif
+depend: makefile.dep
+
+-include makefile.dep
 
 #
 # local Makefile
