@@ -121,7 +121,7 @@ static int vkprintf(const char *fmt, va_list ap)
 
 #if STONX_NATIVE_PRINT || DETECT_NATIVE_PRINT
     if (native_print_kind) {
-        ret = doprintf(kprintf_outc_stonx, fmt, ap);
+        return doprintf(kprintf_outc_stonx, fmt, ap);
     } 
 #endif
 
