@@ -97,13 +97,9 @@ static void detect_vme(void)
 
 static void setvalue_swi(void)
 {
-  if(has_ste_shifter) {
-    /* this generates bus errors on some machines/emulators
-     * TODO: investigate.
-     * cookie_swi = (*(WORD *)0xffff9200)>>8;
-     */
-  } else {
-    cookie_swi = 0x7F;
+  cookie_swi = 0x7F;
+  if (check_read_byte(0xffff9201)) {
+    cookie_swi = (*(volatile WORD *)0xffff9200)>>8;
   }
 }
 
@@ -164,8 +160,9 @@ static void setvalue_snd(void)
 {
   /* always at least a PSG */
   cookie_snd = 1;
-  if(cookie_swi & 0x80) {
-    /* if not disabled in DIP switches, also DMA sound */
+
+  /* Check for DMA sound */
+  if (check_read_byte(0xFFFF8903)) {
     cookie_snd |= 2;
   }
 }
@@ -215,14 +212,20 @@ void machine_init(void)
   /* this is detected by detect_fpu(), called from processor_init() */
   cookie_add(COOKIE_FPU, fputype);
 
+  /* _MCH */
+  setvalue_mch();
+  cookie_add(COOKIE_MCH, cookie_mch);
+
   /* _SWI  On machines that contain internal configuration dip switches, 
    * this value specifies their positions as a bitmap. Dip switches are 
    * generally used to indicate the presence of additional hardware which 
    * will be represented by other cookies.  
    */
-
-  setvalue_swi();
-  cookie_add(COOKIE_SWI, cookie_swi);
+  if (cookie_mch == MCH_MSTE || cookie_mch == MCH_TT
+      || cookie_mch == MCH_FALCON) {
+    setvalue_swi();
+    cookie_add(COOKIE_SWI, cookie_swi);
+  }
 
   /* _SND
    * This cookie contains a bitmap of sound features available to the 
@@ -236,11 +239,6 @@ void machine_init(void)
   
   setvalue_snd();
   cookie_add(COOKIE_SND, cookie_snd);
-
-  /* _MCH */
-  setvalue_mch();
-  cookie_add(COOKIE_MCH, cookie_mch);
-
 
   /* _FRB  This cookie is present when alternative RAM is present. It 
    * points to a 64k buffer that may be used by DMA device drivers to 

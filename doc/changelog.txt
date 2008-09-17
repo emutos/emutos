@@ -2081,3 +2081,7 @@ Start... early ages
 - bios/floppy.c bios/acsi.c: The timeout_gpip() function was declared twice,
   in acsi.c and floppy.c. Merged them now into one function only. Thanks to
   Jens Caroll for the hint! (THH)
+
+2008-09-17
+- bios/machine.c: Fixed cookies setup: _SWI cookie was never initilized, and
+  in the _SND cookie the DMA sound bit was never set. (THH)
