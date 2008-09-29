@@ -2085,3 +2085,6 @@ Start... early ages
 2008-09-17
 - bios/machine.c: Fixed cookies setup: _SWI cookie was never initilized, and
   in the _SND cookie the DMA sound bit was never set. (THH)
+
+2008-09-29
+- cli/command.c: Check for valid drive when running the SHOW command. (THH)
