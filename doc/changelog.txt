@@ -2088,3 +2088,9 @@ Start... early ages
 
 2008-09-29
 - cli/command.c: Check for valid drive when running the SHOW command. (THH)
+
+2008-10-03
+- cli/command.c:
+   -> Declared local functions and variables as static. (patch by E. Tamminen)
+   -> Reworked the help texts. (patch by E. Tamminen)
+   -> Removed command aliases ERA and INIT. (THH)

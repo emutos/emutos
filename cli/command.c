@@ -832,9 +832,8 @@ DIR or LS [path] [-f] [-d] [-t] [-w]\r\n\
         wrtln(_("\tExit the CLI."));
 
         wrtln(_("\
-INIT [drive:]\r\n\
-\tQuick format the given drive by reinitializing its FAT entries.\r\n\
-\tIf no drive given, format the current drive."));
+FORMAT drive:\r\n\
+\tQuick format the given drive by reinitializing its FAT entries."));
         wrtln(_("\
 MD [subdirectory name]\r\n\
 \tCreate a new subdirectory to the current directory."));
@@ -871,7 +870,7 @@ REN source_file [destination_file]\r\n\
 RD [path]\r\n\
 \tRemove named directory."));
         wrtln(_("\
-RM or DEL or ERA filename [[filename]...] [-q]\r\n\
+RM or DEL filename [[filename]...] [-q]\r\n\
 \tRemove named file from directory.\r\n\
 \tIf the -q option is used, show the question\r\n\
 \tY/CR... and wait for a response."));
@@ -2128,8 +2127,7 @@ xCmdLn(char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl)
                 if ((compl_code = xrmdir(p)) != 0)
                     wrt(_("Unable to remove directory"));
             }
-                else if (xncmps(3, s, "RM") || xncmps(4, s, "DEL") ||
-                         xncmps(4, s, "ERA")) {
+                else if (xncmps(3, s, "RM") || xncmps(4, s, "DEL")) {
                 if (*nonStdIn)
                     dspCL(&argv[0]);
                 compl_code = delCmd(&argv[0]);
@@ -2171,7 +2169,7 @@ xCmdLn(char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl)
                 }
             }
 
-            else if (xncmps(5, s, "INIT") || xncmps(7, s, "FORMAT")) {
+            else if (xncmps(7, s, "FORMAT")) {
                 if (*nonStdIn)
                     dspCL(&argv[0]);
                 for (i = 0; i < BUFSIZ; i++)
