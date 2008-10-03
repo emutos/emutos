@@ -108,52 +108,50 @@ struct rdb {                    /*IO redirection info block     */
     int oldsi;
 };
 
-struct rdb *rd_ptr;
+static struct rdb *rd_ptr;
 
-char zero = { '0' };
-char hexch[] = {
+static const char hexch[] = {
     '0', '1', '2', '3', '4', '5', '6', '7',
     '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
 };
 
 int drv;
 int exeflg;
-int rtrnFrmBat;
-int prgerr;
-int cmderr;
+static int prgerr;
+static int cmderr;
 
-int bExitFlag;      /* TRUE when the user wants to leave the CLI */
+static int bExitFlag;      /* TRUE when the user wants to leave the CLI */
 
 jmp_buf jb;
-long compl_code;
+static long compl_code;
 
 #define BUFSIZ 10000
 char buf[BUFSIZ];
 
 char lin[130];
-char srchb[44];
-char prgTail[5] = { ".PRG" };
-char batTail[5] = { ".BAT" };
-char autoBat[13] = { "AUTOEXEC.BAT" };
-char pthSymb[6] = { "PATH=" };
-char drvch;
-char *basePage;
-char *prntEnvPtr;
+static char srchb[44];
+static const char prgTail[5] = { ".PRG" };
+static const char batTail[5] = { ".BAT" };
+static const char pthSymb[6] = { "PATH=" };
+static char autoBat[13] = { "AUTOEXEC.BAT" };
+static char drvch;
+static char *basePage;
+static char *prntEnvPtr;
 
 /* Declarations for Wild Card processing: */
-char *WSrcReq;
-int WAttCode;
-char wildExp[4] = { "*.*" };
-char srcFlNm[67];               /* src file name */
-char dstFlNm[67];               /* destination file name */
-char srcDir[67];                /* src dir path */
-char dstDir[67];                /* dst dir path */
-char srcNmPat[13];              /* src file name specified in path */
-char dstNmPat[13];              /* dst file name specified in path */
+static char *WSrcReq;
+static int WAttCode;
+static const char wildExp[4] = { "*.*" };
+static char srcFlNm[67];               /* src file name */
+static char dstFlNm[67];               /* destination file name */
+static char srcDir[67];                /* src dir path */
+static char dstDir[67];                /* dst dir path */
+static char srcNmPat[13];              /* src file name specified in path */
+static char dstNmPat[13];              /* dst file name specified in path */
 char path[67];                  /* lst of default path names */
 
 /* Forward declarations */
-void
+static void
 xCmdLn(char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl);
 
 
@@ -163,7 +161,7 @@ xCmdLn(char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl);
  * if so restoring it to previous value.
  */
 
-void
+static void
 chk_redirect(struct rdb *r)
 {
     /* if a new standard in specified ... */
@@ -180,7 +178,7 @@ chk_redirect(struct rdb *r)
 
 
 
-void
+static void
 errout(void)
 {
     chk_redirect(rd_ptr);
@@ -191,7 +189,7 @@ errout(void)
 /*
  * xncpmps - compare strings with n length
  */
-int
+static int
 xncmps(int n, char *s, char *d)
 {
     while (n--)
@@ -202,7 +200,7 @@ xncmps(int n, char *s, char *d)
 
 
 
-void
+static void
 prthex(unsigned h)
 {
     unsigned h2;
@@ -234,7 +232,7 @@ strlen(const char *s)
  * pdl - print a decimal long value
  */
 
-void
+static void
 pdl(long d)
 {
     long d2;
@@ -249,7 +247,7 @@ pdl(long d)
  * prtdecl - print a decimal long value, if it exists
  */
 
-void
+static void
 prtdecl(long d)
 {
     if (d)
@@ -260,7 +258,7 @@ prtdecl(long d)
 
 
 
-void
+static void
 prtDclFmt(long d, int cnt, char *ch)
 {
     int i;
@@ -279,7 +277,7 @@ prtDclFmt(long d, int cnt, char *ch)
 
 
 
-void
+static void
 ucase(char *s)
 {
     for (; *s; s++) {
@@ -304,7 +302,7 @@ ucase(char *s)
  *
  */
 
-int
+static int
 gtFlNm(void)
 {
     /* First file request?      */
@@ -347,7 +345,7 @@ gtFlNm(void)
  * filExp  - ptr to file.ext part of pathExp
  */
 
-int
+static int
 chkDir(char *pathExp, char *dirExp, char *filExp)
 {
     int dirLen;
@@ -436,7 +434,7 @@ chkDir(char *pathExp, char *dirExp, char *filExp)
  *
  */
 
-int
+static int
 chkDst(void)
 {
     int i = 0;
@@ -492,7 +490,7 @@ doDstChk:
  *
  */
 
-int
+static int
 mkDst(void)
 {
     int i, k, ndx;
@@ -560,7 +558,7 @@ mkDst(void)
  *  mkSrc - make source file name from directory path and file name.
  */
 
-void
+static void
 mkSrc(void)
 {
     int i, j = 0;
@@ -579,20 +577,20 @@ mkSrc(void)
  *  wrt - write to standard output
  */
 
-void
+static void
 wrt(const char *msg)
 {
     xwrite(1, (long) strlen(msg), (char *)msg);
 }
 
-void
+static void
 wrtln(const char *msg)
 {
     wrt("\r\n");
     wrt(msg);
 }
 
-void
+static void
 wrtch(char ch)
 {
     char str[2];
@@ -608,7 +606,7 @@ wrtch(char ch)
 extern long cookie_idt;         /* in bios/machine.c */
 #endif
 
-void
+static void
 wrtDate(int j)
 {
     int year = ((j >> 9) & 0x7F) + 80;
@@ -652,7 +650,7 @@ wrtDate(int j)
     prtDclFmt((long) c, 2, "0");
 }
 
-void
+static void
 wrtTime(int j)
 {
     int hour = (j >> 11) & 0x1F;
@@ -669,14 +667,14 @@ wrtTime(int j)
 
 #if NO_ROM
 /* BUILDDATE is needed only for non-ROM command.prg */
-void
+static void
 wrtbdate(void)
 {
     wrt(BUILDDATE);
 }
 #else
 extern int os_dosdate;          /* in bios/startup.S */
-void
+static void
 wrtbdate(void)
 {
     wrtDate(os_dosdate);
@@ -688,7 +686,7 @@ wrtbdate(void)
  *  dspDir - display directory
  */
 
-void
+static void
 dspDir(char *p, char *dir)
 {
     int i, j;
@@ -718,10 +716,10 @@ dspDir(char *p, char *dir)
 
 
 /*
- *  cr2cont - wait for cariage return before continuing.
+ *  cr2cont - wait for carriage return before continuing.
  */
 
-void
+static void
 cr2cont(void)
 {
     wrt(_("CR to continue..."));
@@ -735,7 +733,7 @@ cr2cont(void)
  *  dspMsg - display message
  */
 
-void
+static void
 dspMsg(int msg)
 {
     switch (msg) {
@@ -896,7 +894,7 @@ SHOW [drive_spec:]\r\n\
  * getYes
  */
 
-int
+static int
 getYes(void)
 {
     char inpStr[30];
@@ -914,10 +912,10 @@ getYes(void)
 /*
  *  copyCmd - copy file.
  *
- *  returns 0 if copyied ok
+ *  returns 0 if copied ok
  *     -1 if copy failed
  */
-int
+static int
 copyCmd(char *src, char *dst, int move)
 {
     int i, srcEqDst, fds, fdd;
@@ -1030,7 +1028,7 @@ copyCmd(char *src, char *dst, int move)
  *  renmCmd - rename command
  */
 
-long
+static long
 renmCmd(char *src, char *dst)
 {
     int i;
@@ -1109,7 +1107,7 @@ renmCmd(char *src, char *dst)
 
 
 
-long
+static long
 dirCmd(char *argv[])
 {
     char srcSpc[67];
@@ -1222,7 +1220,7 @@ dirCmd(char *argv[])
 
 
 
-long
+static long
 pwdCmd(char *argv[])
 {
     int i, j;
@@ -1248,7 +1246,7 @@ pwdCmd(char *argv[])
 
 
 
-int
+static int
 mknum(char *str)
 {
     int num, hex = 0;
@@ -1278,7 +1276,7 @@ mknum(char *str)
 
 
 
-long
+static long
 chmodCmd(char *argv[])
 {
     char srcSpc[67];
@@ -1325,7 +1323,7 @@ chmodCmd(char *argv[])
 
 
 
-long
+static long
 typeCmd(char *argv[])
 {
     char srcSpc[67];
@@ -1364,7 +1362,7 @@ typeCmd(char *argv[])
 
 
 
-long
+static long
 delCmd(char *argv[])
 {
     char srcSpc[67];
@@ -1447,7 +1445,7 @@ delCmd(char *argv[])
 /*
  *  dspCL - display command line
  */
-void
+static void
 dspCL(char *argv[])
 {
     int i;
@@ -1465,7 +1463,7 @@ dspCL(char *argv[])
 /*
  *  setPath - set execution path
  */
-void
+static void
 setPath(char *p)
 {
     int i = 0;
@@ -1482,7 +1480,7 @@ setPath(char *p)
 /*
  * execPrgm - execute program;
  */
-long
+static long
 execPrgm(char *s, char *cmdtl)
 {
     char cmd[100], ch, *cmdptr;
@@ -1601,7 +1599,7 @@ execPrgm(char *s, char *cmdtl)
 /*
  *  execBat - execute batch file
  */
-int
+static int
 execBat(char *s, char *parms[])
 {
     long flHnd;
@@ -1662,7 +1660,7 @@ execBat(char *s, char *parms[])
 
 
 
-void
+static void
 chk_sub(char *tl, char **parm)
 {
     char ch, tmptl[167], *tmptl_ptr, *tmp_front, *tl_front, *parm_ptr;
@@ -1704,7 +1702,7 @@ chk_sub(char *tl, char **parm)
 
 
 
-void
+static void
 chk_str(char *parm[])
 {
     int i = 0;
@@ -1759,7 +1757,7 @@ chk_str(char *parm[])
  *  readSi - read standard input
  */
 
-int
+static int
 readSi(char *lin)
 {
     int i, j;
@@ -1791,7 +1789,7 @@ readSi(char *lin)
  *  readDsk - read from disk file
  */
 
-int
+static int
 readDsk(char *lin, long *flHnd)
 {
     int i, j;
@@ -1824,7 +1822,7 @@ readDsk(char *lin, long *flHnd)
  *  xCmdLn - execute command line.
  */
 
-void
+static void
 xCmdLn(char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl)
 {
     int pipe, bdChrs;
