@@ -798,90 +798,90 @@ dspMsg(int msg)
         wrtln(_("\
 # in the first non blank column is a comment."));
         wrtln(_("\
-CAT or TYPE filenm.ext\r\n\
-\tWrites filenm.ext to standard output."));
+CAT or TYPE filename\r\n\
+\tOutput given file to standard output."));
         wrtln(_("\
-CD [pathnm]\r\n\
-\tWith pathnm it sets default for working directory.\r\n\
-\tWithout pathnm displays current working directory."));
+CD [path]\r\n\
+\tIf path given, set it as the default work directory.\r\n\
+\tOtherwise show the current work directory path."));
         wrtln(_("\
-CHMOD [pathnm/]filenm mode\r\n\
-\tChanges the mode of the file specified in filenm to the\r\n\
-\tvalue of mode.\tAcceptable values are < 7:\r\n\
-\t\t0 - Normal File Entry\r\n\
-\t\t1 - File is Read Only\r\n\
-\t\t2 - File is Hidden from directory Search\r\n\
-\t\t4 - File is System File"));
+CHMOD [path/]filename mode\r\n\
+\tSet the mode of the given file. Acceptable values are < 7:\r\n\
+\t\t0 - Normal file\r\n\
+\t\t1 - Read only\r\n\
+\t\t2 - Hidden from directory search\r\n\
+\t\t4 - System file"));
         wrtln("CLS");
-        wrtln(_("\tClears the screen."));
+        wrtln(_("\tClear the screen."));
         wrtln(_("\
 COPY source_file [destination_file]\r\n\
-\tCopies source to destination."));
+\tCopy source to destination."));
         wrtln(_("\
-DIR or LS [filenm.ext] [-f] [-d] [-t] [-w]\r\n\
-\t-f - anything but directories.\r\n\
-\t-d - directories only.\r\n\
-\t-t - terse: names only.\r\n\
-\t-w - wide: names only displayed horizontally."));
+DIR or LS [path] [-f] [-d] [-t] [-w]\r\n\
+\t-f - Anything but directories.\r\n\
+\t-d - Directories only.\r\n\
+\t-t - Terse: names only.\r\n\
+\t-w - Wide: names only, horizontal."));
         wrtln("");
         cr2cont();
         wrtln("ERR ");
         wrtln(_("\
-\tDisplays the value of the Completion Code for the last command."));
+\tShow the return value for the last command."));
 
         wrtln("EXIT");
-        wrtln(_("\tExits the CLI."));
+        wrtln(_("\tExit the CLI."));
 
         wrtln(_("\
-INIT [drive_spec:]\r\n\
-\tReinitializes FAT entries thus wiping the disk."));
+INIT [drive:]\r\n\
+\tQuick format the given drive by reinitializing its FAT entries.\r\n\
+\tIf no drive given, format the current drive."));
         wrtln(_("\
 MD [subdirectory name]\r\n\
-\tCreates a new subdirectory in current directory."));
+\tCreate a new subdirectory to the current directory."));
         wrtln(_("\
 MOVE source_file [destination_file]\r\n\
-\tCopies source to destination and deletes source."));
+\tCopy source to destination and delete source."));
         wrtln("PAUSE");
         wrtln(_("\
-\tWrites 'CR to continue...' to standard output\r\n\
-\tand waits for a carriage return from standard input."));
+\tWrite 'CR to continue...' to standard output\r\n\
+\tand wait for a Carriage Return from standard input."));
         wrtln("PRGERR [ON | OFF]");
         wrtln(_("\
-\tTurns command processing abort feature ON/OFF.\r\n\
-\tIf PRGERR is ON and a .PRG file returns a non zero completion\r\n\
-\tcode, all further processing will stop.  Usefull in .BAT files.\r\n\
+\tToggle command processing abort feature ON/OFF.\r\n\
+\tIf PRGERR is ON and command returns a non-zero value,\r\n\
+\tall further processing will stop.  Useful in .BAT files.\r\n\
 \tDefault is ON."));
         wrtln("NOWRAP");
-        wrtln(_("\tDisables line wrap."));
+        wrtln(_("\tDisable line wrap."));
         wrtln(_("\
-PATH [;[pathnm]...]\r\n\
-\tWith path name sets default path for batch and commands.\r\n\
-\tWithout path name displays current path"));
+PATH [;[path]...]\r\n\
+\tIf path given, set the default path for running .BAT files\r\n\
+\tand commands. Otherwise show the currently set path."));
         wrtln("");
         cr2cont();
         wrtln(_("\
 REM or ECHO [\"string\"]\r\n\
-\tStrips quotes and writes string to standard output.\r\n\
+\tStrip quotes and write string to standard output.\r\n\
 \t/r is replaced by 13, /n by 10, /0 by 0x0.\r\n\
 \t/c by 13 10, /anything is replaced by anything."));
         wrtln(_("\
-REN source_file_nm [destination_file_nm]\r\n\
-\tRenames source to destination."));
+REN source_file [destination_file]\r\n\
+\tRename source to destination."));
         wrtln(_("\
-RD [pathnm]\r\n\
-\tRemoves named directory."));
+RD [path]\r\n\
+\tRemove named directory."));
         wrtln(_("\
-RM or DEL or ERA filenm [[filemn]...] [-q]\r\n\
-\tRemoves named file from directory.\r\n\
-\tIf the -q option is used, the CLI will display the question\r\n\
+RM or DEL or ERA filename [[filename]...] [-q]\r\n\
+\tRemove named file from directory.\r\n\
+\tIf the -q option is used, show the question\r\n\
 \tY/CR... and wait for a response."));
         wrtln(_("\
-SHOW [drive_spec:]\r\n\
-\tDisplays disk status for default drive or drive specified."));
+SHOW [drive:]\r\n\
+\tShow disk status for the default or specified drive."));
         wrtln("VERSION");
-        wrtln(_("\tDisplays current version of OS."));
+        wrtln(_("\tShow GEMDOS version."));
         wrtln("WRAP");
-        wrtln(_("\tEnables line wrap."));
+        wrtln(_("\tEnable line wrap."));
         wrtln("");
         cr2cont();
         break;
