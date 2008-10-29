@@ -2094,3 +2094,7 @@ Start... early ages
    -> Declared local functions and variables as static. (patch by E. Tamminen)
    -> Reworked the help texts. (patch by E. Tamminen)
    -> Removed command aliases ERA and INIT. (THH)
+
+2008-10-29
+- bios/parport.c: Fixed return value of bcostat0 (thanks to David Savinkoff
+  for the hint) (THH)

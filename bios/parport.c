@@ -49,9 +49,9 @@ LONG bcostat0(void)
     MFP *mfp=MFP_BASE;
 
     if(mfp->gpip & 1) {
-        return -1;  /* busy high: printer not available */
+        return 0;   /* busy high: printer not available */
     } else {
-        return 0;
+        return -1;
     }
 }
 
