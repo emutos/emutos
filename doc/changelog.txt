@@ -2098,3 +2098,7 @@ Start... early ages
 2008-10-29
 - bios/parport.c: Fixed return value of bcostat0 (thanks to David Savinkoff
   for the hint) (THH)
+
+2008-11-03
+- bios/parport.c: Fixed bconout0 so that printing should be working now
+  (thanks to David Savinkoff for the patch) (THH)

@@ -64,13 +64,13 @@ void bconout0(WORD dev, WORD c)
         /* disable interrupts */
         old_sr = set_sr(0x2700);
         /* read PSG multi-function register */
-        a = giaccess(PSG_MULTI | GIACCESS_READ, 0);
+        a = giaccess(0, PSG_MULTI | GIACCESS_READ);
         /* set port B to output mode */
         a |= 0x80;
         /* write new value in register */
-        giaccess(PSG_MULTI | GIACCESS_WRITE, a);
+        giaccess(a, PSG_MULTI | GIACCESS_WRITE);
         /* write char in port B */
-        giaccess(PSG_PORT_B | GIACCESS_WRITE, c);
+        giaccess(c, PSG_PORT_B | GIACCESS_WRITE);
         /* set Strobe low */
         offgibit(~0x20);
         /* delay ? */
