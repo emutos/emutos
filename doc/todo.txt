@@ -1,8 +1,7 @@
 BIOS/XBIOS
 - implement missing XBIOS calls
-  (e.g. the Falcon Videl and TT shifter video functions)
+  (e.g. the Blitter, Falcon Videl and TT shifter video functions)
 - add support for Falcon RGB screen modes
-- implement Line-A functions (really necessary?? Line-A is obsolete!)
 - merge identical headers, and put them all in an include directory (?)
 - reduce the number of 'extern' in .c files
 - check that RAM disks work
@@ -39,6 +38,7 @@ DESK
 - Add a dialog for resolution switching
 - Add a dialog for configuring the NVRAM (keyboard, languages, ...)
 - Support for loading DESKTOP.INF (needs remapping of the icon indices)
+- Recognize/handle *.GTP
 
 CLI
 - Needs a lot of memory due to static buffers ("char buf[10000]" etc.)
