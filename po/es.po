@@ -851,8 +851,8 @@ msgid "Press 'C' to run an early console"
 msgstr "Pulse 'C' para correr en una cónsola primitiva"
 
 #: desk/desk_rsc.c:760
-msgid "Copyright (c) 2007 by"
-msgstr "Copyright (c) 2007,"
+msgid "Copyright (c) by"
+msgstr "Copyright (c)"
 
 #: desk/desk_rsc.c:395
 msgid "  New Folder..."
