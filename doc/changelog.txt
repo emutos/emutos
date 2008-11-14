@@ -2107,3 +2107,5 @@ Start... early ages
 - cli/command.c: Disabled the moldy commands FORMAT, GETBOOT and PUTBOOT (THH)
 - cli/command.c: Removed the global 10k big buffer. (THH)
 - cli/coma.S: Increased the stack size a little bit. (THH)
+
+* Release: 0.8.4

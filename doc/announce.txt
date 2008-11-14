@@ -3,7 +3,7 @@ Dear Atari Community!
 
 We are happy to announce a new public release of EmuTOS:
 
-EmuTOS 0.8.3 -- February 7th, 2008
+EmuTOS 0.8.4 -- November 14th, 2008
 
 
 INTRODUCTION
@@ -18,15 +18,12 @@ free, licensed under the GNU General Public License (GPL).
 
 CHANGES SINCE LAST RELEASE
 
-- Support for the PUN_INFO structure for block devices
-- Bugfixes in the i18n functions
-- The VDI function v_clrwk() has been fixed
-- Improved VDI color palette functions
-- The standard etos512k.img can now also be used on Aranym
-  (no more special build required)
-- EmuTOS can now be compiled with GCC 4.2, too (not very well tested though)
-- Fixed off-by-one bug in VDI mouse driver
-- Improved XBIOS clock functions (IKBD clock is now working, too)
+- RTC detection fixed
+- Return code problem of Dsetdrv fixed
+- Experimental UART functions
+- _SND cookie is now correctly initialized on STE
+- BIOS parallel port code fixed
+- EmuCON fixes and improvements
 
 Have a look at the changelog.txt for more detailed information.
 

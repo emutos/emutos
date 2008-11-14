@@ -91,3 +91,6 @@ Roger Crettol
 - Found and fixed a bug in GEMDOS Pterm() function.
 - Support for swiss german keyboard
 - Some EmuCON improvements
+
+David Savinkoff
+- Bug fixes for the BIOS parallel port code.
