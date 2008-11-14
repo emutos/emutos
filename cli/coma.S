@@ -259,7 +259,7 @@ bios_ret:       .ds.l   1
 xbios_ret:      .ds.l   1
 gemdos_ret:     .ds.l   1
 
-                .ds.l   800             // Stack space, growing backwards                         
+                .ds.l   1024            // Stack space, growing backwards                         
 mystak:         .ds.l   1               // Stack for command.prg
 
 
