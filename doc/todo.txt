@@ -41,7 +41,6 @@ DESK
 - Recognize/handle *.GTP
 
 CLI
-- Needs a lot of memory due to static buffers ("char buf[10000]" etc.)
 - use extended argv specification in EmuCON
 - EmuCON should allow 'exit' in .BAT scripts?
 - Input/Output redirection does not work well (problems with spaces after

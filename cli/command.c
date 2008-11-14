@@ -115,8 +115,8 @@ static const char hexch[] = {
     '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'
 };
 
-int drv;
 int exeflg;
+static int drv;
 static int prgerr;
 static int cmderr;
 
@@ -125,10 +125,7 @@ static int bExitFlag;      /* TRUE when the user wants to leave the CLI */
 jmp_buf jb;
 static long compl_code;
 
-#define BUFSIZ 10000
-char buf[BUFSIZ];
-
-char lin[130];
+static char lin[130];
 static char srchb[44];
 static const char prgTail[5] = { ".PRG" };
 static const char batTail[5] = { ".BAT" };
@@ -148,7 +145,7 @@ static char srcDir[67];                /* src dir path */
 static char dstDir[67];                /* dst dir path */
 static char srcNmPat[13];              /* src file name specified in path */
 static char dstNmPat[13];              /* dst file name specified in path */
-char path[67];                  /* lst of default path names */
+static char path[67];                  /* lst of default path names */
 
 /* Forward declarations */
 static void
@@ -830,10 +827,11 @@ DIR or LS [path] [-f] [-d] [-t] [-w]\r\n\
 
         wrtln("EXIT");
         wrtln(_("\tExit the CLI."));
-
+/*
         wrtln(_("\
 FORMAT drive:\r\n\
 \tQuick format the given drive by reinitializing its FAT entries."));
+*/
         wrtln(_("\
 MD [subdirectory name]\r\n\
 \tCreate a new subdirectory to the current directory."));
@@ -921,6 +919,7 @@ copyCmd(char *src, char *dst, int move)
     long nr, nw;
     char srcSpc[67];
     char dstSpc[67];
+    char buf[512];
 
     for (i = 0; (srcSpc[i] = src[i]); i++);
     for (i = 0; (dstSpc[i] = dst[i]); i++);
@@ -963,14 +962,11 @@ copyCmd(char *src, char *dst, int move)
                                 compl_code = 0;
                                 nr = nw = -1;
                                 while ((nr) && (nw)) {
-                                    if (
-                                        (nr =
-                                         xread(fds, (long) BUFSIZ,
-                                               buf)) > 0) {
-                                        if ((nw = xwrite(fdd, nr, buf)) <
-                                            nr) {
+                                    nr = xread(fds, (long) sizeof(buf), buf);
+                                    if (nr > 0) {
+                                        nw = xwrite(fdd, nr, buf);
+                                        if (nw < nr) {
                                             /* kprintf("nw = %ld\n", nw); */
-
                                             goto error4;
                                         }
                                     } else if (nr < 0) {
@@ -1326,8 +1322,10 @@ static long
 typeCmd(char *argv[])
 {
     char srcSpc[67];
-    int i, n, fd;
+    int i, fd;
+    long n;
     long compl_code;
+    char buf[128];
 
     compl_code = 0;
     if (!(*argv[1]))
@@ -1346,7 +1344,7 @@ typeCmd(char *argv[])
                 mkSrc();
                 fd = xopen(srcFlNm, 0);
                 do {
-                    n = xread(fd, 1000L, buf);
+                    n = xread(fd, (long)sizeof(buf), buf);
                     if (n > 0)
                         xwrite(1, (long) n, buf);
                 }
@@ -1482,7 +1480,8 @@ setPath(char *p)
 static long
 execPrgm(char *s, char *cmdtl)
 {
-    char cmd[100], ch, *cmdptr;
+    char cmd[100], buf[100];
+    char ch, *cmdptr;
     int k, i, j, gtpath, envLen;
     int tlNtFnd = -1;
     long err;
@@ -1604,7 +1603,8 @@ execBat(char *s, char *parms[])
     long flHnd;
     int i, j, k, gtpath;
     int tlNtFnd = -1;
-    char ch, cmd[100], *cmdptr;
+    char ch, *cmdptr;
+    char cmd[100], buf[100];
 
     for (i = 0; (cmd[i] = *s); s++, i++)
         if (*s == '.')
@@ -1825,18 +1825,14 @@ static void
 xCmdLn(char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl)
 {
     int pipe, bdChrs;
-    int fs, fd;
-    int i, j, k, argc, f1, f2, nd, rec;
+    int i, j, k, argc;
     int concat;
     long newso, newsi;
     long sbuf[4];
     long dskFlHnd;
     char ch, *cmdtl, *tl0, *tl1, *tl, *d, *s, *argv[MAXARGS];
     char *p, ltail[130];
-
     struct rdb rd;
-
-    BPB *b;
 
     rd.nso = 0;
     rd.nsi = 0;
@@ -2066,6 +2062,7 @@ xCmdLn(char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl)
                 if (*nonStdIn)
                     dspCL(&argv[0]);
                 if (argc == 0) {
+                    char buf[256];
                     xgetdir(buf, drv + 1);
                     if (!buf[0]) {
                         buf[0] = '\\';
@@ -2169,7 +2166,12 @@ xCmdLn(char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl)
                 }
             }
 
+#if 0
             else if (xncmps(7, s, "FORMAT")) {
+                static char buf[10000];
+                int f1, f2, nd, rec;
+                int fs, fd;
+                BPB *b;
                 if (*nonStdIn)
                     dspCL(&argv[0]);
                 for (i = 0; i < BUFSIZ; i++)
@@ -2199,7 +2201,8 @@ xCmdLn(char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl)
                     rwabs(1, buf, 1, rec, drv);
                 dspMsg(5);
             }
-
+#endif
+/*
             else if (xncmps(8, s, "GETBOOT")) {
                 if (*nonStdIn)
                     dspCL(&argv[0]);
@@ -2216,7 +2219,8 @@ xCmdLn(char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl)
 
                 dspMsg(5);
             }
-
+*/
+/*
             else if (xncmps(8, s, "PUTBOOT")) {
                 if (*nonStdIn)
                     dspCL(&argv[0]);
@@ -2233,7 +2237,7 @@ xCmdLn(char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl)
                 }
                 dspMsg(5);
             }
-
+*/
             else if (xncmps(5, s, "COPY") || xncmps(5, s, "MOVE") ||
                      xncmps(3, s, "CP") || xncmps(3, s, "MV")) {
                 if (*nonStdIn)
