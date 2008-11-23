@@ -151,15 +151,18 @@ static void cprint_asctime(void)
 
 void initinfo(void)
 {
-    long end = hz_200 + 2 * 200UL;	/* Pause for 2 seconds */
+    /* Clear screen - Esc E
+     * disable cursor blinking - Esc f
+     * foreground is color 15, background is color 0
+     */
+    cprintf("\033E\033f\033b%c\033c%c", 15 + ' ', 0 + ' ');
 
-    /* Clear screen - Esc E */
-    cprintf("\033E\r\n");
-
-    /* foreground is color 15, background is color 0 */
-    cprintf("\033b%c\033c%c", 15 + ' ', 0 + ' ');
+    /* skip init information display after warm start */
+    /* NB - would require moving memvalid init from memory.S to bios.c */
+    /* if (memvalid == 0x752019f3) return; */
 
     /* Now print the EmuTOS Logo */
+    cprintf("\r\n");
     print_art("11111111111 7777777777  777   7777");
     print_art("1                  7   7   7 7    ");
     print_art("1111   1 1  1   1  7   7   7  777 ");
@@ -209,8 +212,6 @@ void initinfo(void)
     set_line();
     cprintf("\n\r");
 
-    set_margin(); cprintf(_("Hold <Shift> to pause this screen"));
-    cprintf("\r\n");
     set_margin(); cprintf(_("Hold <Control> to skip AUTO/ACC"));
     cprintf("\r\n");
     set_margin(); cprintf(_("Hold <Alternate> to skip HDD boot"));
@@ -221,12 +222,20 @@ void initinfo(void)
 #endif
     cprintf("\r\n");
     cprintf("\r\n");
+    set_margin();
+    cprintf("\033b%c\033c%c", 0 + ' ', 15 + ' ');
+    cprintf(_("Hold <Shift> to pause this screen"));
+    cprintf("\033b%c\033c%c", 15 + ' ', 0 + ' ');
+    cprintf("\r\n");
     
-    /* pause for 1 second (or longer), possibly enable early CLI */
-    while(hz_200 < end) {
-	while((kbshift(-1) & 0x03)) ;	/* Shift key will pause */
-        if ((kbshift(-1) & 0x0c) || bconstat2())
-            break;
+    /* pause for a short while (or longer if a Shift key is held down) */
+    {
+        long end = hz_200 + 2 * 200UL;	/* Pause for 2 seconds */
+        while(hz_200 < end) {
+	    while((kbshift(-1) & 0x03)) ;	/* Shift key will pause */
+            if ((kbshift(-1) & 0x0c) || bconstat2())
+                break;
+        }
     }
     if (bconstat2()) {  /* examine the keypress */  
         int c = 0xFF & bconin2(); 
@@ -237,8 +246,8 @@ void initinfo(void)
 #endif
     }
 
-    /* Clear screen before booting and disable cursor blinking */
-    cprintf("\033E\033f");
+    /* Clear screen before booting */
+    cprintf("\033E");
 }
 
 
