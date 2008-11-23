@@ -2109,3 +2109,6 @@ Start... early ages
 - cli/coma.S: Increased the stack size a little bit. (THH)
 
 * Release: 0.8.4
+
+2008-11-23
+- bios/initinfo.c: timeout on boot removed - hold <Shift> if you miss it (joy)
