@@ -178,7 +178,7 @@ con_state:      ds.l    1       // vector for screen output
 _save_row:      ds.w    1       // temporary storage for cursor line pos.
 sav_context:    ds.l    1       // ptr to save area for exception processing
 _bufl:          ds.l    2       // pointers to buffer ctrl blocks for GEMDOS 
-_hz_200:        ds.l    1       // counter for 20 hz system clock
+_hz_200:        ds.l    1       // counter for 200 Hz system clock
 the_env:        ds.l    1       // pointer to default environment string
         .org 0x4c2
 _drvbits:       ds.l    1       // bit allocation for physical drives
