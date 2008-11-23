@@ -151,7 +151,7 @@ static void cprint_asctime(void)
 
 void initinfo(void)
 {
-    long end = hz_200 + 1 * 200UL;	/* Pause for 1 second */
+    long end = hz_200 + 2 * 200UL;	/* Pause for 2 seconds */
 
     /* Clear screen - Esc E */
     cprintf("\033E\r\n");
