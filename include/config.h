@@ -121,16 +121,6 @@
 #endif
 
 /*
- * Define the boot timeout in seconds. The higher the number the better
- * chance for the user to read all the initinfo screen.
- * Undefined or defined with zero value will skip the whole boot timeout
- * routine.
- */
-#ifndef TIMEOUT_ON_BOOT
-#define TIMEOUT_ON_BOOT 8
-#endif
-
-/*
  * With this switch you can control if some functions should be used as
  * static-inlines. This is generally a good idea if your compiler supports
  * this (a recent GCC does it!). It will shrink the size of the ROM since

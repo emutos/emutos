@@ -58,7 +58,7 @@ static void set_margin(void)
     WORD marl;
     WORD celx;
 
-    marl=(v_cel_mx-34) / 2;     /* 36 = lenght of Logo */
+    marl=(v_cel_mx-34) / 2;     /* 36 = length of Logo */
 
     cprintf("\r");              /* goto left side */
 
@@ -145,61 +145,13 @@ static void cprint_asctime(void)
     cprintf("%04d/%02d/%02d %02d:%02d:%02d", years, months, days, hours, minutes, seconds);
 }
 
-#ifdef TIMEOUT_ON_BOOT
-/* display help and wait for <TIMEOUT_ON_BOOT> seconds before boot continues */
-static void draw_timeout_line(void)
-{
-#if TIMEOUT_ON_BOOT > 0
-    char bar[]="                                  ";
-    int barsize = sizeof(bar);
-    int oldidx;
-    long start = hz_200;
-    long timeout = TIMEOUT_ON_BOOT * 200UL;
-    long end = start + timeout;
-
-    set_margin(); cprintf(_("Hold <Control> to skip AUTO/ACC"));
-    cprintf("\r\n");
-    set_margin(); cprintf(_("Hold <Alternate> to skip HDD"));
-    cprintf("\r\n");
-#if WITH_CLI
-    set_margin(); cprintf(_("Press 'C' to run an early console"));
-    cprintf("\r\n"); 
-#endif
-    set_margin(); cprintf(_("Press any key to continue booting"));
-    cprintf("\r\n");
-    cprintf("\r\n");
-    
-    oldidx = -1;
-    while(hz_200 < end) {
-        int idx = (((hz_200 - start) * barsize) / timeout);
-        if (idx > oldidx) {
-            set_margin();
-            cprintf("\033p");
-            cprintf(bar + idx);
-            cprintf("\033q\033K\r");
-            oldidx = idx;
-        }
-        if (kbshift(-1) || bconstat2())
-            break;
-    }
-    if (bconstat2()) {  /* examine the keypress */  
-        int c = 0xFF & bconin2(); 
-#if WITH_CLI
-        if (c == 'c' || c == 'C') {
-            early_cli = 1;
-        }
-#endif
-    }
-#endif /* TIMEOUT_ON_BOOT > 0 */
-}
-#endif /* TIMEOUT_ON_BOOT */
-
 /*
  * initinfo - Show initial configuration at startup
  */
 
 void initinfo(void)
 {
+    long end = hz_200 + 1 * 200UL;	/* Pause for 1 second */
 
     /* Clear screen - Esc E */
     cprintf("\033E\r\n");
@@ -257,9 +209,33 @@ void initinfo(void)
     set_line();
     cprintf("\n\r");
 
-#ifdef TIMEOUT_ON_BOOT
-    draw_timeout_line();
+    set_margin(); cprintf(_("Hold <Shift> to pause this screen"));
+    cprintf("\r\n");
+    set_margin(); cprintf(_("Hold <Control> to skip AUTO/ACC"));
+    cprintf("\r\n");
+    set_margin(); cprintf(_("Hold <Alternate> to skip HDD boot"));
+    cprintf("\r\n");
+#if WITH_CLI
+    set_margin(); cprintf(_("Press 'C' to run an early console"));
+    cprintf("\r\n"); 
 #endif
+    cprintf("\r\n");
+    cprintf("\r\n");
+    
+    /* pause for 1 second (or longer), possibly enable early CLI */
+    while(hz_200 < end) {
+	while((kbshift(-1) & 0x03)) ;	/* Shift key will pause */
+        if ((kbshift(-1) & 0x0c) || bconstat2())
+            break;
+    }
+    if (bconstat2()) {  /* examine the keypress */  
+        int c = 0xFF & bconin2(); 
+#if WITH_CLI
+        if (c == 'c' || c == 'C') {
+            early_cli = 1;
+        }
+#endif
+    }
 
     /* Clear screen before booting and disable cursor blinking */
     cprintf("\033E\033f");
