@@ -1,7 +1,7 @@
 /*
  *  initinfo.c - Info screen at startup
  *
- * Copyright (c) 2001 by Authors:
+ * Copyright (c) 2001-2008 by Authors:
  *
  *  MAD     Martin Doering
  *  joy     Petr Stehlik
@@ -31,7 +31,7 @@
 
 #include "initinfo.h"
 
-int early_cli;
+int early_cli = 0;
 
 #if TOS_VERSION >= 0x200   /* Don't include splashscreen on TOS 1.0x to
                               save some space in the ROM image */
@@ -151,15 +151,8 @@ static void cprint_asctime(void)
 
 void initinfo(void)
 {
-    /* Clear screen - Esc E
-     * disable cursor blinking - Esc f
-     * foreground is color 15, background is color 0
-     */
+    /* Clear screen, disable cursor blinking, set colors */
     cprintf("\033E\033f\033b%c\033c%c", 15 + ' ', 0 + ' ');
-
-    /* skip init information display after warm start */
-    /* NB - would require moving memvalid init from memory.S to bios.c */
-    /* if (memvalid == 0x752019f3) return; */
 
     /* Now print the EmuTOS Logo */
     cprintf("\r\n");
@@ -223,14 +216,13 @@ void initinfo(void)
     cprintf("\r\n");
     cprintf("\r\n");
     set_margin();
-    cprintf("\033b%c\033c%c", 0 + ' ', 15 + ' ');
-    cprintf(_("Hold <Shift> to pause this screen"));
-    cprintf("\033b%c\033c%c", 15 + ' ', 0 + ' ');
-    cprintf("\r\n");
+    cprintf("\033p");
+    cprintf(_(" Hold <Shift> to pause this screen "));
+    cprintf("\033q");
     
     /* pause for a short while (or longer if a Shift key is held down) */
     {
-        long end = hz_200 + 2 * 200UL;	/* Pause for 2 seconds */
+        long end = hz_200 + 3 * 200UL;	/* Pause for 3 seconds */
         while(hz_200 < end) {
 	    while((kbshift(-1) & 0x03)) ;	/* Shift key will pause */
             if ((kbshift(-1) & 0x0c) || bconstat2())
@@ -245,9 +237,7 @@ void initinfo(void)
         }
 #endif
     }
-
-    /* Clear screen before booting */
-    cprintf("\033E");
+    cprintf("\r\033K\r\n\r\n"); /* remove the "Hold Shift" message */
 }
 
 
