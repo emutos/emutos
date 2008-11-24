@@ -28,6 +28,8 @@ extern LONG proc_usp;
 extern WORD proc_stk[];
 
 extern LONG memvalid;
+extern LONG memval2;
+extern LONG memval3;
 extern BYTE conterm;
 
 extern WORD cmdload;

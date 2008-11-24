@@ -31,6 +31,7 @@
         .global _phystop
         .global _membot
         .global _memtop
+        .global _memval2
         .global memval2
         .global _flock
         .global _seekrate
@@ -81,6 +82,7 @@
         .global _aux_stat
         .global _aux_vec
         .global _pun_ptr
+        .global _memval3
         .global memval3
         .global _bconstat_vec
         .global _bconin_vec
@@ -141,6 +143,7 @@ resvector:      ds.l    1       // reset vector
 _phystop:       ds.l    1       // physical top of RAM
 _membot:        ds.l    1       // start of TPA (user memory)
 _memtop:        ds.l    1       // end of TPA (user memory)
+_memval2:
 memval2:        ds.l    1       // validates memcntrl/memconf, if 0x237698aa
 _flock:         ds.w    1       // if != 0, VBL floppy routine is disabled
 _seekrate:      ds.w    1       // floppy seek rate 
@@ -199,7 +202,8 @@ _prt_vec:       ds.l    1       // pointer to prv_lst
 _aux_stat:      ds.l    1       // pointer to prv_auxo
 _aux_vec:       ds.l    1       // pointer to prv_aux
 _pun_ptr:       ds.l    1       // if AHDI, pointer to pun_info  
-memval3:        ds.l    1       // if $5555aaaa, reset
+_memval3:
+memval3:        ds.l    1       // memory conf valid if = $5555aaaa
 _bconstat_vec:  ds.l    8       // 8 pointers to input-status routines
 _bconin_vec:    ds.l    8       // 8 pointers to input routines
 _bcostat_vec:   ds.l    8       // 8 pointers to output-status routines
