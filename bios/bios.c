@@ -331,7 +331,18 @@ static void autoexec(void)
 
 void biosmain(void)
 {
+    int coldboot; /* unfortunately register d2 gets overwritten by bios_init */
+
     bios_init();                /* Initialize the BIOS */ 
+
+    /* cold or warm boot? */
+    coldboot = (memvalid!=0x752019f3 || memval2!=0x237698aa || memval3!=0x5555aaaa);
+    if (coldboot) {
+        /* make memory config valid */
+        memvalid = 0x752019f3;
+        memval2  = 0x237698aa;
+        memval3  = 0x5555aaaa;
+    }
 
     trap1( 0x30 );              /* initial test, if BDOS works: Sversion() */
 
@@ -348,7 +359,9 @@ void biosmain(void)
         }
     }
 
-    initinfo();                 /* show initial config information */
+    if (coldboot) {
+        initinfo();             /* show initial config information */
+    }
     
     /* boot eventually from a block device (floppy or harddisk) */
     blkdev_hdv_boot();

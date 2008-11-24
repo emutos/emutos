@@ -213,7 +213,7 @@ st_cleared:
         move.b  d6, 0xffff8001          // program ST's memorycontroller
         move.b  d6, memctrl             // set copy of hw memory config
         move.l  d5, _phystop            // highest address as phystop
-        bra     setmemok
+        bra     memdone                 // config done -> return to startup.s
 
 #endif /* ST_MMU */
 
@@ -308,21 +308,9 @@ alter:
         lea     tt_cleared(pc),a6       // remember return address
         bra     clear_ram               // jump to routine clearing the RAM
 tt_cleared:
+        bra     memdone                 // config done -> return to startup.s
 
 #endif /* FALCON_MMU */
-
-
-/*
- * setmemok - Set the "memory config is valid" flags
- */
-
-setmemok:
-        /* make memory config valid */
-        move.l  #0x752019f3, memvalid   // set memvalid to ok
-        move.l  #0x237698aa, memval2    // set memval2 to ok
-        move.l  #0x5555aaaa, memval3    // set memval3 to ok
-
-        bra     memdone                 // config done -> return to startup.s
 
 
 // ==== Clear RAM from a4 to d5 and return to (a6) ===========================
