@@ -2112,3 +2112,7 @@ Start... early ages
 
 2008-11-23
 - bios/initinfo.c: timeout on boot removed - hold <Shift> if you miss it (joy)
+
+2008-11-24
+- bios/memory.S: memvalid setting moved to BIOS (joy)
+- bios/bios.c: check for cold/warm start, show initinfo on coldstart only (joy)
