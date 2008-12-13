@@ -31,7 +31,7 @@
 
 #include "initinfo.h"
 
-int early_cli = 0;
+int early_cli;
 
 #if TOS_VERSION >= 0x200   /* Don't include splashscreen on TOS 1.0x to
                               save some space in the ROM image */

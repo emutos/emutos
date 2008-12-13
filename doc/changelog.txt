@@ -2116,3 +2116,7 @@ Start... early ages
 2008-11-24
 - bios/memory.S: memvalid setting moved to BIOS (joy)
 - bios/bios.c: check for cold/warm start, show initinfo on coldstart only (joy)
+
+2008-12-13
+- bios/initinfo.c: global variable early_cli must not be initialized or it
+  gets to DATA area in ROM space where you can't change its value later (joy)
