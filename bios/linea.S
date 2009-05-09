@@ -65,11 +65,11 @@ linea_dispatch_pc:
 
 wrong_linea:
         move.w  d0,-(sp)
-        sub.w   #2,a0
+        subq.l  #2,a0
         move.l  a0,-(sp)
         pea     wrong_linea_msg
         jsr     _kprintf
-        add.w   #10,sp
+        lea     10(sp),sp
         rte
 
 wrong_linea_msg:
@@ -185,7 +185,7 @@ linea_stub:
         move.l  a0,-(sp)        
         pea     linea_stub_msg
         jsr     _kprintf
-        add.w   #10,sp
+        lea     10(sp),sp
         rts
 
 linea_stub_msg:
