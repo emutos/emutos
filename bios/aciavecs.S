@@ -159,16 +159,17 @@ kbdlength:      ds.b    1       // number of bytes remaining in current packet
 _init_acia_vecs:
         // initialize the kbdvecs structure
         lea     _just_rts,a0            // dummy vector
-        move.l  #_kbdvec,kbdvec
-        move.l  #_midivec,midivec
-        move.l  a0,vkbderr
-        move.l  a0,vmiderr
-        move.l  a0,statvec
-        move.l  a0,mousevec
-        move.l  #_clockvec,clockvec     // in bios/clock.c
-        move.l  a0,joyvec
-        move.l  #_midisys,midisys
-        move.l  #_ikbdsys,ikbdsys
+        lea     _kbdvecs,a1
+        move.l  #_kbdvec,kbdvec-_kbdvecs(a1)
+        move.l  #_midivec,midivec-_kbdvecs(a1)
+        move.l  a0,vkbderr-_kbdvecs(a1)
+        move.l  a0,vmiderr-_kbdvecs(a1)
+        move.l  a0,statvec-_kbdvecs(a1)
+        move.l  a0,mousevec-_kbdvecs(a1)
+        move.l  #_clockvec,clockvec-_kbdvecs(a1)     // in bios/clock.c
+        move.l  a0,joyvec-_kbdvecs(a1)
+        move.l  #_midisys,midisys-_kbdvecs(a1)
+        move.l  #_ikbdsys,ikbdsys-_kbdvecs(a1)
         
         // initialize the iorecs
         pea     iorec_table_end-iorec_table
@@ -220,9 +221,10 @@ int_acia_loop:
         jsr     (a0)
         move.l  ikbdsys,a0
         jsr     (a0)
-        btst    #4,0xfffffa01           // while still interrupting
+        lea     0xfffffa00.w,a1
+        btst.b  #4,0x1(a1)                // while still interrupting
         beq     int_acia_loop
-        bclr    #6,0xfffffa11           // clear in service bit
+        bclr.b  #6,0x11(a1)               // clear in service bit
         
         // restore scratch regs
         movem.l (sp)+,d0-d3/a0-a3
@@ -247,7 +249,7 @@ midirts:
 _midivec:
         // push byte data in d0 into midi iorec.
         move.w  midiibuftl,d1
-        add.w   #1,d1
+        addq.l  #1,d1
         cmp.w   midiibufsz,d1
         blt     1f
         move.l  #0,d1
@@ -295,7 +297,7 @@ _kbdvec:
         move.w  d0,-(sp)
         // call the C routine in ikbd.c to do the work.
         jsr     _kbd_int
-        addq.w  #2,sp
+        addq.l  #2,sp
 just_rts:
         rts
 
