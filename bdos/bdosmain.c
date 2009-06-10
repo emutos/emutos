@@ -97,7 +97,7 @@ FND funcs[0x58] =
      */
 
     { xconin,   0x80, 0 },   /* 0x01 */
-    { (long(*)()) xtabout,  0x81, 1 }, /* 0x02 */
+    { xtabout,  0x81, 1 },   /* 0x02 */
     { xauxin,   0x82, 0 },   /* 0x03 */
     { xauxout,  0x82, 1 },   /* 0x04 */
     { xprtout,  0x83, 1 },   /* 0x05 */

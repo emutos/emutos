@@ -45,7 +45,7 @@ long xconostat(void);
 long xprtostat(void);
 long xauxistat(void);
 long xauxostat(void);
-void xtabout(int ch);
+long xtabout(int ch);
 long xauxout(int ch);
 long xprtout(int ch);
 long x7in(void);

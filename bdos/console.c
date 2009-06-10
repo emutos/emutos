@@ -195,9 +195,10 @@ static void conout(int h, int ch)
 /*
  * xtabout - Function 0x02 - console output with tab expansion
  */
-void xtabout(int ch)
+long xtabout(int ch)
 {
     tabout(HXFORM(run->p_uft[1]),ch);
+    return 1;
 }
 
 
