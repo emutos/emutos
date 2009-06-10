@@ -2120,3 +2120,7 @@ Start... early ages
 2008-12-13
 - bios/initinfo.c: global variable early_cli must not be initialized or it
   gets to DATA area in ROM space where you can't change its value later (joy)
+
+2009-06-11
+- bdos/bdosmain.c: GEMDOS function dispatcher now handles the amount of
+  parameters on the stack correctly. No more accesses beyond the TPA. (THH)

@@ -2,7 +2,7 @@
  * bdosmain.c - GEMDOS main function dispatcher
  *
  * Copyright (c) 2001 Lineo, Inc.
- *               2002 The EmuTOS development team
+ *               2002 - 2009 The EmuTOS development team
  *
  * Authors:
  *  EWF  Eric W. Fleischman
@@ -12,29 +12,27 @@
  *  KTB  Karl T. Braun (kral)
  *  ACH  Anthony C. Hay (DR UK)
  *  MAD  Martin Doering
+ *  THH  Thomas Huth
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
  */
 
 
-
 #define DBGOSIF 1
 
 
-
-#include        "portab.h"
-#include        "fs.h"
-#include        "asm.h"
-#include        "bios.h"
-#include        "mem.h"
-#include        "proc.h"
-#include        "console.h"
-#include        "time.h"
-#include        "gemerror.h"
-#include        "biosbind.h"
-#include        "../bios/kprint.h"
-
+#include "portab.h"
+#include "fs.h"
+#include "asm.h"
+#include "bios.h"
+#include "mem.h"
+#include "proc.h"
+#include "console.h"
+#include "time.h"
+#include "gemerror.h"
+#include "biosbind.h"
+#include "../bios/kprint.h"
 
 
 /*
@@ -73,7 +71,8 @@ long xgetver(void);
 FND
 {
         long    (*fncall)();
-        int     fntyp;
+        UBYTE   stdio_typ;    /* Standard IO channel (highest bit must be set, too) */
+        UBYTE   wparms;       /* Amount of parameters in WORDs */
 };
 
 
@@ -87,9 +86,8 @@ FND
 
 FND funcs[0x58] =
 {
-
     
-     { (long(*)()) x0term, 0 }, /* 0x00 */
+     { (long(*)()) x0term, 0, 0 }, /* 0x00 */
 
     /*
      * console functions
@@ -98,17 +96,17 @@ FND funcs[0x58] =
      * 0x80 is std in, 0x81 is stdout, 0x82 is stdaux, 0x83 stdprn
      */
 
-    { xconin,   0x80 }, /* 0x01 */
-    { (long(*)()) xtabout,  0x81 },     /* 0x02 */
-    { xauxin,   0x82 }, /* 0x03 */
-    { xauxout,  0x82 }, /* 0x04 */
-    { xprtout,  0x83 }, /* 0x05 */
-    { rawconio, 0 },    /* 0x06 */
-    { x7in,     0x80 }, /* 0x07 */
-    { x8in,     0x80 }, /* 0x08 */
-    { (long(*)()) xprt_line,  0x81 },   /* 0x09 */
-    { (long(*)()) readline,   0x80 },   /* 0x0A */
-    { xconstat, 0x80 }, /* 0x0B */
+    { xconin,   0x80, 0 },   /* 0x01 */
+    { (long(*)()) xtabout,  0x81, 1 }, /* 0x02 */
+    { xauxin,   0x82, 0 },   /* 0x03 */
+    { xauxout,  0x82, 1 },   /* 0x04 */
+    { xprtout,  0x83, 1 },   /* 0x05 */
+    { rawconio, 0, 1 },      /* 0x06 */
+    { x7in,     0x80, 0 },   /* 0x07 */
+    { x8in,     0x80, 0 },   /* 0x08 */
+    { (long(*)()) xprt_line,  0x81, 2 }, /* 0x09 */
+    { (long(*)()) readline,   0x80, 2 }, /* 0x0A */
+    { xconstat, 0x80, 0 },   /* 0x0B */
 
     /*
      * disk functions
@@ -118,12 +116,12 @@ FND funcs[0x58] =
      * as usual.
      */
 
-    { ni,       0 },
-    { ni,       0 },
+    { ni,       0, 0 },
+    { ni,       0, 0 },
 
-    { xsetdrv,  0 },    /* 0x0E */
+    { xsetdrv,  0, 1 },      /* 0x0E */
 
-    { ni,       0 },
+    { ni,       0, 0 },
 
     /*
      * extended console functions
@@ -131,95 +129,95 @@ FND funcs[0x58] =
      * Here the 0x80 flag indicates std file used, as above
      */
 
-    { xconostat, 0x81 },        /* 0x10 */
-    { xprtostat, 0x83 },        /* 0x11 */
-    { xauxistat, 0x82 },        /* 0x12 */
-    { xauxostat, 0x82 },        /* 0x13 */
+    { xconostat, 0x81, 0 },  /* 0x10 */
+    { xprtostat, 0x83, 0 },  /* 0x11 */
+    { xauxistat, 0x82, 0 },  /* 0x12 */
+    { xauxostat, 0x82, 0 },  /* 0x13 */
 
-    { xmaddalt, 1 },    /* 0x14 */
-    { ni,       0 },
-    { ni,       0 },
-    { ni,       0 },
-    { ni,       0 },
+    { xmaddalt, 0, 4 },      /* 0x14 */
+    { ni,       0, 0 },
+    { ni,       0, 0 },
+    { ni,       0, 0 },
+    { ni,       0, 0 },
 
-    { xgetdrv,  0 },    /* 0x19 */
-    { (long(*)()) xsetdta, 1 }, /* 0x1A */
+    { xgetdrv,  0, 0 },      /* 0x19 */
+    { (long(*)()) xsetdta, 0, 2 }, /* 0x1A */
 
-    { xsuper,   0 },    /* 0x20 - switch to supervisor mode */
-    { ni,       0 },
-    { ni,       0 },
-    { ni,       0 },
-    { ni,       0 },
+    { xsuper,   0, 2 },      /* 0x20 - switch to supervisor mode */
+    { ni,       0, 0 },
+    { ni,       0, 0 },
+    { ni,       0, 0 },
+    { ni,       0, 0 },
 
     /* xgsps */
 
-    { ni,       0 },    /* 0x20 */
-    { ni,       0 },
-    { ni,       0 },
-    { ni,       0 },
-    { ni,       0 },
-    { ni,       0 },
-    { ni,       0 },
-    { ni,       0 },
-    { ni,       0 },
-    { ni,       0 },
+    { ni,       0, 0 },      /* 0x20 */
+    { ni,       0, 0 },
+    { ni,       0, 0 },
+    { ni,       0, 0 },
+    { ni,       0, 0 },
+    { ni,       0, 0 },
+    { ni,       0, 0 },
+    { ni,       0, 0 },
+    { ni,       0, 0 },
+    { ni,       0, 0 },
 
-    { xgetdate, 0 },    /* 0x2A */
-    { xsetdate, 0 },    /* 0x2B */
-    { xgettime, 0 },    /* 0x2C */
-    { xsettime, 0 },    /* 0x2D */
+    { xgetdate, 0, 0 },      /* 0x2A */
+    { xsetdate, 0, 1 },      /* 0x2B */
+    { xgettime, 0, 0 },      /* 0x2C */
+    { xsettime, 0, 1 },      /* 0x2D */
 
-    { ni,       0 },
+    { ni,       0, 0 },
 
-    { (long(*)()) xgetdta, 0 }, /* 0x2F */
-    { xgetver,  0},     /* 0x30 */
-    { (long(*)()) xtermres, 1 },        /* 0x31 */
+    { (long(*)()) xgetdta, 0, 0 }, /* 0x2F */
+    { xgetver,  0, 0 },      /* 0x30 */
+    { (long(*)()) xtermres, 0, 3 }, /* 0x31 */
 
-    { ni,       0 },
-    { ni,       0 },
-    { ni,       0 },
-    { ni,       0 },
+    { ni,       0, 0 },
+    { ni,       0, 0 },
+    { ni,       0, 0 },
+    { ni,       0, 0 },
 
-    { xgetfree, 1 },    /* 0x36 */
+    { xgetfree, 0, 3 },      /* 0x36 */
 
-    { ni,       0 },
-    { ni,       0 },
+    { ni,       0, 0 },
+    { ni,       0, 0 },
 
-    { xmkdir,   1 },    /* 0x39 */
-    { xrmdir,   1 },    /* 0x3A */
-    { xchdir,   1 },    /* 0x3B */
-    { (long(*)()) xcreat, 1 },  /* 0x3C */
-    { xopen,    1 },    /* 0x3D */
-    { xclose,   0x0 },  /* 0x3E - will handle its own redirection */
-    { xread,    0x82 }, /* 0x3F */
-    { xwrite,   0x82 }, /* 0x40 */
-    { xunlink,  1 },    /* 0x41 */
-    { xlseek,   0x81 }, /* 0x42 */
-    { (long(*)()) xchmod, 1 },  /* 0x43 */
-    { xmxalloc, 1 },    /* 0x44 */
-    { dup,      0 },    /* 0x45 */
-    { xforce,   0 },    /* 0x46 */
-    { xgetdir,  1 },    /* 0x47 */
-    { xmalloc,  1 },    /* 0x48 */
-    { xmfree,   1 },    /* 0x49 */
-    { xsetblk,  2 },    /* 0x4A */
-    { (long(*)()) xexec, 3 },   /* 0x4B */
-    { (long(*)()) xterm, 0 },   /* 0x4C */
+    { xmkdir,   0, 2 },      /* 0x39 */
+    { xrmdir,   0, 2 },      /* 0x3A */
+    { xchdir,   0, 2 },      /* 0x3B */
+    { (long(*)()) xcreat, 0, 3 },  /* 0x3C */
+    { xopen,    0, 3 },      /* 0x3D */
+    { xclose,   0, 1 },      /* 0x3E - will handle its own redirection */
+    { xread,    0x82, 5 },   /* 0x3F */
+    { xwrite,   0x82, 5 },   /* 0x40 */
+    { xunlink,  0, 2 },      /* 0x41 */
+    { xlseek,   0x81, 4 },   /* 0x42 */
+    { (long(*)()) xchmod, 0, 4 },  /* 0x43 */
+    { xmxalloc, 0, 3 },      /* 0x44 */
+    { dup,      0, 2 },      /* 0x45 */
+    { xforce,   0, 2 },      /* 0x46 */
+    { xgetdir,  0, 3 },      /* 0x47 */
+    { xmalloc,  0, 2 },      /* 0x48 */
+    { xmfree,   0, 2 },      /* 0x49 */
+    { xsetblk,  0, 5 },      /* 0x4A */
+    { (long(*)()) xexec, 0, 7 },   /* 0x4B */
+    { (long(*)()) xterm, 0, 1 },   /* 0x4C */
 
-    { ni,       0 },
+    { ni,       0, 0 },
                 
-    { xsfirst,  1 },    /* 0x4E */
-    { xsnext,   0 },    /* 0x4F */
+    { xsfirst,  0, 3 },      /* 0x4E */
+    { xsnext,   0, 0 },      /* 0x4F */
 
-    { ni,       0 },    /* 0x50 */
-    { ni,       0 },
-    { ni,       0 },
-    { ni,       0 },
-    { ni,       0 },
-    { ni,       0 },
+    { ni,       0, 0 },    /* 0x50 */
+    { ni,       0, 0 },
+    { ni,       0, 0 },
+    { ni,       0, 0 },
+    { ni,       0, 0 },
+    { ni,       0, 0 },
 
-    { xrename,  2 },    /* 0x56 */
-    { (long(*)()) xgsdtof, 1 }  /* 0x57 */
+    { xrename,  0, 5 },    /* 0x56 */
+    { (long(*)()) xgsdtof, 0, 4 }  /* 0x57 */
 };
 
 
@@ -471,7 +469,7 @@ restrt:
     }
 
     f = &funcs[fn];
-    typ = f->fntyp;
+    typ = f->stdio_typ;
 
     if (typ && fn && ((fn<12) || ((fn>=16) && (fn<=19)))) /* std funcs */
     {
@@ -534,10 +532,7 @@ restrt:
             }
         }
 
-        if ((fn == 10) || (fn == 9))
-            typ = 1;
-        else
-            typ = 0;
+        typ = 0;
     }
 
     if (typ & 0x80)
@@ -617,6 +612,7 @@ restrt:
             return(0);
         }
     }
+
     rc = 0;
     if ((fn == 0x3d) || (fn == 0x3c))  /* open, create */
     {
@@ -628,27 +624,38 @@ restrt:
         else if (ncmps(5,p,"PRN:"))
             rc = 0xFFFDL;
     }
+
     if (!rc)
     {
-        typ &= 0x07f;
-        switch(typ)
+        switch (f->wparms)
         {
         case 0:
-            rc = (*f->fncall)(pw[1],pw[2]);
+            rc = (*f->fncall)();
             break;
 
         case 1:
-            rc = (*f->fncall)(pw[1],pw[2],pw[3],pw[4]);
+            rc = (*f->fncall)(pw[1]);
             break;
 
         case 2:
-            rc = (*f->fncall)(pw[1],pw[2],pw[3],pw[4],pw[5],pw[6]);
+            rc = (*f->fncall)(pw[1],pw[2]);
             break;
 
         case 3:
+            rc = (*f->fncall)(pw[1],pw[2],pw[3]);
+            break;
+
+        case 4:
+            rc = (*f->fncall)(pw[1],pw[2],pw[3],pw[4]);
+            break;
+
+        case 5:
+            rc = (*f->fncall)(pw[1],pw[2],pw[3],pw[4],pw[5]);
+            break;
+
+        case 7:
             rc = (*f->fncall)(pw[1],pw[2],pw[3],pw[4],pw[5],pw[6],pw[7]);
         }
     }
     return(rc);
 }
-
