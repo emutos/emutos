@@ -655,6 +655,10 @@ restrt:
 
         case 7:
             rc = (*f->fncall)(pw[1],pw[2],pw[3],pw[4],pw[5],pw[6],pw[7]);
+            break;
+
+        default:
+            rc = EINTRN;    /* Internal error */
         }
     }
     return(rc);
