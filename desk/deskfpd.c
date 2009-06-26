@@ -428,6 +428,12 @@ FNODE *pn_sort(WORD lstcnt, FNODE *pflist)
           for(pf=pflist; pf; pf=pf->f_next)
             ml_pfndx[lstcnt++] = pf;
         }
+
+        if (lstcnt < 2)
+        {
+          /* the list is already sorted */
+          return pflist;
+        }
                                                 /* sort files using shell*/
                                                 /*   sort on page 108 of */
                                                 /*   K&R C Prog. Lang.  */
@@ -447,9 +453,9 @@ FNODE *pn_sort(WORD lstcnt, FNODE *pflist)
         }
                                                 /* link up the list in  */
                                                 /*   order              */
-        newlist = (FNODE *) NULL;
-        pf = (FNODE *) &newlist;
-        for(i=0; i<lstcnt; i++)
+        newlist = ml_pfndx[0];
+        pf = ml_pfndx[0];
+        for(i=1; i<lstcnt; i++)
         {
           pf->f_next = ml_pfndx[i];
           pf = ml_pfndx[i];
