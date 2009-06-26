@@ -665,7 +665,7 @@ void ob_change(LONG tree, WORD obj, UWORD new_state, WORD redraw)
         UWORD           curr_state;
         LONG            spec;
 
-        ob_sst(tree, obj, &spec, &curr_state, &obtype, &flags, &t, &th);
+        ob_sst(tree, obj, &spec, (WORD*)&curr_state, &obtype, &flags, &t, &th);
         
         if ( (curr_state == new_state) ||
              (spec == -1L) )

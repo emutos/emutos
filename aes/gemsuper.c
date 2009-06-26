@@ -66,10 +66,11 @@ static LONG     ad_rso;
 
 
 #if SINGLAPP
-static UWORD crysbind(WORD opcode, LONG pglobal, UWORD int_in[], UWORD int_out[], LONG addr_in[])
+static UWORD crysbind(WORD opcode, LONG pglobal, WORD int_in[], WORD int_out[], LONG addr_in[])
 #endif
 #if MULTIAPP
-UWORD crysbind(WORD opcode, LONG pglobal, UWORD int_in[], UWORD int_out[], LONG addr_in[], LONG addr_out[])
+static UWORD crysbind(WORD opcode, LONG pglobal, WORD int_in[], WORD int_out[],
+                      LONG addr_in[], LONG addr_out[])
 #endif
 {
         LONG    maddr;
@@ -469,8 +470,8 @@ UWORD crysbind(WORD opcode, LONG pglobal, UWORD int_in[], UWORD int_out[], LONG 
 static void xif(LONG pcrys_blk)
 {
         UWORD           control[C_SIZE];
-        UWORD           int_in[I_SIZE];
-        UWORD           int_out[O_SIZE];
+        WORD            int_in[I_SIZE];
+        WORD            int_out[O_SIZE];
         LONG            addr_in[AI_SIZE];
 #if MULTIAPP
         LONG            addr_out[AO_SIZE];

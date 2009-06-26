@@ -1586,6 +1586,7 @@ void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
         GRECT           t;
         WINDOW          *pwin;  
 
+        osl = osz = nsl = nsz = 0;
         which = -1;
                                                 /* grab the window sync */
         wm_update(TRUE);
