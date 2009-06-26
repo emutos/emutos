@@ -1463,12 +1463,10 @@ dspCL(char *argv[])
 static void
 setPath(char *p)
 {
-    int i = 0;
-
     if (!*p)
         wrt((char *) &path);
     else if (xncmps(2, p, ";"))
-        path[i] = 0;
+        path[0] = 0;
     else
         strcpy(path, p);
 }
