@@ -1470,7 +1470,7 @@ setPath(char *p)
     else if (xncmps(2, p, ";"))
         path[i] = 0;
     else
-        while ((path[i] = p[i++]));
+        strcpy(path, p);
 }
 
 

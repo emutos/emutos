@@ -33,7 +33,7 @@ extern WORD XACC_DDA;           /* accumulator for x DDA        */
 extern WORD SOURCEX, SOURCEY;   /* upper left of character in font file */
 extern WORD DESTX, DESTY;       /* upper left of destination on screen  */
 extern WORD DELX, DELY;         /* width and height of character    */
-extern WORD *FBASE;             /* pointer to font data         */
+extern UWORD *FBASE;            /* pointer to font data         */
 extern WORD FWIDTH;             /* offset,segment and form with of font */
 extern WORD LITEMASK, SKEWMASK; /* special effects          */
 extern WORD WEIGHT;             /* special effects          */
