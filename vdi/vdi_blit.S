@@ -901,7 +901,7 @@ f2op_15:
 
 _bit_blt:
         // A wrapper, so save and set up registers 
-        movem.l d2-d7/a2-a5,-(sp)
+        movem.l d2-d7/a2-a6,-(sp)
 
         lea     _info, a6               // get info structure
 
@@ -918,7 +918,7 @@ _bit_blt:
         
         bsr.s   bit_blt
 
-        movem.l (sp)+,d2-d7/a2-a5
+        movem.l (sp)+,d2-d7/a2-a6
         rts
 
 //

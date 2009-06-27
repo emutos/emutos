@@ -2128,3 +2128,7 @@ Start... early ages
 2009-06-25
 - desk/deskfpd.c: Fixed empty desktop windows with GCC 4.x.
   (patch by Vincent Riviere)
+
+2009-06-27
+- vdi/vdi_blit.S: Fixed crash in bit_blt() at desktop startup when compiled
+  without -fomit-frame-pointer. (patch by Vincent Riviere)
