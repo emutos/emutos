@@ -2132,3 +2132,6 @@ Start... early ages
 2009-06-27
 - vdi/vdi_blit.S: Fixed crash in bit_blt() at desktop startup when compiled
   without -fomit-frame-pointer. (patch by Vincent Riviere)
+
+2009-08-14
+- bios/screen.c: Fixed Getrez() for TT shifter resolutions. (THH)

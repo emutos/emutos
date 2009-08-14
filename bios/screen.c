@@ -189,7 +189,7 @@ WORD getrez(void)
             case 4: return 0;
             case 8: return 7;
             default:
-                kprintf("Problem - unsupported colour depth\n");
+                kprintf("Problem - unsupported color depth\n");
                 return 0;
        }
     }
@@ -198,8 +198,11 @@ WORD getrez(void)
         WORD rez;
 
         rez = (*(UBYTE *) 0xffff8260);
-        if (rez > 2) {
-            rez = 2;
+        if (has_tt_shifter) {
+            rez &= 0x7;
+        }
+        else {
+            rez &= 0x3;
         }
         return rez;
     }
