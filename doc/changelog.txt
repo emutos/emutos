@@ -2135,3 +2135,9 @@ Start... early ages
 
 2009-08-14
 - bios/screen.c: Fixed Getrez() for TT shifter resolutions. (THH)
+
+2009-09-05
+- Makefile: Added a CPUFLAGS variable to allow easy compilation for a specific
+  CPU on the make command line. For example, use "make CPUFLAGS=-m68020-60 512"
+  to build an EmuTOS version optimized for 68020 CPUs and higher.
+  (patch by Vincent Riviere)

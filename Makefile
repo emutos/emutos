@@ -93,17 +93,19 @@ TOCLEAN := *~ */*~ $(CORE) *.tmp
 INDENT = indent -kr
 
 # Linker with relocation information and binary output (image)
-LD = $(CC) -nostartfiles -nostdlib
+LD = $(CC) $(MULTILIBFLAGS) -nostartfiles -nostdlib
 LDFLAGS = -Xlinker --oformat -Xlinker binary -lgcc 
 LDFLAGS_T1 = -Xlinker -Ttext=0xfc0000 -Xlinker -Tbss=0x000000 
 LDFLAGS_T2 = -Xlinker -Ttext=0xe00000 -Xlinker -Tbss=0x000000 
 
 # C compiler for MiNT
 CC = m68k-atari-mint-gcc
+CPUFLAGS = -m68000
+MULTILIBFLAGS = $(CPUFLAGS) -mshort
 INC = -Iinclude
 OPTFLAGS = -Os -fomit-frame-pointer
 WARNFLAGS = -Wall #-fno-common -Wshadow -Wmissing-prototypes -Wstrict-prototypes #-Werror
-CFLAGS =  $(OPTFLAGS) $(WARNFLAGS) -ffreestanding -mshort -m68000 $(DEF) \
+CFLAGS = $(MULTILIBFLAGS) $(OPTFLAGS) $(WARNFLAGS) -ffreestanding $(DEF) \
   $(LOCALCONF) $(INC) -DWITH_AES=$(WITH_AES) -DWITH_CLI=$(WITH_CLI)
 
 CPPFLAGS = $(INC)
@@ -779,8 +781,8 @@ TOCLEAN += makefile.dep
 
 makefile.dep: util/langs.c bios/header.h
 	( \
-	  $(CC) -MM $(INC) -Ibios -Iaes -Idesk/icons $(DEF) $(CSRC); \
-	  $(CC) -MM $(INC) $(DEF) $(SSRC) \
+	  $(CC) $(MULTILIBFLAGS) -MM $(INC) -Ibios -Iaes -Idesk/icons $(DEF) $(CSRC); \
+	  $(CC) $(MULTILIBFLAGS) -MM $(INC) $(DEF) $(SSRC) \
 	) | sed -e '/:/s,^,obj/,' >makefile.dep
 
 depend: makefile.dep
