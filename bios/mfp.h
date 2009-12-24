@@ -121,7 +121,7 @@ typedef struct
 
 
 /*==== Defines ============================================================*/
-#define MFP_BASE        ((MFP *)(0x00fffa00L))
+#define MFP_BASE        ((MFP *)(0xfffffa00L))
 
 #define B19600 0
 #define B9600  1

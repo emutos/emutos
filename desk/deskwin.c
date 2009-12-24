@@ -101,7 +101,7 @@ void win_view(WORD vtype, WORD isort)
 /*
 *       Start up by initializing global variables
 */
-void win_start()
+void win_start(void)
 {
         WNODE           *pw;
         WORD            i;
@@ -221,7 +221,7 @@ void win_top(WNODE *thewin)
 *       top and return 0.
 */
 #ifdef DESK1
-WNODE *win_ontop()
+WNODE *win_ontop(void)
 {
         WORD            wob;
 
@@ -656,7 +656,7 @@ void win_arrow(WORD wh, WORD arrow_type)
 /*
 *       Routine to sort all existing windows again
 */
-void win_srtall()
+void win_srtall(void)
 {
         WORD            ii;
         WORD            sortsave;
@@ -704,7 +704,7 @@ void win_bdall()
 /*
 *       Routine to draw all existing windows.
 */
-void win_shwall()
+void win_shwall(void)
 {
         WORD            ii;
         WORD            xc, yc, wc, hc;

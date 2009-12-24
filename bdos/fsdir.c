@@ -190,9 +190,9 @@ static void freednd(DND *dn);
 **  dots -, dots2  -
 */
 
-static  char dots[22] =  { ".          " } ;
+static  char dots[22] = ".          ";
 
-/* unused static        char dots2[22] = { "..         " } ; */
+/* unused static  char dots2[22] = "..         "; */
 
 
 

@@ -64,7 +64,7 @@ WNODE *win_alloc(void);
 #endif
 WNODE *win_find(WORD wh);
 void win_top(WNODE *thewin);
-WNODE *win_ontop();
+WNODE *win_ontop(void);
 WNODE *win_ith(WORD level);
 void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h);
 #ifdef DESK1
@@ -75,7 +75,7 @@ void win_slide(WORD wh, WORD sl_value);
 void win_arrow(WORD wh, WORD arrow_type);
 void win_srtall(void);
 void win_bdall(void);
-void win_shwall();
+void win_shwall(void);
 WORD win_isel(OBJECT olist[], WORD root, WORD curr);
 BYTE *win_iname(WORD curr);
 void win_sname(WNODE *pw);

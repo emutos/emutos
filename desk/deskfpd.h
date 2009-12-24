@@ -76,7 +76,7 @@ PNODE
 
 
 /* Prototypes: */
-void fpd_start();
+void fpd_start(void);
 void fpd_parse(BYTE *pspec, WORD *pdrv, BYTE *ppath, BYTE *pname, BYTE *pext);
 FNODE *fpd_ofind(FNODE *pf, WORD obj);
 void pn_close(PNODE *thepath);

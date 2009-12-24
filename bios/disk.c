@@ -154,7 +154,11 @@ int atari_partition(int bdev)
         for(i=0; i<4; i++, offset+=16) {
             u32 start, size;
             u8 type = sect[offset+4];
-            char pid[3] = {0, 'D', type };
+            char pid[3];
+
+            pid[0] = 0;
+            pid[1] = 'D';
+            pid[2] = type;
 
             start = sect[offset+11];
             start <<= 8;

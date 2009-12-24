@@ -59,9 +59,9 @@ _detect_cpu:
 //
         move.l #0x28.w,a0         // keep old Line-A exception vector
         move.l #tmp_line_a,d0
-        move.l %d0,0x28.w          // install custom Line-A handler
+        move.l d0,0x28.w          // install custom Line-A handler
         moveq  #5,d0              // set default return value (Coldfire present)
-        dc.w   0xa981              // move.l %macsr,%d1
+        dc.w   0xa981             // move.l %macsr,%d1
         move.l a0,0x28.w          // restore original Line-A handler
         rts
 

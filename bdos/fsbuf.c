@@ -133,7 +133,7 @@ char *getrec(int recn, DMD *dm, int wrtflg)
         n = 2;                  /*  DATA (?)    */
 
     mtbuf = 0;
-    phdr = &bufl[(n != 0)];
+    phdr = &bufl[n ? 1 : 0];
 
     /*
      * See, if the desired record for the desired drive is in memory.

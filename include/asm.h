@@ -136,5 +136,9 @@ __extension__                                      \
   __asm__ volatile ("movem.l (sp)+,d0-d7/a0-a6");  \
 })
 
+/*
+ * No operation opcode (just waits for some few cycles)
+ */
+#define nop() asm volatile (" nop ")
 
 #endif /* ASM_H */

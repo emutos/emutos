@@ -212,7 +212,7 @@ static void bios_init(void)
     nls_set_lang(get_lang_name());
     
 
-    exec_os = &ui_start;        /* set start of user interface */
+    exec_os = ui_start;         /* set start of user interface */
 
     osinit();                   /* initialize BDOS */
   

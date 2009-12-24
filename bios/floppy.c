@@ -903,5 +903,5 @@ static void delay(void)
 {
     WORD delay = 30;
     while (--delay)
-	    asm volatile (" nop ");
+	    nop();
 }

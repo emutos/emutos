@@ -127,10 +127,10 @@ static long compl_code;
 
 static char lin[130];
 static char srchb[44];
-static const char prgTail[5] = { ".PRG" };
-static const char batTail[5] = { ".BAT" };
-static const char pthSymb[6] = { "PATH=" };
-static char autoBat[13] = { "AUTOEXEC.BAT" };
+static const char prgTail[5] = ".PRG";
+static const char batTail[5] = ".BAT";
+static const char pthSymb[6] = "PATH=";
+static char autoBat[13] = "AUTOEXEC.BAT";
 static char drvch;
 static char *basePage;
 static char *prntEnvPtr;
@@ -138,7 +138,7 @@ static char *prntEnvPtr;
 /* Declarations for Wild Card processing: */
 static char *WSrcReq;
 static int WAttCode;
-static const char wildExp[4] = { "*.*" };
+static const char wildExp[4] = "*.*";
 static char srcFlNm[67];               /* src file name */
 static char dstFlNm[67];               /* destination file name */
 static char srcDir[67];                /* src dir path */
