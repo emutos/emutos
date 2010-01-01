@@ -510,6 +510,12 @@ void xfm_crfm (Vwk * vwk)
 void vdimouse_init(Vwk * vwk)
 {
     struct kbdvecs *kbd_vectors;
+    static const struct {
+        BYTE topmode;
+        BYTE buttons;
+        BYTE xparam;
+        BYTE yparam;
+    } mouse_params = {0, 0, 1, 1};
 
     /* Input must be initialized here and not in init_wk */
     loc_mode = 0;               /* default is request mode  */
@@ -541,7 +547,7 @@ void vdimouse_init(Vwk * vwk)
     *vblqueue = (LONG)vb_draw;   /* set GEM VBL-routine to vbl_list[0] */
 
     /* Initialize mouse via XBIOS in relative mode */
-    Initmous(1, (LONG)&arrow_cdb, (LONG)mouse_int);
+    Initmous(1, (LONG)&mouse_params, (LONG)mouse_int);
 
     kbd_vectors = (struct kbdvecs *)Kbdvbase();
     old_statvec = kbd_vectors->statvec;
