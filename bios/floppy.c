@@ -473,10 +473,6 @@ WORD flopver(LONG buf, LONG filler, WORD dev,
             outerr = err;
             continue;
         }
-        if(memcmp((void *)buf, (void *)dskbufp, (long) SECT_SIZ)) {
-            *bad++ = sect;
-            outerr = -16;
-        }
         sect ++;
     }
     
@@ -496,8 +492,6 @@ WORD flopfmt(LONG buf, LONG filler, WORD dev, WORD spt,
     int i, j;
     BYTE b1, b2;
     BYTE *s;
-    BYTE *data;
-    WORD *bad;
     WORD err;
 
 // #define APPEND(b, count) do { int n=count; while(n--) *s++ = b; } while(0) 
@@ -508,8 +502,6 @@ WORD flopfmt(LONG buf, LONG filler, WORD dev, WORD spt,
     if(spt < 1 || spt > 10) return EGENRL;  /* general error */
     s = (BYTE *)buf;
 
-    data = s; /* dummy, to avoid warning. data will be set in the loop */
-  
     /*
      * sector interleave factor ignored, always 1.
      * create the image in memory. 
@@ -542,8 +534,7 @@ WORD flopfmt(LONG buf, LONG filler, WORD dev, WORD spt,
         APPEND(0xF5, 3);
     
         /* data */
-        *s++ = 0xfe;
-        data = s; /* the content of a sector */
+        *s++ = 0xfb;
         for(j = 0 ; j < SECT_SIZ ; j += 2) {
             *s++ = b1; *s++ = b2;
         }
@@ -563,17 +554,8 @@ WORD flopfmt(LONG buf, LONG filler, WORD dev, WORD spt,
     if(err) return err;
 
     /* verify sectors and store bad sector numbers in buf */
-    bad = (WORD *)buf;
-    for(i = 0 ; i < spt ; i++) {
-        err = flopver((LONG)data, 0L, dev, i+1, track, side, 1);
-        if(err) {
-            *bad++ = i+1;
-        }
-    }
-    *bad = 0;
-    if(bad != (WORD *)buf) {
-        return EBADSF;  /* bad sectors on format */
-    }
+    err = flopver(buf, 0L, dev, 1, track, side, spt);
+    if(err) return EBADSF;
   
     return 0;
 }
@@ -631,7 +613,7 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
             set_fdc_reg(FDC_CS, FDC_READ);
         } else {
             fdc_start_dma_write(count);
-            set_fdc_reg(FDC_CS, FDC_WRITE);
+            set_fdc_reg(FDC_CS | DMA_WRBIT, FDC_WRITE);
         }
         if(timeout_gpip(TIMEOUT)) {
             /* timeout */
@@ -690,7 +672,7 @@ static WORD flopwtrack(LONG buf, WORD dev, WORD track, WORD side)
     for(retry = 0; retry < 2 ; retry ++) {
         set_dma_addr((ULONG) buf);
         fdc_start_dma_write((TRACK_SIZ + SECT_SIZ-1) / SECT_SIZ);
-        set_fdc_reg(FDC_CS, FDC_WRITETR);
+        set_fdc_reg(FDC_CS | DMA_WRBIT, FDC_WRITETR);
   
         if(timeout_gpip(TIMEOUT)) {
             /* timeout */

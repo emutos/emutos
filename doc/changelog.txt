@@ -2144,5 +2144,12 @@ Start... early ages
 
 2010-01-01
 - vdi/vdi_mouse.c: Fixed completely wrong Initmous() parameter that was
-  causing an interrupt storm on real IKBD hardware.
+  causing an interrupt storm on real IKBD STe hardware.
+  (patch by Vincent Riviere)
+
+2010-01-02
+- bios/floppy.c: Fixed writing to floppy on real STe hardware (added
+  missing DMA_WRBIT). Fixed Flopver() (Compendium is a misleading
+  source of information, use tos.hyp wherever possible). Fixed Flopfmt()
+  by aligning the buffer address and correcting the sector header byte.
   (patch by Vincent Riviere)
