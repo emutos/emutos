@@ -187,13 +187,10 @@ static void freednd(DND *dn);
 // extern long  ckdrv();                               /* M01.01.1214.02 */
 
 /*
-**  dots -, dots2  -
+**  dots
 */
 
 static  char dots[22] = ".          ";
-
-/* unused static  char dots2[22] = "..         "; */
-
 
 
 /*
@@ -301,6 +298,7 @@ long xmkdir(char *s)
         /* write parent entry .. */
 
         memcpy(f2, dots, 22);
+        f2->f_name[1] = '.';           /* This is .. */
         f2->f_attrib = FA_SUBDIR;
         f2->f_time = time;
         swpw( f2->f_time ) ;           /*  M01.01.SCC.FS.06  */

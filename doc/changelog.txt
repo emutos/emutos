@@ -2153,3 +2153,7 @@ Start... early ages
   source of information, use tos.hyp wherever possible). Fixed Flopfmt()
   by aligning the buffer address and correcting the sector header byte.
   (patch by Vincent Riviere)
+
+2010-01-19
+- bdos/fsdir.c: Fixed Dcreate(). The new directory had a second "." entry
+  instead of "..". (vriviere)
