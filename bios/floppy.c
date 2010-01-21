@@ -327,7 +327,7 @@ LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt,
         }
         buf += SECT_SIZ;
         recnr ++;
-        if(err) return (LONG) err;
+        if(err) return err;
     }
     return 0;
 }
@@ -437,14 +437,14 @@ UWORD getiword(UBYTE *addr)
 /*==== xbios floprd, flopwr ===============================================*/
 
 
-WORD floprd(LONG buf, LONG filler, WORD dev, 
+LONG floprd(LONG buf, LONG filler, WORD dev, 
             WORD sect, WORD track, WORD side, WORD count)
 {
     return floprw(buf, RW_READ, dev, sect, track, side, count);
 }
 
 
-WORD flopwr(LONG buf, LONG filler, WORD dev, 
+LONG flopwr(LONG buf, LONG filler, WORD dev, 
             WORD sect, WORD track, WORD side, WORD count)
 {
     return floprw(buf, RW_WRITE, dev, sect, track, side, count);
@@ -456,7 +456,7 @@ WORD flopwr(LONG buf, LONG filler, WORD dev,
  * read wrong, what is the error return code? 
  */
 
-WORD flopver(LONG buf, LONG filler, WORD dev, 
+LONG flopver(LONG buf, LONG filler, WORD dev, 
              WORD sect, WORD track, WORD side, WORD count)
 {
     WORD i;
@@ -485,14 +485,14 @@ WORD flopver(LONG buf, LONG filler, WORD dev,
 
 /*==== xbios flopfmt ======================================================*/
 
-WORD flopfmt(LONG buf, LONG filler, WORD dev, WORD spt,
+LONG flopfmt(LONG buf, LONG filler, WORD dev, WORD spt,
              WORD track, WORD side, WORD interleave, 
              ULONG magic, WORD virgin)
 {
     int i, j;
     BYTE b1, b2;
     BYTE *s;
-    WORD err;
+    LONG err;
 
 // #define APPEND(b, count) do { int n=count; while(n--) *s++ = b; } while(0) 
 #define APPEND(b, count) do { memset(s, b, count); s += count; } while(0)
@@ -570,7 +570,7 @@ WORD flopfmt(LONG buf, LONG filler, WORD dev, WORD spt,
  * 3   3ms
  */
 
-WORD floprate(WORD dev, WORD rate)
+LONG floprate(WORD dev, WORD rate)
 {
     WORD old;
 

@@ -216,7 +216,7 @@ WORD xbios_7(WORD colorNum, WORD color)
  */
 
 #if DBG_XBIOS
-WORD xbios_8(LONG buf, LONG filler, WORD devno, WORD sectno,
+LONG xbios_8(LONG buf, LONG filler, WORD devno, WORD sectno,
              WORD trackno, WORD sideno, WORD count)
 {
     kprintf("XBIOS: Floprd()\n");
@@ -239,7 +239,7 @@ WORD xbios_8(LONG buf, LONG filler, WORD devno, WORD sectno,
 
 
 #if DBG_XBIOS
-WORD xbios_9(LONG buf, LONG filler, WORD devno, WORD sectno,
+LONG xbios_9(LONG buf, LONG filler, WORD devno, WORD sectno,
              WORD trackno, WORD sideno, WORD count)
 {
     kprintf("XBIOS: Flopwr()\n");
@@ -272,7 +272,7 @@ WORD xbios_9(LONG buf, LONG filler, WORD devno, WORD sectno,
  */
 
 #if DBG_XBIOS
-WORD xbios_a(LONG buf, LONG filler, WORD devno, WORD spt,
+LONG xbios_a(LONG buf, LONG filler, WORD devno, WORD spt,
              WORD trackno, WORD sideno, WORD interlv, WORD virgin,
              LONG magic)
 {
@@ -466,7 +466,7 @@ void xbios_12(LONG buf, LONG serialno, WORD disktype, WORD execflag)
  */
 
 #if DBG_XBIOS
-WORD xbios_13(LONG buf, LONG filler, WORD devno, WORD sectno,
+LONG xbios_13(LONG buf, LONG filler, WORD devno, WORD sectno,
               WORD trackno, WORD sideno, WORD count)
 {
     kprintf("XBIOS: Flopver()\n");
@@ -768,7 +768,7 @@ LONG xbios_26(LONG codeptr)
  */
 
 #if DBG_XBIOS
-WORD xbios_29(WORD dev, WORD rate)
+LONG xbios_29(WORD dev, WORD rate)
 {
     kprintf("XBIOS: Floprate\n");
     return floprate(dev, rate);

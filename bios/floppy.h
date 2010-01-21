@@ -27,17 +27,17 @@ extern void flop_hdv_init(void);
 
 /* xbios functions */
 
-extern WORD floprd(LONG buf, LONG filler, WORD dev, 
+extern LONG floprd(LONG buf, LONG filler, WORD dev, 
                    WORD sect, WORD track, WORD side, WORD count); 
-extern WORD flopwr(LONG buf, LONG filler, WORD dev, 
+extern LONG flopwr(LONG buf, LONG filler, WORD dev, 
                    WORD sect, WORD track, WORD side, WORD count); 
-extern WORD flopfmt(LONG buf, LONG filler, WORD dev, WORD spt,
+extern LONG flopfmt(LONG buf, LONG filler, WORD dev, WORD spt,
                     WORD track, WORD side, WORD interleave, 
                     ULONG magic, WORD virgin); 
 extern void protobt(LONG buf, LONG serial, WORD type, WORD exec);
-extern WORD flopver(LONG buf, LONG filler, WORD dev, 
+extern LONG flopver(LONG buf, LONG filler, WORD dev, 
                     WORD sect, WORD track, WORD side, WORD count); 
-extern WORD floprate(WORD dev, WORD rate);
+extern LONG floprate(WORD dev, WORD rate);
 
 /* internal functions */
 
