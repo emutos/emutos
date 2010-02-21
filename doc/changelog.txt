@@ -2161,3 +2161,7 @@ Start... early ages
 2010-01-20
 - bios/floppy.c bios/floppy.h bios/xbios.c: The XBIOS floppy functions now
 return errors codes in the full 32 bits of d0 like TOS. (vriviere)
+
+2010-02-21
+- cli/command.c: In EmuCON, removed the volume label from the list of files
+displayed by the DIR command. (vriviere)

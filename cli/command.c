@@ -1158,6 +1158,8 @@ dirCmd(char *argv[])
         k = 0;
         do {
             n = strlen(&srchb[30]);
+            if (srchb[21] == 0x08) /* Volume label */
+                goto skip;
             if ((dirOnly) && (srchb[21] != 0x10))
                 goto skip;
             if ((filOnly) && (srchb[21] == 0x10))
