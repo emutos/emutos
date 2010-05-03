@@ -2,7 +2,7 @@
  * bdosmain.c - GEMDOS main function dispatcher
  *
  * Copyright (c) 2001 Lineo, Inc.
- *               2002 - 2009 The EmuTOS development team
+ *               2002 - 2010 The EmuTOS development team
  *
  * Authors:
  *  EWF  Eric W. Fleischman
@@ -451,7 +451,7 @@ restrt:
                 return(rc);
             }
 
-            if(  log(b,errdrv)  )
+            if ( log_media(b,errdrv) )
                 return (ENSMEM);
 
             rwerr = 0;

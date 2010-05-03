@@ -2,6 +2,7 @@
  * fs.h - file system defines
  *
  * Copyright (c) 2001 Lineo, Inc.
+ *               2002 - 2010 The EmuTOS development team
  *
  * Authors:
  *  JSL   Jason S. Loveman
@@ -373,7 +374,7 @@ long ckdrv(int d);
 DMD  *getdmd(int drv);
 
 /* log in media 'b' on drive 'drv'. */
-long log(BPB *b, int drv);
+long log_media(BPB *b, int drv);
 
 /*
  * in fshand.c

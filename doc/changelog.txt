@@ -2165,3 +2165,7 @@ return errors codes in the full 32 bits of d0 like TOS. (vriviere)
 2010-02-21
 - cli/command.c: In EmuCON, removed the volume label from the list of files
 displayed by the DIR command. (vriviere)
+
+2010-05-03
+- bdos/fsdrive.c: Renamed log() to log_media() so that it can not be confused
+  with the logarithmic function. (THH)

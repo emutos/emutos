@@ -2,9 +2,7 @@
  * fsdrive.c - physical drive routines for file system 
  *
  * Copyright (c) 2001 Lineo, Inc.
- *
- * Authors:
- *  xxx <xxx@xxx>
+ *               2002 - 2010 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -36,19 +34,12 @@
 #include "portab.h"
 #include "asm.h"
 #include "fs.h"
-#include "bios.h"                /*  M01.01.01                   */
+#include "bios.h"
 #include "mem.h"
 #include "gemerror.h"
 #include "biosbind.h"
 #include "../bios/kprint.h"
 
-
-
-/*
- * forward prototypes 
- */
-
-static int log2(int);
 
 /*
  **     globals
@@ -104,7 +95,7 @@ long    ckdrv(int d)
         if ( (long)b < 0 ) /* M01.01.0915.02 */ /* M01.01.1007.01 */
             return( (long)b );
 
-        if (log(b,d))
+        if (log_media(b,d))
             return (ENSMEM);
 
         drvsel |= mask;
@@ -160,6 +151,21 @@ fredm:  xmfreblk (dm);
 }
 
 
+/*
+ * log2 - return log base 2 of n
+ */
+
+static int log2(int n)
+{
+    int i;
+
+    for (i = 0; n ; i++) {
+        n >>= 1;
+    }
+
+    return(i-1);
+}
+
 
 /*
 **      log -
@@ -171,7 +177,7 @@ fredm:  xmfreblk (dm);
  * drv: drive number
  */
 
-long    log(BPB *b, int drv)
+long    log_media(BPB *b, int drv)
 {
         OFD *fo,*f;                         /*  M01.01.03   */
         DND *d;
@@ -230,21 +236,3 @@ long    log(BPB *b, int drv)
 
         return (0L);
 }
-
-
-/*
- * log2 - return log base 2 of n
- */
-
-static int log2(int n)
-{
-    int i;
-
-    for (i = 0; n ; i++) {
-        n >>= 1;
-    }
-
-    return(i-1);
-}
-
-
