@@ -695,18 +695,6 @@ LONG bios_b(WORD flag)
 }
 #endif
 
-/*
- * used by BDOS to ask for, or update, the time and date.
- */
-
-
-#if DBGBIOS
-void bios_11(WORD flag, WORD *dt)
-{
-    date_time(flag, dt);    /* clock.c */
-}
-#endif
-
 
 /*
  * bios_unimpl
