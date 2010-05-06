@@ -115,8 +115,6 @@
 //
 //============================================================================
 
-        .equ    _68070, 0               // 1=running on 68070, 0=68000/68010
-
 
 //==== Global References =====================================================
 
@@ -365,7 +363,7 @@ fix_trap:
         move.w  4(sp),6(sp)     // sr
         move.w  2(sp),4(sp)     // lsw of return address of BSR
         move.w  (sp),2(sp)      // msw of return address of BSR
-        add.l   #2,sp           // discard the missing word
+        addq.l  #2,sp           // discard the missing word
 ft_exit:
         rts
 
@@ -377,7 +375,7 @@ fix_rte:
         tst.w   _longframe      // check processor type
         beq     fr_exit
 
-        sub.l   #2,sp           // reserve a hole on top of the stack
+        subq.l  #2,sp           // reserve a hole on top of the stack
         move.w  2(sp),(sp)      // move SR
         move.w  4(sp),2(sp)     // msw of return address of TRAP
         move.w  6(sp),4(sp)     // lsw of return address of TRAP
