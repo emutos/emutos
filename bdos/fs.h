@@ -58,24 +58,24 @@ extern  int     errdrv;
 extern  long    errcode;
 
 #define longjmp_rwabs(flg,buf,cnt,rec,dev)            \
-    /* if (rec <= 65534) */                                 \
+    if (rec <= 32767)                                 \
     {                                                 \
+        /* kprintf("\nRwabs short, rec = %i\n", (int)(rec)); */ \
         if ((rwerr=Rwabs(flg,buf,cnt,rec,dev,0))!=0)  \
         {                                             \
              errdrv=dev; errcode=rwerr;               \
              longjmp(errbuf,1);                       \
         }                                             \
-    }                                                 
-    /*
+    }                                                 \
     else                                              \
     {                                                 \
+        /* kprintf(__FILE__ "%i: Rwabs rec=%li\n", __LINE__, (long)(rec)); */ \
         if ((rwerr=Rwabs(flg,buf,cnt,-1,dev,rec))!=0) \
         {                                             \
              errdrv=dev; errcode=rwerr;               \
              longjmp(errbuf,1);                       \
         }                                             \
     }                                                 \
-    */
 
 /*
  *  Type declarations
@@ -88,10 +88,15 @@ extern  long    errcode;
 #define FCB     struct  _fcb
 #define DND     struct  _dnd
 #define DMD     struct  _dmd
-#define CLNO    int             /*  cluster number M01.01.03    */
-#define RECNO   int             /*  record number M01.01.03     */
-                                /*  FIXME: this should be changed to a long! */
-#define FH      unsigned int            /*  file handle M01.01.04       */
+#define FH      unsigned int    /*  file handle    */
+
+#if ENABLE_BIGPARTITIONS
+# define CLNO    unsigned int   /*  cluster number */
+# define RECNO   unsigned long  /*  record number  */
+#else
+# define CLNO    int            /*  cluster number */
+# define RECNO   int            /*  record number  */
+#endif
 
 /*
  *  PD - Process Descriptor
@@ -255,14 +260,14 @@ DMD /* drive media block */
     int    m_drvnum;    /*  drive number for this media         */
     RECNO  m_fsiz;      /*  fat size in records M01.01.03       */
     RECNO  m_clsiz;     /*  cluster size in records M01.01.03   */
-    int    m_clsizb;    /*  cluster size in bytes               */
+    unsigned int m_clsizb;  /*  cluster size in bytes           */
     int    m_recsiz;    /*  record size in bytes                */
 
     CLNO   m_numcl;     /*  total number of clusters in data    */
     int    m_clrlog;    /* clsiz in rec, log2 is shift          */
     int    m_clrm;      /* clsiz in rec, mask                   */
     int    m_rblog;     /* recsiz in bytes, shift               */
-    int    m_rbm;               /* recsiz in bytes, mask                */
+    int    m_rbm;       /* recsiz in bytes, mask                */
     int    m_clblog;    /* log of clus size in bytes            */
     OFD    *m_fatofd;   /* OFD for 'fat file'                   */
 
@@ -300,7 +305,7 @@ BCB
     BCB     *b_link;    /*  next bcb                    */
     int     b_bufdrv;   /*  unit for buffer             */
     int     b_buftyp;   /*  buffer type                 */
-    int     b_bufrec;   /*  record number               */
+    RECNO   b_bufrec;   /*  record number               */
     BOOL    b_dirty;    /*  true if buffer dirty        */
     long    b_dm;       /*  reserved for file system    */
     char    *b_bufr;    /*  pointer to buffer           */

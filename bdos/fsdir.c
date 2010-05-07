@@ -2,16 +2,13 @@
  * fsdir.c - directory routines for the file system
  *
  * Copyright (c) 2001 Lineo, Inc.
- *
- * Authors:
- *  xxx <xxx@xxx>
+ *               2002 - 2010 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
  */
 
 
-/*              */
 /*
 ** NOTE:
 **      mods with "SCC.XX.NN" are mods which try to merge fixes to a special
@@ -123,6 +120,7 @@
 **      scan)..
 */
 
+#define DBGFSDIR 0
 
 #include        "portab.h"
 #include        "asm.h"
@@ -170,21 +168,6 @@ static void freednd(DND *dn);
 
 #define dirscan(a,c) ((DND *) scan(a,c,0x10,&negone))
 
-/*
-**  local structures
-*/
-
-/*
-**  bytes 0-20 are reserved by o/s, and are used by sfirst/snext.  beyond
-**      that, contents are published in programmer's guide.
-*/
-
-
-/*
-**  other declarations
-*/
-
-// extern long  ckdrv();                               /* M01.01.1214.02 */
 
 /*
 **  dots
@@ -543,7 +526,7 @@ long xsfirst(char *name, int att)
         dt->dt_dnd = (DND*)NULLPTR;                                     /* M01.01.1209.01 */
 
 #if DBGFSDIR
-                kprintf("\nxsfirst(%s, DTA=%08lx)", name, (long)dt);
+        kprintf("\nxsfirst(%s, DTA=%08lx)", name, (long)dt);
 #endif
         result = ixsfirst(name , att , dt);                   /* M01.01.1209.01 */
 
@@ -580,13 +563,13 @@ long xsfirst(char *name, int att)
                         /* if not search for free entry */
                         if (i == NCURDIR) {
                                 for (i = 1; i < NCURDIR; i++)
-                        if (!diruse[i])
+                                        if (!diruse[i])
                                                 break;
                         }
 
                         /* no empty entry found nor locked - no system memory */
                         if (i == NCURDIR)
-                return (ENSMEM);
+                                return (ENSMEM);
 
                         diruse[i]++;
                         dirtbl[i] = dt->dt_dnd;
@@ -1019,7 +1002,8 @@ long    xgetdir(char *buf, int drv)
 FCB     *dirinit(DND *dn)
 {
         OFD     *fd;            /*  ofd for this dir                    */
-        int     num,i2;
+        int     num;
+        RECNO   i2;
         char    *s1;
         DMD     *dm;
         FCB     *f1;
@@ -1034,6 +1018,9 @@ FCB     *dirinit(DND *dn)
 
         for (i2 = 1; i2 < dm->m_clsiz; i2++)    
         {
+#if DBGFSDIR
+                kprintf("dirinit i2 = %li\n", i2);
+#endif
                 s1 = getrec(fd->o_currec+i2,dn->d_drv,1);       
                 bzero( s1 , num ) ;
         }
@@ -1108,7 +1095,7 @@ DND     *findit(char *name, char **sp, int dflag)
 
     n = name;
 #if DBGFSDIR
-        kprintf("\n findit(%s)", n);
+        kprintf("findit(%s)\n", n);
 #endif
     if ((long)(p = dcrack(&n)) <= 0)                    /* M01.01.1214.01 */
         return( p );
@@ -1234,6 +1221,10 @@ FCB     *scan(register DND *dnd, char *n, WORD att, LONG *posp)
         DND     *dnd1;
         BOOL    m;              /*  T: found a matching FCB             */
 
+#if DBGFSDIR
+        kprintf("scan(%p, '%s', 0x%x, %p)\n", dnd, n, att, posp);
+#endif
+
         m = 0;                  /*  have_match = false                  */
         builds(n,name);         /*  format name into dir format         */
         name[11] = att;
@@ -1272,11 +1263,11 @@ FCB     *scan(register DND *dnd, char *n, WORD att, LONG *posp)
                 */
 
                 if( (fcb->f_attrib & FA_SUBDIR)         &&
-                    (fcb->f_name[0] != '.')             && 
-                    (fcb->f_name[0] != (char)0xe5)
 #if     ! M0101052901
                     (!(fd->o_flag & O_COMPLETE))        &&
 #endif
+                    (fcb->f_name[0] != '.')             && 
+                    (fcb->f_name[0] != (char)0xe5)
                 )
                 {       /*  see if we already have it  */
                         dnd1 = getdnd( &fcb->f_name[0] , dnd ) ;
@@ -1290,7 +1281,8 @@ FCB     *scan(register DND *dnd, char *n, WORD att, LONG *posp)
         }
 
 #if DBGFSDIR
-                kprintf("\n   scan(pos=%ld DND=%08lx DNDfoundFile=%08lx name=%s name1=%s, %d)", (long)fd->o_bytnum, (long)dnd, (long)dnd1, fcb->f_name, name, m);
+        kprintf("\n   scan(pos=%ld DND=%08lx DNDfoundFile=%08lx name=%s name1=%s, %d)",
+                (long)fd->o_bytnum, (long)dnd, (long)dnd1, fcb->f_name, name, m);
 #endif
         /* restore directory scanning pointer */
 
@@ -1352,11 +1344,11 @@ static DND *makdnd(DND *p, FCB *b)
                         for (i = 1; i < NCURDIR; i++)
                                 if (diruse[i] && dirtbl[i] == p1) {
                                     in_use = 1;
-                                                                        break;
-                                                                }
+                                    break;
+                                }
 
 #if DBGFSDIR
-                                                kprintf("\n makdnd check dirtbl (%d)", in_use);
+                        kprintf("\n makdnd check dirtbl (%d)", in_use);
 #endif
                         if( !in_use && p1->d_files == NULLPTR )
                         {       /*  M01.01.KTB.SCC.02  */
@@ -1427,6 +1419,10 @@ static DND *dcrack(char **np)
     DND *p;
     register int d;
     LONG l;                                             /* M01.01.1212.01 */
+
+#if DBGFSDIR
+    kprintf("\n dcrack(%p -> '%s')", np, *np);
+#endif
 
     /*
      **  get drive spec (or default) and make sure drive is logged in

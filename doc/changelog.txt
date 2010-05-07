@@ -2160,12 +2160,18 @@ Start... early ages
 
 2010-01-20
 - bios/floppy.c bios/floppy.h bios/xbios.c: The XBIOS floppy functions now
-return errors codes in the full 32 bits of d0 like TOS. (vriviere)
+  return errors codes in the full 32 bits of d0 like TOS. (vriviere)
 
 2010-02-21
 - cli/command.c: In EmuCON, removed the volume label from the list of files
-displayed by the DIR command. (vriviere)
+  displayed by the DIR command. (vriviere)
 
 2010-05-03
 - bdos/fsdrive.c: Renamed log() to log_media() so that it can not be confused
   with the logarithmic function. (THH)
+
+2010-05-07
+- bdos/fsmain.c, bdos/fsglob.c: Changed code to support up to 32 drives instead
+  of only 16 drives. (THH)
+- bdos/*: Added a lot of hacks to get bigger partitions running. It's not
+  working stable yet, so the code is still disabled by default. (THH)

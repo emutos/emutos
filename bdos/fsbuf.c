@@ -2,6 +2,7 @@
  * fsbuf.c - buffer mgmt for file system
  *
  * Copyright (c) 2001 Lineo, Inc.
+ *               2002 - 2010 The EmuTOS development team
  *
  * Authors:
  *  SCC   Steve C. Cavender
@@ -10,7 +11,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
+#define DBGFSBUF 0
 
 #include "portab.h"
 #include "asm.h"
@@ -21,19 +22,20 @@
 
 
 
-/*
- * bufl_init - BDOS buffer list initialization
- *
- * LVL - This should really go in BDOS...
- */
-
-static BYTE secbuf[4][4096]; /* sector buffers: 16kB is TOS 4.0x limit though
-                                when set here as [4][16384] the BDOS goes
-                                crazy. 4kB is enough for my 500 MB partition */
+ /* sector buffers: 16kB is TOS 4.0x limit though
+    when set here as [4][16384] the BDOS might go crazy. */
+#if ENABLE_BIGPARTITIONS
+static BYTE secbuf[4][16384];
+#else
+static BYTE secbuf[4][4096];
+#endif
 
 static BCB bcbx[4];    /* buffer control block array for each buffer */
 extern BCB *bufl[];    /* buffer lists - two lists:  fat,dir / data */
 
+/*
+ * bufl_init - BDOS buffer list initialization
+ */
 void bufl_init(void)
 {
     /* set up sector buffers */
@@ -106,20 +108,33 @@ void flush(BCB *b)
  * getrec - return the ptr to the buffer containing the desired record
  */
 
-char *getrec(int recn, DMD *dm, int wrtflg)
+char *getrec(RECNO recn, DMD *dm, int wrtflg)
 {
     register BCB *b;
     BCB *p,*mtbuf,**q,**phdr;
     int n,cl,err;
 
+#if DBGFSBUF
+    kprintf("getrec 0x%lx, %p, 0x%x\n", (long)recn, dm, wrtflg);
+#endif
+
     /* put bcb management here */
+#if ENABLE_BIGPARTITIONS
+    cl = (int)(recn >> dm->m_clrlog);  /*  calculate cluster nbr       */
+    if (cl < (int)dm->m_dtl->d_strtcl)
+        n = 0;                  /* FAT operat'n */
+    else if(recn >= ((long)dm->m_numcl *  (long)dm->m_clsiz))
+        n = 1;                  /*  DIR (?)     */
+    else
+        n = 2;                  /*  DATA (?)    */
+#else
     /* unsigned added by Petr Stehlik: trying to get 16-bit recn working */
     #define NEGATIVE_RECN -200      /* made up this value: has to be fixed */
     if (recn >= NEGATIVE_RECN)
         cl = recn >> dm->m_clrlog;  /*  calculate cluster nbr       */
-        else
+    else
         cl = (unsigned)recn >> dm->m_clrlog;  /*  calculate cluster nbr       */
-
+ 
     if (cl < dm->m_dtl->d_strtcl)
         n = 0;                  /* FAT operat'n */
     else if (recn < 0
@@ -131,6 +146,11 @@ char *getrec(int recn, DMD *dm, int wrtflg)
         n = 1;                  /*  DIR (?)     */
     else
         n = 2;                  /*  DATA (?)    */
+#endif  /* ENABLE_BIGPARTITIONS */
+
+#if DBGFSBUF
+    kprintf("n=%i , dm->m_recoff[n] = 0x%lx\n", n, dm->m_recoff[n]);
+#endif
 
     mtbuf = 0;
     phdr = &bufl[n ? 1 : 0];
@@ -191,7 +211,8 @@ doio:   for (p = *(q = phdr); p->b_link; p = *(q = &p->b_link))
     }
     else
     {   /* use a buffer, but first validate media */
-        if ((err = Mediach(b->b_bufdrv)) != 0) {
+        err = Mediach(b->b_bufdrv);
+        if (err != 0) {
             if (err == 1) {
                 goto doio; /* media may be changed */
             } else if (err == 2) {

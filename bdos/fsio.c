@@ -2,22 +2,18 @@
  * fsio.c - read/write routines for the file system                     
  *
  * Copyright (c) 2001 Lineo, Inc.
- *
- * Authors:
- *  xxx <xxx@xxx>
+ *               2002 - 2010 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
  */
 
-
-
-#include        "portab.h"
-#include        "asm.h"
-#include        "fs.h"
-#include        "bios.h"                /*  M01.01.01                   */
-#include        "gemerror.h"
-#include        "biosbind.h"
+#include "portab.h"
+#include "asm.h"
+#include "fs.h"
+#include "bios.h"                /*  M01.01.01                   */
+#include "gemerror.h"
+#include "biosbind.h"
 #include "../bios/kprint.h"
 
 #define DBGFSIO 0
@@ -28,11 +24,11 @@
 
 void xfr2usr(int n, char *s, char *d);
 void usr2xfr(int n, char *d, char *s);
-static int divmod(int *modp, long divdnd, int divsor);
+static long divmod(int *modp, long divdnd, int divsor);
 static void addit(OFD *p, long siz, int flg);
 static long xrw(int wrtflg, OFD *p, long len, char *ubufr,
                 void (*bufxfr)(int, char *, char *));
-static void usrio(int rwflg, int num, int strt, char *ubuf, DMD *dm);
+static void usrio(int rwflg, int num, long strt, char *ubuf, DMD *dm);
 
 
 /*
@@ -68,11 +64,11 @@ void usr2xfr(int n, char *d, char *s)
  */
 
 /* divsor is log2 of actual divisor */
-static int divmod(int *modp, long divdnd, int divsor)
+static long divmod(int *modp, long divdnd, int divsor)
 {
     *modp = (int)(divdnd % (1L<<divsor));
 
-    return (int)(divdnd >> divsor);
+    return (long)(divdnd >> divsor);
 }
 
 
@@ -226,6 +222,15 @@ long    ixread(OFD *p, long len, void *ubufr)
 {
     long maxlen;
 
+#if DBGFSIO  // bug to fix ?
+    // kprintf("ixread(%p, %li, %p)\n", p, len, ubufr);
+    if(p->o_dmd == NULL)
+    {
+        kprintf("xread() dm NULL ofd: 0x%p\n", p);
+        // return(EIHNDL);
+    }
+#endif
+
     /* Make sure file not opened as write only */
     if (p->o_mod == 1)
         return (EACCDN);
@@ -328,9 +333,11 @@ static long xrw(int wrtflg, OFD *p, long len, char *ubufr,
 {
     register DMD *dm;
     char *bufp;
-    int bytn,recn,lenxfr,lentail,num;   /*  M01.01.03 */
+    int bytn, lenxfr, lentail;
+    RECNO recn, num;
     int hdrrec,lsiz,tailrec;
-    int last, nrecs, lflg; /* multi-sector variables */
+    RECNO last, nrecs;                  /* multi-sector variables */
+    int lflg;
     long nbyts;
     long rc,bytpos,lenrec,lenmid;
 
@@ -405,7 +412,8 @@ static long xrw(int wrtflg, OFD *p, long len, char *ubufr,
         lenrec = lenmid >> dm->m_rblog;            /* nbr of records  */
         num = divmod(&tailrec,lenrec,dm->m_clrlog);/* nbr of clusters */
 
-        last = nrecs = nbyts = lflg = 0;
+        last = nrecs = 0L;
+        nbyts = lflg = 0;
 
         while (num--)           /*  for each whole cluster...   */
         {
@@ -463,14 +471,14 @@ mulio:
     {
         recn = divmod(&bytn,(long) p->o_curbyt,dm->m_rblog);
 
-        if ((!recn) || (recn == dm->m_clsiz))
+        if ((!recn) || (recn == (RECNO)dm->m_clsiz))
         {
             if (nextcl(p,wrtflg))
                 goto eof;
             recn = 0;
         }
 
-        bufp = getrec(p->o_currec+recn,dm,wrtflg);
+        bufp = getrec((RECNO)p->o_currec+recn,dm,wrtflg);
         addit(p,(long) lentail,1);
 
         if (!ubufr)
@@ -496,7 +504,7 @@ exit:
  *       not need to return any error codes.
  */
 
-static void usrio(int rwflg, int num, int strt, char *ubuf, DMD *dm)
+static void usrio(int rwflg, int num, long strt, char *ubuf, DMD *dm)
 {
     register BCB *b;
 

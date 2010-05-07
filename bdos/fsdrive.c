@@ -8,8 +8,6 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
-
 /*
  **       date      who     comment
  **     ---------   ---     -------
@@ -30,6 +28,7 @@
  **
  */
 
+#define DBGFSDRIVE 0
 
 #include "portab.h"
 #include "asm.h"
@@ -83,6 +82,10 @@ long    ckdrv(int d)
     int mask,i;
     BPB *b;
 
+#if DBGFSDRIVE
+    kprintf("ckdrv(%i)\n", d);
+#endif
+
     mask = 1 << d;
 
     if (!(mask & drvsel))
@@ -129,6 +132,10 @@ DMD     *getdmd(int drv)
 {
         DMD *dm;
 
+#if DBGFSDRIVE
+        kprintf("getdmd(%i)\n", drv);
+#endif
+
         if (!(drvtbl[drv] = dm = MGET(DMD)))
                 return ( (DMD *) 0 );
 
@@ -155,7 +162,7 @@ fredm:  xmfreblk (dm);
  * log2 - return log base 2 of n
  */
 
-static int log2(int n)
+static int log2(unsigned long n)
 {
     int i;
 
@@ -189,6 +196,12 @@ long    log_media(BPB *b, int drv)
         n = b->rdlen;
         fs = b->fsiz;
 
+#if DBGFSDRIVE
+        kprintf("log_media(%p, %i)\n", b, drv);
+        kprintf("rsiz = 0x%lx, cs = 0x%lx, n = 0x%lx, fs = 0x%lx\n",
+                rsiz, cs, n, fs);
+#endif
+
         if (!(dm = getdmd(drv)))
                 return (ENSMEM);
 
@@ -204,6 +217,7 @@ long    log_media(BPB *b, int drv)
         dm->m_16 = b->b_flags & B_16;   /*      set 12 or 16 bit fat flag   */
         dm->m_clsiz = cs;                   /*  set cluster size in sectors */
         dm->m_clsizb = b->clsizb;           /*    and in bytes              */
+        // kprintf("dm->m_clsizb = 0x%lx\n", (long)dm->m_clsizb);
         dm->m_recsiz = rsiz;        /*  set record (sector) size    */
         dm->m_numcl = b->numcl;     /*  set cluster size in records */
         dm->m_clrlog = log2(cs);            /*    and log of it             */
@@ -214,7 +228,6 @@ long    log_media(BPB *b, int drv)
 
         f->o_fileln = n * rsiz;     /*  size of file (root dir)     */
 
-
         ncl = (n + cs - 1)/cs;      /* number of "clusters" in root */
         d->d_strtcl = f->o_strtcl = -1 - ncl;   /*      root start clus     */
         fcl = (fs + cs - 1)/cs;
@@ -223,16 +236,29 @@ long    log_media(BPB *b, int drv)
         fo->o_strtcl = d->d_strtcl - fcl;           /*  start clus for fat  */
         fo->o_dmd = dm;             /*  link with DMD               */
 
-        dm->m_recoff[0] = b->fatrec - (fo->o_strtcl * cs);
-        dm->m_recoff[1] = (b->fatrec + fs) - (d->d_strtcl * cs);
+        // kprintf("b->fatrec = 0x%x, fo->o_strtcl = 0x%x\n", b->fatrec, fo->o_strtcl);
+        // kprintf("d->d_strtcl = 0x%x, b->datrec = 0x%x\n", d->d_strtcl, b->datrec);
+
+        dm->m_recoff[0] = (long)b->fatrec - ((long)fo->o_strtcl * (long)cs);
+        // kprintf("dm->m_recoff[0] = 0x%lx\n", dm->m_recoff[0]);
+        dm->m_recoff[1] = ((long)b->fatrec + (long)fs) - ((long)d->d_strtcl * (long)cs);
+        // kprintf("dm->m_recoff[1] = 0x%lx\n", dm->m_recoff[1]);
 
         /* 2 is first data cluster */
 
-        dm->m_recoff[2] = b->datrec - (2 * cs);
+        dm->m_recoff[2] = (long)b->datrec - (2L * (long)cs);
+        // kprintf("dm->m_recoff[2] = 0x%lx\n", dm->m_recoff[2]);
 
         fo->o_bytnum = 3;
         fo->o_curbyt = 3;
         fo->o_fileln = fs * rsiz;
+
+        if (b->fsiz == 0) {
+#if DBGFSDRIVE
+            kprintf("Warning: Trying to access a FAT32 partition?\n");
+#endif
+            return EDRIVE;
+        }
 
         return (0L);
 }

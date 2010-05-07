@@ -19,7 +19,7 @@
  */
 
 
-#define DBGOSIF 1
+#define DBGOSIF 0
 
 
 #include "portab.h"
@@ -415,7 +415,8 @@ restrt:
     fn = pw[0];
     if (fn > 0x57)
         return(EINVFN);
-#if 0
+
+#if DBGOSIF
     kprintf("bdos(fn = 0x%04x)\n", fn);
 #endif
     
@@ -661,5 +662,10 @@ restrt:
             rc = EINTRN;    /* Internal error */
         }
     }
+
+#if DBGOSIF
+    kprintf("bdos returns: 0x%08lx\n", rc);
+#endif
+
     return(rc);
 }
