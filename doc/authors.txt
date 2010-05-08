@@ -27,25 +27,34 @@ Here is about the 'recent' contributors - individuals involved in the EmuTOS
 project. In this project virtually everybody modifies every file,
 nevertheless here is an attempt at identifying who's guilty of what: 
 
-Martin Doering (MAD) <mdoering@mucl.de>
-- project initiator and manager; 
+Martin Doering (MAD) <mdoering at users.sourceforge.net>
+- project initiator
 - memory setup, VT52 console, linea, mouse
 - virtually everything not modified later by the other fellows
 
-Petr Stehlik (joy) <pstehlik@sophics.cz>
+Petr Stehlik (joy) <pstehlik at sophics.cz>
 - bios disk interface, BDOS filesystem
 - Falcon and ARAnyM support
 
-Thomas Huth (THH) <thothy@users.sourceforge.net>
-- Lots of VDI bugfixes
+Thomas Huth (THH) <huth at users.berlios.de>
+- Lots of bugfixes all over the place
 - Integration and maintenance of the AES and GEM-Desktop
 
-Laurent Vogel (LVL) <lvl@club-internet.fr>
+Laurent Vogel (LVL) <lvl at club-internet.fr>
 - original ST hardware (MFP, ACIA, parport, sound, floppy, ACSI)
 - Makefile tricks and tools
 - NLS support
 
-Bohdan Milar <milarb@volny.cz>
+Vincent Riviere <vincent.riviere at freesbee.fr>
+- Patches for compiling with GCC 4.x
+- ColdFire support
+- various bug fixes
+
+
+Thanks also to all Mailing list contributors for their help, and 
+especially:
+
+Bohdan Milar <milarb at volny.cz>
 - Czech translation
 
 Gabriel Huertas
@@ -54,26 +63,23 @@ Gabriel Huertas
 George Nakos
 - Greek translation
 
-Stanislav Opichal (SOP) <opichals@seznam.cz>
+Stanislav Opichal (SOP) <opichals at seznam.cz>
 - FreeMiNT kernel bootstrap via BOOTSTRAP NatFeat
 
-Thanks also to all Mailing list contributors for their help, and 
-especially:
-
-Frank Naumann <fnaumann@cs.uni-magdeburg.de> 
+Frank Naumann
 - MiNT
 
-Ctirad Fertr <phanatic@volny.cz>,
-Milan Jurik <M.Jurik@sh.cvut.cz>
+Ctirad Fertr <phanatic at volny.cz>,
+Milan Jurik <M.Jurik at sh.cvut.cz>
 - the ARanyM team
 
-Johan Klockars <rand@cd.chalmers.se> 
+Johan Klockars <rand at cd.chalmers.se> 
 - fVDI
 
-Henk Robbers <h.robbers@chello.nl> 
+Henk Robbers <h.robbers at chello.nl> 
 - XaAES
 
-Jacques-Etienne Rahon "Kevin Flynn" <kevin.flynn@wanadoo.fr>
+Jacques-Etienne Rahon "Kevin Flynn" <kevin.flynn at wanadoo.fr>
 - extensive demo testing on STeeM
 
 Patrice Mandin and Markus Oberhumer
