@@ -514,7 +514,6 @@ void dst_height(Vwk * vwk)
  */
 WORD act_siz(Vwk * vwk, WORD top)
 {
-    UWORD size;
     UWORD accu;
     UWORD retval;
     UWORD i;
@@ -523,13 +522,12 @@ WORD act_siz(Vwk * vwk, WORD top)
         /* double size */
         return ((WORD)(top<<1));
     }
-    size = (UWORD)(top - 1);
     accu = 0x7fff;
     retval = 0;
 
     if (vwk->t_sclsts) {
         /* enlarge */
-        for (i = size; i >= 0; --i) {
+        for (i = 0; i < (UWORD)top; i++) {
             accu += vwk->dda_inc;
             if (accu < vwk->dda_inc) {
                 // Not sz_sm_1 stuff here
@@ -539,7 +537,7 @@ WORD act_siz(Vwk * vwk, WORD top)
         }
     } else {
         /* scale down */
-        for (i = size; i >= 0; --i) {
+        for (i = 0; i < (UWORD)top; i++) {
             accu += vwk->dda_inc;
             if (accu < vwk->dda_inc) {
                 // Not sz_sm_1 stuff here
