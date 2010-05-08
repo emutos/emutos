@@ -223,7 +223,8 @@ f0_r2l_lf:
 //      rotate right to achieve a net left shift.
 f1_l2r_rt:
 
-        move.w  (a0)+,d0        // d0 <- 1st SOURCE word                                 8
+        move.w  (a0),d0         // d0 <- 1st SOURCE word                                 8
+        adda.w  d2,a0           // a0 -> SOURCE 2nd word                                 8
         swap    d0              // d0(31:16) <- SRC 1st word (old)               4
 
 

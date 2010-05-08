@@ -2175,3 +2175,9 @@ Start... early ages
   of only 16 drives. (THH)
 - bdos/*: Added a lot of hacks to get bigger partitions running. It's not
   working stable yet, so the code is still disabled by default. (THH)
+
+2010-05-08
+- vdi/vdi_text.c: Fixed infinite loop in act_siz(). (vriviere)
+- vdi/vdi_tblit.S: Fixed bit_blt() which was copying garbage when the source
+  rectangle had infortunate alignement, like the background of most TeraDesk
+  dialogs. (vriviere)
