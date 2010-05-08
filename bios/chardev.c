@@ -158,8 +158,8 @@ void bconout1(WORD dev, WORD b)
     /* Wait transmit buffer to become empty */
     while(!bcostat1()) ;
 
-	/* Output to RS232 interface */
-	MFP_BASE->udr = (char)b;
+    /* Output to RS232 interface */
+    MFP_BASE->udr = (char)b;
 }
 
 void bconout2(WORD dev, WORD b)

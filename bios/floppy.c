@@ -885,5 +885,5 @@ static void delay(void)
 {
     WORD delay = 30;
     while (--delay)
-	    nop();
+            nop();
 }
