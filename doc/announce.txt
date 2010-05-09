@@ -3,7 +3,7 @@ Dear Atari Community!
 
 We are happy to announce a new public release of EmuTOS:
 
-EmuTOS 0.8.4 -- November 14th, 2008
+EmuTOS 0.8.5 -- May 9th, 2010
 
 
 INTRODUCTION
@@ -18,12 +18,15 @@ free, licensed under the GNU General Public License (GPL).
 
 CHANGES SINCE LAST RELEASE
 
-- RTC detection fixed
-- Return code problem of Dsetdrv fixed
-- Experimental UART functions
-- _SND cookie is now correctly initialized on STE
-- BIOS parallel port code fixed
-- EmuCON fixes and improvements
+- Timeout on boot removed - hold <Shift> if you miss it
+- Show boot splash screen on coldstart only
+- Some GEMDOS bug fixes (e.g. double "." directory bug) and code improvements
+- Some VDI bug fixes (e.g. bit-blit function, mouse init)
+- Fixed Getrez() for TT shifter resolutions
+- New CPUFLAGS Make variable to allow easy compilation for a specific CPU
+- Fixed writing to floppy on real STe hardware
+- XBIOS floppy functions now return errors codes in full 32 bits of d0
+- EmuCON does not show the volume label during the  DIR command anymore
 
 Have a look at the changelog.txt for more detailed information.
 
