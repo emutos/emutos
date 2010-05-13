@@ -169,7 +169,7 @@ _linea_e:
 
 _linea_f:
         move.w  #0xf,d0
-        bra.s   linea_stub
+        // Fall into linea_stub
 
 
 

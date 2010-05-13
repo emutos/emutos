@@ -2183,3 +2183,6 @@ Start... early ages
   dialogs. (vriviere)
 
 * Release: 0.8.5
+
+2010-05-13
+- bios/linea.S: Fixed crash in Line A $a00f stub. (vriviere)
