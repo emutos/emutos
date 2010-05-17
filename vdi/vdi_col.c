@@ -94,9 +94,9 @@ static void set_color(int colnum, int r, int g, int b)
 
 
 /*
- * vs_color - set color index table
+ * _vs_color - set color index table
  */
-void vs_color(Vwk *vwk)
+void _vs_color(Vwk *vwk)
 {
     int colnum, i;
 
@@ -176,9 +176,9 @@ static int st2vdi(int col)
 
 
 /*
- * vq_color - query color index table
+ * _vq_color - query color index table
  */
-void vq_color(Vwk *vwk)
+void _vq_color(Vwk *vwk)
 {
     int colnum, c;
 

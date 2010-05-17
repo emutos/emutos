@@ -270,10 +270,10 @@ void v_locator(Vwk * vwk)
 
 
 /*
- * v_show_c - show cursor
+ * _v_show_c - show cursor
  */
 
-void v_show_c(Vwk * vwk)
+void _v_show_c(Vwk * vwk)
 {
     if (!*INTIN && HIDE_CNT)
         HIDE_CNT = 1;           /* reset cursor to on */
@@ -284,10 +284,10 @@ void v_show_c(Vwk * vwk)
 
 
 /*
- * v_hide_c - hide cursor
+ * _v_hide_c - hide cursor
  */
 
-void v_hide_c(Vwk * vwk)
+void _v_hide_c(Vwk * vwk)
 {
     hide_cur();
 }
@@ -295,10 +295,10 @@ void v_hide_c(Vwk * vwk)
 
 
 /*
- * vq_mouse - Query mouse position and button status
+ * _vq_mouse - Query mouse position and button status
  */
 
-void vq_mouse(Vwk * vwk)
+void _vq_mouse(Vwk * vwk)
 {
     WORD *pointer;
 
@@ -323,7 +323,7 @@ void v_valuator(Vwk * vwk)
 
 
 /*
- * vex_butv
+ * _vex_butv
  *
  * This routine replaces the mouse button change vector with
  * the address of a user-supplied routine.  The previous value
@@ -337,7 +337,7 @@ void v_valuator(Vwk * vwk)
  *    contrl[9], contrl[10] - pointer to old routine
  */
 
-void vex_butv(Vwk * vwk)
+void _vex_butv(Vwk * vwk)
 {
     LONG * pointer;
 
@@ -349,7 +349,7 @@ void vex_butv(Vwk * vwk)
 
 
 /*
- * vex_motv
+ * _vex_motv
  *
  * This routine replaces the mouse coordinate change vector with the address
  * of a user-supplied routine.  The previous value is returned so that it
@@ -362,7 +362,7 @@ void vex_butv(Vwk * vwk)
  *     contrl[9], contrl[10] - pointer to old routine
  */
 
-void vex_motv(Vwk * vwk)
+void _vex_motv(Vwk * vwk)
 {
     LONG * pointer;
 
@@ -374,7 +374,7 @@ void vex_motv(Vwk * vwk)
 
 
 /*
- * vex_curv
+ * _vex_curv
  *
  * This routine replaces the mouse draw vector with the
  * address of a user-supplied routine.  The previous value
@@ -389,7 +389,7 @@ void vex_motv(Vwk * vwk)
  *
  */
 
-void vex_curv(Vwk * vwk)
+void _vex_curv(Vwk * vwk)
 {
     LONG * pointer;
 
@@ -401,7 +401,7 @@ void vex_curv(Vwk * vwk)
 
 
 /*
- * vex_wheelv
+ * _vex_wheelv
  *
  * This routine replaces the mouse wheel vector with the
  * address of a user-supplied routine.  The previous value
@@ -416,7 +416,7 @@ void vex_curv(Vwk * vwk)
  *
  */
 
-void vex_wheelv(Vwk * vwk)
+void _vex_wheelv(Vwk * vwk)
 {
     LONG * pointer;
 

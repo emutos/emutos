@@ -10,5 +10,5 @@ extern WORD MAP_COL[], REV_MAP_COL[];
 extern WORD REQ_COL[16][3];
 
 extern void init_colors(void);
-extern void vs_color(Vwk *vwk);
-extern void vq_color(Vwk *vwk);
+extern void _vs_color(Vwk *vwk);
+extern void _vq_color(Vwk *vwk);

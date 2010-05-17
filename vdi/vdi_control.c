@@ -192,7 +192,7 @@ void s_clip(Vwk * vwk)
 
 
 /* SET_WRITING_MODE: */
-void vswr_mode(Vwk * vwk)
+void _vswr_mode(Vwk * vwk)
 {
     WORD wm;
 
@@ -364,7 +364,7 @@ void d_clsvwk(Vwk * vwk)
 
 
 /* OPEN_WORKSTATION: */
-void v_opnwk(Vwk * vwk)
+void _v_opnwk(Vwk * vwk)
 {
     int i;
 
@@ -409,7 +409,7 @@ void v_opnwk(Vwk * vwk)
 
 
 /* CLOSE_WORKSTATION: */
-void v_clswk(Vwk * vwk)
+void _v_clswk(Vwk * vwk)
 {
     Vwk *next_work;
 
@@ -429,12 +429,12 @@ void v_clswk(Vwk * vwk)
 
 
 /*
- * v_clrwk - clear screen
+ * _v_clrwk - clear screen
  *
  * Screen is cleared from the base address v_bas_ad.
  */
 
-void v_clrwk(Vwk * vwk)
+void _v_clrwk(Vwk * vwk)
 {
     ULONG size;
 
@@ -448,10 +448,10 @@ void v_clrwk(Vwk * vwk)
 
 
 /*
- * vq_extnd - Extended workstation inquire
+ * _vq_extnd - Extended workstation inquire
  */
 
-void vq_extnd(Vwk * vwk)
+void _vq_extnd(Vwk * vwk)
 {
     WORD i;
     WORD *dst, *src;

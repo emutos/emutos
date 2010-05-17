@@ -123,7 +123,7 @@ typedef struct {
 struct blit_frame info;     /* holds some internal info for bit_blt */
 
 /*
- * vr_trnfm - Convert bitmaps
+ * _vr_trnfm - Convert bitmaps
  *
  * Convert device independant bitmaps into device dependants and vice versa.
  *
@@ -131,7 +131,7 @@ struct blit_frame info;     /* holds some internal info for bit_blt */
  * are consecutive, while on the screen they are interleaved.
  */
 void
-vr_trnfm(Vwk * vwk)
+_vr_trnfm(Vwk * vwk)
 {
     MFDB *src_mfdb, *dst_mfdb;
     WORD *src;

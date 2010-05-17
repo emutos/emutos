@@ -172,11 +172,11 @@ dsf_udpat(Vwk * vwk)
 
 
 /*
- * vsf_interior - Set fill style
+ * _vsf_interior - Set fill style
  */
 
 void
-vsf_interior(Vwk * vwk)
+_vsf_interior(Vwk * vwk)
 {
     WORD fs;
 
@@ -192,7 +192,7 @@ vsf_interior(Vwk * vwk)
 
 /* S_FILL_INDEX: */
 void
-vsf_style(Vwk * vwk)
+_vsf_style(Vwk * vwk)
 {
     WORD fi;
 
@@ -214,7 +214,7 @@ vsf_style(Vwk * vwk)
 
 /* S_FILL_COLOR: */
 void
-vsf_color(Vwk * vwk)
+_vsf_color(Vwk * vwk)
 {
     WORD fc;
 
@@ -231,7 +231,7 @@ vsf_color(Vwk * vwk)
 
 /* ST_FILLPERIMETER: */
 void
-vsf_perimeter(Vwk * vwk)
+_vsf_perimeter(Vwk * vwk)
 {
     WORD *int_out;
 
@@ -269,10 +269,10 @@ dr_recfl(Vwk * vwk)
 
 
 /*
- * v_cellarray - Draw a square of sqares (just color devices)
+ * _v_cellarray - Draw a square of sqares (just color devices)
  */
 void
-v_cellarray(Vwk * vwk)
+_v_cellarray(Vwk * vwk)
 {
     /* not implemented */
 }
@@ -613,11 +613,11 @@ polygon(Vwk * vwk, Point * ptsin, int count)
 
 
 /*
- * v_fillarea - Fill an area
+ * _v_fillarea - Fill an area
  */
 
 void
-v_fillarea(Vwk * vwk)
+_v_fillarea(Vwk * vwk)
 {
     Point * point = (Point*)PTSIN;
     int count = CONTRL[1];
@@ -1063,7 +1063,7 @@ get_seed(Vwk * vwk, WORD xin, WORD yin, WORD *xleftout, WORD *xrightout,
 
 
 void
-v_get_pixel(Vwk * vwk)
+_v_get_pixel(Vwk * vwk)
 {
     WORD pel;
     WORD *int_out;

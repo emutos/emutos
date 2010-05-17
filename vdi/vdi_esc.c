@@ -61,7 +61,7 @@ static void escfn1(Vwk * vwk)
 static void escfn2(Vwk * vwk)
 {
     trap1(wntstr, "\033f\033E");   // hide alpha cursor
-    v_clrwk(vwk);
+    _v_clrwk(vwk);
 }
 
 
@@ -71,7 +71,7 @@ static void escfn2(Vwk * vwk)
  */
 static void escfn3(Vwk * vwk)
 {
-    v_clrwk(vwk);
+    _v_clrwk(vwk);
     trap1(wntstr, "\033E\033e");   // show alpha cursor
 }
 
@@ -278,7 +278,7 @@ static void escfn17(Vwk * vwk)
 static void escfn18(Vwk * vwk)
 {
     INTIN[0] = 0;       /* show regardless */
-    v_show_c(vwk);         /* display the graphics cursor */
+    _v_show_c(vwk);         /* display the graphics cursor */
 }
 
 
@@ -289,7 +289,7 @@ static void escfn18(Vwk * vwk)
 
 static void escfn19(Vwk * vwk)
 {
-    v_hide_c(vwk);         /* hide the graphics cursor */
+    _v_hide_c(vwk);         /* hide the graphics cursor */
 }
 
 

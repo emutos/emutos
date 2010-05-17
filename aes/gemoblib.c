@@ -36,7 +36,7 @@
 #include "kprint.h"     // just for debugging
 
                                                 /* in GSXBIND.C         */
-#define vsf_color( x )          gsx_1code(S_FILL_COLOR, x)
+#define g_vsf_color( x )          gsx_1code(S_FILL_COLOR, x)
 
 
 GLOBAL LONG     ad_tmpstr;
@@ -362,7 +362,7 @@ void  just_draw(LONG tree, WORD obj, WORD sx, WORD sy)
 
           if ( (state & SHADOWED) && th )
           {
-            vsf_color(bcol);
+            g_vsf_color(bcol);
             bb_fill(MD_REPLACE, FIS_SOLID, 0, t.g_x, t.g_y+t.g_h+th,
                                 t.g_w + th, 2*th);
             bb_fill(MD_REPLACE, FIS_SOLID, 0, t.g_x+t.g_w+th, t.g_y, 
@@ -382,7 +382,7 @@ void  just_draw(LONG tree, WORD obj, WORD sx, WORD sy)
           }
           if ( state & DISABLED )
           {
-            vsf_color(WHITE);
+            g_vsf_color(WHITE);
             bb_fill(MD_TRANS, FIS_PATTERN, IP_4PATT, t.g_x, t.g_y,
                          t.g_w, t.g_h);
           }

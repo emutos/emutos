@@ -35,17 +35,17 @@ static WORD s_begsty, s_endsty, s_fil_col, s_fill_per;
 
 
 /* ST_UD_LINE_STYLE: */
-void vsl_udsty(Vwk * vwk)
+void _vsl_udsty(Vwk * vwk)
 {
     vwk->ud_ls = *INTIN;
 }
 
 
 /*
- * vsl_type - Set line style for line-drawing functions
+ * _vsl_type - Set line style for line-drawing functions
  */
 
-void vsl_type(Vwk * vwk)
+void _vsl_type(Vwk * vwk)
 {
     WORD li;
 
@@ -61,10 +61,10 @@ void vsl_type(Vwk * vwk)
 
 
 /*
- * vsl_width - Set line width
+ * _vsl_width - Set line width
  */
 
-void vsl_width(Vwk * vwk)
+void _vsl_width(Vwk * vwk)
 {
     WORD w, *pts_out;
 
@@ -88,10 +88,10 @@ void vsl_width(Vwk * vwk)
 
 
 /*
- * vsl_ends - sets the style of end point for line starting and ending points
+ * _vsl_ends - sets the style of end point for line starting and ending points
  */
 
-void vsl_ends(Vwk * vwk)
+void _vsl_ends(Vwk * vwk)
 {
     WORD lb, le;
     WORD *pointer;
@@ -115,10 +115,10 @@ void vsl_ends(Vwk * vwk)
 
 
 /*
- * vsl_color - sets the color for line-drawing
+ * _vsl_color - sets the color for line-drawing
  */
 
-void vsl_color(Vwk * vwk)
+void _vsl_color(Vwk * vwk)
 {
     WORD lc;
 
@@ -639,10 +639,10 @@ void draw_rect(const Vwk * vwk, const Rect * rect, const UWORD fillcolor) {
 
 
 /*
- * v_pline - the wrapper
+ * _v_pline - the wrapper
  */
 
-void v_pline(Vwk * vwk)
+void _v_pline(Vwk * vwk)
 {
     WORD l;
     Point * point = (Point*)PTSIN;

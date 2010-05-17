@@ -31,38 +31,38 @@ WORD xc, xrad, yc, yrad;
 
 /* Two main jumptables for VDI functions */
 void (*jmptb1[])(Vwk *) = {
-    v_opnwk,            /*   1 */
-    v_clswk,            /*   2 */
-    v_clrwk,            /*   3 */
+    _v_opnwk,            /*   1 */
+    _v_clswk,            /*   2 */
+    _v_clrwk,            /*   3 */
     v_nop,              /*   4 - v_updwk not yet implemented */
     chk_esc,            /*   5 - each escape function has it's own call */
-    v_pline,            /*   6 */
-    v_pmarker,          /*   7 */
+    _v_pline,            /*   6 */
+    _v_pmarker,          /*   7 */
     d_gtext,            /*   8 */
-    v_fillarea,         /*   9 */
-    v_cellarray,        /*  10 */
+    _v_fillarea,         /*   9 */
+    _v_cellarray,        /*  10 */
     v_gdp,              /*  11 */
     dst_height,         /*  12 */
     dst_rotation,       /*  13 */
-    vs_color,           /*  14 */
-    vsl_type,           /*  15 */
-    vsl_width,          /*  16 */
-    vsl_color,          /*  17 */
-    vsm_type,           /*  18 */
-    vsm_height,         /*  19 */
-    vsm_color,          /*  20 */
+    _vs_color,           /*  14 */
+    _vsl_type,           /*  15 */
+    _vsl_width,          /*  16 */
+    _vsl_color,          /*  17 */
+    _vsm_type,           /*  18 */
+    _vsm_height,         /*  19 */
+    _vsm_color,          /*  20 */
     dst_font,           /*  21 */
     dst_color,          /*  22 */
-    vsf_interior,       /*  23 */
-    vsf_style,          /*  24 */
-    vsf_color,          /*  25 */
-    vq_color,           /*  26 */
+    _vsf_interior,       /*  23 */
+    _vsf_style,          /*  24 */
+    _vsf_color,          /*  25 */
+    _vq_color,           /*  26 */
     vq_cellarray,       /*  27 */
     v_locator,          /*  28 */
     v_valuator,         /*  29 */
     v_choice,           /*  30 */
     v_string,           /*  31 */
-    vswr_mode,          /*  32 */
+    _vswr_mode,          /*  32 */
     vsin_mode,          /*  33 */
     v_nop,              /*  34 */
     vql_attr,           /*  35 */
@@ -75,39 +75,39 @@ void (*jmptb1[])(Vwk *) = {
 void(*jmptb2[])(Vwk *) = {
     d_opnvwk,           /* 100 */
     d_clsvwk,           /* 101 */
-    vq_extnd,           /* 102 */
+    _vq_extnd,           /* 102 */
     d_contourfill,      /* 103 */
-    vsf_perimeter,      /* 104 */
-    v_get_pixel,        /* 105 */
+    _vsf_perimeter,      /* 104 */
+    _v_get_pixel,        /* 105 */
     dst_style,          /* 106 */
     dst_point,          /* 107 */
-    vsl_ends,           /* 108 */
+    _vsl_ends,           /* 108 */
     vdi_vro_cpyfm,      /* 109 */
-    vr_trnfm,           /* 110 */
+    _vr_trnfm,           /* 110 */
     xfm_crfm,           /* 111 */
     dsf_udpat,          /* 112 */
-    vsl_udsty,          /* 113 */
+    _vsl_udsty,          /* 113 */
     dr_recfl,           /* 114 */
     vqi_mode,           /* 115 */
     dqt_extent,         /* 116 */
     dqt_width,          /* 117 */
-    vex_timv,           /* 118 */ /* in vdi_misc.c */
+    _vex_timv,           /* 118 */ /* in vdi_misc.c */
     dt_loadfont,        /* 119 */
     dt_unloadfont,      /* 120 */
     vdi_vrt_cpyfm,      /* 121 */
-    v_show_c,           /* 122 */
-    v_hide_c,           /* 123 */
-    vq_mouse,           /* 124 */
-    vex_butv,           /* 125 */ /* in vdi_mouse.c */
-    vex_motv,           /* 126 */ /* in vdi_mouse.c */
-    vex_curv,           /* 127 */ /* in vdi_mouse.c */
+    _v_show_c,           /* 122 */
+    _v_hide_c,           /* 123 */
+    _vq_mouse,           /* 124 */
+    _vex_butv,           /* 125 */ /* in vdi_mouse.c */
+    _vex_motv,           /* 126 */ /* in vdi_mouse.c */
+    _vex_curv,           /* 127 */ /* in vdi_mouse.c */
     vq_key_s,           /* 128 */
     s_clip,             /* 129 */
     dqt_name,           /* 130 */
     dqt_fontinfo,       /* 131 */
     v_nop,              /* 132 */ /* vqt_justified */
     v_nop,              /* 133 */
-    vex_wheelv          /* 134 */
+    _vex_wheelv          /* 134 */
 };
 
 

@@ -34,11 +34,11 @@
 /*
  * Calls used in Crystal:
  *
- * vsf_interior();
+ * g_vsf_interior();
  * vr_recfl();
  * vst_height();
- * vsl_type();
- * vsl_udsty();
+ * g_vsl_type();
+ * g_vsl_udsty();
  * g_vsl_width();
  * g_v_pline();
  * vst_clip();
