@@ -19,13 +19,13 @@
 /*
 *       Calls used in DESKTOP:
 *
-*       vsf_interior();
+*       d_vsf_interior();
 *       vr_recfl();
 *       vst_height(); 
-*       vsl_type();
-*       vsl_udsty();
+*       d_vsl_type();
+*       d_vsl_udsty();
 *       vsl_width();
-*       v_pline();
+*       d_v_pline();
 *       vst_clip();
 *       vr_cpyfm();
 *       vq_extnd();
@@ -60,7 +60,7 @@ void gsx_vclose()
 }
 
 
-void v_pline(WORD count, WORD *pxyarray)
+void d_v_pline(WORD count, WORD *pxyarray)
 {
         i_ptsin( pxyarray );
         gsx_ncode(POLYLINE, count, 0);
@@ -88,7 +88,7 @@ void v_opnvwk(WORD *pwork_in, WORD *phandle, WORD *pwork_out )
         contrl[3] = 11;           /* pass down xform mode also */
         contrl[6] = *phandle;
         gsx2();
-        *phandle = contrl[6];    
+        *phandle = contrl[6];
                                  /* reset pointers for next call to binding */
         i_intin( intin );
         i_intout( intout );
@@ -135,7 +135,7 @@ void vst_height(WORD height, WORD *pchr_width, WORD *pchr_height,
 }
 
 
-void vsl_width(WORD width )
+void d_vsl_width(WORD width )
 {
         ptsin[0] = width;
         ptsin[1] = 0;

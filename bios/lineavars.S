@@ -112,13 +112,13 @@ _mask_form:      .ds.w   32      // -846 (cdb+10) Storage for mouse mask and cur
 /* Extended workstation information */
 
 _INQ_TAB:
-                .ds.w   45      // -782 information returned from a vq_extnd() 
+                .ds.w   45      // -782 information returned from a _vq_extnd() 
 
 
 /* Workstation information */
 
 _DEV_TAB:
-                .ds.w   45      // -692 information returned from a v_opnwk()
+                .ds.w   45      // -692 information returned from a _v_opnwk()
 
 
 /* Mouse data */

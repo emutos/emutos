@@ -32,10 +32,10 @@
 #define ORGADDR 0x0L
                                                 /* in GSXBIND.C         */
 #define vsf_interior( x )       gsx_1code(S_FILL_STYLE, x)
-#define vsl_type( x )           gsx_1code(S_LINE_TYPE, x)
-#define vsf_style( x )          gsx_1code(S_FILL_INDEX, x)
-#define vsf_color( x )          gsx_1code(S_FILL_COLOR, x)
-#define vsl_udsty( x )          gsx_1code(ST_UD_LINE_STYLE, x)
+#define d_vsl_type( x )           gsx_1code(S_LINE_TYPE, x)
+#define d_vsf_style( x )          gsx_1code(S_FILL_INDEX, x)
+#define d_vsf_color( x )          gsx_1code(S_FILL_COLOR, x)
+#define d_vsl_udsty( x )          gsx_1code(ST_UD_LINE_STYLE, x)
 
 
 GLOBAL WORD     gl_width;
@@ -143,11 +143,11 @@ void gsx_xline(WORD ptscount, WORD *ppoints )
             linexy = ( *ppoints < *( ppoints + 2 )) ? ppoints : ppoints + 2;
             st = hztltbl[( *(linexy + 1) & 1)];
           }
-          vsl_udsty( st );
-          v_pline( 2, ppoints );
+          d_vsl_udsty( st );
+          d_v_pline( 2, ppoints );
           ppoints += 2;
         }
-        vsl_udsty( 0xffff );
+        d_vsl_udsty( 0xffff );
 }       
 
 
@@ -327,9 +327,9 @@ void gsx_start()
         gl_nrows = gl_height / gl_hchar;
         gl_hbox = gl_hchar + 3;
         gl_wbox = (gl_hbox * gl_ws.ws_hpixel) / gl_ws.ws_wpixel;
-        vsl_type( 7 );
-        vsl_width( 1 );
-        vsl_udsty( 0xffff );
+        d_vsl_type( 7 );
+        d_vsl_width( 1 );
+        d_vsl_udsty( 0xffff );
         r_set(&gl_rscreen, 0, 0, gl_width, gl_height);
         r_set(&gl_rfull, 0, gl_hbox, gl_width, (gl_height - gl_hbox));
         r_set(&gl_rzero, 0, 0, 0, 0);
@@ -381,12 +381,12 @@ void bb_fill(WORD mode, WORD fis, WORD patt, WORD hx, WORD hy, WORD hw, WORD hh)
         gsx_attr(TRUE, mode, gl_tcolor);
         if (fis != gl_fis)
         {
-          vsf_interior( fis);
+          d_vsf_interior( fis);
           gl_fis = fis;
         }
         if (patt != gl_patt)
         {
-          vsf_style( patt );
+          d_vsf_style( patt );
           gl_patt = patt;
         }
         vr_recfl( &ptsin[0], &gl_dst );
