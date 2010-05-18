@@ -2186,3 +2186,7 @@ Start... early ages
 
 2010-05-13
 - bios/linea.S: Fixed crash in Line A $a00f stub. (vriviere)
+
+2010-05-17
+- Change name of internal VDI functions in conflict with standard VDI name (to be able use gem library if
+needed). (olandemarre)

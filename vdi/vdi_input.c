@@ -72,7 +72,7 @@ void v_string(Vwk * vwk)
 
 
 /* Return Shift, Control, Alt State */
-void vq_key_s(Vwk * vwk)
+void _vq_key_s(Vwk * vwk)
 {
     CONTRL[4] = 1;
     INTOUT[0] = gshift_s();
@@ -81,7 +81,7 @@ void vq_key_s(Vwk * vwk)
 
 
 /* SET_INPUT_MODE: */
-void vsin_mode(Vwk * vwk)
+void _vsin_mode(Vwk * vwk)
 {
     WORD i, *int_in;
 

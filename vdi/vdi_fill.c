@@ -280,10 +280,10 @@ _v_cellarray(Vwk * vwk)
 
 
 /*
- * vq_cellarray -
+ * _vq_cellarray -
  */
 void
-vq_cellarray(Vwk * vwk)
+_vq_cellarray(Vwk * vwk)
 {
     /* not implemented */
 }
