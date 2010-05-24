@@ -2188,5 +2188,9 @@ Start... early ages
 - bios/linea.S: Fixed crash in Line A $a00f stub. (vriviere)
 
 2010-05-17
-- Change name of internal VDI functions in conflict with standard VDI name (to be able use gem library if
-needed). (olandemarre)
+- Change name of internal VDI functions in conflict with standard VDI name
+  (to be able use gem library if needed). (olandemarre)
+
+2010-05-24
+- include/config.h: USE_STOP_INSN_TO_FREE_HOST_CPU must be defined after
+  TOS_VERSION since its definition depends on TOS_VERSION. (THH)

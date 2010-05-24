@@ -68,18 +68,6 @@
 #define MIDI_DEBUG_PRINT 0
 #endif
 
-/* Set this to 1 if your emulator is capable of emulating properly the 
- * STOP opcode (used to spare host CPU burden during loops).
- * Set to zero for all emulators which do not properly support STOP opcode.
- */
-#ifndef USE_STOP_INSN_TO_FREE_HOST_CPU
-# if TOS_VERSION < 0x200
-#  define USE_STOP_INSN_TO_FREE_HOST_CPU 0
-# else
-#  define USE_STOP_INSN_TO_FREE_HOST_CPU 1
-# endif
-#endif
-
 /* The two parameters below are commented out, since the same result
  * can now be obtained by simply doing
  *
@@ -118,6 +106,18 @@
  */
 #ifndef TOS_VERSION
 #define TOS_VERSION 0x206
+#endif
+
+/* Set this to 1 if your emulator is capable of emulating properly the 
+ * STOP opcode (used to spare host CPU burden during loops).
+ * Set to zero for all emulators which do not properly support STOP opcode.
+ */
+#ifndef USE_STOP_INSN_TO_FREE_HOST_CPU
+# if TOS_VERSION < 0x200
+#  define USE_STOP_INSN_TO_FREE_HOST_CPU 0
+# else
+#  define USE_STOP_INSN_TO_FREE_HOST_CPU 1
+# endif
 #endif
 
 /*
