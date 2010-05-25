@@ -5,6 +5,7 @@
  *
  *  MAD  Martin Doering
  *  joy  Petr Stehlik
+ *  jfdn Jean-Francois DEL NERO
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -154,55 +155,119 @@ memconf:
  * repeat in memory. The trick is to find these repeated values and
  * set the memory config accordingly. No real memory check is done, 
  * because in emulators it should be always ok - hopefully!
+ *
+ * 24/05/10 - jfdn
+ * Note: To be reliable on the real hardware, the pattern test algorithm
+ * is now the same used in the TOS 1.6 ROM.
+ * Using of only 1 word pattern test is not reliable since without SIMM
+ * the memory bus are floating and may present the good pattern value.
+ * That's why a 200 bytes pattern test are used in the TOS 1.6 ROM to avoid this issue.
  */
-        move.b  #0xa,0xffff8001         // set hw to 2 banks by 2 mb
 
-        lea     0x000008, a0            // a0 points to 1. bank
-        lea     0x200008, a1            // a1 points to 2. bank
+        suba.l  a0,a0                   // Note:The TOS 1.6 use these opcode probably to access to the MMU register more slowly than the classic "move.b  #0xa,0xffff8001"  
+        move.b  #0xa,-0x7fff(a0)        // set hw to 2 banks by 2 mb (reg 0xff8001 - memorycontroller)
 
-        move.w  #0xabcd, d0             // my very special bitpattern
-        move.w  d0, (a0)                // set bitpattern to 1st bank start
-        move.w  d0, (a1)                // set bitpattern to 2nd bank start
+/* init the test pattern in bank 0 and 1 */
+        movea.w #0x000008,a0            // bank 0
+        lea     0x200008,a1             // bank 1
+        clr.w   d0
+init_pattern_loop:
+        move.w  d0,(a0)+                // bank 0
+        move.w  d0,(a1)+                // bank 1
+        add.w   #0xfa54,d0              // next pattern data
+        cmpa.l  #0x200,a0               // 200 word done?
+        bne.s   init_pattern_loop
 
 
-        /* set start values */
-set128kb:
+/* In this part:
+ * D4 = Actual bank memory size in byte
+ * D5 = total memory size (later phystop)
+ * D6 = value to the MMU config register (reg 0xff8001) at the end
+ * A0 = pattern test offset (0x8,0x40008,0x80008)
+ * D1 = pattern test bank base (0x200000 ,0x000000)
+ * A5 = pattern test subroutine return address.
+ */
+
+        move.l  #0x200000,d1            // we begin with the bank 1
         clr.l   d5                      // total memory (later phystop)
-        clr.l   d6                      // configuration value to 128 kb
-        move.l  #0x200000, d1           // d1 to 2. bank
+        clr.l   d6                      // MMU setting set to 0
+
+        /* test the presence of a 256k bank config */
+test_256k:
+        lsr.w   #2,d6                   // switch bank in configuration byte
+        clr.l   d4                      // bank memory size
+
+        movea.l #0x40008,a0             // 256k test
+        lea     test_512k,a5            // return point of test pattern
+        move.l  #0x40000,d4             // 256 kb bank memory size
+        bra     check_test_pattern
+
+        /* test the presence of a 512k bank config */
+test_512k:
+        beq.s   bank_test_end           // There are a memory loop in the pevious test ! -> D6=0x0 - 256k bank
+
+        movea.l #0x80008,a0             // 512k test
+        lea     test_2m,a5              // return point of test pattern
+        move.l  #0x80000,d4             // 512 kb bank memory size
+        bra     check_test_pattern
+
+        /* test the presence of a 2M bank config */
+test_2m:
+        beq.s   bank_test_end_512k      // There are a memory loop in the pevious test -> D6=0x4 - 512K bank
+
+        /* This the last test. in previous tests (256k&512k) we didn't found any memory loop.
+           Here we are testing if there a 2Mb simm (full back memory size) or nothing. */
+
+        movea.l #0x00008,a0             // 0kb/2m test
+        lea     last_return,a5          // return point of test pattern
+        move.l  #0x0,d4                 // 0kb/2Mb bank memory size
+        bra     check_test_pattern
+
+last_return:
+        bne.s   bank_test_end           // Pattern not found!  -> D6=0x0 - NO RAM
+        move.l  #0x200000,d4            // Pattern found!      -> D6=0x6 - 2m
+
+        addq.w  #4,d6
+
+bank_test_end_512k:
+
+        addq.w  #4,d6
+
+bank_test_end:
+        add.l   d4,d5                   // compute total memory size
+        sub.l   #0x200000,d1            // next bank 0
+        beq.s   test_256k               // already done ?   -> no start the tests for the bank 0
+                                        // in the case this test is the end.
+
+        // Set the final MMU config
+        suba.l  a0,a0                   // Note:The TOS 1.6 use these opcode probably to access to the MMU register more slowly than the classic "move.b  d6,0xffff8001"
+        move.b  d6,-0x7fff(a0)          // set hw memory config (reg 0xff8001 - memorycontroller)
+
+        bra mem_config_ok
+
+/*
+ * check_test_pattern "subroutine":
+ * D1= bank base   (Bank0: 0x000000 Bank1: 0x200000)
+ * A0= test offset (0x8,0x40008,0x80008)
+ * A5= return point
+ * if Z=1 -> pattern found !
+ * if Z=0 -> pattern not found !
+ */
+check_test_pattern:
+        adda.l  d1,a0                   // compute starting address
+        clr.w   d0                      // first pattern word
+        lea     0x1f8(a0),a1            // end address
+check_test_pattern_loop:
+        cmp.w   (a0)+,d0                // is the data valid ?
+        bne     end_check_test_pattern
+        add.w   #0xfa54,d0              // next pattern word to test
+        cmpa.l  a0,a1                   // at the end of the pattern ?
+        bne.s   check_test_pattern_loop
+end_check_test_pattern:
+        jmp (a5)                        // return
 
 
-        /* find config for both  banks (written for to be understood) */
-bankloop:
-        lsr.w   #2, d6                  // switch bank in configuration byte
-
-        add.l   #0x20000, d5            // add default 128k to total mem
-        movea.l d1, a0                  // set actual bank and
-        adda    #0x208, a0              // add offset
-        cmp.w   (a0)+, d0               // found repeated test value?
-        beq.s   nextbank                // 128k ok in actual bank!
-
-        add.l   #0x60000, d5            // add (512k-128k) to total mem
-        movea.l d1, a0                  // set actual bank and
-        adda    #0x408, a0              // add offset
-        cmp.w   (a0)+, d0               // found repeated test value?
-        beq.s   set2048kb               // 512k ok in actual bank!
-
-        add.l   #0x160000, d5           // add (2048-512-128k) to total mem
-        movea.l d1, a0                  // set actual bank and
-        adda    #0x008, a0              // add offset
-        cmp.w   (a0)+, d0               // found repeated test value?
-        bne.s   nextbank                // 2048k ok in actual bank!
-
-set512kb:
-        addq    #4, d6                  // configuration value to 512 kb
-
-set2048kb:
-        addq    #4, d6                  // configuration value to 2 mb
-
-nextbank:
-        sub.l   #0x200000, d1           // first (other) bank
-        beq.s   bankloop                // 
+mem_config_ok:
 
         /* clear RAM - from 0x0400 till end (phystop in d5) */
         lea     0x0400, a4              // begin of RAM to clear
@@ -210,7 +275,6 @@ nextbank:
         bra     clear_ram               // jump to routine clearing the RAM
 st_cleared:
 
-        move.b  d6, 0xffff8001          // program ST's memorycontroller
         move.b  d6, memctrl             // set copy of hw memory config
         move.l  d5, _phystop            // highest address as phystop
         bra     memdone                 // config done -> return to startup.s

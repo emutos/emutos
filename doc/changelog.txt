@@ -2194,3 +2194,7 @@ Start... early ages
 2010-05-24
 - include/config.h: USE_STOP_INSN_TO_FREE_HOST_CPU must be defined after
   TOS_VERSION since its definition depends on TOS_VERSION. (THH)
+
+2010-05-25
+- bios/memory.S: Improved memory detection which should now also work on a
+  real STE (patch by Jean-Francois DEL NERO)
