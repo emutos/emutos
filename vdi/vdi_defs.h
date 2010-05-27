@@ -243,7 +243,7 @@ extern BYTE     cur_ms_stat;    /* current mouse status */
 
 
 /* Assembly Language Support Routines NEWLY ADDED */
-void text_blt(void);
+void text_blt(Vwk * vwk);
 void xfm_crfm(Vwk * vwk);
 void rectfill (Vwk * vwk, Rect * rect);
 

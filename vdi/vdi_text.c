@@ -257,7 +257,7 @@ void d_gtext(Vwk * vwk)
             SOURCEY = 0;
             DELY = fnt_ptr->form_height;
 
-            text_blt();
+            text_blt(vwk);
 
             fnt_ptr = vwk->cur_font;     /* restore reg var */
 

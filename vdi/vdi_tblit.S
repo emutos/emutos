@@ -454,8 +454,8 @@ _scrtsiz:
 /////////////////////////////////////////////////////////////////////////
 //
 _text_blt:
-        movem.l d2-d7/a2-a5,-(sp)
         link    a6,#ramlen              //allocate stack for local variables
+        movem.l d2-d7/a2-a5,-(sp)
 //
         clr.w   swap_tmps(a6)           //temps not swapped yet RJG 4/13/85
         move.w  #_scrpt1,buffc(a6)
@@ -480,9 +480,12 @@ _text_blt:
 //  added 5 mar 85
 //
 adr_dbl:
+        movem.l a0/a1,-(sp)             //backup used scratch registers
         move.w  d3,-(sp)                //pass DELY to act_siz on stack 
+        move.l  8(a6),-(sp)             //pass also the parameter Vwk *
         jsr     _act_siz                //
-        addq.w  #2,sp                   //remove act_siz parameter from stack
+        addq.w  #6,sp                   //remove act_siz parameters from stack
+        movem.l (sp)+,a0/a1             //restore used scratch registers
         move.w  d0,d3                   //set new DELY 
         move.w  d3,tmp_dely(a6)         //save in temp for replication use
         move.w  DELX(a6),d2             //DELX to d2 
@@ -1013,8 +1016,8 @@ ck180:
 ck270:
         add.w   d1,_DESTY               // move down by DELX
 blt_done:
-        unlk    a6
         movem.l (sp)+,d2-d7/a2-a5
+        unlk    a6
         rts                             // return to "C"
 
         .page
