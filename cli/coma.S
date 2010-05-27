@@ -84,7 +84,7 @@ _coma_start:
         move.l  save_ssp,-(sp)
         move.w  #0x20,-(sp)
         trap    #1
-        addq.w  #6,sp
+        addq.l  #6,sp
 #endif /* ! NO_ROM */
 
         // Pterm0()
@@ -124,7 +124,7 @@ _rm_term:
         rts
 
 
-myterm: cmp     #0,_exeflg      // is this my child's term
+myterm: tst.w   _exeflg         // is this my child's term
         beq     itsme
 
         rts
@@ -132,7 +132,13 @@ myterm: cmp     #0,_exeflg      // is this my child's term
 // I never terminate (need to distinguish 2nd level command.com (ie. batch)
 
 itsme:
+#ifdef __mcoldfire__
+        move.w  sr,d0
+        andi.l  #0x5fff,d0      // return to user mode
+        move.w  d0,sr
+#else
         andi.w  #0x5fff,sr      // return to user mode
+#endif
 
         move    #1,-(sp)
         move.l  #_jb,-(sp)
@@ -144,7 +150,11 @@ mycrit: move.l  #aris,a0
         move    #2,-(sp)        // conin
         trap    #13
         addq.l  #4,sp
+#ifdef __mcoldfire__
+        and.l   #0x5f,d0        // upcase
+#else
         and     #0x5f,d0        // upcase
+#endif
         cmp.b   #'A',d0
         beq     acrit
 
