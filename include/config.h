@@ -50,7 +50,11 @@
  * by the standard "native features" interface. 
  */
 #ifndef DETECT_NATIVE_FEATURES
-#define DETECT_NATIVE_FEATURES 1
+# ifdef __mcoldfire__
+#  define DETECT_NATIVE_FEATURES 0 /* Conflict with ColdFire instructions. */
+# else
+#  define DETECT_NATIVE_FEATURES 1
+# endif
 #endif
 
 /* set this to 1 to redirect debug prints on RS232 out, for emulator
