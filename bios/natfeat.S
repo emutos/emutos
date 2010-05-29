@@ -48,7 +48,11 @@ _detect_native_features:
         move.l  #fail_natfeat,vec_illegal
         pea     nf_version_name
         sub.l   #4,sp
+#ifdef __mcoldfire__
+#error Conflict with instruction mvs.b d0,d1
+#else
         dc.w    0x7300              // Jump to NATFEAT_ID
+#endif
         tst.l   d0
         beq.s   fail_natfeat
         moveq   #1,d0               // NatFeats detected
@@ -74,11 +78,11 @@ _natfeat_cookie:
         dc.l    nfCall
 
 nfID:
-        dc.w    0x7300
+        dc.w    0x7300  // Conflict with ColdFire instruction mvs.b d0,d1
         rts
 
 nfCall:
-        dc.w    0x7301
+        dc.w    0x7301  // Conflict with ColdFire instruction mvs.b d1,d1
         rts
 
 // ===========================================================================
