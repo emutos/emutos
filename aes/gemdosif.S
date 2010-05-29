@@ -39,21 +39,53 @@
 
 /* disable interrupts */
 _cli:
+#ifdef __mcoldfire__
+        move.l  d0,-(sp)
+        move.w  sr,d0
+        move.w  d0,savesr
+        ori.l   #0x0700,d0
+        move.w  d0,sr
+        move.l  (sp)+,d0
+#else
         move    sr,savesr
         ori     #0x0700,sr
+#endif
         rts
 
 /* restore interrupt mask as it was before cli() */
 _sti:
+#ifdef __mcoldfire__
+        move.l  d0,-(sp)
+        move.w  savesr,d0
+        move.w  d0,sr
+        move.l  (sp)+,d0
+#else
         move    savesr,sr
+#endif
         rts
 
 _hcli:
+#ifdef __mcoldfire__
+        move.l  d0,-(sp)
+        move.w  sr,d0
+        ori.l   #0x0700,d0
+        move.w  d0,sr
+        move.l  (sp)+,d0
+#else
         ori     #0x0700,sr
+#endif
         rts
 
 _hsti:
+#ifdef __mcoldfire__
+        move.l  d0,-(sp)
+        move.w  sr,d0
+        andi.l  #0xF8FF,d0
+        move.w  d0,sr
+        move.l  (sp)+,d0
+#else
         andi    #0xF8FF,sr
+#endif
         rts
 
 
@@ -61,14 +93,19 @@ _hsti:
  DOS error trapping code.
 */
 _retake:
+#ifdef __mcoldfire__
+        lea     0x88,a0
+        move.l  #_aestrap,(a0)
+#else
         move.l  #_aestrap,0x88
+#endif
         move.l  #_err_tra,d0
 call_err:
         move.l  d0,-(sp)
         move.w  #0x0101,-(sp)
         move.w  #0x05,-(sp)
         trap    #13
-        addq.w  #8,sp
+        addq.l  #8,sp
         rts
         
 _giveerr:
@@ -85,7 +122,12 @@ _takeerr:
 _err_tra:
         move.w  0x04(sp),d0
         move.w  0x06(sp),d1
+#ifdef __mcoldfire__
+        lea     -36(sp),sp
+        movem.l d3-d7/a3-a6,(sp)
+#else
         movem.l d3-d7/a3-a6,-(sp)
+#endif
         movea.l #err_tbl,a1
         move.w  d0,-(sp)
         bne     L1F62
@@ -93,7 +135,11 @@ _err_tra:
         bra     L1F70
         
 L1F62:
+#ifdef __mcoldfire__
+        not.l   d0
+#else
         not.w   d0
+#endif
         movea.w d0,a0
         cmp.w   #0x11,d0
         ble     L1F70
@@ -111,7 +157,12 @@ L1F70:
         move.l  #0x010000,d1
 L1F90:
         move.l  d1,d0
+#ifdef __mcoldfire__
+        movem.l (sp),d3-d7/a3-a6
+        lea     36(sp),sp
+#else
         movem.l (sp)+,d3-d7/a3-a6
+#endif
         rts
 
 
@@ -137,7 +188,12 @@ _back:
 L2126:
         bsr     _cli                    // mask out interrupts
         move.l  usp,a0                  
+#ifdef __mcoldfire__
+        lea     -56(a0),a0
+        movem.l d1-d7/a0-a6,(a0)        // put registers to user stack
+#else
         movem.l d1-d7/a0-a6,-(a0)       // put registers to user stack
+#endif
         move.l  a0,usp                  
 
         movea.l _rlr,a6
@@ -163,7 +219,12 @@ supret:                                 // return from gementry
         movea.l 0x46(a0),sp
         movea.l 0x42(a0),a0
 
+#ifdef __mcoldfire__
+        movem.l (a0),d1-d7/a0-a6
+        lea     56(a0),a0
+#else
         movem.l (a0)+,d1-d7/a0-a6
+#endif
         move.l  a0,usp                  
         bsr     _sti                    // restore interrupt mask
         rte
@@ -171,11 +232,22 @@ supret:                                 // return from gementry
 
 
 _givecpm:
+#ifdef __mcoldfire__
+        lea     0x88,a0
+        move.l  savetrap2,(a0)
+#else
         move.l  savetrap2,0x88
+#endif
         rts
 _takecpm:
+#ifdef __mcoldfire__
+        lea     0x88,a0
+        move.l  (a0),savetrap2
+        move.l  #_aestrap,(a0)
+#else
         move.l  0x88,savetrap2
         move.l  #_aestrap,0x88
+#endif
         rts
 
         
@@ -183,25 +255,45 @@ _takecpm:
 _far_bcha:
         move.l  sp,gstksave
         lea     gstack,sp
+#ifdef __mcoldfire__
+        lea     -24(sp),sp
+        movem.l d0-d2/a0-a2,(sp)
+#else
         movem.l d0-d2/a0-a2,-(sp)
+#endif
         move.w  d0,-(sp)
         jsr     _b_click
         addq.l  #2,sp
+#ifdef __mcoldfire__
+        movem.l (sp),d0-d2/a0-a2
+        lea     24(sp),sp
+#else
         movem.l (sp)+,d0-d2/a0-a2
+#endif
         movea.l gstksave,sp
         rts
 
 _far_mcha:
         move.l  sp,gstksave
         lea     gstack,sp
+#ifdef __mcoldfire__
+        lea     -24(sp),sp
+        movem.l d0-d2/a0-a2,(sp)
+#else
         movem.l d0-d2/a0-a2,-(sp)
+#endif
 
         move.w  d1,-(sp)
         move.w  d0,-(sp)
         move.l  #_mchange,-(sp)
         jsr     _forkq
         addq.l  #8,sp
+#ifdef __mcoldfire__
+        movem.l (sp),d0-d2/a0-a2
+        lea     24(sp),sp
+#else
         movem.l (sp)+,d0-d2/a0-a2
+#endif
         movea.l gstksave,sp
         rts
 
