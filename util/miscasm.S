@@ -23,9 +23,17 @@
         .text
 _trap1:
         move.l  (sp)+,t1spsav   // save return address
+#ifdef __mcoldfire__
+        move.l  d2,t1regsav
+        move.l  a2,t1regsav+4
+        trap    #1              // call bdos call
+        move.l  t1regsav,d2
+        move.l  t1regsav+4,a2
+#else
         movem.l d2/a2,t1regsav
         trap    #1              // call bdos call
         movem.l t1regsav,d2/a2
+#endif
         move.l  t1spsav,-(sp)   // restore return address
         rts
 
@@ -43,7 +51,12 @@ t1regsav:
  */
         .text
 _trap1_pexec:
+#ifdef __mcoldfire__
+        move.l  a2,-(sp)
+        move.l  d2,-(sp)
+#else
         movem.l d2/a2,-(sp)
+#endif
         move.l  22(sp),-(sp)    // Push parameter on the stack again for pexec
         move.l  22(sp),-(sp)
         move.l  22(sp),-(sp)
@@ -51,6 +64,11 @@ _trap1_pexec:
         move.w  #0x4b,-(sp)
         trap    #1              // Pexec
         lea     16(sp),sp
+#ifdef __mcoldfire__
+        move.l  (sp)+,d2
+        move.l  (sp)+,a2
+#else
         movem.l (sp)+,d2/a2
+#endif
         rts
 
