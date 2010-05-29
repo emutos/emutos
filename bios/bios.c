@@ -113,12 +113,23 @@ static void vecs_init(void)
     VEC_LEVEL6 = just_rte;     /* just return for this */
     VEC_NMI = just_rte;     /* just return for this */
 
-    /* These just for advanced 680x0 processors */
+    /* Emulate some instructions unsupported by the processor. */
+#ifdef __mcoldfire__
+    /* On ColdFire, all the unsupported assembler instructions
+     * will be emulated by a specific emulation layer loaded later. */
+#else
     if (longframe) {
-        VEC_PRIVLGE = int_priv;         /* set priv. instr. handler */
+        /* On 68010+, "move from sr" called from the user mode cause a
+         * privilege violation. This instruction must be emulated for
+         * compatibility with the 68000 processors. */
+        VEC_PRIVLGE = int_priv;
     } else {
-        VEC_ILLEGAL = int_illegal;      /* set ill. instr. handler */
+        /* On 68000, "move from ccr" is unsupported and cause an illegal
+         * exception. This instruction must be emulated for compatibility
+         * with higher processors. */
+        VEC_ILLEGAL = int_illegal;
     }
+#endif
 }
 
 
