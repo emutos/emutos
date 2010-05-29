@@ -194,8 +194,12 @@ void machine_detect(void)
   
 void machine_init(void)
 {
+#ifdef __mcoldfire__
+  cookie_add(COOKIE_COLDFIRE, 0);
+#else
   /* this is detected by detect_cpu(), called from processor_init() */
   cookie_add(COOKIE_CPU, mcpu);
+#endif
 
   /* _VDO
    * This cookie represents the revision of the video shifter present. 
@@ -209,8 +213,10 @@ void machine_init(void)
   setvalue_vdo();
   cookie_add(COOKIE_VDO, cookie_vdo);
 
+#ifndef __mcoldfire__
   /* this is detected by detect_fpu(), called from processor_init() */
   cookie_add(COOKIE_FPU, fputype);
+#endif
 
   /* _MCH */
   setvalue_mch();
