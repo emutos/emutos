@@ -214,7 +214,12 @@ _int_acia:
          * registers can be freely used by the vectors of the kbdvecs struct.
          * Theoretically d0-d1/a0-a1 would be sufficient here.
          */
+#ifdef __mcoldfire__
+        lea     -32(sp),sp
+        movem.l d0-d3/a0-a3,(sp)
+#else
         movem.l d0-d3/a0-a3,-(sp)
+#endif
                 
 int_acia_loop:
         move.l  midisys,a0
@@ -227,7 +232,12 @@ int_acia_loop:
         bclr.b  #6,0x11(a1)               // clear in service bit
         
         // restore scratch regs
+#ifdef __mcoldfire__
+        movem.l (sp),d0-d3/a0-a3
+        lea     32(sp),sp
+#else
         movem.l (sp)+,d0-d3/a0-a3
+#endif
         rte
 
 // ==== MIDI stuff ================
@@ -248,15 +258,26 @@ midirts:
 
 _midivec:
         // push byte data in d0 into midi iorec.
+#ifdef __mcoldfire__
+        moveq   #0,d1
+#endif
         move.w  midiibuftl,d1
+#ifdef __mcoldfire__
+        addq.l  #1,d1
+#else
         addq.w  #1,d1
+#endif
         cmp.w   midiibufsz,d1
         blt     1f
         move.l  #0,d1
 1:      cmp.w   midiibufhd,d1
         beq     1f
         lea     midiibufbuf,a0
+#ifdef __mcoldfire__
+        move.b  d0,0(a0,d1.l)
+#else
         move.b  d0,0(a0,d1.w)
+#endif
         move.w  d1,midiibuftl
 1:      rts
 
@@ -293,7 +314,11 @@ joybuf: ds.b    3
         .text
 
 _kbdvec:
+#ifdef __mcoldfire__
+        and.l   #0x00ff,d0
+#else
         and.w   #0x00ff,d0
+#endif
         move.w  d0,-(sp)
         // call the C routine in ikbd.c to do the work.
         jsr     _kbd_int
@@ -321,10 +346,20 @@ _ikbdsys:
 
 begin_packet:
         move.b  d0,kbdbuf       // put the byte at beginning of the buffer
+#ifdef __mcoldfire__
+        lea     kbdindex,a0
+        move.w  #1,(a0)         // next position in buffer is byte number 1
+        sub.l   #0xf6,d0
+        lea     ikbdstate,a0
+        move.b  ikbdstate_table(pc,d0),(a0)
+        lea     kbdlength,a0
+        move.b  kbdlength_table(pc,d0),(a0)
+#else
         move.w  #1,kbdindex     // next position in buffer is byte number 1
         sub.b   #0xf6,d0
         move.b  ikbdstate_table(pc,d0),ikbdstate  
         move.b  kbdlength_table(pc,d0),kbdlength  
+#endif
         rts
 ikbdstate_table:
         dc.b    1, 2, 3, 3, 3, 3, 4, 5, 6, 7
@@ -333,19 +368,39 @@ kbdlength_table:
         .even
 
 in_packet:
+#ifdef __mcoldfire__
+        moveq   #0,d1
+#endif
         move.w  kbdindex,d1
         lea     kbdbuf,a0
+#ifdef __mcoldfire__
+        move.b  d0,0(a0,d1.l)
+        moveq   #0,d0
+        move.b  kbdlength,d0
+        subq.l  #1,d0
+        move.b  d0,kbdlength
+        beq     got_packet
+        moveq   #0,d0
+        move.w  kbdindex,d0
+        addq.l  #1,d0
+        move.w  d0,kbdindex
+#else
         move.b  d0,0(a0,d1.w)
         sub.b   #1,kbdlength
         beq     got_packet
         addq.w  #1,kbdindex
+#endif
         rts
 
 // now I've got a full packet in buffer kbdbuf.
 got_packet:
         moveq.l #0,d0
         move.b  ikbdstate,d0
+#ifdef __mcoldfire__
+        asl.l   #2,d0
+#else
         asl.w   #2,d0
+#endif
         move.l  action_table-4(pc,d0),a1
         lea     kbdbuf,a0
         jmp     (a1)
