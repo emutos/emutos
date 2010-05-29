@@ -111,7 +111,7 @@ static void vecs_init(void)
     VEC_LEVEL3 = just_rte;     /* just return for this */
     VEC_LEVEL5 = just_rte;     /* just return for this */
     VEC_LEVEL6 = just_rte;     /* just return for this */
-    VEC_NMI = int_illegal;      /* MAD: Set NMI to illegal instr. */
+    VEC_NMI = just_rte;     /* just return for this */
 
     /* These just for advanced 680x0 processors */
     if (longframe) {
