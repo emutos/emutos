@@ -117,7 +117,9 @@ os_dummy:
  
 _main:                         // stunt to guarantee entry into supervisor mode
         move    #0x2700,sr     // disable interrupts
+#ifndef __mcoldfire__
         reset                  // reset all hardware
+#endif
 
 
 
@@ -127,7 +129,12 @@ _main:                         // stunt to guarantee entry into supervisor mode
 
         .equ    cart_base,      0x00fa0000
 
+#ifdef __mcoldfire__
+        move.l  cart_base, d0
+        cmp.l   #0xfa52235f, d0         // magic - is cartridge present?
+#else
         cmp.l   #0xfa52235f, cart_base  // magic - is cartridge present?
+#endif
         bne     nodiag                  // no -> go on
         lea     nodiag(pc), a6          // save return address
         jmp     cart_base+4             // execute diagnostig cartridge
@@ -139,7 +146,12 @@ nodiag:
  */
 
 resetvec:
+#ifdef __mcoldfire__
+       move.l   resvalid, d0
+       cmpi.l   #0x31415926, d0         // Jump to resetvector?
+#else
        cmpi.l   #0x31415926, resvalid   // Jump to resetvector?
+#endif
        bne.s    noreset                 // No --> noreset
        move.l   resvector, d0           // Yes: old resvec to d0
        beq.s    noreset                 // Address null? Yes --> noreset
@@ -196,7 +208,12 @@ _cartscan:
         move.w  4(sp),d0        
 cartscan:
         lea     cart_base, a0
+#ifdef __mcoldfire__
+        move.l  #0xABCDEF42, d1
+        cmp.l   (a0)+, d1               // is cartridge present?
+#else
         cmp.l   #0xABCDEF42, (a0)+      // is cartridge present?
+#endif
         bne     cartover                // no -> cartover
 testtype:
         btst    d0, 4(a0)               // What type?
@@ -206,10 +223,20 @@ testtype:
 //        bsr     _kprintf
 //        addq #4,sp
 
+#ifdef __mcoldfire__
+        lea     -60(sp), sp
+        movem.l d0-d7/a0-a6, (sp)       // save registers
+#else
         movem.l d0-d7/a0-a6, -(sp)      // save registers
+#endif
         move.l  4(a0), a0
         jsr     (a0)                    // execute app in cartridge
+#ifdef __mcoldfire__
+        movem.l (sp), d0-d7/a0-a6       // restore registers
+        lea     60(sp), sp
+#else
         movem.l (sp)+, d0-d7/a0-a6      // restore registers
+#endif
 nextapp:        
         tst.l   (a0)                    // another application?
         move.l  (a0), a0
