@@ -167,7 +167,15 @@ void initinfo(void)
     cprintf("\n\r");
 
     pair_start(_("EmuTOS Version")); cprintf("%s", version); pair_end();
-    pair_start(_("CPU type")); cprintf("m680%02ld", mcpu); pair_end();
+
+    pair_start(_("CPU type"));
+#ifdef __mcoldfire__
+    cprintf("ColdFire V4e");
+#else
+    cprintf("m680%02ld", mcpu);
+#endif
+    pair_end();
+
     pair_start(_("Machine")); cprintf(machine_name()); pair_end();
 /*  pair_start(_("MMU available")); cprintf(_("No")); pair_end(); */
     pair_start(_("Free ST-RAM"));
