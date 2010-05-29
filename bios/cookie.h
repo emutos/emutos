@@ -39,6 +39,7 @@ struct cookie {
 #define COOKIE_AKP      0x5f414b50L
 #define COOKIE_NATFEAT  0x5f5f4e46L
 #define COOKIE_XHDI     0x58484449L
+#define COOKIE_COLDFIRE 0x5f43465fL
 
 /* 
  * values of MCH cookie
