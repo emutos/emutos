@@ -24,7 +24,12 @@
         .text
         
 _gsx2:
+#ifdef __mcoldfire__
+        lea     tmp_contrl,a0
+        move.l  #_contrl,(a0)
+#else
         move.l  #_contrl,tmp_contrl
+#endif
         move.l  #tmp_contrl,d1
         moveq   #0x73,d0
         trap    #2
@@ -35,26 +40,56 @@ _gsx2:
  * Fill routines for the normal Array pointers 
  */
 _i_intin:
+#ifdef __mcoldfire__
+        lea     tmp_intin,a0
+        move.l  4(sp),(a0)
+#else
         move.l  4(sp),tmp_intin
+#endif
         rts
 _i_ptsin:
+#ifdef __mcoldfire__
+        lea     tmp_ptsin,a0
+        move.l  4(sp),(a0)
+#else
         move.l  4(sp),tmp_ptsin
+#endif
         rts
 _i_intout:
+#ifdef __mcoldfire__
+        lea     tmp_intout,a0
+        move.l  4(sp),(a0)
+#else
         move.l  4(sp),tmp_intout
+#endif
         rts
 _i_ptsout:
+#ifdef __mcoldfire__
+        lea     tmp_ptsout,a0
+        move.l  4(sp),(a0)
+#else
         move.l  4(sp),tmp_ptsout
+#endif
         rts
 
 
 _i_ptr:
 _i_lptr1:
+#ifdef __mcoldfire__
+        lea     _contrl+14,a0
+        move.l  4(sp),(a0)
+#else
         move.l  4(sp),_contrl+14
+#endif
         rts
 
 _i_ptr2:
+#ifdef __mcoldfire__
+        lea     _contrl+18,a0
+        move.l  4(sp),(a0)
+#else
         move.l  4(sp),_contrl+18
+#endif
         rts
 
 _m_lptr2:

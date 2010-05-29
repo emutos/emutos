@@ -61,7 +61,12 @@ _ui_start:
         move.l  d0,old_gem_ssp
 
         // ad_envrn = the pointer to the environ string
+#ifdef __mcoldfire__
+        lea     _ad_envrn,a0
+        move.l  0x2C(a5),(a0)
+#else
         move.l  0x2C(a5),_ad_envrn
+#endif
 
 aes_restart:
         // clear the 'global memory' zone whose size is determined by
@@ -73,7 +78,15 @@ aes_restart:
 clrgloloop:
         move.w  d1,(a0)+
 clrglotest:
+#ifdef __mcoldfire__
+        tst.l   d0
+        beq.s   clrglotestend
+        subq.l  #1,d0
+        bra.s   clrgloloop
+clrglotestend:
+#else
         dbmi    d0,clrgloloop
+#endif
 
         // _drwaddr ??? set to just_rts
         lea     _justretf,a0
@@ -103,7 +116,7 @@ clrglotest:
         move.l  old_gem_ssp,-(sp)
         move.w  #0x20,-(sp)
         trap    #1
-        addq.w  #6,sp
+        addq.l  #6,sp
 
         // Pterm0()
         move.l  #0,-(sp)
@@ -116,21 +129,44 @@ clrglotest:
 //////////////////////////////////////////////////////////////////////////////
 _gemdos:
         move.l  (SP)+,saveretaddr
+#ifdef __mcoldfire__
+        move.l  d2,saveregs
+        move.l  a2,saveregs+4
+#else
         movem.l d2/a2,saveregs
+#endif
 
-        move.w  #0,_DOS_ERR
-        move.w  #0,_DOS_AX
+        clr.w   _DOS_ERR
+        clr.w   _DOS_AX
         trap    #1
         cmp.l   #0,D0
         bge.s   gd_end
+#ifdef __mcoldfire__
+        moveq   #1,d1
+        move.w  d1,_DOS_ERR
+#else
         move.w  #1,_DOS_ERR
+#endif
         move.w  D0,_DOS_AX
         cmp.w   #0xFFE0,D0
         bgt.s   gd_end
+#ifdef __mcoldfire__
+        move.w  d0,d1
+        ext.l   d1
+        not.l   d1
+        subi.l  #0x1E,d1
+        move.w  d1,_DOS_AX
+#else
         not.w   _DOS_AX
         subi.w  #0x1E,_DOS_AX
+#endif
 gd_end:
+#ifdef __mcoldfire__
+        move.l  saveregs,d2
+        move.l  saveregs+4,a2
+#else
         movem.l saveregs,d2/a2
+#endif
         move.l  saveretaddr,-(SP)
         rts
 
@@ -141,7 +177,12 @@ gd_end:
 //////////////////////////////////////////////////////////////////////////////
 _dos_exec:
         move.l  sp,d1
+#ifdef __mcoldfire__
+        move.l  a2,-(sp)                // Save registers
+        move.l  d2,-(sp)
+#else
         movem.l d2/a2,-(sp)             // Save registers
+#endif
 
         bsr     _cli
         movea.l _rlr,a0
@@ -167,11 +208,18 @@ _dos_exec:
         move.l  (sp)+,0x3E(a0)          // Restore rlr->p_uda->u_spsuper
         bsr     _sti
 
+#ifdef __mcoldfire__
+        move.l  (sp)+,d2
+        move.l  (sp)+,a2
+        moveq   #1,d1
+        move.w  d1,_DOS_ERR
+#else
         movem.l (sp)+,d2/a2
         move.w  #1,_DOS_ERR
+#endif
         tst.l   d0
         bmi.s   de_return
-        move.w  #0,_DOS_ERR
+        clr.w   _DOS_ERR
 de_return:
         rts
 

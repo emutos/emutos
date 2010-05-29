@@ -29,7 +29,11 @@ lbwmov_loop:
             move.b  (A0)+,D1
             beq     lbwmov_exit
             move.w  D1,(A1)+
+#ifdef __mcoldfire__
+            addq.l  #1,D0
+#else
             addq.w  #1,D0
+#endif
             bra     lbwmov_loop
 lbwmov_exit:
             rts
