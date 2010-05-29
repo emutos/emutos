@@ -249,7 +249,7 @@ midirts:
 _midivec:
         // push byte data in d0 into midi iorec.
         move.w  midiibuftl,d1
-        addq.l  #1,d1
+        addq.w  #1,d1
         cmp.w   midiibufsz,d1
         blt     1f
         move.l  #0,d1
