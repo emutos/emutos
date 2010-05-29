@@ -5,6 +5,7 @@ tounix
 *.map
 mkheader
 bug
+bug.exe
 local.mk
 dsm.txt
 fal_dsm.txt
