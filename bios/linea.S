@@ -36,12 +36,12 @@
 
 // ==== Line-A handler ===============================
 _int_linea:
-        move.l  2(sp),a0
+        move.l  2(sp),a0        /* Get the opcode address */
         move.l  a0,a1
         clr.l   d0
-        move.w  (a0)+,d0
-        move.l  a0,2(sp)
-        and.w   #0xFFF,d0
+        move.w  (a0)+,d0        /* Get the opcode value */
+        move.l  a0,2(sp)        /* Return after the Line A opcode */
+        and.w   #0xFFF,d0       /* Keep only the function number */
         tst.w   d0
         bmi     wrong_linea
         cmp.w   linea_ents,d0
