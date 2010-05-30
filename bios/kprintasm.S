@@ -91,9 +91,23 @@ _printout_stonx:
 // ==== ASM glue for kprintf =================================================
 kprintf:
         move.l  (sp)+,kprintfsave+16
+#ifdef __mcoldfire__
+        move.l  d0,kprintfsave
+        move.l  d1,kprintfsave+4
+        move.l  a0,kprintfsave+8
+        move.l  a1,kprintfsave+12
+#else
         movem.l d0-d1/a0-a1,kprintfsave
+#endif
         jsr     _kprintf
+#ifdef __mcoldfire__
+        move.l  kprintfsave,d0
+        move.l  kprintfsave+4,d1
+        move.l  kprintfsave+8,a0
+        move.l  kprintfsave+12,a1
+#else
         movem.l kprintfsave,d0-d1/a0-a1
+#endif
         move.l  kprintfsave+16,-(sp)
         rts
 
