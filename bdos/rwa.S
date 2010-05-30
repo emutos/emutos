@@ -174,14 +174,24 @@ _enter:
         bne     enter_sup       // yes, go check sup stack
 
         move.l  usp,a0          // no, check user stack
+#ifdef __mcoldfire__
+        move.w  (a0),d0
+        cmp.w   #0x20,d0        // toggle/inquire state?
+#else
         cmp.w   #0x20,(a0)      // toggle/inquire state?
+#endif
         beq     x20_usr         // yes, go perform function
 
         bra     enter_2
 
 enter_sup:
                                 // next line is 68000 specific
+#ifdef __mcoldfire__
+        move.w  6(sp),d0
+        cmp.w   #0x20,d0        // toggle/inquire state?
+#else
         cmp.w   #0x20,6(sp)     // toggle/inquire state?
+#endif
         beq     x20_sup         // yes, go perform function
 
 enter_2:
@@ -194,7 +204,12 @@ enter_2:
         btst    #13,d0          // if he is in system state, use his stack
         bne     systk
         move.l  usp,a5
+#ifdef __mcoldfire__
+        lea     -40(a5),a5
+        movem.l d1-d7/a0-a2,(a5)
+#else
         movem.l d1-d7/a0-a2,-(a5)
+#endif
         move.l  a4,-(a5)        // retadd
         move.w  d0,-(a5)        // sr
         move.l  sp,a0
@@ -205,7 +220,13 @@ enter_2:
         lea     50(a5),a0
         bra     callos
 // he was using his own ssp
-systk:  movem.l d1-d7/a0-a2,-(sp)
+systk:
+#ifdef __mcoldfire__
+        lea     -40(sp),sp
+        movem.l d1-d7/a0-a2,(sp)
+#else
+        movem.l d1-d7/a0-a2,-(sp)
+#endif
         move.l  a4,-(sp)
         move.w  d0,-(sp)
         move.l  usp,a0
@@ -230,7 +251,12 @@ ggusr:  move.l  0x7c(a5),a6     // stack pointer (maybe usp, maybe ssp)
         move.l  (a6)+,a4        // other stack pointer
         move.w  (a6)+,d0
         move.l  (a6)+,a3        // retadd
+#ifdef __mcoldfire__
+        movem.l (a6),d1-d7/a0-a2
+        lea     40(a6),a6
+#else
         movem.l (a6)+,d1-d7/a0-a2
+#endif
         btst    #13,d0
         bne     retsys          // a6 is (user-supplied) system stack
         move.l  a4,sp
@@ -283,7 +309,11 @@ x20_usr:                        // user mode entry point
 xu_0:
         move.w  (sp)+,d0        // pop SR
         move.l  (sp)+,-(a0)     // transport the return address
+#ifdef __mcoldfire__
+        ori.l   #0x2000,d0      // set supervisor mode
+#else
         ori.w   #0x2000,d0      // set supervisor mode
+#endif
         move.w  d0,-(a0)        // push SR
         move.l  sp,d0           // set return value (old SSP)
         move.l  a0,sp           // set new SSP
@@ -325,7 +355,7 @@ xs_0:
 xs_exit:
         move.l  a0,usp          // update USP
 xs_scram:
-        andi.w  #0xDFFF,(sp)    // set user mode
+        bclr.b  #5,(sp)         // set user mode
 
         bra     fix_rte
 
@@ -355,6 +385,24 @@ _oscall:
 //==== fix_trap - make 68010 exception stack frame look like a 68000 frame ===
 
 fix_trap:
+#ifdef __mcoldfire__
+        move.w  4(sp),d0        // Format/Vector Word
+        andi.l  #0x3000,d0      // Keep the filler bits
+        beq.s   ft_cf_nofiller
+
+        // Assume a 2-byte filler after the exception frame
+        move.w  10(sp),12(sp)   // lsw of return address of TRAP
+        move.w  8(sp),10(sp)    // msw of return address of TRAP
+        move.w  6(sp),8(sp)     // sr
+        move.l  (sp),4(sp)      // return address of BSR
+        addq.l  #4,sp           // discard the additional words
+        rts
+
+ft_cf_nofiller:
+        move.w  2(sp),4(sp)     // lsw of return address of BSR
+        move.w  (sp),2(sp)      // msw of return address of BSR
+        addq.l  #2,sp           // discard the Format/Vector Word
+#else
         tst.w   _longframe      // check processor type
         beq     ft_exit
 
@@ -364,6 +412,7 @@ fix_trap:
         move.w  2(sp),4(sp)     // lsw of return address of BSR
         move.w  (sp),2(sp)      // msw of return address of BSR
         addq.l  #2,sp           // discard the missing word
+#endif
 ft_exit:
         rts
 
@@ -372,6 +421,9 @@ ft_exit:
 //==== fix_rte - restore a 68010 exception stack frame =======================
 
 fix_rte:
+#ifdef __mcoldfire__
+        move.w  #0x4084,-(sp)   // store a fake Format/Vector Word
+#else
         tst.w   _longframe      // check processor type
         beq     fr_exit
 
@@ -380,6 +432,7 @@ fix_rte:
         move.w  4(sp),2(sp)     // msw of return address of TRAP
         move.w  6(sp),4(sp)     // lsw of return address of TRAP
         clr.w   6(sp)           // store a bogus exception frame type
+#endif
 fr_exit:
         rte
 
