@@ -79,7 +79,12 @@ meminit:
         lsr.l   #2, d0
 clearbss:
         clr.l   (a0)+
+#ifdef __mcoldfire__
+        subq.l  #1, d0
+        bpl.s   clearbss
+#else
         dbra    d0, clearbss
+#endif
 
 
 /*
@@ -99,7 +104,12 @@ clearbss:
         beq     memchk                  // no -> skip 0xffff8007 test
 
 # if FALCON_MMU
+#ifdef __mcoldfire__
+        lea     0xffff8007, a0
+        bset    #6, (a0)                // seen in TOS 4.04
+#else
         bset    #6, 0xffff8007          // seen in TOS 4.04
+#endif
         beq     memconf                 // not sure what 6th bit means
 # endif
 #endif
@@ -110,12 +120,24 @@ clearbss:
  */
  
 memchk:
+#ifdef __mcoldfire__
+        move.l  #0x752019f3, d1
+        cmp.l   memvalid, d1            // magic in memvalid ?
+        bne     memconf                 // no -> config memory
+        move.l  #0x237698aa, d1
+        cmp.l   memval2, d1             // magic in memval2 ?
+        bne     memconf                 // no -> config memory
+        move.l  #0x5555aaaa, d1
+        cmp.l   memval3, d1             // magic in memval3 ?
+        bne     memconf                 // no -> config memory
+#else
         cmp.l   #0x752019f3, memvalid   // magic in memvalid ?
         bne     memconf                 // no -> config memory
         cmp.l   #0x237698aa, memval2    // magic in memval2 ?
         bne     memconf                 // no -> config memory
         cmp.l   #0x5555aaaa, memval3    // magic in memval3 ?
         bne     memconf                 // no -> config memory
+#endif
 
 memok:
 #if FALCON_MMU + ST_MMU > 1
@@ -123,7 +145,12 @@ memok:
         bne     no_memctrl              // yes -> skip memctrl init
 #endif
 #if ST_MMU
+#ifdef __mcoldfire__
+        lea     0xffff8001, a0
+        move.b  memctrl, (a0)           // write old valid config to controller
+#else
         move.b  memctrl, 0xffff8001     // write old valid config to controller
+#endif
                                         // phystop should then also be ok
 #endif
 no_memctrl:
@@ -170,11 +197,15 @@ memconf:
 /* init the test pattern in bank 0 and 1 */
         movea.w #0x000008,a0            // bank 0
         lea     0x200008,a1             // bank 1
-        clr.w   d0
+        moveq   #0,d0
 init_pattern_loop:
         move.w  d0,(a0)+                // bank 0
         move.w  d0,(a1)+                // bank 1
+#ifdef __mcoldfire__
+        add.l   #0xfa54,d0              // next pattern data
+#else
         add.w   #0xfa54,d0              // next pattern data
+#endif
         cmpa.l  #0x200,a0               // 200 word done?
         bne.s   init_pattern_loop
 
@@ -194,7 +225,11 @@ init_pattern_loop:
 
         /* test the presence of a 256k bank config */
 test_256k:
+#ifdef __mcoldfire__
+        lsr.l   #2,d6                   // switch bank in configuration byte
+#else
         lsr.w   #2,d6                   // switch bank in configuration byte
+#endif
         clr.l   d4                      // bank memory size
 
         movea.l #0x40008,a0             // 256k test
@@ -227,11 +262,19 @@ last_return:
         bne.s   bank_test_end           // Pattern not found!  -> D6=0x0 - NO RAM
         move.l  #0x200000,d4            // Pattern found!      -> D6=0x6 - 2m
 
+#ifdef __mcoldfire__
+        addq.l  #4,d6
+#else
         addq.w  #4,d6
+#endif
 
 bank_test_end_512k:
 
+#ifdef __mcoldfire__
+        addq.l  #4,d6
+#else
         addq.w  #4,d6
+#endif
 
 bank_test_end:
         add.l   d4,d5                   // compute total memory size
@@ -255,12 +298,16 @@ bank_test_end:
  */
 check_test_pattern:
         adda.l  d1,a0                   // compute starting address
-        clr.w   d0                      // first pattern word
+        moveq   #0,d0                   // first pattern word
         lea     0x1f8(a0),a1            // end address
 check_test_pattern_loop:
         cmp.w   (a0)+,d0                // is the data valid ?
         bne     end_check_test_pattern
+#ifdef __mcoldfire__
+        add.l   #0xfa54,d0              // next pattern word to test
+#else
         add.w   #0xfa54,d0              // next pattern word to test
+#endif
         cmpa.l  a0,a1                   // at the end of the pattern ?
         bne.s   check_test_pattern_loop
 end_check_test_pattern:
@@ -289,6 +336,17 @@ st_cleared:
 
 falcmemconf:
         /* find out the memory size by checking the d0 = $ff8006 value */
+#ifdef __mcoldfire__
+        moveq   #0, d0
+        move.w  0xffff8006.w, d0        // read the Falcon MMU register
+        lsr.l   #8,d0
+        lsr.l   #1,d0
+        move.l  d0,d1
+        and.l   #1,d1
+        lsr.l   #2,d0
+        and.l   #6,d0
+        or.l    d0,d1
+#else
         move.w  0xffff8006.w, d0        // read the Falcon MMU register
         lsr.w   #8,d0
         lsr.b   #1,d0
@@ -297,6 +355,7 @@ falcmemconf:
         lsr.b   #2,d0
         and.b   #6,d0
         or.b    d0,d1
+#endif
         move.l  #0x00080000,d0
         asl.l   d1,d0
         cmp.b   #5,d1
@@ -363,7 +422,12 @@ setramtop:
         sub.l   a3, a3
 alter:
         move.l  a3, _ramtop             // set ramtop to size of found memory
+#ifdef __mcoldfire__
+        lea     _ramvalid, a4
+        move.l  #0x1357BD13, (a4)       // set ramvalid to ok
+#else
         move.l  #0x1357BD13, _ramvalid  // set ramvalid to ok
+#endif
 
         /* clear all Fast/TT-RAM - from 0x1000000 till the end */
         lea     0x1000000, a4           // start from 16MB boundary
@@ -389,7 +453,11 @@ clear_ram:
         sub.l   a4, d4
         lsr.l   #8, d4
         subq.l  #1, d4
+#ifdef __mcoldfire__
+        lea     0x0100, a5
+#else
         lea     0x0200, a5
+#endif
         moveq   #0x00, d0
         move.l  d0, a0
         moveq   #0x00, d1
@@ -400,6 +468,19 @@ clear_ram:
         move.l  d3, a3
         lea     0x0100(a4), a4
 clear_loop:
+#ifdef __mcoldfire__
+        movem.l d0-d3/a0-a3, -32(a4)
+        movem.l d0-d3/a0-a3, -64(a4)
+        movem.l d0-d3/a0-a3, -96(a4)
+        movem.l d0-d3/a0-a3, -128(a4)
+        movem.l d0-d3/a0-a3, -160(a4)
+        movem.l d0-d3/a0-a3, -192(a4)
+        movem.l d0-d3/a0-a3, -224(a4)
+        movem.l d0-d3/a0-a3, -256(a4)
+        adda.l  a5, a4
+        subq.l  #1, d4
+        bpl.s   clear_loop
+#else
         movem.l d0-d3/a0-a3, -(a4)
         movem.l d0-d3/a0-a3, -(a4)
         movem.l d0-d3/a0-a3, -(a4)
@@ -410,6 +491,7 @@ clear_loop:
         movem.l d0-d3/a0-a3, -(a4)
         adda.l  a5, a4
         dbf     d4, clear_loop
+#endif
         jmp     (a6)
 
 // ===========================================================================
