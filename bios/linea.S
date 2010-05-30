@@ -36,28 +36,60 @@
 
 // ==== Line-A handler ===============================
 _int_linea:
+#ifdef __mcoldfire__
+        move.l  4(sp),a0        /* Get the opcode address */
+#else
         move.l  2(sp),a0        /* Get the opcode address */
+#endif
         move.l  a0,a1
         clr.l   d0
         move.w  (a0)+,d0        /* Get the opcode value */
+#ifdef __mcoldfire__
+        move.l  a0,4(sp)        /* Return after the Line A opcode */
+#else
         move.l  a0,2(sp)        /* Return after the Line A opcode */
+#endif
+#ifdef __mcoldfire__
+        /* On ColdFire, all the standard Line A opcodes conflict with
+         * valid MAC instructions. Therefore they can't be used.
+         * Fortunately, the 0xA92x opcodes are still illegal and trigger
+         * the Line A exception. The programs can use 0xA92x instead of
+         * 0xA00x to call the Line A. Thus we must keep only the last
+         * digit as function number. */
+        and.l   #0x00F,d0       /* Keep only the function number */
+#else
         and.w   #0xFFF,d0       /* Keep only the function number */
+#endif
         tst.w   d0
         bmi     wrong_linea
         cmp.w   linea_ents,d0
         bpl     wrong_linea
 
 #if 0
+#ifdef __mcoldfire__
+        lea     -16(sp),sp
+        movem.l d0-d1/a0-a1,(sp)
+#else
         movem.l d0-d1/a0-a1,-(sp)
+#endif
         move.w  d0,-(sp)
         pea     linea_msg
         jsr     _kprintf              /* Print debugging information */
         addq.l  #6,sp
+#ifdef __mcoldfire__
+        movem.l (sp),d0-d1/a0-a1
+        lea     16(sp),sp
+#else
         movem.l (sp)+,d0-d1/a0-a1
+#endif
 #endif
 
         lea     linea_vecs,a0
+#ifdef __mcoldfire__
+        lsl.l   #2,d0
+#else
         lsl.w   #2,d0
+#endif
         move.l  0(a0,d0),a0
         jsr     (a0)
 linea_dispatch_pc:      
