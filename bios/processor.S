@@ -35,6 +35,8 @@
 
         .text
 
+#ifndef __mcoldfire__
+
 /*
  * _detect_cpu - CPU detection
  *
@@ -184,6 +186,8 @@ fexit:  move.l  a1,(0x2c).w     // restore Line-F
         move.l  (sp)+,a2
         rts
 
+#endif /* __mcoldfire__ */
+
 
 
 /*
@@ -191,6 +195,9 @@ fexit:  move.l  a1,(0x2c).w     // restore Line-F
  */
 
 _processor_init:
+#ifdef __mcoldfire__
+        // TODO enable the caches
+#else
         jsr     _detect_cpu
         move.l  d0,_mcpu
         beq     m68000
@@ -228,6 +235,7 @@ m68000:
         dc.l    0x4e7b0006      // movec   d0,dttr0
         moveq.l #0,d0
         dc.l    0x4e7b0007      // movec   d0,dttr1
+#endif
         
 done:
         rts
@@ -242,11 +250,15 @@ done:
  */
 
 _invalidate_icache:
+#ifdef __mcoldfire__
+        // TODO
+#else
         cmp.b   #40,_mcpu+3
         bne     done
         nop
         dc.w    0xf498          // cinva   ic
         nop
+#endif
         rts
 
 
@@ -256,8 +268,10 @@ _invalidate_icache:
         .bss
         .even
 
+#ifndef __mcoldfire__
 _mcpu:          ds.l    1
 _fputype:       ds.l    1
+#endif
 
 
 // ===========================================================================
