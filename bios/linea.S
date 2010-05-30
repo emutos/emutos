@@ -48,12 +48,12 @@ _int_linea:
         bpl     wrong_linea
 
 #if 0
-        movem.l d0-d2/a0-a2,-(sp)
+        movem.l d0-d1/a0-a1,-(sp)
         move.w  d0,-(sp)
         pea     linea_msg
         jsr     _kprintf              /* Print debugging information */
         addq.l  #6,sp
-        movem.l (sp)+,d0-d2/a0-a2
+        movem.l (sp)+,d0-d1/a0-a1
 #endif
 
         lea     linea_vecs,a0
