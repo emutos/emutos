@@ -84,7 +84,12 @@ _init_exc_vec:
 set_vec:
         move.l  a0, (a1)+
         add.l   #2, a0
+#ifdef __mcoldfire__
+        subq.l  #1, d0
+        bpl.s   set_vec
+#else
         dbra    d0, set_vec
+#endif
         rts
 
 /* initialize the 192 user vectors. */
@@ -95,7 +100,12 @@ _init_user_vec:
         move.l  #191, d0
 set_uvec:
         move.l  a0, (a1)+
+#ifdef __mcoldfire__
+        subq.l  #1, d0
+        bpl.s   set_uvec
+#else
         dbra    d0, set_uvec
+#endif
         rts
 
 /* this table holds the default exception vectors for vectors 2 to 63.
@@ -183,8 +193,15 @@ user_vec:
 any_vec:
         move.w  #0x2700, sr
         // dump the registers, including USP
+#ifdef __mcoldfire__
+        move.l  a0,_proc_dregs+32
+        lea     _proc_dregs,a0
+        movem.l d0-d7,(a0)
+        movem.l a1-a6,36(a0)
+#else
         movem.l d0-d7/a0-a6,_proc_dregs
-        move    usp,a0
+#endif
+        move.l  usp,a0
         move.l  a0,_proc_usp
         // compute and dump the exception number
         move.l  (sp)+,d0
@@ -197,9 +214,17 @@ any_vec:
         move.l  d0, _proc_enum
         // dump 16 words from the stack
         movem.l (sp),d0-d7
+#ifdef __mcoldfire__
+        lea     _proc_stk,a0
+        movem.l d0-d7,(a0)
+        // magic value
+        lea     _proc_lives, a0
+        move.l  #0x12345678, (a0)
+#else
         movem.l d0-d7,_proc_stk
         // magic value
         move.l  #0x12345678, _proc_lives
+#endif
         // restore a sane stack
         lea     _stktop,sp
         jmp     _dopanic
@@ -249,6 +274,20 @@ query:
  */
  
 _int_hbl:
+#ifdef __mcoldfire__
+// Beware: In the ColdFire version, d0.l is pushed on the stack
+// so the user status register is in 4(sp)
+        move.l  d0, -(sp)       // save d0
+        moveq   #0, d0
+        move.w  4(sp), d0       // get status register from stack
+        and.l   #0x0700, d0     // isolate just IPL-mask from sr
+        bne     is_ipl          // if IPL is nonzero, then end
+        move.w  4(sp), d0
+        or.l    #0x0300, d0     // else set IPL3 in status register
+        move.w  d0, 4(sp)
+is_ipl:
+        move.l  (sp)+, d0       // restore d0
+#else
         move.w  d0, -(sp)       // save d0
         move.w  2(sp), d0       // get status register from stack
         and.w   #0x0700, d0     // isolate just IPL-mask from sr
@@ -256,6 +295,7 @@ _int_hbl:
         or.w    #0x0300, 2(sp)  // else set IPL3 in status register
 is_ipl:
         move.w  (sp)+, d0       // restore d0
+#endif
         rte
 
 
@@ -268,10 +308,23 @@ is_ipl:
 
 _int_vbl:
         addq.l  #1, _frclock            // increase num of happened ints
+#ifdef __mcoldfire__
+        move.l  d0, -(sp)               // ColdFire specific
+        moveq   #0, d0
+        move.w  _vblsem, d0
+        subq.l  #1, d0
+        move.w  d0, _vblsem
+#else
         subq.w  #1, _vblsem             // check vbl semaphore
+#endif
         bmi     vbl_end                 // if VBl routine disabled -> end
 
+#ifdef __mcoldfire__
+        lea     -56(sp), sp
+        movem.l d1-d7/a0-a6, (sp)       // save registers
+#else
         movem.l d0-d7/a0-a6, -(sp)      // save registers
+#endif
         addq.l  #1, _vbclock            // count number of VBL interrupts
 
         // TODO: Check for monitor switching on normal ST(E) here,
@@ -285,10 +338,15 @@ _int_vbl:
         clr.l   _colorptr
         move.l  d0,a0
         lea     0xffff8240,a1
-        move.w  #15,d0
+        moveq   #15,d0
 vbl_palette_loop:
         move.w  (a0)+,(a1)+
+#ifdef __mcoldfire__
+        subq.l  #1,d0
+        bpl.s   vbl_palette_loop
+#else
         dbra    d0,vbl_palette_loop
+#endif
 vbl_no_palette: 
 
         // set new video address
@@ -299,9 +357,15 @@ vbl_no_palette:
         beq     st_shifter
         move.b  d0,0xffff820d
 st_shifter:
+#ifdef __mcoldfire__
+        lsr.l   #8,d0
+        move.b  d0,0xffff8203
+        lsr.l   #8,d0
+#else
         lsr.w   #8,d0
         move.b  d0,0xffff8203
         swap    d0
+#endif
         move.b  d0,0xffff8201
 vbl_no_screenpt:        
 
@@ -309,27 +373,62 @@ vbl_no_screenpt:
         jsr     _flopvbl
 
         // vblqueue
+#ifdef __mcoldfire__
+        moveq   #0,d0
+#endif
         move.w  _nvbls,d0
         beq     vbl_no_queue
+#ifdef __mcoldfire__
+        sub.l   #1,d0
+#else
         sub.w   #1,d0
+#endif
         move.l  _vblqueue,a0
 vbl_queue_loop: 
         move.l  (a0)+,a1
         cmp.l   #0,a1
         beq     vbl_queue_next
+#ifdef __mcoldfire__
+        move.l  a0,-(sp)
+        move.l  d0,-(sp)
+#else
         movem.l d0/a0,-(sp)
+#endif
         jsr     (a1)
+#ifdef __mcoldfire__
+        move.l  (sp)+,d0
+        move.l  (sp)+,a0
+#else
         movem.l (sp)+,d0/a0
+#endif
 vbl_queue_next: 
+#ifdef __mcoldfire__
+        subq.l  #1,d0
+        bpl.s   vbl_queue_loop
+#else
         dbra    d0,vbl_queue_loop
+#endif
 vbl_no_queue:
         
         // screen hardcopy
         // (not done) 
 
+#ifdef __mcoldfire__
+        movem.l (sp), d1-d7/a0-a6       // restore registers
+        lea     56(sp), sp
+#else
         movem.l (sp)+, d0-d7/a0-a6      // restore registers
+#endif
 vbl_end:
+#ifdef __mcoldfire__
+        moveq   #0,d0
+        move.w  _vblsem,d0
+        addq.l  #1,d0
+        move.w  d0,_vblsem
+        move.l  (sp)+,d0                // ColdFire specific
+#else
         addq.w  #1,_vblsem
+#endif
         rte
 
 
@@ -339,10 +438,25 @@ _int_timerc:
         
         addq.l  #1, _hz_200             // increment 200 Hz counter
 
+#ifdef __mcoldfire__
+        move.l  d0,-(sp)
+        move.l  a0,-(sp)
+        move.w  _timer_c_sieve,d0
+        swap    d0
+        move.w  _timer_c_sieve,d0
+        lsl.l   #1,d0                   // check for 4th call
+        swap    d0
+        move.w  d0,_timer_c_sieve
+        bpl     timerc_end
+
+        lea     -52(sp),sp
+        movem.l d1-d7/a1-a6,(sp)        // save registers       
+#else
         rol.w   _timer_c_sieve          // check for 4th call
         bpl     timerc_end
 
         movem.l d0-d7/a0-a6,-(sp)       // save registers       
+#endif
 
         // repeat keys 
         jsr     _kb_timerc_int
@@ -353,11 +467,21 @@ _int_timerc:
         move.w  _timer_ms, -(sp)
         move.l  _etv_timer, a0
         jsr     (a0)                    // jump to etv_timer routine
-        addq.w  #2, sp                  // correct stack
+        addq.l  #2, sp                  // correct stack
         
+#ifdef __mcoldfire__
+        movem.l (sp),d1-d7/a1-a6
+        lea     52(sp),sp
+timerc_end:                     
+        lea     0xfffffa11, a0
+        bclr    #5, (a0)                // clear interrupt service bit
+        move.l  (sp)+, a0
+        move.l  (sp)+, d0
+#else
         movem.l (sp)+,d0-d7/a0-a6
 timerc_end:                     
         bclr    #5, 0xfffffa11          // clear interrupt service bit
+#endif
         rte
         
 
@@ -373,6 +497,7 @@ _criter1:
         rts                     // jump back to routine
 
 
+#ifndef __mcoldfire__
 
 /*
  * _int_illegal - illegal instruction handler 
@@ -432,6 +557,7 @@ pi_back:
         movem.l (sp)+,d0/a0
         bra     priv_vec                // go directly to our panic handler
 
+#endif /* __mcoldfire__ */
 
 
 // ==== Trap 13 - BIOS entry point ==========================================
@@ -452,6 +578,23 @@ _xbiostrap:
 
 biosxbios:
         move.l  _savptr, a1     
+#ifdef __mcoldfire__
+        move.w  (sp)+,d0        // Format/Vector Word
+        andi.l  #0x3000,d0      // Keep the filler bits
+        beq.s   bx_cf_nofiller
+
+        // Assume a 2-byte filler after the exception frame
+        move.w  (sp)+,d0        // Status register -> d0
+        move.w  d0,-(a1)        // and save in save_area
+        move.l  (sp)+,-(a1)     // save return address
+        addq.l  #2,sp           // discard the filler word
+        bra.s   bx_nolongframe
+
+bx_cf_nofiller:
+        move.w  (sp)+,d0        // Status register -> d0
+        move.w  d0,-(a1)        // and save in save_area
+        move.l  (sp)+,-(a1)     // save return address
+#else
         move.w  (sp)+,d0        // Status register -> d0
         move.w  d0,-(a1)        // and save in save_area
         move.l  (sp)+,-(a1)     // save return address
@@ -459,9 +602,15 @@ biosxbios:
         tst.w   _longframe      // Check processor type
         beq.s   bx_nolongframe  // ...when we support CPU >=68000
         move.w  (sp)+,-(a1)
+#endif
 
 bx_nolongframe:
+#ifdef __mcoldfire__
+        lea     -40(a1), a1
+        movem.l d3-d7/a3-a7, (a1)       // regs, including stack pointer
+#else
         movem.l d3-d7/a3-a7, -(a1)      // regs, including stack pointer
+#endif
         move.l  a1, _savptr
         
         btst    #13,d0          // were we in user mode?
@@ -481,8 +630,18 @@ bx_sp_ok:
 
 bx_ret_exc:
         move.l  _savptr, a1
+#ifdef __mcoldfire__
+        movem.l (a1), d3-d7/a3-a7       // Get regs back, including sp
+        lea     40(a1), a1
+#else
         movem.l (a1)+, d3-d7/a3-a7      // Get regs back, including sp
+#endif
 
+#ifdef __mcoldfire__
+        move.l  (a1)+,-(sp)     // return adress
+        move.w  (a1)+,-(sp)     // sr
+        move.w  #0x40B4,-(sp)   // store a fake Format/Vector Word
+#else
         tst.w   _longframe      // Check longframe again: Is CPU >= 68000?
         beq.s   bx_nolong2
         move.w  (a1)+,-(sp)
@@ -490,6 +649,7 @@ bx_ret_exc:
 bx_nolong2:
         move.l  (a1)+,-(sp)
         move.w  (a1)+,-(sp)
+#endif
         move.l  a1, _savptr
         rte                     // return with return value in D0
 
@@ -577,9 +737,19 @@ _just_rte:
 
 _protect_v:
         move.l   4(sp),a0
+#ifdef __mcoldfire__
+        move.l   a2,-(sp)
+        move.l   d2,-(sp)
+#else
         movem.l  d2/a2,-(sp)
+#endif
         jsr      (a0)
+#ifdef __mcoldfire__
+        move.l   (sp)+,d2
+        move.l   (sp)+,a2
+#else
         movem.l  (sp)+,d2/a2
+#endif
         rts
 
 /*
@@ -589,11 +759,21 @@ _protect_v:
 _protect_w:
         move.l   4(sp),a0
         move.w   8(sp),d0
+#ifdef __mcoldfire__
+        move.l   a2,-(sp)
+        move.l   d2,-(sp)
+#else
         movem.l  d2/a2,-(sp)
+#endif
         move.w   d0,-(sp)
         jsr      (a0)
         addq.l   #2,sp
+#ifdef __mcoldfire__
+        move.l   (sp)+,d2
+        move.l   (sp)+,a2
+#else
         movem.l  (sp)+,d2/a2
+#endif
         rts
 
 /*
@@ -603,11 +783,21 @@ _protect_w:
 _protect_ww:
         move.l   4(sp),a0
         move.l   8(sp),d0
+#ifdef __mcoldfire__
+        move.l   a2,-(sp)
+        move.l   d2,-(sp)
+#else
         movem.l  d2/a2,-(sp)
+#endif
         move.l   d0,-(sp)
         jsr      (a0)
         addq.l   #4,sp
+#ifdef __mcoldfire__
+        move.l   (sp)+,d2
+        move.l   (sp)+,a2
+#else
         movem.l  (sp)+,d2/a2
+#endif
         rts
 
 
@@ -617,22 +807,44 @@ _protect_ww:
 
 _protect_wlwwwl:
         movem.l  8(sp),d0-d1/a0-a1
+#ifdef __mcoldfire__
+        move.l   a2,-(sp)
+        move.l   d2,-(sp)
+        lea      -16(sp),sp
+        movem.l  d0-d1/a0-a1,(sp)
+#else
         movem.l  d2/a2,-(sp)
         movem.l  d0-d1/a0-a1,-(sp)
+#endif
         move.l   28(sp),a0
         jsr      (a0)
         lea      16(sp),sp
+#ifdef __mcoldfire__
+        move.l   (sp)+,d2
+        move.l   (sp)+,a2
+#else
         movem.l  (sp)+,d2/a2
+#endif
         rts
 
 
 /* Compendium says that the scancode is supplied in register d0. */
 _keyclick:
         move.w   4(sp),d0
+#ifdef __mcoldfire__
+        move.l   a2,-(sp)
+        move.l   d2,-(sp)
+#else
         movem.l  d2/a2,-(sp)
+#endif
         move.l   _kcl_hook,a0
         jsr      (a0)
+#ifdef __mcoldfire__
+        move.l   (sp)+,d2
+        move.l   (sp)+,a2
+#else
         movem.l  (sp)+,d2/a2
+#endif
         rts
 
 // ==== Variables ============================================================
