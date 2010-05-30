@@ -41,7 +41,6 @@
  * Return values:
  *
  *  0 - 68000
- *  5 - coldfire
  * 10 - 68010
  * 20 - 68020
  * 30 - 68030
@@ -50,44 +49,14 @@
  */
 
 _detect_cpu:
-
-//
-// The instruction "move.l %macsr,d1" is Coldfire-specific
-// and raises a Line-A exception on a plain m68k. We just
-// execute this instruction and check if such an exception
-// was raised.
-//
-        move.l #0x28.w,a0         // keep old Line-A exception vector
-        move.l #tmp_line_a,d0
-        move.l d0,0x28.w          // install custom Line-A handler
-        moveq  #5,d0              // set default return value (Coldfire present)
-        dc.w   0xa981             // move.l %macsr,%d1
-        move.l a0,0x28.w          // restore original Line-A handler
-        rts
-
-tmp_line_a:
-        addq.l #2,2(sp)           // skip Line-A instruction
-        move.l a0,0x28.w          // restore original Line-A handler
-        bsr    check68k         // no coldfire, gon on with 68k check
-        rte
-
-
-check68k:
         move.l  a2,-(sp)  
         move.l  (0x10).w,a1     // save the illegal instr. exc. vector
         move.l  (0xf4).w,a2     // save the unimplemented instr. exc. vector
-//      move.l  (0x28).w,a3     // save old Line-A exception vector
         lea     exit.w(PC),a0
         move.l  a0,(0x10).w     // set either vector    
         move.l  a0,(0xf4).w
-//        move.l  a0,(0x28).w     // linea-vector for coldfire test
         move.l  sp,a0           // save the ssp
         nop                     // eventually flush pipelines
-
-// on coldfire we try out a 'move.l %macsr,d1', exception on 68k
-
-//      moveq  #100,d0          // set return value (Coldfire present)
-//      dc.w   0xa981           // move.l %macsr,%d1
 
 // on 68000 we try out a `move from CCR'.
 
@@ -119,7 +88,6 @@ x040:   moveq   #60,d0          // assume 68060
 exit:  
         move.l  a2,(0xf4).w     // restore stuff and exit
         move.l  a1,(0x10).w
-//      move.l  a3,(0x28).w     // restore original Line-A handler
         move.l  a0,sp
         nop                     // flush pipelines
         move.l  (sp)+,a2
