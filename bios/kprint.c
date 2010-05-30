@@ -185,7 +185,13 @@ void doassert(const char *file, long line, const char *func, const char *text)
 
 
 static const char *exc_messages[] = {
-    "", "", "bus error", "address error",
+    "", "",
+#ifdef __mcoldfire__
+    "access error",
+#else
+    "bus error",
+#endif
+    "address error",
     "illegal exception", "divide by zero",
     "datatype overflow (CHK)",
     "trapv overflow bit error",
@@ -210,6 +216,24 @@ void dopanic(const char *fmt, ...)
         va_start(ap, fmt);
         vkcprintf(fmt, ap);
         va_end(ap);
+#ifdef __mcoldfire__
+    } else {
+        /* On ColdFire, the exception frame is the same for all exceptions. */
+        struct {
+            WORD fv; /* Format/Vector Word */
+            WORD sr;
+            LONG pc;
+        } *s = (void *)proc_stk;
+
+        if (proc_enum >= 2 && proc_enum < numberof(exc_messages)) {
+            kcprintf("%s. fv = 0x%04x, sr = 0x%04x, pc = 0x%08lx\n",
+                     exc_messages[proc_enum], s->fv, s->sr, s->pc);
+        } else {
+            kcprintf("Exception number %d. fv = 0x%04x, sr = 0x%04x, pc = 0x%08lx\n",
+                    (int) proc_enum, s->fv, s->sr, s->pc);
+        }
+    }
+#else
     } else if (proc_enum == 2 || proc_enum == 3) {
         struct {
             WORD misc;
@@ -277,6 +301,7 @@ void dopanic(const char *fmt, ...)
         kcprintf("Exception number %d. sr = 0x%04x, pc = 0x%08lx\n",
                 (int) proc_enum, s->sr, s->pc);
     }
+#endif
     kcprintf("Aregs: %08lx %08lx %08lx %08lx  %08lx %08lx %08lx %08lx\n",
              proc_aregs[0], proc_aregs[1], proc_aregs[2], proc_aregs[3], 
              proc_aregs[4], proc_aregs[5], proc_aregs[6], proc_aregs[7]);
