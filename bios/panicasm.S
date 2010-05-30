@@ -31,16 +31,31 @@ _panic:
         // supervisor mode, no interrupts
         move.w  #0x2700,sr
         // dump the registers including USP
+#ifdef __mcoldfire__
+        move.l  a0,_proc_dregs+32
+        lea     _proc_dregs,a0
+        movem.l d0-d7,(a0)
+        movem.l a1-a7,36(a0)
+#else
         movem.l d0-d7/a0-a7,_proc_dregs
-        move    usp,a0
+#endif
+        move.l  usp,a0
         move.l  a0,_proc_usp
         // tell dopanic() that there are arguments following
         clr.l   _proc_enum
         // dump 16 words from the stack
         movem.l (sp),d0-d7
+#ifdef __mcoldfire__
+        lea     _proc_stk,a0
+        movem.l d0-d7,(a0)
+        // magic value
+        lea     _proc_lives,a0
+        move.l  #0x12345678,(a0)
+#else
         movem.l d0-d7,_proc_stk
         // magic value
         move.l  #0x12345678,_proc_lives
+#endif
         // at that time, we did not alter the stack, to we can jump to the 
         // C routine directly in kprint.c
         jmp     _dopanic
