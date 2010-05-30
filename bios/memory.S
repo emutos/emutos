@@ -380,10 +380,12 @@ f_cleared:
         /* clear MB counter */
         moveq   #0, d6
 
+#ifndef __mcoldfire__
         /* test CPU - FastRAM is possible on 68020+ (32-bit address space) */
         bsr     _detect_cpu
         cmp.w   #20,d0                  // 68020 or better?
         blt     setramtop               // no -> skip the whole FastRAM stuff
+#endif
 
         /* Can we access FastRAM region? */
         pea     0x1000400
