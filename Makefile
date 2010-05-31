@@ -94,9 +94,9 @@ INDENT = indent -kr
 
 # Linker with relocation information and binary output (image)
 LD = $(CC) $(MULTILIBFLAGS) -nostartfiles -nostdlib
-LDFLAGS = -Xlinker --oformat -Xlinker binary -lgcc 
-LDFLAGS_T1 = -Xlinker -Ttext=0xfc0000 -Xlinker -Tbss=0x000000 
-LDFLAGS_T2 = -Xlinker -Ttext=0xe00000 -Xlinker -Tbss=0x000000 
+LDFLAGS = -Wl,--oformat,binary -lgcc
+LDFLAGS_T1 = -Wl,-Ttext=0xfc0000,-Tbss=0x000000
+LDFLAGS_T2 = -Wl,-Ttext=0xe00000,-Tbss=0x000000
 
 # C compiler for MiNT
 CC = m68k-atari-mint-gcc
@@ -269,11 +269,11 @@ help:
 TOCLEAN += *.img *.map
 
 emutos1.img emutos1.map: $(OBJECTS) Makefile
-	$(LD) -o emutos1.img -Xlinker -Map -Xlinker emutos1.map \
+	$(LD) -o emutos1.img -Wl,-Map,emutos1.map \
 	  $(OBJECTS) $(LDFLAGS) $(LDFLAGS_T1)
 
 emutos2.img emutos2.map: $(OBJECTS) Makefile
-	$(LD) -o emutos2.img -Xlinker -Map -Xlinker emutos2.map \
+	$(LD) -o emutos2.img -Wl,-Map,emutos2.map \
 	  $(OBJECTS) $(LDFLAGS) $(LDFLAGS_T2)
 
 
@@ -346,13 +346,13 @@ ram: ramtos.img boot.prg
 ramtos.img ramtos.map: $(OBJECTS) emutos2.map 
 	@topbss=`sed -e '/__end/!d;s/^ *//;s/ .*//' emutos2.map`; \
 	echo $(LD) -o ramtos.img $(OBJECTS) $(LDFLAGS) \
-		-Xlinker -Ttext=$$topbss -Xlinker -Tbss=0; \
+		-Wl,-Ttext=$$topbss,-Tbss=0; \
 	$(LD) -o ramtos.img $(OBJECTS) $(LDFLAGS) \
-		-Xlinker -Map -Xlinker ramtos.map \
-		-Xlinker -Ttext=$$topbss -Xlinker -Tbss=0
+		-Wl,-Map,ramtos.map \
+		-Wl,-Ttext=$$topbss,-Tbss=0
 
 boot.prg: obj/minicrt.o obj/boot.o obj/bootasm.o
-	$(LD) -Xlinker -s -o $@ $+ -lgcc
+	$(LD) -s -o $@ $+ -lgcc
 
 #
 # compressed ROM image
@@ -362,14 +362,14 @@ COMPROBJ = obj/comprimg.o obj/memory.o obj/uncompr.o obj/processor.o
 
 compr2.img compr2.map: $(COMPROBJ)
 	$(LD) -o compr2.img $(COMPROBJ) $(LDFLAGS) \
-	  -Xlinker -Map -Xlinker compr2.map $(LDFLAGS_T2)
+	  -Wl,-Map,compr2.map $(LDFLAGS_T2)
 
 etoscpr2.img: compr2.img compr$(EXE) ramtos.img
 	./compr$(EXE) --rom compr2.img ramtos.img $@
 
 compr1.img compr1.map: $(COMPROBJ)
 	$(LD) -o compr1.img $(COMPROBJ) $(LDFLAGS) \
-	  -Xlinker -Map -Xlinker compr1.map $(LDFLAGS_T1)
+	  -Wl,-Map,compr1.map $(LDFLAGS_T1)
 
 etoscpr1.img: compr1.img compr$(EXE) ramtos.img
 	./compr$(EXE) --rom compr1.img ramtos.img $@
@@ -406,7 +406,7 @@ emutos.st: mkflop$(EXE) bootsect.img ramtos.img
 	./mkflop$(EXE)
 
 bootsect.img : obj/bootsect.o
-	$(LD) -Xlinker --oformat -Xlinker binary -o $@ obj/bootsect.o
+	$(LD) -Wl,--oformat,binary -o $@ obj/bootsect.o
 
 mkflop$(EXE) : tools/mkflop.c
 	$(NATIVECC) -o $@ $<
@@ -418,11 +418,11 @@ mkflop$(EXE) : tools/mkflop.c
 TOCLEAN += date.prg dumpkbd.prg
 
 date.prg: obj/minicrt.o obj/doprintf.o obj/date.o
-	$(LD) -Xlinker -s -o $@ $+ -lgcc
+	$(LD) -s -o $@ $+ -lgcc
 
 dumpkbd.prg: obj/minicrt.o obj/memmove.o obj/dumpkbd.o obj/doprintf.o \
 	     obj/string.o
-	$(LD) -Xlinker -s -o $@ $+ -lgcc
+	$(LD) -s -o $@ $+ -lgcc
 
 #
 # NLS support
