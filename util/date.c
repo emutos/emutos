@@ -65,5 +65,5 @@ int main(int argc, char **argv)
 
   printf("%d %s %d, %02d:%02d:%02d\n", 
          day, month_name[month-1], year, hour, min, sec);
-  exit(0);
+  return 0;
 }
