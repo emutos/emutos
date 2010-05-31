@@ -311,7 +311,7 @@ etos192k.img: emutos1.img
 ifeq (,$(UNIQUE))
 256: 
 	@echo building $(COUNTRY)-only EmuTOS in etos256k.img; \
-	make UNIQUE=$(COUNTRY) etos256k.img; 
+	$(MAKE) UNIQUE=$(COUNTRY) etos256k.img; 
 else
 256: etos256k.img
 endif
@@ -325,7 +325,7 @@ etos256k.img: emutos2.img
 
 aranym:
 	@echo building ARAnyM EmuTOS in etos512k.img; \
-	make DEF='-DUSE_STOP_INSN_TO_FREE_HOST_CPU=1 -DCONF_WITH_ACSI=0' 512;
+	$(MAKE) DEF='-DUSE_STOP_INSN_TO_FREE_HOST_CPU=1 -DCONF_WITH_ACSI=0' 512;
 
 512: etos512k.img
 falcon: help
@@ -458,13 +458,13 @@ po/messages.pot: bug$(EXE) po/POTFILES.in
 
 allbin: 
 	@echo building etos512k.img; \
-	make etos512k.img; \
+	$(MAKE) etos512k.img; \
 	$(RM) obj/*.o; \
 	for i in $(COUNTRIES); \
 	do \
 	  j=etos256$${i}.img; \
 	  echo building $$j; \
-	  make UNIQUE=$$i 256; \
+	  $(MAKE) UNIQUE=$$i 256; \
 	  mv etos256k.img $$j; \
 	done
 
@@ -473,7 +473,7 @@ all192:
 	do \
 	  j=etos192$${i}.img; \
 	  echo building $$j; \
-	  make DEF='-DTOS_VERSION=0x102' WITH_CLI=0 UNIQUE=$$i 192; \
+	  $(MAKE) DEF='-DTOS_VERSION=0x102' WITH_CLI=0 UNIQUE=$$i 192; \
 	  mv etos192k.img $$j; \
 	done
 
