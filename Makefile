@@ -21,6 +21,12 @@
 
 
 #
+# General settings
+#
+
+MAKEFLAGS = --no-print-directory
+
+#
 # the country. should be a lowercase two-letter code as found in
 # the table in tools/mkheader.c and bios/country.c
 #
