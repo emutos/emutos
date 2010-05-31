@@ -35,6 +35,7 @@ COUNTRY = us
 #
 
 DEF =
+UNIQUE =
 ifneq (,$(UNIQUE))
 COUNTRY = $(UNIQUE)
 endif
