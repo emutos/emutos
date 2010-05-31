@@ -2206,7 +2206,7 @@ Start... early ages
   (patch by Jean-Francois DEL NERO + vriviere)
 
 2010-05-31
-- Makefile:
+- Makefile: (vriviere)
    -> Replaced recursive calls to make by $(MAKE). Replaced -Xlinker by -Wl.
    -> Removed useless command chainings with the shell's ';'.
    -> Added UNIQUE initialization to avoid warnings when
