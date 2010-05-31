@@ -2204,3 +2204,12 @@ Start... early ages
   to text_blt() in order to be able to transmit it to act_siz(). Also fixed
   text_blt() for backuping the scratch registers when calling act_siz().
   (patch by Jean-Francois DEL NERO + vriviere)
+
+2010-05-31
+- Makefile:
+   -> Replaced recursive calls to make by $(MAKE). Replaced -Xlinker by -Wl.
+   -> Removed useless command chainings with the shell's ';'.
+   -> Added UNIQUE initialization to avoid warnings when
+      --warn-undefined-variables is used.
+   -> Disabled the useless "Entering directory" messages, since the current
+      directory is never changed.
