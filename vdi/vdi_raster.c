@@ -20,7 +20,12 @@
 
 
 #define DBG_BLIT 0      // see, what happens (a bit)
+
+#ifdef __mcoldfire__
+#define ASM_BLIT 0      // the assembler routine does not support ColdFire.
+#else
 #define ASM_BLIT 1      // use bit_blt routine in assembler
+#endif
 
 #if DBG_BLIT
 #include "kprint.h"

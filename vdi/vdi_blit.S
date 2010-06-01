@@ -13,6 +13,7 @@
 #include "vdi_asm.h"
 
 
+#ifndef __mcoldfire__
 
         .globl  _bit_blt
 
@@ -1562,5 +1563,6 @@ sc_plane:
         dbra    d4,sc_mp_enter
         rts
 
+#endif /* __mcoldfire__ */
 
         .end
