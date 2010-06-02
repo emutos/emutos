@@ -156,47 +156,55 @@
 
         .globl  _text_blt
         .globl  concat          // convert x,y coordinates to buffer offsets
-        //.globl  _act_siz
 
 /////////////////////////////////////////////////////////
-//  Global variables referenced by this module.        //      
+//  Global routines referenced by this module.         //
 /////////////////////////////////////////////////////////
 
-        .xdef  _SOURCEX,_SOURCEY
-        .xdef  _DESTX,_DESTY
-        .xdef  _DELX,_DELY
-        .xdef  _FBASE
-        .xdef  _FWIDTH
-        .xdef  _WRT_MODE
-        .xdef  _STYLE
-        .xdef  _R_OFF,_L_OFF
-        .xdef  _WEIGHT,_LITEMASK,_SKEWMASK
-        .xdef  _DOUBLE
-        .xdef  _CHUP
-        .xdef  _CLIP
-        .xdef  _MONO_STATUS
-        .xdef  _T_SCLSTS
-        .xdef  _TEXT_FG        //foreground color, text
-        .xdef  _XMN_CLIP,_XMX_CLIP
-        .xdef  _YMN_CLIP,_YMX_CLIP
-        .xdef  _XACC_DD
-        .xdef  _DDA_INC
+        .extern _act_siz
+
+/////////////////////////////////////////////////////////
+//  Global variables referenced.                       //
+/////////////////////////////////////////////////////////
+
+        .extern _SOURCEX,_SOURCEY
+        .extern _DESTX,_DESTY
+        .extern _DELX,_DELY
+        .extern _FBASE
+        .extern _FWIDTH
+        .extern _WRT_MODE
+        .extern _STYLE
+        .extern _R_OFF,_L_OFF
+        .extern _WEIGHT,_LITEMASK,_SKEWMASK
+        .extern _DOUBLE
+        .extern _CHUP
+        .extern _CLIP
+        .extern _MONO_STATUS
+        .extern _T_SCLSTS
+        .extern _TEXT_FG        //foreground color, text
+        .extern _XMN_CLIP,_XMX_CLIP
+        .extern _YMN_CLIP,_YMX_CLIP
+        .extern _XACC_DDA
+        .extern _DDA_INC
+        .extern _scrpt2
+        .extern _scrtchp
+        .extern _shft_off
 
 
 /////////////////////////////////////////////////////////
-//  Hardware dependent variables referenced.                    //
+//  Hardware dependent variables referenced.           //
 /////////////////////////////////////////////////////////
 
-        .xdef  _v_bas_ad       //base address of graphic plane
-        .xdef  _v_lin_wr       //size of a scan line in bytes
-        .xdef  _v_planes       //number of graphic planes
+        .extern _v_bas_ad       //base address of graphic plane
+        .extern _v_lin_wr       //size of a scan line in bytes
+        .extern _v_planes       //number of graphic planes
 
 /////////////////////////////////////////////////////////
-//  Character buffer variables referenced.                      //
+//  Character buffer variables defined in this module. //
 /////////////////////////////////////////////////////////
 
-        .xdef  _deftxbuf       //base of scratch buffer
-        .xdef  _scrtsiz
+        .globl  _deftxbuf       //base of scratch buffer
+        .globl  _scrtsiz
 
         .page
 /////////////////////////////////////////////////////////
