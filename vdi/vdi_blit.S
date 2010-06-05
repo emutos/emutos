@@ -17,7 +17,8 @@
 
         .globl  _bit_blt
 
-        .xdef  _info
+        .extern	_info
+        .extern	_PTSIN
 
 #define    F1OP       8
 #define    F2OP      22
