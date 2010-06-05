@@ -107,7 +107,11 @@ LDFLAGS_T2 = -Wl,-Ttext=0xe00000,-Tbss=0x000000
 
 # C compiler for MiNT
 CC = m68k-atari-mint-gcc
+ifeq (1,$(COLDFIRE))
+CPUFLAGS = -mcpu=5475
+else
 CPUFLAGS = -m68000
+endif
 MULTILIBFLAGS = $(CPUFLAGS) -mshort
 INC = -Iinclude
 OPTFLAGS = -Os -fomit-frame-pointer
@@ -159,7 +163,13 @@ util_ssrc = memset.S memmove.S nlsasm.S setjmp.S miscasm.S stringasm.S
 vdi_csrc = vdi_main.c vdi_col.c vdi_control.c vdi_esc.c vdi_fill.c vdi_gdp.c \
            vdi_line.c vdi_marker.c vdi_misc.c vdi_mouse.c vdi_raster.c \
            vdi_input.c vdi_text.c vdi_bezier.c
-vdi_ssrc = vdi_asm.S vdi_blit.S vdi_tblit.S
+vdi_ssrc = vdi_asm.S
+
+ifeq (1,$(COLDFIRE))
+vdi_ssrc += vdi_tblit_cf.S
+else
+vdi_ssrc += vdi_blit.S vdi_tblit.S
+endif
 
 
 #
@@ -815,3 +825,43 @@ clean:
 distclean: clean
 	rm -f '.#'* */'.#'* 
 
+#
+# ColdFire autoconverted sources.
+# They are not generated automatically.
+# To regenerate them, type "make coldfire-sources".
+# You will need the PortAsm/68K for ColdFire tool from MicroAPL.
+# See http://www.microapl.co.uk/Porting/ColdFire/pacf_download.html
+# 
+
+PORTASM = pacf
+PORTASMFLAGS = -blanks on -core v4 -hardware_divide -hardware_mac -a gnu -out_syntax standard -nowarning 402,502,900,1111,1150 -noerrfile
+
+define DO_PORTASM
+	cd $(<D) && $(PORTASM) $(PORTASMFLAGS) -o $(patsubst generate-%,%,$@) $(<F)
+	sed -i $(<D)/$(patsubst generate-%,%,$@) \
+		-e "s:\.section\t.bss,.*:.bss:g" \
+		-e "s:\( \|\t\)bsr\(  \|\..\):\1jbsr :g" \
+		-e "s:\( \|\t\)bra\(  \|\..\):\1jbra :g" \
+		-e "s:\( \|\t\)beq\(  \|\..\):\1jbeq :g" \
+		-e "s:\( \|\t\)bne\(  \|\..\):\1jbne :g" \
+		-e "s:\( \|\t\)bgt\(  \|\..\):\1jbgt :g" \
+		-e "s:\( \|\t\)bge\(  \|\..\):\1jbge :g" \
+		-e "s:\( \|\t\)blt\(  \|\..\):\1jblt :g" \
+		-e "s:\( \|\t\)ble\(  \|\..\):\1jble :g" \
+		-e "s:\( \|\t\)bcc\(  \|\..\):\1jbcc :g" \
+		-e "s:\( \|\t\)bcs\(  \|\..\):\1jbcs :g" \
+		|| (rm -f $(<D)/$(patsubst generate-%,%,$@) ; false)
+endef
+
+TOCLEAN += vdi/*_preprocessed.*
+
+.PHONY: coldfire-sources
+coldfire-sources:
+	$(MAKE) COLDFIRE=1 generate-vdi_tblit_cf.S
+
+vdi/%_preprocessed.s: vdi/%.S
+	$(CPP) $(CFLAGS) $< -o $@
+
+.PHONY: generate-vdi_tblit_cf.S
+generate-vdi_tblit_cf.S: vdi/vdi_tblit_preprocessed.s
+	$(DO_PORTASM)
