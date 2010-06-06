@@ -113,23 +113,23 @@ _gotopgm:
 
         // jump to the start of TEXT segment, in user mode.
 #ifdef __mcoldfire__
-        subq.l  #2,UDA_SPSUPER(a2)	// See the comment below
+        subq.l  #2,UDA_SPSUPER(a2)      // See the comment below
         move.l  P_TBASE(a0),-(sp)
         move.w  savesr,d0
         eori.l  #0x2000,d0
         move.w  d0,-(sp)
         move.w  #0x4000,-(sp)           // store a fake Format/Vector Word
 #else
-        tst.w   _longframe      // Is CPU>=68010 ?
+        tst.w   _longframe              // Is CPU>=68010 ?
         beq.s   gpgm_nolong
 
-	// The prologue of the AES trap will use this value as SP. It must
-	// be equal to the value of SP just before the RTE instruction below.
-	// Its initial value is correct for a 68000 CPU,
-	// but it must be adjusted if the CPU has long stack frames.
+        // The prologue of the AES trap will use this value as SP. It must
+        // be equal to the value of SP just before the RTE instruction below.
+        // Its initial value is correct for a 68000 CPU,
+        // but it must be adjusted if the CPU has long stack frames.
         subq.l  #2,UDA_SPSUPER(a2)
 
-        clr.w   -(sp)           // Format word
+        clr.w   -(sp)                   // Format word
 gpgm_nolong:
         move.l  P_TBASE(a0),-(sp)
         move.w  savesr,-(sp)
@@ -154,20 +154,20 @@ _dsptch:
 
 savestate:
 #ifdef __mcoldfire__
-        subq.l  #2,sp              // Make room for SR
-        move.l  d0,-(sp)           // Backup D0
+        subq.l  #2,sp           // Make room for SR
+        move.l  d0,-(sp)        // Backup D0
         move.b  _indisp,d0
         addq.l  #1,d0
         move.b  d0,_indisp
 
         move.w  sr,d0
-        move.w  d0,4(sp)           // We'll later return with a RTE
+        move.w  d0,4(sp)        // We'll later return with a RTE
 
         move.w  d0,savesr0
         ori.l   #0x0700,d0
         move.w  d0,sr
 
-        move.l  (sp)+,d0           // Restore D0
+        move.l  (sp)+,d0        // Restore D0
 #else
         addq.b  #1,_indisp
 
