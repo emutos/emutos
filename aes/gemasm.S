@@ -53,8 +53,15 @@
  */
 
 _psetup:
+#ifdef __mcoldfire__
+        move.w  sr,d0
+        move.w  d0,savesr2
+        ori.l   #0x0700,d0
+        move.w  d0,sr
+#else
         move    sr,savesr2
         ori     #0x0700,sr
+#endif
         movea.l 4(sp),a0
         move.l  8(sp),d0
         movea.l PD_UDA(a0),a0
@@ -62,7 +69,12 @@ _psetup:
         move.l  d0,-(a1)
         move.w  #0x2000,-(a1)
         move.l  a1,UDA_SPSUPER(a0)
+#ifdef __mcoldfire__
+        move.w  savesr2,d0
+        move.w  d0,sr
+#else
         move    savesr2,sr
+#endif
         rts
 
 
@@ -73,8 +85,15 @@ _psetup:
  */
 
 _gotopgm:
+#ifdef __mcoldfire__
+        move.w  sr,d0
+        move.w  d0,savesr
+        ori.l   #0x0700,d0
+        move.w  d0,sr
+#else
         move    sr,savesr
         ori     #0x0700,sr
+#endif
 
         // get the basepage for the top of rlr
         movea.l _rlr,a0
@@ -90,9 +109,17 @@ _gotopgm:
         // FIXME: Are we clobbering the end of the BSS segment ?
         move.l  a0,-(a1)
         move.l  #_back,-(a1)
-        move    a1,usp
+        move.l  a1,usp
 
         // jump to the start of TEXT segment, in user mode.
+#ifdef __mcoldfire__
+        subq.l  #2,UDA_SPSUPER(a2)	// See the comment below
+        move.l  P_TBASE(a0),-(sp)
+        move.w  savesr,d0
+        eori.l  #0x2000,d0
+        move.w  d0,-(sp)
+        move.w  #0x4000,-(sp)           // store a fake Format/Vector Word
+#else
         tst.w   _longframe      // Is CPU>=68010 ?
         beq.s   gpgm_nolong
 
@@ -107,6 +134,7 @@ gpgm_nolong:
         move.l  P_TBASE(a0),-(sp)
         move.w  savesr,-(sp)
         eori.w  #0x2000,(sp)
+#endif
         rte
 
 
@@ -125,12 +153,29 @@ _dsptch:
         rts
 
 savestate:
+#ifdef __mcoldfire__
+        subq.l  #2,sp              // Make room for SR
+        move.l  d0,-(sp)           // Backup D0
+        move.b  _indisp,d0
+        addq.l  #1,d0
+        move.b  d0,_indisp
+
+        move.w  sr,d0
+        move.w  d0,4(sp)           // We'll later return with a RTE
+
+        move.w  d0,savesr0
+        ori.l   #0x0700,d0
+        move.w  d0,sr
+
+        move.l  (sp)+,d0           // Restore D0
+#else
         addq.b  #1,_indisp
 
         move    sr,-(sp)        // We'll later return with a RTE
 
         move    sr,savesr0
         ori     #0x0700,sr
+#endif
 
         move.l  a6,-(sp)        // Temporary backup
         movea.l _rlr,a6         // Get pointer to rlr PD structure
@@ -142,13 +187,27 @@ savestate:
         move.l  sp,UDA_SPSUPER(a6)      // Save old ssp in UDA struct
 
         lea     gemasm_stack,sp
+#ifdef __mcoldfire__
+        move.w  savesr0,d0
+        move.w  d0,sr
+#else
         move    savesr0,sr
+#endif
         jmp     _disp
 
 
 _switchto:
+#ifdef __mcoldfire__
+        move.l  d0,-(sp)
+        move.w  sr,d0
+        move.w  d0,savesr0
+        ori.l   #0x0700,d0
+        move.w  d0,sr
+        move.l  (sp)+,d0
+#else
         move    sr,savesr0
         ori     #0x0700,sr
+#endif
 
         movea.l 4(sp),sp        // Use SP as pointer to UDA struct
         movem.l UDA_REGS(sp),d0-a5
