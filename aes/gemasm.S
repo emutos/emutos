@@ -46,16 +46,16 @@
  */
 
 _psetup:
-        move    SR,savesr2
-        ori     #0x0700,SR
-        movea.l 4(SP),A0
-        move.l  8(SP),D0
-        movea.l PD_UDA(A0),A0
-        movea.l 0x3E(A0),A1
-        move.l  D0,-(A1)
-        move.w  #0x2000,-(A1)
-        move.l  A1,0x3E(A0)
-        move    savesr2,SR
+        move    sr,savesr2
+        ori     #0x0700,sr
+        movea.l 4(sp),a0
+        move.l  8(sp),d0
+        movea.l PD_UDA(a0),a0
+        movea.l 0x3E(a0),a1
+        move.l  d0,-(a1)
+        move.w  #0x2000,-(a1)
+        move.l  a1,0x3E(a0)
+        move    savesr2,sr
         rts
 
 
@@ -67,8 +67,8 @@ _psetup:
  */
 
 _gotopgm:
-        move    SR,savesr
-        ori     #0x0700,SR
+        move    sr,savesr
+        ori     #0x0700,sr
 
         // get the basepage for the top of rlr
         movea.l _rlr,a0
@@ -78,22 +78,22 @@ _gotopgm:
         // set the user stack to the top of BSS for this process
         movea.l P_BBASE(a0),a1
         adda.l  P_BLEN(a0),a1
-        // ??? adda.l  0x20(A0),A1  why add P_XDTA also ???
+        // ??? adda.l  0x20(a0),a1  why add P_XDTA also ???
 
         // push basepage and return address
         move.l  a0,-(a1)
         move.l  #_back,-(a1)
-        move    a1,USP
+        move    a1,usp
 
         // jump to the start of TEXT segment, in user mode.
         tst.w   _longframe      // Is CPU>=68010 ?
         beq.s   gpgm_nolong
         subq.l  #2,0x3E(a2)     // Adjust stored stack pointer
-        clr.w   -(SP)           // Additional word on stack for rte
+        clr.w   -(sp)           // Additional word on stack for rte
 gpgm_nolong:
-        move.l  P_TBASE(a0),-(SP)
-        move.w  savesr,-(SP)
-        eori.w  #0x2000,(SP)
+        move.l  P_TBASE(a0),-(sp)
+        move.w  savesr,-(sp)
+        eori.w  #0x2000,(sp)
         rte
 
 
@@ -115,50 +115,50 @@ _dsptch:
 savestate:
         addq.b  #1,_indisp
 
-        move    SR,-(SP)        // We'll later return with a RTE
+        move    sr,-(sp)        // We'll later return with a RTE
 
-        move    SR,savesr0
-        ori     #0x0700,SR
+        move    sr,savesr0
+        ori     #0x0700,sr
 
-        move.l  A6,-(SP)
+        move.l  a6,-(sp)
 
-        movea.l _rlr,A6         // Get pointer to rlr PD structure
-        movea.l 8(a6),A6        // Get pointer to UDA structure
+        movea.l _rlr,a6         // Get pointer to rlr PD structure
+        movea.l 8(a6),a6        // Get pointer to UDA structure
 
-        lea     0x3A(A6),A6
-        movem.l D0-A5,-(A6)     // Save registers D0-A5 in UDA struct
-        move.l  (SP)+,0x38(A6)  // Save old A6 in UDA struct
-        move.l  SP,0x3C(A6)     // Save old SSP in UDA struct
-        move.l  USP,A5
-        move.l  A5,0x40(A6)     // Save old USP in UDA struct
+        lea     0x3A(a6),a6
+        movem.l d0-a5,-(a6)     // Save registers d0-a5 in UDA struct
+        move.l  (sp)+,0x38(a6)  // Save old a6 in UDA struct
+        move.l  sp,0x3C(a6)     // Save old SSP in UDA struct
+        move.l  usp,a5
+        move.l  a5,0x40(a6)     // Save old usp in UDA struct
 
-        lea     gemasm_stack,SP
-        move    savesr0,SR
+        lea     gemasm_stack,sp
+        move    savesr0,sr
         jmp     _disp
 
 
 _switchto:
-        move    SR,savesr0
-        ori     #0x0700,SR
-        addq.l  #4,SP
+        move    sr,savesr0
+        ori     #0x0700,sr
+        addq.l  #4,sp
 
-        movea.l (SP),SP         // Restore register from UDA struct
-        addq.l  #2,SP           // by abusing the SP as a index reg
-        movem.l (SP)+,D0-A5
-        movea.l 8(SP),A6
-        move    A6,USP
-        movea.l (SP)+,A6
-        movea.l (SP),SP
+        movea.l (sp),sp         // Restore register from UDA struct
+        addq.l  #2,sp           // by abusing the sp as a index reg
+        movem.l (sp)+,d0-a5
+        movea.l 8(sp),a6
+        move    a6,usp
+        movea.l (sp)+,a6
+        movea.l (sp),sp
 
         tst.w   _longframe
         beq     swto_68000
-        move.w  (SP),-(SP)
-        move.w  4(SP),2(SP)
-        move.w  6(SP),4(SP)
-        move.w  #0,6(SP)
+        move.w  (sp),-(sp)
+        move.w  4(sp),2(sp)
+        move.w  6(sp),4(sp)
+        move.w  #0,6(sp)
 swto_68000:
         clr.b   _indisp
-        move.w  savesr0,(SP)
+        move.w  savesr0,(sp)
 
         rte
 
@@ -171,6 +171,6 @@ savesr0:
 savesr2:
         ds.w    1
 
-        DS.B    0x0280
+        ds.b    0x0280
 gemasm_stack:
-        DS.B    4
+        ds.b    4
