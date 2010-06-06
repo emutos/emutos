@@ -9,8 +9,6 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
-
         .globl  _psetup
         .globl  _gotopgm
         .globl  _dsptch
@@ -62,7 +60,6 @@ _psetup:
         rts
 
 
-
 /*
  * gotopgm(void)
  * launches the top of rlr list, as if called from within function
@@ -108,7 +105,6 @@ gpgm_nolong:
  *              save machine state,
  *              jump to disp
  */
-
 
 _dsptch:
         tst.b   _indisp
@@ -167,7 +163,6 @@ swto_68000:
 
 
         .bss
-
 
 savesr0:
         .ds.w    1
