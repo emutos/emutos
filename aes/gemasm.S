@@ -216,6 +216,11 @@ _switchto:
         movea.l UDA_REG_A6(sp),a6
         movea.l UDA_SPSUPER(sp),sp
 
+        clr.b   _indisp
+#ifdef __mcoldfire__
+        move.w  savesr0,(sp)
+        move.w  #0x4000,-(sp)   // store a fake Format/Vector Word
+#else
         tst.w   _longframe
         beq     swto_68000
         move.w  (sp),-(sp)      // SR
@@ -223,8 +228,8 @@ _switchto:
         move.w  6(sp),4(sp)     // Low word of return address
         clr.w   6(sp)           // Format word
 swto_68000:
-        clr.b   _indisp
         move.w  savesr0,(sp)
+#endif
 
         rte
 
