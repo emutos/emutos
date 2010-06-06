@@ -50,6 +50,7 @@
 #include "deskpro.h"
 #include "deskact.h"
 #include "desk1.h"
+#include "kprint.h"
 
 #define DBG_DESKMAIN 0
 
