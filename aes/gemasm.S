@@ -16,9 +16,12 @@
         .globl  _dsptch
         .globl  _switchto
 
-        .xdef   _rlr
-
-        .xdef   savesr
+        .extern _rlr
+        .extern savesr
+        .extern _back
+        .extern _longframe
+        .extern _indisp
+        .extern _disp
 
         .text
 
@@ -167,10 +170,10 @@ swto_68000:
 
 
 savesr0:
-        ds.w    1
+        .ds.w    1
 savesr2:
-        ds.w    1
+        .ds.w    1
 
-        ds.b    0x0280
+        .ds.b    0x0280
 gemasm_stack:
-        ds.b    4
+        .ds.b    4
