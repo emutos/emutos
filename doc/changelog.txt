@@ -2217,3 +2217,15 @@ Start... early ages
 2010-06-06
 - desk/deskmain.c, aes/gemdisp.c, aes/geminit.c: Added some debug messages
   and the defines DBG_DESKMAIN, DBG_GEMDISP and DBG_GEMINIT. (vriviere)
+
+2010-06-06
+- aes/gemasm.S, aes/gemdosif.S, aes/gemstart.S, aes/gsx2.S, aes/large.S,
+  bdos/rwa.S, bios/aciavecs.S, bios/bios.c, bios/cookie.h, bios/initinfo.c,
+  bios/kprint.c, bios/kprintasm.S, bios/linea.S, bios/machine.c,
+  bios/memory.S, bios/natfeat.S, bios/panicasm.S, bios/processor.S,
+  bios/startup.S, bios/tosvars.S, bios/vectors.S, cli/coma.S, include/asm.h,
+  include/config.h, util/memmove.S, util/memset.S, util/miscasm.S,
+  util/nlsasm.S, util/stringasm.S, vdi/vdi_asm.S, vdi/vdi_raster.c,
+  vdi/vdi_tblit.S: Added ColdFire V4e CPU support. (vriviere)
+- Makefile: Added the COLDFIRE variable. Set it to 1 to build a ROM version
+  compatible only with ColdFire V4e processors. (vriviere)
