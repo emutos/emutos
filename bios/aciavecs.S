@@ -160,16 +160,35 @@ _init_acia_vecs:
         // initialize the kbdvecs structure
         lea     _just_rts,a0            // dummy vector
         lea     _kbdvecs,a1
+#ifdef __mcoldfire__
+        move.l  #_kbdvec,d0
+        move.l  d0,kbdvec-_kbdvecs(a1)
+        move.l  #_midivec,d0
+        move.l  d0,midivec-_kbdvecs(a1)
+#else
         move.l  #_kbdvec,kbdvec-_kbdvecs(a1)
         move.l  #_midivec,midivec-_kbdvecs(a1)
+#endif
         move.l  a0,vkbderr-_kbdvecs(a1)
         move.l  a0,vmiderr-_kbdvecs(a1)
         move.l  a0,statvec-_kbdvecs(a1)
         move.l  a0,mousevec-_kbdvecs(a1)
+#ifdef __mcoldfire__
+        move.l  #_clockvec,d0                        // in bios/clock.c
+        move.l  d0,clockvec-_kbdvecs(a1)
+#else
         move.l  #_clockvec,clockvec-_kbdvecs(a1)     // in bios/clock.c
+#endif
         move.l  a0,joyvec-_kbdvecs(a1)
+#ifdef __mcoldfire__
+        move.l  #_midisys,d0
+        move.l  d0,midisys-_kbdvecs(a1)
+        move.l  #_ikbdsys,d0
+        move.l  d0,ikbdsys-_kbdvecs(a1)
+#else
         move.l  #_midisys,midisys-_kbdvecs(a1)
         move.l  #_ikbdsys,ikbdsys-_kbdvecs(a1)
+#endif
         
         // initialize the iorecs
         pea     iorec_table_end-iorec_table
