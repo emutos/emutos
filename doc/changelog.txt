@@ -2213,3 +2213,7 @@ Start... early ages
       --warn-undefined-variables is used.
    -> Disabled the useless "Entering directory" messages, since the current
       directory is never changed.
+
+2010-06-06
+- desk/deskmain.c, aes/gemdisp.c, aes/geminit.c: Added some debug messages
+  and the defines DBG_DESKMAIN, DBG_GEMDISP and DBG_GEMINIT. (vriviere)

@@ -51,6 +51,7 @@
 #include "deskact.h"
 #include "desk1.h"
 
+#define DBG_DESKMAIN 0
 
 #define abs(x) ( (x) < 0 ? -(x) : (x) )
 
@@ -1304,6 +1305,9 @@ WORD deskmain()
 
 
         /* initialize libraries */
+#if DBG_DESKMAIN
+        kprintf("EmuDESK: appl_init()\n");
+#endif
         gl_apid = appl_init();
                                                 /* get GEM's gsx handle */
         gl_handle = graf_handle(&gl_wchar, &gl_hchar, &gl_wbox, &gl_hbox);
@@ -1507,6 +1511,9 @@ WORD deskmain()
                                                 /*   input until done   */
         while( !done )
         {
+#if DBG_DESKMAIN
+          kprintf("EmuDESK: evnt_multi()\n");
+#endif
                                                 /* block for input      */
           ev_which = evnt_multi(flags, 0x02, 0x01, 0x01, 
                                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -1551,6 +1558,9 @@ WORD deskmain()
         gsx_vclose();
 #endif
                                                 /* exit the gem AES     */
+#if DBG_DESKMAIN
+        kprintf("EmuDESK: appl_exit()\n");
+#endif
         appl_exit();
 
         return(TRUE);

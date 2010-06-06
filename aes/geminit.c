@@ -60,6 +60,7 @@
 #include "ikbd.h"
 #include "kprint.h"     // just for debugging
 
+#define DBG_GEMINIT 0
 
 #define ROPEN 0
 
@@ -344,6 +345,9 @@ static PD *iprocess(BYTE *pname, void (*routine)())
 {
         register ULONG  ldaddr;
 
+#if DBG_GEMINIT
+        kprintf("iprocess(\"%s\")\n", (const char*)pname);
+#endif
         /* figure out load addr */
 
         /* #if I8086
@@ -390,7 +394,9 @@ static void sndcli(BYTE *pfilespec, UWORD *paccroom)   /* paccroom in paragraphs
         WORD            err_ret;
         LONG            ldaddr;
 
-
+#if DBG_GEMINIT
+        kprintf("sndcli(\"%s\")\n", (const char*)pfilespec);
+#endif
         strcpy(&D.s_cmd[0], pfilespec);
 
         handle = dos_open( (BYTE *)ad_scmd, ROPEN );
@@ -756,8 +762,10 @@ void sh_rdinf(void)
             *(BYTE *)pcurr = 0;
             tmpptr2 = sh_name(tmpptr1);
             *(tmpptr2-1) = 0;
+#if DBG_GEMINIT
             kprintf("Found #Z entry in EMUDESK.INF with path=%s and prg=%s\n",
                     tmpptr1, tmpptr2);
+#endif
             sh_wdef((LONG)tmpptr2, (LONG)tmpptr1);
             ++pcurr;
           }
