@@ -88,7 +88,9 @@
         .global _bconin_vec
         .global _bcostat_vec
         .global _bconout_vec
+#ifndef __mcoldfire__
         .global _longframe
+#endif
         .global _ramtop
         .global _ramvalid
         .global _bell_hook
