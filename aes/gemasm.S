@@ -37,6 +37,12 @@
 #define P_BLEN 0x1C             // length of BSS
 #define P_XDTA 0x20             // pointer to DTA buffer ???
 
+/* UDA struct */
+#define UDA_REGS 0x02           // registers d0-a6
+#define UDA_REG_A6 0x3A         // a6
+#define UDA_SPSUPER 0x3E        // ssp
+#define UDA_SPUSER 0x42         // usp
+
 /*
  * psetup(PD *p, void *codevalue)
  * arranges for codevalue to be pushed to the stack for process p,
@@ -52,10 +58,10 @@ _psetup:
         movea.l 4(sp),a0
         move.l  8(sp),d0
         movea.l PD_UDA(a0),a0
-        movea.l 0x3E(a0),a1
+        movea.l UDA_SPSUPER(a0),a1
         move.l  d0,-(a1)
         move.w  #0x2000,-(a1)
-        move.l  a1,0x3E(a0)
+        move.l  a1,UDA_SPSUPER(a0)
         move    savesr2,sr
         rts
 
@@ -81,6 +87,7 @@ _gotopgm:
         // ??? adda.l  0x20(a0),a1  why add P_XDTA also ???
 
         // push basepage and return address
+        // FIXME: Are we clobbering the end of the BSS segment ?
         move.l  a0,-(a1)
         move.l  #_back,-(a1)
         move    a1,usp
@@ -88,8 +95,14 @@ _gotopgm:
         // jump to the start of TEXT segment, in user mode.
         tst.w   _longframe      // Is CPU>=68010 ?
         beq.s   gpgm_nolong
-        subq.l  #2,0x3E(a2)     // Adjust stored stack pointer
-        clr.w   -(sp)           // Additional word on stack for rte
+
+	// The prologue of the AES trap will use this value as SP. It must
+	// be equal to the value of SP just before the RTE instruction below.
+	// Its initial value is correct for a 68000 CPU,
+	// but it must be adjusted if the CPU has long stack frames.
+        subq.l  #2,UDA_SPSUPER(a2)
+
+        clr.w   -(sp)           // Format word
 gpgm_nolong:
         move.l  P_TBASE(a0),-(sp)
         move.w  savesr,-(sp)
@@ -119,17 +132,14 @@ savestate:
         move    sr,savesr0
         ori     #0x0700,sr
 
-        move.l  a6,-(sp)
-
+        move.l  a6,-(sp)        // Temporary backup
         movea.l _rlr,a6         // Get pointer to rlr PD structure
-        movea.l 8(a6),a6        // Get pointer to UDA structure
-
-        lea     0x3A(a6),a6
-        movem.l d0-a5,-(a6)     // Save registers d0-a5 in UDA struct
-        move.l  (sp)+,0x38(a6)  // Save old a6 in UDA struct
-        move.l  sp,0x3C(a6)     // Save old SSP in UDA struct
+        movea.l PD_UDA(a6),a6   // Get pointer to UDA structure
+        move.l  (sp)+,UDA_REG_A6(a6)    // Save old a6 in UDA struct
+        movem.l d0-a5,UDA_REGS(a6)      // Save registers d0-a5 in UDA struct
         move.l  usp,a5
-        move.l  a5,0x40(a6)     // Save old usp in UDA struct
+        move.l  a5,UDA_SPUSER(a6)       // Save old usp in UDA struct
+        move.l  sp,UDA_SPSUPER(a6)      // Save old ssp in UDA struct
 
         lea     gemasm_stack,sp
         move    savesr0,sr
@@ -139,22 +149,20 @@ savestate:
 _switchto:
         move    sr,savesr0
         ori     #0x0700,sr
-        addq.l  #4,sp
 
-        movea.l (sp),sp         // Restore register from UDA struct
-        addq.l  #2,sp           // by abusing the sp as a index reg
-        movem.l (sp)+,d0-a5
-        movea.l 8(sp),a6
-        move    a6,usp
-        movea.l (sp)+,a6
-        movea.l (sp),sp
+        movea.l 4(sp),sp        // Use SP as pointer to UDA struct
+        movem.l UDA_REGS(sp),d0-a5
+        movea.l UDA_SPUSER(sp),a6
+        move.l  a6,usp
+        movea.l UDA_REG_A6(sp),a6
+        movea.l UDA_SPSUPER(sp),sp
 
         tst.w   _longframe
         beq     swto_68000
-        move.w  (sp),-(sp)
-        move.w  4(sp),2(sp)
-        move.w  6(sp),4(sp)
-        move.w  #0,6(sp)
+        move.w  (sp),-(sp)      // SR
+        move.w  4(sp),2(sp)     // High word of return address
+        move.w  6(sp),4(sp)     // Low word of return address
+        clr.w   6(sp)           // Format word
 swto_68000:
         clr.b   _indisp
         move.w  savesr0,(sp)
