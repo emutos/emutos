@@ -11,16 +11,16 @@
 
 
 
-.globl _psetup
-.globl _gotopgm
-.globl _dsptch
-.globl _switchto
+        .globl  _psetup
+        .globl  _gotopgm
+        .globl  _dsptch
+        .globl  _switchto
 
-.xdef _rlr
+        .xdef   _rlr
 
-.xdef savesr
+        .xdef   savesr
 
-.text
+        .text
 
 /*
  * defines
@@ -31,11 +31,11 @@
 #define PD_LDADDR 0x18
 
 /* BDOS PD struct */
-#define P_TBASE 0x08    // address of TEXT segment
-#define P_BBASE 0x18    // address of BSS segment
-#define P_BLEN 0x1C     // length of BSS
-#define P_XDTA 0x20     // pointer to DTA buffer ???
-        
+#define P_TBASE 0x08            // address of TEXT segment
+#define P_BBASE 0x18            // address of BSS segment
+#define P_BLEN 0x1C             // length of BSS
+#define P_XDTA 0x20             // pointer to DTA buffer ???
+
 /*
  * psetup(PD *p, void *codevalue)
  * arranges for codevalue to be pushed to the stack for process p,
@@ -46,25 +46,24 @@
  */
 
 _psetup:
-            move    SR,savesr2
-            ori     #0x0700,SR
-            movea.l 4(SP),A0
-            move.l  8(SP),D0
-            movea.l PD_UDA(A0),A0
-            movea.l 0x3E(A0),A1
-            move.l  D0,-(A1)
-            move.w  #0x2000,-(A1)
-            move.l  A1,0x3E(A0)
-            move    savesr2,SR
-            rts
+        move    SR,savesr2
+        ori     #0x0700,SR
+        movea.l 4(SP),A0
+        move.l  8(SP),D0
+        movea.l PD_UDA(A0),A0
+        movea.l 0x3E(A0),A1
+        move.l  D0,-(A1)
+        move.w  #0x2000,-(A1)
+        move.l  A1,0x3E(A0)
+        move    savesr2,SR
+        rts
 
 
 
 /*
  * gotopgm(void)
  * launches the top of rlr list, as if called from within function
- * back( basepage * ) 
- *
+ * back( basepage * )
  */
 
 _gotopgm:
@@ -87,10 +86,10 @@ _gotopgm:
         move    a1,USP
 
         // jump to the start of TEXT segment, in user mode.
-        tst.w   _longframe              // Is CPU>=68010 ?
+        tst.w   _longframe      // Is CPU>=68010 ?
         beq.s   gpgm_nolong
-        subq.l  #2,0x3E(a2)             // Adjust stored stack pointer
-        clr.w   -(SP)                   // Additional word on stack for rte
+        subq.l  #2,0x3E(a2)     // Adjust stored stack pointer
+        clr.w   -(SP)           // Additional word on stack for rte
 gpgm_nolong:
         move.l  P_TBASE(a0),-(SP)
         move.w  savesr,-(SP)
@@ -102,76 +101,76 @@ gpgm_nolong:
  * dsptch() is a machine (& compiler) dependent routine which:
  *      1) saves any flags that will be trashed
  *      2) if (indisp) restore flags, return to dsptch caller
- *      3) otherwise 
- *              save machine state, 
+ *      3) otherwise
+ *              save machine state,
  *              jump to disp
  */
 
 
 _dsptch:
-            tst.b   _indisp
-            beq     savestate
-            rts
+        tst.b   _indisp
+        beq     savestate
+        rts
 
 savestate:
-            addq.b  #1,_indisp
+        addq.b  #1,_indisp
 
-            move    SR,-(SP)           // We'll later return with a RTE
+        move    SR,-(SP)        // We'll later return with a RTE
 
-            move    SR,savesr0
-            ori     #0x0700,SR
+        move    SR,savesr0
+        ori     #0x0700,SR
 
-            move.l  A6,-(SP)
+        move.l  A6,-(SP)
 
-            movea.l _rlr,A6            // Get pointer to rlr PD structure
-            movea.l 8(a6),A6           // Get pointer to UDA structure
+        movea.l _rlr,A6         // Get pointer to rlr PD structure
+        movea.l 8(a6),A6        // Get pointer to UDA structure
 
-            lea     0x3A(A6),A6
-            movem.l D0-A5,-(A6)        // Save registers D0-A5 in UDA struct
-            move.l  (SP)+,0x38(A6)     // Save old A6 in UDA struct
-            move.l  SP,0x3C(A6)        // Save old SSP in UDA struct
-            move.l  USP,A5
-            move.l  A5,0x40(A6)        // Save old USP in UDA struct
+        lea     0x3A(A6),A6
+        movem.l D0-A5,-(A6)     // Save registers D0-A5 in UDA struct
+        move.l  (SP)+,0x38(A6)  // Save old A6 in UDA struct
+        move.l  SP,0x3C(A6)     // Save old SSP in UDA struct
+        move.l  USP,A5
+        move.l  A5,0x40(A6)     // Save old USP in UDA struct
 
-            lea     gemasm_stack,SP
-            move    savesr0,SR
-            jmp     _disp
+        lea     gemasm_stack,SP
+        move    savesr0,SR
+        jmp     _disp
 
 
 _switchto:
-            move    SR,savesr0
-            ori     #0x0700,SR
-            addq.l  #4,SP
+        move    SR,savesr0
+        ori     #0x0700,SR
+        addq.l  #4,SP
 
-            movea.l (SP),SP             // Restore register from UDA struct
-            addq.l  #2,SP               // by abusing the SP as a index reg
-            movem.l (SP)+,D0-A5
-            movea.l 8(SP),A6
-            move    A6,USP
-            movea.l (SP)+,A6
-            movea.l (SP),SP
+        movea.l (SP),SP         // Restore register from UDA struct
+        addq.l  #2,SP           // by abusing the SP as a index reg
+        movem.l (SP)+,D0-A5
+        movea.l 8(SP),A6
+        move    A6,USP
+        movea.l (SP)+,A6
+        movea.l (SP),SP
 
-            tst.w   _longframe
-            beq     swto_68000
-            move.w  (SP),-(SP)
-            move.w  4(SP),2(SP)
-            move.w  6(SP),4(SP)
-            move.w  #0,6(SP)
+        tst.w   _longframe
+        beq     swto_68000
+        move.w  (SP),-(SP)
+        move.w  4(SP),2(SP)
+        move.w  6(SP),4(SP)
+        move.w  #0,6(SP)
 swto_68000:
-            clr.b   _indisp
-            move.w  savesr0,(SP)
+        clr.b   _indisp
+        move.w  savesr0,(SP)
 
-            rte
+        rte
 
 
-.bss
+        .bss
 
 
 savesr0:
-            ds.w 1
+        ds.w    1
 savesr2:
-            ds.w 1
+        ds.w    1
 
-            DS.B 0x0280
+        DS.B    0x0280
 gemasm_stack:
-            DS.B 4
+        DS.B    4
