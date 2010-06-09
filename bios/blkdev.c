@@ -104,7 +104,7 @@ void pun_info_setup(void)
 
     pun_ptr = (LONG)&pun_info;
 
-#if 1 /* DBG_BLKDEV */
+#if DBG_BLKDEV
     kprintf("PUN INFO: max sector size = %d\n", pun_info.max_sect_siz);
 #endif
 }
