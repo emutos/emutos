@@ -240,9 +240,10 @@ LONG flop_hdv_boot(void)
 {
     LONG err;
 
-    /* call hdv_boot using the pointer */
     err = flop_bootcheck();
-    kprintf("hdv_boot returns %ld\n", err);
+#if DBG_FLOP
+    kprintf("flop_bootcheck returns %ld\n", err);
+#endif
     if(err == 0) {
         /* if bootable, jump in it */
         regsafe_call(dskbufp);
