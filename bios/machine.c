@@ -311,12 +311,12 @@ void machine_init(void)
 
 const char * machine_name(void)
 {
-    static char buffer[80];
-    long bufsize;
+  static char buffer[80];
+  long bufsize;
 
-    bufsize = nfGetFullName(buffer, sizeof(buffer)-1);
-    if (bufsize > 0)
-        return buffer;
+  bufsize = nfGetFullName(buffer, sizeof(buffer)-1);
+  if (bufsize > 0)
+    return buffer;
 
   switch(cookie_mch) {
   case MCH_ST:
