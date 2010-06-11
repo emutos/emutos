@@ -15,7 +15,6 @@
         .globl  _switchto
 
         .extern _rlr
-        .extern savesr
         .extern _back
         .extern _longframe
         .extern _indisp
@@ -82,23 +81,19 @@ _psetup:
  * gotopgm(void)
  * launches the top of rlr list, as if called from within function
  * back( basepage * )
+ * This the entry point for accessories processes.
+ * It is called in supervisor mode, on the private AES stack of the new
+ * accessory process. Its responsability is to go to the start of the
+ * accessory TEXT segment in user mode. The register a0 must contain the
+ * address of the basepage. The value of the other registers is not
+ * important.
  */
 
 _gotopgm:
-#ifdef __mcoldfire__
-        move.w  sr,d0
-        move.w  d0,savesr
-        ori.l   #0x0700,d0
-        move.w  d0,sr
-#else
-        move    sr,savesr
-        ori     #0x0700,sr
-#endif
-
         // get the basepage for the top of rlr
         movea.l _rlr,a0
         movea.l PD_UDA(a0),a2
-        movea.l PD_LDADDR(a0),a0
+        movea.l PD_LDADDR(a0),a0        // The basepage must stay in a0
 
         // set the user stack to the top of BSS for this process
         movea.l P_BBASE(a0),a1
@@ -114,11 +109,10 @@ _gotopgm:
         // jump to the start of TEXT segment, in user mode.
 #ifdef __mcoldfire__
         subq.l  #2,UDA_SPSUPER(a2)      // See the comment below
-        move.l  P_TBASE(a0),-(sp)
-        move.w  savesr,d0
-        eori.l  #0x2000,d0
-        move.w  d0,-(sp)
-        move.w  #0x4000,-(sp)           // store a fake Format/Vector Word
+
+        move.w  sr,d0
+        bclr    #13,d0                  // Switch to user mode
+        move.w  d0,sr
 #else
         tst.w   _longframe              // Is CPU>=68010 ?
         beq.s   gpgm_nolong
@@ -128,14 +122,11 @@ _gotopgm:
         // Its initial value is correct for a 68000 CPU,
         // but it must be adjusted if the CPU has long stack frames.
         subq.l  #2,UDA_SPSUPER(a2)
-
-        clr.w   -(sp)                   // Format word
 gpgm_nolong:
-        move.l  P_TBASE(a0),-(sp)
-        move.w  savesr,-(sp)
-        eori.w  #0x2000,(sp)
+        andi.w  #0xdfff,sr              // Switch to user mode
 #endif
-        rte
+        move.l  P_TBASE(a0),a1
+        jmp     (a1)
 
 
 /*
