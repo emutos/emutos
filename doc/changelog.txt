@@ -2233,3 +2233,8 @@ Start... early ages
 2010-06-13
 - bios/bios.c, bios/initinfo.c, bios/initinfo.h:
   Clear the screen on reboot. (vriviere)
+
+2010-06-13
+
+- bios/gemasm.S: Changed the dsptch/switchto implementation to switch the
+  AES tasks using a standard RTS rather than a CPU dependent RTE. (vriviere)

@@ -45,10 +45,9 @@
 /*
  * psetup(PD *p, void *codevalue)
  * arranges for codevalue to be pushed to the stack for process p,
- * in a 68000-only RTE stack frame, "in preparation for an RTE that
+ * in a standard RTS stack frame, "in preparation for an RTS that
  * will start this process executing".
- * note: I suppose that the 68000-only RTE stack frame is converted
- * to a proper RTE stack frame in switchto before actually doing the RTE.
+ * That RTS will occur at the end of switchto()
  */
 
 _psetup:
@@ -61,12 +60,11 @@ _psetup:
         move    sr,savesr2
         ori     #0x0700,sr
 #endif
-        movea.l 4(sp),a0
-        move.l  8(sp),d0
+        movea.l 4(sp),a0        // PD *
+        move.l  8(sp),d0        // New process entry point
         movea.l PD_UDA(a0),a0
         movea.l UDA_SPSUPER(a0),a1
-        move.l  d0,-(a1)
-        move.w  #0x2000,-(a1)
+        move.l  d0,-(a1)        // Push entry point on the process stack
         move.l  a1,UDA_SPSUPER(a0)
 #ifdef __mcoldfire__
         move.w  savesr2,d0
@@ -106,26 +104,38 @@ _gotopgm:
         move.l  #_back,-(a1)
         move.l  a1,usp
 
-        // jump to the start of TEXT segment, in user mode.
-#ifdef __mcoldfire__
-        subq.l  #2,UDA_SPSUPER(a2)      // See the comment below
+        // *** WARNING ***
+        // We are currently on the top of the private stack for the
+        // new accessory process. On the next trap #2 for AES, the CPU
+        // will use this stack when going to supervisor mode, and this
+        // will be perfectly correct.
+        // Unfortunately, the AES trap prologue always switch to
+        // rlr->p_uda->u_spsuper even if it is already on that stack.
+        // Thus, if we don't take care, the stack pointer may go up in
+        // the next trap #2 and cause data corruption.
+        // We must fix rlr->p_uda->u_spsuper here to ensure this will
+        // not happen. We have to estimate the amount of data stored
+        // on this stack when the stack switch occurs in the trap.
+        // Currently, there is only the trap stack frame, which is CPU
+        // dependent and may be 6 or 8 bytes. Thus 8 bytes of additional
+        // room will be enough in all cases.
+        // You must keep an eye on the trap #2 prologue for AES.
+        // It is located in gemdosif.S, label "trapaes".
+        // If some additional data is pushed on the stack before
+        // the stack switch, you must add the equivalent room here.
 
+        move.l  sp,d0   // Current stack
+        subq.l  #8,d0   // Room for the trap stack frame or more
+        move.l  d0,UDA_SPSUPER(a2)      // Will be the stack on next trap
+
+#ifdef __mcoldfire__
         move.w  sr,d0
         bclr    #13,d0                  // Switch to user mode
         move.w  d0,sr
 #else
-        tst.w   _longframe              // Is CPU>=68010 ?
-        beq.s   gpgm_nolong
-
-        // The prologue of the AES trap will use this value as SP. It must
-        // be equal to the value of SP just before the RTE instruction below.
-        // Its initial value is correct for a 68000 CPU,
-        // but it must be adjusted if the CPU has long stack frames.
-        subq.l  #2,UDA_SPSUPER(a2)
-gpgm_nolong:
         andi.w  #0xdfff,sr              // Switch to user mode
 #endif
-        move.l  P_TBASE(a0),a1
+        move.l  P_TBASE(a0),a1          // Start of the TEXT segment
         jmp     (a1)
 
 
@@ -145,24 +155,16 @@ _dsptch:
 
 savestate:
 #ifdef __mcoldfire__
-        subq.l  #2,sp           // Make room for SR
-        move.l  d0,-(sp)        // Backup D0
         move.b  _indisp,d0
         addq.l  #1,d0
         move.b  d0,_indisp
 
         move.w  sr,d0
-        move.w  d0,4(sp)        // We'll later return with a RTE
-
         move.w  d0,savesr0
         ori.l   #0x0700,d0
         move.w  d0,sr
-
-        move.l  (sp)+,d0        // Restore D0
 #else
         addq.b  #1,_indisp
-
-        move    sr,-(sp)        // We'll later return with a RTE
 
         move    sr,savesr0
         ori     #0x0700,sr
@@ -189,12 +191,10 @@ savestate:
 
 _switchto:
 #ifdef __mcoldfire__
-        move.l  d0,-(sp)
         move.w  sr,d0
         move.w  d0,savesr0
         ori.l   #0x0700,d0
         move.w  d0,sr
-        move.l  (sp)+,d0
 #else
         move    sr,savesr0
         ori     #0x0700,sr
@@ -209,20 +209,12 @@ _switchto:
 
         clr.b   _indisp
 #ifdef __mcoldfire__
-        move.w  savesr0,(sp)
-        move.w  #0x4000,-(sp)   // store a fake Format/Vector Word
+        move.w  savesr0,d0
+        move.w  d0,sr
 #else
-        tst.w   _longframe
-        beq     swto_68000
-        move.w  (sp),-(sp)      // SR
-        move.w  4(sp),2(sp)     // High word of return address
-        move.w  6(sp),4(sp)     // Low word of return address
-        clr.w   6(sp)           // Format word
-swto_68000:
-        move.w  savesr0,(sp)
+        move.w  savesr0,sr
 #endif
-
-        rte
+        rts                     // Switch to the next process now !
 
 
         .bss
