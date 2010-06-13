@@ -2229,3 +2229,7 @@ Start... early ages
   vdi/vdi_tblit.S: Added ColdFire V4e CPU support. (vriviere)
 - Makefile: Added the COLDFIRE variable. Set it to 1 to build a ROM version
   compatible only with ColdFire V4e processors. (vriviere)
+
+2010-06-13
+- bios/bios.c, bios/initinfo.c, bios/initinfo.h:
+  Clear the screen on reboot. (vriviere)

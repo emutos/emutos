@@ -19,6 +19,7 @@ extern int early_cli;
 
 /*==== Prototypes =========================================================*/
 
+void initscreen(void);
 void initinfo(void);
 
 #endif /* INITINFO_H */

@@ -33,6 +33,13 @@
 
 int early_cli;
 
+/* Initialize the screen */
+void initscreen(void)
+{
+    /* Clear screen, disable cursor blinking, set colors */
+    cprintf("\033E\033f\033b%c\033c%c", 15 + ' ', 0 + ' ');
+}
+
 #if TOS_VERSION >= 0x200   /* Don't include splashscreen on TOS 1.0x to
                               save some space in the ROM image */
 
@@ -151,9 +158,6 @@ static void cprint_asctime(void)
 
 void initinfo(void)
 {
-    /* Clear screen, disable cursor blinking, set colors */
-    cprintf("\033E\033f\033b%c\033c%c", 15 + ' ', 0 + ' ');
-
     /* Now print the EmuTOS Logo */
     cprintf("\r\n");
     print_art("11111111111 7777777777  777   7777");
@@ -254,9 +258,6 @@ void initinfo(void)
 
 void initinfo(void)
 {
-    /* Clear screen, set foreground to 15, background is color 0 */
-    cprintf("\033E\033b%c\033c%c", 15 + ' ', 0 + ' ');
-
     cprintf("EmuTOS Version %s\r\n", version);
 }
 
