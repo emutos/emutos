@@ -220,16 +220,14 @@ static void schedule(void)
 
 /************************************************************************/
 /*                                                                      */
-/* dispatcher maintains all flags/regs so it looks like an rte to       */
-/*   the caller.                                                        */
-/*   dispatch() = rte                                                   */
+/*   This dispatcher is called frop dsptch().                           */
+/*   Its job is to determine the next task to be run.                   */
+/*   This function must end by calling switchto() and will never return.*/
 /*   rlr -> p_stat determines the action to perform on the process that */
 /*              was in context                                          */
 /*   rlr -> p_uda -> dparam is used by the action routines              */
 /*                                                                      */
 /************************************************************************/
-
-/* routine disp called from dsptch(). */
 
 void disp(void)
 {
