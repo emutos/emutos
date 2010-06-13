@@ -173,9 +173,9 @@ _aestrap:
         tst.w   d0
         beq.s   _back
         cmpi.w  #0xC8,d0
-        beq.s   L2126
+        beq.s   trapaes
         cmpi.w  #0xC9,d0
-        beq.s   L2126
+        beq.s   trapaes
         move.l  savetrap2,-(sp)
         rts
 
@@ -185,7 +185,7 @@ _back:
         trap    #1
 
 
-L2126:
+trapaes:
         bsr     _cli                    // mask out interrupts
         move.l  usp,a0                  
 #ifdef __mcoldfire__
@@ -206,7 +206,7 @@ L2126:
 
         move.l  d1,-(sp)                // addr of parameter
         move.w  d0,-(sp)                // 200 or 201
-        jsr     _super                  // jump to supervisor mode
+        jsr     _super                  // jump to supervisor entry point
         addq.l  #6,sp                   // restore stack pointer
 
 supret:                                 // return from gementry
