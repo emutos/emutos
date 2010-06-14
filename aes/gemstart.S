@@ -184,12 +184,43 @@ _dos_exec:
         movem.l d2/a2,-(sp)             // Save registers
 #endif
 
+        // *** WARNING ***
+        // We are here on the private supervisor stack of the AES process 0.
+        // We are going to call Pexec() from the supervisor mode.
+        // The GEMDOS will backup some data on our stack, then it will
+        // switch to its private supervisor stack. Then it will switch
+        // to the child program (desktop or other) which will call the AES
+        // through a trap #2.
+        // The AES trap prologue always switch to rlr->p_uda->u_spsuper.
+        // That variable currently points to somewhere on our stack.
+        // Thus, if we don't take care, the stack pointer may go up in
+        // the next trap #2 and cause data corruption.
+        // In other words, there is a reentrency problem. The AES context
+        // will not be switched when entering the child program, so this
+        // AES process will reenter itself. The workaround is to set
+        // rlr->p_uda->u_spsuper to a value low enough on the current stack
+        // to avoid a stack smashing. We have to estimate the amount of
+        // data that will be stored on the stack between here and the next
+        // stack switch in trap #2.
+        // From the rlr->p_uda->u_spsuper backup below to the next trap #2
+        // stack switch, the following data will be pushed on the stack:
+        //   - the Pexec() arguments (16 bytes)
+        //   - the trap #1 stack frame (0 byte, popped by trap #1 prologue)
+        //   - the backup of registers in the trap #1 prologue (50 bytes)
+        // Currently, this sums to 66 bytes. The stack has to be adjusted
+        // by this value, or more.
+        // You must keep an eye on the trap #1 prologue for GEMDOS,
+        // when entering in supervisor mode and calling a function
+        // other than 0x20. It is located in bdos/rwa.S, label "systk".
+        // If some additional data is pushed on the stack before
+        // the stack switch, you must add the equivalent room here.
+
         bsr     _cli
         movea.l _rlr,a0
         movea.l 8(a0),a0
         move.l  0x3E(a0),-(sp)          // Save rlr->p_uda->u_spsuper
         movea.l sp,a1
-        suba.l  #0x50,a1                // stack offset
+        suba.l  #0x50,a1                // Adjust the stack (see above)
         move.l  a1,0x3E(a0)
         bsr     _sti
 
