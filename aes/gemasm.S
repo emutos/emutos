@@ -16,7 +16,6 @@
 
         .extern _rlr
         .extern _back
-        .extern _longframe
         .extern _indisp
         .extern _disp
 
