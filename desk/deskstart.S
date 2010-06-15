@@ -23,24 +23,10 @@ _deskstart:
         trap    #1                      // Mshrink
         lea     12(a7),a7
 
-#ifndef NO_ROM
-        move.l  #desksstack,-(a7)       // We can't use the old USP as SSP
-        move.w  #0x20,-(a7)             // when doing GEM calls in supervisor
-        trap    #1                      // mode...
-        move.l  d0,old_ssp
-#endif
-
         move.l  #far_draw,d0
         move.l  d0,_drawaddr
 
         jsr     _deskmain               // Run the desktop
-
-#ifndef NO_ROM
-        move.l  old_ssp,-(a7)
-        move.w  #0x20,-(a7)
-        trap    #1                      // Back to user mode
-        addq.l  #6,a7
-#endif
 
         clr.w   -(sp)
         trap    #1                      // Pterm
@@ -99,15 +85,7 @@ _gem:
 
 // Space for the Stack:
 
-#ifndef NO_ROM
-old_ssp:
-        .ds.l   1
-
         .ds.b   0x800
-desksstack:
-#endif
-
-        .ds.b   0x200
 deskustack:
 
 

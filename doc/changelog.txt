@@ -2240,3 +2240,6 @@ Start... early ages
 
 2010-06-15
 - bdos/proc.c: Start new processes in the standard IPL 3. (vriviere)
+
+2010-06-15
+- desk/deskstart.S: Run the desktop in user mode. (vriviere)
