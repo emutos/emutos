@@ -2243,3 +2243,6 @@ Start... early ages
 
 2010-06-15
 - desk/deskstart.S: Run the desktop in user mode. (vriviere)
+
+2010-06-15
+- desk/deskact.c: Fixed crash when moving icons. (vriviere)

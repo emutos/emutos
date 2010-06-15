@@ -339,9 +339,9 @@ void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD numpts,
           if ( !(state & SELECTED) )
           {
                 pa = i_find(dst_wh, *pdobj, &pf, &junk);
-                if ((pa->a_type == AT_ISFOLD) ||
-                    (pa->a_type == AT_ISDISK) ||
-                    (pa->a_type == AT_ISTRSH))
+                if (pa && ((pa->a_type == AT_ISFOLD) ||
+                           (pa->a_type == AT_ISDISK) ||
+                           (pa->a_type == AT_ISTRSH)))
                 {
                   curr_wh = dst_wh;
                   curr_tree = tree;
@@ -429,9 +429,9 @@ void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD *pdulx, WORD *pduly,
               if ( !(state & SELECTED) )
               {
                 pa = i_find(dst_wh, *pdobj, &pf, &junk);
-                if ( ((pa->a_type == AT_ISFOLD) ||
-                      (pa->a_type == AT_ISDISK)) &&
-                     !(pf->f_attr & F_FAKE) )
+                if (pa && (((pa->a_type == AT_ISFOLD) ||
+                           (pa->a_type == AT_ISDISK)) &&
+                          !(pf->f_attr & F_FAKE) ))
                 {
                   curr_wh = dst_wh;
                   curr_tree = tree;
