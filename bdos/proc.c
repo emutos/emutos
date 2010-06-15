@@ -507,7 +507,7 @@ static void proc_go(PD *p)
     sp->basepage = p;      /* the stack contains the basepage */
        
     sp->retaddr = p->p_tbase;    /* return address a3 is text start */
-    sp->sr = 0;                  /* the process will start in user mode */
+    sp->sr = 0x0300;    /* the process will start in user mode, IPL 3 */
     
     /* the other stack is the supervisor stack */
     sp->other_sp = (long) &supstk[SUPSIZ];

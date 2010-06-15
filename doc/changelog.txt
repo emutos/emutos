@@ -2235,6 +2235,8 @@ Start... early ages
   Clear the screen on reboot. (vriviere)
 
 2010-06-13
-
 - bios/gemasm.S: Changed the dsptch/switchto implementation to switch the
   AES tasks using a standard RTS rather than a CPU dependent RTE. (vriviere)
+
+2010-06-15
+- bdos/proc.c: Start new processes in the standard IPL 3. (vriviere)
