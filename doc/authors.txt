@@ -27,10 +27,11 @@ Here is about the 'recent' contributors - individuals involved in the EmuTOS
 project. In this project virtually everybody modifies every file,
 nevertheless here is an attempt at identifying who's guilty of what: 
 
-Martin Doering (MAD) <mdoering at users.sourceforge.net>
-- project initiator
-- memory setup, VT52 console, linea, mouse
-- virtually everything not modified later by the other fellows
+Vincent Riviere <vincent.riviere at freesbee.fr>
+- Current project admin
+- Patches for compiling with GCC 4.x
+- ColdFire support
+- various bug fixes
 
 Petr Stehlik (joy) <pstehlik at sophics.cz>
 - bios disk interface, BDOS filesystem
@@ -40,15 +41,15 @@ Thomas Huth (THH) <huth at users.berlios.de>
 - Lots of bugfixes all over the place
 - Integration and maintenance of the AES and GEM-Desktop
 
+Martin Doering (MAD) <mdoering at users.sourceforge.net>
+- Original project initiator (but retired since years already)
+- memory setup, VT52 console, linea, mouse
+- virtually everything not modified later by the other fellows
+
 Laurent Vogel (LVL) <lvl at club-internet.fr>
 - original ST hardware (MFP, ACIA, parport, sound, floppy, ACSI)
 - Makefile tricks and tools
 - NLS support
-
-Vincent Riviere <vincent.riviere at freesbee.fr>
-- Patches for compiling with GCC 4.x
-- ColdFire support
-- various bug fixes
 
 
 Thanks also to all Mailing list contributors for their help, and 
