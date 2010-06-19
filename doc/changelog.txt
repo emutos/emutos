@@ -2246,3 +2246,6 @@ Start... early ages
 
 2010-06-15
 - desk/deskact.c: Fixed crash when moving icons. (vriviere)
+
+2010-06-19
+- bios/processor.S: Implemented invalidate_icache() for ColdFire. (vriviere)
