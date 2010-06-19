@@ -659,7 +659,7 @@ obj/version.o: obj/version.c
 
 TOCLEAN += *.dsm dsm.txt fal_dsm.txt
 
-%.dsm: %.map
+%.dsm: %.map %.img
 	vma=`sed -e '/^\.text/!d;s/[^0]*//;s/ .*//;q' $<`; \
 	$(OBJDUMP) --target=binary --architecture=m68k \
 	  --adjust-vma=$$vma -D $*.img \
