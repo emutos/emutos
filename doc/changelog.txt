@@ -2249,3 +2249,6 @@ Start... early ages
 
 2010-06-19
 - bios/processor.S: Implemented invalidate_icache() for ColdFire. (vriviere)
+
+2010-06-19
+- cli/coma.S: Run EmuCON in user mode. (vriviere)

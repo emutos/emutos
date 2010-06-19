@@ -55,16 +55,6 @@ _coma_start:
         trap    #1
         lea     12(sp),sp
 
-#ifndef NO_ROM
-// if running in ROM, go in supervisor mode to be able to 
-// read our data and our code (switch tables)
-        clr.l   -(sp)
-        move.w  #0x20,-(sp)
-        trap    #1
-        addq.l  #6,sp
-        move.l  d0,save_ssp
-#endif /* ! NO_ROM */
-        
         move.l  #mycrit,-(sp)
         move.w  #0x101,-(sp)                                   
         move.w  #5,-(sp)
@@ -78,14 +68,6 @@ _coma_start:
         addq.l  #4,sp
 
         bsr     _devector
-
-#ifndef NO_ROM
-// if running in ROM, switch back to user mode
-        move.l  save_ssp,-(sp)
-        move.w  #0x20,-(sp)
-        trap    #1
-        addq.l  #6,sp
-#endif /* ! NO_ROM */
 
         // Pterm0()
         clr.l   -(sp)
@@ -258,8 +240,6 @@ _ui_mupb:
 
 
         .bss
-
-save_ssp:       .ds.l   1                                         
 
 ocrit:          .ds.l   1
 oterm:          .ds.l   1
