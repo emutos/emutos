@@ -168,7 +168,7 @@ noreset:
  */
 
         .global memdone         // return to, if memory config done
-        bra     meminit         // do/test memory config (and clear it)
+        jmp     meminit         // do/test memory config (and clear it)
 memdone:
 
 

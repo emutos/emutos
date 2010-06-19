@@ -154,7 +154,7 @@ memok:
                                         // phystop should then also be ok
 #endif
 no_memctrl:
-        bra     memdone                 // config ok -> memdone in startup.s
+        jmp     memdone                 // config ok -> memdone in startup.s
 
 
 
@@ -324,7 +324,7 @@ st_cleared:
 
         move.b  d6, memctrl             // set copy of hw memory config
         move.l  d5, _phystop            // highest address as phystop
-        bra     memdone                 // config done -> return to startup.s
+        jmp     memdone                 // config done -> return to startup.s
 
 #endif /* ST_MMU */
 
@@ -438,7 +438,7 @@ alter:
         lea     tt_cleared(pc),a6       // remember return address
         bra     clear_ram               // jump to routine clearing the RAM
 tt_cleared:
-        bra     memdone                 // config done -> return to startup.s
+        jmp     memdone                 // config done -> return to startup.s
 
 #endif /* FALCON_MMU */
 
