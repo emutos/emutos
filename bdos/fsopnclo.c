@@ -137,7 +137,7 @@ long ixcreat(char *name, char attr)
                 return(EPTHNF);
 
         /*  M01.01.0721.01  */
-        if( match1(" '*+,:;<=>?[]^`|~",s) )
+        if( match1(" *+,:;<=>?[]|",s) )
                 return( EACCDN ) ;
 
         if (!(fd = dn->d_ofd))

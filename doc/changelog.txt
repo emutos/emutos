@@ -2257,3 +2257,6 @@ Start... early ages
 - bios/conout.c: Fixed crash on reverse scrolling. (vriviere)
 - bdos/fs.h, bdos/fsdir.c: VFAT long file names are now totally ignored
   and are no longer displayed as invalid files. (vriviere)
+- bdos/fsopnclo.c: Removed the characters '^`~ from the list of forbidden
+  characters in filenames to match MS-DOS rules.
+ 
