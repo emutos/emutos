@@ -1529,6 +1529,13 @@ static BOOL match(char *s1, char *s2)
     register int i;
 
     /*
+     **  skip VFAT long file name entries
+     */
+
+    if (s2[11] == FA_LFN)
+        return( FALSE );
+
+    /*
      **  check for deleted entry.  wild cards don't match deleted entries,
      **  only specific requests for deleted entries do.
      */

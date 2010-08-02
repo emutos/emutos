@@ -213,6 +213,7 @@ FCB
 #define FA_SUBDIR       0x10
 #define FA_NORM         0x27
 #define FA_RO           0x01
+#define FA_LFN          0x0f
 
 
 
