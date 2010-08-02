@@ -619,8 +619,8 @@ scroll_down(int start_line)
     ULONG count;
     UBYTE * src, * dst;
 
-    /* screen base addr + offset for bottom of second to last cell row */
-    src = v_bas_ad + (ULONG)v_cel_my * v_cel_wr;
+    /* screen base addr + offset of start line */
+    src = v_bas_ad + (ULONG)start_line * v_cel_wr;
 
     /* form destination from source + cell wrap */
     dst = src + v_cel_wr;

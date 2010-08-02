@@ -2252,3 +2252,6 @@ Start... early ages
 
 2010-06-19
 - cli/coma.S: Run EmuCON in user mode. (vriviere)
+
+2010-08-02
+- bios/conout.c: Fixed crash on reverse scrolling. (vriviere)
