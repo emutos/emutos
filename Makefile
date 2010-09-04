@@ -796,7 +796,7 @@ tgz:	distclean
 
 TOCLEAN += makefile.dep
 
-makefile.dep: util/langs.c bios/header.h
+makefile.dep: util/langs.c bios/header.h bios/ctables.h
 	( \
 	  $(CC) $(MULTILIBFLAGS) -MM $(INC) -Ibios -Iaes -Idesk/icons $(DEF) $(CSRC); \
 	  $(CC) $(MULTILIBFLAGS) -MM $(INC) $(DEF) $(SSRC) \
