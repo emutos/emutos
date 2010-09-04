@@ -1204,6 +1204,10 @@ msgstr "  Changer la résolution     \007C"
 msgid "Press 'C' to run an early console"
 msgstr "Taper 'C' pour lancer la console"
 
+#: bios/initinfo.c:232
+msgid " Hold <Shift> to pause this screen "
+msgstr " <Shift> pour maintenir cet écran "
+
 #: desk/desk_rsc.c:395
 msgid "  New Folder..."
 msgstr "  Nouveau dossier..."
