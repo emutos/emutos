@@ -825,7 +825,7 @@ msgid "Hold <Control> to skip AUTO/ACC"
 msgstr "<Control> para saltar AUTO/ACC"
 
 #: bios/initinfo.c:162
-msgid "Hold <Alternate> to skip HDD"
+msgid "Hold <Alternate> to skip HDD boot"
 msgstr "<Alt> no iniciar disco duro"
 
 #: bios/bios.c:378

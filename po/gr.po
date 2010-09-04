@@ -38,7 +38,7 @@ msgid "Hold <Control> to skip AUTO/ACC"
 msgstr "˜«ã©«œ <Control> š ˜ ¤˜ §˜¨˜¡á£¯œ«œ AUTO/ACC"
 
 #: bios/initinfo.c:161
-msgid "Hold <Alternate> to skip HDD"
+msgid "Hold <Alternate> to skip HDD boot"
 msgstr "˜«ã©«œ <Alternate> š ˜ ¤˜ §˜¨˜¡á£¯œ«œ HDD"
 
 #: bios/initinfo.c:164

@@ -882,7 +882,7 @@ msgid "Hold <Control> to skip AUTO/ACC"
 msgstr "<Cntrl> pohjassa = ohita AUTO/ACC"
 
 #: bios/initinfo.c:161
-msgid "Hold <Alternate> to skip HDD"
+msgid "Hold <Alternate> to skip HDD boot"
 msgstr "<Alt> pohjassa = ohita kovalevy"
 
 #: bios/bios.c:367

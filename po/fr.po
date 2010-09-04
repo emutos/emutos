@@ -1163,7 +1163,7 @@ msgid "Hold <Control> to skip AUTO/ACC"
 msgstr "Touche CTRL => pas d'AUTO/ACC"
 
 #: bios/initinfo.c:161
-msgid "Hold <Alternate> to skip HDD"
+msgid "Hold <Alternate> to skip HDD boot"
 msgstr "Touche ALT => pas de disque dur"
 
 #: bios/initinfo.c:167
