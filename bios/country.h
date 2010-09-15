@@ -28,6 +28,7 @@
 #define KEYB_GR 4
 #define KEYB_SE 5
 #define KEYB_SG 6
+#define KEYB_RU 7
 
 /* charset codes - names in [brackets] are understood by GNU recode */
 #define CHARSET_ALL -1
@@ -35,6 +36,7 @@
 #define CHARSET_L2 1   /* [ISO-Latin-2] charset */
 #define CHARSET_L9 2   /* [ISO-8859-15] (latin-9) charset */
 #define CHARSET_GR 3   /* Greek charset */
+#define CHARSET_RU 4   /* Russian charset */
 
 /* IDT flag 24 hour: 0 = 12am/pm or 1 = 24 hour */
 #define IDT_12H   0x0000

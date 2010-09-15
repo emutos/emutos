@@ -2263,3 +2263,7 @@ Start... early ages
 2010-09-15
 - tools/tos-lang-change.c: Added missing languages. (patch by Dima Sobolev
   + vriviere)
+- country.mk, bios/country.h, bios/ctrycodes.h, bios/fnt_ru_6x6.c,
+  bios/fnt_ru_8x16.c, bios/fnt_ru_8x8.c, bios/keyb_ru.h, po/LINGUAS,
+  po/ru.po, tools/tos-lang-change.c: Added Russian language. (patch by
+  Dima Sobolev)

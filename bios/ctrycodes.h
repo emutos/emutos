@@ -35,3 +35,4 @@
 /* There aren't any official country codes > 16, but we need some more codes
    for the other languages... */
 #define COUNTRY_GR 18   /* Greek */
+#define COUNTRY_RU 19   /* Russia */
