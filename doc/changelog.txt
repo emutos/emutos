@@ -2259,4 +2259,7 @@ Start... early ages
   and are no longer displayed as invalid files. (vriviere)
 - bdos/fsopnclo.c: Removed the characters '^`~ from the list of forbidden
   characters in filenames to match MS-DOS rules. (vriviere)
- 
+
+2010-09-15
+- tools/tos-lang-change.c: Added missing languages. (patch by Dima Sobolev
+  + vriviere)
