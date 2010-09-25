@@ -2267,3 +2267,9 @@ Start... early ages
   bios/fnt_ru_8x16.c, bios/fnt_ru_8x8.c, bios/keyb_ru.h, po/LINGUAS,
   po/ru.po, tools/tos-lang-change.c: Added Russian language. (patch by
   Dima Sobolev)
+
+2010-09-25
+- bios/iorec.h: Added a workaround for GCC 4.5.x bug 45052. Because of that,
+  the keyboard didn't work when USE_STOP_INSN_TO_FREE_HOST_CPU=0. If unsure,
+  compile with -fno-ipa-pure-const as full workaround. That bug will be
+  fixed in GCC 4.5.2. (vriviere)

@@ -28,7 +28,13 @@ IOREC {
   WORD high;            /* high water mark */
 };
 
-extern IOREC rs232iorec, ikbdiorec, midiiorec;
+/* The volatile keyword below is an artificial workaround
+   against the the GCC bug 45052 present in GCC 4.5.x.
+   Without that, bconin2() contains an infinite loop
+   when USE_STOP_INSN_TO_FREE_HOST_CPU=0.
+   This bug will be fixed in GCC 4.5.2.
+*/
+extern volatile IOREC rs232iorec, ikbdiorec, midiiorec;
 
 /*==== Functions ==========================================================*/
 
