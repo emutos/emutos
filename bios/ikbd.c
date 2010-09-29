@@ -218,6 +218,8 @@ void kb_timerc_int(void)
     if((conterm & 2) == 0) return;
     if(kb_ticks <= 0) return;
     if(-- kb_ticks <= 0) {
+        if (conterm & 1)
+            keyclick((WORD)((kb_last_key & 0x00ff0000) >> 16));
         push_ikbdiorec(kb_last_key);
         kb_ticks = kb_repeat;
     }

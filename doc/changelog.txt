@@ -2273,3 +2273,6 @@ Start... early ages
   the keyboard didn't work when USE_STOP_INSN_TO_FREE_HOST_CPU=0. If unsure,
   compile with -fno-ipa-pure-const as full workaround. That bug will be
   fixed in GCC 4.5.2. (vriviere)
+
+2010-09-29
+- bios/ikbd.c: Added key click on key repeat. (vriviere)
