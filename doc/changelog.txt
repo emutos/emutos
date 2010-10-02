@@ -2280,3 +2280,5 @@ Start... early ages
 2010-10-02
 - bdos/bdosmain.c, bdos/console.c, cli/command.c: Fixed BDOS and EmuCON to
   allow the usage of the full 8-bit character set on console I/O. (vriviere)
+- bios/xhdi.c: For unimplemented XHDI opcodes, return EINVFN instead of ERR.
+  Patch contributed by David Galvez. (vriviere)

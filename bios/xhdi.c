@@ -294,7 +294,7 @@ long xhdi_handler(UWORD opcode, long a1, long a2, long a3, long a4,
         */
     }
         
-    return -1; /*ENOSYS;*/
+    return EINVFN;
 }
 
 /*
