@@ -1772,7 +1772,7 @@ readSi(char *lin)
 
     i = 2;
     while (lin[i]) {
-        if ((lin[i] >= ' ') && (lin[i] <= '~'))
+        if ((((unsigned char)lin[i]) >= ' ') && (lin[i] != 0x7f /* DEL */))
             lin[j++] = lin[i];
         i++;
     }
@@ -1805,7 +1805,7 @@ readDsk(char *lin, long *flHnd)
     i = 0;
 
     while (lin[i]) {
-        if ((lin[i] >= ' ') && (lin[i] <= '~'))
+        if ((((unsigned char)lin[i]) >= ' ') && (lin[i] != 0x7f /* DEL */))
             lin[j++] = lin[i];
         i++;
     }

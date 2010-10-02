@@ -598,10 +598,10 @@ restrt:
                 for (i = 0; i < pw[3]; i++)
                 {
                     if( num == H_Console )
-                        tabout( HXFORM(num) , *pb2++ ) ;
+                        tabout( HXFORM(num) , (unsigned char)*pb2++ ) ;
                     else
                     {           /* M01.01.1029.01 */
-                        rc = MyBconout( HXFORM(num), *pb2++ ) ;
+                        rc = MyBconout( HXFORM(num), (unsigned char)*pb2++ ) ;
                         if (rc < 0)
                             return(rc);
                     }

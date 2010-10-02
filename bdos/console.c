@@ -312,7 +312,7 @@ long conin(int h)
 {
     long ch;
 
-    conout( h,(int)(ch = getch(h)) );
+    conout( h,(unsigned char)(ch = getch(h)) );
     return(ch);
 }
 
@@ -384,7 +384,7 @@ void xprt_line(char *p)
  */
 static void prt_line(int h, char *p)
 {
-    while( *p ) tabout( h, *p++ );
+    while( *p ) tabout( h, (unsigned char)*p++ );
 }
 
 
@@ -442,7 +442,7 @@ static int backsp(int h, char *cbuf, int retlen, int col)
  */
 void readline(char *p)
 {
-    p[1] = cgets(HXFORM(run->p_uft[0]),(((int) p[0]) & 0xFF),&p[2]);
+    p[1] = cgets(HXFORM(run->p_uft[0]),(unsigned char)p[0],&p[2]);
 }
 
 /* h is special handle denoting device number */
@@ -476,10 +476,10 @@ int cgets(int h, int maxlen, char *buf)
             conout(h,'#');
             newline(h,stcol);
             for (i=0; i < retlen; i++)
-                cookdout(h,buf[i]);
+                cookdout(h,(unsigned char)buf[i]);
             break;
         default:
-            cookdout(h,buf[retlen++] = ch);
+            cookdout(h,(unsigned char)(buf[retlen++] = ch));
         }
     }
     return(retlen);
