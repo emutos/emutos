@@ -778,7 +778,7 @@ msgstr "JJ-MM-AA"
 
 #: desk/desk_rsc.c:1612
 msgid "%ld bytes used in %d items."
-msgstr "%ld octets utilités par %d éléments."
+msgstr "%ld octets utilisés par %d éléments."
 
 #: desk/desk_rsc.c:1613
 msgid "  Show as icons  \007S"
