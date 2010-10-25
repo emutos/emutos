@@ -2282,3 +2282,7 @@ Start... early ages
   allow the usage of the full 8-bit character set on console I/O. (vriviere)
 - bios/xhdi.c: For unimplemented XHDI opcodes, return EINVFN instead of ERR.
   Patch contributed by David Galvez. (vriviere)
+
+2010-10-25
+- bios/natfeat.S, bios/xhdi.c, bios/xhdi.h: Reimplemented the XHDI stub to
+  backup all the registers to conform to the XHDI specification. (vriviere)

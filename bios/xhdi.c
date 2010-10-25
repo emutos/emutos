@@ -173,123 +173,154 @@ long XHReadWrite(UWORD major, UWORD minor, UWORD rw, ULONG sector,
 
 /*=========================================================================*/
 
-long xhdi_handler(UWORD opcode, long a1, long a2, long a3, long a4,
-                  long a5, long a6, long a7)
+long xhdi_handler(UWORD *stack)
 {
-    typedef long (*wrap1)(long);
-    typedef long (*wrap2)(long, long);
-    typedef long (*wrap3)(long, long, long);
-    typedef long (*wrap4)(long, long, long, long);
-    typedef long (*wrap5)(long, long, long, long, long);
-    typedef long (*wrap6)(long, long, long, long, long, long);
-    typedef long (*wrap7)(long, long, long, long, long, long, long);
-        
+    UWORD opcode = *stack;
     switch (opcode)
     {
-        case  XHGETVERSION:
+        case XHGETVERSION:
         {
             return 0x130;
         }
-        case  XHINQTARGET:
+        case XHINQTARGET:
         {
-            wrap4 f = (wrap4) XHInqTarget;
-            return (*f)(a1, a2, a3, a4);
+            struct XHINQTARGET_args
+            {
+                UWORD opcode;
+                UWORD major;
+                UWORD minor;
+                ULONG *blocksize;
+                ULONG *deviceflags;
+                char *productname;
+            } *args = (struct XHINQTARGET_args *)stack;
+            return XHInqTarget(args->major, args->minor, args->blocksize, args->deviceflags, args->productname);
         }
         /*
-        case  2:
+        case XHRESERVE:
         {
-            wrap2 f = (wrap2) xhdi_handler_XHReserve;
-            return (*f)(a1, a2);
+            return XHReserve();
         }
-        case  3:
+        case XHLOCK:
         {
-            wrap2 f = (wrap2) xhdi_handler_XHLock;
-            return (*f)(a1, a2);
+            return XHLock();
         }
-        case  4:
+        case XHSTOP:
         {
-            wrap2 f = (wrap2) xhdi_handler_XHStop;
-            return (*f)(a1, a2);
+            return XHStop();
         }
-        case  5:
+        case XHEJECT:
         {
-            wrap2 f = (wrap2) xhdi_handler_XHEject;
-            return (*f)(a1, a2);
+            return XHEject();
         }
         */
-        case  6:
+        case XHDRVMAP:
         {
             return blkdev_drvmap() & ~0x03;    /* FIXME */
         }
-        case  XHINQDEV:
+        case XHINQDEV:
         {
-            wrap5 f = (wrap5) XHInqDev;
-            return (*f)(a1, a2, a3, a4, a5);
+            struct XHINQDEV_args
+            {
+                UWORD opcode;
+                UWORD drv;
+                UWORD *major;
+                UWORD *minor;
+                ULONG *start;
+                BPB *bpb;
+            } *args = (struct XHINQDEV_args *)stack;
+            return XHInqDev(args->drv, args->major, args->minor, args->start, args->bpb);
         }
         /*
-        case  8:
+        case XHINQDRIVER:
         {
-            wrap6 f = (wrap6) xhdi_handler_XHInqDriver;
-            return (*f)(a1, a2, a3, a4, a5, a6);
+            return XHInqDriver();
         }
-        case  9:
+        case XHNEWCOOKIE:
         {
-            wrap1 f = (wrap1) xhdi_handler_XHNewCookie;
-            return (*f)(a1);
+            return XHNewCookie();
         }
         */
         case XHREADWRITE:
         {
-            wrap4 f = (wrap4) XHReadWrite;
-            return (*f)(a1, a2, a3, a4);
+            struct XHREADWRITE_args
+            {
+                UWORD opcode;
+                UWORD major;
+                UWORD minor;
+                UWORD rw;
+                ULONG sector;
+                UWORD count;
+                void *buf;
+            } *args = (struct XHREADWRITE_args *)stack;
+            return XHReadWrite(args->major, args->minor, args->rw, args->sector, args->count, args->buf);
         }
         case XHINQTARGET2:
         {
-            wrap5 f = (wrap5) XHInqTarget2;
-            return (*f)(a1, a2, a3, a4, a5);
+            struct XHINQTARGET2_args
+            {
+                UWORD opcode;
+                UWORD major;
+                UWORD minor;
+                ULONG *blocksize;
+                ULONG *deviceflags;
+                char *productname;
+                UWORD stringlen;
+            } *args = (struct XHINQTARGET2_args *)stack;
+            return XHInqTarget2(args->major, args->minor, args->blocksize, args->deviceflags, args->productname, args->stringlen);
         }
         case XHINQDEV2:
         {
-            wrap7 f = (wrap7) XHInqDev2;
-            return (*f)(a1, a2, a3, a4, a5, a6, a7);
+            struct XHINQDEV2_args
+            {
+                UWORD opcode;
+                UWORD drv;
+                UWORD *major;
+                UWORD *minor;
+                ULONG *start;
+                BPB *bpb;
+                ULONG *blocks;
+                char *partid;
+            } *args = (struct XHINQDEV2_args *)stack;
+            return XHInqDev2(args->drv, args->major, args->minor, args->start, args->bpb, args->blocks, args->partid);
         }
         /*
-        case 13:
+        case XHDRIVERSPECIAL:
         {
-            wrap4 f = (wrap4) xhdi_handler_XHDriverSpecial;
-            return (*f)(a1, a2, a3, a4);
+            return XHDriverSpecial();
         }
         */
         case XHGETCAPACITY:
         {
-            wrap3 f = (wrap3) XHGetCapacity;
-            return (*f)(a1, a2, a3);
+            struct XHGETCAPACITY_args
+            {
+                UWORD opcode;
+                UWORD major;
+                UWORD minor;
+                ULONG *blocks;
+                ULONG *blocksize;
+            } *args = (struct XHGETCAPACITY_args *)stack;
+            return XHGetCapacity(args->major, args->minor, args->blocks, args->blocksize);
         }
         /*
-        case 15:
+        case XHMEDIUMCHANGED:
         {
-            wrap1 f = (wrap1) xhdi_handler_XHMediumChanged;
-            return (*f)(a1);
+            return XHMediumChanged();
         }
-        case 16:
+        case XHMINTINFO:
         {
-            wrap2 f = (wrap2) xhdi_handler_XHMiNTInfo;
-            return (*f)(a1, a2);
+            return XHMiNTInfo();
         }
-        case 17:
+        case XHDOSLIMITS:
         {
-            wrap2 f = (wrap2) xhdi_handler_XHDOSLimits;
-            return (*f)(a1, a2);
+            return XHDOSLimits();
         }
-        case 18:
+        case XHLASTACCESS:
         {
-            wrap2 f = (wrap2) xhdi_handler_XHLastAccess;
-            return (*f)(a1, a2);
+            return XHLastAccess();
         }
-        case 19:
+        case XHREACCESS:
         {
-            wrap1 f = (wrap1) xhdi_handler_XHReaccess;
-            return (*f)(a1);
+            return XHReaccess();
         }
         */
     }

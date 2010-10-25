@@ -91,7 +91,22 @@ nfCall:
 
         dc.l    0x27011992              // XHDI magic constant
 _xhdi_vec:
-        jmp     _xhdi_handler
+#ifdef __mcoldfire__
+        lea     -12(sp),sp
+        movem.l d1/a0-a1,(sp)
+#else
+        movem.l d1/a0-a1,-(sp)
+#endif
+        pea     16(sp)
+        jsr     _xhdi_handler
+        addq.l  #4,sp
+#ifdef __mcoldfire__
+        movem.l (sp),d1/a0-a1
+        lea     12(sp),sp
+#else
+        movem.l (sp)+,d1/a0-a1
+#endif
+        rts
 
         .end
 
