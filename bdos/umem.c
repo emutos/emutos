@@ -269,11 +269,11 @@ long    xmxalloc(long amount, int mode)
     }
 
     /*
-     * Round odd-value requests to next higher even number.
+     * Round the size to higher multiple of 4.
+     * Alignment on long boundaries matters in FastRAM.
      */
 
-    if ((amount & 1))
-        amount++;
+    amount = (amount + 3) & ~3;
 
     /*
      * Pass the request on to the internal routine. 

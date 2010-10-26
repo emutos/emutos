@@ -2286,3 +2286,7 @@ Start... early ages
 2010-10-25
 - bios/natfeat.S, bios/xhdi.c, bios/xhdi.h: Reimplemented the XHDI stub to
   backup all the registers to conform to the XHDI specification. (vriviere)
+
+2010-10-26
+- bdos/umem.c: Fixed Malloc() and Mxalloc() to return blocks aligned on
+  multiple of 4 bytes. Long alignment improves speed in FastRam. (vriviere)
