@@ -149,12 +149,18 @@ long    xsetblk(int n, void *blk, long len)
     MPB *mpb;
 
 #if DBGUMEM
-    kprintf("BDOS: Mshrink(0x%08lx, 0x%08lx)\n", (long) blk, len);
+    kprintf("BDOS: Mshrink(0x%08lx, %ld)\n", (long) blk, len);
 #endif
     if(((long)blk) >= start_stram && ((long)blk) <= end_stram) {
         mpb = &pmd;
+#if DBGUMEM
+        kprintf("BDOS: xsetblk - mpb = &pmd\n");
+#endif
     } else if(has_ttram) {
         mpb = &pmdtt;
+#if DBGUMEM
+        kprintf("BDOS: xsetblk - mpb = &pmdtt\n");
+#endif
     } else {
         return EIMBA;
     }
@@ -187,6 +193,9 @@ long    xsetblk(int n, void *blk, long len)
 
     if (len & 1)
         len++;
+#if DBGUMEM
+    kprintf("BDOS: xsetblk - new length = %ld\n", len);
+#endif
 
     /*
      * Create a memory descriptor for the freed portion of memory.
@@ -225,8 +234,7 @@ long    xmxalloc(long amount, int mode)
     long ret_value;
 
 #if DBGUMEM
-    kprintf("BDOS: xmxalloc(0x%08lx, %d)\n", amount, mode);
-    assert(has_ttram || mode == MX_STRAM);
+    kprintf("BDOS: xmxalloc(%ld, %d)\n", amount, mode);
 #endif
 
     /*
@@ -314,7 +322,7 @@ long    xmxalloc(long amount, int mode)
 
 ret:
 #if DBGUMEM
-    kprintf(" = 0x%08lx\n", ret_value);
+    kprintf("BDOS: xmxalloc returns 0x%08lx\n", ret_value);
     dump_mem_map();
 #endif
 

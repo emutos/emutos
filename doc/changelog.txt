@@ -2290,3 +2290,6 @@ Start... early ages
 2010-10-26
 - bdos/umem.c: Fixed Malloc() and Mxalloc() to return blocks aligned on
   multiple of 4 bytes. Long alignment improves speed in FastRam. (vriviere)
+
+2010-11-02
+- bdos/iumem.c, bdos/umem.c: Improved traces on memory management. (vriviere)

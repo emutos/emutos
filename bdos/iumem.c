@@ -51,8 +51,13 @@ MD *ffit(long amount, MPB *mp)
     long maxval;
 
 #if     DBG_IUMEM
-    kprintf("BDOS: ffit - amount = %08lx\n", amount);
-    kprintf("BDOS: ffit - mp = %08lx\n", (LONG)mp);
+    if (mp == &pmd)
+        kprintf("BDOS: ffit - mp = &pmd\n");
+    else if (mp == &pmdtt)
+        kprintf("BDOS: ffit - mp = &pmdtt\n");
+    else
+        kprintf("BDOS: ffit - mp = 0x%08lx\n", (LONG)mp);
+    kprintf("BDOS: ffit - requested amount = %ld\n", amount);
 #endif
 
 #if     STATIUMEM
@@ -62,7 +67,7 @@ MD *ffit(long amount, MPB *mp)
     if( (q = mp->mp_rover) == 0  )      /*  get rotating pointer        */
     {
 #if     DBG_IUMEM
-        kprintf("ffit: null rover\n") ;
+        kprintf("BDOS: ffit - null rover\n") ;
 #endif
         return( 0 ) ;
     }
@@ -128,6 +133,11 @@ MD *ffit(long amount, MPB *mp)
             mp->mp_rover =
                 (q == (MD *) &mp->mp_mfl ? q->m_link : q);
 
+#if     DBG_IUMEM
+    kprintf("BDOS: ffit - start = 0x%08lx\n", (LONG)p->m_start);
+    kprintf("BDOS: ffit - length = %ld\n", p->m_length);
+#endif
+
             return(p);  /* got some */
         }
         else if (p->m_length > maxval)
@@ -140,8 +150,10 @@ MD *ffit(long amount, MPB *mp)
     /*  return either the max, or 0 (error)  */
 
 #if     DBG_IUMEM
-    if( !maxflg )
-        kprintf("ffit: Not Enough Contiguous Memory\n") ;
+    if( maxflg )
+        kprintf("BDOS: ffit - maxval = %ld\n", maxval);
+    else
+        kprintf("BDOS: ffit - Not Enough Contiguous Memory\n") ;
 #endif
     return( maxflg ? (MD *) maxval : 0 ) ;
 }
@@ -166,8 +178,14 @@ void freeit(MD *m, MPB *mp)
             break;
 
 #if     DBG_IUMEM
-    kprintf("BDOS: freeit - amount = %08lx\n", m->m_length);
-    kprintf("BDOS: freeit - mp = %08lx\n", (LONG)m->m_start);
+    if (mp == &pmd)
+        kprintf("BDOS: freeit - mp = &pmd\n");
+    else if (mp == &pmdtt)
+        kprintf("BDOS: freeit - mp = &pmdtt\n");
+    else
+        kprintf("BDOS: freeit - mp = %08lx\n", (LONG)mp);
+    kprintf("BDOS: freeit - start = %08lx\n", (LONG)m->m_start);
+    kprintf("BDOS: freeit - length = %08lx\n", m->m_length);
 #endif
 
     m->m_link = p;
