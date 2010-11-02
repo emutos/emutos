@@ -181,21 +181,21 @@ long    xsetblk(int n, void *blk, long len)
         return(EIMBA);
 
     /*
+     * Round the size to a multiple of 4 bytes to keep alignment.
+     * Alignment on long boundaries matters in FastRAM.
+     */
+
+    len = (len + 3) & ~3;
+#if DBGUMEM
+    kprintf("BDOS: xsetblk - new length = %ld\n", len);
+#endif
+
+    /*
      * If the caller is not shrinking the block size, then abort.
      */
 
     if (p->m_length < len)
         return(EGSBF);
-
-    /*
-     * Always shrink to an even word length.
-     */
-
-    if (len & 1)
-        len++;
-#if DBGUMEM
-    kprintf("BDOS: xsetblk - new length = %ld\n", len);
-#endif
 
     /*
      * Create a memory descriptor for the freed portion of memory.
@@ -275,13 +275,6 @@ long    xmxalloc(long amount, int mode)
         ret_value = 0;
         goto ret;
     }
-
-    /*
-     * Round the size to higher multiple of 4.
-     * Alignment on long boundaries matters in FastRAM.
-     */
-
-    amount = (amount + 3) & ~3;
 
     /*
      * Pass the request on to the internal routine. 

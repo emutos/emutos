@@ -104,9 +104,15 @@ void * balloc(LONG size)
     if(!bmem_allowed) {
         panic("balloc(%ld) at wrong time\n", size);
     }
+
+    /* Round the size to a multiple of 4 bytes to keep alignment.
+     * Alignment on long boundaries matters in FastRAM. */
+    size = (size + 3) & ~3;
+
     if(themd.m_length < size) {
         panic("balloc(%ld): no memory\n", size);
     }
+
     ret = (void*) themd.m_start;
 
     /* subtract needed memory from initial MD */

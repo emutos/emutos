@@ -75,6 +75,11 @@ MD *ffit(long amount, MPB *mp)
     maxval = 0;
     maxflg = (amount == -1 ? TRUE : FALSE) ;
 
+    /* Round the size to a multiple of 4 bytes to keep alignment.
+       Alignment on long boundaries matters in FastRAM. */
+    if (!maxflg)
+        amount = (amount + 3) & ~3;
+
     p = q->m_link;                      /*  start with next MD          */
 
     do /* search the list for an MD with enough space */
