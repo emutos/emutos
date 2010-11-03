@@ -317,7 +317,7 @@ static void autoexec(void)
         strcat(path, dta.name);
 
 #if DBGAUTOBOOT
-        kprintf("Loading %s ... ", path);
+        kprintf("Loading %s ...\n", path);
 #endif
         trap1_pexec(0, path, "", null_env);   /* Pexec */
 #if DBGAUTOBOOT
