@@ -74,7 +74,6 @@ extern void coma_start(void);
 #endif
 
 extern long xmaddalt(long start, long size); /* found in bdos/mem.h */
-extern long xsetblk(int n, void *blk, long len); /* found in bdos/mem.h */
 
 /*==== Declarations =======================================================*/
 
@@ -260,8 +259,8 @@ static void bootstrap(void)
 
     /* free the allocated space if something is wrong */
     if ( length <= 0 ) {
-        /* free the process area by Mshrink( p, 0); */
-        xsetblk( 0, pd, 0);
+        trap1(0x49, (long)pd->p_env); /* Mfree() the environment */
+        trap1(0x49, (long)pd); /* Mfree() the process area */
         return;
     }
 

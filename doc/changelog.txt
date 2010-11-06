@@ -2295,3 +2295,7 @@ Start... early ages
 - bdos/iumem.c, bdos/umem.c: Improved traces on memory management. (vriviere)
 - bdos/iumem.c, bdos/umem.c, bios/biosmem.c: Really fix Malloc() and others
   for 4-byte alignment. The previous patch was not enough. (vriviere)
+
+2010-11-06
+- bdos/bios.c: Fixed a small memory leak when there is no bootstrap program.
+  (vriviere)
