@@ -2303,3 +2303,6 @@ Start... early ages
   relocation of the bootstrap program fails. (vriviere)
 - bios/bios.c: Fixed a memory leak when the bootstrap program finishes
   successfully. (vriviere)
+- tools/mkflop.c: Added a check for the size of ramtos.img when doing
+  "make flop". (vriviere)
+ 

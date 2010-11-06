@@ -23,6 +23,8 @@
 #define FLOPNAME "emutos.st"
 #define BOOTNAME "bootsect.img"
 #define TOSNAME "ramtos.img"
+#define TOTAL_DISK_SECTORS (1 * 80 * 9) /* Single sided floppy */
+#define MAX_EMUTOS_SIZE ((TOTAL_DISK_SECTORS - 1) * 512)
  
 typedef unsigned char uchar;
  
@@ -61,6 +63,13 @@ int mkflop(FILE *bootf, FILE *tosf, FILE *flopf)
   count = ftell(tosf);
   fseek(tosf, 0, SEEK_SET);
   
+  if (count > MAX_EMUTOS_SIZE)
+  {
+    fprintf(stderr, "Error: %s is too big to fit on the floppy (%ld extra bytes).\n",
+      TOSNAME, (long)count - MAX_EMUTOS_SIZE);
+    return 1;
+  }
+
   sectcnt = (count + 511) / 512;
   b->sectcnt[0] = sectcnt>>8;
   b->sectcnt[1] = sectcnt;
@@ -90,10 +99,10 @@ int mkflop(FILE *bootf, FILE *tosf, FILE *flopf)
     fwrite(buf, 1, 512, flopf);
   }
 
-  /* fill to 360 K */
+  /* fill the disk with zeroes */
   if(fill) {
     memset(buf, 0, 512);
-    for(i = sectcnt+1 ; i < 720 ; i++) {
+    for(i = sectcnt+1 ; i < TOTAL_DISK_SECTORS ; i++) {
       fwrite(buf, 1, 512, flopf);
     }
   }
