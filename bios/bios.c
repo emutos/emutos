@@ -370,7 +370,7 @@ void biosmain(void)
     }
 
     initscreen();               /* clear the screen, etc. */
-    if (coldboot) {
+    if (coldboot || is_ramtos) {
         initinfo();             /* show initial config information */
     }
     

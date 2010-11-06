@@ -2305,4 +2305,4 @@ Start... early ages
   successfully. (vriviere)
 - tools/mkflop.c: Added a check for the size of ramtos.img when doing
   "make flop". (vriviere)
- 
+- bios/bios.c: Show the init screen when EmuTOS is loaded from RAM. (vriviere)
