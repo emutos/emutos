@@ -2299,3 +2299,5 @@ Start... early ages
 2010-11-06
 - bios/bios.c: Fixed a small memory leak when there is no bootstrap program.
   (vriviere)
+- bdos/proc.c, bios/bios.c: Fixed a memory leak and a crash when the
+  relocation of the bootstrap program fails. (vriviere)

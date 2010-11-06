@@ -221,7 +221,6 @@ long xexec(WORD flag, char *path, char *tail, char *env)
         rc = kpgm_relocate(p, (long)path);
         if(rc) {
             D(("BDOS: xexec - kpgm_relloc returned %ld (0x%lx)\n", rc, rc));
-            freeit((MD*)p->p_env, &pmd);
             return(rc);
         }
 

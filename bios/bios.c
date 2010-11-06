@@ -267,6 +267,8 @@ static void bootstrap(void)
     /* relocate the loaded executable */
     r = trap1_pexec(50, (char*)length, pd, "");
     if ( r != (LONG)pd ) {
+        trap1(0x49, (long)pd->p_env); /* Mfree() the environment */
+        trap1(0x49, (long)pd); /* Mfree() the process area */
         return;
     }
 
