@@ -258,25 +258,23 @@ static void bootstrap(void)
     length = nf_bootstrap( (char*)pd->p_lowtpa + sizeof(PD), (long)pd->p_hitpa - pd->p_lowtpa);
 
     /* free the allocated space if something is wrong */
-    if ( length <= 0 ) {
-        trap1(0x49, (long)pd->p_env); /* Mfree() the environment */
-        trap1(0x49, (long)pd); /* Mfree() the process area */
-        return;
-    }
+    if ( length <= 0 )
+        goto err;
 
     /* relocate the loaded executable */
     r = trap1_pexec(50, (char*)length, pd, "");
-    if ( r != (LONG)pd ) {
-        trap1(0x49, (long)pd->p_env); /* Mfree() the environment */
-        trap1(0x49, (long)pd); /* Mfree() the process area */
-        return;
-    }
+    if ( r != (LONG)pd )
+        goto err;
 
     /* set the boot drive for the new OS to use */
     bootdev = nf_getbootdrive();
 
     /* execute the relocated process */
     trap1_pexec(4, "", pd, "");
+
+err:
+    trap1(0x49, (long)pd->p_env); /* Mfree() the environment */
+    trap1(0x49, (long)pd); /* Mfree() the process area */
 }
 
 

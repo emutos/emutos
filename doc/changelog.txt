@@ -2301,3 +2301,5 @@ Start... early ages
   (vriviere)
 - bdos/proc.c, bios/bios.c: Fixed a memory leak and a crash when the
   relocation of the bootstrap program fails. (vriviere)
+- bios/bios.c: Fixed a memory leak when the bootstrap program finishes
+  successfully. (vriviere)
