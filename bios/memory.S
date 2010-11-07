@@ -192,7 +192,7 @@ memconf:
  */
 
         suba.l  a0,a0                   // Note:The TOS 1.6 use these opcode probably to access to the MMU register more slowly than the classic "move.b  #0xa,0xffff8001"  
-        move.b  #0xa,-0x7fff(a0)        // set hw to 2 banks by 2 mb (reg 0xff8001 - memorycontroller)
+        move.b  #0xa,-0x7fff(a0)        // set hw to 2 banks by 2 mb (reg 0xffff8001 - memorycontroller)
 
 /* init the test pattern in bank 0 and 1 */
         movea.w #0x000008,a0            // bank 0
@@ -213,7 +213,7 @@ init_pattern_loop:
 /* In this part:
  * D4 = Actual bank memory size in byte
  * D5 = total memory size (later phystop)
- * D6 = value to the MMU config register (reg 0xff8001) at the end
+ * D6 = value to the MMU config register (reg 0xffff8001) at the end
  * A0 = pattern test offset (0x8,0x40008,0x80008)
  * D1 = pattern test bank base (0x200000 ,0x000000)
  * A5 = pattern test subroutine return address.
@@ -284,7 +284,7 @@ bank_test_end:
 
         // Set the final MMU config
         suba.l  a0,a0                   // Note:The TOS 1.6 use these opcode probably to access to the MMU register more slowly than the classic "move.b  d6,0xffff8001"
-        move.b  d6,-0x7fff(a0)          // set hw memory config (reg 0xff8001 - memorycontroller)
+        move.b  d6,-0x7fff(a0)          // set hw memory config (reg 0xffff8001 - memorycontroller)
 
         bra mem_config_ok
 

@@ -2306,3 +2306,7 @@ Start... early ages
 - tools/mkflop.c: Added a check for the size of ramtos.img when doing
   "make flop". (vriviere)
 - bios/bios.c: Show the init screen when EmuTOS is loaded from RAM. (vriviere)
+
+2010-11-07
+- bios/memory.S, bios/screen.c, bios/tosvars.S, vdi/vdi_raster.c:
+  Use 0xffffxxxx instead of 0x00ffxxxx to access I/O registers. (vriviere)

@@ -348,8 +348,8 @@ WORD egetshift(void)
 
 UWORD get_videl_bpp(void)
 {
-    UWORD f_shift = *(UWORD *)0xff8266;
-    UBYTE st_shift = *(UBYTE *)0xff8260;
+    UWORD f_shift = *(UWORD *)0xffff8266;
+    UBYTE st_shift = *(UBYTE *)0xffff8260;
     /* to get bpp, we must examine f_shift and st_shift.
      * f_shift is valid if any of bits no. 10, 8 or 4
      * is set. Priority in f_shift is: 10 ">" 8 ">" 4, i.e.
@@ -376,14 +376,14 @@ UWORD get_videl_bpp(void)
 
 UWORD get_videl_width(void)
 {
-    return (*(UWORD *)0xff8210) * 16 / get_videl_bpp();
+    return (*(UWORD *)0xffff8210) * 16 / get_videl_bpp();
 }
 
 UWORD get_videl_height(void)
 {
-    UWORD vdb = *(UWORD *)0xff82a8;
-    UWORD vde = *(UWORD *)0xff82aa;
-    UWORD vmode = *(UWORD *)0xff82c2;
+    UWORD vdb = *(UWORD *)0xffff82a8;
+    UWORD vde = *(UWORD *)0xffff82aa;
+    UWORD vmode = *(UWORD *)0xffff82c2;
 
     /* visible y resolution:
      * Graphics display starts at line VDB and ends at line
