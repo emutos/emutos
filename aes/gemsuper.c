@@ -46,6 +46,8 @@
 
 #include "string.h"
 
+#define DBG_GEMSUPER 0
+
 
 #define CONTROL LLGET(pcrys_blk)
 #define GGLOBAL LLGET(pcrys_blk+4)
@@ -65,6 +67,20 @@ static LONG     ad_rso;
 
 
 
+#if DBG_GEMSUPER
+static void aestrace(const char* message)
+{
+        char appname[9];
+        const char* src = rlr->p_name;
+        char* dest = appname;
+
+        while (dest < &appname[8] && *src != ' ')
+                *dest++ = *src++;
+        *dest++ = '\0';
+
+        kprintf("AES: %s: %s\n", appname, message);
+}
+#endif
 #if SINGLAPP
 static UWORD crysbind(WORD opcode, LONG pglobal, WORD int_in[], WORD int_out[], LONG addr_in[])
 #endif
@@ -84,6 +100,9 @@ static UWORD crysbind(WORD opcode, LONG pglobal, WORD int_in[], WORD int_out[],
         {       
                                 /* Application Manager                  */
           case APPL_INIT:
+#if DBG_GEMSUPER
+                aestrace("appl_init()");
+#endif
 #if SINGLAPP
                 LWSET(pglobal, 0x0120);         /* version number       */
                 LWSET(pglobal+2, 0x0001);       /* num of concurrent procs*/
@@ -128,6 +147,9 @@ static UWORD crysbind(WORD opcode, LONG pglobal, WORD int_in[], WORD int_out[],
                 dsptch();
                 break;
           case APPL_EXIT:
+#if DBG_GEMSUPER
+                aestrace("appl_exit()");
+#endif
 #if MULTIAPP
                 ap_exit( TRUE );
 #else
@@ -145,6 +167,9 @@ static UWORD crysbind(WORD opcode, LONG pglobal, WORD int_in[], WORD int_out[],
                 ret = ev_mouse((MOBLK *)&MO_FLAGS, &EV_MX);
                 break;
           case EVNT_MESAG:
+#if DBG_GEMSUPER
+                aestrace("evnt_mesag()");
+#endif
 #if MULTIAPP
                                                 /* standard 16 byte read */
                 ev_mesag(MU_MESAG, rlr, ME_PBUFF);
@@ -157,6 +182,9 @@ static UWORD crysbind(WORD opcode, LONG pglobal, WORD int_in[], WORD int_out[],
                 ev_timer( HW(T_HICOUNT) + LW(T_LOCOUNT) );
                 break;
           case EVNT_MULTI:
+#if DBG_GEMSUPER
+                aestrace("evnt_multi()");
+#endif
                 if (MU_FLAGS & MU_TIMER)
                   maddr = HW(MT_HICOUNT) + LW(MT_LOCOUNT);
                 tree = HW(MB_CLICKS) | LW((MB_MASK << 8) | MB_STATE);

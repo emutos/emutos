@@ -2310,3 +2310,5 @@ Start... early ages
 2010-11-07
 - bios/memory.S, bios/screen.c, bios/tosvars.S, vdi/vdi_raster.c:
   Use 0xffffxxxx instead of 0x00ffxxxx to access I/O registers. (vriviere)
+- aes/gemsuper.c, desk/deskmain.c: Moved desktop traces into the AES,
+  since kprintf() is not always available from user mode. (vriviere)
