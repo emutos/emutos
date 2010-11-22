@@ -61,7 +61,7 @@ extern int is_ramtos;           /* 1 if the TOS is running in RAM */
  */
 void bmem_init(void)
 {
-    LONG a;
+    ULONG a;
 
 #if DBG_MEM
     kprintf("_etext = 0x%08lx\n", (LONG)_etext);
@@ -70,8 +70,8 @@ void bmem_init(void)
 #endif
 
     /* detect by looking at os_entry, if TOS in RAM */
-    a = ((LONG) os_entry) & 0xffffff;
-    if( a == 0xe00000L || a == 0xfc0000L ) {
+    a = (ULONG) os_entry;
+    if( a == 0x00e00000L || a == 0x00fc0000L ) {
         is_ramtos = 0;
     } else {
         is_ramtos = 1;
