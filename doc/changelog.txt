@@ -2317,3 +2317,6 @@ Start... early ages
 - Makefile: Use full 32-bit addresses, including in disassembly. This is
   necessary when the ROM is located at a nonstandard place. (vriviere)
 - bios/biosmem.c: Cleaned-up bmem_init() for 32-bit addresses. (vriviere)
+- bios/kprint.c: Improved dopanic() output. Better support for ColdFire
+  stack frames. Each line must be printed with a single kcprintf() to be
+  well displayed when the debug traces go to the console. (vriviere)

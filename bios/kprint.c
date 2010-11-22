@@ -210,7 +210,6 @@ void dopanic(const char *fmt, ...)
         kcprintf("No saved info in dopanic; halted.\n");
         halt();
     }
-    kcprintf("Panic: ");
     if (proc_enum == 0) {
         va_list ap;
         va_start(ap, fmt);
@@ -226,12 +225,16 @@ void dopanic(const char *fmt, ...)
         } *s = (void *)proc_stk;
 
         if (proc_enum >= 2 && proc_enum < numberof(exc_messages)) {
-            kcprintf("%s. fv = 0x%04x, sr = 0x%04x, pc = 0x%08lx\n",
+            kcprintf("Panic: %s. fv = 0x%04x, sr = 0x%04x, pc = 0x%08lx\n",
                      exc_messages[proc_enum], s->fv, s->sr, s->pc);
         } else {
-            kcprintf("Exception number %d. fv = 0x%04x, sr = 0x%04x, pc = 0x%08lx\n",
+            kcprintf("Panic: Exception number %d. fv = 0x%04x, sr = 0x%04x, pc = 0x%08lx\n",
                     (int) proc_enum, s->fv, s->sr, s->pc);
         }
+        kcprintf("       format = %d, vector = %d, fault = %d\n",
+            (s->fv & 0xf000) >> 12,
+            (s->fv & 0x03fc) >> 2,
+            (s->fv & 0x0c00) >> 8 | (s->fv & 0x0002));
     }
 #else
     } else if (proc_enum == 2 || proc_enum == 3) {
@@ -277,7 +280,7 @@ void dopanic(const char *fmt, ...)
                pc = s000->pc;
                address = s000->address;
         }
-        kcprintf("%s. misc = 0x%04x, address = 0x%08lx\n",
+        kcprintf("Panic: %s. misc = 0x%04x, address = 0x%08lx\n",
                  exc_messages[proc_enum], misc, address);
         if (mcpu == 40) {
             kcprintf("sr = 0x%04x, pc = 0x%08lx\n", sr, pc);
@@ -291,14 +294,14 @@ void dopanic(const char *fmt, ...)
             WORD sr;
             LONG pc;
         } *s = (void *)proc_stk;
-        kcprintf("%s. sr = 0x%04x, pc = 0x%08lx\n",
+        kcprintf("Panic: %s. sr = 0x%04x, pc = 0x%08lx\n",
                  exc_messages[proc_enum], s->sr, s->pc);
     } else {
         struct {
             WORD sr;
             LONG pc;
         } *s = (void *)proc_stk;
-        kcprintf("Exception number %d. sr = 0x%04x, pc = 0x%08lx\n",
+        kcprintf("Panic: Exception number %d. sr = 0x%04x, pc = 0x%08lx\n",
                 (int) proc_enum, s->sr, s->pc);
     }
 #endif
