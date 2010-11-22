@@ -2312,3 +2312,7 @@ Start... early ages
   Use 0xffffxxxx instead of 0x00ffxxxx to access I/O registers. (vriviere)
 - aes/gemsuper.c, desk/deskmain.c: Moved desktop traces into the AES,
   since kprintf() is not always available from user mode. (vriviere)
+
+2010-11-22
+- Makefile: Use full 32-bit addresses, including in disassembly. This is
+  necessary when the ROM is located at a nonstandard place. (vriviere)

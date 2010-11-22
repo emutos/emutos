@@ -102,8 +102,8 @@ INDENT = indent -kr
 # Linker with relocation information and binary output (image)
 LD = $(CC) $(MULTILIBFLAGS) -nostartfiles -nostdlib
 LDFLAGS = -Wl,--oformat,binary -lgcc
-LDFLAGS_T1 = -Wl,-Ttext=0xfc0000,-Tbss=0x000000
-LDFLAGS_T2 = -Wl,-Ttext=0xe00000,-Tbss=0x000000
+LDFLAGS_T1 = -Wl,-Ttext=0x00fc0000,-Tbss=0x00000000
+LDFLAGS_T2 = -Wl,-Ttext=0x00e00000,-Tbss=0x00000000
 
 # C compiler for MiNT
 CC = m68k-atari-mint-gcc
@@ -263,10 +263,10 @@ help:
 	@echo "target  meaning"
 	@echo "------  -------"
 	@echo "help    this help message"
-	@echo "all     emutos2.img, a TOS 2 ROM image (0xE00000)"
-	@echo "192     etos192k.img, EmuTOS ROM padded to size 192 KB (starting at 0xFC0000)"
-	@echo "256     etos256k.img, EmuTOS ROM padded to size 256 KB (starting at 0xE00000)"
-	@echo "512     etos512k.img, EmuTOS ROM padded to size 512 KB (starting at 0xE00000)" 
+	@echo "all     emutos2.img, a TOS 2 ROM image (0x00E00000)"
+	@echo "192     etos192k.img, EmuTOS ROM padded to size 192 KB (starting at 0x00FC0000)"
+	@echo "256     etos256k.img, EmuTOS ROM padded to size 256 KB (starting at 0x00E00000)"
+	@echo "512     etos512k.img, EmuTOS ROM padded to size 512 KB (starting at 0x00E00000)" 
 	@echo "aranym  etos512k.img, suitable for ARAnyM" 
 	@echo "ram     ramtos.img + boot.prg, a RAM tos"
 	@echo "flop    emutos.st, a bootable floppy with RAM tos"
@@ -275,7 +275,7 @@ help:
 	@echo "tgz     bundles almost it all into a tgz archive"
 	@echo "depend  creates dependancy file (makefile.dep)"
 	@echo "dsm     dsm.txt, an edited desassembly of emutos.img"
-	@echo "fdsm    fal_dsm.txt, like above, but for 0xE00000 ROMs"
+	@echo "fdsm    fal_dsm.txt, like above, but for 0x00E00000 ROMs"
 	@echo "*.dsm   desassembly of any .c or almost any .img file"
 
 #
@@ -663,8 +663,8 @@ TOCLEAN += *.dsm dsm.txt fal_dsm.txt
 	vma=`sed -e '/^\.text/!d;s/[^0]*//;s/ .*//;q' $<`; \
 	$(OBJDUMP) --target=binary --architecture=m68k \
 	  --adjust-vma=$$vma -D $*.img \
-	  | sed -e '/:/!d;/^  /!d;s/^  //;s/^ /0/;s/:	/: /' > dsm.tmp
-	sed -e '/^ *0x00/!d;s///;s/  */:  /' $< > map.tmp
+	  | sed -e '/^ *[0-9a-f]*:/!d;s/^  /00/;s/:	/: /' > dsm.tmp
+	sed -e '/^ *0x/!d;s///;s/  */:  /' $< > map.tmp
 	cat dsm.tmp map.tmp | LC_ALL=C sort > $@
 	rm -f dsm.tmp map.tmp
 
