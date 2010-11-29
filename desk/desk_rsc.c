@@ -1613,7 +1613,7 @@ char *desk_rs_fstr[] = {
     N_("  Show as icons  \007S"),
     N_("application"),
     N_("documents"),
-    "FORMAT.PRG",
+    NULL,                       /* unused, was "FORMAT.PRG" */
     N_("  Show as text   \007S"),
     NULL,                       /* unused, was "DESKHI.ICN" */
     "A:\\EMUDESK.INF",
@@ -1626,7 +1626,7 @@ char *desk_rs_fstr[] = {
     "#G 08 FF *.PRG@ @",
     "#P 08 FF *.TTP@ @",
     "#F 08 FF *.TOS@ @",
-    "FORMAT.TTP",
+    NULL,                       /* unused, was "FORMAT.TTP" */
     N_("New Folder"),
     N_("Disk Drives:"),
     "am",

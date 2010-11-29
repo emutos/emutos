@@ -184,7 +184,7 @@
 
 #define STDOCU          3
 
-#define STDKFRM1        4
+/*#define STDKFRM1        4*/     /* unused */
 
 #define STASTEXT        5
 
@@ -210,7 +210,7 @@
 
 #define ST6STD          16
 
-#define STDKFRM2        17
+/*#define STDKFRM2        17*/     /* unused */
 
 #define STNEWFOL        18
 

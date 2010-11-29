@@ -729,11 +729,11 @@ int do_format(WORD curr)
 
           if (ret == 1)
           {
-            strcpy(&G.g_cmd[0],ini_str(STDKFRM1));
+            strcpy(&G.g_cmd[0], "FORMAT.PRG");
             foundit = shel_find(G.a_cmd);
             if (!foundit)
             {
-              strcpy(&G.g_cmd[0], ini_str(STDKFRM2));
+              strcpy(&G.g_cmd[0], "FORMAT.TTP");
               foundit = shel_find(G.a_cmd);
             }
 

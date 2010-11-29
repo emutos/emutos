@@ -2320,3 +2320,8 @@ Start... early ages
 - bios/kprint.c: Improved dopanic() output. Better support for ColdFire
   stack frames. Each line must be printed with a single kcprintf() to be
   well displayed when the debug traces go to the console. (vriviere)
+
+2010-11-29
+- desk/desk_rsc.c, desk/desk_rsc.h, desk/desksupp.c: Moved the strings
+  FORMAT.PRG and FORMAT.TTP from the resource file to desksupp.c to make
+  room. (vriviere)
