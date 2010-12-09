@@ -1,3 +1,13 @@
+/*
+ * deskstart.S - assembler startup code of the desktop
+ *
+ * Copyright (c) 1987 Digital Research Inc.
+ *               2001 Lineo, Inc.
+ *               2002, 2010 The EmuTOS development team
+ *
+ * This file is distributed under the GPL, version 2 or at your
+ * option any later version.  See doc/license.txt for details.
+ */
 
 .global _deskstart
 .global _gemdos
