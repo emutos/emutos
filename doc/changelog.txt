@@ -2325,3 +2325,6 @@ Start... early ages
 - desk/desk_rsc.c, desk/desk_rsc.h, desk/desksupp.c: Moved the strings
   FORMAT.PRG and FORMAT.TTP from the resource file to desksupp.c to make
   room. (vriviere)
+
+2010-12-26
+- bios/conout.c: Fixed console line wrap in high resolutions. (vriviere)

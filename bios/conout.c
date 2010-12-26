@@ -108,7 +108,7 @@ ascii_out (int ch)
         int y = v_cur_cy;
 
         /* perform cell carriage return. */
-        cell = v_bas_ad + v_cel_wr * y;
+        cell = v_bas_ad + (ULONG)v_cel_wr * y;
         v_cur_cx = 0;                   /* set X to first cell in line */
 
         /* perform cell line feed. */
