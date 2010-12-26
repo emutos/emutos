@@ -70,6 +70,8 @@ extern void rm_term(void);
 #define xmalloc(a) jmp_gemdos_l(0x48,a);
 #define xmfree(a) jmp_gemdos_p(0x49,a);
 #define xattrib(a,b,c) jmp_gemdos_pww(0x43,a,b,c)
+#define Cconrs(a) jmp_gemdos_p(0xa,a)
+#define Sversion() jmp_gemdos_v(0x30)
 
 
 #define jmp_bios_w(a,b)     jmp_bios((WORD)(a),(WORD)(b))
@@ -721,7 +723,7 @@ cr2cont(void)
 {
     wrt(_("CR to continue..."));
     lin[0] = 126;
-    jmp_gemdos(10, &lin[0]);
+    Cconrs(&lin[0]);
 }
 
 
@@ -1766,7 +1768,7 @@ readSi(char *lin)
     i = j = 0;
 
     lin[0] = 126;
-    jmp_gemdos(10, &lin[0]);
+    Cconrs(&lin[0]);
 
     lin[lin[1] + 2] = 0;
 
@@ -2264,7 +2266,7 @@ xCmdLn(char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl)
             else if (xncmps(8, s, "VERSION")) {
                 if (*nonStdIn)
                     dspCL(&argv[0]);
-                i = jmp_gemdos(0x30);
+                i = Sversion();
                 prtdecl((long) (i & 0xFF));
                 xwrite(1, 1L, ".");
                 prtdecl((long) ((i >> 8) & 0xFF));
