@@ -1482,7 +1482,8 @@ setPath(char *p)
 static long
 execPrgm(char *s, char *cmdtl)
 {
-    char cmd[100], buf[100];
+    char cmd[260]; /* Command name with extension */
+    char buf[260]; /* Absolute executable name using PATH */
     char ch, *cmdptr;
     int k, i, j, gtpath, envLen;
     int tlNtFnd = -1;
@@ -1606,7 +1607,8 @@ execBat(char *s, char *parms[])
     int i, j, k, gtpath;
     int tlNtFnd = -1;
     char ch, *cmdptr;
-    char cmd[100], buf[100];
+    char cmd[260]; /* Command name with extension */
+    char buf[260]; /* Absolute executable name using PATH */
 
     for (i = 0; (cmd[i] = *s); s++, i++)
         if (*s == '.')

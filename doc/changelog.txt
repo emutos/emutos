@@ -2328,3 +2328,5 @@ Start... early ages
 
 2010-12-26
 - bios/conout.c: Fixed console line wrap in high resolutions. (VRI)
+- cli/command.c: Fixed crash in EmuCON when typing a command name longer
+  than 100 characters. (VRI)
