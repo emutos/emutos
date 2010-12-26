@@ -2156,15 +2156,15 @@ Start... early ages
 
 2010-01-19
 - bdos/fsdir.c: Fixed Dcreate(). The new directory had a second "." entry
-  instead of "..". (vriviere)
+  instead of "..". (VRI)
 
 2010-01-20
 - bios/floppy.c bios/floppy.h bios/xbios.c: The XBIOS floppy functions now
-  return errors codes in the full 32 bits of d0 like TOS. (vriviere)
+  return errors codes in the full 32 bits of d0 like TOS. (VRI)
 
 2010-02-21
 - cli/command.c: In EmuCON, removed the volume label from the list of files
-  displayed by the DIR command. (vriviere)
+  displayed by the DIR command. (VRI)
 
 2010-05-03
 - bdos/fsdrive.c: Renamed log() to log_media() so that it can not be confused
@@ -2177,15 +2177,15 @@ Start... early ages
   working stable yet, so the code is still disabled by default. (THH)
 
 2010-05-08
-- vdi/vdi_text.c: Fixed infinite loop in act_siz(). (vriviere)
+- vdi/vdi_text.c: Fixed infinite loop in act_siz(). (VRI)
 - vdi/vdi_tblit.S: Fixed bit_blt() which was copying garbage when the source
   rectangle had infortunate alignement, like the background of most TeraDesk
-  dialogs. (vriviere)
+  dialogs. (VRI)
 
 * Release: 0.8.5
 
 2010-05-13
-- bios/linea.S: Fixed crash in Line A $a00f stub. (vriviere)
+- bios/linea.S: Fixed crash in Line A $a00f stub. (VRI)
 
 2010-05-17
 - Change name of internal VDI functions in conflict with standard VDI name
@@ -2203,10 +2203,10 @@ Start... early ages
 - vdi/vdi_defs.h, vdi/vdi_tblit.S, vdi/vdi_text.c: Added a Vwk* parameter
   to text_blt() in order to be able to transmit it to act_siz(). Also fixed
   text_blt() for backuping the scratch registers when calling act_siz().
-  (patch by Jean-Francois DEL NERO + vriviere)
+  (patch by Jean-Francois DEL NERO + VRI)
 
 2010-05-31
-- Makefile: (vriviere)
+- Makefile: (VRI)
    -> Replaced recursive calls to make by $(MAKE). Replaced -Xlinker by -Wl.
    -> Removed useless command chainings with the shell's ';'.
    -> Added UNIQUE initialization to avoid warnings when
@@ -2216,7 +2216,7 @@ Start... early ages
 
 2010-06-06
 - desk/deskmain.c, aes/gemdisp.c, aes/geminit.c: Added some debug messages
-  and the defines DBG_DESKMAIN, DBG_GEMDISP and DBG_GEMINIT. (vriviere)
+  and the defines DBG_DESKMAIN, DBG_GEMDISP and DBG_GEMINIT. (VRI)
 
 2010-06-06
 - aes/gemasm.S, aes/gemdosif.S, aes/gemstart.S, aes/gsx2.S, aes/large.S,
@@ -2226,43 +2226,43 @@ Start... early ages
   bios/startup.S, bios/tosvars.S, bios/vectors.S, cli/coma.S, include/asm.h,
   include/config.h, util/memmove.S, util/memset.S, util/miscasm.S,
   util/nlsasm.S, util/stringasm.S, vdi/vdi_asm.S, vdi/vdi_raster.c,
-  vdi/vdi_tblit.S: Added ColdFire V4e CPU support. (vriviere)
+  vdi/vdi_tblit.S: Added ColdFire V4e CPU support. (VRI)
 - Makefile: Added the COLDFIRE variable. Set it to 1 to build a ROM version
-  compatible only with ColdFire V4e processors. (vriviere)
+  compatible only with ColdFire V4e processors. (VRI)
 
 2010-06-13
 - bios/bios.c, bios/initinfo.c, bios/initinfo.h:
-  Clear the screen on reboot. (vriviere)
+  Clear the screen on reboot. (VRI)
 
 2010-06-13
 - bios/gemasm.S: Changed the dsptch/switchto implementation to switch the
-  AES tasks using a standard RTS rather than a CPU dependent RTE. (vriviere)
+  AES tasks using a standard RTS rather than a CPU dependent RTE. (VRI)
 
 2010-06-15
-- bdos/proc.c: Start new processes in the standard IPL 3. (vriviere)
+- bdos/proc.c: Start new processes in the standard IPL 3. (VRI)
 
 2010-06-15
-- desk/deskstart.S: Run the desktop in user mode. (vriviere)
+- desk/deskstart.S: Run the desktop in user mode. (VRI)
 
 2010-06-15
-- desk/deskact.c: Fixed crash when moving icons. (vriviere)
+- desk/deskact.c: Fixed crash when moving icons. (VRI)
 
 2010-06-19
-- bios/processor.S: Implemented invalidate_icache() for ColdFire. (vriviere)
+- bios/processor.S: Implemented invalidate_icache() for ColdFire. (VRI)
 
 2010-06-19
-- cli/coma.S: Run EmuCON in user mode. (vriviere)
+- cli/coma.S: Run EmuCON in user mode. (VRI)
 
 2010-08-02
-- bios/conout.c: Fixed crash on reverse scrolling. (vriviere)
+- bios/conout.c: Fixed crash on reverse scrolling. (VRI)
 - bdos/fs.h, bdos/fsdir.c: VFAT long file names are now totally ignored
-  and are no longer displayed as invalid files. (vriviere)
+  and are no longer displayed as invalid files. (VRI)
 - bdos/fsopnclo.c: Removed the characters '^`~ from the list of forbidden
-  characters in filenames to match MS-DOS rules. (vriviere)
+  characters in filenames to match MS-DOS rules. (VRI)
 
 2010-09-15
 - tools/tos-lang-change.c: Added missing languages. (patch by Dima Sobolev
-  + vriviere)
+  + VRI)
 - country.mk, bios/country.h, bios/ctrycodes.h, bios/fnt_ru_6x6.c,
   bios/fnt_ru_8x16.c, bios/fnt_ru_8x8.c, bios/keyb_ru.h, po/LINGUAS,
   po/ru.po, tools/tos-lang-change.c: Added Russian language. (patch by
@@ -2272,59 +2272,59 @@ Start... early ages
 - bios/iorec.h: Added a workaround for GCC 4.5.x bug 45052. Because of that,
   the keyboard didn't work when USE_STOP_INSN_TO_FREE_HOST_CPU=0. If unsure,
   compile with -fno-ipa-pure-const as full workaround. That bug will be
-  fixed in GCC 4.5.2. (vriviere)
+  fixed in GCC 4.5.2. (VRI)
 
 2010-09-29
-- bios/ikbd.c: Added key click on key repeat. (vriviere)
+- bios/ikbd.c: Added key click on key repeat. (VRI)
 
 2010-10-02
 - bdos/bdosmain.c, bdos/console.c, cli/command.c: Fixed BDOS and EmuCON to
-  allow the usage of the full 8-bit character set on console I/O. (vriviere)
+  allow the usage of the full 8-bit character set on console I/O. (VRI)
 - bios/xhdi.c: For unimplemented XHDI opcodes, return EINVFN instead of ERR.
-  Patch contributed by David Galvez. (vriviere)
+  Patch contributed by David Galvez. (VRI)
 
 2010-10-25
 - bios/natfeat.S, bios/xhdi.c, bios/xhdi.h: Reimplemented the XHDI stub to
-  backup all the registers to conform to the XHDI specification. (vriviere)
+  backup all the registers to conform to the XHDI specification. (VRI)
 
 2010-10-26
 - bdos/umem.c: Fixed Malloc() and Mxalloc() to return blocks aligned on
-  multiple of 4 bytes. Long alignment improves speed in FastRam. (vriviere)
+  multiple of 4 bytes. Long alignment improves speed in FastRam. (VRI)
 
 2010-11-02
-- bdos/iumem.c, bdos/umem.c: Improved traces on memory management. (vriviere)
+- bdos/iumem.c, bdos/umem.c: Improved traces on memory management. (VRI)
 - bdos/iumem.c, bdos/umem.c, bios/biosmem.c: Really fix Malloc() and others
-  for 4-byte alignment. The previous patch was not enough. (vriviere)
+  for 4-byte alignment. The previous patch was not enough. (VRI)
 
 2010-11-06
 - bios/bios.c: Fixed a small memory leak when there is no bootstrap program.
-  (vriviere)
+  (VRI)
 - bdos/proc.c, bios/bios.c: Fixed a memory leak and a crash when the
-  relocation of the bootstrap program fails. (vriviere)
+  relocation of the bootstrap program fails. (VRI)
 - bios/bios.c: Fixed a memory leak when the bootstrap program finishes
-  successfully. (vriviere)
+  successfully. (VRI)
 - tools/mkflop.c: Added a check for the size of ramtos.img when doing
-  "make flop". (vriviere)
-- bios/bios.c: Show the init screen when EmuTOS is loaded from RAM. (vriviere)
+  "make flop". (VRI)
+- bios/bios.c: Show the init screen when EmuTOS is loaded from RAM. (VRI)
 
 2010-11-07
 - bios/memory.S, bios/screen.c, bios/tosvars.S, vdi/vdi_raster.c:
-  Use 0xffffxxxx instead of 0x00ffxxxx to access I/O registers. (vriviere)
+  Use 0xffffxxxx instead of 0x00ffxxxx to access I/O registers. (VRI)
 - aes/gemsuper.c, desk/deskmain.c: Moved desktop traces into the AES,
-  since kprintf() is not always available from user mode. (vriviere)
+  since kprintf() is not always available from user mode. (VRI)
 
 2010-11-22
 - Makefile: Use full 32-bit addresses, including in disassembly. This is
-  necessary when the ROM is located at a nonstandard place. (vriviere)
-- bios/biosmem.c: Cleaned-up bmem_init() for 32-bit addresses. (vriviere)
+  necessary when the ROM is located at a nonstandard place. (VRI)
+- bios/biosmem.c: Cleaned-up bmem_init() for 32-bit addresses. (VRI)
 - bios/kprint.c: Improved dopanic() output. Better support for ColdFire
   stack frames. Each line must be printed with a single kcprintf() to be
-  well displayed when the debug traces go to the console. (vriviere)
+  well displayed when the debug traces go to the console. (VRI)
 
 2010-11-29
 - desk/desk_rsc.c, desk/desk_rsc.h, desk/desksupp.c: Moved the strings
   FORMAT.PRG and FORMAT.TTP from the resource file to desksupp.c to make
-  room. (vriviere)
+  room. (VRI)
 
 2010-12-26
-- bios/conout.c: Fixed console line wrap in high resolutions. (vriviere)
+- bios/conout.c: Fixed console line wrap in high resolutions. (VRI)
