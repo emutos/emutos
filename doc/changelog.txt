@@ -2330,3 +2330,4 @@ Start... early ages
 - bios/conout.c: Fixed console line wrap in high resolutions. (VRI)
 - cli/command.c: Fixed crash in EmuCON when typing a command name longer
   than 100 characters. (VRI)
+- bios/conout.c: Fixed the BIOS console to support 256 color modes. (VRI)

@@ -154,10 +154,9 @@ ascii_out (int ch)
 void
 blank_out (int topx, int topy, int botx, int boty)
 {
-    UWORD color;                        /* bg color value */
+    UWORD color = v_col_bg;             /* bg color value */
     int pair, pairs, row, rows, offs;
-    LONG pl01 = 0x00000000;             /* bits on screen for planes 0 + 1 */
-    LONG pl23 = 0x00000000;             /* bits on screen for planes 2 + 3 */
+    UBYTE * addr = cell_addr(topx, topy);   /* running pointer to screen */
 
     /* # of cell-pairs per row in region -1 */
     pairs = (botx - topx) / 2 + 1;      /* pairs of characters */
@@ -165,100 +164,59 @@ blank_out (int topx, int topy, int botx, int boty)
     /* calculate the BYTE offset from the end of one row to next start */
     offs = v_lin_wr - pairs * 2 * v_planes;
 
-    /* d2 = # of lines in region - 1 */
+    /* # of lines in region - 1 */
     rows = (boty - topy + 1) * v_cel_ht;
 
-    color = v_col_bg;           /* background color to d5 */
+    if (v_planes > 1) {
+        /* Color modes are optimized for handling 2 planes at once */
+        ULONG pair_planes[4];        /* bits on screen for 8 planes max */
+        UWORD i;
 
-    /* test for 1, 2 or 4 planes */
-    switch (v_planes) {
-    case 4:
-        {
-            /* 4 planes */
-            ULONG * addr;           /* running pointer to screen */
-
-            /* set the high WORD of our LONG for plane 0 + 1 */
+        /* Precalculate the pairs of plane data */
+        for (i = 0; i < v_planes / 2; i++) {
+            /* set the high WORD of our LONG for the current plane */
             if ( color & 0x1 )
-                pl01 = 0xffff0000;
-
-            /* set the low WORD of our LONG for plane 0 + 1 */
+                pair_planes[i] = 0xffff0000;
+            else
+                pair_planes[i] = 0x00000000;
             color = color >> 1;         /* get next bit */
-            if ( color & 0x1 )
-                pl01 |= 0x0000ffff;
 
-            /* set the high WORD of our LONG for plane 2 + 3 */
+            /* set the low WORD of our LONG for the current plane */
+            if ( color & 0x1 )
+                pair_planes[i] |= 0x0000ffff;
             color = color >> 1;         /* get next bit */
-            if ( color & 0x1 )
-                pl23 = 0xffff0000;
-
-            /* set the low WORD of our LONG for plane 2 + 3 */
-            color = color >> 1;         /* get next bit */
-            if ( color & 0x1 )
-                pl23 |= 0x0000ffff;
-
-            offs >>= 2;                   /* from BYTE to LONG offset */
-            addr = (ULONG*)cell_addr(topx, topy);       /* start address */
-
-            /* do all rows in region */
-            for (row = rows; row--;) {
-                /* loop through all cell pairs (LONG) */
-                for (pair = pairs; pair--;) {
-                    *addr++ = pl01;       /* fill background to planes 0 & 1 */
-                    *addr++ = pl23;       /* fill background to planes 2 & 3 */
-                }
-                addr += offs;       /* skip non-region area with stride advance */
-            }
         }
-        break;
 
-    case 2:
-        {
-            /* 2 planes */
-            ULONG * addr;           /* running pointer to screen */
-
-            /* set the high WORD of our LONG for plane 0 + 1 */
-            if ( color & 0x1 )
-                pl01 = 0xffff0000;
-
-            /* set the low WORD of our LONG for plane 0 + 1 */
-            color = color >> 1;         /* get next bit */
-            if ( color & 0x1 )
-                pl01 |= 0x0000ffff;
-
-            offs >>= 2;                   /* from BYTE to LONG offset */
-            addr = (ULONG*)cell_addr(topx, topy);       /* start address */
-
-            /* do all rows in region */
-            for (row = rows; row--;) {
-                /* loop through all cell pairs (LONG) */
-                for (pair = pairs; pair--;) {
-                    *addr++ = pl01;       /* fill background to planes 0 & 1 */
+        /* do all rows in region */
+        for (row = rows; row--;) {
+            /* loop through all cell pairs */
+            for (pair = pairs; pair--;) {
+                for (i = 0; i < v_planes / 2; i++) {
+                    *(ULONG*)addr = pair_planes[i];
+                    addr += sizeof(ULONG);
                 }
-                addr += offs;       /* skip non-region area with stride advance */
             }
+            addr += offs;       /* skip non-region area with stride advance */
         }
-        break;
+    }
+    else {
+        /* Monochome mode */
+        UWORD pl;               /* bits on screen for current plane */
 
-    default:
-        {
-            /* if monochrome */
-            UWORD * addr;           /* running pointer to screen */
+        /* set the WORD for plane 0 */
+        if ( color & 0x0001 )
+            pl = 0xffff;
+        else
+            pl = 0x0000;
 
-            /* set the WORD for plane 0 */
-            if ( color & 0x0001 )
-                pl01 = 0xffff;
-
-            offs >>= 1;                   /* from BYTE to WORD offset */
-            addr = (UWORD*)cell_addr(topx, topy);       /* start address */
-
-            /* do all rows in region */
-            for (row = rows; row--;) {
-                /* loop through all cell pairs (LONG) */
-                for (pair = pairs; pair--;) {
-                    *addr++ = pl01;       /* fill background to planes 0 & 1 */
-                }
-                addr += offs;       /* skip non-region area with stride advance */
+        /* do all rows in region */
+        for (row = rows; row--;) {
+            /* loop through all cell pairs */
+            for (pair = pairs; pair--;) {
+                *(UWORD*)addr = pl;
+                addr += sizeof(UWORD);
             }
+            addr += offs;       /* skip non-region area with stride advance */
         }
     }
 }
