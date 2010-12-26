@@ -558,16 +558,15 @@ erase_from_home (void)
 static void
 do_cnt_esce (void)
 {
+    invert_cell(v_cur_cx, v_cur_cy);        /* complement cursor. */
+    v_stat_0 |= M_CVIS;                     /* set visibility bit. */
+
     /* see if flashing is enabled. */
     if ( v_stat_0 & M_CFLASH ) {
-        invert_cell(v_cur_cx, v_cur_cy);        /* complement cursor. */
         v_stat_0 |= M_CSTATE;                   /* set cursor on. */
-        v_stat_0 |= M_CVIS;                     /* set visibility bit. */
 
-    }
-    else {
-        v_stat_0 |= M_CVIS;                     /* set visibility bit. */
-        invert_cell(v_cur_cx, v_cur_cy);        /* complement cursor. */
+        /* do not flash the cursor when it moves */
+        v_cur_tim = v_period;                   /* reset the timer. */
     }
 }
 

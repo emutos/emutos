@@ -127,6 +127,11 @@ ascii_out (int ch)
         neg_cell(v_cur_ad);             /* display cursor. */
         v_stat_0 |= M_CSTATE;           /* set state flag (cursor on). */
         v_stat_0 |= M_CVIS;             /* end of critical section. */
+
+        /* do not flash the cursor when it moves */
+        if (v_stat_0 & M_CFLASH) {
+            v_cur_tim = v_period;       /* reset the timer. */
+        }
     }
 }
 
@@ -409,6 +414,9 @@ move_cursor(int x, int y)
             /* not displayed */
             v_stat_0 |= M_CVIS;                 /* end of critical section. */
             v_cur_ad = cell_addr(x, y);         /* just set new coordinates */
+
+            /* do not flash the cursor when it moves */
+            v_cur_tim = v_period;       /* reset the timer. */
             return;
         }
     }

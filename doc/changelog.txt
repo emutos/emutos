@@ -2333,3 +2333,4 @@ Start... early ages
 - bios/conout.c: Fixed the BIOS console to support 256 color modes. (VRI)
 - bios/conout.c: In EmuCON, keep the cursor enabled when running textmmode
   programs. (VRI)
+- bios/conout.c: Do not flash the cursor when it moves. (VRI)
