@@ -198,6 +198,67 @@ xncmps(int n, char *s, char *d)
 }
 
 
+/*
+ * xtoupper - convert a single character to uppercase
+ */
+static char
+xtoupper(char c)
+{
+    if (c >= 'a' && c <= 'z')
+        c -= 'a' - 'A';
+
+    return c;
+}
+
+
+/*
+ * xcasecmps - compare strings case insensitive
+ * returns 1 if the strings are equal, otherwise 0.
+ */
+static int
+xcasecmps(const char *s1, const char *s2)
+{
+    for(;; s1++, s2++)
+    {
+        /* End of both strings */
+        if (*s1 == '\0' && *s2 == '\0')
+            return 1;
+
+        /* End of one string only */
+        if (*s1 == '\0' || *s2 == '\0')
+            return 0;
+
+        /* Standard case */
+        if (xtoupper(*s1) != xtoupper(*s2))
+            return 0;
+    }
+}
+
+
+/*
+ * is_graphical_program - check if a program is graphical (versus text mode)
+ */
+static int
+is_graphical_program(const char* name)
+{
+    const char* p;
+
+    /* Find the dot */
+    for (p = name; *p && *p != '.'; p++);
+
+    /* No dot, not graphical */
+    if (!*p)
+        return 0;
+
+    /* Advance to the extension */
+    p++;
+    
+    /* Check for graphical extensions */
+    return xcasecmps(p, "PRG")
+        || xcasecmps(p, "APP")
+        || xcasecmps(p, "GTP");
+}
+
 
 static void
 prthex(unsigned h)
@@ -280,8 +341,7 @@ static void
 ucase(char *s)
 {
     for (; *s; s++) {
-        if ((*s >= 'a') && (*s <= 'z'))
-            *s &= ~0x20;
+        *s = xtoupper(*s);
     }
 }
 
@@ -1561,7 +1621,9 @@ execPrgm(char *s, char *cmdtl)
 
     cmdptr = (char *) &cmd;
     j = 0;
-    Cursconf(0, 0);             /* XBIOS switch cursor off before command */
+    
+    if (is_graphical_program(cmd))
+        Cursconf(0, 0);         /* XBIOS switch cursor off before command */
 
     /* Loop through semicolon seperated command line */
     while (((err = xexec(0, cmdptr, cmdtl, envPtr)) == -33) && (gtpath)) {

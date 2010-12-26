@@ -2331,3 +2331,5 @@ Start... early ages
 - cli/command.c: Fixed crash in EmuCON when typing a command name longer
   than 100 characters. (VRI)
 - bios/conout.c: Fixed the BIOS console to support 256 color modes. (VRI)
+- bios/conout.c: In EmuCON, keep the cursor enabled when running textmmode
+  programs. (VRI)
