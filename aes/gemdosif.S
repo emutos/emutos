@@ -24,6 +24,7 @@
 .globl _takecpm
 .globl _back
 .globl _far_mcha
+.globl _aes_wheel
 .globl _far_bcha
 .globl _drawrat
 
@@ -286,6 +287,31 @@ _far_mcha:
         move.w  d1,-(sp)
         move.w  d0,-(sp)
         move.l  #_mchange,-(sp)
+        jsr     _forkq
+        addq.l  #8,sp
+#ifdef __mcoldfire__
+        movem.l (sp),d0-d2/a0-a2
+        lea     24(sp),sp
+#else
+        movem.l (sp)+,d0-d2/a0-a2
+#endif
+        movea.l gstksave,sp
+        rts
+
+/* AES mouse wheel handler called by the VDI */
+_aes_wheel:
+        move.l  sp,gstksave
+        lea     gstack,sp
+#ifdef __mcoldfire__
+        lea     -24(sp),sp
+        movem.l d0-d2/a0-a2,(sp)
+#else
+        movem.l d0-d2/a0-a2,-(sp)
+#endif
+
+        move.w  d1,-(sp)
+        move.w  d0,-(sp)
+        move.l  #_wheel_change,-(sp)
         jsr     _forkq
         addq.l  #8,sp
 #ifdef __mcoldfire__

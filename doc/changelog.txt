@@ -2334,3 +2334,8 @@ Start... early ages
 - bios/conout.c: In EmuCON, keep the cursor enabled when running textmmode
   programs. (VRI)
 - bios/conout.c: Do not flash the cursor when it moves. (VRI)
+
+2010-12-28
+- aes/funcdef.h, aes/gemdosif.S, aes/gemdosif.h, aes/gemgsxif.c,
+  aes/gemgsxif.h, aes/geminput.c: Added minimal support for mouse wheel in
+  the AES. (VRI)

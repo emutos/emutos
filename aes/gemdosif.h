@@ -35,6 +35,7 @@ extern void hsti(void);
 
 extern void far_bcha(void);
 extern void far_mcha(void);
+extern void aes_wheel(void);
 extern void justretf(void);
 
 extern void givecpm(void);

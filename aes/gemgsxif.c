@@ -214,12 +214,16 @@ static void gsx_resetmb(void)
 
 void gsx_init(void)
 {
+    void* old_wheelv; /* Ignored */
+
     gsx_wsopen();
     gsx_start();
     gsx_setmb(far_bcha, far_mcha, &drwaddr);
     gsx_ncode(MOUSE_ST, 0, 0);
     xrat = ptsout[0];
     yrat = ptsout[1];
+
+    vex_wheelv(aes_wheel, &old_wheelv);
 }
 
 
@@ -517,3 +521,11 @@ void g_vsl_width(WORD width)
     gsx_ncode(S_LINE_WIDTH, 1, 0);
 }
 
+
+
+void vex_wheelv(void *new, void **old)
+{
+    i_ptr( new );
+    gsx_ncode(WHEEL_VECX, 0, 0);
+    *old = (void*)LLGET(ADDR(&contrl[9]));
+}
