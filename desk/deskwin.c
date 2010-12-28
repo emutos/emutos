@@ -483,8 +483,7 @@ void win_blt(WNODE *pw, WORD newcv)
         win_bldview(pw, c.g_x, c.g_y, c.g_w, c.g_h);
                                                 /* see if any part is   */
                                                 /*   off the screen     */
-        rc_copy(&c, &t);
-        rc_intersect(&gl_rfull, &t);
+        wind_get(pw->w_id, WF_FIRSTXYWH, &t.g_x, &t.g_y, &t.g_w, &t.g_h);
         if ( rc_equal(&c, &t) )
         {
                                                 /* blt as much as we can*/

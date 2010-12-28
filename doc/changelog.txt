@@ -2339,3 +2339,4 @@ Start... early ages
 - aes/funcdef.h, aes/gemdosif.S, aes/gemdosif.h, aes/gemgsxif.c,
   aes/gemgsxif.h, aes/geminput.c: Added minimal support for mouse wheel in
   the AES. (VRI)
+- desk/deskwin.c: Fixed clipping when a non-top window is scrolled. (VRI)
