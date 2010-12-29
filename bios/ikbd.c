@@ -242,6 +242,7 @@ void kbd_int(WORD scancode)
 {
     LONG value;                 /* the value to push into iorec */
     UBYTE ascii = 0;
+    WORD scancode_only = scancode & ~KEY_RELEASED;  /* get rid of release bits */
 
 
 #if DBG_KBD
@@ -261,11 +262,20 @@ void kbd_int(WORD scancode)
         os_entry();  /* restart system */
     }
 
+    /* the additional mouse buttons use a separate vector */
+    if (   scancode_only == 0x37  /* Mouse button 3 */
+        || scancode_only == 0x5e  /* Mouse button 4 */
+        || scancode_only == 0x5f) /* Mouse button 5 */
+    {
+        mousexvec(scancode);
+        return;
+    }
+
     if (scancode & KEY_RELEASED) {
         /* stop key repeat */
         kb_ticks = 0;
         
-        scancode &= ~KEY_RELEASED;      /* get rid of release bits */
+        scancode = scancode_only;
         switch (scancode) {
         case KEY_RSHIFT:
             shifty &= ~MODE_RSHIFT;     /* clear bit */

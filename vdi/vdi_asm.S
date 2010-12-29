@@ -134,6 +134,7 @@ intin_ok:
         .globl  _mov_cur        // set's new x/y coordinates
         .globl  _mouse_int      // mouse interrupt routine
         .globl  _wheel_int      // wheel interrupt routine
+        .globl  _call_user_but  // call the _user_but vector from C
 
         .globl  _cur_replace  
         .globl  _cur_display
@@ -283,12 +284,22 @@ no_left:
         cmp.b   d1,d0           // has button state changed
         beq     xy_update       // no go test x,y change
 
+        lea     _MOUSE_BT,a1
+        move.w  (a1),d2
+#ifdef __mcoldfire__
+        andi.l  #0xfffffffc,d2
+        or.l    d2,d0           // keep additional mouse button states
+#else
+        andi.w  #0xfffc,d2
+        or.w    d2,d0           // keep additional mouse button states
+#endif
+        move.w  d0,(a1)
+
         move.w  d1,-(sp)        // save previous mouse state
         move.l  _user_but,a1    // get user routine address
         jsr     (a1)
 
         move.w  (sp)+, d1       // get back previous mouse button state
-        move.w  d0,_MOUSE_BT
 
 #ifdef __mcoldfire__
         and.l   #0xffff,d0
@@ -537,6 +548,16 @@ _mov_cur:
 #endif
 mov_cur1:
         rts
+
+
+
+/*
+ * Call the _user_but vector from C.
+ */
+_call_user_but:
+        move.w  4(sp),d0
+        move.l  _user_but,a0
+        jmp     (a0)
 
 
 

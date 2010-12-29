@@ -83,6 +83,7 @@
         .global _init_acia_vecs
         .global _int_acia
 
+        .global _mousexvec
         .global _kbdvecs
 
         .global _rs232iorec
@@ -137,6 +138,7 @@ midiibufhi:     ds.w    1
 // This is now the table of routines for managing midi and keyboard data
 // in packets from IKBD (shown by A0 und 4(sp))
 
+_mousexvec:     ds.l    1       // mouse-routine for additional buttons
 kbdvec:         ds.l    1       // must be right before _kbdvecs
 _kbdvecs:       
 midivec:        ds.l    1       // MIDI input
@@ -160,6 +162,7 @@ _init_acia_vecs:
         // initialize the kbdvecs structure
         lea     _just_rts,a0            // dummy vector
         lea     _kbdvecs,a1
+        move.l  a0,_mousexvec-_kbdvecs(a1)
 #ifdef __mcoldfire__
         move.l  #_kbdvec,d0
         move.l  d0,kbdvec-_kbdvecs(a1)

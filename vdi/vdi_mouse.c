@@ -27,6 +27,9 @@ extern void     (*user_but)(void);      // user button vector
 extern void     (*user_cur)(void);      // user cursor vector
 extern void     (*user_mot)(void);      // user motion vector
 
+/* call the user_but vector from C */
+extern void call_user_but(WORD status);
+
 
 
 typedef struct Mcdb_ Mcdb;
@@ -501,6 +504,30 @@ void xfm_crfm (Vwk * vwk)
 
 
 /*
+ * vdi_mousex_handler - Handle additional mouse buttons
+ */
+
+static void vdi_mousex_handler (WORD scancode)
+{
+    if (scancode == 0x37)      /* Mouse button 3 press */
+        MOUSE_BT |= 0x04;
+    else if (scancode == 0xb7) /* Mouse button 3 release */
+        MOUSE_BT &= ~0x04;
+    else if (scancode == 0x5e) /* Mouse button 4 press */
+        MOUSE_BT |= 0x08;
+    else if (scancode == 0xde) /* Mouse button 4 release */
+        MOUSE_BT &= ~0x08;
+    else if (scancode == 0x5f) /* Mouse button 5 press */
+        MOUSE_BT |= 0x10;
+    else if (scancode == 0xdf) /* Mouse button 5 release */
+        MOUSE_BT &= ~0x10;
+
+    call_user_but(MOUSE_BT);
+}
+
+
+
+/*
  * vdimouse_init - Initializes the mouse (VDI part)
  *
  * entry:          none
@@ -552,6 +579,7 @@ void vdimouse_init(Vwk * vwk)
     kbd_vectors = (struct kbdvecs *)Kbdvbase();
     old_statvec = kbd_vectors->statvec;
     kbd_vectors->statvec = wheel_int;
+    mousexvec = vdi_mousex_handler;
 }
 
 

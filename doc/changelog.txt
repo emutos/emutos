@@ -2340,3 +2340,8 @@ Start... early ages
   aes/gemgsxif.h, aes/geminput.c: Added minimal support for mouse wheel in
   the AES. (VRI)
 - desk/deskwin.c: Fixed clipping when a non-top window is scrolled. (VRI)
+
+2010-12-29
+- bios/aciavecs.S, bios/ikbd.c, bios/tosvars.h, vdi/vdi_asm.S,
+  vdi/vdi_mouse.c: Added BIOS and VDI support for extended mouse buttons
+  3, 4 and 5. (VRI)

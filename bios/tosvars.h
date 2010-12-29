@@ -123,6 +123,8 @@ extern void (*etv_term)(void);
 extern void (*etv_xtra)(void);
 
 
+extern void (*mousexvec)(WORD scancode);    /* Additional mouse buttons */
+
 struct kbdvecs
 {
     void (*midivec)( UBYTE data );  /* MIDI Input */
