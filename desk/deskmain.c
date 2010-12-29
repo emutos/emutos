@@ -69,6 +69,10 @@
 #define CNTLU 0x1615                    /* To Output                    */
 #define CNTLZ 0x2c1a                    /* Execute CLI                  */
 #define CNTLQ 0x1011                    /* Exit To Dos                  */
+#define ARROW_UP    0x4800
+#define ARROW_DOWN  0x5000
+#define ARROW_LEFT  0x4b00
+#define ARROW_RIGHT 0x4d00
 
 
 #define BEG_UPDATE 1
@@ -810,6 +814,27 @@ WORD hndl_menu(WORD title, WORD item)
 
 
 
+/* Simulate WM_ARROWED using arrow keys */
+static void kbd_arrow(WORD type)
+{
+    WORD wh;
+    WORD dummy;
+    WNODE *pw;
+
+    wind_get(0, WF_TOP, &wh, &dummy, &dummy, &dummy);
+    if (!wh)
+        return;
+
+    pw = win_find(wh);
+    if (!pw)
+        return;
+
+    desk_clear(wh);
+    win_arrow(wh, type);
+}
+
+
+
 WORD hndl_kbd(WORD thechar)
 {
         WORD            done;
@@ -879,6 +904,18 @@ WORD hndl_kbd(WORD thechar)
           case CNTLQ:
                 menu_tnormal(G.a_trees[ADMENU], FILEMENU, FALSE);
                 done = hndl_menu(FILEMENU, QUITITEM);
+                break;
+          case ARROW_UP:
+                kbd_arrow(WA_UPLINE);
+                break;
+          case ARROW_DOWN:
+                kbd_arrow(WA_DNLINE);
+                break;
+          case ARROW_LEFT:
+                kbd_arrow(WA_LFLINE);
+                break;
+          case ARROW_RIGHT:
+                kbd_arrow(WA_RTLINE);
                 break;
         } /* switch */
         men_update(G.a_trees[ADMENU]);          /* clean up menu info   */

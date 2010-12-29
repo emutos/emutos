@@ -2345,3 +2345,4 @@ Start... early ages
 - bios/aciavecs.S, bios/ikbd.c, bios/tosvars.h, vdi/vdi_asm.S,
   vdi/vdi_mouse.c: Added BIOS and VDI support for extended mouse buttons
   3, 4 and 5. (VRI)
+- desk/deskmain.c: Added scrolling on desktop windows using arrow keys. (VRI)
