@@ -210,7 +210,7 @@
 
 #define ST6STD          16
 
-/*#define STDKFRM2        17*/     /* unused */
+#define ST7STD          17
 
 #define STNEWFOL        18
 

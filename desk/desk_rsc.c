@@ -1622,11 +1622,11 @@ char *desk_rs_fstr[] = {
     NULL,                       /* unused, was "????????.BAT" */
     "#F FF 28 @ *.*@",
     "#D FF 02 @ *.*@",
+    "#Y 08 FF *.GTP@ @",
     "#G 08 FF *.APP@ @",
     "#G 08 FF *.PRG@ @",
     "#P 08 FF *.TTP@ @",
     "#F 08 FF *.TOS@ @",
-    NULL,                       /* unused, was "FORMAT.TTP" */
     N_("New Folder"),
     N_("Disk Drives:"),
     "am",

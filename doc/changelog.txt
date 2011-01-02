@@ -2350,3 +2350,5 @@ Start... early ages
 2011-01-02
 - desk/deskpro.c: Removed useless space in front of the command line of
   textmode programs. (VRI)
+- desk/desk_rsc.c, desk/desk_rsc.h, desk/deskapp.c: Added desktop support for
+  GTP executables. (VRI)

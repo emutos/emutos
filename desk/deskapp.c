@@ -78,6 +78,7 @@ static const char *desk_inf_data1 =
 static const char *desk_inf_data2 =
     "#F FF 28 @ *.*@ \r\n"
     "#D FF 02 @ *.*@ \r\n"
+    "#Y 08 FF *.GTP@ @ \r\n"
     "#G 08 FF *.APP@ @ \r\n"
     "#G 08 FF *.PRG@ @ \r\n"
     "#P 08 FF *.TTP@ @ \r\n"
@@ -350,6 +351,10 @@ BYTE *app_parse(BYTE *pcurr, ANODE *pa)
           case 'G':                             /* GEM App File         */
                 pa->a_type = AT_ISFILE;
                 pa->a_flags = AF_ISCRYS | AF_ISGRAF;
+                break;
+          case 'Y':                             /* GEM App needs parms  */
+                pa->a_type = AT_ISFILE;
+                pa->a_flags = AF_ISCRYS | AF_ISGRAF | AF_ISPARM;
                 break;
           case 'F':                             /* DOS File no parms    */
           case 'f':                             /*   needs full memory  */
@@ -627,7 +632,7 @@ WORD app_start()
                         pa = app_alloc(TRUE);
                         pcurr = app_parse(pcurr, pa);
 
-                        for (i = 0; i < 6; i++)
+                        for (i = 0; i < 7; i++)
                         {
                             pa = app_alloc(TRUE);
                             app_parse(ini_str(ST1STD+i)+1, pa);
@@ -636,6 +641,7 @@ WORD app_start()
 #endif
               case 'M':                         /* Media (Hard/Floppy)  */
               case 'G':                         /* GEM Application      */
+              case 'Y':                         /* GEM App. with parms  */
               case 'F':                         /* File (DOS w/o parms) */
               case 'f':                         /*   use full memory    */
               case 'P':                         /* Parm (DOS w/ parms)  */
@@ -882,7 +888,7 @@ void app_save(WORD todisk)
             case AT_ISFILE:
                 if ( (pa->a_flags & AF_ISCRYS) &&
                      (pa->a_flags & AF_ISGRAF) )
-                  *pcurr++ = 'G';
+                  *pcurr++ = (pa->a_flags & AF_ISPARM) ? 'Y' : 'G';
                 else
                 {  
                   *pcurr = (pa->a_flags & AF_ISPARM) ? 'P' : 'F';
@@ -932,7 +938,7 @@ void app_save(WORD todisk)
           if ( (pa->a_type == AT_ISTRSH))       /* DESKTOP v1.2 */
 #endif
           {
-            for(i=0; i<6 && pa!=0; i++)
+            for(i=0; i<7 && pa!=0; i++)
               pa = pa->a_next;
           }
         }
