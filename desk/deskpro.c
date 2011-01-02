@@ -111,17 +111,9 @@ WORD pro_exec(WORD isgraf, WORD isover, LONG pcmd, LONG ptail)
 
 WORD pro_run(WORD isgraf, WORD isover, WORD wh, WORD curr)
 {
-        WORD            ret, len, i;
+        WORD            ret, len;
 
         G.g_tail[0] = len = strlen(&G.g_tail[1]);
-        if ( (len) && (!isgraf) )
-        {
-          for(i = len; i; i--)
-            G.g_tail[i+1] = G.g_tail[i];
-          G.g_tail[1] = ' ';
-          len++;
-        } /* if */
-        G.g_tail[0] = len;
         G.g_tail[len+1] = 0x0D;
 #if MULTIAPP
         if (isover != 3)                /* keep icon SELECTED during FORMAT */
