@@ -2349,4 +2349,4 @@ Start... early ages
 
 2011-01-02
 - desk/deskpro.c: Removed useless space in front of the command line of
-  textmode programs.
+  textmode programs. (VRI)
