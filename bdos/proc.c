@@ -353,7 +353,7 @@ long xexec(WORD flag, char *path, char *tail, char *env)
     memcpy(bakbuf, errbuf, sizeof(errbuf));
     if ( setjmp(errbuf) ) {
 
-        kprintf("Error and longjmp in xexec()!");
+        kprintf("Error and longjmp in xexec()!\n");
 
         /* free any memory allocated yet */
         freeit(cur_env_md, &pmd);
