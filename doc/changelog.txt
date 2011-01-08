@@ -2352,3 +2352,7 @@ Start... early ages
   textmode programs. (VRI)
 - desk/desk_rsc.c, desk/desk_rsc.h, desk/deskapp.c: Added desktop support for
   GTP executables. (VRI)
+
+2011-01-08
+- vdi/vdi_mouse.c: Call user_but() only if the state of the extended buttons
+  has really changed. (VRI)

@@ -509,6 +509,8 @@ void xfm_crfm (Vwk * vwk)
 
 static void vdi_mousex_handler (WORD scancode)
 {
+    WORD old_buttons = MOUSE_BT;
+
     if (scancode == 0x37)      /* Mouse button 3 press */
         MOUSE_BT |= 0x04;
     else if (scancode == 0xb7) /* Mouse button 3 release */
@@ -522,7 +524,8 @@ static void vdi_mousex_handler (WORD scancode)
     else if (scancode == 0xdf) /* Mouse button 5 release */
         MOUSE_BT &= ~0x10;
 
-    call_user_but(MOUSE_BT);
+    if (MOUSE_BT != old_buttons)
+        call_user_but(MOUSE_BT);
 }
 
 
