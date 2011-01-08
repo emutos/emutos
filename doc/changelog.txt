@@ -2357,4 +2357,6 @@ Start... early ages
 - vdi/vdi_mouse.c: Call user_but() only if the state of the extended buttons
   has really changed. (VRI)
 - bios/ikbd.c, vdi/vdi_asm.S, vdi/vdi_mouse.c: Added support for the Eiffel
-  mouse wheel using simple scancodes instead of status frames.
+  mouse wheel using simple scancodes instead of status frames. (VRI)
+- aes/geminput.c: Disabled mouse wheel until we find a solution to send
+  WM_ARROWED from forker(). (VRI)

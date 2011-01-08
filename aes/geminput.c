@@ -35,6 +35,7 @@
 #include "gemasync.h"
 #include "gemdisp.h"
 #include "rectfunc.h"
+#include "kprint.h"
 
 
 #define MB_DOWN 0x01
@@ -430,7 +431,7 @@ void mchange(WORD rx, WORD ry)
 
 void wheel_change(WORD wheel_number, WORD wheel_amount)
 {
-    WORD wh;
+    /*WORD wh;*/
     WORD type;
 
     /* Ignore the wheel messages if the menu is active */
@@ -444,8 +445,16 @@ void wheel_change(WORD wheel_number, WORD wheel_amount)
     else
         return;
 
+    /* We have a problem here.
+     * This function is called by forker(), where rlr is set to -1.
+     * As a result, we can't call ap_sendmsg() which internally calls iasync().
+     * Uncomment the following code when some solution has been found.
+     */
+/*
+    assert(rlr != (PD *)-1);
     wh = wm_find(xrat, yrat);
     ap_sendmsg(appl_msg, WM_ARROWED, D.w_win[wh].w_owner, wh, type, 0, 0, 0);
+*/
 }
 
 
