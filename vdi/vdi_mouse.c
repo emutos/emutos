@@ -27,8 +27,9 @@ extern void     (*user_but)(void);      // user button vector
 extern void     (*user_cur)(void);      // user cursor vector
 extern void     (*user_mot)(void);      // user motion vector
 
-/* call the user_but vector from C */
+/* call the vectors from C */
 extern void call_user_but(WORD status);
+extern void call_user_wheel(WORD wheel_number, WORD wheel_amount);
 
 
 
@@ -526,6 +527,15 @@ static void vdi_mousex_handler (WORD scancode)
 
     if (MOUSE_BT != old_buttons)
         call_user_but(MOUSE_BT);
+
+    if (scancode == 0x59)      /* Wheel up */
+        call_user_wheel(0, -1);
+    else if (scancode == 0x5a) /* Wheel down */
+        call_user_wheel(0, 1);
+    else if (scancode == 0x5c) /* Wheel left */
+        call_user_wheel(1, -1);
+    else if (scancode == 0x5d) /* Wheel right */
+        call_user_wheel(1, 1);
 }
 
 

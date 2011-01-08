@@ -135,6 +135,7 @@ intin_ok:
         .globl  _mouse_int      // mouse interrupt routine
         .globl  _wheel_int      // wheel interrupt routine
         .globl  _call_user_but  // call the _user_but vector from C
+        .globl  _call_user_wheel// call the _user_wheel vector from C
 
         .globl  _cur_replace  
         .globl  _cur_display
@@ -557,6 +558,17 @@ mov_cur1:
 _call_user_but:
         move.w  4(sp),d0
         move.l  _user_but,a0
+        jmp     (a0)
+
+
+
+/*
+ * Call the _user_wheel vector from C.
+ */
+_call_user_wheel:
+        move.w  4(sp),d0
+        move.w  6(sp),d1
+        move.l  _user_wheel,a0
         jmp     (a0)
 
 

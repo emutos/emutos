@@ -265,7 +265,11 @@ void kbd_int(WORD scancode)
     /* the additional mouse buttons use a separate vector */
     if (   scancode_only == 0x37  /* Mouse button 3 */
         || scancode_only == 0x5e  /* Mouse button 4 */
-        || scancode_only == 0x5f) /* Mouse button 5 */
+        || scancode_only == 0x5f  /* Mouse button 5 */
+        || scancode_only == 0x59  /* Wheel up */
+        || scancode_only == 0x5a  /* Wheel down */
+        || scancode_only == 0x5c  /* Wheel left */
+        || scancode_only == 0x5d) /* Wheel right */
     {
         mousexvec(scancode);
         return;
