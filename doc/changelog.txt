@@ -2360,3 +2360,6 @@ Start... early ages
   mouse wheel using simple scancodes instead of status frames. (VRI)
 - aes/geminput.c: Disabled mouse wheel until we find a solution to send
   WM_ARROWED from forker(). (VRI)
+
+2011-02-12
+- bios/clock.c: Fixed wrong seconds in Gettime() on machines having NVRAM. (VRI)

@@ -321,7 +321,7 @@ static UWORD ndogettime(void)
 {
   UWORD time;
 
-  time = get_nvram_rtc(NVRAM_RTC_SECONDS)
+  time = (get_nvram_rtc(NVRAM_RTC_SECONDS) >> 1)
     |  ( get_nvram_rtc(NVRAM_RTC_MINUTES) << 5)
     |  ( get_nvram_rtc(NVRAM_RTC_HOURS) << 11) ;
  
