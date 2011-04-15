@@ -487,7 +487,7 @@ void
 invert_cell(int x, int y)
 {
     /* fetch x and y coords and invert cursor. */
-    neg_cell(cell_addr(v_cur_cx, v_cur_cy));
+    neg_cell(cell_addr(x, y));
 }
 
 

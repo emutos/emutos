@@ -2363,3 +2363,6 @@ Start... early ages
 
 2011-02-12
 - bios/clock.c: Fixed wrong seconds in Gettime() on machines having NVRAM. (VRI)
+
+2011-04-15
+- bios/conout.c: invert_cell(): use the x and y parameters. (VRI)
