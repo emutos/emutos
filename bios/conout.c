@@ -412,11 +412,14 @@ move_cursor(int x, int y)
         /* is cursor presently displayed ? */
         if ( !(v_stat_0 & M_CSTATE )) {
             /* not displayed */
-            v_stat_0 |= M_CVIS;                 /* end of critical section. */
             v_cur_ad = cell_addr(x, y);         /* just set new coordinates */
 
-            /* do not flash the cursor when it moves */
-            v_cur_tim = v_period;       /* reset the timer. */
+            /* show the cursor when it moves */
+            neg_cell(v_cur_ad);                 /* complement cursor. */
+            v_stat_0 |= M_CSTATE;
+            v_cur_tim = v_period;               /* reset the timer. */
+
+            v_stat_0 |= M_CVIS;                 /* end of critical section. */
             return;
         }
     }
@@ -426,6 +429,9 @@ move_cursor(int x, int y)
 
     v_cur_ad = cell_addr(x, y);                 /* fetch x and y coords. */
     neg_cell(v_cur_ad);                         /* complement cursor. */
+
+    /* do not flash the cursor when it moves */
+    v_cur_tim = v_period;                       /* reset the timer. */
 
     v_stat_0 |= M_CVIS;                         /* end of critical section. */
 }
