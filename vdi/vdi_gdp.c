@@ -62,15 +62,12 @@ static WORD sin_tbl[92] = {
  */
 static WORD Isin(WORD angle)
 {
-    WORD direction;             /* when checking quadrants, must keep   */
-    /* track of direction in array.     */
     WORD index, remainder, tmpsin;      /* holder for sin. */
     WORD quadrant;              /* 0-3 = 1st, 2nd, 3rd, 4th.        */
 
     while (angle > 3600)
         angle -= 3600;
     quadrant = angle / HALFPI;
-    direction = 1;
     switch (quadrant) {
     case 0:
         break;

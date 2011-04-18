@@ -200,7 +200,6 @@ static void hide_cur(void)
 void v_locator(Vwk * vwk)
 {
     WORD i;
-    WORD *pointer;
     Point * point = (Point*)PTSIN;
 
     *INTIN = 1;
@@ -225,7 +224,6 @@ void v_locator(Vwk * vwk)
         CONTRL[4] = 1;
         CONTRL[2] = 1;
 
-        pointer = PTSOUT;
         PTSOUT[0] = point->x;
         PTSOUT[1] = point->y;
         hide_cur();

@@ -545,6 +545,7 @@ void do_fopen(WNODE *pw, WORD curr, WORD drv, BYTE *ppath, BYTE *pname,
                 pext  = "*";
         }
         ok = do_diropen(pw, FALSE, curr, drv, pnew, pname, pext, &t, redraw);
+        (void)ok; /* silent warning */
 #else /* DESK1 */
         if (ok)
         {

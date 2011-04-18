@@ -665,6 +665,7 @@ WORD app_start()
                           prevdisk = ' ';
                         }
 #endif
+                        (void)prevdisk; /* silent warning */
                         pa = app_alloc(TRUE);
                         pcurr = app_parse(pcurr, pa);
                         break;
