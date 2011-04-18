@@ -431,7 +431,7 @@ void mchange(WORD rx, WORD ry)
 
 void wheel_change(WORD wheel_number, WORD wheel_amount)
 {
-    /*WORD wh;*/
+    WORD wh;
     WORD type;
 
     /* Ignore the wheel messages if the menu is active */
@@ -455,6 +455,8 @@ void wheel_change(WORD wheel_number, WORD wheel_amount)
     wh = wm_find(xrat, yrat);
     ap_sendmsg(appl_msg, WM_ARROWED, D.w_win[wh].w_owner, wh, type, 0, 0, 0);
 */
+    (void)wh; /* silent warning */
+    (void)type; /* silent warning */
 }
 
 
