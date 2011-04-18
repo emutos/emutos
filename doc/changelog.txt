@@ -2371,3 +2371,4 @@ Start... early ages
 2011-04-18
 - aes/gemgraf.c, aes/gemfmlib.c, aes/gemfmlib.h, aes/gemrslib.c: Fixed warnings
   with GCC 4.5.2. (VRI)
+- bios/screen.c: Fixed wrong return value for vsetmode().

@@ -499,7 +499,7 @@ UWORD vsetmode(WORD mode)
     ret = oldmode;
     oldmode = mode;
 
-    return oldmode;
+    return ret;
 }
 
 /*
