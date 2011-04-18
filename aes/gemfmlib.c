@@ -388,7 +388,7 @@ WORD fm_dial(WORD fmd_type, GRECT *pt)
 }
 
 
-WORD fm_show(WORD string, UWORD *pwd, WORD level)
+WORD fm_show(WORD string, WORD *pwd, WORD level)
 {
         BYTE    *alert;
         BYTE    *ad_alert;
