@@ -946,18 +946,15 @@ void dqt_name(Vwk * vwk)
     Fonthead *tmp_font;
     BYTE found;
 
-    WORD font_id;
     Fonthead **chain_ptr;
 
     element = INTIN[0];
     chain_ptr = font_ring;
     i = 0;
-    font_id = -1;
 
     found = 0;
     while (!found && (tmp_font = *chain_ptr++)) {
         do {
-            font_id = tmp_font->font_id;
             if ((++i) == element)
                 found = 1;
         } while (!found && (tmp_font = tmp_font->next_font));

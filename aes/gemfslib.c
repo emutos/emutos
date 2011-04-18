@@ -152,7 +152,7 @@ static WORD fs_add(WORD thefile, WORD fs_index)
 
 static WORD fs_active(LONG ppath, BYTE *pspec, WORD *pcount)
 {
-        WORD            ret, thefile, len;
+        WORD            ret, thefile;
         WORD            fs_index;
         register WORD   i, j, gap;
         BYTE            *temp;
@@ -161,7 +161,6 @@ static WORD fs_active(LONG ppath, BYTE *pspec, WORD *pcount)
 
         thefile = 0;
         fs_index = 0;
-        len = 0;
 
         if (gl_shdrive)
         {
