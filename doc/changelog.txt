@@ -2367,3 +2367,7 @@ Start... early ages
 2011-04-15
 - bios/conout.c: invert_cell(): use the x and y parameters. (VRI)
 - bios/conout.c: Fixed cursor blink when moving backwards. (VRI)
+
+2011-04-18
+- aes/gemgraf.c, aes/gemfmlib.c, aes/gemfmlib.h, aes/gemrslib.c: Fixed warnings
+  with GCC 4.5.2. (VRI)
