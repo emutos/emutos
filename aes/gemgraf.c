@@ -200,7 +200,7 @@ void gsx_cline(UWORD x1, UWORD y1, UWORD x2, UWORD y2)
 {
 
         gsx_moff();
-        g_v_pline( 2, &x1 );
+        g_v_pline( 2, (WORD*)&x1 );
         gsx_mon();
 }
 
