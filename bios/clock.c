@@ -467,7 +467,14 @@ static UWORD idogetdate(void)
   UWORD date;
 
 #if !NO_IKBD_CLOCK
-  date = ( (bcd2int(iclkbuf.year)-80) << 9) 
+  /* guess the real year from IKBD data */
+  UWORD year = bcd2int(iclkbuf.year);
+  if (year < 80)
+    year += 2000;
+  else
+    year += 1900;
+
+  date = ((year-1980) << 9)
     | ( bcd2int(iclkbuf.month) << 5 ) | bcd2int(iclkbuf.day);
 #else
   date = os_dosdate; /* default date if no IKBD clock */
