@@ -299,6 +299,7 @@ static void fix_tedinfo(void)
         {
           psubstruct = get_addr(R_TEDINFO, ii);
           tl[0] = tl[1] = 0x0L;
+          ls[0] = ls[1] = 0x0L; /* Useless, avoid bogus GCC warning */
           if (fix_ptr(R_TEPTEXT, ii) )
           {
             tl[0] = RTE_TXTLEN;
