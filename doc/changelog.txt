@@ -2372,3 +2372,6 @@ Start... early ages
 - aes/gemgraf.c, aes/gemfmlib.c, aes/gemfmlib.h, aes/gemrslib.c: Fixed warnings
   with GCC 4.5.2. (VRI)
 - bios/screen.c: Fixed wrong return value for vsetmode(). (VRI)
+- aes/gemfslib.c, aes/geminput.c, aes/gemobed.c, aes/gemoblib.c, aes/gemshlib.c,
+  bios/machine.c, cli/command.c, desk/deskapp.c, desk/desksupp.c, vdi/vdi_gdp.c,
+  vdi/vdi_mouse.c, vdi/vdi_text.c: Fixed warnings with GCC 4.6.0. (VRI)
