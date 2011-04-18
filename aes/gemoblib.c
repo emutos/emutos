@@ -111,7 +111,7 @@ void ob_setxywh(LONG tree, WORD obj, GRECT *pt)
 void ob_format(WORD just, BYTE *raw_str, BYTE *tmpl_str, BYTE *fmt_str)
 {
         register BYTE   *pfbeg, *ptbeg, *prbeg;
-        BYTE            *pfend, *ptend, *prend;
+        BYTE                    *ptend, *prend;
         register WORD   inc, ptlen, prlen;
 
         if (*raw_str == '@')
@@ -134,7 +134,6 @@ void ob_format(WORD just, BYTE *raw_str, BYTE *tmpl_str, BYTE *fmt_str)
           prbeg = prbeg + prlen - 1;
         }
 
-        pfend = pfbeg + (inc * ptlen);
         ptend = ptbeg + (inc * ptlen);
         prend = prbeg + (inc * prlen);
 

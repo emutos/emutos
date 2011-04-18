@@ -138,11 +138,10 @@ static WORD find_pos(BYTE *str, WORD pos)
 void pxl_rect(LONG tree, WORD obj, WORD ch_pos, GRECT *pt)
 {
         GRECT           o;
-        WORD            numchs;
 
         ob_actxywh(tree, obj, &o);
-        numchs = gr_just(edblk.te_just, edblk.te_font, edblk.te_ptmplt, 
-                                o.g_w, o.g_h, &o);
+        gr_just(edblk.te_just, edblk.te_font, edblk.te_ptmplt, 
+                        o.g_w, o.g_h, &o);
         pt->g_x = o.g_x + (ch_pos * gl_wchar);
         pt->g_y = o.g_y;
         pt->g_w = gl_wchar;

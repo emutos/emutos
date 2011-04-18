@@ -398,9 +398,6 @@ void sh_toalpha()
 void sh_draw(LONG lcmd, WORD start, WORD depth)
 {
         LONG            tree;
-        SHELL           *psh;
-
-        psh = &sh[rlr->p_pid];
 
         if (gl_shgem)
         {
@@ -448,7 +445,7 @@ BYTE *sh_name(BYTE *ppath)
 */
 void sh_envrn(LONG ppath, LONG psrch)
 {
-        LONG            lp, ad_loc1;
+        LONG            lp;
         WORD            len, findend;
         BYTE            last, tmp, loc1[10], loc2[10];
 
@@ -456,7 +453,6 @@ void sh_envrn(LONG ppath, LONG psrch)
         len = strlencpy(loc2, (char *)psrch);
         len--;
 
-        ad_loc1 = ADDR(loc1);
         loc1[len] = NULL;
 
         lp = ad_envrn;
