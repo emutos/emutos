@@ -50,15 +50,14 @@ static void detect_video(void)
   volatile BYTE *ste_reg = (BYTE *) 0xffff820d;
   volatile BYTE *other_reg1 = (BYTE *) 0xffff8203;
   volatile WORD *other_reg2 = (WORD *) 0xffff8240;
-  volatile int a;
 
   has_ste_shifter = 0;  
   if(!check_read_byte((long)ste_reg)) return;
   *ste_reg = 90;
-  a = *other_reg1;
+  *other_reg1; /* force register read (really useful ?) */
   if(*ste_reg == 90) {
     *ste_reg = 0;
-    a = *other_reg2;
+    *other_reg2; /* force register read (really useful ?) */
     if(*ste_reg == 0) {
       has_ste_shifter = 1;
     } 

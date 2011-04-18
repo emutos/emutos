@@ -1282,12 +1282,11 @@ dirCmd(char *argv[])
 static long
 pwdCmd(char *argv[])
 {
-    int i, j;
+    int i;
     char ch, tmpbuf[100];
 
     i = xgetdrv();
     ch = i + 'A';
-    j = 0;
 
     xwrite(1, 1L, &ch);
     wrt(":");
