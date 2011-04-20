@@ -185,17 +185,22 @@ void doassert(const char *file, long line, const char *func, const char *text)
 
 
 static const char *exc_messages[] = {
-    "", "",
+    "", /* Reset: Initial SSP */
+    "", /* Reset: Initial PC */
 #ifdef __mcoldfire__
-    "access error",
+    "Access Error",
 #else
-    "bus error",
+    "Bus Error",
 #endif
-    "address error",
-    "illegal exception", "divide by zero",
-    "datatype overflow (CHK)",
-    "trapv overflow bit error",
-    "privilege violation", "Trace", "LineA", "LineF"
+    "Address Error",
+    "Illegal Instruction",
+    "Zero Divide",
+    "CHK Instruction",
+    "TRAPV Instruction",
+    "Privilege Violation",
+    "Trace",
+    "Line A Emulator",
+    "Line F Emulator"
 };
 
 #define numberof(a) (sizeof(a)/sizeof(*a))
@@ -210,107 +215,161 @@ void dopanic(const char *fmt, ...)
         kcprintf("No saved info in dopanic; halted.\n");
         halt();
     }
-    if (proc_enum == 0) {
+    if (proc_enum == 0) { /* Call to panic(const char *fmt, ...) */
+        struct {
+            LONG pc;
+        } *s = (void *)proc_stk;
+
         va_list ap;
         va_start(ap, fmt);
         vkcprintf(fmt, ap);
         va_end(ap);
+
+        kcprintf("pc = %08lx\n",
+                 s->pc);
 #ifdef __mcoldfire__
     } else {
         /* On ColdFire, the exception frame is the same for all exceptions. */
         struct {
-            WORD fv; /* Format/Vector Word */
+            WORD format_word;
             WORD sr;
             LONG pc;
         } *s = (void *)proc_stk;
 
         if (proc_enum >= 2 && proc_enum < numberof(exc_messages)) {
-            kcprintf("Panic: %s. fv = 0x%04x, sr = 0x%04x, pc = 0x%08lx\n",
-                     exc_messages[proc_enum], s->fv, s->sr, s->pc);
+            kcprintf("Panic: %s.\n",
+                     exc_messages[proc_enum]);
         } else {
-            kcprintf("Panic: Exception number %d. fv = 0x%04x, sr = 0x%04x, pc = 0x%08lx\n",
-                    (int) proc_enum, s->fv, s->sr, s->pc);
+            kcprintf("Panic: Exception number %d.\n",
+                     (int) proc_enum);
         }
-        kcprintf("       format = %d, vector = %d, fault = %d\n",
-            (s->fv & 0xf000) >> 12,
-            (s->fv & 0x03fc) >> 2,
-            (s->fv & 0x0c00) >> 8 | (s->fv & 0x0002));
+
+        kcprintf("fw = %04x (format = %d, vector = %d, fault = %d), sr = %04x, pc = %08lx\n",
+                 s->format_word,
+                 (s->format_word & 0xf000) >> 12,
+                 (s->format_word & 0x03fc) >> 2,
+                 (s->format_word & 0x0c00) >> 8 | (s->format_word & 0x0002),
+                 s->sr, s->pc);
     }
 #else
-    } else if (proc_enum == 2 || proc_enum == 3) {
+    } else if (mcpu == 0 && (proc_enum == 2 || proc_enum == 3)) {
+        /* 68000 Bus or Address Error */
         struct {
             WORD misc;
             LONG address;
             WORD opcode;
             WORD sr;
             LONG pc;
-        } *s000 = (void *)proc_stk;
+        } *s = (void *)proc_stk;
 
+        kcprintf("Panic: %s.\n",
+                 exc_messages[proc_enum]);
+        kcprintf("misc = %04x, address = %08lx, opcode = %04x, sr = %04x, pc = %08lx\n",
+                 s->misc, s->address, s->opcode, s->sr, s->pc);
+    } else if (mcpu == 10 && (proc_enum == 2 || proc_enum == 3)) {
+        /* 68010 Bus or Address Error */
+        struct {
+            WORD sr;
+            LONG pc;
+            WORD format_word;
+            WORD special_status_word;
+            LONG fault_address;
+            WORD unused_reserved_1;
+            WORD data_output_buffer;
+            WORD unused_reserved_2;
+            WORD data_input_buffer;
+            WORD unused_reserved_3;
+            WORD instruction_input_buffer;
+            /* ... 29 words in the stack frame, but only 16 ones backuped */
+        } *s = (void *)proc_stk;
+
+        kcprintf("Panic: %s.\n",
+                 exc_messages[proc_enum]);
+        kcprintf("sr = %04x, pc = %08lx, fw = %04x, ssw = %04x, address = %08lx\n",
+                 s->sr, s->pc, s->format_word, s->special_status_word, s->fault_address);
+    } else if ((mcpu == 20 || mcpu == 30) && (proc_enum == 2 || proc_enum == 3)) {
+        /* 68020/68030 Bus or Address Error */
+        struct {
+            WORD sr;
+            LONG pc;
+            WORD format_word;
+            WORD internal_register;
+            WORD special_status_register;
+            WORD instruction_pipe_stage_c;
+            WORD instruction_pipe_stage_b;
+            LONG data_cycle_fault_address;
+            WORD internal_register_1;
+            WORD internal_register_2;
+            LONG data_output_buffer;
+            WORD internal_register_3;
+            WORD internal_register_4;
+        } *s = (void *)proc_stk;
+
+        kcprintf("Panic: %s.\n",
+                 exc_messages[proc_enum]);
+        kcprintf("sr = %04x, pc = %08lx, fw = %04x, ir = %04x, ssr = %04x, address = %08lx\n",
+                 s->sr, s->pc, s->format_word, s->internal_register, s->special_status_register, s->data_cycle_fault_address);
+    } else if (mcpu == 40 && proc_enum == 2) {
+        /* 68040 Bus Error */
         struct {
             WORD sr;
             LONG pc;
             WORD format_word;
             LONG effective_address;
-            WORD misc;
+            WORD special_status_word;
             WORD wb3s, wb2s, wb1s;
+            LONG fault_address;
+            /* ... 30 words in the stack frame, but only 16 ones backuped */
+        } *s = (void *)proc_stk;
+
+        kcprintf("Panic: %s.\n",
+                 exc_messages[proc_enum]);
+        kcprintf("sr = %04x, pc = %08lx, fw = %04x, ea = %08lx, ssw = %04x, fa = %08lx\n",
+                 s->sr, s->pc, s->format_word, s->effective_address, s->special_status_word, s->fault_address);
+    } else if ((mcpu == 40 && proc_enum == 3)
+               || (mcpu == 60 && (proc_enum == 2 || proc_enum == 3))) {
+        /* 68040 Address Error, or 68060 Bus or Address Error */
+        struct {
+            WORD sr;
+            LONG pc;
+            WORD format_word;
             LONG address;
-        } *s040 = (void *)proc_stk;
+        } *s = (void *)proc_stk;
 
-        WORD misc, sr, opcode;
-        LONG address, pc;
-
-        switch(mcpu) {
-            case 40:
-               misc = s040->misc;
-               sr = s040->sr;
-               address = s040->address;
-               pc = s040->pc;
-               /* we could read the opcode from *pc, like below
-               opcode = *(WORD *)pc;
-               but it would not work on real 68040 most probably due to 
-               instruction pre-fetch and could also cause a recursive death
-               if the pc pointed to an illegal memory location */
-               opcode = 0x0000;
-               break;
-
-            default:
-               misc = s000->misc;
-               sr = s000->sr;
-               opcode = s000->opcode;
-               pc = s000->pc;
-               address = s000->address;
-        }
-        kcprintf("Panic: %s. misc = 0x%04x, address = 0x%08lx\n",
-                 exc_messages[proc_enum], misc, address);
-        if (mcpu == 40) {
-            kcprintf("sr = 0x%04x, pc = 0x%08lx\n", sr, pc);
-        }
-        else {
-            kcprintf("opcode = 0x%04x, sr = 0x%04x, pc = 0x%08lx\n",
-                     opcode, sr, pc);
-        }
-    } else if (proc_enum >= 4 && proc_enum < numberof(exc_messages)) {
+        kcprintf("Panic: %s.\n",
+                 exc_messages[proc_enum]);
+        kcprintf("sr = %04x, pc = %08lx, fw = %04x, address = %08lx\n",
+                 s->sr, s->pc, s->format_word, s->address);
+    } else if (proc_enum < numberof(exc_messages)) {
         struct {
             WORD sr;
             LONG pc;
         } *s = (void *)proc_stk;
-        kcprintf("Panic: %s. sr = 0x%04x, pc = 0x%08lx\n",
-                 exc_messages[proc_enum], s->sr, s->pc);
+
+        kcprintf("Panic: %s.\n",
+                 exc_messages[proc_enum]);
+        kcprintf("sr = %04x, pc = %08lx\n",
+                 s->sr, s->pc);
     } else {
         struct {
             WORD sr;
             LONG pc;
         } *s = (void *)proc_stk;
-        kcprintf("Panic: Exception number %d. sr = 0x%04x, pc = 0x%08lx\n",
-                (int) proc_enum, s->sr, s->pc);
+
+        kcprintf("Panic: Exception number %d.\n",
+                 (int) proc_enum);
+        kcprintf("sr = %04x, pc = %08lx\n",
+                 s->sr, s->pc);
     }
 #endif
-    kcprintf("Aregs: %08lx %08lx %08lx %08lx  %08lx %08lx %08lx %08lx\n",
-             proc_aregs[0], proc_aregs[1], proc_aregs[2], proc_aregs[3], 
-             proc_aregs[4], proc_aregs[5], proc_aregs[6], proc_aregs[7]);
     kcprintf("Dregs: %08lx %08lx %08lx %08lx  %08lx %08lx %08lx %08lx\n",
              proc_dregs[0], proc_dregs[1], proc_dregs[2], proc_dregs[3], 
              proc_dregs[4], proc_dregs[5], proc_dregs[6], proc_dregs[7]);
+    kcprintf("Aregs: %08lx %08lx %08lx %08lx  %08lx %08lx %08lx %08lx\n",
+             proc_aregs[0], proc_aregs[1], proc_aregs[2], proc_aregs[3], 
+             proc_aregs[4], proc_aregs[5], proc_aregs[6], proc_aregs[7]);
+    kcprintf("                                                                 usp = %08lx\n",
+             proc_usp);
     kcprintf("Processor halted.\n");
     halt();
 }
