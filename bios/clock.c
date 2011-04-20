@@ -222,6 +222,9 @@ static UWORD mdogetdate(void)
 {
   UWORD date;
 
+  /* The MegaRTC stores the year as the offset from 1980.
+     Fortunately, this is exactly the same as in the BIOS format. */
+
   date = ((clkregs1.day_l & 0xf) + 10 * (clkregs1.day_h & 0xf))
     |  (((clkregs1.mon_l & 0xf) + 10 * (clkregs1.mon_h & 0xf)) << 5) 
     |  (((clkregs1.year_l & 0xf) + 10 * (clkregs1.year_h & 0xf)) << 9) ;
