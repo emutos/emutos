@@ -2379,3 +2379,4 @@ Start... early ages
 
 2011-04-20
 - bios/kprint.c: Fixed dopanic() for all the processors. (VRI)
+- bios/clock.c: Fixed seconds when reading the Mega ST clock. (VRI)

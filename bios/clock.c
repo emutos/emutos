@@ -200,7 +200,7 @@ static UWORD mdogettime(void)
 {
   UWORD time;
 
-  time = ((clkregs1.sec_l & 0xf) + 10 * (clkregs1.sec_h & 0xF)) 
+  time = (((clkregs1.sec_l & 0xf) + 10 * (clkregs1.sec_h & 0xF)) >> 1)
     |  (((clkregs1.min_l & 0xf) + 10 * (clkregs1.min_h & 0xf)) << 5)
     |  (((clkregs1.hour_l & 0xf) + 10 * (clkregs1.hour_h & 0xf)) << 11) ;
  
