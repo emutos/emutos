@@ -327,6 +327,7 @@ static void nsetdt(ULONG dt)
 
 #endif /* ! NO_NVRAM */
 
+
 /*==== IKBD clock section =================================================*/
 
 static struct ikbdregs {
@@ -456,34 +457,6 @@ static void idosetdate(UWORD date)
 
 
 /*==== Ikbd Clock high-level functions ====================================*/
-
-#if 0  /* currently unused */
-static void isettime(UWORD time)
-{
-  iresetregs();
-  idosettime(time);
-  isetregs();
-}
-
-static UWORD igettime(void)
-{
-  igetregs();
-  return idogettime();
-}
-
-static void isetdate(UWORD date)
-{
-  iresetregs();
-  idosetdate(date);
-  isetregs();
-}
-
-static UWORD igetdate(void)
-{
-  igetregs();
-  return idogetdate();
-}
-#endif
 
 static ULONG igetdt(void)
 {
