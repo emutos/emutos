@@ -319,7 +319,6 @@ static void ndosettime(UWORD time)
   set_nvram_rtc(NVRAM_RTC_HOURS, (time >> 11) & 0x1F);
 }
 
-
 static UWORD ndogettime(void)
 {
   UWORD time;
@@ -331,14 +330,14 @@ static UWORD ndogettime(void)
   return time;
 }
 
-#if 0 /* currently unused */
 static void ndosetdate(UWORD date)
 {
+/*
   set_nvram_rtc(NVRAM_RTC_DAYS, date & 0x1F);
   set_nvram_rtc(NVRAM_RTC_MONTHS, (date >> 5) & 0xF);
   set_nvram_rtc(NVRAM_RTC_YEARS, (date >> 9) - nvram_rtc_year_offset);
+*/
 }
-#endif
 
 static UWORD ndogetdate(void)
 {
@@ -353,30 +352,6 @@ static UWORD ndogetdate(void)
 
 /*==== NVRAM RTC high-level functions ======================================*/
 
-#if 0 /* currently unused */
-
-static void nsettime(UWORD time)
-{
-  ndosettime(time);
-}
-
-static UWORD ngettime(void)
-{
-  return ndogettime();
-}
-
-static void nsetdate(UWORD date)
-{
-  ndosetdate(date);
-}
-
-static UWORD ngetdate(void)
-{
-  return ndogetdate();
-}
-
-#endif
-
 static ULONG ngetdt(void)
 {
   return (((ULONG) ndogetdate()) << 16) | ndogettime();
@@ -384,6 +359,7 @@ static ULONG ngetdt(void)
 
 static void nsetdt(ULONG dt)
 {
+  ndosetdate(dt >> 16);
   ndosettime(dt);
 }
 
