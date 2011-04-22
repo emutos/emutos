@@ -39,16 +39,10 @@
 #define NO_IKBD_CLOCK 0
 
 
-/*==== External declarations ==============================================*/
-
-
-/*==== variables ==========================================================*/
+/*==== MegaRTC section ====================================================*/
 
 /* one if there is a MegaST real-time clock. */
 int has_megartc;
-
-
-/*==== Defines ============================================================*/
 
 #define CLK_BASE (0xfffffc20L)
 
@@ -94,8 +88,6 @@ struct myclkreg {
 /* buffers to hols the megartc regs */
 static struct myclkreg clkregs1, clkregs2;
 
-
-/*==== MegaRTC section ====================================================*/
 
 void detect_megartc(void)
 {
@@ -233,36 +225,6 @@ static UWORD mdogetdate(void)
 }
 
 /*==== MegaRTC high-level functions ========================================*/
-
-#if 0  /* currently unused */
-
-static void msettime(UWORD time)
-{
-  mgetregs();
-  mdosettime(time);
-  msetregs();
-}
-
-static UWORD mgettime(void)
-{
-  mgetregs();
-  return mdogettime();
-}
-
-static void msetdate(UWORD date)
-{
-  mgetregs();
-  mdosetdate(date);
-  msetregs();
-}
-
-static UWORD mgetdate(void)
-{
-  mgetregs();
-  return mdogetdate();
-}
-
-#endif
 
 static ULONG mgetdt(void)
 {
