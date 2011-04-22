@@ -338,7 +338,6 @@ static UWORD ndogettime(void)
 
 static void ndosetdate(UWORD date)
 {
-/*
   int days = date & 0x1F;
   int months = (date >> 5) & 0xF;
   int years = (date >> 9) - nvram_rtc_year_offset;
@@ -350,7 +349,6 @@ static void ndosetdate(UWORD date)
   set_nvram_rtc(NVRAM_RTC_DAYS, days);
   set_nvram_rtc(NVRAM_RTC_MONTHS, months);
   set_nvram_rtc(NVRAM_RTC_YEARS, years);
-*/
 }
 
 static UWORD ndogetdate(void)
