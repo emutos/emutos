@@ -2381,7 +2381,7 @@ Start... early ages
 - bios/kprint.c: Fixed dopanic() for all the processors. (VRI)
 - bios/clock.c: Fixed seconds when reading the Mega ST clock. (VRI)
 
-2011-04-20
+2011-04-22
 - bios/clock.c, bios/clock.h: Removed dead code. (VRI)
 - bios/clock.c: Added debug traces. (VRI)
 - bios/clock.c: Enabled setting the date on NVRAM machines. (VRI)
