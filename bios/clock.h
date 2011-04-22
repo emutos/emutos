@@ -14,17 +14,6 @@
 
 #include "portab.h"
 
-#if 0  /* currently unused */
-/* BDOS interface */
-
-#define GET_TIME 0
-#define SET_TIME 1
-#define GET_DATE 2
-#define SET_DATE 3
-
-extern void date_time(WORD flag, WORD *dt);
-#endif
-
 extern void clockvec(BYTE *buf);
 
 /* interface for machine.c */
