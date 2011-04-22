@@ -2385,3 +2385,4 @@ Start... early ages
 - bios/clock.c, bios/clock.h: Removed dead code. (VRI)
 - bios/clock.c: Added debug traces. (VRI)
 - bios/clock.c: Enabled setting the date on NVRAM machines. (VRI)
+- bios/clock.c: Fixed setting the date on MegaRTC machines. (VRI)

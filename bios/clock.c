@@ -180,10 +180,10 @@ static void msetregs(void)
 
 static void mdosettime(UWORD time)
 {
-  clkregs1.sec_l = (time * 2) % 10;
-  clkregs1.sec_h = (time & 0x1F) / 5;
-  clkregs1.min_l = ((time >> 5) & 0x2F) % 10;
-  clkregs1.min_h = ((time >> 5) & 0x2F) / 10;
+  clkregs1.sec_l = ((time & 0x1F) << 1) % 10;
+  clkregs1.sec_h = ((time & 0x1F) << 1) / 10;
+  clkregs1.min_l = ((time >> 5) & 0x3F) % 10;
+  clkregs1.min_h = ((time >> 5) & 0x3F) / 10;
   clkregs1.hour_l = ((time >> 11) & 0x1F) % 10;
   clkregs1.hour_h = ((time >> 11) & 0x1F) / 10;
 
@@ -220,7 +220,7 @@ static void mdosetdate(UWORD date)
   clkregs1.day_l = (date & 0x1F) % 10;
   clkregs1.day_h = (date & 0x1F) / 10;
   clkregs1.mon_l = ((date >> 5) & 0xF) % 10;
-  clkregs1.mon_h = ((date >> 5) & 0xF) % 10;
+  clkregs1.mon_h = ((date >> 5) & 0xF) / 10;
   clkregs1.year_l = (date >> 9) % 10;
   clkregs1.year_h = (date >> 9) / 10;  
 
