@@ -27,6 +27,7 @@
 #include "machine.h"
 #include "cookie.h"
 
+#define DBG_CLOCK 0
 
 #if TOS_VERSION < 0x200
 #define NO_NVRAM 1
@@ -185,12 +186,26 @@ static void mdosettime(UWORD time)
   clkregs1.min_h = ((time >> 5) & 0x2F) / 10;
   clkregs1.hour_l = ((time >> 11) & 0x1F) % 10;
   clkregs1.hour_h = ((time >> 11) & 0x1F) / 10;
+
+#if DBG_CLOCK
+  kprintf("mdosettime() %x%x:%x%x:%x%x\n",
+    clkregs1.hour_h, clkregs1.hour_l,
+    clkregs1.min_h, clkregs1.min_l,
+    clkregs1.sec_h, clkregs1.sec_l);
+#endif
 }
 
 
 static UWORD mdogettime(void)
 {
   UWORD time;
+
+#if DBG_CLOCK
+  kprintf("mdogettime() %x%x:%x%x:%x%x\n",
+    clkregs1.hour_h, clkregs1.hour_l,
+    clkregs1.min_h, clkregs1.min_l,
+    clkregs1.sec_h, clkregs1.sec_l);
+#endif
 
   time = (((clkregs1.sec_l & 0xf) + 10 * (clkregs1.sec_h & 0xF)) >> 1)
     |  (((clkregs1.min_l & 0xf) + 10 * (clkregs1.min_h & 0xf)) << 5)
@@ -208,11 +223,25 @@ static void mdosetdate(UWORD date)
   clkregs1.mon_h = ((date >> 5) & 0xF) % 10;
   clkregs1.year_l = (date >> 9) % 10;
   clkregs1.year_h = (date >> 9) / 10;  
+
+#if DBG_CLOCK
+  kprintf("mdosetdate() %x%x/%x%x/%x%x\n",
+    clkregs1.year_h, clkregs1.year_l,
+    clkregs1.mon_h, clkregs1.mon_l,
+    clkregs1.day_h, clkregs1.day_l);
+#endif
 }
 
 static UWORD mdogetdate(void)
 {
   UWORD date;
+
+#if DBG_CLOCK
+  kprintf("mdogetdate() %x%x/%x%x/%x%x\n",
+    clkregs1.year_h, clkregs1.year_l,
+    clkregs1.mon_h, clkregs1.mon_l,
+    clkregs1.day_h, clkregs1.day_l);
+#endif
 
   /* The MegaRTC stores the year as the offset from 1980.
      Fortunately, this is exactly the same as in the BIOS format. */
@@ -276,18 +305,33 @@ static int nvram_rtc_year_offset;
 
 static void ndosettime(UWORD time)
 {
-  set_nvram_rtc(NVRAM_RTC_SECONDS, (time & 0x1F) * 2);
-  set_nvram_rtc(NVRAM_RTC_MINUTES, (time >> 5) & 0x2F);
-  set_nvram_rtc(NVRAM_RTC_HOURS, (time >> 11) & 0x1F);
+  int seconds = (time & 0x1F) * 2;
+  int minutes = (time >> 5) & 0x2F;
+  int hours = (time >> 11) & 0x1F;
+
+#if DBG_CLOCK
+  kprintf("ndosettime() %02d:%02d:%02d\n", hours, minutes, seconds);
+#endif
+
+  set_nvram_rtc(NVRAM_RTC_SECONDS, seconds);
+  set_nvram_rtc(NVRAM_RTC_MINUTES, minutes);
+  set_nvram_rtc(NVRAM_RTC_HOURS, hours);
 }
 
 static UWORD ndogettime(void)
 {
+  UWORD seconds = get_nvram_rtc(NVRAM_RTC_SECONDS);
+  UWORD minutes = get_nvram_rtc(NVRAM_RTC_MINUTES);
+  UWORD hours = get_nvram_rtc(NVRAM_RTC_HOURS);
   UWORD time;
 
-  time = (get_nvram_rtc(NVRAM_RTC_SECONDS) >> 1)
-    |  ( get_nvram_rtc(NVRAM_RTC_MINUTES) << 5)
-    |  ( get_nvram_rtc(NVRAM_RTC_HOURS) << 11) ;
+#if DBG_CLOCK
+  kprintf("ndogettime() %02d:%02d:%02d\n", hours, minutes, seconds);
+#endif
+
+  time = (seconds >> 1)
+       | (minutes << 5)
+       | (hours << 11);
  
   return time;
 }
@@ -295,19 +339,34 @@ static UWORD ndogettime(void)
 static void ndosetdate(UWORD date)
 {
 /*
-  set_nvram_rtc(NVRAM_RTC_DAYS, date & 0x1F);
-  set_nvram_rtc(NVRAM_RTC_MONTHS, (date >> 5) & 0xF);
-  set_nvram_rtc(NVRAM_RTC_YEARS, (date >> 9) - nvram_rtc_year_offset);
+  int days = date & 0x1F;
+  int months = (date >> 5) & 0xF;
+  int years = (date >> 9) - nvram_rtc_year_offset;
+
+#if DBG_CLOCK
+  kprintf("ndosetdate() %02d/%02d/%02d\n", years, months, days);
+#endif
+
+  set_nvram_rtc(NVRAM_RTC_DAYS, days);
+  set_nvram_rtc(NVRAM_RTC_MONTHS, months);
+  set_nvram_rtc(NVRAM_RTC_YEARS, years);
 */
 }
 
 static UWORD ndogetdate(void)
 {
+  UWORD days = get_nvram_rtc(NVRAM_RTC_DAYS);
+  UWORD months = get_nvram_rtc(NVRAM_RTC_MONTHS);
+  UWORD years = get_nvram_rtc(NVRAM_RTC_YEARS);
   UWORD date;
 
-  date = (get_nvram_rtc(NVRAM_RTC_DAYS) & 0x1F)
-    |  ((get_nvram_rtc(NVRAM_RTC_MONTHS) & 0xF) << 5) 
-    |  ((get_nvram_rtc(NVRAM_RTC_YEARS) + nvram_rtc_year_offset) << 9);
+#if DBG_CLOCK
+  kprintf("ndogetdate() %02d/%02d/%02d\n", years, months, days);
+#endif
+
+  date = (days & 0x1F)
+       | ((months & 0xF) << 5) 
+       | ((years + nvram_rtc_year_offset) << 9);
  
   return date;
 }
@@ -376,8 +435,6 @@ static void igetregs(void)
   while(!iclk_ready && delay > 0) {
     --delay;
   }
-
-  kprintf("iclkbuf: year = %x, month = %x\n", iclkbuf.year, iclkbuf.month);
 #endif /* !NO_IKBD_CLOCK */
 }
 
@@ -409,6 +466,9 @@ static UWORD idogetdate(void)
   UWORD date;
 
 #if !NO_IKBD_CLOCK
+#if DBG_CLOCK
+  kprintf("idogetdate() %02x/%02x/%02x\n", iclkbuf.year, iclkbuf.month, iclkbuf.day);
+#endif
   /* guess the real year from IKBD data */
   UWORD year = bcd2int(iclkbuf.year);
   if (year < 80)
@@ -429,6 +489,9 @@ static UWORD idogettime(void)
   UWORD time;
 
 #if !NO_IKBD_CLOCK
+#if DBG_CLOCK
+  kprintf("idogettime() %02x:%02x:%02x\n", iclkbuf.hour, iclkbuf.min, iclkbuf.sec);
+#endif
   time = ( bcd2int(iclkbuf.sec) >> 1 )
     | ( bcd2int(iclkbuf.min) << 5 ) | ( bcd2int(iclkbuf.hour) << 11 ) ;
 #else
@@ -443,6 +506,9 @@ static void idosettime(UWORD time)
   iclkbuf.sec = int2bcd( (time << 1) & 0x3f );
   iclkbuf.min = int2bcd( (time >> 5) & 0x3f );
   iclkbuf.hour = int2bcd( (time >> 11) & 0x1f );
+#if DBG_CLOCK
+  kprintf("idosettime() %02x:%02x:%02x\n", iclkbuf.hour, iclkbuf.min, iclkbuf.sec);
+#endif
 #endif /* !NO_IKBD_CLOCK */
 }
 
@@ -452,6 +518,9 @@ static void idosetdate(UWORD date)
   iclkbuf.year = int2bcd( ((date >> 9) & 0x7f) + 80 );
   iclkbuf.month = int2bcd( (date >> 5) & 0xf );
   iclkbuf.day = int2bcd( date & 0x1f );
+#if DBG_CLOCK
+  kprintf("idosetdate() %02x/%02x/%02x\n", iclkbuf.year, iclkbuf.month, iclkbuf.day);
+#endif
 #endif /* !NO_IKBD_CLOCK */
 }
 
