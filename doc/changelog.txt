@@ -2386,3 +2386,4 @@ Start... early ages
 - bios/clock.c: Added debug traces. (VRI)
 - bios/clock.c: Enabled setting the date on NVRAM machines. (VRI)
 - bios/clock.c: Fixed setting the date on MegaRTC machines. (VRI)
+- bios/clock.c: Fixed Y2K issues when setting the IKBD date. (VRI)

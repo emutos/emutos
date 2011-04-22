@@ -512,8 +512,10 @@ static void idosettime(UWORD time)
 
 static void idosetdate(UWORD date) 
 {
+  UWORD year = 1980 + ((date >> 9) & 0x7f);
+
 #if !NO_IKBD_CLOCK
-  iclkbuf.year = int2bcd( ((date >> 9) & 0x7f) + 80 );
+  iclkbuf.year = int2bcd( year % 100 );
   iclkbuf.month = int2bcd( (date >> 5) & 0xf );
   iclkbuf.day = int2bcd( date & 0x1f );
 #if DBG_CLOCK
