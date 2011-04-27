@@ -2387,3 +2387,6 @@ Start... early ages
 - bios/clock.c: Enabled setting the date on NVRAM machines. (VRI)
 - bios/clock.c: Fixed setting the date on MegaRTC machines. (VRI)
 - bios/clock.c: Fixed Y2K issues when setting the IKBD date. (VRI)
+
+2011-04-27
+- bios/initinfo.c: Fixed the displayed startup date on Steem. (VRI)

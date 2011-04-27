@@ -26,7 +26,7 @@
 #include "font.h"
 #include "tosvars.h"
 #include "machine.h"
-#include "clock.h"    /* for displaying boot date and time */
+#include "xbiosbind.h"
 #include "version.h"
 
 #include "initinfo.h"
@@ -137,7 +137,8 @@ static void cprint_asctime(void)
 {
     int years, months, days;
     int hours, minutes, seconds;
-    ULONG system_time = gettime();  /* XBIOS directly (shouldn't use TRAP?) */
+    ULONG system_time = Gettime(); /* Use the trap interface as a workaround
+                                      to wrong Steem IKBD date after 16:00 */
     seconds = (system_time & 0x1F) * 2;
     system_time >>= 5;
     minutes = system_time & 0x3F;
