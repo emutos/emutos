@@ -52,7 +52,7 @@ BEGIN {
     print "#endif\n"
     
     print "/* the build date in Binary-Coded Decimal */"
-    print "#define OS_DATE 0x" year month day "\n"
+    print "#define OS_DATE 0x" month day year "\n"
     
     print "/* the country number << 1 and the PAL/NTSC flag */"
     if (uccountry == "US")

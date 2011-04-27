@@ -2390,3 +2390,5 @@ Start... early ages
 
 2011-04-27
 - bios/initinfo.c: Fixed the displayed startup date on Steem. (VRI)
+- tools/mkheader.awk: Fixed the BCD build date in the ROM header to match the
+  DDMMYYYY format used in Atari ROMs. (VRI)
