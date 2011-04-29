@@ -668,45 +668,43 @@ extern long cookie_idt;         /* in bios/machine.c */
 static void
 wrtDate(int j)
 {
-    int year = ((j >> 9) & 0x7F) + 80;
+    int year = ((j >> 9) & 0x7F) + 1980;
     int mon = ((j >> 5) & 0xF);
     int day = (j & 0x1F);
     char sep = cookie_idt & 0xFF;
     int a, b, c;
+    int aw, bw, cw; /* Field width */
 
-#if 1
-    if (year >= 100)
-        year -= 100;
-#endif
+    aw = bw = cw = 2;
 
     switch ((cookie_idt >> 8) & 3) {
     default:
-    case 0:                     /* MMDDYY */
+    case 0:                     /* MMDDYYYY */
         a = mon;
         b = day;
-        c = year;
+        c = year; cw = 4;
         break;
-    case 1:                     /* DDMMYY */
+    case 1:                     /* DDMMYYYY */
         a = day;
         b = mon;
-        c = year;
+        c = year; cw = 4;
         break;
-    case 2:                     /* YYMMDD */
-        a = year;
+    case 2:                     /* YYYYMMDD */
+        a = year; aw = 4;
         b = mon;
         c = day;
         break;
-    case 3:                     /* YYDDMM */
-        a = year;
+    case 3:                     /* YYYYDDMM */
+        a = year; aw = 4;
         b = day;
         c = mon;
         break;
     }
-    prtDclFmt((long) a, 2, "0");
+    prtDclFmt((long) a, aw, "0");
     wrtch(sep);
-    prtDclFmt((long) b, 2, "0");
+    prtDclFmt((long) b, bw, "0");
     wrtch(sep);
-    prtDclFmt((long) c, 2, "0");
+    prtDclFmt((long) c, cw, "0");
 }
 
 static void

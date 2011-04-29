@@ -2392,3 +2392,6 @@ Start... early ages
 - bios/initinfo.c: Fixed the displayed startup date on Steem. (VRI)
 - tools/mkheader.awk: Fixed the BCD build date in the ROM header to match the
   DDMMYYYY format used in Atari ROMs. (VRI)
+
+2011-04-29
+- cli/command.c: Display EmuCON build year on 4 digits. (VRI)
