@@ -2395,3 +2395,7 @@ Start... early ages
 
 2011-04-29
 - cli/command.c: Display EmuCON build year on 4 digits. (VRI)
+
+2011-07-26
+- country.mk, Makefile, bios/country.h, bios/keyb_it.h, po/it.po, po/LINGUAS:
+  Added Italian translation stubs. (VRI)

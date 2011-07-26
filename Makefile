@@ -445,7 +445,7 @@ dumpkbd.prg: obj/minicrt.o obj/memmove.o obj/dumpkbd.o obj/doprintf.o \
 # NLS support
 #
 
-POFILES = po/fr.po po/de.po po/cs.po
+POFILES = po/fr.po po/de.po po/it.po po/cs.po
 
 TOCLEAN += bug$(EXE) util/langs.c po/messages.pot
 

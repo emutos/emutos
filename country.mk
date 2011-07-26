@@ -60,7 +60,12 @@ i18n_ru_keyb = RU
 i18n_ru_cset = RU
 i18n_ru_idt  = IDT_24H | IDT_DDMMYY | '/'
 
-COUNTRIES = us de fr cz gr es fi sg ru
+i18n_it_lang = it
+i18n_it_keyb = IT
+i18n_it_cset = ST
+i18n_it_idt  = IDT_24H | IDT_DDMMYY | '/'
+
+COUNTRIES = us de fr cz gr es fi sg ru it
 
 # 
 
