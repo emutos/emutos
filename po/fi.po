@@ -626,7 +626,7 @@ msgstr "dokumentit"
 
 #: desk/desk_rsc.c:1617
 msgid "  Show as text   \007S"
-msgstr "  Näytä tekstinä    \007S"
+msgstr "  Näytä tekstinä \007S"
 
 #: desk/desk_rsc.c:1630
 msgid "New Folder"
@@ -920,13 +920,13 @@ msgstr "[1]["
 
 #: desk/desk_rsc.c:389
 msgid "---------------------"
-msgstr "---------------------"
+msgstr "----------------------"
 
 #: desk/desk_rsc.c:468
 msgid "-------------------------------"
 msgstr "-------------------------------"
 
 #: desk/desk_rsc.c:504
-msgid "--------------------"
-msgstr "--------------------"
+msgid "---------------------"
+msgstr "---------------------"
 

@@ -354,7 +354,7 @@ msgstr " Orden "
 
 #: desk/desk_rsc.c:322
 msgid "  Desktop info...   "
-msgstr "  Información del Desktop...   "
+msgstr "  Información del Desktop... "
 
 #: desk/desk_rsc.c:376
 msgid "  Open"
@@ -630,7 +630,7 @@ msgstr "Documentos"
 
 #: desk/desk_rsc.c:1617
 msgid "  Show as text   \007S"
-msgstr "  Mostrar como texto \007S"
+msgstr "  Mostrar como texto  \007S"
 
 #: desk/desk_rsc.c:1630
 msgid "New Folder"
@@ -920,7 +920,7 @@ msgstr "[1]["
 
 #: desk/desk_rsc.c:389
 msgid "---------------------"
-msgstr "---------------------"
+msgstr "-----------------------"
 
 #: desk/desk_rsc.c:468
 msgid "-------------------------------"
@@ -928,5 +928,5 @@ msgstr "-------------------------------"
 
 #: desk/desk_rsc.c:504
 msgid "--------------------"
-msgstr "--------------------"
+msgstr "-----------------------------"
 

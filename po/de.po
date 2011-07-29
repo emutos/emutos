@@ -642,7 +642,7 @@ msgstr "Dokumente"
 
 #: desk/desk_rsc.c:1617
 msgid "  Show as text   \007S"
-msgstr "  Als Text   \007S"
+msgstr "  Als Text       \007S"
 
 #: desk/desk_rsc.c:1630
 msgid "New Folder"

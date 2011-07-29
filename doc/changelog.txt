@@ -2406,3 +2406,5 @@ Start... early ages
 - po/gr.po: Converted to LF line endings. (VRI)
 - po/cs.po, po/de.po, po/es.po, po/fi.po, po/fr.po, po/gr.po, po/it.po: Updated
   from new sources. (VRI)
+- desk/desk_rsc.c, po/de.po, po/es.po, po/fi.po, po/gr.po, po/ru.po: Fixed all
+  the menu separator lines length (some of them were still wrong). (VRI)
