@@ -386,7 +386,7 @@ static const OBJECT desk_rs_obj_rom[] = {
    { 21, -1, -1, G_STRING,                      /*** 20 ***/
      NONE,
      DISABLED,
-     (long) "---------------------",
+     (long) N_("---------------------"),
      0, 2, 21, 1},
 
    { 22, -1, -1, G_STRING,                      /*** 21 ***/
@@ -465,7 +465,7 @@ static const OBJECT desk_rs_obj_rom[] = {
    { 34, -1, -1, G_STRING,                      /*** 33 ***/
      NONE,
      DISABLED,
-     (long) "-------------------------------",
+     (long) N_("-------------------------------"),
      0, 2, 31, 1},
 
    { 35, -1, -1, G_STRING,                      /*** 34 ***/
@@ -501,7 +501,7 @@ static const OBJECT desk_rs_obj_rom[] = {
    { 40, -1, -1, G_STRING,                      /*** 39 ***/
      NONE,
      DISABLED,
-     (long) "--------------------",
+     (long) N_("--------------------"),
      0, 1, 20, 1},
 
    { 41, -1, -1, G_STRING,                      /*** 40 ***/

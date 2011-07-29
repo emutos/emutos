@@ -2399,3 +2399,7 @@ Start... early ages
 2011-07-26
 - country.mk, Makefile, bios/country.h, bios/keyb_it.h, po/it.po, po/LINGUAS:
   Added Italian translation stubs. (VRI)
+
+2011-07-29
+- desk/desk_rsc.c, po/ru.po: Fixed the menu separator lines length in the
+  Russian translation. Contributed by Dima Sobolev. (VRI)
