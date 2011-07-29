@@ -2404,3 +2404,5 @@ Start... early ages
 - desk/desk_rsc.c, po/ru.po: Fixed the menu separator lines length in the
   Russian translation. Contributed by Dima Sobolev. (VRI)
 - po/gr.po: Converted to LF line endings. (VRI)
+- po/cs.po, po/de.po, po/es.po, po/fi.po, po/fr.po, po/gr.po, po/it.po: Updated
+  from new sources. (VRI)

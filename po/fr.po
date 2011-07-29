@@ -6,26 +6,26 @@ msgid ""
 msgstr ""
 "Project-Id-Version: EMUTOS beta\n"
 "POT-Creation-Date: 2004-01-27 14:37+0100\n"
-"PO-Revision-Date: 2004-01-27 14:41+0100\n"
+"PO-Revision-Date: 2011-07-29 11:19+0200\n"
 "Last-Translator: Laurent Vogel <lvl@club-internet.fr>\n"
 "Language-Team: French <fr@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: bios/bios.c:321
+#: bios/bios.c:367
 msgid "Please eject the floppy and hit RETURN"
 msgstr "Veuillez éjecter la disquette et taper ENTREE"
 
-#: bios/initinfo.c:220
+#: bios/initinfo.c:174
 msgid "EmuTOS Version"
 msgstr "EmuTOS Version"
 
-#: bios/initinfo.c:221
+#: bios/initinfo.c:176
 msgid "CPU type"
 msgstr "Type de CPU"
 
-#: bios/initinfo.c:222
+#: bios/initinfo.c:184
 msgid "Machine"
 msgstr "Machine"
 
@@ -33,7 +33,7 @@ msgstr "Machine"
 msgid "No"
 msgstr "Non"
 
-#: bios/initinfo.c:237
+#: bios/initinfo.c:199
 msgid "Screen start"
 msgstr "Début écran"
 
@@ -388,11 +388,11 @@ msgstr "Impossible de lire le fichier de secteur d'amorçage"
 msgid "Command not found."
 msgstr "Commande non trouvée."
 
-#: bios/initinfo.c:225 bios/initinfo.c:232
+#: bios/initinfo.c:187 bios/initinfo.c:194
 msgid "%ld kB"
 msgstr "%ld kB"
 
-#: bios/initinfo.c:239
+#: bios/initinfo.c:201
 msgid "GEMDOS drives"
 msgstr "Lecteurs GEMDOS"
 
@@ -804,9 +804,8 @@ msgstr "Nouv Dossier"
 msgid "Disk Drives:"
 msgstr "Lecteurs:"
 
-#: desk/desk_rsc.c:1634
-msgid "Free"
-msgstr "Libre"
+#~msgid "Free"
+#~msgstr "Libre"
 
 #: desk/desk_rsc.c:1636
 msgid "[1]["
@@ -1158,31 +1157,30 @@ msgstr "[3]["
 "Entrée. Pour revenir au DOS cliquer sur|"
 "Annuler.][  OK  |Annuler]"
 
-#: bios/initinfo.c:159
+#: bios/initinfo.c:221
 msgid "Hold <Control> to skip AUTO/ACC"
 msgstr "Touche CTRL => pas d'AUTO/ACC"
 
-#: bios/initinfo.c:161
+#: bios/initinfo.c:223
 msgid "Hold <Alternate> to skip HDD boot"
 msgstr "Touche ALT => pas de disque dur"
 
-#: bios/initinfo.c:167
-msgid "Press any key to continue booting"
-msgstr "Taper une touche pour continuer"
+#~msgid "Press any key to continue booting"
+#~msgstr "Taper une touche pour continuer"
 
-#: bios/initinfo.c:224
+#: bios/initinfo.c:186
 msgid "Free ST-RAM"
 msgstr "ST-RAM libre"
 
-#: bios/initinfo.c:231
+#: bios/initinfo.c:193
 msgid "Free FastRAM"
 msgstr "FastRAM libre"
 
-#: bios/initinfo.c:253
+#: bios/initinfo.c:215
 msgid "Boot time"
 msgstr "Heure de démarrage"
 
-#: bios/bios.c:367
+#: bios/bios.c:414
 msgid ""
 "System halted!\n"
 msgstr ""
@@ -1200,11 +1198,11 @@ msgstr "  Arrêter         ^Q"
 msgid "  Change resolution         \007C"
 msgstr "  Changer la résolution     \007C"
 
-#: bios/initinfo.c:164
+#: bios/initinfo.c:226
 msgid "Press 'C' to run an early console"
 msgstr "Taper 'C' pour lancer la console"
 
-#: bios/initinfo.c:232
+#: bios/initinfo.c:233
 msgid " Hold <Shift> to pause this screen "
 msgstr " <Shift> pour maintenir cet écran "
 
@@ -1277,3 +1275,16 @@ msgstr "[1]["
 "L'icône de la corbeille peut être|"
 "déplacée sur le bureau, mais pas au|"
 "dessus d'une autre icône.][  OK  ]"
+
+#: desk/desk_rsc.c:389
+msgid "---------------------"
+msgstr "---------------------"
+
+#: desk/desk_rsc.c:468
+msgid "-------------------------------"
+msgstr "-------------------------------"
+
+#: desk/desk_rsc.c:504
+msgid "--------------------"
+msgstr "--------------------"
+

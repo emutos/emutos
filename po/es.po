@@ -6,22 +6,22 @@ msgid ""
 msgstr ""
 "Project-Id-Version: EMUTOS beta\n"
 "POT-Creation-Date: 2005-04-11 17:18+0200\n"
-"PO-Revision-Date: 2005-04-14 13:30+0200\n"
+"PO-Revision-Date: 2011-07-29 11:36+0200\n"
 "Last-Translator: Gabriel Huertas <gabrielhuertas@terra.es>\n"
 "Language-Team: Español <dr.worst@terra.es>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-15\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: bios/bios.c:332
+#: bios/bios.c:367
 msgid "Please eject the floppy and hit RETURN"
 msgstr "Por favor, expulse el floppy y pulse RETURN"
 
-#: bios/initinfo.c:221
+#: bios/initinfo.c:174
 msgid "EmuTOS Version"
 msgstr "EmuTOS Versión"
 
-#: bios/initinfo.c:222
+#: bios/initinfo.c:176
 msgid "CPU type"
 msgstr "tipo de CPU"
 
@@ -35,25 +35,25 @@ msgstr "No"
 #~msgid "Free memory"
 #~msgstr "Memoria libre"
 
-#: bios/initinfo.c:238
+#: bios/initinfo.c:199
 msgid "Screen start"
 msgstr "Pantalla inicial"
 
 #~msgid "Boot drive"
 #~msgstr "Unidad de arranque"
 
-#: bios/initinfo.c:223
+#: bios/initinfo.c:184
 msgid "Machine"
 msgstr "Máquina"
 
 #~msgid "Current time"
 #~msgstr "Tiempo actual"
 
-#: bios/initinfo.c:226 bios/initinfo.c:233
+#: bios/initinfo.c:187 bios/initinfo.c:194
 msgid "%ld kB"
 msgstr "%ld kB"
 
-#: bios/initinfo.c:240
+#: bios/initinfo.c:201
 msgid "GEMDOS drives"
 msgstr "Unidades GEMDOS"
 
@@ -640,9 +640,8 @@ msgstr "Nueva Carpeta"
 msgid "Disk Drives:"
 msgstr "Unidades de Disco"
 
-#: desk/desk_rsc.c:1634
-msgid "Free"
-msgstr "Libre"
+#~msgid "Free"
+#~msgstr "Libre"
 
 #: desk/desk_rsc.c:1636
 msgid "[1]["
@@ -804,31 +803,30 @@ msgstr "[3]["
 "res permitidos. Examine la documen-|"
 "tación sobre esos límites.][   OK   ]"
 
-#: bios/initinfo.c:168
-msgid "Press any key to continue booting"
-msgstr "Pulse cualquier tecla para continuar arrancando"
+#~msgid "Press any key to continue booting"
+#~msgstr "Pulse cualquier tecla para continuar arrancando"
 
-#: bios/initinfo.c:225
+#: bios/initinfo.c:186
 msgid "Free ST-RAM"
 msgstr "ST RAM disponible"
 
-#: bios/initinfo.c:232
+#: bios/initinfo.c:193
 msgid "Free FastRAM"
 msgstr "TT/FastRAM disponible"
 
-#: bios/initinfo.c:254
+#: bios/initinfo.c:215
 msgid "Boot time"
 msgstr "Tiempo de arranque"
 
-#: bios/initinfo.c:160
+#: bios/initinfo.c:221
 msgid "Hold <Control> to skip AUTO/ACC"
 msgstr "<Control> para saltar AUTO/ACC"
 
-#: bios/initinfo.c:162
+#: bios/initinfo.c:223
 msgid "Hold <Alternate> to skip HDD boot"
 msgstr "<Alt> no iniciar disco duro"
 
-#: bios/bios.c:378
+#: bios/bios.c:414
 msgid ""
 "System halted!\n"
 msgstr ""
@@ -846,7 +844,7 @@ msgstr "  Cerrar sistema    ^Q"
 msgid "  Change resolution         \007C"
 msgstr "  Cambiar resolución        \007C"
 
-#: bios/initinfo.c:165
+#: bios/initinfo.c:226
 msgid "Press 'C' to run an early console"
 msgstr "Pulse 'C' para correr en una cónsola primitiva"
 
@@ -919,4 +917,16 @@ msgstr "[1]["
 "Puede mover la papelera dentro del |"
 "escritorio GEM, pero no colocarla|"
 "encima de otro icono.][  OK  ]"
+
+#: desk/desk_rsc.c:389
+msgid "---------------------"
+msgstr "---------------------"
+
+#: desk/desk_rsc.c:468
+msgid "-------------------------------"
+msgstr "-------------------------------"
+
+#: desk/desk_rsc.c:504
+msgid "--------------------"
+msgstr "--------------------"
 

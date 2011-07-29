@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: EmuTOS 0.2a\n"
 "POT-Creation-Date: 2004-08-02 13:20+0200\n"
-"PO-Revision-Date: 2004-08-02 13:31+0200\n"
+"PO-Revision-Date: 2011-07-29 11:30+0200\n"
 "Last-Translator: Bohdan Milar <milarb@volny.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -14,7 +14,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: KBabel 0.9.5\n"
 
-#: bios/bios.c:321
+#: bios/bios.c:367
 msgid "Please eject the floppy and hit RETURN"
 msgstr "Vysuòte prosím disketu a stisknìte RETURN"
 
@@ -23,15 +23,15 @@ msgstr "Vysuòte prosím disketu a stisknìte RETURN"
 #~msgstr ""
 #~"[FAIL] HALT - nemìlo by nikdy nastat!\n"
 
-#: bios/initinfo.c:220
+#: bios/initinfo.c:174
 msgid "EmuTOS Version"
 msgstr "EmuTOS verze"
 
-#: bios/initinfo.c:221
+#: bios/initinfo.c:176
 msgid "CPU type"
 msgstr "Typ CPU"
 
-#: bios/initinfo.c:222
+#: bios/initinfo.c:184
 msgid "Machine"
 msgstr "Poèítaè"
 
@@ -45,18 +45,18 @@ msgstr "Ne"
 #~msgid "Free memory"
 #~msgstr "Volná pamì»"
 
-#: bios/initinfo.c:225 bios/initinfo.c:232
+#: bios/initinfo.c:187 bios/initinfo.c:194
 msgid "%ld kB"
 msgstr "%ld kB"
 
 #~msgid " ST-RAM, %ld kB TT-RAM"
 #~msgstr " ST-RAM, %ld kB TT-RAM"
 
-#: bios/initinfo.c:237
+#: bios/initinfo.c:199
 msgid "Screen start"
 msgstr "Zaèátek obrazu"
 
-#: bios/initinfo.c:239
+#: bios/initinfo.c:201
 msgid "GEMDOS drives"
 msgstr "Disky GEMDOSu"
 
@@ -665,9 +665,8 @@ msgstr "Nový adresáø"
 msgid "Disk Drives:"
 msgstr "Jednotky:"
 
-#: desk/desk_rsc.c:1634
-msgid "Free"
-msgstr "Volných"
+#~msgid "Free"
+#~msgstr "Volných"
 
 #: desk/desk_rsc.c:1636
 msgid "[1]["
@@ -838,33 +837,32 @@ msgstr "[3]["
 #~msgid "Hold <Alternate> key to skip HDD boot"
 #~msgstr "Podr¾ <Alternate> pro pøeskoèení HDD"
 
-#: bios/initinfo.c:167
-msgid "Press any key to continue booting"
-msgstr "Stiskni libovolnou klávesu pro start"
+#~msgid "Press any key to continue booting"
+#~msgstr "Stiskni libovolnou klávesu pro start"
 
-#: bios/initinfo.c:224
+#: bios/initinfo.c:186
 msgid "Free ST-RAM"
 msgstr "Volná ST-RAM"
 
-#: bios/initinfo.c:231
+#: bios/initinfo.c:193
 msgid "Free FastRAM"
 msgstr "Volná FastRAM"
 
-#: bios/initinfo.c:253
+#: bios/initinfo.c:215
 msgid "Boot time"
 msgstr "Èas startu"
 
-#: bios/bios.c:367
+#: bios/bios.c:414
 msgid ""
 "System halted!\n"
 msgstr ""
 "Systém zastaven!\n"
 
-#: bios/initinfo.c:159
+#: bios/initinfo.c:221
 msgid "Hold <Control> to skip AUTO/ACC"
 msgstr "Podr¾ <Ctrl> a pøeskoè AUTO/ACC"
 
-#: bios/initinfo.c:161
+#: bios/initinfo.c:223
 msgid "Hold <Alternate> to skip HDD boot"
 msgstr "Podr¾ <Alt> k pøeskoèení HDD"
 
@@ -880,7 +878,7 @@ msgstr "  Vypnout         ^Q"
 msgid "  Change resolution         \007C"
 msgstr "  Zmìna rozli¹ení           \007C"
 
-#: bios/initinfo.c:164
+#: bios/initinfo.c:226
 msgid "Press 'C' to run an early console"
 msgstr "Stiskni 'C' pro spu¹tìní konzoly"
 
@@ -952,4 +950,16 @@ msgstr "[1]["
 "Odpadkový ko¹ mù¾e¹ pøesunout na jiné|"
 "místo na plo¹e GEM Desktopu, ale nemù¾e¹|"
 "ho umístit na jinou ikonu..][  OK  ]"
+
+#: desk/desk_rsc.c:389
+msgid "---------------------"
+msgstr "---------------------"
+
+#: desk/desk_rsc.c:468
+msgid "-------------------------------"
+msgstr "-------------------------------"
+
+#: desk/desk_rsc.c:504
+msgid "--------------------"
+msgstr "--------------------"
 

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: EMUTOS beta\n"
 "POT-Creation-Date: 2011-07-26 23:52+0200\n"
-"PO-Revision-Date: 2011-07-26 23:52+0200\n"
+"PO-Revision-Date: 2011-07-29 12:08+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: Italian <it@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -787,3 +787,16 @@ msgid "[1]["
 "location on the GEM Desktop, but you|"
 "cannot place it on top of another icon.][  OK  ]"
 msgstr ""
+
+#: desk/desk_rsc.c:389
+msgid "---------------------"
+msgstr "---------------------"
+
+#: desk/desk_rsc.c:468
+msgid "-------------------------------"
+msgstr "-------------------------------"
+
+#: desk/desk_rsc.c:504
+msgid "--------------------"
+msgstr "--------------------"
+
