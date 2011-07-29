@@ -23,7 +23,7 @@ msgstr "EmuTOS Versión"
 
 #: bios/initinfo.c:176
 msgid "CPU type"
-msgstr "tipo de CPU"
+msgstr "Tipo de CPU"
 
 #~msgid "MMU available"
 #~msgstr "MMU disponible"
