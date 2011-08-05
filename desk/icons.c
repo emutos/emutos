@@ -20,7 +20,7 @@
 */
 
 
-ICONBLK gl_ilist[NUM_IBLKS] =
+const ICONBLK gl_ilist[NUM_IBLKS] =
 {
 /* System Icons:        */
     { 0x0L,  0x1L,  -1L, 0x1000,5,11, 23,0,32,32, 0,32,72,10}, /*IGHARD 0*/
@@ -282,7 +282,7 @@ static const UWORD icondata[][DATASIZE] =
 };
 
 /* Icon names for use in Desktop's Configure Application dialog */
-BYTE    *cfg_icons_txt[32]=
+const BYTE * const cfg_icons_txt[32] =
 {
         " Generic ",
         " Spreadsheet ",
@@ -319,9 +319,9 @@ BYTE    *cfg_icons_txt[32]=
 };
 
 
-void *icondata_start = &icondata; /* Pointer to array = start of array */
+const void * const icondata_start = &icondata; /* Pointer to array = start of array */
 
-void *icondata_end = &icondata + 1; /* Pointer to array + 1 = end of array */
+const void * const icondata_end = &icondata + 1; /* Pointer to array + 1 = end of array */
 
 
 #endif  /* TOS_VERSION >= 0x200 */

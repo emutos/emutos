@@ -292,7 +292,7 @@ void insa_icon(LONG tree, WORD obj, WORD nicon, ICONBLK *pic, BYTE *ptext)
 void insa_elev(LONG tree, WORD nicon, WORD numics)
 {
         WORD            y, h, th;
-        char            *lp;
+        const char      *lp;
 
         y = 0;
         th = h = LWGET(OB_HEIGHT(APFSVSLI));  

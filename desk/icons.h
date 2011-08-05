@@ -5,9 +5,9 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-extern  ICONBLK gl_ilist[NUM_IBLKS];
+extern const ICONBLK gl_ilist[NUM_IBLKS];
 
-extern  BYTE    *cfg_icons_txt[];
+extern const BYTE * const cfg_icons_txt[];
 
-extern void *icondata_start;
-extern void *icondata_end;
+extern const void * const icondata_start;
+extern const void * const icondata_end;

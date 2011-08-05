@@ -2413,3 +2413,4 @@ Start... early ages
 - desk/icons/*.icn, desk/icons/iconhi.h, desk/icons/iconlo.h,
   desk/icons/read.me: Converted to LF line endings. (VRI)
 - desk/icons/*.icn, desk/icons.c: Fixed icon data ordering for GCC 4.6. (VRI)
+- desk/deskins.c, desk/icons.c, desk/icons.h: Added constness. (VRI)
