@@ -1,8 +1,10 @@
 /* GEM Icon Definition: */
+#ifndef INCLUDE_ONLY_ICON_DATA
 #define ICON_W 0x0020
 #define ICON_H 0x0020
 #define DATASIZE 0x0040
 UWORD iamaildh[DATASIZE] =
+#endif /* INCLUDE_ONLY_ICON_DATA */
 { 0x0000, 0x0000, 0x7FFF, 0xFFFE, 
   0x7FFF, 0xFFFE, 0x7FFF, 0xFFFE, 
   0x4000, 0x0002, 0x5FFF, 0xC002, 
@@ -19,4 +21,7 @@ UWORD iamaildh[DATASIZE] =
   0x401E, 0x000A, 0x4007, 0xFFFA, 
   0x4000, 0x0002, 0x7FFF, 0xFFFE, 
   0x0000, 0x0000, 0x0000, 0x0000
-};
+}
+#ifndef INCLUDE_ONLY_ICON_DATA
+;
+#endif /* INCLUDE_ONLY_ICON_DATA */

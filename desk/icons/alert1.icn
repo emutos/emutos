@@ -1,8 +1,10 @@
 /* GEM Icon Definition: */
+#ifndef INCLUDE_ONLY_ICON_DATA
 #define ICON_W 0x0020
 #define ICON_H 0x0020
 #define DATASIZE 0x0040
 UWORD alert1[DATASIZE] =
+#endif /* INCLUDE_ONLY_ICON_DATA */
 { 0x0000, 0x0000, 0x0000, 0x0000, 
   0x0000, 0x0E00, 0x0000, 0x0E00, 
   0x0000, 0x0E00, 0x0000, 0x0E00, 
@@ -19,4 +21,7 @@ UWORD alert1[DATASIZE] =
   0x6CD8, 0xC630, 0x66D8, 0xC63C, 
   0x63D8, 0xC630, 0x61D8, 0xC630, 
   0x60CF, 0x863E, 0x0000, 0x0000
-};
+}
+#ifndef INCLUDE_ONLY_ICON_DATA
+;
+#endif /* INCLUDE_ONLY_ICON_DATA */

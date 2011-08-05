@@ -101,98 +101,185 @@ ICONBLK gl_ilist[NUM_IBLKS] =
     { 0x1CL, 0x1DL, -1L, 0x1000,0,0,  23,0,32,32, 0,32,72,10}  /*IDRSV 16*/
 };
 
+#define INCLUDE_ONLY_ICON_DATA
+#define DATASIZE 0x0040
+static const UWORD icondata[][DATASIZE] =
+{
 #include <ighdskmh.icn> /*x0*/                  /* System icons         */
+,
 #include <ighdskdh.icn>
+,
 #include <igfdskmh.icn>
+,
 #include <igfdskdh.icn>
+,
 #include <igfoldmh.icn>
+,
 #include <igfolddh.icn>
+,
 #include <igtrshmh.icn>
+,
 #include <igtrshdh.icn> /*x7*/
+,
 /* Placeholders for future icons
 #include <IGRES4MH.ICN>
+,
 #include <IGRES4DH.ICN>
+,
 #include <IGRES5MH.ICN>
+,
 #include <IGRES5DH.ICN>
+,
 #include <IGRES6MH.ICN>
+,
 #include <IGRES6DH.ICN>
+,
 #include <IGRES7MH.ICN>
+,
 #include <IGRES7DH.ICN>
+,
 #include <IGRES8MH.ICN>
+,
 #include <IGRES8DH.ICN>
+,
 */
 #include <iagenrmh.icn> /*x8*/                  /* application icons    */
+,
 #include <iagenrdh.icn>
+,
 #include <iasprddh.icn>
+,
 #include <iaworddh.icn>
+,
 #include <iadbasdh.icn>
+,
 #include <iadrawdh.icn>
+,
 #include <iapantdh.icn>
+,
 #include <iaprojdh.icn>
+,
 #include <iagrphdh.icn> /*x10*/
+,
 #include <iaoutldh.icn>
+,
 #include <iaacctdh.icn>
+,
 #include <iamultdh.icn>
+,
 #include <iaeducdh.icn>
+,
 #include <iacommdh.icn>
+,
 #include <iatooldh.icn>
+,
 #include <iagamedh.icn>
+,
 #include <iaoutpdh.icn>
+,
 #include <iadpubdh.icn> /*x19*/
+,
 #include <iascandh.icn>
+,
 #include <iamaildh.icn>
+,
 /* Placeholders for future Application icons
 #include <IARS04DH.ICN>
+,
 #include <IARS05DH.ICN>
+,
 #include <IARS06DH.ICN>
+,
 #include <IARS07DH.ICN>
+,
 #include <IARS08DH.ICN>
+,
 #include <IARS09DH.ICN>
+,
 #include <IARS10DH.ICN>
+,
 #include <IARS11DH.ICN>
+,
 #include <IARS12DH.ICN>
+,
 #include <IARS13DH.ICN>
+,
 #include <IARS14DH.ICN>
+,
 #include <IARS15DH.ICN>
+,
 #include <IARS16DH.ICN>
+,
 */
 #include <idgenrmh.icn>                         /* document icons       */
+,
 #include <idgenrdh.icn>
+,
 #include <idsprddh.icn>
+,
 #include <idworddh.icn>
+,
 #include <iddbasdh.icn>
+,
 #include <iddrawdh.icn>
+,
 #include <idpantdh.icn> /*x20*/
+,
 #include <idprojdh.icn>
+,
 #include <idgrphdh.icn>
+,
 #include <idoutldh.icn>
+,
 #include <idacctdh.icn>
+,
 #include <idmultdh.icn>
+,
 #include <ideducdh.icn>
+,
 #include <idcommdh.icn>
+,
 #include <idtooldh.icn> /*x28*/
+,
 #include <idgamedh.icn>
+,
 #include <idoutpdh.icn>
+,
 #include <iddpubdh.icn>
+,
 /* Placeholders for future Document Icons
 #include <IDRS02DH.ICN>
+,
 #include <IDRS03DH.ICN>
+,
 #include <IDRS04DH.ICN>
+,
 #include <IDRS05DH.ICN>
+,
 #include <IDRS06DH.ICN>
+,
 #include <IDRS07DH.ICN>
+,
 #include <IDRS08DH.ICN>
+,
 #include <IDRS09DH.ICN>
+,
 #include <IDRS10DH.ICN>
+,
 #include <IDRS11DH.ICN>
+,
 #include <IDRS12DH.ICN>
+,
 #include <IDRS13DH.ICN>
+,
 #include <IDRS14DH.ICN>
+,
 #include <IDRS15DH.ICN>
+,
 #include <IDRS16DH.ICN>
+,
 */
-
-/*WORD icondata_end;*/
+};
 
 /* Icon names for use in Desktop's Configure Application dialog */
 BYTE    *cfg_icons_txt[32]=
@@ -232,9 +319,9 @@ BYTE    *cfg_icons_txt[32]=
 };
 
 
-void *icondata_start = &ighdskmh[0];
+void *icondata_start = &icondata; /* Pointer to array = start of array */
 
-void *icondata_end = &iddpubdh[DATASIZE];
+void *icondata_end = &icondata + 1; /* Pointer to array + 1 = end of array */
 
 
 #endif  /* TOS_VERSION >= 0x200 */
