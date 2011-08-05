@@ -105,178 +105,178 @@ const ICONBLK gl_ilist[NUM_IBLKS] =
 #define DATASIZE 0x0040
 static const UWORD icondata[][DATASIZE] =
 {
-#include <ighdskmh.icn> /*x0*/                  /* System icons         */
+#include "icons/ighdskmh.icn" /*x0*/            /* System icons         */
 ,
-#include <ighdskdh.icn>
+#include "icons/ighdskdh.icn"
 ,
-#include <igfdskmh.icn>
+#include "icons/igfdskmh.icn"
 ,
-#include <igfdskdh.icn>
+#include "icons/igfdskdh.icn"
 ,
-#include <igfoldmh.icn>
+#include "icons/igfoldmh.icn"
 ,
-#include <igfolddh.icn>
+#include "icons/igfolddh.icn"
 ,
-#include <igtrshmh.icn>
+#include "icons/igtrshmh.icn"
 ,
-#include <igtrshdh.icn> /*x7*/
+#include "icons/igtrshdh.icn" /*x7*/
 ,
 /* Placeholders for future icons
-#include <IGRES4MH.ICN>
+#include "icons/igres4mh.icn"
 ,
-#include <IGRES4DH.ICN>
+#include "icons/igres4dh.icn"
 ,
-#include <IGRES5MH.ICN>
+#include "icons/igres5mh.icn"
 ,
-#include <IGRES5DH.ICN>
+#include "icons/igres5dh.icn"
 ,
-#include <IGRES6MH.ICN>
+#include "icons/igres6mh.icn"
 ,
-#include <IGRES6DH.ICN>
+#include "icons/igres6dh.icn"
 ,
-#include <IGRES7MH.ICN>
+#include "icons/igres7mh.icn"
 ,
-#include <IGRES7DH.ICN>
+#include "icons/igres7dh.icn"
 ,
-#include <IGRES8MH.ICN>
+#include "icons/igres8mh.icn"
 ,
-#include <IGRES8DH.ICN>
+#include "icons/igres8dh.icn"
 ,
 */
-#include <iagenrmh.icn> /*x8*/                  /* application icons    */
+#include "icons/iagenrmh.icn" /*x8*/            /* application icons    */
 ,
-#include <iagenrdh.icn>
+#include "icons/iagenrdh.icn"
 ,
-#include <iasprddh.icn>
+#include "icons/iasprddh.icn"
 ,
-#include <iaworddh.icn>
+#include "icons/iaworddh.icn"
 ,
-#include <iadbasdh.icn>
+#include "icons/iadbasdh.icn"
 ,
-#include <iadrawdh.icn>
+#include "icons/iadrawdh.icn"
 ,
-#include <iapantdh.icn>
+#include "icons/iapantdh.icn"
 ,
-#include <iaprojdh.icn>
+#include "icons/iaprojdh.icn"
 ,
-#include <iagrphdh.icn> /*x10*/
+#include "icons/iagrphdh.icn" /*x10*/
 ,
-#include <iaoutldh.icn>
+#include "icons/iaoutldh.icn"
 ,
-#include <iaacctdh.icn>
+#include "icons/iaacctdh.icn"
 ,
-#include <iamultdh.icn>
+#include "icons/iamultdh.icn"
 ,
-#include <iaeducdh.icn>
+#include "icons/iaeducdh.icn"
 ,
-#include <iacommdh.icn>
+#include "icons/iacommdh.icn"
 ,
-#include <iatooldh.icn>
+#include "icons/iatooldh.icn"
 ,
-#include <iagamedh.icn>
+#include "icons/iagamedh.icn"
 ,
-#include <iaoutpdh.icn>
+#include "icons/iaoutpdh.icn"
 ,
-#include <iadpubdh.icn> /*x19*/
+#include "icons/iadpubdh.icn" /*x19*/
 ,
-#include <iascandh.icn>
+#include "icons/iascandh.icn"
 ,
-#include <iamaildh.icn>
+#include "icons/iamaildh.icn"
 ,
 /* Placeholders for future Application icons
-#include <IARS04DH.ICN>
+#include "icons/iars04dh.icn"
 ,
-#include <IARS05DH.ICN>
+#include "icons/iars05dh.icn"
 ,
-#include <IARS06DH.ICN>
+#include "icons/iars06dh.icn"
 ,
-#include <IARS07DH.ICN>
+#include "icons/iars07dh.icn"
 ,
-#include <IARS08DH.ICN>
+#include "icons/iars08dh.icn"
 ,
-#include <IARS09DH.ICN>
+#include "icons/iars09dh.icn"
 ,
-#include <IARS10DH.ICN>
+#include "icons/iars10dh.icn"
 ,
-#include <IARS11DH.ICN>
+#include "icons/iars11dh.icn"
 ,
-#include <IARS12DH.ICN>
+#include "icons/iars12dh.icn"
 ,
-#include <IARS13DH.ICN>
+#include "icons/iars13dh.icn"
 ,
-#include <IARS14DH.ICN>
+#include "icons/iars14dh.icn"
 ,
-#include <IARS15DH.ICN>
+#include "icons/iars15dh.icn"
 ,
-#include <IARS16DH.ICN>
+#include "icons/iars16dh.icn"
 ,
 */
-#include <idgenrmh.icn>                         /* document icons       */
+#include "icons/idgenrmh.icn"                   /* document icons       */
 ,
-#include <idgenrdh.icn>
+#include "icons/idgenrdh.icn"
 ,
-#include <idsprddh.icn>
+#include "icons/idsprddh.icn"
 ,
-#include <idworddh.icn>
+#include "icons/idworddh.icn"
 ,
-#include <iddbasdh.icn>
+#include "icons/iddbasdh.icn"
 ,
-#include <iddrawdh.icn>
+#include "icons/iddrawdh.icn"
 ,
-#include <idpantdh.icn> /*x20*/
+#include "icons/idpantdh.icn" /*x20*/
 ,
-#include <idprojdh.icn>
+#include "icons/idprojdh.icn"
 ,
-#include <idgrphdh.icn>
+#include "icons/idgrphdh.icn"
 ,
-#include <idoutldh.icn>
+#include "icons/idoutldh.icn"
 ,
-#include <idacctdh.icn>
+#include "icons/idacctdh.icn"
 ,
-#include <idmultdh.icn>
+#include "icons/idmultdh.icn"
 ,
-#include <ideducdh.icn>
+#include "icons/ideducdh.icn"
 ,
-#include <idcommdh.icn>
+#include "icons/idcommdh.icn"
 ,
-#include <idtooldh.icn> /*x28*/
+#include "icons/idtooldh.icn" /*x28*/
 ,
-#include <idgamedh.icn>
+#include "icons/idgamedh.icn"
 ,
-#include <idoutpdh.icn>
+#include "icons/idoutpdh.icn"
 ,
-#include <iddpubdh.icn>
+#include "icons/iddpubdh.icn"
 ,
 /* Placeholders for future Document Icons
-#include <IDRS02DH.ICN>
+#include "icons/idrs02dh.icn"
 ,
-#include <IDRS03DH.ICN>
+#include "icons/idrs03dh.icn"
 ,
-#include <IDRS04DH.ICN>
+#include "icons/idrs04dh.icn"
 ,
-#include <IDRS05DH.ICN>
+#include "icons/idrs05dh.icn"
 ,
-#include <IDRS06DH.ICN>
+#include "icons/idrs06dh.icn"
 ,
-#include <IDRS07DH.ICN>
+#include "icons/idrs07dh.icn"
 ,
-#include <IDRS08DH.ICN>
+#include "icons/idrs08dh.icn"
 ,
-#include <IDRS09DH.ICN>
+#include "icons/idrs09dh.icn"
 ,
-#include <IDRS10DH.ICN>
+#include "icons/idrs10dh.icn"
 ,
-#include <IDRS11DH.ICN>
+#include "icons/idrs11dh.icn"
 ,
-#include <IDRS12DH.ICN>
+#include "icons/idrs12dh.icn"
 ,
-#include <IDRS13DH.ICN>
+#include "icons/idrs13dh.icn"
 ,
-#include <IDRS14DH.ICN>
+#include "icons/idrs14dh.icn"
 ,
-#include <IDRS15DH.ICN>
+#include "icons/idrs15dh.icn"
 ,
-#include <IDRS16DH.ICN>
+#include "icons/idrs16dh.icn"
 ,
 */
 };

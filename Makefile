@@ -211,7 +211,7 @@ util_copts = -Ibios
 cli_copts  = -Ibios
 vdi_copts  = -Ibios
 aes_copts  = -Ibios
-desk_copts = -Ibios -Iaes -Idesk/icons -DDESK1
+desk_copts = -Ibios -Iaes -DDESK1
 
 #
 # Directory selection depending on the user interface (EmuCON or AES)
@@ -798,7 +798,7 @@ TOCLEAN += makefile.dep
 
 makefile.dep: util/langs.c bios/header.h bios/ctables.h
 	( \
-	  $(CC) $(MULTILIBFLAGS) -MM $(INC) -Ibios -Iaes -Idesk/icons $(DEF) $(CSRC); \
+	  $(CC) $(MULTILIBFLAGS) -MM $(INC) -Ibios -Iaes $(DEF) $(CSRC); \
 	  $(CC) $(MULTILIBFLAGS) -MM $(INC) $(DEF) $(SSRC) \
 	) | sed -e '/:/s,^,obj/,' >makefile.dep
 
