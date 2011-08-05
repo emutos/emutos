@@ -2408,3 +2408,7 @@ Start... early ages
   from new sources. (VRI)
 - desk/desk_rsc.c, po/de.po, po/es.po, po/fi.po, po/gr.po, po/ru.po: Fixed all
   the menu separator lines length (some of them were still wrong). (VRI)
+
+2011-08-05
+- desk/icons/*.icn, desk/icons/iconhi.h, desk/icons/iconlo.h,
+  desk/icons/read.me: Converted to LF line endings. (VRI)
