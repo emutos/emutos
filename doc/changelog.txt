@@ -2419,3 +2419,4 @@ Start... early ages
 2011-08-05
 - desk/icons/deskhi.icn, desk/icons/desklo.icn: Set as binary in CVS. (VRI)
 - util/bootasm.S, util/bootsect.S: Added ColdFire support. (VRI)
+- util/boot.c: Fixed warnings with GCC 4.6.1. (VRI)

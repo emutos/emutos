@@ -46,14 +46,14 @@ static void putl(unsigned long u)
     u >>= 4L;
     c[7-i] = (a < 10) ? (a + '0') : (a + 'a' - 10);
   }
-  Cconws(c);
+  (void)Cconws(c);
 }
 
 static void fatal(const char *s)
 {
-  Cconws("Fatal: ");
-  Cconws(s);
-  Cconws("\012\015hit any key.");
+  (void)Cconws("Fatal: ");
+  (void)Cconws(s);
+  (void)Cconws("\012\015hit any key.");
   Cconin();
   exit(1);
 }
@@ -90,9 +90,9 @@ int main()
   
   address = *((long *)(buf + 8));
   
-  Cconws("\012\015address = 0x");
+  (void)Cconws("\012\015address = 0x");
   putl(address);
-  Cconws(".\012\015");
+  (void)Cconws(".\012\015");
   
   /* check that the address is not after our buffer */
 
@@ -102,7 +102,7 @@ int main()
 
   /* hit a key to let the user remove any floppy */
 
-  Cconws("Hit RETURN to boot " TOS_FILENAME);
+  (void)Cconws("Hit RETURN to boot " TOS_FILENAME);
   Cconin();
   
   /* supervisor */
