@@ -73,7 +73,7 @@ start:
         move.w  BOOTDEV,-(sp)
         move.w  #GETBPB,-(sp)
         trap    #13
-        add.w   #4,sp
+        addq.l  #4,sp
         
         /* read the sectors in memory */
         
@@ -86,7 +86,7 @@ start:
         clr.w   -(sp)
         move.w  #RWABS,-(sp)
         trap    #13
-        add.w   #14,sp
+        lea     14(sp),sp
         tst.w   d0
         bne     fail
 
@@ -138,8 +138,13 @@ memcpy:
         sub.l   #1,d0
 cpy:
         move.l  (a0)+,(a1)+
+#ifdef __mcoldfire__
+        subq.l  #1,d0
+        bpl.s   cpy
+#else
         dbra    d0,cpy
         sub.l   #0x10000,d0 
         bhi     cpy 
+#endif
         rts
 endboot:
