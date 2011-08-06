@@ -54,10 +54,16 @@ four:
         lsr.l   #2,d0
 copy:
         move.l  (a0)+,(a1)+
+#ifdef __mcoldfire__
+        subq.l  #1,d0
+        bpl.s   copy
+#else
         dbra    d0,copy
+#endif
         
         /* jump into boot routine */
         
+        /* the instruction cache should be invalidated here */
         jmp     (a4)
         
 boot:
@@ -68,12 +74,18 @@ boot:
         move.l  a3,a0
 bcopy:
         move.l  (a2)+,(a3)+
+#ifdef __mcoldfire__
+        subq.l  #1,d2
+        bpl.s   bcopy
+#else
         dbra    d2,bcopy
         sub.l   #0x10000,d2 
         bhi     bcopy 
+#endif
         
         /* jump into it */
 
+        /* the instruction cache should be invalidated here */
         jmp     (a0)
 bootend:
         .end
