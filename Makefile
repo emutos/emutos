@@ -124,6 +124,9 @@ CPPFLAGS = $(INC)
 # The objdump utility (disassembler)
 OBJDUMP = m68k-atari-mint-objdump
 
+# The objcopy utility
+OBJCOPY = m68k-atari-mint-objcopy
+
 # the native C compiler, for tools
 NATIVECC = gcc -Wall -W -pedantic -ansi -O
 
@@ -268,6 +271,7 @@ help:
 	@echo "256     etos256k.img, EmuTOS ROM padded to size 256 KB (starting at 0x00E00000)"
 	@echo "512     etos512k.img, EmuTOS ROM padded to size 512 KB (starting at 0x00E00000)" 
 	@echo "aranym  etos512k.img, suitable for ARAnyM" 
+	@echo "firebee emutos2.s19, to be flashed on the FireBee"
 	@echo "ram     ramtos.img + boot.prg, a RAM tos"
 	@echo "flop    emutos.st, a bootable floppy with RAM tos"
 	@echo "clean"
@@ -350,6 +354,17 @@ falcon: help
 etos512k.img: emutos2.img
 	$(sized_image)
 
+#
+# ColdFire images
+#
+
+TOCLEAN += *.s19
+
+.PHONY: firebee
+firebee:
+	@echo building FireBee EmuTOS in emutos2.s19
+	$(MAKE) COLDFIRE=1 CPUFLAGS='-mcpu=5474' DEF='-DUSE_STOP_INSN_TO_FREE_HOST_CPU=0 -DCONF_WITH_ACSI=0' emutos2.img
+	$(OBJCOPY) -I binary -O srec --change-addresses 0xe0600000 emutos2.img emutos2.s19
 
 #
 # ram - In two stages. first link emutos2.img to know the top address of bss, 

@@ -2420,3 +2420,6 @@ Start... early ages
 - desk/icons/deskhi.icn, desk/icons/desklo.icn: Set as binary in CVS. (VRI)
 - util/bootasm.S, util/bootsect.S: Added ColdFire support. (VRI)
 - util/boot.c: Fixed warnings with GCC 4.6.1. (VRI)
+
+2011-08-12
+- .cvsignore, Makefile: Added the firebee target. (VRI)
