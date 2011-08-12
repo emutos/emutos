@@ -370,6 +370,7 @@ void biosmain(void)
     }
 
     initscreen();               /* clear the screen, etc. */
+#if INITINFO_DURATION > 0
 #if ALWAYS_SHOW_INITINFO
     /* No condition */ {
 #else
@@ -377,6 +378,7 @@ void biosmain(void)
 #endif
         initinfo();             /* show initial config information */
     }
+#endif
     
     /* boot eventually from a block device (floppy or harddisk) */
     blkdev_hdv_boot();

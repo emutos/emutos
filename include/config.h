@@ -150,6 +150,25 @@
 # endif
 #endif
 
+/*
+ * By default, the EmuTOS welcome screen (initinfo) is displayed for 3 seconds.
+ * On emulators, this is enough to read the text, and optionally to press Shift
+ * to keep the screen displayed. But on real hardware, it can take several
+ * seconds for the monitor to recover from stand-by mode, so the welcome screen
+ * may never be seen. I such cases, it is wise to increase the welcome screen
+ * duration.
+ * You can use the INITINFO_DURATION define to specifiy the welcome screen
+ * duration, in seconds. If it is set to 0, the welcome screen will never be
+ * displayed.
+ */
+#ifndef INITINFO_DURATION
+# ifdef MACHINE_FIREBEE
+#  define INITINFO_DURATION 10
+# else
+#  define INITINFO_DURATION 3
+# endif
+#endif
+
 /* The keyboard and language are now set using
  *   make COUNTRY="xx" 
  * where xx is a lowercase two-letter country code as

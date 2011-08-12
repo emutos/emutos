@@ -2428,3 +2428,5 @@ Start... early ages
   machine-specific ROMs from inside the sources. (VRI)
 - bios/bios.c, include/config.h: Added new define ALWAYS_SHOW_INITINFO to show
   the welcome screen on every boot. Enabled by default on the FireBee. (VRI)
+- bios/bios.c, bios/initinfo.c, include/config.h: Added new define
+  INITINFO_DURATION to set the welcome screen duration. (VRI)

@@ -235,7 +235,7 @@ void initinfo(void)
     
     /* pause for a short while (or longer if a Shift key is held down) */
     {
-        long end = hz_200 + 3 * 200UL;  /* Pause for 3 seconds */
+        long end = hz_200 + INITINFO_DURATION * 200UL;
         while(hz_200 < end) {
             while((kbshift(-1) & 0x03)) ;       /* Shift key will pause */
             if ((kbshift(-1) & 0x0c) || bconstat2())
