@@ -2424,3 +2424,5 @@ Start... early ages
 2011-08-12
 - .cvsignore, Makefile: Added the firebee target. (VRI)
 - Makefile: Compile the aranym target with -m68040. (VRI)
+- Makefile: Added the defines MACHINE_ARANYM and MACHINE_FIREBEE to identify the
+  machine-specific ROMs from inside the sources. (VRI)
