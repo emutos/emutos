@@ -135,6 +135,20 @@
 #define USE_STATIC_INLINES 1
 #endif
 
+/*
+ * By default, the EmuTOS welcome screen (initinfo) is only shown on cold boot.
+ * If you set ALWAYS_SHOW_INITINFO to 1, the welcome screen will always be
+ * displayed, on both cold boot and warm boot (reset).
+ * This is typically a good idea on the FireBee where the OS is always started
+ * in warm mode.
+ */
+#ifndef ALWAYS_SHOW_INITINFO
+# ifdef MACHINE_FIREBEE
+#  define ALWAYS_SHOW_INITINFO 1
+# else
+#  define ALWAYS_SHOW_INITINFO 0
+# endif
+#endif
 
 /* The keyboard and language are now set using
  *   make COUNTRY="xx" 
