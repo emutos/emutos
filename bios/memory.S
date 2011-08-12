@@ -192,7 +192,7 @@ memconf:
  */
 
         suba.l  a0,a0                   // Note:The TOS 1.6 use these opcode probably to access to the MMU register more slowly than the classic "move.b  #0xa,0xffff8001"  
-        move.b  #0xa,-0x7fff(a0)        // set hw to 2 banks by 2 mb (reg 0xffff8001 - memorycontroller)
+        move.b  #0xa,0xffff8001(a0)        // set hw to 2 banks by 2 mb (reg 0xffff8001 - memorycontroller)
 
 /* init the test pattern in bank 0 and 1 */
         movea.w #0x000008,a0            // bank 0
@@ -284,7 +284,7 @@ bank_test_end:
 
         // Set the final MMU config
         suba.l  a0,a0                   // Note:The TOS 1.6 use these opcode probably to access to the MMU register more slowly than the classic "move.b  d6,0xffff8001"
-        move.b  d6,-0x7fff(a0)          // set hw memory config (reg 0xffff8001 - memorycontroller)
+        move.b  d6,0xffff8001(a0)       // set hw memory config (reg 0xffff8001 - memorycontroller)
 
         bra mem_config_ok
 
@@ -315,6 +315,20 @@ end_check_test_pattern:
 
 
 mem_config_ok:
+
+        /* Some emulators do not emulator the behaviour of memory banks
+         * so we end up here with a bad value in d5 ... let's do a
+         * last sanity check whether the memory is really usable: */
+        move.l  #0xff0055aa,d0          // Test pattern
+mem_sanity_loop:
+        move.l  d5,a0
+        subq.l  #4,a0
+        move.l  d0,(a0)                 // Write to memory
+        cmp.l   (a0),d0                 // Was memory really writable?
+        beq.s   mem_sanity_done
+        lsr.l   #1,d5                   // Decrease memory size
+        bra.s   mem_sanity_loop
+mem_sanity_done:
 
         /* clear RAM - from 0x0400 till end (phystop in d5) */
         lea     0x0400, a4              // begin of RAM to clear
