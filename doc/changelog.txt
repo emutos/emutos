@@ -2423,3 +2423,4 @@ Start... early ages
 
 2011-08-12
 - .cvsignore, Makefile: Added the firebee target. (VRI)
+- Makefile: Compile the aranym target with -m68040. (VRI)
