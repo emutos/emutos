@@ -570,13 +570,13 @@ static const OBJECT desk_rs_obj_rom[] = {
      NONE,
      NORMAL,
      (long) N_("Attributes:"),
-     2, 7, 11, 1},
+     1, 7, 11, 1},
 
    { 10, 8, 9, G_IBOX,                          /*** 7 ***/
      NONE,
      NORMAL,
      (long) 0L,
-     15, 7, 23, 1},
+     13, 7, 26, 1},
 
    { 9, -1, -1, G_BUTTON,                       /*** 8 ***/
      SELECTABLE | RBUTTON,
@@ -588,7 +588,7 @@ static const OBJECT desk_rs_obj_rom[] = {
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) N_("Read-Only"),
-     13, 0, 10, 1},
+     13, 0, 13, 1},
 
    { 11, -1, -1, G_BUTTON,                      /*** 10 ***/
      SELECTABLE | DEFAULT | EXIT,
@@ -806,13 +806,13 @@ static const OBJECT desk_rs_obj_rom[] = {
      NONE,
      NORMAL,
      (long) N_("EmuTOS is distributed under the GPL"),
-     3, 14, 35, 1 },
+     2, 14, 36, 1 },
 
    { 0, -1, -1, G_STRING,                   /*** 15 ***/
      LASTOB,
      NORMAL,
      (long) N_("See doc/license.txt for details"),
-     4, 15, 21, 1 },
+     2, 15, 36, 1 },
 
 #define TR5 90
 /* TREE 5 */
@@ -938,7 +938,7 @@ static const OBJECT desk_rs_obj_rom[] = {
      EDITABLE,
      NORMAL,
      (long) &desk_rs_tedinfo[18],
-     2, 3, 20, 1},
+     2, 3, 25, 1},
 
    { 4, -1, -1, G_FBOXTEXT,                 /*** 3 ***/
      EDITABLE,
@@ -950,25 +950,25 @@ static const OBJECT desk_rs_obj_rom[] = {
      NONE,
      NORMAL,
      (long) N_("Disk type:"),
-     6, 6, 10, 1},
+     2, 6, 14, 1},
 
    { 8, 6, 7, G_IBOX,                       /*** 5 ***/
      NONE,
      NORMAL,
      (long) 0L,
-     16, 6, 24, 1},
+     17, 6, 23, 1},
 
    { 7, -1, -1, G_BUTTON,                   /*** 6 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) N_("Floppy"),
-     2, 0, 8, 1},
+     1, 0, 10, 1},
 
    { 5, -1, -1, G_BUTTON,                   /*** 7 ***/
      SELECTABLE | RBUTTON,
      NORMAL,
      (long) N_("Hard"),
-     12, 0, 8, 1},
+     12, 0, 10, 1},
 
    { 9, -1, -1, G_BUTTON,                   /*** 8 ***/
      SELECTABLE | EXIT,
@@ -1013,7 +1013,7 @@ static const OBJECT desk_rs_obj_rom[] = {
      NONE,
      NORMAL,
      (long) N_("Document types:"),
-     3, 4, 15, 1 },
+     2, 4, 15, 1 },
 
    { 5, -1, -1, G_FBOXTEXT,                 /*** 4 ***/
      EDITABLE,
