@@ -734,7 +734,7 @@ msgstr "Clic"
 
 #: desk/desk_rsc.c:1498
 msgid "No click"
-msgstr "Pas de clic"
+msgstr "Auto"
 
 #: desk/desk_rsc.c:1504
 msgid "To drop down menus:"

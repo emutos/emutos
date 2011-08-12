@@ -2432,3 +2432,4 @@ Start... early ages
   INITINFO_DURATION to set the welcome screen duration. (VRI)
 - bios/machine.c: Fixed machine_name() for the FireBee. (VRI)
 - desk/desk_rsc.c: Reworked dialogs for French texts (THH)
+- po/fr.po: Changed "Pas de clic" to "Auto" to fit the button. (VRI)
