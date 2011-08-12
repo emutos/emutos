@@ -2430,3 +2430,4 @@ Start... early ages
   the welcome screen on every boot. Enabled by default on the FireBee. (VRI)
 - bios/bios.c, bios/initinfo.c, include/config.h: Added new define
   INITINFO_DURATION to set the welcome screen duration. (VRI)
+- bios/machine.c: Fixed machine_name() for the FireBee. (VRI)

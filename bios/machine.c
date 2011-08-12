@@ -310,6 +310,9 @@ void machine_init(void)
 
 const char * machine_name(void)
 {
+#ifdef MACHINE_FIREBEE
+  return "FireBee";
+#else
   static char buffer[80];
   long bufsize;
 
@@ -330,4 +333,5 @@ const char * machine_name(void)
   case MCH_FALCON: return "Falcon";
   default: return "unknown";
   } 
+#endif
 }
