@@ -346,7 +346,7 @@ etos256k.img: emutos2.img
 
 aranym:
 	@echo building ARAnyM EmuTOS in etos512k.img
-	$(MAKE) CPUFLAGS='-m68040' DEF='-DMACHINE_ARANYM -DUSE_STOP_INSN_TO_FREE_HOST_CPU=1 -DCONF_WITH_ACSI=0' 512
+	$(MAKE) CPUFLAGS='-m68040' DEF='-DMACHINE_ARANYM' 512
 
 512: etos512k.img
 falcon: help
@@ -363,7 +363,7 @@ TOCLEAN += *.s19
 .PHONY: firebee
 firebee:
 	@echo building FireBee EmuTOS in emutos2.s19
-	$(MAKE) COLDFIRE=1 CPUFLAGS='-mcpu=5474' DEF='-DMACHINE_FIREBEE -DUSE_STOP_INSN_TO_FREE_HOST_CPU=0 -DCONF_WITH_ACSI=0' emutos2.img
+	$(MAKE) COLDFIRE=1 CPUFLAGS='-mcpu=5474' DEF='-DMACHINE_FIREBEE' emutos2.img
 	$(OBJCOPY) -I binary -O srec --change-addresses 0xe0600000 emutos2.img emutos2.s19
 
 #

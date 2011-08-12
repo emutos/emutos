@@ -100,7 +100,12 @@
  * Set this to 1 to activate experimental ACSI support 
  */
 #ifndef CONF_WITH_ACSI
-#define CONF_WITH_ACSI 1
+# ifdef MACHINE_ARANYM
+   /* ACSI is unsupported on ARAnyM */
+#  define CONF_WITH_ACSI 0
+# else
+#  define CONF_WITH_ACSI 1
+# endif
 #endif
 
 /*
