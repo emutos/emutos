@@ -2436,3 +2436,8 @@ Start... early ages
 - Makefile, include/config.h: Moved machine-specific defines to config.h. (VRI)
 - bios/memory.S: Added another sanity check for emulators that do not emulate
   the mirroring of memory banks. (THH)
+
+2011-08-13
+- Makefile, bios/bios.c, bios/biosmem.c, bios/startup.S, include/config.h:
+  Replaced the is_ramtos variable by the EMUTOS_RAM define to determine if
+  EmuTOS is running in RAM. (VRI)

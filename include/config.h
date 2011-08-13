@@ -148,7 +148,7 @@
  * in warm mode.
  */
 #ifndef ALWAYS_SHOW_INITINFO
-# ifdef MACHINE_FIREBEE
+# if defined(EMUTOS_RAM) || defined(MACHINE_FIREBEE)
 #  define ALWAYS_SHOW_INITINFO 1
 # else
 #  define ALWAYS_SHOW_INITINFO 0

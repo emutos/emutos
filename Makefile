@@ -375,13 +375,16 @@ TOCLEAN += boot.prg
 
 ram: ramtos.img boot.prg
 
-ramtos.img ramtos.map: $(OBJECTS) emutos2.map 
-	@topbss=`sed -e '/__end/!d;s/^ *//;s/ .*//' emutos2.map`; \
-	echo $(LD) -o ramtos.img $(OBJECTS) $(LDFLAGS) \
-		-Wl,-Ttext=$$topbss,-Tbss=0; \
+.PHONY: emutos2-ram
+emutos2-ram:
+	@echo '# First pass to build emutos2.map and determine the end of the BSS'
+	$(MAKE) emutos2.map DEF='$(DEF) -DEMUTOS_RAM'
+
+ramtos.img ramtos.map: emutos2-ram
+	@echo '# Second pass to build ramtos.img with TEXT and DATA just after the BSS'
 	$(LD) -o ramtos.img $(OBJECTS) $(LDFLAGS) \
 		-Wl,-Map,ramtos.map \
-		-Wl,-Ttext=$$topbss,-Tbss=0
+		-Wl,-Ttext=$(shell sed -e '/__end/!d;s/^ *//;s/ .*//' emutos2.map),-Tbss=0
 
 boot.prg: obj/minicrt.o obj/boot.o obj/bootasm.o
 	$(LD) -s -o $@ $+ -lgcc

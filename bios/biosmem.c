@@ -23,10 +23,6 @@ extern MD themd;            /* BIOS memory descriptor (from tosvars.S) */
 
 static int bmem_allowed;
 
-extern int is_ramtos;           /* 1 if the TOS is running in RAM */
-
-
-
 /*
  * bmem_init - initialize some memory related variables
  *
@@ -61,23 +57,11 @@ extern int is_ramtos;           /* 1 if the TOS is running in RAM */
  */
 void bmem_init(void)
 {
-    ULONG a;
-
 #if DBG_MEM
     kprintf("_etext = 0x%08lx\n", (LONG)_etext);
     kprintf("_edata = 0x%08lx\n", (LONG)_edata);
     kprintf("end    = 0x%08lx\n", (LONG)end);
 #endif
-
-    /* detect by looking at os_entry, if TOS in RAM */
-    a = (ULONG) os_entry;
-    if( a == 0x00e00000L || a == 0x00fc0000L ) {
-        is_ramtos = 0;
-    } else {
-        is_ramtos = 1;
-        /* patch TOS header */
-        os_end = (LONG) _edata;
-    }
 
     /* initialise some memory variables */
     membot = end_os = os_end; 

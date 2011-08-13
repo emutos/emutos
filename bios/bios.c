@@ -83,8 +83,6 @@ static WORD defdrv;             /* default drive number (0 is a:, 2 is c:) */
 /* BYTE env[256];                * environment string, enough bytes??? */
 static const BYTE null_env[] = {0, 0};
 
-int is_ramtos;                  /* 1 if the TOS is running in RAM */
-
 /*==== BOOT ===============================================================*/
 
 
@@ -359,22 +357,22 @@ void biosmain(void)
     if (! (has_megartc || has_nvram))
         trap1( 0x2b, os_dosdate);  /* set initial date in GEMDOS format: Tsetdate() */
 
+#ifdef EMUTOS_RAM
     /* if TOS in RAM booted from an autoboot floppy, ask to remove the
      * floppy before going on.
      */
-    if(is_ramtos) {
-        if(os_magic == OS_MAGIC_EJECT) {
-            cprintf(_("Please eject the floppy and hit RETURN"));
-            bconin2();
-        }
+    if(os_magic == OS_MAGIC_EJECT) {
+        cprintf(_("Please eject the floppy and hit RETURN"));
+        bconin2();
     }
+#endif
 
     initscreen();               /* clear the screen, etc. */
 #if INITINFO_DURATION > 0
 #if ALWAYS_SHOW_INITINFO
     /* No condition */ {
 #else
-    if (coldboot || is_ramtos) {
+    if (coldboot) {
 #endif
         initinfo();             /* show initial config information */
     }
