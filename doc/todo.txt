@@ -40,7 +40,6 @@ DESK
 - Add a dialog for resolution switching
 - Add a dialog for configuring the NVRAM (keyboard, languages, ...)
 - Support for loading DESKTOP.INF (needs remapping of the icon indices)
-- Recognize/handle *.GTP
 
 CLI
 - use extended argv specification in EmuCON
