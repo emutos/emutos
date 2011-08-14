@@ -88,12 +88,10 @@ clearbss:
 
 
 /*
- * Set up a temporary supervisor stack (jsr _check_read_byte/_detect_cpu)
+ * The caller (either startup.S or comprimg.S) needs to have initialized sp
+ * with a temporary supervisor stack (jsr _check_read_byte/_detect_cpu)
  * The stack will be overwritten and lost during clearing of memory
  */
-
-        lea     _stktop, sp             // Setup temporary Supervisor Stack
-
 
 #if FALCON_MMU + ST_MMU > 1
         /* detect if this is a Falcon by reading $ff8282 register */

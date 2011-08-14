@@ -161,7 +161,7 @@ resetvec:
 noreset:
 
         .global memdone         // return to, if memory config done
-        jmp     meminit         // do/test memory config (needs sp)
+        jmp     meminit         // do/test memory config and clear it (needs sp)
 memdone:
 
 /*

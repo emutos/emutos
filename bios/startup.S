@@ -173,20 +173,21 @@ resetvec:
 noreset:
 
 
+/*
+ * Set up a supervisor stack 
+ * It is required by meminit, but may be destroyed.
+ */
+
+        lea     _stktop, sp             // Setup Supervisor Stack
+
+
 /* 
  * memory configuration
  */
 
         .global memdone         // return to, if memory config done
-        jmp     meminit         // do/test memory config (and clear it)
+        jmp     meminit         // do/test memory config and clear it (needs sp)
 memdone:
-
-
-/*
- * Set up a supervisor stack 
- */
-
-        lea     _stktop, sp             // Setup Supervisor Stack
 
 
 /*

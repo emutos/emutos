@@ -2441,3 +2441,7 @@ Start... early ages
 - Makefile, bios/bios.c, bios/biosmem.c, bios/startup.S, include/config.h:
   Replaced the is_ramtos variable by the EMUTOS_RAM define to determine if
   EmuTOS is running in RAM. (VRI)
+
+2011-08-14
+- bios/comprimg.S, bios/memory.S, bios/startup.S: Fixed the ecpr256k.img target
+  compilation (but still not functional). (VRI)
