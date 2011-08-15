@@ -393,7 +393,12 @@ boot.prg: obj/minicrt.o obj/boot.o obj/bootasm.o
 # compressed ROM image
 #
 
-COMPROBJ = obj/comprimg.o obj/memory.o obj/uncompr.o obj/processor.o
+# The following hack allows to build the shared sources with different
+# preprocessor defines (ex: EMUTOS_RAM)
+obj/compr-%.o : %.S
+	$(CC) $(CFLAGS) $($(subst /,_,$(dir $<))sopts) -c $< -o $@
+
+COMPROBJ = obj/comprimg.o obj/compr-memory.o obj/uncompr.o obj/compr-processor.o
 
 compr2.img compr2.map: $(COMPROBJ)
 	$(LD) -o compr2.img $(COMPROBJ) $(LDFLAGS) \

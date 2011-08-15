@@ -2445,3 +2445,7 @@ Start... early ages
 2011-08-14
 - bios/comprimg.S, bios/memory.S, bios/startup.S: Fixed the ecpr256k.img target
   compilation (but still not functional). (VRI)
+
+2011-08-15
+- Makefile: Allow to build the shared sources with different preprocessor
+  defines. (VRI)
