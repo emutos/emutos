@@ -1587,9 +1587,6 @@ WORD deskmain()
         gsx_vclose();
 #endif
                                                 /* exit the gem AES     */
-#if DBG_DESKMAIN
-        kprintf("EmuDESK: appl_exit()\n");
-#endif
         appl_exit();
 
         return(TRUE);
