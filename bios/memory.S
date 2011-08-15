@@ -53,6 +53,7 @@
 
         .xdef   bssstart      // end of documented low memory tosvars
         .xdef   _end          // end of bss + comm sections (ld generated)
+        .xdef   _os_end       // first byte RAM not used by OS
 
 
 // ===========================================================================
@@ -328,10 +329,9 @@ mem_sanity_loop:
         bra.s   mem_sanity_loop
 mem_sanity_done:
 
-        /* clear RAM - from 0x0400 till end (phystop in d5) */
-        lea     0x0400, a4              // begin of RAM to clear
+        /* clear ST-RAM till end (phystop in d5) */
         lea     st_cleared(pc),a6       // remember return address
-        bra     clear_ram               // jump to routine clearing the RAM
+        bra     clear_st_ram            // jump to routine clearing the RAM
 st_cleared:
 
         move.b  d6, memctrl             // set copy of hw memory config
@@ -376,10 +376,9 @@ falcmemconf:
 less16: 
         move.l  d0, d5                  // this is phystop - the end of RAM
 
-        /* clear RAM - from 0x0400 till end (phystop in d5) */
-        lea     0x0400, a4              // begin of RAM to clear
+        /* clear ST-RAM till end (phystop in d5) */
         lea     f_cleared(pc),a6        // remember return address
-        bra     clear_ram               // jump to routine clearing the RAM
+        bra     clear_st_ram            // jump to routine clearing the RAM
 f_cleared:
 
         move.l  d5, _phystop            // highest address as phystop
@@ -454,8 +453,26 @@ tt_cleared:
 
 #endif /* FALCON_MMU */
 
+// ==== Clear the ST-RAM =====================================================
+// d5 = end of the ST-RAM
+// a6 = return address
+// d0-d4/a0-a5 = clobbered
+clear_st_ram:
+#ifdef EMUTOS_RAM
+	// When EmuTOS lives in the RAM, it must not be cleared!
+	move.l	_os_end, d0		// end of EmuTOS in RAM
+	addi.l	#0xff, d0		// round to next multiple of 256
+	andi.l	#0xffffff00, d0		// for clear_ram
+	// BUG: This is not strictly correct. A few bytes will not be cleared
+	// at the beginning of the free ram.
+	move.l	d0,a4			// begin of RAM to clear
+#else
+        lea     0x0400, a4              // begin of RAM to clear
+#endif
+	// Fall into clear_ram
 
 // ==== Clear RAM from a4 to d5 and return to (a6) ===========================
+// Restriction: the amount of ram to clear must be a multiple of 256
 /*
  * a4 = begin of RAM to clear
  * d5 = end of RAM to clear

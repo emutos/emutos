@@ -2449,3 +2449,5 @@ Start... early ages
 2011-08-15
 - Makefile: Allow to build the shared sources with different preprocessor
   defines. (VRI)
+- bios/memory.S: Fixed the compressed image targets (ecpr256k.img and
+  ecpr192k.img). (VRI)
