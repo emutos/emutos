@@ -2457,3 +2457,4 @@ Start... early ages
   variables. (VRI)
 - bios/comprimg.S, util/uncompr.S: Added ColdFire support.
 - Makefile: Added missing PHONY targets.
+- Makefile: Added a rule to build .s19 files.
