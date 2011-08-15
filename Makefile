@@ -367,15 +367,15 @@ etos512k.img: emutos2.img
 #
 
 TOCLEAN += *.s19
-S19_ADDRESS = 0
+LMA = 0
 
 %.s19: %.img
-	$(OBJCOPY) -I binary -O srec --change-addresses $(S19_ADDRESS) $< $@
+	$(OBJCOPY) -I binary -O srec --change-addresses $(LMA) $< $@
 
 .PHONY: firebee
 firebee:
 	@echo building FireBee EmuTOS in emutos2.s19
-	$(MAKE) COLDFIRE=1 CPUFLAGS='-mcpu=5474' DEF='-DMACHINE_FIREBEE' S19_ADDRESS=0xe0600000 emutos2.s19
+	$(MAKE) COLDFIRE=1 CPUFLAGS='-mcpu=5474' DEF='-DMACHINE_FIREBEE' LMA=0xe0600000 emutos2.s19
 
 #
 # ram - In two stages. first link emutos2.img to know the top address of bss, 
