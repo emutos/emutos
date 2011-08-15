@@ -80,7 +80,9 @@ os_dummy:
  
 _main:                         // stunt to guarantee entry into supervisor mode
         move    #0x2700,sr     // disable interrupts
+#ifndef __mcoldfire__
         reset                  // reset all hardware
+#endif
 
 
 /*
@@ -89,7 +91,12 @@ _main:                         // stunt to guarantee entry into supervisor mode
 
         .equ    cart_base,      0x00fa0000
 
+#ifdef __mcoldfire__
+        move.l  cart_base, d0
+        cmp.l   #0xfa52235f, d0         // magic - is cartridge present?
+#else
         cmp.l   #0xfa52235f, cart_base  // magic - is cartridge present?
+#endif
         bne     nodiag                  // no -> go on
         lea     nodiag(pc), a6          // save return address
         jmp     cart_base+4             // execute diagnostig cartridge
@@ -107,7 +114,12 @@ nodiag:
  */
 
 resetvec:
+#ifdef __mcoldfire__
+       move.l   resvalid, d0
+       cmpi.l   #0x31415926, d0         // Jump to resetvector?
+#else
        cmpi.l   #0x31415926, resvalid   // Jump to resetvector?
+#endif
        bne      noreset                 // No --> noreset
        move.l   resvector, d0           // Yes: old resvec to d0
        beq      noreset                 // Address null? Yes --> noreset

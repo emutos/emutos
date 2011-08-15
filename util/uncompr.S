@@ -62,8 +62,9 @@ _uncompr:
         move.l  (a0)+,a1  // dest
         addq.l  #4,a0     // this implementation does not care of the length
 
-        moveq.l #0,d0   // upper word of d0 will be zero from now on.
-
+#ifdef __mcoldfire__
+        move.l  a2,-(sp)
+#endif
 loop:
 /* get the verbatim length */
         bsr     getnum
@@ -83,25 +84,42 @@ loop:
         bsr     getnum
 
 /* do the copy-back copy */     
+#ifdef __mcoldfire__
+        move.l  a0,a2   // backup a0 into a2 instead of d1
+        move.l  d1,a0
+#else
         exg     d1,a0
+#endif
         bsr     copy
-        exg     d1,a0
+#ifdef __mcoldfire__
+        move.l  a2,a0
+#else
+        move.l  d1,a0
+#endif
 
 /* loop again */
         bra     loop
 
 done:
+#ifdef __mcoldfire__
+        move.l  (sp)+,a2
+#endif
         rts
 
 /*
  * getnum: returns in d0
  */
 getnum:
-        clr.w   d0
+        moveq   #0,d0
         move.b  (a0)+,d0
         bge     next
-        add.b   d0,d0
+#ifdef __mcoldfire__
+        andi.l  #0x7f,d0
+        lsl.l   #8,d0
+#else
+        add.b   d0,d0   // lsl #1 and clear the high bit
         lsl.w   #7,d0
+#endif
         move.b  (a0)+,d0
 next:
         rts
@@ -113,11 +131,20 @@ next:
  */
 
 copy:
-        sub.w   #1,d0
+#ifdef __mcoldfire__
+        subq.l   #1,d0
+#else
+        subq.w   #1,d0
+#endif
         bmi     ret
 copyloop:
         move.b  (a0)+,(a1)+
+#ifdef __mcoldfire__
+        subq.l  #1,d0
+        bpl.s   copyloop
+#else
         dbra    d0,copyloop
+#endif
 ret:
         rts
 
