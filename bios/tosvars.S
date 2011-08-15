@@ -96,11 +96,6 @@
         .global _bell_hook
         .global _kcl_hook
 
-        .global rs232ibufbuf
-        .global rs232obufbuf
-        .global ikbdibufbuf
-        .global midiibufbuf
-
         .global _sdata          // start adress of data section
 
 // ===========================================================================

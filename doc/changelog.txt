@@ -2451,3 +2451,4 @@ Start... early ages
   defines. (VRI)
 - bios/memory.S: Fixed the compressed image targets (ecpr256k.img and
   ecpr192k.img). (VRI)
+- bios/tosvars.S: Removed useless globals. (VRI)
