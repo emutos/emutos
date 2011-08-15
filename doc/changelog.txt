@@ -2455,6 +2455,7 @@ Start... early ages
 - desk/deskmain.c: Removed dead DBG_DESKMAIN. (VRI)
 - Makefile, bios/comprimg.S: Use tosvars.S instead of redefining the
   variables. (VRI)
-- bios/comprimg.S, util/uncompr.S: Added ColdFire support.
-- Makefile: Added missing PHONY targets.
-- Makefile: Added a rule to build .s19 files.
+- bios/comprimg.S, util/uncompr.S: Added ColdFire support. (VRI)
+- Makefile: Added missing PHONY targets. (VRI)
+- Makefile: Added a rule to build .s19 files. (VRI)
+- Makefile: Added easily overridable VMA variable. (VRI)

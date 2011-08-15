@@ -102,8 +102,10 @@ INDENT = indent -kr
 # Linker with relocation information and binary output (image)
 LD = $(CC) $(MULTILIBFLAGS) -nostartfiles -nostdlib
 LDFLAGS = -Wl,--oformat,binary -lgcc
-LDFLAGS_T1 = -Wl,-Ttext=0x00fc0000,-Tbss=0x00000000
-LDFLAGS_T2 = -Wl,-Ttext=0x00e00000,-Tbss=0x00000000
+VMA_T1 = 0x00fc0000
+VMA_T2 = 0x00e00000
+# VMA will be set as a target-specific variable
+LDFLAGS_VMA = -Wl,-Ttext=$(VMA),-Tbss=0x00000000
 
 # C compiler for MiNT
 CC = m68k-atari-mint-gcc
@@ -291,13 +293,15 @@ help:
 
 TOCLEAN += *.img *.map
 
+emutos1.img emutos1.map: VMA = $(VMA_T1)
 emutos1.img emutos1.map: $(OBJECTS) Makefile
 	$(LD) -o emutos1.img -Wl,-Map,emutos1.map \
-	  $(OBJECTS) $(LDFLAGS) $(LDFLAGS_T1)
+	  $(OBJECTS) $(LDFLAGS) $(LDFLAGS_VMA)
 
+emutos2.img emutos2.map: VMA = $(VMA_T2)
 emutos2.img emutos2.map: $(OBJECTS) Makefile
 	$(LD) -o emutos2.img -Wl,-Map,emutos2.map \
-	  $(OBJECTS) $(LDFLAGS) $(LDFLAGS_T2)
+	  $(OBJECTS) $(LDFLAGS) $(LDFLAGS_VMA)
 
 
 #
@@ -392,11 +396,11 @@ emutos2-ram:
 	@echo '# First pass to build emutos2.map and determine the end of the BSS'
 	$(MAKE) emutos2.map DEF='$(DEF) -DEMUTOS_RAM'
 
+ramtos.img ramtos.map: VMA = $(shell sed -e '/__end/!d;s/^ *//;s/ .*//' emutos2.map)
 ramtos.img ramtos.map: emutos2-ram
 	@echo '# Second pass to build ramtos.img with TEXT and DATA just after the BSS'
 	$(LD) -o ramtos.img $(OBJECTS) $(LDFLAGS) \
-		-Wl,-Map,ramtos.map \
-		-Wl,-Ttext=$(shell sed -e '/__end/!d;s/^ *//;s/ .*//' emutos2.map),-Tbss=0
+		-Wl,-Map,ramtos.map $(LDFLAGS_VMA)
 
 boot.prg: obj/minicrt.o obj/boot.o obj/bootasm.o
 	$(LD) -s -o $@ $+ -lgcc
@@ -413,16 +417,18 @@ obj/compr-%.o : %.S
 COMPROBJ = obj/compr-tosvars.o obj/comprimg.o obj/compr-memory.o obj/uncompr.o \
            obj/compr-processor.o
 
+compr2.img compr2.map: VMA = $(VMA_T2)
 compr2.img compr2.map: $(COMPROBJ)
 	$(LD) -o compr2.img $(COMPROBJ) $(LDFLAGS) \
-	  -Wl,-Map,compr2.map $(LDFLAGS_T2)
+	  -Wl,-Map,compr2.map $(LDFLAGS_VMA)
 
 etoscpr2.img: compr2.img compr$(EXE) ramtos.img
 	./compr$(EXE) --rom compr2.img ramtos.img $@
 
+compr1.img compr1.map: VMA = $(VMA_T1)
 compr1.img compr1.map: $(COMPROBJ)
 	$(LD) -o compr1.img $(COMPROBJ) $(LDFLAGS) \
-	  -Wl,-Map,compr1.map $(LDFLAGS_T1)
+	  -Wl,-Map,compr1.map $(LDFLAGS_VMA)
 
 etoscpr1.img: compr1.img compr$(EXE) ramtos.img
 	./compr$(EXE) --rom compr1.img ramtos.img $@
