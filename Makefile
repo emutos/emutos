@@ -260,8 +260,10 @@ OBJECTS = $(SOBJ) $(COBJ) $(FONTOBJ) obj/version.o
 # production targets 
 # 
 
+.PHONY: all
 all:	emutos2.img
 
+.PHONY: help
 help:	
 	@echo "target  meaning"
 	@echo "------  -------"
@@ -320,6 +322,7 @@ endef
 # 192kB Image
 #
 
+.PHONY: 192
 192: etos192k.img
 
 etos192k.img: emutos1.img
@@ -329,6 +332,7 @@ etos192k.img: emutos1.img
 # 256kB Image
 #
 
+.PHONY: 256
 ifeq (,$(UNIQUE))
 256: 
 	@echo building $(COUNTRY)-only EmuTOS in etos256k.img
@@ -344,11 +348,14 @@ etos256k.img: emutos2.img
 # 512kB Image (for Aranym or Falcon)
 #
 
+.PHONY: aranym
 aranym:
 	@echo building ARAnyM EmuTOS in etos512k.img
 	$(MAKE) CPUFLAGS='-m68040' DEF='-DMACHINE_ARANYM' 512
 
 512: etos512k.img
+
+.PHONY: falcon
 falcon: help
 
 etos512k.img: emutos2.img
@@ -373,6 +380,7 @@ firebee:
 
 TOCLEAN += boot.prg
 
+.PHONY: ram
 ram: ramtos.img boot.prg
 
 .PHONY: emutos2-ram
@@ -438,8 +446,10 @@ TOCLEAN += compr$(EXE) uncompr$(EXE)
 
 TOCLEAN += emutos.st mkflop$(EXE)
 
+.PHONY: flop
 flop : emutos.st
 
+.PHONY: fd0
 fd0:	emutos.st
 	dd if=$< of=/dev/fd0D360
 
@@ -497,6 +507,7 @@ po/messages.pot: bug$(EXE) po/POTFILES.in
 # all binaries
 #
 
+.PHONY: allbin
 allbin: 
 	@echo building etos512k.img
 	$(MAKE) etos512k.img
@@ -509,6 +520,7 @@ allbin:
 	  mv etos256k.img $$j; \
 	done
 
+.PHONY: all192
 all192:
 	@for i in $(COUNTRIES); \
 	do \
@@ -695,16 +707,20 @@ TOCLEAN += *.dsm dsm.txt fal_dsm.txt
 dsm.txt: emutos1.dsm
 	cp $< $@
 
+.PHONY: dsm
 dsm: dsm.txt
 
+.PHONY: show
 show: dsm.txt
 	cat dsm.txt
 
 fal_dsm.txt: emutos2.dsm
 	cp $< $@
 
+.PHONY: fdsm
 fdsm: fal_dsm.txt
 
+.PHONY: fshow
 fshow: fal_dsm.txt
 	cat fal_dsm.txt
 
@@ -715,6 +731,7 @@ fshow: fal_dsm.txt
 
 INDENTFILES = bdos/*.c bios/*.c util/*.c tools/*.c desk/*.c aes/*.c vdi/*.c
 
+.PHONY: checkindent
 checkindent:
 	@err=0 ; \
 	for i in $(INDENTFILES) ; do \
@@ -733,6 +750,7 @@ checkindent:
 		echo done.; \
 	fi
 
+.PHONY: indent
 indent:
 	@err=0 ; \
 	for i in $(INDENTFILES) ; do \
@@ -762,6 +780,7 @@ indent:
 
 TOCLEAN += tounix$(EXE)
 
+.PHONY: expand
 expand:
 	@for i in `grep -l '	' */*.[chS] */*.awk` ; do \
 		echo expanding $$i; \
@@ -781,9 +800,11 @@ tounix$(EXE): tools/tounix.c
 # crlf:	tounix$(EXE)
 #     find . -name CVS -prune -or -not -name '*~' | xargs $(HERE)/tounix$(EXE)
 
+.PHONY: crlf
 crlf: tounix$(EXE)
 	./$< * bios/* bdos/* doc/* util/* tools/* po/* include/* aes/* desk/*
 
+.PHONY: cvsready
 cvsready: expand crlf
 
 #
@@ -793,6 +814,7 @@ cvsready: expand crlf
 HEREDIR = $(shell basename $(shell pwd))
 TGZ = $(shell echo $(HEREDIR)-`date +%y%m%d`|tr A-Z a-z).tgz
 
+.PHONY: tgz
 tgz:	distclean
 	cd ..;\
 	tar -cf - --exclude '*CVS' $(HEREDIR) | gzip -c -9 >$(TGZ)
@@ -826,6 +848,7 @@ makefile.dep: util/langs.c bios/header.h bios/ctables.h
 	  $(CC) $(MULTILIBFLAGS) -MM $(INC) $(DEF) $(SSRC) \
 	) | sed -e '/:/s,^,obj/,' >makefile.dep
 
+.PHONY: depend
 depend: makefile.dep
 
 -include makefile.dep
@@ -843,9 +866,11 @@ endif
 # (distclean is called before creating a tgz archive)
 #
 
+.PHONY: clean
 clean:
 	rm -f $(TOCLEAN)
 
+.PHONY: distclean
 distclean: clean
 	rm -f '.#'* */'.#'* 
 

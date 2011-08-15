@@ -2456,3 +2456,4 @@ Start... early ages
 - Makefile, bios/comprimg.S: Use tosvars.S instead of redefining the
   variables. (VRI)
 - bios/comprimg.S, util/uncompr.S: Added ColdFire support.
+- Makefile: Added missing PHONY targets.
