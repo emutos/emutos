@@ -2453,3 +2453,4 @@ Start... early ages
   ecpr192k.img). (VRI)
 - bios/tosvars.S: Removed useless globals. (VRI)
 - desk/deskmain.c: Removed dead DBG_DESKMAIN. (VRI)
+- Makefile, comprimg.S: Use tosvars.S instead of redefining the variables. (VRI)

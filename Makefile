@@ -398,7 +398,8 @@ boot.prg: obj/minicrt.o obj/boot.o obj/bootasm.o
 obj/compr-%.o : %.S
 	$(CC) $(CFLAGS) $($(subst /,_,$(dir $<))sopts) -c $< -o $@
 
-COMPROBJ = obj/comprimg.o obj/compr-memory.o obj/uncompr.o obj/compr-processor.o
+COMPROBJ = obj/compr-tosvars.o obj/comprimg.o obj/compr-memory.o obj/uncompr.o \
+           obj/compr-processor.o
 
 compr2.img compr2.map: $(COMPROBJ)
 	$(LD) -o compr2.img $(COMPROBJ) $(LDFLAGS) \

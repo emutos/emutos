@@ -14,13 +14,18 @@
 
 #include "asmdefs.h"
 #include "header.h"
-#include "config.h"
 
 /* define this to 1 to activate minimum debug support. This will print 
  * data using the native feature interface. 
  */
 #define COMPRDBG 0
 
+        .extern _end
+        .extern resvalid
+        .extern resvector
+        .extern meminit
+        .extern __edata
+        .extern _uncompr
 
 /* To be sure not to have any trouble when loading the actual image
  * in RAM, just set the stack below the top of the exception vector 
@@ -32,58 +37,11 @@ _stktop = 0x378
 stderr = 0x37C
 
 /*
- * some needed low memory vars
- */
- 
-        .global resvector
-        .global bssstart
-        .global memvalid
-        .global memval2
-        .global memval3
-        .global memctrl
-        .global _ramvalid
-        .global _phystop
-        .global _ramtop
-        .global resvalid
-        .global _longframe
-
-memvalid = 0x420
-memctrl = 0x424
-resvalid = 0x426
-resvector = 0x42A
-_phystop = 0x42E
-memval2 = 0x43A
-memval3 = 0x51A
-_longframe = 0x59E
-_ramtop = 0x5A4
-_ramvalid = 0x5A8
-        
-        .bss
-        .org 0x5AC
-bssstart = .
-
-/*
  * OSHEADER
  */
  
         .text
 
-        .global _main           // OS entry point
-        .global _os_end
-        .global _os_beg
-        .global _os_magic
-        .global _os_date
-        .global _os_pal
-        .global _os_dosdate
-        .global _root
-        .global _shifty
-        .global _run
-
-_ui_mupb = 0
-_root = 0
-_shifty = 0
-_run = 0
-        
 _os_entry:
     bra.s   _main       // os_entry, branch to _main
 os_version:
@@ -97,7 +55,7 @@ _os_end:
 os_res1:        
     dc.l    _main       // os_res1, reserved
 _os_magic:
-    dc.l    _ui_mupb    // os_magic, pointer to GEM's MUPB
+    dc.l    0           // os_magic, pointer to GEM's MUPB
 _os_date:
     dc.l    OS_DATE     // os_date, Date of system build
 _os_pal:        
@@ -105,11 +63,11 @@ _os_pal:
 _os_dosdate:
     dc.w    OS_DOSDATE  // os_date, Date of system build in GEMDOS format
 os_root:
-    dc.l    _root       // Pointer to the GEMDOS mem pool - not yet supported
+    dc.l    0           // Pointer to the GEMDOS mem pool - not yet supported
 os_kbshift:
-    dc.l    _shifty     // Pointer to the keyboard shift keys states
+    dc.l    0           // Pointer to the keyboard shift keys states
 os_run:
-    dc.l    _run        // Pointer to a pointer to the actual basepage
+    dc.l    0           // Pointer to a pointer to the actual basepage
 os_dummy:
     .ascii  "ETOS"      // _main should start at offset 0x30, shouldn't it?
 
@@ -336,5 +294,3 @@ berr:   move.l  a1,(8).w
         move.l  d1,sp
         nop
         rts
-
-
