@@ -353,6 +353,7 @@ aranym:
 	@echo building ARAnyM EmuTOS in etos512k.img
 	$(MAKE) CPUFLAGS='-m68040' DEF='-DMACHINE_ARANYM' 512
 
+.PHONY: 512
 512: etos512k.img
 
 .PHONY: falcon
