@@ -44,22 +44,22 @@ WORD vmontype(void);
 /* pallette color definitions */
 
 #define RGB_BLACK     0x0000
-#define RGB_BLUE      0x0007
-#define RGB_GREEN     0x0070
-#define RGB_CYAN      0x0077
-#define RGB_RED       0x0700
-#define RGB_MAGENTA   0x0707
+#define RGB_BLUE      0x000f
+#define RGB_GREEN     0x00f0
+#define RGB_CYAN      0x00ff
+#define RGB_RED       0x0f00
+#define RGB_MAGENTA   0x0f0f
 #define RGB_LTGRAY    0x0555
 #define RGB_GRAY      0x0333
-#define RGB_LTBLUE    0x0337
-#define RGB_LTGREEN   0x0373
-#define RGB_LTCYAN    0x0377
-#define RGB_LTRED     0x0733
-#define RGB_LTMAGENTA 0x0737
-#define RGB_YELLOW    0x0770
-#define RGB_LTYELLOW  0x0773
-#define RGB_WHITE     0x0777
-
+#define RGB_LTBLUE    0x033f
+#define RGB_LTGREEN   0x03f3
+#define RGB_LTCYAN    0x03ff
+#define RGB_LTRED     0x0f33
+#define RGB_LTMAGENTA 0x0f3f
+#define RGB_YELLOW    0x0ff0
+#define RGB_LTYELLOW  0x0ff3
+#define RGB_WHITE     0x0fff
+                    
 #define FRGB_BLACK     0x00000000
 #define FRGB_BLUE      0x000000ff
 #define FRGB_GREEN     0x00ff0000

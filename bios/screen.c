@@ -100,7 +100,12 @@ void screen_init(void)
     }
 
     for (i = 0; i < 16; i++) {
-        col_regs[i] = dflt_palette[i];
+        WORD col = dflt_palette[i];
+
+        if (!(has_ste_shifter))
+            col &= 0x777;
+
+        col_regs[i] = col;
     }
 
     /* Get the video mode */
