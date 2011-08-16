@@ -65,7 +65,7 @@ WITH_CLI = 1
 
 ifneq (,$(findstring CYGWIN,$(shell uname)))
 # CYGWIN-dependent stuff
-EXE = .exe
+#EXE = .exe
 CORE = *.stackdump
 DDOPTS = iflag=binary oflag=binary
 else

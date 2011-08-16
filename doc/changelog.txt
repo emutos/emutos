@@ -2459,3 +2459,6 @@ Start... early ages
 - Makefile: Added missing PHONY targets. (VRI)
 - Makefile: Added a rule to build .s19 files. (VRI)
 - Makefile: Added easily overridable VMA variable. (VRI)
+
+2011-08-16
+- Makefile: Disabled special .exe handling no more useful on Cygwin. (VRI)
