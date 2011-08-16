@@ -102,7 +102,7 @@ void screen_init(void)
     for (i = 0; i < 16; i++) {
         WORD col = dflt_palette[i];
 
-        if (!(has_ste_shifter))
+        if (!has_ste_shifter)
             col &= 0x777;
 
         col_regs[i] = col;
