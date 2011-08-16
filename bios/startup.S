@@ -32,19 +32,19 @@
 
 // ==== tosvars.s - TOS System variables =====================================
                 
-        .xdef   resvalid      
-        .xdef   resvector     
-//        .xdef   _kprintf
+        .extern resvalid      
+        .extern resvector     
+//        .extern _kprintf
 
 // ==== memory.s - variables for memory  =====================================
 
-        .xdef   meminit       // initialize the memory and it's controller
+        .extern meminit       // initialize the memory and it's controller
 
 // ==== Overall memory map ===================================================
 
-        .xdef   _end          // end of bss + comm sections (ld generated)
-        .xdef   _etext        // end of text section
-        .xdef   _edata        // end of data section
+        .extern _end          // end of bss + comm sections (ld generated)
+        .extern _etext        // end of text section
+        .extern _edata        // end of data section
         
 
 // ===========================================================================

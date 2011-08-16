@@ -19,14 +19,14 @@
  * _GSX_ENTRY - front end of the GIOS for the screen driver
  */
 
-        .xdef   _local_pb
-        .xdef   _CONTRL
-        .xdef   _INTIN
-        .xdef   _PTSIN
-        .xdef   _INTOUT
-        .xdef   _PTSOUT
-        .xdef   _flip_y
-        .xdef   _screen
+        .extern _local_pb
+        .extern _CONTRL
+        .extern _INTIN
+        .extern _PTSIN
+        .extern _INTOUT
+        .extern _PTSOUT
+        .extern _flip_y
+        .extern _screen
 
         .globl  _GSX_ENTRY
 
@@ -137,38 +137,27 @@ intin_ok:
         .globl  _call_user_but  // call the _user_but vector from C
         .globl  _call_user_wheel// call the _user_wheel vector from C
 
-        .globl  _cur_replace  
-        .globl  _cur_display
-        .globl  _vb_draw        // vertical blank mouse draw routine
-
-        .globl  _mousex
-        .globl  _mousey
-
         /* External variables used here */
 
-        .xdef   _CONTRL         // address of CONTRL array
-        .xdef   _INTIN          // address of INTIN array
-
-        .xdef   _GCURX          // graphics cursor x-coordinate
-        .xdef   _GCURY          // graphics cursor y-coordinate
-        .xdef   _HIDE_CNT       // graphics cursor hide count
-        .xdef   _MOUSE_BT       // mouse button state
+        .extern _GCURX          // graphics cursor x-coordinate
+        .extern _GCURY          // graphics cursor y-coordinate
+        .extern _HIDE_CNT       // graphics cursor hide count
+        .extern _MOUSE_BT       // mouse button state
         
-        .xdef   _cur_ms_stat    // current mouse status
-        .xdef   _draw_flag      // Non-zero means draw mouse form on vblank
-        .xdef   _mouse_flag     // Non-zero if mouse ints disabled
-        .xdef   _newx           // New mouse x position
-        .xdef   _newy           // New mouse y position
+        .extern _cur_ms_stat    // current mouse status
+        .extern _draw_flag      // Non-zero means draw mouse form on vblank
+        .extern _mouse_flag     // Non-zero if mouse ints disabled
+        .extern _newx           // New mouse x position
+        .extern _newy           // New mouse y position
 
-        .xdef   _user_but       // user button vector
-        .xdef   _user_mot       // user motion vector
-        .xdef   _user_cur       // user cursor vector
-        .xdef   _user_wheel     // user wheel vector
+        .extern _user_but       // user button vector
+        .extern _user_mot       // user motion vector
+        .extern _user_cur       // user cursor vector
+        .extern _user_wheel     // user wheel vector
 
-        .xdef   _DEV_TAB        // address of device table
-        .xdef   _MAP_COL        // color map table
+        .extern _DEV_TAB        // address of device table
 
-        .xdef   _old_statvec    // previous IKBD status packet vector
+        .extern _old_statvec    // previous IKBD status packet vector
 
 
         .text

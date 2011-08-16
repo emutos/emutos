@@ -15,18 +15,16 @@
 
 // ==== External Declarations ================================================
 
-        .xdef _put_pix
-        .xdef _get_pix
-        .xdef _abline
-        .xdef _habline
-        .xdef _clc_flit           // from vdi/gsxasm1.S
-        .xdef _RECTFILL
-//        .xdef bit_blt
-        .xdef _text_blt
-        .xdef _dis_cur
-        .xdef _hide_cur
-        .xdef _xfm_crfm
-//        .xdef _COPY_RFM
+        .extern _put_pix
+        .extern _get_pix
+        .extern _abline
+        .extern _habline
+        .extern _clc_flit         // from vdi/gsxasm1.S
+        .extern _RECTFILL
+        .extern _text_blt
+        .extern _dis_cur
+        .extern _hide_cur
+        .extern _xfm_crfm
 
 
 // ==== Global Declarations ================================================

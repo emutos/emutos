@@ -16,8 +16,8 @@
 
         .global _printout_stonx
         
-        .xdef   _kprintf
-        .xdef   _native_print_kind
+        .extern _kprintf
+        .extern _native_print_kind
 
 // ===========================================================================
 // ==== TEXT segment =========================================================

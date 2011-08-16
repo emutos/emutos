@@ -36,38 +36,33 @@
                 
 // ==== tosvars.s - TOS System variables =====================================
 
-        .xdef   _longframe
-        .xdef   _vbclock
-        .xdef   _frclock
-        .xdef   vblsem
-        .xdef   nvbls
-        .xdef   _vblqueue
-        .xdef   _swv_vec
-        .xdef   _hz_200
-        .xdef   savptr
-        .xdef   etv_timer
-        .xdef   etv_critic
-        .xdef   _timer_ms
-        .xdef   _v_bas_ad
-        .xdef   colorptr
-        .xdef   screenpt
+        .extern _longframe
+        .extern _vbclock
+        .extern _frclock
+        .extern _vblqueue
+        .extern _swv_vec
+        .extern _hz_200
+        .extern etv_timer
+        .extern etv_critic
+        .extern _timer_ms
+        .extern _v_bas_ad
 
-        .xdef   _blink          // conout.c - console output
+        .extern _blink          // conout.c - console output
 
 // Note: this scheme is designed to print the exception number
 // for vectors 2 to 63 even if working on a 32bit address bus. 
 // LVL.
 
-        .xdef   _dopanic
+        .extern _dopanic
         
-        .xdef   _proc_lives
-        .xdef   _proc_dregs     
-        .xdef   _proc_aregs     
-        .xdef   _proc_enum      
-        .xdef   _proc_usp       
-        .xdef   _proc_stk       
+        .extern _proc_lives
+        .extern _proc_dregs     
+        .extern _proc_aregs     
+        .extern _proc_enum      
+        .extern _proc_usp       
+        .extern _proc_stk       
         
-        .xdef   _stktop
+        .extern _stktop
 
 
         .text

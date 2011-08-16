@@ -126,11 +126,10 @@
         .global _old_trap2
         .global _bdos_trap2
         
-        .xdef   _osif
-        .xdef   _xterm
-        .xdef   _run
-        .xdef   fstrt
-        .xdef   _longframe              // If not 0, use long stack frames
+        .extern _osif
+        .extern _xterm
+        .extern _run
+        .extern _longframe              // If not 0, use long stack frames
 
         .global _xsuper
 

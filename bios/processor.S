@@ -28,10 +28,9 @@
         .global _detect_cpu
         .global _detect_fpu
 
-        .xdef   _longframe              // If not 0, use long stack frames
-        .xdef   _mcpu
-
-
+        .extern _longframe              // If not 0, use long stack frames
+	
+	
 
         .text
 

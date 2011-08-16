@@ -24,8 +24,8 @@
         .global _gettext
         .global _gettext_init
 
-        .xdef   _nls_hash       // current hash
-        .xdef   _memset
+        .extern _nls_hash       // current hash
+        .extern _memset
 
         .text
 

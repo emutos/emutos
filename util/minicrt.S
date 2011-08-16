@@ -28,7 +28,7 @@
         .global _exit
         .global ___main
         
-        .xdef _main
+        .extern _main
 
         .text
 

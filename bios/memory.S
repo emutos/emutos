@@ -27,33 +27,33 @@
 
 // ==== startup.s - variables for memory  ====================================
 
-        .xdef   memdone       // return to, if memory config done
+        .extern memdone       // return to, if memory config done
 
 
 // ==== detect.s - function for detecting CPU type and for testing memory  ===
 
-        .xdef   _check_read_byte
-        .xdef   _detect_cpu
+        .extern _check_read_byte
+        .extern _detect_cpu
 
 
 // ==== tosvars.s - TOS System variables =====================================
 
 
-        .xdef   memctrl
-        .xdef   _phystop
+        .extern memctrl
+        .extern _phystop
 
-        .xdef   memvalid
-        .xdef   memval2
-        .xdef   memval3
+        .extern memvalid
+        .extern memval2
+        .extern memval3
 
-        .xdef   _ramtop
-        .xdef   _ramvalid
+        .extern _ramtop
+        .extern _ramvalid
 
 // ==== Overall memory map ===================================================
 
-        .xdef   bssstart      // end of documented low memory tosvars
-        .xdef   _end          // end of bss + comm sections (ld generated)
-        .xdef   _os_end       // first byte RAM not used by OS
+        .extern bssstart      // end of documented low memory tosvars
+        .extern _end          // end of bss + comm sections (ld generated)
+        .extern _os_end       // first byte RAM not used by OS
 
 
 // ===========================================================================
