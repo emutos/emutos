@@ -39,6 +39,7 @@
 #include "mfp.h"
 #include "floppy.h"
 #include "sound.h"
+#include "dmasound.h"
 #include "screen.h"
 #include "clock.h"
 #include "vectors.h"
@@ -184,6 +185,7 @@ static void bios_init(void)
     /* The sound init must be done before allowing MFC interrupts,
      * because of dosound stuff in the timer C interrupt routine.
      */
+    dmasound_init();
     snd_init();         /* Reset Soundchip, deselect floppies */
 
     /* Init the two ACIA devices (MIDI and KBD). The three actions below can 

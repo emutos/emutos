@@ -36,6 +36,7 @@ extern int has_videl;
 extern int has_vme;
 extern int has_megartc;   /* in clock.c */
 extern int has_nvram;     /* in nvram.c */
+extern int has_microwire; /* in dmasound.c */
 
 /*
  * other variables

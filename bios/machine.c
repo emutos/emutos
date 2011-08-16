@@ -189,6 +189,7 @@ void machine_detect(void)
   detect_vme();
   detect_megartc();
   detect_nvram();
+  detect_dmasound();
 }
   
 void machine_init(void)

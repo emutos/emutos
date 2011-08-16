@@ -14,8 +14,6 @@ BIOS/XBIOS
   bigger than 6000 words, or GFA Basic and MiNT will crash. This should be
   fixed (so much space is really not needed here!).
 - make EmuTOS MMU aware and let it set up correct MMU tree
-- EmuTOS does not initialize the STE Microwire volume yet, so there is no
-  sound until a program initializes it on its own
 
 BDOS (GEMDOS)
 - fix the scary crashes for disk partitions > 255 MB

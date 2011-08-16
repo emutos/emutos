@@ -2464,3 +2464,5 @@ Start... early ages
 - Makefile: Disabled special .exe handling no more useful on Cygwin. (VRI)
 - *.S: Replaced .xdef by .extern. (VRI)
 - bios/screen.c, bios/screen.h: Fixed the STe default palette. (VRI)
+- Makefile, bios/bios.c, bios/dmasound.c, bios/dmasound.h, bios/machine.c,
+  bios/machine.h: Added LMC1992 initialization. (VRI)
