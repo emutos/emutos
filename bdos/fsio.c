@@ -168,7 +168,7 @@ long    ixlseek(register OFD *p, long n)
         clx = p->o_strtcl;
 
     for (i=1; i < clnum; i++) {                 /*** M00.01.01b ***/
-        clx = getcl(clx,dm);
+        clx = getclnum(clx,p);
         if ( clx == -1)
             return(-1);
     }
@@ -176,7 +176,7 @@ long    ixlseek(register OFD *p, long n)
     /* go one more except on cluster boundary */
 
     if (p->o_curbyt && clnum)                   /*** M00.01.01b ***/
-        clx = getcl(clx,dm);
+        clx = getclnum(clx,p);
 
 fillin:
     p->o_curcl = clx;

@@ -82,7 +82,7 @@ void clfix(CLNO cl, CLNO link, DMD *dm)
 
 
 /*
-**  getcl -
+**  getrealcl -
 **      get the contents of the fat entry indexed by 'cl'.
 **
 **  returns
@@ -92,12 +92,9 @@ void clfix(CLNO cl, CLNO link, DMD *dm)
 **      M01.0.1.03
 */
 
-CLNO getcl(int cl, DMD *dm)
+CLNO getrealcl(CLNO cl, DMD *dm)
 {
         unsigned int f[1];
-
-        if (cl < 0)
-                return(cl+1);
 
         if (dm->m_16)
         {                               /*  M01.01.04  */
@@ -126,6 +123,27 @@ CLNO getcl(int cl, DMD *dm)
 
 
 /*
+**  getclnum -
+**      get the next cluster number (including fake cluster number for FAT/root).
+**
+**  returns
+**      for FAT/root sectors, we just add 1 to the input number.
+**      otherwise we return the value returned by getrealcl().
+**
+*/
+
+CLNO getclnum(CLNO cl, OFD *of)
+{
+        if (!of->o_dnode)           /* if no dir node, must be FAT/root */
+                return cl+1;
+
+        return getrealcl(cl,of->o_dmd);
+}
+
+
+
+
+/*
 **  nextcl -
 **      get the cluster number which follows the cluster indicated in the curcl
 **      field of the OFD, and place it in the OFD.
@@ -146,13 +164,13 @@ int nextcl(OFD *p, int wrtflg)
         cl = p->o_curcl;
         dm = p->o_dmd;
 
-        if((int)(cl) < 0) {
-            cl2 = cl + 1;
-            goto retcl;
-        } else if((int)(cl) > 0) {
-            cl2 = getcl(cl,dm);
-        } else { /* was  if (cl == 0) */
+        if (cl == 0) {              /* initial value */
             cl2 = (p->o_strtcl ? p->o_strtcl : 0xffff );
+        } else if (!p->o_dnode) {   /* if no dir node, must be FAT/root */
+            cl2 = cl + 1;
+            goto retcl;             /* will be able to omit this when we get rid of negative clusters ... */
+        } else {
+            cl2 = getrealcl(cl,dm);
         }
 
         if (wrtflg && (cl2 == 0xffff ))
@@ -163,7 +181,7 @@ int nextcl(OFD *p, int wrtflg)
                         if (rover < 2)
                                 rover = 2;
 
-                        if (!(cl2 = getcl(rover,dm)))
+                        if (!(cl2 = getrealcl(rover,dm)))
                                 break;
                         else
                                 rover = (rover + 1) % dm->m_numcl;
@@ -220,7 +238,7 @@ long xgetfree(long *buf, int drv)
         dm = drvtbl[i];
         free = 0;
         for (i = 2; i < dm->m_numcl; i++)
-                if (!getcl(i,dm))
+                if (!getrealcl(i,dm))
                         free++;
         *buf++ = (long)(free);
         *buf++ = (long)(dm->m_numcl);

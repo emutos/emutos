@@ -436,7 +436,8 @@ char *packit(register char *s, register char *d);
 
 RECNO cl2rec(CLNO cl, DMD *dm);
 void clfix(CLNO cl, CLNO link, DMD *dm);
-CLNO getcl(int cl, DMD *dm);
+CLNO getrealcl(CLNO cl, DMD *dm);
+CLNO getclnum(CLNO cl, OFD *of);
 int nextcl(OFD *p, int wrtflg);
 long xgetfree(long *buf, int drv);
 

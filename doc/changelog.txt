@@ -2468,3 +2468,8 @@ Start... early ages
   bios/machine.h: Added LMC1992 initialization. (VRI)
 - bios/dmasound.c, bios/machine.c, bios/machine.h: Moved DMA sound detection
   to the right place. (VRI)
+
+2011-08-17
+- bdos/fs.h, bdos/fsfat.c, bdos/fsio.c, bdos/fsopnclo.c: Big partition support
+  part 1. Remove the test for negative cluster numbers. Contributed by Roger
+  Burrows. (VRI)

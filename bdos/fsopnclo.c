@@ -167,7 +167,7 @@ long ixcreat(char *name, char attr)
         while( !( f = scan(dn,n,-1,&pos) ) )
         {
                 /*  not in current dir, need to grow  */
-                if( (int)( fd->o_curcl ) < 0 )
+                if (!fd->o_dnode)
                         /*  but can't grow root  */
                         return( EACCDN ) ;
 
@@ -642,7 +642,7 @@ long ixdel(DND *dn, FCB *f, long pos)
 
         while (n && (n != -1))
         {
-                n2 = getcl(n,dm);
+                n2 = getrealcl(n,dm);
                 clfix(n,0,dm);
                 n = n2;
         }
