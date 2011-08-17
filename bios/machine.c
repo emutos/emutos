@@ -22,6 +22,7 @@
 #include "natfeat.h"
 #include "xhdi.h"
 #include "string.h"
+#include "dmasound.h"
 
 long cookie_vdo;
 long cookie_fdc;
@@ -161,7 +162,7 @@ static void setvalue_snd(void)
   cookie_snd = 1;
 
   /* Check for DMA sound */
-  if (check_read_byte(0xFFFF8903)) {
+  if (has_dmasound) {
     cookie_snd |= 2;
   }
 }

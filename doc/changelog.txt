@@ -2466,3 +2466,5 @@ Start... early ages
 - bios/screen.c, bios/screen.h: Fixed the STe default palette. (VRI)
 - Makefile, bios/bios.c, bios/dmasound.c, bios/dmasound.h, bios/machine.c,
   bios/machine.h: Added LMC1992 initialization. (VRI)
+- bios/dmasound.c, bios/machine.c, bios/machine.h: Moved DMA sound detection
+  to the right place. (VRI)

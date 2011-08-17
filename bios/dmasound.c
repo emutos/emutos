@@ -84,10 +84,12 @@ struct dmasound
 /* LMC1992 parameter for Faders functions */
 #define LMC1992_FADER(x) (((x) + 40) / 2) /* Range from -40 to 0 dB */
 
+int has_dmasound;
 int has_microwire;
 
 void detect_dmasound(void)
 {
+    has_dmasound = check_read_byte((long)&DMASOUND->control);
     has_microwire = check_read_byte((long)&DMASOUND->microwire_mask);
 
     /* TODO: Detect the other DMA sound hardware */
