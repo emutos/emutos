@@ -1641,11 +1641,8 @@ char *desk_rs_fstr[] = {
     N_("[1][The GEM Desktop has no more available|"
        "windows.  Before you open a disk, close|"
        "a window you're not using.][  OK  ]"),
-    N_("[1][Cannot find the FORMAT program.  If you|"
-       "are using a dual-floppy system, you must|"
-       "format disks from your DOS disk.  If you|"
-       "are using a hard disk, copy FORMAT to |"
-       "the root directory.][OK]"),
+    N_("[3][Cannot find FORMAT.PRG|"
+       "or FORMAT.TTP.][  OK  ]"),
     N_("[3][Formatting will ERASE all|"
        "information on the disk in drive|"
        "%c:.  Click on OK only if you don't|"

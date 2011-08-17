@@ -2478,3 +2478,5 @@ Start... early ages
 - bios/memory.S: Added support for up to 14 MB ST-RAM on cold boot. (VRI)
 - aes/gemstart.S, bios/memory.S: Replaced bsr by jsr to call externals. (VRI)
 - desk/desksupp.c: Run FORMAT.TTP in text mode. (VRI)
+- desk/desk_rsc.c, po/*.po: Changed the message when the format program is not
+  found. It was too long in the french translation and crashed. (VRI)

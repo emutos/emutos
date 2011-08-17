@@ -692,20 +692,6 @@ msgstr "[1]["
 "oken.  Pøed otevøením disku zavøete|"
 "okno, které nepou¾íváte.][  OK  ]"
 
-#: desk/desk_rsc.c:1650
-msgid "[1]["
-"Cannot find the FORMAT program.  If you|"
-"are using a dual-floppy system, you must|"
-"format disks from your DOS disk.  If you|"
-"are using a hard disk, copy FORMAT to |"
-"the root directory.][OK]"
-msgstr "[1]["
-"Není mo¾né najít program FORMAT.  Pokud|"
-"pou¾íváte dvì disketové jednotky, je|"
-"tøeba formátovat z diskety s DOSem.|"
-"Pokud máte harddisk, zkopírujte FORMAT|"
-"do koøenového adersáøe.][OK]"
-
 #: desk/desk_rsc.c:1659
 msgid "[3]["
 "Formatting will ERASE all|"

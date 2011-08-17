@@ -667,20 +667,6 @@ msgstr "[1]["
 "ventanas. Cierre alguna no usada an-|"
 "tes de abrir un disco.][  OK  ]"
 
-#: desk/desk_rsc.c:1650
-msgid "[1]["
-"Cannot find the FORMAT program.  If you|"
-"are using a dual-floppy system, you must|"
-"format disks from your DOS disk.  If you|"
-"are using a hard disk, copy FORMAT to |"
-"the root directory.][OK]"
-msgstr "[1]["
-"No se encuentra el programa FORMAT. Si|"
-"dispone de dos floppyes, active FORMT |"
-"desde el disco DOS, si usa un disco duro|"
-"copie FORMAT al directorio raíz del |"
-"mismo.][OK]"
-
 #: desk/desk_rsc.c:1659
 msgid "[3]["
 "Formatting will ERASE all|"
