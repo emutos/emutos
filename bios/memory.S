@@ -97,7 +97,7 @@ clearbss:
 #if FALCON_MMU + ST_MMU > 1
         /* detect if this is a Falcon by reading $ff8282 register */
         pea     0xffff8282
-        bsr     _check_read_byte
+        jsr     _check_read_byte
         addq.l  #4, sp
 
         tst.w   d0                      // is it Falcon MMU?
@@ -321,7 +321,7 @@ detect_extra_stram:
         lea     5*1024*1024-1,a0        // start at the end of 5 MB
 loop_extra_stram:
         pea     (a0)
-        bsr     _check_read_byte        // test the last byte
+        jsr     _check_read_byte        // test the last byte
         addq.l  #4,sp
         tst.w   d0                      // readable ?
         beq.s   detect_extra_stram_end  // no, stop here
@@ -410,14 +410,14 @@ f_cleared:
 
 #ifndef __mcoldfire__
         /* test CPU - FastRAM is possible on 68020+ (32-bit address space) */
-        bsr     _detect_cpu
+        jsr     _detect_cpu
         cmp.w   #20,d0                  // 68020 or better?
         blt     setramtop               // no -> skip the whole FastRAM stuff
 #endif
 
         /* Can we access FastRAM region? */
         pea     0x1000400
-        bsr     _check_read_byte
+        jsr     _check_read_byte
         addq.l  #4,sp
         tst.w   d0
         beq     setramtop
@@ -438,7 +438,7 @@ f_cleared:
 loop:
         lea     -1(a3,d3.l), a0
         pea     (a0)
-        bsr     _check_read_byte
+        jsr     _check_read_byte
         addq.l  #4,sp
         tst.w   d0
         beq.s   setramtop

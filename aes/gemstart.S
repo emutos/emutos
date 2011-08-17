@@ -215,14 +215,14 @@ _dos_exec:
         // If some additional data is pushed on the stack before
         // the stack switch, you must add the equivalent room here.
 
-        bsr     _cli
+        jsr     _cli
         movea.l _rlr,a0
         movea.l 8(a0),a0
         move.l  0x3E(a0),-(sp)          // Save rlr->p_uda->u_spsuper
         movea.l sp,a1
         suba.l  #0x50,a1                // Adjust the stack (see above)
         move.l  a1,0x3E(a0)
-        bsr     _sti
+        jsr     _sti
 
         movea.l d1,a1
         move.l  14(a1),-(sp)            // Push parameters on the stack again...
@@ -233,11 +233,11 @@ _dos_exec:
         trap    #1                      // ... and execute the Pexec call!
         lea     16(sp),sp
 
-        bsr     _cli
+        jsr     _cli
         movea.l _rlr,a0
         movea.l 8(a0),a0
         move.l  (sp)+,0x3E(a0)          // Restore rlr->p_uda->u_spsuper
-        bsr     _sti
+        jsr     _sti
 
 #ifdef __mcoldfire__
         move.l  (sp)+,d2
