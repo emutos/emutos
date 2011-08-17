@@ -30,7 +30,6 @@
 #if DBG_BLIT
 #include "kprint.h"
 #endif
-#include "kprint.h"
 
 extern void bit_blt(void);
 
