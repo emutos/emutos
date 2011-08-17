@@ -90,7 +90,7 @@ int has_microwire;
 void detect_dmasound(void)
 {
     has_dmasound = check_read_byte((long)&DMASOUND->control);
-    has_microwire = check_read_byte((long)&DMASOUND->microwire_mask);
+    has_microwire = check_read_byte((long)&DMASOUND->microwire_data);
 
     /* TODO: Detect the other DMA sound hardware */
 }
