@@ -328,6 +328,10 @@ loop_extra_stram:
 
         move.l  #1*1024*1024,d0         // one more megabyte
         add.l   d0,d5                   // to the current amount of ram
+
+        cmp.l   #14*1024*1024,d5        // check for 14 MB maximum
+        bhs.s   detect_extra_stram_end
+
         add.l   d0,a0                   // and to next address to check
         bra.s   loop_extra_stram
 detect_extra_stram_end:
