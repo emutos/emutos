@@ -286,7 +286,7 @@ bank_test_end:
         suba.l  a0,a0                   // Note:The TOS 1.6 use these opcode probably to access to the MMU register more slowly than the classic "move.b  d6,0xffff8001"
         move.b  d6,0xffff8001(a0)       // set hw memory config (reg 0xffff8001 - memorycontroller)
 
-        bra mem_config_ok
+        bra     detect_extra_stram
 
 /*
  * check_test_pattern "subroutine":
@@ -313,8 +313,24 @@ check_test_pattern_loop:
 end_check_test_pattern:
         jmp (a5)                        // return
 
+detect_extra_stram:
+        /* Now detect if there is some extra ST-RAM installed */
+        cmpi.l  #4*1024*1024,d5         // we should already have 4 MB
+        bne.s   detect_extra_stram_end
 
-mem_config_ok:
+        lea     5*1024*1024-1,a0        // start at the end of 5 MB
+loop_extra_stram:
+        pea     (a0)
+        bsr     _check_read_byte        // test the last byte
+        addq.l  #4,sp
+        tst.w   d0                      // readable ?
+        beq.s   detect_extra_stram_end  // no, stop here
+
+        move.l  #1*1024*1024,d0         // one more megabyte
+        add.l   d0,d5                   // to the current amount of ram
+        add.l   d0,a0                   // and to next address to check
+        bra.s   loop_extra_stram
+detect_extra_stram_end:
 
         /* Some emulators do not emulator the behaviour of memory banks
          * so we end up here with a bad value in d5 ... let's do a

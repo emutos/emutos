@@ -2475,3 +2475,4 @@ Start... early ages
   Burrows. (VRI)
 - bios/memory.S: Fix the stack after calling check_read_byte() to avoid
   potential stack overflow. (VRI)
+- bios/memory.S: Added support for up to 14 MB ST-RAM on cold boot. (VRI)
