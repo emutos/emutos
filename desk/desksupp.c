@@ -710,6 +710,7 @@ int do_format(WORD curr)
         ANODE   *pa;
         FNODE   *pf;
         WORD    drive_letter;
+        BOOL    isgraf; /* The format program is a graphical one */
 
         done = 0;
 
@@ -731,17 +732,19 @@ int do_format(WORD curr)
           if (ret == 1)
           {
             strcpy(&G.g_cmd[0], "FORMAT.PRG");
+            isgraf = TRUE;
             foundit = shel_find(G.a_cmd);
             if (!foundit)
             {
               strcpy(&G.g_cmd[0], "FORMAT.TTP");
+              isgraf = FALSE;
               foundit = shel_find(G.a_cmd);
             }
 
             if (foundit)
             {
               strcpy(&G.g_tail[1], &msg[0]);
-              pro_run(TRUE, TRUE, G.g_cwin, curr);
+              pro_run(isgraf, TRUE, G.g_cwin, curr);
               done = 1;
             } /* if */
             else

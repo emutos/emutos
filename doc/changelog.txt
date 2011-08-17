@@ -2477,3 +2477,4 @@ Start... early ages
   potential stack overflow. (VRI)
 - bios/memory.S: Added support for up to 14 MB ST-RAM on cold boot. (VRI)
 - aes/gemstart.S, bios/memory.S: Replaced bsr by jsr to call externals. (VRI)
+- desk/desksupp.c: Run FORMAT.TTP in text mode. (VRI)
