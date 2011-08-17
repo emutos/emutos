@@ -98,6 +98,7 @@ clearbss:
         /* detect if this is a Falcon by reading $ff8282 register */
         pea     0xffff8282
         bsr     _check_read_byte
+        addq.l  #4, sp
 
         tst.w   d0                      // is it Falcon MMU?
         beq     memchk                  // no -> skip 0xffff8007 test
@@ -401,6 +402,7 @@ f_cleared:
         /* Can we access FastRAM region? */
         pea     0x1000400
         bsr     _check_read_byte
+        addq.l  #4,sp
         tst.w   d0
         beq     setramtop
 
@@ -421,6 +423,7 @@ loop:
         lea     -1(a3,d3.l), a0
         pea     (a0)
         bsr     _check_read_byte
+        addq.l  #4,sp
         tst.w   d0
         beq.s   setramtop
         addq.l  #1, d6

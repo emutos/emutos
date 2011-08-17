@@ -2473,3 +2473,5 @@ Start... early ages
 - bdos/fs.h, bdos/fsfat.c, bdos/fsio.c, bdos/fsopnclo.c: Big partition support
   part 1. Remove the test for negative cluster numbers. Contributed by Roger
   Burrows. (VRI)
+- bios/memory.S: Fix the stack after calling check_read_byte() to avoid
+  potential stack overflow. (VRI)
