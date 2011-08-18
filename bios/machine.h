@@ -38,6 +38,7 @@ extern int has_megartc;   /* in clock.c */
 extern int has_nvram;     /* in nvram.c */
 extern int has_dmasound;  /* in dmasound.c */
 extern int has_microwire; /* in dmasound.c */
+extern int has_falcon_dmasound; /* in dmasound.c */
 
 /*
  * other variables

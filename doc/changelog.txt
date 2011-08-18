@@ -2480,3 +2480,6 @@ Start... early ages
 - desk/desksupp.c: Run FORMAT.TTP in text mode. (VRI)
 - desk/desk_rsc.c, po/*.po: Changed the message when the format program is not
   found. It was too long in the french translation and crashed. (VRI)
+
+2011-08-18
+- bios/dmasound.c, bios/machine.h: Improved Microwire detection. (VRI)

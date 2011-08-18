@@ -10,12 +10,16 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+#define DBG_DMASOUND 0
+
 #include "dmasound.h"
 #include "portab.h"
 #include "vectors.h"
+#include "kprint.h"
 
 struct dmasound
 {
+    /* STe/TT DMA registers */
     UBYTE interrupt; /* Buffer interrupts */
     UBYTE control; /* DMA Control Register */
     UBYTE filler02;
@@ -39,8 +43,25 @@ struct dmasound
     UBYTE filler14[12];
     UBYTE track_control; /* DMA Track Control */
     UBYTE mode_control; /* Sound mode control */
+    /* STe/TT Microwire interface registers */
     UWORD microwire_data; /* Microwire data register */
     UWORD microwire_mask; /* Microwire mask register */
+    UBYTE filler26[10];
+    /* Falcon DMA registers */
+    UWORD crossbar_src; /* Crossbar Source Controller */
+    UWORD crossbar_dest; /* Crossbar Destination Controller */
+    UBYTE freq_ext; /* Frequency Divider External Clock */
+    UBYTE freq_int; /* Frequency Divider Internal Sync */
+    UBYTE record_tracks; /* Record Tracks Select */
+    UBYTE codec_16bit_source; /* CODEC Input Source from 16bit adder */
+    UBYTE codec_adc_source; /* CODEC ADC-Input for L+R Channel */
+    UBYTE channel_amplification; /* Channel amplification */
+    UWORD channel_attenuation; /* Channel attenuation */
+    UBYTE codec_status; /* CODEC-Status */
+    UBYTE filler3d[4];
+    UBYTE gpx_data_direction; /* GPx Data Direction */
+    UBYTE filler42;
+    UBYTE gpx_data_port; /* GPx Data Port */
 };
 
 #define DMASOUND ((volatile struct dmasound*)0xffff8900)
@@ -86,13 +107,30 @@ struct dmasound
 
 int has_dmasound;
 int has_microwire;
+int has_falcon_dmasound;
 
 void detect_dmasound(void)
 {
+    /* First, detect basic STe/TT DMA sound */
     has_dmasound = check_read_byte((long)&DMASOUND->control);
-    has_microwire = check_read_byte((long)&DMASOUND->microwire_data);
 
-    /* TODO: Detect the other DMA sound hardware */
+    /* Then detect advanced Falcon DMA sound */
+    if (has_dmasound)
+    {
+        /* Warning: The Falcon registers below GPx does not exist on STe/TT
+         * but they don't cause a bus error. */
+        has_falcon_dmasound = check_read_byte((long)&DMASOUND->gpx_data_port);
+    }
+
+    /* The Falcon has no microwire interface.
+     * This is not detectable through a bus error. */
+    has_microwire = has_dmasound && !has_falcon_dmasound;
+
+#if DBG_DMASOUND
+    kprintf("has_dmasound = %d\n", has_dmasound);
+    kprintf("has_microwire = %d\n", has_microwire);
+    kprintf("has_falcon_dmasound = %d\n", has_falcon_dmasound);
+#endif
 }
 
 static void write_microwire(UWORD data)
