@@ -24,7 +24,7 @@
 
 void xfr2usr(int n, char *s, char *d);
 void usr2xfr(int n, char *d, char *s);
-static long divmod(int *modp, long divdnd, int divsor);
+static long divmod(unsigned int *modp, long divdnd, int divsor);
 static void addit(OFD *p, long siz, int flg);
 static long xrw(int wrtflg, OFD *p, long len, char *ubufr,
                 void (*bufxfr)(int, char *, char *));
@@ -64,9 +64,9 @@ void usr2xfr(int n, char *d, char *s)
  */
 
 /* divsor is log2 of actual divisor */
-static long divmod(int *modp, long divdnd, int divsor)
+static long divmod(unsigned int *modp, long divdnd, int divsor)
 {
-    *modp = (int)(divdnd % (1L<<divsor));
+    *modp = (unsigned int)(divdnd % (1L<<divsor));
 
     return (long)(divdnd >> divsor);
 }
@@ -120,7 +120,7 @@ long    xlseek(long n, int h, int flg)
 
 long    ixlseek(register OFD *p, long n)
 {
-    int clnum,clx,curnum,i;     /*  M01.01.03   */
+    CLNO clnum,clx,curnum,i;    /*  M01.01.03   */
     int curflg ;                /****  M00.01.01b  ****/
     register DMD *dm;
 
@@ -169,7 +169,7 @@ long    ixlseek(register OFD *p, long n)
 
     for (i=1; i < clnum; i++) {                 /*** M00.01.01b ***/
         clx = getclnum(clx,p);
-        if ( clx == -1)
+        if (clx == 0xffff)
             return(-1);
     }
 
@@ -333,9 +333,10 @@ static long xrw(int wrtflg, OFD *p, long len, char *ubufr,
 {
     register DMD *dm;
     char *bufp;
-    int bytn, lenxfr, lentail;
+    unsigned int bytn, tailrec;
+    int lenxfr, lentail;
     RECNO recn, num;
-    int hdrrec,lsiz,tailrec;
+    int hdrrec, lsiz;
     RECNO last, nrecs;                  /* multi-sector variables */
     int lflg;
     long nbyts;

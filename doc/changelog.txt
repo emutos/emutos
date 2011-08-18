@@ -2484,3 +2484,6 @@ Start... early ages
 2011-08-18
 - bios/dmasound.c, bios/machine.h: Improved Microwire detection. (VRI)
 - bios/machine.c, bios/cookie.h: Added Falcon DMA sound to _SND cookie. (VRI)
+- bdos/fs.h, bdos/fsfat.c, bdos/fsio.c: Big partition support part 2.
+  Change the types of variables used in cluster handling. Contributed by Roger
+  Burrows. (VRI)

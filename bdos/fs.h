@@ -165,9 +165,9 @@ OFD
     long  o_dirbyt;     /*  pos in dir of this files fcb (dcnt) */
 
     long  o_bytnum;     /* byte pointer within file             */
-    CLNO  o_curcl;      /* not used                             */
-    RECNO o_currec;     /* not used                             */
-    int   o_curbyt;     /* not used                             */
+    CLNO  o_curcl;      /* current cluster number for file      */
+    RECNO o_currec;     /* current record number for file       */
+    unsigned int o_curbyt; /* byte pointer within current cluster */
     int   o_usecnt;     /* use count for inherited files        */
     OFD   *o_thread;    /* mulitple open thread list            */
     int   o_mod;        /* mode file opened in (r, w, r/w)      */
@@ -253,23 +253,23 @@ DND /* directory node descriptor */
  *  DMD - Drive Media Block
  */
 
-/*  records == sectors  */
+/*  records == logical sectors  */
 
 DMD /* drive media block */
 {
     RECNO  m_recoff[3]; /*  record offsets for fat,dir,data     */
     int    m_drvnum;    /*  drive number for this media         */
-    RECNO  m_fsiz;      /*  fat size in records M01.01.03       */
-    RECNO  m_clsiz;     /*  cluster size in records M01.01.03   */
+    int    m_fsiz;      /*  fat size in records M01.01.03       */
+    int    m_clsiz;     /*  cluster size in records M01.01.03   */
     unsigned int m_clsizb;  /*  cluster size in bytes           */
     int    m_recsiz;    /*  record size in bytes                */
 
     CLNO   m_numcl;     /*  total number of clusters in data    */
-    int    m_clrlog;    /* clsiz in rec, log2 is shift          */
+    int    m_clrlog;    /* log (base 2) of clsiz in records     */
     int    m_clrm;      /* clsiz in rec, mask                   */
-    int    m_rblog;     /* recsiz in bytes, shift               */
+    int    m_rblog;     /* log (base 2) of recsiz in bytes      */
     int    m_rbm;       /* recsiz in bytes, mask                */
-    int    m_clblog;    /* log of clus size in bytes            */
+    int    m_clblog;    /* log (base 2) of clsiz in bytes       */
     OFD    *m_fatofd;   /* OFD for 'fat file'                   */
 
     OFD    *m_ofl;      /*  list of open files                  */
@@ -285,8 +285,7 @@ DMD /* drive media block */
 
 #define BT_FAT          0               /*  fat buffer                  */
 #define BT_ROOT         1               /*  root dir buffer             */
-#define BT_DIR          2               /*  other dir buffer            */
-#define BT_DATA         3               /*  data buffer                 */
+#define BT_DATA         2               /*  buffer for files, dirs      */
 
 /*
  *  buffer list indexes

@@ -114,7 +114,7 @@ CLNO getrealcl(CLNO cl, DMD *dm)
                 cl = 0x0fff & f[0];
 
         if (cl == 0x0fff)
-                return(-1);
+                return(0xffff);
 
         return(cl);
 }
