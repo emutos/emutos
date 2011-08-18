@@ -61,6 +61,17 @@ struct cookie {
 #define FDC_1ATC    0x01415443L
 #define FDC_2ATC    0x02415443L
 
+/* 
+ * values of _SND cookie
+ */
+ 
+#define SND_PSG         0x01    /* Yamaha PSG */
+#define SND_8BIT        0x02    /* 8 bit DMA stereo */
+#define SND_16BIT       0x04    /* 16 bit CODEC */
+#define SND_DSP         0x08    /* DSP */
+#define SND_MATRIX      0x10    /* Connection Matrix */
+#define SND_XBIOS       0x20    /* XBIOS / XGSB */
+
 /* functions */
 
 void cookie_init(void);

@@ -159,11 +159,14 @@ static void setvalue_mch(void)
 static void setvalue_snd(void)
 {
   /* always at least a PSG */
-  cookie_snd = 1;
+  cookie_snd = SND_PSG;
 
-  /* Check for DMA sound */
   if (has_dmasound) {
-    cookie_snd |= 2;
+    cookie_snd |= SND_8BIT;
+  }
+
+  if (has_falcon_dmasound) {
+    cookie_snd |= SND_16BIT | SND_MATRIX;
   }
 }
   
