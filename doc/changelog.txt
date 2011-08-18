@@ -2487,3 +2487,6 @@ Start... early ages
 - bdos/fs.h, bdos/fsfat.c, bdos/fsio.c: Big partition support part 2.
   Change the types of variables used in cluster handling. Contributed by Roger
   Burrows. (VRI)
+- vdi/vdi_raster.c: Fixed the C implementation of bit_blt() when the destination
+  width is spanning a single word (usually width <= 16 pixels). This was visible
+  when moving a window slightly on the right over an icon. (VRI)

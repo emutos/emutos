@@ -599,7 +599,9 @@ bit_blt ()
     if ( !d_span ) {
         /* merge both end masks into Endmask1. */
         lendmask &= rendmask;           /* d4<- single word end mask */
-        skew_idx |= 0x0004;                     /* d6[bit2]:1 => single word dst */
+        // VRI: This C implementation incorrectly handles the special case
+        // of a single word destination, so I comment out the following line.
+        //skew_idx |= 0x0004;             /* d6[bit2]:1 => single word dst */
         /* The other end masks will be ignored by the BLiTTER */
     }
 
