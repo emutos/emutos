@@ -2495,3 +2495,5 @@ Start... early ages
 - desk/deskmain.c: Fixed wrong reloading of large windows. (VRI)
 - desk/deskmain.c: Reposition the windows saved outside the screen into the
   current desktop area. (VRI)
+- aes/gemmnlib.c: Added support for accessory menu separator line customized
+  using a USERDEF (ex: CF-Lib, QED).

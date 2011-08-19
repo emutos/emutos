@@ -188,7 +188,10 @@ static void menu_fixup(BYTE *pname)
         {
           pob = &M_DESK[i];
           pob->ob_next = i+1;
-          pob->ob_type = G_STRING;
+          /* Special support for custom accessory separator line
+           * customized using a USERDEF (ex: CF-Lib, QED).
+           * We must keep the original ob_type (usually G_STRING). */
+          pob->ob_type = LWGET(OB_TYPE(gl_dabox+i));
           pob->ob_state = pob->ob_flags = 0x0;
           if (i > 2)
           {
