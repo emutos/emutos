@@ -1267,6 +1267,16 @@ void cnx_get(void)
         {
                 pws = &G.g_cnxsave.win_save[nw];
 
+                /* Check for valid position */
+                if(pws->x_save >= G.g_wdesk)
+                {
+                  pws->x_save = G.g_wdesk/2;
+                }
+                if(pws->y_save >= G.g_hdesk)
+                {
+                  pws->y_save = G.g_hdesk/2;
+                }
+
                 /* Check for valid width + height */
                 if(pws->w_save <= 0 || pws->w_save > G.g_wdesk)
                 {

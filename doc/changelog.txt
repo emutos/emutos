@@ -2493,3 +2493,5 @@ Start... early ages
 
 2011-08-19
 - desk/deskmain.c: Fixed wrong reloading of large windows. (VRI)
+- desk/deskmain.c: Reposition the windows saved outside the screen into the
+  current desktop area. (VRI)
