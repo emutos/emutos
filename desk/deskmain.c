@@ -1268,13 +1268,13 @@ void cnx_get(void)
                 pws = &G.g_cnxsave.win_save[nw];
 
                 /* Check for valid width + height */
-                if(pws->w_save <= 0 || pws->w_save > G.g_wfull)
+                if(pws->w_save <= 0 || pws->w_save > G.g_wdesk)
                 {
-                  pws->w_save = G.g_wfull/2;
+                  pws->w_save = G.g_wdesk/2;
                 }
-                if(pws->h_save <= 0 || pws->h_save > G.g_hfull)
+                if(pws->h_save <= 0 || pws->h_save > G.g_hdesk)
                 {
-                  pws->h_save = G.g_hfull/2;
+                  pws->h_save = G.g_hdesk/2;
                 }
 
                 if (pws->pth_save[0])

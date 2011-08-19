@@ -2490,3 +2490,6 @@ Start... early ages
 - vdi/vdi_raster.c: Fixed the C implementation of bit_blt() when the destination
   width is spanning a single word (usually width <= 16 pixels). This was visible
   when moving a window slightly on the right over an icon. (VRI)
+
+2011-08-19
+- desk/deskmain.c: Fixed wrong reloading of large windows. (VRI)
