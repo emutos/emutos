@@ -1,5 +1,5 @@
 /*
- * dmasound.c - STe DMA sound routines
+ * dmasound.c - STe/TT/Falcon DMA sound routines
  *
  * Copyright (c) 2011 EmuTOS development team
  *
