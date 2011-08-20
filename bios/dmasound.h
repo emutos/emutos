@@ -1,7 +1,7 @@
 /*
  * dmasound.h - STe DMA sound routines
  *
- * Copyright (c) 2001 EmuTOS development team
+ * Copyright (c) 2011 EmuTOS development team
  *
  * Authors:
  *  VRI   Vincent Riviere
