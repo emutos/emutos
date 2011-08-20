@@ -117,7 +117,7 @@
 #  define CONF_WITH_IDE 1
 # else
    /* For safety, the experimental IDE support is disabled by default. */
-#  define CONF_WITH_IDE 1
+#  define CONF_WITH_IDE 0
 # endif
 #endif
 
