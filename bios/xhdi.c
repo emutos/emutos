@@ -12,6 +12,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+#include "config.h"
 #include "stdarg.h"
 #include "kprint.h"
 #include "blkdev.h"
@@ -20,6 +21,7 @@
 #include "string.h"
 #include "cookie.h"
 #include "natfeat.h"
+#include "ide.h"
 
 #include "xhdi.h"
  
@@ -165,9 +167,12 @@ long XHReadWrite(UWORD major, UWORD minor, UWORD rw, ULONG sector,
     else if (dev < 16) {
         return EUNDEV;  /* call scsi_rw() here when implemented */
     }
+#if CONF_WITH_IDE
     else if (dev < 24) {
-        return EUNDEV;  /* call ide_rw() here when implemented*/
+        return ide_rw(rw, sector, count, (LONG)buf, dev - 16);
     }
+#endif
+
     return EUNDEV;      /* unknown device */
 }
 

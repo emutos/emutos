@@ -2497,3 +2497,7 @@ Start... early ages
   current desktop area. (VRI)
 - aes/gemmnlib.c: Added support for accessory menu separator line customized
   using a USERDEF (ex: CF-Lib, QED).
+
+2011-08-20
+- Makefile, bios/ide.c, bios/ide.h, bios/xhdi.c, include/config.h: Added very
+  minimalistic IDE support. Currently enabled only on the FireBee. (VRI)

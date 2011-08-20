@@ -109,6 +109,19 @@
 #endif
 
 /*
+ * Set CONF_WITH_IDE to 1 to activate Falcon IDE support.
+ */
+#ifndef CONF_WITH_IDE
+# ifdef MACHINE_FIREBEE
+   /* The FireBee's CompactFlash card requires this. */
+#  define CONF_WITH_IDE 1
+# else
+   /* For safety, the experimental IDE support is disabled by default. */
+#  define CONF_WITH_IDE 1
+# endif
+#endif
+
+/*
  * Define the TOS version here. Valid values are 0x102 and 0x206 for example.
  * Note that using a value less than 0x200 might force some parts of
  * EmuTOS not to be compiled to save some space in the ROM image.
