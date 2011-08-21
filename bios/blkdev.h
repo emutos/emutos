@@ -27,6 +27,7 @@
 #define BLKDEVNUM   32          /* A: .. Z:, 1:..6: */
 #define UNITSNUM    (2+24)  /* 2xFDC + 8xACSI + 8xSCSI + 8xIDE */
 
+/* Original FAT12 bootsector */
 struct bs {
   /*   0 */  UBYTE bra[2];
   /*   2 */  UBYTE loader[6];
@@ -43,6 +44,33 @@ struct bs {
   /*  1a */  UBYTE sides[2];  /* number of sides */
   /*  1c */  UBYTE hid[2];    /* number of hidden sectors */
   /*  1e */  UBYTE data[0x1e0];
+  /* 1fe */  UBYTE cksum[2];
+};
+
+/* Extended FAT12/FAT16 bootsector */
+struct fat16_bs {
+  /*   0 */  UBYTE bra[2];
+  /*   2 */  UBYTE loader[6];
+  /*   8 */  UBYTE serial[3];
+  /*   b */  UBYTE bps[2];    /* bytes per sector */
+  /*   d */  UBYTE spc;       /* sectors per cluster */
+  /*   e */  UBYTE res[2];    /* number of reserved sectors */
+  /*  10 */  UBYTE fat;       /* number of FATs */
+  /*  11 */  UBYTE dir[2];    /* number of DIR root entries */
+  /*  13 */  UBYTE sec[2];    /* total number of sectors */
+  /*  15 */  UBYTE media;     /* media descriptor */
+  /*  16 */  UBYTE spf[2];    /* sectors per FAT */
+  /*  18 */  UBYTE spt[2];    /* sectors per track */
+  /*  1a */  UBYTE sides[2];  /* number of sides */
+  /*  1c */  UBYTE hid[4];    /* number of hidden sectors (earlier: 2 bytes) */
+  /*  20 */  UBYTE sec2[4];   /* total number of sectors (if not in sec) */
+  /*  24 */  UBYTE ldn;       /* logical drive number */
+  /*  25 */  UBYTE dirty;     /* dirty filesystem flags */
+  /*  26 */  UBYTE ext;       /* extended signature */
+  /*  27 */  UBYTE serial2[4]; /* extended serial number */
+  /*  2b */  UBYTE label[11]; /* volume label */
+  /*  36 */  UBYTE fstype[8]; /* file system type */
+  /*  3e */  UBYTE data[0x1c0];
   /* 1fe */  UBYTE cksum[2];
 };
 

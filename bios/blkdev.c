@@ -298,6 +298,7 @@ LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG lrecnr
 LONG blkdev_getbpb(WORD dev)
 {
     struct bs *b;
+    struct fat16_bs *b16;
     LONG tmp;
     WORD err;
   
@@ -314,6 +315,7 @@ LONG blkdev_getbpb(WORD dev)
     if (err) return 0;
 
     b = (struct bs *)dskbufp;
+    b16 = (struct fat16_bs *)dskbufp;
 #if DBG_BLKDEV
     kprintf("bootsector[dev = %d] = {\n  ...\n", dev);
     kprintf("  res = %d;\n", getiword(b->res));
@@ -346,11 +348,27 @@ LONG blkdev_getbpb(WORD dev)
                            + blkdev[dev].bpb.rdlen;
     if (b->spc != 0)
         blkdev[dev].bpb.numcl = (getiword(b->sec) - blkdev[dev].bpb.datrec) / b->spc;
-#ifdef MSDOS_COMPATIBLE /* never */
-    blkdev[dev].bpb.b_flags = (blkdev[dev].bpb.numcl > 0xff7) ? B_16 : 0;
-#else
-    blkdev[dev].bpb.b_flags = (blkdev[dev].bpb.numcl > 1440) ? B_16 : 0;
-#endif
+
+    /* Check for FAT12 or FAT16 */
+    if (b16->ext == 0x29 && !memcmp(b16->fstype, "FAT12   ", 8)) {
+        /* Explicit FAT12 */
+        blkdev[dev].bpb.b_flags = 0;
+    }
+    else if (b16->ext == 0x29 && !memcmp(b16->fstype, "FAT16   ", 8)) {
+        /* Explicit FAT16 */
+        blkdev[dev].bpb.b_flags = B_16;
+    }
+    else {
+        /* We have to guess the filesystem type */
+        if (b->media == 0xf8) {
+            /* Assume that hard disks use FAT16 */
+            blkdev[dev].bpb.b_flags = B_16;
+        }
+        else {
+            /* This is probably a floppy using FAT12 */
+            blkdev[dev].bpb.b_flags = 0;
+        }
+    }
 
     /* additional geometry info */
     blkdev[dev].geometry.sides = getiword(b->sides);

@@ -2501,3 +2501,6 @@ Start... early ages
 2011-08-20
 - Makefile, bios/ide.c, bios/ide.h, bios/xhdi.c, include/config.h: Added very
   minimalistic IDE support. Currently enabled only on the FireBee. (VRI)
+
+2011-08-21
+- bios/blkdev.c, bios/blkdev.h: Better FAT12/FAT16 detection. (VRI)
