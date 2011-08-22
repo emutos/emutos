@@ -130,6 +130,10 @@ long XHInqTarget(UWORD major, UWORD minor, ULONG *blocksize,
 
 long XHGetCapacity(UWORD major, UWORD minor, ULONG *blocks, ULONG *blocksize)
 {
+#if DBG_XHDI
+    kprintf("XHGetCapacity(%d.%d)\n", major, minor);
+#endif
+
     if (get_xhdi_nfid()) {
         long ret = NFCall(get_xhdi_nfid() + XHGETCAPACITY, (long)major, (long)minor, (long)blocks, (long)blocksize);
         if (ret != EINVFN && ret != EUNDEV)
