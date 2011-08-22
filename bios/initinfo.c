@@ -21,6 +21,7 @@
 #include "kprint.h"
 #include "nls.h"
 #include "ikbd.h"
+#include "asm.h"
 
 //#include "lineavars.h"
 #include "font.h"
@@ -237,7 +238,16 @@ void initinfo(void)
     {
         long end = hz_200 + INITINFO_DURATION * 200UL;
         while(hz_200 < end) {
-            while((kbshift(-1) & 0x03)) ;       /* Shift key will pause */
+#if USE_STOP_INSN_TO_FREE_HOST_CPU
+            stop2300();
+#endif
+            /* Shift key will pause */
+            while((kbshift(-1) & 0x03)) {
+#if USE_STOP_INSN_TO_FREE_HOST_CPU
+                stop2300();
+#endif
+            }
+
             if ((kbshift(-1) & 0x0c) || bconstat2())
                 break;
         }

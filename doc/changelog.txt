@@ -2504,3 +2504,6 @@ Start... early ages
 
 2011-08-21
 - bios/blkdev.c, bios/blkdev.h: Better FAT12/FAT16 detection. (VRI)
+
+2011-08-22
+- bios/initinfo.c: Save CPU time during the welcome screen. (VRI)
