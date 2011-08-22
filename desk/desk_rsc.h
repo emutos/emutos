@@ -260,6 +260,8 @@
 
 #endif /* DESK1 */
 
+#define STRESOL         42
+
 
 extern void desk_rs_init(void);
 

@@ -192,6 +192,16 @@ void hot_close(WORD wh);
 #endif
 
 
+static int can_change_resolution;
+
+static void detect_features()
+{
+    int rez = Getrez();
+
+    /* Resolution change is only allowed on ST-Low or ST-Mid */
+    can_change_resolution = (rez == 0 || rez == 1);
+}
+
 
 void copy_icon(LONG dst_tree, LONG tree, WORD dst_icon, WORD icon)
 {
@@ -692,7 +702,7 @@ WORD do_optnmenu(WORD item)
                 desk_wait(FALSE);
                 break;
           case RESITEM:
-                rebld = form_alert(1, ADDR("[2][Switch resolution?][Yes|No]"));
+                rebld = form_alert(1, (LONG)ini_str(STRESOL));
                 if (rebld == 1)
                 {
                         shel_write(5, (Getrez()==1?2:3), 0, NULL, NULL);
@@ -854,6 +864,9 @@ WORD hndl_kbd(WORD thechar)
                 }
                 break;
           case ALTC:    /* Options: Change resolution  */
+                if (!can_change_resolution)
+                    break;
+
                 menu_tnormal(G.a_trees[ADMENU], OPTNMENU, FALSE);
                 done = hndl_menu(OPTNMENU, RESITEM);
                 break;
@@ -1395,6 +1408,9 @@ WORD deskmain()
         wind_update(BEG_UPDATE);
         desk_wait(TRUE);
         wind_update(END_UPDATE);
+
+                                                /* detect optional features */
+        detect_features();
                                                 /* initialize resources */
 #if 0
         if( !rsrc_load(ADDR("DESKTOP.RSC")) )
@@ -1497,6 +1513,9 @@ WORD deskmain()
 
         G.g_csortitem = NAMEITEM;
         menu_icheck(G.a_trees[ADMENU], G.g_csortitem, TRUE);
+
+        menu_ienable(G.a_trees[ADMENU], RESITEM, can_change_resolution);
+
                                                 /* set up initial prefs */
         G.g_ccopypref = TRUE;
 #ifdef DESK1

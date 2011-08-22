@@ -482,7 +482,7 @@ static const OBJECT desk_rs_obj_rom[] = {
 
    { 30, -1, -1, G_STRING,                      /*** 36 ***/
      NONE,
-     DISABLED,
+     NORMAL,
      (long) N_("  Change resolution         \007C"),
      0, 5, 31, 1},
 
@@ -1702,8 +1702,9 @@ char *desk_rs_fstr[] = {
        "into a window.][  OK  ]"),
     N_("[1][You can drag the trash can to another|"
        "location on the GEM Desktop, but you|"
-       "cannot place it on top of another icon.][  OK  ]")
+       "cannot place it on top of another icon.][  OK  ]"),
 #endif
+    N_("[2][Switch resolution?][Yes|No]"),
 };
 
 
