@@ -2507,3 +2507,4 @@ Start... early ages
 
 2011-08-22
 - bios/initinfo.c: Save CPU time during the welcome screen. (VRI)
+- po/ru.po: Added missing translations. Contributed by Dima Sobolev. (VRI)
