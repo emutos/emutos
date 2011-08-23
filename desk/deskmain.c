@@ -196,9 +196,19 @@ static int can_change_resolution;
 
 static void detect_features()
 {
-    int rez = Getrez();
+    /* FIXME: Remove the following when full resolution change is supported */
+    extern int has_tt_shifter;
+    extern int has_videl;
+    int rez;
+    
+    if (has_tt_shifter || has_videl)
+    {
+        can_change_resolution = FALSE;
+        return;
+    }
 
     /* Resolution change is only allowed on ST-Low or ST-Mid */
+    rez = Getrez();
     can_change_resolution = (rez == 0 || rez == 1);
 }
 
