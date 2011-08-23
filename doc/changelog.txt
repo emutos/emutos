@@ -2510,3 +2510,4 @@ Start... early ages
 - po/ru.po: Added missing translations. Contributed by Dima Sobolev. (VRI)
 - desk/desk_rsc.c, desk/desk_rsc.h, desk/deskmain.c, po/fr.po: Enabled the
   Change Resolution menu item on ST resolutions. (VRI)
+- desk/deskmain.c: Disable Erase on drives and trash (was crashing). (VRI)

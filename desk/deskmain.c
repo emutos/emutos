@@ -139,14 +139,14 @@ GLOBAL BYTE     ILL_ITEM[] = {L1ITEM, L2ITEM, L3ITEM, L4ITEM, L5ITEM, 0};
 GLOBAL BYTE     ILL_FILE[] = {FORMITEM,IDSKITEM,0};
 GLOBAL BYTE     ILL_DOCU[] = {FORMITEM,IDSKITEM,IAPPITEM,0};
 GLOBAL BYTE     ILL_FOLD[] = {FORMITEM,IDSKITEM,IAPPITEM,0};
-GLOBAL BYTE     ILL_FDSK[] = {IAPPITEM,0};
-GLOBAL BYTE     ILL_HDSK[] = {FORMITEM,IAPPITEM,0};
+GLOBAL BYTE     ILL_FDSK[] = {DELTITEM,IAPPITEM,0};
+GLOBAL BYTE     ILL_HDSK[] = {FORMITEM,DELTITEM,IAPPITEM,0};
 GLOBAL BYTE     ILL_NOSEL[] = {OPENITEM,SHOWITEM,FORMITEM,DELTITEM,
                                 IDSKITEM,IAPPITEM,0};
 GLOBAL BYTE     ILL_YSEL[] = {OPENITEM, IDSKITEM, FORMITEM, SHOWITEM, 0};
 
 #ifdef DESK1
-GLOBAL BYTE     ILL_TRASH[] = {OPENITEM,FORMITEM,IDSKITEM,IAPPITEM,0};
+GLOBAL BYTE     ILL_TRASH[] = {OPENITEM,FORMITEM,DELTITEM,IDSKITEM,IAPPITEM,0};
 GLOBAL BYTE     ILL_NOTOP[] = {NFOLITEM,CLOSITEM,CLSWITEM,0};
 GLOBAL BYTE     ILL_DESKTOP[] = {NFOLITEM,CLOSITEM,CLSWITEM,ICONITEM,
                                 NAMEITEM,DATEITEM,SIZEITEM,TYPEITEM,0};
@@ -416,10 +416,12 @@ void men_update(LONG tree)
             case AT_ISDISK:
                 pvalue = (appl->a_aicon == IG_FLOPPY) ? ILL_FDSK : ILL_HDSK;
                 can_iapp = FALSE;
+                can_del = FALSE;
                 break;
 #ifdef DESK1
             case AT_ISTRSH:                    /* Trash */
                 pvalue = ILL_TRASH;
+                can_del = FALSE;
                 break;
 #endif
           } /* switch */
