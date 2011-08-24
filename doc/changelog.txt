@@ -2514,3 +2514,6 @@ Start... early ages
 
 2011-08-23
 - po/ru.po: Added missing translations. Contributed by Dima Sobolev. (VRI)
+
+2011-08-24
+- vdi/vdi_col.c: Fixed the default VDI palette. (VRI)
