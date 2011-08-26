@@ -88,6 +88,37 @@ void p_nameit(PD *p, BYTE *pname)
         strscn(pname, p->p_name, '.');
 }
 
+/* set the application directory of a PD */
+void p_setappdir(PD *pd, BYTE *pfilespec)
+{
+        BYTE *p;
+        BYTE *plast;
+        BYTE *pdest;
+
+        /* find the position of the last backslash */
+        plast = NULL;
+        for (p = pfilespec; *p; ++p);
+        for (; p >= pfilespec; --p)
+        {
+          if (*p == '\\')
+          {
+            plast = p;
+            break;
+          }
+        }
+
+        /* no backslash means no directory */
+        if (!plast)
+        {
+           rlr->p_appdir[0] = '\0';
+           return;
+        }
+
+        /* copy the directory including the final backslash */
+        for (pdest = pd->p_appdir, p = pfilespec; p <= plast;)
+          *pdest++ = *p++;
+        *pdest = '\0';
+}
 
 PD *pstart(void *pcode, BYTE *pfilespec, LONG ldaddr)
 {
@@ -98,6 +129,7 @@ PD *pstart(void *pcode, BYTE *pfilespec, LONG ldaddr)
         px->p_ldaddr = ldaddr;
                                                 /* copy in name of file */
         p_nameit(px, pfilespec);
+        p_setappdir(px, pfilespec);
 
         /* set pcode to be the return address when this process runs */
         psetup(px, pcode);

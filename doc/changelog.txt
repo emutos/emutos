@@ -2517,3 +2517,8 @@ Start... early ages
 
 2011-08-24
 - vdi/vdi_col.c: Fixed the default VDI palette. (VRI)
+
+2011-08-26
+- aes/geminit.c, aes/gempd.c, aes/gempd.h, aes/gemshlib.c, aes/struct.h:
+  Improved rsrc_load() and shel_find() to search also in the application
+  directory and the root directory. This fxes the Nethack game. (VRI)

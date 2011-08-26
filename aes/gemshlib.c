@@ -563,26 +563,42 @@ WORD sh_path(WORD whichone, LONG dp, BYTE *pname)
 WORD sh_find(LONG pspec)
 {
         WORD            path;
-        BYTE            gotdir, *pname, tmpname[66];
+        BYTE            gotdir, *pname;
+
+        pname = sh_name((BYTE *) pspec);        /* get ptr to name      */
+        gotdir = (pname != (BYTE *) pspec);
 
         dos_sdta(ad_dta);
 
+        /* first, search in the application directory */
+        if (!gotdir && rlr->p_appdir[0] != '\0')
+        {
+          strcpy((char *) ad_path, rlr->p_appdir);
+          strcat((char *) ad_path, (char *) pname);
+          dos_sfirst(ad_path, F_RDONLY | F_SYSTEM);
+          if (!DOS_ERR)
+          {
+            strcpy((char *) pspec, (char *) ad_path);
+            return 1;
+          }
+        }
+
+        /* second, search in the current directory */
         strcpy((char *) ad_path, (char *) pspec);  /* copy to local buffer */
-        pname = sh_name(&D.g_dir[0]);           /* get ptr to name      */
-        gotdir = (pname != &D.g_dir[0]);
         if (!gotdir)
         {
-          strcpy(tmpname, pname);           /* save name            */
           sh_curdir(ad_path);                   /* get current drive/dir*/
           if (D.g_dir[3] != NULL)               /* if not at root       */
             strcat(&D.g_dir[0], "\\");          /*  add foreslash       */
-          strcat(&D.g_dir[0], &tmpname[0]);     /* append name to drive */
-        }
+          strcat(&D.g_dir[0], pname);           /* append name to drive */
                                                 /* and directory.       */
+          /* the actual search will be performed in the loop below */
+        }
+
+        /* third, search in the AES path */
         path = 0;
         do
         {
-
           dos_sfirst(ad_path, F_RDONLY | F_SYSTEM);
 
           if ( (DOS_AX == E_PATHNOTFND) ||
@@ -591,12 +607,20 @@ WORD sh_find(LONG pspec)
                   (DOS_AX == E_PATHNOTFND) ||
                   (DOS_AX == E_FILENOTFND))) )
           {
-            path = sh_path(path, ad_path, &tmpname[0]);
+            path = sh_path(path, ad_path, pname);
             DOS_ERR = TRUE;
           }
           else
             path = 0;
         } while ( !gotdir && DOS_ERR && path );
+
+        /* fourth, search in the current drive root directory */
+        if (DOS_ERR && !gotdir)
+        {
+          strcpy((char *) ad_path, "\\");
+          strcat((char *) ad_path, (char *) pname);
+          dos_sfirst(ad_path, F_RDONLY | F_SYSTEM);
+        }
 
         if (!DOS_ERR)
           strcpy((char *) pspec, (char *) ad_path);
@@ -748,6 +772,7 @@ void sh_ldapp()
               /* Start the ROM desktop: */
               sh_show(ad_scmd);
               p_nameit(rlr, sh_name(&D.s_cmd[0]));
+              p_setappdir(rlr, D.s_cmd);
 
               ui_pd = (LONG *) trap1_pexec(5, 0L , "", 0L);
               ui_pd[2] = (LONG) deskstart;
@@ -769,6 +794,7 @@ void sh_ldapp()
               /* Run a normal application: */
               sh_show(ad_scmd);
               p_nameit(rlr, sh_name(&D.s_cmd[0]));
+              p_setappdir(rlr, D.s_cmd);
               if (psh->sh_fullstep == 0)
               {
 #if GEMDOS

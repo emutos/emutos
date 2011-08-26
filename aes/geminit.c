@@ -883,6 +883,7 @@ void gem_main(void)
         rlr->p_qaddr = ADDR(&rlr->p_queue[0]);
         rlr->p_qindex = 0;
         memset(rlr->p_name, ' ', 8);
+        rlr->p_appdir[0] = '\0'; /* by default, no application directory */
         /* if not rlr then initialize his stack pointer */
         if (i != 0)
             rlr->p_uda->u_spsuper = &rlr->p_uda->u_supstk;
