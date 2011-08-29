@@ -12,12 +12,12 @@
 
 #define DBG_DISK 0
 
+#include "config.h"
 #include "portab.h"
 #include "gemerror.h"
 #include "disk.h"
 #include "asm.h"
 #include "blkdev.h"
-#include "config.h"
 #include "kprint.h"
 #include "xhdi.h"
 
