@@ -19,8 +19,10 @@
         .extern	_info
         .extern	_PTSIN
 
-#define    F1OP       8
-#define    F2OP      22
+// The following defines are offsets inside fringe code fragments
+// As a result this file cannot be converted to ColdFire using PortAsm.
+#define    F1OP       8 // Offset of f1op_xx from mode_xx fragment
+#define    F2OP      22 // Offset of f2op_xx from mode_xx fragment
 
 /* Frame parameters - just for copyfrm.S and bitblt.S */
 
@@ -532,8 +534,8 @@ f1_drt:
 //
 //              this fragment threads to "f2_flush"
 
-//  NOTE: all "f1op_xx" fragments are offset 06 from "mode_xx" fragments
-//        all "f2op_xx" fragments are offset 18 from "mode_xx" fragments
+//  NOTE: all "f1op_xx" fragments are offset F1OP from "mode_xx" fragments
+//        all "f2op_xx" fragments are offset F2OP from "mode_xx" fragments
 
 
         and.w   d7,d0           // S and P                                       4
