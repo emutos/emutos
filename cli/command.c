@@ -24,6 +24,8 @@
 #define N_(a) a
 #endif
 
+#include "bpb.h"
+
 extern long jmp_gemdos(int, ...);
 extern long jmp_bios(int, ...);
 extern long jmp_xbios(int, ...);
@@ -88,20 +90,6 @@ extern void rm_term(void);
 
 
 #define MAXARGS 20
-
-#define BPB struct _bpb
-BPB                             /* bios parameter block */
-{
-    int recsiz;
-    int clsiz;
-    int clsizb;
-    int rdlen;                  /* root directory length in records */
-    int fsiz;                   /* fat size in records */
-    int fatrec;                 /* first fat record (of last fat) */
-    int datrec;                 /* first data record */
-    int numcl;                  /* number of data clusters available */
-    int b_flags;
-};
 
 struct rdb {                    /*IO redirection info block     */
     int nso;

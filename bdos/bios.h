@@ -15,6 +15,7 @@
 #ifndef BIOS_H
 #define BIOS_H
 
+#include "bpb.h"
 
 /*
  *  Bios Function Numbers
@@ -110,35 +111,6 @@ PD
 } ;
 #endif
 
-
-
-/*
- *  BPB - Bios Parameter Block
- */
-
-#ifndef BPB
-#define BPB struct _bpb
-
-BPB /* bios parameter block */
-{
-    int recsiz;         /* sector size in bytes */
-    int clsiz;          /* cluster size in sectors */
-    int clsizb;         /* cluster size in bytes */
-    int rdlen;          /* root directory length in records */
-    int fsiz;           /* fat size in records */
-    int fatrec;         /* first fat record (of last fat) */
-    int datrec;         /* first data record */
-    int numcl;          /* number of data clusters available */
-    int b_flags;
-} ;
-#endif
-
-/*
- *  flags for BPB
- */
-
-#define B_16    1                       /* device has 16-bit FATs       */
-#define B_FIX   2                       /* device has fixed media       */
 
 /*
  *  BCB - Buffer Control Block

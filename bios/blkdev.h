@@ -16,6 +16,7 @@
 
 #include "portab.h"
 #include "bios.h"
+#include "bpb.h"
 
 
 /*
@@ -73,25 +74,6 @@ struct fat16_bs {
   /*  3e */  UBYTE data[0x1c0];
   /* 1fe */  UBYTE cksum[2];
 };
-
-/*
- *  BPB - Bios Parameter Block
- */
-
-struct _bpb /* bios parameter block */
-{
-    int     recsiz;         /* sector size in bytes */
-    int     clsiz;          /* cluster size in sectors */
-    int     clsizb;         /* cluster size in bytes */
-    int     rdlen;          /* root directory length in records */
-    int     fsiz;           /* fat size in records */
-    int     fatrec;         /* first fat record (of last fat) */
-    int     datrec;         /* first data record */
-    int     numcl;          /* number of data clusters available */
-    int     b_flags;
-};
-
-typedef struct _bpb BPB;
 
 
 struct _pun_info
@@ -167,13 +149,6 @@ LONG blkdev_avail(WORD dev);
 
 int add_partition(int dev, char id[], ULONG start, ULONG size, int byteswap);
 
-
-/*
- *  flags for BPB
- */
-
-#define B_16    1                       /* device has 16-bit FATs       */
-#define B_FIX   2                       /* device has fixed media       */
 
 /*
  * Modes of block devices
