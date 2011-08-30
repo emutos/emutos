@@ -2532,3 +2532,4 @@ Start... early ages
 - vdi/vdi_tblit.S, vdi/vdi_tblit_cf.S: Minor addq.w fix. (VRI)
 - Makefile, vdi/vdi_tblit_cf.S: Fixed missed optimization by gas on ColdFire
   from 0(sp) to simply (sp). (VRI)
+- Makefile: More genericity to rebuild the ColdFire PortAsm sources. (VRI)

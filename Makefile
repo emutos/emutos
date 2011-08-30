@@ -895,7 +895,17 @@ distclean: clean
 PORTASM = pacf
 PORTASMFLAGS = -blanks on -core v4 -hardware_divide -hardware_mac -a gnu -out_syntax standard -nowarning 402,502,900,1111,1150 -noerrfile
 
-define DO_PORTASM
+TOCLEAN += vdi/*_preprocessed.*
+
+.PHONY: coldfire-sources
+coldfire-sources:
+	$(MAKE) COLDFIRE=1 generate-vdi_tblit_cf.S
+
+vdi/%_preprocessed.s: vdi/%.S
+	$(CPP) $(CFLAGS) $< -o $@
+
+# The following is actually a phony target (% not supported in .PHONY)
+generate-%_cf.S: vdi/%_preprocessed.s
 	cd $(<D) && $(PORTASM) $(PORTASMFLAGS) -o $(patsubst generate-%,%,$@) $(<F)
 	sed -i $(<D)/$(patsubst generate-%,%,$@) \
 		-e "s:\.section\t.bss,.*:.bss:g" \
@@ -911,17 +921,3 @@ define DO_PORTASM
 		-e "s:\( \|\t\)bcs\(  \|\..\):\1jbcs :g" \
 		-e "s:\( \|,\)0(%:\1(%:g" \
 		|| (rm -f $(<D)/$(patsubst generate-%,%,$@) ; false)
-endef
-
-TOCLEAN += vdi/*_preprocessed.*
-
-.PHONY: coldfire-sources
-coldfire-sources:
-	$(MAKE) COLDFIRE=1 generate-vdi_tblit_cf.S
-
-vdi/%_preprocessed.s: vdi/%.S
-	$(CPP) $(CFLAGS) $< -o $@
-
-.PHONY: generate-vdi_tblit_cf.S
-generate-vdi_tblit_cf.S: vdi/vdi_tblit_preprocessed.s
-	$(DO_PORTASM)
