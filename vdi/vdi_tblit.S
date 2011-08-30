@@ -492,7 +492,7 @@ adr_dbl:
         move.w  d3,-(sp)                //pass DELY to act_siz on stack 
         move.l  8(a6),-(sp)             //pass also the parameter Vwk *
         jsr     _act_siz                //
-        addq.w  #6,sp                   //remove act_siz parameters from stack
+        addq.l  #6,sp                   //remove act_siz parameters from stack
         movem.l (sp)+,a0/a1             //restore used scratch registers
         move.w  d0,d3                   //set new DELY 
         move.w  d3,tmp_dely(a6)         //save in temp for replication use
@@ -2140,7 +2140,7 @@ rot_srt:
         move.w  a4,d4
         ror.w   d5,d3
         bcc.b   rnew_src
-        addq.w  #2,a2
+        addq.l  #2,a2
 rnew_src:
         movea.l a2,a0
 rot_nsrc:

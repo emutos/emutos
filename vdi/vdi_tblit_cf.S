@@ -10,7 +10,7 @@
 |                   All Rights Reserved Worldwide                       #
 |                                                                       #
 |########################################################################
-| Translated on Sat Jun  5 10:00:34 2010 by version 2.6.0 of PortAsm translator
+| Translated on Tue Aug 30 12:25:32 2011 by version 2.6.0 of PortAsm translator
 | PortAsm Licence Number #3250
 | Target assembler:    Gnu 'gas'
 |
@@ -198,8 +198,7 @@ adr_dbl:
       move.w   %d3,-(%a7)              | [113]
       move.l   (8,%a6),-(%a7)          | [114]
       jsr      _act_siz                | [115]
-|;;   addq.w    #6,sp                  | [116]
-	addq.l   #6,%a7
+      addq.l   #6,%a7                  | [116]
 |;;   movem.l   (sp)+,a0/a1            | [117]
 	movem.l  (%a7),%a0-%a1
 	lea      8(%a7),%a7
@@ -2728,8 +2727,7 @@ rot_srt:
 	lsl.l    #1,%d6
 	_PA_1623_1:         
       jbcc     rnew_src                | [1625]
-|;;   addq.w    #2,a2                  | [1626]
-	addq.l   #2,%a2
+      addq.l   #2,%a2                  | [1626]
 rnew_src:
       movea.l  %a2,%a0                 | [1628]
 |***	RESTORE	AFTER d2/d6	***

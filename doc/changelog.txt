@@ -2529,3 +2529,4 @@ Start... early ages
 - bdos/fs.h, bdos/fsbuf.c, bdos/fsdir.c, bdos/fsdrive.c, bdos/fsfat.c,
   bdos/fsio.c: Big partition support part 2. Eliminate the usage of negative
   cluster numbers and enable big partitions. Contributed by Roger Burrows. (VRI)
+- vdi/vdi_tblit.S, vdi/vdi_tblit_cf.S: Minor addq.w fix. (VRI)
