@@ -909,6 +909,7 @@ define DO_PORTASM
 		-e "s:\( \|\t\)ble\(  \|\..\):\1jble :g" \
 		-e "s:\( \|\t\)bcc\(  \|\..\):\1jbcc :g" \
 		-e "s:\( \|\t\)bcs\(  \|\..\):\1jbcs :g" \
+		-e "s:\( \|,\)0(%:\1(%:g" \
 		|| (rm -f $(<D)/$(patsubst generate-%,%,$@) ; false)
 endef
 
