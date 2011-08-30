@@ -25,7 +25,7 @@
 
 RECNO cl2rec(CLNO cl, DMD *dm)
 {
-        return((RECNO)cl * (RECNO)dm->m_clsiz);
+        return((RECNO)(cl-2) * dm->m_clsiz);
 }
 
 

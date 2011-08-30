@@ -175,7 +175,7 @@ static int log2(unsigned long n)
 
 
 /*
-**      log -
+**      log_media -
 **          log in media 'b' on drive 'drv'.
 **
 */
@@ -189,7 +189,7 @@ long    log_media(BPB *b, int drv)
         OFD *fo,*f;                         /*  M01.01.03   */
         DND *d;
         DMD *dm;
-        unsigned long rsiz,cs,n,fs,ncl,fcl;
+        unsigned long rsiz,cs,n,fs;
 
         rsiz = b->recsiz;
         cs = b->clsiz;
@@ -227,26 +227,20 @@ long    log_media(BPB *b, int drv)
         dm->m_clblog = log2(dm->m_clsizb);          /*  log of bytes/clus   */
 
         f->o_fileln = n * rsiz;     /*  size of file (root dir)     */
-
-        ncl = (n + cs - 1)/cs;      /* number of "clusters" in root */
-        d->d_strtcl = f->o_strtcl = -1 - ncl;   /*      root start clus     */
-        fcl = (fs + cs - 1)/cs;
+        d->d_strtcl = f->o_strtcl = 2;      /*  root start pseudo-cluster   */
 
         fo = dm->m_fatofd;                  /*  OFD for 'fat file'          */
-        fo->o_strtcl = d->d_strtcl - fcl;           /*  start clus for fat  */
+        fo->o_strtcl = 2;                   /*  FAT start pseudo-cluster    */
         fo->o_dmd = dm;             /*  link with DMD               */
 
         // kprintf("b->fatrec = 0x%x, fo->o_strtcl = 0x%x\n", b->fatrec, fo->o_strtcl);
         // kprintf("d->d_strtcl = 0x%x, b->datrec = 0x%x\n", d->d_strtcl, b->datrec);
 
-        dm->m_recoff[0] = (long)b->fatrec - ((long)fo->o_strtcl * (long)cs);
+        dm->m_recoff[BT_FAT] = (RECNO)b->fatrec;
         // kprintf("dm->m_recoff[0] = 0x%lx\n", dm->m_recoff[0]);
-        dm->m_recoff[1] = ((long)b->fatrec + (long)fs) - ((long)d->d_strtcl * (long)cs);
+        dm->m_recoff[BT_ROOT] = (RECNO)b->fatrec + fs;
         // kprintf("dm->m_recoff[1] = 0x%lx\n", dm->m_recoff[1]);
-
-        /* 2 is first data cluster */
-
-        dm->m_recoff[2] = (long)b->datrec - (2L * (long)cs);
+        dm->m_recoff[BT_DATA] = (RECNO)b->datrec;
         // kprintf("dm->m_recoff[2] = 0x%lx\n", dm->m_recoff[2]);
 
         fo->o_bytnum = 3;

@@ -2526,3 +2526,6 @@ Start... early ages
 2011-08-30
 - bdos/bios.h, bios/blkdev.h, cli/command.c, include/bpb.h: Centralize
   definition of BPB. Contributed by Roger Burrows. (VRI)
+- bdos/fs.h, bdos/fsbuf.c, bdos/fsdir.c, bdos/fsdrive.c, bdos/fsfat.c,
+  bdos/fsio.c: Big partition support part 2. Eliminate the usage of negative
+  cluster numbers and enable big partitions. Contributed by Roger Burrows. (VRI)

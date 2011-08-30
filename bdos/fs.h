@@ -90,13 +90,8 @@ extern  long    errcode;
 #define DMD     struct  _dmd
 #define FH      unsigned int    /*  file handle    */
 
-#if ENABLE_BIGPARTITIONS
 # define CLNO    unsigned int   /*  cluster number */
 # define RECNO   unsigned long  /*  record number  */
-#else
-# define CLNO    int            /*  cluster number */
-# define RECNO   int            /*  record number  */
-#endif
 
 /*
  *  PD - Process Descriptor
@@ -292,8 +287,6 @@ DMD /* drive media block */
  */
 
 #define BI_FAT          0               /*  fat buffer list             */
-#define BI_ROOT         1               /*  root dir buffer list        */
-#define BI_DIR          1               /*  other dir buffer list       */
 #define BI_DATA         1               /*  data buffer list            */
 
 /*
@@ -425,7 +418,7 @@ void bufl_init(void);
 /* ??? */
 void flush(BCB *b);
 /* return the ptr to the buffer containing the desired record */
-char *getrec(RECNO recn, DMD *dm, int wrtflg);
+char *getrec(RECNO recn, OFD *of, int wrtflg);
 /* pack into user buffer */
 char *packit(register char *s, register char *d);
 

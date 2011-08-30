@@ -289,8 +289,8 @@ long xmkdir(char *s)
         swpw( f2->f_date ) ;           /*  M01.01.SCC.FS.06  */
         cl = f->o_dirfil->o_strtcl;
 
-        if (cl < 0)
-                cl = 0;
+        if (!fd->o_dnode)              /* if creating a folder in the root, the */
+                cl = 0;                /*  cluster# of the .. entry must be 0   */
 
         swpw(cl);
         f2->f_clust = cl;
@@ -1021,7 +1021,7 @@ FCB     *dirinit(DND *dn)
 #if DBGFSDIR
                 kprintf("dirinit i2 = %li\n", i2);
 #endif
-                s1 = getrec(fd->o_currec+i2,dn->d_drv,1);       
+                s1 = getrec(fd->o_currec+i2,fd,1);       
                 bzero( s1 , num ) ;
         }
 
@@ -1029,7 +1029,7 @@ FCB     *dirinit(DND *dn)
         **  now zero out the first record and return a pointer to it
         */
 
-        f1 = (FCB *) (s1 = getrec(fd->o_currec,dn->d_drv,1));
+        f1 = (FCB *) (s1 = getrec(fd->o_currec,fd,1));
 
         bzero( s1 , num ) ;
         return(f1);

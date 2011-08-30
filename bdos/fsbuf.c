@@ -22,13 +22,8 @@
 
 
 
- /* sector buffers: 16kB is TOS 4.0x limit though
-    when set here as [4][16384] the BDOS might go crazy. */
-#if ENABLE_BIGPARTITIONS
+ /* sector buffers: 16kB is TOS 4.0x limit */
 static BYTE secbuf[4][16384];
-#else
-static BYTE secbuf[4][4096];
-#endif
 
 static BCB bcbx[4];    /* buffer control block array for each buffer */
 extern BCB *bufl[];    /* buffer lists - two lists:  fat,dir / data */
@@ -94,9 +89,9 @@ void flush(BCB *b)
 
     /* flush to both fats */
 
-    if (n == 0) {
+    if (n == BT_FAT) {
         longjmp_rwabs(1, (long)b->b_bufr, 1,
-                      b->b_bufrec+dm->m_recoff[0]-dm->m_fsiz, d);
+                      b->b_bufrec+dm->m_recoff[BT_FAT]-dm->m_fsiz, d);
     }
     b->b_bufdrv = d;                    /* re-validate */
     b->b_dirty = 0;
@@ -108,52 +103,30 @@ void flush(BCB *b)
  * getrec - return the ptr to the buffer containing the desired record
  */
 
-char *getrec(RECNO recn, DMD *dm, int wrtflg)
+char *getrec(RECNO recn, OFD *of, int wrtflg)
 {
+    DMD *dm = of->o_dmd;
     register BCB *b;
     BCB *p,*mtbuf,**q,**phdr;
-    int n,cl,err;
+    int n,err;
 
 #if DBGFSBUF
     kprintf("getrec 0x%lx, %p, 0x%x\n", (long)recn, dm, wrtflg);
 #endif
 
     /* put bcb management here */
-#if ENABLE_BIGPARTITIONS
-    cl = (int)(recn >> dm->m_clrlog);  /*  calculate cluster nbr       */
-    if (cl < (int)dm->m_dtl->d_strtcl)
-        n = 0;                  /* FAT operat'n */
-    else if(recn >= ((long)dm->m_numcl *  (long)dm->m_clsiz))
-        n = 1;                  /*  DIR (?)     */
-    else
-        n = 2;                  /*  DATA (?)    */
-#else
-    /* unsigned added by Petr Stehlik: trying to get 16-bit recn working */
-    #define NEGATIVE_RECN -200      /* made up this value: has to be fixed */
-    if (recn >= NEGATIVE_RECN)
-        cl = recn >> dm->m_clrlog;  /*  calculate cluster nbr       */
-    else
-        cl = (unsigned)recn >> dm->m_clrlog;  /*  calculate cluster nbr       */
- 
-    if (cl < dm->m_dtl->d_strtcl)
-        n = 0;                  /* FAT operat'n */
-    else if (recn < 0
-                                /* added by Petr Stehlik: a hack to work around
-                                   the misuse of negative recn for directory
-                                   index. The NEGATIVE_RECN should be replaced
-                                   by main dir size, I guess */
-          && recn >= NEGATIVE_RECN)
-        n = 1;                  /*  DIR (?)     */
-    else
-        n = 2;                  /*  DATA (?)    */
-#endif  /* ENABLE_BIGPARTITIONS */
+    if (of->o_dmd->m_fatofd == of)  /* is this the OFD for the 'FAT file'? */
+        n = BT_FAT;                 /* yes, must be FAT access             */
+    else if (!of->o_dnode)          /* no - do we have a dir node?         */
+        n = BT_ROOT;                /* no, must be root                    */
+    else n = BT_DATA;               /* yes, must be normal dir/file        */
 
 #if DBGFSBUF
     kprintf("n=%i , dm->m_recoff[n] = 0x%lx\n", n, dm->m_recoff[n]);
 #endif
 
     mtbuf = 0;
-    phdr = &bufl[n ? 1 : 0];
+    phdr = &bufl[n==BT_FAT ? BI_FAT : BI_DATA];
 
     /*
      * See, if the desired record for the desired drive is in memory.
@@ -164,7 +137,7 @@ char *getrec(RECNO recn, DMD *dm, int wrtflg)
 
     for (b = *(q = phdr); b; b = *(q = &b->b_link))
     {
-        if ((b->b_bufdrv == dm->m_drvnum) && (b->b_bufrec == recn))
+        if ((b->b_bufdrv == dm->m_drvnum) && (b->b_buftyp == n) && (b->b_bufrec == recn))
             break;
         /*
          * keep track of the last invalid buffer

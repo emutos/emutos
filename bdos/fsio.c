@@ -364,7 +364,7 @@ static long xrw(int wrtflg, OFD *p, long len, char *ubufr,
         /* #bytes left in current record ) */
 
         lenxfr = min(len,dm->m_recsiz-bytn);
-        bufp = getrec(recn,dm,wrtflg);  /* get desired record  */
+        bufp = getrec(recn,p,wrtflg);   /* get desired record  */
         addit(p,(long) lenxfr,1);       /* update ofd          */
         len -= lenxfr;                  /* nbr left to do      */
         recn++;                         /* starting w/ next    */
@@ -479,7 +479,7 @@ mulio:
             recn = 0;
         }
 
-        bufp = getrec((RECNO)p->o_currec+recn,dm,wrtflg);
+        bufp = getrec((RECNO)p->o_currec+recn,p,wrtflg);
         addit(p,(long) lentail,1);
 
         if (!ubufr)
@@ -509,11 +509,11 @@ static void usrio(int rwflg, int num, long strt, char *ubuf, DMD *dm)
 {
     register BCB *b;
 
-    for (b = bufl[1]; b; b = b->b_link)
+    for (b = bufl[BI_DATA]; b; b = b->b_link)
         if ((b->b_bufdrv == dm->m_drvnum) &&
             (b->b_bufrec >= strt) &&
             (b->b_bufrec < strt+num))
             flush(b);
 
-    longjmp_rwabs(rwflg, (long)ubuf, num, strt+dm->m_recoff[2], dm->m_drvnum);
+    longjmp_rwabs(rwflg, (long)ubuf, num, strt+dm->m_recoff[BT_DATA], dm->m_drvnum);
 }
