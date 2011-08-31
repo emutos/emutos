@@ -2536,3 +2536,5 @@ Start... early ages
 
 2011-08-31
 - bdos/fsfat.c: Fixed freespace calculation. Contributed by Roger Burrows. (VRI)
+- bdos/blkdev.c: Fixed Getbpb() number of clusters on MS-DOS-style partitions
+  > 32MB. Contributed by Roger Burrows. (VRI)

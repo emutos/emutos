@@ -299,7 +299,7 @@ LONG blkdev_getbpb(WORD dev)
 {
     struct bs *b;
     struct fat16_bs *b16;
-    LONG tmp;
+    ULONG tmp;
     WORD err;
   
 #if DBG_BLKDEV
@@ -333,6 +333,8 @@ LONG blkdev_getbpb(WORD dev)
     tmp = getiword(b->dir);
     if (blkdev[dev].bpb.recsiz != 0)
         blkdev[dev].bpb.rdlen = (tmp * 32) / blkdev[dev].bpb.recsiz;
+    else
+        blkdev[dev].bpb.rdlen = 0;
     blkdev[dev].bpb.fsiz = getiword(b->spf);
 
     /* the structure of the logical disk is assumed to be:
@@ -346,8 +348,15 @@ LONG blkdev_getbpb(WORD dev)
     blkdev[dev].bpb.fatrec = 1 + blkdev[dev].bpb.fsiz; 
     blkdev[dev].bpb.datrec = blkdev[dev].bpb.fatrec + blkdev[dev].bpb.fsiz 
                            + blkdev[dev].bpb.rdlen;
-    if (b->spc != 0)
-        blkdev[dev].bpb.numcl = (getiword(b->sec) - blkdev[dev].bpb.datrec) / b->spc;
+    if (b->spc != 0) {
+        tmp = getiword(b->sec);
+        /* handle DOS-style disks (512-byte logical sectors) >= 32MB */
+        if (tmp == 0)
+            tmp = ((ULONG)getiword(b16->sec2+2)<<16) + getiword(b16->sec2);
+        blkdev[dev].bpb.numcl = (tmp - blkdev[dev].bpb.datrec) / b->spc;
+    }
+    else
+        blkdev[dev].bpb.numcl = 0;
 
     /* Check for FAT12 or FAT16 */
     if (b16->ext == 0x29 && !memcmp(b16->fstype, "FAT12   ", 8)) {
