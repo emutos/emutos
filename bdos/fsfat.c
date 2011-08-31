@@ -227,23 +227,24 @@ retcl:  p->o_curcl = cl2;
 
 long xgetfree(long *buf, int drv) 
 {
-        int i,free;
+        CLNO i, free;
+        long n;
         DMD *dm;
 
         drv = (drv ? drv-1 : run->p_curdrv);
 
-        if ((i = ckdrv(drv)) < 0)
+        if ((n = ckdrv(drv)) < 0)
                 return(ERR);
 
-        dm = drvtbl[i];
+        dm = drvtbl[n];
         free = 0;
-        for (i = 2; i < dm->m_numcl; i++)
-                if (!getrealcl(i,dm))
+        for (i = 0; i < dm->m_numcl; i++)
+                if (!getrealcl(i+2,dm))     /* cluster numbers start at 2 */
                         free++;
         *buf++ = (long)(free);
         *buf++ = (long)(dm->m_numcl);
         *buf++ = (long)(dm->m_recsiz);
-        *buf++ = (long)(dm->m_clsiz);
+        *buf = (long)(dm->m_clsiz);
         return(E_OK);
 }
 

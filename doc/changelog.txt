@@ -2533,3 +2533,6 @@ Start... early ages
 - Makefile, vdi/vdi_tblit_cf.S: Fixed missed optimization by gas on ColdFire
   from 0(sp) to simply (sp). (VRI)
 - Makefile: More genericity to rebuild the ColdFire PortAsm sources. (VRI)
+
+2011-08-31
+- bdos/fsfat.c: Fixed freespace calculation. Contributed by Roger Burrows. (VRI)
