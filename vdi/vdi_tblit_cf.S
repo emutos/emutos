@@ -10,7 +10,7 @@
 |                   All Rights Reserved Worldwide                       #
 |                                                                       #
 |########################################################################
-| Translated on Tue Aug 30 12:36:14 2011 by version 2.6.0 of PortAsm translator
+| Translated on Mon Sep  5 01:10:46 2011 by version 2.6.0 of PortAsm translator
 | PortAsm Licence Number #3250
 | Target assembler:    Gnu 'gas'
 |
@@ -146,9 +146,9 @@ _deftxbuf:
 |;;           .ds.b ((2 +6 +8 +15)/16)*2*16*2 +(((2*(2 +6 +8))+3+15)/16)*2*(2*16)+2 +(((2*(2 +6 +8))+3+15)/16)*2 +2 | [71]
 	.space	(2+6+8+15)/16*2*16*2+(2*(2+6+8)+3+15)/16*2*(2*16)+2+(2*(2+6+8)+3+15)/16*2+2
 
-|;;           .data                    | [73]
+|;;           .text                    | [73]
 	.p2align 2,0
-	.data
+	.text
 
 
 
@@ -157,12 +157,11 @@ _scrtsiz:
 	.short	(2+6+8+15)/16*2*16*2
 | 459 "vdi/vdi_tblit.S"
 |;;           .text                    | [80]
-	.p2align 2,0
-	.text
 
 
 
 
+	.p2align 1,0
 _text_blt:
       link.w   %a6,#(-126)             | [86]
 |;;   movem.l   d2-d7/a2-a5,-(sp)      | [87]
@@ -987,9 +986,7 @@ blt_done:
 
 
 
-|;;           .data                    | [630]
-	.p2align 2,0
-	.data
+|;;           .text                    | [630]
 | 1043 "vdi/vdi_tblit.S"
 |;;   lf_tab: dc.w 0xFFFF              | [632]
 lf_tab:
@@ -1029,9 +1026,8 @@ rf_tab:
 	.short	0x0000
 
 |;;           .text                    | [650]
-	.p2align 2,0
-	.text
 | 1074 "vdi/vdi_tblit.S"
+	.p2align 1,0
 norm_blt:
 |***	SAVE	d5	***
 	lea      -4(%a7),%a7

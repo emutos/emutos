@@ -2550,5 +2550,6 @@ Start... early ages
   Tamminen. (VRI)
 - vdi/vdi_mouse.c: Fixed potential strict aliasing issue. Suggested by Eero
   Tamminen. (VRI)
-- vdi/vdi_control.c, vdi/vdi_defs.h, vdi/vdi_fill.c, vdi/vdi_line.c: Added more
-  constness. (VRI)
+- vdi/vdi_control.c, vdi/vdi_defs.h, vdi/vdi_fill.c, vdi/vdi_line.c,
+  vdi/vdi_marker.c, vdi/vdi_mouse.c, vdi/vdi_tblit.S, vdi/vdi_tblit_cf.S: Added
+  more constness. (VRI)

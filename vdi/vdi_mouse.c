@@ -85,7 +85,7 @@ void     (*old_statvec)(char *);  /* original IKBD status packet routine */
 
 
 /* Default Mouse Cursor Definition */
-static Mcdb arrow_cdb = {
+static const Mcdb arrow_cdb = {
     1, 0, 1, 0, 1,
     /* background definition */
     {
@@ -575,7 +575,7 @@ void vdimouse_init(Vwk * vwk)
     user_wheel = do_nothing;
 
     /* Move in the default mouse form (presently the arrow) */
-    set_mouse_form(vwk, &arrow_cdb);    /* transform mouse */
+    set_mouse_form(vwk, (Mcdb *)&arrow_cdb);    /* transform mouse */
 
     MOUSE_BT = 0;               // clear the mouse button state
     cur_ms_stat = 0;            // clear the mouse status

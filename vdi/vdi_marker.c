@@ -17,12 +17,12 @@
 
 
 /* Marker definitions */
-static WORD m_dot[] = { 1, 2, 0, 0, 0, 0 };
-static WORD m_plus[] = { 2, 2, 0, -3, 0, 3, 2, -4, 0, 4, 0 };
-static WORD m_star[] = { 3, 2, 0, -3, 0, 3, 2, 3, 2, -3, -2, 2, 3, -2, -3, 2};
-static WORD m_square[] = { 1, 5, -4, -3, 4, -3, 4, 3, -4, 3, -4, -3 };
-static WORD m_cross[] = { 2, 2, -4, -3, 4, 3, 2, -4, 3, 4, -3 };
-static WORD m_dmnd[] = { 1, 5, -4, 0, 0, -3, 4, 0, 0, 3, -4, 0 };
+static const WORD m_dot[] = { 1, 2, 0, 0, 0, 0 };
+static const WORD m_plus[] = { 2, 2, 0, -3, 0, 3, 2, -4, 0, 4, 0 };
+static const WORD m_star[] = { 3, 2, 0, -3, 0, 3, 2, 3, 2, -3, -2, 2, 3, -2, -3, 2};
+static const WORD m_square[] = { 1, 5, -4, -3, 4, -3, 4, 3, -4, 3, -4, -3 };
+static const WORD m_cross[] = { 2, 2, -4, -3, 4, 3, 2, -4, 3, 4, -3 };
+static const WORD m_dmnd[] = { 1, 5, -4, 0, 0, -3, 4, 0, 0, 3, -4, 0 };
 
 
 
@@ -96,17 +96,15 @@ void _v_pmarker(Vwk * vwk)
 /* If this constant goes greater than 5, you must increase size of sav_points */
 #define MARKSEGMAX 5
 
-    extern WORD m_dot[], m_plus[], m_star[];
-    extern WORD m_square[], m_cross[], m_dmnd[];
-
-    static WORD *markhead[] = {
+    static const WORD * const markhead[] = {
         m_dot, m_plus, m_star, m_square, m_cross, m_dmnd
     };
 
     WORD i, j, num_lines, num_vert, x_center, y_center, sav_points[10];
     WORD sav_index, sav_color, sav_width, sav_beg, sav_end;
-    WORD *mrk_ptr, *old_ptsin, scale, num_points, *src_ptr;
-    WORD h, *pts_in, *m_ptr;
+    WORD *old_ptsin, scale, num_points, *src_ptr;
+    WORD h, *pts_in;
+    const WORD *mrk_ptr, *m_ptr;
 
     /* Save the current polyline attributes which will be used. */
     sav_index = vwk->line_index;
