@@ -206,10 +206,10 @@ extern WORD xc, yc, xrad, yrad, del_ang, beg_ang, end_ang;
 extern WORD angle, n_steps;
 
 /* These are still needed for text blitting */
-extern UWORD LINE_STYLE[];
-extern UWORD ROM_UD_PATRN[];
-extern UWORD SOLID;
-extern UWORD HOLLOW;
+extern const UWORD LINE_STYLE[];
+extern const UWORD ROM_UD_PATRN[];
+extern const UWORD SOLID;
+extern const UWORD HOLLOW;
 
 extern WORD DEV_TAB[];          /* initial intout array for open workstation */
 extern WORD SIZ_TAB[];          /* initial ptsout array for open workstation */

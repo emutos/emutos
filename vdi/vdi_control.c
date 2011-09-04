@@ -209,7 +209,8 @@ void _vswr_mode(Vwk * vwk)
 static void init_wk(Vwk * vwk)
 {
     WORD l;
-    WORD *pointer, *src_ptr;
+    WORD *pointer;
+    const WORD *src_ptr;
 
     pointer = INTIN;
     pointer++;
@@ -277,7 +278,7 @@ static void init_wk(Vwk * vwk)
 
     /* move default user defined pattern to RAM */
     pointer = &vwk->ud_patrn[0];
-    src_ptr = (WORD *)ROM_UD_PATRN;
+    src_ptr = (const WORD *)ROM_UD_PATRN;
     for (l = 0; l < 16; l++)
         *pointer++ = *src_ptr++;
 

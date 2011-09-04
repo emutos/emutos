@@ -27,7 +27,7 @@
 static void arrow(Vwk * vwk, Point * point, int count);
 
 /* the six predefined line styles */
-UWORD LINE_STYLE[6] = { 0xFFFF, 0xFFF0, 0xC0C0, 0xFF18, 0xFF00, 0xF191 };
+const UWORD LINE_STYLE[6] = { 0xFFFF, 0xFFF0, 0xC0C0, 0xFF18, 0xFF00, 0xF191 };
 static WORD q_circle[MX_LN_WIDTH];     /* Holds the circle DDA */
 
 /* Wide line attribute save areas */
@@ -981,7 +981,7 @@ void s_fa_attr(Vwk * vwk)
     vwk->line_beg = SQUARED;
     vwk->line_end = SQUARED;
     vwk->fill_per = TRUE;
-    vwk->patptr = &SOLID;
+    vwk->patptr = (UWORD *)&SOLID;
     vwk->patmsk = 0;
 }                               /* End "s_fa_attr". */
 

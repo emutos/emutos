@@ -47,13 +47,13 @@ static WORD qhole;              /* an empty space in the queue */
 
 
 /* the storage for the used defined fill pattern */
-UWORD ROM_UD_PATRN[16] = {
+const UWORD ROM_UD_PATRN[16] = {
     0x07E0, 0x0FF0, 0x1FD8, 0x1808, 0x1808, 0x1008, 0x1E78, 0x1348,
     0x1108, 0x0810, 0x0B70, 0x0650, 0x07A0, 0x1E20, 0x1BC0, 0x1800
 };
 
-static UWORD OEMMSKPAT = 7;
-static UWORD OEMPAT[128] = {
+static const UWORD OEMMSKPAT = 7;
+static const UWORD OEMPAT[128] = {
     /* Brick */
     0xFFFF, 0x8080, 0x8080, 0x8080, 0xFFFF, 0x0808, 0x0808, 0x0808,
     /* Diagonal Bricks */
@@ -88,8 +88,8 @@ static UWORD OEMPAT[128] = {
     0x1111, 0x2222, 0x4444, 0xFFFF, 0x8888, 0x4444, 0x2222, 0xFFFF
 };
 
-static UWORD DITHRMSK = 3;              /* mask off all but four scans */
-static UWORD DITHER[32] = {
+static const UWORD DITHRMSK = 3;              /* mask off all but four scans */
+static const UWORD DITHER[32] = {
     0x0000, 0x4444, 0x0000, 0x1111,     /* intensity level 2 */
     0x0000, 0x5555, 0x0000, 0x5555,     /* intensity level 4 */
     0x8888, 0x5555, 0x2222, 0x5555,     /* intensity level 6 */
@@ -100,8 +100,8 @@ static UWORD DITHER[32] = {
     0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF      /* intensity level 16 */
 };
 
-static UWORD HAT_0_MSK = 7;
-static UWORD HATCH0[48] = {
+static const UWORD HAT_0_MSK = 7;
+static const UWORD HATCH0[48] = {
     /* narrow spaced + 45 */
     0x0101, 0x0202, 0x0404, 0x0808, 0x1010, 0x2020, 0x4040, 0x8080,
     /* medium spaced thick 45 deg */
@@ -116,8 +116,8 @@ static UWORD HATCH0[48] = {
     0xFFFF, 0x8080, 0x8080, 0x8080, 0x8080, 0x8080, 0x8080, 0x8080
 };
 
-static UWORD HAT_1_MSK = 0xF;
-static UWORD HATCH1[96] = {
+static const UWORD HAT_1_MSK = 0xF;
+static const UWORD HATCH1[96] = {
     /* wide +45 deg */
     0x0001, 0x0002, 0x0004, 0x0008, 0x0010, 0x0020, 0x0040, 0x0080,
     0x0100, 0x0200, 0x0400, 0x0800, 0x1000, 0x2000, 0x4000, 0x8000,
@@ -138,8 +138,8 @@ static UWORD HATCH1[96] = {
     0xFFFF, 0x8080, 0x8080, 0x8080, 0x8080, 0x8080, 0x8080, 0x8080,
 };
 
-UWORD HOLLOW = 0;
-UWORD SOLID = 0xFFFF;
+const UWORD HOLLOW = 0;
+const UWORD SOLID = 0xFFFF;
 
 
 
@@ -317,7 +317,7 @@ void
 st_fl_ptr(Vwk * vwk)
 {
     WORD fi, pm;
-    UWORD *pp = NULL;
+    const UWORD *pp = NULL;
 
     fi = vwk->fill_index;
     pm = 0;
@@ -353,7 +353,7 @@ st_fl_ptr(Vwk * vwk)
         pp = (UWORD *)&vwk->ud_patrn[0];
         break;
     }
-    vwk->patptr = pp;
+    vwk->patptr = (UWORD *)pp;
     vwk->patmsk = pm;
 }
 
