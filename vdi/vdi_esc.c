@@ -294,7 +294,7 @@ static void escfn19(Vwk * vwk)
 
 
 
-static void (*esctbl[])(Vwk *) =
+static void (* const esctbl[])(Vwk *) =
 {
     escfn0,
     escfn1,

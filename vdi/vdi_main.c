@@ -30,7 +30,7 @@ WORD xc, xrad, yc, yrad;
 
 
 /* Two main jumptables for VDI functions */
-static void (*jmptb1[])(Vwk *) = {
+static void (* const jmptb1[])(Vwk *) = {
     _v_opnwk,           /*   1 */
     _v_clswk,           /*   2 */
     _v_clrwk,           /*   3 */
@@ -72,7 +72,7 @@ static void (*jmptb1[])(Vwk *) = {
     dst_alignment       /*  39 */
 };
 
-static void(*jmptb2[])(Vwk *) = {
+static void(* const jmptb2[])(Vwk *) = {
     d_opnvwk,           /* 100 */
     d_clsvwk,           /* 101 */
     _vq_extnd,          /* 102 */
