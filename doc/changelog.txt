@@ -2544,3 +2544,5 @@ Start... early ages
   vdi/vdi_esc.c, vdi/vdi_fill.c, vdi/vdi_gdp.c, vdi/vdi_line.c, vdi/vdi_main.c,
   vdi/vdi_mouse.c, vdi/vdi_text.c: Added static and const where relevant.
   Contributed by Eero Tamminen. (VRI)
+- desk/deskdir.c: Make EmuTOS check the "Confirm overwrites" option when copying
+  a file from one directory to another. Contributed by Roger Burrows. (VRI)

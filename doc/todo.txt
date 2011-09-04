@@ -49,6 +49,3 @@ Bug report from Eero:
 - Rename emuconf.inf to end up with .ttp and click to the file:
   EmuTOS says that my machine doesn't have enough memory
   to run the program... (should say that it's not executable)
-- If I copy a file twice from one dir to another, I don't get the name
-  conflict dialog.  If I do it within the same dir, I get the error
-  dialog.
