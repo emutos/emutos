@@ -2546,3 +2546,5 @@ Start... early ages
   Contributed by Eero Tamminen. (VRI)
 - desk/deskdir.c: Make EmuTOS check the "Confirm overwrites" option when copying
   a file from one directory to another. Contributed by Roger Burrows. (VRI)
+- vdi/vdi_defs.h, vdi/vdi_line.c: Faster arrow drawing. Contributed by Eero
+  Tamminen. (VRI)

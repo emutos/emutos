@@ -1106,34 +1106,20 @@ void wideline(Vwk * vwk, Point * point, int count)
 }
 
 
-
-/*
- * vec_len
- *
- * This routine computes the length of a vector using the formula:
- *
- * sqrt(dx*dx + dy*dy)
- */
-
-WORD vec_len(WORD dx, WORD dy)
-{
-    return (Isqrt(dx*dx + dy*dy));
-}
-
 /*
  * arrow - Draw an arrow
  */
 
 static void draw_arrow(Vwk * vwk, Point * point, int inc)
 {
-    WORD arrow_len, arrow_wid, line_len;
+    WORD arrow_len, arrow_wid, line_len, line_len2;
     WORD dx, dy;
     WORD base_x, base_y, ht_x, ht_y;
     WORD temp, i;
     Point triangle[8];       /* triangle 2 high to close polygon */
     Point *ptr1, *ptr2, *xybeg;
 
-    line_len = dx = dy = 0;
+    line_len2 = dx = dy = 0;
 
     /* Set up the arrow-head length and width as a function of line width. */
     temp = vwk->line_width;
@@ -1157,9 +1143,11 @@ static void draw_arrow(Vwk * vwk, Point * point, int inc)
 
         /* Get length of vector connecting the point with the end point. */
         /* If the vector is of sufficient length, the search is over. */
-        if ((line_len = vec_len(ABS(dx), ABS(dy))) >= arrow_len)
+        line_len2 = dx*dx + dy*dy;
+        if (line_len2 >= arrow_len*arrow_len)
             break;
     }                           /* End for:  over i. */
+    line_len = Isqrt(line_len2);
 
     /* Set xybeg to the point we found */
     xybeg = ptr1;

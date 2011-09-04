@@ -250,7 +250,6 @@ WORD gchr_key(void);
 WORD gshift_s(void);
 
 BOOL clip_line(Vwk * vwk, Line * line);
-WORD vec_len(WORD x, WORD y);
 void arb_corner(Rect * rect);
 void arb_line(Line * line);
 
