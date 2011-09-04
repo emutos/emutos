@@ -69,7 +69,10 @@ extern WORD GCURX, GCURY;
 
 /* mouse cursor save area stuff */
 extern UWORD * save_addr;        /* points to destination */
-extern UWORD save_area;         /* memory where saved data resides */
+extern union {
+    UWORD w; /* Valid if !(save_stat & 2) */
+    ULONG l; /* Valid if   save_stat & 2  */
+} save_area;                    /* memory where saved data resides */
 extern BYTE save_stat;          /* status and format of save buffer */
 extern WORD save_len;           /* number of lines to be returned */
 
@@ -775,8 +778,8 @@ static void cur_display (WORD x, WORD y)
     save_len = row_count;       /* number of cursor rows */
     save_stat |= 1;             /* flag the buffer as being loaded */
 
-    save_w = &save_area;        /* a2 -> save area buffer */
-    save_l = (ULONG*)(void*)&save_area; /* a2 -> save area buffer */
+    save_w = &save_area.w;      /* a2 -> save area buffer */
+    save_l = &save_area.l;      /* a2 -> save area buffer */
 
     cdb_bg = m_cdb_bg;          /* get mouse background color bits */
     cdb_fg = m_cdb_fg;          /* get mouse foreground color bits */
@@ -905,7 +908,7 @@ static void cur_replace (void)
     /* word or longword ? */
     if (save_stat & 2 ) {
         /* longword ? */
-        ULONG * src = (ULONG*)(void*)&save_area;/* a2 -> save area buffer */
+        ULONG * src = &save_area.l;     /* a2 -> save area buffer */
 
         /* plane controller, draw cursor in each graphic plane */
         for (plane = v_planes - 1; plane >= 0; plane--) {
@@ -923,7 +926,7 @@ static void cur_replace (void)
     }
     else {
         /* word */
-        UWORD * src = &save_area;       /* a2 -> save area buffer */
+        UWORD * src = &save_area.w;     /* a2 -> save area buffer */
 
         /* plane controller, draw cursor in each graphic plane */
         for (plane = v_planes - 1; plane >= 0; plane--) {

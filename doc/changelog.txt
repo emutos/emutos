@@ -2548,3 +2548,5 @@ Start... early ages
   a file from one directory to another. Contributed by Roger Burrows. (VRI)
 - vdi/vdi_defs.h, vdi/vdi_line.c: Faster arrow drawing. Contributed by Eero
   Tamminen. (VRI)
+- vdi/vdi_mouse.c: Fixed potential strict aliasing issue. Suggested by Eero
+  Tamminen. (VRI)
