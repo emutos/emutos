@@ -45,9 +45,9 @@ struct Mcdb_ {
 };
 
 /* prototypes */
-void cur_display(WORD x, WORD y);
-void cur_replace(void);
-void vb_draw(void);             /* user button vector */
+static void cur_display(WORD x, WORD y);
+static void cur_replace(void);
+static void vb_draw(void);             /* user button vector */
 
 extern void mouse_int(void);    /* mouse interrupt routine */
 extern void wheel_int(char *);  /* wheel interrupt routine */
@@ -642,7 +642,7 @@ void vdimouse_exit(Vwk * vwk)
 
 /* If we do not need to draw the cursor now then just exit. */
 
-void vb_draw()
+static void vb_draw(void)
 {
     WORD old_sr = set_sr(0x2700);       // disable interrupts
     if (draw_flag) {
@@ -706,7 +706,7 @@ void vb_draw()
  *      d6.w    shift count
  */
 
-void cur_display (WORD x, WORD y)
+static void cur_display (WORD x, WORD y)
 {
     int row_count, plane, inc, op, dst_inc;
     UWORD * addr, * mask_start;
@@ -890,7 +890,7 @@ void cur_display (WORD x, WORD y)
  *     _v_line_wr      line wrap (byte width of form)
  */
 
-void cur_replace ()
+static void cur_replace (void)
 {
     int inc, dst_inc, plane;
     UWORD * addr;

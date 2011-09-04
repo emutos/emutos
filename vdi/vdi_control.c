@@ -19,7 +19,7 @@
 #include "string.h"
 
 
-Vwk virt_work;          /* attribute areas for workstations */
+static Vwk virt_work;          /* attribute areas for workstations */
 
 
 /*

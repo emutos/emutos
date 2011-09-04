@@ -78,9 +78,9 @@ static WORD rmcharx, rmchary;   /* add this to use up remainder     */
 
 
 /* Prototypes for this module */
-void make_header(Vwk * vwk);
-WORD clc_dda(Vwk * vwk, WORD act, WORD req);
-WORD act_siz(Vwk * vwk, WORD top);
+static void make_header(Vwk * vwk);
+static WORD clc_dda(Vwk * vwk, WORD act, WORD req);
+extern WORD act_siz(Vwk * vwk, WORD top);  /* used by vdi_tblit.S */
 
 
 void d_gtext(Vwk * vwk)
@@ -566,7 +566,7 @@ static void copy_name(BYTE * source, BYTE * dest)
 }
 
 
-void make_header(Vwk * vwk)
+static void make_header(Vwk * vwk)
 {
     Fonthead *source_font, *dest_font;
 
@@ -1237,7 +1237,7 @@ void dt_unloadfont(Vwk * vwk)
  *   returns the quotient * 256
  */
 
-WORD clc_dda(Vwk * vwk, WORD act, WORD req)
+static WORD clc_dda(Vwk * vwk, WORD act, WORD req)
 {
     /* if actual =< requested */
     if ( act <= req ) {

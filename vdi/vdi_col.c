@@ -19,23 +19,23 @@
 /* Some color mapping tables */
 WORD MAP_COL[MAX_COLOR];
 
-WORD MAP_COL_4BITS[] =
+static const WORD MAP_COL_4BITS[] =
     { 0, 15, 1, 2, 4, 6, 3, 5, 7, 8, 9, 10, 12, 14, 11, 13 };
-WORD MAP_COL_2BITS[] =
+static const WORD MAP_COL_2BITS[] =
     { 0, 3, 1, 2 };
 
 WORD REV_MAP_COL[MAX_COLOR];
 
-WORD REV_MAP_COL_4BITS[] =
+static const WORD REV_MAP_COL_4BITS[] =
     { 0, 2, 3, 6, 4, 7, 5, 8, 9, 10, 11, 14, 12, 15, 13, 1 };
-WORD REV_MAP_COL_2BITS[] =
+static const WORD REV_MAP_COL_2BITS[] =
     { 0, 2, 3, 1 };
 
 
 /* req_col2 contains the VDI color palette entries 16 - 255 for vq_color().
  * To stay compatible with the line-a variables, only entries > 16 are
  * stored in this array, the first 16 entries are stored in REQ_COL */
-WORD req_col2[240][3];
+static WORD req_col2[240][3];
 
 
 /* Initial color palette */

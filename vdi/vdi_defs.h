@@ -207,13 +207,9 @@ extern WORD angle, n_steps;
 
 /* These are still needed for text blitting */
 extern UWORD LINE_STYLE[];
-extern UWORD DITHER[];
-extern UWORD HATCH0[], HATCH1[], OEMPAT[];
 extern UWORD ROM_UD_PATRN[];
 extern UWORD SOLID;
 extern UWORD HOLLOW;
-extern UWORD HAT_0_MSK, HAT_1_MSK;
-extern UWORD DITHRMSK, OEMMSKPAT;
 
 extern WORD DEV_TAB[];          /* initial intout array for open workstation */
 extern WORD SIZ_TAB[];          /* initial ptsout array for open workstation */

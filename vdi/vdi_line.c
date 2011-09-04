@@ -24,7 +24,7 @@
 
 
 /* prototypes*/
-void arrow(Vwk * vwk, Point * point, int count);
+static void arrow(Vwk * vwk, Point * point, int count);
 
 /* the six predefined line styles */
 UWORD LINE_STYLE[6] = { 0xFFFF, 0xFFF0, 0xC0C0, 0xFF18, 0xFF00, 0xF191 };
@@ -1217,7 +1217,7 @@ static void draw_arrow(Vwk * vwk, Point * point, int inc)
  * Will alter the end of the line segment.
  */
 
-void arrow(Vwk * vwk, Point * point, int count)
+static void arrow(Vwk * vwk, Point * point, int count)
 {
     /* Set up the attribute environment. */
     s_fa_attr(vwk);

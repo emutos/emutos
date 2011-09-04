@@ -2538,3 +2538,9 @@ Start... early ages
 - bdos/fsfat.c: Fixed freespace calculation. Contributed by Roger Burrows. (VRI)
 - bdos/blkdev.c: Fixed Getbpb() number of clusters on MS-DOS-style partitions
   > 32MB. Contributed by Roger Burrows. (VRI)
+
+2011-09-04
+- vdi/vdi_bezier.c, vdi/vdi_col.c, vdi/vdi_control.c, vdi/vdi_defs.h,
+  vdi/vdi_esc.c, vdi/vdi_fill.c, vdi/vdi_gdp.c, vdi/vdi_line.c, vdi/vdi_main.c,
+  vdi/vdi_mouse.c, vdi/vdi_text.c: Added static and const where relevant.
+  Contributed by Eero Tamminen. (VRI)

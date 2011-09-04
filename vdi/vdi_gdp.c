@@ -25,19 +25,16 @@
 
 
 /* Prototypes local to this module */
-void gdp_rbox(Vwk * vwk);
-void gdp_arc(Vwk * vwk);
-int  clc_nsteps(void);
-void gdp_ell(Vwk * vwk);
-void clc_arc(Vwk * vwk, int steps);
-void quad_xform(WORD quad, WORD x, WORD y, WORD *tx, WORD *ty);
-void do_circ(Vwk * vwk, WORD cx, WORD cy);
-void perp_off(WORD * px, WORD * py);
+static void gdp_rbox(Vwk * vwk);
+static void gdp_arc(Vwk * vwk);
+static int  clc_nsteps(void);
+static void gdp_ell(Vwk * vwk);
+static void clc_arc(Vwk * vwk, int steps);
 
 
 
 /* Sines of angles 1 - 90 degrees normalized between 0-32767. */
-static WORD sin_tbl[92] = {
+static const WORD sin_tbl[92] = {
         0,   572, 1144,   1716,  2286,  2856,  3425,  3993,
      4560,  5126,  5690,  6252,  6813,  7371,  7927,  8481,
      9032,  9580, 10126, 10668, 11207, 11743, 12275, 12803,
@@ -135,7 +132,7 @@ static void clc_pts(WORD j)
  * clc_arc - calculates
  */
 
-void clc_arc(Vwk * vwk, int steps)
+static void clc_arc(Vwk * vwk, int steps)
 {
     WORD i, j, start;
     Point * point;
@@ -279,7 +276,7 @@ void v_gdp(Vwk * vwk)
  * gdp_rbox - draws an rbox
  */
 
-void gdp_rbox(Vwk * vwk)
+static void gdp_rbox(Vwk * vwk)
 {
     WORD i, j;
     WORD x1,y1,x2,y2;
@@ -368,7 +365,7 @@ void gdp_rbox(Vwk * vwk)
  * gdp_arc - draw an arc
  */
 
-void gdp_arc(Vwk * vwk)
+static void gdp_arc(Vwk * vwk)
 {
     WORD *pointer;
     int steps;
@@ -400,7 +397,7 @@ void gdp_arc(Vwk * vwk)
  * clc_nsteps - calculates
  */
 
-int clc_nsteps(void)
+static int clc_nsteps(void)
 {
     int steps;
 
@@ -424,7 +421,7 @@ int clc_nsteps(void)
  * gdp_ell - draws an ell
  */
 
-void gdp_ell(Vwk * vwk)
+static void gdp_ell(Vwk * vwk)
 {
     WORD *pointer;
     int steps;

@@ -53,7 +53,7 @@
 /*
  * labs - absulute for LONG
  */
-LONG
+static LONG
 labs(LONG x)
 {
     if (x < 0)

@@ -28,34 +28,32 @@
 
 
 /* prototypes */
-void crunch_queue(void);
+static void crunch_queue(void);
 static BOOL clipbox(Vwk * vwk, Rect * rect);
 
 
 
 /* Global variables */
-UWORD search_color;       /* the color of the border      */
+static UWORD search_color;       /* the color of the border      */
 
 
 /* some kind of stack for the segments to fill */
-WORD queue[QSIZE];       /* storage for the seed points  */
-WORD qbottom;            /* the bottom of the queue (zero)   */
-WORD qtop;               /* points top seed +3           */
-WORD qptr;               /* points to the active point   */
-WORD qtmp;
-WORD qhole;              /* an empty space in the queue */
+static WORD queue[QSIZE];       /* storage for the seed points  */
+static WORD qbottom;            /* the bottom of the queue (zero)   */
+static WORD qtop;               /* points top seed +3           */
+static WORD qptr;               /* points to the active point   */
+static WORD qtmp;
+static WORD qhole;              /* an empty space in the queue */
 
 
 /* the storage for the used defined fill pattern */
-UWORD UDPATMSK = 0xF;
-
 UWORD ROM_UD_PATRN[16] = {
     0x07E0, 0x0FF0, 0x1FD8, 0x1808, 0x1808, 0x1008, 0x1E78, 0x1348,
     0x1108, 0x0810, 0x0B70, 0x0650, 0x07A0, 0x1E20, 0x1BC0, 0x1800
 };
 
-UWORD OEMMSKPAT = 7;
-UWORD OEMPAT[128] = {
+static UWORD OEMMSKPAT = 7;
+static UWORD OEMPAT[128] = {
     /* Brick */
     0xFFFF, 0x8080, 0x8080, 0x8080, 0xFFFF, 0x0808, 0x0808, 0x0808,
     /* Diagonal Bricks */
@@ -90,8 +88,8 @@ UWORD OEMPAT[128] = {
     0x1111, 0x2222, 0x4444, 0xFFFF, 0x8888, 0x4444, 0x2222, 0xFFFF
 };
 
-UWORD DITHRMSK = 3;              /* mask off all but four scans */
-UWORD DITHER[32] = {
+static UWORD DITHRMSK = 3;              /* mask off all but four scans */
+static UWORD DITHER[32] = {
     0x0000, 0x4444, 0x0000, 0x1111,     /* intensity level 2 */
     0x0000, 0x5555, 0x0000, 0x5555,     /* intensity level 4 */
     0x8888, 0x5555, 0x2222, 0x5555,     /* intensity level 6 */
@@ -102,8 +100,8 @@ UWORD DITHER[32] = {
     0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF      /* intensity level 16 */
 };
 
-UWORD HAT_0_MSK = 7;
-UWORD HATCH0[48] = {
+static UWORD HAT_0_MSK = 7;
+static UWORD HATCH0[48] = {
     /* narrow spaced + 45 */
     0x0101, 0x0202, 0x0404, 0x0808, 0x1010, 0x2020, 0x4040, 0x8080,
     /* medium spaced thick 45 deg */
@@ -118,8 +116,8 @@ UWORD HATCH0[48] = {
     0xFFFF, 0x8080, 0x8080, 0x8080, 0x8080, 0x8080, 0x8080, 0x8080
 };
 
-UWORD HAT_1_MSK = 0xF;
-UWORD HATCH1[96] = {
+static UWORD HAT_1_MSK = 0xF;
+static UWORD HATCH1[96] = {
     /* wide +45 deg */
     0x0001, 0x0002, 0x0004, 0x0008, 0x0010, 0x0020, 0x0040, 0x0080,
     0x0100, 0x0200, 0x0400, 0x0800, 0x1000, 0x2000, 0x4000, 0x8000,
@@ -999,7 +997,7 @@ d_contourfill(Vwk * vwk)
  * crunch_queue - move qtop down to remove unused seeds
  */
 void
-crunch_queue(void)
+static crunch_queue(void)
 {
     while ((queue[qtop - 3] == EMPTY) && (qtop > qbottom))
         qtop -= 3;
