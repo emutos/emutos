@@ -2553,3 +2553,7 @@ Start... early ages
 - vdi/vdi_control.c, vdi/vdi_defs.h, vdi/vdi_fill.c, vdi/vdi_line.c,
   vdi/vdi_marker.c, vdi/vdi_mouse.c, vdi/vdi_tblit.S, vdi/vdi_tblit_cf.S: Added
   more constness. (VRI)
+
+2011-09-05
+- bdos/kpgmld.c : Make Pexec() return EPLFMT (-66) for non-executable files.
+  Submitted by Roger Burrows. (VRI)

@@ -63,19 +63,24 @@ LONG kpgmhdrld(char *s, PGMHDR01 *hd, FH *h)
     r = xread( *h, 2L, &magic);  /* read magic number */
     if( r < 0L )
         return( r ) ;
+    if( r != 2 )
+        return EPLFMT;
 
     /* alternate executable formats will not be handled */
     if( magic != 0x601a ) {
-        r = EPLFMT ;
 #if DBGKPGMLD
         kprintf("BDOS xpgmld: Unknown executable format!\n") ;
 #endif
+        return EPLFMT;
     }
     /* read in the program header */
 
     r = xread( *h, (LONG)sizeof(PGMHDR01), hd);
     if( r < 0L )
         return( r ) ;
+    if( r != (LONG)sizeof(PGMHDR01) )
+        return EPLFMT;
+
     return 0;
 }
 
