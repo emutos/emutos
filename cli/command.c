@@ -309,17 +309,15 @@ prtdecl(long d)
 static void
 prtDclFmt(long d, int cnt, char *ch)
 {
-    int i;
-    long k, j;
+    int len;
+    long k;
 
-    k = (d ? d : 1);
-    j = 1;
-    for (i = 1; i < cnt; i++)
-        j *= 10;
-    while (k < j) {
+    for (k = d, len = 0; k > 0; k /= 10, len++) /* figure length of output number */
+        ;
+    if (len == 0)
+        len = 1;
+    for ( ; len < cnt; len++)   /* output leading fill characters */
         xwrite(1, 1L, ch);
-        k *= 10;
-    }
     prtdecl(d);
 }
 
@@ -2196,21 +2194,20 @@ xCmdLn(char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl)
                     else
                         wrt(p);
                     dspMsg(12);
-                    wrtln(_("Drive size in BYTES    "));
-                    prtDclFmt((long) (sbuf[1] * sbuf[3] * sbuf[2]), 8, " ");
-                    wrtln(_("BYTES used on drive    "));
-                    prtDclFmt((long) ((sbuf[1] - sbuf[0]) * sbuf[3] * sbuf[2]),
-                              8, " ");
-                    wrtln(_("BYTES left on drive    "));
-                    prtDclFmt((long) (sbuf[0] * sbuf[3] * sbuf[2]), 8, " ");
-                    wrtln(_("Total Units on Drive   "));
-                    prtDclFmt((long) sbuf[1], 8, " ");
-                    wrtln(_("Free Units on Drive    "));
-                    prtDclFmt((long) sbuf[0], 8, " ");
-                    wrtln(_("Sectors per Unit   "));
-                    prtDclFmt((long) sbuf[3], 8, " ");
-                    wrtln(_("Bytes per Sector   "));
-                    prtDclFmt((long) sbuf[2], 8, " ");
+                    wrtln(_("Drive size in bytes    "));
+                    prtDclFmt((long) (sbuf[1] * sbuf[3] * sbuf[2]), 10, " ");
+                    wrtln(_("Bytes used on drive    "));
+                    prtDclFmt((long) ((sbuf[1] - sbuf[0]) * sbuf[3] * sbuf[2]), 10, " ");
+                    wrtln(_("Bytes left on drive    "));
+                    prtDclFmt((long) (sbuf[0] * sbuf[3] * sbuf[2]), 10, " ");
+                    wrtln(_("Total clusters on drive    "));
+                    prtDclFmt((long) sbuf[1], 6, " ");
+                    wrtln(_("Free clusters on drive     "));
+                    prtDclFmt((long) sbuf[0], 6, " ");
+                    wrtln(_("Sectors per cluster        "));
+                    prtDclFmt((long) sbuf[3], 6, " ");
+                    wrtln(_("Bytes per sector           "));
+                    prtDclFmt((long) sbuf[2], 6, " ");
                 }
                 else {
                     wrtln("No information available for this drive.");
