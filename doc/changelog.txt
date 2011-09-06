@@ -2559,3 +2559,7 @@ Start... early ages
   Submitted by Roger Burrows. (VRI)
 - cli/command.c: Fix output display of EmuCON "show" command to handle 10-digit
   numbers correctly. Submitted by Roger Burrows. (VRI)
+
+2011-09-06
+- bios/initinfo.c: Allow EmuTOS startup screen to display drives up to Z: rather
+  than just P:. Submitted by Roger Burrows. (VRI)

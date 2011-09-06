@@ -202,8 +202,8 @@ void initinfo(void)
     pair_start(_("GEMDOS drives"));
     {
         int i;
-        int mask;
-        for(i=0, mask=1; i<26; i++, mask <<=1) {
+        LONG mask;
+        for(i=0, mask=1L; i<26; i++, mask <<=1) {
             if (drvbits & mask)
                 cprintf("%c", 'A'+i);
         }
