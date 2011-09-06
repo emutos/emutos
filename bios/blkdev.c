@@ -195,7 +195,7 @@ int add_partition(int dev, char id[], ULONG start, ULONG size, int byteswap)
     if (strcmp(blkdev[blkdevnum].id, "GEM") == 0
         || strcmp(blkdev[blkdevnum].id, "BGM") == 0)
 */
-        drvbits |= (1 << blkdevnum);
+        drvbits |= (1L << blkdevnum);
 
     blkdevnum++;
 
