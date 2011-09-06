@@ -2565,3 +2565,5 @@ Start... early ages
   than just P:. Submitted by Roger Burrows. (VRI)
 - bios/blkdev.c: Fix add_partition() to set _drvbits correctly for 16 or more
   drives. Submitted by Roger Burrows. (VRI)
+- desk/deskapp.c: Include all drives in the default desktop. Submitted by Roger
+  Burrows. (VRI)

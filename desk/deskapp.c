@@ -82,8 +82,7 @@ static const char *desk_inf_data2 =
     "#G 08 FF *.APP@ @ \r\n"
     "#G 08 FF *.PRG@ @ \r\n"
     "#P 08 FF *.TTP@ @ \r\n"
-    "#F 08 FF *.TOS@ @ \r\n"
-    "#T 00 04 03 FF   TRASH@ @ \r\n";
+    "#F 08 FF *.TOS@ @ \r\n";
 
 
 /************************************************************************/
@@ -596,21 +595,27 @@ WORD app_start()
         if (gl_afile[0] != '#')
         {
           LONG drivemask;
+          int drive_y = 0;
           drivemask = dos_sdrv( dos_gdrv() ); 
           strcpy(gl_afile, desk_inf_data1);  /* Copy core data part 1*/
           /* Scan for valid drives: */
           for(i=0; i<32; i++)
-            if(drivemask&(1<<i))
+            if(drivemask&(1L<<i))
             {
               x = strlen(gl_afile);
               strcat(gl_afile, "#M 00 00 01 FF A DISK A@ @ \r\n");
               gl_afile[x+4] += i % 4;    /* x position */
-              gl_afile[x+7] += i / 4;    /* y position */
+              drive_y = i / 4;           /* y position (remembered) */
+              gl_afile[x+7] += drive_y;
               if (i > 1)
                 gl_afile[x+10] = '0';    /* Hard disk instead of floppy icon */
               gl_afile[x+15] = gl_afile[x+22] = 'A'+i;    /* Drive letter */
             }
           strcat(gl_afile, desk_inf_data2);  /* Copy core data part 2 */
+          /* add Trash icon to end */
+          x = strlen(gl_afile);
+          strcat(gl_afile, "#T 00 00 03 FF   TRASH@ @ \r\n");
+          gl_afile[x+7] += (drive_y < 4) ? 4 : (drive_y+1);
           G.g_afsize = strlen(gl_afile);
         }
 
