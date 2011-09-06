@@ -2521,7 +2521,7 @@ Start... early ages
 2011-08-26
 - aes/geminit.c, aes/gempd.c, aes/gempd.h, aes/gemshlib.c, aes/struct.h:
   Improved rsrc_load() and shel_find() to search also in the application
-  directory and the root directory. This fxes the Nethack game. (VRI)
+  directory and the root directory. This fixes the Nethack game. (VRI)
 
 2011-08-30
 - bdos/bios.h, bios/blkdev.h, cli/command.c, include/bpb.h: Centralize
