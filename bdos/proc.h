@@ -19,7 +19,6 @@
  *  process management
  */
 
-extern  WORD    supstk[];
 extern  PD      *run;
 
 /* 

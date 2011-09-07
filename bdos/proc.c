@@ -50,12 +50,12 @@ static void proc_go(PD *p);
  */
 
 PD      *run;           /* ptr to PD for current process */
-WORD    supstk[SUPSIZ]; /* common sup stack for all processes*/
 
 /*
  * internal variables
  */
 
+static WORD    supstk[SUPSIZ]; /* common sup stack for all processes */
 static jmp_buf bakbuf;         /* longjmp buffer */
 
 

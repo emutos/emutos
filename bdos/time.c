@@ -58,7 +58,7 @@ extern void (*etv_timer)(int);
 
 static void tikfrk(int n);
 
-static int nday[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+static const int nday[] = {0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
 /* static long uptime; */
 

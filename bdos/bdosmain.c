@@ -54,8 +54,8 @@ extern void (*old_trap2)(void);
  *  prototypes / forward declarations
  */
 
-long ni(void);
-long xgetver(void);
+static long ni(void);
+static long xgetver(void);
 
 
 
@@ -84,7 +84,7 @@ FND
  * as the address for functions not implemented.
  */
 
-FND funcs[0x58] =
+static const FND funcs[0x58] =
 {
     
      { (long(*)()) x0term, 0, 0 }, /* 0x00 */
@@ -228,7 +228,7 @@ FND funcs[0x58] =
  *      return current version number
  */
 
-long    xgetver(void)
+static long    xgetver(void)
 {
         return(0x2000L);                /*  minor.major */
 #if DBGOSIF
@@ -241,7 +241,7 @@ long    xgetver(void)
  *  ni -
  */
 
-long    ni(void)
+static long    ni(void)
 {
         return(EINVFN);
 }
@@ -408,7 +408,7 @@ long    osif2(int *pw)
     int typ,h,i,fn;
     int num,max;
     long rc,numl;
-    FND *f;
+    const FND *f;
 
 
 restrt:

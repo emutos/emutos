@@ -22,8 +22,8 @@
  * forward prototypes
  */
 
-void xfr2usr(int n, char *s, char *d);
-void usr2xfr(int n, char *d, char *s);
+static void xfr2usr(int n, char *s, char *d);
+static void usr2xfr(int n, char *d, char *s);
 static long divmod(unsigned int *modp, long divdnd, int divsor);
 static void addit(OFD *p, long siz, int flg);
 static long xrw(int wrtflg, OFD *p, long len, char *ubufr,
@@ -35,7 +35,7 @@ static void usrio(int rwflg, int num, long strt, char *ubuf, DMD *dm);
  *  xfr2usr -
  */
 
-void xfr2usr(int n, char *s, char *d)
+static void xfr2usr(int n, char *s, char *d)
 {
     while (n--)
         *d++ = *s++;
@@ -47,7 +47,7 @@ void xfr2usr(int n, char *s, char *d)
  *  usr2xfr -
  */
 
-void usr2xfr(int n, char *d, char *s)
+static void usr2xfr(int n, char *d, char *s)
 {
     while (n--)
         *d++ = *s++;

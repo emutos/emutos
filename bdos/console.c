@@ -25,10 +25,10 @@
 #include        "biosbind.h"
 
 /* The following data structures are used for the typeahead buffer */
-long glbkbchar[3][KBBUFSZ];     /* The actual typeahead buffer */
-int add[3] ;                    /*  index of add position */
-int remove[3] ;                 /*  index of remove position */
-int glbcolumn[3];
+static long glbkbchar[3][KBBUFSZ]; /* The actual typeahead buffer */
+int add[3] ;                    /*  index of add position, used from bdosmain.c */
+int remove[3] ;                 /*  index of remove position, used from bdosmain.c */
+static int glbcolumn[3];
 
 /* 
  * forward declarations (internal prototypes) 
