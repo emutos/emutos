@@ -2573,3 +2573,5 @@ Start... early ages
   by Roger Burrows. (VRI)
 - bdos/bdosmain.c, bdos/console.c, bdos/fsio.c, bdos/proc.c, bdos/proc.h,
   bdos/time.c: Added more static and const. Contributed by Eero Tamminen. (VRI)
+- vdi/vdi_defs.h, vdi_vdi_line.c, vdi/vdi_misc.c: Isqrt() is used only from the
+  arrow code, so it can be in the same file. Contributed by Eero Tamminen. (VRI)

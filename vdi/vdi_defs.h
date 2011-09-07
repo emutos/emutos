@@ -274,8 +274,6 @@ void polygon(Vwk * vwk, Point * point, int count);
 void polyline(Vwk * vwk, Point * point, int count);
 void wideline(Vwk * vwk, Point * point, int count);
 
-WORD Isqrt(ULONG x);
-
 /* initialization of subsystems */
 void text_init(Vwk *);
 void text_init2(Vwk *);

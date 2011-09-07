@@ -95,31 +95,6 @@ void arb_hzline(Line * line)
 #endif
 
 
-WORD Isqrt(ULONG x)
-{
-    ULONG s1, s2;
-
-    if (x < 2)
-        return x;
-
-    s1 = x;
-    s2 = 2;
-    do {
-        s1 /= 2;
-        s2 *= 2;
-    } while (s1 > s2);
-
-    s2 = (s1 + (s2 / 2)) / 2;
-
-    do {
-        s1 = s2;
-        s2 = (x / s1 + s1) / 2;
-    } while (s1 > s2);
-
-    return (WORD)s1;
-}
-
-
 
 /*
  * tick_int -  VDI Timer interrupt routine
