@@ -40,7 +40,6 @@
 
 WORD pro_chdir(WORD drv, BYTE *ppath)
 {
-        WORD            tmpdrv;
                                                 /* change to directory  */
                                                 /*   that application   */
                                                 /*   is in              */
@@ -49,13 +48,7 @@ WORD pro_chdir(WORD drv, BYTE *ppath)
 
         if ( drv != '@' ) 
         {
-          tmpdrv = dos_gdrv();
           dos_sdrv(drv - 'A');
-          if (DOS_ERR)
-          {
-            dos_sdrv(tmpdrv);
-            return(FALSE);
-          }
           G.g_srcpth[0] = drv;
           G.g_srcpth[1] = ':';
           G.g_srcpth[2] = '\\';

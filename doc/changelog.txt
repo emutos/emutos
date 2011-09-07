@@ -2567,3 +2567,7 @@ Start... early ages
   drives. Submitted by Roger Burrows. (VRI)
 - desk/deskapp.c: Include all drives in the default desktop. Submitted by Roger
   Burrows. (VRI)
+
+2011-09-07
+- desk/deskpro.c: Fix erroneous test of DOS_ERR after dos_sdrv() call. Submitted
+  by Roger Burrows.
