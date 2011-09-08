@@ -2575,3 +2575,8 @@ Start... early ages
   bdos/time.c: Added more static and const. Contributed by Eero Tamminen. (VRI)
 - vdi/vdi_defs.h, vdi_vdi_line.c, vdi/vdi_misc.c: Isqrt() is used only from the
   arrow code, so it can be in the same file. Contributed by Eero Tamminen. (VRI)
+
+2011-09-08
+- aes/gem_rsc.c: Changed the alert issued when there is a problem launching an
+  application, to include the possibility of a damaged application. Submitted by
+  Roger Burrows. (VRI)

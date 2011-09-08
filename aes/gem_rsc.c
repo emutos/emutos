@@ -513,9 +513,9 @@ char *rs_fstr[] = {
            "letter you entered.][Cancel]"),
         N_("[1][You cannot delete the folder in|"
            "which you are currently working.][  OK  ]"),
-        N_("[1][Your computer does not have enough|"
-           "memory to run the application you|"
-           "have selected.][  OK  ]"),
+        N_("[1][Cannot run the application you have|"
+           "selected. It may be damaged, or your|"
+           "computer may not have enough memory.][  OK  ]"),
         N_("[3][DOS error #%d.][Cancel]"),
         N_("[3][Bad Function #][Cancel]"),
         N_("[3][To run the GEM Desktop, insert your|"
