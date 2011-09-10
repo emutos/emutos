@@ -2591,3 +2591,7 @@ Start... early ages
   bios/ikbd.c, bios/kprint.c, bios/mfp.c, bios/midi.c, bios/mouse.c: Remove
   unnecessary includes for bios.h in files in the bios subdirectory. Submitted
   by Roger Burrows. (VRI)
+- bios/bios.c, bios/biosmem.h, include/pd.h: Create centralized pd.h to define
+  the Process Descriptor, and update files in the bios directory to use it
+  where appropriate. The bios/bios.h file is removed. Submitted by Roger
+  Burrows. (VRI)

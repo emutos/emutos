@@ -14,7 +14,7 @@
 #define BIOSMEM_H
 
 #include "portab.h"
-#include "bios.h"
+#include "pd.h"
 
 
 

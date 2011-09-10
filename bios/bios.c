@@ -18,7 +18,7 @@
 
 
 #include "portab.h"
-#include "bios.h"
+#include "pd.h"
 #include "gemerror.h"
 #include "config.h"
 #include "kprint.h"
