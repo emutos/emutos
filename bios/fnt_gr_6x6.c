@@ -13,9 +13,9 @@
 #include "portab.h"
 #include "font.h"
 
-static UWORD off_table[], dat_table[];
+static const UWORD off_table[], dat_table[];
 
-struct font_head fnt_gr_6x6 = {
+const struct font_head fnt_gr_6x6 = {
     1,  /* font_id */
     8,  /* point */
     "6X6 system font",  /*   BYTE name[32]      */
@@ -44,7 +44,7 @@ struct font_head fnt_gr_6x6 = {
     0   /* UWORD next_seg */
 };
 
-static UWORD off_table[] =
+static const UWORD off_table[] =
 {
     0x0000, 0x0006, 0x000c, 0x0012, 0x0018, 0x001e, 0x0024, 0x002a, 
     0x0030, 0x0036, 0x003c, 0x0042, 0x0048, 0x004e, 0x0054, 0x005a, 
@@ -81,7 +81,7 @@ static UWORD off_table[] =
     0x0600, 
 };
 
-static UWORD dat_table[] =
+static const UWORD dat_table[] =
 {
     0x0082, 0x0421, 0xCFB6, 0x0DE3, 0x04E3, 0x8150, 0xF987, 0xBCC3, 
     0xCC3E, 0x73E0, 0x381F, 0x8442, 0x00CD, 0x947B, 0x260C, 0x3184, 

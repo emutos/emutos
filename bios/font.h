@@ -33,8 +33,8 @@
 
 /* font specific linea variables */
 
-extern UWORD *v_fnt_ad;         // address of current monospace font
-extern UWORD *v_off_ad;         // address of font offset table
+extern const UWORD *v_fnt_ad;   // address of current monospace font
+extern const UWORD *v_off_ad;   // address of font offset table
 extern UWORD v_fnt_nd;          // ascii code of last cell in font
 extern UWORD v_fnt_st;          // ascii code of first cell in font
 extern UWORD v_fnt_wr;          // font cell wrap
@@ -77,9 +77,9 @@ struct font_head {
     UWORD skew;                 /* mask for skewing */
     UWORD flags;                    
 
-    UBYTE *hor_table;           /* horizontal offsets */
-    UWORD *off_table;           /* character offsets  */
-    UWORD *dat_table;           /* character definitions */
+    const UBYTE *hor_table;     /* horizontal offsets */
+    const UWORD *off_table;     /* character offsets  */
+    const UWORD *dat_table;     /* character definitions */
     UWORD form_width;
     UWORD form_height;
 

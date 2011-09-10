@@ -2603,5 +2603,5 @@ Start... early ages
   causing bad performance. Suggested by Eero Tammien. (VRI)
 - bios/disk.c: Fixed sect and sect2 with an union to avoid alignment suspicion
   and inefficient access to short and long members on 68000. (VRI)
-- aes/gemdosif.S, aes/gemstart.S, bios/aciavecs.S, cli/coma.S: Added more
-  constness. (VRI)
+- aes/gemdosif.S, aes/gemstart.S, bios/aciavecs.S, bios/font.h, bios/fnt_*.c,
+  cli/coma.S: Added more constness. (VRI)
