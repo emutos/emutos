@@ -213,7 +213,10 @@ _init_acia_vecs:
         addq.l  #6,sp
         rts
         
-        .data
+        // FIXME: The rs232iorec buffer should go into the .data segment (if
+        // EmuTOS had a functional one) instead of copying the following to
+        // the .bss segment at run time.
+        .text // .rodata
 iorec_table:
         //         sz, hd, tl,   lo, hi
         dc.l    rs232ibufbuf

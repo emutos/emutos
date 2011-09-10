@@ -257,7 +257,7 @@ de_return:
 
 
 
-.data
+.text // .rodata
 
 // The AES MUPB structure:
 _ui_mupb:

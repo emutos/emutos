@@ -363,7 +363,7 @@ L2234:
 
 
 
-.data
+.text // .rodata
 
 err_tbl:
         .dc.b   4,1,1,2,1,1,2,2
