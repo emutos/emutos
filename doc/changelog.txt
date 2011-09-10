@@ -2595,3 +2595,4 @@ Start... early ages
   the Process Descriptor, and update files in the bios directory to use it
   where appropriate. The bios/bios.h file is removed. Submitted by Roger
   Burrows. (VRI)
+- po/de.po: Added missing German translations. (THH)
