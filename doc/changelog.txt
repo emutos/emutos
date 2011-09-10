@@ -2580,3 +2580,6 @@ Start... early ages
 - aes/gem_rsc.c: Changed the alert issued when there is a problem launching an
   application, to include the possibility of a damaged application. Submitted by
   Roger Burrows. (VRI)
+
+2011-09-10
+- po/ru.po: Added missing strings. Contributed by Dima Sobolev. (VRI)
