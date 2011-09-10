@@ -2583,3 +2583,5 @@ Start... early ages
 
 2011-09-10
 - po/ru.po: Added missing strings. Contributed by Dima Sobolev. (VRI)
+- bios/keyb_it.h, po/it.po: Added Italian translation. Contributed by Lodovico
+  Zanier. (VRI)
