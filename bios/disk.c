@@ -105,8 +105,12 @@ static inline int OK_id(char *s)
 }
 
 #define MAXPHYSSECTSIZE 2048
-u8 sect[MAXPHYSSECTSIZE];
-u8 sect2[MAXPHYSSECTSIZE];
+union
+{
+    u8 sect[MAXPHYSSECTSIZE];
+    struct rootsector rs;
+} physsect, physsect2;
+  
 
 /*
  * scans for Atari partitions on disk 'bdev' and adds them to blkdev array
@@ -114,7 +118,8 @@ u8 sect2[MAXPHYSSECTSIZE];
  */
 int atari_partition(int bdev)
 {
-    struct rootsector *rs;
+    u8* sect = physsect.sect;
+    struct rootsector *rs = &physsect.rs;
     struct partition_info *pi;
     u32 extensect;
     u32 hd_size;
@@ -124,9 +129,9 @@ int atari_partition(int bdev)
     int byteswap = 0;
 
     /* reset the sector buffer content */
-    bzero(sect, sizeof(sect));
+    bzero(&physsect, sizeof(physsect));
 
-    if (DMAread(0, 1, (long)sect, bdev))
+    if (DMAread(0, 1, (long)&physsect, bdev))
         return -1;
 
     printk("%cd%c:", (bdev >> 3) ? (((bdev >> 3) == 2) ? 'h' : 's') : 'a', (bdev & 7) + 'a');
@@ -197,8 +202,6 @@ int atari_partition(int bdev)
         return 1;
     }
 
-
-    rs = (struct rootsector *)sect;
     hd_size = rs->hd_siz;
 
     /* Verify this is an Atari rootsector: */
@@ -217,7 +220,7 @@ int atari_partition(int bdev)
 
     pi = &rs->part[0];
     for (; pi < &rs->part[4]; pi++) {
-        struct rootsector *xrs;
+        struct rootsector *xrs = &physsect2.rs;
         unsigned long partsect;
 
         if ( !(pi->flg & 1) )
@@ -238,13 +241,12 @@ int atari_partition(int bdev)
         partsect = extensect = pi->st;
         while (1) {
             /* reset the sector buffer content */
-            bzero(sect2, sizeof(sect2));
+            bzero(&physsect2, sizeof(physsect2));
 
-            if (DMAread(partsect, 1, (long)sect2, bdev)) {
+            if (DMAread(partsect, 1, (long)&physsect2, bdev)) {
                 printk (" block %ld read failed\n", partsect);
                 return 0;
             }
-            xrs = (struct rootsector *)sect2;
 
             /* ++roman: sanity check: bit 0 of flg field must be set */
             if (!(xrs->part[0].flg & 1)) {

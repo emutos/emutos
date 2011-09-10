@@ -2601,3 +2601,5 @@ Start... early ages
   maximal alignment is 2 bytes. And most of all it forces all accesses to word
   and long members with move.b on 68000 to avoid potential address errors,
   causing bad performance. Suggested by Eero Tammien. (VRI)
+- bios/disk.c: Fixed sect and sect2 with an union to avoid alignment suspicion
+  and inefficient access to short and long members on 68000. (VRI)
