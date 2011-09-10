@@ -29,6 +29,15 @@
  * be overriden by the Makefile or by localconf.h
  */
 
+/*
+ * Define the TOS version here. Valid values are 0x102 and 0x206 for example.
+ * Note that using a value less than 0x200 might force some parts of
+ * EmuTOS not to be compiled to save some space in the ROM image.
+ */
+#ifndef TOS_VERSION
+#define TOS_VERSION 0x206
+#endif
+
 /* set this to 1 if your emulator provides an STonX-like 
  * native_print() function, i.e. if the code:
  *   dc.w 0xa0ff
@@ -50,7 +59,7 @@
  * by the standard "native features" interface. 
  */
 #ifndef DETECT_NATIVE_FEATURES
-# ifdef __mcoldfire__
+# if defined(__mcoldfire__) || TOS_VERSION < 0x200
 #  define DETECT_NATIVE_FEATURES 0 /* Conflict with ColdFire instructions. */
 # else
 #  define DETECT_NATIVE_FEATURES 1
@@ -122,15 +131,7 @@
 #endif
 
 /*
- * Define the TOS version here. Valid values are 0x102 and 0x206 for example.
- * Note that using a value less than 0x200 might force some parts of
- * EmuTOS not to be compiled to save some space in the ROM image.
- */
-#ifndef TOS_VERSION
-#define TOS_VERSION 0x206
-#endif
-
-/* Set this to 1 if your emulator is capable of emulating properly the 
+ * Set this to 1 if your emulator is capable of emulating properly the 
  * STOP opcode (used to spare host CPU burden during loops).
  * Set to zero for all emulators which do not properly support STOP opcode.
  */

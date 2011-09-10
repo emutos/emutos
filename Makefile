@@ -535,8 +535,9 @@ all192:
 	@for i in $(COUNTRIES); \
 	do \
 	  j=etos192$${i}.img; \
-	  echo building $$j; \
-	  $(MAKE) DEF='-DTOS_VERSION=0x102' WITH_CLI=0 UNIQUE=$$i 192; \
+	  $(RM) include/i18nconf.h; \
+	  echo '***' building $$j '***'; \
+	  $(MAKE) DEF='-DTOS_VERSION=0x102' WITH_CLI=0 UNIQUE=$$i 192 || exit 1 \
 	  mv etos192k.img $$j; \
 	done
 

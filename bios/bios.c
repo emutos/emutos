@@ -140,7 +140,9 @@ static void bios_init(void)
     /* initialize Native Features, if available 
      * do it as soon as possible so that kprintf can make use of them
      */
+#if DETECT_NATIVE_FEATURES
     natfeat_init();
+#endif
 
 #if DBGBIOS
     kprintf("beginning of BIOS init\n");
@@ -242,6 +244,7 @@ static void bios_init(void)
 
 static void bootstrap(void)
 {
+#if DETECT_NATIVE_FEATURES
     /* start the kernel provided by the emulator */
     PD *pd;
     LONG length;
@@ -275,6 +278,7 @@ static void bootstrap(void)
 err:
     trap1(0x49, (long)pd->p_env); /* Mfree() the environment */
     trap1(0x49, (long)pd); /* Mfree() the process area */
+#endif
 }
 
 
@@ -416,7 +420,10 @@ void biosmain(void)
     }
 
     /* try to shutdown the machine if available */
+#if DETECT_NATIVE_FEATURES
     nf_shutdown();
+#endif
+
     kcprintf(_("System halted!\n"));
     halt();
 }

@@ -26,23 +26,21 @@
         .global _xhdi_vec
         .extern _xhdi_handler
 
+        .equ vec_illegal, 0x10       // illegal exception vector
+
 // ===========================================================================
 // ==== TEXT segment (TOS image) =============================================
 // ===========================================================================
 
         .text
 
-_detect_native_features:
-
+#if DETECT_NATIVE_FEATURES
 
 /* 
  * NatFeats test
  */
+_detect_native_features:
         clr.l   d0                   // assume no NatFeats available
-
-#if DETECT_NATIVE_FEATURES
-        .equ vec_illegal, 0x10       // illegal exception vector
-
         move.l  sp,a1
         move.l  vec_illegal,a0
         move.l  #fail_natfeat,vec_illegal
@@ -60,7 +58,6 @@ _detect_native_features:
 fail_natfeat:
         move.l  a1,sp
         move.l  a0,vec_illegal
-#endif  /* DETECT_NATIVE_FEATURES */
 
         rts
 
@@ -84,6 +81,9 @@ nfID:
 nfCall:
         dc.w    0x7301  // Conflict with ColdFire instruction mvs.b d1,d1
         rts
+
+#endif  /* DETECT_NATIVE_FEATURES */
+
 
 // ===========================================================================
 // ==== XHDI cookie points here ==============================================
@@ -109,4 +109,3 @@ _xhdi_vec:
         rts
 
         .end
-

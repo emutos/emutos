@@ -1,7 +1,7 @@
 /*
  * machine.c - detection of machine type
  *
- * Copyright (c) 2001 EmuTOS development team.
+ * Copyright (c) 2001 - 2011 EmuTOS development team.
  *
  * Authors:
  *  LVL     Laurent Vogel
@@ -10,6 +10,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+#include "config.h"
 #include "portab.h"
 #include "cookie.h"
 #include "machine.h"
@@ -306,9 +307,11 @@ void machine_init(void)
   setvalue_fdc();
   cookie_add(COOKIE_FDC, cookie_fdc);
 
+#if DETECT_NATIVE_FEATURES
   if (has_natfeats()) {
     cookie_add(COOKIE_NATFEAT, (long)&natfeat_cookie);
   }
+#endif
 
   create_XHDI_cookie();
 }
@@ -318,12 +321,15 @@ const char * machine_name(void)
 #ifdef MACHINE_FIREBEE
   return "FireBee";
 #else
+
+#if DETECT_NATIVE_FEATURES
   static char buffer[80];
   long bufsize;
 
   bufsize = nfGetFullName(buffer, sizeof(buffer)-1);
   if (bufsize > 0)
     return buffer;
+#endif
 
   switch(cookie_mch) {
   case MCH_ST:

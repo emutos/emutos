@@ -12,6 +12,9 @@
 
 #include "natfeat.h"
 #include "kprint.h"
+#include "config.h"
+
+#if DETECT_NATIVE_FEATURES
 
 static int hasNF;
 
@@ -130,3 +133,4 @@ long nf_getbootstrap_args(char *addr, long size)
     return 0;
 }
 
+#endif /* DETECT_NATIVE_FEATURES */

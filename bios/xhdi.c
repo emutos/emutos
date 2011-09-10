@@ -96,12 +96,14 @@ static long XHInqTarget2(UWORD major, UWORD minor, ULONG *blocksize,
     kprintf("XHInqTarget2(%d.%d)\n", major, minor); 
 #endif
 
+#if DETECT_NATIVE_FEATURES
     /* direct access to device */
     if (get_xhdi_nfid()) {
         int ret = NFCall(get_xhdi_nfid() + XHINQTARGET2, (long)major, (long)minor, (long)blocksize, (long)deviceflags, (long)productname, (long)stringlen);
         if (ret != EINVFN && ret != EUNDEV)
             return ret;
     }
+#endif
 
     if (blocksize) {
         /* TODO could add some heuristic here:
@@ -134,11 +136,13 @@ long XHGetCapacity(UWORD major, UWORD minor, ULONG *blocks, ULONG *blocksize)
     kprintf("XHGetCapacity(%d.%d)\n", major, minor);
 #endif
 
+#if DETECT_NATIVE_FEATURES
     if (get_xhdi_nfid()) {
         long ret = NFCall(get_xhdi_nfid() + XHGETCAPACITY, (long)major, (long)minor, (long)blocks, (long)blocksize);
         if (ret != EINVFN && ret != EUNDEV)
             return ret;
     }
+#endif
 
     return EINVFN;
 }
@@ -154,12 +158,14 @@ long XHReadWrite(UWORD major, UWORD minor, UWORD rw, ULONG sector,
             rw ? "Write" : "Read", major, minor, sector, count, buf);
 #endif
 
+#if DETECT_NATIVE_FEATURES
     /* direct access to device */
     if (get_xhdi_nfid()) {
         long ret = NFCall(get_xhdi_nfid() + XHREADWRITE, (long)dev, (long)0, (long)rw, (long)sector, (long)count, buf);
         if (ret != EINVFN && ret != EUNDEV)
             return ret;
     }
+#endif
 
     if (minor != 0)
         return EUNDEV;
