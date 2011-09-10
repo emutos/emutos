@@ -14,7 +14,6 @@
 
 
 #include "portab.h"
-#include "bios.h"
 #include "kprint.h"
 #include "lineavars.h"
 #include "vt52.h"

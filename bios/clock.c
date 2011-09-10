@@ -15,7 +15,6 @@
 
 
 #include "portab.h"
-#include "bios.h"
 #include "kprint.h"
 #include "clock.h"
 #include "ikbd.h"

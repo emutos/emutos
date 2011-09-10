@@ -2587,3 +2587,7 @@ Start... early ages
   Zanier. (VRI)
 - bdos/fsfat.c: Fixes bug: the last two clusters on a drive could not be
   allocated. Submitted by Roger Burrows. (VRI)
+- bios/biosmem.c, bios/blkdev.c, bios/blkdev.h, bios/chardev.c, bios/clock.c,
+  bios/ikbd.c, bios/kprint.c, bios/mfp.c, bios/midi.c, bios/mouse.c: Remove
+  unnecessary includes for bios.h in files in the bios subdirectory. Submitted
+  by Roger Burrows. (VRI)

@@ -28,7 +28,6 @@
 
 #include "config.h"
 #include "portab.h"
-#include "bios.h"
 #include "acia.h"
 #include "kprint.h"
 #include "tosvars.h"

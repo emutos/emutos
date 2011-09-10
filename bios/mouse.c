@@ -21,7 +21,6 @@
 #include "portab.h"
 #include "kprint.h"
 
-#include "bios.h"
 #include "tosvars.h"
 #include "lineavars.h"
 #include "ikbd.h"

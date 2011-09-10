@@ -14,7 +14,6 @@
 
 
 #include "portab.h"
-#include "bios.h"
 #include "kprint.h"
 #include "acia.h"
 #include "iorec.h"

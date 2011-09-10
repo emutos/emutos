@@ -13,7 +13,6 @@
  */
 
 #include "portab.h"
-#include "bios.h"
 #include "gemerror.h"
 #include "kprint.h"
 #include "tosvars.h"

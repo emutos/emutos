@@ -16,7 +16,6 @@
 
 #include "portab.h"
 #include "string.h"
-#include "bios.h"
 #include "gemerror.h"
 #include "kprint.h"
 #include "tosvars.h"

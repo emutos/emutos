@@ -14,7 +14,6 @@
 
 #include "config.h"
 #include "portab.h"
-#include "bios.h"
 #include "kprint.h"
 #include "mfp.h"
 #include "tosvars.h"
