@@ -152,6 +152,7 @@ GLOBAL BYTE     ILL_DESKTOP[] = {NFOLITEM,CLOSITEM,CLSWITEM,ICONITEM,
                                 NAMEITEM,DATEITEM,SIZEITEM,TYPEITEM,0};
 #endif
 
+#if TOS_VERSION >= 0x200
 /* easter egg */
 static const GLOBAL WORD  freq[]=
 {
@@ -164,6 +165,7 @@ static const GLOBAL WORD  dura[]=
         4, 12, 4, 12, 4, 6, 2, 4, 4, 12, 4, 4, 
         4, 4, 4, 4, 4, 4, 4, 12, 4, 8, 4
 };
+#endif
 
 
 GLOBAL LONG     ad_ptext;
@@ -481,12 +483,14 @@ WORD do_deskmenu(WORD item)
                   touchob &= 0x7fff;
                   if ( touchob == DEICON )
                   {
+#if TOS_VERSION >= 0x200
                     int i;
                     for(i=0; i<23; i++)
                     {
                       sound(TRUE, freq[i], dura[i]);
                       evnt_timer(dura[i]*64, 0);
                     }
+#endif
                   }
                   else
                     done = TRUE;
