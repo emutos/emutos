@@ -2596,3 +2596,8 @@ Start... early ages
   where appropriate. The bios/bios.h file is removed. Submitted by Roger
   Burrows. (VRI)
 - po/de.po: Added missing German translations. (THH)
+- bios/atari_rootsec.h: Removed the __packed__ attribute on the rootsector
+  structure. This is useless in the current m68k-atari-mint GCC because the
+  maximal alignment is 2 bytes. And most of all it forces all accesses to word
+  and long members with move.b on 68000 to avoid potential address errors,
+  causing bad performance. Suggested by Eero Tammien. (VRI)

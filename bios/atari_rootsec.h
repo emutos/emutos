@@ -33,10 +33,6 @@ struct rootsector
   u32 bsl_st;                           /* start of bad sector list */
   u32 bsl_cnt;                          /* length of bad sector list */
   u16 checksum;                         /* checksum for bootable disks */
-#ifdef __GNUC__
-} __attribute__ ((__packed__));
-#else
 };
-#endif
 
 #endif /* ATARI_ROOTSEC_H */
