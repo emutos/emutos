@@ -27,14 +27,14 @@
  
 #define DBG_XHDI        0
 
-/*=========================================================================*/
+
+#if CONF_WITH_XHDI
 
 void create_XHDI_cookie(void)
 {
     cookie_add(COOKIE_XHDI, (long)xhdi_vec);
 }
 
-/*=========================================================================*/
 
 static long XHInqDev2(UWORD drv, UWORD *major, UWORD *minor, ULONG *start,
                       BPB *bpb, ULONG *blocks, char *partid)
@@ -87,6 +87,8 @@ static long XHInqDev(UWORD drv, UWORD *major, UWORD *minor, ULONG *start,
     return XHInqDev2(drv, major, minor, start, bpb, NULL, NULL);
 }
 
+#endif  /* CONF_WITH_XHDI */
+
 /*=========================================================================*/
 
 static long XHInqTarget2(UWORD major, UWORD minor, ULONG *blocksize,
@@ -128,7 +130,6 @@ long XHInqTarget(UWORD major, UWORD minor, ULONG *blocksize,
     return XHInqTarget2(major, minor, blocksize, deviceflags, productname, 33);
 }
 
-/*=========================================================================*/
 
 long XHGetCapacity(UWORD major, UWORD minor, ULONG *blocks, ULONG *blocksize)
 {
@@ -187,6 +188,8 @@ long XHReadWrite(UWORD major, UWORD minor, UWORD rw, ULONG sector,
 }
 
 /*=========================================================================*/
+
+#if CONF_WITH_XHDI
 
 long xhdi_handler(UWORD *stack)
 {
@@ -343,7 +346,8 @@ long xhdi_handler(UWORD *stack)
     return EINVFN;
 }
 
+#endif /* CONF_WITH_XHDI */
+
 /*
 vim:et:ts=4:sw=4:
 */
-

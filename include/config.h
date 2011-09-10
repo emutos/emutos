@@ -131,6 +131,17 @@
 #endif
 
 /*
+ * Set CONF_WITH_XHDI to 1 to enable XHDI support (i.e. the XHDI cookie etc.)
+ */
+#ifndef CONF_WITH_XHDI
+# if TOS_VERSION < 0x200
+#  define CONF_WITH_XHDI 0
+# else
+#  define CONF_WITH_XHDI 1
+# endif
+#endif
+
+/*
  * Set this to 1 if your emulator is capable of emulating properly the 
  * STOP opcode (used to spare host CPU burden during loops).
  * Set to zero for all emulators which do not properly support STOP opcode.

@@ -313,7 +313,9 @@ void machine_init(void)
   }
 #endif
 
+#if CONF_WITH_XHDI
   create_XHDI_cookie();
+#endif
 }
 
 const char * machine_name(void)
