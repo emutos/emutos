@@ -175,18 +175,15 @@ int nextcl(OFD *p, int wrtflg)
 
         if (wrtflg && (cl2 == 0xffff ))
         { /* end of file, allocate new clusters */
-                rover = cl;
-                for (i=2; i < dm->m_numcl; i++) 
+                /* the following code carefully avoids allowing overflow in CLNO variables */
+                rover = (cl < 2) ? 2 : cl;  /* start search at first or current cluster */
+                for (i=0; i < dm->m_numcl; i++, rover++)    /* look at every cluster once */
                 {
-                        if (rover < 2)
-                                rover = 2;
-
-                        if (!(cl2 = getrealcl(rover,dm)))
+                        if (!getrealcl(rover,dm))       /* check for empty cluster */
                                 break;
-                        else
-                                rover = (rover + 1) % dm->m_numcl;
+                        if (rover == dm->m_numcl+1)     /* wrap at max cluster num */ 
+                                rover = 1;
                 }
-
                 cl2 = rover;
 
                 if (i < dm->m_numcl)

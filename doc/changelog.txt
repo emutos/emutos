@@ -2585,3 +2585,5 @@ Start... early ages
 - po/ru.po: Added missing strings. Contributed by Dima Sobolev. (VRI)
 - bios/keyb_it.h, po/it.po: Added Italian translation. Contributed by Lodovico
   Zanier. (VRI)
+- bdos/fsfat.c: Fixes bug: the last two clusters on a drive could not be
+  allocated. Submitted by Roger Burrows. (VRI)
