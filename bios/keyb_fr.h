@@ -16,7 +16,7 @@ static const BYTE keytbl_fr_caps[];
 static const BYTE keytbl_fr_altnorm[];
 static const BYTE keytbl_fr_altshft[];
 static const BYTE keytbl_fr_altcaps[];
-static const BYTE * keytbl_fr_dead[];
+static const BYTE * const keytbl_fr_dead[];
 
 static const struct keytbl keytbl_fr = {
     keytbl_fr_norm, 
@@ -119,7 +119,7 @@ static const BYTE keytbl_fr_dead1[] = {
     ' ', 0xb9, DEAD(1), 0xb9, 0
 };
 
-static const BYTE * keytbl_fr_dead[] = {
+static const BYTE * const keytbl_fr_dead[] = {
     keytbl_fr_dead0,
     keytbl_fr_dead1,
 };
