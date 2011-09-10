@@ -45,7 +45,7 @@ static int num_of_langs;
 
 /* used by nlsasm.S */
 
-char ***nls_hash;
+const char * const * const *nls_hash;
 
 void gettext_init(void); /* call each time the hash changes */
 

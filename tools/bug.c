@@ -1940,7 +1940,7 @@ void make(void)
     if(eref->kind == KIND_NORM) {
       sprintf(tmp, "nls_key_%d", j);
       eref->msgstr = xstrdup(tmp);
-      fprintf(f, "static char %s [] = ", tmp);
+      fprintf(f, "static const char %s [] = ", tmp);
       print_canon(f, eref->msgid.key, "  ");
       fprintf(f, ";\n");
       numref++;
@@ -2016,7 +2016,7 @@ void make(void)
     for(j = 0 ; j < TH_SIZE ; j++) {
       if(th[j] != 0) {
         int ii, nn;
-        fprintf(f, "static char *msg_%s_hash_%d[] = {\n", lang, j);
+        fprintf(f, "static const char * const msg_%s_hash_%d[] = {\n", lang, j);
         nn = da_len(th[j]);
         for(ii = 0 ; ii < nn ; ii+=2) {
           fprintf(f, "  %s, ", (char *) da_nth(th[j],ii));
@@ -2026,7 +2026,7 @@ void make(void)
         fprintf(f, "  0\n};\n\n");
       }
     }
-    fprintf(f, "static char **msg_%s[] = {\n", lang);
+    fprintf(f, "static const char * const * const msg_%s[] = {\n", lang);
     for(j = 0 ; j < TH_SIZE ; j++) {
       if(th[j]) {
         fprintf(f, "  msg_%s_hash_%d,\n", lang, j);
@@ -2047,10 +2047,10 @@ void make(void)
   for(i = 0 ; i < n ; i++) {
     t = da_nth(langs, i);
     fprintf(f, "\
-static struct lang_info lang_%s = { \"%s\", msg_%s };\n", t, t, t);
+static const struct lang_info lang_%s = { \"%s\", msg_%s };\n", t, t, t);
   }
   fprintf(f, "\n");  
-  fprintf(f, "struct lang_info *langs[] = {\n");
+  fprintf(f, "const struct lang_info * const langs[] = {\n");
   for(i = 0 ; i < n ; i++) {
     t = da_nth(langs, i);
     fprintf(f, "  &lang_%s, \n", t);

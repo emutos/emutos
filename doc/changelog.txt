@@ -2605,4 +2605,5 @@ Start... early ages
   and inefficient access to short and long members on 68000. (VRI)
 - aes/gemdosif.S, aes/gemstart.S, bios/aciavecs.S, bios/country.c,
   bios/contry.h, bios/font.h, bios/fnt_*.c, bios/ikbd.c, bios/ikbd.h,
-  bios/keyb_*.h, cli/coma.S: Added more constness. (VRI)
+  bios/keyb_*.h, cli/coma.S, tools/bug.c, util/langs.h, utils/nls.c: Added more
+  constness. (VRI)

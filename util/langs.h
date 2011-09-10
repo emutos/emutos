@@ -14,10 +14,10 @@
 #define LANGS_H
  
 struct lang_info {
-  char *name;
-  char ***hash;
+  const char *name;
+  const char * const * const *hash;
 };
 
-extern struct lang_info *langs[];
+extern const struct lang_info * const langs[];
  
 #endif /* LANGS_H */
