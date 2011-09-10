@@ -7,14 +7,14 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-BYTE keytbl_se_norm[];
-BYTE keytbl_se_shft[];
-BYTE keytbl_se_caps[];
-BYTE keytbl_se_altnorm[];
-BYTE keytbl_se_altshft[];
-BYTE keytbl_se_altcaps[];
+static const BYTE keytbl_se_norm[];
+static const BYTE keytbl_se_shft[];
+static const BYTE keytbl_se_caps[];
+static const BYTE keytbl_se_altnorm[];
+static const BYTE keytbl_se_altshft[];
+static const BYTE keytbl_se_altcaps[];
 
-struct keytbl keytbl_se = {
+static const struct keytbl keytbl_se = {
     keytbl_se_norm, 
     keytbl_se_shft, 
     keytbl_se_caps, 
@@ -24,7 +24,7 @@ struct keytbl keytbl_se = {
     NULL, 
 };
 
-BYTE keytbl_se_norm[] = {
+static const BYTE keytbl_se_norm[] = {
        0, 0x1b,  '1',  '2',  '3',  '4',  '5',  '6', 
      '7',  '8',  '9',  '0',  '+', 0x82,    8, 0x09, 
      'q',  'w',  'e',  'r',  't',  'y',  'u',  'i', 
@@ -43,7 +43,7 @@ BYTE keytbl_se_norm[] = {
        0,    0,    0,    0,    0,    0,    0,    0, 
 };
 
-BYTE keytbl_se_shft[] = {
+static const BYTE keytbl_se_shft[] = {
        0, 0x1b,  '!', '\"',  '#',  '$',  '%',  '&', 
      '/',  '(',  ')',  '=',  '?', 0x90,    8, 0x09, 
      'Q',  'W',  'E',  'R',  'T',  'Y',  'U',  'I', 
@@ -62,7 +62,7 @@ BYTE keytbl_se_shft[] = {
        0,    0,    0,    0,    0,    0,    0,    0, 
 };
 
-BYTE keytbl_se_caps[] = {
+static const BYTE keytbl_se_caps[] = {
        0, 0x1b,  '1',  '2',  '3',  '4',  '5',  '6', 
      '7',  '8',  '9',  '0',  '+', 0x90,    8, 0x09, 
      'Q',  'W',  'E',  'R',  'T',  'Y',  'U',  'I', 
@@ -82,7 +82,7 @@ BYTE keytbl_se_caps[] = {
 };
 
 
-BYTE keytbl_se_altnorm[] = {
+static const BYTE keytbl_se_altnorm[] = {
     0x1a, '[',
     0x1b, ']',
     0x28, '`',
@@ -90,7 +90,7 @@ BYTE keytbl_se_altnorm[] = {
     0,
 };
 
-BYTE keytbl_se_altshft[] = {
+static const BYTE keytbl_se_altshft[] = {
     0x1a, '{',
     0x1b, '}',
     0x28, '~',
@@ -98,7 +98,7 @@ BYTE keytbl_se_altshft[] = {
     0,
 };
 
-BYTE keytbl_se_altcaps[] = {
+static const BYTE keytbl_se_altcaps[] = {
     0x1a, '[',
     0x1b, ']',
     0x28, '`',

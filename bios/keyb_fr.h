@@ -10,15 +10,15 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-BYTE keytbl_fr_norm[];
-BYTE keytbl_fr_shft[];
-BYTE keytbl_fr_caps[];
-BYTE keytbl_fr_altnorm[];
-BYTE keytbl_fr_altshft[];
-BYTE keytbl_fr_altcaps[];
-BYTE * keytbl_fr_dead[];
+static const BYTE keytbl_fr_norm[];
+static const BYTE keytbl_fr_shft[];
+static const BYTE keytbl_fr_caps[];
+static const BYTE keytbl_fr_altnorm[];
+static const BYTE keytbl_fr_altshft[];
+static const BYTE keytbl_fr_altcaps[];
+static const BYTE * keytbl_fr_dead[];
 
-struct keytbl keytbl_fr = {
+static const struct keytbl keytbl_fr = {
     keytbl_fr_norm, 
     keytbl_fr_shft, 
     keytbl_fr_caps, 
@@ -28,7 +28,7 @@ struct keytbl keytbl_fr = {
     keytbl_fr_dead
 };
 
-BYTE keytbl_fr_norm[] = {
+static const BYTE keytbl_fr_norm[] = {
        0, 0x1b,  '&', 0x82, '\"', '\'',  '(', 0xdd, 
     0x8a,  '!', 0x87, 0x85,  ')',  '-',    8, 0x09, 
      'a',  'z',  'e',  'r',  't',  'y',  'u',  'i', 
@@ -47,7 +47,7 @@ BYTE keytbl_fr_norm[] = {
        0,    0,    0,    0,    0,    0,    0,    0, 
 };
 
-BYTE keytbl_fr_shft[] = {
+static const BYTE keytbl_fr_shft[] = {
        0, 0x1b,  '1',  '2',  '3',  '4',  '5',  '6', 
      '7',  '8',  '9',  '0', 0xf8,  '_',    8, 0x09, 
      'A',  'Z',  'E',  'R',  'T',  'Y',  'U',  'I', 
@@ -66,7 +66,7 @@ BYTE keytbl_fr_shft[] = {
        0,    0,    0,    0,    0,    0,    0,    0, 
 };
 
-BYTE keytbl_fr_caps[] = {
+static const BYTE keytbl_fr_caps[] = {
        0, 0x1b,  '&', 0x90, '\"', '\'',  '(', 0xdd, 
     0x8a,  '!', 0x80, 0xb6,  ')',  '-',    8, 0x09, 
      'A',  'Z',  'E',  'R',  'T',  'Y',  'U',  'I', 
@@ -85,7 +85,7 @@ BYTE keytbl_fr_caps[] = {
        0,    0,    0,    0,    0,    0,    0,    0, 
 };
 
-BYTE keytbl_fr_altnorm[] = {
+static const BYTE keytbl_fr_altnorm[] = {
     0x1a, '[',
     0x1b, ']',
     0x28, '\\',
@@ -93,14 +93,14 @@ BYTE keytbl_fr_altnorm[] = {
     0,
 };
 
-BYTE keytbl_fr_altshft[] = {
+static const BYTE keytbl_fr_altshft[] = {
     0x1a, '{',
     0x1b, '}',
     0x2b, '~',
     0,
 };
 
-BYTE keytbl_fr_altcaps[] = {
+static const BYTE keytbl_fr_altcaps[] = {
     0x1a, '[',
     0x1b, ']',
     0x28, '\\',
@@ -108,18 +108,18 @@ BYTE keytbl_fr_altcaps[] = {
     0,
 };
 
-BYTE keytbl_fr_dead0[] = {
+static const BYTE keytbl_fr_dead0[] = {
     'a', 0x83, 'e', 0x88, 'i', 0x8c, 'o', 0x93, 'u', 0x96, 
     ' ', '^', DEAD(0), '^', 0
 };
 
-BYTE keytbl_fr_dead1[] = { 
+static const BYTE keytbl_fr_dead1[] = { 
     'A', 0x8e, 'O', 0x99, 'U', 0x9a, 
     'a', 0x84, 'e', 0x89, 'i', 0x8b, 'o', 0x94, 'u', 0x81, 'y', 0x98, 
     ' ', 0xb9, DEAD(1), 0xb9, 0
 };
 
-BYTE * keytbl_fr_dead[] = {
+static const BYTE * keytbl_fr_dead[] = {
     keytbl_fr_dead0,
     keytbl_fr_dead1,
 };

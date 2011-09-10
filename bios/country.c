@@ -38,7 +38,7 @@ struct country_record {
 
 struct kbd_record {
     int number;
-    struct keytbl *keytbl;
+    const struct keytbl *keytbl;
 };
 
 struct charset_fonts {
@@ -132,7 +132,7 @@ static int get_charset(void)
  * get_keytbl - initialize country dependant keyboard layouts
  */
 
-void get_keytbl(struct keytbl **tbl)
+void get_keytbl(const struct keytbl **tbl)
 {
     int j;
 #if ! CONF_UNIQUE_COUNTRY

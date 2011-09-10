@@ -33,15 +33,15 @@ extern BYTE shifty;
 
 struct keytbl {
   /* 128-sized array giving char codes for each scan code */
-  BYTE *norm;
-  BYTE *shft;
-  BYTE *caps;
+  const BYTE *norm;
+  const BYTE *shft;
+  const BYTE *caps;
   /* couples of (scan code, char code), ended by byte zero */
-  BYTE *altnorm;
-  BYTE *altshft;
-  BYTE *altcaps;
+  const BYTE *altnorm;
+  const BYTE *altshft;
+  const BYTE *altcaps;
   /* table of at most eight dead key translation tables */
-  BYTE **dead;
+  const BYTE * const *dead;
 };
 
 /* initialise the ikbd */

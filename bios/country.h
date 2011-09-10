@@ -62,7 +62,7 @@ extern long cookie_akp;
 void detect_akp_idt(void);
 
 /* used by ikbd.c */
-void get_keytbl(struct keytbl **tbl);
+void get_keytbl(const struct keytbl **tbl);
 
 /* used by nls.c */
 const char *get_lang_name(void);

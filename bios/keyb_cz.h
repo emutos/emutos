@@ -10,14 +10,14 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-BYTE keytbl_cz_norm[];
-BYTE keytbl_cz_shft[];
-BYTE keytbl_cz_caps[];
-BYTE keytbl_cz_altnorm[];
-BYTE keytbl_cz_altshft[];
-BYTE keytbl_cz_altcaps[];
+static const BYTE keytbl_cz_norm[];
+static const BYTE keytbl_cz_shft[];
+static const BYTE keytbl_cz_caps[];
+static const BYTE keytbl_cz_altnorm[];
+static const BYTE keytbl_cz_altshft[];
+static const BYTE keytbl_cz_altcaps[];
 
-struct keytbl keytbl_cz = {
+static const struct keytbl keytbl_cz = {
     keytbl_cz_norm, 
     keytbl_cz_shft, 
     keytbl_cz_caps, 
@@ -27,7 +27,7 @@ struct keytbl keytbl_cz = {
     NULL
 };
 
-BYTE keytbl_cz_norm[] = {
+static const BYTE keytbl_cz_norm[] = {
        0, 0x1b, 0xf3, 0xec, 0xb9, 0xe8, 0xf8, 0xbe, 
     0xfd, 0xe1, 0xed, 0xe9,  '=', '\'',    8, 0x09, 
      'q',  'w',  'e',  'r',  't',  'z',  'u',  'i', 
@@ -46,7 +46,7 @@ BYTE keytbl_cz_norm[] = {
        0,    0,    0,    0,    0,    0,    0,    0, 
 };
 
-BYTE keytbl_cz_shft[] = {
+static const BYTE keytbl_cz_shft[] = {
        0, 0x1b,  '1',  '2',  '3',  '4',  '5',  '6', 
      '7',  '8',  '9',  '0',  '%',  '`',    8, 0x09, 
      'Q',  'W',  'E',  'R',  'T',  'Z',  'U',  'I', 
@@ -65,7 +65,7 @@ BYTE keytbl_cz_shft[] = {
        0,    0,    0,    0,    0,    0,    0,    0, 
 };
 
-BYTE keytbl_cz_caps[] = {
+static const BYTE keytbl_cz_caps[] = {
        0, 0x1b, 0xd3, 0xcc, 0xa9, 0xc8, 0xd8, 0xae, 
     0xdd, 0xc1, 0xcd, 0xc9,  '=', '\'',    8, 0x09, 
      'Q',  'W',  'E',  'R',  'T',  'Z',  'U',  'I', 
@@ -87,14 +87,14 @@ BYTE keytbl_cz_caps[] = {
 
 /* TODO - the tables below were not filled by the tool */
 
-BYTE keytbl_cz_altnorm[] = {
+static const BYTE keytbl_cz_altnorm[] = {
     0,
 };
 
-BYTE keytbl_cz_altshft[] = {
+static const BYTE keytbl_cz_altshft[] = {
     0,
 };
 
-BYTE keytbl_cz_altcaps[] = {
+static const BYTE keytbl_cz_altcaps[] = {
     0,
 };

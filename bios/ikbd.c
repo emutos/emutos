@@ -95,7 +95,7 @@ LONG keytbl(LONG norm, LONG shft, LONG caps)
 
 void bioskeys(void)
 {
-    struct keytbl *tbl;
+    const struct keytbl *tbl;
 
     /* ask country.c for the key table */
     get_keytbl(&tbl);
@@ -331,7 +331,7 @@ void kbd_int(WORD scancode)
     
     
     if (shifty & MODE_ALT) {
-        BYTE *a;
+        const BYTE *a;
          
         /* ALT-keypad means that char number */
         if (scancode >= 103 && scancode <= 112) {
@@ -373,7 +373,7 @@ void kbd_int(WORD scancode)
         /* More complicated in TOS, but is it really necessary ? */
         ascii &= 0x1F;
     } else if(kb_dead >= 0) {
-        BYTE *a = current_keytbl.dead[kb_dead];
+        const BYTE *a = current_keytbl.dead[kb_dead];
         while (*a && *a != ascii) {
             a += 2;
         }

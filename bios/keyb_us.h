@@ -11,14 +11,14 @@
  */
 
 
-BYTE keytbl_us_norm[];
-BYTE keytbl_us_shft[];
-BYTE keytbl_us_caps[];
-BYTE keytbl_us_altnorm[];
-BYTE keytbl_us_altshft[];
-BYTE keytbl_us_altcaps[];
+static const BYTE keytbl_us_norm[];
+static const BYTE keytbl_us_shft[];
+static const BYTE keytbl_us_caps[];
+static const BYTE keytbl_us_altnorm[];
+static const BYTE keytbl_us_altshft[];
+static const BYTE keytbl_us_altcaps[];
 
-struct keytbl keytbl_us = {
+static const struct keytbl keytbl_us = {
     keytbl_us_norm, 
     keytbl_us_shft, 
     keytbl_us_caps, 
@@ -28,7 +28,7 @@ struct keytbl keytbl_us = {
     NULL
 };
 
-BYTE keytbl_us_norm[] = {
+static const BYTE keytbl_us_norm[] = {
        0, 0x1b,  '1',  '2',  '3',  '4',  '5',  '6', 
      '7',  '8',  '9',  '0',  '-',  '=',    8, 0x09, 
      'q',  'w',  'e',  'r',  't',  'y',  'u',  'i', 
@@ -47,7 +47,7 @@ BYTE keytbl_us_norm[] = {
        0,    0,    0,    0,    0,    0,    0,    0, 
 };
 
-BYTE keytbl_us_shft[] = {
+static const BYTE keytbl_us_shft[] = {
        0, 0x1b,  '!',  '@',  '#',  '$',  '%',  '^', 
      '&',  '*',  '(',  ')',  '_',  '+',    8, 0x09, 
      'Q',  'W',  'E',  'R',  'T',  'Y',  'U',  'I', 
@@ -66,7 +66,7 @@ BYTE keytbl_us_shft[] = {
        0,    0,    0,    0,    0,    0,    0,    0, 
 };
 
-BYTE keytbl_us_caps[] = {
+static const BYTE keytbl_us_caps[] = {
        0, 0x1b,  '1',  '2',  '3',  '4',  '5',  '6', 
      '7',  '8',  '9',  '0',  '-',  '=',    8, 0x09, 
      'Q',  'W',  'E',  'R',  'T',  'Y',  'U',  'I', 
@@ -85,13 +85,13 @@ BYTE keytbl_us_caps[] = {
        0,    0,    0,    0,    0,    0,    0,    0, 
 };
 
-BYTE keytbl_us_altnorm[] = {
+static const BYTE keytbl_us_altnorm[] = {
     0,
 };
-BYTE keytbl_us_altshft[] = {
+static const BYTE keytbl_us_altshft[] = {
     0,
 };
-BYTE keytbl_us_altcaps[] = {
+static const BYTE keytbl_us_altcaps[] = {
     0,
 };
 
