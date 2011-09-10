@@ -344,7 +344,7 @@
 _deftxbuf:
         .ds.b   buf_siz         // char. buffer
 
-        .text /* .rodata */
+        .text // .rodata
 
 #define _scrpt1 0               // small buffer base offset 
 
@@ -1031,7 +1031,7 @@ blt_done:
         .page
 
 
-        .text /* .rodata */
+        .text // .rodata
         
 /*
  * Word Mask Table                                                
