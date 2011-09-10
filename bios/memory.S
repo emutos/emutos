@@ -12,9 +12,11 @@
  *
  */
 
+#include "config.h"
+
 // compile time switches would simplify the resulting binary code
-#define ST_MMU          1               // define if it should run on ST
-#define FALCON_MMU      1               // define if it should run on Falcon
+#define ST_MMU      1                       // define if it should run on ST
+#define FALCON_MMU  (TOS_VERSION >= 0x200)  // define if it should run on Falcon
 
 
 // ==== References ===========================================================
@@ -363,6 +365,7 @@ st_cleared:
 
 
 #if FALCON_MMU
+
 /*
  * memconf for Falcon
  */

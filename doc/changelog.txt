@@ -2611,3 +2611,4 @@ Start... early ages
   include/config.h: Disable Native Features for TOS 1.xx / 192kB ROMs (THH)
 - bios/machine.c bios/natfeat.S bios/xhdi.c include/config.h: Added another
   compile-time switch to disable XHDI on TOS 1.xx to save some more space (THH)
+- bios/memory.S: Disable Falcon memory controller support for TOS 1.xx (THH)
