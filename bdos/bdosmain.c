@@ -446,7 +446,7 @@ restrt:
             /* then, in with the new */
             b = MyGetbpb(errdrv);       /* use wrapper just to avoid longjmp() compiler warning */
             if ( (long)b <= 0 ) {
-                drvsel &= ~(1<<errdrv);
+                drvsel &= ~(1L<<errdrv);
                 if ( (long)b )
                     return( (long)b );
                 return(rc);

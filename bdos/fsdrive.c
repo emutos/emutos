@@ -60,7 +60,7 @@ DND     *dirtbl[NCURDIR] ;
  */
 
 char    diruse[NCURDIR] ;
-int     drvsel ;
+LONG    drvsel ;
 
 
 /*
@@ -79,14 +79,15 @@ int     drvsel ;
 
 long    ckdrv(int d)
 {
-    int mask,i;
+    int i;
+    LONG mask;
     BPB *b;
 
 #if DBGFSDRIVE
     kprintf("ckdrv(%i)\n", d);
 #endif
 
-    mask = 1 << d;
+    mask = 1L << d;
 
     if (!(mask & drvsel))
     {       /*  drive has not been selected yet  */

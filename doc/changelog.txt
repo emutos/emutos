@@ -2620,3 +2620,7 @@ Start... early ages
   with fixed window mode (which does not use icons and needs less memory) (THH)
 - bios/clock.c bios/nvram.c bios/screen.c bios/xbios.c include/config.h:
   Added configuration flags for disabling support for TT and NVRAM (THH)
+- bdos/bdosmain.c bdos/fs.h bdos/fsdir.c bdos/fsdrive.c: Change variable drvsel
+  to LONG to properly support more than 16 drives. This avoids an unnecessary
+  bootsector read every time a drive above P: is accessed. Submitted by Roger
+  Burrows. (VRI)

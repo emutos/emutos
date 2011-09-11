@@ -952,7 +952,7 @@ xch:    if (p[1] == ':')
         if (!l)                                                 /* M01.01.1214.01 */
                 return( EPTHNF );
 
-        drvsel |= 1 << dlog ;           /*  M01.01.SCC.FS.03  */
+        drvsel |= 1L << dlog ;          /*  M01.01.SCC.FS.03  */
 
         dirtbl[dr] = (DND *) l;
 

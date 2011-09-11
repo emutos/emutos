@@ -348,7 +348,7 @@ DTAINFO
 extern  DND     *dirtbl[];
 extern  DMD     *drvtbl[];
 extern  char    diruse[];
-extern  int     drvsel;
+extern  LONG    drvsel;
 extern  PD      *run;
 extern  int     logmsk[];
 extern  FTAB    sft[];
