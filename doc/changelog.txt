@@ -2627,3 +2627,5 @@ Start... early ages
 - bdos/bios.h bdos/fs.h: Replaces individual definitions of the Process
   Descriptor with include of centralized version (in headers within bdos
   directory only). Submitted by Rober Burrows. (VRI)
+- desk/desk_rsc.c desk/deskact.c desk/deskmain.c desk/deskmain.h
+  desk/desksupp.c: Static cleanup. Contributed by Eero Tamminen. (VRI)

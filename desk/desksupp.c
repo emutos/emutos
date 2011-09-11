@@ -47,9 +47,6 @@
 
 #if MULTIAPP
 EXTERN WORD     pr_kbytes;
-EXTERN LONG     pr_ssize;
-EXTERN LONG     pr_topdsk;
-EXTERN LONG     pr_topmem;
 EXTERN WORD     gl_keepac;
 #endif
 
@@ -437,7 +434,7 @@ static WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, WORD drv,
 *       Open a disk
 */
 #ifdef DESK1
-WORD do_dopen(WORD curr)
+static WORD do_dopen(WORD curr)
 {
         WORD    drv;
         WNODE   *pw;

@@ -1795,7 +1795,7 @@ void xlate_fix_tedinfo(TEDINFO *tedinfo, int nted)
  * note - the code below is based on the assumption that the width of
  * the system font is eight (documented as such in lineavars.h)
  */
-void adjust_menu(OBJECT *obj_array, WORD tree)
+static void adjust_menu(OBJECT *obj_array, WORD tree)
 {
 
 #define OBJ(i) (&obj_array[i])

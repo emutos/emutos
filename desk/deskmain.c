@@ -88,21 +88,24 @@
 GLOBAL BYTE     gl_amstr[4];
 GLOBAL BYTE     gl_pmstr[4];
 
+GLOBAL WORD     gl_apid;
+
 
 #if MULTIAPP
 
-EXTERN LONG     pr_beggem;
-EXTERN LONG     pr_begacc;
-EXTERN LONG     pr_begdsk;
-EXTERN LONG     pr_topdsk;
-EXTERN LONG     pr_topmem;
 EXTERN LONG     pr_ssize;
-EXTERN LONG     pr_itbl;
 EXTERN WORD     pr_kbytes;
 EXTERN WORD     gl_fmemflg;
 
-GLOBAL BYTE     gl_bootdr;
-GLOBAL WORD     gl_untop;
+static LONG     pr_beggem;
+static LONG     pr_begacc;
+static LONG     pr_begdsk;
+static LONG     pr_topdsk;
+static LONG     pr_topmem;
+static LONG     pr_itbl;
+
+static BYTE     gl_bootdr;
+static WORD     gl_untop;
 
 typedef struct mfdb 
 {
@@ -122,45 +125,43 @@ typedef struct mfdb
 
 
 /* forward declaration  */
-void    cnx_put(void);
+static void    cnx_put(void);
 
 
 /* BugFix       */
-GLOBAL WORD     ig_close;
-
-GLOBAL WORD     gl_apid;
+static WORD     ig_close;
 
 #ifndef DESK1
-GLOBAL BYTE     ILL_ITEM[] = {L1ITEM, L2ITEM, L3ITEM, L4ITEM, L5ITEM, CLSWITEM, 0};
+static BYTE     ILL_ITEM[] = {L1ITEM, L2ITEM, L3ITEM, L4ITEM, L5ITEM, CLSWITEM, 0};
 #else
-GLOBAL BYTE     ILL_ITEM[] = {L1ITEM, L2ITEM, L3ITEM, L4ITEM, L5ITEM, 0};
+static BYTE     ILL_ITEM[] = {L1ITEM, L2ITEM, L3ITEM, L4ITEM, L5ITEM, 0};
 #endif
 
-GLOBAL BYTE     ILL_FILE[] = {FORMITEM,IDSKITEM,0};
-GLOBAL BYTE     ILL_DOCU[] = {FORMITEM,IDSKITEM,IAPPITEM,0};
-GLOBAL BYTE     ILL_FOLD[] = {FORMITEM,IDSKITEM,IAPPITEM,0};
-GLOBAL BYTE     ILL_FDSK[] = {DELTITEM,IAPPITEM,0};
-GLOBAL BYTE     ILL_HDSK[] = {FORMITEM,DELTITEM,IAPPITEM,0};
-GLOBAL BYTE     ILL_NOSEL[] = {OPENITEM,SHOWITEM,FORMITEM,DELTITEM,
+static BYTE     ILL_FILE[] = {FORMITEM,IDSKITEM,0};
+static BYTE     ILL_DOCU[] = {FORMITEM,IDSKITEM,IAPPITEM,0};
+static BYTE     ILL_FOLD[] = {FORMITEM,IDSKITEM,IAPPITEM,0};
+static BYTE     ILL_FDSK[] = {DELTITEM,IAPPITEM,0};
+static BYTE     ILL_HDSK[] = {FORMITEM,DELTITEM,IAPPITEM,0};
+static BYTE     ILL_NOSEL[] = {OPENITEM,SHOWITEM,FORMITEM,DELTITEM,
                                 IDSKITEM,IAPPITEM,0};
-GLOBAL BYTE     ILL_YSEL[] = {OPENITEM, IDSKITEM, FORMITEM, SHOWITEM, 0};
+static BYTE     ILL_YSEL[] = {OPENITEM, IDSKITEM, FORMITEM, SHOWITEM, 0};
 
 #ifdef DESK1
-GLOBAL BYTE     ILL_TRASH[] = {OPENITEM,FORMITEM,DELTITEM,IDSKITEM,IAPPITEM,0};
-GLOBAL BYTE     ILL_NOTOP[] = {NFOLITEM,CLOSITEM,CLSWITEM,0};
-GLOBAL BYTE     ILL_DESKTOP[] = {NFOLITEM,CLOSITEM,CLSWITEM,ICONITEM,
+static BYTE     ILL_TRASH[] = {OPENITEM,FORMITEM,DELTITEM,IDSKITEM,IAPPITEM,0};
+static BYTE     ILL_NOTOP[] = {NFOLITEM,CLOSITEM,CLSWITEM,0};
+static BYTE     ILL_DESKTOP[] = {NFOLITEM,CLOSITEM,CLSWITEM,ICONITEM,
                                 NAMEITEM,DATEITEM,SIZEITEM,TYPEITEM,0};
 #endif
 
 #if TOS_VERSION >= 0x200
 /* easter egg */
-static const GLOBAL WORD  freq[]=
+static const WORD  freq[]=
 {
         262, 349, 329, 293, 349, 392, 440, 392, 349, 329, 262, 293,
         349, 262, 262, 293, 330, 349, 465, 440, 392, 349, 698
 };
 
-static const GLOBAL WORD  dura[]=
+static const WORD  dura[]=
 {
         4, 12, 4, 12, 4, 6, 2, 4, 4, 12, 4, 4, 
         4, 4, 4, 4, 4, 4, 4, 12, 4, 8, 4
@@ -168,35 +169,35 @@ static const GLOBAL WORD  dura[]=
 #endif
 
 
-GLOBAL LONG     ad_ptext;
-GLOBAL LONG     ad_picon;
+static LONG     ad_ptext;
+static LONG     ad_picon;
 
 #ifndef DESK1
 GLOBAL GRECT    gl_savewin[NUM_WNODES]; /* preserve window x,y,w,h      */
 GLOBAL GRECT    gl_normwin;             /* normal (small) window size   */
-GLOBAL WORD     gl_open1st;             /* index of window to open 1st  */
+static WORD     gl_open1st;             /* index of window to open 1st  */
 #endif
-GLOBAL BYTE     gl_defdrv;              /* letter of lowest drive       */
+static BYTE     gl_defdrv;              /* letter of lowest drive       */
 
-GLOBAL WORD     can_iapp;               /* TRUE if INSAPP enabled       */
-GLOBAL WORD     can_show;               /* TRUE if SHOWITEM enabled     */
-GLOBAL WORD     can_del;                /* TRUE if DELITEM enabled      */
+static WORD     can_iapp;               /* TRUE if INSAPP enabled       */
+static WORD     can_show;               /* TRUE if SHOWITEM enabled     */
+static WORD     can_del;                /* TRUE if DELITEM enabled      */
 
 GLOBAL WORD     gl_whsiztop;            /* wh of window fulled          */
-GLOBAL WORD     gl_idsiztop;            /* id of window fulled          */
+static WORD     gl_idsiztop;            /* id of window fulled          */
 
 
 
 
 /* Function prototypes: */
 #ifndef DESK1
-void hot_close(WORD wh);
+static void hot_close(WORD wh);
 #endif
 
 
 static int can_change_resolution;
 
-static void detect_features()
+static void detect_features(void)
 {
     /* FIXME: Remove the following when full resolution change is supported */
     extern int has_tt_shifter;
@@ -215,14 +216,16 @@ static void detect_features()
 }
 
 
-void copy_icon(LONG dst_tree, LONG tree, WORD dst_icon, WORD icon)
+#if MULTIAPP
+static void copy_icon(LONG dst_tree, LONG tree, WORD dst_icon, WORD icon)
 {
         LLSET(obaddr(dst_tree, dst_icon, 12), LLGET(OB_SPEC(icon)));
 }
+#endif
 
 
 #ifndef DESK1
-void fix_wins()
+static void fix_wins(void)
 {
 /* this routine is supposed to keep track of the windows between        */
 /* runs of the Desktop. it assumes pws has already been set up;         */
@@ -288,7 +291,7 @@ void fix_wins()
 *       Turn on the hour glass to signify a wait and turn it off when were
 *       done.
 */
-void desk_wait(WORD turnon)
+static void desk_wait(WORD turnon)
 {
         graf_mouse( (turnon) ? HGLASS : ARROW, 0x0L);
 }
@@ -297,7 +300,7 @@ void desk_wait(WORD turnon)
 /*
 *       Routine to update all of the desktop windows
 */
-void desk_all(WORD sort)
+static void desk_all(WORD sort)
 {
         desk_wait(TRUE);
         if (sort)
@@ -367,7 +370,7 @@ ANODE *i_find(WORD wh, WORD item, FNODE **ppf, WORD *pisapp)
 /*
 *       Enable/Disable the menu items in dlist
 */
-void men_list(LONG mlist, BYTE *dlist, WORD enable)
+static void men_list(LONG mlist, BYTE *dlist, WORD enable)
 {
         while (*dlist)
           menu_ienable(mlist, *dlist++, enable);
@@ -378,7 +381,7 @@ void men_list(LONG mlist, BYTE *dlist, WORD enable)
 *       Based on current selected icons, figure out which
 *       menu items should be selected (deselected)
 */
-void men_update(LONG tree)
+static void men_update(LONG tree)
 {
         WORD            item, nsel, *pjunk, isapp;
         BYTE            *pvalue;
@@ -465,7 +468,7 @@ void men_update(LONG tree)
 } /* men_update */
 
 
-WORD do_deskmenu(WORD item)
+static WORD do_deskmenu(WORD item)
 {
         WORD            done, touchob;
         LONG            tree;
@@ -504,7 +507,7 @@ WORD do_deskmenu(WORD item)
 }
 
 
-WORD do_filemenu(WORD item)
+static WORD do_filemenu(WORD item)
 {
         WORD    done;
         WORD    curr;
@@ -593,7 +596,7 @@ WORD do_filemenu(WORD item)
 } /* do_filemenu */
 
 
-WORD do_viewmenu(WORD item)
+static WORD do_viewmenu(WORD item)
 {
         WORD            newview, newsort;
         LONG            ptext;
@@ -645,7 +648,7 @@ WORD do_viewmenu(WORD item)
 
 
 
-WORD do_optnmenu(WORD item)
+static WORD do_optnmenu(WORD item)
 {
         ANODE           *pa;
         WORD            done, rebld, curr;
@@ -731,7 +734,7 @@ WORD do_optnmenu(WORD item)
 
 
 
-WORD hndl_button(WORD clicks, WORD mx, WORD my, WORD button, WORD keystate)
+static WORD hndl_button(WORD clicks, WORD mx, WORD my, WORD button, WORD keystate)
 {
         WORD            done, junk;
         GRECT           c;
@@ -809,7 +812,7 @@ WORD hndl_button(WORD clicks, WORD mx, WORD my, WORD button, WORD keystate)
 
 
 
-WORD hndl_menu(WORD title, WORD item)
+static WORD hndl_menu(WORD title, WORD item)
 {
         WORD            done;
 
@@ -861,7 +864,7 @@ static void kbd_arrow(WORD type)
 
 
 
-WORD hndl_kbd(WORD thechar)
+static WORD hndl_kbd(WORD thechar)
 {
         WORD            done;
 
@@ -954,7 +957,7 @@ WORD hndl_kbd(WORD thechar)
 
 
 #ifndef DESK1
-void hot_close(WORD wh)
+static void hot_close(WORD wh)
 {
 /* "close" the path but don't set a new dir. & don't redraw the window  */
 /* until the button is up or there are no more CLOSED messages          */
@@ -1033,7 +1036,7 @@ void hot_close(WORD wh)
 #endif
 
 
-WORD hndl_msg()
+WORD hndl_msg(void)
 {
         WORD            done;
         WNODE           *pw;
@@ -1169,7 +1172,7 @@ WORD hndl_msg()
 } /* hndl_msg */
 
 
-void cnx_put()
+static void cnx_put(void)
 {
         WORD            iwin;
         WSAVE           *pws;
@@ -1230,7 +1233,7 @@ void cnx_put()
 /* c n x _ o p e n                                                      */
 /************************************************************************/
 #ifndef DESK1
-void cnx_open(WORD idx)
+static void cnx_open(WORD idx)
 {
         WSAVE           *pws;
         WNODE           *pw;
@@ -1267,7 +1270,7 @@ void cnx_open(WORD idx)
 
 
 #ifdef DESK1
-void cnx_get(void)
+static void cnx_get(void)
 {
         /* DESKTOP v1.2: This function is a lot more involved */
         /* because CNX_OPEN is no longer a separate function. */
@@ -1339,7 +1342,7 @@ void cnx_get(void)
         cnx_put();
 } /* cnx_get */
 #else
-void cnx_get()
+static void cnx_get(void)
 {
         G.g_iview = (G.g_cnxsave.vitem_save == 0) ? V_TEXT : V_ICON;
         do_viewmenu(ICONITEM);
@@ -1363,7 +1366,7 @@ void cnx_get()
 
 
 
-WORD deskmain()
+WORD deskmain(void)
 {
         WORD            ii, done, flags;
         UWORD           ev_which, mx, my, button, kstate, kret, bret;

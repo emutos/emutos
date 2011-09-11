@@ -49,7 +49,7 @@
 
 
 /* Prototypes: */
-WORD act_chkobj(LONG tree, WORD root, WORD obj, WORD mx, WORD my, WORD w, WORD h);
+static WORD act_chkobj(LONG tree, WORD root, WORD obj, WORD mx, WORD my, WORD w, WORD h);
 
 
 
@@ -242,7 +242,7 @@ static void gr_obalign(WORD numobs, WORD x, WORD y, WORD *xyobpts)
 /*
 *       This routine is used to drag a list of polylines.
 */
-void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD numpts, 
+static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD numpts, 
                    WORD *xylnpts, WORD numobs, WORD *xyobpts, 
                    WORD *pdulx, WORD *pduly, WORD *pdwh, WORD *pdobj)
 {
@@ -371,7 +371,7 @@ void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD numpts,
 *       the destination of the copy. numpts, xylnpts, numobs, & xyobpts
 *       are no longer used.
 */
-void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD *pdulx, WORD *pduly,
+static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD *pdulx, WORD *pduly,
                 WORD *pdwh, WORD *pdobj)
 {
         LONG    tree, curr_tree;
@@ -477,7 +477,7 @@ static WORD bit_on(WORD x, WORD y, LONG praster, WORD bwidth)
 *       If the current view is by text strings then use the name
 *       portion of the text string.
 */
-WORD act_chkobj(LONG tree, WORD root, WORD obj, WORD mx, WORD my, WORD w, WORD h)
+static WORD act_chkobj(LONG tree, WORD root, WORD obj, WORD mx, WORD my, WORD w, WORD h)
 {
         OBJECT          *olist;
         ICONBLK         *ib;
