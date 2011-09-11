@@ -2616,3 +2616,5 @@ Start... early ages
 2011-09-11
 - bios/lineainit.c bios/machine.c bios/screen.c bios/xbios.c include/config.h:
   Added new configuration switch to disable support for Falcon hardware (THH)
+- Makefile: Added new flag WITH_DESK1 that can be used to enable the desktop
+  with fixed window mode (which does not use icons and needs less memory) (THH)

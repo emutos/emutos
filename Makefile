@@ -50,13 +50,19 @@ endif
 # Choose the user interface that should be included into EmuTOS
 # (0=command line "EmuCON" , 1=AES)
 
-WITH_AES = 1
+WITH_AES=1
 
 #
 # Also include EmuCON when already using AES as main interface?
 #
 
-WITH_CLI = 1
+WITH_CLI=1
+
+#
+# Use PC-GEM v1.0 style Desktop (i.e. without fixed windows)?
+#
+
+WITH_DESK1=1
 
 
 #
@@ -195,9 +201,14 @@ aes_ssrc = gemstart.S gemdosif.S gemasm.S gsx2.S large.S optimopt.S
 
 desk_csrc = deskact.c deskapp.c deskdir.c deskfpd.c deskfun.c deskglob.c \
             deskinf.c deskins.c deskmain.c deskobj.c deskpro.c deskrsrc.c \
-            desksupp.c deskwin.c gembind.c icons.c desk_rsc.c desk1.c
+            desksupp.c deskwin.c gembind.c desk_rsc.c
             #taddr.c deskgraf.c deskgsx.c
 desk_ssrc = deskstart.S
+
+ifeq ($(strip $(WITH_DESK1)),1)
+desk_csrc += icons.c desk1.c
+endif
+
 
 #
 # source code in cli/ for EmuTOS console EmuCON
@@ -216,7 +227,11 @@ util_copts = -Ibios
 cli_copts  = -Ibios
 vdi_copts  = -Ibios
 aes_copts  = -Ibios
-desk_copts = -Ibios -Iaes -DDESK1
+desk_copts = -Ibios -Iaes 
+
+ifeq ($(strip $(WITH_DESK1)),1)
+desk_copts += -DDESK1
+endif
 
 #
 # Directory selection depending on the user interface (EmuCON or AES)
@@ -537,7 +552,8 @@ all192:
 	  j=etos192$${i}.img; \
 	  $(RM) include/i18nconf.h; \
 	  echo '***' building $$j '***'; \
-	  $(MAKE) DEF='-DTOS_VERSION=0x102' WITH_CLI=0 UNIQUE=$$i 192 || exit 1 \
+	  $(MAKE) DEF='-DTOS_VERSION=0x102' WITH_CLI=0 WITH_DESK1=0 \
+			UNIQUE=$$i 192 || exit 1 \
 	  mv etos192k.img $$j; \
 	done
 
