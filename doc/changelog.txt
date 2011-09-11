@@ -2624,3 +2624,6 @@ Start... early ages
   to LONG to properly support more than 16 drives. This avoids an unnecessary
   bootsector read every time a drive above P: is accessed. Submitted by Roger
   Burrows. (VRI)
+- bdos/bios.h bdos/fs.h: Replaces individual definitions of the Process
+  Descriptor with include of centralized version (in headers within bdos
+  directory only). Submitted by Rober Burrows. (VRI)

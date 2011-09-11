@@ -21,6 +21,8 @@
 #ifndef FS_H
 #define FS_H
 
+#include "pd.h"
+
 /*
  *  fix conditionals
  */
@@ -83,7 +85,6 @@ extern  long    errcode;
 
 #define BCB     struct  _bcb
 #define FTAB    struct  _ftab
-#define PD      struct  _pd
 #define OFD     struct  _ofd
 #define FCB     struct  _fcb
 #define DND     struct  _dnd
@@ -92,53 +93,6 @@ extern  long    errcode;
 
 # define CLNO    unsigned int   /*  cluster number */
 # define RECNO   unsigned long  /*  record number  */
-
-/*
- *  PD - Process Descriptor
- */
-
-#define PDCLSIZE        0x80            /*  size of command line in bytes  */
-#define NUMCURDIR       16              /*  number of entries in curdir array */
-
-PD      /* this is the basepage format */
-{
-    /* 0x00 */
-    long p_lowtpa;
-    long p_hitpa;
-    long p_tbase;
-    long p_tlen;
-    /* 0x10 */
-    long p_dbase;
-    long p_dlen;
-    long p_bbase;
-    long p_blen;
-    /* 0x20 */
-    char *p_xdta;
-    PD   *p_parent;             /* parent PD */
-    int  p_flags;
-    int  p_0fill[1];
-    char *p_env;                /* at offset 2ch (eat your heart out, Lee) */
-    /* 0x30 */
-    char p_uft[NUMSTD];         /* index into sys file table for std files */
-    char p_lddrv;
-    char p_curdrv;
-    long p_1fill[2];
-    /* 0x40 */
-    char p_curdir[NUMCURDIR];   /* index into sys dir table */
-    /* 0x50 */
-    long p_2fill[4];
-    /* 0x60 */
-    long p_3fill[2];
-    long p_dreg[1];             /* dreg[0] */
-    long p_areg[5];             /* areg[3..7] */
-    /* 0x80 */
-    char p_cmdlin[PDCLSIZE];
-} ;
-
-/* p_flags values: */
-#define PF_FASTLOAD  0x0001
-#define PF_TTRAMLOAD 0x0002
-#define PF_TTRAMMEM  0x0004
 
 
 /*

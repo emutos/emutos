@@ -16,6 +16,7 @@
 #define BIOS_H
 
 #include "bpb.h"
+#include "pd.h"
 
 /*
  *  Bios Function Numbers
@@ -81,36 +82,6 @@
 /*
  *  Data Structures
  */
-
-/*
- *  PD - Process Descriptor
- */
-
-#ifndef PD
-#define PD struct _pd
-
-PD
-{
-    /* 0x00 */
-    long        p_lowtpa;
-    long        p_hitpa;
-    long        p_tbase;
-    long        p_tlen;
-    /* 0x10 */
-    long        p_dbase;
-    long        p_dlen;
-    long        p_bbase;
-    long        p_blen;
-    /* 0x20 */
-    long        p_0fill[3] ;
-    char        *p_env;
-    /* 0x30 */
-    long        p_1fill[20] ;
-    /* 0x80 */
-    char        p_cmdlin[0x80];
-} ;
-#endif
-
 
 /*
  *  BCB - Buffer Control Block
