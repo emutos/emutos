@@ -550,10 +550,11 @@ all192:
 	@for i in $(COUNTRIES); \
 	do \
 	  j=etos192$${i}.img; \
-	  $(RM) include/i18nconf.h; \
+	  $(RM) include/i18nconf.h bios/header.h */*.tr.c; \
+	  $(RM) emutos1.img etos192k.img obj/country* obj/nls*; \
 	  echo '***' building $$j '***'; \
 	  $(MAKE) DEF='-DTOS_VERSION=0x102' WITH_CLI=0 WITH_DESK1=0 \
-			UNIQUE=$$i 192 || exit 1 \
+			UNIQUE=$$i 192; \
 	  mv etos192k.img $$j; \
 	done
 
@@ -869,7 +870,7 @@ tgz:	distclean
 
 TOCLEAN += makefile.dep
 
-makefile.dep: util/langs.c bios/header.h bios/ctables.h
+makefile.dep: util/langs.c bios/header.h bios/ctables.h include/i18nconf.h
 	( \
 	  $(CC) $(MULTILIBFLAGS) -MM $(INC) -Ibios -Iaes $(DEF) $(CSRC); \
 	  $(CC) $(MULTILIBFLAGS) -MM $(INC) $(DEF) $(SSRC) \
