@@ -328,7 +328,7 @@ define sized_image
 size=`wc -c < $<`; goalbytes=`expr $$goal \* 1024`; \
 if [ $$size -gt $$goalbytes ]; \
 then \
-  echo "EmuTOS too big for $${goal}K ($$goalbytes bytes): size = $$size"; \
+  echo "EmuTOS too big for $${goal}K ($$goalbytes bytes): size = $$size (`expr $$size - $$goalbytes` extra bytes)"; \
   false; \
 else \
   dd if=/dev/zero of=$@ bs=1024 count=$$goal 2>/dev/null; \

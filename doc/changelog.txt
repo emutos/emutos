@@ -2629,3 +2629,5 @@ Start... early ages
   directory only). Submitted by Rober Burrows. (VRI)
 - desk/desk_rsc.c desk/deskact.c desk/deskmain.c desk/deskmain.h
   desk/desksupp.c: Static cleanup. Contributed by Eero Tamminen. (VRI)
+- Makefile: Display the amount of extra bytes when the sized images are too
+  big. (VRI)
