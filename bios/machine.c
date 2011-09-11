@@ -195,7 +195,9 @@ void machine_detect(void)
   detect_video();
   detect_vme();
   detect_megartc();
+#if CONF_WITH_NVRAM
   detect_nvram();
+#endif
   detect_dmasound();
 }
   

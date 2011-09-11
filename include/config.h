@@ -142,6 +142,28 @@
 #endif
 
 /*
+ * Set CONF_WITH_TT to 1 to enable support for TT hardware
+ */
+#ifndef CONF_WITH_TT
+# if TOS_VERSION < 0x200
+#  define CONF_WITH_TT 0
+# else
+#  define CONF_WITH_TT 1
+# endif
+#endif
+
+/*
+ * Set CONF_WITH_NVRAM to 1 to enable NVRAM support
+ */
+#ifndef CONF_WITH_NVRAM
+# if (CONF_WITH_TT || CONF_WITH_FALCON)
+#  define CONF_WITH_NVRAM 1
+# else
+#  define CONF_WITH_NVRAM 0
+# endif
+#endif
+
+/*
  * Set CONF_WITH_XHDI to 1 to enable XHDI support (i.e. the XHDI cookie etc.)
  */
 #ifndef CONF_WITH_XHDI

@@ -937,7 +937,11 @@ const PFLONG xbios_vecs[] = {
     VEC(xbios_2b, DMAwrite),
     VEC(xbios_2c, bconmap),
     xbios_unimpl,   /* 2d */
-    VEC(xbios_2e, nvmaccess),
+#if CONF_WITH_NVRAM
+    VEC(xbios_2e, nvmaccess),  /* 2e */
+#else
+    xbios_unimpl,   /* 2e */
+#endif
     xbios_unimpl,   /* 2f */
     xbios_unimpl,   /* 30 */
     xbios_unimpl,   /* 31 */
@@ -956,6 +960,7 @@ const PFLONG xbios_vecs[] = {
     xbios_unimpl,   /* 3e */
     xbios_unimpl,   /* 3f */
     xbios_unimpl,   /* 40 blitmode */
+#if TOS_VERSION >= 0x200
     xbios_unimpl,   /* 41 */
     xbios_unimpl,   /* 42 */
     xbios_unimpl,   /* 43 */
@@ -971,8 +976,13 @@ const PFLONG xbios_vecs[] = {
     xbios_unimpl,   /* 4d */
     xbios_unimpl,   /* 4e */
     xbios_unimpl,   /* 4f */
+#if CONF_WITH_TT
     VEC(xbios_50, esetshift),   /* 50 */
     VEC(xbios_51, egetshift),   /* 51 */
+#else
+    xbios_unimpl,   /* 50 */
+    xbios_unimpl,   /* 51 */
+#endif
     xbios_unimpl,   /* 52 */
     xbios_unimpl,   /* 53 */
     xbios_unimpl,   /* 54 */
@@ -982,7 +992,12 @@ const PFLONG xbios_vecs[] = {
 #if CONF_WITH_FALCON
     VEC(vsetmode, vsetmode),   /* 58 */
     VEC(vmontype, vmontype),   /* 59 */
+#else
+    xbios_unimpl,   /* 58 */
+    xbios_unimpl,   /* 59 */
 #endif
+
+#endif /* TOS_VERSION >= 0x200 */
 };
 
 const short xbios_ent = sizeof(xbios_vecs) / sizeof(PFLONG);

@@ -1,7 +1,7 @@
 /*
  * clock.c - BIOS time and date routines
  *
- * Copyright (c) 2001-2008 EmuTOS development team
+ * Copyright (c) 2001-2011 EmuTOS development team
  *
  * Authors:
  *  MAD   Martin Doering
@@ -13,7 +13,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
+#include "config.h"
 #include "portab.h"
 #include "kprint.h"
 #include "clock.h"
@@ -22,15 +22,11 @@
 #include "string.h"
 #include "vectors.h"
 #include "nvram.h"
-#include "config.h"
 #include "machine.h"
 #include "cookie.h"
 
 #define DBG_CLOCK 0
 
-#if TOS_VERSION < 0x200
-#define NO_NVRAM 1
-#endif
 
 /* set this to 1 to debug IKBD clock (you should also disable NVRAM) */
 #define NO_MEGARTC 0
@@ -270,7 +266,7 @@ static void msetdt(ULONG dt)
 
 /*==== NVRAM RTC internal functions =======================================*/
 
-#if ! NO_NVRAM
+#if CONF_WITH_NVRAM
 
 /*
  * The MC146818 was used as the RTC and NVRAM in MegaSTE, TT and Falcon.
@@ -381,7 +377,7 @@ static void nsetdt(ULONG dt)
   ndosettime(dt);
 }
 
-#endif /* ! NO_NVRAM */
+#endif /* CONF_WITH_NVRAM */
 
 
 /*==== IKBD clock section =================================================*/
@@ -544,7 +540,7 @@ static void isetdt(ULONG dt)
 
 void clock_init(void)
 {
-#if ! NO_NVRAM
+#if CONF_WITH_NVRAM
   if(has_nvram) {
     /* On Mega-STE and early TTs the year offset in the NVRAM is different */
     if (cookie_mch < MCH_TT || (cookie_mch == MCH_TT && TOS_VERSION <= 0x0305)) {
@@ -554,7 +550,7 @@ void clock_init(void)
         nvram_rtc_year_offset = 1968 - 1980;
     }
   }
-#endif /* ! NO_NVRAM */
+#endif /* CONF_WITH_NVRAM */
 
   if( ! (has_nvram || has_megartc) ) {
     /* no megartc, the best we can do is set the date to the
@@ -568,12 +564,12 @@ void clock_init(void)
 
 void settime(LONG time)
 {
-#if ! NO_NVRAM
+#if CONF_WITH_NVRAM
   if(has_nvram) {
     nsetdt(time);
   }
   else 
-#endif /* ! NO_NVRAM */
+#endif /* CONF_WITH_NVRAM */
   if(has_megartc) {
     msetdt(time);
   }
@@ -584,7 +580,7 @@ void settime(LONG time)
 
 LONG gettime(void)
 {
-#if ! NO_NVRAM
+#if CONF_WITH_NVRAM
   if(has_nvram) {
     return ngetdt();
   }

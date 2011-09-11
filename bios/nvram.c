@@ -1,7 +1,7 @@
 /*
  * nvram.c - Non-Volatile RAM access
  *
- * Copyright (c) 2001, 2007 EmuTOS development team.
+ * Copyright (c) 2001, 2011 EmuTOS development team.
  *
  * Authors:
  *  LVL     Laurent Vogel
@@ -10,6 +10,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+#include "config.h"
 #include "portab.h"
 #include "cookie.h"
 #include "machine.h"
@@ -17,10 +18,14 @@
 #include "nvram.h"
 #include "biosmem.h"
 
+
 int has_nvram;
+
+#if CONF_WITH_NVRAM
 
 static UBYTE nvram_buf[50];
 static int inited;
+
 
 /*
  * detect_nvram - detect and init the nvram
@@ -166,3 +171,5 @@ WORD nvmaccess(WORD type, WORD start, WORD count, PTR buffer)
     }
     return 0;
 }
+
+#endif  /* CONF_WITH_NVRAM */

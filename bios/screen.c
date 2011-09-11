@@ -40,12 +40,14 @@ const static WORD dflt_palette[] = {
     RGB_LTBLUE, RGB_LTMAGENTA, RGB_LTCYAN, RGB_BLACK
 };
 
+#if CONF_WITH_FALCON
 const static LONG videl_dflt_palette[] = {
     FRGB_WHITE, FRGB_RED, FRGB_GREEN, FRGB_YELLOW,
     FRGB_BLUE, FRGB_MAGENTA, FRGB_CYAN, FRGB_LTGRAY,
     FRGB_GRAY, FRGB_LTRED, FRGB_LTGREEN, FRGB_LTYELLOW,
     FRGB_LTBLUE, FRGB_LTMAGENTA, FRGB_LTCYAN, FRGB_BLACK
 };
+#endif
 
 #if CONF_WITH_FALCON
 #define VRAM_SIZE  (has_videl ? get_videl_width() / 8L * get_videl_height() * get_videl_bpp() : 32000UL)
@@ -118,9 +120,11 @@ void screen_init(void)
     rez = getrez();
 
     if (has_videl) {
+#if CONF_WITH_FALCON
         for(i = 0; i < 256; i++) {
             fcol_regs[i] = videl_dflt_palette[i%16]; /* hackish way of getting all 256 colors from first 16 - incorrect, FIXME */
         }
+#endif
     }
     else {
         volatile struct {
@@ -328,6 +332,12 @@ void vsync(void)
 
 
 /*
+ * TT shifter functions
+ */
+
+#if CONF_WITH_TT
+
+/*
  * Set TT shifter mode
  */
 WORD esetshift(WORD mode)
@@ -355,6 +365,8 @@ WORD egetshift(void)
 
     return *(WORD *)0xffff8262;
 }
+
+#endif /* CONF_WITH_TT */
 
 
 /*
