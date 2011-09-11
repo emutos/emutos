@@ -131,6 +131,17 @@
 #endif
 
 /*
+ * Set CONF_WITH_FALCON to 1 to enable support for Falcon hardware (Videl etc.)
+ */
+#ifndef CONF_WITH_FALCON
+# if TOS_VERSION < 0x200
+#  define CONF_WITH_FALCON 0
+# else
+#  define CONF_WITH_FALCON 1
+# endif
+#endif
+
+/*
  * Set CONF_WITH_XHDI to 1 to enable XHDI support (i.e. the XHDI cookie etc.)
  */
 #ifndef CONF_WITH_XHDI

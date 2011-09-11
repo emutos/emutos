@@ -47,7 +47,11 @@ const static LONG videl_dflt_palette[] = {
     FRGB_LTBLUE, FRGB_LTMAGENTA, FRGB_LTCYAN, FRGB_BLACK
 };
 
+#if CONF_WITH_FALCON
 #define VRAM_SIZE  (has_videl ? get_videl_width() / 8L * get_videl_height() * get_videl_bpp() : 32000UL)
+#else
+#define VRAM_SIZE  32000UL
+#endif
 
 
 /* Set physical screen address */
@@ -82,6 +86,7 @@ void screen_init(void)
     ULONG screen_start;
 
     if (has_videl) {
+#if CONF_WITH_FALCON
         UWORD boot_resolution;
         int ret;
 
@@ -94,6 +99,7 @@ void screen_init(void)
         if (ret != 0)
             boot_resolution = 0x03a;    /* Default resolution */
         vsetmode(boot_resolution);
+#endif
     }
     else {
         *(BYTE *) 0xffff820a = 2;   /* sync-mode to 50 hz pal, internal sync */
@@ -186,6 +192,7 @@ LONG logbase(void)
 WORD getrez(void)
 {
     if (has_videl) {
+#if CONF_WITH_FALCON
         /* Get the video mode for Falcon-hardware */
         int bpp = get_videl_bpp();
         switch(bpp) {
@@ -197,6 +204,7 @@ WORD getrez(void)
                 kprintf("Problem - unsupported color depth\n");
                 return 0;
        }
+#endif
     }
     else {
         /* Get the video mode for ST-hardware */
@@ -231,8 +239,10 @@ void setscreen(LONG logLoc, LONG physLoc, WORD rez, WORD videlmode)
             *(UBYTE *)0xffff8262 = rez;
         }
         else if (has_videl) {
+#if CONF_WITH_FALCON
             if (rez == 3)
                 vsetmode(videlmode);
+#endif
         }
         /* Re-initialize line-a, VT52 etc: */
         linea_init();
@@ -350,6 +360,8 @@ WORD egetshift(void)
 /*
  * functions for VIDEL programming
  */
+
+#if CONF_WITH_FALCON
 
 UWORD get_videl_bpp(void)
 {
@@ -517,3 +529,5 @@ WORD vmontype(void)
 
     return ((*(UBYTE *)0xffff8006) >> 6) & 3;
 }
+
+#endif /* CONF_WITH_FALCON */

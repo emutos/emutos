@@ -1,7 +1,7 @@
 /*
  * memory.S - memory initialization
  *
- * Copyright (c) 2001-2006 by Authors:
+ * Copyright (c) 2001-2011 by Authors:
  *
  *  MAD  Martin Doering
  *  joy  Petr Stehlik
@@ -16,7 +16,7 @@
 
 // compile time switches would simplify the resulting binary code
 #define ST_MMU      1                       // define if it should run on ST
-#define FALCON_MMU  (TOS_VERSION >= 0x200)  // define if it should run on Falcon
+#define FALCON_MMU  CONF_WITH_FALCON        // define if it should run on Falcon
 
 
 // ==== References ===========================================================

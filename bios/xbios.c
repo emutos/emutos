@@ -13,7 +13,7 @@
  */
 
 
-
+#include "config.h"
 #include "portab.h"
 #include "kprint.h"
 #include "iorec.h"
@@ -979,8 +979,10 @@ const PFLONG xbios_vecs[] = {
     xbios_unimpl,   /* 55 */
     xbios_unimpl,   /* 56 */
     xbios_unimpl,   /* 57 */
+#if CONF_WITH_FALCON
     VEC(vsetmode, vsetmode),   /* 58 */
     VEC(vmontype, vmontype),   /* 59 */
+#endif
 };
 
 const short xbios_ent = sizeof(xbios_vecs) / sizeof(PFLONG);

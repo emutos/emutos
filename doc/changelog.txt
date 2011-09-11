@@ -2612,3 +2612,7 @@ Start... early ages
 - bios/machine.c bios/natfeat.S bios/xhdi.c include/config.h: Added another
   compile-time switch to disable XHDI on TOS 1.xx to save some more space (THH)
 - bios/memory.S: Disable Falcon memory controller support for TOS 1.xx (THH)
+
+2011-09-11
+- bios/lineainit.c bios/machine.c bios/screen.c bios/xbios.c include/config.h:
+  Added new configuration switch to disable support for Falcon hardware (THH)

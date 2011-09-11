@@ -10,7 +10,7 @@
  *
  */
 
-
+#include "config.h"
 #include "tosvars.h"
 #include "lineavars.h"
 #include "font.h"
@@ -71,9 +71,11 @@ void linea_init(void)
         vmode=2;                        /* Falcon should be handled special? */
     }
     if (has_videl) {
+#if CONF_WITH_FALCON
         v_planes = get_videl_bpp();
         v_hz_rez = get_videl_width();
         v_vt_rez = get_videl_height();
+#endif
     }
     else {
         v_planes = video_mode[vmode].planes;
