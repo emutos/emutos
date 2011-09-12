@@ -2641,3 +2641,7 @@ Start... early ages
   the corresponding headers from desk/. Submitted by Roger Burrows. (VRI)
 - doc/bios.txt: Converted line endings to LF format. (VRI)
 - bios/screen.c desk/deskact.c: Fixed warnings. (VRI)
+- bios/lineainit.c bios/machine.c bios/machine.h bios/memory.S bios/screen.c
+  bios/xbios.c desk/deskmain.c include/config.h vdi/vdi_col.c: Splitted
+  CONF_WITH_FALCON into CONF_WITH_FALCON_MMU and CONF_WITH_VIDEL and added
+  tests systematically.

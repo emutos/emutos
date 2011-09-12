@@ -131,13 +131,24 @@
 #endif
 
 /*
- * Set CONF_WITH_FALCON to 1 to enable support for Falcon hardware (Videl etc.)
+ * Set CONF_WITH_FALCON_MMU to 1 to enable support for Falcon MMU.
  */
-#ifndef CONF_WITH_FALCON
+#ifndef CONF_WITH_FALCON_MMU
 # if TOS_VERSION < 0x200
-#  define CONF_WITH_FALCON 0
+#  define CONF_WITH_FALCON_MMU 0
 # else
-#  define CONF_WITH_FALCON 1
+#  define CONF_WITH_FALCON_MMU 1
+# endif
+#endif
+
+/*
+ * Set CONF_WITH_VIDEL to 1 to enable support for Falcon Videl.
+ */
+#ifndef CONF_WITH_VIDEL
+# if TOS_VERSION < 0x200
+#  define CONF_WITH_VIDEL 0
+# else
+#  define CONF_WITH_VIDEL 1
 # endif
 #endif
 
@@ -156,10 +167,10 @@
  * Set CONF_WITH_NVRAM to 1 to enable NVRAM support
  */
 #ifndef CONF_WITH_NVRAM
-# if (CONF_WITH_TT || CONF_WITH_FALCON)
-#  define CONF_WITH_NVRAM 1
-# else
+# if TOS_VERSION < 0x200
 #  define CONF_WITH_NVRAM 0
+# else
+#  define CONF_WITH_NVRAM 1
 # endif
 #endif
 

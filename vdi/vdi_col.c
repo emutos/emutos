@@ -73,11 +73,14 @@ static int vdi2ste(int col)
 /* Set an entry in the hardware color palette */
 static void set_color(int colnum, int r, int g, int b)
 {
+#if CONF_WITH_VIDEL
     if (has_videl)
     {
         /* TODO: not implemented */
     }
-    else if (has_tt_shifter)
+    else
+#endif
+    if (has_tt_shifter)
     {
         /* TODO: not implemented */
     }
@@ -209,10 +212,12 @@ void _vq_color(Vwk *vwk)
             INTOUT[3] = req_col2[colnum-16][2];
         }
     }
+#if CONF_WITH_VIDEL
     else if (has_videl)
     {
         /* TODO: not implemented */
     }
+#endif
     else if (has_tt_shifter)
     {
         /* TODO: not implemented */

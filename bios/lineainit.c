@@ -70,14 +70,16 @@ void linea_init(void)
         kprintf("video mode was: %d !\n", vmode);
         vmode=2;                        /* Falcon should be handled special? */
     }
+
+#if CONF_WITH_VIDEL
     if (has_videl) {
-#if CONF_WITH_FALCON
         v_planes = get_videl_bpp();
         v_hz_rez = get_videl_width();
         v_vt_rez = get_videl_height();
-#endif
     }
-    else {
+    else
+#endif
+    {
         v_planes = video_mode[vmode].planes;
         v_hz_rez = video_mode[vmode].hz_rez;
         v_vt_rez = video_mode[vmode].vt_rez;

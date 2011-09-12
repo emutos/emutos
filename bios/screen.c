@@ -40,7 +40,7 @@ const static WORD dflt_palette[] = {
     RGB_LTBLUE, RGB_LTMAGENTA, RGB_LTCYAN, RGB_BLACK
 };
 
-#if CONF_WITH_FALCON
+#if CONF_WITH_VIDEL
 const static LONG videl_dflt_palette[] = {
     FRGB_WHITE, FRGB_RED, FRGB_GREEN, FRGB_YELLOW,
     FRGB_BLUE, FRGB_MAGENTA, FRGB_CYAN, FRGB_LTGRAY,
@@ -49,7 +49,7 @@ const static LONG videl_dflt_palette[] = {
 };
 #endif
 
-#if CONF_WITH_FALCON
+#if CONF_WITH_VIDEL
 #define VRAM_SIZE  (has_videl ? get_videl_width() / 8L * get_videl_height() * get_videl_bpp() : 32000UL)
 #else
 #define VRAM_SIZE  32000UL
@@ -82,13 +82,15 @@ void screen_init(void)
 {
     volatile BYTE *rez_reg = (BYTE *) 0xffff8260;
     volatile WORD *col_regs = (WORD *) 0xffff8240;
+#if CONF_WITH_VIDEL
     volatile LONG *fcol_regs = (LONG *) 0xffff9800;
+#endif
     WORD rez;
     WORD i;
     ULONG screen_start;
 
+#if CONF_WITH_VIDEL
     if (has_videl) {
-#if CONF_WITH_FALCON
         UWORD boot_resolution;
         int ret;
 
@@ -101,9 +103,10 @@ void screen_init(void)
         if (ret != 0)
             boot_resolution = 0x03a;    /* Default resolution */
         vsetmode(boot_resolution);
-#endif
     }
-    else {
+    else
+#endif
+    {
         *(BYTE *) 0xffff820a = 2;   /* sync-mode to 50 hz pal, internal sync */
     }
 
@@ -119,14 +122,15 @@ void screen_init(void)
     /* Get the video mode */
     rez = getrez();
 
+#if CONF_WITH_VIDEL
     if (has_videl) {
-#if CONF_WITH_FALCON
         for(i = 0; i < 256; i++) {
             fcol_regs[i] = videl_dflt_palette[i%16]; /* hackish way of getting all 256 colors from first 16 - incorrect, FIXME */
         }
-#endif
     }
-    else {
+    else
+#endif
+    {
         volatile struct {
             BYTE gpip;
         } *mfp = (void *) 0xfffffa01;
@@ -146,13 +150,17 @@ void screen_init(void)
 
     if (rez == 1) {
         col_regs[3] = col_regs[15];
+#if CONF_WITH_VIDEL
         if (has_videl)
             fcol_regs[3] = fcol_regs[15];
+#endif
     }
     else if (rez == 2) {
         col_regs[1] = col_regs[15];
+#if CONF_WITH_VIDEL
         if (has_videl)
             fcol_regs[1] = fcol_regs[15];
+#endif
     }
 
     /* videoram is placed just below the phystop */
@@ -162,8 +170,12 @@ void screen_init(void)
     /* Original TOS leaves a gap of 768 bytes between screen ram and phys_top...
      * ... we normally don't need that, but some old software relies on that fact,
      * so we use this gap, too. */
+#if CONF_WITH_VIDEL
     if (!has_videl)
+#endif
+    {
         screen_start -= 0x300;
+    }
     /* set new v_bas_ad */
     v_bas_ad = (UBYTE *)screen_start;
     /* correct phystop */
@@ -195,7 +207,7 @@ LONG logbase(void)
 
 WORD getrez(void)
 {
-#if CONF_WITH_FALCON
+#if CONF_WITH_VIDEL
     if (has_videl) {
         /* Get the video mode for Falcon-hardware */
         int bpp = get_videl_bpp();
@@ -243,12 +255,12 @@ void setscreen(LONG logLoc, LONG physLoc, WORD rez, WORD videlmode)
         else if (has_tt_shifter) {
             *(UBYTE *)0xffff8262 = rez;
         }
+#if CONF_WITH_VIDEL
         else if (has_videl) {
-#if CONF_WITH_FALCON
             if (rez == 3)
                 vsetmode(videlmode);
-#endif
         }
+#endif
         /* Re-initialize line-a, VT52 etc: */
         linea_init();
         font_set_default();
@@ -370,11 +382,11 @@ WORD egetshift(void)
 #endif /* CONF_WITH_TT */
 
 
+#if CONF_WITH_VIDEL
+
 /*
  * functions for VIDEL programming
  */
-
-#if CONF_WITH_FALCON
 
 UWORD get_videl_bpp(void)
 {
@@ -543,4 +555,4 @@ WORD vmontype(void)
     return ((*(UBYTE *)0xffff8006) >> 6) & 3;
 }
 
-#endif /* CONF_WITH_FALCON */
+#endif /* CONF_WITH_VIDEL */

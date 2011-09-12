@@ -989,7 +989,7 @@ const PFLONG xbios_vecs[] = {
     xbios_unimpl,   /* 55 */
     xbios_unimpl,   /* 56 */
     xbios_unimpl,   /* 57 */
-#if CONF_WITH_FALCON
+#if CONF_WITH_VIDEL
     VEC(vsetmode, vsetmode),   /* 58 */
     VEC(vmontype, vmontype),   /* 59 */
 #else

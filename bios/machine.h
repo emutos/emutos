@@ -32,7 +32,9 @@ extern long cookie_frb;
 
 extern int has_ste_shifter;
 extern int has_tt_shifter;
+#if CONF_WITH_VIDEL
 extern int has_videl;
+#endif
 extern int has_vme;
 extern int has_megartc;   /* in clock.c */
 extern int has_nvram;     /* in nvram.c */

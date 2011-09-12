@@ -16,7 +16,7 @@
 
 // compile time switches would simplify the resulting binary code
 #define ST_MMU      1                       // define if it should run on ST
-#define FALCON_MMU  CONF_WITH_FALCON        // define if it should run on Falcon
+#define FALCON_MMU  CONF_WITH_FALCON_MMU    // define if it should run on Falcon
 
 
 // ==== References ===========================================================
