@@ -2640,4 +2640,4 @@ Start... early ages
   funcdef.h, gsxdefs.h, obdefs.h, and taddr.h from aes/ to include/, and removes
   the corresponding headers from desk/. Submitted by Roger Burrows. (VRI)
 - doc/bios.txt: Converted line endings to LF format. (VRI)
-- desk/deskact.c: Fixed warning. (VRI)
+- bios/screen.c desk/deskact.c: Fixed warnings. (VRI)

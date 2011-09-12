@@ -195,8 +195,8 @@ LONG logbase(void)
 
 WORD getrez(void)
 {
-    if (has_videl) {
 #if CONF_WITH_FALCON
+    if (has_videl) {
         /* Get the video mode for Falcon-hardware */
         int bpp = get_videl_bpp();
         switch(bpp) {
@@ -208,9 +208,10 @@ WORD getrez(void)
                 kprintf("Problem - unsupported color depth\n");
                 return 0;
        }
-#endif
     }
-    else {
+    else
+#endif
+    {
         /* Get the video mode for ST-hardware */
         WORD rez;
 
