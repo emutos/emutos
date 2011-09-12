@@ -88,6 +88,8 @@ static void detect_video(void)
 #endif
 }
 
+#if CONF_WITH_VME
+
 /* vme */
 
 int has_vme;
@@ -105,6 +107,8 @@ static void detect_vme(void)
     has_vme = 0;
   }
 }
+
+#endif /* CONF_WITH_VME */
 
 /* DIP switches */
 
@@ -168,9 +172,13 @@ static void setvalue_mch(void)
 #endif
 #if CONF_WITH_STE_SHIFTER
   else if(has_ste_shifter) {
+#if CONF_WITH_VME
     if(has_vme) {
       cookie_mch = MCH_MSTE;
-    } else {
+    }
+    else
+#endif /* CONF_WITH_VME */
+    {
       cookie_mch = MCH_STE;
     }
   }
@@ -218,7 +226,9 @@ static void setvalue_fdc(void)
 void machine_detect(void)
 {
   detect_video();
+#if CONF_WITH_VME
   detect_vme();
+#endif
   detect_megartc();
 #if CONF_WITH_NVRAM
   detect_nvram();

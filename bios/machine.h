@@ -39,7 +39,9 @@ extern int has_tt_shifter;
 #if CONF_WITH_VIDEL
 extern int has_videl;
 #endif
+#if CONF_WITH_VME
 extern int has_vme;
+#endif
 extern int has_megartc;   /* in clock.c */
 #if CONF_WITH_NVRAM
 extern int has_nvram;     /* in nvram.c */

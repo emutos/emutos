@@ -175,6 +175,17 @@
 #endif
 
 /*
+ * Set CONF_WITH_VME to 1 to enable support for Mega STe VME bus
+ */
+#ifndef CONF_WITH_VME
+# if TOS_VERSION < 0x200
+#  define CONF_WITH_VME 0
+# else
+#  define CONF_WITH_VME 1
+# endif
+#endif
+
+/*
  * Set CONF_WITH_NVRAM to 1 to enable NVRAM support
  */
 #ifndef CONF_WITH_NVRAM

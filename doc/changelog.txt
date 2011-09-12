@@ -2655,3 +2655,5 @@ Start... early ages
   vdi/vdi_col.c: Added the CONF_WITH_STE_SHIFTER define. (VRI)
 - bios/bios.c bios/dmasound.c bios/dmasound.h bios/machine.c bios/machine.h:
   Added the CONF_WITH_DMASOUND define. (VRI)
+- bios/machine.c bios/machine.h include/config.h: Added the CONF_WITH_VME
+  define. (VRI)
