@@ -219,6 +219,17 @@
 #endif
 
 /*
+ * Set CONF_WITH_ASSERT to 1 to enable the assert() function support.
+ */
+#ifndef CONF_WITH_ASSERT
+# if TOS_VERSION < 0x200
+#  define CONF_WITH_ASSERT 0
+# else
+#  define CONF_WITH_ASSERT 1
+# endif
+#endif
+
+/*
  * Set this to 1 if your emulator is capable of emulating properly the 
  * STOP opcode (used to spare host CPU burden during loops).
  * Set to zero for all emulators which do not properly support STOP opcode.

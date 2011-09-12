@@ -13,13 +13,13 @@
 
 
 
+#include "config.h"
 #include "portab.h"
 #include "kprint.h"
 #include "lineavars.h"
 #include "vt52.h"
 #include "tosvars.h"
 #include "natfeat.h"
-#include "config.h"
 #include "processor.h"
 #include "chardev.h"
 
@@ -173,12 +173,16 @@ int kcprintf(const char *fmt, ...)
     return n;
 }
 
+#if CONF_WITH_ASSERT
+
 /*==== doassert ======*/
 
 void doassert(const char *file, long line, const char *func, const char *text)
 {
     kprintf("assert failed in %s:%ld (function %s): %s\n", file, line, func, text);
 }
+
+#endif /* CONF_WITH_ASSERT */
 
 /*==== dopanic - display information found in 0x380 and halt ======*/
 

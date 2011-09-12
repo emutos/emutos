@@ -38,8 +38,12 @@ extern int kprintf(const char *fmt, ...) PRINTF_STYLE;
 extern int kcprintf(const char *fmt, ...) PRINTF_STYLE;
 
 /* assert stuff */
+#if CONF_WITH_ASSERT
 extern void doassert(const char *, long, const char *, const char *);
 #define assert(a) if(!(a)) { doassert(__FILE__, __LINE__, __FUNCTION__, #a); }
+#else
+#define assert(a) do { } while (0)
+#endif
 
 /* functions below implemented in panicasm.S */
 

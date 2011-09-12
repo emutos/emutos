@@ -2659,3 +2659,5 @@ Start... early ages
   define. (VRI)
 - bios/machine.c bios/machine.h include/config.h: Added the
   CONF_WITH_DIP_SWITCHES define. (VRI)
+- bios/kprint.c bios/kprint.h include/config.h: Added the CONF_WITH_ASSERT
+  define to enable/disable the assert() function. (VRI)
