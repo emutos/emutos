@@ -2631,3 +2631,7 @@ Start... early ages
   desk/desksupp.c: Static cleanup. Contributed by Eero Tamminen. (VRI)
 - Makefile: Display the amount of extra bytes when the sized images are too
   big. (VRI)
+
+2011-09-12
+- bdos/bios.h bdos/mem.h: Remove unused items from bdos/bios.h, and move
+  definitions of MPB & MD to mem.h. Submitted by Roger Burrows.

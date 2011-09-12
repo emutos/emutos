@@ -24,6 +24,39 @@
 
 
 /*
+ *  Data Structures
+ */
+
+/*
+ *  MD - Memory Descriptor
+ */
+
+typedef struct _md MD;
+
+struct _md
+{
+    MD      *m_link;
+    LONG    m_start;
+    LONG    m_length;
+    PD      *m_own;
+};
+
+
+/*
+ *  MPB - Memory Partition Block
+ */
+
+typedef struct _mpb MPB;
+
+struct _mpb
+{
+    MD      *mp_mfl;
+    MD      *mp_mal;
+    MD      *mp_rover;
+};
+
+
+/*
  *  externals
  */
 
