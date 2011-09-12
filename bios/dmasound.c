@@ -12,10 +12,13 @@
 
 #define DBG_DMASOUND 0
 
+#include "config.h"
 #include "dmasound.h"
 #include "portab.h"
 #include "vectors.h"
 #include "kprint.h"
+
+#if CONF_WITH_DMASOUND
 
 struct dmasound
 {
@@ -165,3 +168,5 @@ void dmasound_init(void)
 
     /* TODO: Initialize the other DMA sound hardware */
 }
+
+#endif /* CONF_WITH_DMASOUND */

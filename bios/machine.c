@@ -187,6 +187,7 @@ static void setvalue_snd(void)
   /* always at least a PSG */
   cookie_snd = SND_PSG;
 
+#if CONF_WITH_DMASOUND
   if (has_dmasound) {
     cookie_snd |= SND_8BIT;
   }
@@ -194,6 +195,7 @@ static void setvalue_snd(void)
   if (has_falcon_dmasound) {
     cookie_snd |= SND_16BIT | SND_MATRIX;
   }
+#endif
 }
   
 
@@ -221,7 +223,9 @@ void machine_detect(void)
 #if CONF_WITH_NVRAM
   detect_nvram();
 #endif
+#if CONF_WITH_DMASOUND
   detect_dmasound();
+#endif
 }
   
 void machine_init(void)

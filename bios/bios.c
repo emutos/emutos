@@ -17,10 +17,10 @@
  */
 
 
+#include "config.h"
 #include "portab.h"
 #include "pd.h"
 #include "gemerror.h"
-#include "config.h"
 #include "kprint.h"
 #include "tosvars.h"
 #include "lineavars.h"
@@ -187,7 +187,9 @@ static void bios_init(void)
     /* The sound init must be done before allowing MFC interrupts,
      * because of dosound stuff in the timer C interrupt routine.
      */
+#if CONF_WITH_DMASOUND
     dmasound_init();
+#endif
     snd_init();         /* Reset Soundchip, deselect floppies */
 
     /* Init the two ACIA devices (MIDI and KBD). The three actions below can 

@@ -13,7 +13,11 @@
 #ifndef DMASOUND_H
 #define DMASOUND_H
 
+#if CONF_WITH_DMASOUND
+
 void detect_dmasound(void);
 void dmasound_init(void);
+
+#endif /* CONF_WITH_DMASOUND */
 
 #endif /* DMASOUND_H */

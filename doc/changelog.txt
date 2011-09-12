@@ -2653,3 +2653,5 @@ Start... early ages
   systematically. (VRI)
 - bios/machine.c bios/machine.h bios/screen.c bios/vectors.S include/config.h
   vdi/vdi_col.c: Added the CONF_WITH_STE_SHIFTER define. (VRI)
+- bios/bios.c bios/dmasound.c bios/dmasound.h bios/machine.c bios/machine.h:
+  Added the CONF_WITH_DMASOUND define. (VRI)
