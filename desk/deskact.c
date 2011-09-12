@@ -699,7 +699,7 @@ WORD act_bdown(WORD wh, LONG tree, WORD root, WORD *in_mx, WORD *in_my,
         WORD            numobs, button;
         OBJECT          *olist;
         WORD            dst_wh;
-        WORD            l_mx, l_my, dulx, duly;
+        WORD            l_mx, l_my, dulx = -1, duly = -1;
         WORD            numpts, *pxypts, view;
         GRECT           m;
 
