@@ -2634,8 +2634,9 @@ Start... early ages
 
 2011-09-12
 - bdos/bios.h bdos/mem.h: Remove unused items from bdos/bios.h, and move
-  definitions of MPB & MD to mem.h. Submitted by Roger Burrows.
+  definitions of MPB & MD to mem.h. Submitted by Roger Burrows. (VRI)
 - include/funcdef.h include/gsxdefs.h include/obdefs.h include/taddr.h: Several
   headers are duplicated between the aes & desk directories. This patch moves
   funcdef.h, gsxdefs.h, obdefs.h, and taddr.h from aes/ to include/, and removes
-  the corresponding headers from desk/. Submitted by Roger Burrows.
+  the corresponding headers from desk/. Submitted by Roger Burrows. (VRI)
+- doc/bios.txt: Converted line endings to LF format. (VRI)
