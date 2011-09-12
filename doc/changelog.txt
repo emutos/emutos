@@ -2644,7 +2644,10 @@ Start... early ages
 - bios/lineainit.c bios/machine.c bios/machine.h bios/memory.S bios/screen.c
   bios/xbios.c desk/deskmain.c include/config.h vdi/vdi_col.c: Splitted
   CONF_WITH_FALCON into CONF_WITH_FALCON_MMU and CONF_WITH_VIDEL and added
-  tests systematically.
+  tests systematically. (VRI)
 - bios/machine.c bios/machine.h bios/screen.c bios/xbios.c desk/deskmain.c
   include/config.h vdi/vdi_col.c: Renamed CONF_WITH_TT to CONF_WITH_TT_SHIFTER
-  and added tests systematically.
+  and added tests systematically. (VRI)
+- bios/bios.c bios/clock.c bios/country.c bios/machine.h bios/nvram.c
+  bios/nvram.h bios/screen.c bios/xbios.c: Use CONF_WITH_NVRAM
+  systematically. (VRI)

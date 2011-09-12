@@ -264,9 +264,9 @@ static void msetdt(ULONG dt)
 }
 
 
-/*==== NVRAM RTC internal functions =======================================*/
-
 #if CONF_WITH_NVRAM
+
+/*==== NVRAM RTC internal functions =======================================*/
 
 /*
  * The MC146818 was used as the RTC and NVRAM in MegaSTE, TT and Falcon.
@@ -550,9 +550,9 @@ void clock_init(void)
         nvram_rtc_year_offset = 1968 - 1980;
     }
   }
+  else
 #endif /* CONF_WITH_NVRAM */
-
-  if( ! (has_nvram || has_megartc) ) {
+  if( !has_megartc ) {
     /* no megartc, the best we can do is set the date to the
      * OS creation date, time 0.
      */

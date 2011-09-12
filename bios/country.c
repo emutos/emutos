@@ -14,13 +14,13 @@
  * read doc/country.txt for information about country-related issues.
  */
 
+#include "config.h"
 #include "portab.h"
 #include "cookie.h"
 #include "country.h"
 #include "nvram.h"
 #include "tosvars.h"
 #include "i18nconf.h"
-#include "config.h"
 #include "header.h"  /* contains the default country number */
 
 /*
@@ -91,11 +91,18 @@ static int get_country_index(int country_code)
 
 void detect_akp_idt(void)
 {
+#if CONF_WITH_NVRAM
     char buf[4];
     int err;
   
     err = nvmaccess(0, 6, 4, (PTR) buf);
-    if(err) { 
+    if(err == 0) { 
+        cookie_akp = (buf[0] << 8) | buf[1];
+        cookie_idt = (buf[2] << 8) | buf[3]; 
+    }
+    else
+#endif
+    {
         /* either no NVRAM, or the NVRAM is corrupt (low battery, 
          * bad cksum), interpret the os_pal flag in header 
          */
@@ -103,9 +110,6 @@ void detect_akp_idt(void)
     
         cookie_akp = (countries[i].country << 8) | countries[i].keyboard;
         cookie_idt = countries[i].idt;
-    } else {
-        cookie_akp = (buf[0] << 8) | buf[1];
-        cookie_idt = (buf[2] << 8) | buf[3]; 
     }
 }
 

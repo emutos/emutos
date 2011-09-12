@@ -39,7 +39,9 @@ extern int has_videl;
 #endif
 extern int has_vme;
 extern int has_megartc;   /* in clock.c */
+#if CONF_WITH_NVRAM
 extern int has_nvram;     /* in nvram.c */
+#endif
 extern int has_dmasound;  /* in dmasound.c */
 extern int has_microwire; /* in dmasound.c */
 extern int has_falcon_dmasound; /* in dmasound.c */

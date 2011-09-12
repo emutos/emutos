@@ -19,9 +19,9 @@
 #include "biosmem.h"
 
 
-int has_nvram;
-
 #if CONF_WITH_NVRAM
+
+int has_nvram;
 
 static UBYTE nvram_buf[50];
 static int inited;

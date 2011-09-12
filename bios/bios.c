@@ -346,6 +346,7 @@ static void autoexec(void)
 void biosmain(void)
 {
     int coldboot; /* unfortunately register d2 gets overwritten by bios_init */
+    BOOL rtc_present = FALSE; /* some hardware keeps the time when power is off */
 
     bios_init();                /* Initialize the BIOS */ 
 
@@ -360,7 +361,15 @@ void biosmain(void)
 
     trap1( 0x30 );              /* initial test, if BDOS works: Sversion() */
 
-    if (! (has_megartc || has_nvram))
+#if CONF_WITH_NVRAM
+    if (has_nvram)
+        rtc_present = TRUE;
+#endif
+
+    if (has_megartc)
+        rtc_present = TRUE;
+
+    if (!rtc_present)
         trap1( 0x2b, os_dosdate);  /* set initial date in GEMDOS format: Tsetdate() */
 
 #ifdef EMUTOS_RAM

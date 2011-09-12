@@ -92,20 +92,27 @@ void screen_init(void)
 #if CONF_WITH_VIDEL
     if (has_videl) {
         UWORD boot_resolution;
+#if CONF_WITH_NVRAM
         int ret;
+#endif // CONF_WITH_NVRAM
 
         /* reset VIDEL on boot-up */
         /* first set the physbase to a safe memory */
         setphys(0x10000L);
 
-        /* set desired resolution - fetch it from NVRAM */
+#if CONF_WITH_NVRAM
+        /* get boot resolution from NVRAM */
         ret = nvmaccess(0, 14, 2, (PTR)&boot_resolution);
         if (ret != 0)
+#endif // CONF_WITH_NVRAM
+        {
             boot_resolution = 0x03a;    /* Default resolution */
+	}
+
         vsetmode(boot_resolution);
     }
     else
-#endif
+#endif // CONF_WITH_VIDEL
     {
         *(BYTE *) 0xffff820a = 2;   /* sync-mode to 50 hz pal, internal sync */
     }

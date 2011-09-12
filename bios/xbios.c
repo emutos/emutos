@@ -827,7 +827,7 @@ LONG xbios_2c(WORD devno)
  * xbios_2e - (NVMaccess) 
  */
 
-#if DBG_XBIOS
+#if DBG_XBIOS && CONF_WITH_NVRAM
 WORD xbios_2e(WORD op, WORD start, WORD count, PTR buffer)
 {
     kprintf("XBIOS: NVMaccess\n");

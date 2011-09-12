@@ -11,6 +11,8 @@
  */
 
 
+#if CONF_WITH_NVRAM
+
 /* internal feature detection */
 
 extern int has_nvram;
@@ -22,5 +24,4 @@ void set_nvram_rtc(int index, int data);
 
 WORD nvmaccess(WORD type, WORD start, WORD count, PTR buffer);
 
-
-
+#endif  /* CONF_WITH_NVRAM */
