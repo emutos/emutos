@@ -37,7 +37,9 @@ long cookie_frb;
  * test specific hardware features
  */
 
+#if CONF_WITH_STE_SHIFTER
 int has_ste_shifter;
+#endif
 #if CONF_WITH_TT_SHIFTER
 int has_tt_shifter;
 #endif
@@ -50,6 +52,7 @@ int has_videl;
  */
 static void detect_video(void)
 {
+#if CONF_WITH_STE_SHIFTER
  /* test if we have an STe Shifter by testing that register 820d
   * works (put a value, read other reg, read again, and compare)
   */
@@ -68,6 +71,7 @@ static void detect_video(void)
       has_ste_shifter = 1;
     } 
   }
+#endif
 
 #if CONF_WITH_TT_SHIFTER
   /* test if we have a TT Shifter by testing for TT color palette */
@@ -128,13 +132,15 @@ static void setvalue_vdo(void)
   }
   else
 #endif
-  {
-    if(has_ste_shifter) {
-      cookie_vdo = 0x00010000L;
-    } else {
-      cookie_vdo = 0x00000000L;
-    } 
+#if CONF_WITH_STE_SHIFTER
+  if(has_ste_shifter) {
+    cookie_vdo = 0x00010000L;
   }
+  else
+#endif
+  {
+    cookie_vdo = 0x00000000L;
+  } 
 }
 
 /* detect ARAnyM */
@@ -160,16 +166,17 @@ static void setvalue_mch(void)
     cookie_mch = MCH_TT;
   }
 #endif
-  else {
-    if(has_ste_shifter) {
-      if(has_vme) {
-        cookie_mch = MCH_MSTE;
-      } else {
-        cookie_mch = MCH_STE;
-      }
+#if CONF_WITH_STE_SHIFTER
+  else if(has_ste_shifter) {
+    if(has_vme) {
+      cookie_mch = MCH_MSTE;
     } else {
-      cookie_mch = MCH_ST;
+      cookie_mch = MCH_STE;
     }
+  }
+#endif
+  else {
+    cookie_mch = MCH_ST;
   }
 }
 

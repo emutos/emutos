@@ -7,6 +7,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+#include "config.h"
 #include "portab.h"
 #include "vdi_defs.h"
 #include "string.h"
@@ -164,6 +165,8 @@ void init_colors(void)
 }
 
 
+#if CONF_WITH_STE_SHIFTER
+
 /* Create a VDI color value from STE color */
 static int ste2vdi(int col)
 {
@@ -171,6 +174,8 @@ static int ste2vdi(int col)
     col = col * 200 / 3;
     return col;
 }
+
+#endif
 
 
 /* Create a VDI color value from ST color */
@@ -226,6 +231,7 @@ void _vq_color(Vwk *vwk)
         /* TODO: not implemented */
     }
 #endif
+#if CONF_WITH_STE_SHIFTER
     else if (has_ste_shifter)
     {
         colnum = MAP_COL[colnum];
@@ -234,6 +240,7 @@ void _vq_color(Vwk *vwk)
         INTOUT[2] = ste2vdi(c >> 4);
         INTOUT[3] = ste2vdi(c);
     }
+#endif
     else  /* ST shifter */
     {
         colnum = MAP_COL[colnum];

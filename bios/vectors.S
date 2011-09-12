@@ -8,7 +8,7 @@
  *
  */
 
-
+#include "asmdefs.h"
 
         .global _init_exc_vec
         .global _init_user_vec
@@ -348,9 +348,11 @@ vbl_no_palette:
         move.l  _screenpt,d0
         beq     vbl_no_screenpt
         move.l  d0,_v_bas_ad
+#if CONF_WITH_STE_SHIFTER
         tst.w   _has_ste_shifter
         beq     st_shifter
         move.b  d0,0xffff820d
+#endif
 st_shifter:
 #ifdef __mcoldfire__
         lsr.l   #8,d0

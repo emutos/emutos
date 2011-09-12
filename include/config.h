@@ -164,6 +164,17 @@
 #endif
 
 /*
+ * Set CONF_WITH_STE_SHIFTER to 1 to enable support for STe Shifter
+ */
+#ifndef CONF_WITH_STE_SHIFTER
+# if TOS_VERSION < 0x200
+#  define CONF_WITH_STE_SHIFTER 0
+# else
+#  define CONF_WITH_STE_SHIFTER 1
+# endif
+#endif
+
+/*
  * Set CONF_WITH_NVRAM to 1 to enable NVRAM support
  */
 #ifndef CONF_WITH_NVRAM

@@ -30,7 +30,9 @@ extern long cookie_frb;
  * these are != 0 if the feature is present
  */
 
+#if CONF_WITH_STE_SHIFTER
 extern int has_ste_shifter;
+#endif
 #if CONF_WITH_TT_SHIFTER
 extern int has_tt_shifter;
 #endif

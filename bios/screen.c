@@ -66,9 +66,11 @@ static void setphys(LONG addr)
 
     *(UBYTE *) 0xffff8201 = ((ULONG) addr) >> 16;
     *(UBYTE *) 0xffff8203 = ((ULONG) addr) >> 8;
+#if CONF_WITH_STE_SHIFTER
     if (has_ste_shifter) {
         *(UBYTE *) 0xffff820d = ((ULONG) addr);
     }
+#endif
 }
 
 
@@ -120,8 +122,12 @@ void screen_init(void)
     for (i = 0; i < 16; i++) {
         WORD col = dflt_palette[i];
 
+#if CONF_WITH_STE_SHIFTER
         if (!has_ste_shifter)
+#endif
+        {
             col &= 0x777;
+        }
 
         col_regs[i] = col;
     }
@@ -200,9 +206,11 @@ LONG physbase(void)
     addr <<= 8;
     addr += *(UBYTE *) 0xffff8203;
     addr <<= 8;
+#if CONF_WITH_STE_SHIFTER
     if (has_ste_shifter) {
         addr += *(UBYTE *) 0xffff820D;
     }
+#endif
 
     return (addr);
 }
@@ -320,9 +328,12 @@ WORD setcolor(WORD colorNum, WORD color)
     default:
         max = 0;
     }
+#if CONF_WITH_STE_SHIFTER
     if (has_ste_shifter) {
         mask = 0xfff;
-    } else {
+    } else
+#endif
+    {
         mask = 0x777;
     }
     if (colorNum >= 0 && colorNum <= max) {
