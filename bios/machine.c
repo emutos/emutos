@@ -29,7 +29,9 @@ long cookie_vdo;
 long cookie_fdc;
 long cookie_snd;
 long cookie_mch;
+#if CONF_WITH_DIP_SWITCHES
 long cookie_swi;
+#endif
 long cookie_frb;
 
 
@@ -110,6 +112,8 @@ static void detect_vme(void)
 
 #endif /* CONF_WITH_VME */
 
+#if CONF_WITH_DIP_SWITCHES
+
 /* DIP switches */
 
 static void setvalue_swi(void)
@@ -119,6 +123,8 @@ static void setvalue_swi(void)
     cookie_swi = (*(volatile WORD *)0xffff9200)>>8;
   }
 }
+
+#endif /* CONF_WITH_DIP_SWITCHES */
 
 /* video type */
 
@@ -215,9 +221,12 @@ static void setvalue_fdc(void)
    * comp.sys.atari.st.tech, archives, but I do not claim 
    * this to be fully accurate. 
    */
+#if CONF_WITH_DIP_SWITCHES
   if(cookie_swi & 0x40) {
     cookie_fdc = FDC_1ATC;
-  } else {
+  } else
+#endif
+  {
     cookie_fdc = FDC_0ATC;
   } 
 }
@@ -268,6 +277,7 @@ void machine_init(void)
   setvalue_mch();
   cookie_add(COOKIE_MCH, cookie_mch);
 
+#if CONF_WITH_DIP_SWITCHES
   /* _SWI  On machines that contain internal configuration dip switches, 
    * this value specifies their positions as a bitmap. Dip switches are 
    * generally used to indicate the presence of additional hardware which 
@@ -278,6 +288,7 @@ void machine_init(void)
     setvalue_swi();
     cookie_add(COOKIE_SWI, cookie_swi);
   }
+#endif
 
   /* _SND
    * This cookie contains a bitmap of sound features available to the 

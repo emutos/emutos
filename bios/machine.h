@@ -21,7 +21,9 @@ extern long cookie_mch;
 extern long cookie_vdo;
 extern long cookie_fdc;
 extern long cookie_snd;
+#if CONF_WITH_DIP_SWITCHES
 extern long cookie_swi;
+#endif
 extern long cookie_idt;
 extern long cookie_akp;
 extern long cookie_frb;

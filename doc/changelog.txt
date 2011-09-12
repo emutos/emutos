@@ -2657,3 +2657,5 @@ Start... early ages
   Added the CONF_WITH_DMASOUND define. (VRI)
 - bios/machine.c bios/machine.h include/config.h: Added the CONF_WITH_VME
   define. (VRI)
+- bios/machine.c bios/machine.h include/config.h: Added the
+  CONF_WITH_DIP_SWITCHES define. (VRI)
