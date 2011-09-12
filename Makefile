@@ -333,7 +333,7 @@ then \
 else \
   dd if=/dev/zero of=$@ bs=1024 count=$$goal 2>/dev/null; \
   dd if=$< of=$@ conv=notrunc $(DDOPTS) 2>/dev/null; \
-  echo "$@ done"; \
+  echo "$@ done (`expr $$goalbytes - $$size` bytes free)"; \
 fi
 endef
 

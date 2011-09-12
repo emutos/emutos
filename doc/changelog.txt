@@ -2661,3 +2661,4 @@ Start... early ages
   CONF_WITH_DIP_SWITCHES define. (VRI)
 - bios/kprint.c bios/kprint.h include/config.h: Added the CONF_WITH_ASSERT
   define to enable/disable the assert() function. (VRI)
+- Makefile: Display the amount of bytes free when building a ROM. (VRI)
