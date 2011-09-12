@@ -38,7 +38,9 @@ long cookie_frb;
  */
 
 int has_ste_shifter;
+#if CONF_WITH_TT_SHIFTER
 int has_tt_shifter;
+#endif
 #if CONF_WITH_VIDEL
 int has_videl;
 #endif
@@ -67,10 +69,12 @@ static void detect_video(void)
     } 
   }
 
+#if CONF_WITH_TT_SHIFTER
   /* test if we have a TT Shifter by testing for TT color palette */
   has_tt_shifter = 0;
   if (check_read_byte(0xffff8400))
     has_tt_shifter = 1;
+#endif
 
 #if CONF_WITH_VIDEL
   /* test if we have Falcon VIDEL by testing for f030_xreg */
@@ -118,10 +122,13 @@ static void setvalue_vdo(void)
   }
   else
 #endif
+#if CONF_WITH_TT_SHIFTER
   if(has_tt_shifter) {
     cookie_vdo = 0x00020000L;
   }
-  else {
+  else
+#endif
+  {
     if(has_ste_shifter) {
       cookie_vdo = 0x00010000L;
     } else {
@@ -148,9 +155,11 @@ static void setvalue_mch(void)
     cookie_mch = MCH_FALCON;
   }
 #endif
+#if CONF_WITH_TT_SHIFTER
   else if(has_tt_shifter) {
     cookie_mch = MCH_TT;
   }
+#endif
   else {
     if(has_ste_shifter) {
       if(has_vme) {

@@ -31,7 +31,9 @@ extern long cookie_frb;
  */
 
 extern int has_ste_shifter;
+#if CONF_WITH_TT_SHIFTER
 extern int has_tt_shifter;
+#endif
 #if CONF_WITH_VIDEL
 extern int has_videl;
 #endif

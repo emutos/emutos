@@ -976,7 +976,7 @@ const PFLONG xbios_vecs[] = {
     xbios_unimpl,   /* 4d */
     xbios_unimpl,   /* 4e */
     xbios_unimpl,   /* 4f */
-#if CONF_WITH_TT
+#if CONF_WITH_TT_SHIFTER
     VEC(xbios_50, esetshift),   /* 50 */
     VEC(xbios_51, egetshift),   /* 51 */
 #else

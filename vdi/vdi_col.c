@@ -80,11 +80,13 @@ static void set_color(int colnum, int r, int g, int b)
     }
     else
 #endif
+#if CONF_WITH_TT_SHIFTER
     if (has_tt_shifter)
     {
         /* TODO: not implemented */
     }
     else
+#endif
     {
         /* ST and STE shifter: */
         colnum = MAP_COL[colnum];
@@ -218,10 +220,12 @@ void _vq_color(Vwk *vwk)
         /* TODO: not implemented */
     }
 #endif
+#if CONF_WITH_TT_SHIFTER
     else if (has_tt_shifter)
     {
         /* TODO: not implemented */
     }
+#endif
     else if (has_ste_shifter)
     {
         colnum = MAP_COL[colnum];

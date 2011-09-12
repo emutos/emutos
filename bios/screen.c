@@ -228,10 +228,13 @@ WORD getrez(void)
         WORD rez;
 
         rez = (*(UBYTE *) 0xffff8260);
+#if CONF_WITH_TT_SHIFTER
         if (has_tt_shifter) {
             rez &= 0x7;
         }
-        else {
+        else
+#endif
+	{
             rez &= 0x3;
         }
         return rez;
@@ -252,9 +255,11 @@ void setscreen(LONG logLoc, LONG physLoc, WORD rez, WORD videlmode)
             /* ST compatible resolution */
             *(UBYTE *)0xffff8260 = sshiftmod = rez;
         }
+#if CONF_WITH_TT_SHIFTER
         else if (has_tt_shifter) {
             *(UBYTE *)0xffff8262 = rez;
         }
+#endif
 #if CONF_WITH_VIDEL
         else if (has_videl) {
             if (rez == 3)
@@ -344,11 +349,11 @@ void vsync(void)
 }
 
 
+#if CONF_WITH_TT_SHIFTER
+
 /*
  * TT shifter functions
  */
-
-#if CONF_WITH_TT
 
 /*
  * Set TT shifter mode
@@ -379,7 +384,7 @@ WORD egetshift(void)
     return *(WORD *)0xffff8262;
 }
 
-#endif /* CONF_WITH_TT */
+#endif /* CONF_WITH_TT_SHIFTER */
 
 
 #if CONF_WITH_VIDEL

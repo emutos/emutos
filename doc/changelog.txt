@@ -2645,3 +2645,6 @@ Start... early ages
   bios/xbios.c desk/deskmain.c include/config.h vdi/vdi_col.c: Splitted
   CONF_WITH_FALCON into CONF_WITH_FALCON_MMU and CONF_WITH_VIDEL and added
   tests systematically.
+- bios/machine.c bios/machine.h bios/screen.c bios/xbios.c desk/deskmain.c
+  include/config.h vdi/vdi_col.c: Renamed CONF_WITH_TT to CONF_WITH_TT_SHIFTER
+  and added tests systematically.

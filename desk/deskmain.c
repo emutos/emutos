@@ -201,14 +201,18 @@ static void detect_features(void)
 {
     BOOL unsupported_hardware = FALSE;
     /* FIXME: Remove the following when full resolution change is supported */
+#if CONF_WITH_TT_SHIFTER
     extern int has_tt_shifter;
+#endif
 #if CONF_WITH_VIDEL
     extern int has_videl;
 #endif
     int rez;
 
+#if CONF_WITH_TT_SHIFTER
     if (has_tt_shifter)
         unsupported_hardware = TRUE;
+#endif
 
 #if CONF_WITH_VIDEL
     if (has_videl)

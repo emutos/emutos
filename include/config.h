@@ -153,13 +153,13 @@
 #endif
 
 /*
- * Set CONF_WITH_TT to 1 to enable support for TT hardware
+ * Set CONF_WITH_TT_SHIFTER to 1 to enable support for TT Shifter
  */
-#ifndef CONF_WITH_TT
+#ifndef CONF_WITH_TT_SHIFTER
 # if TOS_VERSION < 0x200
-#  define CONF_WITH_TT 0
+#  define CONF_WITH_TT_SHIFTER 0
 # else
-#  define CONF_WITH_TT 1
+#  define CONF_WITH_TT_SHIFTER 1
 # endif
 #endif
 
