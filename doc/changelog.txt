@@ -2662,3 +2662,9 @@ Start... early ages
 - bios/kprint.c bios/kprint.h include/config.h: Added the CONF_WITH_ASSERT
   define to enable/disable the assert() function. (VRI)
 - Makefile: Display the amount of bytes free when building a ROM. (VRI)
+- bdos/bdosmain.c bdos/bios.h bdos/console.c bdos/fs.h bdos/fsbuf.c bdos/fsdir.c
+  bdos/fsdrive.c bdos/fsfat.c bdos/fsglob.c bdos/fshand.c bdos/fsio.c
+  bdos/fsmain.c bdos/fsopnclo.c bdos/iumem.c bdos/kpgmld.c bdos/osmem.c
+  bdos/proc.c bdos/umem.c: Add includes for bpb.h to fs.h, fsdrive.c,
+  bdosmain.c. Remove all references to bios.h in bdos/ source & delete
+  bdos/bios.h. Submitted by Roger Burrows.

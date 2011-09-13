@@ -16,7 +16,6 @@
 #include "portab.h"
 #include "asm.h"
 #include "fs.h"
-#include "bios.h"
 #include "gemerror.h"
 #include "biosbind.h"
 

@@ -20,7 +20,6 @@
 #include "portab.h"
 #include "fs.h"
 #include "asm.h"
-#include "bios.h"
 #include "mem.h"
 #include "gemerror.h"
 #include "biosbind.h"

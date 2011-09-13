@@ -21,6 +21,7 @@
 #ifndef FS_H
 #define FS_H
 
+#include "bpb.h"
 #include "pd.h"
 
 /*
@@ -291,8 +292,6 @@ DTAINFO
     long  dt_fileln;            /*  file length field from fcb  26-29   */
     char  dt_fname[14];         /*  file name from fcb          30-43   */
 } ;                             /*    includes null terminator          */
-
-#include "bios.h"
 
 
 

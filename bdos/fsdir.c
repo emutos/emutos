@@ -126,7 +126,6 @@
 #include        "asm.h"
 #include        "fs.h"
 #include        "time.h"
-#include        "bios.h"
 #include        "mem.h"
 #include        "gemerror.h"
 #include        "biosbind.h"

@@ -25,7 +25,7 @@
 #include "portab.h"
 #include "fs.h"
 #include "asm.h"
-#include "bios.h"
+#include "bpb.h"
 #include "mem.h"
 #include "proc.h"
 #include "console.h"
