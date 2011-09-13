@@ -22,7 +22,7 @@
 #include "nls.h"
 #include "ikbd.h"
 #include "asm.h"
-
+#include "blkdev.h"     /* for BLKDEVNUM */
 //#include "lineavars.h"
 #include "font.h"
 #include "tosvars.h"
@@ -203,7 +203,7 @@ void initinfo(void)
     {
         int i;
         LONG mask;
-        for(i=0, mask=1L; i<26; i++, mask <<=1) {
+        for(i=0, mask=1L; i<BLKDEVNUM; i++, mask <<=1) {
             if (drvbits & mask)
                 cprintf("%c", 'A'+i);
         }

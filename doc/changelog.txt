@@ -2667,4 +2667,7 @@ Start... early ages
   bdos/fsmain.c bdos/fsopnclo.c bdos/iumem.c bdos/kpgmld.c bdos/osmem.c
   bdos/proc.c bdos/umem.c: Add includes for bpb.h to fs.h, fsdrive.c,
   bdosmain.c. Remove all references to bios.h in bdos/ source & delete
-  bdos/bios.h. Submitted by Roger Burrows.
+  bdos/bios.h. Submitted by Roger Burrows. (VRI)
+- bios/blkdev.h bios/initinfo.c: Fix the maximum number of drives at 26 (A: thru
+  Z:). Note that bdos/fsglob.c still allows up to 32, which means we're wasting
+  24 bytes. Submitted by Roger Burrows. (VRI)
