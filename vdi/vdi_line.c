@@ -1152,10 +1152,11 @@ static void draw_arrow(Vwk * vwk, Point * point, int inc)
 
     /* Set up the arrow-head length and width as a function of line width. */
     temp = vwk->line_width;
-    arrow_wid = (arrow_len = (temp == 1) ? 8 : 3 * temp - 1) / 2;
+    arrow_len = (temp < 4) ? 8 : (3 * temp - 1);
+    arrow_wid = arrow_len / 2;
 
     /* Initialize the beginning pointer. */
-    xybeg = ptr1 = ptr2 = point;
+    ptr1 = ptr2 = point;
 
     /* Find the first point which is not so close to the end point that it */
     /* will be obscured by the arrowhead.                                  */

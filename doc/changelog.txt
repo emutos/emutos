@@ -2671,3 +2671,7 @@ Start... early ages
 - bios/blkdev.h bios/initinfo.c: Fix the maximum number of drives at 26 (A: thru
   Z:). Note that bdos/fsglob.c still allows up to 32, which means we're wasting
   24 bytes. Submitted by Roger Burrows. (VRI)
+
+2011-09-13
+- vdi/vdi_line.c: Fix the minimal width of arrow heads. Contributed by Eero
+  Tamminen. (VRI)
