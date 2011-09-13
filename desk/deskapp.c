@@ -52,18 +52,15 @@
 #define MIN_HINT 2
 
 
-
-GLOBAL WORD     gl_poffset;
 GLOBAL WORD     gl_numics;
-
 GLOBAL WORD     gl_stdrv;
-
-GLOBAL BYTE     gl_afile[SIZE_AFILE];
-GLOBAL BYTE     gl_buffer[SIZE_BUFF];
 
 #if MULTIAPP
 GLOBAL ACCNODE  gl_caccs[3];
 #endif
+
+static BYTE     gl_afile[SIZE_AFILE];
+static BYTE     gl_buffer[SIZE_BUFF];
 
 
 /* We use this DESKTOP.INF here when we can't load that file from disk: */
@@ -196,7 +193,7 @@ WORD hex_dig(BYTE achar)
 /*
 *       Reverse of hex_dig().
 */
-BYTE uhex_dig(WORD wd)
+static BYTE uhex_dig(WORD wd)
 {
         if ( (wd >= 0) &&
              (wd <= 9) )
@@ -238,7 +235,7 @@ extern BYTE *scan_2(BYTE *pcurr, WORD *pwd);
 /*
 *       Reverse of scan_2().
 */
-BYTE *save_2(BYTE *pcurr, UWORD wd)
+static BYTE *save_2(BYTE *pcurr, UWORD wd)
 {
         *pcurr++ = ' ';
         *pcurr++ = uhex_dig((wd >> 4) & 0x000f);
@@ -256,10 +253,7 @@ BYTE *save_2(BYTE *pcurr, UWORD wd)
 *       default memory size -- DEFMEMREQ.
 */
 
-        BYTE
-*scan_memsz(pcurr, pwd)
-        BYTE            *pcurr;
-        UWORD           *pwd;
+static BYTE *scan_memsz(BYTE *pcurr, UWORD *pwd)
 {
         UWORD           temp1, temp2;
         
@@ -283,10 +277,7 @@ BYTE *save_2(BYTE *pcurr, UWORD wd)
 *       Reverse of scan_memsz().
 */
 
-        BYTE
-*save_memsz(pcurr, wd)
-        BYTE            *pcurr;
-        UWORD           wd;
+static BYTE *save_memsz(BYTE *pcurr, UWORD wd)
 {
         *pcurr++ = 'R';
         pcurr = save_2(pcurr, LHIBT(wd));
@@ -320,7 +311,7 @@ BYTE *scan_str(BYTE *pcurr, BYTE **ppstr)
 /*
 *       Reverse of scan_str.
 */
-BYTE *save_str(BYTE *pcurr, BYTE *pstr)
+static BYTE *save_str(BYTE *pcurr, BYTE *pstr)
 {
         while(*pstr)
           *pcurr++ = *pstr++;
@@ -333,7 +324,7 @@ BYTE *save_str(BYTE *pcurr, BYTE *pstr)
 /*
 *       Parse a single line from the DESKTOP.INF file.
 */
-BYTE *app_parse(BYTE *pcurr, ANODE *pa)
+static BYTE *app_parse(BYTE *pcurr, ANODE *pa)
 {
         switch(*pcurr)
         {
@@ -416,7 +407,7 @@ void app_tran(WORD bi_num)
    I changed this behaviour so that the icons are included in the program
    file now. Hope there aren't too much faults in this new version of this
    function. See icons.c, too.  - THH */
-static WORD app_rdicon()
+static WORD app_rdicon(void)
 {
 #if TOS_VERSION >= 0x200    /* Don't include icons in TOS 1.x to save space */
         LONG            temp, stmp, dtmp;
@@ -551,7 +542,7 @@ static WORD app_rdicon()
 *       file, either from memory or from the disk if the shel_get
 *       indicates no message is there.
 */
-WORD app_start()
+WORD app_start(void)
 {
         WORD            i, x, y;
 #ifndef DESK1
@@ -792,7 +783,7 @@ WORD app_start()
 /*
 *       Reverse list when we write so that we can read it in naturally
 */
-void app_revit()
+static void app_revit(void)
 {
         ANODE           *pa;
         ANODE           *pnxtpa;
@@ -985,7 +976,7 @@ void app_save(WORD todisk)
 *       Build the desktop list of objects based on this current 
 *       application list.
 */
-BYTE app_blddesk()
+BYTE app_blddesk(void)
 {
         WORD            obid;
         UWORD           bvdisk, bvhard, bvect;

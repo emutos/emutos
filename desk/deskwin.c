@@ -139,7 +139,7 @@ void win_free(WNODE *thewin)
 #ifdef DESK1
 WNODE *win_alloc(WORD obid)
 #else
-WNODE *win_alloc()
+WNODE *win_alloc(void)
 #endif
 {
         WNODE           *pw;
@@ -238,7 +238,7 @@ WNODE *win_ontop(void)
 *       Find the window node that is the ith from the bottom.  Where
 *       0 is the bottom (desktop surface) and 1-4 are windows.
 */
-WORD win_cnt(WORD level)
+static WORD win_cnt(WORD level)
 {
         WORD            wob;
                                                 /* skip over desktop    */
@@ -265,7 +265,7 @@ WNODE *win_ith(WORD level)
 *       Calculate a bunch of parameters related to how many file objects
 *       will fit in a full-screen window.
 */
-void win_ocalc(WNODE *pwin, WORD wfit, WORD hfit, FNODE **ppstart)
+static void win_ocalc(WNODE *pwin, WORD wfit, WORD hfit, FNODE **ppstart)
 {
         FNODE           *pf;
         WORD            start, cnt, w_space;
@@ -321,7 +321,7 @@ void win_ocalc(WNODE *pwin, WORD wfit, WORD hfit, FNODE **ppstart)
 *       Calculate a bunch of parameters dealing with a particular
 *       icon.
 */
-void win_icalc(FNODE *pfnode)
+static void win_icalc(FNODE *pfnode)
 {
 #ifndef DESK1
         if (pfnode->f_attr & F_DESKTOP)
@@ -449,9 +449,9 @@ void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h)
 *       current row or column
 */
 #ifdef DESK1
-void win_blt(WNODE *pw, BOOL vertical, WORD newcv)
+static void win_blt(WNODE *pw, BOOL vertical, WORD newcv)
 #else
-void win_blt(WNODE *pw, WORD newcv)
+static void win_blt(WNODE *pw, WORD newcv)
 #endif
 {
         WORD            delcv, pn;
@@ -683,7 +683,7 @@ void win_srtall(void)
 /*
 *       Routine to build all existing windows again.
 */
-void win_bdall()
+void win_bdall(void)
 {
         WORD            ii;
         WORD            wh, xc, yc, wc, hc;

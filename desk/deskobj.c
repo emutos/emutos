@@ -34,7 +34,7 @@
 #include "deskglob.h"
 
 
-GLOBAL OBJECT   gl_sampob[2] =
+static OBJECT   gl_sampob[2] =
 {
         { NIL, NIL, NIL, G_IBOX, NONE, NORMAL, 0x0L, 0, 0, 0, 0 },
         { NIL, NIL, NIL, G_BOX,  NONE, NORMAL, 0x00001100L, 0, 0, 0, 0 }
@@ -46,7 +46,7 @@ GLOBAL OBJECT   gl_sampob[2] =
 *       Initialize all objects as children of the 0th root which is
 *       the parent of unused objects.
 */
-void obj_init()
+void obj_init(void)
 {
         WORD            ii;
         LONG            tree;

@@ -2675,3 +2675,8 @@ Start... early ages
 2011-09-13
 - vdi/vdi_line.c: Fix the minimal width of arrow heads. Contributed by Eero
   Tamminen. (VRI)
+- aes/gemgraf.c aes/gemgraf.h desk/aesbind.h desk/desk1.c desk/deskapp.c
+  desk/deskapp.h desk/deskdir.c desk/deskfpd.c desk/deskfun.c desk/deskgraf.c
+  desk/deskgraf.h desk/deskgsx.c desk/deskinf.c desk/deskinf.h desk/deskins.c
+  desk/deskobj.c desk/deskpro.c desk/deskwin.c desk/gembind.c desk/taddr.c
+  include/taddr.h: Static cleanup. Contributed by Eero Tamminen. (VRI)

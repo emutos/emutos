@@ -7,8 +7,6 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-WORD dr_fnode(UWORD last_state, UWORD curr_state, WORD x, WORD y,
-              WORD w, WORD h, LONG psfcb);
 WORD dr_code(LONG pparms);
 WORD inf_show(LONG tree, WORD start);
 WORD inf_file(BYTE *ppath, FNODE *pfnode);

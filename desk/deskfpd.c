@@ -36,7 +36,7 @@
 
 #include "string.h"
 
-GLOBAL FNODE    *ml_pfndx[NUM_FNODES];
+static FNODE    *ml_pfndx[NUM_FNODES];
 
 
 
@@ -85,7 +85,7 @@ void fpd_start(void)
 *       Build a filespec out of drive letter, a pointer to a path, a pointer
 *       to a filename, and a pointer to an extension.
 */
-WORD fpd_bldspec(WORD drive, BYTE *ppath, BYTE *pname, BYTE *pext, BYTE *pspec)
+static WORD fpd_bldspec(WORD drive, BYTE *ppath, BYTE *pname, BYTE *pext, BYTE *pspec)
 {
 /* BUGFIX 2.1   */
         if ( (strlen(ppath) + LEN_ZFNAME) >= (LEN_ZPATH-3) )
@@ -199,7 +199,7 @@ FNODE *fpd_ofind(FNODE *pf, WORD obj)
 /*
 *       Find the list item that is after start and points to stop item.
 */
-BYTE *fpd_elist(FNODE *pfpd, FNODE *pstop)
+static BYTE *fpd_elist(FNODE *pfpd, FNODE *pstop)
 {
         while( pfpd->f_next != pstop )
           pfpd = pfpd->f_next;
@@ -210,7 +210,7 @@ BYTE *fpd_elist(FNODE *pfpd, FNODE *pstop)
 /*
 *       Free a single file node
 */
-void fn_free(FNODE *thefile)
+static void fn_free(FNODE *thefile)
 {
         thefile->f_next = G.g_favail;
         G.g_favail = thefile;
@@ -220,7 +220,7 @@ void fn_free(FNODE *thefile)
 /*
 *       Free a list of file nodes.
 */
-void fl_free(FNODE *pflist)
+static void fl_free(FNODE *pflist)
 {
         FNODE           *thelast;
 
@@ -236,7 +236,7 @@ void fl_free(FNODE *pflist)
 /*
 *       Allocate a file node.
 */
-FNODE *fn_alloc(void)
+static FNODE *fn_alloc(void)
 {
         FNODE           *thefile;
 
@@ -253,7 +253,7 @@ FNODE *fn_alloc(void)
 /*
 *       Allocate a path node.
 */
-PNODE *pn_alloc(void)
+static PNODE *pn_alloc(void)
 {
         PNODE           *thepath;
         
@@ -279,7 +279,7 @@ PNODE *pn_alloc(void)
 /*
 *       Free a path node.
 */
-void pn_free(PNODE *thepath)
+static void pn_free(PNODE *thepath)
 {
         PNODE           *pp;
 

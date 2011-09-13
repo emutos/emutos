@@ -56,7 +56,6 @@ extern WORD     ptsout[10];
 extern LONG     ad_intin;
 
 extern WORD     gl_mode;
-extern WORD     gl_mask;
 extern WORD     gl_tcolor;
 extern WORD     gl_lcolor;
 extern WORD     gl_fis;

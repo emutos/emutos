@@ -30,6 +30,7 @@
 #include "deskwin.h"
 #include "infodef.h"
 #include "gembind.h"
+#include "gemoblib.h"
 #include "deskbind.h"
 
 #include "optimize.h"
@@ -48,40 +49,8 @@
 #include "intmath.h"
 
 
-
-GLOBAL ICONBLK  gl_aib;
-GLOBAL ICONBLK  gl_dib;
-
-
-
-
-#ifdef NO_ROM
-
-/*------------------------------*/
-/*      ob_actxywh              */
-/*------------------------------*/
-void ob_actxywh(LONG tree, WORD obj, GRECT *p)
-{
-                                /* get x,y,w,h for specified object     */
-        objc_offset(tree, obj, &p->g_x, &p->g_y);
-        p->g_w = LWGET(OB_WIDTH(obj));
-        p->g_h = LWGET(OB_HEIGHT(obj));
-} /* ob_actxywh */
-
-/*------------------------------*/
-/*      ob_relxywh              */
-/*------------------------------*/
-void ob_relxywh(LONG tree, WORD obj, GRECT *prect)
-{
-                                /* get x,y,w,h for specified object     */
-        LWCOPY(ADDR(prect), OB_X(obj), sizeof(GRECT) / 2);
-} /* ob_relxywh */
-#else
-void ob_actxywh(LONG tree, WORD obj, GRECT *p);
-void ob_relxywh(LONG tree, WORD obj, GRECT *prect);
-#endif /* NO_ROM */
-
-
+static ICONBLK  gl_aib;
+static ICONBLK  gl_dib;
 
 
 /*
@@ -98,7 +67,7 @@ WORD is_installed(ANODE *pa)
 *       Routine to find out if this icon is the last disk icon on the
 *       screen.
 */
-WORD lastdisk()
+static WORD lastdisk(void)
 {
         WORD            i;
         ANODE           *pa;
@@ -118,7 +87,7 @@ WORD lastdisk()
 *       the trash can
 */
 #ifdef DESK1
-void ins_posdisk(WORD dx, WORD dy, WORD *pdx, WORD *pdy)
+static void ins_posdisk(WORD dx, WORD dy, WORD *pdx, WORD *pdy)
 {
         WORD            tx, ty;
         WORD            xdiff, ydiff, xdir, ydir;
@@ -163,7 +132,7 @@ void ins_posdisk(WORD dx, WORD dy, WORD *pdx, WORD *pdy)
 *       Routine to find out if there is another icon with this letter already
 *       on the desktop.
 */
-ANODE *get_disk(WORD letter)
+static ANODE *get_disk(WORD letter)
 {
         ANODE           *pa;
 
@@ -279,7 +248,7 @@ WORD ins_disk(ANODE *pa)
 } /* ins_disk */
 
 
-void insa_icon(LONG tree, WORD obj, WORD nicon, ICONBLK *pic, BYTE *ptext)
+static void insa_icon(LONG tree, WORD obj, WORD nicon, ICONBLK *pic, BYTE *ptext)
 {
         movs(sizeof(ICONBLK), &G.g_iblist[nicon], pic);
         pic->ib_ptext = ADDR( ptext );
@@ -289,7 +258,7 @@ void insa_icon(LONG tree, WORD obj, WORD nicon, ICONBLK *pic, BYTE *ptext)
 
 
 
-void insa_elev(LONG tree, WORD nicon, WORD numics)
+static void insa_elev(LONG tree, WORD nicon, WORD numics)
 {
         WORD            y, h, th;
         const char      *lp;
@@ -335,7 +304,7 @@ void insa_elev(LONG tree, WORD nicon, WORD numics)
 } /* insa_elev */
 
 
-WORD insa_dial(LONG tree, WORD nicon, WORD numics)
+static WORD insa_dial(LONG tree, WORD nicon, WORD numics)
 {
         WORD            firstslot, nstate, ystate, i;
         WORD            touchob, oicon, value;
@@ -444,7 +413,7 @@ dofelev:        wind_update(3);
 }
 
 
-void insa_gtypes(LONG tree, BYTE *ptypes)
+static void insa_gtypes(LONG tree, BYTE *ptypes)
 {
         WORD            i, j;
         BYTE            *pstr, doctype[4];
@@ -467,7 +436,7 @@ void insa_gtypes(LONG tree, BYTE *ptypes)
 }
 
 
-void insa_stypes(LONG tree, BYTE *pdata)
+static void insa_stypes(LONG tree, BYTE *pdata)
 {
         WORD            i;
         BYTE            *pstr, doctype[4];
@@ -489,9 +458,7 @@ void insa_stypes(LONG tree, BYTE *pdata)
 
 #if MULTIAPP
 
-        WORD
-ins_latoi(st_ad)
-        LONG    st_ad;
+static WORD ins_latoi(LONG st_ad)
 {
         WORD    retval;
         BYTE    ch;

@@ -202,7 +202,7 @@ WORD fun_op(WORD op, PNODE *pspath, BYTE *pdest, WORD dulx, WORD duly,
 
 
 
-WORD cmp_names(BYTE *psrc, BYTE *pdst)
+static WORD cmp_names(BYTE *psrc, BYTE *pdst)
 {
         WORD            ret;
         BYTE            *lastslsh, *ptmp;
@@ -229,17 +229,18 @@ WORD cmp_names(BYTE *psrc, BYTE *pdst)
 /*
 *       Routine to call when a list of files has been dragged on
 *       top of a particular destination inside of a window.
+*         pspath       source path
+*         pdspec       destination file spec
+*         datype       destination icon
+*         pdf          destination file/fold
+*         dulx, duly   destination x, y
+*         from_disk    TRUE if src is disk
+*         src_ob       source object
+*         pdo_both     see AT_ISFOLD below
 */
-        WORD
-fun_wdst(pspath, pdspec, datype, pdf, dulx, duly, from_disk, src_ob, pdo_both)
-        PNODE           *pspath;                /* source path          */
-        BYTE            *pdspec;                /* destination file spec*/
-        WORD            datype;                 /* destination icon     */
-        FNODE           *pdf;                   /* destination file/fold*/
-        WORD            dulx, duly;             /* destination x, y     */
-        WORD            from_disk;              /* TRUE if src is disk  */
-        WORD            src_ob;                 /* source object        */
-        WORD            *pdo_both;              /* see AT_ISFOLD below  */
+static WORD
+fun_wdst(PNODE *pspath, BYTE *pdspec, WORD datype, FNODE *pdf,
+         WORD dulx, WORD duly, WORD from_disk, WORD src_ob, WORD *pdo_both)
 {
         WORD            op;
         BYTE            *pdname, drv_ltr, *ptmp;
@@ -330,13 +331,7 @@ fun_wdst(pspath, pdspec, datype, pdf, dulx, duly, from_disk, src_ob, pdo_both)
 *       and the destination is either a window or another
 *       disk.
 */
-        WORD
-fun_disk(src_ob, pdw, datype, pdf, dulx, duly)
-        WORD            src_ob;
-        WNODE           *pdw;
-        WORD            datype;
-        FNODE           *pdf;
-        WORD            dulx, duly;
+static WORD fun_disk(WORD src_ob, WNODE *pdw, WORD datype, FNODE *pdf, WORD dulx, WORD duly)
 {
         WORD            ret, do_both;
         FNODE           *pf;

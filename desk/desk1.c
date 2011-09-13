@@ -36,7 +36,7 @@
 #include "desk_rsc.h"
 
 
-void zoom_closed(WORD close, WORD w_id, WORD xicon, WORD yicon)
+static void zoom_closed(WORD close, WORD w_id, WORD xicon, WORD yicon)
 {
         GRECT rc;
         wind_get(w_id, WF_WXYWH, &rc.g_x, &rc.g_y, &rc.g_w, &rc.g_h);
@@ -48,7 +48,7 @@ void zoom_closed(WORD close, WORD w_id, WORD xicon, WORD yicon)
 
 
 
-WORD w_setpath(WNODE *pw, WORD drv, BYTE *path, BYTE *name, BYTE *ext)
+static WORD w_setpath(WNODE *pw, WORD drv, BYTE *path, BYTE *name, BYTE *ext)
 {
         WORD icx, icy;
         GRECT rc;
@@ -151,7 +151,7 @@ void snap_disk(WORD x, WORD y, WORD *px, WORD *py)
 
 
 
-WORD fun_file2desk(PNODE *pn_src, ANODE *an_dest, WORD dobj)
+static WORD fun_file2desk(PNODE *pn_src, ANODE *an_dest, WORD dobj)
 {
         ICONBLK *dicon;
         WORD operation;
@@ -178,7 +178,7 @@ WORD fun_file2desk(PNODE *pn_src, ANODE *an_dest, WORD dobj)
 
 
 
-WORD fun_file2win(PNODE *pn_src, BYTE  *spec, ANODE *an_dest, FNODE *fn_dest)
+static WORD fun_file2win(PNODE *pn_src, BYTE  *spec, ANODE *an_dest, FNODE *fn_dest)
 {
         BYTE *p;
         strcpy(G.g_tmppth, spec);
@@ -202,7 +202,7 @@ WORD fun_file2win(PNODE *pn_src, BYTE  *spec, ANODE *an_dest, FNODE *fn_dest)
                       0, 0, 0, 0);    /* GEM/1 doesn't *have* the last 5 arguments! */
 }
 
-void fun_win2desk(WORD wh, WORD obj)
+static void fun_win2desk(WORD wh, WORD obj)
 {
         WNODE *wn_src;
         ANODE *an_dest;
@@ -216,7 +216,7 @@ void fun_win2desk(WORD wh, WORD obj)
 }
 
 
-WORD fun_file2any(WORD sobj, WNODE *wn_dest, ANODE *an_dest, FNODE *fn_dest,
+static WORD fun_file2any(WORD sobj, WNODE *wn_dest, ANODE *an_dest, FNODE *fn_dest,
                   WORD dobj)
 {
         WORD okay = 0;
@@ -254,7 +254,7 @@ WORD fun_file2any(WORD sobj, WNODE *wn_dest, ANODE *an_dest, FNODE *fn_dest,
 }
 
 
-void fun_desk2win(WORD wh, WORD dobj) 
+static void fun_desk2win(WORD wh, WORD dobj) 
 {
         WNODE *wn_dest;
         FNODE *fn_dest;
@@ -279,7 +279,7 @@ void fun_desk2win(WORD wh, WORD dobj)
 }
 
 
-void fun_desk2desk(WORD dobj)
+static void fun_desk2desk(WORD dobj)
 {
         WORD sobj,  isapp;
         FNODE *fn;

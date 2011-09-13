@@ -176,16 +176,10 @@ extern BYTE     *gl_pstart;
 extern WORD     gl_pstart;
 #endif
 */
-extern WORD gl_pstart;
 
 
-extern WORD     gl_poffset;
 extern WORD     gl_numics;
-
 extern WORD     gl_stdrv;
-
-extern BYTE     gl_afile[SIZE_AFILE];
-extern BYTE     gl_buffer[SIZE_BUFF];
 
 
 /* Prototypes: */
@@ -193,7 +187,7 @@ ANODE *app_alloc(WORD tohead);
 void app_free(ANODE *pa);
 BYTE *scan_str(BYTE *pcurr, BYTE **ppstr);
 void app_tran(WORD bi_num);
-WORD app_start();
+WORD app_start(void);
 void app_save(WORD todisk);
 BYTE app_blddesk(void);
 ANODE *app_afind(WORD isdesk, WORD atype, WORD obid, BYTE *pname, WORD *pisapp);

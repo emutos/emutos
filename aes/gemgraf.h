@@ -27,9 +27,6 @@ extern WORD     gl_hschar;
 extern WORD     gl_wptschar;
 extern WORD     gl_hptschar;
 
-extern WORD     gl_wsptschar;
-extern WORD     gl_hsptschar;
-
 extern WORD     gl_wbox;
 extern WORD     gl_hbox;
 

@@ -12,14 +12,12 @@
 
 /* AES prototypes: */
 
-WORD appl_init();
-WORD appl_exit();
+WORD appl_init(void);
+WORD appl_exit(void);
 /*
 WORD appl_write(WORD rwid, WORD length, LONG pbuff);
 WORD appl_read(WORD rwid, WORD length, LONG pbuff);
-*/
 WORD appl_find(LONG pname);
-/*
 WORD appl_tplay(LONG tbuffer, WORD tlength, WORD tscale);
 WORD appl_trecord(LONG tbuffer, WORD tlength);
 */
@@ -91,7 +89,7 @@ WORD wind_calc(WORD wctype, UWORD kind, WORD x, WORD y, WORD w, WORD h,
 
 
 WORD rsrc_load(LONG rsname);
-WORD rsrc_free();
+WORD rsrc_free(void);
 WORD rsrc_gaddr(WORD rstype, WORD rsid, LONG *paddr);
 WORD rsrc_obfix(LONG tree, WORD obj);
 

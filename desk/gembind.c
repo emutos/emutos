@@ -28,7 +28,7 @@
 #define CTRL_CNT        3
 
 
-static BYTE    ctrl_cnts[] =
+static const BYTE ctrl_cnts[] =
 {
 /* Application Manager          */
         0, 1, 0,                        /* func 010             */
@@ -191,10 +191,10 @@ static LONG             addr_out[AO_SIZE];
 
 
 
-WORD gem_if(WORD opcode)
+static WORD gem_if(WORD opcode)
 {
         WORD            i;
-        BYTE            *pctrl;
+        const BYTE      *pctrl;
 
         control[0] = opcode;
 
@@ -210,7 +210,7 @@ WORD gem_if(WORD opcode)
 
                                         /* Application Manager          */
 
-WORD appl_init()
+WORD appl_init(void)
 {
         gb.gb_pcontrol = ADDR((BYTE *) &control[0]); 
         gb.gb_pglobal = ADDR((BYTE *) &global[0]);
@@ -225,7 +225,7 @@ WORD appl_init()
 }
 
 
-WORD appl_exit()
+WORD appl_exit(void)
 {
         gem_if(APPL_EXIT);
         return( TRUE );
@@ -252,13 +252,13 @@ WORD appl_read(WORD rwid, WORD length, LONG pbuff)
 }
 */
 
-
+/* unused
 WORD appl_find(LONG pname)
 {
         AP_PNAME = pname;
         return( gem_if(APPL_FIND) );
 }
-
+*/
 
 /* unused
 WORD appl_tplay(LONG tbuffer, WORD tlength, WORD tscale)
@@ -290,7 +290,7 @@ WORD appl_bvset(UWORD bvdisk, UWORD bvhard)
 
                                         /* Event Manager                */
 /* not used in desktop
-UWORD evnt_keybd()
+UWORD evnt_keybd(void)
 {
         return((UWORD) gem_if(EVNT_KEYBD) );
 }
@@ -1026,7 +1026,7 @@ WORD rsrc_load(LONG rsname)
 }
 
 
-WORD rsrc_free()
+WORD rsrc_free(void)
 {
         return( gem_if( RSRC_FREE ) );
 }

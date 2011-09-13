@@ -154,7 +154,7 @@ void show_hide(WORD fmd, LONG tree)
 }
 
 
-void do_namecon()
+static void do_namecon(void)
 {
 /* BugFix       */
         graf_mouse(ARROW, 0x0L);
@@ -201,7 +201,7 @@ BYTE *scan_slsh(BYTE *path)
 *       Add a new directory name to the end of an existing path.  This
 *       includes appending a \*.*.
 */
-void add_path(BYTE *path, BYTE *new_name)
+static void add_path(BYTE *path, BYTE *new_name)
 {
         while (*path != '*')
           path++;
@@ -214,7 +214,7 @@ void add_path(BYTE *path, BYTE *new_name)
 *       Remove the last directory in the path and replace it with
 *       *.*.
 */
-void sub_path(BYTE *path)
+static void sub_path(BYTE *path)
 {
                                                 /* scan to last slash   */
         path = scan_slsh(path);
@@ -244,7 +244,7 @@ void add_fname(BYTE *path, BYTE *new_name)
 /*
 *       Check if path is associated with an open window
 */
-WORD fold_wind(BYTE *path)
+static WORD fold_wind(BYTE *path)
 {
         WORD            i;
         WNODE           *pwin;
@@ -266,7 +266,7 @@ WORD fold_wind(BYTE *path)
 *       Routine to check that the name we will be adding is like the 
 *       last folder name in the path.
 */
-void like_parent(BYTE *path, BYTE *new_name)
+static void like_parent(BYTE *path, BYTE *new_name)
 {
         BYTE            *pstart, *lastfold, *lastslsh;
                                                 /* remember start of path*/
@@ -302,7 +302,7 @@ void like_parent(BYTE *path, BYTE *new_name)
 *       See if these two paths represent the same folder.  The first
 *       path ends in \*.*, the second path ends with just the folder.
 */
-WORD same_fold(BYTE *psrc, BYTE *pdst)
+static WORD same_fold(BYTE *psrc, BYTE *pdst)
 {
         WORD            ret;
         BYTE            *lastslsh;
@@ -338,7 +338,7 @@ void del_fname(BYTE *pstr)
 *       Parse to find the filename part of a path and return a copy of it
 *       in a form ready to be placed in a dialog box.
 */
-void get_fname(BYTE *pstr, BYTE *newstr)
+static void get_fname(BYTE *pstr, BYTE *newstr)
 {
         while (*pstr)
           pstr++;
@@ -350,7 +350,7 @@ void get_fname(BYTE *pstr, BYTE *newstr)
 } /* get_fname */
 
 
-WORD d_errmsg()
+WORD d_errmsg(void)
 {
         if (DOS_ERR)
         {
@@ -364,7 +364,7 @@ WORD d_errmsg()
 /*
 *       Directory routine to DO File DELeting.
 */
-WORD d_dofdel(BYTE *ppath)
+static WORD d_dofdel(BYTE *ppath)
 { 
         dos_delete((BYTE *)ADDR(ppath));
         return( d_errmsg() );
@@ -374,7 +374,7 @@ WORD d_dofdel(BYTE *ppath)
 /*
 *       Directory routine to DO File COPYing.
 */
-WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WORD attr)
+static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WORD attr)
 {
         LONG            tree;
         WORD            srcfh, dstfh;
@@ -668,7 +668,7 @@ WORD d_doop(WORD op, LONG tree, WORD obj, BYTE *psrc_path, BYTE *pdst_path,
 *       start at the current position of the ptr.
 *       assume path will eventually end with \*.*
 */
-BYTE *ret_path(BYTE *pcurr)
+static BYTE *ret_path(BYTE *pcurr)
 {
         REG BYTE        *path;
                                         /* find next level              */

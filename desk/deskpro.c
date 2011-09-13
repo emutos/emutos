@@ -61,7 +61,7 @@ WORD pro_chdir(WORD drv, BYTE *ppath)
 } /* pro_chdir */
 
 
-WORD pro_exec(WORD isgraf, WORD isover, LONG pcmd, LONG ptail)
+static WORD pro_exec(WORD isgraf, WORD isover, LONG pcmd, LONG ptail)
 {
         WORD            ret;
 #if MULTIAPP

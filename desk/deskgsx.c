@@ -54,7 +54,7 @@ void gsx_ncode(WORD code, WORD n, WORD m)
 }
 
 
-void gsx_vclose()
+void gsx_vclose(void)
 {
         gsx_ncode(CLOSE_VWORKSTATION, 0, 0);
 }
@@ -97,7 +97,7 @@ void v_opnvwk(WORD *pwork_in, WORD *phandle, WORD *pwork_out )
 }
 
 
-void gsx_vopen()
+void gsx_vopen(void)
 {
         WORD            i;
 

@@ -18,6 +18,7 @@
 #define NIL -1
 #define ROOT 0
 
+/* in aes/gemobjop.c */
 extern LONG obaddr(LONG tree, WORD obj, WORD fld_off);
 
 #define OB_NEXT(x) obaddr(tree, x, 0)

@@ -78,7 +78,7 @@ static void my_itoa(UWORD number, BYTE *pnumstr)
 *
 *       put into this form 12:45 pm
 */
-void fmt_time(UWORD time, BYTE *ptime)
+static void fmt_time(UWORD time, BYTE *ptime)
 {
         WORD            pm, val;
 
@@ -118,7 +118,7 @@ void fmt_time(UWORD time, BYTE *ptime)
 *       mm = 1 - 12
 *       dd = 1 - 31
 */
-void fmt_date(UWORD date, BYTE *pdate)
+static void fmt_date(UWORD date, BYTE *pdate)
 {
         WORD year;
 
@@ -224,7 +224,7 @@ static WORD ob_sfcb(LONG psfcb, BYTE *pfmt)
 }       
 
 
-WORD dr_fnode(UWORD last_state, UWORD curr_state, WORD x, WORD y,
+static WORD dr_fnode(UWORD last_state, UWORD curr_state, WORD x, WORD y,
               WORD w, WORD h, LONG psfcb)
 {
         WORD            len;
@@ -278,7 +278,7 @@ WORD inf_show(LONG tree, WORD start)
 /*
 *       Routine for finishing off a simple ok-only dialog box
 */
-void inf_finish(LONG tree, WORD dl_ok)
+static void inf_finish(LONG tree, WORD dl_ok)
 {
         inf_show(tree, 0);
         LWSET(OB_STATE(dl_ok), NORMAL);
@@ -289,7 +289,7 @@ void inf_finish(LONG tree, WORD dl_ok)
 *       Routine to get number of files and folders and stuff them in
 *       a dialog box.
 */
-WORD inf_fifo(LONG tree, WORD dl_fi, WORD dl_fo, BYTE *ppath)
+static WORD inf_fifo(LONG tree, WORD dl_fi, WORD dl_fo, BYTE *ppath)
 {
         WORD            junk, more;
         BYTE            nf_str[6], nd_str[6];
@@ -473,7 +473,7 @@ WORD inf_disk(BYTE dr_id)
 /*
 *       Set preferences dialog.
 */
-WORD inf_pref()
+WORD inf_pref(void)
 {
         LONG            tree;
         WORD            cyes, cno, i;

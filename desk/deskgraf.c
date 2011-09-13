@@ -77,7 +77,6 @@ GLOBAL WORD     ptsout[10];
 GLOBAL LONG     ad_intin;
 
 GLOBAL WORD     gl_mode;
-GLOBAL WORD     gl_mask;
 GLOBAL WORD     gl_tcolor;
 GLOBAL WORD     gl_lcolor;
 GLOBAL WORD     gl_fis;
@@ -301,7 +300,7 @@ void gsx_trans(LONG saddr, UWORD swb, LONG daddr, UWORD dwb, UWORD h)
 *       Routine to initialize all the global variables dealing
 *       with a particular workstation open
 */
-void gsx_start()
+void gsx_start(void)
 {
         WORD            char_height, nc;
 

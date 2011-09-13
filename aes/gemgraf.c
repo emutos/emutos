@@ -55,9 +55,6 @@ GLOBAL WORD     gl_hschar;
 GLOBAL WORD     gl_wptschar;
 GLOBAL WORD     gl_hptschar;
 
-GLOBAL WORD     gl_wsptschar;
-GLOBAL WORD     gl_hsptschar;
-
 GLOBAL WORD     gl_wbox;
 GLOBAL WORD     gl_hbox;
 
@@ -92,6 +89,8 @@ GLOBAL GRECT    gl_rzero;
 GLOBAL GRECT    gl_rcenter;
 GLOBAL GRECT    gl_rmenu;
 
+static WORD     gl_wsptschar;
+static WORD     gl_hsptschar;
 
 
 /*
