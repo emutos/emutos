@@ -37,7 +37,7 @@ static void signal(EVB *e)
 {
         register PD     *p, *p1, *q1;
 
-        p = (PD *) e->e_pd;
+        p = e->e_pd;
         p->p_evflg |= e->e_mask;
                                                 /* off the not-ready    */
                                                 /*   list               */
@@ -139,7 +139,7 @@ EVSPEC iasync(WORD afunc, LONG aparm)
                                                 /* put in on list       */
         e->e_nextp = rlr->p_evlist;
         rlr->p_evlist = e;
-        e->e_pd = (BYTE *) rlr;
+        e->e_pd = rlr;
         e->e_flag = 0;
         e->e_pred = 0;
                                                 /* find a free bit in   */

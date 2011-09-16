@@ -2685,3 +2685,5 @@ Start... early ages
 - bios/bios.c bios/lineainit.c bios/lineavars.h bios/screen.c vdi/vdi_defs.h:
   Declare Line A stuff in lineavars.h header instead of in several C-files.
   Contributed by Eero Tamminen. (VRI)
+- aes/gemasync.c aes/gemflag.c aes/struct.h: Fix EVB structure e_pd member type.
+  Contributed by Eero Tamminen. (VRI)

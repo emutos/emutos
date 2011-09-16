@@ -124,14 +124,14 @@ void unsync(SPB *sy)
                                                 /* next off the wait    */
                                                 /*   list               */
             sy->sy_wait = p->e_link;
-            sy->sy_owner = (PD *) p->e_pd;
+            sy->sy_owner = p->e_pd;
                                                 /* restart counting sema*/
             sy->sy_tas = 1;
             azombie(p, 0);
            dsptch();
           }
           else
-            sy->sy_owner = 0;                   /* reset owner field    */
+            sy->sy_owner = NULLPTR;             /* reset owner field    */
         }
 }
 
