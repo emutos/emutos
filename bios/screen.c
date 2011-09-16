@@ -18,15 +18,13 @@
 #include "screen.h"
 #include "asm.h"
 #include "tosvars.h"
+#include "lineavars.h"
 #include "nvram.h"
 #include "kprint.h"
 #include "font.h"
 #include "vt52.h"
 
 #define DBG_SCREEN 0
-
-
-extern void linea_init(void);   /* found in lineainit.c */
 
 
 /* determine monitor type, ... */

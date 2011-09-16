@@ -199,7 +199,6 @@ extern WORD flip_y;             /* True if magnitudes being returned */
 extern WORD line_cw;            /* Linewidth for current circle */
 extern WORD num_qc_lines;
 extern WORD val_mode, chc_mode, loc_mode, str_mode;
-extern BYTE shft_off;           /* once computed Offset into a Scan Line */
 
 /* gdp area variables */
 extern WORD xc, yc, xrad, yrad, del_ang, beg_ang, end_ang;

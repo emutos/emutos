@@ -19,13 +19,16 @@
 #include "portab.h"
 
 
-
 /* Screen related variables */
+
+extern BYTE shft_off;           // once computed Offset into a Scan Line
 
 extern UWORD v_planes;          // count of color planes
 extern UWORD v_lin_wr;          // line wrap : bytes per line
 extern UWORD v_hz_rez;          // screen horizontal resolution
 extern UWORD v_vt_rez;          // screen vertical resolution
 extern UWORD v_bytes_lin;       // width of line in bytes
+
+extern void linea_init(void);   // initialize variables
 
 #endif /* LINEAVARS_H */

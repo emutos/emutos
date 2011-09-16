@@ -20,8 +20,8 @@
 
 #define DBG_LINEA 0
 
-/* Forward prototypes */
-void linea_init(void);
+
+BYTE shft_off;                  /* once computed Offset into a Scan Line */
 
 
 /* Shift table for computing offsets into a scan line (interleaved planes) */
@@ -32,9 +32,6 @@ static const BYTE shft_tab [] =
     0,  /* not used */
     1   /* 4 planes */
 };
-
-BYTE shft_off;                  /* once computed Offset into a Scan Line */
-
 
 /* Settings for the different video modes */
 struct video_mode {

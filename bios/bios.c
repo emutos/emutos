@@ -65,7 +65,6 @@ LONG bios_do_unimpl(WORD number);
 /*==== External declarations ==============================================*/
 
 extern LONG osinit(void);       /* found in bdosmain.c */
-extern void linea_init(void);   /* found in lineainit.c */
 extern void cartscan(WORD);     /* found in startup.S */
 
 extern void ui_start(void);   /* found in cli/coma.S or aes/gemstart.S */

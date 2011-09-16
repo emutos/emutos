@@ -2680,3 +2680,8 @@ Start... early ages
   desk/deskgraf.h desk/deskgsx.c desk/deskinf.c desk/deskinf.h desk/deskins.c
   desk/deskobj.c desk/deskpro.c desk/deskwin.c desk/gembind.c desk/taddr.c
   include/taddr.h: Static cleanup. Contributed by Eero Tamminen. (VRI)
+
+2011-09-16
+- bios/bios.c bios/lineainit.c bios/lineavars.h bios/screen.c vdi/vdi_defs.h:
+  Declare Line A stuff in lineavars.h header instead of in several C-files.
+  Contributed by Eero Tamminen. (VRI)
