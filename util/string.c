@@ -15,14 +15,10 @@
  * this, replacements for common string routines are provided here.
  */
 
+#include <stdarg.h>
+#include "doprintf.h"
 #include "string.h"
 #include "kprint.h"
-
-/* doprintf implemented in doprintf.c. 
- * This is an OLD one, and does not support floating point.
- */
-#include <stdarg.h>
-extern int doprintf(void (*outc)(int), const char *fmt, va_list ap);
 
 
 /* The following functions are either used as inlines in string.h

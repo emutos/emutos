@@ -6,9 +6,8 @@
  */
 
 #include <stdarg.h>
- 
-/* returns the number of bytes output */
-int doprintf(void (*outc)(int), const char *fmt, va_list ap);
+#include "doprintf.h"
+
 
 static char *itoa(char *p, unsigned int num, int radix)
 {

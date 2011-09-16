@@ -74,5 +74,5 @@ void * memset(void *address, int c, long unsigned int size);
 /* clear memory */
 void bzero(void *address, long unsigned int size);
 
-#endif /* BTOOLS_H */
+#endif /* STRING_H */
 

@@ -2687,3 +2687,6 @@ Start... early ages
   Contributed by Eero Tamminen. (VRI)
 - aes/gemasync.c aes/gemflag.c aes/struct.h: Fix EVB structure e_pd member type.
   Contributed by Eero Tamminen. (VRI)
+- bios/kprint.c include/doprintf.h include/string.h util/date.c util/doprintf.c
+  util/dumpkbd.c util/string.c: Add a new include/doprintf.h header for
+  util/doprintf.c. Contributed by Eero Tamminen. (VRI)

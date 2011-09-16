@@ -12,7 +12,8 @@
  */
 
 
-
+#include <stdarg.h>
+#include "doprintf.h"
 #include "config.h"
 #include "portab.h"
 #include "kprint.h"
@@ -26,13 +27,6 @@
 /* extern declarations */
 
 extern void printout_stonx(char *);    /* in kprintasm.S */
-
-
-/* doprintf implemented in doprintf.c. 
- * This is an OLD one, and does not support floating point 
- */
-#include <stdarg.h>
-extern int doprintf(void (*outc)(int), const char *fmt, va_list ap);
 
 
 /*

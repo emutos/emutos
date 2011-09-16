@@ -11,12 +11,9 @@
  */
 
 #include <osbind.h>
-
-/* doprintf implemented in doprintf.c. 
- * This is an OLD one, and does not support floating point 
- */
 #include <stdarg.h>
-extern int doprintf(void (*outc)(int), const char *fmt, va_list ap);
+#include "doprintf.h"
+
 
 void putchar(int c)
 {

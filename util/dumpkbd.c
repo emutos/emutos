@@ -8,15 +8,15 @@
  */
 
 #include <osbind.h>
+#include <stdarg.h>
+#include "doprintf.h"
 #include "string.h"
 
 /*
  * fake stdio stuff
  */
 
-#include <stdarg.h>
-extern int doprintf(void (*outc)(int), const char *fmt, va_list ap);
-void exit(int status);
+extern void exit(int status);
 
 struct file { int f; };
 #define FILE struct file
