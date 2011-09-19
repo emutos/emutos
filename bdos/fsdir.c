@@ -326,7 +326,7 @@ long xrmdir(char *p)
         char    *s;
         register int i;
 
-        if ((d = findit(p,&s,1)) < 0)                   /* M01.01.1212.01 */
+        if ((long)(d = findit(p,&s,1)) < 0)             /* M01.01.1212.01 */
                 return( (long)d );
         if (!d)                                                 /* M01.01.1214.01 */
                 return( EPTHNF );
@@ -405,7 +405,7 @@ long xchmod(char *p, int wrt, char mod)
         char *s;
         long pos;
 
-        if ((dn = findit(p,&s,0)) < 0)                  /* M01.01.1212.01 */
+        if ((long)(dn = findit(p,&s,0)) < 0)            /* M01.01.1212.01 */
                 return( (long)dn );
         if (!(long)dn)                                  /* M01.01.1214.01 */
                 return( EPTHNF );
