@@ -2696,3 +2696,5 @@ Start... early ages
 - bdos/fsdir.c: Fixed crash when calling Ddelete() or Fattrib() with an invalid
   drive. (VRI)
 - bdos/fsdir.c: Fixed potential uninitialized variable. (VRI)
+- bios/mfp.c bios/screen.c bios/sound.c tools/genctables.awk: Use static const
+  instead of const static for standard complicance. (VRI)

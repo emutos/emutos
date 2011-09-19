@@ -31,7 +31,7 @@
 
 /* Define palette */
 
-const static WORD dflt_palette[] = {
+static const WORD dflt_palette[] = {
     RGB_WHITE, RGB_RED, RGB_GREEN, RGB_YELLOW,
     RGB_BLUE, RGB_MAGENTA, RGB_CYAN, RGB_LTGRAY,
     RGB_GRAY, RGB_LTRED, RGB_LTGREEN, RGB_LTYELLOW,
@@ -39,7 +39,7 @@ const static WORD dflt_palette[] = {
 };
 
 #if CONF_WITH_VIDEL
-const static LONG videl_dflt_palette[] = {
+static const LONG videl_dflt_palette[] = {
     FRGB_WHITE, FRGB_RED, FRGB_GREEN, FRGB_YELLOW,
     FRGB_BLUE, FRGB_MAGENTA, FRGB_CYAN, FRGB_LTGRAY,
     FRGB_GRAY, FRGB_LTRED, FRGB_LTGREEN, FRGB_LTYELLOW,

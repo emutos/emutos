@@ -56,7 +56,7 @@ BEGIN {
 
 END {
     print "#if ! CONF_UNIQUE_COUNTRY"
-    print "const static struct country_record countries[] = {"
+    print "static const struct country_record countries[] = {"
     for(i = 1 ; i <= ncountries ; i++) {
         country = countries[i]
         print "    { COUNTRY_" country ", \"" langs[country] "\", " \
@@ -74,7 +74,7 @@ END {
         print "#include \"keyb_" tolower(keyb) ".h\""
         print "#endif" 
     }
-    print "\nconst static struct kbd_record avail_kbd[] = {"
+    print "\nstatic const struct kbd_record avail_kbd[] = {"
     for(keyb in needkeybs) {
         print "#if (CONF_KEYB == KEYB_ALL || CONF_KEYB == KEYB_" keyb ")" 
         print "    { KEYB_" keyb ", &keytbl_" tolower(keyb) " },"
@@ -88,7 +88,7 @@ END {
         print "extern const struct font_head fnt_" lcset "_8x8;"
         print "extern const struct font_head fnt_" lcset "_8x16;"
     }
-    print "\nconst static struct charset_fonts font_sets[] = {"
+    print "\nstatic const struct charset_fonts font_sets[] = {"
     for(cset in needcsets) {
         lcset = tolower(cset)
         print "#if (CONF_CHARSET == CHARSET_ALL || CONF_CHARSET == CHARSET_" \
