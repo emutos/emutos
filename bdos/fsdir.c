@@ -1096,7 +1096,7 @@ DND     *findit(char *name, char **sp, int dflag)
 #if DBGFSDIR
         kprintf("findit(%s)\n", n);
 #endif
-    if ((long)(p = dcrack(&n)) <= 0)                    /* M01.01.1214.01 */
+    if ((long)(p = dcrack(&n)) < 0)                     /* M01.01.1214.01 */
         return( p );
 
     /*

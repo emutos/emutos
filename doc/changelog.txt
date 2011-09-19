@@ -2695,3 +2695,4 @@ Start... early ages
 - aes/gemwmlib.c: Fixed array out of bounds. (VRI)
 - bdos/fsdir.c: Fixed crash when calling Ddelete() or Fattrib() with an invalid
   drive. (VRI)
+- bdos/fsdir.c: Fixed potential uninitialized variable. (VRI)
