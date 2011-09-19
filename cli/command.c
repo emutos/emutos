@@ -1119,7 +1119,7 @@ renmCmd(char *src, char *dst)
                     } else {
                         while (gtFlNm()) {
                             if (!(srchb[21] & 0x18)) {
-                                if (!mkDst());
+                                if (!mkDst())
                                 {
                                     mkSrc();
 

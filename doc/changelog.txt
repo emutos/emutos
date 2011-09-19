@@ -2698,3 +2698,5 @@ Start... early ages
 - bdos/fsdir.c: Fixed potential uninitialized variable. (VRI)
 - bios/mfp.c bios/screen.c bios/sound.c tools/genctables.awk: Use static const
   instead of const static for standard complicance. (VRI)
+- cli/command.c: Fixed no-op in rename command when the destination file is the
+  same as the source file. (VRI)
