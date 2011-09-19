@@ -1396,7 +1396,7 @@ WORD wm_create(WORD kind, GRECT *pt)
 {
         register WORD   i;
 
-        for(i=0; (D.w_win[i].w_flags & VF_INUSE) && i<NUM_WIN; i++);
+        for(i=0; i<NUM_WIN && (D.w_win[i].w_flags & VF_INUSE); i++);
         if ( i < NUM_WIN )
         {
           w_setup(rlr, i, kind);

@@ -2690,3 +2690,6 @@ Start... early ages
 - bios/kprint.c include/doprintf.h include/string.h util/date.c util/doprintf.c
   util/dumpkbd.c util/string.c: Add a new include/doprintf.h header for
   util/doprintf.c. Contributed by Eero Tamminen. (VRI)
+
+2011-09-19
+- aes/gemwmlib.c: Fixed array out of bounds. (VRI)
