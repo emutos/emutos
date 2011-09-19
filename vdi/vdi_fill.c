@@ -996,8 +996,8 @@ d_contourfill(Vwk * vwk)
 /*
  * crunch_queue - move qtop down to remove unused seeds
  */
-void
-static crunch_queue(void)
+static void
+crunch_queue(void)
 {
     while ((queue[qtop - 3] == EMPTY) && (qtop > qbottom))
         qtop -= 3;

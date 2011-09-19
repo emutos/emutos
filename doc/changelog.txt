@@ -2700,3 +2700,5 @@ Start... early ages
   instead of const static for standard complicance. (VRI)
 - cli/command.c: Fixed no-op in rename command when the destination file is the
   same as the source file. (VRI)
+- vdi/vdi_fill.c: Use static void instead of void static for standard
+  complicance. (VRI)
