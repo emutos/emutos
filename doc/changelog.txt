@@ -2705,3 +2705,5 @@ Start... early ages
 
 2011-09-20
 - bdos/console.c: Fixed backspace key in EmuCON with 8-bit characters. (VRI)
+- vdi/vdi_line.c: Fast, full precision square root. Contributed by David
+  Savinkoff. (VRI)
