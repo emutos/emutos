@@ -421,7 +421,7 @@ static int backsp(int h, char *cbuf, int retlen, int col)
             col += 8;
             col &= ~7;          /* for tab, go to multiple of 8 */
         }
-        else if ( ch < ' ' )
+        else if ( (unsigned char)ch < ' ' )
             col += 2;           /* control chars put out 2 printable chars */
         else
             col += 1;

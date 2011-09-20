@@ -2702,3 +2702,6 @@ Start... early ages
   same as the source file. (VRI)
 - vdi/vdi_fill.c: Use static void instead of void static for standard
   complicance. (VRI)
+
+2011-09-20
+- bdos/console.c: Fixed backspace key in EmuCON with 8-bit characters. (VRI)
