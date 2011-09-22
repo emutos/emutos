@@ -281,7 +281,7 @@
  */
 #ifndef INITINFO_DURATION
 # ifdef MACHINE_FIREBEE
-#  define INITINFO_DURATION 10
+#  define INITINFO_DURATION 8
 # else
 #  define INITINFO_DURATION 3
 # endif
