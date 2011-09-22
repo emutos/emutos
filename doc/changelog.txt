@@ -2712,3 +2712,4 @@ Start... early ages
 - Makefile: Renamed the ARAnyM ROM to emutos-aranym.img. (VRI)
 - Makefile: Changed the default target to "help". (VRI)
 - Makefile: Use the VMA_T* variables in the help message. (VRI)
+- Makefile: Renamed the FireBee ROM to emutosfb.s19. (VRI)

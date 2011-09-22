@@ -289,7 +289,7 @@ help:
 	@echo "256     etos256k.img, EmuTOS ROM padded to size 256 KB (starting at $(VMA_T2))"
 	@echo "512     $(ROM_512), EmuTOS ROM padded to size 512 KB (starting at $(VMA_T2))" 
 	@echo "aranym  $(ROM_ARANYM), suitable for ARAnyM" 
-	@echo "firebee emutos2.s19, to be flashed on the FireBee"
+	@echo "firebee $(SREC_FIREBEE), to be flashed on the FireBee"
 	@echo "ram     ramtos.img + boot.prg, a RAM tos"
 	@echo "flop    emutos.st, a bootable floppy with RAM tos"
 	@echo "clean"
@@ -397,15 +397,18 @@ aranym:
 #
 
 TOCLEAN += *.s19
+SRECFILE = emutos.s19
 LMA = 0
 
-%.s19: %.img
-	$(OBJCOPY) -I binary -O srec --change-addresses $(LMA) $< $@
+$(SRECFILE): emutos2.img
+	$(OBJCOPY) -I binary -O srec --change-addresses $(LMA) $< $(SRECFILE)
+
+SREC_FIREBEE = emutosfb.s19
 
 .PHONY: firebee
 firebee:
-	@echo building FireBee EmuTOS in emutos2.s19
-	$(MAKE) COLDFIRE=1 CPUFLAGS='-mcpu=5474' DEF='-DMACHINE_FIREBEE' LMA=0xe0600000 emutos2.s19
+	@echo building FireBee EmuTOS in $(SREC_FIREBEE)
+	$(MAKE) COLDFIRE=1 CPUFLAGS='-mcpu=5474' DEF='-DMACHINE_FIREBEE' LMA=0xe0600000 SRECFILE=$(SREC_FIREBEE) $(SREC_FIREBEE)
 
 #
 # ram - In two stages. first link emutos2.img to know the top address of bss, 
