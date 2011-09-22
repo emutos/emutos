@@ -278,14 +278,13 @@ OBJECTS = $(SOBJ) $(COBJ) $(FONTOBJ) obj/version.o
 # 
 
 .PHONY: all
-all:	emutos2.img
+all:	help
 
 .PHONY: help
 help:	
 	@echo "target  meaning"
 	@echo "------  -------"
 	@echo "help    this help message"
-	@echo "all     emutos2.img, a TOS 2 ROM image (0x00E00000)"
 	@echo "192     etos192k.img, EmuTOS ROM padded to size 192 KB (starting at 0x00FC0000)"
 	@echo "256     etos256k.img, EmuTOS ROM padded to size 256 KB (starting at 0x00E00000)"
 	@echo "512     $(ROM_512), EmuTOS ROM padded to size 512 KB (starting at 0x00E00000)" 
