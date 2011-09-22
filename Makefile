@@ -288,8 +288,8 @@ help:
 	@echo "all     emutos2.img, a TOS 2 ROM image (0x00E00000)"
 	@echo "192     etos192k.img, EmuTOS ROM padded to size 192 KB (starting at 0x00FC0000)"
 	@echo "256     etos256k.img, EmuTOS ROM padded to size 256 KB (starting at 0x00E00000)"
-	@echo "512     etos512k.img, EmuTOS ROM padded to size 512 KB (starting at 0x00E00000)" 
-	@echo "aranym  etos512k.img, suitable for ARAnyM" 
+	@echo "512     $(ROM_512), EmuTOS ROM padded to size 512 KB (starting at 0x00E00000)" 
+	@echo "aranym  $(ROM_ARANYM), suitable for ARAnyM" 
 	@echo "firebee emutos2.s19, to be flashed on the FireBee"
 	@echo "ram     ramtos.img + boot.prg, a RAM tos"
 	@echo "flop    emutos.st, a bootable floppy with RAM tos"
@@ -323,8 +323,11 @@ emutos2.img emutos2.map: $(OBJECTS) Makefile
 # generic sized images handling
 #
 
+# By default, the size of the ROM is deducted from the number in the filename.
+ROMSIZE = `echo $@ | sed -e 's/[^0-9]//g'`
+
 define sized_image
-@goal=`echo $@ | sed -e 's/[^0-9]//g'`; \
+@goal=$(ROMSIZE); \
 size=`wc -c < $<`; goalbytes=`expr $$goal \* 1024`; \
 if [ $$size -gt $$goalbytes ]; \
 then \
@@ -364,22 +367,31 @@ etos256k.img: emutos2.img
 	$(sized_image)
 
 #
-# 512kB Image (for Aranym or Falcon)
+# 512kB Image (for Falcon)
 #
 
-.PHONY: aranym
-aranym:
-	@echo building ARAnyM EmuTOS in etos512k.img
-	$(MAKE) CPUFLAGS='-m68040' DEF='-DMACHINE_ARANYM' 512
+ROM_512 = etos512k.img
 
 .PHONY: 512
-512: etos512k.img
+512: $(ROM_512)
+
+$(ROM_512): ROMSIZE = 512
+$(ROM_512): emutos2.img
+	$(sized_image)
 
 .PHONY: falcon
 falcon: help
 
-etos512k.img: emutos2.img
-	$(sized_image)
+#
+# ARAnyM Image
+#
+
+ROM_ARANYM = emutos-aranym.img
+
+.PHONY: aranym
+aranym:
+	@echo building ARAnyM EmuTOS in $(ROM_ARANYM)
+	$(MAKE) CPUFLAGS='-m68040' DEF='-DMACHINE_ARANYM' ROM_512=$(ROM_ARANYM) 512
 
 #
 # ColdFire images
@@ -534,8 +546,8 @@ po/messages.pot: bug$(EXE) po/POTFILES.in
 
 .PHONY: allbin
 allbin: 
-	@echo building etos512k.img
-	$(MAKE) etos512k.img
+	@echo building $(ROM_512)
+	$(MAKE) $(ROM_512)
 	$(RM) obj/*.o
 	@for i in $(COUNTRIES); \
 	do \

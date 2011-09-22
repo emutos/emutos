@@ -2707,3 +2707,6 @@ Start... early ages
 - bdos/console.c: Fixed backspace key in EmuCON with 8-bit characters. (VRI)
 - vdi/vdi_line.c: Fast, full precision square root. Contributed by David
   Savinkoff. (VRI)
+
+2011-09-22
+- Makefile: Renamed the ARAnyM ROM to emutos-aranym.img. (VRI)
