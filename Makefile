@@ -285,9 +285,9 @@ help:
 	@echo "target  meaning"
 	@echo "------  -------"
 	@echo "help    this help message"
-	@echo "192     etos192k.img, EmuTOS ROM padded to size 192 KB (starting at 0x00FC0000)"
-	@echo "256     etos256k.img, EmuTOS ROM padded to size 256 KB (starting at 0x00E00000)"
-	@echo "512     $(ROM_512), EmuTOS ROM padded to size 512 KB (starting at 0x00E00000)" 
+	@echo "192     etos192k.img, EmuTOS ROM padded to size 192 KB (starting at $(VMA_T1))"
+	@echo "256     etos256k.img, EmuTOS ROM padded to size 256 KB (starting at $(VMA_T2))"
+	@echo "512     $(ROM_512), EmuTOS ROM padded to size 512 KB (starting at $(VMA_T2))" 
 	@echo "aranym  $(ROM_ARANYM), suitable for ARAnyM" 
 	@echo "firebee emutos2.s19, to be flashed on the FireBee"
 	@echo "ram     ramtos.img + boot.prg, a RAM tos"
@@ -297,7 +297,7 @@ help:
 	@echo "tgz     bundles almost it all into a tgz archive"
 	@echo "depend  creates dependancy file (makefile.dep)"
 	@echo "dsm     dsm.txt, an edited desassembly of emutos.img"
-	@echo "fdsm    fal_dsm.txt, like above, but for 0x00E00000 ROMs"
+	@echo "fdsm    fal_dsm.txt, like above, but for $(VMA_T2) ROMs"
 	@echo "*.dsm   desassembly of any .c or almost any .img file"
 
 #
