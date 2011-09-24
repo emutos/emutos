@@ -308,11 +308,11 @@ TOCLEAN += *.img *.map
 
 emutos1.img emutos1.map: VMA = $(VMA_T1)
 emutos1.img emutos1.map: $(OBJECTS) Makefile
-	$(LD) -o emutos1.img -Wl,-Map,emutos1.map $(OBJECTS) $(LDFLAGS)
+	$(LD) -o emutos1.img $(OBJECTS) $(LDFLAGS) -Wl,-Map,emutos1.map
 
 emutos2.img emutos2.map: VMA = $(VMA_T2)
 emutos2.img emutos2.map: $(OBJECTS) Makefile
-	$(LD) -o emutos2.img -Wl,-Map,emutos2.map $(OBJECTS) $(LDFLAGS)
+	$(LD) -o emutos2.img $(OBJECTS) $(LDFLAGS) -Wl,-Map,emutos2.map
 
 
 #

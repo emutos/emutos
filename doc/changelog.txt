@@ -2723,3 +2723,4 @@ Start... early ages
 - bios/clock.c: Fix warning when NO_IKBD_CLOCK is not defined. (VRI)
 - Makefile: Merge LDFLAGS_VMA to LDFLAGS. (VRI)
 - Makefile: Avoid breaking linker lines. (VRI)
+- Makefile: Move additional linker options to the end of the command line. (VRI)
