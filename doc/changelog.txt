@@ -2721,3 +2721,4 @@ Start... early ages
 - Makefile: Initialize VMA with default value and LMA with VMA. (VRI)
 - bios/machine.c: Added DBG_MACHINE. (VRI)
 - bios/clock.c: Fix warning when NO_IKBD_CLOCK is not defined. (VRI)
+- Makefile: Merge LDFLAGS_VMA to LDFLAGS. (VRI)
