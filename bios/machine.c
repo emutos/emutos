@@ -10,6 +10,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+#define DBG_MACHINE 0
+
 #include "config.h"
 #include "portab.h"
 #include "cookie.h"
@@ -24,6 +26,7 @@
 #include "xhdi.h"
 #include "string.h"
 #include "dmasound.h"
+#include "kprint.h"
 
 long cookie_vdo;
 long cookie_fdc;
@@ -73,6 +76,10 @@ static void detect_video(void)
       has_ste_shifter = 1;
     } 
   }
+
+#if DBG_MACHINE
+  kprintf("has_ste_shifter = %d\n", has_ste_shifter);
+#endif
 #endif
 
 #if CONF_WITH_TT_SHIFTER
@@ -80,6 +87,10 @@ static void detect_video(void)
   has_tt_shifter = 0;
   if (check_read_byte(0xffff8400))
     has_tt_shifter = 1;
+
+#if DBG_MACHINE
+  kprintf("has_tt_shifter = %d\n", has_tt_shifter);
+#endif
 #endif
 
 #if CONF_WITH_VIDEL
@@ -87,6 +98,10 @@ static void detect_video(void)
   has_videl = 0;
   if (check_read_byte(0xffff8282))
     has_videl = 1;
+
+#if DBG_MACHINE
+  kprintf("has_videl = %d\n", has_videl);
+#endif
 #endif
 }
 
@@ -108,6 +123,10 @@ static void detect_vme(void)
   } else {
     has_vme = 0;
   }
+
+#if DBG_MACHINE
+  kprintf("has_vme = %d\n", has_vme);
+#endif
 }
 
 #endif /* CONF_WITH_VME */
@@ -122,6 +141,10 @@ static void setvalue_swi(void)
   if (check_read_byte(0xffff9201)) {
     cookie_swi = (*(volatile WORD *)0xffff9200)>>8;
   }
+
+#if DBG_MACHINE
+  kprintf("cookie_swi = 0x%08lx\n", cookie_swi);
+#endif
 }
 
 #endif /* CONF_WITH_DIP_SWITCHES */
@@ -151,6 +174,10 @@ static void setvalue_vdo(void)
   {
     cookie_vdo = 0x00000000L;
   } 
+
+#if DBG_MACHINE
+  kprintf("cookie_vdo = 0x%08lx\n", cookie_vdo);
+#endif
 }
 
 /* detect ARAnyM */
@@ -192,6 +219,10 @@ static void setvalue_mch(void)
   else {
     cookie_mch = MCH_ST;
   }
+
+#if DBG_MACHINE
+  kprintf("cookie_mch = 0x%08lx\n", cookie_mch);
+#endif
 }
 
 /* SND */
@@ -209,6 +240,10 @@ static void setvalue_snd(void)
   if (has_falcon_dmasound) {
     cookie_snd |= SND_16BIT | SND_MATRIX;
   }
+#endif
+
+#if DBG_MACHINE
+  kprintf("cookie_snd = 0x%08lx\n", cookie_snd);
 #endif
 }
   
@@ -229,6 +264,10 @@ static void setvalue_fdc(void)
   {
     cookie_fdc = FDC_0ATC;
   } 
+
+#if DBG_MACHINE
+  kprintf("cookie_fdc = 0x%08lx\n", cookie_fdc);
+#endif
 }
 
 
@@ -309,6 +348,9 @@ void machine_init(void)
    */
   if (ramtop > 0) {
     cookie_frb = (long)balloc(64 * 1024UL);
+#if DBG_MACHINE
+    kprintf("cookie_frb = 0x%08lx\n", cookie_frb);
+#endif
     cookie_add(COOKIE_FRB, cookie_frb);
   }
   else {
