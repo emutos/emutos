@@ -325,15 +325,15 @@ ROMSIZE = `echo $@ | sed -e 's/[^0-9]//g'`
 define sized_image
 @goal=$(ROMSIZE); \
 size=`wc -c < $<`; goalbytes=`expr $$goal \* 1024`; \
-echo "padding $< to $$goal KB into $@"; \
+echo "# Padding $< to $$goal KB into $@"; \
 if [ $$size -gt $$goalbytes ]; \
 then \
-  echo "$< is too big: `expr $$size - $$goalbytes` extra bytes"; \
+  echo "# $< is too big: `expr $$size - $$goalbytes` extra bytes"; \
   false; \
 else \
   dd if=/dev/zero of=$@ bs=1024 count=$$goal 2>/dev/null; \
   dd if=$< of=$@ conv=notrunc $(DDOPTS) 2>/dev/null; \
-  echo "$@ done (`expr $$goalbytes - $$size` bytes free)"; \
+  echo "# $@ done (`expr $$goalbytes - $$size` bytes free)"; \
 fi
 endef
 
@@ -354,7 +354,7 @@ etos192k.img: emutos1.img
 .PHONY: 256
 ifeq (,$(UNIQUE))
 256: 
-	@echo building $(COUNTRY)-only EmuTOS in etos256k.img
+	@echo "# Building $(COUNTRY)-only EmuTOS in etos256k.img"
 	$(MAKE) UNIQUE=$(COUNTRY) etos256k.img
 else
 256: etos256k.img
@@ -387,7 +387,7 @@ ROM_ARANYM = emutos-aranym.img
 
 .PHONY: aranym
 aranym:
-	@echo building ARAnyM EmuTOS in $(ROM_ARANYM)
+	@echo "# Building ARAnyM EmuTOS in $(ROM_ARANYM)"
 	$(MAKE) CPUFLAGS='-m68040' DEF='-DMACHINE_ARANYM' ROM_512=$(ROM_ARANYM) 512
 
 #
@@ -405,7 +405,7 @@ SREC_FIREBEE = emutosfb.s19
 
 .PHONY: firebee
 firebee:
-	@echo building FireBee EmuTOS in $(SREC_FIREBEE)
+	@echo "# Building FireBee EmuTOS in $(SREC_FIREBEE)"
 	$(MAKE) COLDFIRE=1 CPUFLAGS='-mcpu=5474' DEF='-DMACHINE_FIREBEE' LMA=0xe0600000 SRECFILE=$(SREC_FIREBEE) $(SREC_FIREBEE)
 
 #
@@ -543,13 +543,13 @@ po/messages.pot: bug$(EXE) po/POTFILES.in
 
 .PHONY: allbin
 allbin: 
-	@echo building $(ROM_512)
+	@echo "# Building $(ROM_512)"
 	$(MAKE) $(ROM_512)
 	$(RM) obj/*.o
 	@for i in $(COUNTRIES); \
 	do \
 	  j=etos256$${i}.img; \
-	  echo building $$j; \
+	  echo "# Building $$j"; \
 	  $(MAKE) UNIQUE=$$i 256; \
 	  mv etos256k.img $$j; \
 	done
@@ -561,7 +561,7 @@ all192:
 	  j=etos192$${i}.img; \
 	  $(RM) include/i18nconf.h bios/header.h */*.tr.c; \
 	  $(RM) emutos1.img etos192k.img obj/country* obj/nls*; \
-	  echo '***' building $$j '***'; \
+	  echo "# Building $$j"; \
 	  $(MAKE) DEF='-DTOS_VERSION=0x102' WITH_CLI=0 WITH_DESK1=0 \
 			UNIQUE=$$i 192; \
 	  mv etos192k.img $$j; \
