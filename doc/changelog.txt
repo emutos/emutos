@@ -2722,3 +2722,4 @@ Start... early ages
 - bios/machine.c: Added DBG_MACHINE. (VRI)
 - bios/clock.c: Fix warning when NO_IKBD_CLOCK is not defined. (VRI)
 - Makefile: Merge LDFLAGS_VMA to LDFLAGS. (VRI)
+- Makefile: Avoid breaking linker lines. (VRI)

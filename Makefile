@@ -308,13 +308,11 @@ TOCLEAN += *.img *.map
 
 emutos1.img emutos1.map: VMA = $(VMA_T1)
 emutos1.img emutos1.map: $(OBJECTS) Makefile
-	$(LD) -o emutos1.img -Wl,-Map,emutos1.map \
-	  $(OBJECTS) $(LDFLAGS)
+	$(LD) -o emutos1.img -Wl,-Map,emutos1.map $(OBJECTS) $(LDFLAGS)
 
 emutos2.img emutos2.map: VMA = $(VMA_T2)
 emutos2.img emutos2.map: $(OBJECTS) Makefile
-	$(LD) -o emutos2.img -Wl,-Map,emutos2.map \
-	  $(OBJECTS) $(LDFLAGS)
+	$(LD) -o emutos2.img -Wl,-Map,emutos2.map $(OBJECTS) $(LDFLAGS)
 
 
 #
@@ -427,8 +425,7 @@ emutos2-ram:
 ramtos.img ramtos.map: VMA = $(shell sed -e '/__end/!d;s/^ *//;s/ .*//' emutos2.map)
 ramtos.img ramtos.map: emutos2-ram
 	@echo '# Second pass to build ramtos.img with TEXT and DATA just after the BSS'
-	$(LD) -o ramtos.img $(OBJECTS) $(LDFLAGS) \
-		-Wl,-Map,ramtos.map
+	$(LD) -o ramtos.img $(OBJECTS) $(LDFLAGS) -Wl,-Map,ramtos.map
 
 boot.prg: obj/minicrt.o obj/boot.o obj/bootasm.o
 	$(LD) -s -o $@ $+ -lgcc
@@ -447,16 +444,14 @@ COMPROBJ = obj/compr-tosvars.o obj/comprimg.o obj/compr-memory.o obj/uncompr.o \
 
 compr2.img compr2.map: VMA = $(VMA_T2)
 compr2.img compr2.map: $(COMPROBJ)
-	$(LD) -o compr2.img $(COMPROBJ) $(LDFLAGS) \
-	  -Wl,-Map,compr2.map
+	$(LD) -o compr2.img $(COMPROBJ) $(LDFLAGS) -Wl,-Map,compr2.map
 
 etoscpr2.img: compr2.img compr$(EXE) ramtos.img
 	./compr$(EXE) --rom compr2.img ramtos.img $@
 
 compr1.img compr1.map: VMA = $(VMA_T1)
 compr1.img compr1.map: $(COMPROBJ)
-	$(LD) -o compr1.img $(COMPROBJ) $(LDFLAGS) \
-	  -Wl,-Map,compr1.map
+	$(LD) -o compr1.img $(COMPROBJ) $(LDFLAGS) -Wl,-Map,compr1.map
 
 etoscpr1.img: compr1.img compr$(EXE) ramtos.img
 	./compr$(EXE) --rom compr1.img ramtos.img $@
