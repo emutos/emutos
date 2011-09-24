@@ -106,8 +106,9 @@ void screen_init(void)
         if (ret != 0)
 #endif // CONF_WITH_NVRAM
         {
-            boot_resolution = 0x03a;    /* Default resolution */
-	}
+            /* Use the default resolution */
+            boot_resolution = 0x03a; /* 640x480x16@50Hz */
+        }
 
         vsetmode(boot_resolution);
     }
