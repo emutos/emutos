@@ -2727,3 +2727,4 @@ Start... early ages
 - Makefile: Added padding message. (VRI)
 - Makefile: Added the # character in front of the output messages. (VRI)
 - Makefile: Replaced in by into. (VRI)
+- bios/screen.c: Added missing volatile. (VRI)

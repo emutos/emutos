@@ -62,11 +62,11 @@ static void setphys(LONG addr)
         panic("VideoRAM covers ROM area!!\n");
     }
 
-    *(UBYTE *) 0xffff8201 = ((ULONG) addr) >> 16;
-    *(UBYTE *) 0xffff8203 = ((ULONG) addr) >> 8;
+    *(volatile UBYTE *) 0xffff8201 = ((ULONG) addr) >> 16;
+    *(volatile UBYTE *) 0xffff8203 = ((ULONG) addr) >> 8;
 #if CONF_WITH_STE_SHIFTER
     if (has_ste_shifter) {
-        *(UBYTE *) 0xffff820d = ((ULONG) addr);
+        *(volatile UBYTE *) 0xffff820d = ((ULONG) addr);
     }
 #endif
 }
@@ -114,7 +114,7 @@ void screen_init(void)
     else
 #endif // CONF_WITH_VIDEL
     {
-        *(BYTE *) 0xffff820a = 2;   /* sync-mode to 50 hz pal, internal sync */
+        *(volatile BYTE *) 0xffff820a = 2;   /* sync-mode to 50 hz pal, internal sync */
     }
 
     for (i = 0; i < 16; i++) {
@@ -200,13 +200,13 @@ LONG physbase(void)
 {
     LONG addr;
 
-    addr = *(UBYTE *) 0xffff8201;
+    addr = *(volatile UBYTE *) 0xffff8201;
     addr <<= 8;
-    addr += *(UBYTE *) 0xffff8203;
+    addr += *(volatile UBYTE *) 0xffff8203;
     addr <<= 8;
 #if CONF_WITH_STE_SHIFTER
     if (has_ste_shifter) {
-        addr += *(UBYTE *) 0xffff820D;
+        addr += *(volatile UBYTE *) 0xffff820D;
     }
 #endif
 
@@ -240,7 +240,7 @@ WORD getrez(void)
         /* Get the video mode for ST-hardware */
         WORD rez;
 
-        rez = (*(UBYTE *) 0xffff8260);
+        rez = (*(volatile UBYTE *) 0xffff8260);
 #if CONF_WITH_TT_SHIFTER
         if (has_tt_shifter) {
             rez &= 0x7;
@@ -266,11 +266,11 @@ void setscreen(LONG logLoc, LONG physLoc, WORD rez, WORD videlmode)
     if (rez >= 0 && rez < 8) {
         if (rez < 3) {
             /* ST compatible resolution */
-            *(UBYTE *)0xffff8260 = sshiftmod = rez;
+            *(volatile UBYTE *)0xffff8260 = sshiftmod = rez;
         }
 #if CONF_WITH_TT_SHIFTER
         else if (has_tt_shifter) {
-            *(UBYTE *)0xffff8262 = rez;
+            *(volatile UBYTE *)0xffff8262 = rez;
         }
 #endif
 #if CONF_WITH_VIDEL
@@ -308,7 +308,7 @@ WORD setcolor(WORD colorNum, WORD color)
     WORD rez = getrez();
     WORD max;
     WORD mask;
-    WORD *palette = (WORD *) 0xffff8240;
+    volatile WORD *palette = (WORD *) 0xffff8240;
 
 #if DBG_SCREEN
     kprintf("Setcolor(0x%04x, 0x%04x)\n", colorNum, color);
@@ -397,7 +397,7 @@ WORD egetshift(void)
     if (!has_tt_shifter)
         return -32;
 
-    return *(WORD *)0xffff8262;
+    return *(volatile WORD *)0xffff8262;
 }
 
 #endif /* CONF_WITH_TT_SHIFTER */
@@ -411,8 +411,8 @@ WORD egetshift(void)
 
 UWORD get_videl_bpp(void)
 {
-    UWORD f_shift = *(UWORD *)0xffff8266;
-    UBYTE st_shift = *(UBYTE *)0xffff8260;
+    UWORD f_shift = *(volatile UWORD *)0xffff8266;
+    UBYTE st_shift = *(volatile UBYTE *)0xffff8260;
     /* to get bpp, we must examine f_shift and st_shift.
      * f_shift is valid if any of bits no. 10, 8 or 4
      * is set. Priority in f_shift is: 10 ">" 8 ">" 4, i.e.
@@ -439,14 +439,14 @@ UWORD get_videl_bpp(void)
 
 UWORD get_videl_width(void)
 {
-    return (*(UWORD *)0xffff8210) * 16 / get_videl_bpp();
+    return (*(volatile UWORD *)0xffff8210) * 16 / get_videl_bpp();
 }
 
 UWORD get_videl_height(void)
 {
-    UWORD vdb = *(UWORD *)0xffff82a8;
-    UWORD vde = *(UWORD *)0xffff82aa;
-    UWORD vmode = *(UWORD *)0xffff82c2;
+    UWORD vdb = *(volatile UWORD *)0xffff82a8;
+    UWORD vde = *(volatile UWORD *)0xffff82aa;
+    UWORD vmode = *(volatile UWORD *)0xffff82c2;
 
     /* visible y resolution:
      * Graphics display starts at line VDB and ends at line
@@ -468,7 +468,7 @@ UWORD get_videl_height(void)
  */
 static void set_videl_vga(int mode)
 {
-    char *videlregs = (char *)0xffff8200;
+    volatile char *videlregs = (char *)0xffff8200;
     int hdb_40[5] = { 0x73, 0x0a, 0x8a, 0x9a, 0xac };
     int hdb_80[5] = { 0x73, 0x0e, 0xa3, 0xab, 0xac };
     int hde_40[5] = { 0x50, 0x09, 0x6b, 0x7b, 0x91 };
@@ -573,7 +573,7 @@ WORD vmontype(void)
     if (!has_videl)
         return -32;
 
-    return ((*(UBYTE *)0xffff8006) >> 6) & 3;
+    return ((*(volatile UBYTE *)0xffff8006) >> 6) & 3;
 }
 
 #endif /* CONF_WITH_VIDEL */
