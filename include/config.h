@@ -175,6 +175,17 @@
 #endif
 
 /*
+ * Set CONF_WITH_DMASOUND to 1 to enable support for STe/TT/Falcon DMA sound
+ */
+#ifndef CONF_WITH_DMASOUND
+# if TOS_VERSION < 0x200
+#  define CONF_WITH_DMASOUND 0
+# else
+#  define CONF_WITH_DMASOUND 1
+# endif
+#endif
+
+/*
  * Set CONF_WITH_VME to 1 to enable support for Mega STe VME bus
  */
 #ifndef CONF_WITH_VME

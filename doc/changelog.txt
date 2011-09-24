@@ -2714,3 +2714,7 @@ Start... early ages
 - Makefile: Use the VMA_T* variables in the help message. (VRI)
 - Makefile: Renamed the FireBee ROM to emutosfb.s19. (VRI)
 - include/config.h: Set the FireBee initinfo duration to 8 seconds. (VRI)
+
+2011-09-24
+- include/config.h: Added missing initialization of CONF_WITH_DMASOUND. Reported
+  by David Savinkoff. (VRI)
