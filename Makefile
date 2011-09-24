@@ -110,7 +110,7 @@ LD = $(CC) $(MULTILIBFLAGS) -nostartfiles -nostdlib
 LDFLAGS = -Wl,--oformat,binary -lgcc
 VMA_T1 = 0x00fc0000
 VMA_T2 = 0x00e00000
-# VMA will be set as a target-specific variable
+VMA = $(VMA_T2)
 LDFLAGS_VMA = -Wl,-Ttext=$(VMA),-Tbss=0x00000000
 
 # C compiler for MiNT
@@ -398,7 +398,7 @@ aranym:
 
 TOCLEAN += *.s19
 SRECFILE = emutos.s19
-LMA = 0
+LMA = $(VMA)
 
 $(SRECFILE): emutos2.img
 	$(OBJCOPY) -I binary -O srec --change-addresses $(LMA) $< $(SRECFILE)

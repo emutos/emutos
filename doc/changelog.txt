@@ -2718,3 +2718,4 @@ Start... early ages
 2011-09-24
 - include/config.h: Added missing initialization of CONF_WITH_DMASOUND. Reported
   by David Savinkoff. (VRI)
+- Makefile: Initialize VMA with default value and LMA with VMA. (VRI)
