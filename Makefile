@@ -354,7 +354,7 @@ etos192k.img: emutos1.img
 .PHONY: 256
 ifeq (,$(UNIQUE))
 256: 
-	@echo "# Building $(COUNTRY)-only EmuTOS in etos256k.img"
+	@echo "# Building $(COUNTRY)-only EmuTOS into etos256k.img"
 	$(MAKE) UNIQUE=$(COUNTRY) etos256k.img
 else
 256: etos256k.img
@@ -387,7 +387,7 @@ ROM_ARANYM = emutos-aranym.img
 
 .PHONY: aranym
 aranym:
-	@echo "# Building ARAnyM EmuTOS in $(ROM_ARANYM)"
+	@echo "# Building ARAnyM EmuTOS into $(ROM_ARANYM)"
 	$(MAKE) CPUFLAGS='-m68040' DEF='-DMACHINE_ARANYM' ROM_512=$(ROM_ARANYM) 512
 
 #
@@ -405,7 +405,7 @@ SREC_FIREBEE = emutosfb.s19
 
 .PHONY: firebee
 firebee:
-	@echo "# Building FireBee EmuTOS in $(SREC_FIREBEE)"
+	@echo "# Building FireBee EmuTOS into $(SREC_FIREBEE)"
 	$(MAKE) COLDFIRE=1 CPUFLAGS='-mcpu=5474' DEF='-DMACHINE_FIREBEE' LMA=0xe0600000 SRECFILE=$(SREC_FIREBEE) $(SREC_FIREBEE)
 
 #
