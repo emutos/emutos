@@ -325,9 +325,10 @@ ROMSIZE = `echo $@ | sed -e 's/[^0-9]//g'`
 define sized_image
 @goal=$(ROMSIZE); \
 size=`wc -c < $<`; goalbytes=`expr $$goal \* 1024`; \
+echo "padding $< to $$goal KB into $@"; \
 if [ $$size -gt $$goalbytes ]; \
 then \
-  echo "EmuTOS too big for $${goal}K ($$goalbytes bytes): size = $$size (`expr $$size - $$goalbytes` extra bytes)"; \
+  echo "$< is too big: `expr $$size - $$goalbytes` extra bytes"; \
   false; \
 else \
   dd if=/dev/zero of=$@ bs=1024 count=$$goal 2>/dev/null; \

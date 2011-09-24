@@ -2724,3 +2724,4 @@ Start... early ages
 - Makefile: Merge LDFLAGS_VMA to LDFLAGS. (VRI)
 - Makefile: Avoid breaking linker lines. (VRI)
 - Makefile: Move additional linker options to the end of the command line. (VRI)
+- Makefile: Added padding message. (VRI)
