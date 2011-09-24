@@ -507,9 +507,9 @@ static void idosettime(UWORD time)
 
 static void idosetdate(UWORD date) 
 {
+#if !NO_IKBD_CLOCK
   UWORD year = 1980 + ((date >> 9) & 0x7f);
 
-#if !NO_IKBD_CLOCK
   iclkbuf.year = int2bcd( year % 100 );
   iclkbuf.month = int2bcd( (date >> 5) & 0xf );
   iclkbuf.day = int2bcd( date & 0x1f );
