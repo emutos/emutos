@@ -2728,3 +2728,6 @@ Start... early ages
 - Makefile: Added the # character in front of the output messages. (VRI)
 - Makefile: Replaced in by into. (VRI)
 - bios/screen.c: Added missing volatile. (VRI)
+
+2011-09-26
+- po/de.po: Updated German translation. (THH)
