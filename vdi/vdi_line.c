@@ -1075,19 +1075,18 @@ void wideline(Vwk * vwk, Point * point, int count)
         ptr = box;
         ptr->x = wx1 + vx;
         ptr->y = wy1 + vy;
-        ptr++;
 
+        ptr++;
         ptr->x = wx1 - vx;
         ptr->y = wy1 - vy;
-        ptr++;
 
+        ptr++;
         ptr->x = wx2 - vx;
         ptr->y = wy2 - vy;
-        ptr++;
 
+        ptr++;
         ptr->x = wx2 + vx;
         ptr->y = wy2 + vy;
-        ptr++;
 
         polygon(vwk, box, 4);
 

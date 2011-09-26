@@ -2733,5 +2733,7 @@ Start... early ages
 - po/de.po: Updated German translation. (THH)
 - po/cs.po: Updated Czech translation. Contributed by Pavel Salac. (VRI)
 - po/fi.po: Updated Finnish translation. Contributed by Eero Tamminen. (VRI)
-- vdi/vdi_line.c: Fixed missing lines whan drawing arrows. Contributed by
-  David Savinkoff. (VRI)
+- vdi/vdi_line.c: Fixed missing lines whan drawing arrows. Contributed by David
+  Savinkoff. (VRI)
+- vdi/vdi_line.c: Removed an unused ptr++ in wideline(). Contributed by David
+  Savinkoff. (VRI)
