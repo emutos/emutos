@@ -2731,3 +2731,4 @@ Start... early ages
 
 2011-09-26
 - po/de.po: Updated German translation. (THH)
+- po/cs.po: Updated Czech translation. Contributed by Pavel Salac. (VRI)
