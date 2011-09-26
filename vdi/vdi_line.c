@@ -927,37 +927,37 @@ static void do_circ(Vwk * vwk, WORD cx, WORD cy)
 
     /* Only perform the act if the circle has radius. */
     if (num_qc_lines > 0) {
-        Line * line = (Line*)PTSIN;
+        Line line;
 
         /* Do the horizontal line through the center of the circle. */
         pointer = q_circle;
-        line->x1 = cx - *pointer;
-        line->x2 = cx + *pointer;
-        line->y1 = cy;
-        line->y2 = cy;
-        if (clip_line(vwk, line))
-            horzline(vwk, line);
+        line.x1 = cx - *pointer;
+        line.x2 = cx + *pointer;
+        line.y1 = cy;
+        line.y2 = cy;
+        if (clip_line(vwk, &line))
+            horzline(vwk, &line);
 
         /* Do the upper and lower semi-circles. */
         for (k = 1; k < num_qc_lines; k++) {
             /* Upper semi-circle. */
             pointer = &q_circle[k];
-            line->x1 = cx - *pointer;
-            line->x2 = cx + *pointer;
-            line->y1 = cy - k;
-            line->y2 = cy - k;
-            if (clip_line(vwk, line)) {
-                horzline(vwk, line);
+            line.x1 = cx - *pointer;
+            line.x2 = cx + *pointer;
+            line.y1 = cy - k;
+            line.y2 = cy - k;
+            if (clip_line(vwk, &line)) {
+                horzline(vwk, &line);
                 pointer = &q_circle[k];
             }
 
             /* Lower semi-circle. */
-            line->x1 = cx - *pointer;
-            line->x2 = cx + *pointer;
-            line->y1 = cy + k;
-            line->y2 = cy + k;
-            if (clip_line(vwk, line))
-                horzline(vwk, line);
+            line.x1 = cx - *pointer;
+            line.x2 = cx + *pointer;
+            line.y1 = cy + k;
+            line.y2 = cy + k;
+            if (clip_line(vwk, &line))
+                horzline(vwk, &line);
         }                       /* End for. */
     }                           /* End if:  circle has positive radius. */
 }
