@@ -2737,3 +2737,7 @@ Start... early ages
   Savinkoff. (VRI)
 - vdi/vdi_line.c: Removed an unused ptr++ in wideline(). Contributed by David
   Savinkoff. (VRI)
+
+2011-09-27
+- vdi/vdi_line.c: Fixed random arrow sizes caused by WORD overflow. Contributed
+  by David Savinkoff. (VRI)

@@ -1145,7 +1145,8 @@ static ULONG Isqrt(ULONG x)
 
 static void draw_arrow(Vwk * vwk, Point * point, int inc)
 {
-    WORD arrow_len, arrow_wid, line_len, line_len2;
+    LONG line_len2;
+    WORD arrow_len, arrow_wid, line_len;
     WORD dx, dy;
     WORD base_x, base_y, ht_x, ht_y;
     WORD temp, i;
@@ -1177,8 +1178,8 @@ static void draw_arrow(Vwk * vwk, Point * point, int inc)
 
         /* Get length of vector connecting the point with the end point. */
         /* If the vector is of sufficient length, the search is over. */
-        line_len2 = dx*dx + dy*dy;
-        if (line_len2 >= arrow_len*arrow_len)
+        line_len2 = (LONG)dx*dx + (LONG)dy*dy;
+        if (line_len2 >= (LONG)arrow_len*arrow_len)
             break;
     }                           /* End for:  over i. */
     line_len = Isqrt(line_len2);
