@@ -950,7 +950,7 @@ msgstr "--------------------"
 
 #: bios/initinfo.c:234
 msgid " Hold <Shift> to pause this screen "
-msgstr " Podr¾te <Shift> k pozastavení této obrazovky "
+msgstr " Podr¾ <Shift> pro pauzu obrazovky "
 
 #: aes/gem_rsc.c:547
 msgid "[1]["
