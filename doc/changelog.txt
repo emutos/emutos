@@ -2741,3 +2741,6 @@ Start... early ages
 2011-09-27
 - vdi/vdi_line.c: Fixed random arrow sizes caused by WORD overflow. Contributed
   by David Savinkoff. (VRI)
+
+2011-09-28
+- bios/clock.c: Fixed wrong minutes in NVRAM's ndosettime(). (VRI)

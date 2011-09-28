@@ -300,8 +300,8 @@ static int nvram_rtc_year_offset;
 
 static void ndosettime(UWORD time)
 {
-  int seconds = (time & 0x1F) * 2;
-  int minutes = (time >> 5) & 0x2F;
+  int seconds = (time & 0x1F) << 1;
+  int minutes = (time >> 5) & 0x3F;
   int hours = (time >> 11) & 0x1F;
 
 #if DBG_CLOCK
