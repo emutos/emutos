@@ -1555,6 +1555,7 @@ execPrgm(char *s, char *cmdtl)
 
     /* copy path string into env. */
     i = 0;
+    envPtr[i] = 0; /* Start with empty environment */
     if (path[0]) {
         for (i = 0; pthSymb[i]; i++)
             envPtr[i] = pthSymb[i];

@@ -2744,3 +2744,6 @@ Start... early ages
 
 2011-09-28
 - bios/clock.c: Fixed wrong minutes in NVRAM's ndosettime(). (VRI)
+
+2011-09-30
+- cli/command.c: Fixed random crash when starting a program in EmuCON. (VRI)
