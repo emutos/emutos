@@ -384,6 +384,10 @@ void machine_init(void)
    */
   
   detect_akp_idt();
+#if DBG_MACHINE
+    kprintf("cookie_akp = 0x%08lx\n", cookie_akp);
+    kprintf("cookie_idt = 0x%08lx\n", cookie_idt);
+#endif
   cookie_add(COOKIE_IDT, cookie_idt);
   cookie_add(COOKIE_AKP, cookie_akp);
   

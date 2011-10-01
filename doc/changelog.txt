@@ -2751,4 +2751,5 @@ Start... early ages
 2011-10-01
 - bios/screen.c: Added debug trace on vsetmode(). (VRI)
 - bios/nvram.c: The NVRAM checksum was checked only on the first call to
-  nvmaccess(). Fixed. (VRI).
+  nvmaccess(). Fixed. (VRI)
+- bios/machine.c: Added debug traces for AKP and IDT cookies. (VRI)
