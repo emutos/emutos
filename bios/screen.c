@@ -550,6 +550,10 @@ UWORD vsetmode(WORD mode)
     if (mode == -1)
         return oldmode;
 
+#if DBG_SCREEN
+    kprintf("vsetmode(0x%04x)\n", mode);
+#endif
+
     if (!(mode & 0x10))   /* RBG/TV mode? */
     {
         /* We currently only support VGA screen modes...
