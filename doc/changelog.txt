@@ -2753,3 +2753,5 @@ Start... early ages
 - bios/nvram.c: The NVRAM checksum was checked only on the first call to
   nvmaccess(). Fixed. (VRI)
 - bios/machine.c: Added debug traces for AKP and IDT cookies. (VRI)
+- bios/screen.c: Always use the default video mode on the FireBee, until the
+  VIDEL and vsetmode() are reliable. (VRI)

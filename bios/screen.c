@@ -92,7 +92,7 @@ void screen_init(void)
 #if CONF_WITH_VIDEL
     if (has_videl) {
         UWORD boot_resolution;
-#if CONF_WITH_NVRAM
+#if CONF_WITH_NVRAM && !defined(MACHINE_FIREBEE)
         int ret;
 #endif // CONF_WITH_NVRAM
 
@@ -100,7 +100,7 @@ void screen_init(void)
         /* first set the physbase to a safe memory */
         setphys(0x10000L);
 
-#if CONF_WITH_NVRAM
+#if CONF_WITH_NVRAM && !defined(MACHINE_FIREBEE)
         /* get boot resolution from NVRAM */
         ret = nvmaccess(0, 14, 2, (PTR)&boot_resolution);
         if (ret != 0)
