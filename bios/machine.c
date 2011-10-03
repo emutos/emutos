@@ -229,8 +229,11 @@ static void setvalue_mch(void)
 
 static void setvalue_snd(void)
 {
+  cookie_snd = 0;
+
   /* always at least a PSG */
-  cookie_snd = SND_PSG;
+  cookie_snd |= SND_PSG;
+
 
 #if CONF_WITH_DMASOUND
   if (has_dmasound) {

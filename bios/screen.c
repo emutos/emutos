@@ -306,7 +306,7 @@ void setpalette(LONG palettePtr)
 
 WORD setcolor(WORD colorNum, WORD color)
 {
-    WORD rez = getrez();
+    WORD rez;
     WORD max;
     WORD mask;
     volatile WORD *palette = (WORD *) 0xffff8240;
@@ -314,6 +314,8 @@ WORD setcolor(WORD colorNum, WORD color)
 #if DBG_SCREEN
     kprintf("Setcolor(0x%04x, 0x%04x)\n", colorNum, color);
 #endif
+
+    rez = getrez();
     switch (rez) {
     case 0:
         max = 15;
