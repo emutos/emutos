@@ -104,7 +104,7 @@ static BOOL match1(char *ref, char *test);
 
 long    xcreat(char *name, char attr) 
 {
-        return(ixcreat(name, attr & 0xEF));
+        return(ixcreat(name, attr & ~FA_SUBDIR));
 }
 
 
@@ -256,7 +256,7 @@ ixopen(char *name, int mod)
                 return(EFILNF);
 
         /* Check to see if the file is read only*/
-        if ((f -> f_attrib & 1) && (mod != 0))
+        if ((f -> f_attrib & FA_RO) && (mod != 0))
                 return (EACCDN);
 
         return (opnfil (f, dn, mod));

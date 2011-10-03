@@ -165,7 +165,7 @@ static void freednd(DND *dn);
  *  local macros
  */
 
-#define dirscan(a,c) ((DND *) scan(a,c,0x10,&negone))
+#define dirscan(a,c) ((DND *) scan(a,c,FA_SUBDIR,&negone))
 
 
 /*
@@ -453,8 +453,8 @@ long ixsfirst(char *name, register WORD att, register DTAINFO *addr)
     FCB *f;
     long pos;
 
-    if (att != 8)
-        att |= 0x21;
+    if (att != FA_VOL)
+        att |= (FA_ARCHIVE|FA_RO);
 
 
 #if     M0101071401

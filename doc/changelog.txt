@@ -2763,3 +2763,5 @@ Start... early ages
   since it is the right place for integer math. (VRI)
 - doc/bugs.txt doc/todo.txt: Update to reflect current status. Contributed by
   Roger Burrows. (VRI)
+- bdos/fs.h bdos/fsdir.h bdos/fsopnclo.c: Replace magic numbers for file
+  attributes with #defines. Contributed by Roger Burrows. (VRI)
