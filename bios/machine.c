@@ -234,7 +234,6 @@ static void setvalue_snd(void)
   /* always at least a PSG */
   cookie_snd |= SND_PSG;
 
-
 #if CONF_WITH_DMASOUND
   if (has_dmasound) {
     cookie_snd |= SND_8BIT;
