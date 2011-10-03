@@ -2759,3 +2759,5 @@ Start... early ages
 2011-10-04
 - bios/machine.c bios/screen.c: Minor adjustments to ease next conditional
   compilation. (VRI)
+- util/intmath.c include/intmath.h vdi_vdi_line.c: Moved Isqrt() to intmath.c
+  since it is the right place for integer math. (VRI)

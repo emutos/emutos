@@ -7,7 +7,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
+ULONG Isqrt(ULONG x);
 
 /*
  * mul_div - signed integer multiply and divide

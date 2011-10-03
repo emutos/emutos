@@ -14,6 +14,41 @@
 
 
 /*
+ * Integer squareroot
+ *  y=Isqrt(x) is equivalent to: y = (ULONG)(sqrtl( (long double)x ) + 0.5);
+ */
+
+ULONG Isqrt(ULONG x)
+{
+    ULONG s1, s2;
+
+    if (x < 2)
+        return x;
+
+    s1 = x--; /* This algorithm converges to (x+LSB)^1/2. Thus decrement x */
+    s2 = 2;
+    do {
+        s1 /= 2;
+        s2 *= 2;
+    } while (s1 > s2);
+
+    s1 = s2 = (s1 + (s2 / 2)) / 2;
+    ((s1 &= ~7) & ~63) ? : (s1 = s2); /* Improve first estimate further */
+
+    s2 = (1 + x/s1 + s1) / 2;
+    if (s1 == s2) /* First iteration */
+        return s2;
+
+    do {
+        s1 = s2;
+        s2 = (1 + x/s1 + s1) / 2;
+    } while (s1 > s2);
+
+    return s2;
+}
+
+
+/*
  * mul_div - signed integer multiply and divide
  *
  * mul_div (m1,m2,d1)
