@@ -2,7 +2,8 @@ BIOS/XBIOS
 - implement missing XBIOS calls
   (e.g. the Blitter, Falcon Videl and TT shifter video functions)
 - add support for Falcon RGB screen modes
-- merge identical headers, and put them all in an include directory (?)
+- merge identical headers, and put them all in the include directory
+  (in progress as of end-September 2011)
 - reduce the number of 'extern' in .c files
 - check that RAM disks work
 - misc. TODOs in floppy.c
@@ -16,8 +17,6 @@ BIOS/XBIOS
 - make EmuTOS MMU aware and let it set up correct MMU tree
 
 BDOS (GEMDOS)
-- fix the scary crashes for disk partitions > 255 MB
-- RECNO should be long, not int
 - should hitting control-c terminate the current process? if so, how?
 - move mem-only routines out of proc.c into umem.c or iumem.c
 
@@ -45,7 +44,3 @@ CLI
 - Input/Output redirection does not work well (problems with spaces after
   the ">" for example).
 
-Bug report from Eero:
-- Rename emuconf.inf to end up with .ttp and click to the file:
-  EmuTOS says that my machine doesn't have enough memory
-  to run the program... (should say that it's not executable)

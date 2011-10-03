@@ -1,4 +1,3 @@
-- partitions larger than 255 MB are not supported (TOS 1.2 limit)
 - EmuTOS crashes, if it boots from some STeem generated floppy images
 - Changing the VDI color palette is not possible on TT and Falcon.
 - Drag-and-drop does not work in the freeware games "Risky", "Yukon" and in

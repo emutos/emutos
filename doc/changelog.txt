@@ -2761,3 +2761,5 @@ Start... early ages
   compilation. (VRI)
 - util/intmath.c include/intmath.h vdi_vdi_line.c: Moved Isqrt() to intmath.c
   since it is the right place for integer math. (VRI)
+- doc/bugs.txt doc/todo.txt: Update to reflect current status. Contributed by
+  Roger Burrows. (VRI)
