@@ -2757,5 +2757,5 @@ Start... early ages
   VIDEL and vsetmode() are reliable. (VRI)
 
 2011-10-04
-bios/machine.c bios/screen.c: Minor adjustments to ease next conditional
+- bios/machine.c bios/screen.c: Minor adjustments to ease next conditional
   compilation. (VRI)
