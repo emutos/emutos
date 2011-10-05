@@ -2772,3 +2772,4 @@ Start... early ages
 - bdos/gemerror.h bios/gemerror.h include/gemerror.h: Move gemerror.h from
   bios/ to include/ and remove gemerror.h from bdos/. Contributed by Roger
   Burrows. (VRI)
+- po/es.po: Updated Spanish translation. Contributed by David Galvez. (VRI)
