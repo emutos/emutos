@@ -2768,4 +2768,7 @@ Start... early ages
 
 2011-10-05
 - doc/fat16.txt: Add documentation for FAT16 filesystem code. Contributed by
-  Roger Burrows.
+  Roger Burrows. (VRI)
+- bdos/gemerror.h bios/gemerror.h include/gemerror.h: Move gemerror.h from
+  bios/ to include/ and remove gemerror.h from bdos/. Contributed by Roger
+  Burrows. (VRI)
