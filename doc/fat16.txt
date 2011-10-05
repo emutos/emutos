@@ -1,0 +1,69 @@
+Some notes on the FAT16 filesystem in EmuTOS
+============================================
+These notes apply to the filesystem code as of September 2011, after
+the "big partition fix".
+
+EmuTOS supports both the Atari and the DOS versions of the FAT16
+filesystem.  The following are the critical parameters in each:
+
+Parameter                         Atari                    DOS
+---------                         -----                    ---
+Record (logical sector) size      512-16384 bytes          512 bytes
+Cluster size                      2 logical sectors        2-64 records
+Maximum cluster size              32768 bytes              32768 bytes
+Maximum records in a partition    65535                    4193536
+Limiting factor on records        Max value in halfword    Max cluster size
+                                   in boot sector           * Max clusters
+Maximum clusters in a partition   32766 (2-32767)          65524 (2-65525)
+Maximum partition size            Approx 1GB               Approx 2GB
+
+Internal structures
+-------------------
+The main internal structures used by the filesystem code are
+defined in fs.h.  They include the following:
+
+DMD (Drive Media Block)
+    One for every TOS drive, i.e. floppy or hard disk partition.
+    Pointed to by a global array drvtbl[]. Contains the relevant
+    parameters for that particular drive, including pointers to
+    the root DND (see below).  When a drive is logged in, the
+    filesystem code allocates four structures: a DMD to describe
+    the drive, a DND for the root directory, and OFDs (see below)
+    for the root directory and the FAT.
+
+DND (Directory Node Descriptor)
+    One per active directory.  Contains the name and attributes
+    of the directory, pointers to parent and child directories,
+    and pointers to the directory's OFD (see below).
+
+OFD (Open File Descriptor)
+    One per open file or directory.  Contains time, date, attributes,
+    current position etc of a file, as well as pointers to the
+    related DMD & DND.
+	
+BCB (Buffer Control Block)
+    One per sector buffer.  Contains info describing the sector
+    currently in the buffer.  Currently there are four sector
+    buffers, each of the maximum sector size (16384 bytes), in
+    two chains of two each (this could easily be expanded if
+    desired).  One of the chains contains FAT sectors, the other
+    everything else (i.e. root directory and data area sectors).
+
+Pseudo-clusters: an important concept
+-------------------------------------
+When handling requests for the next piece of data for a normal
+file, the filesystem code follows the normal FAT chain, keeping
+track of the current cluster etc in the corresponding OFD.
+Special OFDs exist for the root directory and the FAT to keep
+track of the current position in each; for these, the filesystem
+code uses a pseudo-cluster number, starting at 0 and incrementing
+by 1 for each logical sector within each area.
+
+Some data items of note
+-----------------------
+m_recoff[] in the DMD: contains the offsets to the first record of
+each of the FAT, the root directory, and the data area.
+
+o_currec, o_curcl, o_curbyt in the OFD: the current record number,
+cluster number, and byte number within the file.
+

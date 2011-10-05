@@ -2756,7 +2756,7 @@ Start... early ages
 - bios/screen.c: Always use the default video mode on the FireBee, until the
   VIDEL and vsetmode() are reliable. (VRI)
 
-2011-10-04
+2011-10-03
 - bios/machine.c bios/screen.c: Minor adjustments to ease next conditional
   compilation. (VRI)
 - util/intmath.c include/intmath.h vdi_vdi_line.c: Moved Isqrt() to intmath.c
@@ -2765,3 +2765,7 @@ Start... early ages
   Roger Burrows. (VRI)
 - bdos/fs.h bdos/fsdir.h bdos/fsopnclo.c: Replace magic numbers for file
   attributes with #defines. Contributed by Roger Burrows. (VRI)
+
+2011-10-05
+- doc/fat16.txt: Add documentation for FAT16 filesystem code. Contributed by
+  Roger Burrows.
