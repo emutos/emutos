@@ -513,7 +513,7 @@ dumpkbd.prg: obj/minicrt.o obj/memmove.o obj/dumpkbd.o obj/doprintf.o \
 # NLS support
 #
 
-POFILES = po/fr.po po/de.po po/it.po po/cs.po
+POFILES = $(wildcard po/*.po)
 
 TOCLEAN += bug$(EXE) util/langs.c po/messages.pot
 
@@ -550,7 +550,7 @@ allbin:
 	do \
 	  j=etos256$${i}.img; \
 	  echo "# Building $$j"; \
-	  $(MAKE) UNIQUE=$$i 256; \
+	  $(MAKE) UNIQUE=$$i 256 || exit 1; \
 	  mv etos256k.img $$j; \
 	done
 
@@ -559,11 +559,9 @@ all192:
 	@for i in $(COUNTRIES); \
 	do \
 	  j=etos192$${i}.img; \
-	  $(RM) include/i18nconf.h bios/header.h */*.tr.c; \
-	  $(RM) emutos1.img etos192k.img obj/country* obj/nls*; \
 	  echo "# Building $$j"; \
 	  $(MAKE) DEF='-DTOS_VERSION=0x102' WITH_CLI=0 WITH_DESK1=0 \
-			UNIQUE=$$i 192; \
+			UNIQUE=$$i 192 || exit 1; \
 	  mv etos192k.img $$j; \
 	done
 
@@ -602,6 +600,7 @@ endif
 
 TOCLEAN += obj/country
 
+.PHONY : needcountry.tmp
 needcountry.tmp:
 	@touch $@
 
@@ -623,8 +622,10 @@ obj/country: needcountry.tmp
 	  echo rm -f $$i $$j; \
 	  rm -f $$i $$j; \
 	done; \
-	echo rm -f include/i18nconf.h; \
-	rm -f include/i18nconf.h; 
+	echo rm -f obj/country.o; \
+	rm -f obj/country.o;
+
+obj/country.o: obj/country
 
 #
 # i18nconf.h - this file is automatically created by the Makefile. This
@@ -638,7 +639,7 @@ obj/country: needcountry.tmp
 TOCLEAN += include/i18nconf.h
 
 ifneq (,$(UNIQUE))
-include/i18nconf.h:
+include/i18nconf.h: obj/country
 	@rm -f $@; touch $@
 	@echo \#define CONF_UNIQUE_COUNTRY 1 >> $@
 	@echo \#define CONF_NO_NLS 1 >> $@
