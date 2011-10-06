@@ -616,14 +616,13 @@ obj/country: needcountry.tmp
 	  fi; \
 	fi; \
 	mv last.tmp $@; \
+	echo Deleting i18n files...; \
+	rm -f obj/country.o include/i18nconf.h ; \
 	for i in $(TRANS_SRC); \
 	do \
 	  j=obj/`basename $$i tr.c`o; \
-	  echo rm -f $$i $$j; \
 	  rm -f $$i $$j; \
-	done; \
-	echo rm -f obj/country.o; \
-	rm -f obj/country.o;
+	done;
 
 obj/country.o: obj/country
 
