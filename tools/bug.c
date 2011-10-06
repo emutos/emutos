@@ -334,10 +334,8 @@ hash * h_new(void)
 unsigned compute_hash(char *t)
 {
   unsigned m = 0;
-  unsigned u; 
   
   while(*t) {
-    u = (m >> 15) & 1;
     m += *t++;
     m <<= 1;
   }
