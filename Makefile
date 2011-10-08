@@ -285,7 +285,7 @@ help:
 	@echo "------  -------"
 	@echo "help    this help message"
 	@echo "192     etos192k.img, EmuTOS ROM padded to size 192 KB (starting at $(VMA_T1))"
-	@echo "256     etos256k.img, EmuTOS ROM padded to size 256 KB (starting at $(VMA_T2))"
+	@echo "256     $(ROM_256), EmuTOS ROM padded to size 256 KB (starting at $(VMA_T2))"
 	@echo "512     $(ROM_512), EmuTOS ROM padded to size 512 KB (starting at $(VMA_T2))" 
 	@echo "aranym  $(ROM_ARANYM), suitable for ARAnyM" 
 	@echo "firebee $(SREC_FIREBEE), to be flashed on the FireBee"
@@ -351,16 +351,18 @@ etos192k.img: emutos1.img
 # 256kB Image
 #
 
+ROM_256 = etos256k.img
+
 .PHONY: 256
 ifeq (,$(UNIQUE))
 256: 
-	@echo "# Building $(COUNTRY)-only EmuTOS into etos256k.img"
-	$(MAKE) UNIQUE=$(COUNTRY) etos256k.img
+	@echo "# Building $(COUNTRY)-only EmuTOS into $(ROM_256)"
+	$(MAKE) UNIQUE=$(COUNTRY) $(ROM_256)
 else
-256: etos256k.img
+256: $(ROM_256)
 endif
 
-etos256k.img: emutos2.img
+$(ROM_256): emutos2.img
 	$(sized_image)
 
 #
@@ -549,9 +551,9 @@ allbin:
 	@for i in $(COUNTRIES); \
 	do \
 	  j=etos256$${i}.img; \
+	  echo; \
 	  echo "# Building $$j"; \
-	  $(MAKE) UNIQUE=$$i 256 || exit 1; \
-	  mv etos256k.img $$j; \
+	  $(MAKE) UNIQUE=$$i ROM_256=$$j 256 || exit 1; \
 	done
 
 .PHONY: all192

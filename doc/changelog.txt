@@ -2781,3 +2781,5 @@ Start... early ages
 2011-10-08
 - Makefile: The needcountry.tmp hack caused trouble on some build systems, such
   as Ubuntu. Replaced by a more robust phony target. (VRI)
+- Makefile: Introduced the ROM_256 variable to specify the name of the 256 KB
+  ROM and produce more meaningful message with make allbin.
