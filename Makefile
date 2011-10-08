@@ -280,15 +280,18 @@ OBJECTS = $(SOBJ) $(COBJ) $(FONTOBJ) obj/version.o
 all:	help
 
 .PHONY: help
-help:	
+help:
 	@echo "target  meaning"
 	@echo "------  -------"
 	@echo "help    this help message"
-	@echo "192     $(ROM_192), EmuTOS ROM padded to size 192 KB (starting at $(VMA_T1))"
-	@echo "256     $(ROM_256), EmuTOS ROM padded to size 256 KB (starting at $(VMA_T2))"
-	@echo "512     $(ROM_512), EmuTOS ROM padded to size 512 KB (starting at $(VMA_T2))" 
+	@echo "192     $(ROM_192), EmuTOS ROM padded to size 192 kB (starting at $(VMA_T1))"
+	@echo "256     $(ROM_256), EmuTOS ROM padded to size 256 kB (starting at $(VMA_T2))"
+	@echo "512     $(ROM_512), EmuTOS ROM padded to size 512 kB (starting at $(VMA_T2))" 
 	@echo "aranym  $(ROM_ARANYM), suitable for ARAnyM" 
 	@echo "firebee $(SREC_FIREBEE), to be flashed on the FireBee"
+	@echo "all192  all 192 kB images"
+	@echo "all256  all 256 kB images"
+	@echo "allbin  all 192 kB, 256 kB and 512 kB images"
 	@echo "ram     ramtos.img + boot.prg, a RAM tos"
 	@echo "flop    emutos.st, a bootable floppy with RAM tos"
 	@echo "clean"
@@ -550,8 +553,15 @@ allbin:
 	@echo "# Building $(ROM_512)"
 	$(MAKE) $(ROM_512)
 	$(RM) obj/*.o
+	$(MAKE) all256
+	$(RM) obj/*.o
+	$(MAKE) all192
+
+.PHONY: all256
+all256:
 	@for i in $(COUNTRIES); \
 	do \
+	  $(RM) include/i18nconf.h bios/header.h */*.tr.c obj/country*; \
 	  j=etos256$${i}.img; \
 	  echo; \
 	  echo "# Building $$j"; \
@@ -562,6 +572,7 @@ allbin:
 all192:
 	@for i in $(COUNTRIES); \
 	do \
+	  $(RM) include/i18nconf.h bios/header.h */*.tr.c obj/country*; \
 	  j=etos192$${i}.img; \
 	  echo; \
 	  echo "# Building $$j"; \
