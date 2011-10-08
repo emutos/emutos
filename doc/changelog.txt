@@ -2777,3 +2777,7 @@ Start... early ages
 2011-10-06
 - tools/bug.c: Removed unused variable. (VRI)
 - Makefile: Fixed problems when switching between UNIQUE builds. (THH)
+
+2011-10-08
+- Makefile: The needcountry.tmp hack caused trouble on some build systems, such
+  as Ubuntu. Replaced by a more robust phony target. (VRI)

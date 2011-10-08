@@ -600,12 +600,13 @@ endif
 
 TOCLEAN += obj/country
 
-.PHONY : needcountry.tmp
-needcountry.tmp:
-	@touch $@
+# A phony target is never up to date.
+.PHONY: always-execute-reciepe
 
-obj/country: needcountry.tmp
-	@rm -f needcountry.tmp
+# The reciepe of a target depending on a phony target will always be executed
+# in order to determine if the target is up to date or not.
+# If the reciepe does not touch the target, it is considered up to date.
+obj/country: always-execute-reciepe
 	@echo $(COUNTRY) $(UNIQUE) > last.tmp; \
 	if [ -e $@ ]; \
 	then \
