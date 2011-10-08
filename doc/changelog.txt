@@ -2785,3 +2785,4 @@ Start... early ages
   ROM and produce more meaningful message with make allbin. (VRI)
 - Makefile: Introduced the ROM_192 variable to specify the name of the 192 KB
   ROM and produce more meaningful message with make all192. (VRI)
+- desk/deskact.c: Fixed warnings with make 192. (VRI)

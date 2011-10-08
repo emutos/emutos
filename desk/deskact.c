@@ -700,7 +700,9 @@ WORD act_bdown(WORD wh, LONG tree, WORD root, WORD *in_mx, WORD *in_my,
         OBJECT          *olist;
         WORD            dst_wh;
         WORD            l_mx, l_my, dulx = -1, duly = -1;
+#ifdef DESK1
         WORD            numpts, *pxypts, view;
+#endif
         GRECT           m;
 
         dst_wh = NIL;
@@ -723,6 +725,7 @@ WORD act_bdown(WORD wh, LONG tree, WORD root, WORD *in_mx, WORD *in_my,
             gr_accobs(tree, root, &numobs, &G.g_xyobpts[0]);
             if (numobs)
             {
+#ifdef DESK1
               view = (root == DROOT) ? V_ICON : G.g_iview;
               if (view == V_ICON)
               {
@@ -734,10 +737,8 @@ WORD act_bdown(WORD wh, LONG tree, WORD root, WORD *in_mx, WORD *in_my,
                 numpts = G.g_nmtext;
                 pxypts = &G.g_xytext[0];
               }
-#ifdef DESK1
               gr_drgplns(l_mx, l_my, &gl_rfull, numpts, pxypts, numobs,
                          G.g_xyobpts, &dulx, &duly, &dst_wh, pdobj);
-
 #else
               gr_drgplns(l_mx, l_my, &gl_rfull, &dulx, &duly, &dst_wh, pdobj);
 #endif
