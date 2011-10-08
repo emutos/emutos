@@ -284,7 +284,7 @@ help:
 	@echo "target  meaning"
 	@echo "------  -------"
 	@echo "help    this help message"
-	@echo "192     etos192k.img, EmuTOS ROM padded to size 192 KB (starting at $(VMA_T1))"
+	@echo "192     $(ROM_192), EmuTOS ROM padded to size 192 KB (starting at $(VMA_T1))"
 	@echo "256     $(ROM_256), EmuTOS ROM padded to size 256 KB (starting at $(VMA_T2))"
 	@echo "512     $(ROM_512), EmuTOS ROM padded to size 512 KB (starting at $(VMA_T2))" 
 	@echo "aranym  $(ROM_ARANYM), suitable for ARAnyM" 
@@ -341,10 +341,12 @@ endef
 # 192kB Image
 #
 
-.PHONY: 192
-192: etos192k.img
+ROM_192 = etos192k.img
 
-etos192k.img: emutos1.img
+.PHONY: 192
+192: $(ROM_192)
+
+$(ROM_192): emutos1.img
 	$(sized_image)
 
 #
@@ -561,10 +563,10 @@ all192:
 	@for i in $(COUNTRIES); \
 	do \
 	  j=etos192$${i}.img; \
+	  echo; \
 	  echo "# Building $$j"; \
 	  $(MAKE) DEF='-DTOS_VERSION=0x102' WITH_CLI=0 WITH_DESK1=0 \
-			UNIQUE=$$i 192 || exit 1; \
-	  mv etos192k.img $$j; \
+			UNIQUE=$$i ROM_192=$$j 192 || exit 1; \
 	done
 
 
