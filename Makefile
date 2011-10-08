@@ -617,7 +617,7 @@ obj/country: always-execute-reciepe
 	  fi; \
 	fi; \
 	mv last.tmp $@; \
-	echo Deleting i18n files...; \
+	echo "# Deleting i18n files..."; \
 	rm -f obj/country.o include/i18nconf.h ; \
 	for i in $(TRANS_SRC); \
 	do \
