@@ -1,4 +1,33 @@
 - EmuTOS crashes, if it boots from some STeem generated floppy images
 - Changing the VDI color palette is not possible on TT and Falcon.
-- Drag-and-drop does not work in the freeware games "Risky", "Yukon" and in
-  the shareware solitair game "Patience".
+- Drag-and-drop does not work in the freeware GEM games "Abalone"
+  "Hotshot checkers", "Risky", "Yukon" and in the shareware solitair
+  game "Patience".
+- In "Patience", all the dialogs (quit, start new game) show the button
+  selected last time still as selected and it needs to be unselected
+  to use the dialog. -> AES dialog handler bug?
+- Mouse clicks don't work properly in several GEM games:
+  - "Awele" window menus close immediately after clicking on them.
+  - In (original) "Ballerburg", moving mouse over the "Fertig" button
+    in the wind strenght dialog activates the button without click.
+  - Clicks don't work at all in "Yams" (mine sweeper) game.
+  - In "Bombs" & "Mind Sweeper" (mine sweeper) games, it's pretty
+    random whether mouse clicks go through.
+- Lines drawn in VDI "transparent" mode show black 16(?) pixel
+  wide boxes, demonstrated by Eero's "vditest".
+- Non-standard font sizes in "Gobang", "Sherlock", "Solitair",
+  "Columns" are wrong (too small, e.g. 2px instead of 16px).
+- Small arrow characters in free "Clac" calculator RSC are missing.
+- In Thomas Binder's GEM Pacman, "game over" melt effect happens
+  for the whole screen, not just for the game window.  Clip error?
+- EmuTOS panic's when running Warwick Allison's "GemAmigo",
+  after vs_clip call.
+- Shots go through buildings in GEM "Invaders", maybe because it
+  uses monochrome resolution with inverted colors?
+- Moves in "Halma" leave boxes to places where game shows that
+  pieces could have been moved, but weren't.
+- In "MathMaze", game win dialog leaves some lines on screen.
+- In Mario Becroft's "Orb", the game area has some white thick
+  vertical lines when game starts which don't show with normal TOS.
+- In "Core War" all the corewars programs shown in "memory" are
+  white, in real TOS they have different patterns.

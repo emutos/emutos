@@ -2787,3 +2787,6 @@ Start... early ages
   ROM and produce more meaningful message with make all192. (VRI)
 - desk/deskact.c: Fixed warnings with make 192. (VRI)
 - Makefile: allbin target now builds the 192 Kb images, too. (THH)
+
+2011-10-09
+- doc/bugs.txt: Updated the bug list. Contributed by Eero Tamminen. (VRI)
