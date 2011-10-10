@@ -2790,3 +2790,6 @@ Start... early ages
 
 2011-10-09
 - doc/bugs.txt: Updated the bug list. Contributed by Eero Tamminen. (VRI)
+
+2011-10-10
+- po/gr.po: Updated Greek translation. Contributed by Christos Tziotzis. (VRI)

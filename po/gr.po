@@ -925,3 +925,32 @@ msgstr "-------------------------------"
 msgid "--------------------"
 msgstr "--------------------------------"
 
+#: bios/initinfo.c:234
+msgid " Hold <Shift> to pause this screen "
+msgstr " ‰¨˜«ã©«œ §˜«ž£â¤¦ «¦ <Shift> š ˜ ¤˜ ©«˜£˜«ã©œ«œ «ž¤ ¦Ÿæ¤ž. "
+
+#: aes/gem_rsc.c:547
+msgid "[1]["
+"Cannot run the application you have|"
+"selected. It may be damaged, or your|"
+"computer may not have enough memory.][  OK  ]"
+msgstr "[1]["
+"† œ§ ¢œš£â¤ž œ­˜¨£¦šã ›œ¤ ã«˜¤ ›¬¤˜«æ ¤˜ œ¡«œ¢œ©«œå.|"
+"‹§¦¨œå ¤˜ œå¤˜  ¡˜«œ©«¨˜££â¤ž ã ¦ ¬§¦¢¦š ©«ãª|"
+"©˜ª ¤˜ £ž¤ â®œ  ˜¨¡œ«ã £¤ã£ž.][  Ž‰  ]"
+
+#: desk/desk_rsc.c:1650
+msgid "[3]["
+"Cannot find FORMAT.PRG|"
+"or FORMAT.TTP.][  OK  ]"
+msgstr "[3]["
+"’¦ FORMAT.PRG ã «¦|"
+"FORMAT.TTP ›œ¤ ™¨âŸž¡˜¤.][  Ž‰  ]"
+
+#: desk/desk_rsc.c:1758
+msgid "[2]["
+"Switch resolution?][Yes|No]"
+msgstr "[2]["
+"€¢¢˜šã ˜¤á¢¬©žª;][Œ˜ |î® ]"
+
+
