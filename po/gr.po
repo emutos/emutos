@@ -927,7 +927,7 @@ msgstr "--------------------------------"
 
 #: bios/initinfo.c:234
 msgid " Hold <Shift> to pause this screen "
-msgstr " ‰¨˜«ã©«œ §˜«£â¤¦ «¦ <Shift> š ˜ ¤˜ ©«˜£˜«ã©œ«œ «¤ ¦Ÿæ¤. "
+msgstr "   ˜«ã©«œ «¦ <Shift> š ˜ §˜ç©   "
 
 #: aes/gem_rsc.c:547
 msgid "[1]["
