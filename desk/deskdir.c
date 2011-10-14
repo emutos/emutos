@@ -962,7 +962,7 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
         } /* switch */
         if (ml_havebox)
           show_hide(FMD_FINISH, G.a_trees[ADCPALER]);
-        graf_mouse(HGLASS, 0x0L);
+        graf_mouse(ARROW, 0x0L);
         return(TRUE);
 } /* dir_op */
 

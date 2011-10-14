@@ -2797,3 +2797,5 @@ Start... early ages
 2011-10-14
 - bdos/*: Removed all unnecessary #includes from all files within the bdos
   directory. Contributed by Roger Burrows. (THH)
+- desk/deskdir.c: Fixed bug that the cursor is sometimes left in the hourglass
+  shape after copying a file. Contributed by Roger Burrows. (THH)
