@@ -20,7 +20,6 @@
 
 #include        "portab.h"
 #include        "fs.h"
-#include        "gemerror.h"
 
 
 

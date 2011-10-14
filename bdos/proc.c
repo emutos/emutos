@@ -15,7 +15,6 @@
 
 
 #include "portab.h"
-#include "asm.h"
 #include "fs.h"
 #include "mem.h"
 #include "proc.h"

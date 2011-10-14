@@ -2793,3 +2793,7 @@ Start... early ages
 
 2011-10-10
 - po/gr.po: Updated Greek translation. Contributed by Christos Tziotzis. (VRI)
+
+2011-10-14
+- bdos/*: Removed all unnecessary #includes from all files within the bdos
+  directory. Contributed by Roger Burrows. (THH)

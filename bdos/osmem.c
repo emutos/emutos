@@ -33,9 +33,6 @@
  */
 
 #include "portab.h"
-#include "fs.h"
-#include "mem.h"
-#include "gemerror.h"
 
 /*
  *  local constants

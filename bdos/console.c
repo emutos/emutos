@@ -17,7 +17,6 @@
 
 
 #include        "portab.h"                      /*  M01.01.02           */
-#include        "asm.h"
 #include        "fs.h"
 #include        "proc.h"
 #include        "console.h"

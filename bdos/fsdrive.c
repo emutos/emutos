@@ -31,7 +31,6 @@
 #define DBGFSDRIVE 0
 
 #include "portab.h"
-#include "asm.h"
 #include "fs.h"
 #include "bpb.h"
 #include "mem.h"
