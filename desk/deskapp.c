@@ -600,6 +600,7 @@ WORD app_start(void)
         if (gl_afile[0] != '#')
         {
           LONG drivemask;
+          int icon_index = 0;
           int drive_x = 0, drive_y = 0;
           int trash_x, trash_y;
           int icon_type;
@@ -612,12 +613,13 @@ WORD app_start(void)
             if(drivemask&(1L<<i))
             {
               x = strlen(gl_afile);
-              drive_x = i % xcnt; /* x position */
-              drive_y = i / xcnt; /* y position */
+              drive_x = icon_index % xcnt; /* x position */
+              drive_y = icon_index / xcnt; /* y position */
               icon_type = (i > 1) ? 0 /* Hard disk */ : 1 /* Floppy */;
               drive_letter = 'A' + i;
               sprintf(gl_afile + x, "#M %02X %02X %02X FF %c DISK %c@ @ \r\n",
                 drive_x, drive_y, icon_type, drive_letter, drive_letter);
+              icon_index++;
             }
           strcat(gl_afile, desk_inf_data2);  /* Copy core data part 2 */
           /* add Trash icon to end */

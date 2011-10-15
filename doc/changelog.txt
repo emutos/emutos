@@ -2814,3 +2814,4 @@ Start... early ages
 - desk/deskapp.c: Fixed wrong calcluation of number of icons on a line. (VRI)
 - util/doprintf.c: Fixed %p regression introduced in my earlier change. (VRI)
 - util/doprintf.c: Removed the nonstandard %O, %U and %D. (VRI)
+- desk/deskapp.c: Pack the drive icons when some drives are missing. (VRI)
