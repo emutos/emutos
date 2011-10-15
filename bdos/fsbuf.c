@@ -78,7 +78,7 @@ void flush(BCB *b)
         return;
     }
     
-    dm = (DMD*) b->b_dm;                /*  media descr for buffer      */
+    dm = b->b_dm;               /*  media descr for buffer      */
     n = b->b_buftyp;
     d = b->b_bufdrv;
     b->b_bufdrv = -1;           /* invalidate in case of error */
@@ -178,7 +178,7 @@ doio:   for (p = *(q = phdr); p->b_link; p = *(q = &p->b_link))
         b->b_dirty = 0;
         b->b_buftyp = n;
         b->b_bufdrv = dm->m_drvnum;
-        b->b_dm = (long) dm;
+        b->b_dm = dm;
     }
     else
     {   /* use a buffer, but first validate media */

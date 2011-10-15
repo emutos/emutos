@@ -259,7 +259,7 @@ BCB
     int     b_buftyp;   /*  buffer type                 */
     RECNO   b_bufrec;   /*  record number               */
     BOOL    b_dirty;    /*  true if buffer dirty        */
-    long    b_dm;       /*  reserved for file system    */
+    DMD     *b_dm;      /*  ptr to drive media block    */
     char    *b_bufr;    /*  pointer to buffer           */
 } ;
 

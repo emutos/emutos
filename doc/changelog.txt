@@ -2799,3 +2799,7 @@ Start... early ages
   directory. Contributed by Roger Burrows. (THH)
 - desk/deskdir.c: Fixed bug that the cursor is sometimes left in the hourglass
   shape after copying a file. Contributed by Roger Burrows. (THH)
+
+2011-10-15
+- bdos/fs.h bdos/fsbuf.c: Fix the type of the b_dm field in the BCB, allowing
+  casts in fsbuf.c to be removed. Contributed by Roger Burrows. (VRI)
