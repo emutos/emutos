@@ -567,6 +567,20 @@ WORD app_start(void)
         G.g_aavail = &G.g_alist[0];
         G.g_alist[NUM_ANODES - 1].a_next = (ANODE *) NULL;
 
+        if (!app_rdicon())
+          return(FALSE);        
+
+        G.g_wicon = (12 * gl_wschar) + (2 * G.g_idlist[0].ib_xtext);
+        G.g_hicon = G.g_idlist[0].ib_hicon + gl_hschar + 2;
+
+        G.g_icw = (gl_height <= 300) ? 0 : 8;
+        G.g_icw += G.g_wicon;
+        xcnt = (gl_width/G.g_icw);
+        G.g_icw += (gl_width % G.g_icw) / xcnt;
+        G.g_ich = G.g_hicon + MIN_HINT;
+        ycnt = ((gl_height-gl_hbox) / G.g_ich);
+        G.g_ich += ((gl_height-gl_hbox) % G.g_ich) / ycnt;
+
         shel_get(ADDR(&gl_afile[0]), SIZE_AFILE);
         if (gl_afile[0] != '#')                 /* invalid signature    */
         {                                       /*   so read from disk  */
@@ -586,14 +600,10 @@ WORD app_start(void)
         if (gl_afile[0] != '#')
         {
           LONG drivemask;
-          int columns, rows;
           int drive_x = 0, drive_y = 0;
           int trash_x, trash_y;
           int icon_type;
           char drive_letter;
-          const ICONBLK *p = &gl_ilist[IG_HARD];
-          columns = G.g_wdesk / (max(p->ib_wicon,p->ib_wtext));
-          rows = G.g_hdesk / (p->ib_hicon + p->ib_htext);
 
           drivemask = dos_sdrv( dos_gdrv() ); 
           strcpy(gl_afile, desk_inf_data1);  /* Copy core data part 1*/
@@ -602,8 +612,8 @@ WORD app_start(void)
             if(drivemask&(1L<<i))
             {
               x = strlen(gl_afile);
-              drive_x = i % columns;  /* x position */
-              drive_y = i / columns;  /* y position */
+              drive_x = i % xcnt; /* x position */
+              drive_y = i / xcnt; /* y position */
               icon_type = (i > 1) ? 0 /* Hard disk */ : 1 /* Floppy */;
               drive_letter = 'A' + i;
               sprintf(gl_afile + x, "#M %02X %02X %02X FF %c DISK %c@ @ \r\n",
@@ -613,9 +623,9 @@ WORD app_start(void)
           /* add Trash icon to end */
           x = strlen(gl_afile);
           trash_x = 0; /* Left */
-          trash_y = rows-1; /* Bottom */
+          trash_y = ycnt-1; /* Bottom */
           if (drive_y >= trash_y) /* if the last dive icon overflows over the */
-            trash_x = columns-1;  /* trash row, force trash to right */
+            trash_x = xcnt-1;  /* trash row, force trash to right */
           sprintf(gl_afile + x, "#T %02X %02X 03 FF   TRASH@ @ \r\n",
             trash_x, trash_y);
           G.g_afsize = strlen(gl_afile);
@@ -745,20 +755,6 @@ WORD app_start(void)
             }
           }
         }
-
-        if (!app_rdicon())
-          return(FALSE);        
-
-        G.g_wicon = (12 * gl_wschar) + (2 * G.g_idlist[0].ib_xtext);
-        G.g_hicon = G.g_idlist[0].ib_hicon + gl_hschar + 2;
-
-        G.g_icw = (gl_height <= 300) ? 0 : 8;
-        G.g_icw += G.g_wicon;
-        xcnt = (gl_width/G.g_icw);
-        G.g_icw += (gl_width % G.g_icw) / xcnt;
-        G.g_ich = G.g_hicon + MIN_HINT;
-        ycnt = ((gl_height-gl_hbox) / G.g_ich);
-        G.g_ich += ((gl_height-gl_hbox) % G.g_ich) / ycnt;
 
 #ifdef DESK1
         for (pa = G.g_ahead; pa; pa = pa->a_next)

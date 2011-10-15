@@ -2810,3 +2810,4 @@ Start... early ages
 - desk/deskapp.c: Fixed default icon positionning in big resolutions when the
   desktop has more than 10 columns or lines of icons. (VRI)
 - desk/deskapp.c: Fixed the desktop to display only drives from A to Z. (VRI)
+- desk/deskapp.c: Fixed wrong calcluation of number of icons on a line. (VRI)
