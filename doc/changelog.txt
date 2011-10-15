@@ -2807,3 +2807,4 @@ Start... early ages
   Contributed by Roger Burrows. (VRI)
 - desk/deskapp.c: Keep the trash icon on the bottom right even if there are
   more icon lines than the current screen. (VRI)
+- util/doprintf.c: Fixed wrong %X implementation in doprintf(). (VRI)

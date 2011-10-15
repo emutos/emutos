@@ -9,7 +9,7 @@
 #include "doprintf.h"
 
 
-static char *itoa(char *p, unsigned int num, int radix)
+static char *itoa(char *p, unsigned int num, int radix, char first_hex_letter)
 {
   int i;
   char *q;
@@ -18,7 +18,7 @@ static char *itoa(char *p, unsigned int num, int radix)
   do {
     i = (int)(num % radix);
     if(i >= 10) {
-      i += 'a' - 10;
+      i += first_hex_letter - 10;
     } else {
       i += '0';
     }
@@ -31,7 +31,7 @@ static char *itoa(char *p, unsigned int num, int radix)
   return(p);
 }
 
-static char *ltoa(char *p, unsigned long num, int radix)
+static char *ltoa(char *p, unsigned long num, int radix, char first_hex_letter)
 {
   int i;
   char *q;
@@ -40,7 +40,7 @@ static char *ltoa(char *p, unsigned long num, int radix)
   do {
     i = (int)(num % radix);
     if(i >= 10) {
-      i += 'a' - 10;
+      i += first_hex_letter - 10;
     } else {
       i += '0';
     }
@@ -67,6 +67,7 @@ int doprintf(void (*outc)(int), const char *fmt, va_list ap)
   int zfill;
   int len = 0;
   int lflag;
+  char first_hex_letter;
   long l;
   for (;;) {
     p = buf;
@@ -121,6 +122,7 @@ int doprintf(void (*outc)(int), const char *fmt, va_list ap)
       if (*fmt)
         c = *fmt++;
     }
+    first_hex_letter = 'a';
     switch (c) {
     case 'p':
       zfill = '0';
@@ -128,7 +130,7 @@ int doprintf(void (*outc)(int), const char *fmt, va_list ap)
       (*outc)('0'); len++;
       (*outc)('x'); len++;
     case 'X':
-      lflag++;
+      first_hex_letter = 'A';
     case 'x':
       c = 16;
       goto oxu;
@@ -144,11 +146,11 @@ int doprintf(void (*outc)(int), const char *fmt, va_list ap)
     oxu:
       if (lflag) {
         l = va_arg(ap, long);
-        p = ltoa(p, l, c);
+        p = ltoa(p, l, c, first_hex_letter);
         break;
       }
       i = va_arg(ap, int);
-      p = itoa(p, i, c);
+      p = itoa(p, i, c, first_hex_letter);
       break;
     case 'D':
       lflag++;
@@ -160,7 +162,7 @@ int doprintf(void (*outc)(int), const char *fmt, va_list ap)
           *p++ = '-';
           l = -l;
         }
-        p = ltoa(p, l, 10);
+        p = ltoa(p, l, 10, first_hex_letter);
         break;
       }
       i = va_arg(ap, int);
@@ -168,7 +170,7 @@ int doprintf(void (*outc)(int), const char *fmt, va_list ap)
         *p++ = '-';
         i = -i;
       }
-      p = itoa(p, i, 10);
+      p = itoa(p, i, 10, first_hex_letter);
       break;
     case 'e':
     case 'f':
