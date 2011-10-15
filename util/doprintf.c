@@ -137,13 +137,9 @@ int doprintf(void (*outc)(int), const char *fmt, va_list ap)
     case 'x':
       c = 16;
       goto oxu;
-    case 'U':
-      lflag++;
     case 'u':
       c = 10;
       goto oxu;
-    case 'O':
-      lflag++;
     case 'o':
       c = 8;
     oxu:
@@ -155,8 +151,6 @@ int doprintf(void (*outc)(int), const char *fmt, va_list ap)
       i = va_arg(ap, int);
       p = itoa(p, i, c, first_hex_letter);
       break;
-    case 'D':
-      lflag++;
     case 'i':
     case 'd':
       if (lflag) {
