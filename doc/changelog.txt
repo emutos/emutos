@@ -2803,3 +2803,5 @@ Start... early ages
 2011-10-15
 - bdos/fs.h bdos/fsbuf.c: Fix the type of the b_dm field in the BCB, allowing
   casts in fsbuf.c to be removed. Contributed by Roger Burrows. (VRI)
+- desk/deskapp.c: Tidy up default desktop arrangement of disk/trash icons.
+  Contributed by Roger Burrows. (VRI)

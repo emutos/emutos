@@ -586,7 +586,11 @@ WORD app_start(void)
         if (gl_afile[0] != '#')
         {
           LONG drivemask;
-          int drive_y = 0;
+          int columns, rows, drive_y = 0;
+          const ICONBLK *p = &gl_ilist[IG_HARD];
+          columns = G.g_wdesk / (max(p->ib_wicon,p->ib_wtext));
+          rows = G.g_hdesk / (p->ib_hicon + p->ib_htext);
+
           drivemask = dos_sdrv( dos_gdrv() ); 
           strcpy(gl_afile, desk_inf_data1);  /* Copy core data part 1*/
           /* Scan for valid drives: */
@@ -595,8 +599,8 @@ WORD app_start(void)
             {
               x = strlen(gl_afile);
               strcat(gl_afile, "#M 00 00 01 FF A DISK A@ @ \r\n");
-              gl_afile[x+4] += i % 4;    /* x position */
-              drive_y = i / 4;           /* y position (remembered) */
+              gl_afile[x+4] += i % columns;    /* x position */
+              drive_y = i / columns;           /* y position (remembered) */
               gl_afile[x+7] += drive_y;
               if (i > 1)
                 gl_afile[x+10] = '0';    /* Hard disk instead of floppy icon */
@@ -606,7 +610,9 @@ WORD app_start(void)
           /* add Trash icon to end */
           x = strlen(gl_afile);
           strcat(gl_afile, "#T 00 00 03 FF   TRASH@ @ \r\n");
-          gl_afile[x+7] += (drive_y < 4) ? 4 : (drive_y+1);
+          if (drive_y == rows-1)             /* if last hard disk on bottom row, */
+            gl_afile[x+4] += columns-1;      /* force trash to end of row */
+          gl_afile[x+7] += rows-1;
           G.g_afsize = strlen(gl_afile);
         }
 
