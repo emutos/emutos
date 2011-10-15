@@ -2807,6 +2807,7 @@ Start... early ages
   Contributed by Roger Burrows. (VRI)
 - desk/deskapp.c: Keep the trash icon on the bottom right even if there are
   more icon lines than the current screen. (VRI)
+- util/doprintf.c: Fixed wrong %X implementation in doprintf(). (VRI)
 - desk/deskapp.c: Fixed default icon positionning in big resolutions when the
   desktop has more than 10 columns or lines of icons. (VRI)
 - desk/deskapp.c: Fixed the desktop to display only drives from A to Z. (VRI)
