@@ -586,7 +586,11 @@ WORD app_start(void)
         if (gl_afile[0] != '#')
         {
           LONG drivemask;
-          int columns, rows, drive_y = 0;
+          int columns, rows;
+          int drive_x = 0, drive_y = 0;
+          int trash_x, trash_y;
+          int icon_type;
+          char drive_letter;
           const ICONBLK *p = &gl_ilist[IG_HARD];
           columns = G.g_wdesk / (max(p->ib_wicon,p->ib_wtext));
           rows = G.g_hdesk / (p->ib_hicon + p->ib_htext);
@@ -598,21 +602,22 @@ WORD app_start(void)
             if(drivemask&(1L<<i))
             {
               x = strlen(gl_afile);
-              strcat(gl_afile, "#M 00 00 01 FF A DISK A@ @ \r\n");
-              gl_afile[x+4] += i % columns;    /* x position */
-              drive_y = i / columns;           /* y position (remembered) */
-              gl_afile[x+7] += drive_y;
-              if (i > 1)
-                gl_afile[x+10] = '0';    /* Hard disk instead of floppy icon */
-              gl_afile[x+15] = gl_afile[x+22] = 'A'+i;    /* Drive letter */
+              drive_x = i % columns;  /* x position */
+              drive_y = i / columns;  /* y position */
+              icon_type = (i > 1) ? 0 /* Hard disk */ : 1 /* Floppy */;
+              drive_letter = 'A' + i;
+              sprintf(gl_afile + x, "#M %02X %02X %02X FF %c DISK %c@ @ \r\n",
+                drive_x, drive_y, icon_type, drive_letter, drive_letter);
             }
           strcat(gl_afile, desk_inf_data2);  /* Copy core data part 2 */
           /* add Trash icon to end */
           x = strlen(gl_afile);
-          strcat(gl_afile, "#T 00 00 03 FF   TRASH@ @ \r\n");
-          if (drive_y >= rows-1)             /* if last hard disk on bottom row, */
-            gl_afile[x+4] += columns-1;      /* force trash to end of row */
-          gl_afile[x+7] += rows-1;
+          trash_x = 0; /* Left */
+          trash_y = rows-1; /* Bottom */
+          if (drive_y >= trash_y) /* if the last dive icon overflows over the */
+            trash_x = columns-1;  /* trash row, force trash to right */
+          sprintf(gl_afile + x, "#T %02X %02X 03 FF   TRASH@ @ \r\n",
+            trash_x, trash_y);
           G.g_afsize = strlen(gl_afile);
         }
 
