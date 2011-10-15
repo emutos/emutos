@@ -2812,3 +2812,4 @@ Start... early ages
   desktop has more than 10 columns or lines of icons. (VRI)
 - desk/deskapp.c: Fixed the desktop to display only drives from A to Z. (VRI)
 - desk/deskapp.c: Fixed wrong calcluation of number of icons on a line. (VRI)
+- util/doprintf.c: Fixed %p regression introduced in my earlier change. (VRI)

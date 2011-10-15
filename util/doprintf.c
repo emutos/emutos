@@ -125,10 +125,13 @@ int doprintf(void (*outc)(int), const char *fmt, va_list ap)
     first_hex_letter = 'a';
     switch (c) {
     case 'p':
+      lflag++;
       zfill = '0';
+      c = 16;
       width = 8;
       (*outc)('0'); len++;
       (*outc)('x'); len++;
+      goto oxu;
     case 'X':
       first_hex_letter = 'A';
     case 'x':
