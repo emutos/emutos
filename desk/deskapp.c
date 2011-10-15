@@ -598,7 +598,7 @@ WORD app_start(void)
           drivemask = dos_sdrv( dos_gdrv() ); 
           strcpy(gl_afile, desk_inf_data1);  /* Copy core data part 1*/
           /* Scan for valid drives: */
-          for(i=0; i<32; i++)
+          for(i=0; i<26; i++)
             if(drivemask&(1L<<i))
             {
               x = strlen(gl_afile);
