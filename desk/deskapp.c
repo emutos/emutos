@@ -610,7 +610,7 @@ WORD app_start(void)
           /* add Trash icon to end */
           x = strlen(gl_afile);
           strcat(gl_afile, "#T 00 00 03 FF   TRASH@ @ \r\n");
-          if (drive_y == rows-1)             /* if last hard disk on bottom row, */
+          if (drive_y >= rows-1)             /* if last hard disk on bottom row, */
             gl_afile[x+4] += columns-1;      /* force trash to end of row */
           gl_afile[x+7] += rows-1;
           G.g_afsize = strlen(gl_afile);
