@@ -2823,3 +2823,5 @@ Start... early ages
 - Makefile: Avoid rebuilding makefile.dep when doing "make clean" and some other
   targets. (VRI)
 - Makefile: Better make message when emutos-aranym.img is up to date. (VRI)
+- Makefile: Update obj/country in a more reliable way using a simply expanded
+  variable and the $(shell) function. (VRI)

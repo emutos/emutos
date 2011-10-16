@@ -615,34 +615,37 @@ endif
 
 TOCLEAN += obj/country
 
-# A phony target is never up to date.
-.PHONY: always-execute-reciepe
-
-# The reciepe of a target depending on a phony target will always be executed
-# in order to determine if the target is up to date or not.
-# If the reciepe does not touch the target, it is considered up to date.
-# Note: The sleep after mv is necessary to let make see that the timestamp of
-# the target has changed. This is probably the proof that the whole method used
-# here is wrong.
-obj/country: always-execute-reciepe
-	@echo $(COUNTRY) $(UNIQUE) > last.tmp; \
-	if [ -e $@ ]; \
+# The following script uses the shell function to assign a dummy variable with
+# the := operator. Thus it is always run just after the Makefile is read,
+# before building any target.
+# As a result, the obj/country file is updated only when the Makefile variables
+# $(COUNTRY) or $(UNIQUE) changes, indicating a language change.
+# Any target depending on obj/country will be automatically rebuilt
+# when $(COUNTRY) or $(UNIQUE) changes.
+DUMMY := $(shell \
+	echo $(COUNTRY) $(UNIQUE) > last.tmp; \
+	if [ -e obj/country ]; \
 	then \
-	  if cmp -s last.tmp $@; \
+	  if cmp -s last.tmp obj/country; \
 	  then \
-	    rm -f last.tmp; \
+	    rm last.tmp; \
 	    exit 0; \
 	  fi; \
 	fi; \
-	mv last.tmp $@; \
-	sleep 1; \
-	echo "# Deleting i18n files..."; \
+	mv last.tmp obj/country; \
 	rm -f obj/country.o include/i18nconf.h ; \
 	for i in $(TRANS_SRC); \
 	do \
 	  j=obj/`basename $$i tr.c`o; \
 	  rm -f $$i $$j; \
-	done;
+	done; \
+)
+
+# Since obj/country is automatically updated by the script above when necessary,
+# there is nothing more to do for building it. The following empty reciepe is
+# mandatory to override the implicit rule which tries to build obj/country
+# from obj/country.o.
+obj/country: ;
 
 obj/country.o: obj/country
 
