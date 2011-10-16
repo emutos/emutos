@@ -14,8 +14,6 @@
 
 
 #include "asmdefs.h"
-#include "header.h"
-#include "config.h"
 
 
 // ==== References ===========================================================
