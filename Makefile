@@ -908,7 +908,11 @@ makefile.dep: util/langs.c bios/header.h bios/ctables.h include/i18nconf.h
 .PHONY: depend
 depend: makefile.dep
 
+# Do not include or rebuild makefile.dep for some targets
+NODEP = makefile.dep clean distclean tgz
+ifeq (,$(filter $(NODEP), $(MAKECMDGOALS)))
 -include makefile.dep
+endif
 
 #
 # local Makefile
