@@ -527,17 +527,8 @@ TOCLEAN += bug$(EXE) util/langs.c po/messages.pot
 bug$(EXE): tools/bug.c
 	$(NATIVECC) -o $@ $<
 
-ifeq (us,$(UNIQUE))
-
-util/langs.c:
-	echo > $@
-
-else
-
 util/langs.c: $(POFILES) po/LINGUAS bug$(EXE) po/messages.pot
 	./bug$(EXE) make
-
-endif
 
 po/messages.pot: bug$(EXE) po/POTFILES.in
 	./bug$(EXE) xgettext

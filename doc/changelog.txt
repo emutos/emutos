@@ -2826,3 +2826,4 @@ Start... early ages
 - Makefile: Update obj/country in a more reliable way using a simply expanded
   variable and the $(shell) function. (VRI)
 - Makefile: Removed unnecessary dependencies already in makefile.dep. (VRI)
+- Makefile: Always generate a full util/langs.c to avoid trouble. (VRI)
