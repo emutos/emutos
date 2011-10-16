@@ -2820,4 +2820,5 @@ Start... early ages
 - Makefile: Make all256 randomly did not recompile some files such as command.c
   on some build hosts (such as Ubuntu). Reported by David Savinkoff. Added a
   sleep in the obj/country recipe as a workaround. (VRI)
-- Makefile: Avoid rebuilding makefile.dep when doing "make clean". (VRI)
+- Makefile: Avoid rebuilding makefile.dep when doing "make clean" and some other
+  targets. (VRI)
