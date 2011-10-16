@@ -621,6 +621,9 @@ TOCLEAN += obj/country
 # The reciepe of a target depending on a phony target will always be executed
 # in order to determine if the target is up to date or not.
 # If the reciepe does not touch the target, it is considered up to date.
+# Note: The sleep after mv is necessary to let make see that the timestamp of
+# the target has changed. This is probably the proof that the whole method used
+# here is wrong.
 obj/country: always-execute-reciepe
 	@echo $(COUNTRY) $(UNIQUE) > last.tmp; \
 	if [ -e $@ ]; \
@@ -632,6 +635,7 @@ obj/country: always-execute-reciepe
 	  fi; \
 	fi; \
 	mv last.tmp $@; \
+	sleep 1; \
 	echo "# Deleting i18n files..."; \
 	rm -f obj/country.o include/i18nconf.h ; \
 	for i in $(TRANS_SRC); \

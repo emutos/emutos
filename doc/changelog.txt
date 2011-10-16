@@ -2815,3 +2815,8 @@ Start... early ages
 - util/doprintf.c: Fixed %p regression introduced in my earlier change. (VRI)
 - util/doprintf.c: Removed the nonstandard %O, %U and %D. (VRI)
 - desk/deskapp.c: Pack the drive icons when some drives are missing. (VRI)
+
+2011-10-16
+- Makefile: Make all256 randomly did not recompile some files such as command.c
+  on some build hosts (such as Ubuntu). Reported by David Savinkoff. Added a
+  sleep in the obj/country recipe as a workaround. (VRI)
