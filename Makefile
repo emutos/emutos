@@ -537,8 +537,6 @@ else
 util/langs.c: $(POFILES) po/LINGUAS bug$(EXE) po/messages.pot
 	./bug$(EXE) make
 
-obj/langs.o: include/config.h include/i18nconf.h
-
 endif
 
 po/messages.pot: bug$(EXE) po/POTFILES.in
@@ -561,7 +559,6 @@ allbin:
 all256:
 	@for i in $(COUNTRIES); \
 	do \
-	  $(RM) include/i18nconf.h bios/header.h */*.tr.c obj/country*; \
 	  j=etos256$${i}.img; \
 	  echo; \
 	  echo "# Building $$j"; \
@@ -572,7 +569,6 @@ all256:
 all192:
 	@for i in $(COUNTRIES); \
 	do \
-	  $(RM) include/i18nconf.h bios/header.h */*.tr.c obj/country*; \
 	  j=etos192$${i}.img; \
 	  echo; \
 	  echo "# Building $$j"; \
@@ -633,7 +629,7 @@ DUMMY := $(shell \
 	  fi; \
 	fi; \
 	mv last.tmp obj/country; \
-	rm -f obj/country.o include/i18nconf.h ; \
+	rm -f include/i18nconf.h ; \
 	for i in $(TRANS_SRC); \
 	do \
 	  j=obj/`basename $$i tr.c`o; \
@@ -646,8 +642,6 @@ DUMMY := $(shell \
 # mandatory to override the implicit rule which tries to build obj/country
 # from obj/country.o.
 obj/country: ;
-
-obj/country.o: obj/country
 
 #
 # i18nconf.h - this file is automatically created by the Makefile. This
@@ -678,16 +672,11 @@ include/i18nconf.h: obj/country
 	  false; \
 	fi
 else
-include/i18nconf.h:
+include/i18nconf.h: obj/country
 	@rm -f $@; touch $@
 	@echo \#define CONF_KEYB KEYB_ALL > $@
 	@echo \#define CONF_CHARSET CHARSET_ALL >> $@
 endif
-
-obj/country.o: include/i18nconf.h
-obj/langs.o: include/i18nconf.h
-obj/nls.o: include/i18nconf.h
-obj/nlsasm.o: include/i18nconf.h
 
 #
 # ctables.h - the country tables, generated from country.mk, and only
@@ -699,21 +688,13 @@ TOCLEAN += bios/ctables.h
 bios/ctables.h: country.mk tools/genctables.awk
 	awk -f tools/genctables.awk < country.mk > $@
 
-obj/country.o: bios/ctables.h
-
 #
 # OS header
 #
 
 TOCLEAN += bios/header.h
 
-obj/startup.o: bios/header.h
-
-obj/comprimg.o: bios/header.h
-
-obj/country.o: bios/header.h
-
-bios/header.h: tools/mkheader.awk obj/country include/i18nconf.h
+bios/header.h: tools/mkheader.awk obj/country
 	awk -f tools/mkheader.awk $(COUNTRY) > $@
 
 #

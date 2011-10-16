@@ -2825,3 +2825,4 @@ Start... early ages
 - Makefile: Better make message when emutos-aranym.img is up to date. (VRI)
 - Makefile: Update obj/country in a more reliable way using a simply expanded
   variable and the $(shell) function. (VRI)
+- Makefile: Removed unnecessary dependencies already in makefile.dep. (VRI)
