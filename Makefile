@@ -395,7 +395,7 @@ ROM_ARANYM = emutos-aranym.img
 .PHONY: aranym
 aranym:
 	@echo "# Building ARAnyM EmuTOS into $(ROM_ARANYM)"
-	$(MAKE) CPUFLAGS='-m68040' DEF='-DMACHINE_ARANYM' ROM_512=$(ROM_ARANYM) 512
+	$(MAKE) CPUFLAGS='-m68040' DEF='-DMACHINE_ARANYM' ROM_512=$(ROM_ARANYM) $(ROM_ARANYM)
 
 #
 # ColdFire images
