@@ -884,12 +884,15 @@ makefile.dep: util/langs.c bios/header.h bios/ctables.h include/i18nconf.h
 depend: makefile.dep
 
 # Do not include or rebuild makefile.dep for some targets
-# This includes targets not using $(CC) and targets recrsively invoking $(MAKE).
+# This includes the default target (currently "help"),
+# targets not using $(CC) and targets recrsively invoking $(MAKE).
 NODEP = makefile.dep depend \
   clean distclean help cvsready expand crlf tgz \
   aranym firebee allbin all256 all192 coldfire-sources
+ifneq (,$(MAKECMDGOALS))
 ifeq (,$(filter $(NODEP), $(MAKECMDGOALS)))
 -include makefile.dep
+endif
 endif
 
 #
