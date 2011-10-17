@@ -620,6 +620,7 @@ DUMMY := $(shell \
 	  fi; \
 	fi; \
 	mv last.tmp obj/country; \
+	sleep 1; \
 	rm -f include/i18nconf.h ; \
 	for i in $(TRANS_SRC); \
 	do \

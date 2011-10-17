@@ -2828,3 +2828,5 @@ Start... early ages
 - Makefile: Removed unnecessary dependencies already in makefile.dep. (VRI)
 - Makefile: Always generate a full util/langs.c to avoid trouble. (VRI)
 - bios/natfeat.S: Removed useless includes. (VRI)
+- Makefile: Reintroduced the sleep workaround since "make all256" still does not
+  correctly work on Ubuntu. (VRI)
