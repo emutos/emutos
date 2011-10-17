@@ -557,6 +557,7 @@ all256:
 	  j=etos256$${i}.img; \
 	  echo; \
 	  echo "# Building $$j"; \
+	  echo "sleep 1"; \
 	  sleep 1; \
 	  $(MAKE) UNIQUE=$$i ROM_256=$$j 256 || exit 1; \
 	done
@@ -568,6 +569,7 @@ all192:
 	  j=etos192$${i}.img; \
 	  echo; \
 	  echo "# Building $$j"; \
+	  echo "sleep 1"; \
 	  sleep 1; \
 	  $(MAKE) DEF='-DTOS_VERSION=0x102' WITH_CLI=0 WITH_DESK1=0 \
 			UNIQUE=$$i ROM_192=$$j 192 || exit 1; \
@@ -624,12 +626,14 @@ obj/country: always-execute-recipe
 	    exit 0; \
 	  fi; \
 	fi; \
+	echo "echo $(COUNTRY) $(UNIQUE) > $@"; \
 	mv last.tmp $@; \
-	echo "# Deleting i18n files..."; \
+	echo "rm -f obj/country.o include/i18nconf.h" ; \
 	rm -f obj/country.o include/i18nconf.h ; \
 	for i in $(TRANS_SRC); \
 	do \
 	  j=obj/`basename $$i tr.c`o; \
+	  echo "rm -f $$i $$j"; \
 	  rm -f $$i $$j; \
 	done
 
@@ -646,6 +650,7 @@ TOCLEAN += include/i18nconf.h
 
 ifneq (,$(UNIQUE))
 include/i18nconf.h: obj/country
+	@echo "# Generating $@ with CONF_LANG=\"$(ETOSLANG)\" CONF_KEYB=KEYB_$(ETOSKEYB) CONF_CHARSET=CHARSET_$(ETOSCSET)"
 	@rm -f $@; touch $@
 	@echo \#define CONF_UNIQUE_COUNTRY 1 >> $@
 	@echo \#define CONF_NO_NLS 1 >> $@
@@ -663,6 +668,7 @@ include/i18nconf.h: obj/country
 	fi
 else
 include/i18nconf.h: obj/country
+	@echo "# Generating $@ with CONF_KEYB=KEYB_ALL CONF_CHARSET=CHARSET_ALL"
 	@rm -f $@; touch $@
 	@echo \#define CONF_KEYB KEYB_ALL > $@
 	@echo \#define CONF_CHARSET CHARSET_ALL >> $@
