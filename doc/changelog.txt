@@ -2830,3 +2830,8 @@ Start... early ages
 - bios/natfeat.S: Removed useless includes. (VRI)
 - Makefile: Reintroduced the sleep workaround since "make all256" still does not
   correctly work on Ubuntu. (VRI)
+
+2011-10-17
+- Makefile: Cleanly fix the all256 and all192 targets on ext2 and ext3
+  partitions. The sleep command is required because of low resolution
+  filesystems limitations. (VRI)

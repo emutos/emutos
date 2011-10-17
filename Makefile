@@ -546,6 +546,10 @@ allbin:
 	$(RM) obj/*.o
 	$(MAKE) all192
 
+# The sleep command in targets below ensure that all the generated sources
+# will have a timestamp older than any object file.
+# This matters on filesystems having low timestamp resolution (ext2, ext3).
+
 .PHONY: all256
 all256:
 	@for i in $(COUNTRIES); \
@@ -553,6 +557,7 @@ all256:
 	  j=etos256$${i}.img; \
 	  echo; \
 	  echo "# Building $$j"; \
+	  sleep 1; \
 	  $(MAKE) UNIQUE=$$i ROM_256=$$j 256 || exit 1; \
 	done
 
@@ -563,6 +568,7 @@ all192:
 	  j=etos192$${i}.img; \
 	  echo; \
 	  echo "# Building $$j"; \
+	  sleep 1; \
 	  $(MAKE) DEF='-DTOS_VERSION=0x102' WITH_CLI=0 WITH_DESK1=0 \
 			UNIQUE=$$i ROM_192=$$j 192 || exit 1; \
 	done
@@ -620,7 +626,6 @@ DUMMY := $(shell \
 	  fi; \
 	fi; \
 	mv last.tmp obj/country; \
-	sleep 1; \
 	rm -f include/i18nconf.h ; \
 	for i in $(TRANS_SRC); \
 	do \
