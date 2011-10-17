@@ -2838,3 +2838,5 @@ Start... early ages
 - Makefile: Rollback to the always-execute-recipe method to update obj/country,
   since finally it is perfectly valid and more flexible. (VRI)
 - Makefile: Improved build messages. (VRI)
+- Makefile: Removed unnecessary removal of obj/country.o include/i18nconf.h.
+  They are automatically rebuilt when necessary through dependencies. (VRI)

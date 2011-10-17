@@ -628,8 +628,6 @@ obj/country: always-execute-recipe
 	fi; \
 	echo "echo $(COUNTRY) $(UNIQUE) > $@"; \
 	mv last.tmp $@; \
-	echo "rm -f obj/country.o include/i18nconf.h" ; \
-	rm -f obj/country.o include/i18nconf.h ; \
 	for i in $(TRANS_SRC); \
 	do \
 	  j=obj/`basename $$i tr.c`o; \
