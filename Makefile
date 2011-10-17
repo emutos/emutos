@@ -608,37 +608,30 @@ endif
 
 TOCLEAN += obj/country
 
-# The following script uses the shell function to assign a dummy variable with
-# the := operator. Thus it is always run just after the Makefile is read,
-# before building any target.
-# As a result, the obj/country file is updated only when the Makefile variables
-# $(COUNTRY) or $(UNIQUE) changes, indicating a language change.
-# Any target depending on obj/country will be automatically rebuilt
-# when $(COUNTRY) or $(UNIQUE) changes.
-DUMMY := $(shell \
-	echo $(COUNTRY) $(UNIQUE) > last.tmp; \
-	if [ -e obj/country ]; \
+# A phony target is never up to date.
+.PHONY: always-execute-recipe
+
+# The recipe of a target depending on a phony target will always be executed
+# in order to determine if the target is up to date or not.
+# If the recipe does not touch the target, it is considered up to date.
+obj/country: always-execute-recipe
+	@echo $(COUNTRY) $(UNIQUE) > last.tmp; \
+	if [ -e $@ ]; \
 	then \
-	  if cmp -s last.tmp obj/country; \
+	  if cmp -s last.tmp $@; \
 	  then \
 	    rm last.tmp; \
 	    exit 0; \
 	  fi; \
 	fi; \
-	mv last.tmp obj/country; \
-	rm -f include/i18nconf.h ; \
+	mv last.tmp $@; \
+	echo "# Deleting i18n files..."; \
+	rm -f obj/country.o include/i18nconf.h ; \
 	for i in $(TRANS_SRC); \
 	do \
 	  j=obj/`basename $$i tr.c`o; \
 	  rm -f $$i $$j; \
-	done; \
-)
-
-# Since obj/country is automatically updated by the script above when necessary,
-# there is nothing more to do for building it. The following empty reciepe is
-# mandatory to override the implicit rule which tries to build obj/country
-# from obj/country.o.
-obj/country: ;
+	done
 
 #
 # i18nconf.h - this file is automatically created by the Makefile. This

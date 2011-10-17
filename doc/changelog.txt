@@ -2835,3 +2835,5 @@ Start... early ages
 - Makefile: Cleanly fix the all256 and all192 targets on ext2 and ext3
   partitions. The sleep command is required because of low resolution
   filesystems limitations. (VRI)
+- Makefile: Rollback to the always-execute-recipe method to update obj/country,
+  since finally it is perfectly valid and more flexible. (VRI)
