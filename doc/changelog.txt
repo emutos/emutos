@@ -2854,3 +2854,5 @@ Start... early ages
   desk/deskwin.c desk/gembind.c desk/icons.c desk/machine.h include/compat.h:
   Merge aes/machine.h and desk/machine.h into include/compat.h. Contributed by
   Roger Burrows. (VRI)
+- aes/dos.h desk/deskfpd.h desk/dos.h include/dos.h: Merge aes/dos.h and
+  desk/dos.h into include/dos.h. Contributed by Roger Burrows. (VRI)

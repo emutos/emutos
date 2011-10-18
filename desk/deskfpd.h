@@ -2,7 +2,7 @@
 /*      for 3.0         11/4/87                 mdf             */
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002 The EmuTOS development team
+*                 2002-2011 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -30,6 +30,9 @@
 #define S_SIZE 2
 #define S_TYPE 3
 #define S_DISK 4
+
+#define F_FAKE    0x40       /* these flags are *only* used in the   */
+#define F_DESKTOP 0x80       /*  f_attr field of the FNODE structure */
 
 #define E_NOERROR 0
 #define E_NOFNODES 100
