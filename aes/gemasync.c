@@ -35,14 +35,13 @@
 
 static void signal(EVB *e)
 {
-        register PD     *p, *p1, *q1;
-
+        register PD     *p, *p1, **pp1;
         p = e->e_pd;
         p->p_evflg |= e->e_mask;
                                                 /* off the not-ready    */
                                                 /*   list               */
-        for (p1 = (q1 = (PD *) &nrl)->p_link; (p1 != p) && (p1);
-          p1 = (q1=p1)->p_link);
+        for (pp1 = &nrl, p1 = nrl; (p1 != p) && (p1);
+          pp1 = &p1->p_link, p1 = p1->p_link);
         if ( p != rlr )
         {
           if ( p->p_evflg & p->p_evwait)
@@ -50,9 +49,10 @@ static void signal(EVB *e)
             if ( p1 )
             {
               p1->p_stat &= ~WAITIN;
-                                                /* onto the drl         */
-              q1->p_link = p1->p_link;
-              p1->p_link = drl;
+
+              *pp1 = p1->p_link;                /* remove from nrl      */
+
+              p1->p_link = drl;                 /* onto the drl         */
               drl = p1;
             }
           }

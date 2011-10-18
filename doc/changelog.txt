@@ -2856,3 +2856,4 @@ Start... early ages
   Roger Burrows. (VRI)
 - aes/dos.h desk/deskfpd.h desk/dos.h include/dos.h: Merge aes/dos.h and
   desk/dos.h into include/dos.h. Contributed by Roger Burrows. (VRI)
+- aes/gemasync.c: Fixed potential strict alising bug. (VRI)
