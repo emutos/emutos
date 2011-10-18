@@ -2840,3 +2840,17 @@ Start... early ages
 - Makefile: Improved build messages. (VRI)
 - Makefile: Removed unnecessary removal of obj/country.o include/i18nconf.h.
   They are automatically rebuilt when necessary through dependencies. (VRI)
+
+2011-10-18
+- aes/gemaplib.c aes/gemasync.c aes/gemctrl.c aes/gemdisp.c aes/gemdos.c
+  aes/gemevlib.c aes/gemflag.c aes/gemfmalt.c aes/gemfmlib.c aes/gemfslib.c
+  aes/gemgraf.c aes/gemgrlib.c aes/gemgsxif.c aes/geminit.c aes/geminput.c
+  aes/gemmnlib.c aes/gemobed.c aes/gemobjop.c aes/gemoblib.c aes/gempd.c
+  aes/gemqueue.c aes/gemrslib.c aes/gemsclib.c aes/gemshlib.c aes/gemsuper.c
+  aes/gemwmlib.c aes/gemwrect.c aes/machine.h aes/optimize.c desk/desk1.c
+  desk/deskact.c desk/deskapp.c desk/deskdir.c desk/deskfpd.c desk/deskfun.c
+  desk/deskglob.c desk/deskgraf.c desk/deskgsx.c desk/deskinf.c desk/deskins.c
+  desk/deskmain.c desk/deskobj.c desk/deskpro.c desk/deskrsrc.c desk/desksupp.c
+  desk/deskwin.c desk/gembind.c desk/icons.c desk/machine.h include/compat.h:
+  Merge aes/machine.h and desk/machine.h into include/compat.h. Contributed by
+  Roger Burrows. (VRI)

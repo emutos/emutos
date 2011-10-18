@@ -18,7 +18,7 @@
 */
 
 #include "portab.h"
-#include "machine.h"
+#include "compat.h"
 #include "obdefs.h"
 #include "taddr.h"
 #include "dos.h"

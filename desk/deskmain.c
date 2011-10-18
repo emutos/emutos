@@ -21,7 +21,7 @@
 #include "config.h"
 #include "xbiosbind.h"
 #include "portab.h"
-#include "machine.h"
+#include "compat.h"
 #include "obdefs.h"
 #include "taddr.h"
 #include "dos.h"

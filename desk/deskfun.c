@@ -19,7 +19,7 @@
 */
 
 #include "portab.h"
-#include "machine.h"
+#include "compat.h"
 #include "obdefs.h"
 #include "dos.h"
 #include "infodef.h"

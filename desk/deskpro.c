@@ -20,7 +20,7 @@
 #include <string.h>
 
 #include "portab.h"
-#include "machine.h"
+#include "compat.h"
 #include "obdefs.h"
 #include "deskapp.h"
 #include "deskfpd.h"

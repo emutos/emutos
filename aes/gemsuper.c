@@ -15,7 +15,7 @@
 
 #include "portab.h"
 #include "kprint.h"
-#include "machine.h"
+#include "compat.h"
 #include "struct.h"
 #include "basepage.h"
 #include "obdefs.h"

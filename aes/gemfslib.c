@@ -11,7 +11,7 @@
 
 
 #include "portab.h"
-#include "machine.h"
+#include "compat.h"
 #include "struct.h"
 #include "obdefs.h"
 #include "taddr.h"

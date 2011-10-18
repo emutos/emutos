@@ -19,7 +19,7 @@
 */
 
 #include "portab.h"
-#include "machine.h"
+#include "compat.h"
 #include "taddr.h"
 #include "obdefs.h"
 #include "gembind.h"

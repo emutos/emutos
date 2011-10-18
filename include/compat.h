@@ -1,3 +1,13 @@
+/*
+ * compat.h - compiler/architecture compatibility settings
+ * 
+ * This file was originally named MACHINE.H, and almost-identical
+ * versions existed in the AES and DESK subdirectories.  It was
+ * renamed by the EmuTOS development team (to avoid confusion with
+ * the MACHINE.H header used within the BIOS subdirectory) and
+ * centralised in the INCLUDE subdirectory.
+ * 
+ */
 /*      MACHINE.H               09/29/84-02/08/85       Lee Lorenzen    */
 /*      GEM20                   12/17/85                Lowell Webster  */
 
@@ -15,6 +25,8 @@
 *       Copyright (C) 1986                      Digital Research Inc.
 *       -------------------------------------------------------------
 */
+#ifndef _COMPAT_H
+#define _COMPAT_H
 
 #include <string.h>
 
@@ -271,3 +283,5 @@ EXTERN LONG     LLCS();
 #define movs(num, ps, pd)  memcpy((char *)pd, (char *)ps, num)
 
 #endif
+
+#endif	/* _COMPAT_H */

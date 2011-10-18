@@ -17,7 +17,7 @@
 */
 
 #include "portab.h"
-#include "machine.h"
+#include "compat.h"
 #include "deskapp.h"
 #include "deskfpd.h"
 #include "gembind.h"
