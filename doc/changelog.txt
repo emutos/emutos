@@ -2215,23 +2215,23 @@ Start... early ages
       directory is never changed.
 
 2010-06-06
-- desk/deskmain.c, aes/gemdisp.c, aes/geminit.c: Added some debug messages
+- desk/deskmain.c aes/gemdisp.c aes/geminit.c: Added some debug messages
   and the defines DBG_DESKMAIN, DBG_GEMDISP and DBG_GEMINIT. (VRI)
 
 2010-06-06
-- aes/gemasm.S, aes/gemdosif.S, aes/gemstart.S, aes/gsx2.S, aes/large.S,
-  bdos/rwa.S, bios/aciavecs.S, bios/bios.c, bios/cookie.h, bios/initinfo.c,
-  bios/kprint.c, bios/kprintasm.S, bios/linea.S, bios/machine.c,
-  bios/memory.S, bios/natfeat.S, bios/panicasm.S, bios/processor.S,
-  bios/startup.S, bios/tosvars.S, bios/vectors.S, cli/coma.S, include/asm.h,
-  include/config.h, util/memmove.S, util/memset.S, util/miscasm.S,
-  util/nlsasm.S, util/stringasm.S, vdi/vdi_asm.S, vdi/vdi_raster.c,
+- aes/gemasm.S aes/gemdosif.S aes/gemstart.S aes/gsx2.S aes/large.S
+  bdos/rwa.S bios/aciavecs.S bios/bios.c bios/cookie.h bios/initinfo.c
+  bios/kprint.c bios/kprintasm.S bios/linea.S bios/machine.c
+  bios/memory.S bios/natfeat.S bios/panicasm.S bios/processor.S
+  bios/startup.S bios/tosvars.S bios/vectors.S cli/coma.S include/asm.h
+  include/config.h util/memmove.S util/memset.S util/miscasm.S
+  util/nlsasm.S util/stringasm.S vdi/vdi_asm.S vdi/vdi_raster.c
   vdi/vdi_tblit.S: Added ColdFire V4e CPU support. (VRI)
 - Makefile: Added the COLDFIRE variable. Set it to 1 to build a ROM version
   compatible only with ColdFire V4e processors. (VRI)
 
 2010-06-13
-- bios/bios.c, bios/initinfo.c, bios/initinfo.h:
+- bios/bios.c bios/initinfo.c bios/initinfo.h:
   Clear the screen on reboot. (VRI)
 
 2010-06-13
@@ -2255,7 +2255,7 @@ Start... early ages
 
 2010-08-02
 - bios/conout.c: Fixed crash on reverse scrolling. (VRI)
-- bdos/fs.h, bdos/fsdir.c: VFAT long file names are now totally ignored
+- bdos/fs.h bdos/fsdir.c: VFAT long file names are now totally ignored
   and are no longer displayed as invalid files. (VRI)
 - bdos/fsopnclo.c: Removed the characters '^`~ from the list of forbidden
   characters in filenames to match MS-DOS rules. (VRI)
@@ -2263,9 +2263,9 @@ Start... early ages
 2010-09-15
 - tools/tos-lang-change.c: Added missing languages. (patch by Dima Sobolev
   + VRI)
-- country.mk, bios/country.h, bios/ctrycodes.h, bios/fnt_ru_6x6.c,
-  bios/fnt_ru_8x16.c, bios/fnt_ru_8x8.c, bios/keyb_ru.h, po/LINGUAS,
-  po/ru.po, tools/tos-lang-change.c: Added Russian language. (patch by
+- country.mk bios/country.h bios/ctrycodes.h bios/fnt_ru_6x6.c
+  bios/fnt_ru_8x16.c bios/fnt_ru_8x8.c bios/keyb_ru.h po/LINGUAS
+  po/ru.po tools/tos-lang-change.c: Added Russian language. (patch by
   Dima Sobolev)
 
 2010-09-25
@@ -2278,13 +2278,13 @@ Start... early ages
 - bios/ikbd.c: Added key click on key repeat. (VRI)
 
 2010-10-02
-- bdos/bdosmain.c, bdos/console.c, cli/command.c: Fixed BDOS and EmuCON to
+- bdos/bdosmain.c bdos/console.c cli/command.c: Fixed BDOS and EmuCON to
   allow the usage of the full 8-bit character set on console I/O. (VRI)
 - bios/xhdi.c: For unimplemented XHDI opcodes, return EINVFN instead of ERR.
   Patch contributed by David Galvez. (VRI)
 
 2010-10-25
-- bios/natfeat.S, bios/xhdi.c, bios/xhdi.h: Reimplemented the XHDI stub to
+- bios/natfeat.S bios/xhdi.c bios/xhdi.h: Reimplemented the XHDI stub to
   backup all the registers to conform to the XHDI specification. (VRI)
 
 2010-10-26
@@ -2292,14 +2292,14 @@ Start... early ages
   multiple of 4 bytes. Long alignment improves speed in FastRam. (VRI)
 
 2010-11-02
-- bdos/iumem.c, bdos/umem.c: Improved traces on memory management. (VRI)
-- bdos/iumem.c, bdos/umem.c, bios/biosmem.c: Really fix Malloc() and others
+- bdos/iumem.c bdos/umem.c: Improved traces on memory management. (VRI)
+- bdos/iumem.c bdos/umem.c bios/biosmem.c: Really fix Malloc() and others
   for 4-byte alignment. The previous patch was not enough. (VRI)
 
 2010-11-06
 - bios/bios.c: Fixed a small memory leak when there is no bootstrap program.
   (VRI)
-- bdos/proc.c, bios/bios.c: Fixed a memory leak and a crash when the
+- bdos/proc.c bios/bios.c: Fixed a memory leak and a crash when the
   relocation of the bootstrap program fails. (VRI)
 - bios/bios.c: Fixed a memory leak when the bootstrap program finishes
   successfully. (VRI)
@@ -2308,9 +2308,9 @@ Start... early ages
 - bios/bios.c: Show the init screen when EmuTOS is loaded from RAM. (VRI)
 
 2010-11-07
-- bios/memory.S, bios/screen.c, bios/tosvars.S, vdi/vdi_raster.c:
+- bios/memory.S bios/screen.c bios/tosvars.S vdi/vdi_raster.c:
   Use 0xffffxxxx instead of 0x00ffxxxx to access I/O registers. (VRI)
-- aes/gemsuper.c, desk/deskmain.c: Moved desktop traces into the AES,
+- aes/gemsuper.c desk/deskmain.c: Moved desktop traces into the AES,
   since kprintf() is not always available from user mode. (VRI)
 
 2010-11-22
@@ -2322,7 +2322,7 @@ Start... early ages
   well displayed when the debug traces go to the console. (VRI)
 
 2010-11-29
-- desk/desk_rsc.c, desk/desk_rsc.h, desk/desksupp.c: Moved the strings
+- desk/desk_rsc.c desk/desk_rsc.h desk/desksupp.c: Moved the strings
   FORMAT.PRG and FORMAT.TTP from the resource file to desksupp.c to make
   room. (VRI)
 
@@ -2336,13 +2336,13 @@ Start... early ages
 - bios/conout.c: Do not flash the cursor when it moves. (VRI)
 
 2010-12-28
-- aes/funcdef.h, aes/gemdosif.S, aes/gemdosif.h, aes/gemgsxif.c,
-  aes/gemgsxif.h, aes/geminput.c: Added minimal support for mouse wheel in
+- aes/funcdef.h aes/gemdosif.S aes/gemdosif.h aes/gemgsxif.c
+  aes/gemgsxif.h aes/geminput.c: Added minimal support for mouse wheel in
   the AES. (VRI)
 - desk/deskwin.c: Fixed clipping when a non-top window is scrolled. (VRI)
 
 2010-12-29
-- bios/aciavecs.S, bios/ikbd.c, bios/tosvars.h, vdi/vdi_asm.S,
+- bios/aciavecs.S bios/ikbd.c bios/tosvars.h vdi/vdi_asm.S
   vdi/vdi_mouse.c: Added BIOS and VDI support for extended mouse buttons
   3, 4 and 5. (VRI)
 - desk/deskmain.c: Added scrolling on desktop windows using arrow keys. (VRI)
@@ -2350,13 +2350,13 @@ Start... early ages
 2011-01-02
 - desk/deskpro.c: Removed useless space in front of the command line of
   textmode programs. (VRI)
-- desk/desk_rsc.c, desk/desk_rsc.h, desk/deskapp.c: Added desktop support for
+- desk/desk_rsc.c desk/desk_rsc.h desk/deskapp.c: Added desktop support for
   GTP executables. (VRI)
 
 2011-01-08
 - vdi/vdi_mouse.c: Call user_but() only if the state of the extended buttons
   has really changed. (VRI)
-- bios/ikbd.c, vdi/vdi_asm.S, vdi/vdi_mouse.c: Added support for the Eiffel
+- bios/ikbd.c vdi/vdi_asm.S vdi/vdi_mouse.c: Added support for the Eiffel
   mouse wheel using simple scancodes instead of status frames. (VRI)
 - aes/geminput.c: Disabled mouse wheel until we find a solution to send
   WM_ARROWED from forker(). (VRI)
@@ -2369,12 +2369,12 @@ Start... early ages
 - bios/conout.c: Fixed cursor blink when moving backwards. (VRI)
 
 2011-04-18
-- aes/gemgraf.c, aes/gemfmlib.c, aes/gemfmlib.h, aes/gemrslib.c: Fixed warnings
+- aes/gemgraf.c aes/gemfmlib.c aes/gemfmlib.h aes/gemrslib.c: Fixed warnings
   with GCC 4.5.2. (VRI)
 - bios/screen.c: Fixed wrong return value for vsetmode(). (VRI)
-- aes/gemfslib.c, aes/geminput.c, aes/gemobed.c, aes/gemoblib.c, aes/gemshlib.c,
-  bios/machine.c, cli/command.c, desk/deskapp.c, desk/desksupp.c, vdi/vdi_gdp.c,
-  vdi/vdi_mouse.c, vdi/vdi_text.c: Fixed warnings with GCC 4.6.0. (VRI)
+- aes/gemfslib.c aes/geminput.c aes/gemobed.c aes/gemoblib.c aes/gemshlib.c
+  bios/machine.c cli/command.c desk/deskapp.c desk/desksupp.c vdi/vdi_gdp.c
+  vdi/vdi_mouse.c vdi/vdi_text.c: Fixed warnings with GCC 4.6.0. (VRI)
 - bios/clock.c: Fixed IKBD Y2K issues by using a pivot year at 80. (VRI)
 
 2011-04-20
@@ -2382,7 +2382,7 @@ Start... early ages
 - bios/clock.c: Fixed seconds when reading the Mega ST clock. (VRI)
 
 2011-04-22
-- bios/clock.c, bios/clock.h: Removed dead code. (VRI)
+- bios/clock.c bios/clock.h: Removed dead code. (VRI)
 - bios/clock.c: Added debug traces. (VRI)
 - bios/clock.c: Enabled setting the date on NVRAM machines. (VRI)
 - bios/clock.c: Fixed setting the date on MegaRTC machines. (VRI)
@@ -2397,53 +2397,53 @@ Start... early ages
 - cli/command.c: Display EmuCON build year on 4 digits. (VRI)
 
 2011-07-26
-- country.mk, Makefile, bios/country.h, bios/keyb_it.h, po/it.po, po/LINGUAS:
+- country.mk Makefile bios/country.h bios/keyb_it.h po/it.po po/LINGUAS:
   Added Italian translation stubs. (VRI)
 
 2011-07-29
-- desk/desk_rsc.c, po/ru.po: Fixed the menu separator lines length in the
+- desk/desk_rsc.c po/ru.po: Fixed the menu separator lines length in the
   Russian translation. Contributed by Dima Sobolev. (VRI)
 - po/gr.po: Converted to LF line endings. (VRI)
-- po/cs.po, po/de.po, po/es.po, po/fi.po, po/fr.po, po/gr.po, po/it.po: Updated
+- po/cs.po po/de.po po/es.po po/fi.po po/fr.po po/gr.po po/it.po: Updated
   from new sources. (VRI)
-- desk/desk_rsc.c, po/de.po, po/es.po, po/fi.po, po/gr.po, po/ru.po: Fixed all
+- desk/desk_rsc.c po/de.po po/es.po po/fi.po po/gr.po po/ru.po: Fixed all
   the menu separator lines length (some of them were still wrong). (VRI)
 
 2011-08-05
-- desk/icons/*.icn, desk/icons/iconhi.h, desk/icons/iconlo.h,
+- desk/icons/*.icn desk/icons/iconhi.h desk/icons/iconlo.h
   desk/icons/read.me: Converted to LF line endings. (VRI)
-- desk/icons/*.icn, desk/icons.c: Fixed icon data ordering for GCC 4.6. (VRI)
-- desk/deskins.c, desk/icons.c, desk/icons.h: Added constness. (VRI)
-- Makefile, desk/icons.c: Removed the icons dir from system include path. (VRI)
+- desk/icons/*.icn desk/icons.c: Fixed icon data ordering for GCC 4.6. (VRI)
+- desk/deskins.c desk/icons.c desk/icons.h: Added constness. (VRI)
+- Makefile desk/icons.c: Removed the icons dir from system include path. (VRI)
 
 2011-08-05
-- desk/icons/deskhi.icn, desk/icons/desklo.icn: Set as binary in CVS. (VRI)
-- util/bootasm.S, util/bootsect.S: Added ColdFire support. (VRI)
+- desk/icons/deskhi.icn desk/icons/desklo.icn: Set as binary in CVS. (VRI)
+- util/bootasm.S util/bootsect.S: Added ColdFire support. (VRI)
 - util/boot.c: Fixed warnings with GCC 4.6.1. (VRI)
 
 2011-08-12
-- .cvsignore, Makefile: Added the firebee target. (VRI)
+- .cvsignore Makefile: Added the firebee target. (VRI)
 - Makefile: Compile the aranym target with -m68040. (VRI)
 - Makefile: Added the defines MACHINE_ARANYM and MACHINE_FIREBEE to identify the
   machine-specific ROMs from inside the sources. (VRI)
-- bios/bios.c, include/config.h: Added new define ALWAYS_SHOW_INITINFO to show
+- bios/bios.c include/config.h: Added new define ALWAYS_SHOW_INITINFO to show
   the welcome screen on every boot. Enabled by default on the FireBee. (VRI)
-- bios/bios.c, bios/initinfo.c, include/config.h: Added new define
+- bios/bios.c bios/initinfo.c include/config.h: Added new define
   INITINFO_DURATION to set the welcome screen duration. (VRI)
 - bios/machine.c: Fixed machine_name() for the FireBee. (VRI)
 - desk/desk_rsc.c: Reworked some dialogs for French texts. (THH)
 - po/fr.po: Changed "Pas de clic" to "Auto" to fit the button. (VRI)
-- Makefile, include/config.h: Moved machine-specific defines to config.h. (VRI)
+- Makefile include/config.h: Moved machine-specific defines to config.h. (VRI)
 - bios/memory.S: Added another sanity check for emulators that do not emulate
   the mirroring of memory banks. (THH)
 
 2011-08-13
-- Makefile, bios/bios.c, bios/biosmem.c, bios/startup.S, include/config.h:
+- Makefile bios/bios.c bios/biosmem.c bios/startup.S include/config.h:
   Replaced the is_ramtos variable by the EMUTOS_RAM define to determine if
   EmuTOS is running in RAM. (VRI)
 
 2011-08-14
-- bios/comprimg.S, bios/memory.S, bios/startup.S: Fixed the ecpr256k.img target
+- bios/comprimg.S bios/memory.S bios/startup.S: Fixed the ecpr256k.img target
   compilation (but still not functional). (VRI)
 
 2011-08-15
@@ -2453,9 +2453,9 @@ Start... early ages
   ecpr192k.img). (VRI)
 - bios/tosvars.S: Removed useless globals. (VRI)
 - desk/deskmain.c: Removed dead DBG_DESKMAIN. (VRI)
-- Makefile, bios/comprimg.S: Use tosvars.S instead of redefining the
+- Makefile bios/comprimg.S: Use tosvars.S instead of redefining the
   variables. (VRI)
-- bios/comprimg.S, util/uncompr.S: Added ColdFire support. (VRI)
+- bios/comprimg.S util/uncompr.S: Added ColdFire support. (VRI)
 - Makefile: Added missing PHONY targets. (VRI)
 - Makefile: Added a rule to build .s19 files. (VRI)
 - Makefile: Added easily overridable VMA variable. (VRI)
@@ -2463,28 +2463,28 @@ Start... early ages
 2011-08-16
 - Makefile: Disabled special .exe handling no more useful on Cygwin. (VRI)
 - *.S: Replaced .xdef by .extern. (VRI)
-- bios/screen.c, bios/screen.h: Fixed the STe default palette. (VRI)
-- Makefile, bios/bios.c, bios/dmasound.c, bios/dmasound.h, bios/machine.c,
+- bios/screen.c bios/screen.h: Fixed the STe default palette. (VRI)
+- Makefile bios/bios.c bios/dmasound.c bios/dmasound.h bios/machine.c
   bios/machine.h: Added LMC1992 initialization. (VRI)
-- bios/dmasound.c, bios/machine.c, bios/machine.h: Moved DMA sound detection
+- bios/dmasound.c bios/machine.c bios/machine.h: Moved DMA sound detection
   to the right place. (VRI)
 
 2011-08-17
-- bdos/fs.h, bdos/fsfat.c, bdos/fsio.c, bdos/fsopnclo.c: Big partition support
+- bdos/fs.h bdos/fsfat.c bdos/fsio.c bdos/fsopnclo.c: Big partition support
   part 1. Remove the test for negative cluster numbers. Contributed by Roger
   Burrows. (VRI)
 - bios/memory.S: Fix the stack after calling check_read_byte() to avoid
   potential stack overflow. (VRI)
 - bios/memory.S: Added support for up to 14 MB ST-RAM on cold boot. (VRI)
-- aes/gemstart.S, bios/memory.S: Replaced bsr by jsr to call externals. (VRI)
+- aes/gemstart.S bios/memory.S: Replaced bsr by jsr to call externals. (VRI)
 - desk/desksupp.c: Run FORMAT.TTP in text mode. (VRI)
-- desk/desk_rsc.c, po/*.po: Changed the message when the format program is not
+- desk/desk_rsc.c po/*.po: Changed the message when the format program is not
   found. It was too long in the french translation and crashed. (VRI)
 
 2011-08-18
-- bios/dmasound.c, bios/machine.h: Improved Microwire detection. (VRI)
-- bios/machine.c, bios/cookie.h: Added Falcon DMA sound to _SND cookie. (VRI)
-- bdos/fs.h, bdos/fsfat.c, bdos/fsio.c: Big partition support part 2.
+- bios/dmasound.c bios/machine.h: Improved Microwire detection. (VRI)
+- bios/machine.c bios/cookie.h: Added Falcon DMA sound to _SND cookie. (VRI)
+- bdos/fs.h bdos/fsfat.c bdos/fsio.c: Big partition support part 2.
   Change the types of variables used in cluster handling. Contributed by Roger
   Burrows. (VRI)
 - vdi/vdi_raster.c: Fixed the C implementation of bit_blt() when the destination
@@ -2499,16 +2499,16 @@ Start... early ages
   using a USERDEF (ex: CF-Lib, QED).
 
 2011-08-20
-- Makefile, bios/ide.c, bios/ide.h, bios/xhdi.c, include/config.h: Added very
+- Makefile bios/ide.c bios/ide.h bios/xhdi.c include/config.h: Added very
   minimalistic IDE support. Currently enabled only on the FireBee. (VRI)
 
 2011-08-21
-- bios/blkdev.c, bios/blkdev.h: Better FAT12/FAT16 detection. (VRI)
+- bios/blkdev.c bios/blkdev.h: Better FAT12/FAT16 detection. (VRI)
 
 2011-08-22
 - bios/initinfo.c: Save CPU time during the welcome screen. (VRI)
 - po/ru.po: Added missing translations. Contributed by Dima Sobolev. (VRI)
-- desk/desk_rsc.c, desk/desk_rsc.h, desk/deskmain.c, po/fr.po: Enabled the
+- desk/desk_rsc.c desk/desk_rsc.h desk/deskmain.c po/fr.po: Enabled the
   Change Resolution menu item on ST resolutions. (VRI)
 - desk/deskmain.c: Disable Erase on drives and trash (was crashing). (VRI)
 
@@ -2519,18 +2519,18 @@ Start... early ages
 - vdi/vdi_col.c: Fixed the default VDI palette. (VRI)
 
 2011-08-26
-- aes/geminit.c, aes/gempd.c, aes/gempd.h, aes/gemshlib.c, aes/struct.h:
+- aes/geminit.c aes/gempd.c aes/gempd.h aes/gemshlib.c aes/struct.h:
   Improved rsrc_load() and shel_find() to search also in the application
   directory and the root directory. This fixes the Nethack game. (VRI)
 
 2011-08-30
-- bdos/bios.h, bios/blkdev.h, cli/command.c, include/bpb.h: Centralize
+- bdos/bios.h bios/blkdev.h cli/command.c include/bpb.h: Centralize
   definition of BPB. Contributed by Roger Burrows. (VRI)
-- bdos/fs.h, bdos/fsbuf.c, bdos/fsdir.c, bdos/fsdrive.c, bdos/fsfat.c,
+- bdos/fs.h bdos/fsbuf.c bdos/fsdir.c bdos/fsdrive.c bdos/fsfat.c
   bdos/fsio.c: Big partition support part 2. Eliminate the usage of negative
   cluster numbers and enable big partitions. Contributed by Roger Burrows. (VRI)
-- vdi/vdi_tblit.S, vdi/vdi_tblit_cf.S: Minor addq.w fix. (VRI)
-- Makefile, vdi/vdi_tblit_cf.S: Fixed missed optimization by gas on ColdFire
+- vdi/vdi_tblit.S vdi/vdi_tblit_cf.S: Minor addq.w fix. (VRI)
+- Makefile vdi/vdi_tblit_cf.S: Fixed missed optimization by gas on ColdFire
   from 0(sp) to simply (sp). (VRI)
 - Makefile: More genericity to rebuild the ColdFire PortAsm sources. (VRI)
 
@@ -2540,18 +2540,18 @@ Start... early ages
   > 32MB. Contributed by Roger Burrows. (VRI)
 
 2011-09-04
-- vdi/vdi_bezier.c, vdi/vdi_col.c, vdi/vdi_control.c, vdi/vdi_defs.h,
-  vdi/vdi_esc.c, vdi/vdi_fill.c, vdi/vdi_gdp.c, vdi/vdi_line.c, vdi/vdi_main.c,
-  vdi/vdi_mouse.c, vdi/vdi_text.c: Added static and const where relevant.
+- vdi/vdi_bezier.c vdi/vdi_col.c vdi/vdi_control.c vdi/vdi_defs.h
+  vdi/vdi_esc.c vdi/vdi_fill.c vdi/vdi_gdp.c vdi/vdi_line.c vdi/vdi_main.c
+  vdi/vdi_mouse.c vdi/vdi_text.c: Added static and const where relevant.
   Contributed by Eero Tamminen. (VRI)
 - desk/deskdir.c: Make EmuTOS check the "Confirm overwrites" option when copying
   a file from one directory to another. Contributed by Roger Burrows. (VRI)
-- vdi/vdi_defs.h, vdi/vdi_line.c: Faster arrow drawing. Contributed by Eero
+- vdi/vdi_defs.h vdi/vdi_line.c: Faster arrow drawing. Contributed by Eero
   Tamminen. (VRI)
 - vdi/vdi_mouse.c: Fixed potential strict aliasing issue. Suggested by Eero
   Tamminen. (VRI)
-- vdi/vdi_control.c, vdi/vdi_defs.h, vdi/vdi_fill.c, vdi/vdi_line.c,
-  vdi/vdi_marker.c, vdi/vdi_mouse.c, vdi/vdi_tblit.S, vdi/vdi_tblit_cf.S: Added
+- vdi/vdi_control.c vdi/vdi_defs.h vdi/vdi_fill.c vdi/vdi_line.c
+  vdi/vdi_marker.c vdi/vdi_mouse.c vdi/vdi_tblit.S vdi/vdi_tblit_cf.S: Added
   more constness. (VRI)
 
 2011-09-05
@@ -2571,9 +2571,9 @@ Start... early ages
 2011-09-07
 - desk/deskpro.c: Fix erroneous test of DOS_ERR after dos_sdrv() call. Submitted
   by Roger Burrows. (VRI)
-- bdos/bdosmain.c, bdos/console.c, bdos/fsio.c, bdos/proc.c, bdos/proc.h,
+- bdos/bdosmain.c bdos/console.c bdos/fsio.c bdos/proc.c bdos/proc.h
   bdos/time.c: Added more static and const. Contributed by Eero Tamminen. (VRI)
-- vdi/vdi_defs.h, vdi_vdi_line.c, vdi/vdi_misc.c: Isqrt() is used only from the
+- vdi/vdi_defs.h vdi_vdi_line.c vdi/vdi_misc.c: Isqrt() is used only from the
   arrow code, so it can be in the same file. Contributed by Eero Tamminen. (VRI)
 
 2011-09-08
@@ -2583,15 +2583,15 @@ Start... early ages
 
 2011-09-10
 - po/ru.po: Added missing strings. Contributed by Dima Sobolev. (VRI)
-- bios/keyb_it.h, po/it.po: Added Italian translation. Contributed by Lodovico
+- bios/keyb_it.h po/it.po: Added Italian translation. Contributed by Lodovico
   Zanier. (VRI)
 - bdos/fsfat.c: Fixes bug: the last two clusters on a drive could not be
   allocated. Submitted by Roger Burrows. (VRI)
-- bios/biosmem.c, bios/blkdev.c, bios/blkdev.h, bios/chardev.c, bios/clock.c,
-  bios/ikbd.c, bios/kprint.c, bios/mfp.c, bios/midi.c, bios/mouse.c: Remove
+- bios/biosmem.c bios/blkdev.c bios/blkdev.h bios/chardev.c bios/clock.c
+  bios/ikbd.c bios/kprint.c bios/mfp.c bios/midi.c bios/mouse.c: Remove
   unnecessary includes for bios.h in files in the bios subdirectory. Submitted
   by Roger Burrows. (VRI)
-- bios/bios.c, bios/biosmem.h, include/pd.h: Create centralized pd.h to define
+- bios/bios.c bios/biosmem.h include/pd.h: Create centralized pd.h to define
   the Process Descriptor, and update files in the bios directory to use it
   where appropriate. The bios/bios.h file is removed. Submitted by Roger
   Burrows. (VRI)
@@ -2603,9 +2603,9 @@ Start... early ages
   causing bad performance. Suggested by Eero Tamminen. (VRI)
 - bios/disk.c: Fixed sect and sect2 with an union to avoid alignment suspicion
   and inefficient access to short and long members on 68000. (VRI)
-- aes/gemdosif.S, aes/gemstart.S, bios/aciavecs.S, bios/country.c,
-  bios/contry.h, bios/font.h, bios/fnt_*.c, bios/ikbd.c, bios/ikbd.h,
-  bios/keyb_*.h, cli/coma.S, tools/bug.c, util/langs.h, utils/nls.c: Added more
+- aes/gemdosif.S aes/gemstart.S bios/aciavecs.S bios/country.c
+  bios/contry.h bios/font.h bios/fnt_*.c bios/ikbd.c bios/ikbd.h
+  bios/keyb_*.h cli/coma.S tools/bug.c util/langs.h utils/nls.c: Added more
   constness. (VRI)
 - bios/bios.c bios/machine.c bios/natfeat.S bios/natfeats.c bios/xhdi.c
   include/config.h: Disable Native Features for TOS 1.xx / 192kB ROMs (THH)
@@ -2665,7 +2665,7 @@ Start... early ages
 - bdos/bdosmain.c bdos/bios.h bdos/console.c bdos/fs.h bdos/fsbuf.c bdos/fsdir.c
   bdos/fsdrive.c bdos/fsfat.c bdos/fsglob.c bdos/fshand.c bdos/fsio.c
   bdos/fsmain.c bdos/fsopnclo.c bdos/iumem.c bdos/kpgmld.c bdos/osmem.c
-  bdos/proc.c bdos/umem.c: Add includes for bpb.h to fs.h, fsdrive.c,
+  bdos/proc.c bdos/umem.c: Add includes for bpb.h to fs.h, fsdrive.c
   bdosmain.c. Remove all references to bios.h in bdos/ source & delete
   bdos/bios.h. Submitted by Roger Burrows. (VRI)
 - bios/blkdev.h bios/initinfo.c: Fix the maximum number of drives at 26 (A: thru
