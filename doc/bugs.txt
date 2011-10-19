@@ -3,11 +3,15 @@
 - Drag-and-drop does not work in the freeware GEM games "Abalone"
   "Hotshot checkers", "Risky", "Yukon" and in the shareware solitair
   game "Patience".
-- In "Patience", all the dialogs (quit, start new game) show the button
-  selected last time still as selected and it needs to be unselected
-  to use the dialog. -> AES dialog handler bug?
-- Mouse clicks don't work properly in several GEM games:
-  - "Awele" window menus close immediately after clicking on them.
+- Mouse buttons don't work properly in several GEM programs:
+  - In "Sysinfo" (v5.02) dialog buttons and window scrollbar buttons
+    are selected only on mouse button release and acted only if
+    press and release are within certain time of each other.
+  - In "Patience", all the dialogs (quit, start new game) show
+    the button selected last time still as selected and it needs
+    to be unselected to use the dialog.
+  - "Awele" v1.01 window menus close immediately after clicking to open
+    them.  "Awele" v1.02 compiled with newer Windom version works fine.
   - In (original) "Ballerburg", moving mouse over the "Fertig" button
     in the wind strenght dialog activates the button without click.
   - Clicks don't work at all in "Yams" (mine sweeper) game.
@@ -15,19 +19,63 @@
     random whether mouse clicks go through.
 - Lines drawn in VDI "transparent" mode show black 16(?) pixel
   wide boxes, demonstrated by Eero's "vditest".
+- 6x6 font is missing characters 1->31, 194->223 and 255.
+  The character 158 is wrong.  As a result small arrows don't
+  show up in "Clac" RSC.
 - Non-standard font sizes in "Gobang", "Sherlock", "Solitair",
   "Columns" are wrong (too small, e.g. 2px instead of 16px).
-- Small arrow characters in free "Clac" calculator RSC are missing.
-- In Thomas Binder's GEM Pacman, "game over" melt effect happens
-  for the whole screen, not just for the game window.  Clip error?
+  In Sherlock the text for replies is positioned wrong too.
+- In Mario Becroft's GEM Pacman, "game over" melt effect happens
+  for the whole screen, not just for the game window.
+- In Mario Becroft's "Orb", the game area has some white thick
+  vertical lines when game starts which don't show with normal TOS.
 - EmuTOS panic's when running Warwick Allison's "GemAmigo",
   after vs_clip call.
-- Shots go through buildings in GEM "Invaders", maybe because it
-  uses monochrome resolution with inverted colors?
+- Shots go through buildings in GEM "Invaders" because EmuTOS
+  returns 0 as VDI color index also for set pixels in monochrome.
 - Moves in "Halma" leave boxes to places where game shows that
   pieces could have been moved, but weren't.
 - In "MathMaze", game win dialog leaves some lines on screen.
-- In Mario Becroft's "Orb", the game area has some white thick
-  vertical lines when game starts which don't show with normal TOS.
 - In "Core War" all the corewars programs shown in "memory" are
   white, in real TOS they have different patterns.
+
+
+Links to programs listed above:
+- Abalone:
+  http://www.umich.edu/~archive/atari/Games/Board/abalone.zoo
+- Awele v1.01:
+  http://windom.free.fr/awele/bin/awele.zip
+- Ballerburg:
+  http://www.eckhardkruse.net/en/atari_st/baller.html
+- Bombs:
+  http://www.umich.edu/~archive/atari/Games/Puzzle/bombs.arc
+- Clac:
+  http://koti.mbnet.fi/tammat/open.shtml#clac
+- Columns:
+  http://www.umich.edu/~archive/atari/Games/Arcade/columns.arc
+- GemAmigo:
+  http://www.umich.edu/~archive/atari/Games/Board/gemamigo.zip
+- Gobang:
+  http://www.umich.edu/~archive/atari/Games/Board/gobang.arc
+- Hotshot checkers:
+  http://www.umich.edu/~archive/atari/Games/Board/hotshot.arc
+- Invaders:
+  http://www.umich.edu/~archive/atari/Games/Arcade/invaders.lzh
+- Mind sweeper:
+  http://www.umich.edu/~archive/atari/Games/Puzzle/minds_11.zip
+- Orb:
+  http://gem.win.co.nz/mb/atarisw/orb.html
+- Pacman:
+  http://gem.win.co.nz/mb/atarisw/pacman.html
+- Patience (older version):
+  http://www.umich.edu/~archive/atari/Games/Cards/patience.lzh
+- Risky (English version):
+  http://www.umich.edu/~archive/atari/Games/Board/risk_eng.lzh
+- Sherlock:
+  http://www.umich.edu/~archive/atari/Games/Adventure/sherlock.arc
+- Yukon:
+  http://www.umich.edu/~archive/atari/Games/Cards/yukone1.lzh
+  http://www.haun-online.de/Atari/e_index.html
+
+(Links missing to: sysinfo v5, yams, halma, mathmaze,
+corewar, solitair.)
