@@ -2868,3 +2868,5 @@ Start... early ages
 - desk/desk_rsc.c desk/desk_rsc.h: Fixed crash when changing resolution from
   the old desktop. (VRI)
 - doc/bugs.txt: Desk accessories don't open after changing the resolution. (VRI)
+- bios/initinfo.c include/portab.h: Added the UNUSED() macro to fix a warning
+  when EmuCON is disabled. (VRI)

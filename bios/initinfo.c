@@ -253,6 +253,7 @@ void initinfo(void)
     }
     if (bconstat2()) {  /* examine the keypress */  
         int c = 0xFF & bconin2(); 
+        UNUSED(c);
 #if WITH_CLI
         if (c == 'c' || c == 'C') {
             early_cli = 1;
