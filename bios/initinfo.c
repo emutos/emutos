@@ -41,8 +41,7 @@ void initscreen(void)
     cprintf("\033E\033f\033b%c\033c%c", 15 + ' ', 0 + ' ');
 }
 
-#if TOS_VERSION >= 0x200   /* Don't include splashscreen on TOS 1.0x to
-                              save some space in the ROM image */
+#if FULL_INITINFO
 
 
 /*==== Defines ============================================================*/
@@ -264,7 +263,7 @@ void initinfo(void)
 }
 
 
-#else    /* TOS_VERSION >= 0x200 */
+#else    /* FULL_INITINFO */
 
 
 void initinfo(void)
@@ -273,4 +272,4 @@ void initinfo(void)
 }
 
 
-#endif   /* TOS_VERSION >= 0x200 */
+#endif   /* FULL_INITINFO */

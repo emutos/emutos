@@ -265,6 +265,15 @@
 #endif
 
 /*
+ * Set FULL_INITINFO to 0 to display the EmuTOS version as a single line of text
+ * instead of the full welcome screen.
+ * This is only useful when there are severe ROM size restrictions.
+ */
+#ifndef FULL_INITINFO
+# define FULL_INITINFO 1
+#endif
+
+/*
  * By default, the EmuTOS welcome screen (initinfo) is only shown on cold boot.
  * If you set ALWAYS_SHOW_INITINFO to 1, the welcome screen will always be
  * displayed, on both cold boot and warm boot (reset).

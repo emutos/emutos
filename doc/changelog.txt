@@ -2860,3 +2860,8 @@ Start... early ages
 
 2011-10-19
 - doc/bugs.txt: Updated the bug list. Contributed by Eero Tamminen. (VRI)
+
+2011-10-20
+- bios/initinfo.c includ/config.h: Added the configuration define FULL_INITINFO
+  to display the full welcome screen at startup or a minimalistic line of text.
+  The full initinfo is displayed again with 192k ROMs. (VRI)
