@@ -1613,7 +1613,7 @@ char *desk_rs_fstr[] = {
     N_("  Show as icons  \007S"),
     N_("application"),
     N_("documents"),
-    NULL,                       /* unused, was "FORMAT.PRG" */
+    N_("[2][Switch resolution?][Yes|No]"),
     N_("  Show as text   \007S"),
     NULL,                       /* unused, was "DESKHI.ICN" */
     "A:\\EMUDESK.INF",
@@ -1704,7 +1704,6 @@ char *desk_rs_fstr[] = {
        "location on the GEM Desktop, but you|"
        "cannot place it on top of another icon.][  OK  ]"),
 #endif
-    N_("[2][Switch resolution?][Yes|No]"),
 };
 
 

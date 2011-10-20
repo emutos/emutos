@@ -184,7 +184,7 @@
 
 #define STDOCU          3
 
-/*#define STDKFRM1        4*/     /* unused */
+#define STRESOL         4
 
 #define STASTEXT        5
 
@@ -259,8 +259,6 @@
 #define STNOSTAK        41
 
 #endif /* DESK1 */
-
-#define STRESOL         42
 
 
 extern void desk_rs_init(void);

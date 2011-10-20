@@ -2865,3 +2865,5 @@ Start... early ages
 - bios/initinfo.c include/config.h: Added the configuration define FULL_INITINFO
   to display the full welcome screen at startup or a minimalistic line of text.
   The full initinfo is displayed again with 192k ROMs. (VRI)
+- desk/desk_rsc.c desk/desk_rsc.h: Fixed crash when changing resolution from
+  the old desktop. (VRI)
