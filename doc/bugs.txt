@@ -1,6 +1,6 @@
 - EmuTOS crashes, if it boots from some STeem generated floppy images
 - Changing the VDI color palette is not possible on TT and Falcon.
-- Desk accessories don't open after changing the resolution.
+- PROCALC.ACC doesn't open after changing the resolution.
 - Drag-and-drop does not work in the freeware GEM games "Abalone"
   "Hotshot checkers", "Risky", "Yukon" and in the shareware solitair
   game "Patience".
