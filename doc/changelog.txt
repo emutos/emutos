@@ -2877,3 +2877,4 @@ Start... early ages
 - Makefile: Removed the obsolete "make tgz". (VRI)
 - doc/bugs.txt: The "accessories doesn't open after changing the resolution" bug
   only affects PROCALC.ACC. (VRI)
+- doc/bugs.txt: Updated the bug list. Contributed by Eero Tamminen. (VRI)
