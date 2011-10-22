@@ -306,7 +306,6 @@ help:
 	@echo "flop    emutos.st, a bootable floppy with RAM tos"
 	@echo "clean"
 	@echo "cvsready  put files in canonic format before committing to cvs"
-	@echo "tgz     bundles almost it all into a tgz archive"
 	@echo "depend  creates dependancy file (makefile.dep)"
 	@echo "dsm     dsm.txt, an edited desassembly of emutos.img"
 	@echo "fdsm    fal_dsm.txt, like above, but for $(VMA_T2) ROMs"
@@ -862,36 +861,6 @@ NODEP += cvsready
 cvsready: expand crlf
 
 #
-# create a tgz archive named project-nnnnnn.tgz, where nnnnnn is the date.
-#
-
-HEREDIR = $(shell basename $(shell pwd))
-TGZ = $(shell echo $(HEREDIR)-`date +%y%m%d`|tr A-Z a-z).tgz
-
-.PHONY: tgz
-NODEP += tgz
-tgz:	distclean
-	cd ..;\
-	tar -cf - --exclude '*CVS' $(HEREDIR) | gzip -c -9 >$(TGZ)
-
-#
-# proposal to create an archive named emutos-0_2a.tgz when
-# the EMUTOS_VERSION equals "0.2a" in include/version.h
-# (THIS IS CURRENTLY BROKEN)
-#
-#VERSION = $(shell grep EMUTOS_VERSION include/version.h | cut -f2 -d\")
-#RELEASEDIR = emutos-$(VERSION)
-#RELEASETGZ = $(shell echo $(RELEASEDIR) | tr A-Z. a-z_).tgz#
-#
-#release: distclean
-#	@tmp=tmpCVS; rm -rf $$tmp; mkdir $$tmp; cd $$tmp; \
-#	ln -s ../../$(HEREDIR) $(RELEASEDIR); \
-#	tar -h -cf - --exclude '*CVS' $(RELEASEDIR) \
-#	| gzip -c -9 >../../$(RELEASETGZ);\
-#	cd ..; rm -rf $$tmp
-#
-
-#
 # local Makefile
 #
 
@@ -901,7 +870,7 @@ endif
 
 #
 # clean and distclean 
-# (distclean is called before creating a tgz archive)
+# (distclean is called before creating a source archive)
 #
 
 .PHONY: clean
