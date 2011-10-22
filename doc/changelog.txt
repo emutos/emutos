@@ -2870,3 +2870,6 @@ Start... early ages
 - doc/bugs.txt: Desk accessories don't open after changing the resolution. (VRI)
 - bios/initinfo.c include/portab.h: Added the UNUSED() macro to fix a warning
   when EmuCON is disabled. (VRI)
+
+2011-10-22
+- Makefile: Define NODEP as goal accumulator. (VRI)

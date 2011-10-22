@@ -98,6 +98,14 @@ endif
 
 TOCLEAN := *~ */*~ $(CORE) *.tmp
 
+#
+# NODEP will accumulate the names of the targets which does not need to include
+# makefile.dep, to avoid rebuilding that file when not necessary.
+# This includes targets not using $(CC) and targets recrsively invoking $(MAKE).
+#
+
+NODEP :=
+
 # 
 # compilation flags
 #
@@ -277,9 +285,11 @@ OBJECTS = $(SOBJ) $(COBJ) $(FONTOBJ) obj/version.o
 # 
 
 .PHONY: all
+NODEP += all
 all:	help
 
 .PHONY: help
+NODEP += help
 help:
 	@echo "target  meaning"
 	@echo "------  -------"
@@ -393,6 +403,7 @@ falcon: help
 ROM_ARANYM = emutos-aranym.img
 
 .PHONY: aranym
+NODEP += aranym
 aranym:
 	@echo "# Building ARAnyM EmuTOS into $(ROM_ARANYM)"
 	$(MAKE) CPUFLAGS='-m68040' DEF='-DMACHINE_ARANYM' ROM_512=$(ROM_ARANYM) $(ROM_ARANYM)
@@ -411,6 +422,7 @@ $(SRECFILE): emutos2.img
 SREC_FIREBEE = emutosfb.s19
 
 .PHONY: firebee
+NODEP += firebee
 firebee:
 	@echo "# Building FireBee EmuTOS into $(SREC_FIREBEE)"
 	$(MAKE) COLDFIRE=1 CPUFLAGS='-mcpu=5474' DEF='-DMACHINE_FIREBEE' LMA=0xe0600000 SRECFILE=$(SREC_FIREBEE) $(SREC_FIREBEE)
@@ -538,6 +550,7 @@ po/messages.pot: bug$(EXE) po/POTFILES.in
 #
 
 .PHONY: allbin
+NODEP += allbin
 allbin: 
 	@echo "# Building $(ROM_512)"
 	$(MAKE) $(ROM_512)
@@ -551,6 +564,7 @@ allbin:
 # This matters on filesystems having low timestamp resolution (ext2, ext3).
 
 .PHONY: all256
+NODEP += all256
 all256:
 	@for i in $(COUNTRIES); \
 	do \
@@ -563,6 +577,7 @@ all256:
 	done
 
 .PHONY: all192
+NODEP += all192
 all192:
 	@for i in $(COUNTRIES); \
 	do \
@@ -816,6 +831,7 @@ indent:
 TOCLEAN += tounix$(EXE)
 
 .PHONY: expand
+NODEP += expand
 expand:
 	@for i in `grep -l '	' */*.[chS] */*.awk` ; do \
 		echo expanding $$i; \
@@ -836,10 +852,12 @@ tounix$(EXE): tools/tounix.c
 #     find . -name CVS -prune -or -not -name '*~' | xargs $(HERE)/tounix$(EXE)
 
 .PHONY: crlf
+NODEP += crlf
 crlf: tounix$(EXE)
 	./$< * bios/* bdos/* doc/* util/* tools/* po/* include/* aes/* desk/*
 
 .PHONY: cvsready
+NODEP += cvsready
 cvsready: expand crlf
 
 #
@@ -850,6 +868,7 @@ HEREDIR = $(shell basename $(shell pwd))
 TGZ = $(shell echo $(HEREDIR)-`date +%y%m%d`|tr A-Z a-z).tgz
 
 .PHONY: tgz
+NODEP += tgz
 tgz:	distclean
 	cd ..;\
 	tar -cf - --exclude '*CVS' $(HEREDIR) | gzip -c -9 >$(TGZ)
@@ -872,33 +891,6 @@ tgz:	distclean
 #
 
 #
-# file dependencies (makefile.dep)
-#
-
-TOCLEAN += makefile.dep
-
-makefile.dep: util/langs.c bios/header.h bios/ctables.h include/i18nconf.h
-	( \
-	  $(CC) $(MULTILIBFLAGS) -MM $(INC) -Ibios -Iaes $(DEF) $(CSRC); \
-	  $(CC) $(MULTILIBFLAGS) -MM $(INC) $(DEF) $(SSRC) \
-	) | sed -e '/:/s,^,obj/,' >makefile.dep
-
-.PHONY: depend
-depend: makefile.dep
-
-# Do not include or rebuild makefile.dep for some targets
-# This includes the default target (currently "help"),
-# targets not using $(CC) and targets recrsively invoking $(MAKE).
-NODEP = makefile.dep depend \
-  clean distclean help cvsready expand crlf tgz \
-  aranym firebee allbin all256 all192 coldfire-sources
-ifneq (,$(MAKECMDGOALS))
-ifeq (,$(filter $(NODEP), $(MAKECMDGOALS)))
--include makefile.dep
-endif
-endif
-
-#
 # local Makefile
 #
 
@@ -912,10 +904,12 @@ endif
 #
 
 .PHONY: clean
+NODEP += clean
 clean:
 	rm -f $(TOCLEAN)
 
 .PHONY: distclean
+NODEP += distclean
 distclean: clean
 	rm -f '.#'* */'.#'* 
 
@@ -933,6 +927,7 @@ PORTASMFLAGS = -blanks on -core v4 -hardware_divide -hardware_mac -a gnu -out_sy
 TOCLEAN += vdi/*_preprocessed.*
 
 .PHONY: coldfire-sources
+NODEP += coldfire-sources
 coldfire-sources:
 	$(MAKE) COLDFIRE=1 generate-vdi_tblit_cf.S
 
@@ -956,3 +951,29 @@ generate-%_cf.S: vdi/%_preprocessed.s
 		-e "s:\( \|\t\)bcs\(  \|\..\):\1jbcs :g" \
 		-e "s:\( \|,\)0(%:\1(%:g" \
 		|| (rm -f $(<D)/$(patsubst generate-%,%,$@) ; false)
+
+#
+# file dependencies (makefile.dep)
+#
+
+.PHONY: depend
+NODEP += depend
+depend: makefile.dep
+
+TOCLEAN += makefile.dep
+NODEP += makefile.dep
+makefile.dep: util/langs.c bios/header.h bios/ctables.h include/i18nconf.h
+	( \
+	  $(CC) $(MULTILIBFLAGS) -MM $(INC) -Ibios -Iaes $(DEF) $(CSRC); \
+	  $(CC) $(MULTILIBFLAGS) -MM $(INC) $(DEF) $(SSRC) \
+	) | sed -e '/:/s,^,obj/,' >makefile.dep
+
+# Do not include or rebuild makefile.dep for the targets listed in NODEP
+# as well as the default target (currently "help").
+# Since NODEP is used inside an ifeq condition, it must be fully set before
+# being used. Be sure to keep this block at the end of the Makefile.
+ifneq (,$(MAKECMDGOALS))
+ifeq (,$(filter $(NODEP), $(MAKECMDGOALS)))
+-include makefile.dep
+endif
+endif
