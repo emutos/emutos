@@ -1,0 +1,156 @@
+#
+# Makefile - Makefile fragment for building releases
+#
+# Copyright (c) 2011 EmuTOS development team.
+#
+# This file is distributed under the GPL, version 2 or at your
+# option any later version.  See doc/license.txt for details.
+#
+
+#
+# This file contains the targets used to build the release archives.
+# It is included from the main Makefile.
+#
+
+# The version used in the archives names is deducted from changelog.txt
+EXTRACT_VERSION = sed -f tools/version.sed doc/changelog.txt \
+  |grep version \
+  |sed 's/[^"]*"(CVS \([0-9]*\)-\([0-9]*\)-\([0-9]*\).*/CVS-\1\2\3/' \
+  |sed 's/[^"]*"\([^"]*\).*/\1/'
+VERSION = $(shell $(EXTRACT_VERSION))
+
+# Check the current release version. For test purposes.
+.PHONY: release-version
+NODEP += release-version
+release-version:
+	@echo '$(VERSION)'
+
+# This subset of the doc directory will be included in all the binary archives
+DOCFILES = doc/announce.txt doc/authors.txt doc/bugs.txt doc/changelog.txt \
+  doc/license.txt doc/status.txt doc/todo.txt
+
+# The archives will be placed into this directory
+RELEASE_DIR = release-archives
+
+.PHONY: release-clean
+NODEP += release-clean
+release-clean:
+	rm -rf $(RELEASE_DIR)
+
+.PHONY: release-mkdir
+NODEP += release-mkdir
+release-mkdir:
+	mkdir $(RELEASE_DIR)
+
+.PHONY: release-src
+NODEP += release-src
+RELEASE_SRC = emutos-src-$(VERSION)
+release-src:
+	mkdir $(RELEASE_DIR)/$(RELEASE_SRC)
+	cp -R $(filter-out . .. $(RELEASE_DIR), $(shell echo * .*)) $(RELEASE_DIR)/$(RELEASE_SRC)
+	find $(RELEASE_DIR)/$(RELEASE_SRC) -type d -name CVS |xargs rm -r
+	find $(RELEASE_DIR)/$(RELEASE_SRC) -type d -exec chmod 755 '{}' ';'
+	find $(RELEASE_DIR)/$(RELEASE_SRC) -type f -exec chmod 644 '{}' ';'
+	find $(RELEASE_DIR)/$(RELEASE_SRC) -type f -name '*.sh' -exec chmod 755 '{}' ';'
+	tar -C $(RELEASE_DIR) --owner=0 --group=0 -zcvf $(RELEASE_DIR)/$(RELEASE_SRC).tar.gz $(RELEASE_SRC)
+	rm -r $(RELEASE_DIR)/$(RELEASE_SRC)
+
+.PHONY: release-512k
+NODEP += release-512k
+RELEASE_512K = emutos-512k-$(VERSION)
+release-512k:
+	$(MAKE) clean
+	$(MAKE) 512
+	mkdir $(RELEASE_DIR)/$(RELEASE_512K)
+	cp etos512k.img readme.txt $(RELEASE_DIR)/$(RELEASE_512K)
+	mkdir $(RELEASE_DIR)/$(RELEASE_512K)/doc
+	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_512K)/doc
+	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_512K).zip $(RELEASE_512K)
+	rm -r $(RELEASE_DIR)/$(RELEASE_512K)
+
+.PHONY: release-256k
+NODEP += release-256k
+RELEASE_256K = emutos-256k-$(VERSION)
+release-256k:
+	$(MAKE) clean
+	$(MAKE) all256
+	mkdir $(RELEASE_DIR)/$(RELEASE_256K)
+	cp etos256*.img readme.txt $(RELEASE_DIR)/$(RELEASE_256K)
+	mkdir $(RELEASE_DIR)/$(RELEASE_256K)/doc
+	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_256K)/doc
+	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_256K).zip $(RELEASE_256K)
+	rm -r $(RELEASE_DIR)/$(RELEASE_256K)
+
+.PHONY: release-192k
+NODEP += release-192k
+RELEASE_192K = emutos-192k-$(VERSION)
+release-192k:
+	$(MAKE) clean
+	$(MAKE) all192
+	mkdir $(RELEASE_DIR)/$(RELEASE_192K)
+	cp etos192*.img readme.txt $(RELEASE_DIR)/$(RELEASE_192K)
+	mkdir $(RELEASE_DIR)/$(RELEASE_192K)/doc
+	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_192K)/doc
+	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_192K).zip $(RELEASE_192K)
+	rm -r $(RELEASE_DIR)/$(RELEASE_192K)
+
+.PHONY: release-aranym
+NODEP += release-aranym
+RELEASE_ARANYM = emutos-aranym-$(VERSION)
+release-aranym:
+	$(MAKE) clean
+	$(MAKE) aranym
+	mkdir $(RELEASE_DIR)/$(RELEASE_ARANYM)
+	cp $(ROM_ARANYM) readme.txt $(RELEASE_DIR)/$(RELEASE_ARANYM)
+	mkdir $(RELEASE_DIR)/$(RELEASE_ARANYM)/doc
+	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_ARANYM)/doc
+	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_ARANYM).zip $(RELEASE_ARANYM)
+	rm -r $(RELEASE_DIR)/$(RELEASE_ARANYM)
+
+.PHONY: release-firebee
+NODEP += release-firebee
+RELEASE_FIREBEE = emutos-firebee-$(VERSION)
+release-firebee:
+	$(MAKE) clean
+	$(MAKE) firebee
+	mkdir $(RELEASE_DIR)/$(RELEASE_FIREBEE)
+	cp $(SREC_FIREBEE) readme.txt $(RELEASE_DIR)/$(RELEASE_FIREBEE)
+	mkdir $(RELEASE_DIR)/$(RELEASE_FIREBEE)/doc
+	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_FIREBEE)/doc
+	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_FIREBEE).zip $(RELEASE_FIREBEE)
+	rm -r $(RELEASE_DIR)/$(RELEASE_FIREBEE)
+
+.PHONY: release-ram
+NODEP += release-ram
+RELEASE_RAM = emutos-ram-$(VERSION)
+release-ram:
+	$(MAKE) clean
+	$(MAKE) ram
+	mkdir $(RELEASE_DIR)/$(RELEASE_RAM)
+	cp boot.prg ramtos.img readme.txt $(RELEASE_DIR)/$(RELEASE_RAM)
+	mkdir $(RELEASE_DIR)/$(RELEASE_RAM)/doc
+	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_RAM)/doc
+	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_RAM).zip $(RELEASE_RAM)
+	rm -r $(RELEASE_DIR)/$(RELEASE_RAM)
+
+.PHONY: release-floppy
+NODEP += release-floppy
+RELEASE_FLOPPY = emutos-floppy-$(VERSION)
+release-floppy:
+	$(MAKE) clean
+	$(MAKE) flop UNIQUE=us
+	mkdir $(RELEASE_DIR)/$(RELEASE_FLOPPY)
+	cp emutos.st readme.txt $(RELEASE_DIR)/$(RELEASE_FLOPPY)
+	mkdir $(RELEASE_DIR)/$(RELEASE_FLOPPY)/doc
+	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_FLOPPY)/doc
+	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_FLOPPY).zip $(RELEASE_FLOPPY)
+	rm -r $(RELEASE_DIR)/$(RELEASE_FLOPPY)
+
+# Main goal to build a full release distribution
+.PHONY: release
+NODEP += release
+release: distclean release-clean release-mkdir \
+  release-src release-512k release-256k release-192k \
+  release-aranym release-firebee release-ram release-floppy
+	$(MAKE) clean
+	@echo '# Packages successfully generated inside $(RELEASE_DIR)'

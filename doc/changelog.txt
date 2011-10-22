@@ -2873,3 +2873,4 @@ Start... early ages
 
 2011-10-22
 - Makefile: Define NODEP as goal accumulator. (VRI)
+- Makefile release.mk: Added "make release" to build the release archives. (VRI)

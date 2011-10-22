@@ -311,6 +311,7 @@ help:
 	@echo "dsm     dsm.txt, an edited desassembly of emutos.img"
 	@echo "fdsm    fal_dsm.txt, like above, but for $(VMA_T2) ROMs"
 	@echo "*.dsm   desassembly of any .c or almost any .img file"
+	@echo "release build the release archives into $(RELEASE_DIR)"
 
 #
 # the maps must be built at the same time as the images, to enable
@@ -951,6 +952,12 @@ generate-%_cf.S: vdi/%_preprocessed.s
 		-e "s:\( \|\t\)bcs\(  \|\..\):\1jbcs :g" \
 		-e "s:\( \|,\)0(%:\1(%:g" \
 		|| (rm -f $(<D)/$(patsubst generate-%,%,$@) ; false)
+
+#
+# The targets for building a release are in a separate file
+#
+
+include release.mk
 
 #
 # file dependencies (makefile.dep)
