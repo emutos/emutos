@@ -2878,3 +2878,6 @@ Start... early ages
 - doc/bugs.txt: The "accessories doesn't open after changing the resolution" bug
   only affects PROCALC.ACC. (VRI)
 - doc/bugs.txt: Updated the bug list. Contributed by Eero Tamminen. (VRI)
+
+2011-10-25
+- doc/announce.txt: Updated for next release. (VRI)

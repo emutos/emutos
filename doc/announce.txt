@@ -3,30 +3,50 @@ Dear Atari Community!
 
 We are happy to announce a new public release of EmuTOS:
 
-EmuTOS 0.8.5 -- May 9th, 2010
+EmuTOS 0.8.6 -- October XXth, 2011
 
 
 INTRODUCTION
 
 EmuTOS is a single-user single-tasking operating system for the 32 bit Atari
-computers and emulators. It can be used as a replacement for the TOS images 
-typically needed today for using emulators and it is also running on some
-real hardware, like the Atari Mega STE. All the source code is open and 
-free, licensed under the GNU General Public License (GPL).
+computers, clones and emulators. It can be used as a replacement for the TOS
+images typically needed today for using emulators and can also run on some
+real hardware, like the Atari Mega STe or the FireBee. All the source code
+is open and free, licensed under the GNU General Public License (GPL).
 
 
 
 CHANGES SINCE LAST RELEASE
 
-- Timeout on boot removed - hold <Shift> if you miss it
-- Show boot splash screen on coldstart only
-- Some GEMDOS bug fixes (e.g. double "." directory bug) and code improvements
-- Some VDI bug fixes (e.g. bit-blit function, mouse init)
-- Fixed Getrez() for TT shifter resolutions
-- New CPUFLAGS Make variable to allow easy compilation for a specific CPU
-- Fixed writing to floppy on real STe hardware
-- XBIOS floppy functions now return errors codes in full 32 bits of d0
-- EmuCON does not show the volume label during the  DIR command anymore
+- Support for FAT16 partitions up to 2 GB
+- Support for the ColdFire V4e CPU (allows running ColdFire TOS programs only)
+- Support for the FireBee computer
+- Experimental Falcon IDE driver (currently only enabled on the FireBee)
+- LMC1992 initialization on STe/TT
+- Better memory detection on cold boot
+- Fixed the XBIOS time functions for the various hardware clocks
+- Key repeat now produces key clicks
+- Improved the register dump when a program crashes
+- VFAT long filenames are now safely ignored
+- Support for drives from A: to Z:
+- Malloc() now returns blocks aligned on 4-byte for better performance
+- The BIOS console now supports the 256-color modes (but the VDI still doesn't)
+- The text cursor does not blink when it moves
+- Fixed the STe BIOS default palette
+- Fixed the VDI default palette
+- Fixed the VDI functions for drawing arrows
+- Better searching for RSC files
+- Added desktop support for GTP executables
+- Desktop windows can be scrolled using arrow keys
+- Better initial icon placement on the default desktop
+- Fixed the position and size of the windows when reloading the desktop
+- Allow resolution switching in ST color modes
+- Fixed the BCD build date in the ROM header to DDMMYYYY format
+- The 192 KB ROMs are provided again
+- The special ARAnyM, FireBee, floppy and RAM versions are now provided
+- Support for compilation using GCC 4.6.x
+- New languages: Russian and Italian
+- A lot of other minor bugfixes and cleanups
 
 Have a look at the changelog.txt for more detailed information.
 
@@ -42,12 +62,12 @@ EmuTOS is basically made up of six subsystems:
 - The AES, the application environment services or window manager
 - The desktop, which is the graphical shell to the user
 
-The BIOS and XBIOS code is our own developement. It is really written from
+The BIOS and XBIOS code is our own development. It is really written from
 scratch and implements nearly all of the TOS 1.0 BIOS functionality, and a
-bit more, like e.g. harddisk access.
+bit more, like e.g. hard disk access.
 
 The GEMDOS part is based on Digital Research's GEMDOS sources, which were
-made available under GPL licence in 1999 by Caldera. 
+made available under GPL license in 1999 by Caldera. 
 
 The graphical parts like VDI and AES are now more or less fully
 implemented. They work in all the graphics modes of the original Atari
@@ -56,7 +76,7 @@ screen resolutions without any problems.
 
 The desktop is not as nice as the original one, but is pretty usable
 now for a start. You are free to use a more advanced desktop
-replacement any time, like Teradesk for example.
+replacement any time, like TeraDesk for example.
 
 Since EmuTOS just implements the TOS's functionality, you might want to
 use MiNT on it in order to run more modern software. EmuTOS is not an
@@ -74,7 +94,7 @@ interface will provide access to use the power of the underlying OS kernel.
 It may allow using modern graphics cards, provides fast native filesystem 
 access and will enable you to use networking with all bells and whistles - 
 and many things more you always dreamed of. This all will at first get 
-possible on the Aranym platform.
+possible on the ARAnyM platform.
 
 
 
@@ -84,9 +104,9 @@ Making EmuTOS running natively on a new hardware platform is more or less
 just a question of driver support for EmuTOS. The same for MiNT, if you'd
 like to have it running on top of EmuTOS.
 
-This is the currently supported Hardware:
+This is the currently supported hardware:
 
-- CPU support for m68000, m68010, m68020, m68030, m68040
+- CPU support for m68000, m68010, m68020, m68030, m68040, m68060, ColdFire V4e
 - FPU detected
 - Memory controller (both ST and Falcon)
 - Monitor type detection (mono or not)
@@ -95,29 +115,31 @@ This is the currently supported Hardware:
 - MFP
 - PSG
 - ST shifter
-- STE shifter (partitially)
+- STE shifter (partially)
+- VIDEL (minimal)
 - ACIAs, IKBD protocol, mouse
 - MegaST Real-Time Clock (set clock not tested)
 - NVRAM (including RTC)
+- Falcon IDE (experimental, enabled on the FireBee only)
 - The native feature interface to some degree
 
 
 AVAILABILITY
 
-EmuTOS has its home at sourceforge:
+EmuTOS has its home at SourceForge:
 
-    http://sourceforge.net/projects/emutos
+    http://sourceforge.net/projects/emutos/
 
 A ready made EmuTOS image or the source can be downloaded from:
 
-    http://sourceforge.net/project/showfiles.php?group_id=36560
+    http://sourceforge.net/projects/emutos/files/
 
 It is always available in source form from our CVS server at:
 
-    http://sourceforge.net/cvs/?group_id=36560
+    http://sourceforge.net/scm/?type=cvs&group_id=36560
 
 If you are just curious or would like to help us develop this nice little
-OS, you are invited to subscribe to our Mailinglist for developers at:
+OS, you are invited to subscribe to our mailing list for developers at:
 
     http://sourceforge.net/mail/?group_id=36560
 
@@ -126,8 +148,8 @@ We hope that you like EmuTOS. If you have any suggestions or comments, we
 always appreciate to hear the good and also the bad things about it.
 
 
-Your EmuTOS development team.
+The EmuTOS development team.
 
---
-written by Martin Doering
+-- 
+Originally written by Martin Doering
 http://emutos.sourceforge.net/en/
