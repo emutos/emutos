@@ -2881,3 +2881,6 @@ Start... early ages
 
 2011-10-25
 - doc/announce.txt: Updated for next release. (VRI)
+
+2011-10-25
+- doc/authors.txt: Updated for next release. (VRI)

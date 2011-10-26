@@ -1,4 +1,3 @@
-
 EmuTOS source code consists of several parts, and includes code taken from 
 other projects - Many thanks to them and to their authors for releasing the 
 code under GPL.
@@ -27,14 +26,14 @@ Here is about the 'recent' contributors - individuals involved in the EmuTOS
 project. In this project virtually everybody modifies every file,
 nevertheless here is an attempt at identifying who's guilty of what: 
 
-Vincent Riviere <vincent.riviere at freesbee.fr>
+Vincent Riviere (VRI) <vincent.riviere at freesbee.fr>
 - Current project admin
 - Patches for compiling with GCC 4.x
-- ColdFire support
-- various bug fixes
+- ColdFire CPU and FireBee support
+- Various bug fixes
 
 Petr Stehlik (joy) <pstehlik at sophics.cz>
-- bios disk interface, BDOS filesystem
+- BIOS disk interface, BDOS filesystem
 - Falcon and ARAnyM support
 
 Thomas Huth (THH) <huth at users.berlios.de>
@@ -43,16 +42,16 @@ Thomas Huth (THH) <huth at users.berlios.de>
 
 Martin Doering (MAD) <mdoering at users.sourceforge.net>
 - Original project initiator (but retired since years already)
-- memory setup, VT52 console, linea, mouse
-- virtually everything not modified later by the other fellows
+- Memory setup, VT52 console, Line A, mouse
+- Virtually everything not modified later by the other fellows
 
 Laurent Vogel (LVL) <lvl at club-internet.fr>
-- original ST hardware (MFP, ACIA, parport, sound, floppy, ACSI)
+- Original ST hardware (MFP, ACIA, parport, sound, floppy, ACSI)
 - Makefile tricks and tools
 - NLS support
 
 
-Thanks also to all Mailing list contributors for their help, and 
+Thanks also to all mailing list contributors for their help, and 
 especially:
 
 Bohdan Milar <milarb at volny.cz>
@@ -72,7 +71,7 @@ Frank Naumann
 
 Ctirad Fertr <phanatic at volny.cz>,
 Milan Jurik <M.Jurik at sh.cvut.cz>
-- the ARanyM team
+- The ARanyM team
 
 Johan Klockars <rand at cd.chalmers.se> 
 - fVDI
@@ -81,7 +80,7 @@ Henk Robbers <h.robbers at chello.nl>
 - XaAES
 
 Jacques-Etienne Rahon "Kevin Flynn" <kevin.flynn at wanadoo.fr>
-- extensive demo testing on STeeM
+- Extensive demo testing on STeeM
 
 Patrice Mandin and Markus Oberhumer
 - Hints and patches for compiling EmuTOS with GCC 3.x
@@ -89,18 +88,44 @@ Patrice Mandin and Markus Oberhumer
 Eero Tamminen
 - Many bug reports and testing
 - Finnish translation and keyboard mapping
+- Static source analysis and cleanup
 
 Gerhard Stoll
 - Improved our nvmaccess() function
 - TOS hypertext
 
 Roger Crettol
-- Found and fixed a bug in GEMDOS Pterm() function.
+- Found and fixed a bug in GEMDOS Pterm() function
 - Support for swiss german keyboard
 - Some EmuCON improvements
 
 David Savinkoff
-- Bug fixes for the BIOS parallel port code.
+- Bug fixes for the BIOS parallel port code
+- Other various bugfixes
 
 Dima Sobolev <avtandil33 at gmail.com>
 - Russian translation
+
+Olivier Landemarre <olivier.landemarre at free.fr>
+- Renamed internal VDI functions to avoid name conflicts
+
+Jean-Francois Del Nero <jeanfrancoisdelnero at free.fr>
+- Improved memory detection on cold boot
+- Tested the EmuTOS ROM on real STe hardware
+- Various bugfixes
+
+Roger Burrows <rfburrows at ymail.com>
+- FAT16 partitions up to 2 GB
+- Various bugfixes and cleanups
+
+Lodovico Zanier <lvc958 at libero.it>
+- Italian translation
+
+Pavel Salac <salac.pavel at gmail.com>
+- Czech translation update
+
+David Galvez <dgalvez75 at gmail.com>
+- Spanish translation update
+
+Christos Tziotzis <ctziotzis at gmail.com>
+- Greek translation update
