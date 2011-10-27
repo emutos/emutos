@@ -6,17 +6,20 @@ if possible add a line telling in which version it did run.
 
   emulator/machine    |  ok?  | who |   date    |  details
   --------------------+-------+-----+-----------+----------------
-  Aranym              |  yes  | LVL |    Feb 03 |
+  ARAnyM              |  yes  | LVL |    Feb 03 |
   Hatari              |  yes  | THH | 14 Nov 08 |
   MegaSTE             |  yes  | (1) | 26 Jun 04 | RAMTOS only
+  STe                 |  yes  | (2) | 06 Jun 10 |
   Pacifist v0.48      |  yes  | LVL | winter 01 |
   STonX 0.6.7.6       |  yes  | THH | 14 Nov 08 |
   STonC v0.8.1        |  yes  | LVL | 9  Feb 03 |
   STeem v2.0.6        |  yes  | LVL | 30 Sep 02 | 
   TOSBox 1.10a        |   no  |  ?  |  < Sep 02 |
   WinSTon V0.1r2      |   no  |  ?  |  < Sep 02 |
+  FireBee             |  yes  | VRI |    Oct 11 |
 
   (1) reported to LVL by Frédéric Pécourt
+  (2) reported by Jean-François Del Nero
 
 Now lets talk about the different subsystems, and if they are implemented.
 
@@ -30,10 +33,10 @@ t Fully implemented and partially tested
 T tested and working on an emulator or real hardware
 
 
- Hardware initialisation
+ Hardware initialization
  ----------------------------------------------------------------------------
  t CPU setting (tested only 68000 (real and emu) and 68040 (emu))
- > FPU (detected, is any initialisation needed?) 
+ > FPU (detected, is any initialization needed?) 
  T Memory controller (both ST and Falcon)
  T DMA controller
  t WD 1772 Floppy disk controller (write track not tested)
@@ -46,11 +49,11 @@ T tested and working on an emulator or real hardware
  t NVRAM (including RTC)
  > Videl
  - Blitter
- - Microwire
+ T Microwire
  - DMA sound
  - DSP
  - SCC
- - IDE
+ > IDE
  > ACSI hard disk
  T NatFeats (a framework for native features on emulators) 
 
@@ -434,4 +437,3 @@ T tested and working on an emulator or real hardware
  X      shel_wdef              (PC-GEM call)
  X      xgrf_stepcalc          (PC-GEM call)
  X      xgrf_2box              (PC-GEM call)
-

@@ -2894,3 +2894,4 @@ Start... early ages
 - Makefile: Fixed typo. (VRI)
 - doc/nls.txt: Updated for next release. (VRI)
 - doc/old_code.txt: Updated for next release. (VRI)
+- doc/status.txt: Updated for next release. (VRI)
