@@ -10,7 +10,7 @@ BIOS/XBIOS
 - check that VEC_CRITICALERR (0x101) is called when the BIOS encounters errors
 - improve Mediach()
 - implement full XHDI 1.30
-- loop callibration needed for various delays in centronics and DMA ports
+- loop calibration needed for various delays in Centronics and DMA ports
 - for some reasons, the initial stack size (SUPSIZ in bios/startup.S) must be
   bigger than 6000 words, or GFA Basic and MiNT will crash. This should be
   fixed (so much space is really not needed here!).
@@ -20,7 +20,7 @@ BDOS (GEMDOS)
 - should hitting control-c terminate the current process? if so, how?
 - move mem-only routines out of proc.c into umem.c or iumem.c
 
-Internationalisation
+Internationalization
 - bugs in tools/bug.c; more things should be configurable on the command line
 
 VDI
@@ -31,16 +31,15 @@ VDI
 AES
 - Check if all strings in desk_rsc.c and gem_rsc.c are fully ROM save (the
   TEDINFO strings etc).
-- Add proper support for screen resolution switching.
+- Add proper support for screen resolution switching on VIDEL and TT
 
 DESK
-- Add a dialog for resolution switching
+- Add a dialog for resolution switching on VIDEL and TT
 - Add a dialog for configuring the NVRAM (keyboard, languages, ...)
-- Support for loading DESKTOP.INF (needs remapping of the icon indices)
+- Support for loading DESKTOP.INF (needs remapping of the icon indexes)
 
 CLI
 - use extended argv specification in EmuCON
 - EmuCON should allow 'exit' in .BAT scripts?
 - Input/Output redirection does not work well (problems with spaces after
   the ">" for example).
-
