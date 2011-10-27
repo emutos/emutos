@@ -2896,3 +2896,4 @@ Start... early ages
 - doc/old_code.txt: Updated for next release. (VRI)
 - doc/status.txt: Updated for next release. (VRI)
 - doc/todo.txt: Updated for next release. (VRI)
+- readmin.txt: Updated for next release. (VRI)
