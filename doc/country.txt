@@ -1,4 +1,3 @@
-
 country.txt - an overview of i18n issues in EmuTOS
 
 EmuTOS supports different countries. The way it does is sometimes
@@ -126,4 +125,3 @@ bios/keyb_xx.h - keyboard layout for keyboard 'xx'
 bios/fnt_xx_*.c - fonts for charset 'xx'
 bios/country.h - defines for keyboard and charset names
 bios/ctrycodes.h - defines for country names
-
