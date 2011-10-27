@@ -2888,3 +2888,4 @@ Start... early ages
 2011-10-27
 - doc/bugs.txt: Removed EmuTOS crash on Steem floppies, as non reproduced. (VRI)
 - doc/bugs.txt: Added 7UP hangs on exit. (VRI)
+- doc/coding.txt: Updated for next release. (VRI)
