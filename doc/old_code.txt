@@ -1,11 +1,11 @@
 old_code.c - a small Museum of Horrors
 
 Some extensive parts of EmuTOS were written using a very old C language.
-This file gives example of problems that actually occured, and gives 
+This file gives example of problems that actually occurred, and gives 
 the *right* way to write code. 
 
 If you fix a bug that is due to obsolete C language, please add a note in 
-this file to help other developpers imagine what kind of nasty bug may 
+this file to help other developers imagine what kind of nasty bug may 
 still exist...
 
 - do not assign to a variable and use the old value in the same
@@ -19,12 +19,10 @@ still exist...
     char *prntEnvPtr;
     /* look for two consecutive 0 */
     // BAD while ((prntEnvPtr[i] + prntEnvPtr[i + 1]) != 0)
-   
+
 - do not use 0xffffffff instead of -1. 0xffffffff is the biggest
   unsigned long value. Comparisons such as
     long value;
     // BAD if ((value & 0xFFFFFFFF) < 0) 
   will fail, because due to integer promotion rules the test 
   is done using unsigned longs.
-  
-
