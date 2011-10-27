@@ -307,14 +307,14 @@ help:
 	@echo "clean"
 	@echo "cvsready  put files in canonic format before committing to cvs"
 	@echo "depend  creates dependancy file (makefile.dep)"
-	@echo "dsm     dsm.txt, an edited desassembly of emutos.img"
+	@echo "dsm     dsm.txt, an edited disassembly of emutos.img"
 	@echo "fdsm    fal_dsm.txt, like above, but for $(VMA_T2) ROMs"
-	@echo "*.dsm   desassembly of any .c or almost any .img file"
+	@echo "*.dsm   disassembly of any .c or almost any .img file"
 	@echo "release build the release archives into $(RELEASE_DIR)"
 
 #
 # the maps must be built at the same time as the images, to enable
-# one generic target to deal with all edited desassembly.
+# one generic target to deal with all edited disassembly.
 #
 
 TOCLEAN += *.img *.map

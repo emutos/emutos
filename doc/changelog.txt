@@ -2891,3 +2891,4 @@ Start... early ages
 - doc/coding.txt: Updated for next release. (VRI)
 - doc/country.txt: Updated for next release. (VRI)
 - doc/install.txt: Updated for next release. (VRI)
+- Makefile: Fixed typo. (VRI)
