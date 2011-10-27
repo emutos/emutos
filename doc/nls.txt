@@ -1,4 +1,3 @@
-
 nls.txt - native language support for EmuTOS, 
 or how having printf("welcome") display "willkommen".
 
@@ -35,7 +34,7 @@ declarations, as in the following example:
   }
 
 translatable strings not immediately translated by _(...) need
-to be translated using gettext explicitely.
+to be translated using gettext() explicitly.
 
 
 Operations
@@ -122,7 +121,7 @@ and entries. Each entry has
 - optional free comment lines, beginning with '# ' (sharp, space)
 - optional special comments, beginning with #, and whose second
   character is not a space
-- the english string,    msgid "..."
+- the English string,    msgid "..."
 - the translation,       msgstr "..."  
 
 the strings after msgid and msgstr follow the C syntax, and can contain
@@ -135,7 +134,7 @@ several "..." strings concatenated. Example:
   
   # this is an entry
   # the line starting with #: is a special comment giving pointers 
-  # to source code where the english string was found
+  # to source code where the English string was found
   #: source/file.c:2
   msgid "yes"
   msgstr "Ja"
@@ -230,4 +229,3 @@ References
 - the GNU gettext manual
 - GNU gettext tools
 - GNU recode, for the names of some charsets.
-
