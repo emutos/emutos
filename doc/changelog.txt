@@ -2890,3 +2890,4 @@ Start... early ages
 - doc/bugs.txt: Added 7UP hangs on exit. (VRI)
 - doc/coding.txt: Updated for next release. (VRI)
 - doc/country.txt: Updated for next release. (VRI)
+- doc/install.txt: Updated for next release. (VRI)

@@ -1,35 +1,37 @@
 Installing:
 
-You will need the (cross-)gcc toolchain from the sparemint pages to
-build this stuff. You will also probably need GNU make as the Makefile
-currently tends to make more and more abuse of advanced make features.
+You will need a (cross-)GCC toolchain for TOS/MiNT.
+Currently, the only supported one is Vincent Riviere's m68k-atari-mint tools:
+http://vincent.riviere.free.fr/soft/m68k-atari-mint/
+Other toolchains, such as the old one from SpareMiNT, may also work, too.
+You will also need GNU make (tested with make 3.81).
 
-building EmuTOS
+Building EmuTOS
 ===============
 
-to build, simply do
-
-    make
-
-This will create a TOS2 image file 'emutos2.img', configured by
-default for the US country. A list of the main Makefile targets is
-obtained by doing 
+To build, first do:
 
     make help
+
+This will display the list of all possible targets.
+
+To build the standard etos512k.img, do
+
+    make 512
 
 To build EmuTOS for a different country (changes the language and the
 keyboard), do
 
-    make COUNTRY=en
+    make 512 COUNTRY=en
 or
-    make COUNTRY=fr
+    make 512 COUNTRY=fr
 or
-    make COUNTRY=de
+    make 512 COUNTRY=de
 
 NOTE: by specifying COUNTRY=xx, all countries are included in the binary, 
-but a flag in the TOS header will indicate counntry 'xx'. If, however, the 
+but a flag in the TOS header will indicate country 'xx'. If, however, the 
 EmuTOS image is booted on an emulator featuring NVRAM emulation (such as
-Aranym), the country number in the NVRAM will override that setting of the 
+ARAnyM), the country number in the NVRAM will override that setting of the 
 country in the TOS header.
 
 Finally, some settings can be configured in the file include/config.h.
@@ -37,26 +39,18 @@ Finally, some settings can be configured in the file include/config.h.
 A complete list of targets
 ==========================
 
-emutos binaries
+EmuTOS binaries
 ---------------
 
-emutos1.img   emutos binary relocated at 0xfc0000. might be bigger than 192k.
-emutos2.img   emutos binary relocated at 0xe00000
-etos192k.img  emutos1.img padded to 192k, if smaller (else the target fails)
-etos256k.img  emutos2.img padded to 256k, if smaller (else the target fails)
-etos512k.img  emutos2.img padded to 512k, if smaller (else the target fails)
-ecpr192k.img  ramtos.img compressed, and installed in an auto-decompressing
-              192k image, if not bigger (else the target fails)
-ecpr256k.img  ramtos.img compressed, and installed in an auto-decompressing
-              256k image, if not bigger (else the target fails)
-ramtos.img    emutos binary relocated to the smallest possible RAM address
-              not used as BSS byt the current code.
-compr1.img    the loader used to decompress ramtos, relocated at 0xfc0000
-compr2.img    the loader used to decompress ramtos, relocated at 0xE00000
-allbin        generates some 256k and 512k binaries
-all192        genearates some 192k binaries. WARNING: do make clean first.
+192     etos192k.img, EmuTOS ROM padded to size 192 kB (starting at 0x00fc0000)
+256     etos256k.img, EmuTOS ROM padded to size 256 kB (starting at 0x00e00000)
+512     etos512k.img, EmuTOS ROM padded to size 512 kB (starting at 0x00e00000)
+aranym  emutos-aranym.img, suitable for ARAnyM
+firebee emutosfb.s19, to be flashed on the FireBee
+ram     ramtos.img + boot.prg, a RAM tos
+flop    emutos.st, a bootable floppy with RAM tos
 
-binary targets modifyers
+Binary targets modifyers
 ------------------------
 
 nothing       same as COUNTRY=us
@@ -66,21 +60,17 @@ DEF='-DTOS_VERSION=0x102'
               used to generate smaller binaries with only support for a
               subset of functionalities. WARNING: do make clean first.
 
-utility targets
+Utility targets
 ---------------
 
-emutos.st     the image of a 360k single-sided floppy on which there is
-              an autobootable ramtos.img
-boot.prg      ramtos.img loader as a GEMDOS program
 fd0           dd emutos.st on a floppy (linux-specific)
 
-debug targets
+Debug targets
 -------------
 
-emutos1.dsm, emutos2.dsm, ramtos.dsm, compr1.dsm, compr2.dsm: the edited
-desassembly of the respective .img files
-
-foo.dsm: the result of gcc -S made on */foo.c
+dsm     dsm.txt, an edited disassembly of emutos.img
+fdsm    fal_dsm.txt, like above, but for 0x00e00000 ROMs
+*.dsm   disassembly of any .c or almost any .img file
 
 CVS-related targets
 -------------------
@@ -92,12 +82,17 @@ cvsready     ensure the files have a proper, canonic, format for CVS
 checkindent  try 'indent' without altering the files
 indent       indent all files - never done yet :-(
 
+Release-related targets
+-------------------
 
-Emulator-specific notes
+all192  all 192 kB images
+all256  all 256 kB images
+allbin  all 192 kB, 256 kB and 512 kB images
+release build the release archives into release-archives
+
+
+STonX-specific notes
 =======================
-
-STonX
------
 
 EmuTOS now needs no change in STonX any longer. It will run on a
 normal STonX. 
@@ -110,23 +105,23 @@ things:
     /* Print string from emulated side */
     void write_native(char * addr)
     {
-	char buf[1024];
-	int n;
+        char buf[1024];
+        int n;
 
-	for(n = 0 ; n < 1023 ; n++) {  /* Fill string char by char */
-	    if ( (buf[n]=LM_UB(MEM(addr++))) == 0) break;
-	}
-	buf[1023] = 0;
+        for(n = 0 ; n < 1023 ; n++) {  /* Fill string char by char */
+            if ( (buf[n]=LM_UB(MEM(addr++))) == 0) break;
+        }
+        buf[1023] = 0;
         fprintf(stderr,"%s", buf);
     }
 
     void call_native(UL as, UL func)
     {
     #if 0
-	fprintf(stderr,"Calling native %d\n",func);
+        fprintf(stderr,"Calling native %d\n",func);
     #endif
-	switch (func)
-	{
+        switch (func)
+        {
         case 0: /* Get the address, where string begins*/
             write_native((char *)LM_UL(MEM(as)));
             break;
@@ -138,34 +133,8 @@ things:
 2. Switch on the debugging output by setting, in include/config.h, the
    parameter STONX_NATIVE_PRINT to 1 before building EmuTOS.
 
-ARAnyM
-------
-
-For ARAnyM >= 0.7.0 enable the Native Features support by setting
-the DETECT_NATIVE_FEATURES parameter to 1 and also allow EmuTOS to call
-the STOP instruction to free host CPU by setting the
-USE_STOP_INSN_TO_FREE_HOST_CPU parameter to 1.
-
-At last use the default (emutos2.img) or the 'falcon' Makefile target.
-
-
-Other emulators
----------------
-
-By default the emutos2.img ROM image is not padded to a particular size.
-However some emulators expect ROM images with a fixed size of 192k, 
-or 256k, or 512k. for these emulators, Use 'make 256' or 'make 512' to 
-create etos256k.img and etos512k.img, ROM images padded to the specified size.
-
-Note: Since the inclusion of the AES and VDI, EmuTOS no longer can fit
-in a 192k image. If you want a 192k TOS1 ROM absolutely try 
-
-    make WITH_AES=0 192
-
-Hope this is all. AND: EmuTOS is now beta Software. It may run well for
-many programs, but also may crash your computer. So be careful.
-
 
 Have success!
---
-Your EmuTOS team
+
+-- 
+The EmuTOS team
