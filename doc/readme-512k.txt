@@ -5,6 +5,9 @@ This ROM is suitable for the following hardware:
 - Falcon
 - emulators of the above
 
+Note: Extra hardware is autodetected.
+This ROM is the optimal one for Hatari, with any hardware combination.
+
 etos512k.img - Multilanguage
 
 The default language is English.

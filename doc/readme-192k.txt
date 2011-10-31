@@ -5,6 +5,9 @@ These ROMs are suitable for the following hardware:
 - Mega ST
 - emulators of the above
 
+Note: Extra hardware is NOT autodetected, unlike other ROM versions.
+These ROMs will not work on Hatari with extra emulated hardware.
+
 Each ROM contains a single language:
 
 etos192cz.img - Czech
@@ -19,7 +22,6 @@ etos192sg.img - Swiss German
 etos192us.img - English
 
 Due to size limitations, the 192 KB ROMs contains:
-- no support for VIDEL or other extra hardware
 - no EmuCON
 - a minimal desktop using 2 fixed windows
 

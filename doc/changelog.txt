@@ -2914,3 +2914,5 @@ Start... early ages
   make cvsready. (VRI)
 - Makefile: Added vdi/vdi_tblit_cf.S to "make expand" exceptions. (VRI)
 - doc/status.txt: Changed the description of the Mega STe test. (VRI)
+- doc/readme-192k.txt doc/readme-256k.txt doc/readme-512k.txt: Added specific
+  notes for Hatari. (VRI)
