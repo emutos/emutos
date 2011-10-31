@@ -62,7 +62,8 @@ release-512k:
 	$(MAKE) clean
 	$(MAKE) 512
 	mkdir $(RELEASE_DIR)/$(RELEASE_512K)
-	cp etos512k.img readme.txt $(RELEASE_DIR)/$(RELEASE_512K)
+	cp etos512k.img $(RELEASE_DIR)/$(RELEASE_512K)
+	cat doc/readme-512k.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_512K)/readme.txt
 	mkdir $(RELEASE_DIR)/$(RELEASE_512K)/doc
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_512K)/doc
 	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_512K).zip $(RELEASE_512K)
@@ -75,7 +76,8 @@ release-256k:
 	$(MAKE) clean
 	$(MAKE) all256
 	mkdir $(RELEASE_DIR)/$(RELEASE_256K)
-	cp etos256*.img readme.txt $(RELEASE_DIR)/$(RELEASE_256K)
+	cp etos256*.img $(RELEASE_DIR)/$(RELEASE_256K)
+	cat doc/readme-256k.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_512K)/readme.txt
 	mkdir $(RELEASE_DIR)/$(RELEASE_256K)/doc
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_256K)/doc
 	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_256K).zip $(RELEASE_256K)
@@ -88,7 +90,8 @@ release-192k:
 	$(MAKE) clean
 	$(MAKE) all192
 	mkdir $(RELEASE_DIR)/$(RELEASE_192K)
-	cp etos192*.img readme.txt $(RELEASE_DIR)/$(RELEASE_192K)
+	cp etos192*.img $(RELEASE_DIR)/$(RELEASE_192K)
+	cat doc/readme-192k.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_512K)/readme.txt
 	mkdir $(RELEASE_DIR)/$(RELEASE_192K)/doc
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_192K)/doc
 	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_192K).zip $(RELEASE_192K)
@@ -101,7 +104,8 @@ release-aranym:
 	$(MAKE) clean
 	$(MAKE) aranym
 	mkdir $(RELEASE_DIR)/$(RELEASE_ARANYM)
-	cp $(ROM_ARANYM) readme.txt $(RELEASE_DIR)/$(RELEASE_ARANYM)
+	cp $(ROM_ARANYM) $(RELEASE_DIR)/$(RELEASE_ARANYM)
+	cat doc/readme-aranym.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_512K)/readme.txt
 	mkdir $(RELEASE_DIR)/$(RELEASE_ARANYM)/doc
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_ARANYM)/doc
 	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_ARANYM).zip $(RELEASE_ARANYM)
@@ -114,7 +118,8 @@ release-firebee:
 	$(MAKE) clean
 	$(MAKE) firebee
 	mkdir $(RELEASE_DIR)/$(RELEASE_FIREBEE)
-	cp $(SREC_FIREBEE) readme.txt $(RELEASE_DIR)/$(RELEASE_FIREBEE)
+	cp $(SREC_FIREBEE) $(RELEASE_DIR)/$(RELEASE_FIREBEE)
+	cat doc/readme-firebee.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_512K)/readme.txt
 	mkdir $(RELEASE_DIR)/$(RELEASE_FIREBEE)/doc
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_FIREBEE)/doc
 	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_FIREBEE).zip $(RELEASE_FIREBEE)
@@ -127,7 +132,8 @@ release-ram:
 	$(MAKE) clean
 	$(MAKE) ram
 	mkdir $(RELEASE_DIR)/$(RELEASE_RAM)
-	cp boot.prg ramtos.img readme.txt $(RELEASE_DIR)/$(RELEASE_RAM)
+	cp boot.prg ramtos.img $(RELEASE_DIR)/$(RELEASE_RAM)
+	cat doc/readme-ram.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_512K)/readme.txt
 	mkdir $(RELEASE_DIR)/$(RELEASE_RAM)/doc
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_RAM)/doc
 	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_RAM).zip $(RELEASE_RAM)
@@ -140,7 +146,8 @@ release-floppy:
 	$(MAKE) clean
 	$(MAKE) flop UNIQUE=us
 	mkdir $(RELEASE_DIR)/$(RELEASE_FLOPPY)
-	cp emutos.st readme.txt $(RELEASE_DIR)/$(RELEASE_FLOPPY)
+	cp emutos.st $(RELEASE_DIR)/$(RELEASE_FLOPPY)
+	cat doc/readme-floppy.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_512K)/readme.txt
 	mkdir $(RELEASE_DIR)/$(RELEASE_FLOPPY)/doc
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_FLOPPY)/doc
 	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_FLOPPY).zip $(RELEASE_FLOPPY)

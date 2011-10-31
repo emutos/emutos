@@ -2900,3 +2900,7 @@ Start... early ages
 
 2011-10-31
 - readme.txt: Cleaned up. (VRI)
+- release.mk doc/changelog.txt doc/readme-192k.txt doc/readme-256k.txt
+  doc/readme-512k.txt doc/readme-aranym.txt doc/readme-firebee.txt
+  doc/readme-floppy.txt doc/readme-ram.txt: Added specific text which will be
+  inserted at the top of the readme file of every binary archive. (VRI)
