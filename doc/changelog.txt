@@ -2904,3 +2904,5 @@ Start... early ages
   doc/readme-512k.txt doc/readme-aranym.txt doc/readme-firebee.txt
   doc/readme-floppy.txt doc/readme-ram.txt: Added specific text which will be
   inserted at the top of the readme file of every binary archive. (VRI)
+- release.mk: Converted all .txt files in the binary archives into Windows LF
+  line endings. (VRI)

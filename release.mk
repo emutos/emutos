@@ -66,6 +66,7 @@ release-512k:
 	cat doc/readme-512k.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_512K)/readme.txt
 	mkdir $(RELEASE_DIR)/$(RELEASE_512K)/doc
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_512K)/doc
+	find $(RELEASE_DIR)/$(RELEASE_512K) -name '*.txt' -exec unix2dos '{}' ';'
 	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_512K).zip $(RELEASE_512K)
 	rm -r $(RELEASE_DIR)/$(RELEASE_512K)
 
@@ -80,6 +81,7 @@ release-256k:
 	cat doc/readme-256k.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_512K)/readme.txt
 	mkdir $(RELEASE_DIR)/$(RELEASE_256K)/doc
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_256K)/doc
+	find $(RELEASE_DIR)/$(RELEASE_256K) -name '*.txt' -exec unix2dos '{}' ';'
 	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_256K).zip $(RELEASE_256K)
 	rm -r $(RELEASE_DIR)/$(RELEASE_256K)
 
@@ -93,6 +95,7 @@ release-192k:
 	cp etos192*.img $(RELEASE_DIR)/$(RELEASE_192K)
 	cat doc/readme-192k.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_512K)/readme.txt
 	mkdir $(RELEASE_DIR)/$(RELEASE_192K)/doc
+	find $(RELEASE_DIR)/$(RELEASE_192K) -name '*.txt' -exec unix2dos '{}' ';'
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_192K)/doc
 	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_192K).zip $(RELEASE_192K)
 	rm -r $(RELEASE_DIR)/$(RELEASE_192K)
@@ -108,6 +111,7 @@ release-aranym:
 	cat doc/readme-aranym.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_512K)/readme.txt
 	mkdir $(RELEASE_DIR)/$(RELEASE_ARANYM)/doc
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_ARANYM)/doc
+	find $(RELEASE_DIR)/$(RELEASE_ARANYM) -name '*.txt' -exec unix2dos '{}' ';'
 	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_ARANYM).zip $(RELEASE_ARANYM)
 	rm -r $(RELEASE_DIR)/$(RELEASE_ARANYM)
 
@@ -122,6 +126,7 @@ release-firebee:
 	cat doc/readme-firebee.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_512K)/readme.txt
 	mkdir $(RELEASE_DIR)/$(RELEASE_FIREBEE)/doc
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_FIREBEE)/doc
+	find $(RELEASE_DIR)/$(RELEASE_FIREBEE) -name '*.txt' -exec unix2dos '{}' ';'
 	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_FIREBEE).zip $(RELEASE_FIREBEE)
 	rm -r $(RELEASE_DIR)/$(RELEASE_FIREBEE)
 
@@ -136,6 +141,7 @@ release-ram:
 	cat doc/readme-ram.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_512K)/readme.txt
 	mkdir $(RELEASE_DIR)/$(RELEASE_RAM)/doc
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_RAM)/doc
+	find $(RELEASE_DIR)/$(RELEASE_RAM) -name '*.txt' -exec unix2dos '{}' ';'
 	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_RAM).zip $(RELEASE_RAM)
 	rm -r $(RELEASE_DIR)/$(RELEASE_RAM)
 
@@ -150,6 +156,7 @@ release-floppy:
 	cat doc/readme-floppy.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_512K)/readme.txt
 	mkdir $(RELEASE_DIR)/$(RELEASE_FLOPPY)/doc
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_FLOPPY)/doc
+	find $(RELEASE_DIR)/$(RELEASE_FLOPPY) -name '*.txt' -exec unix2dos '{}' ';'
 	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_FLOPPY).zip $(RELEASE_FLOPPY)
 	rm -r $(RELEASE_DIR)/$(RELEASE_FLOPPY)
 
