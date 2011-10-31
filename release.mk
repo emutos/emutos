@@ -78,7 +78,7 @@ release-256k:
 	$(MAKE) all256
 	mkdir $(RELEASE_DIR)/$(RELEASE_256K)
 	cp etos256*.img $(RELEASE_DIR)/$(RELEASE_256K)
-	cat doc/readme-256k.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_512K)/readme.txt
+	cat doc/readme-256k.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_256K)/readme.txt
 	mkdir $(RELEASE_DIR)/$(RELEASE_256K)/doc
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_256K)/doc
 	find $(RELEASE_DIR)/$(RELEASE_256K) -name '*.txt' -exec unix2dos '{}' ';'
@@ -93,7 +93,7 @@ release-192k:
 	$(MAKE) all192
 	mkdir $(RELEASE_DIR)/$(RELEASE_192K)
 	cp etos192*.img $(RELEASE_DIR)/$(RELEASE_192K)
-	cat doc/readme-192k.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_512K)/readme.txt
+	cat doc/readme-192k.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_192K)/readme.txt
 	mkdir $(RELEASE_DIR)/$(RELEASE_192K)/doc
 	find $(RELEASE_DIR)/$(RELEASE_192K) -name '*.txt' -exec unix2dos '{}' ';'
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_192K)/doc
@@ -108,7 +108,7 @@ release-aranym:
 	$(MAKE) aranym
 	mkdir $(RELEASE_DIR)/$(RELEASE_ARANYM)
 	cp $(ROM_ARANYM) $(RELEASE_DIR)/$(RELEASE_ARANYM)
-	cat doc/readme-aranym.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_512K)/readme.txt
+	cat doc/readme-aranym.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_ARANYM)/readme.txt
 	mkdir $(RELEASE_DIR)/$(RELEASE_ARANYM)/doc
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_ARANYM)/doc
 	find $(RELEASE_DIR)/$(RELEASE_ARANYM) -name '*.txt' -exec unix2dos '{}' ';'
@@ -123,7 +123,7 @@ release-firebee:
 	$(MAKE) firebee
 	mkdir $(RELEASE_DIR)/$(RELEASE_FIREBEE)
 	cp $(SREC_FIREBEE) $(RELEASE_DIR)/$(RELEASE_FIREBEE)
-	cat doc/readme-firebee.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_512K)/readme.txt
+	cat doc/readme-firebee.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_FIREBEE)/readme.txt
 	mkdir $(RELEASE_DIR)/$(RELEASE_FIREBEE)/doc
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_FIREBEE)/doc
 	find $(RELEASE_DIR)/$(RELEASE_FIREBEE) -name '*.txt' -exec unix2dos '{}' ';'
@@ -138,7 +138,7 @@ release-ram:
 	$(MAKE) ram
 	mkdir $(RELEASE_DIR)/$(RELEASE_RAM)
 	cp boot.prg ramtos.img $(RELEASE_DIR)/$(RELEASE_RAM)
-	cat doc/readme-ram.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_512K)/readme.txt
+	cat doc/readme-ram.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_RAM)/readme.txt
 	mkdir $(RELEASE_DIR)/$(RELEASE_RAM)/doc
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_RAM)/doc
 	find $(RELEASE_DIR)/$(RELEASE_RAM) -name '*.txt' -exec unix2dos '{}' ';'
@@ -153,7 +153,7 @@ release-floppy:
 	$(MAKE) flop UNIQUE=us
 	mkdir $(RELEASE_DIR)/$(RELEASE_FLOPPY)
 	cp emutos.st $(RELEASE_DIR)/$(RELEASE_FLOPPY)
-	cat doc/readme-floppy.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_512K)/readme.txt
+	cat doc/readme-floppy.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_FLOPPY)/readme.txt
 	mkdir $(RELEASE_DIR)/$(RELEASE_FLOPPY)/doc
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_FLOPPY)/doc
 	find $(RELEASE_DIR)/$(RELEASE_FLOPPY) -name '*.txt' -exec unix2dos '{}' ';'
