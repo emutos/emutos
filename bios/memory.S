@@ -485,17 +485,17 @@ tt_cleared:
 // d0-d4/a0-a5 = clobbered
 clear_st_ram:
 #ifdef EMUTOS_RAM
-	// When EmuTOS lives in the RAM, it must not be cleared!
-	move.l	_os_end, d0		// end of EmuTOS in RAM
-	addi.l	#0xff, d0		// round to next multiple of 256
-	andi.l	#0xffffff00, d0		// for clear_ram
-	// BUG: This is not strictly correct. A few bytes will not be cleared
-	// at the beginning of the free ram.
-	move.l	d0,a4			// begin of RAM to clear
+        // When EmuTOS lives in the RAM, it must not be cleared!
+        move.l  _os_end, d0             // end of EmuTOS in RAM
+        addi.l  #0xff, d0               // round to next multiple of 256
+        andi.l  #0xffffff00, d0         // for clear_ram
+        // BUG: This is not strictly correct. A few bytes will not be cleared
+        // at the beginning of the free ram.
+        move.l  d0,a4                   // begin of RAM to clear
 #else
         lea     0x0400, a4              // begin of RAM to clear
 #endif
-	// Fall into clear_ram
+        // Fall into clear_ram
 
 // ==== Clear RAM from a4 to d5 and return to (a6) ===========================
 // Restriction: the amount of ram to clear must be a multiple of 256

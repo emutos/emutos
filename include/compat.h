@@ -284,4 +284,4 @@ EXTERN LONG     LLCS();
 
 #endif
 
-#endif	/* _COMPAT_H */
+#endif  /* _COMPAT_H */

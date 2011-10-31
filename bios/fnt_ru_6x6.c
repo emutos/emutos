@@ -12,7 +12,7 @@ static const UWORD off_table[], dat_table[];
 const struct font_head fnt_ru_6x6 = {
     1,  /* font_id */
     8,  /* point */
-    "6x6 Russian font",  /*   BYTE name[32]	*/
+    "6x6 Russian font",  /*   BYTE name[32]     */
     0,  /* first_ade */
     255,  /* last_ade */
     4,  /* top */
@@ -29,9 +29,9 @@ const struct font_head fnt_ru_6x6 = {
     0x5555, /* lighten */
     0xaaaa, /* skew */
     F_STDFORM | F_MONOSPACE | F_DEFAULT,  /* flags */
-    0,			/*   UBYTE *hor_table	*/
-    off_table,		/*   UWORD *off_table	*/
-    dat_table,		/*   UWORD *dat_table	*/
+    0,                  /*   UBYTE *hor_table   */
+    off_table,          /*   UWORD *off_table   */
+    dat_table,          /*   UWORD *dat_table   */
     192,  /* form_width */
     6,  /* form_height */
     0,  /* struct font * next_font */

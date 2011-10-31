@@ -2909,3 +2909,6 @@ Start... early ages
 - readme.txt: Added compiler information. (VRI)
 - po/es.po: Converted all lines to UNIX LF format. (VRI)
 - po/*.po: Fixed line numbers. (VRI)
+- bios/fnt_ru_6x6.c bios/fnt_ru_8x16.c bios/fnt_ru_8x8.c bios/memory.S
+  bios/processor.S bios/screen.c include/compat.h vdi/vdi_blit.S:
+  make cvsready. (VRI)

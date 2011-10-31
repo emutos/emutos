@@ -29,8 +29,8 @@
         .global _detect_fpu
 
         .extern _longframe              // If not 0, use long stack frames
-	
-	
+
+
 
         .text
 

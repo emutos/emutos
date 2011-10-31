@@ -16,8 +16,8 @@
 
         .globl  _bit_blt
 
-        .extern	_info
-        .extern	_PTSIN
+        .extern _info
+        .extern _PTSIN
 
 // The following defines are offsets inside fringe code fragments
 // As a result this file cannot be converted to ColdFire using PortAsm.

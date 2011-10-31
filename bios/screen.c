@@ -248,7 +248,7 @@ WORD getrez(void)
         }
         else
 #endif
-	{
+        {
             rez &= 0x3;
         }
         return rez;
