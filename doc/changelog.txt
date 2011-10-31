@@ -2906,3 +2906,4 @@ Start... early ages
   inserted at the top of the readme file of every binary archive. (VRI)
 - release.mk: Converted all .txt files in the binary archives into Windows LF
   line endings. (VRI)
+- readme.txt: Added compiler information. (VRI)

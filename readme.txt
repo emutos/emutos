@@ -1,3 +1,5 @@
+This release has been built using GCC 4.6.2 on Cygwin.
+
 If you want to read more about EmuTOS, please look into these files:
 
 doc/announce.txt   - Introduction and general description
