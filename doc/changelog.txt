@@ -2913,3 +2913,4 @@ Start... early ages
   bios/processor.S bios/screen.c include/compat.h vdi/vdi_blit.S:
   make cvsready. (VRI)
 - Makefile: Added vdi/vdi_tblit_cf.S to "make expand" exceptions. (VRI)
+- doc/status.txt: Changed the description of the Mega STe test. (VRI)
