@@ -2912,3 +2912,4 @@ Start... early ages
 - bios/fnt_ru_6x6.c bios/fnt_ru_8x16.c bios/fnt_ru_8x8.c bios/memory.S
   bios/processor.S bios/screen.c include/compat.h vdi/vdi_blit.S:
   make cvsready. (VRI)
+- Makefile: Added vdi/vdi_tblit_cf.S to "make expand" exceptions. (VRI)

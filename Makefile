@@ -830,10 +830,13 @@ indent:
 
 TOCLEAN += tounix$(EXE)
 
+EXPAND_FILES = $(wildcard */*.[chS] */*.awk)
+EXPAND_NOFILES = vdi/vdi_tblit_cf.S
+
 .PHONY: expand
 NODEP += expand
 expand:
-	@for i in `grep -l '	' */*.[chS] */*.awk` ; do \
+	@for i in `grep -l '	' $(filter-out $(EXPAND_NOFILES), $(EXPAND_FILES))` ; do \
 		echo expanding $$i; \
 		expand <$$i >expand.tmp; \
 		mv expand.tmp $$i; \
