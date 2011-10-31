@@ -2908,3 +2908,4 @@ Start... early ages
   line endings. (VRI)
 - readme.txt: Added compiler information. (VRI)
 - po/es.po: Converted all lines to UNIX LF format. (VRI)
+- po/*.po: Fixed line numbers. (VRI)

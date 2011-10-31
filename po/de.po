@@ -13,15 +13,15 @@ msgstr ""
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: bios/bios.c:382
+#: bios/bios.c:381
 msgid "Please eject the floppy and hit RETURN"
 msgstr "Bitte Floppy entnehmen, dann RETURN drücken"
 
-#: bios/initinfo.c:175
+#: bios/initinfo.c:174
 msgid "EmuTOS Version"
 msgstr "EmuTOS Version"
 
-#: bios/initinfo.c:177
+#: bios/initinfo.c:176
 msgid "CPU type"
 msgstr "CPU-Typ"
 
@@ -29,19 +29,19 @@ msgstr "CPU-Typ"
 msgid "No"
 msgstr "Nein"
 
-#: bios/initinfo.c:200
+#: bios/initinfo.c:199
 msgid "Screen start"
 msgstr "Bildschirm ab"
 
-#: bios/initinfo.c:185
+#: bios/initinfo.c:184
 msgid "Machine"
 msgstr "Rechner"
 
-#: bios/initinfo.c:188 bios/initinfo.c:195
+#: bios/initinfo.c:187 bios/initinfo.c:194
 msgid "%ld kB"
 msgstr "%ld kB"
 
-#: bios/initinfo.c:202
+#: bios/initinfo.c:201
 msgid "GEMDOS drives"
 msgstr "GEMDOS-Laufwerke"
 
@@ -775,27 +775,27 @@ msgstr "[3]["
 "über die maximale Länge von Dateinamen|"
 "bitte der Dokumentation entnehmen.][   OK   ]"
 
-#: bios/initinfo.c:187
+#: bios/initinfo.c:186
 msgid "Free ST-RAM"
 msgstr "Freies ST-RAM"
 
-#: bios/initinfo.c:194
+#: bios/initinfo.c:193
 msgid "Free FastRAM"
 msgstr "Freies FastRAM"
 
-#: bios/initinfo.c:216
+#: bios/initinfo.c:215
 msgid "Boot time"
 msgstr "Boot-Zeit"
 
-#: bios/initinfo.c:222
+#: bios/initinfo.c:221
 msgid "Hold <Control> to skip AUTO/ACC"
 msgstr "Halte <Strg> = ohne AUTO/ACC"
 
-#: bios/initinfo.c:224
+#: bios/initinfo.c:223
 msgid "Hold <Alternate> to skip HDD boot"
 msgstr "Halte <Alt> = keine Harddisk"
 
-#: bios/bios.c:438
+#: bios/bios.c:437
 msgid ""
 "System halted!\n"
 msgstr ""
@@ -813,7 +813,7 @@ msgstr "  Stoppe System   ^Q"
 msgid "  Change resolution         \007C"
 msgstr "  Auflösung ändern          \007C"
 
-#: bios/initinfo.c:227
+#: bios/initinfo.c:226
 msgid "Press 'C' to run an early console"
 msgstr "Drücke 'C' für die Konsole"
 
@@ -902,7 +902,7 @@ msgstr "-------------------------------"
 msgid "--------------------"
 msgstr "--------------------"
 
-#: bios/initinfo.c:234
+#: bios/initinfo.c:233
 msgid " Hold <Shift> to pause this screen "
 msgstr " Für Pause <Shift> gedrückt halten "
 
@@ -914,7 +914,7 @@ msgstr "[3]["
 "Kann FORMAT.PRG bzw.|"
 "FORMAT.TTP nicht finden.][  OK  ]"
 
-#: desk/desk_rsc.c:1758
+#: desk/desk_rsc.c:1616
 msgid "[2]["
 "Switch resolution?][Yes|No]"
 msgstr "[2]["
@@ -930,3 +930,4 @@ msgstr "[1]["
 "nicht ausführen. Eventuell ist|"
 "die Datei beschädigt oder der|"
 "freie Speicher zu knapp.][  OK  ]"
+
