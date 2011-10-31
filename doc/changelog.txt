@@ -2897,3 +2897,6 @@ Start... early ages
 - doc/status.txt: Updated for next release. (VRI)
 - doc/todo.txt: Updated for next release. (VRI)
 - readme.txt: Updated for next release. (VRI)
+
+2011-10-31
+- readme.txt: Cleaned up. (VRI)
