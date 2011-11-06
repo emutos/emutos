@@ -129,3 +129,7 @@ David Galvez <dgalvez75 at gmail.com>
 
 Christos Tziotzis <ctziotzis at gmail.com>
 - Greek translation update
+
+Fredi Aschwanden <mcs at kingx.com>
+and all the ACP team
+- Tests on the FireBee hardware
