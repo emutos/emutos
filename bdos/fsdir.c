@@ -350,7 +350,7 @@ long xrmdir(char *p)
         {
                 if (!(f = (FCB *) ixread(fd,32L,NULLPTR)))
                         break;
-        } while (f->f_name[0] == (char)0x0e5);
+        } while (f->f_name[0] == (char)0x0e5 || f->f_attrib == FA_LFN);
 
 
         if( f != (FCB*)NULLPTR  &&  f->f_name[0] != 0 )
