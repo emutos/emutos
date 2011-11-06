@@ -5,8 +5,9 @@ These ROMs are suitable for the following hardware:
 - Mega ST
 - emulators of the above
 
-Note: Extra hardware is NOT autodetected, unlike other ROM versions.
-These ROMs will not work on Hatari with extra emulated hardware.
+Unlike other ROM versions, they do NOT autodetect extra hardware, and might not
+work on machines with additional hardware. For example, they don't work under
+Hatari emulator's Falcon emulation due to missing VIDEL support.
 
 Each ROM contains a single language:
 

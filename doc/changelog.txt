@@ -2920,3 +2920,4 @@ Start... early ages
 2011-11-06
 - bios/blkdev.c: Handle FAT12/16 filesystems correctly when the 'reserved
   sectors' field contains a value other than 1. Contributed by Roger Burrows.
+- doc/readme-192k.txt: Changed Hatari note. Contributed by Eero Tamminen. (VRI)
