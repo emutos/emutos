@@ -2916,3 +2916,7 @@ Start... early ages
 - doc/status.txt: Changed the description of the Mega STe test. (VRI)
 - doc/readme-192k.txt doc/readme-256k.txt doc/readme-512k.txt: Added specific
   notes for Hatari. (VRI)
+
+2011-11-06
+- bios/blkdev.c: Handle FAT12/16 filesystems correctly when the 'reserved
+  sectors' field contains a value other than 1. Contributed by Roger Burrows.

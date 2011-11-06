@@ -1,8 +1,9 @@
 /*
  * blkdev.c - BIOS block device functions
  *
- * Copyright (c) 2002-2007 by Authors:
- *
+ * Copyright (c) 2002-2011 The EmuTOS development team
+ * 
+ * Authors:
  *  MAD     Martin Doering
  *  joy     Petr Stehlik
  *
@@ -338,13 +339,13 @@ LONG blkdev_getbpb(WORD dev)
 
     /* the structure of the logical disk is assumed to be:
      * - bootsector
+     * - other reserved sectors (if any)
      * - fats
      * - dir
      * - data clusters
-     * TODO: understand what to do with reserved or hidden sectors.
      */
 
-    blkdev[dev].bpb.fatrec = 1 + blkdev[dev].bpb.fsiz; 
+    blkdev[dev].bpb.fatrec = getiword(b->res) + blkdev[dev].bpb.fsiz; 
     blkdev[dev].bpb.datrec = blkdev[dev].bpb.fatrec + blkdev[dev].bpb.fsiz 
                            + blkdev[dev].bpb.rdlen;
     if (b->spc != 0) {
