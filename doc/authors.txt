@@ -115,7 +115,7 @@ Jean-Francois Del Nero <jeanfrancoisdelnero at free.fr>
 - Various bugfixes
 
 Roger Burrows <rfburrows at ymail.com>
-- FAT16 partitions up to 2 GB
+- FAT16 partitions up to 2 GB (inspired from Didier Mequignon's BDOS fork)
 - Various bugfixes and cleanups
 
 Lodovico Zanier <lvc958 at libero.it>
