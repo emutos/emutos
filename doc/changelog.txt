@@ -2931,3 +2931,6 @@ Start... early ages
   This caused EmuDesk to randomly and silently stop when copying a folder. (VRI)
 - bdos/fs.h bdos/fsio.c bdos/fsopnclo.c: Fixed creating a read-only file and
   copying a read-only file with EmuDesk. Contributed by Roger Burrows. (VRI)
+
+2011-11-08
+- doc/announce.txt: Updated the release date. (VRI)
