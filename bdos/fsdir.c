@@ -635,7 +635,7 @@ long xsnext(void)
 **      Function 0x57   f_datime
 */
 
-void xgsdtof(int *buf, int h, int wrt)
+long xgsdtof(int *buf, int h, int wrt)
 {
         register OFD *f ;
         register int *b ;
@@ -660,6 +660,8 @@ void xgsdtof(int *buf, int h, int wrt)
                 swpw(b[0]);                    /* M01.01.0918.01 */
                 swpw(b[1]);                    /* M01.01.0918.01 */
         }
+
+        return E_OK;
 }
 
 

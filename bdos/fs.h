@@ -414,7 +414,7 @@ long xchmod(char *p, int wrt, char mod);
 long ixsfirst(char *name, register WORD att, register DTAINFO *addr);
 long xsfirst(char *name, int att);
 long xsnext(void); 
-void xgsdtof(int *buf, int h, int wrt);
+long xgsdtof(int *buf, int h, int wrt);
 void builds( char *s1 , char *s2 );
 long xrename(int n, char *p1, char *p2);
 long xchdir(char *p);

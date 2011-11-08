@@ -216,7 +216,7 @@ static const FND funcs[0x58] =
     { ni,       0, 0 },
 
     { xrename,  0, 5 },    /* 0x56 */
-    { (long(*)()) xgsdtof, 0, 4 }  /* 0x57 */
+    { xgsdtof,  0, 4 }       /* 0x57 */
 };
 
 

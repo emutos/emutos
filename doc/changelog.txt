@@ -2925,3 +2925,7 @@ Start... early ages
 - doc/authors.txt: Added credit to Fredi Aschwanden and the ACP team. (VRI)
 - doc/readme-floppy.txt: Fixed make command line. (VRI)
 - bdos/fsdir.c: Allow removing a directory containing long file names. (VRI)
+
+2011-11-07
+- bdos/bdosmain.c bdos/fs.h bdos/fsdir.c: Fixed Fdatime() random return value.
+  This caused EmuDesk to randomly and silently stop when copying a folder. (VRI)
