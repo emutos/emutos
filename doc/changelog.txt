@@ -2929,3 +2929,5 @@ Start... early ages
 2011-11-07
 - bdos/bdosmain.c bdos/fs.h bdos/fsdir.c: Fixed Fdatime() random return value.
   This caused EmuDesk to randomly and silently stop when copying a folder. (VRI)
+- bdos/fs.h bdos/fsio.c bdos/fsopnclo.c: Fixed creating a read-only file and
+  copying a read-only file with EmuDesk. Contributed by Roger Burrows. (VRI)

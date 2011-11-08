@@ -120,9 +120,25 @@ OFD
     unsigned int o_curbyt; /* byte pointer within current cluster */
     int   o_usecnt;     /* use count for inherited files        */
     OFD   *o_thread;    /* mulitple open thread list            */
-    int   o_mod;        /* mode file opened in (r, w, r/w)      */
+    int   o_mod;        /* mode file opened in (see below)      */
 } ;
 
+/*
+ * bit usage in o_mod
+ * 
+ * bits 8-15 are internal-use only
+ * bits 0-7 correspond to bit usage in the Fopen() system call
+ * note: bits 4-7 are only used if GEMDOS file-sharing/record-locking
+ *       is implemented
+ */
+#define RO_WRITE_OK 0x8000  /* ok to write a R/O file (we're creating it) */
+#define INH_MODE    0x80    /* bit 7 is inheritance flag (not yet implemented) */
+#define MODE_FSM    0x70    /* bits 4-6 are file sharing mode (not yet implemented) */
+#define MODE_FAC    0x07    /* bits 0-2 are file access code: */
+#define RO_MODE        0
+#define WO_MODE        1
+#define RW_MODE        2
+#define VALID_FOPEN_BITS    MODE_FAC    /* currently-valid bits for Fopen() */
 
 /*
  * O_DIRTY - Dirty Flag

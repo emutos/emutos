@@ -230,7 +230,7 @@ long    ixread(OFD *p, long len, void *ubufr)
 #endif
 
     /* Make sure file not opened as write only */
-    if (p->o_mod == 1)
+    if ((p->o_mod&MODE_FAC) == WO_MODE)
         return (EACCDN);
 
     if (len > (maxlen = p->o_fileln - p->o_bytnum))
@@ -262,7 +262,7 @@ long    xwrite(int h, long len, void *ubufr)
     p = getofd(h);
     if ( p ) {
         /* Make sure not read only.*/
-        if (p->o_mod == 0)
+        if (((p->o_mod&MODE_FAC) == RO_MODE) && !(p->o_mod&RO_WRITE_OK))
             ret = EACCDN;
         else
             ret = ixwrite(p,len,ubufr);
