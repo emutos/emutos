@@ -2934,3 +2934,5 @@ Start... early ages
 
 2011-11-08
 - doc/announce.txt: Updated the release date. (VRI)
+
+* Release: 0.8.6
