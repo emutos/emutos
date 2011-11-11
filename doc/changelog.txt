@@ -2953,3 +2953,7 @@ Start... early ages
   desk/deskobj.c include/compat.h include/version.h tools/version.sed: Added
   the const attribute to constant arrays so they moved to the TEXT segment. The
   DATA segment (which is still incorrectly read-only) is now empty.
+
+2011-11-11
+- desk/desksupp.c: Fixed desktop crash when opening a folder that has a
+  pathname exactly (LEN_ZPATH-LEN_ZFNAME) bytes long. (RFB)

@@ -472,9 +472,7 @@ void do_fopen(WNODE *pw, WORD curr, WORD drv, BYTE *ppath, BYTE *pname,
         GRECT   t;
         WORD    ok;
         BYTE    *pnew;
-#ifndef DESK1
         BYTE    *pp;
-#endif
         
         ok = TRUE;
         pnew = ppath;
@@ -537,12 +535,23 @@ void do_fopen(WNODE *pw, WORD curr, WORD drv, BYTE *ppath, BYTE *pname,
 #ifdef DESK1
         if (!DOS_ERR)
         {
-                ppath = "";
                 pname = "*";
                 pext  = "*";
         }
         ok = do_diropen(pw, FALSE, curr, drv, pnew, pname, pext, &t, redraw);
-        (void)ok; /* silent warning */
+        if ( !ok )
+        {
+          fun_alert(1, STDEEPPA, NULLPTR);
+                                                /* back up one level    */
+          pp = pnew;
+          while (*pp)
+            pp++;
+          while(*pp != '\\')
+            pp--;
+          *pp = NULL;
+          pro_chdir(drv,pnew);                  /* fixup current dir */
+          do_diropen(pw, FALSE, curr, drv, pnew, pname, pext, &t, redraw);
+        }
 #else /* DESK1 */
         if (ok)
         {
