@@ -574,7 +574,7 @@ WORD do_open(WORD curr)
         WNODE   *pw;
         FNODE   *pf;
         WORD    drv, isapp;
-        BYTE    path[66], name[9], ext[4];
+        BYTE    path[LEN_ZPATH+1], name[LEN_ZNODE+1], ext[LEN_ZEXT+1];
 
         done = FALSE;
 
@@ -763,7 +763,7 @@ void do_chkall(WORD redraw)
 {
         WORD    ii;
         WORD    drv;
-        BYTE    path[66], name[9], ext[4];
+        BYTE    path[LEN_ZPATH+1], name[LEN_ZNODE+1], ext[LEN_ZEXT+1];
         WNODE   *pw;
 
         for(ii = 0; ii < NUM_WNODES; ii++)

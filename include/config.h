@@ -313,4 +313,15 @@
  * found in the table in bios/country.c
  */
 
+/*
+ * Miscellaneous definitions that apply to more than one EmuTOS subsystem
+ */
+/*
+ * Maximum lengths for pathname, filename, and filename components
+ */
+#define LEN_ZPATH 67                    /* max path length, incl drive */
+#define LEN_ZFNAME 13                   /* max fname length, incl '\' separator */
+#define LEN_ZNODE 8                     /* max node length */
+#define LEN_ZEXT 3                      /* max extension length */
+
 #endif /* CONFIG_H */

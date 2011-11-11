@@ -128,14 +128,14 @@ static char *prntEnvPtr;
 /* Declarations for Wild Card processing: */
 static char *WSrcReq;
 static int WAttCode;
-static const char wildExp[4] = "*.*";
-static char srcFlNm[67];               /* src file name */
-static char dstFlNm[67];               /* destination file name */
-static char srcDir[67];                /* src dir path */
-static char dstDir[67];                /* dst dir path */
-static char srcNmPat[13];              /* src file name specified in path */
-static char dstNmPat[13];              /* dst file name specified in path */
-static char path[67];                  /* lst of default path names */
+static const char wildExp[] = "*.*";
+static char srcFlNm[LEN_ZPATH+1];      /* src file name */
+static char dstFlNm[LEN_ZPATH+1];      /* destination file name */
+static char srcDir[LEN_ZPATH+1];       /* src dir path */
+static char dstDir[LEN_ZPATH+1];       /* dst dir path */
+static char srcNmPat[LEN_ZFNAME+1];    /* src file name specified in path */
+static char dstNmPat[LEN_ZFNAME+1];    /* dst file name specified in path */
+static char path[LEN_ZPATH+1];         /* lst of default path names */
 
 /* Forward declarations */
 static void
@@ -963,8 +963,8 @@ copyCmd(char *src, char *dst, int move)
 {
     int i, srcEqDst, fds, fdd;
     long nr, nw;
-    char srcSpc[67];
-    char dstSpc[67];
+    char srcSpc[LEN_ZPATH+1];
+    char dstSpc[LEN_ZPATH+1];
     char buf[512];
 
     for (i = 0; (srcSpc[i] = src[i]); i++);
@@ -1073,8 +1073,8 @@ static long
 renmCmd(char *src, char *dst)
 {
     int i;
-    char srcSpc[67];
-    char dstSpc[67];
+    char srcSpc[LEN_ZPATH+1];
+    char dstSpc[LEN_ZPATH+1];
 
     for (i = 0; (srcSpc[i] = src[i]); i++);
     for (i = 0; (dstSpc[i] = dst[i]); i++);
@@ -1151,7 +1151,7 @@ renmCmd(char *src, char *dst)
 static long
 dirCmd(char *argv[])
 {
-    char srcSpc[67];
+    char srcSpc[LEN_ZPATH+1];
     int i, j, k, n, att, *dt, filOnly, dirOnly, terse, wide;
     long compl_code, *pl;
 
@@ -1321,7 +1321,7 @@ mknum(char *str)
 static long
 chmodCmd(char *argv[])
 {
-    char srcSpc[67];
+    char srcSpc[LEN_ZPATH+1];
     int i, att;
     long compl_code;
 
@@ -1368,7 +1368,7 @@ chmodCmd(char *argv[])
 static long
 typeCmd(char *argv[])
 {
-    char srcSpc[67];
+    char srcSpc[LEN_ZPATH+1];
     int i, fd;
     long n;
     long compl_code;
@@ -1409,7 +1409,7 @@ typeCmd(char *argv[])
 static long
 delCmd(char *argv[])
 {
-    char srcSpc[67];
+    char srcSpc[LEN_ZPATH+1];
     int i, j, k, query;
     long compl_code;
 

@@ -978,7 +978,7 @@ static void hot_close(WORD wh)
 /* until the button is up or there are no more CLOSED messages          */
         WORD            drv, done, at_drvs, cnt;
         WORD            mx, my, button, kstate;
-        BYTE            path[66], name[9], ext[4];
+        BYTE            path[LEN_ZPATH+1], name[LEN_ZNODE+1], ext[LEN_ZEXT+1];
         BYTE            *pend, *pname, *ppath;
         WNODE           *pw;
 

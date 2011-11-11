@@ -2940,3 +2940,6 @@ Start... early ages
 2011-11-10
 - aes/gemgsxif.c: Fixed calculation of size of menu/alert screen buffer, and
   added/updated comments. (RFB)
+- cli/command.c desk/desk1.c desk/deskapp.h desk/deskmain.c desk/desksupp.c
+  include/config.h: Replaced "magic numbers" for sizes of filename/pathname/etc
+  with centralised #defines. (RFB)

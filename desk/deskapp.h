@@ -83,9 +83,6 @@
 #define ID_GAME 54
 #define ID_OUTPUT 55
 
-#define LEN_ZPATH 67
-#define LEN_ZFNAME 13
-
 #define NUM_ANODES 64                           /* # of appl. nodes     */
 #define SIZE_AFILE 2048                         /* size of DESKTOP.APP  */
                                                 /*   file               */

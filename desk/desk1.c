@@ -81,9 +81,9 @@ WORD true_closewnd(WNODE *pw)
 WORD fun_close(WNODE *pw, WORD trueclose)
 {
         BYTE *ppath, *pend;
-        BYTE ext[4];
-        BYTE name[9];
-        BYTE path[66];
+        BYTE ext[LEN_ZEXT+1];
+        BYTE name[LEN_ZNODE+1];
+        BYTE path[LEN_ZPATH+1];
         WORD drv;
         WORD rv;
 
