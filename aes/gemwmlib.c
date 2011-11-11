@@ -84,7 +84,7 @@ GLOBAL PD       *gl_lastnpd;
 GLOBAL WORD     proc_msg[8];
 #endif
 
-GLOBAL WORD     gl_watype[NUM_ELEM] =
+GLOBAL const WORD gl_watype[NUM_ELEM] =
 {
         G_IBOX,         /* W_BOX        */
         G_BOX,          /* W_TITLE      */
@@ -107,7 +107,7 @@ GLOBAL WORD     gl_watype[NUM_ELEM] =
         G_BOX           /* W_HELEV      */
 } ;
 
-GLOBAL LONG     gl_waspec[NUM_ELEM] =
+GLOBAL const LONG gl_waspec[NUM_ELEM] =
 {
         0x00011101L,    /* W_BOX        */
         0x00011101L,    /* W_TITLE      */
@@ -133,7 +133,7 @@ GLOBAL LONG     gl_waspec[NUM_ELEM] =
 GLOBAL TEDINFO  gl_aname;
 GLOBAL TEDINFO  gl_ainfo;
 
-GLOBAL TEDINFO  gl_asamp =
+GLOBAL const TEDINFO gl_asamp =
 {
         0x0L, 0x0L, 0x0L, IBM, MD_REPLACE, TE_LEFT, SYS_FG, 0x0, 1, 80, 80
 };

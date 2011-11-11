@@ -43,7 +43,7 @@
                                                 /*  in GEM.RSC          */
 
 
-GLOBAL BYTE     gl_fsobj[4] = {FTITLE, FILEBOX, SCRLBAR, 0x0};
+GLOBAL const BYTE gl_fsobj[4] = {FTITLE, FILEBOX, SCRLBAR, 0x0};
 GLOBAL LONG     ad_fstree;
 GLOBAL LONG     ad_fsnames;
 GLOBAL LONG     ad_fsdta;
@@ -379,7 +379,7 @@ static WORD fs_newdir(LONG ftitle,
                       WORD *pcount, 
                       WORD pos)
 {
-        BYTE            *ptmp;
+        const BYTE      *ptmp;
         WORD            len;
                                         /* BUGFIX 2.1 added len calculation*/
                                         /*  so FTITLE doesn't run over into*/

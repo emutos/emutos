@@ -2943,3 +2943,13 @@ Start... early ages
 - cli/command.c desk/desk1.c desk/deskapp.h desk/deskmain.c desk/desksupp.c
   include/config.h: Replaced "magic numbers" for sizes of filename/pathname/etc
   with centralised #defines. (RFB)
+
+2011-11-11
+- aes/gem_rsc.c aes/gem_rsc.h aes/gemctrl.c aes/gemctrl.h aes/gemevlib.c
+  aes/gemevlib.h aes/gemfmalt.c aes/gemfmalt.h aes/gemfslib.c aes/gemfslib.h
+  aes/gemmnlib.c aes/gemmnlib.h aes/gemsclib.c aes/gemwmlib.c aes/gemwmlib.h
+  bdos/fs.h bdos/fsdir.c bdos/fsopnclo.c bios/disk.c bios/fnt_st_8x8.c
+  bios/screen.c bios/vt52.c cli/command.c desk/desk_rsc.c desk/deskmain.c
+  desk/deskobj.c include/compat.h include/version.h tools/version.sed: Added
+  the const attribute to constant arrays so they moved to the TEXT segment. The
+  DATA segment (which is still incorrectly read-only) is now empty.

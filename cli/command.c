@@ -120,7 +120,7 @@ static char srchb[44];
 static const char prgTail[5] = ".PRG";
 static const char batTail[5] = ".BAT";
 static const char pthSymb[6] = "PATH=";
-static char autoBat[13] = "AUTOEXEC.BAT";
+static const char autoBat[13] = "AUTOEXEC.BAT";
 static char drvch;
 static char *basePage;
 static char *prntEnvPtr;
@@ -1647,7 +1647,7 @@ execPrgm(char *s, char *cmdtl)
  *  execBat - execute batch file
  */
 static int
-execBat(char *s, char *parms[])
+execBat(const char *s, char *parms[])
 {
     long flHnd;
     int i, j, k, gtpath;
@@ -2400,7 +2400,7 @@ cmain(char *bp)
         }
     }
     if (!cmd)
-        execBat((char *) &autoBat, &parm[0]);
+        execBat(autoBat, &parm[0]);
 
     if (setjmp(jb)) {
         for (i = 6; i <= 20; i++)

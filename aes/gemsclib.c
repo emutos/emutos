@@ -93,7 +93,7 @@ WORD sc_clear()
 {
     LONG    ptmp;
     WORD    found;
-    static char scrapmask[] = "\\SCRAP.*";
+    static const char *scrapmask = "\\SCRAP.*";
 
     if(ad_scrap == NULL || LBGET(ad_scrap) == 0)
       return FALSE;

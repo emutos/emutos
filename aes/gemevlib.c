@@ -32,7 +32,7 @@
 
 
 /* Global variables: */
-WORD     gl_dcrates[5] = {450, 330, 275, 220, 165};
+const WORD gl_dcrates[5] = {450, 330, 275, 220, 165};
 WORD     gl_dcindex;
 WORD     gl_dclick;                      /* # of ticks to wait   */
                                                 /*   to see if a second */

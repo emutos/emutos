@@ -78,7 +78,7 @@ BOOL vt52_initialized;  /* checked by kprintf for safety */
 
 
 /* jumptable for ESC + uppercase character */
-void (*am_tab[])(void) = {
+static void (* const am_tab[])(void) = {
     cursor_up,          /* Cursor Up */
     cursor_down,        /* Cursor Down */
     cursor_right,       /* Cursor Right */
@@ -96,7 +96,7 @@ void (*am_tab[])(void) = {
 
 
 /* jumptable for ESC + lowercase character */
-void (*bw_tab[])(void) = {
+static void (* const bw_tab[])(void) = {
     set_fg,             /* Set foreground color (1 more char) */
     set_bg,             /* Set background color (1 more char) */
     erase_from_home,    /* Erase from beginning of page */
@@ -122,7 +122,7 @@ void (*bw_tab[])(void) = {
 };
 
 /* jumptable for ASCII control codes */
-void (*cntl_tab[])(void) = {
+static void (* const cntl_tab[])(void) = {
     do_bell,            /* 7 = bell */
     cursor_left,        /* 8 = backspace */
     do_tab,             /* 9 = Horizontal tab */

@@ -472,13 +472,13 @@ UWORD get_videl_height(void)
 static void set_videl_vga(int mode)
 {
     volatile char *videlregs = (char *)0xffff8200;
-    int hdb_40[5] = { 0x73, 0x0a, 0x8a, 0x9a, 0xac };
-    int hdb_80[5] = { 0x73, 0x0e, 0xa3, 0xab, 0xac };
-    int hde_40[5] = { 0x50, 0x09, 0x6b, 0x7b, 0x91 };
-    int hde_80[5] = { 0x50, 0x0d, 0x7c, 0x84, 0x91 };
-    int lwidth[5] = { 40, 80, 160, 320, 640 };
-    int fsm[5] = { 0x400, 0, 0, 16, 256 };
-    int vmd[5] = { 8, 4, 8, 8, 4 };
+    static const int hdb_40[5] = { 0x73, 0x0a, 0x8a, 0x9a, 0xac };
+    static const int hdb_80[5] = { 0x73, 0x0e, 0xa3, 0xab, 0xac };
+    static const int hde_40[5] = { 0x50, 0x09, 0x6b, 0x7b, 0x91 };
+    static const int hde_80[5] = { 0x50, 0x0d, 0x7c, 0x84, 0x91 };
+    static const int lwidth[5] = { 40, 80, 160, 320, 640 };
+    static const int fsm[5] = { 0x400, 0, 0, 16, 256 };
+    static const int vmd[5] = { 8, 4, 8, 8, 4 };
     int idx;
 
     idx = mode & 0x7;

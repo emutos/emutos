@@ -10,7 +10,7 @@
 #ifndef GEMFSLIB_H
 #define GEMFSLIB_H
 
-extern BYTE     gl_fsobj[];
+extern const BYTE gl_fsobj[];
 extern LONG     ad_fstree;
 extern LONG     ad_fsnames;
 extern LONG     ad_fsdta;

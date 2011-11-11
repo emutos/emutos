@@ -153,8 +153,8 @@
 static int namlen(char *s11);
 static char *dopath(DND *p, char *buf, int *len);
 static DND *makdnd(DND *p, FCB *b);
-static DND *dcrack(char **np);
-static int getpath(char *p, char *d, int dirspec);
+static DND *dcrack(const char **np);
+static int getpath(const char *p, char *d, int dirspec);
 static BOOL match(char *s1, char *s2);
 static void makbuf(FCB *f, DTAINFO *dt);
 static int xcmps(char *s, char *d);
@@ -165,14 +165,14 @@ static void freednd(DND *dn);
  *  local macros
  */
 
-#define dirscan(a,c) ((DND *) scan(a,c,FA_SUBDIR,&negone))
+#define dirscan(a,c) ((DND *) scan(a,c,FA_SUBDIR,(LONG*)&negone))
 
 
 /*
 **  dots
 */
 
-static  char dots[22] = ".          ";
+static const char dots[22] = ".          ";
 
 
 /*
@@ -323,7 +323,7 @@ long xrmdir(char *p)
         FCB     *f;
         OFD     *fd,*f2;                /* M01.01.03 */
         long    pos;
-        char    *s;
+        const char *s;
         register int i;
 
         if ((long)(d = findit(p,&s,1)) < 0)             /* M01.01.1212.01 */
@@ -402,7 +402,7 @@ long xchmod(char *p, int wrt, char mod)
 {
         OFD *fd;
         DND *dn;                                        /*  M01.01.03   */
-        char *s;
+        const char *s;
         long pos;
 
         if ((long)(dn = findit(p,&s,0)) < 0)            /* M01.01.1212.01 */
@@ -448,7 +448,7 @@ long xchmod(char *p, int wrt, char mod)
 
 long ixsfirst(char *name, register WORD att, register DTAINFO *addr)
 {
-    char *s;                    /*  M01.01.03                   */
+    const char *s;              /*  M01.01.03                   */
     DND *dn;
     FCB *f;
     long pos;
@@ -771,7 +771,7 @@ void builds(char *s1, char *s2)
 */
 
 /* s1 is source, s2 dest */
-void builds(char *s1, char *s2)
+void builds(const char *s1, char *s2)
 {
         int i;
         char c;
@@ -827,7 +827,7 @@ long xrename(int n, char *p1, char *p2)
         OFD     *f1,*fd;
         FCB     *f;
         DND     *dn1,*dn2;
-        char    *s1,*s2;
+        const char *s1,*s2;
         char    buf[11];
         int     hnew,att;
         long    rc, h1;
@@ -903,7 +903,7 @@ long xchdir(char *p)
         register int dr, i ;
         long    l;
         int     dphy,dlog,flg;
-        char    *s;
+        const char *s;
 
         dlog = 0; /* dummy, to avoid warning */
         flg = 1;
@@ -1074,7 +1074,7 @@ static char *dopath(DND *p, char *buf, int *len)
  *  negone - for use as parameter
  */
 
-static long negone = { -1L } ;
+static const long negone = { -1L } ;
 
 
 /*      
@@ -1084,10 +1084,10 @@ static long negone = { -1L } ;
 /*  name: name of file/dir      
  * dflag: T: name is for a directory
  */             
-DND     *findit(char *name, char **sp, int dflag)
+DND     *findit(char *name, const char **sp, int dflag)
 {
     register DND *p;
-    char        *n;
+    const char *n;
     DND *pp,*newp;
     int i;
     char        s[11];
@@ -1214,7 +1214,7 @@ DND     *findit(char *name, char **sp, int dflag)
  *      return the pointer to the DND, not the FCB.
  */
 
-FCB     *scan(register DND *dnd, char *n, WORD att, LONG *posp)
+FCB     *scan(register DND *dnd, const char *n, WORD att, LONG *posp)
 { 
         char    name[12];
         register FCB *fcb;
@@ -1414,9 +1414,9 @@ static DND *makdnd(DND *p, FCB *b)
  *      ptr to DND for 1st element in path, or error
  */
 
-static DND *dcrack(char **np)
+static DND *dcrack(const char **np)
 {
-    register char       *n;
+    register const char *n;
     DND *p;
     register int d;
     LONG l;                                             /* M01.01.1212.01 */
@@ -1483,10 +1483,10 @@ static DND *dcrack(char **np)
  * d: ptr to destination buffer
  * dirspec: true = no file name, just dir path
  */
-static int getpath(char *p, char *d, int dirspec)
+static int getpath(const char *p, char *d, int dirspec)
 {
         register int    i, i2 ;
-        register char   *p1 ;
+        register const char *p1 ;
 
         for( i = 0 , p1 = p ; *p1 && (*p1 != SLASH) ; p1++ , i++ )
                 ;

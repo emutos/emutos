@@ -16,5 +16,5 @@
  * the changelog so it is guaranteed to be accurate).
  */
 
-extern char version[];
+extern const char version[];
 

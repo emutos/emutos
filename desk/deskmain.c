@@ -132,24 +132,24 @@ static void    cnx_put(void);
 static WORD     ig_close;
 
 #ifndef DESK1
-static BYTE     ILL_ITEM[] = {L1ITEM, L2ITEM, L3ITEM, L4ITEM, L5ITEM, CLSWITEM, 0};
+static const BYTE     ILL_ITEM[] = {L1ITEM, L2ITEM, L3ITEM, L4ITEM, L5ITEM, CLSWITEM, 0};
 #else
-static BYTE     ILL_ITEM[] = {L1ITEM, L2ITEM, L3ITEM, L4ITEM, L5ITEM, 0};
+static const BYTE     ILL_ITEM[] = {L1ITEM, L2ITEM, L3ITEM, L4ITEM, L5ITEM, 0};
 #endif
 
-static BYTE     ILL_FILE[] = {FORMITEM,IDSKITEM,0};
-static BYTE     ILL_DOCU[] = {FORMITEM,IDSKITEM,IAPPITEM,0};
-static BYTE     ILL_FOLD[] = {FORMITEM,IDSKITEM,IAPPITEM,0};
-static BYTE     ILL_FDSK[] = {DELTITEM,IAPPITEM,0};
-static BYTE     ILL_HDSK[] = {FORMITEM,DELTITEM,IAPPITEM,0};
-static BYTE     ILL_NOSEL[] = {OPENITEM,SHOWITEM,FORMITEM,DELTITEM,
+static const BYTE     ILL_FILE[] = {FORMITEM,IDSKITEM,0};
+static const BYTE     ILL_DOCU[] = {FORMITEM,IDSKITEM,IAPPITEM,0};
+static const BYTE     ILL_FOLD[] = {FORMITEM,IDSKITEM,IAPPITEM,0};
+static const BYTE     ILL_FDSK[] = {DELTITEM,IAPPITEM,0};
+static const BYTE     ILL_HDSK[] = {FORMITEM,DELTITEM,IAPPITEM,0};
+static const BYTE     ILL_NOSEL[] = {OPENITEM,SHOWITEM,FORMITEM,DELTITEM,
                                 IDSKITEM,IAPPITEM,0};
-static BYTE     ILL_YSEL[] = {OPENITEM, IDSKITEM, FORMITEM, SHOWITEM, 0};
+static const BYTE     ILL_YSEL[] = {OPENITEM, IDSKITEM, FORMITEM, SHOWITEM, 0};
 
 #ifdef DESK1
-static BYTE     ILL_TRASH[] = {OPENITEM,FORMITEM,DELTITEM,IDSKITEM,IAPPITEM,0};
-static BYTE     ILL_NOTOP[] = {NFOLITEM,CLOSITEM,CLSWITEM,0};
-static BYTE     ILL_DESKTOP[] = {NFOLITEM,CLOSITEM,CLSWITEM,ICONITEM,
+static const BYTE     ILL_TRASH[] = {OPENITEM,FORMITEM,DELTITEM,IDSKITEM,IAPPITEM,0};
+static const BYTE     ILL_NOTOP[] = {NFOLITEM,CLOSITEM,CLSWITEM,0};
+static const BYTE     ILL_DESKTOP[] = {NFOLITEM,CLOSITEM,CLSWITEM,ICONITEM,
                                 NAMEITEM,DATEITEM,SIZEITEM,TYPEITEM,0};
 #endif
 
@@ -385,7 +385,7 @@ ANODE *i_find(WORD wh, WORD item, FNODE **ppf, WORD *pisapp)
 /*
 *       Enable/Disable the menu items in dlist
 */
-static void men_list(LONG mlist, BYTE *dlist, WORD enable)
+static void men_list(LONG mlist, const BYTE *dlist, WORD enable)
 {
         while (*dlist)
           menu_ienable(mlist, *dlist++, enable);
@@ -399,7 +399,7 @@ static void men_list(LONG mlist, BYTE *dlist, WORD enable)
 static void men_update(LONG tree)
 {
         WORD            item, nsel, *pjunk, isapp;
-        BYTE            *pvalue;
+        const BYTE      *pvalue;
         ANODE           *appl;
 
         pvalue = 0;

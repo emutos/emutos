@@ -19,7 +19,7 @@
   :good
   # turn to C syntax
   s/["\]/\\&/g
-  s/.*/char version[] = "&";/
+  s/.*/const char version[] = "&";/
   # print and exit if on the last line
   ${
     p

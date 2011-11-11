@@ -59,7 +59,7 @@ WORD     appl_msg[8];
                                                 /* used to convert from */
                                                 /*   window object # to */
                                                 /*   window message code*/
-WORD     gl_wa[] =
+const WORD gl_wa[] =
 {
         WA_UPLINE,
         WA_DNLINE,

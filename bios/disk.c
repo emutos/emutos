@@ -33,9 +33,10 @@
 void disk_init(void)
 {
     /* scan disk targets in the following order */
-    int targets[] = {16, 18, 17, 19, 20, 22, 21, 23,    /* IDE primary/secondary */
-                     8, 9, 10, 11, 12, 13, 14, 15,      /* SCSI */
-                     0, 1, 2, 3, 4, 5, 6, 7};           /* ACSI */
+    static const int targets[] =
+        {16, 18, 17, 19, 20, 22, 21, 23,    /* IDE primary/secondary */
+         8, 9, 10, 11, 12, 13, 14, 15,      /* SCSI */
+         0, 1, 2, 3, 4, 5, 6, 7};           /* ACSI */
     int i;
 
     /* scan for attached harddrives and their partitions */

@@ -135,12 +135,16 @@
 #define MICE07          10
 
 
-extern OBJECT    rs_obj[];
-extern TEDINFO   rs_tedinfo[];
-extern BITBLK    rs_bitblk[];
-extern OBJECT  * rs_tree[];
-extern char    * rs_fstr[];
-extern BITBLK    rs_fimg[];
+/* The following arrays live in RAM */
+extern OBJECT  rs_obj[];
+extern TEDINFO rs_tedinfo[];
+
+/* This array lives in ROM and points to RAM data */
+extern OBJECT * const rs_tree[];
+
+/* The following resource data live in ROM */
+extern const char * const rs_fstr[];
+extern const BITBLK       rs_fimg[];
 
 
 extern void gem_rsc_init(void);

@@ -64,7 +64,7 @@ static long opnfil(FCB *f, DND *dn, int mod);
 static long makopn(FCB *f, DND *dn, int h, int mod);
 static FTAB *sftsrch(int field, char *ptr);
 static void sftdel(FTAB *sftp);
-static BOOL match1(char *ref, char *test);
+static BOOL match1(const char *ref, const char *test);
 
 /*
 **  used in calls to sftsrch to distinguish which field we are matching on
@@ -119,7 +119,8 @@ long ixcreat(char *name, char attr)
         register DND *dn;
         register OFD *fd;
         FCB *f;
-        char *s,n[2],a[11];                     /*  M01.01.03   */
+        const char *s;
+        char    n[2],a[11];                     /*  M01.01.03   */
         int i,f2;                               /*  M01.01.03   */
         long pos,rc;
 
@@ -238,7 +239,7 @@ ixopen(char *name, int mod)
 {
         FCB *f;
         DND *dn;
-        char *s;
+        const char *s;
         long pos;
 
         /* first find path */
@@ -569,7 +570,7 @@ long xunlink(char *name)
 {
         register DND *dn;
         register FCB *f;
-        char *s;
+        const char *s;
         long pos;
 
  /* first find path */
@@ -673,9 +674,9 @@ long ixdel(DND *dn, FCB *f, long pos)
 **      by scc
 */
 
-static BOOL match1(char *ref, char *test)
+static BOOL match1(const char *ref, const char *test)
 {
-        register char   *t ;
+        const char *t ;
 
         while( *ref )
         {

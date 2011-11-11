@@ -18,7 +18,7 @@ extern LONG     desk_acc[];
 extern PD       *desk_ppd[];
 extern LONG     menu_tree[];
 
-extern BYTE     *desk_str[];
+extern BYTE     * const desk_str[];
 
 extern WORD     gl_dacnt;
 extern WORD     gl_dabox;

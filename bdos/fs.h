@@ -431,13 +431,13 @@ long ixsfirst(char *name, register WORD att, register DTAINFO *addr);
 long xsfirst(char *name, int att);
 long xsnext(void); 
 long xgsdtof(int *buf, int h, int wrt);
-void builds( char *s1 , char *s2 );
+void builds(const char *s1 , char *s2 );
 long xrename(int n, char *p1, char *p2);
 long xchdir(char *p);
 long xgetdir(char *buf, int drv);
 FCB *dirinit(DND *dn);
-DND *findit(char *name, char **sp, int dflag);
-FCB *scan(register DND *dnd, char *n, WORD att, LONG *posp);
+DND *findit(char *name, const char **sp, int dflag);
+FCB *scan(register DND *dnd, const char *n, WORD att, LONG *posp);
 
 /*
  * in fsmain.c

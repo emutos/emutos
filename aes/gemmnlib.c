@@ -48,7 +48,7 @@ GLOBAL PD       *desk_ppd[NUM_DESKACC];
 GLOBAL LONG     menu_tree[NUM_PDS];
 
 static BYTE     desk_str_space[NUM_DESKACC][22];
-GLOBAL BYTE     *desk_str[NUM_DESKACC] = 
+GLOBAL BYTE     * const desk_str[NUM_DESKACC] = 
 {
     desk_str_space[0],
     desk_str_space[1],

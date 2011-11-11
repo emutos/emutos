@@ -225,7 +225,7 @@ static const TEDINFO desk_rs_tedinfo_rom[] = {
 };
 
 /* EmuTOS logo as designed by Martin */
-static int rs_logo_img[] = {
+static const int rs_logo_img[] = {
     0x0000, 0x0000, 0x0000, 0x0000, 
     0x0000, 0x0000, 0x0000, 0x0000, 
     0x0000, 0x0000, 0x000B, 0xD000, 
@@ -245,7 +245,7 @@ static int rs_logo_img[] = {
 };
 
 
-static BITBLK desk_rs_bitblk[] = {
+static const BITBLK desk_rs_bitblk[] = {
     {(LONG) rs_logo_img, 4, 32, 0, 0, 1},
 };
 
@@ -1608,7 +1608,7 @@ static OBJECT *desk_rs_trees[] = {
 };
 
 
-char *desk_rs_fstr[] = {
+static const char *desk_rs_fstr[] = {
     N_("%ld bytes used in %d items."),
     N_("  Show as icons  \007S"),
     N_("application"),

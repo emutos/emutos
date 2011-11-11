@@ -280,7 +280,7 @@ EXTERN LONG     LLCS();
 
 #if MC68K
 
-#define movs(num, ps, pd)  memcpy((char *)pd, (char *)ps, num)
+#define movs(num, ps, pd)  memcpy((char *)pd, (const char *)ps, num)
 
 #endif
 
