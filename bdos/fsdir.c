@@ -226,12 +226,12 @@ long xmkdir(char *s)
         ixlseek(fd,f->o_dirbyt);
         b = (FCB *) ixread(fd,32L,NULLPTR);
 
-        /* is the total path length >= 64 chars? */     /* M01.01.1107.01 */
+        /* is the total path length too long? */     /* M01.01.1107.01 */
 
         plen = namlen( b->f_name );
         for ( dn = f->o_dnode; dn; dn = dn->d_parent )
                 plen += namlen( dn->d_name );
-        if ( plen >= 64 )
+        if ( plen >= (LEN_ZPATH-3) )
         {
                 ixdel( f->o_dnode, b, f->o_dirbyt );
                 return ( EACCDN );
@@ -986,7 +986,7 @@ long    xgetdir(char *buf, int drv)
         }
 
         p = dirtbl[(int)(run->p_curdir[drv])];
-        len = 64;                                               /* M01.01.1024.02 */
+        len = LEN_ZPATH - 3;                                    /* M01.01.1024.02 */
         buf = dopath(p,buf,&len);                               /* M01.01.1024.02 */
         *--buf = 0;     /* null as last char, not slash */
 

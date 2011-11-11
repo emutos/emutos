@@ -74,7 +74,7 @@ static BYTE *fs_back(BYTE *pstr, BYTE *pend)
         if (*pend == ':')
         {
           pend++;
-          ins_char(pend, 0, '\\', 64);
+          ins_char(pend, 0, '\\', LEN_ZPATH-3);
         }
         return(pend);
 }
@@ -424,7 +424,7 @@ WORD fs_input(LONG pipath, LONG pisel, WORD *pbutton)
         WORD            dclkret, cont, firsttime, newname, elevpos;
         register BYTE   *pstr, *pspec;
         GRECT           pt;
-        BYTE            locstr[64];
+        BYTE            locstr[LEN_ZPATH+1];
 
         LONG            dummy; /*!!!*/
 
