@@ -1,7 +1,7 @@
 /*
- * gemasm.S - AES's interface to VDI (gsx)
+ * gemgsxif.c - AES's interface to VDI (gsx)
  *
- * Copyright 2002, The EmuTOS development team
+ * Copyright 2002-2011 The EmuTOS development team
  *           1999, Caldera Thin Clients, Inc.
  *           1987, Digital Research Inc.
  *
@@ -78,6 +78,10 @@ ULONG  gsx_gbufflen(void);
 
 
 
+/* this function calculates the size of the menu/alert screen buffer.
+ * for pre-v2 TOS, it's a quarter of the screen size, otherwise it's
+ * half (in Atari TOS, this change was actually made in v3).
+ */
 ULONG gsx_mcalc()
 {
     gsx_fix(&gl_tmp, 0x0L, 0, 0);           /* store screen info    */
@@ -85,7 +89,11 @@ ULONG gsx_mcalc()
     if (gl_mlen != 0x0l)
         gl_tmp.fd_addr = GRAFMEM;             /* buffer not in sys mem */
     else
-        gl_mlen =  63L * (LONG)gl_wchar * (LONG)gl_hchar * (LONG)gl_nplanes;
+#if TOS_VERSION >= 0x200
+        gl_mlen = (LONG)gl_tmp.fd_wdwidth * gl_tmp.fd_h * gl_tmp.fd_nplanes;
+#else
+        gl_mlen = (LONG)gl_tmp.fd_wdwidth * gl_tmp.fd_h * gl_tmp.fd_nplanes / 2;
+#endif
     return(gl_mlen);
 }
 
@@ -397,6 +405,12 @@ WORD gsx_char()
 
 
 
+/* this function seems bogus: EXTENDED_INQUIRE causes vq_extnd() to be
+ * called, which copies INQ_TAB[] to intout[].  I have not been able to
+ * find anywhere in EmuTOS where INQ_TAB[26] is set to a non-zero value,
+ * so it seems that intout[26] will always contain zeros, and therefore
+ * that this function will always return zero - Roger
+ */
 ULONG gsx_gbufflen()
 {
     gsx_1code(EXTENDED_INQUIRE, 1);
@@ -405,7 +419,7 @@ ULONG gsx_gbufflen()
 
 
 
-/* This function was formally only called v_opnwk, but there was a
+/* This function was formerly just called v_opnwk, but there was a
    conflict with the VDI then, so I renamed it to g_v_opnwk  - Thomas */
 void g_v_opnwk(WORD *pwork_in, WORD *phandle, WS *pwork_out )
 {
@@ -426,7 +440,7 @@ void g_v_opnwk(WORD *pwork_in, WORD *phandle, WS *pwork_out )
 
 
 
-/* This function was formally only called v_pline, but there was a
+/* This function was formerly just called v_pline, but there was a
  conflict with the VDI then, so I renamed it to g_v_pline  - Thomas */
 void g_v_pline(WORD  count, WORD *pxyarray )
 {
@@ -511,7 +525,7 @@ void vrn_trnfm(FDB *psrcMFDB, FDB *pdesMFDB)
 
 
 /*
- * This function was formally only called vsl_width, but there was a
+ * This function was formerly just called vsl_width, but there was a
  * conflict with the VDI then, so I renamed it to g_vsl_width  - Thomas
  */
 void g_vsl_width(WORD width)

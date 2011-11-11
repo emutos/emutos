@@ -2936,3 +2936,7 @@ Start... early ages
 - doc/announce.txt: Updated the release date. (VRI)
 
 * Release: 0.8.6
+
+2011-11-10
+- aes/gemgsxif.c: Fixed calculation of size of menu/alert screen buffer, and
+  added/updated comments. (RFB)
