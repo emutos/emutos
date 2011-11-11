@@ -88,7 +88,15 @@ void fpd_start(void)
 static WORD fpd_bldspec(WORD drive, BYTE *ppath, BYTE *pname, BYTE *pext, BYTE *pspec)
 {
 /* BUGFIX 2.1   */
-        if ( (strlen(ppath) + LEN_ZFNAME) >= (LEN_ZPATH-3) )
+        int len = 0;
+
+        if (*pname)
+        {
+          len = strlen(pname) + 1;      /* allow for "\" */
+          if (*pext)
+            len += strlen(pext) + 1;    /* allow for "." */
+        }
+        if ( (strlen(ppath) + len) >= (LEN_ZPATH-3) )
           return(FALSE);
 /* */
         *pspec++ = drive;

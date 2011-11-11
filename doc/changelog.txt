@@ -2957,3 +2957,5 @@ Start... early ages
 2011-11-11
 - desk/desksupp.c: Fixed desktop crash when opening a folder that has a
   pathname exactly (LEN_ZPATH-LEN_ZFNAME) bytes long. (RFB)
+- desk/deskfpd.c desk/desksupp.c: Fixed incorrect pathname length check
+  that caused some valid pathnames to be disallowed. (RFB)

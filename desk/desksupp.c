@@ -612,7 +612,7 @@ WORD do_open(WORD curr)
                 {
                   if (path[0] != NULL)
                     strcat(&path[0], "\\");
-                  if ( (strlen(&path[0]) + LEN_ZFNAME) >= (LEN_ZPATH-3) )
+                  if ( (strlen(path) + strlen(pf->f_name)) >= (LEN_ZPATH-3) )
                     fun_alert(1, STDEEPPA, NULLPTR);
                   else
                   {
