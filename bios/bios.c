@@ -65,7 +65,9 @@ LONG bios_do_unimpl(WORD number);
 /*==== External declarations ==============================================*/
 
 extern LONG osinit(void);       /* found in bdosmain.c */
-extern void cartscan(WORD);     /* found in startup.S */
+#if !DIAGNOSTIC_CARTRIDGE
+extern void run_cartridge_applications(WORD typebit); /* found in startup.S */
+#endif
 
 extern void ui_start(void);   /* found in cli/coma.S or aes/gemstart.S */
                               /* it is the start addr. of the user interface */
@@ -235,8 +237,12 @@ static void bios_init(void)
     kprintf("BIOS: Last test point reached ...\n");
 #endif
 
-#if !DIAGNOSTIC_CARTRIDGE
-    cartscan(3);
+#if DIAGNOSTIC_CARTRIDGE
+    /* Diagnostic and Application cartridges have different magic numbers,
+     * so a diagnostic cartridge can't contain any application.
+     */
+#else
+    run_cartridge_applications(3); /* Type "Execute prior to bootdisk" */
 #endif
 
     /* add TT-RAM that was detected in memory.S */

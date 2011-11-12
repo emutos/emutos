@@ -29,7 +29,9 @@
 
         
         .global _os_entry
-        .global _cartscan
+#if !DIAGNOSTIC_CARTRIDGE
+        .global _run_cartridge_applications
+#endif
         .global _stktop
 
 // ==== tosvars.s - TOS System variables =====================================
@@ -212,18 +214,14 @@ memdone:
 
 #if !DIAGNOSTIC_CARTRIDGE
 /*
- * _cartscan - Use cartridge, if present
+ * void run_cartridge_applications(WORD typebit);
  *
- * get cartridge-type in d0, else use C glue.
+ * Run all cartridge applications of the speficied type.
+ *
+ * typebit: application type bit number which must be set to 1 to match
  */
-
-//msg_cart:
-//        .ascii "BIOS: Cartridge has been initialized ...\n\0"
-//        .even
-
-_cartscan:      
-        move.w  4(sp),d0        
-cartscan:
+_run_cartridge_applications:      
+        move.w  4(sp),d0                // application bit number
         lea     cart_base, a0
 #ifdef __mcoldfire__
         move.l  #0xABCDEF42, d1
@@ -235,10 +233,6 @@ cartscan:
 testtype:
         btst    d0, 4(a0)               // What type?
         beq     nextapp
-
-//        pea     msg_cart
-//        bsr     _kprintf
-//        addq #4,sp
 
 #ifdef __mcoldfire__
         lea     -60(sp), sp

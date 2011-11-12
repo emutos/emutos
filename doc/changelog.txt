@@ -2963,3 +2963,5 @@ Start... early ages
 2011-11-12
 - Makefile bios/bios.c bios/startup.S include/config.h: New target "make cart"
   to build a diagnostic cartridge into etoscart.img. (VRI)
+- bios/bios.c bios/startup.S: Renamed cartscan() to run_cartridge_applications()
+  and improved application cartridge comments. (VRI)
