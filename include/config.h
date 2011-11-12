@@ -106,6 +106,13 @@
  */
  
 /*
+ * Set DIAGNOSTIC_CARTRIDGE to 1 when building a diagnostic cartridge.
+ */
+#ifndef DIAGNOSTIC_CARTRIDGE
+# define DIAGNOSTIC_CARTRIDGE 0
+#endif
+
+/*
  * Set this to 1 to activate experimental ACSI support 
  */
 #ifndef CONF_WITH_ACSI

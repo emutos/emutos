@@ -2952,12 +2952,14 @@ Start... early ages
   bios/screen.c bios/vt52.c cli/command.c desk/desk_rsc.c desk/deskmain.c
   desk/deskobj.c include/compat.h include/version.h tools/version.sed: Added
   the const attribute to constant arrays so they moved to the TEXT segment. The
-  DATA segment (which is still incorrectly read-only) is now empty.
-
-2011-11-11
+  DATA segment (which is still incorrectly read-only) is now empty. (VRI)
 - desk/desksupp.c: Fixed desktop crash when opening a folder that has a
   pathname exactly (LEN_ZPATH-LEN_ZFNAME) bytes long. (RFB)
 - desk/deskfpd.c desk/desksupp.c: Fixed incorrect pathname length check
   that caused some valid pathnames to be disallowed. (RFB)
 - aes/gemfslib.c bdos/fsdir.c: Replaced more occurrences of "magic numbers"
   for maximum pathname length with centralised #defines. (RFB)
+
+2011-11-12
+- Makefile bios/bios.c bios/startup.S include/config.h: New target "make cart"
+  to build a diagnostic cartridge into etoscart.img. (VRI)

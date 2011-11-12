@@ -235,7 +235,9 @@ static void bios_init(void)
     kprintf("BIOS: Last test point reached ...\n");
 #endif
 
+#if !DIAGNOSTIC_CARTRIDGE
     cartscan(3);
+#endif
 
     /* add TT-RAM that was detected in memory.S */
     if (ramtop > 0x1000000)

@@ -23,6 +23,8 @@
         // there were some strange problems with FreeMiNT and GFA-Basic
         // when it was so small, so I changed it back to > 8000 words...
 
+        .equ    cart_base, 0x00fa0000 // Base of ROM port cartridge
+
 // ==== References ===========================================================
 
         
@@ -79,6 +81,9 @@ _stktop:                        // filled from top to bottom
         .global _shifty
         .global _run
 
+#if DIAGNOSTIC_CARTRIDGE
+    dc.l    0xfa52235f  // diagnostic cartridge magic number
+#endif
 _os_entry:
     bra.s   _main       // os_entry, branch to _main
 os_version:
@@ -125,7 +130,8 @@ os_dummy:
  * Get in supervisor mode and reset all Hardware
  */
  
-_main:                         // stunt to guarantee entry into supervisor mode
+_main:
+#if !DIAGNOSTIC_CARTRIDGE
         move    #0x2700,sr     // disable interrupts
 #ifndef __mcoldfire__
         reset                  // reset all hardware
@@ -137,8 +143,6 @@ _main:                         // stunt to guarantee entry into supervisor mode
  * Check for diagnostic cartridge
  */
 
-        .equ    cart_base,      0x00fa0000
-
 #ifdef __mcoldfire__
         move.l  cart_base, d0
         cmp.l   #0xfa52235f, d0         // magic - is cartridge present?
@@ -149,6 +153,7 @@ _main:                         // stunt to guarantee entry into supervisor mode
         lea     nodiag(pc), a6          // save return address
         jmp     cart_base+4             // execute diagnostig cartridge
 nodiag:
+#endif /* !DIAGNOSTIC_CARTRIDGE */
 
 
 /*
@@ -205,6 +210,7 @@ memdone:
         jmp     _biosmain
 
 
+#if !DIAGNOSTIC_CARTRIDGE
 /*
  * _cartscan - Use cartridge, if present
  *
@@ -254,6 +260,7 @@ nextapp:
         bne     testtype
 cartover:
         rts
+#endif /* !DIAGNOSTIC_CARTRIDGE */
 
         .end
 

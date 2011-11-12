@@ -304,6 +304,7 @@ help:
 	@echo "allbin  all 192 kB, 256 kB and 512 kB images"
 	@echo "ram     ramtos.img + boot.prg, a RAM tos"
 	@echo "flop    emutos.st, a bootable floppy with RAM tos"
+	@echo "cart    $(ROM_CARTRIDGE), EmuTOS as a diagnostic cartridge"
 	@echo "clean"
 	@echo "cvsready  put files in canonic format before committing to cvs"
 	@echo "depend  creates dependancy file (makefile.dep)"
@@ -349,6 +350,16 @@ else \
   echo "# $@ done (`expr $$goalbytes - $$size` bytes free)"; \
 fi
 endef
+
+#
+# 128kB Image
+#
+
+ROM_128 = etos128k.img
+
+$(ROM_128): ROMSIZE = 128
+$(ROM_128): emutos2.img
+	$(sized_image)
 
 #
 # 192kB Image
@@ -407,6 +418,18 @@ NODEP += aranym
 aranym:
 	@echo "# Building ARAnyM EmuTOS into $(ROM_ARANYM)"
 	$(MAKE) CPUFLAGS='-m68040' DEF='-DMACHINE_ARANYM' ROM_512=$(ROM_ARANYM) $(ROM_ARANYM)
+
+#
+# Diagnostic Cartridge Image
+#
+
+ROM_CARTRIDGE = etoscart.img
+
+.PHONY: cart
+NODEP += cart
+cart:
+	@echo "# Building Diagnostic Cartridge EmuTOS into $(ROM_CARTRIDGE)"
+	$(MAKE) DEF='-DDIAGNOSTIC_CARTRIDGE=1' UNIQUE=$(COUNTRY) WITH_AES=0 VMA=0x00fa0000 ROM_128=$(ROM_CARTRIDGE) $(ROM_CARTRIDGE)
 
 #
 # ColdFire images
