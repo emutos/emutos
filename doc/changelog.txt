@@ -2965,3 +2965,7 @@ Start... early ages
   to build a diagnostic cartridge into etoscart.img. (VRI)
 - bios/bios.c bios/startup.S: Renamed cartscan() to run_cartridge_applications()
   and improved application cartridge comments. (VRI)
+
+2011-11-14
+- Makefile: Now "make 192" and "make 256" get the right compile options and
+  produce the expected filename. Override the language with UNIQUE=xx. (VRI)

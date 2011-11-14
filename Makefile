@@ -290,6 +290,7 @@ all:	help
 
 .PHONY: help
 NODEP += help
+help: UNIQUE = $(COUNTRY)
 help:
 	@echo "target  meaning"
 	@echo "------  -------"
@@ -365,10 +366,13 @@ $(ROM_128): emutos2.img
 # 192kB Image
 #
 
-ROM_192 = etos192k.img
+ROM_192 = etos192$(UNIQUE).img
 
 .PHONY: 192
-192: $(ROM_192)
+NODEP += 192
+192: UNIQUE = $(COUNTRY)
+192:
+	$(MAKE) DEF='-DTOS_VERSION=0x102' WITH_CLI=0 WITH_DESK1=0 UNIQUE=$(UNIQUE) ROM_192=$(ROM_192) $(ROM_192)
 
 $(ROM_192): emutos1.img
 	$(sized_image)
@@ -377,16 +381,13 @@ $(ROM_192): emutos1.img
 # 256kB Image
 #
 
-ROM_256 = etos256k.img
+ROM_256 = etos256$(UNIQUE).img
 
 .PHONY: 256
-ifeq (,$(UNIQUE))
-256: 
-	@echo "# Building $(COUNTRY)-only EmuTOS into $(ROM_256)"
-	$(MAKE) UNIQUE=$(COUNTRY) $(ROM_256)
-else
-256: $(ROM_256)
-endif
+NODEP += 256
+256: UNIQUE = $(COUNTRY)
+256:
+	$(MAKE) UNIQUE=$(UNIQUE) ROM_256=$(ROM_256) $(ROM_256)
 
 $(ROM_256): emutos2.img
 	$(sized_image)
@@ -591,12 +592,10 @@ NODEP += all256
 all256:
 	@for i in $(COUNTRIES); \
 	do \
-	  j=etos256$${i}.img; \
 	  echo; \
-	  echo "# Building $$j"; \
 	  echo "sleep 1"; \
 	  sleep 1; \
-	  $(MAKE) UNIQUE=$$i ROM_256=$$j 256 || exit 1; \
+	  $(MAKE) 256 UNIQUE=$$i || exit 1; \
 	done
 
 .PHONY: all192
@@ -604,13 +603,10 @@ NODEP += all192
 all192:
 	@for i in $(COUNTRIES); \
 	do \
-	  j=etos192$${i}.img; \
 	  echo; \
-	  echo "# Building $$j"; \
 	  echo "sleep 1"; \
 	  sleep 1; \
-	  $(MAKE) DEF='-DTOS_VERSION=0x102' WITH_CLI=0 WITH_DESK1=0 \
-			UNIQUE=$$i ROM_192=$$j 192 || exit 1; \
+	  $(MAKE) 192 UNIQUE=$$i || exit 1; \
 	done
 
 
