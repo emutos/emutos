@@ -81,30 +81,6 @@
 #define MIDI_DEBUG_PRINT 0
 #endif
 
-/* The two parameters below are commented out, since the same result
- * can now be obtained by simply doing
- *
- *   make UNIQUE=xx
- *
- * (the Makefile creates a file include/i18nconf.h that contains the 
- * correct setting for those two parameters).
- *
- * Set this to 1 if you want the EmuTOS ROM to contain only one set
- * of keyboards and fonts. The keyboard and fonts will still be those
- * specified as usual (make COUNTRY=xx). 
- *
- * #ifndef CONF_UNIQUE_COUNTRY
- * #define CONF_UNIQUE_COUNTRY 0
- * #endif
- *
- * Set this to 1 if you do not want any Native Language Support (NLS)
- * included in EmuTOS. The only language will be default English.
- *
- * #ifndef CONF_NO_NLS
- * #define CONF_NO_NLS 0
- * #endif
- */
- 
 /*
  * Set DIAGNOSTIC_CARTRIDGE to 1 when building a diagnostic cartridge.
  */
@@ -313,12 +289,6 @@
 #  define INITINFO_DURATION 3
 # endif
 #endif
-
-/* The keyboard and language are now set using
- *   make COUNTRY="xx" 
- * where xx is a lowercase two-letter country code as
- * found in the table in bios/country.c
- */
 
 /*
  * Miscellaneous definitions that apply to more than one EmuTOS subsystem
