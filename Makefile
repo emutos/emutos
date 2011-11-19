@@ -502,11 +502,15 @@ TOCLEAN += compr$(EXE) uncompr$(EXE)
 TOCLEAN += emutos.st mkflop$(EXE)
 
 .PHONY: flop
-flop : emutos.st
+NODEP += flop
+flop: UNIQUE = $(COUNTRY)
+flop:
+	$(MAKE) UNIQUE=$(UNIQUE) emutos.st
 
 .PHONY: fd0
-fd0:	emutos.st
-	dd if=$< of=/dev/fd0D360
+NODEP += fd0
+fd0: flop
+	dd if=emutos.st of=/dev/fd0D360
 
 emutos.st: mkflop$(EXE) bootsect.img ramtos.img
 	./mkflop$(EXE)

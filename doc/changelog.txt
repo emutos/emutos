@@ -2990,3 +2990,5 @@ Start... early ages
   CONF_WITH_EASTER_EGG instead of testing the TOS version. (VRI)
 - Makefile include/config.h: Removed the ROMSIZE define as it broke the non-ROM
   targets. Added TARGET_192, TARGET_256 and TARGET_512 instead. (VRI)
+- Makefile doc/readme-floppy.txt: Fixed "make flop" to implicitly use UNIQUE=us.
+ (VRI)

@@ -10,5 +10,5 @@ Due to size limitation, the only included language is English.
 Be sure to remove the EmuTOS floppy when asked for.
 
 This special version has been built using:
-make flop UNIQUE=us
+make flop
 
