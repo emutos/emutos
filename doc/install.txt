@@ -50,15 +50,15 @@ firebee emutosfb.s19, to be flashed on the FireBee
 ram     ramtos.img + boot.prg, a RAM tos
 flop    emutos.st, a bootable floppy with RAM tos
 
-Binary targets modifyers
+Binary targets modifiers
 ------------------------
 
 nothing       same as COUNTRY=us
 COUNTRY=xx    all countries in the binary, country xx being the default
 UNIQUE=xx     a smaller binary with only support for country xx
-DEF='-DTOS_VERSION=0x102' 
-              used to generate smaller binaries with only support for a
-              subset of functionalities. WARNING: do make clean first.
+DEF='-DSOMEDEFINE=value' 
+              used to override the default settings from include/config.h.
+              WARNING: do make clean first.
 
 Utility targets
 ---------------
