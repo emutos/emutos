@@ -125,9 +125,10 @@ endif
 MULTILIBFLAGS = $(CPUFLAGS) -mshort
 INC = -Iinclude
 OPTFLAGS = -Os -fomit-frame-pointer
+OTHERFLAGS = -ffreestanding
 WARNFLAGS = -Wall #-fno-common -Wshadow -Wmissing-prototypes -Wstrict-prototypes #-Werror
-CFLAGS = $(MULTILIBFLAGS) $(OPTFLAGS) $(WARNFLAGS) -ffreestanding $(DEF) \
-  $(LOCALCONF) $(INC) -DWITH_AES=$(WITH_AES) -DWITH_CLI=$(WITH_CLI)
+DEFINES = $(LOCALCONF) -DWITH_AES=$(WITH_AES) -DWITH_CLI=$(WITH_CLI) $(DEF)
+CFLAGS = $(MULTILIBFLAGS) $(OPTFLAGS) $(WARNFLAGS) $(OTHERFLAGS) $(INC) $(DEFINES)
 
 CPPFLAGS = $(INC)
 
