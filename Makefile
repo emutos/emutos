@@ -241,23 +241,18 @@ desk_copts += -DDESK1
 endif
 
 #
-# Directory selection depending on the user interface (EmuCON or AES)
+# Directory selection depending on the features
 #
 
-ifeq ($(WITH_AES),0)
- ui_dirs := vdi cli
- other_dirs := aes desk
-else
- ifeq ($(WITH_CLI),0)
-  ui_dirs := vdi aes desk
-  other_dirs := cli
- else
-  ui_dirs := vdi aes desk cli
-  other_dirs :=
- endif 
+dirs = bios bdos util vdi
+
+ifeq ($(WITH_AES),1)
+ dirs += aes desk
 endif
 
-dirs := bios bdos util $(ui_dirs)
+ifeq ($(WITH_CLI),1)
+ dirs += cli
+endif
 
 vpath %.c $(dirs)
 vpath %.S $(dirs)
@@ -275,8 +270,8 @@ include country.mk
 COBJ = $(foreach d,$(dirs),$(patsubst %.c,obj/%.o,$($(d)_csrc)))
 SOBJ = $(foreach d,$(dirs),$(patsubst %.S,obj/%.o,$($(d)_ssrc)))
 
-CSRC = $(foreach d,$(dirs) $(other_dirs),$(addprefix $(d)/,$($(d)_csrc)))
-SSRC = $(foreach d,$(dirs) $(other_dirs),$(addprefix $(d)/,$($(d)_ssrc)))
+CSRC = $(foreach d,$(dirs),$(addprefix $(d)/,$($(d)_csrc)))
+SSRC = $(foreach d,$(dirs),$(addprefix $(d)/,$($(d)_ssrc)))
 
 OBJECTS = $(SOBJ) $(COBJ) $(FONTOBJ) obj/version.o
 

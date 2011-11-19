@@ -2974,3 +2974,4 @@ Start... early ages
 - bios/asmdefs.h: Moved to include/. (VRI)
 - */*.c */*.S: Included config.h at the top of every .c file and asmdefs.h at
   the top of every .S file. (VRI)
+- Makefile: Simplified building the dirs list according to the features. (VRI)
