@@ -291,6 +291,14 @@
 #endif
 
 /*
+ * Define DESK1 to use the modern PC-GEM v1.0 style desktop.
+ * Undefine it to use the old desktop with 2 fixed windows.
+ */
+#if ROMSIZE >= 256
+#define DESK1
+#endif
+
+/*
  * Miscellaneous definitions that apply to more than one EmuTOS subsystem
  */
 /*

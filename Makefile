@@ -56,10 +56,6 @@ WITH_AES=1
 # Include EmuCON
 WITH_CLI=1
 
-# 0 = Old desktop with 2 fixed windows
-# 1 = Modern PC-GEM v1.0 style Desktop
-WITH_DESK1=1
-
 #
 # crude machine detection (Unix or Cygwin)
 #
@@ -204,14 +200,9 @@ aes_ssrc = gemstart.S gemdosif.S gemasm.S gsx2.S large.S optimopt.S
 
 desk_csrc = deskact.c deskapp.c deskdir.c deskfpd.c deskfun.c deskglob.c \
             deskinf.c deskins.c deskmain.c deskobj.c deskpro.c deskrsrc.c \
-            desksupp.c deskwin.c gembind.c desk_rsc.c
+            desksupp.c deskwin.c gembind.c desk_rsc.c icons.c desk1.c
             #taddr.c deskgraf.c deskgsx.c
 desk_ssrc = deskstart.S
-
-ifeq ($(strip $(WITH_DESK1)),1)
-desk_csrc += icons.c desk1.c
-endif
-
 
 #
 # source code in cli/ for EmuTOS console EmuCON
@@ -231,10 +222,6 @@ cli_copts  = -Ibios
 vdi_copts  = -Ibios
 aes_copts  = -Ibios
 desk_copts = -Ibios -Iaes 
-
-ifeq ($(strip $(WITH_DESK1)),1)
-desk_copts += -DDESK1
-endif
 
 #
 # Directory selection depending on the features
@@ -360,7 +347,7 @@ ROM_192 = etos192$(UNIQUE).img
 NODEP += 192
 192: UNIQUE = $(COUNTRY)
 192:
-	$(MAKE) DEF='-DTOS_VERSION=0x102' WITH_CLI=0 WITH_DESK1=0 UNIQUE=$(UNIQUE) ROM_192=$(ROM_192) $(ROM_192)
+	$(MAKE) DEF='-DTOS_VERSION=0x102' WITH_CLI=0 UNIQUE=$(UNIQUE) ROM_192=$(ROM_192) $(ROM_192)
 
 $(ROM_192): ROMSIZE = 192
 $(ROM_192): emutos1.img

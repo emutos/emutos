@@ -2981,3 +2981,5 @@ Start... early ages
 - Makefile: Removed now useless ROMSIZE autodetection. (VRI)
 - Makefile: Beautified the compile command line. (VRI)
 - Makefile: Added the ROMSIZE define, in kilobytes. (VRI)
+- Makefile desk/desk1.c include/config.h: Moved the definition of DESK1 to
+  config.h. (VRI)

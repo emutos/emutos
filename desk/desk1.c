@@ -36,6 +36,7 @@
 #include "dos.h"
 #include "desk_rsc.h"
 
+#ifdef DESK1
 
 static void zoom_closed(WORD close, WORD w_id, WORD xicon, WORD yicon)
 {
@@ -350,3 +351,4 @@ WORD desk1_drag(WORD wh, WORD dest_wh, WORD sobj, WORD dobj, WORD mx, WORD my)
         return done;
 }
 
+#endif /* DESK1 */
