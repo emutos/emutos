@@ -86,10 +86,10 @@
 #define SIZE_BUFF 4096                          /* size of a string     */
                                                 /*   buffer             */
 
-#if TOS_VERSION < 0x200
-#define NUM_IBLKS 0
-#else
+#if CONF_WITH_DESKTOP_ICONS
 #define NUM_IBLKS 72
+#else
+#define NUM_IBLKS 0
 #endif
 
 
