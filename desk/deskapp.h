@@ -19,9 +19,6 @@
 #ifndef DESKAPP_H
 #define DESKAPP_H
 
-#include "config.h"
-
-
 #define AP_APPLOPEN 0
 #define AP_DATAOPEN 1
 #define AP_DATADRAG 2

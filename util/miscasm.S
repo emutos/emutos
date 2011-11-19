@@ -11,6 +11,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+#include "asmdefs.h"
+
         .global _trap1          // call GEMDOS
         .global _trap13         // call BIOS
         .global _trap14         // call XBIOS

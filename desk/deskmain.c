@@ -16,9 +16,9 @@
 *       -------------------------------------------------------------
 */
 
+#include "config.h"
 #include <string.h>
 
-#include "config.h"
 #include "xbiosbind.h"
 #include "portab.h"
 #include "compat.h"

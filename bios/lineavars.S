@@ -10,6 +10,7 @@
  *
  */
 
+#include "asmdefs.h"
 
 
                 .bss

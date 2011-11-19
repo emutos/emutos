@@ -10,6 +10,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+#include "config.h"
 #include "portab.h"
 #include "biosmem.h"
 #include "kprint.h"

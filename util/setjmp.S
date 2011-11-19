@@ -10,6 +10,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+#include "asmdefs.h"
+
 /*
  * structure of jmp_buf:
  *   0: return address

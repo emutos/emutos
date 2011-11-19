@@ -12,6 +12,7 @@
  *
  */
 
+#include "asmdefs.h"
 
 // ==== External Declarations ================================================
 

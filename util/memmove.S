@@ -13,6 +13,7 @@
  *
  */
  
+#include "asmdefs.h"
  
  
 // This is taken from Minix 1.5 copy_68k.s fast copy routine.

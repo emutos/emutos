@@ -13,6 +13,7 @@
 
 #define DBGFSBUF 0
 
+#include "config.h"
 #include "portab.h"
 #include "fs.h"
 #include "gemerror.h"

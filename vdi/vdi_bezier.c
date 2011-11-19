@@ -10,6 +10,7 @@
 
 
 
+#include "config.h"
 #include "portab.h"
 #include "tosvars.h"
 #include "lineavars.h"

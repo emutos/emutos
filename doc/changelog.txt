@@ -2972,3 +2972,5 @@ Start... early ages
 
 2011-11-19
 - bios/asmdefs.h: Moved to include/. (VRI)
+- */*.c */*.S: Included config.h at the top of every .c file and asmdefs.h at
+  the top of every .S file. (VRI)

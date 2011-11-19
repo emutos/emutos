@@ -9,6 +9,7 @@
  * This file contains the AES' RSC data
  */
 
+#include "config.h"
 #include <string.h>
 
 #include "portab.h"

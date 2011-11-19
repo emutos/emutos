@@ -15,6 +15,7 @@
  * this, replacements for common string routines are provided here.
  */
 
+#include "config.h"
 #include <stdarg.h>
 #include "doprintf.h"
 #include "string.h"

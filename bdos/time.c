@@ -37,6 +37,7 @@ NAMES
         ACH     Anthony C. Hay (DR UK)
 */
 
+#include "config.h"
 #include "time.h"
 #include "portab.h"
 #include "gemerror.h"

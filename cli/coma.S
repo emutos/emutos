@@ -14,6 +14,7 @@
  *
  */
 
+#include "asmdefs.h"
 
 
         .text

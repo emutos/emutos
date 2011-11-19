@@ -8,6 +8,7 @@
  *
  */
 
+#include "asmdefs.h"
 
 
         .global bssstrt

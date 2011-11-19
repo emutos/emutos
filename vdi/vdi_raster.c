@@ -10,6 +10,7 @@
 
 
 
+#include "config.h"
 #include "portab.h"
 #include "vdi_defs.h"
 #include "lineavars.h"

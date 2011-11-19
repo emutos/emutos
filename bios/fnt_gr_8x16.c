@@ -10,6 +10,7 @@
  * (BTW: original font comes from ELKAT)
  */
 
+#include "config.h"
 #include "portab.h"
 #include "font.h"
 

@@ -10,6 +10,7 @@
  * option any later version.  See doc/licence.txt for details.
  */
 
+#include "config.h"
 #include "portab.h"
 #include "parport.h"
 #include "asm.h"

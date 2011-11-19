@@ -16,6 +16,7 @@
 
 
 
+#include        "config.h"
 #include        "portab.h"                      /*  M01.01.02           */
 #include        "fs.h"
 #include        "proc.h"

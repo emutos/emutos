@@ -11,6 +11,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+#include "asmdefs.h"
 
 #ifndef STACK_SIZE
 #define STACK_SIZE 0x100

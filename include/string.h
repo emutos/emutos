@@ -21,8 +21,6 @@
 #ifndef STRING_H
 #define STRING_H
 
-#include "config.h"
-
 /* string routines */
 
 #if !(USE_STATIC_INLINES)

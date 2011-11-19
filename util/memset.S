@@ -14,6 +14,7 @@
  * Altered to m68k-atari-mint-as 68k syntax 12 september 2001
  */
  
+#include "asmdefs.h"
  
  
 // ==== Defines ==============================================================

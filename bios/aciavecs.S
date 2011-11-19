@@ -79,6 +79,7 @@
  *    again, then jumps to the error vector.
  */
 
+#include "asmdefs.h"
 
         .global _init_acia_vecs
         .global _int_acia

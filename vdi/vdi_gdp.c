@@ -11,6 +11,7 @@
 
 
 
+#include "config.h"
 #include "portab.h"
 #include "intmath.h"
 #include "vdi_defs.h"

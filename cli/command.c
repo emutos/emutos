@@ -15,6 +15,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+#include "config.h"
 #ifndef NO_ROM
 #include "nls.h"
 #include "string.h"

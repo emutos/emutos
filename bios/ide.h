@@ -13,7 +13,6 @@
 #ifndef IDE_H
 #define IDE_H
 
-#include "config.h"
 #include "portab.h"
 
 #if CONF_WITH_IDE

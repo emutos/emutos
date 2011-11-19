@@ -13,6 +13,7 @@
 
 #define DBG_FONT 0
 
+#include "config.h"
 #include "font.h"
 #include "country.h"
 #include "string.h"

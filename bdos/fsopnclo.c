@@ -47,6 +47,7 @@
 */
 
 
+#include "config.h"
 #include "portab.h"
 #include "asm.h"
 #include "fs.h"

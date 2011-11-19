@@ -14,6 +14,7 @@
 
 
 
+#include "config.h"
 #include "portab.h"
 #include "fs.h"
 #include "mem.h"

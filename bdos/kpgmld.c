@@ -13,6 +13,7 @@
 
 
 
+#include "config.h"
 #include "portab.h"
 #include "fs.h"
 #include "proc.h"

@@ -5,6 +5,7 @@
  *       Please see LICENSE.TXT for further information.                 
  */
 
+#include "config.h"
 #include "portab.h"
 #include "obdefs.h"
 

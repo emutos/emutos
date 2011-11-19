@@ -24,9 +24,8 @@
  * - CLRHOME and INSERT in kbshift.
  */
 
-#include "country.h"
-
 #include "config.h"
+#include "country.h"
 #include "portab.h"
 #include "acia.h"
 #include "kprint.h"

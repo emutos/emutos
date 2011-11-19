@@ -34,6 +34,7 @@
 */
 
 
+#include "config.h"
 #include "portab.h"
 #include "compat.h"
 #include "gsxdefs.h"

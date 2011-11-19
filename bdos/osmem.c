@@ -32,6 +32,7 @@
  *
  */
 
+#include "config.h"
 #include "portab.h"
 
 /*

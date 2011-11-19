@@ -10,6 +10,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+#include "config.h"
 #include "acsi.h"
 #include "dma.h"
 #include "kprint.h"
@@ -18,7 +19,6 @@
 #include "machine.h"
 #include "tosvars.h"
 #include "gemerror.h"
-#include "config.h"
 
 #if CONF_WITH_ACSI==0
 

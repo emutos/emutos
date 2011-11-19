@@ -8,6 +8,7 @@
  */
 
 
+#include "config.h"
 #include "portab.h"
 #include "font.h"
 

@@ -10,6 +10,8 @@
  *
  */
 
+#include "asmdefs.h"
+
         .global _bootasm
         .global _getbootsize
         

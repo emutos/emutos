@@ -21,6 +21,7 @@
  * header
  */
 
+#include "asmdefs.h"
 
 #define START 1
 #define COUNT 384

@@ -5,6 +5,7 @@
  * modified Laurent Vogel 2000, 2001
  */
 
+#include "config.h"
 #include <stdarg.h>
 #include "doprintf.h"
 

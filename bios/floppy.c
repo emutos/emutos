@@ -12,6 +12,7 @@
 
 #define DBG_FLOP 0
 
+#include "config.h"
 #include "portab.h"
 #include "gemerror.h"
 #include "floppy.h"

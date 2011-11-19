@@ -9,6 +9,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+#include "asmdefs.h"
 
 
 .globl _cli

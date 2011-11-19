@@ -9,6 +9,7 @@
  */
 
 
+#include "config.h"
 #include "portab.h"
 #include "lineavars.h"
 #include "vdi_defs.h"

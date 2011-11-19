@@ -44,6 +44,7 @@
  * aligned.
  */
         
+#include "asmdefs.h"
 
         .text
 

@@ -30,6 +30,7 @@
 
 #define DBGFSDRIVE 0
 
+#include "config.h"
 #include "portab.h"
 #include "fs.h"
 #include "bpb.h"

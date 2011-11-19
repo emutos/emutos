@@ -9,6 +9,7 @@
  * This file contains the Desk's RSC data
  */
 
+#include "config.h"
 #include "string.h"
 
 #include "portab.h"

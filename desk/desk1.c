@@ -16,6 +16,7 @@
 *       -------------------------------------------------------------
 */
 
+#include "config.h"
 #include "portab.h"
 #include "compat.h"
 #include "deskapp.h"

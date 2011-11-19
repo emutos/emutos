@@ -15,6 +15,7 @@
 
 #define DBG_BLKDEV 0
 
+#include "config.h"
 #include "portab.h"
 #include "string.h"
 #include "gemerror.h"

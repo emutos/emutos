@@ -19,6 +19,7 @@
 *       -------------------------------------------------------------
 */
 
+#include "config.h"
 #include "portab.h"
 #include "compat.h"
 #include "obdefs.h"

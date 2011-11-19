@@ -12,6 +12,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+#include "config.h"
 #include "portab.h"
 #include "gemerror.h"
 #include "kprint.h"

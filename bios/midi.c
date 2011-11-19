@@ -13,6 +13,7 @@
 
 
 
+#include "config.h"
 #include "portab.h"
 #include "kprint.h"
 #include "acia.h"

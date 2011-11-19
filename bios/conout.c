@@ -12,6 +12,7 @@
 
 
 
+#include "config.h"
 #include "portab.h"
 #include "lineavars.h"
 #include "font.h"

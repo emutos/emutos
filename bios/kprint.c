@@ -12,9 +12,9 @@
  */
 
 
+#include "config.h"
 #include <stdarg.h>
 #include "doprintf.h"
-#include "config.h"
 #include "portab.h"
 #include "kprint.h"
 #include "lineavars.h"

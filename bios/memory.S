@@ -12,7 +12,7 @@
  *
  */
 
-#include "config.h"
+#include "asmdefs.h"
 
 // compile time switches would simplify the resulting binary code
 #define ST_MMU      1                       // define if it should run on ST

@@ -9,6 +9,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+#include "asmdefs.h"
+
 .global _deskstart
 .global _gemdos
 .global _gem

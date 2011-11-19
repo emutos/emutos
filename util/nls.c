@@ -10,13 +10,13 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+#include "config.h"
 #include "portab.h"
  
 #include "nls.h"
 #include "langs.h"
 #include "string.h"
 #include "i18nconf.h"
-#include "config.h"
 
 #if CONF_NO_NLS
 

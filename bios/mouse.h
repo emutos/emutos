@@ -15,8 +15,6 @@
 #ifndef MOUSE_H
 #define MOUSE_H
 
-#include "config.h"
-
 #include "portab.h"
 
 
