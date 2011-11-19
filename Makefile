@@ -127,7 +127,7 @@ INC = -Iinclude
 OPTFLAGS = -Os -fomit-frame-pointer
 OTHERFLAGS = -ffreestanding
 WARNFLAGS = -Wall #-fno-common -Wshadow -Wmissing-prototypes -Wstrict-prototypes #-Werror
-DEFINES = $(LOCALCONF) -DWITH_AES=$(WITH_AES) -DWITH_CLI=$(WITH_CLI) $(DEF)
+DEFINES = $(LOCALCONF) -DROMSIZE=$(ROMSIZE) -DWITH_AES=$(WITH_AES) -DWITH_CLI=$(WITH_CLI) $(DEF)
 CFLAGS = $(MULTILIBFLAGS) $(OPTFLAGS) $(WARNFLAGS) $(OTHERFLAGS) $(INC) $(DEFINES)
 
 CPPFLAGS = $(INC)

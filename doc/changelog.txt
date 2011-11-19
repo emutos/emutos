@@ -2980,3 +2980,4 @@ Start... early ages
   programs. (VRI)
 - Makefile: Removed now useless ROMSIZE autodetection. (VRI)
 - Makefile: Beautified the compile command line. (VRI)
+- Makefile: Added the ROMSIZE define, in kilobytes. (VRI)
