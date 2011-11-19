@@ -47,23 +47,18 @@ COUNTRY = $(UNIQUE)
 endif
 
 #
-# Choose the user interface that should be included into EmuTOS
-# (0=command line "EmuCON" , 1=AES)
+# Choose the features that should be included into EmuTOS
+#
 
+# Include the AES and EmuDesk
 WITH_AES=1
 
-#
-# Also include EmuCON when already using AES as main interface?
-#
-
+# Include EmuCON
 WITH_CLI=1
 
-#
-# Use PC-GEM v1.0 style Desktop (i.e. without fixed windows)?
-#
-
+# 0 = Old desktop with 2 fixed windows
+# 1 = Modern PC-GEM v1.0 style Desktop
 WITH_DESK1=1
-
 
 #
 # crude machine detection (Unix or Cygwin)
