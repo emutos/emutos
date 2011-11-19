@@ -292,10 +292,10 @@ static void insa_elev(LONG tree, WORD nicon, WORD numics)
 #endif
 */
 
-#if TOS_VERSION < 0x200 /* Don't include icons in TOS 1.x to save space */
-        lp = "Not available";
-#else
+#if CONF_WITH_DESKTOP_ICONS
         lp = cfg_icons_txt[nicon];
+#else
+        lp = "Not available";
 #endif
 
         strcpy(&gl_lngstr[0], lp);

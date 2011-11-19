@@ -63,7 +63,7 @@
  * by the standard "native features" interface. 
  */
 #ifndef DETECT_NATIVE_FEATURES
-# if defined(__mcoldfire__) || TOS_VERSION < 0x200
+# if defined(__mcoldfire__) || ROMSIZE < 256
 #  define DETECT_NATIVE_FEATURES 0 /* Conflict with ColdFire instructions. */
 # else
 #  define DETECT_NATIVE_FEATURES 1
@@ -121,7 +121,7 @@
  * Set CONF_WITH_FALCON_MMU to 1 to enable support for Falcon MMU.
  */
 #ifndef CONF_WITH_FALCON_MMU
-# if TOS_VERSION < 0x200
+# if ROMSIZE < 256
 #  define CONF_WITH_FALCON_MMU 0
 # else
 #  define CONF_WITH_FALCON_MMU 1
@@ -132,7 +132,7 @@
  * Set CONF_WITH_VIDEL to 1 to enable support for Falcon Videl.
  */
 #ifndef CONF_WITH_VIDEL
-# if TOS_VERSION < 0x200
+# if ROMSIZE < 256
 #  define CONF_WITH_VIDEL 0
 # else
 #  define CONF_WITH_VIDEL 1
@@ -143,7 +143,7 @@
  * Set CONF_WITH_TT_SHIFTER to 1 to enable support for TT Shifter
  */
 #ifndef CONF_WITH_TT_SHIFTER
-# if TOS_VERSION < 0x200
+# if ROMSIZE < 256
 #  define CONF_WITH_TT_SHIFTER 0
 # else
 #  define CONF_WITH_TT_SHIFTER 1
@@ -154,7 +154,7 @@
  * Set CONF_WITH_STE_SHIFTER to 1 to enable support for STe Shifter
  */
 #ifndef CONF_WITH_STE_SHIFTER
-# if TOS_VERSION < 0x200
+# if ROMSIZE < 256
 #  define CONF_WITH_STE_SHIFTER 0
 # else
 #  define CONF_WITH_STE_SHIFTER 1
@@ -165,7 +165,7 @@
  * Set CONF_WITH_DMASOUND to 1 to enable support for STe/TT/Falcon DMA sound
  */
 #ifndef CONF_WITH_DMASOUND
-# if TOS_VERSION < 0x200
+# if ROMSIZE < 256
 #  define CONF_WITH_DMASOUND 0
 # else
 #  define CONF_WITH_DMASOUND 1
@@ -176,7 +176,7 @@
  * Set CONF_WITH_VME to 1 to enable support for Mega STe VME bus
  */
 #ifndef CONF_WITH_VME
-# if TOS_VERSION < 0x200
+# if ROMSIZE < 256
 #  define CONF_WITH_VME 0
 # else
 #  define CONF_WITH_VME 1
@@ -187,7 +187,7 @@
  * Set CONF_WITH_DIP_SWITCHES to 1 to enable support for STe/TT/Falcon DIP switches
  */
 #ifndef CONF_WITH_DIP_SWITCHES
-# if TOS_VERSION < 0x200
+# if ROMSIZE < 256
 #  define CONF_WITH_DIP_SWITCHES 0
 # else
 #  define CONF_WITH_DIP_SWITCHES 1
@@ -198,7 +198,7 @@
  * Set CONF_WITH_NVRAM to 1 to enable NVRAM support
  */
 #ifndef CONF_WITH_NVRAM
-# if TOS_VERSION < 0x200
+# if ROMSIZE < 256
 #  define CONF_WITH_NVRAM 0
 # else
 #  define CONF_WITH_NVRAM 1
@@ -209,7 +209,7 @@
  * Set CONF_WITH_XHDI to 1 to enable XHDI support (i.e. the XHDI cookie etc.)
  */
 #ifndef CONF_WITH_XHDI
-# if TOS_VERSION < 0x200
+# if ROMSIZE < 256
 #  define CONF_WITH_XHDI 0
 # else
 #  define CONF_WITH_XHDI 1
@@ -220,7 +220,7 @@
  * Set CONF_WITH_ASSERT to 1 to enable the assert() function support.
  */
 #ifndef CONF_WITH_ASSERT
-# if TOS_VERSION < 0x200
+# if ROMSIZE < 256
 #  define CONF_WITH_ASSERT 0
 # else
 #  define CONF_WITH_ASSERT 1
@@ -233,7 +233,7 @@
  * Set to zero for all emulators which do not properly support STOP opcode.
  */
 #ifndef USE_STOP_INSN_TO_FREE_HOST_CPU
-# if TOS_VERSION < 0x200
+# if ROMSIZE < 256
 #  define USE_STOP_INSN_TO_FREE_HOST_CPU 0
 # else
 #  define USE_STOP_INSN_TO_FREE_HOST_CPU 1
@@ -300,6 +300,28 @@
  */
 #if ROMSIZE >= 256
 #define DESK1
+#endif
+
+/*
+ * Set CONF_WITH_DESKTOP_ICONS to 1 to include all the desktop icons.
+ */
+#ifndef CONF_WITH_DESKTOP_ICONS
+# if ROMSIZE < 256
+#  define CONF_WITH_DESKTOP_ICONS 0
+# else
+#  define CONF_WITH_DESKTOP_ICONS 1
+# endif
+#endif
+
+/*
+ * Set CONF_WITH_EASTER_EGG to 1 to include EmuDesk Easter Egg.
+ */
+#ifndef CONF_WITH_EASTER_EGG
+# if ROMSIZE < 256
+#  define CONF_WITH_EASTER_EGG 0
+# else
+#  define CONF_WITH_EASTER_EGG 1
+# endif
 #endif
 
 /*

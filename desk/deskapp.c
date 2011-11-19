@@ -409,7 +409,7 @@ void app_tran(WORD bi_num)
    function. See icons.c, too.  - THH */
 static WORD app_rdicon(void)
 {
-#if TOS_VERSION >= 0x200    /* Don't include icons in TOS 1.x to save space */
+#if CONF_WITH_DESKTOP_ICONS
         LONG            temp, stmp, dtmp;
         WORD            length, i, iwb, ih;
         WORD            num_icons, num_masks, last_icon, num_wds, 
@@ -532,7 +532,7 @@ static WORD app_rdicon(void)
         }
 #endif
 
-#endif /* TOS_VERSION >= 0x200 */
+#endif /* CONF_WITH_DESKTOP_ICONS */
         return(TRUE);
 } /* app_rdicon */
 

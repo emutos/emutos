@@ -2985,3 +2985,6 @@ Start... early ages
   config.h. (VRI)
 - Makefile include/config.h: Moved the special TOS_VERSION for 192 KB ROMs into
   config.h. (VRI)
+- desk/desk_rsc.c desk/deskapp.c desk/deskins.c desk/deskmain.c desk/icons.c
+  include/config.h: Added the new defines CONF_WITH_DESKTOP_ICONS and
+  CONF_WITH_EASTER_EGG instead of testing the TOS version. (VRI)

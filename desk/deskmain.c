@@ -153,7 +153,7 @@ static const BYTE     ILL_DESKTOP[] = {NFOLITEM,CLOSITEM,CLSWITEM,ICONITEM,
                                 NAMEITEM,DATEITEM,SIZEITEM,TYPEITEM,0};
 #endif
 
-#if TOS_VERSION >= 0x200
+#if CONF_WITH_EASTER_EGG
 /* easter egg */
 static const WORD  freq[]=
 {
@@ -501,7 +501,7 @@ static WORD do_deskmenu(WORD item)
                   touchob &= 0x7fff;
                   if ( touchob == DEICON )
                   {
-#if TOS_VERSION >= 0x200
+#if CONF_WITH_EASTER_EGG
                     int i;
                     for(i=0; i<23; i++)
                     {
@@ -621,10 +621,10 @@ static WORD do_viewmenu(WORD item)
         switch( item )
         {
           case ICONITEM:
-#if TOS_VERSION >= 0x200
+#if CONF_WITH_DESKTOP_ICONS
                 newview = (G.g_iview == V_ICON) ? V_TEXT : V_ICON;
 #else
-                newview = V_TEXT;   /* No icons in TOS 1.0x so we save space */
+                newview = V_TEXT;
 #endif
                 break;
           case NAMEITEM:

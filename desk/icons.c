@@ -9,7 +9,7 @@
 #include "obdefs.h"
 #include "deskapp.h"
 
-#if TOS_VERSION >= 0x200    /* Don't include icons in TOS 1.x to save space */
+#if CONF_WITH_DESKTOP_ICONS
 
 
 /*ICONBLK
@@ -324,4 +324,4 @@ const void * const icondata_start = &icondata; /* Pointer to array = start of ar
 const void * const icondata_end = &icondata + 1; /* Pointer to array + 1 = end of array */
 
 
-#endif  /* TOS_VERSION >= 0x200 */
+#endif /* CONF_WITH_DESKTOP_ICONS */
