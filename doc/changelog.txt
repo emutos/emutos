@@ -2978,3 +2978,4 @@ Start... early ages
 - bios/bios.c bios/startup.S cli/coma.S: Added the ability to compile with both
   WITH_AES=0 and WITH_CLI=0. Such ROM is still able to run AUTO and bootstrap
   programs. (VRI)
+- Makefile: Removed now useless ROMSIZE autodetection. (VRI)

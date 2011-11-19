@@ -324,9 +324,6 @@ emutos2.img emutos2.map: $(OBJECTS) Makefile
 # generic sized images handling
 #
 
-# By default, the size of the ROM is deducted from the number in the filename.
-ROMSIZE = `echo $@ | sed -e 's/[^0-9]//g'`
-
 define sized_image
 @goal=$(ROMSIZE); \
 size=`wc -c < $<`; goalbytes=`expr $$goal \* 1024`; \
@@ -364,6 +361,7 @@ NODEP += 192
 192:
 	$(MAKE) DEF='-DTOS_VERSION=0x102' WITH_CLI=0 WITH_DESK1=0 UNIQUE=$(UNIQUE) ROM_192=$(ROM_192) $(ROM_192)
 
+$(ROM_192): ROMSIZE = 192
 $(ROM_192): emutos1.img
 	$(sized_image)
 
@@ -379,6 +377,7 @@ NODEP += 256
 256:
 	$(MAKE) UNIQUE=$(UNIQUE) ROM_256=$(ROM_256) $(ROM_256)
 
+$(ROM_256): ROMSIZE = 256
 $(ROM_256): emutos2.img
 	$(sized_image)
 
