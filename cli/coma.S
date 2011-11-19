@@ -31,14 +31,6 @@
         .globl  _devector       // SCC  22 Mar 85
         .globl  _coma_start
 
-// When compiling without AES, the CLI is our system shell:
-#if WITH_AES == 0
-        .globl  _ui_start
-        .globl  _ui_mupb
-
-_ui_start:
-#endif
-
 _coma_start:
         move.l  4(sp),a5
         move.l  #mystak,sp
@@ -228,17 +220,6 @@ aris:
         .ascii "(A)bort, (R)etry, or (I)gnore ?"
         .dc.b   0
         .even
-
-
-// The CLI's MUPB structure - only used when compiling without the AES:
-#if WITH_AES == 0
-_ui_mupb:
-        .dc.l   0x87654321      // Magic value
-        .dc.l   coma_bss_end    // End of CLI's BSS (actually a dummy value)
-        .dc.l   _coma_start     // Start of CLI code
-#endif
-
-
 
         .bss
 

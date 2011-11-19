@@ -69,10 +69,10 @@ extern LONG osinit(void);       /* found in bdosmain.c */
 extern void run_cartridge_applications(WORD typebit); /* found in startup.S */
 #endif
 
-extern void ui_start(void);   /* found in cli/coma.S or aes/gemstart.S */
+extern void ui_start(void);   /* found in aes/gemstart.S */
                               /* it is the start addr. of the user interface */
 #if WITH_CLI
-extern void coma_start(void);
+extern void coma_start(void); /* found in cli/coma.S */
 #endif
 
 extern long xmaddalt(long start, long size); /* found in bdos/mem.h */
@@ -227,7 +227,14 @@ static void bios_init(void)
     nls_set_lang(get_lang_name());
     
 
-    exec_os = ui_start;         /* set start of user interface */
+    /* set start of user interface */
+#if WITH_AES
+    exec_os = ui_start;
+#elif WITH_CLI
+    exec_os = coma_start;
+#else
+    exec_os = NULL;
+#endif
 
     osinit();                   /* initialize BDOS */
   
@@ -428,7 +435,7 @@ void biosmain(void)
     if(cmdload != 0) {
         /* Pexec a program called COMMAND.PRG */
         trap1_pexec(0, "COMMAND.PRG", "", null_env); 
-    } else {
+    } else if (exec_os) {
         /* start the default (ROM) shell */
         PD *pd;
         pd = (PD *) trap1_pexec(5, "", "", null_env);
