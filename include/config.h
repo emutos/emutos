@@ -35,7 +35,11 @@
  * EmuTOS not to be compiled to save some space in the ROM image.
  */
 #ifndef TOS_VERSION
-#define TOS_VERSION 0x206
+# if ROMSIZE == 192
+#  define TOS_VERSION 0x102
+# else
+#  define TOS_VERSION 0x206
+# endif
 #endif
 
 /* set this to 1 if your emulator provides an STonX-like 

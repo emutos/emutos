@@ -2983,3 +2983,5 @@ Start... early ages
 - Makefile: Added the ROMSIZE define, in kilobytes. (VRI)
 - Makefile desk/desk1.c include/config.h: Moved the definition of DESK1 to
   config.h. (VRI)
+- Makefile include/config.h: Moved the special TOS_VERSION for 192 KB ROMs into
+  config.h. (VRI)
