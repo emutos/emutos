@@ -2969,3 +2969,6 @@ Start... early ages
 2011-11-14
 - Makefile: Now "make 192" and "make 256" get the right compile options and
   produce the expected filename. Override the language with UNIQUE=xx. (VRI)
+
+2011-11-19
+- bios/asmdefs.h: Moved to include/. (VRI)
