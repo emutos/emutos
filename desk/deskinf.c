@@ -219,8 +219,8 @@ static WORD ob_sfcb(LONG psfcb, BYTE *pfmt)
             *pdst++ = ':';
         }
         *pdst++ = ' ';
-        strcpy(pdst, &ptime_str[4]);
-        pdst += 3;
+        strcpy(pdst, &ptime_str[4]); /* am or pm */
+        pdst += 2;
         return(pdst - pfmt);
 }       
 

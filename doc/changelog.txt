@@ -2992,3 +2992,5 @@ Start... early ages
   targets. Added TARGET_192, TARGET_256 and TARGET_512 instead. (VRI)
 - Makefile doc/readme-floppy.txt: Fixed "make flop" to implicitly use UNIQUE=us.
  (VRI)
+- desk/deskinf.c: Fixed random character after am/pm in EmuDesk windows in 
+  "view as text" mode.
