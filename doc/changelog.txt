@@ -2979,3 +2979,4 @@ Start... early ages
   WITH_AES=0 and WITH_CLI=0. Such ROM is still able to run AUTO and bootstrap
   programs. (VRI)
 - Makefile: Removed now useless ROMSIZE autodetection. (VRI)
+- Makefile: Beautified the compile command line. (VRI)

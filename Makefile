@@ -471,7 +471,7 @@ boot.prg: obj/minicrt.o obj/boot.o obj/bootasm.o
 # The following hack allows to build the shared sources with different
 # preprocessor defines (ex: EMUTOS_RAM)
 obj/compr-%.o : %.S
-	$(CC) $(CFLAGS) $($(subst /,_,$(dir $<))sopts) -c $< -o $@
+	$(CC) $(SFILE_FLAGS) -c $< -o $@
 
 COMPROBJ = obj/compr-tosvars.o obj/comprimg.o obj/compr-memory.o obj/uncompr.o \
            obj/compr-processor.o
@@ -724,17 +724,20 @@ bios/header.h: tools/mkheader.awk obj/country
 
 TOCLEAN += obj/*.o */*.dsm
 
+CFILE_FLAGS = $(strip $(CFLAGS) $($(subst /,_,$(dir $<))copts))
+SFILE_FLAGS = $(strip $(CFLAGS) $($(subst /,_,$(dir $<))sopts))
+
 obj/%.o : %.tr.c
-	$(CC) $(CFLAGS) $($(subst /,_,$(dir $<))copts) -c $< -o $@
+	$(CC) $(CFILE_FLAGS) -c $< -o $@
 
 obj/%.o : %.c
-	$(CC) $(CFLAGS) $($(subst /,_,$(dir $<))copts) -c $< -o $@
+	$(CC) $(CFILE_FLAGS) -c $< -o $@
 
 obj/%.o : %.S
-	$(CC) $(CFLAGS) $($(subst /,_,$(dir $<))sopts) -c $< -o $@
+	$(CC) $(SFILE_FLAGS) -c $< -o $@
 
 %.dsm : %.c
-	$(CC) $(CFLAGS) $($(subst /,_,$(dir $<))copts) -S $< -o $@
+	$(CC) $(CFILE_FLAGS) -S $< -o $@
 
 #
 # version string
@@ -746,7 +749,7 @@ obj/version.c: doc/changelog.txt tools/version.sed
 	sed -f tools/version.sed doc/changelog.txt > $@
 
 obj/version.o: obj/version.c
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFILE_FLAGS) -c $< -o $@
 
 #
 # generic dsm handling
@@ -914,7 +917,7 @@ coldfire-sources:
 	$(MAKE) COLDFIRE=1 generate-vdi_tblit_cf.S
 
 vdi/%_preprocessed.s: vdi/%.S
-	$(CPP) $(CFLAGS) $< -o $@
+	$(CPP) $(CFILE_FLAGS) $< -o $@
 
 # The following is actually a phony target (% not supported in .PHONY)
 generate-%_cf.S: vdi/%_preprocessed.s
