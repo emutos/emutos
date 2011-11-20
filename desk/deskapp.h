@@ -18,6 +18,7 @@
 
 #ifndef DESKAPP_H
 #define DESKAPP_H
+#include "deskconf.h"
 
 #define AP_APPLOPEN 0
 #define AP_DATAOPEN 1
@@ -151,11 +152,7 @@ CSAVE
         WORD    cmclk_save;     /* Drop down menu click mode */
         WORD    ctmfm_save;     /* Time format */
         WORD    cdtfm_save;     /* Date format */
-#ifndef DESK1
-        WSAVE   win_save[2];
-#else
-        WSAVE   win_save[4];
-#endif
+        WSAVE   win_save[NUM_WNODES];
 };
 
 

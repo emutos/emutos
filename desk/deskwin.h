@@ -14,18 +14,11 @@
 *       Copyright (C) 1987                      Digital Research Inc.
 *       -------------------------------------------------------------
 */
+#ifndef _DESKWIN_H
+#define _DESKWIN_H
+#include "deskconf.h"
 
 #define DROOT 1
-
-#ifdef DESK1
-#define NUM_WNODES 4
-#define NUM_WOBS 128
-#else
-#define NUM_WNODES 2
-#define NUM_WOBS 300
-#endif
-
-#define NUM_SOBS (NUM_WOBS + NUM_WNODES + 1)
 
 #define WNODE struct windnode
 
@@ -82,3 +75,5 @@ void win_sname(WNODE *pw);
 #ifdef DESK1
 void win_sinfo(WNODE *pwin);
 #endif
+
+#endif  /* _DESKWIN_H */

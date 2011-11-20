@@ -2994,3 +2994,5 @@ Start... early ages
  (VRI)
 - desk/deskinf.c: Fixed random character after am/pm in EmuDesk windows in 
   "view as text" mode.
+- desk/deskapp.h desk/deskconf.h desk/deskfpd.h desk/deskwin.h: Allow up to 7
+  windows on the standard (not fixed window) desktop. (RFB)

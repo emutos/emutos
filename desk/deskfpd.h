@@ -14,7 +14,9 @@
 *       Copyright (C) 1987                      Digital Research Inc.
 *       -------------------------------------------------------------
 */
-
+#ifndef _DESKFPD_H
+#define _DESKFPD_H
+#include "deskconf.h"
 
 #define OP_COUNT 0
 #define OP_DELETE 1
@@ -38,13 +40,6 @@
 #define E_NOFNODES 100
 #define E_NOPNODES 101
 #define E_NODNODES 102
-
-#define NUM_FNODES 400
-#ifdef DESK1
-#define NUM_PNODES 6         /* one more than windows for  unopen disk copy */
-#else
-#define NUM_PNODES 3         /* one more than windows for  unopen disk copy */
-#endif
 
 
 #define FNODE struct filenode
@@ -87,3 +82,4 @@ PNODE *pn_open(WORD  drive, BYTE *path, BYTE *name, BYTE *ext, WORD attr);
 FNODE *pn_sort(WORD lstcnt, FNODE *pflist);
 WORD pn_active(PNODE *thepath);
 
+#endif  /* _DESKFPD_H */
