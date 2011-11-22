@@ -1,7 +1,7 @@
 /*
  * screen.c - low-level screen routines
  *
- * Copyright (c) 2001, 2007 EmuTOS development team
+ * Copyright (c) 2001-2011 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel
@@ -37,7 +37,7 @@ WORD setcolor(WORD colorNum, WORD color);
 void vsync(void);
 WORD esetshift(WORD mode);
 WORD egetshift(void);
-UWORD vsetmode(WORD mode);
+WORD vsetmode(WORD mode);
 WORD vmontype(void);
 
 
@@ -76,6 +76,15 @@ WORD vmontype(void);
 #define FRGB_YELLOW    0xffff0000
 #define FRGB_LTYELLOW  0xaaaa0000
 #define FRGB_WHITE     0xffff00ff
+
+/* bit settings for Falcon videomodes */
+#define VIDEL_VERTICAL 0x0100           /* if set, use interlace (TV), double line (VGA) */
+#define VIDEL_COMPAT   0x0080           /* ST-compatible if set */
+#define VIDEL_OVERSCAN 0x0040           /* overscan if set (not used with VGA) */
+#define VIDEL_PAL      0x0020           /* PAL if set; otherwise NTSC */
+#define VIDEL_VGA      0x0010           /* VGA if set; otherwise TV */
+#define VIDEL_80COL    0x0008           /* 80-column mode if set; otherwise 40 */
+#define VIDEL_BPPMASK  0x0007           /* mask for bits/pixel encoding */
 
 #endif /* SCREEN_H */
 

@@ -24,15 +24,6 @@
 BYTE shft_off;                  /* once computed Offset into a Scan Line */
 
 
-/* Shift table for computing offsets into a scan line (interleaved planes) */
-static const BYTE shft_tab [] =
-{
-    3,  /* 1 plane */
-    2,  /* 2 planes */
-    0,  /* not used */
-    1   /* 4 planes */
-};
-
 /* Settings for the different video modes */
 struct video_mode {
     UBYTE       planes;         // count of color planes (v_planes)
@@ -55,6 +46,7 @@ static const struct video_mode video_mode[] = {
 
 void linea_init(void)
 {
+    int n;
     WORD vmode;                         /* video mode */
 
     vmode = (sshiftmod & 3);            /* Get video mode from hardware */
@@ -84,11 +76,11 @@ void linea_init(void)
     v_lin_wr = v_hz_rez / 8 * v_planes;     /* bytes per line */
     v_bytes_lin = v_lin_wr;       /* I think v_bytes_lin = v_lin_wr (joy) */
 
-    /* Calculate the shift offset by a value contained in the shift table
+    /* Calculate the shift offset
      * (used for screen modes that have the planes arranged in an
      *  interleaved fashion with a word for each plane). */
-    if (v_planes <= 4)
-        shft_off = shft_tab[v_planes - 1];
+    for (n = v_planes, shft_off = 3; n > 1; n >>= 1)
+        shft_off--;
 
 #if DBG_LINEA
     kprintf("planes: %d\n", v_planes);

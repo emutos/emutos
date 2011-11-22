@@ -2996,3 +2996,7 @@ Start... early ages
   "view as text" mode.
 - desk/deskapp.h desk/deskconf.h desk/deskfpd.h desk/deskwin.h: Allow up to 7
   windows on the standard (not fixed window) desktop. (RFB)
+
+2011-11-21
+- bios/lineainit.c bios/screen.c bios/screen.h: Set up Videl chip correctly for
+  all valid Falcon video modes. (RFB)
