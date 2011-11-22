@@ -3002,3 +3002,7 @@ Start... early ages
   all valid Falcon video modes. (RFB)
 - aes/gemgsxif.c: Menu/alert screen buffer is now always 25% of screen memory
   size. (RFB)
+
+2011-11-22
+- bios/screen.c bios/screen.h bios/xbios.c: Add support for Falcon video
+  syscalls. (RFB)

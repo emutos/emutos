@@ -859,6 +859,36 @@ WORD xbios_51(WORD mode)
 }
 #endif
 
+/*
+ * Falcon video
+ */
+#if DBG_XBIOS & CONF_WITH_VIDEL
+WORD xbios_58(WORD mode)
+{
+    kprintf("XBIOS: Vsetmode\n");
+    return vsetmode(mode);
+}
+WORD xbios_59(void)
+{
+    kprintf("XBIOS: VgetMonitor\n");
+    return vmontype();
+}
+LONG xbios_5b(WORD mode)
+{
+    kprintf("XBIOS: VgetSize\n");
+    return vgetsize(mode);
+}
+void xbios_5d(WORD index,WORD count,LONG *rgb)
+{
+    kprintf("XBIOS: VsetRGB\n");
+    vsetrgb(index,count,rgb);
+}
+void xbios_5e(WORD index,WORD count,LONG *rgb)
+{
+    kprintf("XBIOS: VgetRGB\n");
+    vgetrgb(index,count,rgb);
+}
+#endif
 
 /*
  * xbios_unimpl
@@ -990,11 +1020,25 @@ const PFLONG xbios_vecs[] = {
     xbios_unimpl,   /* 56 */
     xbios_unimpl,   /* 57 */
 #if CONF_WITH_VIDEL
-    VEC(vsetmode, vsetmode),   /* 58 */
-    VEC(vmontype, vmontype),   /* 59 */
+    VEC(xbios_58, vsetmode),   /* 58 */
+    VEC(xbios_59, vmontype),   /* 59 */
 #else
     xbios_unimpl,   /* 58 */
     xbios_unimpl,   /* 59 */
+#endif
+    xbios_unimpl,   /* 5a */
+#if CONF_WITH_VIDEL
+    VEC(xbios_5b, vgetsize),   /* 5b */
+#else
+    xbios_unimpl,   /* 5b */
+#endif
+    xbios_unimpl,   /* 5c */
+#if CONF_WITH_VIDEL
+    VEC(xbios_5d, vsetrgb),   /* 5d */
+    VEC(xbios_5e, vgetrgb),   /* 5e */
+#else
+    xbios_unimpl,   /* 5d */
+    xbios_unimpl,   /* 5e */
 #endif
 
 #endif /* TOS_VERSION >= 0x200 */

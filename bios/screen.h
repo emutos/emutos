@@ -39,7 +39,9 @@ WORD esetshift(WORD mode);
 WORD egetshift(void);
 WORD vsetmode(WORD mode);
 WORD vmontype(void);
-
+LONG vgetsize(WORD mode);
+void vsetrgb(WORD index,WORD count,LONG *rgb);
+void vgetrgb(WORD index,WORD count,LONG *rgb);
 
 /* pallette color definitions */
 

@@ -57,6 +57,8 @@ static const LONG videl_dflt_palette[] = {
     FRGB_GRAY, FRGB_LTRED, FRGB_LTGREEN, FRGB_LTYELLOW,
     FRGB_LTBLUE, FRGB_LTMAGENTA, FRGB_LTCYAN, FRGB_BLACK
 };
+
+static LONG falcon_shadow_palette[256];   /* real Falcon does this */
 #endif
 
 #if CONF_WITH_VIDEL
@@ -474,8 +476,7 @@ void setpalette(LONG palettePtr)
 
 WORD setcolor(WORD colorNum, WORD color)
 {
-    WORD rez;
-    WORD max;
+    WORD oldcolor;
     WORD mask;
     volatile WORD *palette = (WORD *) ST_PALETTE_REGS;
 
@@ -483,20 +484,13 @@ WORD setcolor(WORD colorNum, WORD color)
     kprintf("Setcolor(0x%04x, 0x%04x)\n", colorNum, color);
 #endif
 
-    rez = getrez();
-    switch (rez) {
-    case 0:
-        max = 15;
-        break;
-    case 1:
-        max = 3;
-        break;
-    case 2:
-        max = 1;
-        break;
-    default:
-        max = 0;
-    }
+    colorNum &= 0x000f;         /* just like real TOS */
+
+#if CONF_WITH_VIDEL
+    if (has_videl) {
+        mask = 0xfff;
+    } else
+#endif
 #if CONF_WITH_STE_SHIFTER
     if (has_ste_shifter) {
         mask = 0xfff;
@@ -505,16 +499,13 @@ WORD setcolor(WORD colorNum, WORD color)
     {
         mask = 0x777;
     }
-    if (colorNum >= 0 && colorNum <= max) {
-        if (color == -1) {
-            return palette[colorNum] & mask;
-        } else {
-            palette[colorNum] = color;
-            return color & mask;
-        }
-    } else {
-        return 0;
-    }
+
+    oldcolor = palette[colorNum] & mask;
+    if (color == -1)
+        return oldcolor;
+
+    palette[colorNum] = color;          /* update ST(e)-compatible palette */
+    return oldcolor;
 }
 
 
@@ -752,6 +743,87 @@ WORD vmontype(void)
         return -32;
 
     return ((*(volatile UBYTE *)0xffff8006) >> 6) & 3;
+}
+
+/*
+ * get video ram size according to mode
+ */
+LONG vgetsize(WORD mode)
+{
+    const VMODE_ENTRY *p;
+    int height;
+
+    if (!has_videl)
+        return -32;
+
+    p = lookup_videl_mode(mode);
+    if (!p)                     /* invalid mode, */
+        return 32000L;          /* so make something up */
+
+    height = p->vde - p->vdb;
+    if (!(p->ctl&0x02))
+        height >>= 1;
+    if (p->ctl&0x01)
+        height >>= 1;
+
+    return (LONG)p->width * 2 * height;
+}
+
+/*
+ * set palette registers
+ */
+void vsetrgb(WORD index,WORD count,LONG *rgb)
+{
+    volatile LONG *colour;
+    LONG *shadow;
+    union {
+		LONG l;
+        UBYTE b[4];
+    } u;
+    WORD limit;
+
+    if (!has_videl)
+        return;
+
+    if ((index < 0) || (count <= 0))
+        return;
+
+    limit = (get_videl_bpp()<=4) ? 16 : 256;
+    if ((index+count) > limit)
+        return;
+
+    colour = (LONG *)FALCON_PALETTE_REGS + index;
+    shadow = falcon_shadow_palette + index;
+    while(count--) {
+        u.l = *rgb++;
+        *shadow++ = u.l;
+        u.b[0] = u.b[1];                 /* shift R & G */
+        u.b[1] = u.b[2];
+        *colour++ = u.l & 0xfcfc00fcL;   /* eliminate unused bits */
+    }
+}
+
+/*
+ * get palette registers
+ */
+void vgetrgb(WORD index,WORD count,LONG *rgb)
+{
+    LONG *shadow;
+    WORD limit;
+
+    if (!has_videl)
+        return;
+
+    if ((index < 0) || (count <= 0))
+        return;
+
+    limit = (get_videl_bpp()<=4) ? 16 : 256;
+    if ((index+count) > limit)
+        return;
+
+    shadow = falcon_shadow_palette + index;
+    while(count--)
+        *rgb++ = *shadow++;      /* just what was set */
 }
 
 #endif /* CONF_WITH_VIDEL */
