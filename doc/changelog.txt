@@ -3000,3 +3000,5 @@ Start... early ages
 2011-11-21
 - bios/lineainit.c bios/screen.c bios/screen.h: Set up Videl chip correctly for
   all valid Falcon video modes. (RFB)
+- aes/gemgsxif.c: Menu/alert screen buffer is now always 25% of screen memory
+  size. (RFB)

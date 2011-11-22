@@ -80,8 +80,9 @@ ULONG  gsx_gbufflen(void);
 
 
 /* this function calculates the size of the menu/alert screen buffer.
- * for pre-v2 TOS, it's a quarter of the screen size, otherwise it's
- * half (in Atari TOS, this change was actually made in v3).
+ * as in older versions of Atari TOS, it's a quarter of the screen
+ * size.  this may need to be increased if screen artifacts occur
+ * around alert boxes or menu items.
  */
 ULONG gsx_mcalc()
 {
@@ -90,11 +91,7 @@ ULONG gsx_mcalc()
     if (gl_mlen != 0x0l)
         gl_tmp.fd_addr = GRAFMEM;             /* buffer not in sys mem */
     else
-#if TOS_VERSION >= 0x200
-        gl_mlen = (LONG)gl_tmp.fd_wdwidth * gl_tmp.fd_h * gl_tmp.fd_nplanes;
-#else
         gl_mlen = (LONG)gl_tmp.fd_wdwidth * gl_tmp.fd_h * gl_tmp.fd_nplanes / 2;
-#endif
     return(gl_mlen);
 }
 
