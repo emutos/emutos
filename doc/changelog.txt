@@ -3011,3 +3011,4 @@ Start... early ages
 - bios/lineainit.c bios/screen.c bios/screen.h: Set PAL/50Hz or NTSC/60Hz
   correctly during boot. (RFB)
 - bios/screen.c: Set full 256-colour Falcon default palette. (RFB)
+- bios/screen.c bios/screen.h: Add boot support for TT shifter. (RFB)

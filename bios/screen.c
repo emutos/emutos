@@ -35,9 +35,11 @@
 #define SPSHIFT             0xffff8266L
 
 #define ST_PALETTE_REGS     0xffff8240L
+#define TT_PALETTE_REGS     0xffff8400L
 #define FALCON_PALETTE_REGS 0xffff9800L
 
 #define ST_VRAM_SIZE        32000UL
+#define TT_VRAM_SIZE        153600UL
 
 /* determine monitor type, ... */
 
@@ -119,6 +121,45 @@ static const LONG videl_dflt_palette[] = {
 };
 
 static LONG falcon_shadow_palette[256];   /* real Falcon does this */
+#endif
+
+#if CONF_WITH_TT_SHIFTER
+static const WORD tt_dflt_palette[] = {
+ TTRGB_WHITE, TTRGB_RED, TTRGB_GREEN, TTRGB_YELLOW,
+ TTRGB_BLUE, TTRGB_MAGENTA, TTRGB_CYAN, TTRGB_LTGRAY,
+ TTRGB_GRAY, TTRGB_LTRED, TTRGB_LTGREEN, TTRGB_LTYELLOW,
+ TTRGB_LTBLUE, TTRGB_LTMAGENTA, TTRGB_LTCYAN, TTRGB_BLACK,
+ 0x0fff, 0x0eee, 0x0ddd, 0x0ccc, 0x0bbb, 0x0aaa, 0x0999, 0x0888,
+ 0x0777, 0x0666, 0x0555, 0x0444, 0x0333, 0x0222, 0x0111, 0x0000,
+ 0x0f00, 0x0f01, 0x0f02, 0x0f03, 0x0f04, 0x0f05, 0x0f06, 0x0f07,
+ 0x0f08, 0x0f09, 0x0f0a, 0x0f0b, 0x0f0c, 0x0f0d, 0x0f0e, 0x0f0f,
+ 0x0e0f, 0x0d0f, 0x0c0f, 0x0b0f, 0x0a0f, 0x090f, 0x080f, 0x070f,
+ 0x060f, 0x050f, 0x040f, 0x030f, 0x020f, 0x010f, 0x000f, 0x001f,
+ 0x002f, 0x003f, 0x004f, 0x005f, 0x006f, 0x007f, 0x008f, 0x009f,
+ 0x00af, 0x00bf, 0x00cf, 0x00df, 0x00ef, 0x00ff, 0x00fe, 0x00fd,
+ 0x00fc, 0x00fb, 0x00fa, 0x00f9, 0x00f8, 0x00f7, 0x00f6, 0x00f5,
+ 0x00f4, 0x00f3, 0x00f2, 0x00f1, 0x00f0, 0x01f0, 0x02f0, 0x03f0,
+ 0x04f0, 0x05f0, 0x06f0, 0x07f0, 0x08f0, 0x09f0, 0x0af0, 0x0bf0,
+ 0x0cf0, 0x0df0, 0x0ef0, 0x0ff0, 0x0fe0, 0x0fd0, 0x0fc0, 0x0fb0,
+ 0x0fa0, 0x0f90, 0x0f80, 0x0f70, 0x0f60, 0x0f50, 0x0f40, 0x0f30,
+ 0x0f20, 0x0f10, 0x0b00, 0x0b01, 0x0b02, 0x0b03, 0x0b04, 0x0b05,
+ 0x0b06, 0x0b07, 0x0b08, 0x0b09, 0x0b0a, 0x0b0b, 0x0a0b, 0x090b,
+ 0x080b, 0x070b, 0x060b, 0x050b, 0x040b, 0x030b, 0x020b, 0x010b,
+ 0x000b, 0x001b, 0x002b, 0x003b, 0x004b, 0x005b, 0x006b, 0x007b,
+ 0x008b, 0x009b, 0x00ab, 0x00bb, 0x00ba, 0x00b9, 0x00b8, 0x00b7,
+ 0x00b6, 0x00b5, 0x00b4, 0x00b3, 0x00b2, 0x00b1, 0x00b0, 0x01b0,
+ 0x02b0, 0x03b0, 0x04b0, 0x05b0, 0x06b0, 0x07b0, 0x08b0, 0x09b0,
+ 0x0ab0, 0x0bb0, 0x0ba0, 0x0b90, 0x0b80, 0x0b70, 0x0b60, 0x0b50,
+ 0x0b40, 0x0b30, 0x0b20, 0x0b10, 0x0700, 0x0701, 0x0702, 0x0703,
+ 0x0704, 0x0705, 0x0706, 0x0707, 0x0607, 0x0507, 0x0407, 0x0307,
+ 0x0207, 0x0107, 0x0007, 0x0017, 0x0027, 0x0037, 0x0047, 0x0057,
+ 0x0067, 0x0077, 0x0076, 0x0075, 0x0074, 0x0073, 0x0072, 0x0071,
+ 0x0070, 0x0170, 0x0270, 0x0370, 0x0470, 0x0570, 0x0670, 0x0770,
+ 0x0760, 0x0750, 0x0740, 0x0730, 0x0720, 0x0710, 0x0400, 0x0401,
+ 0x0402, 0x0403, 0x0404, 0x0304, 0x0204, 0x0104, 0x0004, 0x0014,
+ 0x0024, 0x0034, 0x0044, 0x0043, 0x0042, 0x0041, 0x0040, 0x0140,
+ 0x0240, 0x0340, 0x0440, 0x0430, 0x0420, 0x0410, TTRGB_WHITE, TTRGB_BLACK
+};
 #endif
 
 #if CONF_WITH_VIDEL
@@ -259,6 +300,15 @@ static unsigned long vram_size()
     }
     else
 #endif
+#if CONF_WITH_TT_SHIFTER
+    if (has_tt_shifter) {
+        WORD rez = getrez();
+        if (rez >= 4)
+            return TT_VRAM_SIZE;
+        return ST_VRAM_SIZE;
+    }
+    else
+#endif
     return ST_VRAM_SIZE;
 }
 
@@ -301,6 +351,12 @@ static void setphys(LONG addr,int checkaddr)
     }
     else
 #endif
+#if CONF_WITH_TT_SHIFTER
+    if (has_tt_shifter) {
+        *(volatile UBYTE *) VIDEOBASE_ADDR_LOW = ((ULONG) addr);
+    }
+    else
+#endif
 #if CONF_WITH_STE_SHIFTER
     if (has_ste_shifter) {
         *(volatile UBYTE *) VIDEOBASE_ADDR_LOW = ((ULONG) addr);
@@ -322,6 +378,10 @@ void screen_init(void)
 #if CONF_WITH_VIDEL
     volatile LONG *fcol_regs = (LONG *) FALCON_PALETTE_REGS;
     UWORD boot_resolution;
+#endif
+#if CONF_WITH_TT_SHIFTER
+    volatile BYTE *ttrez_reg = (BYTE *) TT_SHIFTER;
+    volatile WORD *ttcol_regs = (WORD *) TT_PALETTE_REGS;
 #endif
     WORD monitor_type, mask, sync_mode;
     WORD rez = 0;   /* avoid 'may be uninitialized' warning */
@@ -370,6 +430,14 @@ void screen_init(void)
     }
     else
 #endif // CONF_WITH_VIDEL
+#if CONF_WITH_TT_SHIFTER
+    if (has_tt_shifter) {
+        rez = monitor_type?TT_MEDIUM:TT_HIGH;
+        *ttrez_reg = rez;
+        mask = 0x0fff;  /* STe-compatible palette */
+    }
+    else
+#endif
 #if CONF_WITH_STE_SHIFTER
     if (has_ste_shifter) {
         rez = monitor_type?ST_MEDIUM:ST_HIGH;
@@ -420,6 +488,18 @@ void screen_init(void)
     }
     else
 #endif
+#if CONF_WITH_TT_SHIFTER
+    if (has_tt_shifter) {
+        for (i = 0; i < 256; i++) {
+            ttcol_regs[i] = tt_dflt_palette[i];
+        }
+        if (rez == TT_HIGH) {   /* 2-colour mode */
+            ttcol_regs[1] = ttcol_regs[15];
+            col_regs[1] = col_regs[15];
+        }
+    }
+    else
+#endif
     {
         
     }
@@ -441,6 +521,11 @@ void screen_init(void)
      * so we use this gap, too. */
 #if CONF_WITH_VIDEL
     if (has_videl)
+        ;
+    else
+#endif
+#if CONF_WITH_TT_SHIFTER
+    if (has_tt_shifter)
         ;
     else
 #endif
@@ -466,6 +551,12 @@ LONG physbase(void)
     addr <<= 8;
 #if CONF_WITH_VIDEL
     if (has_videl) {
+        addr += *(volatile UBYTE *) VIDEOBASE_ADDR_LOW;
+    }
+    else
+#endif
+#if CONF_WITH_TT_SHIFTER
+    if (has_tt_shifter) {
         addr += *(volatile UBYTE *) VIDEOBASE_ADDR_LOW;
     }
     else
@@ -588,6 +679,9 @@ WORD setcolor(WORD colorNum, WORD color)
     WORD oldcolor;
     WORD mask;
     volatile WORD *palette = (WORD *) ST_PALETTE_REGS;
+#if CONF_WITH_TT_SHIFTER
+    volatile WORD *ttpalette = (WORD *) TT_PALETTE_REGS;
+#endif
 
 #if DBG_SCREEN
     kprintf("Setcolor(0x%04x, 0x%04x)\n", colorNum, color);
@@ -597,6 +691,11 @@ WORD setcolor(WORD colorNum, WORD color)
 
 #if CONF_WITH_VIDEL
     if (has_videl) {
+        mask = 0xfff;
+    } else
+#endif
+#if CONF_WITH_TT_SHIFTER
+    if (has_tt_shifter) {
         mask = 0xfff;
     } else
 #endif
@@ -612,6 +711,15 @@ WORD setcolor(WORD colorNum, WORD color)
     oldcolor = palette[colorNum] & mask;
     if (color == -1)
         return oldcolor;
+
+#if CONF_WITH_TT_SHIFTER
+    if (has_tt_shifter) {
+		WORD msb, lsb;
+        msb = (color << 1) & 0x0eee;    /* move most significant bits to left */
+        lsb = (color >> 3) & 0x0111;    /* move least significant bit to right */
+        ttpalette[colorNum] = msb | lsb;/* update TT-compatible palette */
+    }
+#endif
 
     palette[colorNum] = color;          /* update ST(e)-compatible palette */
     return oldcolor;

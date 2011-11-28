@@ -62,6 +62,23 @@ void vgetrgb(WORD index,WORD count,LONG *rgb);
 #define RGB_LTYELLOW  0x0ff3
 #define RGB_WHITE     0x0fff
 
+#define TTRGB_BLACK     0x0000          /* TT Palette */
+#define TTRGB_BLUE      0x000f
+#define TTRGB_GREEN     0x00f0
+#define TTRGB_CYAN      0x00ff
+#define TTRGB_RED       0x0f00
+#define TTRGB_MAGENTA   0x0f0f
+#define TTRGB_LTGRAY    0x0aaa
+#define TTRGB_GRAY      0x0666
+#define TTRGB_LTBLUE    0x099f
+#define TTRGB_LTGREEN   0x09f9
+#define TTRGB_LTCYAN    0x09ff
+#define TTRGB_LTRED     0x0f99
+#define TTRGB_LTMAGENTA 0x0f9f
+#define TTRGB_YELLOW    0x0ff0
+#define TTRGB_LTYELLOW  0x0ff9
+#define TTRGB_WHITE     0x0fff
+
 #define FRGB_BLACK     0x00000000       /* Falcon palette */
 #define FRGB_BLUE      0x000000ff
 #define FRGB_GREEN     0x00ff0000
@@ -97,6 +114,10 @@ void vgetrgb(WORD index,WORD count,LONG *rgb);
 #define FALCON_ST_MEDIUM    (VIDEL_COMPAT|VIDEL_VERTICAL|VIDEL_VGA|VIDEL_80COL|VIDEL_2BPP)
 
 #define FALCON_DEFAULT_BOOT (VIDEL_80COL|VIDEL_4BPP)    /* 640x480x16 colours, TV, NTSC */
+
+/* TT resolutions */
+#define TT_HIGH        6
+#define TT_MEDIUM      4
 
 /* ST(e) resolutions */
 #define ST_HIGH        2
