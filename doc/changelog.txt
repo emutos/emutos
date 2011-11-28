@@ -3006,3 +3006,7 @@ Start... early ages
 2011-11-22
 - bios/screen.c bios/screen.h bios/xbios.c: Add support for Falcon video
   syscalls. (RFB)
+
+2011-11-27
+- bios/lineainit.c bios/screen.c bios/screen.h: Set PAL/50Hz or NTSC/60Hz
+  correctly during boot. (RFB)

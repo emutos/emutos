@@ -45,7 +45,7 @@ void vgetrgb(WORD index,WORD count,LONG *rgb);
 
 /* pallette color definitions */
 
-#define RGB_BLACK     0x0000
+#define RGB_BLACK     0x0000            /* ST(e) palette */
 #define RGB_BLUE      0x000f
 #define RGB_GREEN     0x00f0
 #define RGB_CYAN      0x00ff
@@ -61,8 +61,8 @@ void vgetrgb(WORD index,WORD count,LONG *rgb);
 #define RGB_YELLOW    0x0ff0
 #define RGB_LTYELLOW  0x0ff3
 #define RGB_WHITE     0x0fff
-                    
-#define FRGB_BLACK     0x00000000
+
+#define FRGB_BLACK     0x00000000       /* Falcon palette */
 #define FRGB_BLUE      0x000000ff
 #define FRGB_GREEN     0x00ff0000
 #define FRGB_CYAN      0x00ff00ff
@@ -87,6 +87,20 @@ void vgetrgb(WORD index,WORD count,LONG *rgb);
 #define VIDEL_VGA      0x0010           /* VGA if set; otherwise TV */
 #define VIDEL_80COL    0x0008           /* 80-column mode if set; otherwise 40 */
 #define VIDEL_BPPMASK  0x0007           /* mask for bits/pixel encoding */
+#define VIDEL_1BPP          0               /* 2 colours */
+#define VIDEL_2BPP          1               /* 4 colours */
+#define VIDEL_4BPP          2               /* 16 colours */
+#define VIDEL_8BPP          3               /* 256 colours */
+
+/* selected Falcon videomodes */
+#define FALCON_ST_HIGH      (VIDEL_COMPAT|VIDEL_VGA|VIDEL_80COL|VIDEL_1BPP)
+#define FALCON_ST_MEDIUM    (VIDEL_COMPAT|VIDEL_VERTICAL|VIDEL_VGA|VIDEL_80COL|VIDEL_2BPP)
+
+#define FALCON_DEFAULT_BOOT (VIDEL_80COL|VIDEL_4BPP)    /* 640x480x16 colours, TV, NTSC */
+
+/* ST(e) resolutions */
+#define ST_HIGH        2
+#define ST_MEDIUM      1
+#define ST_LOW         0
 
 #endif /* SCREEN_H */
-
