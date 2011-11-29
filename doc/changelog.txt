@@ -3012,3 +3012,6 @@ Start... early ages
   correctly during boot. (RFB)
 - bios/screen.c: Set full 256-colour Falcon default palette. (RFB)
 - bios/screen.c bios/screen.h: Add boot support for TT shifter. (RFB)
+
+2011-11-29
+- bios/screen.c: Fix crash during boot due to unrecognised video mode. (RFB)

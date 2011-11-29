@@ -287,6 +287,8 @@ static const VMODE_ENTRY vmode_init_table[] = {
     { 0x01e9, 0x003e, 0x0032, 0x0009, 0x023f, 0x001c, 0x0034, 0x0271, 0x0265, 0x002f, 0x006f, 0x01ff, 0x026b, 0x0060, 0x0004 },
 	{ -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
 };
+
+static const VMODE_ENTRY *lookup_videl_mode(WORD mode);
 #endif
 
 
@@ -419,10 +421,16 @@ void screen_init(void)
             break;
         case 2:     /* VGA */
             boot_resolution |= VIDEL_VGA;
+            boot_resolution &= ~VIDEL_PAL;
             break;
         case 3:     /* TV */
             boot_resolution &= ~VIDEL_VGA;
             break;
+        }
+        if (!lookup_videl_mode(boot_resolution)) {  /* mode isn't in table */
+            kprintf("Invalid video mode 0x%04x changed to 0x%04x\n",
+                    boot_resolution,FALCON_DEFAULT_BOOT);
+            boot_resolution = FALCON_DEFAULT_BOOT;  /* so pick one that is */
         }
         vsetmode(boot_resolution);
         rez = 3;        /* fake value indicates Falcon/Videl */
@@ -929,7 +937,7 @@ static int set_videl_vga(WORD mode)
  */
 WORD vsetmode(WORD mode)
 {
-    static WORD oldmode;
+    static WORD oldmode = 0;        /* 0 means never set */
     WORD ret;
 
     if (!has_videl)
