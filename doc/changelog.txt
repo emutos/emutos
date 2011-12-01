@@ -3015,3 +3015,7 @@ Start... early ages
 
 2011-11-29
 - bios/screen.c: Fix crash during boot due to unrecognised video mode. (RFB)
+
+2011-11-30
+- bios/screen.c bios/screen.h: Change sequence of initialisation of Videl
+  registers. (RFB)

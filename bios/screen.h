@@ -108,6 +108,7 @@ void vgetrgb(WORD index,WORD count,LONG *rgb);
 #define VIDEL_2BPP          1               /* 4 colours */
 #define VIDEL_4BPP          2               /* 16 colours */
 #define VIDEL_8BPP          3               /* 256 colours */
+#define VIDEL_TRUECOLOR     4               /* 65536 colours */
 
 /* selected Falcon videomodes */
 #define FALCON_ST_HIGH      (VIDEL_COMPAT|VIDEL_VGA|VIDEL_80COL|VIDEL_1BPP)

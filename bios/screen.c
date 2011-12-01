@@ -879,8 +879,6 @@ static int set_videl_vga(WORD mode)
     if (!p)
         return -1;
 
-    videlregs[0x0a] = (mode&0x0020) ? 2 : 0;    /* video sync */
-
     videlword(0x82) = p->hht;           /* H hold timer */
     videlword(0x84) = p->hbb;           /* H border begin */
     videlword(0x86) = p->hbe;           /* H border end */
@@ -895,38 +893,40 @@ static int set_videl_vga(WORD mode)
     videlword(0xaa) = p->vde;           /* V display end */
     videlword(0xac) = p->vss;           /* V SS */
 
-    videlword(0x0e) = 0x0000;           /* offset */
-    videlword(0x10) = p->width;         /* scanline width */
+    videlregs[0x0a] = (mode&VIDEL_PAL) ? 2 : 0; /* video sync to 50Hz if PAL */
 
-    videlword(0xc2) = p->ctl;           /* video control */
-
-    if (mode&0x0010)
+    if (mode&VIDEL_VGA)
         videlword(0xc0) = 0x0186;       /* for VGA */
-    else if ((mode&0x0180) == 0x180)
+    else if ((mode&(VIDEL_COMPAT|VIDEL_VERTICAL)) == (VIDEL_COMPAT|VIDEL_VERTICAL))
         videlword(0xc0) = 0x0081;       /* for ST low/medium compatibility */
     else videlword(0xc0) = 0x0181;
 
-    switch(mode&0x07) {                 /* set SPSHIFT / ST shift */
-    case 0:                                 /* 1 bpp (mono) */
+    switch(mode&VIDEL_BPPMASK) {        /* set SPSHIFT / ST shift */
+    case VIDEL_1BPP:                        /* 2 colours (mono) */
         videlword(0x66) = 0x0400;
+        videlregs[0x60] = 0x00;
         break;
-    case 1:                                 /* 2 bpp (4 colours) */
+    case VIDEL_2BPP:                        /* 4 colours */
         videlword(0x66) = 0x0000;
         videlregs[0x60] = 0x01;
         break;
-    case 2:                                 /* 4 bpp (16 colours) */
+    case VIDEL_4BPP:                        /* 16 colours */
         videlword(0x66) = 0x0000;
         videlregs[0x60] = 0x00;
         break;
-    case 3:                                 /* 8 bpp (256 colours) */
+    case VIDEL_8BPP:                        /* 256 colours */
         videlword(0x66) = 0x0010;
         videlregs[0x60] = 0x00;
         break;
-    case 4:                                 /* 16 bpp (Truecolor) */
+    case VIDEL_TRUECOLOR:                   /* 65536 colours (Truecolor) */
         videlword(0x66) = 0x0100;
         videlregs[0x60] = 0x00;
         break;
     }
+
+    videlword(0xc2) = p->ctl;           /* video control */
+    videlword(0x0e) = 0x0000;           /* offset */
+    videlword(0x10) = p->width;         /* scanline width */
 
     return 0;
 }
