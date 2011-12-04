@@ -93,6 +93,13 @@
 #endif
 
 /*
+ * Set CONF_WITH_FLOPPY to 1 to enable floppy support
+ */
+#ifndef CONF_WITH_FLOPPY
+# define CONF_WITH_FLOPPY 1
+#endif
+
+/*
  * Set this to 1 to activate experimental ACSI support 
  */
 #ifndef CONF_WITH_ACSI

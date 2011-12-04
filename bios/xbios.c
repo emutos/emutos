@@ -929,9 +929,15 @@ const PFLONG xbios_vecs[] = {
     VEC(xbios_5, setscreen),
     VEC(xbios_6, setpalette),
     VEC(xbios_7, setcolor),
+#if CONF_WITH_FLOPPY
     VEC(xbios_8, floprd),
     VEC(xbios_9, flopwr),
     VEC(xbios_a, flopfmt),
+#else
+    xbios_unimpl,   /* 8 */
+    xbios_unimpl,   /* 9 */
+    xbios_unimpl,   /* a */
+#endif
     xbios_unimpl,   /*  b used_by_bios */ 
     VEC(xbios_c, midiws),
     VEC(xbios_d, mfpint),
@@ -939,8 +945,13 @@ const PFLONG xbios_vecs[] = {
     VEC(xbios_f, rsconf),
     VEC(xbios_10, keytbl),
     VEC(xbios_11, random),
+#if CONF_WITH_FLOPPY
     VEC(xbios_12, protobt),
     VEC(xbios_13, flopver),
+#else
+    xbios_unimpl,   /* 12 */
+    xbios_unimpl,   /* 13 */
+#endif
     xbios_unimpl,   /* 14 scrdmp */
     VEC(xbios_15, cursconf),
     VEC(xbios_16, settime),
@@ -962,7 +973,11 @@ const PFLONG xbios_vecs[] = {
     VEC(xbios_26, supexec),
     xbios_unimpl,   /* 27 puntaes */ 
     xbios_unimpl,   /* 28 */
+#if CONF_WITH_FLOPPY
     VEC(xbios_29, floprate),
+#else
+    xbios_unimpl,   /* 29 */
+#endif
     VEC(xbios_2a, DMAread),
     VEC(xbios_2b, DMAwrite),
     VEC(xbios_2c, bconmap),

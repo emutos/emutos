@@ -3029,3 +3029,6 @@ Start... early ages
 - bios/acsi.c bios/dma.c bios/dma.h bios/floppy.c: Moved common DMA stuff to
   the new dma.c. (VRI)
 - bios/blkdev.c bios/floppy.c bios/floppy.h: Moved getiword() to blkdev.c. (VRI)
+- bios/blkdev.c bios/floppy.c bios/floppy.h bios/machine.c bios/machine.h
+  bios/vectors.S bios/xbios.c include/config.h: Added the CONF_WITH_FLOPPY
+  define to allow disabling floppy support. (VRI)

@@ -67,6 +67,7 @@
  *   getbpb is called.
  */
 
+#if CONF_WITH_FLOPPY
 
 /*==== Internal defines ===================================================*/
  
@@ -860,3 +861,5 @@ static void delay(void)
     while (--delay)
             nop();
 }
+
+#endif /* CONF_WITH_FLOPPY */

@@ -70,8 +70,10 @@ void blkdev_init(void)
     hdv_rw      = blkdev_rwabs;
     hdv_mediach = blkdev_mediach;
 
+#if CONF_WITH_FLOPPY
     /* floppy initialisation */
     floppy_init();
+#endif
 
     /* setting drvbits */
     blkdev_hdv_init();
@@ -125,14 +127,13 @@ void pun_info_setup(void)
 
 void blkdev_hdv_init(void)
 {
-    /* call the real */
+#if CONF_WITH_FLOPPY
+    /* Detect and initialize floppy drives */
     flop_hdv_init();
+#endif
 
-    /* reset partitions - preserve just floppies */
-    blkdevnum = 2;
-    drvbits &= 0x03;
-
-    disk_init();
+    blkdevnum = 2; /* Start hard disk partitions at C: */
+    disk_init(); /* Detect hard disk partitions */
 
     pun_info_setup();
 }
@@ -169,9 +170,14 @@ LONG blkdev_hdv_boot(void)
                                    code and boot the drive at all! :-) */
         }
     }
+
+#if CONF_WITH_FLOPPY
     /* otherwise try to boot from floppy A: */
     bootdev = 0;
     return(flop_hdv_boot());
+#else
+    return EUNDEV;
+#endif
 }
 
 /*
@@ -282,9 +288,13 @@ LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG lrecnr
         lcount -= CNTMAX;
         do {
             if (unit < 2) {
+#if CONF_WITH_FLOPPY
                 retval = floppy_rw(rw, buf, scount, lrecnr,
                                    blkdev[unit].geometry.spt,
                                    blkdev[unit].geometry.sides, unit);
+#else
+                retval = EUNDEV;
+#endif
             }
             else {
                 retval = rw ? DMAwrite(lrecnr, scount, buf, unit-2)

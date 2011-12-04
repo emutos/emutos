@@ -366,8 +366,10 @@ st_shifter:
         move.b  d0,0xffff8201
 vbl_no_screenpt:        
 
+#if CONF_WITH_FLOPPY
         // flopvbl
         jsr     _flopvbl
+#endif
 
         // vblqueue
 #ifdef __mcoldfire__

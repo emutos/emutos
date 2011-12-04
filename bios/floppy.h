@@ -13,6 +13,8 @@
 #ifndef FLOPPY_H
 #define FLOPPY_H
 
+#if CONF_WITH_FLOPPY
+
 #include "portab.h"
  
 /* bios functions */
@@ -51,5 +53,7 @@ extern void floppy_init(void);
 
 /* lowlevel floppy_rwabs */
 LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt, WORD sides, WORD dev);
+
+#endif /* CONF_WITH_FLOPPY */
 
 #endif /* FLOPPY_H */
