@@ -416,15 +416,21 @@ void screen_init(void)
         case 0:     /* monochrome */
             boot_resolution = FALCON_ST_HIGH;
             break;
-        case 1:     /* colour */
-            boot_resolution = FALCON_ST_MEDIUM;
+        case 1:     /* RGB */
+        case 3:     /* TV */
+            if (boot_resolution & VIDEL_VGA) {
+                /* Convert the VGA video mode to RGB */
+                boot_resolution &= ~VIDEL_VGA; /* Force RGB mode */
+                boot_resolution ^= VIDEL_VERTICAL; /* Invert vertical bit */
+            }
             break;
         case 2:     /* VGA */
-            boot_resolution |= VIDEL_VGA;
-            boot_resolution &= ~VIDEL_PAL;
-            break;
-        case 3:     /* TV */
-            boot_resolution &= ~VIDEL_VGA;
+            if (!(boot_resolution & VIDEL_VGA)) {
+                /* Convert the RGB video mode to VGA */
+                boot_resolution |= VIDEL_VGA; /* Force VGA mode */
+                boot_resolution &= ~VIDEL_PAL; /* Force 60 Hz */
+                boot_resolution ^= VIDEL_VERTICAL; /* Invert vertical bit */
+            }
             break;
         }
         if (!lookup_videl_mode(boot_resolution)) {  /* mode isn't in table */

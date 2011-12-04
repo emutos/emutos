@@ -3019,3 +3019,6 @@ Start... early ages
 2011-11-30
 - bios/screen.c bios/screen.h: Change sequence of initialisation of Videl
   registers. (RFB)
+
+2011-12-03
+- bios/screen.c: Correctly convert the NVRAM video mode to actual monitor. (VRI)
