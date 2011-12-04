@@ -3032,3 +3032,4 @@ Start... early ages
 - bios/blkdev.c bios/floppy.c bios/floppy.h bios/machine.c bios/machine.h
   bios/vectors.S bios/xbios.c include/config.h: Added the CONF_WITH_FLOPPY
   define to allow disabling floppy support. (VRI)
+- bios/screen.c: Improved conditional compilation. (VRI)

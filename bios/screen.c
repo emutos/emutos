@@ -660,8 +660,11 @@ void setscreen(LONG logLoc, LONG physLoc, WORD rez, WORD videlmode)
         setphys(physLoc,1);
     }
     if (rez >= 0 && rez < 8) {
+        if (FALSE) {
+            /* Dummy case for conditional compilation */
+        }
 #if CONF_WITH_VIDEL
-        if (has_videl) {
+        else if (has_videl) {
             if (rez == 3) {
                 vsetmode(videlmode);
                 sshiftmod = rez;
@@ -670,16 +673,14 @@ void setscreen(LONG logLoc, LONG physLoc, WORD rez, WORD videlmode)
                 *(volatile UBYTE *)ST_SHIFTER = sshiftmod = rez;
             }
         }
-        else
 #endif
 #if CONF_WITH_TT_SHIFTER
-        if (has_tt_shifter) {
+        else if (has_tt_shifter) {
             if ((rez != 3) && (rez != 5))
                 *(volatile UBYTE *)TT_SHIFTER = sshiftmod = rez;
         }
-        else
 #endif
-        if (rez < 3) {      /* ST resolution */
+        else if (rez < 3) {      /* ST resolution */
             *(volatile UBYTE *)ST_SHIFTER = sshiftmod = rez;
         }
 
