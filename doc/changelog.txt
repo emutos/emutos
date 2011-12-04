@@ -3026,3 +3026,5 @@ Start... early ages
 2011-12-04
 - bios/screen.c bios/screen.h: Fixed the default boot video mode and added
   accurate traces. (VRI)
+- bios/acsi.c bios/dma.c bios/dma.h bios/floppy.c: Moved common DMA stuff to
+  the new dma.c. (VRI)

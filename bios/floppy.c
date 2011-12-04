@@ -107,7 +107,6 @@ static WORD set_track(WORD track, WORD rate);
 static WORD get_dma_status(void);
 static WORD get_fdc_reg(WORD reg);
 static void set_fdc_reg(WORD reg, WORD value);
-static void set_dma_addr(ULONG addr);
 static void fdc_start_dma_read(WORD count);
 static void fdc_start_dma_write(WORD count);
 
@@ -810,20 +809,6 @@ static WORD set_track(WORD track, WORD rate)
     }
 }
 
-/* returns 1 if the timeout (milliseconds) elapsed before gpip went low */
-int timeout_gpip(LONG delay)
-{
-    MFP *mfp = MFP_BASE;
-    LONG next = hz_200 + delay/5;
-
-    while(hz_200 < next) {
-        if((mfp->gpip & 0x20) == 0) {
-            return 0;
-        }
-    }
-    return 1;
-}
-
 static WORD get_dma_status(void)
 {
     WORD ret;
@@ -848,13 +833,6 @@ static void set_fdc_reg(WORD reg, WORD value)
     delay();
     DMA->data = value;
     delay();
-}
-
-static void set_dma_addr(ULONG addr)
-{
-    DMA->addr_low = addr;
-    DMA->addr_med = addr>>8;
-    DMA->addr_high = addr>>16;
 }
 
 /* the fdc_start_dma_*() functions toggle the dma write bit, to
