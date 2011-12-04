@@ -428,13 +428,6 @@ static void setiword(UBYTE *addr, UWORD value)
     addr[1] = value >> 8;
 }
 
-UWORD getiword(UBYTE *addr)
-{
-    UWORD value;
-    value = (((UWORD)addr[1])<<8) + addr[0]; 
-    return value;
-}
-
 /*==== xbios floprd, flopwr ===============================================*/
 
 

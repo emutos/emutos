@@ -49,9 +49,6 @@ extern void do_hdv_boot(void);
 /* initialise floppy parameters */
 extern void floppy_init(void);
 
-/* get intel words */
-UWORD getiword(UBYTE *addr);
-
 /* lowlevel floppy_rwabs */
 LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt, WORD sides, WORD dev);
 

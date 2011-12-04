@@ -3028,3 +3028,4 @@ Start... early ages
   accurate traces. (VRI)
 - bios/acsi.c bios/dma.c bios/dma.h bios/floppy.c: Moved common DMA stuff to
   the new dma.c. (VRI)
+- bios/blkdev.c bios/floppy.c bios/floppy.h: Moved getiword() to blkdev.c. (VRI)

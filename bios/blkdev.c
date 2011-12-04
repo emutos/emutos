@@ -38,6 +38,14 @@ static BYTE diskbuf[2*512];      /* buffer for 2 sectors */
 
 PUN_INFO pun_info;
 
+/* get intel words */
+static UWORD getiword(UBYTE *addr)
+{
+    UWORD value;
+    value = (((UWORD)addr[1])<<8) + addr[0]; 
+    return value;
+}
+
 /*
  * blkdevs_init - BIOS block drive initialization
  *
