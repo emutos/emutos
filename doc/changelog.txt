@@ -3022,3 +3022,7 @@ Start... early ages
 
 2011-12-03
 - bios/screen.c: Correctly convert the NVRAM video mode to actual monitor. (VRI)
+
+2011-12-04
+- bios/screen.c bios/screen.h: Fixed the default boot video mode and added
+  accurate traces. (VRI)

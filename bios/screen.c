@@ -379,7 +379,7 @@ void screen_init(void)
     volatile WORD *col_regs = (WORD *) ST_PALETTE_REGS;
 #if CONF_WITH_VIDEL
     volatile LONG *fcol_regs = (LONG *) FALCON_PALETTE_REGS;
-    UWORD boot_resolution;
+    UWORD boot_resolution = FALCON_DEFAULT_BOOT;
 #endif
 #if CONF_WITH_TT_SHIFTER
     volatile BYTE *ttrez_reg = (BYTE *) TT_SHIFTER;
@@ -395,10 +395,15 @@ void screen_init(void)
  * resolution / video mode appropriately
  */
     monitor_type = get_monitor_type();
+#if DBG_SCREEN
+    kprintf("monitor_type = %d\n", monitor_type);
+#endif
 
 #if CONF_WITH_VIDEL
     if (has_videl) {
-        int ret = 1;
+        WORD ret;
+
+        UNUSED(ret);
 
         /* reset VIDEL on boot-up */
         /* first set the physbase to a safe memory */
@@ -407,12 +412,28 @@ void screen_init(void)
 #if CONF_WITH_NVRAM && !defined(MACHINE_FIREBEE)
         /* get boot resolution from NVRAM */
         ret = nvmaccess(0, 14, 2, (PTR)&boot_resolution);
-#endif // CONF_WITH_NVRAM
-        if (ret != 0)
-        {
-            boot_resolution = FALCON_DEFAULT_BOOT; /* invalid nvram, default is TV/NTSC */
+        if (ret != 0) {
+#if DBG_SCREEN
+            kprintf("Invalid NVRAM, defaulting to boot video mode 0x%04x\n", boot_resolution);
+#endif
         }
-        switch(monitor_type) {                  /* override if necessary */
+        else {
+#if DBG_SCREEN
+            kprintf("NVRAM boot video mode is 0x%04x\n", boot_resolution);
+#endif
+        }
+#endif // CONF_WITH_NVRAM
+
+        if (!lookup_videl_mode(boot_resolution)) {  /* mode isn't in table */
+#if DBG_SCREEN
+            kprintf("Invalid video mode 0x%04x changed to 0x%04x\n",
+                    boot_resolution,FALCON_DEFAULT_BOOT);
+#endif
+            boot_resolution = FALCON_DEFAULT_BOOT;  /* so pick one that is */
+        }
+
+        /* fix the video mode according to the actual monitor */
+        switch(monitor_type) {
         case 0:     /* monochrome */
             boot_resolution = FALCON_ST_HIGH;
             break;
@@ -433,11 +454,9 @@ void screen_init(void)
             }
             break;
         }
-        if (!lookup_videl_mode(boot_resolution)) {  /* mode isn't in table */
-            kprintf("Invalid video mode 0x%04x changed to 0x%04x\n",
-                    boot_resolution,FALCON_DEFAULT_BOOT);
-            boot_resolution = FALCON_DEFAULT_BOOT;  /* so pick one that is */
-        }
+#if DBG_SCREEN
+        kprintf("Fixed boot video mode is 0x%04x\n", boot_resolution);
+#endif
         vsetmode(boot_resolution);
         rez = 3;        /* fake value indicates Falcon/Videl */
         mask = 0x0fff;  /* STe-compatible palette */
