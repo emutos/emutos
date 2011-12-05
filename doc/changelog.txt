@@ -3033,3 +3033,7 @@ Start... early ages
   bios/vectors.S bios/xbios.c include/config.h: Added the CONF_WITH_FLOPPY
   define to allow disabling floppy support. (VRI)
 - bios/screen.c: Improved conditional compilation. (VRI)
+
+2011-12-05
+- bios/screen.c: Change default ST video boot mode to ST Low when colour
+  monitor is attached. (RFB)

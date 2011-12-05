@@ -473,14 +473,14 @@ void screen_init(void)
 #endif
 #if CONF_WITH_STE_SHIFTER
     if (has_ste_shifter) {
-        rez = monitor_type?ST_MEDIUM:ST_HIGH;
+        rez = monitor_type?ST_LOW:ST_HIGH;
         *rez_reg = rez;
         mask = 0x0fff;  /* STe-compatible palette */
     }
     else
 #endif
     {
-        rez = monitor_type?ST_MEDIUM:ST_HIGH;
+        rez = monitor_type?ST_LOW:ST_HIGH;
         *rez_reg = rez;
         mask = 0x0777;  /* ST-compatible palette */
     }
