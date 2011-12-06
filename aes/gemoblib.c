@@ -159,12 +159,10 @@ void ob_format(WORD just, BYTE *raw_str, BYTE *tmpl_str, BYTE *fmt_str)
 
 
 
-#if MC68K
 static WORD far_call(WORD (*fcode)(), LONG fdata)
 {
         return (*fcode)(fdata);
 }
-#endif
 
 
 /*

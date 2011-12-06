@@ -86,10 +86,8 @@ GLOBAL ACCNODE  gl_caccs[3];            /* max 3 accessories    */
 #endif
 
                                                 /* in GEMINIT.C         */
-#if MC68K
 static BYTE     start[SIZE_AFILE];              /* can't play the same  */
                                                 /* trick in 68k land    */
-#endif
 
 /* Some global variables: */
 
@@ -184,7 +182,7 @@ static void ini_dlongs(void)
                                                 /*   on para. boundary  */
                                                 /*   so new environment */
                                                 /*   can be copied here */
-#if MC68K
+
                                                 /* init. long pointer   */
                                                 /*   to global array    */
                                                 /*   which is used by   */
@@ -219,7 +217,6 @@ static void ini_dlongs(void)
         D.g_dta = ps = &gl_dta[0];
         ad_dta = ADDR(ps);
         ad_fsdta = ADDR(&gl_dta[30]);
-#endif
 
 #if MULTIAPP
         for (ii = 0; ii < NUM_PDS; ii++)
@@ -759,9 +756,7 @@ void gem_main(void)
     gl_changerez = FALSE;
 
     ini_dlongs();               /* init longs */
-#if MC68K
     hcli();
-#endif
     takecpm();                  /* take the 0efh int. */
 
     /* init event recorder  */
@@ -822,9 +817,8 @@ void gem_main(void)
     /* end of process init */
 
     /* restart the tick     */
-#if MC68K
     hsti();
-#endif
+
     /*
      * screen manager process init. this process starts out owning the mouse
      * and the keyboard. it has a pid == 1

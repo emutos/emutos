@@ -35,8 +35,6 @@
 #define CPM     0       /* CP/M version 2.2 */
 #define GEMDOS  1       /* GEM DOS              */
 
-#define MC68K   1       /* Motorola 68000 */
-
 #define ALCYON  1       /* Alcyon C Compiler */
 #define HIGH_C  0       /* for use with MetaWare High-C compiler        */
 
@@ -76,7 +74,6 @@
 #endif
 
 
-#if MC68K
                                                 /* Use memcpy to copy bytes: */
 #define LWCOPY(dest,src,len) memcpy((void *)(dest), (void*)(src), (len)*2)
                                                 /* Use memcpy to copy bytes: */
@@ -85,9 +82,6 @@
 #define LSTRLEN(p) strlen((char *)p)
 
 extern WORD LBWMOV(WORD *pdst, BYTE *psrc);
-
-#endif /* MC68K */
-
 
 extern WORD  LSTCPY(LONG pdst, LONG psrc);
                                                 /* coerce short ptr to  */
@@ -114,8 +108,6 @@ extern WORD  LSTCPY(LONG pdst, LONG psrc);
 
 /************************************************************************/
 
-
-#if MC68K
 
                                                 /* return short pointer */
                                                 /* from long address    */
@@ -174,14 +166,6 @@ extern WORD  LSTCPY(LONG pdst, LONG psrc);
 #define LBYTE3(x) (*(x))
 
 
-#endif /* MC68K */
-
-
-
-#if MC68K
-
 #define movs(num, ps, pd)  memcpy((char *)pd, (const char *)ps, num)
-
-#endif
 
 #endif  /* _COMPAT_H */

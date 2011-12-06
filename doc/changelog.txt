@@ -3041,3 +3041,6 @@ Start... early ages
 - aes/basepage.h aes/gemaplib.c aes/geminit.c aes/gemlib.h aes/struct.h
   desk/deskapp.h desk/deskins.c include/compat.h: Remove I8086 #define
   and all code conditional upon it. (RFB)
+- aes/gemaplib.c aes/geminit.c aes/gemoblib.c aes/struct.h desk/deskglob.c
+  include/compat.h: Remove MC68K #define and ensure that code previously
+  conditional on MC68K is now always compiled. (RFB)

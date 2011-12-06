@@ -215,9 +215,7 @@ WORD ap_trecd(LONG pbuff, WORD length)
                                                 /*   recording          */
         for(i=0; i<length; i++)
         {
-#if MC68K
           proutine = (WORD (*)(void))LLGET(pbuff);
-#endif
           if((LONG)proutine == (LONG)tchange)
           {
             code = TCHNG;

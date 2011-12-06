@@ -33,8 +33,4 @@
 GLOBAL ICONBLK          gl_icons[NUM_WOBS];
 /* */
 
-#if MC68K
 GLOBAL GLOBES           G;  
-#else
-GLOBAL  WORD            G;
-#endif

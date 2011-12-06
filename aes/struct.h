@@ -75,7 +75,6 @@ CDA
 };
 
 
-#if MC68K
 UDA
 {
         WORD    u_insuper;              /*   0  in supervisor flag       */ 
@@ -85,7 +84,6 @@ UDA
         ULONG   u_super[STACK_SIZE];    /*  44  */
         ULONG   u_supstk;               /* 1F4  */
 } ;
-#endif
 
 
 #define NOCANCEL 0x0001         /* event is occuring */
