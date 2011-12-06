@@ -3037,3 +3037,4 @@ Start... early ages
 2011-12-05
 - bios/screen.c: Change default ST video boot mode to ST Low when colour
   monitor is attached. (RFB)
+- bios/screen.c: Add VGA/50Hz modes to table of valid Falcon video modes. (RFB)
