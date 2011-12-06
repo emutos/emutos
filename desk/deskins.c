@@ -286,10 +286,6 @@ static void insa_elev(LONG tree, WORD nicon, WORD numics)
         lp = G.a_datastart + (LONG) *((BYTE **)(G.a_datastart + gl_pstart +
              (nicon * sizeof(BYTE *)) ) );
 #endif
-#if I8086
-        lp = G.a_datastart + LWGET(G.a_datastart + gl_pstart +
-             (nicon * sizeof(BYTE *)) );
-#endif
 */
 
 #if CONF_WITH_DESKTOP_ICONS

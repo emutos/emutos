@@ -86,9 +86,6 @@ GLOBAL ACCNODE  gl_caccs[3];            /* max 3 accessories    */
 #endif
 
                                                 /* in GEMINIT.C         */
-#if I8086
-EXTERN VOID     start();
-#endif
 #if MC68K
 static BYTE     start[SIZE_AFILE];              /* can't play the same  */
                                                 /* trick in 68k land    */
@@ -120,11 +117,8 @@ GLOBAL BYTE     gl_logdrv;
 GLOBAL PD       *rlr, *drl, *nrl;
 GLOBAL EVB      *eul, *dlr, *zlr;
 
-#if I8086
-GLOBAL UWORD    elinkoff;
-#else
 GLOBAL LONG     elinkoff;
-#endif
+
 GLOBAL BYTE     indisp;
 
 GLOBAL WORD     fpt, fph, fpcnt;                /* forkq tail, head,    */
@@ -178,11 +172,6 @@ BYTE *scan_2(BYTE *pcurr, WORD *pwd)
 
 static void ini_dlongs(void)
 {
-/*
-#if I8086
-        REG LONG        ad_dseg;
-#endif
-*/
 #if MULTIAPP
         WORD            ii;
 #endif
@@ -195,52 +184,6 @@ static void ini_dlongs(void)
                                                 /*   on para. boundary  */
                                                 /*   so new environment */
                                                 /*   can be copied here */
-#if I8086
-        /*        
-                  ad_ssave = LLCS() + LW(start);
-                  // init. long pointer   
-                  //   to global array    
-                  //   which is used by   
-                  //   resource calls     
-                  ad_dseg = ADDR(&D.g_sysglo[0]) & 0xFFFF0000L;
-                  ad_sysglo = ad_dseg + LW(&D.g_sysglo[0]);
-                  ad_windspb = ad_dseg + LW(&wind_spb);
-                  ad_mouse = ad_dseg + LW(&gl_mouse[0]);
-                  // gemfslib longs       *
-                  ad_tmp1 = ad_dseg + LW(&gl_tmp1[0]);
-                  ad_tmp2 = ad_dseg + LW(&gl_tmp2[0]);
-                  // gemrslib             
-                  ad_hdrbuff = ad_dseg + LW(&hdr_buff[0]);
-                  // gemoblib             
-                  ad_valstr = ad_dseg + LW(&D.g_valstr[0]);
-                  ad_fmtstr = ad_dseg + LW(&D.g_fmtstr[0]);
-                  ad_rawstr = ad_dseg + LW(&D.g_rawstr[0]);
-                  ad_tmpstr = ad_dseg + LW(&D.g_tmpstr[0]);
-                  ad_edblk = ad_dseg + LW(&edblk);
-                  ad_bi = ad_dseg + LW(&bi);
-                  ad_ib = ad_dseg + LW(&ib);
-                  
-                  D.s_cmd = (BYTE *) &pqueue[0];
-                  ad_scmd = ad_dseg + LW(D.s_cmd);
-                  // put scrap and some   
-                  //   other arrays at    
-                  //   at top of the      
-                  //   screen mgr stack   
-                  ps = D.g_scrap = (BYTE *) &usuper[0];
-                  ad_scrap = ad_dseg + LW(ps);
-                  D.s_cdir = ps += 82;
-                  ad_scdir = ad_dseg + LW(ps);
-                  D.g_loc1 = ps = &gl_1loc[0];
-                  ad_g1loc = ad_dseg + LW(ps);
-                  D.g_loc2 = ps = &gl_2loc[0];
-                  ad_g2loc = ad_dseg + LW(ps);
-                  D.g_dir = ps = &gl_dir[0];
-                  ad_path = ad_dseg + LW(ps);
-                  D.g_dta = ps = &gl_dta[0];
-                  ad_dta = ad_dseg + LW(ps);
-                  ad_fsdta = ad_dseg + LW(&gl_dta[30]);
-        */
-#endif
 #if MC68K
                                                 /* init. long pointer   */
                                                 /*   to global array    */
@@ -296,17 +239,6 @@ static void ini_dlongs(void)
 }
 
 
-/*
- *#if I8086
- *
- *        WORD
- *sizeglo()*
- *{
- *        return(sizeof(THEGLO) );
- *}
- *#endif
- */
-     
 LONG size_theglo(void)
 {
     return( sizeof(THEGLO)/2 );
@@ -350,11 +282,6 @@ static PD *iprocess(BYTE *pname, void (*routine)())
         kprintf("iprocess(\"%s\")\n", (const char*)pname);
 #endif
         /* figure out load addr */
-
-        /* #if I8086
-         * ldaddr = LLCS() + ((ULONG) routine);
-         * #endif
-         */
 
         ldaddr = (ULONG) routine;
 
@@ -832,9 +759,6 @@ void gem_main(void)
     gl_changerez = FALSE;
 
     ini_dlongs();               /* init longs */
-#if I8086
-    cli();                      /* no ticks during init */
-#endif
 #if MC68K
     hcli();
 #endif
@@ -898,9 +822,6 @@ void gem_main(void)
     /* end of process init */
 
     /* restart the tick     */
-#if I8086
-    sti();
-#endif
 #if MC68K
     hsti();
 #endif

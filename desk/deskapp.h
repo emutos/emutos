@@ -163,9 +163,6 @@ CSAVE
 extern BYTE     *gl_pstart;
 #endif
 
-#if I8086
-extern WORD     gl_pstart;
-#endif
 */
 
 

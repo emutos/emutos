@@ -23,11 +23,7 @@ extern PD       *rlr;
 extern PD       *drl, *nrl;
 extern EVB      *eul, *dlr, *zlr;
 
-#if I8086
-extern UWORD    elinkoff;
-#else
 extern LONG     elinkoff;
-#endif
 
 /* In Dispatch - a byte whose value is zero when not in function 
  * dsptch, and 1 when between dsptch ... switchto function calls

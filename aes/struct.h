@@ -75,19 +75,6 @@ CDA
 };
 
 
-#if I8086
-UDA
-{
-        WORD    u_insuper;              /* in supervisor flag           */ 
-        WORD    *u_spsuper;             /* supervisor stack offset      */
-        UWORD   u_sssuper;              /* supervisor stack segment     */
-        WORD    *u_spuser;              /* user stack offset            */
-        UWORD   u_ssuser;               /* user stack segment           */
-        UWORD   u_regs[9];              /* ds,es,ax,bx,cx,dx,si,di,bp   */
-        WORD    u_super[STACK_SIZE];
-        WORD    u_supstk;
-} ;
-#endif
 #if MC68K
 UDA
 {

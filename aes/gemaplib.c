@@ -218,9 +218,6 @@ WORD ap_trecd(LONG pbuff, WORD length)
 #if MC68K
           proutine = (WORD (*)(void))LLGET(pbuff);
 #endif
-#if I8086
-          proutine = (WORD (*)())LWGET(pbuff);
-#endif
           if((LONG)proutine == (LONG)tchange)
           {
             code = TCHNG;

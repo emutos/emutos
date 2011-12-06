@@ -35,7 +35,6 @@
 #define CPM     0       /* CP/M version 2.2 */
 #define GEMDOS  1       /* GEM DOS              */
 
-#define I8086   0       /* Intel 8086/8088 */
 #define MC68K   1       /* Motorola 68000 */
 
 #define ALCYON  1       /* Alcyon C Compiler */
@@ -77,33 +76,6 @@
 #endif
 
 
-#if I8086
-                                                /* return length of     */
-                                                /*   string pointed at  */
-                                                /*   by long pointer    */
-EXTERN WORD     LSTRLEN();
-                                                /* copy n words from    */
-                                                /*   src long ptr to    */
-                                                /*   dst long ptr i.e., */
-                                                /*   LWCOPY(dlp, slp, n)*/
-EXTERN WORD     LWCOPY();
-                                                /* copy n bytes from    */
-                                                /*   src long ptr to    */
-                                                /*   dst long ptr i.e., */
-                                                /*   LBCOPY(dlp, slp, n)*/
-EXTERN BYTE     LBCOPY();
-                                                /* move bytes into wds*/
-                                                /*   from src long ptr to*/
-                                                /*   dst long ptr i.e., */
-                                                /*   until a null is    */
-                                                /*   encountered, then  */
-                                                /*   num moved is returned*/
-                                                /*   LBWMOV(dwlp, sblp)*/
-EXTERN WORD     LBWMOV();
-
-#endif /* I8086 */
-
-
 #if MC68K
                                                 /* Use memcpy to copy bytes: */
 #define LWCOPY(dest,src,len) memcpy((void *)(dest), (void*)(src), (len)*2)
@@ -138,78 +110,6 @@ extern WORD  LSTCPY(LONG pdst, LONG psrc);
                                                 /* return high byte of  */
                                                 /*   a word value       */
 #define LHIBT(x) ((BYTE)( (x >> 8) & 0x00ff))
-
-
-/************************************************************************/
-
-
-#if I8086
-
-
-                                                /* return long address  */
-                                                /*   of short ptr       */
-/*EXTERN LONG   ADDR();*/
-#define ADDR(x) ((LONG) (FAR WORD *) (x))
-
-                                                /* return long address  */
-                                                /*   of the data seg    */
-EXTERN LONG     LLDS();
-
-                                                /* return long address  */
-                                                /*   of the code seg    */
-EXTERN LONG     LLCS();
-                                                /* return a single byte */
-                                                /*   pointed at by long */
-                                                /*   ptr                */
-#define LBGET(x) ( (UBYTE) *((FAR BYTE * )(x)) )
-/*EXTERN BYTE   LBGET();*/
-                                                /* set a single byte    */
-                                                /*   pointed at by long */
-                                                /*   ptr, LBSET(lp, bt) */
-#define LBSET(x, y)  ( *((FAR BYTE *)(x)) = y)
-/*EXTERN BYTE   LBSET();*/
-                                                /* return a single word */
-                                                /*   pointed at by long */
-                                                /*   ptr                */
-#define LWGET(x) ( (WORD) *((FAR WORD *)(x)) )
-/*EXTERN WORD   LWGET();*/
-                                                /* set a single word    */
-                                                /*   pointed at by long */
-                                                /*   ptr, LWSET(lp, bt) */
-#define LWSET(x, y)  ( *((FAR WORD *)(x)) = y)
-/*EXTERN WORD   LWSET();*/
-                                                /* return a single long */
-                                                /*   pointed at by long */
-                                                /*   ptr                */
-#define LLGET(x) ( *((FAR LONG *)(x)))
-/*EXTERN LONG   LLGET();*/
-                                                /* set a single long    */
-                                                /*   pointed at by long */
-                                                /*   ptr, LLSET(lp, bt) */
-#define LLSET(x, y) ( *((FAR LONG *)(x)) = y)
-/*EXTERN LONG   LLSET();*/
-                                                /* return 0th byte of   */
-                                                /*   a long value given */
-                                                /*   a short pointer to */
-                                                /*   the long value     */
-#define LBYTE0(x) (*x)
-                                                /* return 1st byte of   */
-                                                /*   a long value given */
-                                                /*   a short pointer to */
-                                                /*   the long value     */
-#define LBYTE1(x) (*(x+1))
-                                                /* return 2nd byte of   */
-                                                /*   a long value given */
-                                                /*   a short pointer to */
-                                                /*   the long value     */
-#define LBYTE2(x) (*(x+2))
-                                                /* return 3rd byte of   */
-                                                /*   a long value given */
-                                                /*   a short pointer to */
-                                                /*   the long value     */
-#define LBYTE3(x) (*(x+3))
-
-#endif
 
 
 /************************************************************************/

@@ -69,13 +69,7 @@ typedef struct moblk
 #define THEBAR 1
 #define THEACTIVE 2
 
-/*!!!*//* Sozobon C has problems with the following macro, so I changed this... */
-//#if I8086
 #define THEMENUS ( LWGET(OB_TAIL(THESCREEN)) )
-//#endif
-//#if MC68K
-//#define THEMENUS ( (WORD) *((WORD *)( OB_TAIL(THESCREEN) )) )
-//#endif
 
 /*** STATE DEFINITIONS FOR menu_state ***********************************/
 

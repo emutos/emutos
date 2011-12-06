@@ -3038,3 +3038,6 @@ Start... early ages
 - bios/screen.c: Change default ST video boot mode to ST Low when colour
   monitor is attached. (RFB)
 - bios/screen.c: Add VGA/50Hz modes to table of valid Falcon video modes. (RFB)
+- aes/basepage.h aes/gemaplib.c aes/geminit.c aes/gemlib.h aes/struct.h
+  desk/deskapp.h desk/deskins.c include/compat.h: Remove I8086 #define
+  and all code conditional upon it. (RFB)
