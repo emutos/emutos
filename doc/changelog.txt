@@ -3044,3 +3044,6 @@ Start... early ages
 - aes/gemaplib.c aes/geminit.c aes/gemoblib.c aes/struct.h desk/deskglob.c
   include/compat.h: Remove MC68K #define and ensure that code previously
   conditional on MC68K is now always compiled. (RFB)
+
+2011-12-07
+- bios/lineainit.c: Fix crash when booting in TT High resolution. (RFB)

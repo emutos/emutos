@@ -39,7 +39,7 @@ static const struct video_mode video_mode[] = {
     { 0,    0,   0},            /* rez=3: invalid */
     { 4,  640, 480},            /* rez=4: TT medium */
     { 0,    0,  0,},            /* rez=5: invalid */
-    { 2, 1280, 960},            /* rez=6: TT high */
+    { 1, 1280, 960},            /* rez=6: TT high */
     { 8,  320, 480}             /* rez=7: TT low */
 };
 
