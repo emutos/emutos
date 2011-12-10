@@ -3047,3 +3047,7 @@ Start... early ages
 
 2011-12-07
 - bios/lineainit.c: Fix crash when booting in TT High resolution. (RFB)
+
+2011-12-10
+- bios/bios.c bios/kprint.c bios/kprint.h: Fix crash when kprintf() was
+  called from user mode to write to RS232 or MIDI. (RFB)

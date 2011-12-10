@@ -14,6 +14,7 @@
 
 #include "config.h"
 #include <stdarg.h>
+#include <osbind.h>
 #include "doprintf.h"
 #include "portab.h"
 #include "kprint.h"
@@ -120,11 +121,33 @@ static int vkprintf(const char *fmt, va_list ap)
 
 #if MIDI_DEBUG_PRINT
     /* use midi port instead of other native debug capabilities */
-    return doprintf(kprintf_outc_midi, fmt, ap);
+    if (boot_status&MIDI_AVAILABLE) {   /* no MIDI, no message */
+        int rc;
+        char *stacksave = NULL;
+
+        if (boot_status&DOS_AVAILABLE)  /* if Super() is available, */
+            if (!Super(1L))             /* check for user state.    */
+                stacksave = (char *)Super(0L);  /* if so, switch to super   */
+        rc = doprintf(kprintf_outc_midi, fmt, ap);
+        if (stacksave)                  /* if we switched, */
+            SuperToUser(stacksave);     /* switch back.    */
+        return rc;
+    }
 #endif
 
 #if RS232_DEBUG_PRINT
-    return doprintf(kprintf_outc_rs232, fmt, ap);
+    if (boot_status&RS232_AVAILABLE) {  /* no RS232, no message */
+        int rc;
+        char *stacksave = NULL;
+
+        if (boot_status&DOS_AVAILABLE)  /* if Super() is available, */
+            if (!Super(1L))             /* check for user state.    */
+                stacksave = (char *)Super(0L);  /* if so, switch to super   */
+        rc = doprintf(kprintf_outc_rs232, fmt, ap);
+        if (stacksave)                  /* if we switched, */
+            SuperToUser(stacksave);     /* switch back.    */
+        return rc;
+    }
 #endif
 
     /* let us hope nobody is doing 'pretty-print' with kprintf by

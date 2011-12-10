@@ -85,6 +85,8 @@ static WORD defdrv;             /* default drive number (0 is a:, 2 is c:) */
 /* BYTE env[256];                * environment string, enough bytes??? */
 static const BYTE null_env[] = {0, 0};
 
+/* used by kprintf() */
+WORD boot_status = 0;           /* see kprint.h for bit flags */
 /*==== BOOT ===============================================================*/
 
 
@@ -184,6 +186,7 @@ static void bios_init(void)
 
 
     mfp_init();         /* init MFP, timers, USART */
+    boot_status |= RS232_AVAILABLE;     /* track progress */
     
     /* The sound init must be done before allowing MFC interrupts,
      * because of dosound stuff in the timer C interrupt routine.
@@ -200,6 +203,7 @@ static void bios_init(void)
     kbd_init();         /* init keyboard, disable mouse and joystick */
     midi_init();        /* init MIDI acia so that kbd acia irq works */
     init_acia_vecs();   /* Init the ACIA interrupt vector and related stuff */
+    boot_status |= MIDI_AVAILABLE;  /* track progress */
 
     /* Now that the MFP is configured, allow MFP interrupts (we need a
      * Timer C for DMA timeouts in floppy and harddisk initialisation)
@@ -237,6 +241,7 @@ static void bios_init(void)
 #endif
 
     osinit();                   /* initialize BDOS */
+    boot_status |= DOS_AVAILABLE;   /* track progress */
   
     set_sr(0x2300);
   
