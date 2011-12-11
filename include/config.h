@@ -213,6 +213,17 @@
 #endif
 
 /*
+ * Set CONF_WITH_MEGARTC to 1 to enable MegaST real-time clock support
+ */
+#ifndef CONF_WITH_MEGARTC
+# if defined(MACHINE_ARANYM) || defined(MACHINE_FIREBEE)
+#  define CONF_WITH_MEGARTC 0
+# else
+#  define CONF_WITH_MEGARTC 1
+# endif
+#endif
+
+/*
  * Set CONF_WITH_XHDI to 1 to enable XHDI support (i.e. the XHDI cookie etc.)
  */
 #ifndef CONF_WITH_XHDI

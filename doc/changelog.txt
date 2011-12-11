@@ -3051,3 +3051,8 @@ Start... early ages
 2011-12-10
 - bios/bios.c bios/kprint.c bios/kprint.h: Fix crash when kprintf() was
   called from user mode to write to RS232 or MIDI. (RFB)
+
+2011-12-11
+- bios/bios.c bios/clock.c bios/clock.h bios/machine.c bios/machine.h
+  include/config.h: Added the CONF_WITH_MEGARTC define to allow disabling MegaST
+  real-time clock support. (VRI)

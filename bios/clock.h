@@ -18,8 +18,9 @@ extern void clockvec(BYTE *buf);
 
 /* interface for machine.c */
 
-extern int has_megartc;
+#if CONF_WITH_MEGARTC
 extern void detect_megartc(void);
+#endif /* CONF_WITH_MEGARTC */
 
 /* internal init */
 

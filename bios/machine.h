@@ -46,7 +46,9 @@ extern int has_videl;
 #if CONF_WITH_VME
 extern int has_vme;
 #endif
+#if CONF_WITH_MEGARTC
 extern int has_megartc;   /* in clock.c */
+#endif
 #if CONF_WITH_NVRAM
 extern int has_nvram;     /* in nvram.c */
 #endif

@@ -387,8 +387,10 @@ void biosmain(void)
         rtc_present = TRUE;
 #endif
 
+#if CONF_WITH_MEGARTC
     if (has_megartc)
         rtc_present = TRUE;
+#endif
 
     if (!rtc_present)
         trap1( 0x2b, os_dosdate);  /* set initial date in GEMDOS format: Tsetdate() */

@@ -27,13 +27,10 @@
 
 #define DBG_CLOCK 0
 
-
-/* set this to 1 to debug IKBD clock (you should also disable NVRAM) */
-#define NO_MEGARTC 0
-
 /* set this to 1 to not use IKBD clock */
 #define NO_IKBD_CLOCK 0
 
+#if CONF_WITH_MEGARTC
 
 /*==== MegaRTC section ====================================================*/
 
@@ -88,14 +85,13 @@ static struct myclkreg clkregs1, clkregs2;
 void detect_megartc(void)
 {
   has_megartc = 0;
-#if !NO_MEGARTC
+
   /* first check if the address is valid */
   if (check_read_byte(CLK_BASE+1)) {
     if ((UBYTE)clk.sec_l != 0xff && (UBYTE)clk.sec_h != 0xff) {
       has_megartc = 1;
     }
   }
-#endif /* NO_MEGARTC */
   
 #if NEEDED
   /* 
@@ -263,6 +259,7 @@ static void msetdt(ULONG dt)
   msetregs();
 }
 
+#endif /* CONF_WITH_MEGARTC */
 
 #if CONF_WITH_NVRAM
 
@@ -540,8 +537,11 @@ static void isetdt(ULONG dt)
 
 void clock_init(void)
 {
+  if(FALSE) {
+    /* Dummy case for conditional compilation */
+  }
 #if CONF_WITH_NVRAM
-  if(has_nvram) {
+  else if(has_nvram) {
     /* On Mega-STE and early TTs the year offset in the NVRAM is different */
     if (cookie_mch < MCH_TT || (cookie_mch == MCH_TT && TOS_VERSION <= 0x0305)) {
         nvram_rtc_year_offset = 1970 - 1980;
@@ -550,9 +550,13 @@ void clock_init(void)
         nvram_rtc_year_offset = 1968 - 1980;
     }
   }
-  else
 #endif /* CONF_WITH_NVRAM */
-  if( !has_megartc ) {
+#if CONF_WITH_MEGARTC
+  else if(has_megartc) {
+    /* Nothing to initialize */
+  }
+#endif /* CONF_WITH_MEGARTC */
+  else {
     /* no megartc, the best we can do is set the date to the
      * OS creation date, time 0.
      */
@@ -564,15 +568,19 @@ void clock_init(void)
 
 void settime(LONG time)
 {
+  if(FALSE) {
+    /* Dummy case for conditional compilation */
+  }
 #if CONF_WITH_NVRAM
-  if(has_nvram) {
+  else if(has_nvram) {
     nsetdt(time);
   }
-  else 
 #endif /* CONF_WITH_NVRAM */
-  if(has_megartc) {
+#if CONF_WITH_MEGARTC
+  else if(has_megartc) {
     msetdt(time);
   }
+#endif /* CONF_WITH_MEGARTC */
   else {
     isetdt(time);
   }
@@ -580,15 +588,19 @@ void settime(LONG time)
 
 LONG gettime(void)
 {
+  if(FALSE) {
+    /* Dummy case for conditional compilation */
+  }
 #if CONF_WITH_NVRAM
-  if(has_nvram) {
+  else if(has_nvram) {
     return ngetdt();
   }
-  else 
 #endif /* ! NO_NVRAM */
-  if(has_megartc) {
+#if CONF_WITH_MEGARTC
+  else if(has_megartc) {
     return mgetdt();
   }
+#endif /* CONF_WITH_MEGARTC */
   else {
     return igetdt();
   }

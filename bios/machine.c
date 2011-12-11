@@ -284,7 +284,12 @@ void machine_detect(void)
 #if CONF_WITH_VME
   detect_vme();
 #endif
+#if CONF_WITH_MEGARTC
   detect_megartc();
+#if DBG_MACHINE
+  kprintf("has_megartc = %d\n", has_megartc);
+#endif /* DBG_MACHINE */
+#endif /* CONF_WITH_MEGARTC */
 #if CONF_WITH_NVRAM
   detect_nvram();
 #endif
@@ -442,9 +447,13 @@ const char * machine_name(void)
 
   switch(cookie_mch) {
   case MCH_ST:
+#if CONF_WITH_MEGARTC
     if(has_megartc) {
       return "MegaST";
-    } else {
+    }
+    else
+#endif /* CONF_WITH_MEGARTC */
+    {
       return "ST";
     }
   case MCH_STE: return "STe";
