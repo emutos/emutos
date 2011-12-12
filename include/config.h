@@ -224,6 +224,13 @@
 #endif
 
 /*
+ * Set CONF_WITH_MIDI_ACIA to 1 to enable MIDI support
+ */
+#ifndef CONF_WITH_MIDI_ACIA
+# define CONF_WITH_MIDI_ACIA 1
+#endif
+
+/*
  * Set CONF_WITH_XHDI to 1 to enable XHDI support (i.e. the XHDI cookie etc.)
  */
 #ifndef CONF_WITH_XHDI

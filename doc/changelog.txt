@@ -3056,3 +3056,7 @@ Start... early ages
 - bios/bios.c bios/clock.c bios/clock.h bios/machine.c bios/machine.h
   include/config.h: Added the CONF_WITH_MEGARTC define to allow disabling MegaST
   real-time clock support. (VRI)
+
+2011-12-12
+- bios/aciavecs.S bios/midi.c include/config.h: Added the CONF_WITH_MIDI_ACIA
+  define to allow disabling MIDI ACIA support. (VRI)

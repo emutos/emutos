@@ -167,12 +167,17 @@ _init_acia_vecs:
 #ifdef __mcoldfire__
         move.l  #_kbdvec,d0
         move.l  d0,kbdvec-_kbdvecs(a1)
+#else
+        move.l  #_kbdvec,kbdvec-_kbdvecs(a1)
+#endif
+#if CONF_WITH_MIDI_ACIA
+#ifdef __mcoldfire__
         move.l  #_midivec,d0
         move.l  d0,midivec-_kbdvecs(a1)
 #else
-        move.l  #_kbdvec,kbdvec-_kbdvecs(a1)
         move.l  #_midivec,midivec-_kbdvecs(a1)
 #endif
+#endif /* CONF_WITH_MIDI_ACIA */
         move.l  a0,vkbderr-_kbdvecs(a1)
         move.l  a0,vmiderr-_kbdvecs(a1)
         move.l  a0,statvec-_kbdvecs(a1)
@@ -184,13 +189,18 @@ _init_acia_vecs:
         move.l  #_clockvec,clockvec-_kbdvecs(a1)     // in bios/clock.c
 #endif
         move.l  a0,joyvec-_kbdvecs(a1)
+#if CONF_WITH_MIDI_ACIA
 #ifdef __mcoldfire__
         move.l  #_midisys,d0
         move.l  d0,midisys-_kbdvecs(a1)
+#else
+        move.l  #_midisys,midisys-_kbdvecs(a1)
+#endif
+#endif /* CONF_WITH_MIDI_ACIA */
+#ifdef __mcoldfire__
         move.l  #_ikbdsys,d0
         move.l  d0,ikbdsys-_kbdvecs(a1)
 #else
-        move.l  #_midisys,midisys-_kbdvecs(a1)
         move.l  #_ikbdsys,ikbdsys-_kbdvecs(a1)
 #endif
         
@@ -248,8 +258,10 @@ _int_acia:
 #endif
                 
 int_acia_loop:
+#if CONF_WITH_MIDI_ACIA
         move.l  midisys,a0
         jsr     (a0)
+#endif
         move.l  ikbdsys,a0
         jsr     (a0)
         lea     0xfffffa00.w,a1
@@ -265,6 +277,8 @@ int_acia_loop:
         movem.l (sp)+,d0-d3/a0-a3
 #endif
         rte
+
+#if CONF_WITH_MIDI_ACIA
 
 // ==== MIDI stuff ================
 //        
@@ -306,6 +320,8 @@ _midivec:
 #endif
         move.w  d1,midiibuftl
 1:      rts
+
+#endif /* CONF_WITH_MIDI_ACIA */
 
 // ==== IKBD stuff ================
 //        
