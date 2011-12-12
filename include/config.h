@@ -224,6 +224,13 @@
 #endif
 
 /*
+ * Set CONF_WITH_MFP_RS232 to 1 to enable MFP RS-232 support
+ */
+#ifndef CONF_WITH_MFP_RS232
+# define CONF_WITH_MFP_RS232 1
+#endif
+
+/*
  * Set CONF_WITH_MIDI_ACIA to 1 to enable MIDI support
  */
 #ifndef CONF_WITH_MIDI_ACIA

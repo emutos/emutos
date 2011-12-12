@@ -79,10 +79,12 @@ void    mfp_init (void)
     /* ctrl = divide 64, data = 192 */
     xbtimer(2, 0x50, 192, (LONG)int_timerc); 
     
+#if CONF_WITH_MFP_RS232
     /* timer D */
     rsconf(B9600, 0, 0x88, 1, 1, 0);
 
     /* TODO, flow control */
+#endif
 }
  
 
@@ -95,6 +97,8 @@ void mfpint(WORD num, LONG vector)
     *(LONG *)((0x40L + num)*4) = vector;
     jenabint(num);
 }
+
+#if CONF_WITH_MFP_RS232
 
 struct rsconf_struct {
     BYTE control;
@@ -120,9 +124,11 @@ static const struct rsconf_struct rsconf_data[] = {
     { /*    50 */  2, 96 }, 
 };
 
+#endif /* CONF_WITH_MFP_RS232 */
 
 void rsconf(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
 {
+#if CONF_WITH_MFP_RS232
     MFP *mfp=MFP_BASE;   /* set base address of MFP */
 
     if(baud >= 0 && baud < 16) {
@@ -134,6 +140,7 @@ void rsconf(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
     if(rsr >= 0) mfp->rsr = rsr;
     if(tsr >= 0) mfp->tsr = tsr;
     if(scr >= 0) mfp->scr = scr;
+#endif
 }
 
 void jdisint(WORD num)
