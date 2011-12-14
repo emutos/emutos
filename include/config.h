@@ -238,6 +238,17 @@
 #endif
 
 /*
+ * Set CONF_WITH_MIDI_ACIA to 1 to enable MIDI support
+ */
+#ifndef CONF_WITH_IKBD_CLOCK
+# ifdef MACHINE_ARANYM
+#  define CONF_WITH_IKBD_CLOCK 0
+# else
+#  define CONF_WITH_IKBD_CLOCK 1
+# endif
+#endif
+
+/*
  * Set CONF_WITH_XHDI to 1 to enable XHDI support (i.e. the XHDI cookie etc.)
  */
 #ifndef CONF_WITH_XHDI

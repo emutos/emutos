@@ -27,8 +27,10 @@
 
 #define DBG_CLOCK 0
 
-/* set this to 1 to not use IKBD clock */
-#define NO_IKBD_CLOCK 0
+/* Date/Time to use when the hardware clock is not set.
+ * We use the OS creation date at 00:00:00
+ */ 
+#define DEFAULT_DATETIME ((ULONG)os_dosdate << 16)
 
 #if CONF_WITH_MEGARTC
 
@@ -376,6 +378,7 @@ static void nsetdt(ULONG dt)
 
 #endif /* CONF_WITH_NVRAM */
 
+#if CONF_WITH_IKBD_CLOCK
 
 /*==== IKBD clock section =================================================*/
 
@@ -414,7 +417,6 @@ static inline UWORD bcd2int(UBYTE a)
 
 static void igetregs(void)
 {
-#if !NO_IKBD_CLOCK
   long delay;
   iclk_ready = 0;
   iclkbuf.cmd = 0x1C;
@@ -425,13 +427,11 @@ static void igetregs(void)
   while(!iclk_ready && delay > 0) {
     --delay;
   }
-#endif /* !NO_IKBD_CLOCK */
 }
 
 #if 0  /* currently unused */
 static void iresetregs(void)
 {
-#if !NO_IKBD_CLOCK
   iclkbuf.cmd   = 0x1B;
   iclkbuf.year  = 0xFF;
   iclkbuf.month = 0xFF;
@@ -439,23 +439,19 @@ static void iresetregs(void)
   iclkbuf.hour  = 0xFF;
   iclkbuf.min   = 0xFF;
   iclkbuf.sec   = 0xFF;
-#endif /* !NO_IKBD_CLOCK */
 }
 #endif
 
 static void isetregs(void)
 {
-#if !NO_IKBD_CLOCK
   iclkbuf.cmd = 0x1B;
   ikbdws(6, (PTR) &iclkbuf);
-#endif /* !NO_IKBD_CLOCK */
 }
 
 static UWORD idogetdate(void)
 {
   UWORD date;
 
-#if !NO_IKBD_CLOCK
 #if DBG_CLOCK
   kprintf("idogetdate() %02x/%02x/%02x\n", iclkbuf.year, iclkbuf.month, iclkbuf.day);
 #endif
@@ -468,9 +464,7 @@ static UWORD idogetdate(void)
 
   date = ((year-1980) << 9)
     | ( bcd2int(iclkbuf.month) << 5 ) | bcd2int(iclkbuf.day);
-#else
-  date = os_dosdate; /* default date if no IKBD clock */
-#endif /* !NO_IKBD_CLOCK */
+
   return date;
 }
 
@@ -478,33 +472,27 @@ static UWORD idogettime(void)
 {
   UWORD time;
 
-#if !NO_IKBD_CLOCK
 #if DBG_CLOCK
   kprintf("idogettime() %02x:%02x:%02x\n", iclkbuf.hour, iclkbuf.min, iclkbuf.sec);
 #endif
   time = ( bcd2int(iclkbuf.sec) >> 1 )
     | ( bcd2int(iclkbuf.min) << 5 ) | ( bcd2int(iclkbuf.hour) << 11 ) ;
-#else
-  time = 0;     /* default time if no IKBD clock */
-#endif /* !NO_IKBD_CLOCK */
+
   return time;
 }
 
 static void idosettime(UWORD time) 
 {
-#if !NO_IKBD_CLOCK
   iclkbuf.sec = int2bcd( (time << 1) & 0x3f );
   iclkbuf.min = int2bcd( (time >> 5) & 0x3f );
   iclkbuf.hour = int2bcd( (time >> 11) & 0x1f );
 #if DBG_CLOCK
   kprintf("idosettime() %02x:%02x:%02x\n", iclkbuf.hour, iclkbuf.min, iclkbuf.sec);
 #endif
-#endif /* !NO_IKBD_CLOCK */
 }
 
 static void idosetdate(UWORD date) 
 {
-#if !NO_IKBD_CLOCK
   UWORD year = 1980 + ((date >> 9) & 0x7f);
 
   iclkbuf.year = int2bcd( year % 100 );
@@ -513,7 +501,6 @@ static void idosetdate(UWORD date)
 #if DBG_CLOCK
   kprintf("idosetdate() %02x/%02x/%02x\n", iclkbuf.year, iclkbuf.month, iclkbuf.day);
 #endif
-#endif /* !NO_IKBD_CLOCK */
 }
 
 
@@ -532,6 +519,7 @@ static void isetdt(ULONG dt)
   isetregs();
 }
 
+#endif /* CONF_WITH_IKBD_CLOCK */
 
 /* internal init */
 
@@ -556,12 +544,14 @@ void clock_init(void)
     /* Nothing to initialize */
   }
 #endif /* CONF_WITH_MEGARTC */
+#if CONF_WITH_IKBD_CLOCK
   else {
-    /* no megartc, the best we can do is set the date to the
-     * OS creation date, time 0.
+    /* The IKBD clock is lost at power off, and has bogus values at poweron.
+     * So initialize it to the default date/time at startup.
      */
-    isetdt(((ULONG) os_dosdate) << 16);
+    isetdt(DEFAULT_DATETIME);
   }
+#endif /* CONF_WITH_IKBD_CLOCK */
 }
 
 /* xbios functions */
@@ -582,7 +572,9 @@ void settime(LONG time)
   }
 #endif /* CONF_WITH_MEGARTC */
   else {
+#if CONF_WITH_IKBD_CLOCK
     isetdt(time);
+#endif /* CONF_WITH_IKBD_CLOCK */
   }
 }
 
@@ -602,6 +594,10 @@ LONG gettime(void)
   }
 #endif /* CONF_WITH_MEGARTC */
   else {
+#if CONF_WITH_IKBD_CLOCK
     return igetdt();
+#else
+    return DEFAULT_DATETIME;
+#endif /* CONF_WITH_IKBD_CLOCK */
   }
 }

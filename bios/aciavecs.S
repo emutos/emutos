@@ -182,12 +182,14 @@ _init_acia_vecs:
         move.l  a0,vmiderr-_kbdvecs(a1)
         move.l  a0,statvec-_kbdvecs(a1)
         move.l  a0,mousevec-_kbdvecs(a1)
+#if CONF_WITH_IKBD_CLOCK
 #ifdef __mcoldfire__
         move.l  #_clockvec,d0                        // in bios/clock.c
         move.l  d0,clockvec-_kbdvecs(a1)
 #else
         move.l  #_clockvec,clockvec-_kbdvecs(a1)     // in bios/clock.c
 #endif
+#endif /* CONF_WITH_IKBD_CLOCK */
         move.l  a0,joyvec-_kbdvecs(a1)
 #if CONF_WITH_MIDI_ACIA
 #ifdef __mcoldfire__
@@ -450,7 +452,11 @@ action_table:
         dc.l    kbd_status      // 1
         dc.l    kbd_abs_mouse   // 2
         dc.l    kbd_rel_mouse   // 3
+#ifdef CONF_WITH_IKBD_CLOCK
         dc.l    kbd_clock       // 4
+#else
+        dc.l    0               // 4
+#endif
         dc.l    kbd_joys        // 5
         dc.l    kbd_joy0        // 6
         dc.l    kbd_joy1        // 7
@@ -463,10 +469,12 @@ kbd_abs_mouse:
 kbd_rel_mouse:
         move.l  mousevec,a1
         bra     kbd_jump_vec
+#ifdef CONF_WITH_IKBD_CLOCK
 kbd_clock:
         addq.l  #1,a0
         move.l  clockvec,a1
         bra     kbd_jump_vec
+#endif
 
 // Joystick support is special. The buffer passed to routine joyvec
 // will, in any case, contain (package header, joystick 0, joystick 1)
