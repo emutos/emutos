@@ -3062,3 +3062,6 @@ Start... early ages
   define to allow disabling MIDI ACIA support. (VRI)
 - bios/chardev.c bios/mfp.c include/config.h: Added the CONF_WITH_MFP_RS232
   define to allow disabling MFP RS-232 support. (VRI)
+
+2011-12-14
+- bios/screen.c bios/screen.h bios/xbios.c: Added TT video syscalls. (RFB)

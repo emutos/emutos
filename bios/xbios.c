@@ -842,7 +842,9 @@ WORD xbios_2e(WORD op, WORD start, WORD count, PTR buffer)
 
 /* unimplemented */
 
-
+/*
+ * TT video
+ */
 #if DBG_XBIOS
 WORD xbios_50(WORD mode)
 {
@@ -856,6 +858,54 @@ WORD xbios_51(WORD mode)
 {
     kprintf("XBIOS: EgetShift\n");
     return egetshift();
+}
+#endif
+
+#if DBG_XBIOS
+WORD xbios_52(WORD mode)
+{
+    kprintf("XBIOS: EsetBank\n");
+    return esetbank();
+}
+#endif
+
+#if DBG_XBIOS
+WORD xbios_53(WORD mode)
+{
+    kprintf("XBIOS: EsetColor\n");
+    return esetcolor();
+}
+#endif
+
+#if DBG_XBIOS
+WORD xbios_54(WORD mode)
+{
+    kprintf("XBIOS: EsetPalette\n");
+    return esetpalette();
+}
+#endif
+
+#if DBG_XBIOS
+WORD xbios_55(WORD mode)
+{
+    kprintf("XBIOS: EgetPalette\n");
+    return egetpalette();
+}
+#endif
+
+#if DBG_XBIOS
+WORD xbios_56(WORD mode)
+{
+    kprintf("XBIOS: EsetGray\n");
+    return esetgray();
+}
+#endif
+
+#if DBG_XBIOS
+WORD xbios_57(WORD mode)
+{
+    kprintf("XBIOS: EsetSmear\n");
+    return esetsmear();
 }
 #endif
 
@@ -1024,16 +1074,22 @@ const PFLONG xbios_vecs[] = {
 #if CONF_WITH_TT_SHIFTER
     VEC(xbios_50, esetshift),   /* 50 */
     VEC(xbios_51, egetshift),   /* 51 */
+    VEC(xbios_52, esetbank),    /* 52 */
+    VEC(xbios_53, esetcolor),   /* 53 */
+    VEC(xbios_54, esetpalette), /* 54 */
+    VEC(xbios_55, egetpalette), /* 55 */
+    VEC(xbios_56, esetgray),    /* 56 */
+    VEC(xbios_57, esetsmear),   /* 57 */
 #else
     xbios_unimpl,   /* 50 */
     xbios_unimpl,   /* 51 */
-#endif
     xbios_unimpl,   /* 52 */
     xbios_unimpl,   /* 53 */
     xbios_unimpl,   /* 54 */
     xbios_unimpl,   /* 55 */
     xbios_unimpl,   /* 56 */
     xbios_unimpl,   /* 57 */
+#endif
 #if CONF_WITH_VIDEL
     VEC(xbios_58, vsetmode),   /* 58 */
     VEC(xbios_59, vmontype),   /* 59 */

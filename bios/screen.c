@@ -34,9 +34,13 @@
 #define TT_SHIFTER          0xffff8262L
 #define SPSHIFT             0xffff8266L
 
+#define TT_SHIFTER_BITMASK  0x970f      /* valid bits in TT_SHIFTER */
+
 #define ST_PALETTE_REGS     0xffff8240L
 #define TT_PALETTE_REGS     0xffff8400L
 #define FALCON_PALETTE_REGS 0xffff9800L
+
+#define TT_PALETTE_BITMASK  0x0fff      /* valid bits in TT_PALETTE_REGS */
 
 #define ST_VRAM_SIZE        32000UL
 #define TT_VRAM_SIZE        153600UL
@@ -815,8 +819,8 @@ WORD esetshift(WORD mode)
     if (!has_tt_shifter)
         return -32;
 
-    oldmode = *resreg;
-    *resreg = mode;
+    oldmode = *resreg & TT_SHIFTER_BITMASK;
+    *resreg = mode & TT_SHIFTER_BITMASK;
 
     return oldmode;
 }
@@ -830,7 +834,130 @@ WORD egetshift(void)
     if (!has_tt_shifter)
         return -32;
 
-    return *(volatile WORD *)TT_SHIFTER;
+    return *(volatile WORD *)TT_SHIFTER & TT_SHIFTER_BITMASK;
+}
+
+
+/*
+ * Read/modify TT shifter colour bank number
+ */
+WORD esetbank(WORD bank)
+{
+    volatile UBYTE *shiftreg = (UBYTE *)(TT_SHIFTER+1);
+    UBYTE old;
+
+    if (!has_tt_shifter)
+        return -32;
+
+    old = *shiftreg & 0x0f;
+    if (bank >= 0)
+        *shiftreg = bank & 0x0f;
+
+    return old;
+}
+
+
+/*
+ * Read/modify TT palette colour entry
+ */
+WORD esetcolor(WORD index,WORD color)
+{
+    volatile WORD *ttcol_regs = (WORD *) TT_PALETTE_REGS;
+    WORD oldcolor;
+
+    if (!has_tt_shifter)
+        return -32;
+
+    index &= 0xff;                  /* force valid index number */
+    oldcolor = ttcol_regs[index] & TT_PALETTE_BITMASK;
+    if (color >= 0)
+        ttcol_regs[index] = color & TT_PALETTE_BITMASK;
+
+    return oldcolor;
+}
+
+
+/*
+ * Set multiple TT palette colour registers
+ */
+void esetpalette(WORD index,WORD count,WORD *rgb)
+{
+    volatile WORD *ttcolour;
+
+    if (!has_tt_shifter)
+        return;
+
+    index &= 0xff;              /* force valid index number */
+
+    if ((index+count) > 256)
+        count = 256 - index;    /* force valid count */
+
+    ttcolour = (WORD *)TT_PALETTE_REGS + index;
+    while(count--)
+        *ttcolour++ = *rgb++ & TT_PALETTE_BITMASK;
+}
+
+
+/*
+ * Get multiple TT palette colour registers
+ */
+void egetpalette(WORD index,WORD count,WORD *rgb)
+{
+    volatile WORD *ttcolour;
+
+    if (!has_tt_shifter)
+        return;
+
+    index &= 0xff;              /* force valid index number */
+
+    if ((index+count) > 256)
+        count = 256 - index;    /* force valid count */
+
+    ttcolour = (WORD *)TT_PALETTE_REGS + index;
+    while(count--)
+        *rgb++ = *ttcolour++ & TT_PALETTE_BITMASK;
+}
+
+
+/*
+ * Read/modify TT shifter grey mode bit
+ */
+WORD esetgray(WORD mode)
+{
+    volatile UBYTE *shiftreg = (UBYTE *)TT_SHIFTER;
+    UBYTE old;
+
+    if (!has_tt_shifter)
+        return -32;
+
+    old = *shiftreg;
+    if (mode > 0)
+        *shiftreg = old | 0x10;
+    else if (mode == 0)
+        *shiftreg = old & 0xef;
+
+    return (old&0x10)?1:0;
+}
+
+
+/*
+ * Read/modify TT shifter smear mode bit
+ */
+WORD esetsmear(WORD mode)
+{
+    volatile UBYTE *shiftreg = (UBYTE *)TT_SHIFTER;
+    UBYTE old;
+
+    if (!has_tt_shifter)
+        return -32;
+
+    old = *shiftreg;
+    if (mode > 0)
+        *shiftreg = old | 0x80;
+    else if (mode == 0)
+        *shiftreg = old & 0x7f;
+
+    return (old&0x80)?1:0;
 }
 
 #endif /* CONF_WITH_TT_SHIFTER */
