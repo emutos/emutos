@@ -472,6 +472,7 @@ void kbd_init(void)
         ACIA_RLTID |            /* RTS low, TxINT disabled */
         ACIA_DIV64 |            /* clock/64 */
         ACIA_D8N1S;             /* 8 bit, 1 stop, no parity */
+#endif /* CONF_WITH_IKBD_ACIA */
 
     /* initialize the IKBD */
     ikbd_writeb(0x80);            /* Reset */
@@ -479,7 +480,6 @@ void kbd_init(void)
 
     ikbd_writeb(0x1A);            /* disable joystick */
     ikbd_writeb(0x12);            /* disable mouse */
-#endif /* CONF_WITH_IKBD_ACIA */
 
     /* initialize the key repeat stuff */
     kb_ticks = 0;
