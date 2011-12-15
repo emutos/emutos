@@ -170,14 +170,12 @@ _init_acia_vecs:
 #else
         move.l  #_kbdvec,kbdvec-_kbdvecs(a1)
 #endif
-#if CONF_WITH_MIDI_ACIA
 #ifdef __mcoldfire__
         move.l  #_midivec,d0
         move.l  d0,midivec-_kbdvecs(a1)
 #else
         move.l  #_midivec,midivec-_kbdvecs(a1)
 #endif
-#endif /* CONF_WITH_MIDI_ACIA */
         move.l  a0,vkbderr-_kbdvecs(a1)
         move.l  a0,vmiderr-_kbdvecs(a1)
         move.l  a0,statvec-_kbdvecs(a1)
@@ -310,6 +308,8 @@ _midisys:
 midirts:
         rts
 
+#endif /* CONF_WITH_MIDI_ACIA */
+
 _midivec:
         // push byte data in d0 into midi iorec.
 #ifdef __mcoldfire__
@@ -334,8 +334,6 @@ _midivec:
 #endif
         move.w  d1,midiibuftl
 1:      rts
-
-#endif /* CONF_WITH_MIDI_ACIA */
 
 #if CONF_WITH_IKBD_ACIA
 
