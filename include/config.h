@@ -231,14 +231,14 @@
 #endif
 
 /*
- * Set CONF_WITH_MIDI_ACIA to 1 to enable MIDI support
+ * Set CONF_WITH_MIDI_ACIA to 1 to enable MIDI ACIA support
  */
 #ifndef CONF_WITH_MIDI_ACIA
 # define CONF_WITH_MIDI_ACIA 1
 #endif
 
 /*
- * Set CONF_WITH_MIDI_ACIA to 1 to enable MIDI support
+ * Set CONF_WITH_IKBD_CLOCK to 1 to enable IKBD clock support
  */
 #ifndef CONF_WITH_IKBD_CLOCK
 # ifdef MACHINE_ARANYM
