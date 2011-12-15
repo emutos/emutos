@@ -60,12 +60,6 @@ extern LONG bcostat4(void);
 extern void bconout4(WORD dev, WORD c);
 extern LONG kbshift(WORD flag);
 
-/* advanced ikbd functions */
-extern void ikbd_pause(void);
-extern void ikbd_resume(void);
-extern void ikbd_reset(void);
-extern void atari_kbd_leds (UWORD );
-
 /* some xbios functions */
 extern LONG keytbl(LONG norm, LONG shft, LONG caps);
 extern WORD kbrate(WORD initial, WORD repeat);

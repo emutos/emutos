@@ -3074,3 +3074,4 @@ Start... early ages
 - bios/aciavec.S include/config.h: Use midivec even when CONF_WITH_MIDI_ACIA
   is defined. (VRI)
 - bios/ikbd.c: Improved debug traces. (VRI)
+- bios/ikbd.h: Removed prototypes of nonexistent functions. (VRI)
