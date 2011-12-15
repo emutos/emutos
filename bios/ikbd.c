@@ -424,10 +424,7 @@ LONG bcostat4(void)
 /* send a byte to the IKBD */
 void bconout4(WORD dev, WORD c)
 {
-    while (!bcostat4());
-#if CONF_WITH_IKBD_ACIA
-    ikbd_acia.data = c;
-#endif
+    ikbd_writeb((BYTE)c);
 }
 
 /* cnt = number of bytes to send less one */
@@ -441,6 +438,10 @@ void ikbdws(WORD cnt, PTR ptr)
 /* send a byte to the IKBD - for general use */
 void ikbd_writeb(BYTE b)
 {
+#if DBG_KBD
+    kprintf("ikbd_writeb(0x%02x)\n", (UBYTE)b);
+#endif
+
     while (!bcostat4());
 #if CONF_WITH_IKBD_ACIA
     ikbd_acia.data = b;
@@ -450,13 +451,8 @@ void ikbd_writeb(BYTE b)
 /* send a word to the IKBD as two bytes - for general use */
 void ikbd_writew(WORD w)
 {
-    while (!bcostat4());
-#if CONF_WITH_IKBD_ACIA
-    ikbd_acia.data = (w>>8);
-
-    while (!bcostat4());
-    ikbd_acia.data = (w&0xff);
-#endif
+    ikbd_writeb(w>>8);
+    ikbd_writeb(w&0xff);
 }
 
 

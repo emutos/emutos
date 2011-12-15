@@ -3073,3 +3073,4 @@ Start... early ages
   CONF_WITH_IKBD_ACIA define to allow disabling IKBD ACIA support. (VRI)
 - bios/aciavec.S include/config.h: Use midivec even when CONF_WITH_MIDI_ACIA
   is defined. (VRI)
+- bios/ikbd.c: Improved debug traces. (VRI)
