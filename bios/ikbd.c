@@ -409,19 +409,25 @@ void kbd_int(WORD scancode)
 /* can we send a byte to the ikbd ? */
 LONG bcostat4(void)
 {
+#if CONF_WITH_IKBD_ACIA
     if (ikbd_acia.ctrl & ACIA_TDRE) {
         return -1;              /* OK */
     } else {
         /* Data register not empty */
         return 0;               /* not OK */
     }
+#else
+    return -1; /* OK (but output will be ignored) */
+#endif
 }
 
 /* send a byte to the IKBD */
 void bconout4(WORD dev, WORD c)
 {
     while (!bcostat4());
+#if CONF_WITH_IKBD_ACIA
     ikbd_acia.data = c;
+#endif
 }
 
 /* cnt = number of bytes to send less one */
@@ -436,17 +442,21 @@ void ikbdws(WORD cnt, PTR ptr)
 void ikbd_writeb(BYTE b)
 {
     while (!bcostat4());
+#if CONF_WITH_IKBD_ACIA
     ikbd_acia.data = b;
+#endif
 }
 
 /* send a word to the IKBD as two bytes - for general use */
 void ikbd_writew(WORD w)
 {
     while (!bcostat4());
+#if CONF_WITH_IKBD_ACIA
     ikbd_acia.data = (w>>8);
 
     while (!bcostat4());
     ikbd_acia.data = (w&0xff);
+#endif
 }
 
 
@@ -458,6 +468,7 @@ void ikbd_writew(WORD w)
 
 void kbd_init(void)
 {
+#if CONF_WITH_IKBD_ACIA
     /* initialize ikbd ACIA */
     ikbd_acia.ctrl = ACIA_RESET;        /* master reset */
 
@@ -472,6 +483,7 @@ void kbd_init(void)
 
     ikbd_writeb(0x1A);            /* disable joystick */
     ikbd_writeb(0x12);            /* disable mouse */
+#endif /* CONF_WITH_IKBD_ACIA */
 
     /* initialize the key repeat stuff */
     kb_ticks = 0;

@@ -15,6 +15,8 @@
 
 #include        "portab.h"
 
+#if CONF_WITH_IKBD_ACIA || CONF_WITH_MIDI_ACIA
+
 /*==== Defines ============================================================*/
 
 /* constants for the ACIA registers */
@@ -63,11 +65,17 @@ struct ACIA
     UBYTE dummy2;
 };
 
-#define ACIA_IKBD_BASE (0xfffffc00L)
-#define ACIA_MIDI_BASE (0xfffffc04L)
+#endif /* CONF_WITH_IKBD_ACIA || CONF_WITH_MIDI_ACIA */
 
+#if CONF_WITH_IKBD_ACIA
+#define ACIA_IKBD_BASE (0xfffffc00L)
 #define ikbd_acia (*(volatile struct ACIA*)ACIA_IKBD_BASE)
+#endif
+
+#if CONF_WITH_MIDI_ACIA
+#define ACIA_MIDI_BASE (0xfffffc04L)
 #define midi_acia (*(volatile struct ACIA*)ACIA_MIDI_BASE)
+#endif
 
 #endif /* ACIA_H */
 

@@ -199,12 +199,14 @@ _init_acia_vecs:
         move.l  #_midisys,midisys-_kbdvecs(a1)
 #endif
 #endif /* CONF_WITH_MIDI_ACIA */
+#if CONF_WITH_IKBD_ACIA
 #ifdef __mcoldfire__
         move.l  #_ikbdsys,d0
         move.l  d0,ikbdsys-_kbdvecs(a1)
 #else
         move.l  #_ikbdsys,ikbdsys-_kbdvecs(a1)
 #endif
+#endif /* CONF_WITH_IKBD_ACIA */
         
         // initialize the iorecs
         pea     iorec_table_end-iorec_table
@@ -213,17 +215,21 @@ _init_acia_vecs:
         jsr     _memmove
         lea     12(sp),sp
         
+#if CONF_WITH_IKBD_ACIA
         // initialize IKBD-related variables
         moveq.l #0,d0
         move.b  d0,ikbdstate
         move.b  d0,joybuf+1
         move.b  d0,joybuf+2
+#endif /* CONF_WITH_IKBD_ACIA */
         
+#if CONF_WITH_IKBD_ACIA || CONF_WITH_MIDI_ACIA
         // finally, setup the interrupt vector
         pea     _int_acia
         move.w  #6,-(sp)
         jsr     _mfpint
         addq.l  #6,sp
+#endif /* CONF_WITH_IKBD_ACIA || CONF_WITH_MIDI_ACIA */
         rts
         
         // FIXME: The rs232iorec buffer should go into the .data segment (if
@@ -243,6 +249,8 @@ iorec_table:
 iorec_table_end:        
         .text
         
+#if CONF_WITH_IKBD_ACIA || CONF_WITH_MIDI_ACIA
+
 // ==== Int 0x118 - midi/kbd interrupt routine ================
 //
 
@@ -264,8 +272,10 @@ int_acia_loop:
         move.l  midisys,a0
         jsr     (a0)
 #endif
+#if CONF_WITH_IKBD_ACIA
         move.l  ikbdsys,a0
         jsr     (a0)
+#endif
         lea     0xfffffa00.w,a1
         btst.b  #4,0x1(a1)                // while still interrupting
         beq     int_acia_loop
@@ -279,6 +289,8 @@ int_acia_loop:
         movem.l (sp)+,d0-d3/a0-a3
 #endif
         rte
+
+#endif /* CONF_WITH_IKBD_ACIA || CONF_WITH_MIDI_ACIA */
 
 #if CONF_WITH_MIDI_ACIA
 
@@ -325,6 +337,8 @@ _midivec:
 
 #endif /* CONF_WITH_MIDI_ACIA */
 
+#if CONF_WITH_IKBD_ACIA
+
 // ==== IKBD stuff ================
 //        
 // Packets received from the IKBD are accumulated into the kbdbuf buffer.
@@ -355,6 +369,8 @@ kbdindex:
 kbdbuf: ds.b    8   // buffer where packets are being reconstructed
 joybuf: ds.b    3        
 
+#endif /* CONF_WITH_IKBD_ACIA */
+
         .text
 
 _kbdvec:
@@ -370,6 +386,7 @@ _kbdvec:
 just_rts:
         rts
 
+#if CONF_WITH_IKBD_ACIA
         .equ    ikbd_acia_stat, 0xfffffc00
         .equ    ikbd_acia_data, 0xfffffc02
 
@@ -507,3 +524,4 @@ kbd_jump_vec:
         clr.b   ikbdstate
         rts
                 
+#endif /* CONF_WITH_IKBD_ACIA */

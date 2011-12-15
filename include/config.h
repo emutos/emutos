@@ -238,6 +238,13 @@
 #endif
 
 /*
+ * Set CONF_WITH_IKBD_ACIA to 1 to enable IKBD ACIA support
+ */
+#ifndef CONF_WITH_IKBD_ACIA
+# define CONF_WITH_IKBD_ACIA 1
+#endif
+
+/*
  * Set CONF_WITH_IKBD_CLOCK to 1 to enable IKBD clock support
  */
 #ifndef CONF_WITH_IKBD_CLOCK

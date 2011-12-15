@@ -3067,3 +3067,7 @@ Start... early ages
 - bios/screen.c bios/screen.h bios/xbios.c: Added TT video syscalls. (RFB)
 - bios/aciavecs.S bios/clock.c include/config.h: Added the CONF_WITH_IKBD_CLOCK
   define to allow disabling IKBD clock support. (VRI)
+
+2011-12-15
+- bios/acia.h bios/aciavecs.S bios/ikbd.c include/config.h: Added the
+  CONF_WITH_IKBD_ACIA define to allow disabling IKBD ACIA support. (VRI)
