@@ -231,6 +231,13 @@
 #endif
 
 /*
+ * Set CONF_WITH_PRINTER_PORT to 1 to enable Parallel Printer Port support
+ */
+#ifndef CONF_WITH_PRINTER_PORT
+# define CONF_WITH_PRINTER_PORT 1
+#endif
+
+/*
  * Set CONF_WITH_MIDI_ACIA to 1 to enable MIDI ACIA support
  */
 #ifndef CONF_WITH_MIDI_ACIA

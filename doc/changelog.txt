@@ -3075,3 +3075,7 @@ Start... early ages
   is defined. (VRI)
 - bios/ikbd.c: Improved debug traces. (VRI)
 - bios/ikbd.h: Removed prototypes of nonexistent functions. (VRI)
+
+2011-12-19
+- bios/parport.c include/config.h: Added the CONF_WITH_PRINTER_PORT define to
+  allow disabling Parallel Printer Port support. (VRI)

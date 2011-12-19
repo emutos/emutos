@@ -13,10 +13,12 @@
 #include "config.h"
 #include "portab.h"
 #include "parport.h"
+#if CONF_WITH_PRINTER_PORT
 #include "asm.h"
 #include "sound.h"
 #include "mfp.h"
 #include "psg.h"
+#endif
 
 /*
  * known differences with respect to the original TOS:
@@ -29,8 +31,10 @@
 
 void parport_init(void)
 {
+#if CONF_WITH_PRINTER_PORT
     /* set Strobe high */
     ongibit(0x20);
+#endif
 }
 
 LONG bconstat0(void)
@@ -47,6 +51,7 @@ LONG bconin0(void)
 
 LONG bcostat0(void)
 {
+#if CONF_WITH_PRINTER_PORT
     MFP *mfp=MFP_BASE;
 
     if(mfp->gpip & 1) {
@@ -54,14 +59,18 @@ LONG bcostat0(void)
     } else {
         return -1;
     }
+#else
+    return 0; /* output not allowed */
+#endif
 }
 
 void bconout0(WORD dev, WORD c)
 {
-    WORD old_sr;
-    WORD a;
-
     if(bcostat0()) {
+#if CONF_WITH_PRINTER_PORT
+        WORD old_sr;
+        WORD a;
+
         /* disable interrupts */
         old_sr = set_sr(0x2700);
         /* read PSG multi-function register */
@@ -80,6 +89,7 @@ void bconout0(WORD dev, WORD c)
         ongibit(0x20);
         /* restore sr */
         set_sr(old_sr);
+#endif
     } else {
         /* the TOS does wait until the printer is available... 
          * We simply cancel here. 
