@@ -39,29 +39,36 @@
 static void do_bell(void);
 static void do_keyclick(void);
 
+#if CONF_WITH_YM2149
+
 /* data used by dosound: */
 
 static BYTE *sndtable;    /* 0xE44 */
 static UBYTE snddelay;    /* 0xE48 */
 static UBYTE sndtmp;      /* 0xE49 */
 
+#endif
+
 void snd_init(void)
 {
+#if CONF_WITH_YM2149
   /* set ports A and B to output */
   PSG->control = PSG_MULTI;
   PSG->data = 0xC0;  
   /* deselect both floppies */
   PSG->control = PSG_PORT_A;
   PSG->data = 0x07;
+  /* dosound init */
+  sndtable = NULL;
+#endif
   /* set bell_hook and kcl_hook */
   bell_hook = do_bell;
   kcl_hook = do_keyclick;
-  /* dosound init */
-  sndtable = NULL;
 }
 
 LONG giaccess(WORD data, WORD reg)
 {
+#if CONF_WITH_YM2149
   WORD old_sr;
   LONG value = 0;
   
@@ -73,10 +80,14 @@ LONG giaccess(WORD data, WORD reg)
   value = PSG->control;
   set_sr(old_sr);
   return value;
+#else
+  return 0;
+#endif
 }
 
 void ongibit(WORD data)
 {
+#if CONF_WITH_YM2149
   WORD old_sr;
   WORD tmp;
   
@@ -86,10 +97,12 @@ void ongibit(WORD data)
   tmp |= data;
   PSG->data = tmp;
   set_sr(old_sr);
+#endif
 }
 
 void offgibit(WORD data)
 {
+#if CONF_WITH_YM2149
   WORD old_sr;
   WORD tmp;
   
@@ -99,17 +112,24 @@ void offgibit(WORD data)
   tmp &= data;
   PSG->data = tmp;
   set_sr(old_sr);
+#endif
 }
 
 LONG dosound(LONG table)
 {
+#if CONF_WITH_YM2149
   LONG oldtable = (LONG) sndtable;
   if(table >= 0) {
     sndtable = (BYTE *) table;
     snddelay = 0;
   }
   return oldtable;
+#else
+  return 0;
+#endif
 }
+
+#if CONF_WITH_YM2149
 
 void sndirq(void)
 {
@@ -187,6 +207,7 @@ static const UBYTE keyclicksnd[] = {
   0xFF, 0,
 };
 
+#endif /* CONF_WITH_YM2149 */
 
 void bell(void)
 {
@@ -195,10 +216,14 @@ void bell(void)
 
 static void do_bell(void)
 {
+#if CONF_WITH_YM2149
   dosound((LONG) bellsnd);
+#endif
 }
 
 static void do_keyclick(void) 
 {
+#if CONF_WITH_YM2149
   dosound((LONG) keyclicksnd);
+#endif
 }

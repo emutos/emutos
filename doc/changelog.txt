@@ -3079,3 +3079,6 @@ Start... early ages
 2011-12-19
 - bios/parport.c include/config.h: Added the CONF_WITH_PRINTER_PORT define to
   allow disabling Parallel Printer Port support. (VRI)
+- bios/machine.c bios/sound.c bios/sound.h bios/vectors.S include/config.h:
+  Added the CONF_WITH_YM2149 define to allow disabling YM2149 soundchip
+  support. (VRI)

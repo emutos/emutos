@@ -233,8 +233,9 @@ static void setvalue_snd(void)
 {
   cookie_snd = 0;
 
-  /* always at least a PSG */
+#if CONF_WITH_YM2149
   cookie_snd |= SND_PSG;
+#endif
 
 #if CONF_WITH_DMASOUND
   if (has_dmasound) {

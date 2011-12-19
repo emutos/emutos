@@ -30,8 +30,12 @@ extern LONG dosound(LONG table);
 /* initialize */
 void snd_init(void);
 
+#if CONF_WITH_YM2149
+
 /* timer C int sound routine */
 extern void sndirq(void);
+
+#endif /* CONF_WITH_YM2149 */
 
 /* the routines below are implemented in assembler in vectors.S, because
  * a user routine hooked in these vectors might clobber registers D2/A2. 

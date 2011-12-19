@@ -231,6 +231,13 @@
 #endif
 
 /*
+ * Set CONF_WITH_YM2149 to 1 to enable YM2149 soundchip support
+ */
+#ifndef CONF_WITH_YM2149
+# define CONF_WITH_YM2149 1
+#endif
+
+/*
  * Set CONF_WITH_PRINTER_PORT to 1 to enable Parallel Printer Port support
  */
 #ifndef CONF_WITH_PRINTER_PORT
@@ -391,5 +398,14 @@
 #define LEN_ZFNAME 13                   /* max fname length, incl '\' separator */
 #define LEN_ZNODE 8                     /* max node length */
 #define LEN_ZEXT 3                      /* max extension length */
+
+/*
+ * Sanity checks
+ */
+#if !CONF_WITH_YM2149
+# if CONF_WITH_FLOPPY
+#  error "CONF_WITH_FLOPPY requires CONF_WITH_YM2149."
+# endif
+#endif
 
 #endif /* CONFIG_H */

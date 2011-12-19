@@ -460,8 +460,10 @@ _int_timerc:
         // repeat keys 
         jsr     _kb_timerc_int
 
+#if CONF_WITH_YM2149
         // dosound support
         jsr     _sndirq
+#endif
         
         move.w  _timer_ms, -(sp)
         move.l  _etv_timer, a0
