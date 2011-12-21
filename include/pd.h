@@ -25,7 +25,7 @@
  */
 
 #define PDCLSIZE    0x80    /*  size of command line in bytes  */
-#define NUMCURDIR   16      /*  number of entries in curdir array */
+#define NUMCURDIR   BLKDEVNUM   /* number of entries in curdir array */
 
 typedef struct _pd PD;
 struct _pd
@@ -53,8 +53,7 @@ struct _pd
     LONG    p_1fill[2];
 /* 0x40 */
     BYTE    p_curdir[NUMCURDIR];    /* index into sys dir table */
-/* 0x50 */
-    LONG    p_2fill[4];
+    BYTE    p_2fill[32-NUMCURDIR];
 /* 0x60 */
     LONG    p_3fill[2];
     LONG    p_dreg[1];      /* dreg[0] */
