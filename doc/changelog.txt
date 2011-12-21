@@ -3086,4 +3086,4 @@ Start... early ages
 2011-12-21
 - bdos/fsglob.c bios/blkdev.h include/config.h: Moved BLKDEVNUM define to
   config.h; changed number of drvtbl[] entries to BLKDEVNUM. (RFB)
-  
+- bdos/proc.c: Changed a hardcoded constant to NUMCURDIR. (RFB)
