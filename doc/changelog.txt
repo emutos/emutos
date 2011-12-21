@@ -3082,3 +3082,8 @@ Start... early ages
 - bios/machine.c bios/sound.c bios/sound.h bios/vectors.S include/config.h:
   Added the CONF_WITH_YM2149 define to allow disabling YM2149 soundchip
   support. (VRI)
+
+2011-12-21
+- bdos/fsglob.c bios/blkdev.h include/config.h: Moved BLKDEVNUM define to
+  config.h; changed number of drvtbl[] entries to BLKDEVNUM. (RFB)
+  

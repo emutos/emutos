@@ -34,7 +34,7 @@
  *  drvtbl -
  */
 
-DMD *drvtbl[32];
+DMD *drvtbl[BLKDEVNUM];
 
 
 

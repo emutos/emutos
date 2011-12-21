@@ -24,7 +24,6 @@
 
 #define RWABS_RETRIES   1   /* on real machine might want to increase this */
 
-#define BLKDEVNUM   26      /* A: ... Z: */
 #define UNITSNUM    (2+24)  /* 2xFDC + 8xACSI + 8xSCSI + 8xIDE */
 
 /* Original FAT12 bootsector */

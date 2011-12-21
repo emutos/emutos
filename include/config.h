@@ -391,6 +391,7 @@
 /*
  * Miscellaneous definitions that apply to more than one EmuTOS subsystem
  */
+#define BLKDEVNUM 26                    /* number of block devices supported: A: ... Z: */
 /*
  * Maximum lengths for pathname, filename, and filename components
  */
