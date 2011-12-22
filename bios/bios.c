@@ -254,6 +254,11 @@ static void bios_init(void)
      * so a diagnostic cartridge can't contain any application.
      */
 #else
+    /* Run all boot applications from the application cartridge.
+     * Beware: Hatari features a special cartridge which is used
+     * for GEMDOS drive emulation. It will hack drvbits and hook Pexec().
+     * It will also hack Line A variables to enable extended VDI video modes.
+     */
     run_cartridge_applications(3); /* Type "Execute prior to bootdisk" */
 #endif
 
