@@ -3094,3 +3094,4 @@ Start... early ages
 2011-12-22
 - aes/gemgsxif.c: Fixed memory overwrite in ST Low due to a too-small
   menu/alert backup buffer. (RFB)
+- desk/deskapp.c: Use "View as icons" by default for a more Atari feeling. (VRI)
