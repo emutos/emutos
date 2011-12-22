@@ -31,6 +31,7 @@
 #include "geminit.h"
 #include "gemctrl.h"
 #include "gemgsxif.h"
+#include "../bios/kprint.h"
 
 /*
  * Calls used in Crystal:
@@ -57,6 +58,11 @@
 
 #define GRAFMEM         0xFFFFFFFFl
 
+/*
+ * calculate memory size to buffer a display area, given its
+ * width (in words), height (in pixels), and the number of planes
+ */
+#define memsize(wdwidth,h,nplanes)  ((LONG)(wdwidth)*(h)*(nplanes)*2)
 
 GLOBAL WORD  intout[45];
 GLOBAL WORD  ptsout[12];
@@ -83,6 +89,7 @@ ULONG  gsx_gbufflen(void);
  * size.  this may need to be increased if screen artifacts occur
  * around alert boxes or menu items.
  */
+#define MAXSIZE_STLOW_ALERT 12480           /* determined by trial */
 ULONG gsx_mcalc()
 {
     gsx_fix(&gl_tmp, 0x0L, 0, 0);           /* store screen info    */
@@ -90,7 +97,9 @@ ULONG gsx_mcalc()
     if (gl_mlen != 0x0l)
         gl_tmp.fd_addr = GRAFMEM;             /* buffer not in sys mem */
     else
-        gl_mlen = (LONG)gl_tmp.fd_wdwidth * gl_tmp.fd_h * gl_tmp.fd_nplanes / 2;
+        gl_mlen = memsize(gl_tmp.fd_wdwidth,gl_tmp.fd_h,gl_tmp.fd_nplanes) / 4;
+    if (gl_mlen < MAXSIZE_STLOW_ALERT)      /* temporary kludge */
+        gl_mlen = MAXSIZE_STLOW_ALERT;
     return(gl_mlen);
 }
 
@@ -284,11 +293,21 @@ static void bb_set(WORD sx, WORD sy, WORD sw, WORD sh, WORD *pts1, WORD *pts2,
                    FDB *pfd, FDB *psrc, FDB *pdst)
 {
     WORD            oldsx;
+    LONG            size;
 
     /* get on word boundary */
     oldsx = sx;
     sx = (sx / 16) * 16;
     sw = ( ((oldsx - sx) + (sw + 15)) / 16 ) * 16;
+    size = memsize(sw/16,sh,gl_tmp.fd_nplanes);
+
+    if (size > gl_mlen) {       /* buffer too small */
+        /* adjust height to fit buffer: this will leave droppings! */
+        sh = gl_mlen * sh / size;
+        /* issue warning message for backup only, not for subsequent restore */
+        if (pdst == &gl_tmp)
+            kprintf("Menu/alert buffer too small: need at least %ld bytes\n",size);
+    }
 
     gl_tmp.fd_stand = TRUE;
     gl_tmp.fd_wdwidth = sw / 16;
