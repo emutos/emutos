@@ -16,13 +16,7 @@
 extern WORD  intout[];
 extern WORD  ptsout[];
 
-extern FDB   gl_tmp;
-
-extern LONG  old_mcode;
-extern LONG  old_bcode;
 extern WORD  gl_moff;
-extern LONG  gl_mlen;
-extern WORD  gl_graphic;
 
 
 ULONG gsx_mcalc(void);

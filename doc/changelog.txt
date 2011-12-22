@@ -3088,3 +3088,5 @@ Start... early ages
   config.h; changed number of drvtbl[] entries to BLKDEVNUM. (RFB)
 - bdos/proc.c: Changed a hardcoded constant to NUMCURDIR. (RFB)
 - include/pd.h: Fixed latent bug: NUMCURDIR now equals BLKDEVNUM. (RFB)
+- aes/gemgsxif.c aes/gemgsxif.h: Changed variables that are only used
+  locally from GLOBAL to static. (RFB)

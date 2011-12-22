@@ -60,16 +60,15 @@
 
 GLOBAL WORD  intout[45];
 GLOBAL WORD  ptsout[12];
-
-GLOBAL FDB   gl_tmp;
-
-GLOBAL LONG  old_mcode;
-GLOBAL LONG  old_bcode;
 GLOBAL WORD  gl_moff;                /* counting semaphore   */
                                      /*  == 0 implies ON     */
                                      /*  >  0 implies OFF    */
-GLOBAL LONG  gl_mlen;
-GLOBAL WORD  gl_graphic;
+
+static FDB   gl_tmp;
+static LONG  old_mcode;
+static LONG  old_bcode;
+static LONG  gl_mlen;
+static WORD  gl_graphic;
 
 
 
