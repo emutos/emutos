@@ -47,9 +47,6 @@ extern void flopvbl(void);
 
 #endif /* CONF_WITH_FDC */
 
-/* call hdv_boot() and execute bootsector */
-extern void do_hdv_boot(void);  
-
 /* initialise floppy parameters */
 extern void floppy_init(void);
 
