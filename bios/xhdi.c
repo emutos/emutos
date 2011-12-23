@@ -173,14 +173,22 @@ long XHReadWrite(UWORD major, UWORD minor, UWORD rw, ULONG sector,
 
     /* hardware access to device */
     if (dev >= 0 && dev < 8) {
-        return acsi_rw(rw, sector, count, (LONG)buf, dev);
+        long ret = acsi_rw(rw, sector, count, (LONG)buf, dev);
+#if DBG_XHDI
+        kprintf("acsi_rw() returned %ld\n", ret);
+#endif
+        return ret;
     }
     else if (dev < 16) {
         return EUNDEV;  /* call scsi_rw() here when implemented */
     }
 #if CONF_WITH_IDE
     else if (dev < 24) {
-        return ide_rw(rw, sector, count, (LONG)buf, dev - 16);
+        long ret = ide_rw(rw, sector, count, (LONG)buf, dev - 16);
+#if DBG_XHDI
+        kprintf("ide_rw() returned %ld\n", ret);
+#endif
+        return ret;
     }
 #endif
 
