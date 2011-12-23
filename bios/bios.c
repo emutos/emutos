@@ -65,7 +65,7 @@ LONG bios_do_unimpl(WORD number);
 /*==== External declarations ==============================================*/
 
 extern LONG osinit(void);       /* found in bdosmain.c */
-#if !DIAGNOSTIC_CARTRIDGE
+#if CONF_WITH_CARTRIDGE
 extern void run_cartridge_applications(WORD typebit); /* found in startup.S */
 #endif
 
@@ -249,11 +249,7 @@ static void bios_init(void)
     kprintf("BIOS: Last test point reached ...\n");
 #endif
 
-#if DIAGNOSTIC_CARTRIDGE
-    /* Diagnostic and Application cartridges have different magic numbers,
-     * so a diagnostic cartridge can't contain any application.
-     */
-#else
+#if CONF_WITH_CARTRIDGE
     /* Run all boot applications from the application cartridge.
      * Beware: Hatari features a special cartridge which is used
      * for GEMDOS drive emulation. It will hack drvbits and hook Pexec().

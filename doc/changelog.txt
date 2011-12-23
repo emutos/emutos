@@ -3100,3 +3100,5 @@ Start... early ages
 - bios/blkdev.c bios/floppy.c bios/floppy.h bios/machine.c bios/machine.h
   bios/vectors.S bios/xbios.c doc/changelog.txt include/config.h: Replaced
   CONF_WITH_FLOPPY by a better CONF_WITH_FDC. (VRI)
+- bios/bios.c bios/startup.S include/config.h: Added the CONF_WITH_CARTRIDGE
+  define to allow disabling the ROM port cartridge support. (VRI)

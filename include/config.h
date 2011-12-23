@@ -270,6 +270,22 @@
 #endif
 
 /*
+ * Set CONF_WITH_CARTRIDGE to 1 to enable ROM port cartridge support
+ */
+#ifndef CONF_WITH_CARTRIDGE
+# if defined(MACHINE_ARANYM)
+   /* ARAnyM does not support the cartridge port */
+#  define CONF_WITH_CARTRIDGE 0
+# elif DIAGNOSTIC_CARTRIDGE
+   /* Diagnostic and Application cartridges have different magic numbers,
+    * so a diagnostic cartridge can't also be an application cartridge. */
+#  define CONF_WITH_CARTRIDGE 0
+# else
+#  define CONF_WITH_CARTRIDGE 1
+# endif
+#endif
+
+/*
  * Set CONF_WITH_XHDI to 1 to enable XHDI support (i.e. the XHDI cookie etc.)
  */
 #ifndef CONF_WITH_XHDI

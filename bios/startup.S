@@ -28,7 +28,7 @@
 
         
         .global _os_entry
-#if !DIAGNOSTIC_CARTRIDGE
+#if CONF_WITH_CARTRIDGE
         .global _run_cartridge_applications
 #endif
         .global _stktop
@@ -141,9 +141,9 @@ _main:
 #ifndef __mcoldfire__
         reset                  // reset all hardware
 #endif
+#endif /* !DIAGNOSTIC_CARTRIDGE */
 
-
-
+#if CONF_WITH_CARTRIDGE
 /*
  * Check for diagnostic cartridge
  */
@@ -158,7 +158,7 @@ _main:
         lea     nodiag(pc), a6          // save return address
         jmp     cart_base+4             // execute diagnostig cartridge
 nodiag:
-#endif /* !DIAGNOSTIC_CARTRIDGE */
+#endif /* CONF_WITH_CARTRIDGE */
 
 
 /*
@@ -215,7 +215,7 @@ memdone:
         jmp     _biosmain
 
 
-#if !DIAGNOSTIC_CARTRIDGE
+#if CONF_WITH_CARTRIDGE
 /*
  * void run_cartridge_applications(WORD typebit);
  *
@@ -257,7 +257,7 @@ nextapp:
         bne     testtype
 cartover:
         rts
-#endif /* !DIAGNOSTIC_CARTRIDGE */
+#endif /* CONF_WITH_CARTRIDGE */
 
         .end
 
