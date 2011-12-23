@@ -172,13 +172,18 @@ long XHReadWrite(UWORD major, UWORD minor, UWORD rw, ULONG sector,
         return EUNDEV;
 
     /* hardware access to device */
-    if (dev >= 0 && dev < 8) {
+    if (FALSE) {
+        /* Dummy case for conditional compilation */
+    }
+#if CONF_WITH_ACSI
+    else if (dev >= 0 && dev < 8) {
         long ret = acsi_rw(rw, sector, count, (LONG)buf, dev);
 #if DBG_XHDI
         kprintf("acsi_rw() returned %ld\n", ret);
 #endif
         return ret;
     }
+#endif /* CONF_WITH_ACSI */
     else if (dev < 16) {
         return EUNDEV;  /* call scsi_rw() here when implemented */
     }
@@ -190,7 +195,7 @@ long XHReadWrite(UWORD major, UWORD minor, UWORD rw, ULONG sector,
 #endif
         return ret;
     }
-#endif
+#endif /* CONF_WITH_IDE */
 
     return EUNDEV;      /* unknown device */
 }

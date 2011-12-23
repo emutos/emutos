@@ -3105,3 +3105,5 @@ Start... early ages
 - bios/blkdev.c bios/floppy.c: Removed floppy_init() as the job is already done
   in flop_hdv_init(). (VRI)
 - bios/xhdi.c: Added a trace for the result of acsi_rw() and ide_rw(). (VRI)
+- bios/acsi.c bios/acsi.h bios/xhdi.c: Harmonized CONF_WITH_ACSI and
+  CONF_WITH_IDE. (VRI)

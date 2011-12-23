@@ -20,14 +20,7 @@
 #include "tosvars.h"
 #include "gemerror.h"
 
-#if CONF_WITH_ACSI==0
-
-LONG acsi_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev)
-{
-    return EUNDEV;
-}
-
-#else /* CONF_WITH_ACSI */
+#if CONF_WITH_ACSI
 
 /*
  * private prototypes
