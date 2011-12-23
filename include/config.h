@@ -93,10 +93,10 @@
 #endif
 
 /*
- * Set CONF_WITH_FLOPPY to 1 to enable floppy support
+ * Set CONF_WITH_FDC to 1 to enable floppy disk controller support
  */
-#ifndef CONF_WITH_FLOPPY
-# define CONF_WITH_FLOPPY 1
+#ifndef CONF_WITH_FDC
+# define CONF_WITH_FDC 1
 #endif
 
 /*
@@ -404,8 +404,8 @@
  * Sanity checks
  */
 #if !CONF_WITH_YM2149
-# if CONF_WITH_FLOPPY
-#  error "CONF_WITH_FLOPPY requires CONF_WITH_YM2149."
+# if CONF_WITH_FDC
+#  error "CONF_WITH_FDC requires CONF_WITH_YM2149."
 # endif
 #endif
 

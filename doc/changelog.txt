@@ -3095,3 +3095,8 @@ Start... early ages
 - aes/gemgsxif.c: Fixed memory overwrite in ST Low due to a too-small
   menu/alert backup buffer. (RFB)
 - desk/deskapp.c: Use "View as icons" by default for a more Atari feeling. (VRI)
+
+2011-12-23
+- bios/blkdev.c bios/floppy.c bios/floppy.h bios/machine.c bios/machine.h
+  bios/vectors.S bios/xbios.c doc/changelog.txt include/config.h: Replaced
+  CONF_WITH_FLOPPY by a better CONF_WITH_FDC. (VRI)

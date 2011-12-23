@@ -29,7 +29,7 @@
 #include "kprint.h"
 
 long cookie_vdo;
-#if CONF_WITH_FLOPPY
+#if CONF_WITH_FDC
 long cookie_fdc;
 #endif
 long cookie_snd;
@@ -253,7 +253,7 @@ static void setvalue_snd(void)
 }
   
 
-#if CONF_WITH_FLOPPY
+#if CONF_WITH_FDC
 
 /* FDC */
 
@@ -277,7 +277,7 @@ static void setvalue_fdc(void)
 #endif
 }
 
-#endif /* CONF_WITH_FLOPPY */
+#endif /* CONF_WITH_FDC */
 
 void machine_detect(void)
 {
@@ -404,7 +404,7 @@ void machine_init(void)
   cookie_add(COOKIE_IDT, cookie_idt);
   cookie_add(COOKIE_AKP, cookie_akp);
   
-#if CONF_WITH_FLOPPY
+#if CONF_WITH_FDC
   /* Floppy Drive Controller 
    * Most significant byte means: 
    * 0 - DD (Normal floppy interface)

@@ -13,8 +13,6 @@
 #ifndef FLOPPY_H
 #define FLOPPY_H
 
-#if CONF_WITH_FLOPPY
-
 #include "portab.h"
  
 /* bios functions */
@@ -41,9 +39,13 @@ extern LONG flopver(LONG buf, LONG filler, WORD dev,
                     WORD sect, WORD track, WORD side, WORD count); 
 extern LONG floprate(WORD dev, WORD rate);
 
+#if CONF_WITH_FDC
+
 /* internal functions */
 
 extern void flopvbl(void);
+
+#endif /* CONF_WITH_FDC */
 
 /* call hdv_boot() and execute bootsector */
 extern void do_hdv_boot(void);  
@@ -53,7 +55,5 @@ extern void floppy_init(void);
 
 /* lowlevel floppy_rwabs */
 LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt, WORD sides, WORD dev);
-
-#endif /* CONF_WITH_FLOPPY */
 
 #endif /* FLOPPY_H */

@@ -67,8 +67,6 @@
  *   getbpb is called.
  */
 
-#if CONF_WITH_FLOPPY
-
 /*==== Internal defines ===================================================*/
  
 #define SECT_SIZ 512
@@ -90,6 +88,8 @@ static WORD flopwtrack(LONG buf, WORD dev, WORD track, WORD side);
 
 /* initialise a floppy for hdv_init */
 static void flopini(WORD dev);
+
+#if CONF_WITH_FDC
 
 /* called at start and end of a floppy access. */
 static void floplock(WORD dev);
@@ -150,13 +150,15 @@ static void delay(void);
 
 static WORD cur_dev;
 static WORD cur_track;
+static UBYTE deselected;
+
+#endif /* CONF_WITH_FDC */
+
 static struct flop_info {
   WORD cur_track;
   WORD rate;
   BYTE wp;           /* != 0 means write protected */
 } finfo[2];
-
-static UBYTE deselected;
 
 /*==== hdv_init and hdv_boot ==============================================*/
 
@@ -167,10 +169,13 @@ void flop_hdv_init(void)
     seekrate = 3;
 
     nflops = 0;
+
+#if CONF_WITH_FDC
     cur_dev = -1;
 
     /* I'm unsure, so let flopvbl() do the work of figuring out. */
     deselected = 1;
+#endif
 
     finfo[0].cur_track = -1;
     finfo[0].rate = seekrate;
@@ -186,9 +191,11 @@ void floppy_init(void)
     fverify = 0xff;
     seekrate = 3;
 
+#if CONF_WITH_FDC
     /* I'm unsure, so let flopvbl() do the work or figuring out. */
     deselected = 1;
     //dskbufp = &diskbuf;
+#endif
 }
 
 
@@ -197,8 +204,10 @@ static void flopini(WORD dev)
 {
     WORD status;
   
+    UNUSED(status);
     blkdev[dev].valid = devices[dev].valid = 0;    /* disabled by default */
 
+#if CONF_WITH_FDC
     floplock(dev);
     cur_track = -1;
     select(dev, 0);
@@ -234,6 +243,7 @@ static void flopini(WORD dev)
         devices[dev].last_access = 0;   /* never accessed */
     } 
     flopunlk(dev);
+#endif
 }
 
 
@@ -582,6 +592,7 @@ LONG floprate(WORD dev, WORD rate)
 static WORD floprw(LONG buf, WORD rw, WORD dev, 
                    WORD sect, WORD track, WORD side, WORD count)
 {
+#if CONF_WITH_FDC
     WORD retry;
     WORD err;
     WORD status;
@@ -640,12 +651,16 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
     }  
     flopunlk(dev);
     return err;
+#else
+    return EUNDEV;
+#endif
 }
 
 /*==== internal flopwtrack =================================================*/
 
 static WORD flopwtrack(LONG buf, WORD dev, WORD track, WORD side)
 {
+#if CONF_WITH_FDC
     WORD retry;
     WORD err;
     WORD status;
@@ -695,7 +710,12 @@ static WORD flopwtrack(LONG buf, WORD dev, WORD track, WORD side)
     }  
     flopunlk(dev);
     return err;
+#else
+    return EUNDEV;
+#endif
 }
+
+#if CONF_WITH_FDC
 
 /*==== internal status, flopvbl ===========================================*/
 
@@ -862,4 +882,4 @@ static void delay(void)
             nop();
 }
 
-#endif /* CONF_WITH_FLOPPY */
+#endif /* CONF_WITH_FDC */

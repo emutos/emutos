@@ -19,7 +19,7 @@
 
 extern long cookie_mch;
 extern long cookie_vdo;
-#if CONF_WITH_FLOPPY
+#if CONF_WITH_FDC
 extern long cookie_fdc;
 #endif
 extern long cookie_snd;

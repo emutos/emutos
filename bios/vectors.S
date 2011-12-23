@@ -366,7 +366,7 @@ st_shifter:
         move.b  d0,0xffff8201
 vbl_no_screenpt:        
 
-#if CONF_WITH_FLOPPY
+#if CONF_WITH_FDC
         // flopvbl
         jsr     _flopvbl
 #endif
