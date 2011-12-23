@@ -47,9 +47,6 @@ extern void flopvbl(void);
 
 #endif /* CONF_WITH_FDC */
 
-/* initialise floppy parameters */
-extern void floppy_init(void);
-
 /* lowlevel floppy_rwabs */
 LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt, WORD sides, WORD dev);
 

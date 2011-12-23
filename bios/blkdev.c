@@ -70,9 +70,6 @@ void blkdev_init(void)
     hdv_rw      = blkdev_rwabs;
     hdv_mediach = blkdev_mediach;
 
-    /* floppy initialisation */
-    floppy_init();
-
     /* setting drvbits */
     blkdev_hdv_init();
 }

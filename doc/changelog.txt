@@ -3102,3 +3102,5 @@ Start... early ages
   CONF_WITH_FLOPPY by a better CONF_WITH_FDC. (VRI)
 - bios/bios.c bios/startup.S include/config.h: Added the CONF_WITH_CARTRIDGE
   define to allow disabling the ROM port cartridge support. (VRI)
+- bios/blkdev.c bios/floppy.c: Removed floppy_init() as the job is already done
+  in flop_hdv_init(). (VRI)

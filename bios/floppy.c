@@ -39,7 +39,6 @@
  * sections in this file:
  * - private prototypes
  * - internal floppy status info
- * - floppy_init
  * - disk initializations: hdv_init, hdv_boot
  * - boot-sector: protobt 
  * - boot-sector utilities: compute_cksum, intel format words
@@ -184,21 +183,6 @@ void flop_hdv_init(void)
     flopini(0);
     flopini(1);
 }
-
-void floppy_init(void)
-{
-    /* set floppy specific stuff from floppy init */
-    fverify = 0xff;
-    seekrate = 3;
-
-#if CONF_WITH_FDC
-    /* I'm unsure, so let flopvbl() do the work or figuring out. */
-    deselected = 1;
-    //dskbufp = &diskbuf;
-#endif
-}
-
-
 
 static void flopini(WORD dev)
 {
