@@ -247,7 +247,7 @@ LONG flop_hdv_boot(void)
 }
   
 
-LONG flop_bootcheck(void)
+static LONG flop_bootcheck(void)
 {
     struct bs *b = (struct bs *) dskbufp;
     WORD err;
