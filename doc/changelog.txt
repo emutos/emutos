@@ -3107,3 +3107,4 @@ Start... early ages
 - bios/xhdi.c: Added a trace for the result of acsi_rw() and ide_rw(). (VRI)
 - bios/acsi.c bios/acsi.h bios/xhdi.c: Harmonized CONF_WITH_ACSI and
   CONF_WITH_IDE. (VRI)
+- bios/floppy.c: Added a timeout debug message in flopini(). (VRI)

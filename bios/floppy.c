@@ -198,6 +198,9 @@ static void flopini(WORD dev)
     set_fdc_reg(FDC_CS, FDC_RESTORE);
     if(timeout_gpip(TIMEOUT)) {
         /* timeout */
+#if DBG_FLOP
+        kprintf("flopini(%d) timeout\n", dev);
+#endif
         flopunlk(dev);
         return;
     }
