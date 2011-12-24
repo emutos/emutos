@@ -71,6 +71,11 @@
 #define SECT_SIZ 512
 #define TRACK_SIZ 6250
 
+#define STEPPING_RATE_6_MS 0
+#define STEPPING_RATE_12_MS 1
+#define STEPPING_RATE_2_MS 2
+#define STEPPING_RATE_3_MS 3
+
 /*==== Internal prototypes ==============================================*/
 
 /* set/get intel words */
@@ -132,7 +137,7 @@ static void delay(void);
  * controller status reg. As soon as this value is different for
  * the drive, this means that the floppy has changed.
  *
- * finfo[].rate is the seek rate (TODO: unused)
+ * finfo[].rate is the stepping rate.
  * 
  * the flock variable in tosvars.s is used as following :
  * - floppy.c will set it before accessing to the DMA/FDC, and
@@ -164,7 +169,7 @@ void flop_hdv_init(void)
 {
     /* set floppy specific stuff */
     fverify = 0xff;
-    seekrate = 3;
+    seekrate = STEPPING_RATE_3_MS;
 
     /* by default, there is no floppy drive */
     nflops = 0;
@@ -193,7 +198,7 @@ static void flopini(WORD dev)
 #if CONF_WITH_FDC
     floplock(dev);
     select(dev, 0);
-    set_fdc_reg(FDC_CS, FDC_RESTORE);
+    set_fdc_reg(FDC_CS, FDC_RESTORE | finfo[cur_dev].rate);
     if(timeout_gpip(TIMEOUT)) {
         /* timeout */
 #if DBG_FLOP
@@ -552,7 +557,7 @@ LONG flopfmt(LONG buf, LONG filler, WORD dev, WORD spt,
 
 /*==== xbios floprate ======================================================*/
 
-/* sets the rate of the specified drive. 
+/* sets the stepping rate of the specified drive. 
  * rate meaning
  * 0   6ms
  * 1  12ms
@@ -793,16 +798,13 @@ static void select(WORD dev, WORD side)
 
 static WORD set_track(WORD track)
 {
-    WORD rate;
-
     if(track == finfo[cur_dev].cur_track) return 0;
   
-    rate = finfo[cur_dev].rate & 3;
     if(track == 0) {
-        set_fdc_reg(FDC_CS, FDC_RESTORE | rate);
+        set_fdc_reg(FDC_CS, FDC_RESTORE | finfo[cur_dev].rate);
     } else {
         set_fdc_reg(FDC_DR, track);
-        set_fdc_reg(FDC_CS, FDC_SEEK | rate);
+        set_fdc_reg(FDC_CS, FDC_SEEK | finfo[cur_dev].rate);
     }
     if(timeout_gpip(TIMEOUT)) {
         finfo[cur_dev].cur_track = -1;
