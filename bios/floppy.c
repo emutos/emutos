@@ -720,8 +720,10 @@ static void floplock(WORD dev)
         }
         cur_dev = dev;
         cur_track = finfo[cur_dev].cur_track;
-        /* TODO, what if the new device is not available? */
-        set_fdc_reg(FDC_TR, cur_track);
+        if (cur_track != -1) {
+            /* TODO, what if the new device is not available? */
+            set_fdc_reg(FDC_TR, cur_track);
+        }
     } 
 }
 
