@@ -121,10 +121,10 @@ static void delay(void);
  * routine may deselect the drive in the PSG port A. The routine 
  * floplock(dev) will set the new current drive.
  *
- * cur_track contains a copy of the fdc track register for the current
+ * finfo[].cur_track contains a copy of the fdc track register for the current
  * drive, or -1 to indicate that the drive does not exist.
  *
- * last_access is set to the value of the 200 Hz counter at the end of
+ * finfo[].last_access is set to the value of the 200 Hz counter at the end of
  * last fdc command. last_access can be used by mediach, a short time 
  * elapsed indicating that the floppy was not ejected.
  * 
@@ -148,7 +148,6 @@ static void delay(void);
  */
 
 static WORD cur_dev;
-static WORD cur_track;
 static UBYTE deselected;
 
 #endif /* CONF_WITH_FDC */
@@ -189,13 +188,10 @@ void flop_hdv_init(void)
 static void flopini(WORD dev)
 {
     WORD status;
-  
     UNUSED(status);
-    blkdev[dev].valid = devices[dev].valid = 0;    /* disabled by default */
 
 #if CONF_WITH_FDC
     floplock(dev);
-    cur_track = -1;
     select(dev, 0);
     set_fdc_reg(FDC_CS, FDC_RESTORE);
     if(timeout_gpip(TIMEOUT)) {
@@ -215,7 +211,7 @@ static void flopini(WORD dev)
 #if DBG_FLOP
         kprintf("track0 signal got\n" );
 #endif
-        cur_track = 0;
+        finfo[cur_dev].cur_track = 0;
         nflops++;
         drvbits |= (1<<dev);
 
@@ -711,20 +707,18 @@ static WORD flopwtrack(LONG buf, WORD dev, WORD track, WORD side)
 
 static void floplock(WORD dev)
 {
+    /* prevent the VBL from accessing the FDC */
     flock = 1;
-    if(dev != cur_dev) {
+
+    if (dev != cur_dev) {
+        cur_dev = dev;
+
         /* 
          * the FDC has only one track register for two units.
          * we need to save the current value, and switch 
          */
-        if(cur_dev != -1) {
-            finfo[cur_dev].cur_track = cur_track;
-        }
-        cur_dev = dev;
-        cur_track = finfo[cur_dev].cur_track;
-        if (cur_track != -1) {
-            /* TODO, what if the new device is not available? */
-            set_fdc_reg(FDC_TR, cur_track);
+        if (finfo[cur_dev].cur_track != -1) {
+            set_fdc_reg(FDC_TR, finfo[cur_dev].cur_track);
         }
     } 
 }
@@ -797,7 +791,7 @@ static void select(WORD dev, WORD side)
 
 static WORD set_track(WORD track, WORD rate)
 {
-    if(track == cur_track) return 0;
+    if(track == finfo[cur_dev].cur_track) return 0;
   
     if(track == 0) {
         set_fdc_reg(FDC_CS, FDC_RESTORE | (rate & 3));
@@ -806,10 +800,10 @@ static WORD set_track(WORD track, WORD rate)
         set_fdc_reg(FDC_CS, FDC_SEEK | (rate & 3));
     }
     if(timeout_gpip(TIMEOUT)) {
-        cur_track = -1;
+        finfo[cur_dev].cur_track = -1;
         return E_SEEK;  /* seek error */
     } else {
-        cur_track = track;
+        finfo[cur_dev].cur_track = track;
         return 0;
     }
 }
