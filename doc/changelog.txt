@@ -3115,3 +3115,4 @@ Start... early ages
 - bios/floppy.c: Removed the global variable cur_track. (VRI)
 - bios/floppy.c: Removed the flopunlk() dev parameter and the set_track() rate
   parameter. (VRI)
+- bios/floppy.c: Clean up stepping rate usage. (VRI)
