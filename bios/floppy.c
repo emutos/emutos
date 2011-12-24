@@ -92,7 +92,7 @@ static void flopini(WORD dev);
 
 /* called at start and end of a floppy access. */
 static void floplock(WORD dev);
-static void flopunlk(WORD dev);
+static void flopunlk(void);
 
 /* select drive and side in the PSG port A */
 static void select(WORD dev, WORD side);
@@ -199,7 +199,7 @@ static void flopini(WORD dev)
 #if DBG_FLOP
         kprintf("flopini(%d) timeout\n", dev);
 #endif
-        flopunlk(dev);
+        flopunlk();
         return;
     }
     status = get_fdc_reg(FDC_CS);
@@ -227,7 +227,7 @@ static void flopini(WORD dev)
         devices[dev].size = 0;          /* unknown size */
         devices[dev].last_access = 0;   /* never accessed */
     } 
-    flopunlk(dev);
+    flopunlk();
 #endif
 }
 
@@ -593,7 +593,7 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
     select(dev, side);
     err = set_track(track, finfo[dev].rate);
     if(err) {
-        flopunlk(dev);
+        flopunlk();
         return err;
     }
     for(retry = 0; retry < 2 ; retry ++) {
@@ -609,7 +609,7 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
         if(timeout_gpip(TIMEOUT)) {
             /* timeout */
             err = EDRVNR;  /* drive not ready */
-            flopunlk(dev);
+            flopunlk();
             return err;
         }
         status = get_dma_status();
@@ -634,7 +634,7 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
             }
         }
     }  
-    flopunlk(dev);
+    flopunlk();
     return err;
 #else
     return EUNDEV;
@@ -661,7 +661,7 @@ static WORD flopwtrack(LONG buf, WORD dev, WORD track, WORD side)
     select(dev, side);
     err = set_track(track, finfo[dev].rate);
     if(err) {
-        flopunlk(dev);
+        flopunlk();
         return err;
     }
     for(retry = 0; retry < 2 ; retry ++) {
@@ -672,7 +672,7 @@ static WORD flopwtrack(LONG buf, WORD dev, WORD track, WORD side)
         if(timeout_gpip(TIMEOUT)) {
             /* timeout */
             err = EDRVNR;  /* drive not ready */
-            flopunlk(dev);
+            flopunlk();
             return err;
         }
         status = get_dma_status();
@@ -693,7 +693,7 @@ static WORD flopwtrack(LONG buf, WORD dev, WORD track, WORD side)
             }
         }
     }  
-    flopunlk(dev);
+    flopunlk();
     return err;
 #else
     return EUNDEV;
@@ -723,9 +723,11 @@ static void floplock(WORD dev)
     } 
 }
 
-static void flopunlk(WORD dev)
+static void flopunlk(void)
 {
-    devices[dev].last_access = hz_200;
+    devices[cur_dev].last_access = hz_200;
+
+    /* the VBL will deselect the drive when the motor is off */
     flock = 0;
 }
 
