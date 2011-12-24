@@ -167,7 +167,12 @@ void flop_hdv_init(void)
     fverify = 0xff;
     seekrate = 3;
 
+    /* by default, there is no floppy drive */
     nflops = 0;
+    finfo[0].cur_track = -1;
+    finfo[0].rate = seekrate;
+    finfo[1].cur_track = -1;
+    finfo[1].rate = seekrate;
 
 #if CONF_WITH_FDC
     cur_dev = -1;
@@ -176,10 +181,7 @@ void flop_hdv_init(void)
     deselected = 1;
 #endif
 
-    finfo[0].cur_track = -1;
-    finfo[0].rate = seekrate;
-    finfo[1].cur_track = -1;
-    finfo[1].rate = seekrate;
+    /* autodetect floppy drives */
     flopini(0);
     flopini(1);
 }
