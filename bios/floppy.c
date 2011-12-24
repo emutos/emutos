@@ -97,8 +97,8 @@ static void flopunlk(void);
 /* select drive and side in the PSG port A */
 static void select(WORD dev, WORD side);
 
-/* sets the track, returns 0 or error. rate is the step rate */
-static WORD set_track(WORD track, WORD rate);
+/* sets the track on the current drive, returns 0 or error */
+static WORD set_track(WORD track);
 
 /* the timeout we wait for the gpip bit to change */
 #define TIMEOUT 1500L   /* default one second and a half */
@@ -591,7 +591,7 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
     floplock(dev);
     
     select(dev, side);
-    err = set_track(track, finfo[dev].rate);
+    err = set_track(track);
     if(err) {
         flopunlk();
         return err;
@@ -659,7 +659,7 @@ static WORD flopwtrack(LONG buf, WORD dev, WORD track, WORD side)
     floplock(dev);
   
     select(dev, side);
-    err = set_track(track, finfo[dev].rate);
+    err = set_track(track);
     if(err) {
         flopunlk();
         return err;
@@ -791,15 +791,18 @@ static void select(WORD dev, WORD side)
     set_sr(old_sr);
 }
 
-static WORD set_track(WORD track, WORD rate)
+static WORD set_track(WORD track)
 {
+    WORD rate;
+
     if(track == finfo[cur_dev].cur_track) return 0;
   
+    rate = finfo[cur_dev].rate & 3;
     if(track == 0) {
-        set_fdc_reg(FDC_CS, FDC_RESTORE | (rate & 3));
+        set_fdc_reg(FDC_CS, FDC_RESTORE | rate);
     } else {
         set_fdc_reg(FDC_DR, track);
-        set_fdc_reg(FDC_CS, FDC_SEEK | (rate & 3));
+        set_fdc_reg(FDC_CS, FDC_SEEK | rate);
     }
     if(timeout_gpip(TIMEOUT)) {
         finfo[cur_dev].cur_track = -1;

@@ -3113,4 +3113,5 @@ Start... early ages
 - bios/tosvars.h: Declare flock as volatile for safety. (VRI)
 - bios/floppy.c: Do not set the FDC track register when cur_track is -1. (VRI)
 - bios/floppy.c: Removed the global variable cur_track. (VRI)
-- bios/floppy.c: Removed the flopunlk() parameter. (VRI)
+- bios/floppy.c: Removed the flopunlk() dev parameter and the set_track() rate
+  parameter. (VRI)
