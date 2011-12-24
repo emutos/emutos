@@ -3108,3 +3108,6 @@ Start... early ages
 - bios/acsi.c bios/acsi.h bios/xhdi.c: Harmonized CONF_WITH_ACSI and
   CONF_WITH_IDE. (VRI)
 - bios/floppy.c: Added a timeout debug message in flopini(). (VRI)
+
+2011-12-24
+- bios/tosvars.h: Declare flock as volatile for safety. (VRI)

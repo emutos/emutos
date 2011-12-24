@@ -47,7 +47,7 @@ extern WORD timer_ms;
 
 extern volatile LONG hz_200;
 extern void *dskbufp;
-extern WORD flock;
+extern volatile WORD flock;
 extern WORD nflops;
 extern LONG drvbits;
 extern WORD bootdev;
