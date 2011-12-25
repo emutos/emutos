@@ -3116,3 +3116,4 @@ Start... early ages
 - bios/floppy.c: Removed the flopunlk() dev parameter and the set_track() rate
   parameter. (VRI)
 - bios/floppy.c: Clean up stepping rate usage. (VRI)
+- bios/floppy.c: Better handling for invalid floppy devices. (VRI)

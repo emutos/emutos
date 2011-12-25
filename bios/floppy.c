@@ -163,6 +163,8 @@ static struct flop_info {
   BYTE wp;           /* != 0 means write protected */
 } finfo[2];
 
+#define IS_VALID_FLOPPY_DEVICE(dev) (dev >= 0 && dev < 2 && finfo[dev].cur_track >= 0)
+
 /*==== hdv_init and hdv_boot ==============================================*/
 
 void flop_hdv_init(void)
@@ -291,7 +293,7 @@ LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt,
     kprintf("recnr %ld, spt %d, sides %d, dev %d)\n", recnr, spt, sides, dev);
 #endif
 
-    if (dev < 0 || dev > 1) return EUNDEV;  /* unknown device */
+    if (!IS_VALID_FLOPPY_DEVICE(dev)) return EUNDEV;  /* unknown device */
 
     /* do the transfer one sector at a time. It is easier to implement,
      * but perhaps slower when using FastRAM, as the time spent in memcpying
@@ -460,7 +462,7 @@ LONG flopver(LONG buf, LONG filler, WORD dev,
     WORD *bad = (WORD *) buf;
     
     if(count <= 0) return 0;
-    if(dev < 0 || dev > 1) return EUNDEV;  /* unknown disk */
+    if(!IS_VALID_FLOPPY_DEVICE(dev)) return EUNDEV;  /* unknown disk */
     for(i = 0 ; i < count ; i++) {
         err = floprw((LONG) dskbufp, RW_READ, dev, sect, track, side, 1);
         if(err) {
@@ -493,7 +495,7 @@ LONG flopfmt(LONG buf, LONG filler, WORD dev, WORD spt,
 #define APPEND(b, count) do { memset(s, b, count); s += count; } while(0)
 
     if(magic != 0x87654321UL) return 0;
-    if(dev < 0 || dev > 1) return EUNDEV;  /* unknown disk */
+    if(!IS_VALID_FLOPPY_DEVICE(dev)) return EUNDEV;  /* unknown disk */
     if(spt < 1 || spt > 10) return EGENRL;  /* general error */
     s = (BYTE *)buf;
 
@@ -569,7 +571,7 @@ LONG floprate(WORD dev, WORD rate)
 {
     WORD old;
 
-    if(dev < 0 || dev > 1) return EUNDEV;  /* unknown disk */
+    if(!IS_VALID_FLOPPY_DEVICE(dev)) return EUNDEV;  /* unknown disk */
     old = finfo[dev].rate;
     if(rate >= 0 && rate <= 3) {
         finfo[dev].rate = rate;
@@ -587,7 +589,7 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
     WORD err;
     WORD status;
     
-    if(dev < 0 || dev > 1) return EUNDEV;  /* unknown disk */
+    if(!IS_VALID_FLOPPY_DEVICE(dev)) return EUNDEV;  /* unknown disk */
     
     if((rw == RW_WRITE) && (track == 0) && (sect == 1) && (side == 0)) {
         /* TODO, maybe media changed ? */
@@ -654,8 +656,6 @@ static WORD flopwtrack(LONG buf, WORD dev, WORD track, WORD side)
     WORD retry;
     WORD err;
     WORD status;
-    
-    if(dev < 0 || dev > 1) return EUNDEV;  /* unknown disk */
     
     if((track == 0) && (side == 0)) {
         /* TODO, maybe media changed ? */
