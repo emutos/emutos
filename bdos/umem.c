@@ -33,8 +33,8 @@
 
 
 MPB pmd;
-MPB pmdtt;
-int has_ttram;  
+MPB pmdalt;
+int has_alt_ram;  
 
 /* internal variables */
 
@@ -114,8 +114,8 @@ long    xmfree(long addr)
 #endif
     if(addr >= start_stram && addr <= end_stram) {
         mpb = &pmd;
-    } else if(has_ttram) {
-        mpb = &pmdtt;
+    } else if(has_alt_ram) {
+        mpb = &pmdalt;
     } else {
         return EIMBA;
     }
@@ -155,10 +155,10 @@ long    xsetblk(int n, void *blk, long len)
 #if DBGUMEM
         kprintf("BDOS: xsetblk - mpb = &pmd\n");
 #endif
-    } else if(has_ttram) {
-        mpb = &pmdtt;
+    } else if(has_alt_ram) {
+        mpb = &pmdalt;
 #if DBGUMEM
-        kprintf("BDOS: xsetblk - mpb = &pmdtt\n");
+        kprintf("BDOS: xsetblk - mpb = &pmdalt\n");
 #endif
     } else {
         return EIMBA;
@@ -246,7 +246,7 @@ long    xmxalloc(long amount, int mode)
             ret_value = (long) ffit(-1L,&pmd);
             break;
         case MX_TTRAM:
-            ret_value = (long) ffit(-1L,&pmdtt);
+            ret_value = (long) ffit(-1L,&pmdalt);
             break;
         case MX_PREFSTRAM:
         case MX_PREFTTRAM:
@@ -255,7 +255,7 @@ long    xmxalloc(long amount, int mode)
              */ 
             {
                 long tmp = (long) ffit(-1L,&pmd);
-                ret_value = (long) ffit(-1L,&pmdtt);
+                ret_value = (long) ffit(-1L,&pmdalt);
                 if(ret_value < tmp) ret_value = tmp;
             }
             break;
@@ -284,15 +284,15 @@ long    xmxalloc(long amount, int mode)
         m = ffit(amount,&pmd);
         break;
     case MX_TTRAM:
-        m = ffit(amount,&pmdtt);
+        m = ffit(amount,&pmdalt);
         break;
     case MX_PREFSTRAM:
         m = ffit(amount,&pmd);
         if(m == NULL) 
-            m = ffit(amount,&pmdtt);
+            m = ffit(amount,&pmdalt);
         break;
     case MX_PREFTTRAM:
-        m = ffit(amount,&pmdtt);
+        m = ffit(amount,&pmdalt);
         if(m == NULL) 
             m = ffit(amount,&pmd);
         break;
@@ -356,20 +356,20 @@ long xmaddalt( LONG start, LONG size)
     md->m_start = start;
     md->m_length = size;
     md->m_own = NULL;
-    if(has_ttram) {
+    if(has_alt_ram) {
         /* some alternative RAM has already been registered, just insert it
          * to the beginning of the free block list.
          */
-        MD *tmp = pmdtt.mp_mfl;
-        pmdtt.mp_mfl = md;
-        if(pmdtt.mp_rover == tmp) pmdtt.mp_rover = md;
+        MD *tmp = pmdalt.mp_mfl;
+        pmdalt.mp_mfl = md;
+        if(pmdalt.mp_rover == tmp) pmdalt.mp_rover = md;
         md->m_link = tmp;
     } else {
         md->m_link = NULL;
-        pmdtt.mp_mfl = md;
-        pmdtt.mp_mal = NULL;
-        pmdtt.mp_rover = md;
-        has_ttram = 1;
+        pmdalt.mp_mfl = md;
+        pmdalt.mp_mal = NULL;
+        pmdalt.mp_rover = md;
+        has_alt_ram = 1;
     }
     return 0;
 }
@@ -389,6 +389,6 @@ void umem_init(void)
     /* derive the addresses, assuming the MPB is in clean state */ 
     start_stram = pmd.mp_mfl->m_start;
     end_stram = start_stram + pmd.mp_mfl->m_length;
-    /* there is no known TT RAM initially */
-    has_ttram = 0;
+    /* there is no known alternative RAM initially */
+    has_alt_ram = 0;
 }

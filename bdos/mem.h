@@ -62,8 +62,8 @@ struct _mpb
 
 extern  FTAB    sft[];
 extern  MPB     pmd;    /* the mem pool for the main user ST ram */
-extern  MPB     pmdtt;  /* the memory pool for the alternative TT ram */
-extern  int     has_ttram; /* 1 if alternative RAM has been declared to BDOS */
+extern  MPB     pmdalt;  /* the memory pool for the alternative ram (FastRAM or other) */
+extern  int     has_alt_ram; /* 1 if alternative RAM has been declared to BDOS */
 
 /*
  * these should be internal

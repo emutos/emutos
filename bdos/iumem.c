@@ -52,8 +52,8 @@ MD *ffit(long amount, MPB *mp)
 #if     DBG_IUMEM
     if (mp == &pmd)
         kprintf("BDOS: ffit - mp = &pmd\n");
-    else if (mp == &pmdtt)
-        kprintf("BDOS: ffit - mp = &pmdtt\n");
+    else if (mp == &pmdalt)
+        kprintf("BDOS: ffit - mp = &pmdalt\n");
     else
         kprintf("BDOS: ffit - mp = 0x%08lx\n", (LONG)mp);
     kprintf("BDOS: ffit - requested amount = %ld\n", amount);
@@ -184,8 +184,8 @@ void freeit(MD *m, MPB *mp)
 #if     DBG_IUMEM
     if (mp == &pmd)
         kprintf("BDOS: freeit - mp = &pmd\n");
-    else if (mp == &pmdtt)
-        kprintf("BDOS: freeit - mp = &pmdtt\n");
+    else if (mp == &pmdalt)
+        kprintf("BDOS: freeit - mp = &pmdalt\n");
     else
         kprintf("BDOS: freeit - mp = %08lx\n", (LONG)mp);
     kprintf("BDOS: freeit - start = %08lx\n", (LONG)m->m_start);
