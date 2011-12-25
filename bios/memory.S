@@ -407,6 +407,7 @@ f_cleared:
 
         move.l  d5, _phystop            // highest address as phystop
 
+#if CONF_WITH_FASTRAM
 
 /*
  * TT-RAM (FastRAM) detection (joy)
@@ -475,6 +476,9 @@ alter:
         lea     tt_cleared(pc),a6       // remember return address
         bra     clear_ram               // jump to routine clearing the RAM
 tt_cleared:
+
+#endif /* CONF_WITH_FASTRAM */
+
         jmp     memdone                 // config done -> return to startup.s
 
 #endif /* FALCON_MMU */

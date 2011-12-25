@@ -258,9 +258,11 @@ static void bios_init(void)
     run_cartridge_applications(3); /* Type "Execute prior to bootdisk" */
 #endif
 
+#if CONF_WITH_FASTRAM
     /* add TT-RAM that was detected in memory.S */
     if (ramtop > 0x1000000)
         xmaddalt( 0x1000000, ramtop - 0x1000000);
+#endif
 }
 
 

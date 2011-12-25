@@ -93,6 +93,17 @@
 #endif
 
 /*
+ * Set CONF_WITH_FASTRAM to 1 to enable detection and usage of FastRAM (TT-RAM)
+ */
+#ifndef CONF_WITH_FASTRAM
+# ifdef TARGET_192
+#  define CONF_WITH_FASTRAM 0
+# else
+#  define CONF_WITH_FASTRAM 1
+# endif
+#endif
+
+/*
  * Set CONF_WITH_FDC to 1 to enable floppy disk controller support
  */
 #ifndef CONF_WITH_FDC

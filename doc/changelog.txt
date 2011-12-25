@@ -3120,3 +3120,5 @@ Start... early ages
 
 2011-12-25
 - bios/floppy.c: Safer cur_track handling. (VRI)
+- bios/bios.c bios/memory.S include/config.h: Added the CONF_WITH_FASTRAM define
+  to allow detection and usage of FastRAM (TT-RAM). (VRI)
