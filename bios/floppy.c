@@ -722,7 +722,7 @@ static void floplock(WORD dev)
          * the FDC has only one track register for two units.
          * we need to save the current value, and switch 
          */
-        if (finfo[cur_dev].cur_track != -1) {
+        if (finfo[cur_dev].cur_track >= 0) {
             set_fdc_reg(FDC_TR, finfo[cur_dev].cur_track);
         }
     } 
@@ -807,7 +807,8 @@ static WORD set_track(WORD track)
         set_fdc_reg(FDC_CS, FDC_SEEK | finfo[cur_dev].rate);
     }
     if(timeout_gpip(TIMEOUT)) {
-        finfo[cur_dev].cur_track = -1;
+        /* cur_track is certainly wrong now */
+        /* FIXME it shoud be reset using a Restore command */
         return E_SEEK;  /* seek error */
     } else {
         finfo[cur_dev].cur_track = track;

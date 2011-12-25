@@ -3117,3 +3117,6 @@ Start... early ages
   parameter. (VRI)
 - bios/floppy.c: Clean up stepping rate usage. (VRI)
 - bios/floppy.c: Better handling for invalid floppy devices. (VRI)
+
+2011-12-25
+- bios/floppy.c: Safer cur_track handling. (VRI)
