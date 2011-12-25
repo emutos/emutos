@@ -75,7 +75,9 @@ extern void ui_start(void);   /* found in aes/gemstart.S */
 extern void coma_start(void); /* found in cli/coma.S */
 #endif
 
+#if CONF_WITH_ALT_RAM
 extern long xmaddalt(long start, long size); /* found in bdos/mem.h */
+#endif
 
 /*==== Declarations =======================================================*/
 

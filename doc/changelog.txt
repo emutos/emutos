@@ -3124,3 +3124,7 @@ Start... early ages
   to allow detection and usage of FastRAM (TT-RAM). (VRI)
 - bdos/iumem.c bdos/mem.h bdos/proc.c bdosm/umem.c: Renamed has_ttram to
   has_alt_ram and pmdtt to pmdalt. (VRI)
+- bdos/bdosmain.c bdos/iumem.c bdos/mem.h bdos/proc.c bdos/umem.c bios/acsi.c
+  bios/bios.c bios/floppy.c bios/machine.c bios/machine.h include/config.h:
+  Added the CONF_WITH_ALT_RAM define to allow disabling support for alternate
+  RAM. (VRI)

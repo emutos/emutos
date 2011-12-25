@@ -33,8 +33,10 @@
 
 
 MPB pmd;
+#if CONF_WITH_ALT_RAM
 MPB pmdalt;
 int has_alt_ram;  
+#endif
 
 /* internal variables */
 
@@ -114,8 +116,10 @@ long    xmfree(long addr)
 #endif
     if(addr >= start_stram && addr <= end_stram) {
         mpb = &pmd;
+#if CONF_WITH_ALT_RAM
     } else if(has_alt_ram) {
         mpb = &pmdalt;
+#endif
     } else {
         return EIMBA;
     }
@@ -155,11 +159,13 @@ long    xsetblk(int n, void *blk, long len)
 #if DBGUMEM
         kprintf("BDOS: xsetblk - mpb = &pmd\n");
 #endif
+#if CONF_WITH_ALT_RAM
     } else if(has_alt_ram) {
         mpb = &pmdalt;
 #if DBGUMEM
         kprintf("BDOS: xsetblk - mpb = &pmdalt\n");
 #endif
+#endif /* CONF_WITH_ALT_RAM */
     } else {
         return EIMBA;
     }
@@ -245,18 +251,24 @@ long    xmxalloc(long amount, int mode)
         case MX_STRAM:
             ret_value = (long) ffit(-1L,&pmd);
             break;
+#if CONF_WITH_ALT_RAM
         case MX_TTRAM:
             ret_value = (long) ffit(-1L,&pmdalt);
             break;
+#endif
         case MX_PREFSTRAM:
         case MX_PREFTTRAM:
             /* TODO - I assume that the correct behaviour is to return
              * the biggest size in either pools. The documentation is unclear.
              */ 
             {
-                long tmp = (long) ffit(-1L,&pmd);
-                ret_value = (long) ffit(-1L,&pmdalt);
-                if(ret_value < tmp) ret_value = tmp;
+                ret_value = (long) ffit(-1L,&pmd);
+#if CONF_WITH_ALT_RAM
+                {
+                    long tmp = (long) ffit(-1L,&pmdalt);
+                    if(ret_value < tmp) ret_value = tmp;
+                }
+#endif
             }
             break;
         default:
@@ -283,17 +295,23 @@ long    xmxalloc(long amount, int mode)
     case MX_STRAM:
         m = ffit(amount,&pmd);
         break;
+#if CONF_WITH_ALT_RAM
     case MX_TTRAM:
         m = ffit(amount,&pmdalt);
         break;
+#endif
     case MX_PREFSTRAM:
         m = ffit(amount,&pmd);
+#if CONF_WITH_ALT_RAM
         if(m == NULL) 
             m = ffit(amount,&pmdalt);
+#endif
         break;
     case MX_PREFTTRAM:
+#if CONF_WITH_ALT_RAM
         m = ffit(amount,&pmdalt);
         if(m == NULL) 
+#endif
             m = ffit(amount,&pmd);
         break;
     default:
@@ -320,6 +338,8 @@ ret:
 
     return(ret_value);
 }
+
+#if CONF_WITH_ALT_RAM
 
 /*
  * Maddalt() informs GEMDOS of the existence of additional 'alternative' 
@@ -374,6 +394,7 @@ long xmaddalt( LONG start, LONG size)
     return 0;
 }
 
+#endif /* CONF_WITH_ALT_RAM */
 
 /*
  * user memory init
@@ -389,6 +410,8 @@ void umem_init(void)
     /* derive the addresses, assuming the MPB is in clean state */ 
     start_stram = pmd.mp_mfl->m_start;
     end_stram = start_stram + pmd.mp_mfl->m_length;
+#if CONF_WITH_ALT_RAM
     /* there is no known alternative RAM initially */
     has_alt_ram = 0;
+#endif
 }

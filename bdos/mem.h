@@ -62,8 +62,10 @@ struct _mpb
 
 extern  FTAB    sft[];
 extern  MPB     pmd;    /* the mem pool for the main user ST ram */
+#if CONF_WITH_ALT_RAM
 extern  MPB     pmdalt;  /* the memory pool for the alternative ram (FastRAM or other) */
 extern  int     has_alt_ram; /* 1 if alternative RAM has been declared to BDOS */
+#endif
 
 /*
  * these should be internal
@@ -107,8 +109,10 @@ long xmxalloc(long amount, int mode);
 #define MX_PREFSTRAM 2
 #define MX_PREFTTRAM 3
 
+#if CONF_WITH_ALT_RAM
 /* declare additional memory */
 long xmaddalt(long start, long size);
+#endif /* CONF_WITH_ALT_RAM */
 
 /* init user memory */
 void umem_init(void);

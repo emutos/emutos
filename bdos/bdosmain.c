@@ -134,7 +134,11 @@ static const FND funcs[0x58] =
     { xauxistat, 0x82, 0 },  /* 0x12 */
     { xauxostat, 0x82, 0 },  /* 0x13 */
 
+#if CONF_WITH_ALT_RAM
     { xmaddalt, 0, 4 },      /* 0x14 */
+#else
+    { ni,       0, 0 },      /* 0x14 */
+#endif
     { ni,       0, 0 },
     { ni,       0, 0 },
     { ni,       0, 0 },

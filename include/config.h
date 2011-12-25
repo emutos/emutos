@@ -93,6 +93,17 @@
 #endif
 
 /*
+ * Set CONF_WITH_ALT_RAM to 1 to add support for alternate RAM
+ */
+#ifndef CONF_WITH_ALT_RAM
+# ifdef TARGET_192
+#  define CONF_WITH_ALT_RAM 0
+# else
+#  define CONF_WITH_ALT_RAM 1
+# endif
+#endif
+
+/*
  * Set CONF_WITH_FASTRAM to 1 to enable detection and usage of FastRAM (TT-RAM)
  */
 #ifndef CONF_WITH_FASTRAM
@@ -430,9 +441,16 @@
 /*
  * Sanity checks
  */
+
 #if !CONF_WITH_YM2149
 # if CONF_WITH_FDC
 #  error "CONF_WITH_FDC requires CONF_WITH_YM2149."
+# endif
+#endif
+
+#if !CONF_WITH_ALT_RAM
+# if CONF_WITH_FASTRAM
+#  error "CONF_WITH_FASTRAM requires CONF_WITH_ALT_RAM."
 # endif
 #endif
 

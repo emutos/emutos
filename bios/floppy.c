@@ -310,6 +310,7 @@ LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt,
             side = track % 2;
             track /= 2;
         }
+#if CONF_WITH_ALT_RAM
         if (buf > 0x1000000L) {
             if (cookie_frb > 0) {
                 /* do we really need proper FRB lock? (TODO) */
@@ -326,7 +327,9 @@ LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt,
             } else {
                 err = -1;   /* problem: can't DMA to FastRAM */
             }
-        } else {
+        } else
+#endif
+        {
             err = floprw(buf, rw, dev, sect, track, side, 1);
         }
         buf += SECT_SIZ;

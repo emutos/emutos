@@ -37,7 +37,9 @@ long cookie_mch;
 #if CONF_WITH_DIP_SWITCHES
 long cookie_swi;
 #endif
+#if CONF_WITH_ALT_RAM
 long cookie_frb;
+#endif
 
 
 /*
@@ -355,6 +357,7 @@ void machine_init(void)
   setvalue_snd();
   cookie_add(COOKIE_SND, cookie_snd);
 
+#if CONF_WITH_ALT_RAM
   /* _FRB  This cookie is present when alternative RAM is present. It 
    * points to a 64k buffer that may be used by DMA device drivers to 
    * transfer memory between alternative RAM and ST RAM for DMA operations.  
@@ -369,6 +372,7 @@ void machine_init(void)
   else {
     cookie_frb = 0;
   }
+#endif /* CONF_WITH_ALT_RAM */
    
   /* _FLK  The presence of this cookie indicates that file and record 
    * locking extensions to GEMDOS exist. The value field is a version 

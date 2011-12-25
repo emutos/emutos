@@ -74,8 +74,10 @@ static MPB *find_mpb(void *addr)
 {
     if(((long)addr) >= start_stram && ((long)addr) <= end_stram) {
         return &pmd;
+#if CONF_WITH_ALT_RAM
     } else if(has_alt_ram) {
         return &pmdalt;
+#endif
     } else {
         /* returning NULL would mean check for NULL in all mpb functions */
         return &pmd;
@@ -159,8 +161,10 @@ static void     ixterm( PD *r )
     /* free each item in the allocated list, that is owned by 'r' */
 
     free_all_owned(r, &pmd);
+#if CONF_WITH_ALT_RAM
     if(has_alt_ram) 
         free_all_owned(r, &pmdalt);
+#endif
 }
 
 
@@ -304,6 +308,7 @@ long xexec(WORD flag, char *path, char *tail, char *env)
     /* first try */
     p = NULL;
     m = NULL;
+#if CONF_WITH_ALT_RAM
     if(has_alt_ram && (hdr.h01_flags & PF_TTRAMLOAD)) {
         /* use alternate ram preferably */
         max = (long) ffit(-1L, &pmdalt); 
@@ -312,6 +317,7 @@ long xexec(WORD flag, char *path, char *tail, char *env)
             p = (PD *) m->m_start;
         } 
     }
+#endif
     /* second try */
     if(p == NULL) {
         max = (long) ffit(-1L, &pmd); 

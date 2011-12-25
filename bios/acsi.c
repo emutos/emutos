@@ -63,6 +63,7 @@ LONG acsi_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev)
         if(cnt > count) 
             cnt = count;
             
+#if CONF_WITH_ALT_RAM
         if (buf > 0x1000000L) {
             if (cookie_frb <= 0) {
                 kprintf("missing FRB buffer");
@@ -72,7 +73,9 @@ LONG acsi_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev)
                 need_frb = 1;
                 tmp_buf = cookie_frb;
             }
-        } else {
+        } else
+#endif
+        {
             tmp_buf = buf;
         }
         

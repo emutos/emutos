@@ -28,7 +28,9 @@ extern long cookie_swi;
 #endif
 extern long cookie_idt;
 extern long cookie_akp;
+#if CONF_WITH_ALT_RAM
 extern long cookie_frb;
+#endif
 
 /*
  * these are != 0 if the feature is present
