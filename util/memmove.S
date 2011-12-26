@@ -50,8 +50,8 @@
 
 
 
-        .global _memmove
-        .global _memcpy
+        .globl  _memmove
+        .globl  _memcpy
 
         .text
 

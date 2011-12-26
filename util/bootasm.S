@@ -12,8 +12,8 @@
 
 #include "asmdefs.h"
 
-        .global _bootasm
-        .global _getbootsize
+        .globl  _bootasm
+        .globl  _getbootsize
         
         .text
 /*

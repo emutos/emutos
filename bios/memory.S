@@ -21,7 +21,7 @@
 
 // ==== References ===========================================================
 
-        .global meminit                 // memory initialization
+        .globl  meminit                 // memory initialization
 
 
 // ==== Misc. functions ======================================================

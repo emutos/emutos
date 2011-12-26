@@ -12,8 +12,8 @@
 
 #include "asmdefs.h"
 
-.global _strlencpy
-.global _strchr
+.globl  _strlencpy
+.globl  _strchr
 
 /*
  * WORD strlencpy(char *dest, const char *src)

@@ -17,8 +17,8 @@
  *   0: return address
  *   4: twelve registers d2-d7/a2-a7
  */
-        .global _setjmp
-        .global _longjmp
+        .globl  _setjmp
+        .globl  _longjmp
         
         .text
 

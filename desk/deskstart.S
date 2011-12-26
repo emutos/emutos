@@ -11,9 +11,9 @@
 
 #include "asmdefs.h"
 
-.global _deskstart
-.global _gemdos
-.global _gem
+.globl  _deskstart
+.globl  _gemdos
+.globl  _gem
 
 
         .text

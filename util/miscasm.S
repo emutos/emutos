@@ -13,10 +13,10 @@
 
 #include "asmdefs.h"
 
-        .global _trap1          // call GEMDOS
-        .global _trap13         // call BIOS
-        .global _trap14         // call XBIOS
-        .global _trap1_pexec    // Reentrant Pexec call
+        .globl  _trap1          // call GEMDOS
+        .globl  _trap13         // call BIOS
+        .globl  _trap14         // call XBIOS
+        .globl  _trap1_pexec    // Reentrant Pexec call
 
 
 /*

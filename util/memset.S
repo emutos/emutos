@@ -19,8 +19,8 @@
  
 // ==== Defines ==============================================================
 
-        .global _memset
-        .global _bzero
+        .globl  _memset
+        .globl  _bzero
            
         .text
 //

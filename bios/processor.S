@@ -21,12 +21,12 @@
 
 /* References */
 
-        .global _processor_init
-        .global _invalidate_icache
-        .global _mcpu
-        .global _fputype
-        .global _detect_cpu
-        .global _detect_fpu
+        .globl  _processor_init
+        .globl  _invalidate_icache
+        .globl  _mcpu
+        .globl  _fputype
+        .globl  _detect_cpu
+        .globl  _detect_fpu
 
         .extern _longframe              // If not 0, use long stack frames
 

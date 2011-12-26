@@ -10,28 +10,28 @@
 
 #include "asmdefs.h"
 
-        .global _init_exc_vec
-        .global _init_user_vec
+        .globl  _init_exc_vec
+        .globl  _init_user_vec
 
-        .global _trap_1         // call GEMDOS from C
-        .global _gemtrap        // call VDI/AES
-        .global _biostrap       // call BIOS from C
-        .global _xbiostrap      // call XBIOS from C
-        .global _bios_unimpl
-        .global _xbios_unimpl
+        .globl  _trap_1         // call GEMDOS from C
+        .globl  _gemtrap        // call VDI/AES
+        .globl  _biostrap       // call BIOS from C
+        .globl  _xbiostrap      // call XBIOS from C
+        .globl  _bios_unimpl
+        .globl  _xbios_unimpl
         
 
-        .global _check_read_byte
-        .global _int_vbl
-        .global _int_hbl
-        .global _int_timerc
-        .global _int_illegal
-        .global _int_priv
-        .global _just_rts
-        .global _just_rte
-        .global _bell
-        .global _keyclick
-        .global _trap_save_area
+        .globl  _check_read_byte
+        .globl  _int_vbl
+        .globl  _int_hbl
+        .globl  _int_timerc
+        .globl  _int_illegal
+        .globl  _int_priv
+        .globl  _just_rts
+        .globl  _just_rte
+        .globl  _bell
+        .globl  _keyclick
+        .globl  _trap_save_area
 
                 
 // ==== tosvars.s - TOS System variables =====================================
@@ -489,8 +489,8 @@ timerc_end:
 
 // ==== Critical error handler ===============================================
 // Just sets D0 (return code) to -1, end ends the subroutine
-        .global _criter
-        .global _criter1
+        .globl  _criter
+        .globl  _criter1
 _criter:
         move.l  _criter, -(sp)  // etv_critic on stack
 _criter1:
@@ -727,10 +727,10 @@ _just_rte:
  * below provide the necessary assembler support.
  */
 
-        .global  _protect_v
-        .global  _protect_w
-        .global  _protect_ww
-        .global  _protect_wlwwwl
+        .globl   _protect_v
+        .globl   _protect_w
+        .globl   _protect_ww
+        .globl   _protect_wlwwwl
         
 /*
  * LONG protect_v(LONG (*func)(void));

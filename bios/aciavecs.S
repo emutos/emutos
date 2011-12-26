@@ -81,15 +81,15 @@
 
 #include "asmdefs.h"
 
-        .global _init_acia_vecs
-        .global _int_acia
+        .globl  _init_acia_vecs
+        .globl  _int_acia
 
-        .global _mousexvec
-        .global _kbdvecs
+        .globl  _mousexvec
+        .globl  _kbdvecs
 
-        .global _rs232iorec
-        .global _ikbdiorec
-        .global _midiiorec
+        .globl  _rs232iorec
+        .globl  _ikbdiorec
+        .globl  _midiiorec
 
 
         .bss

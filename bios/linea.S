@@ -30,7 +30,7 @@
 
 // ==== Global Declarations ================================================
 
-        .global _int_linea              // entry for linea exception
+        .globl  _int_linea              // entry for linea exception
 
 
 // ==== Line-A handler ===============================

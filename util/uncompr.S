@@ -57,7 +57,7 @@
  * void uncompr(struct header * header);
  */
         
-        .global _uncompr
+        .globl  _uncompr
 _uncompr:
         move.l  4(sp),a0  // src
         move.l  (a0)+,a1  // dest

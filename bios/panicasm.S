@@ -15,8 +15,8 @@
 
         .text
   
-        .global _panic
-        .global _halt
+        .globl  _panic
+        .globl  _halt
 
 
 /*

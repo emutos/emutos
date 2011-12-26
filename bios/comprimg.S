@@ -130,7 +130,7 @@ resetvec:
        jmp      (a0)                    // jump to resvec
 noreset:
 
-        .global memdone         // return to, if memory config done
+        .globl  memdone         // return to, if memory config done
         jmp     meminit         // do/test memory config and clear it (needs sp)
 memdone:
 
@@ -172,8 +172,8 @@ find:
  * stubs - these are called during memory initialisation
  */
 
-        .global kprintf_init
-        .global _kprintf
+        .globl  kprintf_init
+        .globl  _kprintf
 kprintf_init:
 _kprintf:
         moveq.l #0,d0
@@ -183,7 +183,7 @@ _kprintf:
 /*
  * minimum natfeat init - only initializes the stderr id for debug below
  */
-        .global _natfeat_init
+        .globl  _natfeat_init
 
 #if DETECT_NATIVE_FEATURES || COMPRDBG
 
@@ -224,7 +224,7 @@ _natfeat_init:
  */
 
 #if COMPRDBG
-        .global p
+        .globl  p
 p:
         movem.l d0-d2,-(sp)
         move.l  16(sp),d0
@@ -251,7 +251,7 @@ digit:
         addq.l  #4,sp
         rts
 
-        .global h
+        .globl  h
 h:
         move.b  #72,-(sp)
         bsr     outch
@@ -287,7 +287,7 @@ no_natfeat:
  * returns 0 if reading the address caused a bus error
  */
 
-        .global _check_read_byte
+        .globl  _check_read_byte
 _check_read_byte:
         move.l  sp,d1
         move.l  (8).w,a1

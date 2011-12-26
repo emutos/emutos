@@ -3128,3 +3128,6 @@ Start... early ages
   bios/bios.c bios/floppy.c bios/machine.c bios/machine.h include/config.h:
   Added the CONF_WITH_ALT_RAM define to allow disabling support for alternate
   RAM. (VRI)
+
+2011-12-26
+- *.S: Replaced .global by .globl. (VRI)

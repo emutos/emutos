@@ -27,11 +27,11 @@
 // ==== References ===========================================================
 
         
-        .global _os_entry
+        .globl  _os_entry
 #if CONF_WITH_CARTRIDGE
-        .global _run_cartridge_applications
+        .globl  _run_cartridge_applications
 #endif
-        .global _stktop
+        .globl  _stktop
 
 // ==== tosvars.s - TOS System variables =====================================
                 
@@ -71,16 +71,16 @@ _stktop:                        // filled from top to bottom
  * OSHEADER
  */
 
-        .global _main           // OS entry point
-        .global _os_end
-        .global _os_beg
-        .global _os_magic
-        .global _os_date
-        .global _os_pal
-        .global _os_dosdate
-        .global _root
-        .global _shifty
-        .global _run
+        .globl  _main           // OS entry point
+        .globl  _os_end
+        .globl  _os_beg
+        .globl  _os_magic
+        .globl  _os_date
+        .globl  _os_pal
+        .globl  _os_dosdate
+        .globl  _root
+        .globl  _shifty
+        .globl  _run
 
 #if DIAGNOSTIC_CARTRIDGE
     dc.l    0xfa52235f  // diagnostic cartridge magic number
@@ -195,7 +195,7 @@ noreset:
  * memory configuration
  */
 
-        .global memdone         // return to, if memory config done
+        .globl  memdone         // return to, if memory config done
         jmp     meminit         // do/test memory config and clear it (needs sp)
 memdone:
 

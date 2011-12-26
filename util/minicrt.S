@@ -25,9 +25,9 @@
 #define PTERM   0x4C
 
 
-        .global _start
-        .global _exit
-        .global ___main
+        .globl  _start
+        .globl  _exit
+        .globl  ___main
         
         .extern _main
 

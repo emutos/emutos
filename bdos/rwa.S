@@ -119,20 +119,20 @@
 
 //==== Global References =====================================================
 
-        .global _termuser
-        .global _gouser
-        .global _oscall
+        .globl  _termuser
+        .globl  _gouser
+        .globl  _oscall
 
-        .global _enter
-        .global _old_trap2
-        .global _bdos_trap2
+        .globl  _enter
+        .globl  _old_trap2
+        .globl  _bdos_trap2
         
         .extern _osif
         .extern _xterm
         .extern _run
         .extern _longframe              // If not 0, use long stack frames
 
-        .global _xsuper
+        .globl  _xsuper
 
 
 //==== bdos_trap2 - trap 2 entry point =======================================

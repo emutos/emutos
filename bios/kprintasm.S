@@ -11,10 +11,10 @@
 
 #include "asmdefs.h"
 
-        .global kprintf_init
-        .global kprintf
+        .globl  kprintf_init
+        .globl  kprintf
 
-        .global _printout_stonx
+        .globl  _printout_stonx
         
         .extern _kprintf
         .extern _native_print_kind

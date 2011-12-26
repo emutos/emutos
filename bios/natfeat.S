@@ -19,9 +19,9 @@
 // ==== References ===========================================================
 
         
-        .global _detect_native_features
-        .global _natfeat_cookie
-        .global _xhdi_vec
+        .globl  _detect_native_features
+        .globl  _natfeat_cookie
+        .globl  _xhdi_vec
         .extern _xhdi_handler
 
         .equ vec_illegal, 0x10       // illegal exception vector

@@ -21,8 +21,8 @@
 
 #define USE_RAM_HASH 1
 
-        .global _gettext
-        .global _gettext_init
+        .globl  _gettext
+        .globl  _gettext_init
 
         .extern _nls_hash       // current hash
         .extern _memset
