@@ -3137,3 +3137,4 @@ Start... early ages
 - bios/memory.S: Allow FastRAM detection even without Falcon MMU. (VRI)
 - bios/memory.S include/config.h: Added the CONF_FASTRAM_SIZE define to allow
   disabling autodetection of the FastRAM size. (VRI)
+- bios/memory.S: Factorize ST-RAM setup. (VRI)

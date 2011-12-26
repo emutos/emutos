@@ -332,20 +332,7 @@ mem_sanity_loop:
         lsr.l   #1,d5                   // Decrease memory size
         bra.s   mem_sanity_loop
 mem_sanity_done:
-
-        /* clear ST-RAM till end (phystop in d5) */
-        lea     st_cleared(pc),a6       // remember return address
-        bra     clear_st_ram            // jump to routine clearing the RAM
-st_cleared:
-
-        move.b  d6, memctrl             // set copy of hw memory config
-        move.l  d5, _phystop            // highest address as phystop
-
-#if CONF_WITH_FALCON_MMU
-        bra     detect_fastram
-#else
-        // Fall into detect_fastram
-#endif
+        bra     stram_detected
 
 #endif /* CONF_WITH_ST_MMU */
 
@@ -383,20 +370,33 @@ falcmemconf:
         move.l  #0x00E00000,d0
 less16: 
         move.l  d0, d5                  // this is phystop - the end of RAM
+        moveq   #0, d6                  // fake memctrl with Falcon MMU
 
-        /* clear ST-RAM till end (phystop in d5) */
-        lea     f_cleared(pc),a6        // remember return address
-        bra     clear_st_ram            // jump to routine clearing the RAM
-f_cleared:
-
-        move.l  d5, _phystop            // highest address as phystop
-
-        // Fall into detect_fastram
+        // Fall into stram_detected
 
 #endif /* CONF_WITH_FALCON_MMU */
 
-detect_fastram:
+/*
+ * At this point:
+ * - The size of the ST-RAM has been detected
+ * - The MMU has been properly initalized
+ * - The ST-RAM is ready to be used
+ * 
+ * d5 = phystop
+ * d6 = memctrl
+ */
+stram_detected:
+        /* clear ST-RAM till end (phystop in d5) */
+        lea     st_cleared(pc),a6       // remember return address
+        bra     clear_st_ram            // jump to routine clearing the RAM
+st_cleared:
+
+        /* Store the ST-RAM parameters in the ST-RAM itself */
+        move.b  d6, memctrl             // set copy of hw memory config
+        move.l  d5, _phystop            // highest address as phystop
+
 #if CONF_WITH_FASTRAM
+
 /*
  * TT-RAM (FastRAM) detection (joy)
  * This alternate RAM begins at 16MB boundary ($1000000)
