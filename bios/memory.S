@@ -20,23 +20,16 @@
 
         .globl  meminit                 // memory initialization
 
-
-// ==== Misc. functions ======================================================
-
-
 // ==== startup.s - variables for memory  ====================================
 
         .extern memdone       // return to, if memory config done
-
 
 // ==== detect.s - function for detecting CPU type and for testing memory  ===
 
         .extern _check_read_byte
         .extern _detect_cpu
 
-
 // ==== tosvars.s - TOS System variables =====================================
-
 
         .extern memctrl
         .extern _phystop
@@ -54,14 +47,11 @@
         .extern _end          // end of bss + comm sections (ld generated)
         .extern _os_end       // first byte RAM not used by OS
 
-
 // ===========================================================================
 // ==== TEXT segment (TOS image) =============================================
 // ===========================================================================
 
         .text
-
-
 
 /*
  * meminit - Clear BSS + COMM before calling any C function
@@ -71,7 +61,6 @@
  */
 
 meminit:
-
         lea     bssstart, a0
         lea     _end-1, a1
         move.l  a1, d0
@@ -85,7 +74,6 @@ clearbss:
 #else
         dbra    d0, clearbss
 #endif
-
 
 /*
  * The caller (either startup.S or comprimg.S) needs to have initialized sp
@@ -113,7 +101,6 @@ clearbss:
 #endif
         beq     memconf                 // not sure what 6th bit means
 #endif /* CONF_WITH_FALCON_MMU */
-
 
 /*
  * memchk - Check, if old memory config can be used
@@ -157,8 +144,6 @@ memok:
 no_memctrl:
         jmp     memdone                 // config ok -> memdone in startup.s
 
-
-
 /*
  * memconf - Configure the memory and clear it
  *
@@ -175,6 +160,7 @@ memconf:
 #endif
 
 #if CONF_WITH_ST_MMU
+
 /*
  * memconf for ST
  *
@@ -191,7 +177,6 @@ memconf:
  * the memory bus are floating and may present the good pattern value.
  * That's why a 200 bytes pattern test are used in the TOS 1.6 ROM to avoid this issue.
  */
-
         suba.l  a0,a0                   // Note:The TOS 1.6 use these opcode probably to access to the MMU register more slowly than the classic "move.b  #0xa,0xffff8001"  
         move.b  #0xa,0xffff8001(a0)        // set hw to 2 banks by 2 mb (reg 0xffff8001 - memorycontroller)
 
@@ -210,7 +195,6 @@ init_pattern_loop:
         cmpa.l  #0x200,a0               // 200 word done?
         bne.s   init_pattern_loop
 
-
 /* In this part:
  * D4 = Actual bank memory size in byte
  * D5 = total memory size (later phystop)
@@ -219,7 +203,6 @@ init_pattern_loop:
  * D1 = pattern test bank base (0x200000 ,0x000000)
  * A5 = pattern test subroutine return address.
  */
-
         move.l  #0x200000,d1            // we begin with the bank 1
         clr.l   d5                      // total memory (later phystop)
         clr.l   d6                      // MMU setting set to 0
@@ -270,7 +253,6 @@ last_return:
 #endif
 
 bank_test_end_512k:
-
 #ifdef __mcoldfire__
         addq.l  #4,d6
 #else
@@ -362,13 +344,11 @@ st_cleared:
 
 #endif /* CONF_WITH_ST_MMU */
 
-
 #if CONF_WITH_FALCON_MMU
 
 /*
  * memconf for Falcon
  */
-
 falcmemconf:
         /* find out the memory size by checking the d0 = $ff8006 value */
 #ifdef __mcoldfire__
@@ -482,6 +462,10 @@ tt_cleared:
 
 #endif /* CONF_WITH_FALCON_MMU */
 
+// ===========================================================================
+// ==== Below are utility functions ==========================================
+// ===========================================================================
+
 // ==== Clear the ST-RAM =====================================================
 // d5 = end of the ST-RAM
 // a6 = return address
@@ -557,6 +541,3 @@ clear_loop:
 // ===========================================================================
 // ==== End ==================================================================
 // ===========================================================================
-
-        .end
-
