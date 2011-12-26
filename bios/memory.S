@@ -105,9 +105,9 @@ clearbss:
 
         tst.w   d0                      // is it Falcon MMU?
         beq     memchk                  // no -> skip 0xffff8007 test
-#endif
+#endif /* DETECT_MMU */
 
-# if FALCON_MMU
+#if FALCON_MMU
         /* Initialize ant test Falcon MMU ??? */
 #ifdef __mcoldfire__
         lea     0xffff8007, a0
@@ -116,7 +116,7 @@ clearbss:
         bset    #6, 0xffff8007          // seen in TOS 4.04
 #endif
         beq     memconf                 // not sure what 6th bit means
-# endif
+#endif /* FALCON_MMU */
 
 
 /*
@@ -148,6 +148,7 @@ memok:
         tst.w   d0                      // is it Falcon MMU?
         bne     no_memctrl              // yes -> skip memctrl init
 #endif
+
 #if ST_MMU
 #ifdef __mcoldfire__
         lea     0xffff8001, a0
@@ -156,7 +157,7 @@ memok:
         move.b  memctrl, 0xffff8001     // write old valid config to controller
 #endif
                                         // phystop should then also be ok
-#endif
+#endif /* ST_MMU */
 no_memctrl:
         jmp     memdone                 // config ok -> memdone in startup.s
 
