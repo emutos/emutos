@@ -3132,3 +3132,5 @@ Start... early ages
 2011-12-26
 - *.S: Replaced .global by .globl. (VRI)
 - bios/memory.S: Set 0xffff8007 even when compiling for Falcon MMU only. (VRI)
+- bios/memory.S include/config.h: Added the CONF_WITH_ST_MMU define to allow
+  disabling ST MMU support. (VRI)

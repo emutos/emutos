@@ -147,6 +147,13 @@
 #endif
 
 /*
+ * Set CONF_WITH_ST_MMU to 1 to enable support for ST MMU.
+ */
+#ifndef CONF_WITH_ST_MMU
+# define CONF_WITH_ST_MMU 1
+#endif
+
+/*
  * Set CONF_WITH_FALCON_MMU to 1 to enable support for Falcon MMU.
  */
 #ifndef CONF_WITH_FALCON_MMU

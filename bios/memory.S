@@ -14,10 +14,7 @@
 
 #include "asmdefs.h"
 
-// compile time switches would simplify the resulting binary code
-#define ST_MMU      1                       // define if it should run on ST
-#define DETECT_MMU (CONF_WITH_FALCON_MMU + ST_MMU > 1)
-
+#define DETECT_MMU (CONF_WITH_FALCON_MMU + CONF_WITH_ST_MMU > 1)
 
 // ==== References ===========================================================
 
@@ -148,7 +145,7 @@ memok:
         bne     no_memctrl              // yes -> skip memctrl init
 #endif
 
-#if ST_MMU
+#if CONF_WITH_ST_MMU
 #ifdef __mcoldfire__
         lea     0xffff8001, a0
         move.b  memctrl, (a0)           // write old valid config to controller
@@ -156,7 +153,7 @@ memok:
         move.b  memctrl, 0xffff8001     // write old valid config to controller
 #endif
                                         // phystop should then also be ok
-#endif /* ST_MMU */
+#endif /* CONF_WITH_ST_MMU */
 no_memctrl:
         jmp     memdone                 // config ok -> memdone in startup.s
 
@@ -177,7 +174,7 @@ memconf:
         bne     falcmemconf             // yes -> jump to Falcon mem routine
 #endif
 
-#if ST_MMU
+#if CONF_WITH_ST_MMU
 /*
  * memconf for ST
  *
@@ -363,7 +360,7 @@ st_cleared:
         move.l  d5, _phystop            // highest address as phystop
         jmp     memdone                 // config done -> return to startup.s
 
-#endif /* ST_MMU */
+#endif /* CONF_WITH_ST_MMU */
 
 
 #if CONF_WITH_FALCON_MMU
