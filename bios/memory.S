@@ -16,8 +16,7 @@
 
 // compile time switches would simplify the resulting binary code
 #define ST_MMU      1                       // define if it should run on ST
-#define FALCON_MMU  CONF_WITH_FALCON_MMU    // define if it should run on Falcon
-#define DETECT_MMU (FALCON_MMU + ST_MMU > 1)
+#define DETECT_MMU (CONF_WITH_FALCON_MMU + ST_MMU > 1)
 
 
 // ==== References ===========================================================
@@ -107,7 +106,7 @@ clearbss:
         beq     memchk                  // no -> skip 0xffff8007 test
 #endif /* DETECT_MMU */
 
-#if FALCON_MMU
+#if CONF_WITH_FALCON_MMU
         /* Initialize ant test Falcon MMU ??? */
 #ifdef __mcoldfire__
         lea     0xffff8007, a0
@@ -116,7 +115,7 @@ clearbss:
         bset    #6, 0xffff8007          // seen in TOS 4.04
 #endif
         beq     memconf                 // not sure what 6th bit means
-#endif /* FALCON_MMU */
+#endif /* CONF_WITH_FALCON_MMU */
 
 
 /*
@@ -367,7 +366,7 @@ st_cleared:
 #endif /* ST_MMU */
 
 
-#if FALCON_MMU
+#if CONF_WITH_FALCON_MMU
 
 /*
  * memconf for Falcon
@@ -484,7 +483,7 @@ tt_cleared:
 
         jmp     memdone                 // config done -> return to startup.s
 
-#endif /* FALCON_MMU */
+#endif /* CONF_WITH_FALCON_MMU */
 
 // ==== Clear the ST-RAM =====================================================
 // d5 = end of the ST-RAM
