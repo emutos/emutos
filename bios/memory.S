@@ -340,7 +340,12 @@ st_cleared:
 
         move.b  d6, memctrl             // set copy of hw memory config
         move.l  d5, _phystop            // highest address as phystop
-        jmp     memdone                 // config done -> return to startup.s
+
+#if CONF_WITH_FALCON_MMU
+        bra     detect_fastram
+#else
+        // Fall into detect_fastram
+#endif
 
 #endif /* CONF_WITH_ST_MMU */
 
@@ -386,6 +391,11 @@ f_cleared:
 
         move.l  d5, _phystop            // highest address as phystop
 
+        // Fall into detect_fastram
+
+#endif /* CONF_WITH_FALCON_MMU */
+
+detect_fastram:
 #if CONF_WITH_FASTRAM
 
 /*
@@ -459,8 +469,6 @@ tt_cleared:
 #endif /* CONF_WITH_FASTRAM */
 
         jmp     memdone                 // config done -> return to startup.s
-
-#endif /* CONF_WITH_FALCON_MMU */
 
 // ===========================================================================
 // ==== Below are utility functions ==========================================
