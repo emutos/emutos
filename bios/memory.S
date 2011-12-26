@@ -17,6 +17,7 @@
 // compile time switches would simplify the resulting binary code
 #define ST_MMU      1                       // define if it should run on ST
 #define FALCON_MMU  CONF_WITH_FALCON_MMU    // define if it should run on Falcon
+#define DETECT_MMU (FALCON_MMU + ST_MMU > 1)
 
 
 // ==== References ===========================================================
@@ -96,7 +97,7 @@ clearbss:
  * The stack will be overwritten and lost during clearing of memory
  */
 
-#if FALCON_MMU + ST_MMU > 1
+#if DETECT_MMU
         /* detect if this is a Falcon by reading $ff8282 register */
         pea     0xffff8282
         jsr     _check_read_byte
@@ -142,7 +143,7 @@ memchk:
 #endif
 
 memok:
-#if FALCON_MMU + ST_MMU > 1
+#if DETECT_MMU
         tst.w   d0                      // is it Falcon MMU?
         bne     no_memctrl              // yes -> skip memctrl init
 #endif
@@ -170,7 +171,7 @@ no_memctrl:
  * register, however it does not really have the $ff8006 register :-(
  */
 memconf:
-#if FALCON_MMU + ST_MMU > 1
+#if DETECT_MMU
         tst.w   d0                      // is it Falcon MMU?
         bne     falcmemconf             // yes -> jump to Falcon mem routine
 #endif
