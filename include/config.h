@@ -115,6 +115,14 @@
 #endif
 
 /*
+ * Define CONF_FASTRAM_SIZE to the actual size of the FastRAM, in bytes.
+ * If set to 0, the amount of FastRAM will be autodetected.
+ */
+#ifndef CONF_FASTRAM_SIZE
+# define CONF_FASTRAM_SIZE 0
+#endif
+
+/*
  * Set CONF_WITH_FDC to 1 to enable floppy disk controller support
  */
 #ifndef CONF_WITH_FDC

@@ -397,11 +397,13 @@ f_cleared:
 
 detect_fastram:
 #if CONF_WITH_FASTRAM
-
 /*
  * TT-RAM (FastRAM) detection (joy)
  * This alternate RAM begins at 16MB boundary ($1000000)
  */
+#if CONF_FASTRAM_SIZE
+        move.l  #0x1000000+CONF_FASTRAM_SIZE,a3    // fixed ramtop
+#else
         /* clear MB counter */
         moveq   #0, d6
 
@@ -450,6 +452,7 @@ setramtop:
         bne.s   alter
         sub.l   a3, a3
 alter:
+#endif /* CONF_FASTRAM_SIZE */
         move.l  a3, _ramtop             // set ramtop to size of found memory
 #ifdef __mcoldfire__
         lea     _ramvalid, a4
