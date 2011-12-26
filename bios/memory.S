@@ -105,8 +105,10 @@ clearbss:
 
         tst.w   d0                      // is it Falcon MMU?
         beq     memchk                  // no -> skip 0xffff8007 test
+#endif
 
 # if FALCON_MMU
+        /* Initialize ant test Falcon MMU ??? */
 #ifdef __mcoldfire__
         lea     0xffff8007, a0
         bset    #6, (a0)                // seen in TOS 4.04
@@ -115,7 +117,6 @@ clearbss:
 #endif
         beq     memconf                 // not sure what 6th bit means
 # endif
-#endif
 
 
 /*
