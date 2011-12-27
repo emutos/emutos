@@ -154,6 +154,15 @@ no_memctrl:
  * register, however it does not really have the $ff8006 register :-(
  */
 memconf:
+#if CONF_STRAM_SIZE
+
+        move.l  #CONF_STRAM_SIZE,d5     // this is phystop - the end of RAM
+        moveq   #0,d6                   // fake memctrl
+
+        // Fall into stram_detected
+
+#else /* CONF_STRAM_SIZE */
+
 #if DETECT_MMU
         tst.w   d0                      // is it Falcon MMU?
         bne     falcmemconf             // yes -> jump to Falcon mem routine
@@ -375,6 +384,8 @@ less16:
         // Fall into stram_detected
 
 #endif /* CONF_WITH_FALCON_MMU */
+
+#endif /* CONF_STRAM_SIZE */
 
 /*
  * At this point:

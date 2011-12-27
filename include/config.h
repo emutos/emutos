@@ -93,6 +93,14 @@
 #endif
 
 /*
+ * Define CONF_STRAM_SIZE to the actual size of the ST-RAM, in bytes.
+ * If set to 0, the amount of ST-RAM will be autodetected.
+ */
+#ifndef CONF_STRAM_SIZE
+# define CONF_STRAM_SIZE 0
+#endif
+
+/*
  * Set CONF_WITH_ALT_RAM to 1 to add support for alternate RAM
  */
 #ifndef CONF_WITH_ALT_RAM
