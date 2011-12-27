@@ -16,6 +16,8 @@
 
 #include "portab.h"
 
+#if CONF_WITH_MFP
+
 #define IRQ_SPURIOUS      (IRQ_MACHSPEC | 0)
 
 /* auto-vector interrupts */
@@ -123,6 +125,24 @@ typedef struct
 /*==== Defines ============================================================*/
 #define MFP_BASE        ((MFP *)(0xfffffa00L))
 
+extern WORD mfp_ctrl;
+
+/*==== Xbios functions ====================================================*/
+
+void mfpint(WORD num, LONG vector);
+void jdisint(WORD num);
+void jenabint(WORD num);
+
+/*==== internal functions =================================================*/
+
+void mfp_init(void);
+
+#endif /* CONF_WITH_MFP */
+
+/*==== The following stuff may be implemented with alternate hardware =====*/
+
+/*==== Defines ============================================================*/
+
 #define B19600 0
 #define B9600  1
 #define B4800  2 
@@ -140,28 +160,21 @@ typedef struct
 #define B75    14
 #define B50    15 
 
-
 #define MFP_CTRL_NONE   0    /* no flow control */
 #define MFP_CTRL_SOFT   1    /* software flow control (XON/XOFF) */
 #define MFP_CTRL_HARD   2    /* hardware flow control (RTS/CTS) */
 #define MFP_CTRL_BOTH   3    /* XON/XOFF and RTS/CTS */
 
-extern WORD mfp_ctrl;
-
-/* "sieve" to get only the fourth interrupt, 0x1111 initially */
-extern WORD timer_c_sieve;
-
 /*==== Xbios functions ====================================================*/
 
-void mfpint(WORD num, LONG vector);
-void rsconf(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
-void jdisint(WORD num);
-void jenabint(WORD num);
 void xbtimer(WORD timer, WORD control, WORD data, LONG vector);
+void rsconf(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
 
 /*==== internal functions =================================================*/
 
-void mfp_init(void);
+void init_system_timer(void);
 
+/* "sieve" to get only the fourth interrupt, 0x1111 initially */
+extern WORD timer_c_sieve;
 
 #endif /* MFP_H */

@@ -3140,3 +3140,8 @@ Start... early ages
 - bios/memory.S: Factorize ST-RAM setup. (VRI)
 - bios/memory.S include/config.h: Added the CONF_STRAM_SIZE define to allow
   disabling autodetection of the ST-RAM size. (VRI)
+
+2011-12-27
+- bios/bios.c bios/dma.c bios/dma.h bios/mfp.c bios/mfp.h bios/xbios.c
+  include/config.h: Added the CONF_WITH_MFP define to allow disabling MFP
+  support. (VRI)

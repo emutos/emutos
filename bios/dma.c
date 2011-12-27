@@ -20,6 +20,8 @@ void set_dma_addr(ULONG addr)
     DMA->addr_high = addr>>16;
 }
 
+#if CONF_WITH_MFP
+
 /* returns 1 if the timeout (milliseconds) elapsed before gpip went low */
 int timeout_gpip(LONG delay)
 {
@@ -33,3 +35,5 @@ int timeout_gpip(LONG delay)
     }
     return 1;
 }
+
+#endif /* CONF_WITH_MFP */

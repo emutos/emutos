@@ -984,7 +984,11 @@ const PFLONG xbios_vecs[] = {
     VEC(xbios_a, flopfmt),
     xbios_unimpl,   /*  b used_by_bios */ 
     VEC(xbios_c, midiws),
+#if CONF_WITH_MFP
     VEC(xbios_d, mfpint),
+#else
+    xbios_unimpl,   /* d */
+#endif
     VEC(xbios_e, iorec),
     VEC(xbios_f, rsconf),
     VEC(xbios_10, keytbl),
@@ -997,12 +1001,21 @@ const PFLONG xbios_vecs[] = {
     VEC(xbios_17, gettime),
     VEC(xbios_18, bioskeys),
     VEC(xbios_19, ikbdws),
+#if CONF_WITH_MFP
     VEC(xbios_1a, jdisint),
     VEC(xbios_1b, jenabint),
+#else
+    xbios_unimpl,   /* 1a */
+    xbios_unimpl,   /* 1b */
+#endif
     VEC(xbios_1c, giaccess),
     VEC(xbios_1d, offgibit),
     VEC(xbios_1e, ongibit),
+#if CONF_WITH_MFP
     VEC(xbios_1f, xbtimer),
+#else
+    xbios_unimpl,   /* 1f */
+#endif
     VEC(xbios_20, dosound),
     xbios_unimpl,   /* 21 setprt */ 
     VEC(xbios_22, kbdvbase),

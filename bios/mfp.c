@@ -19,6 +19,7 @@
 #include "tosvars.h"
 #include "vectors.h"
 
+#if CONF_WITH_MFP
 
 /*==== Prototypes =========================================================*/
 
@@ -28,16 +29,11 @@ static void setup_timer(WORD timer, WORD control, WORD data);
 
 /*==== Defines ============================================================*/
 
-WORD mfp_ctrl;
+WORD mfp_ctrl; /* TODO, flow control */
 
-/* "sieve", to get only the fourth interrupt */
-WORD timer_c_sieve;
-
-
-
-/*==== kbinit - initialize the MFP ========================================*/
+/*==== mfp_init - initialize the MFP ========================================*/
  
-void    mfp_init (void)
+void mfp_init(void)
 {
     MFP *mfp=MFP_BASE;   /* set base address of MFP */
 
@@ -72,19 +68,6 @@ void    mfp_init (void)
 
     /* initialize the MFP */
     mfp->vr = 0x48;      /* vectors 0x40 to 0x4F, software end of interrupt */
-    
-    /* timer C */
-    timer_c_sieve = 0x1111;
-    timer_ms = 20;
-    /* ctrl = divide 64, data = 192 */
-    xbtimer(2, 0x50, 192, (LONG)int_timerc); 
-    
-#if CONF_WITH_MFP_RS232
-    /* timer D */
-    rsconf(B9600, 0, 0x88, 1, 1, 0);
-
-    /* TODO, flow control */
-#endif
 }
  
 
@@ -96,51 +79,6 @@ void mfpint(WORD num, LONG vector)
     jdisint(num);
     *(LONG *)((0x40L + num)*4) = vector;
     jenabint(num);
-}
-
-#if CONF_WITH_MFP_RS232
-
-struct rsconf_struct {
-    BYTE control;
-    BYTE data;
-};
-
-static const struct rsconf_struct rsconf_data[] = {
-    { /* 19200 */  1, 1 }, 
-    { /*  9600 */  1, 2 },
-    { /*  4800 */  1, 4 },
-    { /*  3600 */  1, 5 },
-    { /*  2400 */  1, 8 },
-    { /*  2000 */  1, 10 },
-    { /*  1800 */  1, 11 },
-    { /*  1200 */  1, 16 },
-    { /*   600 */  1, 32 },
-    { /*   300 */  1, 64 },
-    { /*   200 */  1, 96 },
-    { /*   150 */  1, 128 },
-    { /*   134 */  1, 143 },
-    { /*   110 */  1, 175 },
-    { /*    75 */  2, 64 },
-    { /*    50 */  2, 96 }, 
-};
-
-#endif /* CONF_WITH_MFP_RS232 */
-
-void rsconf(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
-{
-#if CONF_WITH_MFP_RS232
-    MFP *mfp=MFP_BASE;   /* set base address of MFP */
-
-    if(baud >= 0 && baud < 16) {
-        setup_timer(3, rsconf_data[baud].control, rsconf_data[baud].data);
-    }
-
-    if(ctrl >= 0) mfp_ctrl = ctrl;
-    if(ucr >= 0) mfp->ucr = ucr;
-    if(rsr >= 0) mfp->rsr = rsr;
-    if(tsr >= 0) mfp->tsr = tsr;
-    if(scr >= 0) mfp->scr = scr;
-#endif
 }
 
 void jdisint(WORD num)
@@ -218,4 +156,65 @@ void xbtimer(WORD timer, WORD control, WORD data, LONG vector)
     if(timer < 0 || timer > 3) return;
     setup_timer(timer, control, data);
     mfpint(timer_num[timer], vector);
+}
+
+#endif /* CONF_WITH_MFP */
+
+/* "sieve", to get only the fourth interrupt */
+WORD timer_c_sieve;
+
+void init_system_timer(void)
+{
+    timer_c_sieve = 0x1111;
+    timer_ms = 20;
+
+#if CONF_WITH_MFP
+    /* Timer C: ctrl = divide 64, data = 192 */
+    xbtimer(2, 0x50, 192, (LONG)int_timerc); 
+#endif
+}
+
+#if CONF_WITH_MFP_RS232
+
+struct rsconf_struct {
+    BYTE control;
+    BYTE data;
+};
+
+static const struct rsconf_struct rsconf_data[] = {
+    { /* 19200 */  1, 1 }, 
+    { /*  9600 */  1, 2 },
+    { /*  4800 */  1, 4 },
+    { /*  3600 */  1, 5 },
+    { /*  2400 */  1, 8 },
+    { /*  2000 */  1, 10 },
+    { /*  1800 */  1, 11 },
+    { /*  1200 */  1, 16 },
+    { /*   600 */  1, 32 },
+    { /*   300 */  1, 64 },
+    { /*   200 */  1, 96 },
+    { /*   150 */  1, 128 },
+    { /*   134 */  1, 143 },
+    { /*   110 */  1, 175 },
+    { /*    75 */  2, 64 },
+    { /*    50 */  2, 96 }, 
+};
+
+#endif /* CONF_WITH_MFP_RS232 */
+
+void rsconf(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
+{
+#if CONF_WITH_MFP_RS232
+    MFP *mfp=MFP_BASE;   /* set base address of MFP */
+
+    if(baud >= 0 && baud < 16) {
+        setup_timer(3, rsconf_data[baud].control, rsconf_data[baud].data);
+    }
+
+    if(ctrl >= 0) mfp_ctrl = ctrl;
+    if(ucr >= 0) mfp->ucr = ucr;
+    if(rsr >= 0) mfp->rsr = rsr;
+    if(tsr >= 0) mfp->tsr = tsr;
+    if(scr >= 0) mfp->scr = scr;
+#endif
 }

@@ -186,8 +186,15 @@ static void bios_init(void)
         }
     }
 
+#if CONF_WITH_MFP
+    mfp_init();
+#endif
 
-    mfp_init();         /* init MFP, timers, USART */
+    /* Initialize the system 200 Hz timer */
+    init_system_timer();
+
+    /* Initialize the RS-232 port */
+    rsconf(B9600, 0, 0x88, 1, 1, 0);
     boot_status |= RS232_AVAILABLE;     /* track progress */
     
     /* The sound init must be done before allowing MFC interrupts,

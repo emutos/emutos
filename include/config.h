@@ -269,6 +269,13 @@
 #endif
 
 /*
+ * Set CONF_WITH_MFP to 1 to enable support for the MFP 68901.
+ */
+#ifndef CONF_WITH_MFP
+# define CONF_WITH_MFP 1
+#endif
+
+/*
  * Set CONF_WITH_MFP_RS232 to 1 to enable MFP RS-232 support
  */
 #ifndef CONF_WITH_MFP_RS232
@@ -474,6 +481,24 @@
 #if !CONF_WITH_ALT_RAM
 # if CONF_WITH_FASTRAM
 #  error "CONF_WITH_FASTRAM requires CONF_WITH_ALT_RAM."
+# endif
+#endif
+
+#if !CONF_WITH_MFP
+# if CONF_WITH_MFP_RS232
+#  error "CONF_WITH_MFP_RS232 requires CONF_WITH_MFP."
+# endif
+# if CONF_WITH_PRINTER_PORT
+#  error "CONF_WITH_PRINTER_PORT requires CONF_WITH_MFP."
+# endif
+# if CONF_WITH_FDC
+#  error "CONF_WITH_FDC requires CONF_WITH_MFP."
+# endif
+# if CONF_WITH_IKBD_ACIA
+#  error "CONF_WITH_IKBD_ACIA requires CONF_WITH_MFP."
+# endif
+# if CONF_WITH_MIDI_ACIA
+#  error "CONF_WITH_MIDI_ACIA requires CONF_WITH_MFP."
 # endif
 #endif
 
