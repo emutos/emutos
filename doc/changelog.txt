@@ -3158,3 +3158,4 @@ Start... early ages
   check_read_byte() calls. (VRI)
 - bios/biosmem.c bios/screen.c include/config.h: Added the CONF_VRAM_ADDRESS
   define to use a fixed video ram area out of the ST-RAM. (VRI)
+- include/config.h: Moved target specific defaults to a separate section. (VRI)
