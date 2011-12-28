@@ -3149,3 +3149,4 @@ Start... early ages
 - bios/xbios.c bios/xbios.h: Removed obsolete xbiosinit(). (VRI)
 - bios/xbios.c bios/xbios.h: Make all XBIOS functions extern. (VRI)
 - bios/bios.c bios/xbios.c: Make debug wrappers static. (VRI)
+- bios/bios.h: Added prototypes for misc BIOS functions. (VRI)
