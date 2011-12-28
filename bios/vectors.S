@@ -8,7 +8,7 @@
  *
  */
 
-#define DBG_CHECK_READ_BYTE 0 /* To trace check_read_byte() calls */
+#define DBG_CHECK_READ_BYTE 0   // to trace check_read_byte() calls
 
 #include "asmdefs.h"
 
