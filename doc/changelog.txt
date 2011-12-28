@@ -3145,3 +3145,4 @@ Start... early ages
 - bios/bios.c bios/dma.c bios/dma.h bios/mfp.c bios/mfp.h bios/xbios.c
   include/config.h: Added the CONF_WITH_MFP define to allow disabling MFP
   support. (VRI)
+- bios/xbios.c: Fixed DBG_XBIOS. (VRI)

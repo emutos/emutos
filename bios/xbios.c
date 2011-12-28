@@ -69,10 +69,10 @@ void xbiosinit(void)
  */
 
 #if DBG_XBIOS
-void xbios_0(WORD type, PTR param, PTR vec)
+void xbios_0(WORD type, struct param * param, void *vec)
 {
     kprintf("XBIOS: Initmous\n");
-    Initmous(type, (struct param *)param, vec);
+    Initmous(type, param, vec);
 }
 #endif
 
@@ -307,6 +307,7 @@ void xbios_c(WORD cnt, LONG ptr)
 #endif
 
 
+#if CONF_WITH_MFP
 
 /*
  * xbios_d - (mfpint) Set the MFP interrupt number
@@ -324,6 +325,7 @@ void xbios_d(WORD interno, LONG vector)
 }
 #endif
 
+#endif /* CONF_WITH_MFP */
 
 
 /*
@@ -561,6 +563,7 @@ void xbios_19(WORD cnt, LONG ptr)
 #endif
 
 
+#if CONF_WITH_MFP
 
 /*
  * xbios_1a - (jdisint) Disable interrupt number 'intno' on the 68901
@@ -588,6 +591,7 @@ void xbios_1b(WORD intno)
 }
 #endif
 
+#endif /* CONF_WITH_MFP */
 
 
 /*
@@ -631,6 +635,7 @@ void xbios_1e(WORD bitno)
 #endif
 
 
+#if CONF_WITH_MFP
 
 /*
  * xbios_1f - (xbtimer)
@@ -645,6 +650,7 @@ void xbios_1f(WORD timer, WORD control, WORD data, LONG vec)
 }
 #endif
 
+#endif /* CONF_WITH_MFP */
 
 
 /*
@@ -854,7 +860,7 @@ WORD xbios_50(WORD mode)
 #endif
 
 #if DBG_XBIOS
-WORD xbios_51(WORD mode)
+WORD xbios_51(void)
 {
     kprintf("XBIOS: EgetShift\n");
     return egetshift();
@@ -862,34 +868,34 @@ WORD xbios_51(WORD mode)
 #endif
 
 #if DBG_XBIOS
-WORD xbios_52(WORD mode)
+WORD xbios_52(WORD bank)
 {
     kprintf("XBIOS: EsetBank\n");
-    return esetbank();
+    return esetbank(bank);
 }
 #endif
 
 #if DBG_XBIOS
-WORD xbios_53(WORD mode)
+WORD xbios_53(WORD index, WORD color)
 {
     kprintf("XBIOS: EsetColor\n");
-    return esetcolor();
+    return esetcolor(index, color);
 }
 #endif
 
 #if DBG_XBIOS
-WORD xbios_54(WORD mode)
+void xbios_54(WORD index,WORD count,WORD *rgb)
 {
     kprintf("XBIOS: EsetPalette\n");
-    return esetpalette();
+    esetpalette(index, count, rgb);
 }
 #endif
 
 #if DBG_XBIOS
-WORD xbios_55(WORD mode)
+void xbios_55(WORD index, WORD count, WORD *rgb)
 {
     kprintf("XBIOS: EgetPalette\n");
-    return egetpalette();
+    egetpalette(index, count, rgb);
 }
 #endif
 
@@ -897,7 +903,7 @@ WORD xbios_55(WORD mode)
 WORD xbios_56(WORD mode)
 {
     kprintf("XBIOS: EsetGray\n");
-    return esetgray();
+    return esetgray(mode);
 }
 #endif
 
@@ -905,7 +911,7 @@ WORD xbios_56(WORD mode)
 WORD xbios_57(WORD mode)
 {
     kprintf("XBIOS: EsetSmear\n");
-    return esetsmear();
+    return esetsmear(mode);
 }
 #endif
 
