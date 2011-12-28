@@ -123,6 +123,95 @@
 #endif
 
 /*
+ * By default, EmuTOS is built for Atari ST/TT/Falcon compatible hardware.
+ */
+#ifndef CONF_ATARI_HARDWARE
+# define CONF_ATARI_HARDWARE 1
+#endif
+
+/*
+ * Defaults for non-Atari hardware.
+ * Disable all Atari specific hardware.
+ */
+#if !CONF_ATARI_HARDWARE
+# ifndef DETECT_NATIVE_FEATURES
+#  define DETECT_NATIVE_FEATURES 0
+# endif
+# ifndef CONF_WITH_ST_MMU
+#  define CONF_WITH_ST_MMU 0
+# endif
+# ifndef CONF_WITH_FALCON_MMU
+#  define CONF_WITH_FALCON_MMU 0
+# endif
+# ifndef CONF_WITH_MFP
+#  define CONF_WITH_MFP 0
+# endif
+# ifndef CONF_WITH_MFP_RS232
+#  define CONF_WITH_MFP_RS232 0
+# endif
+# ifndef CONF_WITH_YM2149
+#  define CONF_WITH_YM2149 0
+# endif
+# ifndef CONF_WITH_PRINTER_PORT
+#  define CONF_WITH_PRINTER_PORT 0
+# endif
+# ifndef CONF_WITH_MIDI_ACIA
+#  define CONF_WITH_MIDI_ACIA 0
+# endif
+# ifndef CONF_WITH_IKBD_ACIA
+#  define CONF_WITH_IKBD_ACIA 0
+# endif
+# ifndef CONF_WITH_IKBD_CLOCK
+#  define CONF_WITH_IKBD_CLOCK 0
+# endif
+# ifndef CONF_WITH_CARTRIDGE
+#  define CONF_WITH_CARTRIDGE 0
+# endif
+# ifndef CONF_WITH_FDC
+#  define CONF_WITH_FDC 0
+# endif
+# ifndef CONF_WITH_ACSI
+#  define CONF_WITH_ACSI 0
+# endif
+# ifndef CONF_WITH_IDE
+#  define CONF_WITH_IDE 0
+# endif
+# ifndef CONF_WITH_SHIFTER
+#  define CONF_WITH_SHIFTER 0
+# endif
+# ifndef CONF_WITH_STE_SHIFTER
+#  define CONF_WITH_STE_SHIFTER 0
+# endif
+# ifndef CONF_WITH_TT_SHIFTER
+#  define CONF_WITH_TT_SHIFTER 0
+# endif
+# ifndef CONF_WITH_VIDEL
+#  define CONF_WITH_VIDEL 0
+# endif
+# ifndef CONF_WITH_MEGARTC
+#  define CONF_WITH_MEGARTC 0
+# endif
+# ifndef CONF_WITH_DMASOUND
+#  define CONF_WITH_DMASOUND 0
+# endif
+# ifndef CONF_WITH_VME
+#  define CONF_WITH_VME 0
+# endif
+# ifndef CONF_WITH_DIP_SWITCHES
+#  define CONF_WITH_DIP_SWITCHES 0
+# endif
+# ifndef CONF_WITH_NVRAM
+#  define CONF_WITH_NVRAM 0
+# endif
+# ifndef CONF_WITH_XHDI
+#  define CONF_WITH_XHDI 0
+# endif
+# ifndef USE_STOP_INSN_TO_FREE_HOST_CPU
+#  define USE_STOP_INSN_TO_FREE_HOST_CPU 0
+# endif
+#endif
+
+/*
  * use #ifndef ... #endif for definitions below, to allow them to
  * be overriden by the Makefile or by localconf.h
  */

@@ -3161,3 +3161,5 @@ Start... early ages
 - include/config.h: Moved target specific defaults to a separate section. (VRI)
 - include/config.h: Added the CONF_WITH_DESK1 define to simplify the conditional
   definition of DESK1. (VRI)
+- bios/cookie.h bios/machine.c include/config.h: Added the CONF_ATARI_HARDWARE
+  define to allow disabling support for all Atari hardware. (VRI)

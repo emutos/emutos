@@ -184,16 +184,19 @@ static void setvalue_vdo(void)
 #endif
 }
 
+#if CONF_ATARI_HARDWARE
 /* detect ARAnyM */
 #define ARANYM_NAME     "aranym"
 static int is_it_aranym(void)
 {
   return (strncasecmp(machine_name(), ARANYM_NAME, strlen(ARANYM_NAME)) == 0);
 }
+#endif /* CONF_ATARI_HARDWARE */
 
 /* machine type */
 static void setvalue_mch(void)
 {
+#if CONF_ATARI_HARDWARE
   if (is_it_aranym()) {
     cookie_mch = MCH_ARANYM;
   }
@@ -223,6 +226,9 @@ static void setvalue_mch(void)
   else {
     cookie_mch = MCH_ST;
   }
+#else
+  cookie_mch = MCH_NOHARD;
+#endif /* CONF_ATARI_HARDWARE */
 
 #if DBG_MACHINE
   kprintf("cookie_mch = 0x%08lx\n", cookie_mch);

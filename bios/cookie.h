@@ -45,6 +45,7 @@ struct cookie {
  * values of MCH cookie
  */
  
+#define MCH_NOHARD  0xffffffffL /* No ST-compatible hardware */
 #define MCH_ST      0
 #define MCH_STE     0x00010000L
 #define MCH_MSTE    0x00010010L
