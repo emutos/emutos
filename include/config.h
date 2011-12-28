@@ -25,6 +25,24 @@
 #endif
 
 /*
+ * Defaults for the ARAnyM target
+ */
+#ifdef MACHINE_ARANYM
+# ifndef CONF_WITH_ACSI
+#  define CONF_WITH_ACSI 0
+# endif
+# ifndef CONF_WITH_MEGARTC
+#  define CONF_WITH_MEGARTC 0
+# endif
+# ifndef CONF_WITH_IKBD_CLOCK
+#  define CONF_WITH_IKBD_CLOCK 0
+# endif
+# ifndef CONF_WITH_CARTRIDGE
+#  define CONF_WITH_CARTRIDGE 0
+# endif
+#endif
+
+/*
  * use #ifndef ... #endif for definitions below, to allow them to
  * be overriden by the Makefile or by localconf.h
  */
@@ -141,12 +159,7 @@
  * Set this to 1 to activate experimental ACSI support 
  */
 #ifndef CONF_WITH_ACSI
-# ifdef MACHINE_ARANYM
-   /* ACSI is unsupported on ARAnyM */
-#  define CONF_WITH_ACSI 0
-# else
-#  define CONF_WITH_ACSI 1
-# endif
+# define CONF_WITH_ACSI 1
 #endif
 
 /*
@@ -277,7 +290,7 @@
  * Set CONF_WITH_MEGARTC to 1 to enable MegaST real-time clock support
  */
 #ifndef CONF_WITH_MEGARTC
-# if defined(MACHINE_ARANYM) || defined(MACHINE_FIREBEE)
+# ifdef MACHINE_FIREBEE
 #  define CONF_WITH_MEGARTC 0
 # else
 #  define CONF_WITH_MEGARTC 1
@@ -330,21 +343,14 @@
  * Set CONF_WITH_IKBD_CLOCK to 1 to enable IKBD clock support
  */
 #ifndef CONF_WITH_IKBD_CLOCK
-# ifdef MACHINE_ARANYM
-#  define CONF_WITH_IKBD_CLOCK 0
-# else
-#  define CONF_WITH_IKBD_CLOCK 1
-# endif
+# define CONF_WITH_IKBD_CLOCK 1
 #endif
 
 /*
  * Set CONF_WITH_CARTRIDGE to 1 to enable ROM port cartridge support
  */
 #ifndef CONF_WITH_CARTRIDGE
-# if defined(MACHINE_ARANYM)
-   /* ARAnyM does not support the cartridge port */
-#  define CONF_WITH_CARTRIDGE 0
-# elif DIAGNOSTIC_CARTRIDGE
+# if DIAGNOSTIC_CARTRIDGE
    /* Diagnostic and Application cartridges have different magic numbers,
     * so a diagnostic cartridge can't also be an application cartridge. */
 #  define CONF_WITH_CARTRIDGE 0
