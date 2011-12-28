@@ -543,4 +543,10 @@
 # endif
 #endif
 
+#if !CONF_WITH_DESKTOP_ICONS
+# if CONF_WITH_DESK1
+#  error "CONF_WITH_DESK1 requires CONF_WITH_DESKTOP_ICONS."
+# endif
+#endif
+
 #endif /* CONFIG_H */
