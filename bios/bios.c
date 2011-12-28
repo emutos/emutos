@@ -487,7 +487,7 @@ void biosmain(void)
  */
 
 #if DBGBIOS
-void bios_0(MPB *mpb)
+static void bios_0(MPB *mpb)
 {
     getmpb(mpb); 
 }
@@ -512,7 +512,7 @@ static LONG bconstat(WORD handle)        /* GEMBIOS character_input_status */
 }
 
 #if DBGBIOS
-LONG bios_1(WORD handle)
+static LONG bios_1(WORD handle)
 {
     return bconstat(handle);
 }
@@ -539,7 +539,7 @@ static LONG bconin(WORD handle)
 }
 
 #if DBGBIOS
-LONG bios_2(WORD handle)
+static LONG bios_2(WORD handle)
 {
     return bconin(handle);
 }
@@ -555,7 +555,7 @@ static void bconout(WORD handle, WORD what)
 }
 
 #if DBGBIOS
-void bios_3(WORD handle, WORD what)
+static void bios_3(WORD handle, WORD what)
 {
     bconout(handle, what);
 }
@@ -584,7 +584,7 @@ static LONG lrwabs(WORD r_w, LONG adr, WORD numb, WORD first, WORD drive, LONG l
 }
 
 #if DBGBIOS
-LONG bios_4(WORD r_w, LONG adr, WORD numb, WORD first, WORD drive, LONG lfirst)
+static LONG bios_4(WORD r_w, LONG adr, WORD numb, WORD first, WORD drive, LONG lfirst)
 {
     LONG ret;
     kprintf("BIOS rwabs(rw = %d, addr = 0x%08lx, count = 0x%04x, "
@@ -616,7 +616,7 @@ static LONG setexec(WORD num, LONG vector)
 }
 
 #if DBGBIOS
-LONG bios_5(WORD num, LONG vector)
+static LONG bios_5(WORD num, LONG vector)
 {
     LONG ret = setexec(num, vector);
     kprintf("Bios 5: Setexec(num = 0x%x, vector = 0x%08lx)\n", num, vector);
@@ -635,7 +635,7 @@ static LONG tickcal(void)
 }
 
 #if DBGBIOS
-LONG bios_6(void)
+static LONG bios_6(void)
 {
     return tickcal();
 }
@@ -659,7 +659,7 @@ static LONG getbpb(WORD drive)
 }
 
 #if DBGBIOS
-LONG bios_7(WORD drive)
+static LONG bios_7(WORD drive)
 {
     return getbpb(drive);
 }
@@ -689,7 +689,7 @@ static LONG bcostat(WORD handle)        /* GEMBIOS character_output_status */
 }
 
 #if DBGBIOS
-LONG bios_8(WORD handle)
+static LONG bios_8(WORD handle)
 {
     return bcostat(handle);
 }
@@ -713,7 +713,7 @@ static LONG mediach(WORD drv)
 }
 
 #if DBGBIOS
-LONG bios_9(WORD drv)
+static LONG bios_9(WORD drv)
 {
     return mediach(drv);
 }
@@ -734,7 +734,7 @@ static LONG drvmap(void)
 }
 
 #if DBGBIOS
-LONG bios_a(void)
+static LONG bios_a(void)
 {
     return drvmap();
 }
@@ -757,7 +757,7 @@ LONG bios_a(void)
  */
 
 #if DBGBIOS
-LONG bios_b(WORD flag)
+static LONG bios_b(WORD flag)
 {
     return kbshift(flag);
 }
