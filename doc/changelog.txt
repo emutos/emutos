@@ -3147,3 +3147,4 @@ Start... early ages
   support. (VRI)
 - bios/xbios.c: Fixed DBG_XBIOS. (VRI)
 - bios/xbios.c bios/xbios.h: Removed obsolete xbiosinit(). (VRI)
+- bios/xbios.c bios/xbios.h: Make all XBIOS functions extern. (VRI)
