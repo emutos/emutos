@@ -26,6 +26,14 @@
 
 #define DBG_SCREEN 0
 
+#define ST_VRAM_SIZE        32000UL
+#define TT_VRAM_SIZE        153600UL
+
+static unsigned long vram_size();
+static void setphys(LONG addr,int checkaddr);
+
+#if CONF_WITH_SHIFTER
+
 #define VIDEOBASE_ADDR_HI   0xffff8201L
 #define VIDEOBASE_ADDR_MID  0xffff8203L
 #define VIDEOBASE_ADDR_LOW  0xffff820dL
@@ -41,9 +49,6 @@
 #define FALCON_PALETTE_REGS 0xffff9800L
 
 #define TT_PALETTE_BITMASK  0x0fff      /* valid bits in TT_PALETTE_REGS */
-
-#define ST_VRAM_SIZE        32000UL
-#define TT_VRAM_SIZE        153600UL
 
 /* determine monitor type, ... */
 
@@ -316,29 +321,6 @@ static const VMODE_ENTRY *lookup_videl_mode(WORD mode);
 #endif
 
 
-/* calculate VRAM size for current video mode */
-
-static unsigned long vram_size()
-{
-#if CONF_WITH_VIDEL
-    if (has_videl) {
-        return get_videl_width() / 8L * get_videl_height() * get_videl_bpp();
-    }
-    else
-#endif
-#if CONF_WITH_TT_SHIFTER
-    if (has_tt_shifter) {
-        WORD rez = getrez();
-        if (rez >= 4)
-            return TT_VRAM_SIZE;
-        return ST_VRAM_SIZE;
-    }
-    else
-#endif
-    return ST_VRAM_SIZE;
-}
-
-
 /* get monitor type (same encoding as VgetMonitor()) */
 static WORD get_monitor_type()
 {
@@ -359,448 +341,7 @@ static WORD get_monitor_type()
 }
 
 
-/* Set physical screen address */
-
-static void setphys(LONG addr,int checkaddr)
-{
-    if (checkaddr) {
-        if (addr > ((ULONG)phystop - vram_size())) {
-            panic("VideoRAM covers ROM area!!\n");
-        }
-    }
-
-    *(volatile UBYTE *) VIDEOBASE_ADDR_HI = ((ULONG) addr) >> 16;
-    *(volatile UBYTE *) VIDEOBASE_ADDR_MID = ((ULONG) addr) >> 8;
-#if CONF_WITH_VIDEL
-    if (has_videl) {
-        *(volatile UBYTE *) VIDEOBASE_ADDR_LOW = ((ULONG) addr);
-    }
-    else
-#endif
-#if CONF_WITH_TT_SHIFTER
-    if (has_tt_shifter) {
-        *(volatile UBYTE *) VIDEOBASE_ADDR_LOW = ((ULONG) addr);
-    }
-    else
-#endif
-#if CONF_WITH_STE_SHIFTER
-    if (has_ste_shifter) {
-        *(volatile UBYTE *) VIDEOBASE_ADDR_LOW = ((ULONG) addr);
-    }
-#endif
-}
-
-
-/*
- * In the original TOS there used to be an early screen init, 
- * before memory configuration. This is not used here, and all is
- * done at the same time from C.
- */
-
-void screen_init(void)
-{
-    volatile BYTE *rez_reg = (BYTE *) ST_SHIFTER;
-    volatile WORD *col_regs = (WORD *) ST_PALETTE_REGS;
-#if CONF_WITH_VIDEL
-    volatile LONG *fcol_regs = (LONG *) FALCON_PALETTE_REGS;
-    UWORD boot_resolution = FALCON_DEFAULT_BOOT;
-#endif
-#if CONF_WITH_TT_SHIFTER
-    volatile BYTE *ttrez_reg = (BYTE *) TT_SHIFTER;
-    volatile WORD *ttcol_regs = (WORD *) TT_PALETTE_REGS;
-#endif
-    WORD monitor_type, mask, sync_mode;
-    WORD rez = 0;   /* avoid 'may be uninitialized' warning */
-    WORD i;
-    ULONG screen_start;
-
-/*
- * first, see what we're connected to, and set the
- * resolution / video mode appropriately
- */
-    monitor_type = get_monitor_type();
-#if DBG_SCREEN
-    kprintf("monitor_type = %d\n", monitor_type);
-#endif
-
-#if CONF_WITH_VIDEL
-    if (has_videl) {
-        WORD ret;
-
-        UNUSED(ret);
-
-        /* reset VIDEL on boot-up */
-        /* first set the physbase to a safe memory */
-        setphys(0x10000L,0);
-
-#if CONF_WITH_NVRAM && !defined(MACHINE_FIREBEE)
-        /* get boot resolution from NVRAM */
-        ret = nvmaccess(0, 14, 2, (PTR)&boot_resolution);
-        if (ret != 0) {
-#if DBG_SCREEN
-            kprintf("Invalid NVRAM, defaulting to boot video mode 0x%04x\n", boot_resolution);
-#endif
-        }
-        else {
-#if DBG_SCREEN
-            kprintf("NVRAM boot video mode is 0x%04x\n", boot_resolution);
-#endif
-        }
-#endif // CONF_WITH_NVRAM
-
-        if (!lookup_videl_mode(boot_resolution)) {  /* mode isn't in table */
-#if DBG_SCREEN
-            kprintf("Invalid video mode 0x%04x changed to 0x%04x\n",
-                    boot_resolution,FALCON_DEFAULT_BOOT);
-#endif
-            boot_resolution = FALCON_DEFAULT_BOOT;  /* so pick one that is */
-        }
-
-        /* fix the video mode according to the actual monitor */
-        switch(monitor_type) {
-        case 0:     /* monochrome */
-            boot_resolution = FALCON_ST_HIGH;
-            break;
-        case 1:     /* RGB */
-        case 3:     /* TV */
-            if (boot_resolution & VIDEL_VGA) {
-                /* Convert the VGA video mode to RGB */
-                boot_resolution &= ~VIDEL_VGA; /* Force RGB mode */
-                boot_resolution ^= VIDEL_VERTICAL; /* Invert vertical bit */
-            }
-            break;
-        case 2:     /* VGA */
-            if (!(boot_resolution & VIDEL_VGA)) {
-                /* Convert the RGB video mode to VGA */
-                boot_resolution |= VIDEL_VGA; /* Force VGA mode */
-                boot_resolution &= ~VIDEL_PAL; /* Force 60 Hz */
-                boot_resolution ^= VIDEL_VERTICAL; /* Invert vertical bit */
-            }
-            break;
-        }
-#if DBG_SCREEN
-        kprintf("Fixed boot video mode is 0x%04x\n", boot_resolution);
-#endif
-        vsetmode(boot_resolution);
-        rez = 3;        /* fake value indicates Falcon/Videl */
-        mask = 0x0fff;  /* STe-compatible palette */
-    }
-    else
-#endif // CONF_WITH_VIDEL
-#if CONF_WITH_TT_SHIFTER
-    if (has_tt_shifter) {
-        rez = monitor_type?TT_MEDIUM:TT_HIGH;
-        *ttrez_reg = rez;
-        mask = 0x0fff;  /* STe-compatible palette */
-    }
-    else
-#endif
-#if CONF_WITH_STE_SHIFTER
-    if (has_ste_shifter) {
-        rez = monitor_type?ST_LOW:ST_HIGH;
-        *rez_reg = rez;
-        mask = 0x0fff;  /* STe-compatible palette */
-    }
-    else
-#endif
-    {
-        rez = monitor_type?ST_LOW:ST_HIGH;
-        *rez_reg = rez;
-        mask = 0x0777;  /* ST-compatible palette */
-    }
-
-#if CONF_WITH_VIDEL
-    if (rez == 3) {     /* detected a Falcon */
-        sync_mode = (boot_resolution&VIDEL_PAL)?0x02:0x00;
-    }
-    else
-#endif
-    {
-        sync_mode = (os_pal&0x01)?0x02:0x00;
-    }
-    *(volatile BYTE *) 0xffff820a = sync_mode;
-
-/*
- * next, set up the palette(s)
- */
-    for (i = 0; i < 16; i++) {
-        col_regs[i] = dflt_palette[i] & mask;
-    }
-
-#if CONF_WITH_VIDEL
-    if (has_videl) {
-        for(i = 0; i < 256; i++) {
-            fcol_regs[i] = videl_dflt_palette[i];
-        }
-        switch(boot_resolution&VIDEL_BPPMASK) {
-        case VIDEL_1BPP:        /* 2-colour mode */
-            fcol_regs[1] = fcol_regs[15];
-            col_regs[1] = col_regs[15];
-            break;
-        case VIDEL_2BPP:        /* 4-colour mode */
-            fcol_regs[3] = fcol_regs[15];
-            col_regs[3] = col_regs[15];
-            break;
-        }
-    }
-    else
-#endif
-#if CONF_WITH_TT_SHIFTER
-    if (has_tt_shifter) {
-        for (i = 0; i < 256; i++) {
-            ttcol_regs[i] = tt_dflt_palette[i];
-        }
-        if (rez == TT_HIGH) {   /* 2-colour mode */
-            ttcol_regs[1] = ttcol_regs[15];
-            col_regs[1] = col_regs[15];
-        }
-    }
-    else
-#endif
-    {
-        
-    }
-    sshiftmod = rez;
-
-    if (rez == ST_MEDIUM) {
-        col_regs[3] = col_regs[15];
-    }
-    else if (rez == ST_HIGH) {
-        col_regs[1] = col_regs[15];
-    }
-
-    /* videoram is placed just below the phystop */
-    screen_start = (ULONG)phystop - vram_size();
-    /* round down to 256 byte boundary */
-    screen_start &= 0x00ffff00;
-    /* Original TOS leaves a gap of 768 bytes between screen ram and phys_top...
-     * ... we normally don't need that, but some old software relies on that fact,
-     * so we use this gap, too. */
-#if CONF_WITH_VIDEL
-    if (has_videl)
-        ;
-    else
-#endif
-#if CONF_WITH_TT_SHIFTER
-    if (has_tt_shifter)
-        ;
-    else
-#endif
-    {
-        screen_start -= 0x300;
-    }
-    /* set new v_bas_ad */
-    v_bas_ad = (UBYTE *)screen_start;
-    /* correct physical address */
-    setphys(screen_start,1);
-}
-
-
 /* xbios routines */
-
-LONG physbase(void)
-{
-    LONG addr;
-
-    addr = *(volatile UBYTE *) VIDEOBASE_ADDR_HI;
-    addr <<= 8;
-    addr += *(volatile UBYTE *) VIDEOBASE_ADDR_MID;
-    addr <<= 8;
-#if CONF_WITH_VIDEL
-    if (has_videl) {
-        addr += *(volatile UBYTE *) VIDEOBASE_ADDR_LOW;
-    }
-    else
-#endif
-#if CONF_WITH_TT_SHIFTER
-    if (has_tt_shifter) {
-        addr += *(volatile UBYTE *) VIDEOBASE_ADDR_LOW;
-    }
-    else
-#endif
-#if CONF_WITH_STE_SHIFTER
-    if (has_ste_shifter) {
-        addr += *(volatile UBYTE *) VIDEOBASE_ADDR_LOW;
-    }
-#endif
-
-    return (addr);
-}
-
-LONG logbase(void)
-{
-    return ((ULONG) v_bas_ad);
-}
-
-WORD getrez(void)
-{
-    UBYTE rez;
-
-#if CONF_WITH_VIDEL
-    if (has_videl) {
-        /* Get the video mode for Falcon-hardware */
-        WORD vmode = vsetmode(-1);
-        if (vmode & VIDEL_COMPAT) {
-            switch(vmode&VIDEL_BPPMASK) {
-            case VIDEL_1BPP:
-                rez = 2;
-                break;
-            case VIDEL_2BPP:
-                rez = 1;
-                break;
-            case VIDEL_4BPP:
-                rez = 0;
-                break;
-            default:
-                kprintf("Problem - unsupported video mode\n");
-                rez = 0;
-            }
-        } else
-            rez = 2;
-    }
-    else
-#endif
-#if CONF_WITH_TT_SHIFTER
-    if (has_tt_shifter) {
-        /* Get the video mode for TT-hardware */
-        rez = *(volatile UBYTE *)TT_SHIFTER & 0x07;
-    }
-    else
-#endif
-    {
-        rez = *(volatile UBYTE *)ST_SHIFTER & 0x03;
-    }
-
-    return rez;
-}
-
-
-void setscreen(LONG logLoc, LONG physLoc, WORD rez, WORD videlmode)
-{
-    if (logLoc >= 0) {
-        v_bas_ad = (UBYTE *) logLoc;
-    }
-    if (physLoc >= 0) {
-        setphys(physLoc,1);
-    }
-    if (rez >= 0 && rez < 8) {
-        if (FALSE) {
-            /* Dummy case for conditional compilation */
-        }
-#if CONF_WITH_VIDEL
-        else if (has_videl) {
-            if (rez == 3) {
-                vsetmode(videlmode);
-                sshiftmod = rez;
-            } else if (rez < 3) {   /* ST compatible resolution */
-                *(volatile UWORD *)SPSHIFT = 0;
-                *(volatile UBYTE *)ST_SHIFTER = sshiftmod = rez;
-            }
-        }
-#endif
-#if CONF_WITH_TT_SHIFTER
-        else if (has_tt_shifter) {
-            if ((rez != 3) && (rez != 5))
-                *(volatile UBYTE *)TT_SHIFTER = sshiftmod = rez;
-        }
-#endif
-        else if (rez < 3) {      /* ST resolution */
-            *(volatile UBYTE *)ST_SHIFTER = sshiftmod = rez;
-        }
-
-        /* Re-initialize line-a, VT52 etc: */
-        linea_init();
-        font_set_default();
-        vt52_init();
-    }
-}
-
-void setpalette(LONG palettePtr)
-{
-#if DBG_SCREEN
-    int i, max;
-    WORD *p = (WORD *)palettePtr;
-    max = getrez() == 0 ? 15 : getrez() == 1 ? 3 : 1;
-    kprintf("Setpalette(");
-    for(i = 0 ; i <= max ; i++) {
-        kprintf("%03x", p[i]);
-        if(i < 15) kprintf(" ");
-    }
-    kprintf(")\n");
-#endif
-    /* next VBL will do this */
-    colorptr = (WORD *) palettePtr;
-}
-
-WORD setcolor(WORD colorNum, WORD color)
-{
-    WORD oldcolor;
-    WORD mask;
-    volatile WORD *palette = (WORD *) ST_PALETTE_REGS;
-#if CONF_WITH_TT_SHIFTER
-    volatile WORD *ttpalette = (WORD *) TT_PALETTE_REGS;
-#endif
-
-#if DBG_SCREEN
-    kprintf("Setcolor(0x%04x, 0x%04x)\n", colorNum, color);
-#endif
-
-    colorNum &= 0x000f;         /* just like real TOS */
-
-#if CONF_WITH_VIDEL
-    if (has_videl) {
-        mask = 0xfff;
-    } else
-#endif
-#if CONF_WITH_TT_SHIFTER
-    if (has_tt_shifter) {
-        mask = 0xfff;
-    } else
-#endif
-#if CONF_WITH_STE_SHIFTER
-    if (has_ste_shifter) {
-        mask = 0xfff;
-    } else
-#endif
-    {
-        mask = 0x777;
-    }
-
-    oldcolor = palette[colorNum] & mask;
-    if (color == -1)
-        return oldcolor;
-
-#if CONF_WITH_TT_SHIFTER
-    if (has_tt_shifter) {
-		WORD msb, lsb;
-        msb = (color << 1) & 0x0eee;    /* move most significant bits to left */
-        lsb = (color >> 3) & 0x0111;    /* move least significant bit to right */
-        ttpalette[colorNum] = msb | lsb;/* update TT-compatible palette */
-    }
-#endif
-
-    palette[colorNum] = color;          /* update ST(e)-compatible palette */
-    return oldcolor;
-}
-
-
-void vsync(void)
-{
-    WORD old_sr;
-    LONG a;
-
-    old_sr = set_sr(0x2300);    /* allow VBL interrupt */
-    a = frclock;
-    while (frclock == a) {
-#if USE_STOP_INSN_TO_FREE_HOST_CPU
-        stop2300();
-#else
-        ;
-#endif
-    }
-    set_sr(old_sr);
-}
-
 
 #if CONF_WITH_TT_SHIFTER
 
@@ -1225,3 +766,490 @@ void vgetrgb(WORD index,WORD count,LONG *rgb)
 }
 
 #endif /* CONF_WITH_VIDEL */
+
+#endif /* CONF_WITH_SHIFTER */
+
+/*
+ * In the original TOS there used to be an early screen init, 
+ * before memory configuration. This is not used here, and all is
+ * done at the same time from C.
+ */
+
+void screen_init(void)
+{
+    ULONG screen_start;
+#if CONF_WITH_SHIFTER
+    volatile BYTE *rez_reg = (BYTE *) ST_SHIFTER;
+    volatile WORD *col_regs = (WORD *) ST_PALETTE_REGS;
+#if CONF_WITH_VIDEL
+    volatile LONG *fcol_regs = (LONG *) FALCON_PALETTE_REGS;
+    UWORD boot_resolution = FALCON_DEFAULT_BOOT;
+#endif
+#if CONF_WITH_TT_SHIFTER
+    volatile BYTE *ttrez_reg = (BYTE *) TT_SHIFTER;
+    volatile WORD *ttcol_regs = (WORD *) TT_PALETTE_REGS;
+#endif
+    WORD monitor_type, mask, sync_mode;
+    WORD rez = 0;   /* avoid 'may be uninitialized' warning */
+    WORD i;
+
+/*
+ * first, see what we're connected to, and set the
+ * resolution / video mode appropriately
+ */
+    monitor_type = get_monitor_type();
+#if DBG_SCREEN
+    kprintf("monitor_type = %d\n", monitor_type);
+#endif
+
+#if CONF_WITH_VIDEL
+    if (has_videl) {
+        WORD ret;
+
+        UNUSED(ret);
+
+        /* reset VIDEL on boot-up */
+        /* first set the physbase to a safe memory */
+        setphys(0x10000L,0);
+
+#if CONF_WITH_NVRAM && !defined(MACHINE_FIREBEE)
+        /* get boot resolution from NVRAM */
+        ret = nvmaccess(0, 14, 2, (PTR)&boot_resolution);
+        if (ret != 0) {
+#if DBG_SCREEN
+            kprintf("Invalid NVRAM, defaulting to boot video mode 0x%04x\n", boot_resolution);
+#endif
+        }
+        else {
+#if DBG_SCREEN
+            kprintf("NVRAM boot video mode is 0x%04x\n", boot_resolution);
+#endif
+        }
+#endif // CONF_WITH_NVRAM
+
+        if (!lookup_videl_mode(boot_resolution)) {  /* mode isn't in table */
+#if DBG_SCREEN
+            kprintf("Invalid video mode 0x%04x changed to 0x%04x\n",
+                    boot_resolution,FALCON_DEFAULT_BOOT);
+#endif
+            boot_resolution = FALCON_DEFAULT_BOOT;  /* so pick one that is */
+        }
+
+        /* fix the video mode according to the actual monitor */
+        switch(monitor_type) {
+        case 0:     /* monochrome */
+            boot_resolution = FALCON_ST_HIGH;
+            break;
+        case 1:     /* RGB */
+        case 3:     /* TV */
+            if (boot_resolution & VIDEL_VGA) {
+                /* Convert the VGA video mode to RGB */
+                boot_resolution &= ~VIDEL_VGA; /* Force RGB mode */
+                boot_resolution ^= VIDEL_VERTICAL; /* Invert vertical bit */
+            }
+            break;
+        case 2:     /* VGA */
+            if (!(boot_resolution & VIDEL_VGA)) {
+                /* Convert the RGB video mode to VGA */
+                boot_resolution |= VIDEL_VGA; /* Force VGA mode */
+                boot_resolution &= ~VIDEL_PAL; /* Force 60 Hz */
+                boot_resolution ^= VIDEL_VERTICAL; /* Invert vertical bit */
+            }
+            break;
+        }
+#if DBG_SCREEN
+        kprintf("Fixed boot video mode is 0x%04x\n", boot_resolution);
+#endif
+        vsetmode(boot_resolution);
+        rez = 3;        /* fake value indicates Falcon/Videl */
+        mask = 0x0fff;  /* STe-compatible palette */
+    }
+    else
+#endif // CONF_WITH_VIDEL
+#if CONF_WITH_TT_SHIFTER
+    if (has_tt_shifter) {
+        rez = monitor_type?TT_MEDIUM:TT_HIGH;
+        *ttrez_reg = rez;
+        mask = 0x0fff;  /* STe-compatible palette */
+    }
+    else
+#endif
+#if CONF_WITH_STE_SHIFTER
+    if (has_ste_shifter) {
+        rez = monitor_type?ST_LOW:ST_HIGH;
+        *rez_reg = rez;
+        mask = 0x0fff;  /* STe-compatible palette */
+    }
+    else
+#endif
+    {
+        rez = monitor_type?ST_LOW:ST_HIGH;
+        *rez_reg = rez;
+        mask = 0x0777;  /* ST-compatible palette */
+    }
+
+#if CONF_WITH_VIDEL
+    if (rez == 3) {     /* detected a Falcon */
+        sync_mode = (boot_resolution&VIDEL_PAL)?0x02:0x00;
+    }
+    else
+#endif
+    {
+        sync_mode = (os_pal&0x01)?0x02:0x00;
+    }
+    *(volatile BYTE *) 0xffff820a = sync_mode;
+
+/*
+ * next, set up the palette(s)
+ */
+    for (i = 0; i < 16; i++) {
+        col_regs[i] = dflt_palette[i] & mask;
+    }
+
+#if CONF_WITH_VIDEL
+    if (has_videl) {
+        for(i = 0; i < 256; i++) {
+            fcol_regs[i] = videl_dflt_palette[i];
+        }
+        switch(boot_resolution&VIDEL_BPPMASK) {
+        case VIDEL_1BPP:        /* 2-colour mode */
+            fcol_regs[1] = fcol_regs[15];
+            col_regs[1] = col_regs[15];
+            break;
+        case VIDEL_2BPP:        /* 4-colour mode */
+            fcol_regs[3] = fcol_regs[15];
+            col_regs[3] = col_regs[15];
+            break;
+        }
+    }
+    else
+#endif
+#if CONF_WITH_TT_SHIFTER
+    if (has_tt_shifter) {
+        for (i = 0; i < 256; i++) {
+            ttcol_regs[i] = tt_dflt_palette[i];
+        }
+        if (rez == TT_HIGH) {   /* 2-colour mode */
+            ttcol_regs[1] = ttcol_regs[15];
+            col_regs[1] = col_regs[15];
+        }
+    }
+    else
+#endif
+    {
+        
+    }
+    sshiftmod = rez;
+
+    if (rez == ST_MEDIUM) {
+        col_regs[3] = col_regs[15];
+    }
+    else if (rez == ST_HIGH) {
+        col_regs[1] = col_regs[15];
+    }
+#endif /* CONF_WITH_SHIFTER */
+
+    /* videoram is placed just below the phystop */
+    screen_start = (ULONG)phystop - vram_size();
+    /* round down to 256 byte boundary */
+    screen_start &= 0x00ffff00;
+    /* Original TOS leaves a gap of 768 bytes between screen ram and phys_top...
+     * ... we normally don't need that, but some old software relies on that fact,
+     * so we use this gap, too. */
+#if CONF_WITH_VIDEL
+    if (has_videl)
+        ;
+    else
+#endif
+#if CONF_WITH_TT_SHIFTER
+    if (has_tt_shifter)
+        ;
+    else
+#endif
+    {
+        screen_start -= 0x300;
+    }
+    /* set new v_bas_ad */
+    v_bas_ad = (UBYTE *)screen_start;
+    /* correct physical address */
+    setphys(screen_start,1);
+}
+
+
+/* calculate VRAM size for current video mode */
+static unsigned long vram_size()
+{
+#if CONF_WITH_VIDEL
+    if (has_videl) {
+        return get_videl_width() / 8L * get_videl_height() * get_videl_bpp();
+    }
+    else
+#endif
+#if CONF_WITH_TT_SHIFTER
+    if (has_tt_shifter) {
+        WORD rez = getrez();
+        if (rez >= 4)
+            return TT_VRAM_SIZE;
+        return ST_VRAM_SIZE;
+    }
+    else
+#endif
+    return ST_VRAM_SIZE;
+}
+
+/* hardware independant xbios routines */
+
+LONG physbase(void)
+{
+    LONG addr;
+
+#if CONF_WITH_SHIFTER
+    addr = *(volatile UBYTE *) VIDEOBASE_ADDR_HI;
+    addr <<= 8;
+    addr += *(volatile UBYTE *) VIDEOBASE_ADDR_MID;
+    addr <<= 8;
+#if CONF_WITH_VIDEL
+    if (has_videl) {
+        addr += *(volatile UBYTE *) VIDEOBASE_ADDR_LOW;
+    }
+    else
+#endif
+#if CONF_WITH_TT_SHIFTER
+    if (has_tt_shifter) {
+        addr += *(volatile UBYTE *) VIDEOBASE_ADDR_LOW;
+    }
+    else
+#endif
+#if CONF_WITH_STE_SHIFTER
+    if (has_ste_shifter) {
+        addr += *(volatile UBYTE *) VIDEOBASE_ADDR_LOW;
+    }
+#endif
+#else /* CONF_WITH_SHIFTER */
+    /* No real physical screen, fall back to Logbase() */
+    addr = logbase();
+#endif /* #if CONF_WITH_SHIFTER */
+
+    return (addr);
+}
+
+/* Set physical screen address */
+
+static void setphys(LONG addr,int checkaddr)
+{
+    if (checkaddr) {
+        if (addr > ((ULONG)phystop - vram_size())) {
+            panic("VideoRAM covers ROM area!!\n");
+        }
+    }
+
+#if CONF_WITH_SHIFTER
+    *(volatile UBYTE *) VIDEOBASE_ADDR_HI = ((ULONG) addr) >> 16;
+    *(volatile UBYTE *) VIDEOBASE_ADDR_MID = ((ULONG) addr) >> 8;
+#if CONF_WITH_VIDEL
+    if (has_videl) {
+        *(volatile UBYTE *) VIDEOBASE_ADDR_LOW = ((ULONG) addr);
+    }
+    else
+#endif
+#if CONF_WITH_TT_SHIFTER
+    if (has_tt_shifter) {
+        *(volatile UBYTE *) VIDEOBASE_ADDR_LOW = ((ULONG) addr);
+    }
+    else
+#endif
+#if CONF_WITH_STE_SHIFTER
+    if (has_ste_shifter) {
+        *(volatile UBYTE *) VIDEOBASE_ADDR_LOW = ((ULONG) addr);
+    }
+#endif
+#endif /* CONF_WITH_SHIFTER */
+}
+
+LONG logbase(void)
+{
+    return ((ULONG) v_bas_ad);
+}
+
+WORD getrez(void)
+{
+    UBYTE rez;
+
+#if CONF_WITH_SHIFTER
+#if CONF_WITH_VIDEL
+    if (has_videl) {
+        /* Get the video mode for Falcon-hardware */
+        WORD vmode = vsetmode(-1);
+        if (vmode & VIDEL_COMPAT) {
+            switch(vmode&VIDEL_BPPMASK) {
+            case VIDEL_1BPP:
+                rez = 2;
+                break;
+            case VIDEL_2BPP:
+                rez = 1;
+                break;
+            case VIDEL_4BPP:
+                rez = 0;
+                break;
+            default:
+                kprintf("Problem - unsupported video mode\n");
+                rez = 0;
+            }
+        } else
+            rez = 2;
+    }
+    else
+#endif
+#if CONF_WITH_TT_SHIFTER
+    if (has_tt_shifter) {
+        /* Get the video mode for TT-hardware */
+        rez = *(volatile UBYTE *)TT_SHIFTER & 0x07;
+    }
+    else
+#endif
+    {
+        rez = *(volatile UBYTE *)ST_SHIFTER & 0x03;
+    }
+#else /* CONF_WITH_SHIFTER */
+    /* No video hardware, default to some standard video mode */
+    rez = ST_LOW;
+#endif /* CONF_WITH_SHIFTER */
+
+    return rez;
+}
+
+
+void setscreen(LONG logLoc, LONG physLoc, WORD rez, WORD videlmode)
+{
+    if (logLoc >= 0) {
+        v_bas_ad = (UBYTE *) logLoc;
+    }
+    if (physLoc >= 0) {
+        setphys(physLoc,1);
+    }
+    if (rez >= 0 && rez < 8) {
+        if (FALSE) {
+            /* Dummy case for conditional compilation */
+        }
+#if CONF_WITH_VIDEL
+        else if (has_videl) {
+            if (rez == 3) {
+                vsetmode(videlmode);
+                sshiftmod = rez;
+            } else if (rez < 3) {   /* ST compatible resolution */
+                *(volatile UWORD *)SPSHIFT = 0;
+                *(volatile UBYTE *)ST_SHIFTER = sshiftmod = rez;
+            }
+        }
+#endif
+#if CONF_WITH_TT_SHIFTER
+        else if (has_tt_shifter) {
+            if ((rez != 3) && (rez != 5))
+                *(volatile UBYTE *)TT_SHIFTER = sshiftmod = rez;
+        }
+#endif
+#if CONF_WITH_SHIFTER
+        else if (rez < 3) {      /* ST resolution */
+            *(volatile UBYTE *)ST_SHIFTER = sshiftmod = rez;
+        }
+#endif
+
+        /* Re-initialize line-a, VT52 etc: */
+        linea_init();
+        font_set_default();
+        vt52_init();
+    }
+}
+
+void setpalette(LONG palettePtr)
+{
+#if DBG_SCREEN
+    int i, max;
+    WORD *p = (WORD *)palettePtr;
+    max = getrez() == 0 ? 15 : getrez() == 1 ? 3 : 1;
+    kprintf("Setpalette(");
+    for(i = 0 ; i <= max ; i++) {
+        kprintf("%03x", p[i]);
+        if(i < 15) kprintf(" ");
+    }
+    kprintf(")\n");
+#endif
+    /* next VBL will do this */
+    colorptr = (WORD *) palettePtr;
+}
+
+WORD setcolor(WORD colorNum, WORD color)
+{
+    WORD oldcolor;
+#if CONF_WITH_SHIFTER
+    WORD mask;
+    volatile WORD *palette = (WORD *) ST_PALETTE_REGS;
+#if CONF_WITH_TT_SHIFTER
+    volatile WORD *ttpalette = (WORD *) TT_PALETTE_REGS;
+#endif
+
+#if DBG_SCREEN
+    kprintf("Setcolor(0x%04x, 0x%04x)\n", colorNum, color);
+#endif
+
+    colorNum &= 0x000f;         /* just like real TOS */
+
+#if CONF_WITH_VIDEL
+    if (has_videl) {
+        mask = 0xfff;
+    } else
+#endif
+#if CONF_WITH_TT_SHIFTER
+    if (has_tt_shifter) {
+        mask = 0xfff;
+    } else
+#endif
+#if CONF_WITH_STE_SHIFTER
+    if (has_ste_shifter) {
+        mask = 0xfff;
+    } else
+#endif
+    {
+        mask = 0x777;
+    }
+
+    oldcolor = palette[colorNum] & mask;
+    if (color == -1)
+        return oldcolor;
+
+#if CONF_WITH_TT_SHIFTER
+    if (has_tt_shifter) {
+		WORD msb, lsb;
+        msb = (color << 1) & 0x0eee;    /* move most significant bits to left */
+        lsb = (color >> 3) & 0x0111;    /* move least significant bit to right */
+        ttpalette[colorNum] = msb | lsb;/* update TT-compatible palette */
+    }
+#endif
+
+    palette[colorNum] = color;          /* update ST(e)-compatible palette */
+#else /* CONF_WITH_SHIFTER */
+    /* No hardware, fake value */
+    oldcolor = 0;
+#endif /* CONF_WITH_SHIFTER */
+    return oldcolor;
+}
+
+
+void vsync(void)
+{
+#if CONF_WITH_SHIFTER
+    WORD old_sr;
+    LONG a;
+
+    old_sr = set_sr(0x2300);    /* allow VBL interrupt */
+    a = frclock;
+    while (frclock == a) {
+#if USE_STOP_INSN_TO_FREE_HOST_CPU
+        stop2300();
+#else
+        ;
+#endif
+    }
+    set_sr(old_sr);
+#endif /* CONF_WITH_SHIFTER */
+}

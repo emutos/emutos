@@ -3150,3 +3150,7 @@ Start... early ages
 - bios/xbios.c bios/xbios.h: Make all XBIOS functions extern. (VRI)
 - bios/bios.c bios/xbios.c: Make debug wrappers static. (VRI)
 - bios/bios.h: Added prototypes for misc BIOS functions. (VRI)
+
+2011-12-28
+- bios/screen.c bios/screen.h bios/vectors.S include/config.h: Added the
+  CONF_WITH_SHIFTER define to allow disabling Shifter support. (VRI)

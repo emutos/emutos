@@ -214,6 +214,13 @@
 #endif
 
 /*
+ * Set CONF_WITH_SHIFTER to 1 to enable general Shifter support
+ */
+#ifndef CONF_WITH_SHIFTER
+# define CONF_WITH_SHIFTER 1
+#endif
+
+/*
  * Set CONF_WITH_DMASOUND to 1 to enable support for STe/TT/Falcon DMA sound
  */
 #ifndef CONF_WITH_DMASOUND
@@ -499,6 +506,18 @@
 # endif
 # if CONF_WITH_MIDI_ACIA
 #  error "CONF_WITH_MIDI_ACIA requires CONF_WITH_MFP."
+# endif
+#endif
+
+#if !CONF_WITH_SHIFTER
+# if CONF_WITH_STE_SHIFTER
+#  error "CONF_WITH_STE_SHIFTER requires CONF_WITH_SHIFTER."
+# endif
+# if CONF_WITH_TT_SHIFTER
+#  error "CONF_WITH_TT_SHIFTER requires CONF_WITH_SHIFTER."
+# endif
+# if CONF_WITH_VIDEL
+#  error "CONF_WITH_VIDEL requires CONF_WITH_SHIFTER."
 # endif
 #endif
 

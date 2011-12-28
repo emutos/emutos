@@ -17,8 +17,7 @@
 #include "portab.h"
 #include "tosvars.h"
 
-/* determine monitor type, ... */
-void screen_init(void);
+#if CONF_WITH_SHIFTER
 
 /* misc routines */
 UWORD get_videl_bpp(void);
@@ -26,15 +25,8 @@ UWORD get_videl_width(void);
 UWORD get_videl_height(void);
 
 
-/* xbios routines */
+/* hardware dependant xbios routines */
 
-LONG physbase(void);
-LONG logbase(void);
-WORD getrez(void);
-void setscreen(LONG logLoc, LONG physLoc, WORD rez, WORD videlmode);
-void setpalette(LONG palettePtr);
-WORD setcolor(WORD colorNum, WORD color);
-void vsync(void);
 WORD esetshift(WORD mode);
 WORD egetshift(void);
 WORD esetbank(WORD bank);
@@ -126,9 +118,24 @@ void vgetrgb(WORD index,WORD count,LONG *rgb);
 #define TT_HIGH        6
 #define TT_MEDIUM      4
 
+#endif /* CONF_WITH_SHIFTER */
+
 /* ST(e) resolutions */
 #define ST_HIGH        2
 #define ST_MEDIUM      1
 #define ST_LOW         0
+
+/* determine monitor type, ... */
+void screen_init(void);
+
+/* hardware independant xbios routines */
+
+LONG physbase(void);
+LONG logbase(void);
+WORD getrez(void);
+void setscreen(LONG logLoc, LONG physLoc, WORD rez, WORD videlmode);
+void setpalette(LONG palettePtr);
+WORD setcolor(WORD colorNum, WORD color);
+void vsync(void);
 
 #endif /* SCREEN_H */

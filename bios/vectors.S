@@ -327,6 +327,7 @@ _int_vbl:
 
         jsr     _blink                  // blink cursor
 
+#if CONF_WITH_SHIFTER
         // load new color palette
         move.l  _colorptr,d0
         beq     vbl_no_palette
@@ -365,6 +366,7 @@ st_shifter:
 #endif
         move.b  d0,0xffff8201
 vbl_no_screenpt:        
+#endif /* CONF_WITH_SHIFTER */
 
 #if CONF_WITH_FDC
         // flopvbl
