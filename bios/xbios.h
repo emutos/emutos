@@ -12,9 +12,6 @@
  
 #if 0
 
-/* initializes the xbios */
-void xbiosinit(void);
-
 /* misc XBIOS functions */
 LONG iorec(WORD devno);
 LONG random(void);

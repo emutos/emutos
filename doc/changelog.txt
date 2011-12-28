@@ -3146,3 +3146,4 @@ Start... early ages
   include/config.h: Added the CONF_WITH_MFP define to allow disabling MFP
   support. (VRI)
 - bios/xbios.c: Fixed DBG_XBIOS. (VRI)
+- bios/xbios.c bios/xbios.h: Removed obsolete xbiosinit(). (VRI)

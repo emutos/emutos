@@ -36,34 +36,6 @@
 
 #define DBG_XBIOS        0
 
-
-
-
-
-
-/*
- * xbiosinit - XBIOS's initialization.
- *
- * XBIOS initialization. Must be done before any regular XBIOS calls are
- * performed. It is called from startup.s. This routine will do necessary
- * bios initialization that can be done in hi level lang. startup.s has
- * the rest.
- */
-#if 0
-void xbiosinit(void)
-{
-    /*
-     * Later print version string ...
-     */
-
-#if DBG_XBIOS
-    kprintf("XBIOS: Initialization ...\n");
-#endif
-}
-#endif
-
-
-
 /*
  * xbios_0 - (initmous) Initialize mouse packet handler
  */
