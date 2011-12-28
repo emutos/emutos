@@ -3156,3 +3156,5 @@ Start... early ages
   CONF_WITH_SHIFTER define to allow disabling Shifter support. (VRI)
 - bios/vectors.S: Added the DBG_CHECK_READ_BYTE define to allow tracing
   check_read_byte() calls. (VRI)
+- bios/biosmem.c bios/screen.c include/config.h: Added the CONF_VRAM_ADDRESS
+  define to use a fixed video ram area out of the ST-RAM. (VRI)

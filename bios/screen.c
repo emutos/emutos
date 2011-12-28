@@ -810,7 +810,11 @@ void screen_init(void)
 
         /* reset VIDEL on boot-up */
         /* first set the physbase to a safe memory */
+#if CONF_VRAM_ADDRESS
+        setphys(CONF_VRAM_ADDRESS,0);
+#else
         setphys(0x10000L,0);
+#endif
 
 #if CONF_WITH_NVRAM && !defined(MACHINE_FIREBEE)
         /* get boot resolution from NVRAM */
@@ -949,6 +953,9 @@ void screen_init(void)
     }
 #endif /* CONF_WITH_SHIFTER */
 
+#if CONF_VRAM_ADDRESS
+    screen_start = CONF_VRAM_ADDRESS;
+#else
     /* videoram is placed just below the phystop */
     screen_start = (ULONG)phystop - vram_size();
     /* round down to 256 byte boundary */
@@ -969,6 +976,7 @@ void screen_init(void)
     {
         screen_start -= 0x300;
     }
+#endif /* CONF_VRAM_ADDRESS */
     /* set new v_bas_ad */
     v_bas_ad = (UBYTE *)screen_start;
     /* correct physical address */

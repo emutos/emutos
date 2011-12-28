@@ -221,6 +221,15 @@
 #endif
 
 /*
+ * CONF_VRAM_ADDRESS allows to set the video ram address to a fixed location,
+ * outside ST-RAM or FastRam. This allows using custom graphic cards.
+ * Set to 0 to allocate the video ram in the ST-RAM as usual.
+ */
+#ifndef CONF_VRAM_ADDRESS
+# define CONF_VRAM_ADDRESS 0
+#endif
+
+/*
  * Set CONF_WITH_DMASOUND to 1 to enable support for STe/TT/Falcon DMA sound
  */
 #ifndef CONF_WITH_DMASOUND

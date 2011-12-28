@@ -65,7 +65,13 @@ void bmem_init(void)
 
     /* initialise some memory variables */
     membot = end_os = os_end; 
+#if CONF_VRAM_ADDRESS
+    /* Available ST-RAM ends at the physical ST-RAM end */
+    memtop = (LONG) phystop; 
+#else
+    /* Available ST-RAM ends at the screen start */
     memtop = (LONG) v_bas_ad; 
+#endif
     
     /* Fill out the first memory descriptor */
     themd.m_link = (MD*) 0;     /* no next memory descriptor */
