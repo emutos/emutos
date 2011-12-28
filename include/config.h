@@ -43,6 +43,24 @@
 #endif
 
 /*
+ * Defaults for the FireBee target
+ */
+#ifdef MACHINE_FIREBEE
+# ifndef CONF_WITH_IDE
+#  define CONF_WITH_IDE 1 /* For CompactFlash support */
+# endif
+# ifndef CONF_WITH_MEGARTC
+#  define CONF_WITH_MEGARTC 0
+# endif
+# ifndef ALWAYS_SHOW_INITINFO
+#  define ALWAYS_SHOW_INITINFO 1 /* Because the FireBee always do warm boot */
+# endif
+# ifndef INITINFO_DURATION
+#  define INITINFO_DURATION 8 /* Longer time for LCD monitors startup */
+# endif
+#endif
+
+/*
  * use #ifndef ... #endif for definitions below, to allow them to
  * be overriden by the Makefile or by localconf.h
  */
@@ -166,13 +184,8 @@
  * Set CONF_WITH_IDE to 1 to activate Falcon IDE support.
  */
 #ifndef CONF_WITH_IDE
-# ifdef MACHINE_FIREBEE
-   /* The FireBee's CompactFlash card requires this. */
-#  define CONF_WITH_IDE 1
-# else
-   /* For safety, the experimental IDE support is disabled by default. */
-#  define CONF_WITH_IDE 0
-# endif
+  /* For safety, the experimental IDE support is disabled by default. */
+# define CONF_WITH_IDE 0
 #endif
 
 /*
@@ -290,11 +303,7 @@
  * Set CONF_WITH_MEGARTC to 1 to enable MegaST real-time clock support
  */
 #ifndef CONF_WITH_MEGARTC
-# ifdef MACHINE_FIREBEE
-#  define CONF_WITH_MEGARTC 0
-# else
-#  define CONF_WITH_MEGARTC 1
-# endif
+# define CONF_WITH_MEGARTC 1
 #endif
 
 /*
@@ -422,7 +431,7 @@
  * in warm mode.
  */
 #ifndef ALWAYS_SHOW_INITINFO
-# if defined(EMUTOS_RAM) || defined(MACHINE_FIREBEE)
+# ifdef EMUTOS_RAM
 #  define ALWAYS_SHOW_INITINFO 1
 # else
 #  define ALWAYS_SHOW_INITINFO 0
@@ -441,11 +450,7 @@
  * displayed.
  */
 #ifndef INITINFO_DURATION
-# ifdef MACHINE_FIREBEE
-#  define INITINFO_DURATION 8
-# else
-#  define INITINFO_DURATION 3
-# endif
+# define INITINFO_DURATION 3
 #endif
 
 /*
