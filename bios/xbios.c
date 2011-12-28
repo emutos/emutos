@@ -41,7 +41,7 @@
  */
 
 #if DBG_XBIOS
-void xbios_0(WORD type, struct param * param, void *vec)
+static void xbios_0(WORD type, struct param * param, void *vec)
 {
     kprintf("XBIOS: Initmous\n");
     Initmous(type, param, vec);
@@ -69,7 +69,7 @@ void xbios_0(WORD type, struct param * param, void *vec)
  */
 
 #if DBG_XBIOS
-ULONG xbios_2(void)
+static ULONG xbios_2(void)
 {
     kprintf("XBIOS: Physbase ...\n");
     return physbase();
@@ -85,7 +85,7 @@ ULONG xbios_2(void)
  */
 
 #if DBG_XBIOS
-LONG xbios_3(void)
+static LONG xbios_3(void)
 {
     kprintf("XBIOS: Logbase ...\n");
     return logbase();
@@ -101,7 +101,7 @@ LONG xbios_3(void)
  */
 
 #if DBG_XBIOS
-WORD xbios_4(void)
+static WORD xbios_4(void)
 {
     kprintf("XBIOS: Getrez ...\n");
     return getrez();
@@ -121,7 +121,7 @@ WORD xbios_4(void)
  */
 
 #if DBG_XBIOS
-void xbios_5(LONG logLoc, LONG physLoc, WORD rez, WORD videlmode)
+static void xbios_5(LONG logLoc, LONG physLoc, WORD rez, WORD videlmode)
 {
     kprintf("XBIOS: SetScreen(log = 0x%08lx, phys = 0x%08lx, rez = 0x%04x)\n",
            logLoc, physLoc, rez);
@@ -140,7 +140,7 @@ void xbios_5(LONG logLoc, LONG physLoc, WORD rez, WORD videlmode)
  */
 
 #if DBG_XBIOS
-void xbios_6(LONG palettePtr)
+static void xbios_6(LONG palettePtr)
 {
     kprintf("XBIOS: SetPalette(0x%08lx)\n", palettePtr);
     setpalette(palettePtr);
@@ -160,7 +160,7 @@ void xbios_6(LONG palettePtr)
  */
 
 #if DBG_XBIOS
-WORD xbios_7(WORD colorNum, WORD color)
+static WORD xbios_7(WORD colorNum, WORD color)
 {
     kprintf("XBIOS: Setcolor(0x%04x, 0x%04x)\n", colorNum, color);
     return setcolor(colorNum, color);
@@ -188,8 +188,8 @@ WORD xbios_7(WORD colorNum, WORD color)
  */
 
 #if DBG_XBIOS
-LONG xbios_8(LONG buf, LONG filler, WORD devno, WORD sectno,
-             WORD trackno, WORD sideno, WORD count)
+static LONG xbios_8(LONG buf, LONG filler, WORD devno, WORD sectno,
+                    WORD trackno, WORD sideno, WORD count)
 {
     kprintf("XBIOS: Floprd()\n");
     return floprd(buf, filler, devno, sectno, trackno, sideno, count);
@@ -211,8 +211,8 @@ LONG xbios_8(LONG buf, LONG filler, WORD devno, WORD sectno,
 
 
 #if DBG_XBIOS
-LONG xbios_9(LONG buf, LONG filler, WORD devno, WORD sectno,
-             WORD trackno, WORD sideno, WORD count)
+static LONG xbios_9(LONG buf, LONG filler, WORD devno, WORD sectno,
+                    WORD trackno, WORD sideno, WORD count)
 {
     kprintf("XBIOS: Flopwr()\n");
     return flopwr(buf, filler, devno, sectno, trackno, sideno, count);
@@ -244,9 +244,9 @@ LONG xbios_9(LONG buf, LONG filler, WORD devno, WORD sectno,
  */
 
 #if DBG_XBIOS
-LONG xbios_a(LONG buf, LONG filler, WORD devno, WORD spt,
-             WORD trackno, WORD sideno, WORD interlv, WORD virgin,
-             LONG magic)
+static LONG xbios_a(LONG buf, LONG filler, WORD devno, WORD spt,
+                    WORD trackno, WORD sideno, WORD interlv, WORD virgin,
+                    LONG magic)
 {
     kprintf("XBIOS: flopfmt()\n");
     return flopfmt(buf, filler, devno, spt, trackno, sideno, interlv, 
@@ -271,7 +271,7 @@ LONG xbios_a(LONG buf, LONG filler, WORD devno, WORD spt,
  */
 
 #if DBG_XBIOS
-void xbios_c(WORD cnt, LONG ptr)
+static void xbios_c(WORD cnt, LONG ptr)
 {
     kprintf("XBIOS: Midiws(0x%04x, 0x%08lx)\n", cnt, ptr);
     midiws(cnt, ptr);
@@ -290,7 +290,7 @@ void xbios_c(WORD cnt, LONG ptr)
 
 
 #if DBG_XBIOS
-void xbios_d(WORD interno, LONG vector)
+static void xbios_d(WORD interno, LONG vector)
 {
     kprintf("XBIOS: Mfpint(0x%x, 0x%08lx)\n", interno, vector);
     mfpint(interno, vector);
@@ -319,7 +319,7 @@ LONG iorec(WORD devno)
 }
 
 #if DBG_XBIOS
-LONG xbios_e(WORD devno)
+static LONG xbios_e(WORD devno)
 {
     LONG ret;
     kprintf("XBIOS: Iorec(%d)\n", devno);
@@ -346,7 +346,7 @@ LONG xbios_e(WORD devno)
  */
 
 #if DBG_XBIOS
-void xbios_f(WORD speed, WORD flowctl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
+static void xbios_f(WORD speed, WORD flowctl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
 {
     kprintf("XBIOS: Rsconf(...)\n");
     rsconf(speed, flowctl, ucr, rsr, tsr, scr);
@@ -367,7 +367,7 @@ void xbios_f(WORD speed, WORD flowctl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
  */
 
 #if DBG_XBIOS
-LONG xbios_10(LONG unshift, LONG shift, LONG capslock)
+static LONG xbios_10(LONG unshift, LONG shift, LONG capslock)
 {
     kprintf("XBIOS: Keytbl(0x%08lx, 0x%08lx, 0x%08lx)\n",
             unshift, shift, capslock);
@@ -397,7 +397,7 @@ LONG random(void)
 }
 
 #if DBG_XBIOS
-LONG xbios_11(void)
+static LONG xbios_11(void)
 {
     kprintf("XBIOS: Random()\n");
     return random();
@@ -426,7 +426,7 @@ LONG xbios_11(void)
  */
 
 #if DBG_XBIOS
-void xbios_12(LONG buf, LONG serialno, WORD disktype, WORD execflag)
+static void xbios_12(LONG buf, LONG serialno, WORD disktype, WORD execflag)
 {
     kprintf("XBIOS: Protobt()\n");
     protobt(buf, serialno, disktype, execflag);
@@ -440,8 +440,8 @@ void xbios_12(LONG buf, LONG serialno, WORD disktype, WORD execflag)
  */
 
 #if DBG_XBIOS
-LONG xbios_13(LONG buf, LONG filler, WORD devno, WORD sectno,
-              WORD trackno, WORD sideno, WORD count)
+static LONG xbios_13(LONG buf, LONG filler, WORD devno, WORD sectno,
+                     WORD trackno, WORD sideno, WORD count)
 {
     kprintf("XBIOS: Flopver()\n");
     return flopver(buf, filler, devno, sectno, trackno, sideno, count);
@@ -463,7 +463,7 @@ LONG xbios_13(LONG buf, LONG filler, WORD devno, WORD sectno,
  */
 
 #if DBG_XBIOS
-WORD xbios_15(WORD function, WORD operand)
+static WORD xbios_15(WORD function, WORD operand)
 {
     kprintf("XBIOS: Cursconf( 0x%04x, 0x%04x )\n", function, operand);
     return cursconf(function, operand);
@@ -480,7 +480,7 @@ WORD xbios_15(WORD function, WORD operand)
  */
 
 #if DBG_XBIOS
-void xbios_16(ULONG datetime)
+static void xbios_16(ULONG datetime)
 {
     kprintf("XBIOS: Settime()\n");
     settime(datetime);
@@ -497,7 +497,7 @@ void xbios_16(ULONG datetime)
  */
 
 #if DBG_XBIOS
-ULONG xbios_17(void)
+static ULONG xbios_17(void)
 {
     kprintf("XBIOS: Gettime()\n");
     return gettime();
@@ -513,7 +513,7 @@ ULONG xbios_17(void)
  */
 
 #if DBG_XBIOS
-void xbios_18(void)
+static void xbios_18(void)
 {
     kprintf("XBIOS: Bioskeys()\n");
     bioskeys();
@@ -527,7 +527,7 @@ void xbios_18(void)
  */
 
 #if DBG_XBIOS
-void xbios_19(WORD cnt, LONG ptr)
+static void xbios_19(WORD cnt, LONG ptr)
 {
     kprintf("XBIOS: Midiws(0x%04x, 0x%08lx)\n", cnt, ptr);
     ikbdws(cnt, (PTR) ptr);
@@ -542,7 +542,7 @@ void xbios_19(WORD cnt, LONG ptr)
  */
 
 #if DBG_XBIOS
-void xbios_1a(WORD intno)
+static void xbios_1a(WORD intno)
 {
     kprintf("XBIOS: Jdisint(0x%x)\n", intno);
     jdisint(intno);
@@ -556,7 +556,7 @@ void xbios_1a(WORD intno)
  */
 
 #if DBG_XBIOS
-void xbios_1b(WORD intno)
+static void xbios_1b(WORD intno)
 {
     kprintf("XBIOS: Jenabint(0x%x)\n", intno);
     jenabint(intno);
@@ -571,7 +571,7 @@ void xbios_1b(WORD intno)
  */
 
 #if DBG_XBIOS
-BYTE xbios_1c(BYTE data, WORD regno)
+static BYTE xbios_1c(BYTE data, WORD regno)
 {
     kprintf("XBIOS: Giaccess()\n");
     return giaccess(data, regno);
@@ -585,7 +585,7 @@ BYTE xbios_1c(BYTE data, WORD regno)
  */
 
 #if DBG_XBIOS
-void xbios_1d(WORD bitno)
+static void xbios_1d(WORD bitno)
 {
     kprintf("XBIOS: Offgibit(%d)\n", bitno);
     offgibit(bitno);
@@ -599,7 +599,7 @@ void xbios_1d(WORD bitno)
  */
 
 #if DBG_XBIOS
-void xbios_1e(WORD bitno)
+static void xbios_1e(WORD bitno)
 {
     kprintf("XBIOS: Ongibit(%d)\n", bitno);
     ongibit(bitno);
@@ -614,7 +614,7 @@ void xbios_1e(WORD bitno)
  */
 
 #if DBG_XBIOS
-void xbios_1f(WORD timer, WORD control, WORD data, LONG vec)
+static void xbios_1f(WORD timer, WORD control, WORD data, LONG vec)
 {
     kprintf("XBIOS: xbtimer(%d, 0x%02x, 0x%02x, 0x%08lx)\n",
             timer, control, data, vec);
@@ -632,7 +632,7 @@ void xbios_1f(WORD timer, WORD control, WORD data, LONG vec)
  */
 
 #if DBG_XBIOS
-void xbios_20(LONG ptr)
+static void xbios_20(LONG ptr)
 {
     kprintf("XBIOS: Dosound()\n");
     dosound(ptr);
@@ -662,7 +662,7 @@ LONG kbdvbase(void)
 }
 
 #if DBG_XBIOS
-LONG xbios_22(void)
+static LONG xbios_22(void)
 {
     kprintf("XBIOS: Kbdvbase()\n");
     return kbdvbase();
@@ -676,7 +676,7 @@ LONG xbios_22(void)
  */
  
 #if DBG_XBIOS
-WORD xbios_23(WORD initial, WORD repeat)
+static WORD xbios_23(WORD initial, WORD repeat)
 {
     kprintf("XBIOS: kbrate(%d, %d)\n", initial, repeat);
     return kbrate(initial, repeat);
@@ -697,7 +697,7 @@ WORD xbios_23(WORD initial, WORD repeat)
  */
 
 #if DBG_XBIOS
-void xbios_25(void)
+static void xbios_25(void)
 {
     kprintf("XBIOS: Vsync()\n");
     vsync();
@@ -722,7 +722,7 @@ LONG supexec(LONG codeptr)
 }
 
 #if DBG_XBIOS
-LONG xbios_26(LONG codeptr)
+static LONG xbios_26(LONG codeptr)
 {
     kprintf("XBIOS: Supexec(0x%08lx)\n", codeptr);
     return supexec(codeptr);
@@ -746,7 +746,7 @@ LONG xbios_26(LONG codeptr)
  */
 
 #if DBG_XBIOS
-LONG xbios_29(WORD dev, WORD rate)
+static LONG xbios_29(WORD dev, WORD rate)
 {
     kprintf("XBIOS: Floprate\n");
     return floprate(dev, rate);
@@ -758,7 +758,7 @@ LONG xbios_29(WORD dev, WORD rate)
  */
 
 #if DBG_XBIOS
-LONG xbios_2a(LONG sector, WORD count, PTR buf, WORD dev)
+static LONG xbios_2a(LONG sector, WORD count, PTR buf, WORD dev)
 {
     kprintf("XBIOS: DMAread\n");
     return DMAread(sector, count, buf, dev);
@@ -770,7 +770,7 @@ LONG xbios_2a(LONG sector, WORD count, PTR buf, WORD dev)
  */
 
 #if DBG_XBIOS
-LONG xbios_2b(LONG sector, WORD count, PTR buf, WORD dev)
+static LONG xbios_2b(LONG sector, WORD count, PTR buf, WORD dev)
 {
     kprintf("XBIOS: DMAwrite\n");
     return DMAwrite(sector, count, buf, dev);
@@ -792,7 +792,7 @@ LONG bconmap(WORD devno)
 }
 
 #if DBG_XBIOS
-LONG xbios_2c(WORD devno)
+static LONG xbios_2c(WORD devno)
 {
     kprintf("XBIOS: Bconmap\n");
     return bconmap(devno);
@@ -806,7 +806,7 @@ LONG xbios_2c(WORD devno)
  */
 
 #if DBG_XBIOS && CONF_WITH_NVRAM
-WORD xbios_2e(WORD op, WORD start, WORD count, PTR buffer)
+static WORD xbios_2e(WORD op, WORD start, WORD count, PTR buffer)
 {
     kprintf("XBIOS: NVMaccess\n");
     return nvmaccess(op, start, count, buffer);
@@ -824,7 +824,7 @@ WORD xbios_2e(WORD op, WORD start, WORD count, PTR buffer)
  * TT video
  */
 #if DBG_XBIOS
-WORD xbios_50(WORD mode)
+static WORD xbios_50(WORD mode)
 {
     kprintf("XBIOS: EsetShift\n");
     return esetshift(mode);
@@ -832,7 +832,7 @@ WORD xbios_50(WORD mode)
 #endif
 
 #if DBG_XBIOS
-WORD xbios_51(void)
+static WORD xbios_51(void)
 {
     kprintf("XBIOS: EgetShift\n");
     return egetshift();
@@ -840,7 +840,7 @@ WORD xbios_51(void)
 #endif
 
 #if DBG_XBIOS
-WORD xbios_52(WORD bank)
+static WORD xbios_52(WORD bank)
 {
     kprintf("XBIOS: EsetBank\n");
     return esetbank(bank);
@@ -848,7 +848,7 @@ WORD xbios_52(WORD bank)
 #endif
 
 #if DBG_XBIOS
-WORD xbios_53(WORD index, WORD color)
+static WORD xbios_53(WORD index, WORD color)
 {
     kprintf("XBIOS: EsetColor\n");
     return esetcolor(index, color);
@@ -856,7 +856,7 @@ WORD xbios_53(WORD index, WORD color)
 #endif
 
 #if DBG_XBIOS
-void xbios_54(WORD index,WORD count,WORD *rgb)
+static void xbios_54(WORD index,WORD count,WORD *rgb)
 {
     kprintf("XBIOS: EsetPalette\n");
     esetpalette(index, count, rgb);
@@ -864,7 +864,7 @@ void xbios_54(WORD index,WORD count,WORD *rgb)
 #endif
 
 #if DBG_XBIOS
-void xbios_55(WORD index, WORD count, WORD *rgb)
+static void xbios_55(WORD index, WORD count, WORD *rgb)
 {
     kprintf("XBIOS: EgetPalette\n");
     egetpalette(index, count, rgb);
@@ -872,7 +872,7 @@ void xbios_55(WORD index, WORD count, WORD *rgb)
 #endif
 
 #if DBG_XBIOS
-WORD xbios_56(WORD mode)
+static WORD xbios_56(WORD mode)
 {
     kprintf("XBIOS: EsetGray\n");
     return esetgray(mode);
@@ -880,7 +880,7 @@ WORD xbios_56(WORD mode)
 #endif
 
 #if DBG_XBIOS
-WORD xbios_57(WORD mode)
+static WORD xbios_57(WORD mode)
 {
     kprintf("XBIOS: EsetSmear\n");
     return esetsmear(mode);
@@ -891,27 +891,27 @@ WORD xbios_57(WORD mode)
  * Falcon video
  */
 #if DBG_XBIOS & CONF_WITH_VIDEL
-WORD xbios_58(WORD mode)
+static WORD xbios_58(WORD mode)
 {
     kprintf("XBIOS: Vsetmode\n");
     return vsetmode(mode);
 }
-WORD xbios_59(void)
+static WORD xbios_59(void)
 {
     kprintf("XBIOS: VgetMonitor\n");
     return vmontype();
 }
-LONG xbios_5b(WORD mode)
+static LONG xbios_5b(WORD mode)
 {
     kprintf("XBIOS: VgetSize\n");
     return vgetsize(mode);
 }
-void xbios_5d(WORD index,WORD count,LONG *rgb)
+static void xbios_5d(WORD index,WORD count,LONG *rgb)
 {
     kprintf("XBIOS: VsetRGB\n");
     vsetrgb(index,count,rgb);
 }
-void xbios_5e(WORD index,WORD count,LONG *rgb)
+static void xbios_5e(WORD index,WORD count,LONG *rgb)
 {
     kprintf("XBIOS: VgetRGB\n");
     vgetrgb(index,count,rgb);
