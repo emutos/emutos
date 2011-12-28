@@ -28,17 +28,17 @@
  * Defaults for the ARAnyM target
  */
 #ifdef MACHINE_ARANYM
-# ifndef CONF_WITH_ACSI
-#  define CONF_WITH_ACSI 0
-# endif
-# ifndef CONF_WITH_MEGARTC
-#  define CONF_WITH_MEGARTC 0
-# endif
 # ifndef CONF_WITH_IKBD_CLOCK
 #  define CONF_WITH_IKBD_CLOCK 0
 # endif
 # ifndef CONF_WITH_CARTRIDGE
 #  define CONF_WITH_CARTRIDGE 0
+# endif
+# ifndef CONF_WITH_ACSI
+#  define CONF_WITH_ACSI 0
+# endif
+# ifndef CONF_WITH_MEGARTC
+#  define CONF_WITH_MEGARTC 0
 # endif
 #endif
 
@@ -72,23 +72,23 @@
 # ifndef DETECT_NATIVE_FEATURES
 #  define DETECT_NATIVE_FEATURES 0
 # endif
+# ifndef CONF_WITH_FALCON_MMU
+#  define CONF_WITH_FALCON_MMU 0
+# endif
 # ifndef CONF_WITH_ALT_RAM
 #  define CONF_WITH_ALT_RAM 0
 # endif
 # ifndef CONF_WITH_FASTRAM
 #  define CONF_WITH_FASTRAM 0
 # endif
-# ifndef CONF_WITH_FALCON_MMU
-#  define CONF_WITH_FALCON_MMU 0
-# endif
-# ifndef CONF_WITH_VIDEL
-#  define CONF_WITH_VIDEL 0
+# ifndef CONF_WITH_STE_SHIFTER
+#  define CONF_WITH_STE_SHIFTER 0
 # endif
 # ifndef CONF_WITH_TT_SHIFTER
 #  define CONF_WITH_TT_SHIFTER 0
 # endif
-# ifndef CONF_WITH_STE_SHIFTER
-#  define CONF_WITH_STE_SHIFTER 0
+# ifndef CONF_WITH_VIDEL
+#  define CONF_WITH_VIDEL 0
 # endif
 # ifndef CONF_WITH_DMASOUND
 #  define CONF_WITH_DMASOUND 0
@@ -187,6 +187,20 @@
 #endif
 
 /*
+ * Set CONF_WITH_ST_MMU to 1 to enable support for ST MMU.
+ */
+#ifndef CONF_WITH_ST_MMU
+# define CONF_WITH_ST_MMU 1
+#endif
+
+/*
+ * Set CONF_WITH_FALCON_MMU to 1 to enable support for Falcon MMU.
+ */
+#ifndef CONF_WITH_FALCON_MMU
+# define CONF_WITH_FALCON_MMU 1
+#endif
+
+/*
  * Define CONF_STRAM_SIZE to the actual size of the ST-RAM, in bytes.
  * If set to 0, the amount of ST-RAM will be autodetected.
  */
@@ -214,114 +228,6 @@
  */
 #ifndef CONF_FASTRAM_SIZE
 # define CONF_FASTRAM_SIZE 0
-#endif
-
-/*
- * Set CONF_WITH_FDC to 1 to enable floppy disk controller support
- */
-#ifndef CONF_WITH_FDC
-# define CONF_WITH_FDC 1
-#endif
-
-/*
- * Set this to 1 to activate experimental ACSI support 
- */
-#ifndef CONF_WITH_ACSI
-# define CONF_WITH_ACSI 1
-#endif
-
-/*
- * Set CONF_WITH_IDE to 1 to activate Falcon IDE support.
- */
-#ifndef CONF_WITH_IDE
-  /* For safety, the experimental IDE support is disabled by default. */
-# define CONF_WITH_IDE 0
-#endif
-
-/*
- * Set CONF_WITH_ST_MMU to 1 to enable support for ST MMU.
- */
-#ifndef CONF_WITH_ST_MMU
-# define CONF_WITH_ST_MMU 1
-#endif
-
-/*
- * Set CONF_WITH_FALCON_MMU to 1 to enable support for Falcon MMU.
- */
-#ifndef CONF_WITH_FALCON_MMU
-# define CONF_WITH_FALCON_MMU 1
-#endif
-
-/*
- * Set CONF_WITH_VIDEL to 1 to enable support for Falcon Videl.
- */
-#ifndef CONF_WITH_VIDEL
-# define CONF_WITH_VIDEL 1
-#endif
-
-/*
- * Set CONF_WITH_TT_SHIFTER to 1 to enable support for TT Shifter
- */
-#ifndef CONF_WITH_TT_SHIFTER
-# define CONF_WITH_TT_SHIFTER 1
-#endif
-
-/*
- * Set CONF_WITH_STE_SHIFTER to 1 to enable support for STe Shifter
- */
-#ifndef CONF_WITH_STE_SHIFTER
-# define CONF_WITH_STE_SHIFTER 1
-#endif
-
-/*
- * Set CONF_WITH_SHIFTER to 1 to enable general Shifter support
- */
-#ifndef CONF_WITH_SHIFTER
-# define CONF_WITH_SHIFTER 1
-#endif
-
-/*
- * CONF_VRAM_ADDRESS allows to set the video ram address to a fixed location,
- * outside ST-RAM or FastRam. This allows using custom graphic cards.
- * Set to 0 to allocate the video ram in the ST-RAM as usual.
- */
-#ifndef CONF_VRAM_ADDRESS
-# define CONF_VRAM_ADDRESS 0
-#endif
-
-/*
- * Set CONF_WITH_DMASOUND to 1 to enable support for STe/TT/Falcon DMA sound
- */
-#ifndef CONF_WITH_DMASOUND
-# define CONF_WITH_DMASOUND 1
-#endif
-
-/*
- * Set CONF_WITH_VME to 1 to enable support for Mega STe VME bus
- */
-#ifndef CONF_WITH_VME
-# define CONF_WITH_VME 1
-#endif
-
-/*
- * Set CONF_WITH_DIP_SWITCHES to 1 to enable support for STe/TT/Falcon DIP switches
- */
-#ifndef CONF_WITH_DIP_SWITCHES
-# define CONF_WITH_DIP_SWITCHES 1
-#endif
-
-/*
- * Set CONF_WITH_NVRAM to 1 to enable NVRAM support
- */
-#ifndef CONF_WITH_NVRAM
-# define CONF_WITH_NVRAM 1
-#endif
-
-/*
- * Set CONF_WITH_MEGARTC to 1 to enable MegaST real-time clock support
- */
-#ifndef CONF_WITH_MEGARTC
-# define CONF_WITH_MEGARTC 1
 #endif
 
 /*
@@ -387,6 +293,100 @@
 #endif
 
 /*
+ * Set CONF_WITH_FDC to 1 to enable floppy disk controller support
+ */
+#ifndef CONF_WITH_FDC
+# define CONF_WITH_FDC 1
+#endif
+
+/*
+ * Set this to 1 to activate experimental ACSI support 
+ */
+#ifndef CONF_WITH_ACSI
+# define CONF_WITH_ACSI 1
+#endif
+
+/*
+ * Set CONF_WITH_IDE to 1 to activate Falcon IDE support.
+ */
+#ifndef CONF_WITH_IDE
+  /* For safety, the experimental IDE support is disabled by default. */
+# define CONF_WITH_IDE 0
+#endif
+
+/*
+ * Set CONF_WITH_SHIFTER to 1 to enable general Shifter support
+ */
+#ifndef CONF_WITH_SHIFTER
+# define CONF_WITH_SHIFTER 1
+#endif
+
+/*
+ * Set CONF_WITH_STE_SHIFTER to 1 to enable support for STe Shifter
+ */
+#ifndef CONF_WITH_STE_SHIFTER
+# define CONF_WITH_STE_SHIFTER 1
+#endif
+
+/*
+ * Set CONF_WITH_TT_SHIFTER to 1 to enable support for TT Shifter
+ */
+#ifndef CONF_WITH_TT_SHIFTER
+# define CONF_WITH_TT_SHIFTER 1
+#endif
+
+/*
+ * Set CONF_WITH_VIDEL to 1 to enable support for Falcon Videl.
+ */
+#ifndef CONF_WITH_VIDEL
+# define CONF_WITH_VIDEL 1
+#endif
+
+/*
+ * CONF_VRAM_ADDRESS allows to set the video ram address to a fixed location,
+ * outside ST-RAM or FastRam. This allows using custom graphic cards.
+ * Set to 0 to allocate the video ram in the ST-RAM as usual.
+ */
+#ifndef CONF_VRAM_ADDRESS
+# define CONF_VRAM_ADDRESS 0
+#endif
+
+/*
+ * Set CONF_WITH_MEGARTC to 1 to enable MegaST real-time clock support
+ */
+#ifndef CONF_WITH_MEGARTC
+# define CONF_WITH_MEGARTC 1
+#endif
+
+/*
+ * Set CONF_WITH_DMASOUND to 1 to enable support for STe/TT/Falcon DMA sound
+ */
+#ifndef CONF_WITH_DMASOUND
+# define CONF_WITH_DMASOUND 1
+#endif
+
+/*
+ * Set CONF_WITH_VME to 1 to enable support for Mega STe VME bus
+ */
+#ifndef CONF_WITH_VME
+# define CONF_WITH_VME 1
+#endif
+
+/*
+ * Set CONF_WITH_DIP_SWITCHES to 1 to enable support for STe/TT/Falcon DIP switches
+ */
+#ifndef CONF_WITH_DIP_SWITCHES
+# define CONF_WITH_DIP_SWITCHES 1
+#endif
+
+/*
+ * Set CONF_WITH_NVRAM to 1 to enable NVRAM support
+ */
+#ifndef CONF_WITH_NVRAM
+# define CONF_WITH_NVRAM 1
+#endif
+
+/*
  * Set CONF_WITH_XHDI to 1 to enable XHDI support (i.e. the XHDI cookie etc.)
  */
 #ifndef CONF_WITH_XHDI
@@ -417,7 +417,7 @@
  * also make the code faster!
  */
 #ifndef USE_STATIC_INLINES
-#define USE_STATIC_INLINES 1
+# define USE_STATIC_INLINES 1
 #endif
 
 /*
