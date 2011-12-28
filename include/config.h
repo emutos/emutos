@@ -61,6 +61,65 @@
 #endif
 
 /*
+ * Defaults for the 192 target.
+ * This target is only useful on ST hardware, and the ROM size is very limited,
+ * so strip out all the advanced features.
+ */
+#ifdef TARGET_192
+# ifndef TOS_VERSION
+#  define TOS_VERSION 0x102
+# endif
+# ifndef DETECT_NATIVE_FEATURES
+#  define DETECT_NATIVE_FEATURES 0
+# endif
+# ifndef CONF_WITH_ALT_RAM
+#  define CONF_WITH_ALT_RAM 0
+# endif
+# ifndef CONF_WITH_FASTRAM
+#  define CONF_WITH_FASTRAM 0
+# endif
+# ifndef CONF_WITH_FALCON_MMU
+#  define CONF_WITH_FALCON_MMU 0
+# endif
+# ifndef CONF_WITH_VIDEL
+#  define CONF_WITH_VIDEL 0
+# endif
+# ifndef CONF_WITH_TT_SHIFTER
+#  define CONF_WITH_TT_SHIFTER 0
+# endif
+# ifndef CONF_WITH_STE_SHIFTER
+#  define CONF_WITH_STE_SHIFTER 0
+# endif
+# ifndef CONF_WITH_DMASOUND
+#  define CONF_WITH_DMASOUND 0
+# endif
+# ifndef CONF_WITH_VME
+#  define CONF_WITH_VME 0
+# endif
+# ifndef CONF_WITH_DIP_SWITCHES
+#  define CONF_WITH_DIP_SWITCHES 0
+# endif
+# ifndef CONF_WITH_NVRAM
+#  define CONF_WITH_NVRAM 0
+# endif
+# ifndef CONF_WITH_XHDI
+#  define CONF_WITH_XHDI 0
+# endif
+# ifndef CONF_WITH_ASSERT
+#  define CONF_WITH_ASSERT 0
+# endif
+# ifndef USE_STOP_INSN_TO_FREE_HOST_CPU
+#  define USE_STOP_INSN_TO_FREE_HOST_CPU 0 /* Good idea to disable ? */
+# endif
+# ifndef CONF_WITH_DESKTOP_ICONS
+#  define CONF_WITH_DESKTOP_ICONS 0
+# endif
+# ifndef CONF_WITH_EASTER_EGG
+#  define CONF_WITH_EASTER_EGG 0
+# endif
+#endif
+
+/*
  * use #ifndef ... #endif for definitions below, to allow them to
  * be overriden by the Makefile or by localconf.h
  */
@@ -71,11 +130,7 @@
  * EmuTOS not to be compiled to save some space in the ROM image.
  */
 #ifndef TOS_VERSION
-# ifdef TARGET_192
-#  define TOS_VERSION 0x102
-# else
-#  define TOS_VERSION 0x206
-# endif
+# define TOS_VERSION 0x206
 #endif
 
 /* set this to 1 if your emulator provides an STonX-like 
@@ -99,7 +154,7 @@
  * by the standard "native features" interface. 
  */
 #ifndef DETECT_NATIVE_FEATURES
-# if defined(__mcoldfire__) || defined(TARGET_192)
+# ifdef __mcoldfire__
 #  define DETECT_NATIVE_FEATURES 0 /* Conflict with ColdFire instructions. */
 # else
 #  define DETECT_NATIVE_FEATURES 1
@@ -140,22 +195,14 @@
  * Set CONF_WITH_ALT_RAM to 1 to add support for alternate RAM
  */
 #ifndef CONF_WITH_ALT_RAM
-# ifdef TARGET_192
-#  define CONF_WITH_ALT_RAM 0
-# else
-#  define CONF_WITH_ALT_RAM 1
-# endif
+# define CONF_WITH_ALT_RAM 1
 #endif
 
 /*
  * Set CONF_WITH_FASTRAM to 1 to enable detection and usage of FastRAM (TT-RAM)
  */
 #ifndef CONF_WITH_FASTRAM
-# ifdef TARGET_192
-#  define CONF_WITH_FASTRAM 0
-# else
-#  define CONF_WITH_FASTRAM 1
-# endif
+# define CONF_WITH_FASTRAM 1
 #endif
 
 /*
@@ -199,44 +246,28 @@
  * Set CONF_WITH_FALCON_MMU to 1 to enable support for Falcon MMU.
  */
 #ifndef CONF_WITH_FALCON_MMU
-# ifdef TARGET_192
-#  define CONF_WITH_FALCON_MMU 0
-# else
-#  define CONF_WITH_FALCON_MMU 1
-# endif
+# define CONF_WITH_FALCON_MMU 1
 #endif
 
 /*
  * Set CONF_WITH_VIDEL to 1 to enable support for Falcon Videl.
  */
 #ifndef CONF_WITH_VIDEL
-# ifdef TARGET_192
-#  define CONF_WITH_VIDEL 0
-# else
-#  define CONF_WITH_VIDEL 1
-# endif
+# define CONF_WITH_VIDEL 1
 #endif
 
 /*
  * Set CONF_WITH_TT_SHIFTER to 1 to enable support for TT Shifter
  */
 #ifndef CONF_WITH_TT_SHIFTER
-# ifdef TARGET_192
-#  define CONF_WITH_TT_SHIFTER 0
-# else
-#  define CONF_WITH_TT_SHIFTER 1
-# endif
+# define CONF_WITH_TT_SHIFTER 1
 #endif
 
 /*
  * Set CONF_WITH_STE_SHIFTER to 1 to enable support for STe Shifter
  */
 #ifndef CONF_WITH_STE_SHIFTER
-# ifdef TARGET_192
-#  define CONF_WITH_STE_SHIFTER 0
-# else
-#  define CONF_WITH_STE_SHIFTER 1
-# endif
+# define CONF_WITH_STE_SHIFTER 1
 #endif
 
 /*
@@ -259,44 +290,28 @@
  * Set CONF_WITH_DMASOUND to 1 to enable support for STe/TT/Falcon DMA sound
  */
 #ifndef CONF_WITH_DMASOUND
-# ifdef TARGET_192
-#  define CONF_WITH_DMASOUND 0
-# else
-#  define CONF_WITH_DMASOUND 1
-# endif
+# define CONF_WITH_DMASOUND 1
 #endif
 
 /*
  * Set CONF_WITH_VME to 1 to enable support for Mega STe VME bus
  */
 #ifndef CONF_WITH_VME
-# ifdef TARGET_192
-#  define CONF_WITH_VME 0
-# else
-#  define CONF_WITH_VME 1
-# endif
+# define CONF_WITH_VME 1
 #endif
 
 /*
  * Set CONF_WITH_DIP_SWITCHES to 1 to enable support for STe/TT/Falcon DIP switches
  */
 #ifndef CONF_WITH_DIP_SWITCHES
-# ifdef TARGET_192
-#  define CONF_WITH_DIP_SWITCHES 0
-# else
-#  define CONF_WITH_DIP_SWITCHES 1
-# endif
+# define CONF_WITH_DIP_SWITCHES 1
 #endif
 
 /*
  * Set CONF_WITH_NVRAM to 1 to enable NVRAM support
  */
 #ifndef CONF_WITH_NVRAM
-# ifdef TARGET_192
-#  define CONF_WITH_NVRAM 0
-# else
-#  define CONF_WITH_NVRAM 1
-# endif
+# define CONF_WITH_NVRAM 1
 #endif
 
 /*
@@ -372,22 +387,14 @@
  * Set CONF_WITH_XHDI to 1 to enable XHDI support (i.e. the XHDI cookie etc.)
  */
 #ifndef CONF_WITH_XHDI
-# ifdef TARGET_192
-#  define CONF_WITH_XHDI 0
-# else
-#  define CONF_WITH_XHDI 1
-# endif
+# define CONF_WITH_XHDI 1
 #endif
 
 /*
  * Set CONF_WITH_ASSERT to 1 to enable the assert() function support.
  */
 #ifndef CONF_WITH_ASSERT
-# ifdef TARGET_192
-#  define CONF_WITH_ASSERT 0
-# else
-#  define CONF_WITH_ASSERT 1
-# endif
+# define CONF_WITH_ASSERT 1
 #endif
 
 /*
@@ -396,11 +403,7 @@
  * Set to zero for all emulators which do not properly support STOP opcode.
  */
 #ifndef USE_STOP_INSN_TO_FREE_HOST_CPU
-# ifdef TARGET_192
-#  define USE_STOP_INSN_TO_FREE_HOST_CPU 0
-# else
-#  define USE_STOP_INSN_TO_FREE_HOST_CPU 1
-# endif
+# define USE_STOP_INSN_TO_FREE_HOST_CPU 1
 #endif
 
 /*
@@ -465,22 +468,14 @@
  * Set CONF_WITH_DESKTOP_ICONS to 1 to include all the desktop icons.
  */
 #ifndef CONF_WITH_DESKTOP_ICONS
-# ifdef TARGET_192
-#  define CONF_WITH_DESKTOP_ICONS 0
-# else
-#  define CONF_WITH_DESKTOP_ICONS 1
-# endif
+# define CONF_WITH_DESKTOP_ICONS 1
 #endif
 
 /*
  * Set CONF_WITH_EASTER_EGG to 1 to include EmuDesk Easter Egg.
  */
 #ifndef CONF_WITH_EASTER_EGG
-# ifdef TARGET_192
-#  define CONF_WITH_EASTER_EGG 0
-# else
-#  define CONF_WITH_EASTER_EGG 1
-# endif
+# define CONF_WITH_EASTER_EGG 1
 #endif
 
 /*
