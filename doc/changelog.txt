@@ -3154,3 +3154,5 @@ Start... early ages
 2011-12-28
 - bios/screen.c bios/screen.h bios/vectors.S include/config.h: Added the
   CONF_WITH_SHIFTER define to allow disabling Shifter support. (VRI)
+- bios/vectors.S: Added the DBG_CHECK_READ_BYTE define to allow tracing
+  check_read_byte() calls. (VRI)

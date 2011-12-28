@@ -8,6 +8,8 @@
  *
  */
 
+#define DBG_CHECK_READ_BYTE 0 /* To trace check_read_byte() calls */
+
 #include "asmdefs.h"
 
         .globl  _init_exc_vec
@@ -700,7 +702,25 @@ _check_read_byte:
 berr:   move.l  a1,(8).w
         move.l  d1,sp
         nop
+
+#if DBG_CHECK_READ_BYTE
+        move.l  d0,-(sp)        // backup return value
+
+        move.w  d0,-(sp)
+        move.l  a0,-(sp)
+        pea     msgcrb(pc)
+        jsr     _kprintf        // print debug message
+        lea     10(sp),sp
+
+        move.l  (sp)+,d0        // restore return value
+#endif
         rts
+
+#if DBG_CHECK_READ_BYTE
+msgcrb:
+        .asciz  "check_read_byte(0x%08lx) returns %d\n"
+        .even
+#endif
 
 
 
