@@ -3159,3 +3159,5 @@ Start... early ages
 - bios/biosmem.c bios/screen.c include/config.h: Added the CONF_VRAM_ADDRESS
   define to use a fixed video ram area out of the ST-RAM. (VRI)
 - include/config.h: Moved target specific defaults to a separate section. (VRI)
+- include/config.h: Added the CONF_WITH_DESK1 define to simplify the conditional
+  definition of DESK1. (VRI)
