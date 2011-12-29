@@ -22,7 +22,7 @@
 #include "compat.h"
 #include "obdefs.h"
 #include "taddr.h"
-#include "../bios/kprint.h"
+#include "kprint.h"
 
 
 LONG obaddr(LONG tree, WORD obj, WORD fld_off)

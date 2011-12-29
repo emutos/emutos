@@ -22,7 +22,7 @@
 #include "gemerror.h"
 #include "biosbind.h"
 #include "string.h"
-#include "../bios/kprint.h"
+#include "kprint.h"
 #include "../bios/processor.h"
 
 #define DBGPROC 0

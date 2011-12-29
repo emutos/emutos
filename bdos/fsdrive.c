@@ -37,7 +37,7 @@
 #include "mem.h"
 #include "gemerror.h"
 #include "biosbind.h"
-#include "../bios/kprint.h"
+#include "kprint.h"
 
 
 /*

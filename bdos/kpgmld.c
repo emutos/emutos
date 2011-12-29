@@ -20,7 +20,7 @@
 #include "gemerror.h"
 #include "pghdr.h"
 #include "string.h"
-#include "../bios/kprint.h"
+#include "kprint.h"
 
 
 #define DBGKPGMLD 0

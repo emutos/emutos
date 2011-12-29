@@ -13,7 +13,7 @@
 #include "fs.h"
 #include "gemerror.h"
 #include "biosbind.h"
-#include "../bios/kprint.h"
+#include "kprint.h"
 
 #define DBGFSIO 0
 

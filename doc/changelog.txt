@@ -3163,3 +3163,10 @@ Start... early ages
   definition of DESK1. (VRI)
 - bios/cookie.h bios/machine.c include/config.h: Added the CONF_ATARI_HARDWARE
   define to allow disabling support for all Atari hardware. (VRI)
+
+2011-12-29
+- aes/gemgsxif.c aes/gemobjop.c bdos/bdosmain.c bdos/fsdir.c bdos/fsdrive.c
+  bdos/fsio.c bdos/iumem.c bdos/kpgmld.c bdos/proc.c bdos/umem.c
+  bios/kprint.h include/kprint.h: Moved kprint.h from bios/ to include/,
+  its logical place. (RFB)
+ 

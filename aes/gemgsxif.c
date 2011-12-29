@@ -31,7 +31,7 @@
 #include "geminit.h"
 #include "gemctrl.h"
 #include "gemgsxif.h"
-#include "../bios/kprint.h"
+#include "kprint.h"
 
 /*
  * Calls used in Crystal:

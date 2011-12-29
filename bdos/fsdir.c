@@ -131,7 +131,7 @@
 #include        "gemerror.h"
 #include        "biosbind.h"
 #include        "string.h"
-#include        "../bios/kprint.h"
+#include        "kprint.h"
 
 #ifndef M0101052901
 #define M0101052901     TRUE

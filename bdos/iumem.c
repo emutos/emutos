@@ -20,7 +20,7 @@
 #include "portab.h"
 #include "fs.h"
 #include "mem.h"
-#include "../bios/kprint.h"
+#include "kprint.h"
 
 
 /*
