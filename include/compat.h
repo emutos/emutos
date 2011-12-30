@@ -31,14 +31,9 @@
 #include <string.h>
 
 
-#define PCDOS   0       /* IBM PC DOS */
-#define CPM     0       /* CP/M version 2.2 */
 #define GEMDOS  1       /* GEM DOS              */
 
 #define ALCYON  1       /* Alcyon C Compiler */
-#define HIGH_C  0       /* for use with MetaWare High-C compiler        */
-
-#define ALPHA   0       /* if character screen  */
 
 #define DEBUG 0
 

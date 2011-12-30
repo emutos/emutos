@@ -3171,3 +3171,4 @@ Start... early ages
   its logical place. (RFB)
 - aes/geminit.c aes/gemstart.S: Call C routine to init stack pointer, rather
   than relying on 'magic number'. (RFB)
+- include/compat.h: Removed obsolete, unused, defines. (RFB)
