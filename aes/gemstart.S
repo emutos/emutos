@@ -97,12 +97,10 @@ clrglotestend:
         lea     _tikcod,a0
         move.l  a0,_tikaddr
 
-        // Initiallize the SSP to be _D + 0x74A, and also store
-        // this in _D + 0x3E. (_D + 0x3E is ssp in D.uda[0])
+        // call C routine to init the SSP in the UDA & return its offset
+        jsr     _init_p0_stkptr
         movea.l #_D,a6
-        movea.l a6,a5
-        adda.l  #0x74A,a6
-        move.l  a6,0x3E(a5)
+        adda.l  d0,a6
         movea.l a6,sp
 
         // go in C

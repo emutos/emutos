@@ -244,14 +244,20 @@ LONG size_theglo(void)
 
 
 /*
-*       called from startup code to get the stack for process 0
+*       called from startup code to initialise the process 0 supervisor stack ptr:
+*        1. determines the end of the supervisor stack
+*        2. initialises the supervisor stack pointer in the UDA
+*        3. returns the offset from the start of THEGLO to the end of the stack
 */
-/*
-WORD sizeuda(void)
+LONG init_p0_stkptr(void)
 {
-        return( sizeof(UDA) - sizeof(WORD) );
+    UDA *u = &D.g_intuda[0];
+
+    u->u_spsuper = &u->u_supstk + 1;
+
+	return (char *)u->u_spsuper - (char *)u;
 }
-*/
+
 
 
 static void ev_init(EVB evblist[], WORD cnt)

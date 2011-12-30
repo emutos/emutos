@@ -3169,4 +3169,5 @@ Start... early ages
   bdos/fsio.c bdos/iumem.c bdos/kpgmld.c bdos/proc.c bdos/umem.c
   bios/kprint.h include/kprint.h: Moved kprint.h from bios/ to include/,
   its logical place. (RFB)
- 
+- aes/geminit.c aes/gemstart.S: Call C routine to init stack pointer, rather
+  than relying on 'magic number'. (RFB)
