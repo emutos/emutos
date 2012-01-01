@@ -3172,3 +3172,6 @@ Start... early ages
 - aes/geminit.c aes/gemstart.S: Call C routine to init stack pointer, rather
   than relying on 'magic number'. (RFB)
 - include/compat.h: Removed obsolete, unused, defines. (RFB)
+
+2012-01-01
+- bios/floppy.c: Increased the FDC timeout to 3 seconds. (VRI)

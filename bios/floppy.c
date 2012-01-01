@@ -105,8 +105,11 @@ static void select(WORD dev, WORD side);
 /* sets the track on the current drive, returns 0 or error */
 static WORD set_track(WORD track);
 
-/* the timeout we wait for the gpip bit to change */
-#define TIMEOUT 1500L   /* default one second and a half */
+/* time to wait before aborting any FDC command.
+ * this must be longer than the longest command.
+ * seeking to the end with spin-up sequence may take more than 2 seconds.
+ */
+#define TIMEOUT 3000L /* in milliseconds */
 
 /* access to dma and fdc registers */
 static WORD get_dma_status(void);
