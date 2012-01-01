@@ -143,6 +143,9 @@
 # ifndef CONF_WITH_FALCON_MMU
 #  define CONF_WITH_FALCON_MMU 0
 # endif
+# ifndef CONF_WITH_FASTRAM
+#  define CONF_WITH_FASTRAM 0
+# endif
 # ifndef CONF_WITH_MFP
 #  define CONF_WITH_MFP 0
 # endif
