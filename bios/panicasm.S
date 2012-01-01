@@ -64,13 +64,14 @@ _panic:
  * simply halt the machine.
  */
 _halt:
-#if USE_STOP_INSN_TO_FREE_HOST_CPU
-        // first try 'STOP'
-        stop    #0x2700
-        // a normal 680x0 CPU would have halted already, but just in case:
+#if !USE_STOP_INSN_TO_FREE_HOST_CPU
+        // disable the interrupts
+        move.w  #0x2700,sr  
 #endif
-        move.w  #0x2700,sr
-forever:
-        bra     forever
-
-
+haltloop:
+        // endless loop
+#if USE_STOP_INSN_TO_FREE_HOST_CPU
+        stop    #0x2700
+        // only an NMI could theroretically wake up the CPU here
+#endif
+        bra.s   haltloop
