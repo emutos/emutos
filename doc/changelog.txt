@@ -3177,3 +3177,4 @@ Start... early ages
 - bios/floppy.c: Increased the FDC timeout to 3 seconds. (VRI)
 - include/config.h: Set CONF_WITH_FASTRAM=0 when !CONF_ATARI_HARDWARE. (VRI)
 - bios/panicasm.S: Minor optimization of halt(). (VRI)
+- bios/config.h: Added a sanity check for USE_STOP_INSN_TO_FREE_HOST_CPU. (VRI)

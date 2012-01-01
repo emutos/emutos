@@ -635,6 +635,12 @@
 # endif
 #endif
 
+#if USE_STOP_INSN_TO_FREE_HOST_CPU
+# if !CONF_ATARI_HARDWARE
+#  error "USE_STOP_INSN_TO_FREE_HOST_CPU currently requires CONF_ATARI_HARDWARE."
+# endif
+#endif
+
 #if !CONF_WITH_DESKTOP_ICONS
 # if CONF_WITH_DESK1
 #  error "CONF_WITH_DESK1 requires CONF_WITH_DESKTOP_ICONS."
