@@ -3178,3 +3178,4 @@ Start... early ages
 - include/config.h: Set CONF_WITH_FASTRAM=0 when !CONF_ATARI_HARDWARE. (VRI)
 - bios/panicasm.S: Minor optimization of halt(). (VRI)
 - bios/config.h: Added a sanity check for USE_STOP_INSN_TO_FREE_HOST_CPU. (VRI)
+- bdos/fsopnclo.c: Allow '+' character in filenames. (RFB)
