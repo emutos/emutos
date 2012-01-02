@@ -3179,3 +3179,5 @@ Start... early ages
 - bios/panicasm.S: Minor optimization of halt(). (VRI)
 - bios/config.h: Added a sanity check for USE_STOP_INSN_TO_FREE_HOST_CPU. (VRI)
 - bdos/fsopnclo.c: Allow '+' character in filenames. (RFB)
+- bdos/fs.h bdos/fsdir.c bdos/fsopnclo.c: Disallow invalid filename characters
+  when renaming a file or folder. (RFB)

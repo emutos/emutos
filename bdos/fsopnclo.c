@@ -56,6 +56,13 @@
 #include "mem.h"
 #include "time.h"
 
+/* the following characters are disallowed in the name when creating
+ * or renaming files or folders.  this is *mostly* the same list as
+ * for MS-DOS, except that Atari allows the '+' character.
+ */
+#define ILLEGAL_FNAME_CHARACTERS " *,:;<=>?[]|"
+
+
 /*
  * forward prototypes
  */
@@ -65,7 +72,6 @@ static long opnfil(FCB *f, DND *dn, int mod);
 static long makopn(FCB *f, DND *dn, int h, int mod);
 static FTAB *sftsrch(int field, char *ptr);
 static void sftdel(FTAB *sftp);
-static BOOL match1(const char *ref, const char *test);
 
 /*
 **  used in calls to sftsrch to distinguish which field we are matching on
@@ -138,7 +144,7 @@ long ixcreat(char *name, char attr)
                 return(EPTHNF);
 
         /*  M01.01.0721.01  */
-        if( match1(" *,:;<=>?[]|",s) )
+        if( contains_illegal_characters(s) )
                 return( EACCDN ) ;
 
         if (!(fd = dn->d_ofd))
@@ -669,14 +675,14 @@ long ixdel(DND *dn, FCB *f, long pos)
 
 
 /*
-**  match1 - check for bad chars in path name
-**      check thru test string to see if any character in the ref str is found
-**      (utility routine for ixcreat())
-**      by scc
+**  contains_illegal_characters - check for illegal filename chars in specified string
+**
+**  returns TRUE if found
 */
 
-static BOOL match1(const char *ref, const char *test)
+BOOL contains_illegal_characters(const char *test)
 {
+        const char *ref = ILLEGAL_FNAME_CHARACTERS ;
         const char *t ;
 
         while( *ref )

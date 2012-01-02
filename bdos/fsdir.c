@@ -846,6 +846,9 @@ long xrename(int n, char *p1, char *p2)
         if (!dn2)                                        /* M01.01.1214.01 */
                 return( EPTHNF );
 
+        if (contains_illegal_characters(s2))
+                return( EACCDN ) ;
+
         if ((h1 = xopen(p1, 2)) < 0L)
                 return (h1);
 

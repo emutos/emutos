@@ -383,6 +383,9 @@ long xunlink(char *name);
 /* internal delete file. */
 long ixdel(DND *dn, FCB *f, long pos);
 
+/* internal check for illegal name */
+BOOL contains_illegal_characters(const char *test);
+
 /*
  * in fsbuf.c
  */
