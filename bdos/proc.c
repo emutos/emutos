@@ -24,6 +24,7 @@
 #include "string.h"
 #include "kprint.h"
 #include "../bios/processor.h"
+#include "asm.h"
 
 #define DBGPROC 0
 
@@ -511,7 +512,7 @@ static void proc_go(PD *p)
     sp->basepage = p;      /* the stack contains the basepage */
        
     sp->retaddr = p->p_tbase;    /* return address a3 is text start */
-    sp->sr = 0x0300;    /* the process will start in user mode, IPL 3 */
+    sp->sr = get_sr() & 0x0700;  /* the process will start in user mode, same IPL */
     
     /* the other stack is the supervisor stack */
     sp->other_sp = (long) &supstk[SUPSIZ];
