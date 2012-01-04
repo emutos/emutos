@@ -3184,9 +3184,9 @@ Start... early ages
 
 2012-01-03
 - aes/gemdisp.c bios/ikbd.c bios/initinfo.c bios/screen.c include/asm.h
-  util/miscasm.S: New stop_until_interrupt() wrapper around STOP.
-- include/config.h: Allow CONF_WITH_XHDI with !CONF_ATARI_HARDWARE.
+  util/miscasm.S: New stop_until_interrupt() wrapper around STOP. (VRI)
+- include/config.h: Allow CONF_WITH_XHDI with !CONF_ATARI_HARDWARE. (VRI)
 
 2012-01-04
-- bios/screen.c: Fix Vsync() when !CONF_WITH_SHIFTER. (VRI)
+- bios/screen.c: Fixed Vsync() when !CONF_WITH_SHIFTER. (VRI)
 - bios/vectors.S: Fixed int_hbl() on ColdFire. (VRI)
