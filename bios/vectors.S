@@ -272,16 +272,17 @@ query:
  
 _int_hbl:
 #ifdef __mcoldfire__
-// Beware: In the ColdFire version, d0.l is pushed on the stack
-// so the user status register is in 4(sp)
+// Beware: On ColdFire, the first word on the stack is the Format/Vector word,
+// and the user SR comes after. Furthermore, we need to backup the whole d0.l.
+// As a result the user status register is at 6(sp) instead of 2(sp)
         move.l  d0, -(sp)       // save d0
         moveq   #0, d0
-        move.w  4(sp), d0       // get status register from stack
+        move.w  6(sp), d0       // get status register from stack
         and.l   #0x0700, d0     // isolate just IPL-mask from sr
         bne     is_ipl          // if IPL is nonzero, then end
-        move.w  4(sp), d0
+        move.w  6(sp), d0
         or.l    #0x0300, d0     // else set IPL3 in status register
-        move.w  d0, 4(sp)
+        move.w  d0, 6(sp)
 is_ipl:
         move.l  (sp)+, d0       // restore d0
 #else

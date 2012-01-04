@@ -3189,3 +3189,4 @@ Start... early ages
 
 2012-01-04
 - bios/screen.c: Fix Vsync() when !CONF_WITH_SHIFTER. (VRI)
+- bios/vectors.S: Fixed int_hbl() on ColdFire. (VRI)
