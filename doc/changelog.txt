@@ -3182,7 +3182,7 @@ Start... early ages
 - bdos/fs.h bdos/fsdir.c bdos/fsopnclo.c: Disallow invalid filename characters
   when renaming a file or folder. (RFB)
 
-2012-01-04
+2012-01-03
 - aes/gemdisp.c bios/ikbd.c bios/initinfo.c bios/screen.c include/asm.h
   util/miscasm.S: New stop_until_interrupt() wrapper around STOP.
 - include/config.h: Allow CONF_WITH_XHDI with !CONF_ATARI_HARDWARE.
