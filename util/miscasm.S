@@ -84,11 +84,20 @@ _trap1_pexec:
 _stop_until_interrupt:
         move.w  sr,d0
         move.w  d0,d1           // Backup
+#ifdef __mcoldfire__
+        andi.l  #0x0700,d1      // Isolate IPL bits
+#else
         andi.w  #0x0700,d1      // Isolate IPL bits
+#endif
 
         // Convert the IPL into an offset in the stop block below
+#ifdef __mcoldfire__
+        lsr.l   #8-3,d1         // 8 bits right, then multiply by 4
+        jmp     stop0(pc,d1.l)
+#else
         lsr.w   #8-3,d1         // 8 bits right, then multiply by 4
         jmp     stop0(pc,d1.w)
+#endif
 
         // Each stop case must be exactly 8 byte long.
         // Preserving sr is not strictly mandatory, but:
