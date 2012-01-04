@@ -1245,11 +1245,11 @@ WORD setcolor(WORD colorNum, WORD color)
 
 void vsync(void)
 {
-#if CONF_WITH_SHIFTER
-    WORD old_sr;
     LONG a;
+#if CONF_WITH_SHIFTER
+    WORD old_sr = set_sr(0x2300);       /* allow VBL interrupt */
+#endif
 
-    old_sr = set_sr(0x2300);    /* allow VBL interrupt */
     a = frclock;
     while (frclock == a) {
 #if USE_STOP_INSN_TO_FREE_HOST_CPU
@@ -1257,6 +1257,8 @@ void vsync(void)
 #endif
         /* Wait */
     }
+
+#if CONF_WITH_SHIFTER
     set_sr(old_sr);
 #endif /* CONF_WITH_SHIFTER */
 }
