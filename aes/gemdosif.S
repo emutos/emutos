@@ -14,8 +14,6 @@
 
 .globl _cli
 .globl _sti
-.globl _hsti
-.globl _hcli
 .globl _giveerr
 .globl _takeerr
 .globl _retake
@@ -63,30 +61,6 @@ _sti:
         move.l  (sp)+,d0
 #else
         move    savesr,sr
-#endif
-        rts
-
-_hcli:
-#ifdef __mcoldfire__
-        move.l  d0,-(sp)
-        move.w  sr,d0
-        ori.l   #0x0700,d0
-        move.w  d0,sr
-        move.l  (sp)+,d0
-#else
-        ori     #0x0700,sr
-#endif
-        rts
-
-_hsti:
-#ifdef __mcoldfire__
-        move.l  d0,-(sp)
-        move.w  sr,d0
-        andi.l  #0xF8FF,d0
-        move.w  d0,sr
-        move.l  (sp)+,d0
-#else
-        andi    #0xF8FF,sr
 #endif
         rts
 

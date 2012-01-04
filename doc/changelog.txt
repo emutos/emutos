@@ -3190,3 +3190,5 @@ Start... early ages
 2012-01-04
 - bios/screen.c: Fixed Vsync() when !CONF_WITH_SHIFTER. (VRI)
 - bios/vectors.S: Fixed int_hbl() on ColdFire. (VRI)
+- aes/gemodosif.h aes/gemdosif.S bios/geminit.c: Removed hcli() and hsti(). They
+  forced IPL0 instead of restoring the old IPL. (VRI)

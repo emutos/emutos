@@ -762,7 +762,7 @@ void gem_main(void)
     gl_changerez = FALSE;
 
     ini_dlongs();               /* init longs */
-    hcli();
+    cli();
     takecpm();                  /* take the 0efh int. */
 
     /* init event recorder  */
@@ -823,7 +823,7 @@ void gem_main(void)
     /* end of process init */
 
     /* restart the tick     */
-    hsti();
+    sti();
 
     /*
      * screen manager process init. this process starts out owning the mouse
