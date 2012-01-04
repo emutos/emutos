@@ -20,9 +20,6 @@
  *   sets sr to the new value, and return the old sr value 
  * WORD get_sr(void);
  *   returns the current value of sr. the CCR bits are not meaningful.
- * void stop2300(void);
- * void stop2500(void);
- *   the STOP immediate instruction
  * void regsafe_call(void *addr);
  *   Do a subroutine call with saving/restoring the CPU registers
  *
@@ -39,6 +36,8 @@ extern long trap1(int, ...);
 extern long trap1_pexec(short mode, const char * path, 
   const void * tail, const char * env);
 
+/* Wrapper around the STOP instruction. This preserves SR. */
+extern void stop_until_interrupt(void);
 
 /*
  * WORD swpw(WORD val); 
@@ -146,33 +145,6 @@ __extension__                             \
   : "cc", "memory"   /* clobbered */      \
   );                                      \
   _r;                                     \
-})
-
-
-
-/*
- * void stop2x00(void)
- *   the m68k STOP immediate instruction
- */
-
-#define stop2300()                        \
-__extension__                             \
-({__asm__ volatile                        \
-  ("stop #0x2300"                         \
-  :                  /* outputs */        \
-  :                  /* inputs  */        \
-  : "cc", "memory"   /* clobbered */      \
-  );                                      \
-})
-
-#define stop2500()                        \
-__extension__                             \
-({__asm__ volatile                        \
-  ("stop #0x2500"                         \
-  :                  /* outputs */        \
-  :                  /* inputs  */        \
-  : "cc", "memory"   /* clobbered */      \
-  );                                      \
 })
 
 

@@ -1253,10 +1253,9 @@ void vsync(void)
     a = frclock;
     while (frclock == a) {
 #if USE_STOP_INSN_TO_FREE_HOST_CPU
-        stop2300();
-#else
-        ;
+        stop_until_interrupt();
 #endif
+        /* Wait */
     }
     set_sr(old_sr);
 #endif /* CONF_WITH_SHIFTER */

@@ -200,7 +200,7 @@ static void schedule(void)
         do
         {
 #if USE_STOP_INSN_TO_FREE_HOST_CPU
-        stop2300();
+          stop_until_interrupt();
 #endif
                                                 /* poll the keyboard    */
           chkkbd();

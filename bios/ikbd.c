@@ -134,22 +134,13 @@ LONG bconin2(void)
     WORD old_sr;
     LONG value;
 
-    /* keep current value of sr before changing it using STOP */
-    old_sr = get_sr();
-
     while (!bconstat2()) {
 #if USE_STOP_INSN_TO_FREE_HOST_CPU
-        /* set sr = 0x2300 and stop the CPU until the next interrupt.
-         * This allows VBL and MFP interrupts, but no HBL interrupts.
-         * TODO - A problem could occur if the IPL mask was intentionnally 
-         * set to something higher than 3 before calling bconin. If so, 
-         * based on the value of old_sr, we should use different stop opcodes.
-         */
-        stop2300();
+        stop_until_interrupt();
 #endif
     }
     /* disable interrupts */
-    set_sr(0x2700);
+    old_sr = set_sr(0x2700);
 
     ikbdiorec.head += 4;
     if (ikbdiorec.head >= ikbdiorec.size) {

@@ -17,6 +17,7 @@
         .globl  _trap13         // call BIOS
         .globl  _trap14         // call XBIOS
         .globl  _trap1_pexec    // Reentrant Pexec call
+        .globl  _stop_until_interrupt   // Wrapper around the STOP instruction
 
 
 /*
@@ -74,3 +75,64 @@ _trap1_pexec:
 #endif
         rts
 
+#if USE_STOP_INSN_TO_FREE_HOST_CPU
+
+/* void stop_until_interrupt(void)
+ * Stop the CPU until an interrupt occurs.
+ * This may save some host CPU time on emulators (i.e. ARAnyM).
+ */
+_stop_until_interrupt:
+        move.w  sr,d0
+        move.w  d0,d1           // Backup
+        andi.w  #0x0700,d1      // Isolate IPL bits
+
+        // Convert the IPL into an offset in the stop block below
+        lsr.w   #8-3,d1         // 8 bits right, then multiply by 4
+        jmp     stop0(pc,d1.w)
+
+        // Each stop case must be exactly 8 byte long.
+        // Preserving sr is not strictly mandatory, but:
+        // - it allows preserving additional special bits (trace?)
+        // - it is a padding instruction to reach a block multiple of 2 bytes
+
+stop0:
+        stop    #0x2000
+        move.w  d0,sr
+        rts
+
+stop1:
+        stop    #0x2100
+        move.w  d0,sr
+        rts
+
+stop2:
+        stop    #0x2200
+        move.w  d0,sr
+        rts
+
+stop3:
+        stop    #0x2300
+        move.w  d0,sr
+        rts
+
+stop4:
+        stop    #0x2400
+        move.w  d0,sr
+        rts
+
+stop5:
+        stop    #0x2500
+        move.w  d0,sr
+        rts
+
+stop6:
+        stop    #0x2600
+        move.w  d0,sr
+        rts
+
+stop7:
+        stop    #0x2700
+        move.w  d0,sr
+        rts
+
+#endif /* USE_STOP_INSN_TO_FREE_HOST_CPU */

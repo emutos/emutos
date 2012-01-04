@@ -3181,3 +3181,7 @@ Start... early ages
 - bdos/fsopnclo.c: Allow '+' character in filenames. (RFB)
 - bdos/fs.h bdos/fsdir.c bdos/fsopnclo.c: Disallow invalid filename characters
   when renaming a file or folder. (RFB)
+
+2012-01-04
+- aes/gemdisp.c bios/ikbd.c bios/initinfo.c bios/screen.c include/asm.h
+  util/miscasm.S: New stop_until_interrupt() wrapper around STOP.

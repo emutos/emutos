@@ -238,12 +238,12 @@ void initinfo(void)
         long end = hz_200 + INITINFO_DURATION * 200UL;
         while(hz_200 < end) {
 #if USE_STOP_INSN_TO_FREE_HOST_CPU
-            stop2300();
+            stop_until_interrupt();
 #endif
             /* Shift key will pause */
             while((kbshift(-1) & 0x03)) {
 #if USE_STOP_INSN_TO_FREE_HOST_CPU
-                stop2300();
+                stop_until_interrupt();
 #endif
             }
 
