@@ -113,7 +113,11 @@ static void vecs_init(void)
     VEC_HBL = just_rte;         /* just return for this */
 #endif
     VEC_LEVEL3 = just_rte;      /* just return for this */
+#if CONF_WITH_SHIFTER
     VEC_VBL = int_vbl;
+#else
+    VEC_VBL = just_rte;         /* just return for this */
+#endif
     VEC_LEVEL5 = just_rte;      /* just return for this */
     VEC_LEVEL6 = just_rte;      /* just return for this */
     VEC_NMI = just_rte;         /* just return for this */
