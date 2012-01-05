@@ -99,20 +99,24 @@ static void vecs_init(void)
     init_user_vec();
 
     /* initialise some vectors we really need */
-#if CONF_WITH_SHIFTER
-    VEC_HBL = int_hbl;
-#endif
-    VEC_VBL = int_vbl;
     VEC_AES = gemtrap;
     VEC_BIOS = biostrap;
     VEC_XBIOS = xbiostrap;
     VEC_LINEA = int_linea;
     VEC_DIVNULL = just_rte;     /* just return for this */
-    VEC_LEVEL1 = just_rte;     /* just return for this */
-    VEC_LEVEL3 = just_rte;     /* just return for this */
-    VEC_LEVEL5 = just_rte;     /* just return for this */
-    VEC_LEVEL6 = just_rte;     /* just return for this */
-    VEC_NMI = just_rte;     /* just return for this */
+    
+    /* interrupt vectors */
+    VEC_LEVEL1 = just_rte;      /* just return for this */
+#if CONF_WITH_SHIFTER
+    VEC_HBL = int_hbl;
+#else
+    VEC_HBL = just_rte;         /* just return for this */
+#endif
+    VEC_LEVEL3 = just_rte;      /* just return for this */
+    VEC_VBL = int_vbl;
+    VEC_LEVEL5 = just_rte;      /* just return for this */
+    VEC_LEVEL6 = just_rte;      /* just return for this */
+    VEC_NMI = just_rte;         /* just return for this */
 
     /* Emulate some instructions unsupported by the processor. */
 #ifdef __mcoldfire__

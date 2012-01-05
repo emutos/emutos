@@ -3195,3 +3195,4 @@ Start... early ages
 - bdos/proc.c: Inherit IPL in child process. (VRI)
 - bios/bios.c bios/vectors.h vios/vectors.S: Disable IPL hacking on non-Atari
   hardware. (VRI)
+- bios/bios.c: Tidy interrupt vectors initialization. (VRI)
