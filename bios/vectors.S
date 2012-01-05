@@ -25,7 +25,9 @@
 
         .globl  _check_read_byte
         .globl  _int_vbl
+#if CONF_WITH_SHIFTER
         .globl  _int_hbl
+#endif
         .globl  _int_timerc
         .globl  _int_illegal
         .globl  _int_priv
@@ -265,6 +267,7 @@ query:
         rte
 
 
+#if CONF_WITH_SHIFTER
 
 /* 
  * Int 0x68 - HBL interrupt 
@@ -296,6 +299,7 @@ is_ipl:
 #endif
         rte
 
+#endif /* CONF_WITH_SHIFTER */
 
 
 /*

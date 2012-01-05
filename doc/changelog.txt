@@ -3193,3 +3193,5 @@ Start... early ages
 - aes/gemodosif.h aes/gemdosif.S bios/geminit.c: Removed hcli() and hsti(). They
   forced IPL0 instead of restoring the old IPL. (VRI)
 - bdos/proc.c: Inherit IPL in child process. (VRI)
+- bios/bios.c bios/vectors.h vios/vectors.S: Disable IPL hacking on non-Atari
+  hardware. (VRI)

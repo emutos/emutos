@@ -99,7 +99,9 @@ static void vecs_init(void)
     init_user_vec();
 
     /* initialise some vectors we really need */
+#if CONF_WITH_SHIFTER
     VEC_HBL = int_hbl;
+#endif
     VEC_VBL = int_vbl;
     VEC_AES = gemtrap;
     VEC_BIOS = biostrap;
@@ -210,10 +212,12 @@ static void bios_init(void)
     init_acia_vecs();   /* Init the ACIA interrupt vector and related stuff */
     boot_status |= MIDI_AVAILABLE;  /* track progress */
 
+#if CONF_WITH_MFP
     /* Now that the MFP is configured, allow MFP interrupts (we need a
      * Timer C for DMA timeouts in floppy and harddisk initialisation)
      */
     set_sr(0x2500);
+#endif
   
     blkdev_init();      /* floppy and harddisk initialisation */
 
@@ -248,7 +252,10 @@ static void bios_init(void)
     osinit();                   /* initialize BDOS */
     boot_status |= DOS_AVAILABLE;   /* track progress */
   
+#if CONF_WITH_SHIFTER
+    /* enable the VBL interrupt */
     set_sr(0x2300);
+#endif
   
 #if DBGBIOS
     kprintf("BIOS: Last test point reached ...\n");
