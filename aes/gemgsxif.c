@@ -64,6 +64,15 @@
  */
 #define memsize(wdwidth,h,nplanes)  ((LONG)(wdwidth)*(h)*(nplanes)*2)
 
+/*
+ * the following specify the maximum dimensions of a form_alert, in
+ * characters, derived by trial.  note that the actual maximum height
+ * is 78 pixels (for 8-pixel chars) and 150 pixels (for 16-pixel chars),
+ * so these are conservative numbers.
+ */
+#define MAX_ALERT_WIDTH  50     /* includes worst-case screen alignment */
+#define MAX_ALERT_HEIGHT 10
+
 GLOBAL WORD  intout[45];
 GLOBAL WORD  ptsout[12];
 GLOBAL WORD  gl_moff;                /* counting semaphore   */
@@ -82,24 +91,37 @@ static WORD  gl_graphic;
 void  g_v_opnwk(WORD *pwork_in, WORD *phandle, WS *pwork_out );
 ULONG  gsx_gbufflen(void);
 
+static LONG form_alert_bufsize(void)
+{
+    int w = MAX_ALERT_WIDTH * gl_wchar;
+    int h = MAX_ALERT_HEIGHT * gl_hchar;
 
+    if (w > gl_width)       /* e.g. max size form alert in ST low */
+        w = gl_width;
+
+    return (LONG)h * w * gl_nplanes / 8; 
+}
 
 /* this function calculates the size of the menu/alert screen buffer.
- * as in older versions of Atari TOS, it's a quarter of the screen
- * size.  this may need to be increased if screen artifacts occur
- * around alert boxes or menu items.
+ * as in older versions of Atari TOS, it's a minimum of one-quarter
+ * of the screen size.  this is increased if necessary to allow the
+ * for the maximum-sized form alert.
  */
-#define MAXSIZE_STLOW_ALERT 12480           /* determined by trial */
 ULONG gsx_mcalc()
 {
+    LONG mem;
+
     gsx_fix(&gl_tmp, 0x0L, 0, 0);           /* store screen info    */
     gl_mlen = gsx_gbufflen();
     if (gl_mlen != 0x0l)
         gl_tmp.fd_addr = GRAFMEM;             /* buffer not in sys mem */
     else
         gl_mlen = memsize(gl_tmp.fd_wdwidth,gl_tmp.fd_h,gl_tmp.fd_nplanes) / 4;
-    if (gl_mlen < MAXSIZE_STLOW_ALERT)      /* temporary kludge */
-        gl_mlen = MAXSIZE_STLOW_ALERT;
+
+    mem = form_alert_bufsize();
+    if (gl_mlen < mem)
+        gl_mlen = mem;
+
     return(gl_mlen);
 }
 
