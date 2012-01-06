@@ -3200,3 +3200,4 @@ Start... early ages
 2012-01-06
 - aes/gemlib.h: Replaced magic number for path length with #define. (RFB)
 - aes/gemgsxif.c: Optimize calculation of menu/alert buffer size. (RFB)
+- doc/todo.txt: Show that duplicate header names have been fixed. (RFB)

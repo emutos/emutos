@@ -2,8 +2,6 @@ BIOS/XBIOS
 - implement missing XBIOS calls
   (e.g. the Blitter, Falcon Videl and TT shifter video functions)
 - add support for Falcon RGB screen modes
-- merge identical headers, and put them all in the include directory
-  (in progress as of end-September 2011)
 - reduce the number of 'extern' in .c files
 - check that RAM disks work
 - misc. TODOs in floppy.c
