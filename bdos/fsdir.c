@@ -1049,7 +1049,7 @@ FCB     *dirinit(DND *dn)
 
 static char *dopath(DND *p, char *buf, int *len)
 {
-        char    temp[14];
+        char    temp[LEN_ZFNAME];
         char    *tp;
         long    tlen;
 

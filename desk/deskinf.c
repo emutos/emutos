@@ -48,7 +48,7 @@ typedef struct sfcb
         WORD            sfcb_time;
         WORD            sfcb_date;
         LONG            sfcb_size;
-        BYTE            sfcb_name[13];
+        BYTE            sfcb_name[LEN_ZFNAME];
 } SFCB;
 
 
@@ -337,7 +337,7 @@ WORD inf_file(BYTE *ppath, FNODE *pfnode)
 {
         LONG            tree;
         WORD            attr, more, nmidx;
-        BYTE            poname[13], pnname[13];
+        BYTE            poname[LEN_ZFNAME], pnname[LEN_ZFNAME];
 
         tree = G.a_trees[ADFILEIN];
 
@@ -402,7 +402,7 @@ WORD inf_folder(BYTE *ppath, FNODE *pf)
 {
         LONG            tree;
         WORD            more;
-        BYTE            *pname, fname[13];
+        BYTE            *pname, fname[LEN_ZFNAME];
 
         graf_mouse(HGLASS, 0x0L);       
 
@@ -564,7 +564,7 @@ WORD inf_pref(void)
 WORD opn_appl(BYTE *papname, BYTE *papparms, BYTE *pcmd, BYTE *ptail)
 {
         LONG            tree;
-        BYTE            poname[13];
+        BYTE            poname[LEN_ZFNAME];
 
         tree = G.a_trees[ADOPENAP];
 

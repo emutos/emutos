@@ -56,7 +56,7 @@
 static BYTE     ml_files[4], ml_dirs[4];
 static WORD     ml_dlfi, ml_dlfo, ml_dlok, ml_dlcn;
 static WORD     ml_dlpr, ml_havebox;
-static BYTE     ml_fsrc[13], ml_fdst[13], ml_fstr[13], ml_ftmp[13];
+static BYTE     ml_fsrc[LEN_ZFNAME], ml_fdst[LEN_ZFNAME], ml_fstr[LEN_ZFNAME], ml_ftmp[LEN_ZFNAME];
 
 
 

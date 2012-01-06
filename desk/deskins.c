@@ -153,8 +153,8 @@ WORD ins_disk(ANODE *pa)
 {                              
         LONG            tree;
         WORD            change, icon, flop, hard, fld;
-        BYTE            cletter[2], clabel[13];
-        BYTE            nletter[2], nlabel[13];
+        BYTE            cletter[2], clabel[LEN_ZFNAME];
+        BYTE            nletter[2], nlabel[LEN_ZFNAME];
         ANODE           *newpa;
 
         tree = G.a_trees[ADINSDIS];

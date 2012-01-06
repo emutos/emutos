@@ -118,7 +118,7 @@ WORD fun_mkdir(WNODE *pw_node)
         PNODE           *pp_node;
         LONG            tree;
         WORD            more, cont, i;
-        BYTE            fnew_name[12], unew_name[13], *ptmp;
+        BYTE            fnew_name[LEN_ZFNAME], unew_name[LEN_ZFNAME], *ptmp;
 
         tree = G.a_trees[ADMKDBOX];
         pp_node = pw_node->w_path;

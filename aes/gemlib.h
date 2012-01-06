@@ -419,7 +419,7 @@ typedef struct sh_struct
         WORD    sh_isacc;                       /* if TRUE then accessory*/
         WORD    sh_state;                       /* bit vector of states */
 #endif
-        BYTE    sh_desk[14];
+        BYTE    sh_desk[LEN_ZFNAME];
         BYTE    sh_cdir[LEN_ZPATH];
 } SHELL;
 
