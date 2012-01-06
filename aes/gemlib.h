@@ -420,7 +420,7 @@ typedef struct sh_struct
         WORD    sh_state;                       /* bit vector of states */
 #endif
         BYTE    sh_desk[14];
-        BYTE    sh_cdir[67];
+        BYTE    sh_cdir[LEN_ZPATH];
 } SHELL;
 
 

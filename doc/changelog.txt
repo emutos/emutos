@@ -3196,3 +3196,6 @@ Start... early ages
 - bios/bios.c bios/vectors.h vios/vectors.S: Disable IPL hacking on non-Atari
   hardware. (VRI)
 - bios/bios.c: Tidy interrupt vectors initialization. (VRI)
+
+2012-01-06
+- aes/gemlib.h: Replaced magic number for path length with #define. (RFB)
