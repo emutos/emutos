@@ -3203,3 +3203,6 @@ Start... early ages
 - doc/todo.txt: Show that duplicate header names have been fixed. (RFB)
 - aes/gemlib.h bdos/fsdir.c desk/deskdir.c desk/deskfun.c desk/deskinf.c
   desk/deskins.c: Replaced magic number for filename length with #define. (RFB)
+
+2012-01-07
+- aes/geminit.c: Removed unused code in 'load accessories' routines. (RFB)

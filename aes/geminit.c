@@ -314,12 +314,10 @@ static void fs_start(void)
 /*
 *       Routine to load program file pointed at by pfilespec, then
 *       create new process context for it.  This uses the load overlay
-*       function of DOS.  The room for accessories variable will be
-*       decremented by the size of the accessory image.  If the
-*       accessory is too big to fit it will be not be loaded.
+*       function of DOS.
 */
 
-static void sndcli(BYTE *pfilespec, UWORD *paccroom)   /* paccroom in paragraphs*/
+static void sndcli(BYTE *pfilespec)
 {
         register WORD   handle;
         WORD            err_ret;
@@ -333,7 +331,7 @@ static void sndcli(BYTE *pfilespec, UWORD *paccroom)   /* paccroom in paragraphs
         handle = dos_open( (BYTE *)ad_scmd, ROPEN );
         if (!DOS_ERR)
         {
-          err_ret = pgmld(handle, &D.s_cmd[0], (LONG **)(void*)&ldaddr /*, paccroom*/);
+          err_ret = pgmld(handle, &D.s_cmd[0], (LONG **)(void*)&ldaddr);
           dos_close(handle);
                                                 /* create process to    */
                                                 /*   execute it         */
@@ -345,29 +343,14 @@ static void sndcli(BYTE *pfilespec, UWORD *paccroom)   /* paccroom in paragraphs
 
 
 /*
-*       Routine to load in desk accessory's.  Files by the name of *.ACC
-*       will be loaded, if there is sufficient room for them in the system.
-*       The number that this gives is the room available for desk accessories.
-*
-*       0x20000         128 kb for app
-*       0x01000           4 kb for virt wk station
-*       0x00800           2 kb for file selector
-*       0x02000           8 kb for fudge factor
-*       -------
-*       0x23800
-*
-*       FOR GEM2.0 max is 192kb
-*       0x33800
+*       Routine to load in desk accessories.  Files by the name of *.ACC
+*       will be loaded.
 */
 static void ldaccs(void)
 {
         register WORD   i;
         WORD            ret;
-        ULONG           laccroom;
-        UWORD           accroom;
 
-        laccroom = dos_avail() - 0x00033800L - gsx_mcalc();
-        accroom = (laccroom + 0x0000000fL) >> 4;
         strcpy(&D.g_dir[0], rs_str(STACC));
         dos_sdta(ad_dta);
 
@@ -376,12 +359,12 @@ static void ldaccs(void)
           return;
 
         ret = TRUE;
-        for(i=0; (i<NUM_ACCS) && (accroom > 0) && (ret); i++)
+        for(i=0; (i<NUM_ACCS) && (ret); i++)
         {
 
           ret = (i==0) ? dos_sfirst(ad_path, F_RDONLY) : dos_snext();
           if (ret)
-            sndcli(&gl_dta[30], &accroom);
+            sndcli(&gl_dta[30]);
         }
 }
 #endif
