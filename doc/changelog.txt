@@ -3206,3 +3206,6 @@ Start... early ages
 
 2012-01-07
 - aes/geminit.c: Removed unused code in 'load accessories' routines. (RFB)
+
+2012-01-09
+- bios/vectors.h: Define the exception vectors as volatile for safety. (VRI)
