@@ -3209,3 +3209,4 @@ Start... early ages
 
 2012-01-09
 - bios/vectors.h: Define the exception vectors as volatile for safety. (VRI)
+- bios/bios.c bios/vectors.h: Clean up exception vector names. (VRI)

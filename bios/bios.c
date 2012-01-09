@@ -120,7 +120,7 @@ static void vecs_init(void)
 #endif
     VEC_LEVEL5 = just_rte;      /* just return for this */
     VEC_LEVEL6 = just_rte;      /* just return for this */
-    VEC_NMI = just_rte;         /* just return for this */
+    VEC_LEVEL7 = just_rte;      /* just return for this */
 
     /* Emulate some instructions unsupported by the processor. */
 #ifdef __mcoldfire__
