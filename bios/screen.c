@@ -580,11 +580,94 @@ static const VMODE_ENTRY *lookup_videl_mode(WORD mode)
 }
 
 
+#ifdef MACHINE_FIREBEE
+
+/* FIXME: To be removed */
+
+static void set_videl_vga_old(int mode)
+{
+    volatile char *videlregs = (char *)0xffff8200;
+    int hdb_40[5] = { 0x73, 0x0a, 0x8a, 0x9a, 0xac };
+    int hdb_80[5] = { 0x73, 0x0e, 0xa3, 0xab, 0xac };
+    int hde_40[5] = { 0x50, 0x09, 0x6b, 0x7b, 0x91 };
+    int hde_80[5] = { 0x50, 0x0d, 0x7c, 0x84, 0x91 };
+    int lwidth[5] = { 40, 80, 160, 320, 640 };
+    int fsm[5] = { 0x400, 0, 0, 16, 256 };
+    int vmd[5] = { 8, 4, 8, 8, 4 };
+    int idx;
+
+    idx = mode & 0x7;
+
+    videlregs[0x0a] = 2;
+    videlregs[0x82] = 0;
+    videlregs[0x83] = 198;
+    videlregs[0x84] = 0;
+    videlregs[0x85] = 141;
+    videlregs[0x86] = 0;
+    videlregs[0x87] = 21;
+    videlregs[0x88] = 2;
+    if (mode & 8)   /* 40/80 columns */
+        videlregs[0x89] = hdb_80[idx];
+    else
+        videlregs[0x89] = hdb_40[idx];
+    videlregs[0x8a] = 0;
+    if (mode & 8)   /* 40/80 columns */
+        videlregs[0x8b] = hde_80[idx];
+    else
+        videlregs[0x8b] = hde_40[idx];
+    videlregs[0x8c] = 0;
+    videlregs[0x8d] = 150;
+    videlregs[0xa2] = 4;
+    videlregs[0xa3] = 25;
+    videlregs[0xa4] = 3;
+    videlregs[0xa5] = 255;
+    videlregs[0xa6] = 0;
+    videlregs[0xa7] = 63;
+    videlregs[0xa8] = 0;
+    videlregs[0xa9] = 63;
+    videlregs[0xaa] = 3;
+    videlregs[0xab] = 255;
+    videlregs[0xac] = 4;
+    videlregs[0xad] = 21;
+    videlregs[0x0e] = 0;
+    videlregs[0x0f] = 0;
+    if (mode & 8)   /* 40/80 columns */
+        *(UWORD *)&videlregs[0x10] = lwidth[idx];
+    else
+        *(UWORD *)&videlregs[0x10] = lwidth[idx] / 2;
+    if (mode & 0x100)          /* Doublescan */
+        *(UWORD *)&videlregs[0xc2] = vmd[idx] + 1;
+    else
+        *(UWORD *)&videlregs[0xc2] = vmd[idx];
+    videlregs[0xc0] = 1;
+    videlregs[0xc1] = 134;
+    videlregs[0x66] = 0;
+    videlregs[0x67] = 0;
+
+    videlregs[0x66] = fsm[idx] >> 8;
+    videlregs[0x67] = fsm[idx] & 0xff;
+
+    /* special support for STE 4 color mode */
+    if ((mode & 7) == 1)
+        videlregs[0x60] = 1;
+}
+
+#endif /* MACHINE_FIREBEE */
+
+
 /*
  * this routine can set VIDEL to 1,2,4 or 8 bitplanes mode on VGA
  */
 static int set_videl_vga(WORD mode)
 {
+#ifdef MACHINE_FIREBEE
+    /* FIXME: The FireBee's VIDEL is currently innacurate.
+     * It was debugged using the old EmuTOS implementation, which was wrong :-(
+     * So stick to the old wrong implementation until the FireBee is fixed.
+     */
+    set_videl_vga_old(mode);
+    return 0;
+#else
     volatile char *videlregs = (char *)0xffff8200;
 #define videlword(n) (*(volatile UWORD *)(videlregs+(n)))
     const VMODE_ENTRY *p;
@@ -643,6 +726,7 @@ static int set_videl_vga(WORD mode)
     videlword(0x10) = p->width;         /* scanline width */
 
     return 0;
+#endif /* MACHINE_FIREBEE */
 }
 
 
