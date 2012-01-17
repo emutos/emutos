@@ -335,20 +335,41 @@ _int_vbl:
         jsr     _blink                  // blink cursor
 
 #if CONF_WITH_SHIFTER
-        // load new color palette
+// the contents of colorptr indicate the palette processing required; since
+// the source address must be on a word boundary, we use bit 0 as a flag:
+//  contents                 meaning
+//  --------                 -------
+//     0                     do nothing
+//  address                  load ST(e) palette registers from address
+//  address with flag set    load 16 Falcon palette registers from address
+//     0 with flag set       load 256 Falcon palette registers from
+//                             _falcon_shadow_palette
         move.l  _colorptr,d0
         beq     vbl_no_palette
+        // load new color palette
         clr.l   _colorptr
-        move.l  d0,a0
-        lea     0xffff8240,a1
-        moveq   #15,d0
+        lea     0xffff8240,a1               // ST(e) hardware palette registers
+        moveq   #7,d1                       // count/2 - 1 (we move longwords)
+        bclr    #0,d0                       // test & clear Falcon indicator
+#if CONF_WITH_VIDEL
+        beq.s   docopy                      // wasn't set, so update STe regs
+        // load Falcon color palette
+        lea     0xffff9800,a1               // Falcon palette registers
+        moveq   #15,d1                      // assume 16 only
+        tst.l   d0                          // source address specified?
+        bne.s   docopy                      // yes, go update 16
+        move.l  #_falcon_shadow_palette,d0  // else set source address
+        move.l  #255,d1                     //  & prepare to update 256
+docopy:
+#endif
+        move.l  d0,a0                       // a0 -> source
 vbl_palette_loop:
-        move.w  (a0)+,(a1)+
+        move.l  (a0)+,(a1)+
 #ifdef __mcoldfire__
-        subq.l  #1,d0
+        subq.l  #1,d1
         bpl.s   vbl_palette_loop
 #else
-        dbra    d0,vbl_palette_loop
+        dbra    d1,vbl_palette_loop
 #endif
 vbl_no_palette: 
 

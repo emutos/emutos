@@ -129,7 +129,8 @@ static const LONG videl_dflt_palette[] = {
     0x44210000, 0x44110000, FRGB_WHITE, FRGB_BLACK
 };
 
-static LONG falcon_shadow_palette[256];   /* real Falcon does this */
+GLOBAL LONG falcon_shadow_palette[256];   /* real Falcon does this */
+static WORD ste_shadow_palette[16];
 #endif
 
 #if CONF_WITH_TT_SHIFTER
@@ -793,14 +794,58 @@ LONG vgetsize(WORD mode)
 }
 
 /*
+ * convert from Falcon palette format to STe palette format
+ */
+#define falc2ste(a) ((((a)>>1)&0x08)|(((a)>>5)&0x07))
+static void convert2ste(WORD *ste,LONG *falcon)
+{
+    union {
+        LONG l;
+        UBYTE b[4];
+    } u;
+    int i;
+
+    for (i = 0; i < 16; i++) {
+        u.l = *falcon++;
+        *ste++ = (falc2ste(u.b[0])<<8) | (falc2ste(u.b[1])<<4) | falc2ste(u.b[3]);
+    }
+}
+
+/*
+ * determine whether to update STe or Falcon h/w palette registers
+ * returns TRUE if we need to update the STE h/w palette
+ */
+static int use_ste_palette(WORD videomode)
+{
+    if ((videomode&VIDEL_BPPMASK) == VIDEL_2BPP)    /* always for 4-colour modes */
+        return TRUE;
+
+    if ((videomode&(VIDEL_COMPAT|VIDEL_VERTICAL)) == (VIDEL_COMPAT|VIDEL_VERTICAL))
+        if ((videomode&VIDEL_BPPMASK) == VIDEL_4BPP)
+            return TRUE;                            /* and for ST low */
+
+    return FALSE;
+}
+
+/*
  * set palette registers
+ * 
+ * note that the actual update of the hardware registers is done by the
+ * VBL interrupt handler, according to the setting of 'colorptr'.  since
+ * the address in colorptr must be even, we use bit 0 as a flag.
+ * 
+ * colorptr contents   VBL interrupt handler action
+ * -----------------   ----------------------------
+ *       0             do nothing
+ * address             load STe palette regs from address
+ * address | 0x01      load first 16 Falcon palette regs from address
+ *       0 | 0x01      load 256 Falcon palette regs from falcon_shadow_palette[]
  */
 void vsetrgb(WORD index,WORD count,LONG *rgb)
 {
-    volatile LONG *colour;
-    LONG *shadow;
+    LONG *shadow, *source;
     union {
-		LONG l;
+        LONG l;
         UBYTE b[4];
     } u;
     WORD limit;
@@ -815,15 +860,33 @@ void vsetrgb(WORD index,WORD count,LONG *rgb)
     if ((index+count) > limit)
         return;
 
-    colour = (LONG *)FALCON_PALETTE_REGS + index;
+    /*
+     * we always update the Falcon shadow palette, since that's
+     * what we'll return for VgetRGB()
+     */
     shadow = falcon_shadow_palette + index;
+    source = rgb;
     while(count--) {
-        u.l = *rgb++;
-        *shadow++ = u.l;
+        u.l = *source++;
         u.b[0] = u.b[1];                 /* shift R & G */
         u.b[1] = u.b[2];
-        *colour++ = u.l & 0xfcfc00fcL;   /* eliminate unused bits */
+        u.b[2] = 0x00;
+        *shadow++ = u.l;
     }
+
+    /*
+     * for ST low or 4-colour modes, we need to convert the
+     * Falcon shadow registers to STe palette register format, and
+     * request the VBL interrupt handler to update the STe palette
+     * registers rather than the Falcon registers
+     */
+    if (use_ste_palette(vsetmode(-1))) {
+        convert2ste(ste_shadow_palette,falcon_shadow_palette);
+        colorptr = ste_shadow_palette;
+        return;
+    }
+
+    colorptr = (limit==256) ? (WORD *)0x01L : (WORD *)((LONG)falcon_shadow_palette|0x01L);
 }
 
 /*
@@ -832,6 +895,10 @@ void vsetrgb(WORD index,WORD count,LONG *rgb)
 void vgetrgb(WORD index,WORD count,LONG *rgb)
 {
     LONG *shadow;
+    union {
+        LONG l;
+        UBYTE b[4];
+    } u;
     WORD limit;
 
     if (!has_videl)
@@ -845,8 +912,13 @@ void vgetrgb(WORD index,WORD count,LONG *rgb)
         return;
 
     shadow = falcon_shadow_palette + index;
-    while(count--)
-        *rgb++ = *shadow++;      /* just what was set */
+    while(count--) {
+        u.l = *shadow++;
+        u.b[2] = u.b[1];        /* shift R & G right*/
+        u.b[1] = u.b[0];
+        u.b[0] = 0x00;
+        *rgb++ = u.l;
+    }
 }
 
 #endif /* CONF_WITH_VIDEL */
@@ -996,18 +1068,31 @@ void screen_init(void)
 
 #if CONF_WITH_VIDEL
     if (has_videl) {
-        for(i = 0; i < 256; i++) {
-            fcol_regs[i] = videl_dflt_palette[i];
+        /* first, set up Falcon shadow palette and real registers */
+        for (i = 0; i < 256; i++) {
+            falcon_shadow_palette[i] = videl_dflt_palette[i];
         }
         switch(boot_resolution&VIDEL_BPPMASK) {
         case VIDEL_1BPP:        /* 2-colour mode */
-            fcol_regs[1] = fcol_regs[15];
-            col_regs[1] = col_regs[15];
+            falcon_shadow_palette[1] = falcon_shadow_palette[15];
             break;
         case VIDEL_2BPP:        /* 4-colour mode */
-            fcol_regs[3] = fcol_regs[15];
-            col_regs[3] = col_regs[15];
+            falcon_shadow_palette[3] = falcon_shadow_palette[15];
             break;
+        }
+        for (i = 0; i < 256; i++) {
+            fcol_regs[i] = falcon_shadow_palette[i];
+        }
+
+        /*
+         * then, for ST-compatible and 4-colour modes, set up the
+         * STe shadow & real palette registers
+         */
+        if (use_ste_palette(boot_resolution)) {
+            convert2ste(ste_shadow_palette,falcon_shadow_palette);
+            for (i = 0; i < 16; i++) {
+                col_regs[i] = ste_shadow_palette[i];
+            }
         }
     }
     else

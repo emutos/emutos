@@ -3213,3 +3213,7 @@ Start... early ages
 
 2012-01-12
 - bios/screen.c: Workaround to get some working video mode on the FireBee. (VRI)
+
+2012-01-17
+- bios/screen.c bios/vectors.S: Fix VsetRGB() to update the STe palette
+  where appropriate, and to use the VBL handler to update palettes. (RFB)
