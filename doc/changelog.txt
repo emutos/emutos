@@ -3230,3 +3230,5 @@ Start... early ages
 2012-01-19
 - include/compat.h aes/gemmnlib.c: Increased allowed number of desk
   accessories from 3 to 6. (RFB)
+- aes/gemsuper.c aes/gemsuper.h: Removed gl_mnpds[] (never initialised) and
+  fixed associated code. (RFB)

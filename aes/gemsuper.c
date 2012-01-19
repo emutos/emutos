@@ -60,7 +60,6 @@
 
 GLOBAL WORD     gl_bvdisk;
 GLOBAL WORD     gl_bvhard;
-GLOBAL WORD     gl_mnpds[NUM_PDS];
 GLOBAL WORD     gl_mnclick;
 
 static WORD     dspcnt;
@@ -200,19 +199,13 @@ static UWORD crysbind(WORD opcode, LONG pglobal, WORD int_in[], WORD int_out[], 
                 break;
           case MENU_TEXT:
                 tree = MM_ITREE;
-                if (LHIWD(tree))
-                  strcpy((char *)LLGET(OB_SPEC(ITEM_NUM)), 
+                strcpy((char *)LLGET(OB_SPEC(ITEM_NUM)), 
                          (char *)MM_PTEXT);   
-                else
-                  strcpy((char *)desk_acc[ gl_mnpds[ LLOWD(tree) ] ], 
-                         (char *)MM_PTEXT);
                 break;
           case MENU_REGISTER:
                 ret = mn_register(MM_PID, MM_PSTR);
                 break;
           case MENU_UNREGISTER:
-                if (MM_MID == -1) 
-                  MM_MID = gl_mnpds[rlr->p_pid];
                 mn_unregister( MM_MID );
                 break;
                                 /* Object Manager                       */
