@@ -38,7 +38,6 @@
 #define DEBUG 0
 
 
-#define MULTIAPP 0
 #define SINGLAPP 1
 
 

@@ -18,24 +18,13 @@
 
 
                                 /* leftovers from old deskdefn.h        */
-
-#if MULTIAPP
-#define NUM_ADTREES 16
-#else
 #define NUM_ADTREES 14
-#endif
 
 
 #ifndef ARROW
 #define ARROW 0x0
 #endif
 #define HRGLASS 0x2
-
-
-#if MULTIAPP
-#define DESKPID 0
-#define GEMPID 1
-#endif
 
 
 #define MAX_OBS 60

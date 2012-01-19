@@ -3225,3 +3225,4 @@ Start... early ages
   desk/deskdir.c desk/deskins.c desk/deskmain.c desk/deskpro.c desk/desksupp.c
   desk/gembind.h include/compat.h: Removed MULTIAPP #define and code dependent
   on it. (RFB)
+- desk/deskbind.h include/compat.h: Finished removal of MULTIAPP. (RFB)
