@@ -56,9 +56,7 @@ GLOBAL BYTE     * const desk_str[NUM_DESKACC] =
     desk_str_space[2],
     desk_str_space[3],
     desk_str_space[4],
-    desk_str_space[5],
-    desk_str_space[6],
-    desk_str_space[7],
+    desk_str_space[5]
 };
 
 GLOBAL WORD     gl_dacnt;

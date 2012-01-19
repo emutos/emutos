@@ -3226,3 +3226,7 @@ Start... early ages
   desk/gembind.h include/compat.h: Removed MULTIAPP #define and code dependent
   on it. (RFB)
 - desk/deskbind.h include/compat.h: Finished removal of MULTIAPP. (RFB)
+
+2012-01-19
+- include/compat.h aes/gemmnlib.c: Increased allowed number of desk
+  accessories from 3 to 6. (RFB)

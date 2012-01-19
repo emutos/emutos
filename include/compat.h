@@ -42,15 +42,14 @@
 
 
 #if SINGLAPP
-#define NUM_WIN 8               /* 8 for main app and 3 desk accs       */
-
-#define NUM_ACCS 3              /* 3 for number of desk accs    */
-
-#define NUM_DESKACC 9           /* at least 9 slots for         */
-                                /*   3 desk accessories         */
-                                /* each desk acc can take 3 slots*/
-                                /* requires new string array    */
-                                /*   in gemmnlib.c if num != 9  */
+#define NUM_WIN 8               /* 8 for main app and desk accs       */
+ 
+#define NUM_ACCS 6              /* maximum number of desk accessory   */
+                                /* _files_ (.ACC) that will be loaded */
+ 
+#define NUM_DESKACC 6           /* maximum number of desk accessory   */
+                                /* _slots_ available (one slot per    */
+                                /* mn_register() call)                */
 #endif
 
 
