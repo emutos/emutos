@@ -48,17 +48,6 @@ GLOBAL LONG     desk_acc[NUM_DESKACC];
 GLOBAL PD       *desk_ppd[NUM_DESKACC];
 GLOBAL LONG     menu_tree[NUM_PDS];
 
-static BYTE     desk_str_space[NUM_DESKACC][22];
-GLOBAL BYTE     * const desk_str[NUM_DESKACC] = 
-{
-    desk_str_space[0],
-    desk_str_space[1],
-    desk_str_space[2],
-    desk_str_space[3],
-    desk_str_space[4],
-    desk_str_space[5]
-};
-
 GLOBAL WORD     gl_dacnt;
 GLOBAL WORD     gl_dabox;
 GLOBAL LONG     gl_datree;
@@ -516,8 +505,6 @@ void mn_clsda()
 WORD mn_register(WORD pid, LONG pstr)
 {
         WORD            openda;
-        WORD            len;
-        BYTE            *ptmp;
 
                                                 /* add desk acc. if room*/
         if ( (pid >= 0) &&
@@ -528,18 +515,7 @@ WORD mn_register(WORD pid, LONG pstr)
           while( desk_acc[openda] )
             openda++;
           desk_ppd[openda] = rlr;
-          desk_acc[openda] = ADDR(desk_str[openda]);
-
-#if SINGLAPP
-          len = strlencpy((char *) desk_acc[openda], (char *) pstr);
-#endif
-          ptmp = desk_str[openda] + len + 1;
-          while( *ptmp == ' ' )
-          {
-            *ptmp = NULL;
-            ptmp--;
-          } 
-          strcat(desk_str[openda], " ");
+          desk_acc[openda] = pstr;  /* save pointer, like Atari TOS */
 
           menu_fixup(&rlr->p_name[0]);
           return(openda);
@@ -554,13 +530,12 @@ WORD mn_register(WORD pid, LONG pstr)
 */
 void mn_unregister(WORD da_id)
 {
-        WORD i, j;
+        WORD i;
 
         for (i=da_id; i<gl_dacnt-1; i++)
         { 
-          for (j=0; j<22; j++)
-            *(desk_str[i]+j) = *(desk_str[i+1]+j);
           desk_ppd[i] = desk_ppd[i+1];
+          desk_acc[i] = desk_acc[i+1];
         }
         gl_dacnt--;
         desk_ppd[gl_dacnt] = (PD *)0x0;
