@@ -65,38 +65,10 @@ WORD pro_chdir(WORD drv, BYTE *ppath)
 static WORD pro_exec(WORD isgraf, WORD isover, LONG pcmd, LONG ptail)
 {
         WORD            ret;
-#if MULTIAPP
-        WORD            chnum;
-        LONG            begaddr, csize;
 
-        if (isover != 3)
-#endif
         graf_mouse(HGLASS, 0x0L);
 
-#if MULTIAPP
-        if ((isover == -1) || (isover == 2) || (isover == 3))
-        {
-          if (isover == 2)                      /* full step    */
-            pro_chcalc((LONG)-1, &begaddr, &csize);
-          else
-            pro_chcalc((LONG)pr_kbytes << 10, &begaddr, &csize);
-
-          ret = proc_create(begaddr, csize, 1, isgraf, &chnum);
-          if (!ret)
-          {
-            fun_alert(1,STNOROOM,NULLPTR);
-            return(FALSE);
-          }
-          if (isover == 2)
-            gl_fmemflg |= (1 << chnum);
-
-          ret = proc_run(chnum, isgraf, isover, pcmd, ptail);
-          if (isover==3)
-            ret = 0;
-        }
-        else
-#endif
-          ret = shel_write(TRUE, isgraf, isover, pcmd, ptail);
+        ret = shel_write(TRUE, isgraf, isover, pcmd, ptail);
         if (!ret)
           graf_mouse(ARROW, 0x0L);
         return( ret );
@@ -109,20 +81,12 @@ WORD pro_run(WORD isgraf, WORD isover, WORD wh, WORD curr)
 
         G.g_tail[0] = len = strlen(&G.g_tail[1]);
         G.g_tail[len+1] = 0x0D;
-#if MULTIAPP
-        if (isover != 3)                /* keep icon SELECTED during FORMAT */
-          do_wopen(FALSE, wh, curr, G.g_xdesk, G.g_ydesk, G.g_wdesk, G.g_hdesk);
-#endif
         ret = pro_exec(isgraf, isover, G.a_cmd, G.a_tail);
         if (isover == -1)
           ret = FALSE;
         else
         {
-#if MULTIAPP
-          if (isover == 3)                      /* for FORMAT           */
-#else
           if (wh != -1)
-#endif
             do_wopen(FALSE, wh, curr, G.g_xdesk, G.g_ydesk,
                      G.g_wdesk, G.g_hdesk);
         } /* else */

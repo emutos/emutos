@@ -110,21 +110,6 @@ ANODE
         WORD            a_yspot;                /* desired spot on desk */
 };
 
-#if MULTIAPP
-
-#define a_memreq        a_xspot
-#define DEFMEMREQ       256
-
-#define ACCNODE struct acc_info
-ACCNODE
-{
-/*      WORD    acc_chan;       */
-        WORD    acc_swap;
-        BYTE    acc_name[13];
-};
-
-#endif
-
 
 #define WSAVE   struct window_save
 WSAVE

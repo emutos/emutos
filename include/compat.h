@@ -55,20 +55,6 @@
 #endif
 
 
-#if MULTIAPP
-#define NUM_WIN 12              /* 12 for 11 process entries            */
-
-#define NUM_ACCS 10             /* 10 for multi-process version */
-
-#define NUM_DESKACC 17          /* at least 17 slots for        */
-                                /*   3 desk accessories and     */
-                                /*   11 process entries         */
-                                /* each desk acc can take 3 slots*/
-                                /* requires new string array    */
-                                /*   in gemmnlib.c if num != 17 */
-#endif
-
-
                                                 /* Use memcpy to copy bytes: */
 #define LWCOPY(dest,src,len) memcpy((void *)(dest), (void*)(src), (len)*2)
                                                 /* Use memcpy to copy bytes: */

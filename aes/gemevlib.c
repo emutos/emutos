@@ -40,12 +40,6 @@ WORD     gl_dclick;                      /* # of ticks to wait   */
                                                 /*   click will occur   */
 WORD     gl_ticktime;
 
-#if MULTIAPP
-extern SHELL    sh[];
-#endif
-
-
-
 
 /*
 *       Stuff the return array with the mouse x, y, button, and keyboard
@@ -137,21 +131,7 @@ WORD ev_multi(WORD flags, MOBLK *pmo1, MOBLK *pmo2, LONG tmcount,
         register EVSPEC which;
         register WORD   what;
         register CQUEUE *pc;
-#if MULTIAPP
-        WORD            evbuff[8];
-        WORD            pid;
-        SHELL           *psh;
-        LONG            ljunk;
 
-        pid = rlr->p_pid;
-        psh = &sh[pid];
-        if ( psh->sh_state & SHRINK )           /* shrink accessory     */
-        {
-          if (pr_shrink(pid, TRUE, &ljunk, &ljunk))
-            ap_exit(TRUE); /* if no swap space terminate acc */ 
-          psh->sh_state &= ~SHRINK;
-        }
-#endif
                                                 /* say nothing has      */
                                                 /*   happened yet       */
         what = 0x0;
@@ -215,9 +195,6 @@ WORD ev_multi(WORD flags, MOBLK *pmo1, MOBLK *pmo2, LONG tmcount,
         {
           if ( rlr->p_qindex > 0 )
           {
-#if MULTIAPP
-            ap_rdwr(MU_MESAG, rlr, 16, ADDR(&evbuff[0]) );
-#endif
 #if SINGLAPP
             ap_rdwr(MU_MESAG, rlr, 16, mebuff);
 #endif
@@ -246,9 +223,6 @@ WORD ev_multi(WORD flags, MOBLK *pmo1, MOBLK *pmo2, LONG tmcount,
           {
             m.qpb_ppd = rlr;
             m.qpb_cnt = 16;
-#if MULTIAPP
-            m.qpb_buf = ADDR(&evbuff[0]);
-#endif
 #if SINGLAPP
             m.qpb_buf = mebuff;
 #endif
@@ -284,12 +258,6 @@ WORD ev_multi(WORD flags, MOBLK *pmo1, MOBLK *pmo2, LONG tmcount,
           if (which & MU_TIMER)
             apret(MU_TIMER);
         }
-#if MULTIAPP
-        if ( (flags & MU_MESAG) && (what & MU_MESAG) )
-        {
-          LBCOPY(mebuff, ADDR(&evbuff[0]), 16);
-        }
-#endif
                                                   /* return what happened*/
         return( what );
 }
@@ -307,18 +275,4 @@ WORD ev_dclick(WORD rate, WORD setit)
         }
         return( gl_dcindex );
 }
-
-#if MULTIAPP
-        VOID
-ev_mesag(type, ppd, mebuff)
-        WORD            type;
-        PD              *ppd;
-        LONG            mebuff;
-{
-        WORD            evbuff[8];
-
-        ap_rdwr(type, ppd, 16, ADDR(&evbuff[0]) );
-        LBCOPY(mebuff, ADDR(&evbuff[0]), 16);
-}
-#endif
 

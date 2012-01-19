@@ -452,25 +452,6 @@ static void insa_stypes(LONG tree, BYTE *pdata)
 }
 
 
-#if MULTIAPP
-
-static WORD ins_latoi(LONG st_ad)
-{
-        WORD    retval;
-        BYTE    ch;
-
-        retval = 0;
-        while ((ch = LBGET(st_ad)) != '\0')
-        {
-          retval = retval*10 + ch - '0';
-          st_ad += 1;
-        }
-        return(retval);
-}
-
-#endif
-
-
 
 /************************************************************************/
 /* i n s _ a p p                                                        */
@@ -485,16 +466,9 @@ WORD ins_app(BYTE *pfname, ANODE *pa)
         WORD            oflag, nflag;
         WORD            change, field;
         WORD            uninstalled, h;
-#if MULTIAPP
-        BYTE            memszstr[4];
-        WORD            omemsz, nmemsz;
-#endif
-
 
         tree = G.a_trees[ADINSAPP];
-#if MULTIAPP
-        LWSET(OB_NEXT(APMEMBOX),APMEMSZ);
-#endif
+
         h = LWGET(OB_HEIGHT(APSCRLBA));
         LWSET(OB_HEIGHT(APFUPARO), gl_hbox + 2);
         LWSET(OB_Y(APFSVSLI), gl_hbox + 2);
@@ -527,19 +501,9 @@ WORD ins_app(BYTE *pfname, ANODE *pa)
 
         oicon = pa->a_aicon - IA_GENERIC;
 
-#if MULTIAPP
-        omemsz = pa->a_memreq;
-        sprintf(&memszstr[0], "%d", omemsz);
-        inf_sset(tree, APMEMSZ, &memszstr[0]);
-#endif
-
         insa_elev(tree, oicon, gl_numics);
         nicon = insa_dial(tree, oicon, gl_numics);
         change = FALSE;
-
-#if MULTIAPP
-        nmemsz = ins_latoi(LLGET(LLGET(OB_SPEC(APMEMSZ))));
-#endif
 
                                                 /* set memory flag      */
         field = inf_gindex(tree, APYMEM, 2);
@@ -598,9 +562,6 @@ WORD ins_app(BYTE *pfname, ANODE *pa)
                                                 /* see if icon changed  */
                                                 /*   or flags changed   */
           if ( (uninstalled) ||
-#if MULTIAPP
-               (omemsz != nmemsz) ||
-#endif
                (oicon != nicon) ||
                (oflag != nflag) )
           {
@@ -608,9 +569,6 @@ WORD ins_app(BYTE *pfname, ANODE *pa)
             pa->a_aicon = nicon + IA_GENERIC;
             pa->a_dicon = nicon + ID_GENERIC;
             pa->a_flags = nflag;
-#if MULTIAPP
-            pa->a_memreq = nmemsz;
-#endif
           }
         }
         else if ( field == 1 )

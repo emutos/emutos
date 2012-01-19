@@ -55,10 +55,6 @@
 GLOBAL WORD     gl_numics;
 GLOBAL WORD     gl_stdrv;
 
-#if MULTIAPP
-GLOBAL ACCNODE  gl_caccs[3];
-#endif
-
 static BYTE     gl_afile[SIZE_AFILE];
 static BYTE     gl_buffer[SIZE_BUFF];
 
@@ -245,50 +241,6 @@ static BYTE *save_2(BYTE *pcurr, UWORD wd)
 
 
 
-#if MULTIAPP
-/*
-*       Scan off and convert the next four hex digits and return with
-*       pcurr pointing one space past the end of the four hex digits.
-*       Start of field is marked with an 'R'.  If no field, set it to
-*       default memory size -- DEFMEMREQ.
-*/
-
-static BYTE *scan_memsz(BYTE *pcurr, UWORD *pwd)
-{
-        UWORD           temp1, temp2;
-        
-        temp1 = 0x0;
-        while (*pcurr == ' ')
-          pcurr++;
-        if (*pcurr == 'R')
-        {
-          pcurr++;                              
-          pcurr = scan_2(pcurr, &temp1);                /* hi byte      */
-          pcurr = scan_2(pcurr, &temp2);                /* lo byte      */
-          temp1 = ((temp1 << 8) & 0xff00) | temp2;
-        }
-        if (temp1 == 0)
-          temp1 = DEFMEMREQ;
-        *pwd = temp1;
-        return( pcurr );
-}
-
-/*
-*       Reverse of scan_memsz().
-*/
-
-static BYTE *save_memsz(BYTE *pcurr, UWORD wd)
-{
-        *pcurr++ = 'R';
-        pcurr = save_2(pcurr, LHIBT(wd));
-        pcurr = save_2(pcurr, LLOBT(wd));
-        return( pcurr );
-}
-
-#endif /* MUTLIAPP */
-
-
-
 /*
 *       Scan off spaces until a string is encountered.  An @ denotes
 *       a null string.  Copy the string into a string buffer until
@@ -377,10 +329,7 @@ static BYTE *app_parse(BYTE *pcurr, ANODE *pa)
         }
         pcurr = scan_str(pcurr, &pa->a_pappl);
         pcurr = scan_str(pcurr, &pa->a_pdata);
-#if MULTIAPP
-        if (!(pa->a_flags & AF_ISDESK))                 /* only for apps */
-          pcurr = scan_memsz(pcurr, &pa->a_memreq);
-#endif
+
         return(pcurr);
 }
 
@@ -552,10 +501,7 @@ WORD app_start(void)
         WSAVE           *pws;
         BYTE            *pcurr, *ptmp, prevdisk;
         WORD            envr, xcnt, ycnt, xcent, wincnt;
-#if MULTIAPP
-        WORD            numaccs = 0;
-        BYTE            *savbuff;
-#endif          
+
                                                 /* remember start drive */
         gl_stdrv = dos_gdrv();
 
@@ -688,17 +634,6 @@ WORD app_start(void)
                         pa = app_alloc(TRUE);
                         pcurr = app_parse(pcurr, pa);
                         break;
-#if MULTIAPP                    
-              case 'A':                         /* Desk Accessory       */
-                        pcurr++;
-                        pcurr = scan_2(pcurr, &(gl_caccs[numaccs].acc_swap));
-                        savbuff = G.g_pbuff;
-                        G.g_pbuff = &(gl_caccs[numaccs].acc_name[0]);
-                        pcurr = scan_str(pcurr, &ptmp);
-                        G.g_pbuff = savbuff;
-                        numaccs++;
-                        break;
-#endif
               case 'W':                         /* Window               */
                         pcurr++;
                         if ( wincnt < NUM_WNODES )
@@ -866,20 +801,6 @@ void app_save(WORD todisk)
           *pcurr++ = 0x0d;
           *pcurr++ = 0x0a;
         }               
-#if MULTIAPP
-        for (i=0; i<3; i++)
-          if (gl_caccs[i].acc_name[0])
-          {
-            *pcurr++ = '#';
-            *pcurr++ = 'A';
-            pcurr = save_2(pcurr, gl_caccs[i].acc_swap);
-            *pcurr++ = ' ';
-            pcurr = save_str(pcurr, &(gl_caccs[i].acc_name[0]));
-            pcurr--;
-            *pcurr++ = 0x0d;
-            *pcurr++ = 0x0a;
-          }
-#endif  
                                                 /* reverse ANODE list   */
         app_revit();
                                                 /* save ANODE list      */
@@ -927,13 +848,6 @@ void app_save(WORD todisk)
           pcurr = save_str(pcurr, pa->a_pappl);
           pcurr = save_str(pcurr, pa->a_pdata);
           pcurr--;
-#if MULTIAPP
-          if (!(pa->a_flags & AF_ISDESK))       /* only for apps        */
-          {
-            pcurr++;                            /* leave blank          */
-            pcurr = save_memsz(pcurr, pa->a_memreq);
-          }
-#endif
           *pcurr++ = 0x0d;
           *pcurr++ = 0x0a;
                                                 /* skip standards       */

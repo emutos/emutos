@@ -91,39 +91,6 @@ GLOBAL BYTE     gl_pmstr[4];
 GLOBAL WORD     gl_apid;
 
 
-#if MULTIAPP
-
-EXTERN LONG     pr_ssize;
-EXTERN WORD     pr_kbytes;
-EXTERN WORD     gl_fmemflg;
-
-static LONG     pr_beggem;
-static LONG     pr_begacc;
-static LONG     pr_begdsk;
-static LONG     pr_topdsk;
-static LONG     pr_topmem;
-static LONG     pr_itbl;
-
-static BYTE     gl_bootdr;
-static WORD     gl_untop;
-
-typedef struct mfdb 
-{
-    LONG        mp;
-    WORD        fwp;
-    WORD        fh; 
-    WORD        fww; 
-    WORD        ff;
-    WORD        np;
-    WORD        r1; 
-    WORD        r2;
-    WORD        r3;
-} MFDB;
-#endif
-
-
-
-
 /* forward declaration  */
 static void    cnx_put(void);
 
@@ -229,14 +196,6 @@ static void detect_features(void)
     rez = Getrez();
     can_change_resolution = (rez == 0 || rez == 1);
 }
-
-
-#if MULTIAPP
-static void copy_icon(LONG dst_tree, LONG tree, WORD dst_icon, WORD icon)
-{
-        LLSET(obaddr(dst_tree, dst_icon, 12), LLGET(OB_SPEC(icon)));
-}
-#endif
 
 
 #ifndef DESK1
@@ -533,10 +492,6 @@ static WORD do_filemenu(WORD item)
         BYTE    *pdst;
 */
 
-#if MULTIAPP
-        ANODE   *pa;
-#endif
-        
         done = FALSE;
 #ifdef DESK1
         pw = win_ontop();
@@ -593,11 +548,6 @@ static WORD do_filemenu(WORD item)
                 break;
 
           case QUITITEM:
-#if MULTIAPP
-                if (fun_alert(1,STEXTDSK,NULLPTR) == 2)         /* CANCEL */
-                  break;
-                else
-#endif
                 pro_exit(G.a_cmd, G.a_tail);
                 done = TRUE;
                 break;
@@ -673,9 +623,6 @@ static WORD do_optnmenu(WORD item)
 #ifdef DESK1
         GRECT           rect;
 #endif
-#if MULTIAPP
-        WORD            junk;
-#endif
 
         pa = 0;
         pstr = 0;
@@ -720,11 +667,6 @@ static WORD do_optnmenu(WORD item)
                 if (rebld)
                   desk_all(FALSE);
                 break;
-#if MULTIAPP
-          case IACCITEM:
-                ins_acc();
-                break;
-#endif
           case PREFITEM:
                 if (inf_pref())
                   desk_all(FALSE);
@@ -1089,14 +1031,6 @@ WORD hndl_msg(void)
                 break;
           case WM_REDRAW:
                 menu = TRUE;
-#if MULTIAPP
-                if (gl_untop)
-                {
-                  gl_untop = FALSE;
-                  do_chkall(FALSE);
-                  men_update(G.a_trees[ADMENU]);        /* disable some items */
-                }
-#endif
                 if (G.g_rmsg[3])
                 {
                   do_wredraw(G.g_rmsg[3], G.g_rmsg[4], G.g_rmsg[5], 
@@ -1119,14 +1053,6 @@ WORD hndl_msg(void)
                 G.g_wlastsel = pw->w_id;
 #endif
                 break;
-#if MULTIAPP
-          case WM_ONTOP:
-                gl_untop = TRUE;
-                break;
-          case PR_FINISH:
-                gl_fmemflg &= (0xff ^ (1 << G.g_rmsg[3]));
-                break;
-#endif
           case WM_CLOSED:
 #ifdef DESK1
                 do_filemenu(CLOSITEM);
@@ -1388,13 +1314,6 @@ WORD deskmain(void)
 #ifndef DESK1
         WSAVE           *pws;
 #endif
-#if MULTIAPP
-        WORD            junk1, junk2;
-        LONG            csize;
-        LONG            templn, templn2;
-        BYTE            memszstr[4];
-#endif
-
 
         /* initialize libraries */
         gl_apid = appl_init();
@@ -1461,22 +1380,6 @@ WORD deskmain(void)
         for(ii = 0; ii < NUM_ADTREES; ii++)
           rsrc_gaddr(R_TREE, ii, &G.a_trees[ii]);
 
-
-
-
-#if MULTIAPP
-        templn = G.a_trees[ADDINFO];
-        if (gl_height <= 300)
-        {                                       /* get lo-res images    */
-          templn2 = G.a_trees[ADLRSINF];        
-          copy_icon(templn, templn2, DEICON, LDEICON);
-          copy_icon(templn, templn2, DENAME1, LDENAME1);
-          copy_icon(templn, templn2, DENAME2, LDENAME2);
-          copy_icon(templn, templn2, DENAME3, LDENAME3);
-          copy_icon(templn, templn2, DENAME4, LDENAME4);
-        }
-#endif
-
         for (ii=0; ii<NUM_BB; ii++)             /* initialize bit images */
         {
           app_tran(ii);
@@ -1503,33 +1406,6 @@ WORD deskmain(void)
           pro_exit(G.a_cmd, G.a_tail);
           return(FALSE);
         }
-
-#if MULTIAPP
-        LSTCPY(G.a_cmd, ADDR("GEMVDI.EXE"));    /* get boot drive */
-        shel_find(G.a_cmd);
-        gl_bootdr = G.g_cmd[0];
-        gl_untop = 0;
-
-        proc_shrink(DESKPID);
-
-        proc_info(DESKPID,&junk1,&junk2,&pr_begdsk,&csize,&pr_topmem,
-                                                &pr_ssize,&pr_itbl);
-
-        pr_begdsk = LOFFSET(pr_begdsk);         /* start of desk        */
-        pr_topdsk = pr_begdsk + csize;          /* addr above desktop   */
-        pr_topmem = LOFFSET(pr_topmem);
-
-        csize = (pr_topmem - pr_begdsk) >> 10;          /* K app space  */
-        sprintf(&memszstr[0], "%ld", csize);            /* to ASCII     */
-        iac_strcop(G.a_trees[ADDINFO], DEMEMSIZ, ADDR(&memszstr[0]));
-        
-        proc_info(GEMPID,&junk1,&junk2,&pr_beggem,&csize,&templn,
-                                                &pr_ssize,&templn);
-        pr_beggem = LOFFSET(pr_beggem);
-        pr_begacc = pr_beggem + csize;                  /* start of acc's */
-        iac_init();
-
-#endif
 
                                                 /* initialize windows   */
         win_start();

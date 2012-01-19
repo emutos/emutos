@@ -44,13 +44,6 @@
 #define KEYSTOP 0x00002b1cL                     /* control backslash    */
 
 
-#if MULTIAPP
-GLOBAL LONG             gl_prret;
-GLOBAL LONG             gl_prpid;
-GLOBAL PD               *gl_displock = 0;
-#endif
-
-
 /* forkq puts a fork block with a routine in the fork ring      */
 
 void forkq(void (*fcode)(), LONG fdata)
@@ -233,9 +226,6 @@ void disp(void)
 {
         register PD     *p;
 
-#if MULTIAPP
-skip:
-#endif
                                                 /* take the process p   */
                                                 /*   off the ready list */
                                                 /*   root               */
@@ -270,19 +260,6 @@ skip:
  *      3) returns to appropriate address
  *              so we'll never return from this
  */
-#if MULTIAPP
-        if (gl_displock && (rlr != gl_displock))
-          goto skip;
-
-        if (rlr->p_pid == 1)
-        {
-          if (gl_mntree)
-            pr_load(gl_mnppd->p_pid);   
-        }
-        else
-          pr_load(rlr->p_pid);
-#endif
-
         switchto(rlr->p_uda);
 }
 

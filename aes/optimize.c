@@ -352,20 +352,3 @@ void ins_char(BYTE *str, WORD pos, BYTE chr, WORD tot_len)
           str[tot_len-1] = NULL;
 }
 
-
-/*
-*       Used to get strings of 16 bytes or less from resource.
-*/
-#if MULTIAPP
-GLOBAL BYTE  gl_rsname[16];
-
-BYTE *op_gname(WORD index)
-{
-        LONG    pname;
-/* define R_STRING 5    */
-        rs_gaddr(ad_sysglo, 5, index, &pname);
-        strcpy(&gl_rsname[0], (char *)pname);
-        return(&gl_rsname[0]);
-}
-#endif
-

@@ -52,10 +52,6 @@
 
 #define DESKWH  0x0
 
-#if MULTIAPP
-#define NUM_MWIN NUM_WIN+1
-#define INACROOT NUM_WIN
-#endif
 #if SINGLAPP
 #define NUM_MWIN NUM_WIN
 #endif
@@ -75,15 +71,6 @@ GLOBAL WORD     desk_root[NUM_PDS];             /* starting object to   */
 GLOBAL OBJECT   W_TREE[NUM_MWIN];
 GLOBAL OBJECT   W_ACTIVE[NUM_ELEM];
 
-#if MULTIAPP
-#define WSTRSIZE 81
-GLOBAL BYTE     W_NAMES[NUM_WIN][WSTRSIZE];
-GLOBAL BYTE     W_INFOS[NUM_WIN][WSTRSIZE];
-GLOBAL PD       *W_INACTIVE[NUM_WIN];           /* pds of inactive windows*/
-GLOBAL PD       *gl_newmenu = (PD *)0x0;
-GLOBAL PD       *gl_lastnpd;
-GLOBAL WORD     proc_msg[8];
-#endif
 
 GLOBAL const WORD gl_watype[NUM_ELEM] =
 {
@@ -383,20 +370,6 @@ static void w_clipdraw(WORD wh, WORD obj, WORD depth, WORD usetrue)
 
 void  w_strchg(WORD w_handle, WORD obj, LONG pstring)
 {
-#if MULTIAPP
-        if ( obj == W_NAME )
-        {
-          LBCOPY( ADDR(W_NAMES[w_handle]), pstring, WSTRSIZE);
-          W_NAMES[w_handle][WSTRSIZE-1] = 0;
-          gl_aname.te_ptext = pstring;
-        }
-        else
-        {
-          LBCOPY( ADDR(W_INFOS[w_handle]), pstring, WSTRSIZE);
-          W_INFOS[w_handle][WSTRSIZE-1] = 0;
-          gl_ainfo.te_ptext = pstring;
-        }
-#endif
 #if SINGLAPP
         if ( obj == W_NAME )
           gl_aname.te_ptext = D.w_win[w_handle].w_pname = pstring;
@@ -545,10 +518,6 @@ void w_bldactive(WORD w_handle)
         w_nilit(NUM_ELEM, &W_ACTIVE[0]);
                                                 /* start adding pieces  */
                                                 /*   & adjusting sizes  */
-#if MULTIAPP
-        gl_aname.te_ptext = ADDR(W_NAMES[w_handle]);
-        gl_ainfo.te_ptext = ADDR(W_INFOS[w_handle]);
-#endif
 #if SINGLAPP
         gl_aname.te_ptext = pw->w_pname;
         gl_ainfo.te_ptext = pw->w_pinfo;
@@ -692,10 +661,6 @@ void w_redraw(WORD w_handle, GRECT *pt)
         PD              *ppd;
 
         ppd = D.w_win[w_handle].w_owner;
-#if MULTIAPP
-        if ( !sh[ppd->p_pid].sh_isgem )         /* get out if not a gemapp*/
-          return;
-#endif
                                                 /* make sure work rect  */
                                                 /*   and word rect      */
                                                 /*   intersect          */
@@ -894,187 +859,6 @@ void w_menufix()
 #endif /* SINGLEAPP */
 
 
-#if MULTIAPP
-        void
-w_setmen(pid)
-        WORD            pid;
-{
-        GRECT           c;
-        WORD            npid;
-        LONG            tree;
-        
-                        /* code to find best available menu goes here */
-        npid = pid;
-        tree = menu_tree[npid];
-        
-        if (sh[npid].sh_isacc && !tree)
-        {
-          tree = gl_mntree;
-          npid = gl_mnppd->p_pid;
-        }
-        if (!tree)
-        {
-          tree = ad_sysmenu;
-          npid = 1; /* scrmgr */
-        }
-        
-        mn_bar(tree, TRUE, npid);
-
-        if (desk_tree[npid])
-        {
-          gl_newdesk = desk_tree[npid];
-          gl_newroot = desk_root[npid];
-        }
-        else
-          gl_newdesk = 0x0L;
-
-        w_drawdesk(&gl_rscreen);
-}
-
-
-void w_newmenu(PD *owner)
-{
-        gl_newmenu = owner;
-}
-
-
-/*
-*       Routine to draw menu of top most window as the current menu bar.
-*/
-void w_menufix(PD *rlr)
-{
-        WORD            pid;
-
-        if (gl_newmenu && (rlr == gl_newmenu))  /* is there a possible menu */
-        {                                       /* change and is the new ap */
-           gl_newmenu = (PD *)0x0;              /* loaded                   */
-           w_setmen(rlr->p_pid);
-        }
-}
-
-
-WORD w_clswin()
-{
-        WORD            i;
-                                                /* close any open winds */
-        wm_update(TRUE);
-        for(i=1; i < NUM_WIN; i++)
-        {
-          if (D.w_win[i].w_owner == rlr)
-          {
-            if (D.w_win[i].w_flags & VF_INTREE)
-              ob_delete(gl_wtree, i);
-            wm_delete(i);
-          }
-        }
-        wm_update(FALSE);
-}
-
-/*
-*       Routine to take all windows belonging to a particular
-*       process, save them on a list, and delete them from
-*       the window tree.
-*       IF deletions first,
-*/
-static void oldwfix(PD *npd, WORD isdelete)    /* npd = pd of old process */
-{
-        WORD            ii, next;
-        PD              *owner;
-
-        for(ii=W_TREE[ROOT].ob_head; ii>ROOT; ii=next)
-        {
-          next = W_TREE[ii].ob_next;
-          owner = D.w_win[ii].w_owner;
-                                /* if not an acc or dosnext        */
-                                /* then make window inactive      */
-          if ( (!sh[owner->p_pid].sh_isacc) &&
-               (sh[owner->p_pid].sh_isgem) &&
-               !(D.w_win[ii].w_flags & VF_KEEPWIN) )
-          {
-            if (isdelete)
-            {
-              ob_delete(gl_wtree, ii);
-              w_obadd(&W_TREE[ROOT], INACROOT, ii);
-              D.w_win[ii].w_flags &= ~VF_INTREE;
-            }
-            else
-              ap_sendmsg(proc_msg, WM_UNTOPPED, owner, ii, 0, 0, 0, 0);
-          }
-        }
-}
-
-
-static void newwfix(PD *npd)            /* npd = pd of new process */
-{
-        WORD            ii, next;
-
-        for(ii=W_TREE[INACROOT].ob_head; (ii != INACROOT)&&(ii != NIL);
-                ii=next)
-        {
-          next = W_TREE[ii].ob_next;
-          if(D.w_win[ii].w_owner == npd)
-          {
-            D.w_win[ii].w_flags |= VF_INTREE;
-            ob_delete(gl_wtree, ii);
-            w_obadd(&W_TREE[ROOT], ROOT, ii);
-          }
-        }
-}
-
-
-static WORD w_windfix(PD *npd)          /* npd = pd of new process    */
-{
-        WORD            ii, jj;
-        WORD            wh, old;
-
-/* to send all untopped */
-        oldwfix(npd, FALSE);
-        for (ii=0; ii<NUM_ACCS; ii++)
-          dsptch();
-/* */
-        oldwfix(npd, TRUE);
-        if (npd)
-          newwfix(npd);
-        gl_wtop = W_TREE[0].ob_tail;
-        for (ii=0; ii<NUM_ACCS; ii++)
-          dsptch();
-
-                                                /* if not a dos app     */
-                                                /* don't draw borders   */
-        if (! sh[npd->p_pid].sh_isgem)
-          return(TRUE);
-        else
-          gl_newmenu = npd;
-
-        wm_update(TRUE);
-        everyobj(gl_wtree, ROOT, NIL, newrect, 0, 0, MAX_DEPTH);
-        wh = gl_wtop;
-        gsx_sclip(&gl_rfull);
-        ob_draw(gl_wtree, ROOT, 0);
-        w_setactive();
-        wm_update(FALSE);
-
-        for (ii=0; ii<NUM_ACCS; ii++)
-          dsptch();
-        wm_update(TRUE);
-        while (wh != NIL)
-        {
-          w_cpwalk(wh, 0, MAX_DEPTH, TRUE);
-          w_redraw(wh, &gl_rfull);
-          old=wh;
-          wh=W_TREE[ROOT].ob_head;
-          if (wh==old)
-            break;        
-          for (wh=W_TREE[ROOT].ob_head; W_TREE[wh].ob_next != old;
-            wh = W_TREE[wh].ob_next);
-        }
-        gsx_mfset(ad_armice);
-        wm_update(FALSE);
-        return(TRUE);
-}
-#endif /* MULTIAPP */
-
-
 /*
 *       Draw the tree of windows given a major change in the some 
 *       window.  It may have been sized, moved, fulled, topped, or closed.
@@ -1112,14 +896,6 @@ void draw_change(WORD w_handle, GRECT *pt)
         if (gl_wtop != oldtop)
 #if SINGLAPP
           w_menufix();
-#endif
-#if MULTIAPP
-        {
-          if (gl_wtop == NIL)
-            w_setmen(1);
-          else
-            w_newmenu(D.w_win[gl_wtop].w_owner);
-        }
 #endif
                                                 /* set ctrl rect and    */
                                                 /*   mouse owner        */
@@ -1318,10 +1094,6 @@ void wm_start()
         register LONG   tree;
         PD              *ppd;
 
-#if MULTIAPP
-        mn_init();
-#endif
-
 #if 0
                                                 /* init default owner   */
                                                 /*  to be screen mgr.   */
@@ -1342,9 +1114,6 @@ void wm_start()
           D.w_win[i].w_flags = 0x0;
           D.w_win[i].w_rlist = (ORECT *) 0x0;
           W_TREE[i].ob_type = G_IBOX;
-#if MULTIAPP
-          W_NAMES[i][0] = 0;
-#endif
         }
         W_TREE[ROOT].ob_type = G_BOX;
         tree = ad_stdesk;
@@ -1469,9 +1238,6 @@ void wm_delete(WORD w_handle)
         w_setsize(WS_WORK, w_handle, &gl_rfull);
         D.w_win[w_handle].w_flags = 0x0;        /*&= ~VF_INUSE; */
         D.w_win[w_handle].w_owner = NULLPTR;
-#if MULTIAPP
-        W_INACTIVE[w_handle] = NULLPTR;
-#endif
 }
 
 

@@ -79,12 +79,6 @@
 #define INF_SIZE 2048
 #endif
 
-
-#if MULTIAPP
-GLOBAL WORD     gl_numaccs;
-GLOBAL ACCNODE  gl_caccs[3];            /* max 3 accessories    */
-#endif
-
                                                 /* in GEMINIT.C         */
 static BYTE     start[SIZE_AFILE];              /* can't play the same  */
                                                 /* trick in 68k land    */
@@ -170,9 +164,6 @@ BYTE *scan_2(BYTE *pcurr, WORD *pwd)
 
 static void ini_dlongs(void)
 {
-#if MULTIAPP
-        WORD            ii;
-#endif
         register BYTE   *ps;
         
                                                 /* use all of this      */
@@ -217,22 +208,6 @@ static void ini_dlongs(void)
         D.g_dta = ps = &gl_dta[0];
         ad_dta = ADDR(ps);
         ad_fsdta = ADDR(&gl_dta[30]);
-
-#if MULTIAPP
-        for (ii = 0; ii < NUM_PDS; ii++)
-        {
-          gl_mnpds[ii] = 0x0;
-          desk_root[ii] = 0x0;
-          menu_tree[ii] = 0x0L;
-          desk_tree[ii] = 0x0L;
-        }
-        for (ii = 0; ii < NUM_DESKACC; ii++)
-        {  
-          desk_ppd[ii] = NULLPTR;
-          desk_acc[ii] = 0x0L;
-        }
-#endif
-
 }
 
 
@@ -459,9 +434,6 @@ static void sh_init(void)
         SHELL   *psh;
         BYTE    savch;
 
-#if MULTIAPP
-        gl_pids = 0;
-#endif
         psh = &sh[0];
 
         sh_deskf(2, ADDR(&ad_pfile));
@@ -637,9 +609,6 @@ void sh_rdinf(void)
           return;
         pcurr = ad_ssave;
         bvdisk = bvhard = 0x0;
-#if MULTIAPP
-        gl_numaccs = 0x0;
-#endif
         LBSET(pcurr + (ULONG)size, NULL);       /* set end to NULL      */
         while ( LBGET(pcurr) != NULL)
         {
@@ -683,20 +652,6 @@ void sh_rdinf(void)
             sh_wdef((LONG)tmpptr2, (LONG)tmpptr1);
             ++pcurr;
           }
-#if MULTIAPP
-          else if (tmp == 'A')          /* test for accessories */
-          {                             /* #A 59 CALCLOCK.ACC@  */
-            BYTE  *pstr;
-            pcurr++;
-            scan_2((BYTE *)pcurr, &(gl_caccs[gl_numaccs].acc_swap));
-            pcurr += 4;
-            pstr = &gl_caccs[gl_numaccs].acc_name[0];
-            while( (tmp = LBGET(pcurr++)) != '@')
-              *pstr++ = tmp;
-            *pstr = NULL;
-            gl_numaccs++;
-          }
-#endif    
         }
         gl_bvdisk = bvdisk;
         gl_bvhard = bvhard;
@@ -734,10 +689,6 @@ void gem_main(void)
 {
     WORD    i;
     LONG    tmpadbi;
-#if MULTIAPP
-    for (i=0; i<NUM_PDS; i++)
-        sh[i].sh_loadable = FALSE;
-#endif
 
     totpds = NUM_PDS;
     ml_ocnt = 0;
@@ -814,14 +765,6 @@ void gem_main(void)
      */
     gl_dacnt = 0;
     gl_mowner = ctl_pd = iprocess("SCRENMGR", ctlmgr);
-
-#if MULTIAPP
-    if (totpds > 2)
-    {
-        for (i=0; i<NUM_ACCS; i++)
-            iprocess("AVAILNUL", &nulmgr);
-    }
-#endif
 
     /* load gem resource and fix it up before we go */
 #ifndef USE_GEM_RSC
@@ -931,10 +874,6 @@ void gem_main(void)
          */
         sh_main();
 
-#if MULTIAPP
-        /* fixup memory */
-        pr_load(SCR_MGR);
-#endif
         /* free up resource space */
 #ifdef USE_GEM_RSC
         rs_free(ad_sysglo);

@@ -381,9 +381,6 @@ static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WO
         WORD            srcfh, dstfh;
         UWORD           amntrd, amntwr;
         WORD            copy, cont, more, samedir, ob;
-#if MULTIAPP
-        LONG            lavail;
-#endif
 
         copy = TRUE;
                                                 /* open the source file */
@@ -477,12 +474,7 @@ static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WO
 
         if ( copy && more )
           dstfh = dos_create((BYTE *)ADDR(pdst_file), attr);
-#if MULTIAPP
-        G.g_xbuf = proc_malloc(0xfff0L, &lavail);
-        if (G.g_xbuf == 0)
-          G.g_xbuf = proc_malloc(lavail, &lavail);
-        G.g_xlen = LLOWD(lavail);
-#endif
+
         amntrd = copy;
         while( amntrd && more )
         {
@@ -764,10 +756,7 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
         FNODE           *pf;
         WORD            ret, more, obj;
         BYTE            *pglsrc, *pgldst;
-#if MULTIAPP
-#else
         LONG            lavail;
-#endif
 
 /* BugFix       */
         graf_mouse(HGLASS, 0x0L);
@@ -794,14 +783,10 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
                 }
                 break;
           case OP_COPY:
-#if MULTIAPP
-                /* do malloc elsewhere */
-#else
                 lavail = dos_avail();
                 G.g_xlen = (lavail > 0x0000fff0L) ? 0xfff0 : LLOWD(lavail);
                 G.g_xlen -= 0x0200;
                 G.g_xbuf = dos_alloc( LW(G.g_xlen) );
-#endif
 
                 ml_dlpr = G.g_ccopypref;
                 if (ml_dlpr)
@@ -954,11 +939,7 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
           case OP_DELETE:
                 break;
           case OP_COPY:
-#if MULTIAPP
-                /* no need to free with proc_malloc */
-#else
                 dos_free(G.g_xbuf);
-#endif
                 break;
         } /* switch */
         if (ml_havebox)

@@ -46,12 +46,6 @@
 #include "desk1.h"
 
 
-#if MULTIAPP
-EXTERN WORD     pr_kbytes;
-EXTERN WORD     gl_keepac;
-#endif
-
-
 
 /*
 *       Clear out the selections for this particular window
@@ -352,18 +346,7 @@ static WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, WORD drv,
         done = FALSE;
                                                 /* set flags            */
         isgraf = pa->a_flags & AF_ISGRAF;
-#if MULTIAPP
-        pr_kbytes = pa->a_memreq;               /* K bytes needed for app */
-        isover = (pa->a_flags & AF_ISFMEM) ? 2 : -1;
-        if ((isover == 2) && gl_keepac)         /* full-step ok?        */
-        {
-          rsrc_gaddr(R_STRING, STNOFSTP, &G.a_alert);
-          form_alert(1, G.a_alert);
-          return(FALSE);
-        }
-#else
         isover = (pa->a_flags & AF_ISFMEM) ? 2 : 1;
-#endif
         isparm = pa->a_flags & AF_ISPARM;
         uninstalled = ( (*pa->a_pappl == '*') || 
                         (*pa->a_pappl == '?') ||
@@ -422,11 +405,8 @@ static WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, WORD drv,
             strcpy(&G.g_tail[1], ptail);
           done = pro_run(isgraf, isover, G.g_cwin, curr);
         } /* if ret */
-#if MULTIAPP
-        return(FALSE);                          /* don't want to exit   */
-#else
+
         return(done);
-#endif
 } /* do_aopen */
 
 
@@ -598,10 +578,6 @@ WORD do_open(WORD curr)
           switch( pa->a_type )
           {
             case AT_ISFILE:
-#if MULTIAPP
-                if (strcmp("DESKTOP.APP", &pf->f_name[0])==0)
-                  break;
-#endif
                 done = do_aopen(pa,isapp,curr,drv,&path[0],&pf->f_name[0]);
                 break;
             case AT_ISFOLD:

@@ -305,16 +305,6 @@ static void hctl_rect(void)
                 
                 mesag = AC_OPEN;
 #endif
-#if MULTIAPP
-                                        /* release screen so apps can   */
-                                        /*  get it.                     */
-                ct_mouse(FALSE);
-
-                mesag = sh_chmsg(owner);
-                                        /* get screen back to keep ctrl */
-                                        /*  manager happy.              */
-                ct_mouse(TRUE);
-#endif
               }
               else
                 item += gl_dabox;
@@ -364,24 +354,6 @@ void ct_mouse(WORD grabit)
         }
 }
 
-#if MULTIAPP
-void hctl_mesag(WORD pmbuf[])
-{
-        PD      *ppd;
-        WORD    mesag;
-
-        if (pmbuf[0] == CT_SWITCH)
-        {
-          ppd = fpdnm(NULLPTR, pmbuf[3]);
-          if (ppd)
-          {
-            mesag = sh_chmsg(ppd);
-            ct_msgup(mesag, ppd, 0, 0, 0, 0, 0);
-          }
-        }
-}
-#endif
-
 
 /*
 *       Internal process context used to control the screen for use by
@@ -395,9 +367,7 @@ void ctlmgr(void)
         register WORD   ev_which;
         WORD            rets[6];
         WORD            i, wh;
-#if MULTIAPP
-        WORD            cmsg[8];
-#endif
+
                                                 /* set defaults for     */
                                                 /*  multi wait          */
         gl_ctwait.m_out = FALSE;
@@ -427,14 +397,8 @@ void ctlmgr(void)
             ev_which = MU_KEYBD | MU_BUTTON;
             if ( gl_mntree != 0x0L )    /* only wait on bar when there  */
               ev_which |= MU_M1;        /* is a menu                    */
-#if MULTIAPP
-            ev_which = ev_multi(ev_which | MU_MESAG, 
-                        &gl_ctwait, &gl_ctwait, 
-                        0x0L, 0x0001ff01L, ADDR(&cmsg[0]), &rets[0]);
-#else
             ev_which = ev_multi(ev_which, &gl_ctwait, &gl_ctwait, 
                         0x0L, 0x0001ff01L, 0x0L, &rets[0]);
-#endif
                                                 /* grab screen sink     */
           }
           ct_mouse(TRUE);
@@ -454,9 +418,5 @@ void ctlmgr(void)
             hctl_rect();
                                                 /* give up screen sink  */
           ct_mouse(FALSE);
-#if MULTIAPP
-          if (ev_which & MU_MESAG)
-            hctl_mesag(&cmsg[0]);
-#endif
         }
 }

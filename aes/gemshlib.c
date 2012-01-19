@@ -56,16 +56,6 @@
 #define Dprintf(a)
 #endif
 
-
-
-#if MULTIAPP
-GLOBAL WORD     nulp_msg[8];
-GLOBAL LONG     gl_efnorm, gl_efsave;
-GLOBAL LONG     gl_strtaes;
-GLOBAL LONG     gl_endaes;
-GLOBAL LONG     gl_enddesktop;
-#endif
-
 GLOBAL SHELL    sh[NUM_PDS];
 
 #if GEMDOS
@@ -857,37 +847,9 @@ void sh_ldapp()
 
 void sh_main()
 {
-#if MULTIAPP
-        WORD            ii;
-
-        for (ii = 0; ii < 2; ii++)              /* init pid 0 and 1     */
-        {
-          sh[ii].sh_isgem = TRUE;
-          sh[ii].sh_isacc = FALSE;
-          sh[ii].sh_state = 0x0;
-          pr_scpid(ii, FALSE);
-        }
-        sh[1].sh_loadable = TRUE;
-        pr_menu(ADDR(desk_str[0]), ADDR(&gl_dacnt));
-                                                /* allocate screen space*/
-        gsx_malloc();
-        ratinit();
-                                                /* fix up aes channel   */
-        pr_shrink(SCR_MGR, ADDR(&gl_strtaes), ADDR(&gl_endaes), TRUE );
-        sh_rdinf();
-        sh_ldacc();
-        gl_enddesktop = gl_endaes + (SIZE_DESKTOP << 12);
-                                                /* create the default   */
-                                                /*  channel.            */
-        pr_create(rlr->p_pid, gl_endaes, SIZE_DESKTOP, FALSE, TRUE);
-#endif
                                                 /* do the exec          */
         sh_ldapp();
 
-#if MULTIAPP
-                                                /* return screen space  */
-        gsx_mfree();
-#endif
                                                 /* get back to alpha    */
                                                 /*   mode if necessary  */
         if (gl_shgem)

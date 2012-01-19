@@ -444,9 +444,6 @@ WORD fs_input(LONG pipath, LONG pisel, WORD *pbutton)
         if (!ad_fsnames)
           return(FALSE);
 #endif
-#if MULTIAPP
-        ad_fsnames = ADDR(&D.g_fsnames[0]);
-#endif  
         tree = ad_fstree;
         ad_locstr = (LONG) ADDR(&locstr[0]);
                                                 /* init strings in form */

@@ -59,16 +59,6 @@ GLOBAL BYTE     * const desk_str[NUM_DESKACC] =
     desk_str_space[5],
     desk_str_space[6],
     desk_str_space[7],
-#if MULTIAPP
-    desk_str_space[8],
-    desk_str_space[9],
-    desk_str_space[10],
-    desk_str_space[11],
-    desk_str_space[12],
-    desk_str_space[13],
-    desk_str_space[14],
-    desk_str_space[15],
-#endif
 };
 
 GLOBAL WORD     gl_dacnt;
@@ -76,34 +66,6 @@ GLOBAL WORD     gl_dabox;
 GLOBAL LONG     gl_datree;
 
 GLOBAL OBJECT   M_DESK[3+NUM_DESKACC];
-
-#if MULTIAPP
-
-OBJECT  gl_sysmenu[10] = {
--1,  1,  4,  G_IBOX, NONE, NORMAL,       0x0L, 0, 0, 80, 25, /* SCREEN   */
- 4,  2,  2,   G_BOX, NONE, NORMAL,    0x1100L, 0, 0, 80,513, /* BAR      */
- 1,  3,  3,  G_IBOX, NONE, NORMAL,       0x0L, 2, 0, 20,769, /* ACTIVE   */
- 2, -1, -1, G_TITLE, NONE, NORMAL,       0x0L, 0, 0,  8,769, /* TITLE #1 */ 
- 0, -1, -1,  G_IBOX, NONE, NORMAL,       0x0L, 0,769,80, 19  /* MENUS    */
-};
-
-GLOBAL LONG     ad_sysmenu; 
-GLOBAL WORD     gl_mninit = FALSE;
-
-mn_init() /* initialize default menu */
-{
-        WORD    i;
-
-        if (gl_mninit)
-          return;
-        ad_sysmenu = ADDR(gl_sysmenu);
-        for (i=0; i<=4; i++)
-          rs_obfix(ad_sysmenu, i);
-        gl_sysmenu[3].ob_spec = ADDR(" SWITCH ");
-        menu_tree[1] = ad_sysmenu;
-}
-#endif
-
 
 
 static WORD menu_sub(LONG *ptree, WORD ititle)
@@ -171,18 +133,12 @@ static void menu_fixup(BYTE *pname)
 
         cnt = (gl_dacnt) ? (2 + gl_dacnt) : 1;
                                                 /* fix up links         */
-#if MULTIAPP
-        pob->ob_head = 3;
-#endif
 #if SINGLAPP
         pob->ob_head = 1;
 #endif
         pob->ob_tail = cnt;
                                                 /* build up desk items  */
         ob_relxywh(tree, gl_dabox + 1, &t);
-#if MULTIAPP
-        for(i=3; i<=cnt; i++)
-#endif
 #if SINGLAPP
         for(i=1; i<=cnt; i++)
 #endif
@@ -564,9 +520,7 @@ WORD mn_register(WORD pid, LONG pstr)
         WORD            openda;
         WORD            len;
         BYTE            *ptmp;
-#if MULTIAPP
-        LONG            pdest;
-#endif
+
                                                 /* add desk acc. if room*/
         if ( (pid >= 0) &&
              (gl_dacnt < NUM_DESKACC) )
@@ -578,15 +532,6 @@ WORD mn_register(WORD pid, LONG pstr)
           desk_ppd[openda] = rlr;
           desk_acc[openda] = ADDR(desk_str[openda]);
 
-#if MULTIAPP
-          pdest = desk_acc[openda];
-          if (sh[pid].sh_isacc)
-          {
-            LBSET(pdest, '*');
-            pdest += 1;
-          }
-          len = strlencpy((char *) pdest, (char *) pstr);
-#endif
 #if SINGLAPP
           len = strlencpy((char *) desk_acc[openda], (char *) pstr);
 #endif
@@ -626,21 +571,4 @@ void mn_unregister(WORD da_id)
         menu_fixup(&rlr->p_name[0]);
 #endif
 }       
-
-#if MULTIAPP
-/*
-*       Given a PD * , find its desk accessory id
-*/
-        WORD
-mn_ppdtoid(p)
-        PD      *p;
-{
-        WORD i;
-
-        for (i=0; i<NUM_DESKACC; i++)
-          if (desk_ppd[i] == p) 
-            return(i);
-        return(NIL);                            /* should never get here*/
-}
-#endif
 

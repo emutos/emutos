@@ -58,17 +58,6 @@
 #define FORM_CENTER 54
 #define FORM_KEYBD 55
 #define FORM_BUTTON 56
-                                /* Process Manager                      */
-#if MULTIAPP
-#define PROC_CREATE 60
-#define PROC_RUN 61
-#define PROC_DELETE 62
-#define PROC_INFO 63
-#define PROC_MALLOC 64
-#define PROC_MFREE 65
-#define PROC_SWITCH 66
-#define PROC_SETBLOCK 67
-#endif
                                 /* Graphics Manager                     */
 #define GRAF_RUBBOX 70
 #define GRAF_DRAGBOX 71
@@ -121,9 +110,6 @@
 #if SINGLAPP
 #define C_SIZE 4
 #endif
-#if MULTIAPP
-#define C_SIZE 5
-#endif
 #define G_SIZE 15
 #define I_SIZE 16
 #define O_SIZE 7
@@ -131,17 +117,11 @@
 #if SINGLAPP
 #define AO_SIZE 1
 #endif
-#if MULTIAPP
-#define AO_SIZE 5
-#endif
                                         /* Crystal funtion op code      */
 #define OP_CODE control[0]
 #define IN_LEN control[1]
 #define OUT_LEN control[2]
 #define AIN_LEN control[3]
-#if MULTIAPP
-#define AOUT_LEN control[4]
-#endif
                         
 #define RET_CODE int_out[0]
                                         /* application lib parameters   */
@@ -314,29 +294,7 @@
 #define FM_OCHAR int_out[2]
 
 #define FM_CLKS int_in[1]
-                                        /* process library parameters   */
 
-#if MULTIAPP
-#define PR_ISSWAP int_in[0]             /* proc_create  */
-#define PR_ISGEM int_in[1]
-#define PR_IBEGADDR addr_in[0]
-#define PR_ISIZE addr_in[1]
-#define PR_ONUM int_out[1]
-
-#define PR_NUM int_in[0]                /* proc_run     */
-#define PR_ISGRAF int_in[1]
-#define PR_ISOVER int_in[2]
-#define PR_PCMD addr_in[0]
-#define PR_PTAIL addr_in[1]
-
-#define PR_OISSWAP int_out[1]           /* proc_info    */
-#define PR_OISGEM int_out[2]
-#define PR_OBEGADDR addr_out[0]
-#define PR_OCSIZE addr_out[1]
-#define PR_OENDMEM addr_out[2]
-#define PR_OSSIZE addr_out[3]
-#define PR_OINTADDR addr_out[4]
-#endif
                                         /* object library parameters    */
 
 #define OB_TREE addr_in[0]              /* all ob procedures            */

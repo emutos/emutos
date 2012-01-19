@@ -85,10 +85,6 @@ static void aestrace(const char* message)
 #if SINGLAPP
 static UWORD crysbind(WORD opcode, LONG pglobal, WORD int_in[], WORD int_out[], LONG addr_in[])
 #endif
-#if MULTIAPP
-static UWORD crysbind(WORD opcode, LONG pglobal, WORD int_in[], WORD int_out[],
-                      LONG addr_in[], LONG addr_out[])
-#endif
 {
         LONG    maddr;
         LONG    tree;
@@ -107,10 +103,6 @@ static UWORD crysbind(WORD opcode, LONG pglobal, WORD int_in[], WORD int_out[],
 #if SINGLAPP
                 LWSET(pglobal, 0x0120);         /* version number       */
                 LWSET(pglobal+2, 0x0001);       /* num of concurrent procs*/
-#endif
-#if MULTIAPP
-                LWSET(pglobal, 0x0110);         /* version number       */
-                LWSET(pglobal+2, NUM_DESKACC-1);/* num of concurrent procs*/
 #endif
 /*              LLSET(pglobal, 0x00010200L);
 */
@@ -151,11 +143,7 @@ static UWORD crysbind(WORD opcode, LONG pglobal, WORD int_in[], WORD int_out[],
 #if DBG_GEMSUPER
                 aestrace("appl_exit()");
 #endif
-#if MULTIAPP
-                ap_exit( TRUE );
-#else
                 ap_exit();
-#endif
                 break;
                                 /* Event Manager                        */
           case EVNT_KEYBD:
@@ -170,10 +158,6 @@ static UWORD crysbind(WORD opcode, LONG pglobal, WORD int_in[], WORD int_out[],
           case EVNT_MESAG:
 #if DBG_GEMSUPER
                 aestrace("evnt_mesag()");
-#endif
-#if MULTIAPP
-                                                /* standard 16 byte read */
-                ev_mesag(MU_MESAG, rlr, ME_PBUFF);
 #endif
 #if SINGLAPP
                 ap_rdwr(MU_MESAG, rlr, 16, ME_PBUFF);
@@ -293,35 +277,6 @@ static UWORD crysbind(WORD opcode, LONG pglobal, WORD int_in[], WORD int_out[],
                 gsx_sclip(&gl_rfull);
                 ret = fm_button(FM_FORM, FM_OBJ, FM_CLKS, &FM_ONXTOB);
                 break;
-                                /* Graphics Manager                     */
-#if MULTIAPP
-          case PROC_CREATE:
-                ret = prc_create(PR_IBEGADDR, PR_ISIZE, PR_ISSWAP, PR_ISGEM,
-                                 &PR_ONUM );
-                break;
-          case PROC_RUN:
-                ret = pr_run(PR_NUM, PR_ISGRAF, PR_ISOVER, PR_PCMD, PR_PTAIL);
-                break;
-          case PROC_DELETE:
-                ret = pr_abort(PR_NUM);
-                break;
-          case PROC_INFO:
-                ret = pr_info(PR_NUM, &PR_OISSWAP, &PR_OISGEM, &PR_OBEGADDR,
-                        &PR_OCSIZE, &PR_OENDMEM, &PR_OSSIZE, &PR_OINTADDR);
-                break;
-          case PROC_MALLOC:
-                ret = pr_malloc(PR_IBEGADDR, PR_ISIZE);
-                break;
-          case PROC_MFREE:
-                ret = pr_mfree(PR_NUM);
-                break;
-          case PROC_SWITCH:
-                ret = pr_switch(PR_NUM);
-                break;
-          case PROC_SETBLOCK:
-                ret = pr_setblock(PR_NUM);
-                break;
-#endif
                                 /* Graphics Manager                     */
           case GRAF_RUBBOX:
                 gr_rubbox(GR_I1, GR_I2, GR_I3, GR_I4, 
@@ -502,9 +457,6 @@ static void xif(LONG pcrys_blk)
         WORD            int_in[I_SIZE];
         WORD            int_out[O_SIZE];
         LONG            addr_in[AI_SIZE];
-#if MULTIAPP
-        LONG            addr_out[AO_SIZE];
-#endif
 
         LWCOPY(ADDR(&control[0]), CONTROL, C_SIZE);
         if (IN_LEN)
@@ -516,19 +468,11 @@ static void xif(LONG pcrys_blk)
         int_out[0] = crysbind(OP_CODE, GGLOBAL, &int_in[0], &int_out[0], 
                                 &addr_in[0]);
 #endif
-#if MULTIAPP
-        int_out[0] = crysbind(OP_CODE, GGLOBAL, &int_in[0], &int_out[0], 
-                                &addr_in[0], &addr_out[0]);
-#endif
 
         if (OUT_LEN)
           LWCOPY(INT_OUT, ADDR(&int_out[0]), OUT_LEN);
         if (OP_CODE == RSRC_GADDR)
           LLSET(ADDR_OUT, ad_rso);
-#if MULTIAPP
-        if (OP_CODE == PROC_INFO)
-          LWCOPY(ADDR_OUT, ADDR(&addr_out[0]), AOUT_LEN * 2);
-#endif
 }
 
 

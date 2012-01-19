@@ -63,21 +63,8 @@ WORD ap_init(void)
         WORD    pid;
         LONG    scdir;
         char    tmpstr[32];
-#if MULTIAPP
-        SHELL   *psh;
-        UWORD   chseg;
-#endif
 
         pid = rlr->p_pid;
-#if MULTIAPP
-        psh = &sh[pid];
-        if ( psh->sh_state & SHRINK )
-        {
-          chseg = dos_gpsp();                   /* get seg of acc's PSP */
-          dos_stblk(chseg, psh->sh_shrsz);      /* size down acc        */
-
-        }
-#endif
 
 #ifdef USE_GEM_RSC
         rs_gaddr(ad_sysglo, R_STRING, STSCDIR, &scdir);
@@ -235,11 +222,7 @@ WORD ap_trecd(LONG pbuff, WORD length)
 } /* ap_trecd */
 
 
-#if MULTIAPP
-void ap_exit(WORD isgem)
-#else
 void ap_exit(void)
-#endif
 {
         wm_update(TRUE);
 #if SINGLAPP
@@ -250,20 +233,5 @@ void ap_exit(void)
         gsx_mfset(ad_armice);
         wm_update(FALSE);
         all_run();
-#if MULTIAPP
-        if (isgem)
-          dos_term();
-#endif
 }
-
-
-#if MULTIAPP
-/*
-*       special abort for accessories
-*/
-void ap_accexit()
-{
-        ap_exit(TRUE);
-}
-#endif
 

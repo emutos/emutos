@@ -20,25 +20,6 @@
 #ifndef GEMLIB_H
 #define GEMLIB_H
 
-
-#if MULTIAPP
-#define PR_EXITED       0
-#define PR_SWITCH       1
-#define PR_FAILURE      -1
-#define PR_OKGEM        0
-#define PR_TERMINATE    1
-#define PR_STOPPED      2
-#define SIZE_DESKTOP    0x20000L                /* 128K         */
-#define DEF_CHNLSIZE    0x40000L                /* 256K         */
-#define SHRINK 0x01             /* state vars for sh_state      */
-#define ABORT 0x02
-#define ACCNODE struct accnode
-ACCNODE
-{
-        WORD    acc_swap;
-        BYTE    acc_name[12];
-};
-#endif
                                                 /* mu_flags             */
 #define MU_KEYBD 0x0001 
 #define MU_BUTTON 0x0002
@@ -410,15 +391,6 @@ typedef struct sh_struct
                                                 /*   the currently      */
                                                 /*   running appl.      */
                                                 /*   is a GEM app.      */
-#if MULTIAPP
-        WORD    sh_loadable;                    /* if TRUE then can make*/
-                                                /*   a pr_load call on  */
-                                                /*   this channel       */
-        WORD    sh_wh;                          /* window handle of fake*/
-                                                /*   window for a dos app*/
-        WORD    sh_isacc;                       /* if TRUE then accessory*/
-        WORD    sh_state;                       /* bit vector of states */
-#endif
         BYTE    sh_desk[LEN_ZFNAME];
         BYTE    sh_cdir[LEN_ZPATH];
 } SHELL;
@@ -449,9 +421,6 @@ THEGLO
  BYTE       g_fmtstr[MAX_LEN];
 
  BYTE       *g_fslist[NM_FILES];
-#if MULTIAPP
- BYTE       g_fsnames[LEN_FSNAME * NM_FILES];
-#endif
 
  UWORD      g_sysglo[G_SIZE];
 
