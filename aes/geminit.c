@@ -72,12 +72,8 @@
 
 #define IG_HARD 0
 #define SIZE_AFILE 2048
-#if SINGLAPP
 #define INF_SIZE 300                    /* Number of bytes to read of   */
                                         /*  the desktop.inf file.       */
-#else
-#define INF_SIZE 2048
-#endif
 
                                                 /* in GEMINIT.C         */
 static BYTE     start[SIZE_AFILE];              /* can't play the same  */
@@ -285,7 +281,6 @@ static void fs_start(void)
 }
 
 
-#if SINGLAPP
 /*
 *       Routine to load program file pointed at by pfilespec, then
 *       create new process context for it.  This uses the load overlay
@@ -342,7 +337,6 @@ static void ldaccs(void)
             sndcli(&gl_dta[30]);
         }
 }
-#endif
 
 
 
@@ -447,7 +441,6 @@ static void sh_init(void)
                  = psh->sh_isgem = TRUE;
         psh->sh_fullstep = FALSE;
 
-#if SINGLAPP
                                                 /* parse command tail   */
                                                 /*   that was stored in */
                                                 /*   geminit            */
@@ -569,7 +562,6 @@ static void sh_init(void)
           }
         }
         LBCOPY(ad_stail, ADDR(&s_tail[0]), 128);
-#endif
 }
 
 
@@ -798,11 +790,10 @@ void gem_main(void)
         gl_logdrv = dos_gdrv() + 'A';   /* boot directory       */
         gsx_init();                     /* do gsx open work station */
 
-#if SINGLAPP
         /* load all desk acc's  */
         if (totpds > 2)
             ldaccs();
-#endif
+
         /* fix up icons         */
         for(i=0; i<3; i++) {
 #ifdef USE_GEM_RSC
@@ -853,9 +844,8 @@ void gem_main(void)
 
         /* read the desktop.inf */
         /* 2/20/86 LKW          */
-#if SINGLAPP
         sh_rdinf();
-#endif
+
         /* off we go !!!        */
         dsptch();
 

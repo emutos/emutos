@@ -439,11 +439,10 @@ WORD fs_input(LONG pipath, LONG pisel, WORD *pbutton)
           return(FALSE);
                                                 /* get memory for       */
                                                 /*   the string buffer  */
-#if SINGLAPP
         ad_fsnames = dos_alloc( LW(LEN_FSNAME * NM_FILES) );
         if (!ad_fsnames)
           return(FALSE);
-#endif
+
         tree = ad_fstree;
         ad_locstr = (LONG) ADDR(&locstr[0]);
                                                 /* init strings in form */
@@ -649,9 +648,8 @@ dofelev:        fm_own(TRUE);
         fm_dial(FMD_FINISH, &gl_rfs);
                                                 /* return exit button   */
         *pbutton = inf_what(tree, FSOK, FSCANCEL);
-#if SINGLAPP
         dos_free(ad_fsnames);
-#endif
+
         return( TRUE );
 }
 

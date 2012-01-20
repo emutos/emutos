@@ -38,10 +38,7 @@
 #define DEBUG 0
 
 
-#define SINGLAPP 1
 
-
-#if SINGLAPP
 #define NUM_WIN 8               /* 8 for main app and desk accs       */
  
 #define NUM_ACCS 6              /* maximum number of desk accessory   */
@@ -50,7 +47,6 @@
 #define NUM_DESKACC 6           /* maximum number of desk accessory   */
                                 /* _slots_ available (one slot per    */
                                 /* mn_register() call)                */
-#endif
 
 
                                                 /* Use memcpy to copy bytes: */

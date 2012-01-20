@@ -52,9 +52,7 @@
 
 #define DESKWH  0x0
 
-#if SINGLAPP
 #define NUM_MWIN NUM_WIN
-#endif
 
 
 
@@ -370,12 +368,11 @@ static void w_clipdraw(WORD wh, WORD obj, WORD depth, WORD usetrue)
 
 void  w_strchg(WORD w_handle, WORD obj, LONG pstring)
 {
-#if SINGLAPP
         if ( obj == W_NAME )
           gl_aname.te_ptext = D.w_win[w_handle].w_pname = pstring;
         else
           gl_ainfo.te_ptext = D.w_win[w_handle].w_pinfo = pstring;
-#endif  
+
         w_clipdraw(w_handle, obj, MAX_DEPTH, 1);
 }
 
@@ -518,10 +515,8 @@ void w_bldactive(WORD w_handle)
         w_nilit(NUM_ELEM, &W_ACTIVE[0]);
                                                 /* start adding pieces  */
                                                 /*   & adjusting sizes  */
-#if SINGLAPP
         gl_aname.te_ptext = pw->w_pname;
         gl_ainfo.te_ptext = pw->w_pinfo;
-#endif
         gl_aname.te_just = TE_CNTR;
         issub = ( (pw->w_flags & VF_SUBWIN) &&
                   (D.w_win[gl_wtop].w_flags & VF_SUBWIN) );
@@ -827,7 +822,6 @@ void w_update(WORD bottom, GRECT *pt, WORD top, WORD moved, WORD usetrue)
 }
 
 
-#if SINGLAPP
 void w_setmen(WORD pid)
 {
         WORD            npid;
@@ -856,7 +850,6 @@ void w_menufix()
         pid = D.w_win[w_top()].w_owner->p_pid;
         w_setmen(pid);
 }
-#endif /* SINGLEAPP */
 
 
 /*
@@ -894,9 +887,7 @@ void draw_change(WORD w_handle, GRECT *pt)
                                                 /* if new top then      */
                                                 /*   change men         */
         if (gl_wtop != oldtop)
-#if SINGLAPP
           w_menufix();
-#endif
                                                 /* set ctrl rect and    */
                                                 /*   mouse owner        */
         w_setactive();

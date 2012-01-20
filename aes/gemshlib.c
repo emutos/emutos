@@ -348,10 +348,8 @@ void sh_tographic()
         gsx_graphic(TRUE);
                                                 /* set initial clip rect*/
         gsx_sclip(&gl_rscreen);
-#if SINGLAPP
                                                 /* allocate screen space*/
         gsx_malloc();
-#endif
                                                 /* start up the mouse   */
         ratinit();
                                                 /* put mouse to hourglass*/
@@ -375,10 +373,8 @@ void sh_toalpha()
         sti();
                                                 /* turn off the mouse   */
         ratexit();
-#if SINGLAPP
                                                 /* return screen space  */
         gsx_mfree();
-#endif
                                                 /* close workstation    */
         gsx_graphic(FALSE);
 }

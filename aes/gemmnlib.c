@@ -121,15 +121,11 @@ static void menu_fixup(BYTE *pname)
 
         cnt = (gl_dacnt) ? (2 + gl_dacnt) : 1;
                                                 /* fix up links         */
-#if SINGLAPP
         pob->ob_head = 1;
-#endif
         pob->ob_tail = cnt;
                                                 /* build up desk items  */
         ob_relxywh(tree, gl_dabox + 1, &t);
-#if SINGLAPP
         for(i=1, st=0; i<=cnt; i++)
-#endif
         {
           pob = &M_DESK[i];
           pob->ob_next = i+1;
@@ -479,7 +475,6 @@ void mn_bar(LONG tree, WORD showit, WORD pid)
         post_keybd(ctl_pd->p_cda, 0x0000);
 }
 
-#if SINGLAPP
 /*
 *       Routine to tell all desk accessories that the currently running
 *       application is about to terminate.
@@ -494,7 +489,6 @@ void mn_clsda()
             ap_sendmsg(appl_msg, AC_CLOSE, desk_ppd[i], i, 0, 0, 0, 0);
         }
 }
-#endif
 
 
 /*
@@ -565,9 +559,7 @@ void mn_unregister(WORD da_id)
                 build_menuid_lookup();
             }
         }
-#if SINGLAPP
         menu_fixup(&rlr->p_name[0]);
-#endif
 }       
 
 /*

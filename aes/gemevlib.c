@@ -195,9 +195,7 @@ WORD ev_multi(WORD flags, MOBLK *pmo1, MOBLK *pmo2, LONG tmcount,
         {
           if ( rlr->p_qindex > 0 )
           {
-#if SINGLAPP
             ap_rdwr(MU_MESAG, rlr, 16, mebuff);
-#endif
             what |= MU_MESAG;
           }
         }
@@ -223,9 +221,7 @@ WORD ev_multi(WORD flags, MOBLK *pmo1, MOBLK *pmo2, LONG tmcount,
           {
             m.qpb_ppd = rlr;
             m.qpb_cnt = 16;
-#if SINGLAPP
             m.qpb_buf = mebuff;
-#endif
             iasync( MU_MESAG, ADDR(&m) );
           }
                                                 /* wait for timer       */

@@ -81,9 +81,8 @@ static void aestrace(const char* message)
         kprintf("AES: %s: %s\n", appname, message);
 }
 #endif
-#if SINGLAPP
+
 static UWORD crysbind(WORD opcode, LONG pglobal, WORD int_in[], WORD int_out[], LONG addr_in[])
-#endif
 {
         LONG    maddr;
         LONG    tree;
@@ -99,10 +98,8 @@ static UWORD crysbind(WORD opcode, LONG pglobal, WORD int_in[], WORD int_out[], 
 #if DBG_GEMSUPER
                 aestrace("appl_init()");
 #endif
-#if SINGLAPP
                 LWSET(pglobal, 0x0120);         /* version number       */
                 LWSET(pglobal+2, 0x0001);       /* num of concurrent procs*/
-#endif
 /*              LLSET(pglobal, 0x00010200L);
 */
                 LWSET(pglobal+4, rlr->p_pid);
@@ -158,9 +155,7 @@ static UWORD crysbind(WORD opcode, LONG pglobal, WORD int_in[], WORD int_out[], 
 #if DBG_GEMSUPER
                 aestrace("evnt_mesag()");
 #endif
-#if SINGLAPP
                 ap_rdwr(MU_MESAG, rlr, 16, ME_PBUFF);
-#endif
                 break;
           case EVNT_TIMER:
                 ev_timer( HW(T_HICOUNT) + LW(T_LOCOUNT) );
@@ -457,10 +452,8 @@ static void xif(LONG pcrys_blk)
         if (AIN_LEN)
           LWCOPY(ADDR(&addr_in[0]), ADDR_IN, AIN_LEN*2);
 
-#if SINGLAPP
         int_out[0] = crysbind(OP_CODE, GGLOBAL, &int_in[0], &int_out[0], 
                                 &addr_in[0]);
-#endif
 
         if (OUT_LEN)
           LWCOPY(INT_OUT, ADDR(&int_out[0]), OUT_LEN);

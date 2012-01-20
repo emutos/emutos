@@ -3236,3 +3236,9 @@ Start... early ages
   for menu_register() exceeds 21 bytes. (RFB)
 - aes/gemctrl.c aes/gemmnlib.c aes/gemmnlib.h: Fixed implementation of
   menu_unregister() to avoid it changing existing menu ids. (RFB)
+
+2012-01-20
+- aes/crysbind.h aes/gemaplib.c aes/gemctrl.c aes/gemevlib.c aes/gemfslib.c
+  aes/geminit.c aes/gemmnlib.c aes/gemshlib.c aes/gemsuper.c aes/gemwmlib.c
+  desk/gembind.h include/compat.h: Removed SINGLAPP #define and made code
+  dependent on it always compile. (RFB)

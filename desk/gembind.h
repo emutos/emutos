@@ -119,16 +119,12 @@
 #define XGRF_2BOX 131
 
                                         /* max sizes for arrays         */
-#if SINGLAPP
 #define C_SIZE 4
-#endif
 #define G_SIZE 15
 #define I_SIZE 16
 #define O_SIZE 7
 #define AI_SIZE 2
-#if SINGLAPP
 #define AO_SIZE 1
-#endif
 
 /*
 extern UWORD    control[C_SIZE];

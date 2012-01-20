@@ -225,9 +225,7 @@ WORD ap_trecd(LONG pbuff, WORD length)
 void ap_exit(void)
 {
         wm_update(TRUE);
-#if SINGLAPP
         mn_clsda();
-#endif
         if (rlr->p_qindex)
           ap_rdwr(MU_MESAG, rlr, rlr->p_qindex, ad_valstr);
         gsx_mfset(ad_armice);

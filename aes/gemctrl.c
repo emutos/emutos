@@ -251,12 +251,10 @@ doelev:         message = (cpt == W_HELEV) ? WM_HSLID : WM_VSLID;
         }
         else
         {
-#if SINGLAPP
           ct_msgup(WM_UNTOPPED, D.w_win[gl_wtop].w_owner, gl_wtop,
                         x, y, w, h);
           for(ii=0; ii<NUM_ACCS; ii++)
             dsptch();
-#endif
                                                 /* went down on inactive*/
                                                 /*   window so tell ap. */
                                                 /*   to bring it to top */
@@ -289,7 +287,7 @@ static void hctl_rect(void)
                 item -= 3;
                 mn_getownid(&owner,&item,item); /* get accessory owner & menu id */
                 do_chg(gl_mntree, title, SELECTED, FALSE, TRUE, TRUE);
-#if SINGLAPP
+
                 if (gl_wtop >= 0 )
                 {
                   WORD  ii;
@@ -300,7 +298,6 @@ static void hctl_rect(void)
                 }
                 
                 mesag = AC_OPEN;
-#endif
               }
               else
                 item += gl_dabox;
