@@ -3234,3 +3234,5 @@ Start... early ages
   fixed associated code. (RFB)
 - aes/gemmnlib.c aes/gemmnlib.h: Fixed potential memory overwrite when title
   for menu_register() exceeds 21 bytes. (RFB)
+- aes/gemctrl.c aes/gemmnlib.c aes/gemmnlib.h: Fixed implementation of
+  menu_unregister() to avoid it changing existing menu ids. (RFB)

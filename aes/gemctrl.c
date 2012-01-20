@@ -272,7 +272,7 @@ static void hctl_rect(void)
 {
         WORD            title, item;
         register WORD   mesag;
-        register PD     *owner;
+        PD     *owner;
         
         if ( gl_mntree != 0x0L )
         {
@@ -287,11 +287,7 @@ static void hctl_rect(void)
               if (item > 2)
               {
                 item -= 3;
-                owner = desk_ppd[item];
-#if 0
-                /* use w, new mnlib      */
-                item  = mn_indextoid(item);
-#endif
+                mn_getownid(&owner,&item,item); /* get accessory owner & menu id */
                 do_chg(gl_mntree, title, SELECTED, FALSE, TRUE, TRUE);
 #if SINGLAPP
                 if (gl_wtop >= 0 )

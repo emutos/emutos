@@ -15,7 +15,6 @@ extern LONG     gl_mntree;
 extern PD       *gl_mnppd;
 
 extern LONG     desk_acc[];
-extern PD       *desk_ppd[];
 extern LONG     menu_tree[];
 
 extern WORD     gl_dacnt;
@@ -33,6 +32,7 @@ void mn_bar(LONG tree, WORD showit, WORD pid);
 void mn_clsda(void);
 WORD mn_register(WORD pid, LONG pstr);
 void mn_unregister(WORD da_id);
+void mn_getownid(PD **owner,WORD *id,WORD item);
 
 
 #endif

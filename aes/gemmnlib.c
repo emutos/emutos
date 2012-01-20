@@ -45,7 +45,8 @@ GLOBAL LONG     gl_mntree;
 GLOBAL PD       *gl_mnppd;
 
 GLOBAL LONG     desk_acc[NUM_DESKACC];
-GLOBAL PD       *desk_ppd[NUM_DESKACC];
+static PD       *desk_ppd[NUM_DESKACC];
+static WORD     acc_display[NUM_DESKACC];
 GLOBAL LONG     menu_tree[NUM_PDS];
 
 GLOBAL WORD     gl_dacnt;
@@ -127,7 +128,7 @@ static void menu_fixup(BYTE *pname)
                                                 /* build up desk items  */
         ob_relxywh(tree, gl_dabox + 1, &t);
 #if SINGLAPP
-        for(i=1; i<=cnt; i++)
+        for(i=1, st=0; i<=cnt; i++)
 #endif
         {
           pob = &M_DESK[i];
@@ -139,10 +140,9 @@ static void menu_fixup(BYTE *pname)
           pob->ob_state = pob->ob_flags = 0x0;
           if (i > 2)
           {
-            st = i-3;
             while( !desk_acc[st] )
               st++;
-            pob->ob_spec = desk_acc[st];
+            pob->ob_spec = desk_acc[st++];
           }
           else
             pob->ob_spec = LLGET(OB_SPEC(gl_dabox+i));
@@ -498,6 +498,30 @@ void mn_clsda()
 
 
 /*
+*       Routine to build lookup table for displayslot->menuid conversion.
+*       On completion, acc_display[n] will contain the menu_id for the
+*       nth accessory slot as displayed on the desktop.
+*/
+static void build_menuid_lookup(void)
+{
+        WORD i, slot;
+
+        for (i = 0, slot = 0; i < NUM_DESKACC; i++)
+        {
+          if (desk_acc[i])
+          {
+            acc_display[slot++] = i;
+          }
+        }
+
+        for ( ; slot < NUM_DESKACC; slot++)
+        {
+          acc_display[slot++] = -1;
+        }
+}
+
+
+/*
 *       Routine to register a desk accessory item on the menu bar.
 *       The return value is the object index of the menu item that
 *       was added.
@@ -518,6 +542,7 @@ WORD mn_register(WORD pid, LONG pstr)
           desk_acc[openda] = pstr;  /* save pointer, like Atari TOS */
 
           menu_fixup(&rlr->p_name[0]);
+          build_menuid_lookup();
           return(openda);
         }
         else
@@ -530,18 +555,33 @@ WORD mn_register(WORD pid, LONG pstr)
 */
 void mn_unregister(WORD da_id)
 {
-        WORD i;
-
-        for (i=da_id; i<gl_dacnt-1; i++)
-        { 
-          desk_ppd[i] = desk_ppd[i+1];
-          desk_acc[i] = desk_acc[i+1];
+        if ((gl_dacnt > 0) && (da_id >= 0) && (da_id < NUM_DESKACC))
+        {
+            if (desk_acc[da_id])
+            {
+                gl_dacnt--;
+                desk_ppd[da_id] = (PD *)0x0;
+                desk_acc[da_id] = 0x0L;
+                build_menuid_lookup();
+            }
         }
-        gl_dacnt--;
-        desk_ppd[gl_dacnt] = (PD *)0x0;
-        desk_acc[gl_dacnt] = 0x0L;
 #if SINGLAPP
         menu_fixup(&rlr->p_name[0]);
 #endif
 }       
 
+/*
+*       Routine to get the owner and menu id of the DA corresponding
+*       to the desktop display item number
+*/
+void mn_getownid(PD **owner,WORD *id,WORD item)
+{
+        WORD n;
+
+        n = acc_display[item];              /* get menu_id */
+        if ((n >= 0) && (n < NUM_DESKACC))  /* paranoia */
+        {
+          *id = n;
+          *owner = desk_ppd[n];
+        }
+}
