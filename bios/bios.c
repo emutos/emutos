@@ -84,7 +84,7 @@ static WORD defdrv;             /* default drive number (0 is a:, 2 is c:) */
 static const BYTE null_env[] = {0, 0};
 
 /* used by kprintf() */
-WORD boot_status = 0;           /* see kprint.h for bit flags */
+WORD boot_status;               /* see kprint.h for bit flags */
 /*==== BOOT ===============================================================*/
 
 
