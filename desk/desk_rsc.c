@@ -14,13 +14,7 @@
 
 #include "portab.h"
 #include "obdefs.h"
-#include "gembind.h"
-#include "aesbind.h"
-#include "gemdos.h"
-#include "kprint.h"
 #include "desk_rsc.h"
-#include "version.h"
-#include "lineavars.h"
 #include "nls.h"
 
 static const char rs_str_OK[] = N_("OK");
@@ -29,11 +23,6 @@ static const char rs_str_Install[] = N_("Install");
 static const char rs_str_Remove[] = N_("Remove");
 static const char rs_str_Yes[] = N_("Yes");
 static const char rs_str_No[] = N_("No");
-
-
-
-#define RS_NTED 37
-
 
 
 TEDINFO desk_rs_tedinfo[RS_NTED];
@@ -246,17 +235,13 @@ static const int rs_logo_img[] = {
 };
 
 
-static const BITBLK desk_rs_bitblk[] = {
+const BITBLK desk_rs_bitblk[] = {
     {(LONG) rs_logo_img, 4, 32, 0, 0, 1},
 };
 
 
-
-
 static char rs_str_iconOrText[32];      /* was: "  xxxx xx xxxxx  xx" */
 
-
-#define RS_NOBS 215
 
 OBJECT desk_rs_obj[RS_NOBS];
 
@@ -738,7 +723,7 @@ static const OBJECT desk_rs_obj_rom[] = {
    { 4, -1, -1, G_STRING,                   /*** 3 ***/
      NONE,
      NORMAL,
-     (long) version,
+     (long) "0.0.0",
      22, 2, 4, 1 },
 
    { 5, -1, -1, G_IMAGE,                    /*** 4 ***/
@@ -1591,7 +1576,7 @@ static const OBJECT desk_rs_obj_rom[] = {
 };
 
 
-static OBJECT *desk_rs_trees[] = {
+OBJECT *desk_rs_trees[] = {
     &desk_rs_obj[TR0],
     &desk_rs_obj[TR1],
     &desk_rs_obj[TR2],
@@ -1609,7 +1594,7 @@ static OBJECT *desk_rs_trees[] = {
 };
 
 
-static const char *desk_rs_fstr[] = {
+const char *desk_rs_fstr[] = {
     N_("%ld bytes used in %d items."),
     N_("  Show as icons  \007S"),
     N_("application"),
@@ -1708,199 +1693,11 @@ static const char *desk_rs_fstr[] = {
 };
 
 
-
-
-/* Counts the occurance of c in str */
-static int count_chars(char *str, char c)
-{
-    int count;
-
-    count = 0;
-    while(*str) {
-        if(*str++ == c) 
-            count ++;
-    }
-
-    return count;
-}
-
-/* 
- * the xlate_ functions below are also used by the GEM rsc in aes/gem_rsc.c
- */
-
-/* Translates the strings in an OBJECT array */
-void xlate_obj_array(OBJECT *obj_array, int nobj)
-{
-    register OBJECT *obj;
-
-    for(obj = obj_array; --nobj >= 0 ; obj++) {
-        switch(obj->ob_type) {
-        case G_TEXT:
-        case G_BOXTEXT:
-        case G_FTEXT:
-        case G_FBOXTEXT:
-            {
-                LONG * str = & ((TEDINFO *)obj->ob_spec)->te_ptmplt;
-                *str = (LONG) gettext((char *) *str);
-            }
-            break;
-        case G_STRING:
-        case G_BUTTON:
-        case G_TITLE:
-            obj->ob_spec = (LONG) gettext( (char *) obj->ob_spec);
-            break;
-        default:
-            break;
-        }
-    }
-}
-
-/* Translates and fixes the TEDINFO strings */
-void xlate_fix_tedinfo(TEDINFO *tedinfo, int nted)
-{
-    register int i = 0;
-    long len;
-    int j;
-    char *tedinfptr;
-
-    /* translate strings in TEDINFO */
-    for (i = 0; i < nted; i++) {
-        TEDINFO *ted = &tedinfo[i];
-        ted->te_ptmplt = (LONG) gettext( (char *) ted->te_ptmplt);
-    }
-
-    /* Fix TEDINFO strings: */
-    len = 0;
-    for (i = 0; i < nted; i++) {
-        if (tedinfo[i].te_ptext == 0) {
-            /* Count number of '_' in strings ( +1 for \0 at the end ): */
-            len += count_chars((char *) tedinfo[i].te_ptmplt, '_') + 1;
-        }
-    }
-    tedinfptr = (char *) dos_alloc(len);        /* Get memory */
-    for (i = 0; i < nted; i++) {
-        if (tedinfo[i].te_ptext == 0) {
-            tedinfo[i].te_ptext = (LONG) tedinfptr;
-            *tedinfptr++ = '@'; /* First character of uninitialized string */
-            len = count_chars((char *) tedinfo[i].te_ptmplt, '_');
-            for (j = 0; j < len; j++) {
-                *tedinfptr++ = '_';     /* Set other characters to '_' */
-            }
-            *tedinfptr++ = 0;   /* Final 0 */
-        }
-    }
-}
-
-/* change the sizes of the menus after translation 
- * note - the code below is based on the assumption that the width of
- * the system font is eight (documented as such in lineavars.h)
- */
-static void adjust_menu(OBJECT *obj_array, WORD tree)
-{
-
-#define OBJ(i) (&obj_array[i])
-
-    int i;  /* index in the menu bar */
-    int j;  /* index in the array of pull downs */
-    int width = (v_hz_rez >> 3); /* screen witdh in chars */
-    int x;  
-    OBJECT *menu = OBJ(tree);
-    OBJECT *mbar = OBJ(OBJ(menu->ob_head)->ob_head);
-    OBJECT *pulls = OBJ(menu->ob_tail);
-
-    x = 0; 
-    j = pulls->ob_head;
-    for (i = mbar->ob_head ; i <= mbar->ob_tail ; i++) {
-        OBJECT *title = OBJ(i);
-        int n = strlen( (char *) title->ob_spec);
-        int k, m;
-        title->ob_x = x;
-        title->ob_width = n;
-
-        m = 0;
-        for (k = OBJ(j)->ob_head ; k <= OBJ(j)->ob_tail ; k++) {
-            OBJECT *item = OBJ(k);
-            int l = strlen( (char *) item->ob_spec);
-            if (m < l) 
-                m = l;
-        }
-        
-        OBJ(j)->ob_x = 2+x;
-        
-        /* make sure the menu is not too far on the right of the screen */
-        if (OBJ(j)->ob_x + m >= width) {
-            OBJ(j)->ob_x = width - m;
-            m = (m-1) | 0x700;
-        }
-        
-        for (k = OBJ(j)->ob_head ; k <= OBJ(j)->ob_tail ; k++) {
-            OBJECT *item = OBJ(k);
-            item->ob_width = m;
-        }
-        OBJ(j)->ob_width = m;
-        
-        j = OBJ(j)->ob_next;
-        x += n;
-    }
-    
-    mbar->ob_width = x;
-#undef OBJ
-}
-
 void desk_rs_init(void)
 {
-    register int i;
-
     /* Copy data from ROM to RAM: */
     memcpy(desk_rs_obj, desk_rs_obj_rom, RS_NOBS * sizeof(OBJECT));
     memcpy(desk_rs_tedinfo, desk_rs_tedinfo_rom,
            RS_NTED * sizeof(TEDINFO));
-
-    /* translate strings in objects */
-    xlate_obj_array(desk_rs_obj, RS_NOBS);
-
-    /* adjust slightly the about box for a CVS built */
-    if (version[0] == '(') {
-        desk_rs_obj[TR4+2].ob_spec = (long) "";
-        desk_rs_obj[TR4+3].ob_x = 12;
-    }
-
-    /* adjust the size and coordinates of menu items */
-    adjust_menu(desk_rs_obj, TR0);
-
-    /* Fix objects coordinates: */
-    for(i = 0 ; i < RS_NOBS ; i++) {
-        rsrc_obfix((LONG) desk_rs_obj, i);
-    }
-
-    /* translate and fix TEDINFO strings */
-    xlate_fix_tedinfo(desk_rs_tedinfo, RS_NTED);
-
-#if !CONF_WITH_DESKTOP_ICONS
-    /* Disable menu entry that toggles icon/text mode */
-    desk_rs_obj[TR0+ICONITEM].ob_state |= DISABLED;
-#endif
-}
-
-
-/* Fake a rsrc_gaddr for the ROM desktop: */
-WORD rsrc_gaddr(WORD rstype, WORD rsid, LONG * paddr)
-{
-    switch (rstype) {
-    case R_TREE:
-        *paddr = (LONG) desk_rs_trees[rsid];
-        break;
-    case R_BITBLK:
-        *paddr = (LONG) & desk_rs_bitblk[rsid];
-        break;
-    case R_STRING:
-        *paddr = (LONG) gettext( desk_rs_fstr[rsid] );
-        break;
-    default:
-        kcprintf("FIXME: unsupported (faked) rsrc_gaddr type!\n");
-        return FALSE;
-    }
-
-    return TRUE;
 }
 

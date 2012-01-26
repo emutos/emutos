@@ -1033,7 +1033,7 @@ WORD rsrc_free(void)
 }
 
 
-/* Note: We fake this call in desk_rsc.c when desktop is in ROM */
+/* Note: We fake this call in deskmain.c when desktop is in ROM */
 WORD rsrc_gaddr(WORD rstype, WORD rsid, LONG *paddr)
 {
         RS_TYPE = rstype;

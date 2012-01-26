@@ -260,6 +260,14 @@
 
 #endif /* DESK1 */
 
+#define RS_NOBS         215
+#define RS_NTED         37
+
+extern const BITBLK desk_rs_bitblk[];
+extern const char *desk_rs_fstr[];
+extern OBJECT desk_rs_obj[RS_NOBS];
+extern TEDINFO desk_rs_tedinfo[RS_NTED];
+extern OBJECT *desk_rs_trees[];
 
 extern void desk_rs_init(void);
 
