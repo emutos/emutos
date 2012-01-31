@@ -27,6 +27,37 @@
  
 #define DBG_XHDI        0
 
+/*--- Global variables ---*/
+
+long (*next_handler)();
+/* is there installed another handler to pass the calls? */
+static BOOL another_handler = FALSE;
+static long xhdi_version = 0x130;
+extern int blkdevnum;
+
+/*---Functions ---*/
+
+int check_wether_is_my_device(UWORD major)
+{
+     /* ACSI? only when configured */
+#if CONF_WITH_ASCI
+    if (major >= 0 && major < 8)
+        return 1;
+#endif
+
+    /* SCSI? only when Native Features */
+#if DETECT_NATIVE_FEATURES
+    if (get_xhdi_nfid() && major >= 8 && major < 16)
+        return 1;
+#endif
+
+    /* IDE? always */
+    if (major >= 16 && major < 24)
+        return 1;
+
+    /* It's not my device */
+    return 0;
+}
 
 #if CONF_WITH_XHDI
 
@@ -35,6 +66,18 @@ void create_XHDI_cookie(void)
     cookie_add(COOKIE_XHDI, (long)xhdi_vec);
 }
 
+static long XHNewCookie(ULONG newcookie)
+{
+    /* Only handle this call once */
+    if (another_handler == TRUE) {
+        return (next_handler(newcookie));
+    }
+
+    next_handler = (long (*)()) newcookie;
+    another_handler = TRUE;
+
+    return E_OK;
+}
 
 static long XHInqDev2(UWORD drv, UWORD *major, UWORD *minor, ULONG *start,
                       BPB *bpb, ULONG *blocks, char *partid)
@@ -207,11 +250,18 @@ long XHReadWrite(UWORD major, UWORD minor, UWORD rw, ULONG sector,
 long xhdi_handler(UWORD *stack)
 {
     UWORD opcode = *stack;
+    UWORD version;
+    ULONG drvmap = 0UL;
+
     switch (opcode)
     {
         case XHGETVERSION:
         {
-            return 0x130;
+            if (another_handler) {
+                version = next_handler(XHGETVERSION);
+                xhdi_version = ((version) < (xhdi_version)) ? (version) : (xhdi_version);
+            }
+            return xhdi_version;
         }
         case XHINQTARGET:
         {
@@ -224,7 +274,13 @@ long xhdi_handler(UWORD *stack)
                 ULONG *deviceflags;
                 char *productname;
             } *args = (struct XHINQTARGET_args *)stack;
-            return XHInqTarget(args->major, args->minor, args->blocksize, args->deviceflags, args->productname);
+
+            if (check_wether_is_my_device(args->major))
+                return XHInqTarget(args->major, args->minor, args->blocksize, args->deviceflags, args->productname);
+            else if (another_handler)
+                return next_handler(XHINQTARGET, args->major, args->minor, args->blocksize, args->deviceflags, args->productname);
+            else 
+                return EUNDEV;
         }
         /*
         case XHRESERVE:
@@ -246,7 +302,13 @@ long xhdi_handler(UWORD *stack)
         */
         case XHDRVMAP:
         {
-            return blkdev_drvmap() & ~0x03;    /* FIXME */
+            if (another_handler)
+                drvmap = next_handler(XHDRVMAP);
+
+            return blkdev_drvmap() & drvmap & ~0x03;    /* FIXME */
+            /* Galvez: ?? I don't know why this 0x03 is present to hide the
+             * floppies, I guess for Aranym. Until I figure it out leave it.
+             */ 
         }
         case XHINQDEV:
         {
@@ -259,18 +321,35 @@ long xhdi_handler(UWORD *stack)
                 ULONG *start;
                 BPB *bpb;
             } *args = (struct XHINQDEV_args *)stack;
-            return XHInqDev(args->drv, args->major, args->minor, args->start, args->bpb);
+
+            /* Galvez: To know that we need to handle this call we compare blkdevnum
+             * (number of partitions found at boot) with drv (BIOS device number passed).
+             * IMPORTANT: We are trusting that this number of partitons isn't modified
+             * during run time. Future support for removable SD-Cards with multiple
+             * partitions could change this.
+             */
+            if (args->drv <= blkdevnum)
+                return XHInqDev(args->drv, args->major, args->minor, args->start, args->bpb);
+            else if (another_handler)
+                return next_handler(XHINQDEV, args->drv, args->major, args->minor, args->start, args->bpb);
+            else
+                return EUNDEV;
         }
         /*
         case XHINQDRIVER:
         {
             return XHInqDriver();
         }
+        */
         case XHNEWCOOKIE:
         {
-            return XHNewCookie();
+            struct XHINQTARGET_args
+            {
+                ULONG newcookie;
+            } *args = (struct XHINQTARGET_args *)stack;
+
+            return XHNewCookie(args->newcookie);
         }
-        */
         case XHREADWRITE:
         {
             struct XHREADWRITE_args
@@ -283,7 +362,13 @@ long xhdi_handler(UWORD *stack)
                 UWORD count;
                 void *buf;
             } *args = (struct XHREADWRITE_args *)stack;
-            return XHReadWrite(args->major, args->minor, args->rw, args->sector, args->count, args->buf);
+            
+            if (check_wether_is_my_device(args->major))
+                return XHReadWrite(args->major, args->minor, args->rw, args->sector, args->count, args->buf);
+            else if (another_handler)
+                return next_handler(XHREADWRITE, args->major, args->minor, args->rw, args->sector, args->count, args->buf);
+            else
+                return EUNDEV;
         }
         case XHINQTARGET2:
         {
@@ -297,7 +382,12 @@ long xhdi_handler(UWORD *stack)
                 char *productname;
                 UWORD stringlen;
             } *args = (struct XHINQTARGET2_args *)stack;
-            return XHInqTarget2(args->major, args->minor, args->blocksize, args->deviceflags, args->productname, args->stringlen);
+
+            if (check_wether_is_my_device(args->major))
+                return XHInqTarget2(args->major, args->minor, args->blocksize, args->deviceflags, args->productname, args->stringlen);
+            else if (another_handler)
+                return next_handler(XHINQTARGET2, args->major, args->minor, args->blocksize, args->deviceflags, args->productname, args->stringlen);
+            else return EUNDEV;
         }
         case XHINQDEV2:
         {
@@ -312,7 +402,20 @@ long xhdi_handler(UWORD *stack)
                 ULONG *blocks;
                 char *partid;
             } *args = (struct XHINQDEV2_args *)stack;
-            return XHInqDev2(args->drv, args->major, args->minor, args->start, args->bpb, args->blocks, args->partid);
+
+            /* Galvez: To know that we need to handle this call we compare blkdevnum
+             * (number of partitions found at boot) with drv (BIOS device number passed).
+             * IMPORTANT: We are trusting that this number of partitons isn't modified
+             * during run time. Future support for removable SD-Cards with multiple
+             * partitions could change this.
+             */
+            if (args->drv <= blkdevnum)
+                return XHInqDev2(args->drv, args->major, args->minor, args->start, args->bpb, args->blocks, args->partid);
+            else if (another_handler)
+                return next_handler(XHINQDEV2, args->drv, args->major, args->minor, args->start, args->bpb, args->blocks, args->partid);
+            else
+                return EUNDEV;
+            
         }
         /*
         case XHDRIVERSPECIAL:
@@ -330,7 +433,13 @@ long xhdi_handler(UWORD *stack)
                 ULONG *blocks;
                 ULONG *blocksize;
             } *args = (struct XHGETCAPACITY_args *)stack;
-            return XHGetCapacity(args->major, args->minor, args->blocks, args->blocksize);
+            
+            if (check_wether_is_my_device(args->major))
+                return XHGetCapacity(args->major, args->minor, args->blocks, args->blocksize);
+            else if (another_handler)
+                return next_handler(XHGETCAPACITY, args->major, args->minor, args->blocks, args->blocksize);
+            else
+                return EUNDEV;
         }
         /*
         case XHMEDIUMCHANGED:

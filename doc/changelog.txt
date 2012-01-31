@@ -3246,3 +3246,6 @@ Start... early ages
 2012-01-26
 - aes/deskmain.c aes/desk_rsc.c aes/desk_rsc.h aes/gembind.c: Reorganised
   desktop resource files in preparation for upcoming changes. (RFB)
+
+2012-01-31
+- bios/xhdi.c: Added XHNewCookie() support. Contributed by David Galvez. (VRI)
