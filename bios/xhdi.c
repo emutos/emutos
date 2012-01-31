@@ -70,7 +70,7 @@ static long XHNewCookie(ULONG newcookie)
 {
     /* Only handle this call once */
     if (another_handler == TRUE) {
-        return (next_handler(newcookie));
+        return (next_handler(XHNEWCOOKIE, newcookie));
     }
 
     next_handler = (long (*)()) newcookie;
