@@ -27,6 +27,8 @@
 
 #define DBG_XHDI        0
 
+#if CONF_WITH_XHDI
+
 /*--- Global variables ---*/
 
 typedef long (*XHDI_HANDLER)(UWORD opcode, ...);
@@ -56,8 +58,6 @@ int check_wether_is_my_device(UWORD major)
     /* It's not my device */
     return 0;
 }
-
-#if CONF_WITH_XHDI
 
 void create_XHDI_cookie(void)
 {
