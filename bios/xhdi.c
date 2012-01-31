@@ -24,7 +24,7 @@
 #include "ide.h"
 
 #include "xhdi.h"
- 
+
 #define DBG_XHDI        0
 
 /*--- Global variables ---*/
@@ -89,7 +89,7 @@ static long XHInqDev2(UWORD drv, UWORD *major, UWORD *minor, ULONG *start,
 #if DBG_XHDI
     kprintf("XHInqDev2(%c:) start=%ld, size=%ld, ID=%c%c%c\n",
             'A' + drv, pstart, blkdev[drv].size,
-            blkdev[drv].id[0], blkdev[drv].id[1], blkdev[drv].id[2]); 
+            blkdev[drv].id[0], blkdev[drv].id[1], blkdev[drv].id[2]);
 #endif
 
     if (major)
@@ -98,29 +98,29 @@ static long XHInqDev2(UWORD drv, UWORD *major, UWORD *minor, ULONG *start,
         *minor = 0;
     if (bpb)
         bpb->recsiz = 0;
-        
+
     if (!pstart)
         return EDRVNR;
-            
+
     if (start)
         *start = pstart;
 
     myBPB = (BPB *)blkdev_getbpb(drv);
     if (bpb)
         memcpy(bpb, myBPB, sizeof(BPB));
-            
+
     if (blocks)
         *blocks = blkdev[drv].size;
-            
+
     if (partid) {
         partid[0] = blkdev[drv].id[0];
         partid[1] = blkdev[drv].id[1];
         partid[2] = blkdev[drv].id[2];
     }
-            
+
     if (mediachange)
         return EDRVNR;
-            
+
    return E_OK;
 }
 
@@ -138,7 +138,7 @@ static long XHInqTarget2(UWORD major, UWORD minor, ULONG *blocksize,
                          ULONG *deviceflags, char *productname, UWORD stringlen)
 {
 #if DBG_XHDI
-    kprintf("XHInqTarget2(%d.%d)\n", major, minor); 
+    kprintf("XHInqTarget2(%d.%d)\n", major, minor);
 #endif
 
 #if DETECT_NATIVE_FEATURES
@@ -198,7 +198,7 @@ long XHReadWrite(UWORD major, UWORD minor, UWORD rw, ULONG sector,
 {
     WORD dev = major;
 #if DBG_XHDI
-    kprintf("XH%s(device=%d.%d, sector=%ld, count=%d, buf=%p)\n", 
+    kprintf("XH%s(device=%d.%d, sector=%ld, count=%d, buf=%p)\n",
             rw ? "Write" : "Read", major, minor, sector, count, buf);
 #endif
 
@@ -279,7 +279,7 @@ long xhdi_handler(UWORD *stack)
                 return XHInqTarget(args->major, args->minor, args->blocksize, args->deviceflags, args->productname);
             else if (another_handler)
                 return next_handler(XHINQTARGET, args->major, args->minor, args->blocksize, args->deviceflags, args->productname);
-            else 
+            else
                 return EUNDEV;
         }
         /*
@@ -308,7 +308,7 @@ long xhdi_handler(UWORD *stack)
             return blkdev_drvmap() & drvmap & ~0x03;    /* FIXME */
             /* Galvez: ?? I don't know why this 0x03 is present to hide the
              * floppies, I guess for Aranym. Until I figure it out leave it.
-             */ 
+             */
         }
         case XHINQDEV:
         {
@@ -362,7 +362,7 @@ long xhdi_handler(UWORD *stack)
                 UWORD count;
                 void *buf;
             } *args = (struct XHREADWRITE_args *)stack;
-            
+
             if (check_wether_is_my_device(args->major))
                 return XHReadWrite(args->major, args->minor, args->rw, args->sector, args->count, args->buf);
             else if (another_handler)
@@ -415,7 +415,7 @@ long xhdi_handler(UWORD *stack)
                 return next_handler(XHINQDEV2, args->drv, args->major, args->minor, args->start, args->bpb, args->blocks, args->partid);
             else
                 return EUNDEV;
-            
+
         }
         /*
         case XHDRIVERSPECIAL:
@@ -433,7 +433,7 @@ long xhdi_handler(UWORD *stack)
                 ULONG *blocks;
                 ULONG *blocksize;
             } *args = (struct XHGETCAPACITY_args *)stack;
-            
+
             if (check_wether_is_my_device(args->major))
                 return XHGetCapacity(args->major, args->minor, args->blocks, args->blocksize);
             else if (another_handler)
@@ -464,7 +464,7 @@ long xhdi_handler(UWORD *stack)
         }
         */
     }
-        
+
     return EINVFN;
 }
 
