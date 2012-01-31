@@ -29,10 +29,8 @@
 
 /*--- Global variables ---*/
 
-long (*next_handler)();
-/* is there installed another handler to pass the calls? */
-static BOOL another_handler = FALSE;
-static long xhdi_version = 0x130;
+typedef long (*XHDI_HANDLER)(UWORD opcode, ...);
+static XHDI_HANDLER next_handler; /* Next handler installed by XHNewCookie() */
 extern int blkdevnum;
 
 /*---Functions ---*/
@@ -68,13 +66,10 @@ void create_XHDI_cookie(void)
 
 static long XHNewCookie(ULONG newcookie)
 {
-    /* Only handle this call once */
-    if (another_handler == TRUE) {
-        return (next_handler(XHNEWCOOKIE, newcookie));
-    }
+    if (next_handler)
+        return next_handler(XHNEWCOOKIE, newcookie);
 
-    next_handler = (long (*)()) newcookie;
-    another_handler = TRUE;
+    next_handler = (XHDI_HANDLER)newcookie;
 
     return E_OK;
 }
@@ -250,18 +245,20 @@ long XHReadWrite(UWORD major, UWORD minor, UWORD rw, ULONG sector,
 long xhdi_handler(UWORD *stack)
 {
     UWORD opcode = *stack;
-    UWORD version;
-    ULONG drvmap = 0UL;
 
     switch (opcode)
     {
         case XHGETVERSION:
         {
-            if (another_handler) {
-                version = next_handler(XHGETVERSION);
-                xhdi_version = ((version) < (xhdi_version)) ? (version) : (xhdi_version);
+            UWORD version = 0x130;
+
+            if (next_handler) {
+                UWORD next_version = (UWORD)next_handler(XHGETVERSION);
+                if (next_version < version)
+                    version = next_version;
             }
-            return xhdi_version;
+
+            return version;
         }
         case XHINQTARGET:
         {
@@ -277,7 +274,7 @@ long xhdi_handler(UWORD *stack)
 
             if (check_wether_is_my_device(args->major))
                 return XHInqTarget(args->major, args->minor, args->blocksize, args->deviceflags, args->productname);
-            else if (another_handler)
+            else if (next_handler)
                 return next_handler(XHINQTARGET, args->major, args->minor, args->blocksize, args->deviceflags, args->productname);
             else
                 return EUNDEV;
@@ -302,13 +299,15 @@ long xhdi_handler(UWORD *stack)
         */
         case XHDRVMAP:
         {
-            if (another_handler)
-                drvmap = next_handler(XHDRVMAP);
+            ULONG drvmap = blkdev_drvmap();
 
-            return blkdev_drvmap() & drvmap & ~0x03;    /* FIXME */
-            /* Galvez: ?? I don't know why this 0x03 is present to hide the
-             * floppies, I guess for Aranym. Until I figure it out leave it.
-             */
+            /* Currently, floppy drives can't be accessed through XHDI. */
+            drvmap &= ~0x03;
+
+            if (next_handler)
+                drvmap |= next_handler(XHDRVMAP);
+
+            return drvmap;
         }
         case XHINQDEV:
         {
@@ -330,7 +329,7 @@ long xhdi_handler(UWORD *stack)
              */
             if (args->drv <= blkdevnum)
                 return XHInqDev(args->drv, args->major, args->minor, args->start, args->bpb);
-            else if (another_handler)
+            else if (next_handler)
                 return next_handler(XHINQDEV, args->drv, args->major, args->minor, args->start, args->bpb);
             else
                 return EUNDEV;
@@ -365,7 +364,7 @@ long xhdi_handler(UWORD *stack)
 
             if (check_wether_is_my_device(args->major))
                 return XHReadWrite(args->major, args->minor, args->rw, args->sector, args->count, args->buf);
-            else if (another_handler)
+            else if (next_handler)
                 return next_handler(XHREADWRITE, args->major, args->minor, args->rw, args->sector, args->count, args->buf);
             else
                 return EUNDEV;
@@ -385,7 +384,7 @@ long xhdi_handler(UWORD *stack)
 
             if (check_wether_is_my_device(args->major))
                 return XHInqTarget2(args->major, args->minor, args->blocksize, args->deviceflags, args->productname, args->stringlen);
-            else if (another_handler)
+            else if (next_handler)
                 return next_handler(XHINQTARGET2, args->major, args->minor, args->blocksize, args->deviceflags, args->productname, args->stringlen);
             else return EUNDEV;
         }
@@ -411,7 +410,7 @@ long xhdi_handler(UWORD *stack)
              */
             if (args->drv <= blkdevnum)
                 return XHInqDev2(args->drv, args->major, args->minor, args->start, args->bpb, args->blocks, args->partid);
-            else if (another_handler)
+            else if (next_handler)
                 return next_handler(XHINQDEV2, args->drv, args->major, args->minor, args->start, args->bpb, args->blocks, args->partid);
             else
                 return EUNDEV;
@@ -436,7 +435,7 @@ long xhdi_handler(UWORD *stack)
 
             if (check_wether_is_my_device(args->major))
                 return XHGetCapacity(args->major, args->minor, args->blocks, args->blocksize);
-            else if (another_handler)
+            else if (next_handler)
                 return next_handler(XHGETCAPACITY, args->major, args->minor, args->blocks, args->blocksize);
             else
                 return EUNDEV;
