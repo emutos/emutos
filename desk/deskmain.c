@@ -1491,7 +1491,7 @@ void desk_xlate_fix(void)
 
 #if !CONF_WITH_DESKTOP_ICONS
     /* Disable menu entry that toggles icon/text mode */
-    desk_rs_obj[TR0+ICONITEM].ob_state |= DISABLED;
+    desk_rs_obj[ICONITEM].ob_state |= DISABLED;
 #endif
 }
 

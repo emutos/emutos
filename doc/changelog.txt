@@ -3250,3 +3250,5 @@ Start... early ages
 2012-01-31
 - bios/xhdi.c: Added XHNewCookie() support. Contributed by David Galvez. (VRI)
 - bios/xhdi.c: Fixed chaining XHNewCookie(). (VRI)
+- desk/deskmain.c: Fixed 'make 192', broken by previous changes to
+  deskmain.c. (RFB)
