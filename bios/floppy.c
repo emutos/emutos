@@ -609,14 +609,16 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
         flopunlk();
         return err;
     }
-    for(retry = 0; retry < 2 ; retry ++) {
+
+    while (count--) {
+      for(retry = 0; retry < 2 ; retry ++) {
         set_fdc_reg(FDC_SR, sect);
         set_dma_addr((ULONG) buf);
         if(rw == RW_READ) {
-            fdc_start_dma_read(count);
+            fdc_start_dma_read(1);
             set_fdc_reg(FDC_CS, FDC_READ);
         } else {
-            fdc_start_dma_write(count);
+            fdc_start_dma_write(1);
             set_fdc_reg(FDC_CS | DMA_WRBIT, FDC_WRITE);
         }
         if(timeout_gpip(TIMEOUT)) {
@@ -646,7 +648,16 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
                 break;
             }
         }
-    }  
+      }
+      //-- If there was an error, dont read any more sectors
+      if (err) {
+          break;
+      }
+      //-- Otherwise carry on sequentially
+      buf += 512;
+      sect++;
+    }
+
     flopunlk();
     return err;
 #else

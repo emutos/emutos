@@ -3252,3 +3252,7 @@ Start... early ages
 - bios/xhdi.c: Fixed chaining XHNewCookie(). (VRI)
 - desk/deskmain.c: Fixed 'make 192', broken by previous changes to
   deskmain.c. (RFB)
+
+2012-02-03
+- bios/floppy.c: Fixed floprw() to be able to read multiple sectors.
+  Thanks to James Boulton for the patch! (THH)
