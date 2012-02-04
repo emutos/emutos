@@ -3256,3 +3256,5 @@ Start... early ages
 2012-02-03
 - bios/floppy.c: Fixed floprw() to be able to read multiple sectors.
   Thanks to James Boulton for the patch! (THH)
+- bios/kprint.c: Added SuperToUser() macro, required for compilation with
+  RS232 or MIDI debug print enabled. (RFB)

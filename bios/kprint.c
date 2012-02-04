@@ -25,6 +25,38 @@
 #include "processor.h"
 #include "chardev.h"
 
+#undef SuperToUser      /* prevent "redefined" warning message */
+/*
+ * Safe binding to switch back from supervisor to user mode.
+ * On TOS or EmuTOS, if the stack pointer has changed between Super(0)
+ * and Super(oldssp), the resulting user stack pointer is wrong.
+ * This bug does not occur with FreeMiNT.
+ * So the safe way to return from supervisor to user mode is to backup
+ * the stack pointer then restore it after the trap.
+ * Sometimes, GCC optimizes the stack usage, so this matters.
+ *
+ * Binding originally by Vincent Riviere, from MiNTlib's osbind.h
+ */
+#define SuperToUser(ptr)                    \
+(void)__extension__                         \
+({                                          \
+    register long retvalue __asm__("d0");   \
+    register long sp_backup;                \
+                                            \
+    __asm__ volatile                        \
+    (                                       \
+        "movl    sp,%1\n\t"                 \
+        "movl    %2,sp@-\n\t"               \
+        "movw    #0x20,sp@-\n\t"            \
+        "trap    #1\n\t"                    \
+        "movl    %1,sp\n\t"                 \
+    : "=r"(retvalue), "=&r"(sp_backup)  /* outputs */       \
+    : "g"((long)(ptr))                  /* inputs */        \
+    : __CLOBBER_RETURN("d0") "d1", "d2", "a0", "a1", "a2"   \
+    );                                      \
+})
+
+
 /* extern declarations */
 
 extern void printout_stonx(char *);    /* in kprintasm.S */
