@@ -16,9 +16,7 @@
 *       -------------------------------------------------------------
 */
 
-
-                                /* leftovers from old deskdefn.h        */
-#define NUM_ADTREES 14
+#include "desk_rsc.h"           /* for RS_NTREE */
 
 
 #ifndef ARROW
@@ -119,7 +117,7 @@ GLOBES
         
 /*GLOBAL*/ LONG         a_alert;
 
-/*GLOBAL*/ LONG         a_trees[NUM_ADTREES];
+/*GLOBAL*/ LONG         a_trees[RS_NTREE];
 
 /*GLOBAL*/ WORD         g_croot;                /* current pseudo root  */
 

@@ -3262,3 +3262,4 @@ Start... early ages
 2012-02-05
 - desk/deskmain.c desk/desk_rsc.h: Renamed & moved two resource-related
   #defines into resource header. (RFB)
+- desk/deskbind.h: Get number of trees in resource from resource header. (RFB)
