@@ -3263,3 +3263,5 @@ Start... early ages
 - desk/deskmain.c desk/desk_rsc.h: Renamed & moved two resource-related
   #defines into resource header. (RFB)
 - desk/deskbind.h: Get number of trees in resource from resource header. (RFB)
+- desk/aesbind.h desk/deskmain.c desk/gembind.c: Replace menu_text() with
+  macro to avoid problems when original object string is in ROM. (RFB)

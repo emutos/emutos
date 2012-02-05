@@ -438,6 +438,7 @@ WORD menu_tnormal(LONG tree, WORD titlenum, WORD normalit)
 }
 
 
+/* no longer used in desktop
 WORD menu_text(LONG tree, WORD inum, LONG ptext)
 {
         MM_ITREE = tree;
@@ -445,6 +446,7 @@ WORD menu_text(LONG tree, WORD inum, LONG ptext)
         MM_PTEXT = ptext;
         return( gem_if( MENU_TEXT ) );
 }
+*/
 
 
 /* not used in desktop

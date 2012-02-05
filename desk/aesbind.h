@@ -36,7 +36,7 @@ WORD menu_bar(LONG tree, WORD showit);
 WORD menu_icheck(LONG tree, WORD itemnum, WORD checkit);
 WORD menu_ienable(LONG tree, WORD itemnum, WORD enableit);
 WORD menu_tnormal(LONG tree, WORD titlenum, WORD normalit);
-WORD menu_text(LONG tree, WORD inum, LONG ptext);
+/* WORD menu_text(LONG tree, WORD inum, LONG ptext); */
 WORD menu_click(WORD click, WORD setit);
 
 WORD objc_add(LONG tree, WORD parent, WORD child);
