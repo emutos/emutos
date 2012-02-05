@@ -261,7 +261,9 @@
 #endif /* DESK1 */
 
 #define RS_NOBS         215
+#define RS_NTREE        14
 #define RS_NTED         37
+#define RS_NBB          1
 
 extern const BITBLK desk_rs_bitblk[];
 extern const char *desk_rs_fstr[];

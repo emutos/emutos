@@ -3258,3 +3258,7 @@ Start... early ages
   Thanks to James Boulton for the patch! (THH)
 - bios/kprint.c: Added SuperToUser() macro, required for compilation with
   RS232 or MIDI debug print enabled. (RFB)
+
+2012-02-05
+- desk/deskmain.c desk/desk_rsc.h: Renamed & moved two resource-related
+  #defines into resource header. (RFB)

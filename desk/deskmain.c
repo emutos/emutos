@@ -83,7 +83,6 @@
 #define BEG_UPDATE 1
 #define END_UPDATE 0
 
-#define NUM_BB  1
 
 /* */
 #define SPACE 0x20
@@ -1589,10 +1588,10 @@ WORD deskmain(void)
 #endif
                                                 /* initialize menus and */
                                                 /*   dialogs            */
-        for(ii = 0; ii < NUM_ADTREES; ii++)
+        for(ii = 0; ii < RS_NTREE; ii++)
           rsrc_gaddr(R_TREE, ii, &G.a_trees[ii]);
 
-        for (ii=0; ii<NUM_BB; ii++)             /* initialize bit images */
+        for (ii=0; ii<RS_NBB; ii++)             /* initialize bit images */
         {
           app_tran(ii);
         }
