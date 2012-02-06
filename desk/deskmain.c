@@ -1396,7 +1396,7 @@ void xlate_fix_tedinfo(TEDINFO *tedinfo, int nted)
  * note - the code below is based on the assumption that the width of
  * the system font is eight (documented as such in lineavars.h)
  */
-static void adjust_menu(OBJECT *obj_array, WORD tree)
+static void adjust_menu(OBJECT *obj_array)
 {
 
 #define OBJ(i) (&obj_array[i])
@@ -1405,7 +1405,7 @@ static void adjust_menu(OBJECT *obj_array, WORD tree)
     int j;  /* index in the array of pull downs */
     int width = (v_hz_rez >> 3); /* screen width in chars */
     int x;  
-    OBJECT *menu = OBJ(tree);
+    OBJECT *menu = OBJ(0);
     OBJECT *mbar = OBJ(OBJ(menu->ob_head)->ob_head);
     OBJECT *pulls = OBJ(menu->ob_tail);
 
@@ -1479,7 +1479,7 @@ void desk_xlate_fix(void)
     }
 
     /* adjust the size and coordinates of menu items */
-    adjust_menu(desk_rs_obj, 0);
+    adjust_menu(desk_rs_trees[ADMENU]);
 
     /* Fix objects coordinates: */
     for(i = 0 ; i < RS_NOBS ; i++) {
@@ -1491,7 +1491,7 @@ void desk_xlate_fix(void)
 
 #if !CONF_WITH_DESKTOP_ICONS
     /* Disable menu entry that toggles icon/text mode */
-    desk_rs_obj[ICONITEM].ob_state |= DISABLED;
+    menu_ienable((LONG)desk_rs_trees[ADMENU],ICONITEM,FALSE);
 #endif
 }
 
