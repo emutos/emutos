@@ -126,6 +126,7 @@ Pavel Salac <salac.pavel at gmail.com>
 
 David Galvez <dgalvez75 at gmail.com>
 - Spanish translation update
+- XHNewCookie() implementation.
 
 Christos Tziotzis <ctziotzis at gmail.com>
 - Greek translation update
