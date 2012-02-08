@@ -37,28 +37,6 @@ extern int blkdevnum;
 
 /*---Functions ---*/
 
-int check_wether_is_my_device(UWORD major)
-{
-     /* ACSI? only when configured */
-#if CONF_WITH_ASCI
-    if (major >= 0 && major < 8)
-        return 1;
-#endif
-
-    /* SCSI? only when Native Features */
-#if DETECT_NATIVE_FEATURES
-    if (get_xhdi_nfid() && major >= 8 && major < 16)
-        return 1;
-#endif
-
-    /* IDE? always */
-    if (major >= 16 && major < 24)
-        return 1;
-
-    /* It's not my device */
-    return 0;
-}
-
 void create_XHDI_cookie(void)
 {
     cookie_add(COOKIE_XHDI, (long)xhdi_vec);
@@ -80,12 +58,19 @@ static long XHInqDev2(UWORD drv, UWORD *major, UWORD *minor, ULONG *start,
     long pstart = blkdev[drv].start;
     int mediachange = 0;
     BPB *myBPB;
+    long ret;
 
 #if DBG_XHDI
     kprintf("XHInqDev2(%c:) start=%ld, size=%ld, ID=%c%c%c\n",
             'A' + drv, pstart, blkdev[drv].size,
             blkdev[drv].id[0], blkdev[drv].id[1], blkdev[drv].id[2]);
 #endif
+    
+    if (next_handler) {
+        ret = next_handler(XHINQDEV2, drv, major, minor, start, bpb, blocks, partid);
+        if (ret != EINVFN && ret != EUNDEV && ret != EDRIVE)
+            return ret;
+    }
 
     if (major)
         *major = blkdev[drv].unit-2;
@@ -122,6 +107,14 @@ static long XHInqDev2(UWORD drv, UWORD *major, UWORD *minor, ULONG *start,
 static long XHInqDev(UWORD drv, UWORD *major, UWORD *minor, ULONG *start,
                      BPB *bpb)
 {
+    long ret;
+
+    if (next_handler) {
+        ret = next_handler(XHINQDEV, drv, major, minor, start, bpb);
+        if (ret != EINVFN && ret != EUNDEV && ret != EDRIVE)
+            return ret;
+    }
+
     return XHInqDev2(drv, major, minor, start, bpb, NULL, NULL);
 }
 
@@ -132,14 +125,22 @@ static long XHInqDev(UWORD drv, UWORD *major, UWORD *minor, ULONG *start,
 static long XHInqTarget2(UWORD major, UWORD minor, ULONG *blocksize,
                          ULONG *deviceflags, char *productname, UWORD stringlen)
 {
+    long ret;
+
 #if DBG_XHDI
     kprintf("XHInqTarget2(%d.%d)\n", major, minor);
 #endif
 
+    if (next_handler) {
+        ret = next_handler(XHINQTARGET2, major, minor, blocksize, deviceflags, productname, stringlen);
+        if (ret != EINVFN && ret != EUNDEV)
+            return ret;
+    }
+
 #if DETECT_NATIVE_FEATURES
     /* direct access to device */
     if (get_xhdi_nfid()) {
-        int ret = NFCall(get_xhdi_nfid() + XHINQTARGET2, (long)major, (long)minor, (long)blocksize, (long)deviceflags, (long)productname, (long)stringlen);
+        ret = NFCall(get_xhdi_nfid() + XHINQTARGET2, (long)major, (long)minor, (long)blocksize, (long)deviceflags, (long)productname, (long)stringlen);
         if (ret != EINVFN && ret != EUNDEV)
             return ret;
     }
@@ -165,19 +166,35 @@ static long XHInqTarget2(UWORD major, UWORD minor, ULONG *blocksize,
 long XHInqTarget(UWORD major, UWORD minor, ULONG *blocksize,
                  ULONG *deviceflags, char *productname)
 {
+    long ret;
+
+    if (next_handler) {
+        ret = next_handler(XHINQTARGET, major, minor, blocksize, deviceflags, productname);
+        if (ret != EINVFN && ret != EUNDEV)
+            return ret;
+    }
+
     return XHInqTarget2(major, minor, blocksize, deviceflags, productname, 33);
 }
 
 
 long XHGetCapacity(UWORD major, UWORD minor, ULONG *blocks, ULONG *blocksize)
 {
+    long ret;
+
 #if DBG_XHDI
     kprintf("XHGetCapacity(%d.%d)\n", major, minor);
 #endif
+    
+    if (next_handler) {
+        ret = next_handler(XHGETCAPACITY, major, minor, blocks, blocksize);
+        if (ret != EINVFN && ret != EUNDEV)
+            return ret;
+    }
 
 #if DETECT_NATIVE_FEATURES
     if (get_xhdi_nfid()) {
-        long ret = NFCall(get_xhdi_nfid() + XHGETCAPACITY, (long)major, (long)minor, (long)blocks, (long)blocksize);
+        ret = NFCall(get_xhdi_nfid() + XHGETCAPACITY, (long)major, (long)minor, (long)blocks, (long)blocksize);
         if (ret != EINVFN && ret != EUNDEV)
             return ret;
     }
@@ -192,15 +209,23 @@ long XHReadWrite(UWORD major, UWORD minor, UWORD rw, ULONG sector,
                  UWORD count, void *buf)
 {
     WORD dev = major;
+    long ret;
+
 #if DBG_XHDI
     kprintf("XH%s(device=%d.%d, sector=%ld, count=%d, buf=%p)\n",
             rw ? "Write" : "Read", major, minor, sector, count, buf);
 #endif
 
+    if (next_handler) {
+        ret = next_handler(XHREADWRITE, major, minor, rw, sector, count, buf);
+        if (ret != EINVFN && ret != EUNDEV)
+            return ret;
+    }
+
 #if DETECT_NATIVE_FEATURES
     /* direct access to device */
     if (get_xhdi_nfid()) {
-        long ret = NFCall(get_xhdi_nfid() + XHREADWRITE, (long)dev, (long)0, (long)rw, (long)sector, (long)count, buf);
+        ret = NFCall(get_xhdi_nfid() + XHREADWRITE, (long)dev, (long)0, (long)rw, (long)sector, (long)count, buf);
         if (ret != EINVFN && ret != EUNDEV)
             return ret;
     }
@@ -215,7 +240,7 @@ long XHReadWrite(UWORD major, UWORD minor, UWORD rw, ULONG sector,
     }
 #if CONF_WITH_ACSI
     else if (dev >= 0 && dev < 8) {
-        long ret = acsi_rw(rw, sector, count, (LONG)buf, dev);
+        ret = acsi_rw(rw, sector, count, (LONG)buf, dev);
 #if DBG_XHDI
         kprintf("acsi_rw() returned %ld\n", ret);
 #endif
@@ -227,7 +252,7 @@ long XHReadWrite(UWORD major, UWORD minor, UWORD rw, ULONG sector,
     }
 #if CONF_WITH_IDE
     else if (dev < 24) {
-        long ret = ide_rw(rw, sector, count, (LONG)buf, dev - 16);
+        ret = ide_rw(rw, sector, count, (LONG)buf, dev - 16);
 #if DBG_XHDI
         kprintf("ide_rw() returned %ld\n", ret);
 #endif
@@ -272,12 +297,7 @@ long xhdi_handler(UWORD *stack)
                 char *productname;
             } *args = (struct XHINQTARGET_args *)stack;
 
-            if (check_wether_is_my_device(args->major))
-                return XHInqTarget(args->major, args->minor, args->blocksize, args->deviceflags, args->productname);
-            else if (next_handler)
-                return next_handler(XHINQTARGET, args->major, args->minor, args->blocksize, args->deviceflags, args->productname);
-            else
-                return EUNDEV;
+            return XHInqTarget(args->major, args->minor, args->blocksize, args->deviceflags, args->productname);
         }
         /*
         case XHRESERVE:
@@ -321,18 +341,7 @@ long xhdi_handler(UWORD *stack)
                 BPB *bpb;
             } *args = (struct XHINQDEV_args *)stack;
 
-            /* Galvez: To know that we need to handle this call we compare blkdevnum
-             * (number of partitions found at boot) with drv (BIOS device number passed).
-             * IMPORTANT: We are trusting that this number of partitons isn't modified
-             * during run time. Future support for removable SD-Cards with multiple
-             * partitions could change this.
-             */
-            if (args->drv <= blkdevnum)
-                return XHInqDev(args->drv, args->major, args->minor, args->start, args->bpb);
-            else if (next_handler)
-                return next_handler(XHINQDEV, args->drv, args->major, args->minor, args->start, args->bpb);
-            else
-                return EUNDEV;
+            return XHInqDev(args->drv, args->major, args->minor, args->start, args->bpb);
         }
         /*
         case XHINQDRIVER:
@@ -344,6 +353,7 @@ long xhdi_handler(UWORD *stack)
         {
             struct XHINQTARGET_args
             {
+                UWORD opcode;
                 ULONG newcookie;
             } *args = (struct XHINQTARGET_args *)stack;
 
@@ -362,12 +372,7 @@ long xhdi_handler(UWORD *stack)
                 void *buf;
             } *args = (struct XHREADWRITE_args *)stack;
 
-            if (check_wether_is_my_device(args->major))
-                return XHReadWrite(args->major, args->minor, args->rw, args->sector, args->count, args->buf);
-            else if (next_handler)
-                return next_handler(XHREADWRITE, args->major, args->minor, args->rw, args->sector, args->count, args->buf);
-            else
-                return EUNDEV;
+            return XHReadWrite(args->major, args->minor, args->rw, args->sector, args->count, args->buf);
         }
         case XHINQTARGET2:
         {
@@ -382,11 +387,7 @@ long xhdi_handler(UWORD *stack)
                 UWORD stringlen;
             } *args = (struct XHINQTARGET2_args *)stack;
 
-            if (check_wether_is_my_device(args->major))
-                return XHInqTarget2(args->major, args->minor, args->blocksize, args->deviceflags, args->productname, args->stringlen);
-            else if (next_handler)
-                return next_handler(XHINQTARGET2, args->major, args->minor, args->blocksize, args->deviceflags, args->productname, args->stringlen);
-            else return EUNDEV;
+            return XHInqTarget2(args->major, args->minor, args->blocksize, args->deviceflags, args->productname, args->stringlen);
         }
         case XHINQDEV2:
         {
@@ -402,19 +403,7 @@ long xhdi_handler(UWORD *stack)
                 char *partid;
             } *args = (struct XHINQDEV2_args *)stack;
 
-            /* Galvez: To know that we need to handle this call we compare blkdevnum
-             * (number of partitions found at boot) with drv (BIOS device number passed).
-             * IMPORTANT: We are trusting that this number of partitons isn't modified
-             * during run time. Future support for removable SD-Cards with multiple
-             * partitions could change this.
-             */
-            if (args->drv <= blkdevnum)
-                return XHInqDev2(args->drv, args->major, args->minor, args->start, args->bpb, args->blocks, args->partid);
-            else if (next_handler)
-                return next_handler(XHINQDEV2, args->drv, args->major, args->minor, args->start, args->bpb, args->blocks, args->partid);
-            else
-                return EUNDEV;
-
+            return XHInqDev2(args->drv, args->major, args->minor, args->start, args->bpb, args->blocks, args->partid);
         }
         /*
         case XHDRIVERSPECIAL:
@@ -433,12 +422,7 @@ long xhdi_handler(UWORD *stack)
                 ULONG *blocksize;
             } *args = (struct XHGETCAPACITY_args *)stack;
 
-            if (check_wether_is_my_device(args->major))
-                return XHGetCapacity(args->major, args->minor, args->blocks, args->blocksize);
-            else if (next_handler)
-                return next_handler(XHGETCAPACITY, args->major, args->minor, args->blocks, args->blocksize);
-            else
-                return EUNDEV;
+            return XHGetCapacity(args->major, args->minor, args->blocks, args->blocksize);
         }
         /*
         case XHMEDIUMCHANGED:

@@ -3267,3 +3267,6 @@ Start... early ages
   macro to avoid problems when original object string is in ROM. (RFB)
 - desk/deskmain.c: Fixed latent bug when menu isn't first tree in
   resource. (RFB)
+
+2012-02-08
+- bios/xhdi.c: Better XHNewCookie() support. Contributed by David Galvez. (VRI)
