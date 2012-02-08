@@ -24,7 +24,7 @@
 #include "ide.h"
 
 #include "xhdi.h"
-
+ 
 #define DBG_XHDI        0
 
 #if CONF_WITH_XHDI
@@ -40,6 +40,32 @@ extern int blkdevnum;
 void create_XHDI_cookie(void)
 {
     cookie_add(COOKIE_XHDI, (long)xhdi_vec);
+}
+
+static UWORD XHGetVersion(void)
+{
+    UWORD version = 0x130;
+
+    if (next_handler) {
+        UWORD next_version = (UWORD)next_handler(XHGETVERSION);
+        if (next_version < version)
+            version = next_version;
+    }
+
+    return version;
+}
+
+static ULONG XHDrvMap(void)
+{
+    ULONG drvmap = blkdev_drvmap();
+
+    /* Currently, floppy drives can't be accessed through XHDI. */
+    drvmap &= ~0x03;
+
+    if (next_handler)
+        drvmap |= next_handler(XHDRVMAP);
+
+    return drvmap;
 }
 
 static long XHNewCookie(ULONG newcookie)
@@ -177,7 +203,6 @@ long XHInqTarget(UWORD major, UWORD minor, ULONG *blocksize,
     return XHInqTarget2(major, minor, blocksize, deviceflags, productname, 33);
 }
 
-
 long XHGetCapacity(UWORD major, UWORD minor, ULONG *blocks, ULONG *blocksize)
 {
     long ret;
@@ -275,16 +300,9 @@ long xhdi_handler(UWORD *stack)
     {
         case XHGETVERSION:
         {
-            UWORD version = 0x130;
-
-            if (next_handler) {
-                UWORD next_version = (UWORD)next_handler(XHGETVERSION);
-                if (next_version < version)
-                    version = next_version;
-            }
-
-            return version;
+            return XHGetVersion();
         }
+
         case XHINQTARGET:
         {
             struct XHINQTARGET_args
@@ -299,36 +317,32 @@ long xhdi_handler(UWORD *stack)
 
             return XHInqTarget(args->major, args->minor, args->blocksize, args->deviceflags, args->productname);
         }
-        /*
+/*
         case XHRESERVE:
         {
             return XHReserve();
         }
+
         case XHLOCK:
         {
             return XHLock();
         }
+
         case XHSTOP:
         {
             return XHStop();
         }
+
         case XHEJECT:
         {
             return XHEject();
         }
-        */
+*/
         case XHDRVMAP:
         {
-            ULONG drvmap = blkdev_drvmap();
-
-            /* Currently, floppy drives can't be accessed through XHDI. */
-            drvmap &= ~0x03;
-
-            if (next_handler)
-                drvmap |= next_handler(XHDRVMAP);
-
-            return drvmap;
+            return XHDrvMap();
         }
+
         case XHINQDEV:
         {
             struct XHINQDEV_args
@@ -343,12 +357,12 @@ long xhdi_handler(UWORD *stack)
 
             return XHInqDev(args->drv, args->major, args->minor, args->start, args->bpb);
         }
-        /*
+/*
         case XHINQDRIVER:
         {
             return XHInqDriver();
         }
-        */
+*/
         case XHNEWCOOKIE:
         {
             struct XHINQTARGET_args
@@ -359,6 +373,7 @@ long xhdi_handler(UWORD *stack)
 
             return XHNewCookie(args->newcookie);
         }
+
         case XHREADWRITE:
         {
             struct XHREADWRITE_args
@@ -374,6 +389,7 @@ long xhdi_handler(UWORD *stack)
 
             return XHReadWrite(args->major, args->minor, args->rw, args->sector, args->count, args->buf);
         }
+
         case XHINQTARGET2:
         {
             struct XHINQTARGET2_args
@@ -389,6 +405,7 @@ long xhdi_handler(UWORD *stack)
 
             return XHInqTarget2(args->major, args->minor, args->blocksize, args->deviceflags, args->productname, args->stringlen);
         }
+
         case XHINQDEV2:
         {
             struct XHINQDEV2_args
@@ -405,12 +422,12 @@ long xhdi_handler(UWORD *stack)
 
             return XHInqDev2(args->drv, args->major, args->minor, args->start, args->bpb, args->blocks, args->partid);
         }
-        /*
+/*
         case XHDRIVERSPECIAL:
         {
             return XHDriverSpecial();
         }
-        */
+*/
         case XHGETCAPACITY:
         {
             struct XHGETCAPACITY_args
@@ -424,31 +441,37 @@ long xhdi_handler(UWORD *stack)
 
             return XHGetCapacity(args->major, args->minor, args->blocks, args->blocksize);
         }
-        /*
+/*
         case XHMEDIUMCHANGED:
         {
             return XHMediumChanged();
         }
+
         case XHMINTINFO:
         {
             return XHMiNTInfo();
         }
+
         case XHDOSLIMITS:
         {
             return XHDOSLimits();
         }
+
         case XHLASTACCESS:
         {
             return XHLastAccess();
         }
+
         case XHREACCESS:
         {
             return XHReaccess();
         }
-        */
+*/
+        default:
+        {
+            return EINVFN;
+        }
     }
-
-    return EINVFN;
 }
 
 #endif /* CONF_WITH_XHDI */
