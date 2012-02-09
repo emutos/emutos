@@ -33,7 +33,6 @@
 
 typedef long (*XHDI_HANDLER)(UWORD opcode, ...);
 static XHDI_HANDLER next_handler; /* Next handler installed by XHNewCookie() */
-extern int blkdevnum;
 
 /*---Functions ---*/
 
@@ -84,7 +83,6 @@ static long XHInqDev2(UWORD drv, UWORD *major, UWORD *minor, ULONG *start,
     long pstart = blkdev[drv].start;
     int mediachange = 0;
     BPB *myBPB;
-    long ret;
 
 #if DBG_XHDI
     kprintf("XHInqDev2(%c:) start=%ld, size=%ld, ID=%c%c%c\n",
@@ -93,7 +91,7 @@ static long XHInqDev2(UWORD drv, UWORD *major, UWORD *minor, ULONG *start,
 #endif
     
     if (next_handler) {
-        ret = next_handler(XHINQDEV2, drv, major, minor, start, bpb, blocks, partid);
+        long ret = next_handler(XHINQDEV2, drv, major, minor, start, bpb, blocks, partid);
         if (ret != EINVFN && ret != EUNDEV && ret != EDRIVE)
             return ret;
     }
@@ -133,10 +131,8 @@ static long XHInqDev2(UWORD drv, UWORD *major, UWORD *minor, ULONG *start,
 static long XHInqDev(UWORD drv, UWORD *major, UWORD *minor, ULONG *start,
                      BPB *bpb)
 {
-    long ret;
-
     if (next_handler) {
-        ret = next_handler(XHINQDEV, drv, major, minor, start, bpb);
+        long ret = next_handler(XHINQDEV, drv, major, minor, start, bpb);
         if (ret != EINVFN && ret != EUNDEV && ret != EDRIVE)
             return ret;
     }
@@ -151,22 +147,22 @@ static long XHInqDev(UWORD drv, UWORD *major, UWORD *minor, ULONG *start,
 static long XHInqTarget2(UWORD major, UWORD minor, ULONG *blocksize,
                          ULONG *deviceflags, char *productname, UWORD stringlen)
 {
-    long ret;
-
 #if DBG_XHDI
     kprintf("XHInqTarget2(%d.%d)\n", major, minor);
 #endif
 
+#if CONF_WITH_XHDI
     if (next_handler) {
-        ret = next_handler(XHINQTARGET2, major, minor, blocksize, deviceflags, productname, stringlen);
+        long ret = next_handler(XHINQTARGET2, major, minor, blocksize, deviceflags, productname, stringlen);
         if (ret != EINVFN && ret != EUNDEV)
             return ret;
     }
+#endif
 
 #if DETECT_NATIVE_FEATURES
     /* direct access to device */
     if (get_xhdi_nfid()) {
-        ret = NFCall(get_xhdi_nfid() + XHINQTARGET2, (long)major, (long)minor, (long)blocksize, (long)deviceflags, (long)productname, (long)stringlen);
+        long ret = NFCall(get_xhdi_nfid() + XHINQTARGET2, (long)major, (long)minor, (long)blocksize, (long)deviceflags, (long)productname, (long)stringlen);
         if (ret != EINVFN && ret != EUNDEV)
             return ret;
     }
@@ -192,34 +188,34 @@ static long XHInqTarget2(UWORD major, UWORD minor, ULONG *blocksize,
 long XHInqTarget(UWORD major, UWORD minor, ULONG *blocksize,
                  ULONG *deviceflags, char *productname)
 {
-    long ret;
-
+#if CONF_WITH_XHDI
     if (next_handler) {
-        ret = next_handler(XHINQTARGET, major, minor, blocksize, deviceflags, productname);
+        long ret = next_handler(XHINQTARGET, major, minor, blocksize, deviceflags, productname);
         if (ret != EINVFN && ret != EUNDEV)
             return ret;
     }
+#endif
 
     return XHInqTarget2(major, minor, blocksize, deviceflags, productname, 33);
 }
 
 long XHGetCapacity(UWORD major, UWORD minor, ULONG *blocks, ULONG *blocksize)
 {
-    long ret;
-
 #if DBG_XHDI
     kprintf("XHGetCapacity(%d.%d)\n", major, minor);
 #endif
     
+#if CONF_WITH_XHDI
     if (next_handler) {
-        ret = next_handler(XHGETCAPACITY, major, minor, blocks, blocksize);
+        long ret = next_handler(XHGETCAPACITY, major, minor, blocks, blocksize);
         if (ret != EINVFN && ret != EUNDEV)
             return ret;
     }
+#endif
 
 #if DETECT_NATIVE_FEATURES
     if (get_xhdi_nfid()) {
-        ret = NFCall(get_xhdi_nfid() + XHGETCAPACITY, (long)major, (long)minor, (long)blocks, (long)blocksize);
+        long ret = NFCall(get_xhdi_nfid() + XHGETCAPACITY, (long)major, (long)minor, (long)blocks, (long)blocksize);
         if (ret != EINVFN && ret != EUNDEV)
             return ret;
     }
@@ -234,23 +230,24 @@ long XHReadWrite(UWORD major, UWORD minor, UWORD rw, ULONG sector,
                  UWORD count, void *buf)
 {
     WORD dev = major;
-    long ret;
 
 #if DBG_XHDI
     kprintf("XH%s(device=%d.%d, sector=%ld, count=%d, buf=%p)\n",
             rw ? "Write" : "Read", major, minor, sector, count, buf);
 #endif
 
+#if CONF_WITH_XHDI
     if (next_handler) {
-        ret = next_handler(XHREADWRITE, major, minor, rw, sector, count, buf);
+        long ret = next_handler(XHREADWRITE, major, minor, rw, sector, count, buf);
         if (ret != EINVFN && ret != EUNDEV)
             return ret;
     }
+#endif
 
 #if DETECT_NATIVE_FEATURES
     /* direct access to device */
     if (get_xhdi_nfid()) {
-        ret = NFCall(get_xhdi_nfid() + XHREADWRITE, (long)dev, (long)0, (long)rw, (long)sector, (long)count, buf);
+        long ret = NFCall(get_xhdi_nfid() + XHREADWRITE, (long)dev, (long)0, (long)rw, (long)sector, (long)count, buf);
         if (ret != EINVFN && ret != EUNDEV)
             return ret;
     }
@@ -265,7 +262,7 @@ long XHReadWrite(UWORD major, UWORD minor, UWORD rw, ULONG sector,
     }
 #if CONF_WITH_ACSI
     else if (dev >= 0 && dev < 8) {
-        ret = acsi_rw(rw, sector, count, (LONG)buf, dev);
+        long ret = acsi_rw(rw, sector, count, (LONG)buf, dev);
 #if DBG_XHDI
         kprintf("acsi_rw() returned %ld\n", ret);
 #endif
@@ -277,7 +274,7 @@ long XHReadWrite(UWORD major, UWORD minor, UWORD rw, ULONG sector,
     }
 #if CONF_WITH_IDE
     else if (dev < 24) {
-        ret = ide_rw(rw, sector, count, (LONG)buf, dev - 16);
+        long ret = ide_rw(rw, sector, count, (LONG)buf, dev - 16);
 #if DBG_XHDI
         kprintf("ide_rw() returned %ld\n", ret);
 #endif
