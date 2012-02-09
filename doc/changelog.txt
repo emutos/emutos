@@ -3270,3 +3270,4 @@ Start... early ages
 
 2012-02-08
 - bios/xhdi.c: Better XHNewCookie() support. Contributed by David Galvez. (VRI)
+- bios/xhdi.c: Fixed when not CONF_WITH_XHDI. (VRI)
