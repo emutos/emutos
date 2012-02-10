@@ -3275,3 +3275,5 @@ Start... early ages
 2012-02-09
 - desk/desktop.dfn desk/desktop.rsc: Updated raw resource files to correspond
   to the current C code in desk_rsc.c/desk_rsc.h. (RFB)
+- doc/resource.txt tools/erd.c: Added documentation & source for resource
+  decompilation tool. (RFB)

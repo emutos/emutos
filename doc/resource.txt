@@ -1,0 +1,120 @@
+Modifying the desktop resource in EmuTOS
+========================================
+The desktop resource is now maintained in the resource file desktop.rsc
+and its corresponding definitions file, desktop.dfn.  Changes are made
+"offline" with a standard resource editor, and the changed file(s)
+replace the existing ones.  The make process uses a special-purpose
+resource decompiler, erd (see below), to convert the .rsc/.dfn files
+into C source code which is then compiled into the EmuTOS image(s).
+
+
+Tips on using a resource editor with the current EmuTOS desktop resource
+========================================================================
+1. Atari TOS and most resource editors support a maximum of 30 or 31
+   characters per line in an alert; however, EmuTOS supports up to 40
+   characters/line, and most alerts in the EmuTOS desktop use this.
+   If you need to edit an alert, you will probably need to make your
+   resource editor treat them as strings; otherwise they will be
+   mangled due to line truncation.
+2. Some resource editors (such as Interface) have an option to optimize
+   spaces in menu items.  You may need to disable this to avoid the
+   "Sort by" menu items from being altered.
+
+
+erd: the EmuTOS Resource Decompiler
+===================================
+This program is designed to decompile the EmuTOS desktop RSC file 
+into .c and .h files, which are input to the EmuTOS make process.
+It is similar to a general-purpose resource decompiler, but has a
+number of EmuTOS-specific additions/changes, as well as a number
+of deliberate omissions.
+
+EmuTOS-specific features
+------------------------
+1. All arrays of resource information are globally visible, and the
+   normal resource fixup is performed by code within other parts of
+   EmuTOS.  The resource initialisation routine (rs_init()) only
+   copies the OBJECT and TEDINFO arrays from initialised variables
+   (which will be located in ROM) to globally-visible arrays, located
+   in RAM.  This allows modification of OBJECTs and TEDINFOs.
+2. For compatibility with EmuTOS multi-language support, text strings
+   (defined as strings containing any character other than a space, a
+   digit or punctuation) are normally output to the .c file enclosed
+   in the N_() macro.  This allows the EmuTOS multi-language support
+   to identify this as a string to be translated.
+   Additionally, strings consisting of all dashes (which are used to
+   separate menu items) are also enclosed in N_().  Although the
+   string itself does not need to be translated, its length may
+   need to change to correspond to changes in menu item lengths, and
+   enclosing the string in the N_() macro makes the string visible to
+   the translation process.
+   These actions may cause some strings to be unnecessarily marked as
+   to-be-translated; therefore, before enclosing a string with N_(),
+   the program references a "no translate" array containing strings
+   that should _not_ be so enclosed.
+3. For compatibility with the EmuTOS DESK1 compilation option, any
+   free string or alert that contains the word "trash" will be
+   surrounded by #ifdef DESK1 and #endif directives, as will the
+   corresponding #define in the .h file.  This will reduce ROM memory
+   requirements when DESK1 is not #defined.
+4. Several other features reduce ROM memory requirements, as follows:
+   (a) duplicate image data is automatically eliminated; multiple
+       BITBLKs may point to the same image data.
+   (b) duplicate icon data is automatically eliminated; multiple
+       ICONBLKs may point to the same mask/data arrays.
+   (c) strings in objects are trimmed of trailing spaces.
+   (d) duplicate strings (strings that occur in more than one object,
+       such as "OK") may be eliminated by including such strings in
+       a "shared string" array; when this is done, the program will
+       assign them to individual variables which are then pointed to
+       by more than one object.
+   (e) the te_ptext pointer in TEDINFOs is always set to NULL; this
+       field is initialised properly by the resource fixup code
+       elsewhere in EmuTOS.
+   (f) the TEDINFO validation string, pointed to by te_pvalid, is
+       optimized by removing duplicate characters from the end of
+       the string.
+
+Program omissions
+-----------------
+The programs does not handle CICONBLKs or USERDEFs, since they are not
+currently found in the resource.  If they are added to the resource
+later, it should be easy to add the appropriate code to the decompiler.
+
+Program usage
+-------------
+The program is invoked from the shell/commandline by:
+    erd [-d] [-p<prefix>] [-v] <RSCfile> <Cfile>
+
+where:
+    -d          requests debugging output
+    -p          specifies the prefix to apply to the names of all
+                globally-visible generated data items
+    -v          requests verbose output (start & end messages)
+    <RSCfile>   identifies the input RSC/definition files
+    <Cfile>     identifies the output .c/.h files
+
+Notes:
+ 1. Filenames for input and output files
+    File extensions should be omitted for <RSCfile> and <Cfile>.  The
+    files used for input are <RSCfile>.rsc and <RSCfile.<def> where
+    <def> is the definition file corresponding to the resource file.
+    Existing resource construction programs generate definition files
+    in one of 3 different formats, with differing extensions:
+      .HRD      most recent, supports mixed case names up to 16 bytes
+      .DEF/.RSD original, upper case names up to 8 bytes
+      .DFN      slightly simplified version of .DEF/.RSD, with flag
+                values in a different sequence
+    ERD attempts to open the files in the above order, stopping when
+    one is opened successfully.
+ 2.	The prefix
+    The -p option specifies a prefix to be applied to the names of all
+    the arrays in the .c file.  If no prefix is supplied, but the input
+    definition file is an HRD file, and it contains prefix information,
+    that prefix will be used.  In either case, an underscore will be
+    inserted between the prefix and the array name.  For example, a
+    prefix of "my" will prefix each of the array names in the .c file
+    with "my_".
+	NOTE: the current version of EmuTOS _requires_ a prefix of "desk"
+	(i.e. you should specify -pdesk).
+
