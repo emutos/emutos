@@ -1398,7 +1398,7 @@ int i;
     /* if _not_ no-translate, then see if we need to */
     if (!notranslate(src))
         for (i = 0, s = src; (i < len) && *s; i++, s++)
-            if (!isdigit(*s) && !ispunct(*s) && !isspace(*s))
+            if (!isdigit((unsigned char)*s) && !ispunct((unsigned char)*s) && !isspace((unsigned char)*s))
                 return 1;
 
     return 0;
@@ -1415,7 +1415,7 @@ int i;
     for (i = 0, d = dest, s = src; (i < len) && *s; i++, s++) {
         if (*s == '"')          /* we need to escape double quotes */
             *d++ = '\\';
-        if (!isprint(*s))       /* or convert to octal if not printable */
+        if (!isprint((unsigned char)*s))        /* or convert to octal if not printable */
             d += sprintf(d,"\\%03o",*s);
         else *d++ = *s;
     }
@@ -1767,7 +1767,7 @@ void fixshared(char *dest,char *src)
 char *d, *s;
 
     for (d = dest, s = src; *s; d++, s++)
-        *d = isalnum(*s) ? *s : '_';
+        *d = isalnum((unsigned char)*s) ? *s : '_';
     *d = '\0';
 }
 

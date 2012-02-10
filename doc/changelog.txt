@@ -3283,3 +3283,4 @@ Start... early ages
 - desk/desk_rsc.c po/cs.po po/de.po po/es.po po/fi.po po/fr.po po/gr.po
   po/it.po po/ru.po: Removed trailing spaces from 'Desktop info...' string
   for compatibility with erd. (RFB)
+- tools/erd.c: Fixed ctype warnings on Cygwin. (VRI)
