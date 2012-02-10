@@ -552,6 +552,15 @@ po/messages.pot: bug$(EXE) po/POTFILES.in
 	./bug$(EXE) xgettext
 
 #
+# Resource support
+#
+
+TOCLEAN += erd$(EXE)
+
+erd$(EXE): tools/erd.c
+	$(NATIVECC) -o $@ $<
+
+#
 # all binaries
 #
 

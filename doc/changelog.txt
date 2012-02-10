@@ -3284,3 +3284,4 @@ Start... early ages
   po/it.po po/ru.po: Removed trailing spaces from 'Desktop info...' string
   for compatibility with erd. (RFB)
 - tools/erd.c: Fixed ctype warnings on Cygwin. (VRI)
+- .cvsignore Makefile: Build the erd tool using "make erd". (VRI)
