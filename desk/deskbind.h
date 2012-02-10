@@ -109,12 +109,6 @@ GLOBES
 /*GLOBAL*/ BYTE         g_tail[128];
 /*GLOBAL*/ LONG         a_tail;
 
-/*GLOBAL*/ BYTE         g_fcb1[36];
-/*GLOBAL*/ LONG         a_fcb1;
-
-/*GLOBAL*/ BYTE         g_fcb2[36];
-/*GLOBAL*/ LONG         a_fcb2;
-        
 /*GLOBAL*/ LONG         a_alert;
 
 /*GLOBAL*/ LONG         a_trees[RS_NTREE];

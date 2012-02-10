@@ -1565,8 +1565,6 @@ WORD deskmain(void)
                                                 /*   will be used alot  */
         G.a_cmd = ADDR(&G.g_cmd[0]);
         G.a_tail = ADDR(&G.g_tail[0]);
-        G.a_fcb1 = ADDR(&G.g_fcb1[0]);
-        G.a_fcb2 = ADDR(&G.g_fcb2[0]);
         G.a_rmsg = ADDR(&G.g_rmsg[0]);
                                                 /* initialize mouse     */
         wind_update(BEG_UPDATE);

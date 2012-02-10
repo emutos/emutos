@@ -3285,3 +3285,5 @@ Start... early ages
   for compatibility with erd. (RFB)
 - tools/erd.c: Fixed ctype warnings on Cygwin. (VRI)
 - .cvsignore Makefile: Build the erd tool using "make erd". (VRI)
+- desk/deskbind.h desk/deskmain.c: Code cleanup: removed unused FCB
+  structures from GLOBES. (RFB)
