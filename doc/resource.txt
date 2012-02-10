@@ -107,7 +107,7 @@ Notes:
                 values in a different sequence
     ERD attempts to open the files in the above order, stopping when
     one is opened successfully.
- 2.	The prefix
+ 2. The prefix
     The -p option specifies a prefix to be applied to the names of all
     the arrays in the .c file.  If no prefix is supplied, but the input
     definition file is an HRD file, and it contains prefix information,
@@ -115,6 +115,6 @@ Notes:
     inserted between the prefix and the array name.  For example, a
     prefix of "my" will prefix each of the array names in the .c file
     with "my_".
-	NOTE: the current version of EmuTOS _requires_ a prefix of "desk"
-	(i.e. you should specify -pdesk).
+    NOTE: the current version of EmuTOS _requires_ a prefix of "desk"
+    (i.e. you should specify -pdesk).
 

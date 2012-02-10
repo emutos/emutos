@@ -3277,3 +3277,6 @@ Start... early ages
   to the current C code in desk_rsc.c/desk_rsc.h. (RFB)
 - doc/resource.txt tools/erd.c: Added documentation & source for resource
   decompilation tool. (RFB)
+
+2012-02-10
+- doc/resource.txt tools/erd.c: Changed tabs to spaces, crlf to lf. (RFB)
