@@ -3271,3 +3271,7 @@ Start... early ages
 2012-02-08
 - bios/xhdi.c: Better XHNewCookie() support. Contributed by David Galvez. (VRI)
 - bios/xhdi.c: Fixed when not CONF_WITH_XHDI. (VRI)
+
+2012-02-09
+- desk/desktop.dfn desk/desktop.rsc: Updated raw resource files to correspond
+  to the current C code in desk_rsc.c/desk_rsc.h. (RFB)
