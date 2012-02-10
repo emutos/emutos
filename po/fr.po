@@ -457,7 +457,7 @@ msgid " Arrange "
 msgstr " Rangement "
 
 #: desk/desk_rsc.c:322
-msgid "  Desktop info...   "
+msgid "  Desktop info..."
 msgstr "  Infos bureau..."
 
 #: desk/desk_rsc.c:376

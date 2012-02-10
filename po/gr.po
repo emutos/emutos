@@ -392,7 +392,7 @@ msgid " Arrange "
 msgstr " ƒ œ¬Ÿâ«© "
 
 #: desk/desk_rsc.c:322
-msgid "  Desktop info...   "
+msgid "  Desktop info..."
 msgstr "  ¢¨¦­¦¨åœª Dektop...   "
 
 #: desk/desk_rsc.c:376

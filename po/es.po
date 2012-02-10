@@ -344,7 +344,7 @@ msgid " Arrange "
 msgstr " Orden "
 
 #: desk/desk_rsc.c:322
-msgid "  Desktop info...   "
+msgid "  Desktop info..."
 msgstr "  Información del Desktop... "
 
 #: desk/desk_rsc.c:376

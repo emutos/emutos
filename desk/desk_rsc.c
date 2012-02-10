@@ -305,7 +305,7 @@ static const OBJECT desk_rs_obj_rom[] = {
    { 10, -1, -1, G_STRING,                      /*** 9 ***/
      NONE,
      NORMAL,
-     (long) N_("  Desktop info...   "),
+     (long) N_("  Desktop info..."),
      0, 0, 20, 1},
 
    { 11, -1, -1, G_STRING,                      /*** 10 ***/

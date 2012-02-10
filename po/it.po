@@ -386,7 +386,7 @@ msgid " Arrange "
 msgstr " Visione "
 
 #: desk/desk_rsc.c:322
-msgid "  Desktop info...   "
+msgid "  Desktop info..."
 msgstr "  Info scrivania...  "
 
 #: desk/desk_rsc.c:328 desk/desk_rsc.c:504

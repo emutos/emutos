@@ -368,7 +368,7 @@ msgid " Arrange "
 msgstr " Uspoøádání "
 
 #: desk/desk_rsc.c:322
-msgid "  Desktop info...   "
+msgid "  Desktop info..."
 msgstr "  Info o desktopu..."
 
 #: desk/desk_rsc.c:376
