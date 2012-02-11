@@ -34,7 +34,6 @@
 #include "deskmain.h"
 #include "rectfunc.h"
 #include "dos.h"
-#include "desk_rsc.h"
 
 #ifdef DESK1
 

@@ -26,10 +26,7 @@
 #include "deskapp.h"
 #include "deskfpd.h"
 #include "deskwin.h"
-#include "dos.h"
 #include "infodef.h"
-#include "desk_rsc.h"
-#include "gembind.h"
 #include "deskbind.h"
 
 #include "gemdos.h"

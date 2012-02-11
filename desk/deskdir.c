@@ -23,7 +23,6 @@
 #include "compat.h"
 #include "obdefs.h"
 #include "taddr.h"
-#include "desk_rsc.h"
 #include "dos.h"
 #include "deskapp.h"
 #include "deskfpd.h"
@@ -31,7 +30,6 @@
 #include "infodef.h"
 #include "gembind.h"
 #include "deskbind.h"
-#include "gsxdefs.h"
 
 #include "optimize.h"
 #include "gemdos.h"

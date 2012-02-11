@@ -31,7 +31,6 @@
 #include "deskwin.h"
 #include "infodef.h"
 #include "deskbind.h"
-#include "desk_rsc.h"
 
 #include "kprint.h"
 #include "lineavars.h"
@@ -40,13 +39,11 @@
 
 #include "optimize.h"
 #include "optimopt.h"
-#include "rectfunc.h"
 #include "gemdos.h"
 #include "aesbind.h"
 #include "desksupp.h"
 #include "deskglob.h"
 #include "deskgraf.h"
-#include "deskgsx.h"
 #include "deskins.h"
 #include "deskinf.h"
 #include "deskdir.h"

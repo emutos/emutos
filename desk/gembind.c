@@ -21,8 +21,6 @@
 #include "config.h"
 #include "portab.h"
 #include "compat.h"
-#include "taddr.h"
-#include "obdefs.h"
 #include "gembind.h"
 
 

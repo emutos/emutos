@@ -21,13 +21,11 @@
 #include "compat.h"
 #include "obdefs.h"
 #include "taddr.h"
-#include "dos.h"
 #include "gembind.h"
 #include "deskapp.h"
 #include "deskfpd.h"
 #include "deskwin.h"
 #include "infodef.h"
-#include "desk_rsc.h"
 #include "deskbind.h"
 
 #include "optimize.h"

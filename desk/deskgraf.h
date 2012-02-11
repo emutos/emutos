@@ -12,10 +12,6 @@
 
 #include "gsxdefs.h"
 
-#ifndef GRECT
-#include "obdefs.h"
-#endif
-
 
 extern WORD     gl_width;
 extern WORD     gl_height;

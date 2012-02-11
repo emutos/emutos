@@ -3287,3 +3287,7 @@ Start... early ages
 - .cvsignore Makefile: Build the erd tool using "make erd". (VRI)
 - desk/deskbind.h desk/deskmain.c: Code cleanup: removed unused FCB
   structures from GLOBES. (RFB)
+
+2012-02-11
+- desk/*: Removed all unnecessary #includes from all files within the desk
+  directory. (RFB)

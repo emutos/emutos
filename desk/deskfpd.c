@@ -26,13 +26,10 @@
 #include "deskwin.h"
 #include "dos.h"
 #include "infodef.h"
-#include "desk_rsc.h"
-#include "gembind.h"
 #include "deskbind.h"
 
 #include "gemdos.h"
 #include "optimopt.h"
-#include "deskrsrc.h"
 #include "deskglob.h"
 
 #include "string.h"

@@ -18,14 +18,11 @@
 
 #include "config.h"
 #include "portab.h"
-#include "compat.h"
 #include "obdefs.h"
 #include "deskapp.h"
 #include "deskfpd.h"
 #include "deskwin.h"
 #include "infodef.h"
-#include "desk_rsc.h"
-#include "gembind.h"
 #include "deskbind.h"
 
 /* BugFix       */

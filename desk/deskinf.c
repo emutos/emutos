@@ -22,7 +22,6 @@
 #include "compat.h"
 #include "obdefs.h"
 #include "taddr.h"
-#include "desk_rsc.h"
 #include "dos.h"
 #include "deskapp.h"
 #include "deskfpd.h"
