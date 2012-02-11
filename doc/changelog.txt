@@ -3295,3 +3295,5 @@ Start... early ages
   desk/deskwin.c: Restored some #includes required for 'make 192'. (RFB)
 - desk/deskact.c desk/deskbind.h desk/deskconf.h: Code cleanup: centralised
   #define for MAX_OBS. (RFB)
+- desk/deskbind.h desk/deskconf.h: Code cleanup: centralised #define for
+  MAX_LEVEL. (RFB)

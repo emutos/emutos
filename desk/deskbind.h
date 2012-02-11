@@ -26,8 +26,6 @@
 #define HRGLASS 0x2
 
 
-#define MAX_LEVEL 8
-
 #define GLOBES struct glnode
 GLOBES
 {
