@@ -3293,3 +3293,5 @@ Start... early ages
   directory. (RFB)
 - desk/deskapp.c desk/deskfpd.c desk/deskmain.c desk/desksupp.c
   desk/deskwin.c: Restored some #includes required for 'make 192'. (RFB)
+- desk/deskact.c desk/deskbind.h desk/deskconf.h: Code cleanup: centralised
+  #define for MAX_OBS. (RFB)

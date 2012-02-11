@@ -42,10 +42,6 @@
 
 #define LEN_FNODE 45
 
-#ifndef MAX_OBS
-#define MAX_OBS 60
-#endif
-
 
 /* Prototypes: */
 static WORD act_chkobj(LONG tree, WORD root, WORD obj, WORD mx, WORD my, WORD w, WORD h);
