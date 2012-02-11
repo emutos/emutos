@@ -36,6 +36,7 @@
 #include "deskgraf.h"
 #include "desksupp.h"
 #include "deskfun.h"
+#include "deskrsrc.h"
 #include "deskmain.h"
 #include "deskglob.h"
 

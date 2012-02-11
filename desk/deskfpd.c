@@ -30,6 +30,7 @@
 
 #include "gemdos.h"
 #include "optimopt.h"
+#include "deskrsrc.h"
 #include "deskglob.h"
 
 #include "string.h"

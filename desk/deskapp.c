@@ -39,6 +39,7 @@
 #include "deskobj.h"
 #include "deskgraf.h"
 #include "deskglob.h"
+#include "deskmain.h"
 #include "icons.h"
 #include "desk1.h"
 

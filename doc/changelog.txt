@@ -3291,3 +3291,5 @@ Start... early ages
 2012-02-11
 - desk/*: Removed all unnecessary #includes from all files within the desk
   directory. (RFB)
+- desk/deskapp.c desk/deskfpd.c desk/deskmain.c desk/desksupp.c
+  desk/deskwin.c: Restored some #includes required for 'make 192'. (RFB)
