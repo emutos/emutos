@@ -3297,3 +3297,4 @@ Start... early ages
   #define for MAX_OBS. (RFB)
 - desk/deskbind.h desk/deskconf.h: Code cleanup: centralised #define for
   MAX_LEVEL. (RFB)
+- desk/infodef.h: Code cleanup: removed unused #defines. (RFB)

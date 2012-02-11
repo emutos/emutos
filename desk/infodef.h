@@ -30,7 +30,3 @@ FCB
 
 #define ARROW 0
 #define HGLASS 2
-
-#define FLOPPY 0
-#define HARD 1
-
