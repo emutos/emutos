@@ -246,49 +246,49 @@ T tested and working on an emulator or real hardware
  ?      vst_load_fonts
  ?      vst_unload_fonts
  ?      vs_clip
- T      v_pline
- ?      v_pmarker
- ?      v_gtext
- ?      v_fillarea
+ t      v_pline
+ t      v_pmarker
+ t      v_gtext
+ t      v_fillarea
  ?      v_cellarray
  ?      v_contourfill
- ?      vr_recfl
- ?      v_bar
+ t      vr_recfl
+ t      v_bar
  ?      v_arc
- ?      v_pieslice
- T      v_circle
- ?      v_ellarc
- ?      v_ellpie
- ?      v_ellipse
+ t      v_pieslice
+ t      v_circle
+ t      v_ellarc
+ t      v_ellpie
+ t      v_ellipse
  ?      v_rbox
- ?      v_rfbox
+ t      v_rfbox
  ?      v_justified
- ?      vswr_mode
+ >      vswr_mode
  >      vs_color
  ?      vsl_type
  ?      vsl_udsty
- ?      vsl_width
+ t      vsl_width
  ?      vsl_color
- ?      vsl_ends
- ?      vsm_type
- ?      vsm_height
+ t      vsl_ends
+ t      vsm_type
+ t      vsm_height
  ?      vsm_color
- ?      vst_height
- ?      vst_point
+ t      vst_height
+ t      vst_point
  ?      vst_rotation
  ?      vst_font
  ?      vst_color
- ?      vst_effects
- ?      vst_alignment
- ?      vsf_interior
- ?      vsf_style
- ?      vsf_color
- ?      vsf_perimeter
+ T      vst_effects
+ T      vst_alignment
+ T      vsf_interior
+ T      vsf_style
+ t      vsf_color
+ T      vsf_perimeter
  ?      vsf_udpat
  ?      vro_cpyfm
  ?      vrt_cpyfm
  ?      vr_trnfm
- ?      v_get_pixel
+ >      v_get_pixel
  ?      vsin_mode
  ?      vrq_locator
  ?      vsm_locator
@@ -300,33 +300,33 @@ T tested and working on an emulator or real hardware
  ?      vsm_string
  ?      vsc_form
  ?      vex_timv
- ?      v_show_c
- ?      v_hide_c
+ T      v_show_c
+ T      v_hide_c
  ?      vq_mouse
  T      vex_butv
  T      vex_motv
  T      vex_curv
  ?      vq_key_s
- ?      vq_extnd
+ t      vq_extnd
  >      vq_color
  ?      vql_attributes
  ?      vqm_attributes
  ?      vqf_attributes
  ?      vqt_attributes
- ?      vqt_extent
+ >      vqt_extent
  ?      vqt_width
  ?      vqt_name
  ?      vq_cellarray
  ?      vqin_mode
  ?      vqt_font_info
  ?      vq_chcells
- ?      v_exit_cur
+ T      v_exit_cur
  ?      v_enter_cur
  ?      v_curup
  ?      v_curdown
  ?      v_curright
  ?      v_curleft
- ?      v_curhome
+ T      v_curhome
  ?      v_eeos
  ?      v_eeol
  ?      vs_curaddress
