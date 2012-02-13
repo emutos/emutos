@@ -3302,3 +3302,5 @@ Start... early ages
 2012-02-12
 - doc/status.txt: Updated to reflect implementation of TT & Falcon xbios
   video calls. (RFB)
+- desk/deskact.c desk/deskconf.h desk/deskwin.c: Code cleanup: centralised
+  #define for LEN_FNODE. (RFB)

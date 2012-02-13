@@ -43,8 +43,6 @@
 #include "kprint.h"
 
 
-#define LEN_FNODE 45
-
 #define MIN_HINT 2
 
 #define SPACE 0x20

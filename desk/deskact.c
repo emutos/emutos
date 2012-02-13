@@ -40,9 +40,6 @@
 #include "desk1.h"
 
 
-#define LEN_FNODE 45
-
-
 /* Prototypes: */
 static WORD act_chkobj(LONG tree, WORD root, WORD obj, WORD mx, WORD my, WORD w, WORD h);
 
