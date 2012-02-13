@@ -171,9 +171,19 @@ T tested and working on an emulator or real hardware
 
  X 0x50 EsetShift       (for TT shifter only)
  X 0x51 EgetShift       (for TT shifter only)
-
- > 0x58 Vsetmode        (for Falcon Videl only)
+ X 0x52 EsetBank        (for TT shifter only)
+ X 0x53 EsetColor       (for TT shifter only)
+ X 0x54 EsetPalette     (for TT shifter only)
+ X 0x55 EgetPalette     (for TT shifter only)
+ X 0x56 EsetGray        (for TT shifter only)
+ X 0x57 EsetSmear       (for TT shifter only)
+ X 0x58 Vsetmode        (for Falcon Videl only)
  X 0x59 Vmontype        (for Falcon Videl only)
+
+ X 0x5b VgetSize        (for Falcon Videl only)
+ 
+ X 0x5d VsetRGB         (for Falcon Videl only)
+ X 0x5e VgetRGB         (for Falcon Videl only)
 
 
  GEMDOS Functions
