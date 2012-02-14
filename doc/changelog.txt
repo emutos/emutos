@@ -3309,3 +3309,5 @@ Start... early ages
 - Makefile: Do not build makefile.dep when building the tools. (VRI)
 - Makefile: Replaced the obsolete -W option by the new -Wextra. (VRI)
 - Makefile: Removed desk/desk_rsc.[ch] and enabled the ERD tool. (VRI)
+- tools/erd.c: Made *_rs_trees and *_rs_fstr const to move them to the TEXT
+  segment. (VRI)

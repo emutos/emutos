@@ -1011,11 +1011,11 @@ short old_tree = -1;
 int write_h_extern(FILE *fp)
 {
     fprintf(fp,"extern const BITBLK %srs_bitblk[];\n",prefix);
-    fprintf(fp,"extern const char *%srs_fstr[];\n",prefix);
+    fprintf(fp,"extern const char * const %srs_fstr[];\n",prefix);
     fprintf(fp,"extern const ICONBLK %srs_iconblk[];\n",prefix);
     fprintf(fp,"extern OBJECT %srs_obj[RS_NOBS];\n",prefix);
     fprintf(fp,"extern TEDINFO %srs_tedinfo[RS_NTED];\n",prefix);
-    fprintf(fp,"extern OBJECT *%srs_trees[];\n\n",prefix);
+    fprintf(fp,"extern OBJECT * const %srs_trees[];\n\n",prefix);
 
     fprintf(fp,"extern void %srs_init(void);\n\n",prefix);
 
@@ -1307,7 +1307,7 @@ int write_tree(FILE *fp)
 {
 int i, ntree;
 
-    fprintf(fp,"OBJECT *%srs_trees[] = {\n",prefix);
+    fprintf(fp,"OBJECT * const %srs_trees[] = {\n",prefix);
 
     ntree = get_ushort(&rschdr->rsh_ntree);
     for (i = 0; i < ntree; i++) {
@@ -1334,7 +1334,7 @@ OFFSET *strptr;
 char temp[MAX_STRLEN];
 char *base = (char *)rschdr;
 
-    fprintf(fp,"const char *%srs_fstr[] = {\n",prefix);
+    fprintf(fp,"const char * const %srs_fstr[] = {\n",prefix);
 
     nstring = get_ushort(&rschdr->rsh_nstring);
     strptr = (OFFSET *)(base + get_ushort(&rschdr->rsh_frstr));
