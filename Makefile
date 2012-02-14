@@ -554,7 +554,7 @@ bug$(EXE): tools/bug.c
 util/langs.c: $(POFILES) po/LINGUAS bug$(EXE) po/messages.pot
 	./bug$(EXE) make
 
-po/messages.pot: bug$(EXE) po/POTFILES.in
+po/messages.pot: bug$(EXE) po/POTFILES.in $(shell grep -v '^#' po/POTFILES.in)
 	./bug$(EXE) xgettext
 
 #
@@ -567,6 +567,11 @@ NODEP += erd$(EXE)
 erd$(EXE): tools/erd.c
 	$(NATIVECC) -o $@ $<
 
+DESKRSC_BASE = desk/desktop
+DESKRSCGEN_BASE = desk/desk_rsc
+TOCLEAN += $(DESKRSCGEN_BASE).c $(DESKRSCGEN_BASE).h
+$(DESKRSCGEN_BASE).c $(DESKRSCGEN_BASE).h: erd$(EXE) $(DESKRSC_BASE).rsc $(DESKRSC_BASE).dfn
+	./erd$(EXE) -pdesk $(DESKRSC_BASE) $(DESKRSCGEN_BASE)
 #
 # all binaries
 #
