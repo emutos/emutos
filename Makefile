@@ -135,7 +135,7 @@ OBJDUMP = m68k-atari-mint-objdump
 OBJCOPY = m68k-atari-mint-objcopy
 
 # the native C compiler, for tools
-NATIVECC = gcc -Wall -W -pedantic -ansi -O
+NATIVECC = gcc -ansi -pedantic -Wall -Wextra -O
 
 # 
 # source code in bios/

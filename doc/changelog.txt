@@ -3307,3 +3307,4 @@ Start... early ages
 
 2012-02-14
 - Makefile: Do not build makefile.dep when building the tools. (VRI)
+- Makefile: Replaced the obsolete -W option by the new -Wextra. (VRI)
