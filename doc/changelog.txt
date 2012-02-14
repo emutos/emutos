@@ -3304,3 +3304,6 @@ Start... early ages
   video calls. (RFB)
 - desk/deskact.c desk/deskconf.h desk/deskwin.c: Code cleanup: centralised
   #define for LEN_FNODE. (RFB)
+
+2012-02-14
+- Makefile: Do not build makefile.dep when building the tools. (VRI)

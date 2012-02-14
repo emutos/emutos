@@ -484,12 +484,16 @@ ecpr256k.img: etoscpr2.img
 ecpr192k.img: etoscpr1.img
 	$(sized_image)
 
+NODEP += compr$(EXE)
 compr$(EXE): tools/compr.c
 	$(NATIVECC) -o $@ $<
 
+NODEP += uncompr$(EXE)
 uncompr$(EXE): tools/uncompr.c
 	$(NATIVECC) -o $@ $<
 
+.PHONY: comprtest
+NODEP += comprtest
 comprtest: compr$(EXE) uncompr$(EXE)
 	sh tools/comprtst.sh
 
@@ -518,6 +522,7 @@ emutos.st: mkflop$(EXE) bootsect.img ramtos.img
 bootsect.img : obj/bootsect.o
 	$(LD) -Wl,--oformat,binary -o $@ obj/bootsect.o
 
+NODEP += mkflop$(EXE)
 mkflop$(EXE) : tools/mkflop.c
 	$(NATIVECC) -o $@ $<
 
@@ -542,6 +547,7 @@ POFILES = $(wildcard po/*.po)
 
 TOCLEAN += bug$(EXE) util/langs.c po/messages.pot
 
+NODEP += bug$(EXE)
 bug$(EXE): tools/bug.c
 	$(NATIVECC) -o $@ $<
 
@@ -557,6 +563,7 @@ po/messages.pot: bug$(EXE) po/POTFILES.in
 
 TOCLEAN += erd$(EXE)
 
+NODEP += erd$(EXE)
 erd$(EXE): tools/erd.c
 	$(NATIVECC) -o $@ $<
 
@@ -855,6 +862,7 @@ expand:
 		mv expand.tmp $$i; \
 	done
 
+NODEP += tounix$(EXE)
 tounix$(EXE): tools/tounix.c
 	$(NATIVECC) -o $@ $<
 
