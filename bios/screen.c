@@ -925,6 +925,137 @@ void vgetrgb(WORD index,WORD count,LONG *rgb)
 
 #endif /* CONF_WITH_SHIFTER */
 
+#if CONF_WITH_SHIFTER
+/*
+ * Initialise ST(e) palette registers
+ */
+static void initialise_ste_palette(WORD mask)
+{
+    volatile WORD *col_regs = (WORD *) ST_PALETTE_REGS;
+    int i;
+
+    for (i = 0; i < 16; i++)
+        col_regs[i] = dflt_palette[i] & mask;
+}
+
+/*
+ * Fixup ST(e) palette registers
+ */
+static void fixup_ste_palette(WORD rez)
+{
+    volatile WORD *col_regs = (WORD *) ST_PALETTE_REGS;
+
+    if (rez == ST_MEDIUM)
+        col_regs[3] = col_regs[15];
+    else if (rez == ST_HIGH)
+        col_regs[1] = col_regs[15];
+}
+
+#if CONF_WITH_TT_SHIFTER
+/*
+ * Initialise TT palette
+ */
+static void initialise_tt_palette(WORD rez)
+{
+    volatile WORD *col_regs = (WORD *) ST_PALETTE_REGS;
+    volatile WORD *ttcol_regs = (WORD *) TT_PALETTE_REGS;
+    int i;
+
+    for (i = 0; i < 256; i++)
+        ttcol_regs[i] = tt_dflt_palette[i];
+
+    if (rez == TT_HIGH) {
+        col_regs[1] = col_regs[15];
+        ttcol_regs[1] = ttcol_regs[15];
+    }
+}
+#endif
+
+#if CONF_WITH_VIDEL
+/*
+ * Initialise Falcon palette
+ */
+static void initialise_falcon_palette(WORD mode)
+{
+    volatile WORD *col_regs = (WORD *) ST_PALETTE_REGS;
+    volatile LONG *fcol_regs = (LONG *) FALCON_PALETTE_REGS;
+    int i;
+
+    /* first, set up Falcon shadow palette and real registers */
+    for (i = 0; i < 256; i++)
+        falcon_shadow_palette[i] = videl_dflt_palette[i];
+
+    switch(mode&VIDEL_BPPMASK) {
+    case VIDEL_1BPP:        /* 2-colour mode */
+        falcon_shadow_palette[1] = falcon_shadow_palette[15];
+        break;
+    case VIDEL_2BPP:        /* 4-colour mode */
+        falcon_shadow_palette[3] = falcon_shadow_palette[15];
+        break;
+    }
+
+    for (i = 0; i < 256; i++)
+        fcol_regs[i] = falcon_shadow_palette[i];
+
+    /*
+     * then, for ST-compatible and 4-colour modes, set up the
+     * STe shadow & real palette registers
+     */
+    if (use_ste_palette(mode)) {
+        convert2ste(ste_shadow_palette,falcon_shadow_palette);
+        for (i = 0; i < 16; i++)
+            col_regs[i] = ste_shadow_palette[i];
+    }
+}
+#endif
+#endif
+
+/*
+ * Initialise palette registers
+ * This routine is also used by resolution change
+ */
+void initialise_palette_registers(WORD rez,WORD mode)
+{
+#if CONF_WITH_SHIFTER
+WORD mask;
+
+#if CONF_WITH_VIDEL
+    if (has_videl)
+        mask = 0x0fff;
+    else
+#endif
+#if CONF_WITH_TT_SHIFTER
+    if (has_tt_shifter)
+        mask = 0x0fff;
+    else
+#endif
+#if CONF_WITH_STE_SHIFTER
+    if (has_ste_shifter)
+        mask = 0x0fff;
+    else
+#endif
+    {
+        mask = 0x0777;
+	}
+    initialise_ste_palette(mask);
+
+#if CONF_WITH_VIDEL
+    if (has_videl)
+        initialise_falcon_palette(mode);
+    else
+#endif
+#if CONF_WITH_TT_SHIFTER
+    if (has_tt_shifter)
+        initialise_tt_palette(rez);
+    else
+#endif
+    {
+    }
+
+    fixup_ste_palette(rez);
+#endif
+}
+
 /*
  * In the original TOS there used to be an early screen init, 
  * before memory configuration. This is not used here, and all is
@@ -936,18 +1067,12 @@ void screen_init(void)
     ULONG screen_start;
 #if CONF_WITH_SHIFTER
     volatile BYTE *rez_reg = (BYTE *) ST_SHIFTER;
-    volatile WORD *col_regs = (WORD *) ST_PALETTE_REGS;
-#if CONF_WITH_VIDEL
-    volatile LONG *fcol_regs = (LONG *) FALCON_PALETTE_REGS;
     UWORD boot_resolution = FALCON_DEFAULT_BOOT;
-#endif
 #if CONF_WITH_TT_SHIFTER
     volatile BYTE *ttrez_reg = (BYTE *) TT_SHIFTER;
-    volatile WORD *ttcol_regs = (WORD *) TT_PALETTE_REGS;
 #endif
-    WORD monitor_type, mask, sync_mode;
+    WORD monitor_type, sync_mode;
     WORD rez = 0;   /* avoid 'may be uninitialized' warning */
-    WORD i;
 
 /*
  * first, see what we're connected to, and set the
@@ -1022,7 +1147,6 @@ void screen_init(void)
 #endif
         vsetmode(boot_resolution);
         rez = 3;        /* fake value indicates Falcon/Videl */
-        mask = 0x0fff;  /* STe-compatible palette */
     }
     else
 #endif // CONF_WITH_VIDEL
@@ -1030,7 +1154,6 @@ void screen_init(void)
     if (has_tt_shifter) {
         rez = monitor_type?TT_MEDIUM:TT_HIGH;
         *ttrez_reg = rez;
-        mask = 0x0fff;  /* STe-compatible palette */
     }
     else
 #endif
@@ -1038,14 +1161,12 @@ void screen_init(void)
     if (has_ste_shifter) {
         rez = monitor_type?ST_LOW:ST_HIGH;
         *rez_reg = rez;
-        mask = 0x0fff;  /* STe-compatible palette */
     }
     else
 #endif
     {
         rez = monitor_type?ST_LOW:ST_HIGH;
         *rez_reg = rez;
-        mask = 0x0777;  /* ST-compatible palette */
     }
 
 #if CONF_WITH_VIDEL
@@ -1062,64 +1183,9 @@ void screen_init(void)
 /*
  * next, set up the palette(s)
  */
-    for (i = 0; i < 16; i++) {
-        col_regs[i] = dflt_palette[i] & mask;
-    }
-
-#if CONF_WITH_VIDEL
-    if (has_videl) {
-        /* first, set up Falcon shadow palette and real registers */
-        for (i = 0; i < 256; i++) {
-            falcon_shadow_palette[i] = videl_dflt_palette[i];
-        }
-        switch(boot_resolution&VIDEL_BPPMASK) {
-        case VIDEL_1BPP:        /* 2-colour mode */
-            falcon_shadow_palette[1] = falcon_shadow_palette[15];
-            break;
-        case VIDEL_2BPP:        /* 4-colour mode */
-            falcon_shadow_palette[3] = falcon_shadow_palette[15];
-            break;
-        }
-        for (i = 0; i < 256; i++) {
-            fcol_regs[i] = falcon_shadow_palette[i];
-        }
-
-        /*
-         * then, for ST-compatible and 4-colour modes, set up the
-         * STe shadow & real palette registers
-         */
-        if (use_ste_palette(boot_resolution)) {
-            convert2ste(ste_shadow_palette,falcon_shadow_palette);
-            for (i = 0; i < 16; i++) {
-                col_regs[i] = ste_shadow_palette[i];
-            }
-        }
-    }
-    else
-#endif
-#if CONF_WITH_TT_SHIFTER
-    if (has_tt_shifter) {
-        for (i = 0; i < 256; i++) {
-            ttcol_regs[i] = tt_dflt_palette[i];
-        }
-        if (rez == TT_HIGH) {   /* 2-colour mode */
-            ttcol_regs[1] = ttcol_regs[15];
-            col_regs[1] = col_regs[15];
-        }
-    }
-    else
-#endif
-    {
-        
-    }
+    initialise_palette_registers(rez,boot_resolution);
     sshiftmod = rez;
 
-    if (rez == ST_MEDIUM) {
-        col_regs[3] = col_regs[15];
-    }
-    else if (rez == ST_HIGH) {
-        col_regs[1] = col_regs[15];
-    }
 #endif /* CONF_WITH_SHIFTER */
 
 #if CONF_VRAM_ADDRESS

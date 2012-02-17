@@ -1,5 +1,5 @@
 /*
- * screen.c - low-level screen routines
+ * screen.h - low-level screen routines
  *
  * Copyright (c) 2001-2011 The EmuTOS development team
  *
@@ -23,7 +23,7 @@
 UWORD get_videl_bpp(void);
 UWORD get_videl_width(void);
 UWORD get_videl_height(void);
-
+void initialise_palette_registers(WORD rez,WORD mode);
 
 /* hardware dependant xbios routines */
 
@@ -117,6 +117,7 @@ void vgetrgb(WORD index,WORD count,LONG *rgb);
 /* TT resolutions */
 #define TT_HIGH        6
 #define TT_MEDIUM      4
+#define TT_LOW         7
 
 #endif /* CONF_WITH_SHIFTER */
 

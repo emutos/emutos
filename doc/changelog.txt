@@ -3311,3 +3311,7 @@ Start... early ages
 - Makefile: Removed desk/desk_rsc.[ch] and enabled the ERD tool. (VRI)
 - tools/erd.c: Made *_rs_trees and *_rs_fstr const to move them to the TEXT
   segment. (VRI)
+
+2012-02-16
+- bios/screen.c bios/screen.h: Created new function to be called by
+  screen resolution change processing. (RFB)
