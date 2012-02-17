@@ -31,6 +31,7 @@
 #include "gem_rsc.h"
 #include "dos.h"
 #include "xbiosbind.h"
+#include "screen.h"
 
 #include "gemgsxif.h"
 #include "gemdosif.h"
@@ -879,9 +880,10 @@ void gem_main(void)
         if (gl_changerez)
         {
             /* Change resolution before starting over again... */
-            if (gl_changerez == 1)
+            if (gl_changerez == 1)  /* ST(e) or TT display */
             {
                 Setscreen(-1L, -1L, gl_nextrez-2);
+                initialise_palette_registers(gl_nextrez-2,0);
             }
             /* TODO: Support for Falcon screen modes */
         }

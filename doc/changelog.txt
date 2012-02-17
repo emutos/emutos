@@ -3315,3 +3315,6 @@ Start... early ages
 2012-02-16
 - bios/screen.c bios/screen.h: Created new function to be called by
   screen resolution change processing. (RFB)
+- Makefile aes/geminit.c desk/deskmain.c desk/deskrez.c desk/deskrez.h
+  desk/desktop.dfn desk/desktop.rsc: Allow desktop resolution switching
+  for TT. (RFB)

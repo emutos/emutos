@@ -34,6 +34,8 @@
 
 #include "kprint.h"
 #include "lineavars.h"
+#include "machine.h"
+#include "screen.h"
 #include "nls.h"
 #include "version.h"
 
@@ -53,6 +55,7 @@
 #include "deskpro.h"
 #include "deskact.h"
 #include "desk1.h"
+#include "deskrez.h"
 
 #define abs(x) ( (x) < 0 ? -(x) : (x) )
 #define menu_text(tree,inum,ptext) (((OBJECT *)(tree)+(inum))->ob_spec = ptext)
@@ -169,35 +172,27 @@ static int can_change_resolution;
 
 static void detect_features(void)
 {
-    BOOL unsupported_hardware = FALSE;
-    /* FIXME: Remove the following when full resolution change is supported */
-#if CONF_WITH_TT_SHIFTER
-    extern int has_tt_shifter;
-#endif
-#if CONF_WITH_VIDEL
-    extern int has_videl;
-#endif
     int rez;
 
-#if CONF_WITH_TT_SHIFTER
-    if (has_tt_shifter)
-        unsupported_hardware = TRUE;
-#endif
-
+    /* FIXME: Remove the following when full resolution change is supported */
 #if CONF_WITH_VIDEL
-    if (has_videl)
-        unsupported_hardware = TRUE;
-#endif
-    
-    if (unsupported_hardware)
-    {
+    if (has_videl) {
         can_change_resolution = FALSE;
         return;
     }
+#endif
 
-    /* Resolution change is only allowed on ST-Low or ST-Mid */
     rez = Getrez();
-    can_change_resolution = (rez == 0 || rez == 1);
+
+#if CONF_WITH_TT_SHIFTER
+    if (has_tt_shifter) {
+        can_change_resolution = (rez != TT_HIGH);
+        return;
+    }
+#endif
+
+    /* For ST(e), resolution change is only allowed on ST-Low or ST-Med */
+    can_change_resolution = (rez != ST_HIGH);
 }
 
 
@@ -622,6 +617,7 @@ static WORD do_optnmenu(WORD item)
         WORD            done, rebld, curr;
         FNODE           *pf;
         WORD            isapp;
+        WORD            newres, newmode;
         BYTE            *pstr;
 #ifdef DESK1
         GRECT           rect;
@@ -681,10 +677,10 @@ static WORD do_optnmenu(WORD item)
                 desk_wait(FALSE);
                 break;
           case RESITEM:
-                rebld = form_alert(1, (LONG)ini_str(STRESOL));
+                rebld = change_resolution(&newres,&newmode);
                 if (rebld == 1)
                 {
-                        shel_write(5, (Getrez()==1?2:3), 0, NULL, NULL);
+                        shel_write(5, newres+2, 0, NULL, NULL);
                         done = TRUE;
                 }
                 break;
