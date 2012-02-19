@@ -3318,3 +3318,7 @@ Start... early ages
 - Makefile aes/geminit.c desk/deskmain.c desk/deskrez.c desk/deskrez.h
   desk/desktop.dfn desk/desktop.rsc: Allow desktop resolution switching
   for TT. (RFB)
+
+2012-02-19
+- bios/machine.c: In the _SND cookie, remove SND_16BIT and SND_MATRIX until
+  the Falcon XBIOS sound functions are implemented. (VRI)
