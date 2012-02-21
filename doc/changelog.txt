@@ -3329,3 +3329,5 @@ Start... early ages
 
 2012-02-21
 - po/fr.po: Fixed leading capital letter in menus sort items. (VRI)
+- bios/initinfo.c: Allow the user to bypass the welcome screen by quickly
+  tapping the Shift key. (VRI)

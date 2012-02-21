@@ -235,20 +235,30 @@ void initinfo(void)
     
     /* pause for a short while (or longer if a Shift key is held down) */
     {
+        /* Wait until timeout or keypress */
         long end = hz_200 + INITINFO_DURATION * 200UL;
-        while(hz_200 < end) {
+        LONG shiftbits;
+        do
+        {
+            shiftbits = kbshift(-1);
+
+            /* If Shift, Control, Alt or normal key is pressed, stop waiting */
+            if ((shiftbits & 0x0f) || bconstat2())
+                break;
+
 #if USE_STOP_INSN_TO_FREE_HOST_CPU
             stop_until_interrupt();
 #endif
-            /* Shift key will pause */
-            while((kbshift(-1) & 0x03)) {
-#if USE_STOP_INSN_TO_FREE_HOST_CPU
-                stop_until_interrupt();
-#endif
-            }
+        }
+        while (hz_200 < end);
 
-            if ((kbshift(-1) & 0x0c) || bconstat2())
-                break;
+        /* Wait while Shift is pressed */
+        while (shiftbits & 0x03)
+        {
+#if USE_STOP_INSN_TO_FREE_HOST_CPU
+            stop_until_interrupt();
+#endif
+            shiftbits = kbshift(-1);
         }
     }
     if (bconstat2()) {  /* examine the keypress */  
