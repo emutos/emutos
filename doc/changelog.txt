@@ -3326,3 +3326,6 @@ Start... early ages
 2012-02-20
 - bios/screen.c bios/screen.h: Improve calculation of Falcon VRAM size in
   preparation for Falcon resolution switching. (RFB)
+
+2012-02-21
+- po/fr.po: Fixed leading capital letter in menus sort items. (VRI)

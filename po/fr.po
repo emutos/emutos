@@ -498,15 +498,15 @@ msgstr "  Trier par nom"
 
 #: desk/desk_rsc.c:516
 msgid "  Sort by type   \007P"
-msgstr "  trier par type"
+msgstr "  Trier par type"
 
 #: desk/desk_rsc.c:522
 msgid "  Sort by size   \007Z"
-msgstr "  trier par taille"
+msgstr "  Trier par taille"
 
 #: desk/desk_rsc.c:528
 msgid "  Sort by date   \007T"
-msgstr "  trier par date"
+msgstr "  Trier par date"
 
 #: desk/desk_rsc.c:77 desk/desk_rsc.c:112
 msgid "Number of items:     _____"
