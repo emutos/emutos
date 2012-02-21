@@ -28,7 +28,9 @@
 
 #define ST_VRAM_SIZE        32000UL
 #define TT_VRAM_SIZE        153600UL
+#define FALCON_VRAM_SIZE    307200UL
 
+static unsigned long initial_vram_size();
 static unsigned long vram_size();
 static void setphys(LONG addr,int checkaddr);
 
@@ -780,9 +782,21 @@ LONG vgetsize(WORD mode)
     if (!has_videl)
         return -32;
 
+    mode &= VIDEL_VALID;        /* ignore invalid bits */
+    if ((mode&VIDEL_BPPMASK) > VIDEL_TRUECOLOR) {   /* fixup invalid bpp */
+        mode &= ~VIDEL_BPPMASK;
+        mode |= VIDEL_TRUECOLOR;
+    }
+
     p = lookup_videl_mode(mode);
-    if (!p)                     /* invalid mode, */
-        return 32000L;          /* so make something up */
+    if (!p) {                   /* invalid mode */
+        if (mode&VIDEL_COMPAT)
+            return ST_VRAM_SIZE;
+        mode &= ~(VIDEL_OVERSCAN|VIDEL_PAL);/* ignore less-important bits */
+        p = lookup_videl_mode(mode);        /* & try again */
+        if (!p)                             /* "can't happen" */
+            return FALCON_VRAM_SIZE;
+    }
 
     height = p->vde - p->vdb;
     if (!(p->ctl&0x02))
@@ -1192,7 +1206,7 @@ void screen_init(void)
     screen_start = CONF_VRAM_ADDRESS;
 #else
     /* videoram is placed just below the phystop */
-    screen_start = (ULONG)phystop - vram_size();
+    screen_start = (ULONG)phystop - initial_vram_size();
     /* round down to 256 byte boundary */
     screen_start &= 0x00ffff00;
     /* Original TOS leaves a gap of 768 bytes between screen ram and phys_top...
@@ -1218,6 +1232,23 @@ void screen_init(void)
     setphys(screen_start,1);
 }
 
+/* calculate initial VRAM size based on video hardware */
+static unsigned long initial_vram_size()
+{
+#if CONF_WITH_VIDEL
+    if (has_videl) {
+        return FALCON_VRAM_SIZE;
+    }
+    else
+#endif
+#if CONF_WITH_TT_SHIFTER
+    if (has_tt_shifter) {
+        return TT_VRAM_SIZE;
+    }
+    else
+#endif
+    return ST_VRAM_SIZE;
+}
 
 /* calculate VRAM size for current video mode */
 static unsigned long vram_size()

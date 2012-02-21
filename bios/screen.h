@@ -95,6 +95,7 @@ void vgetrgb(WORD index,WORD count,LONG *rgb);
 #define FRGB_WHITE     0xffff00ff
 
 /* bit settings for Falcon videomodes */
+#define VIDEL_VALID    0x01ff           /* the only bits allowed in a videomode */
 #define VIDEL_VERTICAL 0x0100           /* if set, use interlace (TV), double line (VGA) */
 #define VIDEL_COMPAT   0x0080           /* ST-compatible if set */
 #define VIDEL_OVERSCAN 0x0040           /* overscan if set (not used with VGA) */
