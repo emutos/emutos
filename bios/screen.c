@@ -732,30 +732,33 @@ static int set_videl_vga(WORD mode)
 #endif /* MACHINE_FIREBEE */
 }
 
+/*
+ * the current Falcon video mode; used by vsetmode() & vfixmode()
+ */
+static WORD current_video_mode;
 
 /*
  * Set Falcon video mode
  */
 WORD vsetmode(WORD mode)
 {
-    static WORD oldmode = 0;        /* 0 means never set */
     WORD ret;
 
     if (!has_videl)
         return -32;
 
     if (mode == -1)
-        return oldmode;
+        return current_video_mode;
 
 #if DBG_SCREEN
     kprintf("vsetmode(0x%04x)\n", mode);
 #endif
 
     if (set_videl_vga(mode) < 0)    /* invalid mode */
-        return oldmode;
+        return current_video_mode;
 
-    ret = oldmode;
-    oldmode = mode;
+    ret = current_video_mode;
+    current_video_mode = mode;
 
     return ret;
 }
@@ -933,6 +936,53 @@ void vgetrgb(WORD index,WORD count,LONG *rgb)
         u.b[0] = 0x00;
         *rgb++ = u.l;
     }
+}
+
+/*
+ * Fix Videl mode
+ *
+ * This converts an (assumed legal) input mode into the
+ * corresponding output mode for the current monitor type
+ */
+WORD vfixmode(WORD mode)
+{
+WORD monitor, currentmode;
+
+    if (!has_videl)
+        return -32;
+
+    monitor = vmontype();
+    if (monitor == MON_MONO)
+        return FALCON_ST_HIGH;
+
+    currentmode = vsetmode(-1);
+    if (currentmode & VIDEL_PAL)    /* set PAL bit per current value */
+        mode |= VIDEL_PAL;
+    else mode &= ~VIDEL_PAL;
+
+    /* handle VGA monitor */
+    if (monitor == MON_VGA) {
+        mode &= ~VIDEL_OVERSCAN;    /* turn off overscan (not used with VGA) */
+        if (!(mode & VIDEL_VGA))            /* if mode doesn't have VGA set, */
+            mode ^= (VIDEL_VERTICAL | VIDEL_VGA);   /* set it & flip vertical */
+        if (mode & VIDEL_COMPAT) {
+            if ((mode&VIDEL_BPPMASK) == VIDEL_1BPP)
+                mode &= ~VIDEL_VERTICAL;    /* clear vertical for ST high */
+            else mode |= VIDEL_VERTICAL;    /* set it for ST medium, low  */
+        }
+        return mode;
+    }
+
+    /* handle RGB or TV */
+    if (mode & VIDEL_VGA)                       /* if mode has VGA set, */
+        mode ^= (VIDEL_VERTICAL | VIDEL_VGA);   /* clear it & flip vertical */
+    if (mode & VIDEL_COMPAT) {
+        if ((mode&VIDEL_BPPMASK) == VIDEL_1BPP)
+            mode |= VIDEL_VERTICAL;         /* set vertical for ST high */
+        else mode &= ~VIDEL_VERTICAL;       /* clear it for ST medium, low  */
+    }
+
+    return mode;
 }
 
 #endif /* CONF_WITH_VIDEL */
@@ -1134,33 +1184,16 @@ void screen_init(void)
             boot_resolution = FALCON_DEFAULT_BOOT;  /* so pick one that is */
         }
 
+        /* initialise the current video mode, for vfixmode()/vsetmode() */
+        current_video_mode = boot_resolution;
+
         /* fix the video mode according to the actual monitor */
-        switch(monitor_type) {
-        case 0:     /* monochrome */
-            boot_resolution = FALCON_ST_HIGH;
-            break;
-        case 1:     /* RGB */
-        case 3:     /* TV */
-            if (boot_resolution & VIDEL_VGA) {
-                /* Convert the VGA video mode to RGB */
-                boot_resolution &= ~VIDEL_VGA; /* Force RGB mode */
-                boot_resolution ^= VIDEL_VERTICAL; /* Invert vertical bit */
-            }
-            break;
-        case 2:     /* VGA */
-            if (!(boot_resolution & VIDEL_VGA)) {
-                /* Convert the RGB video mode to VGA */
-                boot_resolution |= VIDEL_VGA; /* Force VGA mode */
-                boot_resolution &= ~VIDEL_PAL; /* Force 60 Hz */
-                boot_resolution ^= VIDEL_VERTICAL; /* Invert vertical bit */
-            }
-            break;
-        }
+        boot_resolution = vfixmode(boot_resolution);
 #if DBG_SCREEN
         kprintf("Fixed boot video mode is 0x%04x\n", boot_resolution);
 #endif
         vsetmode(boot_resolution);
-        rez = 3;        /* fake value indicates Falcon/Videl */
+        rez = FALCON_REZ;   /* fake value indicates Falcon/Videl */
     }
     else
 #endif // CONF_WITH_VIDEL
@@ -1184,7 +1217,7 @@ void screen_init(void)
     }
 
 #if CONF_WITH_VIDEL
-    if (rez == 3) {     /* detected a Falcon */
+    if (rez == FALCON_REZ) {    /* detected a Falcon */
         sync_mode = (boot_resolution&VIDEL_PAL)?0x02:0x00;
     }
     else
@@ -1407,7 +1440,7 @@ void setscreen(LONG logLoc, LONG physLoc, WORD rez, WORD videlmode)
         }
 #if CONF_WITH_VIDEL
         else if (has_videl) {
-            if (rez == 3) {
+            if (rez == FALCON_REZ) {
                 vsetmode(videlmode);
                 sshiftmod = rez;
             } else if (rez < 3) {   /* ST compatible resolution */

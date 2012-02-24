@@ -40,6 +40,7 @@ WORD vmontype(void);
 LONG vgetsize(WORD mode);
 void vsetrgb(WORD index,WORD count,LONG *rgb);
 void vgetrgb(WORD index,WORD count,LONG *rgb);
+WORD vfixmode(WORD mode);
 
 /* pallette color definitions */
 
@@ -110,10 +111,11 @@ void vgetrgb(WORD index,WORD count,LONG *rgb);
 #define VIDEL_TRUECOLOR     4               /* 65536 colours */
 
 /* selected Falcon videomodes */
-#define FALCON_ST_HIGH      (VIDEL_COMPAT|VIDEL_VGA|VIDEL_80COL|VIDEL_1BPP)
-#define FALCON_ST_MEDIUM    (VIDEL_COMPAT|VIDEL_VERTICAL|VIDEL_VGA|VIDEL_80COL|VIDEL_2BPP)
+#define FALCON_ST_HIGH      (VIDEL_COMPAT|VIDEL_80COL|VIDEL_1BPP)
 
-#define FALCON_DEFAULT_BOOT (VIDEL_VERTICAL|VIDEL_80COL|VIDEL_4BPP) /* 640x400x16 colours, TV, NTSC */
+#define FALCON_DEFAULT_BOOT (VIDEL_VERTICAL|VIDEL_80COL|VIDEL_4BPP) /* 640x480x16 colours, TV, NTSC */
+
+#define FALCON_REZ     3    /* used as a Falcon indicator */
 
 /* TT resolutions */
 #define TT_HIGH        6
@@ -126,6 +128,12 @@ void vgetrgb(WORD index,WORD count,LONG *rgb);
 #define ST_HIGH        2
 #define ST_MEDIUM      1
 #define ST_LOW         0
+
+/* monitor types (from VgetMonitor()) */
+#define MON_MONO       0    /* ST monochrome */
+#define MON_COLOR      1    /* ST colour */
+#define MON_VGA        2    /* VGA */
+#define MON_TV         3    /* TV via RF modulator */
 
 /* determine monitor type, ... */
 void screen_init(void);

@@ -3331,3 +3331,7 @@ Start... early ages
 - po/fr.po: Fixed leading capital letter in menus sort items. (VRI)
 - bios/initinfo.c: Allow the user to bypass the welcome screen by quickly
   tapping the Shift key. (VRI)
+
+2012-02-23
+- bios/screen.c bios/screen.h: Made code that fixes up Falcon video modes
+  into a function. (RFB)
