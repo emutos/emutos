@@ -3336,3 +3336,7 @@ Start... early ages
 - bios/screen.c bios/screen.h: Made code that fixes up Falcon video modes
   into a function. (RFB)
 - bios/screen.h: Restore correct mode code for Falcon ST High. (RFB)
+
+2012-02-24
+- bios/screen.c: Falcon fix: STe palette was not always updated when it
+  should have been. (RFB)

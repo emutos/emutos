@@ -834,12 +834,14 @@ static void convert2ste(WORD *ste,LONG *falcon)
  */
 static int use_ste_palette(WORD videomode)
 {
+    if (vmontype() == MON_MONO)                     /* always for ST mono monitor */
+        return TRUE;
+
     if ((videomode&VIDEL_BPPMASK) == VIDEL_2BPP)    /* always for 4-colour modes */
         return TRUE;
 
-    if ((videomode&(VIDEL_COMPAT|VIDEL_VERTICAL)) == (VIDEL_COMPAT|VIDEL_VERTICAL))
-        if ((videomode&VIDEL_BPPMASK) == VIDEL_4BPP)
-            return TRUE;                            /* and for ST low */
+    if ((videomode&VIDEL_COMPAT) && ((videomode&VIDEL_BPPMASK) == VIDEL_4BPP))
+        return TRUE;                                /* and for ST low */
 
     return FALSE;
 }
@@ -1062,8 +1064,7 @@ static void initialise_falcon_palette(WORD mode)
         fcol_regs[i] = falcon_shadow_palette[i];
 
     /*
-     * then, for ST-compatible and 4-colour modes, set up the
-     * STe shadow & real palette registers
+     * if appropriate, set up the STe shadow & real palette registers
      */
     if (use_ste_palette(mode)) {
         convert2ste(ste_shadow_palette,falcon_shadow_palette);
