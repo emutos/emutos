@@ -111,7 +111,7 @@ WORD vfixmode(WORD mode);
 #define VIDEL_TRUECOLOR     4               /* 65536 colours */
 
 /* selected Falcon videomodes */
-#define FALCON_ST_HIGH      (VIDEL_COMPAT|VIDEL_80COL|VIDEL_1BPP)
+#define FALCON_ST_HIGH      (VIDEL_COMPAT|VIDEL_VGA|VIDEL_80COL|VIDEL_1BPP)
 
 #define FALCON_DEFAULT_BOOT (VIDEL_VERTICAL|VIDEL_80COL|VIDEL_4BPP) /* 640x480x16 colours, TV, NTSC */
 
