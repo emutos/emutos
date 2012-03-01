@@ -3354,3 +3354,5 @@ Start... early ages
 2012-03-01
 - bios/machine.c bios/machine.h bios/xbios.c include/config.h: Add minimal
   support for Blitmode(). (RFB)
+- bios/screen.c: Removed specific kludges for the FireBee's VIDEL since
+  the standard VsetMode() routines work fine now. (VRI)
