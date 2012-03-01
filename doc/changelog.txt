@@ -3348,3 +3348,5 @@ Start... early ages
   desk/desktop.rsc include/xbiosbind.h: Allow desktop resolution switching
   for Falcon. (RFB)
 - doc/reschange.txt: Added documentation on resolution change. (RFB)
+- aes/gemobed.c: Fixed form_center() to accurately centre the form, as
+  per Atari TOS. (RFB)

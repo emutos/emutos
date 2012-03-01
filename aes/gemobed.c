@@ -74,7 +74,7 @@ void ob_center(LONG tree, GRECT *pt)
         plong = OB_X(ROOT);
         wd = LWGET(plong + 0x04L);
         hd = LWGET(plong + 0x06L);
-        xd = ((gl_width - wd) / 2) / gl_wchar * gl_wchar;
+        xd = (gl_width - wd) / 2;
                                         /* don't center on xtra long screens */
         height = min(gl_height, 25 * gl_hchar);
         yd = gl_hbox + ((height - gl_hbox - hd) / 2);
