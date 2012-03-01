@@ -174,10 +174,9 @@ static void detect_features(void)
 {
     int rez;
 
-    /* FIXME: Remove the following when full resolution change is supported */
 #if CONF_WITH_VIDEL
-    if (has_videl) {
-        can_change_resolution = FALSE;
+    if (has_videl) {    /* can't change if real ST monochrome monitor */
+        can_change_resolution = VgetMonitor() ? TRUE : FALSE;
         return;
     }
 #endif
@@ -680,8 +679,10 @@ static WORD do_optnmenu(WORD item)
                 rebld = change_resolution(&newres,&newmode);
                 if (rebld == 1)
                 {
-                        shel_write(5, newres+2, 0, NULL, NULL);
-                        done = TRUE;
+                  if (newres == FALCON_REZ)
+                    shel_write(5,newmode,1,NULL,NULL);
+                  else shel_write(5,newres+2,0,NULL,NULL);
+                  done = TRUE;
                 }
                 break;
         }

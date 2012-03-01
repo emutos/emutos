@@ -33,9 +33,39 @@
 #include "screen.h"
 #include "kprint.h"
 
+/*
+ * maps TT dialog buttons to resolution
+ */
 #define NUM_TT_BUTTONS  5
 static const WORD ttrez_from_button[NUM_TT_BUTTONS] =
     { ST_LOW, ST_MEDIUM, ST_HIGH, TT_LOW, TT_MEDIUM };
+
+/*
+ * maps Falcon dialog buttons to 'base' mode
+ * note: these correspond to the VGA videomode settings; the
+ * VIDEL_VERTICAL bit is inverted for RGB mode (see the code)
+ */
+#define NUM_FALCON_BUTTONS  19
+static const WORD falconmode_from_button[NUM_FALCON_BUTTONS] =
+    { VIDEL_80COL|VIDEL_1BPP,                       /* 640x480x2 */
+      VIDEL_80COL|VIDEL_2BPP,                       /* 640x480x4 */
+      VIDEL_80COL|VIDEL_4BPP,                       /* 640x480x16 */
+      VIDEL_80COL|VIDEL_8BPP,                       /* 640x480x256 */
+      VIDEL_VERTICAL|VIDEL_80COL|VIDEL_1BPP,        /* 640x240x2 */
+      VIDEL_VERTICAL|VIDEL_80COL|VIDEL_2BPP,        /* 640x240x4 */
+      VIDEL_VERTICAL|VIDEL_80COL|VIDEL_4BPP,        /* 640x240x16 */
+      VIDEL_VERTICAL|VIDEL_80COL|VIDEL_8BPP,        /* 640x240x256 */
+      VIDEL_2BPP,                                   /* 320x480x4 */
+      VIDEL_4BPP,                                   /* 320x480x16 */
+      VIDEL_8BPP,                                   /* 320x480x256 */
+      VIDEL_TRUECOLOR,                              /* 320x480x65536 */
+      VIDEL_VERTICAL|VIDEL_2BPP,                    /* 320x240x4 */
+      VIDEL_VERTICAL|VIDEL_4BPP,                    /* 320x240x16 */
+      VIDEL_VERTICAL|VIDEL_8BPP,                    /* 320x240x256 */
+      VIDEL_VERTICAL|VIDEL_TRUECOLOR,               /* 320x240x65536 */
+      VIDEL_COMPAT|VIDEL_80COL|VIDEL_1BPP,                  /* ST High */
+      VIDEL_COMPAT|VIDEL_VERTICAL|VIDEL_80COL|VIDEL_2BPP,   /* ST Medium */
+      VIDEL_COMPAT|VIDEL_VERTICAL|VIDEL_4BPP };             /* ST Low */
 
 /*
  *  change_st_rez(): change desktop ST resolution
@@ -68,8 +98,6 @@ WORD oldres;
     for (i = 0; i < NUM_TT_BUTTONS; i++)
         if (oldres == ttrez_from_button[i])
             break;
-    if (i >= NUM_TT_BUTTONS)    /* paranoia */
-        return 0;
 
     selected = i;
 
@@ -89,7 +117,7 @@ WORD oldres;
         return 0;
 
     /* look for button with SELECTED state */
-    i = inf_gindex(tree,TTREZSTL,5);
+    i = inf_gindex(tree,TTREZSTL,NUM_TT_BUTTONS);
     if (i < 0)                  /* paranoia */
         return 0;
     if (i == selected)          /* no change */
@@ -109,8 +137,55 @@ WORD oldres;
  */
 static int change_falcon_rez(WORD *newres,WORD *newmode)
 {
-    /* for now, we always do nothing ... */
-    return 0;
+LONG tree;
+OBJECT *obj;
+int i, selected;
+WORD oldmode, oldbase, oldoptions;
+
+    oldmode = VsetMode(-1);
+    oldbase = oldmode & (VIDEL_VERTICAL|VIDEL_COMPAT|VIDEL_80COL|VIDEL_BPPMASK);
+    oldoptions = oldmode & (VIDEL_OVERSCAN|VIDEL_PAL|VIDEL_VGA);
+    if (!(oldoptions&VIDEL_VGA))    /* if RGB mode, */
+        oldbase ^= VIDEL_VERTICAL;  /* this bit has inverted meaning */
+
+    for (i = 0; i < NUM_FALCON_BUTTONS; i++)
+        if (oldbase == falconmode_from_button[i])
+            break;
+    selected = i;
+
+    /* set up dialog & display */
+    tree = G.a_trees[ADFALREZ];
+    /* FIXME: change the next 2 lines when we have 256-colour support in VDI */
+    obj = (OBJECT *)tree+FREZTEXT;  /* this hides the "256  TC" header text */
+    obj->ob_flags |= HIDETREE;
+
+    for (i = 0, obj = (OBJECT *)tree+FREZLIST; i < NUM_FALCON_BUTTONS; i++, obj++) {
+        /* FIXME: change the next 2 lines when we have 256-colour support in VDI */
+        if ((falconmode_from_button[i]&VIDEL_BPPMASK) > VIDEL_4BPP)
+            obj->ob_flags |= HIDETREE;
+        if (i == selected)
+            obj->ob_state |= SELECTED;
+        else obj->ob_state &= ~SELECTED;
+    }
+
+    inf_show(tree,ROOT);
+
+    if (inf_what(tree,FREZOK,FREZCAN) == 0)
+        return 0;
+
+    /* look for button with SELECTED state */
+    i = inf_gindex(tree,FREZLIST,NUM_FALCON_BUTTONS);
+    if (i < 0)                  /* paranoia */
+        return 0;
+    if (i == selected)          /* no change */
+        return 0;
+
+    *newres = FALCON_REZ;
+    *newmode = falconmode_from_button[i] | oldoptions;
+    if (!(oldoptions&VIDEL_VGA))    /* if RGB mode, */
+        *newmode ^= VIDEL_VERTICAL; /* invert the bit returned */
+
+    return 1;
 }
 #endif
  

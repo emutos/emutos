@@ -21,7 +21,7 @@
 #define Physbase() xbios_l_v(2)
 #define Logbase() xbios_l_v(3)
 #define Getrez() xbios_w_v(4)
-#define Setscreen(a,b,c) xbios_v_llw(5,a,b,c)
+#define Setscreen(a,b,c,d) xbios_v_llww(5,a,b,c,d)
 #define Setpalette(a) xbios_v_l(6,a)
 #define Setcolor(a,b) xbios_w_ww(7,a,b)
 #define Floprd(a,b,c,d,e,f,g) xbios_w_llwwwww(8,a,b,c,d,e,f,g)
@@ -55,6 +55,8 @@
 #define Vsync() xbios_v_v(37)
 #define Supexec(a) xbios_v_l(38,a)  /* void ??? */
 #define Puntaes() xbios_v_v(39)
+#define VsetMode(a) xbios_w_w(88,a)
+#define VgetMonitor() xbios_w_v(89)
 
 /*
  *

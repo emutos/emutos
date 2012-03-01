@@ -3344,3 +3344,6 @@ Start... early ages
 2012-02-29
 - bios/screen.c: Fixed bugs in set_videl_vga() including using the wrong
   palette. (RFB)
+- aes/geminit.c desk/deskmain.c desk/deskrez.c desk/desktop.dfn
+  desk/desktop.rsc include/xbiosbind.h: Allow desktop resolution switching
+  for Falcon. (RFB)

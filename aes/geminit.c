@@ -882,10 +882,14 @@ void gem_main(void)
             /* Change resolution before starting over again... */
             if (gl_changerez == 1)  /* ST(e) or TT display */
             {
-                Setscreen(-1L, -1L, gl_nextrez-2);
+                Setscreen(-1L,-1L,gl_nextrez-2,0);
                 initialise_palette_registers(gl_nextrez-2,0);
             }
-            /* TODO: Support for Falcon screen modes */
+            else if (gl_changerez == 2)   /* Falcon display */
+            {
+                Setscreen(-1L, -1L, FALCON_REZ, gl_nextrez);
+                initialise_palette_registers(FALCON_REZ,gl_nextrez);
+            }
         }
     }
 
