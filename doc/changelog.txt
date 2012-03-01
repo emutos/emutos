@@ -3347,3 +3347,4 @@ Start... early ages
 - aes/geminit.c desk/deskmain.c desk/deskrez.c desk/desktop.dfn
   desk/desktop.rsc include/xbiosbind.h: Allow desktop resolution switching
   for Falcon. (RFB)
+- doc/reschange.txt: Added documentation on resolution change. (RFB)

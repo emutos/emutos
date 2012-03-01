@@ -1,0 +1,33 @@
+How resolution change works in the EmuTOS desktop
+=================================================
+
+When the user selects resolution change, do_optnmenu() [deskmain.c]
+calls resolution_change() [deskrez.c].  Depending on the type of video
+support (ST(e)/TT/Falcon) available, either a form_alert() is issued, or
+a dialog box is presented to the user.
+
+When the user closes the alert or box, the results are passed back to
+do_optnmenu().  If the user selected a change of resolution, do_optnmenu()
+issues a shel_write(5) to indicate resolution change; the shel_write()
+results in a call to sh_write [gemshlib.c] which sets the globals
+gl_changerez and gl_nextrez.  do_optmenu() then exits, returning a value
+of TRUE.
+
+As a result, hndl_menu() [deskmain.c] returns TRUE, and its caller (either
+hndl_kbd() or hndl_msg() [both in deskmain.c]) also returns TRUE.  This
+causes deskmain() [deskmain.c] to return TRUE, and then deskstart()
+[deskstart.S] issues Pterm() to terminate the desktop process.
+
+The desktop termination causes control to be returned to sh_ldapp()
+[gemshlib.c] and, because gl_changerez is non-zero, sh_ldapp() exits.
+This causes sh_main() [gemshlib.c] to return to gem_main() [geminit.c].
+
+In gem_main(), the code checks for gl_changerez and, if non-zero:
+  1. issues a Setscreen(), with resolution and videomode set according
+     to the values of gl_changerez and gl_nextrez,
+  2. reinitialises the palette(s) via a call to initialise_palette_registers()
+     [screen.c],
+  3. returns to its caller, gem_start() [gemstart.S].
+gem_start() checks for gl_changerez set and if so, branches back to the
+aes_restart label, which clears the global area, and calls gem_main(),
+restarting the desktop.
