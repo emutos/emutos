@@ -3340,3 +3340,7 @@ Start... early ages
 2012-02-24
 - bios/screen.c: Falcon fix: STe palette was not always updated when it
   should have been. (RFB)
+
+2012-02-29
+- bios/screen.c: Fixed bugs in set_videl_vga() including using the wrong
+  palette. (RFB)
