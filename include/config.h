@@ -206,6 +206,9 @@
 # ifndef CONF_WITH_NVRAM
 #  define CONF_WITH_NVRAM 0
 # endif
+# ifndef CONF_WITH_BLITTER
+#  define CONF_WITH_BLITTER 0
+# endif
 # ifndef USE_STOP_INSN_TO_FREE_HOST_CPU
 #  define USE_STOP_INSN_TO_FREE_HOST_CPU 0
 # endif
@@ -480,6 +483,13 @@
  */
 #ifndef CONF_WITH_XHDI
 # define CONF_WITH_XHDI 1
+#endif
+
+/*
+ * Set CONF_WITH_BLITTER to 1 to enable minimal Blitmode() support
+ */
+#ifndef CONF_WITH_BLITTER
+# define CONF_WITH_BLITTER 1
 #endif
 
 /*

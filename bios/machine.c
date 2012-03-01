@@ -135,6 +135,28 @@ static void detect_vme(void)
 
 #endif /* CONF_WITH_VME */
 
+
+#if CONF_WITH_BLITTER
+
+/* blitter */
+
+int has_blitter;
+
+static void detect_blitter(void)
+{
+  has_blitter = 0;
+
+  if (check_read_byte(0xffff8a3c))
+    has_blitter = 1;
+
+#if DBG_MACHINE
+  kprintf("has_blitter = %d\n",has_blitter);
+#endif
+}
+
+#endif /* CONF_WITH_BLITTER */
+
+
 #if CONF_WITH_DIP_SWITCHES
 
 /* DIP switches */
@@ -305,6 +327,9 @@ void machine_detect(void)
 #endif
 #if CONF_WITH_DMASOUND
   detect_dmasound();
+#endif
+#if CONF_WITH_BLITTER
+  detect_blitter();
 #endif
 }
   

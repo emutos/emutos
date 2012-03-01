@@ -3350,3 +3350,7 @@ Start... early ages
 - doc/reschange.txt: Added documentation on resolution change. (RFB)
 - aes/gemobed.c: Fixed form_center() to accurately centre the form, as
   per Atari TOS. (RFB)
+
+2012-03-01
+- bios/machine.c bios/machine.h bios/xbios.c include/config.h: Add minimal
+  support for Blitmode(). (RFB)

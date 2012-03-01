@@ -54,6 +54,9 @@ extern int has_megartc;   /* in clock.c */
 #if CONF_WITH_NVRAM
 extern int has_nvram;     /* in nvram.c */
 #endif
+#if CONF_WITH_BLITTER
+extern int has_blitter;
+#endif
 #if CONF_WITH_DMASOUND
 extern int has_dmasound;  /* in dmasound.c */
 extern int has_microwire; /* in dmasound.c */
