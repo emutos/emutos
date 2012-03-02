@@ -97,6 +97,9 @@
  *  v1.1    roger burrows, march/2012
  *          . added comments to identify trees, objects and free strings
  *            by name
+ *
+ *  v1.2    roger burrows, march/2012
+ *          . added strings to "no-translate" table
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -270,7 +273,7 @@ typedef struct {
  *  our own defines & structures
  */
 #define PROGRAM_NAME    "erd"
-#define VERSION         "v1.1"
+#define VERSION         "v1.2"
 #define MAX_STRLEN      200         /* max size for internal string areas */
 #define NLS             "N_("       /* the macro used in EmuTOS for NLS support*/
 
@@ -361,7 +364,10 @@ NOTRANS_ENTRY notrans[] = {
     { 0, "A:" },
     { 0, "am" },
     { 0, "pm" },
-    { 0, "(c)" }
+    { 0, "(c)" },
+    { 0, "256  TC" },
+    { 0, "640 x " },
+    { 0, "320 x " }
 };
 int num_notrans = sizeof(notrans) / sizeof(NOTRANS_ENTRY);
 
