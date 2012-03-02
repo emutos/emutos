@@ -3356,3 +3356,5 @@ Start... early ages
   support for Blitmode(). (RFB)
 - bios/screen.c: Removed specific kludges for the FireBee's VIDEL since
   the standard VsetMode() routines work fine now. (VRI)
+- tools/erd.c: Added comments to generated .c file to identify trees,
+  objects, and free strings by name. (RFB)

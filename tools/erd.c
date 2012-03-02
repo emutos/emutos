@@ -93,6 +93,10 @@
  *  ---------------
  *  v1.0    roger burrows, february/2012
  *          initial release
+ *
+ *  v1.1    roger burrows, march/2012
+ *          . added comments to identify trees, objects and free strings
+ *            by name
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -266,7 +270,7 @@ typedef struct {
  *  our own defines & structures
  */
 #define PROGRAM_NAME    "erd"
-#define VERSION         "v1.0"
+#define VERSION         "v1.1"
 #define MAX_STRLEN      200         /* max size for internal string areas */
 #define NLS             "N_("       /* the macro used in EmuTOS for NLS support*/
 
@@ -309,7 +313,7 @@ typedef struct {
 /*
  *  globals
  */
-char *copyright = PROGRAM_NAME " " VERSION " copyright ½ 2012 by Roger Burrows\n"
+char *copyright = PROGRAM_NAME " " VERSION " copyright (c) 2012 by Roger Burrows\n"
 "This program is licensed under the GNU Public License. Please see LICENSE.TXT for details.\n";
 
 int debug = 0;                          /* options */
@@ -443,6 +447,9 @@ int load_def(FILE *fp);
 int load_dfn(FILE *fp);
 int load_hrd(FILE *fp);
 RSHDR *load_rsc(char *path);
+DEF_ENTRY *lookup_freestr(int freestr);
+DEF_ENTRY *lookup_object(int tree,int obj);
+DEF_ENTRY *lookup_tree(int tree);
 int markdef(int number);
 int notranslate(char *text);
 FILE *openfile(char *name,char *ext,char *mode);
@@ -875,6 +882,82 @@ DEF_ENTRY *d;
     return -1;
 }
 
+/*
+ *  lookup object in definition table
+ *
+ *  if found, return pointer to entry
+ *  otherwise, return NULL
+ */
+DEF_ENTRY *lookup_object(int tree,int obj)
+{
+int i;
+DEF_ENTRY *d;
+
+    for (i = 0, d = def; i < num_defs; i++, d++) {
+        if (d->type != DEF_OBJECT)
+            continue;
+        if (d->tree > tree)
+            break;
+        if (d->tree < tree)
+            continue;
+        if (d->obj > obj)
+            break;
+        if (d->obj < obj)
+            continue;
+        return d;
+    }
+
+    return NULL;
+}
+
+/*
+ *  lookup tree in definition table
+ *
+ *  if found, return pointer to entry
+ *  otherwise, return NULL
+ */
+DEF_ENTRY *lookup_tree(int tree)
+{
+int i;
+DEF_ENTRY *d;
+
+    for (i = 0, d = def; i < num_defs; i++, d++) {
+        if ((d->type != DEF_DIALOG) && (d->type != DEF_MENU))
+            continue;
+        if (d->tree > tree)
+            break;
+        if (d->tree < tree)
+            continue;
+        return d;
+    }
+
+    return NULL;
+}
+
+/*
+ *  lookup free string in definition table
+ *
+ *  if found, return pointer to entry
+ *  otherwise, return NULL
+ */
+DEF_ENTRY *lookup_freestr(int freestr)
+{
+int i;
+DEF_ENTRY *d;
+
+    for (i = 0, d = def; i < num_defs; i++, d++) {
+        if ((d->type != DEF_ALERT) && (d->type != DEF_FREESTR))
+            continue;
+        if (d->obj > freestr)
+            break;
+        if (d->obj < freestr)
+            continue;
+        return d;
+    }
+
+    return NULL;
+}
+
 
 /*****  output routines *****/
 
@@ -1253,6 +1336,7 @@ int i, j, nobs, tree, ntree;
 unsigned short type, ext_type;
 OBJECT *obj;
 OFFSET *trindex;
+DEF_ENTRY *d;
 char temp[MAX_STRLEN];
 char *p;
 char *base = (char *)rschdr;
@@ -1284,7 +1368,10 @@ char *base = (char *)rschdr;
         else sprintf(temp,"   { %d, %d, %d, %s,",get_short(&obj->ob_next),
                     get_short(&obj->ob_head),get_short(&obj->ob_tail),p);
 
-        fprintf(fp,"%-44s/*** %d ***/\n",temp,j);
+        fprintf(fp,"%-44s/*** %d ***/",temp,j);
+        if ((d=lookup_object(tree-1,j)))
+            fprintf(fp,"  /* %s */",d->name);
+        fprintf(fp,"\n");
         fprintf(fp,"     %s,\n",decode_flags(get_ushort(&obj->ob_flags)));
         fprintf(fp,"     %s,\n",decode_state(get_ushort(&obj->ob_state)));
         write_obspec(fp,obj);
@@ -1306,15 +1393,16 @@ char *base = (char *)rschdr;
 int write_tree(FILE *fp)
 {
 int i, ntree;
+DEF_ENTRY *d;
+char temp[MAX_STRLEN];
 
     fprintf(fp,"OBJECT * const %srs_trees[] = {\n",prefix);
 
     ntree = get_ushort(&rschdr->rsh_ntree);
     for (i = 0; i < ntree; i++) {
-        fprintf(fp,"    &%srs_obj[TR%d]",prefix,i);
-        if (i != ntree-1)
-            fprintf(fp,",\n");
-        else fprintf(fp,"\n");
+        sprintf(temp,"    &%srs_obj[TR%d]%s",prefix,i,(i==ntree-1)?"":",");
+        d = lookup_tree(i);
+        fprintf(fp,"%-44s/* %s */\n",temp,d?d->name:"???");
     }
     fprintf(fp,"};\n\n\n");
 
@@ -1326,11 +1414,12 @@ int i, ntree;
  */
 int write_freestr(FILE *fp)
 {
-int i, j, nstring;
+int i, j, n, nstring;
 int desk1, xlate, numstr, len;
 int length[MAX_SUBSTR];
 char *s;
 OFFSET *strptr;
+DEF_ENTRY *d;
 char temp[MAX_STRLEN];
 char *base = (char *)rschdr;
 
@@ -1351,13 +1440,20 @@ char *base = (char *)rschdr;
         xlate = copycheck(temp,s,MAX_STRLEN-1); /* copy string, fixing up special characters */
         numstr = getlen(length,temp);           /* get lengths of substrings */
         for (j = 0, s = temp; j < numstr; j++, s += len) {
-            fprintf(fp,"    ");
+            n = fprintf(fp,"    ");
             if (xlate)
-                fprintf(fp,"%s",(j==0)?NLS:"   ");
+                n += fprintf(fp,"%s",(j==0)?NLS:"   ");
             len = length[j];
-            fprintf(fp,"\"%*.*s\"",len,len,s);
+            n += fprintf(fp,"\"%*.*s\"",len,len,s);
             if (j == numstr-1)
-                fprintf(fp,"%s,",xlate?")":"");
+                n += fprintf(fp,"%s,",xlate?")":"");
+            if (j == 0) {
+                if ((d=lookup_freestr(i))) {
+                    while(n++ < 56)
+                        fprintf(fp," ");
+                    fprintf(fp,"/* %s */",d->name);
+                }
+            }
             fprintf(fp,"\n");
         }
 
