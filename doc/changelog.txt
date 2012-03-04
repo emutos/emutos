@@ -3363,3 +3363,5 @@ Start... early ages
 2012-03-04
 - aes/gemfmalt.c: Added validity checks to form_alert() to prevent crash
   due to badly-formed alert string. (RFB)
+- bios/bios.c bios/xbios.c: Return function number rather than zero for
+  unimplemented (x)bios calls, as per Atari TOS. (RFB)

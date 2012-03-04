@@ -946,7 +946,7 @@ LONG xbios_do_unimpl(WORD number)
 #if DBG_XBIOS
     kprintf("unimplemented XBIOS function 0x%02x\n", number);
 #endif
-    return 0;
+    return number;
 }
 
 extern LONG xbios_unimpl(void);

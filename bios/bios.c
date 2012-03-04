@@ -787,7 +787,7 @@ LONG bios_do_unimpl(WORD number)
 #if DBGBIOS
     kprintf("unimplemented BIOS function 0x%02x\n", number);
 #endif
-    return 0;
+    return number;
 }
 
 extern LONG bios_unimpl(void);
