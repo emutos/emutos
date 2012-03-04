@@ -3359,3 +3359,7 @@ Start... early ages
 - tools/erd.c: Added comments to generated .c file to identify trees,
   objects, and free strings by name. (RFB)
 - tools/erd.c: Added strings to 'no-translate' table. (RFB)
+
+2012-03-04
+- aes/gemfmalt.c: Added validity checks to form_alert() to prevent crash
+  due to badly-formed alert string. (RFB)

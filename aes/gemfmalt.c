@@ -39,6 +39,18 @@
 #include "optimopt.h"
 #include "rectfunc.h"
 #include "gemfmalt.h"
+#include "kprint.h"
+
+#define DBG_ALERT   0
+
+/*
+ * parameters for form_alert():
+ * MUST correspond to string lengths and counts in gem_rsc.c!
+ */
+#define MAX_LINENUM 5
+#define MAX_LINELEN 40
+#define MAX_BUTNUM  3
+#define MAX_BUTLEN  20
 
 
 #define MSG_OFF 2
@@ -60,50 +72,73 @@ LONG     ad_nils;
 /*
 *       Routine to break a string into smaller strings.  Breaks occur
 *       whenever an | or a ] is encountered.
+* 
+*       Input:  start       starting object
+*               maxnum      maximum number of substrings
+*               maxlen      maximum length of substring
+*               alert       starting point in alert string
+*       Output: pnum        number of substrings found
+*               plen        maximum length of substring found
+*       Returns:            pointer to next character to process
 */
-static void fm_strbrk(LONG tree, LONG palstr, WORD stroff, WORD *pcurr_id,
-                      WORD *pnitem, WORD *pmaxlen)
-{
-        register WORD   nitem, curr_id;
-        register WORD   len, maxlen;
-        register BYTE   tmp;
-        BYTE            *pstr;
-        register BYTE   nxttmp;
+#define endstring(a)    ( ((a)==']') || ((a)=='\0') )
+#define endsubstring(a) ( ((a)=='|') || ((a)==']') || ((a)=='\0') )
 
-        nitem = maxlen = 0; 
-        curr_id = *pcurr_id;
-        tmp = NULL;
-        while( tmp != ']')
-        {
-          pstr = (BYTE *)LLGET(OB_SPEC(stroff + nitem));
-          len = 0;
-                                                /* get 1st char of new  */
-                                                /*   string             */
-          do
-          {
-            tmp = LBGET(palstr + curr_id);
-            curr_id++;
-            nxttmp = LBGET(palstr + curr_id);
-            if ( (tmp == ']') ||
-                 (tmp == '|') )
-            {
-              if (tmp == nxttmp)
-                curr_id++;
-              else
-              {
-                nxttmp = tmp;
-                tmp = NULL;
-              }
-            }
-            *(pstr + len++) = tmp;
-          } while ( tmp != NULL );
-          tmp = nxttmp;
-          maxlen = max(len - 1, maxlen);
-          nitem++;
+static char *fm_strbrk(OBJECT *start,WORD maxnum,WORD maxlen,char *alert,
+                           WORD *pnum,WORD *plen)
+{
+    int i, j, len;
+    OBJECT *obj;
+    char *p;
+
+    *plen = 0;
+
+    if (*alert == '[')              /* ignore a leading [ */
+        alert++;
+
+    for (i = 0, obj = start; i < maxnum; i++, obj++, alert++) {
+        p = (char *)obj->ob_spec;
+        for (j = 0; j < maxlen; j++) {
+            if (endsubstring(*alert))
+                break;
+            *p++ = *alert++;
         }
-        *pcurr_id = curr_id;
-        *pnitem = nitem;
-        *pmaxlen = maxlen;
+        *p = '\0';
+
+        len = p - (char *)obj->ob_spec;
+        if (len > *plen)            /* track max substring length */
+            *plen = len;
+
+        if (!endsubstring(*alert)) {/* substring was too long */
+#if DBG_ALERT
+            kprintf("form_alert(): substring > %d bytes long\n",maxlen);
+#endif
+            while(1) {              /* eat rest of substring */
+                if (endsubstring(*alert))
+                    break;
+                alert++;
+            }
+        }
+        if (endstring(*alert))      /* end of all substrings */
+            break;
+    }
+#if DBG_ALERT
+    if (i >= maxnum)                /* too many substrings */
+        kprintf("form_alert(): more than %d substrings\n",maxnum);
+#endif
+
+    while(1) {                      /* eat any remaining characters */
+        if (endstring(*alert))
+            break;
+        alert++;
+    }
+
+    *pnum = (i<maxnum)?(i+1):maxnum;/* count of substrings found */
+
+    if (*alert)                     /* if not at null byte, */
+        alert++;                    /* point to next one    */
+
+    return alert;
 }
 
 
@@ -120,19 +155,27 @@ static void fm_strbrk(LONG tree, LONG palstr, WORD stroff, WORD *pcurr_id,
 *               2nd msg line = for the screen.
 *               1st button = Ok
 *               2nd button = Cancel
+*
+*       Input:  tree        address of tree
+*               palstr      pointer to alert string
+*       Output: pnummsg     number of message lines
+*               plenmsg     length of biggest line
+*               pnumbut     number of buttons
+*               plenbut     length of biggest button
 */
-
 static void fm_parse(LONG tree, LONG palstr, WORD *picnum, WORD *pnummsg,
-                     WORD *plenmsg, WORD *pnumbut, WORD *plenbut)
+                         WORD *plenmsg, WORD *pnumbut, WORD *plenbut)
 {
-        WORD            curr_id;
+    OBJECT *obj = (OBJECT *)tree;
+    char *alert = (char *)palstr;
 
-        *picnum = LBGET(palstr + 1) - '0';
-        curr_id = 4;
-        fm_strbrk(tree, palstr, MSG_OFF, &curr_id, pnummsg, plenmsg);
-        curr_id++;
-        fm_strbrk(tree, palstr, BUT_OFF, &curr_id, pnumbut, plenbut);
-        *plenbut += 1;
+    *picnum = alert[1] - '0';
+
+    alert = fm_strbrk(obj+MSG_OFF,MAX_LINENUM,MAX_LINELEN,alert+3,pnummsg,plenmsg);
+
+    fm_strbrk(obj+BUT_OFF,MAX_BUTNUM,MAX_BUTLEN,alert,pnumbut,plenbut);
+
+    *plenbut += 1;  /* allow 1/2 character space inside each end of button */
 }
 
 
