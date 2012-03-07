@@ -640,6 +640,35 @@ static const VMODE_ENTRY *lookup_videl_mode(WORD mode)
 
 
 /*
+ * determine regc0 based on video mode & monitor type
+ */
+WORD determine_regc0(WORD mode)
+{
+    WORD monitor = vmontype();
+
+    if (mode&VIDEL_VGA)
+        return 0x0186;
+
+    if (!(mode&VIDEL_COMPAT))
+        return (monitor==MON_TV)?0x0183:0x0181;
+
+    /* handle ST-compatible modes */
+    if ((mode&(VIDEL_80COL|VIDEL_BPPMASK)) == (VIDEL_80COL|VIDEL_1BPP)) {  /* 80-column, 2-colour */
+        switch(monitor) {
+        case MON_MONO:
+            return 0x0080;
+        case MON_TV:
+            return 0x0183;
+        default:
+            return 0x0181;
+        }
+    }
+
+    return (monitor==MON_TV)?0x0083:0x0081;
+}
+
+
+/*
  * this routine can set VIDEL to 1,2,4 or 8 bitplanes mode on VGA
  */
 static int set_videl_vga(WORD mode)
@@ -647,7 +676,6 @@ static int set_videl_vga(WORD mode)
     volatile char *videlregs = (char *)0xffff8200;
 #define videlword(n) (*(volatile UWORD *)(videlregs+(n)))
     const VMODE_ENTRY *p;
-    WORD regc0;
 
     p = lookup_videl_mode(mode);        /* validate mode */
     if (!p)
@@ -657,28 +685,6 @@ static int set_videl_vga(WORD mode)
 
     if (frclock)        /* if we're not being called during initialisation, */
         vsync();        /* wait for vbl so we're not interrupted :-) */
-
-    switch(vmontype()) {
-    case MON_MONO:
-        regc0 = 0x0080;
-        break;
-    case MON_COLOR:
-        regc0 = 0x0181;
-        break;
-    case MON_VGA:
-        regc0 = 0x0186;
-        break;
-    default:            /* i.e. MON_TV */
-        regc0 = 0x0183;
-        break;
-    }
-    if (regc0 & 1) {    /* i.e. MON_COLOR or MON_TV */
-        if (mode&VIDEL_COMPAT) {
-            if (((mode&VIDEL_BPPMASK) == VIDEL_2BPP)
-             || ((mode&VIDEL_BPPMASK) == VIDEL_4BPP))
-                regc0 &= 0x00ff;
-        }
-    }
 
     videlword(0x82) = p->hht;           /* H hold timer */
     videlword(0x84) = p->hbb;           /* H border begin */
@@ -700,7 +706,7 @@ static int set_videl_vga(WORD mode)
 
     videlword(0x10) = p->width;         /* scanline width */
     videlword(0xc2) = p->ctl;           /* video control */
-    videlword(0xc0) = regc0;
+    videlword(0xc0) = determine_regc0(mode);
     videlword(0x66) = 0x0000;           /* clear SPSHIFT */
 
     switch(mode&VIDEL_BPPMASK) {        /* set SPSHIFT / ST shift */

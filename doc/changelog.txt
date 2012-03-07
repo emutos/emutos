@@ -3365,3 +3365,6 @@ Start... early ages
   due to badly-formed alert string. (RFB)
 - bios/bios.c bios/xbios.c: Return function number rather than zero for
   unimplemented (x)bios calls, as per Atari TOS. (RFB)
+
+2012-03-07
+- bios/screen.c: Improved calculation of value for videl register $82c0. (RFB)
