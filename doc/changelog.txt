@@ -3368,3 +3368,5 @@ Start... early ages
 
 2012-03-07
 - bios/screen.c: Improved calculation of value for videl register $82c0. (RFB)
+- bios/screen.c: Replace table lookup of scanline width & vctl with
+  direct calculation. (RFB)
