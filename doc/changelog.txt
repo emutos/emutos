@@ -3370,3 +3370,7 @@ Start... early ages
 - bios/screen.c: Improved calculation of value for videl register $82c0. (RFB)
 - bios/screen.c: Replace table lookup of scanline width & vctl with
   direct calculation. (RFB)
+
+2012-03-08
+- bios/screen.c: Modified videomode lookup table to support multiple
+  entries for the same mode on different monitor types. (RFB)
