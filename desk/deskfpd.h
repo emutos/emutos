@@ -33,8 +33,10 @@
 #define S_TYPE 3
 #define S_DISK 4
 
+#ifndef DESK1
 #define F_FAKE    0x40       /* these flags are *only* used in the   */
 #define F_DESKTOP 0x80       /*  f_attr field of the FNODE structure */
+#endif
 
 #define E_NOERROR 0
 #define E_NOFNODES 100

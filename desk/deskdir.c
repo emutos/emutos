@@ -725,7 +725,9 @@ WORD par_chk(BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path)
                 if ( (pf->f_obid != NIL) &&
                      (G.g_screen[pf->f_obid].ob_state & SELECTED) &&
                      (pf->f_attr & F_SUBDIR) &&
+#ifndef DESK1
                      !(pf->f_attr & F_FAKE) &&
+#endif
                      (!strcmp(&pf->f_name[0], tdst)) )
                 {
                                                 /* INVALID      */
@@ -818,8 +820,10 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
         for (pf = pflist; pf && more; pf = pf->f_next)
         {
           if ( (pf->f_obid != NIL) &&
-               (G.g_screen[pf->f_obid].ob_state & SELECTED) &&
-               !(pf->f_attr & F_FAKE) )
+#ifndef DESK1
+               !(pf->f_attr & F_FAKE) &&
+#endif
+               (G.g_screen[pf->f_obid].ob_state & SELECTED))
           {
             strcpy(pglsrc, psrc_path);
             if (op == OP_COPY)

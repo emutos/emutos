@@ -156,6 +156,7 @@ static WORD ob_sfcb(LONG psfcb, BYTE *pfmt)
         *pdst++ = ' ';
         *pdst++ = (sf.sfcb_attr & F_SUBDIR) ? 0x07 : ' ';
         *pdst++ = ' ';
+#ifndef DESK1
         if (sf.sfcb_attr & F_DESKTOP)
         {
           *pdst++ = sf.sfcb_junk;
@@ -163,6 +164,7 @@ static WORD ob_sfcb(LONG psfcb, BYTE *pfmt)
           *pdst++ = ' ';
         }
         else
+#endif
         {
           while( (*psrc) &&
                  (*psrc != '.') )

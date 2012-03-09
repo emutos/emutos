@@ -3374,3 +3374,6 @@ Start... early ages
 2012-03-08
 - bios/screen.c: Modified videomode lookup table to support multiple
   entries for the same mode on different monitor types. (RFB)
+- desk/deskdir.c desk/deskfpd.c desk/deskfpd.h desk/deskfun.c
+  desk/deskinf.c: Ensure F_FAKE/F_DESKTOP #defines are only used if DESK1
+  is not #defined. (RFB)

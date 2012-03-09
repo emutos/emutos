@@ -276,9 +276,11 @@ fun_wdst(PNODE *pspath, BYTE *pdspec, WORD datype, FNODE *pdf,
                                                 /*   path, if it is a   */
                                                 /*   fake then treat it */
                                                 /*   like open space    */
+#ifndef DESK1
                 if (pdf->f_attr & F_FAKE)
                   strcat(pdname, "*.*");
                 else
+#endif
                 {
                   strcpy(pdname, &pdf->f_name[0]);
                   strcat(pdname, "\\*.*");

@@ -405,11 +405,13 @@ static WORD pn_fcomp(FNODE *pf1, FNODE *pf2, WORD which)
 */
 static WORD pn_comp(FNODE *pf1, FNODE *pf2)
 {
+#ifndef DESK1
         if (pf1->f_attr & F_FAKE)
           return( -1 );
 
         if (pf2->f_attr & F_FAKE)
           return( 1 );
+#endif
 
         if ( (pf1->f_attr ^ pf2->f_attr) & F_SUBDIR)
           return ((pf1->f_attr & F_SUBDIR)? -1: 1);
@@ -654,8 +656,6 @@ WORD pn_active(PNODE *thepath)
                                                 //   or directory then  //
                                                 //   save it            //
               memcpy(&thefile->f_junk, &G.g_wdta[20], 23);
-              thefile->f_attr &= ~(F_DESKTOP | F_FAKE);
-              
               thepath->p_size += thefile->f_size;
               prevfile->f_next = ml_pfndx[thepath->p_count++] = thefile;
               prevfile = thefile;
