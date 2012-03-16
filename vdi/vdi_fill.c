@@ -399,11 +399,23 @@ bub_sort (WORD * buf, WORD count)
  *   - Sort intersections left to right
  *   - Draw pixels between each pair of points (x coords) on the scan line
  */
+/*
+ * the buffer used by clc_flit() has been temporarily moved from the
+ * stack to a local static area.  this avoids some cases of stack
+ * overflow when the VDI is called from the AES (and the stack is the
+ * small one located in the UDA).  this fix allows GemAmigo to run.
+ *
+ * this change restores the situation that existed in the original
+ * DRI code, when clc_flit() was written in assembler; the buffer
+ * was moved to the stack when clc_flit() was re-implemented in C.
+ */
+#define MAX_INTERSECTIONS   256
+static WORD fill_buffer[MAX_INTERSECTIONS];
 
 static void
 clc_flit (Vwk * vwk, Point * point, WORD y, int vectors)
 {
-    WORD fill_buffer[256];      /* must be 256 words or it will fail */
+//    WORD fill_buffer[256];      /* must be 256 words or it will fail */
     WORD * bufptr;              /* point to array of x-values. */
     int intersections;          /* count of intersections */
     int i;
@@ -440,6 +452,8 @@ clc_flit (Vwk * vwk, Point * point, WORD y, int vectors)
              * test is found in Newman and Sproull.
              */
             if ((dy1 < 0) != (dy2 < 0)) {
+                if (++intersections > MAX_INTERSECTIONS)
+                    break;
                 /* fill edge buffer with x-values */
                 int dx = x2 - x1;
                 if ( dx < 0 ) {
@@ -448,7 +462,6 @@ clc_flit (Vwk * vwk, Point * point, WORD y, int vectors)
                 else {
                     *bufptr++ = dy1 * dx / dy + x1;
                 }
-                intersections++;
             }
         }
     }
