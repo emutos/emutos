@@ -35,7 +35,7 @@ typedef UWORD   EVSPEC;
 #define NUM_EEVBS (NUM_ACCS * 5)        /* 5 * the number of externalPDs*/
 #define KBD_SIZE 8
 #define QUEUE_SIZE 128
-#define STACK_SIZE 448
+#define STACK_SIZE 447
 #define NFORKS 32
 
 CQUEUE
@@ -81,8 +81,9 @@ UDA
         ULONG   u_regs[15];             /*   2  d0-d7, a0-a6             */
         ULONG   *u_spsuper;             /*  3E  supervisor stack         */
         ULONG   *u_spuser;              /*  42  user stack               */
-        ULONG   u_super[STACK_SIZE];    /*  44  */
-        ULONG   u_supstk;               /* 1F4  */
+        ULONG   *u_oldspsuper;          /*  46  old ssp, used in trapaes [gemdosif.S] */
+        ULONG   u_super[STACK_SIZE];    /*  4A  */
+        ULONG   u_supstk;               /* 746  */
 } ;
 
 

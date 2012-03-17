@@ -3386,3 +3386,4 @@ Start... early ages
 - aes/asmstruct.h aes/gemasm.S: Move #defines to separate header file for
   inclusion by other .S files. (RFB)
 - aes/gemdosif.S aes/gemstart.S: Replaced hard-coded offsets with #defines. (RFB)
+- aes/struct.h: Fix UDA definition to include field used by trapaes. (RFB)
