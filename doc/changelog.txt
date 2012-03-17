@@ -3382,3 +3382,6 @@ Start... early ages
 - vdi/vdi_fill.c: Fixed crash in GemAmigo due to stack overflow. Contributed
   by David Savinkoff. (RFB)
 
+2012-03-17
+- aes/asmstruct.h aes/gemasm.S: Move #defines to separate header file for
+  inclusion by other .S files. (RFB)

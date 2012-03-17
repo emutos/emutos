@@ -10,6 +10,7 @@
  */
 
 #include "asmdefs.h"
+#include "asmstruct.h"
 
         .globl  _psetup
         .globl  _gotopgm
@@ -23,25 +24,6 @@
 
         .text
 
-/*
- * defines
- */
-
-/* AES PD struct */
-#define PD_UDA 0x08
-#define PD_LDADDR 0x18
-
-/* BDOS PD struct */
-#define P_TBASE 0x08            // address of TEXT segment
-#define P_BBASE 0x18            // address of BSS segment
-#define P_BLEN 0x1C             // length of BSS
-#define P_XDTA 0x20             // pointer to DTA buffer ???
-
-/* UDA struct */
-#define UDA_REGS 0x02           // registers d0-a6
-#define UDA_REG_A6 0x3A         // a6
-#define UDA_SPSUPER 0x3E        // ssp
-#define UDA_SPUSER 0x42         // usp
 
 /*
  * psetup(PD *p, void *codevalue)
