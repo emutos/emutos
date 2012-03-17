@@ -16,6 +16,7 @@
 */
 
 #include "asmdefs.h"
+#include "asmstruct.h"
 
 .globl _ui_start
 .globl _pgmld
@@ -216,11 +217,11 @@ _dos_exec:
 
         jsr     _cli
         movea.l _rlr,a0
-        movea.l 8(a0),a0
-        move.l  0x3E(a0),-(sp)          // Save rlr->p_uda->u_spsuper
+        movea.l PD_UDA(a0),a0
+        move.l  UDA_SPSUPER(a0),-(sp)   // Save rlr->p_uda->u_spsuper
         movea.l sp,a1
         suba.l  #0x50,a1                // Adjust the stack (see above)
-        move.l  a1,0x3E(a0)
+        move.l  a1,UDA_SPSUPER(a0)
         jsr     _sti
 
         movea.l d1,a1
@@ -234,8 +235,8 @@ _dos_exec:
 
         jsr     _cli
         movea.l _rlr,a0
-        movea.l 8(a0),a0
-        move.l  (sp)+,0x3E(a0)          // Restore rlr->p_uda->u_spsuper
+        movea.l PD_UDA(a0),a0
+        move.l  (sp)+,UDA_SPSUPER(a0)   // Restore rlr->p_uda->u_spsuper
         jsr     _sti
 
 #ifdef __mcoldfire__

@@ -1,7 +1,7 @@
 /*
  * gemdosif.S - Assembler part of the GEMDOS interface
  *
- * Copyright 2002, The EmuTOS development team
+ * Copyright 2002-2012, The EmuTOS development team
  *           1999, Caldera Thin Clients, Inc.
  *           1987, Digital Research Inc.
  *
@@ -10,7 +10,7 @@
  */
 
 #include "asmdefs.h"
-
+#include "asmstruct.h"
 
 .globl _cli
 .globl _sti
@@ -173,11 +173,11 @@ trapaes:
         move.l  a0,usp                  
 
         movea.l _rlr,a6
-        movea.l 8(a6),a6
-        move.w  #1,(a6)
-        move.l  a0,0x42(a6)
-        move.l  sp,0x46(a6)
-        movea.l 0x3E(a6),sp
+        movea.l PD_UDA(a6),a6
+        move.w  #1,UDA_INSUPER(a6)
+        move.l  a0,UDA_SPUSER(a6)
+        move.l  sp,UDA_OLDSPSUPER(a6)
+        movea.l UDA_SPSUPER(a6),sp
         bsr     _sti                    // restore interrupt mask
 
         move.l  d1,-(sp)                // addr of parameter
@@ -189,11 +189,11 @@ supret:                                 // return from gementry
         bsr     _cli                    // mask out interrupts
 
         movea.l _rlr,a0
-        movea.l 8(a0),a0
-        clr.w   (a0)
-        move.l  sp,0x3E(a0)
-        movea.l 0x46(a0),sp
-        movea.l 0x42(a0),a0
+        movea.l PD_UDA(a0),a0
+        clr.w   UDA_INSUPER(a0)
+        move.l  sp,UDA_SPSUPER(a0)
+        movea.l UDA_OLDSPSUPER(a0),sp
+        movea.l UDA_SPUSER(a0),a0
 
 #ifdef __mcoldfire__
         movem.l (a0),d1-d7/a0-a6

@@ -3385,3 +3385,4 @@ Start... early ages
 2012-03-17
 - aes/asmstruct.h aes/gemasm.S: Move #defines to separate header file for
   inclusion by other .S files. (RFB)
+- aes/gemdosif.S aes/gemstart.S: Replaced hard-coded offsets with #defines. (RFB)
