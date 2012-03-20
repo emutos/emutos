@@ -352,7 +352,7 @@ void app_tran(WORD bi_num)
    I changed this behaviour so that the icons are included in the program
    file now. Hope there aren't too much faults in this new version of this
    function. See icons.c, too.  - THH */
-static WORD app_rdicon(void)
+static void app_rdicon(void)
 {
 #if CONF_WITH_DESKTOP_ICONS
         LONG            temp, stmp, dtmp;
@@ -478,7 +478,6 @@ static WORD app_rdicon(void)
 #endif
 
 #endif /* CONF_WITH_DESKTOP_ICONS */
-        return(TRUE);
 } /* app_rdicon */
 
 
@@ -487,7 +486,7 @@ static WORD app_rdicon(void)
 *       file, either from memory or from the disk if the shel_get
 *       indicates no message is there.
 */
-WORD app_start(void)
+void app_start(void)
 {
         WORD            i, x, y;
 #ifndef DESK1
@@ -509,8 +508,7 @@ WORD app_start(void)
         G.g_aavail = &G.g_alist[0];
         G.g_alist[NUM_ANODES - 1].a_next = (ANODE *) NULL;
 
-        if (!app_rdicon())
-          return(FALSE);        
+        app_rdicon();
 
         G.g_wicon = (12 * gl_wschar) + (2 * G.g_idlist[0].ib_xtext);
         G.g_hicon = G.g_idlist[0].ib_hicon + gl_hschar + 2;
@@ -715,8 +713,6 @@ WORD app_start(void)
         G.g_xytext[4] = gl_wchar * 12;   G.g_xytext[5] = gl_hchar;
         G.g_xytext[6] = 0;              G.g_xytext[7] = gl_hchar;
         G.g_xytext[8] = 0;              G.g_xytext[9] = 0;
-
-        return(TRUE);
 }
 
 

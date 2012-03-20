@@ -3387,3 +3387,7 @@ Start... early ages
   inclusion by other .S files. (RFB)
 - aes/gemdosif.S aes/gemstart.S: Replaced hard-coded offsets with #defines. (RFB)
 - aes/struct.h: Fix UDA definition to include field used by trapaes. (RFB)
+
+2012-03-20
+- desk/deskapp.c desk/deskapp.h desk/deskmain.c desk/desktop.dfn
+  desk/desktop.rsc: Removed unused STNOFILE alert from desktop resource. (RFB)

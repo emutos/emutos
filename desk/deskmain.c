@@ -1600,17 +1600,11 @@ WORD deskmain(void)
                                                 /* reenter AES.         */
         strcpy(&gl_amstr[0], ini_str(STAM));
         strcpy(&gl_pmstr[0], ini_str(STPM));
-                                                /* initialize icons     */
-                                                /*   and apps from      */
-                                                /*   shell memory or    */
-                                                /*   from DESKTOP.INF   */
-                                                /*   and DESKHI/LO.ICN  */
-        if (!app_start())
-        {
-          fun_alert(1, STNOFILE, NULLPTR);
-          pro_exit(G.a_cmd, G.a_tail);
-          return(FALSE);
-        }
+                                                /* initialize icons and */
+                                                /*   apps from memory   */
+                                                /*   or EMUDESK.INF or  */
+                                                /*   builtin defaults   */
+        app_start();
 
                                                 /* initialize windows   */
         win_start();
