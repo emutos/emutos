@@ -452,15 +452,15 @@ clc_flit (Vwk * vwk, Point * point, WORD y, int vectors)
              * test is found in Newman and Sproull.
              */
             if ((dy1 < 0) != (dy2 < 0)) {
-                int dx = x2 - x1;
+                int dx = (x2 - x1) << 1;    /* so we can round by adding 1 below */
                 if (++intersections > MAX_INTERSECTIONS)
                     break;
                 /* fill edge buffer with x-values */
                 if ( dx < 0 ) {
-                    *bufptr++ = dy2 * dx / dy + x2;
+                    *bufptr++ = ((dy2 * dx / dy + 1) >> 1) + x2;
                 }
                 else {
-                    *bufptr++ = dy1 * dx / dy + x1;
+                    *bufptr++ = ((dy1 * dx / dy + 1) >> 1) + x1;
                 }
             }
         }

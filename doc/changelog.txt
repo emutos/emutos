@@ -3395,5 +3395,6 @@ Start... early ages
 2012-03-22
 - vdi/vdi_fill.c: Code cleanup: moved declaration to start of block.
   Contributed by David Savinkoff. (RFB)
-  bios/startup.S: Reduced startup stack size to 1024 words. (RFB)
-
+- bios/startup.S: Reduced startup stack size to 1024 words. (RFB)
+- vdi/vdi_fill.c: Improved polygon fill by rounding calculation of edge
+  intersections. Contributed by David Savinkoff. (RFB)
