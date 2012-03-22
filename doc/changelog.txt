@@ -3391,3 +3391,7 @@ Start... early ages
 2012-03-20
 - desk/deskapp.c desk/deskapp.h desk/deskmain.c desk/desktop.dfn
   desk/desktop.rsc: Removed unused STNOFILE alert from desktop resource. (RFB)
+
+2012-03-22
+- vdi/vdi_fill.c: Code cleanup: moved declaration to start of block.
+  Contributed by David Savinkoff. (RFB)
