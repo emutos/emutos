@@ -194,6 +194,556 @@ void horzline(const Vwk * vwk, Line * line)
 }
 
 /*
+ * draw_rect_replace - draw one or more horizontal lines in REPLACE mode
+ * 
+ * this is one of four routines called by draw_rect(); as with the
+ * original monolithic version of draw_rect(), the code does the
+ * following:
+ *  1. Fill variables with all values for masks, fringes etc.
+ *  2. Decide if we are just updating one WORD
+ *  3a. If so, mask out the bits and process the action
+ *  3b. Else mask out left fringe, write WORDS, process the right fringe
+ *  4. In either case, we have an outside loop to loop through the y axis
+ *     and an inner loop to loop through the planes
+ */
+static void draw_rect_replace(const Vwk * vwk, const Rect * rect, const UWORD fillcolor)
+{
+    UWORD leftmask, rightmask;
+    UWORD *addr;
+    int dx, y, yinc;
+    int patadd;                         /* advance for multiplane patterns */
+    int leftpart;
+    int rightpart;
+    int planes;
+
+    planes = v_planes;
+    dx = rect->x2 - rect->x1 - 16;      /* width of line - one WORD */
+    addr = get_start_addr(rect->x1, rect->y1);  /* init adress counter */
+    patadd = vwk->multifill ? 16 : 0;           /* multi plane pattern offset */
+    leftpart = rect->x1 & 0xf;          /* left fringe */
+    rightpart = rect->x2 & 0xf;         /* right fringe */
+    leftmask = ~(0xffff>>leftpart);     /* origin for not left fringe lookup */
+    rightmask = 0x7fff>>rightpart;      /* origin for right fringe lookup */
+    yinc = (v_lin_wr >> 1) - planes;
+
+    /* check, if we have to process just one single WORD on screen */
+    if (dx+leftpart < 0) {
+        for (y = rect->y1; y <= rect->y2; y++ ) {
+            int patind = vwk->patmsk&y; /* pattern to start with */
+            UWORD color = fillcolor;
+            int plane;
+
+            for (plane = planes-1; plane >= 0; plane-- ) {
+                /* load values fresh for this bitplane */
+                UWORD bits;
+                UWORD pattern = 0;
+
+                if (color & 0x0001)
+                    pattern = vwk->patptr[patind];
+
+                /* Isolate the necessary pixels */
+                bits = *addr;           /* get data from screen address */
+                bits ^= pattern;        /* xor the pattern with the source */
+                bits &= leftmask|rightmask; /* isolate the bits outside the fringe */
+                bits ^= pattern;        /* restore the bits outside the fringe */
+                *addr = bits;           /* write back the result */
+                addr++;                 /* advance one WORD to next plane */
+                patind += patadd;
+                color >>= 1;
+            }
+            addr += yinc;               /* next scanline */
+        }
+        return;
+    }
+
+    /* process two or more WORDs */
+    leftpart = 16 - leftpart;       /* precalculate delta for the left */
+    for (y = rect->y1; y <= rect->y2; y++ ) {
+        int patind = vwk->patmsk&y; /* pattern to start with */
+        UWORD color = fillcolor;
+        int plane;
+
+        for (plane = planes-1; plane >= 0; plane-- ) {
+            /* load values fresh for this bitplane */
+            int bw;
+            UWORD * adr = addr;
+            int pixels = dx;
+            UWORD pattern = 0;
+
+            if (color & 0x0001)
+                pattern = vwk->patptr[patind];
+
+            /* Draw the left fringe */
+            if (leftmask) {
+                UWORD bits = *adr;      /* get data from screen address */
+                bits ^= pattern;        /* xor the pattern with the source */
+                bits &= leftmask;       /* isolate the bits outside the fringe */
+                bits ^= pattern;        /* restore the bits outside the fringe */
+                *adr = bits;            /* write back the result */
+
+                adr += planes;
+                pixels -= leftpart;
+            }
+            /* Full WORDs */
+            for (bw = pixels >> 4; bw >= 0; bw--) {
+                *adr = pattern;
+                adr += planes;
+            }
+            /* Draw the right fringe */
+            if (~rightmask) {
+                UWORD bits = *adr;      /* get data from screen address */
+                bits ^= pattern;        /* xor the pattern with the source */
+                bits &= rightmask;      /* isolate the bits outside the fringe */
+                bits ^= pattern;        /* restore the bits outside the fringe */
+                *adr = bits;            /* write back the result */
+            }
+            addr++;                     /* advance one WORD to next plane */
+            patind += patadd;
+            color >>= 1;
+        }
+        addr += yinc;                   /* next scanline */
+    }
+}
+
+
+/*
+ * draw_rect_transparent - draw one or more horizontal lines in TRANSPARENT mode
+ * 
+ * see the comments at the start of draw_rect_replace() for an overview
+ */
+static void draw_rect_transparent(const Vwk * vwk, const Rect * rect, const UWORD fillcolor)
+{
+    UWORD leftmask, rightmask;
+    UWORD *addr;
+    int dx, y, yinc;
+    int patadd;                         /* advance for multiplane patterns */
+    int leftpart;
+    int rightpart;
+    int planes;
+
+    planes = v_planes;
+    dx = rect->x2 - rect->x1 - 16;      /* width of line - one WORD */
+    addr = get_start_addr(rect->x1, rect->y1);  /* init adress counter */
+    patadd = vwk->multifill ? 16 : 0;   /* multi plane pattern offset */
+    leftpart = rect->x1 & 0xf;          /* left fringe */
+    rightpart = rect->x2 & 0xf;         /* right fringe */
+    leftmask = ~(0xffff>>leftpart);     /* origin for not left fringe lookup */
+    rightmask = 0x7fff>>rightpart;      /* origin for right fringe lookup */
+    yinc = (v_lin_wr >> 1) - planes;
+
+    /* check, if we have to process just one single WORD on screen */
+    if (dx+leftpart < 0) {
+        for (y = rect->y1; y <= rect->y2; y++ ) {
+            int patind = vwk->patmsk&y; /* pattern to start with */
+            UWORD color = fillcolor;
+            int plane;
+
+            for (plane = planes-1; plane >= 0; plane-- ) {
+                /* load values fresh for this bitplane */
+                UWORD pattern = vwk->patptr[patind];
+
+                if (color & 0x0001) {
+                    UWORD help,bits;
+
+                    /* Isolate the necessary pixels */
+                    bits = *addr;       /* get data from screen address */
+                    help = bits;
+                    bits |= pattern;    /* and complement of mask with source */
+                    help ^= bits;       /* isolate changed bits */
+                    help &= ~(leftmask | rightmask);    /* isolate bits */
+                    bits ^= help;       /* restore them to original states */
+                    *addr = bits;       /* write back the result */
+                } else {
+                    /* Isolate the necessary pixels */
+                    UWORD bits = *addr; /* get data from screen address */
+                    UWORD help = bits;
+                    bits &= ~pattern;   /* and complement of mask with source */
+                    help ^= bits;       /* isolate changed bits */
+                    help &= leftmask | rightmask;       /* isolate bits */
+                    bits ^= help;       /* restore them to original states */
+                    *addr = bits;       /* write back the result */
+                }
+                addr++;                 /* advance one WORD to next plane */
+                patind += patadd;
+                color >>= 1;
+            }
+            addr += yinc;               /* next scanline */
+        }
+        return;
+    }
+
+    /* process two or more WORDs */
+    leftpart = 16 - leftpart;           /* precalculate delta for the left */
+    for (y = rect->y1; y <= rect->y2; y++ ) {
+        int patind = vwk->patmsk&y;     /* pattern to start with */
+        UWORD color = fillcolor;
+        int plane;
+
+        for (plane = planes-1; plane >= 0; plane-- ) {
+            /* load values fresh for this bitplane */
+            UWORD * adr = addr;
+            int pixels = dx;
+            UWORD pattern = vwk->patptr[patind];
+
+            if (color & 0x0001) {
+                int bw;
+
+                /* Draw the left fringe */
+                if (leftmask) {
+                    UWORD bits = *adr;  /* get data from screen address */
+                    UWORD help = bits;
+                    bits |= pattern;    /* and complement of mask with source */
+                    help ^= bits;       /* isolate changed bits */
+                    help &= ~leftmask;  /* isolate changed bits outside of fringe */
+                    bits ^= help;       /* restore them to original states */
+                    *adr = bits;        /* write back the result */
+
+                    adr += planes;
+                    pixels -= leftpart;
+                }
+                /* Full bytes */
+                for (bw = pixels >> 4; bw >= 0; bw--) {
+                    *adr |= pattern;
+                    adr += planes;
+                }
+                /* Draw the right fringe */
+                if (~rightmask) {
+                    UWORD bits = *adr;  /* get data from screen address */
+                    UWORD help = bits;
+                    bits |= pattern;    /* and complement of mask with source */
+                    help ^= bits;       /* isolate changed bits */
+                    help &= ~rightmask; /* isolate changed bits outside of fringe */
+                    bits ^= help;       /* restore them to original states */
+                    *adr = bits;        /* write back the result */
+                }
+            } else {
+                int bw;
+
+                pattern = ~pattern;
+
+                /* Draw the left fringe */
+                if (leftmask) {
+                    UWORD bits = *adr;  /* get data from screen address */
+                    UWORD help = bits;
+                    bits &= pattern;    /* and complement of mask with source */
+                    help ^= bits;       /* isolate changed bits */
+                    help &= leftmask;   /* isolate changed bits outside of fringe */
+                    bits ^= help;       /* restore them to original states */
+                    *adr = bits;        /* write back the result */
+
+                    adr += planes;
+                    pixels -= leftpart;
+                }
+                /* Full bytes */
+                for (bw = pixels >> 4; bw >= 0; bw--) {
+                    *adr &= pattern;
+                    adr += planes;
+                }
+                /* Draw the right fringe */
+                if (~rightmask) {
+                    UWORD bits = *adr;  /* get data from screen address */
+                    UWORD help = bits;
+                    bits &= pattern;    /* and complement of mask with source */
+                    help ^= bits;       /* isolate changed bits */
+                    help &= rightmask;  /* isolate changed bits outside of fringe */
+                    bits ^= help;       /* restore them to original states */
+                    *adr = bits;        /* write back the result */
+                }
+                pattern = ~pattern;
+            }
+            addr++;                     /* advance one WORD to next plane */
+            patind += patadd;
+            color >>= 1;
+        }
+        addr += yinc;                   /* next scanline */
+    }
+}
+
+
+/*
+ * draw_rect_xor - draw one or more horizontal lines in XOR mode
+ * 
+ * see the comments at the start of draw_rect_replace() for an overview
+ */
+static void draw_rect_xor(const Vwk * vwk, const Rect * rect, const UWORD fillcolor)
+{
+    UWORD leftmask, rightmask;
+    UWORD *addr;
+    int dx, y, yinc;
+    int patadd;                         /* advance for multiplane patterns */
+    int leftpart;
+    int rightpart;
+    int planes;
+
+    planes = v_planes;
+    dx = rect->x2 - rect->x1 - 16;      /* width of line - one WORD */
+    addr = get_start_addr(rect->x1, rect->y1);  /* init adress counter */
+    patadd = vwk->multifill ? 16 : 0;   /* multi plane pattern offset */
+    leftpart = rect->x1 & 0xf;          /* left fringe */
+    rightpart = rect->x2 & 0xf;         /* right fringe */
+    leftmask = ~(0xffff>>leftpart);     /* origin for not left fringe lookup */
+    rightmask = 0x7fff>>rightpart;      /* origin for right fringe lookup */
+    yinc = (v_lin_wr >> 1) - planes;
+
+    /* check, if we have to process just one single WORD on screen */
+    if (dx+leftpart < 0) {
+        for (y = rect->y1; y <= rect->y2; y++ ) {
+            int patind = vwk->patmsk&y; /* pattern to start with */
+            int plane;
+
+            for (plane = planes-1; plane >= 0; plane-- ) {
+                /* load values fresh for this bitplane */
+                UWORD help,bits;
+                UWORD pattern = vwk->patptr[patind];
+
+                /* Isolate the necessary pixels */
+                bits = *addr;           /* get data from screen address */
+                help = bits;
+                bits ^= pattern;        /* xor the pattern with the source */
+                help ^= bits;           /* xor result with source - now have pattern */
+                help &= leftmask | rightmask;   /* isolate bits */
+                bits ^= help;           /* restore states of bits outside of fringe */
+                *addr = bits;           /* write back the result */
+                addr++;                 /* advance one WORD to next plane */
+                patind += patadd;
+            }
+            addr += yinc;               /* next scanline */
+        }
+        return;
+    }
+
+    /* process two or more WORDs */
+    leftpart = 16 - leftpart;           /* precalculate delta for the left */
+    for (y = rect->y1; y <= rect->y2; y++ ) {
+        int patind = vwk->patmsk&y;     /* pattern to start with */
+        int plane;
+
+        for (plane = planes-1; plane >= 0; plane-- ) {
+            /* load values fresh for this bitplane */
+            UWORD * adr = addr;
+            int pixels = dx;
+            UWORD pattern = vwk->patptr[patind];
+
+            int bw;
+            UWORD help,bits;
+            /* Draw the left fringe */
+            if (leftmask) {
+                bits = *adr;            /* get data from screen address */
+                help = bits;
+                bits ^= pattern;        /* xor the pattern with the source */
+                help ^= bits;           /* xor result with source - now have pattern */
+                help &= leftmask;       /* isolate changed bits outside of fringe */
+                bits ^= help;           /* restore states of bits outside of fringe */
+                *adr = bits;            /* write back the result */
+
+                adr += planes;
+                pixels -= leftpart;
+            }
+            /* Full bytes */
+            for (bw = pixels >> 4; bw >= 0; bw--) {
+                *adr ^= pattern;        /* write back the result */
+                adr += planes;
+            }
+            /* Draw the right fringe */
+            if (~rightmask) {
+                bits = *adr;            /* get data from screen address */
+                help = bits;
+                bits ^= pattern;        /* xor the pattern with the source */
+                help ^= bits;           /* xor result with source - now have pattern */
+                help &= rightmask;      /* isolate changed bits outside of fringe */
+                bits ^= help;           /* restore states of bits outside of fringe */
+                *adr = bits;            /* write back the result */
+            }
+            addr++;                     /* advance one WORD to next plane */
+            patind += patadd;
+        }
+        addr += yinc;                   /* next scanline */
+    }
+}
+
+
+/*
+ * draw_rect_erase - draw one or more horizontal lines in ERASE mode
+ * 
+ * see the comments at the start of draw_rect_replace() for an overview
+ */
+static void draw_rect_erase(const Vwk * vwk, const Rect * rect, const UWORD fillcolor)
+{
+    UWORD leftmask, rightmask;
+    UWORD *addr;
+    int dx, y, yinc;
+    int patadd;                         /* advance for multiplane patterns */
+    int leftpart;
+    int rightpart;
+    int planes;
+
+    /* Get the pattern with which the line is to be drawn. */
+    planes = v_planes;
+    dx = rect->x2 - rect->x1 - 16;      /* width of line - one WORD */
+    addr = get_start_addr(rect->x1, rect->y1);  /* init adress counter */
+    patadd = vwk->multifill ? 16 : 0;   /* multi plane pattern offset */
+    leftpart = rect->x1 & 0xf;          /* left fringe */
+    rightpart = rect->x2 & 0xf;         /* right fringe */
+    leftmask = ~(0xffff>>leftpart);     /* origin for not left fringe lookup */
+    rightmask = 0x7fff>>rightpart;      /* origin for right fringe lookup */
+    yinc = (v_lin_wr >> 1) - planes;
+
+    /* check, if we have to process just one single WORD on screen */
+    if (dx+leftpart < 0) {
+        for (y = rect->y1; y <= rect->y2; y++ ) {
+            int patind = vwk->patmsk&y; /* pattern to start with */
+            UWORD color = fillcolor;
+            int plane;
+
+            /* init adress counter */
+            for (plane = planes-1; plane >= 0; plane-- ) {
+                /* load values fresh for this bitplane */
+                UWORD pattern = vwk->patptr[patind];
+
+                if (color & 0x0001) {
+                    /* Isolate the necessary pixels */
+                    UWORD bits = *addr; /* get data from screen address */
+                    UWORD help = bits;
+                    bits |= ~pattern;   /* and complement of mask with source */
+                    help ^= bits;       /* isolate changed bits */
+                    help &= leftmask | rightmask;   /* isolate changed bits outside of fringe */
+                    bits ^= help;       /* restore them to original states */
+                    *addr = bits;       /* write back the result */
+                } else {
+                    /* Isolate the necessary pixels */
+                    UWORD bits = *addr; /* get data from screen address */
+                    UWORD help = bits;
+                    bits &= pattern;    /* and complement of mask with source */
+                    help ^= bits;       /* isolate changed bits */
+                    help &= leftmask | rightmask;   /* isolate changed bits outside of fringe */
+                    bits ^= help;       /* restore them to original states */
+                    *addr = bits;       /* write back the result */
+                }
+                addr++;                 /* advance one WORD to next plane */
+                patind += patadd;
+                color >>= 1;
+            }
+            addr += yinc;               /* next scanline */
+        }
+        return;
+    }
+
+    /* process two or more WORDs */
+    leftpart = 16 - leftpart;           /* precalculate delta for the left */
+
+    for (y = rect->y1; y <= rect->y2; y++ ) {
+        int patind = vwk->patmsk&y;     /* pattern to start with */
+        UWORD color = fillcolor;
+        int plane;
+
+        /* init adress counter */
+        for (plane = planes-1; plane >= 0; plane-- ) {
+            /* load values fresh for this bitplane */
+            UWORD * adr = addr;
+            int pixels = dx;
+            UWORD pattern = vwk->patptr[patind];
+
+            if (color & 0x0001) {
+                int bw;
+                pattern = ~pattern;
+                /* check, if the line is completely contained within one WORD */
+
+                /* Draw the left fringe */
+                if (leftmask) {
+                    UWORD bits = *adr;  /* get data from screen address */
+                    UWORD help = bits;
+                    bits |= pattern;    /* and complement of mask with source */
+                    help ^= bits;       /* isolate changed bits */
+                    help &= leftmask;   /* isolate changed bits outside of fringe */
+                    bits ^= help;       /* restore them to original states */
+                    *adr = bits;        /* write back the result */
+
+                    adr += planes;
+                    pixels -= leftpart;
+                }
+                /* Full bytes */
+                for (bw = pixels >> 4; bw >= 0; bw--) {
+                    *adr |= pattern;
+                    adr += planes;
+                }
+                /* Draw the right fringe */
+                if (~rightmask) {
+                    UWORD bits = *adr;  /* get data from screen address */
+                    UWORD help = bits;
+                    bits |= pattern;    /* and complement of mask with source */
+                    help ^= bits;       /* isolate changed bits */
+                    help &= rightmask;  /* isolate changed bits outside of fringe */
+                    bits ^= help;       /* restore them to original states */
+                    *adr = bits;        /* write back the result */
+                }
+                pattern = ~pattern;
+            } else {
+                int bw;
+
+                /* Draw the left fringe */
+                if (leftmask) {
+                    UWORD bits = *adr;  /* get data from screen address */
+                    UWORD help = bits;
+                    bits &= pattern;    /* and complement of mask with source */
+                    help ^= bits;       /* isolate changed bits */
+                    help &= leftmask;   /* isolate changed bits outside of fringe */
+                    bits ^= help;       /* restore them to original states */
+                    *adr = bits;        /* write back the result */
+
+                    adr += planes;
+                    pixels -= leftpart;
+                }
+                /* Full bytes */
+                for (bw = pixels >> 4; bw >= 0; bw--) {
+                    *adr &= pattern;
+                    adr += planes;
+                }
+                /* Draw the right fringe */
+                if (~rightmask) {
+                    UWORD bits = *adr;  /* get data from screen address */
+                    UWORD help = bits;
+                    bits &= pattern;    /* and complement of mask with source */
+                    help ^= bits;       /* isolate changed bits */
+                    help &= rightmask;  /* isolate changed bits outside of fringe */
+                    bits ^= help;       /* restore them to original states */
+                    *adr = bits;        /* write back the result */
+                }
+            }
+            addr++;                     /* advance one WORD to next plane */
+            patind += patadd;
+            color >>= 1;
+        }
+        addr += yinc;                   /* next scanline */
+    }
+}
+
+/*
+ * draw_rect - draw one or more horizontal lines
+ *
+ * all the heavy lifting is done by the routines above: draw_rect_replace(),
+ * draw_rect_transparent(), draw_rect_xor(), draw_rect_erase()
+ */
+void draw_rect(const Vwk * vwk, const Rect * rect, const UWORD fillcolor)
+{
+    switch (vwk->wrt_mode) {
+    case 3:
+        draw_rect_erase(vwk,rect,fillcolor);
+        break;
+    case 2:
+        draw_rect_xor(vwk,rect,fillcolor);
+        break;
+    case 1:
+        draw_rect_transparent(vwk,rect,fillcolor);
+        break;
+    default:
+        draw_rect_replace(vwk,rect,fillcolor);
+        break;
+    }
+}
+
+
+#if 0
+/*
  * draw_rect - draw one or more horizontal lines
  *
  * Rewritten in C instead of assembler this routine is now looking
@@ -636,7 +1186,7 @@ void draw_rect(const Vwk * vwk, const Rect * rect, const UWORD fillcolor) {
         }
     }
 }
-
+#endif
 
 
 /*

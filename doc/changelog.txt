@@ -3398,3 +3398,6 @@ Start... early ages
 - bios/startup.S: Reduced startup stack size to 1024 words. (RFB)
 - vdi/vdi_fill.c: Improved polygon fill by rounding calculation of edge
   intersections. Contributed by David Savinkoff. (RFB)
+
+2012-03-24
+- vdi/vdi_line.c: Reorganised code to simplify future changes. (RFB)
