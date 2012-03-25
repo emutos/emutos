@@ -70,10 +70,6 @@
 
 
 
-/*==== Global variables ===================================================*/
-BYTE shifty;                    /* reflect the status up/down of mode keys */
-
-
 /*=== Keymaps handling (xbios) =======================================*/
 
 static struct keytbl current_keytbl;

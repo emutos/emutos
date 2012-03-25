@@ -97,6 +97,8 @@
         .globl  _bell_hook
         .globl  _kcl_hook
 
+        .globl  _shifty
+
         .globl  _sdata          // start adress of data section
 
 // ===========================================================================
@@ -225,6 +227,11 @@ _kcl_hook:      ds.l    1       // pointer to routine for system keyclick
         
 // memory past this address will be cleared on startup or on reset.
 bssstart:
+// Note: _shifty was moved here to ensure that it lies within the first 32K
+// of memory.  This is not required by the architecture, but GFA Basic
+// assumes that it is half-word addressable, and may crash the system
+// otherwise.
+_shifty:        ds.b    1       // reflects the status up/down of mode keys
 
 // ===========================================================================
 // ==== End ==================================================================
