@@ -8,11 +8,11 @@ OBJDUMP=m68k-atari-mint-objdump
 
 LDFLAGS = -m68000 -mshort
 CFLAGS =  -O2 -fomit-frame-pointer -I. -Iicons -I../aes -I../include \
-    -mshort -m68000 -DNO_ROM -Wall #-Werror
+    -I../bios -mshort -m68000 -DNO_ROM -Wall #-Werror
 
 C_SRC = deskact.c deskfpd.c deskgraf.c deskinf.c deskpro.c deskmain.c \
     deskapp.c deskfun.c deskgsx.c deskins.c deskrsrc.c deskwin.c  \
-    deskdir.c deskglob.c deskobj.c desksupp.c gembind.c icons.c taddr.c
+    deskdir.c deskglob.c deskobj.c desksupp.c desk_rsc.c gembind.c icons.c
     #rectfunc.c gemdos.c optimize.c string.c
 
 C_OBS= $(C_SRC:%.c=%.o)
