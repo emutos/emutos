@@ -39,7 +39,7 @@
 #include "compat.h"
 #include "gsxdefs.h"
 #include "funcdef.h"
-
+#include "obdefs.h"
 #include "deskgraf.h"
 #include "gsx2.h"
 
