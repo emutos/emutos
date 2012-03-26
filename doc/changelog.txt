@@ -3405,3 +3405,6 @@ Start... early ages
 2012-03-25
 - bios/ikbd.c bios/tosvars.S: Moved _shifty to first 32K of memory to
   circumvent GFA crash. (RFB)
+
+2012-03-26
+- doc/bugs.txt vdi/vdi_line.c: Fixed line drawing in transparent mode. (RFB)

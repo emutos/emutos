@@ -19,8 +19,6 @@
   - Clicks don't work at all in "Yams" (mine sweeper) game.
   - In "Bombs" & "Mind Sweeper" (mine sweeper) games, it's pretty
     random whether mouse clicks go through.
-- Lines drawn in VDI "transparent" mode show black 16(?) pixel
-  wide boxes, demonstrated by Eero's "vditest".
 - 6x6 font is missing characters 1->31, 194->223 and 255.
   The character 158 is wrong.  As a result small arrows don't
   show up in "Clac" RSC.
