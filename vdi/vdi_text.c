@@ -1235,15 +1235,12 @@ void dt_unloadfont(Vwk * vwk)
  *
  * output:
  *   T_SCLSTS is the text scaling flag (means: scale up or down)
- *   returns the quotient * 256
  */
 
 static WORD clc_dda(Vwk * vwk, WORD act, WORD req)
 {
-    /* if actual =< requested */
-    if ( act <= req ) {
+    if ( req < act ) {
         vwk->t_sclsts = 0;           /* we do scale down */
-        /* check requested size */
         if ( req <= 0 ) {
             req = 1;            /* if 0 then make it 1 (minimum value) */
         }
@@ -1256,6 +1253,5 @@ static WORD clc_dda(Vwk * vwk, WORD act, WORD req)
             return -1;          /* put 0xFFFF in d0 (max value, 2x) */
     }
 
-    /* requested/actual: quotient = bits 15-0 */
-    return (WORD)(((ULONG)req << 16) / act);
+    return act / req;
 }

@@ -3408,3 +3408,5 @@ Start... early ages
 
 2012-03-26
 - doc/bugs.txt vdi/vdi_line.c: Fixed line drawing in transparent mode. (RFB)
+- vdi/vdi_text.c: Improved text scaling by vst_height(). Contributed by
+  David Savinkoff. (RFB)
