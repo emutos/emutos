@@ -445,38 +445,27 @@ void text_init(Vwk * vwk)
 
 void dst_height(Vwk * vwk)
 {
-    Fonthead **chain_ptr;
     Fonthead *test_font, *single_font;
     WORD *pointer, font_id, test_height;
-    BYTE found;
 
     font_id = vwk->cur_font->font_id;
     vwk->pts_mode = FALSE;
 
     /* Find the smallest font in the requested face */
-    chain_ptr = font_ring;
 
-    found = 0;
-    while (!found && (test_font = *chain_ptr++)) {
-        do {
-            found = (test_font->font_id == font_id);
-        } while (!found && (test_font = test_font->next_font));
-    }
 
-    single_font = test_font;
+    test_font = single_font = *font_ring;
     test_height = PTSIN[1];
     if (vwk->xfm_mode == 0)     /* If NDC transformation, swap y coordinate */
         test_height = DEV_TAB[1] + 1 - test_height;
 
     /* Traverse the chains and find the font closest to the size requested. */
-    do {
-        while ((test_font->top <= test_height)
-               && (test_font->font_id == font_id)) {
-            single_font = test_font;
-            if (!(test_font = test_font->next_font))
-                break;
-        }
-    } while ((test_font = *chain_ptr++));
+    while ((test_font->top <= test_height)
+           && (test_font->font_id == font_id)) {
+        single_font = test_font;
+        if (!(test_font = test_font->next_font))
+            break;
+    }
 
     /* Set up environment for this font in the non-scaled case */
     vwk->cur_font = single_font;
