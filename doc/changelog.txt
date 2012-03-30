@@ -3417,3 +3417,5 @@ Start... early ages
 - vdi/vdi_line.c: Code cleanup: all drawing modes for draw_rect() now
   use the same code structure. (RFB)
 
+2012-03-30
+- vdi/vdi_line.c: Code cleanup: simplified draw_rect(). (RFB)

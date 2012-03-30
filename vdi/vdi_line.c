@@ -219,55 +219,6 @@ static void draw_word_replace(const Vwk * vwk, UWORD * addr, int y, UWORD fillco
 
 
 /*
- * draw_rect_replace - draw one or more horizontal lines in REPLACE mode
- *
- * This code does the following:
- *  1. Figures out the sizes of the left, centre, and right sections.  If the
- *     line lies entirely within a WORD, then the centre and right section
- *     sizes will be zero; if the line spans two WORDs, then the centre size
- *     will be zero.
- *  2. The outermost loop processes one scan line per iteration, calling
- *     draw_word_replace() for each (complete or partial) WORD.
- *  3. draw_word_replace() looks after the multiple video planes.
- */
-static void draw_rect_replace(const Vwk * vwk, const Rect * rect, const UWORD fillcolor, const int reverse)
-{
-    UWORD leftmask, rightmask, *addr, *work;
-    int left, centre, right;
-    int n, y;
-
-    addr = get_start_addr(rect->x1, rect->y1);  /* init address counter */
-
-    left = 16 - (rect->x1 & 0x0f);
-    right = (rect->x2 & 0x0f) + 1;
-    centre = rect->x2 - rect->x1 + 1 - left - right;
-
-    leftmask = 0xffff >> (16-left);
-    rightmask = 0xffff << (16-right);
-
-    if (centre < 0) {               /* i.e. all bits within 1 WORD */
-        leftmask &= rightmask;      /* so combine masks */
-        centre = right = 0;
-    }
-
-    for (y = rect->y1; y <= rect->y2; y++, addr += (v_lin_wr>>1)) {
-        work = addr;
-        /* handle start of line */
-        draw_word_replace(vwk,work,y,fillcolor,leftmask,reverse);
-        work += v_planes;
-
-        /* handle middle of line */
-        for (n = 0; n < centre; n += 16, work += v_planes)
-            draw_word_replace(vwk,work,y,fillcolor,0xffff,reverse);
-
-        /* handle end of line */
-        if (right)
-            draw_word_replace(vwk,work,y,fillcolor,rightmask,reverse);
-    }
-}
-
-
-/*
  * draws a word in (reverse) transparent mode
  * 
  * Supports multiline patterns (set by vsf_udpat()), but this is yet
@@ -289,55 +240,6 @@ static void draw_word_transparent(const Vwk * vwk, UWORD * addr, int y, UWORD fi
         else *work &= ~pattern;
         work++;                         /* advance to next plane */
         patind += patadd;               /* and maybe next pattern data */
-    }
-}
-
-
-/*
- * draw_rect_transparent - draw one or more horizontal lines in (REVERSE) TRANSPARENT mode
- * 
- * This code does the following:
- *  1. Figures out the sizes of the left, centre, and right sections.  If the
- *     line lies entirely within a WORD, then the centre and right section
- *     sizes will be zero; if the line spans two WORDs, then the centre size
- *     will be zero.
- *  2. The outermost loop processes one scan line per iteration, calling
- *     draw_word_transparent() for each (complete or partial) WORD.
- *  3. draw_word_transparent() looks after the multiple video planes.
- */
-static void draw_rect_transparent(const Vwk * vwk, const Rect * rect, const UWORD fillcolor, const int reverse)
-{
-    UWORD leftmask, rightmask, *addr, *work;
-    int left, centre, right;
-    int n, y;
-
-    addr = get_start_addr(rect->x1, rect->y1);  /* init address counter */
-
-    left = 16 - (rect->x1 & 0x0f);
-    right = (rect->x2 & 0x0f) + 1;
-    centre = rect->x2 - rect->x1 + 1 - left - right;
-
-    leftmask = 0xffff >> (16-left);
-    rightmask = 0xffff << (16-right);
-
-    if (centre < 0) {               /* i.e. all bits within 1 WORD */
-        leftmask &= rightmask;      /* so combine masks */
-        centre = right = 0;
-    }
-
-    for (y = rect->y1; y <= rect->y2; y++, addr += (v_lin_wr>>1)) {
-        work = addr;
-        /* handle start of line */
-        draw_word_transparent(vwk,work,y,fillcolor,leftmask,reverse);
-        work += v_planes;
-
-        /* handle middle of line */
-        for (n = 0; n < centre; n += 16, work += v_planes)
-            draw_word_transparent(vwk,work,y,fillcolor,0xffff,reverse);
-
-        /* handle end of line */
-        if (right)
-            draw_word_transparent(vwk,work,y,fillcolor,rightmask,reverse);
     }
 }
 
@@ -365,22 +267,40 @@ static void draw_word_xor(const Vwk * vwk, UWORD * addr, int y, UWORD fillcolor,
 
 
 /*
- * draw_rect_xor - draw one or more horizontal lines in XOR mode
- * 
+ * draw_rect - draw one or more horizontal lines
+ *
  * This code does the following:
- *  1. Figures out the sizes of the left, centre, and right sections.  If the
+ *  1. Decides which second-level routine to call, based on drawing mode.
+ *  2. Figures out the sizes of the left, centre, and right sections.  If the
  *     line lies entirely within a WORD, then the centre and right section
  *     sizes will be zero; if the line spans two WORDs, then the centre size
  *     will be zero.
- *  2. The outermost loop processes one scan line per iteration, calling
- *     draw_word_xor() for each (complete or partial) WORD.
- *  3. draw_word_xor() looks after the multiple video planes.
+ *  3. The outermost loop processes one scan line per iteration, calling
+ *     draw_word_xxx() for each (complete or partial) WORD.
+ *  4. draw_word_xxx() looks after the multiple video planes.
  */
-static void draw_rect_xor(const Vwk * vwk, const Rect * rect, const UWORD fillcolor, const int reverse)
+void draw_rect(const Vwk * vwk, const Rect * rect, const UWORD fillcolor)
 {
     UWORD leftmask, rightmask, *addr, *work;
     int left, centre, right;
-    int n, y;
+    int n, y, reverse = 0;
+    void (*draw_word)(const Vwk *,UWORD *,int,UWORD,UWORD,int);
+
+    switch (vwk->wrt_mode) {    /* choose which routine to call */
+    case 3:     /* erase (reverse transparent) mode */
+        draw_word = &draw_word_transparent;
+        reverse = 1;
+        break;
+    case 2:
+        draw_word = &draw_word_xor;
+        break;
+    case 1:
+        draw_word = &draw_word_transparent;
+        break;
+    default:
+        draw_word = &draw_word_replace;
+        break;
+    }
 
     addr = get_start_addr(rect->x1, rect->y1);  /* init address counter */
 
@@ -399,42 +319,16 @@ static void draw_rect_xor(const Vwk * vwk, const Rect * rect, const UWORD fillco
     for (y = rect->y1; y <= rect->y2; y++, addr += (v_lin_wr>>1)) {
         work = addr;
         /* handle start of line */
-        draw_word_xor(vwk,work,y,fillcolor,leftmask,reverse);
+        (*draw_word)(vwk,work,y,fillcolor,leftmask,reverse);
         work += v_planes;
 
         /* handle middle of line */
         for (n = 0; n < centre; n += 16, work += v_planes)
-            draw_word_xor(vwk,work,y,fillcolor,0xffff,reverse);
+            (*draw_word)(vwk,work,y,fillcolor,0xffff,reverse);
 
         /* handle end of line */
         if (right)
-            draw_word_xor(vwk,work,y,fillcolor,rightmask,reverse);
-    }
-}
-
-
-/*
- * draw_rect - draw one or more horizontal lines
- *
- * all the heavy lifting is done by the routines above: draw_rect_replace(),
- * draw_rect_transparent(), draw_rect_xor()
- */
-void draw_rect(const Vwk * vwk, const Rect * rect, const UWORD fillcolor)
-{
-    switch (vwk->wrt_mode) {
-    case 3:
-        /* erase mode is also known as reverse transparent mode */
-        draw_rect_transparent(vwk,rect,fillcolor,1);
-        break;
-    case 2:
-        draw_rect_xor(vwk,rect,fillcolor,0);
-        break;
-    case 1:
-        draw_rect_transparent(vwk,rect,fillcolor,0);
-        break;
-    default:
-        draw_rect_replace(vwk,rect,fillcolor,0);
-        break;
+            (*draw_word)(vwk,work,y,fillcolor,rightmask,reverse);
     }
 }
 
