@@ -195,114 +195,74 @@ void horzline(const Vwk * vwk, Line * line)
 
 
 /*
- * draw_rect_replace - draw one or more horizontal lines in REPLACE mode
- * 
- * this is one of four routines called by draw_rect(); as with the
- * original monolithic version of draw_rect(), this routine does the
- * following:
- *  1. Fill variables with all values for masks, fringes etc.
- *  2. Decide if we are just updating one WORD
- *  3a. If so, mask out the bits and process the action
- *  3b. Else mask out left fringe, write WORDS, process the right fringe
- *  4. In either case, we have an outside loop to loop through the y axis
- *     and an inner loop to loop through the planes
+ * draws a word in replace mode
+ *
+ * Supports multiline patterns (set by vsf_udpat()), but this is yet
+ * to be tested.
  */
-static void draw_rect_replace(const Vwk * vwk, const Rect * rect, const UWORD fillcolor)
+static void draw_word_replace(const Vwk * vwk, UWORD * addr, int y, UWORD fillcolor, UWORD bitmask, int reverse)
 {
-    UWORD leftmask, rightmask;
-    UWORD *addr;
-    int dx, y, yinc;
-    int patadd;                         /* advance for multiplane patterns */
-    int leftpart;
-    int rightpart;
-    int planes;
+    int patadd, patind, plane, col;
+    UWORD pattern, *work;
 
-    planes = v_planes;
-    dx = rect->x2 - rect->x1 - 16;      /* width of line - one WORD */
-    addr = get_start_addr(rect->x1, rect->y1);  /* init adress counter */
-    patadd = vwk->multifill ? 16 : 0;           /* multi plane pattern offset */
-    leftpart = rect->x1 & 0xf;          /* left fringe */
-    rightpart = rect->x2 & 0xf;         /* right fringe */
-    leftmask = ~(0xffff>>leftpart);     /* origin for not left fringe lookup */
-    rightmask = 0x7fff>>rightpart;      /* origin for right fringe lookup */
-    yinc = (v_lin_wr >> 1) - planes;
+    patadd = vwk->multifill ? 16 : 0;   /* multi plane pattern offset */
+    patind = vwk->patmsk & y;           /* starting pattern */
+    for (plane = 0, col = fillcolor, work = addr; plane < v_planes; plane++, col>>=1) {
+        pattern = vwk->patptr[patind] & bitmask;
+        *work &= ~bitmask;              /* zero out the bits we're changing */
+        if (col & 1)
+            *work |= pattern;
+        work++;                         /* advance to next plane */
+        patind += patadd;               /* and maybe next pattern data */
+    }
+}
 
-    /* check, if we have to process just one single WORD on screen */
-    if (dx+leftpart < 0) {
-        for (y = rect->y1; y <= rect->y2; y++ ) {
-            int patind = vwk->patmsk&y; /* pattern to start with */
-            UWORD color = fillcolor;
-            int plane;
 
-            for (plane = planes-1; plane >= 0; plane-- ) {
-                /* load values fresh for this bitplane */
-                UWORD bits;
-                UWORD pattern = 0;
+/*
+ * draw_rect_replace - draw one or more horizontal lines in REPLACE mode
+ *
+ * This code does the following:
+ *  1. Figures out the sizes of the left, centre, and right sections.  If the
+ *     line lies entirely within a WORD, then the centre and right section
+ *     sizes will be zero; if the line spans two WORDs, then the centre size
+ *     will be zero.
+ *  2. The outermost loop processes one scan line per iteration, calling
+ *     draw_word_replace() for each (complete or partial) WORD.
+ *  3. draw_word_replace() looks after the multiple video planes.
+ */
+static void draw_rect_replace(const Vwk * vwk, const Rect * rect, const UWORD fillcolor, const int reverse)
+{
+    UWORD leftmask, rightmask, *addr, *work;
+    int left, centre, right;
+    int n, y;
 
-                if (color & 0x0001)
-                    pattern = vwk->patptr[patind];
+    addr = get_start_addr(rect->x1, rect->y1);  /* init address counter */
 
-                /* Isolate the necessary pixels */
-                bits = *addr;           /* get data from screen address */
-                bits ^= pattern;        /* xor the pattern with the source */
-                bits &= leftmask|rightmask; /* isolate the bits outside the fringe */
-                bits ^= pattern;        /* restore the bits outside the fringe */
-                *addr = bits;           /* write back the result */
-                addr++;                 /* advance one WORD to next plane */
-                patind += patadd;
-                color >>= 1;
-            }
-            addr += yinc;               /* next scanline */
-        }
-        return;
+    left = 16 - (rect->x1 & 0x0f);
+    right = (rect->x2 & 0x0f) + 1;
+    centre = rect->x2 - rect->x1 + 1 - left - right;
+
+    leftmask = 0xffff >> (16-left);
+    rightmask = 0xffff << (16-right);
+
+    if (centre < 0) {               /* i.e. all bits within 1 WORD */
+        leftmask &= rightmask;      /* so combine masks */
+        centre = right = 0;
     }
 
-    /* process two or more WORDs */
-    leftpart = 16 - leftpart;       /* precalculate delta for the left */
-    for (y = rect->y1; y <= rect->y2; y++ ) {
-        int patind = vwk->patmsk&y; /* pattern to start with */
-        UWORD color = fillcolor;
-        int plane;
+    for (y = rect->y1; y <= rect->y2; y++, addr += (v_lin_wr>>1)) {
+        work = addr;
+        /* handle start of line */
+        draw_word_replace(vwk,work,y,fillcolor,leftmask,reverse);
+        work += v_planes;
 
-        for (plane = planes-1; plane >= 0; plane-- ) {
-            /* load values fresh for this bitplane */
-            int bw;
-            UWORD * adr = addr;
-            int pixels = dx;
-            UWORD pattern = 0;
+        /* handle middle of line */
+        for (n = 0; n < centre; n += 16, work += v_planes)
+            draw_word_replace(vwk,work,y,fillcolor,0xffff,reverse);
 
-            if (color & 0x0001)
-                pattern = vwk->patptr[patind];
-
-            /* Draw the left fringe */
-            if (leftmask) {
-                UWORD bits = *adr;      /* get data from screen address */
-                bits ^= pattern;        /* xor the pattern with the source */
-                bits &= leftmask;       /* isolate the bits outside the fringe */
-                bits ^= pattern;        /* restore the bits outside the fringe */
-                *adr = bits;            /* write back the result */
-
-                adr += planes;
-                pixels -= leftpart;
-            }
-            /* Full WORDs */
-            for (bw = pixels >> 4; bw >= 0; bw--) {
-                *adr = pattern;
-                adr += planes;
-            }
-            /* Draw the right fringe */
-            if (~rightmask) {
-                UWORD bits = *adr;      /* get data from screen address */
-                bits ^= pattern;        /* xor the pattern with the source */
-                bits &= rightmask;      /* isolate the bits outside the fringe */
-                bits ^= pattern;        /* restore the bits outside the fringe */
-                *adr = bits;            /* write back the result */
-            }
-            addr++;                     /* advance one WORD to next plane */
-            patind += patadd;
-            color >>= 1;
-        }
-        addr += yinc;                   /* next scanline */
+        /* handle end of line */
+        if (right)
+            draw_word_replace(vwk,work,y,fillcolor,rightmask,reverse);
     }
 }
 
@@ -383,105 +343,75 @@ static void draw_rect_transparent(const Vwk * vwk, const Rect * rect, const UWOR
 
 
 /*
- * draw_rect_xor - draw one or more horizontal lines in XOR mode
+ * draws a word in xor mode
  * 
- * see the comments at the start of draw_rect_replace() for an overview
+ * Supports multiline patterns (set by vsf_udpat()), but this is yet
+ * to be tested.
  */
-static void draw_rect_xor(const Vwk * vwk, const Rect * rect, const UWORD fillcolor)
+static void draw_word_xor(const Vwk * vwk, UWORD * addr, int y, UWORD fillcolor, UWORD bitmask, int reverse)
 {
-    UWORD leftmask, rightmask;
-    UWORD *addr;
-    int dx, y, yinc;
-    int patadd;                         /* advance for multiplane patterns */
-    int leftpart;
-    int rightpart;
-    int planes;
+    int patadd, patind, plane;
+    UWORD pattern, *work;
 
-    planes = v_planes;
-    dx = rect->x2 - rect->x1 - 16;      /* width of line - one WORD */
-    addr = get_start_addr(rect->x1, rect->y1);  /* init adress counter */
     patadd = vwk->multifill ? 16 : 0;   /* multi plane pattern offset */
-    leftpart = rect->x1 & 0xf;          /* left fringe */
-    rightpart = rect->x2 & 0xf;         /* right fringe */
-    leftmask = ~(0xffff>>leftpart);     /* origin for not left fringe lookup */
-    rightmask = 0x7fff>>rightpart;      /* origin for right fringe lookup */
-    yinc = (v_lin_wr >> 1) - planes;
-
-    /* check, if we have to process just one single WORD on screen */
-    if (dx+leftpart < 0) {
-        for (y = rect->y1; y <= rect->y2; y++ ) {
-            int patind = vwk->patmsk&y; /* pattern to start with */
-            int plane;
-
-            for (plane = planes-1; plane >= 0; plane-- ) {
-                /* load values fresh for this bitplane */
-                UWORD help,bits;
-                UWORD pattern = vwk->patptr[patind];
-
-                /* Isolate the necessary pixels */
-                bits = *addr;           /* get data from screen address */
-                help = bits;
-                bits ^= pattern;        /* xor the pattern with the source */
-                help ^= bits;           /* xor result with source - now have pattern */
-                help &= leftmask | rightmask;   /* isolate bits */
-                bits ^= help;           /* restore states of bits outside of fringe */
-                *addr = bits;           /* write back the result */
-                addr++;                 /* advance one WORD to next plane */
-                patind += patadd;
-            }
-            addr += yinc;               /* next scanline */
-        }
-        return;
-    }
-
-    /* process two or more WORDs */
-    leftpart = 16 - leftpart;           /* precalculate delta for the left */
-    for (y = rect->y1; y <= rect->y2; y++ ) {
-        int patind = vwk->patmsk&y;     /* pattern to start with */
-        int plane;
-
-        for (plane = planes-1; plane >= 0; plane-- ) {
-            /* load values fresh for this bitplane */
-            UWORD * adr = addr;
-            int pixels = dx;
-            UWORD pattern = vwk->patptr[patind];
-
-            int bw;
-            UWORD help,bits;
-            /* Draw the left fringe */
-            if (leftmask) {
-                bits = *adr;            /* get data from screen address */
-                help = bits;
-                bits ^= pattern;        /* xor the pattern with the source */
-                help ^= bits;           /* xor result with source - now have pattern */
-                help &= leftmask;       /* isolate changed bits outside of fringe */
-                bits ^= help;           /* restore states of bits outside of fringe */
-                *adr = bits;            /* write back the result */
-
-                adr += planes;
-                pixels -= leftpart;
-            }
-            /* Full bytes */
-            for (bw = pixels >> 4; bw >= 0; bw--) {
-                *adr ^= pattern;        /* write back the result */
-                adr += planes;
-            }
-            /* Draw the right fringe */
-            if (~rightmask) {
-                bits = *adr;            /* get data from screen address */
-                help = bits;
-                bits ^= pattern;        /* xor the pattern with the source */
-                help ^= bits;           /* xor result with source - now have pattern */
-                help &= rightmask;      /* isolate changed bits outside of fringe */
-                bits ^= help;           /* restore states of bits outside of fringe */
-                *adr = bits;            /* write back the result */
-            }
-            addr++;                     /* advance one WORD to next plane */
-            patind += patadd;
-        }
-        addr += yinc;                   /* next scanline */
+    patind = vwk->patmsk & y;           /* starting pattern */
+    for (plane = 0, work = addr; plane < v_planes; plane++) {
+        pattern = vwk->patptr[patind] & bitmask;
+        *work ^= pattern;
+        work++;                         /* advance to next plane */
+        patind += patadd;               /* and maybe next pattern data */
     }
 }
+
+
+/*
+ * draw_rect_xor - draw one or more horizontal lines in XOR mode
+ * 
+ * This code does the following:
+ *  1. Figures out the sizes of the left, centre, and right sections.  If the
+ *     line lies entirely within a WORD, then the centre and right section
+ *     sizes will be zero; if the line spans two WORDs, then the centre size
+ *     will be zero.
+ *  2. The outermost loop processes one scan line per iteration, calling
+ *     draw_word_xor() for each (complete or partial) WORD.
+ *  3. draw_word_xor() looks after the multiple video planes.
+ */
+static void draw_rect_xor(const Vwk * vwk, const Rect * rect, const UWORD fillcolor, const int reverse)
+{
+    UWORD leftmask, rightmask, *addr, *work;
+    int left, centre, right;
+    int n, y;
+
+    addr = get_start_addr(rect->x1, rect->y1);  /* init address counter */
+
+    left = 16 - (rect->x1 & 0x0f);
+    right = (rect->x2 & 0x0f) + 1;
+    centre = rect->x2 - rect->x1 + 1 - left - right;
+
+    leftmask = 0xffff >> (16-left);
+    rightmask = 0xffff << (16-right);
+
+    if (centre < 0) {               /* i.e. all bits within 1 WORD */
+        leftmask &= rightmask;      /* so combine masks */
+        centre = right = 0;
+    }
+
+    for (y = rect->y1; y <= rect->y2; y++, addr += (v_lin_wr>>1)) {
+        work = addr;
+        /* handle start of line */
+        draw_word_xor(vwk,work,y,fillcolor,leftmask,reverse);
+        work += v_planes;
+
+        /* handle middle of line */
+        for (n = 0; n < centre; n += 16, work += v_planes)
+            draw_word_xor(vwk,work,y,fillcolor,0xffff,reverse);
+
+        /* handle end of line */
+        if (right)
+            draw_word_xor(vwk,work,y,fillcolor,rightmask,reverse);
+    }
+}
+
 
 /*
  * draw_rect - draw one or more horizontal lines
@@ -497,13 +427,13 @@ void draw_rect(const Vwk * vwk, const Rect * rect, const UWORD fillcolor)
         draw_rect_transparent(vwk,rect,fillcolor,1);
         break;
     case 2:
-        draw_rect_xor(vwk,rect,fillcolor);
+        draw_rect_xor(vwk,rect,fillcolor,0);
         break;
     case 1:
         draw_rect_transparent(vwk,rect,fillcolor,0);
         break;
     default:
-        draw_rect_replace(vwk,rect,fillcolor);
+        draw_rect_replace(vwk,rect,fillcolor,0);
         break;
     }
 }

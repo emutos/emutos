@@ -3413,3 +3413,7 @@ Start... early ages
 - vdi/vdi_text.c: Code cleanup: simplified code. Contributed by David
   Savinkoff. (RFB)
 
+2012-03-29
+- vdi/vdi_line.c: Code cleanup: all drawing modes for draw_rect() now
+  use the same code structure. (RFB)
+
