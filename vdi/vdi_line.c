@@ -195,140 +195,175 @@ void horzline(const Vwk * vwk, Line * line)
 
 
 /*
- * draws a word in replace mode
- *
- * Supports multiline patterns (set by vsf_udpat()), but this is yet
- * to be tested.
- */
-static void draw_word_replace(const Vwk * vwk, UWORD * addr, int y, UWORD fillcolor, UWORD bitmask, int reverse)
-{
-    int patadd, patind, plane, col;
-    UWORD pattern, *work;
-
-    patadd = vwk->multifill ? 16 : 0;   /* multi plane pattern offset */
-    patind = vwk->patmsk & y;           /* starting pattern */
-    for (plane = 0, col = fillcolor, work = addr; plane < v_planes; plane++, col>>=1) {
-        pattern = vwk->patptr[patind] & bitmask;
-        *work &= ~bitmask;              /* zero out the bits we're changing */
-        if (col & 1)
-            *work |= pattern;
-        work++;                         /* advance to next plane */
-        patind += patadd;               /* and maybe next pattern data */
-    }
-}
-
-
-/*
- * draws a word in (reverse) transparent mode
- * 
- * Supports multiline patterns (set by vsf_udpat()), but this is yet
- * to be tested.
- */
-static void draw_word_transparent(const Vwk * vwk, UWORD * addr, int y, UWORD fillcolor, UWORD bitmask, int reverse)
-{
-    int patadd, patind, plane, col;
-    UWORD pattern, *work;
-
-    patadd = vwk->multifill ? 16 : 0;   /* multi plane pattern offset */
-    patind = vwk->patmsk & y;           /* starting pattern */
-    for (plane = 0, col = fillcolor, work = addr; plane < v_planes; plane++, col>>=1) {
-        if (reverse)
-            pattern = ~vwk->patptr[patind] & bitmask;
-        else pattern = vwk->patptr[patind] & bitmask;
-        if (col & 1)                    /* copy colour to plane */
-            *work |= pattern;
-        else *work &= ~pattern;
-        work++;                         /* advance to next plane */
-        patind += patadd;               /* and maybe next pattern data */
-    }
-}
-
-
-/*
- * draws a word in xor mode
- * 
- * Supports multiline patterns (set by vsf_udpat()), but this is yet
- * to be tested.
- */
-static void draw_word_xor(const Vwk * vwk, UWORD * addr, int y, UWORD fillcolor, UWORD bitmask, int reverse)
-{
-    int patadd, patind, plane;
-    UWORD pattern, *work;
-
-    patadd = vwk->multifill ? 16 : 0;   /* multi plane pattern offset */
-    patind = vwk->patmsk & y;           /* starting pattern */
-    for (plane = 0, work = addr; plane < v_planes; plane++) {
-        pattern = vwk->patptr[patind] & bitmask;
-        *work ^= pattern;
-        work++;                         /* advance to next plane */
-        patind += patadd;               /* and maybe next pattern data */
-    }
-}
-
-
-/*
  * draw_rect - draw one or more horizontal lines
  *
  * This code does the following:
- *  1. Decides which second-level routine to call, based on drawing mode.
- *  2. Figures out the sizes of the left, centre, and right sections.  If the
- *     line lies entirely within a WORD, then the centre and right section
- *     sizes will be zero; if the line spans two WORDs, then the centre size
- *     will be zero.
- *  3. The outermost loop processes one scan line per iteration, calling
- *     draw_word_xxx() for each (complete or partial) WORD.
- *  4. draw_word_xxx() looks after the multiple video planes.
+ *  1. Figures out the sizes of the left, centre, and right sections.  If
+ *     the line lies entirely within a WORD, then the centre and right
+ *     section sizes will be zero; if the line spans two WORDs, then the
+ *     centre size will be zero.
+ *  2. The outermost control is via a switch() statement depending on
+ *     the current drawing mode.
+ *  3. Within each case, the outermost loop processes one scan line per
+ *     iteration.
+ *  4. Within this loop, the video planes are processed in sequence.
+ *  5. Within this, the left section is processed, then the centre and/or
+ *     right sections (if they exist).
+ *
+ * NOTE: this code seems rather longwinded and repetitive.  In fact it
+ * can be shortened considerably and made much more elegant.  Doing so
+ * however will wreck its performance, and this in turn will affect the
+ * performance of many VDI calls.  This is not particularly noticeable
+ * on an accelerated system, but is disastrous when running on a plain
+ * 8MHz ST or 16MHz Falcon.  You are strongly advised not to change this
+ * without a lot of careful thought & performance testing!
  */
-void draw_rect(const Vwk * vwk, const Rect * rect, const UWORD fillcolor)
+void draw_rect(const Vwk *vwk,const Rect *rect,const UWORD fillcolor)
 {
-    UWORD leftmask, rightmask, *addr, *work;
-    int left, centre, right;
-    int n, y, reverse = 0;
-    void (*draw_word)(const Vwk *,UWORD *,int,UWORD,UWORD,int);
+    UWORD leftmask, rightmask, *addr;
+    UWORD patmsk = vwk->patmsk;
+    int centre, y;
+    int numplanes = v_planes;
+    int yinc = (v_lin_wr>>1) - numplanes;
+    int patadd = (vwk->multifill) ? 16 : 0;     /* multi-plane pattern offset */
 
-    switch (vwk->wrt_mode) {    /* choose which routine to call */
-    case 3:     /* erase (reverse transparent) mode */
-        draw_word = &draw_word_transparent;
-        reverse = 1;
-        break;
-    case 2:
-        draw_word = &draw_word_xor;
-        break;
-    case 1:
-        draw_word = &draw_word_transparent;
-        break;
-    default:
-        draw_word = &draw_word_replace;
-        break;
+    leftmask = 0xffff >> (rect->x1 & 0x0f);
+    rightmask = 0xffff << (15 - (rect->x2 & 0x0f));
+
+    centre = (rect->x2 & 0xfff0) - (rect->x1 & 0xfff0) - 16;
+    if (centre < 0) {                   /* i.e. all bits within 1 WORD */
+        leftmask &= rightmask;          /* so combine masks */
+        centre = rightmask = 0;
     }
+    centre >>= 4;                       /* convert to WORD count */
 
-    addr = get_start_addr(rect->x1, rect->y1);  /* init address counter */
+    addr = get_start_addr(rect->x1,rect->y1);   /* init address counter */
 
-    left = 16 - (rect->x1 & 0x0f);
-    right = (rect->x2 & 0x0f) + 1;
-    centre = rect->x2 - rect->x1 + 1 - left - right;
+    switch(vwk->wrt_mode) {
+    case 3:                 /* erase (reverse transparent) mode */
+        for (y = rect->y1; y <= rect->y2; y++, addr += yinc) {
+            int patind = patmsk & y;   /* starting pattern */
+            int plane;
+            UWORD color;
 
-    leftmask = 0xffff >> (16-left);
-    rightmask = 0xffff << (16-right);
+            for (plane = 0, color = fillcolor; plane < numplanes; plane++, color>>=1, addr++) {
+                UWORD *work = addr;
+                UWORD pattern = ~vwk->patptr[patind];
+                int n;
 
-    if (centre < 0) {               /* i.e. all bits within 1 WORD */
-        leftmask &= rightmask;      /* so combine masks */
-        centre = right = 0;
-    }
+                if (color & 0x0001) {
+                    *work |= pattern & leftmask;    /* left section */
+                    work += numplanes;
+                    for (n = 0; n < centre; n++) {  /* centre section */
+                        *work |= pattern;
+                        work += numplanes;
+                    }
+                    if (rightmask) {                /* right section */
+                        *work |= pattern & rightmask;
+                    }
+                } else {
+                    *work &= ~(pattern & leftmask); /* left section */
+                    work += numplanes;
+                    for (n = 0; n < centre; n++) {  /* centre section */
+                        *work &= ~pattern;
+                        work += numplanes;
+                    }
+                    if (rightmask) {                /* right section */
+                        *work &= ~(pattern & rightmask);
+                    }
+                }
+                patind += patadd;       /* maybe advance pattern data */
+            }
+        }
+        break;
+    case 2:                 /* xor mode */
+        for (y = rect->y1; y <= rect->y2; y++, addr += yinc) {
+            int patind = patmsk & y;   /* starting pattern */
+            int plane;
+            UWORD color;
 
-    for (y = rect->y1; y <= rect->y2; y++, addr += (v_lin_wr>>1)) {
-        work = addr;
-        /* handle start of line */
-        (*draw_word)(vwk,work,y,fillcolor,leftmask,reverse);
-        work += v_planes;
+            for (plane = 0, color = fillcolor; plane < numplanes; plane++, color>>=1, addr++) {
+                UWORD *work = addr;
+                UWORD pattern = vwk->patptr[patind];
+                int n;
 
-        /* handle middle of line */
-        for (n = 0; n < centre; n += 16, work += v_planes)
-            (*draw_word)(vwk,work,y,fillcolor,0xffff,reverse);
+                *work ^= pattern & leftmask;        /* left section */
+                work += numplanes;
+                for (n = 0; n < centre; n++) {      /* centre section */
+                    *work ^= pattern;
+                    work += numplanes;
+                }
+                if (rightmask) {                    /* right section */
+                    *work ^= pattern & rightmask;
+                }
+                patind += patadd;       /* maybe advance pattern data */
+            }
+        }
+        break;
+    case 1:                 /* transparent mode */
+        for (y = rect->y1; y <= rect->y2; y++, addr += yinc) {
+            int patind = patmsk & y;   /* starting pattern */
+            int plane;
+            UWORD color;
 
-        /* handle end of line */
-        if (right)
-            (*draw_word)(vwk,work,y,fillcolor,rightmask,reverse);
+            for (plane = 0, color = fillcolor; plane < numplanes; plane++, color>>=1, addr++) {
+                UWORD *work = addr;
+                UWORD pattern = vwk->patptr[patind];
+                int n;
+
+                if (color & 0x0001) {
+                    *work |= pattern & leftmask;    /* left section */
+                    work += numplanes;
+                    for (n = 0; n < centre; n++) {  /* centre section */
+                        *work |= pattern;
+                        work += numplanes;
+                    }
+                    if (rightmask) {                /* right section */
+                        *work |= pattern & rightmask;
+                    }
+                } else {
+                    *work &= ~(pattern & leftmask); /* left section */
+                    work += numplanes;
+                    for (n = 0; n < centre; n++) {  /* centre section */
+                        *work &= ~pattern;
+                        work += numplanes;
+                    }
+                    if (rightmask) {                /* right section */
+                        *work &= ~(pattern & rightmask);
+                    }
+                }
+                patind += patadd;       /* maybe advance pattern data */
+            }
+        }
+        break;
+    default:                /* replace mode */
+        for (y = rect->y1; y <= rect->y2; y++, addr += yinc) {
+            int patind = patmsk & y;   /* starting pattern */
+            int plane;
+            UWORD color;
+
+            for (plane = 0, color = fillcolor; plane < numplanes; plane++, color>>=1, addr++) {
+                UWORD data, *work = addr;
+                UWORD pattern = (color & 0x0001) ? vwk->patptr[patind] : 0x0000;
+                int n;
+
+                data = *work & ~leftmask;           /* left section */
+                data |= pattern & leftmask;
+                *work = data;
+                work += numplanes;
+                for (n = 0; n < centre; n++) {      /* centre section */
+                    *work = pattern;
+                    work += numplanes;
+                }
+                if (rightmask) {                    /* right section */
+                    data = *work & ~rightmask;
+                    data |= pattern & rightmask;
+                    *work = data;
+                }
+                patind += patadd;       /* maybe advance pattern data */
+            }
+        }
+        break;
     }
 }
 

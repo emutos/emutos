@@ -3419,3 +3419,6 @@ Start... early ages
 
 2012-03-30
 - vdi/vdi_line.c: Code cleanup: simplified draw_rect(). (RFB)
+
+2012-04-05
+- vdi/vdi_line.c: Rewrote draw_rect() again to restore performance. (RFB)
