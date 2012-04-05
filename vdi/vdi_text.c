@@ -312,14 +312,14 @@ void d_gtext(Vwk * vwk)
                     ty2 = line->y2;
 
                     if (clip_line(vwk, line))
-                        abline(vwk, line);
+                        abline(vwk, line, vwk->text_color);
 
                     line->x1 = tx1;
                     line->x2 = tx2;
                     line->y1 = ty1;
                     line->y2 = ty2;
                 } else
-                    abline(vwk, line);
+                    abline(vwk, line, vwk->text_color);
 
                 line->x1 += xfact;
                 line->x2 += xfact;

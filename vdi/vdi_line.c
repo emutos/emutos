@@ -389,7 +389,7 @@ void _v_pline(Vwk * vwk)
 #endif
     {
         if (vwk->line_width == 1) {
-            polyline(vwk, point, count);
+            polyline(vwk, point, count, vwk->line_color);
             if ((vwk->line_beg | vwk->line_end) & ARROWED)
                 arrow(vwk, point, count);
         } else
@@ -463,9 +463,12 @@ BOOL clip_line(Vwk * vwk, Line * line)
 
 /*
  * pline - draw a poly-line
+ *
+ * note: we pass the colour, since this routine is also used for
+ * perimeters, which are drawn in the fill colour ...
  */
 
-void polyline(Vwk * vwk, Point * point, int count)
+void polyline(Vwk * vwk, Point * point, int count, WORD color)
 {
     int i;
     Line line;
@@ -478,7 +481,7 @@ void polyline(Vwk * vwk, Point * point, int count)
         line.y2 = point->y;
 
         if (!vwk->clip || clip_line(vwk, &line))
-            abline(vwk, &line);
+            abline(vwk, &line, color);
     }
 }
 
@@ -988,7 +991,7 @@ static void arrow(Vwk * vwk, Point * point, int count)
  *     LN_MASK rotated to proper alignment with (X2,Y2).
  */
 
-void abline (Vwk * vwk, Line * line)
+void abline (Vwk * vwk, Line * line, WORD color)
 {
     void *adr;                  /* using void pointer is much faster */
     UWORD x1,y1,x2,y2;          /* the coordinates */
@@ -999,7 +1002,6 @@ void abline (Vwk * vwk, Line * line)
     UWORD msk;
     int plane;
     UWORD linemask;             /* linestyle bits */
-    UWORD color;                /* color index */
 
 #if 0
     if (line->y1 == line->y2) {
@@ -1039,7 +1041,6 @@ void abline (Vwk * vwk, Line * line)
     adr = get_start_addr(x1, y1);      /* init adress counter */
     msk = 0x8000 >> (x1&0xf);           /* initial bit position in WORD */
     linemask = LN_MASK;                 /* to avoid compiler warning */
-    color = vwk->line_color;            /* initial load of color index */
 
     for (plane = v_planes-1; plane >= 0; plane-- ) {
         void *addr;

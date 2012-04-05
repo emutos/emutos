@@ -195,7 +195,7 @@ draw_segs(Vwk * vwk, WORD nr_vertices, Point * point, WORD mode)
                 line.y2 = point->y;
 
                 if (!vwk->clip || clip_line(vwk, &line))
-                    abline(vwk, &line);
+                    abline(vwk, &line, vwk->line_color);
             }
         }
     }

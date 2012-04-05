@@ -170,10 +170,10 @@ static void clc_arc(Vwk * vwk, int steps)
     steps++;                 /* since loop in Clc_arc starts at 0 */
 
     /* If arc or circle, do nothing because loop should close circle. */
-    if ((CONTRL[5] == 2) || (CONTRL[5] == 6)) {
+    if ((CONTRL[5] == 2) || (CONTRL[5] == 6)) { /* v_arc() or v_ellarc() */
         /* open arc */
         if (vwk->line_width == 1) {
-            polyline(vwk, point, steps);
+            polyline(vwk, point, steps, vwk->line_color);
             // FIXME: Originally here was a check fpr arrow drawing!
         } else
             wideline(vwk, point, steps);
@@ -208,7 +208,7 @@ void v_gdp(Vwk * vwk)
             *(xy_pointer + 4) = *(xy_pointer + 2);
             *(xy_pointer + 6) = *(xy_pointer + 8) = *(xy_pointer);
 
-            polyline(vwk, (Point*)PTSIN, 5);
+            polyline(vwk, (Point*)PTSIN, 5, vwk->fill_color);
         }
         break;
 
@@ -345,12 +345,12 @@ static void gdp_rbox(Vwk * vwk)
     *(pointer + 40) = *pointer;
     *(pointer + 41) = *(pointer + 1);
 
-    if (CONTRL[5] == 8) {
+    if (CONTRL[5] == 8) {       /* v_rbox() */
         i = vwk->line_index;
         LN_MASK = (i < 6) ? LINE_STYLE[i] : vwk->ud_ls;
 
         if (vwk->line_width == 1) {
-            polyline(vwk, (Point*)PTSIN, 21);
+            polyline(vwk, (Point*)PTSIN, 21, vwk->line_color);
         } else
             wideline(vwk, (Point*)PTSIN, 21);
     } else {

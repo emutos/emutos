@@ -3422,3 +3422,6 @@ Start... early ages
 
 2012-04-05
 - vdi/vdi_line.c: Rewrote draw_rect() again to restore performance. (RFB)
+- vdi/vdi_bezier.c vdi/vdi_defs.h vdi/vdi_fill.c vdi/vdi_gdp.c
+  vdi/vdi_line.c vdi/vdi_text.c: Fixed GDP functions to draw text
+  underlines & perimeters in the correct colour. (RFB)

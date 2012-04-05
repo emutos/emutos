@@ -264,13 +264,13 @@ void r_fa_attr(Vwk *);
 void s_fa_attr(Vwk *);
 
 /* drawing primitives */
-void abline (Vwk * vwk, Line * line);
+void abline (Vwk * vwk, Line * line, WORD color);
 void draw_pline(Vwk * vwk);
 
 void horzline(const Vwk * vwk, Line * line);
 void draw_rect(const Vwk * vwk, const Rect * rect, const UWORD fillcolor);
 void polygon(Vwk * vwk, Point * point, int count);
-void polyline(Vwk * vwk, Point * point, int count);
+void polyline(Vwk * vwk, Point * point, int count, WORD color);
 void wideline(Vwk * vwk, Point * point, int count);
 
 /* initialization of subsystems */

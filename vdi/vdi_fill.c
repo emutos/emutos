@@ -618,7 +618,7 @@ polygon(Vwk * vwk, Point * ptsin, int count)
     }
     if (vwk->fill_per == TRUE) {
         LN_MASK = 0xffff;
-        polyline(vwk, ptsin, count+1);
+        polyline(vwk, ptsin, count+1, vwk->fill_color);
     }
 }
 
