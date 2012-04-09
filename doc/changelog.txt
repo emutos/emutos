@@ -3425,3 +3425,7 @@ Start... early ages
 - vdi/vdi_bezier.c vdi/vdi_defs.h vdi/vdi_fill.c vdi/vdi_gdp.c
   vdi/vdi_line.c vdi/vdi_text.c: Fixed GDP functions to draw text
   underlines & perimeters in the correct colour. (RFB)
+
+2012-04-09
+- vdi/vdi_text.c: Restored earlier vst_height() code that searches all
+  font chains, not just the first. (RFB)
