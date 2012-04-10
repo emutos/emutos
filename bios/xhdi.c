@@ -519,11 +519,11 @@ long xhdi_handler(UWORD *stack)
 
         case XHNEWCOOKIE:
         {
-            struct XHINQTARGET_args
+            struct XHNEWCOOKIE_args
             {
                 UWORD opcode;
                 ULONG newcookie;
-            } *args = (struct XHINQTARGET_args *)stack;
+            } *args = (struct XHNEWCOOKIE_args *)stack;
 
             return XHNewCookie(args->newcookie);
         }

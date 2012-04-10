@@ -3437,3 +3437,4 @@ Start... early ages
 2012-04-11
 - bios/xhdi.c: XHDI functions that are unsupported by EmuTOS are passed to the
   next handler (if any). Contributed by David Galvez. (VRI)
+- bios/xhdi.c: Correct typo in struct's name. Contributed by David Galvez. (VRI)
