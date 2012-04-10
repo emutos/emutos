@@ -140,6 +140,116 @@ static long XHInqDev(UWORD drv, UWORD *major, UWORD *minor, ULONG *start,
     return XHInqDev2(drv, major, minor, start, bpb, NULL, NULL);
 }
 
+static long XHReserve(UWORD major, UWORD minor, UWORD do_reserve, UWORD key)
+{
+    if (next_handler) {
+        long ret = next_handler(XHRESERVE, major, minor, do_reserve, key);
+        if (ret != EINVFN && ret != EUNDEV && ret != EDRIVE)
+            return ret;
+    }
+
+    return EINVFN;
+}
+
+static long XHLock(UWORD major, UWORD minor, UWORD do_lock, UWORD key)
+{
+    if (next_handler) {
+        long ret = next_handler(XHLOCK, major, minor, do_lock, key);
+        if (ret != EINVFN && ret != EUNDEV && ret != EDRIVE)
+            return ret;
+    }
+
+    return EINVFN;
+}
+
+static long XHStop(UWORD major, UWORD minor, UWORD do_stop, UWORD key)
+{
+    if (next_handler) {
+        long ret = next_handler(XHSTOP, major, minor, do_stop, key);
+        if (ret != EINVFN && ret != EUNDEV && ret != EDRIVE)
+            return ret;
+    }
+
+    return EINVFN;
+}
+
+static long XHEject(UWORD major, UWORD minor, UWORD do_eject, UWORD key)
+{
+    if (next_handler) {
+        long ret = next_handler(XHEJECT, major, minor, do_eject, key);
+        if (ret != EINVFN && ret != EUNDEV && ret != EDRIVE)
+            return ret;
+    }
+
+    return EINVFN;
+}
+
+static long XHInqDriver(UWORD dev, char *name, char *version, char *company, UWORD *ahdi_version, UWORD *max_IPL)
+{
+    if (next_handler) {
+        long ret = next_handler(XHSTOP, dev, name, version, company, ahdi_version, max_IPL);
+        if (ret != EINVFN && ret != EUNDEV && ret != EDRIVE)
+            return ret;
+    }
+
+    return EINVFN;
+}
+
+static long XHDriverSpecial(ULONG key1, ULONG key2, UWORD subopcode, void *data)
+{
+    if (next_handler) {
+        long ret = next_handler(XHDRIVERSPECIAL, key1, key2, subopcode, data);
+        if (ret != EINVFN && ret != EUNDEV && ret != EDRIVE)
+            return ret;
+    }
+
+    return EINVFN;
+}
+
+static long XHMediumChanged(UWORD major, UWORD minor)
+{
+    if (next_handler) {
+        long ret = next_handler(XHMEDIUMCHANGED, major, minor);
+        if (ret != EINVFN && ret != EUNDEV && ret != EDRIVE)
+            return ret;
+    }
+
+    return EINVFN;
+}
+
+static long XHDOSLimits(UWORD which, ULONG limit)
+{
+   if (next_handler) {
+        long ret = next_handler(XHDOSLIMITS, which, limit);
+        if (ret != EINVFN && ret != EUNDEV && ret != EDRIVE)
+            return ret;
+    }
+
+    return EINVFN;
+}
+
+static long XHLastAccess(UWORD major, UWORD minor, ULONG *ms)
+{
+    if (next_handler) {
+        long ret = next_handler(XHLASTACCESS, major, minor, ms);
+        if (ret != EINVFN && ret != EUNDEV && ret != EDRIVE)
+            return ret;
+    }
+
+    return EINVFN;
+}
+
+static long XHReaccess(UWORD major, UWORD minor)
+{
+    if (next_handler) {
+        long ret = next_handler(XHREACCESS, major, minor);
+        if (ret != EINVFN && ret != EUNDEV && ret != EDRIVE)
+            return ret;
+    }
+    
+    return EINVFN;
+}
+
 #endif  /* CONF_WITH_XHDI */
 
 /*=========================================================================*/
@@ -314,27 +424,63 @@ long xhdi_handler(UWORD *stack)
 
             return XHInqTarget(args->major, args->minor, args->blocksize, args->deviceflags, args->productname);
         }
-/*
+
         case XHRESERVE:
         {
-            return XHReserve();
+            struct XHRESERVE_args
+            {
+                UWORD opcode;
+                UWORD major;
+                UWORD minor;
+                UWORD do_reserve;
+                UWORD key;
+            } *args = (struct XHRESERVE_args *)stack;
+
+            return XHReserve(args->major, args->minor, args->do_reserve, args->key);
         }
 
         case XHLOCK:
         {
-            return XHLock();
+            struct XHLOCK_args
+            {
+                UWORD opcode;
+                UWORD major;
+                UWORD minor;
+                UWORD do_lock;
+                UWORD key;
+            } *args = (struct XHLOCK_args *)stack;
+
+            return XHLock(args->major, args->minor, args->do_lock, args->key);
         }
 
         case XHSTOP:
         {
-            return XHStop();
+            struct XHSTOP_args
+            {
+                UWORD opcode;
+                UWORD major;
+                UWORD minor;
+                UWORD do_stop;
+                UWORD key;
+            } *args = (struct XHSTOP_args *)stack;
+
+            return XHStop(args->major, args->minor, args->do_stop, args->key);
         }
 
         case XHEJECT:
         {
-            return XHEject();
+            struct XHEJECT_args
+            {
+                UWORD opcode;
+                UWORD major;
+                UWORD minor;
+                UWORD do_eject;
+                UWORD key;
+            } *args = (struct XHEJECT_args *)stack;
+
+            return XHEject(args->major, args->minor, args->do_eject, args->key);
         }
-*/
+
         case XHDRVMAP:
         {
             return XHDrvMap();
@@ -354,12 +500,23 @@ long xhdi_handler(UWORD *stack)
 
             return XHInqDev(args->drv, args->major, args->minor, args->start, args->bpb);
         }
-/*
+
         case XHINQDRIVER:
         {
-            return XHInqDriver();
+            struct XHINQDRIVER_args
+            {
+                UWORD opcode;
+                UWORD dev;
+                char *name;
+                char *version;
+                char *company;
+                UWORD *ahdi_version;
+                UWORD *maxIPL;
+            } *args = (struct XHINQDRIVER_args *)stack;
+
+            return XHInqDriver(args->dev, args->name, args->version, args->company, args->ahdi_version, args->maxIPL);
         }
-*/
+
         case XHNEWCOOKIE:
         {
             struct XHINQTARGET_args
@@ -419,12 +576,21 @@ long xhdi_handler(UWORD *stack)
 
             return XHInqDev2(args->drv, args->major, args->minor, args->start, args->bpb, args->blocks, args->partid);
         }
-/*
+
         case XHDRIVERSPECIAL:
         {
-            return XHDriverSpecial();
+            struct XHDRIVERSPECIAL_args
+            {
+                UWORD opcode;
+                ULONG key1;
+                ULONG key2;
+                UWORD subopcode;
+                void *data;
+            } *args = (struct XHDRIVERSPECIAL_args *)stack;
+
+            return XHDriverSpecial(args->key1, args->key2, args->subopcode, args->data);
         }
-*/
+
         case XHGETCAPACITY:
         {
             struct XHGETCAPACITY_args
@@ -438,32 +604,65 @@ long xhdi_handler(UWORD *stack)
 
             return XHGetCapacity(args->major, args->minor, args->blocks, args->blocksize);
         }
-/*
+
         case XHMEDIUMCHANGED:
         {
-            return XHMediumChanged();
+            struct XHMEDIUMCHANGED_args
+            {
+                UWORD opcode;
+                UWORD major;
+                UWORD minor;
+            } *args = (struct XHMEDIUMCHANGED_args *)stack;
+
+            return XHMediumChanged(args->major, args->minor);
         }
+
+/* 
+       MiNT places itself at the beginning of the chain,
+       We don't need to pass this call.
 
         case XHMINTINFO:
         {
             return XHMiNTInfo();
         }
-
+*/
         case XHDOSLIMITS:
         {
-            return XHDOSLimits();
+            struct XHDOSLIMITS_args
+            {
+                UWORD opcode;
+                UWORD which;
+                ULONG limit;
+            } *args = (struct XHDOSLIMITS_args *)stack;
+
+            return XHDOSLimits(args->which, args->limit);
         }
 
         case XHLASTACCESS:
         {
-            return XHLastAccess();
+            struct XHLASTACCESS_args
+            {
+                UWORD opcode;
+                UWORD major;
+                UWORD minor;
+                ULONG *ms;
+            } *args = (struct XHLASTACCESS_args *)stack;
+
+            return XHLastAccess(args->major, args->minor, args->ms);
         }
 
         case XHREACCESS:
         {
-            return XHReaccess();
+            struct XHREACCESS_args
+            {
+                UWORD opcode;
+                UWORD major;
+                UWORD minor;
+            } *args = (struct XHREACCESS_args *)stack;
+
+            return XHReaccess(args->major, args->minor);
         }
-*/
+
         default:
         {
             return EINVFN;

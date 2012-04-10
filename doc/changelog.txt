@@ -3433,3 +3433,7 @@ Start... early ages
   scaling from WORD to UWORD, as per actual usage. (RFB)
 - vdi/vdi_text.c: Fixed text scaling in vst_height().  Based on contribution
   by David Savinkoff. (RFB)
+
+2012-04-11
+- bios/xhdi.c: XHDI functions that are unsupported by EmuTOS are passed to the
+  next handler (if any). Contributed by David Galvez. (VRI)
