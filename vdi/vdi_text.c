@@ -1241,7 +1241,7 @@ static UWORD clc_dda(Vwk * vwk, UWORD act, UWORD req)
 {
     if ( req < act ) {
         vwk->t_sclsts = 0;           /* we do scale down */
-        if ( req <= 0 ) {
+        if ( req == 0 ) {
             req = 1;            /* if 0 then make it 1 (minimum value) */
         }
     }
@@ -1250,8 +1250,8 @@ static UWORD clc_dda(Vwk * vwk, UWORD act, UWORD req)
         req -= act;
         /* if larger than 2x? */
         if ( req >= act )
-            return -1;          /* put 0xFFFF in d0 (max value, 2x) */
+            return 0xFFFF;          /* indicates 2x scale up */
     }
 
-    return act / req;
+    return (UWORD)((((ULONG)req)<<16)/act);
 }

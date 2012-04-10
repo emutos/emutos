@@ -3431,3 +3431,5 @@ Start... early ages
   font chains, not just the first. (RFB)
 - vdi/vdi_defs.h vdi/vdi_text.c: Code cleanup: changed values used in text
   scaling from WORD to UWORD, as per actual usage. (RFB)
+- vdi/vdi_text.c: Fixed text scaling in vst_height().  Based on contribution
+  by David Savinkoff. (RFB)
