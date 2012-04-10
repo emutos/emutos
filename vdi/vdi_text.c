@@ -22,7 +22,7 @@ extern Fonthead *font_ring[];   /* Ring of available fonts */
 
 /* linea-variables used for text_blt in assembler */
 extern WORD CLIP, XMN_CLIP, XMX_CLIP, YMN_CLIP, YMX_CLIP;
-extern WORD DDA_INC;            /* the fraction to be added to the DDA */
+extern UWORD DDA_INC;           /* the fraction to be added to the DDA */
 extern WORD T_SCLSTS;           /* 0 if scale down, 1 if enlarge */
 extern WORD MONO_STATUS;        /* True if current font monospaced */
 extern WORD STYLE;              /* Requested text special effects */
@@ -33,7 +33,7 @@ extern WORD WRT_MODE;
 extern WORD XACC_DDA;           /* accumulator for x DDA        */
 extern WORD SOURCEX, SOURCEY;   /* upper left of character in font file */
 extern WORD DESTX, DESTY;       /* upper left of destination on screen  */
-extern WORD DELX, DELY;         /* width and height of character    */
+extern UWORD DELX, DELY;        /* width and height of character    */
 extern UWORD *FBASE;            /* pointer to font data         */
 extern WORD FWIDTH;             /* offset,segment and form with of font */
 extern WORD LITEMASK, SKEWMASK; /* special effects          */
@@ -80,8 +80,7 @@ static WORD rmcharx, rmchary;   /* add this to use up remainder     */
 
 /* Prototypes for this module */
 static void make_header(Vwk * vwk);
-static WORD clc_dda(Vwk * vwk, WORD act, WORD req);
-extern WORD act_siz(Vwk * vwk, WORD top);  /* used by vdi_tblit.S */
+static UWORD clc_dda(Vwk * vwk, UWORD act, UWORD req);
 
 
 void d_gtext(Vwk * vwk)
@@ -447,7 +446,8 @@ void dst_height(Vwk * vwk)
 {
     Fonthead **chain_ptr;
     Fonthead *test_font, *single_font;
-    WORD *pointer, font_id, test_height;
+    WORD *pointer, font_id;
+    UWORD test_height;
     BYTE found;
 
     font_id = vwk->cur_font->font_id;
@@ -507,13 +507,13 @@ void dst_height(Vwk * vwk)
  *   top     - size to scale (DELY)
  *
  * used variables:
- *   DDA_INC - (WORD) DDA increment passed externally
+ *   DDA_INC - (UWORD) DDA increment passed externally
  *   T_SCLST - (WORD) 0 if scale down, 1 if enlarge
  *
  * exit:
  *   actual size
  */
-WORD act_siz(Vwk * vwk, WORD top)
+UWORD act_siz(Vwk * vwk, UWORD top)
 {
     UWORD accu;
     UWORD retval;
@@ -521,14 +521,14 @@ WORD act_siz(Vwk * vwk, WORD top)
 
     if (vwk->dda_inc == 0xffff) {
         /* double size */
-        return ((WORD)(top<<1));
+        return (top<<1);
     }
     accu = 0x7fff;
     retval = 0;
 
     if (vwk->t_sclsts) {
         /* enlarge */
-        for (i = 0; i < (UWORD)top; i++) {
+        for (i = 0; i < top; i++) {
             accu += vwk->dda_inc;
             if (accu < vwk->dda_inc) {
                 // Not sz_sm_1 stuff here
@@ -538,7 +538,7 @@ WORD act_siz(Vwk * vwk, WORD top)
         }
     } else {
         /* scale down */
-        for (i = 0; i < (UWORD)top; i++) {
+        for (i = 0; i < top; i++) {
             accu += vwk->dda_inc;
             if (accu < vwk->dda_inc) {
                 // Not sz_sm_1 stuff here
@@ -549,7 +549,7 @@ WORD act_siz(Vwk * vwk, WORD top)
         if (!retval)
             retval = 1;
     }
-    return ((WORD)retval);
+    return retval;
 }
 
 
@@ -1237,7 +1237,7 @@ void dt_unloadfont(Vwk * vwk)
  *   T_SCLSTS is the text scaling flag (means: scale up or down)
  */
 
-static WORD clc_dda(Vwk * vwk, WORD act, WORD req)
+static UWORD clc_dda(Vwk * vwk, UWORD act, UWORD req)
 {
     if ( req < act ) {
         vwk->t_sclsts = 0;           /* we do scale down */

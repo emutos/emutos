@@ -112,7 +112,7 @@ struct Vwk_ {
     WORD chup;                  /* Character Up vector */
     WORD clip;                  /* Clipping Flag */
     Fonthead *cur_font;         /* Pointer to current font */
-    WORD dda_inc;               /* Fraction to be added to the DDA */
+    UWORD dda_inc;              /* Fraction to be added to the DDA */
     WORD multifill;             /* Multi-plane fill flag */
     UWORD patmsk;               /* Current pattern mask */
     UWORD *patptr;              /* Current pattern pointer */

@@ -3429,3 +3429,5 @@ Start... early ages
 2012-04-09
 - vdi/vdi_text.c: Restored earlier vst_height() code that searches all
   font chains, not just the first. (RFB)
+- vdi/vdi_defs.h vdi/vdi_text.c: Code cleanup: changed values used in text
+  scaling from WORD to UWORD, as per actual usage. (RFB)
