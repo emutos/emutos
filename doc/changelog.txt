@@ -3434,9 +3434,11 @@ Start... early ages
 - vdi/vdi_text.c: Fixed text scaling in vst_height().  Based on contribution
   by David Savinkoff. (RFB)
 
-2012-04-11
+2012-04-10
 - bios/xhdi.c: XHDI functions that are unsupported by EmuTOS are passed to the
   next handler (if any). Contributed by David Galvez. (VRI)
 - bios/xhdi.c: Correct typo in struct's name. Contributed by David Galvez. (VRI)
+
+2012-04-11
 - include/config.h vdi/vdi_text.c: Added CONF_WITH_GDOS to allow disabling
   GDOS support code. (RFB)
