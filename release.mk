@@ -27,7 +27,7 @@ release-version:
 
 # This subset of the doc directory will be included in all the binary archives
 DOCFILES = doc/announce.txt doc/authors.txt doc/bugs.txt doc/changelog.txt \
-  doc/license.txt doc/status.txt doc/todo.txt
+  doc/license.txt doc/status.txt doc/todo.txt doc/xhdi.txt
 
 # The archives will be placed into this directory
 RELEASE_DIR = release-archives

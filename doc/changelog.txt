@@ -3442,3 +3442,5 @@ Start... early ages
 2012-04-11
 - include/config.h vdi/vdi_text.c: Added CONF_WITH_GDOS to allow disabling
   GDOS support code. (RFB)
+- release.mk doc/xhdi.txt: Added documentation about the current XHDI status.
+  Contributed by David Galvez. (VRI)
