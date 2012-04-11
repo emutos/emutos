@@ -3444,3 +3444,4 @@ Start... early ages
   GDOS support code. (RFB)
 - release.mk doc/xhdi.txt: Added documentation about the current XHDI status.
   Contributed by David Galvez. (VRI)
+- release.mk: Added missing unix2dos for 192k targets. (VRI)
