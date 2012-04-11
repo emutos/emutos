@@ -1158,6 +1158,7 @@ void d_justified(Vwk * vwk)
 
 void dt_loadfont(Vwk * vwk)
 {
+#if CONF_WITH_GDOS
     WORD id, count, *control;
 
     Fonthead *first_font;
@@ -1212,11 +1213,16 @@ void dt_loadfont(Vwk * vwk)
     vwk->num_fonts += count;
     DEV_TAB[10] = vwk->num_fonts;
     INTOUT[0] = count;
+#else
+    CONTRL[4] = 1;
+    INTOUT[0] = 0;      /* we loaded no new fonts */
+#endif
 }
 
 
 void dt_unloadfont(Vwk * vwk)
 {
+#if CONF_WITH_GDOS
     /* Since we always unload all fonts, this is easy. */
     vwk->loaded_fonts = NULLPTR;   /* No fonts installed */
     font_ring[2] = vwk->loaded_fonts;
@@ -1224,6 +1230,7 @@ void dt_unloadfont(Vwk * vwk)
     vwk->scrtchp = deftxbuf;
     vwk->num_fonts = font_count;   /* Reset font count to default */
     DEV_TAB[10] = vwk->num_fonts;
+#endif
 }
 
 

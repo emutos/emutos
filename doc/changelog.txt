@@ -3438,3 +3438,5 @@ Start... early ages
 - bios/xhdi.c: XHDI functions that are unsupported by EmuTOS are passed to the
   next handler (if any). Contributed by David Galvez. (VRI)
 - bios/xhdi.c: Correct typo in struct's name. Contributed by David Galvez. (VRI)
+- include/config.h vdi/vdi_text.c: Added CONF_WITH_GDOS to allow disabling
+  GDOS support code. (RFB)
