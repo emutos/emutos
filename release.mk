@@ -97,6 +97,7 @@ release-192k:
 	mkdir $(RELEASE_DIR)/$(RELEASE_192K)/doc
 	find $(RELEASE_DIR)/$(RELEASE_192K) -name '*.txt' -exec unix2dos '{}' ';'
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_192K)/doc
+	find $(RELEASE_DIR)/$(RELEASE_192K) -name '*.txt' -exec unix2dos '{}' ';'
 	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_192K).zip $(RELEASE_192K)
 	rm -r $(RELEASE_DIR)/$(RELEASE_192K)
 
