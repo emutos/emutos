@@ -3450,3 +3450,5 @@ Start... early ages
 
 2012-04-12
 - bdos/fsdrive.c: Fix possible memory leak in log_media().  (RFB)
+- bdos/fsio.c: Code cleanup in xrw(): eliminate two GOTOs & add explanatory
+  comments. (RFB)

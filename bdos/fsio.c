@@ -311,7 +311,15 @@ static void addit(OFD *p, long siz, int flg)
 
 
 /*
- * xrw - read/write 'len' bytes from/to the file indicated by the OFD at 'p'.
+ * xrw -
+ *
+ * This has two (related) functions:
+ * 1. transfer 'len' bytes between the file indicated by the OFD and the
+ *    buffer pointed to by 'ubufr'
+ * 2. if 'ubufr' is NULL, return a pointer to the current file position
+ *    within an internal buffer.  this is used internally within fsdir.c
+ *    and fsopnclo.c to request ixread() [which calls xrw()] to return a
+ *    pointer to a directory entry.
  *
  * We wish to do the i/o in whole clusters as much as possible.
  * Therefore, we break the i/o up into 5 sections.  Data which occupies
@@ -324,7 +332,8 @@ static void addit(OFD *p, long siz, int flg)
  * we do i/o in terms of whole clusters.
  *
  *  returns
- *      nbr of bytes read/written from/to the file.
+ *      1. nbr of bytes read/written from/to the file, or
+ *      2. pointer (see above)
  */
 
 static long xrw(int wrtflg, OFD *p, long len, char *ubufr,
@@ -369,10 +378,7 @@ static long xrw(int wrtflg, OFD *p, long len, char *ubufr,
         recn++;                         /* starting w/ next    */
 
         if (!ubufr)
-        {
-            rc = (long) (bufp+bytn);    /* ???????????  */
-            goto exit;
-        }
+            return (long) (bufp+bytn);
 
         (*bufxfr)(lenxfr,bufp+bytn,ubufr);
         ubufr += lenxfr;
@@ -482,17 +488,14 @@ mulio:
         addit(p,(long) lentail,1);
 
         if (!ubufr)
-        {
-            rc = (long) bufp;
-            goto exit;
-        }
+            return (long) bufp;
 
         (*bufxfr)(lentail,bufp,ubufr);
     } /*  end tail bytes  */
 
 eof:
     rc = p->o_bytnum - bytpos;
-exit:
+
     return(rc);
 }
 
