@@ -33,6 +33,8 @@
 #include "screen.h"
 #include "kprint.h"
 
+#define R_STRING 5      /* this should be obtained from a header! */
+
 /*
  * maps TT dialog buttons to resolution
  */
@@ -155,6 +157,12 @@ WORD oldmode, oldbase, oldoptions;
 
     /* set up dialog & display */
     tree = G.a_trees[ADFALREZ];
+
+    if (VgetMonitor() != MON_VGA) { /* fix up rez descriptions if not VGA */
+        for (i = 0, obj = (OBJECT *)tree+FREZNAME; i < 4; i++, obj++)
+            rsrc_gaddr(R_STRING,STREZ1+i,&obj->ob_spec);
+    }
+
     /* FIXME: change the next 2 lines when we have 256-colour support in VDI */
     obj = (OBJECT *)tree+FREZTEXT;  /* this hides the "256  TC" header text */
     obj->ob_flags |= HIDETREE;

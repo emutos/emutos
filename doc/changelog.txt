@@ -3445,3 +3445,5 @@ Start... early ages
 - release.mk doc/xhdi.txt: Added documentation about the current XHDI status.
   Contributed by David Galvez. (VRI)
 - release.mk: Added missing unix2dos for 192k targets. (VRI)
+- desk/deskrez.c desk/desktop.dfn desk/desktop.rsc: Display correct sizes in
+  Falcon resolution change dialog for non-VGA monitors. (RFB)
