@@ -203,6 +203,13 @@ long    log_media(BPB *b, int drv)
                 rsiz, cs, n, fs);
 #endif
 
+        if (fs == 0) {
+#if DBGFSDRIVE
+            kprintf("Warning: Trying to access a FAT32 partition?\n");
+#endif
+            return EDRIVE;
+        }
+
         if (!(dm = getdmd(drv)))
                 return (ENSMEM);
 
@@ -247,13 +254,6 @@ long    log_media(BPB *b, int drv)
         fo->o_bytnum = 3;
         fo->o_curbyt = 3;
         fo->o_fileln = fs * rsiz;
-
-        if (b->fsiz == 0) {
-#if DBGFSDRIVE
-            kprintf("Warning: Trying to access a FAT32 partition?\n");
-#endif
-            return EDRIVE;
-        }
 
         return (0L);
 }
