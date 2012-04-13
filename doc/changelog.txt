@@ -3452,3 +3452,6 @@ Start... early ages
 - bdos/fsdrive.c: Fix possible memory leak in log_media().  (RFB)
 - bdos/fsio.c: Code cleanup in xrw(): eliminate two GOTOs & add explanatory
   comments. (RFB)
+
+2012-04-13
+- include/config.h: For TARGET_192, disable CONF_WITH_MEGARTC by default. (RFB)

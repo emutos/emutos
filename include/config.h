@@ -90,6 +90,9 @@
 # ifndef CONF_WITH_VIDEL
 #  define CONF_WITH_VIDEL 0
 # endif
+# ifndef CONF_WITH_MEGARTC
+#  define CONF_WITH_MEGARTC 0
+# endif
 # ifndef CONF_WITH_DMASOUND
 #  define CONF_WITH_DMASOUND 0
 # endif
