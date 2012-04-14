@@ -3459,4 +3459,5 @@ Start... early ages
 2012-04-14
 - doc/bugs.txt: Removed games that now run from list of problems. Contributed
   by Eero Tamminen. (RFB)
-
+- desk/deskfun.c: Issue more informative alert if trying to create a folder
+  with a too-long name. (RFB)

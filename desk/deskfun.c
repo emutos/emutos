@@ -152,7 +152,10 @@ WORD fun_mkdir(WNODE *pw_node)
               dos_mkdir((BYTE *)ADDR(&G.g_srcpth[0]));
               if (DOS_ERR)
               {
-                cont = fun_alert(2, STFOEXIS, NULLPTR) - 1;
+                if (strlen(G.g_srcpth) >= LEN_ZPATH-3)
+                  fun_alert(1,STDEEPPA,NULLPTR);
+                else
+                  cont = fun_alert(2,STFOEXIS,NULLPTR) - 1;
                 del_fname(&G.g_srcpth[0]);
               }
               else
