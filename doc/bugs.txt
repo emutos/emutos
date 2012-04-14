@@ -22,22 +22,13 @@
 - 6x6 font is missing characters 1->31, 194->223 and 255.
   The character 158 is wrong.  As a result small arrows don't
   show up in "Clac" RSC.
-- Non-standard font sizes in "Gobang", "Sherlock", "Solitair",
-  "Columns" are wrong (too small, e.g. 2px instead of 16px).
-  In Sherlock the text for replies is positioned wrong too.
+- Dialogs in "Sherlock" are too large, their outline is of
+  wrong type and text is positioned too low.
 - In Mario Becroft's GEM Pacman, "game over" melt effect happens
   for the whole screen, not just for the game window.
-- In Mario Becroft's "Orb", the game area has some white thick
-  vertical lines when game starts which don't show with normal TOS.
-- EmuTOS panic's when running Warwick Allison's "GemAmigo",
-  after vs_clip call.
 - Shots go through buildings in GEM "Invaders" because EmuTOS
   returns 0 as VDI color index also for set pixels in monochrome.
-- Moves in "Halma" leave boxes to places where game shows that
-  pieces could have been moved, but weren't.
 - In "MathMaze", game win dialog leaves some lines on screen.
-- In "Core War" all the corewars programs shown in "memory" are
-  white, in real TOS they have different patterns.
 - 7UP hangs on exit.
 
 
@@ -52,33 +43,22 @@ Links to programs listed above:
   http://www.umich.edu/~archive/atari/Games/Puzzle/bombs.arc
 - Clac:
   http://koti.mbnet.fi/tammat/open.shtml#clac
-- Columns:
-  http://www.umich.edu/~archive/atari/Games/Arcade/columns.arc
-- GemAmigo:
-  http://www.umich.edu/~archive/atari/Games/Board/gemamigo.zip
-- Gobang:
-  http://www.umich.edu/~archive/atari/Games/Board/gobang.arc
 - Hotshot checkers:
   http://www.umich.edu/~archive/atari/Games/Board/hotshot.arc
 - Invaders:
   http://www.umich.edu/~archive/atari/Games/Arcade/invaders.lzh
 - Mind sweeper:
   http://www.umich.edu/~archive/atari/Games/Puzzle/minds_11.zip
-- Orb:
-  http://gem.win.co.nz/mb/atarisw/orb.html
 - Pacman:
   http://gem.win.co.nz/mb/atarisw/pacman.html
 - Patience (older version):
   http://www.umich.edu/~archive/atari/Games/Cards/patience.lzh
 - Risky (English version):
   http://www.umich.edu/~archive/atari/Games/Board/risk_eng.lzh
-- Sherlock:
-  http://www.umich.edu/~archive/atari/Games/Adventure/sherlock.arc
 - Yukon:
   http://www.umich.edu/~archive/atari/Games/Cards/yukone1.lzh
   http://www.haun-online.de/Atari/e_index.html
 - 7UP 2.09e
   ftp://gem.win.co.nz/hall/tos_206/7up_209e.zip
 
-(Links missing to: sysinfo v5, yams, halma, mathmaze,
-corewar, solitair.)
+(Links missing to: sysinfo v5, yams, mathmaze.)

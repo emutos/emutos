@@ -3455,3 +3455,8 @@ Start... early ages
 
 2012-04-13
 - include/config.h: For TARGET_192, disable CONF_WITH_MEGARTC by default. (RFB)
+
+2012-04-14
+- doc/bugs.txt: Removed games that now run from list of problems. Contributed
+  by Eero Tamminen. (RFB)
+
