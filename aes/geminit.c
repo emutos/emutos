@@ -115,9 +115,9 @@ GLOBAL WORD     curpid;
 
 GLOBAL THEGLO   D;
 
-BYTE     scrap_dir[LEN_ZPATH];
-BYTE     cur_dir[LEN_ZPATH];
-BYTE     cmd[LEN_ZPATH];
+static BYTE     scrap_dir[LEN_ZPATH];
+static BYTE     cur_dir[LEN_ZPATH];
+static BYTE     cmd[LEN_ZPATH];
 
 
 /*

@@ -59,7 +59,7 @@
 GLOBAL SHELL    sh[NUM_PDS];
 
 #if GEMDOS
-BYTE sh_apdir[LEN_ZPATH];                       /* holds directory of   */
+static BYTE sh_apdir[LEN_ZPATH];                /* holds directory of   */
                                                 /*   applications to be */
                                                 /*   run from desktop.  */
                                                 /*   GEMDOS resets dir  */
