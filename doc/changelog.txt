@@ -3461,3 +3461,7 @@ Start... early ages
   by Eero Tamminen. (RFB)
 - desk/deskfun.c: Issue more informative alert if trying to create a folder
   with a too-long name. (RFB)
+
+2012-04-16
+- desk/desktop.rsc: Changed alerts to conform to standard TOS limit of 30
+  characters per line. (RFB)
