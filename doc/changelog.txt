@@ -3465,3 +3465,5 @@ Start... early ages
 2012-04-16
 - desk/desktop.rsc: Changed alerts to conform to standard TOS limit of 30
   characters per line. (RFB)
+- aes/geminit.c aes/geminit.h aes/gemshlib.c: Code cleanup: eliminated some
+  unnecessary globals. (RFB)

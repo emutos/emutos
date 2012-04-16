@@ -97,8 +97,6 @@ GLOBAL BYTE     gl_dta[128];
 GLOBAL BYTE     gl_dir[130];
 GLOBAL BYTE     gl_1loc[256];
 GLOBAL BYTE     gl_2loc[256];
-GLOBAL BYTE     pqueue[128];
-GLOBAL BYTE     usuper[128];
 GLOBAL WORD     gl_mouse[37];
 GLOBAL LONG     ad_scdir;
 GLOBAL BYTE     gl_logdrv;
@@ -117,6 +115,9 @@ GLOBAL WORD     curpid;
 
 GLOBAL THEGLO   D;
 
+BYTE     scrap_dir[LEN_ZPATH];
+BYTE     cur_dir[LEN_ZPATH];
+BYTE     cmd[LEN_ZPATH];
 
 
 /*
@@ -158,11 +159,14 @@ BYTE *scan_2(BYTE *pcurr, WORD *pwd)
         return( pcurr );
 }
 
-
+/*
+ * in the following code, there are many initialisations of global ad_xxx
+ * variables to point to members of D (which is also global).  Most or all
+ * of the ad_xxx variables & their initialisations could be removed with
+ * appropriate changes to the modules that use them.
+ */
 static void ini_dlongs(void)
 {
-        register BYTE   *ps;
-        
                                                 /* use all of this      */
                                                 /*   initialization     */
                                                 /*   code area for the  */
@@ -188,22 +192,18 @@ static void ini_dlongs(void)
         ad_bi = ADDR(&bi);
         ad_ib = ADDR(&ib);
 
-        D.s_cmd = (BYTE *) &pqueue[0];
+        D.s_cmd = &cmd[0];
         ad_scmd = ADDR(D.s_cmd);
-                                                /* put scrap and some   */
-                                                /*   other arrays at    */
-                                                /*   at top of the      */
-                                                /*   screen mgr stack   */
-        ps = D.g_scrap = (BYTE *) &usuper[0];
-        ad_scrap = ADDR(ps);
-        D.s_cdir = ps += 82;
-        ad_scdir = ADDR(ps);
+        D.g_scrap = &scrap_dir[0];
+        ad_scrap = ADDR(D.g_scrap);
+        D.s_cdir = &cur_dir[0];
+        ad_scdir = ADDR(D.s_cdir);
         D.g_loc1 = &gl_1loc[0];
         D.g_loc2 = &gl_2loc[0];
-        D.g_dir = ps = &gl_dir[0];
-        ad_path = ADDR(ps);
-        D.g_dta = ps = &gl_dta[0];
-        ad_dta = ADDR(ps);
+        D.g_dir = &gl_dir[0];
+        ad_path = ADDR(D.g_dir);
+        D.g_dta = &gl_dta[0];
+        ad_dta = ADDR(D.g_dta);
         ad_fsdta = ADDR(&gl_dta[30]);
 }
 

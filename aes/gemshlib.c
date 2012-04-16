@@ -102,7 +102,7 @@ extern void coma_start();
 
 void sh_read(LONG pcmd, LONG ptail)
 {
-        LBCOPY(pcmd, ad_scmd, 128);
+        strcpy((char *)pcmd,(char *)ad_scmd);
         LBCOPY(ptail, ad_stail, 128);
 }
 
@@ -274,7 +274,7 @@ WORD sh_write(WORD doex, WORD isgem, WORD isover, LONG pcmd, LONG ptail)
           return TRUE;
         }
 
-        LBCOPY(ad_scmd, pcmd, 128);
+        strcpy((char *)ad_scmd,(char *)pcmd);
         LBCOPY(ad_stail, ptail, 128);
 
         if (isover > 0)
