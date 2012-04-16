@@ -43,9 +43,6 @@
 GLOBAL LONG     ad_tmpstr;
 GLOBAL LONG     ad_rawstr;
 GLOBAL LONG     ad_fmtstr;
-GLOBAL LONG     ad_edblk;
-GLOBAL LONG     ad_bi;
-GLOBAL LONG     ad_ib;
 
 GLOBAL TEDINFO  edblk;
 GLOBAL BITBLK   bi;
@@ -237,7 +234,7 @@ void  just_draw(LONG tree, WORD obj, WORD sx, WORD sy)
             case G_FBOXTEXT:
             case G_TEXT:
             case G_FTEXT:
-                  LBCOPY(ad_edblk, spec, sizeof(TEDINFO));
+                  LBCOPY(&edblk, spec, sizeof(TEDINFO));
                   gr_crack(edblk.te_color, &bcol,&tcol, &ipat, &icol, &tmode);
                 break;
           }
@@ -306,13 +303,13 @@ void  just_draw(LONG tree, WORD obj, WORD sx, WORD sy)
                 gr_inside(&t, -tmpth);
                 break;
             case G_IMAGE:
-                LBCOPY(ad_bi, spec, sizeof(BITBLK));
+                LBCOPY(&bi, spec, sizeof(BITBLK));
                 gsx_blt(bi.bi_pdata, bi.bi_x, bi.bi_y, bi.bi_wb,
                                 0x0L, t.g_x, t.g_y, gl_width/8, bi.bi_wb * 8,
                                 bi.bi_hl, MD_TRANS, bi.bi_color, WHITE);
                 break;
             case G_ICON:
-                LBCOPY(ad_ib, spec, sizeof(ICONBLK));
+                LBCOPY(&ib, spec, sizeof(ICONBLK));
                 ib.ib_xicon += t.g_x;
                 ib.ib_yicon += t.g_y; 
                 ib.ib_xtext += t.g_x;

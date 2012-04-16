@@ -187,9 +187,6 @@ static void ini_dlongs(void)
         ad_fmtstr = ADDR(&D.g_fmtstr[0]);
         ad_rawstr = ADDR(&D.g_rawstr[0]);
         ad_tmpstr = ADDR(&D.g_tmpstr[0]);
-        ad_edblk = ADDR(&edblk);
-        ad_bi = ADDR(&bi);
-        ad_ib = ADDR(&ib);
 
         D.s_cmd = &cmd[0];
         ad_scmd = ADDR(D.s_cmd);
@@ -801,7 +798,7 @@ void gem_main(void)
 #else
             tmpadbi = (LONG) &rs_fimg[i];
 #endif
-            LBCOPY(ad_bi, tmpadbi, sizeof(BITBLK));
+            LBCOPY(&bi, tmpadbi, sizeof(BITBLK));
             gsx_trans(bi.bi_pdata, bi.bi_wb, bi.bi_pdata, bi.bi_wb, bi.bi_hl);
         }
 

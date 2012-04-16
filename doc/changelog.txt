@@ -3471,4 +3471,5 @@ Start... early ages
   use #define for its length. (RFB)
 - aes/geminit.c aes/gemwmlib.c aes/gemwmlib.h: Code cleanup: eliminate
   ad_windspb. (RFB)
-
+- aes/geminit.c aes/gemoblib.c aes/gemoblib.h: Code cleanup: eliminate
+  ad_edblk, ad_bi, ad_ib. (RFB)
