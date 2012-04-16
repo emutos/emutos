@@ -3467,3 +3467,5 @@ Start... early ages
   characters per line. (RFB)
 - aes/geminit.c aes/geminit.h aes/gemshlib.c: Code cleanup: eliminated some
   unnecessary globals. (RFB)
+- aes/gemshlib.c aes/gemshlib.h: Code cleanup: make sh_apdir[] local, and
+  use #define for its length. (RFB)

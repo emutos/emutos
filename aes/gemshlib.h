@@ -12,7 +12,6 @@
 
 extern SHELL    sh[];
 
-extern BYTE     sh_apdir[];
 extern LONG     ad_scmd;
 extern LONG     ad_stail;
 extern LONG     ad_ssave;
