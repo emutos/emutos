@@ -3477,3 +3477,5 @@ Start... early ages
   local. (RFB)
 - aes/gemctrl.c aes/gemgsxif.c aes/geminit.c aes/geminit.h: Code cleanup:
   eliminate ad_mouse. (RFB)
+- aes/gemshlib.c desk/deskapp.c desk/deskapp.h desk/deskins.c desk/desksupp.c:
+  Removed AF_ISFMEM, since it has no meaning when the AES is ROMmed. (RFB)

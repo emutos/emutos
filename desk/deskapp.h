@@ -29,8 +29,6 @@
 #define AF_ISDESK 0x0004                        /* is placed on desk    */
 #define AF_ISPARM 0x0008                        /* is in need of input  */
                                                 /*   parameters         */
-#define AF_ISFMEM 0x0010                        /* is in need of full   */
-                                                /*   memory             */
 
 #define AT_ISFILE 0
 #define AT_ISFOLD 1

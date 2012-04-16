@@ -493,7 +493,7 @@ WORD ins_app(BYTE *pfname, ANODE *pa)
           field = (pa->a_flags & AF_ISPARM) ? APPARMS : APDOS;
         LWSET(OB_STATE(field), SELECTED);
 
-        field = (pa->a_flags & AF_ISFMEM) ? APYMEM : APNMEM;
+        field = APNMEM;
         LWSET(OB_STATE(field), SELECTED);
 
         oicon = pa->a_aicon - IA_GENERIC;
@@ -504,7 +504,7 @@ WORD ins_app(BYTE *pfname, ANODE *pa)
 
                                                 /* set memory flag      */
         field = inf_gindex(tree, APYMEM, 2);
-        nflag = (field == 0) ? AF_ISFMEM : 0;
+        nflag = 0;
         LWSET(OB_STATE(APYMEM + field), NORMAL);
                                                 /* set type flags       */
         field = inf_gindex(tree, APGEM, 3);

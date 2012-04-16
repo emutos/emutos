@@ -295,15 +295,14 @@ static BYTE *app_parse(BYTE *pcurr, ANODE *pa)
                 pa->a_flags = AF_ISCRYS | AF_ISGRAF | AF_ISPARM;
                 break;
           case 'F':                             /* DOS File no parms    */
-          case 'f':                             /*   needs full memory  */
+          case 'f':                             /* (backward compatibility)  */
                 pa->a_type = AT_ISFILE;
-                pa->a_flags = (*pcurr == 'F') ? NONE : AF_ISFMEM;
+                pa->a_flags = NONE;
                 break;
           case 'P':                             /* DOS App needs parms  */
-          case 'p':                             /*   needs full memory  */
+          case 'p':                             /* (backward compatibility) */
                 pa->a_type = AT_ISFILE;
-                pa->a_flags = (*pcurr == 'P') ? 
-                                AF_ISPARM : AF_ISPARM | AF_ISFMEM;
+                pa->a_flags = AF_ISPARM;
                 break;
           case 'D':                             /* Directory (Folder)   */
                 pa->a_type = AT_ISFOLD;
@@ -809,12 +808,7 @@ void app_save(WORD todisk)
                      (pa->a_flags & AF_ISGRAF) )
                   *pcurr++ = (pa->a_flags & AF_ISPARM) ? 'Y' : 'G';
                 else
-                {  
-                  *pcurr = (pa->a_flags & AF_ISPARM) ? 'P' : 'F';
-                  if (pa->a_flags & AF_ISFMEM)
-                    *pcurr += 'a' - 'A';
-                  pcurr++;
-                }
+                  *pcurr++ = (pa->a_flags & AF_ISPARM) ? 'P' : 'F';
                 break;
             case AT_ISFOLD:
                 *pcurr++ = 'D';

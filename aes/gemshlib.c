@@ -259,7 +259,6 @@ void sh_fixtail(WORD iscpm)
 *
 *               isover = 0  then run above DESKTOP
 *               isover = 1  then run over DESKTOP
-*               isover = 2  then run over AES and DESKTOP
 */
 WORD sh_write(WORD doex, WORD isgem, WORD isover, LONG pcmd, LONG ptail)
 {
