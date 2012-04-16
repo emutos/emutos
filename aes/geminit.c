@@ -89,7 +89,6 @@ GLOBAL LONG     ad_valstr;
 GLOBAL LONG     ad_sysglo;
 GLOBAL LONG     ad_armice;
 GLOBAL LONG     ad_hgmice;
-GLOBAL LONG     ad_mouse;
 GLOBAL LONG     ad_envrn;               /* initialized in GEMSTART      */
 GLOBAL LONG     ad_stdesk;
 
@@ -181,7 +180,6 @@ static void ini_dlongs(void)
                                                 /*   resource calls     */
         ad_ssave = ADDR(&start);
         ad_sysglo = ADDR(&D.g_sysglo[0]);
-        ad_mouse = ADDR(&gl_mouse[0]);
                                                 /* gemoblib             */
         ad_valstr = ADDR(&D.g_valstr[0]);
         ad_fmtstr = ADDR(&D.g_fmtstr[0]);

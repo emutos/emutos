@@ -3475,3 +3475,5 @@ Start... early ages
   ad_edblk, ad_bi, ad_ib. (RFB)
 - aes/geminit.c aes/gemshlib.c: Code cleanup: really make some variables
   local. (RFB)
+- aes/gemctrl.c aes/gemgsxif.c aes/geminit.c aes/geminit.h: Code cleanup:
+  eliminate ad_mouse. (RFB)

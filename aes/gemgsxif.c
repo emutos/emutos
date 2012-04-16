@@ -383,7 +383,7 @@ void gsx_mfset(LONG pmfnew)
 {
     gsx_moff();
     if (!gl_ctmown)
-        LWCOPY(ad_mouse, pmfnew, 37);
+        LWCOPY(&gl_mouse[0], pmfnew, 37);
     LWCOPY(ad_intin, pmfnew, 37);
     gsx_ncode(ST_CUR_FORM, 0, 37);
     gsx_mon();

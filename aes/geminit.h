@@ -15,7 +15,6 @@ extern LONG     ad_valstr;
 extern LONG     ad_sysglo;
 extern LONG     ad_armice;
 extern LONG     ad_hgmice;
-extern LONG     ad_mouse;
 extern LONG     ad_envrn;
 extern LONG     ad_stdesk;
 
