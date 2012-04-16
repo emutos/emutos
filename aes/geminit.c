@@ -181,7 +181,6 @@ static void ini_dlongs(void)
                                                 /*   resource calls     */
         ad_ssave = ADDR(&start);
         ad_sysglo = ADDR(&D.g_sysglo[0]);
-        ad_windspb = ADDR(&wind_spb);
         ad_mouse = ADDR(&gl_mouse[0]);
                                                 /* gemoblib             */
         ad_valstr = ADDR(&D.g_valstr[0]);

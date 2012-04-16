@@ -127,8 +127,6 @@ GLOBAL const TEDINFO gl_asamp =
 
 GLOBAL WORD     wind_msg[8];
 
-GLOBAL LONG     ad_windspb;
-
 GLOBAL WORD     gl_wtop;
 GLOBAL LONG     gl_wtree;
 GLOBAL LONG     gl_awind;
@@ -1458,7 +1456,7 @@ void wm_update(WORD beg_update)
           if ( beg_update )
           {
             if ( !tak_flag(&wind_spb) )
-                    ev_block(MU_MUTEX, ad_windspb);
+                    ev_block(MU_MUTEX, (LONG)&wind_spb);
 
           }
           else

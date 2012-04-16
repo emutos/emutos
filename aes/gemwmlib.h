@@ -22,7 +22,6 @@ extern TEDINFO  gl_aname;
 extern TEDINFO  gl_ainfo;
 extern const TEDINFO gl_asamp;
 extern WORD     wind_msg[8];
-extern LONG     ad_windspb;
 extern WORD     gl_wtop;
 extern LONG     gl_wtree;
 extern LONG     gl_awind;
