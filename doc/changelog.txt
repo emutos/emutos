@@ -3481,3 +3481,4 @@ Start... early ages
   Removed AF_ISFMEM, since it has no meaning when the AES is ROMmed. (RFB)
 - desk/deskins.c desk/desktop.dfn desk/desktop.rsc: Removed 'use full memory'
   objects from 'Configure application' dialog. (RFB)
+- desk/deskapp.c: Code cleanup: use sprintf() instead of local routines. (RFB)

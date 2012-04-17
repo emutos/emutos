@@ -181,22 +181,6 @@ WORD hex_dig(BYTE achar)
 }
 #endif
 
-
-/*
-*       Reverse of hex_dig().
-*/
-static BYTE uhex_dig(WORD wd)
-{
-        if ( (wd >= 0) &&
-             (wd <= 9) )
-          return(wd + '0');     
-        if ( (wd >= 0x0a) &&
-             (wd <= 0x0f) )
-          return(wd + 'A' - 0x0a);
-        return(' ');
-}
-
-
 /*
 *       Scan off and convert the next two hex digits and return with
 *       pcurr pointing one space past the end of the four hex digits
@@ -225,19 +209,6 @@ extern BYTE *scan_2(BYTE *pcurr, WORD *pwd);
 
 
 /*
-*       Reverse of scan_2().
-*/
-static BYTE *save_2(BYTE *pcurr, UWORD wd)
-{
-        *pcurr++ = ' ';
-        *pcurr++ = uhex_dig((wd >> 4) & 0x000f);
-        *pcurr++ = uhex_dig(wd & 0x000f);
-        return( pcurr );
-}
-
-
-
-/*
 *       Scan off spaces until a string is encountered.  An @ denotes
 *       a null string.  Copy the string into a string buffer until
 *       a @ is encountered.  This denotes the end of the string.  Advance
@@ -252,19 +223,6 @@ BYTE *scan_str(BYTE *pcurr, BYTE **ppstr)
           *G.g_pbuff++ = *pcurr++;
         *G.g_pbuff++ = NULL;
         pcurr++;
-        return(pcurr);
-}
-
-
-/*
-*       Reverse of scan_str.
-*/
-static BYTE *save_str(BYTE *pcurr, BYTE *pstr)
-{
-        while(*pstr)
-          *pcurr++ = *pstr++;
-        *pcurr++ = '@';
-        *pcurr++ = ' ';
         return(pcurr);
 }
 
@@ -741,7 +699,9 @@ static void app_revit(void)
 */
 void app_save(WORD todisk)
 {
-        WORD            i, fh, ret, envr;
+        WORD            i, fh, ret;
+        WORD            env1, env2;
+        BYTE            type;
         BYTE            *pcurr, *ptmp;
         ANODE           *pa;
         WSAVE           *pws;
@@ -749,93 +709,64 @@ void app_save(WORD todisk)
         memset(&gl_afile[0], 0, SIZE_AFILE);
         pcurr = &gl_afile[0];
                                                 /* save evironment      */
-        *pcurr++ = '#';
-        *pcurr++ = 'E';
-        envr = 0x0;
-        envr |= (G.g_cnxsave.vitem_save) ? 0x80 : 0x00;
-        envr |= ((G.g_cnxsave.sitem_save) << 5) & 0x60;
-        envr |= (G.g_cnxsave.cdele_save) ? 0x10 : 0x00;
-        envr |= (G.g_cnxsave.ccopy_save) ? 0x08 : 0x00;
-        envr |= G.g_cnxsave.cdclk_save;
-        pcurr = save_2(pcurr, envr);
+        env1 = (G.g_cnxsave.vitem_save) ? 0x80 : 0x00;
+        env1 |= ((G.g_cnxsave.sitem_save) << 5) & 0x60;
+        env1 |= (G.g_cnxsave.cdele_save) ? 0x10 : 0x00;
+        env1 |= (G.g_cnxsave.ccopy_save) ? 0x08 : 0x00;
+        env1 |= G.g_cnxsave.cdclk_save;
+        env2 = (G.g_cnxsave.covwr_save) ? 0x00 : 0x10;
+        env2 |= (G.g_cnxsave.cmclk_save) ? 0x08 : 0x00;
+        env2 |= (G.g_cnxsave.cdtfm_save) ? 0x00 : 0x04;
+        env2 |= (G.g_cnxsave.ctmfm_save) ? 0x00 : 0x02;
+        env2 |= sound(FALSE, 0xFFFF, 0)  ? 0x00 : 0x01;
+        pcurr += sprintf(pcurr,"#E %02X %02X\r\n",env1,env2);
 
-        envr = (G.g_cnxsave.covwr_save) ? 0x00 : 0x10;
-        envr |= (G.g_cnxsave.cmclk_save) ? 0x08 : 0x00;
-        envr |= (G.g_cnxsave.cdtfm_save) ? 0x00 : 0x04;
-        envr |= (G.g_cnxsave.ctmfm_save) ? 0x00 : 0x02;
-        envr |= sound(FALSE, 0xFFFF, 0)  ? 0x00 : 0x01;
-        pcurr = save_2(pcurr, envr );
-
-        *pcurr++ = 0x0d;
-        *pcurr++ = 0x0a;
                                                 /* save windows         */
         for(i=0; i<NUM_WNODES; i++)
         {
-          *pcurr++ = '#';
-          *pcurr++ = 'W';
           pws = &G.g_cnxsave.win_save[i];
-          pcurr = save_2(pcurr, pws->hsl_save);
-          pcurr = save_2(pcurr, pws->vsl_save);
-          pcurr = save_2(pcurr, pws->x_save / gl_wchar);
-          pcurr = save_2(pcurr, pws->y_save / gl_hchar);
-          pcurr = save_2(pcurr, pws->w_save / gl_wchar);
-          pcurr = save_2(pcurr, pws->h_save / gl_hchar);
-          pcurr = save_2(pcurr, pws->obid_save);
-          ptmp = &pws->pth_save[0];
-          *pcurr++ = ' ';
-          if (*ptmp != '@')
-          {
-            while (*ptmp)
-              *pcurr++ = *ptmp++;
-          }
-          *pcurr++ = '@';
-          *pcurr++ = 0x0d;
-          *pcurr++ = 0x0a;
-        }               
+          ptmp = pws->pth_save;
+          pcurr += sprintf(pcurr,"#W %02X %02X %02X %02X %02X %02X %02X",
+                    pws->hsl_save,pws->vsl_save,pws->x_save/gl_wchar,
+                    pws->y_save/gl_hchar,pws->w_save/gl_wchar,
+                    pws->h_save/gl_hchar,pws->obid_save);
+          pcurr += sprintf(pcurr," %s@\r\n",(*ptmp!='@')?ptmp:"");
+        }
+
                                                 /* reverse ANODE list   */
         app_revit();
                                                 /* save ANODE list      */
         for(pa=G.g_ahead; pa; pa=pa->a_next)
         {
-          *pcurr++ = '#';
           switch(pa->a_type)
           {
             case AT_ISDISK:
-                *pcurr++ = 'M';
+                type = 'M';
                 break;
             case AT_ISFILE:
-                if ( (pa->a_flags & AF_ISCRYS) &&
-                     (pa->a_flags & AF_ISGRAF) )
-                  *pcurr++ = (pa->a_flags & AF_ISPARM) ? 'Y' : 'G';
+                if ( (pa->a_flags & (AF_ISCRYS|AF_ISGRAF)) == (AF_ISCRYS|AF_ISGRAF) )
+                  type = (pa->a_flags & AF_ISPARM) ? 'Y' : 'G';
                 else
-                  *pcurr++ = (pa->a_flags & AF_ISPARM) ? 'P' : 'F';
+                  type = (pa->a_flags & AF_ISPARM) ? 'P' : 'F';
                 break;
             case AT_ISFOLD:
-                *pcurr++ = 'D';
+                type = 'D';
                 break;
             case AT_ISTRSH:     /* Trash */
-                *pcurr++ = 'T';
+                type = 'T';
                 break;
-
+            default:
+                type = ' ';
           }
+          pcurr += sprintf(pcurr,"#%c",type);
           if (pa->a_flags & AF_ISDESK)
-          {
-            pcurr = save_2(pcurr, pa->a_xspot / G.g_icw);
-            pcurr = save_2(pcurr, (pa->a_yspot - G.g_ydesk) / G.g_ich);
-          }
-          pcurr = save_2(pcurr, pa->a_aicon);
-          pcurr = save_2(pcurr, pa->a_dicon);
-          *pcurr++ = ' ';
+			pcurr += sprintf(pcurr," %02X %02X",
+			            pa->a_xspot/G.g_icw,(pa->a_yspot-G.g_ydesk)/G.g_ich);
+          pcurr += sprintf(pcurr," %02X %02X",pa->a_aicon&0x00ff,pa->a_dicon&0x00ff);
           if (pa->a_flags & AF_ISDESK)
-          {
-            *pcurr++ = (pa->a_letter == NULL) ? ' ' : pa->a_letter;
-            *pcurr++ = ' ';
-          }
-          pcurr = save_str(pcurr, pa->a_pappl);
-          pcurr = save_str(pcurr, pa->a_pdata);
-          pcurr--;
-          *pcurr++ = 0x0d;
-          *pcurr++ = 0x0a;
+            pcurr += sprintf(pcurr," %c",pa->a_letter?pa->a_letter:' ');
+          pcurr += sprintf(pcurr," %s@",pa->a_pappl);
+          pcurr += sprintf(pcurr," %s@\r\n",pa->a_pdata);
                                                 /* skip standards       */
 #ifndef DESK1
           if ( (pa->a_type == AT_ISDISK) && 
