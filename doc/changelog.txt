@@ -3479,3 +3479,5 @@ Start... early ages
   eliminate ad_mouse. (RFB)
 - aes/gemshlib.c desk/deskapp.c desk/deskapp.h desk/deskins.c desk/desksupp.c:
   Removed AF_ISFMEM, since it has no meaning when the AES is ROMmed. (RFB)
+- desk/deskins.c desk/desktop.dfn desk/desktop.rsc: Removed 'use full memory'
+  objects from 'Configure application' dialog. (RFB)

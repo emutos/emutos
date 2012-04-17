@@ -299,7 +299,7 @@ static void insa_elev(LONG tree, WORD nicon, WORD numics)
 
 static WORD insa_dial(LONG tree, WORD nicon, WORD numics)
 {
-        WORD            firstslot, nstate, ystate, i;
+        WORD            firstslot, i;
         WORD            touchob, oicon, value;
         WORD            mx, my, kret, bret, cont;
         BYTE            *pstr, doctype[4];
@@ -323,7 +323,7 @@ static WORD insa_dial(LONG tree, WORD nicon, WORD numics)
           touchob = form_do(tree, APDFTYPE+firstslot);
           graf_mkstate(&mx, &my, &kret, &bret);
         
-          value = nstate = ystate = 0;
+          value = 0;
           touchob &= 0x7fff;
           switch( touchob )
           {
@@ -337,20 +337,6 @@ static WORD insa_dial(LONG tree, WORD nicon, WORD numics)
                 break;
             case APFDNARO:
                 value = 1;
-                break;
-            case APGEM:
-                nstate = SELECTED;
-                ystate = DISABLED;
-                break;
-            case APDOS:
-            case APPARMS:
-                nstate = LWGET(OB_STATE(APNMEM));
-                ystate = LWGET(OB_STATE(APYMEM));
-                if ( ystate == DISABLED )
-                {
-                  nstate = SELECTED;
-                  ystate = NORMAL;
-                }
                 break;
             case APFSVSLI:
 /* BugFix       */
@@ -376,12 +362,6 @@ dofelev:        wind_update(3);
                 wind_update(2);
                 value = mul_div(value, numics-1, 1000) - nicon;
                 break;
-          }
-          if (nstate != ystate)
-          {
-            LWSET(OB_STATE(APNMEM), nstate);
-            LWSET(OB_STATE(APYMEM), ystate);
-            draw_fld(tree, APMEMBOX);
           }
           if (value)
           {
@@ -480,20 +460,13 @@ WORD ins_app(BYTE *pfname, ANODE *pa)
         inf_sset(tree, APNAME, &pname[0]);
                                                 /* stuff in docu types  */
         insa_stypes(tree, pa->a_pdata);
-/* BugFix       */
-        LWSET(OB_STATE(APYMEM), NORMAL);
-/* */
         oflag = pa->a_flags;
         if (pa->a_flags & AF_ISCRYS)
         {
           field = APGEM;
-          LWSET(OB_STATE(APYMEM), DISABLED);
         }
         else
           field = (pa->a_flags & AF_ISPARM) ? APPARMS : APDOS;
-        LWSET(OB_STATE(field), SELECTED);
-
-        field = APNMEM;
         LWSET(OB_STATE(field), SELECTED);
 
         oicon = pa->a_aicon - IA_GENERIC;
@@ -502,16 +475,13 @@ WORD ins_app(BYTE *pfname, ANODE *pa)
         nicon = insa_dial(tree, oicon, gl_numics);
         change = FALSE;
 
-                                                /* set memory flag      */
-        field = inf_gindex(tree, APYMEM, 2);
-        nflag = 0;
-        LWSET(OB_STATE(APYMEM + field), NORMAL);
                                                 /* set type flags       */
+        nflag = 0;
         field = inf_gindex(tree, APGEM, 3);
         if (field == 0)
           nflag = AF_ISCRYS | AF_ISGRAF;
         if (field == 2)
-          nflag |= AF_ISPARM;
+          nflag = AF_ISPARM;
         LWSET(OB_STATE(APGEM + field), NORMAL);
                                                 /* get button selection */
         field = inf_gindex(tree, APINST, 3);
