@@ -3482,3 +3482,6 @@ Start... early ages
 - desk/deskins.c desk/desktop.dfn desk/desktop.rsc: Removed 'use full memory'
   objects from 'Configure application' dialog. (RFB)
 - desk/deskapp.c: Code cleanup: use sprintf() instead of local routines. (RFB)
+
+2012-04-18
+- po/de.po: Updated german translations. (THH)
