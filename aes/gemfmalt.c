@@ -196,18 +196,11 @@ static void fm_build(LONG tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
           ms.g_x = ic.g_x + ic.g_w + INTER_WSPACE + 1;
         }
 
-#if 0   /* Buttons on the right */
-        al.g_w += ms.g_w + INTER_WSPACE + 1;
-        r_set(&bt, al.g_w, 1 + INTER_HSPACE, mlenbut, 1);
-
-        al.g_w += bt.g_w + INTER_WSPACE + 1;
-        al.g_h = max(al.g_h, 2 + (2 * INTER_HSPACE) + nummsg );
-        al.g_h = max(al.g_h, 2 + INTER_HSPACE + (numbut * 2) - 1);
-        al.g_h |= 0xfd00;
-
-#else   /* Buttons on the bottom */
-
-        r_set(&bt, 1+INTER_WSPACE, 2+INTER_HSPACE+max(nummsg, 2), mlenbut, 1);
+        r_set(&bt, 1+INTER_WSPACE, 2+INTER_HSPACE+max(nummsg, 1), mlenbut, 1);
+        if (haveicon && nummsg < 2)
+        {
+            bt.g_y += 1;
+        }
 
         if (mlenmsg + al.g_w > numbut * mlenbut + (numbut-1) + 1+INTER_WSPACE)
         {
@@ -220,7 +213,7 @@ static void fm_build(LONG tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
         }
 
         al.g_h = max(al.g_h, 2 + (2 * INTER_HSPACE) + nummsg + 2);
-#endif
+
                                                 /* init. root object    */
         ob_setxywh(tree, ROOT, &al);
         ad_nils = (LONG) ADDR(&gl_nils[0]);
@@ -247,11 +240,8 @@ static void fm_build(LONG tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
           LWSET(OB_STATE(k), NORMAL);
           ob_setxywh(tree, k, &bt);
 
-#if 0   /* Buttons on the right */
-          bt.g_y += 2;
-#else   /* Buttons on the bottom */
           bt.g_x += mlenbut + 1;
-#endif
+
           ob_add(tree, ROOT, k);
         }
                                                 /* set last object flag */

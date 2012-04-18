@@ -3485,3 +3485,5 @@ Start... early ages
 
 2012-04-18
 - po/de.po: Updated german translations. (THH)
+- aes/gemfmalt.c: Changed form_alert so that dialog boxes with only one line
+  of text and without icon should be formatted fine, too. (THH)
