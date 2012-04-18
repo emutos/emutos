@@ -40,6 +40,8 @@ static void setphys(LONG addr,int checkaddr);
 #define VIDEOBASE_ADDR_MID  0xffff8203L
 #define VIDEOBASE_ADDR_LOW  0xffff820dL
 
+#define SYNCMODE            0xffff820aL
+
 #define ST_SHIFTER          0xffff8260L
 #define TT_SHIFTER          0xffff8262L
 #define SPSHIFT             0xffff8266L
@@ -858,6 +860,33 @@ WORD vmontype(void)
 }
 
 /*
+ * Set external video sync mode
+ */
+void vsetsync(WORD external)
+{
+    UWORD spshift;
+
+    if (!has_videl)
+        return;
+
+    if (external & 0x01)            /* external clock wanted? */
+        *(volatile BYTE *)SYNCMODE |= 0x01;
+    else *(volatile BYTE *)SYNCMODE &= 0xfe;
+
+    spshift = *(volatile UWORD *)SPSHIFT;
+
+    if (external&0x02)              /* external vertical sync wanted? */
+        spshift |= 0x0020;
+    else spshift &= 0xffdf;
+
+    if (external&0x04)              /* external horizontal sync wanted? */
+        spshift |= 0x0040;
+    else spshift &= 0xffbf;
+
+    *(volatile UWORD *)SPSHIFT = spshift;
+}
+
+/*
  * get video ram size according to mode
  */
 LONG vgetsize(WORD mode)
@@ -1313,7 +1342,7 @@ void screen_init(void)
     {
         sync_mode = (os_pal&0x01)?0x02:0x00;
     }
-    *(volatile BYTE *) 0xffff820a = sync_mode;
+    *(volatile BYTE *) SYNCMODE = sync_mode;
 
 /*
  * next, set up the palette(s)

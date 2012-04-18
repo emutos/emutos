@@ -37,6 +37,7 @@ WORD esetgray(WORD mode);
 WORD esetsmear(WORD mode);
 WORD vsetmode(WORD mode);
 WORD vmontype(void);
+void vsetsync(WORD external);
 LONG vgetsize(WORD mode);
 void vsetrgb(WORD index,WORD count,LONG *rgb);
 void vgetrgb(WORD index,WORD count,LONG *rgb);

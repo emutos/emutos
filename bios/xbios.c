@@ -917,6 +917,11 @@ static WORD xbios_59(void)
     kprintf("XBIOS: VgetMonitor\n");
     return vmontype();
 }
+static void xbios_5a(void)
+{
+    kprintf("XBIOS: VsetSync\n");
+    vsetsync();
+}
 static LONG xbios_5b(WORD mode)
 {
     kprintf("XBIOS: VgetSize\n");
@@ -1089,14 +1094,12 @@ const PFLONG xbios_vecs[] = {
 #if CONF_WITH_VIDEL
     VEC(xbios_58, vsetmode),   /* 58 */
     VEC(xbios_59, vmontype),   /* 59 */
+    VEC(xbios_5a, vsetsync),   /* 5a */
+    VEC(xbios_5b, vgetsize),   /* 5b */
 #else
     xbios_unimpl,   /* 58 */
     xbios_unimpl,   /* 59 */
-#endif
     xbios_unimpl,   /* 5a */
-#if CONF_WITH_VIDEL
-    VEC(xbios_5b, vgetsize),   /* 5b */
-#else
     xbios_unimpl,   /* 5b */
 #endif
     xbios_unimpl,   /* 5c */
