@@ -29,6 +29,7 @@
 #include "infodef.h"
 #include "gembind.h"
 #include "deskbind.h"
+#include "screen.h"
 
 #include "gemdos.h"
 #include "rectfunc.h"
@@ -721,7 +722,7 @@ void app_save(WORD todisk)
         env2 |= sound(FALSE, 0xFFFF, 0)  ? 0x00 : 0x01;
         mode = get_videl_mode();
         pcurr += sprintf(pcurr,"#E %02X %02X %02X %02X %02X\r\n",
-                    env1,env2,getrez()&0x00ff,(mode>>16)&0x00ff,mode&0x00ff);
+                    env1,env2,getrez()&0x00ff,(mode>>8)&0x00ff,mode&0x00ff);
 
                                                 /* save windows         */
         for(i=0; i<NUM_WNODES; i++)
