@@ -23,6 +23,7 @@
 UWORD get_videl_bpp(void);
 UWORD get_videl_width(void);
 UWORD get_videl_height(void);
+WORD get_videl_mode(void);
 void initialise_palette_registers(WORD rez,WORD mode);
 
 /* hardware dependant xbios routines */

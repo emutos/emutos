@@ -1192,6 +1192,20 @@ static void initialise_falcon_palette(WORD mode)
 #endif
 
 /*
+ * Get videl mode
+ * This is the same as vsetmode(-1) except that it returns
+ * zero when there is no videl.  Used by app_save().
+ */
+WORD get_videl_mode(void)
+{
+#if CONF_WITH_VIDEL
+    if (has_videl)
+        return vsetmode(-1);
+#endif
+    return 0;
+}
+
+/*
  * Initialise palette registers
  * This routine is also used by resolution change
  */

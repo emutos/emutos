@@ -3488,3 +3488,5 @@ Start... early ages
 - aes/gemfmalt.c: Changed form_alert so that dialog boxes with only one line
   of text and without icon should be formatted fine, too. (THH)
 - bios/screen.c bios/screen.h bios/xbios.c: Added VsetSync(). (RFB)
+- bios/screen.c bios/screen.h desk/deskapp.c: Save current rez / video mode
+  to EMUDESK.INF. (RFB)

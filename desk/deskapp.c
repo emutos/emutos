@@ -695,12 +695,12 @@ static void app_revit(void)
 
 /*
 *       Save the current state of all the icons to a file called 
-*       DESKTOP.INF
+*       EMUDESK.INF
 */
 void app_save(WORD todisk)
 {
         WORD            i, fh, ret;
-        WORD            env1, env2;
+        WORD            env1, env2, mode;
         BYTE            type;
         BYTE            *pcurr, *ptmp;
         ANODE           *pa;
@@ -719,7 +719,9 @@ void app_save(WORD todisk)
         env2 |= (G.g_cnxsave.cdtfm_save) ? 0x00 : 0x04;
         env2 |= (G.g_cnxsave.ctmfm_save) ? 0x00 : 0x02;
         env2 |= sound(FALSE, 0xFFFF, 0)  ? 0x00 : 0x01;
-        pcurr += sprintf(pcurr,"#E %02X %02X\r\n",env1,env2);
+        mode = get_videl_mode();
+        pcurr += sprintf(pcurr,"#E %02X %02X %02X %02X %02X\r\n",
+                    env1,env2,getrez()&0x00ff,(mode>>16)&0x00ff,mode&0x00ff);
 
                                                 /* save windows         */
         for(i=0; i<NUM_WNODES; i++)
