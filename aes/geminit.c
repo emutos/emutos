@@ -71,11 +71,15 @@
 
 #define IG_HARD 0
 
-#define SIZE_AFILE 2048                 /* size of AES shell buffer */
+#define SIZE_AFILE 2048                 /* size of AES shell buffer (but see */
+                                        /*  comments below)                  */
 #define INF_SIZE   300                  /* size of buffer used by sh_rdinf() */
                                         /*  for start of EMUDESK.INF file    */
 
-static BYTE     start[SIZE_AFILE];      /* AES shell buffer */
+static BYTE     start[SIZE_AFILE];      /* AES shell buffer: note that the first */
+                                        /*  few bytes are currently used to hold */
+                                        /*  the environment string, built by     */
+                                        /*  sh_addpath().                        */
 
 /* Some global variables: */
 
@@ -167,27 +171,27 @@ static void ini_dlongs(void)
                                                 /*   to global array    */
                                                 /*   which is used by   */
                                                 /*   resource calls     */
-        ad_ssave = ADDR(&start);
-        ad_sysglo = ADDR(&D.g_sysglo[0]);
+        ad_ssave = (LONG)&start;
+        ad_sysglo = (LONG)&D.g_sysglo[0];
                                                 /* gemoblib             */
-        ad_valstr = ADDR(&D.g_valstr[0]);
-        ad_fmtstr = ADDR(&D.g_fmtstr[0]);
-        ad_rawstr = ADDR(&D.g_rawstr[0]);
-        ad_tmpstr = ADDR(&D.g_tmpstr[0]);
+        ad_valstr = (LONG)&D.g_valstr[0];
+        ad_fmtstr = (LONG)&D.g_fmtstr[0];
+        ad_rawstr = (LONG)&D.g_rawstr[0];
+        ad_tmpstr = (LONG)&D.g_tmpstr[0];
 
         D.s_cmd = &cmd[0];
-        ad_scmd = ADDR(D.s_cmd);
+        ad_scmd = (LONG)D.s_cmd;
         D.g_scrap = &scrap_dir[0];
-        ad_scrap = ADDR(D.g_scrap);
+        ad_scrap = (LONG)D.g_scrap;
         D.s_cdir = &cur_dir[0];
-        ad_scdir = ADDR(D.s_cdir);
+        ad_scdir = (LONG)D.s_cdir;
         D.g_loc1 = &gl_1loc[0];
         D.g_loc2 = &gl_2loc[0];
         D.g_dir = &gl_dir[0];
-        ad_path = ADDR(D.g_dir);
+        ad_path = (LONG)D.g_dir;
         D.g_dta = &gl_dta[0];
-        ad_dta = ADDR(D.g_dta);
-        ad_fsdta = ADDR(&gl_dta[30]);
+        ad_dta = (LONG)D.g_dta;
+        ad_fsdta = (LONG)&gl_dta[30];
 }
 
 
@@ -253,15 +257,15 @@ static PD *iprocess(BYTE *pname, void (*routine)())
 */
 static void fs_start(void)
 {
-        LONG            tree;
+        OBJECT *tree;
 
 #ifdef USE_GEM_RSC
-        rs_gaddr(ad_sysglo, R_TREE, FSELECTR, &tree);
+        rs_gaddr(ad_sysglo, R_TREE, FSELECTR, (LONG *)&tree);
 #else
-        tree = (LONG) rs_tree[FSELECTR];
+        tree = rs_tree[FSELECTR];
 #endif
-        ad_fstree = tree;
-        ob_center(tree, &gl_rfs);
+        ad_fstree = (LONG)tree;
+        ob_center((LONG)tree, &gl_rfs);
 }
 
 
@@ -285,7 +289,7 @@ static void sndcli(BYTE *pfilespec)
         handle = dos_open( (BYTE *)ad_scmd, ROPEN );
         if (!DOS_ERR)
         {
-          err_ret = pgmld(handle, &D.s_cmd[0], (LONG **)(void*)&ldaddr);
+          err_ret = pgmld(handle, &D.s_cmd[0], (LONG **)&ldaddr);
           dos_close(handle);
                                                 /* create process to    */
                                                 /*   execute it         */
@@ -326,49 +330,48 @@ static void ldaccs(void)
 
 static void sh_addpath(void)
 {
-        LONG    lp, np, new_envr;
+        char    *lp, *np, *new_envr;
         WORD    oelen, oplen, nplen, fstlen;
         BYTE    tmp;
         char    tmpstr[MAX_LEN];
 
-        lp = ad_envrn;
+        lp = (char *)ad_envrn;
                                                 /* get to end of envrn  */
-        while ( (tmp = LBGET(lp)) != 0  ||      /* ends with 2 nulls    */
-                (LBGET(lp+1)) )
+        while ( *lp || *(lp+1) )                /* ends with 2 nulls    */
           lp++;
         lp++;                                   /* past 2nd null        */
-                                                /* old evironment length*/
-        oelen = (lp - ad_envrn) + 2;
+                                                /* old environment length*/
+        oelen = (lp - (char *)ad_envrn) + 2;
                                                 /* new path length      */
 #ifdef USE_GEM_RSC
-        rs_gaddr(ad_sysglo, R_STRING, STINPATH, &np);
+        rs_gaddr(ad_sysglo, R_STRING, STINPATH, (LONG *)&np);
 #else
         strcpy(tmpstr, rs_fstr[STINPATH]);
-        np = (LONG) tmpstr;
+        np = tmpstr;
 #endif
-        nplen = LSTRLEN(np);
+        nplen = strlen(np);
                                                 /* fix up drive letters */
         lp = np;
-        while ( (tmp = LBGET(lp)) != 0 )
+        while ( (tmp = *lp) != 0 )
         {
           if (tmp == ':')
-            LBSET(lp - 1, gl_logdrv);
+            *(lp-1) = gl_logdrv;
           lp++;
         }
                                                 /* alloc new environ    */
-        new_envr = ad_ssave;
-        ad_ssave += LW(oelen + nplen);
+        new_envr = (char *)ad_ssave;
+        ad_ssave += oelen + nplen;
                                                 /* get ptr to initial   */
                                                 /*   PATH=              */
-        sh_envrn(ADDR(&lp), ADDR(rs_str(STPATH)));
+        sh_envrn((LONG)&lp, (LONG)rs_str(STPATH));
 
         if(lp)
         {
                                                 /* first part length    */
-          oplen = LSTRLEN(lp);                  /* length of actual path */
+          oplen = strlen(lp);                   /* length of actual path */
 
-          fstlen = lp - ad_envrn + oplen;       /* len thru end of path */
-          LBCOPY(new_envr, ad_envrn, fstlen);
+          fstlen = lp - (char *)ad_envrn + oplen; /* len thru end of path */
+          memcpy(new_envr,(char *)ad_envrn,fstlen);
         }
         else
         {
@@ -377,18 +380,18 @@ static void sh_addpath(void)
 
         if (oplen)
         {
-          LBSET(new_envr + fstlen, ';');        /* to splice in new path */
+          *(new_envr+fstlen) = ';';     /* to splice in new path */
           fstlen += 1;
         }
 
-        LBCOPY(new_envr + fstlen, np, nplen);   /* splice on more path  */
+        memcpy(new_envr+fstlen,np,nplen);       /* splice on more path  */
                                                 /* copy rest of environ */
         if(lp)
         {
-          LBCOPY(new_envr + fstlen + nplen, lp + oplen, oelen - fstlen);
+          memcpy(new_envr+fstlen+nplen,lp+oplen,oelen-fstlen);
         }
 
-        ad_envrn = new_envr;                    /* remember new environ.*/
+        ad_envrn = (LONG)new_envr;              /* remember new environ.*/
 }
 
 
@@ -396,10 +399,10 @@ static void sh_addpath(void)
 
 void sh_deskf(WORD obj, LONG plong)
 {
-        register LONG   tree;
+        register OBJECT *tree;
 
-        tree = ad_stdesk;
-        LLSET(plong, LLGET(OB_SPEC(obj)));
+        tree = (OBJECT *)ad_stdesk;
+        *(LONG *)plong = tree[obj].ob_spec;
 }
 
 
@@ -414,7 +417,7 @@ static void sh_init(void)
 
         psh = &sh[0];
 
-        sh_deskf(2, ADDR(&ad_pfile));
+        sh_deskf(2, (LONG)&ad_pfile);
                                                 /* add in internal      */
                                                 /*   search paths with  */
                                                 /*   right drive letter */
@@ -429,7 +432,7 @@ static void sh_init(void)
                                                 /*   that was stored in */
                                                 /*   geminit            */
         psrc = s_tail = &D.g_dir[0];            /* reuse part of globals*/
-        LBCOPY(ADDR(&s_tail[0]), ad_stail, 128);
+        memcpy(s_tail,(char *)ad_stail,128);
         cnt = *psrc++;
 
         if (cnt)
@@ -545,7 +548,7 @@ static void sh_init(void)
             psh->sh_doexec = (toupper(*(psrc+1)) == 'D');
           }
         }
-        LBCOPY(ad_stail, ADDR(&s_tail[0]), 128);
+        LBCOPY(ad_stail, (LONG)(&s_tail[0]), 128);
 }
 
 
@@ -558,20 +561,19 @@ static void sh_init(void)
 void sh_rdinf(void)
 {
         WORD    fh, size, ishdisk;
-        LONG    pcurr;
+        char    *pcurr;
         WORD    bvdisk, bvhard, bvect, env;
         char    *pfile;
         BYTE    tmp;
-        WORD    i;
         char    tmpstr[MAX_LEN];
 
 #ifdef USE_GEM_RSC
-        rs_gaddr(ad_sysglo, R_STRING, STINFPAT, &pfile);
+        rs_gaddr(ad_sysglo, R_STRING, STINFPAT, (LONG *)&pfile);
 #else
         strcpy(tmpstr, rs_fstr[STINFPAT]);
         pfile = tmpstr;
 #endif
-        LBSET(pfile, D.s_cdir[0] );             /* set the drive        */
+        *pfile = D.s_cdir[0];                   /* set the drive        */
 
         fh = dos_open((BYTE *)pfile, ROPEN);
         if ( (!fh) || DOS_ERR)
@@ -583,20 +585,20 @@ void sh_rdinf(void)
         dos_close(fh);
         if (DOS_ERR)
           return;
-        pcurr = ad_ssave;
+        pcurr = (char *)ad_ssave;
         bvdisk = bvhard = 0x0;
-        LBSET(pcurr + (ULONG)size, NULL);       /* set end to NULL      */
-        while ( LBGET(pcurr) != NULL)
+        pcurr[size] = NULL;             /* set end to NULL      */
+        while (*pcurr)
         {
-          if ( LBGET(pcurr++) != '#' )
+          if ( *pcurr++ != '#' )
             continue;
-          tmp = LBGET(pcurr);
+          tmp = *pcurr;
           if (tmp == 'M')               /* #M 00 00 01 FF B FLOPPY DISK@ @ */
           {
             pcurr += 8;                 /* convert the icon number      */
-            scan_2((BYTE *)pcurr, &ishdisk);
+            scan_2(pcurr, &ishdisk);
             pcurr += 6;                 /* get the disk letter          */
-            bvect = ((UWORD) 0x8000) >> ((UWORD) ( LBGET(pcurr) - 'A'));
+            bvect = ((UWORD) 0x8000) >> ( *pcurr - 'A');
             bvdisk |= bvect;
             if (ishdisk == IG_HARD)
               bvhard |= bvect;
@@ -604,10 +606,10 @@ void sh_rdinf(void)
           else if (tmp == 'E')          /* #E 3A 11                     */
           {                             /* desktop environment          */
             pcurr += 2;
-            scan_2((BYTE *)pcurr, &env);
+            scan_2(pcurr, &env);
             ev_dclick(env & 0x07, TRUE);
             pcurr += 3;
-            scan_2((BYTE *)pcurr, &env);
+            scan_2(pcurr, &env);
             gl_mnclick = ((env & 0x08) != 0);
             sound(FALSE, !(env & 0x01), 0);
           }
@@ -615,10 +617,10 @@ void sh_rdinf(void)
           {
             BYTE *tmpptr1, *tmpptr2;
             pcurr += 5;
-            tmpptr1 = (BYTE *)pcurr;
-            while (LBGET(pcurr) != 0 && LBGET(pcurr) != '@')
+            tmpptr1 = pcurr;
+            while (*pcurr && (*pcurr != '@'))
               ++pcurr;
-            *(BYTE *)pcurr = 0;
+            *pcurr = 0;
             tmpptr2 = sh_name(tmpptr1);
             *(tmpptr2-1) = 0;
 #if DBG_GEMINIT
@@ -632,12 +634,8 @@ void sh_rdinf(void)
         gl_bvdisk = bvdisk;
         gl_bvhard = bvhard;
                                         /* clean up tmp buffer          */
-        pcurr = ad_ssave;
-        for(i = 0; i < (INF_SIZE / 2); i++)
-        {
-          LWSET(pcurr, 0x0);
-          pcurr += 2;
-        }
+        pcurr = (char *)ad_ssave;
+        memset((char *)ad_ssave,0x00,INF_SIZE);
 }
 
 
@@ -664,7 +662,7 @@ void all_run(void)
 void gem_main(void)
 {
     WORD    i;
-    LONG    tmpadbi;
+    const BITBLK *tmpadbi;
 
     totpds = NUM_PDS;
     ml_ocnt = 0;
@@ -716,7 +714,7 @@ void gem_main(void)
             rlr->p_uda = &D.g_extuda[i-2];
             rlr->p_cda = &D.g_extcda[i-2];
         }
-        rlr->p_qaddr = ADDR(&rlr->p_queue[0]);
+        rlr->p_qaddr = (LONG)(&rlr->p_queue[0]);
         rlr->p_qindex = 0;
         memset(rlr->p_name, ' ', 8);
         rlr->p_appdir[0] = '\0'; /* by default, no application directory */
@@ -746,7 +744,7 @@ void gem_main(void)
 #ifndef USE_GEM_RSC
     gem_rsc_init();
 #else
-    if ( !rs_readit(ad_sysglo, ADDR("GEM.RSC")) )
+    if ( !rs_readit(ad_sysglo, (LONG)"GEM.RSC") )
     {
         /* bad resource load, so dive out */
         cprintf("gem_main: failed to load GEM.RSC...\n");
@@ -781,11 +779,11 @@ void gem_main(void)
         /* fix up icons         */
         for(i=0; i<3; i++) {
 #ifdef USE_GEM_RSC
-            rs_gaddr(ad_sysglo, R_BITBLK, i, &tmpadbi);
+            rs_gaddr(ad_sysglo, R_BITBLK, i, (LONG *)&tmpadbi);
 #else
-            tmpadbi = (LONG) &rs_fimg[i];
+            tmpadbi = &rs_fimg[i];
 #endif
-            LBCOPY(&bi, tmpadbi, sizeof(BITBLK));
+            memcpy((char *)&bi, tmpadbi, sizeof(BITBLK));
             gsx_trans(bi.bi_pdata, bi.bi_wb, bi.bi_pdata, bi.bi_wb, bi.bi_hl);
         }
 

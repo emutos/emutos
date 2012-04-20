@@ -3496,3 +3496,4 @@ Start... early ages
 
 2012-04-20
 - aes/geminit.c: Code cleanup: fix comments, remove unused #define. (RFB)
+- aes/geminit.c: Code cleanup: eliminate compatibility macros. (RFB)
