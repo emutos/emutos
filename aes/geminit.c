@@ -69,16 +69,13 @@
 #define ARROW 0
 #define HGLASS 2
 
-#define PATH_LEN 0x40                   /* path length defined by PC_DOS*/
-
 #define IG_HARD 0
-#define SIZE_AFILE 2048
-#define INF_SIZE 300                    /* Number of bytes to read of   */
-                                        /*  the desktop.inf file.       */
 
-                                                /* in GEMINIT.C         */
-static BYTE     start[SIZE_AFILE];              /* can't play the same  */
-                                                /* trick in 68k land    */
+#define SIZE_AFILE 2048                 /* size of AES shell buffer */
+#define INF_SIZE   300                  /* size of buffer used by sh_rdinf() */
+                                        /*  for start of EMUDESK.INF file    */
+
+static BYTE     start[SIZE_AFILE];      /* AES shell buffer */
 
 /* Some global variables: */
 
@@ -166,14 +163,6 @@ BYTE *scan_2(BYTE *pcurr, WORD *pwd)
  */
 static void ini_dlongs(void)
 {
-                                                /* use all of this      */
-                                                /*   initialization     */
-                                                /*   code area for the  */
-                                                /*   save area, must be */
-                                                /*   on para. boundary  */
-                                                /*   so new environment */
-                                                /*   can be copied here */
-
                                                 /* init. long pointer   */
                                                 /*   to global array    */
                                                 /*   which is used by   */

@@ -3493,3 +3493,6 @@ Start... early ages
 
 2012-04-19
 - desk/deskapp.c: Fix compilation errors caused by previous update. (RFB)
+
+2012-04-20
+- aes/geminit.c: Code cleanup: fix comments, remove unused #define. (RFB)
