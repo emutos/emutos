@@ -17,6 +17,7 @@
 #include "obdefs.h"
 #include "taddr.h"
 #include "dos.h"
+#include "tosvars.h"
 #include "gemlib.h"
 #include "gem_rsc.h"
 
@@ -53,7 +54,7 @@ static LONG     ad_fsnames;
 static BYTE     gl_tmp1[LEN_FSNAME];
 static BYTE     gl_tmp2[LEN_FSNAME];
 
-static WORD     gl_shdrive;
+static WORD     gl_shdrive;     /* TRUE => show disks rather than files */
 static WORD     gl_fspos;
 
 
@@ -153,6 +154,7 @@ static WORD fs_add(WORD thefile, WORD fs_index)
 
 static WORD fs_active(LONG ppath, BYTE *pspec, WORD *pcount)
 {
+        ULONG           mask;
         WORD            ret, thefile;
         WORD            fs_index;
         register WORD   i, j, gap;
@@ -166,11 +168,11 @@ static WORD fs_active(LONG ppath, BYTE *pspec, WORD *pcount)
         if (gl_shdrive)
         {
           strcpy(&gl_dta[29], "\007 A:");
-          for(i=0; i<16; i++)
+          for (i = 0, mask = 1; i < 16; i++, mask <<= 1)
           {
-            if ( (gl_bvdisk >> i) & 0x0001 )
+            if (drvbits & mask)
             {
-              gl_dta[31] = 'A' + (15 - i);
+              gl_dta[31] = 'A' + i;
               fs_index = fs_add(thefile, fs_index);
               thefile++;
             }
