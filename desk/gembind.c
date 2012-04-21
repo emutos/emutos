@@ -278,15 +278,6 @@ WORD appl_trecord(LONG tbuffer, WORD tlength)
 }
 */
 
-/*
-WORD appl_bvset(UWORD bvdisk, UWORD bvhard)
-{
-        AP_BVDISK = bvdisk;
-        AP_BVHARD = bvhard;
-        return( gem_if(APPL_BVSET) );
-}
-*/
-
                                         /* Event Manager                */
 /* not used in desktop
 UWORD evnt_keybd(void)

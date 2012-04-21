@@ -128,10 +128,6 @@ static UWORD crysbind(WORD opcode, LONG pglobal, WORD int_in[], WORD int_out[], 
           case APPL_TRECORD:
                 ret = ap_trecd(AP_TBUFFER, AP_TLENGTH);
                 break;
-          case APPL_BVSET:
-                gl_bvdisk = AP_BVDISK;
-                gl_bvhard = AP_BVHARD;
-                break;
           case APPL_YIELD:
                 dsptch();
                 break;

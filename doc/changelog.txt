@@ -3497,3 +3497,7 @@ Start... early ages
 2012-04-20
 - aes/geminit.c: Code cleanup: fix comments, remove unused #define. (RFB)
 - aes/geminit.c: Code cleanup: eliminate compatibility macros. (RFB)
+
+2012-04-21
+- aes/crysbind.h aes/gemsuper.c desk/gembind.c desk/gembind.h: Remove
+  appl_bvset() [never used & not Atari TOS]. (RFB)

@@ -21,7 +21,6 @@
 #define APPL_FIND 13
 #define APPL_TPLAY 14
 #define APPL_TRECORD 15
-#define APPL_BVSET 16
 #define APPL_YIELD 17
 #define APPL_EXIT 19
                                 /* Event Manager                        */
