@@ -43,18 +43,18 @@
 #define LEN_FTITLE 18                           /* BEWARE, requires change*/
                                                 /*  in GEM.RSC          */
 
-
-GLOBAL const BYTE gl_fsobj[4] = {FTITLE, FILEBOX, SCRLBAR, 0x0};
 GLOBAL LONG     ad_fstree;
-GLOBAL LONG     ad_fsnames;
 GLOBAL LONG     ad_fsdta;
 GLOBAL GRECT    gl_rfs;
 
-GLOBAL BYTE     gl_tmp1[LEN_FSNAME];
-GLOBAL BYTE     gl_tmp2[LEN_FSNAME];
+static const BYTE gl_fsobj[4] = {FTITLE, FILEBOX, SCRLBAR, 0x0};
 
-GLOBAL WORD     gl_shdrive;
-GLOBAL WORD     gl_fspos;
+static LONG     ad_fsnames;
+static BYTE     gl_tmp1[LEN_FSNAME];
+static BYTE     gl_tmp2[LEN_FSNAME];
+
+static WORD     gl_shdrive;
+static WORD     gl_fspos;
 
 
 

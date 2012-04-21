@@ -3501,3 +3501,4 @@ Start... early ages
 2012-04-21
 - aes/crysbind.h aes/gemsuper.c desk/gembind.c desk/gembind.h: Remove
   appl_bvset() [never used & not Atari TOS]. (RFB)
+- aes/gemfslib.c aes/gemfslib.h: Code cleanup: made some globals local. (RFB)
