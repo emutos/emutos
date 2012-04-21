@@ -612,7 +612,7 @@ dofelev:        fm_own(TRUE);
                   }
                   else
                   {
-                    if (gl_bvdisk)
+                    if (drvbits)
                       gl_shdrive = TRUE;
                   }
                 }

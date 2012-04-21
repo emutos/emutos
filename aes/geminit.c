@@ -631,8 +631,6 @@ void sh_rdinf(void)
             ++pcurr;
           }
         }
-        gl_bvdisk = bvdisk;
-        gl_bvhard = bvhard;
                                         /* clean up tmp buffer          */
         pcurr = (char *)ad_ssave;
         memset((char *)ad_ssave,0x00,INF_SIZE);

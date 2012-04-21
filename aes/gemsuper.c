@@ -58,8 +58,6 @@
 #define ADDR_OUT LLGET(pcrys_blk+20)
 
 
-GLOBAL WORD     gl_bvdisk;
-GLOBAL WORD     gl_bvhard;
 GLOBAL WORD     gl_mnclick;
 
 static WORD     dspcnt;
@@ -106,8 +104,6 @@ static UWORD crysbind(WORD opcode, LONG pglobal, WORD int_in[], WORD int_out[], 
                 sh_deskf(0, pglobal+6);
                 LWSET(pglobal+20, gl_nplanes);
                 LLSET(pglobal+22, ADDR(&D));
-                LWSET(pglobal+26, gl_bvdisk);
-                LWSET(pglobal+28, gl_bvhard);
                                                 /* reset dispatcher     */
                                                 /*  count to let the app*/
                                                 /*  run a while.        */
