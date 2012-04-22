@@ -554,16 +554,13 @@ static void sh_init(void)
 
 
 /*
-*       Routine to read the desktop.inf file from the \gemdesk
-*       directory and set the bvdisk and bvhard variables
-*       so that apps and accessories can always use this data.
+*       Routine to read in part of the emudesk.inf file; called
+*       before desktop initialisation
 */
 void sh_rdinf(void)
 {
-        WORD    fh, size, ishdisk;
-        char    *pcurr;
-        WORD    bvdisk, bvhard, bvect, env;
-        char    *pfile;
+        WORD    fh, size, env;
+        char    *pcurr, *pfile;
         BYTE    tmp;
         char    tmpstr[MAX_LEN];
 
@@ -586,24 +583,13 @@ void sh_rdinf(void)
         if (DOS_ERR)
           return;
         pcurr = (char *)ad_ssave;
-        bvdisk = bvhard = 0x0;
         pcurr[size] = NULL;             /* set end to NULL      */
         while (*pcurr)
         {
           if ( *pcurr++ != '#' )
             continue;
           tmp = *pcurr;
-          if (tmp == 'M')               /* #M 00 00 01 FF B FLOPPY DISK@ @ */
-          {
-            pcurr += 8;                 /* convert the icon number      */
-            scan_2(pcurr, &ishdisk);
-            pcurr += 6;                 /* get the disk letter          */
-            bvect = ((UWORD) 0x8000) >> ( *pcurr - 'A');
-            bvdisk |= bvect;
-            if (ishdisk == IG_HARD)
-              bvhard |= bvect;
-          }
-          else if (tmp == 'E')          /* #E 3A 11                     */
+          if (tmp == 'E')               /* #E 3A 11                     */
           {                             /* desktop environment          */
             pcurr += 2;
             scan_2(pcurr, &env);

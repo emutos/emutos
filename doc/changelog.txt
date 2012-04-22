@@ -3509,3 +3509,4 @@ Start... early ages
   resource was recreated). (RFB)
 - aes/geminit.c aes/deskapp.c: Move initialisation of gl_mnclick to
   app_start(), where it belongs. (RFB)
+- aes/geminit.c: Code cleanup: remove no-longer-used code. (RFB)
