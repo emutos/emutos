@@ -30,7 +30,7 @@
 #include "gembind.h"
 #include "deskbind.h"
 #include "screen.h"
-
+#include "gemsuper.h"
 #include "gemdos.h"
 #include "rectfunc.h"
 #include "optimize.h"
@@ -636,7 +636,7 @@ void app_start(void)
 
                         pcurr = scan_2(pcurr, &envr);
                         G.g_cnxsave.covwr_save = ( (envr & 0x10) == 0);
-                        G.g_cnxsave.cmclk_save = ( (envr & 0x08) != 0);
+                        G.g_cnxsave.cmclk_save = gl_mnclick = ( (envr & 0x08) != 0);
                         G.g_cnxsave.cdtfm_save = ( (envr & 0x04) == 0);
                         G.g_cnxsave.ctmfm_save = ( (envr & 0x02) == 0);
                         sound(FALSE, !(envr & 0x01), 0);

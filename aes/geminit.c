@@ -608,10 +608,6 @@ void sh_rdinf(void)
             pcurr += 2;
             scan_2(pcurr, &env);
             ev_dclick(env & 0x07, TRUE);
-            pcurr += 3;
-            scan_2(pcurr, &env);
-            gl_mnclick = ((env & 0x08) != 0);
-            sound(FALSE, !(env & 0x01), 0);
           }
           else if (tmp == 'Z')      /* something like "#Z 01 C:\THING.APP@" */
           {

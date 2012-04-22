@@ -3507,3 +3507,5 @@ Start... early ages
   gl_bvdisk & gl_bvhard globals. (RFB)
 - desk/desktop.rsc: Re-enabled Easter Egg (accidentally disabled when
   resource was recreated). (RFB)
+- aes/geminit.c aes/deskapp.c: Move initialisation of gl_mnclick to
+  app_start(), where it belongs. (RFB)
