@@ -33,6 +33,5 @@ extern THEGLO   D;
 
 void all_run(void);
 void sh_deskf(WORD obj, LONG plong);
-void sh_rdinf(void);
 
 #endif

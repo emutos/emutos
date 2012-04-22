@@ -69,8 +69,6 @@
 #define ARROW 0
 #define HGLASS 2
 
-#define IG_HARD 0
-
 #define SIZE_AFILE 2048                 /* size of AES shell buffer (but see */
                                         /*  comments below)                  */
 #define INF_SIZE   300                  /* size of buffer used by sh_rdinf() */
@@ -557,7 +555,7 @@ static void sh_init(void)
 *       Routine to read in part of the emudesk.inf file; called
 *       before desktop initialisation
 */
-void sh_rdinf(void)
+static void sh_rdinf(void)
 {
         WORD    fh, size, env;
         char    *pcurr, *pfile;
