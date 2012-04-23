@@ -3511,3 +3511,7 @@ Start... early ages
   app_start(), where it belongs. (RFB)
 - aes/geminit.c: Code cleanup: remove no-longer-used code. (RFB)
 - aes/geminit.c aes/geminit.h: Code cleanup: make sh_rdinf() local. (RFB)
+
+2012-04-23
+- aes/geminit.c: Fix bug: sh_addpath() did not create PATH environment
+  variable correctly if it was missing. (RFB)

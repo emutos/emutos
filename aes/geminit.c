@@ -329,6 +329,7 @@ static void ldaccs(void)
 static void sh_addpath(void)
 {
         char    *lp, *np, *new_envr;
+        const char *pp;
         WORD    oelen, oplen, nplen, fstlen;
         BYTE    tmp;
         char    tmpstr[MAX_LEN];
@@ -342,8 +343,10 @@ static void sh_addpath(void)
         oelen = (lp - (char *)ad_envrn) + 2;
                                                 /* new path length      */
 #ifdef USE_GEM_RSC
+        rs_gaddr(ad_sysglo, R_STRING, STPATH, (LONG *)&pp);
         rs_gaddr(ad_sysglo, R_STRING, STINPATH, (LONG *)&np);
 #else
+        pp = rs_fstr[STPATH];
         strcpy(tmpstr, rs_fstr[STINPATH]);
         np = tmpstr;
 #endif
@@ -361,7 +364,7 @@ static void sh_addpath(void)
         ad_ssave += oelen + nplen;
                                                 /* get ptr to initial   */
                                                 /*   PATH=              */
-        sh_envrn((LONG)&lp, (LONG)rs_str(STPATH));
+        sh_envrn((LONG)&lp, (LONG)pp);
 
         if(lp)
         {
@@ -373,7 +376,9 @@ static void sh_addpath(void)
         }
         else
         {
-          oplen = fstlen = 0;
+          oplen = 0;
+          fstlen = strlencpy(new_envr,pp) + 1;
+          ad_ssave += fstlen;
         }
 
         if (oplen)
