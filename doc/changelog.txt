@@ -3517,3 +3517,5 @@ Start... early ages
   variable correctly if it was missing. (RFB)
 - aes/gemstart.S: Fix bug: restore original environment ptr on AES
   restart. (RFB)
+- aes/geminit.c: Give sh_rdinf() its own buffer to avoid overwriting the
+  AES shell buffer during restart. (RFB)

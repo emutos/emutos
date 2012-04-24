@@ -78,6 +78,7 @@ static BYTE     start[SIZE_AFILE];      /* AES shell buffer: note that the first
                                         /*  few bytes are currently used to hold */
                                         /*  the environment string, built by     */
                                         /*  sh_addpath().                        */
+static BYTE     infbuf[INF_SIZE+1];     /* used to read part of EMUDESK.INF */
 
 /* Some global variables: */
 
@@ -558,7 +559,11 @@ static void sh_init(void)
 
 /*
 *       Routine to read in part of the emudesk.inf file; called
-*       before desktop initialisation
+*       before desktop initialisation to process the #E and #Z lines.
+*       This is required for two purposes:
+*        1. Determine the auto-run program to be started (from #Z).
+*        2. Set the double-click speed (from #E).  This is done here
+*           in case we have an auto-run program.
 */
 static void sh_rdinf(void)
 {
@@ -578,14 +583,14 @@ static void sh_rdinf(void)
         fh = dos_open((BYTE *)pfile, ROPEN);
         if ( (!fh) || DOS_ERR)
           return;
-                                                /* NOTE BENE all disk info */
-                                                /*  MUST be within INF_SIZE*/
-                                                /*  bytes from beg of file */
-        size = dos_read(fh, INF_SIZE, ad_ssave);
+                                                /* NOTA BENE all required info */
+                                                /*  MUST be within INF_SIZE    */
+                                                /*  bytes from beg of file     */
+        size = dos_read(fh, INF_SIZE, (LONG)infbuf);
         dos_close(fh);
         if (DOS_ERR)
           return;
-        pcurr = (char *)ad_ssave;
+        pcurr = infbuf;
         pcurr[size] = NULL;             /* set end to NULL      */
         while (*pcurr)
         {
@@ -616,9 +621,6 @@ static void sh_rdinf(void)
             ++pcurr;
           }
         }
-                                        /* clean up tmp buffer          */
-        pcurr = (char *)ad_ssave;
-        memset((char *)ad_ssave,0x00,INF_SIZE);
 }
 
 
