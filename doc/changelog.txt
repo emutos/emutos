@@ -3519,3 +3519,7 @@ Start... early ages
   restart. (RFB)
 - aes/geminit.c: Give sh_rdinf() its own buffer to avoid overwriting the
   AES shell buffer during restart. (RFB)
+
+2012-04-24
+- aes/geminit.c: Create separate buffer for desktop environment (avoid
+  sharing AES shell buffer). (RFB)

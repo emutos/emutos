@@ -69,16 +69,15 @@
 #define ARROW 0
 #define HGLASS 2
 
-#define SIZE_AFILE 2048                 /* size of AES shell buffer (but see */
-                                        /*  comments below)                  */
+#define SIZE_AFILE 2048                 /* size of AES shell buffer: must   */
+                                        /*  agree with #define in deskapp.h */
 #define INF_SIZE   300                  /* size of buffer used by sh_rdinf() */
                                         /*  for start of EMUDESK.INF file    */
+#define ENV_SIZE   200                  /* size of initial desktop environment */
 
-static BYTE     start[SIZE_AFILE];      /* AES shell buffer: note that the first */
-                                        /*  few bytes are currently used to hold */
-                                        /*  the environment string, built by     */
-                                        /*  sh_addpath().                        */
+static BYTE     start[SIZE_AFILE];      /* AES shell buffer */
 static BYTE     infbuf[INF_SIZE+1];     /* used to read part of EMUDESK.INF */
+static BYTE     envbuf[ENV_SIZE];       /* for initial desktop environment */
 
 /* Some global variables: */
 
@@ -331,7 +330,7 @@ static void sh_addpath(void)
 {
         char    *lp, *np, *new_envr;
         const char *pp;
-        WORD    oelen, oplen, nplen, fstlen;
+        WORD    oelen, oplen, nplen, pplen, fstlen;
         BYTE    tmp;
         char    tmpstr[MAX_LEN];
 
@@ -342,7 +341,7 @@ static void sh_addpath(void)
         lp++;                                   /* past 2nd null        */
                                                 /* old environment length*/
         oelen = (lp - (char *)ad_envrn) + 2;
-                                                /* new path length      */
+                                                /* PATH= length & new path length */
 #ifdef USE_GEM_RSC
         rs_gaddr(ad_sysglo, R_STRING, STPATH, (LONG *)&pp);
         rs_gaddr(ad_sysglo, R_STRING, STINPATH, (LONG *)&np);
@@ -351,7 +350,15 @@ static void sh_addpath(void)
         strcpy(tmpstr, rs_fstr[STINPATH]);
         np = tmpstr;
 #endif
+        pplen = strlen(pp);
         nplen = strlen(np);
+
+        if (oelen+nplen+pplen+1 > ENV_SIZE) {
+#if DBG_GEMINIT
+            kprintf("sh_addpath(): cannot add path, environment buffer too small\n");
+#endif
+            return;
+        }
                                                 /* fix up drive letters */
         lp = np;
         while ( (tmp = *lp) != 0 )
@@ -361,8 +368,7 @@ static void sh_addpath(void)
           lp++;
         }
                                                 /* alloc new environ    */
-        new_envr = (char *)ad_ssave;
-        ad_ssave += oelen + nplen;
+        new_envr = envbuf;
                                                 /* get ptr to initial   */
                                                 /*   PATH=              */
         sh_envrn((LONG)&lp, (LONG)pp);
@@ -378,8 +384,8 @@ static void sh_addpath(void)
         else
         {
           oplen = 0;
-          fstlen = strlencpy(new_envr,pp) + 1;
-          ad_ssave += fstlen;
+          strcpy(new_envr,pp);
+          fstlen = pplen + 1;
         }
 
         if (oplen)
