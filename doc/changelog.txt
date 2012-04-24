@@ -3515,3 +3515,5 @@ Start... early ages
 2012-04-23
 - aes/geminit.c: Fix bug: sh_addpath() did not create PATH environment
   variable correctly if it was missing. (RFB)
+- aes/gemstart.S: Fix bug: restore original environment ptr on AES
+  restart. (RFB)

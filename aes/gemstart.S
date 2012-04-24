@@ -64,13 +64,21 @@ _ui_start:
 
         // ad_envrn = the pointer to the environ string
 #ifdef __mcoldfire__
-        lea     _ad_envrn,a0
+        lea     save_ad_envrn,a0
         move.l  0x2C(a5),(a0)
 #else
-        move.l  0x2C(a5),_ad_envrn
+        move.l  0x2C(a5),save_ad_envrn
 #endif
 
 aes_restart:
+        // restore original environment pointer
+#ifdef __mcoldfire__
+        move.l  save_ad_envrn,d0
+        move.l  d0,_ad_envrn
+#else
+        move.l  save_ad_envrn,_ad_envrn
+#endif
+
         // clear the 'global memory' zone whose size is determined by
         // routine size_theglo :-)
         jsr     _size_theglo
@@ -286,5 +294,8 @@ gemusp:
 saveregs:
         .ds.l   2
 
+// pointer to original environment, restored on AES restart
+save_ad_envrn:
+        .ds.l   1
 ui_bss_end:
 
