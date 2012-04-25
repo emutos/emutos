@@ -65,7 +65,7 @@ BYTE ob_sst(LONG tree, WORD obj, LONG *pspec, WORD *pstate, WORD *ptype,
           case G_BOX:
           case G_BOXCHAR:
           case G_IBOX:
-                th = LBYTE2(((BYTE *)pspec));
+                th = *(((BYTE *)pspec)+1);
                 break;
           case G_BUTTON:
                 th--;
@@ -78,7 +78,7 @@ BYTE ob_sst(LONG tree, WORD obj, LONG *pspec, WORD *pstate, WORD *ptype,
         if (th > 128)
           th -= 256;
         *pth = th;
-        return(LBYTE3(((BYTE *)pspec)));
+        return *(BYTE *)pspec;
 }
 
 

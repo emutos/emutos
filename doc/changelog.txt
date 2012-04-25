@@ -3535,3 +3535,5 @@ Start... early ages
 - desk/deskapp.c desk/deskapp.h desk/deskins.c include/compat.h: Code
   cleanup: removed ALCYON #define and made code dependent on it always
   compile. (RFB)
+- aes/gemobjop.c: Code cleanup: eliminated LBYTE2 & LBYTE3 compatibility
+  macros. (RFB)
