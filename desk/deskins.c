@@ -279,10 +279,8 @@ static void insa_elev(LONG tree, WORD nicon, WORD numics)
 /* The following disabled lines were used when the icons have been loaded
    from an external file: */
 /*
-#if ALCYON
         lp = G.a_datastart + (LONG) *((BYTE **)(G.a_datastart + gl_pstart +
              (nicon * sizeof(BYTE *)) ) );
-#endif
 */
 
 #if CONF_WITH_DESKTOP_ICONS

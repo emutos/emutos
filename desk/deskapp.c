@@ -829,17 +829,11 @@ BYTE app_blddesk(void)
         ANODE           *pa;
         OBJECT          *pob;
         ICONBLK         *pic;
-#if ALCYON
         LONG            *ptr;
-#endif                                          /* free all this windows*/
                                                 /*   kids and set size  */
         obj_wfree(DROOT, 0, 0, gl_width, gl_height);
-#if ALCYON
         ptr = (LONG *)&global[3];
         G.g_screen[DROOT].ob_spec = LLGET(ptr);
-#else
-        G.g_screen[DROOT].ob_spec = LW(global[3]) + HW(global[4]);
-#endif
         bvdisk = bvhard = 0x0;
 
         for(pa = G.g_ahead; pa; pa = pa->a_next)

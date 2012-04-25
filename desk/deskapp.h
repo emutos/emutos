@@ -139,16 +139,6 @@ CSAVE
 };
 
 
-
-/* Global variables from deskapp.c: */
-/*
-#if ALCYON
-extern BYTE     *gl_pstart;
-#endif
-
-*/
-
-
 extern WORD     gl_numics;
 extern WORD     gl_stdrv;
 

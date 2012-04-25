@@ -3532,3 +3532,6 @@ Start... early ages
   mode. (RFB)
 - aes/gemgsxif.c aes/gemshlib.c include/compat.h: Code cleanup: removed
   GEMDOS #define and made code dependent on it always compile. (RFB)
+- desk/deskapp.c desk/deskapp.h desk/deskins.c include/compat.h: Code
+  cleanup: removed ALCYON #define and made code dependent on it always
+  compile. (RFB)
