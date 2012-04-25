@@ -3530,3 +3530,5 @@ Start... early ages
   saved in / restored from EMUDESK.INF. (RFB)
 - desk/deskapp.c: Fix crash on ST/TT due to accessing I/O memory in user
   mode. (RFB)
+- aes/gemgsxif.c aes/gemshlib.c include/compat.h: Code cleanup: removed
+  GEMDOS #define and made code dependent on it always compile. (RFB)

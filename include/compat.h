@@ -31,8 +31,6 @@
 #include <string.h>
 
 
-#define GEMDOS  1       /* GEM DOS              */
-
 #define ALCYON  1       /* Alcyon C Compiler */
 
 #define DEBUG 0

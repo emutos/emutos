@@ -58,21 +58,14 @@
 
 GLOBAL SHELL    sh[NUM_PDS];
 
-#if GEMDOS
 static BYTE sh_apdir[LEN_ZPATH];                /* holds directory of   */
                                                 /*   applications to be */
                                                 /*   run from desktop.  */
                                                 /*   GEMDOS resets dir  */
                                                 /*   to parent's on ret */
                                                 /*   from exec.         */
-#endif
 GLOBAL LONG     ad_scmd;
 GLOBAL LONG     ad_stail;
-#if GEMDOS
-#else
-GLOBAL LONG     ad_s1fcb;
-GLOBAL LONG     ad_s2fcb;
-#endif
 GLOBAL LONG     ad_ssave;
 GLOBAL LONG     ad_dta;
 GLOBAL LONG     ad_path;
@@ -238,12 +231,6 @@ void sh_fixtail(WORD iscpm)
               sh_parse(ptmp, &s_fcbs[16]);
             s_tail[ 1 + s_tail[0] ] = 0x0d;
           }
-#if GEMDOS
-#else
-                                                /* copy into true fcbs  */
-          LBCOPY(ad_s1fcb, ADDR(&s_fcbs[0]), 16); 
-          LBCOPY(ad_s2fcb, ADDR(&s_fcbs[16]), 16); 
-#endif
         }
                                                 /* copy into true tail  */
         LBCOPY(ad_stail, ADDR(s_tail), 128);
@@ -284,10 +271,8 @@ WORD sh_write(WORD doex, WORD isgem, WORD isover, LONG pcmd, LONG ptail)
           psh->sh_doexec = doex;
           psh->sh_dodef = FALSE;
           psh->sh_fullstep = isover - 1;
-#if GEMDOS                                      
           sh_curdir(ADDR(&sh_apdir[0]));        /* save apps. current   */
                                                 /* directory            */
-#endif
         }
         else
         {
@@ -295,12 +280,8 @@ WORD sh_write(WORD doex, WORD isgem, WORD isover, LONG pcmd, LONG ptail)
                                                 /* run it above us      */
           if ( sh_find(ad_scmd) )
           {
-#if GEMDOS
             /* Normal Atari-GEM's shel_write does not support running PRGs directly! */
             /*dos_exec(0, ad_scmd, ad_stail, ad_envrn);*/
-#else
-            dos_exec(ad_scmd, LHIWD(ad_envrn), ad_stail, ad_s1fcb, ad_s2fcb);
-#endif
           }
           else
             return(FALSE);
@@ -682,14 +663,12 @@ void sh_chdef(SHELL *psh)
           dos_chdir((BYTE *)ADDR(&psh->sh_cdir[0]));
           strcpy(&D.s_cmd[0], &psh->sh_desk[0]);
         }
-#if GEMDOS
         else
         {                       
           if(sh_apdir[1] == ':')
             dos_sdrv(sh_apdir[0] - 'A');        /* desktop's def. dir   */
           dos_chdir(sh_apdir);
         }
-#endif
 }
 
 
@@ -702,9 +681,7 @@ void sh_ldapp()
 
 
         psh = &sh[rlr->p_pid];
-#if GEMDOS
         strcpy(sh_apdir, (BYTE *)ad_scdir);     /* initialize sh_apdir  */
-#endif
         badtry = 0;     
 
         /* Set default DESKTOP if there isn't any yet: */
@@ -783,7 +760,6 @@ void sh_ldapp()
               p_setappdir(rlr, D.s_cmd);
               if (psh->sh_fullstep == 0)
               {
-#if GEMDOS
                 dos_exec(0, ad_scmd, ad_stail, ad_envrn);   /* Run the APP */
 
                 /* If the user ran an alternative desktop and quitted it,
@@ -794,19 +770,10 @@ void sh_ldapp()
                   strcpy(&psh->sh_desk[0], rs_str(STDESKTP));
                   strcpy(&psh->sh_cdir[0], &D.s_cdir[0]);
                 }
-#else
-                dos_exec(ad_scmd, LHIWD(ad_envrn), ad_stail, 
-                         ad_s1fcb, ad_s2fcb);
-#endif
               }
               else if (psh->sh_fullstep == 1)
               {
-#if GEMDOS
                 dos_exec(0, ad_scmd, ad_stail, ad_envrn);
-#else
-                gsx_exec(ad_scmd, LHIWD(ad_envrn), ad_stail, 
-                         ad_s1fcb, ad_s2fcb);
-#endif
                 DOS_ERR = psh->sh_doexec = FALSE;
               }
               if (DOS_ERR)

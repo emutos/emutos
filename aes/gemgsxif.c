@@ -293,31 +293,6 @@ void gsx_graphic(WORD tographic)
 
 
 
-#if !GEMDOS
-void gsx_exec(LONG pcspec, WORD segenv, LONG pcmdln, LONG pfcb1, LONG pfcb2)
-{
-    EXEC_BLK        exec;
-    LONG            lpstr;
-
-    exec.eb_segenv = segenv;
-    exec.eb_pcmdln = pcmdln;
-    exec.eb_pfcb1 = pfcb1;
-    exec.eb_pfcb2 = pfcb2;
-
-    intin[0] = LLOWD(pcspec);
-    intin[1] = LHIWD(pcspec);
-    intin[2] = LLOWD(ADDR(&exec));
-    intin[3] = LHIWD(ADDR(&exec));
-    lpstr = (LONG) ADDR(rs_str(STGDOS));
-    intin[4] = LLOWD( lpstr );
-    intin[5] = LHIWD( lpstr );
-    contrl[5] = 1;
-    gsx_ncode(-1, 0, 6);
-}
-#endif
-
-
-
 static void bb_set(WORD sx, WORD sy, WORD sw, WORD sh, WORD *pts1, WORD *pts2,
                    FDB *pfd, FDB *psrc, FDB *pdst)
 {
