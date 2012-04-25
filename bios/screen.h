@@ -20,6 +20,7 @@
 #if CONF_WITH_SHIFTER
 
 /* misc routines */
+WORD check_moderez(WORD moderez);
 UWORD get_videl_bpp(void);
 UWORD get_videl_width(void);
 UWORD get_videl_height(void);

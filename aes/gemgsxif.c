@@ -200,6 +200,13 @@ void gsx_wsclose(void)
 
 
 
+void gsx_wsclear(void)
+{
+    gsx_ncode(CLEAR_WORKSTATION, 0, 0);
+}
+
+
+
 void ratinit(void)
 {
     gsx_1code(SHOW_CUR, 0);

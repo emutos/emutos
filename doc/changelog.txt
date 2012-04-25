@@ -3523,3 +3523,8 @@ Start... early ages
 2012-04-24
 - aes/geminit.c: Create separate buffer for desktop environment (avoid
   sharing AES shell buffer). (RFB)
+
+2012-04-25
+- aes/gemgsxif.c aes/gemgsxif.h aes/geminit.c bios/screen.c bios/screen.h
+  desk/deskapp.c doc/reschange.txt: Allow desktop resolution/mode to be
+  saved in / restored from EMUDESK.INF. (RFB)

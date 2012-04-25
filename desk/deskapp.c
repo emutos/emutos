@@ -721,8 +721,10 @@ void app_save(WORD todisk)
         env2 |= (G.g_cnxsave.ctmfm_save) ? 0x00 : 0x02;
         env2 |= sound(FALSE, 0xFFFF, 0)  ? 0x00 : 0x01;
         mode = get_videl_mode();
-        pcurr += sprintf(pcurr,"#E %02X %02X %02X %02X %02X\r\n",
-                    env1,env2,getrez()&0x00ff,(mode>>8)&0x00ff,mode&0x00ff);
+        if (!mode)                      /* i.e. not videl */
+            mode = 0xff00 | getrez();
+        pcurr += sprintf(pcurr,"#E %02X %02X %02X %02X\r\n",
+                        env1,env2,(mode>>8)&0x00ff,mode&0x00ff);
 
                                                 /* save windows         */
         for(i=0; i<NUM_WNODES; i++)

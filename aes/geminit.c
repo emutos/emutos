@@ -564,30 +564,23 @@ static void sh_init(void)
 
 
 /*
-*       Routine to read in part of the emudesk.inf file; called
-*       before desktop initialisation to process the #E and #Z lines.
-*       This is required for two purposes:
-*        1. Determine the auto-run program to be started (from #Z).
-*        2. Set the double-click speed (from #E).  This is done here
-*           in case we have an auto-run program.
+*       Routine to read in the start of the emudesk.inf file,
+*       expected to contain the #E and #Z lines.
 */
 static void sh_rdinf(void)
 {
-        WORD    fh, size, env;
-        char    *pcurr, *pfile;
-        BYTE    tmp;
+        WORD    fh, size;
+        char    *pfile;
         char    tmpstr[MAX_LEN];
 
-#ifdef USE_GEM_RSC
-        rs_gaddr(ad_sysglo, R_STRING, STINFPAT, (LONG *)&pfile);
-#else
+        infbuf[0] = 0;
+
         strcpy(tmpstr, rs_fstr[STINFPAT]);
         pfile = tmpstr;
-#endif
-        *pfile = D.s_cdir[0];                   /* set the drive        */
+        *pfile = 'A' + dos_gdrv();              /* set the drive        */
 
-        fh = dos_open((BYTE *)pfile, ROPEN);
-        if ( (!fh) || DOS_ERR)
+        fh = dos_open(pfile, ROPEN);
+        if ( !fh || DOS_ERR)
           return;
                                                 /* NOTA BENE all required info */
                                                 /*  MUST be within INF_SIZE    */
@@ -596,8 +589,73 @@ static void sh_rdinf(void)
         dos_close(fh);
         if (DOS_ERR)
           return;
+        infbuf[size] = 0;
+}
+
+
+
+/*
+*       Part 1 of early emudesk.inf processing
+*
+*       This has one function: determine if we need to change resolutions
+*       (from #E).  If so, we set gl_changerez and gl_nextrez appropriately.
+*/
+static void process_inf1(void)
+{
+        WORD    env1, env2, mode;
+        char    *pcurr;
+
+        gl_changerez = 0;       /* assume no change */
+
+        for (pcurr = infbuf; *pcurr; )
+        {
+          if ( *pcurr++ != '#' )
+            continue;
+          if (*pcurr++ == 'E')          /* #E 3A 11 FF 02               */
+          {                             /* desktop environment          */
+            pcurr = scan_2(pcurr, &env1);
+            ev_dclick(env1 & 0x07, TRUE);
+            pcurr = scan_2(pcurr, &env2);
+            if (*pcurr == '\r')         /* no video info saved */
+              break;
+
+            pcurr = scan_2(pcurr, &env1);
+            pcurr = scan_2(pcurr, &env2);
+            mode = (env1 << 8) | (env2 & 0x00ff);
+            mode = check_moderez(mode);
+            if (mode == 0)              /* no change required */
+              break;
+            if (mode > 0)               /* need to set Falcon mode */
+            {
+              gl_changerez = 2;
+              gl_nextrez = mode;
+            }
+            else                        /* set ST/TT rez */
+            {
+              gl_changerez = 1;
+              gl_nextrez = (mode & 0x00ff) + 2;
+            }
+          }
+        }
+}
+
+
+
+/*
+*       Part 2 of early emudesk.inf processing
+*
+*       This has two functions:
+*        1. Determine the auto-run program to be started (from #Z).
+*        2. Set the double-click speed (from #E).  This is done here
+*           in case we have an auto-run program.
+*/
+static void process_inf2(void)
+{
+        WORD    env;
+        char    *pcurr;
+        BYTE    tmp;
+
         pcurr = infbuf;
-        pcurr[size] = NULL;             /* set end to NULL      */
         while (*pcurr)
         {
           if ( *pcurr++ != '#' )
@@ -654,6 +712,24 @@ void gem_main(void)
 {
     WORD    i;
     const BITBLK *tmpadbi;
+
+    sh_rdinf();                 /* get start of emudesk.inf */
+    if (!gl_changerez)          /* can't be here because of rez change,       */
+        process_inf1();         /*  so see if .inf says we need to change rez */
+
+    if (gl_changerez) {
+        switch(gl_changerez) {
+        case 1:                     /* ST(e) or TT display */
+            Setscreen(-1L,-1L,gl_nextrez-2,0);
+            initialise_palette_registers(gl_nextrez-2,0);
+            break;
+        case 2:                     /* Falcon display */
+            Setscreen(-1L, -1L, FALCON_REZ, gl_nextrez);
+            initialise_palette_registers(FALCON_REZ,gl_nextrez);
+            break;
+        }
+        gsx_wsclear();              /* avoid artefacts that may show briefly */
+    }
 
     totpds = NUM_PDS;
     ml_ocnt = 0;
@@ -791,7 +867,7 @@ void gem_main(void)
         gl_ticktime = gsx_tick(tikaddr, &tiksav);
         sti();
 
-        /* set init. click rate */
+        /* set init. click rate: must do this after setting gl_ticktime */
         ev_dclick(3, TRUE);
 
         /* fix up the GEM rsc. file now that we have an open WS */
@@ -815,9 +891,8 @@ void gem_main(void)
         /* remember current desktop directory */
         sh_curdir(ad_scdir);
 
-        /* read the desktop.inf */
-        /* 2/20/86 LKW          */
-        sh_rdinf();
+        /* process emudesk.inf part 2 */
+        process_inf2();
 
         /* off we go !!!        */
         dsptch();
@@ -849,6 +924,7 @@ void gem_main(void)
         /* close workstation    */
         gsx_wsclose();
 
+#if 0
         if (gl_changerez)
         {
             /* Change resolution before starting over again... */
@@ -863,6 +939,7 @@ void gem_main(void)
                 initialise_palette_registers(FALCON_REZ,gl_nextrez);
             }
         }
+#endif
     }
 
     /* return GEM's 0xEF int*/

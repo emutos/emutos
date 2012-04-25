@@ -20,14 +20,17 @@ causes deskmain() [deskmain.c] to return TRUE, and then deskstart()
 
 The desktop termination causes control to be returned to sh_ldapp()
 [gemshlib.c] and, because gl_changerez is non-zero, sh_ldapp() exits.
-This causes sh_main() [gemshlib.c] to return to gem_main() [geminit.c].
+This causes sh_main() [gemshlib.c] to return to gem_main() [geminit.c],
+which returns to its caller, gem_start() [gemstart.S].
 
-In gem_main(), the code checks for gl_changerez and, if non-zero:
+gem_start() checks for gl_changerez set and if so, branches back to the
+aes_restart label, which clears the global area, and calls gem_main().
+
+At the beginning of gem_main(), the code checks gl_changerez and, if
+non-zero:
   1. issues a Setscreen(), with resolution and videomode set according
      to the values of gl_changerez and gl_nextrez,
   2. reinitialises the palette(s) via a call to initialise_palette_registers()
-     [screen.c],
-  3. returns to its caller, gem_start() [gemstart.S].
-gem_start() checks for gl_changerez set and if so, branches back to the
-aes_restart label, which clears the global area, and calls gem_main(),
-restarting the desktop.
+     [screen.c].
+gem_main then continues with desktop initialisation.
+

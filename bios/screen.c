@@ -1206,6 +1206,59 @@ WORD get_videl_mode(void)
 }
 
 /*
+ * Check specified mode/rez to see if we should change; used in early
+ * emudesk.inf processing.  We only indicate a change if all of the
+ * following are true:
+ *  . the current monitor is not mono
+ *  . the specified & current values are the same type (both modes
+ *    or both rezs)
+ *  . the specified value differs from the current value
+ * If these are all true, we return the new mode/rez; otherwise we
+ * return zero.
+ *
+ * Mode/rez values are encoded as follows:
+ *      0xFFnn: ST/TT resolution nn
+ *      otherwise, Falcon mode value
+ */
+WORD check_moderez(WORD moderez)
+{
+WORD current_mode, return_mode, return_rez;
+int tt;
+
+    if (get_monitor_type() == MON_MONO)
+        return 0;
+
+    current_mode = get_videl_mode();
+    if (current_mode) {
+        if (moderez < 0)                    /* ignore rez values */
+            return 0;
+        return_mode = vfixmode(moderez);    /* adjust */
+        return (return_mode==current_mode)?0:return_mode;
+    }
+
+    /* handle old-fashioned rez :-) */
+    if (moderez > 0)                        /* ignore mode values */
+        return 0;
+
+    tt = 0;
+#if CONF_WITH_TT_SHIFTER
+    if (has_tt_shifter)
+        tt = 1;
+#endif
+
+    return_rez = moderez & 0x00ff;
+    if (tt) {
+        if (return_rez == TT_HIGH)
+            return_rez = TT_MEDIUM;
+    } else {
+        if (return_rez > ST_MEDIUM)
+            return_rez = ST_MEDIUM;
+    }
+
+    return (return_rez==getrez())?0:(0xff00|return_rez);
+}
+
+/*
  * Initialise palette registers
  * This routine is also used by resolution change
  */
