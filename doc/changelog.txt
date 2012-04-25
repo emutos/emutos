@@ -3528,3 +3528,5 @@ Start... early ages
 - aes/gemgsxif.c aes/gemgsxif.h aes/geminit.c bios/screen.c bios/screen.h
   desk/deskapp.c doc/reschange.txt: Allow desktop resolution/mode to be
   saved in / restored from EMUDESK.INF. (RFB)
+- desk/deskapp.c: Fix crash on ST/TT due to accessing I/O memory in user
+  mode. (RFB)

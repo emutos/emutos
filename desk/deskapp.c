@@ -43,6 +43,7 @@
 #include "deskmain.h"
 #include "icons.h"
 #include "desk1.h"
+#include "xbiosbind.h"
 
 
 #define MIN_WINT 4
@@ -722,7 +723,7 @@ void app_save(WORD todisk)
         env2 |= sound(FALSE, 0xFFFF, 0)  ? 0x00 : 0x01;
         mode = get_videl_mode();
         if (!mode)                      /* i.e. not videl */
-            mode = 0xff00 | getrez();
+            mode = 0xff00 | Getrez();
         pcurr += sprintf(pcurr,"#E %02X %02X %02X %02X\r\n",
                         env1,env2,(mode>>8)&0x00ff,mode&0x00ff);
 
