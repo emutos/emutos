@@ -3537,3 +3537,5 @@ Start... early ages
   compile. (RFB)
 - aes/gemobjop.c: Code cleanup: eliminated LBYTE2 & LBYTE3 compatibility
   macros. (RFB)
+- include/compat.h: Code cleanup: removed unused compatibility macros
+  and externs. (RFB)

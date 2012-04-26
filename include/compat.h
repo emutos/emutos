@@ -54,7 +54,6 @@
 
 extern WORD LBWMOV(WORD *pdst, BYTE *psrc);
 
-extern WORD  LSTCPY(LONG pdst, LONG psrc);
                                                 /* coerce short ptr to  */
                                                 /*   low word  of long  */
 #define LW(x) ( (LONG)((UWORD)(x)) )
@@ -114,27 +113,6 @@ extern WORD  LSTCPY(LONG pdst, LONG psrc);
                                                 /*   pointed at by long */
                                                 /*   ptr, LLSET(lp, bt) */
 #define LLSET(x, y) ( *((LONG *)(x)) = y)
-
-                                                /* return 0th byte of   */
-                                                /*   a long value given */
-                                                /*   a short pointer to */
-                                                /*   the long value     */
-#define LBYTE0(x) ( *((x)+3) )
-                                                /* return 1st byte of   */
-                                                /*   a long value given */
-                                                /*   a short pointer to */
-                                                /*   the long value     */
-#define LBYTE1(x) ( *((x)+2) )
-                                                /* return 2nd byte of   */
-                                                /*   a long value given */
-                                                /*   a short pointer to */
-                                                /*   the long value     */
-#define LBYTE2(x) ( *((x)+1) )
-                                                /* return 3rd byte of   */
-                                                /*   a long value given */
-                                                /*   a short pointer to */
-                                                /*   the long value     */
-#define LBYTE3(x) (*(x))
 
 
 #define movs(num, ps, pd)  memcpy((char *)pd, (const char *)ps, num)
