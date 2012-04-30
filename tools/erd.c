@@ -1,5 +1,5 @@
 /*
- *  erd: the EmuTOS Resource Decompiler
+ *  erd: the EmuDesk Resource Decompiler
  *
  *  Copyright 2012 by Roger Burrows
  *
@@ -46,14 +46,22 @@
  *  strings.  It also contains externs for the structures in the .c file
  *  that are to be globally-visible.
  *
- *  For compatibility with the EmuTOS DESK1 compilation option, any free
- *  string or alert that contains the word "trash" will be surrounded by
- *  #ifdef DESK1 and #endif directives, as will the corresponding #define
- *  in the .h file.  This will reduce ROM memory requirements when DESK1
- *  is not #defined.
+ *  In order to save space in the generated resource file when compiling
+ *  for the 192K ROM images, the generated code for certain items is
+ *  surrounded by a #ifdef/#endif wrapper.  This is based on three
+ *  program-supplied values:
+ *      . a starting free string name
+ *      . a starting tree name
+ *      . the #ifdef string (currently "#ifndef TARGET_192").
+ *  All free strings with numbers greater than or equal to the number
+ *  of the starting free string are wrapped.  Trees are treated in a
+ *  similar fashion.  Objects/tedinfos/bitblks/iconblks that appear only
+ *  in wrapped trees will also be wrapped.  Note that, at this time, this
+ *  process does NOT extend to the images pointed to by bitblks/iconblks,
+ *  but this could be added with some extra work.
  *
- *  In order to save space in the generated resource file, the following
- *  additional steps are taken:
+ *  In order to save space in the generated resource file for all ROMs,
+ *  the following additional steps are taken:
  *    . duplicate image data is automatically eliminated; multiple
  *      BITBLKs may point to the same image data.
  *    . duplicate icon data is automatically eliminated; multiple
@@ -64,7 +72,9 @@
  *      pointed to by more than one object.  This is done through the
  *      "shared string" array in the program.  Each entry in the array
  *      specifies a complete string; a match causes the corresponding
- *      string to be assigned to a separate variable.
+ *      string to be assigned to a separate variable.  If the specified
+ *      shared strings only occur in "wrapped" objects, the string variables
+ *      will also be wrapped.
  *    . the te_ptext pointer in TEDINFOs is always set to NULL; this field
  *      is initialised properly by the resource fixup code elsewhere in
  *      EmuTOS.
@@ -100,10 +110,16 @@
  *
  *  v1.2    roger burrows, march/2012
  *          . added strings to "no-translate" table
+ *
+ *  v2.0    roger burrows, april/2012
+ *          . the conditional wrapping now uses TARGET_192
+ *          . the items wrapped now depend on two "start" names, one for
+ *            trees and one for free strings.
  */
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <limits.h>
 #include <string.h>
 #ifdef ATARI                        /* i.e. running under TOS */
 #define DIRSEP  '\\'
@@ -273,9 +289,33 @@ typedef struct {
  *  our own defines & structures
  */
 #define PROGRAM_NAME    "erd"
-#define VERSION         "v1.2"
+#define VERSION         "v2.0"
 #define MAX_STRLEN      200         /* max size for internal string areas */
 #define NLS             "N_("       /* the macro used in EmuTOS for NLS support*/
+
+/*
+ *  internal representation of resource header
+ */
+typedef struct {
+    unsigned short vrsn;            /* RCS version # */
+    unsigned short object;          /* offset to object[] */
+    unsigned short tedinfo;         /* offset to tedinfo[] */
+    unsigned short iconblk;         /* offset to iconblk[] */
+    unsigned short bitblk;          /* offset to bitblk[] */
+    unsigned short frstr;           /* offset to free string index */
+    unsigned short string;          /* offset to first string */
+    unsigned short imdata;          /* offset to image data */
+    unsigned short frimg;           /* offset to free image index */
+    unsigned short trindex;         /* offset to object tree index */
+    unsigned short nobs;            /* number of objects */
+    unsigned short ntree;           /* number of trees */
+    unsigned short nted;            /* number of tedinfos */
+    unsigned short nib;             /* number of icon blocks */
+    unsigned short nbb;             /* number of bit blocks */
+    unsigned short nstring;         /* number of free strings */
+    unsigned short nimages;         /* number of free images */
+    unsigned short rssize;          /* total bytes in resource */
+} MY_RSHDR;
 
 /*
  *  internal representation of items in definition file
@@ -294,7 +334,7 @@ typedef struct {
     short tree;
     short obj;
     char indicator;
-    char desk1;                     /* 1 => conditional on DESK1 (DEF_ALERT/DEF_FREESTR only) */
+    char conditional;               /* 1 => conditional wrapper */
     char *name;
 } DEF_ENTRY;
 
@@ -302,7 +342,9 @@ typedef struct {
  *  shared strings
  */
 typedef struct {
-    char *string;
+    char *string;                   /* value of shared string */
+    short objnum;                   /* lowest unconditional object number accessing it */
+                                    /* (SHRT_MAX => only accessed conditionally)       */
 } SHARED_ENTRY;
 
 /*
@@ -314,40 +356,27 @@ typedef struct {
 } NOTRANS_ENTRY;
 
 /*
- *  globals
+ *  START OF PROGRAM PARAMETERS
+ *
+ *  These may need to be altered when significant changes are made to the resource
  */
-char *copyright = PROGRAM_NAME " " VERSION " copyright (c) 2012 by Roger Burrows\n"
-"This program is licensed under the GNU Public License. Please see LICENSE.TXT for details.\n";
-
-int debug = 0;                          /* options */
-char prefix[MAX_STRLEN] = "";
-int verbose = 0;
-
-char *rsc_root = NULL;                  /* paths of input, output files */
-char *out_path = NULL;
-char defext[5];                         /* extension of definition file actually used */
-
-char inrsc[MAX_STRLEN] = "";            /* actual file names */
-char indef[MAX_STRLEN] = "";
-char cfile[MAX_STRLEN] = "";
-char hfile[MAX_STRLEN] = "";
-
-
-RSHDR *rschdr = NULL;                   /* RSC header */
-
-DEF_ENTRY *def = NULL;                  /* table of #defines from HRD/DEF/RSD/DFN */
-int num_defs = 0;                       /* entries in def */
+/*
+ *  names for conditional wrapping
+ */
+char *conditional_string = "#ifndef TARGET_192";    /* name to use in #ifdef */
+char *tree_start = "ADTTREZ";                       /* starting names */
+char *freestr_start = "STNOOPEN";
 
 /*
  *  table of complete strings that will have a shared data item
  */
 SHARED_ENTRY shared[] = {
-    { "OK" },
-    { "Cancel" },
-    { "Install" },
-    { "Remove" },
-    { "Yes" },
-    { "No" }
+    { "OK", SHRT_MAX },
+    { "Cancel", SHRT_MAX },
+    { "Install", SHRT_MAX },
+    { "Remove", SHRT_MAX },
+    { "Yes", SHRT_MAX },
+    { "No", SHRT_MAX }
 };
 int num_shared = sizeof(shared) / sizeof(SHARED_ENTRY);
 
@@ -370,6 +399,56 @@ NOTRANS_ENTRY notrans[] = {
     { 0, "320 x " }
 };
 int num_notrans = sizeof(notrans) / sizeof(NOTRANS_ENTRY);
+/*
+ *  END OF PROGRAM PARAMETERS
+ */
+
+
+/*
+ *  other globals
+ */
+char *copyright = PROGRAM_NAME " " VERSION " copyright (c) 2012 by Roger Burrows\n"
+"This program is licensed under the GNU Public License. Please see LICENSE.TXT for details.\n";
+
+int debug = 0;                          /* options */
+char prefix[MAX_STRLEN] = "";
+int verbose = 0;
+
+char *rsc_root = NULL;                  /* paths of input, output files */
+char *out_path = NULL;
+char defext[5];                         /* extension of definition file actually used */
+
+char inrsc[MAX_STRLEN] = "";            /* actual file names */
+char indef[MAX_STRLEN] = "";
+char cfile[MAX_STRLEN] = "";
+char hfile[MAX_STRLEN] = "";
+
+
+RSHDR *rschdr = NULL;                   /* RSC header */
+MY_RSHDR rsh;                           /* converted RSC header */
+
+DEF_ENTRY *def = NULL;                  /* table of #defines from HRD/DEF/RSD/DFN */
+int num_defs = 0;                       /* entries in def */
+int first_freestr = -1;                 /* # of entry in def[] corresponding to first free string */
+
+/*
+ *  arrays used to figure out conditional wrapping stuff
+ *
+ *  pointers to malloc'd arrays; non-zero entry => item is conditional
+ */
+char *tedinfo_status = NULL;
+char *bitblk_status = NULL;
+char *iconblk_status = NULL;
+
+/*
+ *  the following values are derived such that *all* items from
+ *  the given value to the end of the array are conditional.
+ */
+int conditional_tree_start;
+int conditional_object_start;
+int conditional_tedinfo_start;
+int conditional_bitblk_start;
+int conditional_iconblk_start;
 
 /*
  *  table for decoding ob_flags
@@ -425,8 +504,11 @@ TYPE typelist[] = {
  *  function prototypes
  */
 int all_dashes(char *string);
+int cmp_def(const void *a,const void *b);
+int cmp_shared(const void *a,const void *b);
 int compare_icons(ICONBLK *b1,ICONBLK *b2);
 int compare_images(BITBLK *b1,BITBLK *b2);
+void convert_header(RSHDR *hdr);
 short convert_type(int deftype);
 int copycheck(char *dest,char *src,int len);
 void copyfix(char *dest,char *src,int len);
@@ -437,30 +519,33 @@ char *decode_just(short just);
 char *decode_state(short state);
 char *decode_type(short type);
 void display_defs(int entries);
-void display_header(RSHDR *rschdr);
+void display_header(void);
 void display_notrans(int n);
 void display_shared(int n);
 void error(char *s,char *t);
-int find(char *string,char *substring);
 void fixshared(char *dest,char *src);
 int getlen(int *length,char *s);
 short get_short(SHORT *p);
 unsigned short get_ushort(USHORT *p);
 unsigned long get_offset(OFFSET *p);
+int init_all_status(MY_RSHDR *hdr);
 void init_notrans(int n);
+int init_status(char **array,int entries);
 int load_definition(char *file);
 int load_def(FILE *fp);
 int load_dfn(FILE *fp);
 int load_hrd(FILE *fp);
 RSHDR *load_rsc(char *path);
-DEF_ENTRY *lookup_freestr(int freestr);
 DEF_ENTRY *lookup_object(int tree,int obj);
 DEF_ENTRY *lookup_tree(int tree);
-int markdef(int number);
+void mark_conditional(void);
 int notranslate(char *text);
 FILE *openfile(char *name,char *ext,char *mode);
+void process_start_names(int num_defs);
+int scan_conditional(char *conditional,int length);
 void shrink_valid(char *dest,char *src);
-void sort_table(int n);
+void sort_def_table(int n);
+void sort_shared(int n);
 char *strdup(const char *string);
 void trim_spaces(char *string);
 void usage(char *s);
@@ -524,8 +609,9 @@ int n;
     sprintf(inrsc,"%s.rsc",rsc_root);
     if ((rschdr=load_rsc(inrsc)) == NULL)
         error("can't load resource file",inrsc);
+    convert_header(rschdr);
     if (debug)
-        display_header(rschdr);
+        display_header();
 
     num_defs = load_definition(rsc_root);
     sprintf(indef,"%s.%s",rsc_root,defext);
@@ -533,7 +619,9 @@ int n;
     if (num_defs < 0)
         error("can't load definition file",indef);
 
-    sort_table(num_defs);
+    sort_def_table(num_defs);
+    process_start_names(num_defs);
+
     if (debug)
         display_defs(num_defs);
 
@@ -545,10 +633,19 @@ int n;
         printf("Output files: %s, %s\n",cfile,hfile);
     }
 
+    if (init_all_status(&rsh) < 0)      /* initialise xxx_status arrays */
+        error("can't malloc memory",NULL);
+
+    /*
+     *  first we must check each object and, if conditional, we must also
+     *  mark as conditional any tedinfo/bitblk/iconblk pointed to.
+     */
+    mark_conditional();
+
     /*
      *  we write the C file first, because it figures out what free strings
      *  are conditional on DESK1, so that we can make the corresponding
-     *  defines conditional too.
+     *  header defines conditional too.
      */
     if (write_c_file(out_path,"c") < 0)
         error("can't create file",cfile);
@@ -616,6 +713,32 @@ char s[MAX_STRLEN];
     }
 
     return rschdr;
+}
+
+/*
+ *  convert header to internal representation
+ *  (save converting for each use)
+ */
+void convert_header(RSHDR *hdr)
+{
+    rsh.vrsn = get_ushort(&hdr->rsh_vrsn);
+    rsh.object = get_ushort(&hdr->rsh_object);
+    rsh.tedinfo = get_ushort(&hdr->rsh_tedinfo);
+    rsh.iconblk = get_ushort(&hdr->rsh_iconblk);
+    rsh.bitblk = get_ushort(&hdr->rsh_bitblk);
+    rsh.frstr = get_ushort(&hdr->rsh_frstr);
+    rsh.string = get_ushort(&hdr->rsh_string);
+    rsh.imdata = get_ushort(&hdr->rsh_imdata);
+    rsh.frimg = get_ushort(&hdr->rsh_frimg);
+    rsh.trindex = get_ushort(&hdr->rsh_trindex);
+    rsh.nobs = get_ushort(&hdr->rsh_nobs);
+    rsh.ntree = get_ushort(&hdr->rsh_ntree);
+    rsh.nted = get_ushort(&hdr->rsh_nted);
+    rsh.nib = get_ushort(&hdr->rsh_nib);
+    rsh.nbb = get_ushort(&hdr->rsh_nbb);
+    rsh.nstring = get_ushort(&hdr->rsh_nstring);
+    rsh.nimages = get_ushort(&hdr->rsh_nimages);
+    rsh.rssize = get_ushort(&hdr->rsh_rssize);
 }
 
 /*
@@ -869,26 +992,6 @@ short new;
 }
 
 /*
- *  mark definition entry as conditional
- */
-int markdef(int number)
-{
-int i;
-DEF_ENTRY *d;
-
-    for (i = 0, d = def; i < num_defs; i++, d++) {
-        if ((d->type == DEF_ALERT) || (d->type == DEF_FREESTR)) {
-            if (d->obj == number) {
-                d->desk1 = 1;
-                return 0;
-            }
-        }
-    }
-
-    return -1;
-}
-
-/*
  *  lookup object in definition table
  *
  *  if found, return pointer to entry
@@ -939,31 +1042,6 @@ DEF_ENTRY *d;
 
     return NULL;
 }
-
-/*
- *  lookup free string in definition table
- *
- *  if found, return pointer to entry
- *  otherwise, return NULL
- */
-DEF_ENTRY *lookup_freestr(int freestr)
-{
-int i;
-DEF_ENTRY *d;
-
-    for (i = 0, d = def; i < num_defs; i++, d++) {
-        if ((d->type != DEF_ALERT) && (d->type != DEF_FREESTR))
-            continue;
-        if (d->obj > freestr)
-            break;
-        if (d->obj < freestr)
-            continue;
-        return d;
-    }
-
-    return NULL;
-}
-
 
 /*****  output routines *****/
 
@@ -1064,32 +1142,59 @@ char *basersc;
 int write_h_define(FILE *fp)
 {
 int i, n;
+int first_time = 1;
 DEF_ENTRY *d;
 short old_tree = -1;
 
+    /*
+     * first handle trees & objects
+     */
     for (i = 0, d = def; i < num_defs; i++, d++) {
-        if ((d->tree != old_tree)
-         || (d->seq == 1))
+        if ((d->type == DEF_ALERT) || (d->type == DEF_FREESTR))
+            break;
+        if (d->tree != old_tree)
             fprintf(fp,"\n");
-        if (d->desk1)
-            fprintf(fp,"#ifdef DESK1\n");
-        if ((d->type == DEF_DIALOG)
-         || (d->type == DEF_MENU))
+        if (d->conditional && first_time) {
+            fprintf(fp,"%s\n",conditional_string);
+            first_time = 0;
+        }
+        if ((d->type == DEF_DIALOG) || (d->type == DEF_MENU))
             n = d->tree;
         else n = d->obj;
         fprintf(fp,"#define %-16s%d\n",d->name,n);
-        if (d->desk1)
-            fprintf(fp,"#endif\n");
         old_tree = d->tree;
     }
+    if (!first_time)
+        fprintf(fp,"#endif\n");
+    fprintf(fp,"\n");
+
+    /*
+     * then alerts & free strings
+     */
+    for (first_time = 1; i < num_defs; i++, d++) {
+        if (d->conditional && first_time) {
+            fprintf(fp,"\n%s\n",conditional_string);
+            first_time = 0;
+        }
+        fprintf(fp,"#define %-16s%d\n",d->name,d->obj);
+    }
+    if (!first_time)
+        fprintf(fp,"#endif\n");
     fprintf(fp,"\n\n");
 
-    fprintf(fp,"#define %-16s%d\n","RS_NOBS",get_ushort(&rschdr->rsh_nobs));
-    fprintf(fp,"#define %-16s%d\n","RS_NTREE",get_ushort(&rschdr->rsh_ntree));
-    fprintf(fp,"#define %-16s%d\n","RS_NTED",get_ushort(&rschdr->rsh_nted));
-    fprintf(fp,"#define %-16s%d\n","RS_NIB",get_ushort(&rschdr->rsh_nib));
-    fprintf(fp,"#define %-16s%d\n\n\n","RS_NBB",get_ushort(&rschdr->rsh_nbb));
-
+    fprintf(fp,"%s\n",conditional_string);
+    fprintf(fp,"#define %-16s%d\n","RS_NOBS",rsh.nobs);
+    fprintf(fp,"#define %-16s%d\n","RS_NTREE",rsh.ntree);
+    fprintf(fp,"#define %-16s%d\n","RS_NTED",rsh.nted);
+    fprintf(fp,"#define %-16s%d\n","RS_NIB",rsh.nib);
+    fprintf(fp,"#define %-16s%d\n","RS_NBB",rsh.nbb);
+    fprintf(fp,"#else\n");
+    fprintf(fp,"#define %-16s%d\n","RS_NOBS",conditional_object_start);
+    fprintf(fp,"#define %-16s%d\n","RS_NTREE",conditional_tree_start);
+    fprintf(fp,"#define %-16s%d\n","RS_NTED",conditional_tedinfo_start);
+    fprintf(fp,"#define %-16s%d\n","RS_NIB",conditional_iconblk_start);
+    fprintf(fp,"#define %-16s%d\n","RS_NBB",conditional_bitblk_start);
+    fprintf(fp,"#endif\n\n\n");
 
     return ferror(fp) ? -1 : 0;
 }
@@ -1132,19 +1237,44 @@ int write_include(FILE *fp,char *name)
 int write_shared(FILE *fp)
 {
 int i;
+int first_time = 1;
 SHARED_ENTRY *e;
 char temp[MAX_STRLEN];
 
+	sort_shared(num_shared);
+
     for (i = 0, e = shared; i < num_shared; i++, e++) {
+        if ((e->objnum == SHRT_MAX) && first_time) {
+            fprintf(fp,"%s\n",conditional_string);
+            first_time = 0;
+        }
         fixshared(temp,e->string);  /* replace any non-alphanumeric char with underscore */
         fprintf(fp,"static const char rs_str_%s[] = ",temp);
         if (copycheck(temp,e->string,MAX_STRLEN-1) == 0)
             fprintf(fp,"\"%s\";\n",temp);
         else fprintf(fp,"%s\"%s\");\n",NLS,temp);
     }
+    if (!first_time)
+        fprintf(fp,"#endif\n");
     fprintf(fp,"\n\n");
 
     return ferror(fp) ? -1 : 0;
+}
+
+/*
+ *  sort the shared entry table
+ */
+void sort_shared(int n)
+{
+    qsort(shared,n,sizeof(SHARED_ENTRY),cmp_shared);
+}
+
+int cmp_shared(const void *a,const void *b)
+{
+const SHARED_ENTRY *e1 = a;
+const SHARED_ENTRY *e2 = b;
+
+    return e1->objnum - e2->objnum;
 }
 
 /*
@@ -1160,8 +1290,10 @@ char *base = (char *)rschdr;
     fprintf(fp,"TEDINFO %srs_tedinfo[RS_NTED];\n\n",prefix);
 
     fprintf(fp,"static const TEDINFO %srs_tedinfo_rom[] = {\n",prefix);
-    nted = get_ushort(&rschdr->rsh_nted);
-    for (i = 0, ted = (TEDINFO *)(base+get_ushort(&rschdr->rsh_tedinfo)); i < nted; i++, ted++) {
+    nted = rsh.nted;
+    for (i = 0, ted = (TEDINFO *)(base+rsh.tedinfo); i < nted; i++, ted++) {
+        if (i == conditional_tedinfo_start)
+            fprintf(fp,"%s\n",conditional_string);
         fprintf(fp,"    {0L,\n");
         if (copycheck(temp,base+get_offset(&ted->te_ptmplt),get_short(&ted->te_tmplen)) == 0)
             fprintf(fp,"     (LONG) \"%s\",\n",temp);
@@ -1178,7 +1310,8 @@ char *base = (char *)rschdr;
         if (i != nted-1)
             fprintf(fp,"\n");
     }
-
+    if (conditional_tedinfo_start < nted)
+        fprintf(fp,"#endif\n");
     fprintf(fp,"};\n\n");
 
     return ferror(fp) ? -1 : 0;
@@ -1196,11 +1329,11 @@ int *map;
 ICONBLK *iconblk;
 char *base = (char *)rschdr;
 
-    nib = get_ushort(&rschdr->rsh_nib);
+    nib = rsh.nib;
     if (nib == 0)
         return 0;
 
-    iconblk = (ICONBLK *)(base + get_ushort(&rschdr->rsh_iconblk));
+    iconblk = (ICONBLK *)(base + rsh.iconblk);
 
     /*
      * first we figure out the duplicate icon stuff: if map[j]
@@ -1244,8 +1377,10 @@ char *base = (char *)rschdr;
      * finally we create the array of ICONBLKs with pointers to mask/data
      */
     fprintf(fp,"const ICONBLK %srs_iconblk[] = {\n",prefix);
-    iconblk = (ICONBLK *)(base + get_ushort(&rschdr->rsh_iconblk));
+    iconblk = (ICONBLK *)(base + rsh.iconblk);
     for (i = 0; i < nib; i++, iconblk++) {
+        if (i == conditional_iconblk_start)
+            fprintf(fp,"%s\n",conditional_string);
         iconchar = get_short(&iconblk->ib_char);
         copyfix(temp,base+get_offset(&iconblk->ib_ptext),MAX_STRLEN-1);
         fprintf(fp,"    { (LONG) rs_iconmask%d, (LONG) rs_icondata%d, \"%s\", %s,\n",
@@ -1258,6 +1393,8 @@ char *base = (char *)rschdr;
                 get_short(&iconblk->ib_xtext),get_short(&iconblk->ib_ytext),
                 get_short(&iconblk->ib_wtext),get_short(&iconblk->ib_htext));
     }
+    if (conditional_iconblk_start < nib)
+        fprintf(fp,"#endif\n");
     fprintf(fp,"};\n\n\n");
 
     free(map);
@@ -1275,11 +1412,11 @@ int *map;
 BITBLK *bitblk;
 char *base = (char *)rschdr;
 
-    nbb = get_ushort(&rschdr->rsh_nbb);
+    nbb = rsh.nbb;
     if (nbb == 0)
         return 0;
 
-    bitblk = (BITBLK *)(base + get_ushort(&rschdr->rsh_bitblk));
+    bitblk = (BITBLK *)(base + rsh.bitblk);
 
     /*
      * first we figure out the duplicate image stuff: if map[j]
@@ -1320,12 +1457,17 @@ char *base = (char *)rschdr;
      * finally we create the array of BITBLKs with pointers to images
      */
     fprintf(fp,"const BITBLK %srs_bitblk[] = {\n",prefix);
-    bitblk = (BITBLK *)(base + get_ushort(&rschdr->rsh_bitblk));
-    for (i = 0; i < nbb; i++, bitblk++)
+    bitblk = (BITBLK *)(base + rsh.bitblk);
+    for (i = 0; i < nbb; i++, bitblk++) {
+        if (i == conditional_bitblk_start)
+            fprintf(fp,"%s\n",conditional_string);
         fprintf(fp,"    { (LONG) rs_bitblk%d, %d, %d, %d, %d, %d },\n",
                 (map[i]==-1)?i:map[i],get_short(&bitblk->bi_wb),
                 get_short(&bitblk->bi_hl),get_short(&bitblk->bi_x),
                 get_short(&bitblk->bi_y),get_short(&bitblk->bi_color));
+    }
+    if (conditional_bitblk_start < nbb)
+        fprintf(fp,"#endif\n");
     fprintf(fp,"};\n\n\n");
 
     free(map);
@@ -1339,6 +1481,7 @@ char *base = (char *)rschdr;
 int write_object(FILE *fp)
 {
 int i, j, nobs, tree, ntree;
+int first_time = 1;
 unsigned short type, ext_type;
 OBJECT *obj;
 OFFSET *trindex;
@@ -1352,13 +1495,20 @@ char *base = (char *)rschdr;
     fprintf(fp,"static const OBJECT %srs_obj_rom[] = {\n",prefix);
 
     /* trindex points to an array of long _offsets_ */
-    trindex = (OFFSET *)(base+get_ushort(&rschdr->rsh_trindex));
-    obj = (OBJECT *)(base + get_ushort(&rschdr->rsh_object));
-    nobs = get_ushort(&rschdr->rsh_nobs);
-    ntree = get_ushort(&rschdr->rsh_ntree);
+    trindex = (OFFSET *)(base + rsh.trindex);
+    obj = (OBJECT *)(base + rsh.object);
+    nobs = rsh.nobs;
+    ntree = rsh.ntree;
     for (i = 0, j = 0, tree = 0; i < nobs; i++, j++, obj++) {
         if (tree < ntree) {
             if ((OBJECT *)(base+get_offset(&trindex[tree])) == obj) {
+                d = lookup_tree(tree);
+                if (first_time && d) {
+                    if (d->conditional) {
+                        fprintf(fp,"%s\n",conditional_string);
+                        first_time = 0;
+                    }
+                }
                 fprintf(fp,"#define TR%d %d\n",tree,i);
                 fprintf(fp,"/* TREE %d */\n\n",tree);
                 tree++;
@@ -1381,13 +1531,13 @@ char *base = (char *)rschdr;
         fprintf(fp,"     %s,\n",decode_flags(get_ushort(&obj->ob_flags)));
         fprintf(fp,"     %s,\n",decode_state(get_ushort(&obj->ob_state)));
         write_obspec(fp,obj);
-        fprintf(fp,"     %d, %d, %d, %d}",
+        fprintf(fp,"     %d, %d, %d, %d},\n\n",
                 get_short(&obj->ob_x),get_short(&obj->ob_y),
                 get_short(&obj->ob_width),get_short(&obj->ob_height));
-        if (i != nobs-1)
-            fprintf(fp,",\n\n");
-        else fprintf(fp,"\n");
     }
+    if (!first_time)
+        fprintf(fp,"#endif\n");
+
     fprintf(fp,"};\n\n\n");
 
     return ferror(fp) ? -1 : 0;
@@ -1399,17 +1549,26 @@ char *base = (char *)rschdr;
 int write_tree(FILE *fp)
 {
 int i, ntree;
+int first_time = 1;
 DEF_ENTRY *d;
 char temp[MAX_STRLEN];
 
     fprintf(fp,"OBJECT * const %srs_trees[] = {\n",prefix);
 
-    ntree = get_ushort(&rschdr->rsh_ntree);
+    ntree = rsh.ntree;
     for (i = 0; i < ntree; i++) {
-        sprintf(temp,"    &%srs_obj[TR%d]%s",prefix,i,(i==ntree-1)?"":",");
         d = lookup_tree(i);
+        if (first_time && d) {
+            if (d->conditional) {
+                fprintf(fp,"%s\n",conditional_string);
+                first_time = 0;
+            }
+        }
+        sprintf(temp,"    &%srs_obj[TR%d],",prefix,i);
         fprintf(fp,"%-44s/* %s */\n",temp,d?d->name:"???");
     }
+    if (!first_time)
+        fprintf(fp,"#endif\n");
     fprintf(fp,"};\n\n\n");
 
     return ferror(fp) ? -1 : 0;
@@ -1421,7 +1580,8 @@ char temp[MAX_STRLEN];
 int write_freestr(FILE *fp)
 {
 int i, j, n, nstring;
-int desk1, xlate, numstr, len;
+int xlate, numstr, len;
+int first_time = 1;
 int length[MAX_SUBSTR];
 char *s;
 OFFSET *strptr;
@@ -1431,18 +1591,14 @@ char *base = (char *)rschdr;
 
     fprintf(fp,"const char * const %srs_fstr[] = {\n",prefix);
 
-    nstring = get_ushort(&rschdr->rsh_nstring);
-    strptr = (OFFSET *)(base + get_ushort(&rschdr->rsh_frstr));
-    for (i = 0; i < nstring; i++, strptr++) {
-        s = (char *) (base + get_offset(strptr));
-
-        /* save space in the generated code if DESK1 is not defined */
-        desk1 = find(s,"trash");    /* set flag if magic word is present */
-        if (desk1) {
-            fprintf(fp,"#ifdef DESK1\n");       /* string is only generated conditionally */
-            markdef(i);                         /* mark DEF_ENTRY so #define is conditional too */
+    nstring = rsh.nstring;
+    strptr = (OFFSET *)(base + rsh.frstr);
+    for (i = 0, d = def+first_freestr; i < nstring; i++, d++, strptr++) {
+        if (d->conditional && first_time) {
+            fprintf(fp,"%s\n",conditional_string);
+            first_time = 0;
         }
-
+        s = (char *) (base + get_offset(strptr));
         xlate = copycheck(temp,s,MAX_STRLEN-1); /* copy string, fixing up special characters */
         numstr = getlen(length,temp);           /* get lengths of substrings */
         for (j = 0, s = temp; j < numstr; j++, s += len) {
@@ -1454,18 +1610,15 @@ char *base = (char *)rschdr;
             if (j == numstr-1)
                 n += fprintf(fp,"%s,",xlate?")":"");
             if (j == 0) {
-                if ((d=lookup_freestr(i))) {
-                    while(n++ < 56)
-                        fprintf(fp," ");
-                    fprintf(fp,"/* %s */",d->name);
-                }
+                while(n++ < 56)
+                    fprintf(fp," ");
+                fprintf(fp,"/* %s */",d->name);
             }
             fprintf(fp,"\n");
         }
-
-        if (desk1)
-            fprintf(fp,"#endif\n");
     }
+    if (!first_time)
+        fprintf(fp,"#endif\n");
     fprintf(fp,"};\n\n\n");
 
     return ferror(fp) ? -1 : 0;
@@ -1573,36 +1726,16 @@ NOTRANS_ENTRY *e;
  *  looks for match between supplied string and shared string entries
  *  returns 1 iff match found
  */
-int isshared(char *text)
+SHARED_ENTRY *isshared(char *text)
 {
 int i;
 SHARED_ENTRY *e;
 
     for (i = 0, e = shared; i < num_shared; i++, e++)
         if (strcmp(text,e->string) == 0)
-            return 1;
+            return e;
 
-    return 0;
-}
-
-/*
- *  look for substring in string
- *  returns 1 if substring is found, 0 otherwise
- */
-int find(char *string,char *substring)
-{
-char *s = string;
-char *t = substring;
-int len, stop;
-
-    len = strlen(substring);
-    stop = strlen(string) - len;
-
-    while (stop-- >= 0)
-        if (strncmp(s++,t,len) == 0)
-            return 1;
-
-    return 0;
+    return NULL;
 }
 
 /*
@@ -1834,11 +1967,11 @@ char *base = (char *)rschdr;
     case G_FTEXT:
     case G_FBOXTEXT:
         fprintf(fp,"&%srs_tedinfo[%ld],\n",prefix,
-            (get_offset(&obj->ob_spec)-get_ushort(&rschdr->rsh_tedinfo))/sizeof(TEDINFO));
+            (get_offset(&obj->ob_spec)-rsh.tedinfo)/sizeof(TEDINFO));
         break;
     case G_IMAGE:
         fprintf(fp,"&%srs_bitblk[%ld],\n",prefix,
-            (get_offset(&obj->ob_spec)-get_ushort(&rschdr->rsh_bitblk))/sizeof(BITBLK));
+            (get_offset(&obj->ob_spec)-rsh.bitblk)/sizeof(BITBLK));
         break;
     case G_PROGDEF:
         fprintf(fp,"%ldL, /* generate number for unsupported PROGDEF ob_type */\n",
@@ -1846,7 +1979,7 @@ char *base = (char *)rschdr;
         break;
     case G_ICON:
         fprintf(fp,"&%srs_iconblk[%ld],\n",prefix,
-            (get_offset(&obj->ob_spec)-get_ushort(&rschdr->rsh_iconblk))/sizeof(ICONBLK));
+            (get_offset(&obj->ob_spec)-rsh.iconblk)/sizeof(ICONBLK));
         break;
     case G_CICON:
         fprintf(fp,"%ldL, /* generate number for unsupported CICONBLK ob_type */\n",
@@ -1970,31 +2103,50 @@ char *base = (char *)rschdr;
 /*****  dump routines for debugging *****/
 
 /*
- *  display info from RSC header
+ *  display info from converted RSC header
  */
-void display_header(RSHDR *rschdr)
+void display_header()
 {
-    printf("RSC header (version %d), loaded from %s\n",get_ushort(&rschdr->rsh_vrsn),inrsc);
-    printf("  Object offset  %5d\n",get_ushort(&rschdr->rsh_object));   /* offset to object[] */
-    printf("  TEDINFO offset %5d\n",get_ushort(&rschdr->rsh_tedinfo));  /* offset to tedinfo[] */
-    printf("  ICONBLK offset %5d\n",get_ushort(&rschdr->rsh_iconblk));  /* offset to iconblk[] */
-    printf("  BITBLK offset  %5d\n",get_ushort(&rschdr->rsh_bitblk));   /* offset to bitblk[] */
-    printf("  FRSTR offset   %5d\n",get_ushort(&rschdr->rsh_frstr));    /* offset to free strings index */
-    printf("  STRING offset  %5d\n",get_ushort(&rschdr->rsh_string));   /* offset to string data */
-    printf("  IMDATA offset  %5d\n",get_ushort(&rschdr->rsh_imdata));   /* offset to image data */
-    printf("  FRIMG offset   %5d\n",get_ushort(&rschdr->rsh_frimg));    /* offset to free image index */
-    printf("  TRINDEX offset %5d\n",get_ushort(&rschdr->rsh_trindex));  /* offset to object tree index */
-    printf("  %5d objects\n",get_ushort(&rschdr->rsh_nobs));            /* number of objects */
-    printf("  %5d trees\n",get_ushort(&rschdr->rsh_ntree));             /* number of trees */
-    printf("  %5d TEDINFOs\n",get_ushort(&rschdr->rsh_nted));           /* number of tedinfos */
-    printf("  %5d ICONBLKs\n",get_ushort(&rschdr->rsh_nib));            /* number of icon blocks */
-    printf("  %5d BITBLKs\n",get_ushort(&rschdr->rsh_nbb));             /* number of blt blocks */
-    printf("  %5d free strings\n",get_ushort(&rschdr->rsh_nstring));    /* number of free strings */
-    printf("  %5d free images\n",get_ushort(&rschdr->rsh_nimages));     /* number of free images */
-    printf("  Resource size %5d bytes\n\n",get_ushort(&rschdr->rsh_rssize));    /* total bytes in resource */
+    printf("RSC header (version %d), loaded from %s\n",rsh.vrsn,inrsc); /* version */
+    printf("  Object offset  %5d\n",rsh.object);            /* offset to object[] */
+    printf("  TEDINFO offset %5d\n",rsh.tedinfo);           /* offset to tedinfo[] */
+    printf("  ICONBLK offset %5d\n",rsh.iconblk);           /* offset to iconblk[] */
+    printf("  BITBLK offset  %5d\n",rsh.bitblk);            /* offset to bitblk[] */
+    printf("  FRSTR offset   %5d\n",rsh.frstr);             /* offset to free strings index */
+    printf("  STRING offset  %5d\n",rsh.string);            /* offset to string data */
+    printf("  IMDATA offset  %5d\n",rsh.imdata);            /* offset to image data */
+    printf("  FRIMG offset   %5d\n",rsh.frimg);             /* offset to free image index */
+    printf("  TRINDEX offset %5d\n",rsh.trindex);           /* offset to object tree index */
+    printf("  %5d objects\n",rsh.nobs);                     /* number of objects */
+    printf("  %5d trees\n",rsh.ntree);                      /* number of trees */
+    printf("  %5d TEDINFOs\n",rsh.nted);                    /* number of tedinfos */
+    printf("  %5d ICONBLKs\n",rsh.nib);                     /* number of icon blocks */
+    printf("  %5d BITBLKs\n",rsh.nbb);                      /* number of blt blocks */
+    printf("  %5d free strings\n",rsh.nstring);             /* number of free strings */
+    printf("  %5d free images\n",rsh.nimages);              /* number of free images */
+    printf("  Resource size %5d bytes\n\n",rsh.rssize);     /* total bytes in resource */
 }
 
-int cmp(const void *a,const void *b)
+/*
+ *  sort the definition table
+ */
+void sort_def_table(int n)
+{
+int i;
+DEF_ENTRY *d;
+
+    /* insert sequencing number */
+    for (i = 0, d = def; i < n; i++, d++)
+        if ((d->type == DEF_DIALOG)
+         || (d->type == DEF_MENU)
+         || (d->type == DEF_OBJECT))
+            d->seq = 0;
+        else d->seq = 1;
+
+    qsort(def,n,sizeof(DEF_ENTRY),cmp_def);
+}
+
+int cmp_def(const void *a,const void *b)
 {
 const DEF_ENTRY *d1 = a;
 const DEF_ENTRY *d2 = b;
@@ -2008,31 +2160,16 @@ const DEF_ENTRY *d2 = b;
     return d1->obj - d2->obj;
 }
 
-void sort_table(int n)
-{
-int i;
-DEF_ENTRY *d;
-
-    /* insert sequencing number */
-    for (i = 0, d = def; i < n; i++, d++)
-        if ((d->type == DEF_DIALOG)
-         || (d->type == DEF_MENU)
-         || (d->type == DEF_OBJECT))
-            d->seq = 0;
-        else d->seq = 1;
-
-    qsort(def,n,sizeof(DEF_ENTRY),cmp);
-}
-
 void display_defs(int n)
 {
 int i;
 DEF_ENTRY *d;
 
-    printf("Definitions table, loaded from %s.%s\n",rsc_root,defext);
-    printf("  Seq  Type  Tree  Object  Ind  Name\n");
+    printf("Definitions table (%d entries), loaded from %s.%s\n",n,rsc_root,defext);
+    printf("  Seq  Type  Tree  Object  Ind  Cond  Name\n");
     for (i = 0, d = def; i < n; i++, d++)
-        printf("   %2d   %2d    %2d     %2d    %2d  %s\n",d->seq,d->type,d->tree,d->obj,d->indicator,d->name);
+        printf("   %2d   %2d    %2d     %2d    %2d    %2d   %s\n",
+                d->seq,d->type,d->tree,d->obj,d->indicator,d->conditional,d->name);
     printf("\n");
 }
 
@@ -2071,6 +2208,171 @@ SHARED_ENTRY *e;
 
 
 /*****  miscellaneous support routines  *****/
+
+/*
+ *  mark objects as conditional if appropriate:
+ *   1. find start of conditional objects
+ *   2. determine which shared objects are conditional
+ *   3. mark any tedinfo/bitblk/iconblk pointedto by a conditional
+ *      object as conditional
+ */
+void mark_conditional(void)
+{
+int n;
+OBJECT *obj;
+OFFSET *trindex;
+DEF_ENTRY *d;
+SHARED_ENTRY *e;
+char *base = (char *)rschdr;
+char *obj_base, *p;
+
+	/*
+	 * scan the definition table & find the start of the last contiguous run
+	 * of conditional objects
+	 */
+    for (d = def+num_defs-1; d >= def; d--)
+        if ((d->type == DEF_OBJECT) && !d->conditional)
+            break;
+    for (d++; d < def+num_defs; d++)
+        if ((d->type == DEF_DIALOG) || (d->type == DEF_MENU))
+            break;
+
+    /*
+     *  find the corresponding object in the resource
+     */
+    trindex = (OFFSET *)(base + rsh.trindex);
+    obj_base = base + rsh.object;
+    conditional_object_start = (get_offset(&trindex[d->tree]) - get_offset(&trindex[0])) / sizeof(OBJECT);
+
+    /*
+     *  examine all the objects from the start of the table to the last
+     *  unconditional object, marking shared strings as unconditional
+     */
+    for (obj = (OBJECT *)obj_base; obj < (OBJECT *)obj_base+conditional_object_start; obj++) {
+        switch(get_ushort(&obj->ob_type)&0xff) {
+        case G_STRING:
+        case G_BUTTON:
+        case G_TITLE:
+            p = base + get_offset(&obj->ob_spec);
+            if ((e=isshared(p))) {
+                n = ((char *)obj - obj_base) / sizeof(OBJECT);
+                if (n < e->objnum)
+                    e->objnum = n;
+            }
+            break;
+        }
+    }
+
+    /*
+     *  examine all the remaining objects, marking the associated tedinfo,
+     *  bitblk, and iconblk objects as conditional
+     */
+    for ( ; obj < (OBJECT *)obj_base+rsh.nobs; obj++) {
+        switch(get_ushort(&obj->ob_type)&0xff) {
+        case G_TEXT:
+        case G_BOXTEXT:
+        case G_FTEXT:
+        case G_FBOXTEXT:
+            n = (get_offset(&obj->ob_spec) - rsh.tedinfo) / sizeof(TEDINFO);
+            tedinfo_status[n] = 1;
+            break;
+        case G_IMAGE:
+            n = (get_offset(&obj->ob_spec) - rsh.bitblk) / sizeof(BITBLK);
+            bitblk_status[n] = 1;
+            break;
+        case G_ICON:
+            n = (get_offset(&obj->ob_spec) - rsh.iconblk) / sizeof(ICONBLK);
+            iconblk_status[n] = 1;
+            break;
+        }
+    }
+
+    /*
+     *  scan the conditional tables to determine the number of conditional items
+     */
+    conditional_tedinfo_start = scan_conditional(tedinfo_status,rsh.nted);
+    conditional_bitblk_start = scan_conditional(bitblk_status,rsh.nbb);
+    conditional_iconblk_start = scan_conditional(iconblk_status,rsh.nib);
+}
+
+/*
+ *  scan a conditional array backwards, returning the start of a
+ *  sequence of conditional objects stretching to the end of the array
+ */
+int scan_conditional(char *conditional,int length)
+{
+int i;
+
+    for (i = length-1; i >= 0; i--)
+        if (!conditional[i])
+            break;
+
+    return i + 1;
+}
+
+/*
+ *  initialise conditional status of trees/objects, free strings/alerts
+ */
+void process_start_names(int num_defs)
+{
+int i;
+DEF_ENTRY *d;
+
+    /*
+     * do trees & contained objects
+     */
+    for (i = 0, d = def; i < num_defs; i++, d++) {
+        if ((d->type == DEF_DIALOG) || (d->type == DEF_MENU))
+            if (strcmp(d->name,tree_start) == 0)
+                break;
+    }
+    conditional_tree_start = d->tree;
+    for ( ; i < num_defs; i++, d++)
+        if ((d->type == DEF_DIALOG) || (d->type == DEF_MENU) || (d->type == DEF_OBJECT))
+            d->conditional = 1;
+
+    /*
+     * do free strings
+     */
+    for (i = 0, d = def; i < num_defs; i++, d++) {
+        if ((d->type == DEF_ALERT) || (d->type == DEF_FREESTR)) {
+            if (first_freestr < 0)      /* not yet set */
+                first_freestr = i;
+            if (strcmp(d->name,freestr_start) == 0)
+                break;
+        }
+    }
+    for ( ; i < num_defs; i++, d++)
+        if ((d->type == DEF_ALERT) || (d->type == DEF_FREESTR))
+            d->conditional = 1;
+}
+
+/*
+ *  initialise all xxx_status arrays
+ */
+int init_all_status(MY_RSHDR *hdr)
+{
+    if (init_status(&tedinfo_status,hdr->nted) < 0)
+        return -1;
+    if (init_status(&bitblk_status,hdr->nbb) < 0)
+        return -1;
+    if (init_status(&iconblk_status,hdr->nib) < 0)
+        return -1;
+
+    return 0;
+}
+
+/*
+ *  init one _status array
+ */
+int init_status(char **array,int entries)
+{
+    *array = calloc(entries,1);
+    if (entries && !*array)
+        return -1;
+
+    return 0;
+}
 
 /*
  *  convert big-endian short to short
@@ -2138,4 +2440,3 @@ void usage(char *s)
 
     exit(2);
 }
-

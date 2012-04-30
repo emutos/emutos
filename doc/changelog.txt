@@ -3539,3 +3539,7 @@ Start... early ages
   macros. (RFB)
 - include/compat.h: Code cleanup: removed unused compatibility macros
   and externs. (RFB)
+
+2012-04-30
+- doc/resource.txt tools/erd.c: Reworked ERD to save more space when
+  compiling the 192K ROMS. (RFB)
