@@ -40,6 +40,11 @@
 
 
 
+/*
+ * NOTE: this structure is used to access a subset of the fields
+ * in the FNODE structure, so the fields MUST be the same size and
+ * sequence as those in the FNODE structure!
+ */
 typedef struct sfcb
 {
         BYTE            sfcb_junk;
