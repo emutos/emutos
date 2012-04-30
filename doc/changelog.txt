@@ -3543,3 +3543,5 @@ Start... early ages
 2012-04-30
 - doc/resource.txt tools/erd.c: Reworked ERD to save more space when
   compiling the 192K ROMS. (RFB)
+- desk/deskapp.c: Fix bad desktop display after resolution change in
+  192k ROMs (bug introduced by changes of 2012-04-16). (RFB)

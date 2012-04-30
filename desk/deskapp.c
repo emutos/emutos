@@ -766,8 +766,8 @@ void app_save(WORD todisk)
           }
           pcurr += sprintf(pcurr,"#%c",type);
           if (pa->a_flags & AF_ISDESK)
-			pcurr += sprintf(pcurr," %02X %02X",
-			            pa->a_xspot/G.g_icw,(pa->a_yspot-G.g_ydesk)/G.g_ich);
+            pcurr += sprintf(pcurr," %02X %02X",(pa->a_xspot/G.g_icw)&0x00ff,
+                            (max(0,(pa->a_yspot-G.g_ydesk))/G.g_ich)&0x00ff);
           pcurr += sprintf(pcurr," %02X %02X",pa->a_aicon&0x00ff,pa->a_dicon&0x00ff);
           if (pa->a_flags & AF_ISDESK)
             pcurr += sprintf(pcurr," %c",pa->a_letter?pa->a_letter:' ');
