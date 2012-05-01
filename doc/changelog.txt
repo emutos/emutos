@@ -3548,3 +3548,7 @@ Start... early ages
 - desk/deskinf.c: Added some warning comments re SFCB. (RFB)
 - desk/deskapp.c: Eliminated duplicate desktop data that already exists
   in the built-in resource. (RFB)
+
+2012-05-01
+- vdi/vdi_defs.h vdi/vdi_gdp.c vdi/vdi_line.c: Fix bug: arrows are now
+  drawn correctly for thin line arcs/ellarcs. (RFB)

@@ -24,9 +24,6 @@
 
 
 
-/* prototypes*/
-static void arrow(Vwk * vwk, Point * point, int count);
-
 /* the six predefined line styles */
 const UWORD LINE_STYLE[6] = { 0xFFFF, 0xFFF0, 0xC0C0, 0xFF18, 0xFF00, 0xF191 };
 static WORD q_circle[MX_LN_WIDTH];     /* Holds the circle DDA */
@@ -934,12 +931,12 @@ static void draw_arrow(Vwk * vwk, Point * point, int inc)
 
 
 /*
- * arrow - Draw an arrow
+ * arrow - draw arrow(s) at the end(s) of the line
  *
  * Will alter the end of the line segment.
  */
 
-static void arrow(Vwk * vwk, Point * point, int count)
+void arrow(Vwk * vwk, Point * point, int count)
 {
     /* Set up the attribute environment. */
     s_fa_attr(vwk);

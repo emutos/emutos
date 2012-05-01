@@ -174,7 +174,9 @@ static void clc_arc(Vwk * vwk, int steps)
         /* open arc */
         if (vwk->line_width == 1) {
             polyline(vwk, point, steps, vwk->line_color);
-            // FIXME: Originally here was a check fpr arrow drawing!
+            /* If the ends are arrowed, output them. */
+            if ((vwk->line_beg | vwk->line_end) & ARROWED)
+                arrow(vwk, point, steps);
         } else
             wideline(vwk, point, steps);
     }
