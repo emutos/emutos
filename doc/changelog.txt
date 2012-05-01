@@ -3546,3 +3546,5 @@ Start... early ages
 - desk/deskapp.c: Fix bad desktop display after resolution change in
   192k ROMs (bug introduced by changes of 2012-04-16). (RFB)
 - desk/deskinf.c: Added some warning comments re SFCB. (RFB)
+- desk/deskapp.c: Eliminated duplicate desktop data that already exists
+  in the built-in resource. (RFB)

@@ -57,24 +57,18 @@ static BYTE     gl_afile[SIZE_AFILE];
 static BYTE     gl_buffer[SIZE_BUFF];
 
 
-/* We use this DESKTOP.INF here when we can't load that file from disk: */
-
+/* When we can't get EMUDESK.INF via shel_get() or by reading from
+ * the disk, we create one dynamically from three sources:
+ *  the following data, for #E and #W lines
+ *  the drivemask, for #M lines
+ *  the builtin destop resource, for the remaining lines
+ */
 static const char *desk_inf_data1 =
     "#E 1A 01\r\n"
     "#W 00 00 02 06 26 0C 00 @\r\n"
     "#W 00 00 02 08 26 0C 00 @\r\n"
     "#W 00 00 02 0A 26 0C 00 @\r\n"
     "#W 00 00 02 0D 26 0C 00 @\r\n";
-
-static const char *desk_inf_data2 =
-    "#F FF 28 @ *.*@ \r\n"
-    "#D FF 02 @ *.*@ \r\n"
-    "#Y 08 FF *.GTP@ @ \r\n"
-    "#G 08 FF *.APP@ @ \r\n"
-    "#G 08 FF *.PRG@ @ \r\n"
-    "#P 08 FF *.TTP@ @ \r\n"
-    "#F 08 FF *.TOS@ @ \r\n";
-
 
 /************************************************************************/
 /* g e t _ d e f d r v                                                  */
@@ -520,7 +514,11 @@ void app_start(void)
                 drive_x, drive_y, icon_type, drive_letter, drive_letter);
               icon_index++;
             }
-          strcat(gl_afile, desk_inf_data2);  /* Copy core data part 2 */
+          /* Copy core data part 2 */
+          for (i = 0, x = strlen(gl_afile); i < 7; i++, x += y+3) {
+            y = strlencpy(gl_afile+x,ini_str(ST1STD+i));
+            strcpy(gl_afile+x+y," \r\n");
+          }
           /* add Trash icon to end */
           x = strlen(gl_afile);
           trash_x = 0; /* Left */
