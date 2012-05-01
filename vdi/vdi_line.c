@@ -371,12 +371,10 @@ void draw_rect(const Vwk *vwk,const Rect *rect,const UWORD fillcolor)
 
 void _v_pline(Vwk * vwk)
 {
-    WORD l;
     Point * point = (Point*)PTSIN;
     int count = CONTRL[1];
 
-    l = vwk->line_index;
-    LN_MASK = (l < 6) ? LINE_STYLE[l] : vwk->ud_ls;
+    set_LN_MASK(vwk);
 
 #if HAVE_BEZIER
     /* check, if we want to draw a bezier curve */
@@ -1291,3 +1289,13 @@ void abline (Vwk * vwk, Line * line, WORD color)
     LN_MASK = linemask;
 }
 
+/*
+ * set LN_MASK from virtual workstation values
+ */
+void set_LN_MASK(Vwk *vwk)
+{
+    WORD l;
+
+    l = vwk->line_index;
+    LN_MASK = (l < 6) ? LINE_STYLE[l] : vwk->ud_ls;
+}

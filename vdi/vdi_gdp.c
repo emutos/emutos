@@ -348,8 +348,7 @@ static void gdp_rbox(Vwk * vwk)
     *(pointer + 41) = *(pointer + 1);
 
     if (CONTRL[5] == 8) {       /* v_rbox() */
-        i = vwk->line_index;
-        LN_MASK = (i < 6) ? LINE_STYLE[i] : vwk->ud_ls;
+        set_LN_MASK(vwk);
 
         if (vwk->line_width == 1) {
             polyline(vwk, (Point*)PTSIN, 21, vwk->line_color);

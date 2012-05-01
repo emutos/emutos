@@ -256,7 +256,7 @@ void arb_line(Line * line);
 /* C Support routines */
 Vwk * get_vwk_by_handle(WORD);
 void * get_start_addr(const WORD x, const WORD y);
-
+void set_LN_MASK(Vwk *vwk);
 void chk_esc(Vwk *);
 void st_fl_ptr(Vwk *);
 void d_justified(Vwk *);

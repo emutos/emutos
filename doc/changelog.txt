@@ -3552,3 +3552,5 @@ Start... early ages
 2012-05-01
 - vdi/vdi_defs.h vdi/vdi_gdp.c vdi/vdi_line.c: Fix bug: arrows are now
   drawn correctly for thin line arcs/ellarcs. (RFB)
+- vdi/vdi_defs.h vdi/vdi_gdp.c vdi/vdi_line.c: Replace common code to
+  set LN_MASK with subroutine. (RFB)
