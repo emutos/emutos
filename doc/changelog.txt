@@ -3554,3 +3554,5 @@ Start... early ages
   drawn correctly for thin line arcs/ellarcs. (RFB)
 - vdi/vdi_defs.h vdi/vdi_gdp.c vdi/vdi_line.c: Replace common code to
   set LN_MASK with subroutine. (RFB)
+- vdi/vdi_gdp.c: Fix bug: line styles are now used for thin line arcs
+  and ellarcs. (RFB)

@@ -173,6 +173,7 @@ static void clc_arc(Vwk * vwk, int steps)
     if ((CONTRL[5] == 2) || (CONTRL[5] == 6)) { /* v_arc() or v_ellarc() */
         /* open arc */
         if (vwk->line_width == 1) {
+            set_LN_MASK(vwk);
             polyline(vwk, point, steps, vwk->line_color);
             /* If the ends are arrowed, output them. */
             if ((vwk->line_beg | vwk->line_end) & ARROWED)
