@@ -20,17 +20,13 @@
 /* Some color mapping tables */
 WORD MAP_COL[MAX_COLOR];
 
-static const WORD MAP_COL_4BITS[] =
+static const WORD MAP_COL_ROM[] =
     { 0, 15, 1, 2, 4, 6, 3, 5, 7, 8, 9, 10, 12, 14, 11, 13 };
-static const WORD MAP_COL_2BITS[] =
-    { 0, 3, 1, 2 };
 
 WORD REV_MAP_COL[MAX_COLOR];
 
-static const WORD REV_MAP_COL_4BITS[] =
+static const WORD REV_MAP_COL_ROM[] =
     { 0, 2, 3, 6, 4, 7, 5, 8, 9, 10, 11, 14, 12, 15, 13, 1 };
-static const WORD REV_MAP_COL_2BITS[] =
-    { 0, 2, 3, 1 };
 
 
 /* req_col2 contains the VDI color palette entries 16 - 255 for vq_color().
@@ -136,24 +132,17 @@ void _vs_color(Vwk *vwk)
 /* Set the default palette etc. */
 void init_colors(void)
 {
-    int i;
+    int i, max_colour;
 
     memcpy(REQ_COL, initial_palette, sizeof(initial_palette));
 
-    if (v_planes == 4)
-    {
-        memcpy(MAP_COL, MAP_COL_4BITS, sizeof(MAP_COL_4BITS));
-        memcpy(REV_MAP_COL, REV_MAP_COL_4BITS, sizeof(REV_MAP_COL_4BITS));
-    }
-    else if (v_planes == 2)
-    {
-        memcpy(MAP_COL, MAP_COL_2BITS, sizeof(MAP_COL_2BITS));
-        memcpy(REV_MAP_COL, REV_MAP_COL_2BITS, sizeof(REV_MAP_COL_2BITS));
-    }
-    else
-    {
-        MAP_COL[1] = 1;  // monochrome mapping
-    }
+    memcpy(MAP_COL, MAP_COL_ROM, sizeof(MAP_COL_ROM));
+    memcpy(REV_MAP_COL, REV_MAP_COL_ROM, sizeof(REV_MAP_COL_ROM));
+
+    /* adjust colour mappings according to number of colours available */
+    max_colour = DEV_TAB[13] - 1;
+    MAP_COL[1] = max_colour;
+    REV_MAP_COL[max_colour] = 1;
 
     for (i = 0; i < DEV_TAB[13]; i++)
     {

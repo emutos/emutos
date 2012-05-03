@@ -1088,10 +1088,6 @@ _v_get_pixel(Vwk * vwk)
     int_out = INTOUT;
     *int_out++ = pel;
 
-    /* Correct pel value for number of planes so it is a standard value */
-    if ((INQ_TAB[4] == 1 && pel) || (INQ_TAB[4] == 2 && pel == 3))
-        pel = 15;
-
     *int_out = REV_MAP_COL[pel];
     CONTRL[4] = 2;
 }

@@ -3560,3 +3560,7 @@ Start... early ages
 2012-05-02
 - vdi/vdi_line.c: Fix bug: arrows are now drawn correctly for all arcs
   and ellarcs. (RFB)
+
+2012-05-03
+- vdi/vdi_col.c vdi/vdi_fill.c: Fix bug: v_get_pixel() did not return the
+  VDI colour index correctly in all cases. (RFB)
