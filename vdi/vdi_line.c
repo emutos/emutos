@@ -837,7 +837,7 @@ void wideline(Vwk * vwk, Point * point, int count)
  * arrow - Draw an arrow
  */
 
-static void draw_arrow(Vwk * vwk, Point * point, int inc)
+static void draw_arrow(Vwk * vwk, Point * point, int count, int inc)
 {
     LONG line_len2;
     WORD arrow_len, arrow_wid, line_len;
@@ -859,8 +859,7 @@ static void draw_arrow(Vwk * vwk, Point * point, int inc)
 
     /* Find the first point which is not so close to the end point that it */
     /* will be obscured by the arrowhead.                                  */
-    temp = CONTRL[1];
-    for (i = 1; i < temp; i++) {
+    for (i = 1; i < count; i++) {
         /* Find the deltas between the next point and the end point.
            Transform */
         /* to a space such that the aspect ratio is uniform and the x axis */
@@ -941,13 +940,13 @@ void arrow(Vwk * vwk, Point * point, int count)
 
     /* beginning point is arrowed. */
     if (s_begsty & ARROWED) {
-        draw_arrow(vwk, point, 1);
+        draw_arrow(vwk, point, count, 1);
     }
 
     /* ending point is arrowed. */
     point += count - 1;
     if (s_endsty & ARROWED) {
-        draw_arrow(vwk, point, -1);
+        draw_arrow(vwk, point, count, -1);
     }
 
     /* Restore the attribute environment. */

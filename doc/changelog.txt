@@ -3556,3 +3556,7 @@ Start... early ages
   set LN_MASK with subroutine. (RFB)
 - vdi/vdi_gdp.c: Fix bug: line styles are now used for thin line arcs
   and ellarcs. (RFB)
+
+2012-05-02
+- vdi/vdi_line.c: Fix bug: arrows are now drawn correctly for all arcs
+  and ellarcs. (RFB)
