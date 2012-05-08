@@ -50,9 +50,9 @@ struct charset_fonts {
 
 /* 
  * ctables.h contains the following tables: 
- * const static struct country_record countries[];
- * const static struct kbd_record avail_kbd[];
- * const static struct charset_fonts font_sets[];
+ * static const struct country_record countries[];
+ * static const struct kbd_record avail_kbd[];
+ * static const struct charset_fonts font_sets[];
  */
 
 #include "ctables.h"
