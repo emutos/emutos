@@ -29,11 +29,11 @@
  */
 
 struct country_record {
-    int country;      /* country code */
-    char *lang_name;  /* name used to retrieve translations */
-    int keyboard;     /* keyboard layout code */
-    int charset;      /* charset code */
-    int idt;          /* international date and time */
+    int country;            /* country code */
+    const char *lang_name;  /* name used to retrieve translations */
+    int keyboard;           /* keyboard layout code */
+    int charset;            /* charset code */
+    int idt;                /* international date and time */
 };
 
 struct kbd_record {
