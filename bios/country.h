@@ -30,6 +30,7 @@
 #define KEYB_SG 6
 #define KEYB_RU 7
 #define KEYB_IT 8
+#define KEYB_UK 9
 
 /* charset codes - names in [brackets] are understood by GNU recode */
 #define CHARSET_ALL -1

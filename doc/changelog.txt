@@ -3567,3 +3567,5 @@ Start... early ages
 
 2012-05-08
 - bios/country.c: Fix wrong keyboard layout read from the NVRAM. (VRI)
+- country.mk bios/country.h bios/keyb_uk.h: New UK country and keyboard layout.
+  Contributed by David Savinkoff. (VRI)
