@@ -42,9 +42,9 @@ void font_init(void)
   
     /* copy the ROM-fontheaders of 3 system fonts to RAM */
 
-    memmove(&fon6x6, f6x6, sizeof(struct font_head));
-    memmove(&fon8x8, f8x8, sizeof(struct font_head));
-    memmove(&fon8x16, f8x16, sizeof(struct font_head));
+    fon6x6 = *f6x6;
+    fon8x8 = *f8x8;
+    fon8x16 = *f8x16;
 
     /* now in RAM, chain the font headers to a linked list */
 
