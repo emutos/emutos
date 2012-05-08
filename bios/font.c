@@ -34,7 +34,7 @@ struct font_head fon6x6;
 
 void font_init(void)
 {
-    struct font_head *f6x6, *f8x8, *f8x16;
+    const struct font_head *f6x6, *f8x8, *f8x16;
   
     /* ask country.c for the right fonts */
 

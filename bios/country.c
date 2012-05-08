@@ -161,9 +161,9 @@ void get_keytbl(const struct keytbl **tbl)
  * get_fonts - initialize country dependant font tables
  */
 
-void get_fonts(struct font_head **f6x6, 
-               struct font_head **f8x8, 
-               struct font_head **f8x16)
+void get_fonts(const struct font_head **f6x6, 
+               const struct font_head **f8x8, 
+               const struct font_head **f8x16)
 {
     int j = 0;
 
@@ -180,8 +180,8 @@ void get_fonts(struct font_head **f6x6,
     }
 #endif
 
-    *f6x6 = (struct font_head *) font_sets[j].f6x6;
-    *f8x8 = (struct font_head *) font_sets[j].f8x8;  
-    *f8x16 = (struct font_head *) font_sets[j].f8x16;
+    *f6x6 = font_sets[j].f6x6;
+    *f8x8 = font_sets[j].f8x8;  
+    *f8x16 = font_sets[j].f8x16;
 }
 
