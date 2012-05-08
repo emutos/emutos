@@ -115,7 +115,8 @@ void detect_akp_idt(void)
 
 static int get_kbd_number(void)
 {
-    return cookie_akp & 0xff;
+    int i = get_country_index(cookie_akp & 0xff);
+    return countries[i].keyboard;
 }
 
 const char *get_lang_name(void)

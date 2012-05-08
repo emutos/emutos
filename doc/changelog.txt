@@ -3564,3 +3564,6 @@ Start... early ages
 2012-05-03
 - vdi/vdi_col.c vdi/vdi_fill.c: Fix bug: v_get_pixel() did not return the
   VDI colour index correctly in all cases. (RFB)
+
+2012-05-08
+- bios/country.c: Fix wrong keyboard layout read from the NVRAM. (VRI)
