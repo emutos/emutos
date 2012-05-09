@@ -3569,3 +3569,5 @@ Start... early ages
 - bios/country.c: Fix wrong keyboard layout read from the NVRAM. (VRI)
 - country.mk bios/country.h bios/keyb_uk.h: New UK country and keyboard layout.
   Contributed by David Savinkoff. (VRI)
+- bios/screen.c: Fix bug: can't change to ST resolutions after booting
+  with videl in VGA 50Hz mode. (RFB)
