@@ -78,15 +78,15 @@ void detect_akp_idt(void)
 
 #else
 
-static int get_country_index(int country_code)
+static const struct country_record *get_current_country(int country_code)
 {
     int i;
     for(i = 0 ; i < sizeof(countries)/sizeof(*countries) ; i++) {
         if(countries[i].country == country_code) {
-            return i;
+            return &countries[i];
         }
     }
-    return 0; /* default is US */
+    return &countries[0]; /* default is US */
 }
 
 void detect_akp_idt(void)
@@ -106,29 +106,29 @@ void detect_akp_idt(void)
         /* either no NVRAM, or the NVRAM is corrupt (low battery, 
          * bad cksum), interpret the os_pal flag in header 
          */
-        int i = get_country_index(os_pal >> 1);
+        const struct country_record *cr = get_current_country(os_pal >> 1);
     
-        cookie_akp = (countries[i].country << 8) | countries[i].keyboard;
-        cookie_idt = countries[i].idt;
+        cookie_akp = (cr->country << 8) | cr->keyboard;
+        cookie_idt = cr->idt;
     }
 }
 
 static int get_kbd_number(void)
 {
-    int i = get_country_index(cookie_akp & 0xff);
-    return countries[i].keyboard;
+    const struct country_record *cr = get_current_country(cookie_akp & 0xff);
+    return cr->keyboard;
 }
 
 const char *get_lang_name(void)
 {
-    int i = get_country_index((cookie_akp >> 8) & 0xFF);
-    return countries[i].lang_name;
+    const struct country_record *cr = get_current_country((cookie_akp >> 8) & 0xFF);
+    return cr->lang_name;
 }
 
 static int get_charset(void)
 {
-    int i = get_country_index((cookie_akp >> 8) & 0xFF);
-    return countries[i].charset;
+    const struct country_record *cr = get_current_country((cookie_akp >> 8) & 0xFF);
+    return cr->charset;
 }
 
 #endif
