@@ -19,13 +19,10 @@
 
 #define N_(a) a
 
-#if !CONF_WITH_NLS
-# define _(a) (a)
-# define gettext(a) (a)    /* Disable NLS / gettext completely */
-#else
+#if CONF_WITH_NLS
+
 # define _(a) gettext(a)
 const char *gettext(const char *);
-#endif
 
 /* initialisation */
 
@@ -34,5 +31,14 @@ void nls_init(void);
 /* functions to query the lang database and to set the lang */
 
 void nls_set_lang(const char *);
+
+#else
+
+/* Disable NLS / gettext completely */
+
+# define _(a) (a)
+# define gettext(a) (a)
+
+#endif
 
 #endif /* NLS_H */

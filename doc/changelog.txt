@@ -3582,3 +3582,5 @@ Start... early ages
   UNIQUE builds. (VRI)
 - Makefile include/nls.h tools/bug.c util/nls.c util/nlsasm.S: Replaced
   CONF_NO_NLS by !CONF_WITH_NLS. (VRI)
+- bios/bios.c include/nls.h util/nls.c: Removed all NLS functions when
+  !CONF_WITH_NLS. (VRI)

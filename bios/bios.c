@@ -244,9 +244,11 @@ static void bios_init(void)
     parport_init();     /* parallel port */
     //mouse_init();     /* init mouse driver */
     clock_init();       /* init clock */
+
+#if CONF_WITH_NLS
     nls_init();         /* init native language support */
     nls_set_lang(get_lang_name());
-    
+#endif
 
     /* set start of user interface */
 #if WITH_AES
