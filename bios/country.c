@@ -73,7 +73,7 @@ const char *get_lang_name(void)
 void detect_akp_idt(void)
 {
     cookie_akp = (OS_COUNTRY << 8) | CONF_KEYB;
-    cookie_idt = IDT_24H | IDT_DDMMYY | '/';
+    cookie_idt = CONF_IDT;
 }
 
 #else

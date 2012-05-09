@@ -92,6 +92,11 @@ ifeq (,$(ETOSCSET))
 $(error Variable i18n_$(COUNTRY)_cset incorrectly configured)
 endif
 
+ETOSIDT = $(i18n_$(COUNTRY)_idt)
+ifeq (,$(ETOSIDT))
+$(error Variable i18n_$(COUNTRY)_idt incorrectly configured)
+endif
+
 #
 
 FONTOBJ_ST = fnt_st_6x6.o fnt_st_8x8.o fnt_st_8x16.o 
