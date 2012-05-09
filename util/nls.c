@@ -18,7 +18,7 @@
 #include "string.h"
 #include "i18nconf.h"
 
-#if CONF_NO_NLS
+#if !CONF_WITH_NLS
 
 void nls_init(void)
 {
@@ -28,7 +28,7 @@ void nls_set_lang(const char *s)
 {
 }
 
-#else /* ! CONF_NO_NLS */
+#else /* CONF_WITH_NLS */
 
 static int the_lang;
 static int num_of_langs;
@@ -71,4 +71,4 @@ void nls_set_lang(const char *s)
   the_lang = 0;
 }
   
-#endif /* ! CONF_NO_NLS */
+#endif /* CONF_WITH_NLS */

@@ -14,7 +14,7 @@
 #include "i18nconf.h"
 
 
-#if !CONF_NO_NLS
+#if CONF_WITH_NLS
 
 // set this to one to first hash addresses in RAM before
 // computing actual string hashes. (experimental)
@@ -224,5 +224,5 @@ ram_hash:
         ds.l    20      // 10 additional slots.
 #endif /* USE_RAM_HASH */
         
-#endif /* ! CONF_NO_NLS */
+#endif /* CONF_WITH_NLS */
  

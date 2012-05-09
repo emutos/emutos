@@ -1924,7 +1924,7 @@ void make(void)
   
   fprintf(f, "#include \"config.h\"\n");
   fprintf(f, "#include \"i18nconf.h\"\n\n");
-  fprintf(f, "#if ! CONF_NO_NLS\n\n");
+  fprintf(f, "#if CONF_WITH_NLS\n\n");
   fprintf(f, "#include \"langs.h\"\n\n");
   
   /* generate the default strings table, and store the
@@ -2053,7 +2053,7 @@ static const struct lang_info lang_%s = { \"%s\", msg_%s };\n", t, t, t);
     t = da_nth(langs, i);
     fprintf(f, "  &lang_%s, \n", t);
   }
-  fprintf(f, "  0,\n};\n\n#endif /* ! CONF_NO_NLS */\n");
+  fprintf(f, "  0,\n};\n\n#endif /* CONF_WITH_NLS */\n");
   fclose(f);
   da_free(langs);
   da_free(d);

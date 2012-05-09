@@ -19,7 +19,7 @@
 
 #define N_(a) a
 
-#if CONF_NO_NLS
+#if !CONF_WITH_NLS
 # define _(a) (a)
 # define gettext(a) (a)    /* Disable NLS / gettext completely */
 #else

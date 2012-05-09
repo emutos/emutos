@@ -3580,3 +3580,5 @@ Start... early ages
 - Makefile: Add correct echo quoting. (VRI)
 - country.mk Makefile bios/country.c: Use the country-specific IDT settings in
   UNIQUE builds. (VRI)
+- Makefile include/nls.h tools/bug.c util/nls.c util/nlsasm.S: Replaced
+  CONF_NO_NLS by !CONF_WITH_NLS. (VRI)
