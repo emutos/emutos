@@ -3574,3 +3574,4 @@ Start... early ages
 
 2012-05-09
 - country.mk: Fix UK date format. Contributed by David Savinkoff. (VRI)
+- Makefile: Remove useless #ifdef in include/i18nconf.h. (VRI)

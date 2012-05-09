@@ -691,12 +691,8 @@ include/i18nconf.h: obj/country
 	@echo \#define CONF_UNIQUE_COUNTRY 1 >> $@
 	@echo \#define CONF_NO_NLS 1 >> $@
 	@echo \#define CONF_LANG '"$(ETOSLANG)"' >> $@
-	@echo \#ifdef KEYB_$(ETOSKEYB) >> $@
 	@echo \#define CONF_KEYB KEYB_$(ETOSKEYB) >> $@
-	@echo \#endif >> $@
-	@echo \#ifdef CHARSET_$(ETOSCSET) >> $@
 	@echo \#define CONF_CHARSET CHARSET_$(ETOSCSET) >> $@
-	@echo \#endif >> $@
 	@if [ "x$(ETOSKEYB)" = "x" -o "x$(ETOSCSET)" = "x" ]; \
 	then \
 	  echo "Country $(COUNTRY) not properly specified in country.mk"; \
