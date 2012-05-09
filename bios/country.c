@@ -64,19 +64,7 @@ struct charset_fonts {
 long cookie_idt;
 long cookie_akp;
 
-#if CONF_UNIQUE_COUNTRY
-const char *get_lang_name(void)
-{
-    return CONF_LANG;
-}
-
-void detect_akp_idt(void)
-{
-    cookie_akp = (OS_COUNTRY << 8) | CONF_KEYB;
-    cookie_idt = CONF_IDT;
-}
-
-#else
+#if !CONF_UNIQUE_COUNTRY
 
 static const struct country_record *get_current_country(int country_code)
 {
@@ -87,30 +75,6 @@ static const struct country_record *get_current_country(int country_code)
         }
     }
     return &countries[0]; /* default is US */
-}
-
-void detect_akp_idt(void)
-{
-#if CONF_WITH_NVRAM
-    char buf[4];
-    int err;
-  
-    err = nvmaccess(0, 6, 4, (PTR) buf);
-    if(err == 0) { 
-        cookie_akp = (buf[0] << 8) | buf[1];
-        cookie_idt = (buf[2] << 8) | buf[3]; 
-    }
-    else
-#endif
-    {
-        /* either no NVRAM, or the NVRAM is corrupt (low battery, 
-         * bad cksum), interpret the os_pal flag in header 
-         */
-        const struct country_record *cr = get_current_country(os_pal >> 1);
-    
-        cookie_akp = (cr->country << 8) | cr->keyboard;
-        cookie_idt = cr->idt;
-    }
 }
 
 static int get_kbd_number(void)
@@ -132,6 +96,37 @@ static int get_charset(void)
 }
 
 #endif
+
+void detect_akp_idt(void)
+{
+#if CONF_UNIQUE_COUNTRY
+    cookie_akp = (OS_COUNTRY << 8) | CONF_KEYB;
+    cookie_idt = CONF_IDT;
+#else
+
+#if CONF_WITH_NVRAM
+    char buf[4];
+    int err;
+  
+    err = nvmaccess(0, 6, 4, (PTR) buf);
+    if(err == 0) { 
+        cookie_akp = (buf[0] << 8) | buf[1];
+        cookie_idt = (buf[2] << 8) | buf[3]; 
+    }
+    else
+#endif
+    {
+        /* either no NVRAM, or the NVRAM is corrupt (low battery, 
+         * bad cksum), interpret the os_pal flag in header 
+         */
+        const struct country_record *cr = get_current_country(os_pal >> 1);
+    
+        cookie_akp = (cr->country << 8) | cr->keyboard;
+        cookie_idt = cr->idt;
+    }
+
+#endif
+}
 
 /*
  * get_keytbl - initialize country dependant keyboard layouts
