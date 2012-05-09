@@ -3571,3 +3571,6 @@ Start... early ages
   Contributed by David Savinkoff. (VRI)
 - bios/screen.c: Fix bug: can't change to ST resolutions after booting
   with videl in VGA 50Hz mode. (RFB)
+
+2012-05-09
+- country.mk: Fix UK date format. Contributed by David Savinkoff. (VRI)
