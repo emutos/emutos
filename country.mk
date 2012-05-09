@@ -71,6 +71,9 @@ i18n_uk_cset = ST
 i18n_uk_idt  = IDT_12H | IDT_DDMMYY | '/'
 
 COUNTRIES = us de fr cz gr es fi sg ru it uk
+ifeq (,$(findstring $(COUNTRY),$(COUNTRIES)))
+$(error Unknown COUNTRY=$(COUNTRY))
+endif
 
 # 
 

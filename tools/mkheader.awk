@@ -46,11 +46,6 @@ BEGIN {
     
     print "#include \"ctrycodes.h\"\n"
     
-    print "#ifndef COUNTRY_" uccountry
-    print "#warning unknown country " country
-    print "#define COUNTRY_" uccountry " 0"
-    print "#endif\n"
-    
     print "/* the build date in Binary-Coded Decimal */"
     print "#define OS_DATE 0x" month day year "\n"
     
