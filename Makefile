@@ -693,11 +693,6 @@ include/i18nconf.h: obj/country
 	@echo \#define CONF_LANG '"$(ETOSLANG)"' >> $@
 	@echo \#define CONF_KEYB KEYB_$(ETOSKEYB) >> $@
 	@echo \#define CONF_CHARSET CHARSET_$(ETOSCSET) >> $@
-	@if [ "x$(ETOSKEYB)" = "x" -o "x$(ETOSCSET)" = "x" ]; \
-	then \
-	  echo "Country $(COUNTRY) not properly specified in country.mk"; \
-	  false; \
-	fi
 else
 include/i18nconf.h: obj/country
 	@echo "# Generating $@ with CONF_KEYB=KEYB_ALL CONF_CHARSET=CHARSET_ALL"

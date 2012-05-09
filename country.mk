@@ -78,8 +78,19 @@ endif
 # 
 
 ETOSLANG = $(i18n_$(COUNTRY)_lang)
+ifeq (,$(ETOSLANG))
+$(error Variable i18n_$(COUNTRY)_lang incorrectly configured)
+endif
+
 ETOSKEYB = $(i18n_$(COUNTRY)_keyb)
+ifeq (,$(ETOSKEYB))
+$(error Variable i18n_$(COUNTRY)_keyb incorrectly configured)
+endif
+
 ETOSCSET = $(i18n_$(COUNTRY)_cset)
+ifeq (,$(ETOSCSET))
+$(error Variable i18n_$(COUNTRY)_cset incorrectly configured)
+endif
 
 #
 
