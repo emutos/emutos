@@ -686,19 +686,19 @@ TOCLEAN += include/i18nconf.h
 
 ifneq (,$(UNIQUE))
 include/i18nconf.h: obj/country
-	@echo "# Generating $@ with CONF_LANG=\"$(ETOSLANG)\" CONF_KEYB=KEYB_$(ETOSKEYB) CONF_CHARSET=CHARSET_$(ETOSCSET)"
+	@echo '# Generating $@ with CONF_LANG="$(ETOSLANG)" CONF_KEYB=KEYB_$(ETOSKEYB) CONF_CHARSET=CHARSET_$(ETOSCSET)'
 	@rm -f $@; touch $@
-	@echo \#define CONF_UNIQUE_COUNTRY 1 >> $@
-	@echo \#define CONF_NO_NLS 1 >> $@
-	@echo \#define CONF_LANG '"$(ETOSLANG)"' >> $@
-	@echo \#define CONF_KEYB KEYB_$(ETOSKEYB) >> $@
-	@echo \#define CONF_CHARSET CHARSET_$(ETOSCSET) >> $@
+	@echo '#define CONF_UNIQUE_COUNTRY 1' >> $@
+	@echo '#define CONF_NO_NLS 1' >> $@
+	@echo '#define CONF_LANG "$(ETOSLANG)"' >> $@
+	@echo '#define CONF_KEYB KEYB_$(ETOSKEYB)' >> $@
+	@echo '#define CONF_CHARSET CHARSET_$(ETOSCSET)' >> $@
 else
 include/i18nconf.h: obj/country
-	@echo "# Generating $@ with CONF_KEYB=KEYB_ALL CONF_CHARSET=CHARSET_ALL"
+	@echo '# Generating $@ with CONF_KEYB=KEYB_ALL CONF_CHARSET=CHARSET_ALL'
 	@rm -f $@; touch $@
-	@echo \#define CONF_KEYB KEYB_ALL > $@
-	@echo \#define CONF_CHARSET CHARSET_ALL >> $@
+	@echo '#define CONF_KEYB KEYB_ALL' > $@
+	@echo '#define CONF_CHARSET CHARSET_ALL' >> $@
 endif
 
 #

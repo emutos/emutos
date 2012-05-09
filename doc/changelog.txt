@@ -3577,3 +3577,4 @@ Start... early ages
 - Makefile: Remove useless #ifdef in include/i18nconf.h. (VRI)
 - country.mk tools/mkheader.awk: Move COUNTRY existence test. (VRI)
 - country.mk Makefile: Move country configuration sanity checks. (VRI)
+- Makefile: Add correct echo quoting. (VRI)
