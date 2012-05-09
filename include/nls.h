@@ -34,7 +34,5 @@ void nls_init(void);
 /* functions to query the lang database and to set the lang */
 
 void nls_set_lang(const char *);
-const char *nls_nth_lang(int);
-int nls_num_of_langs(void);
 
 #endif /* NLS_H */

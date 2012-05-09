@@ -28,16 +28,6 @@ void nls_set_lang(const char *s)
 {
 }
 
-const char *nls_nth_lang(int i)
-{
-  return CONF_LANG;
-}
-
-int nls_num_of_langs(void)
-{
-  return 1;
-}
-
 #else /* ! CONF_NO_NLS */
 
 static int the_lang;
@@ -81,14 +71,4 @@ void nls_set_lang(const char *s)
   the_lang = 0;
 }
   
-const char *nls_nth_lang(int i)
-{
-  return langs[i]->name;
-}
-
-int nls_num_of_langs(void)
-{
-  return num_of_langs;
-}
-
 #endif /* ! CONF_NO_NLS */
