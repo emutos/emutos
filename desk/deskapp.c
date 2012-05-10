@@ -44,6 +44,7 @@
 #include "icons.h"
 #include "desk1.h"
 #include "xbiosbind.h"
+#include "country.h"
 
 
 #define MIN_WINT 4
@@ -59,12 +60,12 @@ static BYTE     gl_buffer[SIZE_BUFF];
 
 /* When we can't get EMUDESK.INF via shel_get() or by reading from
  * the disk, we create one dynamically from three sources:
- *  the following data, for #E and #W lines
+ *  the desktop preferences, for #E line
+ *  the following data, for #W lines
  *  the drivemask, for #M lines
  *  the builtin destop resource, for the remaining lines
  */
 static const char *desk_inf_data1 =
-    "#E 1A 01\r\n"
     "#W 00 00 02 06 26 0C 00 @\r\n"
     "#W 00 00 02 08 26 0C 00 @\r\n"
     "#W 00 00 02 0A 26 0C 00 @\r\n"
@@ -498,10 +499,20 @@ void app_start(void)
           int trash_x, trash_y;
           int icon_type;
           char drive_letter;
+          BYTE env1, env2;
 
-          drivemask = dos_sdrv( dos_gdrv() ); 
-          strcpy(gl_afile, desk_inf_data1);  /* Copy core data part 1*/
+          /* Preferences */
+          env1 = 0x1a;
+          env2 = 0x01;
+          if (cookie_idt & IDT_BIT_DM)
+            env2 |= 0x04; /* day before month */
+          sprintf(gl_afile, "#E %02X %02X\r\n", env1, env2);
+
+          /* Windows */
+          strcat(gl_afile, desk_inf_data1);
+
           /* Scan for valid drives: */
+          drivemask = dos_sdrv( dos_gdrv() );
           for(i=0; i<26; i++)
             if(drivemask&(1L<<i))
             {

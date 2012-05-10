@@ -46,11 +46,13 @@
 #define IDT_TMASK 0x1000  /* time mask */
 
 /* IDT format for printing date */
+#define IDT_BIT_DM 0x100 /* day before month */
+#define IDT_BIT_YM 0x200 /* year before month */
 #define IDT_MMDDYY 0x000
-#define IDT_DDMMYY 0x100
-#define IDT_YYMMDD 0x200
-#define IDT_YYDDMM 0x300
-#define IDT_DMASK  0x300
+#define IDT_DDMMYY IDT_BIT_DM
+#define IDT_YYMMDD IDT_BIT_YM
+#define IDT_YYDDMM (IDT_BIT_YM | IDT_BIT_DM)
+#define IDT_DMASK  (IDT_BIT_YM | IDT_BIT_DM)
 #define IDT_SMASK   0xFF  /* date mask */
 
 

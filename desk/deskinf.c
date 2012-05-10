@@ -129,11 +129,13 @@ static void fmt_date(UWORD date, BYTE *pdate)
 
         if (G.g_cdateform)
         {
+          /* MM-DD-YY */
           my_itoa( (date & 0x01e0) >> 5, &pdate[0]);
           my_itoa(date & 0x001f, &pdate[2]);
         }
         else
         {
+          /* DD-MM-YY */
           my_itoa(date & 0x001f, &pdate[0]);
           my_itoa( (date & 0x01e0) >> 5, &pdate[2]);
         }

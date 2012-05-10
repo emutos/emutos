@@ -3586,3 +3586,7 @@ Start... early ages
   !CONF_WITH_NLS. (VRI)
 - bios/country.c bios/country.h bios/machine.c: Rework the AKP/IDT detection
   algorithm. (VRI)
+
+2012-05-10
+- bios/country.h desk/deskapp.c desk/deskinf.c: Use the IDT date ordering in
+  the default desktop. (VRI)
