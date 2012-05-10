@@ -504,6 +504,8 @@ void app_start(void)
           /* Preferences */
           env1 = 0x1a;
           env2 = 0x01;
+          if (cookie_idt & IDT_24H)
+            env2 |= 0x02; /* 24 hours */
           if (cookie_idt & IDT_BIT_DM)
             env2 |= 0x04; /* day before month */
           sprintf(gl_afile, "#E %02X %02X\r\n", env1, env2);

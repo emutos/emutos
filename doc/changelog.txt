@@ -3590,3 +3590,4 @@ Start... early ages
 2012-05-10
 - bios/country.h desk/deskapp.c desk/deskinf.c: Use the IDT date ordering in
   the default desktop. (VRI)
+- desk/deskapp.c: Use the IDT time format in the default desktop. (VRI)
