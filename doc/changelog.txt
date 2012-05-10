@@ -3584,3 +3584,5 @@ Start... early ages
   CONF_NO_NLS by !CONF_WITH_NLS. (VRI)
 - bios/bios.c include/nls.h util/nls.c: Removed all NLS functions when
   !CONF_WITH_NLS. (VRI)
+- bios/country.c bios/country.h bios/machine.c: Rework the AKP/IDT detection
+  algorithm. (VRI)

@@ -97,35 +97,51 @@ static int get_charset(void)
 
 #endif
 
-void detect_akp_idt(void)
+void detect_akp(void)
 {
-#if CONF_UNIQUE_COUNTRY
-    cookie_akp = (OS_COUNTRY << 8) | CONF_KEYB;
-    cookie_idt = CONF_IDT;
-#else
+    /* By default, use the ROM default country */
+    int country = OS_COUNTRY;
+    int keyboard = OS_COUNTRY;
 
-#if CONF_WITH_NVRAM
-    char buf[4];
+#if CONF_WITH_NVRAM && !CONF_UNIQUE_COUNTRY
+    char buf[2];
     int err;
   
-    err = nvmaccess(0, 6, 4, (PTR) buf);
-    if(err == 0) { 
-        cookie_akp = (buf[0] << 8) | buf[1];
-        cookie_idt = (buf[2] << 8) | buf[3]; 
+    err = nvmaccess(0, 6, 2, (PTR) buf);
+    if (err == 0)
+    { 
+        /* Override with the NVRAM settings */
+        country = buf[0];
+        keyboard = buf[1];
+    }
+#endif
+
+    cookie_akp = (country << 8) | keyboard;
+}
+
+void detect_idt(void)
+{
+#if CONF_WITH_NVRAM
+    char buf[2];
+    int err;
+  
+    err = nvmaccess(0, 8, 2, (PTR) buf);
+    if (err == 0)
+    { 
+        cookie_idt = (buf[0] << 8) | buf[1]; 
     }
     else
 #endif
     {
         /* either no NVRAM, or the NVRAM is corrupt (low battery, 
-         * bad cksum), interpret the os_pal flag in header 
-         */
-        const struct country_record *cr = get_current_country(os_pal >> 1);
-    
-        cookie_akp = (cr->country << 8) | cr->keyboard;
+         * bad cksum), get the value from the current country. */
+#if CONF_UNIQUE_COUNTRY
+        cookie_idt = CONF_IDT;
+#else
+        const struct country_record *cr = get_current_country((cookie_akp >> 8) & 0xff);
         cookie_idt = cr->idt;
-    }
-
 #endif
+    }
 }
 
 /*

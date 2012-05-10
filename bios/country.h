@@ -56,11 +56,12 @@
 
 /* cookies */
 
-extern long cookie_idt;
 extern long cookie_akp;
+extern long cookie_idt;
 
 /* used by machine.c */
-void detect_akp_idt(void);
+void detect_akp(void);
+void detect_idt(void);
 
 /* used by ikbd.c */
 void get_keytbl(const struct keytbl **tbl);
