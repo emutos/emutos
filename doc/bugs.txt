@@ -1,7 +1,7 @@
 - Changing the VDI color palette is not possible on TT and Falcon.
 - PROCALC.ACC doesn't open after changing the resolution.
 - Desktop doesn't default to language specific time & date formats
-  (G.g_ctimeform & G.g_cdateform don't get defaults from country.c/.mk).
+  (G.g_ctimeform doesn't get defaults from country.c/.mk).
 - Drag-and-drop does not work in the freeware GEM games "Abalone"
   "Hotshot checkers", "Risky", "Yukon" and in the shareware solitair
   game "Patience".
