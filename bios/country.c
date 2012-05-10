@@ -66,7 +66,7 @@ long cookie_akp;
 
 #if !CONF_UNIQUE_COUNTRY
 
-static const struct country_record *get_current_country(int country_code)
+static const struct country_record *get_country_record(int country_code)
 {
     int i;
     for(i = 0 ; i < sizeof(countries)/sizeof(*countries) ; i++) {
@@ -79,19 +79,19 @@ static const struct country_record *get_current_country(int country_code)
 
 static int get_kbd_number(void)
 {
-    const struct country_record *cr = get_current_country(cookie_akp & 0xff);
+    const struct country_record *cr = get_country_record(cookie_akp & 0xff);
     return cr->keyboard;
 }
 
 const char *get_lang_name(void)
 {
-    const struct country_record *cr = get_current_country((cookie_akp >> 8) & 0xFF);
+    const struct country_record *cr = get_country_record((cookie_akp >> 8) & 0xFF);
     return cr->lang_name;
 }
 
 static int get_charset(void)
 {
-    const struct country_record *cr = get_current_country((cookie_akp >> 8) & 0xFF);
+    const struct country_record *cr = get_country_record((cookie_akp >> 8) & 0xFF);
     return cr->charset;
 }
 
@@ -138,7 +138,7 @@ void detect_idt(void)
 #if CONF_UNIQUE_COUNTRY
         cookie_idt = CONF_IDT;
 #else
-        const struct country_record *cr = get_current_country((cookie_akp >> 8) & 0xff);
+        const struct country_record *cr = get_country_record((cookie_akp >> 8) & 0xff);
         cookie_idt = cr->idt;
 #endif
     }
