@@ -3591,3 +3591,7 @@ Start... early ages
 - bios/country.h desk/deskapp.c desk/deskinf.c: Use the IDT date ordering in
   the default desktop. (VRI)
 - desk/deskapp.c: Use the IDT time format in the default desktop. (VRI)
+
+2012-05-13
+- bios/screen.c: Fix bug: Falcon ST compatibility colour modes were wrong
+  height on VGA monitor. (RFB)

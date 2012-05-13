@@ -677,7 +677,7 @@ WORD determine_width(WORD mode)
  */
 WORD determine_vctl(WORD mode,WORD monitor)
 {
-    WORD bppcode, vctl;
+    WORD vctl;
 
     if (mode&VIDEL_VGA) {
         vctl = (mode&VIDEL_80COL) ? 0x08 : 0x04;
@@ -692,30 +692,17 @@ WORD determine_vctl(WORD mode,WORD monitor)
     if (!(mode&VIDEL_COMPAT))
         return vctl;
 
-    bppcode = mode & VIDEL_BPPMASK;
-
-    if (mode&VIDEL_VGA) {
-        switch(bppcode) {
-        case VIDEL_1BPP:
-            break;
-        case VIDEL_4BPP:
-            vctl = 0x04;
-            break;
-        default:
+    switch(mode&VIDEL_BPPMASK) {
+    case VIDEL_1BPP:
+        if (!(mode&VIDEL_VGA) && (monitor == MON_MONO))
             vctl = 0x08;
-        }
-    } else {
-        switch(bppcode) {
-        case VIDEL_1BPP:
-            if (monitor == MON_MONO)
-                vctl = 0x08;
-            break;
-        case VIDEL_4BPP:
-            vctl = 0x00;
-            break;
-        default:
-            vctl = 0x04;
-        }
+        break;
+    case VIDEL_2BPP:
+        vctl = (mode&VIDEL_VGA)? 0x09 : 0x04;
+        break;
+    case VIDEL_4BPP:
+        vctl = (mode&VIDEL_VGA)? 0x05 : 0x00;
+        break;
     }
 
     return vctl;
