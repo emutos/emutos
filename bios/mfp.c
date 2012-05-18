@@ -172,6 +172,8 @@ void init_system_timer(void)
     /* Timer C: ctrl = divide 64, data = 192 */
     xbtimer(2, 0x50, 192, (LONG)int_timerc); 
 #endif
+
+    /* The timer will really be enabled when sr is set to 0x2500 or lower. */
 }
 
 #if CONF_WITH_MFP_RS232
