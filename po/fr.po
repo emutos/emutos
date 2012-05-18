@@ -325,7 +325,7 @@ msgstr "Types de document:"
 msgid "Application type:"
 msgstr "Type d'application:"
 
-#: desk/desk_rsc.c:1123
+#: desk/desk_rsc.c:1090
 msgid "Icon type:"
 msgstr "Icône:"
 
@@ -601,7 +601,7 @@ msgstr "[3]["
 "documentation pour les limites sur le|"
 "nombre de caractères.][  OK  ]"
 
-#: aes/gem_rsc.c:36
+#: aes/gem_rsc.c:37
 msgid "Selection:  ________.___"
 msgstr "Sélection:  ________.___"
 
