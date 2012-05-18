@@ -51,9 +51,9 @@ BEGIN {
     
     print "/* the country number << 1 and the PAL/NTSC flag */"
     if (uccountry == "US")
-        printf "#define OS_PAL (2 * COUNTRY_US)\n"
+        printf "#define OS_CONF (2 * COUNTRY_US)\n"
     else
-        print "#define OS_PAL (2 * COUNTRY_" uccountry " + 1)\n"
+        print "#define OS_CONF (2 * COUNTRY_" uccountry " + 1)\n"
 
     print "/* the country number only (used by country.c) */"
     print "#define OS_COUNTRY COUNTRY_" uccountry "\n"

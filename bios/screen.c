@@ -1400,7 +1400,7 @@ void screen_init(void)
     else
 #endif
     {
-        sync_mode = (os_pal&0x01)?0x02:0x00;
+        sync_mode = (os_conf&0x01)?0x02:0x00;
     }
     *(volatile BYTE *) SYNCMODE = sync_mode;
 

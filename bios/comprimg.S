@@ -58,8 +58,8 @@ _os_magic:
     dc.l    0           // os_magic, pointer to GEM's MUPB
 _os_date:
     dc.l    OS_DATE     // os_date, Date of system build
-_os_pal:        
-    dc.w    OS_PAL      // Flag for PAL version + country
+_os_conf:
+    dc.w    OS_CONF     // Flag for PAL version + country
 _os_dosdate:
     dc.w    OS_DOSDATE  // os_date, Date of system build in GEMDOS format
 os_root:

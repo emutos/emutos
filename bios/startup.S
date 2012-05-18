@@ -72,7 +72,7 @@ _stktop:                        // filled from top to bottom
         .globl  _os_beg
         .globl  _os_magic
         .globl  _os_date
-        .globl  _os_pal
+        .globl  _os_conf
         .globl  _os_dosdate
         .globl  _root
         .globl  _shifty
@@ -111,8 +111,8 @@ _os_magic:
 #endif
 _os_date:
     dc.l    OS_DATE     // os_date, Date of system build
-_os_pal:        
-    dc.w    OS_PAL      // Flag for PAL version + country
+_os_conf:        
+    dc.w    OS_CONF     // Flag for PAL version + country
 _os_dosdate:
     dc.w    OS_DOSDATE  // os_date, Date of system build in GEMDOS format
 os_root:

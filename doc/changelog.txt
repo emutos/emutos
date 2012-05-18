@@ -3595,3 +3595,7 @@ Start... early ages
 2012-05-13
 - bios/screen.c: Fix bug: Falcon ST compatibility colour modes were wrong
   height on VGA monitor. (RFB)
+
+2012-05-18
+- bios/comprimg.S bios/screen.c bios/startup.S bios/tosvars.h
+  tools/mkheader.awk: Renamed os_pal to os_conf. (VRI)

@@ -68,7 +68,7 @@ extern void os_entry(void);
 extern LONG os_beg;
 extern LONG os_date;
 extern UWORD os_dosdate;
-extern WORD os_pal;
+extern WORD os_conf;
 extern void (*exec_os)(void);
 extern LONG end_os;
 extern LONG m_start;
