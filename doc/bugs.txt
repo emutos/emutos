@@ -8,32 +8,54 @@
   - In "Sysinfo" (v5.02) dialog buttons and window scrollbar buttons
     are selected only on mouse button release and acted only if
     press and release are within certain time of each other.
+    http://sourceforge.net/mailarchive/message.php?msg_id=28236630
   - In "Patience", all the dialogs (quit, start new game) show
     the button selected last time still as selected and it needs
     to be unselected to use the dialog.
   - "Awele" v1.01 window menus close immediately after clicking to open
     them.  "Awele" v1.02 compiled with newer Windom version works fine.
-  - In (original) "Ballerburg", moving mouse over the "Fertig" button
-    in the wind strenght dialog activates the button without click.
+  - In (original) "Ballerburg", when not in a dialog, there are constant
+    "ding" sounds and moving mouse over interactive elements activates
+    them without a click.
   - Clicks don't work at all in "Yams" (mine sweeper) game.
   - In "Bombs" & "Mind Sweeper" (mine sweeper) games, it's pretty
-    random whether mouse clicks go through.
+    random whether mouse clicks go through, mostly they don't.
 - 6x6 font is missing characters 1->31, 194->223 and 255.
   The character 158 is wrong.  As a result small arrows don't
   show up in "Clac" RSC.
-- Dialogs in "Sherlock" are too large, their outline is of
-  wrong type and text is positioned too low.
+- The right side of outline characters are clipped, e.g. in
+  "LaserChess", "Diamond miner" and "Minigolf" games.  In vditext
+  tester their line height is also too low:
+  http://sourceforge.net/mailarchive/message.php?msg_id=29276993
+- Text input in GFA programs like "Minigolf" (which dont' use GEM)
+  always goes to the top left corner of screen, not to the position
+  where it goes with normal TOS.
+- Game result text in "Sherlock" is positioned wrong (overlaps).
+- Thick arcs going partly outside of screen have incorrectly
+  drawn pixels at top of screen in vditext tester.  
 - In Mario Becroft's GEM Pacman, "game over" melt effect happens
   for the whole screen, not just for the game window.
-- Shots go through buildings in GEM "Invaders" because EmuTOS
-  returns 0 as VDI color index also for set pixels in monochrome.
+- '-' key for moving left in VDI "Invaders" and 'h' & 'j' keys
+  for moving character left & right in Anduril don't work, only
+  special key (Alt/Shift) input works:
+  http://sourceforge.net/mailarchive/message.php?msg_id=29277643
+- Box drawing in Gl"ucksrad leaves garbage on top of screen
+  and player name input text isn't shown.
 - In "MathMaze", game win dialog leaves some lines on screen.
+- Monopoly game board isn't drawn properly, maybe due to issues
+  in filled polylines.
+- Ramses game panics after Mediach() if floppy is missing:
+  http://sourceforge.net/mailarchive/message.php?msg_id=29277256
 - 7UP hangs on exit.
 
 
 Links to programs listed above:
+- 7UP 2.09e
+  ftp://gem.win.co.nz/hall/tos_206/7up_209e.zip
 - Abalone:
   http://www.umich.edu/~archive/atari/Games/Board/abalone.zoo
+- Anduril:
+  http://www.umich.edu/~archive/atari/Games/Adventure/andurlin.arc
 - Awele v1.01:
   http://windom.free.fr/awele/bin/awele.zip
 - Ballerburg:
@@ -48,16 +70,21 @@ Links to programs listed above:
   http://www.umich.edu/~archive/atari/Games/Arcade/invaders.lzh
 - Mind sweeper:
   http://www.umich.edu/~archive/atari/Games/Puzzle/minds_11.zip
+- Minigolf:
+  http://koti.mbnet.fi/tammat/src/minigolf.tar.gz
 - Pacman:
   http://gem.win.co.nz/mb/atarisw/pacman.html
 - Patience (older version):
   http://www.umich.edu/~archive/atari/Games/Cards/patience.lzh
 - Risky (English version):
   http://www.umich.edu/~archive/atari/Games/Board/risk_eng.lzh
+- Sherlock:
+  http://www.umich.edu/~archive/atari/Games/Adventure/sherlock.arc
+- Sysinfo 5.02:
+  http://gfa.atari-users.net/ftp/download.php?fn=sinf502e.zip 
 - Yukon:
   http://www.umich.edu/~archive/atari/Games/Cards/yukone1.lzh
   http://www.haun-online.de/Atari/e_index.html
-- 7UP 2.09e
-  ftp://gem.win.co.nz/hall/tos_206/7up_209e.zip
 
-(Links missing to: sysinfo v5, yams, mathmaze.)
+(Links missing to: yams, mathmaze, monopoly,
+laserchess/diamondminer and ramses.)
