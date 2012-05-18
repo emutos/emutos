@@ -9,6 +9,8 @@
     are selected only on mouse button release and acted only if
     press and release are within certain time of each other.
     http://sourceforge.net/mailarchive/message.php?msg_id=28236630
+  - In PixArt4, buttons within windows don't react to mouse clicks,
+    only window close button does
   - In "Patience", all the dialogs (quit, start new game) show
     the button selected last time still as selected and it needs
     to be unselected to use the dialog.
@@ -23,6 +25,8 @@
 - 6x6 font is missing characters 1->31, 194->223 and 255.
   The character 158 is wrong.  As a result small arrows don't
   show up in "Clac" RSC.
+- Text in the log window of ImCon GEM image converter is double
+  the correct size on ST low and med resolutions.
 - The right side of outline characters are clipped, e.g. in
   "LaserChess", "Diamond miner" and "Minigolf" games.  In vditext
   tester their line height is also too low:
@@ -44,6 +48,9 @@
 - In "MathMaze", game win dialog leaves some lines on screen.
 - Monopoly game board isn't drawn properly, maybe due to issues
   in filled polylines.
+- Speed of Light GEM image viewer complains for every supported
+  EmuTOS color resolution, that it doesn't support TrueColor
+  resolutions, then it exits.
 - Ramses game panics after Mediach() if floppy is missing:
   http://sourceforge.net/mailarchive/message.php?msg_id=29277256
 - 7UP hangs on exit.
@@ -66,6 +73,8 @@ Links to programs listed above:
   http://koti.mbnet.fi/tammat/open.shtml#clac
 - Hotshot checkers:
   http://www.umich.edu/~archive/atari/Games/Board/hotshot.arc
+- ImCon:
+  ftp://ftp.funet.fi/pub/atari/graphics/imcon11.lzh
 - Invaders:
   http://www.umich.edu/~archive/atari/Games/Arcade/invaders.lzh
 - Mind sweeper:
@@ -76,10 +85,14 @@ Links to programs listed above:
   http://gem.win.co.nz/mb/atarisw/pacman.html
 - Patience (older version):
   http://www.umich.edu/~archive/atari/Games/Cards/patience.lzh
+- PixArt4:
+  http://www.1632systems.co.uk/www/html/Product/pixart.htm
 - Risky (English version):
   http://www.umich.edu/~archive/atari/Games/Board/risk_eng.lzh
 - Sherlock:
   http://www.umich.edu/~archive/atari/Games/Adventure/sherlock.arc
+- Speed of Light:
+  http://www.umich.edu/~archive/atari/Graphics/spoflt38.zip
 - Sysinfo 5.02:
   http://gfa.atari-users.net/ftp/download.php?fn=sinf502e.zip 
 - Yukon:
