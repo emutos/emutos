@@ -46,6 +46,11 @@ BEGIN {
     
     print "#include \"ctrycodes.h\"\n"
     
+    print "/* The defines below must only be used in startup.S and comprimg.S."
+    print " * Then the OS header variables must be used elsewhere."
+    print " * This allows tools like tos-lang-change to patch the ROM header afterwards."
+    print " */\n"
+
     print "/* the build date in Binary-Coded Decimal */"
     print "#define OS_DATE 0x" month day year "\n"
     
@@ -54,7 +59,7 @@ BEGIN {
     print "/* the build date in GEMDOS format */"
     print "#define OS_DOSDATE " dos_date "\n"
 
-    print "/* the country number only (used by country.c) */"
+    print "/* the country number only */"
     print "#define OS_COUNTRY COUNTRY_" uccountry "\n"
 
     print "/* the PAL/NTSC flag */"
