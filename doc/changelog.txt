@@ -3599,3 +3599,5 @@ Start... early ages
 2012-05-18
 - bios/comprimg.S bios/screen.c bios/startup.S bios/tosvars.h
   tools/mkheader.awk: Renamed os_pal to os_conf. (VRI)
+- bios/country.c: [3527804] Use the os_conf variable from the OS header as
+  default language. This allows again the usage of tos-lang-change. (VRI)

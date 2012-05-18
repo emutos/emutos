@@ -100,8 +100,8 @@ static int get_charset(void)
 void detect_akp(void)
 {
     /* By default, use the ROM default country */
-    int country = OS_COUNTRY;
-    int keyboard = OS_COUNTRY;
+    int country = os_conf >> 1;
+    int keyboard = country;
 
 #if CONF_WITH_NVRAM && !CONF_UNIQUE_COUNTRY
     char buf[2];
