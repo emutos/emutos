@@ -3603,3 +3603,5 @@ Start... early ages
   default language. This allows again the usage of tos-lang-change. (VRI)
 - bios/comprimg.S bios/startup.S tools/mkheader.awk: Remove the OS_CONF define.
   Use the os_conf variable instead. (VRI)
+- aes/geminit.c bios/screen.c desk/deskapp.c desk/deskmain.c desk/deskrez.c:
+  Fixed compilation for non-Atari hardware. (VRI)
