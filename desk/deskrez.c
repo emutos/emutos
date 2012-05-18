@@ -35,12 +35,18 @@
 
 #define R_STRING 5      /* this should be obtained from a header! */
 
+#if CONF_WITH_TT_SHIFTER
+
 /*
  * maps TT dialog buttons to resolution
  */
 #define NUM_TT_BUTTONS  5
 static const WORD ttrez_from_button[NUM_TT_BUTTONS] =
     { ST_LOW, ST_MEDIUM, ST_HIGH, TT_LOW, TT_MEDIUM };
+
+#endif /* CONF_WITH_TT_SHIFTER */
+
+#if CONF_WITH_VIDEL
 
 /*
  * maps Falcon dialog buttons to 'base' mode
@@ -68,6 +74,8 @@ static const WORD falconmode_from_button[NUM_FALCON_BUTTONS] =
       VIDEL_COMPAT|VIDEL_80COL|VIDEL_1BPP,                  /* ST High */
       VIDEL_COMPAT|VIDEL_VERTICAL|VIDEL_80COL|VIDEL_2BPP,   /* ST Medium */
       VIDEL_COMPAT|VIDEL_VERTICAL|VIDEL_4BPP };             /* ST Low */
+
+#endif /* CONF_WITH_VIDEL */
 
 /*
  *  change_st_rez(): change desktop ST resolution

@@ -679,9 +679,17 @@ static WORD do_optnmenu(WORD item)
                 rebld = change_resolution(&newres,&newmode);
                 if (rebld == 1)
                 {
-                  if (newres == FALCON_REZ)
+                  if (FALSE)
+                  {
+                    /* Dummy case for conditional compilation */
+                  }
+#if CONF_WITH_VIDEL
+                  else if (newres == FALCON_REZ)
                     shel_write(5,newmode,1,NULL,NULL);
+#endif
+#if CONF_WITH_SHIFTER
                   else shel_write(5,newres+2,0,NULL,NULL);
+#endif
                   done = TRUE;
                 }
                 break;

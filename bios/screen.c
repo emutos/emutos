@@ -1215,6 +1215,7 @@ WORD get_videl_mode(void)
  */
 WORD check_moderez(WORD moderez)
 {
+#if CONF_WITH_SHIFTER
 WORD current_mode, return_mode, return_rez;
 int tt;
 
@@ -1249,6 +1250,9 @@ int tt;
     }
 
     return (return_rez==getrez())?0:(0xff00|return_rez);
+#else /* CONF_WITH_SHIFTER */
+    return 0;
+#endif /* CONF_WITH_SHIFTER */
 }
 
 /*
@@ -1595,8 +1599,8 @@ WORD getrez(void)
         rez = *(volatile UBYTE *)ST_SHIFTER & 0x03;
     }
 #else /* CONF_WITH_SHIFTER */
-    /* No video hardware, default to some standard video mode */
-    rez = ST_LOW;
+    /* No video hardware, return the logical video mode */
+    rez = sshiftmod;
 #endif /* CONF_WITH_SHIFTER */
 
     return rez;
