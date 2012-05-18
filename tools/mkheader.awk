@@ -49,19 +49,19 @@ BEGIN {
     print "/* the build date in Binary-Coded Decimal */"
     print "#define OS_DATE 0x" month day year "\n"
     
-    print "/* the country number << 1 and the PAL/NTSC flag */"
-    if (uccountry == "US")
-        printf "#define OS_CONF (2 * COUNTRY_US)\n"
-    else
-        print "#define OS_CONF (2 * COUNTRY_" uccountry " + 1)\n"
-
-    print "/* the country number only (used by country.c) */"
-    print "#define OS_COUNTRY COUNTRY_" uccountry "\n"
-
     dos_date = day + month * 32 + (year - 1980) * 512 
 
     print "/* the build date in GEMDOS format */"
     print "#define OS_DOSDATE " dos_date "\n"
+
+    print "/* the country number only (used by country.c) */"
+    print "#define OS_COUNTRY COUNTRY_" uccountry "\n"
+
+    print "/* the country number << 1 and the PAL/NTSC flag */"
+    if (uccountry == "US")
+        print "#define OS_CONF (2 * COUNTRY_US)\n"
+    else
+        print "#define OS_CONF (2 * COUNTRY_" uccountry " + 1)\n"
 
     print "#endif /* HEADER_H */"
 }
