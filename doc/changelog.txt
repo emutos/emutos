@@ -3605,3 +3605,4 @@ Start... early ages
   Use the os_conf variable instead. (VRI)
 - aes/geminit.c bios/screen.c desk/deskapp.c desk/deskmain.c desk/deskrez.c:
   Fixed compilation for non-Atari hardware. (VRI)
+- include/intmath.h util/intmath.c: Implement mul_div() using muls/divs. (VRI)

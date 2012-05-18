@@ -47,21 +47,3 @@ ULONG Isqrt(ULONG x)
 
     return s2;
 }
-
-
-/*
- * mul_div - signed integer multiply and divide
- *
- * mul_div (m1,m2,d1)
- * 
- * ( ( m1 * m2 ) / d1 ) + 1/2
- *
- * m1 = signed 16 bit integer
- * m2 = unsigned 15 bit integer
- * d1 = signed 16 bit integer
- */
-
-WORD mul_div(WORD m1, UWORD m2, WORD d1)
-{
-    return (WORD)(((WORD)(m1)*(LONG)((WORD)(m2))) / (WORD)d1);
-}
