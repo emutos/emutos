@@ -57,11 +57,11 @@ BEGIN {
     print "/* the country number only (used by country.c) */"
     print "#define OS_COUNTRY COUNTRY_" uccountry "\n"
 
-    print "/* the country number << 1 and the PAL/NTSC flag */"
+    print "/* the PAL/NTSC flag */"
     if (uccountry == "US")
-        print "#define OS_CONF (2 * COUNTRY_US)\n"
+        print "#define OS_PAL 0\n"
     else
-        print "#define OS_CONF (2 * COUNTRY_" uccountry " + 1)\n"
+        print "#define OS_PAL 1\n"
 
     print "#endif /* HEADER_H */"
 }
