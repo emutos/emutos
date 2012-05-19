@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: EMUTOS beta\n"
 "POT-Creation-Date: 2004-01-27 14:37+0100\n"
-"PO-Revision-Date: 2012-05-19 01:33+0200\n"
+"PO-Revision-Date: 2012-05-19 16:20+0200\n"
 "Last-Translator: Vincent Riviere <vincent.riviere@freesbee.fr>\n"
 "Language-Team: French <fr@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -232,8 +232,9 @@ msgid "[1]["
 "You cannot delete the folder in|"
 "which you are currently working.][  OK  ]"
 msgstr "[1]["
-"Vouz ne pouvez pas détruire|"
-"le dossier courant.][  OK  ]"
+"Vous ne pouvez pas supprimer|"
+"un dossier dans lequel vous|"
+"êtes en train de travailler.][  OK  ]"
 
 #: aes/gem_rsc.c:548
 msgid "[1]["
@@ -356,11 +357,11 @@ msgstr "Eléments à copier:  ____"
 
 #: desk/desk_rsc.c:190
 msgid "Folders to delete:  ____"
-msgstr "Dossiers à effacer:  ____"
+msgstr "Dossiers à supprimer:  ____"
 
 #: desk/desk_rsc.c:195
 msgid "Items to delete:  ____"
-msgstr "Eléments à effacer:  ____"
+msgstr "Fichiers à supprimer:  ____"
 
 #: desk/desk_rsc.c:200
 msgid "Current name:  ________.___"
@@ -420,7 +421,7 @@ msgstr "  Fermer la fenêtre"
 
 #: desk/desk_rsc.c:400
 msgid "  Delete...       \007D"
-msgstr "  Effacer..."
+msgstr "  Supprimer..."
 
 #: desk/desk_rsc.c:406
 msgid "  Format..."
@@ -600,7 +601,7 @@ msgstr "COPIER DES DOSSIERS"
 
 #: desk/desk_rsc.c:1216
 msgid "DELETE FOLDERS / ITEMS"
-msgstr "EFFACER DES DOSSIERS"
+msgstr "SUPPRIMER DES OBJETS"
 
 #: desk/desk_rsc.c:1255
 msgid "NAME CONFLICT DURING COPY"
@@ -787,8 +788,8 @@ msgid "[3]["
 "Cannot find FORMAT.PRG|"
 "or FORMAT.TTP.][  OK  ]"
 msgstr "[3]["
-"Impossible de trouver FORMAT.PRG|"
-"ou FORMAT.TTP.][  OK  ]"
+"Impossible de trouver|"
+"FORMAT.PRG ou FORMAT.TTP.][  OK  ]"
 
 #: desk/desk_rsc.c:1879
 msgid "[3]["
@@ -809,9 +810,9 @@ msgid "[3]["
 "You cannot copy a parent folder|"
 "into one of its child folders.][  OK  ]"
 msgstr "[3]["
-"Vous ne pouvez pas copier un dossier|"
-"à l'intérieur d'un dossier contenu par|"
-"celui-ci.][  OK  ]"
+"Vous ne pouvez pas copier un|"
+"dossier parent dans l'un de|"
+"ses dossiers enfants.][  OK  ]"
 
 #: desk/desk_rsc.c:1891
 msgid "[3]["
@@ -821,11 +822,10 @@ msgid "[3]["
 "on OK.  Otherwise, click on|"
 "Cancel.][  OK  |Cancel]"
 msgstr "[3]["
-"Cliquez sur OK si vous êtes|"
-"sûr de vouloir effacer TOUTES|"
-"les données présentes sur le|"
-"disque %c:.|"
-"Sinon cliquez sur Annuler.][  OK  |Annuler]"
+"Si vous êtes sûr de vouloir|"
+"supprimer TOUTES les données|"
+"du disque %c:, cliquez sur OK.|"
+"Sinon, cliquez sur Annuler.][  OK  |Annuler]"
 
 #: desk/desk_rsc.c:1900
 msgid "[1]["
@@ -950,8 +950,9 @@ msgid "[1]["
 "You cannot drag the trash can|"
 "into a window.][  OK  ]"
 msgstr "[1]["
-"La corbeille ne peut pas être glissée|"
-"dans une fenêtre.][  OK  ]"
+"Vous ne pouvez pas faire|"
+"glisser la corbeille dans une|"
+"fenêtre.][  OK  ]"
 
 #: desk/desk_rsc.c:1973
 msgid "[1]["
