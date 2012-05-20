@@ -3612,3 +3612,4 @@ Start... early ages
 
 2012-05-20
 - po/fi.po: Update. Contributed by Eero Tamminen. (VRI)
+- po/es.po: Update. Contributed by David Galvez. (VRI)
