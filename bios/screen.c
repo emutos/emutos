@@ -1216,19 +1216,25 @@ WORD get_videl_mode(void)
 WORD check_moderez(WORD moderez)
 {
 #if CONF_WITH_SHIFTER
-WORD current_mode, return_mode, return_rez;
+WORD return_rez;
 int tt;
 
     if (get_monitor_type() == MON_MONO)
         return 0;
 
-    current_mode = get_videl_mode();
-    if (current_mode) {
-        if (moderez < 0)                    /* ignore rez values */
-            return 0;
-        return_mode = vfixmode(moderez);    /* adjust */
-        return (return_mode==current_mode)?0:return_mode;
+#if CONF_WITH_VIDEL
+    if (has_videl) {
+        WORD current_mode, return_mode;
+
+        current_mode = get_videl_mode();
+        if (current_mode) {
+            if (moderez < 0)                /* ignore rez values */
+                return 0;
+            return_mode = vfixmode(moderez);/* adjust */
+            return (return_mode==current_mode)?0:return_mode;
+        }
     }
+#endif
 
     /* handle old-fashioned rez :-) */
     if (moderez > 0)                        /* ignore mode values */
