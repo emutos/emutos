@@ -3617,3 +3617,6 @@ Start... early ages
 2012-05-21
 - bios/screen.c: Fixed check_moderez() when CONF_WITH_VIDEL was not
   defined. (RFB)
+
+2012-05-22
+- po/it.po: Update. Contributed by Lodovico Zanier. (VRI)
