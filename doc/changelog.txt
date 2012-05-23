@@ -3620,3 +3620,6 @@ Start... early ages
 
 2012-05-22
 - po/it.po: Update. Contributed by Lodovico Zanier. (VRI)
+
+2012-05-23
+- po/ru.po: Update. Contributed by Dima Sobolev. (VRI)
