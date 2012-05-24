@@ -36,14 +36,14 @@ LONG bconin5(void);
 LONG bconin6(void);
 LONG bconin7(void);
 
-void bconout0(WORD, WORD);
-void bconout1(WORD, WORD);
-void bconout2(WORD, WORD);
-void bconout3(WORD, WORD);
-void bconout4(WORD, WORD);
-void bconout5(WORD, WORD);
-void bconout6(WORD, WORD);
-void bconout7(WORD, WORD);
+LONG bconout0(WORD, WORD);
+LONG bconout1(WORD, WORD);
+LONG bconout2(WORD, WORD);
+LONG bconout3(WORD, WORD);
+LONG bconout4(WORD, WORD);
+LONG bconout5(WORD, WORD);
+LONG bconout6(WORD, WORD);
+LONG bconout7(WORD, WORD);
 
 LONG bcostat0(void);
 LONG bcostat1(void);
@@ -60,7 +60,7 @@ void dummy(void);
 
 extern LONG (*bconstat_vec[])(void);
 extern LONG (*bconin_vec[])(void);
-extern void (*bconout_vec[])(WORD, WORD);
+extern LONG (*bconout_vec[])(WORD, WORD);
 extern LONG (*bcostat_vec[])(void);
 
 /* internal init routine */

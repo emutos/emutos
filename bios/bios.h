@@ -16,7 +16,7 @@ LONG bios_do_unimpl(WORD number);
 /* misc BIOS functions */
 LONG bconstat(WORD handle);
 LONG bconin(WORD handle);
-void bconout(WORD handle, WORD what);
+LONG bconout(WORD handle, WORD what);
 LONG lrwabs(WORD r_w, LONG adr, WORD numb, WORD first, WORD drive, LONG lfirst);
 LONG setexec(WORD num, LONG vector);
 LONG tickcal(void);

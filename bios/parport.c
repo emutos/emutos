@@ -64,7 +64,7 @@ LONG bcostat0(void)
 #endif
 }
 
-void bconout0(WORD dev, WORD c)
+LONG bconout0(WORD dev, WORD c)
 {
     if(bcostat0()) {
 #if CONF_WITH_PRINTER_PORT
@@ -89,12 +89,14 @@ void bconout0(WORD dev, WORD c)
         ongibit(0x20);
         /* restore sr */
         set_sr(old_sr);
+        return 1L;
 #endif
     } else {
         /* the TOS does wait until the printer is available... 
          * We simply cancel here. 
          */
     }
+    return 0L;
 }
 
 

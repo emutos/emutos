@@ -562,15 +562,15 @@ static LONG bios_2(WORD handle)
  * bconout  - Print character to output device
  */
 
-void bconout(WORD handle, WORD what)
+LONG bconout(WORD handle, WORD what)
 {
-    protect_ww((PFLONG)(bconout_vec[handle & 7]), handle, what);
+    return protect_ww((PFLONG)(bconout_vec[handle & 7]), handle, what);
 }
 
 #if DBGBIOS
-static void bios_3(WORD handle, WORD what)
+static LONG bios_3(WORD handle, WORD what)
 {
-    bconout(handle, what);
+    return bconout(handle, what);
 }
 #endif
 

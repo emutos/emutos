@@ -161,7 +161,7 @@ LONG bconin7(void)
 
 /* BIOS devices - bconout functions */
 
-void bconout1(WORD dev, WORD b)
+LONG bconout1(WORD dev, WORD b)
 {
     /* Wait transmit buffer to become empty */
     while(!bcostat1()) ;
@@ -169,26 +169,33 @@ void bconout1(WORD dev, WORD b)
 #if CONF_WITH_MFP_RS232
     /* Output to RS232 interface */
     MFP_BASE->udr = (char)b;
+    return 1L;
+#else
+    return 0L;
 #endif
 }
 
-void bconout2(WORD dev, WORD b)
+LONG bconout2(WORD dev, WORD b)
 {
-  cputc(b);
+    cputc(b);
+    return 1L;
 }
 
 /* bconout5 - raw console output. */
-void bconout5(WORD dev, WORD ch)
+LONG bconout5(WORD dev, WORD ch)
 {
     ascii_out(ch);
+    return 1L;
 }
 
-void bconout6(WORD dev, WORD b)
+LONG bconout6(WORD dev, WORD b)
 {
+    return 1L;
 }
 
-void bconout7(WORD dev, WORD b)
+LONG bconout7(WORD dev, WORD b)
 {
+    return 1L;
 }
 
 

@@ -409,9 +409,10 @@ LONG bcostat4(void)
 }
 
 /* send a byte to the IKBD */
-void bconout4(WORD dev, WORD c)
+LONG bconout4(WORD dev, WORD c)
 {
     ikbd_writeb((BYTE)c);
+    return 1L;
 }
 
 /* cnt = number of bytes to send less one */

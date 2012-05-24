@@ -78,13 +78,16 @@ LONG bcostat3(void)
 }
 
 /* send a byte to the MIDI ACIA */
-void bconout3(WORD dev, WORD c)
+LONG bconout3(WORD dev, WORD c)
 {
   while(! bcostat3())
     ;
 
 #if CONF_WITH_MIDI_ACIA
   midi_acia.data = c;
+  return 1L;
+#else
+  return 0L;
 #endif
 }
 
