@@ -3626,3 +3626,4 @@ Start... early ages
 - bios/bios.c bios/bios.h bios/chardev.c bios/chardev.h bios/ikbd.c
   bios/ikbd.h bios/midi.c bios/midi.h bios/parport.c bios/parport.h:
   Fix Bconout() to return long rather than void. (RFB)
+- bdos/bdosmain.c: Fix Fwrite() for AUX: or PRN:. (RFB)

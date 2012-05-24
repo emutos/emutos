@@ -605,9 +605,8 @@ restrt:
                         tabout( HXFORM(num) , (unsigned char)*pb2++ ) ;
                     else
                     {           /* M01.01.1029.01 */
-                        rc = MyBconout( HXFORM(num), (unsigned char)*pb2++ ) ;
-                        if (rc < 0)
-                            return(rc);
+                        if (MyBconout( HXFORM(num), (unsigned char)*pb2++ ) == 0)
+                            return(i);
                     }
                 }
 
