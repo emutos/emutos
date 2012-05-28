@@ -101,6 +101,21 @@ release-192k:
 	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_192K).zip $(RELEASE_192K)
 	rm -r $(RELEASE_DIR)/$(RELEASE_192K)
 
+.PHONY: release-cartridge
+NODEP += release-cartridge
+RELEASE_CARTRIDGE = emutos-cartridge-$(VERSION)
+release-cartridge:
+	$(MAKE) clean
+	$(MAKE) cart
+	mkdir $(RELEASE_DIR)/$(RELEASE_CARTRIDGE)
+	cp $(ROM_CARTRIDGE) $(RELEASE_DIR)/$(RELEASE_CARTRIDGE)
+	cat doc/readme-cartridge.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_CARTRIDGE)/readme.txt
+	mkdir $(RELEASE_DIR)/$(RELEASE_CARTRIDGE)/doc
+	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_CARTRIDGE)/doc
+	find $(RELEASE_DIR)/$(RELEASE_CARTRIDGE) -name '*.txt' -exec unix2dos '{}' ';'
+	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_CARTRIDGE).zip $(RELEASE_CARTRIDGE)
+	rm -r $(RELEASE_DIR)/$(RELEASE_CARTRIDGE)
+
 .PHONY: release-aranym
 NODEP += release-aranym
 RELEASE_ARANYM = emutos-aranym-$(VERSION)
@@ -165,7 +180,7 @@ release-floppy:
 .PHONY: release
 NODEP += release
 release: distclean release-clean release-mkdir \
-  release-src release-512k release-256k release-192k \
+  release-src release-512k release-256k release-192k release-cartridge \
   release-aranym release-firebee release-ram release-floppy
 	$(MAKE) clean
 	@echo '# Packages successfully generated inside $(RELEASE_DIR)'

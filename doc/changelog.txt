@@ -3627,3 +3627,7 @@ Start... early ages
   bios/ikbd.h bios/midi.c bios/midi.h bios/parport.c bios/parport.h:
   Fix Bconout() to return long rather than void. (RFB)
 - bdos/bdosmain.c: Fix Fwrite() for AUX: or PRN:. (RFB)
+
+2012-05-28
+- doc/readme-cartridge.txt release.mk: New emutos-cartridge binary archive
+  built by make release. (VRI)
