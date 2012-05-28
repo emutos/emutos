@@ -2781,9 +2781,9 @@ Start... early ages
 2011-10-08
 - Makefile: The needcountry.tmp hack caused trouble on some build systems, such
   as Ubuntu. Replaced by a more robust phony target. (VRI)
-- Makefile: Introduced the ROM_256 variable to specify the name of the 256 KB
+- Makefile: Introduced the ROM_256 variable to specify the name of the 256 kB
   ROM and produce more meaningful message with make allbin. (VRI)
-- Makefile: Introduced the ROM_192 variable to specify the name of the 192 KB
+- Makefile: Introduced the ROM_192 variable to specify the name of the 192 kB
   ROM and produce more meaningful message with make all192. (VRI)
 - desk/deskact.c: Fixed warnings with make 192. (VRI)
 - Makefile: allbin target now builds the 192 Kb images, too. (THH)
@@ -2983,7 +2983,7 @@ Start... early ages
 - Makefile: Added the ROMSIZE define, in kilobytes. (VRI)
 - Makefile desk/desk1.c include/config.h: Moved the definition of DESK1 to
   config.h. (VRI)
-- Makefile include/config.h: Moved the special TOS_VERSION for 192 KB ROMs into
+- Makefile include/config.h: Moved the special TOS_VERSION for 192 kB ROMs into
   config.h. (VRI)
 - desk/desk_rsc.c desk/deskapp.c desk/deskins.c desk/deskmain.c desk/icons.c
   include/config.h: Added the new defines CONF_WITH_DESKTOP_ICONS and

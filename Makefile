@@ -316,7 +316,7 @@ emutos2.img emutos2.map: $(OBJECTS) Makefile
 define sized_image
 @goal=$(ROMSIZE); \
 size=`wc -c < $<`; goalbytes=`expr $$goal \* 1024`; \
-echo "# Padding $< to $$goal KB into $@"; \
+echo "# Padding $< to $$goal kB into $@"; \
 if [ $$size -gt $$goalbytes ]; \
 then \
   echo "# $< is too big: `expr $$size - $$goalbytes` extra bytes"; \

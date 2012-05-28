@@ -1,4 +1,4 @@
-EmuTOS - 256 KB versions
+EmuTOS - 256 kB versions
 
 These ROMs are suitable for the following hardware:
 - STe

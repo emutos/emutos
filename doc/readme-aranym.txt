@@ -23,7 +23,7 @@ cd - Swiss German
 The ARAnyM ROM features:
 - optimization for 68040 CPU
 - no ACSI support
-- full NatFeat support (also enabled in the standard 512 KB version)
+- full NatFeat support (also enabled in the standard 512 kB version)
 
 This ROM image has been built using:
 make aranym
