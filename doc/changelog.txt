@@ -3636,3 +3636,5 @@ Start... early ages
 - bios/country.c: Use the default country from the ROM header if the NVRAM
   language is not supported. (VRI)
 - util/nls.c: Remove the unused the_lang variable. (VRI)
+- tools/bug.c: Remove the translations administrative entries from the final
+  binaries. (VRI)

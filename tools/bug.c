@@ -1125,7 +1125,7 @@ void parse_c_file(char *fname, parse_c_action *pca, void *this)
  */
 
 
-void parse_po_file(char *fname, oh *o)
+void parse_po_file(char *fname, oh *o, int ignore_ae)
 {
   int c;
   IFILE *f;
@@ -1300,6 +1300,10 @@ void parse_po_file(char *fname, oh *o)
     e = o_find(o, s_close(msgid));
     if(e) {
       warn("double entry %s", s_close(msgid));
+      s_free(msgid);
+      s_free(msgstr);
+    } else if(ignore_ae && msgid->buf[0] == '\0') {
+      /* ignore administrative entry */
       s_free(msgid);
       s_free(msgstr);
     } else {
@@ -1554,7 +1558,7 @@ void update(char *fname)
 
   /* get the reference first, before renaming the file */
   o1 = o_new();
-  parse_po_file("po/messages.pot", o1);
+  parse_po_file("po/messages.pot", o1, 0);
 
   /* rename the po file (backup) */
   s = s_new();
@@ -1569,7 +1573,7 @@ void update(char *fname)
   
   /* parse the po file */
   o2 = o_new();
-  parse_po_file(bfname, o2);
+  parse_po_file(bfname, o2, 0);
 
   /* scan o1 and o2, merging the two */
   n1 = o_len(o1);
@@ -1905,7 +1909,7 @@ void make(void)
   parse_oipl_file("po/LINGUAS", d);
   
   oref = o_new();
-  parse_po_file("po/messages.pot", oref);
+  parse_po_file("po/messages.pot", oref, 1);
   
   f = fopen(LANGS_C, "w");
   if(f == NULL) {
@@ -1967,7 +1971,7 @@ void make(void)
     /* read translations */
     o = o_new();
     sprintf(tmp, "po/%s.po", lang);
-    parse_po_file(tmp, o);
+    parse_po_file(tmp, o, 0);
     
     { /* get the source charset from the po file */
       ae_t a;
@@ -2114,7 +2118,7 @@ void translate(char *lang, char * from)
   /* read all translations */
   p.o = o_new();
   sprintf(po, "po/%s.po", lang);
-  parse_po_file(po, p.o);
+  parse_po_file(po, p.o, 0);
     
   { /* get the source charset from the po file */
     ae_t a;
