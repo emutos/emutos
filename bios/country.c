@@ -21,7 +21,6 @@
 #include "nvram.h"
 #include "tosvars.h"
 #include "i18nconf.h"
-#include "header.h"  /* contains the default country number */
 
 /*
  * country tables - we define the data structures here, then include the
@@ -68,13 +67,22 @@ long cookie_akp;
 
 static const struct country_record *get_country_record(int country_code)
 {
+    int default_country = os_conf >> 1; /* From the ROM header */
+    int default_country_index = 0;
     int i;
+
     for(i = 0 ; i < sizeof(countries)/sizeof(*countries) ; i++) {
         if(countries[i].country == country_code) {
-            return &countries[i];
+            return &countries[i]; /* Found */
+        }
+
+        if(countries[i].country == default_country) {
+            default_country_index = i;
         }
     }
-    return &countries[0]; /* default is US */
+
+    /* Not found */
+    return &countries[default_country_index];
 }
 
 static int get_kbd_number(void)

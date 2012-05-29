@@ -3631,3 +3631,7 @@ Start... early ages
 2012-05-28
 - doc/readme-cartridge.txt release.mk: New emutos-cartridge binary archive
   built by make release. (VRI)
+
+2012-05-29
+- bios/country.c: Use the default country from the ROM header if the NVRAM
+  language is not supported. (VRI)
