@@ -20,8 +20,6 @@
 
 #if CONF_WITH_NLS
 
-static int num_of_langs;
-
 /* used by nlsasm.S */
 
 const char * const * const *nls_hash;
@@ -32,14 +30,8 @@ void gettext_init(void); /* call each time the hash changes */
 
 void nls_init(void)
 {
-  int i;
-  
   nls_hash = 0;
   gettext_init();
-  
-  for(i = 0 ; langs[i] ; i++) 
-    ;
-  num_of_langs = i;
 }
 
 /* functions to query the lang database and to set the lang */
@@ -48,7 +40,7 @@ void nls_set_lang(const char *s)
 {
   int i;
 
-  for(i = 0 ; i < num_of_langs ; i++) {
+  for(i = 0 ; langs[i] ; i++) {
     if(!strcmp(s, langs[i]->name)) {
       nls_hash = langs[i]->hash;
       gettext_init();
