@@ -3642,3 +3642,6 @@ Start... early ages
 2012-05-31
 - tools/tos-lang-change.c: Change the PAL/NTSC bit according to the new country.
   Contributed by Eero Tamminen. (VRI)
+- bios/bios.c bios/screen.c bios/screen.h desk/deskmain.c: Restore support
+  for Hatari extended VDI resolutions. (RFB)
+
