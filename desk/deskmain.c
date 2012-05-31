@@ -172,26 +172,7 @@ static int can_change_resolution;
 
 static void detect_features(void)
 {
-    int rez;
-
-#if CONF_WITH_VIDEL
-    if (has_videl) {    /* can't change if real ST monochrome monitor */
-        can_change_resolution = VgetMonitor() ? TRUE : FALSE;
-        return;
-    }
-#endif
-
-    rez = Getrez();
-
-#if CONF_WITH_TT_SHIFTER
-    if (has_tt_shifter) {
-        can_change_resolution = (rez != TT_HIGH);
-        return;
-    }
-#endif
-
-    /* For ST(e), resolution change is only allowed on ST-Low or ST-Med */
-    can_change_resolution = (rez != ST_HIGH);
+    can_change_resolution = rez_changeable();
 }
 
 

@@ -272,12 +272,19 @@ static void bios_init(void)
 #endif
 
 #if CONF_WITH_CARTRIDGE
+    {
+    WORD save_hz = v_hz_rez, save_vt = v_vt_rez, save_pl = v_planes;
+
     /* Run all boot applications from the application cartridge.
      * Beware: Hatari features a special cartridge which is used
      * for GEMDOS drive emulation. It will hack drvbits and hook Pexec().
      * It will also hack Line A variables to enable extended VDI video modes.
      */
     run_cartridge_applications(3); /* Type "Execute prior to bootdisk" */
+
+    if ((v_hz_rez != save_hz) || (v_vt_rez != save_vt) || (v_planes != save_pl))
+        set_rez_hacked();
+    }
 #endif
 
 #if CONF_WITH_FASTRAM

@@ -23,6 +23,7 @@
 #include "kprint.h"
 #include "font.h"
 #include "vt52.h"
+#include "xbiosbind.h"
 
 #define DBG_SCREEN 0
 
@@ -395,6 +396,7 @@ static const VMODE_ENTRY vmode_init_table[] = {
 static const VMODE_ENTRY *lookup_videl_mode(WORD mode,WORD monitor);
 #endif
 
+static char rez_was_hacked;
 
 /* get monitor type (same encoding as VgetMonitor()) */
 static WORD get_monitor_type()
@@ -1199,10 +1201,52 @@ WORD get_videl_mode(void)
 }
 
 /*
+ * Mark resolution as hacked
+ * 
+ * called by bios_init() if a cartridge application has altered key
+ * lineA variables
+ */
+void set_rez_hacked(void)
+{
+    rez_was_hacked = TRUE;
+}
+
+/*
+ * Check if resolution can be changed
+ *
+ * returns 1 iff TRUE
+ */
+int rez_changeable(void)
+{
+#if CONF_WITH_SHIFTER
+int rez;
+
+    if (rez_was_hacked)
+        return FALSE;
+
+#if CONF_WITH_VIDEL
+    if (has_videl)      /* can't change if real ST monochrome monitor */
+        return VgetMonitor() ? TRUE : FALSE;
+#endif
+
+    rez = Getrez();
+
+#if CONF_WITH_TT_SHIFTER
+    if (has_tt_shifter)
+        return (rez != TT_HIGH)? TRUE : FALSE;
+#endif
+
+    if (rez != ST_HIGH) /* can't change if mono monitor */
+        return TRUE;
+#endif
+    return FALSE;
+}
+
+/*
  * Check specified mode/rez to see if we should change; used in early
  * emudesk.inf processing.  We only indicate a change if all of the
  * following are true:
- *  . the current monitor is not mono
+ *  . the resolution is changeable
  *  . the specified & current values are the same type (both modes
  *    or both rezs)
  *  . the specified value differs from the current value
@@ -1219,7 +1263,7 @@ WORD check_moderez(WORD moderez)
 WORD return_rez;
 int tt;
 
-    if (get_monitor_type() == MON_MONO)
+    if (!rez_changeable())
         return 0;
 
 #if CONF_WITH_VIDEL
@@ -1450,6 +1494,7 @@ void screen_init(void)
     v_bas_ad = (UBYTE *)screen_start;
     /* correct physical address */
     setphys(screen_start,1);
+    rez_was_hacked = 0;     /* initial assumption */
 }
 
 /* calculate initial VRAM size based on video hardware */

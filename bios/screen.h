@@ -26,6 +26,8 @@ UWORD get_videl_width(void);
 UWORD get_videl_height(void);
 WORD get_videl_mode(void);
 void initialise_palette_registers(WORD rez,WORD mode);
+int rez_changeable(void);
+void set_rez_hacked(void);
 
 /* hardware dependant xbios routines */
 
