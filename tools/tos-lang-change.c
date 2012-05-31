@@ -101,10 +101,11 @@ static uint16_t get_new_conf_value(uint16_t conf)
 
         name = get_country_name(value);
         if (!name) {
-        /* failed */
+                /* failed */
                 fprintf(stderr, "Error: TOS ROM has unrecognized country code %d\n", value);
                 return conf;
         }
+        printf("Current TOS video sync mode:\n %s\n", (conf & 1) ? "PAL" : "NTSC");
         printf("Current TOS ROM country code:\n%3hu) %s\n", value, name);
 
         do {
@@ -112,9 +113,17 @@ static uint16_t get_new_conf_value(uint16_t conf)
         } while (value == COUNTRY_ERROR);
 
         name = get_country_name(value);
-        printf("New TOS ROM country code:\n%3hu) %s\n", value, name);
+        conf = country2conf(conf, value);
+        /* us -> NTSC (0), any other -> PAL (1) */
+        if (value) {
+                conf |= 1;
+        } else {
+                conf &= ~1;
+        }
 
-        return country2conf(conf, value);
+        printf("\nNew TOS video sync mode:\n %s\n", conf&1 ? "PAL" : "NTSC");
+        printf("New TOS ROM country code:\n%3hu) %s\n", value, name);
+        return conf;
 }
 
 int main(int argc, char *argv[])
@@ -124,7 +133,8 @@ int main(int argc, char *argv[])
 
         if (argc != 2) {
                 printf("usage: %s <TOS ROM file>\n", *argv);
-                printf("\nAllows changing the default country in a multilanguage Atari TOS ROM\n");
+                printf("\nAllows changing the default country in a multilanguage Atari TOS ROM.\n");
+                printf("\nUSA implies NTSC, any other country implies PAL video sync mode.\n");
                 return 1;
         }
 
@@ -163,8 +173,7 @@ int main(int argc, char *argv[])
                 return -1;
         }
         fclose(fp);
-        printf("OS conf variable updated to the TOS ROM file.\n");
+        printf("\nOS conf variable updated to the TOS ROM file.\n");
 
         return 0;
 }
-

@@ -3638,3 +3638,7 @@ Start... early ages
 - util/nls.c: Remove the unused the_lang and num_of_langs variables. (VRI)
 - tools/bug.c: Remove the translations administrative entries from the final
   binaries. (VRI)
+
+2012-05-31
+- tools/tos-lang-change.c: Change the PAL/NTSC bit according to the new country.
+  Contributed by Eero Tamminen. (VRI)
