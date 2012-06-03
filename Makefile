@@ -308,26 +308,6 @@ emutos2.img emutos2.map: VMA = $(VMA_T2)
 emutos2.img emutos2.map: $(OBJECTS) Makefile
 	$(LD) -o emutos2.img $(OBJECTS) $(LDFLAGS) -Wl,-Map,emutos2.map
 
-
-#
-# generic sized images handling
-#
-
-define sized_image
-@goal=$(ROMSIZE); \
-size=`wc -c < $<`; goalbytes=`expr $$goal \* 1024`; \
-echo "# Padding $< to $$goal kB into $@"; \
-if [ $$size -gt $$goalbytes ]; \
-then \
-  echo "# $< is too big: `expr $$size - $$goalbytes` extra bytes"; \
-  false; \
-else \
-  dd if=/dev/zero of=$@ bs=1024 count=$$goal 2>/dev/null; \
-  dd if=$< of=$@ conv=notrunc $(DDOPTS) 2>/dev/null; \
-  echo "# $@ done (`expr $$goalbytes - $$size` bytes free)"; \
-fi
-endef
-
 #
 # 128kB Image
 #
@@ -335,8 +315,8 @@ endef
 ROM_128 = etos128k.img
 
 $(ROM_128): ROMSIZE = 128
-$(ROM_128): emutos2.img
-	$(sized_image)
+$(ROM_128): emutos2.img mkrom$(EXE)
+	./mkrom$(EXE) pad $(ROMSIZE)k $< $(ROM_128)
 
 #
 # 192kB Image
@@ -351,8 +331,8 @@ NODEP += 192
 	$(MAKE) DEF='-DTARGET_192' WITH_CLI=0 UNIQUE=$(UNIQUE) ROM_192=$(ROM_192) $(ROM_192)
 
 $(ROM_192): ROMSIZE = 192
-$(ROM_192): emutos1.img
-	$(sized_image)
+$(ROM_192): emutos1.img mkrom$(EXE)
+	./mkrom$(EXE) pad $(ROMSIZE)k $< $(ROM_192)
 
 #
 # 256kB Image
@@ -367,8 +347,8 @@ NODEP += 256
 	$(MAKE) DEF='-DTARGET_256' UNIQUE=$(UNIQUE) ROM_256=$(ROM_256) $(ROM_256)
 
 $(ROM_256): ROMSIZE = 256
-$(ROM_256): emutos2.img
-	$(sized_image)
+$(ROM_256): emutos2.img mkrom$(EXE)
+	./mkrom$(EXE) pad $(ROMSIZE)k $< $(ROM_256)
 
 #
 # 512kB Image (for Falcon)
@@ -381,8 +361,8 @@ ROM_512 = etos512k.img
 512: $(ROM_512)
 
 $(ROM_512): ROMSIZE = 512
-$(ROM_512): emutos2.img
-	$(sized_image)
+$(ROM_512): emutos2.img mkrom$(EXE)
+	./mkrom$(EXE) pad $(ROMSIZE)k $< $(ROM_512)
 
 .PHONY: falcon
 falcon: help
@@ -479,11 +459,13 @@ compr1.img compr1.map: $(COMPROBJ)
 etoscpr1.img: compr1.img compr$(EXE) ramtos.img
 	./compr$(EXE) --rom compr1.img ramtos.img $@
 
-ecpr256k.img: etoscpr2.img
-	$(sized_image)
+ecpr256k.img: ROMSIZE = 256
+ecpr256k.img: etoscpr2.img mkrom$(EXE)
+	./mkrom$(EXE) pad $(ROMSIZE)k $< $@
 
-ecpr192k.img: etoscpr1.img
-	$(sized_image)
+ecpr192k.img: ROMSIZE = 192
+ecpr192k.img: etoscpr1.img mkrom$(EXE)
+	./mkrom$(EXE) pad $(ROMSIZE)k $< $@
 
 NODEP += compr$(EXE)
 compr$(EXE): tools/compr.c
@@ -573,6 +555,17 @@ DESKRSCGEN_BASE = desk/desk_rsc
 TOCLEAN += $(DESKRSCGEN_BASE).c $(DESKRSCGEN_BASE).h
 $(DESKRSCGEN_BASE).c $(DESKRSCGEN_BASE).h: erd$(EXE) $(DESKRSC_BASE).rsc $(DESKRSC_BASE).dfn
 	./erd$(EXE) -pdesk $(DESKRSC_BASE) $(DESKRSCGEN_BASE)
+
+#
+# Special ROM support
+#
+
+TOCLEAN += mkrom$(EXE)
+
+NODEP += mkrom$(EXE)
+mkrom$(EXE): tools/mkrom.c
+	$(NATIVECC) -o $@ $<
+
 #
 # all binaries
 #

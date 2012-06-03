@@ -3647,3 +3647,4 @@ Start... early ages
 
 2012-06-03
 - po/gr.po: Update. Contributed by Christos Tziotzis. (VRI)
+- Makefile tools/mkrom.c: New mkrom tool to build custom ROM images. (VRI)
