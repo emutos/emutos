@@ -109,6 +109,7 @@ release-cartridge:
 	$(MAKE) cart
 	mkdir $(RELEASE_DIR)/$(RELEASE_CARTRIDGE)
 	cp $(ROM_CARTRIDGE) $(RELEASE_DIR)/$(RELEASE_CARTRIDGE)
+	cp emutos.stc $(RELEASE_DIR)/$(RELEASE_CARTRIDGE)
 	cat doc/readme-cartridge.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_CARTRIDGE)/readme.txt
 	mkdir $(RELEASE_DIR)/$(RELEASE_CARTRIDGE)/doc
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_CARTRIDGE)/doc

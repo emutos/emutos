@@ -28,7 +28,8 @@
 typedef enum
 {
     CMD_NONE = 0,
-    CMD_PAD
+    CMD_PAD,
+    CMD_STC
 } CMD_TYPE;
 
 /* Global variables */
@@ -209,6 +210,50 @@ static int cmd_pad(FILE* infile, const char* infilename,
     return 1;
 }
 
+/* Steem Engine cartridge image */
+static int cmd_stc(FILE* infile, const char* infilename,
+                   FILE* outfile, const char* outfilename)
+{
+    size_t source_size;
+    size_t target_size = 128 * 1024;
+    size_t free_size;
+    int ret; /* boolean return value: 0 == error, 1 == OK */
+
+    printf("# Padding %s to %ld kB Steem Engine cartridge image into %s\n", infilename, ((long)target_size) / 1024, outfilename);
+
+    /* Get the input file size */
+    source_size = get_file_size(infile, infilename);
+    if (source_size == SIZE_ERROR)
+        return 0;
+
+    /* Check if the input file size is not too big */
+    if (source_size > target_size)
+    {
+        fprintf(stderr, "%s: %s is too big: %lu extra bytes\n", g_argv0, infilename, (unsigned long)(source_size - target_size));
+        return 0;
+    }
+
+    /* Insert a long zero at the beginning */
+    ret = write_byte_block(outfile, outfilename, 0, 4);
+    if (!ret)
+        return ret;
+
+    /* Copy the input file */
+    ret = copy_stream(infile, infilename, outfile, outfilename, source_size);
+    if (!ret)
+        return ret;
+
+    /* Pad with zeroes */
+    free_size = target_size - source_size;
+    ret = write_byte_block(outfile, outfilename, 0, free_size);
+    if (!ret)
+        return ret;
+
+    printf("# %s done (%lu bytes free)\n", outfilename, (unsigned long)free_size);
+
+    return 1;
+}
+
 /* Main program */
 int main(int argc, char* argv[])
 {
@@ -234,11 +279,20 @@ int main(int argc, char* argv[])
         infilename = argv[3];
         outfilename = argv[4];
     }
+    else if (argc == 4 && !strcmp(argv[1], "stc"))
+    {
+        op = CMD_STC;
+        infilename = argv[2];
+        outfilename = argv[3];
+    }
     else
     {
         fprintf(stderr, "usage:\n");
         fprintf(stderr, "  # Generic zero padding\n");
         fprintf(stderr, "  %s pad <size> <source> <destination>\n", g_argv0);
+        fprintf(stderr, "\n");
+        fprintf(stderr, "  # Steem Engine cartridge image\n");
+        fprintf(stderr, "  %s stc <source> <destination>\n", g_argv0);
         return 1;
     }
 
@@ -262,6 +316,10 @@ int main(int argc, char* argv[])
     {
         case CMD_PAD:
             ret = cmd_pad(infile, infilename, outfile, outfilename, target_size);
+        break;
+
+        case CMD_STC:
+            ret = cmd_stc(infile, infilename, outfile, outfilename);
         break;
 
         default:

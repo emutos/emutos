@@ -3648,3 +3648,5 @@ Start... early ages
 2012-06-03
 - po/gr.po: Update. Contributed by Christos Tziotzis. (VRI)
 - Makefile tools/mkrom.c: New mkrom tool to build custom ROM images. (VRI)
+- .cvsignore Makefile release.mk doc/readme-cartridge.txt tools/mkrom.c: Added
+  support to build Steem Engine cartridge image. (VRI)

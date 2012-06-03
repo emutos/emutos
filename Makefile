@@ -390,6 +390,7 @@ NODEP += cart
 cart:
 	@echo "# Building Diagnostic Cartridge EmuTOS into $(ROM_CARTRIDGE)"
 	$(MAKE) DEF='-DDIAGNOSTIC_CARTRIDGE=1' UNIQUE=$(COUNTRY) WITH_AES=0 VMA=0x00fa0000 ROM_128=$(ROM_CARTRIDGE) $(ROM_CARTRIDGE)
+	./mkrom$(EXE) stc emutos2.img emutos.stc
 
 #
 # ColdFire images
