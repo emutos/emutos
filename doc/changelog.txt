@@ -3645,3 +3645,5 @@ Start... early ages
 - bios/bios.c bios/screen.c bios/screen.h desk/deskmain.c: Restore support
   for Hatari extended VDI resolutions. (RFB)
 
+2012-06-03
+- po/gr.po: Update. Contributed by Christos Tziotzis. (VRI)
