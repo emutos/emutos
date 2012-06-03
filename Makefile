@@ -383,6 +383,7 @@ aranym:
 # Diagnostic Cartridge Image
 #
 
+TOCLEAN += *.stc
 ROM_CARTRIDGE = etoscart.img
 
 .PHONY: cart
