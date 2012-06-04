@@ -26,8 +26,6 @@ UWORD get_videl_width(void);
 UWORD get_videl_height(void);
 WORD get_videl_mode(void);
 void initialise_palette_registers(WORD rez,WORD mode);
-int rez_changeable(void);
-void set_rez_hacked(void);
 
 /* hardware dependant xbios routines */
 
@@ -142,6 +140,8 @@ WORD vfixmode(WORD mode);
 
 /* determine monitor type, ... */
 void screen_init(void);
+void set_rez_hacked(void);
+int rez_changeable(void);
 
 /* hardware independant xbios routines */
 
