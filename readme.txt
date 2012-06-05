@@ -1,7 +1,7 @@
-This release has been built using GCC 4.6.2 on Cygwin.
+This release has been built using GCC 4.6.3 on Cygwin.
 
 The source package, as well as other binary packages are available at:
-http://sourceforge.net/projects/emutos/files/emutos/0.8.6/
+http://sourceforge.net/projects/emutos/files/emutos/0.8.7/
 
 If you want to read more about EmuTOS, please look into these files:
 
@@ -21,4 +21,4 @@ doc/nls.txt        - How to add a native language or use one
 doc/old_code.txt   - For developers, a museum of bugs due to old C language
 
 -- 
-The EmuTOS team - http://emutos.sourceforge.net/en/
+The EmuTOS team - http://emutos.sourceforge.net/

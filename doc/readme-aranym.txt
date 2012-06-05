@@ -19,6 +19,8 @@ gr - Greek
 it - Italian
 ru - Russian (currently unsupported by ARAnyM)
 cd - Swiss German
+us - English (US)
+uk - English (UK)
 
 The ARAnyM ROM features:
 - optimization for 68040 CPU

@@ -33,4 +33,3 @@ non-zero:
   2. reinitialises the palette(s) via a call to initialise_palette_registers()
      [screen.c].
 gem_main then continues with desktop initialisation.
-

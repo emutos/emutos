@@ -126,7 +126,7 @@ Pavel Salac <salac.pavel at gmail.com>
 
 David Galvez <dgalvez75 at gmail.com>
 - Spanish translation update
-- XHNewCookie() implementation.
+- XHNewCookie() implementation
 
 Christos Tziotzis <ctziotzis at gmail.com>
 - Greek translation update
@@ -134,3 +134,6 @@ Christos Tziotzis <ctziotzis at gmail.com>
 Fredi Aschwanden <mcs at kingx.com>
 and all the ACP team
 - Tests on the FireBee hardware
+
+James Boulton <james.boulton at eiconic.com>
+- floprw() fix for reading multiple sectors

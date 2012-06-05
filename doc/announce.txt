@@ -3,12 +3,12 @@ Dear Atari Community!
 
 We are happy to announce a new public release of EmuTOS:
 
-EmuTOS 0.8.6 -- November 8th, 2011
+EmuTOS 0.8.7 -- June Xth, 2012
 
 
 INTRODUCTION
 
-EmuTOS is a single-user single-tasking operating system for the 32 bit Atari
+EmuTOS is a single-user single-tasking operating system for the 32-bit Atari
 computers, clones and emulators. It can be used as a replacement for the TOS
 images typically needed today for using emulators and can also run on some
 real hardware, like the Atari Mega STe or the FireBee. All the source code
@@ -18,34 +18,35 @@ is open and free, licensed under the GNU General Public License (GPL).
 
 CHANGES SINCE LAST RELEASE
 
-- Support for FAT16 partitions up to 2 GB
-- Support for the ColdFire V4e CPU (allows running ColdFire TOS programs only)
-- Support for the FireBee computer
-- Experimental Falcon IDE driver (currently only enabled on the FireBee)
-- LMC1992 initialization on STe/TT
-- Better memory detection on cold boot
-- Fixed the XBIOS time functions for the various hardware clocks
-- Key repeat now produces key clicks
-- Improved the register dump when a program crashes
-- VFAT long filenames are now safely ignored
-- Support for drives from A: to Z:
-- Malloc() now returns blocks aligned on 4-byte for better performance
-- The BIOS console now supports the 256-color modes (but the VDI still doesn't)
-- The text cursor does not blink when it moves
-- Fixed the STe BIOS default palette
-- Fixed the VDI default palette
-- Fixed the VDI functions for drawing arrows
-- Better searching for RSC files
-- Added desktop support for GTP executables
-- Desktop windows can be scrolled using arrow keys
-- Better initial icon placement on the default desktop
-- Fixed the position and size of the windows when reloading the desktop
-- Allow resolution switching in ST color modes
-- Fixed the BCD build date in the ROM header to DDMMYYYY format
-- The 192 KB ROMs are provided again
-- The special ARAnyM, FireBee, floppy and RAM versions are now provided
-- Support for compilation using GCC 4.6.x
-- New languages: Russian and Italian
+- Added full support for Falcon and TT video hardware
+- New video mode switching dialog box for Falcon and TT
+- New EmuTOS variant on ROM-port cartridge
+- New UK country and keyboard layout with PAL frequency
+- Added potential support for non-Atari hardware
+- Fixed wrong keyboard layout read from the NVRAM
+- Fixed bogus _AKP cookie values
+- Fixed _IDT cookie with unique language ROMs
+- Use the _IDT date ordering in the default desktop
+- Fixed the _SND cookie to remove unsupported bits (0.8.6 regression)
+- Added support for XHDI XHNewCookie()
+- Added minimal stub Blitmode()
+- Fixed floprw() to be able to read multiple sectors
+- Return function number rather than zero for unimplemented (x)bios calls
+- Fixed VDI polygon fill
+- Fixed VDI line drawing in transparent mode
+- Fixed VDI to draw text underlines & perimeters in the correct colour
+- Fixed VDI text scaling
+- Fixed VDI line styles and arrows for thin line arcs/ellarcs
+- Fixed AES sh_addpath() when there was no PATH variable
+- Increased allowed number of desk accessories from 3 to 6
+- Allowed up to 7 windows on the desktop
+- Fixed the desktop to use "view as icons" by default
+- Fixed random character at the end of desktop "view as text" lines
+- Fixed alerts with no icon and a single text line
+- Changed desktop alerts to conform to the limit of 30 characters per line
+- Workaround against GFA startup crash
+- New erd tool for converting binary resources to source files
+- New mkrom tool to build custom ROM formats
 - A lot of other minor bugfixes and cleanups
 
 Have a look at the changelog.txt for more detailed information.
@@ -109,14 +110,14 @@ This is the currently supported hardware:
 - CPU support for m68000, m68010, m68020, m68030, m68040, m68060, ColdFire V4e
 - FPU detected
 - Memory controller (both ST and Falcon)
-- Monitor type detection (mono or not)
+- Monitor type detection (mono, RGB or VGA)
 - WD 1772 Floppy disk controller (write track not tested)
 - DMA controller
 - MFP
 - PSG
 - ST shifter
-- STE shifter (partially)
-- VIDEL (minimal)
+- STE shifter
+- VIDEL
 - ACIAs, IKBD protocol, mouse
 - MegaST Real-Time Clock (set clock not tested)
 - NVRAM (including RTC)
@@ -130,11 +131,15 @@ EmuTOS has its home at SourceForge:
 
     http://sourceforge.net/projects/emutos/
 
-A ready made EmuTOS image or the source can be downloaded from:
+The latest releases can be downloaded from:
 
-    http://sourceforge.net/projects/emutos/files/
+    http://sourceforge.net/projects/emutos/files/emutos/ 
 
-It is always available in source form from our CVS server at:
+Development snapshots allow you to test the current development progress: 
+
+    http://sourceforge.net/projects/emutos/files/snapshots/ 
+
+The latest sources are always available from our CVS server at:
 
     http://sourceforge.net/scm/?type=cvs&group_id=36560
 
@@ -152,4 +157,4 @@ The EmuTOS development team.
 
 -- 
 Originally written by Martin Doering
-http://emutos.sourceforge.net/en/
+http://emutos.sourceforge.net/

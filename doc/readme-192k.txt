@@ -11,16 +11,17 @@ Hatari emulator's Falcon emulation due to missing VIDEL support.
 
 Each ROM contains a single language:
 
-etos192cz.img - Czech
-etos192de.img - German
-etos192es.img - Spanish
-etos192fi.img - Finnish
-etos192fr.img - French
-etos192gr.img - Greek
-etos192it.img - Italian
-etos192ru.img - Russian
-etos192sg.img - Swiss German
-etos192us.img - English
+etos192cz.img - Czech (PAL)
+etos192de.img - German (PAL)
+etos192es.img - Spanish (PAL)
+etos192fi.img - Finnish (PAL)
+etos192fr.img - French (PAL)
+etos192gr.img - Greek (PAL)
+etos192it.img - Italian (PAL)
+etos192ru.img - Russian (PAL)
+etos192sg.img - Swiss German (PAL)
+etos192us.img - English (NTSC)
+etos192uk.img - English (PAL)
 
 Due to size limitations, the 192 kB ROMs contains:
 - no EmuCON

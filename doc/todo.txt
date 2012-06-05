@@ -1,7 +1,6 @@
 BIOS/XBIOS
 - implement missing XBIOS calls
-  (e.g. the Blitter, Falcon Videl and TT shifter video functions)
-- add support for Falcon RGB screen modes
+  (e.g. the Blitter functions)
 - reduce the number of 'extern' in .c files
 - check that RAM disks work
 - misc. TODOs in floppy.c
@@ -29,10 +28,8 @@ VDI
 AES
 - Check if all strings in desk_rsc.c and gem_rsc.c are fully ROM save (the
   TEDINFO strings etc).
-- Add proper support for screen resolution switching on VIDEL and TT
 
 DESK
-- Add a dialog for resolution switching on VIDEL and TT
 - Add a dialog for configuring the NVRAM (keyboard, languages, ...)
 - Support for loading DESKTOP.INF (needs remapping of the icon indexes)
 
