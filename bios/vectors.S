@@ -15,7 +15,6 @@
         .globl  _init_exc_vec
         .globl  _init_user_vec
 
-        .globl  _trap_1         // call GEMDOS from C
         .globl  _gemtrap        // call VDI/AES
         .globl  _biostrap       // call BIOS from C
         .globl  _xbiostrap      // call XBIOS from C

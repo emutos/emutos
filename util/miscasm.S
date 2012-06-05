@@ -14,8 +14,6 @@
 #include "asmdefs.h"
 
         .globl  _trap1          // call GEMDOS
-        .globl  _trap13         // call BIOS
-        .globl  _trap14         // call XBIOS
         .globl  _trap1_pexec    // Reentrant Pexec call
         .globl  _stop_until_interrupt   // Wrapper around the STOP instruction
 

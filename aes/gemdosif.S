@@ -17,7 +17,6 @@
 .globl _giveerr
 .globl _takeerr
 .globl _retake
-.globl _setdsss
 .globl _justretf
 .globl _givecpm
 .globl _takecpm

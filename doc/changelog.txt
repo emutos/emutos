@@ -3651,3 +3651,6 @@ Start... early ages
 - .cvsignore Makefile release.mk doc/readme-cartridge.txt tools/mkrom.c: Added
   support to build Steem Engine cartridge image. (VRI)
 - bios/screen.c bios/screen.h: Fixed compilation for non-Atari hardware. (VRI)
+
+2012-06-05
+- aes/gemdosif.S bios/vectors.S util/miscasm.S: Remove useless globals. (VRI)
