@@ -3655,3 +3655,4 @@ Start... early ages
 2012-06-05
 - aes/gemdosif.S bios/vectors.S util/miscasm.S: Remove useless globals. (VRI)
 - bios/kprint.c: Remove ugly MIT assembled syntax. (VRI)
+- include/portab.h bios/kprint.c: Remove dependencies to the MiNTLib. (VRI)

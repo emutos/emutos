@@ -28,6 +28,35 @@
 #define NORETURN
 #endif
 
+/* Convenience macros to test the versions of glibc and gcc.
+   Use them like this:
+   #if __GNUC_PREREQ (2,8)
+   ... code requiring gcc 2.8 or later ...
+   #endif
+   Note - they won't work for gcc1 or glibc1, since the _MINOR macros
+   were not defined then.  */
+#undef __GNUC_PREREQ
+#if defined __GNUC__ && defined __GNUC_MINOR__
+# define __GNUC_PREREQ(maj, min) \
+        ((__GNUC__ << 16) + __GNUC_MINOR__ >= ((maj) << 16) + (min))
+#else
+# define __GNUC_PREREQ(maj, min) 0
+#endif
+
+#undef __CLOBBER_RETURN
+#if __GNUC_PREREQ(3, 3)
+# define __CLOBBER_RETURN(a) 
+#else
+# define __CLOBBER_RETURN(a) a,
+#endif
+
+#undef AND_MEMORY
+#if __GNUC_PREREQ(2, 6)
+#define AND_MEMORY , "memory"
+#else
+#define AND_MEMORY
+#endif
+
 /*
  *  Constants 
  */

@@ -14,7 +14,6 @@
 
 #include "config.h"
 #include <stdarg.h>
-#include <osbind.h>
 #include "doprintf.h"
 #include "portab.h"
 #include "kprint.h"
@@ -24,6 +23,28 @@
 #include "natfeat.h"
 #include "processor.h"
 #include "chardev.h"
+
+#undef Super
+/* Standard Super() binding */
+#define Super(ptr)                          \
+__extension__                               \
+({                                          \
+    register long retvalue __asm__("d0");   \
+    long  _ptr = (long) (ptr);              \
+                                            \
+    __asm__ volatile                        \
+    (                                       \
+        "move.l %1,-(sp)\n\t"               \
+        "move.w 0x20,-(sp)\n\t"             \
+        "trap   #1\n\t"                     \
+        "addq.l #6,sp"                      \
+    : "=r"(retvalue)                    /* outputs */       \
+    : "r"(_ptr)                         /* inputs  */       \
+    : __CLOBBER_RETURN("d0") "d1", "d2", "a0", "a1", "a2"   \
+      AND_MEMORY                            \
+    );                                      \
+    retvalue;                               \
+})
 
 #undef SuperToUser      /* prevent "redefined" warning message */
 /*
