@@ -32,7 +32,7 @@ Vincent Riviere (VRI) <vincent.riviere at freesbee.fr>
 - ColdFire CPU and FireBee support
 - Various bug fixes
 
-Roger Burrows <rfburrows at ymail.com>
+Roger Burrows (RFB) <rfburrows at ymail.com>
 - FAT16 partitions up to 2 GB (inspired from Didier Mequignon's BDOS fork)
 - Full support for Falcon and TT video hardware
 - Various bugfixes and cleanups
