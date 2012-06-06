@@ -32,23 +32,28 @@ Vincent Riviere (VRI) <vincent.riviere at freesbee.fr>
 - ColdFire CPU and FireBee support
 - Various bug fixes
 
-Petr Stehlik (joy) <pstehlik at sophics.cz>
-- BIOS disk interface, BDOS filesystem
-- Falcon and ARAnyM support
+Roger Burrows <rfburrows at ymail.com>
+- FAT16 partitions up to 2 GB (inspired from Didier Mequignon's BDOS fork)
+- Full support for Falcon and TT video hardware
+- Various bugfixes and cleanups
 
 Thomas Huth (THH) <huth at users.berlios.de>
 - Lots of bugfixes all over the place
 - Integration and maintenance of the AES and GEM-Desktop
 
-Martin Doering (MAD) <mdoering at users.sourceforge.net>
-- Original project initiator (but retired since years already)
-- Memory setup, VT52 console, Line A, mouse
-- Virtually everything not modified later by the other fellows
+Petr Stehlik (joy) <pstehlik at sophics.cz>
+- BIOS disk interface, BDOS filesystem
+- Falcon and ARAnyM support
 
 Laurent Vogel (LVL) <lvl at club-internet.fr>
 - Original ST hardware (MFP, ACIA, parport, sound, floppy, ACSI)
 - Makefile tricks and tools
 - NLS support
+
+Martin Doering (MAD) <mdoering at users.sourceforge.net>
+- Original project initiator (but retired since years already)
+- Memory setup, VT52 console, Line A, mouse
+- Virtually everything not modified later by the other fellows
 
 
 Thanks also to all mailing list contributors for their help, and 
@@ -113,10 +118,6 @@ Jean-Francois Del Nero <jeanfrancoisdelnero at free.fr>
 - Improved memory detection on cold boot
 - Tested the EmuTOS ROM on real STe hardware
 - Various bugfixes
-
-Roger Burrows <rfburrows at ymail.com>
-- FAT16 partitions up to 2 GB (inspired from Didier Mequignon's BDOS fork)
-- Various bugfixes and cleanups
 
 Lodovico Zanier <lvc958 at libero.it>
 - Italian translation
