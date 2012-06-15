@@ -1032,7 +1032,7 @@ void parse_c_file(char *fname, parse_c_action *pca, void *this)
         
   IFILE *f = ifopen(fname);
   if(f == NULL) {
-    warn("could not open file");
+    warn("could not open file '%s'", fname);
     return;
   }
 
@@ -1567,7 +1567,7 @@ void update(char *fname)
   bfname = s_detach(s);
   
   if(rename(fname, bfname)) {
-    warn("cannot rename file %s, cancelled", fname);
+    warn("cannot rename file '%s' to '%s', cancelled", fname, bfname);
     return;
   }
   
