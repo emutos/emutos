@@ -41,7 +41,7 @@ Thomas Huth (THH) <huth at users.berlios.de>
 - Lots of bugfixes all over the place
 - Integration and maintenance of the AES and GEM-Desktop
 
-Petr Stehlik (joy) <pstehlik at sophics.cz>
+Petr Stehlik (PES) <pstehlik at sophics.cz>
 - BIOS disk interface, BDOS filesystem
 - Falcon and ARAnyM support
 

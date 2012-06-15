@@ -5,7 +5,7 @@
  * 
  * Authors:
  *  MAD     Martin Doering
- *  joy     Petr Stehlik
+ *  PES     Petr Stehlik
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.

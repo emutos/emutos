@@ -4,7 +4,7 @@
  * Copyright (c) 2001-2005 EmuTOS development team
  *
  * Authors:
- *  joy   Petr Stehlik
+ *  PES   Petr Stehlik
  *
  *  xhdi_handler() inspired by ppzip driver (by Frank Naumann)
  *

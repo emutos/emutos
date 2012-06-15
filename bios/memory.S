@@ -4,7 +4,7 @@
  * Copyright (c) 2001-2011 by Authors:
  *
  *  MAD  Martin Doering
- *  joy  Petr Stehlik
+ *  PES  Petr Stehlik
  *  jfdn Jean-Francois DEL NERO
  *
  * This file is distributed under the GPL, version 2 or at your
@@ -409,7 +409,7 @@ st_cleared:
 #if CONF_WITH_FASTRAM
 
 /*
- * TT-RAM (FastRAM) detection (joy)
+ * TT-RAM (FastRAM) detection (PES)
  * This alternate RAM begins at 16MB boundary ($1000000)
  */
 #if CONF_FASTRAM_SIZE

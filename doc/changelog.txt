@@ -336,16 +336,16 @@ Start... early ages
 
 2001-12-07
 - EmuTOS now recognizes Falcon (by detecting VIDEL) and TT030
-  (by detecting TT-Shifter). (joy)
+  (by detecting TT-Shifter). (PES)
 - NVRAM is actually initialized now. Added functions for accessing the RTC
-  in NVRAM. (joy)
-- MegaRTC now checks whether there's the hardware present. (joy)
-- clock.c works with the RTC in NVRAM. (joy)
-- initinfo.c displays current date and time (sorry, no NLS enabled yet!) (joy)
+  in NVRAM. (PES)
+- MegaRTC now checks whether there's the hardware present. (PES)
+- clock.c works with the RTC in NVRAM. (PES)
+- initinfo.c displays current date and time (sorry, no NLS enabled yet!) (PES)
 
 2001-12-08
 - NO_IKBD_CLOCK forgot to disable the XBIOS gettime(). Fixed by disabling
-  all lowlevel IKBD functions. STonX boots EmuTOS again. (joy)
+  all lowlevel IKBD functions. STonX boots EmuTOS again. (PES)
 - changed back all BYTE to char in bdos/*.[ch] (MAD)
 - added/marked up some comments in bios/nvram.c (MAD)
 
@@ -386,32 +386,32 @@ Start... early ages
 - updated readme.txt (LVL)
 
 2001-12-20
-- added "stop" macro to include/asm.h as Laurent suggested (joy)
-- added calling the "stop" in bios/ikbd.c (surrounded by #ifdef) (joy)
+- added "stop" macro to include/asm.h as Laurent suggested (PES)
+- added calling the "stop" in bios/ikbd.c (surrounded by #ifdef) (PES)
 
 2001-12-28
-- added Falcon memconf routine (joy)
-- corrected the memtop in the memconf clear routine to 14MB (joy)
-- added memval3 check/set (joy)
-- added ramtop/ramvalid set (no FastRAM for now) (joy)
+- added Falcon memconf routine (PES)
+- corrected the memtop in the memconf clear routine to 14MB (PES)
+- added memval3 check/set (PES)
+- added ramtop/ramvalid set (no FastRAM for now) (PES)
 - added run-time check for Falcon MMU that fires a bus error
   on non-Falcon machines. This makes use of stack so the notice
-  in bios/startup.S about meminit not using sp is not correct (joy)
-- updated status.txt (the hw init paragraph) (joy)
+  in bios/startup.S about meminit not using sp is not correct (PES)
+- updated status.txt (the hw init paragraph) (PES)
 
 2001-12-31
 - added FastRAM (TT-RAM) detection to bios/memory.S. Right now
   it is called if Falcon MMU was detected but generally I need
-  to detect CPU type so it would work on TT as well. (joy)
+  to detect CPU type so it would work on TT as well. (PES)
 - corrected // notice in bios/startup.S - the meminit actually
   needs stack pointer - for both the bus error handler and for
-  occasionals bsr kprintf (joy)
+  occasionals bsr kprintf (PES)
 
 2002-01-01
-- FastRAM detection now uses proper CPU check (joy)
-- resetvec handling fixed (wrong check 'tst.b resetvec' removed) (joy)
-- cartridge is defined at $00fa0000, not $fffa0000 - fixed. (joy)
-- _check_read_byte now flushes pipelines at the correct places (joy)
+- FastRAM detection now uses proper CPU check (PES)
+- resetvec handling fixed (wrong check 'tst.b resetvec' removed) (PES)
+- cartridge is defined at $00fa0000, not $fffa0000 - fixed. (PES)
+- _check_read_byte now flushes pipelines at the correct places (PES)
 
 2002-01-03
 - replaced "REG" by register in bios/ and bdos/  (MAD)
@@ -419,7 +419,7 @@ Start... early ages
 
 2002-01-04 
 - made bdos/fsio.c better readable (MAD)
-- bios/memory.S makes use of routines in bios/detect.S (joy)
+- bios/memory.S makes use of routines in bios/detect.S (PES)
 
 2002-01-05
 - fixed set_sr(0x0300) to 0x2300 in bios/screen.c:vsync() (LVL)
@@ -433,8 +433,8 @@ Start... early ages
 - fixed BAD bug in fsmain.c - the divmod() long number (byte offset of lseek)
   was stripped when converting to (int). Due to that relocation info couldn't
   be read from a file during Pexec() and that caused "invalid exec format"
-  bugs. Actually most things in BDOS filesystem could never work! (joy)
-- "061a executable file format" debug print corrected: "601a ..." (joy)
+  bugs. Actually most things in BDOS filesystem could never work! (PES)
+- "061a executable file format" debug print corrected: "601a ..." (PES)
 
 2002-01-06
 - optimized divmod() and moved it to bdos/fsio.c (MAD) 
@@ -444,10 +444,10 @@ Start... early ages
 2002-01-07
 - added GETBOOT bootsector extractor routine to EmuCON (MAD)
 - fixed COPY/MOVE/CP/MV command (MAD)
-- fixed NVRAM RTC getting/setting date (month is already 1..12) (joy)
-- fixed printing of current time at bootup (month is already 1..12) (joy)
-- disabled vsync() neverending loop (MonST works now) (joy)
-- fixed LineA v_bytes_lin variable (Clocky works now) (joy)
+- fixed NVRAM RTC getting/setting date (month is already 1..12) (PES)
+- fixed printing of current time at bootup (month is already 1..12) (PES)
+- disabled vsync() neverending loop (MonST works now) (PES)
+- fixed LineA v_bytes_lin variable (Clocky works now) (PES)
 
 
 2002-01-08
@@ -479,23 +479,23 @@ Start... early ages
                  moved compute_cksum() to blkdev.c
                  added floppy_rw() (that's the lowlevel part of floppy_rwabs)
                  added (WORD dev) to flopunlk() in order to update last_access
-                 added hackish init of floppy geometry to flopini() (joy)
+                 added hackish init of floppy geometry to flopini() (PES)
 - bios/floppy.h: disabled bpb struct
-                 made getiword externally accessible (joy)
-- bios/startup.S: added ara_DMAread() (for calling the aranym's DMAread) (joy)
-- bios/tosvars.h: added long recnr parameter to rwabs (like AHDI 3.0) (joy)
-- bios/bios.c: added long recnr parameter to bios_4 (like AHDI 3.0) (joy)
-- bios/bios.h: enabled bpb struct (joy)
-- bios/xbios.c: DMAread()/DMAwrite() implemented (joy)
-- Makefile: added disk.c to source files (joy)
-- bios/disk.[ch] created, DMAread()/DMAwrite() implemented (joy)
+                 made getiword externally accessible (PES)
+- bios/startup.S: added ara_DMAread() (for calling the aranym's DMAread) (PES)
+- bios/tosvars.h: added long recnr parameter to rwabs (like AHDI 3.0) (PES)
+- bios/bios.c: added long recnr parameter to bios_4 (like AHDI 3.0) (PES)
+- bios/bios.h: enabled bpb struct (PES)
+- bios/xbios.c: DMAread()/DMAwrite() implemented (PES)
+- Makefile: added disk.c to source files (PES)
+- bios/disk.[ch] created, DMAread()/DMAwrite() implemented (PES)
 - bios/blkdev.c: deleted most of Martin's framework
                  added full AHDI 3.0 extended Rwabs() (yet to add MEDIACH check)
                  added getBPB() with auto 12/16-bit FAT detection
-                 added Mediach() (same as was in floppy.c) (joy)
+                 added Mediach() (same as was in floppy.c) (PES)
 - bios/blkdev.h: blkdev structure reworked (maybe a bit too much)
                  bpb structure disabled - what's wrong with the bios.h one?
-                 UNIT and PARTITION structures - first ideas, incomplete (joy)
+                 UNIT and PARTITION structures - first ideas, incomplete (PES)
 - Comment: the only thing I am sure of is the Rwabs() implementation. I am not
            very sure about the blkdev/device concept. Also would need to set
            common language - how to call physical drive (unit? device? drive?)
@@ -503,7 +503,7 @@ Start... early ages
            now is how many things can be detected during boot - the size of 
            partition, of the whole drive (especially with floppy) etc.
            bdos/fsio.c still strikes - passes null pointer for rwabs buffer.
-           That needs to be debugged (or maybe rewritten completely). (joy)
+           That needs to be debugged (or maybe rewritten completely). (PES)
 - updated po/de.po, because of stupid translations by me (MAD)
 
 2002-01-14
@@ -514,8 +514,8 @@ Start... early ages
 - changed some struct {...} foo [] = syntax that Indent didn't like (LVL)
 - removed from lineavars.h struct VIDEO_MODE used only inside lineainit.c (LVL)
 - fixed typos in bios-level memory (LVL) 
-- fixed the amount of fastram printed in debug mode (joy)
-- set the C: in drvbits for the hacked up host access disk drive (joy)
+- fixed the amount of fastram printed in debug mode (PES)
+- set the C: in drvbits for the hacked up host access disk drive (PES)
 
 2002-01-15
 - disabled the bmem_allowed bug what Petr found in bios/biosmem.c (MAD)
@@ -533,9 +533,9 @@ Start... early ages
 - in bios/vectors.S, init_user_vec no longer relies on the previous value of 
   register a1 from init_exc_vec (LVL)
 - bios/blkdev.c - the floppy_init does not use the hdv_init vector. A: works
-  under STonX again. (joy)
+  under STonX again. (PES)
 - bios/bios.c - increased the fixed size sector cache to 4kB sector. That's
-  enough for partitions smaller than 512MB. Ideally it should be 32kB (joy).
+  enough for partitions smaller than 512MB. Ideally it should be 32kB (PES).
 
 2002-01-16
 - aes and vdi not exported in make tgz (LVL)
@@ -563,14 +563,14 @@ Start... early ages
 2002-01-20
 - in bios/lineainit.c there is now the sysfonts array for linea.
   font_ring is not longer used by linea (MAD).
-- keyboard reset (Alt+Ctrl+Del(+RShift)) implemented (joy)
+- keyboard reset (Alt+Ctrl+Del(+RShift)) implemented (PES)
 - trying to get 16-bit sector number working in BDOS - one workaround
   in fsbuf.c makes DIR (fsfirst/fsnext) working correctly (it seems).
   The NEGATIVE_RECN value (currently -200) should be fixed when it will be
   clear what is FAT/DIR negative recn and what is unsigned recn in signed int.
-  FAT traversing seems to be broken (Pexec fails for some files) (joy)
-- blkdev.h: retrying in emulator is not necessary (joy)
-- blkdev.c: 16-bit recn should work now (joy)
+  FAT traversing seems to be broken (Pexec fails for some files) (PES)
+- blkdev.h: retrying in emulator is not necessary (PES)
+- blkdev.c: 16-bit recn should work now (PES)
 
 2002-01-21
 - in bios/lineainit.c: removed font_ring initialization (MAD)
@@ -587,8 +587,8 @@ Start... early ages
 - put parallel and serial output funcs from asm to chardev.c (MAD)
 - put cpu_init(), cooki_init() and machine_init() to the beginning of the 
   C-startup procedure of bios.c (MAD)
-- TT-RAM is added to BDOS memory by calling Maddalt (should be changed) (joy)
-- free TT-RAM is displayed in initinfo.c (joy)
+- TT-RAM is added to BDOS memory by calling Maddalt (should be changed) (PES)
+- free TT-RAM is displayed in initinfo.c (PES)
 - put diskbuf to blkdev.c (MAD)
 
 2002-01-23
@@ -609,35 +609,35 @@ Start... early ages
 - panic() prints on screen if linea is inited (LVL)
 - added new BDOS memory functions to doc/status.txt (LVL)
 - added make target 512 and some related hints in Makefile (MAD)
-- added code for Atari disk partitions detecting (unfinished yet) (joy)
-- a check for Control key added to the AUTO folder execution (joy)
-- #if ARANYM_NATIVE_DISK added to bios/disk.c - so it doesn't kill STonX (joy)
+- added code for Atari disk partitions detecting (unfinished yet) (PES)
+- a check for Control key added to the AUTO folder execution (PES)
+- #if ARANYM_NATIVE_DISK added to bios/disk.c - so it doesn't kill STonX (PES)
 
 2002-01-27
 - changed kcprintf() calls in panic() to vkcprintf for good CR/LF (MAD)
-- drive and partition scanning finished (joy)
-- initinfo shows the available gemdos logical drives (joy)
+- drive and partition scanning finished (PES)
+- initinfo shows the available gemdos logical drives (PES)
 
 2002-01-28
-- 1-bit color depth on Falcon now in proper black-on-white colors (joy)
+- 1-bit color depth on Falcon now in proper black-on-white colors (PES)
 - machine_init() split to two phases - machine_detect() can be called very
-  early() and new machine_init() creates cookies etc. (joy)
+  early() and new machine_init() creates cookies etc. (PES)
 - screen.c now detects proper screen size from VIDEL registers - there's no
-  more trash on the screen - the size is set to 640x480 (joy)
-- lineainit.c sets the variables according to proper screen resolution (joy)
-- fixed BDOS 16-bit FAT - integer computing was overflowing in fsdrive.c (joy)
+  more trash on the screen - the size is set to 640x480 (PES)
+- lineainit.c sets the variables according to proper screen resolution (PES)
+- fixed BDOS 16-bit FAT - integer computing was overflowing in fsdrive.c (PES)
 
 2002-01-30
-- bdos/osmem.c variables init fixed. (joy)
-- bios/blkdev.c - mediach returns "not changed" status for hard drives (joy)
-- bios/machine.c - _FRB buffer for DMA operations to FastRAM added (joy)
-- bios/floppy.c - floppy rwabs now use _FRB if destination is in FastRAM (joy)
+- bdos/osmem.c variables init fixed. (PES)
+- bios/blkdev.c - mediach returns "not changed" status for hard drives (PES)
+- bios/machine.c - _FRB buffer for DMA operations to FastRAM added (PES)
+- bios/floppy.c - floppy rwabs now use _FRB if destination is in FastRAM (PES)
 
 2002-02-03
-- bios/screen.c - do not change VIDEL freq by Shifter init code (joy)
-- bios/blkdev.c - buf must be incremented (thanks Laurent) (joy)
-                - getbpb no more divide by zero error (thanks Laurent) (joy)
-- bios/floppy.c - corrent blkdev[].unit init for floppy B: (thx Laurent) (joy)
+- bios/screen.c - do not change VIDEL freq by Shifter init code (PES)
+- bios/blkdev.c - buf must be incremented (thanks Laurent) (PES)
+                - getbpb no more divide by zero error (thanks Laurent) (PES)
+- bios/floppy.c - corrent blkdev[].unit init for floppy B: (thx Laurent) (PES)
 
 2002-03-06
 - bios/machine.c - got rid of some compiler warnings
@@ -670,14 +670,14 @@ Start... early ages
 - vdi/lisagem.S - Here is now just the VDI part of mousedriver setup (MAD)
 - bios/lineainit.c - implemented v_pl_dspl (bytes/plane) for VDI (MAD)
 - bios/screen.c - the last patch for real Falcon reverted because it caused
-                  black screen under ARAnyM (joy)
+                  black screen under ARAnyM (PES)
 2002-03-17
 - vdi/* - corrected the swapped #defines to use Atari and/or VME10 (MAD)
 - You can now use the AES as user interface instead of EmuCON (THH)
   (by enabling it in the Makefile, however AES is not yet fully working)
 
 2002-03-18
-- bios/kprint.c - registers are printed out to ease debugging (joy)
+- bios/kprint.c - registers are printed out to ease debugging (PES)
 
 2002-03-20
 - The AES are now succeed in loading and running DESKTOP.APP from disk! (THH)
@@ -801,7 +801,7 @@ Start... early ages
 - vdi/vmouse.c - implemented vex and some other mouse funcs in C (MAD)
 - util/miscasm.S - added for smaller asm routines (MAD)
 - bdos/umem.c - added missing break in a case that is responsible
-                for returning free memory - now everything works OK! (joy)
+                for returning free memory - now everything works OK! (PES)
 
 2002-04-27
 - vdi/*.S - changed // back to * inside comments (LVL)
@@ -984,7 +984,7 @@ Start... early ages
 - vdi/vdiinput.c - fixed bug in vb_draw routine (MAD)
 
 2002-09-01
-- bios/blkdev.c - booting from harddisk enabled (joy)
+- bios/blkdev.c - booting from harddisk enabled (PES)
 - bios/disk.[ch] - ARANYM_NATIVE_DISK does not crash other machines now.
                    Also it makes use of new ARAnyM XHDI function XHREADWRITE.
                    Harddisk is now read/write (if enabled in ARAnyM).
@@ -1003,19 +1003,19 @@ Start... early ages
 - bios/startup.S - deleted unused function vidchng() (MAD)
 
 2002-09-11
-- bios/startup.S - added NatFeat detection code (joy)
+- bios/startup.S - added NatFeat detection code (PES)
 - bios/bios.c - added 'int native_features' flag (please move elsewhere as 
   appropriate - it's definitely not bios related but will be used mostly
-  there) (joy)
+  there) (PES)
 - bios/disk.c - adapted to NatFeat. Finally clean XHDI interface that other
-  emulators may follow. (joy)
+  emulators may follow. (PES)
 - bios/machine.c - a very hackish code for reading NF_NAME in place
   of emulated machine name. Where to get a bit of free RAM? Please fix it.
-  (joy)
+  (PES)
 - bios/initinfo.c - added 5 seconds delay so users can enjoy machine name.
   The waiting is not using CPU STOP insn yet. Also needs to be
   interruptable by a keypress. Would be nice if it was possible to jump
-  to the EmuShell instead of booting the GEM by pressing a key. (joy)
+  to the EmuShell instead of booting the GEM by pressing a key. (PES)
 
 2002-09-14
 - desk/icons - removed unnecessary 48x24 icons, added sed scripts to help edit
@@ -1179,41 +1179,41 @@ Start... early ages
 
 2002-10-19
 - bios/bios.c - display initinfo before you start booting from a device
-  so that users have time to press and hold the Alt key to skip the boot (joy)
-- bios/blkdev.c - added check for the Alt key (joy)
-- bios/initinfo.c - can't display the boot device - it's unknown ATM (joy)
-- bios/bios.c - check for Ctrl key fixed (hold it to skip AUTO\*.PRG) (joy)
-- bios/initinfo.c - delay can be interrupted by Shift/Ctrl/Alt keys (joy)
-- bios/cookie.c - number of free slots corrected (joy)
-- bios/machine.c - COOKIE_NATFEAT created (joy)
+  so that users have time to press and hold the Alt key to skip the boot (PES)
+- bios/blkdev.c - added check for the Alt key (PES)
+- bios/initinfo.c - can't display the boot device - it's unknown ATM (PES)
+- bios/bios.c - check for Ctrl key fixed (hold it to skip AUTO\*.PRG) (PES)
+- bios/initinfo.c - delay can be interrupted by Shift/Ctrl/Alt keys (PES)
+- bios/cookie.c - number of free slots corrected (PES)
+- bios/machine.c - COOKIE_NATFEAT created (PES)
 - bios/startup.S, bios/disk.c, bios/machine.c - NatFeat instruction codes
-  changed to LineF $fe00/$fe01 (joy)
+  changed to LineF $fe00/$fe01 (PES)
 
 2002-10-20
 - bios/startup.S, bios/disk.c, bios/machine.c - NatFeat instruction codes
   changed back to good old $7300/$7301. The LineF interface requires
   the $fe0x instructions to be long words and I am not ready to accept
-  such change of NatFeat calling convention. Sorry. (joy)
+  such change of NatFeat calling convention. Sorry. (PES)
 
 2002-10-28
 - bios/bios.c - loading of AUTO folder programs displayed on stderr console
   via new NF_STDERR (sorry for the mess in bios.c, the nf calling must be
-  cleaned up somehow). (joy)
+  cleaned up somehow). (PES)
 
 2002-10-31
 - Makefile - changed, so that vdi/lisaesc.S is used again (MAD)
 - aes/gemdosif.S - changed to lowercase and put _back after entry (MAD)
 
 2002-11-02
-- aes/geminit.c - held Ctrl key causes not loading the ACCs (joy)
+- aes/geminit.c - held Ctrl key causes not loading the ACCs (PES)
 
 2002-11-03
-- bios/xhdi.[ch] - XHDI implemented - allows running FreeMiNT (joy)
-- bios/disk.c - some functions moved to the xhdi.c (joy)
-- bios/blkdev.c - initialization order changed (joy)
-- bios/machine.c - add XHDI cookie to the jar (joy)
-- bios/startup.S - XHDI entry point (joy)
-- bios/initinfo.c - missing #include (joy)
+- bios/xhdi.[ch] - XHDI implemented - allows running FreeMiNT (PES)
+- bios/disk.c - some functions moved to the xhdi.c (PES)
+- bios/blkdev.c - initialization order changed (PES)
+- bios/machine.c - add XHDI cookie to the jar (PES)
+- bios/startup.S - XHDI entry point (PES)
+- bios/initinfo.c - missing #include (PES)
 
 2002-11-07
 - util/intmath.c - central impl. of (s)mul_div()    (MAD)
@@ -1223,21 +1223,21 @@ Start... early ages
 - aes/gemgsxif.c - changed i_lptr1 to use just one argument (MAD)
 
 2002-11-16
-- aes/gemdisp.c - schedule() loop now sleeps with the STOP #2300 insn (joy)
+- aes/gemdisp.c - schedule() loop now sleeps with the STOP #2300 insn (PES)
 
 2002-11-22
 - vdi/vdimain.c - change timer vectors to be used as pointers (MAD)
 
 2003-01-13
-- bios/natfeat.[hS] - NatFeat stuff moved to separate files (joy)
-- bios/startup.S, bios/machine.c - cleaned up (joy)
+- bios/natfeat.[hS] - NatFeat stuff moved to separate files (PES)
+- bios/startup.S, bios/machine.c - cleaned up (PES)
 - "__NF" cookie now contains pointer to the NatFeat structure with
-  function pointers (joy)
+  function pointers (PES)
 
 2003-01-14
 - bios/vectors.S - the screenpt must be cleared after successful video
-  registers update (joy)
-- NatFeat calling cleaned up - uses function pointers now (joy)
+  registers update (PES)
+- NatFeat calling cleaned up - uses function pointers now (PES)
 
 2003-01-20
 - bdos/fsdir.c - Fsfirst/Fsnext nesting fixed. This was a very important
@@ -1245,12 +1245,12 @@ Start... early ages
 - bdos/proc.c - local or global variable referenced? Fixed by a wild
   guess (Standa)
 - bios/bios.c - restore our DTA when processing the AUTO folder since
-  the executed AUTO program could have changed it in the meantime (joy)
+  the executed AUTO program could have changed it in the meantime (PES)
 - bios/blkdev.c - TOS uses a different algorithm for detecting whether
   a FAT partition is 12-bit or 16-bit. From mtools I understood that
   anything with non-floppy-standard cluster number (probably 720/1440)
   is considered to be 16-bit FAT. Without this patch 4 MB disk image
-  formatted with TOS could not be used under EmuTOS. Now fixed (joy)
+  formatted with TOS could not be used under EmuTOS. Now fixed (PES)
 
 2003-01-21
 - bdos/fsfirst.c - yesterday's patch corrected (Standa)
@@ -1266,36 +1266,36 @@ Start... early ages
 - bios/ikbd.[ch] - dead keys fixed, backspace seems to work okay now (LVL)
 
 2003-02-06
-- bios/bios.c - natfeat printing changed back to kprintf (joy)
+- bios/bios.c - natfeat printing changed back to kprintf (PES)
 - bios/screen.[ch] - a routine for programming VIDEL to produce any of
   bitplane modes on VGA monitor with 640x480 res. added. Also proper VIDEL
   reset is now done on init. The last missing thing is to fetch the
   pre-selected boot resolution from the NVRAM and apply it. Until then
-  the default boot resolution will be the 2-color mode (joy)
+  the default boot resolution will be the 2-color mode (PES)
 
 2003-02-07
 - bios/natfeats.c, natfeat.h, natfeat.S - general cleanup, library of NF
-  functions added (joy)
-- bios/kprint.c, kprintasm.S - ARAnyM code removed, NF support added (joy)
-- bios/machine.[ch], bios.c - updated for new NF library (joy)
-- Makefile, doc/install.txt, include/config.h - updated to support NF (joy)
+  functions added (PES)
+- bios/kprint.c, kprintasm.S - ARAnyM code removed, NF support added (PES)
+- bios/machine.[ch], bios.c - updated for new NF library (PES)
+- Makefile, doc/install.txt, include/config.h - updated to support NF (PES)
 
 2003-02-07
 - doc/announce.txt - updated for release 0.6 (MAD)
 
 2003-02-08
 - bios/natfeats.c - display the short emu name so that initinfo fits in
-  40 columns screen resolution (joy)
+  40 columns screen resolution (PES)
 - aes/geminit.c - check the Control key only once, not before loading each
   accessory. The harddrives are so fast that it doesn't make sense to try
-  and skip only some accessories ;-) (joy)
+  and skip only some accessories ;-) (PES)
 - bios/initinfo.c - corrected displaying of free RAM so it fits in 40 cols.
   Also added a TOS like boot timeout with a little boot guide and a gfx
-  effect of countdown :-) (joy)
+  effect of countdown :-) (PES)
 - include/config.h - #define TIMEOUT_ON_BOOT here or in your localconf.h.
   This was added especially to make Thothy happy - he doesn't like long
-  boot timeouts... (joy)
-- po/cs.po - Czech translation updated (joy)
+  boot timeouts... (PES)
+- po/cs.po - Czech translation updated (PES)
 - bios/initinfo.c - moved up the time bar a few lines (MAD)
 - vdi/esclisa.S - used this instead of buggy vdiesc.c  (MAD)
 - bdos/console.c - better code style (MAD)
@@ -1307,13 +1307,13 @@ Start... early ages
 - po/fr.po - updated (LVL)
 - include/version.h - set to 0.6 (LVL)
 - include/config.h - added DETECT_NATIVE_FEATURES (I assume it was only in
-  joy's localconf.h) and set it to 1 by default. I checked that it works on
+  Petr's localconf.h) and set it to 1 by default. I checked that it works on
   on both non-nf-enabled-yet STonX and on newly-nf-enabled STonC. I suggest
   to get rid of the STonX native print stuff as soon as I commit to STonX the
   quick natfeat implementation I just added to STonC (LVL)
 - natfeat_init() called in memory.S, for earlier availability of kprintf (LVL)
-- bios/bios.c - DBGAUTOBOOT added so that the AUTO crash is visible (joy)
-- bios/ikbd.c - corrected debug typo (joy)
+- bios/bios.c - DBGAUTOBOOT added so that the AUTO crash is visible (PES)
+- bios/ikbd.c - corrected debug typo (PES)
 
 2003-02-10
 - bios/bios.c - now using the reentrant trap1_pexec() to load programs (THH)
@@ -1324,7 +1324,7 @@ Start... early ages
 
 2003-02-12
 - bios/ikbd.c - initial settings of conterm hopefully fixes the hotkeys
-  in XaAES (joy)
+  in XaAES (PES)
 - Fixed some bugs in EmuCON (for example the initial Mshrink was not working).
   Now it is also possible to quit it with "EXIT" again. (THH)
 - EmuCON can now be compiled into EmuTOS together with the AES/Desktop and
@@ -1349,26 +1349,26 @@ Start... early ages
 2003-02-18
 - bios/screen.c - Falcon VIDEL better supported. Should allow boot in colors
   but there is still something wrong in the EmuTOS as it requires the rez_reg
-  to be set (can't find out why) (joy)
+  to be set (can't find out why) (PES)
 
 2003-02-19
 - bios/screen.c - cleaned up the getrez a bit (MAD)
 
 2003-02-20
 - bios/screen.[ch] - VIDEL color registers supported, EmuTOS can boot
-  in 2, 4 or 16 colors now! (joy)
-- bios/screen.[ch] - setphys() safeguard check (joy)
-- bios/nvram.c - fixed wrong offset, added static buffer for nvram data (joy)
-- bios/machine.c - early initialization of nvram (joy)
+  in 2, 4 or 16 colors now! (PES)
+- bios/screen.[ch] - setphys() safeguard check (PES)
+- bios/nvram.c - fixed wrong offset, added static buffer for nvram data (PES)
+- bios/machine.c - early initialization of nvram (PES)
 - bios/screen.c - make use of NVRAM boot resolution setting. Tested on
-  ARAnyM (aranym -e -r <X>) and should work also on real Falcon030. (joy)
+  ARAnyM (aranym -e -r <X>) and should work also on real Falcon030. (PES)
 - doc/announce.txt - updated for 0.6 release (MAD)
 
 2003-02-21
 - bios/lineainit.c - quick patch to get 8x16 font in all resolutions with
-  screen height >= 400 (joy)
-- include/config.h - boot countdown time increased to 8 seconds (joy)
-- po/cs.po - updated (joy)
+  screen height >= 400 (PES)
+- include/config.h - boot countdown time increased to 8 seconds (PES)
+- po/cs.po - updated (PES)
 
 2003-02-27
 - vdi/* - found bug in C-pattern filling, enabled again (MAD)
@@ -1490,7 +1490,7 @@ Start... early ages
 
 2003-06-26
 - bios/bios.c: initialize unknown level interrupts to just RTE (not bombs)
-  (joy)
+  (PES)
 
 2003-07-04
 - bios/bios.c: also initialize level int 0x11 to just RTE, not
@@ -1502,25 +1502,25 @@ Start... early ages
 
 2003-07-12
 - po/es.po: added Spanish translation of EmuTOS, created by Gabriel Huertas
-  <gabrielhuertas@terra.es> (joy)
+  <gabrielhuertas@terra.es> (PES)
 
 2003-07-13
-- bios/clock.c: NVRAM RTC year offset now detected from RTC_TOS_VER (joy)
-- include/config.h: RTC_TOS_VER documented but not defined by default (joy)
+- bios/clock.c: NVRAM RTC year offset now detected from RTC_TOS_VER (PES)
+- include/config.h: RTC_TOS_VER documented but not defined by default (PES)
 - Makefile: new target 'aranym' added - it defines all required features.
   The 'falcon' target was removed (I don't believe current EmuTOS would
-  work on real Falcon) (joy)
-- doc/todo.txt: removed a couple of entries that I believe were done (joy)
-- bios/disk.c: added debug kprintf's to partition detection code (joy)
+  work on real Falcon) (PES)
+- doc/todo.txt: removed a couple of entries that I believe were done (PES)
+- bios/disk.c: added debug kprintf's to partition detection code (PES)
 
 2003-07-21
 - aes/gemstart.S: _dos_exec() - jsr _dsptch removed on THH suggestion.
-  This fixes the EmuDesk Shutdown crash I was experiencing (joy)
+  This fixes the EmuDesk Shutdown crash I was experiencing (PES)
 - vdi/blit.c: implemented vrt_cpyfm, vro_cpyfm and bit_blt in C  (MAD)
 
 2003-07-25
 - aes/gemstart.S: _dos_exec() still having problem. Had to increase
-  the stack offset from 0x40 to 0x50 (joy)
+  the stack offset from 0x40 to 0x50 (PES)
 
 2003-07-27
 - desk/* : Fixed some of the "Desktop 1.2" patches and added three new menu
@@ -1585,7 +1585,7 @@ Start... early ages
 - Added George Nakos' greek translations. (THH)
 
 2004-01-07
-- bios/machine.c: _MCH cookie now contains 0x50000 on ARAnyM (joy)
+- bios/machine.c: _MCH cookie now contains 0x50000 on ARAnyM (PES)
 - util/string.c,h: strncasecmp() added
 
 2004-01-27
@@ -1648,15 +1648,15 @@ Start... early ages
 - vdi/vdi_mouse.c: implemented xfm_crfm in C (MAD)
 
 2004-08-02
-- po/cs.po: translated missing strings (joy)
+- po/cs.po: translated missing strings (PES)
 
 2004-08-03
 - bios/cookie.h: _FDC cookie now uses correct "ATC" identification string (THH)
 
 2004-08-04
 - bios/tosvars.S: kbdvec added in order to satisfy FreeMiNT 1.16.1 that
-                  relies on an undocumented TOS >= 2.0 feature (joy)
-- bios/aciavecs.S: jump to ikbd.c via the kbdvec with scancode in d0 (joy)
+                  relies on an undocumented TOS >= 2.0 feature (PES)
+- bios/aciavecs.S: jump to ikbd.c via the kbdvec with scancode in d0 (PES)
 
 2004-08-05
 - vdi/vdi_main.c: eleminated most doubleing to Assembler variables (MAD)
@@ -1689,9 +1689,9 @@ Start... early ages
 - vdi/vdi_mouse.c: implemented vex_wheelv() (MAD)
 
 2004-10-09
-- bios/ikbd.c: keyboard repetition respects 1st bit of conterm (joy)
-               conterm initialized (we never did that before) (joy)
-- doc/bios.txt: fixed description of conterm bits (joy)
+- bios/ikbd.c: keyboard repetition respects 1st bit of conterm (PES)
+               conterm initialized (we never did that before) (PES)
+- doc/bios.txt: fixed description of conterm bits (PES)
 
 2004-10-18
 - bios/conout.S: removed from CVS (MAD)
@@ -1749,9 +1749,9 @@ Start... early ages
 -  aes/gem_rsc.c: Changed background color of the desktop to green. (THH)
 
 2005-01-15
-- bios/disk.c: added DOS PTBL recognition (primary partitions only) (joy)
-- bios/xhdi.c: reformatted (joy)
-- bios/blkdev.[ch]: added flag for byteswap (unused yet, TODO) (joy)
+- bios/disk.c: added DOS PTBL recognition (primary partitions only) (PES)
+- bios/xhdi.c: reformatted (PES)
+- bios/blkdev.[ch]: added flag for byteswap (unused yet, TODO) (PES)
 
 2005-01-25
 - desk/deskmain.c, desk/deskwin.c: Fixed a bug that caused a crash when
@@ -1917,7 +1917,7 @@ Start... early ages
 * Release: 0.8.1
 
 2005-09-19
-- vdi/vdi_asm.S: reversed mouse wheel direction, now Milan compatible (joy)
+- vdi/vdi_asm.S: reversed mouse wheel direction, now Milan compatible (PES)
 
 2005-10-04
 - po/fi.po: Eero Tamminen has updated the Finnish translation. (THH)
@@ -1937,15 +1937,15 @@ Start... early ages
 - Makefile: dd in cygwin needs binary flags (SOP)
 - po/fr.po: Patrice Mandin translated cli/command.c to French and says that
   NLS is broken since untranslated CLI crashes (instead of falling back
-  to English as Laurent designed it) (joy)
+  to English as Laurent designed it) (PES)
 
 2006-05-03
-- bios/kprint.c: fix bus error register printout for MC68040 (joy)
+- bios/kprint.c: fix bus error register printout for MC68040 (PES)
 
 2006-05-05
 - bios/vectors.S: _int_hbl handler had incorrectly commented the internal
   logic. And then Andreas noticed the misplaced jump label that could cause
-  system crash if IPL was 1 or 2. (joy)
+  system crash if IPL was 1 or 2. (PES)
 
 2006-05-22
 - bios/natfeat*: nf_getbootstrap_arg() added (SOP)
@@ -1953,11 +1953,11 @@ Start... early ages
 
 2006-11-03
 - bios/bios.c: natfeat_init() called as the very first thing in bios_init()
-  so that first kprintf() can make use of the NF output, if available (joy)
+  so that first kprintf() can make use of the NF output, if available (PES)
 - bios/startup.S: do not set supervisor stack before meminit as you don't
   know yet if there is any RAM at all. Also RAM might be cleared in meminit()
   eventually so you can't rely on the stack, anyway. Also kprintf_init()
-  is now called here (before it was hidden in meminit()). (joy)
+  is now called here (before it was hidden in meminit()). (PES)
 - bios/memory.S: main new feature is that all RAM is now cleared upon cold
   boot (if memvalid flags are not set correctly). This should ensure that
   EmuTOS does not crash during boot when it copies color registers from
@@ -1966,10 +1966,10 @@ Start... early ages
   yet because it would be overwritten, also all variables would be cleared).
   New #define ST_MMU and FALCON_MMU introduced. We should IMHO separate
   these routines and not include them in one EmuTOS binary. I doubt anyone
-  would want to run ST EmuTOS on Falcon or vice-versa. (joy)
+  would want to run ST EmuTOS on Falcon or vice-versa. (PES)
 
 2006-11-18
-- bios/memory.S: don't clear non-existing FastRAM (joy, thanks to Milan)
+- bios/memory.S: don't clear non-existing FastRAM (PES, thanks to Milan)
 
 2007-01-18
 - bios/screen.c bios/xbios: Implemented XBIOS functions EsetShift() and
@@ -1998,16 +1998,16 @@ Start... early ages
 
 2007-07-17
 - bios/blkdev.[ch]: PUN_INFO structure added to satisfy FreeMiNT that wants
-  to know the max sector size for setting up disk buffer. (joy)
-- tosvars.[Sh]: export pun_ptr for setting up the PUN_INFO struct. (joy)
+  to know the max sector size for setting up disk buffer. (PES)
+- tosvars.[Sh]: export pun_ptr for setting up the PUN_INFO struct. (PES)
 
 2007-07-24
-- util/nlsasm.S: beware, movea.l does NOT set flags! Caused crashes.. (joy)
+- util/nlsasm.S: beware, movea.l does NOT set flags! Caused crashes.. (PES)
 - util/nlsasm.S: empty string was not translated correctly and that was
   causing scary crashes. Fixed by explicit check for empty string.
   Intentionally not cached in the RAM cache since the empty strings are
   often replaced with something else at runtime. The cache can be rather
-  dangerous in this respect... (joy)
+  dangerous in this respect... (PES)
 
 2007-11-06
 - vdi/vdi_control.c: Fixed v_clrwk() - the function now calculates the screen
@@ -2111,15 +2111,15 @@ Start... early ages
 * Release: 0.8.4
 
 2008-11-23
-- bios/initinfo.c: timeout on boot removed - hold <Shift> if you miss it (joy)
+- bios/initinfo.c: timeout on boot removed - hold <Shift> if you miss it (PES)
 
 2008-11-24
-- bios/memory.S: memvalid setting moved to BIOS (joy)
-- bios/bios.c: check for cold/warm start, show initinfo on coldstart only (joy)
+- bios/memory.S: memvalid setting moved to BIOS (PES)
+- bios/bios.c: check for cold/warm start, show initinfo on coldstart only (PES)
 
 2008-12-13
 - bios/initinfo.c: global variable early_cli must not be initialized or it
-  gets to DATA area in ROM space where you can't change its value later (joy)
+  gets to DATA area in ROM space where you can't change its value later (PES)
 
 2009-06-11
 - bdos/bdosmain.c: GEMDOS function dispatcher now handles the amount of
@@ -3659,5 +3659,5 @@ Start... early ages
 - doc/*: Update the documentation. (VRI)
 
 2012-06-15
-- tools/bug.c: report which file is missing (joy)
-- po/cs.po: updated Czech translation (joy)
+- tools/bug.c: report which file is missing (PES)
+- po/cs.po: updated Czech translation (PES)

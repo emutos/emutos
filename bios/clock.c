@@ -7,7 +7,7 @@
  *  MAD   Martin Doering
  *  LVL   Laurent Vogel
  *  THH   Thomas Huth
- *  joy   Petr Stehlik
+ *  PES   Petr Stehlik
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -275,7 +275,7 @@ static void msetdt(ULONG dt)
  * for updating real RTC because it doesn't handle the control registers
  * and also doesn't provide proper timing (32kHz device needs proper timing).
  * Reading of RTC should be OK on real machines.
- * (joy)
+ * (PES)
  */
 #define NVRAM_RTC_SECONDS 0
 #define NVRAM_RTC_MINUTES 2
