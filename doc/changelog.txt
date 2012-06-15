@@ -3660,3 +3660,4 @@ Start... early ages
 
 2012-06-15
 - tools/bug.c: report which file is missing (joy)
+- po/cs.po: updated Czech translation (joy)
