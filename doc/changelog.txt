@@ -3660,4 +3660,3 @@ Start... early ages
 
 2012-06-15
 - tools/bug.c: report which file is missing (joy)
-- po/POTFILES.in: comment out not existing desk/desk_rsc.c (joy)
