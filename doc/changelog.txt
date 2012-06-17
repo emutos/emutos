@@ -3664,3 +3664,4 @@ Start... early ages
 
 2012-06-17
 - tools/bug.c: Fixed memory allocation problem. (THH)
+- desk/desktop.rsc: Fixed button widths in change resolution dialog. (RFB)
