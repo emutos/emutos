@@ -3661,3 +3661,6 @@ Start... early ages
 2012-06-15
 - tools/bug.c: report which file is missing (PES)
 - po/cs.po: updated Czech translation (PES)
+
+2012-06-17
+- tools/bug.c: Fixed memory allocation problem. (THH)

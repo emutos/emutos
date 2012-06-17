@@ -292,7 +292,7 @@ char * s_close(str *s)
     s->buf[0] = 0;
     return s->buf;
   }
-  xrealloc(s->buf, s->len+1);
+  s->buf = xrealloc(s->buf, s->len+1);
   s->buf[s->len] = 0;
   return s->buf;
 }
