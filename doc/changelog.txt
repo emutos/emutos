@@ -3670,3 +3670,4 @@ Start... early ages
 - include/compat.h include/portab.h: Fix strict-aliasing warnings with GCC 4.7.1
   and potential issues. (VRI)
 - *: Converted text files to UTF-8. Suggested by David Savinkoff. (VRI)
+- Makefile: Added "make charset" to check the sources charset. (VRI)

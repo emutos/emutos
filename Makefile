@@ -874,6 +874,13 @@ NODEP += crlf
 crlf: tounix$(EXE)
 	./$< * bios/* bdos/* doc/* util/* tools/* po/* include/* aes/* desk/*
 
+# Check the sources charset (no automatic fix)
+.PHONY: charset
+NODEP += charset
+charset:
+	@echo "# All the files below should use charset=utf-8"
+	find . -type f '!' -path '*/CVS/*' '!' -name '*.dfn' '!' -name '*.rsc' '!' -name '*.icn' '!' -name '*.po' -print0 | xargs -0 file -i |grep -v us-ascii
+
 .PHONY: cvsready
 NODEP += cvsready
 cvsready: expand crlf
