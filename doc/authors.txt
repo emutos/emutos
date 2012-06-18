@@ -33,7 +33,7 @@ Vincent Rivière (VRI) <vincent.riviere at freesbee.fr>
 - Various bug fixes
 
 Roger Burrows (RFB) <rfburrows at ymail.com>
-- FAT16 partitions up to 2 GB (inspired from Didier Mequignon's BDOS fork)
+- FAT16 partitions up to 2 GB (inspired from Didier Méquignon's BDOS fork)
 - Full support for Falcon and TT video hardware
 - Various bugfixes and cleanups
 

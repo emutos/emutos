@@ -25,7 +25,7 @@ flash tool, including:
 http://www.freescale.com/webapp/search/Serp.jsp?QueryText=cfflasher&fsrch=1&RELEVANCE=true&Downloads=Downloads%2F010JOVEUG4CB%60%60Development+Tools%2F070JOVFYTFTB%60%60Programmers+%28Flash%2C+etc.%29&showAllCategories=false&SelectedAsset=Downloads
 This tool runs on MS Windows and requires additional hardware.
 
-2) Didier Mequignon's FLASH060.PRG
+2) Didier Méquignon's FLASH060.PRG
 http://didierm.pagesperso-orange.fr/firebee.htm
 Get it from the tos060.lzh archive, tos060/flash.too foder.
 On your FireBee, start FireTOS, run FLASH060.PRG and flash emutosfb.s19.
