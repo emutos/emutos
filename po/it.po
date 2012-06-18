@@ -681,64 +681,6 @@ msgstr "MM-GG-AA"
 msgid "DD-MM-YY"
 msgstr "GG-MM-AA"
 
-#: desk/desk_rsc.c:1838
-msgid "%ld bytes used in %d items."
-msgstr "%ld byte usati in %d oggetti."
-
-#: desk/desk_rsc.c:1839
-msgid "  Show as icons  \007S"
-msgstr "  Formato icona  \007S"
-
-#: desk/desk_rsc.c:1840
-msgid "application"
-msgstr "applicazione"
-
-#: desk/desk_rsc.c:1841
-msgid "documents"
-msgstr "documenti"
-
-#: desk/desk_rsc.c:1843
-msgid "  Show as text   \007S"
-msgstr "  Formato testo  \007S"
-
-#: desk/desk_rsc.c:1852
-msgid "New Folder"
-msgstr "Nuova cartella"
-
-#: desk/desk_rsc.c:1853
-msgid "Disk Drives:"
-msgstr "Unità disco:"
-
-#: desk/desk_rsc.c:1876
-msgid "[3]["
-"Cannot find FORMAT.PRG|"
-"or FORMAT.TTP.][  OK  ]"
-msgstr "[3]["
-"Impossibile trovare FORMAT.PRG|"
-"o FORMAT.TTP.][  OK  ]"
-
-#: desk/desk_rsc.c:1888
-msgid "[3]["
-"You cannot copy a parent folder|"
-"into one of its child folders.][  OK  ]"
-msgstr "[3]["
-"Impossibile copiare una cartella|"
-"in una sua sottocartella.][  OK  ]"
-
-#: desk/desk_rsc.c:1970
-msgid "[1]["
-"You cannot drag the trash can|"
-"into a window.][  OK  ]"
-msgstr "[1]["
-"Non è possibile trascinare il|"
-"cestino in una finestra.][  OK  ]"
-
-#: desk/desk_rsc.c:1842
-msgid "[2]["
-"Switch resolution?][Yes|No]"
-msgstr "[2]["
-"Cambiare la risoluzione?][Si|No]"
-
 #: desk/desk_rsc.c:1571 desk/desk_rsc.c:1634
 msgid "SET SCREEN RESOLUTION"
 msgstr "IMPOSTA RISOLUZIONE"
@@ -779,6 +721,40 @@ msgstr "Bassa"
 msgid "ST Compatible"
 msgstr "ST Compatibile"
 
+#: desk/desk_rsc.c:1838
+msgid "%ld bytes used in %d items."
+msgstr "%ld byte usati in %d oggetti."
+
+#: desk/desk_rsc.c:1839
+msgid "  Show as icons  \007S"
+msgstr "  Formato icona  \007S"
+
+#: desk/desk_rsc.c:1840
+msgid "application"
+msgstr "applicazione"
+
+#: desk/desk_rsc.c:1841
+msgid "documents"
+msgstr "documenti"
+
+#: desk/desk_rsc.c:1842
+msgid "[2]["
+"Switch resolution?][Yes|No]"
+msgstr "[2]["
+"Cambiare la risoluzione?][Si|No]"
+
+#: desk/desk_rsc.c:1843
+msgid "  Show as text   \007S"
+msgstr "  Formato testo  \007S"
+
+#: desk/desk_rsc.c:1852
+msgid "New Folder"
+msgstr "Nuova cartella"
+
+#: desk/desk_rsc.c:1853
+msgid "Disk Drives:"
+msgstr "Unità disco:"
+
 #: desk/desk_rsc.c:1860
 msgid "[1]["
 "The selected document type is|"
@@ -805,6 +781,14 @@ msgstr "[1]["
 "aprire un disco, chiudere una|"
 "finestra non in uso.][  OK  ]"
 
+#: desk/desk_rsc.c:1876
+msgid "[3]["
+"Cannot find FORMAT.PRG|"
+"or FORMAT.TTP.][  OK  ]"
+msgstr "[3]["
+"Impossibile trovare FORMAT.PRG|"
+"o FORMAT.TTP.][  OK  ]"
+
 #: desk/desk_rsc.c:1879
 msgid "[3]["
 "Formatting will ERASE all|"
@@ -818,6 +802,14 @@ msgstr "[3]["
 "unità %c:.  Clicca su OK solo|"
 "se non importa la perdita delle|"
 "informazioni sul disco.][  OK  |Annulla]"
+
+#: desk/desk_rsc.c:1888
+msgid "[3]["
+"You cannot copy a parent folder|"
+"into one of its child folders.][  OK  ]"
+msgstr "[3]["
+"Impossibile copiare una cartella|"
+"in una sua sottocartella.][  OK  ]"
 
 #: desk/desk_rsc.c:1891
 msgid "[3]["
@@ -948,6 +940,14 @@ msgstr "[1]["
 "cazioni sulla scrivania GEM.|"
 "Tuttavia si possono copiare nel|"
 "disco o spostarli nel cestino.][  OK  ]"
+
+#: desk/desk_rsc.c:1970
+msgid "[1]["
+"You cannot drag the trash can|"
+"into a window.][  OK  ]"
+msgstr "[1]["
+"Non è possibile trascinare il|"
+"cestino in una finestra.][  OK  ]"
 
 #: desk/desk_rsc.c:1973
 msgid "[1]["
