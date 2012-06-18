@@ -56,7 +56,7 @@ __extension__                               \
  * the stack pointer then restore it after the trap.
  * Sometimes, GCC optimizes the stack usage, so this matters.
  *
- * Binding originally by Vincent Riviere, from MiNTlib's osbind.h
+ * Binding originally by Vincent Rivière, from MiNTlib's osbind.h
  */
 #define SuperToUser(ptr)                    \
 (void)__extension__                         \

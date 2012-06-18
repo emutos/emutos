@@ -3,7 +3,7 @@
  *
  * Copyright (c) 1999, 2002 by Authors:
  *
- *      Jörg Westheide <joerg_westheide@su.maus.de>
+ *      JÃ¶rg Westheide <joerg_westheide@su.maus.de>
  *      Draco  
  * LVL  Laurent Vogel
  * MAD  Martin Doering
@@ -267,7 +267,7 @@ _invalidate_icache:
         // - flush both caches with "cpushl bc" instead of "cpushl dc"
         // - flush the 512 Sets (original code forgot the last one)
         
-        nop                     // synchronize—flush store buffer
+        nop                     // synchronize/flush store buffer
         moveq.l #0,d0           // initialize way counter
         moveq.l #0,d1           // initialize set counter
         move.l  d0,a0           // initialize cpushl pointer

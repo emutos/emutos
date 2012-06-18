@@ -254,7 +254,7 @@ long xprtout(int ch)
 #if 0 
     /* TODO - depending whether Bconout() returns a value or not,
      * use Bcostat() or not. 
-     * Some doc (Le livre du développeur - the developper's book) says:
+     * Some doc (Le livre du dÃ©veloppeur - the developper's book) says:
      *   void Bconout(); void Cauxout(); int Cprnout();
      * the BDOS code assumes that Bconout() returns a value;
      * our current BIOS code doesn't.

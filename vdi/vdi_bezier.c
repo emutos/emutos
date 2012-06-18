@@ -1,5 +1,5 @@
 /*
- * bezier.c - Fast Bezier approximation using four control points.
+ * bezier.c - Fast BÃ©zier approximation using four control points.
  *
  * Copyright 1998-2002, Trevor Blight
  * Copyright 2004, EmuTOS development team
@@ -28,12 +28,12 @@
  *
  * In 2D geometry, a vertex is a corner of a polygon (where two sides meet)
  *
- * Quadratic Bézier curves
+ * Quadratic BÃ©zier curves
  *
- * A quadratic Bézier curve is the path traced by the function P(t). For
+ * A quadratic BÃ©zier curve is the path traced by the function P(t). For
  * points A, B, and C.
  *
- * Points on a quadratic Bézier curve can be computed recursively:
+ * Points on a quadratic BÃ©zier curve can be computed recursively:
  *
  * 1. Let A, B and C be the startpoint, control point and endpoint of the curve.
  * 2. Let D be the midpoint of the line AB.

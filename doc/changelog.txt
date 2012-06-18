@@ -1616,7 +1616,7 @@ Start... early ages
 
 2004-06-26
 - doc/status.txt: updated to reflect successful run of recent EmuTOS on a 
-  MegaSTE (this is reported by Fr�d�ric P�court who is curently testing EmuTOS
+  MegaSTE (this is reported by Frédéric Pécourt who is curently testing EmuTOS
   on a extension board of his own for the MegaSTE) (LVL)
 
 2004-07-07
@@ -2127,11 +2127,11 @@ Start... early ages
 
 2009-06-25
 - desk/deskfpd.c: Fixed empty desktop windows with GCC 4.x.
-  (patch by Vincent Riviere)
+  (patch by Vincent Rivière)
 
 2009-06-27
 - vdi/vdi_blit.S: Fixed crash in bit_blt() at desktop startup when compiled
-  without -fomit-frame-pointer. (patch by Vincent Riviere)
+  without -fomit-frame-pointer. (patch by Vincent Rivière)
 
 2009-08-14
 - bios/screen.c: Fixed Getrez() for TT shifter resolutions. (THH)
@@ -2140,19 +2140,19 @@ Start... early ages
 - Makefile: Added a CPUFLAGS variable to allow easy compilation for a specific
   CPU on the make command line. For example, use "make CPUFLAGS=-m68020-60 512"
   to build an EmuTOS version optimized for 68020 CPUs and higher.
-  (patch by Vincent Riviere)
+  (patch by Vincent Rivière)
 
 2010-01-01
 - vdi/vdi_mouse.c: Fixed completely wrong Initmous() parameter that was
   causing an interrupt storm on real IKBD STe hardware.
-  (patch by Vincent Riviere)
+  (patch by Vincent Rivière)
 
 2010-01-02
 - bios/floppy.c: Fixed writing to floppy on real STe hardware (added
   missing DMA_WRBIT). Fixed Flopver() (Compendium is a misleading
   source of information, use tos.hyp wherever possible). Fixed Flopfmt()
   by aligning the buffer address and correcting the sector header byte.
-  (patch by Vincent Riviere)
+  (patch by Vincent Rivière)
 
 2010-01-19
 - bdos/fsdir.c: Fixed Dcreate(). The new directory had a second "." entry
@@ -2197,13 +2197,13 @@ Start... early ages
 
 2010-05-25
 - bios/memory.S: Improved memory detection which should now also work on a
-  real STE (patch by Jean-Francois DEL NERO)
+  real STE (patch by Jean-François DEL NERO)
 
 2010-05-27
 - vdi/vdi_defs.h, vdi/vdi_tblit.S, vdi/vdi_text.c: Added a Vwk* parameter
   to text_blt() in order to be able to transmit it to act_siz(). Also fixed
   text_blt() for backuping the scratch registers when calling act_siz().
-  (patch by Jean-Francois DEL NERO + VRI)
+  (patch by Jean-François DEL NERO + VRI)
 
 2010-05-31
 - Makefile: (VRI)
@@ -2281,7 +2281,7 @@ Start... early ages
 - bdos/bdosmain.c bdos/console.c cli/command.c: Fixed BDOS and EmuCON to
   allow the usage of the full 8-bit character set on console I/O. (VRI)
 - bios/xhdi.c: For unimplemented XHDI opcodes, return EINVFN instead of ERR.
-  Patch contributed by David Galvez. (VRI)
+  Patch contributed by David Gálvez. (VRI)
 
 2010-10-25
 - bios/natfeat.S bios/xhdi.c bios/xhdi.h: Reimplemented the XHDI stub to
@@ -2731,7 +2731,7 @@ Start... early ages
 
 2011-09-26
 - po/de.po: Updated German translation. (THH)
-- po/cs.po: Updated Czech translation. Contributed by Pavel Salac. (VRI)
+- po/cs.po: Updated Czech translation. Contributed by Pavel Salač. (VRI)
 - po/fi.po: Updated Finnish translation. Contributed by Eero Tamminen. (VRI)
 - vdi/vdi_line.c: Fixed missing lines whan drawing arrows. Contributed by David
   Savinkoff. (VRI)
@@ -2772,7 +2772,7 @@ Start... early ages
 - bdos/gemerror.h bios/gemerror.h include/gemerror.h: Move gemerror.h from
   bios/ to include/ and remove gemerror.h from bdos/. Contributed by Roger
   Burrows. (VRI)
-- po/es.po: Updated Spanish translation. Contributed by David Galvez. (VRI)
+- po/es.po: Updated Spanish translation. Contributed by David Gálvez. (VRI)
 
 2011-10-06
 - tools/bug.c: Removed unused variable. (VRI)
@@ -3248,7 +3248,7 @@ Start... early ages
   desktop resource files in preparation for upcoming changes. (RFB)
 
 2012-01-31
-- bios/xhdi.c: Added XHNewCookie() support. Contributed by David Galvez. (VRI)
+- bios/xhdi.c: Added XHNewCookie() support. Contributed by David Gálvez. (VRI)
 - bios/xhdi.c: Fixed chaining XHNewCookie(). (VRI)
 - desk/deskmain.c: Fixed 'make 192', broken by previous changes to
   deskmain.c. (RFB)
@@ -3269,7 +3269,7 @@ Start... early ages
   resource. (RFB)
 
 2012-02-08
-- bios/xhdi.c: Better XHNewCookie() support. Contributed by David Galvez. (VRI)
+- bios/xhdi.c: Better XHNewCookie() support. Contributed by David Gálvez. (VRI)
 - bios/xhdi.c: Fixed when not CONF_WITH_XHDI. (VRI)
 
 2012-02-09
@@ -3436,14 +3436,14 @@ Start... early ages
 
 2012-04-10
 - bios/xhdi.c: XHDI functions that are unsupported by EmuTOS are passed to the
-  next handler (if any). Contributed by David Galvez. (VRI)
-- bios/xhdi.c: Correct typo in struct's name. Contributed by David Galvez. (VRI)
+  next handler (if any). Contributed by David Gálvez. (VRI)
+- bios/xhdi.c: Correct typo in struct's name. Contributed by David Gálvez. (VRI)
 
 2012-04-11
 - include/config.h vdi/vdi_text.c: Added CONF_WITH_GDOS to allow disabling
   GDOS support code. (RFB)
 - release.mk doc/xhdi.txt: Added documentation about the current XHDI status.
-  Contributed by David Galvez. (VRI)
+  Contributed by David Gálvez. (VRI)
 - release.mk: Added missing unix2dos for 192k targets. (VRI)
 - desk/deskrez.c desk/desktop.dfn desk/desktop.rsc: Display correct sizes in
   Falcon resolution change dialog for non-VGA monitors. (RFB)
@@ -3612,7 +3612,7 @@ Start... early ages
 
 2012-05-20
 - po/fi.po: Update. Contributed by Eero Tamminen. (VRI)
-- po/es.po: Update. Contributed by David Galvez. (VRI)
+- po/es.po: Update. Contributed by David Gálvez. (VRI)
 
 2012-05-21
 - bios/screen.c: Fixed check_moderez() when CONF_WITH_VIDEL was not
@@ -3669,3 +3669,4 @@ Start... early ages
 2012-06-18
 - include/compat.h include/portab.h: Fix strict-aliasing warnings with GCC 4.7.1
   and potential issues. (VRI)
+- *: Converted text files to UTF-8. Suggested by David Savinkoff. (VRI)

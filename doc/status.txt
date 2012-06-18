@@ -18,8 +18,8 @@ if possible add a line telling in which version it did run.
   WinSTon V0.1r2      |   no  |  ?  |  < Sep 02 |
   FireBee             |  yes  | VRI |    Oct 11 |
 
-  (1) reported to LVL by Frédéric Pécourt
-  (2) reported by Jean-François Del Nero
+  (1) reported to LVL by FrÃ©dÃ©ric PÃ©court
+  (2) reported by Jean-FranÃ§ois Del Nero
 
 Now lets talk about the different subsystems, and if they are implemented.
 

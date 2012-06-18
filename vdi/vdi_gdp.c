@@ -365,7 +365,7 @@ static void gdp_rbox(Vwk * vwk)
 
 
 /*
- * gdp_arc - draw an arc
+ * gdp_arc - draw an arc
  */
 
 static void gdp_arc(Vwk * vwk)

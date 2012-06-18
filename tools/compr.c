@@ -10,7 +10,7 @@
 #define VERSION "0.2"
  
 /*
- * This is a very naïve compressor. It is best described by the
+ * This is a very naive compressor. It is best described by the
  * algorithm implemented in the decompressor:
  *
  * Conceptually the decompressor will read objects one at a time
