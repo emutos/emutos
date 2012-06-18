@@ -31,19 +31,23 @@ Vincent Rivière (VRI) <vincent.riviere at freesbee.fr>
 - Patches for compiling with GCC 4.x
 - ColdFire CPU and FireBee support
 - Various bug fixes
+- French translation update
 
 Roger Burrows (RFB) <rfburrows at ymail.com>
 - FAT16 partitions up to 2 GB (inspired from Didier Méquignon's BDOS fork)
 - Full support for Falcon and TT video hardware
+- erd tool: the EmuDesk Resource Decompiler
 - Various bugfixes and cleanups
 
 Thomas Huth (THH) <huth at users.berlios.de>
 - Lots of bugfixes all over the place
 - Integration and maintenance of the AES and GEM-Desktop
+- German translation update
 
 Petr Stehlik (PES) <pstehlik at sophics.cz>
 - BIOS disk interface, BDOS filesystem
 - Falcon and ARAnyM support
+- Czech translation update
 
 Laurent Vogel (LVL) <lvl at club-internet.fr>
 - Original ST hardware (MFP, ACIA, parport, sound, floppy, ACSI)
