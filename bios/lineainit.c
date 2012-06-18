@@ -77,7 +77,7 @@ void linea_init(void)
         v_vt_rez = video_mode[vmode].vt_rez;
     }
     v_lin_wr = v_hz_rez / 8 * v_planes;     /* bytes per line */
-    v_bytes_lin = v_lin_wr;       /* I think v_bytes_lin = v_lin_wr (joy) */
+    v_bytes_lin = v_lin_wr;       /* I think v_bytes_lin = v_lin_wr (PES) */
 
     /* Calculate the shift offset
      * (used for screen modes that have the planes arranged in an
