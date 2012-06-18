@@ -14,7 +14,7 @@ msgstr ""
 "X-Generator: Emacs 23.2\n"
 "Plural-Forms:  nplurals=2; plural=(n != 1);\n"
 
-#: bios/bios.c:428
+#: bios/bios.c:435
 msgid "Please eject the floppy and hit RETURN"
 msgstr "Poista levyke ja paina RETURN"
 
@@ -651,7 +651,7 @@ msgstr "<Cntrl> pohjassa = ohita AUTO/ACC"
 msgid "Hold <Alternate> to skip HDD boot"
 msgstr "<Alt> pohjassa = ohita kovalevy"
 
-#: bios/bios.c:484
+#: bios/bios.c:491
 msgid ""
 "System halted!\n"
 msgstr ""

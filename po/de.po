@@ -13,7 +13,7 @@ msgstr ""
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: bios/bios.c:426
+#: bios/bios.c:435
 msgid "Please eject the floppy and hit RETURN"
 msgstr "Bitte Floppy entnehmen, dann RETURN drücken"
 
@@ -593,35 +593,35 @@ msgstr "MM-DD-YY"
 msgid "DD-MM-YY"
 msgstr "DD-MM-YY"
 
-#: desk/desk_rsc.c:1833
+#: desk/desk_rsc.c:1838
 msgid "%ld bytes used in %d items."
 msgstr "%ld Bytes in %d Dateien."
 
-#: desk/desk_rsc.c:1834
+#: desk/desk_rsc.c:1839
 msgid "  Show as icons  \007S"
 msgstr "  Als Icons      \007S"
 
-#: desk/desk_rsc.c:1835
+#: desk/desk_rsc.c:1840
 msgid "application"
 msgstr "Anwendung"
 
-#: desk/desk_rsc.c:1836
+#: desk/desk_rsc.c:1841
 msgid "documents"
 msgstr "Dokumente"
 
-#: desk/desk_rsc.c:1838
+#: desk/desk_rsc.c:1843
 msgid "  Show as text   \007S"
 msgstr "  Als Text       \007S"
 
-#: desk/desk_rsc.c:1847
+#: desk/desk_rsc.c:1852
 msgid "New Folder"
 msgstr "Neuer Ordner"
 
-#: desk/desk_rsc.c:1848
+#: desk/desk_rsc.c:1853
 msgid "Disk Drives:"
 msgstr "Laufwerke"
 
-#: desk/desk_rsc.c:1883
+#: desk/desk_rsc.c:1888
 msgid "[3]["
 "You cannot copy a parent folder|"
 "into one of its child folders.][  OK  ]"
@@ -650,7 +650,7 @@ msgstr "Halte <Strg> = ohne AUTO/ACC"
 msgid "Hold <Alternate> to skip HDD boot"
 msgstr "Halte <Alt> = keine Harddisk"
 
-#: bios/bios.c:482
+#: bios/bios.c:491
 msgid ""
 "System halted!\n"
 msgstr ""
@@ -688,7 +688,7 @@ msgstr "  Schließe"
 msgid "  Close window"
 msgstr "  Schließe Fenster"
 
-#: desk/desk_rsc.c:1971
+#: desk/desk_rsc.c:1970
 msgid "[1]["
 "You cannot drag the trash can|"
 "into a window.][  OK  ]"
@@ -712,7 +712,7 @@ msgstr "--------------------"
 msgid " Hold <Shift> to pause this screen "
 msgstr " Für Pause <Shift> gedrückt halten "
 
-#: desk/desk_rsc.c:1871
+#: desk/desk_rsc.c:1876
 msgid "[3]["
 "Cannot find FORMAT.PRG|"
 "or FORMAT.TTP.][  OK  ]"
@@ -720,7 +720,7 @@ msgstr "[3]["
 "Kann FORMAT.PRG bzw.|"
 "FORMAT.TTP nicht finden.][  OK  ]"
 
-#: desk/desk_rsc.c:1837
+#: desk/desk_rsc.c:1842
 msgid "[2]["
 "Switch resolution?][Yes|No]"
 msgstr "[2]["
@@ -737,47 +737,47 @@ msgstr "[1]["
 "die Datei beschädigt oder der|"
 "freie Speicher zu knapp.][  OK  ]"
 
-#: desk/desk_rsc.c:1570 desk/desk_rsc.c:1633
+#: desk/desk_rsc.c:1571 desk/desk_rsc.c:1634
 msgid "SET SCREEN RESOLUTION"
 msgstr "AUFLÖSUNG EINSTELLEN"
 
-#: desk/desk_rsc.c:1582
+#: desk/desk_rsc.c:1583
 msgid "ST Low"
 msgstr "ST Niedrig"
 
-#: desk/desk_rsc.c:1588
+#: desk/desk_rsc.c:1589
 msgid "ST Medium"
 msgstr "ST Mittel"
 
-#: desk/desk_rsc.c:1594
+#: desk/desk_rsc.c:1595
 msgid "ST High"
 msgstr "ST Hoch"
 
-#: desk/desk_rsc.c:1600
+#: desk/desk_rsc.c:1601
 msgid "TT Low"
 msgstr "TT Niedrig"
 
-#: desk/desk_rsc.c:1606
+#: desk/desk_rsc.c:1607
 msgid "TT Medium"
 msgstr "TT Mittel"
 
-#: desk/desk_rsc.c:1753
+#: desk/desk_rsc.c:1754
 msgid "High"
 msgstr "Hoch"
 
-#: desk/desk_rsc.c:1759
+#: desk/desk_rsc.c:1760
 msgid "Medium"
 msgstr "Mittel"
 
-#: desk/desk_rsc.c:1765
+#: desk/desk_rsc.c:1766
 msgid "Low"
 msgstr "Niedrig"
 
-#: desk/desk_rsc.c:1795
+#: desk/desk_rsc.c:1796
 msgid "ST Compatible"
 msgstr "ST kompatibel"
 
-#: desk/desk_rsc.c:1855
+#: desk/desk_rsc.c:1860
 msgid "[1]["
 "The selected document type is|"
 "not configured to work with|"
@@ -791,7 +791,7 @@ msgstr "[1]["
 "dung\" um den Dokumenten-Typ|"
 "einer Anwendung zuzuordnen.][  OK  ]"
 
-#: desk/desk_rsc.c:1864
+#: desk/desk_rsc.c:1869
 msgid "[1]["
 "The GEM Desktop has no more|"
 "available windows. Before you|"
@@ -804,7 +804,7 @@ msgstr "[1]["
 "werden kann, muss ein offenes|"
 "Fenster geschlossen werden.][  OK  ]"
 
-#: desk/desk_rsc.c:1874
+#: desk/desk_rsc.c:1879
 msgid "[3]["
 "Formatting will ERASE all|"
 "information on the disk in|"
@@ -818,7 +818,7 @@ msgstr "[3]["
 "wenn alles auf diesem Medium|"
 "gelöscht werden darf.][  OK  |Abbruch]"
 
-#: desk/desk_rsc.c:1886
+#: desk/desk_rsc.c:1891
 msgid "[3]["
 "If you are sure you want to|"
 "delete ALL the information on|"
@@ -831,7 +831,7 @@ msgstr "[3]["
 "%c: gelöscht. Sonst bitte auf|"
 "Abbruch drücken.][  OK  |Abbruch]"
 
-#: desk/desk_rsc.c:1895
+#: desk/desk_rsc.c:1900
 msgid "[1]["
 "There is not enough space|"
 "available to configure this|"
@@ -845,7 +845,7 @@ msgstr "[1]["
 "konfigurierte Anwendung muss|"
 "vorher entfernt werden.][  OK  ]"
 
-#: desk/desk_rsc.c:1904
+#: desk/desk_rsc.c:1909
 msgid "[2]["
 "The folder already exists, or|"
 "your disk is full.  Retry with|"
@@ -858,7 +858,7 @@ msgstr "[2]["
 "Namen oder drücke Abbruch und|"
 "prüfe den freien Platz.][ Abbruch | Nochmal ]"
 
-#: desk/desk_rsc.c:1911
+#: desk/desk_rsc.c:1916
 msgid "[1]["
 "This disk does not have enough|"
 "room for the information you|"
@@ -872,7 +872,7 @@ msgstr "[1]["
 "tuell auf das Medium kopiert|"
 "worden.][  OK  ]"
 
-#: desk/desk_rsc.c:1920
+#: desk/desk_rsc.c:1925
 msgid "[3]["
 "Cannot create EMUDESK.INF.|"
 "Make sure that a disk is in|"
@@ -886,7 +886,7 @@ msgstr "[3]["
 "klick Abbruch falls der Desktop|"
 "nicht gesichert werden soll.][  OK  |Abbruch]"
 
-#: desk/desk_rsc.c:1929
+#: desk/desk_rsc.c:1934
 msgid "[3]["
 "You cannot create or|"
 "access a folder this far|"
@@ -896,7 +896,7 @@ msgstr "[3]["
 "kein neuer Ordner erstellt|"
 "werden.][  OK  ]"
 
-#: desk/desk_rsc.c:1934
+#: desk/desk_rsc.c:1939
 msgid "[3]["
 "You cannot create or access|"
 "a file or folder with that|"
@@ -908,7 +908,7 @@ msgstr "[3]["
 "geöffnet werden, da der|"
 "Pfadname zu lang ist.][  OK  ]"
 
-#: desk/desk_rsc.c:1942
+#: desk/desk_rsc.c:1947
 msgid "[1]["
 "You cannot open the trash can|"
 "icon. To delete a disk, folder,|"
@@ -921,7 +921,7 @@ msgstr "[1]["
 "löschen, einfach das Symbol|"
 "auf den Mülleimer ziehen.][  OK  ]"
 
-#: desk/desk_rsc.c:1951
+#: desk/desk_rsc.c:1954
 msgid "[1]["
 "The trash can is where you drag|"
 "the disks, folders, documents,|"
@@ -933,7 +933,7 @@ msgstr "[1]["
 "verschoben werden, um sie|"
 "ENDGÜLTIG zu löschen!][  OK  ]"
 
-#: desk/desk_rsc.c:1960
+#: desk/desk_rsc.c:1961
 msgid "[1]["
 "You cannot drag folders,|"
 "documents or applications onto|"
@@ -947,7 +947,7 @@ msgstr "[1]["
 "auf ein Laufwerk kopiert oder in|"
 "den Mülleimer geworfen werden.][  OK  ]"
 
-#: desk/desk_rsc.c:1976
+#: desk/desk_rsc.c:1973
 msgid "[1]["
 "You can drag the trash can to|"
 "another location on the GEM|"
@@ -958,3 +958,4 @@ msgstr "[1]["
 "Desktop umhergeschoben werden,|"
 "aber er kann nicht auf einem|"
 "anderen Symbol abgelegt werden.][  OK  ]"
+
