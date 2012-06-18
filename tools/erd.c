@@ -1241,7 +1241,7 @@ int first_time = 1;
 SHARED_ENTRY *e;
 char temp[MAX_STRLEN];
 
-	sort_shared(num_shared);
+    sort_shared(num_shared);
 
     for (i = 0, e = shared; i < num_shared; i++, e++) {
         if ((e->objnum == SHRT_MAX) && first_time) {
@@ -2226,10 +2226,10 @@ SHARED_ENTRY *e;
 char *base = (char *)rschdr;
 char *obj_base, *p;
 
-	/*
-	 * scan the definition table & find the start of the last contiguous run
-	 * of conditional objects
-	 */
+    /*
+     * scan the definition table & find the start of the last contiguous run
+     * of conditional objects
+     */
     for (d = def+num_defs-1; d >= def; d--)
         if ((d->type == DEF_OBJECT) && !d->conditional)
             break;

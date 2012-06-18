@@ -114,7 +114,7 @@ WORD oldres;
     /* set up dialog & display */
     tree = G.a_trees[ADTTREZ];
     for (i = 0, obj = (OBJECT *)tree+TTREZSTL; i < NUM_TT_BUTTONS; i++, obj++) {
-        if (ttrez_from_button[i] == TT_LOW)	/* FIXME: remove these 2 lines when */
+        if (ttrez_from_button[i] == TT_LOW) /* FIXME: remove these 2 lines when */
             obj->ob_state |= DISABLED;      /* we have 256-colour support in VDI */
         if (i == selected)
             obj->ob_state |= SELECTED;
@@ -228,5 +228,5 @@ int change_resolution(WORD *newres,WORD *newmode)
         return change_tt_rez(newres);
 #endif
 
-	return change_st_rez(newres);
+    return change_st_rez(newres);
 }

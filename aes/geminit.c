@@ -212,7 +212,7 @@ LONG init_p0_stkptr(void)
 
     u->u_spsuper = &u->u_supstk + 1;
 
-	return (char *)u->u_spsuper - (char *)u;
+    return (char *)u->u_spsuper - (char *)u;
 }
 
 

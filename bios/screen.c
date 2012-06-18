@@ -771,7 +771,7 @@ static int set_videl_vga(WORD mode)
     videlword(0xaa) = p->vde;           /* V display end */
     videlword(0xac) = p->vss;           /* V SS */
 
-    videlregs[0x60] = 0x00;				/* clear ST shift for safety */
+    videlregs[0x60] = 0x00;             /* clear ST shift for safety */
 
     videlword(0x0e) = 0;                /* offset */
 
@@ -1287,7 +1287,7 @@ WORD mask;
 #endif
     {
         mask = 0x0777;
-	}
+    }
     initialise_ste_palette(mask);
 
 #if CONF_WITH_VIDEL
@@ -1758,7 +1758,7 @@ WORD setcolor(WORD colorNum, WORD color)
 
 #if CONF_WITH_TT_SHIFTER
     if (has_tt_shifter) {
-		WORD msb, lsb;
+        WORD msb, lsb;
         msb = (color << 1) & 0x0eee;    /* move most significant bits to left */
         lsb = (color >> 3) & 0x0111;    /* move least significant bit to right */
         ttpalette[colorNum] = msb | lsb;/* update TT-compatible palette */

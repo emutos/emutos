@@ -71,7 +71,7 @@ void linea_init(void)
         if (video_mode[vmode].planes == 0) {
             kprintf("video mode was %d, reset to 2!\n", vmode);
             vmode = 2;
-	    }
+        }
         v_planes = video_mode[vmode].planes;
         v_hz_rez = video_mode[vmode].hz_rez;
         v_vt_rez = video_mode[vmode].vt_rez;
