@@ -7,11 +7,12 @@ If you want to read more about EmuTOS, please look into these files:
 
 doc/announce.txt   - Introduction and general description
 doc/authors.txt    - A list with the authors of EmuTOS
-doc/status.txt     - What is implemented and running (or not yet)
 doc/bugs.txt       - Currently known bugs
-doc/todo.txt       - What should be done in next versions
 doc/changelog.txt  - Detailed changes
 doc/license.txt    - The FSF General Public License for EmuTOS
+doc/status.txt     - What is implemented and running (or not yet)
+doc/todo.txt       - What should be done in next versions
+doc/xhdi.txt       - Current XHDI implementation status
 
 Additional information for developers (just in the source archive):
 
