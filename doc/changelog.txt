@@ -3665,3 +3665,7 @@ Start... early ages
 2012-06-17
 - tools/bug.c: Fixed memory allocation problem. (THH)
 - desk/desktop.rsc: Fixed button widths in change resolution dialog. (RFB)
+
+2012-06-18
+- include/compat.h include/portab.h: Fix strict-aliasing warnings with GCC 4.7.1
+  and potential issues. (VRI)

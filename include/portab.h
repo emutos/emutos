@@ -87,5 +87,19 @@ typedef short int       WORD;                   /*  signed 16 bit word  */
 typedef unsigned short  UWORD;                  /*  unsigned 16 bit word*/
 typedef long            LONG;                   /*  signed 32 bit word  */
 
+/*
+ * Workarounds for the GCC strict aliasing rule
+ */
+
+#if __GNUC_PREREQ(3, 3)
+# define MAY_ALIAS __attribute__ ((__may_alias__))
+#else
+# define MAY_ALIAS
+#endif
+
+typedef BYTE BYTE_ALIAS MAY_ALIAS;
+typedef WORD WORD_ALIAS MAY_ALIAS;
+typedef LONG LONG_ALIAS MAY_ALIAS;
+
 #endif /* PORTAB_H */
 

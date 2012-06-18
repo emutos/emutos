@@ -91,28 +91,28 @@ extern WORD LBWMOV(WORD *pdst, BYTE *psrc);
                                                 /* return a single byte */
                                                 /*   pointed at by long */
                                                 /*   ptr                */
-#define LBGET(x) ( (UBYTE) *((BYTE * )(x)) )
+#define LBGET(x) ( (UBYTE) *((BYTE_ALIAS * )(x)) )
                                                 /* set a single byte    */
                                                 /*   pointed at by long */
                                                 /*   ptr, LBSET(lp, bt) */
-#define LBSET(x, y)  ( *((BYTE *)(x)) = y)
+#define LBSET(x, y)  ( *((BYTE_ALIAS *)(x)) = y)
                                                 /* return a single word */
                                                 /*   pointed at by long */
                                                 /*   ptr                */
-#define LWGET(x) ( (WORD) *((WORD *)(x)) )
+#define LWGET(x) ( (WORD) *((WORD_ALIAS *)(x)) )
                                                 /* set a single word    */
                                                 /*   pointed at by long */
                                                 /*   ptr, LWSET(lp, bt) */
-#define LWSET(x, y)  ( *((WORD *)(x)) = y)
+#define LWSET(x, y)  ( *((WORD_ALIAS *)(x)) = y)
 
                                                 /* return a single long */
                                                 /*   pointed at by long */
                                                 /*   ptr                */
-#define LLGET(x) ( *((LONG *)(x)))
+#define LLGET(x) ( *((LONG_ALIAS *)(x)))
                                                 /* set a single long    */
                                                 /*   pointed at by long */
                                                 /*   ptr, LLSET(lp, bt) */
-#define LLSET(x, y) ( *((LONG *)(x)) = y)
+#define LLSET(x, y) ( *((LONG_ALIAS *)(x)) = y)
 
 
 #define movs(num, ps, pd)  memcpy((char *)pd, (const char *)ps, num)
