@@ -18,7 +18,7 @@ is open and free, licensed under the GNU General Public License (GPL).
 
 CHANGES SINCE LAST RELEASE
 
-- Added full support for Falcon and TT video hardware
+- Added full XBIOS support for Falcon and TT video hardware
 - New video mode switching dialog box for Falcon and TT
 - New EmuTOS variant on ROM-port cartridge
 - New UK country and keyboard layout with PAL frequency
@@ -43,7 +43,7 @@ CHANGES SINCE LAST RELEASE
 - Fixed the desktop to use "view as icons" by default
 - Fixed random character at the end of desktop "view as text" lines
 - Fixed alerts with no icon and a single text line
-- Changed desktop alerts to conform to the limit of 30 characters per line
+- Changed desktop alerts to conform to the limit of 32 characters per line
 - Workaround against GFA startup crash
 - New erd tool for converting binary resources to source files
 - New mkrom tool to build custom ROM formats
