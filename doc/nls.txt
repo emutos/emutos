@@ -216,7 +216,7 @@ if your po-file is in another encoding (here, ISO latin 2).
 
 When translating a *.po file, please note that some strings are limited
 in size. For example, the texts used in a "form_alert" box are limited
-to five lines with 40 characters each. Each of the three buttons of such
+to five lines with 32 characters each. Each of the three buttons of such
 a "form_alert" box is limited to 20 characters.
 You should always check the translated text in EmuTOS to see if it looks
 as you expected it.
