@@ -1437,29 +1437,21 @@ static void adjust_menu(OBJECT *obj_array)
  */
 void desk_xlate_fix(void)
 {
-    OBJECT *obj;
+    OBJECT *tree = desk_rs_trees[ADDINFO];
+    OBJECT *objlabel = &tree[4]; /* FIXME use a define */
+    OBJECT *objversion = &tree[5]; /* FIXME use a define */
     register int i;
-
-    /* find Version object */
-    for (i = 0, obj = desk_rs_obj; i < RS_NOBS; i++, obj++) {
-        if (obj->ob_type == G_STRING)
-            if (memcmp((char *)obj->ob_spec,"Version",7) == 0)
-                break;
-    }
-    if (i >= RS_NOBS)   /* precaution in case this part of RSC has changed :-( */
-        obj = NULL;
 
     /* translate strings in objects */
     xlate_obj_array(desk_rs_obj, RS_NOBS);
 
-    /* insert the version number (in the object following "Version") */
-    if (obj) {
-        (obj+1)->ob_spec = (LONG) version;
-        /* slightly adjust the about box for a CVS build */
-        if (version[0] == '(') {
-            obj->ob_spec = (LONG) "";   /* remove the word "Version" */
-            (obj+1)->ob_x -= 10;        /* and move the start of the string */
-        }
+    /* insert the version number */
+    objversion->ob_spec = (LONG) version;
+
+    /* slightly adjust the about box for a CVS build */
+    if (version[0] == '(') {
+        objlabel->ob_spec = (LONG) "";  /* remove the word "Version" */
+        objversion->ob_x -= 10;         /* and move the start of the string */
     }
 
     /* adjust the size and coordinates of menu items */

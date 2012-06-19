@@ -3671,3 +3671,6 @@ Start... early ages
   and potential issues. (VRI)
 - *: Converted text files to UTF-8. Suggested by David Savinkoff. (VRI)
 - Makefile: Added "make charset" to check the sources charset. (VRI)
+
+2012-06-19
+- desk/deskmain.c: Fixed about box version in translated UNIQUE builds. (VRI)
