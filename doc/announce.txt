@@ -44,6 +44,7 @@ CHANGES SINCE LAST RELEASE
 - Fixed random character at the end of desktop "view as text" lines
 - Fixed alerts with no icon and a single text line
 - Changed desktop alerts to conform to the limit of 32 characters per line
+- Fixed the version displayed in the desktop about box for translated ROMs
 - Workaround against GFA startup crash
 - New erd tool for converting binary resources to source files
 - New mkrom tool to build custom ROM formats
