@@ -25,7 +25,12 @@
 
 #define START 1
 #define COUNT 384
-#define TMPADDR 0x40000
+
+/* The temporary load address must be:
+ *   - high enough to not override the TOS internal variables
+ *   - low enough so ramtos.img will not run over the screen
+ */
+#define TMPADDR 0x38000
 
 #define BOOTDEV 0x446
 

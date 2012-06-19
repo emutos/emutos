@@ -3674,3 +3674,5 @@ Start... early ages
 
 2012-06-19
 - desk/deskmain.c: Fixed about box version in translated UNIQUE builds. (VRI)
+- util/bootsect.S: Fixed emutos.st to avoid trashing the startup screen when
+  running on 512 MB machines. (VRI)
