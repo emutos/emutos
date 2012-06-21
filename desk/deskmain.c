@@ -1438,8 +1438,8 @@ static void adjust_menu(OBJECT *obj_array)
 void desk_xlate_fix(void)
 {
     OBJECT *tree = desk_rs_trees[ADDINFO];
-    OBJECT *objlabel = &tree[4]; /* FIXME use a define */
-    OBJECT *objversion = &tree[5]; /* FIXME use a define */
+    OBJECT *objlabel = &tree[DELABEL];
+    OBJECT *objversion = &tree[DEVERSN];
     register int i;
 
     /* translate strings in objects */

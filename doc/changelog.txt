@@ -3679,3 +3679,7 @@ Start... early ages
 - doc/announce.txt: Updated the release date. (VRI)
 
 * Release: 0.8.7
+
+2012-06-20
+- desk/deskmain.c desk/desktop.dfn: Added labels to About box tree to
+  avoid hardcoded object numbers. (RFB)
