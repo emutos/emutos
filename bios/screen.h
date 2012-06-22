@@ -113,6 +113,9 @@ WORD vfixmode(WORD mode);
 #define VIDEL_8BPP          3               /* 256 colours */
 #define VIDEL_TRUECOLOR     4               /* 65536 colours */
 
+/* test for VDI support of videomode */
+#define VALID_VDI_BPP(mode) ((mode&VIDEL_BPPMASK)<=VIDEL_4BPP)
+
 /* selected Falcon videomodes */
 #define FALCON_ST_HIGH      (VIDEL_COMPAT|VIDEL_VGA|VIDEL_80COL|VIDEL_1BPP)
 

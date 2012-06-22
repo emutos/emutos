@@ -1343,6 +1343,14 @@ void screen_init(void)
             boot_resolution = FALCON_DEFAULT_BOOT;  /* so pick one that is */
         }
 
+        if (!VALID_VDI_BPP(boot_resolution)) {      /* mustn't confuse VDI */
+#if DBG_SCREEN
+            kprintf("VDI doesn't support video mode 0x%04x, changed to 0x%04x\n",
+                    boot_resolution,FALCON_DEFAULT_BOOT);
+#endif
+            boot_resolution = FALCON_DEFAULT_BOOT;  /* so use default */
+        }
+
         /* initialise the current video mode, for vfixmode()/vsetmode() */
         current_video_mode = boot_resolution;
 

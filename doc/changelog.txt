@@ -3688,3 +3688,5 @@ Start... early ages
 - bios/screen.c: Split vmode table for clarity & future refactoring. (RFB)
 - bios/screen.c: Save space & time by eliminating entries with duplicate
   data in vga vmode table. (RFB)
+- bios/screen.c bios/screen.h: Use default videl boot resolution if VDI
+  does not support NVRAM value. (RFB)
