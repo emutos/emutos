@@ -209,9 +209,8 @@ typedef struct {
  *    a cost of about 52 * 12 = 624 bytes for the additional tables plus the
  *    bytes required for the code to do the additional table lookup.
  */
-static const VMODE_ENTRY vmode_init_table[] = {
-    /* the first entries are for VGA, since we expect to access them most frequently */
-    /* there are entries for VGA/NTSC (i.e. VGA 60Hz) and VGA/PAL (i.e. VGA 50Hz)    */
+static const VMODE_ENTRY vga_init_table[] = {
+    /* these entries are for VGA/NTSC (i.e. VGA 60Hz) and VGA/PAL (i.e. VGA 50Hz)    */
     { 0x0011, MON_ALL,  0x0017, 0x0012, 0x0001, 0x020a, 0x0009, 0x0011, 0x0419, 0x03ff, 0x003f, 0x003f, 0x03ff, 0x0415 },
     { 0x0012, MON_ALL,  0x00c6, 0x008d, 0x0015, 0x028a, 0x006b, 0x0096, 0x0419, 0x03ff, 0x003f, 0x003f, 0x03ff, 0x0415 },
     { 0x0013, MON_ALL,  0x00c6, 0x008d, 0x0015, 0x029a, 0x007b, 0x0096, 0x0419, 0x03ff, 0x003f, 0x003f, 0x03ff, 0x0415 },
@@ -256,7 +255,10 @@ static const VMODE_ENTRY vmode_init_table[] = {
     { 0x01b2, MON_ALL,  0x0017, 0x0012, 0x0001, 0x020e, 0x000d, 0x0011, 0x0419, 0x03af, 0x008f, 0x008f, 0x03af, 0x0415 },
     { 0x01b8, MON_ALL,  0x00c6, 0x008d, 0x0015, 0x0273, 0x0050, 0x0096, 0x0419, 0x03af, 0x008f, 0x008f, 0x03af, 0x0415 },
     { 0x01b9, MON_ALL,  0x0017, 0x0012, 0x0001, 0x020e, 0x000d, 0x0011, 0x0419, 0x03af, 0x008f, 0x008f, 0x03af, 0x0415 },
+    { -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+};
 
+static const VMODE_ENTRY nonvga_init_table[] = {
     /* the remaining entries are for TV+NTSC, TV+PAL, TV+NTSC+overscan, TV+PAL+overscan */
     { 0x0001, MON_ALL,  0x003e, 0x0030, 0x0008, 0x0239, 0x0012, 0x0034, 0x020d, 0x0201, 0x0016, 0x004d, 0x01dd, 0x0207 },
     { 0x0002, MON_ALL,  0x00fe, 0x00c9, 0x0027, 0x000c, 0x006d, 0x00d8, 0x020d, 0x0201, 0x0016, 0x004d, 0x01dd, 0x0207 },
@@ -645,7 +647,13 @@ UWORD get_videl_height(void)
  */
 static const VMODE_ENTRY *lookup_videl_mode(WORD mode,WORD monitor)
 {
-    const VMODE_ENTRY *p;
+    const VMODE_ENTRY *vmode_init_table, *p;
+
+    if (mode&VIDEL_VGA) {
+        vmode_init_table = vga_init_table;
+    } else {
+        vmode_init_table = nonvga_init_table;
+    }
 
     for (p = vmode_init_table; p->vmode >= 0; p++)
         if (p->vmode == mode)

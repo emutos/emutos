@@ -3683,3 +3683,6 @@ Start... early ages
 2012-06-20
 - desk/deskmain.c desk/desktop.dfn: Added labels to About box tree to
   avoid hardcoded object numbers. (RFB)
+
+2012-06-22
+- bios/screen.c: Split vmode table for clarity & future refactoring. (RFB)
