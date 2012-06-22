@@ -3686,3 +3686,5 @@ Start... early ages
 
 2012-06-22
 - bios/screen.c: Split vmode table for clarity & future refactoring. (RFB)
+- bios/screen.c: Save space & time by eliminating entries with duplicate
+  data in vga vmode table. (RFB)
