@@ -457,7 +457,11 @@ vbl_end:
 #else
         addq.w  #1,_vblsem
 #endif
+#if CONF_ATARI_HARDWARE
         rte
+#else
+        rts
+#endif
 
 
 
@@ -467,22 +471,30 @@ _int_timerc:
         addq.l  #1, _hz_200             // increment 200 Hz counter
 
 #ifdef __mcoldfire__
+        // Save early ColdFire registers
         move.l  d0,-(sp)
         move.l  a0,-(sp)
-        move.w  _timer_c_sieve,d0
+#endif
+
+#ifdef __mcoldfire__
+        lea     _timer_c_sieve,a0
+        move.w  (a0),d0
         swap    d0
-        move.w  _timer_c_sieve,d0
+        move.w  (a0),d0
         lsl.l   #1,d0                   // check for 4th call
         swap    d0
-        move.w  d0,_timer_c_sieve
+        move.w  d0,(a0)
         bpl     timerc_end
-
-        lea     -52(sp),sp
-        movem.l d1-d7/a1-a6,(sp)        // save registers       
 #else
         rol.w   _timer_c_sieve          // check for 4th call
         bpl     timerc_end
+#endif
 
+#ifdef __mcoldfire__
+        // On ColdFire, d0 and a0 were saved earlier
+        lea     -52(sp),sp
+        movem.l d1-d7/a1-a6,(sp)        // save registers       
+#else
         movem.l d0-d7/a0-a6,-(sp)       // save registers       
 #endif
 
@@ -500,20 +512,34 @@ _int_timerc:
         addq.l  #2, sp                  // correct stack
         
 #ifdef __mcoldfire__
+        // On ColdFire, d0 and a0 will be restored later
         movem.l (sp),d1-d7/a1-a6
         lea     52(sp),sp
-timerc_end:                     
-        lea     0xfffffa11, a0
-        bclr    #5, (a0)                // clear interrupt service bit
-        move.l  (sp)+, a0
-        move.l  (sp)+, d0
 #else
         movem.l (sp)+,d0-d7/a0-a6
+#endif
+
 timerc_end:                     
+#if CONF_ATARI_HARDWARE
+#ifdef __mcoldfire__
+        lea     0xfffffa11, a0
+        bclr    #5, (a0)                // clear interrupt service bit
+#else
         bclr    #5, 0xfffffa11          // clear interrupt service bit
 #endif
+#endif /* CONF_ATARI_HARDWARE */
+
+#ifdef __mcoldfire__
+        // Restore late ColdFire registers
+        move.l  (sp)+, a0
+        move.l  (sp)+, d0
+#endif
+
+#if CONF_ATARI_HARDWARE
         rte
-        
+#else
+        rts
+#endif
 
 
 // ==== Critical error handler ===============================================

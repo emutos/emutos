@@ -3690,3 +3690,4 @@ Start... early ages
   data in vga vmode table. (RFB)
 - bios/screen.c bios/screen.h: Use default videl boot resolution if VDI
   does not support NVRAM value. (RFB)
+- bios/vectors.S: Clean up for __mcoldfire__ and CONF_ATARI_HARDWARE. (VRI)
