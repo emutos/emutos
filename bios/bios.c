@@ -263,7 +263,7 @@ static void bios_init(void)
     boot_status |= DOS_AVAILABLE;   /* track progress */
   
 #if CONF_WITH_SHIFTER
-    /* enable the VBL interrupt */
+    /* Enable the VBL interrupt, but keep the HBL disabled. */
     set_sr(0x2300);
 #endif
   
