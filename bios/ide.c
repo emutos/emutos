@@ -73,6 +73,18 @@ struct IDE
 /* The following is required to access PC compatible disks */
 #define BYTESWAPPED_SECTOR_DATA
 
+static void byteswap(UBYTE* buffer, ULONG size)
+{
+    UBYTE* p;
+
+    for (p = buffer; p < buffer + IDE_SECTOR_SIZE; p += 2)
+    {
+        UBYTE temp = p[0];
+        p[0] = p[1];
+        p[1] = temp;
+    }
+}
+
 static int ide_wait_not_busy(void)
 {
     for (;;)
@@ -176,18 +188,6 @@ static int ide_write_data(UBYTE buffer[IDE_SECTOR_SIZE], BOOL need_byteswap)
     }
         
     return ide_wait_not_busy_check_error();
-}
-
-static void byteswap(UBYTE* buffer, ULONG size)
-{
-    UBYTE* p;
-
-    for (p = buffer; p < buffer + IDE_SECTOR_SIZE; p += 2)
-    {
-        UBYTE temp = p[0];
-        p[0] = p[1];
-        p[1] = temp;
-    }
 }
 
 static int ide_read_sector(UWORD device, ULONG sector, UBYTE buffer[IDE_SECTOR_SIZE])
