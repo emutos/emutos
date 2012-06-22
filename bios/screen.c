@@ -198,12 +198,15 @@ typedef struct {
 #define MON_ALL     -1  /* code used in VMODE_ENTRY for match on mode only */
 
 /*
- * a list of all(?) valid Falcon modes
+ * tables that cover all(?) valid Falcon modes
  * note:
  *  . 256-colour and Truecolor modes are not currently supported by the VDI
  */
 static const VMODE_ENTRY vga_init_table[] = {
-    /* these entries are for VGA/NTSC (i.e. VGA 60Hz) and VGA/PAL (i.e. VGA 50Hz)    */
+    /* the entries in this table are for VGA/NTSC (i.e. VGA 60Hz) and VGA/PAL
+     * (i.e. VGA 50Hz).  in *this* table, each entry applies to four video modes:
+     * mode, mode|VIDEL_VERTICAL, mode|VIDEL_PAL, mode|VIDEL_VERTICAL|VIDEL_PAL
+     */
     { 0x0011, MON_ALL,  0x0017, 0x0012, 0x0001, 0x020a, 0x0009, 0x0011, 0x0419, 0x03ff, 0x003f, 0x003f, 0x03ff, 0x0415 },
     { 0x0012, MON_ALL,  0x00c6, 0x008d, 0x0015, 0x028a, 0x006b, 0x0096, 0x0419, 0x03ff, 0x003f, 0x003f, 0x03ff, 0x0415 },
     { 0x0013, MON_ALL,  0x00c6, 0x008d, 0x0015, 0x029a, 0x007b, 0x0096, 0x0419, 0x03ff, 0x003f, 0x003f, 0x03ff, 0x0415 },
