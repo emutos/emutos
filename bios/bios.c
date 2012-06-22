@@ -287,11 +287,15 @@ static void bios_init(void)
     }
 #endif
 
+#if CONF_WITH_ALT_RAM
+
 #if CONF_WITH_FASTRAM
     /* add TT-RAM that was detected in memory.S */
     if (ramtop > 0x1000000)
         xmaddalt( 0x1000000, ramtop - 0x1000000);
 #endif
+
+#endif /* CONF_WITH_ALT_RAM */
 }
 
 
