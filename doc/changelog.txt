@@ -3698,3 +3698,7 @@ Start... early ages
 - aes/gemfmalt.c: Use #defines to convert icon number to icon image for
   form_alert(). (RFB)
 - aes/gemfmalt.c: Use gem_rsc.h #defines instead of local #defines. (RFB)
+
+2012-06-23
+- aes/gemsuper.c: Use #defines to convert from mouse number to mouse
+  image for graf_mouse(). (RFB)

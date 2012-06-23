@@ -84,7 +84,7 @@ static UWORD crysbind(WORD opcode, LONG pglobal, WORD int_in[], WORD int_out[], 
 {
         LONG    maddr;
         LONG    tree;
-        WORD    ret;
+        WORD    mouse, ret;
 
         maddr = 0;
         ret = TRUE;
@@ -300,10 +300,36 @@ static UWORD crysbind(WORD opcode, LONG pglobal, WORD int_in[], WORD int_out[], 
                 {
                   if (GR_MNUMBER != 255)                
                   {
+                    switch(GR_MNUMBER) {
+                      case 1:
+                        mouse = MICE01;
+                        break;
+                      case 2:
+                        mouse = MICE02;
+                        break;
+                      case 3:
+                        mouse = MICE03;
+                        break;
+                      case 4:
+                        mouse = MICE04;
+                        break;
+                      case 5:
+                        mouse = MICE05;
+                        break;
+                      case 6:
+                        mouse = MICE06;
+                        break;
+                      case 7:
+                        mouse = MICE07;
+                        break;
+                      default:
+                        mouse = MICE00;
+                        break;
+                    }
 #ifdef USE_GEM_RSC
-                    rs_gaddr(ad_sysglo, R_BIPDATA, 3 + GR_MNUMBER, &maddr);
+                    rs_gaddr(ad_sysglo, R_BIPDATA, mouse, &maddr);
 #else
-                    maddr = (LONG) &rs_fimg[3+GR_MNUMBER];
+                    maddr = (LONG) &rs_fimg[mouse];
 #endif
                     maddr = LLGET(maddr);
                   }
