@@ -55,7 +55,7 @@ extern WORD fverify;
 extern WORD seekrate;
 extern WORD dumpflg;
 extern WORD nvbls;
-extern WORD vblsem;
+extern volatile WORD vblsem;
 extern LONG vbl_list[];
 extern LONG *vblqueue;
 extern volatile LONG frclock;

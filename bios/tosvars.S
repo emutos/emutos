@@ -155,7 +155,7 @@ _defshiftmod:   ds.w    1       // default video resolution
 _sshiftmod:     ds.b    1       // copy of contents of 0xffff8260
         .org 0x44e
 _v_bas_ad:      ds.l    1       // screen base address
-_vblsem:        ds.w    1       // if not 0, VBL routine not executed
+_vblsem:        ds.w    1       // if > 0, the VBL routine is executed
 _nvbls:         ds.w    1       // number of VBL routines
 _vblqueue:      ds.l    1       // pointer to list of VBL routines
 _colorptr:      ds.l    1       // pointer to color palette to be loaded
