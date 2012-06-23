@@ -252,7 +252,7 @@ static void fm_build(LONG tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
 WORD fm_alert(WORD defbut, LONG palstr)
 {
         register WORD   i;
-        WORD            inm, nummsg, mlenmsg, numbut, mlenbut;
+        WORD            inm, nummsg, mlenmsg, numbut, mlenbut, image;
         LONG            tree, plong;
         GRECT           d, t;
 
@@ -275,10 +275,21 @@ WORD fm_alert(WORD defbut, LONG palstr)
 
         if (inm != 0)
         {
+          switch(inm) {
+            case 1:
+              image = NOTEBB;
+              break;
+            case 2:
+              image = QUESTBB;
+              break;
+            default:
+              image = STOPBB;
+              break;
+          }
 #ifdef USE_GEM_RSC
-          rs_gaddr(ad_sysglo, R_BITBLK, inm-1, &plong);
+          rs_gaddr(ad_sysglo, R_BITBLK, image, &plong);
 #else
-          plong = (LONG) &rs_fimg[inm-1];
+          plong = (LONG) &rs_fimg[image];
 #endif
           LLSET(OB_SPEC(1), plong);
         }
