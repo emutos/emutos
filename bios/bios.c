@@ -105,23 +105,6 @@ static void vecs_init(void)
     VEC_LINEA = int_linea;
     VEC_DIVNULL = just_rte;     /* just return for this */
     
-    /* interrupt vectors */
-    VEC_LEVEL1 = just_rte;      /* just return for this */
-#if CONF_WITH_SHIFTER
-    VEC_HBL = int_hbl;
-#else
-    VEC_HBL = just_rte;         /* just return for this */
-#endif
-    VEC_LEVEL3 = just_rte;      /* just return for this */
-#if CONF_WITH_SHIFTER
-    VEC_VBL = int_vbl;
-#else
-    VEC_VBL = just_rte;         /* just return for this */
-#endif
-    VEC_LEVEL5 = just_rte;      /* just return for this */
-    VEC_LEVEL6 = just_rte;      /* just return for this */
-    VEC_LEVEL7 = just_rte;      /* just return for this */
-
     /* Emulate some instructions unsupported by the processor. */
 #ifdef __mcoldfire__
     /* On ColdFire, all the unsupported assembler instructions
@@ -159,25 +142,24 @@ static void bios_init(void)
     kprintf("beginning of BIOS init\n");
 #endif
 
-    /* first detect available hardware (video, sound etc.) */
+    /* Initialize the processor */
+    processor_init();   /* Set CPU type, longframe and FPU type */
+    vecs_init();        /* setup all exception vectors (above) */
+
+    /* Detect optional hardware (video, sound, etc.) */
     machine_detect();
 
-    /* First cut memory for screen, rest goes in memory descriptor */
+    /* Initialize the screen */
     screen_init();      /* detect monitor type, ... */
 
     bmem_init();        /* initialize BIOS memory management */
-    processor_init();   /* Set CPU type, VEC_ILLEGAL, longframe and FPU type */
     cookie_init();      /* sets a cookie jar */
     machine_init();     /* detect hardware features and fill the cookie jar */
-    vecs_init();        /* setup all exception vectors (above) */
 
     /* misc. variables */
     dumpflg = -1;
     sysbase = (LONG) os_entry;
-
     savptr = (LONG) trap_save_area;
-
-    /* some more variables */
     etv_timer = (void(*)(int)) just_rts;
     etv_critic = criter1;
     etv_term = just_rts;
@@ -220,11 +202,15 @@ static void bios_init(void)
     init_acia_vecs();   /* Init the ACIA interrupt vector and related stuff */
     boot_status |= MIDI_AVAILABLE;  /* track progress */
 
-#if CONF_WITH_MFP
-    /* Now that the MFP is configured, allow MFP interrupts (we need a
-     * Timer C for DMA timeouts in floppy and harddisk initialisation)
+    /* Now we can enable the interrupts.
+     * We need a timer for DMA timeouts in floppy and harddisk initialisation.
+     * The VBL processing will be enabled later with the vblsem semaphore.
      */
-    set_sr(0x2500);
+#if CONF_WITH_SHIFTER
+    /* Keep the HBL disabled */
+    set_sr(0x2300);
+#else
+    set_sr(0x2000);
 #endif
   
     blkdev_init();      /* floppy and harddisk initialisation */
@@ -235,8 +221,6 @@ static void bios_init(void)
     font_init();        /* initialize font ring */
     font_set_default(); /* set default font */
     vt52_init();        /* initialize the vt52 console */
-
-    vblsem = 1;
 
     /* initialize BIOS components */
 
@@ -262,10 +246,8 @@ static void bios_init(void)
     osinit();                   /* initialize BDOS */
     boot_status |= DOS_AVAILABLE;   /* track progress */
   
-#if CONF_WITH_SHIFTER
-    /* Enable the VBL interrupt, but keep the HBL disabled. */
-    set_sr(0x2300);
-#endif
+    /* Enable VBL processing */
+    vblsem = 1;
   
 #if DBGBIOS
     kprintf("BIOS: Last test point reached ...\n");

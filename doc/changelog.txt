@@ -3703,3 +3703,4 @@ Start... early ages
 - aes/gemsuper.c: Use #defines to convert from mouse number to mouse
   image for graf_mouse(). (RFB)
 - bios/tosvars.h bios/tosvars.S: Mark vblsem as volatile for safety. (VRI)
+- bios/bios.c bios/screen.c: Cleaned up bios_init() initialization order. (VRI)

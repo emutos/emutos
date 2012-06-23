@@ -24,6 +24,7 @@
 #include "font.h"
 #include "vt52.h"
 #include "xbiosbind.h"
+#include "vectors.h"
 
 #define DBG_SCREEN 0
 
@@ -1434,6 +1435,12 @@ void screen_init(void)
     /* correct physical address */
     setphys(screen_start,1);
     rez_was_hacked = FALSE; /* initial assumption */
+
+    /* interrupt handlers (interrupts will be enabler later) */
+#if CONF_WITH_SHIFTER
+    VEC_HBL = int_hbl;
+    VEC_VBL = int_vbl;
+#endif
 }
 
 /*
