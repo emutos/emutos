@@ -355,22 +355,6 @@ static void offree(DMD *d)
 
 
 /*
- * These both are just wrappers for some BIOS function. They are made
- * to avoid the 'clobbered by longjmp or vfork' compiler warnings!
- */
-static BPB * MyGetbpb(WORD errdrv)
-{
-    return (BPB *) Getbpb(errdrv);
-}
-
-static long MyBconout(short dev, short c)
-{
-    return Bconout(dev, c);
-}
-
-
-
-/*
  *  osif -
  */
 
@@ -448,7 +432,7 @@ restrt:
                         bx->b_bufdrv = -1;
 
             /* then, in with the new */
-            b = MyGetbpb(errdrv);       /* use wrapper just to avoid longjmp() compiler warning */
+            b = (BPB *)Getbpb(errdrv);
             if ( (long)b <= 0 ) {
                 drvsel &= ~(1L<<errdrv);
                 if ( (long)b )
@@ -605,7 +589,7 @@ restrt:
                         tabout( HXFORM(num) , (unsigned char)*pb2++ ) ;
                     else
                     {           /* M01.01.1029.01 */
-                        if (MyBconout( HXFORM(num), (unsigned char)*pb2++ ) == 0)
+                        if (Bconout( HXFORM(num), (unsigned char)*pb2++ ) == 0)
                             return(i);
                     }
                 }
