@@ -3709,3 +3709,5 @@ Start... early ages
   bios/bios.c bios/ide.c bios/machine.c bios/memory.S bios/screen.c
   bios/startup.S doc/readme-amiga.txt include/config.h tools/mkrom.c: Added
   support for Amiga hardware. (VRI)
+- aes/gemfmalt.c: Issue debug msg if lines or buttons in form_alert()
+  exceed standard TOS lengths. (RFB)

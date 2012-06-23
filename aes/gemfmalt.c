@@ -43,6 +43,10 @@
 
 #define DBG_ALERT   0
 
+/* TOS standard form_alert() maximum values */
+#define TOS_MAX_LINELEN 32
+#define TOS_MAX_BUTLEN  10
+
 /*
  * parameters for form_alert():
  * MUST correspond to string lengths and counts in gem_rsc.c!
@@ -51,7 +55,6 @@
 #define MAX_LINELEN 40
 #define MAX_BUTNUM  3
 #define MAX_BUTLEN  20
-
 
 #define NUM_ALOBJS 10
 #define NUM_ALSTRS 8 
@@ -171,7 +174,17 @@ static void fm_parse(LONG tree, LONG palstr, WORD *picnum, WORD *pnummsg,
 
     alert = fm_strbrk(obj+MSGOFF,MAX_LINENUM,MAX_LINELEN,alert+3,pnummsg,plenmsg);
 
+#if DBG_ALERT
+    if (*plenmsg > TOS_MAX_LINELEN)
+        kprintf("form_alert(): warning: alert line(s) exceed TOS standard length\n");
+#endif
+
     fm_strbrk(obj+BUTOFF,MAX_BUTNUM,MAX_BUTLEN,alert,pnumbut,plenbut);
+
+#if DBG_ALERT
+    if (*plenbut > TOS_MAX_BUTLEN)
+        kprintf("form_alert(): warning: alert button(s) exceed TOS standard length\n");
+#endif
 
     *plenbut += 1;  /* allow 1/2 character space inside each end of button */
 }
