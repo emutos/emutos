@@ -3694,3 +3694,4 @@ Start... early ages
 - bios/ide.c: Reorganization for future changes. (VRI)
 - bios/screen.c: Update comments to reflect recent changes. (RFB)
 - bdos/bdosmain.c: Remove function wrappers (no longer needed). (RFB)
+- bdos/time.c: Avoid theoretical race condition in time_init(). (RFB)

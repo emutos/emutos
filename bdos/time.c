@@ -159,9 +159,11 @@ long    xsettime(int t)
 
 void time_init(void)
 {
-    date = xgetdate();
-    time = xgettime();
-    
+    ULONG dt = Gettime();
+
+    date = (dt >> 16) & 0xffff;
+    time = dt & 0xffff;
+
     etv_timer = tikfrk;
 }
 
