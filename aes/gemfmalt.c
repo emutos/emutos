@@ -53,8 +53,6 @@
 #define MAX_BUTLEN  20
 
 
-#define MSG_OFF 2
-#define BUT_OFF 7
 #define NUM_ALOBJS 10
 #define NUM_ALSTRS 8 
 #define MAX_MSGLEN 40
@@ -171,9 +169,9 @@ static void fm_parse(LONG tree, LONG palstr, WORD *picnum, WORD *pnummsg,
 
     *picnum = alert[1] - '0';
 
-    alert = fm_strbrk(obj+MSG_OFF,MAX_LINENUM,MAX_LINELEN,alert+3,pnummsg,plenmsg);
+    alert = fm_strbrk(obj+MSGOFF,MAX_LINENUM,MAX_LINELEN,alert+3,pnummsg,plenmsg);
 
-    fm_strbrk(obj+BUT_OFF,MAX_BUTNUM,MAX_BUTLEN,alert,pnumbut,plenbut);
+    fm_strbrk(obj+BUTOFF,MAX_BUTNUM,MAX_BUTLEN,alert,pnumbut,plenbut);
 
     *plenbut += 1;  /* allow 1/2 character space inside each end of button */
 }
@@ -228,14 +226,14 @@ static void fm_build(LONG tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
                                                 /* add msg objects      */
         for(i=0; i<nummsg; i++)
         {
-          ob_setxywh(tree, MSG_OFF+i, &ms);
+          ob_setxywh(tree, MSGOFF+i, &ms);
           ms.g_y++;
-          ob_add(tree, ROOT, MSG_OFF+i);
+          ob_add(tree, ROOT, MSGOFF+i);
         }
                                                 /* add button objects   */
         for(i=0; i<numbut; i++)
         {
-          k = BUT_OFF+i;
+          k = BUTOFF+i;
           LWSET(OB_FLAGS(k), SELECTABLE | EXIT);
           LWSET(OB_STATE(k), NORMAL);
           ob_setxywh(tree, k, &bt);
@@ -245,7 +243,7 @@ static void fm_build(LONG tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
           ob_add(tree, ROOT, k);
         }
                                                 /* set last object flag */
-        LWSET(OB_FLAGS(BUT_OFF+numbut-1), SELECTABLE | EXIT | LASTOB);
+        LWSET(OB_FLAGS(BUTOFF+numbut-1), SELECTABLE | EXIT | LASTOB);
 }
 
 
@@ -269,7 +267,7 @@ WORD fm_alert(WORD defbut, LONG palstr)
 
         if (defbut)
         {
-          plong = OB_FLAGS(BUT_OFF + defbut - 1);
+          plong = OB_FLAGS(BUTOFF + defbut - 1);
           LWSET(plong, LWGET(plong) | DEFAULT);
         }
 
@@ -324,7 +322,7 @@ WORD fm_alert(WORD defbut, LONG palstr)
         gsx_sclip(&t);
         wm_update(FALSE);
                                                 /* return selection     */
-        return( i - BUT_OFF + 1 );
+        return( i - BUTOFF + 1 );
 }
 
 
