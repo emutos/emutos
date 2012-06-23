@@ -457,7 +457,8 @@ vbl_end:
 #else
         addq.w  #1,_vblsem
 #endif
-#if CONF_ATARI_HARDWARE
+
+#if CONF_WITH_SHIFTER
         rte
 #else
         rts
@@ -520,14 +521,14 @@ _int_timerc:
 #endif
 
 timerc_end:                     
-#if CONF_ATARI_HARDWARE
+#if CONF_WITH_MFP
 #ifdef __mcoldfire__
         lea     0xfffffa11, a0
         bclr    #5, (a0)                // clear interrupt service bit
 #else
         bclr    #5, 0xfffffa11          // clear interrupt service bit
 #endif
-#endif /* CONF_ATARI_HARDWARE */
+#endif /* CONF_WITH_MFP */
 
 #ifdef __mcoldfire__
         // Restore late ColdFire registers
@@ -535,7 +536,7 @@ timerc_end:
         move.l  (sp)+, d0
 #endif
 
-#if CONF_ATARI_HARDWARE
+#if CONF_WITH_MFP
         rte
 #else
         rts
