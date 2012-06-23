@@ -152,7 +152,17 @@ static void bios_init(void)
     /* Initialize the screen */
     screen_init();      /* detect monitor type, ... */
 
-    bmem_init();        /* initialize BIOS memory management */
+    /* Initialize the BIOS memory management */
+    bmem_init();        /* this must be done after screen_init() */
+
+    /* Set up the BIOS console output */
+    linea_init();       /* initialize screen related line-a variables */
+    font_init();        /* initialize font ring */
+    font_set_default(); /* set default font */
+    vt52_init();        /* initialize the vt52 console */
+
+    /* Now kcprintf() will also send debug info to the screen */
+
     cookie_init();      /* sets a cookie jar */
     machine_init();     /* detect hardware features and fill the cookie jar */
 
@@ -214,13 +224,6 @@ static void bios_init(void)
 #endif
   
     blkdev_init();      /* floppy and harddisk initialisation */
-
-    /* these routines must be called in the given order */
-
-    linea_init();       /* initialize screen related line-a variables */
-    font_init();        /* initialize font ring */
-    font_set_default(); /* set default font */
-    vt52_init();        /* initialize the vt52 console */
 
     /* initialize BIOS components */
 

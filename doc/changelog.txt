@@ -3704,3 +3704,4 @@ Start... early ages
   image for graf_mouse(). (RFB)
 - bios/tosvars.h bios/tosvars.S: Mark vblsem as volatile for safety. (VRI)
 - bios/bios.c bios/screen.c: Cleaned up bios_init() initialization order. (VRI)
+- bios/bios.c: Initialized the BIOS console early to see debug messages. (VRI)
