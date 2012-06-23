@@ -385,6 +385,17 @@ less16:
 
 #endif /* CONF_WITH_FALCON_MMU */
 
+#ifdef MACHINE_AMIGA
+
+/*
+ * memconf for Amiga
+ */
+        lea     amiga_memconf_ret(pc),a6
+        jmp     amiga_memconf
+amiga_memconf_ret:
+
+#endif /* MACHINE_AMIGA */
+
 #endif /* CONF_STRAM_SIZE */
 
 /*

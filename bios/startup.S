@@ -156,6 +156,11 @@ _main:
 nodiag:
 #endif /* CONF_WITH_CARTRIDGE */
 
+#ifdef MACHINE_AMIGA
+        lea     amiga_startup_ret,a6
+        jmp     amiga_startup
+amiga_startup_ret:
+#endif
 
 /*
  * Check, if we should jump to a reset vector after warmboot

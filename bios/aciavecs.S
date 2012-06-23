@@ -228,6 +228,10 @@ _init_acia_vecs:
         jsr     _mfpint
         addq.l  #6,sp
 #endif /* CONF_WITH_IKBD_ACIA || CONF_WITH_MIDI_ACIA */
+
+#ifdef MACHINE_AMIGA
+        jsr     _amiga_init_keyboard_interrupt
+#endif
         rts
         
         // FIXME: The rs232iorec buffer should go into the .data segment (if

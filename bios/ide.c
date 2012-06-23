@@ -21,10 +21,15 @@
 #include "ide.h"
 #include "gemerror.h"
 #include "kprint.h"
+#ifdef MACHINE_AMIGA
+#include "amiga.h"
+#endif
 
 #if CONF_WITH_IDE
 
 #define MAKE_UWORD(a, b) (((UWORD)(a) << 8) | (b))
+
+#ifndef MACHINE_AMIGA
 
 struct IDE
 {
@@ -49,6 +54,8 @@ struct IDE
 
 #define ide_interface (*(volatile struct IDE*)0xfff00000)
 
+#endif /* MACHINE_AMIGA */
+
 /* IDE defines */
 
 #define IDE_SECTOR_SIZE 512
@@ -70,6 +77,8 @@ struct IDE
 #define IDE_STATUS_DRDY (1 << 6)
 #define IDE_STATUS_BSY (1 << 7)
 
+#if CONF_ATARI_HARDWARE
+
 /* The following is required to access PC compatible disks */
 #define BYTESWAPPED_SECTOR_DATA
 
@@ -84,6 +93,8 @@ static void byteswap(UBYTE* buffer, ULONG size)
         p[1] = temp;
     }
 }
+
+#endif
 
 static int ide_wait_not_busy(void)
 {

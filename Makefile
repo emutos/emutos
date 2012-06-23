@@ -145,10 +145,10 @@ bios_csrc = kprint.c xbios.c chardev.c blkdev.c bios.c clock.c \
             mfp.c parport.c biosmem.c acsi.c \
             midi.c ikbd.c sound.c dma.c floppy.c disk.c screen.c lineainit.c \
             mouse.c initinfo.c cookie.c machine.c nvram.c country.c \
-            xhdi.c natfeats.c font.c conout.c vt52.c dmasound.c ide.c
+            xhdi.c natfeats.c font.c conout.c vt52.c dmasound.c ide.c amiga.c
 bios_ssrc = tosvars.S startup.S aciavecs.S vectors.S lineavars.S \
             processor.S memory.S linea.S panicasm.S kprintasm.S \
-            natfeat.S
+            natfeat.S amiga2.S
 
 #
 # source code in bdos/
@@ -392,6 +392,22 @@ cart:
 	@echo "# Building Diagnostic Cartridge EmuTOS into $(ROM_CARTRIDGE)"
 	$(MAKE) DEF='-DDIAGNOSTIC_CARTRIDGE=1' UNIQUE=$(COUNTRY) WITH_AES=0 VMA=0x00fa0000 ROM_128=$(ROM_CARTRIDGE) $(ROM_CARTRIDGE)
 	./mkrom$(EXE) stc emutos2.img emutos.stc
+
+#
+# Amiga Image
+#
+
+ROM_AMIGA = emutos-amiga.img
+
+.PHONY: amiga
+NODEP += amiga
+amiga: UNIQUE = $(COUNTRY)
+amiga:
+	@echo "# Building Amiga EmuTOS into $(ROM_AMIGA)"
+	$(MAKE) DEF='-DMACHINE_AMIGA' UNIQUE=$(UNIQUE) VMA=0x00fc0000 $(ROM_AMIGA)
+
+$(ROM_AMIGA): emutos2.img mkrom$(EXE)
+	./mkrom$(EXE) amiga $< $(ROM_AMIGA)
 
 #
 # ColdFire images

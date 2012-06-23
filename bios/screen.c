@@ -25,6 +25,9 @@
 #include "vt52.h"
 #include "xbiosbind.h"
 #include "vectors.h"
+#ifdef MACHINE_AMIGA
+#include "amiga.h"
+#endif
 
 #define DBG_SCREEN 0
 
@@ -1432,6 +1435,9 @@ void screen_init(void)
 #endif /* CONF_VRAM_ADDRESS */
     /* set new v_bas_ad */
     v_bas_ad = (UBYTE *)screen_start;
+#ifdef MACHINE_AMIGA
+    amiga_screen_init();
+#endif
     /* correct physical address */
     setphys(screen_start,1);
     rez_was_hacked = FALSE; /* initial assumption */

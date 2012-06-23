@@ -147,6 +147,21 @@ release-firebee:
 	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_FIREBEE).zip $(RELEASE_FIREBEE)
 	rm -r $(RELEASE_DIR)/$(RELEASE_FIREBEE)
 
+.PHONY: release-amiga
+NODEP += release-amiga
+RELEASE_AMIGA = emutos-amiga-$(VERSION)
+release-amiga:
+	$(MAKE) clean
+	$(MAKE) amiga
+	mkdir $(RELEASE_DIR)/$(RELEASE_AMIGA)
+	cp $(ROM_AMIGA) $(RELEASE_DIR)/$(RELEASE_AMIGA)
+	cat doc/readme-amiga.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_AMIGA)/readme.txt
+	mkdir $(RELEASE_DIR)/$(RELEASE_AMIGA)/doc
+	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_AMIGA)/doc
+	find $(RELEASE_DIR)/$(RELEASE_AMIGA) -name '*.txt' -exec unix2dos '{}' ';'
+	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_AMIGA).zip $(RELEASE_AMIGA)
+	rm -r $(RELEASE_DIR)/$(RELEASE_AMIGA)
+
 .PHONY: release-ram
 NODEP += release-ram
 RELEASE_RAM = emutos-ram-$(VERSION)
@@ -182,6 +197,6 @@ release-floppy:
 NODEP += release
 release: distclean release-clean release-mkdir \
   release-src release-512k release-256k release-192k release-cartridge \
-  release-aranym release-firebee release-ram release-floppy
+  release-aranym release-firebee release-amiga release-ram release-floppy
 	$(MAKE) clean
 	@echo '# Packages successfully generated inside $(RELEASE_DIR)'

@@ -126,6 +126,18 @@
 #endif
 
 /*
+ * Defaults for the Amiga target.
+ */
+#ifdef MACHINE_AMIGA
+# ifndef CONF_ATARI_HARDWARE
+#  define CONF_ATARI_HARDWARE 0
+# endif
+# ifndef CONF_WITH_IDE
+#  define CONF_WITH_IDE 1
+# endif
+#endif
+
+/*
  * By default, EmuTOS is built for Atari ST/TT/Falcon compatible hardware.
  */
 #ifndef CONF_ATARI_HARDWARE

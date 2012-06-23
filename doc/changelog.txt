@@ -3705,3 +3705,7 @@ Start... early ages
 - bios/tosvars.h bios/tosvars.S: Mark vblsem as volatile for safety. (VRI)
 - bios/bios.c bios/screen.c: Cleaned up bios_init() initialization order. (VRI)
 - bios/bios.c: Initialized the BIOS console early to see debug messages. (VRI)
+- Makefile release.mk bios/aciavecs.S bios/amiga.c bios/amiga.h bios/amiga2.S
+  bios/bios.c bios/ide.c bios/machine.c bios/memory.S bios/screen.c
+  bios/startup.S doc/readme-amiga.txt include/config.h tools/mkrom.c: Added
+  support for Amiga hardware. (VRI)

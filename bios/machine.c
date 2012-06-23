@@ -475,6 +475,8 @@ const char * machine_name(void)
 {
 #ifdef MACHINE_FIREBEE
   return "FireBee";
+#elif defined(MACHINE_AMIGA)
+  return "Amiga";
 #else
 
 #if DETECT_NATIVE_FEATURES

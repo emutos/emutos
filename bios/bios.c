@@ -50,6 +50,9 @@
 #include "parport.h"
 #include "string.h"
 #include "natfeat.h"
+#ifdef MACHINE_AMIGA
+#include "amiga.h"
+#endif
 
 
 
@@ -278,6 +281,10 @@ static void bios_init(void)
     /* add TT-RAM that was detected in memory.S */
     if (ramtop > 0x1000000)
         xmaddalt( 0x1000000, ramtop - 0x1000000);
+#endif
+
+#ifdef MACHINE_AMIGA
+    amiga_add_alt_ram();
 #endif
 
 #endif /* CONF_WITH_ALT_RAM */

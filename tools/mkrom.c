@@ -29,7 +29,8 @@ typedef enum
 {
     CMD_NONE = 0,
     CMD_PAD,
-    CMD_STC
+    CMD_STC,
+    CMD_AMIGA
 } CMD_TYPE;
 
 /* Global variables */
@@ -254,6 +255,66 @@ static int cmd_stc(FILE* infile, const char* infilename,
     return 1;
 }
 
+/* Amiga ROM image */
+static int cmd_amiga(FILE* infile, const char* infilename,
+                     FILE* outfile, const char* outfilename)
+{
+    int i;
+    size_t nwrite;
+    size_t source_size;
+    size_t target_size = 256 * 1024;
+    size_t max_size = target_size - 16;
+    size_t free_size;
+    int ret; /* boolean return value: 0 == error, 1 == OK */
+
+    printf("# Padding %s to %ld kB Amiga ROM image into %s\n", infilename, ((long)target_size) / 1024, outfilename);
+
+    /* Get the input file size */
+    source_size = get_file_size(infile, infilename);
+    if (source_size == SIZE_ERROR)
+        return 0;
+
+    /* Check if the input file size is not too big */
+    if (source_size > max_size)
+    {
+        fprintf(stderr, "%s: %s is too big: %lu extra bytes\n", g_argv0, infilename, (unsigned long)(source_size - max_size));
+        return 0;
+    }
+
+    /* Copy the input file */
+    ret = copy_stream(infile, infilename, outfile, outfilename, source_size);
+    if (!ret)
+        return ret;
+
+    /* Pad with zeroes */
+    free_size = max_size - source_size;
+    ret = write_byte_block(outfile, outfilename, 0, free_size);
+    if (!ret)
+        return ret;
+
+    /* Add vector numbers at the end */
+    for (i = 0; i < 8; i++)
+    {
+        /* Big endian words */
+        g_buffer[i*2] = 0;
+        g_buffer[i*2 + 1] = 0x18 + i;
+    }
+
+    nwrite = fwrite(g_buffer, 1, 16, outfile);
+    if (nwrite != 16)
+    {
+        if (ferror(outfile))
+        {
+            fprintf(stderr, "%s: %s: %s\n", g_argv0, outfilename, strerror(errno));
+            return 0;
+        }
+    }
+
+    printf("# %s done (%lu bytes free)\n", outfilename, (unsigned long)free_size);
+
+    return 1;
+}
+
 /* Main program */
 int main(int argc, char* argv[])
 {
@@ -285,6 +346,12 @@ int main(int argc, char* argv[])
         infilename = argv[2];
         outfilename = argv[3];
     }
+    else if (argc == 4 && !strcmp(argv[1], "amiga"))
+    {
+        op = CMD_AMIGA;
+        infilename = argv[2];
+        outfilename = argv[3];
+    }
     else
     {
         fprintf(stderr, "usage:\n");
@@ -293,6 +360,9 @@ int main(int argc, char* argv[])
         fprintf(stderr, "\n");
         fprintf(stderr, "  # Steem Engine cartridge image\n");
         fprintf(stderr, "  %s stc <source> <destination>\n", g_argv0);
+        fprintf(stderr, "\n");
+        fprintf(stderr, "  # Amiga ROM image\n");
+        fprintf(stderr, "  %s amiga <source> <destination>\n", g_argv0);
         return 1;
     }
 
@@ -320,6 +390,10 @@ int main(int argc, char* argv[])
 
         case CMD_STC:
             ret = cmd_stc(infile, infilename, outfile, outfilename);
+        break;
+
+        case CMD_AMIGA:
+            ret = cmd_amiga(infile, infilename, outfile, outfilename);
         break;
 
         default:
