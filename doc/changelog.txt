@@ -3711,3 +3711,7 @@ Start... early ages
   support for Amiga hardware. (VRI)
 - aes/gemfmalt.c: Issue debug msg if lines or buttons in form_alert()
   exceed standard TOS lengths. (RFB)
+
+2012-06-24
+- bios/screen.c bios/screen.h vdi/vdi_control.c: Fix bug: vq_extnd(mode 1)
+  always returned 0 for LUT support. (RFB)

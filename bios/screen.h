@@ -21,6 +21,7 @@
 
 /* misc routines */
 WORD check_moderez(WORD moderez);
+WORD get_monitor_type(void);
 UWORD get_videl_bpp(void);
 UWORD get_videl_width(void);
 UWORD get_videl_height(void);

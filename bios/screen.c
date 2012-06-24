@@ -366,7 +366,7 @@ static const VMODE_ENTRY *lookup_videl_mode(WORD mode,WORD monitor);
 #endif
 
 /* get monitor type (same encoding as VgetMonitor()) */
-static WORD get_monitor_type()
+WORD get_monitor_type(void)
 {
 #if CONF_WITH_VIDEL
     if (has_videl) {
