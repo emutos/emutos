@@ -387,7 +387,11 @@ void _v_opnwk(Vwk * vwk)
     INQ_TAB[4] = v_planes;
 
     /* Indicate whether LUT is supported */
-    if ((INQ_TAB[4] == 16) || (get_monitor_type() == MON_MONO))
+    if ((INQ_TAB[4] == 16)
+#if CONF_WITH_SHIFTER
+        || (get_monitor_type() == MON_MONO)
+#endif
+       )
         INQ_TAB[5] = 0;
     else INQ_TAB[5] = 1;
 
