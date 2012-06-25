@@ -3715,3 +3715,4 @@ Start... early ages
 2012-06-24
 - bios/screen.c bios/screen.h vdi/vdi_control.c: Fix bug: vq_extnd(mode 1)
   always returned 0 for LUT support. (RFB)
+- aes/geminit.c: Use gem_rsc.h #defines instead of local #defines. (RFB)

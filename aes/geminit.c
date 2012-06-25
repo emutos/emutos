@@ -66,9 +66,6 @@
 
 #define ROPEN 0
 
-#define ARROW 0
-#define HGLASS 2
-
 #define SIZE_AFILE 2048                 /* size of AES shell buffer: must   */
                                         /*  agree with #define in deskapp.h */
 #define INF_SIZE   300                  /* size of buffer used by sh_rdinf() */
@@ -830,11 +827,11 @@ void gem_main(void)
     {
         /* get mice forms       */
 #ifdef USE_GEM_RSC
-        rs_gaddr(ad_sysglo, R_BIPDATA, 3 + ARROW, &ad_armice);
-        rs_gaddr(ad_sysglo, R_BIPDATA, 3 + HGLASS, &ad_hgmice);
+        rs_gaddr(ad_sysglo, R_BIPDATA, MICE00, &ad_armice);
+        rs_gaddr(ad_sysglo, R_BIPDATA, MICE02, &ad_hgmice);
 #else
-        ad_armice = (LONG) &rs_fimg[3+ARROW];
-        ad_hgmice = (LONG) &rs_fimg[3+HGLASS];
+        ad_armice = (LONG) &rs_fimg[MICE00];
+        ad_hgmice = (LONG) &rs_fimg[MICE02];
 #endif
         ad_armice = LLGET(ad_armice);
         ad_hgmice = LLGET(ad_hgmice);
@@ -857,7 +854,7 @@ void gem_main(void)
 #ifdef USE_GEM_RSC
             rs_gaddr(ad_sysglo, R_BITBLK, i, (LONG *)&tmpadbi);
 #else
-            tmpadbi = &rs_fimg[i];
+            tmpadbi = &rs_fimg[NOTEBB+i];
 #endif
             memcpy((char *)&bi, tmpadbi, sizeof(BITBLK));
             gsx_trans(bi.bi_pdata, bi.bi_wb, bi.bi_pdata, bi.bi_wb, bi.bi_hl);
