@@ -10,6 +10,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+#define DBG_NVRAM 0
+
 #include "config.h"
 #include "portab.h"
 #include "cookie.h"
@@ -17,7 +19,7 @@
 #include "vectors.h"
 #include "nvram.h"
 #include "biosmem.h"
-
+#include "kprint.h"
 
 #if CONF_WITH_NVRAM
 
@@ -148,8 +150,13 @@ WORD nvmaccess(WORD type, WORD start, WORD count, PTR buffer)
         return -5;
 
     switch(type) {
-    case 0: /* read, from our buffer since it is already in memory */
-        if(compute_sum() != get_sum()) {
+    case 0: { /* read, from our buffer since it is already in memory */
+        UWORD expected = compute_sum();
+        UWORD actual = get_sum();
+        if(expected != actual) {
+#if DBG_NVRAM
+            kprintf("wrong nvram: expected=0x%04x actual=0x%04x\n", expected, actual);
+#endif
             /* wrong checksum, return error code */
             return -12;
         }
@@ -157,6 +164,7 @@ WORD nvmaccess(WORD type, WORD start, WORD count, PTR buffer)
             *ubuffer++ = nvram_buf[i];
         }
         break;
+    }
     case 1: /* write, in our buffer and in the memory */
         for(i = start ; i < start + count ; i++) {
             *addr_reg = i + 14;

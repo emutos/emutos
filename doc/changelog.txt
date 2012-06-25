@@ -3718,4 +3718,4 @@ Start... early ages
 - aes/geminit.c: Use gem_rsc.h #defines instead of local #defines. (RFB)
 
 2012-06-25
-- bios/floppy.c: Added flopini() debug traces. (VRI)
+- bios/floppy.c bios/nvram.c: Added debug traces. (VRI)
