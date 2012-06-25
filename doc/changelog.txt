@@ -3720,3 +3720,4 @@ Start... early ages
 2012-06-25
 - bios/floppy.c bios/nvram.c: Added debug traces. (VRI)
 - vdi/vdi_control.c: Fixed compilation for non-Atari hardware. (VRI)
+- bios/ide.c: Changed struct IDE conditional compilation. (VRI)

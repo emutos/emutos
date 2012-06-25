@@ -29,7 +29,7 @@
 
 #define MAKE_UWORD(a, b) (((UWORD)(a) << 8) | (b))
 
-#ifndef MACHINE_AMIGA
+#if CONF_ATARI_HARDWARE
 
 struct IDE
 {
@@ -54,7 +54,7 @@ struct IDE
 
 #define ide_interface (*(volatile struct IDE*)0xfff00000)
 
-#endif /* MACHINE_AMIGA */
+#endif /* CONF_ATARI_HARDWARE */
 
 /* IDE defines */
 
