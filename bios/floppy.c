@@ -200,6 +200,10 @@ static void flopini(WORD dev)
     WORD status;
     UNUSED(status);
 
+#if DBG_FLOP
+    kprintf("flopini(%d)\n", dev);
+#endif
+
 #if CONF_WITH_FDC
     floplock(dev);
     select(dev, 0);
