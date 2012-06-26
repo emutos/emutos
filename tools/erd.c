@@ -3,7 +3,7 @@
  *
  *  Copyright 2012 by Roger Burrows
  *
- *  This program is licensed under the GNU Public License.
+ *  This program is licensed under the GNU General Public License.
  *  Please see LICENSE.TXT for details.
  *
  *
@@ -115,6 +115,10 @@
  *          . the conditional wrapping now uses TARGET_192
  *          . the items wrapped now depend on two "start" names, one for
  *            trees and one for free strings.
+ *
+ *  v2.1    roger burrows, june/2012
+ *          . handle case when 'tree_start' string doesn't match
+ *          . fix license specification text
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -127,7 +131,6 @@
 #include <getopt.h>
 #define DIRSEP  '/'
 #endif
-
 /*
  *  manifest RSC-related stuff
  */
@@ -289,7 +292,7 @@ typedef struct {
  *  our own defines & structures
  */
 #define PROGRAM_NAME    "erd"
-#define VERSION         "v2.0"
+#define VERSION         "v2.1"
 #define MAX_STRLEN      200         /* max size for internal string areas */
 #define NLS             "N_("       /* the macro used in EmuTOS for NLS support*/
 
@@ -408,7 +411,8 @@ int num_notrans = sizeof(notrans) / sizeof(NOTRANS_ENTRY);
  *  other globals
  */
 char *copyright = PROGRAM_NAME " " VERSION " copyright (c) 2012 by Roger Burrows\n"
-"This program is licensed under the GNU Public License. Please see LICENSE.TXT for details.\n";
+"This program is licensed under the GNU General Public License.\n"
+"Please see LICENSE.TXT for details.\n";
 
 int debug = 0;                          /* options */
 char prefix[MAX_STRLEN] = "";
@@ -1129,7 +1133,7 @@ char *basersc;
     fprintf(fp," *\n");
     fprintf(fp," * Copyright by the EmuTOS development team\n");
     fprintf(fp," *\n");
-    fprintf(fp," * This software is licenced under the GNU Public License.\n");
+    fprintf(fp," * This software is licenced under the GNU General Public License.\n");
     fprintf(fp," * Please see LICENSE.TXT for further information.\n");
     fprintf(fp," */\n");
 
@@ -1182,19 +1186,31 @@ short old_tree = -1;
         fprintf(fp,"#endif\n");
     fprintf(fp,"\n\n");
 
-    fprintf(fp,"%s\n",conditional_string);
-    fprintf(fp,"#define %-16s%d\n","RS_NOBS",rsh.nobs);
-    fprintf(fp,"#define %-16s%d\n","RS_NTREE",rsh.ntree);
-    fprintf(fp,"#define %-16s%d\n","RS_NTED",rsh.nted);
-    fprintf(fp,"#define %-16s%d\n","RS_NIB",rsh.nib);
-    fprintf(fp,"#define %-16s%d\n","RS_NBB",rsh.nbb);
-    fprintf(fp,"#else\n");
-    fprintf(fp,"#define %-16s%d\n","RS_NOBS",conditional_object_start);
-    fprintf(fp,"#define %-16s%d\n","RS_NTREE",conditional_tree_start);
-    fprintf(fp,"#define %-16s%d\n","RS_NTED",conditional_tedinfo_start);
-    fprintf(fp,"#define %-16s%d\n","RS_NIB",conditional_iconblk_start);
-    fprintf(fp,"#define %-16s%d\n","RS_NBB",conditional_bitblk_start);
-    fprintf(fp,"#endif\n\n\n");
+    if ((rsh.nobs == conditional_object_start)
+     && (rsh.ntree == conditional_tree_start)
+     && (rsh.nted == conditional_tedinfo_start)
+     && (rsh.nib == conditional_iconblk_start)
+     && (rsh.nbb == conditional_bitblk_start)) {
+        fprintf(fp,"#define %-16s%d\n","RS_NOBS",rsh.nobs);
+        fprintf(fp,"#define %-16s%d\n","RS_NTREE",rsh.ntree);
+        fprintf(fp,"#define %-16s%d\n","RS_NTED",rsh.nted);
+        fprintf(fp,"#define %-16s%d\n","RS_NIB",rsh.nib);
+        fprintf(fp,"#define %-16s%d\n\n\n","RS_NBB",rsh.nbb);
+    } else {
+        fprintf(fp,"%s\n",conditional_string);
+        fprintf(fp,"#define %-16s%d\n","RS_NOBS",rsh.nobs);
+        fprintf(fp,"#define %-16s%d\n","RS_NTREE",rsh.ntree);
+        fprintf(fp,"#define %-16s%d\n","RS_NTED",rsh.nted);
+        fprintf(fp,"#define %-16s%d\n","RS_NIB",rsh.nib);
+        fprintf(fp,"#define %-16s%d\n","RS_NBB",rsh.nbb);
+        fprintf(fp,"#else\n");
+        fprintf(fp,"#define %-16s%d\n","RS_NOBS",conditional_object_start);
+        fprintf(fp,"#define %-16s%d\n","RS_NTREE",conditional_tree_start);
+        fprintf(fp,"#define %-16s%d\n","RS_NTED",conditional_tedinfo_start);
+        fprintf(fp,"#define %-16s%d\n","RS_NIB",conditional_iconblk_start);
+        fprintf(fp,"#define %-16s%d\n","RS_NBB",conditional_bitblk_start);
+        fprintf(fp,"#endif\n\n\n");
+    }
 
     return ferror(fp) ? -1 : 0;
 }
@@ -2211,43 +2227,25 @@ SHARED_ENTRY *e;
 
 /*
  *  mark objects as conditional if appropriate:
- *   1. find start of conditional objects
- *   2. determine which shared objects are conditional
- *   3. mark any tedinfo/bitblk/iconblk pointedto by a conditional
+ *   1. determine which shared objects are conditional
+ *   2. mark any tedinfo/bitblk/iconblk pointed to by a conditional
  *      object as conditional
  */
 void mark_conditional(void)
 {
 int n;
 OBJECT *obj;
-OFFSET *trindex;
-DEF_ENTRY *d;
 SHARED_ENTRY *e;
 char *base = (char *)rschdr;
 char *obj_base, *p;
 
     /*
-     * scan the definition table & find the start of the last contiguous run
-     * of conditional objects
-     */
-    for (d = def+num_defs-1; d >= def; d--)
-        if ((d->type == DEF_OBJECT) && !d->conditional)
-            break;
-    for (d++; d < def+num_defs; d++)
-        if ((d->type == DEF_DIALOG) || (d->type == DEF_MENU))
-            break;
-
-    /*
-     *  find the corresponding object in the resource
-     */
-    trindex = (OFFSET *)(base + rsh.trindex);
-    obj_base = base + rsh.object;
-    conditional_object_start = (get_offset(&trindex[d->tree]) - get_offset(&trindex[0])) / sizeof(OBJECT);
-
-    /*
      *  examine all the objects from the start of the table to the last
-     *  unconditional object, marking shared strings as unconditional
+     *  unconditional object.  for each object referencing a shared string,
+     *  mark that shared string's table entry with the lowest-numbered
+     *  object referencing it.
      */
+    obj_base = base + rsh.object;
     for (obj = (OBJECT *)obj_base; obj < (OBJECT *)obj_base+conditional_object_start; obj++) {
         switch(get_ushort(&obj->ob_type)&0xff) {
         case G_STRING:
@@ -2264,8 +2262,8 @@ char *obj_base, *p;
     }
 
     /*
-     *  examine all the remaining objects, marking the associated tedinfo,
-     *  bitblk, and iconblk objects as conditional
+     *  examine all the remaining (conditional) objects, marking the
+     *  associated tedinfo, bitblk, and iconblk objects as conditional
      */
     for ( ; obj < (OBJECT *)obj_base+rsh.nobs; obj++) {
         switch(get_ushort(&obj->ob_type)&0xff) {
@@ -2317,19 +2315,33 @@ void process_start_names(int num_defs)
 {
 int i;
 DEF_ENTRY *d;
+OFFSET *trindex = (OFFSET *)((char *)rschdr + rsh.trindex);
 
     /*
      * do trees & contained objects
      */
+    conditional_tree_start = rsh.ntree;     /* assume no conditional trees */
+    conditional_object_start = rsh.nobs;    /*  & no conditional objects */
     for (i = 0, d = def; i < num_defs; i++, d++) {
-        if ((d->type == DEF_DIALOG) || (d->type == DEF_MENU))
-            if (strcmp(d->name,tree_start) == 0)
+        if ((d->type == DEF_DIALOG) || (d->type == DEF_MENU)) {
+            if (strcmp(d->name,tree_start) == 0) {
+                conditional_tree_start = d->tree;
+                for ( ; i < num_defs; i++, d++) {
+                    switch(d->type) {
+                    case DEF_OBJECT:
+                        if (conditional_object_start == rsh.nobs)   /* first time */
+                            conditional_object_start = (get_offset(&trindex[d->tree]) - get_offset(&trindex[0])) / sizeof(OBJECT);
+                        /* drop through */
+                    case DEF_DIALOG:
+                    case DEF_MENU:
+                        d->conditional = 1;
+                        break;
+                    }
+                }
                 break;
+            }
+        }
     }
-    conditional_tree_start = d->tree;
-    for ( ; i < num_defs; i++, d++)
-        if ((d->type == DEF_DIALOG) || (d->type == DEF_MENU) || (d->type == DEF_OBJECT))
-            d->conditional = 1;
 
     /*
      * do free strings
