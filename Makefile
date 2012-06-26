@@ -143,7 +143,7 @@ NATIVECC = gcc -ansi -pedantic -Wall -Wextra -O
 
 bios_csrc = kprint.c xbios.c chardev.c blkdev.c bios.c clock.c \
             mfp.c parport.c biosmem.c acsi.c \
-            midi.c ikbd.c sound.c dma.c floppy.c disk.c screen.c lineainit.c \
+            midi.c ikbd.c sound.c dma.c floppy.c disk.c screen.c videl.c lineainit.c \
             mouse.c initinfo.c cookie.c machine.c nvram.c country.c \
             xhdi.c natfeats.c font.c conout.c vt52.c dmasound.c ide.c amiga.c
 bios_ssrc = tosvars.S startup.S aciavecs.S vectors.S lineavars.S \

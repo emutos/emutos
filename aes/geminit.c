@@ -32,6 +32,7 @@
 #include "dos.h"
 #include "xbiosbind.h"
 #include "screen.h"
+#include "videl.h"
 
 #include "gemgsxif.h"
 #include "gemdosif.h"

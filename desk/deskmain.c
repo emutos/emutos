@@ -36,6 +36,7 @@
 #include "lineavars.h"
 #include "machine.h"
 #include "screen.h"
+#include "videl.h"
 #include "nls.h"
 #include "version.h"
 

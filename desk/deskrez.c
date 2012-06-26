@@ -31,6 +31,7 @@
 #include "xbiosbind.h"
 #include "machine.h"    /* for has_videl etc */
 #include "screen.h"
+#include "videl.h"
 #include "kprint.h"
 
 #define R_STRING 5      /* this should be obtained from a header! */
