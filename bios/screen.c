@@ -437,7 +437,9 @@ void screen_init(void)
     ULONG screen_start;
 #if CONF_WITH_SHIFTER
     volatile BYTE *rez_reg = (BYTE *) ST_SHIFTER;
+#if CONF_WITH_VIDEL
     UWORD boot_resolution = FALCON_DEFAULT_BOOT;
+#endif
 #if CONF_WITH_TT_SHIFTER
     volatile BYTE *ttrez_reg = (BYTE *) TT_SHIFTER;
 #endif
@@ -544,7 +546,11 @@ void screen_init(void)
 /*
  * next, set up the palette(s)
  */
+#if CONF_WITH_VIDEL
     initialise_palette_registers(rez,boot_resolution);
+#else
+    initialise_palette_registers(rez,0);
+#endif
     sshiftmod = rez;
 
 #endif /* CONF_WITH_SHIFTER */

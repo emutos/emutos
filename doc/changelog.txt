@@ -3726,3 +3726,6 @@ Start... early ages
 - Makefile aes/geminit.c bios/screen.c bios/screen.h bios/videl.c bios/videl.h
   desk/deskmain.c desk/deskrez.c: Rough split of screen.c into videl.c. (VRI)
 - tools/erd.c: Fix bug when tree specified by 'tree_start' is not found. (RFB)
+
+2012-06-27
+- bios/screen.c: Quick compilation fix for make 192. (VRI)
