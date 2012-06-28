@@ -3729,3 +3729,4 @@ Start... early ages
 
 2012-06-27
 - bios/screen.c: Quick compilation fix for make 192. (VRI)
+- aes/gem_rsc.c: Reorganised to correspond to desk_rsc.c layout. (RFB)
