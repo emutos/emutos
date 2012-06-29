@@ -831,8 +831,8 @@ void gem_main(void)
         rs_gaddr(ad_sysglo, R_BIPDATA, MICE00, &ad_armice);
         rs_gaddr(ad_sysglo, R_BIPDATA, MICE02, &ad_hgmice);
 #else
-        ad_armice = (LONG) &rs_fimg[MICE00];
-        ad_hgmice = (LONG) &rs_fimg[MICE02];
+        ad_armice = (LONG) &rs_bitblk[MICE00];
+        ad_hgmice = (LONG) &rs_bitblk[MICE02];
 #endif
         ad_armice = LLGET(ad_armice);
         ad_hgmice = LLGET(ad_hgmice);
@@ -855,7 +855,7 @@ void gem_main(void)
 #ifdef USE_GEM_RSC
             rs_gaddr(ad_sysglo, R_BITBLK, i, (LONG *)&tmpadbi);
 #else
-            tmpadbi = &rs_fimg[NOTEBB+i];
+            tmpadbi = &rs_bitblk[NOTEBB+i];
 #endif
             memcpy((char *)&bi, tmpadbi, sizeof(BITBLK));
             gsx_trans(bi.bi_pdata, bi.bi_wb, bi.bi_pdata, bi.bi_wb, bi.bi_hl);

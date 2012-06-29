@@ -158,7 +158,7 @@ extern OBJECT * const rs_tree[];
 
 /* The following resource data live in ROM */
 extern const char * const rs_fstr[];
-extern const BITBLK       rs_fimg[];
+extern const BITBLK       rs_bitblk[];
 
 
 extern void gem_rsc_init(void);

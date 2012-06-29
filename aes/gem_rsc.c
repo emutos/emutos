@@ -252,7 +252,7 @@ static const WORD rs_b10img[] = {
 };
 
 
-const BITBLK rs_fimg[] = {
+const BITBLK rs_bitblk[] = {
     { (LONG)rs_b0img, 4, 32, 0, 0, 1 },
     { (LONG)rs_b1img, 4, 32, 0, 0, 1 },
     { (LONG)rs_b2img, 4, 32, 0, 0, 1 },

@@ -329,7 +329,7 @@ static UWORD crysbind(WORD opcode, LONG pglobal, WORD int_in[], WORD int_out[], 
 #ifdef USE_GEM_RSC
                     rs_gaddr(ad_sysglo, R_BIPDATA, mouse, &maddr);
 #else
-                    maddr = (LONG) &rs_fimg[mouse];
+                    maddr = (LONG) &rs_bitblk[mouse];
 #endif
                     maddr = LLGET(maddr);
                   }

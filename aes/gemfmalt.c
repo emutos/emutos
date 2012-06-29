@@ -290,7 +290,7 @@ WORD fm_alert(WORD defbut, LONG palstr)
 #ifdef USE_GEM_RSC
           rs_gaddr(ad_sysglo, R_BITBLK, image, &plong);
 #else
-          plong = (LONG) &rs_fimg[image];
+          plong = (LONG) &rs_bitblk[image];
 #endif
           LLSET(OB_SPEC(1), plong);
         }

@@ -3741,3 +3741,5 @@ Start... early ages
 - aes/gem_rsc.c: Set up ptrs to alert msg/button buffers dynamically. (RFB)
 - aes/geminit.c: Code cleanup: use #define for tree number of desktop. (RFB)
 - aes/gem_rsc.c: Standardise contents of last object. (RFB)
+- aes/geminit.c aes/gem_rsc.c aes/gem_rsc.h aes/gemfmalt.c aes/gemsuper.c:
+  Renamed GEM resource bitblks for future ERD compatibility. (RFB)
