@@ -44,10 +44,6 @@
 /* misc routines */
 WORD check_moderez(WORD moderez);
 WORD get_monitor_type(void);
-UWORD get_videl_bpp(void);
-UWORD get_videl_width(void);
-UWORD get_videl_height(void);
-WORD get_videl_mode(void);
 void initialise_palette_registers(WORD rez,WORD mode);
 
 /* hardware dependant xbios routines */
@@ -60,7 +56,6 @@ void esetpalette(WORD index,WORD count,WORD *rgb);
 void egetpalette(WORD index,WORD count,WORD *rgb);
 WORD esetgray(WORD mode);
 WORD esetsmear(WORD mode);
-WORD vfixmode(WORD mode);
 
 /* pallette color definitions */
 

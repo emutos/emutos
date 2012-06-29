@@ -3745,3 +3745,5 @@ Start... early ages
   Renamed GEM resource bitblks for future ERD compatibility. (RFB)
 - bios/screen.h bios/videl.c bios/videl.h bios/xbios.c: Fixed the return value
   of VIDEL XBIOS functions when there is no VIDEL. (VRI)
+- bios/lineainit.c bios/screen.h bios/videl.h desk/deskapp.c: Moved VIDEL
+  functions declarations to videl.h.

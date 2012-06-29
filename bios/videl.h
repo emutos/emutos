@@ -83,12 +83,20 @@ typedef struct {
 void initialise_falcon_palette(WORD mode);
 const VMODE_ENTRY *lookup_videl_mode(WORD mode,WORD monitor);
 
+/* Public XBIOS functions */
 WORD vsetmode(WORD mode);
 WORD vmontype(void);
 WORD vsetsync(WORD external);
 LONG vgetsize(WORD mode);
 WORD vsetrgb(WORD index,WORD count,LONG *rgb);
 WORD vgetrgb(WORD index,WORD count,LONG *rgb);
+
+/* misc routines */
+UWORD get_videl_bpp(void);
+UWORD get_videl_width(void);
+UWORD get_videl_height(void);
+WORD get_videl_mode(void);
+WORD vfixmode(WORD mode);
 
 extern WORD current_video_mode;
 

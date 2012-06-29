@@ -30,6 +30,7 @@
 #include "gembind.h"
 #include "deskbind.h"
 #include "screen.h"
+#include "videl.h"
 #include "gemsuper.h"
 #include "gemdos.h"
 #include "rectfunc.h"
