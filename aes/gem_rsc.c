@@ -266,15 +266,9 @@ const BITBLK rs_fimg[] = {
     { (LONG)rs_b10img, 2, 37, 0, 0, 3 }
 };
 
-
-static char msg_str_1[MAX_LINELEN+1];   /* Strings for the alert box */
-static char msg_str_2[MAX_LINELEN+1];
-static char msg_str_3[MAX_LINELEN+1];
-static char msg_str_4[MAX_LINELEN+1];
-static char msg_str_5[MAX_LINELEN+1];
-static char msg_but_1[MAX_BUTLEN+1];
-static char msg_but_2[MAX_BUTLEN+1];
-static char msg_but_3[MAX_BUTLEN+1];
+/* Strings for the alert box */
+static char msg_str[MAX_LINENUM][MAX_LINELEN+1];
+static char msg_but[MAX_BUTNUM][MAX_BUTLEN+1];
 
 
 OBJECT rs_obj[RS_NOBS];
@@ -445,49 +439,49 @@ static const OBJECT rs_obj_rom[] = {
    { 3, -1, -1, G_STRING,                    /*** 2 ***/
      NONE,
      NORMAL,
-     (LONG) msg_str_1,
+     (LONG) "",
      9, 1, 40, 1 },
 
    { 4, -1, -1, G_STRING,                    /*** 3 ***/
      NONE,
      NORMAL,
-     (LONG) msg_str_2,
+     (LONG) "",
      9, 2, 50, 1 },
 
    { 5, -1, -1, G_STRING,                    /*** 4 ***/
      NONE,
      NORMAL,
-     (LONG) msg_str_3,
+     (LONG) "",
      9, 3, 50, 1 },
 
    { 6, -1, -1, G_STRING,                    /*** 5 ***/
      NONE,
      NORMAL,
-     (LONG) msg_str_4,
+     (LONG) "",
      9, 4, 50, 1 },
 
    { 7, -1, -1, G_STRING,                    /*** 6 ***/
      NONE,
      NORMAL,
-     (LONG) msg_str_5,
+     (LONG) "",
      9, 5, 50, 1 },
 
    { 8, -1, -1, G_BUTTON,                    /*** 7 ***/
      SELECTABLE|DEFAULT|EXIT,
      NORMAL,
-     (LONG) msg_but_1,
+     (LONG) "",
      9, 7, 16, 1 },
 
    { 9, -1, -1, G_BUTTON,                    /*** 8 ***/
      SELECTABLE|DEFAULT|EXIT,
      NORMAL,
-     (LONG) msg_but_2,
+     (LONG) "",
      26, 7, 16, 1 },
 
    { 0, -1, -1, G_BUTTON,                    /*** 9 ***/
      SELECTABLE|DEFAULT|EXIT|LASTOB,
      NORMAL,
-     (LONG) msg_but_3,
+     (LONG) "",
      43, 7, 16, 1 },
 
 #define TR2 34
@@ -625,8 +619,19 @@ void gem_rsc_init()
 void gem_rsc_fixit()
 {
     register int i=0;
+    OBJECT *tree, *p;
 
     for(i = 0 ; i < RS_NOBS ; i++) {
         rs_obfix((LONG)rs_obj, i);
     } 
+
+    /*
+     * Set up message & button buffers for form_alert().
+     * We must do this *after* the object fixup has been done!
+     */
+    tree = rs_tree[DIALERT];
+    for (i = 0, p = tree+MSGOFF; i < MAX_LINENUM; i++, p++)
+        p->ob_spec = (LONG)&msg_str[i];
+    for (i = 0, p = tree+BUTOFF; i < MAX_BUTNUM; i++, p++)
+        p->ob_spec = (LONG)&msg_but[i];
 }

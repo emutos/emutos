@@ -3738,5 +3738,4 @@ Start... early ages
 2012-06-29
 - aes/gemfmalt.c aes/gem_rsc.c aes/gem_rsc.h: Replace hardcoded numbers
   with #defines for alert msg/button sizes. (RFB)
-
-  hardcoded numbers for alert msg/
+- aes/gem_rsc.c: Set up ptrs to alert msg/button buffers dynamically. (RFB)
