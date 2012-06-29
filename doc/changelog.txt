@@ -3740,3 +3740,4 @@ Start... early ages
   with #defines for alert msg/button sizes. (RFB)
 - aes/gem_rsc.c: Set up ptrs to alert msg/button buffers dynamically. (RFB)
 - aes/geminit.c: Code cleanup: use #define for tree number of desktop. (RFB)
+- aes/gem_rsc.c: Standardise contents of last object. (RFB)

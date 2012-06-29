@@ -83,9 +83,9 @@ static const TEDINFO rs_tedinfo_rom[] = {
       (LONG)rs_str_xF,
       IBM, 1, TE_LEFT, 4352, 0, 0, 13, 16 },
 
-    { (LONG)"\200",
-      (LONG)"\200",
-      (LONG)"\200",
+    { 0L,
+      (LONG)"",
+      (LONG)"",
       IBM, 1, TE_CNTR, 4352, 0, 1, 2, 2 }
 };
 
