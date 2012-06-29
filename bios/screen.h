@@ -43,7 +43,6 @@
 
 /* misc routines */
 WORD check_moderez(WORD moderez);
-WORD get_monitor_type(void);
 void initialise_palette_registers(WORD rez,WORD mode);
 
 /* hardware dependant xbios routines */
@@ -115,6 +114,7 @@ WORD esetsmear(WORD mode);
 void screen_init(void);
 void set_rez_hacked(void);
 int rez_changeable(void);
+WORD get_monitor_type(void);
 
 /* hardware independant xbios routines */
 

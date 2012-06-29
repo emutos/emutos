@@ -86,29 +86,6 @@ static const WORD tt_dflt_palette[] = {
 };
 #endif
 
-/* get monitor type (same encoding as VgetMonitor()) */
-WORD get_monitor_type(void)
-{
-    if (FALSE) {
-        /* Dummy case for conditional compilation */
-    }
-#if CONF_WITH_VIDEL
-    else if (has_videl) {
-        return vmontype();
-    }
-#endif
-    else {
-#if CONF_WITH_SHIFTER
-        volatile UBYTE *gpip = (UBYTE *)0xfffffa01;
-
-        if (*gpip & 0x80)       /* colour monitor */
-            return 1;
-#endif
-        return 0;               /* monochrome monitor */
-    }
-}
-
-
 /* xbios routines */
 
 #if CONF_WITH_TT_SHIFTER
@@ -638,6 +615,28 @@ int rez;
         return TRUE;
 #endif
     return FALSE;
+}
+
+/* get monitor type (same encoding as VgetMonitor()) */
+WORD get_monitor_type(void)
+{
+    if (FALSE) {
+        /* Dummy case for conditional compilation */
+    }
+#if CONF_WITH_VIDEL
+    else if (has_videl) {
+        return vmontype();
+    }
+#endif
+    else {
+#if CONF_WITH_SHIFTER
+        volatile UBYTE *gpip = (UBYTE *)0xfffffa01;
+
+        if (*gpip & 0x80)       /* colour monitor */
+            return MON_COLOR;
+#endif
+        return MON_MONO;        /* monochrome monitor */
+    }
 }
 
 /* calculate initial VRAM size based on video hardware */
