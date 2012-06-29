@@ -119,6 +119,10 @@
  *  v2.1    roger burrows, june/2012
  *          . handle case when 'tree_start' string doesn't match
  *          . fix license specification text
+ *
+ *  v2.2    roger burrows, june/2012
+ *          . fix bug: the identification comments in the generated .c
+ *            file were not always accurate
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -292,7 +296,7 @@ typedef struct {
  *  our own defines & structures
  */
 #define PROGRAM_NAME    "erd"
-#define VERSION         "v2.1"
+#define VERSION         "v2.2"
 #define MAX_STRLEN      200         /* max size for internal string areas */
 #define NLS             "N_("       /* the macro used in EmuTOS for NLS support*/
 
@@ -2152,13 +2156,21 @@ int i;
 DEF_ENTRY *d;
 
     /* insert sequencing number */
-    for (i = 0, d = def; i < n; i++, d++)
-        if ((d->type == DEF_DIALOG)
-         || (d->type == DEF_MENU)
-         || (d->type == DEF_OBJECT))
+    for (i = 0, d = def; i < n; i++, d++) {
+        switch(d->type) {
+        case DEF_DIALOG:
+        case DEF_MENU:
+        case DEF_OBJECT:
             d->seq = 0;
-        else d->seq = 1;
-
+            break;
+        case DEF_ALERT:
+        case DEF_FREESTR:
+            d->seq = 1;
+            break;
+        default:
+            d->seq = 2;
+        }
+    }
     qsort(def,n,sizeof(DEF_ENTRY),cmp_def);
 }
 
