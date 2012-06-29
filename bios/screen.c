@@ -89,18 +89,21 @@ static const WORD tt_dflt_palette[] = {
 /* get monitor type (same encoding as VgetMonitor()) */
 WORD get_monitor_type(void)
 {
+    if (FALSE) {
+        /* Dummy case for conditional compilation */
+    }
 #if CONF_WITH_VIDEL
-    if (has_videl) {
+    else if (has_videl) {
         return vmontype();
     }
-    else
 #endif
-    {
+    else {
+#if CONF_WITH_SHIFTER
         volatile UBYTE *gpip = (UBYTE *)0xfffffa01;
 
         if (*gpip & 0x80)       /* colour monitor */
             return 1;
-
+#endif
         return 0;               /* monochrome monitor */
     }
 }
