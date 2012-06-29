@@ -267,14 +267,14 @@ const BITBLK rs_fimg[] = {
 };
 
 
-char msg_str_1[41];         /* Strings for the alert box */
-char msg_str_2[41];
-char msg_str_3[41];
-char msg_str_4[41];
-char msg_str_5[41];
-char msg_but_1[21];
-char msg_but_2[21];
-char msg_but_3[21];
+static char msg_str_1[MAX_LINELEN+1];   /* Strings for the alert box */
+static char msg_str_2[MAX_LINELEN+1];
+static char msg_str_3[MAX_LINELEN+1];
+static char msg_str_4[MAX_LINELEN+1];
+static char msg_str_5[MAX_LINELEN+1];
+static char msg_but_1[MAX_BUTLEN+1];
+static char msg_but_2[MAX_BUTLEN+1];
+static char msg_but_3[MAX_BUTLEN+1];
 
 
 OBJECT rs_obj[RS_NOBS];

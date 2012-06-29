@@ -47,18 +47,8 @@
 #define TOS_MAX_LINELEN 32
 #define TOS_MAX_BUTLEN  10
 
-/*
- * parameters for form_alert():
- * MUST correspond to string lengths and counts in gem_rsc.c!
- */
-#define MAX_LINENUM 5
-#define MAX_LINELEN 40
-#define MAX_BUTNUM  3
-#define MAX_BUTLEN  20
 
-#define NUM_ALOBJS 10
-#define NUM_ALSTRS 8 
-#define MAX_MSGLEN 40
+#define NUM_ALOBJS   10     /* MUST match # of objects in the DIALERT tree! */
 #define INTER_WSPACE 0
 #define INTER_HSPACE 0
 

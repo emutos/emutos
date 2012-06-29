@@ -140,6 +140,15 @@
 #define RS_NBB          11
 
 
+/*
+ * parameters for form_alert()
+ */
+#define MAX_LINENUM 5
+#define MAX_LINELEN 40
+#define MAX_BUTNUM  3
+#define MAX_BUTLEN  20
+
+
 /* The following arrays live in RAM */
 extern OBJECT  rs_obj[];
 extern TEDINFO rs_tedinfo[];

@@ -3734,3 +3734,9 @@ Start... early ages
 2012-06-28
 - tools/erd.c: Fix bug in comments in generated .c file. (RFB)
 - aes/gem_rsc.c aes/gem_rsc.h: More reorganisation for standard layout. (RFB)
+
+2012-06-29
+- aes/gemfmalt.c aes/gem_rsc.c aes/gem_rsc.h: Replace hardcoded numbers
+  with #defines for alert msg/button sizes. (RFB)
+
+  hardcoded numbers for alert msg/
