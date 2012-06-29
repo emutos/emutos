@@ -882,12 +882,12 @@ void gem_main(void)
         rs_fixit(ad_sysglo);
 
         /* get st_desk ptr */
-        rs_gaddr(ad_sysglo, R_TREE, 2, &ad_stdesk);
+        rs_gaddr(ad_sysglo, R_TREE, DESKTOP, &ad_stdesk);
 #else
         gem_rsc_fixit();
 
         /* get st_desk ptr */
-        ad_stdesk = (LONG) rs_tree[2];
+        ad_stdesk = (LONG) rs_tree[DESKTOP];
 #endif
         /* init. window vars. */
         wm_start();
