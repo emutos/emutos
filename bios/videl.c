@@ -512,7 +512,7 @@ WORD vsetmode(WORD mode)
     WORD ret;
 
     if (!has_videl)
-        return -32;
+        return 0x58; /* XBIOS function number as unimplemented error code */
 
     if (mode == -1)
         return current_video_mode;
@@ -536,7 +536,7 @@ WORD vsetmode(WORD mode)
 WORD vmontype(void)
 {
     if (!has_videl)
-        return -32;
+        return 0x59; /* XBIOS function number as unimplemented error code */
 
     return ((*(volatile UBYTE *)0xffff8006) >> 6) & 3;
 }
@@ -544,12 +544,12 @@ WORD vmontype(void)
 /*
  * Set external video sync mode
  */
-void vsetsync(WORD external)
+WORD vsetsync(WORD external)
 {
     UWORD spshift;
 
     if (!has_videl)
-        return;
+        return 0x5a; /* XBIOS function number as unimplemented error code */
 
     if (external & 0x01)            /* external clock wanted? */
         *(volatile BYTE *)SYNCMODE |= 0x01;
@@ -566,6 +566,8 @@ void vsetsync(WORD external)
     else spshift &= 0xffbf;
 
     *(volatile UWORD *)SPSHIFT = spshift;
+
+    return 0; /* OK */
 }
 
 /*
@@ -578,7 +580,7 @@ LONG vgetsize(WORD mode)
     WORD vctl, monitor;
 
     if (!has_videl)
-        return -32;
+        return 0x5b; /* XBIOS function number as unimplemented error code */
 
     monitor = vmontype();
 
@@ -658,7 +660,7 @@ static int use_ste_palette(WORD videomode)
  * address | 0x01      load first 16 Falcon palette regs from address
  *       0 | 0x01      load 256 Falcon palette regs from falcon_shadow_palette[]
  */
-void vsetrgb(WORD index,WORD count,LONG *rgb)
+WORD vsetrgb(WORD index,WORD count,LONG *rgb)
 {
     LONG *shadow, *source;
     union {
@@ -668,14 +670,14 @@ void vsetrgb(WORD index,WORD count,LONG *rgb)
     WORD limit;
 
     if (!has_videl)
-        return;
+        return 0x5d; /* XBIOS function number as unimplemented error code */
 
     if ((index < 0) || (count <= 0))
-        return;
+        return -1; /* Generic error */
 
     limit = (get_videl_bpp()<=4) ? 16 : 256;
     if ((index+count) > limit)
-        return;
+        return -1; /* Generic error */
 
     /*
      * we always update the Falcon shadow palette, since that's
@@ -700,16 +702,18 @@ void vsetrgb(WORD index,WORD count,LONG *rgb)
     if (use_ste_palette(vsetmode(-1))) {
         convert2ste(ste_shadow_palette,falcon_shadow_palette);
         colorptr = ste_shadow_palette;
-        return;
+        return 0; /* OK */
     }
 
     colorptr = (limit==256) ? (WORD *)0x01L : (WORD *)((LONG)falcon_shadow_palette|0x01L);
+
+    return 0; /* OK */
 }
 
 /*
  * get palette registers
  */
-void vgetrgb(WORD index,WORD count,LONG *rgb)
+WORD vgetrgb(WORD index,WORD count,LONG *rgb)
 {
     LONG *shadow;
     union {
@@ -719,14 +723,14 @@ void vgetrgb(WORD index,WORD count,LONG *rgb)
     WORD limit;
 
     if (!has_videl)
-        return;
+        return 0x5e; /* XBIOS function number as unimplemented error code */
 
     if ((index < 0) || (count <= 0))
-        return;
+        return -1; /* Generic error */
 
     limit = (get_videl_bpp()<=4) ? 16 : 256;
     if ((index+count) > limit)
-        return;
+        return -1; /* Generic error */
 
     shadow = falcon_shadow_palette + index;
     while(count--) {
@@ -736,6 +740,8 @@ void vgetrgb(WORD index,WORD count,LONG *rgb)
         u.b[0] = 0x00;
         *rgb++ = u.l;
     }
+
+    return 0; /* OK */
 }
 
 /*

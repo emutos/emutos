@@ -83,6 +83,13 @@ typedef struct {
 void initialise_falcon_palette(WORD mode);
 const VMODE_ENTRY *lookup_videl_mode(WORD mode,WORD monitor);
 
+WORD vsetmode(WORD mode);
+WORD vmontype(void);
+WORD vsetsync(WORD external);
+LONG vgetsize(WORD mode);
+WORD vsetrgb(WORD index,WORD count,LONG *rgb);
+WORD vgetrgb(WORD index,WORD count,LONG *rgb);
+
 extern WORD current_video_mode;
 
 #endif /* CONF_WITH_VIDEL */

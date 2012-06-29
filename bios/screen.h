@@ -60,12 +60,6 @@ void esetpalette(WORD index,WORD count,WORD *rgb);
 void egetpalette(WORD index,WORD count,WORD *rgb);
 WORD esetgray(WORD mode);
 WORD esetsmear(WORD mode);
-WORD vsetmode(WORD mode);
-WORD vmontype(void);
-void vsetsync(WORD external);
-LONG vgetsize(WORD mode);
-void vsetrgb(WORD index,WORD count,LONG *rgb);
-void vgetrgb(WORD index,WORD count,LONG *rgb);
 WORD vfixmode(WORD mode);
 
 /* pallette color definitions */

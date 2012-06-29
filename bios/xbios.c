@@ -25,6 +25,7 @@
 #include "mfp.h"
 #include "machine.h"
 #include "screen.h"
+#include "videl.h"
 #include "sound.h"
 #include "floppy.h"
 #include "disk.h"

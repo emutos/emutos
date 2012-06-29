@@ -3743,3 +3743,5 @@ Start... early ages
 - aes/gem_rsc.c: Standardise contents of last object. (RFB)
 - aes/geminit.c aes/gem_rsc.c aes/gem_rsc.h aes/gemfmalt.c aes/gemsuper.c:
   Renamed GEM resource bitblks for future ERD compatibility. (RFB)
+- bios/screen.h bios/videl.c bios/videl.h bios/xbios.c: Fixed the return value
+  of VIDEL XBIOS functions when there is no VIDEL. (VRI)
