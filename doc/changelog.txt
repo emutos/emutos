@@ -3733,3 +3733,4 @@ Start... early ages
 
 2012-06-28
 - tools/erd.c: Fix bug in comments in generated .c file. (RFB)
+- aes/gem_rsc.c aes/gem_rsc.h: More reorganisation for standard layout. (RFB)

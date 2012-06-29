@@ -4,8 +4,6 @@
  *       This software is licenced under the GNU Public License.
  *       Please see LICENSE.TXT for further information.
  */
-
-
 #define FSELECTR        0
 #define FSTITLE         1
 #define FSDIRECT        2
@@ -133,6 +131,13 @@
 #define MICE06          9
 
 #define MICE07          10
+
+
+#define RS_NOBS         37
+#define RS_NTREE        3
+#define RS_NTED         13
+#define RS_NIB          0
+#define RS_NBB          11
 
 
 /* The following arrays live in RAM */
