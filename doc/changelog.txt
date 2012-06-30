@@ -3753,3 +3753,4 @@ Start... early ages
 - desk/desktop.rsc tools/erd.c: Fix handling of backslash in strings. (RFB)
 - aes/gemfmalt.c aes/geminit.c aes/gem_rsc.c aes/gem_rsc.h: Renamed trees
   array for (future) ERD compatibility. (RFB)
+- tools/erd.c: New version of ERD that also handles the GEM resource. (RFB)
