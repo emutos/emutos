@@ -3748,3 +3748,6 @@ Start... early ages
 - bios/lineainit.c bios/screen.h bios/videl.h desk/deskapp.c: Moved VIDEL
   functions declarations to videl.h.
 - bios/screen.c vdi/vdi_control.c: Cleaned up get_monitor_type(). (VRI)
+
+2012-06-30
+- desk/desktop.rsc tools/erd.c: Fix handling of backslash in strings. (RFB)

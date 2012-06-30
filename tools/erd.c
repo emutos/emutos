@@ -1688,7 +1688,7 @@ char *d, *s;
 int i;
 
     for (i = 0, d = dest, s = src; (i < len) && *s; i++, s++) {
-        if (*s == '"')          /* we need to escape double quotes */
+        if ((*s == '"') || (*s == '\\'))        /* we need to escape double quotes & backslashes */
             *d++ = '\\';
         if (!isprint((unsigned char)*s))        /* or convert to octal if not printable */
             d += sprintf(d,"\\%03o",*s);
