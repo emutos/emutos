@@ -3755,3 +3755,4 @@ Start... early ages
   array for (future) ERD compatibility. (RFB)
 - tools/erd.c: New version of ERD that also handles the GEM resource. (RFB)
 - tools/erd.c: Handle free strings/alerts more than 200 bytes long. (RFB)
+- aes/gem.def aes/gem.rsc: Add recreated GEM resource files. (RFB)
