@@ -261,7 +261,7 @@ WORD fm_alert(WORD defbut, LONG palstr)
 #ifdef USE_GEM_RSC
         rs_gaddr(ad_sysglo, R_TREE, DIALERT, &tree);
 #else
-        tree = (LONG) rs_tree[DIALERT];
+        tree = (LONG) rs_trees[DIALERT];
 #endif
         gsx_mfset(ad_armice);
 

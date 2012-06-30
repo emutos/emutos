@@ -258,7 +258,7 @@ static void fs_start(void)
 #ifdef USE_GEM_RSC
         rs_gaddr(ad_sysglo, R_TREE, FSELECTR, (LONG *)&tree);
 #else
-        tree = rs_tree[FSELECTR];
+        tree = rs_trees[FSELECTR];
 #endif
         ad_fstree = (LONG)tree;
         ob_center((LONG)tree, &gl_rfs);
@@ -887,7 +887,7 @@ void gem_main(void)
         gem_rsc_fixit();
 
         /* get st_desk ptr */
-        ad_stdesk = (LONG) rs_tree[DESKTOP];
+        ad_stdesk = (LONG) rs_trees[DESKTOP];
 #endif
         /* init. window vars. */
         wm_start();

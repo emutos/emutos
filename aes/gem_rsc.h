@@ -154,7 +154,7 @@ extern OBJECT  rs_obj[];
 extern TEDINFO rs_tedinfo[];
 
 /* This array lives in ROM and points to RAM data */
-extern OBJECT * const rs_tree[];
+extern OBJECT * const rs_trees[];
 
 /* The following resource data live in ROM */
 extern const char * const rs_fstr[];

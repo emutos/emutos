@@ -507,7 +507,7 @@ static const OBJECT rs_obj_rom[] = {
 };
 
 
-OBJECT * const rs_tree[] = {
+OBJECT * const rs_trees[] = {
     &rs_obj[TR0],
     &rs_obj[TR1],
     &rs_obj[TR2]
@@ -629,7 +629,7 @@ void gem_rsc_fixit()
      * Set up message & button buffers for form_alert().
      * We must do this *after* the object fixup has been done!
      */
-    tree = rs_tree[DIALERT];
+    tree = rs_trees[DIALERT];
     for (i = 0, p = tree+MSGOFF; i < MAX_LINENUM; i++, p++)
         p->ob_spec = (LONG)&msg_str[i];
     for (i = 0, p = tree+BUTOFF; i < MAX_BUTNUM; i++, p++)
