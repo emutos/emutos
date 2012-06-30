@@ -1,38 +1,45 @@
-Modifying the desktop resource in EmuTOS
-========================================
-The desktop resource is now maintained in the resource file desktop.rsc
-and its corresponding definitions file, desktop.dfn.  Changes are made
-"offline" with a standard resource editor, and the changed file(s)
-replace the existing ones.  The make process uses a special-purpose
-resource decompiler, erd (see below), to convert the .rsc/.dfn files
-into C source code which is then compiled into the EmuTOS image(s).
+Modifying resources in EmuTOS
+=============================
+There are two built-in resource files in EmuTOS: the desktop and the
+AES/GEM.  Both are now maintained in resource files rather than C
+source code; the desktop uses desktop.rsc/desktop.dfn and the AES/GEM
+uses gem.rsc/gem.def.  Changes are made "offline" with a standard
+resource editor, and the changed file(s) replace the existing ones.
+The make process uses special-purpose resource decompilers erd and
+grd (see below), to convert the .rsc/.dfn/.def files into C source
+code which is then compiled into the EmuTOS image(s).  Both erd and
+grd are built from the same source code, with some compile-time and
+run-time differences.
 
-Tips on using a resource editor with the current EmuTOS desktop resource
-========================================================================
+Tips on using a resource editor with the current EmuTOS resources
+=================================================================
 1. Atari TOS and most resource editors support a maximum of 30 or 31
    characters per line in an alert; however, EmuTOS supports up to 40
    characters/line.  If you need to edit an alert with lines longer
-   than the standard, you will probably need to make your resource
-   editor treat them as strings to avoid being mangled due to line
-   truncation.
+   than the standard, you may need to make your resource editor treat
+   them as strings to avoid mangling due to line truncation.
 2. Some resource editors (such as Interface) have an option to optimize
    spaces in menu items.  You may need to disable this to avoid the
    "Sort by" menu items from being altered.
-3. When you add a dialog or a free string/alert, *where* you add it
-   will affect whether it is compiled conditionally or not.  If you
-   want it to be compiled conditionally, you should add it at the end.
-   If you want it to be always compiled, you must add it before the
-   start of the conditionally-compiled items; this is currently
-   specified as ADTTREZ for dialogs, STNOOPEN for free strings/alerts.
+3. The generated C code for the desktop resource includes #ifdefs for
+   conditionally-compiled code; this allows code space to be minimised
+   for the 192K ROMs (see the list of EmuTOS-specific features below
+   for more details).  When you add a dialog or a free string/alert to
+   the desktop resource, *where* you add it will affect whether it is
+   compiled conditionally or not.  If you want it to be compiled
+   conditionally, you should add it at the end.  If you want it to
+   be always compiled, you *must* add it before the start of the
+   conditionally-compiled items; this is currently specified as ADTTREZ
+   for dialogs, STNOOPEN for free strings/alerts.
 
-
-erd: the EmuDesk Resource Decompiler
-====================================
-This program is designed to decompile the EmuTOS desktop RSC file 
-into .c and .h files, which are input to the EmuTOS make process.
-It is similar to a general-purpose resource decompiler, but has a
-number of EmuTOS-specific additions/changes, as well as a number
-of deliberate omissions.
+erd/grd: the EmuTOS Resource Decompilers
+========================================
+These programs are compiled from the same source code; grd is generated
+iff the preprocessor symbol GEM_RSC is defined.  They decompile the
+desktop resource file or AES/GEM resource file into .c and .h files,
+which are input to the EmuTOS make process.  The programs are similar
+to a general-purpose resource decompiler, but have a number of EmuTOS-
+specific additions/changes, as well as a number of deliberate omissions.
 
 EmuTOS-specific features
 ------------------------
@@ -48,19 +55,19 @@ EmuTOS-specific features
    in the N_() macro.  This allows the EmuTOS multi-language support
    to identify this as a string to be translated.
    Additionally, strings consisting of all dashes (which are used to
-   separate menu items) are also enclosed in N_().  Although the
-   string itself does not need to be translated, its length may
-   need to change to correspond to changes in menu item lengths, and
-   enclosing the string in the N_() macro makes the string visible to
-   the translation process.
+   separate menu items in the desktop) are also enclosed in N_().
+   Although the string itself does not need to be translated, its
+   length may need to change to correspond to changes in menu item
+   lengths, and enclosing the string in the N_() macro makes the string
+   visible to the translation process.
    These actions may cause some strings to be unnecessarily marked as
    to-be-translated; therefore, before enclosing a string with N_(),
    the program references a "no translate" array containing strings
    that should _not_ be so enclosed.
-3. In order to save space in the generated resource file when compiling
-   for the 192K ROM images, the generated code for certain items is
-   surrounded by a #ifdef/#endif wrapper.  This is based on three
-   program-supplied values:
+3. In order to save space in the generated desktop resource file when
+   compiling for the 192K ROM images, the generated code for certain
+   items is surrounded by a #ifdef/#endif wrapper.  This is based on
+   three program-supplied values:
        . a starting free string name
        . a starting tree name
        . the #ifdef string (currently "#ifndef TARGET_192").
@@ -70,9 +77,6 @@ EmuTOS-specific features
    in wrapped trees will also be wrapped.  Note that, at this time, this
    process does NOT extend to the images pointed to by bitblks/iconblks,
    but this could be added with some extra work.
-   This method of selecting items to be wrapped replaces the search
-   for the word "trash" in the text, used in previous versions of
-   ERD.
 4. Several other features reduce ROM memory requirements, as follows:
    (a) duplicate image data is automatically eliminated; multiple
        BITBLKs may point to the same image data.
@@ -99,10 +103,11 @@ later, it should be easy to add the appropriate code to the decompiler.
 
 Program usage
 -------------
-The program is invoked from the shell/commandline by:
-    erd [-d] [-p<prefix>] [-v] <RSCfile> <Cfile>
+The programs are invoked from the shell/commandline by:
+    <program> [-d] [-p<prefix>] [-v] <RSCfile> <Cfile>
 
 where:
+    <program>   is erd for the desktop, grd for the AES/GEM, decompiler
     -d          requests debugging output
     -p          specifies the prefix to apply to the names of all
                 globally-visible generated data items
@@ -131,5 +136,5 @@ Notes:
     inserted between the prefix and the array name.  For example, a
     prefix of "my" will prefix each of the array names in the .c file
     with "my_".
-    NOTE: the current version of EmuTOS _requires_ a prefix of "desk"
-    (i.e. you should specify -pdesk).
+    NOTE: the current version of the EmuTOS desktop _requires_ a prefix
+    of "desk" (i.e. you should always specify -pdesk).
