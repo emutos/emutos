@@ -306,7 +306,7 @@ typedef struct {
 #define PROGRAM_NAME    "erd"
 #endif
 #define VERSION         "v3.0"
-#define MAX_STRLEN      200         /* max size for internal string areas */
+#define MAX_STRLEN      300         /* max size for internal string areas */
 #define NLS             "N_("       /* the macro used in EmuTOS for NLS support*/
 
 /*
