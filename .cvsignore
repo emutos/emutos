@@ -7,6 +7,7 @@ tounix
 mkheader
 bug
 erd
+grd
 mkrom
 local.mk
 dsm.txt
