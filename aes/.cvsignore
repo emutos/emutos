@@ -1,1 +1,3 @@
 *.tr.c
+gem_rsc.c
+gem_rsc.h
