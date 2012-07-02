@@ -600,6 +600,16 @@ static int shifter_rez_changeable(void)
     return (rez != ST_HIGH);    /* can't change if mono monitor */
 }
 
+static WORD shifter_get_monitor_type(void)
+{
+    volatile UBYTE *gpip = (UBYTE *)0xfffffa01;
+
+    if (*gpip & 0x80)
+        return MON_COLOR;
+    else
+        return MON_MONO;
+}
+
 #endif /* CONF_WITH_SHIFTER */
 
 /*
@@ -627,23 +637,16 @@ int rez_changeable(void)
 /* get monitor type (same encoding as VgetMonitor()) */
 WORD get_monitor_type(void)
 {
-    if (FALSE) {
-        /* Dummy case for conditional compilation */
-    }
 #if CONF_WITH_VIDEL
-    else if (has_videl) {
+    if (has_videl)
         return vmontype();
-    }
 #endif
-    else {
-#if CONF_WITH_SHIFTER
-        volatile UBYTE *gpip = (UBYTE *)0xfffffa01;
 
-        if (*gpip & 0x80)       /* colour monitor */
-            return MON_COLOR;
+#if CONF_WITH_SHIFTER
+    return shifter_get_monitor_type();
+#else
+    return MON_MONO;    /* fake monochrome monitor */
 #endif
-        return MON_MONO;        /* monochrome monitor */
-    }
 }
 
 /* calculate initial VRAM size based on video hardware */
