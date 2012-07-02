@@ -3762,3 +3762,4 @@ Start... early ages
 
 2012-07-02
 - aes/.cvsignore: Added missing gem_rsc.c gem_rsc.h. (VRI)
+- bios/screen.c: Refactored rez_changeable(). (VRI)

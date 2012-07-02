@@ -586,6 +586,22 @@ void set_rez_hacked(void)
     rez_was_hacked = TRUE;
 }
 
+#if CONF_WITH_SHIFTER
+
+static int shifter_rez_changeable(void)
+{
+    int rez = Getrez();
+
+#if CONF_WITH_TT_SHIFTER
+    if (has_tt_shifter)
+        return (rez != TT_HIGH);
+#endif
+
+    return (rez != ST_HIGH);    /* can't change if mono monitor */
+}
+
+#endif /* CONF_WITH_SHIFTER */
+
 /*
  * Check if resolution can be changed
  *
@@ -593,28 +609,19 @@ void set_rez_hacked(void)
  */
 int rez_changeable(void)
 {
-#if CONF_WITH_SHIFTER
-int rez;
-
     if (rez_was_hacked)
         return FALSE;
 
 #if CONF_WITH_VIDEL
-    if (has_videl)      /* can't change if real ST monochrome monitor */
-        return VgetMonitor() ? TRUE : FALSE;
+    if (has_videl)  /* can't change if real ST monochrome monitor */
+        return (VgetMonitor() != MON_MONO);
 #endif
 
-    rez = Getrez();
-
-#if CONF_WITH_TT_SHIFTER
-    if (has_tt_shifter)
-        return (rez != TT_HIGH)? TRUE : FALSE;
-#endif
-
-    if (rez != ST_HIGH) /* can't change if mono monitor */
-        return TRUE;
-#endif
+#if CONF_WITH_SHIFTER
+    return shifter_rez_changeable();
+#else
     return FALSE;
+#endif
 }
 
 /* get monitor type (same encoding as VgetMonitor()) */
