@@ -653,17 +653,15 @@ WORD get_monitor_type(void)
 static unsigned long initial_vram_size()
 {
 #if CONF_WITH_VIDEL
-    if (has_videl) {
+    if (has_videl)
         return FALCON_VRAM_SIZE;
-    }
-    else
 #endif
+
 #if CONF_WITH_TT_SHIFTER
-    if (has_tt_shifter) {
+    if (has_tt_shifter)
         return TT_VRAM_SIZE;
-    }
-    else
 #endif
+
     return ST_VRAM_SIZE;
 }
 

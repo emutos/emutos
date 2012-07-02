@@ -3764,3 +3764,4 @@ Start... early ages
 - aes/.cvsignore: Added missing gem_rsc.c gem_rsc.h. (VRI)
 - bios/screen.c: Refactored rez_changeable(). (VRI)
 - bios/screen.c: Refactored get_monitor_type(). (VRI)
+- bios/screen.c: Refactored initial_vram_size(). (VRI)
