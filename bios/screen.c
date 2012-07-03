@@ -47,7 +47,81 @@ static const WORD dflt_palette[] = {
     RGB_LTBLUE, RGB_LTMAGENTA, RGB_LTCYAN, RGB_BLACK
 };
 
+/*
+ * Initialise ST(e) palette registers
+ */
+static void initialise_ste_palette(WORD mask)
+{
+    volatile WORD *col_regs = (WORD *) ST_PALETTE_REGS;
+    int i;
+
+    for (i = 0; i < 16; i++)
+        col_regs[i] = dflt_palette[i] & mask;
+}
+
+/*
+ * Fixup ST(e) palette registers
+ */
+static void fixup_ste_palette(WORD rez)
+{
+    volatile WORD *col_regs = (WORD *) ST_PALETTE_REGS;
+
+    if (rez == ST_MEDIUM)
+        col_regs[3] = col_regs[15];
+    else if (rez == ST_HIGH)
+        col_regs[1] = col_regs[15];
+}
+
+static WORD shifter_check_moderez(WORD moderez)
+{
+    WORD return_rez;
+
+    /* handle old-fashioned rez :-) */
+    if (moderez > 0)                        /* ignore mode values */
+        return 0;
+
+    return_rez = moderez & 0x00ff;
+
 #if CONF_WITH_TT_SHIFTER
+    if (has_tt_shifter) {
+        if (return_rez == TT_HIGH)
+            return_rez = TT_MEDIUM;
+    } else
+#endif
+    {
+        if (return_rez > ST_MEDIUM)
+            return_rez = ST_MEDIUM;
+    }
+
+    return (return_rez==getrez())?0:(0xff00|return_rez);
+}
+
+static int shifter_rez_changeable(void)
+{
+    int rez = Getrez();
+
+#if CONF_WITH_TT_SHIFTER
+    if (has_tt_shifter)
+        return (rez != TT_HIGH);
+#endif
+
+    return (rez != ST_HIGH);    /* can't change if mono monitor */
+}
+
+static WORD shifter_get_monitor_type(void)
+{
+    volatile UBYTE *gpip = (UBYTE *)0xfffffa01;
+
+    if (*gpip & 0x80)
+        return MON_COLOR;
+    else
+        return MON_MONO;
+}
+
+#endif /* CONF_WITH_SHIFTER */
+
+#if CONF_WITH_TT_SHIFTER
+
 static const WORD tt_dflt_palette[] = {
  TTRGB_WHITE, TTRGB_RED, TTRGB_GREEN, TTRGB_YELLOW,
  TTRGB_BLUE, TTRGB_MAGENTA, TTRGB_CYAN, TTRGB_LTGRAY,
@@ -84,11 +158,8 @@ static const WORD tt_dflt_palette[] = {
  0x0024, 0x0034, 0x0044, 0x0043, 0x0042, 0x0041, 0x0040, 0x0140,
  0x0240, 0x0340, 0x0440, 0x0430, 0x0420, 0x0410, TTRGB_WHITE, TTRGB_BLACK
 };
-#endif
 
 /* xbios routines */
-
-#if CONF_WITH_TT_SHIFTER
 
 /*
  * TT shifter functions
@@ -246,34 +317,6 @@ WORD esetsmear(WORD mode)
     return (old&0x80)?1:0;
 }
 
-#endif /* CONF_WITH_TT_SHIFTER */
-
-/*
- * Initialise ST(e) palette registers
- */
-static void initialise_ste_palette(WORD mask)
-{
-    volatile WORD *col_regs = (WORD *) ST_PALETTE_REGS;
-    int i;
-
-    for (i = 0; i < 16; i++)
-        col_regs[i] = dflt_palette[i] & mask;
-}
-
-/*
- * Fixup ST(e) palette registers
- */
-static void fixup_ste_palette(WORD rez)
-{
-    volatile WORD *col_regs = (WORD *) ST_PALETTE_REGS;
-
-    if (rez == ST_MEDIUM)
-        col_regs[3] = col_regs[15];
-    else if (rez == ST_HIGH)
-        col_regs[1] = col_regs[15];
-}
-
-#if CONF_WITH_TT_SHIFTER
 /*
  * Initialise TT palette
  */
@@ -291,33 +334,8 @@ static void initialise_tt_palette(WORD rez)
         ttcol_regs[1] = ttcol_regs[15];
     }
 }
-#endif
 
-static WORD shifter_check_moderez(WORD moderez)
-{
-    WORD return_rez;
-
-    /* handle old-fashioned rez :-) */
-    if (moderez > 0)                        /* ignore mode values */
-        return 0;
-
-    return_rez = moderez & 0x00ff;
-
-#if CONF_WITH_TT_SHIFTER
-    if (has_tt_shifter) {
-        if (return_rez == TT_HIGH)
-            return_rez = TT_MEDIUM;
-    } else
-#endif
-    {
-        if (return_rez > ST_MEDIUM)
-            return_rez = ST_MEDIUM;
-    }
-
-    return (return_rez==getrez())?0:(0xff00|return_rez);
-}
-
-#endif /* CONF_WITH_SHIFTER */
+#endif /* CONF_WITH_TT_SHIFTER */
 
 /*
  * Check specified mode/rez to see if we should change; used in early
@@ -578,32 +596,6 @@ void set_rez_hacked(void)
 {
     rez_was_hacked = TRUE;
 }
-
-#if CONF_WITH_SHIFTER
-
-static int shifter_rez_changeable(void)
-{
-    int rez = Getrez();
-
-#if CONF_WITH_TT_SHIFTER
-    if (has_tt_shifter)
-        return (rez != TT_HIGH);
-#endif
-
-    return (rez != ST_HIGH);    /* can't change if mono monitor */
-}
-
-static WORD shifter_get_monitor_type(void)
-{
-    volatile UBYTE *gpip = (UBYTE *)0xfffffa01;
-
-    if (*gpip & 0x80)
-        return MON_COLOR;
-    else
-        return MON_MONO;
-}
-
-#endif /* CONF_WITH_SHIFTER */
 
 /*
  * Check if resolution can be changed
