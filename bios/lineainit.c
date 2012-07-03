@@ -11,12 +11,9 @@
  */
 
 #include "config.h"
-#include "tosvars.h"
 #include "lineavars.h"
-#include "font.h"
 #include "kprint.h"
 #include "screen.h"
-#include "machine.h"
 
 #define DBG_LINEA 0
 
