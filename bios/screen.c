@@ -32,8 +32,8 @@
 
 #define DBG_SCREEN 0
 
-static unsigned long initial_vram_size();
-static unsigned long vram_size();
+static ULONG initial_vram_size(void);
+static ULONG vram_size(void);
 static void setphys(LONG addr,int checkaddr);
 
 #if CONF_WITH_SHIFTER
@@ -159,11 +159,21 @@ static const WORD tt_dflt_palette[] = {
  0x0240, 0x0340, 0x0440, 0x0430, 0x0420, 0x0410, TTRGB_WHITE, TTRGB_BLACK
 };
 
-/* xbios routines */
-
 /*
  * TT shifter functions
  */
+
+static ULONG tt_vram_size(void)
+{
+    WORD rez = getrez();
+
+    if (rez >= TT_MEDIUM)
+        return TT_VRAM_SIZE;
+    else
+        return ST_VRAM_SIZE;
+}
+
+/* xbios routines */
 
 /*
  * Set TT shifter mode
@@ -635,7 +645,7 @@ WORD get_monitor_type(void)
 }
 
 /* calculate initial VRAM size based on video hardware */
-static unsigned long initial_vram_size()
+static ULONG initial_vram_size(void)
 {
 #if CONF_WITH_VIDEL
     if (has_videl)
@@ -651,23 +661,18 @@ static unsigned long initial_vram_size()
 }
 
 /* calculate VRAM size for current video mode */
-static unsigned long vram_size()
+static ULONG vram_size(void)
 {
 #if CONF_WITH_VIDEL
-    if (has_videl) {
+    if (has_videl)
         return videl_vram_size();
-    }
-    else
 #endif
+
 #if CONF_WITH_TT_SHIFTER
-    if (has_tt_shifter) {
-        WORD rez = getrez();
-        if (rez >= 4)
-            return TT_VRAM_SIZE;
-        return ST_VRAM_SIZE;
-    }
-    else
+    if (has_tt_shifter)
+        return tt_vram_size();
 #endif
+
     return ST_VRAM_SIZE;
 }
 

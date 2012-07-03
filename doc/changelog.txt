@@ -3770,3 +3770,4 @@ Start... early ages
 - bios/screen.c bios/videl.c bios/videl.h: Refactored check_moderez(). (VRI)
 - bios/lineainit.c bios/screen.c bios/screen.h bios/videl.c bios/videl.h:
   Added screen_get_current_mode_info(). (VRI)
+- bios/screen.c: Refactored vram_size(). (VRI)
