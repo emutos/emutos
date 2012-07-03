@@ -293,7 +293,31 @@ static void initialise_tt_palette(WORD rez)
 }
 #endif
 
+static WORD shifter_check_moderez(WORD moderez)
+{
+    WORD return_rez;
+
+    /* handle old-fashioned rez :-) */
+    if (moderez > 0)                        /* ignore mode values */
+        return 0;
+
+    return_rez = moderez & 0x00ff;
+
+#if CONF_WITH_TT_SHIFTER
+    if (has_tt_shifter) {
+        if (return_rez == TT_HIGH)
+            return_rez = TT_MEDIUM;
+    } else
 #endif
+    {
+        if (return_rez > ST_MEDIUM)
+            return_rez = ST_MEDIUM;
+    }
+
+    return (return_rez==getrez())?0:(0xff00|return_rez);
+}
+
+#endif /* CONF_WITH_SHIFTER */
 
 /*
  * Check specified mode/rez to see if we should change; used in early
@@ -312,50 +336,19 @@ static void initialise_tt_palette(WORD rez)
  */
 WORD check_moderez(WORD moderez)
 {
-#if CONF_WITH_SHIFTER
-WORD return_rez;
-int tt;
-
     if (!rez_changeable())
         return 0;
 
 #if CONF_WITH_VIDEL
-    if (has_videl) {
-        WORD current_mode, return_mode;
-
-        current_mode = get_videl_mode();
-        if (current_mode) {
-            if (moderez < 0)                /* ignore rez values */
-                return 0;
-            return_mode = vfixmode(moderez);/* adjust */
-            return (return_mode==current_mode)?0:return_mode;
-        }
-    }
+    if (has_videl)
+        return videl_check_moderez(moderez);
 #endif
 
-    /* handle old-fashioned rez :-) */
-    if (moderez > 0)                        /* ignore mode values */
-        return 0;
-
-    tt = 0;
-#if CONF_WITH_TT_SHIFTER
-    if (has_tt_shifter)
-        tt = 1;
-#endif
-
-    return_rez = moderez & 0x00ff;
-    if (tt) {
-        if (return_rez == TT_HIGH)
-            return_rez = TT_MEDIUM;
-    } else {
-        if (return_rez > ST_MEDIUM)
-            return_rez = ST_MEDIUM;
-    }
-
-    return (return_rez==getrez())?0:(0xff00|return_rez);
-#else /* CONF_WITH_SHIFTER */
+#if CONF_WITH_SHIFTER
+    return shifter_check_moderez(moderez);
+#else
     return 0;
-#endif /* CONF_WITH_SHIFTER */
+#endif
 }
 
 /*

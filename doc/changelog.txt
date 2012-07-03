@@ -3765,3 +3765,6 @@ Start... early ages
 - bios/screen.c: Refactored rez_changeable(). (VRI)
 - bios/screen.c: Refactored get_monitor_type(). (VRI)
 - bios/screen.c: Refactored initial_vram_size(). (VRI)
+
+2012-07-03
+- bios/screen.c bios/videl.c bios/videl.h: Refactored check_moderez(). (VRI)

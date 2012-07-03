@@ -97,6 +97,7 @@ UWORD get_videl_width(void);
 UWORD get_videl_height(void);
 WORD get_videl_mode(void);
 WORD vfixmode(WORD mode);
+WORD videl_check_moderez(WORD moderez);
 
 extern WORD current_video_mode;
 

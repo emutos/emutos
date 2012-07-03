@@ -791,6 +791,18 @@ WORD monitor, currentmode;
     return mode;
 }
 
+WORD videl_check_moderez(WORD moderez)
+{
+    WORD current_mode, return_mode;
+
+    if (moderez < 0)                /* ignore rez values */
+        return 0;
+
+    current_mode = get_videl_mode();
+    return_mode = vfixmode(moderez);/* adjust */
+    return (return_mode==current_mode)?0:return_mode;
+}
+
 /*
  * Initialise Falcon palette
  */
