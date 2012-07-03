@@ -266,7 +266,7 @@ static const VMODE_ENTRY nonvga_init_table[] = {
  * functions for VIDEL programming
  */
 
-UWORD get_videl_bpp(void)
+static UWORD get_videl_bpp(void)
 {
     UWORD f_shift = *(volatile UWORD *)SPSHIFT;
     UBYTE st_shift = *(volatile UBYTE *)ST_SHIFTER;
@@ -294,12 +294,12 @@ UWORD get_videl_bpp(void)
     return bits_per_pixel;
 }
 
-UWORD get_videl_width(void)
+static UWORD get_videl_width(void)
 {
     return (*(volatile UWORD *)0xffff8210) * 16 / get_videl_bpp();
 }
 
-UWORD get_videl_height(void)
+static UWORD get_videl_height(void)
 {
     UWORD vdb = *(volatile UWORD *)0xffff82a8;
     UWORD vde = *(volatile UWORD *)0xffff82aa;
@@ -801,6 +801,18 @@ WORD videl_check_moderez(WORD moderez)
     current_mode = get_videl_mode();
     return_mode = vfixmode(moderez);/* adjust */
     return (return_mode==current_mode)?0:return_mode;
+}
+
+ULONG videl_vram_size(void)
+{
+    return get_videl_width() / 8L * get_videl_height() * get_videl_bpp();
+}
+
+void videl_get_current_mode_info(UWORD *planes, UWORD *hz_rez, UWORD *vt_rez)
+{
+    *planes = get_videl_bpp();
+    *hz_rez = get_videl_width();
+    *vt_rez = get_videl_height();
 }
 
 /*

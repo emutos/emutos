@@ -115,6 +115,7 @@ void screen_init(void);
 void set_rez_hacked(void);
 int rez_changeable(void);
 WORD get_monitor_type(void);
+void screen_get_current_mode_info(UWORD *planes, UWORD *hz_rez, UWORD *vt_rez);
 
 /* hardware independant xbios routines */
 

@@ -655,7 +655,7 @@ static unsigned long vram_size()
 {
 #if CONF_WITH_VIDEL
     if (has_videl) {
-        return get_videl_width() / 8L * get_videl_height() * get_videl_bpp();
+        return videl_vram_size();
     }
     else
 #endif
@@ -669,6 +669,52 @@ static unsigned long vram_size()
     else
 #endif
     return ST_VRAM_SIZE;
+}
+
+/* Settings for the different video modes */
+struct video_mode {
+    UBYTE       planes;         // count of color planes (v_planes)
+    UWORD       hz_rez;         // screen horizontal resolution (v_hz_rez)
+    UWORD       vt_rez;         // screen vertical resolution (v_vt_rez)
+};
+
+static const struct video_mode video_mode[] = {
+    { 4,  320, 200},            /* rez=0: ST low */
+    { 2,  640, 200},            /* rez=1: ST medium */
+    { 1,  640, 400},            /* rez=2: ST high */
+#if CONF_WITH_TT_SHIFTER
+    { 0,    0,   0},            /* rez=3: invalid */
+    { 4,  640, 480},            /* rez=4: TT medium */
+    { 0,    0,  0,},            /* rez=5: invalid */
+    { 1, 1280, 960},            /* rez=6: TT high */
+    { 8,  320, 480},            /* rez=7: TT low */
+#endif    
+};
+
+static void shifter_get_current_mode_info(UWORD *planes, UWORD *hz_rez, UWORD *vt_rez)
+{
+    WORD vmode;                         /* video mode */
+
+    vmode = (sshiftmod & 7);            /* Get video mode from copy of hardware */
+#if DBG_SCREEN
+    kprintf("vmode: %d\n", vmode);
+#endif
+
+    *planes = video_mode[vmode].planes;
+    *hz_rez = video_mode[vmode].hz_rez;
+    *vt_rez = video_mode[vmode].vt_rez;
+}
+
+void screen_get_current_mode_info(UWORD *planes, UWORD *hz_rez, UWORD *vt_rez)
+{
+#if CONF_WITH_VIDEL
+    if (has_videl) {
+        videl_get_current_mode_info(planes, hz_rez, vt_rez);
+    } else
+#endif
+    {
+        shifter_get_current_mode_info(planes, hz_rez, vt_rez);
+    }
 }
 
 /* hardware independant xbios routines */
