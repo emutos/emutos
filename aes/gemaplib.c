@@ -66,12 +66,9 @@ WORD ap_init(void)
 
         pid = rlr->p_pid;
 
-#ifdef USE_GEM_RSC
-        rs_gaddr(ad_sysglo, R_STRING, STSCDIR, &scdir);
-#else
         strcpy(tmpstr, rs_fstr[STSCDIR]);
         scdir = (LONG) tmpstr;
-#endif
+
         LBSET(scdir, gl_logdrv);                /* set drive letter     */
         sc_write(scdir);
 

@@ -255,11 +255,7 @@ static void fs_start(void)
 {
         OBJECT *tree;
 
-#ifdef USE_GEM_RSC
-        rs_gaddr(ad_sysglo, R_TREE, FSELECTR, (LONG *)&tree);
-#else
         tree = rs_trees[FSELECTR];
-#endif
         ad_fstree = (LONG)tree;
         ob_center((LONG)tree, &gl_rfs);
 }
@@ -340,14 +336,10 @@ static void sh_addpath(void)
                                                 /* old environment length*/
         oelen = (lp - (char *)ad_envrn) + 2;
                                                 /* PATH= length & new path length */
-#ifdef USE_GEM_RSC
-        rs_gaddr(ad_sysglo, R_STRING, STPATH, (LONG *)&pp);
-        rs_gaddr(ad_sysglo, R_STRING, STINPATH, (LONG *)&np);
-#else
         pp = rs_fstr[STPATH];
         strcpy(tmpstr, rs_fstr[STINPATH]);
         np = tmpstr;
-#endif
+
         pplen = strlen(pp);
         nplen = strlen(np);
 
@@ -815,27 +807,11 @@ void gem_main(void)
     gl_mowner = ctl_pd = iprocess("SCRENMGR", ctlmgr);
 
     /* load gem resource and fix it up before we go */
-#ifndef USE_GEM_RSC
     gem_rsc_init();
-#else
-    if ( !rs_readit(ad_sysglo, (LONG)"GEM.RSC") )
-    {
-        /* bad resource load, so dive out */
-        cprintf("gem_main: failed to load GEM.RSC...\n");
-    }
-    else
-#endif
     {
         /* get mice forms       */
-#ifdef USE_GEM_RSC
-        rs_gaddr(ad_sysglo, R_BIPDATA, MICE00, &ad_armice);
-        rs_gaddr(ad_sysglo, R_BIPDATA, MICE02, &ad_hgmice);
-#else
-        ad_armice = (LONG) &rs_bitblk[MICE00];
-        ad_hgmice = (LONG) &rs_bitblk[MICE02];
-#endif
-        ad_armice = LLGET(ad_armice);
-        ad_hgmice = LLGET(ad_hgmice);
+        ad_armice = *(LONG *)&rs_bitblk[MICE00];
+        ad_hgmice = *(LONG *)&rs_bitblk[MICE02];
 
         /* init button stuff    */
         gl_btrue = 0x0;
@@ -852,11 +828,7 @@ void gem_main(void)
 
         /* fix up icons         */
         for(i=0; i<3; i++) {
-#ifdef USE_GEM_RSC
-            rs_gaddr(ad_sysglo, R_BITBLK, i, (LONG *)&tmpadbi);
-#else
             tmpadbi = &rs_bitblk[NOTEBB+i];
-#endif
             memcpy((char *)&bi, tmpadbi, sizeof(BITBLK));
             gsx_trans(bi.bi_pdata, bi.bi_wb, bi.bi_pdata, bi.bi_wb, bi.bi_hl);
         }
@@ -878,17 +850,11 @@ void gem_main(void)
         ev_dclick(3, TRUE);
 
         /* fix up the GEM rsc. file now that we have an open WS */
-#ifdef USE_GEM_RSC
-        rs_fixit(ad_sysglo);
-
-        /* get st_desk ptr */
-        rs_gaddr(ad_sysglo, R_TREE, DESKTOP, &ad_stdesk);
-#else
         gem_rsc_fixit();
 
         /* get st_desk ptr */
         ad_stdesk = (LONG) rs_trees[DESKTOP];
-#endif
+
         /* init. window vars. */
         wm_start();
 
@@ -919,10 +885,6 @@ void gem_main(void)
          */
         sh_main();
 
-        /* free up resource space */
-#ifdef USE_GEM_RSC
-        rs_free(ad_sysglo);
-#endif
         /* give back the tick   */
         cli();
         gl_ticktime = gsx_tick(tiksav, &tiksav);

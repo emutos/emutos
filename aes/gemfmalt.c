@@ -258,11 +258,8 @@ WORD fm_alert(WORD defbut, LONG palstr)
         GRECT           d, t;
 
                                                 /* init tree pointer    */
-#ifdef USE_GEM_RSC
-        rs_gaddr(ad_sysglo, R_TREE, DIALERT, &tree);
-#else
         tree = (LONG) rs_trees[DIALERT];
-#endif
+
         gsx_mfset(ad_armice);
 
         fm_parse(tree, palstr, &inm, &nummsg, &mlenmsg, &numbut, &mlenbut);
@@ -287,11 +284,7 @@ WORD fm_alert(WORD defbut, LONG palstr)
               image = STOPBB;
               break;
           }
-#ifdef USE_GEM_RSC
-          rs_gaddr(ad_sysglo, R_BITBLK, image, &plong);
-#else
           plong = (LONG) &rs_bitblk[image];
-#endif
           LLSET(OB_SPEC(1), plong);
         }
                                                 /* convert to pixels    */

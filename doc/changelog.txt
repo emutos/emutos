@@ -3771,3 +3771,5 @@ Start... early ages
 - bios/lineainit.c bios/screen.c bios/screen.h bios/videl.c bios/videl.h:
   Added screen_get_current_mode_info(). (VRI)
 - bios/screen.c: Refactored vram_size(). (VRI)
+- aes/gemaplib.c aes/gemfmalt.c aes/geminit.c aes/gemrslib.c aes/gemsuper.c:
+  Remove obsolete code only generated when USE_GEM_RSC is #defined. (RFB)

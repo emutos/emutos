@@ -474,11 +474,7 @@ BYTE *rs_str(UWORD stnum)
 {
         LONG            ad_string;
 
-#ifdef USE_GEM_RSC
-        rs_gaddr(ad_sysglo, R_STRING, stnum, &ad_string);
-#else
         ad_string = (LONG) gettext( rs_fstr[stnum] );
-#endif
         strcpy(D.g_loc1, (char *) ad_string);
         return( &D.g_loc1[0] );
 }
