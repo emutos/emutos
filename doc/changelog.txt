@@ -3773,3 +3773,4 @@ Start... early ages
 - bios/screen.c: Refactored vram_size(). (VRI)
 - aes/gemaplib.c aes/gemfmalt.c aes/geminit.c aes/gemrslib.c aes/gemsuper.c:
   Remove obsolete code only generated when USE_GEM_RSC is #defined. (RFB)
+- aes/geminit.c: Code cleanup: remove previously-disabled code. (RFB)

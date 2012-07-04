@@ -892,31 +892,6 @@ void gem_main(void)
 
         /* close workstation    */
         gsx_wsclose();
-
-#if 0
-        if (gl_changerez)
-        {
-            /* Change resolution before starting over again... */
-            if (FALSE)
-            {
-                /* Dummy case for conditional compilation */
-            }
-#if CONF_WITH_SHIFTER
-            else if (gl_changerez == 1)  /* ST(e) or TT display */
-            {
-                Setscreen(-1L,-1L,gl_nextrez-2,0);
-                initialise_palette_registers(gl_nextrez-2,0);
-            }
-#endif
-#if CONF_WITH_VIDEL
-            else if (gl_changerez == 2)   /* Falcon display */
-            {
-                Setscreen(-1L, -1L, FALCON_REZ, gl_nextrez);
-                initialise_palette_registers(FALCON_REZ,gl_nextrez);
-            }
-#endif
-        }
-#endif
     }
 
     /* return GEM's 0xEF int*/
