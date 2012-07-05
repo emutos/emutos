@@ -445,5 +445,3 @@ T tested and working on an emulator or real hardware
  X      shel_envrn
  X      shel_rdef              (PC-GEM call)
  X      shel_wdef              (PC-GEM call)
- X      xgrf_stepcalc          (PC-GEM call)
- X      xgrf_2box              (PC-GEM call)

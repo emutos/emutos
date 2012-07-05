@@ -3785,3 +3785,5 @@ Start... early ages
   functions XGRF_xxx. (RFB)
 - aes/gem.rsc aes/gemsuper.c: Display function number for unsupported
   AES calls. (RFB)
+- doc/bugs.txt doc/status.txt doc/todo.txt: Miscellaneous documentation
+  updates. (RFB)

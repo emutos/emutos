@@ -8,9 +8,6 @@ BIOS/XBIOS
 - improve Mediach()
 - implement full XHDI 1.30
 - loop calibration needed for various delays in Centronics and DMA ports
-- for some reasons, the initial stack size (SUPSIZ in bios/startup.S) must be
-  bigger than 6000 words, or GFA Basic and MiNT will crash. This should be
-  fixed (so much space is really not needed here!).
 - make EmuTOS MMU aware and let it set up correct MMU tree
 
 BDOS (GEMDOS)

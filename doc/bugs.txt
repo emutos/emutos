@@ -48,9 +48,6 @@
 - In "MathMaze", game win dialog leaves some lines on screen.
 - Monopoly game board isn't drawn properly, maybe due to issues
   in filled polylines.
-- Speed of Light GEM image viewer complains for every supported
-  EmuTOS color resolution, that it doesn't support TrueColor
-  resolutions, then it exits.
 - Ramses game panics after Mediach() if floppy is missing:
   http://sourceforge.net/mailarchive/message.php?msg_id=29277256
 - 7UP hangs on exit.
