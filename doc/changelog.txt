@@ -3781,3 +3781,5 @@ Start... early ages
 2012-07-05
 - aes/gem.def aes/gem.rsc: Changed alerts to conform to standard TOS
   alert line length. (RFB)
+- aes/crysbind.h aes/gemsuper.c desk/gembind.h: Removed non-Atari AES
+  functions XGRF_xxx. (RFB)

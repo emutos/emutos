@@ -427,14 +427,6 @@ static UWORD crysbind(WORD opcode, LONG pglobal, WORD int_in[], WORD int_out[], 
           case SHEL_WDEF:
                 sh_wdef(SH_LPCMD, SH_LPDIR);
                 break;
-          case XGRF_STEPCALC:
-                gr_stepcalc( XGR_I1, XGR_I2, (GRECT *)&XGR_I3, &XGR_O1,
-                   &XGR_O2, &XGR_O3, &XGR_O4, &XGR_O5 );
-                break;
-          case XGRF_2BOX:
-                gr_2box(XGR_I4, XGR_I1, (GRECT *)&XGR_I6, XGR_I2,
-                        XGR_I3, XGR_I5 );
-                break;
           default:
                 kprintf("Bad AES function %d\n", opcode);
                 if(opcode!=0)     /* Ignore the 0 since some PRGs are this call */

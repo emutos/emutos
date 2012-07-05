@@ -113,9 +113,6 @@
 #define SHEL_ENVRN 125
 #define SHEL_RDEF 126
 #define SHEL_WDEF 127
-                                /* Extended Graphics Manager            */
-#define XGRF_STEPCALC 130
-#define XGRF_2BOX 131
 
                                         /* max sizes for arrays         */
 #define C_SIZE 4
