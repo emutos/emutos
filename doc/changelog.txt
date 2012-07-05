@@ -3787,3 +3787,4 @@ Start... early ages
   AES calls. (RFB)
 - doc/bugs.txt doc/status.txt doc/todo.txt: Miscellaneous documentation
   updates. (RFB)
+- bios/startup.S: Added Amiga ROM size marker. (VRI)

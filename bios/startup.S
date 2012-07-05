@@ -81,6 +81,13 @@ _stktop:                        // filled from top to bottom
 #if DIAGNOSTIC_CARTRIDGE
     dc.l    0xfa52235f  // diagnostic cartridge magic number
 #endif
+
+#if defined(MACHINE_AMIGA) && !defined(EMUTOS_RAM)
+    dc.w    0x1111      // 256 kB ROM
+    dc.w    0x4ef9      // jmp
+    dc.l    _main       // pointer to reset handler
+#endif
+
 _os_entry:
     bra.s   _main       // os_entry, branch to _main
 os_version:
