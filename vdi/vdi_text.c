@@ -586,27 +586,19 @@ static void make_header(Vwk * vwk)
         dest_font->top = source_font->top * 2 + 1;
         dest_font->ascent = source_font->ascent * 2 + 1;
         dest_font->half = source_font->half * 2 + 1;
-        dest_font->descent = source_font->descent * 2;
-        dest_font->bottom = source_font->bottom * 2;
-        dest_font->max_char_width = source_font->max_char_width * 2;
-        dest_font->max_cell_width = source_font->max_cell_width * 2;
-        dest_font->left_offset = source_font->left_offset * 2;
-        dest_font->right_offset = source_font->right_offset * 2;
-        dest_font->thicken = source_font->thicken * 2;
-        dest_font->ul_size = source_font->ul_size * 2;
     } else {
         dest_font->top = act_siz(vwk, source_font->top);
         dest_font->ascent = act_siz(vwk, source_font->ascent);
         dest_font->half = act_siz(vwk, source_font->half);
-        dest_font->descent = act_siz(vwk, source_font->descent);
-        dest_font->bottom = act_siz(vwk, source_font->bottom);
-        dest_font->max_char_width = act_siz(vwk, source_font->max_char_width);
-        dest_font->max_cell_width = act_siz(vwk, source_font->max_cell_width);
-        dest_font->left_offset = act_siz(vwk, source_font->left_offset);
-        dest_font->right_offset = act_siz(vwk, source_font->right_offset);
-        dest_font->thicken = act_siz(vwk, source_font->thicken);
-        dest_font->ul_size = act_siz(vwk, source_font->ul_size);
     }
+    dest_font->descent = act_siz(vwk, source_font->descent);
+    dest_font->bottom = act_siz(vwk, source_font->bottom);
+    dest_font->max_char_width = act_siz(vwk, source_font->max_char_width);
+    dest_font->max_cell_width = act_siz(vwk, source_font->max_cell_width);
+    dest_font->left_offset = act_siz(vwk, source_font->left_offset);
+    dest_font->right_offset = act_siz(vwk, source_font->right_offset);
+    dest_font->thicken = act_siz(vwk, source_font->thicken);
+    dest_font->ul_size = act_siz(vwk, source_font->ul_size);
 
     dest_font->lighten = source_font->lighten;
     dest_font->skew = source_font->skew;

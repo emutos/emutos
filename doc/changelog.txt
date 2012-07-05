@@ -3790,3 +3790,4 @@ Start... early ages
 - bios/startup.S: Added Amiga ROM size marker. (VRI)
 - aes/gemfmlib.c aes/geminit.c aes/gemlib.h aes/gemrslib.c: Made two
   strings local rather than global. (RFB)
+- vdi/vdi_text.c: Code cleanup: save space & simplify. (RFB)
