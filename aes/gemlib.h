@@ -405,8 +405,6 @@ THEGLO
  EVB        g_intevb[NUM_IEVBS];
 
  BYTE       *g_scrap;
- BYTE       *g_loc1;
- BYTE       *g_loc2;
  BYTE       *g_dir;
  BYTE       *g_dta;
  BYTE       *s_cdir;

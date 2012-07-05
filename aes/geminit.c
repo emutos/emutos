@@ -91,8 +91,6 @@ GLOBAL LONG     ad_stdesk;
 
 GLOBAL BYTE     gl_dta[128];
 GLOBAL BYTE     gl_dir[130];
-GLOBAL BYTE     gl_1loc[256];
-GLOBAL BYTE     gl_2loc[256];
 GLOBAL WORD     gl_mouse[37];
 GLOBAL LONG     ad_scdir;
 GLOBAL BYTE     gl_logdrv;
@@ -181,8 +179,6 @@ static void ini_dlongs(void)
         ad_scrap = (LONG)D.g_scrap;
         D.s_cdir = &cur_dir[0];
         ad_scdir = (LONG)D.s_cdir;
-        D.g_loc1 = &gl_1loc[0];
-        D.g_loc2 = &gl_2loc[0];
         D.g_dir = &gl_dir[0];
         ad_path = (LONG)D.g_dir;
         D.g_dta = &gl_dta[0];

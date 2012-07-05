@@ -68,6 +68,7 @@ WORD     ml_ocnt;    /* Needs to be 0 initially! */
 static LONG     ml_mnhold;
 static GRECT    ml_ctrl;
 static PD       *ml_pmown;
+static BYTE     alert_str[256]; /* must be long enough for longest alert in gem.rsc */
 
 static WORD     ml_alrt[] = 
                 {AL00CRT,AL01CRT,AL02CRT,AL03CRT,AL04CRT,AL05CRT};
@@ -391,14 +392,13 @@ WORD fm_dial(WORD fmd_type, GRECT *pt)
 
 WORD fm_show(WORD string, WORD *pwd, WORD level)
 {
-        BYTE    *alert;
         BYTE    *ad_alert;
 
-        ad_alert = alert = rs_str(string);
+        ad_alert = rs_str(string);
         if (pwd)
         {
-          sprintf(&D.g_loc2[0], alert, *pwd);
-          ad_alert = &D.g_loc2[0];
+          sprintf(alert_str, ad_alert, *pwd);
+          ad_alert = alert_str;
         }
         return( fm_alert(level, (LONG)ad_alert) );
 }

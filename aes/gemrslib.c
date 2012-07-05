@@ -72,6 +72,7 @@ static LONG    rs_hdr;
 static LONG    rs_global;
 static char    tmprsfname[128];
 static UWORD   hdr_buff[HDR_LENGTH/2];
+static char    free_str[256];   /* must be long enough for longest freestring in gem.rsc */
 
 
 
@@ -475,7 +476,7 @@ BYTE *rs_str(UWORD stnum)
         LONG            ad_string;
 
         ad_string = (LONG) gettext( rs_fstr[stnum] );
-        strcpy(D.g_loc1, (char *) ad_string);
-        return( &D.g_loc1[0] );
+        strcpy(free_str, (char *) ad_string);
+        return( &free_str[0] );
 }
 

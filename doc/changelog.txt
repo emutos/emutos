@@ -3788,3 +3788,5 @@ Start... early ages
 - doc/bugs.txt doc/status.txt doc/todo.txt: Miscellaneous documentation
   updates. (RFB)
 - bios/startup.S: Added Amiga ROM size marker. (VRI)
+- aes/gemfmlib.c aes/geminit.c aes/gemlib.h aes/gemrslib.c: Made two
+  strings local rather than global. (RFB)
