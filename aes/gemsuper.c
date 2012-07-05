@@ -430,7 +430,7 @@ static UWORD crysbind(WORD opcode, LONG pglobal, WORD int_in[], WORD int_out[], 
           default:
                 kprintf("Bad AES function %d\n", opcode);
                 if(opcode!=0)     /* Ignore the 0 since some PRGs are this call */
-                  fm_show(ALNOFUNC, NULLPTR, 1);
+                  fm_show(ALNOFUNC, &opcode, 1);
                 ret = -1;
                 break;
         }
