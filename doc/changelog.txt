@@ -3791,3 +3791,4 @@ Start... early ages
 - aes/gemfmlib.c aes/geminit.c aes/gemlib.h aes/gemrslib.c: Made two
   strings local rather than global. (RFB)
 - vdi/vdi_text.c: Code cleanup: save space & simplify. (RFB)
+- doc/status.txt: Updated status of VDI calls and AES calls. (RFB)

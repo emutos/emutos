@@ -252,116 +252,116 @@ T tested and working on an emulator or real hardware
  T      v_opnvwk
  T      v_clsvwk
  T      v_clrwk
- ?      v_updwk
- ?      vst_load_fonts
- ?      vst_unload_fonts
- ?      vs_clip
+ -      v_updwk
+ >      vst_load_fonts      (needs GDOS or equivalent)
+ >      vst_unload_fonts    (needs GDOS or equivalent)
+ X      vs_clip
  t      v_pline
  t      v_pmarker
  t      v_gtext
  t      v_fillarea
- ?      v_cellarray
- ?      v_contourfill
+ -      v_cellarray
+ X      v_contourfill
  t      vr_recfl
  t      v_bar
- ?      v_arc
+ t      v_arc
  t      v_pieslice
  t      v_circle
+ t      v_ellipse
  t      v_ellarc
  t      v_ellpie
- t      v_ellipse
- ?      v_rbox
+ X      v_rbox
  t      v_rfbox
- ?      v_justified
- >      vswr_mode
+ X      v_justified
+ X      vswr_mode
  >      vs_color
- ?      vsl_type
- ?      vsl_udsty
+ X      vsl_type
+ X      vsl_udsty
  t      vsl_width
- ?      vsl_color
+ >      vsl_color
  t      vsl_ends
  t      vsm_type
  t      vsm_height
- ?      vsm_color
+ >      vsm_color
  t      vst_height
  t      vst_point
- ?      vst_rotation
- ?      vst_font
- ?      vst_color
+ X      vst_rotation
+ X      vst_font
+ >      vst_color
  T      vst_effects
  T      vst_alignment
  T      vsf_interior
  T      vsf_style
  t      vsf_color
  T      vsf_perimeter
- ?      vsf_udpat
- ?      vro_cpyfm
- ?      vrt_cpyfm
- ?      vr_trnfm
+ X      vsf_udpat
+ X      vro_cpyfm
+ >      vrt_cpyfm
+ X      vr_trnfm
  >      v_get_pixel
- ?      vsin_mode
- ?      vrq_locator
- ?      vsm_locator
- ?      vrq_valuator
- ?      vsm_valuator
- ?      vrq_choice
- ?      vsm_choice
- ?      vrq_string
- ?      vsm_string
- ?      vsc_form
- ?      vex_timv
+ X      vsin_mode
+ X      vrq_locator
+ X      vsm_locator
+ -      vrq_valuator
+ -      vsm_valuator
+ X      vrq_choice
+ X      vsm_choice
+ X      vrq_string
+ X      vsm_string
+ X      vsc_form
+ X      vex_timv
  T      v_show_c
  T      v_hide_c
- ?      vq_mouse
+ X      vq_mouse
  T      vex_butv
  T      vex_motv
  T      vex_curv
- ?      vq_key_s
+ X      vq_key_s
  t      vq_extnd
  >      vq_color
- ?      vql_attributes
- ?      vqm_attributes
- ?      vqf_attributes
- ?      vqt_attributes
+ >      vql_attributes
+ >      vqm_attributes
+ >      vqf_attributes
+ >      vqt_attributes
  >      vqt_extent
- ?      vqt_width
- ?      vqt_name
- ?      vq_cellarray
- ?      vqin_mode
- ?      vqt_font_info
- ?      vq_chcells
+ X      vqt_width
+ X      vqt_name
+ -      vq_cellarray
+ X      vqin_mode
+ X      vqt_fontinfo
+ >      vq_chcells
  T      v_exit_cur
- ?      v_enter_cur
- ?      v_curup
- ?      v_curdown
- ?      v_curright
- ?      v_curleft
+ X      v_enter_cur
+ X      v_curup
+ X      v_curdown
+ X      v_curright
+ X      v_curleft
  T      v_curhome
- ?      v_eeos
- ?      v_eeol
- ?      vs_curaddress
- ?      v_curtext
- ?      v_rvon
- ?      v_rvoff
- ?      vq_curaddress
- ?      vq_tabstatus
- ?      v_hardcopy
- ?      v_dspcur
- ?      v_rmcur
- ?      v_form_adv
- ?      v_output_window
- ?      v_clear_disp_list
- ?      v_bit_image
- ?      vs_palette
- ?      vqp_films
- ?      vqp_state
- ?      vsp_state
- ?      vsp_save
- ?      vsp_message
- ?      vqp_error
- ?      v_meta_extents
- ?      v_write_meta
- ?      vm_filename
+ X      v_eeos
+ X      v_eeol
+ X      vs_curaddress
+ X      v_curtext
+ X      v_rvon
+ X      v_rvoff
+ -      vq_curaddress
+ >      vq_tabstatus
+ -      v_hardcopy
+ X      v_dspcur
+ X      v_rmcur
+ -      v_form_adv
+ -      v_output_window
+ -      v_clear_disp_list
+ -      v_bit_image
+ -      vs_palette
+ -      vqp_films
+ -      vqp_state
+ -      vsp_state
+ -      vsp_save
+ -      vsp_message
+ -      vqp_error
+ -      v_meta_extents
+ -      v_write_meta
+ -      vm_filename
 
 
  AES functions
@@ -374,7 +374,6 @@ T tested and working on an emulator or real hardware
  X      appl_find
  X      appl_tplay
  X      appl_trecord
- X      appl_bvset              (PC-GEM call)
  X      appl_yield              (PC-GEM call)
  X      appl_exit
  X      evnt_keybd
