@@ -80,11 +80,12 @@ static void aestrace(const char* message)
 }
 #endif
 
-static UWORD crysbind(WORD opcode, LONG pglobal, WORD int_in[], WORD int_out[], LONG addr_in[])
+static UWORD crysbind(WORD opcode, LONG pglobal, WORD control[], WORD int_in[], WORD int_out[], LONG addr_in[])
 {
         LONG    maddr;
         LONG    tree;
         WORD    mouse, ret;
+        WORD    unsupported = FALSE;
 
         maddr = 0;
         ret = TRUE;
@@ -193,15 +194,22 @@ static UWORD crysbind(WORD opcode, LONG pglobal, WORD int_in[], WORD int_out[], 
                 ret = mn_register(MM_PID, MM_PSTR);
                 break;
           case MENU_UNREGISTER:
-                mn_unregister( MM_MID );
+                /* distinguish between menu_unregister() and menu_popup() */
+                if (IN_LEN == 1)
+                  mn_unregister( MM_MID );
+                else
+                  unsupported = TRUE;
+                break;
+          case MENU_CLICK:
+                /* distinguish between menu_click() and menu_attach() */
+                if (IN_LEN == 2) {
+                  if (MN_SETIT)
+                    gl_mnclick = MN_CLICK;
+                  ret = gl_mnclick;
+                } else
+                  unsupported = TRUE;
                 break;
                                 /* Object Manager                       */
-          case MENU_CLICK:
-                if (MN_SETIT)
-                  gl_mnclick = MN_CLICK;
-                ret = gl_mnclick;
-                break;
-
           case OBJC_ADD:
                 ob_add(OB_TREE, OB_PARENT, OB_CHILD);
                 break;
@@ -428,12 +436,17 @@ static UWORD crysbind(WORD opcode, LONG pglobal, WORD int_in[], WORD int_out[], 
                 sh_wdef(SH_LPCMD, SH_LPDIR);
                 break;
           default:
-                kprintf("Bad AES function %d\n", opcode);
-                if(opcode!=0)     /* Ignore the 0 since some PRGs are this call */
-                  fm_show(ALNOFUNC, &opcode, 1);
-                ret = -1;
+                unsupported = TRUE;
                 break;
         }
+
+        if (unsupported) {
+            kprintf("Bad AES function %d\n", opcode);
+            if (opcode != 0)    /* Ignore the 0 since some PRGs are this call */
+                fm_show(ALNOFUNC, &opcode, 1);
+            ret = -1;
+        }
+
         return(ret);
 }
 
@@ -457,7 +470,7 @@ static void xif(LONG pcrys_blk)
         if (AIN_LEN)
           LWCOPY(ADDR(&addr_in[0]), ADDR_IN, AIN_LEN*2);
 
-        int_out[0] = crysbind(OP_CODE, GGLOBAL, &int_in[0], &int_out[0], 
+        int_out[0] = crysbind(OP_CODE, GGLOBAL, &control[0], &int_in[0], &int_out[0], 
                                 &addr_in[0]);
 
         if (OUT_LEN)

@@ -21,7 +21,7 @@
 #define APPL_FIND 13
 #define APPL_TPLAY 14
 #define APPL_TRECORD 15
-#define APPL_YIELD 17
+#define APPL_YIELD 17               /* PC-GEM function */
 #define APPL_EXIT 19
                                 /* Event Manager                        */
 #define EVNT_KEYBD 20
@@ -38,8 +38,10 @@
 #define MENU_TNORMAL 33
 #define MENU_TEXT 34
 #define MENU_REGISTER 35
-#define MENU_UNREGISTER 36
-#define MENU_CLICK 37
+#define MENU_POPUP 36
+#define MENU_UNREGISTER 36          /* PC-GEM function */
+#define MENU_ATTACH 37
+#define MENU_CLICK 37               /* PC-GEM function */
                                 /* Object Manager                       */
 #define OBJC_ADD 40
 #define OBJC_DELETE 41
@@ -71,7 +73,7 @@
                                 /* Scrap Manager                        */
 #define SCRP_READ 80
 #define SCRP_WRITE 81
-#define SCRP_CLEAR 82
+#define SCRP_CLEAR 82               /* PC-GEM function */
                                 /* File Selector Manager                */
 #define FSEL_INPUT    90
 #define FSEL_EXINPUT  91
@@ -99,8 +101,8 @@
 #define SHEL_PUT 123
 #define SHEL_FIND 124
 #define SHEL_ENVRN 125
-#define SHEL_RDEF 126
-#define SHEL_WDEF 127
+#define SHEL_RDEF 126               /* PC-GEM function */
+#define SHEL_WDEF 127               /* PC-GEM function */
 
                                         /* max sizes for arrays         */
 #define C_SIZE 4

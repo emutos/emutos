@@ -3792,3 +3792,7 @@ Start... early ages
   strings local rather than global. (RFB)
 - vdi/vdi_text.c: Code cleanup: save space & simplify. (RFB)
 - doc/status.txt: Updated status of VDI calls and AES calls. (RFB)
+
+2012-07-06
+- aes/crysbind.h aes/gemsuper.c: Differentiate between TOS and PC-GEM AES
+  functions with the same opcode. (RFB)
