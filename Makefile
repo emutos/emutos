@@ -397,6 +397,8 @@ cart:
 # Amiga Image
 #
 
+TOCLEAN += *.rom
+
 ROM_AMIGA = emutos-amiga.rom
 
 .PHONY: amiga
@@ -412,6 +414,8 @@ $(ROM_AMIGA): emutos2.img mkrom$(EXE)
 #
 # Amiga Kickstart disk image for Amiga 1000
 #
+
+TOCLEAN += *.adf
 
 AMIGA_KICKDISK = emutos-kickdisk.adf
 
