@@ -2,7 +2,7 @@ EmuTOS - Amiga version
 
 This EmuTOS version runs on Amiga hardware.
 
-emutos-amiga.img - English
+emutos-amiga.rom - English
 
 This is a Kickstart ROM replacement.
 EmuTOS will boot and run just as on Atari computers.

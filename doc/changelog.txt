@@ -3801,3 +3801,5 @@ Start... early ages
 - aes/gemsuper.c: Fixed crysbind() warning about control signedness. (VRI)
 - tools/mkrom.c: Added Amiga ROM checksum fixup. (VRI)
 - bios/processor.S: Changed 68060 detection for buggy WinUAE. (VRI)
+- .cvsignore, Makefile, doc/readme-amiga.txt: Renamed the Amiga ROM to
+  emutos-amiga.rom. (VRI)

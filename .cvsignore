@@ -3,6 +3,7 @@ makefile.dep
 needcountry.tmp
 tounix
 *.img
+*.rom
 *.map
 mkheader
 bug

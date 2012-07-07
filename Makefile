@@ -397,7 +397,7 @@ cart:
 # Amiga Image
 #
 
-ROM_AMIGA = emutos-amiga.img
+ROM_AMIGA = emutos-amiga.rom
 
 .PHONY: amiga
 NODEP += amiga
