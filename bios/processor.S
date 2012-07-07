@@ -81,11 +81,11 @@ _detect_cpu:
         moveq   #30,d0          // data cache enabled means 68030
         bra.s   exit
 
-// 68040 or 68060. Quad word mulu test.
+// 68040 or 68060
 
-x040:   moveq   #60,d0          // assume 68060
-        dc.l    0x4c102401      // mulu.l (a0),d1-d2
-        moveq   #40,d0          // no fault -> this is 68040
+x040:   moveq   #40,d0          // assume 68040
+        dc.l    0x4e7a1808      // movec pcr,d1
+        moveq   #60,d0          // no fault -> this is 68060
 exit:  
         move.l  a2,(0xf4).w     // restore stuff and exit
         move.l  a1,(0x10).w
