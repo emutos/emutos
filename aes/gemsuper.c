@@ -459,7 +459,7 @@ static UWORD crysbind(WORD opcode, LONG pglobal, WORD control[], WORD int_in[], 
 
 static void xif(LONG pcrys_blk)
 {
-        UWORD           control[C_SIZE];
+        WORD            control[C_SIZE];
         WORD            int_in[I_SIZE];
         WORD            int_out[O_SIZE];
         LONG            addr_in[AI_SIZE];

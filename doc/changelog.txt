@@ -3796,3 +3796,6 @@ Start... early ages
 2012-07-06
 - aes/crysbind.h aes/gemsuper.c: Differentiate between TOS and PC-GEM AES
   functions with the same opcode. (RFB)
+
+2012-07-07
+- aes/gemsuper.c: Fixed crysbind() warning about control signedness. (VRI)
