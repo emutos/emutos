@@ -3805,3 +3805,4 @@ Start... early ages
   emutos-amiga.rom. (VRI)
 - .cvsignore Makefile release.mk doc/readme-amiga.txt tools/mkrom.c: Added
   support for EmuTOS as an Amiga 1000 Kickstart disk. (VRI)
+- bios/ide.c: Quick hack to avoid infinite loop on Amiga 1000 hardware. (VRI)

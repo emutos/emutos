@@ -144,6 +144,12 @@ static int ide_wait_drq(void)
         UBYTE status = ide_interface.command;
         //kprintf("IDE status = 0x%02x\n", status);
 
+#ifdef MACHINE_AMIGA
+        /* Quick hack to avoid infinite loop on Amiga 1000 hardware */
+        if (status == IDE_STATUS_DRDY)
+            return EUNDEV;
+#endif
+
         if (status == 0)
             return EUNDEV;
 
