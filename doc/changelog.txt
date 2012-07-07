@@ -3803,3 +3803,5 @@ Start... early ages
 - bios/processor.S: Changed 68060 detection for buggy WinUAE. (VRI)
 - .cvsignore, Makefile, doc/readme-amiga.txt: Renamed the Amiga ROM to
   emutos-amiga.rom. (VRI)
+- .cvsignore Makefile release.mk doc/readme-amiga.txt tools/mkrom.c: Added
+  support for EmuTOS as an Amiga 1000 Kickstart disk. (VRI)

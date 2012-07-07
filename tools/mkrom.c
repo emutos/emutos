@@ -32,7 +32,8 @@ typedef enum
     CMD_NONE = 0,
     CMD_PAD,
     CMD_STC,
-    CMD_AMIGA
+    CMD_AMIGA,
+    CMD_AMIGA_KICKDISK
 } CMD_TYPE;
 
 /* Global variables */
@@ -462,6 +463,57 @@ static int cmd_amiga(FILE* infile, const char* infilename,
     return 1;
 }
 
+/* Amiga Kickstart-like floppy for Amiga 1000 */
+static int cmd_amiga_kickdisk(FILE* infile, const char* infilename,
+                              FILE* outfile, const char* outfilename)
+{
+    int ret; /* boolean return value: 0 == error, 1 == OK */
+    size_t written; /* Number of bytes written this time */
+    size_t source_size;
+    size_t bootblock_size = 512;
+    size_t rom_size = 256 * 1024;
+    size_t target_size = 880 * 1024;
+    size_t pad_size;
+
+    printf("# Padding %s to Amiga 1000 Kickstart disk into %s\n", infilename, outfilename);
+
+    /* Get the input file size */
+    source_size = get_file_size(infile, infilename);
+    if (source_size == SIZE_ERROR)
+        return 0;
+
+    /* Check if the input file size is not too big */
+    if (source_size != rom_size)
+    {
+        fprintf(stderr, "%s: %s has invalid size: %lu bytes (should be %lu bytes)\n", g_argv0, infilename, (unsigned long)source_size, (unsigned long)rom_size);
+        return 0;
+    }
+
+    /* Write the Kickstart bootblock */
+    strncpy((char*)g_buffer, "KICK", bootblock_size);
+    written = fwrite(g_buffer, 1, bootblock_size, outfile);
+    if (written != bootblock_size)
+    {
+        fprintf(stderr, "%s: %s: %s\n", g_argv0, outfilename, strerror(errno));
+        return 0;
+    }
+
+    /* Copy the input file */
+    ret = copy_stream(infile, infilename, outfile, outfilename, source_size);
+    if (!ret)
+        return ret;
+
+    /* Pad with zeroes */
+    pad_size = target_size - bootblock_size - source_size;
+    ret = write_byte_block(outfile, outfilename, 0, pad_size);
+    if (!ret)
+        return ret;
+
+    printf("# %s done\n", outfilename);
+
+    return 1;
+}
+
 /* Main program */
 int main(int argc, char* argv[])
 {
@@ -501,6 +553,12 @@ int main(int argc, char* argv[])
         outfilename = argv[3];
         outmode = "w+b"; /* Computing the checksum requires read/write */
     }
+    else if (argc == 4 && !strcmp(argv[1], "amiga-kickdisk"))
+    {
+        op = CMD_AMIGA_KICKDISK;
+        infilename = argv[2];
+        outfilename = argv[3];
+    }
     else
     {
         fprintf(stderr, "usage:\n");
@@ -512,6 +570,9 @@ int main(int argc, char* argv[])
         fprintf(stderr, "\n");
         fprintf(stderr, "  # Amiga ROM image\n");
         fprintf(stderr, "  %s amiga <source> <destination>\n", g_argv0);
+        fprintf(stderr, "\n");
+        fprintf(stderr, "  # Amiga 1000 Kickstart disk\n");
+        fprintf(stderr, "  %s amiga-kickdisk <sourcerom> <destination>\n", g_argv0);
         return 1;
     }
 
@@ -543,6 +604,10 @@ int main(int argc, char* argv[])
 
         case CMD_AMIGA:
             ret = cmd_amiga(infile, infilename, outfile, outfilename);
+        break;
+
+        case CMD_AMIGA_KICKDISK:
+            ret = cmd_amiga_kickdisk(infile, infilename, outfile, outfilename);
         break;
 
         default:

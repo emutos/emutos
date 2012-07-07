@@ -410,6 +410,17 @@ $(ROM_AMIGA): emutos2.img mkrom$(EXE)
 	./mkrom$(EXE) amiga $< $(ROM_AMIGA)
 
 #
+# Amiga Kickstart disk image for Amiga 1000
+#
+
+AMIGA_KICKDISK = emutos-kickdisk.adf
+
+.PHONY: amiga-kickdisk
+NODEP += amiga-kickdisk
+amiga-kickdisk: amiga
+	./mkrom$(EXE) amiga-kickdisk $(ROM_AMIGA) $(AMIGA_KICKDISK)
+
+#
 # ColdFire images
 #
 
