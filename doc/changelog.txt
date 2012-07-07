@@ -3799,3 +3799,4 @@ Start... early ages
 
 2012-07-07
 - aes/gemsuper.c: Fixed crysbind() warning about control signedness. (VRI)
+- tools/mkrom.c: Added Amiga ROM checksum fixup. (VRI)

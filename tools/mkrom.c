@@ -15,6 +15,8 @@
  * and also creates special ROM formats.
  */
 
+#define DBG_MKROM 0
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -36,6 +38,66 @@ typedef enum
 /* Global variables */
 const char* g_argv0; /* Program name */
 unsigned char g_buffer[BUFFER_SIZE]; /* Global buffer to minimize stack usage */
+
+/* Read a big endian long */
+static unsigned long read_big_endian_long(const unsigned long* p)
+{
+    union
+    {
+        unsigned long l;
+        unsigned char b[4];
+    } u;
+
+    u.l = *p;
+
+    return ((unsigned long)u.b[0]) << 24
+         | ((unsigned long)u.b[1]) << 16
+         | ((unsigned long)u.b[2]) << 8
+         |  (unsigned long)u.b[3];
+}
+
+/* Write a big endian long */
+static void write_big_endian_long(unsigned long* p, unsigned long value)
+{
+    union
+    {
+        unsigned long l;
+        char b[4];
+    } u;
+
+    u.b[0] = (value >> 24);
+    u.b[1] = (value >> 16);
+    u.b[2] = (value >> 8);
+    u.b[3] = value;
+
+    *p = u.l;
+}
+
+/* Write a big endian short */
+static void write_big_endian_short(unsigned short* p, unsigned short value)
+{
+    union
+    {
+        unsigned short s;
+        unsigned char b[4];
+    } u;
+
+    u.b[0] = (value >> 8);
+    u.b[1] = value;
+
+    *p = u.s;
+}
+
+/* Add two longs, and the carry, if any */
+static unsigned long add_with_carry(unsigned long a, unsigned long b)
+{
+    unsigned long sum = a + b;
+
+    if (sum < a) /* Overflow */
+        sum++; /* Add carry */
+
+    return sum;
+}
 
 /* Get an integer value from an integer string with a k, m, or g suffix */
 size_t get_size_value(const char* strsize)
@@ -255,6 +317,59 @@ static int cmd_stc(FILE* infile, const char* infilename,
     return 1;
 }
 
+/* Structure at the end of an Amiga ROM */
+struct amiga_rom_footer
+{
+    unsigned long checksum_fixup; /* Fixup to get checksum == 0xffffffff */
+    unsigned long romsize; /* Size of the ROM, in bytes */
+    unsigned short vectors[8]; /* Autovectors exception numbers */
+};
+
+/* Compute the checksum of an Amiga ROM */
+static int compute_amiga_checksum(FILE* file, const char* filename, size_t filesize, unsigned long* pchecksum)
+{
+    unsigned long big_endian_val;
+    unsigned long value;
+    unsigned long checksum = 0;
+    size_t nread;
+    int err; /* Seek error */
+    size_t total_read = 0;
+
+    /* Rewind to the start of the file */
+    err = fseek(file, 0, SEEK_SET);
+    if (err != 0)
+    {
+        fprintf(stderr, "%s: %s: %s\n", g_argv0, filename, strerror(errno));
+        return 0;
+    }
+
+    while (total_read < filesize)
+    {
+        nread = fread(&big_endian_val, sizeof big_endian_val, 1, file);
+        if (nread == 0)
+        {
+            if (ferror(file))
+            {
+                fprintf(stderr, "%s: %s: %s\n", g_argv0, filename, strerror(errno));
+                return 0;
+            }
+            else
+            {
+                fprintf(stderr, "%s: %s: premature end of file.\n", g_argv0, filename);
+                return 0;
+            }
+        }
+
+        total_read += sizeof big_endian_val;
+
+        value = read_big_endian_long(&big_endian_val);
+        checksum = add_with_carry(checksum, value);
+    }
+
+    *pchecksum = checksum;
+    return 1;
+}
+
 /* Amiga ROM image */
 static int cmd_amiga(FILE* infile, const char* infilename,
                      FILE* outfile, const char* outfilename)
@@ -263,9 +378,12 @@ static int cmd_amiga(FILE* infile, const char* infilename,
     size_t nwrite;
     size_t source_size;
     size_t target_size = 256 * 1024;
-    size_t max_size = target_size - 16;
+    struct amiga_rom_footer footer;
+    size_t max_size = target_size - sizeof footer;
     size_t free_size;
     int ret; /* boolean return value: 0 == error, 1 == OK */
+    int err; /* Seek error */
+    unsigned long checksum;
 
     printf("# Padding %s to %ld kB Amiga ROM image into %s\n", infilename, ((long)target_size) / 1024, outfilename);
 
@@ -292,23 +410,52 @@ static int cmd_amiga(FILE* infile, const char* infilename,
     if (!ret)
         return ret;
 
-    /* Add vector numbers at the end */
+    /* Set up ROM footer */
+    /* The checksum fixup will be overwritten in a second pass */
+    write_big_endian_long(&footer.checksum_fixup, 0);
+    write_big_endian_long(&footer.romsize, target_size);
     for (i = 0; i < 8; i++)
+        write_big_endian_short(&footer.vectors[i], 0x18 + i);
+
+    /* Write the footer with temporary checksum_fixup */
+    nwrite = fwrite(&footer, 1, sizeof footer, outfile);
+    if (nwrite != sizeof footer)
     {
-        /* Big endian words */
-        g_buffer[i*2] = 0;
-        g_buffer[i*2 + 1] = 0x18 + i;
+        fprintf(stderr, "%s: %s: %s\n", g_argv0, outfilename, strerror(errno));
+        return 0;
     }
 
-    nwrite = fwrite(g_buffer, 1, 16, outfile);
-    if (nwrite != 16)
+    /* Compute the adequate checksum_fixup */
+    ret = compute_amiga_checksum(outfile, outfilename, target_size, &checksum);
+    if (!ret)
+        return ret;
+#if DBG_MKROM
+    printf("# checksum before fixup = 0x%08lx\n", checksum);
+#endif
+    write_big_endian_long(&footer.checksum_fixup, 0xffffffff - checksum);
+
+    /* Seek to the footer location again */
+    err = fseek(outfile, max_size, SEEK_SET);
+    if (err != 0)
     {
-        if (ferror(outfile))
-        {
-            fprintf(stderr, "%s: %s: %s\n", g_argv0, outfilename, strerror(errno));
-            return 0;
-        }
+        fprintf(stderr, "%s: %s: %s\n", g_argv0, outfilename, strerror(errno));
+        return 0;
     }
+
+    /* Write the footer a second time with the fixed checksum */
+    nwrite = fwrite(&footer, 1, sizeof footer, outfile);
+    if (nwrite != sizeof footer)
+    {
+        fprintf(stderr, "%s: %s: %s\n", g_argv0, outfilename, strerror(errno));
+        return 0;
+    }
+
+#if DBG_MKROM
+    ret = compute_amiga_checksum(outfile, outfilename, target_size, &checksum);
+    if (!ret)
+        return ret;
+    printf("# checksum  after fixup = 0x%08lx\n", checksum);
+#endif
 
     printf("# %s done (%lu bytes free)\n", outfilename, (unsigned long)free_size);
 
@@ -326,6 +473,7 @@ int main(int argc, char* argv[])
     int err; /* stdio error: 0 == OK, EOF == error */
     int ret; /* boolean return value: 0 == error, 1 == OK */
     CMD_TYPE op = CMD_NONE;
+    const char* outmode = "wb"; /* By default, write only */
 
     g_argv0 = argv[0]; /* Remember the program name */
 
@@ -351,6 +499,7 @@ int main(int argc, char* argv[])
         op = CMD_AMIGA;
         infilename = argv[2];
         outfilename = argv[3];
+        outmode = "w+b"; /* Computing the checksum requires read/write */
     }
     else
     {
@@ -375,7 +524,7 @@ int main(int argc, char* argv[])
     }
 
     /* Open the destination file */
-    outfile = fopen(outfilename, "wb");
+    outfile = fopen(outfilename, outmode);
     if (outfile == NULL)
     {
         fprintf(stderr, "%s: %s: %s\n", g_argv0, outfilename, strerror(errno));
