@@ -85,7 +85,13 @@ _stktop:                        // filled from top to bottom
 #if defined(MACHINE_AMIGA) && !defined(EMUTOS_RAM)
     dc.w    0x1111      // 256 kB ROM
     dc.w    0x4ef9      // jmp
-    dc.l    _main       // pointer to reset handler
+    dc.l    amiga_main  // pc after reset
+
+    /* Some softkick programs (ex: BlizKick) requires the entry point to be here */
+    .org    0xd0
+    reset
+amiga_main:
+    bra.s   main_after_reset
 #endif
 
 _os_entry:
@@ -145,6 +151,8 @@ _main:
         reset                  // reset all hardware
 #endif
 #endif /* !DIAGNOSTIC_CARTRIDGE */
+
+main_after_reset:
 
 #if CONF_WITH_CARTRIDGE
 /*

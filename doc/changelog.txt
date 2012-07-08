@@ -3813,3 +3813,4 @@ Start... early ages
   calls. (RFB)
 - Makefile desk/desktop.def desk/desktop.dfn: Replaced .dfn file with
   equivalent .def file. (RFB)
+- bios/startup.S: Fixed entry point address for BlizKick compatibility. (VRI)
