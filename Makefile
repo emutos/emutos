@@ -591,7 +591,7 @@ GEMRSC_BASE = aes/gem
 GEMRSCGEN_BASE = aes/gem_rsc
 TOCLEAN += $(DESKRSCGEN_BASE).c $(DESKRSCGEN_BASE).h $(GEMRSCGEN_BASE).c $(GEMRSCGEN_BASE).h
 
-$(DESKRSCGEN_BASE).c $(DESKRSCGEN_BASE).h: erd$(EXE) $(DESKRSC_BASE).rsc $(DESKRSC_BASE).dfn
+$(DESKRSCGEN_BASE).c $(DESKRSCGEN_BASE).h: erd$(EXE) $(DESKRSC_BASE).rsc $(DESKRSC_BASE).def
 	./erd$(EXE) -pdesk $(DESKRSC_BASE) $(DESKRSCGEN_BASE)
 $(GEMRSCGEN_BASE).c $(GEMRSCGEN_BASE).h: grd$(EXE) $(GEMRSC_BASE).rsc $(GEMRSC_BASE).def
 	./grd$(EXE) $(GEMRSC_BASE) $(GEMRSCGEN_BASE)
@@ -917,7 +917,7 @@ crlf: tounix$(EXE)
 NODEP += charset
 charset:
 	@echo "# All the files below should use charset=utf-8"
-	find . -type f '!' -path '*/CVS/*' '!' -name '*.dfn' '!' -name '*.rsc' '!' -name '*.icn' '!' -name '*.po' -print0 | xargs -0 file -i |grep -v us-ascii
+	find . -type f '!' -path '*/CVS/*' '!' -name '*.def' '!' -name '*.rsc' '!' -name '*.icn' '!' -name '*.po' -print0 | xargs -0 file -i |grep -v us-ascii
 
 .PHONY: cvsready
 NODEP += cvsready

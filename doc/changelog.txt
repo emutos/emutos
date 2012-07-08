@@ -3811,4 +3811,5 @@ Start... early ages
 - aes/gemmnlib.c aes/gemsclib.c aes/gemshlib.c aes/gemsuper.c
   include/config.h: Added CONF_WITH_PCGEM to enable PC-GEM-only AES
   calls. (RFB)
-
+- Makefile desk/desktop.def desk/desktop.dfn: Replaced .dfn file with
+  equivalent .def file. (RFB)
