@@ -543,7 +543,7 @@ WORD mn_register(WORD pid, LONG pstr)
           return(-1);
 }       
 
-
+#if CONF_WITH_PCGEM
 /*
 *       Routine to unregister a desk accessory item on the menu bar.
 */
@@ -561,6 +561,7 @@ void mn_unregister(WORD da_id)
         }
         menu_fixup(&rlr->p_name[0]);
 }       
+#endif
 
 /*
 *       Routine to get the owner and menu id of the DA corresponding

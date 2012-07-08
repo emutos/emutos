@@ -125,9 +125,11 @@ static UWORD crysbind(WORD opcode, LONG pglobal, WORD control[], WORD int_in[], 
           case APPL_TRECORD:
                 ret = ap_trecd(AP_TBUFFER, AP_TLENGTH);
                 break;
+#if CONF_WITH_PCGEM
           case APPL_YIELD:
                 dsptch();
                 break;
+#endif
           case APPL_EXIT:
 #if DBG_GEMSUPER
                 aestrace("appl_exit()");
@@ -194,14 +196,20 @@ static UWORD crysbind(WORD opcode, LONG pglobal, WORD control[], WORD int_in[], 
                 ret = mn_register(MM_PID, MM_PSTR);
                 break;
           case MENU_UNREGISTER:
+#if CONF_WITH_PCGEM
                 /* distinguish between menu_unregister() and menu_popup() */
                 if (IN_LEN == 1)
                   mn_unregister( MM_MID );
                 else
+#endif
                   unsupported = TRUE;
                 break;
           case MENU_CLICK:
                 /* distinguish between menu_click() and menu_attach() */
+                /*
+                 * although menu_click() is PC-GEM only, it's always
+                 * enabled because the desktop uses it.
+                 */
                 if (IN_LEN == 2) {
                   if (MN_SETIT)
                     gl_mnclick = MN_CLICK;
@@ -351,9 +359,11 @@ static UWORD crysbind(WORD opcode, LONG pglobal, WORD control[], WORD int_in[], 
           case SCRP_WRITE:
                 ret = sc_write(SC_PATH);
                 break;
+#if CONF_WITH_PCGEM
           case SCRP_CLEAR:
                 ret = sc_clear();
                 break;
+#endif
                                 /* File Selector Manager                */
           case FSEL_EXINPUT:
                 /* We don't have a separate fsel_exinput call yet, so */
@@ -429,12 +439,14 @@ static UWORD crysbind(WORD opcode, LONG pglobal, WORD control[], WORD int_in[], 
           case SHEL_ENVRN:
                 sh_envrn(SH_PATH, SH_SRCH);
                 break;
+#if CONF_WITH_PCGEM
           case SHEL_RDEF:
                 sh_rdef(SH_LPCMD, SH_LPDIR);
                 break;
           case SHEL_WDEF:
                 sh_wdef(SH_LPCMD, SH_LPDIR);
                 break;
+#endif
           default:
                 unsupported = TRUE;
                 break;

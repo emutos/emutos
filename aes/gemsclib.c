@@ -80,7 +80,7 @@ WORD sc_write(LONG pscrap)
     return(dos_sfirst(ad_scrap, F_SUBDIR)); /* make sure path ok    */
 }
 
-
+#if CONF_WITH_PCGEM
 /************************************************************************/
 /*                                                                      */
 /* sc_clear() -- delete scrap files from current scrap directory        */
@@ -120,4 +120,4 @@ WORD sc_clear()
 
     return(TRUE);
 }
-
+#endif

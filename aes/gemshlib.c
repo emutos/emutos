@@ -597,7 +597,7 @@ WORD sh_find(LONG pspec)
 
 
 
-
+#if CONF_WITH_PCGEM
 /*
 *       Read the default application to invoke.
 */
@@ -611,7 +611,7 @@ void sh_rdef(LONG lpcmd, LONG lpdir)
         strcpy((char *)lpcmd, &psh->sh_desk[0]);
         strcpy((char *)lpdir, &psh->sh_cdir[0]);
 }
-
+#endif
 
 /*
 *       Write the default application to invoke

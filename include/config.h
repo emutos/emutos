@@ -123,6 +123,9 @@
 # ifndef CONF_WITH_EASTER_EGG
 #  define CONF_WITH_EASTER_EGG 0
 # endif
+# ifndef CONF_WITH_PCGEM
+#  define CONF_WITH_PCGEM 0
+# endif
 #endif
 
 /*
@@ -606,6 +609,13 @@
  */
 #ifndef CONF_WITH_GDOS
 # define CONF_WITH_GDOS 0
+#endif
+
+/*
+ * Set CONF_WITH_PCGEM to 1 to support various PC-GEM-compatible AES functions
+ */
+#ifndef CONF_WITH_PCGEM
+ # define CONF_WITH_PCGEM 1
 #endif
 
 /*

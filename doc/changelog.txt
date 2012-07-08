@@ -3806,3 +3806,9 @@ Start... early ages
 - .cvsignore Makefile release.mk doc/readme-amiga.txt tools/mkrom.c: Added
   support for EmuTOS as an Amiga 1000 Kickstart disk. (VRI)
 - bios/ide.c: Quick hack to avoid infinite loop on Amiga 1000 hardware. (VRI)
+
+2012-07-08
+- aes/gemmnlib.c aes/gemsclib.c aes/gemshlib.c aes/gemsuper.c
+  include/config.h: Added CONF_WITH_PCGEM to enable PC-GEM-only AES
+  calls. (RFB)
+
