@@ -90,7 +90,7 @@ _amiga_init_keyboard_interrupt:
         move.b  #0,0xbfee01             // CIAA control register A (serial)
         move.b  #0,0xbfef01             // CIAA control register B (Timer 200 Hz)
 
-        // CIAA Timer B (timer système 200 Hz) valeur 3547
+        // CIAA Timer B: 200 Hz system timer, value = 3547
         move.b  #0x0d,0xbfe701
         move.b  #0xdb,0xbfe601
 
