@@ -49,6 +49,8 @@ void amiga_add_alt_ram(void);
 #endif
 void amiga_screen_init(void);
 void amiga_mouse_vbl(void);
+void amiga_clock_init(void);
+ULONG amiga_getdt(void);
 
 /* The following functions are defined in amiga2.S */
 

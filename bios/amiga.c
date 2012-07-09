@@ -10,11 +10,14 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+#define DBG_AMIGA 0
+
 #include "config.h"
 #include "portab.h"
 #include "amiga.h"
 #include "vectors.h"
 #include "tosvars.h"
+#include "kprint.h"
 
 #ifdef MACHINE_AMIGA
 
@@ -161,6 +164,114 @@ void amiga_mouse_vbl(void)
     oldButton1 = button1;
     oldButton2 = button2;
     oldMouseSet = TRUE;
+}
+
+/* Date/Time to use when the hardware clock is not set.
+ * We use the OS creation date at 00:00:00
+ */
+#define DEFAULT_DATETIME ((ULONG)os_dosdate << 16)
+
+#define BATTCLOCK ((volatile UBYTE*)0x00dc0000)
+
+#define AMIGA_CLOCK_NONE 0
+#define AMIGA_CLOCK_MSM6242B 1
+#define AMIGA_CLOCK_RF5C01A 2
+
+static int amiga_clock_type;
+
+static UBYTE read_clock_reg(int reg)
+{
+    return BATTCLOCK[reg * 4 + 3] & 0x0f;
+}
+
+static void write_clock_reg(UBYTE reg, UBYTE val)
+{
+    BATTCLOCK[reg * 4 + 3] = val;
+}
+
+static UBYTE read_clock_bcd(int reg)
+{
+    return read_clock_reg(reg + 1) * 10 + read_clock_reg(reg);
+}
+
+void amiga_clock_init(void)
+{
+#if DBG_AMIGA
+    cprintf("d = %d, e = %d, f = %d\n", read_clock_reg(0xd), read_clock_reg(0xe), read_clock_reg(0xf));
+#endif
+
+    if (read_clock_reg(0xf) == 4)
+    {
+        amiga_clock_type = AMIGA_CLOCK_MSM6242B;
+    }
+    else
+    {
+        UBYTE before, test, after;
+
+        before = read_clock_reg(0xd);
+
+        /* Write a value */
+        test = before | 0x1;
+        write_clock_reg(0xd, test);
+
+        /* If the value is still here, there is a register */
+        after = read_clock_reg(0xd);
+        if (after == test)
+            amiga_clock_type = AMIGA_CLOCK_RF5C01A;
+        else
+            amiga_clock_type = AMIGA_CLOCK_NONE;
+
+        write_clock_reg(0xd, before);
+    }
+
+#if DBG_AMIGA
+    cprintf("amiga_clock_type = %d\n", amiga_clock_type);
+#endif
+}
+
+static UWORD amiga_dogettime(void)
+{
+    UWORD seconds = read_clock_bcd(0);
+    UWORD minutes = read_clock_bcd(2);
+    UWORD hours = read_clock_bcd(4);
+    UWORD time;
+
+#if DBG_AMIGA
+    kprintf("amiga_dogettime() %02d:%02d:%02d\n", hours, minutes, seconds);
+#endif
+
+    time = (seconds >> 1)
+         | (minutes << 5)
+         | (hours << 11);
+
+    return time;
+}
+
+static UWORD amiga_dogetdate(void)
+{
+    UWORD offset = (amiga_clock_type == AMIGA_CLOCK_RF5C01A) ? 1 : 0;
+    UWORD days = read_clock_bcd(offset + 6);
+    UWORD months = read_clock_bcd(offset + 8);
+    UWORD years = read_clock_bcd(offset + 10);
+    UWORD date;
+
+#if DBG_CLOCK
+    kprintf("amiga_dogetdate() %02d/%02d/%02d\n", years, months, days);
+#endif
+
+    date = (days & 0x1F)
+        | ((months & 0xF) << 5)
+        | ((1900 + years - 1980) << 9);
+
+    return date;
+}
+
+ULONG amiga_getdt(void)
+{
+    if (amiga_clock_type == AMIGA_CLOCK_NONE)
+        return DEFAULT_DATETIME;
+
+    return (((ULONG) amiga_dogetdate()) << 16) | amiga_dogettime();
 }
 
 #endif /* MACHINE_AMIGA */

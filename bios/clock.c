@@ -24,6 +24,9 @@
 #include "nvram.h"
 #include "machine.h"
 #include "cookie.h"
+#ifdef MACHINE_AMIGA
+#include "amiga.h"
+#endif
 
 #define DBG_CLOCK 0
 
@@ -528,6 +531,11 @@ void clock_init(void)
   if(FALSE) {
     /* Dummy case for conditional compilation */
   }
+#ifdef MACHINE_AMIGA
+  else if(TRUE) {
+    return amiga_clock_init();
+  }
+#endif /* MACHINE_AMIGA */
 #if CONF_WITH_NVRAM
   else if(has_nvram) {
     /* On Mega-STE and early TTs the year offset in the NVRAM is different */
@@ -583,6 +591,11 @@ LONG gettime(void)
   if(FALSE) {
     /* Dummy case for conditional compilation */
   }
+#ifdef MACHINE_AMIGA
+  else if(TRUE) {
+    return amiga_getdt();
+  }
+#endif /* MACHINE_AMIGA */
 #if CONF_WITH_NVRAM
   else if(has_nvram) {
     return ngetdt();

@@ -3818,3 +3818,5 @@ Start... early ages
 2012-07-09
 - tools/erd.c: Fix EmuTOS compile error when TARGET_192 and DESK1 are
   defined at the same time. (RFB)
+- bios/amiga.c bios/amiga.h bios/clock.c: Added support for Amiga real-time
+  clocks. (VRI)
