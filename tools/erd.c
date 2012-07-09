@@ -48,11 +48,10 @@
  *
  *  In order to save space in the generated resource file when compiling
  *  for the 192K ROM images, the generated code for certain items is
- *  surrounded by a #ifdef/#endif wrapper.  This is based on three
- *  program-supplied values:
- *      . a starting free string name
- *      . a starting tree name
- *      . the conditional compilation string.
+ *  surrounded by a #ifdef/#endif wrapper.  This is based on two pairs
+ *  of program-supplied values:
+ *      . a starting free string name & conditional compilation string
+ *      . a starting tree name & conditional compilation string.
  *  All free strings with numbers greater than or equal to the number
  *  of the starting free string are wrapped.  Trees are treated in a
  *  similar fashion.  Objects/tedinfos/bitblks/iconblks that appear only
@@ -127,6 +126,10 @@
  *  v3.0    roger burrows, june/2012
  *          . add support for gem resource generation (performed if
  *            preprocessor symbol GEM_RSC is #defined)
+ *
+ *  v3.1    roger burrows, july/2012
+ *          . allow conditional string for trees & freestrings
+ *            to differ
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -139,7 +142,6 @@
 #include <getopt.h>
 #define DIRSEP  '/'
 #endif
-
 /*
  *  manifest RSC-related stuff
  */
@@ -305,7 +307,7 @@ typedef struct {
 #else
 #define PROGRAM_NAME    "erd"
 #endif
-#define VERSION         "v3.0"
+#define VERSION         "v3.1"
 #define MAX_STRLEN      300         /* max size for internal string areas */
 #define NLS             "N_("       /* the macro used in EmuTOS for NLS support*/
 
@@ -372,6 +374,14 @@ typedef struct {
 } NOTRANS_ENTRY;
 
 /*
+ *  conditional code generation
+ */
+typedef struct {
+    char *start;                    /* starting string in resource to match */
+    char *string;                   /* string to be inserted in generated code */
+} CONDITIONAL;
+
+/*
  *  START OF PROGRAM PARAMETERS
  *
  *  These may need to be altered when significant changes are made to the resource
@@ -380,11 +390,10 @@ typedef struct {
 #ifdef GEM_RSC
 
 /*
- *  names for conditional wrapping
+ *  conditional wrapping control
  */
-char *conditional_string = "#pragma error";         /* force error if generated */
-char *tree_start = "?";                             /* starting names (force no match) */
-char *freestr_start = "?";
+CONDITIONAL frstr_cond = { "?", "#pragma error" };  /* no match, error if it does ... */
+CONDITIONAL other_cond = { "?", "#pragma error" };  /* likewise */
 
 /*
  *  table of complete strings that will have a shared data item
@@ -416,11 +425,10 @@ int num_notrans = sizeof(notrans) / sizeof(NOTRANS_ENTRY);
 #else
 
 /*
- *  names for conditional wrapping
+ *  conditional wrapping control
  */
-char *conditional_string = "#ifndef TARGET_192";    /* name to use in #ifdef */
-char *tree_start = "ADTTREZ";                       /* starting names */
-char *freestr_start = "STNOOPEN";
+CONDITIONAL frstr_cond = { "STNOOPEN", "#ifdef DESK1" };
+CONDITIONAL other_cond = { "ADTTREZ", "#ifndef TARGET_192" };
 
 /*
  *  table of complete strings that will have a shared data item
@@ -1244,7 +1252,7 @@ short old_tree = -1;
         if (d->tree != old_tree)
             fprintf(fp,"\n");
         if (d->conditional && first_time) {
-            fprintf(fp,"%s\n",conditional_string);
+            fprintf(fp,"%s\n",other_cond.string);
             first_time = 0;
         }
         if ((d->type == DEF_DIALOG) || (d->type == DEF_MENU))
@@ -1264,7 +1272,7 @@ short old_tree = -1;
         if ((d->type != DEF_ALERT) && (d->type != DEF_FREESTR))
             break;
         if (d->conditional && first_time) {
-            fprintf(fp,"\n%s\n",conditional_string);
+            fprintf(fp,"\n%s\n",frstr_cond.string);
             first_time = 0;
         }
         fprintf(fp,"#define %-16s%d\n",d->name,d->obj);
@@ -1280,7 +1288,7 @@ short old_tree = -1;
         if (d->type != DEF_FREEBIT)
             break;
         if (d->conditional && first_time) {
-            fprintf(fp,"\n%s\n",conditional_string);
+            fprintf(fp,"\n%s\n",other_cond.string);
             first_time = 0;
         }
         fprintf(fp,"#define %-16s%d\n",d->name,d->obj);
@@ -1300,7 +1308,7 @@ short old_tree = -1;
         fprintf(fp,"#define %-16s%d\n","RS_NIB",rsh.nib);
         fprintf(fp,"#define %-16s%d\n\n\n","RS_NBB",rsh.nbb);
     } else {
-        fprintf(fp,"%s\n",conditional_string);
+        fprintf(fp,"%s\n",other_cond.string);
         fprintf(fp,"#define %-16s%d\n","RS_NOBS",rsh.nobs);
         fprintf(fp,"#define %-16s%d\n","RS_NTREE",rsh.ntree);
         fprintf(fp,"#define %-16s%d\n","RS_NTED",rsh.nted);
@@ -1393,7 +1401,7 @@ char temp[MAX_STRLEN];
 
     for (i = 0, e = shared; i < num_shared; i++, e++) {
         if ((e->objnum == SHRT_MAX) && first_time) {
-            fprintf(fp,"%s\n",conditional_string);
+            fprintf(fp,"%s\n",other_cond.string);
             first_time = 0;
         }
         fixshared(temp,e->string);  /* replace any non-alphanumeric char with underscore */
@@ -1441,7 +1449,7 @@ char *base = (char *)rschdr, *p;
     nted = rsh.nted;
     for (i = 0, ted = (TEDINFO *)(base+rsh.tedinfo); i < nted; i++, ted++) {
         if (i == conditional_tedinfo_start)
-            fprintf(fp,"%s\n",conditional_string);
+            fprintf(fp,"%s\n",other_cond.string);
         fprintf(fp,"    {0L,\n");
         p = base + get_offset(&ted->te_ptmplt);
         if (isshared(p)) {
@@ -1536,7 +1544,7 @@ char *base = (char *)rschdr;
     iconblk = (ICONBLK *)(base + rsh.iconblk);
     for (i = 0; i < nib; i++, iconblk++) {
         if (i == conditional_iconblk_start)
-            fprintf(fp,"%s\n",conditional_string);
+            fprintf(fp,"%s\n",other_cond.string);
         iconchar = get_short(&iconblk->ib_char);
         copyfix(temp,base+get_offset(&iconblk->ib_ptext),MAX_STRLEN-1);
         fprintf(fp,"    { (LONG) rs_iconmask%d, (LONG) rs_icondata%d, \"%s\", %s,\n",
@@ -1616,7 +1624,7 @@ char *base = (char *)rschdr;
     bitblk = (BITBLK *)(base + rsh.bitblk);
     for (i = 0; i < nbb; i++, bitblk++) {
         if (i == conditional_bitblk_start)
-            fprintf(fp,"%s\n",conditional_string);
+            fprintf(fp,"%s\n",other_cond.string);
         fprintf(fp,"    { (LONG) rs_bitblk%d, %d, %d, %d, %d, %d },\n",
                 (map[i]==-1)?i:map[i],get_short(&bitblk->bi_wb),
                 get_short(&bitblk->bi_hl),get_short(&bitblk->bi_x),
@@ -1661,7 +1669,7 @@ char *base = (char *)rschdr;
                 d = lookup_tree(tree);
                 if (first_time && d) {
                     if (d->conditional) {
-                        fprintf(fp,"%s\n",conditional_string);
+                        fprintf(fp,"%s\n",other_cond.string);
                         first_time = 0;
                     }
                 }
@@ -1716,7 +1724,7 @@ char temp[MAX_STRLEN];
         d = lookup_tree(i);
         if (first_time && d) {
             if (d->conditional) {
-                fprintf(fp,"%s\n",conditional_string);
+                fprintf(fp,"%s\n",other_cond.string);
                 first_time = 0;
             }
         }
@@ -1751,7 +1759,7 @@ char *base = (char *)rschdr;
     strptr = (OFFSET *)(base + rsh.frstr);
     for (i = 0, d = def+first_freestr; i < nstring; i++, d++, strptr++) {
         if (d->conditional && first_time) {
-            fprintf(fp,"%s\n",conditional_string);
+            fprintf(fp,"%s\n",frstr_cond.string);
             first_time = 0;
         }
         s = (char *) (base + get_offset(strptr));
@@ -2543,7 +2551,7 @@ OFFSET *trindex = (OFFSET *)((char *)rschdr + rsh.trindex);
     conditional_object_start = rsh.nobs;    /*  & no conditional objects */
     for (i = 0, d = def; i < num_defs; i++, d++) {
         if ((d->type == DEF_DIALOG) || (d->type == DEF_MENU)) {
-            if (strcmp(d->name,tree_start) == 0) {
+            if (strcmp(d->name,other_cond.start) == 0) {
                 conditional_tree_start = d->tree;
                 for ( ; i < num_defs; i++, d++) {
                     switch(d->type) {
@@ -2569,7 +2577,7 @@ OFFSET *trindex = (OFFSET *)((char *)rschdr + rsh.trindex);
         if ((d->type == DEF_ALERT) || (d->type == DEF_FREESTR)) {
             if (first_freestr < 0)      /* not yet set */
                 first_freestr = i;
-            if (strcmp(d->name,freestr_start) == 0)
+            if (strcmp(d->name,frstr_cond.start) == 0)
                 break;
         }
     }

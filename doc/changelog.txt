@@ -3814,3 +3814,7 @@ Start... early ages
 - Makefile desk/desktop.def desk/desktop.dfn: Replaced .dfn file with
   equivalent .def file. (RFB)
 - bios/startup.S: Fixed entry point address for BlizKick compatibility. (VRI)
+
+2012-07-09
+- tools/erd.c: Fix EmuTOS compile error when TARGET_192 and DESK1 are
+  defined at the same time. (RFB)
