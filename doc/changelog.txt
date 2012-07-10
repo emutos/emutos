@@ -3820,3 +3820,7 @@ Start... early ages
   defined at the same time. (RFB)
 - bios/amiga.c bios/amiga.h bios/clock.c: Added support for Amiga real-time
   clocks. (VRI)
+
+2012-07-10
+- desk/deskapp.c: Removed unnecessary parsing of lines from desktop
+  resource while processing emudesk.inf. (RFB)

@@ -449,7 +449,7 @@ void app_start(void)
 #endif
         ANODE           *pa;
         WSAVE           *pws;
-        BYTE            *pcurr, *ptmp, prevdisk;
+        BYTE            *pcurr, *ptmp;
         WORD            envr, xcnt, ycnt, xcent, wincnt;
 
                                                 /* remember start drive */
@@ -546,7 +546,6 @@ void app_start(void)
 
         wincnt = 0;
         pcurr = &gl_afile[0];
-        prevdisk = ' ';
 
         while (*pcurr)
         {
@@ -561,12 +560,6 @@ void app_start(void)
               case 'T':                         /* Trash */
                         pa = app_alloc(TRUE);
                         pcurr = app_parse(pcurr, pa);
-
-                        for (i = 0; i < 7; i++)
-                        {
-                            pa = app_alloc(TRUE);
-                            app_parse(ini_str(ST1STD+i)+1, pa);
-                        } /* for */
                         break;
 #endif
               case 'M':                         /* Media (Hard/Floppy)  */
@@ -577,25 +570,6 @@ void app_start(void)
               case 'P':                         /* Parm (DOS w/ parms)  */
               case 'p':                         /*   use full memory    */
               case 'D':                         /* Directory            */
-                        if ( *pcurr == 'M' )
-                          prevdisk = 'M';
-#ifndef DESK1
-                        else
-                        {
-                                                /* rest of standards    */
-                                                /*   after last disk    */
-                          if (prevdisk == 'M') 
-                          {
-                            for (i = 0; i < 6; i++)
-                            {
-                              pa = app_alloc(TRUE);
-                              app_parse(ini_str(ST1STD+i)+1, pa);
-                            } /* for */
-                          } /* if */
-                          prevdisk = ' ';
-                        }
-#endif
-                        (void)prevdisk; /* silent warning */
                         pa = app_alloc(TRUE);
                         pcurr = app_parse(pcurr, pa);
                         break;
@@ -787,17 +761,6 @@ void app_save(WORD todisk)
             pcurr += sprintf(pcurr," %c",pa->a_letter?pa->a_letter:' ');
           pcurr += sprintf(pcurr," %s@",pa->a_pappl);
           pcurr += sprintf(pcurr," %s@\r\n",pa->a_pdata);
-                                                /* skip standards       */
-#ifndef DESK1
-          if ( (pa->a_type == AT_ISDISK) && 
-               (pa->a_next->a_type != AT_ISDISK) )
-#else
-          if ( (pa->a_type == AT_ISTRSH))       /* DESKTOP v1.2 */
-#endif
-          {
-            for(i=0; i<7 && pa!=0; i++)
-              pa = pa->a_next;
-          }
         }
         *pcurr++ = 0x1a;
         *pcurr++ = 0x0;
