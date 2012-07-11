@@ -3824,3 +3824,4 @@ Start... early ages
 2012-07-10
 - desk/deskapp.c: Removed unnecessary parsing of lines from desktop
   resource while processing emudesk.inf. (RFB)
+- desk/deskapp.c: Validate icon number when reading EMUDESK.INF. (RFB)

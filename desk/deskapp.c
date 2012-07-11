@@ -270,9 +270,15 @@ static BYTE *app_parse(BYTE *pcurr, ANODE *pa)
           pcurr = scan_2(pcurr, &pa->a_xspot);
           pcurr = scan_2(pcurr, &pa->a_yspot);
         }
+
         pcurr = scan_2(pcurr, &pa->a_aicon);
+        if (pa->a_aicon >= NUM_IBLKS)
+            pa->a_aicon = min(IA_GENERIC,NUM_IBLKS-1);
         pcurr = scan_2(pcurr, &pa->a_dicon);
+        if (pa->a_dicon >= NUM_IBLKS)
+            pa->a_dicon = min(ID_GENERIC,NUM_IBLKS-1);
         pcurr++;
+
         if (pa->a_flags & AF_ISDESK)
         {
           pa->a_letter = (*pcurr == ' ') ? NULL : *pcurr;
