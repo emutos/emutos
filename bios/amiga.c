@@ -197,7 +197,7 @@ static UBYTE read_clock_bcd(int reg)
 void amiga_clock_init(void)
 {
 #if DBG_AMIGA
-    cprintf("d = %d, e = %d, f = %d\n", read_clock_reg(0xd), read_clock_reg(0xe), read_clock_reg(0xf));
+    kprintf("d = %d, e = %d, f = %d\n", read_clock_reg(0xd), read_clock_reg(0xe), read_clock_reg(0xf));
 #endif
 
     if (read_clock_reg(0xf) == 4)
@@ -225,7 +225,7 @@ void amiga_clock_init(void)
     }
 
 #if DBG_AMIGA
-    cprintf("amiga_clock_type = %d\n", amiga_clock_type);
+    kprintf("amiga_clock_type = %d\n", amiga_clock_type);
 #endif
 }
 
