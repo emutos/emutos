@@ -328,6 +328,12 @@ static ULONG uaelib_DbgPuts(const char* str)
     return uaelib_demux(86, str);
 }
 
+/* Exit UAE */
+static ULONG uaelib_ExitEmu(void)
+{
+    return uaelib_demux(13);
+}
+
 /******************************************************************************/
 /* kprintf() stuff                                                            */
 /******************************************************************************/
@@ -364,5 +370,16 @@ void kprintf_outc_uae(int c)
 }
 
 #endif /* CONF_WITH_UAE */
+
+/******************************************************************************/
+/* Shutdown stuff                                                             */
+/******************************************************************************/
+
+void amiga_shutdown(void)
+{
+#if CONF_WITH_UAE
+    uaelib_ExitEmu();
+#endif
+}
 
 #endif /* MACHINE_AMIGA */

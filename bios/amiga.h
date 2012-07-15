@@ -55,6 +55,7 @@ ULONG amiga_getdt(void);
 void amiga_uaelib_init(void);
 void kprintf_outc_uae(int c);
 #endif
+void amiga_shutdown(void);
 
 /* The following functions are defined in amiga2.S */
 

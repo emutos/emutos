@@ -486,6 +486,9 @@ void biosmain(void)
 #if DETECT_NATIVE_FEATURES
     nf_shutdown();
 #endif
+#ifdef MACHINE_AMIGA
+    amiga_shutdown();
+#endif
 
     kcprintf(_("System halted!\n"));
     halt();
