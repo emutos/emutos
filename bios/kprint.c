@@ -23,6 +23,9 @@
 #include "natfeat.h"
 #include "processor.h"
 #include "chardev.h"
+#ifdef MACHINE_AMIGA
+#include "amiga.h"
+#endif
 
 #undef Super
 /* Standard Super() binding */
@@ -160,6 +163,10 @@ static void kprintf_outc_stonx(int c)
 
 static int vkprintf(const char *fmt, va_list ap)
 {
+#if CONF_WITH_UAE
+    return doprintf(kprintf_outc_uae, fmt, ap);
+#endif
+
 #if DETECT_NATIVE_FEATURES
     if (is_nfStdErr()) {
         return doprintf(kprintf_outc_natfeat, fmt, ap);

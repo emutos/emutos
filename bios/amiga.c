@@ -274,4 +274,95 @@ ULONG amiga_getdt(void)
     return (((ULONG) amiga_dogetdate()) << 16) | amiga_dogettime();
 }
 
+#if CONF_WITH_UAE
+
+/******************************************************************************/
+/* uaelib stuff                                                               */
+/******************************************************************************/
+
+/* Location of the UAE Boot ROM, a.k.a. RTAREA */
+#define RTAREA_DEFAULT 0x00f00000
+#define RTAREA_BACKUP  0x00ef0000
+
+/* uaelib_demux() is the entry point */
+#define UAELIB_DEMUX_OFFSET 0xFF60
+typedef ULONG uaelib_demux_t(ULONG fnum, ...);
+uaelib_demux_t* uaelib_demux = NULL;
+
+#define has_uaelib (uaelib_demux != NULL)
+
+static ULONG uaelib_GetVersion(void);
+
+#define IS_TRAP(x)(((*(ULONG*)(x)) & 0xf000ffff) == 0xa0004e75)
+
+void amiga_uaelib_init(void)
+{
+    if (IS_TRAP(RTAREA_DEFAULT + UAELIB_DEMUX_OFFSET))
+        uaelib_demux = (uaelib_demux_t*)(RTAREA_DEFAULT + UAELIB_DEMUX_OFFSET);
+    else if (IS_TRAP(RTAREA_BACKUP + UAELIB_DEMUX_OFFSET))
+        uaelib_demux = (uaelib_demux_t*)(RTAREA_BACKUP + UAELIB_DEMUX_OFFSET);
+
+#if DBG_AMIGA
+    if (has_uaelib)
+    {
+        ULONG version = uaelib_GetVersion();
+        kprintf("EmuTOS running on UAE version %d.%d.%d\n",
+            (int)((version & 0xff000000) >> 24),
+            (int)((version & 0x00ff0000) >> 16),
+            (int)(version & 0x0000ffff));
+    }
+#endif
+    UNUSED(uaelib_GetVersion);
+}
+
+/* Get UAE version */
+static ULONG uaelib_GetVersion(void)
+{
+    return uaelib_demux(0);
+}
+
+/* Write a string prefixed by DBG: to the UAE debug log
+ * The final \n will automatically be appended */
+static ULONG uaelib_DbgPuts(const char* str)
+{
+    return uaelib_demux(86, str);
+}
+
+/******************************************************************************/
+/* kprintf() stuff                                                            */
+/******************************************************************************/
+
+#define UAE_MAX_DEBUG_LENGTH 255
+
+static char uae_debug_string[UAE_MAX_DEBUG_LENGTH + 1];
+
+/* The only available output function is uaelib_DbgPuts(),
+ * so we have to buffer the string until until \n */
+void kprintf_outc_uae(int c)
+{
+    if (!has_uaelib)
+        return;
+
+    if (c == '\n')
+    {
+        /* Output the current string then clear the buffer */
+        uaelib_DbgPuts(uae_debug_string);
+        uae_debug_string[0] = '\0';
+    }
+    else
+    {
+        char* p;
+
+        /* Append the character to the buffer */
+        for (p = uae_debug_string; *p; ++p);
+        if ((p - uae_debug_string) < UAE_MAX_DEBUG_LENGTH)
+        {
+            *p++ = (char)c;
+            *p = '\0';
+        }
+    }
+}
+
+#endif /* CONF_WITH_UAE */
+
 #endif /* MACHINE_AMIGA */

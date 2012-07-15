@@ -140,6 +140,9 @@ static void bios_init(void)
 #if DETECT_NATIVE_FEATURES
     natfeat_init();
 #endif
+#if CONF_WITH_UAE
+    amiga_uaelib_init();
+#endif
 
 #if DBGBIOS
     kprintf("beginning of BIOS init\n");

@@ -3825,3 +3825,5 @@ Start... early ages
 - desk/deskapp.c: Removed unnecessary parsing of lines from desktop
   resource while processing emudesk.inf. (RFB)
 - desk/deskapp.c: Validate icon number when reading EMUDESK.INF. (RFB)
+- bios/amiga.c bios/amiga.h bios/bios.c bios/kprint.c include/config.h:
+  Added kprintf() support for UAE. (VRI)

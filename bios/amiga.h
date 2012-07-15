@@ -51,6 +51,10 @@ void amiga_screen_init(void);
 void amiga_mouse_vbl(void);
 void amiga_clock_init(void);
 ULONG amiga_getdt(void);
+#if CONF_WITH_UAE
+void amiga_uaelib_init(void);
+void kprintf_outc_uae(int c);
+#endif
 
 /* The following functions are defined in amiga2.S */
 
