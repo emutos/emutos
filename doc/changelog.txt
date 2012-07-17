@@ -3828,3 +3828,6 @@ Start... early ages
 - bios/amiga.c bios/amiga.h bios/bios.c bios/kprint.c include/config.h:
   Added kprintf() support for UAE. (VRI)
 - bios/amiga.c bios/amiga.h bios/bios.c: Added shutdown support for UAE. (VRI)
+
+2012-07-16
+- bios/amiga.c: Added support for Zorro II / Zorro III Fast RAM. (VRI)
