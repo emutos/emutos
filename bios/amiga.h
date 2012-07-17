@@ -41,8 +41,8 @@ struct IDE
 
 #define ide_interface (*(volatile struct IDE*)0x00da0000)
 
-const UBYTE scancode_atari_from_amiga[128];
-UWORD copper_list[6];
+extern const UBYTE scancode_atari_from_amiga[128];
+extern UWORD copper_list[6];
 extern int has_gayle;
 
 void amiga_machine_detect(void);
