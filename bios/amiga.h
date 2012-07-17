@@ -43,7 +43,9 @@ struct IDE
 
 const UBYTE scancode_atari_from_amiga[128];
 UWORD copper_list[6];
+extern int has_gayle;
 
+void amiga_machine_detect(void);
 #if CONF_WITH_ALT_RAM
 void amiga_add_alt_ram(void);
 #endif
@@ -63,6 +65,7 @@ void amiga_init_keyboard_interrupt(void);
 void amiga_vbl(void);
 void call_mousevec(BYTE* buf);
 ULONG MemoryTest(void *address, void *endAddress, ULONG blockSize);
+ULONG ReadGayle(void);
 
 #endif /* MACHINE_AMIGA */
 

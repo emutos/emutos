@@ -1100,9 +1100,11 @@ static void ConfigChain(APTR baseAddr)
     allocram(ExpansionBase);
 }
 
-/* EmuTOS Alt RAM detection ***************************************************/
+/* Machine detection **********************************************************/
 
-static void setup_sysbase(void)
+int has_gayle;
+
+void amiga_machine_detect(void)
 {
     /* Do we have at least a 68020? */
     if (mcpu >= 20)
@@ -1111,18 +1113,34 @@ static void setup_sysbase(void)
     /* Do we have a 32-bit address bus? */
     if (MemoryTest((APTR)0x08000000, (APTR)0x08000000, 0x00100000) == 0)
         SysBase->AttnFlags |= AFF_ADDR32;
+
+    /* Do we have Gayle? */
+    has_gayle = ReadGayle() > 0;
+    D(bug("has_gayle = %d\n", has_gayle));
+}
+
+/* Alternate RAM detection ****************************************************/
+
+static void add_slow_ram(void)
+{
+    APTR address = (APTR)0x00c00000;
+    APTR endAddress = has_gayle ? (APTR)0x00d80000 : (APTR)0x00dc0000;
+    ULONG size = MemoryTest(address, endAddress, 0x00040000);
+
+    if (size > 0)
+    {
+        D(bug("Slow RAM detected at %08lx, size %08lx\n", (ULONG)address, size));
+        xmaddalt((long)address, (long)size);
+    }
 }
 
 void amiga_add_alt_ram(void)
 {
-    setup_sysbase();
+    /* Add the slowest RAM first to put it at the end of the Alt RAM pool */
+    add_slow_ram();
 
     /* Configure Zorro II / Zorro III boards and find the Alt RAM */
     ConfigChain((APTR)E_EXPANSIONBASE);
-
-    /* Slow RAM */
-    /* FIXME: Detect the size */
-    //xmaddalt(0x00c00000, 512*1024L);
 }
 
 #endif /* CONF_WITH_ALT_RAM */

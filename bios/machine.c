@@ -28,6 +28,9 @@
 #include "string.h"
 #include "dmasound.h"
 #include "kprint.h"
+#ifdef MACHINE_AMIGA
+#include "amiga.h"
+#endif
 
 long cookie_vdo;
 #if CONF_WITH_FDC
@@ -313,6 +316,9 @@ static void setvalue_fdc(void)
 
 void machine_detect(void)
 {
+#ifdef MACHINE_AMIGA
+  amiga_machine_detect();
+#endif
   detect_video();
 #if CONF_WITH_VME
   detect_vme();
