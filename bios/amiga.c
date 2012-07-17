@@ -20,6 +20,7 @@
 #include "tosvars.h"
 #include "kprint.h"
 #include "string.h"
+#include "processor.h"
 
 #ifdef MACHINE_AMIGA
 
@@ -397,6 +398,20 @@ void amiga_shutdown(void)
 #define AROS_UFC5(ftype, fname, a1, a2, a3, a4, a5) \
     fname(a1, a2, a3, a4, a5)
 
+/* From compiler/include/exec/execbase.h **************************************/
+
+// Minimal ExecBase
+struct ExecBase
+{
+    UWORD AttnFlags; /* Attention Flags */
+};
+
+static struct ExecBase g_ExecBase;
+static struct ExecBase* const SysBase = &g_ExecBase;
+
+#define AFF_68020   (1L<<1)
+#define AFF_ADDR32  (1L<<14)
+
 /* From compiler/include/libraries/configregs.h *******************************/
 
 #define E_SLOTSIZE      0x10000
@@ -631,7 +646,6 @@ struct IntExpansionBase
 };
 
 #define IntExpBase(eb)  ((struct IntExpansionBase*)(eb))
-#define SysBase     (((struct IntExpansionBase *)ExpansionBase)->eb_SysBase)
 
 // EmuTOS fake Expansion Library
 struct IntExpansionBase g_eb;
@@ -975,13 +989,10 @@ static void findmbram(struct ExpansionBase *ExpansionBase)
     LONG ret;
     ULONG step, start, end;
 
-    // FIXME: Implement SysBase->AttnFlags
-/*
     if (!(SysBase->AttnFlags & AFF_68020))
         return;
     if ((SysBase->AttnFlags & AFF_68020) && !(SysBase->AttnFlags & AFF_ADDR32))
         return;
-*/
 
     /* High MBRAM */
     step =  0x00100000;
@@ -1059,8 +1070,7 @@ static void ConfigChain(APTR baseAddr)
      *
      * Ignores original baseAddr by design.
      */
-    //BOOL maybeZ3 = (SysBase->AttnFlags & AFF_ADDR32);
-    BOOL maybeZ3 = TRUE; // FIXME
+    BOOL maybeZ3 = (SysBase->AttnFlags & AFF_ADDR32);
     D(bug("configchain\n"));
     for(;;) {
         BOOL gotrom = FALSE;
@@ -1092,8 +1102,21 @@ static void ConfigChain(APTR baseAddr)
 
 /* EmuTOS Alt RAM detection ***************************************************/
 
+static void setup_sysbase(void)
+{
+    /* Do we have at least a 68020? */
+    if (mcpu >= 20)
+        SysBase->AttnFlags |= AFF_68020;
+
+    /* Do we have a 32-bit address bus? */
+    if (MemoryTest((APTR)0x08000000, (APTR)0x08000000, 0x00100000) == 0)
+        SysBase->AttnFlags |= AFF_ADDR32;
+}
+
 void amiga_add_alt_ram(void)
 {
+    setup_sysbase();
+
     /* Configure Zorro II / Zorro III boards and find the Alt RAM */
     ConfigChain((APTR)E_EXPANSIONBASE);
 
