@@ -936,14 +936,6 @@ static void AddConfigDev(struct ConfigDev *configDev)
 #define MEMF_SEM_PROTECTED (1L<<20) /* For CreatePool() - add semaphore protection to the pool */
 #define MEMF_NO_EXPUNGE    (1L<<31)
 
-/* From arch/m68k-amiga/boot/rom_init.S ***************************************/
-
-static ULONG MemoryTest(APTR address, APTR endAddress, ULONG blockSize)
-{
-    // FIXME: Real implementation
-    return endAddress - address;
-}
-
 /* From rom/exec/addmemlist.c *************************************************/
 
 extern long xmaddalt(long start, long size); /* found in bdos/mem.h */
@@ -984,7 +976,6 @@ static void findmbram(struct ExpansionBase *ExpansionBase)
     ULONG step, start, end;
 
     // FIXME: Implement SysBase->AttnFlags
-    return;
 /*
     if (!(SysBase->AttnFlags & AFF_68020))
         return;

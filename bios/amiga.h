@@ -62,6 +62,7 @@ void amiga_shutdown(void);
 void amiga_init_keyboard_interrupt(void);
 void amiga_vbl(void);
 void call_mousevec(BYTE* buf);
+ULONG MemoryTest(void *address, void *endAddress, ULONG blockSize);
 
 #endif /* MACHINE_AMIGA */
 

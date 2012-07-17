@@ -3831,3 +3831,7 @@ Start... early ages
 
 2012-07-16
 - bios/amiga.c: Added support for Zorro II / Zorro III Fast RAM. (VRI)
+
+2012-07-17
+- bios/amiga.c bios/amiga.h bios/amiga2.S: Added support for A3000/A4000
+  motherboard RAM. (VRI)
