@@ -64,13 +64,6 @@ extern int has_falcon_dmasound; /* in dmasound.c */
 #endif
 
 /*
- * other variables
- */
-
-extern long mcpu; 
-extern long fputype; 
-
-/*
  * functions
  */
 

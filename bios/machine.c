@@ -16,6 +16,7 @@
 #include "portab.h"
 #include "cookie.h"
 #include "machine.h"
+#include "processor.h"
 #include "biosmem.h"
 #include "vectors.h"
 #include "nvram.h"

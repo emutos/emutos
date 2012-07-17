@@ -3836,3 +3836,5 @@ Start... early ages
 - bios/amiga.c bios/amiga.h bios/amiga2.S: Added support for A3000/A4000
   motherboard RAM. (VRI)
 - bios/amiga.c: Added check for 32-bit address bus. (VRI)
+- bios/initinfo.c bios/machine.c bios/machine.h: Removed duplicate declaration
+  of mcpu and fputype. (VRI)
