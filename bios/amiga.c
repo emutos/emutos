@@ -48,6 +48,8 @@
 #define POTGO *(volatile UWORD*)0xdff034
 #define POTGOR *(volatile UWORD*)0xdff016 // = POTINP
 
+/* Screen *********************************************************************/
+
 UWORD copper_list[6];
 
 void amiga_screen_init(void)
@@ -369,14 +371,10 @@ void amiga_shutdown(void)
 #endif
 }
 
-#if CONF_WITH_ALT_RAM
-
 /******************************************************************************/
-/* Alt RAM stuff                                                              */
+/* The following code comes from AROS sources.                                */
+/* It is covered by the AROS PUBLIC LICENSE (APL) Version 1.1                 */
 /******************************************************************************/
-
-// The following code comes from AROS sources.
-// It is covered by the AROS PUBLIC LICENSE (APL) Version 1.1
 
 /* Compatibility macros *******************************************************/
 
@@ -398,6 +396,15 @@ void amiga_shutdown(void)
 #define AROS_UFC5(ftype, fname, a1, a2, a3, a4, a5) \
     fname(a1, a2, a3, a4, a5)
 
+/* From compiler/include/exec/types.h *****************************************/
+
+typedef void * APTR; /* memory pointer */
+typedef unsigned long IPTR;
+typedef unsigned char UBYTE; /* unsigned 8-bit value */
+
+// STRPTR is char* in C++, but should be UBYTE* in C
+typedef char * STRPTR; /* Pointer to string (NULL terminated) */
+
 /* From compiler/include/exec/execbase.h **************************************/
 
 // Minimal ExecBase
@@ -411,6 +418,31 @@ static struct ExecBase* const SysBase = &g_ExecBase;
 
 #define AFF_68020   (1L<<1)
 #define AFF_ADDR32  (1L<<14)
+
+/* Machine detection **********************************************************/
+
+int has_gayle;
+
+void amiga_machine_detect(void)
+{
+    /* Do we have at least a 68020? */
+    if (mcpu >= 20)
+        SysBase->AttnFlags |= AFF_68020;
+
+    /* Do we have a 32-bit address bus? */
+    if (MemoryTest((APTR)0x08000000, (APTR)0x08000000, 0x00100000) == 0)
+        SysBase->AttnFlags |= AFF_ADDR32;
+
+    /* Do we have Gayle? */
+    has_gayle = ReadGayle() > 0;
+    D(bug("has_gayle = %d\n", has_gayle));
+}
+
+#if CONF_WITH_ALT_RAM
+
+/******************************************************************************/
+/* Alt RAM stuff                                                              */
+/******************************************************************************/
 
 /* From compiler/include/libraries/configregs.h *******************************/
 
@@ -463,15 +495,6 @@ static struct ExecBase* const SysBase = &g_ExecBase;
 #define ERT_Z3_SSMASK       0x0F
 #define ERT_Z3_SSBIT        0
 #define ERT_Z3_SSSIZE       4
-
-/* From compiler/include/exec/types.h *****************************************/
-
-typedef void * APTR; /* memory pointer */
-typedef unsigned long IPTR;
-typedef unsigned char UBYTE; /* unsigned 8-bit value */
-
-// STRPTR is char* in C++, but should be UBYTE* in C
-typedef char * STRPTR; /* Pointer to string (NULL terminated) */
 
 /* From compiler/include/exec/nodes.h *****************************************/
 
@@ -1098,25 +1121,6 @@ static void ConfigChain(APTR baseAddr)
     D(bug("configchain done\n"));
 
     allocram(ExpansionBase);
-}
-
-/* Machine detection **********************************************************/
-
-int has_gayle;
-
-void amiga_machine_detect(void)
-{
-    /* Do we have at least a 68020? */
-    if (mcpu >= 20)
-        SysBase->AttnFlags |= AFF_68020;
-
-    /* Do we have a 32-bit address bus? */
-    if (MemoryTest((APTR)0x08000000, (APTR)0x08000000, 0x00100000) == 0)
-        SysBase->AttnFlags |= AFF_ADDR32;
-
-    /* Do we have Gayle? */
-    has_gayle = ReadGayle() > 0;
-    D(bug("has_gayle = %d\n", has_gayle));
 }
 
 /* Alternate RAM detection ****************************************************/
