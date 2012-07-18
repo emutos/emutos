@@ -997,7 +997,7 @@ static void AddMemList(ULONG size, ULONG attributes, LONG pri, APTR base, STRPTR
     xmaddalt((long)base, (long)size);
 }
 
-/* From arch\m68k-amiga\expansion\configchain.c *******************************/
+/* From arch/m68k-amiga/expansion/configchain.c *******************************/
 
 static ULONG autosize(struct ExpansionBase *ExpansionBase, struct ConfigDev *configDev)
 {
