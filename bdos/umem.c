@@ -364,7 +364,7 @@ ret:
 
 long xmaddalt( LONG start, LONG size)
 {
-    MD *md;
+    MD *md, *p;
 
     /* shrink size to a multiple of 4 bytes */
     size &= -4L;
@@ -376,6 +376,14 @@ long xmaddalt( LONG start, LONG size)
     if((start < start_stram && start+size > start_stram) || start < end_stram)
         return -1;
 
+    /* if the new block is just after a free one, just extend it */
+    for (p = pmdalt.mp_mfl; p; p = p->m_link) {
+        if (p->m_start + p->m_length == start)
+            p->m_length += size;
+
+        return 0;
+    }
+
     md = MGET(MD);
     if(md == NULL) return ENSMEM;
     md->m_start = start;
@@ -385,10 +393,10 @@ long xmaddalt( LONG start, LONG size)
         /* some alternative RAM has already been registered, just insert it
          * to the beginning of the free block list.
          */
-        MD *tmp = pmdalt.mp_mfl;
+        p = pmdalt.mp_mfl;
         pmdalt.mp_mfl = md;
-        if(pmdalt.mp_rover == tmp) pmdalt.mp_rover = md;
-        md->m_link = tmp;
+        if(pmdalt.mp_rover == p) pmdalt.mp_rover = md;
+        md->m_link = p;
     } else {
         md->m_link = NULL;
         pmdalt.mp_mfl = md;
