@@ -367,6 +367,9 @@ void kprintf_outc_uae(int c)
 void amiga_shutdown(void)
 {
 #if CONF_WITH_UAE
+    if (!has_uaelib)
+        return;
+
     uaelib_ExitEmu();
 #endif
 }

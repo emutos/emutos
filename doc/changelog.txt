@@ -3842,3 +3842,4 @@ Start... early ages
   Slow RAM. (VRI)
 - bios/amiga.c: Fixed crash when there is no expansion board. (VRI)
 - bios/ide.c: Cleaned up Amiga IDE autodetection. (VRI)
+- bios/amiga.c: Fixed crash on shutdown when uaelib is not available. (VRI)
