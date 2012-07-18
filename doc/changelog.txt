@@ -3843,3 +3843,6 @@ Start... early ages
 - bios/amiga.c: Fixed crash when there is no expansion board. (VRI)
 - bios/ide.c: Cleaned up Amiga IDE autodetection. (VRI)
 - bios/amiga.c: Fixed crash on shutdown when uaelib is not available. (VRI)
+
+2012-07-18
+- bdos/umem.c: Shrink alternate RAM blocks to multiples of 4 bytes. (VRI)

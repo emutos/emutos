@@ -365,8 +365,13 @@ ret:
 long xmaddalt( LONG start, LONG size)
 {
     MD *md;
-    if(size <= 1) return -1;
-    if(size & 1) size --;
+
+    /* shrink size to a multiple of 4 bytes */
+    size &= -4L;
+
+    /* only strictly positive sizes allowed */
+    if(size <= 0) return -1;
+
     /* does it overlap with ST RAM? */
     if(start <= start_stram && start+size >= start_stram) return -1;
     if(start <= end_stram && start+size >= end_stram) return -1;
