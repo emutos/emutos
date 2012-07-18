@@ -545,6 +545,17 @@ struct MinList
     };
 };
 
+#define NEWLIST(_l)                                     \
+do                                                      \
+{                                                       \
+    struct List *__aros_list_tmp = (struct List *)(_l), \
+                *l = __aros_list_tmp;                   \
+                                                        \
+    l->lh_TailPred_= l;                                 \
+    l->lh_Tail     = 0;                                 \
+    l->lh_Head     = (struct Node *)&l->lh_Tail;        \
+} while (0)
+
 /* From rom/exec/addtail.c ****************************************************/
 
 static void AddTail(struct List *list, struct Node *node)
@@ -1123,6 +1134,18 @@ static void ConfigChain(APTR baseAddr)
     allocram(ExpansionBase);
 }
 
+/* From rom/expansion/expansion_init.c ****************************************/
+
+static void ExpansionInit(struct ExpansionBase *ExpansionBase)
+{
+    D(bug("expansion init\n"));
+
+    NEWLIST(&ExpansionBase->eb_BoardList);
+
+    /* See what expansion hardware we can detect. */
+    ConfigChain((APTR)E_EXPANSIONBASE);
+}
+
 /* Alternate RAM detection ****************************************************/
 
 static void add_slow_ram(void)
@@ -1144,7 +1167,7 @@ void amiga_add_alt_ram(void)
     add_slow_ram();
 
     /* Configure Zorro II / Zorro III boards and find the Alt RAM */
-    ConfigChain((APTR)E_EXPANSIONBASE);
+    ExpansionInit(ExpansionBase);
 }
 
 #endif /* CONF_WITH_ALT_RAM */

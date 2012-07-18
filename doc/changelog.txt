@@ -3840,3 +3840,4 @@ Start... early ages
   of mcpu and fputype. (VRI)
 - bios/amiga.c bios/amiga.h bios/amiga2.S bios/machine.c: Added support for
   Slow RAM. (VRI)
+- bios/amiga.c: Fixed crash when there is no expansion board. (VRI)
