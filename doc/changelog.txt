@@ -3841,3 +3841,4 @@ Start... early ages
 - bios/amiga.c bios/amiga.h bios/amiga2.S bios/machine.c: Added support for
   Slow RAM. (VRI)
 - bios/amiga.c: Fixed crash when there is no expansion board. (VRI)
+- bios/ide.c: Cleaned up Amiga IDE autodetection. (VRI)

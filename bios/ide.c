@@ -144,12 +144,6 @@ static int ide_wait_drq(void)
         UBYTE status = ide_interface.command;
         //kprintf("IDE status = 0x%02x\n", status);
 
-#ifdef MACHINE_AMIGA
-        /* Quick hack to avoid infinite loop on Amiga 1000 hardware */
-        if (status == IDE_STATUS_DRDY)
-            return EUNDEV;
-#endif
-
         if (status == 0)
             return EUNDEV;
 
@@ -251,6 +245,11 @@ LONG ide_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev)
 {
     UBYTE* p = (UBYTE*)buf;
     int ret;
+
+#ifdef MACHINE_AMIGA
+    if (!has_gayle)
+        return EUNDEV;
+#endif
 
     if (dev >= 1) /* Should be 2 to support slave device */
         return EUNDEV;
