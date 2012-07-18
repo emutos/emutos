@@ -3846,3 +3846,4 @@ Start... early ages
 
 2012-07-18
 - bdos/umem.c: Shrink alternate RAM blocks to multiples of 4 bytes. (VRI)
+- bdos/umem.c: Fixed overlap test beween alt RAM blocks and ST-RAM. (VRI)

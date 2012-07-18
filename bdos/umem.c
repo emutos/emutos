@@ -373,8 +373,8 @@ long xmaddalt( LONG start, LONG size)
     if(size <= 0) return -1;
 
     /* does it overlap with ST RAM? */
-    if(start <= start_stram && start+size >= start_stram) return -1;
-    if(start <= end_stram && start+size >= end_stram) return -1;
+    if((start < start_stram && start+size > start_stram) || start < end_stram)
+        return -1;
 
     md = MGET(MD);
     if(md == NULL) return ENSMEM;
