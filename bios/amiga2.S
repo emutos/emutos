@@ -96,7 +96,6 @@ _amiga_init_keyboard_interrupt:
         move.b  #0xdb,0xbfe601
 
         // CIAA control register
-        move.b  #0b00000001,0xbfee01    // CIAA control register A (serial)
         move.b  #0b00000001,0xbfef01    // CIAA control register B (Timer 200 Hz)
 
         // CIAA interrupt control register
@@ -155,8 +154,24 @@ _amiga_int_ciaa_serial:
         not.b   d0
         ror.b   #1,d0                   // d0 now contains the raw key
 
-        // TODO: Wait a bit
-        // TODO: ACK
+        // Begin acknowledge on CNT pin
+        ori.b   #0b01000000,0xbfee01    // SPMODE = 1
+
+        // Start the CIAA Timer A in one shot mode
+        move.b  #0b00001000,0xbfee01    // CIAA control register A (Timer A)
+
+        // The timer will start after writing the high byte
+        // CIAA Timer A: keyboard acknowledge timer, value = 63 (85 ms)
+        move.b  #0x3d,0xbfe401          // Low byte
+        move.b  #0x00,0xbfe501          // High byte
+
+        // Wait for timer expired
+wait_kbd_ack:
+        btst.b  #0,0xbfed01             // Wait for CIAA A Timer A interrupt flag
+        jbeq    wait_kbd_ack
+
+        // End acknowledge on CNT pin
+        andi.b  #~0b01000000,0xbfee01   // SPMODE = 0
 
         move.b  d0,d1
         andi.b  #0x80,d0
