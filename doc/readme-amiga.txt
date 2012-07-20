@@ -24,9 +24,9 @@ but it should also work on other emulators or real hardware.
 
 Supported Amiga hardware features:
 - Any CPU from 68000 to 68060
-- Chip RAM (up to 8 MB)
+- Chip RAM, Zorro II/III Fast RAM, Slow RAM, A3000/A4000 motherboard RAM
 - Monochrome, interlaced 640x400 video mode
-- Keyboard (acknowledge missing, but works fine on WinUAE)
+- Keyboard
 - Mouse
 - A600/A1200 IDE interface
 
