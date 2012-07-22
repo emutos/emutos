@@ -50,6 +50,7 @@
 
 /* Screen *********************************************************************/
 
+void *amiga_screenbase;
 UWORD copper_list[6];
 
 void amiga_screen_init(void)
@@ -71,9 +72,9 @@ void amiga_screen_init(void)
 
     // Set up the Copper list (must be in ST-RAM)
     copper_list[0] = 0x0e0; // BPL1PTH
-    copper_list[1] = (((ULONG)v_bas_ad) & 0xffff0000) >> 16;
+    copper_list[1] = ((ULONG)amiga_screenbase & 0xffff0000) >> 16;
     copper_list[2] = 0x0e2; // BPL1PTL
-    copper_list[3] = (((ULONG)v_bas_ad) & 0x0000ffff);
+    copper_list[3] = ((ULONG)amiga_screenbase & 0x0000ffff);
     copper_list[4] = 0xffff; // End of
     copper_list[5] = 0xfffe; // Copper list
 
@@ -87,6 +88,19 @@ void amiga_screen_init(void)
 
     // Start the DMA
     *(volatile UWORD*)0xdff096 = DMAF_SETCLR | DMAF_COPPER | DMAF_RASTER | DMAF_MASTER;
+}
+
+void amiga_setphys(void *addr)
+{
+#if DBG_AMIGA
+    kprintf("amiga_setphys(0x%08lx)\n", (ULONG)addr);
+#endif
+    amiga_screenbase = addr;
+}
+
+LONG amiga_physbase(void)
+{
+    return (LONG)amiga_screenbase;
 }
 
 /* This scancode table will be used by amiga_int_ciaa_serial */

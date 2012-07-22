@@ -203,7 +203,7 @@ _amiga_vbl:
         btst    #5,d0                   // interrupt vbl ?
         jbeq    amivblend
 
-        move.l  _v_bas_ad,d0            // Video Base address
+        move.l  _amiga_screenbase,d0    // Video Base address
         tst.w   0xdff004                // Test bit 15 = LOF bit
         jpl     vl1                     // LOF = 0, even lines, no change
 

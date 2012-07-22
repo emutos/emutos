@@ -728,6 +728,10 @@ LONG physbase(void)
 {
     LONG addr;
 
+#ifdef MACHINE_AMIGA
+    return amiga_physbase();
+#endif
+
 #if CONF_WITH_SHIFTER
     addr = *(volatile UBYTE *) VIDEOBASE_ADDR_HI;
     addr <<= 8;
@@ -767,6 +771,11 @@ static void setphys(LONG addr,int checkaddr)
             panic("VideoRAM covers ROM area!!\n");
         }
     }
+
+#ifdef MACHINE_AMIGA
+    amiga_setphys((void*)addr);
+    return;
+#endif
 
 #if CONF_WITH_SHIFTER
     *(volatile UBYTE *) VIDEOBASE_ADDR_HI = ((ULONG) addr) >> 16;

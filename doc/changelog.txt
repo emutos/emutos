@@ -3852,3 +3852,7 @@ Start... early ages
 2012-07-19
 - bios/amiga.c: Added keyboard acknowledges required for real Amiga hardware
   and WinUAE 2.4.0 or higher. (VRI)
+
+2012-07-22
+- bios/amiga.c bios/amiga.h bios/amiga2.S bios/screen.c: Added setphys() and
+ Getphys() support for Amiga(). (VRI)
