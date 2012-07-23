@@ -3856,3 +3856,7 @@ Start... early ages
 2012-07-22
 - bios/amiga.c bios/amiga.h bios/amiga2.S bios/screen.c: Added setphys() and
  Getphys() support for Amiga(). (VRI)
+
+2012-07-23
+- include/config.h bios/processor.S: Added CONF_WITH_SFP004 (Mega ST 68881 FPU
+  board) to avoid testing 0xfffffa40 on non-Atari hardware. (VRI)

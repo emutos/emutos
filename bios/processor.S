@@ -142,7 +142,11 @@ _detect_fpu:
 
         move.l  _mcpu,d1        // check if 68000 or 68010
         cmpi.w  #20,d1
+#if CONF_WITH_SFP004
         bmi.s   sfp
+#else
+        bmi.s   fexit
+#endif
         
         cmpi.w  #60,d1          // enable FPU on 68060 before the check
         bmi.s   no60
@@ -174,9 +178,13 @@ no60:   dc.l    0xf2800000      // fnop
         cmpi.b  #0x1f,d1
         beq.s   fexit
         moveq   #0x04,d0        // must be 68881
+
+#if CONF_WITH_SFP004
         bra.s   fexit
-sfp:    tst.w   (0xfa40).w      // CIR
+sfp:    tst.w   0xfffffa40.w    // CIR
         moveq   #0x01,d0        // memory mapped FPU
+#endif
+
 fexit:  move.l  a1,(0x2c).w     // restore Line-F
         move.l  a2,(0x08).w
         move.l  a0,sp
