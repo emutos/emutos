@@ -831,6 +831,8 @@ fshow: fal_dsm.txt
 # Hatari symbols file
 #
 
+TOCLEAN += *.sym
+
 %.sym: emutos2.map tools/map2sym.sh
 	tools/map2sym.sh $< >$@
 
