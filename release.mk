@@ -62,7 +62,7 @@ release-512k:
 	$(MAKE) clean
 	$(MAKE) 512
 	mkdir $(RELEASE_DIR)/$(RELEASE_512K)
-	cp etos512k.img $(RELEASE_DIR)/$(RELEASE_512K)
+	cp etos512k.img etos512k.sym $(RELEASE_DIR)/$(RELEASE_512K)
 	cat doc/readme-512k.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_512K)/readme.txt
 	mkdir $(RELEASE_DIR)/$(RELEASE_512K)/doc
 	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_512K)/doc

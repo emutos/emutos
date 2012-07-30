@@ -9,6 +9,7 @@ Note: Extra hardware is autodetected.
 This ROM is the optimal one for Hatari, with any hardware combination.
 
 etos512k.img - Multilanguage
+etos512k.sym - Debug symbols for Hatari
 
 The default language is English.
 Other supported languages are:

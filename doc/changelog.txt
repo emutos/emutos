@@ -3860,3 +3860,8 @@ Start... early ages
 2012-07-23
 - include/config.h bios/processor.S: Added CONF_WITH_SFP004 (Mega ST 68881 FPU
   board) to avoid testing 0xfffffa40 on non-Atari hardware. (VRI)
+
+2012-07-30
+- .cvsignore Makefile release.mk tools/map2sym.sh doc/readme-512k.txt: Make
+  512 now generates debug symbols for Hatari in etos512.sym. Contributed by Eero
+  Tamminen. (VRI)

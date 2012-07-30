@@ -355,10 +355,11 @@ $(ROM_256): emutos2.img mkrom$(EXE)
 #
 
 ROM_512 = etos512k.img
+SYMFILE = $(addsuffix .sym,$(basename $(ROM_512)))
 
 .PHONY: 512
 512: DEF = -DTARGET_512
-512: $(ROM_512)
+512: $(ROM_512) $(SYMFILE)
 
 $(ROM_512): ROMSIZE = 512
 $(ROM_512): emutos2.img mkrom$(EXE)
@@ -825,6 +826,13 @@ fdsm: fal_dsm.txt
 .PHONY: fshow
 fshow: fal_dsm.txt
 	cat fal_dsm.txt
+
+#
+# Hatari symbols file
+#
+
+%.sym: emutos2.map tools/map2sym.sh
+	tools/map2sym.sh $< >$@
 
 #
 # indent - indents the files except when there are warnings
