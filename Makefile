@@ -512,7 +512,7 @@ uncompr$(EXE): tools/uncompr.c
 .PHONY: comprtest
 NODEP += comprtest
 comprtest: compr$(EXE) uncompr$(EXE)
-	sh tools/comprtst.sh
+	$(SHELL) tools/comprtst.sh
 
 TOCLEAN += compr$(EXE) uncompr$(EXE)
 
@@ -834,7 +834,7 @@ fshow: fal_dsm.txt
 TOCLEAN += *.sym
 
 %.sym: emutos2.map tools/map2sym.sh
-	tools/map2sym.sh $< >$@
+	$(SHELL) tools/map2sym.sh $< >$@
 
 #
 # indent - indents the files except when there are warnings
