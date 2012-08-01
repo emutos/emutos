@@ -531,7 +531,7 @@ static void xbios_18(void)
 #if DBG_XBIOS
 static void xbios_19(WORD cnt, LONG ptr)
 {
-    kprintf("XBIOS: Midiws(0x%04x, 0x%08lx)\n", cnt, ptr);
+    kprintf("XBIOS: Ikbdws(0x%04x, 0x%08lx)\n", cnt, ptr);
     ikbdws(cnt, (PTR) ptr);
 }
 #endif
@@ -918,10 +918,10 @@ static WORD xbios_59(void)
     kprintf("XBIOS: VgetMonitor\n");
     return vmontype();
 }
-static void xbios_5a(void)
+static void xbios_5a(WORD external)
 {
     kprintf("XBIOS: VsetSync\n");
-    vsetsync();
+    vsetsync(external);
 }
 static LONG xbios_5b(WORD mode)
 {
