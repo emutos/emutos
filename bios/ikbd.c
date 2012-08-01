@@ -415,7 +415,11 @@ LONG bconout4(WORD dev, WORD c)
     return 1L;
 }
 
-/* cnt = number of bytes to send less one */
+/* cnt = number of bytes to send less one
+ * Workaround: New Beat's 4kB Falcon demo "Blue" calls Ikbdws() with a
+ * ridiculously small stack (sp == 0x22), so keep stack usage as small as
+ * possible here.
+ */
 void ikbdws(WORD cnt, PTR ptr)
 {
     UBYTE *p = (UBYTE *) ptr;
