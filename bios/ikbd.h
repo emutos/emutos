@@ -66,7 +66,7 @@ extern WORD kbrate(WORD initial, WORD repeat);
 extern void bioskeys(void);
 
 extern void ikbdws(WORD cnt, LONG ptr);
-extern void ikbd_writeb(BYTE b);
+extern void ikbd_writeb(UBYTE b);
 extern void ikbd_writew(WORD w);
 
 #endif /* IKBD_H */

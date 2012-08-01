@@ -411,7 +411,7 @@ LONG bcostat4(void)
 /* send a byte to the IKBD */
 LONG bconout4(WORD dev, WORD c)
 {
-    ikbd_writeb((BYTE)c);
+    ikbd_writeb((UBYTE)c);
     return 1L;
 }
 
@@ -420,11 +420,11 @@ void ikbdws(WORD cnt, PTR ptr)
 {
     UBYTE *p = (UBYTE *) ptr;
     while (cnt-- >= 0)
-        bconout4(0, *p++);
+        ikbd_writeb(*p++);
 }
 
 /* send a byte to the IKBD - for general use */
-void ikbd_writeb(BYTE b)
+void ikbd_writeb(UBYTE b)
 {
 #if DBG_KBD
     kprintf("ikbd_writeb(0x%02x)\n", (UBYTE)b);

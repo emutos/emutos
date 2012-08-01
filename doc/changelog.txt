@@ -3865,3 +3865,7 @@ Start... early ages
 - .cvsignore Makefile release.mk tools/map2sym.sh doc/readme-512k.txt: Make
   512 now generates debug symbols for Hatari in etos512.sym. Contributed by Eero
   Tamminen. (VRI)
+
+2012-08-01
+- bios/ikbd.c: Slightly optimized ikbdws() to work around a stack problem in
+  the Falcon demo "Blue" by "New Beat". (THH)
