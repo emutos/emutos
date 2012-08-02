@@ -146,12 +146,9 @@ GLOBES
 /*GLOBAL*/ ANODE        *g_ahead;
 /*GLOBAL*/ ICONBLK      g_idlist[NUM_IBLKS];
 /*GLOBAL*/ ICONBLK      g_iblist[NUM_IBLKS];
-/*GLOBAL*/ WORD         g_ismask[NUM_IBLKS*2];
 
 
 /*GLOBAL*/ CSAVE        g_cnxsave;
-/*GLOBAL*/ LONG         a_datastart;
-/*GLOBAL*/ LONG         a_buffstart;
 
 /*GLOBAL*/ LONG         a_screen;
 /*GLOBAL*/ OBJECT       g_screen[NUM_SOBS];             /* NUM_SOBS     */

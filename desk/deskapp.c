@@ -55,6 +55,10 @@
 GLOBAL WORD     gl_numics;
 GLOBAL WORD     gl_stdrv;
 
+static LONG     datastart;
+static LONG     buffstart;
+static WORD     ismask[NUM_IBLKS*2];
+
 static BYTE     gl_afile[SIZE_AFILE];
 static BYTE     gl_buffer[SIZE_BUFF];
 
@@ -351,47 +355,47 @@ static void app_rdicon(void)
                                                 /*   in bytes           */
        length = (LONG)icondata_end - (LONG)icondata_start;
 
-        G.a_datastart = dos_alloc( length );
+        datastart = dos_alloc( length );
                                                 /* copy it              */
-        memcpy((void *)G.a_datastart, icondata_start, length);
+        memcpy((void *)datastart, icondata_start, length);
 
        gl_numics = 18;
                                                 /* figure out which are */
                                                 /*   mask & which data  */
         for (i=0; i<last_icon; i++)
         {
-          G.g_ismask[ (WORD) G.g_idlist[i].ib_pmask] = TRUE;
-          G.g_ismask[ (WORD) G.g_idlist[i].ib_pdata] = FALSE;
+          ismask[ (WORD) G.g_idlist[i].ib_pmask] = TRUE;
+          ismask[ (WORD) G.g_idlist[i].ib_pdata] = FALSE;
         }
                                                 /* fix up mask ptrs     */
         num_masks = 0;
         for (i=0; i<num_icons; i++)
         {
-          if (G.g_ismask[i])
+          if (ismask[i])
           {
-            G.g_ismask[i] = num_masks;
+            ismask[i] = num_masks;
             num_masks++;
           }
           else
-            G.g_ismask[i] = -1;
+            ismask[i] = -1;
         }
                                                 /* allocate memory for  */
                                                 /*   transformed mask   */
                                                 /*   forms              */
         msk_bytes = num_masks * num_bytes;
-        G.a_buffstart = dos_alloc( LW(msk_bytes) );
+        buffstart = dos_alloc( LW(msk_bytes) );
                                                 /* fix up icon pointers */
         for (i=0; i<last_icon; i++)
         {
                                                 /* first the mask       */
-          temp = ( G.g_ismask[ G.g_idlist[i].ib_pmask ] * ((LONG) num_bytes));
-          G.g_iblist[i].ib_pmask = G.a_buffstart + LW(temp);
+          temp = ( ismask[ G.g_idlist[i].ib_pmask ] * ((LONG) num_bytes));
+          G.g_iblist[i].ib_pmask = buffstart + LW(temp);
           temp = ( G.g_idlist[i].ib_pmask * ((LONG) num_bytes));
-          G.g_idlist[i].ib_pmask = G.a_datastart + LW(temp);
+          G.g_idlist[i].ib_pmask = datastart + LW(temp);
                                                 /* now the data         */
           temp = ( G.g_idlist[i].ib_pdata * ((LONG) num_bytes));
           G.g_iblist[i].ib_pdata = G.g_idlist[i].ib_pdata = 
-                G.a_datastart + LW(temp);
+                datastart + LW(temp);
                                                 /* now the text ptrs    */
           G.g_idlist[i].ib_ytext = G.g_iblist[i].ib_ytext = 
                         G.g_idlist[0].ib_hicon;
@@ -404,19 +408,19 @@ static void app_rdicon(void)
 
         for (i=0; i<num_icons; i++)
         {
-          if (G.g_ismask[i] != -1)
+          if (ismask[i] != -1)
           {
                                                 /* preserve standard    */
                                                 /*   form of masks      */
-            stmp = G.a_datastart + (i * num_bytes);
-            dtmp = G.a_buffstart + (G.g_ismask[i] * num_bytes);
+            stmp = datastart + (i * num_bytes);
+            dtmp = buffstart + (ismask[i] * num_bytes);
             LWCOPY(dtmp, stmp, num_wds);
           }
           else
           {
                                                 /* transform over std.  */
                                                 /*   form of datas      */
-            dtmp = G.a_datastart + (i * num_bytes);
+            dtmp = datastart + (i * num_bytes);
           }
           gsx_trans(dtmp, iwb, dtmp, iwb, ih);
         }
