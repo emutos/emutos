@@ -287,6 +287,34 @@ static void setvalue_snd(void)
 #endif
 }
   
+#if CONF_WITH_ALT_RAM
+
+/* FRB */
+
+static void setvalue_frb(void)
+{
+  BOOL need_frb;
+
+#ifdef MACHINE_AMIGA
+  /* Unfortunately, read Alt RAM presence will be detected later */
+  need_frb = TRUE;
+#elif CONF_WITH_FASTRAM
+  /* Standard Atari TT-RAM may be present */
+  need_frb = (ramtop > 0);
+#else
+  need_frb = FALSE;
+#endif
+
+  if (need_frb) {
+    cookie_frb = (long)balloc(64 * 1024UL);
+  }
+
+#if DBG_MACHINE
+  kprintf("cookie_frb = 0x%08lx\n", cookie_frb);
+#endif
+}
+
+#endif /* CONF_WITH_ALT_RAM */
 
 #if CONF_WITH_FDC
 
@@ -401,15 +429,9 @@ void machine_init(void)
    * points to a 64k buffer that may be used by DMA device drivers to 
    * transfer memory between alternative RAM and ST RAM for DMA operations.  
    */
-  if (ramtop > 0) {
-    cookie_frb = (long)balloc(64 * 1024UL);
-#if DBG_MACHINE
-    kprintf("cookie_frb = 0x%08lx\n", cookie_frb);
-#endif
+  setvalue_frb();
+  if (cookie_frb) {
     cookie_add(COOKIE_FRB, cookie_frb);
-  }
-  else {
-    cookie_frb = 0;
   }
 #endif /* CONF_WITH_ALT_RAM */
    

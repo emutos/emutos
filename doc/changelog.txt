@@ -3871,3 +3871,6 @@ Start... early ages
   the Falcon demo "Blue" by "New Beat". (THH)
 - bios/xbios.c: Fixed compilation with DBG_XBIOS. (VRI)
 - desk/deskapp.c desk/deskbind.h: Changed three globals into locals. (RFB)
+
+2012-08-03
+- bios/machine.c: Added _FRB cookie on Amiga. (VRI)
