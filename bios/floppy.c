@@ -318,7 +318,11 @@ LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt,
             track /= 2;
         }
 #if CONF_WITH_ALT_RAM
-        if (buf > 0x1000000L) {
+        if ((void *)buf >= phystop) {
+            /* The buffer provided by the user is outside the ST-RAM,
+             * but floprw() needs to use the DMA.
+             * We must use the intermediate _FRB buffer.
+             */
             if (cookie_frb > 0) {
                 /* do we really need proper FRB lock? (TODO) */
                 if(rw & 1) {
@@ -337,6 +341,7 @@ LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt,
         } else
 #endif
         {
+            /* The buffer is in the ST-RAM, we can call floprw() directly */
             err = floprw(buf, rw, dev, sect, track, side, 1);
         }
         buf += SECT_SIZ;

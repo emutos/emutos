@@ -3873,4 +3873,4 @@ Start... early ages
 - desk/deskapp.c desk/deskbind.h: Changed three globals into locals. (RFB)
 
 2012-08-03
-- bios/machine.c: Added _FRB cookie on Amiga. (VRI)
+- bios/floppy.c bios/machine.c: Added _FRB cookie on Amiga. (VRI)
