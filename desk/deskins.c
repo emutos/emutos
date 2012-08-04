@@ -284,7 +284,7 @@ static void insa_elev(LONG tree, WORD nicon, WORD numics)
 */
 
 #if CONF_WITH_DESKTOP_ICONS
-        lp = cfg_icons_txt[nicon];
+        lp = icon_rs_fstr[nicon];
 #else
         lp = "Not available";
 #endif

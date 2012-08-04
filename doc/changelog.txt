@@ -3878,3 +3878,5 @@ Start... early ages
 2012-08-04
 - desk/deskapp.c desk/icons.c: ICONBLKs in icons.c now use ptrs to data/mask
   instead of non-standard index numbers. (RFB)
+- desk/deskapp.c desk/deskins.c desk/icons.c desk/icons.h: Clean up icon name
+  stuff prior to implementing icons in a .RSC file. (RFB)

@@ -398,9 +398,8 @@ static void app_rdicon(void)
             }
         }
 
-        /* the following is pretty bogus. it is the number of entries in the
-         * cfg_icons_txt[] array in icons.c. FIXME */
-       gl_numics = 18;
+        /* the number of entries in the icon_rs_fstr[] array in icons.c */
+        gl_numics = LASTICON + 1;
 
         /*
          * Fix up the ICONBLKs

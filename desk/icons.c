@@ -159,8 +159,11 @@ const ICONBLK gl_ilist[NUM_IBLKS] =
 };
 
 
-/* Icon names for use in Desktop's Configure Application dialog */
-const BYTE * const cfg_icons_txt[32] =
+/* Icon names for use in Desktop's Configure Application dialog
+ * Each line corresponds to a pair of icons (application + document)
+ * in gl_ilist[]; a maximum of (NUM_IBLKS-8)/2 names is supported.
+ */
+const BYTE * const icon_rs_fstr[] =
 {
         " Generic ",
         " Spreadsheet ",
@@ -180,20 +183,7 @@ const BYTE * const cfg_icons_txt[32] =
         " Output ",
         " Desktop Publisher ",
         " Scan ",
-        " Mail ",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        ""
+        " Mail "
 };
 
 #endif /* CONF_WITH_DESKTOP_ICONS */
