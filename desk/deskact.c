@@ -473,7 +473,7 @@ static WORD act_chkobj(LONG tree, WORD root, WORD obj, WORD mx, WORD my, WORD w,
 {
         OBJECT          *olist;
         ICONBLK         *ib;
-        WORD            view, ox, oy;
+        WORD            view, ox, oy, icon;
         GRECT           t, m;
 
         olist = (OBJECT *) LPOINTER(tree);
@@ -493,7 +493,8 @@ static WORD act_chkobj(LONG tree, WORD root, WORD obj, WORD mx, WORD my, WORD w,
           case V_ICON:
                 r_set(&t, mx - ox, my - oy, w, h);
                 r_set(&m, mx - ox, my - oy, w, h);
-                ib = (ICONBLK *) &G.g_idlist[G.g_index[obj]];
+                icon = G.g_index[obj];
+                ib = (ICONBLK *) &G.g_iblist[icon];
                 if ( !rc_intersect((GRECT *)&ib->ib_xtext, &t) )
                 {
                   if ( !rc_intersect((GRECT *)&ib->ib_xicon, &m) )
@@ -502,7 +503,7 @@ static WORD act_chkobj(LONG tree, WORD root, WORD obj, WORD mx, WORD my, WORD w,
                   {
                     if ( !bit_on(m.g_x - ib->ib_xicon + (w / 2), 
                         m.g_y - ib->ib_yicon + (h / 2),
-                        ib->ib_pmask, ib->ib_wicon/8) )
+                        G.g_origmask[icon], ib->ib_wicon/8) )
                     return(root);
                   }
                 }

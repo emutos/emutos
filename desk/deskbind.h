@@ -144,7 +144,7 @@ GLOBES
 
 /*GLOBAL*/ ANODE        *g_aavail;
 /*GLOBAL*/ ANODE        *g_ahead;
-/*GLOBAL*/ ICONBLK      g_idlist[NUM_IBLKS];
+/*GLOBAL*/ LONG         g_origmask[NUM_IBLKS];  /* ptrs to untransformed icon mask */
 /*GLOBAL*/ ICONBLK      g_iblist[NUM_IBLKS];
 
 

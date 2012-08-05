@@ -329,16 +329,20 @@ static void app_rdicon(void)
         WORD            num_mask, num_data, num_wds, num_bytes;
 
         /*
-         * First, we copy the ICONBLKs to two arrays: g_idlist[]
-         * and g_iblist[].
-         *  g_idlist[] points to the transformed data/untransformed mask
-         *             & is referenced by act_chkobj() in deskact.c
+         * First, we copy the ICONBLKs to the g_iblist[] array:
          *  g_iblist[] points to the transformed data/transformed mask
-         *             & is referenced by insa_icon() in deskins.c and
-         *             win_bldview() in deskwin.c
+         *  & is referenced by act_chkobj() in deskact.c, insa_icon()
+         *  in deskins.c, and win_bldview() in deskwin.c
          */
-        memcpy(G.g_idlist, gl_ilist, NUM_IBLKS*sizeof(ICONBLK));
         memcpy(G.g_iblist, gl_ilist, NUM_IBLKS*sizeof(ICONBLK));
+
+        /*
+         * Then we initialise g_origmask[]:
+         *  g_origmask[i] points to the untransformed mask & is
+         *  referenced by act_chkobj() in deskact.c
+         */
+        for (i = 0; i < NUM_IBLKS; i++)
+            G.g_origmask[i] = gl_ilist[i].ib_pmask;
 
         /*
          * Determine the number of mask and data icons actually used
@@ -408,10 +412,10 @@ static void app_rdicon(void)
             temp = mask[i] * num_bytes;
             G.g_iblist[i].ib_pmask = (LONG)maskstart + temp;
             temp = data[i] * num_bytes;
-            G.g_iblist[i].ib_pdata = G.g_idlist[i].ib_pdata = (LONG)datastart + temp;
-            G.g_iblist[i].ib_ytext = G.g_idlist[i].ib_ytext = gl_ilist[0].ib_hicon;
-            G.g_iblist[i].ib_wtext = G.g_idlist[i].ib_wtext = 12 * gl_wschar;
-            G.g_iblist[i].ib_htext = G.g_idlist[i].ib_htext = gl_hschar + 2;
+            G.g_iblist[i].ib_pdata = (LONG)datastart + temp;
+            G.g_iblist[i].ib_ytext = gl_ilist[0].ib_hicon;
+            G.g_iblist[i].ib_wtext = 12 * gl_wschar;
+            G.g_iblist[i].ib_htext = gl_hschar + 2;
         }
 
         /*
@@ -458,8 +462,8 @@ void app_start(void)
 
         app_rdicon();
 
-        G.g_wicon = (12 * gl_wschar) + (2 * G.g_idlist[0].ib_xtext);
-        G.g_hicon = G.g_idlist[0].ib_hicon + gl_hschar + 2;
+        G.g_wicon = (12 * gl_wschar) + (2 * G.g_iblist[0].ib_xtext);
+        G.g_hicon = G.g_iblist[0].ib_hicon + gl_hschar + 2;
 
         G.g_icw = (gl_height <= 300) ? 0 : 8;
         G.g_icw += G.g_wicon;
@@ -634,7 +638,7 @@ void app_start(void)
         }
 #endif
 
-        xcent = (G.g_wicon - G.g_idlist[0].ib_wicon) / 2;
+        xcent = (G.g_wicon - G.g_iblist[0].ib_wicon) / 2;
         G.g_nmicon = 9;
         G.g_xyicon[0] = xcent;  G.g_xyicon[1] = 0;
         G.g_xyicon[2]=xcent; G.g_xyicon[3]=G.g_hicon-gl_hschar-2;

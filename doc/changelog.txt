@@ -3880,3 +3880,7 @@ Start... early ages
   instead of non-standard index numbers. (RFB)
 - desk/deskapp.c desk/deskins.c desk/icons.c desk/icons.h: Clean up icon name
   stuff prior to implementing icons in a .RSC file. (RFB)
+
+2012-08-05
+- desk/deskact.c desk/deskapp.c desk/deskbind.h: Save ~2K RAM by replacing one
+  of the global ICONBLK arrays with an array of pointers. (RFB)
