@@ -3887,3 +3887,5 @@ Start... early ages
 
 2012-08-08
 - bios/kprint.c: Fix bug in Super() expansion, introduced in rev 1.43. (RFB)
+- desk/deskapp.c: Code cleanup: eliminate 'unused variable' warning
+  messages. (RFB)

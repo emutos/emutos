@@ -55,8 +55,10 @@
 GLOBAL WORD     gl_numics;
 GLOBAL WORD     gl_stdrv;
 
+#if CONF_WITH_DESKTOP_ICONS
 static char     *maskstart;
 static char     *datastart;
+#endif
 
 static BYTE     gl_afile[SIZE_AFILE];
 static BYTE     gl_buffer[SIZE_BUFF];
