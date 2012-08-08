@@ -38,7 +38,7 @@ __extension__                               \
     __asm__ volatile                        \
     (                                       \
         "move.l %1,-(sp)\n\t"               \
-        "move.w 0x20,-(sp)\n\t"             \
+        "move.w #0x20,-(sp)\n\t"             \
         "trap   #1\n\t"                     \
         "addq.l #6,sp"                      \
     : "=r"(retvalue)                    /* outputs */       \
