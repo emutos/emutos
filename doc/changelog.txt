@@ -3889,3 +3889,6 @@ Start... early ages
 - bios/kprint.c: Fix bug in Super() expansion, introduced in rev 1.43. (RFB)
 - desk/deskapp.c: Code cleanup: eliminate 'unused variable' warning
   messages. (RFB)
+
+2012-08-09
+- bios/amiga.c: Fix clock year on real hardware. (VRI)

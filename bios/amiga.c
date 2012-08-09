@@ -262,9 +262,15 @@ static UWORD amiga_dogetdate(void)
     kprintf("amiga_dogetdate() %02d/%02d/%02d\n", years, months, days);
 #endif
 
+    /* Y2K fix */
+    if (years >= 80)
+        years += 1900;
+    else
+        years += 2000;
+
     date = (days & 0x1F)
         | ((months & 0xF) << 5)
-        | ((1900 + years - 1980) << 9);
+        | ((years - 1980) << 9);
 
     return date;
 }
