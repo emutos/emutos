@@ -155,10 +155,8 @@ _amiga_int_ciaa_serial:
         ror.b   #1,d0                   // d0 now contains the raw key
 
         // Begin acknowledge on CNT pin
-        ori.b   #0b01000000,0xbfee01    // SPMODE = 1
-
-        // Start the CIAA Timer A in one shot mode
-        move.b  #0b00001000,0xbfee01    // CIAA control register A (Timer A)
+        // and start the CIAA Timer A in one shot mode
+        move.b  #0b01001000,0xbfee01    // CIAA control register A (Timer A) + SPMODE = 1
 
         // The timer will start after writing the high byte
         // CIAA Timer A: keyboard acknowledge timer, value = 63 (85 ms)

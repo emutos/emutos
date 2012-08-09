@@ -3891,4 +3891,5 @@ Start... early ages
   messages. (RFB)
 
 2012-08-09
-- bios/amiga.c: Fix clock year on real hardware. (VRI)
+- bios/amiga.c: Fixed clock year on real hardware. (VRI)
+- bios/amiga.c: Fixed keyboard acknowledge bug. (VRI)
