@@ -45,10 +45,10 @@
 #include "desk1.h"
 #include "intmath.h"
 
-
+#if CONF_WITH_DESKTOP_ICONS
 static ICONBLK  gl_aib;
 static ICONBLK  gl_dib;
-
+#endif
 
 /*
 *       Routine to tell if an icon has an associated document type.
@@ -245,6 +245,7 @@ WORD ins_disk(ANODE *pa)
 } /* ins_disk */
 
 
+#if CONF_WITH_DESKTOP_ICONS
 static void insa_icon(LONG tree, WORD obj, WORD nicon, ICONBLK *pic, BYTE *ptext)
 {
         movs(sizeof(ICONBLK), &G.g_iblist[nicon], pic);
@@ -252,7 +253,7 @@ static void insa_icon(LONG tree, WORD obj, WORD nicon, ICONBLK *pic, BYTE *ptext
         LWSET(OB_TYPE(obj), G_ICON);
         LLSET(OB_SPEC(obj), ADDR(pic));
 }
-
+#endif
 
 
 static void insa_elev(LONG tree, WORD nicon, WORD numics)
@@ -271,19 +272,13 @@ static void insa_elev(LONG tree, WORD nicon, WORD numics)
         LWSET(OB_Y(APFSVELE), y);
         LWSET(OB_HEIGHT(APFSVELE), h);
 
+#if CONF_WITH_DESKTOP_ICONS
         strcpy(&G.g_1text[0], ini_str(STAPPL));
         insa_icon(tree, APF1NAME, IA_GENERIC+nicon, &gl_aib, &G.g_1text[0]);
 
         strcpy(&G.g_2text[0], ini_str(STDOCU));
         insa_icon(tree, APF2NAME, ID_GENERIC+nicon, &gl_dib, &G.g_2text[0]);
-/* The following disabled lines were used when the icons have been loaded
-   from an external file: */
-/*
-        lp = G.a_datastart + (LONG) *((BYTE **)(G.a_datastart + gl_pstart +
-             (nicon * sizeof(BYTE *)) ) );
-*/
 
-#if CONF_WITH_DESKTOP_ICONS
         lp = icon_rs_fstr[nicon];
 #else
         lp = "Not available";
