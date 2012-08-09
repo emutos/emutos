@@ -258,7 +258,7 @@ static UWORD amiga_dogetdate(void)
     UWORD years = read_clock_bcd(offset + 10);
     UWORD date;
 
-#if DBG_CLOCK
+#if DBG_AMIGA
     kprintf("amiga_dogetdate() %02d/%02d/%02d\n", years, months, days);
 #endif
 
