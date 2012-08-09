@@ -453,13 +453,14 @@ static void isetregs(void)
 
 static UWORD idogetdate(void)
 {
+  UWORD year;
   UWORD date;
 
 #if DBG_CLOCK
   kprintf("idogetdate() %02x/%02x/%02x\n", iclkbuf.year, iclkbuf.month, iclkbuf.day);
 #endif
   /* guess the real year from IKBD data */
-  UWORD year = bcd2int(iclkbuf.year);
+  year = bcd2int(iclkbuf.year);
   if (year < 80)
     year += 2000;
   else
