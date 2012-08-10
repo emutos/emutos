@@ -52,37 +52,35 @@
 
 
 
-void ob_getsp(LONG tree, WORD obj, TEDINFO *pted)
+static void ob_getsp(LONG tree, WORD obj, TEDINFO *pted)
 {
-        WORD            flags;
         register LONG   spec;
+        OBJECT          *objptr = ((OBJECT *)tree) + obj;
 
-        flags = LWGET(OB_FLAGS(obj));
-        spec = LLGET(OB_SPEC(obj));
-        if (flags & INDIRECT)
-          spec = LLGET(spec);
-        LBCOPY(ADDR(pted), spec, sizeof(TEDINFO));
+        spec = objptr->ob_spec;
+        if (objptr->ob_flags & INDIRECT)
+          spec = *((LONG *)spec);
+        memcpy(pted, (TEDINFO *)spec, sizeof(TEDINFO));
 }
 
 
 void ob_center(LONG tree, GRECT *pt)
 {
         register WORD   xd, yd, wd, hd;
-        register LONG   plong;
+        OBJECT          *root = (OBJECT *)tree;
         WORD            height;
 
-        plong = OB_X(ROOT);
-        wd = LWGET(plong + 0x04L);
-        hd = LWGET(plong + 0x06L);
+        wd = root->ob_width;
+        hd = root->ob_height;
         xd = (gl_width - wd) / 2;
                                         /* don't center on xtra long screens */
         height = min(gl_height, 25 * gl_hchar);
         yd = gl_hbox + ((height - gl_hbox - hd) / 2);
-        LWSET(plong, xd);         
-        LWSET(plong + 0x02L, yd);
+        root->ob_x = xd;
+        root->ob_y = yd;
                                                 /* account for outline  */
                                                 /*   or shadow          */
-        if ( LWGET(OB_STATE(ROOT)) & (OUTLINED | SHADOWED) )
+        if (root->ob_state & (OUTLINED|SHADOWED))
         {
           xd -= 3;
           yd -= 3;

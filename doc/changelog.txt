@@ -3897,3 +3897,7 @@ Start... early ages
   no icons are available (eg 192K ROMs). (RFB)
 - desk/deskwin.c: Change initial desktop display for 192K ROMs to standard
   text format (was strange 'text-as-icons' display). (RFB)
+
+2012-08-10
+- aes/gemobed.c: Code cleanup: removed compatibility macros & made local
+  function static. (RFB)
