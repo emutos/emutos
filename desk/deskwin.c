@@ -52,9 +52,11 @@
 #ifndef DESK1
 /* Cut-down DESKTOP 2.x+ style */
 #define WINDOW_STYLE (HOTCLOSE|VSLIDE|UPARROW|DNARROW|NAME|CLOSER|FULLER)
+#define START_VIEW   V_TEXT
 #else
 #define WINDOW_STYLE (NAME | CLOSER | MOVER | FULLER | INFO | SIZER | \
                       UPARROW | DNARROW | VSLIDE | LFARROW | RTARROW | HSLIDE)
+#define START_VIEW   V_ICON
 #endif
 
 
@@ -103,7 +105,7 @@ void win_start(void)
         WORD            i;
 
         obj_init();
-        win_view(V_ICON, S_NAME);       
+        win_view(START_VIEW, S_NAME);       
 
         for(i=0; i<NUM_WNODES; i++)
         {

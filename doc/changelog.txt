@@ -3895,3 +3895,5 @@ Start... early ages
 - bios/amiga.c: Fixed keyboard acknowledge bug. (VRI)
 - desk/deskins.c: Fix desktop crash when doing 'Configure application' and
   no icons are available (eg 192K ROMs). (RFB)
+- desk/deskwin.c: Change initial desktop display for 192K ROMs to standard
+  text format (was strange 'text-as-icons' display). (RFB)
