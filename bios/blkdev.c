@@ -435,8 +435,8 @@ LONG blkdev_mediach(WORD dev)
         err = blkdev_rwabs(RW_READ | RW_NOTRANSLATE, (LONG) dskbufp, 1, -1,
                            unit, blkdev[dev].start);
         if (err) {
-            /* can't even read the bootsector, what do we do ??? */
-            return err;
+            /* can't even read the bootsector */
+            return 1; /* unsure */
         }
         if ( (bs->serial[0] != blkdev[dev].serial[0])
             || (bs->serial[1] != blkdev[dev].serial[1])

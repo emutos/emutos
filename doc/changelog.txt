@@ -3904,3 +3904,4 @@ Start... early ages
 
 2012-08-11
 - bios/floppy.c: Renamed flopini() to flop_add_drive(). (VRI)
+- bios/blkdev.c: Fixed Mediach() return value when there is no floppy. (VRI)
