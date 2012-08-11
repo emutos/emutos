@@ -3901,3 +3901,6 @@ Start... early ages
 2012-08-10
 - aes/gemobed.c: Code cleanup: removed compatibility macros & made local
   function static. (RFB)
+
+2012-08-11
+- bios/floppy.c: Renamed flopini() to flop_add_drive(). (VRI)

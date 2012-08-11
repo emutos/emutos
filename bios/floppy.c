@@ -91,7 +91,7 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
 static WORD flopwtrack(LONG buf, WORD dev, WORD track, WORD side);
 
 /* initialise a floppy for hdv_init */
-static void flopini(WORD dev);
+static void flop_detect_drive(WORD dev);
 
 #if CONF_WITH_FDC
 
@@ -161,14 +161,24 @@ static UBYTE deselected;
 #endif /* CONF_WITH_FDC */
 
 static struct flop_info {
-  WORD cur_track;
   WORD rate;
+#if CONF_WITH_FDC
+  WORD cur_track;
   BYTE wp;           /* != 0 means write protected */
+#endif
 } finfo[2];
 
-#define IS_VALID_FLOPPY_DEVICE(dev) (dev >= 0 && dev < 2 && finfo[dev].cur_track >= 0)
+#define IS_VALID_FLOPPY_DEVICE(dev) ((UWORD)(dev) < 2 && devices[dev].valid)
 
 /*==== hdv_init and hdv_boot ==============================================*/
+
+static void flop_init(WORD dev)
+{
+    finfo[dev].rate = seekrate;
+#if CONF_WITH_FDC
+    finfo[dev].cur_track = -1;
+#endif
+}
 
 void flop_hdv_init(void)
 {
@@ -178,10 +188,8 @@ void flop_hdv_init(void)
 
     /* by default, there is no floppy drive */
     nflops = 0;
-    finfo[0].cur_track = -1;
-    finfo[0].rate = seekrate;
-    finfo[1].cur_track = -1;
-    finfo[1].rate = seekrate;
+    flop_init(0);
+    flop_init(1);
 
 #if CONF_WITH_FDC
     cur_dev = -1;
@@ -191,17 +199,43 @@ void flop_hdv_init(void)
 #endif
 
     /* autodetect floppy drives */
-    flopini(0);
-    flopini(1);
+    flop_detect_drive(0);
+    flop_detect_drive(1);
 }
 
-static void flopini(WORD dev)
+static void flop_add_drive(WORD dev)
+{
+#if CONF_WITH_FDC
+    /* FDC floppy device */
+    finfo[dev].cur_track = 0;
+#endif
+
+    /* Physical block device */
+    devices[dev].valid = 1;
+    devices[dev].pssize = 512;      /* default */
+    devices[dev].size = 0;          /* unknown size */
+    devices[dev].last_access = 0;   /* never accessed */
+
+    /* Logical block device */
+    blkdev[dev].valid = 1;
+    blkdev[dev].start = 0;
+    blkdev[dev].size = 0;           /* unknown size */
+    blkdev[dev].geometry.sides = 2; /* default geometry of 3.5" DD */
+    blkdev[dev].geometry.spt = 9;
+    blkdev[dev].unit = dev;
+
+    /* OS variables */
+    nflops++;
+    drvbits |= (1 << dev);
+}
+
+static void flop_detect_drive(WORD dev)
 {
     WORD status;
     UNUSED(status);
 
 #if DBG_FLOP
-    kprintf("flopini(%d)\n", dev);
+    kprintf("flop_detect_drive(%d)\n", dev);
 #endif
 
 #if CONF_WITH_FDC
@@ -211,7 +245,7 @@ static void flopini(WORD dev)
     if(timeout_gpip(TIMEOUT)) {
         /* timeout */
 #if DBG_FLOP
-        kprintf("flopini(%d) timeout\n", dev);
+        kprintf("flop_detect_drive(%d) timeout\n", dev);
 #endif
         flopunlk();
         return;
@@ -225,21 +259,7 @@ static void flopini(WORD dev)
 #if DBG_FLOP
         kprintf("track0 signal got\n" );
 #endif
-        finfo[cur_dev].cur_track = 0;
-        nflops++;
-        drvbits |= (1<<dev);
-
-        /* init blkdev and device with default parameters */
-        blkdev[dev].valid = 1;
-        blkdev[dev].start = 0;
-        blkdev[dev].size = 0;           /* unknown size */
-        blkdev[dev].geometry.sides = 2; /* default geometry of 3.5" DD */
-        blkdev[dev].geometry.spt = 9;
-        blkdev[dev].unit = dev;
-        devices[dev].valid = 1;
-        devices[dev].pssize = 512;
-        devices[dev].size = 0;          /* unknown size */
-        devices[dev].last_access = 0;   /* never accessed */
+        flop_add_drive(dev);
     } 
     flopunlk();
 #endif
@@ -599,17 +619,19 @@ LONG floprate(WORD dev, WORD rate)
 static WORD floprw(LONG buf, WORD rw, WORD dev, 
                    WORD sect, WORD track, WORD side, WORD count)
 {
+    WORD err;
 #if CONF_WITH_FDC
     WORD retry;
-    WORD err;
     WORD status;
-    
+#endif
+
     if(!IS_VALID_FLOPPY_DEVICE(dev)) return EUNDEV;  /* unknown disk */
     
     if((rw == RW_WRITE) && (track == 0) && (sect == 1) && (side == 0)) {
         /* TODO, maybe media changed ? */
     }
   
+#if CONF_WITH_FDC
     floplock(dev);
     
     select(dev, side);
@@ -668,10 +690,11 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
     }
 
     flopunlk();
-    return err;
 #else
-    return EUNDEV;
+    err = EUNDEV;
 #endif
+
+    return err;
 }
 
 /*==== internal flopwtrack =================================================*/
