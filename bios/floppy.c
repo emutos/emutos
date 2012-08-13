@@ -27,6 +27,9 @@
 #include "string.h"
 #include "kprint.h"
 #include "xbiosbind.h"  /* random() */
+#ifdef MACHINE_AMIGA
+#include "amiga.h"
+#endif
 
 
 /*==== Introduction =======================================================*/
@@ -236,6 +239,14 @@ static void flop_detect_drive(WORD dev)
 
 #if DBG_FLOP
     kprintf("flop_detect_drive(%d)\n", dev);
+#endif
+
+#ifdef MACHINE_AMIGA
+    if (amiga_flop_detect_drive(dev)) {
+        flop_add_drive(dev);
+        devices[dev].last_access = hz_200;
+    }
+    return;
 #endif
 
 #if CONF_WITH_FDC
@@ -631,7 +642,10 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
         /* TODO, maybe media changed ? */
     }
   
-#if CONF_WITH_FDC
+#ifdef MACHINE_AMIGA
+    err = amiga_floprw(buf, rw, dev, sect, track, side, count);
+    devices[dev].last_access = hz_200;
+#elif CONF_WITH_FDC
     floplock(dev);
     
     select(dev, side);
