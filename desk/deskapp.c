@@ -336,7 +336,7 @@ static void app_rdicon(void)
          *  & is referenced by act_chkobj() in deskact.c, insa_icon()
          *  in deskins.c, and win_bldview() in deskwin.c
          */
-        memcpy(G.g_iblist, gl_ilist, NUM_IBLKS*sizeof(ICONBLK));
+        memcpy(G.g_iblist, icon_rs_iconblk, NUM_IBLKS*sizeof(ICONBLK));
 
         /*
          * Then we initialise g_origmask[]:
@@ -344,7 +344,7 @@ static void app_rdicon(void)
          *  referenced by act_chkobj() in deskact.c
          */
         for (i = 0; i < NUM_IBLKS; i++)
-            G.g_origmask[i] = gl_ilist[i].ib_pmask;
+            G.g_origmask[i] = icon_rs_iconblk[i].ib_pmask;
 
         /*
          * Determine the number of mask and data icons actually used
@@ -357,17 +357,17 @@ static void app_rdicon(void)
         for (i = 0, num_mask = num_data = 0; i < NUM_IBLKS; i++) {
             if (mask[i] < 0) {
                 mask[i] = num_mask;
-                addr = gl_ilist[i].ib_pmask;
+                addr = icon_rs_iconblk[i].ib_pmask;
                 for (j = i+1; j < NUM_IBLKS; j++) 
-                    if (gl_ilist[j].ib_pmask == addr)
+                    if (icon_rs_iconblk[j].ib_pmask == addr)
                         mask[j] = num_mask;
                 num_mask++;
             }
             if (data[i] < 0) {
                 data[i] = num_data;
-                addr = gl_ilist[i].ib_pdata;
+                addr = icon_rs_iconblk[i].ib_pdata;
                 for (j = i+1; j < NUM_IBLKS; j++) 
-                    if (gl_ilist[j].ib_pdata == addr)
+                    if (icon_rs_iconblk[j].ib_pdata == addr)
                         data[j] = num_data;
                 num_data++;
             }
@@ -377,7 +377,7 @@ static void app_rdicon(void)
          * Calculate the size of each icon in words & bytes.  We
          * assume that all icons are the same w,h as the first
          */
-        num_wds = (gl_ilist[0].ib_wicon * gl_ilist[0].ib_hicon) / 16;
+        num_wds = (icon_rs_iconblk[0].ib_wicon * icon_rs_iconblk[0].ib_hicon) / 16;
         num_bytes = num_wds * 2;
 
         /*
@@ -389,7 +389,7 @@ static void app_rdicon(void)
         for (i = 0, p = maskstart; i < NUM_IBLKS; i++) {
             n = mask[i];
             if (!copied[n]) {   /* only copy mask once */
-                memcpy(p+n*num_bytes, (char *)gl_ilist[i].ib_pmask, num_bytes);
+                memcpy(p+n*num_bytes, (char *)icon_rs_iconblk[i].ib_pmask, num_bytes);
                 copied[n] = 1;
             }
         }
@@ -399,7 +399,7 @@ static void app_rdicon(void)
         for (i = 0, p = datastart; i < NUM_IBLKS; i++) {
             n = data[i];
             if (!copied[n]) {   /* only copy data once */
-                memcpy(p+n*num_bytes, (char *)gl_ilist[i].ib_pdata, num_bytes);
+                memcpy(p+n*num_bytes, (char *)icon_rs_iconblk[i].ib_pdata, num_bytes);
                 copied[n] = 1;
             }
         }
@@ -415,7 +415,7 @@ static void app_rdicon(void)
             G.g_iblist[i].ib_pmask = (LONG)maskstart + temp;
             temp = data[i] * num_bytes;
             G.g_iblist[i].ib_pdata = (LONG)datastart + temp;
-            G.g_iblist[i].ib_ytext = gl_ilist[0].ib_hicon;
+            G.g_iblist[i].ib_ytext = icon_rs_iconblk[0].ib_hicon;
             G.g_iblist[i].ib_wtext = 12 * gl_wschar;
             G.g_iblist[i].ib_htext = gl_hschar + 2;
         }
@@ -423,8 +423,8 @@ static void app_rdicon(void)
         /*
          * Finally we do the transforms
          */
-        iwb = gl_ilist[0].ib_wicon / 8;
-        ih = gl_ilist[0].ib_hicon;
+        iwb = icon_rs_iconblk[0].ib_wicon / 8;
+        ih = icon_rs_iconblk[0].ib_hicon;
 
         for (i = 0, p = maskstart; i < num_mask; i++, p += num_bytes)
             gsx_trans((LONG)p, iwb, (LONG)p, iwb, ih);

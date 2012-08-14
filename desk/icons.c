@@ -77,7 +77,7 @@
    (W)ib_xtext, (W)ib_ytext, (W)ib_wtext, (W)ib_htext;
 */
 
-const ICONBLK gl_ilist[NUM_IBLKS] =
+const ICONBLK icon_rs_iconblk[NUM_IBLKS] =
 {
 /* System Icons:        */
     { (LONG)ighdskmh, (LONG)ighdskdh, -1L, 0x1000,5,11, 23,0,32,32, 0,32,72,10}, /*IGHARD 0*/
@@ -161,7 +161,7 @@ const ICONBLK gl_ilist[NUM_IBLKS] =
 
 /* Icon names for use in Desktop's Configure Application dialog
  * Each line corresponds to a pair of icons (application + document)
- * in gl_ilist[]; a maximum of (NUM_IBLKS-8)/2 names is supported.
+ * in icon_rs_iconblk[]; a maximum of (NUM_IBLKS-8)/2 names is supported.
  */
 const BYTE * const icon_rs_fstr[] =
 {
