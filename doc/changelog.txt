@@ -3909,3 +3909,5 @@ Start... early ages
 2012-08-13
 - bios/amiga.c bios/amiga.h bios/floppy.c: Added support for reading ST floppies
   on Amiga. (VRI)
+- tools/erd.c: Improve handling of ICONBLKs and TEDINFOs prior to upcoming
+  icon resource decompiler. (RFB)

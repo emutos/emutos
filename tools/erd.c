@@ -130,6 +130,14 @@
  *  v3.1    roger burrows, july/2012
  *          . allow conditional string for trees & freestrings
  *            to differ
+ *
+ *  v3.2    roger burrows, july/2012
+ *          . change iconblk handling: previously, both mask & data had
+ *            to match to eliminate duplicates; now, mask & data are
+ *            checked separately for duplication
+ *          . change TEDINFO handling: previously, if there were no
+ *            TEDINFOs, we created an empty array; now we don't create
+ *            the array
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -307,7 +315,7 @@ typedef struct {
 #else
 #define PROGRAM_NAME    "erd"
 #endif
-#define VERSION         "v3.1"
+#define VERSION         "v3.2"
 #define MAX_STRLEN      300         /* max size for internal string areas */
 #define NLS             "N_("       /* the macro used in EmuTOS for NLS support*/
 
@@ -573,8 +581,9 @@ TYPE typelist[] = {
 int all_dashes(char *string);
 int cmp_def(const void *a,const void *b);
 int cmp_shared(const void *a,const void *b);
-int compare_icons(ICONBLK *b1,ICONBLK *b2);
+int compare_data(ICONBLK *b1,ICONBLK *b2);
 int compare_images(BITBLK *b1,BITBLK *b2);
+int compare_mask(ICONBLK *b1,ICONBLK *b2);
 void convert_header(RSHDR *hdr);
 short convert_def_type(int deftype);
 short convert_dfn_type(int dfntype,int dfnind);
@@ -1443,6 +1452,9 @@ TEDINFO *ted;
 char temp[MAX_STRLEN], temp2[MAX_STRLEN];
 char *base = (char *)rschdr, *p;
 
+    if (rsh.nted == 0)      /* don't generate TEDINFO stuff if not needed */
+        return 0;
+
     fprintf(fp,"TEDINFO %srs_tedinfo[RS_NTED];\n\n",prefix);
 
     fprintf(fp,"static const TEDINFO %srs_tedinfo_rom[] = {\n",prefix);
@@ -1489,7 +1501,7 @@ int write_iconblk(FILE *fp)
 int i, j, n, nib;
 short iconchar;
 char temp[MAX_STRLEN];
-int *map;
+int *mmap, *dmap;
 ICONBLK *iconblk;
 char *base = (char *)rschdr;
 
@@ -1500,24 +1512,35 @@ char *base = (char *)rschdr;
     iconblk = (ICONBLK *)(base + rsh.iconblk);
 
     /*
-     * first we figure out the duplicate icon stuff: if map[j]
-     * contains i (i not equal to -1), then the jth icon is the
-     * same as the ith, and the ith icon is the "master" icon
-     * (and map[i] will contain -1)
+     * first we figure out the duplicate icon stuff: if mmap[j]
+     * contains i (i not equal to -1), then the jth mask is the
+     * same as the ith, and the ith mask is the "master" mask
+     * (and mmap[i] will contain -1).  data areas are treated
+     * the same, using dmap[].
      */
-    map = malloc(nib*sizeof(int));      /* allocate mapping array */
+    mmap = malloc(nib*sizeof(int));      /* allocate mapping arrays */
+    dmap = malloc(nib*sizeof(int));
     for (i = 0; i < nib; i++)
-        map[i] = -1;
+        mmap[i] = dmap[i] = -1;
 
-    for (i = 0; i < nib; i++) {         /* populate mapping array */
-        if (map[i] >= 0)
-            continue;                   /* already mapped */
-        for (j = i+1; j < nib; j++) {
-            if (map[j] >= 0)
-                continue;               /* already mapped */
-            if (compare_icons(iconblk+i,iconblk+j))
-                continue;                       /* different icons */
-            map[j] = i;                         /* the same, so map */
+    for (i = 0; i < nib; i++) {         /* populate mapping arrays */
+        if (mmap[i] < 0) {                  /* not yet mapped */
+            for (j = i+1; j < nib; j++) {
+                if (mmap[j] >= 0)
+                    continue;               /* already mapped */
+                if (compare_mask(iconblk+i,iconblk+j))
+                    continue;               /* different masks */
+                mmap[j] = i;                /* the same, so map */
+            }
+        }
+        if (dmap[i] < 0) {                  /* not yet mapped */
+            for (j = i+1; j < nib; j++) {
+                if (dmap[j] >= 0)
+                    continue;               /* already mapped */
+                if (compare_data(iconblk+i,iconblk+j))
+                    continue;               /* different masks */
+                dmap[j] = i;                /* the same, so map */
+            }
         }
     }
 
@@ -1525,15 +1548,18 @@ char *base = (char *)rschdr;
      * then we create the actual icon mask/data arrays
      */
     for (i = 0; i < nib; i++, iconblk++) {
-        if (map[i] >= 0)        /* don't create icon data for a "mapped" icon */
-            continue;
-        n = get_short(&iconblk->ib_hicon) * get_short(&iconblk->ib_wicon) / 16;
-        fprintf(fp,"static const WORD rs_iconmask%d[] = {\n",i);        /* output mask */
-        write_data(fp,n,(USHORT *)(base+get_offset(&iconblk->ib_pmask)));
-        fprintf(fp,"};\n");
-        fprintf(fp,"static const WORD rs_icondata%d[] = {\n",i);        /* output data */
-        write_data(fp,n,(USHORT *)(base+get_offset(&iconblk->ib_pdata)));
-        fprintf(fp,"};\n\n");
+        if (mmap[i] < 0) {      /* only create icon mask for an "unmapped" icon */
+            n = get_short(&iconblk->ib_hicon) * get_short(&iconblk->ib_wicon) / 16;
+            fprintf(fp,"static const WORD rs_iconmask%d[] = {\n",i);    /* output mask */
+            write_data(fp,n,(USHORT *)(base+get_offset(&iconblk->ib_pmask)));
+            fprintf(fp,"};\n\n");
+        }
+        if (dmap[i] < 0) {      /* only create icon data for an "unmapped" icon */
+            n = get_short(&iconblk->ib_hicon) * get_short(&iconblk->ib_wicon) / 16;
+            fprintf(fp,"static const WORD rs_icondata%d[] = {\n",i);    /* output data */
+            write_data(fp,n,(USHORT *)(base+get_offset(&iconblk->ib_pdata)));
+            fprintf(fp,"};\n\n");
+        }
     }
     fprintf(fp,"\n");
 
@@ -1548,7 +1574,7 @@ char *base = (char *)rschdr;
         iconchar = get_short(&iconblk->ib_char);
         copyfix(temp,base+get_offset(&iconblk->ib_ptext),MAX_STRLEN-1);
         fprintf(fp,"    { (LONG) rs_iconmask%d, (LONG) rs_icondata%d, \"%s\", %s,\n",
-                (map[i]==-1)?i:map[i],(map[i]==-1)?i:map[i],
+                (mmap[i]==-1)?i:mmap[i],(dmap[i]==-1)?i:dmap[i],
                 temp,decode_ib_char(iconchar));
         fprintf(fp,"      %d, %d, %d, %d, %d, %d, %d, %d, %d, %d },\n",
                 get_short(&iconblk->ib_xchar),get_short(&iconblk->ib_ychar),
@@ -1561,7 +1587,8 @@ char *base = (char *)rschdr;
         fprintf(fp,"#endif\n");
     fprintf(fp,"};\n\n\n");
 
-    free(map);
+    free(mmap);
+    free(dmap);
 
     return ferror(fp) ? -1 : 0;
 }
@@ -2276,9 +2303,9 @@ char *base = (char *)rschdr;
 }
 
 /*
- *  compare icons, return 0 iff identical size & mask/data
+ *  compare icon mask, return 0 iff identical size & mask
  */
-int compare_icons(ICONBLK *b1,ICONBLK *b2)
+int compare_mask(ICONBLK *b1,ICONBLK *b2)
 {
 int i, size1, size2;
 char *p1, *p2;
@@ -2295,6 +2322,24 @@ char *base = (char *)rschdr;
     for (i = 0; i < size1; i++)
         if (*p1++ != *p2++)
             return 1;
+
+    return 0;
+}
+
+/*
+ *  compare icon data, return 0 iff identical size & data
+ */
+int compare_data(ICONBLK *b1,ICONBLK *b2)
+{
+int i, size1, size2;
+char *p1, *p2;
+char *base = (char *)rschdr;
+
+    /* calculate sizes in bytes */
+    size1 = get_short(&b1->ib_hicon) * get_short(&b1->ib_wicon) / 8;
+    size2 = get_short(&b2->ib_hicon) * get_short(&b2->ib_wicon) / 8;
+    if (size1 != size2)
+        return 1;
 
     p1 = base + get_offset(&b1->ib_pdata);
     p2 = base + get_offset(&b2->ib_pdata);
