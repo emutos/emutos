@@ -3919,4 +3919,4 @@ Start... early ages
 - aes/* desk/*: Changed file selector string parameter types to BYTE*. (VRI)
 - aes/*: Changed scrap functions string parameter types to BYTE*. (VRI)
 - aes/*: Changed shell functions string parameter types to BYTE*. (VRI)
-- aes/*: Removed global variables ad_scdir and ad_path. (VRI)
+- aes/*: Removed global variables ad_scdir, ad_path and ad_scrap. (VRI)

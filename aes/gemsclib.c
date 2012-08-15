@@ -35,11 +35,6 @@
 
 #include "string.h"
 
-
-GLOBAL LONG             ad_scrap;
-
-
-
 /************************************************************************/
 /*                                                                      */
 /* sc_read() -- get info about current scrap directory                  */
@@ -54,7 +49,7 @@ WORD sc_read(BYTE *pscrap)
     WORD    len;
 
     /* current scrap directory */
-    len = strlencpy(pscrap, (char *) ad_scrap);      
+    len = strlencpy(pscrap, D.g_scrap);      
     strcpy(pscrap+len, "\\");      /* cat on backslash  */
     return( len != 0 );
 }
@@ -73,11 +68,11 @@ WORD sc_write(BYTE *pscrap)
 {
     WORD    len;
 
-    len = strlencpy((char *) ad_scrap, pscrap);      /* new scrap directory  */
-    if (LBGET(ad_scrap + --len) == '\\')    /* remove backslash     */
-      LBSET(ad_scrap + len, '\0');
+    len = strlencpy(D.g_scrap, pscrap);     /* new scrap directory  */
+    if (LBGET(D.g_scrap + --len) == '\\')   /* remove backslash     */
+      LBSET(D.g_scrap + len, '\0');
     dos_sdta(ad_dta);                       /* use our dta          */
-    return(dos_sfirst((BYTE*)ad_scrap, F_SUBDIR)); /* make sure path ok    */
+    return(dos_sfirst(D.g_scrap, F_SUBDIR)); /* make sure path ok    */
 }
 
 #if CONF_WITH_PCGEM
@@ -85,34 +80,34 @@ WORD sc_write(BYTE *pscrap)
 /*                                                                      */
 /* sc_clear() -- delete scrap files from current scrap directory        */
 /*                                                                      */
-/*      Assumes *ad_scrap holds a valid directory path.                 */
+/*      Assumes D.g_scrap holds a valid directory path.                 */
 /*      Returns TRUE on success.                                        */
 /*                                                                      */
 /************************************************************************/
 
 WORD sc_clear()
 {
-    LONG    ptmp;
+    BYTE    *ptmp;
     WORD    found;
     static const char *scrapmask = "\\SCRAP.*";
 
-    if(ad_scrap == NULL || LBGET(ad_scrap) == 0)
+    if(D.g_scrap == NULL || LBGET(D.g_scrap) == 0)
       return FALSE;
 
-    ptmp = ad_scrap;
+    ptmp = D.g_scrap;
     while(LBGET(ptmp))                      /* find null */
       ptmp++;
 
-    strcpy((char *) ptmp, scrapmask);       /* Add mask */
+    strcpy(ptmp, scrapmask);                /* Add mask */
 
     dos_sdta(ad_dta);                       /* make sure dta ok */
 
-    found = dos_sfirst((BYTE*)ad_scrap, F_SUBDIR);
+    found = dos_sfirst(D.g_scrap, F_SUBDIR);
     while(found)
     {
-        strcpy((char *)ptmp + 1, ((char *)ad_dta + 30));  /* Add file name */
-        dos_delete((char *)ad_scrap);       /* delete scrap.* */
-        strcpy((char *) ptmp, scrapmask);   /* Add mask */
+        strcpy(ptmp + 1, ((char *)ad_dta + 30));    /* Add file name */
+        dos_delete(D.g_scrap);              /* delete scrap.* */
+        strcpy(ptmp, scrapmask);            /* Add mask */
         found = dos_snext();
     }
 

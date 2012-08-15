@@ -175,7 +175,6 @@ static void ini_dlongs(void)
         D.s_cmd = &cmd[0];
         ad_scmd = (LONG)D.s_cmd;
         D.g_scrap = &scrap_dir[0];
-        ad_scrap = (LONG)D.g_scrap;
         D.s_cdir = &cur_dir[0];
         D.g_dir = &gl_dir[0];
         D.g_dta = &gl_dta[0];
