@@ -12,8 +12,7 @@
 
 extern SHELL    sh[];
 
-extern LONG     ad_scmd;
-extern LONG     ad_stail;
+extern BYTE     *ad_stail;
 extern LONG     ad_ssave;
 extern LONG     ad_dta;
 

@@ -64,8 +64,7 @@ static BYTE sh_apdir[LEN_ZPATH];                /* holds directory of   */
                                                 /*   GEMDOS resets dir  */
                                                 /*   to parent's on ret */
                                                 /*   from exec.         */
-GLOBAL LONG     ad_scmd;
-GLOBAL LONG     ad_stail;
+GLOBAL BYTE     *ad_stail;
 GLOBAL LONG     ad_ssave;
 GLOBAL LONG     ad_dta;
 
@@ -94,7 +93,7 @@ extern void coma_start();
 
 void sh_read(BYTE *pcmd, BYTE *ptail)
 {
-        strcpy(pcmd,(char *)ad_scmd);
+        strcpy(pcmd, D.s_cmd);
         LBCOPY(ptail, ad_stail, 128);
 }
 
@@ -232,7 +231,7 @@ void sh_fixtail(WORD iscpm)
           }
         }
                                                 /* copy into true tail  */
-        LBCOPY(ad_stail, ADDR(s_tail), 128);
+        LBCOPY(ad_stail, s_tail, 128);
 }
 
 
@@ -254,12 +253,12 @@ WORD sh_write(WORD doex, WORD isgem, WORD isover, const BYTE *pcmd, const BYTE *
         {
           gl_changerez = 1 + isover;
           gl_nextrez = isgem;
-          strcpy((char*)ad_scmd, "");
-          strcpy((char*)ad_stail, "");
+          strcpy(D.s_cmd, "");
+          strcpy(ad_stail, "");
           return TRUE;
         }
 
-        strcpy((char *)ad_scmd, pcmd);
+        strcpy(D.s_cmd, pcmd);
         LBCOPY(ad_stail, ptail, 128);
 
         if (isover > 0)
@@ -277,10 +276,10 @@ WORD sh_write(WORD doex, WORD isgem, WORD isover, const BYTE *pcmd, const BYTE *
         {
           sh_fixtail(FALSE);
                                                 /* run it above us      */
-          if ( sh_find((BYTE*)ad_scmd) )
+          if ( sh_find(D.s_cmd) )
           {
             /* Normal Atari-GEM's shel_write does not support running PRGs directly! */
-            /*dos_exec(0, ad_scmd, ad_stail, ad_envrn);*/
+            /*dos_exec(0, D.s_cmd, ad_stail, ad_envrn);*/
           }
           else
             return(FALSE);
@@ -361,7 +360,7 @@ void sh_toalpha()
 
 
 
-void sh_draw(LONG lcmd, WORD start, WORD depth)
+static void sh_draw(const BYTE *lcmd, WORD start, WORD depth)
 {
         LONG            tree;
 
@@ -369,7 +368,7 @@ void sh_draw(LONG lcmd, WORD start, WORD depth)
         {
           tree = ad_stdesk;
           gsx_sclip(&gl_rscreen);
-          LLSET(ad_pfile, lcmd);
+          LLSET(ad_pfile, (LONG)lcmd);
           ob_draw(tree, start, depth);
         }
 }
@@ -377,7 +376,7 @@ void sh_draw(LONG lcmd, WORD start, WORD depth)
 
 
 
-void sh_show(LONG lcmd)
+static void sh_show(const BYTE *lcmd)
 {
         WORD            i;
         
@@ -411,7 +410,7 @@ BYTE *sh_name(BYTE *ppath)
 */
 void sh_envrn(BYTE **ppath, const BYTE *psrch)
 {
-        LONG            lp;
+        BYTE            *lp;
         WORD            len, findend;
         BYTE            last, tmp, loc1[10], loc2[10];
 
@@ -454,7 +453,7 @@ void sh_envrn(BYTE **ppath, const BYTE *psrch)
         if (!tmp)
                 lp = 0x0L;
 
-        LLSET(ppath, lp);
+        *ppath = lp;
 }
 
 
@@ -709,7 +708,7 @@ void sh_ldapp()
           }
                                                 /* fix up/parse cmd tail*/ 
           sh_fixtail(psh->sh_fullstep == 2);
-          sh_draw(ad_scmd, 0, 0);               /* redraw the desktop   */
+          sh_draw(D.s_cmd, 0, 0);               /* redraw the desktop   */
 
                                                 /* clear his desk field */
           desk_tree[rlr->p_pid] = 0x0L;
@@ -728,38 +727,38 @@ void sh_ldapp()
           {
             retry = FALSE;
 
-            Dprintf(("sh_ldapp: Starting %s\n",(char *)ad_scmd));
-            if(psh->sh_isdef && strcmp((char *)ad_scmd,rs_str(STDESKTP)) == 0)
+            Dprintf(("sh_ldapp: Starting %s\n", D.s_cmd));
+            if(psh->sh_isdef && strcmp(D.s_cmd, rs_str(STDESKTP)) == 0)
             {
               /* Start the ROM desktop: */
-              sh_show(ad_scmd);
+              sh_show(D.s_cmd);
               p_nameit(rlr, sh_name(&D.s_cmd[0]));
               p_setappdir(rlr, D.s_cmd);
 
               ui_pd = (LONG *) trap1_pexec(5, 0L , "", 0L);
               ui_pd[2] = (LONG) deskstart;
               ui_pd[3] = ui_pd[5] = ui_pd[7] = 0;
-              dos_exec(6, 0L, (LONG)ui_pd, 0L);           /* Run the desktop */
+              dos_exec(6, 0L, (const BYTE *)ui_pd, 0L);     /* Run the desktop */
             }
 #if WITH_CLI != 0
-            else if(strcmp((char *)ad_scmd, "EMUCON") == 0)
+            else if(strcmp(D.s_cmd, "EMUCON") == 0)
             {
               /* start the EmuCON shell: */
               ui_pd = (LONG *) trap1_pexec(5, 0L , "", 0L);
               ui_pd[2] = (LONG) coma_start;
               ui_pd[3] = ui_pd[5] = ui_pd[7] = 0;
-              dos_exec(6, 0L, (LONG)ui_pd, 0L);           /* Run EmuCON */
+              dos_exec(6, 0L, (const BYTE *)ui_pd, 0L);     /* Run EmuCON */
             }
 #endif
-            else if ( sh_find((BYTE*)ad_scmd) )
+            else if ( sh_find(D.s_cmd) )
             {
               /* Run a normal application: */
-              sh_show(ad_scmd);
+              sh_show(D.s_cmd);
               p_nameit(rlr, sh_name(&D.s_cmd[0]));
               p_setappdir(rlr, D.s_cmd);
               if (psh->sh_fullstep == 0)
               {
-                dos_exec(0, ad_scmd, ad_stail, ad_envrn);   /* Run the APP */
+                dos_exec(0, D.s_cmd, ad_stail, ad_envrn);   /* Run the APP */
 
                 /* If the user ran an alternative desktop and quitted it,
                    return now to the default desktop: (experimental) */
@@ -772,7 +771,7 @@ void sh_ldapp()
               }
               else if (psh->sh_fullstep == 1)
               {
-                dos_exec(0, ad_scmd, ad_stail, ad_envrn);
+                dos_exec(0, D.s_cmd, ad_stail, ad_envrn);
                 DOS_ERR = psh->sh_doexec = FALSE;
               }
               if (DOS_ERR)

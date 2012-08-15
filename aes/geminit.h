@@ -15,7 +15,7 @@ extern LONG     ad_valstr;
 extern LONG     ad_sysglo;
 extern LONG     ad_armice;
 extern LONG     ad_hgmice;
-extern LONG     ad_envrn;
+extern BYTE     *ad_envrn;
 extern LONG     ad_stdesk;
 
 extern BYTE     gl_dta[128];

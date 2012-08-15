@@ -86,7 +86,7 @@ GLOBAL LONG     ad_valstr;
 GLOBAL LONG     ad_sysglo;
 GLOBAL LONG     ad_armice;
 GLOBAL LONG     ad_hgmice;
-GLOBAL LONG     ad_envrn;               /* initialized in GEMSTART      */
+GLOBAL BYTE     *ad_envrn;              /* initialized in GEMSTART      */
 GLOBAL LONG     ad_stdesk;
 
 GLOBAL BYTE     gl_dta[128];
@@ -173,7 +173,6 @@ static void ini_dlongs(void)
         ad_tmpstr = (LONG)&D.g_tmpstr[0];
 
         D.s_cmd = &cmd[0];
-        ad_scmd = (LONG)D.s_cmd;
         D.g_scrap = &scrap_dir[0];
         D.s_cdir = &cur_dir[0];
         D.g_dir = &gl_dir[0];
@@ -270,7 +269,7 @@ static void sndcli(BYTE *pfilespec)
 #endif
         strcpy(&D.s_cmd[0], pfilespec);
 
-        handle = dos_open( (BYTE *)ad_scmd, ROPEN );
+        handle = dos_open(D.s_cmd, ROPEN);
         if (!DOS_ERR)
         {
           err_ret = pgmld(handle, &D.s_cmd[0], (LONG **)&ldaddr);
@@ -320,13 +319,13 @@ static void sh_addpath(void)
         BYTE    tmp;
         char    tmpstr[MAX_LEN];
 
-        lp = (char *)ad_envrn;
+        lp = ad_envrn;
                                                 /* get to end of envrn  */
         while ( *lp || *(lp+1) )                /* ends with 2 nulls    */
           lp++;
         lp++;                                   /* past 2nd null        */
                                                 /* old environment length*/
-        oelen = (lp - (char *)ad_envrn) + 2;
+        oelen = (lp - ad_envrn) + 2;
                                                 /* PATH= length & new path length */
         pp = rs_fstr[STPATH];
         strcpy(tmpstr, rs_fstr[STINPATH]);
@@ -360,8 +359,8 @@ static void sh_addpath(void)
                                                 /* first part length    */
           oplen = strlen(lp);                   /* length of actual path */
 
-          fstlen = lp - (char *)ad_envrn + oplen; /* len thru end of path */
-          memcpy(new_envr,(char *)ad_envrn,fstlen);
+          fstlen = lp - ad_envrn + oplen;       /* len thru end of path */
+          memcpy(new_envr,ad_envrn,fstlen);
         }
         else
         {
@@ -383,7 +382,7 @@ static void sh_addpath(void)
           memcpy(new_envr+fstlen+nplen,lp+oplen,oelen-fstlen);
         }
 
-        ad_envrn = (LONG)new_envr;              /* remember new environ.*/
+        ad_envrn = new_envr;                    /* remember new environ.*/
 }
 
 
@@ -424,7 +423,7 @@ static void sh_init(void)
                                                 /*   that was stored in */
                                                 /*   geminit            */
         psrc = s_tail = &D.g_dir[0];            /* reuse part of globals*/
-        memcpy(s_tail,(char *)ad_stail,128);
+        memcpy(s_tail,ad_stail,128);
         cnt = *psrc++;
 
         if (cnt)
@@ -474,7 +473,7 @@ static void sh_init(void)
                 pend++;
               }
               dos_sdrv(D.s_cmd[0] -'A');
-              dos_chdir((BYTE *)ad_scmd);
+              dos_chdir(D.s_cmd);
               *pdst++ = '\\';
             }
             need_ext = TRUE;
