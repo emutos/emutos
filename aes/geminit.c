@@ -92,7 +92,6 @@ GLOBAL LONG     ad_stdesk;
 GLOBAL BYTE     gl_dta[128];
 GLOBAL BYTE     gl_dir[130];
 GLOBAL WORD     gl_mouse[37];
-GLOBAL LONG     ad_scdir;
 GLOBAL BYTE     gl_logdrv;
 
 GLOBAL PD       *rlr, *drl, *nrl;
@@ -178,9 +177,7 @@ static void ini_dlongs(void)
         D.g_scrap = &scrap_dir[0];
         ad_scrap = (LONG)D.g_scrap;
         D.s_cdir = &cur_dir[0];
-        ad_scdir = (LONG)D.s_cdir;
         D.g_dir = &gl_dir[0];
-        ad_path = (LONG)D.g_dir;
         D.g_dta = &gl_dta[0];
         ad_dta = (LONG)D.g_dta;
         ad_fsdta = (LONG)&gl_dta[30];
@@ -308,7 +305,7 @@ static void ldaccs(void)
         for(i=0; (i<NUM_ACCS) && (ret); i++)
         {
 
-          ret = (i==0) ? dos_sfirst((BYTE*)ad_path, F_RDONLY) : dos_snext();
+          ret = (i==0) ? dos_sfirst(D.g_dir, F_RDONLY) : dos_snext();
           if (ret)
             sndcli(&gl_dta[30]);
         }
@@ -858,7 +855,7 @@ void gem_main(void)
         fs_start();
 
         /* remember current desktop directory */
-        sh_curdir(ad_scdir);
+        sh_curdir((LONG)D.s_cdir);
 
         /* process emudesk.inf part 2 */
         process_inf2();

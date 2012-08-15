@@ -68,7 +68,6 @@ GLOBAL LONG     ad_scmd;
 GLOBAL LONG     ad_stail;
 GLOBAL LONG     ad_ssave;
 GLOBAL LONG     ad_dta;
-GLOBAL LONG     ad_path;
 
 GLOBAL LONG     ad_pfile;
 
@@ -540,21 +539,21 @@ WORD sh_find(LONG pspec)
         /* first, search in the application directory */
         if (!gotdir && rlr->p_appdir[0] != '\0')
         {
-          strcpy((char *) ad_path, rlr->p_appdir);
-          strcat((char *) ad_path, (char *) pname);
-          dos_sfirst((BYTE*)ad_path, F_RDONLY | F_SYSTEM);
+          strcpy(D.g_dir, rlr->p_appdir);
+          strcat(D.g_dir, pname);
+          dos_sfirst(D.g_dir, F_RDONLY | F_SYSTEM);
           if (!DOS_ERR)
           {
-            strcpy((char *) pspec, (char *) ad_path);
+            strcpy((char *) pspec, D.g_dir);
             return 1;
           }
         }
 
         /* second, search in the current directory */
-        strcpy((char *) ad_path, (char *) pspec);  /* copy to local buffer */
+        strcpy(D.g_dir, (char *) pspec);  /* copy to local buffer */
         if (!gotdir)
         {
-          sh_curdir(ad_path);                   /* get current drive/dir*/
+          sh_curdir((LONG)D.g_dir);             /* get current drive/dir*/
           if (D.g_dir[3] != NULL)               /* if not at root       */
             strcat(&D.g_dir[0], "\\");          /*  add foreslash       */
           strcat(&D.g_dir[0], pname);           /* append name to drive */
@@ -566,7 +565,7 @@ WORD sh_find(LONG pspec)
         path = 0;
         do
         {
-          dos_sfirst((BYTE*)ad_path, F_RDONLY | F_SYSTEM);
+          dos_sfirst(D.g_dir, F_RDONLY | F_SYSTEM);
 
           if ( (DOS_AX == E_PATHNOTFND) ||
                 ((DOS_ERR) && 
@@ -574,7 +573,7 @@ WORD sh_find(LONG pspec)
                   (DOS_AX == E_PATHNOTFND) ||
                   (DOS_AX == E_FILENOTFND))) )
           {
-            path = sh_path(path, ad_path, pname);
+            path = sh_path(path, (LONG)D.g_dir, pname);
             DOS_ERR = TRUE;
           }
           else
@@ -584,13 +583,13 @@ WORD sh_find(LONG pspec)
         /* fourth, search in the current drive root directory */
         if (DOS_ERR && !gotdir)
         {
-          strcpy((char *) ad_path, "\\");
-          strcat((char *) ad_path, (char *) pname);
-          dos_sfirst((BYTE*)ad_path, F_RDONLY | F_SYSTEM);
+          strcpy(D.g_dir, "\\");
+          strcat(D.g_dir, pname);
+          dos_sfirst(D.g_dir, F_RDONLY | F_SYSTEM);
         }
 
         if (!DOS_ERR)
-          strcpy((char *) pspec, (char *) ad_path);
+          strcpy((char *) pspec, D.g_dir);
 
         return(!DOS_ERR);
 }
@@ -681,7 +680,7 @@ void sh_ldapp()
 
 
         psh = &sh[rlr->p_pid];
-        strcpy(sh_apdir, (BYTE *)ad_scdir);     /* initialize sh_apdir  */
+        strcpy(sh_apdir, D.s_cdir);             /* initialize sh_apdir  */
         badtry = 0;     
 
         /* Set default DESKTOP if there isn't any yet: */
