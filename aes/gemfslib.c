@@ -422,7 +422,7 @@ WORD fs_input(LONG pipath, LONG pisel, WORD *pbutton)
         WORD            curr, count, sel;
         WORD            mx, my;
         register LONG   tree;
-        LONG            ad_fpath, ad_fname, ad_ftitle, ad_locstr;
+        LONG            ad_fpath, ad_fname, ad_ftitle;
         WORD            fname_len, fpath_len, temp_len; 
         WORD            dclkret, cont, firsttime, newname, elevpos;
         register BYTE   *pstr, *pspec;
@@ -446,7 +446,6 @@ WORD fs_input(LONG pipath, LONG pisel, WORD *pbutton)
           return(FALSE);
 
         tree = ad_fstree;
-        ad_locstr = (LONG) ADDR(&locstr[0]);
                                                 /* init strings in form */
 
         dummy = LLGET(OB_SPEC(FTITLE));
@@ -493,7 +492,7 @@ WORD fs_input(LONG pipath, LONG pisel, WORD *pbutton)
             fs_sset(tree, FSDIRECT, ADDR(&D.g_dir[0]), &ad_fpath, &temp_len);
             pstr = fs_pspec(&locstr[0], &locstr[fpath_len]);        
             strcpy(pstr, "*.*");
-            fs_newdir(ad_ftitle, ad_locstr, pspec, tree, &count, elevpos);
+            fs_newdir(ad_ftitle, (LONG)locstr, pspec, tree, &count, elevpos);
             curr = elevpos;
             sel = touchob = elevpos = 0;
             firsttime = FALSE;
@@ -623,8 +622,8 @@ dofelev:        fm_own(TRUE);
           }
           if (firsttime)
           {
-           /* strcpy(ad_fpath, ad_locstr); */
-            fs_sset(tree, FSDIRECT, ad_locstr, &ad_fpath, &temp_len);
+           /* strcpy(ad_fpath, locstr); */
+            fs_sset(tree, FSDIRECT, (LONG)locstr, &ad_fpath, &temp_len);
             D.g_dir[0] = NULL;
             gl_tmp1[1] = NULL;
             newname = TRUE;
