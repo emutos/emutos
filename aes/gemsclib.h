@@ -13,8 +13,8 @@
 
 extern LONG  ad_scrap;
 
-WORD sc_read(LONG pscrap);
-WORD sc_write(LONG pscrap);
+WORD sc_read(BYTE *pscrap);
+WORD sc_write(BYTE *pscrap);
 WORD sc_clear(void);
 
 

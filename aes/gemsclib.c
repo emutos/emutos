@@ -49,13 +49,13 @@ GLOBAL LONG             ad_scrap;
 /*                                                                      */
 /************************************************************************/
 
-WORD sc_read(LONG pscrap)
+WORD sc_read(BYTE *pscrap)
 {
     WORD    len;
 
     /* current scrap directory */
-    len = strlencpy((char *) pscrap, (char *) ad_scrap);      
-    strcpy((char *) pscrap+len, "\\");      /* cat on backslash  */
+    len = strlencpy(pscrap, (char *) ad_scrap);      
+    strcpy(pscrap+len, "\\");      /* cat on backslash  */
     return( len != 0 );
 }
 
@@ -69,11 +69,11 @@ WORD sc_read(LONG pscrap)
 /*                                                                      */
 /************************************************************************/
 
-WORD sc_write(LONG pscrap)
+WORD sc_write(BYTE *pscrap)
 {
     WORD    len;
 
-    len = strlencpy((char *) ad_scrap, (char *) pscrap);      /* new scrap directory  */
+    len = strlencpy((char *) ad_scrap, pscrap);      /* new scrap directory  */
     if (LBGET(ad_scrap + --len) == '\\')    /* remove backslash     */
       LBSET(ad_scrap + len, '\0');
     dos_sdta(ad_dta);                       /* use our dta          */

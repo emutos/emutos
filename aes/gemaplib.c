@@ -61,13 +61,11 @@ LONG     gl_rbuf;
 WORD ap_init(void)
 {
         WORD    pid;
-        LONG    scdir;
-        char    tmpstr[32];
+        char    scdir[32];
 
         pid = rlr->p_pid;
 
-        strcpy(tmpstr, rs_fstr[STSCDIR]);
-        scdir = (LONG) tmpstr;
+        strcpy(scdir, rs_fstr[STSCDIR]);
 
         LBSET(scdir, gl_logdrv);                /* set drive letter     */
         sc_write(scdir);
