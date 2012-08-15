@@ -542,7 +542,7 @@ WORD sh_find(LONG pspec)
         {
           strcpy((char *) ad_path, rlr->p_appdir);
           strcat((char *) ad_path, (char *) pname);
-          dos_sfirst(ad_path, F_RDONLY | F_SYSTEM);
+          dos_sfirst((BYTE*)ad_path, F_RDONLY | F_SYSTEM);
           if (!DOS_ERR)
           {
             strcpy((char *) pspec, (char *) ad_path);
@@ -566,7 +566,7 @@ WORD sh_find(LONG pspec)
         path = 0;
         do
         {
-          dos_sfirst(ad_path, F_RDONLY | F_SYSTEM);
+          dos_sfirst((BYTE*)ad_path, F_RDONLY | F_SYSTEM);
 
           if ( (DOS_AX == E_PATHNOTFND) ||
                 ((DOS_ERR) && 
@@ -586,7 +586,7 @@ WORD sh_find(LONG pspec)
         {
           strcpy((char *) ad_path, "\\");
           strcat((char *) ad_path, (char *) pname);
-          dos_sfirst(ad_path, F_RDONLY | F_SYSTEM);
+          dos_sfirst((BYTE*)ad_path, F_RDONLY | F_SYSTEM);
         }
 
         if (!DOS_ERR)

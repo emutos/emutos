@@ -152,7 +152,7 @@ static WORD fs_add(WORD thefile, WORD fs_index)
 *       out the information in the path node.  Then sort the files.
 */
 
-static WORD fs_active(LONG ppath, BYTE *pspec, WORD *pcount)
+static WORD fs_active(BYTE *ppath, BYTE *pspec, WORD *pcount)
 {
         ULONG           mask;
         WORD            ret, thefile;
@@ -261,7 +261,7 @@ static void fs_format(LONG tree, WORD currtop, WORD count)
 {
         register WORD   i, cnt;
         register WORD   y, h, th;
-        LONG            adtext;
+        BYTE            *adtext;
         WORD            tlen;
                                                 /* build in real text   */
                                                 /*   strings            */
@@ -280,7 +280,7 @@ static void fs_format(LONG tree, WORD currtop, WORD count)
             gl_tmp1[0] = ' ';
             gl_tmp1[1] = NULL;
           }
-          fs_sset(tree, NAME_OFFSET+i, ADDR(&gl_tmp1[0]), &adtext, &tlen);
+          fs_sset(tree, NAME_OFFSET+i, gl_tmp1, &adtext, &tlen);
           LWSET(OB_TYPE(NAME_OFFSET+i),
                 ((gl_shdrive) ? G_BOXTEXT : G_FBOXTEXT) );
           LWSET(OB_STATE(NAME_OFFSET+i), NORMAL);
@@ -375,8 +375,8 @@ static WORD fs_nscroll(LONG tree, WORD *psel, WORD curr, WORD count,
 *       will activate the directory, format it, and display ir[0].
 */
         
-static WORD fs_newdir(LONG ftitle, 
-                      LONG fpath, 
+static WORD fs_newdir(BYTE *ftitle, 
+                      BYTE *fpath, 
                       BYTE *pspec, 
                       LONG tree, 
                       WORD *pcount, 
@@ -416,13 +416,13 @@ static WORD fs_newdir(LONG ftitle,
 *       or change of path, and returns to the application with
 *       the selected path, filename, and exit button.
 */
-WORD fs_input(LONG pipath, LONG pisel, WORD *pbutton)
+WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton)
 {
         register WORD   touchob, value, fnum;
         WORD            curr, count, sel;
         WORD            mx, my;
         register LONG   tree;
-        LONG            ad_fpath, ad_fname, ad_ftitle;
+        BYTE            *ad_fpath, *ad_fname, *ad_ftitle;
         WORD            fname_len, fpath_len, temp_len; 
         WORD            dclkret, cont, firsttime, newname, elevpos;
         register BYTE   *pstr, *pspec;
@@ -435,9 +435,9 @@ WORD fs_input(LONG pipath, LONG pisel, WORD *pbutton)
         count = 0;
                                         /* get out quick if path is     */
                                         /*   nullptr or if pts to null. */
-        if (pipath == 0x0L)
+        if (pipath == NULL)
           return(FALSE);
-        if ( LBGET(pipath) == NULL)
+        if ( LBGET(pipath) == '\0')
           return(FALSE);
                                                 /* get memory for       */
                                                 /*   the string buffer  */
@@ -449,18 +449,18 @@ WORD fs_input(LONG pipath, LONG pisel, WORD *pbutton)
                                                 /* init strings in form */
 
         dummy = LLGET(OB_SPEC(FTITLE));
-        ad_ftitle = LLGET(dummy);
+        ad_ftitle = (BYTE*)LLGET(dummy);
 
-        strcpy((char *) ad_ftitle, " *.* ");
+        strcpy(ad_ftitle, " *.* ");
         dummy=LLGET(OB_SPEC(FSDIRECT));
-        if (!strcmp((char *)pipath, (char *)LLGET(dummy)))   /* if equal */
+        if (!strcmp(pipath, (char *)LLGET(dummy)))   /* if equal */
           elevpos = gl_fspos;                   /* same dir as last time */ 
         else                                    
           elevpos = 0;
         fs_sset(tree, FSDIRECT, pipath, &ad_fpath, &temp_len);
-        strcpy(gl_tmp1, (char *) pisel);
+        strcpy(gl_tmp1, pisel);
         fmt_str(&gl_tmp1[0], &gl_tmp2[0]);
-        fs_sset(tree, FSSELECT, ADDR(&gl_tmp2[0]), &ad_fname, &fname_len);
+        fs_sset(tree, FSSELECT, gl_tmp2, &ad_fname, &fname_len);
                                                 /* set clip and start   */
                                                 /*   form fill-in by    */
                                                 /*   drawing the form   */
@@ -479,7 +479,7 @@ WORD fs_input(LONG pipath, LONG pisel, WORD *pbutton)
           touchob = (firsttime) ? 0x0 : fm_do(tree, FSSELECT);
           gsx_mxmy(&mx, &my);
         
-          fpath_len = strlencpy(locstr, (char *) ad_fpath);
+          fpath_len = strlencpy(locstr, ad_fpath);
           if ( strcmp(&D.g_dir[0], locstr)!=0 )
           {
             fs_sel(sel, NORMAL);
@@ -488,11 +488,11 @@ WORD fs_input(LONG pipath, LONG pisel, WORD *pbutton)
               ob_change(tree, touchob, NORMAL, TRUE);
             strcpy(&D.g_dir[0], &locstr[0]);
             pspec = fs_pspec(&D.g_dir[0], &D.g_dir[fpath_len]);     
-/*          strcpy((char *)ad_fpath, &D.g_dir[0]); */
-            fs_sset(tree, FSDIRECT, ADDR(&D.g_dir[0]), &ad_fpath, &temp_len);
+/*          strcpy(ad_fpath, &D.g_dir[0]); */
+            fs_sset(tree, FSDIRECT, D.g_dir, &ad_fpath, &temp_len);
             pstr = fs_pspec(&locstr[0], &locstr[fpath_len]);        
             strcpy(pstr, "*.*");
-            fs_newdir(ad_ftitle, (LONG)locstr, pspec, tree, &count, elevpos);
+            fs_newdir(ad_ftitle, locstr, pspec, tree, &count, elevpos);
             curr = elevpos;
             sel = touchob = elevpos = 0;
             firsttime = FALSE;
@@ -569,7 +569,7 @@ dofelev:        fm_own(TRUE);
                   }
                                                 /* get string and see   */
                                                 /*   if file or folder  */
-                  fs_sget(tree, touchob, ADDR(&gl_tmp1[0]));
+                  fs_sget(tree, touchob, gl_tmp1);
                   if (gl_tmp1[0] == ' ')
                   {
                                                 /* copy to selection    */
@@ -623,14 +623,14 @@ dofelev:        fm_own(TRUE);
           if (firsttime)
           {
            /* strcpy(ad_fpath, locstr); */
-            fs_sset(tree, FSDIRECT, (LONG)locstr, &ad_fpath, &temp_len);
+            fs_sset(tree, FSDIRECT, locstr, &ad_fpath, &temp_len);
             D.g_dir[0] = NULL;
             gl_tmp1[1] = NULL;
             newname = TRUE;
           }
           if (newname)
           {
-            strcpy((char *)ad_fname, gl_tmp1 + 1);
+            strcpy(ad_fname, gl_tmp1 + 1);
             ob_draw(tree, FSSELECT, MAX_DEPTH);
             if (!cont)
               ob_change(tree, FSOK, SELECTED, TRUE);
@@ -641,10 +641,10 @@ dofelev:        fm_own(TRUE);
         }
                                                 /* return path and      */
                                                 /*   file name to app   */
-        strcpy((char *) pipath, (char *) ad_fpath);
-        strcpy(gl_tmp1, (char *) ad_fname);
+        strcpy(pipath, ad_fpath);
+        strcpy(gl_tmp1, ad_fname);
         unfmt_str(&gl_tmp1[0], &gl_tmp2[0]);
-        strcpy((char *) pisel, gl_tmp2);
+        strcpy(pisel, gl_tmp2);
                                                 /* start the redraw     */
         fm_dial(FMD_FINISH, &gl_rfs);
                                                 /* return exit button   */

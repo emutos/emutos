@@ -120,7 +120,7 @@ void dos_sdta(LONG ldta)
 }
 
 
-WORD dos_sfirst(LONG pspec, WORD attr)
+WORD dos_sfirst(BYTE *pspec, WORD attr)
 {
         return(!gemdos(X_SFIRST,pspec,attr));
 }

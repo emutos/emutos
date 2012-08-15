@@ -538,7 +538,7 @@ static WORD pn_folder(PNODE *thepath)
             }
             if (firstime)
             {
-              ret = dos_sfirst(ADDR(&thepath->p_spec[0]), thepath->p_attr);
+              ret = dos_sfirst(thepath->p_spec, thepath->p_attr);
               firstime = FALSE;
             }
             else
@@ -636,7 +636,7 @@ WORD pn_active(PNODE *thepath)
 
         dos_sdta(G.a_wdta);
 
-        ret = dos_sfirst(ADDR(thepath->p_spec), thepath->p_attr);
+        ret = dos_sfirst(thepath->p_spec, thepath->p_attr);
         while ( ret )
         {
           if ( !thefile )

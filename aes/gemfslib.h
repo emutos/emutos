@@ -14,7 +14,7 @@ extern LONG     ad_fstree;
 extern LONG     ad_fsdta;
 extern GRECT    gl_rfs;
 
-WORD fs_input(LONG pipath, LONG pisel, WORD *pbutton);
+WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton);
 
 
 #endif

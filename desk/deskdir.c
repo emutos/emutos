@@ -530,7 +530,7 @@ WORD d_doop(WORD op, LONG tree, WORD obj, BYTE *psrc_path, BYTE *pdst_path,
         level = 0;
                                                 /* set up initial DTA   */
         dos_sdta(ADDR(&G.g_fcbstk[level]));
-        dos_sfirst(ADDR(psrc_path), 0x16);
+        dos_sfirst(psrc_path, 0x16);
 
         cont = more = TRUE;
         while (cont && more)
@@ -609,7 +609,7 @@ WORD d_doop(WORD op, LONG tree, WORD obj, BYTE *psrc_path, BYTE *pdst_path,
                 level++;
                 dos_sdta(ADDR(&G.g_fcbstk[level]));
                 if (more)
-                  dos_sfirst(ADDR(psrc_path), 0x16);
+                  dos_sfirst(psrc_path, 0x16);
               } /* if not a dir */
             } /* if */
             else                                 

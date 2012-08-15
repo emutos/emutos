@@ -308,7 +308,7 @@ static void ldaccs(void)
         for(i=0; (i<NUM_ACCS) && (ret); i++)
         {
 
-          ret = (i==0) ? dos_sfirst(ad_path, F_RDONLY) : dos_snext();
+          ret = (i==0) ? dos_sfirst((BYTE*)ad_path, F_RDONLY) : dos_snext();
           if (ret)
             sndcli(&gl_dta[30]);
         }

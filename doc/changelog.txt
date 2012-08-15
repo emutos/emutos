@@ -3916,3 +3916,4 @@ Start... early ages
 
 2012-08-15
 - bios/machine.c: Disabled currently useless 64 kB _FRB buffer on Amiga. (VRI)
+- aes/* desk/*: Changed file selector string parameter types to BYTE*. (VRI)

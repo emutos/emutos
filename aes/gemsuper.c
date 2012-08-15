@@ -369,7 +369,7 @@ static UWORD crysbind(WORD opcode, LONG pglobal, WORD control[], WORD int_in[], 
                 /* We don't have a separate fsel_exinput call yet, so */
                 /* let's fall throught to fsel_input... */
           case FSEL_INPUT:
-                ret = fs_input(FS_IPATH, FS_ISEL, &FS_BUTTON);
+                ret = fs_input((BYTE*)FS_IPATH, (BYTE*)FS_ISEL, &FS_BUTTON);
                 break;
                                 /* Window Manager                       */
           case WIND_CREATE:

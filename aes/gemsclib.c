@@ -77,7 +77,7 @@ WORD sc_write(LONG pscrap)
     if (LBGET(ad_scrap + --len) == '\\')    /* remove backslash     */
       LBSET(ad_scrap + len, '\0');
     dos_sdta(ad_dta);                       /* use our dta          */
-    return(dos_sfirst(ad_scrap, F_SUBDIR)); /* make sure path ok    */
+    return(dos_sfirst((BYTE*)ad_scrap, F_SUBDIR)); /* make sure path ok    */
 }
 
 #if CONF_WITH_PCGEM
@@ -107,7 +107,7 @@ WORD sc_clear()
 
     dos_sdta(ad_dta);                       /* make sure dta ok */
 
-    found = dos_sfirst(ad_scrap, F_SUBDIR);
+    found = dos_sfirst((BYTE*)ad_scrap, F_SUBDIR);
     while(found)
     {
         strcpy((char *)ptmp + 1, ((char *)ad_dta + 30));  /* Add file name */

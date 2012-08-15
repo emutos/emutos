@@ -166,13 +166,13 @@ void unfmt_str(BYTE *instr, BYTE *outstr)
 }
 
 
-void fs_sset(LONG tree, WORD obj, LONG pstr, LONG *ptext, WORD *ptxtlen)
+void fs_sset(LONG tree, WORD obj, BYTE *pstr, BYTE **ptext, WORD *ptxtlen)
 {
         LONG            spec;
         WORD            len;
 
-    spec = LLGET(OB_SPEC(obj));   /*!!!*/
-        *ptext =LLGET(spec);
+        spec = LLGET(OB_SPEC(obj));   /*!!!*/
+        *ptext =(BYTE*)LLGET(spec);
 
         *ptxtlen = LWGET( spec + 24 );
         len = LSTRLEN(pstr);                    /* allow for null       */
@@ -184,27 +184,28 @@ void fs_sset(LONG tree, WORD obj, LONG pstr, LONG *ptext, WORD *ptxtlen)
 
 void inf_sset(LONG tree, WORD obj, BYTE *pstr)
 {
-        LONG            text;
+        BYTE            *text;
         WORD            txtlen;
 
-        fs_sset(tree, obj, ADDR(pstr), &text, &txtlen);
+        fs_sset(tree, obj, pstr, &text, &txtlen);
 }
 
 
-void fs_sget(LONG tree, WORD obj, LONG pstr)
+void fs_sget(LONG tree, WORD obj, BYTE *pstr)
 {
-        LONG            ptext;
+        LONG            spec;
+        BYTE            *ptext;
 
-        ptext=LLGET(OB_SPEC(obj));  /*!!!*/
-        ptext = LLGET( ptext );
-        strcpy((char *)pstr, (char *)ptext);
+        spec = LLGET(OB_SPEC(obj));  /*!!!*/
+        ptext = (BYTE*)LLGET(spec);
+        strcpy(pstr, ptext);
 }
 
 
 
 void inf_sget(LONG tree, WORD obj, BYTE *pstr)
 {
-        fs_sget(tree, obj, ADDR(pstr));
+        fs_sget(tree, obj, pstr);
 }
 
 
