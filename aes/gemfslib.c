@@ -457,6 +457,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton)
           elevpos = gl_fspos;                   /* same dir as last time */ 
         else                                    
           elevpos = 0;
+        strcpy(locstr, pipath);
         fs_sset(tree, FSDIRECT, pipath, &ad_fpath, &temp_len);
         strcpy(gl_tmp1, pisel);
         fmt_str(&gl_tmp1[0], &gl_tmp2[0]);
@@ -479,7 +480,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton)
           touchob = (firsttime) ? 0x0 : fm_do(tree, FSSELECT);
           gsx_mxmy(&mx, &my);
         
-          fpath_len = strlencpy(locstr, ad_fpath);
+          fpath_len = strlen(locstr);
           if ( strcmp(&D.g_dir[0], locstr)!=0 )
           {
             fs_sel(sel, NORMAL);
@@ -641,7 +642,7 @@ dofelev:        fm_own(TRUE);
         }
                                                 /* return path and      */
                                                 /*   file name to app   */
-        strcpy(pipath, ad_fpath);
+        strcpy(pipath, locstr);
         strcpy(gl_tmp1, ad_fname);
         unfmt_str(&gl_tmp1[0], &gl_tmp2[0]);
         strcpy(pisel, gl_tmp2);
