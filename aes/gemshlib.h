@@ -24,21 +24,21 @@ extern WORD     gl_shgem;
 extern WORD     gl_changerez;
 extern WORD     gl_nextrez;
 
-void sh_read(LONG pcmd, LONG ptail);
-void sh_curdir(LONG ppath);
-WORD sh_write(WORD doex, WORD isgem, WORD isover, LONG pcmd, LONG ptail);
-void sh_get(LONG pbuffer, WORD len);
-void sh_put(LONG pdata, WORD len);
+void sh_read(BYTE *pcmd, BYTE *ptail);
+void sh_curdir(BYTE *ppath);
+WORD sh_write(WORD doex, WORD isgem, WORD isover, const BYTE *pcmd, const BYTE *ptail);
+void sh_get(void *pbuffer, WORD len);
+void sh_put(const void *pdata, WORD len);
 void sh_tographic(void);
 void sh_toalpha(void);
 
 BYTE *sh_name(BYTE *ppath);
-void sh_envrn(LONG ppath, LONG psrch);
+void sh_envrn(BYTE **ppath, const BYTE *psrch);
 
-WORD sh_find(LONG pspec);
+WORD sh_find(BYTE *pspec);
 
-void sh_rdef(LONG lpcmd, LONG lpdir);
-void sh_wdef(LONG lpcmd, LONG lpdir);
+void sh_rdef(BYTE *lpcmd, BYTE *lpdir);
+void sh_wdef(const BYTE *lpcmd, const BYTE *lpdir);
 
 void sh_main(void);
 

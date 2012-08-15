@@ -393,7 +393,7 @@ static WORD rs_readit(LONG pglobal, LONG rsfname)
         UWORD   rslsize, fd, ret;
                                                 /* make sure its there  */
         strcpy(tmprsfname, (char *) rsfname);
-        if ( !sh_find((LONG)tmprsfname) )
+        if ( !sh_find(tmprsfname) )
         {
           return(FALSE);
         }

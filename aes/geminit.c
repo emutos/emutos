@@ -354,7 +354,7 @@ static void sh_addpath(void)
         new_envr = envbuf;
                                                 /* get ptr to initial   */
                                                 /*   PATH=              */
-        sh_envrn((LONG)&lp, (LONG)pp);
+        sh_envrn(&lp, pp);
 
         if(lp)
         {
@@ -669,7 +669,7 @@ static void process_inf2(void)
             kprintf("Found #Z entry in EMUDESK.INF with path=%s and prg=%s\n",
                     tmpptr1, tmpptr2);
 #endif
-            sh_wdef((LONG)tmpptr2, (LONG)tmpptr1);
+            sh_wdef(tmpptr2, tmpptr1);
             ++pcurr;
           }
         }
@@ -855,7 +855,7 @@ void gem_main(void)
         fs_start();
 
         /* remember current desktop directory */
-        sh_curdir((LONG)D.s_cdir);
+        sh_curdir(D.s_cdir);
 
         /* process emudesk.inf part 2 */
         process_inf2();

@@ -83,7 +83,7 @@ GLOBAL WORD     gl_nextrez;
 
 
 /* Prototypes: */
-WORD sh_find(LONG pspec);
+WORD sh_find(BYTE *pspec);
 extern void deskstart();        /* see ../desk/deskstart.S */
 
 #if WITH_CLI != 0
@@ -92,15 +92,15 @@ extern void coma_start();
 
 
 
-void sh_read(LONG pcmd, LONG ptail)
+void sh_read(BYTE *pcmd, BYTE *ptail)
 {
-        strcpy((char *)pcmd,(char *)ad_scmd);
+        strcpy(pcmd,(char *)ad_scmd);
         LBCOPY(ptail, ad_stail, 128);
 }
 
 
 
-void sh_curdir(LONG ppath)
+void sh_curdir(BYTE *ppath)
 {
         WORD    drive;
                                                 /* remember current     */
@@ -109,7 +109,7 @@ void sh_curdir(LONG ppath)
         LBSET(ppath++, (drive + 'A') );
         LBSET(ppath++, ':');
         LBSET(ppath++, '\\');
-        dos_gdir( drive+1, (BYTE *)ppath );
+        dos_gdir( drive+1, ppath );
 }
 
 
@@ -246,7 +246,7 @@ void sh_fixtail(WORD iscpm)
 *               isover = 0  then run above DESKTOP
 *               isover = 1  then run over DESKTOP
 */
-WORD sh_write(WORD doex, WORD isgem, WORD isover, LONG pcmd, LONG ptail)
+WORD sh_write(WORD doex, WORD isgem, WORD isover, const BYTE *pcmd, const BYTE *ptail)
 {
         SHELL           *psh;
 
@@ -259,7 +259,7 @@ WORD sh_write(WORD doex, WORD isgem, WORD isover, LONG pcmd, LONG ptail)
           return TRUE;
         }
 
-        strcpy((char *)ad_scmd,(char *)pcmd);
+        strcpy((char *)ad_scmd, pcmd);
         LBCOPY(ad_stail, ptail, 128);
 
         if (isover > 0)
@@ -270,14 +270,14 @@ WORD sh_write(WORD doex, WORD isgem, WORD isover, LONG pcmd, LONG ptail)
           psh->sh_doexec = doex;
           psh->sh_dodef = FALSE;
           psh->sh_fullstep = isover - 1;
-          sh_curdir(ADDR(&sh_apdir[0]));        /* save apps. current   */
+          sh_curdir(sh_apdir);                  /* save apps. current   */
                                                 /* directory            */
         }
         else
         {
           sh_fixtail(FALSE);
                                                 /* run it above us      */
-          if ( sh_find(ad_scmd) )
+          if ( sh_find((BYTE*)ad_scmd) )
           {
             /* Normal Atari-GEM's shel_write does not support running PRGs directly! */
             /*dos_exec(0, ad_scmd, ad_stail, ad_envrn);*/
@@ -293,7 +293,7 @@ WORD sh_write(WORD doex, WORD isgem, WORD isover, LONG pcmd, LONG ptail)
 *       Used by the DESKTOP to recall 1024 bytes worth of previously
 *       'put' desktop-context information.
 */
-void sh_get(LONG pbuffer, WORD len)
+void sh_get(void *pbuffer, WORD len)
 {
         LBCOPY(pbuffer, ad_ssave, len);
 }
@@ -303,7 +303,7 @@ void sh_get(LONG pbuffer, WORD len)
 *       Used by the DESKTOP to save away 1024 bytes worth of desktop-
 *       context information.
 */
-void sh_put(LONG pdata, WORD len)
+void sh_put(const void *pdata, WORD len)
 {
         LBCOPY(ad_ssave, pdata, len);
 }
@@ -409,14 +409,14 @@ BYTE *sh_name(BYTE *ppath)
 *       a long pointer to the character after the string if it is found. 
 *       Otherwise, return a NULLPTR
 */
-void sh_envrn(LONG ppath, LONG psrch)
+void sh_envrn(BYTE **ppath, const BYTE *psrch)
 {
         LONG            lp;
         WORD            len, findend;
         BYTE            last, tmp, loc1[10], loc2[10];
 
 
-        len = strlencpy(loc2, (char *)psrch);
+        len = strlencpy(loc2, psrch);
         len--;
 
         loc1[len] = NULL;
@@ -468,7 +468,7 @@ void sh_envrn(LONG ppath, LONG psrch)
 WORD sh_path(WORD whichone, LONG dp, BYTE *pname)
 {
         register BYTE   tmp, last;
-        LONG            lp;
+        BYTE            *lp;
         register WORD   i;
 
         last = 0;
@@ -476,7 +476,7 @@ WORD sh_path(WORD whichone, LONG dp, BYTE *pname)
                                                 /*   command tail which */
                                                 /*   is a double null-  */
                                                 /*   terminated string  */
-        sh_envrn(ADDR(&lp), ADDR(rs_str(STPATH)));
+        sh_envrn(&lp, rs_str(STPATH));
         if (!lp)
                 return(0);
 
@@ -526,13 +526,13 @@ WORD sh_path(WORD whichone, LONG dp, BYTE *pname)
 *       current directory and then looks down the search path.
 */
 
-WORD sh_find(LONG pspec)
+WORD sh_find(BYTE *pspec)
 {
         WORD            path;
         BYTE            gotdir, *pname;
 
-        pname = sh_name((BYTE *) pspec);        /* get ptr to name      */
-        gotdir = (pname != (BYTE *) pspec);
+        pname = sh_name(pspec);                 /* get ptr to name      */
+        gotdir = (pname != pspec);
 
         dos_sdta(ad_dta);
 
@@ -544,16 +544,16 @@ WORD sh_find(LONG pspec)
           dos_sfirst(D.g_dir, F_RDONLY | F_SYSTEM);
           if (!DOS_ERR)
           {
-            strcpy((char *) pspec, D.g_dir);
+            strcpy(pspec, D.g_dir);
             return 1;
           }
         }
 
         /* second, search in the current directory */
-        strcpy(D.g_dir, (char *) pspec);  /* copy to local buffer */
+        strcpy(D.g_dir, pspec);                 /* copy to local buffer */
         if (!gotdir)
         {
-          sh_curdir((LONG)D.g_dir);             /* get current drive/dir*/
+          sh_curdir(D.g_dir);                   /* get current drive/dir*/
           if (D.g_dir[3] != NULL)               /* if not at root       */
             strcat(&D.g_dir[0], "\\");          /*  add foreslash       */
           strcat(&D.g_dir[0], pname);           /* append name to drive */
@@ -589,7 +589,7 @@ WORD sh_find(LONG pspec)
         }
 
         if (!DOS_ERR)
-          strcpy((char *) pspec, D.g_dir);
+          strcpy(pspec, D.g_dir);
 
         return(!DOS_ERR);
 }
@@ -601,14 +601,14 @@ WORD sh_find(LONG pspec)
 *       Read the default application to invoke.
 */
 
-void sh_rdef(LONG lpcmd, LONG lpdir)
+void sh_rdef(BYTE *lpcmd, BYTE *lpdir)
 {
         SHELL           *psh;
 
         psh = &sh[rlr->p_pid];
 
-        strcpy((char *)lpcmd, &psh->sh_desk[0]);
-        strcpy((char *)lpdir, &psh->sh_cdir[0]);
+        strcpy(lpcmd, &psh->sh_desk[0]);
+        strcpy(lpdir, &psh->sh_cdir[0]);
 }
 #endif
 
@@ -616,14 +616,14 @@ void sh_rdef(LONG lpcmd, LONG lpdir)
 *       Write the default application to invoke
 */
 
-void sh_wdef(LONG lpcmd, LONG lpdir)
+void sh_wdef(const BYTE *lpcmd, const BYTE *lpdir)
 {
         SHELL           *psh;
 
         psh = &sh[rlr->p_pid];
 
-        strcpy(&psh->sh_desk[0], (char *) lpcmd);
-        strcpy(&psh->sh_cdir[0], (char *) lpdir);
+        strcpy(&psh->sh_desk[0], lpcmd);
+        strcpy(&psh->sh_cdir[0], lpdir);
 }
 
 
@@ -751,7 +751,7 @@ void sh_ldapp()
               dos_exec(6, 0L, (LONG)ui_pd, 0L);           /* Run EmuCON */
             }
 #endif
-            else if ( sh_find(ad_scmd) )
+            else if ( sh_find((BYTE*)ad_scmd) )
             {
               /* Run a normal application: */
               sh_show(ad_scmd);

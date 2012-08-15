@@ -422,29 +422,29 @@ static UWORD crysbind(WORD opcode, LONG pglobal, WORD control[], WORD int_in[], 
                 break;
                                 /* Shell Manager                        */
           case SHEL_READ:
-                sh_read(SH_PCMD, SH_PTAIL);
+                sh_read((BYTE*)SH_PCMD, (BYTE*)SH_PTAIL);
                 break;
           case SHEL_WRITE:
-                ret = sh_write(SH_DOEX, SH_ISGR, SH_ISCR, SH_PCMD, SH_PTAIL);
+                ret = sh_write(SH_DOEX, SH_ISGR, SH_ISCR, (const BYTE*)SH_PCMD, (const BYTE*)SH_PTAIL);
                 break;
           case SHEL_GET:
-                sh_get(SH_PBUFFER, SH_LEN);
+                sh_get((void*)SH_PBUFFER, SH_LEN);
                 break;
           case SHEL_PUT:
-                sh_put(SH_PDATA, SH_LEN);
+                sh_put((const void *)SH_PDATA, SH_LEN);
                 break;
           case SHEL_FIND:
-                ret = sh_find(SH_PATH);
+                ret = sh_find((BYTE*)SH_PATH);
                 break;
           case SHEL_ENVRN:
-                sh_envrn(SH_PATH, SH_SRCH);
+                sh_envrn((BYTE**)SH_PATH, (const BYTE*)SH_SRCH);
                 break;
 #if CONF_WITH_PCGEM
           case SHEL_RDEF:
-                sh_rdef(SH_LPCMD, SH_LPDIR);
+                sh_rdef((BYTE*)SH_LPCMD, (BYTE*)SH_LPDIR);
                 break;
           case SHEL_WDEF:
-                sh_wdef(SH_LPCMD, SH_LPDIR);
+                sh_wdef((const BYTE*)SH_LPCMD, (const BYTE*)SH_LPDIR);
                 break;
 #endif
           default:
