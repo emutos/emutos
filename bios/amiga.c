@@ -2548,6 +2548,7 @@ BOOL amiga_flop_detect_drive(WORD dev)
     struct TDU* unit = tdu;
     ULONG i = dev;
 
+    UNUSED(i);
     if (!tdb->td_DMABuffer)
         init_trackdisk();
 
