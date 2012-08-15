@@ -3913,3 +3913,6 @@ Start... early ages
   icon resource decompiler. (RFB)
 - desk/deskapp.c desk/icons.c desk/icons.h: Rename gl_ilist[] to
   icon_rs_iconblk[] for upcoming icon resource decompiler. (RFB)
+
+2012-08-15
+- bios/machine.c: Disabled currently useless 64 kB _FRB buffer on Amiga. (VRI)

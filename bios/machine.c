@@ -297,7 +297,8 @@ static void setvalue_frb(void)
 
 #ifdef MACHINE_AMIGA
   /* Unfortunately, read Alt RAM presence will be detected later */
-  need_frb = TRUE;
+  //need_frb = TRUE;
+  need_frb = FALSE; // But _FRB is useless for Amiga floppy routines, so disable it
 #elif CONF_WITH_FASTRAM
   /* Standard Atari TT-RAM may be present */
   need_frb = (ramtop > 0);
