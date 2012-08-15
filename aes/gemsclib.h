@@ -12,7 +12,7 @@
 
 
 WORD sc_read(BYTE *pscrap);
-WORD sc_write(BYTE *pscrap);
+WORD sc_write(const BYTE *pscrap);
 WORD sc_clear(void);
 
 

@@ -357,7 +357,7 @@ static UWORD crysbind(WORD opcode, LONG pglobal, WORD control[], WORD int_in[], 
                 ret = sc_read((BYTE*)SC_PATH);
                 break;
           case SCRP_WRITE:
-                ret = sc_write((BYTE*)SC_PATH);
+                ret = sc_write((const BYTE*)SC_PATH);
                 break;
 #if CONF_WITH_PCGEM
           case SCRP_CLEAR:
