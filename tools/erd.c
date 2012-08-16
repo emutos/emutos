@@ -1463,7 +1463,7 @@ int write_include(FILE *fp,char *name)
     fprintf(fp,"#include \"nls.h\"\n\n");
 
 #ifdef ICON_RSC
-    fprintf(fp,"#ifdef CONF_WITH_DESKTOP_ICONS\n\n");
+    fprintf(fp,"#if CONF_WITH_DESKTOP_ICONS\n\n");
 #endif
 
     return ferror(fp) ? -1 : 0;
