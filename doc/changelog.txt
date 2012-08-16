@@ -3924,3 +3924,5 @@ Start... early ages
 - tools/erd.c: Add support for icon resource decompilation. (RFB)
 - desk/icon.def desk/icon.rsc: Added icon resource. (RFB)
 
+2012-08-16
+- desk/icons.c po/POTFILES.in: Make icon descriptions translatable. (RFB)

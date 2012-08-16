@@ -7,6 +7,7 @@
 #include "portab.h"
 #include "obdefs.h"
 #include "deskapp.h"
+#include "nls.h"
 
 #if CONF_WITH_DESKTOP_ICONS
 
@@ -165,25 +166,25 @@ const ICONBLK icon_rs_iconblk[NUM_IBLKS] =
  */
 const BYTE * const icon_rs_fstr[] =
 {
-        " Generic ",
-        " Spreadsheet ",
-        " Word Processor ",
-        " Database ",
-        " Draw ",
-        " Paint ",
-        " Project ",
-        " Graph ",
-        " Outline ",
-        " Accounting ",
-        " Multi-Function ",
-        " Education ",
-        " Communications ",
-        " Programmer's Tool ",
-        " Game ",
-        " Output ",
-        " Desktop Publisher ",
-        " Scan ",
-        " Mail "
+        N_(" Generic "),
+        N_(" Spreadsheet "),
+        N_(" Word Processor "),
+        N_(" Database "),
+        N_(" Draw "),
+        N_(" Paint "),
+        N_(" Project "),
+        N_(" Graph "),
+        N_(" Outline "),
+        N_(" Accounting "),
+        N_(" Multi-Function "),
+        N_(" Education "),
+        N_(" Communications "),
+        N_(" Programmer's Tool "),
+        N_(" Game "),
+        N_(" Output "),
+        N_(" Desktop Publisher "),
+        N_(" Scan "),
+        N_(" Mail ")
 };
 
 #endif /* CONF_WITH_DESKTOP_ICONS */
