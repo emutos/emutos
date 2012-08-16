@@ -3922,3 +3922,5 @@ Start... early ages
 - aes/*: Removed global variables ad_scdir, ad_path, ad_scrap and ad_scmd. (VRI)
 - aes/gemfslib.c: Fixed the file selector for deeply nested directories. (VRI)
 - tools/erd.c: Add support for icon resource decompilation. (RFB)
+- desk/icon.def desk/icon.rsc: Added icon resource. (RFB)
+
