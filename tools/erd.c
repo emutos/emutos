@@ -138,6 +138,11 @@
  *          . change TEDINFO handling: previously, if there were no
  *            TEDINFOs, we created an empty array; now we don't create
  *            the array
+ *
+ *  v4.0    roger burrows, august/2012
+ *          . add support for icon resource generation (performed if
+ *            preprocessor symbol ICON_RSC is #defined)
+ *          . generate "#error" directive if internal error is detected
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -150,6 +155,29 @@
 #include <getopt.h>
 #define DIRSEP  '/'
 #endif
+
+/*
+ *  check which type of resource is to be processed
+ */
+#ifdef DESK_RSC
+  #define RSC_CHOSEN
+#endif
+#ifdef GEM_RSC
+  #ifdef RSC_CHOSEN
+    #error "Conflicting preprocessor defines"
+  #endif
+  #define RSC_CHOSEN
+#endif
+#ifdef ICON_RSC
+  #ifdef RSC_CHOSEN
+    #error "Conflicting preprocessor defines"
+  #endif
+  #define RSC_CHOSEN
+#endif
+#ifndef RSC_CHOSEN
+  #define DESK_RSC
+#endif
+
 /*
  *  manifest RSC-related stuff
  */
@@ -310,12 +338,17 @@ typedef struct {
 /*
  *  our own defines & structures
  */
-#ifdef GEM_RSC
-#define PROGRAM_NAME    "grd"
-#else
-#define PROGRAM_NAME    "erd"
+#ifdef DESK_RSC
+  #define PROGRAM_NAME  "erd"
 #endif
-#define VERSION         "v3.2"
+#ifdef GEM_RSC
+  #define PROGRAM_NAME  "grd"
+#endif
+#ifdef ICON_RSC
+  #define PROGRAM_NAME  "ird"
+#endif
+
+#define VERSION         "v4.0"
 #define MAX_STRLEN      300         /* max size for internal string areas */
 #define NLS             "N_("       /* the macro used in EmuTOS for NLS support*/
 
@@ -395,43 +428,7 @@ typedef struct {
  *  These may need to be altered when significant changes are made to the resource
  */
 
-#ifdef GEM_RSC
-
-/*
- *  conditional wrapping control
- */
-CONDITIONAL frstr_cond = { "?", "#pragma error" };  /* no match, error if it does ... */
-CONDITIONAL other_cond = { "?", "#pragma error" };  /* likewise */
-
-/*
- *  table of complete strings that will have a shared data item
- */
-SHARED_ENTRY shared[] = {
-    { "_ ________.___ ", SHRT_MAX },
-    { "xF", SHRT_MAX },
-};
-int num_shared = sizeof(shared) / sizeof(SHARED_ENTRY);
-
-/*
- *  table of string prefixes for text that should not be translated
- */
-NOTRANS_ENTRY notrans[] = {
-    { 0, "PATH=" },
-    { 0, "EMUDESK" },
-    { 0, ".APP" },
-    { 0, "*.ACC" },
-    { 0, "a..zA..Z" },
-    { 0, "C:\\" },
-    { 0, "GEM.RSC Release 3.0" },
-    { 0, "AVAILNUL" },
-    { 0, "SCRENMGR" },
-    { 0, "__________________" },
-    { 0, "xF" },
-};
-int num_notrans = sizeof(notrans) / sizeof(NOTRANS_ENTRY);
-
-#else
-
+#ifdef DESK_RSC
 /*
  *  conditional wrapping control
  */
@@ -470,8 +467,65 @@ NOTRANS_ENTRY notrans[] = {
     { 0, "320 x " }
 };
 int num_notrans = sizeof(notrans) / sizeof(NOTRANS_ENTRY);
-
 #endif
+
+
+#ifdef GEM_RSC
+/*
+ *  conditional wrapping control
+ */
+CONDITIONAL frstr_cond = { "?", "#error \"Code generation error\"" };  /* no match, error if it does ... */
+CONDITIONAL other_cond = { "?", "#error \"Code generation error\"" };  /* likewise */
+
+/*
+ *  table of complete strings that will have a shared data item
+ */
+SHARED_ENTRY shared[] = {
+    { "_ ________.___ ", SHRT_MAX },
+    { "xF", SHRT_MAX },
+};
+int num_shared = sizeof(shared) / sizeof(SHARED_ENTRY);
+
+/*
+ *  table of string prefixes for text that should not be translated
+ */
+NOTRANS_ENTRY notrans[] = {
+    { 0, "PATH=" },
+    { 0, "EMUDESK" },
+    { 0, ".APP" },
+    { 0, "*.ACC" },
+    { 0, "a..zA..Z" },
+    { 0, "C:\\" },
+    { 0, "GEM.RSC Release 3.0" },
+    { 0, "AVAILNUL" },
+    { 0, "SCRENMGR" },
+    { 0, "__________________" },
+    { 0, "xF" },
+};
+int num_notrans = sizeof(notrans) / sizeof(NOTRANS_ENTRY);
+#endif
+
+
+#ifdef ICON_RSC
+/*
+ *  conditional wrapping control
+ */
+CONDITIONAL frstr_cond = { "?", "#error \"Code generation error\"" };  /* no match, error if it does ... */
+CONDITIONAL other_cond = { "?", "#error \"Code generation error\"" };  /* likewise */
+
+/*
+ *  table of complete strings that will have a shared data item
+ */
+SHARED_ENTRY shared[1];     /* dummy */
+int num_shared = 0;
+
+/*
+ *  table of string prefixes for text that should not be translated
+ */
+NOTRANS_ENTRY notrans[1];   /* dummy */
+int num_notrans = 0;
+#endif
+
 
 /*
  *  END OF PROGRAM PARAMETERS
@@ -1247,10 +1301,13 @@ char *basersc;
  */
 int write_h_define(FILE *fp)
 {
-int i, n;
+int i;
 int first_time = 1;
 DEF_ENTRY *d;
+#ifndef ICON_RSC
+int n;
 short old_tree = -1;
+#endif
 
     /*
      * first handle trees & objects
@@ -1258,6 +1315,7 @@ short old_tree = -1;
     for (i = 0, d = def; i < num_defs; i++, d++) {
         if ((d->type == DEF_ALERT) || (d->type == DEF_FREESTR))
             break;
+#ifndef ICON_RSC
         if (d->tree != old_tree)
             fprintf(fp,"\n");
         if (d->conditional && first_time) {
@@ -1269,6 +1327,7 @@ short old_tree = -1;
         else n = d->obj;
         fprintf(fp,"#define %-16s%d\n",d->name,n);
         old_tree = d->tree;
+#endif
     }
     if (!first_time)
         fprintf(fp,"#endif\n");
@@ -1290,6 +1349,7 @@ short old_tree = -1;
         fprintf(fp,"#endif\n");
     fprintf(fp,"\n");
 
+#ifndef ICON_RSC
     /*
      * then bitblks & free images
      */
@@ -1331,6 +1391,7 @@ short old_tree = -1;
         fprintf(fp,"#define %-16s%d\n","RS_NBB",conditional_bitblk_start);
         fprintf(fp,"#endif\n\n\n");
     }
+#endif
 
 #ifdef GEM_RSC
     fprintf(fp,"/*\n");
@@ -1350,6 +1411,16 @@ short old_tree = -1;
  */
 int write_h_extern(FILE *fp)
 {
+#ifdef DESK_RSC
+    fprintf(fp,"extern const BITBLK %srs_bitblk[];\n",prefix);
+    fprintf(fp,"extern const char * const %srs_fstr[];\n",prefix);
+    fprintf(fp,"extern const ICONBLK %srs_iconblk[];\n",prefix);
+    fprintf(fp,"extern OBJECT %srs_obj[RS_NOBS];\n",prefix);
+    fprintf(fp,"extern TEDINFO %srs_tedinfo[RS_NTED];\n",prefix);
+    fprintf(fp,"extern OBJECT * const %srs_trees[];\n\n",prefix);
+
+    fprintf(fp,"extern void %srs_init(void);\n\n",prefix);
+#endif
 #ifdef GEM_RSC
     fprintf(fp,"/* The following arrays live in RAM */\n");
     fprintf(fp,"extern OBJECT  %srs_obj[];\n",prefix);
@@ -1364,15 +1435,10 @@ int write_h_extern(FILE *fp)
 
     fprintf(fp,"extern void gem_rsc_init(void);\n");
     fprintf(fp,"extern void gem_rsc_fixit(void);\n\n");
-#else
-    fprintf(fp,"extern const BITBLK %srs_bitblk[];\n",prefix);
+#endif
+#ifdef ICON_RSC
     fprintf(fp,"extern const char * const %srs_fstr[];\n",prefix);
-    fprintf(fp,"extern const ICONBLK %srs_iconblk[];\n",prefix);
-    fprintf(fp,"extern OBJECT %srs_obj[RS_NOBS];\n",prefix);
-    fprintf(fp,"extern TEDINFO %srs_tedinfo[RS_NTED];\n",prefix);
-    fprintf(fp,"extern OBJECT * const %srs_trees[];\n\n",prefix);
-
-    fprintf(fp,"extern void %srs_init(void);\n\n",prefix);
+    fprintf(fp,"extern const ICONBLK %srs_iconblk[];\n\n",prefix);
 #endif
 
     return ferror(fp) ? -1 : 0;
@@ -1390,8 +1456,15 @@ int write_include(FILE *fp,char *name)
 #ifdef GEM_RSC
     fprintf(fp,"#include \"gemrslib.h\"\n");
 #endif
+#ifdef ICON_RSC
+    fprintf(fp,"#include \"deskapp.h\"\n");
+#endif
     fprintf(fp,"#include \"%s.h\"\n",name);
     fprintf(fp,"#include \"nls.h\"\n\n");
+
+#ifdef ICON_RSC
+    fprintf(fp,"#ifdef CONF_WITH_DESKTOP_ICONS\n\n");
+#endif
 
     return ferror(fp) ? -1 : 0;
 }
@@ -1405,6 +1478,9 @@ int i;
 int first_time = 1;
 SHARED_ENTRY *e;
 char temp[MAX_STRLEN];
+
+    if (num_shared == 0)
+        return 0;
 
     sort_shared(num_shared);
 
@@ -1573,7 +1649,7 @@ char *base = (char *)rschdr;
             fprintf(fp,"%s\n",other_cond.string);
         iconchar = get_short(&iconblk->ib_char);
         copyfix(temp,base+get_offset(&iconblk->ib_ptext),MAX_STRLEN-1);
-        fprintf(fp,"    { (LONG) rs_iconmask%d, (LONG) rs_icondata%d, \"%s\", %s,\n",
+        fprintf(fp,"    { (LONG) rs_iconmask%d, (LONG) rs_icondata%d, (LONG) \"%s\", %s,\n",
                 (mmap[i]==-1)?i:mmap[i],(dmap[i]==-1)?i:dmap[i],
                 temp,decode_ib_char(iconchar));
         fprintf(fp,"      %d, %d, %d, %d, %d, %d, %d, %d, %d, %d },\n",
@@ -1671,6 +1747,7 @@ char *base = (char *)rschdr;
  */
 int write_object(FILE *fp)
 {
+#ifndef ICON_RSC
 int i, j, nobs, tree, ntree;
 int first_time = 1;
 unsigned short type, ext_type;
@@ -1730,6 +1807,7 @@ char *base = (char *)rschdr;
         fprintf(fp,"#endif\n");
 
     fprintf(fp,"};\n\n\n");
+#endif
 
     return ferror(fp) ? -1 : 0;
 }
@@ -1739,6 +1817,7 @@ char *base = (char *)rschdr;
  */
 int write_tree(FILE *fp)
 {
+#ifndef ICON_RSC
 int i, ntree;
 int first_time = 1;
 DEF_ENTRY *d;
@@ -1760,7 +1839,9 @@ char temp[MAX_STRLEN];
     }
     if (!first_time)
         fprintf(fp,"#endif\n");
+
     fprintf(fp,"};\n\n\n");
+#endif
 
     return ferror(fp) ? -1 : 0;
 }
@@ -1820,6 +1901,15 @@ char *base = (char *)rschdr;
  */
 int write_c_epilogue(FILE *fp)
 {
+#ifdef DESK_RSC
+    fprintf(fp,"void %srs_init(void)\n",prefix);
+    fprintf(fp,"{\n");
+    fprintf(fp,"    /* Copy data from ROM to RAM: */\n");
+    fprintf(fp,"    memcpy(%srs_obj, %srs_obj_rom, RS_NOBS * sizeof(OBJECT));\n",prefix,prefix);
+    fprintf(fp,"    memcpy(%srs_tedinfo, %srs_tedinfo_rom,\n",prefix,prefix);
+    fprintf(fp,"           RS_NTED * sizeof(TEDINFO));\n");
+    fprintf(fp,"}\n\n");
+#endif
 #ifdef GEM_RSC
     fprintf(fp,"/* Strings for the alert box */\n");
     fprintf(fp,"static char msg_str[MAX_LINENUM][MAX_LINELEN+1];\n");
@@ -1860,14 +1950,9 @@ int write_c_epilogue(FILE *fp)
     fprintf(fp,"    for (i = 0, p = tree+BUTOFF; i < MAX_BUTNUM; i++, p++)\n");
     fprintf(fp,"        p->ob_spec = (LONG)&msg_but[i];\n");
     fprintf(fp,"}\n");
-#else
-    fprintf(fp,"void %srs_init(void)\n",prefix);
-    fprintf(fp,"{\n");
-    fprintf(fp,"    /* Copy data from ROM to RAM: */\n");
-    fprintf(fp,"    memcpy(%srs_obj, %srs_obj_rom, RS_NOBS * sizeof(OBJECT));\n",prefix,prefix);
-    fprintf(fp,"    memcpy(%srs_tedinfo, %srs_tedinfo_rom,\n",prefix,prefix);
-    fprintf(fp,"           RS_NTED * sizeof(TEDINFO));\n");
-    fprintf(fp,"}\n\n");
+#endif
+#ifdef ICON_RSC
+    fprintf(fp,"#endif /* CONF_WITH_DESKTOP_ICONS */\n");
 #endif
 
     return ferror(fp) ? -1 : 0;
@@ -2143,13 +2228,15 @@ static char temp[10];
  */
 int write_data(FILE *fp,int words,USHORT *data)
 {
-int i;
+int i, last = 0;
 
     for (i = 0; i < words; i++) {
         if ((i%4) == 0)
             fprintf(fp,"   ");
-        fprintf(fp," 0x%04hX,",get_ushort(data++));
-        if (((i%4) == 3) || (i == words-1))
+        if (i == words-1)
+            last = 1;
+        fprintf(fp," 0x%04hX%s",get_ushort(data++),last?"":",");
+        if (((i%4) == 3) || last)
             fprintf(fp,"\n");
     }
 
@@ -2443,7 +2530,7 @@ int i;
 NOTRANS_ENTRY *e;
 
     if (n == 0) {
-        printf("0 no-translate entries\n");
+        printf("No no-translate entries\n");
         return;
     }
 
@@ -2460,7 +2547,7 @@ int i;
 SHARED_ENTRY *e;
 
     if (n == 0) {
-        printf("0 shared string entries\n");
+        printf("No shared string entries\n");
         return;
     }
 
@@ -2517,19 +2604,19 @@ char *obj_base, *p;
         case G_BOXTEXT:
         case G_FTEXT:
         case G_FBOXTEXT:
-        	ted = (TEDINFO *)(base + get_offset(&obj->ob_spec));
-        	p = base + get_offset(&ted->te_ptmplt);
+            ted = (TEDINFO *)(base + get_offset(&obj->ob_spec));
+            p = base + get_offset(&ted->te_ptmplt);
             if ((e=isshared(p))) {
                 if (n < e->objnum)
                     e->objnum = n;
             }
-        	p = base + get_offset(&ted->te_pvalid);
-        	shrink_valid(temp,p);
+            p = base + get_offset(&ted->te_pvalid);
+            shrink_valid(temp,p);
             if ((e=isshared(temp))) {
                 if (n < e->objnum)
                     e->objnum = n;
             }
-        	break;
+            break;
         }
     }
 
