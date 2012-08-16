@@ -9,6 +9,7 @@ mkheader
 bug
 erd
 grd
+ird
 mkrom
 local.mk
 dsm.txt

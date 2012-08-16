@@ -578,24 +578,30 @@ po/messages.pot: bug$(EXE) po/POTFILES.in $(shell grep -v '^#' po/POTFILES.in)
 # Resource support
 #
 
-TOCLEAN += erd$(EXE) grd$(EXE)
+TOCLEAN += erd$(EXE) grd$(EXE) ird$(EXE)
 
-NODEP += erd$(EXE) grd$(EXE)
+NODEP += erd$(EXE) grd$(EXE) ird$(EXE)
 erd$(EXE): tools/erd.c
 	$(NATIVECC) -o $@ $<
 grd$(EXE): tools/erd.c
 	$(NATIVECC) -DGEM_RSC -o grd $<
+ird$(EXE): tools/erd.c
+	$(NATIVECC) -DICON_RSC -o ird $<
 
 DESKRSC_BASE = desk/desktop
 DESKRSCGEN_BASE = desk/desk_rsc
 GEMRSC_BASE = aes/gem
 GEMRSCGEN_BASE = aes/gem_rsc
-TOCLEAN += $(DESKRSCGEN_BASE).c $(DESKRSCGEN_BASE).h $(GEMRSCGEN_BASE).c $(GEMRSCGEN_BASE).h
+ICONRSC_BASE = desk/icon
+ICONRSCGEN_BASE = desk/icons
+TOCLEAN += $(DESKRSCGEN_BASE).c $(DESKRSCGEN_BASE).h $(GEMRSCGEN_BASE).c $(GEMRSCGEN_BASE).h $(ICONRSCGEN_BASE).c $(ICONRSCGEN_BASE).h
 
 $(DESKRSCGEN_BASE).c $(DESKRSCGEN_BASE).h: erd$(EXE) $(DESKRSC_BASE).rsc $(DESKRSC_BASE).def
 	./erd$(EXE) -pdesk $(DESKRSC_BASE) $(DESKRSCGEN_BASE)
 $(GEMRSCGEN_BASE).c $(GEMRSCGEN_BASE).h: grd$(EXE) $(GEMRSC_BASE).rsc $(GEMRSC_BASE).def
 	./grd$(EXE) $(GEMRSC_BASE) $(GEMRSCGEN_BASE)
+$(ICONRSCGEN_BASE).c $(ICONRSCGEN_BASE).h: ird$(EXE) $(ICONRSC_BASE).rsc $(ICONRSC_BASE).def
+	./ird$(EXE) -picon $(ICONRSC_BASE) $(ICONRSCGEN_BASE)
 
 #
 # Special ROM support
