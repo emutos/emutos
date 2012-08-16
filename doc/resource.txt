@@ -1,14 +1,16 @@
 Modifying resources in EmuTOS
 =============================
 There are two built-in resource files in EmuTOS: the desktop and the
-AES/GEM.  Both are now maintained in resource files rather than C
-source code; the desktop uses desktop.rsc/desktop.dfn and the AES/GEM
-uses gem.rsc/gem.def.  Changes are made "offline" with a standard
-resource editor, and the changed file(s) replace the existing ones.
-The make process uses special-purpose resource decompilers erd and
-grd (see below), to convert the .rsc/.dfn/.def files into C source
-code which is then compiled into the EmuTOS image(s).  Both erd and
-grd are built from the same source code, with some compile-time and
+AES/GEM.  There is also a set of icons used by the desktop, which is
+treated as a partial resource file.  All of these are now maintained
+in resource files rather than C source code; the desktop uses both
+desktop.rsc/desktop.def & icon.rsc/icon.def, and AES/GEM uses
+gem.rsc/gem.def.  Changes are made "offline" with a standard resource
+editor, and the changed file(s) replace the existing ones.  The make
+process uses special-purpose resource decompilers erd, grd, and ird
+(see below) to convert the .rsc/.def files into C source code which is
+then compiled into the EmuTOS image(s).  All the resource decompilers
+are built from the same source code, with some compile-time and
 run-time differences.
 
 Tips on using a resource editor with the current EmuTOS resources
@@ -32,24 +34,19 @@ Tips on using a resource editor with the current EmuTOS resources
    conditionally-compiled items; this is currently specified as ADTTREZ
    for dialogs, STNOOPEN for free strings/alerts.
 
-erd/grd: the EmuTOS Resource Decompilers
-========================================
+erd/grd/ird: the EmuTOS Resource Decompilers
+============================================
 These programs are compiled from the same source code; grd is generated
-iff the preprocessor symbol GEM_RSC is defined.  They decompile the
-desktop resource file or AES/GEM resource file into .c and .h files,
-which are input to the EmuTOS make process.  The programs are similar
-to a general-purpose resource decompiler, but have a number of EmuTOS-
-specific additions/changes, as well as a number of deliberate omissions.
+iff the preprocessor symbol GEM_RSC is defined, and ird iff the symbol
+ICON_RSC is defined.  They decompile the various resource files into .c
+and .h files, which are input to the EmuTOS make process.  The programs
+are similar to a general-purpose resource decompiler, but have a number
+of EmuTOS-specific additions/changes, as well as a number of deliberate
+omissions.
 
 EmuTOS-specific features
 ------------------------
-1. All arrays of resource information are globally visible, and the
-   normal resource fixup is performed by code within other parts of
-   EmuTOS.  The resource initialisation routine (rs_init()) only
-   copies the OBJECT and TEDINFO arrays from initialised variables
-   (which will be located in ROM) to globally-visible arrays, located
-   in RAM.  This allows modification of OBJECTs and TEDINFOs.
-2. For compatibility with EmuTOS multi-language support, text strings
+1. For compatibility with EmuTOS multi-language support, text strings
    (defined as strings containing any character other than a space, a
    digit or punctuation) are normally output to the .c file enclosed
    in the N_() macro.  This allows the EmuTOS multi-language support
@@ -64,20 +61,8 @@ EmuTOS-specific features
    to-be-translated; therefore, before enclosing a string with N_(),
    the program references a "no translate" array containing strings
    that should _not_ be so enclosed.
-3. In order to save space in the generated desktop resource file when
-   compiling for the 192K ROM images, the generated code for certain
-   items is surrounded by a #ifdef/#endif wrapper.  This is based on
-   three program-supplied values:
-       . a starting free string name
-       . a starting tree name
-       . the #ifdef string (currently "#ifndef TARGET_192").
-   All free strings with numbers greater than or equal to the number
-   of the starting free string are wrapped.  Trees are treated in a
-   similar fashion.  Objects/tedinfos/bitblks/iconblks that appear only
-   in wrapped trees will also be wrapped.  Note that, at this time, this
-   process does NOT extend to the images pointed to by bitblks/iconblks,
-   but this could be added with some extra work.
-4. Several other features reduce ROM memory requirements, as follows:
+2. The following features reduce ROM memory requirements (not all
+   are applicable to all decompilers):
    (a) duplicate image data is automatically eliminated; multiple
        BITBLKs may point to the same image data.
    (b) duplicate icon data is automatically eliminated; multiple
@@ -94,6 +79,25 @@ EmuTOS-specific features
    (f) the TEDINFO validation string, pointed to by te_pvalid, is
        optimized by removing duplicate characters from the end of
        the string.
+3. For the desktop resource decompiler (erd) only, the following feature
+   saves more ROM space when compiling for the 192K ROM images: the
+   generated code for certain items is surrounded by a #ifdef/#endif
+   wrapper.  This is based on three program-supplied values:
+       . a starting free string name
+       . a starting tree name
+       . the #ifdef string (currently "#ifndef TARGET_192").
+   All free strings with numbers greater than or equal to the number
+   of the starting free string are wrapped.  Trees are treated in a
+   similar fashion.  Objects/tedinfos/bitblks/iconblks that appear only
+   in wrapped trees will also be wrapped.  Note that, at this time, this
+   process does NOT extend to the images pointed to by bitblks/iconblks,
+   but this could be added with some extra work.
+4. For both erd and grd, all arrays of resource information are globally
+   visible, and the normal resource fixup is performed by code within
+   other parts of EmuTOS.  The resource initialisation routine only
+   copies the OBJECT and TEDINFO arrays from initialised variables
+   (which will be located in ROM) to globally-visible arrays, located
+   in RAM.  This allows modification of OBJECTs and TEDINFOs.
 
 Program omissions
 -----------------
@@ -107,7 +111,7 @@ The programs are invoked from the shell/commandline by:
     <program> [-d] [-p<prefix>] [-v] <RSCfile> <Cfile>
 
 where:
-    <program>   is erd for the desktop, grd for the AES/GEM, decompiler
+    <program>   is erd, grd or ird
     -d          requests debugging output
     -p          specifies the prefix to apply to the names of all
                 globally-visible generated data items
@@ -136,5 +140,7 @@ Notes:
     inserted between the prefix and the array name.  For example, a
     prefix of "my" will prefix each of the array names in the .c file
     with "my_".
-    NOTE: the current version of the EmuTOS desktop _requires_ a prefix
-    of "desk" (i.e. you should always specify -pdesk).
+    NOTE: for the current EmuTOS source, you should use the following:
+      erd       -pdesk
+      grd       (no prefix)
+      ird       -picon
