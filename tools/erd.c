@@ -488,15 +488,6 @@ int num_shared = sizeof(shared) / sizeof(SHARED_ENTRY);
  *  table of string prefixes for text that should not be translated
  */
 NOTRANS_ENTRY notrans[] = {
-    { 0, "PATH=" },
-    { 0, "EMUDESK" },
-    { 0, ".APP" },
-    { 0, "*.ACC" },
-    { 0, "a..zA..Z" },
-    { 0, "C:\\" },
-    { 0, "GEM.RSC Release 3.0" },
-    { 0, "AVAILNUL" },
-    { 0, "SCRENMGR" },
     { 0, "__________________" },
     { 0, "xF" },
 };

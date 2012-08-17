@@ -10,6 +10,11 @@
 #ifndef GEMINIT_H
 #define GEMINIT_H
 
+#define PATH_ENV    "PATH="     /* PATH environment variable */
+#define DEF_PATH    "C:\\GEMAPPS\\GEMSYS;C:\\GEMAPPS;C:\\"  /* default value */
+
+#define DEF_DESKTOP "EMUDESK"   /* default desktop */
+
 extern LONG     ad_valstr;
 
 extern LONG     ad_sysglo;

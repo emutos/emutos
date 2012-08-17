@@ -3935,3 +3935,8 @@ Start... early ages
 - desk/deskapp.c desk/desktop.def desk/desktop.rsc include/config.h
   tools/erd.c: Code cleanup: move non-displayed/untranslated strings from
   desktop resource to C code. (RFB)
+
+2012-08-17
+- aes/gem.def aes/gem.rsc aes/gemaplib.c aes/geminit.c aes/geminit.h
+  aes/gemobed.c aes/gemsclib.h aes/gemshlib.c tools/erd.c: Code cleanup:
+  move non-displayed/untranslated strings from GEM resource to C code. (RFB)

@@ -73,6 +73,7 @@
                                         /*  for start of EMUDESK.INF file    */
 #define ENV_SIZE   200                  /* size of initial desktop environment */
 
+
 static BYTE     start[SIZE_AFILE];      /* AES shell buffer */
 static BYTE     infbuf[INF_SIZE+1];     /* used to read part of EMUDESK.INF */
 static BYTE     envbuf[ENV_SIZE];       /* for initial desktop environment */
@@ -292,7 +293,7 @@ static void ldaccs(void)
         register WORD   i;
         WORD            ret;
 
-        strcpy(&D.g_dir[0], rs_str(STACC));
+        strcpy(&D.g_dir[0], "*.ACC");
         dos_sdta(ad_dta);
 
         /* if Control is held down then skip loading of accs */
@@ -327,8 +328,8 @@ static void sh_addpath(void)
                                                 /* old environment length*/
         oelen = (lp - ad_envrn) + 2;
                                                 /* PATH= length & new path length */
-        pp = rs_fstr[STPATH];
-        strcpy(tmpstr, rs_fstr[STINPATH]);
+        pp = PATH_ENV;
+        strcpy(tmpstr, DEF_PATH);
         np = tmpstr;
 
         pplen = strlen(pp);
@@ -487,7 +488,7 @@ static void sh_init(void)
                                                 /* append .APP if no    */
                                                 /*   extension given    */
             if (need_ext)
-              strcpy(pdst, rs_str(STGEM));
+              strcpy(pdst, ".APP");
             else
               *pdst = NULL;
             pdst = &D.s_cmd[0];
@@ -556,9 +557,9 @@ static void sh_rdinf(void)
 
         infbuf[0] = 0;
 
-        strcpy(tmpstr, rs_fstr[STINFPAT]);
+        strcpy(tmpstr, INF_FILE_NAME);
         pfile = tmpstr;
-        *pfile = 'A' + dos_gdrv();              /* set the drive        */
+        *pfile += dos_gdrv();                   /* set the drive        */
 
         fh = dos_open(pfile, ROPEN);
         if ( !fh || DOS_ERR)

@@ -475,7 +475,7 @@ WORD sh_path(WORD whichone, LONG dp, BYTE *pname)
                                                 /*   command tail which */
                                                 /*   is a double null-  */
                                                 /*   terminated string  */
-        sh_envrn(&lp, rs_str(STPATH));
+        sh_envrn(&lp, PATH_ENV);
         if (!lp)
                 return(0);
 
@@ -685,7 +685,7 @@ void sh_ldapp()
         /* Set default DESKTOP if there isn't any yet: */
         if(psh->sh_desk[0] == 0)
         {
-          strcpy(&psh->sh_desk[0], rs_str(STDESKTP));
+          strcpy(&psh->sh_desk[0], DEF_DESKTOP);
           strcpy(&psh->sh_cdir[0], &D.s_cdir[0]);
         }
 
@@ -728,7 +728,7 @@ void sh_ldapp()
             retry = FALSE;
 
             Dprintf(("sh_ldapp: Starting %s\n", D.s_cmd));
-            if(psh->sh_isdef && strcmp(D.s_cmd, rs_str(STDESKTP)) == 0)
+            if(psh->sh_isdef && strcmp(D.s_cmd, DEF_DESKTOP) == 0)
             {
               /* Start the ROM desktop: */
               sh_show(D.s_cmd);
@@ -765,7 +765,7 @@ void sh_ldapp()
                 if(psh->sh_isdef && psh->sh_dodef)
                 {
                   Dprintf(("sh_ldapp: Returning to ROM desktop!\n"));
-                  strcpy(&psh->sh_desk[0], rs_str(STDESKTP));
+                  strcpy(&psh->sh_desk[0], DEF_DESKTOP);
                   strcpy(&psh->sh_cdir[0], &D.s_cdir[0]);
                 }
               }

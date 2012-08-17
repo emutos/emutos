@@ -10,6 +10,7 @@
 #ifndef GEMSCLIB_H
 #define GEMSCLIB_H
 
+#define SCRAP_DIR_NAME  "C:\\CLIPBRD"
 
 WORD sc_read(BYTE *pscrap);
 WORD sc_write(const BYTE *pscrap);

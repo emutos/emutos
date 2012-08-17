@@ -211,40 +211,40 @@ WORD instr(BYTE chr, BYTE *str)
 WORD check(BYTE *in_char, BYTE valchar)
 {
         register WORD   upcase;
-        register WORD   rstr;
+        register BYTE   *rstr;
 
         upcase = TRUE;
-        rstr = -1;
+        rstr = NULL;
         switch(valchar)
         {
           case '9':                             /* 0..9                 */
-            rstr = ST9VAL;
+            rstr = "0..9";
             upcase = FALSE;
             break;
           case 'A':                             /* A..Z, <space>        */
-            rstr = STAVAL;
+            rstr = "a..zA..Z ";
             break;
           case 'N':                             /* 0..9, A..Z, <SPACE>  */
-            rstr = STNVAL;
+            rstr = "a..zA..Z0..9 ";
             break;
           case 'P':         /* DOS pathname + '\', '?', '*', ':','.',','*/
-            rstr = STPVAL;
+            rstr = "a..zA..Z0..9 $#&@!%()-{}'`_^~\\?*:.,";
             break;
           case 'p':                     /* DOS pathname + '\` + ':'     */
-            rstr = STLPVAL;
+            rstr = "a..zA..Z0..9 $#&@!%()-{}'`_^~\\:";
             break;
           case 'F':             /* DOS filename + ':', '?' + '*'        */
-            rstr = STFVAL;
+            rstr = "a..zA..Z0..9 $#&@!%()-{}'`_^~:?*";
             break;
           case 'f':                             /* DOS filename */
-            rstr = STLFAVAL;
+            rstr = "a..zA..Z0..9 $#&@!%()-{}'`_^~";
             break;
           case 'a':                             /* a..z, A..Z, <SPACE>  */
-            rstr = STLAVAL;
+            rstr = "a..zA..Z ";
             upcase = FALSE;
             break;
           case 'n':                             /* 0..9, a..z, A..Z,<SP>*/
-            rstr = STLNVAL;
+            rstr = "a..zA..Z0..9 ";
             upcase = FALSE;
             break;
           case 'x':                             /* anything, but upcase */
@@ -253,9 +253,9 @@ WORD check(BYTE *in_char, BYTE valchar)
           case 'X':                             /* anything             */
             return(TRUE);
         }
-        if (rstr != -1)
+        if (rstr)
         {
-          if ( instr(*in_char, rs_str(rstr)) )
+          if ( instr(*in_char, rstr) )
           {
              if (upcase)
                *in_char = toupper(*in_char);
