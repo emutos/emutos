@@ -3940,3 +3940,5 @@ Start... early ages
 - aes/gem.def aes/gem.rsc aes/gemaplib.c aes/geminit.c aes/geminit.h
   aes/gemobed.c aes/gemsclib.h aes/gemshlib.c tools/erd.c: Code cleanup:
   move non-displayed/untranslated strings from GEM resource to C code. (RFB)
+- desk/deskapp.c desk/deskapp.h desk/icon.def desk/icon.rsc: Provide copies
+  of generic app/doc icons for future use. (RFB)

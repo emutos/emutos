@@ -42,8 +42,8 @@
 #define IG_TRASH 3
 #define IG_4RESV 4
 #define IG_5RESV 5
-#define IG_6RESV 6
-#define IG_7RESV 7
+#define IA_GENERIC_ALT 6
+#define ID_GENERIC_ALT 7
                                                 /* application icons    */
 #define IA_GENERIC 8
 #define IA_SS 9
