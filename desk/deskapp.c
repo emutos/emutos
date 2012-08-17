@@ -67,15 +67,23 @@ static BYTE     gl_buffer[SIZE_BUFF];
 /* When we can't get EMUDESK.INF via shel_get() or by reading from
  * the disk, we create one dynamically from three sources:
  *  the desktop preferences, for #E line
- *  the following data, for #W lines
+ *  desk_inf_data1 below, for #W lines
  *  the drivemask, for #M lines
- *  the builtin destop resource, for the remaining lines
+ *  desk_inf_data2 below, for the remaining lines
  */
 static const char *desk_inf_data1 =
     "#W 00 00 02 06 26 0C 00 @\r\n"
     "#W 00 00 02 08 26 0C 00 @\r\n"
     "#W 00 00 02 0A 26 0C 00 @\r\n"
     "#W 00 00 02 0D 26 0C 00 @\r\n";
+static const char *desk_inf_data2 =
+    "#F FF 28 @ *.*@\r\n"
+    "#D FF 02 @ *.*@\r\n"
+    "#Y 08 FF *.GTP@ @\r\n"
+    "#G 08 FF *.APP@ @\r\n"
+    "#G 08 FF *.PRG@ @\r\n"
+    "#P 08 FF *.TTP@ @\r\n"
+    "#F 08 FF *.TOS@ @\r\n";
 
 /************************************************************************/
 /* g e t _ d e f d r v                                                  */
@@ -480,7 +488,7 @@ void app_start(void)
         {                                       /*   so read from disk  */
           WORD fh;
           char inf_file_name[16];
-          strcpy(inf_file_name, ini_str(STGEMAPP));
+          strcpy(inf_file_name, INF_FILE_NAME);
           inf_file_name[0] += gl_stdrv;         /* Adjust drive letter  */
           fh = dos_open(inf_file_name, 0x0);
           if( !DOS_ERR )
@@ -527,11 +535,10 @@ void app_start(void)
                 drive_x, drive_y, icon_type, drive_letter, drive_letter);
               icon_index++;
             }
+
           /* Copy core data part 2 */
-          for (i = 0, x = strlen(gl_afile); i < 7; i++, x += y+3) {
-            y = strlencpy(gl_afile+x,ini_str(ST1STD+i));
-            strcpy(gl_afile+x+y," \r\n");
-          }
+          strcat(gl_afile, desk_inf_data2);
+
           /* add Trash icon to end */
           x = strlen(gl_afile);
           trash_x = 0; /* Left */
@@ -777,7 +784,7 @@ void app_save(WORD todisk)
           while (!fh)
           {
             char inf_file_name[16];
-            strcpy(inf_file_name, ini_str(STGEMAPP));
+            strcpy(inf_file_name, INF_FILE_NAME);
             inf_file_name[0] += gl_stdrv;         /* Adjust drive letter  */
             fh = dos_create(inf_file_name, 0x0);
             if( DOS_ERR )
