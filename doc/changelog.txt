@@ -3942,3 +3942,7 @@ Start... early ages
   move non-displayed/untranslated strings from GEM resource to C code. (RFB)
 - desk/deskapp.c desk/deskapp.h desk/icon.def desk/icon.rsc: Provide copies
   of generic app/doc icons for future use. (RFB)
+
+2012-08-18
+- desk/deskapp.h desk/deskins.c: Allow for future usage of only some of
+  desktop icons. (RFB)

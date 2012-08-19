@@ -45,7 +45,7 @@
 #include "desk1.h"
 #include "intmath.h"
 
-#if CONF_WITH_DESKTOP_ICONS
+#if HAVE_APPL_IBLKS
 static ICONBLK  gl_aib;
 static ICONBLK  gl_dib;
 #endif
@@ -245,7 +245,7 @@ WORD ins_disk(ANODE *pa)
 } /* ins_disk */
 
 
-#if CONF_WITH_DESKTOP_ICONS
+#if HAVE_APPL_IBLKS
 static void insa_icon(LONG tree, WORD obj, WORD nicon, ICONBLK *pic, BYTE *ptext)
 {
         movs(sizeof(ICONBLK), &G.g_iblist[nicon], pic);
@@ -272,7 +272,7 @@ static void insa_elev(LONG tree, WORD nicon, WORD numics)
         LWSET(OB_Y(APFSVELE), y);
         LWSET(OB_HEIGHT(APFSVELE), h);
 
-#if CONF_WITH_DESKTOP_ICONS
+#if HAVE_APPL_IBLKS
         strcpy(&G.g_1text[0], ini_str(STAPPL));
         insa_icon(tree, APF1NAME, IA_GENERIC+nicon, &gl_aib, &G.g_1text[0]);
 

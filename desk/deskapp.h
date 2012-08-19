@@ -44,6 +44,7 @@
 #define IG_5RESV 5
 #define IA_GENERIC_ALT 6
 #define ID_GENERIC_ALT 7
+#define NUM_GEM_IBLKS (ID_GENERIC_ALT+1)
                                                 /* application icons    */
 #define IA_GENERIC 8
 #define IA_SS 9
@@ -91,6 +92,11 @@
 #define NUM_IBLKS 0
 #endif
 
+#if (NUM_IBLKS > NUM_GEM_IBLKS)
+#define HAVE_APPL_IBLKS 1
+#else
+#define HAVE_APPL_IBLKS 0
+#endif
 
 #define ANODE struct applstr
 ANODE
