@@ -3950,3 +3950,5 @@ Start... early ages
 2012-08-19
 - desk/deskapp.c desk/deskins.c: Allow ICONBLKs for 'Configure application'
   to be omitted. (RFB)
+- desk/desktop.def desk/desktop.rsc desk/deskins.c: Move string to resource
+  and make it translatable. (RFB)

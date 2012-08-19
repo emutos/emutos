@@ -281,7 +281,7 @@ static void insa_elev(LONG tree, WORD nicon, WORD numics)
 
         lp = icon_rs_fstr[nicon];
 #else
-        lp = "Not available";
+        lp = ini_str(STNOTAVL);
 #endif
 
         strcpy(&gl_lngstr[0], lp);
