@@ -413,7 +413,11 @@ static void app_rdicon(void)
         }
 
         /* the number of entries in the icon_rs_fstr[] array in icons.c */
+#if HAVE_APPL_IBLKS
         gl_numics = LASTICON + 1;
+#else
+        gl_numics = 0;
+#endif
 
         /*
          * Fix up the ICONBLKs

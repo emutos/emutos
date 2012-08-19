@@ -3946,3 +3946,7 @@ Start... early ages
 2012-08-18
 - desk/deskapp.h desk/deskins.c: Allow for future usage of only some of
   desktop icons. (RFB)
+
+2012-08-19
+- desk/deskapp.c desk/deskins.c: Allow ICONBLKs for 'Configure application'
+  to be omitted. (RFB)

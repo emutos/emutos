@@ -462,7 +462,9 @@ WORD ins_app(BYTE *pfname, ANODE *pa)
           field = (pa->a_flags & AF_ISPARM) ? APPARMS : APDOS;
         LWSET(OB_STATE(field), SELECTED);
 
-        oicon = pa->a_aicon - IA_GENERIC;
+        if (pa->a_aicon == IA_GENERIC_ALT)
+            oicon = 0;
+        else oicon = pa->a_aicon - IA_GENERIC;
 
         insa_elev(tree, oicon, gl_numics);
         nicon = insa_dial(tree, oicon, gl_numics);
@@ -526,8 +528,13 @@ WORD ins_app(BYTE *pfname, ANODE *pa)
                (oflag != nflag) )
           {
             change = TRUE;
+#if HAVE_APPL_IBLKS
             pa->a_aicon = nicon + IA_GENERIC;
             pa->a_dicon = nicon + ID_GENERIC;
+#else
+            pa->a_aicon = IA_GENERIC_ALT;
+            pa->a_dicon = ID_GENERIC_ALT;
+#endif
             pa->a_flags = nflag;
           }
         }
