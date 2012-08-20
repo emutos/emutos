@@ -7,7 +7,5 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-extern  BYTE    gl_lngstr[];
-
 BYTE *ini_str(WORD stnum);
 

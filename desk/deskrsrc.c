@@ -22,13 +22,8 @@
 
 #include "aesbind.h"
 
-#include "string.h"
-
 
 #define R_STRING 5
-
-
-GLOBAL  BYTE    gl_lngstr[256];
 
 
 BYTE *ini_str(WORD stnum)
@@ -36,7 +31,5 @@ BYTE *ini_str(WORD stnum)
         LONG            lstr;
 
         rsrc_gaddr(R_STRING, stnum, &lstr);
-        strcpy(gl_lngstr, (char *)lstr);
-
-        return(&gl_lngstr[0]);
+        return (BYTE *)lstr;
 }

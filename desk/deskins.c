@@ -284,9 +284,7 @@ static void insa_elev(LONG tree, WORD nicon, WORD numics)
         lp = ini_str(STNOTAVL);
 #endif
 
-        strcpy(&gl_lngstr[0], lp);
-
-        inf_sset(tree, APFTITLE, &gl_lngstr[0] );
+        inf_sset(tree, APFTITLE, (BYTE *)lp );
 } /* insa_elev */
 
 

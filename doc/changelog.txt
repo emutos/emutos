@@ -3952,3 +3952,7 @@ Start... early ages
   to be omitted. (RFB)
 - desk/desktop.def desk/desktop.rsc desk/deskins.c: Move string to resource
   and make it translatable. (RFB)
+
+2012-08-20
+- desk/deskins.c desk/deskrsrc.c desk/deskrsrc.h: Code cleanup: simplify
+  code & eliminate a global. (RFB)
