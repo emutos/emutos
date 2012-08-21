@@ -15,7 +15,6 @@
 #include "compat.h"
 #include "struct.h"
 #include "obdefs.h"
-#include "taddr.h"
 #include "dos.h"
 #include "tosvars.h"
 #include "gemlib.h"
@@ -263,11 +262,12 @@ static void fs_format(LONG tree, WORD currtop, WORD count)
         register WORD   y, h, th;
         BYTE            *adtext;
         WORD            tlen;
+        OBJECT          *obj, *treeptr = (OBJECT *)tree;
                                                 /* build in real text   */
                                                 /*   strings            */
         gl_fspos = currtop;                     /* save new position    */
         cnt = min(NM_NAMES, count - currtop);
-        for(i=0; i<NM_NAMES; i++)
+        for(i=0, obj=treeptr+NAME_OFFSET; i<NM_NAMES; i++, obj++)
         {
           if (i < cnt)
           {
@@ -281,22 +281,23 @@ static void fs_format(LONG tree, WORD currtop, WORD count)
             gl_tmp1[1] = NULL;
           }
           fs_sset(tree, NAME_OFFSET+i, gl_tmp1, &adtext, &tlen);
-          LWSET(OB_TYPE(NAME_OFFSET+i),
-                ((gl_shdrive) ? G_BOXTEXT : G_FBOXTEXT) );
-          LWSET(OB_STATE(NAME_OFFSET+i), NORMAL);
+          obj->ob_type = (gl_shdrive) ? G_BOXTEXT : G_FBOXTEXT;
+          obj->ob_state = NORMAL;
         }
                                                 /* size and position the*/
                                                 /*   elevator           */
         y = 0;
-        th = h = LWGET(OB_HEIGHT(FSVSLID));  
+        obj = treeptr + FSVSLID;
+        th = h = obj->ob_height;
         if ( count > NM_NAMES)
         {
           h = mul_div(NM_NAMES, h, count);
           h = max(gl_hbox/2, h);                /* min size elevator    */
           y = mul_div(currtop, th-h, count-NM_NAMES);
         }
-        LWSET(OB_Y(FSVELEV), y);
-        LWSET(OB_HEIGHT(FSVELEV), h);
+        obj = treeptr + FSVELEV;
+        obj->ob_y = y;
+        obj->ob_height = h;
 }
 
 
@@ -428,8 +429,8 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton)
         register BYTE   *pstr, *pspec;
         GRECT           pt;
         BYTE            locstr[LEN_ZPATH+1];
-
-        LONG            dummy; /*!!!*/
+        OBJECT          *obj;
+        TEDINFO         *tedinfo;
 
         curr = 0;
         count = 0;
@@ -447,13 +448,14 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton)
 
         tree = ad_fstree;
                                                 /* init strings in form */
-
-        dummy = LLGET(OB_SPEC(FTITLE));
-        ad_ftitle = (BYTE*)LLGET(dummy);
+        obj = ((OBJECT *)tree) + FTITLE;
+        tedinfo = (TEDINFO *)obj->ob_spec;
+        ad_ftitle = (BYTE *)tedinfo->te_ptext;
 
         strcpy(ad_ftitle, " *.* ");
-        dummy=LLGET(OB_SPEC(FSDIRECT));
-        if (!strcmp(pipath, (char *)LLGET(dummy)))   /* if equal */
+        obj = ((OBJECT *)tree) + FSDIRECT;
+        tedinfo = (TEDINFO *)obj->ob_spec;
+        if (!strcmp(pipath, (char *)tedinfo->te_ptext))     /* if equal */
           elevpos = gl_fspos;                   /* same dir as last time */ 
         else                                    
           elevpos = 0;
@@ -525,19 +527,10 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton)
             case FSVELEV:
 dofelev:        fm_own(TRUE);
                 ob_relxywh(tree, FSVSLID, &pt);
-                /* anemic slidebars
-                  pt.g_x += 3;           
-                  pt.g_w -= 6;
-                */
-                LWSET(OB_X(FSVSLID), pt.g_x);
-                LWSET(OB_WIDTH(FSVSLID), pt.g_w);
+                obj = ((OBJECT *)tree) + FSVSLID;
+                obj->ob_x = pt.g_x;
+                obj->ob_width = pt.g_w;
                 value = gr_slidebox(tree, FSVSLID, FSVELEV, TRUE);
-                /* anemic slidebars
-                  pt.g_x -= 3;
-                  pt.g_w += 6;
-                */
-                LWSET(OB_X(FSVSLID), pt.g_x);
-                LWSET(OB_WIDTH(FSVSLID), pt.g_w);
                 fm_own(FALSE);
                 value = curr - mul_div(value, count-NM_NAMES, 1000);
                 if (value >= 0)
