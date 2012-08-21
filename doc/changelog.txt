@@ -3957,3 +3957,6 @@ Start... early ages
 - desk/deskins.c desk/deskrsrc.c desk/deskrsrc.h: Code cleanup: simplify
   code & eliminate a global. (RFB)
 - aes/gemfslib.c: Code cleanup: removed compatibility & OB_ macros. (RFB)
+
+2012-08-21
+- aes/gemctrl.c: Code cleanup: removed compatibility & OB_ macros. (RFB)

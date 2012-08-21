@@ -24,7 +24,6 @@
 #include "struct.h"
 #include "basepage.h"
 #include "obdefs.h"
-#include "taddr.h"
 #include "gemlib.h"
 
 #include "geminput.h"
@@ -110,6 +109,7 @@ static void hctl_window(WORD w_handle, WORD mx, WORD my)
         WORD            kind;
         register WORD   cpt, message;
         LONG            tree;
+        OBJECT          *obj;
         
         message = 0;
         if ( (w_handle == gl_wtop) ||
@@ -206,43 +206,18 @@ static void hctl_window(WORD w_handle, WORD mx, WORD my)
             case W_VELEV:
 doelev:         message = (cpt == W_HELEV) ? WM_HSLID : WM_VSLID;
                 ob_relxywh(tree, cpt - 1, &pt);
+                obj = ((OBJECT *)tree) + cpt - 1;
                 if ( message == WM_VSLID )
                 {
-                  /* anemic slidebars
-                    pt.g_x += 3; 
-                    pt.g_w -= 6;
-                  */
-                  LWSET(OB_X(cpt - 1), pt.g_x);
-                  LWSET(OB_WIDTH(cpt - 1), pt.g_w);
+                  obj->ob_x = pt.g_x;
+                  obj->ob_width = pt.g_w;
                 }
                 else
                 {
-                  /* anemic slidebars
-                    pt.g_y += 2; 
-                    pt.g_h -= 4;
-                  */
-                  LWSET(OB_Y(cpt - 1), pt.g_y);
-                  LWSET(OB_HEIGHT(cpt - 1), pt.g_h);
+                  obj->ob_y = pt.g_y;
+                  obj->ob_height = pt.g_h;
                 }
                 x = gr_slidebox(gl_awind, cpt - 1, cpt, (cpt == W_VELEV));
-                if ( message == WM_VSLID )
-                {
-                  /* anemic slidebars
-                    pt.g_x -= 3;
-                    pt.g_w += 6;
-                  */
-                  LWSET(OB_X(cpt - 1), pt.g_x);
-                  LWSET(OB_WIDTH(cpt - 1), pt.g_w);
-                }
-                else
-                {
-                  /* anemic slidebars
-                    pt.g_y -= 2;
-                    pt.g_h += 4;
-                  */
-                  LWSET(OB_Y(cpt - 1), pt.g_y);
-                  LWSET(OB_HEIGHT(cpt - 1), pt.g_h);
-                }
                                         /* slide is 1 less than elev    */
                 break;
           }
