@@ -3960,3 +3960,6 @@ Start... early ages
 
 2012-08-21
 - aes/gemctrl.c: Code cleanup: removed compatibility & OB_ macros. (RFB)
+
+2012-08-22
+- aes/gemrslib.c: Code cleanup: removed OB_ & related macros. (RFB)

@@ -43,24 +43,6 @@
 #define NUM_FRSTR LWGET(rs_hdr + 2*R_NSTRING)
 #define NUM_FRIMG LWGET(rs_hdr + 2*R_IMAGES)
 
-#define ROB_TYPE (psubstruct + 6)       /* Long pointer in OBJECT       */
-#define ROB_STATE (psubstruct + 10)     /* Long pointer in OBJECT       */
-#define ROB_SPEC (psubstruct + 12)      /* Long pointer in OBJECT       */
-
-#define RTE_PTEXT (psubstruct + 0)      /* Long pointers in TEDINFO     */
-#define RTE_PTMPLT (psubstruct + 4)
-#define RTE_PVALID (psubstruct + 8)
-#define RTE_TXTLEN (psubstruct + 24)
-#define RTE_TMPLEN (psubstruct + 26)
-
-#define RIB_PMASK (psubstruct + 0)      /* Long pointers in ICONBLK     */
-#define RIB_PDATA (psubstruct + 4)
-#define RIB_PTEXT (psubstruct + 8)
-
-#define RBI_PDATA (psubstruct + 0)      /* Long pointer in BITBLK       */
-#define RBI_WB (psubstruct + 4)
-#define RBI_HL (psubstruct + 6)
-                                        /* in global array              */
 #define APP_LOPNAME (rs_global + 10)
 #define APP_LO1RESV (rs_global + 14)
 #define APP_LO2RESV (rs_global + 18)
@@ -81,12 +63,12 @@ static char    free_str[256];   /* must be long enough for longest freestring in
 *       If column or width is 80 then convert to rightmost column or 
 *       full screen width. 
 */
-static void fix_chpos(LONG pfix, WORD offset)
+static void fix_chpos(WORD *pfix, WORD offset)
 {
         WORD    coffset;
         WORD    cpos;
 
-        cpos = LWGET(pfix);
+        cpos = *pfix;
         coffset = (cpos >> 8) & 0x00ff;
         cpos &= 0x00ff;
 
@@ -109,7 +91,7 @@ static void fix_chpos(LONG pfix, WORD offset)
         }
 
         cpos += ( coffset > 128 ) ? (coffset - 256) : coffset;
-        LWSET(pfix, cpos);
+        *pfix = cpos;
 }
 
 
@@ -119,12 +101,13 @@ static void fix_chpos(LONG pfix, WORD offset)
 void rs_obfix(LONG tree, WORD curob)
 {
         register WORD   offset;
-        register LONG   p;
+        WORD            *p;
+        OBJECT          *obj;
                                                 /* set X,Y,W,H */
-        p = OB_X(curob);
+        obj = ((OBJECT *)tree) + curob;
 
-        for (offset=0; offset<4; offset++)
-          fix_chpos(p+(LONG)(2*offset), offset);
+        for (offset=0, p=&obj->ob_x; offset<4; offset++, p++)
+          fix_chpos(p, offset);
 }
 
 
@@ -145,7 +128,9 @@ static LONG get_sub(WORD rsindex, WORD rtype, WORD rsize)
  */
 static LONG get_addr(UWORD rstype, UWORD rsindex)
 {
-        register LONG   psubstruct;
+        OBJECT          *obj;
+        TEDINFO         *ted;
+        ICONBLK         *ib;
         register WORD   size;
         register WORD   rt;
         WORD            valid;
@@ -180,22 +165,22 @@ static LONG get_addr(UWORD rstype, UWORD rsindex)
                 size = sizeof(BITBLK);
                 break;
           case R_OBSPEC:
-                psubstruct = get_addr(R_OBJECT, rsindex);
-                return( ROB_SPEC );
+                obj = (OBJECT *)get_addr(R_OBJECT, rsindex);
+                return( obj->ob_spec );
           case R_TEPTMPLT:
           case R_TEPVALID:
-                psubstruct = get_addr(R_TEDINFO, rsindex);
+                ted = (TEDINFO *)get_addr(R_TEDINFO, rsindex);
                 if (rstype == R_TEPTMPLT)
-                  return( RTE_PTMPLT );
+                  return( ted->te_ptmplt );
                 else
-                  return( RTE_PVALID );
+                  return( ted->te_pvalid );
           case R_IBPDATA:
           case R_IBPTEXT:
-                psubstruct = get_addr(R_ICONBLK, rsindex);
+                ib = (ICONBLK *)get_addr(R_ICONBLK, rsindex);
                 if (rstype == R_IBPDATA)
-                  return( RIB_PDATA );
+                  return( ib->ib_pdata );
                 else
-                  return( RIB_PTEXT );
+                  return( ib->ib_ptext );
           case R_STRING:
                 return( LLGET( get_sub(rsindex, RT_FREESTR, sizeof(LONG)) ) );
           case R_IMAGEDATA:
@@ -239,17 +224,17 @@ static void fix_trindex(void)
 {
         register WORD   ii;
         register LONG   ptreebase;
-        LONG            tree;
+        OBJECT          *tree;
 
         ptreebase = get_sub(0, RT_TRINDEX, sizeof(LONG) );
         LLSET(APP_LOPNAME, ptreebase );
 
         for (ii = NUM_TREE-1; ii >= 0; ii--)
         {
-          tree = fix_long(ptreebase + LW(ii*4));
-          if ( (LWGET(OB_STATE(ROOT)) == OUTLINED) &&
-               (LWGET(OB_TYPE(ROOT)) == G_BOX) )
-           LWSET( OB_STATE(ROOT), SHADOWED );
+          tree = (OBJECT *)fix_long(ptreebase + ii*4);
+          if ( (tree->ob_state == OUTLINED) &&
+               (tree->ob_type == G_BOX) )
+           tree->ob_state = SHADOWED;
         }
 }
 
@@ -258,17 +243,17 @@ static void fix_objects(void)
 {
         register WORD   ii;
         register WORD   obtype;
-        LONG            psubstruct;
+        OBJECT          *obj;
 
         for (ii = NUM_OBS-1; ii >= 0; ii--)
         {
-          psubstruct = get_addr(R_OBJECT, ii);
-          rs_obfix(psubstruct, 0);
-          obtype = (LWGET( ROB_TYPE ) & 0x00ff);
+          obj = (OBJECT *)get_addr(R_OBJECT, ii);
+          rs_obfix((LONG)obj, 0);
+          obtype = obj->ob_type & 0x00ff;
           if ( (obtype != G_BOX) &&
                (obtype != G_IBOX) &&
                (obtype != G_BOXCHAR) )
-            fix_long(ROB_SPEC);
+            fix_long(obj->ob_spec);
         }
 }
 
@@ -293,24 +278,24 @@ static WORD fix_ptr(WORD type, WORD index)
 static void fix_tedinfo(void)
 {
         register WORD   ii, i;
-        register LONG   psubstruct;
+        TEDINFO         *ted;
         LONG            tl[2], ls[2];
 
 
         for (ii = NUM_TI-1; ii >= 0; ii--)
         {
-          psubstruct = get_addr(R_TEDINFO, ii);
+          ted = (TEDINFO *)get_addr(R_TEDINFO, ii);
           tl[0] = tl[1] = 0x0L;
           ls[0] = ls[1] = 0x0L; /* Useless, avoid bogus GCC warning */
           if (fix_ptr(R_TEPTEXT, ii) )
           {
-            tl[0] = RTE_TXTLEN;
-            ls[0] = RTE_PTEXT;
+            tl[0] = ted->te_txtlen;
+            ls[0] = ted->te_ptext;
           }
           if (fix_ptr(R_TEPTMPLT, ii) )
           {
-            tl[1] = RTE_TMPLEN;
-            ls[1] = RTE_PTMPLT;
+            tl[1] = ted->te_tmplen;
+            ls[1] = ted->te_ptmplt;
           }
           for(i=0; i<2; i++)
           {
