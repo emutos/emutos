@@ -105,7 +105,6 @@ static BYTE *fs_pspec(BYTE *pstr, BYTE *pend)
 *       else, just based on name
 */
 
-
 static WORD fs_comp(void)
 {
         WORD            chk;
@@ -407,6 +406,21 @@ static WORD fs_newdir(BYTE *ftitle,
 }
 
 
+/*
+ * sets wildcard mask from string
+ * if no mask, uses default *.* & adds it to string
+ */
+static void set_mask(BYTE *mask,BYTE *path)
+{
+        BYTE            *pend;
+
+        pend = fs_back(path, path+strlen(path));
+        if (!*++pend)
+          strcpy(pend, "*.*");
+        strcpy(mask, pend);
+}
+
+
 
 /*
 *       File Selector input routine that takes control of the mouse
@@ -423,10 +437,10 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton)
         register LONG   tree;
         BYTE            *ad_fpath, *ad_fname, *ad_ftitle;
         WORD            fpath_len; 
-        WORD            dclkret, cont, firsttime, newname, elevpos;
+        WORD            dclkret, cont, newlist, newsel, elevpos;
         register BYTE   *pstr, *pspec;
         GRECT           pt;
-        BYTE            locstr[LEN_ZPATH+1];
+        BYTE            locstr[LEN_ZPATH+1], mask[LEN_ZFNAME+1];
         OBJECT          *obj;
         TEDINFO         *tedinfo;
 
@@ -443,29 +457,29 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton)
         ad_fsnames = dos_alloc( LW(LEN_FSNAME * NM_FILES) );
         if (!ad_fsnames)
           return(FALSE);
+        strcpy(locstr, pipath);
 
         tree = ad_fstree;
                                                 /* init strings in form */
         obj = ((OBJECT *)tree) + FTITLE;
         tedinfo = (TEDINFO *)obj->ob_spec;
         ad_ftitle = (BYTE *)tedinfo->te_ptext;
-        strcpy(ad_ftitle, " *.* ");
+        set_mask(mask, locstr);                 /* save caller's mask */
+        strcpy(ad_ftitle, mask);                /*  & copy to title line */
 
         obj = ((OBJECT *)tree) + FSDIRECT;
         tedinfo = (TEDINFO *)obj->ob_spec;
         ad_fpath = (BYTE *)tedinfo->te_ptext;
-        if (!strcmp(pipath, ad_fpath))          /* if equal */
+        if (!strcmp(locstr, ad_fpath))          /* if equal */
           elevpos = gl_fspos;                   /* same dir as last time */ 
         else                                    
           elevpos = 0;
-        strcpy(locstr, pipath);
-        inf_sset(tree, FSDIRECT, pipath);
+        inf_sset(tree, FSDIRECT, locstr);
 
         obj = ((OBJECT *)tree) + FSSELECT;
         tedinfo = (TEDINFO *)obj->ob_spec;
         ad_fname = (BYTE *)tedinfo->te_ptext;
-        strcpy(gl_tmp1, pisel);
-        fmt_str(&gl_tmp1[0], &gl_tmp2[0]);
+        fmt_str(pisel, gl_tmp2);                /* gl_tmp2[] is without dot */
         inf_sset(tree, FSSELECT, gl_tmp2);
                                                 /* set clip and start   */
                                                 /*   form fill-in by    */
@@ -478,30 +492,30 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton)
                                                 /*   by forcing initial */
                                                 /*   fs_newdir call     */
         sel = 0;
-        newname = gl_shdrive = FALSE;
-        cont = firsttime = TRUE;
+        newsel = gl_shdrive = FALSE;
+        cont = newlist = TRUE;
         while( cont )
         {
-          touchob = (firsttime) ? 0x0 : fm_do(tree, FSSELECT);
+          touchob = (newlist) ? 0x0 : fm_do(tree, FSSELECT);
           gsx_mxmy(&mx, &my);
         
           fpath_len = strlen(locstr);
-          if ( strcmp(&D.g_dir[0], locstr)!=0 )
+          if ( newlist )
           {
             fs_sel(sel, NORMAL);
             if ( (touchob == FSOK) ||
                  (touchob == FSCANCEL) )
               ob_change(tree, touchob, NORMAL, TRUE);
-            strcpy(&D.g_dir[0], &locstr[0]);
-            pspec = fs_pspec(&D.g_dir[0], &D.g_dir[fpath_len]);     
+            strcpy(D.g_dir, locstr);
+            pspec = fs_pspec(D.g_dir, &D.g_dir[fpath_len]);     
 /*          strcpy(ad_fpath, &D.g_dir[0]); */
             inf_sset(tree, FSDIRECT, D.g_dir);
-            pstr = fs_pspec(&locstr[0], &locstr[fpath_len]);        
-            strcpy(pstr, "*.*");
+            pstr = fs_pspec(locstr, &locstr[fpath_len]);        
+            strcpy(pstr, mask);
             fs_newdir(ad_ftitle, locstr, pspec, tree, &count, elevpos);
             curr = elevpos;
             sel = touchob = elevpos = 0;
-            firsttime = FALSE;
+            newlist = FALSE;
           }
 
           value = 0;
@@ -522,17 +536,15 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton)
                   pt.g_x -= 3;
                   pt.g_w += 6;
                 */
-                if ( inside(mx, my, &pt) )
-                  goto dofelev;
-                touchob = (my <= pt.g_y) ? FUPAROW : FDNAROW;
-                value = NM_NAMES;
-                break;
+                if ( !inside(mx, my, &pt) )
+                  {
+                  touchob = (my <= pt.g_y) ? FUPAROW : FDNAROW;
+                  value = NM_NAMES;
+                  break;
+                  }
+                /* drop through */
             case FSVELEV:
-dofelev:        fm_own(TRUE);
-                ob_relxywh(tree, FSVSLID, &pt);
-                obj = ((OBJECT *)tree) + FSVSLID;
-                obj->ob_x = pt.g_x;
-                obj->ob_width = pt.g_w;
+                fm_own(TRUE);
                 value = gr_slidebox(tree, FSVSLID, FSVELEV, TRUE);
                 fm_own(FALSE);
                 value = curr - mul_div(value, count-NM_NAMES, 1000);
@@ -554,52 +566,49 @@ dofelev:        fm_own(TRUE);
             case F8NAME:
             case F9NAME:
                 fnum = touchob - F1NAME + 1;
-                if ( fnum <= count )
+                if ( fnum > count )
+                  break;
+                if ( (sel) && (sel != fnum) )
+                  fs_sel(sel, NORMAL);
+                if ( sel != fnum)
                 {
-                  if ( (sel) &&
-                       (sel != fnum) )
-                    fs_sel(sel, NORMAL);
-                  if ( sel != fnum)
-                  {
-                    sel = fnum;
-                    fs_sel(sel, SELECTED);
-                  }
+                  sel = fnum;
+                  fs_sel(sel, SELECTED);
+                }
                                                 /* get string and see   */
                                                 /*   if file or folder  */
-                  inf_sget(tree, touchob, gl_tmp1);
-                  if (gl_tmp1[0] == ' ')
+                inf_sget(tree, touchob, gl_tmp1);
+                if (gl_tmp1[0] == ' ')
+                {                               /* copy to selection    */
+                  newsel = TRUE;
+                  if (dclkret)
+                    cont = FALSE;
+                }
+                else
+                {
+                  if (gl_shdrive)
                   {
-                                                /* copy to selection    */
-                    newname = TRUE;
-                    if (dclkret)
-                      cont = FALSE;
+                                                /* prepend in drive name*/
+                    if (locstr[1] == ':')
+                      locstr[0] = gl_tmp1[2];
                   }
                   else
                   {
-                    if (gl_shdrive)
-                    {
-                                                /* prepend in drive name*/
-                      if (locstr[1] == ':')
-                        locstr[0] = gl_tmp1[2];
-                    }
-                    else
-                    {
                                                 /* append in folder name*/
-                      pstr = fs_pspec(&locstr[0], &locstr[fpath_len]);
-                      strcpy(gl_tmp2, pstr - 1);
-                      unfmt_str(&gl_tmp1[1], pstr);
-                      strcat(pstr, &gl_tmp2[0]);
-                    }
-                    firsttime = TRUE;
+                    pstr = fs_pspec(&locstr[0], &locstr[fpath_len]);
+                    strcpy(gl_tmp2, pstr - 1);
+                    unfmt_str(&gl_tmp1[1], pstr);
+                    strcat(pstr, &gl_tmp2[0]);
                   }
-                  gl_shdrive = FALSE;
+                  newlist = TRUE;
                 }
+                gl_shdrive = FALSE;
                 break;
             case FCLSBOX:
                 pspec = pstr = fs_back(&locstr[0], &locstr[fpath_len]);
                 if (*pstr-- == '\\')
                 {
-                  firsttime = TRUE;
+                  newlist = TRUE;
                   if (*pstr != ':')
                   {
                     pstr = fs_back(&locstr[0], pstr);
@@ -613,25 +622,27 @@ dofelev:        fm_own(TRUE);
                   }
                 }
                 break;
-            case FTITLE:
-                firsttime = TRUE;
-                break;
           }
-          if (firsttime)
+          if (!newlist && strcmp(ad_fpath, locstr)) /* path changed manually */
           {
-           /* strcpy(ad_fpath, locstr); */
+            strcpy(locstr, ad_fpath);
+            newlist = TRUE;
+          }
+          if (newlist)
+          {
             inf_sset(tree, FSDIRECT, locstr);
+            set_mask(mask, locstr);                 /* set mask         */
             D.g_dir[0] = NULL;
             gl_tmp1[1] = NULL;
-            newname = TRUE;
+            newsel = TRUE;
           }
-          if (newname)
+          if (newsel)
           {
             strcpy(ad_fname, gl_tmp1 + 1);
             ob_draw(tree, FSSELECT, MAX_DEPTH);
             if (!cont)
               ob_change(tree, FSOK, SELECTED, TRUE);
-            newname = FALSE;
+            newsel = FALSE;
           }
           if (value)
             curr = fs_nscroll(tree, &sel, curr, count, touchob, value);
@@ -639,8 +650,7 @@ dofelev:        fm_own(TRUE);
                                                 /* return path and      */
                                                 /*   file name to app   */
         strcpy(pipath, locstr);
-        strcpy(gl_tmp1, ad_fname);
-        unfmt_str(&gl_tmp1[0], &gl_tmp2[0]);
+        unfmt_str(ad_fname, gl_tmp2);
         strcpy(pisel, gl_tmp2);
                                                 /* start the redraw     */
         fm_dial(FMD_FINISH, &gl_rfs);

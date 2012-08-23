@@ -3966,3 +3966,7 @@ Start... early ages
 - aes/optimize.c: Code cleanup: removed OB_ & compatibility macros. (RFB)
 - aes/gemfslib.c aes/optimize.c aes/optimize.h: Code cleanup: eliminate
   some global functions. (RFB)
+
+2012-08-23
+- aes/gem.def aes/gem.rsc aes/gemfslib.c: Fixed regression in file selector
+  and cleaned up code. (RFB)
