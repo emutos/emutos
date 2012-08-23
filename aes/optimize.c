@@ -20,7 +20,6 @@
 #include "config.h"
 #include "portab.h"
 #include "compat.h"
-#include "taddr.h"
 #include "obdefs.h"
 #include "struct.h"
 #include "gemlib.h"
@@ -168,17 +167,18 @@ void unfmt_str(BYTE *instr, BYTE *outstr)
 
 void fs_sset(LONG tree, WORD obj, BYTE *pstr, BYTE **ptext, WORD *ptxtlen)
 {
-        LONG            spec;
         WORD            len;
+        TEDINFO         *ted;
+        OBJECT          *objptr = ((OBJECT *)tree) + obj;
 
-        spec = LLGET(OB_SPEC(obj));   /*!!!*/
-        *ptext =(BYTE*)LLGET(spec);
+        ted = (TEDINFO *)objptr->ob_spec;
+        *ptext = (BYTE *)ted->te_ptext;
 
-        *ptxtlen = LWGET( spec + 24 );
-        len = LSTRLEN(pstr);                    /* allow for null       */
+        *ptxtlen = ted->te_txtlen;
+        len = strlen(pstr);                     /* allow for null       */
         len = min(len, *ptxtlen - 1);
-        LBCOPY(*ptext, pstr, len);
-        LBSET(*ptext+len, '\0');                /* add null             */
+        memcpy(*ptext, pstr, len);
+        *(*ptext+len) = '\0';                   /* add null             */
 }
 
 
@@ -193,12 +193,11 @@ void inf_sset(LONG tree, WORD obj, BYTE *pstr)
 
 void fs_sget(LONG tree, WORD obj, BYTE *pstr)
 {
-        LONG            spec;
-        BYTE            *ptext;
+        TEDINFO         *ted;
+        OBJECT          *objptr = ((OBJECT *)tree) + obj;
 
-        spec = LLGET(OB_SPEC(obj));  /*!!!*/
-        ptext = (BYTE*)LLGET(spec);
-        strcpy(pstr, ptext);
+        ted = (TEDINFO *)objptr->ob_spec;
+        strcpy(pstr, (BYTE *)ted->te_ptext);
 }
 
 
@@ -213,7 +212,9 @@ void inf_sget(LONG tree, WORD obj, BYTE *pstr)
 void inf_fldset(LONG tree, WORD obj, UWORD testfld, UWORD testbit,
                 UWORD truestate, UWORD falsestate)
 {
-        LWSET(OB_STATE(obj), (testfld & testbit) ? truestate : falsestate);
+        OBJECT          *objptr = ((OBJECT *)tree) + obj;
+
+        objptr->ob_state = (testfld & testbit) ? truestate : falsestate;
 }
 
 
@@ -221,10 +222,11 @@ void inf_fldset(LONG tree, WORD obj, UWORD testfld, UWORD testbit,
 WORD inf_gindex(LONG tree, WORD baseobj, WORD numobj)
 {
         WORD            retobj;
+        OBJECT          *objptr;
 
-        for (retobj=0; retobj < numobj; retobj++)
+        for (retobj=0, objptr=((OBJECT *)tree)+baseobj; retobj < numobj; retobj++, objptr++)
         {
-          if (LWGET(OB_STATE(baseobj+retobj)) & SELECTED)
+          if (objptr->ob_state & SELECTED)
             return(retobj);
         }
         return(-1);
@@ -239,12 +241,14 @@ WORD inf_gindex(LONG tree, WORD baseobj, WORD numobj)
 WORD inf_what(LONG tree, WORD ok, WORD cncl)
 {
         WORD            field;
+        OBJECT          *objptr;
 
         field = inf_gindex(tree, ok, 2);
 
         if (field != -1)
         {
-          LWSET(OB_STATE(ok + field), NORMAL);
+          objptr = ((OBJECT *)tree) + ok + field;
+          objptr->ob_state = NORMAL;
           field = (field == 0);
         }
         return(field);

@@ -3963,3 +3963,4 @@ Start... early ages
 
 2012-08-22
 - aes/gemrslib.c: Code cleanup: removed OB_ & related macros. (RFB)
+- aes/optimize.c: Code cleanup: removed OB_ & compatibility macros. (RFB)
