@@ -165,33 +165,24 @@ void unfmt_str(BYTE *instr, BYTE *outstr)
 }
 
 
-void fs_sset(LONG tree, WORD obj, BYTE *pstr, BYTE **ptext, WORD *ptxtlen)
+void inf_sset(LONG tree, WORD obj, BYTE *pstr)
 {
-        WORD            len;
+        BYTE            *text;
+        WORD            txtlen, len;
         TEDINFO         *ted;
         OBJECT          *objptr = ((OBJECT *)tree) + obj;
 
         ted = (TEDINFO *)objptr->ob_spec;
-        *ptext = (BYTE *)ted->te_ptext;
-
-        *ptxtlen = ted->te_txtlen;
-        len = strlen(pstr);                     /* allow for null       */
-        len = min(len, *ptxtlen - 1);
-        memcpy(*ptext, pstr, len);
-        *(*ptext+len) = '\0';                   /* add null             */
+        text = (BYTE *)ted->te_ptext;
+        txtlen = ted->te_txtlen;
+        len = strlen(pstr);
+        len = min(len, txtlen - 1);             /* allow for nul */
+        memcpy(text, pstr, len);
+        text[len] = '\0';                       /* add nul */
 }
 
 
-void inf_sset(LONG tree, WORD obj, BYTE *pstr)
-{
-        BYTE            *text;
-        WORD            txtlen;
-
-        fs_sset(tree, obj, pstr, &text, &txtlen);
-}
-
-
-void fs_sget(LONG tree, WORD obj, BYTE *pstr)
+void inf_sget(LONG tree, WORD obj, BYTE *pstr)
 {
         TEDINFO         *ted;
         OBJECT          *objptr = ((OBJECT *)tree) + obj;
@@ -199,14 +190,6 @@ void fs_sget(LONG tree, WORD obj, BYTE *pstr)
         ted = (TEDINFO *)objptr->ob_spec;
         strcpy(pstr, (BYTE *)ted->te_ptext);
 }
-
-
-
-void inf_sget(LONG tree, WORD obj, BYTE *pstr)
-{
-        fs_sget(tree, obj, pstr);
-}
-
 
 
 void inf_fldset(LONG tree, WORD obj, UWORD testfld, UWORD testbit,

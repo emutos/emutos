@@ -260,8 +260,6 @@ static void fs_format(LONG tree, WORD currtop, WORD count)
 {
         register WORD   i, cnt;
         register WORD   y, h, th;
-        BYTE            *adtext;
-        WORD            tlen;
         OBJECT          *obj, *treeptr = (OBJECT *)tree;
                                                 /* build in real text   */
                                                 /*   strings            */
@@ -280,7 +278,7 @@ static void fs_format(LONG tree, WORD currtop, WORD count)
             gl_tmp1[0] = ' ';
             gl_tmp1[1] = NULL;
           }
-          fs_sset(tree, NAME_OFFSET+i, gl_tmp1, &adtext, &tlen);
+          inf_sset(tree, NAME_OFFSET+i, gl_tmp1);
           obj->ob_type = (gl_shdrive) ? G_BOXTEXT : G_FBOXTEXT;
           obj->ob_state = NORMAL;
         }
@@ -424,7 +422,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton)
         WORD            mx, my;
         register LONG   tree;
         BYTE            *ad_fpath, *ad_fname, *ad_ftitle;
-        WORD            fname_len, fpath_len, temp_len; 
+        WORD            fpath_len; 
         WORD            dclkret, cont, firsttime, newname, elevpos;
         register BYTE   *pstr, *pspec;
         GRECT           pt;
@@ -451,19 +449,24 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton)
         obj = ((OBJECT *)tree) + FTITLE;
         tedinfo = (TEDINFO *)obj->ob_spec;
         ad_ftitle = (BYTE *)tedinfo->te_ptext;
-
         strcpy(ad_ftitle, " *.* ");
+
         obj = ((OBJECT *)tree) + FSDIRECT;
         tedinfo = (TEDINFO *)obj->ob_spec;
-        if (!strcmp(pipath, (char *)tedinfo->te_ptext))     /* if equal */
+        ad_fpath = (BYTE *)tedinfo->te_ptext;
+        if (!strcmp(pipath, ad_fpath))          /* if equal */
           elevpos = gl_fspos;                   /* same dir as last time */ 
         else                                    
           elevpos = 0;
         strcpy(locstr, pipath);
-        fs_sset(tree, FSDIRECT, pipath, &ad_fpath, &temp_len);
+        inf_sset(tree, FSDIRECT, pipath);
+
+        obj = ((OBJECT *)tree) + FSSELECT;
+        tedinfo = (TEDINFO *)obj->ob_spec;
+        ad_fname = (BYTE *)tedinfo->te_ptext;
         strcpy(gl_tmp1, pisel);
         fmt_str(&gl_tmp1[0], &gl_tmp2[0]);
-        fs_sset(tree, FSSELECT, gl_tmp2, &ad_fname, &fname_len);
+        inf_sset(tree, FSSELECT, gl_tmp2);
                                                 /* set clip and start   */
                                                 /*   form fill-in by    */
                                                 /*   drawing the form   */
@@ -492,7 +495,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton)
             strcpy(&D.g_dir[0], &locstr[0]);
             pspec = fs_pspec(&D.g_dir[0], &D.g_dir[fpath_len]);     
 /*          strcpy(ad_fpath, &D.g_dir[0]); */
-            fs_sset(tree, FSDIRECT, D.g_dir, &ad_fpath, &temp_len);
+            inf_sset(tree, FSDIRECT, D.g_dir);
             pstr = fs_pspec(&locstr[0], &locstr[fpath_len]);        
             strcpy(pstr, "*.*");
             fs_newdir(ad_ftitle, locstr, pspec, tree, &count, elevpos);
@@ -563,7 +566,7 @@ dofelev:        fm_own(TRUE);
                   }
                                                 /* get string and see   */
                                                 /*   if file or folder  */
-                  fs_sget(tree, touchob, gl_tmp1);
+                  inf_sget(tree, touchob, gl_tmp1);
                   if (gl_tmp1[0] == ' ')
                   {
                                                 /* copy to selection    */
@@ -617,7 +620,7 @@ dofelev:        fm_own(TRUE);
           if (firsttime)
           {
            /* strcpy(ad_fpath, locstr); */
-            fs_sset(tree, FSDIRECT, locstr, &ad_fpath, &temp_len);
+            inf_sset(tree, FSDIRECT, locstr);
             D.g_dir[0] = NULL;
             gl_tmp1[1] = NULL;
             newname = TRUE;
