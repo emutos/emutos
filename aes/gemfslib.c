@@ -40,8 +40,17 @@
 
 #define NM_NAMES (F9NAME-F1NAME+1)
 #define NAME_OFFSET F1NAME
+#define NM_DRIVES (FSLSTDRV-FS1STDRV+1)
+#define DRIVE_OFFSET FS1STDRV
+
 #define LEN_FTITLE 18                           /* BEWARE, requires change*/
                                                 /*  in GEM.RSC          */
+#define LEN_FSNAME (LEN_ZFNAME+1)   /* includes leading flag byte & trailing nul */
+
+                            /* max number of files/directory that we can handle */
+#define MAX_NM_FILES 1600L          /*  ... if we have enough memory */
+#define MIN_NM_FILES 100L           /*  ... if memory is tight */
+
 
 GLOBAL LONG     ad_fstree;
 GLOBAL LONG     ad_fsdta;
@@ -49,11 +58,13 @@ GLOBAL GRECT    gl_rfs;
 
 static const BYTE gl_fsobj[4] = {FTITLE, FILEBOX, SCRLBAR, 0x0};
 
-static LONG     ad_fsnames;
+static BYTE     *ad_fsnames;    /* holds filenames in currently-displayed directory */
+static LONG     *g_fslist;      /* offsets of filenames within ad_fsnames */
+static LONG     nm_files;       /* total number of slots in g_fslist[] */
+
 static BYTE     gl_tmp1[LEN_FSNAME];
 static BYTE     gl_tmp2[LEN_FSNAME];
 
-static WORD     gl_shdrive;     /* TRUE => show disks rather than files */
 static WORD     gl_fspos;
 
 
@@ -101,45 +112,24 @@ static BYTE *fs_pspec(BYTE *pstr, BYTE *pend)
 }
 
 /*
-*       Routine to compare based on type and then on name if its a file
-*       else, just based on name
+*       Routine to compare files based on name
+*       Note: folders always sort lowest because the first character is \007
 */
 
-static WORD fs_comp(void)
+static WORD fs_comp(BYTE *name1, BYTE *name2)
 {
-        WORD            chk;
-
-        if ( (gl_tmp1[0] == ' ') && (gl_tmp2[0] == ' ') )
-        {
-          // old implementation:
-          // chk = strchk( scasb(&gl_tmp1[0], '.'), 
-          //               scasb(&gl_tmp2[0], '.') );
-          // 
-          char *t1, *t2;
-
-          t1 = strchr(gl_tmp1, '.');
-          if(t1 == NULL) t1 = "";
-          t2 = strchr(gl_tmp2, '.');
-          if(t2 == NULL) t2 = "";
-
-          chk = strcmp(t1, t2);
-          if ( chk )
-            return( chk );
-        }
-        return ( strcmp(gl_tmp1, gl_tmp2) );
+        return ( strcmp(name1, name2) );
 }
 
 
 
-static WORD fs_add(WORD thefile, WORD fs_index)
+static LONG fs_add(WORD thefile, LONG fs_index)
 {
         WORD            len;
 
-        len = strlencpy((char *) ad_fsnames + (LONG) fs_index, 
-                        (char *) ad_fsdta - (LONG) 1);
-        D.g_fslist[thefile] = (BYTE *) ((LONG)fs_index);
-        fs_index += len + 2;
-
+        len = strlencpy(ad_fsnames + fs_index, (char *)ad_fsdta - (LONG) 1);
+        g_fslist[thefile] = fs_index;
+        fs_index += len + 1;
         return(fs_index);
 }
 
@@ -152,58 +142,45 @@ static WORD fs_add(WORD thefile, WORD fs_index)
 
 static WORD fs_active(BYTE *ppath, BYTE *pspec, WORD *pcount)
 {
-        ULONG           mask;
-        WORD            ret, thefile;
-        WORD            fs_index;
+        WORD            ret;
+        LONG            thefile, fs_index, temp;
         register WORD   i, j, gap;
-        BYTE            *temp;
+        BYTE            *fname, allpath[LEN_ZPATH+1];
         
         gsx_mfset(ad_hgmice);
 
-        thefile = 0;
-        fs_index = 0;
+        thefile = 0L;
+        fs_index = 0L;
 
-        if (gl_shdrive)
+        strcpy(allpath, ppath);               /* 'allpath' gets all files */
+        fname = fs_back(allpath,allpath+strlen(allpath));
+        strcpy(fname+1,"*.*");
+
+        dos_sdta(ad_dta);
+        ret = dos_sfirst(allpath, F_SUBDIR);
+        while ( ret )
         {
-          strcpy(&gl_dta[29], "\007 A:");
-          for (i = 0, mask = 1; i < 16; i++, mask <<= 1)
-          {
-            if (drvbits & mask)
-            {
-              gl_dta[31] = 'A' + i;
-              fs_index = fs_add(thefile, fs_index);
-              thefile++;
-            }
-          }
-        }
-        else
-        {
-          dos_sdta(ad_dta);
-          ret = dos_sfirst(ppath, F_SUBDIR);
-          while ( ret )
-          {
                                                 /* if it is a real file */
                                                 /*   or directory then  */
                                                 /*   save it and set    */
                                                 /*   first byte to tell */
                                                 /*   which              */
-            if (gl_dta[30] != '.')
+          if (gl_dta[30] != '.')
+          {
+            gl_dta[29] = (gl_dta[21] & F_SUBDIR) ? 0x07 : ' ';
+            if ( (gl_dta[29] == 0x07) ||
+                 (wildcmp(pspec, &gl_dta[30])) )
             {
-              gl_dta[29] = (gl_dta[21] & F_SUBDIR) ? 0x07 : ' ';
-              if ( (gl_dta[29] == 0x07) ||
-                   (wildcmp(pspec, &gl_dta[30])) )
-              {
-                fs_index = fs_add(thefile, fs_index);
-                thefile++;
-              }
+              fs_index = fs_add(thefile, fs_index);
+              thefile++;
             }
-            ret = dos_snext();
+          }
+          ret = dos_snext();
 
-            if (thefile >= NM_FILES)
-            {
-              ret = FALSE;
-              sound(TRUE, 660, 4);
-            }
+          if (thefile >= nm_files)
+          {
+            ret = FALSE;
+            sound(TRUE, 660, 4);
           }
         }
         *pcount = thefile;
@@ -216,16 +193,15 @@ static WORD fs_active(BYTE *ppath, BYTE *pspec, WORD *pcount)
           {
             for (j = i-gap; j >= 0; j -= gap)
             {
-              strcpy(gl_tmp1, (char *) ad_fsnames + (LONG) D.g_fslist[j]);
-              strcpy(gl_tmp2, (char *) ad_fsnames + (LONG) D.g_fslist[j+gap]);
-              if ( fs_comp() <= 0 )
+              if ( fs_comp(ad_fsnames+g_fslist[j],ad_fsnames+g_fslist[j+gap]) <= 0 )
                 break;
-              temp = D.g_fslist[j];
-              D.g_fslist[j] = D.g_fslist[j+gap];
-              D.g_fslist[j+gap] = temp;
+              temp = g_fslist[j];
+              g_fslist[j] = g_fslist[j+gap];
+              g_fslist[j+gap] = temp;
             }
           }
         }
+
         gsx_mfset( ad_armice );
         return(TRUE);
 }
@@ -268,7 +244,7 @@ static void fs_format(LONG tree, WORD currtop, WORD count)
         {
           if (i < cnt)
           {
-            strcpy(gl_tmp2, (char *)ad_fsnames + (LONG) D.g_fslist[currtop+i]);
+            strcpy(gl_tmp2, ad_fsnames + g_fslist[currtop+i]);
             fmt_str(&gl_tmp2[1], &gl_tmp1[1]);
             gl_tmp1[0] = gl_tmp2[0];
           }
@@ -278,7 +254,7 @@ static void fs_format(LONG tree, WORD currtop, WORD count)
             gl_tmp1[1] = NULL;
           }
           inf_sset(tree, NAME_OFFSET+i, gl_tmp1);
-          obj->ob_type = (gl_shdrive) ? G_BOXTEXT : G_FBOXTEXT;
+          obj->ob_type = G_FBOXTEXT;
           obj->ob_state = NORMAL;
         }
                                                 /* size and position the*/
@@ -422,6 +398,19 @@ static void set_mask(BYTE *mask,BYTE *path)
 
 
 
+static void select_drive(LONG treeaddr, WORD drive)
+{
+        WORD            i;
+        OBJECT          *obj, *start = (OBJECT *)treeaddr+DRIVE_OFFSET;
+
+        for (i = 0, obj = start; i < NM_DRIVES; i++, obj++)
+          obj->ob_state &= ~SELECTED;
+
+        (start+drive)->ob_state |= SELECTED;
+}
+
+
+
 /*
 *       File Selector input routine that takes control of the mouse
 *       and keyboard, searchs and sort the directory, draws the file 
@@ -434,10 +423,11 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton)
         register WORD   touchob, value, fnum;
         WORD            curr, count, sel;
         WORD            mx, my;
-        register LONG   tree;
+        LONG            tree;
+        ULONG           bitmask;
         BYTE            *ad_fpath, *ad_fname, *ad_ftitle;
-        WORD            fpath_len; 
-        WORD            dclkret, cont, newlist, newsel, elevpos;
+        WORD            fpath_len, drive; 
+        WORD            dclkret, cont, newlist, newsel, newdrive, elevpos;
         register BYTE   *pstr, *pspec;
         GRECT           pt;
         BYTE            locstr[LEN_ZPATH+1], mask[LEN_ZFNAME+1];
@@ -452,11 +442,18 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton)
           return(FALSE);
         if ( LBGET(pipath) == '\0')
           return(FALSE);
-                                                /* get memory for       */
-                                                /*   the string buffer  */
-        ad_fsnames = dos_alloc( LW(LEN_FSNAME * NM_FILES) );
+                                        /* get memory for the filename buffer */
+                                        /*  & the array that points to it     */
+        for (nm_files = MAX_NM_FILES; nm_files >= MIN_NM_FILES; nm_files /= 2)
+        {
+          ad_fsnames = (BYTE *)dos_alloc(nm_files*(LEN_FSNAME+sizeof(BYTE *)));
+          if (ad_fsnames)
+            break;
+        }
         if (!ad_fsnames)
           return(FALSE);
+        g_fslist = (LONG *)(ad_fsnames+nm_files*LEN_FSNAME);
+
         strcpy(locstr, pipath);
 
         tree = ad_fstree;
@@ -481,6 +478,17 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton)
         ad_fname = (BYTE *)tedinfo->te_ptext;
         fmt_str(pisel, gl_tmp2);                /* gl_tmp2[] is without dot */
         inf_sset(tree, FSSELECT, gl_tmp2);
+
+                                                /* set drive buttons */
+        obj = ((OBJECT *)tree) + DRIVE_OFFSET;
+        for (drive = 0, bitmask = 1; drive < NM_DRIVES; drive++, bitmask <<= 1, obj++)
+        {
+          if (drvbits & bitmask)
+            obj->ob_state &= ~DISABLED;
+          else
+            obj->ob_state |= DISABLED;
+        }
+        select_drive(tree,locstr[0]-'A');
                                                 /* set clip and start   */
                                                 /*   form fill-in by    */
                                                 /*   drawing the form   */
@@ -492,7 +500,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton)
                                                 /*   by forcing initial */
                                                 /*   fs_newdir call     */
         sel = 0;
-        newsel = gl_shdrive = FALSE;
+        newsel = FALSE;
         cont = newlist = TRUE;
         while( cont )
         {
@@ -586,23 +594,13 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton)
                 }
                 else
                 {
-                  if (gl_shdrive)
-                  {
-                                                /* prepend in drive name*/
-                    if (locstr[1] == ':')
-                      locstr[0] = gl_tmp1[2];
-                  }
-                  else
-                  {
                                                 /* append in folder name*/
-                    pstr = fs_pspec(&locstr[0], &locstr[fpath_len]);
-                    strcpy(gl_tmp2, pstr - 1);
-                    unfmt_str(&gl_tmp1[1], pstr);
-                    strcat(pstr, &gl_tmp2[0]);
-                  }
+                  pstr = fs_pspec(&locstr[0], &locstr[fpath_len]);
+                  strcpy(gl_tmp2, pstr - 1);
+                  unfmt_str(&gl_tmp1[1], pstr);
+                  strcat(pstr, &gl_tmp2[0]);
                   newlist = TRUE;
                 }
-                gl_shdrive = FALSE;
                 break;
             case FCLSBOX:
                 pspec = pstr = fs_back(&locstr[0], &locstr[fpath_len]);
@@ -615,17 +613,36 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton)
                     if (*pstr == '\\')
                       strcpy(pstr, pspec);
                   }
-                  else
-                  {
-                    if (drvbits)
-                      gl_shdrive = TRUE;
-                  }
                 }
                 break;
+            default:
+                drive = touchob - DRIVE_OFFSET;
+                if ((drive < 0) || (drive >= NM_DRIVES))/* not for us */
+                  break;
+                if (drive == locstr[0] - 'A')           /* no change */
+                  break;
+                obj = ((OBJECT *)tree) + touchob;
+                if (obj->ob_state & DISABLED)           /* non-existent drive */
+                  break;
+                strcpy(locstr, "A:\\*.*");
+                locstr[0] += drive;
+                newdrive = TRUE;
+                break;
           }
-          if (!newlist && strcmp(ad_fpath, locstr)) /* path changed manually */
+          if (!newlist && !newdrive
+           && strcmp(ad_fpath, locstr))                 /* path changed manually */
           {
+            if (ad_fpath[0] != locstr[0])               /* drive has changed */
+              newdrive = TRUE;
+            else
+              newlist = TRUE;
             strcpy(locstr, ad_fpath);
+          }
+          if (newdrive)
+          {
+            select_drive(tree, touchob-DRIVE_OFFSET);
+            ob_draw(tree, FSDRIVES, MAX_DEPTH);
+            newdrive = FALSE;
             newlist = TRUE;
           }
           if (newlist)
@@ -656,7 +673,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton)
         fm_dial(FMD_FINISH, &gl_rfs);
                                                 /* return exit button   */
         *pbutton = inf_what(tree, FSOK, FSCANCEL);
-        dos_free(ad_fsnames);
+        dos_free((LONG)ad_fsnames);
 
         return( TRUE );
 }

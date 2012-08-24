@@ -3970,3 +3970,7 @@ Start... early ages
 2012-08-23
 - aes/gem.def aes/gem.rsc aes/gemfslib.c: Fixed regression in file selector
   and cleaned up code. (RFB)
+
+2012-08-24
+- aes/gem.def aes/gem.rsc aes/gemfslib.c aes/gemlib.h: Made the file
+  selector more Atari-like. (RFB)

@@ -118,10 +118,6 @@ typedef struct moblk
 
 #define FS_BUTTON int_out[1]
 
-#define NM_FILES 100
-
-#define LEN_FSNAME 16
-
 
 /*      RSRCLIB.H       05/05/84 - 09/13/84     Lowell Webster          */
 
@@ -417,8 +413,6 @@ THEGLO
  BYTE       g_tmpstr[MAX_LEN];
  BYTE       g_valstr[MAX_LEN];
  BYTE       g_fmtstr[MAX_LEN];
-
- BYTE       *g_fslist[NM_FILES];
 
  UWORD      g_sysglo[G_SIZE];
 
