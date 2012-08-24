@@ -90,7 +90,6 @@ GLOBAL LONG     ad_hgmice;
 GLOBAL BYTE     *ad_envrn;              /* initialized in GEMSTART      */
 GLOBAL LONG     ad_stdesk;
 
-GLOBAL BYTE     gl_dta[128];
 GLOBAL BYTE     gl_dir[130];
 GLOBAL WORD     gl_mouse[37];
 GLOBAL BYTE     gl_logdrv;
@@ -109,6 +108,7 @@ GLOBAL WORD     curpid;
 
 GLOBAL THEGLO   D;
 
+static BYTE     gl_dta[128];
 static BYTE     scrap_dir[LEN_ZPATH];
 static BYTE     cur_dir[LEN_ZPATH];
 static BYTE     cmd[LEN_ZPATH];
@@ -178,8 +178,6 @@ static void ini_dlongs(void)
         D.s_cdir = &cur_dir[0];
         D.g_dir = &gl_dir[0];
         D.g_dta = &gl_dta[0];
-        ad_dta = (LONG)D.g_dta;
-        ad_fsdta = (LONG)&gl_dta[30];
 }
 
 
@@ -294,7 +292,7 @@ static void ldaccs(void)
         WORD            ret;
 
         strcpy(&D.g_dir[0], "*.ACC");
-        dos_sdta(ad_dta);
+        dos_sdta((LONG)D.g_dta);
 
         /* if Control is held down then skip loading of accs */
         if ((kbshift(-1) & (1<<2)))

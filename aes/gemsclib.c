@@ -71,7 +71,7 @@ WORD sc_write(const BYTE *pscrap)
     len = strlencpy(D.g_scrap, pscrap);     /* new scrap directory  */
     if (LBGET(D.g_scrap + --len) == '\\')   /* remove backslash     */
       LBSET(D.g_scrap + len, '\0');
-    dos_sdta(ad_dta);                       /* use our dta          */
+    dos_sdta((LONG)D.g_dta);                /* use our dta          */
     return(dos_sfirst(D.g_scrap, F_SUBDIR)); /* make sure path ok    */
 }
 
@@ -100,12 +100,12 @@ WORD sc_clear()
 
     strcpy(ptmp, scrapmask);                /* Add mask */
 
-    dos_sdta(ad_dta);                       /* make sure dta ok */
+    dos_sdta((LONG)D.g_dta);                /* make sure dta ok */
 
     found = dos_sfirst(D.g_scrap, F_SUBDIR);
     while(found)
     {
-        strcpy(ptmp + 1, ((char *)ad_dta + 30));    /* Add file name */
+        strcpy(ptmp + 1, D.g_dta + 30);     /* Add file name */
         dos_delete(D.g_scrap);              /* delete scrap.* */
         strcpy(ptmp, scrapmask);            /* Add mask */
         found = dos_snext();

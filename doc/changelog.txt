@@ -3974,3 +3974,6 @@ Start... early ages
 2012-08-24
 - aes/gem.def aes/gem.rsc aes/gemfslib.c aes/gemlib.h: Made the file
   selector more Atari-like. (RFB)
+- aes/gemfslib.c aes/gemfslib.h aes/geminit.c aes/geminit.h aes/gemsclib.c
+  aes/gemshlib.c aes/gemshlib.h: Code cleanup: eliminate some superfluous
+  and confusing global variables. (RFB)

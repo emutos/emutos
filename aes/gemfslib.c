@@ -53,7 +53,6 @@
 
 
 GLOBAL LONG     ad_fstree;
-GLOBAL LONG     ad_fsdta;
 GLOBAL GRECT    gl_rfs;
 
 static const BYTE gl_fsobj[4] = {FTITLE, FILEBOX, SCRLBAR, 0x0};
@@ -127,7 +126,7 @@ static LONG fs_add(WORD thefile, LONG fs_index)
 {
         WORD            len;
 
-        len = strlencpy(ad_fsnames + fs_index, (char *)ad_fsdta - (LONG) 1);
+        len = strlencpy(ad_fsnames + fs_index, &D.g_dta[29]);
         g_fslist[thefile] = fs_index;
         fs_index += len + 1;
         return(fs_index);
@@ -156,7 +155,7 @@ static WORD fs_active(BYTE *ppath, BYTE *pspec, WORD *pcount)
         fname = fs_back(allpath,allpath+strlen(allpath));
         strcpy(fname+1,"*.*");
 
-        dos_sdta(ad_dta);
+        dos_sdta((LONG)D.g_dta);
         ret = dos_sfirst(allpath, F_SUBDIR);
         while ( ret )
         {
@@ -165,11 +164,11 @@ static WORD fs_active(BYTE *ppath, BYTE *pspec, WORD *pcount)
                                                 /*   save it and set    */
                                                 /*   first byte to tell */
                                                 /*   which              */
-          if (gl_dta[30] != '.')
+          if (D.g_dta[30] != '.')
           {
-            gl_dta[29] = (gl_dta[21] & F_SUBDIR) ? 0x07 : ' ';
-            if ( (gl_dta[29] == 0x07) ||
-                 (wildcmp(pspec, &gl_dta[30])) )
+            D.g_dta[29] = (D.g_dta[21] & F_SUBDIR) ? 0x07 : ' ';
+            if ( (D.g_dta[29] == 0x07) ||
+                 (wildcmp(pspec, &D.g_dta[30])) )
             {
               fs_index = fs_add(thefile, fs_index);
               thefile++;

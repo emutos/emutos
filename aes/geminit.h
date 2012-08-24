@@ -23,7 +23,6 @@ extern LONG     ad_hgmice;
 extern BYTE     *ad_envrn;
 extern LONG     ad_stdesk;
 
-extern BYTE     gl_dta[128];
 extern BYTE     gl_dir[130];
 extern BYTE     gl_1loc[256];
 extern BYTE     gl_2loc[256];

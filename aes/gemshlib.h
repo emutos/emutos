@@ -14,7 +14,6 @@ extern SHELL    sh[];
 
 extern BYTE     *ad_stail;
 extern LONG     ad_ssave;
-extern LONG     ad_dta;
 
 extern LONG     ad_pfile;
 

@@ -66,7 +66,6 @@ static BYTE sh_apdir[LEN_ZPATH];                /* holds directory of   */
                                                 /*   from exec.         */
 GLOBAL BYTE     *ad_stail;
 GLOBAL LONG     ad_ssave;
-GLOBAL LONG     ad_dta;
 
 GLOBAL LONG     ad_pfile;
 
@@ -533,7 +532,7 @@ WORD sh_find(BYTE *pspec)
         pname = sh_name(pspec);                 /* get ptr to name      */
         gotdir = (pname != pspec);
 
-        dos_sdta(ad_dta);
+        dos_sdta((LONG)D.g_dta);
 
         /* first, search in the application directory */
         if (!gotdir && rlr->p_appdir[0] != '\0')
