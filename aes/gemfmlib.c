@@ -22,7 +22,6 @@
 #include "struct.h"
 #include "basepage.h"
 #include "obdefs.h"
-#include "taddr.h"
 #include "gemlib.h"
 #include "gem_rsc.h"
 
@@ -190,8 +189,8 @@ WORD fm_keybd(LONG tree, WORD obj, WORD *pchar, WORD *pnew_obj)
           if ( (direction == DEFLT) &&
                (*pnew_obj != 0) )
           {
-            ob_change(tree, *pnew_obj, 
-                        LWGET(OB_STATE(*pnew_obj)) | SELECTED, TRUE);
+            OBJECT *objptr = ((OBJECT *)tree) + *pnew_obj;
+            ob_change(tree, *pnew_obj, objptr->ob_state | SELECTED, TRUE);
             return(FALSE);
           }
         }
@@ -208,6 +207,7 @@ WORD fm_button(LONG tree, WORD new_obj, WORD clks, WORD *pnew_obj)
         WORD            parent, state, flags;
         WORD            cont, junk, tstate, tflags;
         WORD            rets[6];
+        OBJECT          *objptr;
 
         cont = TRUE;
         orword = 0x0;
@@ -234,7 +234,8 @@ WORD fm_button(LONG tree, WORD new_obj, WORD clks, WORD *pnew_obj)
                                                 /*   find and turn off  */
                                                 /*   the old RBUTTON    */
             parent = get_par(tree, new_obj, &junk);
-            tobj = LWGET(OB_HEAD(parent));
+            objptr = ((OBJECT *)tree) + parent;
+            tobj = objptr->ob_head;
             while ( tobj != parent )
             {
               tstate = ob_fs(tree, tobj, &tflags);
@@ -248,7 +249,8 @@ WORD fm_button(LONG tree, WORD new_obj, WORD clks, WORD *pnew_obj)
                   tstate &= ~SELECTED;
                 ob_change(tree, tobj, tstate, TRUE);
               }
-              tobj = LWGET(OB_NEXT(tobj));
+              objptr = ((OBJECT *)tree) + tobj;
+              tobj = objptr->ob_next;
             }
           }
           else

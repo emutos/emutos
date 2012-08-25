@@ -3977,3 +3977,7 @@ Start... early ages
 - aes/gemfslib.c aes/gemfslib.h aes/geminit.c aes/geminit.h aes/gemsclib.c
   aes/gemshlib.c aes/gemshlib.h: Code cleanup: eliminate some superfluous
   and confusing global variables. (RFB)
+
+2012-08-25
+- aes/gemfmlib.c aes/gemwmlib.c: Code cleanup: removed OB_ & related
+  macros. (RFB)

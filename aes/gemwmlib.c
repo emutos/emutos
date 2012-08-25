@@ -23,7 +23,6 @@
 #include "struct.h"
 #include "basepage.h"
 #include "obdefs.h"
-#include "taddr.h"
 #include "gemlib.h"
 
 #include "gempd.h"
@@ -1080,7 +1079,7 @@ void wm_start()
 {
         register WORD   i;
         register ORECT  *po;
-        register LONG   tree;
+        register OBJECT *tree;
         PD              *ppd;
 
 #if 0
@@ -1105,8 +1104,8 @@ void wm_start()
           W_TREE[i].ob_type = G_IBOX;
         }
         W_TREE[ROOT].ob_type = G_BOX;
-        tree = ad_stdesk;
-        W_TREE[ROOT].ob_spec = LLGET(OB_SPEC(ROOT));
+        tree = (OBJECT *)ad_stdesk;
+        W_TREE[ROOT].ob_spec = tree->ob_spec;
                                                 /* init window element  */
                                                 /*   objects            */
         memset(&W_ACTIVE[ROOT], 0, NUM_ELEM * sizeof(OBJECT));
