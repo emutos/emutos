@@ -3981,3 +3981,7 @@ Start... early ages
 2012-08-25
 - aes/gemfmlib.c aes/gemwmlib.c: Code cleanup: removed OB_ & related
   macros. (RFB)
+
+2012-08-28
+- aes/gemrslib.c: Reverted most recent changes which caused crashes in many
+  programs including QED & TeraDesk. (RFB)
