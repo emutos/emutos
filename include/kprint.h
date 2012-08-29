@@ -59,6 +59,6 @@ extern void panic(const char *fmt, ...) PRINTF_STYLE NORETURN;
 extern void halt(void) NORETURN;
 
 /* display information found in 0x380 and halt */
-extern void dopanic(const char *fmt, ...);
+extern void dopanic(const char *fmt, ...) PRINTF_STYLE NORETURN;
 
 #endif /* KPRINT_H */

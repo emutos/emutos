@@ -3989,3 +3989,4 @@ Start... early ages
 2012-08-29
 - bios/kprint.c bios/vt52.c bios/vt52.h: Fixed crash when dopanic() is called
   before vt52 is initialized. (VRI)
+- include/kprint.h: Safer dopanic() prototype. (VRI)
