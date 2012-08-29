@@ -447,6 +447,14 @@ void screen_init(void)
     WORD monitor_type, sync_mode;
     WORD rez = 0;   /* avoid 'may be uninitialized' warning */
 
+#if CONF_WITH_SHIFTER
+    /* Initialize the interrupt handlers.
+     * It is important to do this first because the initialization code below
+     * may call vsync(), which temporarily enables the interrupts. */
+    VEC_HBL = int_hbl;
+    VEC_VBL = int_vbl;
+#endif
+
 /*
  * first, see what we're connected to, and set the
  * resolution / video mode appropriately
@@ -588,12 +596,6 @@ void screen_init(void)
     /* correct physical address */
     setphys(screen_start,1);
     rez_was_hacked = FALSE; /* initial assumption */
-
-    /* interrupt handlers (interrupts will be enabler later) */
-#if CONF_WITH_SHIFTER
-    VEC_HBL = int_hbl;
-    VEC_VBL = int_vbl;
-#endif
 }
 
 /*

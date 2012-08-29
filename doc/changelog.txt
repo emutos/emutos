@@ -3990,3 +3990,4 @@ Start... early ages
 - bios/kprint.c bios/vt52.c bios/vt52.h: Fixed crash when dopanic() is called
   before vt52 is initialized. (VRI)
 - include/kprint.h: Safer dopanic() prototype. (VRI)
+- bios/screen.c: Initialize the VBL interrupt handler before using vsync().
