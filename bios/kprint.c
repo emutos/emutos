@@ -232,12 +232,8 @@ int kprintf(const char *fmt, ...)
 
 static int vkcprintf(const char *fmt, va_list ap)
 {
-    if(vt52_initialized) {
-        vkprintf(fmt, ap);
-        return vcprintf(fmt, ap);
-    } else {
-        return vkprintf(fmt, ap);
-    }
+  vkprintf(fmt, ap);
+  return vcprintf(fmt, ap);
 }
 
 int kcprintf(const char *fmt, ...)

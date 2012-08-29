@@ -142,6 +142,11 @@ static void (* const cntl_tab[])(void) = {
 void
 cputc(WORD ch)
 {
+    if (!con_state) {
+        /* vt52_init() has not been called yet, ignore */
+        return;
+    }
+
     /* based on our state goto the correct stub routine */
     (*con_state)(ch & 0xff);
 }
