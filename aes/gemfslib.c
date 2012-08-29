@@ -411,6 +411,34 @@ static void select_drive(LONG treeaddr, WORD drive)
 
 
 /*
+ *      Compares specified path to FSDIRECT TEDINFO text and
+ *      returns 1 iff it is different in the first n characters,
+ *      where n is the minimum of:
+ *        the maximum text length from the TEDINFO
+ *        the current length of the specified path
+ */
+static WORD path_changed(char *path)
+{
+        OBJECT          *obj;
+        TEDINFO         *ted;
+        BYTE            *text;
+        WORD            i, len;
+
+        obj = ((OBJECT *)ad_fstree) + FSDIRECT;
+        ted = (TEDINFO *)obj->ob_spec;
+        text = (BYTE *)ted->te_ptext;
+        len = ted->te_txtlen - 1;   /* allow for trailing nul */
+
+        for (i = 0; (i < len) && *path; i++)
+          if (*text++ != *path++)
+            return 1;
+
+        return 0;
+}
+
+
+
+/*
 *       File Selector input routine that takes control of the mouse
 *       and keyboard, searchs and sort the directory, draws the file 
 *       selector, interacts with the user to determine a selection
@@ -629,7 +657,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton)
                 break;
           }
           if (!newlist && !newdrive
-           && strcmp(ad_fpath, locstr))                 /* path changed manually */
+           && path_changed(locstr))                     /* path changed manually */
           {
             if (ad_fpath[0] != locstr[0])               /* drive has changed */
               newdrive = TRUE;
