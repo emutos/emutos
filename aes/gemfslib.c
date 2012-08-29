@@ -397,15 +397,32 @@ static void set_mask(BYTE *mask,BYTE *path)
 
 
 
-static void select_drive(LONG treeaddr, WORD drive)
+/*
+ *      Marks object corresponding to specified drive as selected,
+ *      and all others as deselected.  Optionally, if the selected
+ *      drive has changed, the affected drive buttons are redrawn.
+ */
+static void select_drive(LONG treeaddr, WORD drive, WORD redraw)
 {
-        WORD            i;
+        WORD            i, olddrive = -1;
         OBJECT          *obj, *start = (OBJECT *)treeaddr+DRIVE_OFFSET;
 
         for (i = 0, obj = start; i < NM_DRIVES; i++, obj++)
-          obj->ob_state &= ~SELECTED;
-
+        {
+          if (obj->ob_state & SELECTED)
+          {
+            obj->ob_state &= ~SELECTED;
+            olddrive = i;
+          }
+        }
         (start+drive)->ob_state |= SELECTED;
+
+        if (redraw && (drive != olddrive))
+        {
+          if (olddrive >= 0)
+            ob_draw(treeaddr,olddrive+DRIVE_OFFSET,MAX_DEPTH);
+          ob_draw(treeaddr,drive+DRIVE_OFFSET,MAX_DEPTH);
+        }
 }
 
 
@@ -511,7 +528,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton)
           else
             obj->ob_state |= DISABLED;
         }
-        select_drive(tree,locstr[0]-'A');
+        select_drive(tree,locstr[0]-'A',0);
                                                 /* set clip and start   */
                                                 /*   form fill-in by    */
                                                 /*   drawing the form   */
@@ -663,8 +680,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton)
           }
           if (newdrive)
           {
-            select_drive(tree, touchob-DRIVE_OFFSET);
-            ob_draw(tree, FSDRIVES, MAX_DEPTH);
+            select_drive(tree, touchob-DRIVE_OFFSET,1);
             newdrive = FALSE;
             newlist = TRUE;
           }

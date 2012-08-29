@@ -4000,3 +4000,4 @@ Start... early ages
   arguments to fs_newdir(). (RFB)
 - bios/screen.c bios/startup.S: Workaround for Hatari which does not disable the
   MFP interrupts after a RESET instruction. This fixes the RAM versions. (VRI)
+- aes/gemfslib.c: Speed up redraw of file selector drive buttons. (RFB)
