@@ -64,8 +64,6 @@ static LONG     nm_files;       /* total number of slots in g_fslist[] */
 static BYTE     gl_tmp1[LEN_FSNAME];
 static BYTE     gl_tmp2[LEN_FSNAME];
 
-static WORD     gl_fspos;
-
 
 
 /*
@@ -237,7 +235,6 @@ static void fs_format(LONG tree, WORD currtop, WORD count)
         OBJECT          *obj, *treeptr = (OBJECT *)tree;
                                                 /* build in real text   */
                                                 /*   strings            */
-        gl_fspos = currtop;                     /* save new position    */
         cnt = min(NM_NAMES, count - currtop);
         for(i=0, obj=treeptr+NAME_OFFSET; i<NM_NAMES; i++, obj++)
         {
@@ -452,7 +449,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton)
         ULONG           bitmask;
         BYTE            *ad_fpath, *ad_fname, *ad_ftitle;
         WORD            fpath_len, drive; 
-        WORD            dclkret, cont, newlist, newsel, newdrive, elevpos;
+        WORD            dclkret, cont, newlist, newsel, newdrive;
         register BYTE   *pstr, *pspec;
         GRECT           pt;
         BYTE            locstr[LEN_ZPATH+1], mask[LEN_ZFNAME+1];
@@ -492,10 +489,6 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton)
         obj = ((OBJECT *)tree) + FSDIRECT;
         tedinfo = (TEDINFO *)obj->ob_spec;
         ad_fpath = (BYTE *)tedinfo->te_ptext;
-        if (!strcmp(locstr, ad_fpath))          /* if equal */
-          elevpos = gl_fspos;                   /* same dir as last time */ 
-        else                                    
-          elevpos = 0;
         inf_sset(tree, FSDIRECT, locstr);
 
         obj = ((OBJECT *)tree) + FSSELECT;
@@ -545,9 +538,9 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton)
             inf_sset(tree, FSDIRECT, D.g_dir);
             pstr = fs_pspec(locstr, &locstr[fpath_len]);        
             strcpy(pstr, mask);
-            fs_newdir(ad_ftitle, locstr, pspec, tree, &count, elevpos);
-            curr = elevpos;
-            sel = touchob = elevpos = 0;
+            fs_newdir(ad_ftitle, locstr, pspec, tree, &count, 0);
+            curr = 0;
+            sel = touchob = 0;
             newlist = FALSE;
           }
 
