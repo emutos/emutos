@@ -367,13 +367,11 @@ static WORD fs_newdir(BYTE *ftitle,
         fs_format(tree, pos, *pcount);
         len = strlen(pspec);
         len = (len > LEN_FTITLE) ? LEN_FTITLE : len;
-        LBSET(ftitle, ' ');
-        ftitle++;
-        LBCOPY(ftitle, ADDR(pspec), len);
+        *ftitle++ = ' ';
+        memcpy(ftitle, pspec, len);
         ftitle += len;
-        LBSET(ftitle, ' ');
-        ftitle++;
-        LBSET(ftitle, NULL);
+        *ftitle++ = ' ';
+        *ftitle = '\0';
         ptmp = &gl_fsobj[0];
         while(*ptmp)
           ob_draw(tree, *ptmp++, MAX_DEPTH);
@@ -467,7 +465,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton)
                                         /*   nullptr or if pts to null. */
         if (pipath == NULL)
           return(FALSE);
-        if ( LBGET(pipath) == '\0')
+        if ( *pipath == '\0')
           return(FALSE);
                                         /* get memory for the filename buffer */
                                         /*  & the array that points to it     */
