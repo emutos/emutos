@@ -3998,3 +3998,5 @@ Start... early ages
   selector calls (simpler & more Atari-like). (RFB)
 - aes/gemfslib.c: Code cleanup: eliminate LEN_FTITLE and remove unneeded
   arguments to fs_newdir(). (RFB)
+- bios/screen.c bios/startup.S: Workaround for Hatari which does not disable the
+  MFP interrupts after a RESET instruction. This fixes the RAM versions. (VRI)

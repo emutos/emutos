@@ -976,6 +976,11 @@ void vsync(void)
     LONG a;
 #if CONF_WITH_SHIFTER
     WORD old_sr = set_sr(0x2300);       /* allow VBL interrupt */
+    /* Beware: as a side effect, MFP interrupts are also enabled.
+     * So the MFP interruptions must be carefully initialized (or disabled)
+     * before calling vsync().
+     * This is ugly, but the Atari TOS does the same.
+     */
 #endif
 
     a = frclock;
