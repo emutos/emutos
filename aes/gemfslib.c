@@ -43,8 +43,6 @@
 #define NM_DRIVES (FSLSTDRV-FS1STDRV+1)
 #define DRIVE_OFFSET FS1STDRV
 
-#define LEN_FTITLE 18                           /* BEWARE, requires change*/
-                                                /*  in GEM.RSC          */
 #define LEN_FSNAME (LEN_ZFNAME+1)   /* includes leading flag byte & trailing nul */
 
                             /* max number of files/directory that we can handle */
@@ -345,31 +343,38 @@ static WORD fs_nscroll(LONG tree, WORD *psel, WORD curr, WORD count,
 *       will activate the directory, format it, and display ir[0].
 */
         
-static WORD fs_newdir(BYTE *ftitle, 
-                      BYTE *fpath, 
+static WORD fs_newdir(BYTE *fpath, 
                       BYTE *pspec, 
                       LONG tree, 
-                      WORD *pcount, 
-                      WORD pos)
+                      WORD *pcount)
 {
         const BYTE      *ptmp;
-        WORD            len;
+        BYTE            *ftitle;
+        OBJECT          *obj;
+        TEDINFO         *tedinfo;
+        WORD            len, len_ftitle;
                                         /* BUGFIX 2.1 added len calculation*/
                                         /*  so FTITLE doesn't run over into*/
                                         /*  F1NAME.                     */
         ob_draw(tree, FSDIRECT, MAX_DEPTH);
         fs_active(fpath, pspec, pcount);
-        if (pos+ NM_NAMES > *pcount)    /* in case file deleted         */
-          pos = max(0, *pcount - NM_NAMES);
-        fs_format(tree, pos, *pcount);
+        fs_format(tree, 0, *pcount);
+
+        obj = ((OBJECT *)tree) + FTITLE;
+        tedinfo = (TEDINFO *)obj->ob_spec;
+        ftitle = (BYTE *)tedinfo->te_ptext;
+
+        len_ftitle = tedinfo->te_txtlen - 1;
         len = strlen(pspec);
-        len = (len > LEN_FTITLE) ? LEN_FTITLE : len;
+        len = (len > len_ftitle) ? len_ftitle : len;
+
         *ftitle++ = ' ';
         memcpy(ftitle, pspec, len);
         ftitle += len;
         *ftitle++ = ' ';
         *ftitle = '\0';
-        ptmp = &gl_fsobj[0];
+
+        ptmp = &gl_fsobj[0];    /* redraw file selector objects */
         while(*ptmp)
           ob_draw(tree, *ptmp++, MAX_DEPTH);
         return(TRUE);
@@ -538,7 +543,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton)
             inf_sset(tree, FSDIRECT, D.g_dir);
             pstr = fs_pspec(locstr, &locstr[fpath_len]);        
             strcpy(pstr, mask);
-            fs_newdir(ad_ftitle, locstr, pspec, tree, &count, 0);
+            fs_newdir(locstr, pspec, tree, &count);
             curr = 0;
             sel = touchob = 0;
             newlist = FALSE;

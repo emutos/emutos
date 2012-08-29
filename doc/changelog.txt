@@ -3996,3 +3996,5 @@ Start... early ages
 - aes/gemfslib.c: Code cleanup: eliminate compatibility macros. (RFB)
 - aes/gemfslib.c: Do not try to maintain slider position between file
   selector calls (simpler & more Atari-like). (RFB)
+- aes/gemfslib.c: Code cleanup: eliminate LEN_FTITLE and remove unneeded
+  arguments to fs_newdir(). (RFB)
