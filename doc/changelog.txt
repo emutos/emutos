@@ -4001,3 +4001,5 @@ Start... early ages
 - bios/screen.c bios/startup.S: Workaround for Hatari which does not disable the
   MFP interrupts after a RESET instruction. This fixes the RAM versions. (VRI)
 - aes/gemfslib.c: Speed up redraw of file selector drive buttons. (RFB)
+- aes/gemlib.h: Code cleanup: deleted some macros that were duplicates of
+  macros in crysbind.h. (RFB)

@@ -111,23 +111,7 @@ typedef struct moblk
 
 /*      FSELLIB.H       05/05/84 - 01/07/85     Lee Lorenzen            */
 
-#define RET_CODE int_out[0]
-
-#define FS_IPATH addr_in[0]
-#define FS_ISEL addr_in[1]
-
-#define FS_BUTTON int_out[1]
-
-
 /*      RSRCLIB.H       05/05/84 - 09/13/84     Lowell Webster          */
-
-
-#define RS_PFNAME addr_in[0]            /* rs_init,                     */
-#define RS_TYPE int_in[0]
-#define RS_INDEX int_in[1]
-#define RS_INADDR addr_in[0]
-#define RS_OUTADDR addr_out[0]          
-
 
 #define RMODE_RD 0
 #define RMODE_WR 1
