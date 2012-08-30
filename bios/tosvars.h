@@ -64,7 +64,7 @@ extern WORD save_row;     /* saved row in escape Y command */
 
 
 extern LONG sysbase;
-extern void os_entry(void);
+extern void os_entry(void) NORETURN;
 extern LONG os_beg;
 extern LONG os_date;
 extern UWORD os_dosdate;
