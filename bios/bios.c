@@ -68,10 +68,10 @@ extern LONG osinit(void);       /* found in bdosmain.c */
 extern void run_cartridge_applications(WORD typebit); /* found in startup.S */
 #endif
 
-extern void ui_start(void);   /* found in aes/gemstart.S */
+extern void ui_start(void) NORETURN;    /* found in aes/gemstart.S */
                               /* it is the start addr. of the user interface */
 #if WITH_CLI
-extern void coma_start(void); /* found in cli/coma.S */
+extern void coma_start(void) NORETURN;  /* found in cli/coma.S */
 #endif
 
 #if CONF_WITH_ALT_RAM

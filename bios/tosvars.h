@@ -69,7 +69,7 @@ extern LONG os_beg;
 extern LONG os_date;
 extern UWORD os_dosdate;
 extern WORD os_conf;
-extern void (*exec_os)(void);
+extern void (*exec_os)(void) NORETURN;
 extern LONG end_os;
 extern LONG m_start;
 extern LONG m_length;

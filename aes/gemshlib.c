@@ -82,10 +82,10 @@ GLOBAL WORD     gl_nextrez;
 
 /* Prototypes: */
 WORD sh_find(BYTE *pspec);
-extern void deskstart();        /* see ../desk/deskstart.S */
+extern void deskstart(void) NORETURN;   /* see ../desk/deskstart.S */
 
 #if WITH_CLI != 0
-extern void coma_start();
+extern void coma_start(void) NORETURN;
 #endif
 
 
