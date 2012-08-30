@@ -154,7 +154,7 @@ _main:
 
 main_after_reset:
 
-#if CONF_WITH_MFP
+#if CONF_WITH_MFP && !defined(MACHINE_FIREBEE)
         // Workaround for buggy Hatari (tested with version 1.6.2).
         // The reset instruction should have disabled the MFP interrupts, but
         // Hatari leaves them unmodified, so unexpected interrupts may occur.
