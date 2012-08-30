@@ -4003,3 +4003,6 @@ Start... early ages
 - aes/gemfslib.c: Speed up redraw of file selector drive buttons. (RFB)
 - aes/gemlib.h: Code cleanup: deleted some macros that were duplicates of
   macros in crysbind.h. (RFB)
+
+2012-08-30
+- bios/bios.c: Fixed memory leak after running the early console. (VRI)

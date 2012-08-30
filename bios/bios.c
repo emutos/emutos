@@ -460,7 +460,7 @@ void biosmain(void)
         PD *pd = (PD *) trap1_pexec(5, "", "", null_env);
         pd->p_tbase = (LONG) coma_start;
         pd->p_tlen = pd->p_dlen = pd->p_blen = 0;
-        trap1_pexec(4, "", pd, "");
+        trap1_pexec(6, "", pd, "");
     }
 #endif
     
