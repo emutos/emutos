@@ -116,10 +116,11 @@ BYTE *strscn(BYTE *ps, BYTE *pd, BYTE stop)
 }
 
 
-
 /*
-*       Strip out period and turn into raw data.
-*/
+ *      Convert 'normal' filename to a value suitable for formatting
+ *      with a TEDINFO FFFFFFFF.FFF text string.  For example,
+ *      'SAMPLE.PRG' is converted to 'SAMPLE  PRG'.
+ */
 void fmt_str(BYTE *instr, BYTE *outstr)
 {
         WORD            count;
@@ -142,8 +143,9 @@ void fmt_str(BYTE *instr, BYTE *outstr)
 
 
 /*
-*       Insert in period and make into true data.
-*/
+ *      Does the reverse of fmt_str() above.  For example,
+ *      'SAMPLE  PRG' is converted to 'SAMPLE.PRG'.
+ */
 void unfmt_str(BYTE *instr, BYTE *outstr)
 {
         BYTE            *pstr, temp;
@@ -165,6 +167,10 @@ void unfmt_str(BYTE *instr, BYTE *outstr)
 }
 
 
+/*
+ *      Copies the specified string to the te_ptext field of the TEDINFO
+ *      structure for (tree,object), truncating if necessary to fit.
+ */
 void inf_sset(LONG tree, WORD obj, BYTE *pstr)
 {
         BYTE            *text;
@@ -182,6 +188,10 @@ void inf_sset(LONG tree, WORD obj, BYTE *pstr)
 }
 
 
+/*
+ *      Copies the te_ptext field of the TEDINFO structure for (tree,object)
+ *      to the specified string.
+ */
 void inf_sget(LONG tree, WORD obj, BYTE *pstr)
 {
         TEDINFO         *ted;
@@ -192,6 +202,11 @@ void inf_sget(LONG tree, WORD obj, BYTE *pstr)
 }
 
 
+/*
+ *      Sets the ob_state field of (tree,obj) to either 'truestate' or
+ *      'falsestate', depending on whether (testfld&testbit) is true
+ *      or false.
+ */
 void inf_fldset(LONG tree, WORD obj, UWORD testfld, UWORD testbit,
                 UWORD truestate, UWORD falsestate)
 {
@@ -201,7 +216,11 @@ void inf_fldset(LONG tree, WORD obj, UWORD testfld, UWORD testbit,
 }
 
 
-
+/*
+ *      Examines 'numobj' objects in 'tree', starting at 'baseobj', looking
+ *      for a SELECTED onject.  Returns the relative number of the first
+ *      SELECTED object, or -1 if none of the objects is selected.
+ */
 WORD inf_gindex(LONG tree, WORD baseobj, WORD numobj)
 {
         WORD            retobj;
@@ -323,8 +342,13 @@ WORD wildcmp(BYTE *pwld, BYTE *ptst)
 
 
 /*
-*       Routine to insert a character in a string by
-*/
+ *      Inserts character 'chr' into the string pointed to 'str', at
+ *      position 'pos' (positions are relative to the start of the
+ *      string; inserting at position 0 means inserting at the start
+ *      of the string).  'tot_len' gives the maximum length the string
+ *      can grow to; if necessary, the string will be truncated after
+ *      inserting the character.
+ */
 void ins_char(BYTE *str, WORD pos, BYTE chr, WORD tot_len)
 {
         register WORD   ii, len;
