@@ -66,7 +66,11 @@ static BYTE     gl_tmp2[LEN_FSNAME];
 
 
 /*
-*       Routine to back off the end of a file string.
+*       Routine to back off the end of a path string, stopping at the
+*       first backslash or colon encountered.  If stopped by a colon,
+*       it inserts a backslash in the string immediately following the
+*       colon.  Returns a pointer to the beginning of the string (if
+*       no colon or backslash found), or to the last backslash.
 */
 
 static BYTE *fs_back(BYTE *pstr, BYTE *pend)
@@ -473,7 +477,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
         BYTE            *ad_fpath, *ad_fname, *ad_ftitle;
         WORD            fpath_len, drive; 
         WORD            dclkret, cont, newlist, newsel, newdrive;
-        register BYTE   *pstr, *pspec;
+        register BYTE   *pstr;
         GRECT           pt;
         BYTE            locstr[LEN_ZPATH+1], mask[LEN_ZFNAME+1];
         OBJECT          *obj;
@@ -538,7 +542,6 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
                                                 /*   drawing the form   */
         gsx_sclip(&gl_rfs);     
         fm_dial(FMD_START, &gl_rfs);
-        D.g_dir[0] = NULL;                      
         ob_draw(tree, ROOT, 2);
                                                 /* init for while loop  */
                                                 /*   by forcing initial */
@@ -558,13 +561,10 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
             if ( (touchob == FSOK) ||
                  (touchob == FSCANCEL) )
               ob_change(tree, touchob, NORMAL, TRUE);
-            strcpy(D.g_dir, locstr);
-            pspec = fs_pspec(D.g_dir, &D.g_dir[fpath_len]);     
-/*          strcpy(ad_fpath, &D.g_dir[0]); */
-            inf_sset(tree, FSDIRECT, D.g_dir);
+            inf_sset(tree, FSDIRECT, locstr);
             pstr = fs_pspec(locstr, &locstr[fpath_len]);        
             strcpy(pstr, mask);
-            fs_newdir(locstr, pspec, tree, &count);
+            fs_newdir(locstr, mask, tree, &count);
             curr = 0;
             sel = touchob = 0;
             newlist = FALSE;
@@ -647,17 +647,16 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
                 }
                 break;
             case FCLSBOX:
-                pspec = pstr = fs_back(&locstr[0], &locstr[fpath_len]);
-                if (*pstr-- == '\\')
+                pstr = fs_back(&locstr[0], &locstr[fpath_len]);
+                if (*pstr-- != '\\')    /* ignore strange path string */
+                  break;
+                if (*pstr != ':')       /* not at root of drive, so back up */
                 {
-                  newlist = TRUE;
-                  if (*pstr != ':')
-                  {
-                    pstr = fs_back(&locstr[0], pstr);
-                    if (*pstr == '\\')
-                      strcpy(pstr, pspec);
-                  }
+                  pstr = fs_back(&locstr[0], pstr);
+                  if (*pstr == '\\')    /* we must have at least X:\ */
+                    strcpy(pstr+1, mask);
                 }
+                newlist = TRUE;
                 break;
             default:
                 drive = touchob - DRIVE_OFFSET;
@@ -692,7 +691,6 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
           {
             inf_sset(tree, FSDIRECT, locstr);
             set_mask(mask, locstr);                 /* set mask         */
-            D.g_dir[0] = NULL;
             gl_tmp1[1] = NULL;
             newsel = TRUE;
           }
