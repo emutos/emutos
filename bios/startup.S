@@ -85,13 +85,13 @@ _stktop:                        // filled from top to bottom
 #if defined(MACHINE_AMIGA) && !defined(EMUTOS_RAM)
     dc.w    0x1111      // 256 kB ROM
     dc.w    0x4ef9      // jmp
-    dc.l    amiga_main  // pc after reset
+    dc.l    amiga_main  // pc at power on or after physical reset
 
     /* Some softkick programs (ex: BlizKick) requires the entry point to be here */
     .org    0xd0
     reset
 amiga_main:
-    bra.s   main_after_reset
+    bra.s   main_after_reset_instruction
 #endif
 
 _os_entry:
@@ -152,7 +152,7 @@ _main:
 #endif
 #endif /* !DIAGNOSTIC_CARTRIDGE */
 
-main_after_reset:
+main_after_reset_instruction:
 
 #if CONF_WITH_MFP && !defined(MACHINE_FIREBEE)
         // Workaround for buggy Hatari (tested with version 1.6.2).
