@@ -258,6 +258,19 @@
 # define TOS_VERSION 0x206
 #endif
 
+/*
+ * Define the AES version here. Valid values include:
+ *      0x0120      AES 1.20, used by TOS v1.02
+ *      0x0140      AES 1.40, used by TOS v1.04 & v1.62
+ *      0x0320      AES 3.20, used by TOS v2.06 & v3.06
+ *      0x0340      AES 3.40, used by TOS v4.04
+ * Do not change this arbitrarily, as each value implies the presence or
+ * absence of certain AES functions ...
+ */
+#ifndef AES_VERSION
+# define AES_VERSION 0x0140
+#endif
+
 /* set this to 1 if your emulator provides an STonX-like 
  * native_print() function, i.e. if the code:
  *   dc.w 0xa0ff

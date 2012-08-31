@@ -4008,3 +4008,5 @@ Start... early ages
 - bios/bios.c: Fixed memory leak after running the early console. (VRI)
 - aes/crysbind.h aes/gem.def aes/gem.rsc aes/gemfslib.c aes/gemfslib.h
   aes/gemsuper.c: Implemented fsel_exinput() function. (RFB)
+- aes/gemsuper.c include/config.h: Make appl_init() return AES version as
+  1.40 since we now support fsel_exinput(). (RFB)

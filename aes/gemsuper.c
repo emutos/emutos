@@ -97,7 +97,7 @@ static UWORD crysbind(WORD opcode, LONG pglobal, WORD control[], WORD int_in[], 
 #if DBG_GEMSUPER
                 aestrace("appl_init()");
 #endif
-                LWSET(pglobal, 0x0120);         /* version number       */
+                LWSET(pglobal, AES_VERSION);    /* version number       */
                 LWSET(pglobal+2, 0x0001);       /* num of concurrent procs*/
 /*              LLSET(pglobal, 0x00010200L);
 */
