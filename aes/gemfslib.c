@@ -440,25 +440,18 @@ static void select_drive(LONG treeaddr, WORD drive, WORD redraw)
 /*
  *      Compares specified path to FSDIRECT TEDINFO text and
  *      returns 1 iff it is different in the first n characters,
- *      where n is the minimum of:
- *        the maximum text length from the TEDINFO
- *        the current length of the specified path
+ *      where n is the maximum text length from the TEDINFO.
  */
 static WORD path_changed(char *path)
 {
         OBJECT          *obj;
         TEDINFO         *ted;
-        BYTE            *text;
-        WORD            i, len;
 
         obj = ((OBJECT *)ad_fstree) + FSDIRECT;
         ted = (TEDINFO *)obj->ob_spec;
-        text = (BYTE *)ted->te_ptext;
-        len = ted->te_txtlen - 1;   /* allow for trailing nul */
 
-        for (i = 0; (i < len) && *path; i++)
-          if (*text++ != *path++)
-            return 1;
+        if (strncmp(path,(BYTE *)ted->te_ptext,ted->te_txtlen-1))
+          return 1;
 
         return 0;
 }

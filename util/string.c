@@ -81,7 +81,6 @@ int memcmp(const void * aa, const void * bb, unsigned long int n)
     return 1;
 }
 
-#if NEEDED
 int strncmp(const char *a, const char *b, unsigned long int n)
 {
     while(n && *a && *a == *b) {
@@ -94,7 +93,6 @@ int strncmp(const char *a, const char *b, unsigned long int n)
     if(*a < *b) return -1;
     return 1;
 }
-#endif /* NEEDED */
 
 int strncasecmp(const char *a, const char *b, unsigned long int n)
 {
