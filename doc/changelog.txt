@@ -4010,3 +4010,6 @@ Start... early ages
   aes/gemsuper.c: Implemented fsel_exinput() function. (RFB)
 - aes/gemsuper.c include/config.h: Make appl_init() return AES version as
   1.40 since we now support fsel_exinput(). (RFB)
+
+2012-08-31
+- aes/gemshlib.c: Factorized aes_run_rom_program(). (VRI)

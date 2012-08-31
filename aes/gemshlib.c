@@ -668,13 +668,25 @@ void sh_chdef(SHELL *psh)
         }
 }
 
+typedef void PRG_ENTRY(void); /* Program entry point type */
 
+static void aes_run_rom_program(PRG_ENTRY *entry)
+{
+        LONG *pd; /* FIXME: Use BDOS PD struct after fixing AES PD conflict */
+
+        /* Create a basepage with the standard Pexec() */
+        pd = (LONG *) trap1_pexec(5, NULL, "", NULL);
+        pd[2] = (LONG) entry;
+        pd[3] = pd[5] = pd[7] = 0;
+
+        /* Run the program with dos_exec() to for AES reentrency issues */
+        dos_exec(6, NULL, (const BYTE *)pd, NULL);
+}
 
 void sh_ldapp()
 {
         WORD    ret, badtry, retry;
         SHELL   *psh;
-        LONG    *ui_pd;
 
 
         psh = &sh[rlr->p_pid];
@@ -733,20 +745,13 @@ void sh_ldapp()
               sh_show(D.s_cmd);
               p_nameit(rlr, sh_name(&D.s_cmd[0]));
               p_setappdir(rlr, D.s_cmd);
-
-              ui_pd = (LONG *) trap1_pexec(5, 0L , "", 0L);
-              ui_pd[2] = (LONG) deskstart;
-              ui_pd[3] = ui_pd[5] = ui_pd[7] = 0;
-              dos_exec(6, 0L, (const BYTE *)ui_pd, 0L);     /* Run the desktop */
+              aes_run_rom_program(deskstart);
             }
 #if WITH_CLI != 0
             else if(strcmp(D.s_cmd, "EMUCON") == 0)
             {
               /* start the EmuCON shell: */
-              ui_pd = (LONG *) trap1_pexec(5, 0L , "", 0L);
-              ui_pd[2] = (LONG) coma_start;
-              ui_pd[3] = ui_pd[5] = ui_pd[7] = 0;
-              dos_exec(6, 0L, (const BYTE *)ui_pd, 0L);     /* Run EmuCON */
+              aes_run_rom_program(coma_start);
             }
 #endif
             else if ( sh_find(D.s_cmd) )
