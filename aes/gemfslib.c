@@ -38,7 +38,7 @@
 
 #include "string.h"
 #include "intmath.h"
-
+#include "kprint.h"
 #define NM_NAMES (F9NAME-F1NAME+1)
 #define NAME_OFFSET F1NAME
 #define NM_DRIVES (FSLSTDRV-FS1STDRV+1)
@@ -67,14 +67,19 @@ static BYTE     gl_tmp2[LEN_FSNAME];
 
 /*
 *       Routine to back off the end of a path string, stopping at the
-*       first backslash or colon encountered.  If stopped by a colon,
-*       it inserts a backslash in the string immediately following the
-*       colon.  Returns a pointer to the beginning of the string (if
-*       no colon or backslash found), or to the last backslash.
+*       first backslash or colon encountered.  The second argument
+*       specifies the end of the string; if NULL, the end is determined
+*       via strlen().  If the scan is stopped by a colon, the routine
+*       inserts a backslash in the string immediately following the colon.
+*
+*       Returns a pointer to the beginning of the string (if no colon or
+*       backslash found), or to the last backslash.
 */
 
 static BYTE *fs_back(BYTE *pstr, BYTE *pend)
 {
+        if (!pend)
+          pend = pstr + strlen(pstr);
                                                 /* back off to last     */
                                                 /*   slash              */
         while ( (*pend != ':') &&
@@ -153,7 +158,7 @@ static WORD fs_active(BYTE *ppath, BYTE *pspec, WORD *pcount)
         fs_index = 0L;
 
         strcpy(allpath, ppath);               /* 'allpath' gets all files */
-        fname = fs_back(allpath,allpath+strlen(allpath));
+        fname = fs_back(allpath,NULL);
         strcpy(fname+1,"*.*");
 
         dos_sdta((LONG)D.g_dta);
@@ -394,7 +399,7 @@ static void set_mask(BYTE *mask,BYTE *path)
 {
         BYTE            *pend;
 
-        pend = fs_back(path, path+strlen(path));
+        pend = fs_back(path, NULL);
         if (!*++pend)
           strcpy(pend, "*.*");
         strcpy(mask, pend);
@@ -475,7 +480,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
         LONG            tree;
         ULONG           bitmask;
         BYTE            *ad_fpath, *ad_fname, *ad_ftitle;
-        WORD            fpath_len, drive; 
+        WORD            drive; 
         WORD            dclkret, cont, newlist, newsel, newdrive;
         register BYTE   *pstr;
         GRECT           pt;
@@ -554,7 +559,6 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
           touchob = (newlist) ? 0x0 : fm_do(tree, FSSELECT);
           gsx_mxmy(&mx, &my);
         
-          fpath_len = strlen(locstr);
           if ( newlist )
           {
             fs_sel(sel, NORMAL);
@@ -562,7 +566,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
                  (touchob == FSCANCEL) )
               ob_change(tree, touchob, NORMAL, TRUE);
             inf_sset(tree, FSDIRECT, locstr);
-            pstr = fs_pspec(locstr, &locstr[fpath_len]);        
+            pstr = fs_pspec(locstr, NULL);        
             strcpy(pstr, mask);
             fs_newdir(locstr, mask, tree, &count);
             curr = 0;
@@ -639,7 +643,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
                 else
                 {
                                                 /* append in folder name*/
-                  pstr = fs_pspec(&locstr[0], &locstr[fpath_len]);
+                  pstr = fs_pspec(locstr, NULL);
                   strcpy(gl_tmp2, pstr - 1);
                   unfmt_str(&gl_tmp1[1], pstr);
                   strcat(pstr, &gl_tmp2[0]);
@@ -647,12 +651,12 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
                 }
                 break;
             case FCLSBOX:
-                pstr = fs_back(&locstr[0], &locstr[fpath_len]);
+                pstr = fs_back(locstr, NULL);
                 if (*pstr-- != '\\')    /* ignore strange path string */
                   break;
                 if (*pstr != ':')       /* not at root of drive, so back up */
                 {
-                  pstr = fs_back(&locstr[0], pstr);
+                  pstr = fs_back(locstr, pstr);
                   if (*pstr == '\\')    /* we must have at least X:\ */
                     strcpy(pstr+1, mask);
                 }
