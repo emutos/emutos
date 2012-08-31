@@ -4013,3 +4013,4 @@ Start... early ages
 
 2012-08-31
 - aes/gemshlib.c: Factorized aes_run_rom_program(). (VRI)
+- aes/gemfslib.c: Code cleanup: simplify & eliminate variables. (RFB)

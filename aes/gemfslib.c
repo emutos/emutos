@@ -38,7 +38,7 @@
 
 #include "string.h"
 #include "intmath.h"
-#include "kprint.h"
+
 #define NM_NAMES (F9NAME-F1NAME+1)
 #define NAME_OFFSET F1NAME
 #define NM_DRIVES (FSLSTDRV-FS1STDRV+1)
@@ -634,19 +634,20 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
                                                 /* get string and see   */
                                                 /*   if file or folder  */
                 inf_sget(tree, touchob, gl_tmp1);
-                if (gl_tmp1[0] == ' ')
+                if (gl_tmp1[0] == ' ')          /* file selected */
                 {                               /* copy to selection    */
                   newsel = TRUE;
                   if (dclkret)
                     cont = FALSE;
                 }
-                else
+                else                            /* folder selected */
                 {
                                                 /* append in folder name*/
                   pstr = fs_pspec(locstr, NULL);
-                  strcpy(gl_tmp2, pstr - 1);
                   unfmt_str(&gl_tmp1[1], pstr);
-                  strcat(pstr, &gl_tmp2[0]);
+                  pstr += strlen(pstr);
+                  *pstr++ = '\\';
+                  strcpy(pstr, mask);
                   newlist = TRUE;
                 }
                 break;
