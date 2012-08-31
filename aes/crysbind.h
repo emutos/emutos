@@ -371,7 +371,7 @@
 
 #define FS_IPATH addr_in[0]
 #define FS_ISEL addr_in[1]
-
+#define FS_ILABEL addr_in[2]
 #define FS_BUTTON int_out[1]
                                         /* window library parameters    */
 #define XFULL 0

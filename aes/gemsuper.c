@@ -365,11 +365,11 @@ static UWORD crysbind(WORD opcode, LONG pglobal, WORD control[], WORD int_in[], 
                 break;
 #endif
                                 /* File Selector Manager                */
-          case FSEL_EXINPUT:
-                /* We don't have a separate fsel_exinput call yet, so */
-                /* let's fall throught to fsel_input... */
           case FSEL_INPUT:
-                ret = fs_input((BYTE*)FS_IPATH, (BYTE*)FS_ISEL, &FS_BUTTON);
+                ret = fs_input((BYTE*)FS_IPATH, (BYTE*)FS_ISEL, &FS_BUTTON, NULL);
+                break;
+          case FSEL_EXINPUT:
+                ret = fs_input((BYTE*)FS_IPATH, (BYTE*)FS_ISEL, &FS_BUTTON, (BYTE *)FS_ILABEL);
                 break;
                                 /* Window Manager                       */
           case WIND_CREATE:

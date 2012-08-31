@@ -30,6 +30,7 @@
 #include "gemsuper.h"
 #include "gemshlib.h"
 #include "gemfslib.h"
+#include "gemrslib.h"
 #include "gsx2.h"
 #include "optimize.h"
 #include "optimopt.h"
@@ -462,7 +463,7 @@ static WORD path_changed(char *path)
 *       or change of path, and returns to the application with
 *       the selected path, filename, and exit button.
 */
-WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton)
+WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
 {
         register WORD   touchob, value, fnum;
         WORD            curr, count, sel;
@@ -518,6 +519,9 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton)
         ad_fname = (BYTE *)tedinfo->te_ptext;
         fmt_str(pisel, gl_tmp2);                /* gl_tmp2[] is without dot */
         inf_sset(tree, FSSELECT, gl_tmp2);
+
+        obj = ((OBJECT *)tree) + FSTITLE;
+        obj->ob_spec = pilabel ? (LONG)pilabel : (LONG)rs_str(ITEMSLCT);
 
                                                 /* set drive buttons */
         obj = ((OBJECT *)tree) + DRIVE_OFFSET;
