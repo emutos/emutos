@@ -437,23 +437,17 @@ void screen_init(void)
 {
     ULONG screen_start;
 #if CONF_WITH_SHIFTER
-    volatile BYTE *rez_reg = (BYTE *) ST_SHIFTER;
 #if CONF_WITH_VIDEL
     UWORD boot_resolution = FALCON_DEFAULT_BOOT;
-#endif
-#if CONF_WITH_TT_SHIFTER
-    volatile BYTE *ttrez_reg = (BYTE *) TT_SHIFTER;
 #endif
     WORD monitor_type, sync_mode;
     WORD rez = 0;   /* avoid 'may be uninitialized' warning */
 
-#if CONF_WITH_SHIFTER
     /* Initialize the interrupt handlers.
      * It is important to do this first because the initialization code below
      * may call vsync(), which temporarily enables the interrupts. */
     VEC_HBL = int_hbl;
     VEC_VBL = int_vbl;
-#endif
 
 /*
  * first, see what we're connected to, and set the
@@ -525,20 +519,13 @@ void screen_init(void)
 #if CONF_WITH_TT_SHIFTER
     if (has_tt_shifter) {
         rez = monitor_type?TT_MEDIUM:TT_HIGH;
-        *ttrez_reg = rez;
-    }
-    else
-#endif
-#if CONF_WITH_STE_SHIFTER
-    if (has_ste_shifter) {
-        rez = monitor_type?ST_LOW:ST_HIGH;
-        *rez_reg = rez;
+        *(volatile BYTE *) TT_SHIFTER = rez;
     }
     else
 #endif
     {
         rez = monitor_type?ST_LOW:ST_HIGH;
-        *rez_reg = rez;
+        *(volatile BYTE *) ST_SHIFTER = rez;
     }
 
 #if CONF_WITH_VIDEL
