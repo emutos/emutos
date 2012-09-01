@@ -362,26 +362,31 @@ static WORD fs_newdir(BYTE *fpath,
         BYTE            *ftitle;
         OBJECT          *obj;
         TEDINFO         *tedinfo;
-        WORD            len, len_ftitle;
-                                        /* BUGFIX 2.1 added len calculation*/
-                                        /*  so FTITLE doesn't run over into*/
-                                        /*  F1NAME.                     */
+        WORD            len, len_ftitle, i, fill;
+
+                                        /* load the filenames matching pspec, */
+                                        /* sort them, and insert the names in */
+                                        /* the file selector scroll box       */
         ob_draw(tree, FSDIRECT, MAX_DEPTH);
         fs_active(fpath, pspec, pcount);
         fs_format(tree, 0, *pcount);
-
+                                        /* ensure that mask fits within */
+                                        /* FTITLE, surround it with     */
+                                        /* spaces, and centre it        */
         obj = ((OBJECT *)tree) + FTITLE;
         tedinfo = (TEDINFO *)obj->ob_spec;
         ftitle = (BYTE *)tedinfo->te_ptext;
-
         len_ftitle = tedinfo->te_txtlen - 1;
         len = strlen(pspec);
-        len = (len > len_ftitle) ? len_ftitle : len;
-
-        *ftitle++ = ' ';
+        if (len > len_ftitle)
+          len = len_ftitle;
+        fill = len_ftitle - len;
+        for (i = 0; i < fill/2; i++)
+          *ftitle++ = ' ';
         memcpy(ftitle, pspec, len);
         ftitle += len;
-        *ftitle++ = ' ';
+        for ( ; i < fill; i++)
+          *ftitle++ = ' ';
         *ftitle = '\0';
 
         ptmp = &gl_fsobj[0];    /* redraw file selector objects */
