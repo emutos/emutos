@@ -4022,3 +4022,4 @@ Start... early ages
   changing the resolution on ST. (VRI)
 - bios/ikbd.c bios/panicasm.S include/kprint.h: Now cold reset always reboot
   to the ROM OS, even with EmuTOS RAM versions.
+- aes/gemfslib.c: Fix loop in file selector when mask is too long. (RFB)

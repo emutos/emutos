@@ -402,6 +402,7 @@ static void set_mask(BYTE *mask,BYTE *path)
         pend = fs_back(path, NULL);
         if (!*++pend)
           strcpy(pend, "*.*");
+        pend[LEN_ZFNAME] = '\0';    /* avoid possibility of overflow on strcpy() */
         strcpy(mask, pend);
 }
 
