@@ -17,6 +17,7 @@
   
         .globl  _panic
         .globl  _halt
+        .globl  _cold_reset
 
 
 /*
@@ -75,3 +76,21 @@ haltloop:
         // only an NMI could theroretically wake up the CPU here
 #endif
         bra.s   haltloop
+
+/* void cold_reset(void)
+ * Invalidate the RAM configuration and reset the computer to the ROM OS
+ */
+_cold_reset:
+#ifdef MACHINE_AMIGA
+        clr.l   0x420           // Invalidate memvalid
+        move.l  0x00fc0004,a0   // Get the entry adress from offset 4 in the ROM
+        reset                   // The entry usually points just after reset
+        jmp     (a0)
+#elif CONF_ATARI_HARDWARE && !defined(MACHINE_FIREBEE)
+        clr.l   0x420           // Invalidate memvalid
+        move.l  0x004,a0        // The 2 first longs are mapped to the ROM
+        jmp     (a0)
+#else
+        // We don't know how to cold reset, so just warm reset this OS
+        jmp     _main
+#endif

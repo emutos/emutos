@@ -58,6 +58,9 @@ extern void panic(const char *fmt, ...) PRINTF_STYLE NORETURN;
 /* halt the machine */
 extern void halt(void) NORETURN;
 
+/* Invalidate the RAM configuration and reset the computer to the ROM OS */
+void cold_reset(void) NORETURN;
+
 /* display information found in 0x380 and halt */
 extern void dopanic(const char *fmt, ...) PRINTF_STYLE NORETURN;
 

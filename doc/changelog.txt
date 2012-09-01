@@ -4020,3 +4020,5 @@ Start... early ages
 2012-09-01
 - bios/screen.c bios/videl.c: Added vsync() to avoid the plane shift bug when
   changing the resolution on ST. (VRI)
+- bios/ikbd.c bios/panicasm.S include/kprint.h: Now cold reset always reboot
+  to the ROM OS, even with EmuTOS RAM versions.

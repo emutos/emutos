@@ -237,14 +237,17 @@ void kbd_int(WORD scancode)
     kprintf("Key-shift bits: 0x%02x\n", shifty);
 #endif
 
-    /* keyboard warm/cold start */
+    /* keyboard warm/cold reset */
     if ((scancode == 0x53)  /* Del key and shifty is Alt+Ctrl but not LShift */
         && ((shifty & (MODE_ALT|MODE_CTRL|MODE_LSHIFT)) == (MODE_ALT|MODE_CTRL))) {
         if (shifty & MODE_RSHIFT) {
-            /* Alt+Ctrl+RShift means cold start */
-            memvalid = 0;   /* enforce cold start by resetting memvalid */
+            /* Ctrl+Alt+RShift+Del means cold reset */
+            cold_reset();
         }
-        os_entry();  /* restart system */
+        else {
+            /* Ctrl+Alt+Del means warm reset */
+            os_entry();  /* restart this OS */
+        }
     }
 
     /* the additional mouse buttons use a separate vector */
