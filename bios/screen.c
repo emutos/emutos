@@ -449,6 +449,10 @@ void screen_init(void)
     VEC_HBL = int_hbl;
     VEC_VBL = int_vbl;
 
+    /* On ST, it is important to change the resolution register when nothing
+     * is displaying, otherwise the plane shift but may appear. */
+    vsync();
+
 /*
  * first, see what we're connected to, and set the
  * resolution / video mode appropriately
@@ -851,6 +855,9 @@ void setscreen(LONG logLoc, LONG physLoc, WORD rez, WORD videlmode)
         setphys(physLoc,1);
     }
     if (rez >= 0 && rez < 8) {
+        /* Wait for the end of display to avoid the plane-shift bug on ST */
+        vsync();
+
         if (FALSE) {
             /* Dummy case for conditional compilation */
         }

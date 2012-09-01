@@ -443,8 +443,7 @@ static int set_videl_vga(WORD mode)
 
     videlregs[0x0a] = (mode&VIDEL_PAL) ? 2 : 0; /* video sync to 50Hz if PAL */
 
-    if (frclock)        /* if we're not being called during initialisation, */
-        vsync();        /* wait for vbl so we're not interrupted :-) */
+    vsync(); /* wait for vbl so we're not interrupted :-) */
 
     videlword(0x82) = p->hht;           /* H hold timer */
     videlword(0x84) = p->hbb;           /* H border begin */

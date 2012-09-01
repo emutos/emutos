@@ -4016,3 +4016,7 @@ Start... early ages
 - aes/gemfslib.c: Code cleanup: simplify & eliminate variables. (RFB)
 - aes/gemfslib.c util/string.c: Fix bug: allow file selector mask to be
   lengthened. (RFB)
+
+2012-09-01
+- bios/screen.c bios/videl.c: Added vsync() to avoid the plane shift bug when
+  changing the resolution on ST. (VRI)
