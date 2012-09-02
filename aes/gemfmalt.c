@@ -22,7 +22,6 @@
 #include "struct.h"
 #include "basepage.h"
 #include "obdefs.h"
-#include "taddr.h"
 #include "gemlib.h"
 #include "gem_rsc.h"
 
@@ -51,12 +50,6 @@
 #define NUM_ALOBJS   10     /* MUST match # of objects in the DIALERT tree! */
 #define INTER_WSPACE 0
 #define INTER_HSPACE 0
-
-
-
-/* Global variables: */
-const BYTE gl_nils[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
-LONG     ad_nils;
 
 
 
@@ -183,8 +176,9 @@ static void fm_parse(LONG tree, LONG palstr, WORD *picnum, WORD *pnummsg,
 static void fm_build(LONG tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
                      WORD numbut, WORD mlenbut)
 {
-        register WORD   i, k;
+        register WORD   i;
         GRECT           al, ic, bt, ms;
+        OBJECT          *obj;
 
         r_set(&al, 0, 0, 1+INTER_WSPACE, 1+INTER_HSPACE);
         r_set(&ms, 1 + INTER_WSPACE, 1 + INTER_HSPACE, mlenmsg, 1);
@@ -217,9 +211,8 @@ static void fm_build(LONG tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
 
                                                 /* init. root object    */
         ob_setxywh(tree, ROOT, &al);
-        ad_nils = (LONG) ADDR(&gl_nils[0]);
-        for(i=0; i<NUM_ALOBJS; i++)
-          LBCOPY(OB_NEXT(i), ad_nils, 6);
+        for(i=0, obj=(OBJECT *)tree; i<NUM_ALOBJS; i++, obj++)
+          obj->ob_next = obj->ob_head = obj->ob_tail = -1;
                                                 /* add icon object      */
         if (haveicon)
         {
@@ -234,19 +227,16 @@ static void fm_build(LONG tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
           ob_add(tree, ROOT, MSGOFF+i);
         }
                                                 /* add button objects   */
-        for(i=0; i<numbut; i++)
+        for(i=0, obj=((OBJECT *)tree)+BUTOFF; i<numbut; i++, obj++)
         {
-          k = BUTOFF+i;
-          LWSET(OB_FLAGS(k), SELECTABLE | EXIT);
-          LWSET(OB_STATE(k), NORMAL);
-          ob_setxywh(tree, k, &bt);
-
+          obj->ob_flags = SELECTABLE | EXIT;
+          obj->ob_state = NORMAL;
+          ob_setxywh(tree, BUTOFF+i, &bt);
           bt.g_x += mlenbut + 1;
-
-          ob_add(tree, ROOT, k);
+          ob_add(tree, ROOT, BUTOFF+i);
         }
                                                 /* set last object flag */
-        LWSET(OB_FLAGS(BUTOFF+numbut-1), SELECTABLE | EXIT | LASTOB);
+        (--obj)->ob_flags |= LASTOB;
 }
 
 
@@ -254,8 +244,9 @@ WORD fm_alert(WORD defbut, LONG palstr)
 {
         register WORD   i;
         WORD            inm, nummsg, mlenmsg, numbut, mlenbut, image;
-        LONG            tree, plong;
+        LONG            tree;
         GRECT           d, t;
+        OBJECT          *obj;
 
                                                 /* init tree pointer    */
         tree = (LONG) rs_trees[DIALERT];
@@ -267,9 +258,11 @@ WORD fm_alert(WORD defbut, LONG palstr)
 
         if (defbut)
         {
-          plong = OB_FLAGS(BUTOFF + defbut - 1);
-          LWSET(plong, LWGET(plong) | DEFAULT);
+          obj = ((OBJECT *)tree) + BUTOFF + defbut - 1;
+          obj->ob_flags |= DEFAULT;
         }
+
+        obj = ((OBJECT *)tree) + 1;
 
         if (inm != 0)
         {
@@ -284,15 +277,14 @@ WORD fm_alert(WORD defbut, LONG palstr)
               image = STOPBB;
               break;
           }
-          plong = (LONG) &rs_bitblk[image];
-          LLSET(OB_SPEC(1), plong);
+          obj->ob_spec = (LONG) &rs_bitblk[image];
         }
                                                 /* convert to pixels    */
         for(i=0; i<NUM_ALOBJS; i++)
           rs_obfix(tree, i);
                                                 /* fix up icon, 32x32   */
-        LWSET(OB_TYPE(1), G_IMAGE);
-        LLSET(OB_WIDTH(1), 0x00200020L);        
+        obj->ob_type = G_IMAGE;
+        obj->ob_width = obj->ob_height = 32;
                                                 /* center tree on screen*/
         ob_center(tree, &d);
 

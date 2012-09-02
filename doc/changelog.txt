@@ -4027,3 +4027,5 @@ Start... early ages
 
 2012-09-02
 - aes/gemfslib.c: Code cleanup: replace static variables with dynamic. (RFB)
+- aes/gemfmalt.c aes/gemfmalt: Code cleanup: eliminate unnecessary globals,
+  OB_ macros, compatibility macros. (RFB)
