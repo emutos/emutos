@@ -60,9 +60,6 @@ static BYTE     *ad_fsnames;    /* holds filenames in currently-displayed direct
 static LONG     *g_fslist;      /* offsets of filenames within ad_fsnames */
 static LONG     nm_files;       /* total number of slots in g_fslist[] */
 
-static BYTE     gl_tmp1[LEN_FSNAME];
-static BYTE     gl_tmp2[LEN_FSNAME];
-
 
 
 /*
@@ -240,6 +237,7 @@ static void fs_format(LONG tree, WORD currtop, WORD count)
 {
         register WORD   i, cnt;
         register WORD   y, h, th;
+        BYTE            *p, name[LEN_FSNAME];
         OBJECT          *obj, *treeptr = (OBJECT *)tree;
                                                 /* build in real text   */
                                                 /*   strings            */
@@ -248,16 +246,16 @@ static void fs_format(LONG tree, WORD currtop, WORD count)
         {
           if (i < cnt)
           {
-            strcpy(gl_tmp2, ad_fsnames + g_fslist[currtop+i]);
-            fmt_str(&gl_tmp2[1], &gl_tmp1[1]);
-            gl_tmp1[0] = gl_tmp2[0];
+            p = ad_fsnames + g_fslist[currtop+i];
+            fmt_str(p+1, name+1);               /* format file/folder name */
+            name[0] = p[0];                     /* copy file/folder indicator */
           }
           else
           {
-            gl_tmp1[0] = ' ';
-            gl_tmp1[1] = NULL;
+            name[0] = ' ';
+            name[1] = '\0';
           }
-          inf_sset(tree, NAME_OFFSET+i, gl_tmp1);
+          inf_sset(tree, NAME_OFFSET+i, name);
           obj->ob_type = G_FBOXTEXT;
           obj->ob_state = NORMAL;
         }
@@ -483,7 +481,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
         WORD            dclkret, cont, newlist, newsel, newdrive;
         register BYTE   *pstr;
         GRECT           pt;
-        BYTE            locstr[LEN_ZPATH+1], mask[LEN_ZFNAME+1];
+        BYTE            locstr[LEN_ZPATH+1], mask[LEN_ZFNAME+1], selname[LEN_FSNAME];
         OBJECT          *obj;
         TEDINFO         *tedinfo;
 
@@ -525,8 +523,8 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
         obj = ((OBJECT *)tree) + FSSELECT;
         tedinfo = (TEDINFO *)obj->ob_spec;
         ad_fname = (BYTE *)tedinfo->te_ptext;
-        fmt_str(pisel, gl_tmp2);                /* gl_tmp2[] is without dot */
-        inf_sset(tree, FSSELECT, gl_tmp2);
+        fmt_str(pisel, selname);                /* selname[] is without dot */
+        inf_sset(tree, FSSELECT, selname);
 
         obj = ((OBJECT *)tree) + FSTITLE;
         obj->ob_spec = pilabel ? (LONG)pilabel : (LONG)rs_str(ITEMSLCT);
@@ -632,18 +630,17 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
                 }
                                                 /* get string and see   */
                                                 /*   if file or folder  */
-                inf_sget(tree, touchob, gl_tmp1);
-                if (gl_tmp1[0] == ' ')          /* file selected */
+                inf_sget(tree, touchob, selname);
+                if (selname[0] == ' ')          /* a file was selected  */
                 {                               /* copy to selection    */
                   newsel = TRUE;
                   if (dclkret)
                     cont = FALSE;
                 }
-                else                            /* folder selected */
-                {
-                                                /* append in folder name*/
+                else                            /* a folder was selected:  */
+                {                               /* insert name before mask */
                   pstr = fs_pspec(locstr, NULL);
-                  unfmt_str(&gl_tmp1[1], pstr);
+                  unfmt_str(selname+1, pstr);
                   pstr += strlen(pstr);
                   *pstr++ = '\\';
                   strcpy(pstr, mask);
@@ -695,12 +692,12 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
           {
             inf_sset(tree, FSDIRECT, locstr);
             set_mask(mask, locstr);                 /* set mask         */
-            gl_tmp1[1] = NULL;
+            selname[1] = '\0';                      /* selected is empty */
             newsel = TRUE;
           }
           if (newsel)
           {
-            strcpy(ad_fname, gl_tmp1 + 1);
+            strcpy(ad_fname, selname + 1);
             ob_draw(tree, FSSELECT, MAX_DEPTH);
             if (!cont)
               ob_change(tree, FSOK, SELECTED, TRUE);
@@ -712,8 +709,8 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
                                                 /* return path and      */
                                                 /*   file name to app   */
         strcpy(pipath, locstr);
-        unfmt_str(ad_fname, gl_tmp2);
-        strcpy(pisel, gl_tmp2);
+        unfmt_str(ad_fname, selname);
+        strcpy(pisel, selname);
                                                 /* start the redraw     */
         fm_dial(FMD_FINISH, &gl_rfs);
                                                 /* return exit button   */

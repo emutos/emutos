@@ -4024,3 +4024,6 @@ Start... early ages
   to the ROM OS, even with EmuTOS RAM versions.
 - aes/gemfslib.c: Fix loop in file selector when mask is too long. (RFB)
 - aes/gemfslib.c: Cosmetic improvement to file selector. (RFB)
+
+2012-09-02
+- aes/gemfslib.c: Code cleanup: replace static variables with dynamic. (RFB)
