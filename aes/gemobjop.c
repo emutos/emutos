@@ -35,21 +35,18 @@ BYTE ob_sst(LONG tree, WORD obj, LONG *pspec, WORD *pstate, WORD *ptype,
             WORD *pflags, GRECT *pt, WORD *pth)
 {
         WORD            th;
-        OBJECT          tmp;
+        OBJECT          *objptr = ((OBJECT *)tree) + obj;
+        TEDINFO         *ted;
 
-        LWCOPY(ADDR(&tmp), OB_NEXT(obj), sizeof(OBJECT)/2);
-        pt->g_w = tmp.ob_width;
-        pt->g_h = tmp.ob_height;
-        *pflags = tmp.ob_flags;
-        *pspec = tmp.ob_spec;
+        pt->g_w = objptr->ob_width;
+        pt->g_h = objptr->ob_height;
+        *pflags = objptr->ob_flags;
+        *pspec = objptr->ob_spec;
+        if (objptr->ob_flags & INDIRECT)
+          *pspec = *(LONG *)objptr->ob_spec;
 
-        //kprintf("Wert = %lx \n", *pspec);
-
-        if (*pflags & INDIRECT)
-          *pspec = LLGET(tmp.ob_spec);
-
-        *pstate = tmp.ob_state;
-        *ptype = tmp.ob_type & 0x00ff;
+        *pstate = objptr->ob_state;
+        *ptype = objptr->ob_type & 0x00ff;
         th = 0;
         switch( *ptype )
         {
@@ -60,7 +57,8 @@ BYTE ob_sst(LONG tree, WORD obj, LONG *pspec, WORD *pstate, WORD *ptype,
           case G_BOXTEXT:
           case G_FTEXT:
           case G_FBOXTEXT:
-                th = LWGET(*pspec+22);
+                ted = (TEDINFO *)*pspec;
+                th = ted->te_thickness;
                 break;
           case G_BOX:
           case G_BOXCHAR:
@@ -69,16 +67,16 @@ BYTE ob_sst(LONG tree, WORD obj, LONG *pspec, WORD *pstate, WORD *ptype,
                 break;
           case G_BUTTON:
                 th--;
-                if ( *pflags & EXIT)
+                if ( objptr->ob_flags & EXIT)
                   th--;
-                if ( *pflags & DEFAULT)
+                if ( objptr->ob_flags & DEFAULT)
                   th--;
                 break;
         }
         if (th > 128)
           th -= 256;
         *pth = th;
-        return *(BYTE *)pspec;
+        return *(BYTE *)pspec;  /* only useful for G_BOXCHAR */
 }
 
 
