@@ -21,7 +21,6 @@
 #include "portab.h"
 #include "compat.h"
 #include "obdefs.h"
-#include "taddr.h"
 #include "kprint.h"
 
 
@@ -155,26 +154,26 @@ sibling:
  */
 WORD get_par(LONG tree, WORD obj, WORD *pnobj)
 {
-    register WORD   pobj;
-    register WORD   nobj;
+    WORD            pobj = NIL, nobj = NIL;
+    OBJECT          *objptr, *pobjptr;
 
-    pobj = obj;
-    nobj = NIL;
-    if (obj == ROOT)
-        pobj = NIL;
-    else
+    if (obj != ROOT)
     {
-        do
+        while(1)
         {
-            obj = pobj;
-            pobj = LWGET(OB_NEXT(obj));
-            if (nobj == NIL)
+            objptr = ((OBJECT *)tree) + obj;
+            pobj = objptr->ob_next;
+            if (nobj == NIL)        /* first time */
                 nobj = pobj;
-        } while ( (pobj >= ROOT) && (LWGET(OB_TAIL(pobj)) != obj) );
+            if (pobj < ROOT)
+                break;
+            pobjptr = ((OBJECT *)tree) + pobj;
+            if ( pobjptr->ob_tail == obj )
+                break;
+            obj = pobj;
+        }
     }
+
     *pnobj = nobj;
     return(pobj);
-} /* get_par */
-
-
-
+}
