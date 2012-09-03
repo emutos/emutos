@@ -4033,3 +4033,5 @@ Start... early ages
 2012-09-03
 - aes/gemobjop.c: Code cleanup: eliminated OB_ & compatibility macros,
   rewrote get_par(). (RFB)
+- aes/gem.def aes/gem.rsc: Changed FSTITLE marker from X to _ to avoid
+  unnecessary translation requirement. (RFB)
