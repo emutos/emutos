@@ -4035,3 +4035,5 @@ Start... early ages
   rewrote get_par(). (RFB)
 - aes/gem.def aes/gem.rsc: Changed FSTITLE marker from X to _ to avoid
   unnecessary translation requirement. (RFB)
+- aes/gemlib.h aes/gemmnlib.c: Code cleanup: eliminate OB_ & compatibility
+  macros. (RFB)

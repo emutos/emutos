@@ -23,7 +23,6 @@
 #include "struct.h"
 #include "basepage.h"
 #include "obdefs.h"
-#include "taddr.h"
 #include "gemlib.h"
 
 #include "gemgsxif.h"
@@ -58,16 +57,19 @@ GLOBAL OBJECT   M_DESK[3+NUM_DESKACC];
 
 static WORD menu_sub(LONG *ptree, WORD ititle)
 {
-        LONG            tree;
-        WORD            imenu;
+        OBJECT          *tree;
+        WORD            themenus, imenu;
         WORD            i;
 
-        tree = *ptree;
+        tree = (OBJECT *)*ptree;
+        themenus = (tree+THESCREEN)->ob_tail;
                                                 /* correlate title #    */
                                                 /*   to menu subtree #  */
-        imenu = LWGET(OB_HEAD(THEMENUS));
+        imenu = (tree+themenus)->ob_head;
         for (i=ititle-THEACTIVE; i>1; i--)
-          imenu = LWGET(OB_NEXT(imenu));
+        {
+          imenu = (tree+imenu)->ob_next;
+        }
                                                 /* special case desk acc*/
         if (imenu == gl_dabox)  
         {
@@ -100,19 +102,23 @@ WORD mn_getda(PD *ppd)
 
 static void menu_fixup(BYTE *pname)
 {
-        register OBJECT *pob;
+        register OBJECT *pob, *obj;
         GRECT           t;
-        WORD            i, cnt, st;
+        WORD            themenus, i, cnt, st;
         LONG            tree;
 
         if ( (tree = gl_mntree) == 0x0L )
           return;
 
         w_nilit(3 + NUM_DESKACC, &M_DESK[0]);
-                                                
-        gl_dabox = LWGET( OB_HEAD(THEMENUS) );
+
+        obj = ((OBJECT *)tree) + THESCREEN;
+        themenus = obj->ob_tail;
+        obj = ((OBJECT *)tree) + themenus;
+        gl_dabox = obj->ob_head;
+
         pob = &M_DESK[ROOT];
-        gl_datree = ADDR( pob );
+        gl_datree = (LONG)pob;
                                                 /* fix up desk root     */
         pob->ob_type = G_BOX;
         pob->ob_state = pob->ob_flags = 0x0;
@@ -125,14 +131,14 @@ static void menu_fixup(BYTE *pname)
         pob->ob_tail = cnt;
                                                 /* build up desk items  */
         ob_relxywh(tree, gl_dabox + 1, &t);
-        for(i=1, st=0; i<=cnt; i++)
+        for(i=1, st=0, obj=((OBJECT *)tree)+gl_dabox+1; i<=cnt; i++, obj++)
         {
           pob = &M_DESK[i];
           pob->ob_next = i+1;
           /* Special support for custom accessory separator line
            * customized using a USERDEF (ex: CF-Lib, QED).
            * We must keep the original ob_type (usually G_STRING). */
-          pob->ob_type = LWGET(OB_TYPE(gl_dabox+i));
+          pob->ob_type = obj->ob_type;
           pob->ob_state = pob->ob_flags = 0x0;
           if (i > 2)
           {
@@ -141,7 +147,7 @@ static void menu_fixup(BYTE *pname)
             pob->ob_spec = desk_acc[st++];
           }
           else
-            pob->ob_spec = LLGET(OB_SPEC(gl_dabox+i));
+            pob->ob_spec = obj->ob_spec;
           rc_copy(&t, (GRECT *)&pob->ob_x);
           t.g_y += gl_hchar;
         }
@@ -184,8 +190,10 @@ UWORD do_chg(LONG tree, WORD iitem, UWORD chgvalue,
 /* chkdisabled:  only if item enabled */
 {
         register UWORD  curr_state;
+        OBJECT          *obj;
 
-        curr_state = LWGET(OB_STATE(iitem));
+        obj = ((OBJECT *)tree) + iitem;
+        curr_state = obj->ob_state;
         if ( (chkdisabled) &&
              (curr_state & DISABLED) )
           return(FALSE);
@@ -278,7 +286,7 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
         MOBLK           p1mor, p2mor;
         WORD            menu_state, theval;
         WORD            rets[6];
-
+        OBJECT          *obj;
                                                 /* initially wait to    */
                                                 /*   go into the active */
                                                 /*   part of the bar    */
@@ -388,7 +396,8 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
                   menu_state = OUTITEM;
                 else
                 {
-                  if ( (LWGET(OB_STATE(cur_title))) & DISABLED )
+                  obj = ((OBJECT *)tree) + cur_title;
+                  if ( obj->ob_state & DISABLED )
                   {
                     menu_state = INBAR;
                     cur_title = NIL;
@@ -449,6 +458,7 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
 void mn_bar(LONG tree, WORD showit, WORD pid)
 {
         PD              *p;
+        OBJECT          *obj;
 
         p = fpdnm(NULLPTR, pid);
         
@@ -457,7 +467,8 @@ void mn_bar(LONG tree, WORD showit, WORD pid)
           gl_mnppd = p;
           menu_tree[pid] = gl_mntree = tree;
           menu_fixup(&p->p_name[0]);
-          LWSET(OB_WIDTH(1), gl_width - LWGET(OB_X(1)));
+          obj = ((OBJECT *)tree) + 1;
+          obj->ob_width = gl_width - obj->ob_x;
           ob_actxywh(gl_mntree, THEACTIVE, (GRECT *)&gl_ctwait.m_x);
           gsx_sclip(&gl_rzero);
           ob_draw(gl_mntree, THEBAR, MAX_DEPTH);

@@ -50,8 +50,6 @@ typedef struct moblk
 #define THEBAR 1
 #define THEACTIVE 2
 
-#define THEMENUS ( LWGET(OB_TAIL(THESCREEN)) )
-
 /*** STATE DEFINITIONS FOR menu_state ***********************************/
 
 #define INBAR   1       /* mouse position       outside menu bar & mo dn */
