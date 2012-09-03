@@ -86,6 +86,7 @@ void everyobj(LONG tree, WORD this, WORD last, void (*routine)(),
         register WORD   tmp1;
         register WORD   depth;
         WORD            x[8], y[8];
+        OBJECT          *obj;
 
         x[0] = startx;
         y[0] = starty;
@@ -98,16 +99,16 @@ child:
         if ( this == last)
           return;
                                                 /* do this object       */
-        x[depth] = x[depth-1] + LWGET(OB_X(this));
-        y[depth] = y[depth-1] + LWGET(OB_Y(this));
+        obj = ((OBJECT *)tree) + this;
+        x[depth] = x[depth-1] + obj->ob_x;
+        y[depth] = y[depth-1] + obj->ob_y;
         (*routine)(tree, this, x[depth], y[depth]);
                                                 /* if this guy has kids */
                                                 /*   then do them       */
-        tmp1 = LWGET(OB_HEAD(this));
-
+        tmp1 = obj->ob_head;
         if ( tmp1 != NIL )
         {
-          if ( !( LWGET(OB_FLAGS(this)) & HIDETREE ) && 
+          if ( !( obj->ob_flags & HIDETREE ) && 
                 ( depth <= maxdep ) )
           {
             depth++;
@@ -120,7 +121,8 @@ sibling:
                                                 /*   which has no parent*/
                                                 /*   or it is the last  */
                                                 /*   then stop else...  */
-        tmp1 = LWGET(OB_NEXT(this));
+        obj = ((OBJECT *)tree) + this;
+        tmp1 = obj->ob_next;
         if ( (tmp1 == last) ||
              (this == ROOT) )   
           return;
@@ -129,7 +131,8 @@ sibling:
                                                 /*   his parent, then   */
                                                 /*   move to him and do */
                                                 /*   him and his kids   */
-        if ( LWGET(OB_TAIL(tmp1)) != this )
+        obj = ((OBJECT *)tree) + tmp1;
+        if ( obj->ob_tail != this )
         {
           this = tmp1;
           goto child;
