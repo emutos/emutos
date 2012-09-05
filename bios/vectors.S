@@ -347,13 +347,13 @@ _int_vbl:
         beq     vbl_no_palette
         // load new color palette
         clr.l   _colorptr
-        lea     0xffff8240,a1               // ST(e) hardware palette registers
+        lea     0x00ff8240,a1               // ST(e) hardware palette registers
         moveq   #7,d1                       // count/2 - 1 (we move longwords)
         bclr    #0,d0                       // test & clear Falcon indicator
 #if CONF_WITH_VIDEL
         beq.s   docopy                      // wasn't set, so update STe regs
         // load Falcon color palette
-        lea     0xffff9800,a1               // Falcon palette registers
+        lea     0x00ff9800,a1               // Falcon palette registers
         moveq   #15,d1                      // assume 16 only
         tst.l   d0                          // source address specified?
         bne.s   docopy                      // yes, go update 16
@@ -379,19 +379,19 @@ vbl_no_palette:
 #if CONF_WITH_STE_SHIFTER
         tst.w   _has_ste_shifter
         beq     st_shifter
-        move.b  d0,0xffff820d
+        move.b  d0,0x00ff820d
 #endif
 st_shifter:
 #ifdef __mcoldfire__
         lsr.l   #8,d0
-        move.b  d0,0xffff8203
+        move.b  d0,0x00ff8203
         lsr.l   #8,d0
 #else
         lsr.w   #8,d0
-        move.b  d0,0xffff8203
+        move.b  d0,0x00ff8203
         swap    d0
 #endif
-        move.b  d0,0xffff8201
+        move.b  d0,0x00ff8201
 vbl_no_screenpt:        
 #endif /* CONF_WITH_SHIFTER */
 
@@ -523,10 +523,10 @@ _int_timerc:
 timerc_end:                     
 #if CONF_WITH_MFP
 #ifdef __mcoldfire__
-        lea     0xfffffa11, a0
+        lea     0x00fffa11, a0
         bclr    #5, (a0)                // clear interrupt service bit
 #else
-        bclr    #5, 0xfffffa11          // clear interrupt service bit
+        bclr    #5, 0x00fffa11          // clear interrupt service bit
 #endif
 #endif /* CONF_WITH_MFP */
 

@@ -42,7 +42,7 @@
 /* one if there is a MegaST real-time clock. */
 int has_megartc;
 
-#define CLK_BASE (0xfffffc20L)
+#define CLK_BASE (0x00fffc20L)
 
 #define CLK     struct clkreg
 CLK     /*  needs name for casting      */

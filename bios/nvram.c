@@ -34,7 +34,7 @@ static int inited;
  */
 void detect_nvram(void)
 {
-    if(check_read_byte(0xffff8961)) {
+    if(check_read_byte(0x00ff8961)) {
         has_nvram = 1;
         inited = 0;
     } else {
@@ -47,8 +47,8 @@ void detect_nvram(void)
  */
 UBYTE get_nvram_rtc(int index)
 {
-    volatile UBYTE * addr_reg = (volatile UBYTE *)0xffff8961;
-    volatile UBYTE * data_reg = (volatile UBYTE *)0xffff8963;
+    volatile UBYTE * addr_reg = (volatile UBYTE *)0x00ff8961;
+    volatile UBYTE * data_reg = (volatile UBYTE *)0x00ff8963;
     int ret_value = 0;
 
     if (has_nvram) {
@@ -66,8 +66,8 @@ UBYTE get_nvram_rtc(int index)
  */
 void set_nvram_rtc(int index, int data)
 {
-    volatile UBYTE * addr_reg = (volatile UBYTE *)0xffff8961;
-    volatile UBYTE * data_reg = (volatile UBYTE *)0xffff8963;
+    volatile UBYTE * addr_reg = (volatile UBYTE *)0x00ff8961;
+    volatile UBYTE * data_reg = (volatile UBYTE *)0x00ff8963;
 
     if (has_nvram) {
         if (index >=0 && index < 14) {
@@ -99,8 +99,8 @@ static UWORD get_sum(void)
 
 static void set_sum(UWORD sum)
 {
-    volatile UBYTE * addr_reg = (volatile UBYTE *)0xffff8961;
-    volatile UBYTE * data_reg = (volatile UBYTE *)0xffff8963;
+    volatile UBYTE * addr_reg = (volatile UBYTE *)0x00ff8961;
+    volatile UBYTE * data_reg = (volatile UBYTE *)0x00ff8963;
 
     *addr_reg = 62;
     *data_reg = nvram_buf[48] = sum >> 8;
@@ -120,8 +120,8 @@ static void set_sum(UWORD sum)
  */
 WORD nvmaccess(WORD type, WORD start, WORD count, PTR buffer)
 {
-    volatile UBYTE * addr_reg = (volatile UBYTE *)0xffff8961;
-    volatile UBYTE * data_reg = (volatile UBYTE *)0xffff8963;
+    volatile UBYTE * addr_reg = (volatile UBYTE *)0x00ff8961;
+    volatile UBYTE * data_reg = (volatile UBYTE *)0x00ff8963;
     UBYTE * ubuffer = (UBYTE *) buffer;
     int i;
 

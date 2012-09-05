@@ -15,7 +15,7 @@
 
 #include "portab.h"
  
-#define DMA     ((volatile struct dma *) 0xFFFF8600)
+#define DMA     ((volatile struct dma *) 0x00FF8600)
 
 struct dma {
     UWORD   pad0[2];   

@@ -123,7 +123,7 @@ typedef struct
 
 
 /*==== Defines ============================================================*/
-#define MFP_BASE        ((MFP *)(0xfffffa00L))
+#define MFP_BASE        ((MFP *)(0x00fffa00L))
 
 extern WORD mfp_ctrl;
 

@@ -136,7 +136,7 @@ _etv_xtra:      ds.l    5       // GEM additional vectors (unused)
 _memvalid:
 memvalid:       ds.l    1       // memory conf valid, if 0x752019f3
         .org 0x424
-memctrl:        ds.b    1       // copy of contents of 0xffff8001
+memctrl:        ds.b    1       // copy of contents of 0x00ff8001
         .org 0x426
 resvalid:       ds.l    1       // validates resvector, if 0x31415926
 resvector:      ds.l    1       // reset vector
@@ -152,7 +152,7 @@ _fverify:       ds.w    1       // if != 0, verify floppy writes
 _bootdev:       ds.w    1       // default boot drive
 _palmode:       ds.w    1       // 0 = NTSC, else PAL
 _defshiftmod:   ds.w    1       // default video resolution
-_sshiftmod:     ds.b    1       // copy of contents of 0xffff8260
+_sshiftmod:     ds.b    1       // copy of contents of 0x00ff8260
         .org 0x44e
 _v_bas_ad:      ds.l    1       // screen base address
 _vblsem:        ds.w    1       // if > 0, the VBL routine is executed

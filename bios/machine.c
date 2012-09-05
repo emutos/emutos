@@ -69,9 +69,9 @@ static void detect_video(void)
  /* test if we have an STe Shifter by testing that register 820d
   * works (put a value, read other reg, read again, and compare)
   */
-  volatile BYTE *ste_reg = (BYTE *) 0xffff820d;
-  volatile BYTE *other_reg1 = (BYTE *) 0xffff8203;
-  volatile WORD *other_reg2 = (WORD *) 0xffff8240;
+  volatile BYTE *ste_reg = (BYTE *) 0x00ff820d;
+  volatile BYTE *other_reg1 = (BYTE *) 0x00ff8203;
+  volatile WORD *other_reg2 = (WORD *) 0x00ff8240;
 
   has_ste_shifter = 0;  
   if(!check_read_byte((long)ste_reg)) return;
@@ -93,7 +93,7 @@ static void detect_video(void)
 #if CONF_WITH_TT_SHIFTER
   /* test if we have a TT Shifter by testing for TT color palette */
   has_tt_shifter = 0;
-  if (check_read_byte(0xffff8400))
+  if (check_read_byte(0x00ff8400))
     has_tt_shifter = 1;
 
 #if DBG_MACHINE
@@ -104,7 +104,7 @@ static void detect_video(void)
 #if CONF_WITH_VIDEL
   /* test if we have Falcon VIDEL by testing for f030_xreg */
   has_videl = 0;
-  if (check_read_byte(0xffff8282))
+  if (check_read_byte(0x00ff8282))
     has_videl = 1;
 
 #if DBG_MACHINE
@@ -121,10 +121,10 @@ int has_vme;
 
 static void detect_vme(void)
 {
-  volatile BYTE *vme_mask = (BYTE *) 0xffff8e0d;
-  volatile BYTE *sys_mask = (BYTE *) 0xffff8e01;
+  volatile BYTE *vme_mask = (BYTE *) 0x00ff8e0d;
+  volatile BYTE *sys_mask = (BYTE *) 0x00ff8e01;
   
-  if(check_read_byte(0xffff8e09)) {
+  if(check_read_byte(0x00ff8e09)) {
     *vme_mask = 0x40;  /* ??? IRQ3 from VMEBUS/soft */
     *sys_mask = 0x14;  /* ??? set VSYNC and HSYNC */
     has_vme = 1;
@@ -150,7 +150,7 @@ static void detect_blitter(void)
 {
   has_blitter = 0;
 
-  if (check_read_byte(0xffff8a3c))
+  if (check_read_byte(0x00ff8a3c))
     has_blitter = 1;
 
 #if DBG_MACHINE
@@ -168,8 +168,8 @@ static void detect_blitter(void)
 static void setvalue_swi(void)
 {
   cookie_swi = 0x7F;
-  if (check_read_byte(0xffff9201)) {
-    cookie_swi = (*(volatile WORD *)0xffff9200)>>8;
+  if (check_read_byte(0x00ff9201)) {
+    cookie_swi = (*(volatile WORD *)0x00ff9200)>>8;
   }
 
 #if DBG_MACHINE

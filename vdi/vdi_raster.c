@@ -435,7 +435,7 @@ do_blit(blit * blt)
 
 
 /* BLiTTER BASE ADDRESS */
-//#define BLiTTER 0xFFFF8A00:
+//#define BLiTTER 0x00FF8A00:
 
     /* BLiTTER REGISTER FLAGS */
 #define fHOP_Source    1

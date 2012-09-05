@@ -181,7 +181,7 @@ no60:   dc.l    0xf2800000      // fnop
 
 #if CONF_WITH_SFP004
         bra.s   fexit
-sfp:    tst.w   0xfffffa40.w    // CIR
+sfp:    tst.w   0x00fffa40.w    // CIR
         moveq   #0x01,d0        // memory mapped FPU
 #endif
 

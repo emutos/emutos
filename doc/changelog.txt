@@ -4037,3 +4037,6 @@ Start... early ages
   unnecessary translation requirement. (RFB)
 - aes/gemlib.h aes/gemmnlib.c: Code cleanup: eliminate OB_ & compatibility
   macros. (RFB)
+
+2012-09-05
+- bios/*: Use 0x00ffxxxx instead of 0xffffxxxx to access I/O registers. (VRI)

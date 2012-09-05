@@ -19,7 +19,7 @@
 #include "portab.h"
 #include "tosvars.h"
 
-#define SPSHIFT             0xffff8266L
+#define SPSHIFT             0x00ff8266L
 
 #define FRGB_BLACK     0x00000000       /* Falcon palette */
 #define FRGB_BLUE      0x000000ff
