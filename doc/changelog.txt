@@ -4040,3 +4040,7 @@ Start... early ages
 
 2012-09-05
 - bios/*: Use 0x00ffxxxx instead of 0xffffxxxx to access I/O registers. (VRI)
+
+2012-09-06
+- bios/videl.c: Fix Falcon hardware palette initialisation for real Falcon
+  hardware. (RFB)

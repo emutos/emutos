@@ -821,7 +821,7 @@ void initialise_falcon_palette(WORD mode)
 {
     volatile WORD *col_regs = (WORD *) ST_PALETTE_REGS;
     volatile LONG *fcol_regs = (LONG *) FALCON_PALETTE_REGS;
-    int i;
+    int i, limit;
 
     /* first, set up Falcon shadow palette and real registers */
     for (i = 0; i < 256; i++)
@@ -836,7 +836,17 @@ void initialise_falcon_palette(WORD mode)
         break;
     }
 
-    for (i = 0; i < 256; i++)
+    /* a 'feature' of the Falcon hardware: if we're in a mode with less
+     * than 256 colours, and we attempt to set the Falcon hardware
+     * palette registers for colours 16 & above, it will screw up the
+     * values in the first 16 hardware palette registers, resulting in
+     * a messed-up display ...
+     * NOTE: what happens in the Truecolor case is yet to be determined,
+     * although it is probably not important since we don't use those
+     * registers.
+     */
+    limit = ((mode&VIDEL_BPPMASK)==VIDEL_8BPP) ? 256 : 16;
+    for (i = 0; i < limit; i++)
         fcol_regs[i] = falcon_shadow_palette[i];
 
     /*
