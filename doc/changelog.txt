@@ -4044,3 +4044,6 @@ Start... early ages
 2012-09-06
 - bios/videl.c: Fix Falcon hardware palette initialisation for real Falcon
   hardware. (RFB)
+
+2012-09-12
+- bios/screen.c bios/videl.c: Fixed vsync() startup trouble. (VRI)

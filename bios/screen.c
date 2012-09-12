@@ -449,10 +449,6 @@ void screen_init(void)
     VEC_HBL = int_hbl;
     VEC_VBL = int_vbl;
 
-    /* On ST, it is important to change the resolution register when nothing
-     * is displaying, otherwise the plane shift but may appear. */
-    vsync();
-
 /*
  * first, see what we're connected to, and set the
  * resolution / video mode appropriately
@@ -528,6 +524,10 @@ void screen_init(void)
     else
 #endif
     {
+        /* On ST, it is important to change the resolution register when nothing
+         * is displaying, otherwise the plane shift but may appear. */
+        vsync();
+
         rez = monitor_type?ST_LOW:ST_HIGH;
         *(volatile BYTE *) ST_SHIFTER = rez;
     }
