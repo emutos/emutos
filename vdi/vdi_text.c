@@ -13,6 +13,7 @@
 
 #include "config.h"
 #include "portab.h"
+#include "string.h"
 #include "vdi_defs.h"
 
 
@@ -553,20 +554,6 @@ UWORD act_siz(Vwk * vwk, UWORD top)
 }
 
 
-
-static void copy_name(BYTE * source, BYTE * dest)
-{
-    WORD i;
-    BYTE *sptr, *dptr;
-
-    sptr = source;
-    dptr = dest;
-
-    for (i = 0; i < 32; i++)
-        *dptr++ = *sptr++;
-}
-
-
 static void make_header(Vwk * vwk)
 {
     Fonthead *source_font, *dest_font;
@@ -577,7 +564,7 @@ static void make_header(Vwk * vwk)
     dest_font->font_id = source_font->font_id;
     dest_font->point = source_font->point * 2;
 
-    copy_name(&source_font->name[0], &dest_font->name[0]);
+    memcpy(dest_font->name, source_font->name, FONT_NAME_LEN);
 
     dest_font->first_ade = source_font->first_ade;
     dest_font->last_ade = source_font->last_ade;

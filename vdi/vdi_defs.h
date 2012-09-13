@@ -73,11 +73,13 @@
 #define MD_XOR      3
 #define MD_ERASE    4
 
+#define FONT_NAME_LEN 32
+
 typedef struct Fonthead_ Fonthead;
 struct Fonthead_ {              /* descibes a font */
     WORD font_id;
     WORD point;
-    BYTE name[32];
+    BYTE name[FONT_NAME_LEN];
     UWORD first_ade;
     UWORD last_ade;
     UWORD top;
