@@ -35,6 +35,7 @@ T tested and working on an emulator or real hardware
 
  Hardware initialization
  ----------------------------------------------------------------------------
+
  t CPU setting (tested only 68000 (real and emu) and 68040 (emu))
  > FPU (detected, is any initialization needed?) 
  T Memory controller (both ST and Falcon)
@@ -60,6 +61,7 @@ T tested and working on an emulator or real hardware
 
  BOOT sequence
  ----------------------------------------------------------------------------
+
  T configure memory
  X execute reset routine
  X detect monitor type
@@ -79,6 +81,7 @@ T tested and working on an emulator or real hardware
 
  BIOS devices
  ----------------------------------------------------------------------------
+
  > parallel port
  > serial port
  T console
@@ -87,9 +90,9 @@ T tested and working on an emulator or real hardware
  T ascii 
 
 
-
  ACIA interrupt routines
  ----------------------------------------------------------------------------
+
  - midierr
  - ikbderr
  X midi input
@@ -99,9 +102,9 @@ T tested and working on an emulator or real hardware
  - joysticks            (is done by games - TOS does not have one)
 
 
-
  BIOS Functions
  ----------------------------------------------------------------------------
+
  T 0x00 getmpb
  T 0x01 bconstat        (the function works for console only)
  > 0x02 bconin          (the function works for console only)
@@ -119,6 +122,8 @@ T tested and working on an emulator or real hardware
 
  XBIOS Functions
  ----------------------------------------------------------------------------
+
+All XBIOS versions:
  X 0x00 initmous
  - 0x01 ssbrk           (useless - will not be implemented)
  X 0x02 physBase
@@ -160,14 +165,19 @@ T tested and working on an emulator or real hardware
  X 0x26 supexec
  - 0x27 puntaes         (useless - will not be implemented)
 
+TOS v1.02:
  X 0x29 floprate
- X 0x2a DMAread
- X 0x2b DMAwrite
+
  - 0x2c Bconmap
 
- X 0x2e NVMaccess
+ t 0x40 Blitmode
 
- - 0x40 Blitmode
+TOS v2.0:
+ X 0x2a DMAread
+ X 0x2b DMAwrite
+
+TOS v3.00:
+ X 0x2e NVMaccess
 
  X 0x50 EsetShift       (for TT shifter only)
  X 0x51 EgetShift       (for TT shifter only)
@@ -177,6 +187,8 @@ T tested and working on an emulator or real hardware
  X 0x55 EgetPalette     (for TT shifter only)
  X 0x56 EsetGray        (for TT shifter only)
  X 0x57 EsetSmear       (for TT shifter only)
+
+TOS v4.00:
  X 0x58 Vsetmode        (for Falcon Videl only)
  X 0x59 Vmontype        (for Falcon Videl only)
 
@@ -185,9 +197,33 @@ T tested and working on an emulator or real hardware
  X 0x5d VsetRGB         (for Falcon Videl only)
  X 0x5e VgetRGB         (for Falcon Videl only)
 
+2nd bit in _SND is set:
+ - 0x80 LockSnd
+ - 0x82 Soundcmd
+ - 0x83 Setbuffer
+ - 0x84 Setmode
+ - 0x85 Settracks
+ - 0x86 Setmontracks
+ - 0x87 Setinterrupt
+ - 0x8c Sndstatus
+
+3rd bit in _SND is set:
+ - 0x88 Buffoper
+ - 0x8a Gpio
+ - 0x8b Devconnect
+ - 0x8d Buffptr
+
+3&4 bits in _SND are set:
+ - 0x89 Dsptristate
+
+5th bit in _SND is set:
+ - 0x61-0x7e, 32 Dsp_* functions
+
 
  GEMDOS Functions
  ----------------------------------------------------------------------------
+
+All GEMDOS versions:
  X 0x00 Pterm0
  X 0x01 Cconin
  X 0x02 Cconout
@@ -200,23 +236,30 @@ T tested and working on an emulator or real hardware
  X 0x09 Cconws
  X 0x0a Cconrs
  X 0x0b Cconis
+
  X 0x0e Dsetdrv
+
  X 0x10 Cconos
  X 0x11 Cprnos
  X 0x12 Cauxis
  X 0x13 Cauxos
- X 0x14 Maddalt
+
  X 0x19 Dgetdrv
  X 0x1a Fsetdta
+
  X 0x20 Super
+
  X 0x2a Tgetdate
  X 0x2b Tsetdate
  X 0x2c Tgettime
  X 0x2d Tsettime
+
  X 0x2f Fgetdta
  X 0x30 Sversion
  X 0x31 Ptermres
+
  X 0x36 Dfree
+
  X 0x39 Dcreate
  X 0x3a Ddelete
  X 0x3b Dsetpath
@@ -228,7 +271,7 @@ T tested and working on an emulator or real hardware
  X 0x41 Fdelete
  X 0x42 Fseek
  X 0x43 Fattrib
- X 0x44 Mxalloc
+
  X 0x45 Fdup
  X 0x46 Fforce
  X 0x47 Dgetpath
@@ -237,14 +280,22 @@ T tested and working on an emulator or real hardware
  X 0x4a Mshrink
  X 0x4b Pexec
  X 0x4c Pterm
+
  X 0x4e Fsfirst
  X 0x4f Fsnext
+
  X 0x56 Frename
  X 0x57 Fdatime
+
+GEMDOS v0.19 (TOS v2):
+ X 0x14 Maddalt
+ X 0x44 Mxalloc
+ (and Pexec mode 6)
 
 
  VDI functions
  ----------------------------------------------------------------------------
+
  All TOS 1.0 calls are implemented.
  
  T      v_opnwk
@@ -260,7 +311,7 @@ T tested and working on an emulator or real hardware
  t      v_pmarker
  t      v_gtext
  t      v_fillarea
- -      v_cellarray
+ -      v_cellarray         (not supported by any current VDI driver)
  X      v_contourfill
  t      vr_recfl
  t      v_bar
@@ -326,7 +377,7 @@ T tested and working on an emulator or real hardware
  >      vqt_extent
  X      vqt_width
  X      vqt_name
- -      vq_cellarray
+ -      vq_cellarray        (not supported by any current VDI driver)
  X      vqin_mode
  X      vqt_fontinfo
  >      vq_chcells
@@ -366,8 +417,8 @@ T tested and working on an emulator or real hardware
 
  AES functions
  ----------------------------------------------------------------------------
- All TOS 1.0 calls are implemented.
 
+All AES versions:
  X      appl_init
  X      appl_read
  X      appl_write
@@ -419,7 +470,6 @@ T tested and working on an emulator or real hardware
  X      scrp_read
  X      scrp_write
  X      scrp_clear              (PC-GEM call)
- >      fsel_exinput
  X      fsel_input
  X      wind_create
  X      wind_open
@@ -430,7 +480,6 @@ T tested and working on an emulator or real hardware
  X      wind_find
  X      wind_update
  X      wind_calc
- t      wind_new
  X      rsrc_load
  X      rsrc_free
  X      rsrc_gaddr
@@ -444,3 +493,16 @@ T tested and working on an emulator or real hardware
  X      shel_envrn
  X      shel_rdef              (PC-GEM call)
  X      shel_wdef              (PC-GEM call)
+
+AES v1.40 (TOS >= v1.04):
+ >      fsel_exinput
+ t      wind_new
+
+AES v3.30 (TOS > v3.06):
+ -      menu_attach
+ -      menu_istart
+ -      menu_popup
+ -      menu_settings
+
+AES v3.40 (TOS >= v4):
+ -      objc_sysvar            (3D look)

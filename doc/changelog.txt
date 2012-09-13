@@ -4047,3 +4047,6 @@ Start... early ages
 
 2012-09-12
 - bios/screen.c bios/videl.c: Fixed vsync() startup trouble. (VRI)
+
+2012-09-13
+- doc/status.txt: Updated. Contributed by Eero Tamminen. (VRI)
