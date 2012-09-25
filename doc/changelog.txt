@@ -4052,3 +4052,6 @@ Start... early ages
 - doc/status.txt: Updated. Contributed by Eero Tamminen. (VRI)
 - vdi/vdi_defs.h vdi/vdi_text.c: Replaced copy_name() by memcpy(). Contributed
   by Eero Tamminen. (VRI)
+
+2012-09-26
+- desk/deskmain.c: Fixed buffer overflow in xlate_fix_tedinfo(). (VRI)

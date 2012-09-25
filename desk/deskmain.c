@@ -1359,8 +1359,10 @@ void xlate_fix_tedinfo(TEDINFO *tedinfo, int nted)
     len = 0;
     for (i = 0; i < nted; i++) {
         if (tedinfo[i].te_ptext == 0) {
-            /* Count number of '_' in strings ( +1 for \0 at the end ): */
-            len += count_chars((char *) tedinfo[i].te_ptmplt, '_') + 1;
+            /* Count number of '_' in strings
+             * ( +2 for @ at the beginning, and \0 at the end )
+             */
+            len += count_chars((char *) tedinfo[i].te_ptmplt, '_') + 2;
         }
     }
     tedinfptr = (char *) dos_alloc(len);        /* Get memory */
