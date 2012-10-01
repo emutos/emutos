@@ -212,6 +212,8 @@ void _vq_color(Vwk *vwk)
     else if (has_videl)
     {
         /* TODO: not implemented */
+        // Quick hack to see something in TosWin2
+        INTOUT[1] = INTOUT[2] = INTOUT[3] = (colnum == 1 ? 0 : 1000);
     }
 #endif
 #if CONF_WITH_TT_SHIFTER

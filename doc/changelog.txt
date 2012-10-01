@@ -4055,3 +4055,6 @@ Start... early ages
 
 2012-09-26
 - desk/deskmain.c: Fixed buffer overflow in xlate_fix_tedinfo(). (VRI)
+
+2012-10-01
+- vdi/vdi_col.c: Quick hack to see something in TosWin2 on Falcon. (VRI)
