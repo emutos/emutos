@@ -4058,3 +4058,8 @@ Start... early ages
 
 2012-10-01
 - vdi/vdi_col.c: Quick hack to see something in TosWin2 on Falcon. (VRI)
+
+2012-10-07
+- Makefile bios/aciavecs.S bios/bios.c bios/chardev.c bios/iorec.h
+  bios/mfp.c bios/mfp.h bios/serport.c bios/serport.h bios/xbios.c:
+  Reorganised serial i/o code prior to adding Falcon serial i/o support.

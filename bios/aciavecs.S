@@ -87,7 +87,6 @@
         .globl  _mousexvec
         .globl  _kbdvecs
 
-        .globl  _rs232iorec
         .globl  _ikbdiorec
         .globl  _midiiorec
 
@@ -95,30 +94,15 @@
         .bss
 
 // ==== IOREC BUFFERS ======================================================
-// Table of input-output buffersfor rs232 in, rs232 out, kdb in, midi in
+// Table of input-output buffers for kbd in, midi in
 
-rs232ibufbuf:   ds.b    0x100
-rs232obufbuf:   ds.b    0x100
 ikbdibufbuf:    ds.b    0x100
 midiibufbuf:    ds.b    0x80
 
 
 // ==== IORECS =============================================================
-// Table of input-output records for rs232 in, rs232 out, kdb in, midi in
+// Table of input-output records for kbd in, midi in
 
-_rs232iorec:
-rs232ibuf:      ds.l    1
-rs232ibufsz:    ds.w    1
-rs232ibufhd:    ds.w    1
-rs232ibuftl:    ds.w    1
-rs232ibuflo:    ds.w    1
-rs232ibufhi:    ds.w    1
-rs232obuf:      ds.l    1
-rs232obufsz:    ds.w    1
-rs232obufhd:    ds.w    1
-rs232obuftl:    ds.w    1
-rs232obuflo:    ds.w    1
-rs232obufhi:    ds.w    1
 _ikbdiorec:
 ikbdibuf:       ds.l    1
 ikbdibufsz:     ds.w    1
@@ -209,7 +193,7 @@ _init_acia_vecs:
         // initialize the iorecs
         pea     iorec_table_end-iorec_table
         pea     iorec_table
-        pea     _rs232iorec
+        pea     _ikbdiorec
         jsr     _memmove
         lea     12(sp),sp
         
@@ -234,16 +218,12 @@ _init_acia_vecs:
 #endif
         rts
         
-        // FIXME: The rs232iorec buffer should go into the .data segment (if
+        // FIXME: The iorec stuff should go into the .data segment (if
         // EmuTOS had a functional one) instead of copying the following to
         // the .bss segment at run time.
         .text // .rodata
 iorec_table:
         //         sz, hd, tl,   lo, hi
-        dc.l    rs232ibufbuf
-        dc.w    0x100,  0,  0, 0x40, 0xC0
-        dc.l    rs232obufbuf
-        dc.w    0x100,  0,  0, 0x40, 0xC0
         dc.l    ikbdibufbuf
         dc.w    0x100,  0,  0, 0x40, 0xC0
         dc.l    midiibufbuf

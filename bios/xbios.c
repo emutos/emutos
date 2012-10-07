@@ -23,6 +23,7 @@
 #include "ikbd.h"
 #include "midi.h"
 #include "mfp.h"
+#include "serport.h"
 #include "machine.h"
 #include "screen.h"
 #include "videl.h"
@@ -310,7 +311,7 @@ LONG iorec(WORD devno)
 {
     switch(devno) {
     case 0:
-        return (LONG) &rs232iorec;
+        return (LONG) rs232iorecptr;
     case 1:
         return (LONG) &ikbdiorec;
     case 2:

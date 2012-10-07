@@ -87,21 +87,6 @@ void chardev_init(void)
 
 /* BIOS devices - bconstat functions */
 
-
-LONG bconstat1(void)
-{
-#if CONF_WITH_MFP_RS232
-    /* Character available in the serial input buffer? */
-    /* FIXME: We should rather use Iorec() for this... */
-    if (MFP_BASE->rsr & 0x80)
-        return -1;
-    else
-        return 0;
-#else
-    return 0;
-#endif
-}
-
 LONG bconstat4(void)
 {
   return 0;
@@ -126,20 +111,6 @@ LONG bconstat7(void)
 
 /* BIOS devices - bconin functions */
 
-LONG bconin1(void)
-{
-    /* Wait for character at the serial line */
-    while(!bconstat1()) ;
-
-#if CONF_WITH_MFP_RS232
-    /* Return character...
-     * FIXME: We should rather use Iorec() for this... */
-    return MFP_BASE->udr;
-#else
-    return 0;
-#endif
-}
-
 LONG bconin4(void)
 {
   return 0;
@@ -160,20 +131,6 @@ LONG bconin7(void)
 
 
 /* BIOS devices - bconout functions */
-
-LONG bconout1(WORD dev, WORD b)
-{
-    /* Wait transmit buffer to become empty */
-    while(!bcostat1()) ;
-
-#if CONF_WITH_MFP_RS232
-    /* Output to RS232 interface */
-    MFP_BASE->udr = (char)b;
-    return 1L;
-#else
-    return 0L;
-#endif
-}
 
 LONG bconout2(WORD dev, WORD b)
 {
@@ -201,18 +158,6 @@ LONG bconout7(WORD dev, WORD b)
 
 
 /* BIOS devices - bcostat functions */
-
-LONG bcostat1(void)
-{
-#if CONF_WITH_MFP_RS232
-    if (MFP_BASE->tsr & 0x80)
-        return -1;
-    else
-        return 0;
-#else
-  return -1;
-#endif
-}
 
 LONG bcostat2(void)
 {

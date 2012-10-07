@@ -34,7 +34,8 @@ IOREC {
    when USE_STOP_INSN_TO_FREE_HOST_CPU=0.
    This bug will be fixed in GCC 4.5.2.
 */
-extern volatile IOREC rs232iorec, ikbdiorec, midiiorec;
+extern volatile IOREC ikbdiorec, midiiorec;
+extern IOREC *rs232iorecptr;
 
 /*==== Functions ==========================================================*/
 

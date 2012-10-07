@@ -21,23 +21,11 @@
 
 #if CONF_WITH_MFP
 
-/*==== Prototypes =========================================================*/
-
-/* setup the timer, but do not activate the interrupt */
-static void setup_timer(WORD timer, WORD control, WORD data);
-
-
-/*==== Defines ============================================================*/
-
-WORD mfp_ctrl; /* TODO, flow control */
-
 /*==== mfp_init - initialize the MFP ========================================*/
  
 void mfp_init(void)
 {
     MFP *mfp=MFP_BASE;   /* set base address of MFP */
-
-    mfp_ctrl = MFP_CTRL_NONE;  /* no flow control */
 
     /* reset the MFP registers */
     mfp->gpip = 0x00;
@@ -120,7 +108,7 @@ void jenabint(WORD num)
 }
 
 /* setup the timer, but do not activate the interrupt */
-static void setup_timer(WORD timer, WORD control, WORD data)
+void setup_timer(WORD timer, WORD control, WORD data)
 {
     MFP *mfp=MFP_BASE;   /* set base address of MFP */
     switch(timer) {
@@ -174,49 +162,4 @@ void init_system_timer(void)
 #endif
 
     /* The timer will really be enabled when sr is set to 0x2500 or lower. */
-}
-
-#if CONF_WITH_MFP_RS232
-
-struct rsconf_struct {
-    BYTE control;
-    BYTE data;
-};
-
-static const struct rsconf_struct rsconf_data[] = {
-    { /* 19200 */  1, 1 }, 
-    { /*  9600 */  1, 2 },
-    { /*  4800 */  1, 4 },
-    { /*  3600 */  1, 5 },
-    { /*  2400 */  1, 8 },
-    { /*  2000 */  1, 10 },
-    { /*  1800 */  1, 11 },
-    { /*  1200 */  1, 16 },
-    { /*   600 */  1, 32 },
-    { /*   300 */  1, 64 },
-    { /*   200 */  1, 96 },
-    { /*   150 */  1, 128 },
-    { /*   134 */  1, 143 },
-    { /*   110 */  1, 175 },
-    { /*    75 */  2, 64 },
-    { /*    50 */  2, 96 }, 
-};
-
-#endif /* CONF_WITH_MFP_RS232 */
-
-void rsconf(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
-{
-#if CONF_WITH_MFP_RS232
-    MFP *mfp=MFP_BASE;   /* set base address of MFP */
-
-    if(baud >= 0 && baud < 16) {
-        setup_timer(3, rsconf_data[baud].control, rsconf_data[baud].data);
-    }
-
-    if(ctrl >= 0) mfp_ctrl = ctrl;
-    if(ucr >= 0) mfp->ucr = ucr;
-    if(rsr >= 0) mfp->rsr = rsr;
-    if(tsr >= 0) mfp->tsr = tsr;
-    if(scr >= 0) mfp->scr = scr;
-#endif
 }

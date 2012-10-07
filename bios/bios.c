@@ -48,6 +48,7 @@
 #include "chardev.h"
 #include "blkdev.h"
 #include "parport.h"
+#include "serport.h"
 #include "string.h"
 #include "natfeat.h"
 #ifdef MACHINE_AMIGA
@@ -198,7 +199,7 @@ static void bios_init(void)
     init_system_timer();
 
     /* Initialize the RS-232 port */
-    rsconf(B9600, 0, 0x88, 1, 1, 0);
+    init_serport();
     boot_status |= RS232_AVAILABLE;     /* track progress */
     
     /* The sound init must be done before allowing MFC interrupts,
