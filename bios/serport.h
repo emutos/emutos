@@ -31,7 +31,10 @@
 #define B134   12
 #define B110   13
 #define B75    14
-#define B50    15 
+#define B50    15
+
+#define MIN_BAUDRATE_CODE   B19200
+#define MAX_BAUDRATE_CODE   B50
 
 /*
  * flow control codes
@@ -40,6 +43,9 @@
 #define FLOW_CTRL_SOFT  1    /* software flow control (XON/XOFF) */
 #define FLOW_CTRL_HARD  2    /* hardware flow control (RTS/CTS) */
 #define FLOW_CTRL_BOTH  3    /* XON/XOFF and RTS/CTS */
+
+#define MIN_FLOW_CTRL   FLOW_CTRL_NONE
+#define MAX_FLOW_CTRL   FLOW_CTRL_BOTH
 
 /*
  * function prototypes

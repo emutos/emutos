@@ -37,7 +37,7 @@ typedef struct {
 } EXT_IOREC;
 
 static EXT_IOREC rs232iorec;
-static EXT_IOREC iorec_init = {
+static const EXT_IOREC iorec_init = {
     { rs232ibuf, RS232_BUFSIZE, 0, 0, RS232_BUFSIZE/4, 3*RS232_BUFSIZE/4 },
     { rs232obuf, RS232_BUFSIZE, 0, 0, RS232_BUFSIZE/4, 3*RS232_BUFSIZE/4 },
     B9600, FLOW_CTRL_NONE };
@@ -56,12 +56,12 @@ void init_serport(void)
 
 #if CONF_WITH_MFP_RS232
 
-struct rsconf_struct {
+struct mfp_rs232_table {
     BYTE control;
     BYTE data;
 };
 
-static const struct rsconf_struct rsconf_data[] = {
+static const struct mfp_rs232_table mfp_rs232_init[] = {
     { /* 19200 */  1, 1 }, 
     { /*  9600 */  1, 2 },
     { /*  4800 */  1, 4 },
@@ -86,13 +86,15 @@ void rsconf(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
 {
 #if CONF_WITH_MFP_RS232
     MFP *mfp=MFP_BASE;   /* set base address of MFP */
+    const struct mfp_rs232_table *init;
 
-    if (baud >= 0 && baud <= 15) {
+    if ((baud >= MIN_BAUDRATE_CODE ) && (baud <= MAX_BAUDRATE_CODE)) {
         rs232iorec.baudrate = baud;
-        setup_timer(3, rsconf_data[baud].control, rsconf_data[baud].data);
+        init = &mfp_rs232_init[baud];
+        setup_timer(3,init->control,init->data);
     }
 
-    if (ctrl >= 0)
+    if ((ctrl >= MIN_FLOW_CTRL) && (ctrl <= MAX_FLOW_CTRL))
         rs232iorec.flowctrl = ctrl;
     if (ucr >= 0)
         mfp->ucr = ucr;
@@ -121,10 +123,11 @@ LONG bconstat1(void)
 
 LONG bconin1(void)
 {
-    /* Wait for character at the serial line */
-    while(!bconstat1()) ;
-
 #if CONF_WITH_MFP_RS232
+    /* Wait for character at the serial line */
+    while(!bconstat1())
+        ;
+
     /* Return character...
      * FIXME: We ought to use Iorec() for this... */
     return MFP_BASE->udr;
@@ -141,16 +144,17 @@ LONG bcostat1(void)
     else
         return 0;
 #else
-  return -1;
+    return -1;
 #endif
 }
 
 LONG bconout1(WORD dev, WORD b)
 {
-    /* Wait for transmit buffer to become empty */
-    while(!bcostat1()) ;
-
 #if CONF_WITH_MFP_RS232
+    /* Wait for transmit buffer to become empty */
+    while(!bcostat1())
+        ;
+
     /* Output to RS232 interface */
     MFP_BASE->udr = (char)b;
     return 1L;

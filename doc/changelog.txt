@@ -4062,4 +4062,7 @@ Start... early ages
 2012-10-07
 - Makefile bios/aciavecs.S bios/bios.c bios/chardev.c bios/iorec.h
   bios/mfp.c bios/mfp.h bios/serport.c bios/serport.h bios/xbios.c:
-  Reorganised serial i/o code prior to adding Falcon serial i/o support.
+  Reorganised serial i/o code prior to adding Falcon serial i/o support. (RFB)
+
+2012-10-09
+- bios/serport.c bios/serport.h: Reformat & tidy up code. (RFB)
