@@ -349,10 +349,10 @@ static LONG xbios_e(WORD devno)
  */
 
 #if DBG_XBIOS
-static void xbios_f(WORD speed, WORD flowctl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
+static ULONG xbios_f(WORD speed, WORD flowctl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
 {
     kprintf("XBIOS: Rsconf(...)\n");
-    rsconf(speed, flowctl, ucr, rsr, tsr, scr);
+    return rsconf(speed, flowctl, ucr, rsr, tsr, scr);
 }
 #endif
 

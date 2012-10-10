@@ -4066,3 +4066,7 @@ Start... early ages
 
 2012-10-09
 - bios/serport.c bios/serport.h: Reformat & tidy up code. (RFB)
+
+2012-10-10
+- bios/serport.c bios/serport.h bios/xbios.c: Fix Rsconf() to return
+  ULONG instead of void. (RFB)

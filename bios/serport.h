@@ -13,6 +13,8 @@
 #ifndef _SERPORT_H
 #define _SERPORT_H
 
+#include "portab.h"
+
 /*
  * baud rate codes
  */
@@ -51,6 +53,6 @@
  * function prototypes
  */
 void init_serport(void);
-void rsconf(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
+ULONG rsconf(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
 
 #endif

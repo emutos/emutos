@@ -11,12 +11,18 @@
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
  */
+#include "config.h"
+#include "portab.h"
 #include "iorec.h"
 #include "mfp.h"
 #include "serport.h"
 #include "string.h"
 
+#if CONF_WITH_MFP_RS232
 #define RS232_BUFSIZE 256
+#else
+#define RS232_BUFSIZE 4     /* save space if unused */
+#endif
 
 IOREC *rs232iorecptr;
 
@@ -82,11 +88,23 @@ static const struct mfp_rs232_table mfp_rs232_init[] = {
 
 #endif /* CONF_WITH_MFP_RS232 */
 
-void rsconf(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
+ULONG rsconf(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
 {
 #if CONF_WITH_MFP_RS232
-    MFP *mfp=MFP_BASE;   /* set base address of MFP */
+    MFP *mfp;
     const struct mfp_rs232_table *init;
+    ULONG old;
+
+    if (baud == -2)     /* wants current baud rate */
+        return rs232iorec.baudrate;
+
+    mfp = MFP_BASE;     /* set base address of MFP */
+
+    /*
+     * remember old ucr/rsr/tsr; note that we don't bother with scr, despite
+     * the docs, because it's not useful and TOS doesn't return it either ...
+     */
+    old = ((ULONG)mfp->ucr<<24) | ((ULONG)mfp->rsr<<16) | (ULONG)mfp->tsr<<8;
 
     if ((baud >= MIN_BAUDRATE_CODE ) && (baud <= MAX_BAUDRATE_CODE)) {
         rs232iorec.baudrate = baud;
@@ -104,6 +122,10 @@ void rsconf(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
         mfp->tsr = tsr;
     if (scr >= 0)
         mfp->scr = scr;
+
+    return old;
+#else
+    return 0UL;
 #endif
 }
 
