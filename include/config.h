@@ -37,6 +37,9 @@
 # ifndef CONF_WITH_ACSI
 #  define CONF_WITH_ACSI 0
 # endif
+# ifndef CONF_WITH_TT_MFP
+#  define CONF_WITH_TT_MFP 0
+# endif
 # ifndef CONF_WITH_MEGARTC
 #  define CONF_WITH_MEGARTC 0
 # endif
@@ -51,6 +54,12 @@
 #ifdef MACHINE_FIREBEE
 # ifndef CONF_WITH_IDE
 #  define CONF_WITH_IDE 1 /* For CompactFlash support */
+# endif
+# ifndef CONF_WITH_TT_MFP
+#  define CONF_WITH_TT_MFP 0
+# endif
+# ifndef CONF_WITH_SCC
+#  define CONF_WITH_SCC 0
 # endif
 # ifndef CONF_WITH_MEGARTC
 #  define CONF_WITH_MEGARTC 0
@@ -86,6 +95,12 @@
 # endif
 # ifndef CONF_WITH_FASTRAM
 #  define CONF_WITH_FASTRAM 0
+# endif
+# ifndef CONF_WITH_TT_MFP
+#  define CONF_WITH_TT_MFP 0
+# endif
+# ifndef CONF_WITH_SCC
+#  define CONF_WITH_SCC 0
 # endif
 # ifndef CONF_WITH_STE_SHIFTER
 #  define CONF_WITH_STE_SHIFTER 0
@@ -178,6 +193,12 @@
 # endif
 # ifndef CONF_WITH_MFP_RS232
 #  define CONF_WITH_MFP_RS232 0
+# endif
+# ifndef CONF_WITH_TT_MFP
+#  define CONF_WITH_TT_MFP 0
+# endif
+# ifndef CONF_WITH_SCC
+#  define CONF_WITH_SCC 0
 # endif
 # ifndef CONF_WITH_YM2149
 #  define CONF_WITH_YM2149 0
@@ -377,6 +398,20 @@
  */
 #ifndef CONF_WITH_MFP_RS232
 # define CONF_WITH_MFP_RS232 1
+#endif
+
+/*
+ * Set CONF_WITH_TT_MFP to 1 to enable TT MFP support
+ */
+#ifndef CONF_WITH_TT_MFP
+# define CONF_WITH_TT_MFP 1
+#endif
+
+/*
+ * Set CONF_WITH_SCC to 1 to enable SCC support
+ */
+#ifndef CONF_WITH_SCC
+# define CONF_WITH_SCC 1
 #endif
 
 /*

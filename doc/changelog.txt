@@ -4074,3 +4074,7 @@ Start... early ages
 2012-10-11
 - bios/machine.c bios/machine.h bios/screen.h: Replaced hard-coded
   values with #defines in feature detection code. (RFB)
+
+2012-10-12
+- bios/machine.c bios/machine.h include/config.h: Added detection of
+  additional serial ports: Falcon SCC and TT second MFP. (RFB)

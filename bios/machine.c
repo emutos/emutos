@@ -59,7 +59,14 @@ int has_tt_shifter;
 #if CONF_WITH_VIDEL
 int has_videl;
 #endif
- 
+
+#if CONF_WITH_TT_MFP
+int has_tt_mfp;
+#endif
+#if CONF_WITH_SCC
+int has_scc;
+#endif
+
 /*
  * Tests video capabilities (STEnhanced Shifter, TT Shifter and VIDEL)
  */
@@ -109,6 +116,30 @@ static void detect_video(void)
 
 #if DBG_MACHINE
   kprintf("has_videl = %d\n", has_videl);
+#endif
+#endif
+}
+
+/*
+ * detect SCC (Falcon and TT) and second MFP (TT only)
+ */
+static void detect_serial_ports(void)
+{
+#if CONF_WITH_TT_MFP
+  has_tt_mfp = 0;
+  if (check_read_byte(TT_MFP_BASE+1))
+    has_tt_mfp = 1;
+#if DBG_MACHINE
+  kprintf("has_tt_mfp = %d\n", has_tt_mfp);
+#endif
+#endif
+
+#if CONF_WITH_SCC
+  has_scc = 0;
+  if (check_read_byte(SCC_PORTA_CTL))
+    has_scc = 1;
+#if DBG_MACHINE
+  kprintf("has_scc = %d\n", has_scc);
 #endif
 #endif
 }
@@ -349,6 +380,7 @@ void machine_detect(void)
   amiga_machine_detect();
 #endif
   detect_video();
+  detect_serial_ports();
 #if CONF_WITH_VME
   detect_vme();
 #endif

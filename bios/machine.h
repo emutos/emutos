@@ -19,10 +19,12 @@
 #define FALCON_HHT          0x00ff8282UL
 #define TT_PALETTE_REGS     0x00ff8400UL
 #define BLITTER_CONFIG1     0x00ff8a3cUL
+#define SCC_PORTA_CTL       0x00ff8c80UL
 #define SYS_INT_MASK        0x00ff8e01UL
 #define SCU_GPR1            0x00ff8e09UL
 #define VME_INT_MASK        0x00ff8e0dUL
 #define DIP_SWITCHES        0x00ff9200UL
+#define TT_MFP_BASE         0x00fffa80UL
 
 /*
  * some useful cookies.
@@ -55,6 +57,12 @@ extern int has_tt_shifter;
 #endif
 #if CONF_WITH_VIDEL
 extern int has_videl;
+#endif
+#if CONF_WITH_TT_MFP
+extern int has_tt_mfp;
+#endif
+#if CONF_WITH_SCC
+extern int has_scc;
 #endif
 #if CONF_WITH_VME
 extern int has_vme;
