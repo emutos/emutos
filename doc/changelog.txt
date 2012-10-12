@@ -4070,3 +4070,7 @@ Start... early ages
 2012-10-10
 - bios/serport.c bios/serport.h bios/xbios.c: Fix Rsconf() to return
   ULONG instead of void. (RFB)
+
+2012-10-11
+- bios/machine.c bios/machine.h bios/screen.h: Replaced hard-coded
+  values with #defines in feature detection code. (RFB)

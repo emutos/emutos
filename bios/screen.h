@@ -36,7 +36,6 @@
 #define TT_SHIFTER_BITMASK  0x970f      /* valid bits in TT_SHIFTER */
 
 #define ST_PALETTE_REGS     0x00ff8240L
-#define TT_PALETTE_REGS     0x00ff8400L
 #define FALCON_PALETTE_REGS 0x00ff9800L
 
 #define TT_PALETTE_BITMASK  0x0fff      /* valid bits in TT_PALETTE_REGS */

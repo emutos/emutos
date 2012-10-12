@@ -93,7 +93,7 @@ static void detect_video(void)
 #if CONF_WITH_TT_SHIFTER
   /* test if we have a TT Shifter by testing for TT color palette */
   has_tt_shifter = 0;
-  if (check_read_byte(0x00ff8400))
+  if (check_read_byte(TT_PALETTE_REGS))
     has_tt_shifter = 1;
 
 #if DBG_MACHINE
@@ -104,7 +104,7 @@ static void detect_video(void)
 #if CONF_WITH_VIDEL
   /* test if we have Falcon VIDEL by testing for f030_xreg */
   has_videl = 0;
-  if (check_read_byte(0x00ff8282))
+  if (check_read_byte(FALCON_HHT))
     has_videl = 1;
 
 #if DBG_MACHINE
@@ -121,10 +121,10 @@ int has_vme;
 
 static void detect_vme(void)
 {
-  volatile BYTE *vme_mask = (BYTE *) 0x00ff8e0d;
-  volatile BYTE *sys_mask = (BYTE *) 0x00ff8e01;
+  volatile BYTE *vme_mask = (BYTE *) VME_INT_MASK;
+  volatile BYTE *sys_mask = (BYTE *) SYS_INT_MASK;
   
-  if(check_read_byte(0x00ff8e09)) {
+  if(check_read_byte(SCU_GPR1)) {
     *vme_mask = 0x40;  /* ??? IRQ3 from VMEBUS/soft */
     *sys_mask = 0x14;  /* ??? set VSYNC and HSYNC */
     has_vme = 1;
@@ -150,7 +150,7 @@ static void detect_blitter(void)
 {
   has_blitter = 0;
 
-  if (check_read_byte(0x00ff8a3c))
+  if (check_read_byte(BLITTER_CONFIG1))
     has_blitter = 1;
 
 #if DBG_MACHINE
@@ -168,8 +168,8 @@ static void detect_blitter(void)
 static void setvalue_swi(void)
 {
   cookie_swi = 0x7F;
-  if (check_read_byte(0x00ff9201)) {
-    cookie_swi = (*(volatile WORD *)0x00ff9200)>>8;
+  if (check_read_byte(DIP_SWITCHES+1)) {
+    cookie_swi = (*(volatile WORD *)DIP_SWITCHES)>>8;
   }
 
 #if DBG_MACHINE
