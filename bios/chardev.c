@@ -1,7 +1,7 @@
 /*
- *  chardev.c - BIOS character device funtions
+ *  chardev.c - BIOS character device functions
  *
- * Copyright (c) 2001-2008 by the EmuTOS Development Team
+ * Copyright (c) 2001-2012 by the EmuTOS Development Team
  *
  * Authors:
  *  THO     Thomas Huth
@@ -22,56 +22,61 @@
 #include "vt52.h"
 #include "mfp.h"
 
+#define NUM_CHAR_VECS   8
 
-/*==== Defines ============================================================*/
+static LONG char_dummy(void);
+static LONG charout_dummy(WORD x);
 
-#define DBGBIOSC TRUE
+static LONG (*bconstat_init[NUM_CHAR_VECS])(void) =
+    { char_dummy, bconstat1, bconstat2, bconstat3,
+      char_dummy, char_dummy, char_dummy, char_dummy };
 
-/*==== BIOS initialization ================================================*/
+static LONG (*bconin_init[NUM_CHAR_VECS])(void) =
+    { bconin0, bconin1, bconin2, bconin3,
+      char_dummy, char_dummy, char_dummy, char_dummy };
+
+static LONG (*bcostat_init[NUM_CHAR_VECS])(void) =
+    { bcostat0, bcostat1, bcostat2, bcostat4,
+      /* note that IKBD and MIDI bcostat() are swapped! */
+      bcostat3, char_dummy, char_dummy, char_dummy };
+
+static LONG (*bconout_init[NUM_CHAR_VECS])(WORD) =
+    { bconout0, bconout1, bconout2, bconout3,
+      bconout4, bconout5, charout_dummy, charout_dummy };
+
 /*
- * called from startup.s, this routine will do necessary bios initialization
- * that can be done in hi level lang.  startup.s has the rest.
+ * dummy - unimplemented functions
  */
+static void dummy(void)
+{
+}
+
+static LONG char_dummy(void)
+{
+    return 0L;
+}
+
+static LONG charout_dummy(WORD x)
+{
+    return 0L;
+}
+
+
+/*==== BIOS device vector initialization =============================*/
 
 void chardev_init(void)
 {
-    /* initialise bios device functions */
+int i;
 
-    bconstat_vec[0] = bconstat0;
-    bconstat_vec[1] = bconstat1;
-    bconstat_vec[2] = bconstat2;
-    bconstat_vec[3] = bconstat4;    /* IKBD and MIDI bconstat swapped */
-    bconstat_vec[4] = bconstat3;
-    bconstat_vec[5] = bconstat5;
-    bconstat_vec[6] = bconstat6;
-    bconstat_vec[7] = bconstat7;
-
-    bconin_vec[0] = bconin0;
-    bconin_vec[1] = bconin1;
-    bconin_vec[2] = bconin2;
-    bconin_vec[3] = bconin3;
-    bconin_vec[4] = bconin4;
-    bconin_vec[5] = bconin5;
-    bconin_vec[6] = bconin6;
-    bconin_vec[7] = bconin7;
-    
-    bconout_vec[0] = bconout0;
-    bconout_vec[1] = bconout1;
-    bconout_vec[2] = bconout2;
-    bconout_vec[3] = bconout3;
-    bconout_vec[4] = bconout4;
-    bconout_vec[5] = bconout5;
-    bconout_vec[6] = bconout6;
-    bconout_vec[7] = bconout7;
-
-    bcostat_vec[0] = bcostat0;
-    bcostat_vec[1] = bcostat1;
-    bcostat_vec[2] = bcostat2;
-    bcostat_vec[3] = bcostat3;
-    bcostat_vec[4] = bcostat4;
-    bcostat_vec[5] = bcostat5;
-    bcostat_vec[6] = bcostat6;
-    bcostat_vec[7] = bcostat7;
+    /* initialise bios device vectors */
+    for (i = 0; i < NUM_CHAR_VECS; i++)
+        bconstat_vec[i] = bconstat_init[i];
+    for (i = 0; i < NUM_CHAR_VECS; i++)
+        bconin_vec[i] = bconin_init[i];
+    for (i = 0; i < NUM_CHAR_VECS; i++)
+        bcostat_vec[i] = bcostat_init[i];
+    for (i = 0; i < NUM_CHAR_VECS; i++)
+        bconout_vec[i] = bconout_init[i];
 
     /* setup serial output functions */
     aux_stat = dummy;
@@ -81,51 +86,6 @@ void chardev_init(void)
     prt_stat = dummy;
     prt_vec = dummy;
     dump_vec = dummy;
-}
-
-
-
-/* BIOS devices - bconstat functions */
-
-LONG bconstat4(void)
-{
-  return 0;
-}
-
-LONG bconstat5(void)
-{
-  return 0;
-}
-
-LONG bconstat6(void)
-{
-  return 0;
-}
-
-LONG bconstat7(void)
-{
-  return 0;
-}
-
-
-
-/* BIOS devices - bconin functions */
-
-LONG bconin4(void)
-{
-  return 0;
-}
-LONG bconin5(void)
-{
-  return 0;
-}
-LONG bconin6(void)
-{
-  return 0;
-}
-LONG bconin7(void)
-{
-  return 0;
 }
 
 
@@ -145,16 +105,6 @@ LONG bconout5(WORD ch)
     return 1L;
 }
 
-LONG bconout6(WORD b)
-{
-    return 1L;
-}
-
-LONG bconout7(WORD b)
-{
-    return 1L;
-}
-
 
 
 /* BIOS devices - bcostat functions */
@@ -162,30 +112,4 @@ LONG bconout7(WORD b)
 LONG bcostat2(void)
 {
   return -1;
-}
-
-LONG bcostat5(void)
-{
-  return -1;
-}
-
-LONG bcostat6(void)
-{
-  return -1;
-}
-
-LONG bcostat7(void)
-{
-  return -1;
-}
-
-
-
-/*
- * dummy - not implemented functions
- */
-
-void dummy(void)
-{
-    return;
 }

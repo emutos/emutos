@@ -4084,3 +4084,6 @@ Start... early ages
   bios/kprint.c bios/midi.c bios/midi.h bios/parport.c bios/parport.h
   bios/serport.c: Code cleanup: remove unnecessary argument passed
   in Bconout() processing. (RFB)
+- bios/bios.c bios/chardev.c bios/chardev.h bios/parport.c
+  bios/tosvars.h: Code cleanup: save ROM space & fix swapping of Bcostat()
+  for ikbd & midi. (RFB)

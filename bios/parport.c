@@ -37,12 +37,6 @@ void parport_init(void)
 #endif
 }
 
-LONG bconstat0(void)
-{
-    /* input not implemented */
-    return 0;  /* no char available */
-}
-
 LONG bconin0(void)
 {
     /* not implemented */

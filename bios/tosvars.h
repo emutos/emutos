@@ -108,6 +108,11 @@ extern void (*dump_vec)(void);
 
 /* indirect BIOS vectors */
 
+extern LONG (*bconstat_vec[])(void);
+extern LONG (*bconin_vec[])(void);
+extern LONG (*bconout_vec[])(WORD);
+extern LONG (*bcostat_vec[])(void);
+
 extern LONG (*hdv_rw)(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG lrecnr);
 extern LONG (*hdv_bpb)(WORD dev);
 extern LONG (*hdv_mediach)(WORD dev);
