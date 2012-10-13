@@ -170,7 +170,7 @@ LONG bcostat1(void)
 #endif
 }
 
-LONG bconout1(WORD dev, WORD b)
+LONG bconout1(WORD b)
 {
 #if CONF_WITH_MFP_RS232
     /* Wait for transmit buffer to become empty */

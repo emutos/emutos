@@ -574,7 +574,8 @@ static LONG bios_2(WORD handle)
 
 LONG bconout(WORD handle, WORD what)
 {
-    return protect_ww((PFLONG)(bconout_vec[handle & 7]), handle, what);
+//    return protect_w((PFLONG)(bconout_vec[handle & 7]), what);
+    return protect_w(bconout_vec[handle & 7], what);
 }
 
 #if DBGBIOS

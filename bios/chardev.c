@@ -132,25 +132,25 @@ LONG bconin7(void)
 
 /* BIOS devices - bconout functions */
 
-LONG bconout2(WORD dev, WORD b)
+LONG bconout2(WORD b)
 {
     cputc(b);
     return 1L;
 }
 
 /* bconout5 - raw console output. */
-LONG bconout5(WORD dev, WORD ch)
+LONG bconout5(WORD ch)
 {
     ascii_out(ch);
     return 1L;
 }
 
-LONG bconout6(WORD dev, WORD b)
+LONG bconout6(WORD b)
 {
     return 1L;
 }
 
-LONG bconout7(WORD dev, WORD b)
+LONG bconout7(WORD b)
 {
     return 1L;
 }

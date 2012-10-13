@@ -78,7 +78,7 @@ LONG bcostat3(void)
 }
 
 /* send a byte to the MIDI ACIA */
-LONG bconout3(WORD dev, WORD c)
+LONG bconout3(WORD c)
 {
   while(! bcostat3())
     ;
@@ -98,7 +98,7 @@ void midiws(WORD cnt, LONG ptr)
 {
   UBYTE *p = (UBYTE *)ptr;
   while(cnt-- >= 0) {
-    bconout3(0, *p++);
+    bconout3(*p++);
   }
 }
 

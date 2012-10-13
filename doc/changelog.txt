@@ -4078,3 +4078,9 @@ Start... early ages
 2012-10-12
 - bios/machine.c bios/machine.h include/config.h: Added detection of
   additional serial ports: Falcon SCC and TT second MFP. (RFB)
+
+2012-10-13
+- bios/bios.c bios/chardev.c bios/chardev.h bios/ikbd.c bios/ikbd.h
+  bios/kprint.c bios/midi.c bios/midi.h bios/parport.c bios/parport.h
+  bios/serport.c: Code cleanup: remove unnecessary argument passed
+  in Bconout() processing. (RFB)

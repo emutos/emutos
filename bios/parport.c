@@ -64,7 +64,7 @@ LONG bcostat0(void)
 #endif
 }
 
-LONG bconout0(WORD dev, WORD c)
+LONG bconout0(WORD c)
 {
     if(bcostat0()) {
 #if CONF_WITH_PRINTER_PORT

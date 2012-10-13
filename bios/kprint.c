@@ -103,9 +103,9 @@ static void cprintf_outc(int c)
 {
     /* add a CR to Unix LF for VT52 convenience */
     if ( c == '\n')
-        bconout2(2,'\r');
+        bconout2('\r');
 
-    bconout2(2,c);
+    bconout2(c);
 }
 
 static int vcprintf(const char *fmt, va_list ap)
@@ -129,14 +129,14 @@ int cprintf(const char *fmt, ...)
 #if MIDI_DEBUG_PRINT
 static void kprintf_outc_midi(int c)
 {
-    bconout3(3,c);
+    bconout3(c);
 }
 #endif
 
 #if RS232_DEBUG_PRINT
 static void kprintf_outc_rs232(int c)
 {
-    bconout1(1, c);
+    bconout1(c);
 }
 #endif
 
