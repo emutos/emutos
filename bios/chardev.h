@@ -40,6 +40,10 @@ LONG bcostat2(void);
 LONG bcostat3(void);
 LONG bcostat4(void);
 
+LONG char_dummy(void);
+LONG charout_dummy(WORD x);
+
+
 /* internal init routine */
 
 extern void chardev_init(void);

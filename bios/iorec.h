@@ -35,7 +35,6 @@ IOREC {
    This bug will be fixed in GCC 4.5.2.
 */
 extern volatile IOREC ikbdiorec, midiiorec;
-extern IOREC *rs232iorecptr;
 
 /*==== Functions ==========================================================*/
 

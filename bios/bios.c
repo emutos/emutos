@@ -199,6 +199,7 @@ static void bios_init(void)
     init_system_timer();
 
     /* Initialize the RS-232 port */
+    chardev_init();     /* Initialize low-memory bios vectors */
     init_serport();
     boot_status |= RS232_AVAILABLE;     /* track progress */
     
@@ -234,7 +235,6 @@ static void bios_init(void)
 
     /* initialize BIOS components */
 
-    chardev_init();     /* Initialize character devices */
     parport_init();     /* parallel port */
     //mouse_init();     /* init mouse driver */
     clock_init();       /* init clock */
@@ -531,7 +531,17 @@ static void bios_0(MPB *mpb)
 
 LONG bconstat(WORD handle)        /* GEMBIOS character_input_status */
 {
-    return protect_v(bconstat_vec[handle & 7]);
+#if BCONMAP_AVAILABLE
+    WORD map_index = handle - BCONMAP_START_HANDLE;
+    if (map_index >= bconmap_root.maptabsize)
+        return 0L;
+    if (map_index >= 0)
+        return protect_v(bconmap_root.maptab[map_index].Bconstat);
+#endif
+
+    if ((handle >= 0) && (handle <= 7))
+        return protect_v(bconstat_vec[handle]);
+    return 0L;
 }
 
 #if DBGBIOS
@@ -558,7 +568,17 @@ static LONG bios_1(WORD handle)
 
 LONG bconin(WORD handle)
 {
-    return protect_v(bconin_vec[handle & 7]);
+#if BCONMAP_AVAILABLE
+    WORD map_index = handle - BCONMAP_START_HANDLE;
+    if (map_index >= bconmap_root.maptabsize)
+        return 0L;
+    if (map_index >= 0)
+        return protect_v(bconmap_root.maptab[map_index].Bconin);
+#endif
+
+    if ((handle >= 0) && (handle <= 7))
+        return protect_v(bconin_vec[handle]);
+    return 0L;
 }
 
 #if DBGBIOS
@@ -574,7 +594,17 @@ static LONG bios_2(WORD handle)
 
 LONG bconout(WORD handle, WORD what)
 {
-    return protect_w(bconout_vec[handle & 7], what);
+#if BCONMAP_AVAILABLE
+    WORD map_index = handle - BCONMAP_START_HANDLE;
+    if (map_index >= bconmap_root.maptabsize)
+        return 0L;
+    if (map_index >= 0)
+        return protect_w(bconmap_root.maptab[map_index].Bconout, what);
+#endif
+
+    if ((handle >= 0) && (handle <= 7))
+        return protect_w(bconout_vec[handle], what);
+    return 0L;
 }
 
 #if DBGBIOS
@@ -701,14 +731,17 @@ static LONG bios_7(WORD drive)
 
 LONG bcostat(WORD handle)       /* GEMBIOS character_output_status */
 {
-    if(handle>7)
-        return 0;               /* Illegal handle */
+#if BCONMAP_AVAILABLE
+    WORD map_index = handle - BCONMAP_START_HANDLE;
+    if (map_index >= bconmap_root.maptabsize)
+        return 0L;
+    if (map_index >= 0)
+        return protect_v(bconmap_root.maptab[map_index].Bcostat);
+#endif
 
-    /* compensate for a known BIOS bug: MIDI and IKBD are switched */
-    /*    if(handle==3)  handle=4; else if (handle==4)  handle=3;  */
-    /* LVL: now done directly in the table */
-
-    return protect_v(bcostat_vec[handle]);
+    if ((handle >= 0) && (handle <= 7))
+        return protect_v(bcostat_vec[handle]);
+    return 0L;
 }
 
 #if DBGBIOS

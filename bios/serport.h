@@ -14,6 +14,13 @@
 #define _SERPORT_H
 
 #include "portab.h"
+#include "iorec.h"
+
+#if CONF_WITH_SCC || CONF_WITH_TT_MFP
+#define BCONMAP_AVAILABLE 1
+#else
+#define BCONMAP_AVAILABLE 0
+#endif
 
 /*
  * baud rate codes
@@ -50,9 +57,67 @@
 #define MAX_FLOW_CTRL   FLOW_CTRL_BOTH
 
 /*
+ * Bconmap() stuff
+ */
+typedef struct {
+    IOREC in;
+    IOREC out;
+    char baudrate;
+    char flowctrl;  	/* TODO, flow control */
+} EXT_IOREC;
+
+typedef struct {        /* one per mappable device */
+    LONG (*Bconstat)();
+    LONG (*Bconin)();
+    LONG (*Bcostat)();
+    LONG (*Bconout)(WORD);
+    ULONG (*Rsconf)(WORD,WORD,WORD,WORD,WORD,WORD);
+    EXT_IOREC *Iorec;   /* points to IOREC and extended IOREC */
+} MAPTAB;
+
+typedef struct {
+    MAPTAB *maptab;
+    WORD maptabsize;
+    WORD mapped_device; /* device currently mapped to device 1 */
+} BCONMAP;
+
+#define BCONMAP_START_HANDLE    6
+
+/*
+ * external references
+ */
+extern BCONMAP bconmap_root;
+extern ULONG (*rsconfptr)(WORD,WORD,WORD,WORD,WORD,WORD);
+extern EXT_IOREC *rs232iorecptr;
+
+/*
  * function prototypes
  */
 void init_serport(void);
-ULONG rsconf(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
+LONG bconstat1(void);
+LONG bconin1(void);
+LONG bcostat1(void);
+LONG bconout1(WORD);
+ULONG rsconf1(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
+LONG bconmap(WORD);
 
+#if BCONMAP_AVAILABLE
+LONG bconstatA(void);
+LONG bconinA(void);
+LONG bcostatA(void);
+LONG bconoutA(WORD);
+LONG bconstatB(void);
+LONG bconinB(void);
+LONG bcostatB(void);
+LONG bconoutB(WORD);
+LONG bconstatTT(void);
+LONG bconinTT(void);
+LONG bcostatTT(void);
+LONG bconoutTT(WORD);
+ULONG rsconfA(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
+ULONG rsconfB(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
+ULONG rsconfTT(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
+ULONG rsconf_dummy(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
 #endif
+
+#endif  /* _SERPORT_H */

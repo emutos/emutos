@@ -24,9 +24,6 @@
 
 #define NUM_CHAR_VECS   8
 
-static LONG char_dummy(void);
-static LONG charout_dummy(WORD x);
-
 static LONG (*bconstat_init[NUM_CHAR_VECS])(void) =
     { char_dummy, bconstat1, bconstat2, bconstat3,
       char_dummy, char_dummy, char_dummy, char_dummy };
@@ -51,12 +48,12 @@ static void dummy(void)
 {
 }
 
-static LONG char_dummy(void)
+LONG char_dummy(void)
 {
     return 0L;
 }
 
-static LONG charout_dummy(WORD x)
+LONG charout_dummy(WORD x)
 {
     return 0L;
 }

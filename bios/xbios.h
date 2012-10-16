@@ -15,7 +15,6 @@ LONG iorec(WORD devno);
 LONG random(void);
 LONG kbdvbase(void);
 LONG supexec(LONG codeptr);
-LONG bconmap(WORD devno);
 
 LONG xbios_do_unimpl(WORD number);
 
