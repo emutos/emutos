@@ -106,18 +106,17 @@ T tested and working on an emulator or real hardware
  ----------------------------------------------------------------------------
 
  T 0x00 getmpb
- T 0x01 bconstat        (the function works for console only)
- > 0x02 bconin          (the function works for console only)
- T 0x03 bconout         (the function works for console only)
+ T 0x01 bconstat
+ T 0x02 bconin
+ T 0x03 bconout
  T 0x04 rwabs
  T 0x05 setexc
  T 0x06 tickcal
  T 0x07 getbpb
- > 0x08 bcostat         (the function works for console only)
+ T 0x08 bcostat
  > 0x09 mediach         (crude, floppy write-protect mode not monitored)
- X 0x0a drvmap          (the function works, but not the devices)
+ X 0x0a drvmap
  X 0x0b kbshift
- X 0x11 date_time       (used by BDOS to get/set the date and time)
 
 
  XBIOS Functions
@@ -129,7 +128,7 @@ All XBIOS versions:
  X 0x02 physBase
  X 0x03 logBase
  X 0x04 getRez
- > 0x05 setscreen       (not fully tested)
+ X 0x05 setscreen
  X 0x06 setPallete
  X 0x07 setColor
  X 0x08 floprd
@@ -168,13 +167,12 @@ All XBIOS versions:
 TOS v1.02:
  X 0x29 floprate
 
- - 0x2c Bconmap
-
  t 0x40 Blitmode
 
 TOS v2.0:
  X 0x2a DMAread
  X 0x2b DMAwrite
+ X 0x2c Bconmap
 
 TOS v3.00:
  X 0x2e NVMaccess
@@ -191,7 +189,7 @@ TOS v3.00:
 TOS v4.00:
  X 0x58 Vsetmode        (for Falcon Videl only)
  X 0x59 Vmontype        (for Falcon Videl only)
-
+ X 0x5a VsetSync        (for Falcon Videl only)
  X 0x5b VgetSize        (for Falcon Videl only)
  
  X 0x5d VsetRGB         (for Falcon Videl only)
@@ -495,7 +493,7 @@ All AES versions:
  X      shel_wdef              (PC-GEM call)
 
 AES v1.40 (TOS >= v1.04):
- >      fsel_exinput
+ X      fsel_exinput
  t      wind_new
 
 AES v3.30 (TOS > v3.06):

@@ -4091,3 +4091,4 @@ Start... early ages
 2012-10-15
 - bios/bios.c bios/chardev.c bios/chardev.h bios/iorec.h bios/serport.c
   bios/serport.h bios/xbios.c bios/xbios.h: Added Bconmap() support. (RFB)
+- doc/status.txt: Small corrections to lists of implemented functions. (RFB)
