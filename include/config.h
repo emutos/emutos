@@ -102,6 +102,9 @@
 # ifndef CONF_WITH_SCC
 #  define CONF_WITH_SCC 0
 # endif
+# ifndef CONF_WITH_IDE
+#  define CONF_WITH_IDE 0
+# endif
 # ifndef CONF_WITH_STE_SHIFTER
 #  define CONF_WITH_STE_SHIFTER 0
 # endif
