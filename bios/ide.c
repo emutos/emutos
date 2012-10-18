@@ -131,9 +131,12 @@ static int ide_wait_not_busy_check_error(void)
 
 static void ide_select_sector_lba(UWORD device, ULONG sector)
 {
+    // first change the device bit without changing anything else 
+    ide_interface.head = IDE_DEVICE(device) | (ide_interface.head & ~IDE_DEVICE(1));
     ide_interface.sector_number = (UBYTE)(sector & 0xff);
     ide_interface.cylinder_low = (UBYTE)((sector >> 8) & 0xff);
     ide_interface.cylinder_high = (UBYTE)((sector >> 16) & 0xff);
+    // now write the rest of the devhead register.
     ide_interface.head = IDE_MODE_LBA | IDE_DEVICE(device) | (UBYTE)((sector >> 24) & 0x0f);
 }
 
@@ -251,7 +254,7 @@ LONG ide_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev)
         return EUNDEV;
 #endif
 
-    if (dev >= 1) /* Should be 2 to support slave device */
+    if (dev >= 2) /* Only Master and Slave device supported */
         return EUNDEV;
 
     while (count > 0)

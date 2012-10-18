@@ -4092,3 +4092,7 @@ Start... early ages
 - bios/bios.c bios/chardev.c bios/chardev.h bios/iorec.h bios/serport.c
   bios/serport.h bios/xbios.c bios/xbios.h: Added Bconmap() support. (RFB)
 - doc/status.txt: Small corrections to lists of implemented functions. (RFB)
+
+2012-10-18
+- bios/ide.c: Fixed and enabled support for IDE slave device. Contributed by
+  Stephen Leary. (VRI)
