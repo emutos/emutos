@@ -4096,3 +4096,5 @@ Start... early ages
 2012-10-18
 - bios/ide.c: Fixed and enabled support for IDE slave device. Contributed by
   Stephen Leary. (VRI)
+- bios/ide.c bios/ide.h bios/machine.c include/config.h: Enabled the internal
+  IDE driver by default. (VRI)

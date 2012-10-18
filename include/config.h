@@ -37,6 +37,9 @@
 # ifndef CONF_WITH_ACSI
 #  define CONF_WITH_ACSI 0
 # endif
+# ifndef CONF_WITH_IDE
+#  define CONF_WITH_IDE 0 /* Because NatFeats are better */
+# endif
 # ifndef CONF_WITH_TT_MFP
 #  define CONF_WITH_TT_MFP 0
 # endif
@@ -52,9 +55,6 @@
  * Defaults for the FireBee target
  */
 #ifdef MACHINE_FIREBEE
-# ifndef CONF_WITH_IDE
-#  define CONF_WITH_IDE 1 /* For CompactFlash support */
-# endif
 # ifndef CONF_WITH_TT_MFP
 #  define CONF_WITH_TT_MFP 0
 # endif
@@ -158,9 +158,6 @@
 # endif
 # ifndef CONF_WITH_UAE
 #  define CONF_WITH_UAE 1
-# endif
-# ifndef CONF_WITH_IDE
-#  define CONF_WITH_IDE 1
 # endif
 #endif
 
@@ -480,8 +477,7 @@
  * Set CONF_WITH_IDE to 1 to activate Falcon IDE support.
  */
 #ifndef CONF_WITH_IDE
-  /* For safety, the experimental IDE support is disabled by default. */
-# define CONF_WITH_IDE 0
+# define CONF_WITH_IDE 1
 #endif
 
 /*

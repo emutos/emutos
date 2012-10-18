@@ -16,10 +16,13 @@
  * Only standard PC disks (byteswapped) are supported.
  */
 
+#define DBG_IDE 0
+
 #include "config.h"
 #include "portab.h"
 #include "ide.h"
 #include "gemerror.h"
+#include "vectors.h"
 #include "kprint.h"
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
@@ -76,6 +79,21 @@ struct IDE
 #define IDE_STATUS_DRQ (1 << 3)
 #define IDE_STATUS_DRDY (1 << 6)
 #define IDE_STATUS_BSY (1 << 7)
+
+int has_ide;
+
+void detect_ide(void)
+{
+#ifdef MACHINE_AMIGA
+    has_ide = has_gayle;
+#else
+    has_ide = check_read_byte((long)&ide_interface.command);
+#endif
+
+#if DBG_IDE
+    kprintf("has_ide = %d\n", has_ide);
+#endif
+}
 
 #if CONF_ATARI_HARDWARE
 
@@ -249,10 +267,8 @@ LONG ide_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev)
     UBYTE* p = (UBYTE*)buf;
     int ret;
 
-#ifdef MACHINE_AMIGA
-    if (!has_gayle)
+    if (!has_ide)
         return EUNDEV;
-#endif
 
     if (dev >= 2) /* Only Master and Slave device supported */
         return EUNDEV;

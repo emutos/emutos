@@ -28,6 +28,7 @@
 #include "string.h"
 #include "dmasound.h"
 #include "kprint.h"
+#include "ide.h"
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
 #endif
@@ -398,6 +399,9 @@ void machine_detect(void)
 #endif
 #if CONF_WITH_BLITTER
   detect_blitter();
+#endif
+#if CONF_WITH_IDE
+  detect_ide();
 #endif
 }
   

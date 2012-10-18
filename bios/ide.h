@@ -17,6 +17,7 @@
 
 #if CONF_WITH_IDE
 
+void detect_ide(void);
 LONG ide_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev);
 
 #endif /* CONF_WITH_IDE */
