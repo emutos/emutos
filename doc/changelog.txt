@@ -4104,3 +4104,7 @@ Start... early ages
   bios/kprint.c bios/midi.c bios/midi.h bios/parport.c bios/parport.h
   bios/serport.c bios/serport.h bios/tosvars.h : Fix args passed to xconout
   vectors (regression introduced 2012-10-13). (RFB)
+
+2012-10-27
+- aes/gemsuper.c aes/crysbind.h: Fix overwrite of local AES arrays if
+  originals are longer than expected. (RFB)

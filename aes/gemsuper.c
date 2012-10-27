@@ -478,9 +478,9 @@ static void xif(LONG pcrys_blk)
 
         LWCOPY(ADDR(&control[0]), CONTROL, C_SIZE);
         if (IN_LEN)
-          LWCOPY(ADDR(&int_in[0]), INT_IN, IN_LEN);
+          LWCOPY(ADDR(&int_in[0]), INT_IN, min(IN_LEN,I_SIZE));
         if (AIN_LEN)
-          LWCOPY(ADDR(&addr_in[0]), ADDR_IN, AIN_LEN*2);
+          LWCOPY(ADDR(&addr_in[0]), ADDR_IN, min(AIN_LEN,AI_SIZE)*2);
 
         int_out[0] = crysbind(OP_CODE, GGLOBAL, &control[0], &int_in[0], &int_out[0], 
                                 &addr_in[0]);

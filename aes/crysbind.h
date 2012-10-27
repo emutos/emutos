@@ -109,7 +109,7 @@
 #define G_SIZE 15
 #define I_SIZE 16
 #define O_SIZE 7
-#define AI_SIZE 3
+#define AI_SIZE 4                       /* for fsel_boxinput() compatibility */
 #define AO_SIZE 1
                                         /* Crystal funtion op code      */
 #define OP_CODE control[0]
