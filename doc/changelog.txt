@@ -4109,3 +4109,4 @@ Start... early ages
 - aes/gemsuper.c aes/crysbind.h: Fix overwrite of local AES arrays if
   originals are longer than expected. (RFB)
 - aes/gemsuper.c: Fix warning msg introduced by previous update. (RFB)
+- aes/gemfslib.c: Allow empty string in path passed to file selector. (RFB)

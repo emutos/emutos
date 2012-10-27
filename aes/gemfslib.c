@@ -491,8 +491,12 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
                                         /*   nullptr or if pts to null. */
         if (pipath == NULL)
           return(FALSE);
-        if ( *pipath == '\0')
-          return(FALSE);
+                                        /* if path string is empty, */
+                                        /*   set reasonable default */
+        if (*pipath == '\0') {
+          strcpy(pipath,"A:\\*.*");
+          *pipath += dos_gdrv();
+        }
                                         /* get memory for the filename buffer */
                                         /*  & the array that points to it     */
         for (nm_files = MAX_NM_FILES; nm_files >= MIN_NM_FILES; nm_files /= 2)
