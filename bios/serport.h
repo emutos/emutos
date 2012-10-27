@@ -70,7 +70,7 @@ typedef struct {        /* one per mappable device */
     LONG (*Bconstat)();
     LONG (*Bconin)();
     LONG (*Bcostat)();
-    LONG (*Bconout)(WORD);
+    LONG (*Bconout)(WORD,WORD);
     ULONG (*Rsconf)(WORD,WORD,WORD,WORD,WORD,WORD);
     EXT_IOREC *Iorec;   /* points to IOREC and extended IOREC */
 } MAPTAB;
@@ -97,7 +97,7 @@ void init_serport(void);
 LONG bconstat1(void);
 LONG bconin1(void);
 LONG bcostat1(void);
-LONG bconout1(WORD);
+LONG bconout1(WORD,WORD);
 ULONG rsconf1(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
 LONG bconmap(WORD);
 
@@ -105,15 +105,15 @@ LONG bconmap(WORD);
 LONG bconstatA(void);
 LONG bconinA(void);
 LONG bcostatA(void);
-LONG bconoutA(WORD);
+LONG bconoutA(WORD,WORD);
 LONG bconstatB(void);
 LONG bconinB(void);
 LONG bcostatB(void);
-LONG bconoutB(WORD);
+LONG bconoutB(WORD,WORD);
 LONG bconstatTT(void);
 LONG bconinTT(void);
 LONG bcostatTT(void);
-LONG bconoutTT(WORD);
+LONG bconoutTT(WORD,WORD);
 ULONG rsconfA(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
 ULONG rsconfB(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
 ULONG rsconfTT(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);

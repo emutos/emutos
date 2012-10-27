@@ -22,7 +22,7 @@ extern void midi_init(void);
 extern LONG bconstat3(void);
 extern LONG bconin3(void);
 extern LONG bcostat3(void);
-extern LONG bconout3(WORD c);
+extern LONG bconout3(WORD dev, WORD c);
 
 /* some xbios functions */
 extern void midiws(WORD cnt, LONG ptr);

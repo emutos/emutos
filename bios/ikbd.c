@@ -412,7 +412,7 @@ LONG bcostat4(void)
 }
 
 /* send a byte to the IKBD */
-LONG bconout4(WORD c)
+LONG bconout4(WORD dev, WORD c)
 {
     ikbd_writeb((UBYTE)c);
     return 1L;

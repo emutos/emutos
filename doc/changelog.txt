@@ -4098,3 +4098,9 @@ Start... early ages
   Stephen Leary. (VRI)
 - bios/ide.c bios/ide.h bios/machine.c include/config.h: Enabled the internal
   IDE driver by default. (VRI)
+
+2012-10-26
+- bios/bios.c bios/chardev.c bios/chardev.h bios/ikbd.c bios/ikbd.h
+  bios/kprint.c bios/midi.c bios/midi.h bios/parport.c bios/parport.h
+  bios/serport.c bios/serport.h bios/tosvars.h : Fix args passed to xconout
+  vectors (regression introduced 2012-10-13). (RFB)

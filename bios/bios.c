@@ -599,11 +599,11 @@ LONG bconout(WORD handle, WORD what)
     if (map_index >= bconmap_root.maptabsize)
         return 0L;
     if (map_index >= 0)
-        return protect_w(bconmap_root.maptab[map_index].Bconout, what);
+        return protect_ww((PFLONG)bconmap_root.maptab[map_index].Bconout, handle, what);
 #endif
 
     if ((handle >= 0) && (handle <= 7))
-        return protect_w(bconout_vec[handle], what);
+        return protect_ww((PFLONG)bconout_vec[handle], handle, what);
     return 0L;
 }
 

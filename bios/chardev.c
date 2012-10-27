@@ -37,7 +37,7 @@ static LONG (*bcostat_init[NUM_CHAR_VECS])(void) =
       /* note that IKBD and MIDI bcostat() are swapped! */
       bcostat3, char_dummy, char_dummy, char_dummy };
 
-static LONG (*bconout_init[NUM_CHAR_VECS])(WORD) =
+static LONG (*bconout_init[NUM_CHAR_VECS])(WORD,WORD) =
     { bconout0, bconout1, bconout2, bconout3,
       bconout4, bconout5, charout_dummy, charout_dummy };
 
@@ -53,7 +53,7 @@ LONG char_dummy(void)
     return 0L;
 }
 
-LONG charout_dummy(WORD x)
+LONG charout_dummy(WORD dev,WORD b)
 {
     return 0L;
 }
@@ -89,14 +89,14 @@ int i;
 
 /* BIOS devices - bconout functions */
 
-LONG bconout2(WORD b)
+LONG bconout2(WORD dev, WORD b)
 {
     cputc(b);
     return 1L;
 }
 
 /* bconout5 - raw console output. */
-LONG bconout5(WORD ch)
+LONG bconout5(WORD dev, WORD ch)
 {
     ascii_out(ch);
     return 1L;

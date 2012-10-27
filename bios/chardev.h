@@ -27,12 +27,12 @@ LONG bconin1(void);
 LONG bconin2(void);
 LONG bconin3(void);
 
-LONG bconout0(WORD);
-LONG bconout1(WORD);
-LONG bconout2(WORD);
-LONG bconout3(WORD);
-LONG bconout4(WORD);
-LONG bconout5(WORD);
+LONG bconout0(WORD, WORD);
+LONG bconout1(WORD, WORD);
+LONG bconout2(WORD, WORD);
+LONG bconout3(WORD, WORD);
+LONG bconout4(WORD, WORD);
+LONG bconout5(WORD, WORD);
 
 LONG bcostat0(void);
 LONG bcostat1(void);
@@ -41,7 +41,7 @@ LONG bcostat3(void);
 LONG bcostat4(void);
 
 LONG char_dummy(void);
-LONG charout_dummy(WORD x);
+LONG charout_dummy(WORD dev, WORD x);
 
 
 /* internal init routine */

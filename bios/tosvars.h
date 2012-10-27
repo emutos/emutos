@@ -110,7 +110,7 @@ extern void (*dump_vec)(void);
 
 extern LONG (*bconstat_vec[])(void);
 extern LONG (*bconin_vec[])(void);
-extern LONG (*bconout_vec[])(WORD);
+extern LONG (*bconout_vec[])(WORD, WORD);
 extern LONG (*bcostat_vec[])(void);
 
 extern LONG (*hdv_rw)(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG lrecnr);

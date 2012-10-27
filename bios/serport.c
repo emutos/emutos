@@ -116,7 +116,7 @@ LONG bcostat1(void)
 #endif
 }
 
-LONG bconout1(WORD b)
+LONG bconout1(WORD dev, WORD b)
 {
 #if CONF_WITH_MFP_RS232
     /* Wait for transmit buffer to become empty */
@@ -150,7 +150,7 @@ LONG bcostatA(void)
     return -1L;
 }
 
-LONG bconoutA(WORD b)
+LONG bconoutA(WORD dev, WORD b)
 {
     return 0L;
 }
@@ -173,7 +173,7 @@ LONG bcostatB(void)
     return -1L;
 }
 
-LONG bconoutB(WORD b)
+LONG bconoutB(WORD dev, WORD b)
 {
     return 0L;
 }
@@ -198,7 +198,7 @@ LONG bcostatTT(void)
     return -1L;
 }
 
-LONG bconoutTT(WORD b)
+LONG bconoutTT(WORD dev, WORD b)
 {
     return 0L;
 }

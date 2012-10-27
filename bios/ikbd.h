@@ -57,7 +57,7 @@ extern void kb_timerc_int(void);
 extern LONG bconstat2(void);
 extern LONG bconin2(void);
 extern LONG bcostat4(void);
-extern LONG bconout4(WORD c);
+extern LONG bconout4(WORD dev, WORD c);
 extern LONG kbshift(WORD flag);
 
 /* some xbios functions */
