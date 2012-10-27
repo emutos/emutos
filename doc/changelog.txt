@@ -4108,3 +4108,4 @@ Start... early ages
 2012-10-27
 - aes/gemsuper.c aes/crysbind.h: Fix overwrite of local AES arrays if
   originals are longer than expected. (RFB)
+- aes/gemsuper.c: Fix warning msg introduced by previous update. (RFB)

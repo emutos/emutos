@@ -44,6 +44,7 @@
 #include "gemfmalt.h"
 #include "gemdosif.h"
 #include "gemasm.h"
+#include "rectfunc.h"
 
 #include "string.h"
 
