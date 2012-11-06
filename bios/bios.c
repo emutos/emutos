@@ -51,6 +51,7 @@
 #include "serport.h"
 #include "string.h"
 #include "natfeat.h"
+#include "delay.h"
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
 #endif
@@ -195,8 +196,9 @@ static void bios_init(void)
     mfp_init();
 #endif
 
-    /* Initialize the system 200 Hz timer */
+    /* Initialize the system 200 Hz timer & delay values */
     init_system_timer();
+    init_delay();       /* set 'reasonable default values' */
 
     /* Initialize the RS-232 port */
     chardev_init();     /* Initialize low-memory bios vectors */
@@ -230,7 +232,9 @@ static void bios_init(void)
 #else
     set_sr(0x2000);
 #endif
-  
+
+    calibrate_delay();  /* determine values for delay() function */
+                        /*  - requires interrupts to be enabled  */
     blkdev_init();      /* floppy and harddisk initialisation */
 
     /* initialize BIOS components */

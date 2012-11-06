@@ -4110,3 +4110,7 @@ Start... early ages
   originals are longer than expected. (RFB)
 - aes/gemsuper.c: Fix warning msg introduced by previous update. (RFB)
 - aes/gemfslib.c: Allow empty string in path passed to file selector. (RFB)
+
+2012-11-06
+- bios/bios.c bios/delay.c bios/delay.h bios/delayasm.S include/asm.h
+  Makefile: Add calibrated delay loop. (RFB)

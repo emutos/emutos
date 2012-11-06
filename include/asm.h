@@ -1,7 +1,7 @@
 /*
  * asm.h - Assembler help routines
  *
- * Copyright (c) 2001 EmuTOS development team
+ * Copyright (c) 2001-2012 EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel
@@ -12,7 +12,7 @@
 
 /*
  * This file contains utility routines (macros) to 
- * manipulate special registers from C language.
+ * perform functions not directly available from C.
  * 
  * available macros:
  *
@@ -22,6 +22,8 @@
  *   returns the current value of sr. the CCR bits are not meaningful.
  * void regsafe_call(void *addr);
  *   Do a subroutine call with saving/restoring the CPU registers
+ * void delay_loop(ULONG loopcount);
+ *   Loops for the specified loopcount.
  *
  * For clarity, please add such two lines above when adding 
  * new macros below.
@@ -107,7 +109,8 @@ extern void stop_until_interrupt(void);
  * Warning: The following macros use "memory" in the clobber list,
  * even if the memory is not modified. On ColdFire, this is necessary
  * to avoid these instructions to be reordered by the compiler.
- * This may be a GCC bug.
+ * 
+ * Apparently, this is standard GCC behaviour (RFB 2012).
  */
 
 
@@ -184,5 +187,22 @@ __extension__                             \
   : "memory"         /* clobbered */      \
   );                                      \
 })
+
+/*
+ * Loops for the specified count; for a 1 millisecond delay on the
+ * current system, use the value in the global 'loopcount_1_msec'.
+ */
+#define delay_loop(count)                   \
+  __extension__                             \
+  ({ULONG _count = (count);                 \
+    __asm__ __volatile__                    \
+    ("0:\n\t"                               \
+     "subq.l #1,%0\n\t"                     \
+     "bpl.b  0b"                            \
+    :                   /* outputs */       \
+    : "d"(_count)       /* inputs  */       \
+    : "cc", "memory"    /* clobbered */     \
+    );                                      \
+  })
 
 #endif /* ASM_H */
