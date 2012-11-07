@@ -137,7 +137,7 @@ static void detect_serial_ports(void)
 
 #if CONF_WITH_SCC
   has_scc = 0;
-  if (check_read_byte(SCC_PORTA_CTL))
+  if (check_read_byte(SCC_BASE))
     has_scc = 1;
 #if DBG_MACHINE
   kprintf("has_scc = %d\n", has_scc);

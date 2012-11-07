@@ -4114,3 +4114,5 @@ Start... early ages
 2012-11-06
 - bios/bios.c bios/delay.c bios/delay.h bios/delayasm.S include/asm.h
   Makefile: Add calibrated delay loop. (RFB)
+- bios/machine.c bios/machine.h: Rename SCC_PORTA_CTL to SCC_BASE for
+  clarity. (RFB)

@@ -19,7 +19,7 @@
 #define FALCON_HHT          0x00ff8282UL
 #define TT_PALETTE_REGS     0x00ff8400UL
 #define BLITTER_CONFIG1     0x00ff8a3cUL
-#define SCC_PORTA_CTL       0x00ff8c80UL
+#define SCC_BASE            0x00ff8c80UL
 #define SYS_INT_MASK        0x00ff8e01UL
 #define SCU_GPR1            0x00ff8e09UL
 #define VME_INT_MASK        0x00ff8e0dUL
