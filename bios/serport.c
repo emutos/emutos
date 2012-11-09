@@ -13,8 +13,10 @@
  */
 #include "config.h"
 #include "portab.h"
+#include "asm.h"
 #include "chardev.h"
 #include "cookie.h"
+#include "delay.h"
 #include "machine.h"
 #include "mfp.h"
 #include "serport.h"
@@ -29,6 +31,23 @@
 #else
 #define RS232_BUFSIZE 4         /* save space if buffers unused */
 #endif
+
+#define RESET_RECOVERY_DELAY    delay_loop(reset_recovery_loops)
+#define RECOVERY_DELAY          delay_loop(recovery_loops)
+
+/*
+ * structures
+ */
+typedef struct {
+    UBYTE dum1;
+    volatile UBYTE ctl;
+    UBYTE dum2;
+    volatile UBYTE data;
+} PORT;
+typedef struct {
+    PORT portA;
+    PORT portB;
+} SCC;
 
 /*
  * global variables
@@ -48,7 +67,7 @@ static char ibuf1[RS232_BUFSIZE], obuf1[RS232_BUFSIZE];
 static const EXT_IOREC iorec_init = {
     { NULL, RS232_BUFSIZE, 0, 0, RS232_BUFSIZE/4, 3*RS232_BUFSIZE/4 },
     { NULL, RS232_BUFSIZE, 0, 0, RS232_BUFSIZE/4, 3*RS232_BUFSIZE/4 },
-    B9600, FLOW_CTRL_NONE };
+    B9600, FLOW_CTRL_NONE, 0x88, 0xff, 0xea };
 
 #if BCONMAP_AVAILABLE
 static EXT_IOREC iorecA, iorecB, iorecTT, iorec_dummy;
@@ -70,6 +89,9 @@ static const MAPTAB maptable_mfp_tt =
     { bconstatTT, bconinTT, bcostatTT, bconoutTT, rsconfTT, &iorecTT };
 #endif
 
+#if CONF_WITH_SCC
+ULONG recovery_loops;
+#endif
 
 
 /*
@@ -137,22 +159,43 @@ LONG bconout1(WORD dev, WORD b)
  */
 LONG bconstatA(void)
 {
+SCC *scc = (SCC *)SCC_BASE;
+
+    if (scc->portA.ctl & 0x01)
+        return -1L;
+
     return 0L;
 }
 
 LONG bconinA(void)
 {
-    return 0L;
+SCC *scc = (SCC *)SCC_BASE;
+
+    while(!bconstatA())
+        ;
+
+    return scc->portA.data & iorecA.datamask;
 }
 
 LONG bcostatA(void)
 {
-    return -1L;
+SCC *scc = (SCC *)SCC_BASE;
+
+    if (scc->portA.ctl & 0x04)
+        return -1L;
+
+    return 0L;
 }
 
 LONG bconoutA(WORD dev, WORD b)
 {
-    return 0L;
+SCC *scc = (SCC *)SCC_BASE;
+
+    while(!bcostatA())
+        ;
+    scc->portA.data = (UBYTE)b;
+
+    return 1L;
 }
 
 /*
@@ -160,28 +203,51 @@ LONG bconoutA(WORD dev, WORD b)
  */
 LONG bconstatB(void)
 {
+SCC *scc = (SCC *)SCC_BASE;
+
+    if (scc->portB.ctl & 0x01)
+        return -1L;
+
     return 0L;
 }
 
 LONG bconinB(void)
 {
-    return 0L;
+SCC *scc = (SCC *)SCC_BASE;
+
+    while(!bconstatB())
+        ;
+
+    return scc->portB.data & iorecB.datamask;
 }
 
 LONG bcostatB(void)
 {
-    return -1L;
+SCC *scc = (SCC *)SCC_BASE;
+
+    if (scc->portB.ctl & 0x04)
+        return -1L;
+
+    return 0L;
 }
 
 LONG bconoutB(WORD dev, WORD b)
 {
-    return 0L;
+SCC *scc = (SCC *)SCC_BASE;
+
+    while(!bcostatB())
+        ;
+    scc->portB.data = (UBYTE)b;
+
+    return 1L;
 }
 #endif
 
 #if CONF_WITH_TT_MFP
 /*
  * TT MFP i/o routines
+ * 
+ * TODO: implement these!
  */
 LONG bconstatTT(void)
 {
@@ -277,19 +343,142 @@ ULONG rsconf1(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
 #endif
 }
 
+#if CONF_WITH_SCC
+/*
+ * NOTE: these are calculated using a PCLK of 8.053976 MHz.
+ * The maximum difference between the specified & actual
+ * baud rates is approximately 0.84%.
+ */
+static const WORD scc_timeconst[] = {
+    /* 19200 */  11,
+    /*  9600 */  24,
+    /*  4800 */  50,
+    /*  3600 */  68,
+    /*  2400 */  103,
+    /*  2000 */  124,
+    /*  1800 */  138,
+    /*  1200 */  208,
+    /*   600 */  417,
+    /*   300 */  837,
+    /*   200 */  1256,
+    /*   150 */  1676,
+    /* 134.5 */  1869,
+    /*   110 */  2286,
+    /*    75 */  3354,
+    /*    50 */  5032
+};
+
+#endif /* CONF_WITH_SCC */
+
 #if BCONMAP_AVAILABLE
-ULONG rsconfA(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
+static void write_scc(PORT *port,UBYTE reg,UBYTE data)
+{
+    port->ctl = reg;
+    RECOVERY_DELAY;
+    port->ctl = data;
+    RECOVERY_DELAY;
+}
+
+static ULONG rsconf_scc(PORT *port,WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
 {
 #if CONF_WITH_SCC
-    ULONG old = 0UL;
+    ULONG old;
 
     if (baud == -2)     /* wants current baud rate */
         return rs232iorecptr->baudrate;
 
+    /*
+     * retrieve old ucr/rsr/tsr/scr
+     * according to the TT030 TOS Release notes, for non-MFP hardware,
+     * we must return 0 for rsr and scr, and the only valid bit in the
+     * tsr is bit 3.
+     */
+    old = (ULONG)(rs232iorecptr->ucr) << 24;
+    if (rs232iorecptr->wr5 & 0x10)  /* break being sent? */
+        old |= 0x0800;              /* yes, mark it in the returned pseudo-TSR */
+
     if ((ctrl >= MIN_FLOW_CTRL) && (ctrl <= MAX_FLOW_CTRL))
         rs232iorecptr->flowctrl = ctrl;
 
+    /*
+     * set baudrate from lookup table
+     */
+    if ((baud >= MIN_BAUDRATE_CODE ) && (baud <= MAX_BAUDRATE_CODE)) {
+        WORD tc;
+        rs232iorecptr->baudrate = baud;
+        tc = scc_timeconst[baud];
+        write_scc(port,12,tc&0xff);
+        write_scc(port,13,(tc>>8)&0xff);
+    }
+
+    /*
+     * handle ucr
+     */
+    if (ucr >= 0) {
+        UBYTE bpc, mask, wr4, wr5;
+        rs232iorecptr->ucr = ucr;
+        switch((ucr>>5)&0x03) {     /* isolate ucr bits/char code */
+        case 3:     /* 5 bits */
+            mask = 0x1f;
+            bpc = 0x00;
+            break;
+        case 2:     /* 6 bits */
+            mask = 0x3f;
+            bpc = 0x40;
+            break;
+        case 1:     /* 7 bits */
+            mask = 0x7f;
+            bpc = 0x20;
+            break;
+        default:     /* 8 bits */
+            mask = 0xff;
+            bpc = 0x60;
+            break;
+        }
+        rs232iorecptr->datamask = mask;
+        wr5 = (rs232iorecptr->wr5&0x9f) | bpc;
+        rs232iorecptr->wr5 = wr5;       /* update tx bits/char in shadow wr5 */
+        write_scc(port,5,wr5);          /* update real wr5 */
+        write_scc(port,3,(bpc<<1)|0x01);/* update rx bits/char too */
+        wr4 = 0x40 | ((ucr>>1)&0x0c);   /* set x16 clock & stop bits */
+        if (ucr&0x02)                   /* even parity */
+            wr4 |= 0x02;
+        if (ucr&0x04)                   /* parity enable */
+            wr4 |= 0x01;
+        write_scc(port,4,wr4);
+    }
+
+    /*
+     * handle tsr
+     */
+    if (tsr >= 0) {
+        UBYTE wr5;
+        wr5 = rs232iorecptr->wr5;
+        if (tsr & 0x08) {       /* break requested */
+            if (!(wr5 & 0x10))      /* not currently breaking */
+                wr5 |= 0x10;
+        } else {                /* no break requested */
+            if (wr5 & 0x10)         /* break in progress */
+                wr5 &= ~0x10;
+        }
+        if (wr5 != rs232iorecptr->wr5) {
+            rs232iorecptr->wr5 = wr5;
+            write_scc(port,5,wr5);
+        }
+    }
+
     return old;
+#else
+    return 0UL;
+#endif
+}
+
+ULONG rsconfA(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
+{
+#if CONF_WITH_SCC
+SCC *scc = (SCC *)SCC_BASE;
+
+    return rsconf_scc(&scc->portA,baud,ctrl,ucr,rsr,tsr,scr);
 #else
     return 0UL;
 #endif
@@ -298,15 +487,9 @@ ULONG rsconfA(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
 ULONG rsconfB(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
 {
 #if CONF_WITH_SCC
-    ULONG old = 0UL;
+SCC *scc = (SCC *)SCC_BASE;
 
-    if (baud == -2)     /* wants current baud rate */
-        return rs232iorecptr->baudrate;
-
-    if ((ctrl >= MIN_FLOW_CTRL) && (ctrl <= MAX_FLOW_CTRL))
-        rs232iorecptr->flowctrl = ctrl;
-
-    return old;
+    return rsconf_scc(&scc->portB,baud,ctrl,ucr,rsr,tsr,scr);
 #else
     return 0UL;
 #endif
@@ -338,9 +521,9 @@ ULONG rsconf_dummy(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
 /*
  * initialise the Bconmap() structures
  */
-void init_bconmap(void)
-{
 #if BCONMAP_AVAILABLE
+static void init_bconmap(void)
+{
     MAPTAB *maptabptr;
     int i;
 
@@ -380,11 +563,6 @@ void init_bconmap(void)
 #endif
         bconmap_root.maptabsize = 4;
     }
-    /*
-     * FIXME: the following is a temporary kludge and should be
-     * removed when EmuTOS SCC support is available
-     */
-    memcpy(&maptable[1],&maptable_mfp,sizeof(MAPTAB));
 
     /* set up to use mapped device values */
     maptabptr = &maptable[bconmap_root.mapped_device-BCONMAP_START_HANDLE];
@@ -394,18 +572,79 @@ void init_bconmap(void)
     bconout_vec[1] = maptabptr->Bconout;
     rsconfptr = maptabptr->Rsconf;
     rs232iorecptr = maptabptr->Iorec;
-#endif
 }
+#endif      /* BCONMAP_AVAILABLE */
+
+#if CONF_WITH_SCC
+WORD SCC_init_string[] = {
+    0x0444,     /* x16 clock mode, 1 stop bit, no parity */
+    0x0104,     /* 'parity is special condition' */
+    0x0260,     /* interrupt vector #s start at 0x60 (lowmem 0x180) */
+    0x03c0,     /* Rx 8 bits/char, disabled */
+    0x05e2,     /* Tx 8 bits/char, disabled, DTR, RTS */
+    0x0600,     /* SDLC (n/a) */
+    0x0700,     /* SDLC (n/a) */
+    0x0901,     /* status low, vector includes status */
+    0x0a00,     /* misc flags */
+    0x0b50,     /* Rx/Tx clocks from baudrate generator output */
+    0x0c18,     /* time const low = 24 | so rate = (24+2)*2/BR clock period */
+    0x0d00,     /* time const hi = 0   | = 52/(8000000/16) => 9615 bps      */
+    0x0e02,     /* baudrate generator source = PCLK (8MHz) */
+    0x0e03,     /* ditto + enable baudrate generator */
+    0x03c1,     /* Rx 8 bits/char, enabled */
+    0x05ea,     /* Tx 8 bits/char, enabled, DTR, RTS */
+    0x0f20,     /* CTS interrupt enable */
+    0x0010,     /* reset external/status interrupts */
+    0x0010,     /* reset again (necessary, see manual) */
+    0x0117,     /* interrupts for Rx, Tx, special condition; parity is special */
+    0x0901,     /* status low, master interrupt disable */
+                /* NOTE: change above to 0x0909 to enable interrupts! */
+    0xffff      /* end of table marker */
+};
+
+/*
+ * initialise the SCC
+ */
+static void init_scc(void)
+{
+SCC *scc = (SCC *)SCC_BASE;
+WORD *p;
+ULONG reset_recovery_loops;
+
+    /* calculate delay times for SCC access: note that SCC PCLK is 8MHz */
+    reset_recovery_loops = loopcount_1_msec / 1000; /* 8 cycles = 1 usec */
+    recovery_loops = loopcount_1_msec / 2000;       /* 4 cycles = 0.5 usec */
+
+    /* issue hardware reset */
+    scc->portA.ctl = 0x09;
+    RECOVERY_DELAY;
+    scc->portA.ctl = 0xC0;
+    RESET_RECOVERY_DELAY;
+
+    /* initialise channel A */
+    for (p = SCC_init_string; *p >= 0; p++)
+        write_scc(&scc->portA,(*p>>8)&0xff,*p&0xff);
+
+    /* initialise channel B */
+    for (p = SCC_init_string; *p >= 0; p++)
+        write_scc(&scc->portB,(*p>>8)&0xff,*p&0xff);
+}
+#endif
 
 /*
  * initialise the serial port(s)
  */
 void init_serport(void)
 {
-    /* initialise the IORECs */
+    /* initialisation for device 1 */
     memcpy(&iorec1,&iorec_init,sizeof(EXT_IOREC));
     iorec1.in.buf = ibuf1;
     iorec1.out.buf = obuf1;
+
+    rs232iorecptr = &iorec1;
+    rsconfptr = rsconf1;
+
+    /* initialisation for other devices if required */
 #if BCONMAP_AVAILABLE
     memcpy(&iorecA,&iorec_init,sizeof(EXT_IOREC));
     iorecA.in.buf = ibufA;
@@ -417,12 +656,14 @@ void init_serport(void)
     iorecTT.in.buf = ibufTT;
     iorecTT.out.buf = obufTT;
     memcpy(&iorec_dummy,&iorec_init,sizeof(EXT_IOREC));
-#endif
-
-    rs232iorecptr = &iorec1;
-    rsconfptr = rsconf1;
 
     init_bconmap();
+#endif
+
+#if CONF_WITH_SCC
+    if (has_scc)
+        init_scc();
+#endif
 
     (*rsconfptr)(B9600, 0, 0x88, 1, 1, 0);
 }

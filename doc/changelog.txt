@@ -4116,3 +4116,7 @@ Start... early ages
   Makefile: Add calibrated delay loop. (RFB)
 - bios/machine.c bios/machine.h: Rename SCC_PORTA_CTL to SCC_BASE for
   clarity. (RFB)
+
+2012-11-08
+- bios/serport.c bios/serport.h: Add Falcon serial I/O support (supports
+  SCC chip on Falcon & TT). (RFB)
