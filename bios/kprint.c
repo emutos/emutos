@@ -23,6 +23,7 @@
 #include "natfeat.h"
 #include "processor.h"
 #include "chardev.h"
+#include "serport.h"
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
 #endif
@@ -140,6 +141,13 @@ static void kprintf_outc_rs232(int c)
 }
 #endif
 
+#if SCC_DEBUG_PRINT
+static void kprintf_outc_sccB(int c)
+{
+    bconoutB(1,c);
+}
+#endif
+
 #if DETECT_NATIVE_FEATURES
 static void kprintf_outc_natfeat(int c)
 {
@@ -204,6 +212,21 @@ static int vkprintf(const char *fmt, va_list ap)
             if (!Super(1L))             /* check for user state.    */
                 stacksave = (char *)Super(0L);  /* if so, switch to super   */
         rc = doprintf(kprintf_outc_rs232, fmt, ap);
+        if (stacksave)                  /* if we switched, */
+            SuperToUser(stacksave);     /* switch back.    */
+        return rc;
+    }
+#endif
+
+#if SCC_DEBUG_PRINT
+    if (boot_status&SCC_AVAILABLE) {    /* no SCC, no message */
+        int rc;
+        char *stacksave = NULL;
+
+        if (boot_status&DOS_AVAILABLE)  /* if Super() is available, */
+            if (!Super(1L))             /* check for user state.    */
+                stacksave = (char *)Super(0L);  /* if so, switch to super   */
+        rc = doprintf(kprintf_outc_sccB, fmt, ap);
         if (stacksave)                  /* if we switched, */
             SuperToUser(stacksave);     /* switch back.    */
         return rc;

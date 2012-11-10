@@ -320,11 +320,19 @@
 # endif
 #endif
 
-/* set this to 1 to redirect debug prints on RS232 out, for emulator
+/* set this to 1 to redirect debug prints on MFP RS232 out, for emulator
  * without any native debug print capabilities or real hardware.
  */
 #ifndef RS232_DEBUG_PRINT
 #define RS232_DEBUG_PRINT 0
+#endif
+
+/* set this to 1 to redirect debug prints on SCC portB RS232 out.
+ * this is primarily for real Falcon hardware, which does not use
+ * the MFP USART.
+ */
+#ifndef SCC_DEBUG_PRINT
+#define SCC_DEBUG_PRINT 0
 #endif
 
 /* set this to 1 to redirect debug prints on MIDI out, for emulator
@@ -752,6 +760,12 @@
 #if !CONF_WITH_DESKTOP_ICONS
 # if CONF_WITH_DESK1
 #  error "CONF_WITH_DESK1 requires CONF_WITH_DESKTOP_ICONS."
+# endif
+#endif
+
+#if !CONF_WITH_SCC
+# if SCC_DEBUG_PRINT
+#  error "SCC_DEBUG_PRINT requires CONF_WITH_SCC."
 # endif
 #endif
 

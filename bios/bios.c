@@ -200,10 +200,14 @@ static void bios_init(void)
     init_system_timer();
     init_delay();       /* set 'reasonable default values' */
 
-    /* Initialize the RS-232 port */
+    /* Initialize the RS-232 port(s) */
     chardev_init();     /* Initialize low-memory bios vectors */
     init_serport();
     boot_status |= RS232_AVAILABLE;     /* track progress */
+#if CONF_WITH_SCC
+    if (has_scc)
+        boot_status |= SCC_AVAILABLE;   /* track progress */
+#endif
     
     /* The sound init must be done before allowing MFC interrupts,
      * because of dosound stuff in the timer C interrupt routine.

@@ -19,6 +19,7 @@ extern WORD boot_status;
 #define RS232_AVAILABLE 0x01
 #define MIDI_AVAILABLE  0x02
 #define DOS_AVAILABLE   0x04
+#define SCC_AVAILABLE   0x08
 
 #ifdef __GNUC__
 #define PRINTF_STYLE __attribute__ ((format (printf, 1, 2)))
