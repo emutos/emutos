@@ -1,7 +1,7 @@
 /*
  * startup.S - EmuTOS startup module
  *
- * Copyright (c) 2001-2005 by the EmuTOS development team
+ * Copyright (c) 2001-2012 by the EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -142,13 +142,37 @@ os_dummy:
 
 /*
  * Get in supervisor mode and reset all Hardware
+ *
+ * The following considerations have been taken into account:
+ * 1. for unknown reasons, real Falcons need an access to location $ffff8006
+ *    before and after the reset instruction
+ * 2. in order to run the same code on systems without a register at $ffff8006,
+ *    the bus error vector must be intercepted prior to #1
+ * 3. since non-68000 systems use the VBR to point to the start of the exception
+ *    vectors, the VBR must be zeroed prior to #2 via MOVEC
+ * 4. in order to run the same code on 68000 systems (which don't have MOVEC),
+ *    the illegal instruction vector must be intercepted prior to #3.  for this,
+ *    it doesn't matter if the VBR is non-zero because, if it is, the MOVEC
+ *    instruction must be legal so the trap won't get taken ...
  */
  
 _main:
 #if !DIAGNOSTIC_CARTRIDGE
         move    #0x2700,sr     // disable interrupts
 #ifndef __mcoldfire__
+        lea     _stktop,sp     // required for exception
+        move.l  #not_falcon,16 // must be 68000 if we get illegal instrn error
+        moveq   #0,d0
+        MOVEC_D0_VBR           // initialise VBR to zero
+        lea     _stktop,sp     // required for exception
+        move.l  #not_falcon,8  // can't be Falcon if we get bus error
+        tst.w   0x8006.w       // magic: must access this before & after the reset
         reset                  // reset all hardware
+        tst.w   0x8006.w       // remaining magic
+        bra.b   reset_done
+not_falcon:
+        reset
+reset_done:
 #endif
 #endif /* !DIAGNOSTIC_CARTRIDGE */
 

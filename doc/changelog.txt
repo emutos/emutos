@@ -4125,3 +4125,7 @@ Start... early ages
 - bios/bios.c bios/kprint.c include/config.h include/kprint.h: Add new
   debug option SCC_DEBUG_PRINT to route kprintf() to SCC (Falcon serial
   port). (RFB)
+
+2012-11-15
+- bios/startup.S include/asmdefs.h: Fix startup so that EmuTOS RAM works
+  on real Falcon. (RFB)

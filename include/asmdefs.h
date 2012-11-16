@@ -1,7 +1,7 @@
 /*
  * asmdefs.h - definitions to include in top of all assembler files
  *
- * Copyright (c) 2001 EmuTOS development team
+ * Copyright (c) 2001-2012 EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel
@@ -19,5 +19,10 @@
 /* general-purpose configuration file */
 #include "config.h"
 
-/* anything else? */
+/* generate constants for opcodes that are 68010 and above */
+#define MOVEC_D0_CACR       dc.l 0x4e7b0002         /* 68020-68060 */
+#define MOVEC_D0_VBR        dc.l 0x4e7b0801         /* 68010-68060 */
 
+#define PMOVE_TO_TC(addr)   dc.l 0xf0394000,addr    /* 68030 */
+#define PMOVE_TO_TTR0(addr) dc.l 0xf0390800,addr    /* 68030 */
+#define PMOVE_TO_TTR1(addr) dc.l 0xf0390c00,addr    /* 68030 */
