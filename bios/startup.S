@@ -212,6 +212,16 @@ amiga_startup_ret:
 #endif
 
 /*
+ * disable the instruction/data caches
+ */
+#ifndef __mcoldfire__
+        move.l  #cache_done,0x10   // must be 68000 if we get illegal instrn error
+        move.l  #0x00000808,d0     // clear & disable instruction/data caches on
+        MOVEC_D0_CACR              //  68020-60 (even though bit usage differs!)
+cache_done:
+#endif
+
+/*
  * Check, if we should jump to a reset vector after warmboot
  */
 
