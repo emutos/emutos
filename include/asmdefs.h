@@ -23,6 +23,12 @@
 #define MOVEC_D0_CACR       dc.l 0x4e7b0002         /* 68020-68060 */
 #define MOVEC_D0_VBR        dc.l 0x4e7b0801         /* 68010-68060 */
 
-#define PMOVE_TO_TC(addr)   dc.l 0xf0394000,addr    /* 68030 */
+#define MOVEC_D0_TC         dc.l 0x4e7b0003         /* 68040-68060 (except 68ec040) */
+#define MOVEC_D0_ITT0       dc.l 0x4e7b0004         /* 68040-68060 */
+#define MOVEC_D0_ITT1       dc.l 0x4e7b0005         /* 68040-68060 */
+#define MOVEC_D0_DTT0       dc.l 0x4e7b0006         /* 68040-68060 */
+#define MOVEC_D0_DTT1       dc.l 0x4e7b0007         /* 68040-68060 */
+
+#define PMOVE_TO_TC(addr)   dc.l 0xf0394000,addr    /* 68030 (except 68ec030) */
 #define PMOVE_TO_TTR0(addr) dc.l 0xf0390800,addr    /* 68030 */
 #define PMOVE_TO_TTR1(addr) dc.l 0xf0390c00,addr    /* 68030 */

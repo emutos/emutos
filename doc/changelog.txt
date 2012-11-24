@@ -4132,3 +4132,4 @@ Start... early ages
 
 2012-11-23
 - bios/startup.S: Disable data & instruction caches at beginning of boot. (RFB)
+- bios/startup.S include/asmdefs.h: Disable MMU at beginning of boot. (RFB)

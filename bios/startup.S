@@ -47,6 +47,14 @@
         
 
 // ===========================================================================
+// ==== DATA segment =========================================================
+// ===========================================================================
+        .data
+
+zero:   dc.l    0
+
+
+// ===========================================================================
 // ==== BSS segment ==========================================================
 // ===========================================================================
         .bss
@@ -219,6 +227,29 @@ amiga_startup_ret:
         move.l  #0x00000808,d0     // clear & disable instruction/data caches on
         MOVEC_D0_CACR              //  68020-60 (even though bit usage differs!)
 cache_done:
+#endif
+
+/*
+ * disable the MMU
+ */
+#ifndef __mcoldfire__
+        lea     _stktop,sp         // required for exception
+        move.l  #not_68030,0x2c    // PMOVE is lineF on non-68030 systems
+        PMOVE_TO_TTR0(zero)        // first we initialise the TTRs (ACRs on a 68ec030)
+        PMOVE_TO_TTR1(zero)
+        move.l  #mmu_done,0x2c     // since PMOVE_TO_TC doesn't exist on a 68ec030,
+        PMOVE_TO_TC(zero)          //  we're done if we get a lineF exception ...
+        bra.b   mmu_done
+not_68030:
+        move.l  #mmu_done,0x10     // if a MOVEC causes an exception, we're done 
+        moveq   #0,d0
+        MOVEC_D0_ITT0              // first we initialise the TTRs (ACRs on a 68ec040)
+        MOVEC_D0_ITT1
+        MOVEC_D0_DTT0
+        MOVEC_D0_DTT1
+        MOVEC_D0_TC                // disable translation on 68040-60 (will error out
+                                   //  on a 68ec040)
+mmu_done:
 #endif
 
 /*
