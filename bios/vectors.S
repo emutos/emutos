@@ -1,7 +1,7 @@
 /*
  * vectors.S - exception vectors
  *
- * Copyright (c) 2001-2002 by the EmuTOS Development Team
+ * Copyright (c) 2001-2012 by the EmuTOS Development Team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -597,7 +597,20 @@ _int_priv:
         bne     pi_back                 // Not a MOVE SR,XX instruction
 
         ori.w   #0x200,(a0)             // make it MOVE CCR,XX
-        
+
+        cmpi.b  #30,_mcpu+3
+        bne.s   pi_not30
+
+        // on 68030, invalidate the i-cache line we just modified
+        move.l  a0,d0                   // get full address
+        andi.l  #0x000000fc,d0          //  zero out unused bits
+        MOVEC_D0_CAAR                   //   & set caar -> index/longword of cache line
+        MOVEC_CACR_D0                   // get current cacr
+        ori.b   #0x04,d0                // set the CEI bit
+        MOVEC_D0_CACR                   // invalidate the line
+        bra.s   pi_next
+
+pi_not30:        
         cmp.b   #40,_mcpu+3
         bne     pi_next
         

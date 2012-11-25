@@ -215,8 +215,19 @@ m68000:
         jsr     _detect_fpu
         move.l  d0,_fputype
 
+        cmpi.b  #30,_mcpu+3
+        bne.s   pi_chk040
+
+// On a 68030, we need to initialise the i-cache (it was cleared
+// and disabled in startup.S).  the data cache remains disabled.
+
+        move.l  #0x00000011,d0  // we set IBE (burst enable) and EI
+        MOVEC_D0_CACR
+        bra.s   pi_done
+
+pi_chk040:
         cmp.b   #40,_mcpu+3
-        bne     done
+        bne.s   pi_done
         
 // On a 68040 only, clear the instruction cache then activate it;
 // the data cache remains disabled.
@@ -242,9 +253,9 @@ m68000:
         dc.l    0x4e7b0006      // movec   d0,dttr0
         moveq.l #0,d0
         dc.l    0x4e7b0007      // movec   d0,dttr1
+pi_done:
 #endif
-        
-done:
+
         rts
 
 /*
@@ -293,11 +304,20 @@ setloop:
         cmpi.l  #4,d0           // flushed all the ways?
         bne.s   setloop
 #else
+        cmpi.b  #30,_mcpu+3
+        bne.s   ii_not30
+        MOVEC_CACR_D0                   // get current cacr
+        ori.b   #0x08,d0                // set the CI bit
+        MOVEC_D0_CACR                   // clear the whole i-cache
+        bra.s   ii_done
+
+ii_not30:
         cmp.b   #40,_mcpu+3
-        bne     done
+        bne     ii_done
         nop
         dc.w    0xf498          // cinva   ic
         nop
+ii_done:
 #endif
         rts
 

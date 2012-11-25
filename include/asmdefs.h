@@ -20,8 +20,11 @@
 #include "config.h"
 
 /* generate constants for opcodes that are 68010 and above */
+#define MOVEC_CACR_D0       dc.l 0x4e7a0002         /* 68020-68060 */
+
 #define MOVEC_D0_CACR       dc.l 0x4e7b0002         /* 68020-68060 */
 #define MOVEC_D0_VBR        dc.l 0x4e7b0801         /* 68010-68060 */
+#define MOVEC_D0_CAAR       dc.l 0x4e7b0802         /* 68020-68030 */
 
 #define MOVEC_D0_TC         dc.l 0x4e7b0003         /* 68040-68060 (except 68ec040) */
 #define MOVEC_D0_ITT0       dc.l 0x4e7b0004         /* 68040-68060 */
