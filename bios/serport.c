@@ -163,6 +163,7 @@ SCC *scc = (SCC *)SCC_BASE;
 
     if (scc->portA.ctl & 0x01)
         return -1L;
+    RECOVERY_DELAY;
 
     return 0L;
 }
@@ -170,11 +171,14 @@ SCC *scc = (SCC *)SCC_BASE;
 LONG bconinA(void)
 {
 SCC *scc = (SCC *)SCC_BASE;
+LONG data;
 
     while(!bconstatA())
         ;
+    data = scc->portA.data & iorecA.datamask;
+    RECOVERY_DELAY;
 
-    return scc->portA.data & iorecA.datamask;
+    return data;
 }
 
 LONG bcostatA(void)
@@ -183,6 +187,7 @@ SCC *scc = (SCC *)SCC_BASE;
 
     if (scc->portA.ctl & 0x04)
         return -1L;
+    RECOVERY_DELAY;
 
     return 0L;
 }
@@ -194,6 +199,7 @@ SCC *scc = (SCC *)SCC_BASE;
     while(!bcostatA())
         ;
     scc->portA.data = (UBYTE)b;
+    RECOVERY_DELAY;
 
     return 1L;
 }
@@ -207,6 +213,7 @@ SCC *scc = (SCC *)SCC_BASE;
 
     if (scc->portB.ctl & 0x01)
         return -1L;
+    RECOVERY_DELAY;
 
     return 0L;
 }
@@ -214,11 +221,14 @@ SCC *scc = (SCC *)SCC_BASE;
 LONG bconinB(void)
 {
 SCC *scc = (SCC *)SCC_BASE;
+LONG data;
 
     while(!bconstatB())
         ;
+    data = scc->portB.data & iorecB.datamask;
+    RECOVERY_DELAY;
 
-    return scc->portB.data & iorecB.datamask;
+    return data;
 }
 
 LONG bcostatB(void)
@@ -227,6 +237,7 @@ SCC *scc = (SCC *)SCC_BASE;
 
     if (scc->portB.ctl & 0x04)
         return -1L;
+    RECOVERY_DELAY;
 
     return 0L;
 }
@@ -238,6 +249,7 @@ SCC *scc = (SCC *)SCC_BASE;
     while(!bcostatB())
         ;
     scc->portB.data = (UBYTE)b;
+    RECOVERY_DELAY;
 
     return 1L;
 }
