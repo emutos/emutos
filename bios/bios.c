@@ -172,7 +172,7 @@ static void bios_init(void)
     /* Now kcprintf() will also send debug info to the screen */
 
     cookie_init();      /* sets a cookie jar */
-    machine_init();     /* detect hardware features and fill the cookie jar */
+    fill_cookie_jar();  /* detect hardware features and fill the cookie jar */
 
     /* misc. variables */
     dumpflg = -1;

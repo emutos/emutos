@@ -405,7 +405,7 @@ void machine_detect(void)
 #endif
 }
   
-void machine_init(void)
+void fill_cookie_jar(void)
 {
 #ifdef __mcoldfire__
   cookie_add(COOKIE_COLDFIRE, 0);

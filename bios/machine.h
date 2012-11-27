@@ -89,8 +89,8 @@ extern int has_falcon_dmasound; /* in dmasound.c */
 /* detect the available hardware machine */
 void machine_detect(void);
 
-/* initialise the machine, and fill the cookie jar */
-void machine_init(void);
+/* fill the cookie jar */
+void fill_cookie_jar(void);
 
 /* print the name of the machine */
 const char * machine_name(void);

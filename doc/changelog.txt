@@ -4138,3 +4138,7 @@ Start... early ages
 - bios/processor.h bios/processor.S bios/vectors.S include/asmdefs.h:
   Enable instruction cache on 68030. (RFB)
 - bios/serport.c: Insert required delays for SCC chip access. (RFB)
+
+2012-11-27
+- bios/bios.c bios/machine.c bios/machine.h: Code cleanup: rename
+  machine_init() to fill_cookie_jar(). (RFB)
