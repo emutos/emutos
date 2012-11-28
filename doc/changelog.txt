@@ -4142,3 +4142,5 @@ Start... early ages
 2012-11-27
 - bios/bios.c bios/machine.c bios/machine.h: Code cleanup: rename
   machine_init() to fill_cookie_jar(). (RFB)
+- bios/bios.c bios/machine.c bios/machine.h: Initialise Falcon bus control
+  register (sets cpu speed to 16MHz). (RFB)

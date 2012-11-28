@@ -16,6 +16,7 @@
 /*
  * hardware registers
  */
+#define FALCON_BUS_CTL      0x00ff8007UL
 #define FALCON_HHT          0x00ff8282UL
 #define TT_PALETTE_REGS     0x00ff8400UL
 #define BLITTER_CONFIG1     0x00ff8a3cUL
@@ -86,8 +87,11 @@ extern int has_falcon_dmasound; /* in dmasound.c */
  * functions
  */
 
-/* detect the available hardware machine */
+/* detect the available hardware */
 void machine_detect(void);
+
+/* perform machine-specific initialisation */
+void machine_init(void);
 
 /* fill the cookie jar */
 void fill_cookie_jar(void);

@@ -404,6 +404,28 @@ void machine_detect(void)
   detect_ide();
 #endif
 }
+
+/*
+ * perform machine-specific initialisation
+ */
+void machine_init(void)
+{
+#ifndef MACHINE_FIREBEE
+#if CONF_WITH_VIDEL
+volatile BYTE *fbcr = (BYTE *)FALCON_BUS_CTL;
+/* the Falcon Bus Control Register uses the following bits:
+ *   0x40 : type of start (0=cold, 1=warm)
+ *   0x20 : STe Bus emulation (0=on, 1=off)
+ *   0x08 : blitter control (0=on, 1=off)
+ *   0x04 : blitter speed (0=8MHz, 1=16MHz)
+ *   0x01 : cpu speed (0=8MHz, 1=16MHz)
+ * source: Hatari source code
+ */
+  if (has_videl)        /* i.e. it's a Falcon */
+    *fbcr |= 0x29;      /* set STe Bus emulation off, blitter off, 16MHz CPU */
+#endif
+#endif
+}
   
 void fill_cookie_jar(void)
 {

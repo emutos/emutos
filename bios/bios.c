@@ -155,7 +155,8 @@ static void bios_init(void)
     vecs_init();        /* setup all exception vectors (above) */
 
     /* Detect optional hardware (video, sound, etc.) */
-    machine_detect();
+    machine_detect();   /* detect hardware */
+    machine_init();     /* initialise machine-specific stuff */
 
     /* Initialize the screen */
     screen_init();      /* detect monitor type, ... */
