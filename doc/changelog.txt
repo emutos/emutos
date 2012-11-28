@@ -4144,3 +4144,6 @@ Start... early ages
   machine_init() to fill_cookie_jar(). (RFB)
 - bios/bios.c bios/machine.c bios/machine.h: Initialise Falcon bus control
   register (sets cpu speed to 16MHz). (RFB)
+
+2012-11-28
+- bios/serport.c bios/serport.h: Code cleanup: make functions static. (RFB)

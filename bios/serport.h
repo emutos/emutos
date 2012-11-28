@@ -105,22 +105,7 @@ ULONG rsconf1(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
 LONG bconmap(WORD);
 
 #if BCONMAP_AVAILABLE
-LONG bconstatA(void);
-LONG bconinA(void);
-LONG bcostatA(void);
-LONG bconoutA(WORD,WORD);
-LONG bconstatB(void);
-LONG bconinB(void);
-LONG bcostatB(void);
 LONG bconoutB(WORD,WORD);
-LONG bconstatTT(void);
-LONG bconinTT(void);
-LONG bcostatTT(void);
-LONG bconoutTT(WORD,WORD);
-ULONG rsconfA(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
-ULONG rsconfB(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
-ULONG rsconfTT(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
-ULONG rsconf_dummy(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
 #endif
 
 #endif  /* _SERPORT_H */

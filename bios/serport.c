@@ -36,6 +36,27 @@
 #define RECOVERY_DELAY          delay_loop(recovery_loops)
 
 /*
+ * function prototypes
+ */
+#if BCONMAP_AVAILABLE
+static LONG bconstatA(void);
+static LONG bconinA(void);
+static LONG bcostatA(void);
+static LONG bconoutA(WORD,WORD);
+static LONG bconstatB(void);
+static LONG bconinB(void);
+static LONG bcostatB(void);
+static LONG bconstatTT(void);
+static LONG bconinTT(void);
+static LONG bcostatTT(void);
+static LONG bconoutTT(WORD,WORD);
+static ULONG rsconfA(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
+static ULONG rsconfB(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
+static ULONG rsconfTT(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
+static ULONG rsconf_dummy(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
+#endif      /* BCONMAP_AVAILABLE */
+
+/*
  * structures
  */
 typedef struct {
@@ -157,7 +178,7 @@ LONG bconout1(WORD dev, WORD b)
 /*
  * SCC port A i/o routines
  */
-LONG bconstatA(void)
+static LONG bconstatA(void)
 {
 SCC *scc = (SCC *)SCC_BASE;
 
@@ -168,7 +189,7 @@ SCC *scc = (SCC *)SCC_BASE;
     return 0L;
 }
 
-LONG bconinA(void)
+static LONG bconinA(void)
 {
 SCC *scc = (SCC *)SCC_BASE;
 LONG data;
@@ -181,7 +202,7 @@ LONG data;
     return data;
 }
 
-LONG bcostatA(void)
+static LONG bcostatA(void)
 {
 SCC *scc = (SCC *)SCC_BASE;
 
@@ -192,7 +213,7 @@ SCC *scc = (SCC *)SCC_BASE;
     return 0L;
 }
 
-LONG bconoutA(WORD dev, WORD b)
+static LONG bconoutA(WORD dev, WORD b)
 {
 SCC *scc = (SCC *)SCC_BASE;
 
@@ -207,7 +228,7 @@ SCC *scc = (SCC *)SCC_BASE;
 /*
  * SCC port B i/o routines
  */
-LONG bconstatB(void)
+static LONG bconstatB(void)
 {
 SCC *scc = (SCC *)SCC_BASE;
 
@@ -218,7 +239,7 @@ SCC *scc = (SCC *)SCC_BASE;
     return 0L;
 }
 
-LONG bconinB(void)
+static LONG bconinB(void)
 {
 SCC *scc = (SCC *)SCC_BASE;
 LONG data;
@@ -231,7 +252,7 @@ LONG data;
     return data;
 }
 
-LONG bcostatB(void)
+static LONG bcostatB(void)
 {
 SCC *scc = (SCC *)SCC_BASE;
 
@@ -261,22 +282,22 @@ SCC *scc = (SCC *)SCC_BASE;
  * 
  * TODO: implement these!
  */
-LONG bconstatTT(void)
+static LONG bconstatTT(void)
 {
     return 0L;
 }
 
-LONG bconinTT(void)
+static LONG bconinTT(void)
 {
     return 0L;
 }
 
-LONG bcostatTT(void)
+static LONG bcostatTT(void)
 {
     return -1L;
 }
 
-LONG bconoutTT(WORD dev, WORD b)
+static LONG bconoutTT(WORD dev, WORD b)
 {
     return 0L;
 }
@@ -485,7 +506,7 @@ static ULONG rsconf_scc(PORT *port,WORD baud, WORD ctrl, WORD ucr, WORD rsr, WOR
 #endif
 }
 
-ULONG rsconfA(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
+static ULONG rsconfA(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
 {
 #if CONF_WITH_SCC
 SCC *scc = (SCC *)SCC_BASE;
@@ -496,7 +517,7 @@ SCC *scc = (SCC *)SCC_BASE;
 #endif
 }
 
-ULONG rsconfB(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
+static ULONG rsconfB(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
 {
 #if CONF_WITH_SCC
 SCC *scc = (SCC *)SCC_BASE;
@@ -507,7 +528,7 @@ SCC *scc = (SCC *)SCC_BASE;
 #endif
 }
 
-ULONG rsconfTT(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
+static ULONG rsconfTT(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
 {
 #if CONF_WITH_MFP_TT
     ULONG old = 0UL;
@@ -524,7 +545,7 @@ ULONG rsconfTT(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
 #endif
 }
 
-ULONG rsconf_dummy(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
+static ULONG rsconf_dummy(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
 {
     return 0UL;
 }
