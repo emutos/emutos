@@ -4147,3 +4147,6 @@ Start... early ages
 
 2012-11-28
 - bios/serport.c bios/serport.h: Code cleanup: make functions static. (RFB)
+
+2012-12-02
+- bios/machine.c: Fix _SWI cookie to set high order bytes to zeros. (RFB)

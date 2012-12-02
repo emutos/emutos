@@ -1,7 +1,7 @@
 /*
  * machine.c - detection of machine type
  *
- * Copyright (c) 2001 - 2011 EmuTOS development team.
+ * Copyright (c) 2001-2012 EmuTOS development team.
  *
  * Authors:
  *  LVL     Laurent Vogel
@@ -195,13 +195,19 @@ static void detect_blitter(void)
 
 #if CONF_WITH_DIP_SWITCHES
 
-/* DIP switches */
+/* DIP switch usage is as follows (according to the "ATARI FALCON030
+ * Service Guide", dated October 1, 1992):
+ * bit 7: off => no DMA sound hardware
+ * bit 6: off => AJAX FDC chip installed (support for 1.44MB floppy)
+ * bit 5: off => quad density floppy
+ * other bits are not used (and are set on)
+ */
 
 static void setvalue_swi(void)
 {
-  cookie_swi = 0x7F;
+  cookie_swi = 0x000000FF;
   if (check_read_byte(DIP_SWITCHES+1)) {
-    cookie_swi = (*(volatile WORD *)DIP_SWITCHES)>>8;
+    cookie_swi = (*(volatile UWORD *)DIP_SWITCHES)>>8;
   }
 
 #if DBG_MACHINE
