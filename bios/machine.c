@@ -361,12 +361,8 @@ static void setvalue_frb(void)
 
 static void setvalue_fdc(void)
 {
-  /* LVL - This is what I understood of my search on 
-   * comp.sys.atari.st.tech, archives, but I do not claim 
-   * this to be fully accurate. 
-   */
 #if CONF_WITH_DIP_SWITCHES
-  if(cookie_swi & 0x40) {
+  if (!(cookie_swi & 0x40)) {   /* switch *off* means AJAX controller is installed */
     cookie_fdc = FDC_1ATC;
   } else
 #endif

@@ -4150,3 +4150,4 @@ Start... early ages
 
 2012-12-02
 - bios/machine.c: Fix _SWI cookie to set high order bytes to zeros. (RFB)
+- bios/machine.c: Set correct value in _FDC cookie. (RFB)
