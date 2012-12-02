@@ -175,18 +175,7 @@ __extension__                                      \
 })
 #endif
 
-/*
- * No operation opcode (just waits for some few cycles)
- */
-#define nop()                             \
-__extension__                             \
-({__asm__ volatile                        \
-  ("nop"                                  \
-  :                  /* outputs */        \
-  :                  /* inputs  */        \
-  : "memory"         /* clobbered */      \
-  );                                      \
-})
+
 
 /*
  * Loops for the specified count; for a 1 millisecond delay on the

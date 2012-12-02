@@ -1,7 +1,7 @@
 /*
  * floppy.c - floppy routines
  *
- * Copyright (c) 2001 EmuTOS development team
+ * Copyright (c) 2001-2012 EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel
@@ -27,6 +27,7 @@
 #include "string.h"
 #include "kprint.h"
 #include "xbiosbind.h"  /* random() */
+#include "delay.h"
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
 #endif
@@ -60,7 +61,6 @@
  * - on error, should jump to critical error vector
  * - no 'virtual' disk B: mapped to disk A: when only one drive
  * - high density media not considered in flopfmt or protobt
- * - delay() should be based on some delay loop callibration
  * - reserved or hidden sectors are not guaranteed to be handled correctly
  * - ... (search for 'TODO' in the rest of this file)
  * - the unique FDC track register is probably not handled correctly
@@ -122,7 +122,7 @@ static void fdc_start_dma_read(WORD count);
 static void fdc_start_dma_write(WORD count);
 
 /* delay for fdc register access */
-static void delay(void);
+#define delay() delay_loop(loopcount_3_usec)
 
 /*==== Internal floppy status =============================================*/
 
@@ -160,6 +160,7 @@ static void delay(void);
 
 static WORD cur_dev;
 static UBYTE deselected;
+static ULONG loopcount_3_usec;
 
 #endif /* CONF_WITH_FDC */
 
@@ -196,6 +197,7 @@ void flop_hdv_init(void)
 
 #if CONF_WITH_FDC
     cur_dev = -1;
+    loopcount_3_usec = 3 * loopcount_1_msec / 1000;
 
     /* I'm unsure, so let flopvbl() do the work of figuring out. */
     deselected = 1;
@@ -925,17 +927,6 @@ static void fdc_start_dma_write(WORD count)
     DMA->control = DMA_SCREG | DMA_FDC;
     DMA->control = DMA_SCREG | DMA_FDC | DMA_WRBIT;
     DMA->data = count;
-}
-
-
-/* TODO - determine which delay is appropriate, and ensure
- * this delay is obtained regardless of the processor speed.
- */
-static void delay(void)
-{
-    WORD delay = 30;
-    while (--delay)
-            nop();
 }
 
 #endif /* CONF_WITH_FDC */
