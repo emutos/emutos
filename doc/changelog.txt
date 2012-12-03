@@ -4153,3 +4153,4 @@ Start... early ages
 - bios/machine.c: Set correct value in _FDC cookie. (RFB)
 - bios/floppy.c include/asm.h: Use calibrated delay loop for floppy register
   access. (RFB)
+- bios/floppy.c: Code cleanup: update comments re floppy track format. (RFB)

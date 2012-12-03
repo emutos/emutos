@@ -539,7 +539,6 @@ LONG flopfmt(LONG buf, LONG filler, WORD dev, WORD spt,
     BYTE *s;
     LONG err;
 
-// #define APPEND(b, count) do { int n=count; while(n--) *s++ = b; } while(0) 
 #define APPEND(b, count) do { memset(s, b, count); s += count; } while(0)
 
     if(magic != 0x87654321UL) return 0;
@@ -557,35 +556,35 @@ LONG flopfmt(LONG buf, LONG filler, WORD dev, WORD spt,
     b1 = virgin >> 8;
     b2 = virgin;
 
-    /* GAP1 : 60 bytes 0x4E */  
+    /* GAP1 + GAP2(part1) : 60 bytes 0x4E */  
     APPEND(0x4E, 60);
   
     for(i = 0 ; i < spt ; i++) {
-        /* GAP2 */
+        /* GAP2 (part2) */
         APPEND(0x00, 12);
-        APPEND(0xF5, 3);
 
-        /* index */
-        *s++ = 0xfe;
+        /* id */
+        APPEND(0xF5, 3);
+        *s++ = 0xfe;            /* id address mark */
         *s++ = track;
         *s++ = side;
         *s++ = i+1;
         *s++ = 2; /* means sector of 512 bytes */
-        *s++ = 0xf7;
+        *s++ = 0xf7;            /* generate 2 crc bytes */
 
         /* GAP3 */
         APPEND(0x4e, 22);
         APPEND(0x00, 12);
-        APPEND(0xF5, 3);
-    
+
         /* data */
-        *s++ = 0xfb;
+        APPEND(0xF5, 3);
+        *s++ = 0xfb;            /* data address mark */
         for(j = 0 ; j < SECT_SIZ ; j += 2) {
             *s++ = b1; *s++ = b2;
         }
-        *s++ = 0xf7;
+        *s++ = 0xf7;            /* generate 2 crc bytes */
 
-        /* GAP4 */
+        /* GAP4 + GAP2(part1) */
         APPEND(0x4e, 40);
     }    
 
