@@ -1,7 +1,7 @@
 /*
  * blkdev.c - BIOS block device functions
  *
- * Copyright (c) 2002-2011 The EmuTOS development team
+ * Copyright (c) 2002-2012 The EmuTOS development team
  * 
  * Authors:
  *  MAD     Martin Doering
@@ -192,6 +192,7 @@ int add_partition(int dev, char id[], ULONG start, ULONG size, int byteswap)
 
     blkdev[blkdevnum].unit  = dev + 2;
     blkdev[blkdevnum].valid = 1;
+    blkdev[blkdevnum].mediachange = MEDIANOCHANGE;
     blkdev[blkdevnum].byteswap = byteswap;
 
     /* make just GEM/BGM partitions visible to applications */
@@ -266,7 +267,12 @@ LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG lrecnr
         retries = 1;
 
     if (! (rw & RW_NOMEDIACH)) {
-        /* check physMediach() for this drive */
+        if (blkdev_mediach(dev) != MEDIANOCHANGE) {
+#if DBG_BLKDEV
+            kprintf("media change detected\n");
+#endif
+            return E_CHNG;
+        }
     }
 
     rw &= RW_RW;
@@ -313,9 +319,11 @@ LONG blkdev_getbpb(WORD dev)
     if ((dev < 0 ) || (dev >= BLKDEVNUM) || !blkdev[dev].valid)
         return 0;  /* unknown device */
 
+    blkdev[dev].mediachange = MEDIANOCHANGE;    /* reset now */
+
     /* read bootsector using the physical mode */
-    err = blkdev_rwabs(RW_READ | RW_NOTRANSLATE, (LONG) dskbufp, 1, -1,
-                       blkdev[dev].unit, blkdev[dev].start);
+    err = blkdev_rwabs(RW_READ | RW_NOMEDIACH | RW_NOTRANSLATE,
+                      (LONG)dskbufp, 1, -1, blkdev[dev].unit, blkdev[dev].start);
     if (err) return 0;
 
     b = (struct bs *)dskbufp;
@@ -409,46 +417,24 @@ LONG blkdev_getbpb(WORD dev)
 
 
 /*
- * blkdev_mediach - dummy BIOS media change vector
+ * blkdev_mediach - BIOS media change vector
  */
 
 LONG blkdev_mediach(WORD dev)
 {
-    int unit;
-    if ((dev < 0 ) || (dev >= BLKDEVNUM) || !blkdev[dev].valid)
+    BLKDEV *b = &blkdev[dev];
+
+    if ((dev < 0 ) || (dev >= BLKDEVNUM) || !b->valid)
         return EUNDEV;  /* unknown device */
 
-    if (dev >= 2) return 0;  /* for harddrives return "not changed" for now */
+    if (dev >= 2)
+        return MEDIANOCHANGE;   /* for harddrives return "not changed" for now */
 
-    unit = blkdev[dev].unit;
-    if (hz_200 < devices[unit].last_access + 100) {
-        /* less than half a second since last access, assume no mediachange */
-        return 0; /* definitely not changed */
-    }
-    else {
-        WORD err;
-        struct bs *bs = (struct bs *) dskbufp;
-        /* TODO, monitor write-protect status in flopvbl... */
-    
-        /* for now, assume it is unsure and look at the serial number */
-        /* read bootsector using the physical mode */
-        err = blkdev_rwabs(RW_READ | RW_NOTRANSLATE, (LONG) dskbufp, 1, -1,
-                           unit, blkdev[dev].start);
-        if (err) {
-            /* can't even read the bootsector */
-            return 1; /* unsure */
-        }
-        if ( (bs->serial[0] != blkdev[dev].serial[0])
-            || (bs->serial[1] != blkdev[dev].serial[1])
-            || (bs->serial[2] != blkdev[dev].serial[2]) ) {
-            return 2; /* definitely changed */
-        }
-        else {
-            return 1; /* unsure */
-        }
-    }
+    if (b->mediachange == MEDIANOCHANGE)
+        b->mediachange = flop_mediach(dev);
+
+    return b->mediachange;
 }
-
 
 
 /**

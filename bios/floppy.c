@@ -65,8 +65,6 @@
  * - ... (search for 'TODO' in the rest of this file)
  * - the unique FDC track register is probably not handled correctly
  *   when using two drives
- * - once mediach reported != 0, it should not report zero until a new
- *   getbpb is called.
  */
 
 /*==== Internal defines ===================================================*/
@@ -223,6 +221,7 @@ static void flop_add_drive(WORD dev)
 
     /* Logical block device */
     blkdev[dev].valid = 1;
+    blkdev[dev].mediachange = MEDIACHANGE;
     blkdev[dev].start = 0;
     blkdev[dev].size = 0;           /* unknown size */
     blkdev[dev].geometry.sides = 2; /* default geometry of 3.5" DD */
@@ -276,6 +275,48 @@ static void flop_detect_drive(WORD dev)
     } 
     flopunlk();
 #endif
+}
+
+
+/*
+ * flop_mediach - return mediachange status for floppy
+ */
+LONG flop_mediach(WORD dev)
+{
+    int unit;
+    WORD err;
+    struct bs *bootsec = (struct bs *) dskbufp;
+#if DBG_FLOP
+    kprintf("flop_mediach(%d)\n",dev);
+#endif
+
+    /* if less than half a second since last access, assume no mediachange */
+    unit = blkdev[dev].unit;
+    if (hz_200 < devices[unit].last_access + 100)
+        return MEDIANOCHANGE;
+
+    /* TODO, monitor write-protect status in flopvbl... */
+    
+#if DBG_FLOP
+    kprintf("flop_mediach() read bootsec\n");
+#endif
+    /* for now, assume it is unsure and look at the serial number */
+    /* read bootsector at track 0, side 0, sector 1 */
+    err = floprw((LONG)bootsec,RW_READ,dev,1,0,0,1);
+    if (err)        /* can't even read the bootsector */
+        return MEDIACHANGE;
+
+#if DBG_FLOP
+    kprintf("flop_mediach() got bootsec, serial=0x%02x%02x%02x\n",
+            bootsec->serial[0],bootsec->serial[1],bootsec->serial[2]);
+#endif
+    if (memcmp(bootsec->serial,blkdev[dev].serial,3))
+        return MEDIACHANGE;
+
+#if DBG_FLOP
+    kprintf("flop_mediach() serial is unchanged\n");
+#endif
+    return MEDIAMAYCHANGE;
 }
 
 

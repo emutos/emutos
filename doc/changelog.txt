@@ -4154,3 +4154,7 @@ Start... early ages
 - bios/floppy.c include/asm.h: Use calibrated delay loop for floppy register
   access. (RFB)
 - bios/floppy.c: Code cleanup: update comments re floppy track format. (RFB)
+
+2012-02-03
+- bios/blkdev.c bios/blkdev.h bios/floppy.c bios/floppy.h: Code cleanup:
+  reorganise media change handling for floppies. (RFB)

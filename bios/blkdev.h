@@ -176,7 +176,8 @@ struct _blkdev
     ULONG       start;          /* physical start sector */
     ULONG       size;           /* physical sectors */
 
-    UWORD       valid;          /* device valid */
+    UBYTE       valid;          /* device valid */
+    UBYTE       mediachange;    /* current mediachange status */
     BPB         bpb;
     GEOMETRY    geometry;       /* this should probably belong to devices */
     UBYTE       serial[3];      /* the serial number taken from the bootsector */
