@@ -465,21 +465,6 @@ LONG blkdev_avail(WORD dev)
 }
 
 
-/* compute_cksum is also used for booting DMA, hence not static. */
-UWORD compute_cksum(LONG buf)
-{
-    UWORD sum = 0;
-    UWORD tmp;
-    UBYTE *b = (UBYTE *)buf;
-    WORD i;
-    for(i = 0 ; i < 256 ; i++) {
-        tmp = *b++ << 8;
-        tmp += *b++;
-        sum += tmp;
-    }
-    return sum;
-}
-
 /*
 vim:et:ts=4:sw=4:
 */

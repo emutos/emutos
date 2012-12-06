@@ -141,7 +141,6 @@ LONG blkdev_hdv_boot(void);
 LONG blkdev_getbpb(WORD dev);
 LONG blkdev_rwabs(WORD r_w, LONG adr, WORD numb, WORD first, WORD dev, LONG lfirst);
 LONG blkdev_mediach(WORD dev);
-UWORD compute_cksum(LONG buf);
 LONG blkdev_drvmap(void);
 LONG blkdev_avail(WORD dev);
 

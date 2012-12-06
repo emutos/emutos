@@ -60,7 +60,7 @@
  * - on error, the geometry info should be reset to a sane state
  * - on error, should jump to critical error vector
  * - no 'virtual' disk B: mapped to disk A: when only one drive
- * - high density media not considered in flopfmt or protobt
+ * - high density media not considered in flopfmt
  * - reserved or hidden sectors are not guaranteed to be handled correctly
  * - ... (search for 'TODO' in the rest of this file)
  * - the unique FDC track register is probably not handled correctly
@@ -80,6 +80,7 @@
 /*==== Internal prototypes ==============================================*/
 
 /* set/get intel words */
+static UWORD compute_cksum(struct bs *buf);
 static void setiword(UBYTE *addr, UWORD value);
 
 static LONG flop_bootcheck(void);
@@ -353,7 +354,7 @@ static LONG flop_bootcheck(void)
     if(err) {
         return 3;    /* unreadable */
     }
-    cksum = compute_cksum((LONG) b);
+    cksum = compute_cksum(b);
     if(cksum == 0x1234) {
         return 0;    /* bootable */
     } else {
@@ -422,10 +423,15 @@ LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt,
         recnr ++;
         if(err) return err;
     }
+
     return 0;
 }
 
 /*==== boot-sector: protobt =======================================*/
+/*
+ * note that (as in Falcon or TT TOS) you are allowed to create
+ * a boot sector for a device type that is not on your system.
+ */
 
 struct _protobt {
     WORD bps;
@@ -442,34 +448,32 @@ struct _protobt {
 };
 
 static const struct _protobt protobt_data[] = {
-    { SECT_SIZ, 1, 1, 2,  64,  360, 252, 2, 9, 1, 0 },
-    { SECT_SIZ, 2, 1, 2, 112,  720, 253, 2, 9, 2, 0 },
-    { SECT_SIZ, 2, 1, 2, 112,  720, 248, 5, 9, 1, 0 },
-    { SECT_SIZ, 2, 1, 2, 112, 1440, 249, 5, 9, 2, 0 },
+    { SECT_SIZ, 1, 1, 2,  64,  360, 0xfc, 2, 9, 1, 0 },
+    { SECT_SIZ, 2, 1, 2, 112,  720, 0xfd, 2, 9, 2, 0 },
+    { SECT_SIZ, 2, 1, 2, 112,  720, 0xf9, 5, 9, 1, 0 },
+    { SECT_SIZ, 2, 1, 2, 112, 1440, 0xf9, 5, 9, 2, 0 },
+    { SECT_SIZ, 2, 1, 2, 224, 2880, 0xf0, 5, 18, 2, 0 }, /* for HD floppy */
+    { SECT_SIZ, 2, 1, 2, 224, 5760, 0xf0, 10, 36, 2, 0 } /* for ED floppy */
 };
-  
+#define NUM_PROTOBT_ENTRIES (sizeof(protobt_data)/sizeof(struct _protobt))
+
 void protobt(LONG buf, LONG serial, WORD type, WORD exec)
 {
     WORD is_exec;
     struct bs *b = (struct bs *)buf;
     UWORD cksum;
   
-    is_exec = (compute_cksum(buf) == 0x1234);
+    is_exec = (compute_cksum(b) == 0x1234);
   
-    if(serial < 0) {
-        /* do not modify serial */
-    } else {
-        if(serial >= 0x1000000) {
-            /* create a random serial */
+    if (serial >= 0) {
+        if (serial >= 0x01000000)   /* create a random serial */
             serial = Random();
-        }
-        /* set this serial */
-        b->serial[0] = serial>>16;
+        b->serial[0] = serial;      /* set it (reversed as per Atari TOS) */
         b->serial[1] = serial>>8;
-        b->serial[2] = serial;
+        b->serial[2] = serial>>16;
     }
     
-    if(type >= 0 && type <= 3) {
+    if(type >= 0 && type < NUM_PROTOBT_ENTRIES) {
         const struct _protobt *bt = &protobt_data[type];
 
         setiword(b->bps, bt->bps);
@@ -484,35 +488,43 @@ void protobt(LONG buf, LONG serial, WORD type, WORD exec)
         setiword(b->sides, bt->sides);
         setiword(b->hid, bt->hid); 
     }
-  
-    if(exec < 0) {
-        /* keep in the same state */
-        if(is_exec) {
-            exec = 1;   /* executable */
-        } else {
-            exec = 0;   /* not executable */
-        }
-    }
-    switch(exec) {
-    case 0:
-        cksum = compute_cksum(buf);
-        if(cksum == 0x1234) {
-            b->cksum[1]++;
-        } 
-        break;
-    case 1:
-        setiword(b->cksum, 0);
-        cksum = compute_cksum(buf);
-        setiword(b->cksum, 0x1234 - cksum);
-        break;
-    default:
-        /* unknown */
-        break;
-    }
+
+    /*
+     * Falcon & TT TOS 'exec' flag compatibility
+     *  1. if 'exec' is negative, leave the executable *status* unchanged
+     *  2. if 'exec' is zero, make it non-executable (checksum 0x1235)
+     *  3. if 'exec' is greater than zero, make it executable (checksum 0x1234)
+     * 
+     * note that a new checksum is calculated & stored every time.  also,
+     * although the Protobt() specification is that a checksum of 0x1234
+     * means executable & anything else means non-executable, both Falcon
+     * & TT TOS always set a checksum of 0x1235 for non-executable, so we
+     * do it as well for hyper-compatibility :-).
+     */
+    if (exec < 0)       /* keep in the same state */
+        exec = is_exec ? 1 : 0;
+
+    b->cksum[0] = b->cksum[1] = 0;
+    cksum = 0x1234 - compute_cksum(b);
+    b->cksum[0] = cksum>>8;
+    b->cksum[1] = cksum;
+    if (!exec)
+        b->cksum[1]++;
 }
 
 
 /*==== boot-sector utilities ==============================================*/
+
+static UWORD compute_cksum(struct bs *buf)
+{
+    int i;
+    UWORD sum, *w;
+
+    for (i = 0, sum = 0, w = (UWORD *)buf; i < SECT_SIZ/sizeof(UWORD); i++, w++)
+        sum += *w;
+
+    return sum;
+}
 
 static void setiword(UBYTE *addr, UWORD value)
 {
