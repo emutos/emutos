@@ -275,8 +275,6 @@ LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG lrecnr
         }
     }
 
-    rw &= RW_RW;
-
     do {
         /* split the transfer to 15-bit count blocks (lowlevel functions take WORD count) */
         int scount = (lcount > CNTMAX) ? CNTMAX : lcount;
@@ -288,7 +286,7 @@ LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG lrecnr
                                    blkdev[unit].geometry.sides, unit);
             }
             else {
-                retval = rw ? DMAwrite(lrecnr, scount, buf, unit-2)
+                retval = (rw&RW_RW) ? DMAwrite(lrecnr, scount, buf, unit-2)
                             : DMAread(lrecnr, scount, buf, unit-2);
             }
         } while((retval < 0) && (--retries > 0));

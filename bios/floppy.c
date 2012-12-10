@@ -60,7 +60,6 @@
  * - on error, the geometry info should be reset to a sane state
  * - on error, should jump to critical error vector
  * - no 'virtual' disk B: mapped to disk A: when only one drive
- * - high density media not considered in flopfmt
  * - reserved or hidden sectors are not guaranteed to be handled correctly
  * - ... (search for 'TODO' in the rest of this file)
  * - the unique FDC track register is probably not handled correctly
@@ -70,12 +69,20 @@
 /*==== Internal defines ===================================================*/
  
 #define SECT_SIZ 512
-#define TRACK_SIZ 6250
+#define TRACK_SIZE_DD      6250
+#define TRACK_SIZE_HD      12500
+#define LEADER_DD          60
+#define LEADER_HD          120
 
-#define STEPPING_RATE_6_MS 0
-#define STEPPING_RATE_12_MS 1
-#define STEPPING_RATE_2_MS 2
-#define STEPPING_RATE_3_MS 3
+/*
+ * stepping rates
+ */
+#define DD_STEPRATE_6MS    0        /* double density */
+#define DD_STEPRATE_12MS   1
+#define DD_STEPRATE_2MS    2
+#define DD_STEPRATE_3MS    3
+#define HD_STEPRATE_3MS    0        /* high density */
+#define HD_STEPRATE_6MS    1
 
 /*==== Internal prototypes ==============================================*/
 
@@ -90,7 +97,7 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
                    WORD sect, WORD track, WORD side, WORD count); 
 
 /* floppy write track */
-static WORD flopwtrack(LONG buf, WORD dev, WORD track, WORD side);
+static WORD flopwtrack(LONG buf, WORD dev, WORD track, WORD side, WORD track_size);
 
 /* initialise a floppy for hdv_init */
 static void flop_detect_drive(WORD dev);
@@ -131,8 +138,15 @@ static void fdc_start_dma_write(WORD count);
  * routine may deselect the drive in the PSG port A. The routine 
  * floplock(dev) will set the new current drive.
  *
+ * drivetype is the type of drive; this is derived from the first byte of the
+ * _FDC cookie.  note that TOS appears to assume that if you have two drives,
+ * they are both of the same type.  so EmuTOS does the same.
+ *
  * finfo[].cur_track contains a copy of the fdc track register for the current
  * drive, or -1 to indicate that the drive does not exist.
+ *
+ * finfo[].cur_density is the density (either DD or HD) being used to access
+ * the current diskette.
  *
  * finfo[].last_access is set to the value of the 200 Hz counter at the end of
  * last fdc command. last_access can be used by mediach, a short time 
@@ -142,7 +156,11 @@ static void fdc_start_dma_write(WORD count);
  * controller status reg. As soon as this value is different for
  * the drive, this means that the floppy has changed.
  *
- * finfo[].rate is the stepping rate.
+ * finfo[].rate is the stepping rate set by Floprate() (or by 'seekrate' if
+ * Floprate() has never been called).
+ *
+ * finfo[].actual_rate is the value to send to the 1772 chip to get the stepping
+ * rate implied by finfo[].rate.  it differs from finfo[].rate for HD diskettes.
  * 
  * the flock variable in tosvars.s is used as following :
  * - floppy.c will set it before accessing to the DMA/FDC, and
@@ -158,15 +176,30 @@ static void fdc_start_dma_write(WORD count);
  */
 
 static WORD cur_dev;
+static UBYTE drivetype;
+#define DD_DRIVE    0x00
+#define HD_DRIVE    0x01
 static UBYTE deselected;
 static ULONG loopcount_3_usec;
+
+/*
+ * the following array maps the stepping rate as requested by Floprate()
+ * to the (closest possible) value to send to the 1772 chip when an HD
+ * diskette is loaded.
+ */
+static const WORD hd_steprate[] =
+ { HD_STEPRATE_6MS, HD_STEPRATE_6MS, HD_STEPRATE_3MS, HD_STEPRATE_3MS };
 
 #endif /* CONF_WITH_FDC */
 
 static struct flop_info {
-  WORD rate;
+  WORD rate;        /* rate selected via Floprate() */
 #if CONF_WITH_FDC
+  WORD actual_rate; /* value to send to 1772 controller */
   WORD cur_track;
+  BYTE cur_density;
+#define DENSITY_DD  0x00
+#define DENSITY_HD  0x03
   BYTE wp;           /* != 0 means write protected */
 #endif
 } finfo[2];
@@ -179,7 +212,9 @@ static void flop_init(WORD dev)
 {
     finfo[dev].rate = seekrate;
 #if CONF_WITH_FDC
+    finfo[dev].actual_rate = finfo[dev].rate;
     finfo[dev].cur_track = -1;
+    finfo[dev].cur_density = DENSITY_DD;
 #endif
 }
 
@@ -187,7 +222,7 @@ void flop_hdv_init(void)
 {
     /* set floppy specific stuff */
     fverify = 0xff;
-    seekrate = STEPPING_RATE_3_MS;
+    seekrate = DD_STEPRATE_3MS;
 
     /* by default, there is no floppy drive */
     nflops = 0;
@@ -196,6 +231,7 @@ void flop_hdv_init(void)
 
 #if CONF_WITH_FDC
     cur_dev = -1;
+    drivetype = (cookie_fdc >> 24) ? HD_DRIVE : DD_DRIVE;
     loopcount_3_usec = 3 * loopcount_1_msec / 1000;
 
     /* I'm unsure, so let flopvbl() do the work of figuring out. */
@@ -254,7 +290,7 @@ static void flop_detect_drive(WORD dev)
 #if CONF_WITH_FDC
     floplock(dev);
     select(dev, 0);
-    set_fdc_reg(FDC_CS, FDC_RESTORE | finfo[cur_dev].rate);
+    set_fdc_reg(FDC_CS, FDC_RESTORE | finfo[cur_dev].actual_rate);
     if(timeout_gpip(TIMEOUT)) {
         /* timeout */
 #if DBG_FLOP
@@ -369,6 +405,7 @@ LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt,
     WORD side;
     WORD sect;
     WORD err;
+    WORD bootsec = 0;
 
 #if DBG_FLOP
     kprintf("floppy_rw(rw %d, buf 0x%lx, cnt %d, ", rw, buf, cnt);
@@ -377,13 +414,18 @@ LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt,
 
     if (!IS_VALID_FLOPPY_DEVICE(dev)) return EUNDEV;  /* unknown device */
 
+    /* set flag if reading boot sector */
+    if ((cnt == 1) && (recnr == blkdev[dev].start)
+     && (rw & RW_NOTRANSLATE) && (rw & RW_NOMEDIACH))
+        bootsec = 1;
+
     /* do the transfer one sector at a time. It is easier to implement,
      * but perhaps slower when using FastRAM, as the time spent in memcpying
      * the sector in memory may force us to wait for a complete
      * rotation of the floppy before reading the next sector.
      */
     
-    while( --cnt >= 0) {
+    while (cnt > 0) {
         sect = (recnr % spt) + 1;
         track = recnr / spt;
         if (sides == 1) {
@@ -419,9 +461,30 @@ LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt,
             /* The buffer is in the ST-RAM, we can call floprw() directly */
             err = floprw(buf, rw, dev, sect, track, side, 1);
         }
+        if(err) {
+            struct flop_info *f;
+            if (drivetype == DD_DRIVE)          /* DD only, so no retry */
+                return err;
+            if (!bootsec)                       /* not reading boot sector */
+                return err;
+            /* we now switch density and retry.  note that 'spt' will
+             * certainly be wrong for the calculation of 'sect' and
+             * 'track' above; however, since we're reading the very
+             * first sector of the diskette, this doesn't matter.
+             */
+            f = &finfo[dev];
+#if DBG_FLOP
+            kprintf("switching density (current=%d)\n",f->cur_density);
+#endif
+            if (f->cur_density == DENSITY_DD)   /* retry with changed density */
+                f->cur_density = DENSITY_HD;
+            else f->cur_density = DENSITY_DD;
+            bootsec = 0;                        /* avoid endless retries */
+            continue;
+        }
         buf += SECT_SIZ;
         recnr ++;
-        if(err) return err;
+        cnt--;
     }
 
     return 0;
@@ -588,6 +651,7 @@ LONG flopfmt(LONG buf, LONG filler, WORD dev, WORD spt,
              ULONG magic, WORD virgin)
 {
     int i, j;
+    WORD track_size, leader;
     BYTE b1, b2;
     BYTE *s;
     LONG err;
@@ -596,7 +660,15 @@ LONG flopfmt(LONG buf, LONG filler, WORD dev, WORD spt,
 
     if(magic != 0x87654321UL) return 0;
     if(!IS_VALID_FLOPPY_DEVICE(dev)) return EUNDEV;  /* unknown disk */
-    if(spt < 1 || spt > 10) return EGENRL;  /* general error */
+
+    if ((spt >= 1) && (spt <= 10)) {
+        track_size = TRACK_SIZE_DD;
+        leader = LEADER_DD;
+    } else if ((drivetype == HD_DRIVE) && (spt >= 13) && (spt <= 20)) {
+        track_size = TRACK_SIZE_HD;
+        leader = LEADER_HD;
+    } else return EGENRL;     /* general error */
+
     s = (BYTE *)buf;
 
     /*
@@ -609,8 +681,8 @@ LONG flopfmt(LONG buf, LONG filler, WORD dev, WORD spt,
     b1 = virgin >> 8;
     b2 = virgin;
 
-    /* GAP1 + GAP2(part1) : 60 bytes 0x4E */  
-    APPEND(0x4E, 60);
+    /* GAP1 + GAP2(part1) : 60/120 bytes 0x4E */  
+    APPEND(0x4E, leader);
   
     for(i = 0 ; i < spt ; i++) {
         /* GAP2 (part2) */
@@ -641,13 +713,13 @@ LONG flopfmt(LONG buf, LONG filler, WORD dev, WORD spt,
         APPEND(0x4e, 40);
     }    
 
-    /* GAP5 : all the rest to fill to size 6250 (size of a raw track) */  
-    APPEND(0x4E, TRACK_SIZ - 60 - 614 * spt);
+    /* GAP5 : all the rest to fill raw track */  
+    APPEND(0x4E, track_size - leader - 614 * spt);
   
 #undef APPEND
 
     /* write the buffer to track */
-    err = flopwtrack(buf, dev, track, side);
+    err = flopwtrack(buf, dev, track, side, track_size);
     if(err) return err;
 
     /* verify sectors and store bad sector numbers in buf */
@@ -674,7 +746,7 @@ LONG floprate(WORD dev, WORD rate)
     if(!IS_VALID_FLOPPY_DEVICE(dev)) return EUNDEV;  /* unknown disk */
     old = finfo[dev].rate;
     if(rate >= 0 && rate <= 3) {
-        finfo[dev].rate = rate;
+        finfo[dev].actual_rate = finfo[dev].rate = rate;
     }
     return old;
 }
@@ -691,7 +763,9 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
 #endif
 
     if(!IS_VALID_FLOPPY_DEVICE(dev)) return EUNDEV;  /* unknown disk */
-    
+
+    rw &= RW_RW;    /* remove any extraneous bits */
+
     if((rw == RW_WRITE) && (track == 0) && (sect == 1) && (side == 0)) {
         /* TODO, maybe media changed ? */
     }
@@ -758,16 +832,15 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
     }
 
     flopunlk();
-#else
-    err = EUNDEV;
-#endif
-
     return err;
+#else
+    return EUNDEV;
+#endif
 }
 
 /*==== internal flopwtrack =================================================*/
 
-static WORD flopwtrack(LONG buf, WORD dev, WORD track, WORD side)
+static WORD flopwtrack(LONG buf, WORD dev, WORD track, WORD side, WORD track_size)
 {
 #if CONF_WITH_FDC
     WORD retry;
@@ -786,9 +859,10 @@ static WORD flopwtrack(LONG buf, WORD dev, WORD track, WORD side)
         flopunlk();
         return err;
     }
+
     for(retry = 0; retry < 2 ; retry ++) {
         set_dma_addr((ULONG) buf);
-        fdc_start_dma_write((TRACK_SIZ + SECT_SIZ-1) / SECT_SIZ);
+        fdc_start_dma_write((track_size + SECT_SIZ-1) / SECT_SIZ);
         set_fdc_reg(FDC_CS | DMA_WRBIT, FDC_WRITETR);
   
         if(timeout_gpip(TIMEOUT)) {
@@ -829,6 +903,8 @@ static WORD flopwtrack(LONG buf, WORD dev, WORD track, WORD side)
 
 static void floplock(WORD dev)
 {
+struct flop_info *f = &finfo[dev];
+
     /* prevent the VBL from accessing the FDC */
     flock = 1;
 
@@ -839,10 +915,16 @@ static void floplock(WORD dev)
          * the FDC has only one track register for two units.
          * we need to save the current value, and switch 
          */
-        if (finfo[cur_dev].cur_track >= 0) {
-            set_fdc_reg(FDC_TR, finfo[cur_dev].cur_track);
+        if (f->cur_track >= 0) {
+            set_fdc_reg(FDC_TR, f->cur_track);
         }
-    } 
+    }
+
+    /* for HD drives, always set density & update actual step rate */
+    if (drivetype == HD_DRIVE) {
+        DMA->density = f->cur_density;
+        f->actual_rate = (f->cur_density == DENSITY_HD) ? hd_steprate[f->rate] : f->rate;
+    }
 }
 
 static void flopunlk(void)
@@ -918,10 +1000,10 @@ static WORD set_track(WORD track)
     if(track == finfo[cur_dev].cur_track) return 0;
   
     if(track == 0) {
-        set_fdc_reg(FDC_CS, FDC_RESTORE | finfo[cur_dev].rate);
+        set_fdc_reg(FDC_CS, FDC_RESTORE | finfo[cur_dev].actual_rate);
     } else {
         set_fdc_reg(FDC_DR, track);
-        set_fdc_reg(FDC_CS, FDC_SEEK | finfo[cur_dev].rate);
+        set_fdc_reg(FDC_CS, FDC_SEEK | finfo[cur_dev].actual_rate);
     }
     if(timeout_gpip(TIMEOUT)) {
         /* cur_track is certainly wrong now */

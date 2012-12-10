@@ -1,7 +1,7 @@
 /*
  * dma.h - dma definitions
  *
- * Copyright (c) 2001 EmuTOS development team
+ * Copyright (c) 2001-2012 EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel
@@ -27,6 +27,8 @@ struct dma {
     UBYTE   addr_med;
     UBYTE   pad3;
     UBYTE   addr_low;
+    UBYTE   pad4;
+    UBYTE   density;    /* floppy density control (DD or HD) */
 };
 
 /*
