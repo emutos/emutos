@@ -646,7 +646,7 @@ LONG flopver(LONG buf, LONG filler, WORD dev,
 
 /*==== xbios flopfmt ======================================================*/
 
-LONG flopfmt(LONG buf, LONG filler, WORD dev, WORD spt,
+LONG flopfmt(LONG buf, WORD *skew, WORD dev, WORD spt,
              WORD track, WORD side, WORD interleave, 
              ULONG magic, WORD virgin)
 {
@@ -672,7 +672,6 @@ LONG flopfmt(LONG buf, LONG filler, WORD dev, WORD spt,
     s = (BYTE *)buf;
 
     /*
-     * sector interleave factor ignored, always 1.
      * create the image in memory. 
      * track  ::= GAP1 record record ... record GAP5
      * record ::= GAP2 index GAP3 data GAP4
@@ -693,7 +692,7 @@ LONG flopfmt(LONG buf, LONG filler, WORD dev, WORD spt,
         *s++ = 0xfe;            /* id address mark */
         *s++ = track;
         *s++ = side;
-        *s++ = i+1;
+        *s++ = (interleave < 0) ? *skew++ : i+1;    /* sector number */
         *s++ = 2; /* means sector of 512 bytes */
         *s++ = 0xf7;            /* generate 2 crc bytes */
 

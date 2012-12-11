@@ -32,7 +32,7 @@ extern LONG floprd(LONG buf, LONG filler, WORD dev,
                    WORD sect, WORD track, WORD side, WORD count); 
 extern LONG flopwr(LONG buf, LONG filler, WORD dev, 
                    WORD sect, WORD track, WORD side, WORD count); 
-extern LONG flopfmt(LONG buf, LONG filler, WORD dev, WORD spt,
+extern LONG flopfmt(LONG buf, WORD *skew, WORD dev, WORD spt,
                     WORD track, WORD side, WORD interleave, 
                     ULONG magic, WORD virgin); 
 extern void protobt(LONG buf, LONG serial, WORD type, WORD exec);

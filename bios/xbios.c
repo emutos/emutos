@@ -227,32 +227,42 @@ static LONG xbios_9(LONG buf, LONG filler, WORD devno, WORD sectno,
 /*
  * xbios_a - (flopfmt) Format a track on a floppy disk
  *
- * buf      - must point to a word-aligned buffer large enough to contain the
- *            number of sectors requested.
- * filler   - an unused longword.
+ * buf      - must point to a word-aligned buffer large enough to contain
+ *            a write track image.  Atari documentation says this is 8K
+ *            for a DD diskette, but the minimum values currently required
+ *            are 6250 bytes for DD and 12500 bytes for HD diskettes.
+ * skew     - if 'interlv' is negative, points to an array of WORDs with
+ *            'spt' entries, containing sector numbers in the sequence
+ *            in which they should be created on the track.  if 'interlv'
+ *            is not negative, this is ignored.
  * devno    - the floppy number (0 or 1).
- * spt      - the number of sectors-per-track to format (usually 9).
+ * spt      - the number of sectors-per-track to format: standard values
+ *            are 9 for DD and 18 for HD.  values of 1-9 imply formatting
+ *            as DD; values of 13-20 as HD.  other values return an error.
  * trackno  - the track number to format (usually 0 to 79).
  * sideno   - the side number to format (0 or 1).
- * interlv  - the sector-interleave factor (usually 1).
+ * interlv  - the sector-interleave factor.  if it is negative, the 'skew'
+ *            array is used to generate sector numbers; otherwise a value
+ *            of 1 is used for interleave (i.e. no interleave).
  * magic    - a magic number that MUST be the value $87654321.
- * virgin   - a word fill value for new sectors.
+ * virgin   - a word fill value for new sectors, normally 0xe5e5.  other
+ *            values may be used, but the high nybble of each byte must
+ *            *not* be $f (these values have special meanings to the FDC).
  *
  * Returns a status code:
  *  zero    - the operation succeeded.
- *  nonzero - the operation failed, returns an error number).
- *
- * Also returns null-terminated list of bad sector numbers in the buffer.
- *
+ *  nonzero - the operation failed.  if the status code is EBADSF, a
+ *            null-terminated WORD array of bad sector numbers is also
+ *            returned in the buffer.
  */
 
 #if DBG_XBIOS
-static LONG xbios_a(LONG buf, LONG filler, WORD devno, WORD spt,
+static LONG xbios_a(LONG buf, WORD *skew, WORD devno, WORD spt,
                     WORD trackno, WORD sideno, WORD interlv, WORD virgin,
                     LONG magic)
 {
     kprintf("XBIOS: flopfmt()\n");
-    return flopfmt(buf, filler, devno, spt, trackno, sideno, interlv, 
+    return flopfmt(buf, skew, devno, spt, trackno, sideno, interlv, 
                    virgin, magic);
 }
 #endif

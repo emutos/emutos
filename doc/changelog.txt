@@ -4166,3 +4166,7 @@ Start... early ages
 2012-12-10
 - bios/blkdev.c bios/dma.h bios/floppy.c: Add support for HD floppy disks
   as indicated by _FDC cookie. (RFB)
+
+2012-12-11
+- bios/floppy.c bios/floppy.h bios/xbios.c: Flopfmt() now supports the
+  skew array introduced in TOS 1.04. (RFB)
