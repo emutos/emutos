@@ -4170,3 +4170,4 @@ Start... early ages
 2012-12-11
 - bios/floppy.c bios/floppy.h bios/xbios.c: Flopfmt() now supports the
   skew array introduced in TOS 1.04. (RFB)
+- bios/floppy.c: Flopfmt() now supports interleave. (RFB)

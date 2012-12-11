@@ -651,10 +651,10 @@ LONG flopfmt(LONG buf, WORD *skew, WORD dev, WORD spt,
              ULONG magic, WORD virgin)
 {
     int i, j;
-    WORD track_size, leader;
+    WORD track_size, leader, offset;
     BYTE b1, b2;
     BYTE *s;
-    LONG err;
+    LONG used, err;
 
 #define APPEND(b, count) do { memset(s, b, count); s += count; } while(0)
 
@@ -668,6 +668,14 @@ LONG flopfmt(LONG buf, WORD *skew, WORD dev, WORD spt,
         track_size = TRACK_SIZE_HD;
         leader = LEADER_HD;
     } else return EGENRL;     /* general error */
+
+    /*
+     * fixup interleave if not using skew table
+     */
+    if (interleave > 0)
+        interleave = interleave % spt;
+    if (interleave == 0)
+        interleave = 1;
 
     s = (BYTE *)buf;
 
@@ -683,7 +691,7 @@ LONG flopfmt(LONG buf, WORD *skew, WORD dev, WORD spt,
     /* GAP1 + GAP2(part1) : 60/120 bytes 0x4E */  
     APPEND(0x4E, leader);
   
-    for(i = 0 ; i < spt ; i++) {
+    for(i = 0, offset = -interleave, used = 0L; i < spt ; i++) {
         /* GAP2 (part2) */
         APPEND(0x00, 12);
 
@@ -692,7 +700,13 @@ LONG flopfmt(LONG buf, WORD *skew, WORD dev, WORD spt,
         *s++ = 0xfe;            /* id address mark */
         *s++ = track;
         *s++ = side;
-        *s++ = (interleave < 0) ? *skew++ : i+1;    /* sector number */
+        if (interleave > 0) {   /* using interleave factor */
+            offset = (offset+interleave) % spt;
+            while(used&(1L<<offset))    /* skip offsets already used */
+                offset = (offset+1) % spt;
+            *s++ = offset + 1;  /* sector number from 'interleave' */
+            used |= (1L<<offset);
+        } else *s++ = *skew++;  /* sector number from skew array */
         *s++ = 2; /* means sector of 512 bytes */
         *s++ = 0xf7;            /* generate 2 crc bytes */
 
