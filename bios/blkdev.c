@@ -34,7 +34,7 @@ BLKDEV blkdev[BLKDEVNUM];
 int blkdevnum;
 UNIT devices[UNITSNUM];
 
-static BYTE diskbuf[2*512];      /* buffer for 2 sectors */
+static BYTE diskbuf[2*SECTOR_SIZE];     /* buffer for 2 sectors */
 
 PUN_INFO pun_info;
 
@@ -83,7 +83,7 @@ void pun_info_setup(void)
 
     /* set PUN_INFO */
     pun_info.puns = blkdevnum;
-    pun_info.max_sect_siz = 512;
+    pun_info.max_sect_siz = SECTOR_SIZE;
 
     /* floppy A: */
     pun_info.pun[0] = 0;    /* FIXME */

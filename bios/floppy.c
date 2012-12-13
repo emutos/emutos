@@ -67,8 +67,7 @@
  */
 
 /*==== Internal defines ===================================================*/
- 
-#define SECT_SIZ 512
+
 #define TRACK_SIZE_DD      6250
 #define TRACK_SIZE_HD      12500
 #define LEADER_DD          60
@@ -252,7 +251,7 @@ static void flop_add_drive(WORD dev)
 
     /* Physical block device */
     devices[dev].valid = 1;
-    devices[dev].pssize = 512;      /* default */
+    devices[dev].pssize = SECTOR_SIZE;  /* default */
     devices[dev].size = 0;          /* unknown size */
     devices[dev].last_access = 0;   /* never accessed */
 
@@ -444,12 +443,12 @@ LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt,
                 /* do we really need proper FRB lock? (TODO) */
                 if(rw & 1) {
                     /* writing */ 
-                    memcpy((void *)cookie_frb, (void *)buf, SECT_SIZ);
+                    memcpy((void *)cookie_frb, (void *)buf, SECTOR_SIZE);
                     err = floprw(cookie_frb, rw, dev, sect, track, side, 1);
                 } else {
                     /* reading */
                     err = floprw(cookie_frb, rw, dev, sect, track, side, 1);
-                    memcpy((void *)buf, (void *)cookie_frb, SECT_SIZ);
+                    memcpy((void *)buf, (void *)cookie_frb, SECTOR_SIZE);
                 }
                 /* proper FRB unlock (TODO) */
             } else {
@@ -482,7 +481,7 @@ LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt,
             bootsec = 0;                        /* avoid endless retries */
             continue;
         }
-        buf += SECT_SIZ;
+        buf += SECTOR_SIZE;
         recnr ++;
         cnt--;
     }
@@ -511,12 +510,12 @@ struct _protobt {
 };
 
 static const struct _protobt protobt_data[] = {
-    { SECT_SIZ, 1, 1, 2,  64,  360, 0xfc, 2, 9, 1, 0 },
-    { SECT_SIZ, 2, 1, 2, 112,  720, 0xfd, 2, 9, 2, 0 },
-    { SECT_SIZ, 2, 1, 2, 112,  720, 0xf9, 5, 9, 1, 0 },
-    { SECT_SIZ, 2, 1, 2, 112, 1440, 0xf9, 5, 9, 2, 0 },
-    { SECT_SIZ, 2, 1, 2, 224, 2880, 0xf0, 5, 18, 2, 0 }, /* for HD floppy */
-    { SECT_SIZ, 2, 1, 2, 224, 5760, 0xf0, 10, 36, 2, 0 } /* for ED floppy */
+    { SECTOR_SIZE, 1, 1, 2,  64,  360, 0xfc, 2, 9, 1, 0 },
+    { SECTOR_SIZE, 2, 1, 2, 112,  720, 0xfd, 2, 9, 2, 0 },
+    { SECTOR_SIZE, 2, 1, 2, 112,  720, 0xf9, 5, 9, 1, 0 },
+    { SECTOR_SIZE, 2, 1, 2, 112, 1440, 0xf9, 5, 9, 2, 0 },
+    { SECTOR_SIZE, 2, 1, 2, 224, 2880, 0xf0, 5, 18, 2, 0 }, /* for HD floppy */
+    { SECTOR_SIZE, 2, 1, 2, 224, 5760, 0xf0, 10, 36, 2, 0 } /* for ED floppy */
 };
 #define NUM_PROTOBT_ENTRIES (sizeof(protobt_data)/sizeof(struct _protobt))
 
@@ -583,7 +582,7 @@ static UWORD compute_cksum(struct bs *buf)
     int i;
     UWORD sum, *w;
 
-    for (i = 0, sum = 0, w = (UWORD *)buf; i < SECT_SIZ/sizeof(UWORD); i++, w++)
+    for (i = 0, sum = 0, w = (UWORD *)buf; i < SECTOR_SIZE/sizeof(UWORD); i++, w++)
         sum += *w;
 
     return sum;
@@ -717,7 +716,7 @@ LONG flopfmt(LONG buf, WORD *skew, WORD dev, WORD spt,
         /* data */
         APPEND(0xF5, 3);
         *s++ = 0xfb;            /* data address mark */
-        for(j = 0 ; j < SECT_SIZ ; j += 2) {
+        for(j = 0; j < SECTOR_SIZE; j += 2) {
             *s++ = b1; *s++ = b2;
         }
         *s++ = 0xf7;            /* generate 2 crc bytes */
@@ -840,7 +839,7 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
           break;
       }
       //-- Otherwise carry on sequentially
-      buf += 512;
+      buf += SECTOR_SIZE;
       sect++;
     }
 
@@ -875,7 +874,7 @@ static WORD flopwtrack(LONG buf, WORD dev, WORD track, WORD side, WORD track_siz
 
     for(retry = 0; retry < 2 ; retry ++) {
         set_dma_addr((ULONG) buf);
-        fdc_start_dma_write((track_size + SECT_SIZ-1) / SECT_SIZ);
+        fdc_start_dma_write((track_size + SECTOR_SIZE-1) / SECTOR_SIZE);
         set_fdc_reg(FDC_CS | DMA_WRBIT, FDC_WRITETR);
   
         if(timeout_gpip(TIMEOUT)) {

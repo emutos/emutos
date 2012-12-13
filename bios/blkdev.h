@@ -1,7 +1,7 @@
 /*
  * blkdev.h - bios block devices
  *
- * Copyright (c) 2001-2005 EmuTOS development team
+ * Copyright (c) 2001-2012 EmuTOS development team
  *
  * Authors:
  *  MAD   Martin Doering
@@ -21,6 +21,7 @@
 /*
  * defines
  */
+#define SECTOR_SIZE     512 /* standard for floppy, hard disk */
 
 #define RWABS_RETRIES   1   /* on real machine might want to increase this */
 

@@ -1,7 +1,7 @@
 /*
  * xhdi.c - XHDI handler
  *
- * Copyright (c) 2001-2005 EmuTOS development team
+ * Copyright (c) 2001-2012 EmuTOS development team
  *
  * Authors:
  *  PES   Petr Stehlik
@@ -285,7 +285,7 @@ static long XHInqTarget2(UWORD major, UWORD minor, ULONG *blocksize,
          * 3) find last common byte
          * 4) blocksize = index_of_last_common_byte + 1
          */
-        *blocksize = 512;   /* usually physical sector size on HDD is 512 bytes */
+        *blocksize = SECTOR_SIZE;   /* standard physical sector size on HDD */
     }
     if (deviceflags)
         *deviceflags = 0;  /* not implemented yet */

@@ -1,7 +1,7 @@
 /*
  * acsi.c - Atari Simple Computer Interface (ACSI) support
  *
- * Copyright (c) 2002, 2007 EmuTOS development team
+ * Copyright (c) 2002-2012 EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel
@@ -19,6 +19,7 @@
 #include "machine.h"
 #include "tosvars.h"
 #include "gemerror.h"
+#include "blkdev.h"
 
 #if CONF_WITH_ACSI
 
@@ -80,14 +81,14 @@ LONG acsi_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev)
         }
         
         if(rw && need_frb) {
-            memcpy((void *)tmp_buf, (void *)buf, cnt * 512L);
+            memcpy((void *)tmp_buf, (void *)buf, (LONG)cnt * SECTOR_SIZE);
         }
         for(retry = 0; retry < 2 ; retry++) {
             err = do_acsi_rw(rw, sector, cnt, tmp_buf, dev);
             if(err == 0) break;
         }
         if((!rw) && need_frb) {
-            memcpy((void *)buf, (void *)tmp_buf, cnt * 512L);
+            memcpy((void *)buf, (void *)tmp_buf, (LONG)cnt * SECTOR_SIZE);
         }
         if(need_frb) {
             /* proper FRB unlock (TODO) */
@@ -98,7 +99,7 @@ LONG acsi_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev)
         }
         
         count -= cnt;
-        buf += cnt * 512L;
+        buf += (LONG)cnt * SECTOR_SIZE;
         sector += cnt;
     }
     return 0;

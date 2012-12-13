@@ -1,7 +1,7 @@
 /*
  * disk.c - disk routines
  *
- * Copyright (c) 2001-2005 EmuTOS development team
+ * Copyright (c) 2001-2012 EmuTOS development team
  *
  * Authors:
  *  PES   Petr Stehlik
@@ -145,7 +145,7 @@ int atari_partition(int bdev)
         kprintf("DOS MBR byteswapped checksum detected: byteswap required!\n");
 #endif
         /* swap bytes in the loaded boot sector */
-        for(i=0; i<512; i+=2) {
+        for(i=0; i<SECTOR_SIZE; i+=2) {
             int a = sect[i];
             sect[i] = sect[i+1];
             sect[i+1] = a;

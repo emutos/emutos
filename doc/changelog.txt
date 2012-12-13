@@ -4171,3 +4171,8 @@ Start... early ages
 - bios/floppy.c bios/floppy.h bios/xbios.c: Flopfmt() now supports the
   skew array introduced in TOS 1.04. (RFB)
 - bios/floppy.c: Flopfmt() now supports interleave. (RFB)
+
+2012-12-13
+- bios/acsi.c bios/blkdev.c bios/blkdev.h bios/disk.c bios/floppy.c
+  bios/ide.c bios/xhdi.c: Code cleanup: #define physical sector size in
+  one place. (RFB)

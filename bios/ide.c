@@ -1,7 +1,7 @@
 /*
  * ide.c - Falcon IDE functions
  *
- * Copyright (c) 2011 EmuTOS development team
+ * Copyright (c) 2011-2012 EmuTOS development team
  *
  * Authors:
  *  VRI   Vincent Rivière
@@ -20,6 +20,7 @@
 
 #include "config.h"
 #include "portab.h"
+#include "blkdev.h"
 #include "ide.h"
 #include "gemerror.h"
 #include "vectors.h"
@@ -60,8 +61,6 @@ struct IDE
 #endif /* CONF_ATARI_HARDWARE */
 
 /* IDE defines */
-
-#define IDE_SECTOR_SIZE 512
 
 #define IDE_CMD_IDENTIFY_DEVICE 0xec
 #define IDE_CMD_READ_SECTOR 0x20
@@ -104,7 +103,7 @@ static void byteswap(UBYTE* buffer, ULONG size)
 {
     UBYTE* p;
 
-    for (p = buffer; p < buffer + IDE_SECTOR_SIZE; p += 2)
+    for (p = buffer; p < buffer + SECTOR_SIZE; p += 2)
     {
         UBYTE temp = p[0];
         p[0] = p[1];
@@ -176,10 +175,10 @@ static int ide_wait_drq(void)
     }
 }
 
-static int ide_read_data(UBYTE buffer[IDE_SECTOR_SIZE])
+static int ide_read_data(UBYTE buffer[SECTOR_SIZE])
 {
     UWORD* p = (UWORD*)buffer;
-    UWORD* end = p + (IDE_SECTOR_SIZE / 2);
+    UWORD* end = p + (SECTOR_SIZE / 2);
     int ret;
 
     ret = ide_wait_drq();
@@ -192,10 +191,10 @@ static int ide_read_data(UBYTE buffer[IDE_SECTOR_SIZE])
     return E_OK;
 }
 
-static int ide_write_data(UBYTE buffer[IDE_SECTOR_SIZE], BOOL need_byteswap)
+static int ide_write_data(UBYTE buffer[SECTOR_SIZE], BOOL need_byteswap)
 {
     UWORD* p = (UWORD*)buffer;
-    UWORD* end = p + (IDE_SECTOR_SIZE / 2);
+    UWORD* end = p + (SECTOR_SIZE / 2);
     int ret;
 
     ret = ide_wait_drq();
@@ -222,7 +221,7 @@ static int ide_write_data(UBYTE buffer[IDE_SECTOR_SIZE], BOOL need_byteswap)
     return ide_wait_not_busy_check_error();
 }
 
-static int ide_read_sector(UWORD device, ULONG sector, UBYTE buffer[IDE_SECTOR_SIZE])
+static int ide_read_sector(UWORD device, ULONG sector, UBYTE buffer[SECTOR_SIZE])
 {
     int ret;
 
@@ -235,7 +234,7 @@ static int ide_read_sector(UWORD device, ULONG sector, UBYTE buffer[IDE_SECTOR_S
         return ret;
 
 #ifdef BYTESWAPPED_SECTOR_DATA
-    byteswap(buffer, IDE_SECTOR_SIZE);
+    byteswap(buffer, SECTOR_SIZE);
 #endif
 
     ide_wait_not_busy_check_error();
@@ -243,7 +242,7 @@ static int ide_read_sector(UWORD device, ULONG sector, UBYTE buffer[IDE_SECTOR_S
     return E_OK;
 }
 
-static int ide_write_sector(UWORD device, ULONG sector, UBYTE buffer[IDE_SECTOR_SIZE])
+static int ide_write_sector(UWORD device, ULONG sector, UBYTE buffer[SECTOR_SIZE])
 {
     int ret;
 
@@ -280,7 +279,7 @@ LONG ide_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev)
         if (ret < 0)
             return ret;
 
-        p += IDE_SECTOR_SIZE;
+        p += SECTOR_SIZE;
         ++sector;
         --count;
     }
