@@ -406,6 +406,8 @@ LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt,
     WORD err;
     WORD bootsec = 0;
 
+    UNUSED(bootsec);
+
 #if DBG_FLOP
     kprintf("floppy_rw(rw %d, buf 0x%lx, cnt %d, ", rw, buf, cnt);
     kprintf("recnr %ld, spt %d, sides %d, dev %d)\n", recnr, spt, sides, dev);
@@ -461,6 +463,9 @@ LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt,
             err = floprw(buf, rw, dev, sect, track, side, 1);
         }
         if(err) {
+#ifdef MACHINE_AMIGA
+            return err;
+#else
             struct flop_info *f;
             if (drivetype == DD_DRIVE)          /* DD only, so no retry */
                 return err;
@@ -480,6 +485,7 @@ LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt,
             else f->cur_density = DENSITY_DD;
             bootsec = 0;                        /* avoid endless retries */
             continue;
+#endif
         }
         buf += SECTOR_SIZE;
         recnr ++;
@@ -663,9 +669,11 @@ LONG flopfmt(LONG buf, WORD *skew, WORD dev, WORD spt,
     if ((spt >= 1) && (spt <= 10)) {
         track_size = TRACK_SIZE_DD;
         leader = LEADER_DD;
+#ifndef MACHINE_AMIGA
     } else if ((drivetype == HD_DRIVE) && (spt >= 13) && (spt <= 20)) {
         track_size = TRACK_SIZE_HD;
         leader = LEADER_HD;
+#endif
     } else return EGENRL;     /* general error */
 
     /*
@@ -758,7 +766,10 @@ LONG floprate(WORD dev, WORD rate)
     if(!IS_VALID_FLOPPY_DEVICE(dev)) return EUNDEV;  /* unknown disk */
     old = finfo[dev].rate;
     if(rate >= 0 && rate <= 3) {
-        finfo[dev].actual_rate = finfo[dev].rate = rate;
+        finfo[dev].rate = rate;
+#ifndef MACHINE_AMIGA
+        finfo[dev].actual_rate = rate;
+#endif
     }
     return old;
 }
@@ -785,6 +796,7 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
 #ifdef MACHINE_AMIGA
     err = amiga_floprw(buf, rw, dev, sect, track, side, count);
     devices[dev].last_access = hz_200;
+    return err;
 #elif CONF_WITH_FDC
     floplock(dev);
     
