@@ -21,7 +21,8 @@
 #include "kprint.h"
 #include "xhdi.h"
 
-/*==== External declarations ==============================================*/
+/*==== Internal declarations ==============================================*/
+static int atari_partition(int xhdidev);
 
 /*
  * disk_init
@@ -73,8 +74,6 @@ void disk_init(void)
 #include "string.h"
 #include "atari_rootsec.h"
 
-#define printk  kprintf
-
 #define ICD_PARTS
 
 /* check if a partition entry looks valid -- Atari format is assumed if at
@@ -114,10 +113,10 @@ union
   
 
 /*
- * scans for Atari partitions on disk 'bdev' and adds them to blkdev array
+ * scans for Atari partitions on 'xhdidev' and adds them to blkdev array
  *
  */
-int atari_partition(int bdev)
+static int atari_partition(int xhdidev)
 {
     u8* sect = physsect.sect;
     struct rootsector *rs = &physsect.rs;
@@ -132,15 +131,15 @@ int atari_partition(int bdev)
     /* reset the sector buffer content */
     bzero(&physsect, sizeof(physsect));
 
-    if (DMAread(0, 1, (long)&physsect, bdev))
+    if (DMAread(0, 1, (long)&physsect, xhdidev))
         return -1;
 
-    printk("%cd%c:", (bdev >> 3) ? (((bdev >> 3) == 2) ? 'h' : 's') : 'a', (bdev & 7) + 'a');
+    kprintf("%cd%c:","ash"[xhdidev>>3],'a'+(xhdidev&0x07));
 
     /* check for DOS byteswapped master boot record */
     if (sect[510] == 0xaa && sect[511] == 0x55) {
         int i;
-        byteswap = 1;   /* byteswap required for whole 'bdev' disk!! */
+        byteswap = 1;   /* byteswap required for whole disk!! */
 #if DBG_DISK
         kprintf("DOS MBR byteswapped checksum detected: byteswap required!\n");
 #endif
@@ -174,7 +173,7 @@ int atari_partition(int bdev)
             start <<= 8;
             start |= sect[offset+8];
 
-                size = sect[offset+15];
+            size = sect[offset+15];
             size <<= 8;
             size |= sect[offset+14];
             size <<= 8;
@@ -190,15 +189,15 @@ int atari_partition(int bdev)
                     start, size, type);
 #endif
             if (type == 0x05 || type == 0x0f || type == 0x85) {
-                kprintf(" extended partitions unsupported yet ");
+                kprintf(" extended partitions not yet supported ");
             }
             else {
-                add_partition(bdev, pid, start, size, byteswap);
+                add_partition(xhdidev, pid, start, size, byteswap);
                 kprintf(" $%02x", type);
             }
         }
     
-        printk ("\n");
+        kprintf("\n");
 
         return 1;
     }
@@ -229,72 +228,72 @@ int atari_partition(int bdev)
         /* active partition */
         if (memcmp (pi->id, "XGM", 3) != 0) {
             /* we don't care about other id's */
-            if (add_partition(bdev, pi->id, pi->st, pi->siz, 0))
+            if (add_partition(xhdidev, pi->id, pi->st, pi->siz, 0))
                 break;  /* max number of partitions reached */
-            printk(" %c%c%c", pi->id[0], pi->id[1], pi->id[2]);
+            kprintf(" %c%c%c", pi->id[0], pi->id[1], pi->id[2]);
             continue;
         }
         /* extension partition */
 #ifdef ICD_PARTS
         part_fmt = 1;
 #endif
-        printk(" XGM<");
+        kprintf(" XGM<");
         partsect = extensect = pi->st;
         while (1) {
             /* reset the sector buffer content */
             bzero(&physsect2, sizeof(physsect2));
 
-            if (DMAread(partsect, 1, (long)&physsect2, bdev)) {
-                printk (" block %ld read failed\n", partsect);
+            if (DMAread(partsect, 1, (long)&physsect2, xhdidev)) {
+                kprintf(" block %ld read failed\n", partsect);
                 return 0;
             }
 
             /* ++roman: sanity check: bit 0 of flg field must be set */
             if (!(xrs->part[0].flg & 1)) {
-                printk( "\nFirst sub-partition in extended partition is not valid!\n" );
+                kprintf( "\nFirst sub-partition in extended partition is not valid!\n" );
                 break;
             }
 
-            if (add_partition(bdev, xrs->part[0].id,
+            if (add_partition(xhdidev, xrs->part[0].id,
                               partsect + xrs->part[0].st,
                               xrs->part[0].siz, 0))
                 break;  /* max number of partitions reached */
-            printk(" %c%c%c", xrs->part[0].id[0], xrs->part[0].id[1], xrs->part[0].id[2]);
+            kprintf(" %c%c%c", xrs->part[0].id[0], xrs->part[0].id[1], xrs->part[0].id[2]);
 
             if (!(xrs->part[1].flg & 1)) {
                 /* end of linked partition list */
                 break;
             }
             if (memcmp( xrs->part[1].id, "XGM", 3 ) != 0) {
-                printk("\nID of extended partition is not XGM!\n");
+                kprintf("\nID of extended partition is not XGM!\n");
                 break;
             }
 
             partsect = xrs->part[1].st + extensect;
         }
-        printk(" >");
+        kprintf(" >");
     }
 #ifdef ICD_PARTS
     if ( part_fmt!=1 ) { /* no extended partitions -> test ICD-format */
         pi = &rs->icdpart[0];
         /* sanity check: no ICD format if first partition invalid */
         if (OK_id(pi->id)) {
-            printk(" ICD<");
+            kprintf(" ICD<");
             for (; pi < &rs->icdpart[8]; pi++) {
                 /* accept only GEM,BGM,RAW,LNX,SWP partitions */
                 if (!((pi->flg & 1) && OK_id(pi->id)))
                     continue;
                 part_fmt = 2;
-                if (add_partition(bdev, pi->id, pi->st, pi->siz, 0))
+                if (add_partition(xhdidev, pi->id, pi->st, pi->siz, 0))
                     break;  /* max number of partitions reached */
-                printk(" %c%c%c", pi->id[0], pi->id[1], pi->id[2]);
+                kprintf(" %c%c%c", pi->id[0], pi->id[1], pi->id[2]);
             }
-            printk(" >");
+            kprintf(" >");
         }
     }
 #endif
 
-    printk ("\n");
+    kprintf("\n");
 
     return 1;
 }

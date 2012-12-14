@@ -4177,3 +4177,4 @@ Start... early ages
   bios/ide.c bios/xhdi.c: Code cleanup: #define physical sector size in
   one place. (RFB)
 - bios/floppy.c: Fix compile errors when MACHINE_AMIGA is defined. (RFB)
+- bios/disk.c bios/disk.h: Tidy up code format, variable names etc. (RFB)

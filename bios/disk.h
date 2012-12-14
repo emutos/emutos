@@ -1,7 +1,7 @@
 /*
  * disk.h - disk routines
  *
- * Copyright (c) 2001 EmuTOS development team
+ * Copyright (c) 2001-2012 EmuTOS development team
  *
  * Authors:
  *  PES   Petr Stehlik
@@ -23,6 +23,5 @@ extern LONG DMAwrite(LONG sector, WORD count, LONG buf, WORD dev);
 /* partition detection */
 
 void disk_init(void);
-int atari_partition(int bdev);
 
 #endif /* DISK_H */
