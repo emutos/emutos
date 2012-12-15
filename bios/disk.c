@@ -46,7 +46,7 @@ void disk_init(void)
         ULONG blocks;
         int major = targets[i];
         int minor = 0;
-        int xbiosdev = major + 2;
+        int xbiosdev = major + NUMFLOPPIES;
 
         if (! XHInqTarget(major, minor, &blocksize, NULL, NULL)) {
             devices[xbiosdev].valid = 1;

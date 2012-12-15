@@ -201,9 +201,9 @@ static struct flop_info {
 #define DENSITY_HD  0x03
   BYTE wp;           /* != 0 means write protected */
 #endif
-} finfo[2];
+} finfo[NUMFLOPPIES];
 
-#define IS_VALID_FLOPPY_DEVICE(dev) ((UWORD)(dev) < 2 && devices[dev].valid)
+#define IS_VALID_FLOPPY_DEVICE(dev) ((UWORD)(dev) < NUMFLOPPIES && devices[dev].valid)
 
 /*==== hdv_init and hdv_boot ==============================================*/
 

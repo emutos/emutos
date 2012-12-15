@@ -4178,3 +4178,7 @@ Start... early ages
   one place. (RFB)
 - bios/floppy.c: Fix compile errors when MACHINE_AMIGA is defined. (RFB)
 - bios/disk.c bios/disk.h: Tidy up code format, variable names etc. (RFB)
+
+2012-12-15
+- bios/blkdev.c bios/blkdev.h bios/disk.c bios/floppy.c bios/xhdi.c:
+  Code cleanup: replace magic number 2 with NUMFLOPPIES. (RFB)

@@ -190,7 +190,7 @@ int add_partition(int dev, char id[], ULONG start, ULONG size, int byteswap)
     blkdev[blkdevnum].start = start;
     blkdev[blkdevnum].size  = size;
 
-    blkdev[blkdevnum].unit  = dev + 2;
+    blkdev[blkdevnum].unit  = dev + NUMFLOPPIES;
     blkdev[blkdevnum].valid = 1;
     blkdev[blkdevnum].mediachange = MEDIANOCHANGE;
     blkdev[blkdevnum].byteswap = byteswap;
@@ -280,14 +280,14 @@ LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG lrecnr
         int scount = (lcount > CNTMAX) ? CNTMAX : lcount;
         lcount -= CNTMAX;
         do {
-            if (unit < 2) {
+            if (unit < NUMFLOPPIES) {
                 retval = floppy_rw(rw, buf, scount, lrecnr,
                                    blkdev[unit].geometry.spt,
                                    blkdev[unit].geometry.sides, unit);
             }
             else {
-                retval = (rw&RW_RW) ? DMAwrite(lrecnr, scount, buf, unit-2)
-                            : DMAread(lrecnr, scount, buf, unit-2);
+                retval = (rw&RW_RW) ? DMAwrite(lrecnr, scount, buf, unit-NUMFLOPPIES)
+                            : DMAread(lrecnr, scount, buf, unit-NUMFLOPPIES);
             }
         } while((retval < 0) && (--retries > 0));
         buf += scount;
