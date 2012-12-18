@@ -331,12 +331,12 @@ static void setvalue_snd(void)
 
 static void setvalue_frb(void)
 {
-  BOOL need_frb;
+  BOOL need_frb; /* Required only if the system has Alt RAM */
 
 #ifdef MACHINE_AMIGA
-  /* Unfortunately, read Alt RAM presence will be detected later */
-  //need_frb = TRUE;
-  need_frb = FALSE; // But _FRB is useless for Amiga floppy routines, so disable it
+  /* At this point, we don't know if the system has Alt RAM yet.
+   * Anyway, _FRB is useless for Amiga floppy routines, so disable it. */
+  need_frb = FALSE;
 #elif CONF_WITH_FASTRAM
   /* Standard Atari TT-RAM may be present */
   need_frb = (ramtop > 0);
