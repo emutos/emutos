@@ -46,10 +46,12 @@ static LONG bconoutA(WORD,WORD);
 static LONG bconstatB(void);
 static LONG bconinB(void);
 static LONG bcostatB(void);
+#if CONF_WITH_TT_MFP
 static LONG bconstatTT(void);
 static LONG bconinTT(void);
 static LONG bcostatTT(void);
 static LONG bconoutTT(WORD,WORD);
+#endif /* CONF_WITH_TT_MFP */
 static ULONG rsconfA(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
 static ULONG rsconfB(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
 static ULONG rsconfTT(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
@@ -106,8 +108,10 @@ static const MAPTAB maptable_port_a =
     { bconstatA, bconinA, bcostatA, bconoutA, rsconfA, &iorecA };
 static const MAPTAB maptable_port_b =
     { bconstatB, bconinB, bcostatB, bconoutB, rsconfB, &iorecB };
+#if CONF_WITH_TT_MFP
 static const MAPTAB maptable_mfp_tt =
     { bconstatTT, bconinTT, bcostatTT, bconoutTT, rsconfTT, &iorecTT };
+#endif /* CONF_WITH_TT_MFP */
 #endif
 
 #if CONF_WITH_SCC
