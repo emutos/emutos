@@ -524,13 +524,13 @@ void fill_cookie_jar(void)
   
   detect_akp();
 #if DBG_MACHINE
-    kprintf("cookie_akp = 0x%08lx\n", cookie_akp);
+  kprintf("cookie_akp = 0x%08lx\n", cookie_akp);
 #endif
   cookie_add(COOKIE_AKP, cookie_akp);
 
   detect_idt();
 #if DBG_MACHINE
-    kprintf("cookie_idt = 0x%08lx\n", cookie_idt);
+  kprintf("cookie_idt = 0x%08lx\n", cookie_idt);
 #endif
   cookie_add(COOKIE_IDT, cookie_idt);
   
