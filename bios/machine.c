@@ -412,7 +412,6 @@ void machine_detect(void)
  */
 void machine_init(void)
 {
-#ifndef MACHINE_FIREBEE
 #if CONF_WITH_VIDEL
 volatile BYTE *fbcr = (BYTE *)FALCON_BUS_CTL;
 /* the Falcon Bus Control Register uses the following bits:
@@ -425,7 +424,6 @@ volatile BYTE *fbcr = (BYTE *)FALCON_BUS_CTL;
  */
   if (has_videl)        /* i.e. it's a Falcon */
     *fbcr |= 0x29;      /* set STe Bus emulation off, blitter off, 16MHz CPU */
-#endif
 #endif
 }
   
