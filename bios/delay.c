@@ -51,7 +51,7 @@ void calibration_timer(void);
  */
 void init_delay(void)
 {
-#ifdef MACHINE_FIREBEE
+#ifdef __mcoldfire__
     loopcount_1_msec = LOOPS_FIREBEE;
 #else
     switch((int)mcpu) {

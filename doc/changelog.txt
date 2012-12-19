@@ -4187,3 +4187,6 @@ Start... early ages
 - bios/bios.c: Fixed wrong charset in multilanguage builds when the _AKP
   cookie is initialized from the NVRAM (ex: wrong Spanish accents). (VRI)
 - bios/serport.c: Fixed compilation warnings with "make aranym". (VRI)
+
+2012-12-19
+- bios/delay.c: Use __mcoldfire__ instead of MACHINE_FIREBEE. (RFB)
