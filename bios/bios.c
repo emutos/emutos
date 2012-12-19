@@ -99,16 +99,34 @@ WORD boot_status;               /* see kprint.h for bit flags */
  
 static void vecs_init(void)
 {
-    /* setup default exception vectors */
+    /* Initialize the exception vectors.
+     * By default, any unexpected exception calls dopanic().
+     */
     init_exc_vec();
     init_user_vec();
+
+    /* Some user drivers may install interrupt handlers and call the previous
+     * ones. For example, ARAnyM's network driver for MiNT (nfeth.xif) and fVDI
+     * driver (aranym.sys) install custom handlers on INT3, and call the
+     * previous one. This panics with "Exception number 27" if VEC_LEVEL3 is
+     * not initialized with a valid default handler.
+     */
+    VEC_LEVEL1 = just_rte;
+    VEC_LEVEL2 = just_rte;
+    VEC_LEVEL3 = just_rte;
+    VEC_LEVEL4 = just_rte;
+    VEC_LEVEL5 = just_rte;
+    VEC_LEVEL6 = just_rte;
+    VEC_LEVEL7 = just_rte;
+
+    /* Original TOS cowardly ignores integer divide by zero. */
+    VEC_DIVNULL = just_rte;
 
     /* initialise some vectors we really need */
     VEC_AES = gemtrap;
     VEC_BIOS = biostrap;
     VEC_XBIOS = xbiostrap;
     VEC_LINEA = int_linea;
-    VEC_DIVNULL = just_rte;     /* just return for this */
     
     /* Emulate some instructions unsupported by the processor. */
 #ifdef __mcoldfire__

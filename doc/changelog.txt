@@ -4190,3 +4190,6 @@ Start... early ages
 
 2012-12-19
 - bios/delay.c: Use __mcoldfire__ instead of MACHINE_FIREBEE. (RFB)
+- bios/bios.c: Fixed regression on default interrupt handlers. At least
+  ARAnyM's network and fVDI driver requires INT3 handler to be initialized
+  with a simple RTE, otherwise they crashes with "Exception number 27". (VRI)
