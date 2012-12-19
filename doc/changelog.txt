@@ -4197,3 +4197,4 @@ Start... early ages
   The hardware supports both, but 0xffffxxxx allows the .w optimization. (VRI)
 - bios/blkdev.c: Fixed latent bug in blkdev_rwabs() when transferring
   >32767 sectors. (RFB)
+- bios/floppy.c: Fixed compilation for non-Atari hardware. (VRI)

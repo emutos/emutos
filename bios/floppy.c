@@ -175,9 +175,6 @@ static void fdc_start_dma_write(WORD count);
  */
 
 static WORD cur_dev;
-static UBYTE drivetype;
-#define DD_DRIVE    0x00
-#define HD_DRIVE    0x01
 static UBYTE deselected;
 static ULONG loopcount_3_usec;
 
@@ -191,14 +188,18 @@ static const WORD hd_steprate[] =
 
 #endif /* CONF_WITH_FDC */
 
+static UBYTE drivetype;
+#define DD_DRIVE    0x00
+#define HD_DRIVE    0x01
+
 static struct flop_info {
   WORD rate;        /* rate selected via Floprate() */
-#if CONF_WITH_FDC
   WORD actual_rate; /* value to send to 1772 controller */
-  WORD cur_track;
   BYTE cur_density;
 #define DENSITY_DD  0x00
 #define DENSITY_HD  0x03
+#if CONF_WITH_FDC
+  WORD cur_track;
   BYTE wp;           /* != 0 means write protected */
 #endif
 } finfo[NUMFLOPPIES];
@@ -273,6 +274,7 @@ static void flop_detect_drive(WORD dev)
 {
     WORD status;
     UNUSED(status);
+    UNUSED(flop_add_drive);
 
 #if DBG_FLOP
     kprintf("flop_detect_drive(%d)\n", dev);
@@ -463,9 +465,6 @@ LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt,
             err = floprw(buf, rw, dev, sect, track, side, 1);
         }
         if(err) {
-#ifdef MACHINE_AMIGA
-            return err;
-#else
             struct flop_info *f;
             if (drivetype == DD_DRIVE)          /* DD only, so no retry */
                 return err;
@@ -485,7 +484,6 @@ LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt,
             else f->cur_density = DENSITY_DD;
             bootsec = 0;                        /* avoid endless retries */
             continue;
-#endif
         }
         buf += SECTOR_SIZE;
         recnr ++;
@@ -669,11 +667,9 @@ LONG flopfmt(LONG buf, WORD *skew, WORD dev, WORD spt,
     if ((spt >= 1) && (spt <= 10)) {
         track_size = TRACK_SIZE_DD;
         leader = LEADER_DD;
-#ifndef MACHINE_AMIGA
     } else if ((drivetype == HD_DRIVE) && (spt >= 13) && (spt <= 20)) {
         track_size = TRACK_SIZE_HD;
         leader = LEADER_HD;
-#endif
     } else return EGENRL;     /* general error */
 
     /*
@@ -767,9 +763,7 @@ LONG floprate(WORD dev, WORD rate)
     old = finfo[dev].rate;
     if(rate >= 0 && rate <= 3) {
         finfo[dev].rate = rate;
-#ifndef MACHINE_AMIGA
         finfo[dev].actual_rate = rate;
-#endif
     }
     return old;
 }
@@ -796,7 +790,6 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
 #ifdef MACHINE_AMIGA
     err = amiga_floprw(buf, rw, dev, sect, track, side, count);
     devices[dev].last_access = hz_200;
-    return err;
 #elif CONF_WITH_FDC
     floplock(dev);
     
@@ -856,10 +849,10 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
     }
 
     flopunlk();
-    return err;
 #else
-    return EUNDEV;
+    err = EUNDEV;
 #endif
+    return err;
 }
 
 /*==== internal flopwtrack =================================================*/
