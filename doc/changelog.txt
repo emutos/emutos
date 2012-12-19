@@ -4200,3 +4200,4 @@ Start... early ages
 - bios/floppy.c: Fixed compilation for non-Atari hardware. (VRI)
 - bios/serport.c: Fixed test on wrong define in rsconfTT(). (VRI)
 - bios/serport.c: Fixed warning about rsconfTT() with "make aranym". (VRI)
+- bios/serport.c bios/startup.S: Moved read-only data to TEXT segment. (VRI)

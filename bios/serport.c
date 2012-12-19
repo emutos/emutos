@@ -613,7 +613,7 @@ static void init_bconmap(void)
 #endif      /* BCONMAP_AVAILABLE */
 
 #if CONF_WITH_SCC
-WORD SCC_init_string[] = {
+static const WORD SCC_init_string[] = {
     0x0444,     /* x16 clock mode, 1 stop bit, no parity */
     0x0104,     /* 'parity is special condition' */
     0x0260,     /* interrupt vector #s start at 0x60 (lowmem 0x180) */
@@ -645,7 +645,7 @@ WORD SCC_init_string[] = {
 static void init_scc(void)
 {
 SCC *scc = (SCC *)SCC_BASE;
-WORD *p;
+const WORD *p;
 ULONG reset_recovery_loops;
 
     /* calculate delay times for SCC access: note that SCC PCLK is 8MHz */
