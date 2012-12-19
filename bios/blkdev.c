@@ -277,8 +277,7 @@ LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG lrecnr
 
     do {
         /* split the transfer to 15-bit count blocks (lowlevel functions take WORD count) */
-        int scount = (lcount > CNTMAX) ? CNTMAX : lcount;
-        lcount -= CNTMAX;
+        WORD scount = (lcount > CNTMAX) ? CNTMAX : lcount;
         do {
             if (unit < NUMFLOPPIES) {
                 retval = floppy_rw(rw, buf, scount, lrecnr,
@@ -290,7 +289,9 @@ LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG lrecnr
                             : DMAread(lrecnr, scount, buf, unit-NUMFLOPPIES);
             }
         } while((retval < 0) && (--retries > 0));
-        buf += scount;
+        buf += scount * devices[unit].pssize;
+        lrecnr += scount;
+        lcount -= scount;
     } while(lcount > 0);
 
     return retval;

@@ -4195,3 +4195,5 @@ Start... early ages
   with a simple RTE, otherwise they crashes with "Exception number 27". (VRI)
 - bios/*: Use again 0xffffxxxx instead of 0x00ffxxxx to access I/O registers.
   The hardware supports both, but 0xffffxxxx allows the .w optimization. (VRI)
+- bios/blkdev.c: Fixed latent bug in blkdev_rwabs() when transferring
+  >32767 sectors. (RFB)
