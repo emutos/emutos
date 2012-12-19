@@ -4198,3 +4198,4 @@ Start... early ages
 - bios/blkdev.c: Fixed latent bug in blkdev_rwabs() when transferring
   >32767 sectors. (RFB)
 - bios/floppy.c: Fixed compilation for non-Atari hardware. (VRI)
+- bios/serport.c: Fixed test on wrong define in rsconfTT(). (VRI)

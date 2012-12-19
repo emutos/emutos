@@ -534,7 +534,7 @@ SCC *scc = (SCC *)SCC_BASE;
 
 static ULONG rsconfTT(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
 {
-#if CONF_WITH_MFP_TT
+#if CONF_WITH_TT_MFP
     ULONG old = 0UL;
 
     if (baud == -2)     /* wants current baud rate */
