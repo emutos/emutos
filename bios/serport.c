@@ -54,7 +54,9 @@ static LONG bconoutTT(WORD,WORD);
 #endif /* CONF_WITH_TT_MFP */
 static ULONG rsconfA(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
 static ULONG rsconfB(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
+#if CONF_WITH_TT_MFP
 static ULONG rsconfTT(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
+#endif /* CONF_WITH_TT_MFP */
 static ULONG rsconf_dummy(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
 #endif      /* BCONMAP_AVAILABLE */
 
@@ -532,9 +534,9 @@ SCC *scc = (SCC *)SCC_BASE;
 #endif
 }
 
+#if CONF_WITH_TT_MFP
 static ULONG rsconfTT(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
 {
-#if CONF_WITH_TT_MFP
     ULONG old = 0UL;
 
     if (baud == -2)     /* wants current baud rate */
@@ -544,10 +546,8 @@ static ULONG rsconfTT(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD s
         rs232iorecptr->flowctrl = ctrl;
 
     return old;
-#else
-    return 0UL;
-#endif
 }
+#endif /* CONF_WITH_TT_MFP */
 
 static ULONG rsconf_dummy(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
 {

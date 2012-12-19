@@ -4199,3 +4199,4 @@ Start... early ages
   >32767 sectors. (RFB)
 - bios/floppy.c: Fixed compilation for non-Atari hardware. (VRI)
 - bios/serport.c: Fixed test on wrong define in rsconfTT(). (VRI)
+- bios/serport.c: Fixed warning about rsconfTT() with "make aranym". (VRI)
