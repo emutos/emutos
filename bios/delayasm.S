@@ -15,7 +15,7 @@
         .globl  _run_calibration
 
 #define TIMERD_VEC  0x110
-#define MFP_REGS    0x00fffa01
+#define MFP_REGS    0xfffffa01
 #define MFP_IERB    MFP_REGS+8
 #define MFP_ISRB    MFP_REGS+16
 #define MFP_IMRB    MFP_REGS+20

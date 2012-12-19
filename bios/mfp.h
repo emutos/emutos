@@ -123,7 +123,7 @@ typedef struct
 
 
 /*==== Defines ============================================================*/
-#define MFP_BASE        ((MFP *)(0x00fffa00L))
+#define MFP_BASE        ((MFP *)(0xfffffa00L))
 
 /*==== Xbios functions ====================================================*/
 

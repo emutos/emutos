@@ -77,9 +77,9 @@ static void detect_video(void)
  /* test if we have an STe Shifter by testing that register 820d
   * works (put a value, read other reg, read again, and compare)
   */
-  volatile BYTE *ste_reg = (BYTE *) 0x00ff820d;
-  volatile BYTE *other_reg1 = (BYTE *) 0x00ff8203;
-  volatile WORD *other_reg2 = (WORD *) 0x00ff8240;
+  volatile BYTE *ste_reg = (BYTE *) 0xffff820d;
+  volatile BYTE *other_reg1 = (BYTE *) 0xffff8203;
+  volatile WORD *other_reg2 = (WORD *) 0xffff8240;
 
   has_ste_shifter = 0;  
   if(!check_read_byte((long)ste_reg)) return;

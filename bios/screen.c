@@ -110,7 +110,7 @@ static int shifter_rez_changeable(void)
 
 static WORD shifter_get_monitor_type(void)
 {
-    volatile UBYTE *gpip = (UBYTE *)0x00fffa01;
+    volatile UBYTE *gpip = (UBYTE *)0xfffffa01;
 
     if (*gpip & 0x80)
         return MON_COLOR;

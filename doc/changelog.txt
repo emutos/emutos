@@ -4193,3 +4193,5 @@ Start... early ages
 - bios/bios.c: Fixed regression on default interrupt handlers. At least
   ARAnyM's network and fVDI driver requires INT3 handler to be initialized
   with a simple RTE, otherwise they crashes with "Exception number 27". (VRI)
+- bios/*: Use again 0xffffxxxx instead of 0x00ffxxxx to access I/O registers.
+  The hardware supports both, but 0xffffxxxx allows the .w optimization. (VRI)

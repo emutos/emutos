@@ -83,21 +83,21 @@ clearbss:
 
 #if DETECT_MMU
         /* detect if this is a Falcon by reading $ff8282 register */
-        pea     0x00ff8282
+        pea     0xffff8282.w
         jsr     _check_read_byte
         addq.l  #4, sp
 
         tst.w   d0                      // is it Falcon MMU?
-        beq     memchk                  // no -> skip 0x00ff8007 test
+        beq     memchk                  // no -> skip 0xffff8007 test
 #endif /* DETECT_MMU */
 
 #if CONF_WITH_FALCON_MMU
         /* Initialize ant test Falcon MMU ??? */
 #ifdef __mcoldfire__
-        lea     0x00ff8007, a0
+        lea     0xffff8007.w, a0
         bset    #6, (a0)                // seen in TOS 4.04
 #else
-        bset    #6, 0x00ff8007          // seen in TOS 4.04
+        bset    #6, 0xffff8007.w        // seen in TOS 4.04
 #endif
         beq     memconf                 // not sure what 6th bit means
 #endif /* CONF_WITH_FALCON_MMU */
@@ -134,10 +134,10 @@ memok:
 
 #if CONF_WITH_ST_MMU
 #ifdef __mcoldfire__
-        lea     0x00ff8001, a0
+        lea     0xffff8001.w, a0
         move.b  memctrl, (a0)           // write old valid config to controller
 #else
-        move.b  memctrl, 0x00ff8001     // write old valid config to controller
+        move.b  memctrl, 0xffff8001.w   // write old valid config to controller
 #endif
                                         // phystop should then also be ok
 #endif /* CONF_WITH_ST_MMU */
@@ -187,10 +187,10 @@ memconf:
  * That's why a 200 bytes pattern test are used in the TOS 1.6 ROM to avoid this issue.
  */
 #ifdef __mcoldfire__
-        lea     0x00ff8001,a0
-        move.b  #0xa,(a0)               // set hw to 2 banks by 2 mb (reg 0x00ff8001 - memorycontroller)
+        lea     0xffff8001.w,a0
+        move.b  #0xa,(a0)               // set hw to 2 banks by 2 mb (reg 0xffff8001 - memorycontroller)
 #else
-        move.b  #0xa,0x00ff8001         // set hw to 2 banks by 2 mb (reg 0x00ff8001 - memorycontroller)
+        move.b  #0xa,0xffff8001.w       // set hw to 2 banks by 2 mb (reg 0xffff8001 - memorycontroller)
 #endif
 
 /* init the test pattern in bank 0 and 1 */
@@ -211,7 +211,7 @@ init_pattern_loop:
 /* In this part:
  * D4 = Actual bank memory size in byte
  * D5 = total memory size (later phystop)
- * D6 = value to the MMU config register (reg 0x00ff8001) at the end
+ * D6 = value to the MMU config register (reg 0xffff8001) at the end
  * A0 = pattern test offset (0x8,0x40008,0x80008)
  * D1 = pattern test bank base (0x200000 ,0x000000)
  * A5 = pattern test subroutine return address.
@@ -279,7 +279,7 @@ bank_test_end:
                                         // in the case this test is the end.
 
         // Set the final MMU config
-        move.b  d6,0x00ff8001           // set hw memory config (reg 0x00ff8001 - memorycontroller)
+        move.b  d6,0xffff8001.w         // set hw memory config (reg 0xffff8001 - memorycontroller)
 
         bra     detect_extra_stram
 
@@ -357,7 +357,7 @@ falcmemconf:
         /* find out the memory size by checking the d0 = $ff8006 value */
 #ifdef __mcoldfire__
         moveq   #0, d0
-        move.w  0x00ff8006, d0          // read the Falcon MMU register
+        move.w  0xffff8006.w, d0        // read the Falcon MMU register
         lsr.l   #8,d0
         lsr.l   #1,d0
         move.l  d0,d1
@@ -366,7 +366,7 @@ falcmemconf:
         and.l   #6,d0
         or.l    d0,d1
 #else
-        move.w  0x00ff8006, d0          // read the Falcon MMU register
+        move.w  0xffff8006.w, d0        // read the Falcon MMU register
         lsr.w   #8,d0
         lsr.b   #1,d0
         move.b  d0,d1

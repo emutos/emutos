@@ -16,16 +16,16 @@
 /*
  * hardware registers
  */
-#define FALCON_BUS_CTL      0x00ff8007UL
-#define FALCON_HHT          0x00ff8282UL
-#define TT_PALETTE_REGS     0x00ff8400UL
-#define BLITTER_CONFIG1     0x00ff8a3cUL
-#define SCC_BASE            0x00ff8c80UL
-#define SYS_INT_MASK        0x00ff8e01UL
-#define SCU_GPR1            0x00ff8e09UL
-#define VME_INT_MASK        0x00ff8e0dUL
-#define DIP_SWITCHES        0x00ff9200UL
-#define TT_MFP_BASE         0x00fffa80UL
+#define FALCON_BUS_CTL      0xffff8007UL
+#define FALCON_HHT          0xffff8282UL
+#define TT_PALETTE_REGS     0xffff8400UL
+#define BLITTER_CONFIG1     0xffff8a3cUL
+#define SCC_BASE            0xffff8c80UL
+#define SYS_INT_MASK        0xffff8e01UL
+#define SCU_GPR1            0xffff8e09UL
+#define VME_INT_MASK        0xffff8e0dUL
+#define DIP_SWITCHES        0xffff9200UL
+#define TT_MFP_BASE         0xfffffa80UL
 
 /*
  * some useful cookies.

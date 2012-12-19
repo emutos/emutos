@@ -23,20 +23,20 @@
 
 #if CONF_WITH_SHIFTER
 
-#define VIDEOBASE_ADDR_HI   0x00ff8201L
-#define VIDEOBASE_ADDR_MID  0x00ff8203L
-#define VIDEOBASE_ADDR_LOW  0x00ff820dL
+#define VIDEOBASE_ADDR_HI   0xffff8201L
+#define VIDEOBASE_ADDR_MID  0xffff8203L
+#define VIDEOBASE_ADDR_LOW  0xffff820dL
 
-#define SYNCMODE            0x00ff820aL
+#define SYNCMODE            0xffff820aL
 
-#define ST_SHIFTER          0x00ff8260L
-#define TT_SHIFTER          0x00ff8262L
-#define SPSHIFT             0x00ff8266L
+#define ST_SHIFTER          0xffff8260L
+#define TT_SHIFTER          0xffff8262L
+#define SPSHIFT             0xffff8266L
 
 #define TT_SHIFTER_BITMASK  0x970f      /* valid bits in TT_SHIFTER */
 
-#define ST_PALETTE_REGS     0x00ff8240L
-#define FALCON_PALETTE_REGS 0x00ff9800L
+#define ST_PALETTE_REGS     0xffff8240L
+#define FALCON_PALETTE_REGS 0xffff9800L
 
 #define TT_PALETTE_BITMASK  0x0fff      /* valid bits in TT_PALETTE_REGS */
 

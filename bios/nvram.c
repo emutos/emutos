@@ -34,7 +34,7 @@ static int inited;
  */
 void detect_nvram(void)
 {
-    if(check_read_byte(0x00ff8961)) {
+    if(check_read_byte(0xffff8961)) {
         has_nvram = 1;
         inited = 0;
     } else {

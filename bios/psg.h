@@ -19,7 +19,7 @@ struct psg {
   UBYTE data;
 };
 
-#define PSG ((volatile struct psg *) 0x00ff8800)
+#define PSG ((volatile struct psg *) 0xffff8800)
 
 /* bits in PSG_MULTI register: */
 

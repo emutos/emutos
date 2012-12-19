@@ -258,7 +258,7 @@ int_acia_loop:
         move.l  ikbdsys,a0
         jsr     (a0)
 #endif
-        lea     0x00fffa00,a1
+        lea     0xfffffa00.w,a1
         btst.b  #4,0x1(a1)                // while still interrupting
         beq     int_acia_loop
         bclr.b  #6,0x11(a1)               // clear in service bit
@@ -279,8 +279,8 @@ int_acia_loop:
 // ==== MIDI stuff ================
 //        
 
-        .equ    midi_acia_stat, 0x00fffc04
-        .equ    midi_acia_data, 0x00fffc06
+        .equ    midi_acia_stat, 0xfffffc04
+        .equ    midi_acia_data, 0xfffffc06
         
 _midisys:
         move.b  midi_acia_stat,d0
@@ -369,8 +369,8 @@ just_rts:
         rts
 
 #if CONF_WITH_IKBD_ACIA
-        .equ    ikbd_acia_stat, 0x00fffc00
-        .equ    ikbd_acia_data, 0x00fffc02
+        .equ    ikbd_acia_stat, 0xfffffc00
+        .equ    ikbd_acia_data, 0xfffffc02
 
 _ikbdsys:
         move.l  #0,d0

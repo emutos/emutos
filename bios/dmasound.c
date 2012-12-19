@@ -67,7 +67,7 @@ struct dmasound
     UBYTE gpx_data_port; /* GPx Data Port */
 };
 
-#define DMASOUND ((volatile struct dmasound*)0x00ff8900)
+#define DMASOUND ((volatile struct dmasound*)0xffff8900)
 
 /* Generic Microwire macros */
 #define MICROWIRE_BIT_OFFSET 1 /* As seen in TOS 1.62 */

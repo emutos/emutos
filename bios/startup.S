@@ -192,8 +192,8 @@ main_after_reset_instruction:
         // Hatari leaves them unmodified, so unexpected interrupts may occur.
         // This matters for EmuTOS RAM versions.
         // So manually disable the MFP interrupts
-        clr.b   0x00fffa07      // IERA
-        clr.b   0x00fffa09      // IERB
+        clr.b   0xfffffa07.w    // IERA
+        clr.b   0xfffffa09.w    // IERB
 #endif
 
 #if CONF_WITH_CARTRIDGE
