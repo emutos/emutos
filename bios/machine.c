@@ -591,7 +591,7 @@ static const char * guess_machine_name(void)
 
 const char * machine_name(void)
 {
-  UNUSED(guess_machine_name);
+  MAYBE_UNUSED(guess_machine_name);
 #ifdef MACHINE_FIREBEE
   return "FireBee";
 #elif defined(MACHINE_AMIGA)

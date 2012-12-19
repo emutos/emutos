@@ -307,6 +307,8 @@ static ULONG uaelib_GetVersion(void);
 
 void amiga_uaelib_init(void)
 {
+    MAYBE_UNUSED(uaelib_GetVersion);
+
     if (IS_TRAP(RTAREA_DEFAULT + UAELIB_DEMUX_OFFSET))
         uaelib_demux = (uaelib_demux_t*)(RTAREA_DEFAULT + UAELIB_DEMUX_OFFSET);
     else if (IS_TRAP(RTAREA_BACKUP + UAELIB_DEMUX_OFFSET))
@@ -322,7 +324,6 @@ void amiga_uaelib_init(void)
             (int)(version & 0x0000ffff));
     }
 #endif
-    UNUSED(uaelib_GetVersion);
 }
 
 /* Get UAE version */
@@ -2548,7 +2549,8 @@ BOOL amiga_flop_detect_drive(WORD dev)
     struct TDU* unit = tdu;
     ULONG i = dev;
 
-    UNUSED(i);
+    MAYBE_UNUSED(i);
+
     if (!tdb->td_DMABuffer)
         init_trackdisk();
 

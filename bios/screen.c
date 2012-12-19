@@ -462,7 +462,7 @@ void screen_init(void)
     if (has_videl) {
         WORD ret;
 
-        UNUSED(ret);
+        MAYBE_UNUSED(ret);
 
         /* reset VIDEL on boot-up */
         /* first set the physbase to a safe memory */

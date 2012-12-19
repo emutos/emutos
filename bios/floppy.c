@@ -273,8 +273,9 @@ static void flop_add_drive(WORD dev)
 static void flop_detect_drive(WORD dev)
 {
     WORD status;
-    UNUSED(status);
-    UNUSED(flop_add_drive);
+
+    MAYBE_UNUSED(status);
+    MAYBE_UNUSED(flop_add_drive);
 
 #if DBG_FLOP
     kprintf("flop_detect_drive(%d)\n", dev);
@@ -407,8 +408,6 @@ LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt,
     WORD sect;
     WORD err;
     WORD bootsec = 0;
-
-    UNUSED(bootsec);
 
 #if DBG_FLOP
     kprintf("floppy_rw(rw %d, buf 0x%lx, cnt %d, ", rw, buf, cnt);
