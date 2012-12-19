@@ -4202,3 +4202,4 @@ Start... early ages
 - bios/serport.c: Fixed warning about rsconfTT() with "make aranym". (VRI)
 - bios/serport.c bios/startup.S: Moved read-only data to TEXT segment. (VRI)
 - bios/machine.c: Set the Falcon Bus Control Register on the FireBee. (VRI)
+- bios/machine.c: Added guess_machine_name(). (VRI)

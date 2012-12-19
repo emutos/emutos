@@ -559,14 +559,8 @@ void fill_cookie_jar(void)
 #endif
 }
 
-const char * machine_name(void)
+static const char * guess_machine_name(void)
 {
-#ifdef MACHINE_FIREBEE
-  return "FireBee";
-#elif defined(MACHINE_AMIGA)
-  return "Amiga";
-#else
-
 #if DETECT_NATIVE_FEATURES
   static char buffer[80];
   long bufsize;
@@ -593,5 +587,16 @@ const char * machine_name(void)
   case MCH_FALCON: return "Falcon";
   default: return "unknown";
   } 
+}
+
+const char * machine_name(void)
+{
+  UNUSED(guess_machine_name);
+#ifdef MACHINE_FIREBEE
+  return "FireBee";
+#elif defined(MACHINE_AMIGA)
+  return "Amiga";
+#else
+  return guess_machine_name();
 #endif
 }
