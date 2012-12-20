@@ -100,7 +100,6 @@ static const EXT_IOREC iorec_init = {
     { NULL, RS232_BUFSIZE, 0, 0, RS232_BUFSIZE/4, 3*RS232_BUFSIZE/4 },
     { NULL, RS232_BUFSIZE, 0, 0, RS232_BUFSIZE/4, 3*RS232_BUFSIZE/4 },
     B9600, FLOW_CTRL_NONE, 0x88, 0xff, 0xea };
-static ULONG (*rsconfptr)(WORD,WORD,WORD,WORD,WORD,WORD);
 
 #if BCONMAP_AVAILABLE
 static MAPTAB maptable[4];
@@ -111,6 +110,8 @@ static const MAPTAB maptable_dummy =
 
 static const MAPTAB maptable_mfp =
     { bconstat1, bconin1, bcostat1, bconout1, rsconf1, &iorec1 };
+
+static ULONG (*rsconfptr)(WORD,WORD,WORD,WORD,WORD,WORD);
 #endif /* BCONMAP_AVAILABLE */
 
 #if CONF_WITH_SCC
@@ -718,7 +719,6 @@ void init_serport(void)
     iorec1.out.buf = obuf1;
 
     rs232iorecptr = &iorec1;
-    rsconfptr = rsconf1;
 
     /* initialisation for other devices if required */
 #if BCONMAP_AVAILABLE
@@ -741,7 +741,7 @@ void init_serport(void)
         init_scc();
 #endif
 
-    (*rsconfptr)(B9600, 0, 0x88, 1, 1, 0);
+    rsconf(B9600, 0, 0x88, 1, 1, 0);
 }
 
 /*
@@ -749,5 +749,9 @@ void init_serport(void)
  */
 ULONG rsconf(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
 {
+#if BCONMAP_AVAILABLE
     return (*rsconfptr)(baud, ctrl, ucr, rsr, tsr, scr);
+#else
+    return rsconf1(baud, ctrl, ucr, rsr, tsr, scr);
+#endif
 }
