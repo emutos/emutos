@@ -4204,3 +4204,7 @@ Start... early ages
 - bios/machine.c: Set the Falcon Bus Control Register on the FireBee. (VRI)
 - bios/machine.c: Added guess_machine_name(). (VRI)
 - *: Added the MAYBE_UNUSED() macro. (VRI)
+
+2012-12-20
+- bios/serport.c bios/serport.h bios/xbios.c: Refactored serial port support
+  for better readability with conditional compilation. (VRI)
