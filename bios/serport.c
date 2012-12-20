@@ -85,16 +85,15 @@ typedef struct {
 /*
  * global variables
  */
-EXT_IOREC *rs232iorecptr;
-
+EXT_IOREC iorec1;
 #if BCONMAP_AVAILABLE
 BCONMAP bconmap_root;
+EXT_IOREC *rs232iorecptr;
 #endif
 
 /*
  * local variables
  */
-static EXT_IOREC iorec1;
 static char ibuf1[RS232_BUFSIZE], obuf1[RS232_BUFSIZE];
 static const EXT_IOREC iorec_init = {
     { NULL, RS232_BUFSIZE, 0, 0, RS232_BUFSIZE/4, 3*RS232_BUFSIZE/4 },
@@ -231,7 +230,7 @@ ULONG rsconf1(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
     ULONG old;
 
     if (baud == -2)     /* wants current baud rate */
-        return rs232iorecptr->baudrate;
+        return iorec1.baudrate;
 
     mfp = MFP_BASE;     /* set base address of MFP */
 
@@ -242,13 +241,13 @@ ULONG rsconf1(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
     old = ((ULONG)mfp->ucr<<24) | ((ULONG)mfp->rsr<<16) | (ULONG)mfp->tsr<<8;
 
     if ((baud >= MIN_BAUDRATE_CODE ) && (baud <= MAX_BAUDRATE_CODE)) {
-        rs232iorecptr->baudrate = baud;
+        iorec1.baudrate = baud;
         init = &mfp_rs232_init[baud];
         setup_timer(3,init->control,init->data);
     }
 
     if ((ctrl >= MIN_FLOW_CTRL) && (ctrl <= MAX_FLOW_CTRL))
-        rs232iorecptr->flowctrl = ctrl;
+        iorec1.flowctrl = ctrl;
     if (ucr >= 0)
         mfp->ucr = ucr;
     if (rsr >= 0)
@@ -717,8 +716,6 @@ void init_serport(void)
     memcpy(&iorec1,&iorec_init,sizeof(EXT_IOREC));
     iorec1.in.buf = ibuf1;
     iorec1.out.buf = obuf1;
-
-    rs232iorecptr = &iorec1;
 
     /* initialisation for other devices if required */
 #if BCONMAP_AVAILABLE

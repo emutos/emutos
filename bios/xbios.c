@@ -321,7 +321,11 @@ LONG iorec(WORD devno)
 {
     switch(devno) {
     case 0:
+#if BCONMAP_AVAILABLE
         return (LONG) rs232iorecptr;
+#else
+        return (LONG) &iorec1;
+#endif
     case 1:
         return (LONG) &ikbdiorec;
     case 2:

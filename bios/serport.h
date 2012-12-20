@@ -66,7 +66,7 @@ typedef struct {
 /*
  * external references
  */
-extern EXT_IOREC *rs232iorecptr;
+extern EXT_IOREC iorec1;
 
 /*
  * function prototypes
@@ -105,6 +105,7 @@ typedef struct {
 #define BCONMAP_START_HANDLE    6
 
 extern BCONMAP bconmap_root;
+extern EXT_IOREC *rs232iorecptr;
 
 LONG bconmap(WORD);
 
