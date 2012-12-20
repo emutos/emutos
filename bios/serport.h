@@ -16,12 +16,6 @@
 #include "portab.h"
 #include "iorec.h"
 
-#if CONF_WITH_SCC || CONF_WITH_TT_MFP
-#define BCONMAP_AVAILABLE 1
-#else
-#define BCONMAP_AVAILABLE 0
-#endif
-
 /*
  * baud rate codes
  */
@@ -46,6 +40,19 @@
 #define MAX_BAUDRATE_CODE   B50
 
 /*
+ * structures
+ */
+typedef struct {
+    IOREC in;
+    IOREC out;
+    UBYTE baudrate;     /* remember value set by Rsconf() */
+    UBYTE flowctrl;  	/* TODO, flow control */
+    UBYTE ucr;          /* remember value set by Rsconf() */
+    UBYTE datamask;     /* masks off hi-order bits (handles < 8 bits/char) */
+    UBYTE wr5;          /* shadow of real wr5 (for SCC only) */
+} EXT_IOREC;
+
+/*
  * flow control codes
  */
 #define FLOW_CTRL_NONE  0    /* no flow control */
@@ -57,17 +64,28 @@
 #define MAX_FLOW_CTRL   FLOW_CTRL_BOTH
 
 /*
- * Bconmap() stuff
+ * external references
  */
-typedef struct {
-    IOREC in;
-    IOREC out;
-    UBYTE baudrate;     /* remember value set by Rsconf() */
-    UBYTE flowctrl;  	/* TODO, flow control */
-    UBYTE ucr;          /* remember value set by Rsconf() */
-    UBYTE datamask;     /* masks off hi-order bits (handles < 8 bits/char) */
-    UBYTE wr5;          /* shadow of real wr5 (for SCC only) */
-} EXT_IOREC;
+extern ULONG (*rsconfptr)(WORD,WORD,WORD,WORD,WORD,WORD);
+extern EXT_IOREC *rs232iorecptr;
+
+/*
+ * function prototypes
+ */
+LONG bconstat1(void);
+LONG bconin1(void);
+LONG bcostat1(void);
+LONG bconout1(WORD,WORD);
+ULONG rsconf1(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
+void init_serport(void);
+
+#if CONF_WITH_SCC
+LONG bconoutB(WORD,WORD);
+#endif
+
+#define BCONMAP_AVAILABLE (CONF_WITH_SCC || CONF_WITH_TT_MFP)
+
+#if BCONMAP_AVAILABLE
 
 typedef struct {        /* one per mappable device */
     LONG (*Bconstat)();
@@ -86,26 +104,10 @@ typedef struct {
 
 #define BCONMAP_START_HANDLE    6
 
-/*
- * external references
- */
 extern BCONMAP bconmap_root;
-extern ULONG (*rsconfptr)(WORD,WORD,WORD,WORD,WORD,WORD);
-extern EXT_IOREC *rs232iorecptr;
 
-/*
- * function prototypes
- */
-void init_serport(void);
-LONG bconstat1(void);
-LONG bconin1(void);
-LONG bcostat1(void);
-LONG bconout1(WORD,WORD);
-ULONG rsconf1(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
 LONG bconmap(WORD);
 
-#if BCONMAP_AVAILABLE
-LONG bconoutB(WORD,WORD);
-#endif
+#endif /* BCONMAP_AVAILABLE */
 
 #endif  /* _SERPORT_H */

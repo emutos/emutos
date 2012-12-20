@@ -1033,7 +1033,11 @@ const PFLONG xbios_vecs[] = {
     VEC(xbios_29, floprate),
     VEC(xbios_2a, DMAread),
     VEC(xbios_2b, DMAwrite),
+#if BCONMAP_AVAILABLE
     VEC(xbios_2c, bconmap),
+#else
+    xbios_unimpl,   /* 2c */
+#endif
     xbios_unimpl,   /* 2d */
 #if CONF_WITH_NVRAM
     VEC(xbios_2e, nvmaccess),  /* 2e */
