@@ -85,7 +85,6 @@ typedef struct {
 /*
  * global variables
  */
-ULONG (*rsconfptr)(WORD,WORD,WORD,WORD,WORD,WORD);
 EXT_IOREC *rs232iorecptr;
 
 #if BCONMAP_AVAILABLE
@@ -101,6 +100,7 @@ static const EXT_IOREC iorec_init = {
     { NULL, RS232_BUFSIZE, 0, 0, RS232_BUFSIZE/4, 3*RS232_BUFSIZE/4 },
     { NULL, RS232_BUFSIZE, 0, 0, RS232_BUFSIZE/4, 3*RS232_BUFSIZE/4 },
     B9600, FLOW_CTRL_NONE, 0x88, 0xff, 0xea };
+static ULONG (*rsconfptr)(WORD,WORD,WORD,WORD,WORD,WORD);
 
 #if BCONMAP_AVAILABLE
 static MAPTAB maptable[4];
@@ -742,4 +742,12 @@ void init_serport(void)
 #endif
 
     (*rsconfptr)(B9600, 0, 0x88, 1, 1, 0);
+}
+
+/*
+ * xbios_f - (rsconf) Configure RS-232 port.
+ */
+ULONG rsconf(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
+{
+    return (*rsconfptr)(baud, ctrl, ucr, rsr, tsr, scr);
 }

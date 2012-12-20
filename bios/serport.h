@@ -66,7 +66,6 @@ typedef struct {
 /*
  * external references
  */
-extern ULONG (*rsconfptr)(WORD,WORD,WORD,WORD,WORD,WORD);
 extern EXT_IOREC *rs232iorecptr;
 
 /*
@@ -78,6 +77,7 @@ LONG bcostat1(void);
 LONG bconout1(WORD,WORD);
 ULONG rsconf1(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
 void init_serport(void);
+ULONG rsconf(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
 
 #if CONF_WITH_SCC
 LONG bconoutB(WORD,WORD);

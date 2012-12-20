@@ -357,10 +357,6 @@ static LONG xbios_e(WORD devno)
  * tsr    - 68901 register
  * scr    - 68901 register
  */
-ULONG rsconf(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
-{
-    return (*rsconfptr)(baud, ctrl, ucr, rsr, tsr, scr);
-}
 
 #if DBG_XBIOS
 static ULONG xbios_f(WORD speed, WORD flowctl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
