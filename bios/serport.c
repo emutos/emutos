@@ -718,20 +718,27 @@ void init_serport(void)
     iorec1.out.buf = obuf1;
 
     /* initialisation for other devices if required */
-#if BCONMAP_AVAILABLE
+#if CONF_WITH_SCC
     memcpy(&iorecA,&iorec_init,sizeof(EXT_IOREC));
     iorecA.in.buf = ibufA;
     iorecA.out.buf = obufA;
+
     memcpy(&iorecB,&iorec_init,sizeof(EXT_IOREC));
     iorecB.in.buf = ibufB;
     iorecB.out.buf = obufB;
+#endif /* CONF_WITH_SCC */
+
+#if CONF_WITH_TT_MFP
     memcpy(&iorecTT,&iorec_init,sizeof(EXT_IOREC));
     iorecTT.in.buf = ibufTT;
     iorecTT.out.buf = obufTT;
+#endif /* CONF_WITH_TT_MFP */
+
+#if BCONMAP_AVAILABLE
     memcpy(&iorec_dummy,&iorec_init,sizeof(EXT_IOREC));
 
     init_bconmap();
-#endif
+#endif /* BCONMAP_AVAILABLE */
 
 #if CONF_WITH_SCC
     if (has_scc)
