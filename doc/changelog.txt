@@ -4208,3 +4208,7 @@ Start... early ages
 2012-12-20
 - bios/serport.c bios/serport.h bios/xbios.c: Refactored serial port support
   for better readability with conditional compilation. (VRI)
+
+2012-12-23
+- bios/chardev.c bios/serport.c bios/serport.h xbios.c: Reverted previous
+  update because EmuTOS RAM did not work on real Falcon. (RFB)

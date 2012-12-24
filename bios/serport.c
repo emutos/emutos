@@ -11,7 +11,6 @@
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
  */
-
 #include "config.h"
 #include "portab.h"
 #include "asm.h"
@@ -33,39 +32,33 @@
 #define RS232_BUFSIZE 4         /* save space if buffers unused */
 #endif
 
-#if CONF_WITH_SCC
 #define RESET_RECOVERY_DELAY    delay_loop(reset_recovery_loops)
 #define RECOVERY_DELAY          delay_loop(recovery_loops)
-#endif /* CONF_WITH_SCC */
 
 /*
  * function prototypes
  */
 #if BCONMAP_AVAILABLE
-static ULONG rsconf_dummy(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
-static void init_bconmap(void);
-#endif /* BCONMAP_AVAILABLE */
-
-#if CONF_WITH_SCC
 static LONG bconstatA(void);
 static LONG bconinA(void);
 static LONG bcostatA(void);
 static LONG bconoutA(WORD,WORD);
-static ULONG rsconfA(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
-
 static LONG bconstatB(void);
 static LONG bconinB(void);
 static LONG bcostatB(void);
-static ULONG rsconfB(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
-#endif /* CONF_WITH_SCC */
-
 #if CONF_WITH_TT_MFP
 static LONG bconstatTT(void);
 static LONG bconinTT(void);
 static LONG bcostatTT(void);
 static LONG bconoutTT(WORD,WORD);
+#endif /* CONF_WITH_TT_MFP */
+static ULONG rsconfA(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
+static ULONG rsconfB(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
+#if CONF_WITH_TT_MFP
 static ULONG rsconfTT(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
 #endif /* CONF_WITH_TT_MFP */
+static ULONG rsconf_dummy(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
+#endif      /* BCONMAP_AVAILABLE */
 
 /*
  * structures
@@ -76,7 +69,6 @@ typedef struct {
     UBYTE dum2;
     volatile UBYTE data;
 } PORT;
-
 typedef struct {
     PORT portA;
     PORT portB;
@@ -85,15 +77,17 @@ typedef struct {
 /*
  * global variables
  */
-EXT_IOREC iorec1;
+ULONG (*rsconfptr)(WORD,WORD,WORD,WORD,WORD,WORD);
+EXT_IOREC *rs232iorecptr;
+
 #if BCONMAP_AVAILABLE
 BCONMAP bconmap_root;
-EXT_IOREC *rs232iorecptr;
 #endif
 
 /*
  * local variables
  */
+static EXT_IOREC iorec1;
 static char ibuf1[RS232_BUFSIZE], obuf1[RS232_BUFSIZE];
 static const EXT_IOREC iorec_init = {
     { NULL, RS232_BUFSIZE, 0, 0, RS232_BUFSIZE/4, 3*RS232_BUFSIZE/4 },
@@ -101,35 +95,31 @@ static const EXT_IOREC iorec_init = {
     B9600, FLOW_CTRL_NONE, 0x88, 0xff, 0xea };
 
 #if BCONMAP_AVAILABLE
-static MAPTAB maptable[4];
-
-static EXT_IOREC iorec_dummy;
-static const MAPTAB maptable_dummy =
-    { char_dummy, char_dummy, char_dummy, charout_dummy, rsconf_dummy, &iorec_dummy };
-
-static const MAPTAB maptable_mfp =
-    { bconstat1, bconin1, bcostat1, bconout1, rsconf1, &iorec1 };
-
-static ULONG (*rsconfptr)(WORD,WORD,WORD,WORD,WORD,WORD);
-#endif /* BCONMAP_AVAILABLE */
-
-#if CONF_WITH_SCC
-static ULONG recovery_loops;
-static EXT_IOREC iorecA, iorecB;
+static EXT_IOREC iorecA, iorecB, iorecTT, iorec_dummy;
 static char ibufA[RS232_BUFSIZE], obufA[RS232_BUFSIZE];
 static char ibufB[RS232_BUFSIZE], obufB[RS232_BUFSIZE];
+static char ibufTT[RS232_BUFSIZE], obufTT[RS232_BUFSIZE];
+
+static MAPTAB maptable[4];
+
+static const MAPTAB maptable_dummy =
+    { char_dummy, char_dummy, char_dummy, charout_dummy, rsconf_dummy, &iorec_dummy };
+static const MAPTAB maptable_mfp =
+    { bconstat1, bconin1, bcostat1, bconout1, rsconf1, &iorec1 };
 static const MAPTAB maptable_port_a =
     { bconstatA, bconinA, bcostatA, bconoutA, rsconfA, &iorecA };
 static const MAPTAB maptable_port_b =
     { bconstatB, bconinB, bcostatB, bconoutB, rsconfB, &iorecB };
-#endif /* CONF_WITH_SCC */
-
 #if CONF_WITH_TT_MFP
-static EXT_IOREC iorecTT;
-static char ibufTT[RS232_BUFSIZE], obufTT[RS232_BUFSIZE];
 static const MAPTAB maptable_mfp_tt =
     { bconstatTT, bconinTT, bcostatTT, bconoutTT, rsconfTT, &iorecTT };
 #endif /* CONF_WITH_TT_MFP */
+#endif
+
+#if CONF_WITH_SCC
+ULONG recovery_loops;
+#endif
+
 
 /*
  * MFP serial port i/o routines
@@ -187,79 +177,6 @@ LONG bconout1(WORD dev, WORD b)
     return 1L;
 #else
     return 0L;
-#endif
-}
-
-/*
- * MFP Rsconf() routines
- */
-
-#if CONF_WITH_MFP_RS232
-
-struct mfp_rs232_table {
-    BYTE control;
-    BYTE data;
-};
-
-static const struct mfp_rs232_table mfp_rs232_init[] = {
-    { /* 19200 */  1, 1 }, 
-    { /*  9600 */  1, 2 },
-    { /*  4800 */  1, 4 },
-    { /*  3600 */  1, 5 },
-    { /*  2400 */  1, 8 },
-    { /*  2000 */  1, 10 },
-    { /*  1800 */  1, 11 },
-    { /*  1200 */  1, 16 },
-    { /*   600 */  1, 32 },
-    { /*   300 */  1, 64 },
-    { /*   200 */  1, 96 },
-    { /*   150 */  1, 128 },
-    { /*   134 */  1, 143 },
-    { /*   110 */  1, 175 },
-    { /*    75 */  2, 64 },
-    { /*    50 */  2, 96 }, 
-};
-
-#endif /* CONF_WITH_MFP_RS232 */
-
-ULONG rsconf1(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
-{
-#if CONF_WITH_MFP_RS232
-    MFP *mfp;
-    const struct mfp_rs232_table *init;
-    ULONG old;
-
-    if (baud == -2)     /* wants current baud rate */
-        return iorec1.baudrate;
-
-    mfp = MFP_BASE;     /* set base address of MFP */
-
-    /*
-     * remember old ucr/rsr/tsr; note that we don't bother with scr, despite
-     * the docs, because it's not useful and TOS doesn't return it either ...
-     */
-    old = ((ULONG)mfp->ucr<<24) | ((ULONG)mfp->rsr<<16) | (ULONG)mfp->tsr<<8;
-
-    if ((baud >= MIN_BAUDRATE_CODE ) && (baud <= MAX_BAUDRATE_CODE)) {
-        iorec1.baudrate = baud;
-        init = &mfp_rs232_init[baud];
-        setup_timer(3,init->control,init->data);
-    }
-
-    if ((ctrl >= MIN_FLOW_CTRL) && (ctrl <= MAX_FLOW_CTRL))
-        iorec1.flowctrl = ctrl;
-    if (ucr >= 0)
-        mfp->ucr = ucr;
-    if (rsr >= 0)
-        mfp->rsr = rsr;
-    if (tsr >= 0)
-        mfp->tsr = tsr;
-    if (scr >= 0)
-        mfp->scr = scr;
-
-    return old;
-#else
-    return 0UL;
 #endif
 }
 
@@ -363,7 +280,109 @@ SCC *scc = (SCC *)SCC_BASE;
 
     return 1L;
 }
+#endif
 
+#if CONF_WITH_TT_MFP
+/*
+ * TT MFP i/o routines
+ * 
+ * TODO: implement these!
+ */
+static LONG bconstatTT(void)
+{
+    return 0L;
+}
+
+static LONG bconinTT(void)
+{
+    return 0L;
+}
+
+static LONG bcostatTT(void)
+{
+    return -1L;
+}
+
+static LONG bconoutTT(WORD dev, WORD b)
+{
+    return 0L;
+}
+#endif
+
+
+/*
+ * Rsconf() routines
+ */
+#if CONF_WITH_MFP_RS232
+
+struct mfp_rs232_table {
+    BYTE control;
+    BYTE data;
+};
+
+static const struct mfp_rs232_table mfp_rs232_init[] = {
+    { /* 19200 */  1, 1 }, 
+    { /*  9600 */  1, 2 },
+    { /*  4800 */  1, 4 },
+    { /*  3600 */  1, 5 },
+    { /*  2400 */  1, 8 },
+    { /*  2000 */  1, 10 },
+    { /*  1800 */  1, 11 },
+    { /*  1200 */  1, 16 },
+    { /*   600 */  1, 32 },
+    { /*   300 */  1, 64 },
+    { /*   200 */  1, 96 },
+    { /*   150 */  1, 128 },
+    { /*   134 */  1, 143 },
+    { /*   110 */  1, 175 },
+    { /*    75 */  2, 64 },
+    { /*    50 */  2, 96 }, 
+};
+
+#endif /* CONF_WITH_MFP_RS232 */
+
+ULONG rsconf1(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
+{
+#if CONF_WITH_MFP_RS232
+    MFP *mfp;
+    const struct mfp_rs232_table *init;
+    ULONG old;
+
+    if (baud == -2)     /* wants current baud rate */
+        return rs232iorecptr->baudrate;
+
+    mfp = MFP_BASE;     /* set base address of MFP */
+
+    /*
+     * remember old ucr/rsr/tsr; note that we don't bother with scr, despite
+     * the docs, because it's not useful and TOS doesn't return it either ...
+     */
+    old = ((ULONG)mfp->ucr<<24) | ((ULONG)mfp->rsr<<16) | (ULONG)mfp->tsr<<8;
+
+    if ((baud >= MIN_BAUDRATE_CODE ) && (baud <= MAX_BAUDRATE_CODE)) {
+        rs232iorecptr->baudrate = baud;
+        init = &mfp_rs232_init[baud];
+        setup_timer(3,init->control,init->data);
+    }
+
+    if ((ctrl >= MIN_FLOW_CTRL) && (ctrl <= MAX_FLOW_CTRL))
+        rs232iorecptr->flowctrl = ctrl;
+    if (ucr >= 0)
+        mfp->ucr = ucr;
+    if (rsr >= 0)
+        mfp->rsr = rsr;
+    if (tsr >= 0)
+        mfp->tsr = tsr;
+    if (scr >= 0)
+        mfp->scr = scr;
+
+    return old;
+#else
+    return 0UL;
+#endif
+}
+
+#if CONF_WITH_SCC
 /*
  * NOTE: these are calculated using a PCLK of 8.053976 MHz.
  * The maximum difference between the specified & actual
@@ -388,6 +407,9 @@ static const WORD scc_timeconst[] = {
     /*    50 */  5032
 };
 
+#endif /* CONF_WITH_SCC */
+
+#if BCONMAP_AVAILABLE
 static void write_scc(PORT *port,UBYTE reg,UBYTE data)
 {
     port->ctl = reg;
@@ -398,6 +420,7 @@ static void write_scc(PORT *port,UBYTE reg,UBYTE data)
 
 static ULONG rsconf_scc(PORT *port,WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
 {
+#if CONF_WITH_SCC
     ULONG old;
 
     if (baud == -2)     /* wants current baud rate */
@@ -484,22 +507,112 @@ static ULONG rsconf_scc(PORT *port,WORD baud, WORD ctrl, WORD ucr, WORD rsr, WOR
     }
 
     return old;
+#else
+    return 0UL;
+#endif
 }
 
 static ULONG rsconfA(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
 {
+#if CONF_WITH_SCC
 SCC *scc = (SCC *)SCC_BASE;
 
     return rsconf_scc(&scc->portA,baud,ctrl,ucr,rsr,tsr,scr);
+#else
+    return 0UL;
+#endif
 }
 
 static ULONG rsconfB(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
 {
+#if CONF_WITH_SCC
 SCC *scc = (SCC *)SCC_BASE;
 
     return rsconf_scc(&scc->portB,baud,ctrl,ucr,rsr,tsr,scr);
+#else
+    return 0UL;
+#endif
 }
 
+#if CONF_WITH_TT_MFP
+static ULONG rsconfTT(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
+{
+    ULONG old = 0UL;
+
+    if (baud == -2)     /* wants current baud rate */
+        return rs232iorecptr->baudrate;
+
+    if ((ctrl >= MIN_FLOW_CTRL) && (ctrl <= MAX_FLOW_CTRL))
+        rs232iorecptr->flowctrl = ctrl;
+
+    return old;
+}
+#endif /* CONF_WITH_TT_MFP */
+
+static ULONG rsconf_dummy(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
+{
+    return 0UL;
+}
+#endif
+
+/*
+ * initialise the Bconmap() structures
+ */
+#if BCONMAP_AVAILABLE
+static void init_bconmap(void)
+{
+    MAPTAB *maptabptr;
+    int i;
+
+    /* initialise with dummy entries */
+    for (i = 0; i < 4; i++)
+        memcpy(&maptable[i],&maptable_dummy,sizeof(MAPTAB));
+    bconmap_root.maptab = maptable;
+    bconmap_root.maptabsize = 1;
+    bconmap_root.mapped_device = (cookie_mch==MCH_FALCON) ? 7 : 6;
+
+    /*
+     * initialise the BCONMAP structure according to machine type first
+     * and detected hardware second
+     */
+#if CONF_WITH_MFP_RS232
+    memcpy(&maptable[0],&maptable_mfp,sizeof(MAPTAB));
+#endif
+
+    if ((cookie_mch == MCH_FALCON) || (cookie_mch == MCH_MSTE)) {
+#if CONF_WITH_SCC
+        if (has_scc) {
+            memcpy(&maptable[1],&maptable_port_b,sizeof(MAPTAB));
+            memcpy(&maptable[2],&maptable_port_a,sizeof(MAPTAB));
+        }
+#endif
+        bconmap_root.maptabsize = 3;
+    } else if (cookie_mch == MCH_TT) {
+#if CONF_WITH_SCC
+        if (has_scc) {
+            memcpy(&maptable[1],&maptable_port_b,sizeof(MAPTAB));
+            memcpy(&maptable[3],&maptable_port_a,sizeof(MAPTAB));
+        }
+#endif
+#if CONF_WITH_TT_MFP
+        if (has_tt_mfp)
+            memcpy(&maptable[2],&maptable_mfp_tt,sizeof(MAPTAB));
+#endif
+        bconmap_root.maptabsize = 4;
+    }
+
+    /* set up to use mapped device values */
+    maptabptr = &maptable[bconmap_root.mapped_device-BCONMAP_START_HANDLE];
+    bconstat_vec[1] = maptabptr->Bconstat;
+    bconin_vec[1] = maptabptr->Bconin;
+    bcostat_vec[1] = maptabptr->Bcostat;
+    bconout_vec[1] = maptabptr->Bconout;
+    rsconfptr = maptabptr->Rsconf;
+    rs232iorecptr = maptabptr->Iorec;
+}
+#endif      /* BCONMAP_AVAILABLE */
+
+#if CONF_WITH_SCC
 static const WORD SCC_init_string[] = {
     0x0444,     /* x16 clock mode, 1 stop bit, no parity */
     0x0104,     /* 'parity is special condition' */
@@ -553,118 +666,48 @@ ULONG reset_recovery_loops;
     for (p = SCC_init_string; *p >= 0; p++)
         write_scc(&scc->portB,(*p>>8)&0xff,*p&0xff);
 }
-
-#endif /* CONF_WITH_SCC */
-
-#if CONF_WITH_TT_MFP
+#endif
 
 /*
- * TT MFP i/o routines
- * 
- * TODO: implement these!
+ * initialise the serial port(s)
  */
-static LONG bconstatTT(void)
+void init_serport(void)
 {
-    return 0L;
-}
+    /* initialisation for device 1 */
+    memcpy(&iorec1,&iorec_init,sizeof(EXT_IOREC));
+    iorec1.in.buf = ibuf1;
+    iorec1.out.buf = obuf1;
 
-static LONG bconinTT(void)
-{
-    return 0L;
-}
+    rs232iorecptr = &iorec1;
+    rsconfptr = rsconf1;
 
-static LONG bcostatTT(void)
-{
-    return -1L;
-}
-
-static LONG bconoutTT(WORD dev, WORD b)
-{
-    return 0L;
-}
-
-static ULONG rsconfTT(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
-{
-    ULONG old = 0UL;
-
-    if (baud == -2)     /* wants current baud rate */
-        return rs232iorecptr->baudrate;
-
-    if ((ctrl >= MIN_FLOW_CTRL) && (ctrl <= MAX_FLOW_CTRL))
-        rs232iorecptr->flowctrl = ctrl;
-
-    return old;
-}
-
-#endif /* CONF_WITH_TT_MFP */
-
+    /* initialisation for other devices if required */
 #if BCONMAP_AVAILABLE
+    memcpy(&iorecA,&iorec_init,sizeof(EXT_IOREC));
+    iorecA.in.buf = ibufA;
+    iorecA.out.buf = obufA;
+    memcpy(&iorecB,&iorec_init,sizeof(EXT_IOREC));
+    iorecB.in.buf = ibufB;
+    iorecB.out.buf = obufB;
+    memcpy(&iorecTT,&iorec_init,sizeof(EXT_IOREC));
+    iorecTT.in.buf = ibufTT;
+    iorecTT.out.buf = obufTT;
+    memcpy(&iorec_dummy,&iorec_init,sizeof(EXT_IOREC));
 
-/*
- * Dummy serial port i/o routines
- */
-static ULONG rsconf_dummy(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
-{
-    return 0UL;
-}
-
-/*
- * initialise the Bconmap() structures
- */
-static void init_bconmap(void)
-{
-    MAPTAB *maptabptr;
-    int i;
-
-    /* initialise with dummy entries */
-    for (i = 0; i < 4; i++)
-        memcpy(&maptable[i],&maptable_dummy,sizeof(MAPTAB));
-    bconmap_root.maptab = maptable;
-    bconmap_root.maptabsize = 1;
-    bconmap_root.mapped_device = (cookie_mch==MCH_FALCON) ? 7 : 6;
-
-    /*
-     * initialise the BCONMAP structure according to machine type first
-     * and detected hardware second
-     */
-#if CONF_WITH_MFP_RS232
-    memcpy(&maptable[0],&maptable_mfp,sizeof(MAPTAB));
+    init_bconmap();
 #endif
 
-    if ((cookie_mch == MCH_FALCON) || (cookie_mch == MCH_MSTE)) {
 #if CONF_WITH_SCC
-        if (has_scc) {
-            memcpy(&maptable[1],&maptable_port_b,sizeof(MAPTAB));
-            memcpy(&maptable[2],&maptable_port_a,sizeof(MAPTAB));
-        }
+    if (has_scc)
+        init_scc();
 #endif
-        bconmap_root.maptabsize = 3;
-    } else if (cookie_mch == MCH_TT) {
-#if CONF_WITH_SCC
-        if (has_scc) {
-            memcpy(&maptable[1],&maptable_port_b,sizeof(MAPTAB));
-            memcpy(&maptable[3],&maptable_port_a,sizeof(MAPTAB));
-        }
-#endif
-#if CONF_WITH_TT_MFP
-        if (has_tt_mfp)
-            memcpy(&maptable[2],&maptable_mfp_tt,sizeof(MAPTAB));
-#endif
-        bconmap_root.maptabsize = 4;
-    }
 
-    /* set up to use mapped device values */
-    maptabptr = &maptable[bconmap_root.mapped_device-BCONMAP_START_HANDLE];
-    bconstat_vec[1] = maptabptr->Bconstat;
-    bconin_vec[1] = maptabptr->Bconin;
-    bcostat_vec[1] = maptabptr->Bcostat;
-    bconout_vec[1] = maptabptr->Bconout;
-    rsconfptr = maptabptr->Rsconf;
-    rs232iorecptr = maptabptr->Iorec;
+    (*rsconfptr)(B9600, 0, 0x88, 1, 1, 0);
 }
 
 LONG bconmap(WORD dev)
 {
+#if BCONMAP_AVAILABLE
     MAPTAB *maptabptr;
     WORD old_dev = bconmap_root.mapped_device;
     WORD map_index;
@@ -703,59 +746,7 @@ LONG bconmap(WORD dev)
 
     bconmap_root.mapped_device = dev;   /* update current dev in mapping table */
     return old_dev;
-}
-
-#endif /* BCONMAP_AVAILABLE */
-
-/*
- * initialise the serial port(s)
- */
-void init_serport(void)
-{
-    /* initialisation for device 1 */
-    memcpy(&iorec1,&iorec_init,sizeof(EXT_IOREC));
-    iorec1.in.buf = ibuf1;
-    iorec1.out.buf = obuf1;
-
-    /* initialisation for other devices if required */
-#if CONF_WITH_SCC
-    memcpy(&iorecA,&iorec_init,sizeof(EXT_IOREC));
-    iorecA.in.buf = ibufA;
-    iorecA.out.buf = obufA;
-
-    memcpy(&iorecB,&iorec_init,sizeof(EXT_IOREC));
-    iorecB.in.buf = ibufB;
-    iorecB.out.buf = obufB;
-#endif /* CONF_WITH_SCC */
-
-#if CONF_WITH_TT_MFP
-    memcpy(&iorecTT,&iorec_init,sizeof(EXT_IOREC));
-    iorecTT.in.buf = ibufTT;
-    iorecTT.out.buf = obufTT;
-#endif /* CONF_WITH_TT_MFP */
-
-#if BCONMAP_AVAILABLE
-    memcpy(&iorec_dummy,&iorec_init,sizeof(EXT_IOREC));
-
-    init_bconmap();
-#endif /* BCONMAP_AVAILABLE */
-
-#if CONF_WITH_SCC
-    if (has_scc)
-        init_scc();
-#endif
-
-    rsconf(B9600, 0, 0x88, 1, 1, 0);
-}
-
-/*
- * xbios_f - (rsconf) Configure RS-232 port.
- */
-ULONG rsconf(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
-{
-#if BCONMAP_AVAILABLE
-    return (*rsconfptr)(baud, ctrl, ucr, rsr, tsr, scr);
 #else
-    return rsconf1(baud, ctrl, ucr, rsr, tsr, scr);
+    return 0x2c;    /* return the function opcode */
 #endif
 }

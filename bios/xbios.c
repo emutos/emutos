@@ -321,11 +321,7 @@ LONG iorec(WORD devno)
 {
     switch(devno) {
     case 0:
-#if BCONMAP_AVAILABLE
         return (LONG) rs232iorecptr;
-#else
-        return (LONG) &iorec1;
-#endif
     case 1:
         return (LONG) &ikbdiorec;
     case 2:
@@ -361,6 +357,10 @@ static LONG xbios_e(WORD devno)
  * tsr    - 68901 register
  * scr    - 68901 register
  */
+ULONG rsconf(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
+{
+    return (*rsconfptr)(baud, ctrl, ucr, rsr, tsr, scr);
+}
 
 #if DBG_XBIOS
 static ULONG xbios_f(WORD speed, WORD flowctl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
@@ -1033,11 +1033,7 @@ const PFLONG xbios_vecs[] = {
     VEC(xbios_29, floprate),
     VEC(xbios_2a, DMAread),
     VEC(xbios_2b, DMAwrite),
-#if BCONMAP_AVAILABLE
     VEC(xbios_2c, bconmap),
-#else
-    xbios_unimpl,   /* 2c */
-#endif
     xbios_unimpl,   /* 2d */
 #if CONF_WITH_NVRAM
     VEC(xbios_2e, nvmaccess),  /* 2e */
