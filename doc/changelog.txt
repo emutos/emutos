@@ -4212,3 +4212,6 @@ Start... early ages
 2012-12-23
 - bios/chardev.c bios/serport.c bios/serport.h xbios.c: Reverted previous
   update because EmuTOS RAM did not work on real Falcon. (RFB)
+
+2012-12-25
+- bios/chardev.c: Added const to vector initialisation arrays. (RFB)
