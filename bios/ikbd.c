@@ -198,16 +198,44 @@ WORD kbrate(WORD initial, WORD repeat)
     return ret;
 }
 
+static void do_key_repeat(void)
+{
+    if (!(conterm & 2))
+    {
+        /* Key repeat is globally disabled */
+        return;
+    }
+
+    if (kb_ticks == 0)
+    {
+        /* No key is currently repeating */
+        return;
+    }
+
+    /* Decrease delay */
+    if (--kb_ticks > 0)
+    {
+        /* Nothing to do this time */
+        return;
+    }
+
+    /* Play the key click sound */
+    if (conterm & 1)
+        keyclick((WORD)((kb_last_key & 0x00ff0000) >> 16));
+
+    /* Simulate a key press */
+    push_ikbdiorec(kb_last_key);
+
+    /* The key will repeat again until some key up */
+    kb_ticks = kb_repeat;
+}
+
+/* Keyboard timer interrupt handler.
+ * It is called at 50 Hz (each 4th Timer C call).
+ */
 void kb_timerc_int(void)
 {
-    if((conterm & 2) == 0) return;
-    if(kb_ticks <= 0) return;
-    if(-- kb_ticks <= 0) {
-        if (conterm & 1)
-            keyclick((WORD)((kb_last_key & 0x00ff0000) >> 16));
-        push_ikbdiorec(kb_last_key);
-        kb_ticks = kb_repeat;
-    }
+    do_key_repeat();
 }
 
 
