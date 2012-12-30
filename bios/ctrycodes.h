@@ -10,6 +10,20 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+/*
+ * The country codes were defined by Atari. They do not need to be contiguous.
+ * They are used as country identifier in the ROM header.
+ * They are also used in NVRAM to select the UI language and keyboard layout.
+ *
+ * Sources of information:
+ *
+ * tos.hyp:
+ * http://toshyp.atari.org/en/003007.html#Cookie_2C_20_AKP
+ *
+ * FreeMiNT's sys/keyboard.c:
+ * http://sparemint.atariforge.net/cgi-bin/cvsweb/freemint/sys/keyboard.c?rev=1.112&content-type=text/x-cvsweb-markup
+ */
+
 /* these are documented in the compendium */
 #define COUNTRY_US  0   /* USA */
 #define COUNTRY_DE  1   /* Germany */
@@ -30,9 +44,8 @@
 #define COUNTRY_NL 14   /* Holland */
 #define COUNTRY_CZ 15   /* Czech Republic */
 #define COUNTRY_HU 16   /* Hungary */
-#define COUNTRY_SK 17   /* Slovak Republic */
 
-/* There aren't any official country codes > 16, but we need some more codes
-   for the other languages... */
-#define COUNTRY_GR 18   /* Greek */
-#define COUNTRY_RU 19   /* Russia */
+/* other ones */
+#define COUNTRY_SK 23   /* Slovak Republic */
+#define COUNTRY_GR 31   /* Greece */
+#define COUNTRY_RU 32   /* Russia */
