@@ -4218,3 +4218,4 @@ Start... early ages
 
 2012-12-30
 - bios/ctrycodes.h: Fixed Slovakia, Greece and Russia country codes. (VRI)
+- bios/ikbd.c: Fixed welcome screen key repeat bug with FreeMiNT. (VRI)

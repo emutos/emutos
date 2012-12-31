@@ -187,6 +187,7 @@ static WORD kb_initial;
 static WORD kb_repeat;
 static WORD kb_ticks;
 static LONG kb_last_key;
+static void (*kb_last_ikbdsys)(void); /* ikbdsys when kb_last_key was set */
 
 WORD kbrate(WORD initial, WORD repeat)
 {
@@ -200,6 +201,28 @@ WORD kbrate(WORD initial, WORD repeat)
 
 static void do_key_repeat(void)
 {
+    if (kb_ticks > 0 && kbdvecs.ikbdsys != kb_last_ikbdsys)
+    {
+        /*
+         * There is a key repeat in progress, but the ikbdsys handler has
+         * changed since the key was pressed. The new handler may handle
+         * the key repeat totally differently, so stop the current key repeat
+         * right now.
+         *
+         * Concretely, this scenario happens when starting FreeMiNT on ARAnyM.
+         * When the user presses a key at the EmuTOS welcome screen,
+         * FreeMiNT installs its new ikbdsys handler before the user has time
+         * to release the key. So this EmuTOS key repeat routine keeps running
+         * indefinitely, filling FreeMiNT's keyboard buffer, but without
+         * producing keyboard events. As soon as the user presses any key,
+         * he sees the ghost repeating keys.
+         *
+         * This trick fixes the problem.
+         */
+        kb_ticks = 0;
+        return;
+    }
+
     if (!(conterm & 2))
     {
         /* Key repeat is globally disabled */
@@ -418,6 +441,7 @@ void kbd_int(WORD scancode)
     
     /* set initial delay for key repeat */
     kb_last_key = value;
+    kb_last_ikbdsys = kbdvecs.ikbdsys;
     kb_ticks = kb_initial;
 }
 
