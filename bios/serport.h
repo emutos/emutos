@@ -16,11 +16,7 @@
 #include "portab.h"
 #include "iorec.h"
 
-#if CONF_WITH_SCC || CONF_WITH_TT_MFP
-#define BCONMAP_AVAILABLE 1
-#else
-#define BCONMAP_AVAILABLE 0
-#endif
+#define BCONMAP_AVAILABLE (CONF_WITH_SCC || CONF_WITH_TT_MFP)
 
 /*
  * baud rate codes
@@ -57,7 +53,7 @@
 #define MAX_FLOW_CTRL   FLOW_CTRL_BOTH
 
 /*
- * Bconmap() stuff
+ * structures
  */
 typedef struct {
     IOREC in;
@@ -69,6 +65,30 @@ typedef struct {
     UBYTE wr5;          /* shadow of real wr5 (for SCC only) */
 } EXT_IOREC;
 
+/*
+ * external references
+ */
+extern ULONG (*rsconfptr)(WORD,WORD,WORD,WORD,WORD,WORD);
+extern EXT_IOREC *rs232iorecptr;
+
+/*
+ * function prototypes
+ */
+LONG bconstat1(void);
+LONG bconin1(void);
+LONG bcostat1(void);
+LONG bconout1(WORD,WORD);
+ULONG rsconf1(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
+void init_serport(void);
+
+#if CONF_WITH_SCC
+LONG bconoutB(WORD,WORD);
+#endif
+
+#if BCONMAP_AVAILABLE
+/*
+ * Bconmap() stuff
+ */
 typedef struct {        /* one per mappable device */
     LONG (*Bconstat)();
     LONG (*Bconin)();
@@ -90,22 +110,11 @@ typedef struct {
  * external references
  */
 extern BCONMAP bconmap_root;
-extern ULONG (*rsconfptr)(WORD,WORD,WORD,WORD,WORD,WORD);
-extern EXT_IOREC *rs232iorecptr;
+#endif  /* BCONMAP_AVAILABLE */
 
 /*
  * function prototypes
  */
-void init_serport(void);
-LONG bconstat1(void);
-LONG bconin1(void);
-LONG bcostat1(void);
-LONG bconout1(WORD,WORD);
-ULONG rsconf1(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
 LONG bconmap(WORD);
-
-#if BCONMAP_AVAILABLE
-LONG bconoutB(WORD,WORD);
-#endif
 
 #endif  /* _SERPORT_H */
