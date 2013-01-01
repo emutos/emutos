@@ -50,6 +50,7 @@ void disk_init(void)
 
         if (! XHInqTarget(major, minor, &blocksize, NULL, NULL)) {
             devices[xbiosdev].valid = 1;
+            devices[xbiosdev].byteswap = 1; /* always byteswapped: FIXME */
             devices[xbiosdev].pssize = blocksize;
 
             if (! XHGetCapacity(major, minor, &blocks, NULL))
@@ -123,10 +124,10 @@ static int atari_partition(int xhdidev)
     struct partition_info *pi;
     u32 extensect;
     u32 hd_size;
+    int xbiosdev = xhdidev + NUMFLOPPIES;
 #ifdef ICD_PARTS
     int part_fmt = 0; /* 0:unknown, 1:AHDI, 2:ICD/Supra */
 #endif
-    int byteswap = 0;
 
     /* reset the sector buffer content */
     bzero(&physsect, sizeof(physsect));
@@ -139,7 +140,7 @@ static int atari_partition(int xhdidev)
     /* check for DOS byteswapped master boot record */
     if (sect[510] == 0xaa && sect[511] == 0x55) {
         int i;
-        byteswap = 1;   /* byteswap required for whole disk!! */
+        devices[xbiosdev].byteswap = 1; /* byteswap required for whole disk */
 #if DBG_DISK
         kprintf("DOS MBR byteswapped checksum detected: byteswap required!\n");
 #endif
@@ -192,7 +193,7 @@ static int atari_partition(int xhdidev)
                 kprintf(" extended partitions not yet supported ");
             }
             else {
-                add_partition(xhdidev, pid, start, size, byteswap);
+                add_partition(xhdidev, pid, start, size);
                 kprintf(" $%02x", type);
             }
         }
@@ -228,7 +229,7 @@ static int atari_partition(int xhdidev)
         /* active partition */
         if (memcmp (pi->id, "XGM", 3) != 0) {
             /* we don't care about other id's */
-            if (add_partition(xhdidev, pi->id, pi->st, pi->siz, 0))
+            if (add_partition(xhdidev, pi->id, pi->st, pi->siz))
                 break;  /* max number of partitions reached */
             kprintf(" %c%c%c", pi->id[0], pi->id[1], pi->id[2]);
             continue;
@@ -256,7 +257,7 @@ static int atari_partition(int xhdidev)
 
             if (add_partition(xhdidev, xrs->part[0].id,
                               partsect + xrs->part[0].st,
-                              xrs->part[0].siz, 0))
+                              xrs->part[0].siz))
                 break;  /* max number of partitions reached */
             kprintf(" %c%c%c", xrs->part[0].id[0], xrs->part[0].id[1], xrs->part[0].id[2]);
 
@@ -284,7 +285,7 @@ static int atari_partition(int xhdidev)
                 if (!((pi->flg & 1) && OK_id(pi->id)))
                     continue;
                 part_fmt = 2;
-                if (add_partition(xhdidev, pi->id, pi->st, pi->siz, 0))
+                if (add_partition(xhdidev, pi->id, pi->st, pi->siz))
                     break;  /* max number of partitions reached */
                 kprintf(" %c%c%c", pi->id[0], pi->id[1], pi->id[2]);
             }

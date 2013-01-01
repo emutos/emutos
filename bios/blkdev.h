@@ -28,6 +28,15 @@
 #define NUMFLOPPIES     2   /* max number of floppies supported */
 #define UNITSNUM       (NUMFLOPPIES+24) /* 2xFDC + 8xACSI + 8xSCSI + 8xIDE */
 
+#define ACSI_BUS            0
+#define SCSI_BUS            1
+#define IDE_BUS             2
+#define DEVICES_PER_BUS     8
+#define GET_BUS(n)          ((n)/DEVICES_PER_BUS)
+#define IS_ACSI_DEVICE(n)   (GET_BUS(n) == ACSI_BUS)
+#define IS_SCSI_DEVICE(n)   (GET_BUS(n) == SCSI_BUS)
+#define IS_IDE_DEVICE(n)    (GET_BUS(n) == IDE_BUS)
+
 /* Original FAT12 bootsector */
 struct bs {
   /*   0 */  UBYTE bra[2];
@@ -146,7 +155,7 @@ LONG blkdev_mediach(WORD dev);
 LONG blkdev_drvmap(void);
 LONG blkdev_avail(WORD dev);
 
-int add_partition(int dev, char id[], ULONG start, ULONG size, int byteswap);
+int add_partition(int dev, char id[], ULONG start, ULONG size);
 
 
 /*
@@ -190,7 +199,8 @@ typedef struct _blkdev  BLKDEV;
 /* physical unit (floppy/harddisk) identificator */
 struct _unit
 {
-    int     valid;      /* unit valid */
+    BYTE    valid;          /* unit valid */
+    BYTE    byteswap;       /* unit is byteswapped */
     ULONG   size;           /* number of physical sectors */
     ULONG   pssize;         /* physical sector size */
     LONG    last_access;/* used in mediach only */

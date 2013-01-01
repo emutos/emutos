@@ -170,10 +170,12 @@ LONG blkdev_hdv_boot(void)
 }
 
 /*
- * Add a partitions details to the devices partition description.
+ * Add a partition's details to the device's partition description.
  */
-int add_partition(int dev, char id[], ULONG start, ULONG size, int byteswap)
+int add_partition(int dev, char id[], ULONG start, ULONG size)
 {
+    int unit = dev + NUMFLOPPIES;
+
     if (blkdevnum == BLKDEVNUM) {
         kprintf("Maximum number of partitions reached!\n");
         return -1;
@@ -190,10 +192,10 @@ int add_partition(int dev, char id[], ULONG start, ULONG size, int byteswap)
     blkdev[blkdevnum].start = start;
     blkdev[blkdevnum].size  = size;
 
-    blkdev[blkdevnum].unit  = dev + NUMFLOPPIES;
     blkdev[blkdevnum].valid = 1;
     blkdev[blkdevnum].mediachange = MEDIANOCHANGE;
-    blkdev[blkdevnum].byteswap = byteswap;
+    blkdev[blkdevnum].byteswap = devices[unit].byteswap;
+    blkdev[blkdevnum].unit  = unit;
 
     /* make just GEM/BGM partitions visible to applications */
 /*

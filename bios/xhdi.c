@@ -339,7 +339,9 @@ long XHGetCapacity(UWORD major, UWORD minor, ULONG *blocks, ULONG *blocksize)
 long XHReadWrite(UWORD major, UWORD minor, UWORD rw, ULONG sector,
                  UWORD count, void *buf)
 {
-    WORD dev = major;
+    LONG ret;
+    WORD dev = major, bus, reldev;
+    MAYBE_UNUSED(reldev);
 
 #if DBG_XHDI
     kprintf("XH%s(device=%d.%d, sector=%ld, count=%d, buf=%p)\n",
@@ -348,7 +350,7 @@ long XHReadWrite(UWORD major, UWORD minor, UWORD rw, ULONG sector,
 
 #if CONF_WITH_XHDI
     if (next_handler) {
-        long ret = next_handler(XHREADWRITE, major, minor, rw, sector, count, buf);
+        ret = next_handler(XHREADWRITE, major, minor, rw, sector, count, buf);
         if (ret != EINVFN && ret != EUNDEV)
             return ret;
     }
@@ -357,7 +359,7 @@ long XHReadWrite(UWORD major, UWORD minor, UWORD rw, ULONG sector,
 #if DETECT_NATIVE_FEATURES
     /* direct access to device */
     if (get_xhdi_nfid()) {
-        long ret = NFCall(get_xhdi_nfid() + XHREADWRITE, (long)dev, (long)0, (long)rw, (long)sector, (long)count, buf);
+        ret = NFCall(get_xhdi_nfid() + XHREADWRITE, (long)dev, (long)0, (long)rw, (long)sector, (long)count, buf);
         if (ret != EINVFN && ret != EUNDEV)
             return ret;
     }
@@ -366,33 +368,35 @@ long XHReadWrite(UWORD major, UWORD minor, UWORD rw, ULONG sector,
     if (minor != 0)
         return EUNDEV;
 
+    bus = GET_BUS(dev);
+    reldev = dev - bus * DEVICES_PER_BUS;
+
     /* hardware access to device */
-    if (FALSE) {
-        /* Dummy case for conditional compilation */
-    }
+    switch(bus) {
 #if CONF_WITH_ACSI
-    else if (dev >= 0 && dev < 8) {
-        long ret = acsi_rw(rw, sector, count, (LONG)buf, dev);
+    case ACSI_BUS:
+        ret = acsi_rw(rw, sector, count, (LONG)buf, reldev);
 #if DBG_XHDI
         kprintf("acsi_rw() returned %ld\n", ret);
 #endif
-        return ret;
-    }
+        break;
 #endif /* CONF_WITH_ACSI */
-    else if (dev < 16) {
-        return EUNDEV;  /* call scsi_rw() here when implemented */
-    }
+    case SCSI_BUS:
+        ret = EUNDEV;   /* call scsi_rw() here when implemented */
+        break;
 #if CONF_WITH_IDE
-    else if (dev < 24) {
-        long ret = ide_rw(rw, sector, count, (LONG)buf, dev - 16);
+    case IDE_BUS:
+        ret = ide_rw(rw, sector, count, (LONG)buf, reldev);
 #if DBG_XHDI
         kprintf("ide_rw() returned %ld\n", ret);
 #endif
-        return ret;
-    }
+        break;
 #endif /* CONF_WITH_IDE */
+    default:
+        ret = EUNDEV;
+    }
 
-    return EUNDEV;      /* unknown device */
+    return ret;
 }
 
 /*=========================================================================*/

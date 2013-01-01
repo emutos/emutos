@@ -4223,3 +4223,7 @@ Start... early ages
 2012-12-31
 - bios/serport.c bios/serport.h: Refactored serial port support, based on
   previous patch by Vincent Riviere. (RFB)
+
+2013-01-01
+- bios/blkdev.c bios/blkdev.h bios/disk.c bios/floppy.c bios/xhdi.c:
+  Minor code refactor / clean up prior to IDE changes. (RFB)
