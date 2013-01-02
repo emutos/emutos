@@ -1,7 +1,7 @@
 /*
  * psg.h - Programmable Sound Generator YM-2149 
  *
- * Copyright (c) 2001 EmuTOS development team
+ * Copyright (c) 2001-2013 EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel
@@ -11,7 +11,7 @@
  */
 
 #ifndef PSG_H
-#define PSH_H
+#define PSG_H
  
 struct psg {
   UBYTE control;
