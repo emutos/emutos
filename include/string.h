@@ -27,6 +27,7 @@
 char *strcpy(char *dest, const char *src);
 #endif
 
+unsigned long strlcpy(char *dest,const char *src,unsigned long count);
 unsigned long int strlen(const char *s);
 short strlencpy(char *dest, const char *src);
 char *strcat(char *dest, const char *src);

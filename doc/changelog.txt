@@ -4227,3 +4227,4 @@ Start... early ages
 2013-01-01
 - bios/blkdev.c bios/blkdev.h bios/disk.c bios/floppy.c bios/xhdi.c:
   Minor code refactor / clean up prior to IDE changes. (RFB)
+- util/string.c util/string.h: Added strlcpy() for use by IDE code. (RFB)

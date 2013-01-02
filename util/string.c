@@ -35,6 +35,52 @@ char *strcpy(char *dest, const char *src)
 }
 #endif
 
+/*
+ * strlcpy: a better strcnpy()
+ *
+ * strlcpy() was introduced in OpenBSD in the 90s as a
+ * replacement for strncpy().  it has three improvements
+ * compared to strncpy():
+ *    . it always nul-terminates the destination (as long
+ *      as the length is > 0)
+ *    . it does not nul-fill the destination (a performance
+ *      benefit when the source is short and the destination
+ *      is large) 
+ *    . the return value allows a simple test for truncation
+ * 
+ * this implementation of strlcpy() was written from scratch
+ * by roger burrows.  it is based on the description of the
+ * function in the paper "strlcpy and strlcat - consistent,
+ * safe string copy and concatenation", by todd c. miller
+ * and theo de raadt.
+ *
+ * description: strlcpy() copies bytes from src to dest,
+ * stopping when the last (pre-NUL) byte of src is reached
+ * OR count-1 bytes have been copied, whichever comes first.
+ * as long as count is not zero, dest is then NUL-terminated.
+ *
+ * strlcpy() returns the length of src (excluding the
+ * terminating NUL).  this allows a simple test for string
+ * truncation: if the return value is greater than or equal
+ * to the specified length, then truncation has occurred.
+ */
+unsigned long strlcpy(char *dest,const char *src,unsigned long count)
+{
+char *d = dest;
+const char *s = src;
+unsigned long n;
+
+    if (count > 0) {
+        for (n = count-1; *s && n; n--)
+            *d++ = *s++;
+        *d = '\0';
+    }
+
+    while (*s++)
+        ;
+
+    return s-src-1;
+}
 
 unsigned long int strlen(const char *s)
 {
