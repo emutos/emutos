@@ -4230,3 +4230,6 @@ Start... early ages
 - util/string.c util/string.h: Added strlcpy() for use by IDE code. (RFB)
 - bios/psg.h: Fix typo in #define. (RFB)
 
+2013-01-03
+- bios/ctrycodes.h tools/tos-lang-change.c: Removed Slovak Republic country code
+  as it is currently unused. (VRI)

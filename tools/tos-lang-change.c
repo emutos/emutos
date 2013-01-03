@@ -40,7 +40,6 @@ static country_t countries[] = {
         { 14, "Holland" },
         { 15, "Czech Republic" },
         { 16, "Hungary" },
-        { 17, "Slovakia" },
         { 18, "Greece" },
         { 19, "Russia" },
         {127, "Multilanguage (all countries are supported, TOS >= v4.0)" },
