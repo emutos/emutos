@@ -46,6 +46,5 @@
 #define COUNTRY_HU 16   /* Hungary */
 
 /* other ones */
-#define COUNTRY_SK 23   /* Slovak Republic */
 #define COUNTRY_GR 31   /* Greece */
 #define COUNTRY_RU 32   /* Russia */
