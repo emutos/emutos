@@ -1120,6 +1120,6 @@ const PFLONG xbios_vecs[] = {
 #endif /* TOS_VERSION >= 0x200 */
 };
 
-const short xbios_ent = sizeof(xbios_vecs) / sizeof(PFLONG);
+const UWORD xbios_ent = sizeof(xbios_vecs) / sizeof(PFLONG);
 
 

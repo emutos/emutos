@@ -4233,3 +4233,8 @@ Start... early ages
 2013-01-03
 - bios/ctrycodes.h tools/tos-lang-change.c: Removed Slovak Republic country code
   as it is currently unused. (VRI)
+
+2013-01-07
+- bios/bios.c bios/vectors.S bios/xbios.c: Fixed crash when BIOS or XBIOS are
+  called with a function number greater than 32767. Bug reported by Olivier
+  Landemarre. (VRI)

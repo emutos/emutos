@@ -894,6 +894,6 @@ const PFLONG bios_vecs[] = {
     VEC(bios_b, kbshift),
 };
 
-const short bios_ent = sizeof(bios_vecs) / sizeof(PFLONG);
+const UWORD bios_ent = sizeof(bios_vecs) / sizeof(PFLONG);
 
 

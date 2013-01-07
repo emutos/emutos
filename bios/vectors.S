@@ -690,7 +690,7 @@ bx_sp_ok:
         move.l  #0,d0           // clear d0 (use d0 like the original TOS)
         move.w  (sp)+,d0        // remove the function number from stack
         cmp.w   d1,d0           // Higher, than highest number?
-        bge     bx_ret_exc
+        bhs.s   bx_ret_exc
         move.l  d0,d1           // if not implemented, returns the func number
         add.l   d1,d1           // indirection function table is 1 LW per
         add.l   d1,d1           // so multiply function number by 4
