@@ -266,12 +266,12 @@ ULONG rsconf1(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
 static LONG bconstatA(void)
 {
 SCC *scc = (SCC *)SCC_BASE;
+LONG rc;
 
-    if (scc->portA.ctl & 0x01)
-        return -1L;
+    rc = (scc->portA.ctl & 0x01) ? -1L : 0L;
     RECOVERY_DELAY;
 
-    return 0L;
+    return rc;
 }
 
 static LONG bconinA(void)
@@ -290,12 +290,12 @@ LONG data;
 static LONG bcostatA(void)
 {
 SCC *scc = (SCC *)SCC_BASE;
+LONG rc;
 
-    if (scc->portA.ctl & 0x04)
-        return -1L;
+    rc = (scc->portA.ctl & 0x04) ? -1L : 0L;
     RECOVERY_DELAY;
 
-    return 0L;
+    return rc;
 }
 
 static LONG bconoutA(WORD dev, WORD b)
@@ -316,12 +316,12 @@ SCC *scc = (SCC *)SCC_BASE;
 static LONG bconstatB(void)
 {
 SCC *scc = (SCC *)SCC_BASE;
+LONG rc;
 
-    if (scc->portB.ctl & 0x01)
-        return -1L;
+    rc = (scc->portB.ctl & 0x01) ? -1L : 0L;
     RECOVERY_DELAY;
 
-    return 0L;
+    return rc;
 }
 
 static LONG bconinB(void)
@@ -340,12 +340,12 @@ LONG data;
 static LONG bcostatB(void)
 {
 SCC *scc = (SCC *)SCC_BASE;
+LONG rc;
 
-    if (scc->portB.ctl & 0x04)
-        return -1L;
+    rc = (scc->portB.ctl & 0x04) ? -1L : 0L;
     RECOVERY_DELAY;
 
-    return 0L;
+    return rc;
 }
 
 /* note that bconoutB() is global to support SCC_DEBUG_PRINT */

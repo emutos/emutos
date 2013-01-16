@@ -4238,3 +4238,7 @@ Start... early ages
 - bios/bios.c bios/vectors.S bios/xbios.c: Fixed crash when BIOS or XBIOS are
   called with a function number greater than 32767. Bug reported by Olivier
   Landemarre. (VRI)
+
+2013-01-15
+- bios/serport.c: Fix bug: SCC serial I/O routines do not always delay after
+  accessing SCC. (RFB)
