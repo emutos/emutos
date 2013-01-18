@@ -4246,3 +4246,8 @@ Start... early ages
 2013-01-17
 - bdos/mem.h bios/biosmem.h include/memdefs.h: Code cleanup: eliminate
   duplicate definitions of MD & MPB. (RFB)
+
+2013-01-18
+- bios/iorec.h bios/mfp.c tools/bug.c tools/compr.c tools/tounix.c
+  tools/uncompr.c util/nlsasm.S: Changed the copyright owner from "Laurent
+  Vogel" to "EmuTOS development team". (VRI)

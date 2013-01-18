@@ -1,7 +1,8 @@
 /*
  * mfp.c - handling of the Atari ST Multi-Function Peripheral MFP 68901
  *
- * Copyright (c) 2001 Laurent Vogel, Martin Doering
+ * Copyright (c) 2001 EmuTOS development team
+ * Copyright (c) 2001 Martin Doering
  *
  * Authors:
  *  LVL   Laurent Vogel

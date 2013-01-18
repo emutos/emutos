@@ -1,7 +1,7 @@
 /*
  * nlsasm.S - fast routines for the nls hash tables
  *
- * Copyright (c) 2001 Laurent Vogel
+ * Copyright (c) 2001 EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel
