@@ -2,9 +2,9 @@
  * mem.h - header file for memory and process management routines  
  *
  * Copyright (c) 2001 Lineo, Inc. and 
+ *               2002-2013 The EmuTOS Development Team
  *
  * Authors:
- *  xxx <xxx@xxx>
  *  LVL Laurent Vogel
  *
  * This file is distributed under the GPL, version 2 or at your
@@ -14,6 +14,8 @@
 #ifndef MEM_H
 #define MEM_H
 
+#include "memdefs.h"
+
 
 /*
  *  conditional compile switches
@@ -21,39 +23,6 @@
 
 #define OSMPANIC        FALSE
 #define OSMLIST         FALSE
-
-
-/*
- *  Data Structures
- */
-
-/*
- *  MD - Memory Descriptor
- */
-
-typedef struct _md MD;
-
-struct _md
-{
-    MD      *m_link;
-    LONG    m_start;
-    LONG    m_length;
-    PD      *m_own;
-};
-
-
-/*
- *  MPB - Memory Partition Block
- */
-
-typedef struct _mpb MPB;
-
-struct _mpb
-{
-    MD      *mp_mfl;
-    MD      *mp_mal;
-    MD      *mp_rover;
-};
 
 
 /*
