@@ -4251,3 +4251,5 @@ Start... early ages
 - bios/iorec.h bios/mfp.c tools/bug.c tools/compr.c tools/tounix.c
   tools/uncompr.c util/nlsasm.S: Changed the copyright owner from "Laurent
   Vogel" to "EmuTOS development team". (VRI)
+- bios/ctrycodes.h tools/tos-lang-change.c: Reverted Russia country code to 19,
+  as FreeMiNT people agreed to keep it as the official standard. (VRI)

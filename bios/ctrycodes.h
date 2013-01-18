@@ -43,5 +43,5 @@
  * http://sparemint.atariforge.net/cgi-bin/cvsweb/freemint/sys/keyboard.c?rev=1.112&content-type=text/x-cvsweb-markup
  * http://sparemint.atariforge.net/cgi-bin/cvsweb/freemint/xaaes/src.km/init.c?rev=1.123&content-type=text/x-cvsweb-markup
  */
+#define COUNTRY_RU 19   /* Russia */
 #define COUNTRY_GR 31   /* Greece */
-#define COUNTRY_RU 32   /* Russia */
