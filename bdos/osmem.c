@@ -34,6 +34,8 @@
 
 #include "config.h"
 #include "portab.h"
+#include "nls.h"
+#include "kprint.h"
 
 /*
  *  local constants
@@ -86,11 +88,8 @@ static int *getosm(int n)
     if( n > osmlen ) 
     {
       /*  not enough room  */
-#if     OSMPANIC
-        mgtpanic( root , 20 ) ; /*  will not return             */
-#endif
-        dbggtosm++ ;
-        return(0);
+        kcprintf(_("\033EOut of internal memory.\nUse FOLDR100.PRG to get more.\nSystem halted!\n"));
+        halt();                 /*  will not return             */
     }
 
     m = &osmem[osmptr];         /*  start at base               */

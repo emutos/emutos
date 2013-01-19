@@ -18,14 +18,6 @@
 
 
 /*
- *  conditional compile switches
- */
-
-#define OSMPANIC        FALSE
-#define OSMLIST         FALSE
-
-
-/*
  *  externals
  */
 

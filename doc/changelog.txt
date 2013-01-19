@@ -4253,3 +4253,7 @@ Start... early ages
   Vogel" to "EmuTOS development team". (VRI)
 - bios/ctrycodes.h tools/tos-lang-change.c: Reverted Russia country code to 19,
   as FreeMiNT people agreed to keep it as the official standard. (VRI)
+
+2013-01-19
+- bdos/mem.h bdos/osmem.c: Issue error message & halt when internal OS memory
+  is exhausted. (RFB)
