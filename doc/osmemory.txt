@@ -1,0 +1,48 @@
+Internal OS memory
+==================
+This is a critical system resource.  It is allocated in "paragraphs"
+(multiples of 16 bytes) from a pool defined in osmem.c, using the
+function xmgetblk(); for simplicity, xmgetblk() is normally invoked
+via the wrapper MGET().  Each allocated memory block is preceded by
+a WORD containing the size of the block in paragraphs.  The maximum
+size of block that can be allocated is MAXQUICK-1 paragraphs.
+
+When freed, memory is not returned to the pool directly, but is added
+to one of a number of chains of free memory blocks.  There are MAXQUICK
+chains, one for each possible memory block size plus an unused chain
+corresponding to blocks of zero paragraphs.  Free blocks are chained
+together via standard address pointers occupying the first 4 bytes of
+each free block.  When a memory block is requested, it is obtained from
+the appropriate free chain if possible; otherwise from the pool.
+
+The following structures are allocated in internal OS memory:
+Name  Size*         Defined in     Used in
+----  -----         ----------     -------
+DMD   48/3/24       fs.h           fsdrive.c
+DND   56/4/32       fs.h           fsdir.c, fsdrive.c
+MD    16/1/8        memdefs.h      umem.c, iumem.c
+OFD   52/4/32       fs.h           fsdrive.c, fsmain.c, fsopnclo.c
+PD    256/16/128    pd.h           bdosmain.c
+
+* Sizes are: bytes/paragraphs/WORDs.  Note that the actual number of WORDs
+  gotten from the pool is one greater than the count shown (the overhead
+  is for the block size prefix WORD).
+
+As can be seen, although there are free chains for blocks of size 1-19
+paragraphs, the only ones used are 1, 3, 4, and 16.
+
+This method of allocation is the same as used in TOS, and the program
+FOLDRnnn.PRG can be used to extend the amount of memory available for
+DNDs and OFDs.  It does this by adding blocks to the free chain for
+4-paragraph blocks.  Since allocation is always from the free chain
+first, this provides additional space that is reserved for these blocks
+only.  By doing so, it also relieves pressure on the rest of the pool.
+
+If pool memory becomes exhausted, EmuTOS operation is compromised, since
+memory cannot be allocated via Malloc(), processes cannot be created,
+and files/folders may not be able to be accessed.  When EmuTOS runs out
+of internal memory, it halts with a message; this is the same behaviour
+as TOS.
+
+Roger Burrows
+19 January 2013

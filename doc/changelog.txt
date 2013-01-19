@@ -4257,3 +4257,4 @@ Start... early ages
 2013-01-19
 - bdos/mem.h bdos/osmem.c: Issue error message & halt when internal OS memory
   is exhausted. (RFB)
+- doc/osmemory.txt: Add documentation on internal OS memory. (RFB)
