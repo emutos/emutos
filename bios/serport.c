@@ -19,6 +19,7 @@
 #include "delay.h"
 #include "machine.h"
 #include "mfp.h"
+#include "scc.h"
 #include "serport.h"
 #include "string.h"
 #include "tosvars.h"
@@ -65,22 +66,6 @@ static LONG bcostatTT(void);
 static LONG bconoutTT(WORD,WORD);
 static ULONG rsconfTT(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
 #endif  /* CONF_WITH_TT_MFP */
-
-/*
- * structures
- */
-#if CONF_WITH_SCC
-typedef struct {
-    UBYTE dum1;
-    volatile UBYTE ctl;
-    UBYTE dum2;
-    volatile UBYTE data;
-} PORT;
-typedef struct {
-    PORT portA;
-    PORT portB;
-} SCC;
-#endif  /* CONF_WITH_SCC */
 
 /*
  * global variables

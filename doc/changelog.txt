@@ -4258,3 +4258,6 @@ Start... early ages
 - bdos/mem.h bdos/osmem.c: Issue error message & halt when internal OS memory
   is exhausted. (RFB)
 - doc/osmemory.txt: Add documentation on internal OS memory. (RFB)
+
+2013-01-20
+- bios/scc.h bios/serport.c: Moved struct for SCC chip to new header. (RFB)
