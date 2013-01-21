@@ -307,7 +307,6 @@ LONG DMAwrite(LONG sector, WORD count, LONG buf, WORD dev)
     return XHReadWrite(dev, 0, 1, sector, count, (void *)buf);
 }
 
-#if CONF_ATARI_HARDWARE
 void byteswap(UBYTE *buffer, ULONG size)
 {
     UWORD *p;
@@ -315,8 +314,6 @@ void byteswap(UBYTE *buffer, ULONG size)
     for (p = (UWORD *)buffer; p < (UWORD *)(buffer+size); p++)
         swpw(*p);
 }
-#endif
-
 
 /*
 vim:et:ts=4:sw=4:
