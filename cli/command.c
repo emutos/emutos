@@ -2294,7 +2294,7 @@ xCmdLn(char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl)
                     dspCL(&argv[0]);
                 if (argc >= 1) {
                     compl_code =
-                        copyCmd(p, argv[2], xncmps(5, s, "MOVE") ? 1 : 0);
+                        copyCmd(p, argv[2], (s[0] == 'M') ? 1 : 0);
                 } else {
                     compl_code = -1;
                     dspMsg(6);

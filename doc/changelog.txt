@@ -4267,3 +4267,4 @@ Start... early ages
 
 2013-01-21
 - cli/command.c: Minor improvements to displayed text strings. (RFB)
+- cli/command.c: Fix MV command to move rather than copy. (RFB)
