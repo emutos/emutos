@@ -6,6 +6,8 @@
 bios/bios.c
 bios/initinfo.c
 
+bdos/osmem.c
+
 # cli/command.c
 
 aes/gem_rsc.c

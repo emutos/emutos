@@ -4263,3 +4263,4 @@ Start... early ages
 - bios/scc.h bios/serport.c: Moved struct for SCC chip to new header. (RFB)
 - bios/bios.c bios/machine.c bios/startup.s include/config.h: Do not use
   reset instruction if compiling for EmuTOS RAM. (RFB)
+- po/POTFILES.in: Add osmem.c to list of files with _(...) macro. (RFB)
