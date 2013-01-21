@@ -840,7 +840,7 @@ dspMsg(int msg)
         break;
     case 17:
         wrtln(_("\
-# in the first non blank column is a comment."));
+# in the first non-blank column is a comment."));
         wrtln(_("\
 CAT or TYPE filename\r\n\
 \tOutput given file to standard output."));
@@ -858,7 +858,7 @@ CHMOD [path/]filename mode\r\n\
         wrtln("CLS");
         wrtln(_("\tClear the screen."));
         wrtln(_("\
-COPY source_file [destination_file]\r\n\
+COPY or CP source_file [destination_file]\r\n\
 \tCopy source to destination."));
         wrtln(_("\
 DIR or LS [path] [-f] [-d] [-t] [-w]\r\n\
@@ -880,11 +880,17 @@ FORMAT drive:\r\n\
 \tQuick format the given drive by reinitializing its FAT entries."));
 */
         wrtln(_("\
-MD [subdirectory name]\r\n\
-\tCreate a new subdirectory to the current directory."));
+MKDIR or MD [subdirectory name]\r\n\
+\tCreate a new subdirectory in the current directory."));
         wrtln(_("\
-MOVE source_file [destination_file]\r\n\
+MOVE or MV source_file [destination_file]\r\n\
 \tCopy source to destination and delete source."));
+        wrtln("NOWRAP");
+        wrtln(_("\tDisable line wrap."));
+        wrtln(_("\
+PATH [;[path]...]\r\n\
+\tIf path given, set the default path for running .BAT files\r\n\
+\tand commands. Otherwise show the currently set path."));
         wrtln("PAUSE");
         wrtln(_("\
 \tWrite 'CR to continue...' to standard output\r\n\
@@ -895,12 +901,6 @@ MOVE source_file [destination_file]\r\n\
 \tIf PRGERR is ON and command returns a non-zero value,\r\n\
 \tall further processing will stop.  Useful in .BAT files.\r\n\
 \tDefault is ON."));
-        wrtln("NOWRAP");
-        wrtln(_("\tDisable line wrap."));
-        wrtln(_("\
-PATH [;[path]...]\r\n\
-\tIf path given, set the default path for running .BAT files\r\n\
-\tand commands. Otherwise show the currently set path."));
         wrtln("");
         cr2cont();
         wrtln(_("\
@@ -912,13 +912,13 @@ REM or ECHO [\"string\"]\r\n\
 REN source_file [destination_file]\r\n\
 \tRename source to destination."));
         wrtln(_("\
-RD [path]\r\n\
-\tRemove named directory."));
-        wrtln(_("\
 RM or DEL filename [[filename]...] [-q]\r\n\
 \tRemove named file from directory.\r\n\
 \tIf the -q option is used, show the question\r\n\
 \tY/CR... and wait for a response."));
+        wrtln(_("\
+RMDIR or RD [path]\r\n\
+\tRemove named directory."));
         wrtln(_("\
 SHOW [drive:]\r\n\
 \tShow disk status for the default or specified drive."));
@@ -1131,7 +1131,7 @@ renmCmd(char *src, char *dst)
                                     compl_code =
                                         xrename(0, srcFlNm, dstFlNm);
                                     if (compl_code < 0) {
-                                        wrt(_("  Rename Unsucessfull!"));
+                                        wrt(_("  Rename failed."));
                                     }
                                 }
                             }
@@ -1338,7 +1338,7 @@ chmodCmd(char *argv[])
         mkSrc();
         att = srchb[21];
         if (att & 0x18) {
-            wrt(_("Unable to change mode on subdirectorys or volumes."));
+            wrt(_("Unable to change mode on directories or volumes."));
             compl_code = -1;
         } else {
             compl_code = 0;
@@ -1996,15 +1996,15 @@ xCmdLn(char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl)
                     newso = xcreat(tl1, 0);
                 }
                 if (newso < 0) {
-                    wrt("Can not open file.\r\n");
+                    wrt("Cannot open file.\r\n");
                     break;
                 }
                 if ((rd.oldso = dup(1)) < 0) {
-                    /*wrt("Can not dup stdout.\r\n");*/
+                    /*wrt("Cannot dup stdout.\r\n");*/
                     rd.oldso = -1;  /* fake old handle = console */
                 }
                 if (xforce(1, (int)newso) < 0) {
-                    wrt("Can not force stdout to new channel.\r\n");
+                    wrt("Cannot force stdout to new handle.\r\n");
                     xclose(newso);
                     break;
                 }
