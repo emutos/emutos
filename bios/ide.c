@@ -1,7 +1,7 @@
 /*
  * ide.c - Falcon IDE functions
  *
- * Copyright (c) 2011-2012 EmuTOS development team
+ * Copyright (c) 2011-2013 EmuTOS development team
  *
  * Authors:
  *  VRI   Vincent Rivière
@@ -12,15 +12,15 @@
 
 /*
  * Warning: This is very alpha IDE support.
- * Only the Master device is supported.
- * Only standard PC disks (byteswapped) are supported.
  */
 
 #define DBG_IDE 0
 
 #include "config.h"
 #include "portab.h"
+#include "asm.h"
 #include "blkdev.h"
+#include "disk.h"
 #include "ide.h"
 #include "gemerror.h"
 #include "vectors.h"
@@ -32,6 +32,7 @@
 #if CONF_WITH_IDE
 
 #define MAKE_UWORD(a, b) (((UWORD)(a) << 8) | (b))
+#define BLKDEVICE(idedev)   ((idedev)+(IDE_BUS)*(DEVICES_PER_BUS))
 
 #if CONF_ATARI_HARDWARE
 
@@ -93,25 +94,6 @@ void detect_ide(void)
     kprintf("has_ide = %d\n", has_ide);
 #endif
 }
-
-#if CONF_ATARI_HARDWARE
-
-/* The following is required to access PC compatible disks */
-#define BYTESWAPPED_SECTOR_DATA
-
-static void byteswap(UBYTE* buffer, ULONG size)
-{
-    UBYTE* p;
-
-    for (p = buffer; p < buffer + SECTOR_SIZE; p += 2)
-    {
-        UBYTE temp = p[0];
-        p[0] = p[1];
-        p[1] = temp;
-    }
-}
-
-#endif
 
 static int ide_wait_not_busy(void)
 {
@@ -201,19 +183,14 @@ static int ide_write_data(UBYTE buffer[SECTOR_SIZE], BOOL need_byteswap)
     if (ret < 0)
         return ret;
 
-    if (need_byteswap)
-    {
-        UBYTE* pb = (UBYTE*)p;
-        UBYTE* endb = (UBYTE*)end;
-
-        while (pb < endb)
-        {
-            ide_interface.data = MAKE_UWORD(pb[1], pb[0]);
-            pb += 2;
+    if (need_byteswap) {
+        while (p < end) {
+            UWORD temp;
+            temp = *p++;
+            swpw(temp);
+            ide_interface.data = temp;
         }
-    }
-    else
-    {
+    } else {
         while (p < end)
             ide_interface.data = *p++;
     }
@@ -233,9 +210,8 @@ static int ide_read_sector(UWORD device, ULONG sector, UBYTE buffer[SECTOR_SIZE]
     if (ret < 0)
         return ret;
 
-#ifdef BYTESWAPPED_SECTOR_DATA
-    byteswap(buffer, SECTOR_SIZE);
-#endif
+    if (devices[BLKDEVICE(device)].byteswap)
+        byteswap(buffer, SECTOR_SIZE);
 
     ide_wait_not_busy_check_error();
 
@@ -250,11 +226,7 @@ static int ide_write_sector(UWORD device, ULONG sector, UBYTE buffer[SECTOR_SIZE
     ide_interface.sector_count = 1;
     ide_interface.command = IDE_CMD_WRITE_SECTOR;
 
-#ifdef BYTESWAPPED_SECTOR_DATA
-    ret = ide_write_data(buffer, TRUE);
-#else
-    ret = ide_write_data(buffer, FALSE);
-#endif
+    ret = ide_write_data(buffer, devices[BLKDEVICE(device)].byteswap);
     if (ret < 0)
         return ret;
 

@@ -1,7 +1,7 @@
 /*
  * disk.c - disk routines
  *
- * Copyright (c) 2001-2012 EmuTOS development team
+ * Copyright (c) 2001-2013 EmuTOS development team
  *
  * Authors:
  *  PES   Petr Stehlik
@@ -50,7 +50,7 @@ void disk_init(void)
 
         if (! XHInqTarget(major, minor, &blocksize, NULL, NULL)) {
             devices[xbiosdev].valid = 1;
-            devices[xbiosdev].byteswap = 1; /* always byteswapped: FIXME */
+            devices[xbiosdev].byteswap = 0;
             devices[xbiosdev].pssize = blocksize;
 
             if (! XHGetCapacity(major, minor, &blocks, NULL))
@@ -139,17 +139,12 @@ static int atari_partition(int xhdidev)
 
     /* check for DOS byteswapped master boot record */
     if (sect[510] == 0xaa && sect[511] == 0x55) {
-        int i;
         devices[xbiosdev].byteswap = 1; /* byteswap required for whole disk */
 #if DBG_DISK
         kprintf("DOS MBR byteswapped checksum detected: byteswap required!\n");
 #endif
         /* swap bytes in the loaded boot sector */
-        for(i=0; i<SECTOR_SIZE; i+=2) {
-            int a = sect[i];
-            sect[i] = sect[i+1];
-            sect[i+1] = a;
-        }
+        byteswap(sect,SECTOR_SIZE);
     }
 
     /* check for DOS master boot record */
@@ -304,15 +299,24 @@ static int atari_partition(int xhdidev)
 
 LONG DMAread(LONG sector, WORD count, LONG buf, WORD dev)
 {
-    /* TODO: byteswap */
     return XHReadWrite(dev, 0, 0, sector, count, (void *)buf);
 }
 
 LONG DMAwrite(LONG sector, WORD count, LONG buf, WORD dev)
 {
-    /* TODO: byteswap */
     return XHReadWrite(dev, 0, 1, sector, count, (void *)buf);
 }
+
+#if CONF_ATARI_HARDWARE
+void byteswap(UBYTE *buffer, ULONG size)
+{
+    UWORD *p;
+
+    for (p = (UWORD *)buffer; p < (UWORD *)(buffer+size); p++)
+        swpw(*p);
+}
+#endif
+
 
 /*
 vim:et:ts=4:sw=4:
