@@ -171,6 +171,7 @@ static void bios_init(void)
     /* Initialize the processor */
     processor_init();   /* Set CPU type, longframe and FPU type */
     vecs_init();        /* setup all exception vectors (above) */
+    init_delay();       /* set 'reasonable' default values for delay */
 
     /* Detect optional hardware (video, sound, etc.) */
     machine_detect();   /* detect hardware */
@@ -215,9 +216,8 @@ static void bios_init(void)
     mfp_init();
 #endif
 
-    /* Initialize the system 200 Hz timer & delay values */
+    /* Initialize the system 200 Hz timer */
     init_system_timer();
-    init_delay();       /* set 'reasonable default values' */
 
     /* Initialize the RS-232 port(s) */
     chardev_init();     /* Initialize low-memory bios vectors */

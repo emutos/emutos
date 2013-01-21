@@ -29,6 +29,10 @@
 #include "dmasound.h"
 #include "kprint.h"
 #include "ide.h"
+#include "asm.h"
+#include "delay.h"
+#include "mfp.h"
+#include "scc.h"
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
 #endif
@@ -425,6 +429,35 @@ volatile BYTE *fbcr = (BYTE *)FALCON_BUS_CTL;
   if (has_videl)        /* i.e. it's a Falcon */
     *fbcr |= 0x29;      /* set STe Bus emulation off, blitter off, 16MHz CPU */
 #endif
+
+#if !CONF_WITH_RESET
+/*
+ * we must disable interrupts here, because the reset instruction hasn't
+ * been run during startup
+ */
+ #if CONF_WITH_MFP
+  {
+    MFP *mfp = MFP_BASE;  /* set base address of MFP */
+
+    mfp->iera = 0x00;     /* disable MFP interrupts */
+    mfp->ierb = 0x00;
+  }
+ #endif
+
+  /* TODO: disable MFP-TT interrupts when TT support is implemented */
+
+ #if CONF_WITH_SCC
+  {
+    SCC *scc = (SCC *)SCC_BASE;
+    ULONG loops = loopcount_1_msec / 1000;  /* 1 usec = 8 cycles of SCC PCLK */
+
+    scc->portA.ctl = 0x09;  /* issue hardware reset */
+    delay_loop(loops);
+    scc->portA.ctl = 0xC0;
+    delay_loop(loops);
+  }
+ #endif
+#endif /* CONF_WITH_RESET */
 }
   
 void fill_cookie_jar(void)

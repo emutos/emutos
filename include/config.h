@@ -693,6 +693,21 @@
 #endif
 
 /*
+ * Set CONF_WITH_RESET to 0 to force the startup code to bypass the
+ * "reset" instruction during startup.  By default it is only bypassed
+ * in EmuTOS RAM, because it causes crashes very early in startup (the
+ * "black screen" problem).  It is surmised that the hardware reset may
+ * reset the RAM controller allowing/causing RAM contents to change.
+ */
+#ifndef CONF_WITH_RESET
+# ifdef EMUTOS_RAM
+ # define CONF_WITH_RESET 0
+# else
+ # define CONF_WITH_RESET 1
+# endif
+#endif
+
+/*
  * Miscellaneous definitions that apply to more than one EmuTOS subsystem
  */
 #define BLKDEVNUM 26                    /* number of block devices supported: A: ... Z: */

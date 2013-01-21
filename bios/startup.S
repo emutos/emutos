@@ -154,6 +154,7 @@ _main:
         move.l  #not_falcon,16 // must be 68000 if we get illegal instrn error
         moveq   #0,d0
         MOVEC_D0_VBR           // initialise VBR to zero
+#if CONF_WITH_RESET
         lea     _stktop,sp     // required for exception
         move.l  #not_falcon,8  // can't be Falcon if we get bus error
         tst.w   0x8006.w       // magic: must access this before & after the reset
@@ -163,7 +164,10 @@ _main:
 not_falcon:
         reset
 reset_done:
-#endif
+#else
+not_falcon:
+#endif /* CONF_WITH_RESET */
+#endif /* __mcoldfire__ */
 #endif /* !DIAGNOSTIC_CARTRIDGE */
 
 main_after_reset_instruction:
