@@ -4271,9 +4271,11 @@ Start... early ages
 - bios/disk.c bios/disk.h bios/ide.c: Add support for not-byteswapped
   disk partitions. (RFB)
 
-2013-01-21
+2013-01-23
 - Makefile bios/startup.S include/asmdefs.h: Added support for the m68k-elf
   toolchain. Use with "make 512 ELF=1". (VRI)
 - aes/gemdosif.S aes/gemstart.S bios/aciavecs.S bios/comprimg.S bios/linea.S
   bios/natfeat.S cli/coma.S include/asmdefs.h: Added support for section .rodata
   with ELF toolchain. (VRI)
+- include/xbiosbind.h vdi/vdi_col.c: Fix vq_color() & vs_color() for systems
+  with videl. (RFB)

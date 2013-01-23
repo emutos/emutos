@@ -1,7 +1,7 @@
 /*
  * xbiosbind.h - Bindings for XBIOS access
  *
- * Copyright (c) 2001 EmuTOS development team
+ * Copyright (c) 2001-2013 EmuTOS development team
  *
  * Authors:
  *  MAD   Martin Doering
@@ -57,6 +57,8 @@
 #define Puntaes() xbios_v_v(39)
 #define VsetMode(a) xbios_w_w(88,a)
 #define VgetMonitor() xbios_w_v(89)
+#define VsetRGB(a,b,c) xbios_v_wwl(93,a,b,c)
+#define VgetRGB(a,b,c) xbios_v_wwl(94,a,b,c)
 
 /*
  *
@@ -112,6 +114,22 @@ static inline void xbios_v_wll(int op, short a, long b, long c)
         "lea     12(sp),sp"
          : 
          : "nr"(op), "nr"(a), "ir"(b), "ir"(c) 
+         : "d0", "d1", "d2", "a0", "a1", "a2", "memory", "cc"
+        );
+}
+
+static inline void 
+xbios_v_wwl(int op, short a, short b, long c)
+{
+    __asm__ __volatile__ (
+        "move.l  %3,-(sp)\n\t"
+        "move.w  %2,-(sp)\n\t"
+        "move.w  %1,-(sp)\n\t"
+        "move.w  %0,-(sp)\n\t"
+        "trap    #14\n\t"
+        "lea     10(sp),sp"
+         : 
+         : "nr"(op), "nr"(a), "nr"(b), "ir"(c) 
          : "d0", "d1", "d2", "a0", "a1", "a2", "memory", "cc"
         );
 }

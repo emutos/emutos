@@ -1,7 +1,7 @@
 /*
  * vdi_col.c - VDI color palette functions and tables.
  *
- * Copyright 2005, 2007 by The EmuTOS development team.
+ * Copyright (c) 2005-2013 by The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -15,28 +15,32 @@
 #include "xbiosbind.h"
 #include "vdi_col.h"
 #include "lineavars.h"
+#include "kprint.h"
 
+#define EXTENDED_PALETTE (CONF_WITH_VIDEL || CONF_WITH_TT_SHIFTER)
+
+#if EXTENDED_PALETTE
+#define MAXCOLOURS  256
+#else
+#define MAXCOLOURS  16
+#endif
 
 /* Some color mapping tables */
-WORD MAP_COL[MAX_COLOR];
+WORD MAP_COL[MAXCOLOURS];       /* maps vdi pen -> hardware register */
+WORD REV_MAP_COL[MAXCOLOURS];   /* maps hardware register -> vdi pen */
 
 static const WORD MAP_COL_ROM[] =
     { 0, 15, 1, 2, 4, 6, 3, 5, 7, 8, 9, 10, 12, 14, 11, 13 };
 
-WORD REV_MAP_COL[MAX_COLOR];
-
-static const WORD REV_MAP_COL_ROM[] =
-    { 0, 2, 3, 6, 4, 7, 5, 8, 9, 10, 11, 14, 12, 15, 13, 1 };
-
-
+#if EXTENDED_PALETTE
 /* req_col2 contains the VDI color palette entries 16 - 255 for vq_color().
  * To stay compatible with the line-a variables, only entries > 16 are
  * stored in this array, the first 16 entries are stored in REQ_COL */
 static WORD req_col2[240][3];
+#endif
 
-
-/* Initial color palette */
-static const WORD initial_palette[16][3] =
+/* Initial color palettes */
+static const WORD st_palette[16][3] =
 {
     { 1000, 1000, 1000 },
     { 0, 0, 0 },
@@ -55,6 +59,78 @@ static const WORD initial_palette[16][3] =
     { 1000, 1000, 400 },
     { 1000, 400, 1000 }
 };
+#if CONF_WITH_VIDEL
+static const WORD videl_palette1[16][3] =
+{
+    { 1000, 1000, 1000 }, { 0, 0, 0 }, { 1000, 0, 0 }, { 0, 1000, 0 },
+    { 0, 0, 1000 }, { 0, 1000, 1000 }, { 1000, 1000, 0 }, { 1000, 0, 1000 },
+    { 800, 800, 800 }, { 500, 500, 500 }, { 500, 0, 0 }, { 0, 500, 0 },
+    { 0, 0, 500 }, { 0, 500, 500 }, { 500, 500, 0 }, { 500, 0, 500 }
+};
+static const WORD videl_palette2[240][3] =
+{
+    { 1000, 1000, 1000 }, { 933, 933, 933 }, { 867, 867, 867 }, { 800, 800, 800 },
+    { 733, 733, 733 }, { 667, 667, 667 }, { 600, 600, 600 }, { 533, 533, 533 },
+    { 467, 467, 467 }, { 400, 400, 400 }, { 333, 333, 333 }, { 267, 267, 267 },
+    { 200, 200, 200 }, { 133, 133, 133 }, { 67, 67, 67 }, { 0, 0, 0 },
+    { 1000, 0, 0 }, { 1000, 0, 67 }, { 1000, 0, 133 }, { 1000, 0, 200 },
+    { 1000, 0, 267 }, { 1000, 0, 333 }, { 1000, 0, 400 }, { 1000, 0, 467 },
+    { 1000, 0, 533 }, { 1000, 0, 600 }, { 1000, 0, 667 }, { 1000, 0, 733 },
+    { 1000, 0, 800 }, { 1000, 0, 867 }, { 1000, 0, 933 }, { 1000, 0, 1000 },
+    { 933, 0, 1000 }, { 867, 0, 1000 }, { 800, 0, 1000 }, { 733, 0, 1000 },
+    { 667, 0, 1000 }, { 600, 0, 1000 }, { 533, 0, 1000 }, { 467, 0, 1000 },
+    { 400, 0, 1000 }, { 333, 0, 1000 }, { 267, 0, 1000 }, { 200, 0, 1000 },
+    { 133, 0, 1000 }, { 67, 0, 1000 }, { 0, 0, 1000 }, { 0, 67, 1000 },
+    { 0, 133, 1000 }, { 0, 200, 1000 }, { 0, 267, 1000 }, { 0, 333, 1000 },
+    { 0, 400, 1000 }, { 0, 467, 1000 }, { 0, 533, 1000 }, { 0, 600, 1000 },
+    { 0, 667, 1000 }, { 0, 733, 1000 }, { 0, 800, 1000 }, { 0, 867, 1000 },
+    { 0, 933, 1000 }, { 0, 1000, 1000 }, { 0, 1000, 933 }, { 0, 1000, 867 },
+    { 0, 1000, 800 }, { 0, 1000, 733 }, { 0, 1000, 667 }, { 0, 1000, 600 },
+    { 0, 1000, 533 }, { 0, 1000, 467 }, { 0, 1000, 400 }, { 0, 1000, 333 },
+    { 0, 1000, 267 }, { 0, 1000, 200 }, { 0, 1000, 133 }, { 0, 1000, 67 },
+    { 0, 1000, 0 }, { 67, 1000, 0 }, { 133, 1000, 0 }, { 200, 1000, 0 },
+    { 267, 1000, 0 }, { 333, 1000, 0 }, { 400, 1000, 0 }, { 467, 1000, 0 },
+    { 533, 1000, 0 }, { 600, 1000, 0 }, { 667, 1000, 0 }, { 733, 1000, 0 },
+    { 800, 1000, 0 }, { 867, 1000, 0 }, { 933, 1000, 0 }, { 1000, 1000, 0 },
+    { 1000, 933, 0 }, { 1000, 867, 0 }, { 1000, 800, 0 }, { 1000, 733, 0 },
+    { 1000, 667, 0 }, { 1000, 600, 0 }, { 1000, 533, 0 }, { 1000, 467, 0 },
+    { 1000, 400, 0 }, { 1000, 333, 0 }, { 1000, 267, 0 }, { 1000, 200, 0 },
+    { 1000, 133, 0 }, { 1000, 67, 0 }, { 733, 0, 0 }, { 733, 0, 67 },
+    { 733, 0, 133 }, { 733, 0, 200 }, { 733, 0, 267 }, { 733, 0, 333 },
+    { 733, 0, 400 }, { 733, 0, 467 }, { 733, 0, 533 }, { 733, 0, 600 },
+    { 733, 0, 667 }, { 733, 0, 733 }, { 667, 0, 733 }, { 600, 0, 733 },
+    { 533, 0, 733 }, { 467, 0, 733 }, { 400, 0, 733 }, { 333, 0, 733 },
+    { 267, 0, 733 }, { 200, 0, 733 }, { 133, 0, 733 }, { 67, 0, 733 },
+    { 0, 0, 733 }, { 0, 67, 733 }, { 0, 133, 733 }, { 0, 200, 733 },
+    { 0, 267, 733 }, { 0, 333, 733 }, { 0, 400, 733 }, { 0, 467, 733 },
+    { 0, 533, 733 }, { 0, 600, 733 }, { 0, 667, 733 }, { 0, 733, 733 },
+    { 0, 733, 667 }, { 0, 733, 600 }, { 0, 733, 533 }, { 0, 733, 467 },
+    { 0, 733, 400 }, { 0, 733, 333 }, { 0, 733, 267 }, { 0, 733, 200 },
+    { 0, 733, 133 }, { 0, 733, 67 }, { 0, 733, 0 }, { 67, 733, 0 },
+    { 133, 733, 0 }, { 200, 733, 0 }, { 267, 733, 0 }, { 333, 733, 0 },
+    { 400, 733, 0 }, { 467, 733, 0 }, { 533, 733, 0 }, { 600, 733, 0 },
+    { 667, 733, 0 }, { 733, 733, 0 }, { 733, 667, 0 }, { 733, 600, 0 },
+    { 733, 533, 0 }, { 733, 467, 0 }, { 733, 400, 0 }, { 733, 333, 0 },
+    { 733, 267, 0 }, { 733, 200, 0 }, { 733, 133, 0 }, { 733, 67, 0 },
+    { 467, 0, 0 }, { 467, 0, 67 }, { 467, 0, 133 }, { 467, 0, 200 },
+    { 467, 0, 267 }, { 467, 0, 333 }, { 467, 0, 400 }, { 467, 0, 467 },
+    { 400, 0, 467 }, { 333, 0, 467 }, { 267, 0, 467 }, { 200, 0, 467 },
+    { 133, 0, 467 }, { 67, 0, 467 }, { 0, 0, 467 }, { 0, 67, 467 },
+    { 0, 133, 467 }, { 0, 200, 467 }, { 0, 267, 467 }, { 0, 333, 467 },
+    { 0, 400, 467 }, { 0, 467, 467 }, { 0, 467, 400 }, { 0, 467, 333 },
+    { 0, 467, 267 }, { 0, 467, 200 }, { 0, 467, 133 }, { 0, 467, 67 },
+    { 0, 467, 0 }, { 67, 467, 0 }, { 133, 467, 0 }, { 200, 467, 0 },
+    { 267, 467, 0 }, { 333, 467, 0 }, { 400, 467, 0 }, { 467, 467, 0 },
+    { 467, 400, 0 }, { 467, 333, 0 }, { 467, 267, 0 }, { 467, 200, 0 },
+    { 467, 133, 0 }, { 467, 67, 0 }, { 267, 0, 0 }, { 267, 0, 67 },
+    { 267, 0, 133 }, { 267, 0, 200 }, { 267, 0, 267 }, { 200, 0, 267 },
+    { 133, 0, 267 }, { 67, 0, 267 }, { 0, 0, 267 }, { 0, 67, 267 },
+    { 0, 133, 267 }, { 0, 200, 267 }, { 0, 267, 267 }, { 0, 267, 200 },
+    { 0, 267, 133 }, { 0, 267, 67 }, { 0, 267, 0 }, { 67, 267, 0 },
+    { 133, 267, 0 }, { 200, 267, 0 }, { 267, 267, 0 }, { 267, 200, 0 },
+    { 267, 133, 0 }, { 267, 67, 0 }, { 1000, 1000, 1000 }, { 0, 0, 0 }
+};
+#endif
 
 
 /* Create a ST/STE color value from VDI color */
@@ -67,13 +143,35 @@ static int vdi2ste(int col)
 }
 
 
+#if CONF_WITH_VIDEL
+/* Create videl colour value from VDI colour */
+static LONG vdi2videl(WORD col)
+{
+    return (LONG)col * 51 / 200;            /* scale 1000 -> 255 */
+}
+
+
+/* Create VDI colour value from videl colour */
+static WORD videl2vdi(LONG col)
+{
+    return (WORD)((col & 0xff) * 200 / 51); /* scale 255 -> 1000 */
+}
+#endif
+
+
 /* Set an entry in the hardware color palette */
 static void set_color(int colnum, int r, int g, int b)
 {
+    colnum = MAP_COL[colnum];   /* get hardware register */
+
 #if CONF_WITH_VIDEL
     if (has_videl)
     {
-        /* TODO: not implemented */
+        LONG rgb;
+
+        rgb = (vdi2videl(r) << 16) | (vdi2videl(g) << 8) | vdi2videl(b);
+if (colnum < 16) kprintf("Calling VsetRGB() reg %d = 0x%08lx\n",colnum,rgb);
+        VsetRGB(colnum,1,(LONG)&rgb);
     }
     else
 #endif
@@ -86,7 +184,6 @@ static void set_color(int colnum, int r, int g, int b)
 #endif
     {
         /* ST and STE shifter: */
-        colnum = MAP_COL[colnum];
         r = vdi2ste(r);
         g = vdi2ste(g);
         b = vdi2ste(b);
@@ -121,8 +218,10 @@ void _vs_color(Vwk *vwk)
 
         if (colnum < 16)
             REQ_COL[colnum][i-1] = INTIN[i];
+#if EXTENDED_PALETTE
         else
             req_col2[colnum-16][i-1] = INTIN[i];
+#endif
     }
 
     set_color(colnum, INTIN[1], INTIN[2], INTIN[3]);
@@ -132,25 +231,53 @@ void _vs_color(Vwk *vwk)
 /* Set the default palette etc. */
 void init_colors(void)
 {
-    int i, max_colour;
+    int i;
 
-    memcpy(REQ_COL, initial_palette, sizeof(initial_palette));
+    /* set up palette */
+    memcpy(REQ_COL, st_palette, sizeof(st_palette));    /* use ST as default */
 
+#if CONF_WITH_VIDEL
+    if (has_videl)
+    {
+        memcpy(REQ_COL, videl_palette1, sizeof(videl_palette1));
+        memcpy(req_col2, videl_palette2, sizeof(videl_palette2));
+    }
+    else
+#endif
+#if CONF_WITH_TT_SHIFTER
+    if (has_tt_shifter)
+    {
+        /* TODO: not implemented */
+    }
+    else
+#endif
+    {
+	}
+
+    /* set up vdi pen -> hardware colour register mapping */
     memcpy(MAP_COL, MAP_COL_ROM, sizeof(MAP_COL_ROM));
-    memcpy(REV_MAP_COL, REV_MAP_COL_ROM, sizeof(REV_MAP_COL_ROM));
+    MAP_COL[1] = DEV_TAB[13] - 1;   /* pen 1 varies according to # colours available */
 
-    /* adjust colour mappings according to number of colours available */
-    max_colour = DEV_TAB[13] - 1;
-    MAP_COL[1] = max_colour;
-    REV_MAP_COL[max_colour] = 1;
+#if EXTENDED_PALETTE
+    for (i = 16; i < MAXCOLOURS-1; i++)
+        MAP_COL[i] = i;
+    MAP_COL[i] = 15;
+#endif
 
+    /* set up reverse mapping (hardware colour register -> vdi pen) */
+    for (i = 0; i < DEV_TAB[13]; i++)
+		REV_MAP_COL[MAP_COL[i]] = i;
+
+    /* now initialise the hardware */
     for (i = 0; i < DEV_TAB[13]; i++)
     {
-        set_color(i, initial_palette[i][0], initial_palette[i][1],
-                     initial_palette[i][2]);
+        if (i < 16)
+            set_color(i, REQ_COL[i][0], REQ_COL[i][1], REQ_COL[i][2]);
+#if EXTENDED_PALETTE
+        else
+            set_color(i, req_col2[i-16][0], req_col2[i-16][1], req_col2[i-16][2]);
+#endif
     }
-
-    /* TODO: Also initialize the colors 16 - 255 ? */
 }
 
 
@@ -183,7 +310,7 @@ void _vq_color(Vwk *vwk)
 
     colnum = INTIN[0];
 
-    INTOUT[1] = INTOUT[2] = INTOUT[3] = 0;      // Default values
+    INTOUT[0] = INTOUT[1] = INTOUT[2] = INTOUT[3] = 0;  // Default values
 
     /* Check for valid color index */
     if (colnum < 0 || colnum >= DEV_TAB[13])
@@ -193,7 +320,7 @@ void _vq_color(Vwk *vwk)
         return;
     }
 
-    if (INTIN[1] == 0)
+    if (INTIN[1] == 0)  /* return last-requested value */
     {
         if (colnum < 16)
         {
@@ -201,46 +328,57 @@ void _vq_color(Vwk *vwk)
             INTOUT[2] = REQ_COL[colnum][1];
             INTOUT[3] = REQ_COL[colnum][2];
         }
+#if EXTENDED_PALETTE
         else
         {
             INTOUT[1] = req_col2[colnum-16][0];
             INTOUT[2] = req_col2[colnum-16][1];
             INTOUT[3] = req_col2[colnum-16][2];
         }
+#endif
+        return;
     }
+
+    /*
+     * return actual current value
+     */
+    colnum = MAP_COL[colnum];   /* get hardware register */
+
 #if CONF_WITH_VIDEL
-    else if (has_videl)
+    if (has_videl)
     {
-        /* TODO: not implemented */
-        // Quick hack to see something in TosWin2
-        INTOUT[1] = INTOUT[2] = INTOUT[3] = (colnum == 1 ? 0 : 1000);
+    LONG rgb;
+
+        VgetRGB(colnum,1,(LONG)&rgb);
+        INTOUT[1] = videl2vdi(rgb >> 16);
+        INTOUT[2] = videl2vdi(rgb >> 8);
+        INTOUT[3] = videl2vdi(rgb);
     }
+    else
 #endif
 #if CONF_WITH_TT_SHIFTER
-    else if (has_tt_shifter)
+    if (has_tt_shifter)
     {
         /* TODO: not implemented */
     }
+    else
 #endif
 #if CONF_WITH_STE_SHIFTER
-    else if (has_ste_shifter)
+    if (has_ste_shifter)
     {
-        colnum = MAP_COL[colnum];
         c = Setcolor(colnum, -1);
         INTOUT[1] = ste2vdi(c >> 8);
         INTOUT[2] = ste2vdi(c >> 4);
         INTOUT[3] = ste2vdi(c);
     }
+    else
 #endif
-    else  /* ST shifter */
+    /* ST shifter */
     {
-        colnum = MAP_COL[colnum];
         c = Setcolor(colnum, -1);
         INTOUT[1] = st2vdi(c >> 8);
         INTOUT[2] = st2vdi(c >> 4);
         INTOUT[3] = st2vdi(c);
     }
-
-    INTOUT[0] = 0;
 }
 
