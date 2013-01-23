@@ -201,9 +201,13 @@ fail_natfeat:
         move.l  a1,sp
         rts
         
+        SECTION_RODATA
+
 nf_stderr_name:
         .ascii  "NF_STDERR\0"
         .even
+
+        .text
 
 #else /* no native features */
         

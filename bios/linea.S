@@ -103,6 +103,8 @@ wrong_linea:
         lea     10(sp),sp
         rte
 
+        SECTION_RODATA
+
 wrong_linea_msg:
         .ascii  "pc=0x%08lx: Line-A call number 0x%03x out of bounds\n\0"
         .even
@@ -111,6 +113,7 @@ linea_msg:
         .ascii  "Line-A #%x\n\0"
         .even
 
+        .text
 
 _linea_0:       
         lea     line_a_vars,a0  // get base address for line a variables
@@ -218,6 +221,8 @@ linea_stub:
         jsr     _kprintf
         lea     10(sp),sp
         rts
+
+        SECTION_RODATA
 
 linea_stub_msg:
         .ascii  "pc=0x%08lx: unimplemented Line-A call number 0x%03x\n\0"

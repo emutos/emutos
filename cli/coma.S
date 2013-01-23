@@ -214,7 +214,7 @@ _jmp_gemdos:
         rts
 
 
-        .text // .rodata
+        SECTION_RODATA
 aris:
         .dc.b   13,10
         .ascii "(A)bort, (R)etry, or (I)gnore ?"

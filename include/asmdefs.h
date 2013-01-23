@@ -41,3 +41,12 @@
 #define DEFINE_FUNCTION_ALIAS(alias, impl) .globl alias; alias:; jmp impl
 #define ELF_LIB_REF(f) DEFINE_FUNCTION_ALIAS(_##f, f)
 #endif
+
+/* Read-only data section */
+#ifdef ELF_TOOLCHAIN
+/* ELF objects have real support for .rodata */
+#define SECTION_RODATA .section .rodata
+#else
+/* a.out objects have no .rodata section, default to .text */
+#define SECTION_RODATA .text
+#endif

@@ -221,7 +221,7 @@ _init_acia_vecs:
         // FIXME: The iorec stuff should go into the .data segment (if
         // EmuTOS had a functional one) instead of copying the following to
         // the .bss segment at run time.
-        .text // .rodata
+        SECTION_RODATA
 iorec_table:
         //         sz, hd, tl,   lo, hi
         dc.l    ikbdibufbuf

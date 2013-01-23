@@ -59,9 +59,13 @@ fail_natfeat:
 
         rts
 
+        SECTION_RODATA
+
 nf_version_name:
         .ascii  "NF_VERSION\0"
         .even
+
+        .text
 
 // ===========================================================================
 // ==== NatFeat cookie points here ===========================================

@@ -337,7 +337,7 @@ L2234:
 
 
 
-.text // .rodata
+SECTION_RODATA
 
 err_tbl:
         .dc.b   4,1,1,2,1,1,2,2
