@@ -4270,3 +4270,7 @@ Start... early ages
 - cli/command.c: Fix MV command to move rather than copy. (RFB)
 - bios/disk.c bios/disk.h bios/ide.c: Add support for not-byteswapped
   disk partitions. (RFB)
+
+2013-01-21
+- Makefile bios/startup.S include/asmdefs.h: Added support for the m68k-elf
+  toolchain. Use with "make 512 ELF=1". (VRI)

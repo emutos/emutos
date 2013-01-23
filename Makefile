@@ -101,6 +101,19 @@ NODEP :=
 # compilation flags
 #
 
+# Override with 1 to use the ELF toolchain instead of the MiNT one
+ELF = 0
+
+ifeq (1,$(ELF))
+# Standard ELF toolchain
+TOOLCHAIN_PREFIX = m68k-elf-
+TOOLCHAIN_CFLAGS = -fleading-underscore -Wa,--register-prefix-optional -fno-reorder-functions -DELF_TOOLCHAIN
+else
+# MiNT toolchain
+TOOLCHAIN_PREFIX = m68k-atari-mint-
+TOOLCHAIN_CFLAGS =
+endif
+
 # indent flags
 INDENT = indent -kr
 
@@ -109,10 +122,10 @@ LD = $(CC) $(MULTILIBFLAGS) -nostartfiles -nostdlib
 VMA_T1 = 0x00fc0000
 VMA_T2 = 0x00e00000
 VMA = $(VMA_T2)
-LDFLAGS = -lgcc -Wl,--oformat,binary,-Ttext=$(VMA),-Tbss=0x00000000
+LDFLAGS = -lgcc -Wl,--oformat,binary,-Ttext=$(VMA),-Tbss=0x00000000,-e,_main
 
-# C compiler for MiNT
-CC = m68k-atari-mint-gcc
+# C compiler
+CC = $(TOOLCHAIN_PREFIX)gcc
 ifeq (1,$(COLDFIRE))
 CPUFLAGS = -mcpu=5475
 else
@@ -124,15 +137,15 @@ OPTFLAGS = -Os -fomit-frame-pointer
 OTHERFLAGS = -ffreestanding
 WARNFLAGS = -Wall #-fno-common -Wshadow -Wmissing-prototypes -Wstrict-prototypes #-Werror
 DEFINES = $(LOCALCONF) -DWITH_AES=$(WITH_AES) -DWITH_CLI=$(WITH_CLI) $(DEF)
-CFLAGS = $(MULTILIBFLAGS) $(OPTFLAGS) $(WARNFLAGS) $(OTHERFLAGS) $(INC) $(DEFINES)
+CFLAGS = $(MULTILIBFLAGS) $(TOOLCHAIN_CFLAGS) $(OPTFLAGS) $(WARNFLAGS) $(OTHERFLAGS) $(INC) $(DEFINES)
 
 CPPFLAGS = $(INC)
 
 # The objdump utility (disassembler)
-OBJDUMP = m68k-atari-mint-objdump
+OBJDUMP = $(TOOLCHAIN_PREFIX)objdump
 
 # The objcopy utility
-OBJCOPY = m68k-atari-mint-objcopy
+OBJCOPY = $(TOOLCHAIN_PREFIX)objcopy
 
 # the native C compiler, for tools
 NATIVECC = gcc -ansi -pedantic -Wall -Wextra -O
@@ -1019,8 +1032,8 @@ TOCLEAN += makefile.dep
 NODEP += makefile.dep
 makefile.dep: util/langs.c bios/header.h bios/ctables.h include/i18nconf.h
 	( \
-	  $(CC) $(MULTILIBFLAGS) -MM $(INC) -Ibios -Iaes $(DEF) $(CSRC); \
-	  $(CC) $(MULTILIBFLAGS) -MM $(INC) $(DEF) $(SSRC) \
+	  $(CC) $(MULTILIBFLAGS) $(TOOLCHAIN_CFLAGS) -MM $(INC) -Ibios -Iaes $(DEF) $(CSRC); \
+	  $(CC) $(MULTILIBFLAGS) $(TOOLCHAIN_CFLAGS) -MM $(INC) $(DEF) $(SSRC) \
 	) | sed -e '/:/s,^,obj/,' >makefile.dep
 
 # Do not include or rebuild makefile.dep for the targets listed in NODEP

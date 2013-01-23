@@ -35,3 +35,9 @@
 #define PMOVE_TO_TC(addr)   dc.l 0xf0394000,addr    /* 68030 (except 68ec030) */
 #define PMOVE_TO_TTR0(addr) dc.l 0xf0390800,addr    /* 68030 */
 #define PMOVE_TO_TTR1(addr) dc.l 0xf0390c00,addr    /* 68030 */
+
+/* ELF toolchain support */
+#ifdef ELF_TOOLCHAIN
+#define DEFINE_FUNCTION_ALIAS(alias, impl) .globl alias; alias:; jmp impl
+#define ELF_LIB_REF(f) DEFINE_FUNCTION_ALIAS(_##f, f)
+#endif
