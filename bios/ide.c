@@ -32,7 +32,6 @@
 #if CONF_WITH_IDE
 
 #define MAKE_UWORD(a, b) (((UWORD)(a) << 8) | (b))
-#define BLKDEVICE(idedev)   ((idedev)+(IDE_BUS)*(DEVICES_PER_BUS))
 
 #if CONF_ATARI_HARDWARE
 
@@ -198,7 +197,7 @@ static int ide_write_data(UBYTE buffer[SECTOR_SIZE], BOOL need_byteswap)
     return ide_wait_not_busy_check_error();
 }
 
-static int ide_read_sector(UWORD device, ULONG sector, UBYTE buffer[SECTOR_SIZE])
+static int ide_read_sector(UWORD device, ULONG sector, UBYTE buffer[SECTOR_SIZE], BOOL need_byteswap)
 {
     int ret;
 
@@ -210,7 +209,7 @@ static int ide_read_sector(UWORD device, ULONG sector, UBYTE buffer[SECTOR_SIZE]
     if (ret < 0)
         return ret;
 
-    if (devices[BLKDEVICE(device)].byteswap)
+    if (need_byteswap)
         byteswap(buffer, SECTOR_SIZE);
 
     ide_wait_not_busy_check_error();
@@ -218,7 +217,7 @@ static int ide_read_sector(UWORD device, ULONG sector, UBYTE buffer[SECTOR_SIZE]
     return E_OK;
 }
 
-static int ide_write_sector(UWORD device, ULONG sector, UBYTE buffer[SECTOR_SIZE])
+static int ide_write_sector(UWORD device, ULONG sector, UBYTE buffer[SECTOR_SIZE], BOOL need_byteswap)
 {
     int ret;
 
@@ -226,14 +225,14 @@ static int ide_write_sector(UWORD device, ULONG sector, UBYTE buffer[SECTOR_SIZE
     ide_interface.sector_count = 1;
     ide_interface.command = IDE_CMD_WRITE_SECTOR;
 
-    ret = ide_write_data(buffer, devices[BLKDEVICE(device)].byteswap);
+    ret = ide_write_data(buffer, need_byteswap);
     if (ret < 0)
         return ret;
 
     return E_OK;
 }
 
-LONG ide_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev)
+LONG ide_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev, BOOL need_byteswap)
 {
     UBYTE* p = (UBYTE*)buf;
     int ret;
@@ -246,8 +245,8 @@ LONG ide_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev)
 
     while (count > 0)
     {
-        ret = rw ? ide_write_sector(dev, sector, p)
-            : ide_read_sector(dev, sector, p);
+        ret = rw ? ide_write_sector(dev, sector, p, need_byteswap)
+            : ide_read_sector(dev, sector, p, need_byteswap);
         if (ret < 0)
             return ret;
 

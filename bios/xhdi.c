@@ -386,11 +386,15 @@ long XHReadWrite(UWORD major, UWORD minor, UWORD rw, ULONG sector,
         break;
 #if CONF_WITH_IDE
     case IDE_BUS:
-        ret = ide_rw(rw, sector, count, (LONG)buf, reldev);
+    {
+        UWORD xbiosdev = 2 + dev;
+        BOOL need_byteswap = devices[xbiosdev].byteswap;
+        ret = ide_rw(rw, sector, count, (LONG)buf, reldev, need_byteswap);
 #if DBG_XHDI
         kprintf("ide_rw() returned %ld\n", ret);
 #endif
         break;
+    }
 #endif /* CONF_WITH_IDE */
     default:
         ret = EUNDEV;

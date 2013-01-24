@@ -4284,3 +4284,5 @@ Start... early ages
 2013-01-24
 - bios/blkdev.c bios/blkdev.h bios/floppy.c: Removed useless byteswap member in
   BLKDEV structure. (VRI)
+- bios/ide.c bios/ide.h bios/xhdi.c: Fixed recent regression on byteswapped IDE
+  disks. (VRI)
