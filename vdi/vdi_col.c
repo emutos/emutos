@@ -15,7 +15,6 @@
 #include "xbiosbind.h"
 #include "vdi_col.h"
 #include "lineavars.h"
-#include "kprint.h"
 
 #define EXTENDED_PALETTE (CONF_WITH_VIDEL || CONF_WITH_TT_SHIFTER)
 
@@ -170,7 +169,6 @@ static void set_color(int colnum, int r, int g, int b)
         LONG rgb;
 
         rgb = (vdi2videl(r) << 16) | (vdi2videl(g) << 8) | vdi2videl(b);
-if (colnum < 16) kprintf("Calling VsetRGB() reg %d = 0x%08lx\n",colnum,rgb);
         VsetRGB(colnum,1,(LONG)&rgb);
     }
     else

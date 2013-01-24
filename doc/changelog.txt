@@ -4279,3 +4279,4 @@ Start... early ages
   with ELF toolchain. (VRI)
 - include/xbiosbind.h vdi/vdi_col.c: Fix vq_color() & vs_color() for systems
   with videl. (RFB)
+- vdi/vdi_col.c: Remove debugging statements. (RFB)
