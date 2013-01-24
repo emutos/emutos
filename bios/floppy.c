@@ -259,7 +259,6 @@ static void flop_add_drive(WORD dev)
 
     /* Logical block device */
     blkdev[dev].valid = 1;
-    blkdev[dev].byteswap = 0;       /* floppies are never byteswapped */
     blkdev[dev].mediachange = MEDIACHANGE;
     blkdev[dev].start = 0;
     blkdev[dev].size = 0;           /* unknown size */

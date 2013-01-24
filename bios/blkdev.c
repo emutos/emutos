@@ -194,7 +194,6 @@ int add_partition(int dev, char id[], ULONG start, ULONG size)
 
     blkdev[blkdevnum].valid = 1;
     blkdev[blkdevnum].mediachange = MEDIANOCHANGE;
-    blkdev[blkdevnum].byteswap = devices[unit].byteswap;
     blkdev[blkdevnum].unit  = unit;
 
     /* make just GEM/BGM partitions visible to applications */

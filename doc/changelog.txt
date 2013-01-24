@@ -4280,3 +4280,7 @@ Start... early ages
 - include/xbiosbind.h vdi/vdi_col.c: Fix vq_color() & vs_color() for systems
   with videl. (RFB)
 - vdi/vdi_col.c: Remove debugging statements. (RFB)
+
+2013-01-24
+- bios/blkdev.c bios/blkdev.h bios/floppy.c: Removed useless byteswap member in
+  BLKDEV structure. (VRI)
