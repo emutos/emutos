@@ -27,7 +27,7 @@
 /*
  * defines
  */
-#if CONF_WITH_SERIAL_INTERRUPTS /* TODO */
+#if 0 /* CONF_WITH_SERIAL_INTERRUPTS TODO */
 #define RS232_BUFSIZE 256
 #else
 #define RS232_BUFSIZE 4         /* save space if buffers unused */

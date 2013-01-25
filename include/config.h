@@ -708,6 +708,14 @@
 #endif
 
 /*
+ * Set CONF_WITH_UAE to 1 to enable support for the advanced features of the
+ * UAE emulator on the Amiga target.
+ */
+#ifndef CONF_WITH_UAE
+# define CONF_WITH_UAE 0
+#endif
+
+/*
  * Miscellaneous definitions that apply to more than one EmuTOS subsystem
  */
 #define BLKDEVNUM 26                    /* number of block devices supported: A: ... Z: */
@@ -781,6 +789,12 @@
 #if !CONF_WITH_SCC
 # if SCC_DEBUG_PRINT
 #  error "SCC_DEBUG_PRINT requires CONF_WITH_SCC."
+# endif
+#endif
+
+#ifndef MACHINE_AMIGA
+# if CONF_WITH_UAE
+#  error "CONF_WITH_UAE requires MACHINE_AMIGA."
 # endif
 #endif
 

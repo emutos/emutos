@@ -4286,3 +4286,7 @@ Start... early ages
   BLKDEV structure. (VRI)
 - bios/ide.c bios/ide.h bios/xhdi.c: Fixed recent regression on byteswapped IDE
   disks. (VRI)
+
+2013-01-25
+- Makefile bios/clock.c bios/serport.c cli/command.c include/config.h: Added
+  the -Wundef option to avoid using undefined preprocessor identifiers. (VRI)

@@ -98,7 +98,7 @@ void detect_megartc(void)
     }
   }
   
-#if NEEDED
+#if 0
   /* 
    * Then this is what TOS 1.2 seems to do. However emulators like
    * STonX do not accept writing to the RTC registers, even in the
@@ -120,7 +120,7 @@ void detect_megartc(void)
       clk.regb = 0;
     }
   }
-#endif /* NEEDED */
+#endif
 }
 
 /*==== MegaRTC internal functions =========================================*/

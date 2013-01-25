@@ -261,7 +261,7 @@ prthex(unsigned h)
 }
 
 
-#if NO_ROM
+#ifdef NO_ROM
 /* LVL using unsigned long int to stop gcc warning about
  * conflicting types for built-in function `strlen'
  */
@@ -646,7 +646,7 @@ wrtch(char ch)
     wrt(str);
 }
 
-#if NO_ROM
+#ifdef NO_ROM
 #define cookie_idt ( 0x100 | '/' )
 #else
 extern long cookie_idt;         /* in bios/machine.c */
@@ -709,7 +709,7 @@ wrtTime(int j)
 }
 
 
-#if NO_ROM
+#ifdef NO_ROM
 /* BUILDDATE is needed only for non-ROM command.prg */
 static void
 wrtbdate(void)

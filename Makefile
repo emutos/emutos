@@ -135,7 +135,7 @@ MULTILIBFLAGS = $(CPUFLAGS) -mshort
 INC = -Iinclude
 OPTFLAGS = -Os -fomit-frame-pointer
 OTHERFLAGS = -ffreestanding
-WARNFLAGS = -Wall #-fno-common -Wshadow -Wmissing-prototypes -Wstrict-prototypes #-Werror
+WARNFLAGS = -Wall -Wundef #-fno-common -Wshadow -Wmissing-prototypes -Wstrict-prototypes #-Werror
 DEFINES = $(LOCALCONF) -DWITH_AES=$(WITH_AES) -DWITH_CLI=$(WITH_CLI) $(DEF)
 CFLAGS = $(MULTILIBFLAGS) $(TOOLCHAIN_CFLAGS) $(OPTFLAGS) $(WARNFLAGS) $(OTHERFLAGS) $(INC) $(DEFINES)
 
@@ -751,6 +751,7 @@ else
 include/i18nconf.h: obj/country
 	@echo '# Generating $@ with CONF_KEYB=KEYB_ALL CONF_CHARSET=CHARSET_ALL'
 	@rm -f $@; touch $@
+	@echo '#define CONF_UNIQUE_COUNTRY 0' >> $@
 	@echo '#define CONF_WITH_NLS 1' >> $@
 	@echo '#define CONF_KEYB KEYB_ALL' >> $@
 	@echo '#define CONF_CHARSET CHARSET_ALL' >> $@
