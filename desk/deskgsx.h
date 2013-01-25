@@ -7,10 +7,10 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-void gsx_vclose();
+void gsx_vclose(void);
 void d_v_pline(WORD count, WORD *pxyarray);
 void gsx_1code(WORD  code, WORD  value);
-void gsx_vopen();
+void gsx_vopen(void);
 WORD vst_clip(WORD clip_flag, WORD *pxyarray);
 void vst_height(WORD height, WORD *pchr_width, WORD *pchr_height,
                 WORD *pcell_width, WORD *pcell_height);

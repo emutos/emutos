@@ -90,9 +90,9 @@ LONG bconoutB(WORD,WORD);
  * Bconmap() stuff
  */
 typedef struct {        /* one per mappable device */
-    LONG (*Bconstat)();
-    LONG (*Bconin)();
-    LONG (*Bcostat)();
+    LONG (*Bconstat)(void);
+    LONG (*Bconin)(void);
+    LONG (*Bcostat)(void);
     LONG (*Bconout)(WORD,WORD);
     ULONG (*Rsconf)(WORD,WORD,WORD,WORD,WORD,WORD);
     EXT_IOREC *Iorec;   /* points to IOREC and extended IOREC */

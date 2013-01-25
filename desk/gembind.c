@@ -173,7 +173,7 @@ typedef struct gemblkstr
 } GEMBLK;
 
 
-extern WORD             gem();                  /* in STARTUP.S */
+extern WORD             gem(LONG);              /* in STARTUP.S */
 
 
 static GEMBLK           gb;

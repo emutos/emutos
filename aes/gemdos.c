@@ -108,7 +108,7 @@ void dos_func(UWORD function, LONG parm)
 */
 
 
-WORD dos_gdrv()
+WORD dos_gdrv(void)
 {
         return( gemdos(X_GETDRV) );
 }
@@ -285,7 +285,7 @@ LONG dos_alloc(LONG nbytes)
 /*
 *       Returns the amount of memory available in bytes
 */
-LONG dos_avail()
+LONG dos_avail(void)
 {
         return( gemdos( X_MALLOC, -1L) );
 }

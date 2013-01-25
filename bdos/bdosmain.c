@@ -263,7 +263,7 @@ void    osinit(void)
     /* intercept TRAP #2 only for xterm(), keeping the old value
      * so that our trap handler can call the old one
      */
-    old_trap2 = (void(*)()) Setexc(0x22, (long)bdos_trap2);
+    old_trap2 = (void(*)(void)) Setexc(0x22, (long)bdos_trap2);
 
     bufl_init();                /* initialize BDOS buffer list */
     osmem_init();
