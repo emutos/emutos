@@ -4292,3 +4292,6 @@ Start... early ages
   the -Wundef option to avoid using undefined preprocessor identifiers. (VRI)
 - vdi/vdi_col.c: Minor changes to initial ST/Falcon VDI palettes to agree
   with TOS. (RFB)
+
+2013-01-27
+- bios/processor.S include/asmdefs.h: Detect 68ec030 processor subtype. (RFB)

@@ -24,6 +24,7 @@
         .globl  _processor_init
         .globl  _invalidate_icache
         .globl  _mcpu
+        .globl  _mcpu_subtype
         .globl  _fputype
         .globl  _detect_cpu
         .globl  _detect_fpu
@@ -39,22 +40,30 @@
 /*
  * _detect_cpu - CPU detection
  *
- * Return values:
- *
- *  0 - 68000
- * 10 - 68010
- * 20 - 68020
- * 30 - 68030
- * 40 - 68040
- * 60 - 68060
+ * Returns a long word indicating the type of CPU.  The low-order word
+ * contains the generic type, and the high-order word indicates the
+ * subtype.  Current returned values are as follows:
+ *   low-order    high-order    CPU type
+ *       0             0        68000
+ *      10             0        68010
+ *      20             0        68020 
+ *      30             0        68030
+ *      30             1        68ec030
+ *      40             0        68040
+ *      60             0        68060
  */
 
 _detect_cpu:
-        move.l  a2,-(sp)  
-        move.l  (0x10).w,a1     // save the illegal instr. exc. vector
-        move.l  (0xf4).w,a2     // save the unimplemented instr. exc. vector
+        movem.l  d2/a2-a3,-(sp)
+
+// intercept possible exceptions
+
+        move.l  (0x10).w,a1     // save exception vectors: illegal instruction
+        move.l  (0x2c).w,a2     //   line F
+        move.l  (0xf4).w,a3     //     unimplemented instruction
         lea     exit.w(PC),a0
-        move.l  a0,(0x10).w     // set either vector    
+        move.l  a0,(0x10).w     // replace vectors
+        move.l  a0,(0x2c).w
         move.l  a0,(0xf4).w
         move.l  sp,a0           // save the ssp
         nop                     // eventually flush pipelines
@@ -78,7 +87,9 @@ _detect_cpu:
         moveq   #20,d0          // assume 68020
         btst    #8,d1           // check if 68030 data cache was enabled
         beq.s   exit            // a zero here means no data cache, i.e. 68020
-        moveq   #30,d0          // data cache enabled means 68030
+        move.l  #0x0001001e,d0  // data cache enabled means 68030 - assume 68ec030
+        PMOVE_FROM_TC(temp)     // try to access the TC register
+        moveq   #30,d0          // no fault -> this is a 68030
         bra.s   exit
 
 // 68040 or 68060
@@ -87,11 +98,12 @@ x040:   moveq   #40,d0          // assume 68040
         dc.l    0x4e7a1808      // movec pcr,d1
         moveq   #60,d0          // no fault -> this is 68060
 exit:  
-        move.l  a2,(0xf4).w     // restore stuff and exit
+        move.l  a3,(0xf4).w     // restore stuff and exit
+        move.l  a2,(0x2c).w
         move.l  a1,(0x10).w
         move.l  a0,sp
         nop                     // flush pipelines
-        move.l  (sp)+,a2
+        movem.l  (sp)+,d2/a2-a3
         rts
 
 
@@ -206,7 +218,11 @@ _processor_init:
         // TODO enable the caches
 #else
         jsr     _detect_cpu
-        move.l  d0,_mcpu
+        swap	d0
+        move.w	d0,_mcpu_subtype    // save processor subtype
+        clr.w	d0
+        swap    d0
+        move.l  d0,_mcpu            // & type
         beq     m68000
 
 
@@ -330,7 +346,9 @@ ii_done:
 
 #ifndef __mcoldfire__
 _mcpu:          ds.l    1
+_mcpu_subtype:  ds.w    1
 _fputype:       ds.l    1
+temp:           ds.l    1
 #endif
 
 
