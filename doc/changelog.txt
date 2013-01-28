@@ -4295,3 +4295,6 @@ Start... early ages
 
 2013-01-27
 - bios/processor.S include/asmdefs.h: Detect 68ec030 processor subtype. (RFB)
+- bios/68030_pmmu.S bios/processor.S bios/tosvars.S include/asmdefs.h
+  include/config.h Makefile: Add PMMU tree & enable data caching for
+  68030 processors. (RFB)

@@ -1,7 +1,7 @@
 /*
  * tosvars.S - TOS System variables
  *
- * Copyright (c) 2005-2007 by the EmuTOS development team.
+ * Copyright (c) 2005-2013 by the EmuTOS development team.
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -97,6 +97,9 @@
         .globl  _bell_hook
         .globl  _kcl_hook
 
+#ifdef CONF_WITH_68030_PMMU
+        .globl  pmmutree
+#endif
         .globl  _shifty
 
         .globl  _sdata          // start adress of data section
@@ -216,12 +219,14 @@ _bell_hook:     ds.l    1       // pointer to routine for system bell
 _kcl_hook:      ds.l    1       // pointer to routine for system keyclick
         .org 0x5b4
 
+        .org 0x700
+pmmutree:       ds.l    64      // for pmmu tree on 68030
 
 // Memory below 0x800 is only accessible in supervisor mode on the ST.
 // We have to make sure that nothing is linked into this region that might
 // be accessed from user mode, too.
-// (So the gap between 0x5b4 and 0x800 could be filled with system variables
-//  or a buffer that are only accessed in supervisor mode.)
+// (So the gap between 0x5b4 and 0x700 could be filled with system variables
+//  or a buffer that is only accessed in supervisor mode.)
         .org 0x800
 
         

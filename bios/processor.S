@@ -234,10 +234,37 @@ m68000:
         cmpi.b  #30,_mcpu+3
         bne.s   pi_chk040
 
-// On a 68030, we need to initialise the i-cache (it was cleared
-// and disabled in startup.S).  the data cache remains disabled.
+// We're running on a 68030 or a 68ec030
 
-        move.l  #0x00000011,d0  // we set IBE (burst enable) and EI
+#if CONF_WITH_68030_PMMU
+
+// User would like a PMMU tree, so see if it's possible
+
+        tst.w   _mcpu_subtype   // check for full 68030
+        beq.s   m68030
+
+// On a 68ec030, we enable just the instruction cache, since we can't
+// set up a proper PMMU tree to avoid caching the I/O address area
+
+        move.l  #0x00000011,d0  // set IBE and EI only
+        bra.s   init_cacr
+
+// On a full 68030, if a PMMU tree is wanted, we must set it up before
+// enabling the data cache.  The PMMU tree will ensure that caching is
+// inhibited for access to i/o addresses.
+
+m68030:
+        jsr     setup_68030_pmmu
+        move.l  #0x00003111,d0  // we set WA, DBE, ED, IBE and EI
+#else
+
+// A PMMU tree isn't wanted, so we avoid caching problems by only
+// enabling the instruction cache.
+
+        move.l  #0x00000011,d0  // we set IBE and EI only
+#endif
+
+init_cacr:
         MOVEC_D0_CACR
         bra.s   pi_done
 

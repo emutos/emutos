@@ -1,7 +1,7 @@
 /*
  * asmdefs.h - definitions to include in top of all assembler files
  *
- * Copyright (c) 2001-2012 EmuTOS development team
+ * Copyright (c) 2001-2013 EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel
@@ -35,6 +35,7 @@
 #define PMOVE_FROM_TC(addr) dc.l 0xf0394200,addr    /* 68030 (except 68ec030) */
 
 #define PMOVE_TO_TC(addr)   dc.l 0xf0394000,addr    /* 68030 (except 68ec030) */
+#define PMOVE_TO_CRP(addr)  dc.l 0xf0394c00,addr    /* 68030 (except 68ec030) */
 #define PMOVE_TO_TTR0(addr) dc.l 0xf0390800,addr    /* 68030 */
 #define PMOVE_TO_TTR1(addr) dc.l 0xf0390c00,addr    /* 68030 */
 
