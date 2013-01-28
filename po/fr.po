@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: EMUTOS beta\n"
 "POT-Creation-Date: 2004-01-27 14:37+0100\n"
-"PO-Revision-Date: 2013-01-28 21:59+0100\n"
+"PO-Revision-Date: 2013-01-28 22:17+0100\n"
 "Last-Translator: Vincent Riviere <vincent.riviere@freesbee.fr>\n"
 "Language-Team: French <fr@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -75,13 +75,23 @@ msgstr "Taper 'C' pour lancer la console"
 msgid " Hold <Shift> to pause this screen "
 msgstr " <Shift> pour maintenir cet écran "
 
+#: bdos/osmem.c:91
+msgid ""
+"\033EOut of internal memory.\n"
+"Use FOLDR100.PRG to get more.\n"
+"System halted!\n"
+msgstr ""
+"\033ESystème à court de mémoire interne.\n"
+"Utilisez FOLDR100.PRG pour l'augmenter.\n"
+"Système stoppé !\n"
+
 #: aes/gem_rsc.c:32
 msgid "Selection:  ________.___"
 msgstr "Sélection:  ________.___"
 
-#: aes/gem_rsc.c:787
-msgid "ITEM SELECTOR"
-msgstr "SELECTEUR"
+#: aes/gem_rsc.c:37
+msgid "Drives:"
+msgstr "Lecteurs :"
 
 #: aes/gem_rsc.c:583 desk/desk_rsc.c:18
 msgid "OK"
@@ -90,6 +100,192 @@ msgstr "OK"
 #: aes/gem_rsc.c:589 desk/desk_rsc.c:19
 msgid "Cancel"
 msgstr "Annuler"
+
+#: aes/gem_rsc.c:687
+msgid "[2]["
+"You cannot write to the disk|"
+"in drive %c: because it is|"
+"write-protected.][Cancel|Retry]"
+msgstr "[2]["
+"Impossible d'écrire sur le|"
+"disque du lecteur %c: car il est|"
+"protégé en écriture.][Annuler|Réessayer]"
+
+#: aes/gem_rsc.c:692
+msgid "[2]["
+"Drive %c: is not responding.|"
+"Ensure that the disk is loaded|"
+"properly.  If the drive is a|"
+"hard disk, check that it is|"
+"connected properly.][Cancel|Retry]"
+msgstr "[2]["
+"Le lecteur %c: ne répond pas.|"
+"Assurez-vous que le disque est|"
+"correctement inséré. S'il s'agit|"
+"d'un disque dur, vérifiez qu'il|"
+"est bien connecté.][Annuler|Réessayer]"
+
+#: aes/gem_rsc.c:701
+msgid "[2]["
+"Data on the disk in drive %c:|"
+"may be damaged.  Ensure that|"
+"you are using the right kind|"
+"of disk and the drive is|"
+"connected properly.][Cancel|Retry]"
+msgstr "[2]["
+"Les données du lecteur %c: sont|"
+"peut-être endommagées. Vérifiez|"
+"que vous utilisez le bon type|"
+"de disque et que le lecteur est|"
+"correctement connecté.][Annuler|Réessayer]"
+
+#: aes/gem_rsc.c:710
+msgid "[2]["
+"Cannot read data on the disk|"
+"in drive %c:.  Ensure that|"
+"the disk is formatted, and|"
+"the drive is powered on and|"
+"connected to your computer.][Cancel|Retry]"
+msgstr "[2]["
+"Impossible de lire les données|"
+"du lecteur %c:. Assurez-vous que|"
+"le disque est formaté, que le|"
+"lecteur est alimenté et qu'il|"
+"est connecté à votre ordinateur.][Annuler|Réessayer]"
+
+#: aes/gem_rsc.c:719
+msgid "[2]["
+"Your output device is not|"
+"receiving data.  Before you|"
+"retry, make sure the device|"
+"has power, is on-line, and|"
+"is ready.][Cancel|Retry]"
+msgstr "[2]["
+"Votre périphérique de sortie ne|"
+"reçoit pas de données. Avant de|"
+"réessayer, assurez-vous que le|"
+"périphérique est bien alimenté|"
+"et prêt à recevoir des données.][Annuler|Réessayer]"
+
+#: aes/gem_rsc.c:728
+msgid "[3]["
+"An error has occurred in GEM.|"
+"Please contact the EmuTOS|"
+"Development Team and submit|"
+"a bug report.][Cancel]"
+msgstr "[3]["
+"Une erreur est survenue dans le|"
+"GEM. Merci de contacter l'équipe|"
+"de développement d'EmuTOS et|"
+"de soumettre un rapport de bug.][Annuler]"
+
+#: aes/gem_rsc.c:735
+msgid "[1]["
+"The application cannot find|"
+"the folder or document you|"
+"are trying to open.  Check|"
+"the name you have entered.][  OK  ]"
+msgstr "[1]["
+"Cette application ne trouve pas|"
+"le dossier ou le document que|"
+"vous essayez d'ouvrir. Vérifiez|"
+"le nom que vous avez entré.][  OK  ]"
+
+#: aes/gem_rsc.c:742
+msgid "[3]["
+"Your system doesn't have|"
+"enough memory to run EmuDesk.][Cancel]"
+msgstr "[3]["
+"Votre système n'a pas assez de|"
+"mémoire pour exécuter EmuDesk.][Annuler]"
+
+#: aes/gem_rsc.c:745
+msgid "[1]["
+"The application doesn't have|"
+"enough room to open another|"
+"document.  To make room, close|"
+"any documents you don't need.][  OK  ]"
+msgstr "[1]["
+"Cette application n'a pas assez|"
+"de place pour ouvrir une autre|"
+"document. Pour faire de la|"
+"place, veuillez fermer tous les|"
+"documents inutilisés.][  OK  ]"
+
+#: aes/gem_rsc.c:752
+msgid "[1]["
+"An item with this name already|"
+"exists in the folder, or the|"
+"item is set to Read-Only.|"
+"Use the \"Info/Rename\" command|"
+"to change the item's status.][  OK  ]"
+msgstr "[1]["
+"Il existe déjà un objet avec ce|"
+"nom dans ce dossier, ou bien il|"
+"est en lecture seule. Veuillez|"
+"utiliser \"Info/Renommer\" pour|"
+"changer l'état de cet objet.][  OK  ]"
+
+#: aes/gem_rsc.c:761
+msgid "[1]["
+"The specified disk drive does|"
+"not exist.  Check the drive|"
+"letter you entered.][  OK  ]"
+msgstr "[1]["
+"Le lecteur spécifié n'existe pas.|"
+"Vérifiez la lettre de lecteur que|"
+"vous avez saisie.][  OK  ]"
+
+#: aes/gem_rsc.c:766
+msgid "[1]["
+"You cannot delete the folder|"
+"in which you are currently|"
+"working.][  OK  ]"
+msgstr "[1]["
+"Vous ne pouvez pas supprimer|"
+"le dossier dans lequel vous|"
+"êtes en train de travailler.][  OK  ]"
+
+#: aes/gem_rsc.c:771
+msgid "[1]["
+"Cannot run the application|"
+"you have selected.  It may|"
+"be damaged, or your system|"
+"may not have enough memory.][  OK  ]"
+msgstr "[1]["
+"Impossible d'exécuter cette|"
+"application. Elle est peut-être|"
+"endommagée, ou votre système|"
+"manque de mémoire.][  OK  ]"
+
+#: aes/gem_rsc.c:778
+msgid "[3]["
+"DOS error #%d.][Cancel]"
+msgstr "[3]["
+"Erreur DOS #%d.][Annuler]"
+
+#: aes/gem_rsc.c:779
+msgid "[3]["
+"Unsupported AES function #%d.][Cancel]"
+msgstr "[3]["
+"La fonction AES #%d|"
+"n'est pas supportée.][Annuler]"
+
+#: aes/gem_rsc.c:780
+msgid "[3]["
+"An unexpected error has|"
+"occurred.  Please report|"
+"this message to the EmuTOS|"
+"Development team.][Cancel]"
+msgstr "[3]["
+"Une erreur inattendue s'est|"
+"produite. Merci de rapporter ce|"
+"message à l'équipe de|"
+"développement d'EmuTOS.][Annuler]"
+
+#: aes/gem_rsc.c:787
+msgid "ITEM SELECTOR"
+msgstr "SELECTEUR DE FICHIERS"
 
 #: desk/desk_rsc.c:20
 msgid "Install"
@@ -551,6 +747,14 @@ msgstr "%ld octets utilisés par %d éléments."
 msgid "  Show as icons  \007S"
 msgstr "  Voir comme icônes"
 
+#: desk/desk_rsc.c:1840
+msgid "  Show as text   \007S"
+msgstr "  Voir comme texte"
+
+#: desk/desk_rsc.c:1841
+msgid "Not available"
+msgstr "Indisponible"
+
 #: desk/desk_rsc.c:1842
 msgid "application"
 msgstr "application"
@@ -559,16 +763,6 @@ msgstr "application"
 msgid "documents"
 msgstr "documents"
 
-#: desk/desk_rsc.c:1852
-msgid "[2]["
-"Switch resolution?][Yes|No]"
-msgstr "[2]["
-"Changer de résolution ?][Oui|Non]"
-
-#: desk/desk_rsc.c:1840
-msgid "  Show as text   \007S"
-msgstr "  Voir comme texte"
-
 #: desk/desk_rsc.c:1844
 msgid "New Folder"
 msgstr "Nouv Dossier"
@@ -576,6 +770,12 @@ msgstr "Nouv Dossier"
 #: desk/desk_rsc.c:1845
 msgid "Disk Drives:"
 msgstr "Lecteurs:"
+
+#: desk/desk_rsc.c:1852
+msgid "[2]["
+"Switch resolution?][Yes|No]"
+msgstr "[2]["
+"Changer de résolution ?][Oui|Non]"
 
 #: desk/desk_rsc.c:1853
 msgid "[1]["
@@ -786,200 +986,6 @@ msgstr "[1]["
 "le bureau, mais pas sur une|"
 "autre icône.][  OK  ]"
 
-#: bdos/osmem.c:91
-msgid ""
-"\033EOut of internal memory.\n"
-"Use FOLDR100.PRG to get more.\n"
-"System halted!\n"
-msgstr ""
-"\033ESystème à court de mémoire interne.\n"
-"Utilisez FOLDR100.PRG pour l'augmenter.\n"
-"Système stoppé !\n"
-
-#: aes/gem_rsc.c:37
-msgid "Drives:"
-msgstr "Lecteurs :"
-
-#: aes/gem_rsc.c:687
-msgid "[2]["
-"You cannot write to the disk|"
-"in drive %c: because it is|"
-"write-protected.][Cancel|Retry]"
-msgstr "[2]["
-"Impossible d'écrire sur le|"
-"disque du lecteur %c: car il est|"
-"protégé en écriture.][Annuler|Réessayer]"
-
-#: aes/gem_rsc.c:692
-msgid "[2]["
-"Drive %c: is not responding.|"
-"Ensure that the disk is loaded|"
-"properly.  If the drive is a|"
-"hard disk, check that it is|"
-"connected properly.][Cancel|Retry]"
-msgstr "[2]["
-"Le lecteur %c: ne répond pas.|"
-"Assurez-vous que le disque est|"
-"correctement inséré. S'il s'agit|"
-"d'un disque dur, vérifiez qu'il|"
-"est bien connecté.][Annuler|Réessayer]"
-
-#: aes/gem_rsc.c:701
-msgid "[2]["
-"Data on the disk in drive %c:|"
-"may be damaged.  Ensure that|"
-"you are using the right kind|"
-"of disk and the drive is|"
-"connected properly.][Cancel|Retry]"
-msgstr "[2]["
-"Les données du lecteur %c: sont|"
-"peut-être endommagées. Vérifiez|"
-"que vous utilisez le bon type|"
-"de disque et que le lecteur est|"
-"correctement connecté.][Annuler|Réessayer]"
-
-#: aes/gem_rsc.c:710
-msgid "[2]["
-"Cannot read data on the disk|"
-"in drive %c:.  Ensure that|"
-"the disk is formatted, and|"
-"the drive is powered on and|"
-"connected to your computer.][Cancel|Retry]"
-msgstr "[2]["
-"Impossible de lire les données|"
-"du lecteur %c:. Assurez-vous que|"
-"le disque est formaté, que le|"
-"lecteur est alimenté et qu'il|"
-"est connecté à votre ordinateur.][Annuler|Réessayer]"
-
-#: aes/gem_rsc.c:719
-msgid "[2]["
-"Your output device is not|"
-"receiving data.  Before you|"
-"retry, make sure the device|"
-"has power, is on-line, and|"
-"is ready.][Cancel|Retry]"
-msgstr "[2]["
-"Votre périphérique de sortie ne|"
-"reçoit pas de données. Avant de|"
-"réessayer, assurez-vous que le|"
-"périphérique est bien alimenté|"
-"et prêt à recevoir des données.][Annuler|Réessayer]"
-
-#: aes/gem_rsc.c:728
-msgid "[3]["
-"An error has occurred in GEM.|"
-"Please contact the EmuTOS|"
-"Development Team and submit|"
-"a bug report.][Cancel]"
-msgstr "[3]["
-"Une erreur est survenue dans le|"
-"GEM. Merci de contacter l'équipe|"
-"de développement d'EmuTOS et|"
-"de soumettre un rapport de bug.][Annuler]"
-
-#: aes/gem_rsc.c:735
-msgid "[1]["
-"The application cannot find|"
-"the folder or document you|"
-"are trying to open.  Check|"
-"the name you have entered.][  OK  ]"
-msgstr "[1]["
-"Cette application ne trouve pas|"
-"le dossier ou le document que|"
-"vous essayez d'ouvrir. Vérifiez|"
-"le nom que vous avez entré.][  OK  ]"
-
-#: aes/gem_rsc.c:742
-msgid "[3]["
-"Your system doesn't have|"
-"enough memory to run EmuDesk.][Cancel]"
-msgstr "[3]["
-"Votre système n'a pas assez de|"
-"mémoire pour exécuter EmuDesk.][Annuler]"
-
-#: aes/gem_rsc.c:745
-msgid "[1]["
-"The application doesn't have|"
-"enough room to open another|"
-"document.  To make room, close|"
-"any documents you don't need.][  OK  ]"
-msgstr "[1]["
-"Cette application n'a pas assez|"
-"de place pour ouvrir une autre|"
-"document. Pour faire de la|"
-"place, veuillez fermer tous les|"
-"documents inutilisés.][  OK  ]"
-
-#: aes/gem_rsc.c:752
-msgid "[1]["
-"An item with this name already|"
-"exists in the folder, or the|"
-"item is set to Read-Only.|"
-"Use the \"Info/Rename\" command|"
-"to change the item's status.][  OK  ]"
-msgstr "[1]["
-"Il existe déjà un objet avec ce|"
-"nom dans ce dossier, ou bien il|"
-"est en lecture seule. Veuillez|"
-"utiliser \"Info/Renommer\" pour|"
-"changer l'état de cet objet.][  OK  ]"
-
-#: aes/gem_rsc.c:761
-msgid "[1]["
-"The specified disk drive does|"
-"not exist.  Check the drive|"
-"letter you entered.][  OK  ]"
-msgstr "[1]["
-"Le lecteur spécifié n'existe pas.|"
-"Vérifiez la lettre de lecteur que|"
-"vous avez saisie.][  OK  ]"
-
-#: aes/gem_rsc.c:766
-msgid "[1]["
-"You cannot delete the folder|"
-"in which you are currently|"
-"working.][  OK  ]"
-msgstr "[1]["
-"Vous ne pouvez pas supprimer|"
-"le dossier dans lequel vous|"
-"êtes en train de travailler.][  OK  ]"
-
-#: aes/gem_rsc.c:771
-msgid "[1]["
-"Cannot run the application|"
-"you have selected.  It may|"
-"be damaged, or your system|"
-"may not have enough memory.][  OK  ]"
-msgstr "[1]["
-"Impossible d'exécuter cette|"
-"application. Elle est peut-être|"
-"endommagée, ou votre système|"
-"manque de mémoire.][  OK  ]"
-
-#: aes/gem_rsc.c:779
-msgid "[3]["
-"Unsupported AES function #%d.][Cancel]"
-msgstr "[3]["
-"La fonction AES #%d|"
-"n'est pas supportée.][Annuler]"
-
-#: aes/gem_rsc.c:780
-msgid "[3]["
-"An unexpected error has|"
-"occurred.  Please report|"
-"this message to the EmuTOS|"
-"Development team.][Cancel]"
-msgstr "[3]["
-"Une erreur inattendue s'est|"
-"produite. Merci de rapporter ce|"
-"message à l'équipe de|"
-"développement d'EmuTOS.][Annuler]"
-
-#: desk/desk_rsc.c:1841
-msgid "Not available"
-msgstr "Indisponible"
-
 #: desk/icons.c:1026
 msgid " Generic "
 msgstr " Générique "
@@ -1055,10 +1061,4 @@ msgstr " Scan "
 #: desk/icons.c:1044
 msgid " Mail "
 msgstr " Messagerie "
-
-#: aes/gem_rsc.c:778
-msgid "[3]["
-"DOS error #%d.][Cancel]"
-msgstr "[3]["
-"Erreur DOS #%d.][Annuler]"
 
