@@ -138,6 +138,8 @@ void blkdev_hdv_init(void)
 
 LONG blkdev_hdv_boot(void)
 {
+    LONG mode = kbshift(-1);
+
 #if DBG_BLKDEV
     kprintf("drvbits = %08lx\n", drvbits);
 #endif
@@ -151,7 +153,7 @@ LONG blkdev_hdv_boot(void)
     */
 
     /* boot hard drive only if user does not hold the Alternate key down */
-    if ((kbshift(-1) & MODE_ALT) == 0) {
+    if (!(mode & MODE_ALT)) {
         if (blkdev_avail(2)) {  /* if drive C: is available */
             bootdev = 2;        /* make it the boot drive */
             return 0;           /* don't actually boot from the boot device
@@ -164,9 +166,12 @@ LONG blkdev_hdv_boot(void)
         }
     }
 
-    /* otherwise try to boot from floppy A: */
+    /* otherwise boot device is floppy A: */
     bootdev = 0;
-    return(flop_hdv_boot());
+    if (!(mode & MODE_CTRL))    /* if Control is NOT held down, */
+        return(flop_hdv_boot());/*  try to boot from the floppy */
+
+    return 0;
 }
 
 /*

@@ -4300,3 +4300,7 @@ Start... early ages
   68030 processors. (RFB)
 - aes/geminit.c bios/bios.c bios/blkdev.c bios/ikbd.c bios/ikbd.h
   bios/initinfo.c: Use #defines instead of magic numbers for mode keys. (RFB)
+
+2013-01-28
+- bios/blkdev.c: Disable boot sector execution when Control is held
+  down. (RFB)
