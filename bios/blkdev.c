@@ -151,7 +151,7 @@ LONG blkdev_hdv_boot(void)
     */
 
     /* boot hard drive only if user does not hold the Alternate key down */
-    if ((kbshift(-1) & 0x08) == 0) {
+    if ((kbshift(-1) & MODE_ALT) == 0) {
         if (blkdev_avail(2)) {  /* if drive C: is available */
             bootdev = 2;        /* make it the boot drive */
             return 0;           /* don't actually boot from the boot device

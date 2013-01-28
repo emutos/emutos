@@ -52,24 +52,6 @@
 #define KEY_CAPS    0x3a
 
 
-/*
- * These bit flags are set in the "modes" byte based on the state
- * of control keys on the keyboard, like:
- * right shift, left shift, control, alt, ...
- */
-
-/* mode types - these are the different bits */
-#define MODE_RSHIFT 0x01        /* right shift keys is down */
-#define MODE_LSHIFT 0x02        /* right shift keys is down */
-#define MODE_CTRL   0x04        /* CTRL is down. */
-#define MODE_ALT    0x08        /* ALT is down.                        */
-#define MODE_CAPS   0x10        /* ALPHA LOCK is down.                 */
-#define MODE_CLEAR  0x20        /* CLR/HOME mode key is down    */
-
-#define MODE_SHIFT   (MODE_RSHIFT|MODE_LSHIFT)  /* shifted */
-
-
-
 /*=== Keymaps handling (xbios) =======================================*/
 
 static struct keytbl current_keytbl;

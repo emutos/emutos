@@ -295,7 +295,7 @@ static void ldaccs(void)
         dos_sdta((LONG)D.g_dta);
 
         /* if Control is held down then skip loading of accs */
-        if ((kbshift(-1) & (1<<2)))
+        if ((kbshift(-1) & MODE_CTRL))
           return;
 
         ret = TRUE;

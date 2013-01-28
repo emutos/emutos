@@ -4298,3 +4298,5 @@ Start... early ages
 - bios/68030_pmmu.S bios/processor.S bios/tosvars.S include/asmdefs.h
   include/config.h Makefile: Add PMMU tree & enable data caching for
   68030 processors. (RFB)
+- aes/geminit.c bios/bios.c bios/blkdev.c bios/ikbd.c bios/ikbd.h
+  bios/initinfo.c: Use #defines instead of magic numbers for mode keys. (RFB)

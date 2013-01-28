@@ -244,7 +244,7 @@ void initinfo(void)
             shiftbits = kbshift(-1);
 
             /* If Shift, Control, Alt or normal key is pressed, stop waiting */
-            if ((shiftbits & 0x0f) || bconstat2())
+            if ((shiftbits & MODE_SCA) || bconstat2())
                 break;
 
 #if USE_STOP_INSN_TO_FREE_HOST_CPU
@@ -254,7 +254,7 @@ void initinfo(void)
         while (hz_200 < end);
 
         /* Wait while Shift is pressed */
-        while (shiftbits & 0x03)
+        while (shiftbits & MODE_SHIFT)
         {
 #if USE_STOP_INSN_TO_FREE_HOST_CPU
             stop_until_interrupt();

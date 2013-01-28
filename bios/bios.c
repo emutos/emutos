@@ -384,7 +384,7 @@ static void autoexec(void)
     BYTE path[30];
     WORD err;
 
-    if (kbshift(-1) & 0x04)             /* check if Control is held down */
+    if (kbshift(-1) & MODE_CTRL)        /* check if Control is held down */
         return;
 
     bootstrap();                        /* try to boot the new OS kernel directly */

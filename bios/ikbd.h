@@ -15,6 +15,21 @@
 
 #include "portab.h"
 
+/*
+ * These bit flags are set in the "shifty" byte based on the state
+ * of control keys on the keyboard, like:
+ * right shift, left shift, control, alt, ...
+ */
+#define MODE_RSHIFT 0x01        /* Right Shift key is down */
+#define MODE_LSHIFT 0x02        /* Left Shift key is down  */
+#define MODE_CTRL   0x04        /* Control is down         */
+#define MODE_ALT    0x08        /* Alternate is down       */
+#define MODE_CAPS   0x10        /* CapsLock is down        */
+#define MODE_CLEAR  0x20        /* Clr/Home is down        */
+
+#define MODE_SHIFT  (MODE_RSHIFT|MODE_LSHIFT)   /* shifted */
+#define MODE_SCA    (MODE_RSHIFT|MODE_LSHIFT|MODE_CTRL|MODE_ALT)
+
 extern BYTE shifty;
 
 /*
