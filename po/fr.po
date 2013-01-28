@@ -285,7 +285,7 @@ msgstr "[3]["
 
 #: aes/gem_rsc.c:787
 msgid "ITEM SELECTOR"
-msgstr "SELECTEUR DE FICHIERS"
+msgstr "SELECTEUR DE FICHIER"
 
 #: desk/desk_rsc.c:20
 msgid "Install"
