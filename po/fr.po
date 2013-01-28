@@ -6,270 +6,90 @@ msgid ""
 msgstr ""
 "Project-Id-Version: EMUTOS beta\n"
 "POT-Creation-Date: 2004-01-27 14:37+0100\n"
-"PO-Revision-Date: 2012-05-19 16:20+0200\n"
+"PO-Revision-Date: 2013-01-28 21:59+0100\n"
 "Last-Translator: Vincent Riviere <vincent.riviere@freesbee.fr>\n"
 "Language-Team: French <fr@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: bios/bios.c:435
+#: bios/bios.c:462
 msgid "Please eject the floppy and hit RETURN"
 msgstr "Veuillez éjecter la disquette et taper ENTREE"
 
-#: bios/bios.c:491
+#: bios/bios.c:521
 msgid ""
 "System halted!\n"
 msgstr ""
-"Système stoppé!\n"
+"Système stoppé !\n"
 
-#: bios/initinfo.c:174
+#: bios/initinfo.c:175
 msgid "EmuTOS Version"
 msgstr "EmuTOS Version"
 
-#: bios/initinfo.c:176
+#: bios/initinfo.c:177
 msgid "CPU type"
 msgstr "Type de CPU"
 
-#: bios/initinfo.c:184
+#: bios/initinfo.c:185
 msgid "Machine"
 msgstr "Machine"
 
-#: bios/initinfo.c:186
+#: bios/initinfo.c:187
 msgid "Free ST-RAM"
 msgstr "ST-RAM libre"
 
-#: bios/initinfo.c:187 bios/initinfo.c:194
+#: bios/initinfo.c:188 bios/initinfo.c:195
 msgid "%ld kB"
 msgstr "%ld ko"
 
-#: bios/initinfo.c:193
+#: bios/initinfo.c:194
 msgid "Free FastRAM"
 msgstr "FastRAM libre"
 
-#: bios/initinfo.c:199
+#: bios/initinfo.c:200
 msgid "Screen start"
 msgstr "Début écran"
 
-#: bios/initinfo.c:201
+#: bios/initinfo.c:202
 msgid "GEMDOS drives"
 msgstr "Lecteurs GEMDOS"
 
-#: bios/initinfo.c:215
+#: bios/initinfo.c:216
 msgid "Boot time"
 msgstr "Heure de démarrage"
 
-#: bios/initinfo.c:221
+#: bios/initinfo.c:222
 msgid "Hold <Control> to skip AUTO/ACC"
 msgstr "Touche CTRL => pas d'AUTO/ACC"
 
-#: bios/initinfo.c:223
+#: bios/initinfo.c:224
 msgid "Hold <Alternate> to skip HDD boot"
 msgstr "Touche ALT => pas de disque dur"
 
-#: bios/initinfo.c:226
+#: bios/initinfo.c:227
 msgid "Press 'C' to run an early console"
 msgstr "Taper 'C' pour lancer la console"
 
-#: bios/initinfo.c:233
+#: bios/initinfo.c:234
 msgid " Hold <Shift> to pause this screen "
 msgstr " <Shift> pour maintenir cet écran "
 
-#: aes/gem_rsc.c:37
+#: aes/gem_rsc.c:32
 msgid "Selection:  ________.___"
 msgstr "Sélection:  ________.___"
 
-#: aes/gem_rsc.c:224
+#: aes/gem_rsc.c:787
 msgid "ITEM SELECTOR"
 msgstr "SELECTEUR"
 
-#: aes/gem_rsc.c:242 desk/desk_rsc.c:18
+#: aes/gem_rsc.c:583 desk/desk_rsc.c:18
 msgid "OK"
 msgstr "OK"
 
-#: aes/gem_rsc.c:248 desk/desk_rsc.c:19
+#: aes/gem_rsc.c:589 desk/desk_rsc.c:19
 msgid "Cancel"
 msgstr "Annuler"
-
-#: aes/gem_rsc.c:466
-msgid "Insert your GEM STARTUP disk"
-msgstr "Insérer le disque de démarrage GEM"
-
-#: aes/gem_rsc.c:474
-msgid "[2]["
-"You cannot write to the disk in drive|"
-"%c: because it is physically write-|"
-"protected.  Before you Retry, remove|"
-"the write-protect tab or notch the|"
-"disk.][Cancel|Retry]"
-msgstr "[2]["
-"Vous ne pouvez écrire sur le disque du|"
-"lecteur %c: car il est protégé|"
-"physiquement en écriture. Retirez la|"
-"protection avant de réessayer.][Annuler|Encore]"
-
-#: aes/gem_rsc.c:481
-msgid "[2]["
-"Drive %c: is not responding.  You must|"
-"use the right kind of disk, insert it|"
-"correctly, and close the door.  If the|"
-"problem is with a hard disk, check the|"
-"disk's connections.][Cancel|Retry]"
-msgstr "[2]["
-"Le lecteur %c: ne répond pas. Insérez|"
-"le bon type de disque dans le lecteur.|"
-"Si le problème est sur un disque dur,|"
-"vérifiez les connexions du disque.][Annuler|Encore]"
-
-#: aes/gem_rsc.c:490
-msgid "[2]["
-"Data on the disk in drive %c: may be|"
-"damaged.  You must use the right kind|"
-"of floppy disk; you must connect your|"
-"hard disk properly.][Cancel|Retry]"
-msgstr "[2]["
-"Les données du disque %c: peuvent être|"
-"altérées. Utilisez le bon type de|"
-"disquette ou vérifiez les connections|"
-"du disque dur.][Annuler|Encore]"
-
-#: aes/gem_rsc.c:497
-msgid "[2]["
-"This application cannot read data on the|"
-"disk in drive %c:.  The disk must be|"
-"formatted, there must be power to the|"
-"disk drive, and the disk drive must be|"
-"physically connected to your computer.][Cancel|Retry]"
-msgstr "[2]["
-"Cette application ne peut lire les|"
-"données du disque dans le lecteur %c:.|"
-"Le disque doit être formaté, le lecteur|"
-"doit être alimenté en courant et|"
-"connecté à l'ordinateur.][Annuler|Encore]"
-
-#: aes/gem_rsc.c:506
-msgid "[2]["
-"Your output device is not receiving|"
-"data. Before you Retry, make sure the|"
-"device has power, is on-line, and is|"
-"loaded with paper or film.][Cancel|Retry]"
-msgstr "[2]["
-"Le périphérique de sortie ne reçoit pas|"
-"de données. Avant de réessayer, vérifiez|"
-"que le périphérique est alimenté,|"
-"connecté à l'ordinateur et chargé en|"
-"papier ou en film.][Annuler|Encore]"
-
-#: aes/gem_rsc.c:513
-msgid "[3]["
-"An error has occurred with the|"
-"Graphics Environment Manager (GEM).|"
-"Please contact the EmuTOS Development|"
-"Team and submit a bug report.][Cancel]"
-msgstr "[3]["
-"Une erreur s'est produite avec|"
-"l'environnement graphique GEM.|"
-"Merci de porter ce bogue à la|"
-"connaissance de l'équipe de|"
-"développement d'EmuTOS.][Annuler]"
-
-#: aes/gem_rsc.c:520
-msgid "[2]["
-"This application cannot find the|"
-"folder or document you are trying to|"
-"open. Check the name you have entered.][  OK  ]"
-msgstr "[2]["
-"Cette application ne peut trouver|"
-"le dossier ou le document que vous|"
-"tentez d'ouvrir. Vérifiez le nom|"
-"que vous avez saisi.][  OK  ]"
-
-#: aes/gem_rsc.c:525
-msgid "[3]["
-"Your computer doesn't have enough|"
-"memory to run the GEM Desktop.][ Sorry ]"
-msgstr "[3]["
-"Votre ordinateur n'a pas suffisamment|"
-"de mémoire pour faire tourner le|"
-"bureau GEM.][Désolé]"
-
-#: aes/gem_rsc.c:528
-msgid "[1]["
-"This application doesn't have room to|"
-"open another document.  To make room,|"
-"close any documents you don't need.][  OK  ]"
-msgstr "[1]["
-"Cette application n'a pas assez de|"
-"place pour ouvrir un autre document.|"
-"Fermez des documents inutilisés pour|"
-"libérer de la place.][  OK  ]"
-
-#: aes/gem_rsc.c:533
-msgid "[1]["
-"An item with this name already exists|"
-"in the folder, or the item is set to|"
-"Read-Only status. Use the \"Info/Rename\"|"
-"command to change the item's status.][  OK  ]"
-msgstr "[1]["
-"Il existe déjà un élément de même nom|"
-"dans le dossier, ou l'élément est en|"
-"lecture seule. Utilisez la commande|"
-"\"Info/Renommer\" pour changer l'état|"
-"de l'élément.][  OK  ]"
-
-#: aes/gem_rsc.c:540
-msgid "[1]["
-"The disk drive you have indicated does|"
-"not exist. Check the drive identifier|"
-"letter you entered.][Cancel]"
-msgstr "[1]["
-"Le lecteur spécifié n'existe pas.|"
-"Vérifiez la lettre de lecteur que|"
-"vous avez saisie.][Annuler]"
-
-#: aes/gem_rsc.c:545
-msgid "[1]["
-"You cannot delete the folder in|"
-"which you are currently working.][  OK  ]"
-msgstr "[1]["
-"Vous ne pouvez pas supprimer|"
-"un dossier dans lequel vous|"
-"êtes en train de travailler.][  OK  ]"
-
-#: aes/gem_rsc.c:548
-msgid "[1]["
-"Cannot run the application you have|"
-"selected. It may be damaged, or your|"
-"computer may not have enough memory.][  OK  ]"
-msgstr "[1]["
-"Impossible d'exécuter cette application.|"
-"Elle est peut-être endommagée, ou bien|"
-"votre ordinateur manque de mémoire.][  OK  ]"
-
-#: aes/gem_rsc.c:553
-msgid "[3]["
-"DOS error #%d.][Cancel]"
-msgstr "[3]["
-"Erreur DOS #%d.][Annuler]"
-
-#: aes/gem_rsc.c:554
-msgid "[3]["
-"Bad Function #][Cancel]"
-msgstr "[3]["
-"Mauvais numéro de fonction][Annuler]"
-
-#: aes/gem_rsc.c:555
-msgid "[3]["
-"To run the GEM Desktop, insert your|"
-"GEM DESKTOP disk in drive A and click|"
-"on OK or press Enter. To return to DOS,|"
-"click on Cancel.][  OK  |Cancel]"
-msgstr "[3]["
-"Pour lancer le bureau GEM, insérez la|"
-"disquette BUREAU GEM dans le lecteur A|"
-"et cliquez sur OK ou appuyer sur|"
-"Entrée. Pour revenir au DOS cliquer sur|"
-"Annuler.][  OK  |Annuler]"
 
 #: desk/desk_rsc.c:20
 msgid "Install"
@@ -731,33 +551,33 @@ msgstr "%ld octets utilisés par %d éléments."
 msgid "  Show as icons  \007S"
 msgstr "  Voir comme icônes"
 
-#: desk/desk_rsc.c:1840
+#: desk/desk_rsc.c:1842
 msgid "application"
 msgstr "application"
 
-#: desk/desk_rsc.c:1841
+#: desk/desk_rsc.c:1843
 msgid "documents"
 msgstr "documents"
 
-#: desk/desk_rsc.c:1842
+#: desk/desk_rsc.c:1852
 msgid "[2]["
 "Switch resolution?][Yes|No]"
 msgstr "[2]["
 "Changer de résolution ?][Oui|Non]"
 
-#: desk/desk_rsc.c:1843
+#: desk/desk_rsc.c:1840
 msgid "  Show as text   \007S"
 msgstr "  Voir comme texte"
 
-#: desk/desk_rsc.c:1852
+#: desk/desk_rsc.c:1844
 msgid "New Folder"
 msgstr "Nouv Dossier"
 
-#: desk/desk_rsc.c:1853
+#: desk/desk_rsc.c:1845
 msgid "Disk Drives:"
 msgstr "Lecteurs:"
 
-#: desk/desk_rsc.c:1860
+#: desk/desk_rsc.c:1853
 msgid "[1]["
 "The selected document type is|"
 "not configured to work with|"
@@ -771,7 +591,7 @@ msgstr "[1]["
 "application\" pour effectuer|"
 "cette association.][  OK  ]"
 
-#: desk/desk_rsc.c:1869
+#: desk/desk_rsc.c:1862
 msgid "[1]["
 "The GEM Desktop has no more|"
 "available windows. Before you|"
@@ -783,7 +603,7 @@ msgstr "[1]["
 "fermer une fenêtre inutilisée|"
 "avant d'ouvrir un disque.][  OK  ]"
 
-#: desk/desk_rsc.c:1876
+#: desk/desk_rsc.c:1869
 msgid "[3]["
 "Cannot find FORMAT.PRG|"
 "or FORMAT.TTP.][  OK  ]"
@@ -791,7 +611,7 @@ msgstr "[3]["
 "Impossible de trouver|"
 "FORMAT.PRG ou FORMAT.TTP.][  OK  ]"
 
-#: desk/desk_rsc.c:1879
+#: desk/desk_rsc.c:1872
 msgid "[3]["
 "Formatting will ERASE all|"
 "information on the disk in|"
@@ -805,7 +625,7 @@ msgstr "[3]["
 "cela ne vous dérange pas de|"
 "les perdre.][  OK  |Annuler]"
 
-#: desk/desk_rsc.c:1888
+#: desk/desk_rsc.c:1881
 msgid "[3]["
 "You cannot copy a parent folder|"
 "into one of its child folders.][  OK  ]"
@@ -814,7 +634,7 @@ msgstr "[3]["
 "dossier parent dans l'un de|"
 "ses dossiers enfants.][  OK  ]"
 
-#: desk/desk_rsc.c:1891
+#: desk/desk_rsc.c:1884
 msgid "[3]["
 "If you are sure you want to|"
 "delete ALL the information on|"
@@ -827,7 +647,7 @@ msgstr "[3]["
 "du disque %c:, cliquez sur OK.|"
 "Sinon, cliquez sur Annuler.][  OK  |Annuler]"
 
-#: desk/desk_rsc.c:1900
+#: desk/desk_rsc.c:1893
 msgid "[1]["
 "There is not enough space|"
 "available to configure this|"
@@ -841,7 +661,7 @@ msgstr "[1]["
 "Vous devez retirer une|"
 "application déjà configurée.][  OK  ]"
 
-#: desk/desk_rsc.c:1909
+#: desk/desk_rsc.c:1902
 msgid "[2]["
 "The folder already exists, or|"
 "your disk is full.  Retry with|"
@@ -854,7 +674,7 @@ msgstr "[2]["
 "et vérifiez l'espace disque|"
 "disponible.][Annuler|Encore]"
 
-#: desk/desk_rsc.c:1916
+#: desk/desk_rsc.c:1909
 msgid "[1]["
 "This disk does not have enough|"
 "room for the information you|"
@@ -868,7 +688,7 @@ msgstr "[1]["
 "se peut que certains éléments|"
 "aient déjà été copiés.][  OK  ]"
 
-#: desk/desk_rsc.c:1925
+#: desk/desk_rsc.c:1918
 msgid "[3]["
 "Cannot create EMUDESK.INF.|"
 "Make sure that a disk is in|"
@@ -882,7 +702,7 @@ msgstr "[3]["
 "lecteur de démarrage, puis|"
 "cliquez sur OK ou Annuler.][  OK  |Annuler]"
 
-#: desk/desk_rsc.c:1934
+#: desk/desk_rsc.c:1927
 msgid "[3]["
 "You cannot create or|"
 "access a folder this far|"
@@ -893,7 +713,7 @@ msgstr "[3]["
 "profondément dans l'arborescence|"
 "des répertoires.][  OK  ]"
 
-#: desk/desk_rsc.c:1939
+#: desk/desk_rsc.c:1932
 msgid "[3]["
 "You cannot create or access|"
 "a file or folder with that|"
@@ -905,7 +725,7 @@ msgstr "[3]["
 "dossier avec ce nom, car le|"
 "chemin est trop long.][  OK  ]"
 
-#: desk/desk_rsc.c:1947
+#: desk/desk_rsc.c:1940
 msgid "[1]["
 "You cannot open the trash can|"
 "icon. To delete a disk, folder,|"
@@ -918,7 +738,7 @@ msgstr "[1]["
 "applications, faites-les|"
 "glisser sur la corbeille.][  OK  ]"
 
-#: desk/desk_rsc.c:1954
+#: desk/desk_rsc.c:1947
 msgid "[1]["
 "The trash can is where you drag|"
 "the disks, folders, documents,|"
@@ -931,7 +751,7 @@ msgstr "[1]["
 "documents et applications à|"
 "supprimer DÉFINITIVEMENT !][  OK  ]"
 
-#: desk/desk_rsc.c:1961
+#: desk/desk_rsc.c:1954
 msgid "[1]["
 "You cannot drag folders,|"
 "documents or applications onto|"
@@ -945,7 +765,7 @@ msgstr "[1]["
 "En revanche, vous pouvez le|"
 "faire vers la corbeille.][  OK  ]"
 
-#: desk/desk_rsc.c:1970
+#: desk/desk_rsc.c:1963
 msgid "[1]["
 "You cannot drag the trash can|"
 "into a window.][  OK  ]"
@@ -954,7 +774,7 @@ msgstr "[1]["
 "glisser la corbeille dans une|"
 "fenêtre.][  OK  ]"
 
-#: desk/desk_rsc.c:1973
+#: desk/desk_rsc.c:1966
 msgid "[1]["
 "You can drag the trash can to|"
 "another location on the GEM|"
@@ -965,4 +785,280 @@ msgstr "[1]["
 "de la corbeille ailleurs sur|"
 "le bureau, mais pas sur une|"
 "autre icône.][  OK  ]"
+
+#: bdos/osmem.c:91
+msgid ""
+"\033EOut of internal memory.\n"
+"Use FOLDR100.PRG to get more.\n"
+"System halted!\n"
+msgstr ""
+"\033ESystème à court de mémoire interne.\n"
+"Utilisez FOLDR100.PRG pour l'augmenter.\n"
+"Système stoppé !\n"
+
+#: aes/gem_rsc.c:37
+msgid "Drives:"
+msgstr "Lecteurs :"
+
+#: aes/gem_rsc.c:687
+msgid "[2]["
+"You cannot write to the disk|"
+"in drive %c: because it is|"
+"write-protected.][Cancel|Retry]"
+msgstr "[2]["
+"Impossible d'écrire sur le|"
+"disque du lecteur %c: car il est|"
+"protégé en écriture.][Annuler|Réessayer]"
+
+#: aes/gem_rsc.c:692
+msgid "[2]["
+"Drive %c: is not responding.|"
+"Ensure that the disk is loaded|"
+"properly.  If the drive is a|"
+"hard disk, check that it is|"
+"connected properly.][Cancel|Retry]"
+msgstr "[2]["
+"Le lecteur %c: ne répond pas.|"
+"Assurez-vous que le disque est|"
+"correctement inséré. S'il s'agit|"
+"d'un disque dur, vérifiez qu'il|"
+"est bien connecté.][Annuler|Réessayer]"
+
+#: aes/gem_rsc.c:701
+msgid "[2]["
+"Data on the disk in drive %c:|"
+"may be damaged.  Ensure that|"
+"you are using the right kind|"
+"of disk and the drive is|"
+"connected properly.][Cancel|Retry]"
+msgstr "[2]["
+"Les données du lecteur %c: sont|"
+"peut-être endommagées. Vérifiez|"
+"que vous utilisez le bon type|"
+"de disque et que le lecteur est|"
+"correctement connecté.][Annuler|Réessayer]"
+
+#: aes/gem_rsc.c:710
+msgid "[2]["
+"Cannot read data on the disk|"
+"in drive %c:.  Ensure that|"
+"the disk is formatted, and|"
+"the drive is powered on and|"
+"connected to your computer.][Cancel|Retry]"
+msgstr "[2]["
+"Impossible de lire les données|"
+"du lecteur %c:. Assurez-vous que|"
+"le disque est formaté, que le|"
+"lecteur est alimenté et qu'il|"
+"est connecté à votre ordinateur.][Annuler|Réessayer]"
+
+#: aes/gem_rsc.c:719
+msgid "[2]["
+"Your output device is not|"
+"receiving data.  Before you|"
+"retry, make sure the device|"
+"has power, is on-line, and|"
+"is ready.][Cancel|Retry]"
+msgstr "[2]["
+"Votre périphérique de sortie ne|"
+"reçoit pas de données. Avant de|"
+"réessayer, assurez-vous que le|"
+"périphérique est bien alimenté|"
+"et prêt à recevoir des données.][Annuler|Réessayer]"
+
+#: aes/gem_rsc.c:728
+msgid "[3]["
+"An error has occurred in GEM.|"
+"Please contact the EmuTOS|"
+"Development Team and submit|"
+"a bug report.][Cancel]"
+msgstr "[3]["
+"Une erreur est survenue dans le|"
+"GEM. Merci de contacter l'équipe|"
+"de développement d'EmuTOS et|"
+"de soumettre un rapport de bug.][Annuler]"
+
+#: aes/gem_rsc.c:735
+msgid "[1]["
+"The application cannot find|"
+"the folder or document you|"
+"are trying to open.  Check|"
+"the name you have entered.][  OK  ]"
+msgstr "[1]["
+"Cette application ne trouve pas|"
+"le dossier ou le document que|"
+"vous essayez d'ouvrir. Vérifiez|"
+"le nom que vous avez entré.][  OK  ]"
+
+#: aes/gem_rsc.c:742
+msgid "[3]["
+"Your system doesn't have|"
+"enough memory to run EmuDesk.][Cancel]"
+msgstr "[3]["
+"Votre système n'a pas assez de|"
+"mémoire pour exécuter EmuDesk.][Annuler]"
+
+#: aes/gem_rsc.c:745
+msgid "[1]["
+"The application doesn't have|"
+"enough room to open another|"
+"document.  To make room, close|"
+"any documents you don't need.][  OK  ]"
+msgstr "[1]["
+"Cette application n'a pas assez|"
+"de place pour ouvrir une autre|"
+"document. Pour faire de la|"
+"place, veuillez fermer tous les|"
+"documents inutilisés.][  OK  ]"
+
+#: aes/gem_rsc.c:752
+msgid "[1]["
+"An item with this name already|"
+"exists in the folder, or the|"
+"item is set to Read-Only.|"
+"Use the \"Info/Rename\" command|"
+"to change the item's status.][  OK  ]"
+msgstr "[1]["
+"Il existe déjà un objet avec ce|"
+"nom dans ce dossier, ou bien il|"
+"est en lecture seule. Veuillez|"
+"utiliser \"Info/Renommer\" pour|"
+"changer l'état de cet objet.][  OK  ]"
+
+#: aes/gem_rsc.c:761
+msgid "[1]["
+"The specified disk drive does|"
+"not exist.  Check the drive|"
+"letter you entered.][  OK  ]"
+msgstr "[1]["
+"Le lecteur spécifié n'existe pas.|"
+"Vérifiez la lettre de lecteur que|"
+"vous avez saisie.][  OK  ]"
+
+#: aes/gem_rsc.c:766
+msgid "[1]["
+"You cannot delete the folder|"
+"in which you are currently|"
+"working.][  OK  ]"
+msgstr "[1]["
+"Vous ne pouvez pas supprimer|"
+"le dossier dans lequel vous|"
+"êtes en train de travailler.][  OK  ]"
+
+#: aes/gem_rsc.c:771
+msgid "[1]["
+"Cannot run the application|"
+"you have selected.  It may|"
+"be damaged, or your system|"
+"may not have enough memory.][  OK  ]"
+msgstr "[1]["
+"Impossible d'exécuter cette|"
+"application. Elle est peut-être|"
+"endommagée, ou votre système|"
+"manque de mémoire.][  OK  ]"
+
+#: aes/gem_rsc.c:779
+msgid "[3]["
+"Unsupported AES function #%d.][Cancel]"
+msgstr "[3]["
+"La fonction AES #%d|"
+"n'est pas supportée.][Annuler]"
+
+#: aes/gem_rsc.c:780
+msgid "[3]["
+"An unexpected error has|"
+"occurred.  Please report|"
+"this message to the EmuTOS|"
+"Development team.][Cancel]"
+msgstr "[3]["
+"Une erreur inattendue s'est|"
+"produite. Merci de rapporter ce|"
+"message à l'équipe de|"
+"développement d'EmuTOS.][Annuler]"
+
+#: desk/desk_rsc.c:1841
+msgid "Not available"
+msgstr "Indisponible"
+
+#: desk/icons.c:1026
+msgid " Generic "
+msgstr " Générique "
+
+#: desk/icons.c:1027
+msgid " Spreadsheet "
+msgstr " Tableur "
+
+#: desk/icons.c:1028
+msgid " Word Processor "
+msgstr " Traitement de texte "
+
+#: desk/icons.c:1029
+msgid " Database "
+msgstr " Base de données "
+
+#: desk/icons.c:1030
+msgid " Draw "
+msgstr " Dessin technique "
+
+#: desk/icons.c:1031
+msgid " Paint "
+msgstr " Dessin d'art "
+
+#: desk/icons.c:1032
+msgid " Project "
+msgstr " Gestion de projet "
+
+#: desk/icons.c:1033
+msgid " Graph "
+msgstr " Graphique "
+
+#: desk/icons.c:1034
+msgid " Outline "
+msgstr " Organisation d'idées "
+
+#: desk/icons.c:1035
+msgid " Accounting "
+msgstr " Comptabilité "
+
+#: desk/icons.c:1036
+msgid " Multi-Function "
+msgstr " Multi-fonction "
+
+#: desk/icons.c:1037
+msgid " Education "
+msgstr " Education "
+
+#: desk/icons.c:1038
+msgid " Communications "
+msgstr " Communication "
+
+#: desk/icons.c:1039
+msgid " Programmer's Tool "
+msgstr " Outil de programmeur "
+
+#: desk/icons.c:1040
+msgid " Game "
+msgstr " Jeu "
+
+#: desk/icons.c:1041
+msgid " Output "
+msgstr " Impression "
+
+#: desk/icons.c:1042
+msgid " Desktop Publisher "
+msgstr " Publication "
+
+#: desk/icons.c:1043
+msgid " Scan "
+msgstr " Scan "
+
+#: desk/icons.c:1044
+msgid " Mail "
+msgstr " Messagerie "
+
+#: aes/gem_rsc.c:778
+msgid "[3]["
+"DOS error #%d.][Cancel]"
+msgstr "[3]["
+"Erreur DOS #%d.][Annuler]"
 
