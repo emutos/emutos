@@ -71,7 +71,8 @@ copy_tree:
         PMOVE_TO_TTR1(init_ttr1)    //   0x01000000-0xfeffffff (see below for details)
         rts
 
-        .data
+        SECTION_RODATA
+
 root_pointer_descriptor:
         dc.l    0x80000002,pmmutree // lower limit 0, short format, table at 'pmmutree'
 init_tc:

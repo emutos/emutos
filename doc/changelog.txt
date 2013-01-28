@@ -4304,3 +4304,4 @@ Start... early ages
 2013-01-28
 - bios/blkdev.c: Disable boot sector execution when Control is held
   down. (RFB)
+- bios/68030_pmmu.S: Moved read-only data to SECTION_RODATA. (VRI)
