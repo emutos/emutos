@@ -105,6 +105,32 @@ static inline int OK_id(char *s)
             memcmp (s, "F32", 3) == 0 || memcmp (s, "RAW", 3) == 0;
 }
 
+/*
+ * determine whether we're looking at a partitioned
+ * or a partitionless disk (like a floppy)
+ * 
+ * returns the size in sectors if it appears to be partitionless
+ * otherwise return 0
+ */
+static ULONG check_for_no_partitions(UBYTE *sect)
+{
+    struct fat16_bs *bs = (struct fat16_bs *)sect;
+    ULONG size = 0UL;
+    int i;
+
+    if ((bs->media == 0xf8)
+     && (bs->ext == 0x29)
+     && (memcmp(bs->fstype,"FAT16   ",8) == 0)
+     && (bs->sec[0] == 0)
+     && (bs->sec[1] == 0)) {
+        for (i = 3; i >= 0; i--)
+            size = (size << 8) + bs->sec2[i];
+    }
+
+    return size;
+}
+
+
 #define MAXPHYSSECTSIZE 2048
 union
 {
@@ -145,6 +171,16 @@ static int atari_partition(int xhdidev)
 #endif
         /* swap bytes in the loaded boot sector */
         byteswap(sect,SECTOR_SIZE);
+    }
+
+    /* check for DOS disk without partitions */
+    if (sect[510] == 0x55 && sect[511] == 0xaa) {
+        ULONG size = check_for_no_partitions(sect);
+        if (size) {
+            add_partition(xhdidev,"BGM",0UL,size);
+            kprintf("fake BGM\n");
+            return 1;
+        }
     }
 
     /* check for DOS master boot record */

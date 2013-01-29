@@ -4308,3 +4308,4 @@ Start... early ages
 - po/fr.po: Added missing translations. (VRI)
 - desk/deskapp.c desk/desktop.def desk/desktop.rsc: Added "DISK" and
   "TRASH" from the desktop to the translatable strings. (RFB)
+- bios/disk.c: Support DOS hard disk with no MBR. (RFB)
