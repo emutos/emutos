@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: EMUTOS beta\n"
 "POT-Creation-Date: 2004-01-27 14:37+0100\n"
-"PO-Revision-Date: 2013-01-28 22:17+0100\n"
+"PO-Revision-Date: 2013-01-29 11:00+0100\n"
 "Last-Translator: Vincent Riviere <vincent.riviere@freesbee.fr>\n"
 "Language-Team: French <fr@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -772,12 +772,20 @@ msgid "Disk Drives:"
 msgstr "Lecteurs:"
 
 #: desk/desk_rsc.c:1852
+msgid "DISQUE"
+msgstr ""
+
+#: desk/desk_rsc.c:1853
+msgid "CORBEILLE"
+msgstr ""
+
+#: desk/desk_rsc.c:1854
 msgid "[2]["
 "Switch resolution?][Yes|No]"
 msgstr "[2]["
 "Changer de résolution ?][Oui|Non]"
 
-#: desk/desk_rsc.c:1853
+#: desk/desk_rsc.c:1855
 msgid "[1]["
 "The selected document type is|"
 "not configured to work with|"
@@ -791,7 +799,7 @@ msgstr "[1]["
 "application\" pour effectuer|"
 "cette association.][  OK  ]"
 
-#: desk/desk_rsc.c:1862
+#: desk/desk_rsc.c:1864
 msgid "[1]["
 "The GEM Desktop has no more|"
 "available windows. Before you|"
@@ -803,7 +811,7 @@ msgstr "[1]["
 "fermer une fenêtre inutilisée|"
 "avant d'ouvrir un disque.][  OK  ]"
 
-#: desk/desk_rsc.c:1869
+#: desk/desk_rsc.c:1871
 msgid "[3]["
 "Cannot find FORMAT.PRG|"
 "or FORMAT.TTP.][  OK  ]"
@@ -811,7 +819,7 @@ msgstr "[3]["
 "Impossible de trouver|"
 "FORMAT.PRG ou FORMAT.TTP.][  OK  ]"
 
-#: desk/desk_rsc.c:1872
+#: desk/desk_rsc.c:1874
 msgid "[3]["
 "Formatting will ERASE all|"
 "information on the disk in|"
@@ -825,7 +833,7 @@ msgstr "[3]["
 "cela ne vous dérange pas de|"
 "les perdre.][  OK  |Annuler]"
 
-#: desk/desk_rsc.c:1881
+#: desk/desk_rsc.c:1883
 msgid "[3]["
 "You cannot copy a parent folder|"
 "into one of its child folders.][  OK  ]"
@@ -834,7 +842,7 @@ msgstr "[3]["
 "dossier parent dans l'un de|"
 "ses dossiers enfants.][  OK  ]"
 
-#: desk/desk_rsc.c:1884
+#: desk/desk_rsc.c:1886
 msgid "[3]["
 "If you are sure you want to|"
 "delete ALL the information on|"
@@ -847,7 +855,7 @@ msgstr "[3]["
 "du disque %c:, cliquez sur OK.|"
 "Sinon, cliquez sur Annuler.][  OK  |Annuler]"
 
-#: desk/desk_rsc.c:1893
+#: desk/desk_rsc.c:1895
 msgid "[1]["
 "There is not enough space|"
 "available to configure this|"
@@ -861,7 +869,7 @@ msgstr "[1]["
 "Vous devez retirer une|"
 "application déjà configurée.][  OK  ]"
 
-#: desk/desk_rsc.c:1902
+#: desk/desk_rsc.c:1904
 msgid "[2]["
 "The folder already exists, or|"
 "your disk is full.  Retry with|"
@@ -874,7 +882,7 @@ msgstr "[2]["
 "et vérifiez l'espace disque|"
 "disponible.][Annuler|Encore]"
 
-#: desk/desk_rsc.c:1909
+#: desk/desk_rsc.c:1911
 msgid "[1]["
 "This disk does not have enough|"
 "room for the information you|"
@@ -888,7 +896,7 @@ msgstr "[1]["
 "se peut que certains éléments|"
 "aient déjà été copiés.][  OK  ]"
 
-#: desk/desk_rsc.c:1918
+#: desk/desk_rsc.c:1920
 msgid "[3]["
 "Cannot create EMUDESK.INF.|"
 "Make sure that a disk is in|"
@@ -902,7 +910,7 @@ msgstr "[3]["
 "lecteur de démarrage, puis|"
 "cliquez sur OK ou Annuler.][  OK  |Annuler]"
 
-#: desk/desk_rsc.c:1927
+#: desk/desk_rsc.c:1929
 msgid "[3]["
 "You cannot create or|"
 "access a folder this far|"
@@ -913,7 +921,7 @@ msgstr "[3]["
 "profondément dans l'arborescence|"
 "des répertoires.][  OK  ]"
 
-#: desk/desk_rsc.c:1932
+#: desk/desk_rsc.c:1934
 msgid "[3]["
 "You cannot create or access|"
 "a file or folder with that|"
@@ -925,7 +933,7 @@ msgstr "[3]["
 "dossier avec ce nom, car le|"
 "chemin est trop long.][  OK  ]"
 
-#: desk/desk_rsc.c:1940
+#: desk/desk_rsc.c:1942
 msgid "[1]["
 "You cannot open the trash can|"
 "icon. To delete a disk, folder,|"
@@ -938,7 +946,7 @@ msgstr "[1]["
 "applications, faites-les|"
 "glisser sur la corbeille.][  OK  ]"
 
-#: desk/desk_rsc.c:1947
+#: desk/desk_rsc.c:1949
 msgid "[1]["
 "The trash can is where you drag|"
 "the disks, folders, documents,|"
@@ -951,7 +959,7 @@ msgstr "[1]["
 "documents et applications à|"
 "supprimer DÉFINITIVEMENT !][  OK  ]"
 
-#: desk/desk_rsc.c:1954
+#: desk/desk_rsc.c:1956
 msgid "[1]["
 "You cannot drag folders,|"
 "documents or applications onto|"
@@ -965,7 +973,7 @@ msgstr "[1]["
 "En revanche, vous pouvez le|"
 "faire vers la corbeille.][  OK  ]"
 
-#: desk/desk_rsc.c:1963
+#: desk/desk_rsc.c:1965
 msgid "[1]["
 "You cannot drag the trash can|"
 "into a window.][  OK  ]"
@@ -974,7 +982,7 @@ msgstr "[1]["
 "glisser la corbeille dans une|"
 "fenêtre.][  OK  ]"
 
-#: desk/desk_rsc.c:1966
+#: desk/desk_rsc.c:1968
 msgid "[1]["
 "You can drag the trash can to|"
 "another location on the GEM|"
