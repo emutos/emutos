@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: EMUTOS beta\n"
 "POT-Creation-Date: 2004-01-27 14:37+0100\n"
-"PO-Revision-Date: 2013-01-29 11:00+0100\n"
+"PO-Revision-Date: 2013-01-29 19:50+0100\n"
 "Last-Translator: Vincent Riviere <vincent.riviere@freesbee.fr>\n"
 "Language-Team: French <fr@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -772,12 +772,12 @@ msgid "Disk Drives:"
 msgstr "Lecteurs:"
 
 #: desk/desk_rsc.c:1852
-msgid "DISQUE"
-msgstr ""
+msgid "DISK"
+msgstr "DISQUE"
 
 #: desk/desk_rsc.c:1853
-msgid "CORBEILLE"
-msgstr ""
+msgid "TRASH"
+msgstr "CORBEILLE"
 
 #: desk/desk_rsc.c:1854
 msgid "[2]["
