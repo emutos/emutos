@@ -4309,3 +4309,6 @@ Start... early ages
 - desk/deskapp.c desk/desktop.def desk/desktop.rsc: Added "DISK" and
   "TRASH" from the desktop to the translatable strings. (RFB)
 - bios/disk.c: Support DOS hard disk with no MBR. (RFB)
+
+2013-01-29
+- po/fi.po: Updated. Contributed by Eero Tamminen. (VRI)

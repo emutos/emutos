@@ -1,11 +1,11 @@
 # -*- coding: iso-latin-1; -*-
 # translation of fi.po to Suomi
-# Eero Tamminen <eerott@gmail>, 2005-2012.
+# Eero Tamminen <eerott@gmail>, 2005-2013.
 msgid ""
 msgstr ""
 "Project-Id-Version: fi\n"
 "POT-Creation-Date: 2012-05-19 21:14+0300\n"
-"PO-Revision-Date: 2012-05-19 22:27+0300\n"
+"PO-Revision-Date: 2013-01-29 22:54+0100\n"
 "Last-Translator: Eero Tamminen <eerott@gmail>\n"
 "Language-Team: Suomi\n"
 "MIME-Version: 1.0\n"
@@ -14,258 +14,275 @@ msgstr ""
 "X-Generator: Emacs 23.2\n"
 "Plural-Forms:  nplurals=2; plural=(n != 1);\n"
 
-#: bios/bios.c:435
+#: bios/bios.c:462
 msgid "Please eject the floppy and hit RETURN"
 msgstr "Poista levyke ja paina RETURN"
 
-#: bios/bios.c:491
+#: bios/bios.c:521
 msgid ""
 "System halted!\n"
 msgstr ""
 "Systeemi pysäytetty!\n"
 
-#: bios/initinfo.c:174
+#: bios/initinfo.c:175
 msgid "EmuTOS Version"
 msgstr "EmuTOS versio"
 
-#: bios/initinfo.c:176
+#: bios/initinfo.c:177
 msgid "CPU type"
 msgstr "CPU-tyyppi"
 
-#: bios/initinfo.c:184
+#: bios/initinfo.c:185
 msgid "Machine"
 msgstr "Kone"
 
-#: bios/initinfo.c:186
+#: bios/initinfo.c:187
 msgid "Free ST-RAM"
 msgstr "Vapaa ST-RAM"
 
-#: bios/initinfo.c:187 bios/initinfo.c:194
+#: bios/initinfo.c:188 bios/initinfo.c:195
 msgid "%ld kB"
 msgstr "%ld kB"
 
-#: bios/initinfo.c:193
+#: bios/initinfo.c:194
 msgid "Free FastRAM"
 msgstr "Vapaa FastRAM"
 
-#: bios/initinfo.c:199
+#: bios/initinfo.c:200
 msgid "Screen start"
 msgstr "Ruudun alku"
 
-#: bios/initinfo.c:201
+#: bios/initinfo.c:202
 msgid "GEMDOS drives"
 msgstr "GEMDOS-asemat"
 
-#: bios/initinfo.c:215
+#: bios/initinfo.c:216
 msgid "Boot time"
 msgstr "Käynnistysaika"
 
-#: bios/initinfo.c:221
+#: bios/initinfo.c:222
 msgid "Hold <Control> to skip AUTO/ACC"
 msgstr "<Cntrl> pohjassa = ohita AUTO/ACC"
 
-#: bios/initinfo.c:223
+#: bios/initinfo.c:224
 msgid "Hold <Alternate> to skip HDD boot"
 msgstr "<Alt> pohjassa = ohita kovalevy"
 
-#: bios/initinfo.c:226
+#: bios/initinfo.c:227
 msgid "Press 'C' to run an early console"
 msgstr "Paina 'C' päästäksesi konsoliin"
 
-#: bios/initinfo.c:233
+#: bios/initinfo.c:234
 msgid " Hold <Shift> to pause this screen "
 msgstr "Pysäytä ruutu <Shift> näppäimellä "
 
-#: aes/gem_rsc.c:37
+#: bdos/osmem.c:91
+msgid ""
+"\033EOut of internal memory.\n"
+"Use FOLDR100.PRG to get more.\n"
+"System halted!\n"
+msgstr ""
+"\033ESisäinen muisti loppu.\n"
+"FOLDR100.PRG ohjelma auttaa.\n"
+"Järjestelmä pysäytetty!\n"
+
+#: aes/gem_rsc.c:32
 msgid "Selection:  ________.___"
 msgstr "Valinta:    ________.___"
 
-#: aes/gem_rsc.c:224
-msgid "ITEM SELECTOR"
-msgstr "TIEDOSTON VALINTA"
+#: aes/gem_rsc.c:37
+msgid "Drives:"
+msgstr "Asemat:"
 
-#: aes/gem_rsc.c:242 desk/desk_rsc.c:18
+#: aes/gem_rsc.c:583 desk/desk_rsc.c:18
 msgid "OK"
 msgstr "OK"
 
-#: aes/gem_rsc.c:248 desk/desk_rsc.c:19
+#: aes/gem_rsc.c:589 desk/desk_rsc.c:19
 msgid "Cancel"
 msgstr "Kumoa"
 
-#: aes/gem_rsc.c:466
-msgid "Insert your GEM STARTUP disk"
-msgstr "Syötä GEM aloitus-levyke"
-
-#: aes/gem_rsc.c:474
+#: aes/gem_rsc.c:687
 msgid "[2]["
-"You cannot write to the disk in drive|"
-"%c: because it is physically write-|"
-"protected.  Before you Retry, remove|"
-"the write-protect tab or notch the|"
-"disk.][Cancel|Retry]"
+"You cannot write to the disk|"
+"in drive %c: because it is|"
+"write-protected.][Cancel|Retry]"
 msgstr "[2]["
-"Et voi kirjoittaa %c: asemalle,|"
-"koska se on kirjoitussuojattu!|"
-"Poista kirjoitussuojaus ennen|"
-"kuin yrität uudelleen.][Kumoa|Uudestaan]"
+"Levylle asemassa %c: ei voi|"
+"kirjoittaa, koska se on|"
+"kirjoitussuojattu.][Kumoa|Uudestaan]"
 
-#: aes/gem_rsc.c:481
+#: aes/gem_rsc.c:692
 msgid "[2]["
-"Drive %c: is not responding.  You must|"
-"use the right kind of disk, insert it|"
-"correctly, and close the door.  If the|"
-"problem is with a hard disk, check the|"
-"disk's connections.][Cancel|Retry]"
+"Drive %c: is not responding.|"
+"Ensure that the disk is loaded|"
+"properly.  If the drive is a|"
+"hard disk, check that it is|"
+"connected properly.][Cancel|Retry]"
 msgstr "[2]["
-"Asema %c: ei vastaa.  Sinun pitää|"
-"käyttää oikeantyyppistä levykettä|"
-"ja laittaa se asemaan oikein.  Jos|"
-"ongelma koskee kovalevyä, tarkista|"
-"sen liitännät.][Kumoa|Uudestaan]"
+"Asema %c: ei vastaa.|"
+"Varmista, että levyke on|"
+"asemassa.  Jos asema on|"
+"kovalevy, tarkista sen|"
+"kaapelointi.][Kumoa|Uudestaan]"
 
-#: aes/gem_rsc.c:490
+#: aes/gem_rsc.c:701
 msgid "[2]["
-"Data on the disk in drive %c: may be|"
-"damaged.  You must use the right kind|"
-"of floppy disk; you must connect your|"
-"hard disk properly.][Cancel|Retry]"
+"Data on the disk in drive %c:|"
+"may be damaged.  Ensure that|"
+"you are using the right kind|"
+"of disk and the drive is|"
+"connected properly.][Cancel|Retry]"
 msgstr "[2]["
-"Tiedot asemassa %c: olevalla levyllä|"
-"saattavat olla viallisia.  Sinun|"
-"pitää käyttää oikean tyyppistä|"
-"levykettä ja kovalevyn tapauksessa|"
-"kiinnittää sen liittimet oikein.][Kumoa|Uudelleen]"
+"Tiedot levyllä asemassa %c:|"
+"voivat olla vioittuneet.|"
+"Varmista, että käytät oikean|"
+"tyyppistä levykettä ja, että|"
+"asema on kunnolla kytketty.][Kumoa|Uudestaan]"
 
-#: aes/gem_rsc.c:497
+#: aes/gem_rsc.c:710
 msgid "[2]["
-"This application cannot read data on the|"
-"disk in drive %c:.  The disk must be|"
-"formatted, there must be power to the|"
-"disk drive, and the disk drive must be|"
-"physically connected to your computer.][Cancel|Retry]"
+"Cannot read data on the disk|"
+"in drive %c:.  Ensure that|"
+"the disk is formatted, and|"
+"the drive is powered on and|"
+"connected to your computer.][Cancel|Retry]"
 msgstr "[2]["
-"Sovellus ei pysty lukemaan asemassa|"
-"%c: olevia tietoja.  Levykkeen|"
-"pitää olla formatoitu, aseman pitää|"
-"olla päällä ja fyysisesti liitetty|"
-"tietokoneeseesi.][Kumoa|Uudelleen]"
+"Levykkeen tietoja asemassa %c:|"
+"ei voi lukea.  Varmista, että|"
+"se on alustettu, asemalle on|"
+"virtaa ja, että se on kytketty|"
+"tietokoneeseen.][Kumoa|Uudestaan]"
 
-#: aes/gem_rsc.c:506
+#: aes/gem_rsc.c:719
 msgid "[2]["
-"Your output device is not receiving|"
-"data. Before you Retry, make sure the|"
-"device has power, is on-line, and is|"
-"loaded with paper or film.][Cancel|Retry]"
+"Your output device is not|"
+"receiving data.  Before you|"
+"retry, make sure the device|"
+"has power, is on-line, and|"
+"is ready.][Cancel|Retry]"
 msgstr "[2]["
-" Tulostuslaitteesi ei vastaanota|"
-"tietoja. Varmista, että laite on|"
-"päällä ja, että siinä on paperia|"
-"ennen uutta yritystä.][Kumoa|Uudelleen]"
+"Tulostuslaitteesi ei vastaan-|"
+"ota tietoja.  Varmista,|"
+"että laitteella on virtaa,|"
+"se on kiinni ja valmiina|"
+"vastaanottamaan.][Cancel|Retry]"
 
-#: aes/gem_rsc.c:513
+#: aes/gem_rsc.c:728
 msgid "[3]["
-"An error has occurred with the|"
-"Graphics Environment Manager (GEM).|"
-"Please contact the EmuTOS Development|"
-"Team and submit a bug report.][Cancel]"
+"An error has occurred in GEM.|"
+"Please contact the EmuTOS|"
+"Development Team and submit|"
+"a bug report.][Cancel]"
 msgstr "[3]["
-"GEM-virhe.  Ota yhteyttä|"
-"EmuTOS-kehittäjiin ja anna|"
-"virheraportti.][Kumoa]"
+"GEM virhe. Ota yhteyttä|"
+"EmuTOS-kehitystiimiin|"
+"ja lähetä virheraportti.][Sulje]"
 
-#: aes/gem_rsc.c:520
-msgid "[2]["
-"This application cannot find the|"
-"folder or document you are trying to|"
-"open. Check the name you have entered.][  OK  ]"
-msgstr "[2]["
-"Sovellus ei löydä hakemistoa tai|"
-"tiedostoa, jota yrität aukaista.|"
-"Tarkista antamasi nimi.][  OK  ]"
+#: aes/gem_rsc.c:735
+msgid "[1]["
+"The application cannot find|"
+"the folder or document you|"
+"are trying to open.  Check|"
+"the name you have entered.][  OK  ]"
+msgstr "[1]["
+"Sovellus ei löydä kansiota|"
+"tai tiedostoa, jota yritit|"
+"avata.  Tarkista sen nimi|"
+"ja yritä uudelleen.][  OK  ]"
 
-#: aes/gem_rsc.c:525
+#: aes/gem_rsc.c:742
 msgid "[3]["
-"Your computer doesn't have enough|"
-"memory to run the GEM Desktop.][ Sorry ]"
+"Your system doesn't have|"
+"enough memory to run EmuDesk.][Cancel]"
 msgstr "[3]["
-"Koneessasi ei ole riittävästi|"
-"muistia GEM-työpöydän|"
-"käynnistämiseen.][ Valitan ]"
+"Järjestelmässäsi ei ole|"
+"riittävasti muistia EmuTOS:n|"
+"ajamiseen.][Sulje]"
 
-#: aes/gem_rsc.c:528
+#: aes/gem_rsc.c:745
 msgid "[1]["
-"This application doesn't have room to|"
-"open another document.  To make room,|"
-"close any documents you don't need.][  OK  ]"
+"The application doesn't have|"
+"enough room to open another|"
+"document.  To make room, close|"
+"any documents you don't need.][  OK  ]"
 msgstr "[1]["
-"Sovelluksella ei ole riittävästi|"
-"tilaa uudelle dokumentille.  Tee|"
-"tilaa sulkemalla dokumentit,|"
-"joita et tarvitse.][  OK  ]"
+"Sovelluksella ei ole|"
+"tilaa uudelle tiedostolle.|"
+"Sulje ensi tiedostot, joita|"
+"et enää tarvitse.][  OK  ]"
 
-#: aes/gem_rsc.c:533
+#: aes/gem_rsc.c:752
 msgid "[1]["
-"An item with this name already exists|"
-"in the folder, or the item is set to|"
-"Read-Only status. Use the \"Info/Rename\"|"
-"command to change the item's status.][  OK  ]"
+"An item with this name already|"
+"exists in the folder, or the|"
+"item is set to Read-Only.|"
+"Use the \"Info/Rename\" command|"
+"to change the item's status.][  OK  ]"
 msgstr "[1]["
-"Kansiossa on jo tiedosto annetulla|"
-"nimellä tai se on kirjoitus-|"
-"suojattu. Käytä \"Tiedot/Nimeä\"-|"
-"komentoa vaihtaaksesi sen tilaa.][  OK  ]"
+"Valittu tiedosto on jo olemassa|"
+"tai se on kirjoitussuojattu.|"
+"Käytä \"Tiedot/Nimeä\"|"
+"toimintoa vaihtaaksesi sen|"
+"tilaa.][  OK  ]"
 
-#: aes/gem_rsc.c:540
+#: aes/gem_rsc.c:761
 msgid "[1]["
-"The disk drive you have indicated does|"
-"not exist. Check the drive identifier|"
-"letter you entered.][Cancel]"
+"The specified disk drive does|"
+"not exist.  Check the drive|"
+"letter you entered.][  OK  ]"
 msgstr "[1]["
-"Antamaasi asemaa ei ole.  Tarkista|"
-"antamasi aseman tunnus.][Kumoa]"
+"Valittua levyasemaa ei ole.|"
+"Tarkista antamasi aseman|"
+"tunniste.][  OK  ]"
 
-#: aes/gem_rsc.c:545
+#: aes/gem_rsc.c:766
 msgid "[1]["
-"You cannot delete the folder in|"
-"which you are currently working.][  OK  ]"
+"You cannot delete the folder|"
+"in which you are currently|"
+"working.][  OK  ]"
 msgstr "[1]["
-"Et voi poistaa kansiota,|"
+"Et voi poistaa hakemistoa,|"
 "jota käytät.][  OK  ]"
 
-#: aes/gem_rsc.c:548
+#: aes/gem_rsc.c:771
 msgid "[1]["
-"Cannot run the application you have|"
-"selected. It may be damaged, or your|"
-"computer may not have enough memory.][  OK  ]"
+"Cannot run the application|"
+"you have selected.  It may|"
+"be damaged, or your system|"
+"may not have enough memory.][  OK  ]"
 msgstr "[1]["
-"Valitsemasi sovelluksen käynnistys ei|"
-"onnistu.  Se voi olla vioittunut, tai|"
-"koneessasi ei ole riittävästi muistia.][  OK  ]"
+"Valitsemasi sovelluksen|"
+"käynnistys ei onnistu. Se voi|"
+"olla vioittunut, tai koneessasi|"
+"ei ole riittävästi muistia.][  OK  ]"
 
-#: aes/gem_rsc.c:553
+#: aes/gem_rsc.c:778
 msgid "[3]["
 "DOS error #%d.][Cancel]"
 msgstr "[3]["
 "DOS-virhe #%d.][Kumoa]"
 
-#: aes/gem_rsc.c:554
+#: aes/gem_rsc.c:779
 msgid "[3]["
-"Bad Function #][Cancel]"
+"Unsupported AES function #%d.][Cancel]"
 msgstr "[3]["
-"Tuntematon funktionumero #][Kumoa]"
+"Tuntematon AES funktio #%d.][Kumoa]"
 
-#: aes/gem_rsc.c:555
+#: aes/gem_rsc.c:780
 msgid "[3]["
-"To run the GEM Desktop, insert your|"
-"GEM DESKTOP disk in drive A and click|"
-"on OK or press Enter. To return to DOS,|"
-"click on Cancel.][  OK  |Cancel]"
+"An unexpected error has|"
+"occurred.  Please report|"
+"this message to the EmuTOS|"
+"Development team.][Cancel]"
 msgstr "[3]["
-"Käynnistääksesi GEM työpöydän,|"
-"laita GEM DESKTOP -levyke asemaan|"
-"A ja klikkaa OK tai paina Enter.|"
-"Palataksesi komentoriville,|"
-"klikkaa Kumoa.][  OK  |Kumoa]"
+"Odottamaton virhe.|"
+"Raportoi tämä viesti|"
+"EmuTOS-kehitystiimille.][Kumoa]"
+
+#: aes/gem_rsc.c:787
+msgid "ITEM SELECTOR"
+msgstr "TIEDOSTON VALINTA"
 
 #: desk/desk_rsc.c:20
 msgid "Install"
@@ -728,32 +745,44 @@ msgid "  Show as icons  \007S"
 msgstr "  Näytä ikoneina \007S"
 
 #: desk/desk_rsc.c:1840
+msgid "  Show as text   \007S"
+msgstr "  Näytä tekstinä \007S"
+
+#: desk/desk_rsc.c:1841
+msgid "Not available"
+msgstr "Ei saatavilla"
+
+#: desk/desk_rsc.c:1842
 msgid "application"
 msgstr "sovellus"
 
-#: desk/desk_rsc.c:1841
+#: desk/desk_rsc.c:1843
 msgid "documents"
 msgstr "dokumentit"
 
-#: desk/desk_rsc.c:1842
+#: desk/desk_rsc.c:1844
+msgid "New Folder"
+msgstr "Uusi kansio"
+
+#: desk/desk_rsc.c:1845
+msgid "Disk Drives:"
+msgstr "Levyasemat:"
+
+#: desk/desk_rsc.c:1852
+msgid "DISK"
+msgstr "LEVYKE"
+
+#: desk/desk_rsc.c:1853
+msgid "TRASH"
+msgstr "ROSKIS"
+
+#: desk/desk_rsc.c:1854
 msgid "[2]["
 "Switch resolution?][Yes|No]"
 msgstr "[2]["
 "Vaihda tarkkuutta?][Kyllä|Ei]"
 
-#: desk/desk_rsc.c:1843
-msgid "  Show as text   \007S"
-msgstr "  Näytä tekstinä \007S"
-
-#: desk/desk_rsc.c:1852
-msgid "New Folder"
-msgstr "Uusi kansio"
-
-#: desk/desk_rsc.c:1853
-msgid "Disk Drives:"
-msgstr "Levyasemat:"
-
-#: desk/desk_rsc.c:1860
+#: desk/desk_rsc.c:1855
 msgid "[1]["
 "The selected document type is|"
 "not configured to work with|"
@@ -767,7 +796,7 @@ msgstr "[1]["
 "komentoa liittääksesi tämän|"
 "tiedostotyypin sovellukseen.][  OK  ]"
 
-#: desk/desk_rsc.c:1869
+#: desk/desk_rsc.c:1864
 msgid "[1]["
 "The GEM Desktop has no more|"
 "available windows. Before you|"
@@ -779,7 +808,7 @@ msgstr "[1]["
 "aikaisua, sulje jokin ikkuna,|"
 "jota et käytä.][  OK  ]"
 
-#: desk/desk_rsc.c:1876
+#: desk/desk_rsc.c:1871
 msgid "[3]["
 "Cannot find FORMAT.PRG|"
 "or FORMAT.TTP.][  OK  ]"
@@ -787,7 +816,7 @@ msgstr "[3]["
 "FORMAT.PRG tai FORMAT.TTP|"
 "ohjelmaa ei löydy.][  OK  ]"
 
-#: desk/desk_rsc.c:1879
+#: desk/desk_rsc.c:1874
 msgid "[3]["
 "Formatting will ERASE all|"
 "information on the disk in|"
@@ -800,7 +829,7 @@ msgstr "[3]["
 "vain jos tietosi voidaan|"
 "hävittää tältä levyltä.][  OK  |Kumoa]"
 
-#: desk/desk_rsc.c:1888
+#: desk/desk_rsc.c:1883
 msgid "[3]["
 "You cannot copy a parent folder|"
 "into one of its child folders.][  OK  ]"
@@ -808,7 +837,7 @@ msgstr "[3]["
 "Et voi kopioida kansiota sen|"
 "omiin alikansioihin.][  OK  ]"
 
-#: desk/desk_rsc.c:1891
+#: desk/desk_rsc.c:1886
 msgid "[3]["
 "If you are sure you want to|"
 "delete ALL the information on|"
@@ -821,7 +850,7 @@ msgstr "[3]["
 "asemassa %c:, klikkaa OK.|"
 "Muutoin klikkaa Kumoa.][  OK  |Kumoa]"
 
-#: desk/desk_rsc.c:1900
+#: desk/desk_rsc.c:1895
 msgid "[1]["
 "There is not enough space|"
 "available to configure this|"
@@ -834,7 +863,7 @@ msgstr "[1]["
 "Poista jokin jo määritetyistä|"
 "sovelluksista ensin.][  OK  ]"
 
-#: desk/desk_rsc.c:1909
+#: desk/desk_rsc.c:1904
 msgid "[2]["
 "The folder already exists, or|"
 "your disk is full.  Retry with|"
@@ -846,7 +875,7 @@ msgstr "[2]["
 "Yritä uutta nimeä, tai Kumoa|"
 "ja tarkista vapaa levytila.][ Kumoa | Uudelleen ]"
 
-#: desk/desk_rsc.c:1916
+#: desk/desk_rsc.c:1911
 msgid "[1]["
 "This disk does not have enough|"
 "room for the information you|"
@@ -860,7 +889,7 @@ msgstr "[1]["
 "tiedostoista saatettiin silti|"
 "kopioida.][  OK  ]"
 
-#: desk/desk_rsc.c:1925
+#: desk/desk_rsc.c:1920
 msgid "[3]["
 "Cannot create EMUDESK.INF.|"
 "Make sure that a disk is in|"
@@ -874,7 +903,7 @@ msgstr "[2]["
 "ja klikkaa OK, tai peru|"
 "työpöydän talletus.][  OK  ][ Peru ]"
 
-#: desk/desk_rsc.c:1934
+#: desk/desk_rsc.c:1929
 msgid "[3]["
 "You cannot create or|"
 "access a folder this far|"
@@ -884,7 +913,7 @@ msgstr "[3]["
 "näin syvällä hakemistopuussa|"
 "ei ole mahdollista.][  OK  ]"
 
-#: desk/desk_rsc.c:1939
+#: desk/desk_rsc.c:1934
 msgid "[3]["
 "You cannot create or access|"
 "a file or folder with that|"
@@ -894,7 +923,7 @@ msgstr "[3]["
 "Tiedostopolku on liian pitkä|"
 "hakemiston/tiedoston luontiin.][  OK  ]"
 
-#: desk/desk_rsc.c:1947
+#: desk/desk_rsc.c:1942
 msgid "[1]["
 "You cannot open the trash can|"
 "icon. To delete a disk, folder,|"
@@ -906,7 +935,7 @@ msgstr "[1]["
 "tai sovellus vetämällä se|"
 "roskakori-ikoniin.][  OK  ]"
 
-#: desk/desk_rsc.c:1954
+#: desk/desk_rsc.c:1949
 msgid "[1]["
 "The trash can is where you drag|"
 "the disks, folders, documents,|"
@@ -918,7 +947,7 @@ msgstr "[1]["
 "sovellukset, jotka haluat|"
 "poistaa PYSYVÄSTI!][  OK  ]"
 
-#: desk/desk_rsc.c:1961
+#: desk/desk_rsc.c:1956
 msgid "[1]["
 "You cannot drag folders,|"
 "documents or applications onto|"
@@ -932,7 +961,7 @@ msgstr "[1]["
 "kopioida niitä levyille|"
 "tai vetää ne roskakoriin.][  OK  ]"
 
-#: desk/desk_rsc.c:1970
+#: desk/desk_rsc.c:1965
 msgid "[1]["
 "You cannot drag the trash can|"
 "into a window.][  OK  ]"
@@ -940,7 +969,7 @@ msgstr "[1]["
 "Et voi vetää roskakoria|"
 "ikkunaan.][  OK  ]"
 
-#: desk/desk_rsc.c:1973
+#: desk/desk_rsc.c:1968
 msgid "[1]["
 "You can drag the trash can to|"
 "another location on the GEM|"
@@ -950,4 +979,80 @@ msgstr "[1]["
 "Voit siirtää roskakorin muualle|"
 "työpöydällä, muttet toisen|"
 "ikonin päälle.][  OK  ]"
+
+#: desk/icons.c:1026
+msgid " Generic "
+msgstr " Yleinen "
+
+#: desk/icons.c:1027
+msgid " Spreadsheet "
+msgstr " Taulukkolaskenta "
+
+#: desk/icons.c:1028
+msgid " Word Processor "
+msgstr " Tekstinkäsittely "
+
+#: desk/icons.c:1029
+msgid " Database "
+msgstr " Tietokanta "
+
+#: desk/icons.c:1030
+msgid " Draw "
+msgstr " Piirto "
+
+#: desk/icons.c:1031
+msgid " Paint "
+msgstr " Maalaus "
+
+#: desk/icons.c:1032
+msgid " Project "
+msgstr " Projekti "
+
+#: desk/icons.c:1033
+msgid " Graph "
+msgstr " Kaavio "
+
+#: desk/icons.c:1034
+msgid " Outline "
+msgstr " Ulkoviiva "
+
+#: desk/icons.c:1035
+msgid " Accounting "
+msgstr " Kirjanpito "
+
+#: desk/icons.c:1036
+msgid " Multi-Function "
+msgstr " Monitoiminen "
+
+#: desk/icons.c:1037
+msgid " Education "
+msgstr " Koulutus "
+
+#: desk/icons.c:1038
+msgid " Communications "
+msgstr " Tietoliikenne "
+
+#: desk/icons.c:1039
+msgid " Programmer's Tool "
+msgstr " Ohjelmointi "
+
+#: desk/icons.c:1040
+msgid " Game "
+msgstr " Peli "
+
+#: desk/icons.c:1041
+msgid " Output "
+msgstr " Tulostus "
+
+#: desk/icons.c:1042
+msgid " Desktop Publisher "
+msgstr " Julkaisu "
+
+#: desk/icons.c:1043
+msgid " Scan "
+msgstr " Skanneri "
+
+#: desk/icons.c:1044
+msgid " Mail "
+msgstr " Posti "
 
