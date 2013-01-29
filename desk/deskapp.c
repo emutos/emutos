@@ -4,7 +4,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002 The EmuTOS development team
+*       Copyright (c) 2002-2013 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -297,8 +297,41 @@ static BYTE *app_parse(BYTE *pcurr, ANODE *pa)
           pa->a_letter = (*pcurr == ' ') ? NULL : *pcurr;
           pcurr += 2;
         }
-        pcurr = scan_str(pcurr, &pa->a_pappl);
-        pcurr = scan_str(pcurr, &pa->a_pdata);
+
+        /*
+         * for disk and trash, we use text strings from the resource
+         * rather than those embedded in the .INF file, so that we can
+         * provide multilanguage support for the desktop.
+         */
+        switch(pa->a_type)
+        {
+          BYTE temp[15], *p;
+          ULONG n;
+
+          case AT_ISDISK:
+                /*
+                 * because the string to display for disks includes the
+                 * drive letter as well as the (translated) word "DISK",
+                 * we create a temporary string for scan_str()
+                 */
+                n = strlcpy(temp,desk_rs_fstr[STDISK],sizeof(temp)-3);
+                p = temp + min(n,sizeof(temp)-4);
+                *p++ = ' ';
+                *p++ = pa->a_letter;
+                *p = '@';
+                scan_str(temp, &pa->a_pappl);
+                scan_str("@", &pa->a_pdata);    /* allocates null string */
+                break;
+          case AT_ISTRSH:
+                pa->a_pappl = (char *)desk_rs_fstr[STTRASH];
+                scan_str("@", &pa->a_pdata);
+                break;
+          default:
+                pcurr = scan_str(pcurr, &pa->a_pappl);
+                pcurr = scan_str(pcurr, &pa->a_pdata);
+        }
+        while(*pcurr != '\n')   /* advance to end of line */
+            pcurr++;
 
         return(pcurr);
 }

@@ -4306,3 +4306,5 @@ Start... early ages
   down. (RFB)
 - bios/68030_pmmu.S: Moved read-only data to SECTION_RODATA. (VRI)
 - po/fr.po: Added missing translations. (VRI)
+- desk/deskapp.c desk/desktop.def desk/desktop.rsc: Added "DISK" and
+  "TRASH" from the desktop to the translatable strings. (RFB)
