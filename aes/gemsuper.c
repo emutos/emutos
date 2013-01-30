@@ -83,8 +83,8 @@ static void aestrace(const char* message)
 
 static UWORD crysbind(WORD opcode, LONG pglobal, WORD control[], WORD int_in[], WORD int_out[], LONG addr_in[])
 {
-        LONG    maddr;
-        LONG    tree;
+        LONG    maddr, buparm;
+        OBJECT  *tree;
         WORD    mouse, ret;
         WORD    unsupported = FALSE;
 
@@ -162,9 +162,9 @@ static UWORD crysbind(WORD opcode, LONG pglobal, WORD control[], WORD int_in[], 
 #endif
                 if (MU_FLAGS & MU_TIMER)
                   maddr = HW(MT_HICOUNT) + LW(MT_LOCOUNT);
-                tree = HW(MB_CLICKS) | LW((MB_MASK << 8) | MB_STATE);
+                buparm = HW(MB_CLICKS) | LW((MB_MASK << 8) | MB_STATE);
                 ret = ev_multi(MU_FLAGS, (MOBLK *)&MMO1_FLAGS, (MOBLK *)&MMO2_FLAGS, 
-                        maddr, tree, MME_PBUFF, &EV_MX);
+                        maddr, buparm, MME_PBUFF, &EV_MX);
                 break;
           case EVNT_DCLICK:
                 ret = ev_dclick(EV_DCRATE, EV_DCSETIT);
@@ -189,9 +189,8 @@ static UWORD crysbind(WORD opcode, LONG pglobal, WORD control[], WORD int_in[], 
                                 TRUE, TRUE);
                 break;
           case MENU_TEXT:
-                tree = MM_ITREE;
-                strcpy((char *)LLGET(OB_SPEC(ITEM_NUM)), 
-                         (char *)MM_PTEXT);   
+                tree = (OBJECT *)MM_ITREE;
+                strcpy((char *)tree[ITEM_NUM].ob_spec,(char *)MM_PTEXT);   
                 break;
           case MENU_REGISTER:
                 ret = mn_register(MM_PID, MM_PSTR);
