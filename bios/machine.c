@@ -46,7 +46,7 @@ long cookie_mch;
 #if CONF_WITH_DIP_SWITCHES
 long cookie_swi;
 #endif
-#if CONF_WITH_ALT_RAM
+#if CONF_WITH_FRB
 long cookie_frb;
 #endif
 
@@ -329,7 +329,7 @@ static void setvalue_snd(void)
 #endif
 }
   
-#if CONF_WITH_ALT_RAM
+#if CONF_WITH_FRB
 
 /* FRB */
 
@@ -337,11 +337,7 @@ static void setvalue_frb(void)
 {
   BOOL need_frb; /* Required only if the system has Alt RAM */
 
-#ifdef MACHINE_AMIGA
-  /* At this point, we don't know if the system has Alt RAM yet.
-   * Anyway, _FRB is useless for Amiga floppy routines, so disable it. */
-  need_frb = FALSE;
-#elif CONF_WITH_FASTRAM
+#if CONF_WITH_FASTRAM
   /* Standard Atari TT-RAM may be present */
   need_frb = (ramtop > 0);
 #else
@@ -357,7 +353,7 @@ static void setvalue_frb(void)
 #endif
 }
 
-#endif /* CONF_WITH_ALT_RAM */
+#endif /* CONF_WITH_FRB */
 
 #if CONF_WITH_FDC
 
@@ -516,7 +512,7 @@ void fill_cookie_jar(void)
   setvalue_snd();
   cookie_add(COOKIE_SND, cookie_snd);
 
-#if CONF_WITH_ALT_RAM
+#if CONF_WITH_FRB
   /* _FRB  This cookie is present when alternative RAM is present. It 
    * points to a 64k buffer that may be used by DMA device drivers to 
    * transfer memory between alternative RAM and ST RAM for DMA operations.  
@@ -525,7 +521,7 @@ void fill_cookie_jar(void)
   if (cookie_frb) {
     cookie_add(COOKIE_FRB, cookie_frb);
   }
-#endif /* CONF_WITH_ALT_RAM */
+#endif /* CONF_WITH_FRB */
    
   /* _FLK  The presence of this cookie indicates that file and record 
    * locking extensions to GEMDOS exist. The value field is a version 

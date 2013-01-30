@@ -42,7 +42,7 @@ extern long cookie_swi;
 #endif
 extern long cookie_idt;
 extern long cookie_akp;
-#if CONF_WITH_ALT_RAM
+#if CONF_WITH_FRB
 extern long cookie_frb;
 #endif
 

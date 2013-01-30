@@ -4319,3 +4319,5 @@ Start... early ages
 - aes/gemsuper.c: Code cleanup: eliminate OB_ macros. (RFB)
 - desk/deskapp.c: Handle internationalization of desktop DISK & TRASH
   names just like TOS. (RFB)
+- bios/acsi.c bios/floppy.c bios/machine.c bios/machine.h include/config.h:
+  Proper _FRB handing to fix floppy routines on Amiga with Alt Ram. (VRI)

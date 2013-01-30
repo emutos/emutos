@@ -437,7 +437,7 @@ LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt,
             side = track % 2;
             track /= 2;
         }
-#if CONF_WITH_ALT_RAM
+#if CONF_WITH_FRB
         if ((void *)buf >= phystop) {
             /* The buffer provided by the user is outside the ST-RAM,
              * but floprw() needs to use the DMA.

@@ -194,6 +194,9 @@
 # ifndef CONF_WITH_FALCON_MMU
 #  define CONF_WITH_FALCON_MMU 0
 # endif
+# ifndef CONF_WITH_FRB
+#  define CONF_WITH_FRB 0
+# endif
 # ifndef CONF_WITH_FASTRAM
 #  define CONF_WITH_FASTRAM 0
 # endif
@@ -389,6 +392,13 @@
  */
 #ifndef CONF_WITH_ALT_RAM
 # define CONF_WITH_ALT_RAM 1
+#endif
+
+/*
+ * Set CONF_WITH_FRB to 1 to automatically enable the _FRB cookie when required
+ */
+#ifndef CONF_WITH_FRB
+# define CONF_WITH_FRB CONF_WITH_ALT_RAM
 #endif
 
 /*
