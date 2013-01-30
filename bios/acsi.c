@@ -66,7 +66,7 @@ LONG acsi_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev)
             
 #if CONF_WITH_FRB
         if (buf > 0x1000000L) {
-            if (cookie_frb <= 0) {
+            if (cookie_frb == 0) {
                 kprintf("missing FRB buffer");
                 return -1L;
             } else {

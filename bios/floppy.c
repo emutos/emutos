@@ -443,7 +443,7 @@ LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt,
              * but floprw() needs to use the DMA.
              * We must use the intermediate _FRB buffer.
              */
-            if (cookie_frb > 0) {
+            if (cookie_frb) {
                 /* do we really need proper FRB lock? (TODO) */
                 if(rw & 1) {
                     /* writing */ 
