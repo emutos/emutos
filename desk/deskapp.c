@@ -297,41 +297,8 @@ static BYTE *app_parse(BYTE *pcurr, ANODE *pa)
           pa->a_letter = (*pcurr == ' ') ? NULL : *pcurr;
           pcurr += 2;
         }
-
-        /*
-         * for disk and trash, we use text strings from the resource
-         * rather than those embedded in the .INF file, so that we can
-         * provide multilanguage support for the desktop.
-         */
-        switch(pa->a_type)
-        {
-          BYTE temp[15], *p;
-          ULONG n;
-
-          case AT_ISDISK:
-                /*
-                 * because the string to display for disks includes the
-                 * drive letter as well as the (translated) word "DISK",
-                 * we create a temporary string for scan_str()
-                 */
-                n = strlcpy(temp,desk_rs_fstr[STDISK],sizeof(temp)-3);
-                p = temp + min(n,sizeof(temp)-4);
-                *p++ = ' ';
-                *p++ = pa->a_letter;
-                *p = '@';
-                scan_str(temp, &pa->a_pappl);
-                scan_str("@", &pa->a_pdata);    /* allocates null string */
-                break;
-          case AT_ISTRSH:
-                pa->a_pappl = (char *)desk_rs_fstr[STTRASH];
-                scan_str("@", &pa->a_pdata);
-                break;
-          default:
-                pcurr = scan_str(pcurr, &pa->a_pappl);
-                pcurr = scan_str(pcurr, &pa->a_pdata);
-        }
-        while(*pcurr != '\n')   /* advance to end of line */
-            pcurr++;
+        pcurr = scan_str(pcurr, &pa->a_pappl);
+        pcurr = scan_str(pcurr, &pa->a_pdata);
 
         return(pcurr);
 }
@@ -539,6 +506,7 @@ void app_start(void)
         if (gl_afile[0] != '#')
         {
           LONG drivemask;
+          char *text;
           int icon_index = 0;
           int drive_x = 0, drive_y = 0;
           int trash_x, trash_y;
@@ -568,8 +536,9 @@ void app_start(void)
               drive_y = icon_index / xcnt; /* y position */
               icon_type = (i > 1) ? 0 /* Hard disk */ : 1 /* Floppy */;
               drive_letter = 'A' + i;
-              sprintf(gl_afile + x, "#M %02X %02X %02X FF %c DISK %c@ @ \r\n",
-                drive_x, drive_y, icon_type, drive_letter, drive_letter);
+              rsrc_gaddr(R_STRING, STDISK, (LONG *)&text);
+              sprintf(gl_afile + x, "#M %02X %02X %02X FF %c %s %c@ @ \r\n",
+                      drive_x, drive_y, icon_type, drive_letter, text, drive_letter);
               icon_index++;
             }
 
@@ -582,8 +551,9 @@ void app_start(void)
           trash_y = ycnt-1; /* Bottom */
           if (drive_y >= trash_y) /* if the last dive icon overflows over the */
             trash_x = xcnt-1;  /* trash row, force trash to right */
-          sprintf(gl_afile + x, "#T %02X %02X 03 FF   TRASH@ @ \r\n",
-            trash_x, trash_y);
+          rsrc_gaddr(R_STRING, STTRASH, (LONG *)&text);
+          sprintf(gl_afile + x, "#T %02X %02X 03 FF   %s@ @ \r\n",
+                  trash_x, trash_y, text);
           G.g_afsize = strlen(gl_afile);
         }
 

@@ -4317,3 +4317,5 @@ Start... early ages
 
 2013-01-30
 - aes/gemsuper.c: Code cleanup: eliminate OB_ macros. (RFB)
+- desk/deskapp.c: Handle internationalization of desktop DISK & TRASH
+  names just like TOS. (RFB)
