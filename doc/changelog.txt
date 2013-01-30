@@ -4312,3 +4312,5 @@ Start... early ages
 
 2013-01-29
 - po/fi.po: Updated. Contributed by Eero Tamminen. (VRI)
+- Makefile bios/amiga.c bios/amiga.h bios/amiga2.S bios/aros.c bios/aros.h
+  bios/aros2.S: Split amiga.c to aros.c due to license issues. (VRI)

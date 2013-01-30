@@ -1,7 +1,7 @@
 /*
  * amiga.h - Amiga specific functions
  *
- * Copyright (c) 2012 EmuTOS development team
+ * Copyright (c) 2013 EmuTOS development team
  *
  * Authors:
  *  VRI   Vincent Rivière
@@ -69,8 +69,6 @@ WORD amiga_floprw(LONG buf, WORD rw, WORD dev, WORD sect, WORD track, WORD side,
 void amiga_init_keyboard_interrupt(void);
 void amiga_vbl(void);
 void call_mousevec(BYTE* buf);
-ULONG MemoryTest(void *address, void *endAddress, ULONG blockSize);
-ULONG ReadGayle(void);
 
 #endif /* MACHINE_AMIGA */
 
