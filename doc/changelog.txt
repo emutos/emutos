@@ -4321,3 +4321,4 @@ Start... early ages
   names just like TOS. (RFB)
 - bios/acsi.c bios/floppy.c bios/machine.c bios/machine.h include/config.h:
   Proper _FRB handing to fix floppy routines on Amiga with Alt Ram. (VRI)
+- po/de.po: Updated German translations. (THH)
