@@ -915,15 +915,15 @@ d_contourfill(Vwk * vwk)
 
     search_color = INTIN[0];
 
-    /* Range check the color and convert the index to a pixel value */
-    if (search_color >= DEV_TAB[13])
-        return;
-
-    if (search_color < 0) {
+    if ((WORD)search_color < 0) {
         search_color = pixelread(xleft,oldy);
         seed_type = 1;
     } else {
         const WORD plane_mask[] = { 1, 3, 7, 15 };
+
+        /* Range check the color and convert the index to a pixel value */
+        if (search_color >= DEV_TAB[13])
+            return;
 
         /*
          * We mandate that white is all bits on.  Since this yields 15

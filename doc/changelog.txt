@@ -4323,3 +4323,6 @@ Start... early ages
   Proper _FRB handing to fix floppy routines on Amiga with Alt Ram. (VRI)
 - po/de.po: Updated German translations. (THH)
 - bios/acsi.c: Code cleanup: removed GOTOs & simplified do_acsi_rw(). (RFB)
+
+2013-01-31
+- vdi/vdi_fill.c: Fixed v_contourfill() with negative index. (VRI)
