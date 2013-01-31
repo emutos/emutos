@@ -4322,3 +4322,4 @@ Start... early ages
 - bios/acsi.c bios/floppy.c bios/machine.c bios/machine.h include/config.h:
   Proper _FRB handing to fix floppy routines on Amiga with Alt Ram. (VRI)
 - po/de.po: Updated German translations. (THH)
+- bios/acsi.c: Code cleanup: removed GOTOs & simplified do_acsi_rw(). (RFB)

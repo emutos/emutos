@@ -1,7 +1,7 @@
 /*
- * acsi.c - Atari Simple Computer Interface (ACSI) support
+ * acsi.c - Atari Computer System Interface (ACSI) support
  *
- * Copyright (c) 2002-2012 EmuTOS development team
+ * Copyright (c) 2002-2013 EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel
@@ -30,6 +30,7 @@
 static void hdc_start_dma_read(int count);
 static void hdc_start_dma_write(int count);
 static void dma_send_byte(UBYTE data, UBYTE control);
+static int send_command(WORD opcode, WORD dev, LONG sector, WORD cnt);
 static int do_acsi_rw(WORD rw, LONG sect, WORD cnt, LONG buf, WORD dev);
 
 /*
@@ -112,25 +113,12 @@ LONG acsi_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev)
 
 static int do_acsi_rw(WORD rw, LONG sector, WORD cnt, LONG buf, WORD dev)
 {
-    /* TODO - is dev the device number, the controller number,
-     * or a combination of both ?
+    /* ACSI uses the top 3 bits of the command code to
+     * specify the device number
      */
-#if 0
-    int ctrlnum = 0;
-    int devnum = dev << 5;
-#else
-    int ctrlnum = dev << 5;
-    int devnum = 0;
-#endif
     int opcode;
     int status;
-    
-    if(rw) {
-        opcode = 0x0a | ctrlnum;  /* write */
-    } else {
-        opcode = 0x08 | ctrlnum;  /* read */
-    }
-    
+
     /* set flock */
     flock = -1;
     
@@ -139,38 +127,57 @@ static int do_acsi_rw(WORD rw, LONG sector, WORD cnt, LONG buf, WORD dev)
     
     if(rw) {
         hdc_start_dma_write(cnt);
+        opcode = 0x0a;      /* write */
     } else {
         hdc_start_dma_read(cnt);
+        opcode = 0x08;      /* read */
     }
         
     /* emit command */
-    dma_send_byte( opcode, DMA_FDC | DMA_HDC);
-    if(timeout_gpip(SMALL_TIMEOUT)) goto timeout;
-    dma_send_byte( devnum | ((sector >> 16) & 0x1F), 
-                   DMA_FDC | DMA_HDC | DMA_A0);
-    if(timeout_gpip(SMALL_TIMEOUT)) goto timeout;
-    dma_send_byte( sector >> 8, DMA_FDC | DMA_HDC | DMA_A0);
-    if(timeout_gpip(SMALL_TIMEOUT)) goto timeout;
-    dma_send_byte( sector,  DMA_FDC | DMA_HDC | DMA_A0);
-    if(timeout_gpip(SMALL_TIMEOUT)) goto timeout;
-    dma_send_byte( cnt, DMA_FDC | DMA_HDC | DMA_A0);
-    if(timeout_gpip(SMALL_TIMEOUT)) goto timeout;
-    dma_send_byte( 0, DMA_HDC | DMA_A0);
-    if(timeout_gpip(LARGE_TIMEOUT)) goto timeout;
-    
-    /* read status */
-    DMA->control = DMA_FDC | DMA_HDC | DMA_A0;
-    status = DMA->data;
-    
+    status = send_command(opcode,dev,sector,cnt);
+
+    if (status == 0) {      /* no timeout */
+        /* read status */
+        DMA->control = DMA_FDC | DMA_HDC | DMA_A0;
+        status = DMA->data;
+    }
+
     /* put back to floppy and free flock */
     DMA->control = DMA_FDC;
     flock = 0;
     return status;
+}
 
-timeout:
-    DMA->control = DMA_FDC;
-    flock = 0;
-    return -1;
+/*
+ * send an ACSI command; return -1 if timeout
+ */
+static int send_command(WORD opcode,WORD dev,LONG sector,WORD cnt)
+{
+    dma_send_byte( opcode | (dev<<5), DMA_FDC | DMA_HDC);
+    if (timeout_gpip(SMALL_TIMEOUT))
+        return -1;
+
+    dma_send_byte( ((sector >> 16) & 0x1F), DMA_FDC | DMA_HDC | DMA_A0);
+    if (timeout_gpip(SMALL_TIMEOUT))
+        return -1;
+
+    dma_send_byte( sector >> 8, DMA_FDC | DMA_HDC | DMA_A0);
+    if (timeout_gpip(SMALL_TIMEOUT))
+        return -1;
+
+    dma_send_byte( sector,  DMA_FDC | DMA_HDC | DMA_A0);
+    if (timeout_gpip(SMALL_TIMEOUT))
+        return -1;
+
+    dma_send_byte( cnt, DMA_FDC | DMA_HDC | DMA_A0);
+    if (timeout_gpip(SMALL_TIMEOUT))
+        return -1;
+
+    dma_send_byte( 0, DMA_HDC | DMA_A0);
+    if (timeout_gpip(LARGE_TIMEOUT))
+        return -1;
+
+    return 0;
 }
 
 static void dma_send_byte(UBYTE data, UBYTE control)
