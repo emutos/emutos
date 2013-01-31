@@ -30,6 +30,8 @@
         .globl  _detect_fpu
 
         .extern _longframe              // If not 0, use long stack frames
+        .extern _setup_68030_pmmu
+        .extern _setup_68040_pmmu
 
 
 
@@ -272,6 +274,9 @@ pi_chk040:
         cmp.b   #40,_mcpu+3
         bne.s   pi_done
         
+#if CONF_WITH_68040_PMMU
+        jsr     setup_68040_pmmu
+#else
 // On a 68040 only, clear the instruction cache then activate it;
 // the data cache remains disabled.
         nop
@@ -296,9 +301,11 @@ pi_chk040:
         dc.l    0x4e7b0006      // movec   d0,dttr0
         moveq.l #0,d0
         dc.l    0x4e7b0007      // movec   d0,dttr1
-pi_done:
-#endif
+#endif /* CONF_WITH_68040_PMMU */
 
+#endif /* __mcoldfire__ */
+
+pi_done:
         rts
 
 /*

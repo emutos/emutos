@@ -73,6 +73,9 @@
 # ifndef CONF_WITH_68030_PMMU
 #  define CONF_WITH_68030_PMMU 0
 # endif
+# ifndef CONF_WITH_68040_PMMU
+#  define CONF_WITH_68040_PMMU 0
+# endif
 # ifndef ALWAYS_SHOW_INITINFO
 #  define ALWAYS_SHOW_INITINFO 1 /* Because the FireBee always do warm boot */
 # endif
@@ -158,6 +161,9 @@
 # endif
 # ifndef CONF_WITH_68030_PMMU
 #  define CONF_WITH_68030_PMMU 0
+# endif
+# ifndef CONF_WITH_68040_PMMU
+#  define CONF_WITH_68040_PMMU 0
 # endif
 #endif
 
@@ -274,6 +280,9 @@
 # endif
 # ifndef CONF_WITH_68030_PMMU
 #  define CONF_WITH_68030_PMMU 0
+# endif
+# ifndef CONF_WITH_68040_PMMU
+#  define CONF_WITH_68040_PMMU 0
 # endif
 # ifndef USE_STOP_INSN_TO_FREE_HOST_CPU
 #  define USE_STOP_INSN_TO_FREE_HOST_CPU 0
@@ -744,6 +753,16 @@
  */
 #ifndef CONF_WITH_68030_PMMU
 # define CONF_WITH_68030_PMMU 1
+#endif
+
+/*
+ * Set CONF_WITH_68040_PMMU to install a PMMU tree on a 68040 CPU.
+ * This provides improved performance by allowing the data cache to
+ * be enabled. This also allows to run FreeMiNT on 68040 without set_mmu.prg.
+ */
+#ifndef CONF_WITH_68040_PMMU
+// This is currently an experimental feature
+# define CONF_WITH_68040_PMMU 0
 #endif
 
 /*

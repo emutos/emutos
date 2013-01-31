@@ -161,7 +161,7 @@ bios_csrc = kprint.c xbios.c chardev.c blkdev.c bios.c clock.c \
             xhdi.c natfeats.c font.c conout.c vt52.c dmasound.c ide.c amiga.c aros.c delay.c
 bios_ssrc = tosvars.S startup.S aciavecs.S vectors.S lineavars.S \
             processor.S memory.S linea.S panicasm.S kprintasm.S \
-            natfeat.S amiga2.S aros2.S delayasm.S 68030_pmmu.S
+            natfeat.S amiga2.S aros2.S delayasm.S 68030_pmmu.S 68040_pmmu.S
 
 #
 # source code in bdos/
