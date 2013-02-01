@@ -361,7 +361,7 @@ static UBYTE ReadExpansionByte(APTR board, ULONG offset)
     return v;
 }
 
-/* From arch/m68k-amiga/expansion/readexpansionbyte.c *************************/
+/* From arch/m68k-amiga/expansion/writeexpansionbyte.c ************************/
 
 static void WriteExpansionByte(APTR board, ULONG offset, ULONG byte)
 {
