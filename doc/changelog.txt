@@ -4333,3 +4333,4 @@ Start... early ages
 2013-02-01
 - aes/gemobed.c: Always center dialogs, even with high resolutions. (VRI)
 - desk/desktop.rsc po/*.po: Display doc\license.txt with \ in about box. (VRI)
+- bios/initinfo.c: Center the initinfo screen vertically. (VRI)

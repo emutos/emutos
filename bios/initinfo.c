@@ -160,8 +160,14 @@ static void cprint_asctime(void)
 
 void initinfo(void)
 {
+    int initinfo_height = 22;
+    int i;
+
+    /* Center the initinfo screen vertically */
+    for (i = 0; i < (v_cel_my - initinfo_height) / 2; i++)
+        cprintf("\r\n");
+
     /* Now print the EmuTOS Logo */
-    cprintf("\r\n");
     print_art("11111111111 7777777777  777   7777");
     print_art("1                  7   7   7 7    ");
     print_art("1111   1 1  1   1  7   7   7  777 ");
