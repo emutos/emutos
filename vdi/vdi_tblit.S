@@ -189,7 +189,7 @@
         .extern _DDA_INC
         .extern _scrpt2
         .extern _scrtchp
-        .extern _shft_off
+        .extern _shift_offset
 
 
 /////////////////////////////////////////////////////////
@@ -2604,7 +2604,7 @@ srt_lin:
  */
 
 concat:
-        movem.l d2/d3,-(sp)     // save the registers that get clobbered
+        movem.l d2/d3/a0,-(sp)  // save the registers that get clobbered
 
 /* Convert the y-coordinate into an offset to the start of the scan row. */
 
@@ -2625,7 +2625,9 @@ concat:
 // in the shift table.  If the planes are arranged as separate, consecu-      
 // tive entities then divide the x-coordinate by 8 to get the number of bytes.                                                                     
 //
-        move.b  _shft_off,d3    // get pre-calculated shift factor
+        lea     _shift_offset,a0
+        add.w   _v_planes,a0
+        move.b  (a0),d3         // get pre-calculated shift factor
         lsr.w   d3,d2           // convert x-coordinate to offset
 
 //
@@ -2635,7 +2637,7 @@ concat:
 //
         ext.l   d2
         add.l   d2,d1           // compute total offset into screen buffer
-        movem.l (sp)+,d2/d3     // restore the clobbered registers
+        movem.l (sp)+,d2/d3/a0  // restore the clobbered registers
         rts
 
 

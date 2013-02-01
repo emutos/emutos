@@ -10,7 +10,7 @@
 |                   All Rights Reserved Worldwide                       #
 |                                                                       #
 |########################################################################
-| Translated on Sat Nov 19 23:00:26 2011 by version 2.6.0 of PortAsm translator
+| Translated on Sat Feb  2 00:37:40 2013 by version 2.6.0 of PortAsm translator
 | PortAsm Licence Number #3250
 | Target assembler:    Gnu 'gas'
 |
@@ -118,8 +118,8 @@
 	.extern	_scrpt2
 |;;           .extern _scrtchp         | [51]
 	.extern	_scrtchp
-|;;           .extern _shft_off        | [52]
-	.extern	_shft_off
+|;;           .extern _shift_offset    | [52]
+	.extern	_shift_offset
 
 
 
@@ -3591,9 +3591,9 @@ srt_lin:
       rts                              | [2034]
 | 2606 "vdi/vdi_tblit.S"
 concat:
-|;;   movem.l   d2/d3,-(sp)            | [2037]
-	lea      -8(%a7),%a7
-	movem.l  %d2-%d3,(%a7)
+|;;   movem.l   d2/d3/a0,-(sp)         | [2037]
+	lea      -12(%a7),%a7
+	movem.l  %d2-%d3/%a0,(%a7)
 
 
 
@@ -3609,8 +3609,12 @@ concat:
 |;;   andi.w    #0xfff0,d2             | [2049]
 	andi.l   #(0xFFFF&0xfff0),%d2
 | 2628 "vdi/vdi_tblit.S"
-      move.b   _shft_off,%d3           | [2051]
-|;;   lsr.w     d3,d2                  | [2052]
+      lea      _shift_offset,%a0       | [2051]
+|;;   add.w     _v_planes,a0           | [2052]
+	mvs.w    _v_planes,%d3
+	adda.l   %d3,%a0
+      move.b   (%a0),%d3               | [2053]
+|;;   lsr.w     d3,d2                  | [2054]
 	lsr.l    %d3,%d2
 
 
@@ -3618,12 +3622,12 @@ concat:
 
 
 
-      ext.l    %d2                     | [2059]
-      add.l    %d2,%d1                 | [2060]
-|;;   movem.l   (sp)+,d2/d3            | [2061]
-	movem.l  (%a7),%d2-%d3
-	lea      8(%a7),%a7
-      rts                              | [2062]
+      ext.l    %d2                     | [2061]
+      add.l    %d2,%d1                 | [2062]
+|;;   movem.l   (sp)+,d2/d3/a0         | [2063]
+	movem.l  (%a7),%d2-%d3/%a0
+	lea      12(%a7),%a7
+      rts                              | [2064]
 
 
 

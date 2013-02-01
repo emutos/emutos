@@ -4337,3 +4337,5 @@ Start... early ages
 - bios/acsi.c bios/floppy.c bios/processor.h bios/processor.S
   include/asmdefs.h: Fix bug: caches were not flushed/invalidated when
   DMA was used. (RFB)
+- bios/lineainit.c bios/lineavars.h vdi/vdi_misc.c vdi/vdi_tblit.S
+  vdi/vdi_tblit_cf.S: Fixed Hatari extended VDI screens in ST mode. (VRI)

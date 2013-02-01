@@ -17,7 +17,12 @@
 
 #define DBG_LINEA 0
 
-BYTE shft_off;                  /* once computed Offset into a Scan Line */
+/* Precomputed value of log2(8/v_planes).
+ * To get the address of a pixel x in a scan line, use the fomula:
+ * (x&0xfff0)>>shift_offset[v_planes]
+ * Only the indexes 1, 2 and 4 are meaningful.
+ */
+const BYTE shift_offset[5] = {0, 3, 2, 0, 1};
 
 /*
  * linea_init - init linea variables
@@ -25,18 +30,11 @@ BYTE shft_off;                  /* once computed Offset into a Scan Line */
 
 void linea_init(void)
 {
-    int n;
 
     screen_get_current_mode_info(&v_planes, &v_hz_rez, &v_vt_rez);
 
     v_lin_wr = v_hz_rez / 8 * v_planes;     /* bytes per line */
     v_bytes_lin = v_lin_wr;       /* I think v_bytes_lin = v_lin_wr (PES) */
-
-    /* Calculate the shift offset
-     * (used for screen modes that have the planes arranged in an
-     *  interleaved fashion with a word for each plane). */
-    for (n = v_planes, shft_off = 3; n > 1; n >>= 1)
-        shft_off--;
 
 #if DBG_LINEA
     kprintf("planes: %d\n", v_planes);

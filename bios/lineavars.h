@@ -21,7 +21,7 @@
 
 /* Screen related variables */
 
-extern BYTE shft_off;           // once computed Offset into a Scan Line
+extern const BYTE shift_offset[5];  // pixel to address helper
 
 extern UWORD v_planes;          // count of color planes
 extern UWORD v_lin_wr;          // line wrap : bytes per line
