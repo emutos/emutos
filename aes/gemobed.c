@@ -68,14 +68,11 @@ void ob_center(LONG tree, GRECT *pt)
 {
         register WORD   xd, yd, wd, hd;
         OBJECT          *root = (OBJECT *)tree;
-        WORD            height;
 
         wd = root->ob_width;
         hd = root->ob_height;
         xd = (gl_width - wd) / 2;
-                                        /* don't center on xtra long screens */
-        height = min(gl_height, 25 * gl_hchar);
-        yd = gl_hbox + ((height - gl_hbox - hd) / 2);
+        yd = gl_hbox + ((gl_height - gl_hbox - hd) / 2);
         root->ob_x = xd;
         root->ob_y = yd;
                                                 /* account for outline  */

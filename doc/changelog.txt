@@ -4329,3 +4329,6 @@ Start... early ages
 - Makefile bios/68040_pmmu.S bios/processor.S include/config.h: Added
   experimental support for 68040 PMMU initialization. This does the same as
   set_mmu.prg, which is now useless. Contributed by Miro Kropáček. (VRI)
+
+2013-02-01
+- aes/gemobed.c: Always center dialogs, even with high resolutions. (VRI)
