@@ -515,8 +515,8 @@ msgid "EmuTOS is distributed under the GPL"
 msgstr "EmuTOS je ¹íøen pod licencí GPL"
 
 #: desk/desk_rsc.c:802
-msgid "See doc/license.txt for details"
-msgstr "Detaily viz doc/license.txt"
+msgid "See doc\\license.txt for details"
+msgstr "Detaily viz doc\\license.txt"
 
 #: desk/desk_rsc.c:817
 msgid "NEW FOLDER INFORMATION"
