@@ -23,6 +23,8 @@
 
         .globl  _processor_init
         .globl  _invalidate_icache
+        .globl  _flush_cache
+        .globl  _inval_cache
         .globl  _mcpu
         .globl  _mcpu_subtype
         .globl  _fputype
@@ -371,6 +373,64 @@ ii_done:
 #endif
         rts
 
+/*
+ * void flush_cache(void *start, long length)
+ *
+ * flush data cache before writing data
+ *
+ * the actions required depend on the type of data cache:
+ *   write-through:
+ *     no action is necessary
+ *   copyback:
+ *     we must push the data cache (the backing memory may be stale)
+ */
+
+_flush_cache:
+#ifdef __mcoldfire__
+#else
+//
+// 68030 data caches are always write-through, so no action is necessary
+//
+// 68040 data caches are either write-through or copyback, depending on
+// how the system is set up.  at this time, the data TTRs are set up so
+// that the cache would be write-through if enabled; but in any case it
+// is disabled.  so no action is necessary.
+//
+#endif
+        rts
+
+
+/*
+ * void inval_cache(void *start, long length)
+ *
+ * invalidate caches after data has been read in
+ *
+ * for both types of cache (write_through and copyback), we need to
+ * invalidate both the data and instruction caches
+ */
+_inval_cache:
+#ifdef __mcoldfire__
+#else
+        cmpi.b  #30,_mcpu+3
+        bne.s   ic_not30
+        MOVEC_CACR_D0                   // get current cacr
+        ori.w   #0x0808,d0              // set CD, CI bits
+        MOVEC_D0_CACR                   // clear both caches
+        bra.s   ic_done
+ic_not30:
+        cmpi.b  #40,_mcpu+3
+        bne.s   ic_done
+//
+// at this time, the data cache is disabled, so we only invalidate the
+// instruction cache.  if the data cache is enabled in the future, we
+// should issue a "cinva bc" instead.
+//
+        nop
+        CINVA_IC
+        nop
+ic_done:
+#endif
+        rts
 
 
 // ==== Variables ============================================================

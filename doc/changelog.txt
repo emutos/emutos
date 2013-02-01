@@ -4334,3 +4334,6 @@ Start... early ages
 - aes/gemobed.c: Always center dialogs, even with high resolutions. (VRI)
 - desk/desktop.rsc po/*.po: Display doc\license.txt with \ in about box. (VRI)
 - bios/initinfo.c: Center the initinfo screen vertically. (VRI)
+- bios/acsi.c bios/floppy.c bios/processor.h bios/processor.S
+  include/asmdefs.h: Fix bug: caches were not flushed/invalidated when
+  DMA was used. (RFB)

@@ -20,6 +20,7 @@
 #include "tosvars.h"
 #include "gemerror.h"
 #include "blkdev.h"
+#include "processor.h"
 
 #if CONF_WITH_ACSI
 
@@ -118,6 +119,11 @@ static int do_acsi_rw(WORD rw, LONG sector, WORD cnt, LONG buf, WORD dev)
      */
     int opcode;
     int status;
+    LONG buflen = (LONG)cnt * SECTOR_SIZE;
+
+    /* flush cache here so that memory is current */
+    if (rw == RW_WRITE)
+        flush_cache((void *)buf,buflen);
 
     /* set flock */
     flock = -1;
@@ -141,6 +147,10 @@ static int do_acsi_rw(WORD rw, LONG sector, WORD cnt, LONG buf, WORD dev)
         DMA->control = DMA_FDC | DMA_HDC | DMA_A0;
         status = DMA->data;
     }
+
+    /* invalidate cache if we've read into memory */
+    if (rw == RW_READ)
+        inval_cache((void *)buf,buflen);
 
     /* put back to floppy and free flock */
     DMA->control = DMA_FDC;

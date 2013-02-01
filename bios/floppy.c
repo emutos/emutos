@@ -28,6 +28,7 @@
 #include "kprint.h"
 #include "xbiosbind.h"  /* random() */
 #include "delay.h"
+#include "processor.h"
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
 #endif
@@ -777,6 +778,7 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
 #if CONF_WITH_FDC
     WORD retry;
     WORD status;
+    LONG buflen = (LONG)count * SECTOR_SIZE;
 #endif
 
     if(!IS_VALID_FLOPPY_DEVICE(dev)) return EUNDEV;  /* unknown disk */
@@ -791,6 +793,10 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
     err = amiga_floprw(buf, rw, dev, sect, track, side, count);
     devices[dev].last_access = hz_200;
 #elif CONF_WITH_FDC
+    /* flush cache here so that memory is current */
+    if (rw == RW_WRITE)
+        flush_cache((void *)buf,buflen);
+
     floplock(dev);
     
     select(dev, side);
@@ -814,8 +820,7 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
         if(timeout_gpip(TIMEOUT)) {
             /* timeout */
             err = EDRVNR;  /* drive not ready */
-            flopunlk();
-            return err;
+            break;         /* no retry */
         }
         status = get_dma_status();
         if(! (status & DMA_OK)) {
@@ -848,6 +853,10 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
       sect++;
     }
 
+    /* invalidate cache if we've read into memory */
+    if (rw == RW_READ)
+        inval_cache((void *)buf,buflen);
+
     flopunlk();
 #else
     err = EUNDEV;
@@ -867,7 +876,10 @@ static WORD flopwtrack(LONG buf, WORD dev, WORD track, WORD side, WORD track_siz
     if((track == 0) && (side == 0)) {
         /* TODO, maybe media changed ? */
     }
-  
+
+    /* flush cache here so that track image is pushed to memory */
+    flush_cache((void *)buf,track_size);
+
     floplock(dev);
   
     select(dev, side);
