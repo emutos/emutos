@@ -157,9 +157,9 @@ _main:
 #if CONF_WITH_RESET
         lea     _stktop,sp     // required for exception
         move.l  #not_falcon,8  // can't be Falcon if we get bus error
-        tst.w   0x8006.w       // magic: must access this before & after the reset
+        tst.w   0xffff8006.w   // magic: must access this before & after the reset
         reset                  // reset all hardware
-        tst.w   0x8006.w       // remaining magic
+        tst.w   0xffff8006.w   // remaining magic
         bra.b   reset_done
 not_falcon:
         reset
