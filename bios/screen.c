@@ -473,6 +473,9 @@ void screen_init(void)
 #endif
 
 #if CONF_WITH_NVRAM && !defined(MACHINE_FIREBEE)
+        /* This is currently disabled on the FireBee, because the VIDEL is
+         * unreliable. Some video modes are not displayed well.
+         */
         /* get boot resolution from NVRAM */
         ret = nvmaccess(0, 14, 2, (PTR)&boot_resolution);
         if (ret != 0) {
