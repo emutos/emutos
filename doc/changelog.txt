@@ -4339,3 +4339,6 @@ Start... early ages
   DMA was used. (RFB)
 - bios/lineainit.c bios/lineavars.h vdi/vdi_misc.c vdi/vdi_tblit.S
   vdi/vdi_tblit_cf.S: Fixed Hatari extended VDI screens in ST mode. (VRI)
+
+2013-02-02
+- po/it.po: Updated. Contributed by Lodovico Zanier. (VRI)
