@@ -279,7 +279,7 @@ void kbd_int(WORD scancode)
         }
         else {
             /* Ctrl+Alt+Del means warm reset */
-            os_entry();  /* restart this OS */
+            warm_reset();
         }
     }
 

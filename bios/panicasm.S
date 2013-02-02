@@ -17,6 +17,7 @@
   
         .globl  _panic
         .globl  _halt
+        .globl  _warm_reset
         .globl  _cold_reset
 
 
@@ -77,6 +78,12 @@ haltloop:
 #endif
         bra.s   haltloop
 
+/* void warm_reset(void)
+ * Restart this OS
+ */
+_warm_reset:
+        jmp     _main
+
 /* void cold_reset(void)
  * Invalidate the RAM configuration and reset the computer to the ROM OS
  */
@@ -92,5 +99,5 @@ _cold_reset:
         jmp     (a0)
 #else
         // We don't know how to cold reset, so just warm reset this OS
-        jmp     _main
+        jmp     _warm_reset
 #endif

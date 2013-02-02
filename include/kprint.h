@@ -59,6 +59,9 @@ extern void panic(const char *fmt, ...) PRINTF_STYLE NORETURN;
 /* halt the machine */
 extern void halt(void) NORETURN;
 
+/* Restart this OS */
+void warm_reset(void) NORETURN;
+
 /* Invalidate the RAM configuration and reset the computer to the ROM OS */
 void cold_reset(void) NORETURN;
 

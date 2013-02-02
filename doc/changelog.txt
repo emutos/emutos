@@ -4344,3 +4344,5 @@ Start... early ages
 - po/it.po: Updated. Contributed by Lodovico Zanier. (VRI)
 - bios/startup.S: Removed Hatari workaround, since the RESET instruction is not
   used anymore in emutos-ram. (VRI)
+- bios/ikbd.c bios/panicasm.S bios/screen.c include/kprint.h: Added
+  warm_reset() to restart the current OS. (VRI)
