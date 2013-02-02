@@ -172,16 +172,6 @@ not_falcon:
 
 main_after_reset_instruction:
 
-#if CONF_WITH_MFP && !defined(MACHINE_FIREBEE)
-        // Workaround for buggy Hatari (tested with version 1.6.2).
-        // The reset instruction should have disabled the MFP interrupts, but
-        // Hatari leaves them unmodified, so unexpected interrupts may occur.
-        // This matters for EmuTOS RAM versions.
-        // So manually disable the MFP interrupts
-        clr.b   0xfffffa07.w    // IERA
-        clr.b   0xfffffa09.w    // IERB
-#endif
-
 #if CONF_WITH_CARTRIDGE
 /*
  * Check for diagnostic cartridge
