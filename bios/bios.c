@@ -470,9 +470,9 @@ void biosmain(void)
         cprintf(_("Please eject the floppy and hit RETURN"));
         bconin2();
     }
+    cprintf("\r\033K"); /* clear the message */
 #endif
 
-    initscreen();               /* clear the screen, etc. */
 #if INITINFO_DURATION > 0
 #if ALWAYS_SHOW_INITINFO
     /* No condition */ {

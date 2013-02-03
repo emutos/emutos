@@ -4353,3 +4353,4 @@ Start... early ages
 - po/ru.po: Updated. Contributed by Dima Sobolev. (VRI)
 - bios/machine.c: Fixed crash of emutos-ram on machines without SCC. (VRI)
 - bios/vt52.c: Fixed vt52_init() and Setscreen() to clear the screen. (VRI)
+- bios/bios.c bios/initinfo.c bios/initinfo.h: Removed initscreen(). (VRI)

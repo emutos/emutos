@@ -35,13 +35,6 @@
 
 int early_cli;
 
-/* Initialize the screen */
-void initscreen(void)
-{
-    /* Clear screen, disable cursor blinking, set colors */
-    cprintf("\033E\033f\033b%c\033c%c", 15 + ' ', 0 + ' ');
-}
-
 #if FULL_INITINFO
 
 
