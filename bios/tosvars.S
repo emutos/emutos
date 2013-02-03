@@ -97,6 +97,10 @@
         .globl  _bell_hook
         .globl  _kcl_hook
 
+#if CONF_WITH_PSEUDO_COLD_BOOT
+        .globl  _warm_magic
+#endif
+
 #ifdef CONF_WITH_68030_PMMU
         .globl  pmmutree
 #endif
@@ -218,6 +222,11 @@ _ramvalid:      ds.l    1       // validates ramtop if $1357BD13
 _bell_hook:     ds.l    1       // pointer to routine for system bell
 _kcl_hook:      ds.l    1       // pointer to routine for system keyclick
         .org 0x5b4
+
+#if CONF_WITH_PSEUDO_COLD_BOOT
+        .org 0x6fc              // any location below bssstart is ok
+_warm_magic:    ds.l    1       // set to WARM_MAGIC if this is a warm boot
+#endif
 
         .org 0x700
 pmmutree:       ds.l    64      // for pmmu tree on 68030

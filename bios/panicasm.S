@@ -88,6 +88,9 @@ _warm_reset:
  * Invalidate the RAM configuration and reset the computer to the ROM OS
  */
 _cold_reset:
+#if CONF_WITH_PSEUDO_COLD_BOOT
+        clr.l   _warm_magic     // Next boot will be pseudo-cold
+#endif
 #ifdef MACHINE_AMIGA
         clr.l   0x420           // Invalidate memvalid
         move.l  0x00fc0004,a0   // Get the entry adress from offset 4 in the ROM

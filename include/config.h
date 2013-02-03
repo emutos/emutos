@@ -76,8 +76,8 @@
 # ifndef CONF_WITH_68040_PMMU
 #  define CONF_WITH_68040_PMMU 0
 # endif
-# ifndef ALWAYS_SHOW_INITINFO
-#  define ALWAYS_SHOW_INITINFO 1 /* Because the FireBee always do warm boot */
+# ifndef CONF_WITH_PSEUDO_COLD_BOOT
+#  define CONF_WITH_PSEUDO_COLD_BOOT 1
 # endif
 # ifndef INITINFO_DURATION
 #  define INITINFO_DURATION 8 /* Longer time for LCD monitors startup */
@@ -640,6 +640,14 @@
  */
 #ifndef USE_STATIC_INLINES
 # define USE_STATIC_INLINES 1
+#endif
+
+/*
+ * Set CONF_WITH_PSEUDO_COLD_BOOT to 1 to simulate a cold boot on machines
+ * which always do a warm boot, such as the FireBee.
+ */
+#ifndef CONF_WITH_PSEUDO_COLD_BOOT
+# define CONF_WITH_PSEUDO_COLD_BOOT 0
 #endif
 
 /*

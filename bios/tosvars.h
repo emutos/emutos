@@ -144,6 +144,11 @@ struct kbdvecs
 };
 extern struct kbdvecs kbdvecs;
 
+#if CONF_WITH_PSEUDO_COLD_BOOT
+#define WARM_MAGIC 0x5741524D /* "WARM" */
+extern ULONG warm_magic;
+#endif
+
 #endif /* TOSVARS_H */
 
 

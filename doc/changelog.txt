@@ -4346,3 +4346,7 @@ Start... early ages
   used anymore in emutos-ram. (VRI)
 - bios/ikbd.c bios/panicasm.S bios/screen.c include/kprint.h: Added
   warm_reset() to restart the current OS. (VRI)
+
+2013-02-03
+- bios/bios.c bios/panicasm.S bios/tosvars.h bios/tosvars.S include/config.h:
+  Added proper warm boot detection on the FireBee.

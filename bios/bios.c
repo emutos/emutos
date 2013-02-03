@@ -425,18 +425,26 @@ static void autoexec(void)
 
 void biosmain(void)
 {
-    int coldboot; /* unfortunately register d2 gets overwritten by bios_init */
+    BOOL coldboot = FALSE; /* Without clue, this is a warm boot */
     BOOL rtc_present = FALSE; /* some hardware keeps the time when power is off */
 
     bios_init();                /* Initialize the BIOS */ 
 
-    /* cold or warm boot? */
-    coldboot = (memvalid!=0x752019f3 || memval2!=0x237698aa || memval3!=0x5555aaaa);
-    if (coldboot) {
+#if CONF_WITH_PSEUDO_COLD_BOOT
+    if (warm_magic != WARM_MAGIC)
+    {
+        coldboot = TRUE;
+        warm_magic = WARM_MAGIC; /* Next boot will be warm */
+    }
+#endif
+    
+    /* If the RAM was not valid, this is a cold boot */
+    if (memvalid!=0x752019f3 || memval2!=0x237698aa || memval3!=0x5555aaaa) {
         /* make memory config valid */
         memvalid = 0x752019f3;
         memval2  = 0x237698aa;
         memval3  = 0x5555aaaa;
+        coldboot = TRUE;
     }
 
     trap1( 0x30 );              /* initial test, if BDOS works: Sversion() */
