@@ -4351,3 +4351,4 @@ Start... early ages
 - bios/bios.c bios/panicasm.S bios/tosvars.h bios/tosvars.S include/config.h:
   Added proper warm boot detection on the FireBee and in emutos-ram.
 - po/ru.po: Updated. Contributed by Dima Sobolev. (VRI)
+- bios/machine.c: Fixed crash of emutos-ram on machines without SCC. (VRI)

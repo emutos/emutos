@@ -443,6 +443,7 @@ volatile BYTE *fbcr = (BYTE *)FALCON_BUS_CTL;
   /* TODO: disable MFP-TT interrupts when TT support is implemented */
 
  #if CONF_WITH_SCC
+  if (has_scc)
   {
     SCC *scc = (SCC *)SCC_BASE;
     ULONG loops = loopcount_1_msec / 1000;  /* 1 usec = 8 cycles of SCC PCLK */
