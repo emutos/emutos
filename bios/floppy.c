@@ -371,6 +371,7 @@ LONG flop_hdv_boot(void)
 #endif
     if(err == 0) {
         /* if bootable, jump in it */
+        invalidate_instruction_cache(dskbufp, SECTOR_SIZE);
         regsafe_call(dskbufp);
     }
     return err;         /* may never be reached, if booting */

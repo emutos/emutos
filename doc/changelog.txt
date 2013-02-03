@@ -4358,3 +4358,4 @@ Start... early ages
   Renamed the CPU cache management functions(). (VRI)
 - bios/processor.S: Implemented data cache functions for ColdFire. (VRI)
 - bios/initinfo.S: Remove useless initinfo scroll on RGB monitors. (VRI)
+- bios/floppy.c: Added cache management for loading bootsector. (VRI)
