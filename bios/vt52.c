@@ -890,5 +890,7 @@ vt52_init(void)
     con_state = normal_ascii;           /* Init conout state machine */
 
     vt52_initialized = TRUE;
+
+    clear_and_home();
 }
 
