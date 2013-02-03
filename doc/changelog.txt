@@ -4357,3 +4357,4 @@ Start... early ages
 - bdos/proc.c bios/acsi.c bios/floppy.c bios/processor.h bios/processor.S:
   Renamed the CPU cache management functions(). (VRI)
 - bios/processor.S: Implemented data cache functions for ColdFire. (VRI)
+- bios/initinfo.S: Remove useless initinfo scroll on RGB monitors. (VRI)

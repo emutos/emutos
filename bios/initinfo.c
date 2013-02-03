@@ -270,7 +270,7 @@ void initinfo(void)
         }
 #endif
     }
-    cprintf("\r\033K\r\n\r\n"); /* remove the "Hold Shift" message */
+    cprintf("\r\033K"); /* remove the "Hold Shift" message */
 }
 
 
