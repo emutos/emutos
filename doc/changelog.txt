@@ -4354,3 +4354,5 @@ Start... early ages
 - bios/machine.c: Fixed crash of emutos-ram on machines without SCC. (VRI)
 - bios/vt52.c: Fixed vt52_init() and Setscreen() to clear the screen. (VRI)
 - bios/bios.c bios/initinfo.c bios/initinfo.h: Removed initscreen(). (VRI)
+- bdos/proc.c bios/acsi.c bios/floppy.c bios/processor.h bios/processor.S:
+  Renamed the CPU cache management functions(). (VRI)

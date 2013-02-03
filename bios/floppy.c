@@ -795,7 +795,7 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
 #elif CONF_WITH_FDC
     /* flush cache here so that memory is current */
     if (rw == RW_WRITE)
-        flush_cache((void *)buf,buflen);
+        flush_data_cache((void *)buf,buflen);
 
     floplock(dev);
     
@@ -855,7 +855,7 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
 
     /* invalidate cache if we've read into memory */
     if (rw == RW_READ)
-        inval_cache((void *)buf,buflen);
+        invalidate_data_cache((void *)buf,buflen);
 
     flopunlk();
 #else
@@ -878,7 +878,7 @@ static WORD flopwtrack(LONG buf, WORD dev, WORD track, WORD side, WORD track_siz
     }
 
     /* flush cache here so that track image is pushed to memory */
-    flush_cache((void *)buf,track_size);
+    flush_data_cache((void *)buf,track_size);
 
     floplock(dev);
   

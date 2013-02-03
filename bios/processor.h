@@ -60,9 +60,9 @@ long detect_cpu(void);
 long detect_fpu(void);
 
 extern void processor_init(void);
-extern void invalidate_icache(void *start, long size);
-extern void flush_cache(void *start, long size);
-extern void inval_cache(void *start, long size);
+extern void invalidate_instruction_cache(void *start, long size);
+extern void flush_data_cache(void *start, long size);
+extern void invalidate_data_cache(void *start, long size);
 extern LONG mcpu;
 extern LONG fputype;
 extern WORD longframe;

@@ -22,9 +22,9 @@
 /* References */
 
         .globl  _processor_init
-        .globl  _invalidate_icache
-        .globl  _flush_cache
-        .globl  _inval_cache
+        .globl  _invalidate_instruction_cache
+        .globl  _flush_data_cache
+        .globl  _invalidate_data_cache
         .globl  _mcpu
         .globl  _mcpu_subtype
         .globl  _fputype
@@ -311,7 +311,7 @@ pi_done:
         rts
 
 /*
- * void invalidate_icache(void *start, long length)
+ * void invalidate_instruction_cache(void *start, long length)
  * invalidate the instruction cache for addresses in the specified zone.
  *
  * We're lazy here and invalidate all the cache. A real implementation
@@ -319,7 +319,7 @@ pi_done:
  * It is not worth the trouble for EmuTOS right now.
  */
 
-_invalidate_icache:
+_invalidate_instruction_cache:
 #ifdef __mcoldfire__
         // This code comes from the MCF547x Reference Manual
         // Section 7.11 Cache Management
@@ -374,18 +374,18 @@ ii_done:
         rts
 
 /*
- * void flush_cache(void *start, long length)
+ * void flush_data_cache(void *start, long length)
  *
- * flush data cache before writing data
+ * flush data cache before writing data with DMA
  *
- * the actions required depend on the type of data cache:
+ * the actions required depend on the mode of data cache:
  *   write-through:
  *     no action is necessary
  *   copyback:
  *     we must push the data cache (the backing memory may be stale)
  */
 
-_flush_cache:
+_flush_data_cache:
 #ifdef __mcoldfire__
 #else
 //
@@ -401,33 +401,31 @@ _flush_cache:
 
 
 /*
- * void inval_cache(void *start, long length)
+ * void invalidate_data_cache(void *start, long length)
  *
- * invalidate caches after data has been read in
+ * invalidate data cache after data has been read with DMA
  *
- * for both types of cache (write_through and copyback), we need to
- * invalidate both the data and instruction caches
+ * for both modes of data cache (write_through and copyback),
+ * the cache needs to be invalidated
  */
-_inval_cache:
+_invalidate_data_cache:
 #ifdef __mcoldfire__
 #else
         cmpi.b  #30,_mcpu+3
         bne.s   ic_not30
         MOVEC_CACR_D0                   // get current cacr
-        ori.w   #0x0808,d0              // set CD, CI bits
+        ori.w   #0x0800,d0              // set CD bit
         MOVEC_D0_CACR                   // clear both caches
-        bra.s   ic_done
+        //bra.s   ic_done
 ic_not30:
-        cmpi.b  #40,_mcpu+3
-        bne.s   ic_done
+        //cmpi.b  #40,_mcpu+3
+        //bne.s   ic_done
 //
-// at this time, the data cache is disabled, so we only invalidate the
-// instruction cache.  if the data cache is enabled in the future, we
-// should issue a "cinva bc" instead.
+// at this time, the data cache is disabled on 68040, so we have
+// nothing to do.  if the data cache is enabled in the future, we
+// should issue a "cinva dc" instead.
 //
-        nop
-        CINVA_IC
-        nop
+
 ic_done:
 #endif
         rts

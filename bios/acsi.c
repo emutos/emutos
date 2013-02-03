@@ -123,7 +123,7 @@ static int do_acsi_rw(WORD rw, LONG sector, WORD cnt, LONG buf, WORD dev)
 
     /* flush cache here so that memory is current */
     if (rw == RW_WRITE)
-        flush_cache((void *)buf,buflen);
+        flush_data_cache((void *)buf,buflen);
 
     /* set flock */
     flock = -1;
@@ -150,7 +150,7 @@ static int do_acsi_rw(WORD rw, LONG sector, WORD cnt, LONG buf, WORD dev)
 
     /* invalidate cache if we've read into memory */
     if (rw == RW_READ)
-        inval_cache((void *)buf,buflen);
+        invalidate_data_cache((void *)buf,buflen);
 
     /* put back to floppy and free flock */
     DMA->control = DMA_FDC;
