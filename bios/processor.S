@@ -312,7 +312,8 @@ pi_done:
 
 /*
  * void invalidate_instruction_cache(void *start, long length)
- * invalidate the instruction cache for addresses in the specified zone.
+ * First, the data cache is flushed to push changes into the RAM.
+ * Then the instruction cache is invalidated for the specified zone.
  *
  * We're lazy here and invalidate all the cache. A real implementation
  * would invalidate only the needed pages using several cinvp ic,(a0). 
