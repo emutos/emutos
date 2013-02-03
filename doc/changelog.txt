@@ -4349,4 +4349,4 @@ Start... early ages
 
 2013-02-03
 - bios/bios.c bios/panicasm.S bios/tosvars.h bios/tosvars.S include/config.h:
-  Added proper warm boot detection on the FireBee.
+  Added proper warm boot detection on the FireBee and in emutos-ram.

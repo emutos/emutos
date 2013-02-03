@@ -645,9 +645,14 @@
 /*
  * Set CONF_WITH_PSEUDO_COLD_BOOT to 1 to simulate a cold boot on machines
  * which always do a warm boot, such as the FireBee.
+ * This is also always the case when EmuTOS is run from the RAM.
  */
 #ifndef CONF_WITH_PSEUDO_COLD_BOOT
-# define CONF_WITH_PSEUDO_COLD_BOOT 0
+# ifdef EMUTOS_RAM
+#  define CONF_WITH_PSEUDO_COLD_BOOT 1
+# else
+#  define CONF_WITH_PSEUDO_COLD_BOOT 0
+# endif
 #endif
 
 /*
@@ -665,11 +670,7 @@
  * displayed, on both cold boot and warm boot (reset).
  */
 #ifndef ALWAYS_SHOW_INITINFO
-# ifdef EMUTOS_RAM
-#  define ALWAYS_SHOW_INITINFO 1
-# else
-#  define ALWAYS_SHOW_INITINFO 0
-# endif
+# define ALWAYS_SHOW_INITINFO 0
 #endif
 
 /*
