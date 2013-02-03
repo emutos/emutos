@@ -4359,3 +4359,4 @@ Start... early ages
 - bios/processor.S: Implemented data cache functions for ColdFire. (VRI)
 - bios/initinfo.S: Remove useless initinfo scroll on RGB monitors. (VRI)
 - bios/floppy.c: Added cache management for loading bootsector. (VRI)
+- bios/disk.c: Limited byteswap support to IDE devices. (VRI)
