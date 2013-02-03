@@ -322,40 +322,8 @@ pi_done:
 
 _invalidate_instruction_cache:
 #ifdef __mcoldfire__
-        // This code comes from the MCF547x Reference Manual
-        // Section 7.11 Cache Management
-        //
-        // The ColdFire has no cinva instruction.
-        // Instead, cpushl writes the modified cache data to the RAM
-        // then invalidates the caches (data + instruction) except if
-        // the bits DDPI and IDPI have been set in the CACR.
-        //
-        // The ColdFire V4e core has a 32 kB instruction cache
-        // and a 32 kB data cache. Both caches have the same structure.
-        // The data is stored in "Line" elements of 16 bytes.
-        // The Lines are stored in a 2D array of 4 Ways * 512 Sets.
-        //
-        // The following changes have been made to the original code:
-        // - flush both caches with "cpushl bc" instead of "cpushl dc"
-        // - flush the 512 Sets (original code forgot the last one)
-        
-        nop                     // synchronize/flush store buffer
-        moveq.l #0,d0           // initialize way counter
-        moveq.l #0,d1           // initialize set counter
-        move.l  d0,a0           // initialize cpushl pointer
-
-setloop:
-        cpushl  bc,(a0)         // push cache line a0 (both caches)
-        add.l   #0x0010,a0      // increment set index by 1
-        addq.l  #1,d1           // increment set counter
-        cmpi.l  #512,d1         // are sets for this way done?
-        bne.s   setloop
-
-        moveq.l #0,d1           // set counter to zero again
-        addq.l  #1,d0           // increment to next way
-        move.l  d0,a0           // set = 0, way = d0
-        cmpi.l  #4,d0           // flushed all the ways?
-        bne.s   setloop
+        lea     cpushl_bc,a1    // flush/invalidate both caches
+        bra.s   cpushl_loop
 #else
         cmpi.b  #30,_mcpu+3
         bne.s   ii_not30
@@ -371,8 +339,8 @@ ii_not30:
         dc.w    0xf498          // cinva   ic
         nop
 ii_done:
-#endif
         rts
+#endif
 
 /*
  * void flush_data_cache(void *start, long length)
@@ -388,6 +356,8 @@ ii_done:
 
 _flush_data_cache:
 #ifdef __mcoldfire__
+        lea     cpushl_dc,a1    // flush/invalidate data cache
+        bra.s   cpushl_loop
 #else
 //
 // 68030 data caches are always write-through, so no action is necessary
@@ -397,8 +367,8 @@ _flush_data_cache:
 // that the cache would be write-through if enabled; but in any case it
 // is disabled.  so no action is necessary.
 //
-#endif
         rts
+#endif
 
 
 /*
@@ -411,6 +381,8 @@ _flush_data_cache:
  */
 _invalidate_data_cache:
 #ifdef __mcoldfire__
+        lea     cpushl_dc,a1    // flush/invalidate data cache
+        // drop into cpushl_loop
 #else
         cmpi.b  #30,_mcpu+3
         bne.s   ic_not30
@@ -428,9 +400,66 @@ ic_not30:
 //
 
 ic_done:
+        rts
 #endif
+
+#ifdef __mcoldfire__
+cpushl_loop:
+        // This helper routine is a loop around cpushl ?c,(a0)
+        // a1 must point to the actual instruction called in the loop
+        
+        // This code comes from the MCF547x Reference Manual
+        // Section 7.11 Cache Management
+        //
+        // The ColdFire has no cinva instruction.
+        // Instead, cpushl writes the modified cache data to the RAM
+        // then invalidates the caches (data + instruction) except if
+        // the DDPI and IDPI bits have been set in the CACR.
+        //
+        // The ColdFire V4e core has a 32 kB instruction cache
+        // and a 32 kB data cache. Both caches have the same structure.
+        // The data is stored in "Line" elements of 16 bytes.
+        // The Lines are stored in a 2D array of 4 Ways * 512 Sets.
+        //
+        // The following changes have been made to the original code:
+        // - call jsr (a1) instead of "cpushl dc"
+        // - flush the 512 Sets (original code forgot the last one)
+        
+        nop                     // synchronize/flush store buffer
+        moveq.l #0,d0           // initialize way counter
+        moveq.l #0,d1           // initialize set counter
+        move.l  d0,a0           // initialize cpushl pointer
+
+setloop:
+        jsr     (a1)            // call appropriate cpushl instruction
+        lea     0x0010(a0),a0   // increment set index by 1
+        addq.l  #1,d1           // increment set counter
+        cmpi.l  #512,d1         // are sets for this way done?
+        bne.s   setloop
+
+        moveq.l #0,d1           // set counter to zero again
+        addq.l  #1,d0           // increment to next way
+        move.l  d0,a0           // set = 0, way = d0
+        cmpi.l  #4,d0           // flushed all the ways?
+        bne.s   setloop
+
         rts
 
+// Helper routines for cpushl_loop
+        
+cpushl_ic:
+        cpushl  ic,(a0)         // instruction cache
+        rts
+        
+cpushl_dc:
+        cpushl  dc,(a0)         // data cache
+        rts
+        
+cpushl_bc:
+        cpushl  bc,(a0)         // both caches
+        rts
+        
+#endif
 
 // ==== Variables ============================================================
  
