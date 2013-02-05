@@ -4360,3 +4360,6 @@ Start... early ages
 - bios/initinfo.S: Remove useless initinfo scroll on RGB monitors. (VRI)
 - bios/floppy.c: Added cache management for loading bootsector. (VRI)
 - bios/disk.c: Limited byteswap support to IDE devices. (VRI)
+
+2013-02-05
+- po/es.po: Updated. Contributed by David Gálvez. (VRI)
