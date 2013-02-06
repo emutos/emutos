@@ -12,7 +12,7 @@
 
 #include "asmdefs.h"
 
-#ifdef MACHINE_AMIGA
+#if defined(MACHINE_AMIGA) && CONF_WITH_AROS
 
 /******************************************************************************/
 /* Memory Test                                                                */
@@ -218,4 +218,4 @@ _ReadGayle:
 1:
     rts
 
-#endif /* MACHINE_AMIGA */
+#endif /* defined(MACHINE_AMIGA) && CONF_WITH_AROS */
