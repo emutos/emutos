@@ -4363,3 +4363,6 @@ Start... early ages
 
 2013-02-05
 - po/es.po: Updated. Contributed by David Gálvez. (VRI)
+
+2013-02-06
+- Makefile release.mk: Renamed amiga-kickdisk target to amigakd. (VRI)

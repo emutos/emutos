@@ -152,7 +152,7 @@ NODEP += release-amiga
 RELEASE_AMIGA = emutos-amiga-$(VERSION)
 release-amiga:
 	$(MAKE) clean
-	$(MAKE) amiga-kickdisk
+	$(MAKE) amigakd
 	mkdir $(RELEASE_DIR)/$(RELEASE_AMIGA)
 	cp $(ROM_AMIGA) $(RELEASE_DIR)/$(RELEASE_AMIGA)
 	cp $(AMIGA_KICKDISK) $(RELEASE_DIR)/$(RELEASE_AMIGA)

@@ -293,7 +293,7 @@ help:
 	@echo "aranym  $(ROM_ARANYM), suitable for ARAnyM" 
 	@echo "firebee $(SREC_FIREBEE), to be flashed on the FireBee"
 	@echo "amiga   $(ROM_AMIGA), EmuTOS ROM for Amiga hardware"
-	@echo "amiga-kickdisk $(AMIGA_KICKDISK), EmuTOS as Amiga 1000 Kickstart disk"
+	@echo "amigakd $(AMIGA_KICKDISK), EmuTOS as Amiga 1000 Kickstart disk"
 	@echo "all192  all 192 kB images"
 	@echo "all256  all 256 kB images"
 	@echo "allbin  all 192 kB, 256 kB and 512 kB images"
@@ -435,9 +435,9 @@ TOCLEAN += *.adf
 
 AMIGA_KICKDISK = emutos-kickdisk.adf
 
-.PHONY: amiga-kickdisk
-NODEP += amiga-kickdisk
-amiga-kickdisk: amiga
+.PHONY: amigakd
+NODEP += amigakd
+amigakd: amiga
 	./mkrom$(EXE) amiga-kickdisk $(ROM_AMIGA) $(AMIGA_KICKDISK)
 
 #
