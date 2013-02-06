@@ -8,6 +8,7 @@
  *  VRI   Vincent Rivière
  * 
  * This file is covered by the AROS PUBLIC LICENSE (APL) Version 1.1
+ * See doc/license_aros.txt for details.
  */
 
 #include "asmdefs.h"
