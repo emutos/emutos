@@ -17,7 +17,12 @@
 #include "amiga.h"
 #include "vectors.h"
 #include "tosvars.h"
+#include "processor.h"
+#include "gemerror.h"
+
+#if CONF_WITH_AROS
 #include "aros.h"
+#endif
 
 #ifdef MACHINE_AMIGA
 
@@ -40,7 +45,11 @@ int has_gayle;
 
 void amiga_machine_detect(void)
 {
+#if CONF_WITH_AROS
     aros_machine_detect();
+#else
+    has_gayle = (mcpu >= 20);
+#endif
 
 #if DBG_AMIGA
     kprintf("has_gayle = %d\n", has_gayle);
@@ -55,7 +64,9 @@ void amiga_machine_detect(void)
 
 void amiga_add_alt_ram(void)
 {
+#if CONF_WITH_AROS
     aros_add_alt_ram();
+#endif
 }
 
 #endif /* CONF_WITH_ALT_RAM */
@@ -426,12 +437,20 @@ void amiga_shutdown(void)
 
 BOOL amiga_flop_detect_drive(WORD dev)
 {
+#if CONF_WITH_AROS
     return aros_flop_detect_drive(dev);
+#else
+    return FALSE;
+#endif
 }
 
 WORD amiga_floprw(LONG buf, WORD rw, WORD dev, WORD sect, WORD track, WORD side, WORD count)
 {
+#if CONF_WITH_AROS
     return aros_floprw(buf, rw, dev, sect, track, side, count);
+#else
+    return EUNDEV;
+#endif
 }
 
 #endif /* MACHINE_AMIGA */

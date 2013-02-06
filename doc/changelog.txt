@@ -4367,3 +4367,6 @@ Start... early ages
 2013-02-06
 - Makefile release.mk: Renamed amiga-kickdisk target to amigakd. (VRI)
 - include/config.h: Enabled again IDE on Amiga (was disabled by mistake). (VRI)
+- bios/amiga.c bios/aros.c include/config.h: Added the CONF_WITH_AROS define to
+  enable compilation with AROS sources. This is disabled by default due to
+  license issues. (VRI)

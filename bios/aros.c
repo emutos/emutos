@@ -14,14 +14,15 @@
 
 #include "config.h"
 #include "portab.h"
+
+#if defined(MACHINE_AMIGA) && CONF_WITH_AROS
+
 #include "aros.h"
 #include "amiga.h"
 #include "string.h"
 #include "processor.h"
 #include "gemerror.h"
 #include "kprint.h"
-
-#ifdef MACHINE_AMIGA
 
 /* The following functions are defined in aros2.S */
 ULONG MemoryTest(void *address, void *endAddress, ULONG blockSize);
@@ -2236,4 +2237,4 @@ WORD aros_floprw(LONG buf, WORD rw, WORD dev, WORD sect, WORD track, WORD side, 
     return err ? ERR : E_OK;
 }
 
-#endif /* MACHINE_AMIGA */
+#endif /* defined(MACHINE_AMIGA) && CONF_WITH_AROS */

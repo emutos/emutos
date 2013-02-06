@@ -180,6 +180,9 @@
 # ifndef CONF_WITH_UAE
 #  define CONF_WITH_UAE 1
 # endif
+# ifndef CONF_WITH_AROS
+#  define CONF_WITH_AROS 0
+# endif
 #endif
 
 /*
@@ -757,6 +760,14 @@
 #endif
 
 /*
+ * Set CONF_WITH_AROS to 1 to compile the sources coming from the AROS project
+ * on the Amiga target. There are license issues.
+ */
+#ifndef CONF_WITH_AROS
+# define CONF_WITH_AROS 0
+#endif
+
+/*
  * Set CONF_WITH_68030_PMMU to install a PMMU tree on a 68030 CPU.
  * This provides improved performance by allowing the data cache to
  * be enabled.
@@ -855,6 +866,9 @@
 #ifndef MACHINE_AMIGA
 # if CONF_WITH_UAE
 #  error "CONF_WITH_UAE requires MACHINE_AMIGA."
+# endif
+# if CONF_WITH_AROS
+#  error "CONF_WITH_AROS requires MACHINE_AMIGA."
 # endif
 #endif
 
