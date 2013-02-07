@@ -4371,3 +4371,7 @@ Start... early ages
   to enable compilation with AROS sources. This is disabled by default due to
   license issues. (VRI)
 - bios/aros.c bios/aros2.S doc/license_aros.txt: Added AROS APL license. (VRI)
+
+2013-02-07
+- bios/bios.c bios/tosvars.h bios/tosvars.S util/bootsect.S: In emutos-floppy,
+  do not ask to remove the floppy on every warm boot. (VRI)

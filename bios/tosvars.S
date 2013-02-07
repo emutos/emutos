@@ -97,6 +97,10 @@
         .globl  _bell_hook
         .globl  _kcl_hook
 
+#ifdef EMUTOS_RAM
+        .globl  _eject_magic
+#endif
+
 #if CONF_WITH_PSEUDO_COLD_BOOT
         .globl  _warm_magic
 #endif
@@ -222,6 +226,11 @@ _ramvalid:      ds.l    1       // validates ramtop if $1357BD13
 _bell_hook:     ds.l    1       // pointer to routine for system bell
 _kcl_hook:      ds.l    1       // pointer to routine for system keyclick
         .org 0x5b4
+
+#ifdef EMUTOS_RAM
+        .org 0x6f8              // must match the value in util/bootsect.S
+_eject_magic:   ds.l    1
+#endif
 
 #if CONF_WITH_PSEUDO_COLD_BOOT
         .org 0x6fc              // any location below bssstart is ok

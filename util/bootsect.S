@@ -98,7 +98,7 @@ start:
 
         /* tell EmuTOS to ask for floppy removal before going on */
 
-        move.l  #0x1234abcd,20(a4)
+        move.l  #0x1234abcd,0x6f8.w     // EJECT_MAGIC, _eject_magic
         
         /* d4 = max size of TOS */
         

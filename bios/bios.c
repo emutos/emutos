@@ -466,11 +466,12 @@ void biosmain(void)
     /* if TOS in RAM booted from an autoboot floppy, ask to remove the
      * floppy before going on.
      */
-    if(os_magic == OS_MAGIC_EJECT) {
+    if(eject_magic == EJECT_MAGIC) {
         cprintf(_("Please eject the floppy and hit RETURN"));
         bconin2();
+        cprintf("\r\033K"); /* clear the message */
+        eject_magic = NULL; /* do not ask on next warm boot */
     }
-    cprintf("\r\033K"); /* clear the message */
 #endif
 
 #if INITINFO_DURATION > 0
