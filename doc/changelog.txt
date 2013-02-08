@@ -4377,3 +4377,4 @@ Start... early ages
   do not ask to remove the floppy on every warm boot. (VRI)
 - bios/pmmu030.c bios/processor.S bios/tosvars.S include/config.h Makefile:
   Refactored 68030 PMMU support. (RFB)
+- bios/68030_pmmu.S: Removed file, no longer used. (RFB)
