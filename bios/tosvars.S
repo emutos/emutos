@@ -106,7 +106,7 @@
 #endif
 
 #ifdef CONF_WITH_68030_PMMU
-        .globl  pmmutree
+        .globl  _pmmutree
 #endif
         .globl  _shifty
 
@@ -237,8 +237,10 @@ _eject_magic:   ds.l    1
 _warm_magic:    ds.l    1       // set to WARM_MAGIC if this is a warm boot
 #endif
 
-        .org 0x700
-pmmutree:       ds.l    64      // for pmmu tree on 68030
+#if CONF_WITH_68030_PMMU
+        .org PMMUTREE_ADDRESS_68030
+_pmmutree:      ds.l    64      // for pmmu tree on 68030
+#endif
 
 // Memory below 0x800 is only accessible in supervisor mode on the ST.
 // We have to make sure that nothing is linked into this region that might

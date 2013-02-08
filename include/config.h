@@ -771,9 +771,15 @@
  * Set CONF_WITH_68030_PMMU to install a PMMU tree on a 68030 CPU.
  * This provides improved performance by allowing the data cache to
  * be enabled.
+ * If CONF_WITH_68030_PMMU is enabled, then PMMUTREE_ADDRESS_68030
+ * specifies where in low memory the tree is built.  Unless you
+ * really understand the implications, don't change this value!
  */
 #ifndef CONF_WITH_68030_PMMU
 # define CONF_WITH_68030_PMMU 1
+#endif
+#if CONF_WITH_68030_PMMU
+# define PMMUTREE_ADDRESS_68030 0x700
 #endif
 
 /*

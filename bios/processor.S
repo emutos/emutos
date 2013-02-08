@@ -258,7 +258,11 @@ m68000:
 // inhibited for access to i/o addresses.
 
 m68030:
-        jsr     setup_68030_pmmu
+        jsr     _setup_68030_pmmu
+        PMOVE_TO_CRP(root_pointer_descriptor)   // tell system where tree is
+        PMOVE_TO_TC(init_tc)        // enable PMMU
+        PMOVE_TO_TTR0(init_ttr0)    // override PMMU tree for accesses to
+        PMOVE_TO_TTR1(init_ttr1)    //   0x01000000-0xfeffffff (see below for details)
         move.l  #0x00003111,d0  // we set WA, DBE, ED, IBE and EI
 #else
 
@@ -459,6 +463,19 @@ cpushl_bc:
         cpushl  bc,(a0)         // both caches
         rts
         
+#endif
+
+        SECTION_RODATA
+
+#if CONF_WITH_68030_PMMU
+root_pointer_descriptor:
+        dc.l    0x80000002,_pmmutree // lower limit 0, short format, table at '_pmmutree'
+init_tc:
+        dc.l    0x80F04445          // enable, 32K pages, table indexes=4/4/4/5
+init_ttr0:                          // transparent translation is enabled for all FCs
+        dc.l    0x017E8107          //   for 0x01000000-0x7fffffff, caching allowed
+init_ttr1:                          // transparent translation is enabled for all FCs
+        dc.l    0x807E8507          //   for 0x80000000-0xfeffffff, *caching inhibited*
 #endif
 
 // ==== Variables ============================================================

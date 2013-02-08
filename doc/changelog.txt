@@ -4375,3 +4375,5 @@ Start... early ages
 2013-02-07
 - bios/bios.c bios/tosvars.h bios/tosvars.S util/bootsect.S: In emutos-floppy,
   do not ask to remove the floppy on every warm boot. (VRI)
+- bios/pmmu030.c bios/processor.S bios/tosvars.S include/config.h Makefile:
+  Refactored 68030 PMMU support. (RFB)
