@@ -4378,3 +4378,6 @@ Start... early ages
 - bios/pmmu030.c bios/processor.S bios/tosvars.S include/config.h Makefile:
   Refactored 68030 PMMU support. (RFB)
 - bios/68030_pmmu.S: Removed file, no longer used. (RFB)
+
+2013-02-10
+- po/cs.po: Updated. Contributed by Pavel Salač. (VRI)
