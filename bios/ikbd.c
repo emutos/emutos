@@ -484,7 +484,29 @@ void ikbd_writew(WORD w)
     ikbd_writeb(w&0xff);
 }
 
+/* Read a byte from the IKBD.
+ * This must not be used when interrupts are enabled.
+ */
+static UBYTE ikbd_readb(void)
+{
+#if CONF_WITH_IKBD_ACIA
+    /* We have to use a timeout to avoid waiting forever
+     * if the keyboard is unplugged.
+     * Unfortunately, we don't have a timer yet, so we use an ugly CPU loop.
+     * This only matters for Hatari, anyway.
+     */
+    UWORD timeout = 30000; /* Minimum 4000 */
+    while (!(ikbd_acia.ctrl & ACIA_RDRF))
+    {
+        if (--timeout == 0)
+            return 0; /* bogus value when timeout */
+    }
 
+    return ikbd_acia.data;
+#else
+    return 0; /* bogus value */
+#endif
+}
 
 /*
  *      FUNCTION:  This routine resets the keyboard,
@@ -493,6 +515,8 @@ void ikbd_writew(WORD w)
 
 void kbd_init(void)
 {
+    UBYTE ikbd_version;
+
 #if CONF_WITH_IKBD_ACIA
     /* initialize ikbd ACIA */
     ikbd_acia.ctrl = ACIA_RESET;        /* master reset */
@@ -506,6 +530,17 @@ void kbd_init(void)
     /* initialize the IKBD */
     ikbd_writeb(0x80);            /* Reset */
     ikbd_writeb(0x01);
+
+    /* On Hatari, it is *mandatory* to wait for the IKBD Reset to complete
+     * before sending the next command bytes. Otherwise, on cold boot
+     * no further data will be received.
+     * This is why we read the IKBD version byte below.
+     */
+    ikbd_version = ikbd_readb(); /* Usually 0xf1, or 0xf0 for antique STs */
+#if DBG_KBD
+    kprintf("ikbd_version = 0x%02x\n", ikbd_version);
+#endif
+    UNUSED(ikbd_version);
 
     ikbd_writeb(0x1A);            /* disable joystick */
     ikbd_writeb(0x12);            /* disable mouse */

@@ -4381,3 +4381,6 @@ Start... early ages
 
 2013-02-10
 - po/cs.po: Updated. Contributed by Pavel Salač. (VRI)
+
+2013-02-11
+- bios/ikbd.c: Fixed Hatari hang on cold boot. (VRI)
