@@ -4390,3 +4390,4 @@ Start... early ages
 2013-02-12
 - bios/acsi.c bios/blkdev.c bios/disk.c bios/floppy.c: Cache flush &
   invalidation now take place at Bios/Xbios level. (RFB)
+- bios/ikbd.c: Use delay_loop() to implement IKBD timeout. (VRI)

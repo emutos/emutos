@@ -36,7 +36,7 @@
 #include "asm.h"
 #include "ikbd.h"
 #include "sound.h"              /* for keyclick */
-
+#include "delay.h"
 
 #define DBG_KBD 0
 
@@ -490,19 +490,20 @@ void ikbd_writew(WORD w)
 static UBYTE ikbd_readb(void)
 {
 #if CONF_WITH_IKBD_ACIA
+    unsigned int i;
+
     /* We have to use a timeout to avoid waiting forever
-     * if the keyboard is unplugged.
-     * Unfortunately, we don't have a timer yet, so we use an ugly CPU loop.
-     * This only matters for Hatari, anyway.
+     * if the keyboard is unplugged. The standard value is 300 ms.
      */
-    UWORD timeout = 30000; /* Minimum 4000 */
-    while (!(ikbd_acia.ctrl & ACIA_RDRF))
+    for (i = 0; i < 300; i++)
     {
-        if (--timeout == 0)
-            return 0; /* bogus value when timeout */
+        if (ikbd_acia.ctrl & ACIA_RDRF)
+            return ikbd_acia.data;
+
+        delay_loop(loopcount_1_msec);
     }
 
-    return ikbd_acia.data;
+    return 0; /* bogus value when timeout */
 #else
     return 0; /* bogus value */
 #endif
