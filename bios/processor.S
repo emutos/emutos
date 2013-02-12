@@ -390,8 +390,16 @@ _invalidate_data_cache:
 #else
         cmpi.b  #30,_mcpu+3
         bne.s   ic_not30
+//
+// for a 68030, we invalidate both instruction and data caches, just
+// like TOS4.  this allows backward compatibility in case some foolish
+// person reads code from an i/o device and branches to it directly;
+// this would have been legal on STs and STes.  since the caches are
+// relatively small on a 68030, this should not have a large impact on
+// performance.
+//
         MOVEC_CACR_D0                   // get current cacr
-        ori.w   #0x0800,d0              // set CD bit
+        ori.w   #0x0808,d0              // set CD & ID bits
         MOVEC_D0_CACR                   // clear both caches
         //bra.s   ic_done
 ic_not30:
@@ -400,7 +408,8 @@ ic_not30:
 //
 // at this time, the data cache is disabled on 68040, so we have
 // nothing to do.  if the data cache is enabled in the future, we
-// should issue a "cinva dc" instead.
+// should issue a "cinva dc" instead.  for performance reasons, we
+// do not intend to invalidate the instruction cache in this case.
 //
 
 ic_done:
