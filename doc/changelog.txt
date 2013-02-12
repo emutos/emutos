@@ -4386,3 +4386,7 @@ Start... early ages
 - bios/ikbd.c: Fixed Hatari hang on cold boot. (VRI)
 - bios/blkdev.c: Changed blkdev_rwabs() to call XHReadWrite() directly
   rather than via DMAread()/DMAwrite(). (RFB)
+
+2013-02-12
+- bios/acsi.c bios/blkdev.c bios/disk.c bios/floppy.c: Cache flush &
+  invalidation now take place at Bios/Xbios level. (RFB)

@@ -1,7 +1,7 @@
 /*
  * blkdev.c - BIOS block device functions
  *
- * Copyright (c) 2002-2012 The EmuTOS development team
+ * Copyright (c) 2002-2013 The EmuTOS development team
  * 
  * Authors:
  *  MAD     Martin Doering
@@ -26,6 +26,7 @@
 #include "ikbd.h"
 #include "blkdev.h"
 #include "xhdi.h"
+#include "processor.h"
 
 /*
  * Global variables
@@ -227,6 +228,7 @@ LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG lrecnr
     int unit = dev;
     LONG lcount = cnt;
     LONG retval;
+    LONG buflen;
 
 #if DBG_BLKDEV
     kprintf("rwabs(rw=%d, buf=%ld, count=%ld, recnr=%u, dev=%d, lrecnr=%ld)\n", rw, buf, lcount, recnr, dev, lrecnr);
@@ -282,6 +284,11 @@ LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG lrecnr
         }
     }
 
+    /* if writing, flush cache here so that memory is current */
+    buflen = lcount * devices[unit].pssize;
+    if ((rw&RW_RW) == RW_WRITE)
+        flush_data_cache((void *)buf,buflen);
+
     do {
         /* split the transfer to 15-bit count blocks (lowlevel functions take WORD count) */
         WORD scount = (lcount > CNTMAX) ? CNTMAX : lcount;
@@ -300,6 +307,10 @@ LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG lrecnr
         lrecnr += scount;
         lcount -= scount;
     } while(lcount > 0);
+
+    /* if reading, invalidate cache */
+    if ((rw&RW_RW) == RW_READ)
+        invalidate_data_cache((void *)buf,buflen);
 
     return retval;
 }
