@@ -4384,3 +4384,5 @@ Start... early ages
 
 2013-02-11
 - bios/ikbd.c: Fixed Hatari hang on cold boot. (VRI)
+- bios/blkdev.c: Changed blkdev_rwabs() to call XHReadWrite() directly
+  rather than via DMAread()/DMAwrite(). (RFB)

@@ -25,6 +25,7 @@
 #include "disk.h"
 #include "ikbd.h"
 #include "blkdev.h"
+#include "xhdi.h"
 
 /*
  * Global variables
@@ -291,8 +292,8 @@ LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG lrecnr
                                    blkdev[unit].geometry.sides, unit);
             }
             else {
-                retval = (rw&RW_RW) ? DMAwrite(lrecnr, scount, buf, unit-NUMFLOPPIES)
-                            : DMAread(lrecnr, scount, buf, unit-NUMFLOPPIES);
+                retval = XHReadWrite(unit-NUMFLOPPIES,0,(rw&RW_RW)?1:0,
+                                     lrecnr,scount,(void *)buf);
             }
         } while((retval < 0) && (--retries > 0));
         buf += scount * devices[unit].pssize;
