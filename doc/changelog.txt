@@ -4393,3 +4393,6 @@ Start... early ages
 - bios/ikbd.c: Use delay_loop() to implement IKBD timeout. (VRI)
 - bios/processor.S: For TOS compatibility, both caches are now
   invalidated after a read on a 68030. (RFB)
+
+2013-02-13
+- readme.txt doc/announce.txt doc/install.txt: Updated. (VRI)

@@ -138,4 +138,5 @@ things:
 Have success!
 
 -- 
-The EmuTOS team
+The EmuTOS development team
+http://emutos.sourceforge.net/

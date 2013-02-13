@@ -3,7 +3,7 @@ Dear Atari Community!
 
 We are happy to announce a new public release of EmuTOS:
 
-EmuTOS 0.8.7 -- June 19th, 2012
+EmuTOS 0.9.0 -- February XXth, 2013
 
 
 INTRODUCTION
@@ -11,44 +11,50 @@ INTRODUCTION
 EmuTOS is a single-user single-tasking operating system for the 32-bit Atari
 computers, clones and emulators. It can be used as a replacement for the TOS
 images typically needed today for using emulators and can also run on some
-real hardware, like the Atari Mega STe or the FireBee. All the source code
-is open and free, licensed under the GNU General Public License (GPL).
+real hardware, like the Atari STe and Falcon, the FireBee, and even Amiga.
+All the source code is open and free, licensed under the GNU General Public
+License (GPL).
 
 
 
 CHANGES SINCE LAST RELEASE
 
-- Added full XBIOS support for Falcon and TT video hardware
-- New video mode switching dialog box for Falcon and TT
-- New EmuTOS variant on ROM-port cartridge
-- New UK country and keyboard layout with PAL frequency
-- Added potential support for non-Atari hardware
-- Fixed wrong keyboard layout read from the NVRAM
-- Fixed bogus _AKP cookie values
-- Fixed _IDT cookie with unique language ROMs
-- Use the _IDT date ordering in the default desktop
-- Fixed the _SND cookie to remove unsupported bits (0.8.6 regression)
-- Added support for XHDI XHNewCookie()
-- Added minimal stub Blitmode()
-- Fixed floprw() to be able to read multiple sectors
-- Return function number rather than zero for unimplemented (x)bios calls
-- Fixed VDI polygon fill
-- Fixed VDI line drawing in transparent mode
-- Fixed VDI to draw text underlines & perimeters in the correct colour
-- Fixed VDI text scaling
-- Fixed VDI line styles and arrows for thin line arcs/ellarcs
-- Fixed AES sh_addpath() when there was no PATH variable
-- Increased allowed number of desk accessories from 3 to 6
-- Allowed up to 7 windows on the desktop
-- Fixed the desktop to use "view as icons" by default
-- Fixed random character at the end of desktop "view as text" lines
-- Fixed alerts with no icon and a single text line
-- Changed desktop alerts to conform to the limit of 32 characters per line
-- Fixed the version displayed in the desktop about box for translated ROMs
-- Workaround against GFA startup crash
-- New erd tool for converting binary resources to source files
-- New mkrom tool to build custom ROM formats
-- A lot of other minor bugfixes and cleanups
+- Added support for real Falcon 030 hardware with EmuTOS-RAM.
+- Added support for Amiga hardware (including WinUAE and Blizzard 1260).
+- Enabled internal IDE support for all machines, including Falcon.
+- Added support for hard disks with Atari, PC, or no partition table.
+- Fixed floppy support for DD and HD drives.
+- Added support for Falcon and TT SCC serial port
+- Many file selector improvements, including drive buttons.
+- Fixed support for Hatari extended VDI screens.
+- Use the default boot video mode if the NVRAM value is unsupported.
+- Center the welcome screen screen vertically.
+- Fixed the welcome screen key repeat bug when booting FreeMiNT.
+- Changed GEM alerts to conform to standard TOS alert line length.
+- Always center dialogs, even with high resolutions.
+- Implemented fsel_exinput(), now appl_init() returns AES version as 1.40.
+- Fixed vq_color() & vs_color() for systems with VIDEL.
+- Fixed crash with BIOS/XBIOS functions numbers >32767.
+- Fixed Mediach() return value when there is no floppy.
+- Fixed the return value of VIDEL XBIOS functions when there is no VIDEL.
+- Fixed latent bug in blkdev_rwabs() when transferring >32767 sectors.
+- Added Bconmap() support.
+- Fixed Rsconf() return value.
+- Fixed Setscreen() to clear the screen on video mode change.
+- Protobt(): add new disk types and fix checksum & serial number.
+- Flopfmt(): added support for the skew array introduced in TOS 1.04.
+- Fixed swapping of Bcostat() for IKBD and MIDI.
+- Fixed Falcon palette initialisation.
+- Enabled instruction, data cache and MMU on 68030.
+- Fixed _SWI cookie to set high order bytes to zeros.
+- Added FOLDRxxx.PRG message when internal OS memory is exhausted.
+- Consistent cold/warm reset behaviour.
+- Fixed EmuCON MV command to move rather than copy.
+- Changed Greece country from 18 to 31 to match FreeMiNT standard.
+- Added internal gem.rsc and icon.rsc files, with resource decompilers.
+- Many internal bugfixes and cleanups.
+- Added compilation support for the m68k-elf toolchain.
+- Added debug symbols for Hatari in etos512.sym.
 
 Have a look at the changelog.txt for more detailed information.
 
@@ -106,13 +112,13 @@ Making EmuTOS running natively on a new hardware platform is more or less
 just a question of driver support for EmuTOS. The same for MiNT, if you'd
 like to have it running on top of EmuTOS.
 
-This is the currently supported hardware:
+This is the currently supported Atari hardware:
 
 - CPU support for m68000, m68010, m68020, m68030, m68040, m68060, ColdFire V4e
 - FPU detected
 - Memory controller (both ST and Falcon)
 - Monitor type detection (mono, RGB or VGA)
-- WD 1772 Floppy disk controller (write track not tested)
+- WD 1772 / AJAX Floppy disk controller (write track not tested)
 - DMA controller
 - MFP
 - PSG
@@ -122,13 +128,20 @@ This is the currently supported hardware:
 - ACIAs, IKBD protocol, mouse
 - MegaST Real-Time Clock (set clock not tested)
 - NVRAM (including RTC)
-- Falcon IDE (experimental, enabled on the FireBee only)
+- Falcon IDE
+- SCC
 - The native feature interface to some degree
 
+EmuTOS is also available on some non-Atari hardware:
+- Amiga (WinUAE, Amiga 1000, Amiga 1200 with Blizzard 1260)
 
 AVAILABILITY
 
-EmuTOS has its home at SourceForge:
+The EmuTOS home page is:
+
+    http://emutos.sourceforge.net/
+
+The project home is on SourceForge:
 
     http://sourceforge.net/projects/emutos/
 
@@ -142,12 +155,12 @@ Development snapshots allow you to test the current development progress:
 
 The latest sources are always available from our CVS server at:
 
-    http://sourceforge.net/scm/?type=cvs&group_id=36560
+    http://sourceforge.net/p/emutos/code/
 
 If you are just curious or would like to help us develop this nice little
 OS, you are invited to subscribe to our mailing list for developers at:
 
-    http://sourceforge.net/mail/?group_id=36560
+    https://lists.sourceforge.net/lists/listinfo/emutos-devel
 
 
 We hope that you like EmuTOS. If you have any suggestions or comments, we 
