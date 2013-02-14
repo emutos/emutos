@@ -4396,3 +4396,7 @@ Start... early ages
 
 2013-02-13
 - readme.txt doc/announce.txt doc/install.txt: Updated. (VRI)
+
+2013-02-14
+- bios/acsi.c bios/blkdev.c bios/disk.c bios/floppy.c: Revert changes to
+  cache flush & invalidation. (RFB)

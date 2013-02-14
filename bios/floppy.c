@@ -779,6 +779,7 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
 #if CONF_WITH_FDC
     WORD retry;
     WORD status;
+    LONG buflen = (LONG)count * SECTOR_SIZE;
 #endif
 
     if(!IS_VALID_FLOPPY_DEVICE(dev)) return EUNDEV;  /* unknown disk */
@@ -793,6 +794,10 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
     err = amiga_floprw(buf, rw, dev, sect, track, side, count);
     devices[dev].last_access = hz_200;
 #elif CONF_WITH_FDC
+    /* flush data cache here so that memory is current */
+    if (rw == RW_WRITE)
+        flush_data_cache((void *)buf,buflen);
+
     floplock(dev);
     
     select(dev, side);
@@ -848,6 +853,10 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
       buf += SECTOR_SIZE;
       sect++;
     }
+
+    /* invalidate data cache if we've read into memory */
+    if (rw == RW_READ)
+        invalidate_data_cache((void *)buf,buflen);
 
     flopunlk();
 #else
