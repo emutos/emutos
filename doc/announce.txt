@@ -45,6 +45,8 @@ CHANGES SINCE LAST RELEASE
 - Flopfmt(): added support for the skew array introduced in TOS 1.04.
 - Fixed swapping of Bcostat() for IKBD and MIDI.
 - Fixed Falcon palette initialisation.
+- Enabled again Mega ST clock support in 192 kB ROMs.
+- Enabled the STOP instruction usage to free ths host CPU in 192 kB ROMs, too.
 - Enabled instruction, data cache and MMU on 68030.
 - Fixed _SWI cookie to set high order bytes to zeros.
 - Added FOLDRxxx.PRG message when internal OS memory is exhausted.
