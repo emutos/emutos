@@ -4400,3 +4400,6 @@ Start... early ages
 2013-02-14
 - bios/acsi.c bios/blkdev.c bios/disk.c bios/floppy.c: Revert changes to
   cache flush & invalidation. (RFB)
+
+2013-02-15
+- include/config.h: Enabled again Mega ST clock support in 192 kB ROMs. (VRI)
