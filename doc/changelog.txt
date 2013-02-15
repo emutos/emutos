@@ -4404,3 +4404,4 @@ Start... early ages
 2013-02-15
 - include/config.h: Enabled again Mega ST clock support in 192 kB ROMs. (VRI)
 - include/config.h: Enabled again the easter egg in 192 kB ROMs. (VRI)
+- include/config.h: Enabled USE_STOP_INSN_TO_FREE_HOST_CPU in 192 kB ROMs. (VRI)

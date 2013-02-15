@@ -141,9 +141,6 @@
 # ifndef CONF_WITH_ASSERT
 #  define CONF_WITH_ASSERT 0
 # endif
-# ifndef USE_STOP_INSN_TO_FREE_HOST_CPU
-#  define USE_STOP_INSN_TO_FREE_HOST_CPU 0
-# endif
 # ifndef CONF_WITH_DESK1
 #  define CONF_WITH_DESK1 0 /* Sad but necessary to fit size requirements */
 # endif
