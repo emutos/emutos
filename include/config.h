@@ -150,9 +150,6 @@
 # ifndef CONF_WITH_DESKTOP_ICONS
 #  define CONF_WITH_DESKTOP_ICONS 0
 # endif
-# ifndef CONF_WITH_EASTER_EGG
-#  define CONF_WITH_EASTER_EGG 0
-# endif
 # ifndef CONF_WITH_PCGEM
 #  define CONF_WITH_PCGEM 0
 # endif
