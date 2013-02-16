@@ -40,7 +40,7 @@ OFD (Open File Descriptor)
     One per open file or directory.  Contains time, date, attributes,
     current position etc of a file, as well as pointers to the
     related DMD & DND.
-	
+
 BCB (Buffer Control Block)
     One per sector buffer.  Contains info describing the sector
     currently in the buffer.  Currently there are four sector
