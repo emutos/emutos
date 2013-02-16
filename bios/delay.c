@@ -72,7 +72,7 @@ void init_delay(void)
  * calibrate delay values: must only be called *after* interrupts are allowed
  *
  * NOTE1: we use TimerD so we restore the RS232 stuff
- * NOTE2: some systems (e.g. Aranym) do not implement TimerD; we leave
+ * NOTE2: some systems (e.g. ARAnyM) do not implement TimerD; we leave
  *        the default delay values as-is in this case
  */
 void calibrate_delay(void)
