@@ -80,7 +80,13 @@ New country check list
 ----------------------
 
 - if the country is not known (in bios/ctrycodes.h),
-  - add an entry in bios/ctrycodes.h
+  - get it from tos.hyp:
+    http://toshyp.atari.org/en/003007.html#Cookie_2C_20_AKP
+  - or from FreeMiNT:
+    http://sparemint.atariforge.net/cgi-bin/cvsweb/freemint/sys/keyboard.c?rev=1.114&content-type=text/x-cvsweb-markup
+  - if there is no code for your country yet, be sure to agree with tos.hyp
+    and FreeMiNT people to avoid a number clash.
+  - add your new entry in bios/ctrycodes.h
 - add suitable lines in the tables in country.mk
 - if a specific charset is needed, 
   - find a two character name for this charset

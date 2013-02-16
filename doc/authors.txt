@@ -21,6 +21,10 @@ Minor borrowed stuff:
 - "Bug" includes parts of the original gettext source code;
 - some low-level hardware stuff comes from the Linux kernel;
 
+While the main Amiga support was written from scratch by the EmuTOS team,
+some advanced code (FastRAM and floppy support) has been borrowed from the
+AROS project. Due to license incompatibilities, that code is shipped in the
+source archive, but not compiled into the official binaries.
 
 Here is about the 'recent' contributors - individuals involved in the EmuTOS
 project. In this project virtually everybody modifies every file,
@@ -30,13 +34,17 @@ Vincent Rivière (VRI) <vincent.riviere at freesbee.fr>
 - Current project admin
 - Patches for compiling with GCC 4.x
 - ColdFire CPU and FireBee support
-- Various bug fixes
+- IDE driver
+- Amiga support
 - French translation update
+- Various bug fixes
 
 Roger Burrows (RFB) <rfburrows at ymail.com>
 - FAT16 partitions up to 2 GB (inspired from Didier Méquignon's BDOS fork)
 - Full support for Falcon and TT video hardware
-- erd tool: the EmuDesk Resource Decompiler
+- Real Falcon 030 support (cache, SCC, HD floppy)
+- Desktop and file selector improvements
+- erd tool: the EmuTOS Resource Decompiler
 - Various bugfixes and cleanups
 
 Thomas Huth (THH) <huth at users.berlios.de>
@@ -86,7 +94,7 @@ Johan Klockars <rand at cd.chalmers.se>
 - fVDI
 
 Henk Robbers <h.robbers at chello.nl> 
-- XaAES
+- XaAES, AHCC
 
 Jacques-Etienne Rahon "Kevin Flynn" <kevin.flynn at wanadoo.fr>
 - Extensive demo testing on STeeM
@@ -95,7 +103,7 @@ Patrice Mandin and Markus Oberhumer
 - Hints and patches for compiling EmuTOS with GCC 3.x
 
 Eero Tamminen
-- Many bug reports and testing
+- Many bug reports, extensive testing, testcases supply
 - Finnish translation and keyboard mapping
 - Static source analysis and cleanup
 
@@ -142,3 +150,12 @@ and all the ACP team
 
 James Boulton <james.boulton at eiconic.com>
 - floprw() fix for reading multiple sectors
+
+Stephen Leary <sleary@vavi.co.uk>
+- Fixed support for IDE slave device
+
+Miro Kropáček <miro.kropacek@gmail.com>
+- Experimental 68040 MMU support
+
+WongCK on Atari-Forum
+- Tests on real Falcon 030
