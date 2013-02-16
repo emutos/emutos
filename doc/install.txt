@@ -34,6 +34,11 @@ EmuTOS image is booted on an emulator featuring NVRAM emulation (such as
 ARAnyM), the country number in the NVRAM will override that setting of the 
 country in the TOS header.
 
+To build EmuTOS for a single country only, you must use UNIQUE instead of
+COUNTRY. This is mainly useful for the 192 and 256 kB targets. Example:
+
+    make 256 UNIQUE=fr
+
 Finally, some settings can be configured in the file include/config.h.
 
 A complete list of targets
@@ -47,6 +52,8 @@ EmuTOS binaries
 512     etos512k.img, EmuTOS ROM padded to size 512 kB (starting at 0x00e00000)
 aranym  emutos-aranym.img, suitable for ARAnyM
 firebee emutosfb.s19, to be flashed on the FireBee
+amiga   emutos-amiga.rom, EmuTOS ROM for Amiga hardware
+amigakd emutos-kickdisk.adf, EmuTOS as Amiga 1000 Kickstart disk
 ram     ramtos.img + boot.prg, a RAM tos
 flop    emutos.st, a bootable floppy with RAM tos
 cart    etoscart.img, EmuTOS as a diagnostic cartridge
@@ -59,7 +66,7 @@ COUNTRY=xx    all countries in the binary, country xx being the default
 UNIQUE=xx     a smaller binary with only support for country xx
 DEF='-DSOMEDEFINE=value' 
               used to override the default settings from include/config.h.
-              WARNING: do make clean first.
+              WARNING: do "make clean" first.
 
 Utility targets
 ---------------
