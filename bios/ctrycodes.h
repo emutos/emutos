@@ -40,8 +40,8 @@
  * Before defining new ones, be sure to register them in tos.hyp:
  * http://toshyp.atari.org/en/003007.html#Cookie_2C_20_AKP
  * Note that those codes are also used in FreeMiNT/XaAES and must match:
- * http://sparemint.atariforge.net/cgi-bin/cvsweb/freemint/sys/keyboard.c?rev=1.112&content-type=text/x-cvsweb-markup
- * http://sparemint.atariforge.net/cgi-bin/cvsweb/freemint/xaaes/src.km/init.c?rev=1.123&content-type=text/x-cvsweb-markup
+ * http://sparemint.atariforge.net/cgi-bin/cvsweb/freemint/sys/keyboard.c?rev=1.114&content-type=text/x-cvsweb-markup
+ * http://sparemint.atariforge.net/cgi-bin/cvsweb/freemint/xaaes/src.km/init.c?rev=1.125&content-type=text/x-cvsweb-markup
  */
 #define COUNTRY_RU 19   /* Russia */
 #define COUNTRY_GR 31   /* Greece */
