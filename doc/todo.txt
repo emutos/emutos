@@ -1,6 +1,6 @@
 BIOS/XBIOS
 - implement missing XBIOS calls
-  (e.g. the Blitter functions)
+  (e.g. the Blitter, Falcon sound matrix and DSP functions)
 - reduce the number of 'extern' in .c files
 - check that RAM disks work
 - misc. TODOs in floppy.c
@@ -19,7 +19,7 @@ Internationalization
 VDI
 - The linemask for dashed lines is not calculated correct, depending on 
   the internal calculations of increase in x direction, like in original TOS.
-- vs_color and vq_color don't work with TT shifter and Falcon Videl yet.
+- vs_color and vq_color don't work with TT shifter.
 
 AES
 - Check if all strings in desk_rsc.c and gem_rsc.c are fully ROM save (the

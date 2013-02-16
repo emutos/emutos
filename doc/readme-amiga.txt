@@ -55,7 +55,11 @@ Unsupported Atari features:
 This ROM image has been built using:
 make amiga
 
-(*) This additional hardware support is provided by sources imported from
-the AROS project. Unfortunately, due to licenses incompatibilities, this
-support is disabled in the official EmuTOS binaries.
+(*) This additional hardware support is provided by sources imported
+from the AROS project. Unfortunately, due to AROS and GPL license
+incompatibility, this support is disabled in the official EmuTOS
+binaries.
+
+Re-build EmuTOS with CONF_WITH_AROS enabled for full support, but note
+that due to licensing issue, such binary isn't redistributable.
 

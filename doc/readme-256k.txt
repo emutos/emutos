@@ -6,6 +6,7 @@ These ROMs are suitable for the following hardware:
 - emulators of the above
 
 Note: Extra hardware is autodetected.
+
 These ROMs will work fine on Hatari with any hardware combination.
 
 Each ROM contains a single language:

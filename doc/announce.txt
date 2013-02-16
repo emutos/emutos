@@ -24,7 +24,7 @@ CHANGES SINCE LAST RELEASE
 - Enabled internal IDE support for all machines, including Falcon.
 - Added support for hard disks with Atari, PC, or no partition table.
 - Fixed floppy support for DD and HD drives.
-- Added support for Falcon and TT SCC serial port
+- Added support for Falcon and TT SCC serial port.
 - Many file selector improvements, including drive buttons.
 - Fixed support for Hatari extended VDI screens.
 - Use the default boot video mode if the NVRAM value is unsupported.
@@ -34,6 +34,7 @@ CHANGES SINCE LAST RELEASE
 - Always center dialogs, even with high resolutions.
 - Implemented fsel_exinput(), now appl_init() returns AES version as 1.40.
 - Fixed vq_color() & vs_color() for systems with VIDEL.
+- Fixed v_contourfill() with negative index.
 - Fixed crash with BIOS/XBIOS functions numbers >32767.
 - Fixed Mediach() return value when there is no floppy.
 - Fixed the return value of VIDEL XBIOS functions when there is no VIDEL.
@@ -72,39 +73,45 @@ EmuTOS is basically made up of six subsystems:
 - The AES, the application environment services or window manager
 - The desktop, which is the graphical shell to the user
 
-The BIOS and XBIOS code is our own development. It is really written from
-scratch and implements nearly all of the TOS 1.0 BIOS functionality, and a
-bit more, like e.g. hard disk access.
+The BIOS and XBIOS code is our own development. It is written from
+scratch and implements all relevant TOS 1.0 Bios & XBIOS functionality,
+and a bit more, e.g. hard disk access. See doc/status.txt for details.
 
 The GEMDOS part is based on Digital Research's GEMDOS sources, which were
 made available under GPL license in 1999 by Caldera. 
 
 The graphical parts like VDI and AES are now more or less fully
-implemented. They work in all the graphics modes of the original Atari
-ST. On some emulators EmuTOS can be patched to work with much bigger
-screen resolutions without any problems.
+implemented up to TOS v1.04 level. They work in all the graphics modes
+of the original Atari ST. On some emulators EmuTOS can be patched to
+work with much bigger screen resolutions.
 
 The desktop is not as nice as the original one, but is pretty usable
 now for a start. You are free to use a more advanced desktop
-replacement any time, like TeraDesk for example.
+replacement like TeraDesk.
 
-Since EmuTOS just implements the TOS's functionality, you might want to
-use MiNT on it in order to run more modern software. EmuTOS is not an
-alternative to MiNT. But EmuTOS is the only free base OS to boot MiNT.
+Since EmuTOS just implements TOS functionality, you might want to use
+MiNT on top of it in order to run more modern software. EmuTOS is not
+an alternative to MiNT, but it's the only free base OS to boot MiNT.
 
 
 
 EMULATION AND FUTURE PLATFORM
 
-EmuTOS and MiNT cooperate well. Both can make use of a standard native
-call interface for emulators.
-EmuTOS itself still uses this new standard native interface for all its 
-supported native functions. When running EmuTOS in an emulator, this
-interface will provide access to use the power of the underlying OS kernel.
-It may allow using modern graphics cards, provides fast native filesystem 
-access and will enable you to use networking with all bells and whistles - 
-and many things more you always dreamed of. This all will at first get 
-possible on the ARAnyM platform.
+EmuTOS and MiNT cooperate well. Both can utilize Native Features
+(NatFeats) interface for emulators:
+    http://wiki.aranym.org/natfeats/proposal
+
+EmuTOS uses this new standard interface for all the relevant native
+functions supported by an emulator on which it's running. This
+interface proxies the calls to underlying host OS so that these
+features don't need to be emulated. This is both faster and can
+provide features that would be infeasible on real a machine. It
+may allow using modern graphics cards, provide fast native filesystem
+access and enable you to use networking with all bells and whistles -
+and many other things you might not have even dreamed of.
+
+ARAnyM emulator has most extensive support for NatFeats.
+Hatari emulator spports the basic NatFeats facilities.
 
 
 
