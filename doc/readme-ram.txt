@@ -9,7 +9,7 @@ ramtos.img - EmuTOS image
 
 Notes:
 - this version is compatible with any hardware (except the FireBee)
-- the CPU cache must be disabled before running boot.prg
+- special care has been taken in this release for Falcon 030 support
 
 The default language is English.
 Other supported languages are:

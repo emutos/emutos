@@ -27,7 +27,7 @@ This tool runs on MS Windows and requires additional hardware.
 
 2) Didier Méquignon's FLASH060.PRG
 http://didierm.pagesperso-orange.fr/firebee.htm
-Get it from the tos060.lzh archive, tos060/flash.too foder.
+Get it from the tos060.lzh archive, in the tos060/flash.too folder.
 On your FireBee, start FireTOS, run FLASH060.PRG and flash emutosfb.s19.
 
 In both cases, the correct EmuTOS flash parameters are prefilled,
@@ -44,7 +44,7 @@ for USB keyboard and mouse.
 
 The FireBee ROM features:
 - NVRAM boot resolution is currently ignored, 640x480x16 is always used
-- Experimental IDE support is enabled for the internal CompactFlash slot
+- IDE support is enabled for the internal CompactFlash slot only
 - Longer welcome screen delay to allow monitors to revover from sleep modes
 - Pure ColdFire OS: ColdFire TOS programs only, 680x0 programs unsupported
 
