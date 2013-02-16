@@ -7,8 +7,7 @@ BIOS/XBIOS
 - check that VEC_CRITICALERR (0x101) is called when the BIOS encounters errors
 - improve Mediach()
 - implement full XHDI 1.30
-- loop calibration needed for various delays in Centronics and DMA ports
-- make EmuTOS MMU aware and let it set up correct MMU tree
+- make EmuTOS MMU aware and let it set up correct MMU tree on 68040
 
 BDOS (GEMDOS)
 - should hitting control-c terminate the current process? if so, how?
