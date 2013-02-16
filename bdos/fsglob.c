@@ -1,5 +1,5 @@
 /*
- * fsglob.c - global variables for the file system                
+ * fsglob.c - global variables for the file system
  *
  * Copyright (c) 2001 Lineo, Inc.
  *               2002 - 2010 The EmuTOS development team
@@ -50,7 +50,7 @@ FTAB sft[OPNFILES];
  * rwerr -  hard error number currently in progress
  */
 
-long rwerr; 
+long rwerr;
 long errcode;
 
 
@@ -59,7 +59,7 @@ long errcode;
  * errdrv -  drive on which error occurred
  */
 
-int errdrv; 
+int errdrv;
 jmp_buf errbuf;
 
 

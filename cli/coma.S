@@ -49,13 +49,13 @@ _coma_start:
         lea     12(sp),sp
 
         move.l  #mycrit,-(sp)
-        move.w  #0x101,-(sp)                                   
+        move.w  #0x101,-(sp)
         move.w  #5,-(sp)
         trap    #13             // set/get critical error
         add.l   #8,sp
         move.l  d0,ocrit
 
-        bsr     _in_term                                       
+        bsr     _in_term
 
         jsr     _cmain          // leave basepage on stack
         addq.l  #4,sp
@@ -69,33 +69,33 @@ _coma_start:
 
 
 
-_devector:                                                     
-        move.l  ocrit,-(sp)     // restore crit err vector      
-        move.w  #0x101,-(sp)                                   
-        move.w  #5,-(sp)                                       
-        trap    #13                                            
-        add.l   #8,sp                                          
+_devector:
+        move.l  ocrit,-(sp)     // restore crit err vector
+        move.w  #0x101,-(sp)
+        move.w  #5,-(sp)
+        trap    #13
+        add.l   #8,sp
 
-        jsr     _rm_term                                       
-        rts                                                    
+        jsr     _rm_term
+        rts
 
 
 _in_term:
-        move.l  #myterm,-(sp)                                  
-        move.w  #0x102,-(sp)                                   
-        move.w  #5,-(sp)                                       
-        trap    #13             // set/get terminate vector     
-        add.l   #8,sp                                          
-        move.l  d0,oterm                                       
-        rts                                                    
+        move.l  #myterm,-(sp)
+        move.w  #0x102,-(sp)
+        move.w  #5,-(sp)
+        trap    #13             // set/get terminate vector
+        add.l   #8,sp
+        move.l  d0,oterm
+        rts
 
 
-_rm_term:                                                      
-        move.l  oterm,-(sp)     // restore terminate vector     
-        move.w  #0x102,-(sp)                                   
-        move.w  #5,-(sp)                                       
-        trap    #13                                            
-        add.l   #8,sp                                          
+_rm_term:
+        move.l  oterm,-(sp)     // restore terminate vector
+        move.w  #0x102,-(sp)
+        move.w  #5,-(sp)
+        trap    #13
+        add.l   #8,sp
         rts
 
 
@@ -231,7 +231,7 @@ bios_ret:       .ds.l   1
 xbios_ret:      .ds.l   1
 gemdos_ret:     .ds.l   1
 
-                .ds.l   1024            // Stack space, growing backwards                         
+                .ds.l   1024            // Stack space, growing backwards
 mystak:         .ds.l   1               // Stack for command.prg
 
 

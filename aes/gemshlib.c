@@ -1,5 +1,5 @@
 /*      GEMSHLIB.C      4/18/84 - 09/13/85      Lee Lorenzen            */
-/*      merge High C vers. w. 2.2               8/24/87         mdf     */ 
+/*      merge High C vers. w. 2.2               8/24/87         mdf     */
 /*      fix sh_envrn                            11/17/87        mdf     */
 
 /*
@@ -308,7 +308,7 @@ void sh_put(const void *pdata, WORD len)
 
 
 /*
-*       Convert the screen to graphics-mode in preparation for the 
+*       Convert the screen to graphics-mode in preparation for the
 *       running of a GEM-based graphic application.
 */
 void sh_tographic()
@@ -378,14 +378,14 @@ static void sh_draw(const BYTE *lcmd, WORD start, WORD depth)
 static void sh_show(const BYTE *lcmd)
 {
         WORD            i;
-        
+
         for(i=1; i<3; i++)
           sh_draw(lcmd, i, 0);
 }
 
 
 /*
-*       Routine to take a full path, and scan back from the end to 
+*       Routine to take a full path, and scan back from the end to
 *       find the starting byte of the particular filename
 */
 BYTE *sh_name(BYTE *ppath)
@@ -404,7 +404,7 @@ BYTE *sh_name(BYTE *ppath)
 
 /*
 *       Search for a particular string in the DOS environment and return
-*       a long pointer to the character after the string if it is found. 
+*       a long pointer to the character after the string if it is found.
 *       Otherwise, return a NULLPTR
 */
 void sh_envrn(BYTE **ppath, const BYTE *psrch)
@@ -566,7 +566,7 @@ WORD sh_find(BYTE *pspec)
           dos_sfirst(D.g_dir, F_RDONLY | F_SYSTEM);
 
           if ( (DOS_AX == E_PATHNOTFND) ||
-                ((DOS_ERR) && 
+                ((DOS_ERR) &&
                  ((DOS_AX == E_NOFILES) ||
                   (DOS_AX == E_PATHNOTFND) ||
                   (DOS_AX == E_FILENOTFND))) )
@@ -661,7 +661,7 @@ void sh_chdef(SHELL *psh)
           strcpy(&D.s_cmd[0], &psh->sh_desk[0]);
         }
         else
-        {                       
+        {
           if(sh_apdir[1] == ':')
             dos_sdrv(sh_apdir[0] - 'A');        /* desktop's def. dir   */
           dos_chdir(sh_apdir);
@@ -691,7 +691,7 @@ void sh_ldapp()
 
         psh = &sh[rlr->p_pid];
         strcpy(sh_apdir, D.s_cdir);             /* initialize sh_apdir  */
-        badtry = 0;     
+        badtry = 0;
 
         /* Set default DESKTOP if there isn't any yet: */
         if(psh->sh_desk[0] == 0)
@@ -717,7 +717,7 @@ void sh_ldapp()
             wm_start();
             ratinit();
           }
-                                                /* fix up/parse cmd tail*/ 
+                                                /* fix up/parse cmd tail*/
           sh_fixtail(psh->sh_fullstep == 2);
           sh_draw(D.s_cmd, 0, 0);               /* redraw the desktop   */
 

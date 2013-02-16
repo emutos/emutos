@@ -82,18 +82,18 @@ call_err:
         trap    #13
         addq.l  #8,sp
         rts
-        
+
 _giveerr:
         move.l  _crit_er,d0
         bra     call_err
-        
+
 _takeerr:
         moveq   #-1,d0
         bsr     call_err
         move.l  d0,_crit_er
         move.l  #_err_tra,d0
         bra     call_err
-        
+
 _err_tra:
         move.w  0x04(sp),d0
         move.w  0x06(sp),d1
@@ -108,7 +108,7 @@ _err_tra:
         bne     L1F62
         movea.w #0x00,a0
         bra     L1F70
-        
+
 L1F62:
 #ifdef __mcoldfire__
         not.l   d0
@@ -162,14 +162,14 @@ _back:
 
 trapaes:
         bsr     _cli                    // mask out interrupts
-        move.l  usp,a0                  
+        move.l  usp,a0
 #ifdef __mcoldfire__
         lea     -56(a0),a0
         movem.l d1-d7/a0-a6,(a0)        // put registers to user stack
 #else
         movem.l d1-d7/a0-a6,-(a0)       // put registers to user stack
 #endif
-        move.l  a0,usp                  
+        move.l  a0,usp
 
         movea.l _rlr,a6
         movea.l PD_UDA(a6),a6
@@ -200,7 +200,7 @@ supret:                                 // return from gementry
 #else
         movem.l (a0)+,d1-d7/a0-a6
 #endif
-        move.l  a0,usp                  
+        move.l  a0,usp
         bsr     _sti                    // restore interrupt mask
         rte
 
@@ -225,7 +225,7 @@ _takecpm:
 #endif
         rts
 
-        
+
 
 _far_bcha:
         move.l  sp,gstksave

@@ -67,7 +67,7 @@ void obj_init(void)
 
 
 /*
-*       Allocate a window object from the screen tree by looking for 
+*       Allocate a window object from the screen tree by looking for
 *       the child of the parent with no size
 */
 WORD obj_walloc(WORD x, WORD y, WORD w, WORD h)

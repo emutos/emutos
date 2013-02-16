@@ -80,7 +80,7 @@ extern void rm_term(void);
 #define jmp_bios_w(a,b)     jmp_bios((WORD)(a),(WORD)(b))
 #define jmp_bios_wpwww(a,b,c,d,e,f) \
           jmp_bios((WORD)(a),(WORD)(b),(void*)(c),(WORD)(d),(WORD)(e),(WORD)(f))
- 
+
 #define getbpb(a) jmp_bios_w(7,a)
 #define rwabs(a,b,c,d,e) jmp_bios_wpwww(4,a,b,c,d,e)
 
@@ -241,7 +241,7 @@ is_graphical_program(const char* name)
 
     /* Advance to the extension */
     p++;
-    
+
     /* Check for graphical extensions */
     return xcasecmps(p, "PRG")
         || xcasecmps(p, "APP")
@@ -1606,7 +1606,7 @@ execPrgm(char *s, char *cmdtl)
 
     cmdptr = (char *) &cmd;
     j = 0;
-    
+
     if (is_graphical_program(cmd))
         Cursconf(0, 0);         /* XBIOS switch cursor off before command */
 

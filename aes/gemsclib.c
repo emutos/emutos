@@ -1,6 +1,6 @@
 /*      GEMSCLIB.C      07/10/84 - 02/02/85     Lee Lorenzen            */
 /*      for 2.0         10/8/85  - 10/15/85     MDF                     */
-/*      merge High C vers. w. 2.2               8/24/87         mdf     */ 
+/*      merge High C vers. w. 2.2               8/24/87         mdf     */
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
@@ -49,7 +49,7 @@ WORD sc_read(BYTE *pscrap)
     WORD    len;
 
     /* current scrap directory */
-    len = strlencpy(pscrap, D.g_scrap);      
+    len = strlencpy(pscrap, D.g_scrap);
     strcpy(pscrap+len, "\\");      /* cat on backslash  */
     return( len != 0 );
 }

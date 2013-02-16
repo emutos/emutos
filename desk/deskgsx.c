@@ -21,7 +21,7 @@
 *
 *       d_vsf_interior();
 *       vr_recfl();
-*       vst_height(); 
+*       vst_height();
 *       d_vsl_type();
 *       d_vsl_udsty();
 *       vsl_width();

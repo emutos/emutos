@@ -34,8 +34,8 @@ extern BYTE shifty;
 
 /*
  * dead key support: i.e. hitting ^ then a yields â.
- * char codes DEADMIN to DEADMAX inclusive are reserved for dead keys. 
- * table keytbl->dead[i - DEADMIN], DEADMIN <= i <= DEADMAX, gives the 
+ * char codes DEADMIN to DEADMAX inclusive are reserved for dead keys.
+ * table keytbl->dead[i - DEADMIN], DEADMIN <= i <= DEADMAX, gives the
  * list of couples of (before, after) char codes ended by zero.
  */
 

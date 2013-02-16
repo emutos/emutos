@@ -61,7 +61,7 @@ static jmp_buf bakbuf;         /* longjmp buffer */
 
 /*
  * memory internal routines
- * 
+ *
  * These violate the encapsulation of the memory internal structure.
  * Could perhaps better go in the memory part.
  */
@@ -114,7 +114,7 @@ static void free_all_owned(PD *p, MPB *mpb)
         }
     }
 }
-    
+
 /* change the memory owner based on the block address */
 static void set_owner(void *addr, PD *p, MPB *mpb)
 {
@@ -123,7 +123,7 @@ static void set_owner(void *addr, PD *p, MPB *mpb)
         if(m->m_start == (long)addr) {
             m->m_own = p;
             return;
-        }  
+        }
     }
 }
 
@@ -163,7 +163,7 @@ static void     ixterm( PD *r )
 
     free_all_owned(r, &pmd);
 #if CONF_WITH_ALT_RAM
-    if(has_alt_ram) 
+    if(has_alt_ram)
         free_all_owned(r, &pmdalt);
 #endif
 }
@@ -220,7 +220,7 @@ long xexec(WORD flag, char *path, char *tail, char *env)
 
     /* first branch - actions that do not require loading files */
     switch(flag) {
-    case PE_RELOCATE: 
+    case PE_RELOCATE:
         p = (PD *) tail;
         rc = kpgm_relocate(p, (long)path);
         if(rc) {
@@ -229,20 +229,20 @@ long xexec(WORD flag, char *path, char *tail, char *env)
         }
 
         /* invalidate instruction cache for the TEXT segment only
-         * programs that jump into their DATA, BSS or HEAP are kindly invited 
+         * programs that jump into their DATA, BSS or HEAP are kindly invited
          * to do their cache management themselves.
          */
         invalidate_instruction_cache( p+1, p->p_tlen);
 
         return (long) p;
-    case PE_BASEPAGE:        
+    case PE_BASEPAGE:
         /* just create a basepage */
         env_md = alloc_env(env);
         if(env_md == NULL) {
             D(("xexec: Not Enough Memory!\n"));
             return(ENSMEM);
         }
-        max = (long) ffit(-1L, &pmd); 
+        max = (long) ffit(-1L, &pmd);
         if(max >= sizeof(PD)) {
             m = ffit(max, &pmd);
             p = (PD *) m->m_start;
@@ -277,7 +277,7 @@ long xexec(WORD flag, char *path, char *tail, char *env)
     default:
         return EINVFN;
     }
-    
+
     /* we now need to load a file */
     D(("BDOS: xexec - trying to find the command ...\n"));
     if (ixsfirst(path,0,0L)) {
@@ -301,31 +301,31 @@ long xexec(WORD flag, char *path, char *tail, char *env)
         D(("xexec: Not Enough Memory!\n"));
         return(ENSMEM);
     }
-    
+
     /* allocate the basepage depending on memory policy */
     needed = hdr.h01_tlen + hdr.h01_dlen + hdr.h01_blen + sizeof(PD);
     max = 0;
-        
+
     /* first try */
     p = NULL;
     m = NULL;
 #if CONF_WITH_ALT_RAM
     if(has_alt_ram && (hdr.h01_flags & PF_TTRAMLOAD)) {
         /* use alternate ram preferably */
-        max = (long) ffit(-1L, &pmdalt); 
+        max = (long) ffit(-1L, &pmdalt);
         if(max >= needed) {
             m = ffit(max, &pmdalt);
             p = (PD *) m->m_start;
-        } 
+        }
     }
 #endif
     /* second try */
     if(p == NULL) {
-        max = (long) ffit(-1L, &pmd); 
+        max = (long) ffit(-1L, &pmd);
         if(max >= needed) {
             m = ffit(max, &pmd);
             p = (PD *) m->m_start;
-        } 
+        }
     }
     /* still failed? free env_md and return */
     if(p == NULL) {
@@ -336,17 +336,17 @@ long xexec(WORD flag, char *path, char *tail, char *env)
     assert(m != NULL);
 
     /* memory ownership - the owner is either the new process being created,
-     * or the parent 
+     * or the parent
      */
     if(flag == PE_LOADGO) {
         m->m_own = env_md->m_own = p;
     } else {
         m->m_own = env_md->m_own = run;
-    }   
+    }
 
     /* initialize the fields in the PD structure */
     init_pd_fields(p, tail, max, env_md);
-    
+
     /* set the flags (must be done after init_pd) */
     p->p_flags = hdr.h01_flags;
 
@@ -364,7 +364,7 @@ long xexec(WORD flag, char *path, char *tail, char *env)
         /* free any memory allocated yet */
         freeit(cur_env_md, &pmd);
         freeit(cur_m, find_mpb((void *)cur_m->m_start));
-        
+
         /* we still have to jump back to bdosmain.c so that the proper error
          * handling can occur.
          */
@@ -378,18 +378,18 @@ long xexec(WORD flag, char *path, char *tail, char *env)
         /* free any memory allocated yet */
         freeit(cur_env_md, &pmd);
         freeit(cur_m, find_mpb((void *)cur_m->m_start));
-    
+
         return rc;
     }
 
-    /* at this point the program has been correctly loaded in memory, and 
+    /* at this point the program has been correctly loaded in memory, and
      * more IO errors cannot occur, so it is safe now to finish initializing
      * the new process.
      */
     init_pd_files(cur_p);
-    
+
     /* invalidate instruction cache for the TEXT segment only
-     * programs that jump into their DATA, BSS or HEAP are kindly invited 
+     * programs that jump into their DATA, BSS or HEAP are kindly invited
      * to do their cache management themselves.
      */
     invalidate_instruction_cache(((char *)cur_p) + sizeof(PD), hdr.h01_tlen);
@@ -404,7 +404,7 @@ static void init_pd_fields(PD *p, char *tail, long max, MD *env_md)
 {
     int i;
     char *b;
-    
+
     /* first, zero it out */
     bzero(p, sizeof(PD)) ;
 
@@ -426,7 +426,7 @@ static void init_pd_fields(PD *p, char *tail, long max, MD *env_md)
 static void init_pd_files(PD *p)
 {
     int i;
-    
+
     /* inherit standard files from me */
     for (i = 0; i < NUMSTD; i++) {
         WORD h = run->p_uft[i];
@@ -454,7 +454,7 @@ static MD *alloc_env(char *env)
     if (env == NULL)
         env = run->p_env;
     size = (envsize(env) + 1) & ~1;  /* must be even */
- 
+
     /* allocate it */
     env_md = ffit((long) size, &pmd);
     if ( env_md == NULL ) {
@@ -463,14 +463,14 @@ static MD *alloc_env(char *env)
 
     /* copy it */
     memcpy((void *)(env_md->m_start), env, size);
-    
+
     return env_md;
 }
 
 /* proc_go launches the new process by creating the right data
  * structure in memory, then pretending resuming from an ordinary
  * BDOS call by calling gouser().
- * 
+ *
  * Here is an excerpt of gouser() from rwa.S:
  * _gouser:
  *   move.l  _run,a5
@@ -484,7 +484,7 @@ static MD *alloc_env(char *env)
  *   bne     retsys          // a6 is (user-supplied) system stack
  *   move.l  a4,sp
  *   move.l  a6,usp
- * gousr:  
+ * gousr:
  *   move.l  a3,-(sp)
  *   move    d0,-(sp)
  *   movem.l 0x68(a5),d0/a3-a6
@@ -505,23 +505,23 @@ static void proc_go(PD *p)
 
     D(("BDOS: xexec - trying to load (and execute) a process on 0x%lx...\n", p->p_tbase));
     p->p_parent = run;
-        
+
     /* create a stack at the end of the TPA */
     sp = (struct gouser_stack *) (p->p_hitpa - sizeof(struct gouser_stack));
-    
+
     sp->basepage = p;      /* the stack contains the basepage */
-       
+
     sp->retaddr = p->p_tbase;    /* return address a3 is text start */
     sp->sr = get_sr() & 0x0700;  /* the process will start in user mode, same IPL */
-    
+
     /* the other stack is the supervisor stack */
     sp->other_sp = (long) &supstk[SUPSIZ];
-    
+
     /* store this new stack in the saved a7 field of the PD */
     p->p_areg[7-3] = (long) sp;
-    
+
 #if 1
-    /* the following settings are not documented, and hence theoretically 
+    /* the following settings are not documented, and hence theoretically
      * the assignments below are not necessary.
      * However, many programs test if A0 = 0 to check if they are running
      * as a normal program or as an accessory, so we need to clear at least
@@ -529,14 +529,14 @@ static void proc_go(PD *p)
      */
     {   /* d1-d7/a0-a2 and dummy return address set to zero */
         int i;
-        for(i = 0; i < 11 ; i++) 
+        for(i = 0; i < 11 ; i++)
             sp->fill[i] = 0;
     }
     p->p_areg[6-3] = (long) sp;    /* a6 to hold a copy of the stack */
     p->p_areg[5-3] = p->p_dbase;   /* a5 to point to the DATA segt */
     p->p_areg[4-3] = p->p_bbase;   /* a4 to point to the BSS segt */
 #endif
-    
+
     /* the new process is the one to run */
     run = (PD *) p;
 
@@ -584,7 +584,7 @@ void    xterm(UWORD rc)
 }
 
 
-/*      
+/*
  * xtermres - Function 0x31   p_termres
  */
 

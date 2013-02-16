@@ -12,12 +12,12 @@
 
 #ifndef LANGS_H
 #define LANGS_H
- 
+
 struct lang_info {
   const char *name;
   const char * const * const *hash;
 };
 
 extern const struct lang_info * const langs[];
- 
+
 #endif /* LANGS_H */

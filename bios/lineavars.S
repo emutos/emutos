@@ -113,7 +113,7 @@ _mask_form:      .ds.w   32      // -846 (cdb+10) Storage for mouse mask and cur
 /* Extended workstation information */
 
 _INQ_TAB:
-                .ds.w   45      // -782 information returned from a _vq_extnd() 
+                .ds.w   45      // -782 information returned from a _vq_extnd()
 
 
 /* Workstation information */
@@ -163,7 +163,7 @@ _mouse_flag:    .ds.b   1       // -339 non-zero if mouse ints disabled
 _sav_cur_x:     .ds.w   1       // -338 save area for cursor cell coords.
 _sav_cur_y:     .ds.w   1       // -336 save area for cursor cell coords.
 retsav:         .ds.l   1       // -334 I'm not sure if this is right here
-                              
+
 _save_len:      .ds.w   1       // -330
 _save_addr:     .ds.l   1       // -328 return address GEMDOS call
 _save_stat:     .ds.w   1       // -324
@@ -186,9 +186,9 @@ _v_cel_ht:      .ds.w   1       // -46  cell height (width is 8)
 _v_cel_mx:      .ds.w   1       // -44  columns on the screen minus 1
 _v_cel_my:      .ds.w   1       // -42  rows on the screen minus 1
 _v_cel_wr:      .ds.w   1       // -40  length (in bytes) of a line of characters
-_v_col_bg:      .ds.w   1       // -38  current background color 
-_v_col_fg:      .ds.w   1       // -36  current foreground color 
-_v_cur_ad:      .ds.l   1       // -34  current cursor address  
+_v_col_bg:      .ds.w   1       // -38  current background color
+_v_col_fg:      .ds.w   1       // -36  current foreground color
+_v_cur_ad:      .ds.l   1       // -34  current cursor address
 _v_cur_of:      .ds.w   1       // -30  offset from begin of screen
 _v_cur_cx:      .ds.w   1       // -28  current cursor column
 _v_cur_cy:      .ds.w   1       // -26  current cursor row
@@ -197,7 +197,7 @@ _v_cur_tim:     .ds.b   1       // -23  cursor blink timer.
 _v_fnt_ad:      .ds.l   1       // -22  pointer to current monospace font
 _v_fnt_nd:      .ds.w   1       // -18  ascii code of last cell in font
 _v_fnt_st:      .ds.w   1       // -16  ascii code of first cell in font
-_v_fnt_wr:      .ds.w   1       // -14  font cell wrap 
+_v_fnt_wr:      .ds.w   1       // -14  font cell wrap
 _v_hz_rez:      .ds.w   1       // -12  horizontal resolution in pixels
 _v_off_ad:      .ds.l   1       // -10  pointer to font offset table
 _v_stat_0:      .ds.b   1       // -6   video cell system status (was in words)
@@ -236,7 +236,7 @@ _v_bytes_lin:   .ds.w   1       // -2   byte per screen line
 
                 .globl  _v_planes
                 .globl  _v_lin_wr
-                
+
                 .globl  _patptr
                 .globl  _patmsk
 

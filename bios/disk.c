@@ -98,7 +98,7 @@ static inline int OK_id(char *s)
 {
     /* for description of the following partition types see
      * the XHDI specification ver 1.30
-     */ 
+     */
     return  memcmp (s, "GEM", 3) == 0 || memcmp (s, "BGM", 3) == 0 ||
             memcmp (s, "LNX", 3) == 0 || memcmp (s, "SWP", 3) == 0 ||
             memcmp (s, "MIX", 3) == 0 || memcmp (s, "UNX", 3) == 0 ||
@@ -109,7 +109,7 @@ static inline int OK_id(char *s)
 /*
  * determine whether we're looking at a partitioned
  * or a partitionless disk (like a floppy)
- * 
+ *
  * returns the size in sectors if it appears to be partitionless
  * otherwise return 0
  */
@@ -138,7 +138,7 @@ union
     u8 sect[MAXPHYSSECTSIZE];
     struct rootsector rs;
 } physsect, physsect2;
-  
+
 
 /*
  * scans for Atari partitions on 'xhdidev' and adds them to blkdev array
@@ -232,7 +232,7 @@ static int atari_partition(int xhdidev)
                 kprintf(" $%02x", type);
             }
         }
-    
+
         kprintf("\n");
 
         return 1;

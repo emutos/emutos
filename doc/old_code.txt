@@ -1,18 +1,18 @@
 old_code.c - a small Museum of Horrors
 
 Some extensive parts of EmuTOS were written using a very old C language.
-This file gives example of problems that actually occurred, and gives 
-the *right* way to write code. 
+This file gives example of problems that actually occurred, and gives
+the *right* way to write code.
 
-If you fix a bug that is due to obsolete C language, please add a note in 
-this file to help other developers imagine what kind of nasty bug may 
+If you fix a bug that is due to obsolete C language, please add a note in
+this file to help other developers imagine what kind of nasty bug may
 still exist...
 
 - do not assign to a variable and use the old value in the same
   expression. Replace
-    // BAD  envLen = ((i = strlen (path)) + (i ? 5 : 0) + 2); 
+    // BAD  envLen = ((i = strlen (path)) + (i ? 5 : 0) + 2);
   by
-    i = strlen (path); 
+    i = strlen (path);
     envLen = i + (i ? 5 : 0) + 2;
 
 - do not write code making assumptions about the sign of 'char':
@@ -23,6 +23,6 @@ still exist...
 - do not use 0xffffffff instead of -1. 0xffffffff is the biggest
   unsigned long value. Comparisons such as
     long value;
-    // BAD if ((value & 0xFFFFFFFF) < 0) 
-  will fail, because due to integer promotion rules the test 
+    // BAD if ((value & 0xFFFFFFFF) < 0)
+  will fail, because due to integer promotion rules the test
   is done using unsigned longs.

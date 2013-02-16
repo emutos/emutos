@@ -137,7 +137,7 @@ static const WORD  freq[]=
 
 static const WORD  dura[]=
 {
-        4, 12, 4, 12, 4, 6, 2, 4, 4, 12, 4, 4, 
+        4, 12, 4, 12, 4, 6, 2, 4, 4, 12, 4, 4,
         4, 4, 4, 4, 4, 4, 4, 12, 4, 8, 4
 };
 #endif
@@ -295,7 +295,7 @@ ANODE *i_find(WORD wh, WORD item, FNODE **ppf, WORD *pisapp)
         {
           pname = &pf->f_name[0];
 #ifdef DESK1
-          if (pf->f_attr & F_SUBDIR) 
+          if (pf->f_attr & F_SUBDIR)
           {
                 pa = app_afind(FALSE, 1, -1, pname, pisapp);
           }
@@ -308,7 +308,7 @@ ANODE *i_find(WORD wh, WORD item, FNODE **ppf, WORD *pisapp)
           if ( (pf->f_attr & F_DESKTOP) ||
                (pf->f_attr & F_SUBDIR) )
             *pisapp = FALSE;
-          else 
+          else
             *pisapp = wildcmp(pa->a_pappl, pname);
 #endif
         }
@@ -365,7 +365,7 @@ static void men_update(LONG tree)
                 {
                   pvalue = ILL_DOCU;
                   can_iapp = FALSE;
-                } 
+                }
                 break;
             case AT_ISFOLD:
                 pvalue = ILL_FOLD;
@@ -450,7 +450,7 @@ static WORD do_deskmenu(WORD item)
                   }
                   else
                     done = TRUE;
-                }   
+                }
                 LWSET(OB_STATE(DEOK), NORMAL);
                 show_hide(FMD_FINISH, tree);
                 done = FALSE;
@@ -518,7 +518,7 @@ static WORD do_filemenu(WORD item)
           case FORMITEM:
                 if (curr)
                   done = do_format(curr);
-                break;   
+                break;
 
           case CLIITEM:                         /* Start EmuCON */
                 G.g_tail[0] = G.g_tail[1] = 0;
@@ -722,7 +722,7 @@ static WORD hndl_button(WORD clicks, WORD mx, WORD my, WORD button, WORD keystat
           graf_mkstate(&junk, &junk, &button, &junk);
           if (button & 0x0001)
           {
-            dest_wh = act_bdown(G.g_cwin, G.a_screen, G.g_croot, &mx, &my, 
+            dest_wh = act_bdown(G.g_cwin, G.a_screen, G.g_croot, &mx, &my,
                                 keystate, &c, &dobj);
 #ifdef DESK1
             if (dest_wh != NIL)
@@ -1023,7 +1023,7 @@ WORD hndl_msg(void)
                 menu = TRUE;
                 if (G.g_rmsg[3])
                 {
-                  do_wredraw(G.g_rmsg[3], G.g_rmsg[4], G.g_rmsg[5], 
+                  do_wredraw(G.g_rmsg[3], G.g_rmsg[4], G.g_rmsg[5],
                                         G.g_rmsg[6], G.g_rmsg[7]);
                 }
                 break;
@@ -1144,7 +1144,7 @@ static void cnx_put(void)
                 pws->pth_save[0] = 0;
         }
 #else
-        for (iwin = 0; iwin < NUM_WNODES; iwin++) 
+        for (iwin = 0; iwin < NUM_WNODES; iwin++)
         {
           pw = win_find(G.g_wlist[iwin].w_id);
           pws = &G.g_cnxsave.win_save[iwin];
@@ -1180,7 +1180,7 @@ static void cnx_open(WORD idx)
             gl_whsiztop = pw->w_id;             /*  save the wh         */
           pw->w_cvcol = pws->hsl_save;
           pw->w_cvrow = pws->vsl_save;
-          fpd_parse(&pws->pth_save[0], &drv, &G.g_tmppth[0], 
+          fpd_parse(&pws->pth_save[0], &drv, &G.g_tmppth[0],
                     &pname[0], &pext[0]);
           if (pname[0] == NULL)
             drv = NULL;
@@ -1193,7 +1193,7 @@ static void cnx_open(WORD idx)
             pname[0] = pext[0] = '*';
             pname[1] = pext[1] = NULL;
           } /* if */
-          do_diropen(pw, TRUE, pws->obid_save, drv, &G.g_tmppth[0], 
+          do_diropen(pw, TRUE, pws->obid_save, drv, &G.g_tmppth[0],
                      &pname[0], &pext[0], (GRECT *)&pws->x_save, TRUE);
         } /* if pw */
 } /* cnx_open */
@@ -1211,7 +1211,7 @@ static void cnx_get(void)
         WNODE *pw;
         BYTE fname[9];
         BYTE fext[4];
-                
+
         G.g_iview = (G.g_cnxsave.vitem_save == 0) ? V_TEXT : V_ICON;
         do_viewmenu(ICONITEM);
         do_viewmenu(NAMEITEM + G.g_cnxsave.sitem_save);
@@ -1264,10 +1264,10 @@ static void cnx_get(void)
                                         win_free(pw);
                                         continue;
                                 }
-                                do_diropen(pw, TRUE, pws->obid_save, drv, G.g_tmppth, 
+                                do_diropen(pw, TRUE, pws->obid_save, drv, G.g_tmppth,
                                            fname, fext, (GRECT *)pws, TRUE);
                         }
-                        
+
                 }
         }
         cnx_put();
@@ -1303,14 +1303,14 @@ static int count_chars(char *str, char c)
 
     count = 0;
     while(*str) {
-        if (*str++ == c) 
+        if (*str++ == c)
             count++;
     }
 
     return count;
 }
 
-/* 
+/*
  * the xlate_ functions below are also used by the GEM rsc in aes/gem_rsc.c
  */
 
@@ -1379,7 +1379,7 @@ void xlate_fix_tedinfo(TEDINFO *tedinfo, int nted)
     }
 }
 
-/* change the sizes of the menus after translation 
+/* change the sizes of the menus after translation
  * note - the code below is based on the assumption that the width of
  * the system font is eight (documented as such in lineavars.h)
  */
@@ -1391,12 +1391,12 @@ static void adjust_menu(OBJECT *obj_array)
     int i;  /* index in the menu bar */
     int j;  /* index in the array of pull downs */
     int width = (v_hz_rez >> 3); /* screen width in chars */
-    int x;  
+    int x;
     OBJECT *menu = OBJ(0);
     OBJECT *mbar = OBJ(OBJ(menu->ob_head)->ob_head);
     OBJECT *pulls = OBJ(menu->ob_tail);
 
-    x = 0; 
+    x = 0;
     j = pulls->ob_head;
     for (i = mbar->ob_head; i <= mbar->ob_tail; i++) {
         OBJECT *title = OBJ(i);
@@ -1409,28 +1409,28 @@ static void adjust_menu(OBJECT *obj_array)
         for (k = OBJ(j)->ob_head; k <= OBJ(j)->ob_tail; k++) {
             OBJECT *item = OBJ(k);
             int l = strlen( (char *) item->ob_spec);
-            if (m < l) 
+            if (m < l)
                 m = l;
         }
-        
+
         OBJ(j)->ob_x = 2+x;
-        
+
         /* make sure the menu is not too far on the right of the screen */
         if (OBJ(j)->ob_x + m >= width) {
             OBJ(j)->ob_x = width - m;
             m = (m-1) | 0x700;
         }
-        
+
         for (k = OBJ(j)->ob_head; k <= OBJ(j)->ob_tail; k++) {
             OBJECT *item = OBJ(k);
             item->ob_width = m;
         }
         OBJ(j)->ob_width = m;
-        
+
         j = OBJ(j)->ob_next;
         x += n;
     }
-    
+
     mbar->ob_width = x;
 #undef OBJ
 }
@@ -1650,7 +1650,7 @@ WORD deskmain(void)
         wind_update(BEG_UPDATE);
         cnx_get();
         wind_update(END_UPDATE);
-        men_update(G.a_trees[ADMENU]); 
+        men_update(G.a_trees[ADMENU]);
                                                 /* get ready for main   */
                                                 /*   loop               */
         flags = MU_BUTTON | MU_MESAG | MU_KEYBD;
@@ -1666,9 +1666,9 @@ WORD deskmain(void)
         while( !done )
         {
                                                 /* block for input      */
-          ev_which = evnt_multi(flags, 0x02, 0x01, 0x01, 
+          ev_which = evnt_multi(flags, 0x02, 0x01, 0x01,
                                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                                G.a_rmsg, 0, 0, 
+                                G.a_rmsg, 0, 0,
                                 &mx, &my, &button, &kstate, &kret, &bret);
                                                 /* grab the screen      */
           wind_update(BEG_UPDATE);
@@ -1688,9 +1688,9 @@ WORD deskmain(void)
                                                 /* out all messages       */
             if (done)
               break;
-            ev_which = evnt_multi(MU_MESAG | MU_TIMER, 0x02, 0x01, 0x01, 
+            ev_which = evnt_multi(MU_MESAG | MU_TIMER, 0x02, 0x01, 0x01,
                                 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                                G.a_rmsg, 0, 0, 
+                                G.a_rmsg, 0, 0,
                                 &mx, &my, &button, &kstate, &kret, &bret);
           }
 

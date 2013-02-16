@@ -64,8 +64,8 @@ int fprintf(FILE *f, const char *fmt, ...)
 
 
 static struct { char *mode; int m ; } fopen_table[] = {
-  { "r", 0 }, { "rb", 0 }, { "w", 1 }, { "wb", 1 }, 
-}; 
+  { "r", 0 }, { "rb", 0 }, { "w", 1 }, { "wb", 1 },
+};
 
 int stdio_fileno = 0;
 FILE stdio_files[10];
@@ -138,7 +138,7 @@ void dump_table(char *table, char *name, FILE *out, char *prefix)
 {
     int i;
 
-    fprintf(out, 
+    fprintf(out,
 "const BYTE keytbl_%s_%s[] = {\n",
             prefix, name
             );
@@ -187,10 +187,10 @@ void dump_tables(struct ktbl *ktbl, char *fname, char *name)
     ucprefix[0] = prefix[0] - 32;
     ucprefix[1] = prefix[1] - 32;
     ucprefix[2] = 0;
-  
-    fprintf(out, 
+
+    fprintf(out,
 "/*\n"
-" * %s - a keyboard layout definition\n" 
+" * %s - a keyboard layout definition\n"
 " *\n"
 " * Copyright (c) 2002 EmuTOS development team\n"
 " *\n"
@@ -201,7 +201,7 @@ void dump_tables(struct ktbl *ktbl, char *fname, char *name)
 
     /* the code below is even worse ! */
 
-    fprintf(out, 
+    fprintf(out,
 "\n"
 "const BYTE keytbl_%s_norm[];\n"
 "const BYTE keytbl_%s_shft[];\n"
@@ -229,28 +229,28 @@ void dump_tables(struct ktbl *ktbl, char *fname, char *name)
     dump_table(ktbl->shft, "shft", out, prefix);
     dump_table(ktbl->caps, "caps", out, prefix);
 
-    fprintf(out, 
+    fprintf(out,
 "\n"
 "/* TODO - the tables below were not filled by the tool.\n"
 " * they should contain couples of (scan code, char code), ended by zero.\n"
 " */\n"
             );
 
-    fprintf(out, 
+    fprintf(out,
 "\n"
 "const BYTE keytbl_%s_altnorm[] = {\n"
 "    0,\n"
 "};\n",
             prefix
             );
-    fprintf(out, 
+    fprintf(out,
 "\n"
 "const BYTE keytbl_%s_altshft[] = {\n"
 "    0,\n"
 "};\n",
             prefix
             );
-    fprintf(out, 
+    fprintf(out,
 "\n"
 "const BYTE keytbl_%s_altcaps[] = {\n"
 "    0,\n"
@@ -267,7 +267,7 @@ int main(int argc, char **argv)
     struct ktbl ktbl;
     char name[3];
     char fname[10];
-    
+
     printf("Enter a two-letter name for this keyboard: ");
     name[0] = getchar();
     name[1] = getchar();
@@ -284,4 +284,4 @@ int main(int argc, char **argv)
 
     return 0;
 }
-  
+

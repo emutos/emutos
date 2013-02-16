@@ -11,13 +11,13 @@
  */
 
 /*
- * This file contains utility routines (macros) to 
+ * This file contains utility routines (macros) to
  * perform functions not directly available from C.
- * 
+ *
  * available macros:
  *
- * WORD set_sr(WORD new); 
- *   sets sr to the new value, and return the old sr value 
+ * WORD set_sr(WORD new);
+ *   sets sr to the new value, and return the old sr value
  * WORD get_sr(void);
  *   returns the current value of sr. the CCR bits are not meaningful.
  * void regsafe_call(void *addr);
@@ -25,7 +25,7 @@
  * void delay_loop(ULONG loopcount);
  *   Loops for the specified loopcount.
  *
- * For clarity, please add such two lines above when adding 
+ * For clarity, please add such two lines above when adding
  * new macros below.
  */
 
@@ -35,14 +35,14 @@
 
 /* OS entry points implemented in util/miscasm.S */
 extern long trap1(int, ...);
-extern long trap1_pexec(short mode, const char * path, 
+extern long trap1_pexec(short mode, const char * path,
   const void * tail, const char * env);
 
 /* Wrapper around the STOP instruction. This preserves SR. */
 extern void stop_until_interrupt(void);
 
 /*
- * WORD swpw(WORD val); 
+ * WORD swpw(WORD val);
  *   swap endianess of val, 16 bits only.
  */
 
@@ -72,7 +72,7 @@ extern void stop_until_interrupt(void);
 
 
 /*
- * WORD swpl(LONG val); 
+ * WORD swpl(LONG val);
  *   swap endianess of val, 32 bits only.
  */
 
@@ -109,14 +109,14 @@ extern void stop_until_interrupt(void);
  * Warning: The following macros use "memory" in the clobber list,
  * even if the memory is not modified. On ColdFire, this is necessary
  * to avoid these instructions to be reordered by the compiler.
- * 
+ *
  * Apparently, this is standard GCC behaviour (RFB 2012).
  */
 
 
 /*
- * WORD set_sr(WORD new); 
- *   sets sr to the new value, and return the old sr value 
+ * WORD set_sr(WORD new);
+ *   sets sr to the new value, and return the old sr value
  */
 
 #define set_sr(a)                         \
@@ -134,8 +134,8 @@ __extension__                             \
 
 
 /*
- * WORD get_sr(void); 
- *   returns the current value of sr. 
+ * WORD get_sr(void);
+ *   returns the current value of sr.
  */
 
 #define get_sr()                          \

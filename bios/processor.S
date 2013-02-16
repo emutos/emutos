@@ -4,11 +4,11 @@
  * Copyright (c) 1999, 2002 by Authors:
  *
  *      Jörg Westheide <joerg_westheide@su.maus.de>
- *      Draco  
+ *      Draco
  * LVL  Laurent Vogel
  * MAD  Martin Doering
  *      Norman Feske
- *  
+ *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
  *
@@ -50,7 +50,7 @@
  *   low-order    high-order    CPU type
  *       0             0        68000
  *      10             0        68010
- *      20             0        68020 
+ *      20             0        68020
  *      30             0        68030
  *      30             1        68ec030
  *      40             0        68040
@@ -84,8 +84,8 @@ _detect_cpu:
         move.l  d1,d2           // hold a copy for later
         ori.w   #0x8100,d1      // enable '030 data and '040 instr. caches
         dc.l    0x4e7b1002      // movec d1,cacr  set new cache controls
-        dc.l    0x4e7a1002      // movec cacr,d1  read it back to check 
-        dc.l    0x4e7b2002      // movec d2,cacr  restore original CACR 
+        dc.l    0x4e7a1002      // movec cacr,d1  read it back to check
+        dc.l    0x4e7b2002      // movec d2,cacr  restore original CACR
         tst.w   d1              // if 15th bit was set, this is a 68040+
         bmi.s   x040
         moveq   #20,d0          // assume 68020
@@ -101,7 +101,7 @@ _detect_cpu:
 x040:   moveq   #40,d0          // assume 68040
         dc.l    0x4e7a1808      // movec pcr,d1
         moveq   #60,d0          // no fault -> this is 68060
-exit:  
+exit:
         move.l  a3,(0xf4).w     // restore stuff and exit
         move.l  a2,(0x2c).w
         move.l  a1,(0x10).w
@@ -136,9 +136,9 @@ exit:
  * - FNOP is executed. If a Line-F exception follows, then there's no FPU
  *   in coprocessor mode. If the CPU is >= 68020, no FPU is assumed.
  * - if FNOP doesn't take an exception, an FPU attached in coprocessor mode
- *   is present. Then if 68040 or 68060 CPU was detected previously, an 
- *   appropriate FPU type is assumed. Otherwise the stackframe is checked 
- *   for magic value indicating 68882 and if it is different, a 68881 is 
+ *   is present. Then if 68040 or 68060 CPU was detected previously, an
+ *   appropriate FPU type is assumed. Otherwise the stackframe is checked
+ *   for magic value indicating 68882 and if it is different, a 68881 is
  *   assumed.
  *
  * I am very interested if this will really work on everything =)
@@ -163,7 +163,7 @@ _detect_fpu:
 #else
         bmi.s   fexit
 #endif
-        
+
         cmpi.w  #60,d1          // enable FPU on 68060 before the check
         bmi.s   no60
 
@@ -190,7 +190,7 @@ no60:   dc.l    0xf2800000      // fnop
         cmpi.w  #40,d1
         beq.s   fexit
         moveq   #0x06,d0        // if neither, maybe a 68882 (0x00060000)
-        move.b  (sp)+,d1                
+        move.b  (sp)+,d1
         cmpi.b  #0x1f,d1
         beq.s   fexit
         moveq   #0x04,d0        // must be 68881
@@ -279,7 +279,7 @@ init_cacr:
 pi_chk040:
         cmp.b   #40,_mcpu+3
         bne.s   pi_done
-        
+
 #if CONF_WITH_68040_PMMU
         jsr     setup_68040_pmmu
 #else
@@ -290,7 +290,7 @@ pi_chk040:
         nop
         move.l  #0x8000,d0
         dc.l    0x4e7b0002      // movec   d0,cacr
-        
+
         // Instruction Transparent Translation Registers (ITTRs):
         // all addresses (bits 23-16), enabled (bit 15), both user and
         // supervisor (bits 14-13), cachable+write-through (bits 6-5)
@@ -298,10 +298,10 @@ pi_chk040:
         dc.l    0x4e7b0004      // movec   d0,ittr0
         moveq.l #0,d0
         dc.l    0x4e7b0005      // movec   d0,ittr1
-        
+
         // The Transparent Translation Registers are setup (even if the cache
-        // and the MMU are disabled) to ensure serialized access ("Without 
-        // serialization, the IU pipeline allows read accesses to occur 
+        // and the MMU are disabled) to ensure serialized access ("Without
+        // serialization, the IU pipeline allows read accesses to occur
         // before completion of a write-back for a previous instruction.")
         move.l  #0x00ffe040,d0
         dc.l    0x4e7b0006      // movec   d0,dttr0
@@ -320,7 +320,7 @@ pi_done:
  * Then the instruction cache is invalidated for the specified zone.
  *
  * We're lazy here and invalidate all the cache. A real implementation
- * would invalidate only the needed pages using several cinvp ic,(a0). 
+ * would invalidate only the needed pages using several cinvp ic,(a0).
  * It is not worth the trouble for EmuTOS right now.
  */
 
@@ -420,7 +420,7 @@ ic_done:
 cpushl_loop:
         // This helper routine is a loop around cpushl ?c,(a0)
         // a1 must point to the actual instruction called in the loop
-        
+
         // This code comes from the MCF547x Reference Manual
         // Section 7.11 Cache Management
         //
@@ -437,7 +437,7 @@ cpushl_loop:
         // The following changes have been made to the original code:
         // - call jsr (a1) instead of "cpushl dc"
         // - flush the 512 Sets (original code forgot the last one)
-        
+
         nop                     // synchronize/flush store buffer
         moveq.l #0,d0           // initialize way counter
         moveq.l #0,d1           // initialize set counter
@@ -459,19 +459,19 @@ setloop:
         rts
 
 // Helper routines for cpushl_loop
-        
+
 cpushl_ic:
         cpushl  ic,(a0)         // instruction cache
         rts
-        
+
 cpushl_dc:
         cpushl  dc,(a0)         // data cache
         rts
-        
+
 cpushl_bc:
         cpushl  bc,(a0)         // both caches
         rts
-        
+
 #endif
 
         SECTION_RODATA
@@ -488,7 +488,7 @@ init_ttr1:                          // transparent translation is enabled for al
 #endif
 
 // ==== Variables ============================================================
- 
+
         .bss
         .even
 

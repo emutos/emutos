@@ -1,5 +1,5 @@
 /*      GEMRSLIB.C      5/14/84 - 06/23/85      Lowell Webster          */
-/*      merge High C vers. w. 2.2               8/24/87         mdf     */ 
+/*      merge High C vers. w. 2.2               8/24/87         mdf     */
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
@@ -78,8 +78,8 @@ static char    free_str[256];   /* must be long enough for longest freestring in
 
 /*
 *       Fix up a character position, from offset,row/col to a pixel value.
-*       If column or width is 80 then convert to rightmost column or 
-*       full screen width. 
+*       If column or width is 80 then convert to rightmost column or
+*       full screen width.
 */
 static void fix_chpos(LONG pfix, WORD offset)
 {
@@ -99,13 +99,13 @@ static void fix_chpos(LONG pfix, WORD offset)
           case 2: if (cpos == 80)
                cpos = gl_width;
              else
-               cpos *= gl_wchar;        
+               cpos *= gl_wchar;
             break;
           case 3: if (cpos == 25)
                cpos = gl_height;
              else
-               cpos *= gl_hchar;        
-            break;      
+               cpos *= gl_hchar;
+            break;
         }
 
         cpos += ( coffset > 128 ) ? (coffset - 256) : coffset;

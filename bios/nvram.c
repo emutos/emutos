@@ -136,7 +136,7 @@ WORD nvmaccess(WORD type, WORD start, WORD count, PTR buffer)
         }
         inited = 1;
         return 0;
-    } 
+    }
     /* else, first read the nvram if not done already */
     if(! inited) {
         for(i = 0 ; i < 50 ; i++) {

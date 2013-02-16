@@ -26,7 +26,7 @@ WORD evnt_button(WORD clicks, UWORD mask, UWORD state,
                  WORD *pmx, WORD *pmy, WORD *pmb, WORD *pks);
 WORD evnt_timer(UWORD locnt, UWORD hicnt);
 WORD evnt_multi(UWORD flags, UWORD bclk, UWORD bmsk, UWORD bst,
-                UWORD m1flags, UWORD m1x, UWORD m1y, UWORD m1w, UWORD m1h, 
+                UWORD m1flags, UWORD m1x, UWORD m1y, UWORD m1w, UWORD m1h,
                 UWORD m2flags, UWORD m2x, UWORD m2y, UWORD m2w, UWORD m2h,
                 LONG mepbuff, UWORD tlc, UWORD thc, UWORD *pmx, UWORD *pmy,
                 UWORD *pmb, UWORD *pks, UWORD *pkr, UWORD *pbr );

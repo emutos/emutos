@@ -1,16 +1,16 @@
-EmuTOS source code consists of several parts, and includes code taken from 
-other projects - Many thanks to them and to their authors for releasing the 
+EmuTOS source code consists of several parts, and includes code taken from
+other projects - Many thanks to them and to their authors for releasing the
 code under GPL.
 
 The 'historical' authors - those who wrote the code before the start of the
 EmuTOS project - are mentioned in the individual files they've authored.
 Major 'historical' parts are:
-- BDOS, VDI, CLI - it comes from the latest known GEMDOS version from 
-  Digital Research (later versions seem to have been developped by Atari). 
+- BDOS, VDI, CLI - it comes from the latest known GEMDOS version from
+  Digital Research (later versions seem to have been developped by Atari).
 - AES, desktop - The C source code for GEM comes from the x86 version.
 - Some GEM assembler files come from the AES for the Apple LISA.
 
-All these historical parts were released under the General Public License by 
+All these historical parts were released under the General Public License by
 Caldera, Inc. in mid april 2000 (?)
 (For the record, Caldera bought it from Novell in 1997 along with DR-DOS; later
  Caldera disappeared and this is the copyright notice that refers to Lineo)
@@ -28,7 +28,7 @@ source archive, but not compiled into the official binaries.
 
 Here is about the 'recent' contributors - individuals involved in the EmuTOS
 project. In this project virtually everybody modifies every file,
-nevertheless here is an attempt at identifying who's guilty of what: 
+nevertheless here is an attempt at identifying who's guilty of what:
 
 Vincent Rivière (VRI) <vincent.riviere at freesbee.fr>
 - Current project admin
@@ -68,7 +68,7 @@ Martin Doering (MAD) <mdoering at users.sourceforge.net>
 - Virtually everything not modified later by the other fellows
 
 
-Thanks also to all mailing list contributors for their help, and 
+Thanks also to all mailing list contributors for their help, and
 especially:
 
 Bohdan Milar <milarb at volny.cz>
@@ -90,10 +90,10 @@ Ctirad Fertr <phanatic at volny.cz>,
 Milan Jurik <M.Jurik at sh.cvut.cz>
 - The ARanyM team
 
-Johan Klockars <rand at cd.chalmers.se> 
+Johan Klockars <rand at cd.chalmers.se>
 - fVDI
 
-Henk Robbers <h.robbers at chello.nl> 
+Henk Robbers <h.robbers at chello.nl>
 - XaAES, AHCC
 
 Jacques-Etienne Rahon "Kevin Flynn" <kevin.flynn at wanadoo.fr>

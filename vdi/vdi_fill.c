@@ -1,5 +1,5 @@
 /*
- * 
+ *
  *
  * Copyright 1982 by Digital Research Inc.  All rights reserved.
  * Copyright 1999 by Caldera, Inc. and Authors:
@@ -826,7 +826,7 @@ search_to_left (Vwk * vwk, WORD x, UWORD mask, const UWORD search_col, UWORD * a
         /* need to jump over interleaved bit_plane? */
         mask = mask >> 15 | mask << 1;  /* roll left */
         if ( mask & 0x0001 )
-            addr -= v_planes;           
+            addr -= v_planes;
 
         /* search, while pixel color != search color */
         color = get_color(mask, addr);

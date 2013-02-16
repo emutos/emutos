@@ -12,14 +12,14 @@
 
 #ifndef VECTORS_H
 #define VECTORS_H
- 
+
 #include "portab.h"
- 
+
 /* initialize default exception vectors */
 
 extern void init_exc_vec(void);
 extern void init_user_vec(void);
- 
+
 /* initialise acia vectors */
 
 extern void init_acia_vecs(void);
@@ -102,4 +102,4 @@ LONG protect_ww(LONG (*func)(void), WORD, WORD);
 LONG protect_wlwwwl(LONG (*func)(void), WORD, LONG, WORD, WORD, WORD, LONG);
 
 #endif /* VECTORS_H */
-  
+

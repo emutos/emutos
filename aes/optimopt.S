@@ -17,9 +17,9 @@
  * this is a rewrite of old code previouly covered by this mention:
  * I suggest to remove the old code and this mention soon.
  *
- *       Copyright 1999, Caldera Thin Clients, Inc.                      
- *       This software is licenced under the GNU Public License.         
- *       Please see LICENSE.TXT for further information.                 
+ *       Copyright 1999, Caldera Thin Clients, Inc.
+ *       This software is licenced under the GNU Public License.
+ *       Please see LICENSE.TXT for further information.
  */
 
 .globl _r_get
@@ -51,7 +51,7 @@ old_r_get:
             unlk    A6
             rts
 #endif
-        
+
 /*
  * void r_get(WORD *pxywh, WORD *x, WORD *y, WORD *w, WORD *h)
  * extract components from the rectangle
@@ -71,7 +71,7 @@ _r_get:
         move.w  (a1),(a2)
         move.l  d0,a2
         rts
-        
+
 
 #if 0
 /*
@@ -94,19 +94,19 @@ old_r_set:
             unlk    A6
             rts
 #endif
-        
+
 /*
  * void r_set(WORD *pxywh, WORD x, WORD y, WORD w, WORD h)
  * fills the rectangle with passed parameters
  */
-        
+
 _r_set:
         lea     4(sp),a0
         move.l  (a0)+,a1
         move.l  (a0)+,(a1)+
         move.l  (a0),(a1)
         rts
-        
+
 
 #if 0
 
@@ -132,7 +132,7 @@ LDBB0:
             rts
 
 #endif
-        
+
 /*
  * char *scasb(char *str, char c)
  * returns the pointer to the first occurrence of char c in string str,

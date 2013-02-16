@@ -1,7 +1,7 @@
 /*
- * mem.h - header file for memory and process management routines  
+ * mem.h - header file for memory and process management routines
  *
- * Copyright (c) 2001 Lineo, Inc. and 
+ * Copyright (c) 2001 Lineo, Inc. and
  *               2002-2013 The EmuTOS Development Team
  *
  * Authors:
@@ -35,7 +35,7 @@ extern  int     has_alt_ram; /* 1 if alternative RAM has been declared to BDOS *
 extern long start_stram;
 extern long end_stram;
 
-/* 
+/*
  * in osmem.c
  */
 
@@ -52,7 +52,7 @@ void xmfreblk(void *m);
 void osmem_init(void);
 
 /*
- * in umem.c 
+ * in umem.c
  */
 
 /* allocate memory */
@@ -80,7 +80,7 @@ void umem_init(void);
 
 /*
  * in iumem.c
- */ 
+ */
 
 /* find first fit for requested memory in ospool */
 MD *ffit(long amount, MPB *mp);

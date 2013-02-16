@@ -2,7 +2,7 @@
  * blkdev.c - BIOS block device functions
  *
  * Copyright (c) 2002-2013 The EmuTOS development team
- * 
+ *
  * Authors:
  *  MAD     Martin Doering
  *  PES     Petr Stehlik
@@ -44,7 +44,7 @@ PUN_INFO pun_info;
 static UWORD getiword(UBYTE *addr)
 {
     UWORD value;
-    value = (((UWORD)addr[1])<<8) + addr[0]; 
+    value = (((UWORD)addr[1])<<8) + addr[0];
     return value;
 }
 
@@ -90,11 +90,11 @@ void pun_info_setup(void)
     /* floppy A: */
     pun_info.pun[0] = 0;    /* FIXME */
     pun_info.partition_start[0] = 0;
-    
+
     /* floppy B: */
     pun_info.pun[1] = 0;    /* FIXME */
     pun_info.partition_start[1] = 0;
-    
+
     /* disks C: - P: */
     for(i = 2; i < 16; i++) {
         pun_info.pun[i] = 0;    /* FIXME */
@@ -318,7 +318,7 @@ LONG blkdev_getbpb(WORD dev)
     struct fat16_bs *b16;
     ULONG tmp;
     WORD err;
-  
+
 #if DBG_BLKDEV
     kprintf("getbpb(%d)\n", dev);
 #endif
@@ -341,11 +341,11 @@ LONG blkdev_getbpb(WORD dev)
     kprintf("  hid = %d;\n", getiword(b->hid));
     kprintf("}\n");
 #endif
-  
+
     /* TODO
      * check if the parameters are sane and set reasonable defaults if not
      */
-  
+
     blkdev[dev].bpb.recsiz = getiword(b->bps);
     blkdev[dev].bpb.clsiz = b->spc;
     blkdev[dev].bpb.clsizb = blkdev[dev].bpb.clsiz * blkdev[dev].bpb.recsiz;
@@ -364,8 +364,8 @@ LONG blkdev_getbpb(WORD dev)
      * - data clusters
      */
 
-    blkdev[dev].bpb.fatrec = getiword(b->res) + blkdev[dev].bpb.fsiz; 
-    blkdev[dev].bpb.datrec = blkdev[dev].bpb.fatrec + blkdev[dev].bpb.fsiz 
+    blkdev[dev].bpb.fatrec = getiword(b->res) + blkdev[dev].bpb.fsiz;
+    blkdev[dev].bpb.datrec = blkdev[dev].bpb.fatrec + blkdev[dev].bpb.fsiz
                            + blkdev[dev].bpb.rdlen;
     if (b->spc != 0) {
         tmp = getiword(b->sec);
@@ -404,7 +404,7 @@ LONG blkdev_getbpb(WORD dev)
     blkdev[dev].serial[0] = b->serial[0];
     blkdev[dev].serial[1] = b->serial[1];
     blkdev[dev].serial[2] = b->serial[2];
-  
+
 #if DBG_BLKDEV
     kprintf("bpb[dev = %d] = {\n", dev);
     kprintf("  recsiz = %d;\n", blkdev[dev].bpb.recsiz);

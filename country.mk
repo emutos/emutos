@@ -9,7 +9,7 @@
 
 # this file is included in the Makefile to build unique-country ROMs.
 #
-# indormation in lines below serve also as source to fill the tables 
+# indormation in lines below serve also as source to fill the tables
 # needed by bios/country.c (tables generated in bios/ctables.h). For
 # each country there should be a four line paragraph giving the language,
 # keyboard code, charset and IDT.
@@ -75,7 +75,7 @@ ifeq (,$(findstring $(COUNTRY),$(COUNTRIES)))
 $(error Unknown COUNTRY=$(COUNTRY))
 endif
 
-# 
+#
 
 ETOSLANG = $(i18n_$(COUNTRY)_lang)
 ifeq (,$(ETOSLANG))
@@ -99,7 +99,7 @@ endif
 
 #
 
-FONTOBJ_ST = fnt_st_6x6.o fnt_st_8x8.o fnt_st_8x16.o 
+FONTOBJ_ST = fnt_st_6x6.o fnt_st_8x8.o fnt_st_8x16.o
 FONTOBJ_L2 = fnt_l2_6x6.o fnt_l2_8x8.o fnt_l2_8x16.o
 FONTOBJ_L9 = fnt_l9_6x6.o fnt_l9_8x8.o fnt_l9_8x16.o
 FONTOBJ_GR = fnt_gr_6x6.o fnt_gr_8x8.o fnt_gr_8x16.o

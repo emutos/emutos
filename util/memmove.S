@@ -12,19 +12,19 @@
  * option any later version.  See doc/license.txt for details.
  *
  */
- 
+
 #include "asmdefs.h"
- 
- 
+
+
 // This is taken from Minix 1.5 copy_68k.s fast copy routine.
-// extracted phys_copy() and converted to modern syntax, 
+// extracted phys_copy() and converted to modern syntax,
 // Laurent Vogel, october 2001.
 //
 //****************************************************************************
 //
 //     C O P Y _ 6 8 K . S                                       M I N I X
 //
-//     Basic fast copy routines used by the kernel 
+//     Basic fast copy routines used by the kernel
 //****************************************************************************
 //
 // Contents:
@@ -38,7 +38,7 @@
 // Edition history
 //
 //  #    Date                         Comments                       By
-// --- -------- ---------------------------------------------------- --- 
+// --- -------- ---------------------------------------------------- ---
 //   1 13.06.89 fast phys_copy by Dale Schumacher                    DAL
 //   2 16.06.89 bug fixes and code impromvement by Klamer Schutte    KS
 //   3 12.07.89 bug fix and further code improvement to phys_copy    RAL
@@ -55,9 +55,9 @@
 
         .text
 
-// 
+//
 // void * memmove(void * dst, void * src, size_t length);
-// moves length bytes from src to dst, performing correctly 
+// moves length bytes from src to dst, performing correctly
 // if the two regions overlap. returns dst as passed.
 
 //
@@ -66,11 +66,11 @@
 // the behaviour is undefined if the two regions overlap.
 
 
-        
+
 _memcpy:
 _memmove:
         move.l   8(sp),a0        // load source pointer
-        move.l   4(sp),a1        // load destination pointer      
+        move.l   4(sp),a1        // load destination pointer
 memmove:
         cmp.l    a1,a0
         bgt      memcopy         // if src > dst, copy will do fine.
@@ -84,9 +84,9 @@ memmove:
         eor.b    d1,d0
 #endif
         btst     #0,d0           // pointers mutually aligned?
-        bne      back1          
+        bne      back1
         move.l   12(sp),d0       // size
-        beq      end             // if size == 0, nothing to do 
+        beq      end             // if size == 0, nothing to do
         add.l    d0,a0
         add.l    d0,a1
         move.l   a0,d1
@@ -95,7 +95,7 @@ memmove:
         move.b   -(a0),-(a1)
         sub.l    #1,d0
         beq      end
-bcheck64:        
+bcheck64:
         move.l   #63,d1                // +
         cmp.l    d1,d0                 // +
         ble      back4                 // + count < 64
@@ -217,12 +217,12 @@ end:    rts
 // backwards, when pointers are not aligned.
 back1:
         move.l   12(sp),d0       // size
-        beq      end             // if size == 0, nothing to do 
-// backwards, but 16 bytes by 16 bytes forward.        
+        beq      end             // if size == 0, nothing to do
+// backwards, but 16 bytes by 16 bytes forward.
         add.l    d0,a0
         add.l    d0,a1
-        move.l   #16,d1          
-        cmp.l    d1,d0            
+        move.l   #16,d1
+        cmp.l    d1,d0
         blt      bend1
 back16:
         move.b   d0,d1
@@ -265,7 +265,7 @@ bend16:
 #endif
         move.l   d1,d0
         bra      bend1
-        
+
 memcopy:
         move.l   a0,d0
         move.l   a1,d1

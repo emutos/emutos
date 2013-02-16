@@ -6,7 +6,7 @@
  * Authors:
  *  LVL   Laurent Vogel
  *
- * This file is distributed under the GPL, version 2 or at your 
+ * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/licence.txt for details.
  */
 
@@ -78,7 +78,7 @@ LONG bconout0(WORD dev, WORD c)
         /* set Strobe low */
         offgibit(~0x20);
         /* delay ? */
-                
+
         /* Strobe high */
         ongibit(0x20);
         /* restore sr */
@@ -86,8 +86,8 @@ LONG bconout0(WORD dev, WORD c)
         return 1L;
 #endif
     } else {
-        /* the TOS does wait until the printer is available... 
-         * We simply cancel here. 
+        /* the TOS does wait until the printer is available...
+         * We simply cancel here.
          */
     }
     return 0L;

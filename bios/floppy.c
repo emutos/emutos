@@ -38,14 +38,14 @@
 
 /*
  * This file contains all floppy-related bios and xbios routines.
- * They are stacked by sections, function of a higher level calling 
+ * They are stacked by sections, function of a higher level calling
  * functions of a lower level.
  *
  * sections in this file:
  * - private prototypes
  * - internal floppy status info
  * - disk initializations: hdv_init, hdv_boot
- * - boot-sector: protobt 
+ * - boot-sector: protobt
  * - boot-sector utilities: compute_cksum, intel format words
  * - xbios floprd, flopwr, flopver
  * - xbios flopfmt
@@ -93,8 +93,8 @@ static void setiword(UBYTE *addr, UWORD value);
 static LONG flop_bootcheck(void);
 
 /* floppy read/write */
-static WORD floprw(LONG buf, WORD rw, WORD dev, 
-                   WORD sect, WORD track, WORD side, WORD count); 
+static WORD floprw(LONG buf, WORD rw, WORD dev,
+                   WORD sect, WORD track, WORD side, WORD count);
 
 /* floppy write track */
 static WORD flopwtrack(LONG buf, WORD dev, WORD track, WORD side, WORD track_size);
@@ -135,7 +135,7 @@ static void fdc_start_dma_write(WORD count);
 /* cur_dev is the current drive, or -1 if none is current.
  * the fdc track register will reflect the position of the head of the
  * current drive. 'current' does not mean 'active', because the flopvbl
- * routine may deselect the drive in the PSG port A. The routine 
+ * routine may deselect the drive in the PSG port A. The routine
  * floplock(dev) will set the new current drive.
  *
  * drivetype is the type of drive; this is derived from the first byte of the
@@ -149,10 +149,10 @@ static void fdc_start_dma_write(WORD count);
  * the current diskette.
  *
  * finfo[].last_access is set to the value of the 200 Hz counter at the end of
- * last fdc command. last_access can be used by mediach, a short time 
+ * last fdc command. last_access can be used by mediach, a short time
  * elapsed indicating that the floppy was not ejected.
- * 
- * finfo[].wp is set according to the corresponding bit in the fdc 
+ *
+ * finfo[].wp is set according to the corresponding bit in the fdc
  * controller status reg. As soon as this value is different for
  * the drive, this means that the floppy has changed.
  *
@@ -161,7 +161,7 @@ static void fdc_start_dma_write(WORD count);
  *
  * finfo[].actual_rate is the value to send to the 1772 chip to get the stepping
  * rate implied by finfo[].rate.  it differs from finfo[].rate for HD diskettes.
- * 
+ *
  * the flock variable in tosvars.s is used as following :
  * - floppy.c will set it before accessing to the DMA/FDC, and
  *   clear it at the end.
@@ -313,7 +313,7 @@ static void flop_detect_drive(WORD dev)
         kprintf("track0 signal got\n" );
 #endif
         flop_add_drive(dev);
-    } 
+    }
     flopunlk();
 #endif
 }
@@ -337,7 +337,7 @@ LONG flop_mediach(WORD dev)
         return MEDIANOCHANGE;
 
     /* TODO, monitor write-protect status in flopvbl... */
-    
+
 #if DBG_FLOP
     kprintf("flop_mediach() read bootsec\n");
 #endif
@@ -376,7 +376,7 @@ LONG flop_hdv_boot(void)
     }
     return err;         /* may never be reached, if booting */
 }
-  
+
 
 static LONG flop_bootcheck(void)
 {
@@ -402,8 +402,8 @@ static LONG flop_bootcheck(void)
         return 4;    /* not valid boot sector */
     }
 }
- 
-LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt, 
+
+LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt,
                WORD sides, WORD dev)
 {
     WORD track;
@@ -429,7 +429,7 @@ LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt,
      * the sector in memory may force us to wait for a complete
      * rotation of the floppy before reading the next sector.
      */
-    
+
     while (cnt > 0) {
         sect = (recnr % spt) + 1;
         track = recnr / spt;
@@ -448,7 +448,7 @@ LONG floppy_rw(WORD rw, LONG buf, WORD cnt, LONG recnr, WORD spt,
             if (cookie_frb) {
                 /* do we really need proper FRB lock? (TODO) */
                 if(rw & 1) {
-                    /* writing */ 
+                    /* writing */
                     memcpy((void *)cookie_frb, (void *)buf, SECTOR_SIZE);
                     err = floprw(cookie_frb, rw, dev, sect, track, side, 1);
                 } else {
@@ -530,9 +530,9 @@ void protobt(LONG buf, LONG serial, WORD type, WORD exec)
     WORD is_exec;
     struct bs *b = (struct bs *)buf;
     UWORD cksum;
-  
+
     is_exec = (compute_cksum(b) == 0x1234);
-  
+
     if (serial >= 0) {
         if (serial >= 0x01000000)   /* create a random serial */
             serial = Random();
@@ -540,7 +540,7 @@ void protobt(LONG buf, LONG serial, WORD type, WORD exec)
         b->serial[1] = serial>>8;
         b->serial[2] = serial>>16;
     }
-    
+
     if(type >= 0 && type < NUM_PROTOBT_ENTRIES) {
         const struct _protobt *bt = &protobt_data[type];
 
@@ -554,7 +554,7 @@ void protobt(LONG buf, LONG serial, WORD type, WORD exec)
         setiword(b->spf, bt->spf);
         setiword(b->spt, bt->spt);
         setiword(b->sides, bt->sides);
-        setiword(b->hid, bt->hid); 
+        setiword(b->hid, bt->hid);
     }
 
     /*
@@ -562,7 +562,7 @@ void protobt(LONG buf, LONG serial, WORD type, WORD exec)
      *  1. if 'exec' is negative, leave the executable *status* unchanged
      *  2. if 'exec' is zero, make it non-executable (checksum 0x1235)
      *  3. if 'exec' is greater than zero, make it executable (checksum 0x1234)
-     * 
+     *
      * note that a new checksum is calculated & stored every time.  also,
      * although the Protobt() specification is that a checksum of 0x1234
      * means executable & anything else means non-executable, both Falcon
@@ -603,14 +603,14 @@ static void setiword(UBYTE *addr, UWORD value)
 /*==== xbios floprd, flopwr ===============================================*/
 
 
-LONG floprd(LONG buf, LONG filler, WORD dev, 
+LONG floprd(LONG buf, LONG filler, WORD dev,
             WORD sect, WORD track, WORD side, WORD count)
 {
     return floprw(buf, RW_READ, dev, sect, track, side, count);
 }
 
 
-LONG flopwr(LONG buf, LONG filler, WORD dev, 
+LONG flopwr(LONG buf, LONG filler, WORD dev,
             WORD sect, WORD track, WORD side, WORD count)
 {
     return floprw(buf, RW_WRITE, dev, sect, track, side, count);
@@ -619,17 +619,17 @@ LONG flopwr(LONG buf, LONG filler, WORD dev,
 /*==== xbios flopver ======================================================*/
 
 /* TODO, in the case where both one sector cannot be read and another is
- * read wrong, what is the error return code? 
+ * read wrong, what is the error return code?
  */
 
-LONG flopver(LONG buf, LONG filler, WORD dev, 
+LONG flopver(LONG buf, LONG filler, WORD dev,
              WORD sect, WORD track, WORD side, WORD count)
 {
     WORD i;
     WORD err;
     WORD outerr = 0;
     WORD *bad = (WORD *) buf;
-    
+
     if(count <= 0) return 0;
     if(!IS_VALID_FLOPPY_DEVICE(dev)) return EUNDEV;  /* unknown disk */
     for(i = 0 ; i < count ; i++) {
@@ -641,7 +641,7 @@ LONG flopver(LONG buf, LONG filler, WORD dev,
         }
         sect ++;
     }
-    
+
     if(outerr) {
         *bad = 0;
     }
@@ -652,7 +652,7 @@ LONG flopver(LONG buf, LONG filler, WORD dev,
 /*==== xbios flopfmt ======================================================*/
 
 LONG flopfmt(LONG buf, WORD *skew, WORD dev, WORD spt,
-             WORD track, WORD side, WORD interleave, 
+             WORD track, WORD side, WORD interleave,
              ULONG magic, WORD virgin)
 {
     int i, j;
@@ -685,7 +685,7 @@ LONG flopfmt(LONG buf, WORD *skew, WORD dev, WORD spt,
     s = (BYTE *)buf;
 
     /*
-     * create the image in memory. 
+     * create the image in memory.
      * track  ::= GAP1 record record ... record GAP5
      * record ::= GAP2 index GAP3 data GAP4
      */
@@ -693,9 +693,9 @@ LONG flopfmt(LONG buf, WORD *skew, WORD dev, WORD spt,
     b1 = virgin >> 8;
     b2 = virgin;
 
-    /* GAP1 + GAP2(part1) : 60/120 bytes 0x4E */  
+    /* GAP1 + GAP2(part1) : 60/120 bytes 0x4E */
     APPEND(0x4E, leader);
-  
+
     for(i = 0, offset = -interleave, used = 0L; i < spt ; i++) {
         /* GAP2 (part2) */
         APPEND(0x00, 12);
@@ -729,11 +729,11 @@ LONG flopfmt(LONG buf, WORD *skew, WORD dev, WORD spt,
 
         /* GAP4 + GAP2(part1) */
         APPEND(0x4e, 40);
-    }    
+    }
 
-    /* GAP5 : all the rest to fill raw track */  
+    /* GAP5 : all the rest to fill raw track */
     APPEND(0x4E, track_size - leader - 614 * spt);
-  
+
 #undef APPEND
 
     /* write the buffer to track */
@@ -743,13 +743,13 @@ LONG flopfmt(LONG buf, WORD *skew, WORD dev, WORD spt,
     /* verify sectors and store bad sector numbers in buf */
     err = flopver(buf, 0L, dev, 1, track, side, spt);
     if(err) return EBADSF;
-  
+
     return 0;
 }
 
 /*==== xbios floprate ======================================================*/
 
-/* sets the stepping rate of the specified drive. 
+/* sets the stepping rate of the specified drive.
  * rate meaning
  * 0   6ms
  * 1  12ms
@@ -772,7 +772,7 @@ LONG floprate(WORD dev, WORD rate)
 
 /*==== internal floprw ====================================================*/
 
-static WORD floprw(LONG buf, WORD rw, WORD dev, 
+static WORD floprw(LONG buf, WORD rw, WORD dev,
                    WORD sect, WORD track, WORD side, WORD count)
 {
     WORD err;
@@ -789,7 +789,7 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
     if((rw == RW_WRITE) && (track == 0) && (sect == 1) && (side == 0)) {
         /* TODO, maybe media changed ? */
     }
-  
+
 #ifdef MACHINE_AMIGA
     err = amiga_floprw(buf, rw, dev, sect, track, side, count);
     devices[dev].last_access = hz_200;
@@ -799,7 +799,7 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
         flush_data_cache((void *)buf,buflen);
 
     floplock(dev);
-    
+
     select(dev, side);
     err = set_track(track);
     if(err) {
@@ -873,7 +873,7 @@ static WORD flopwtrack(LONG buf, WORD dev, WORD track, WORD side, WORD track_siz
     WORD retry;
     WORD err;
     WORD status;
-    
+
     if((track == 0) && (side == 0)) {
         /* TODO, maybe media changed ? */
     }
@@ -882,7 +882,7 @@ static WORD flopwtrack(LONG buf, WORD dev, WORD track, WORD side, WORD track_siz
     flush_data_cache((void *)buf,track_size);
 
     floplock(dev);
-  
+
     select(dev, side);
     err = set_track(track);
     if(err) {
@@ -894,7 +894,7 @@ static WORD flopwtrack(LONG buf, WORD dev, WORD track, WORD side, WORD track_siz
         set_dma_addr((ULONG) buf);
         fdc_start_dma_write((track_size + SECTOR_SIZE-1) / SECTOR_SIZE);
         set_fdc_reg(FDC_CS | DMA_WRBIT, FDC_WRITETR);
-  
+
         if(timeout_gpip(TIMEOUT)) {
             /* timeout */
             err = EDRVNR;  /* drive not ready */
@@ -912,13 +912,13 @@ static WORD flopwtrack(LONG buf, WORD dev, WORD track, WORD side, WORD track_siz
                 /* no need to retry */
                 break;
             } else if(status & FDC_LOSTDAT) {
-                err = EDRVNR;  /* drive not ready */ 
+                err = EDRVNR;  /* drive not ready */
             } else {
                 err = 0;
                 break;
             }
         }
-    }  
+    }
     flopunlk();
     return err;
 #else
@@ -941,9 +941,9 @@ struct flop_info *f = &finfo[dev];
     if (dev != cur_dev) {
         cur_dev = dev;
 
-        /* 
+        /*
          * the FDC has only one track register for two units.
-         * we need to save the current value, and switch 
+         * we need to save the current value, and switch
          */
         if (f->cur_track >= 0) {
             set_fdc_reg(FDC_TR, f->cur_track);
@@ -975,20 +975,20 @@ void flopvbl(void)
     if(flock) return;
     /* only do something every 8th VBL */
     if(frclock & 7) return;
-   
+
     /* TODO - read the write-protect bit in the status register for
      * both drives
      */
- 
+
     /* if no drives are selected, no need to deselect them */
     if(deselected) return;
     /* read FDC status register */
     status = get_fdc_reg(FDC_CS);
-        
+
     /* if the bit motor on is not set, deselect both drives */
     if((status & FDC_MOTORON) == 0) {
         old_sr = set_sr(0x2700);
-        
+
         PSG->control = PSG_PORT_A;
         b = PSG->control;
         b |= 6;
@@ -997,7 +997,7 @@ void flopvbl(void)
         deselected = 1;
         set_sr(old_sr);
     }
-    
+
 }
 
 /*==== low level register access ==========================================*/
@@ -1007,7 +1007,7 @@ static void select(WORD dev, WORD side)
 {
     WORD old_sr;
     BYTE a;
-  
+
     old_sr = set_sr(0x2700);
     PSG->control = PSG_PORT_A;
     a = PSG->control;
@@ -1019,7 +1019,7 @@ static void select(WORD dev, WORD side)
     }
     if(side == 0) {
         a |= 1;
-    }  
+    }
     PSG->data = a;
     deselected = 0;
     set_sr(old_sr);
@@ -1028,7 +1028,7 @@ static void select(WORD dev, WORD side)
 static WORD set_track(WORD track)
 {
     if(track == finfo[cur_dev].cur_track) return 0;
-  
+
     if(track == 0) {
         set_fdc_reg(FDC_CS, FDC_RESTORE | finfo[cur_dev].actual_rate);
     } else {
@@ -1072,8 +1072,8 @@ static void set_fdc_reg(WORD reg, WORD value)
 }
 
 /* the fdc_start_dma_*() functions toggle the dma write bit, to
- * signal the DMA to clear its internal buffers (16 bytes in input, 
- * 32 bytes in output). This is done just before issuing the 
+ * signal the DMA to clear its internal buffers (16 bytes in input,
+ * 32 bytes in output). This is done just before issuing the
  * command to the fdc, after all fdc registers have been set.
  */
 

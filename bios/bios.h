@@ -9,7 +9,7 @@
 
 #ifndef BIOS_H
 #define BIOS_H
- 
+
 void biosmain(void);
 LONG bios_do_unimpl(WORD number);
 

@@ -52,7 +52,7 @@ void bufl_init(void)
     bcbx[3].b_bufr = &secbuf[3][0];
 
     /* initialize the buffer list pointers */
-    
+
     bufl[BI_FAT] = &bcbx[0];                    /* fat buffers */
     bufl[BI_DATA] = &bcbx[2];                   /* dir/data buffers */
 }
@@ -62,8 +62,8 @@ void bufl_init(void)
 /*
  * flush -
  *
- * NOTE: longjmp_rwabs() is a macro that includes a longjmp() which is 
- *       executed if the BIOS returns an error, therefore flush() does 
+ * NOTE: longjmp_rwabs() is a macro that includes a longjmp() which is
+ *       executed if the BIOS returns an error, therefore flush() does
  *       not need to return any error codes.
  */
 
@@ -78,7 +78,7 @@ void flush(BCB *b)
         b->b_bufdrv = -1;
         return;
     }
-    
+
     dm = b->b_dm;               /*  media descr for buffer      */
     n = b->b_buftyp;
     d = b->b_bufdrv;

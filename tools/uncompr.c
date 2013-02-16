@@ -12,10 +12,10 @@
 
 /*
  * This program is just here to be able to test compr.c
- * A real thing would not need to allocate all memory at 
+ * A real thing would not need to allocate all memory at
  * once, and would be generally speaking more efficient.
  */
- 
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -27,7 +27,7 @@ static void fatal(int with_errno, const char *fmt, ...)
 {
   int err = errno;
   va_list ap;
-  
+
   va_start(ap, fmt);
   vfprintf(stderr, fmt, ap);
   va_end(ap);
@@ -42,7 +42,7 @@ static void fatal(int with_errno, const char *fmt, ...)
 
 typedef unsigned char uchar;
 
-/* 
+/*
  * globals
  */
 
@@ -98,7 +98,7 @@ void uncompress(void)
       uchar c = get_byte();
       put_byte(c);
     }
-    
+
     /* copy back */
     off = get_num();
     if(off == 0) return;
@@ -109,25 +109,25 @@ void uncompress(void)
     }
   }
 }
-  
+
 int main(int argc, char **argv)
 {
-  if(argc != 3) 
+  if(argc != 3)
     fatal(0, "usage: %s in out", argv[0]);
-    
+
   fin = fopen(argv[1], "rb");
-  if(fin == NULL) 
+  if(fin == NULL)
     fatal(1, "fopen failed on %s", argv[1]);
 
-  if(get_byte() != 'C' || 
-     get_byte() != 'M' || 
-     get_byte() != 'P' || 
+  if(get_byte() != 'C' ||
+     get_byte() != 'M' ||
+     get_byte() != 'P' ||
      get_byte() != 'R') fatal(0, "it doesn't start with 'CMPR'");
 
   fout = fopen(argv[2], "wb");
-  if(fout == NULL) 
+  if(fout == NULL)
     fatal(1, "fopen failed on %s", argv[2]);
-  
+
   uncompress();
 
   if(fclose(fin)) fatal(0, "cannot close %s", argv[1]);
@@ -135,4 +135,4 @@ int main(int argc, char **argv)
   exit(0);
 }
 
-  
+

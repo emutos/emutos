@@ -52,7 +52,7 @@ LONG kpgmhdrld(char *s, PGMHDR01 *hd, FH *h)
 {
     LONG r;
     WORD magic;
-    
+
     r = xopen( s , 0 );         /* open file for read */
     if( r < 0L  )
         return( r ) ;
@@ -238,7 +238,7 @@ static LONG     pgmld01( FH h , PD *pdptr, PGMHDR01 *hd)
     /* clear the bss or the whole heap */
 
     if( hd->h01_flags & PF_FASTLOAD ) {
-        /* clear only the bss */ 
+        /* clear only the bss */
         flen =  pi->pi_blen;
     } else {
         /* clear the whole heap */

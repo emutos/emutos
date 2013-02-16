@@ -16,7 +16,7 @@
 
 /*
  * File localconf.h will be included if reported present by the Makefile.
- * Use it to put your local configuration. File localconf.h will not be 
+ * Use it to put your local configuration. File localconf.h will not be
  * imported into cvs.
  */
 
@@ -313,7 +313,7 @@
 # define AES_VERSION 0x0140
 #endif
 
-/* set this to 1 if your emulator provides an STonX-like 
+/* set this to 1 if your emulator provides an STonX-like
  * native_print() function, i.e. if the code:
  *   dc.w 0xa0ff
  *   dc.l 0
@@ -331,7 +331,7 @@
 #endif
 
 /* set this to 1 to detect, and (if detected) use native features provided
- * by the standard "native features" interface. 
+ * by the standard "native features" interface.
  */
 #ifndef DETECT_NATIVE_FEATURES
 # ifdef __mcoldfire__
@@ -506,7 +506,7 @@
 #endif
 
 /*
- * Set this to 1 to activate experimental ACSI support 
+ * Set this to 1 to activate experimental ACSI support
  */
 #ifndef CONF_WITH_ACSI
 # define CONF_WITH_ACSI 1
@@ -620,7 +620,7 @@
 #endif
 
 /*
- * Set this to 1 if your emulator is capable of emulating properly the 
+ * Set this to 1 if your emulator is capable of emulating properly the
  * STOP opcode (used to spare host CPU burden during loops).
  * Set to zero for all emulators which do not properly support STOP opcode.
  */

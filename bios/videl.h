@@ -10,10 +10,10 @@
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
  */
- 
+
 #ifndef VIDEL_H
 #define VIDEL_H
- 
+
 #if CONF_WITH_VIDEL
 
 #include "portab.h"

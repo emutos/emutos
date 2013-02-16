@@ -1,5 +1,5 @@
 /*      GEMFMALT.C              09/01/84 - 06/20/85     Lee Lorenzen    */
-/*      merge High C vers. w. 2.2 & 3.0         8/20/87         mdf     */ 
+/*      merge High C vers. w. 2.2 & 3.0         8/20/87         mdf     */
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
@@ -56,7 +56,7 @@
 /*
 *       Routine to break a string into smaller strings.  Breaks occur
 *       whenever an | or a ] is encountered.
-* 
+*
 *       Input:  start       starting object
 *               maxnum      maximum number of substrings
 *               maxlen      maximum length of substring

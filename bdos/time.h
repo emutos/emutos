@@ -10,7 +10,7 @@
 #ifndef TIME_H
 #define TIME_H
 
-extern int time, date;  
+extern int time, date;
 
 long xgetdate(void);
 long xsetdate(int d);

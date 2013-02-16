@@ -100,7 +100,7 @@ extern  long    errcode;
  *  OFD - open file descriptor
  */
 
-OFD 
+OFD
 {
     OFD   *o_link;      /*  link to next OFD                    */
     int   o_flag;
@@ -125,7 +125,7 @@ OFD
 
 /*
  * bit usage in o_mod
- * 
+ *
  * bits 8-15 are internal-use only
  * bits 0-7 correspond to bit usage in the Fopen() system call
  * note: bits 4-7 are only used if GEMDOS file-sharing/record-locking
@@ -334,8 +334,8 @@ extern  BCB     *bufl[2];              /*  in bios main.c              */
  */
 
 
-/* 
- * in fsdrive.c 
+/*
+ * in fsdrive.c
  */
 
 /* check the drive, see if it needs to be logged in. */
@@ -409,7 +409,7 @@ CLNO getclnum(CLNO cl, OFD *of);
 int nextcl(OFD *p, int wrtflg);
 long xgetfree(long *buf, int drv);
 
-/* 
+/*
  * in fsio.c
  */
 
@@ -432,7 +432,7 @@ long xrmdir(char *p);
 long xchmod(char *p, int wrt, char mod);
 long ixsfirst(char *name, register WORD att, register DTAINFO *addr);
 long xsfirst(char *name, int att);
-long xsnext(void); 
+long xsnext(void);
 long xgsdtof(int *buf, int h, int wrt);
 void builds(const char *s1 , char *s2 );
 long xrename(int n, char *p1, char *p2);
@@ -450,7 +450,7 @@ char uc(register char c);
 char *xgetdta(void);
 void xsetdta(char *addr);
 long xsetdrv(int drv);
-long xgetdrv(void); 
+long xgetdrv(void);
 OFD  *makofd(register DND *p);
 OFD  *getofd(int h);
 

@@ -1,5 +1,5 @@
 /*      GEMFLAG.C       1/27/84 - 08/26/85      Lee Jay Lorenzen        */
-/*      merge High C vers. w. 2.2 & 3.0         8/20/87         mdf     */ 
+/*      merge High C vers. w. 2.2 & 3.0         8/20/87         mdf     */
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
@@ -120,7 +120,7 @@ void unsync(SPB *sy)
                                                 /*   if there is one    */
         if (sy->sy_tas == 0)
         {
-          if (( p = sy->sy_wait ) != 0)                 
+          if (( p = sy->sy_wait ) != 0)
           {
                                                 /* next off the wait    */
                                                 /*   list               */

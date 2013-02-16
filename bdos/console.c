@@ -29,8 +29,8 @@ int add[3] ;                    /*  index of add position, used from bdosmain.c 
 int remove[3] ;                 /*  index of remove position, used from bdosmain.c */
 static int glbcolumn[3];
 
-/* 
- * forward declarations (internal prototypes) 
+/*
+ * forward declarations (internal prototypes)
  */
 
 static void buflush(int h);
@@ -251,9 +251,9 @@ long xauxout(int ch)
  */
 long xprtout(int ch)
 {
-#if 0 
+#if 0
     /* TODO - depending whether Bconout() returns a value or not,
-     * use Bcostat() or not. 
+     * use Bcostat() or not.
      * Some doc (Le livre du développeur - the developper's book) says:
      *   void Bconout(); void Cauxout(); int Cprnout();
      * the BDOS code assumes that Bconout() returns a value;
@@ -307,7 +307,7 @@ long x7in(void)
 /*
  * conin - BDOS console input function
  */
-long conin(int h)              
+long conin(int h)
 {
     long ch;
 
@@ -405,7 +405,7 @@ static void newline(int h, int startcol)
 
 /* backspace one character position */
 /* col is the starting console column */
-static int backsp(int h, char *cbuf, int retlen, int col) 
+static int backsp(int h, char *cbuf, int retlen, int col)
 {
     register char       ch;             /* current character            */
     register int        i;

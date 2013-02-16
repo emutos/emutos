@@ -7,7 +7,7 @@
 *       Copyright 1999, Caldera Thin Clients, Inc.
 *                 2002 The EmuTOS development team
 *
-*       This software is licenced under the GNU Public License.         
+*       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
 *
 *                  Historical Copyright
@@ -262,7 +262,7 @@ static WORD fold_wind(BYTE *path)
 
 
 /*
-*       Routine to check that the name we will be adding is like the 
+*       Routine to check that the name we will be adding is like the
 *       last folder name in the path.
 */
 static void like_parent(BYTE *path, BYTE *new_name)
@@ -310,7 +310,7 @@ static WORD same_fold(BYTE *psrc, BYTE *pdst)
                                                 /* null it              */
         *lastslsh = NULL;
                                                 /* see if they match    */
-        ret = !strcmp(psrc, pdst);      
+        ret = !strcmp(psrc, pdst);
                                                 /* restore it           */
         *lastslsh = '\\';
                                                 /* return if same       */
@@ -364,7 +364,7 @@ WORD d_errmsg(void)
 *       Directory routine to DO File DELeting.
 */
 static WORD d_dofdel(BYTE *ppath)
-{ 
+{
         dos_delete((BYTE *)ADDR(ppath));
         return( d_errmsg() );
 } /* d_dofdel */
@@ -405,7 +405,7 @@ static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WO
           else
           {
                                                 /* dest file already    */
-                                                /*   exists             */ 
+                                                /*   exists             */
             dos_close(dstfh);
                                                 /* get the filenames    */
                                                 /*   from the pathnames */
@@ -522,7 +522,7 @@ static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WO
 */
 WORD d_doop(WORD op, LONG tree, WORD obj, BYTE *psrc_path, BYTE *pdst_path,
             WORD *pfcnt, WORD *pdcnt, WORD flag)
-{                              
+{
         BYTE            *ptmp;
         WORD            cont, skip, more, level;
                                                 /* start recursion at   */
@@ -612,7 +612,7 @@ WORD d_doop(WORD op, LONG tree, WORD obj, BYTE *psrc_path, BYTE *pdst_path,
                   dos_sfirst(psrc_path, 0x16);
               } /* if not a dir */
             } /* if */
-            else                                 
+            else
             {
               if (op)
                 add_fname(psrc_path, &G.g_fcbstk[level].fcb_name[0]);
@@ -628,8 +628,8 @@ WORD d_doop(WORD op, LONG tree, WORD obj, BYTE *psrc_path, BYTE *pdst_path,
                 case OP_COPY:
                         add_fname(pdst_path, &G.g_fcbstk[level].fcb_name[0]);
                         more = d_dofcopy(psrc_path, pdst_path,
-                                G.g_fcbstk[level].fcb_time, 
-                                G.g_fcbstk[level].fcb_date, 
+                                G.g_fcbstk[level].fcb_time,
+                                G.g_fcbstk[level].fcb_date,
                                 G.g_fcbstk[level].fcb_attr);
                         del_fname(pdst_path);
                         break;
@@ -745,7 +745,7 @@ WORD par_chk(BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path)
 
 /*
 *       DIRectory routine that does an OPeration on all the selected files and
-*       folders in the source path.  The selected files and folders are 
+*       folders in the source path.  The selected files and folders are
 *       marked in the source file list.
 */
 WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
@@ -839,7 +839,7 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
               } /* if */
             } /* if OP_COPY */
             if (pf->f_attr & F_SUBDIR)
-            {                      
+            {
               add_path(pglsrc, &pf->f_name[0]);
               if (op == OP_COPY)
               {
@@ -848,7 +848,7 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
                 while (DOS_ERR && more)
                 {
                                                 /* see if dest folder   */
-                                                /*   already exists     */ 
+                                                /*   already exists     */
                   if (DOS_AX == E_NOACCESS)
                   {
                     if ( same_fold(pglsrc, pgldst) )
@@ -867,11 +867,11 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
                                                 /*   dir or try again   */
                                                 /*   until we succeed or*/
                                                 /*   cancel is hit      */
-                      more = inf_what(G.a_trees[ADCPALER], 
+                      more = inf_what(G.a_trees[ADCPALER],
                                         CAOK, CACNCL);
 
                       if (more)
-                      { 
+                      {
                         inf_sget(G.a_trees[ADCPALER], 3, &ml_fdst[0]);
                         unfmt_str(&ml_fdst[0], &ml_fstr[0]);
                         del_fname(pgldst);

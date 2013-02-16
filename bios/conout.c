@@ -68,7 +68,7 @@ char_addr(WORD ch)
     }
 
     /* invalid code. no address returned */
-    return NULL;    
+    return NULL;
 }
 
 

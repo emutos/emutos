@@ -1,8 +1,8 @@
 /*
  *       Copyright 2002 The EmuTOS development team
  *
- *       This software is licenced under the GNU Public License.         
- *       Please see LICENSE.TXT for further information.                 
+ *       This software is licenced under the GNU Public License.
+ *       Please see LICENSE.TXT for further information.
  */
 
 #include "config.h"

@@ -1,15 +1,15 @@
 /*      GEMOBJOP.C      03/15/84 - 05/27/85     Gregg Morris            */
-/*      merge High C vers. w. 2.2               8/21/87         mdf     */ 
+/*      merge High C vers. w. 2.2               8/21/87         mdf     */
 /*      fix get_par                             11/12/87        mdf     */
 
 /*
-*       Copyright 1999, Caldera Thin Clients, Inc.                      
+*       Copyright 1999, Caldera Thin Clients, Inc.
 *                 2002 The EmuTOS development team
 *
-*       This software is licenced under the GNU Public License.         
-*       Please see LICENSE.TXT for further information.                 
+*       This software is licenced under the GNU Public License.
+*       Please see LICENSE.TXT for further information.
 *
-*                  Historical Copyright                                 
+*                  Historical Copyright
 *       -------------------------------------------------------------
 *       GEM Application Environment Services              Version 2.3
 *       Serial No.  XXXX-0000-654321              All Rights Reserved
@@ -107,7 +107,7 @@ child:
         tmp1 = obj->ob_head;
         if ( tmp1 != NIL )
         {
-          if ( !( obj->ob_flags & HIDETREE ) && 
+          if ( !( obj->ob_flags & HIDETREE ) &&
                 ( depth <= maxdep ) )
           {
             depth++;
@@ -123,7 +123,7 @@ sibling:
         obj = ((OBJECT *)tree) + this;
         tmp1 = obj->ob_next;
         if ( (tmp1 == last) ||
-             (this == ROOT) )   
+             (this == ROOT) )
           return;
                                                 /* if this obj. has a   */
                                                 /*   sibling that is not*/
@@ -138,7 +138,7 @@ sibling:
         }
                                                 /* else move up to the  */
                                                 /*   parent and finish  */
-                                                /*   off his siblings   */ 
+                                                /*   off his siblings   */
         depth--;
         this = tmp1;
         goto sibling;

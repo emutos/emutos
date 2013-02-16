@@ -2,11 +2,11 @@
 # this file contains the name of languages that will
 # be generated in file langs.c by bug make.
 # each line should be of the form
-#   
+#
 #   xy charset
 #
 # where xy is a lowercase two-letter language name,
-# and charset is the name of the destination charset 
+# and charset is the name of the destination charset
 #
 
 fr atarist

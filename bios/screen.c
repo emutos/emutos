@@ -13,7 +13,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#include "config.h"  
+#include "config.h"
 #include "machine.h"
 #include "screen.h"
 #include "videl.h"
@@ -428,7 +428,7 @@ WORD mask;
 static char rez_was_hacked;
 
 /*
- * In the original TOS there used to be an early screen init, 
+ * In the original TOS there used to be an early screen init,
  * before memory configuration. This is not used here, and all is
  * done at the same time from C.
  */
@@ -594,7 +594,7 @@ void screen_init(void)
 
 /*
  * Mark resolution as hacked
- * 
+ *
  * called by bios_init() if a cartridge application has altered key
  * lineA variables
  */
@@ -689,7 +689,7 @@ static const struct video_mode video_mode[] = {
     { 0,    0,  0,},            /* rez=5: invalid */
     { 1, 1280, 960},            /* rez=6: TT high */
     { 8,  320, 480},            /* rez=7: TT low */
-#endif    
+#endif
 };
 
 static void shifter_get_current_mode_info(UWORD *planes, UWORD *hz_rez, UWORD *vt_rez)

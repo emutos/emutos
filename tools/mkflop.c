@@ -1,5 +1,5 @@
 /*
- * mkflop.c - create an auto-booting EmuTOS floppy. 
+ * mkflop.c - create an auto-booting EmuTOS floppy.
  *
  * Copyright (c) 2001 EmuTOS development team
  *
@@ -14,20 +14,20 @@
  * this tool will create a simple auto-booting FAT12 floppy,
  * called emuboot.st from bootsect.img and emutos.img.
  */
- 
+
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
- 
+
 #define FLOPNAME "emutos.st"
 #define BOOTNAME "bootsect.img"
 #define TOSNAME "ramtos.img"
 #define TOTAL_DISK_SECTORS (1 * 80 * 9) /* Single sided floppy */
 #define MAX_EMUTOS_SIZE ((TOTAL_DISK_SECTORS - 1) * 512)
- 
+
 typedef unsigned char uchar;
- 
+
 struct loader {
   uchar pad[0x1e];
   uchar execflg[2];
@@ -39,7 +39,7 @@ struct loader {
   uchar fname[11];
   uchar reserved;
 };
- 
+
 int fill = 1;
 
 int mkflop(FILE *bootf, FILE *tosf, FILE *flopf)
@@ -49,7 +49,7 @@ int mkflop(FILE *bootf, FILE *tosf, FILE *flopf)
   size_t count;
   unsigned short sectcnt;
   int i;
-  
+
   /* read bootsect */
   count = 512;
   count = fread(buf, 1, count, bootf);
@@ -57,12 +57,12 @@ int mkflop(FILE *bootf, FILE *tosf, FILE *flopf)
   if(count < 512) {
     memset(buf+count, 0, 512 - count);
   }
-  
+
   /* compute size of tosf, and update sectcnt */
   fseek(tosf, 0, SEEK_END);
   count = ftell(tosf);
   fseek(tosf, 0, SEEK_SET);
-  
+
   if (count > MAX_EMUTOS_SIZE)
   {
     fprintf(stderr, "Error: %s is too big to fit on the floppy (%ld extra bytes).\n",
@@ -86,10 +86,10 @@ int mkflop(FILE *bootf, FILE *tosf, FILE *flopf)
     buf[510] = a>>8;
     buf[511] = a;
   }
-  
+
   /* write down bootsector */
   fwrite(buf, 1, 512, flopf);
-  
+
   /* copy the tos starting at sector 1 */
   for(i = 0 ; i < sectcnt ; i++) {
     count = fread(buf, 1, 512, tosf);
@@ -108,7 +108,7 @@ int mkflop(FILE *bootf, FILE *tosf, FILE *flopf)
   }
 
   /* that's it */
-  
+
   return 0;
 }
 
@@ -130,4 +130,4 @@ fail:
   fprintf(stderr, "something failed.\n");
   exit(EXIT_FAILURE);
 }
-  
+

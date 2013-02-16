@@ -1,5 +1,5 @@
 /*      GEMWMLIB.C      4/23/84 - 07/11/85      Lee Lorenzen            */
-/*      merge High C vers. w. 2.2               8/24/87         mdf     */ 
+/*      merge High C vers. w. 2.2               8/24/87         mdf     */
 /*      fix wm_delete bug                       10/8/87         mdf     */
 
 /*
@@ -9,7 +9,7 @@
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
 *
-*                  Historical Copyright                                 
+*                  Historical Copyright
 *       -------------------------------------------------------------
 *       GEM Application Environment Services              Version 2.3
 *       Serial No.  XXXX-0000-654321              All Rights Reserved
@@ -229,7 +229,7 @@ void w_adjust( WORD parent, WORD obj, WORD x, WORD y,  WORD w, WORD h)
         W_ACTIVE[obj].ob_y = y;
         W_ACTIVE[obj].ob_width = w;
         W_ACTIVE[obj].ob_height = h;
-        
+
         W_ACTIVE[obj].ob_head = W_ACTIVE[obj].ob_tail = NIL;
         w_obadd(&W_ACTIVE[ROOT], parent, obj);
 }
@@ -254,7 +254,7 @@ void do_walk(WORD wh, LONG tree, WORD obj, WORD depth, GRECT *pc)
 {
         register ORECT  *po;
         GRECT           t;
-        
+
         if ( wh == NIL )
           return;
                                                 /* clip to screen       */
@@ -292,7 +292,7 @@ void w_drawdesk(GRECT *pc)
         register WORD   depth;
         register WORD   root;
         GRECT           pt;
-        
+
         rc_copy(pc, &pt);
         if (gl_newdesk)
         {
@@ -401,7 +401,7 @@ void w_bldbar(UWORD kind, WORD istop, WORD w_bar, WORD sl_value, WORD sl_size,
               WORD x, WORD y, WORD w, WORD h)
 {
         WORD            isvert, obj;
-        UWORD           upcmp, dncmp, slcmp;            
+        UWORD           upcmp, dncmp, slcmp;
         register WORD   w_up;
         WORD            w_dn, w_slide, space, min_sld;
 
@@ -449,7 +449,7 @@ void w_bldbar(UWORD kind, WORD istop, WORD w_bar, WORD sl_value, WORD sl_size,
           {
             w -= (gl_wbox - 1);
             h -= (gl_hbox - 1);
-            w_hvassign(isvert, w_bar, w_dn, x, y + h - 1, 
+            w_hvassign(isvert, w_bar, w_dn, x, y + h - 1,
                         x + w - 1, y, gl_wbox, gl_hbox);
           }
           if ( kind & slcmp )
@@ -457,7 +457,7 @@ void w_bldbar(UWORD kind, WORD istop, WORD w_bar, WORD sl_value, WORD sl_size,
             w_hvassign(isvert, w_bar, w_slide, x, y, x, y, w, h);
             space = (isvert) ? h : w;
 
-            w_barcalc(isvert, space, sl_value, sl_size, min_sld, 
+            w_barcalc(isvert, space, sl_value, sl_size, min_sld,
                   (GRECT *)&W_ACTIVE[W_VELEV].ob_x, (GRECT *)&W_ACTIVE[W_HELEV].ob_x);
 
             obj = (isvert) ? W_VELEV : W_HELEV;
@@ -538,7 +538,7 @@ void w_bldactive(WORD w_handle)
                ( istop || issub ) )
           {
             tempw -= gl_wbox;
-            w_adjust(W_TITLE, W_FULLER, t.g_x + tempw, t.g_y, 
+            w_adjust(W_TITLE, W_FULLER, t.g_x + tempw, t.g_y,
                         gl_wbox, gl_hbox);
           }
           if ( kind & NAME )
@@ -583,8 +583,8 @@ void w_bldactive(WORD w_handle)
         if ( havevbar )
         {
           t.g_x += t.g_w;
-          w_bldbar(kind, istop || issub, W_VBAR, pw->w_vslide, 
-                        pw->w_vslsiz, t.g_x, 0, 
+          w_bldbar(kind, istop || issub, W_VBAR, pw->w_vslide,
+                        pw->w_vslsiz, t.g_x, 0,
                         t.g_w + 2, t.g_h + 2);
         }
                                                 /* do horiz area        */
@@ -592,7 +592,7 @@ void w_bldactive(WORD w_handle)
         {
           t.g_y += t.g_h;
           w_bldbar(kind, istop || issub, W_HBAR, pw->w_hslide,
-                        pw->w_hslsiz, 0, t.g_y, 
+                        pw->w_hslsiz, 0, t.g_y,
                         t.g_w + 2, t.g_h + 2);
         }
                                                 /* do sizer area        */
@@ -600,7 +600,7 @@ void w_bldactive(WORD w_handle)
              (havehbar) )
         {
           w_adjust(W_DATA, W_SIZER, t.g_x, t.g_y, gl_wbox, gl_hbox);
-          W_ACTIVE[W_SIZER].ob_spec = 
+          W_ACTIVE[W_SIZER].ob_spec =
                 (istop && (kind & SIZER)) ? 0x06011100L: 0x00011100L;
         }
 }
@@ -683,7 +683,7 @@ void w_redraw(WORD w_handle, GRECT *pt)
 WORD w_mvfix(GRECT *ps, GRECT *pd)
 {
         register WORD   tmpsx;
-        
+
         tmpsx = ps->g_x;
         rc_intersect(&gl_rfull, ps);
         if (tmpsx == -1)
@@ -850,7 +850,7 @@ void w_menufix()
 
 
 /*
-*       Draw the tree of windows given a major change in the some 
+*       Draw the tree of windows given a major change in the some
 *       window.  It may have been sized, moved, fulled, topped, or closed.
 *       An attempt should be made to minimize the amount of
 *       redrawing of other windows that has to occur.  W_REDRAW()
@@ -873,8 +873,8 @@ void draw_change(WORD w_handle, GRECT *pt)
                                                 /* set new size's       */
         w_setsize(WS_CURR, w_handle, pt);
         pw = (GRECT *) w_getxptr(WS_WORK, w_handle);
-        wm_calc(WC_WORK, D.w_win[w_handle].w_kind, 
-                        pt->g_x, pt->g_y, pt->g_w, pt->g_h, 
+        wm_calc(WC_WORK, D.w_win[w_handle].w_kind,
+                        pt->g_x, pt->g_y, pt->g_w, pt->g_h,
                         &pw->g_x, &pw->g_y, &pw->g_w, &pw->g_h);
                                                 /* update rect. lists   */
         everyobj(gl_wtree, ROOT, NIL, (void(*)())newrect, 0, 0, MAX_DEPTH);
@@ -904,7 +904,7 @@ void draw_change(WORD w_handle, GRECT *pt)
                                                 /*   its a move, grow,  */
                                                 /*   open or close.     */
         if ( (!rc_equal(&gl_rzero, pt)) &&
-              (pt->g_x == c.g_x) && 
+              (pt->g_x == c.g_x) &&
               (pt->g_y == c.g_y) )
         {
                                                 /* size or top request  */
@@ -940,7 +940,7 @@ void draw_change(WORD w_handle, GRECT *pt)
                                                 /*   top was clear then */
                                                 /*   just draw activated*/
                                                 /*   borders            */
-            if ( (clrold) && 
+            if ( (clrold) &&
                  (wasclr) )
             {
               w_clipdraw(gl_wtop, 0, MAX_DEPTH, 1);
@@ -966,8 +966,8 @@ void draw_change(WORD w_handle, GRECT *pt)
                                                 /* update rect. is the  */
                                                 /*   union of two sizes */
                                                 /*   + the drop shadow  */
-            c.g_w = max(pt->g_w, c.g_w) + 2; 
-            c.g_h = max(pt->g_h, c.g_h) + 2; 
+            c.g_w = max(pt->g_w, c.g_w) + 2;
+            c.g_h = max(pt->g_h, c.g_h) + 2;
           }
         }
         else
@@ -975,9 +975,9 @@ void draw_change(WORD w_handle, GRECT *pt)
                                                 /* move or grow or open */
                                                 /*   or close           */
           if ( !(c.g_w && c.g_h) ||
-                ( (pt->g_x <= c.g_x) && 
+                ( (pt->g_x <= c.g_x) &&
                   (pt->g_y <= c.g_y) &&
-                  (pt->g_x+pt->g_w >= c.g_x+c.g_w) && 
+                  (pt->g_x+pt->g_w >= c.g_x+c.g_w) &&
                   (pt->g_y+pt->g_h >= c.g_y+c.g_h)))
           {
                                                 /* a grow that is a     */
@@ -988,7 +988,7 @@ void draw_change(WORD w_handle, GRECT *pt)
           {
                                                 /* move, close or shrink*/
                                                 /* do a move of top guy */
-            if ( (pt->g_w == c.g_w) && 
+            if ( (pt->g_w == c.g_w) &&
                  (pt->g_h == c.g_h) &&
                  (gl_wtop == w_handle) )
             {
@@ -1037,7 +1037,7 @@ void draw_change(WORD w_handle, GRECT *pt)
         }
         c.g_w += 2;                             /* account for drop shadow*/
         c.g_h += 2;                             /* BUGFIX in 2.1        */
-                                                
+
                                                 /* update the desktop   */
                                                 /*   background         */
         if (start == DESKWH)
@@ -1213,7 +1213,7 @@ void wm_close(WORD w_handle)
 
 
 /*
-*       Frees a window and its handle up for use by 
+*       Frees a window and its handle up for use by
 *       by another application or by the same application.
 */
 
@@ -1272,7 +1272,7 @@ void wm_get(WORD w_handle, WORD w_field, WORD *poutwds)
           case WF_FIRSTXYWH:
           case WF_NEXTXYWH:
                 w_getsize(WS_WORK, w_handle, &t);
-                po = (w_field == WF_FIRSTXYWH) ? D.w_win[w_handle].w_rlist : 
+                po = (w_field == WF_FIRSTXYWH) ? D.w_win[w_handle].w_rlist :
                                                  D.w_win[w_handle].w_rnext;
                 w_owns(w_handle, po, &t, &poutwds[0]);
                 break;
@@ -1294,14 +1294,14 @@ static WORD wm_gsizes(WORD w_field, WORD *psl, WORD *psz)
              (w_field == WF_HSLIDE) )
         {
           *psl = W_ACTIVE[W_HELEV].ob_x;
-          *psz = W_ACTIVE[W_HELEV].ob_width; 
+          *psz = W_ACTIVE[W_HELEV].ob_width;
           return(W_HBAR);
         }
         if ( (w_field == WF_VSLSIZ) ||
              (w_field == WF_VSLIDE) )
         {
           *psl = W_ACTIVE[W_VELEV].ob_y;
-          *psz = W_ACTIVE[W_VELEV].ob_height; 
+          *psz = W_ACTIVE[W_VELEV].ob_height;
           return(W_VBAR);
         }
         return(0);
@@ -1330,7 +1330,7 @@ void wm_mktop(WORD w_handle)
 *       Allows application to set the attributes of
 *       one of the windows that it currently owns.  Some of the
 *       information includes the name, and the scroll bar elevator
-*       positions. 
+*       positions.
 */
 
 void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
@@ -1339,14 +1339,14 @@ void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
         register WORD   wbar;
         WORD            osl, osz, nsl, nsz;
         GRECT           t;
-        WINDOW          *pwin;  
+        WINDOW          *pwin;
 
         osl = osz = nsl = nsz = 0;
         which = -1;
                                                 /* grab the window sync */
         wm_update(TRUE);
         pwin = &D.w_win[w_handle];
-        wbar = wm_gsizes(w_field, &osl, &osz); 
+        wbar = wm_gsizes(w_field, &osl, &osz);
         if (wbar)
         {
           pinwds[0] = max(-1, pinwds[0]);
@@ -1414,7 +1414,7 @@ void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
              (liketop) )
         {
           w_bldactive(w_handle);
-          wm_gsizes(w_field, &nsl, &nsz); 
+          wm_gsizes(w_field, &nsl, &nsz);
           if ( (osl != nsl) ||
                (osz != nsz) ||
                (pwin->w_flags & VF_SUBWIN) )
@@ -1442,7 +1442,7 @@ WORD wm_find(WORD x, WORD y)
 
 
 /*
-*       Locks or unlocks the current state of the window tree while an 
+*       Locks or unlocks the current state of the window tree while an
 *       application is responding to a window update message in his message
 *       pipe or is making some other direct screen update based on his current
 *       rectangle list.
@@ -1471,7 +1471,7 @@ void wm_update(WORD beg_update)
 
 /*
 *       Given a width and height of a Work Area and the Kind of window
-*       desired calculate the required window size including the 
+*       desired calculate the required window size including the
 *       Border Area.  or...  Given the width and height of a window
 *       including the Border Area and the Kind of window desired, calculate
 *       the result size of the window Work Area.
@@ -1482,7 +1482,7 @@ void wm_calc(WORD wtype, UWORD kind, WORD x, WORD y, WORD w, WORD h,
         register WORD   tb, bb, lb, rb;
 
         tb = bb = rb = lb = 1;
-        
+
         if ( kind & (NAME | CLOSER | FULLER) )
           tb += (gl_hbox - 1);
         if ( kind & INFO )
@@ -1499,7 +1499,7 @@ void wm_calc(WORD wtype, UWORD kind, WORD x, WORD y, WORD w, WORD h,
           lb = -lb;
           tb = -tb;
           rb = -rb;
-          bb = -bb;                                             
+          bb = -bb;
         }
         *px = x + lb;
         *py = y + tb;

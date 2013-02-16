@@ -147,7 +147,7 @@ static ANODE *get_disk(WORD letter)
 /* i n s _ d i s k                                                      */
 /************************************************************************/
 WORD ins_disk(ANODE *pa)
-{                              
+{
         LONG            tree;
         WORD            change, icon, flop, hard, fld;
         BYTE            cletter[2], clabel[LEN_ZFNAME];
@@ -168,9 +168,9 @@ WORD ins_disk(ANODE *pa)
         hard = (pa->a_aicon == IG_HARD) ? SELECTED : NORMAL;
         LWSET(OB_STATE(DRFLOPPY), flop);
         LWSET(OB_STATE(DRHARD), hard);
-        LWSET(OB_STATE(DRREM), (lastdisk()) ? DISABLED : NORMAL ); 
+        LWSET(OB_STATE(DRREM), (lastdisk()) ? DISABLED : NORMAL );
 
-        inf_show(tree, 0);      
+        inf_show(tree, 0);
 
         inf_sget(tree, DRID, &nletter[0]);
         inf_sget(tree, DRLABEL, &nlabel[0]);
@@ -198,11 +198,11 @@ WORD ins_disk(ANODE *pa)
                 newpa->a_dicon = NIL;
                 newpa->a_letter = nletter[0];
 #ifdef DESK1
-                ins_posdisk(pa->a_xspot, pa->a_yspot, &newpa->a_xspot, 
+                ins_posdisk(pa->a_xspot, pa->a_yspot, &newpa->a_xspot,
                                         &newpa->a_yspot);
 
-                snap_disk(newpa->a_xspot, newpa->a_yspot, 
-                                        &newpa->a_xspot, &newpa->a_yspot);                      
+                snap_disk(newpa->a_xspot, newpa->a_yspot,
+                                        &newpa->a_xspot, &newpa->a_yspot);
 #endif
               } /* if newpa */
               else
@@ -262,7 +262,7 @@ static void insa_elev(LONG tree, WORD nicon, WORD numics)
         const char      *lp;
 
         y = 0;
-        th = h = LWGET(OB_HEIGHT(APFSVSLI));  
+        th = h = LWGET(OB_HEIGHT(APFSVSLI));
         if ( numics > 1)
         {
           h = mul_div(1, h, numics);
@@ -313,7 +313,7 @@ static WORD insa_dial(LONG tree, WORD nicon, WORD numics)
           }
           touchob = form_do(tree, APDFTYPE+firstslot);
           graf_mkstate(&mx, &my, &kret, &bret);
-        
+
           value = 0;
           touchob &= 0x7fff;
           switch( touchob )
@@ -361,7 +361,7 @@ dofelev:        wind_update(3);
             if (nicon < 0)
               nicon = 0;
             if (nicon >= numics)
-              nicon = numics - 1;       
+              nicon = numics - 1;
             if (oicon != nicon)
             {
               insa_elev(tree, nicon, numics);
@@ -391,7 +391,7 @@ static void insa_gtypes(LONG tree, BYTE *ptypes)
           if (*pstr)
           {
             if (j != 0)
-              ptypes[j++] = ','; 
+              ptypes[j++] = ',';
             strcpy(&ptypes[j], "*.*");
             strcpy(&ptypes[j+2], pstr);
             j += 2 + strlen(pstr);
@@ -425,7 +425,7 @@ static void insa_stypes(LONG tree, BYTE *pdata)
 /* i n s _ a p p                                                        */
 /************************************************************************/
 WORD ins_app(BYTE *pfname, ANODE *pa)
-{                              
+{
         LONG            tree;
         ANODE           *newpa;
         BYTE            pname[12];

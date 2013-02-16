@@ -1,5 +1,5 @@
 /*
- * pghdr.h - header file for program loaders, 'size' pgms, etc. 
+ * pghdr.h - header file for program loaders, 'size' pgms, etc.
  *
  * Copyright (c) 2001 Lineo, Inc.
  *

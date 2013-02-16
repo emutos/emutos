@@ -4,7 +4,7 @@
  * Copyright (c) 2001 by Authors:
  *
  *  LVL  Laurent Vogel
- *  
+ *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
  *
@@ -14,7 +14,7 @@
 
         .globl  _bootasm
         .globl  _getbootsize
-        
+
         .text
 /*
  * void bootasm(long dest, long src, long count);
@@ -29,15 +29,15 @@
 _getbootsize:
         move.l  #bootend-boot, d0
         rts
-        
+
 _bootasm:
         move.w  #0x2700,sr
         move.l  4(sp),a3
         move.l  8(sp),a2
         move.l  12(sp),d2
-        
+
         /* align the size to a multiple of 4 */
-        
+
         btst    #0,d2
         beq     even
         add.l   #1,d2
@@ -48,7 +48,7 @@ even:
 four:
 
         /* copy the boot routine after the TOS buffer */
-  
+
         lea     (a2,d2),a4
         move.l  a4,a1
         lea     boot,a0
@@ -62,12 +62,12 @@ copy:
 #else
         dbra    d0,copy
 #endif
-        
+
         /* jump into boot routine */
-        
+
         /* the instruction cache should be invalidated here */
         jmp     (a4)
-        
+
 boot:
         /* copy the TOS to destination */
 
@@ -81,10 +81,10 @@ bcopy:
         bpl.s   bcopy
 #else
         dbra    d2,bcopy
-        sub.l   #0x10000,d2 
-        bhi     bcopy 
+        sub.l   #0x10000,d2
+        bhi     bcopy
 #endif
-        
+
         /* jump into it */
 
         /* the instruction cache should be invalidated here */

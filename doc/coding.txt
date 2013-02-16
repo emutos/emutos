@@ -15,17 +15,17 @@ However, for 'make cvsready' to work correctly, please make sure that:
 
 - if you use TABs in your editor, set them to 8 spaces.
 
-- To help the tool determining which file is non-binary, make sure that 
+- To help the tool determining which file is non-binary, make sure that
   no non-printable ISO latin 1 characters are in text files.
 
-- use \t instead of TABs in strings ("example") and quoted ascii 
+- use \t instead of TABs in strings ("example") and quoted ascii
   chars ('!'), especially in strings marked for translation _("...")
 
 
-Rules for C coding 
+Rules for C coding
 ==================
 
-Well, at first these are not much. If you have any recommendations, just 
+Well, at first these are not much. If you have any recommendations, just
 write them in here, and we can discuss it later.
 
 - use an indention of 4 spaces for all things.
@@ -48,7 +48,7 @@ those file which cause warnings. Typically:
 
 - avoid cpp tricks that do not respect brace balancing, like:
 
-  instead of     please do    |  instead of     please do 
+  instead of     please do    |  instead of     please do
                               |
   if( a &&    |  if( a        |  foo_t a = {  | foo_t a = {
   #if FOO     |  #if FOO      |    1,         |   1,
@@ -65,18 +65,18 @@ contains a summary of bugs linked to old C code and ways to fix them.
 Rules for assembler coding
 ==========================
 
-As a general rule, try to ensure that external functions and 
+As a general rule, try to ensure that external functions and
 variables can be accessed from C language. To achieve this:
 - name external symbols with a leading underscore;
-- make sure external functions use CDECL conventions 
-  o parameters passed on the stack, 
-  o registers saved except d0-d1/a0-a1, 
+- make sure external functions use CDECL conventions
+  o parameters passed on the stack,
+  o registers saved except d0-d1/a0-a1,
   o return value in d0
 
-When the TOS specifications or efficiency considerations 
-impose that a routine have special register-parameters 
-conventions, name this routine with no underscore and try 
-to make a C glue for it using CDECL, like in the following 
+When the TOS specifications or efficiency considerations
+impose that a routine have special register-parameters
+conventions, name this routine with no underscore and try
+to make a C glue for it using CDECL, like in the following
 example:
 
   _my_routine:
@@ -86,13 +86,13 @@ example:
     ...
     rts
 
-(where C code would call my_routine(a,b), and asm code would 
+(where C code would call my_routine(a,b), and asm code would
 pass parameters in D0 and D1)
 
 Exceptions to the 'underscore leading' rule are:
-- routines and variables that can only be used from assembler, 
-  and whose addresses need not to be manipulated by C code. 
-  example is the memory configuration routines. 
+- routines and variables that can only be used from assembler,
+  and whose addresses need not to be manipulated by C code.
+  example is the memory configuration routines.
   Note: the exception routines will never be *called* by C code,
   however they will be *accessed* by C code copying their address
   into the vector.
@@ -111,10 +111,10 @@ Exceptions to the 'underscore leading' rule are:
     } struct_a;
 
 
-Use 68000-only instructions and addressing modes. If for some reason  
+Use 68000-only instructions and addressing modes. If for some reason
 you need 680X0 intructions not present on the 68000, code them using
 dc.w and put the 680X0 mnemonics in comment. Example:
-  
+
   dc.l    0x4e7b0002      // movec   d0,cacr
 
 

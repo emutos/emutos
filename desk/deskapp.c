@@ -184,7 +184,7 @@ WORD hex_dig(BYTE achar)
 {
         if ( (achar >= '0') &&
              (achar <= '9') )
-          return(achar - '0');  
+          return(achar - '0');
         if ( (achar >= 'A') &&
              (achar <= 'F') )
           return(achar - 'A' + 10);
@@ -366,7 +366,7 @@ static void app_rdicon(void)
             if (mask[i] < 0) {
                 mask[i] = num_mask;
                 addr = icon_rs_iconblk[i].ib_pmask;
-                for (j = i+1; j < NUM_IBLKS; j++) 
+                for (j = i+1; j < NUM_IBLKS; j++)
                     if (icon_rs_iconblk[j].ib_pmask == addr)
                         mask[j] = num_mask;
                 num_mask++;
@@ -374,7 +374,7 @@ static void app_rdicon(void)
             if (data[i] < 0) {
                 data[i] = num_data;
                 addr = icon_rs_iconblk[i].ib_pdata;
-                for (j = i+1; j < NUM_IBLKS; j++) 
+                for (j = i+1; j < NUM_IBLKS; j++)
                     if (icon_rs_iconblk[j].ib_pdata == addr)
                         data[j] = num_data;
                 num_data++;
@@ -467,7 +467,7 @@ void app_start(void)
         gl_stdrv = dos_gdrv();
 
         G.g_pbuff = &gl_buffer[0];
-        
+
         for(i=NUM_ANODES - 2; i >= 0; i--)
           G.g_alist[i].a_next = &G.g_alist[i + 1];
         G.g_ahead = (ANODE *) NULL;
@@ -650,7 +650,7 @@ void app_start(void)
         {
                 x = pa->a_xspot * G.g_icw;
                 y = pa->a_yspot * G.g_ich + G.g_ydesk;
-                snap_disk(x, y, &pa->a_xspot, &pa->a_yspot);            
+                snap_disk(x, y, &pa->a_xspot, &pa->a_yspot);
         }
 #endif
 
@@ -695,7 +695,7 @@ static void app_revit(void)
 
 
 /*
-*       Save the current state of all the icons to a file called 
+*       Save the current state of all the icons to a file called
 *       EMUDESK.INF
 */
 void app_save(WORD todisk)
@@ -809,7 +809,7 @@ void app_save(WORD todisk)
 
 
 /*
-*       Build the desktop list of objects based on this current 
+*       Build the desktop list of objects based on this current
 *       application list.
 */
 BYTE app_blddesk(void)

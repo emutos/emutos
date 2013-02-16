@@ -181,7 +181,7 @@ void fpd_parse(BYTE *pspec, WORD *pdrv, BYTE *ppath, BYTE *pname, BYTE *pext)
         {
           pperiod++;
           while (pperiod != pspec)
-            *pext++ = *pperiod++; 
+            *pext++ = *pperiod++;
         }
         *pext = NULL;
 }
@@ -263,7 +263,7 @@ static FNODE *fn_alloc(void)
 static PNODE *pn_alloc(void)
 {
         PNODE           *thepath;
-        
+
         if ( G.g_pavail )
         {
                                                 /* get up off the avail */
@@ -318,7 +318,7 @@ void pn_close(PNODE *thepath)
 
 
 /*
-*       Open a particular path.  
+*       Open a particular path.
 */
 PNODE *pn_open(WORD  drive, BYTE *path, BYTE *name, BYTE *ext, WORD attr)
 {
@@ -327,13 +327,13 @@ PNODE *pn_open(WORD  drive, BYTE *path, BYTE *name, BYTE *ext, WORD attr)
         thepath = pn_alloc();
         if (thepath)
         {
-/* BUGFIX 2.1   */      
+/* BUGFIX 2.1   */
           if ( fpd_bldspec(drive, path, name, ext, &thepath->p_spec[0]) )
           {
             thepath->p_attr = attr;
             return(thepath);
           }
-          else 
+          else
           {
             pn_close(thepath);
             return(NULLPTR);
@@ -416,7 +416,7 @@ static WORD pn_comp(FNODE *pf1, FNODE *pf2)
         if ( (pf1->f_attr ^ pf2->f_attr) & F_SUBDIR)
           return ((pf1->f_attr & F_SUBDIR)? -1: 1);
         else
-          return (pn_fcomp(pf1,pf2,G.g_isort)); 
+          return (pn_fcomp(pf1,pf2,G.g_isort));
 }
 
 
@@ -511,7 +511,7 @@ static WORD pn_folder(PNODE *thepath)
           {
             thefile = fn_alloc();
             if ( !thefile )
-            {   
+            {
               ret = FALSE;
               DOS_AX = E_NOFNODES;
             }
@@ -575,7 +575,7 @@ static WORD pn_desktop(PNODE *thepath)
           {
             thefile = fn_alloc();
             if ( !thefile )
-            {   
+            {
               pa = 0;
               DOS_AX = E_NOFNODES;
             }
@@ -643,7 +643,7 @@ WORD pn_active(PNODE *thepath)
           {
             thefile = fn_alloc();
             if ( !thefile )
-            {   
+            {
               ret = FALSE;
               DOS_AX = E_NOFNODES;
             }
@@ -668,7 +668,7 @@ WORD pn_active(PNODE *thepath)
         if ( thefile ) fn_free(thefile);
         thepath->p_flist = pn_sort(thepath->p_count, thepath->p_flist);
         return(DOS_AX);
-                
+
 }
 
 #endif /* DESK1 */

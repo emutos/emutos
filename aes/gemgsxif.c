@@ -10,7 +10,7 @@
  */
 
 /*      GEMGSXIF.C      05/06/84 - 06/13/85     Lee Lorenzen            */
-/*      merge High C vers. w. 2.2               8/21/87         mdf     */ 
+/*      merge High C vers. w. 2.2               8/21/87         mdf     */
 
 
 
@@ -99,7 +99,7 @@ static LONG form_alert_bufsize(void)
     if (w > gl_width)       /* e.g. max size form alert in ST low */
         w = gl_width;
 
-    return (LONG)h * w * gl_nplanes / 8; 
+    return (LONG)h * w * gl_nplanes / 8;
 }
 
 /* this function calculates the size of the menu/alert screen buffer.

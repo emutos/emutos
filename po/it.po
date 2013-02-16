@@ -1,7 +1,7 @@
 # -*-C-*- I hate emacs po mode.
 #
 # it.po: the italian translation.
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"

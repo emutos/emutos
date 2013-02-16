@@ -21,7 +21,7 @@
 
 extern  PD      *run;
 
-/* 
+/*
  * values of Pexec flg
  */
 
@@ -53,7 +53,7 @@ LONG kpgm_relocate( PD *p, long length); /* SOP */
  * in rwa.S
  */
 
-void gouser(void)  NORETURN;  
-void termuser(void)  NORETURN;  
+void gouser(void)  NORETURN;
+void termuser(void)  NORETURN;
 
 #endif /* PROC_H */

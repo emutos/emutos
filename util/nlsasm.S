@@ -32,7 +32,7 @@
 _gettext_init:
 
 #if USE_RAM_HASH
-// clear the RAM hash 
+// clear the RAM hash
         move.l  #(1024+10)*8,-(sp)
         clr.w   -(sp)
         pea     ram_hash
@@ -40,7 +40,7 @@ _gettext_init:
         lea     10(sp),sp
 #endif  /* USE_RAM_HASH */
         rts
-                
+
 _gettext:
         tst.l   _nls_hash
         bne     empty
@@ -148,8 +148,8 @@ not_found:
 #else
         rts
 #endif
-        
-search: 
+
+search:
         move.l  (a0)+,d1
         beq     not_found
 #ifdef __mcoldfire__
@@ -170,7 +170,7 @@ strneq:
         move.l  d1,a0
         addq.l  #4,a0
         bra     search
-strend: 
+strend:
         tst.b   (a1)
         bne     strneq
 // strings are equal, return next string
@@ -215,7 +215,7 @@ srh_end:
         move.l  a1,d0
 #endif /* USE_RAM_HASH */
         rts
-        
+
 
         .bss
 #if USE_RAM_HASH
@@ -223,6 +223,6 @@ ram_hash:
         ds.l    2048    // 1024 entries
         ds.l    20      // 10 additional slots.
 #endif /* USE_RAM_HASH */
-        
+
 #endif /* CONF_WITH_NLS */
- 
+

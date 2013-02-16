@@ -27,7 +27,7 @@ MODIFICATION HISTORY
 
         24 Jul 85       SCC     Modified xsetdate().  Fix of 23 Jul 85 was not correct.
 
-        26 Jun 87       ACH     Introduced new bios function to support 
+        26 Jun 87       ACH     Introduced new bios function to support
                                 hardware real-time clock calendars.
 
 NAMES
@@ -46,7 +46,7 @@ NAMES
 
 
 /*
- * BIOS interface  
+ * BIOS interface
  * I didn't put it in a header because only this file is interested.
  */
 

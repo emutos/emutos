@@ -1,5 +1,5 @@
 /*      GEMFMLIB.C      03/15/84 - 06/16/85     Gregg Morris            */
-/*      merge High C vers. w. 2.2 & 3.0         8/20/87         mdf     */ 
+/*      merge High C vers. w. 2.2 & 3.0         8/20/87         mdf     */
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
@@ -69,9 +69,9 @@ static GRECT    ml_ctrl;
 static PD       *ml_pmown;
 static BYTE     alert_str[256]; /* must be long enough for longest alert in gem.rsc */
 
-static WORD     ml_alrt[] = 
+static WORD     ml_alrt[] =
                 {AL00CRT,AL01CRT,AL02CRT,AL03CRT,AL04CRT,AL05CRT};
-static WORD     ml_pwlv[] = 
+static WORD     ml_pwlv[] =
                 {0x0102,0x0102,0x0102,0x0101,0x0002,0x0001};
 
 
@@ -225,7 +225,7 @@ WORD fm_button(LONG tree, WORD new_obj, WORD clks, WORD *pnew_obj)
 
                                                 /* handle selectable case*/
         if ( (flags & SELECTABLE) &&
-            !(state & DISABLED) ) 
+            !(state & DISABLED) )
         {
                                                 /* if its a radio button*/
           if (flags & RBUTTON)
@@ -240,7 +240,7 @@ WORD fm_button(LONG tree, WORD new_obj, WORD clks, WORD *pnew_obj)
             {
               tstate = ob_fs(tree, tobj, &tflags);
               if ( (tflags & RBUTTON) &&
-                   ( (tstate & SELECTED) || 
+                   ( (tstate & SELECTED) ||
                      (tobj == new_obj) ) )
               {
                 if (tobj == new_obj)
@@ -285,7 +285,7 @@ WORD fm_button(LONG tree, WORD new_obj, WORD clks, WORD *pnew_obj)
 
 
 /*
-*       ForM DO routine to allow the user to interactively fill out a 
+*       ForM DO routine to allow the user to interactively fill out a
 *       form.  The cursor is placed at the starting field.  This routine
 *       returns the object that caused the exit to occur
 */
@@ -349,7 +349,7 @@ WORD fm_do(LONG tree, WORD start_fld)
                                                 /* handle end of field  */
                                                 /*   clean up           */
           if ( (!cont) ||
-               ((next_obj != 0) && 
+               ((next_obj != 0) &&
                 (next_obj != edit_obj)) )
 
           {
@@ -435,7 +435,7 @@ WORD fm_error(WORD n)             /* n = dos error number */
         switch (n)
         {
           case 2:
-          case 18:      
+          case 18:
           case 3:
                 string = AL18ERR;
                 break;

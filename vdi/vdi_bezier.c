@@ -265,7 +265,7 @@ v_bez(Vwk * vwk, Point * ptsget, int nr_ptsin)
             gen_segs(&ptsget->y, &ptsput->y, bez_qual, &ymin, &ymax, vwk->xfm_mode);    /* y coords */
 
             /* skip to coord pairs at end of bez curve */
-            i += 3;     
+            i += 3;
             ptsget += 3;
             total_vertices += vertices_per_bez-3;
             draw_segs(vwk, vertices_per_bez+1, ptsbuf, NO_FILL );
@@ -298,7 +298,7 @@ v_bez(Vwk * vwk, Point * ptsget, int nr_ptsin)
                 if (i >= nr_ptsin)
                     break;
 
-                ptsget += 1;   
+                ptsget += 1;
                 {
                     int old_flag = flag;
                     flag = bezarr[i^1];
@@ -366,7 +366,7 @@ v_bez_fill(Vwk * vwk, Point * ptsget, int nr_ptsin)
             gen_segs(&ptsget->y, &ptsput->y, bez_qual, &ymin, &ymax, vwk->xfm_mode);
 
             /* skip to coord pairs at end of bez curve */
-            i += 3;     
+            i += 3;
             ptsget += 3;
             total_vertices += vertices_per_bez-3;
 

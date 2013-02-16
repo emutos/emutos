@@ -129,7 +129,7 @@ static int ide_wait_not_busy_check_error(void)
 
 static void ide_select_sector_lba(UWORD device, ULONG sector)
 {
-    // first change the device bit without changing anything else 
+    // first change the device bit without changing anything else
     ide_interface.head = IDE_DEVICE(device) | (ide_interface.head & ~IDE_DEVICE(1));
     ide_interface.sector_number = (UBYTE)(sector & 0xff);
     ide_interface.cylinder_low = (UBYTE)((sector >> 8) & 0xff);
@@ -150,7 +150,7 @@ static int ide_wait_drq(void)
 
         if (status & IDE_STATUS_ERR)
             return ERR;
-            
+
         if (status & IDE_STATUS_DRQ)
             return E_OK;
     }
@@ -168,7 +168,7 @@ static int ide_read_data(UBYTE buffer[SECTOR_SIZE])
 
     while (p < end)
         *p++ = ide_interface.data;
-        
+
     return E_OK;
 }
 
@@ -193,7 +193,7 @@ static int ide_write_data(UBYTE buffer[SECTOR_SIZE], BOOL need_byteswap)
         while (p < end)
             ide_interface.data = *p++;
     }
-        
+
     return ide_wait_not_busy_check_error();
 }
 
@@ -254,7 +254,7 @@ LONG ide_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev, BOOL need_byte
         ++sector;
         --count;
     }
-    
+
     return E_OK;
 }
 

@@ -1,5 +1,5 @@
 /*
- * linea.S - linea graphics stuff 
+ * linea.S - linea graphics stuff
  *
  * Copyright (c) 2002 by Authors:
  *
@@ -91,7 +91,7 @@ _int_linea:
 #endif
         move.l  0(a0,d0),a0
         jsr     (a0)
-linea_dispatch_pc:      
+linea_dispatch_pc:
         rte
 
 wrong_linea:
@@ -115,12 +115,12 @@ linea_msg:
 
         .text
 
-_linea_0:       
+_linea_0:
         lea     line_a_vars,a0  // get base address for line a variables
         move.l  a0,d0
 
         lea     _sysfonts,a1   // get pointer to the three system font headers
-        
+
         lea     linea_vecs,a2   // get pointer to table of the Line-A routines
         rts
 
@@ -216,7 +216,7 @@ linea_stub:
         bra     2f
 1:      move.l  (sp),a0
 2:      move.w  d0,-(sp)
-        move.l  a0,-(sp)        
+        move.l  a0,-(sp)
         pea     linea_stub_msg
         jsr     _kprintf
         lea     10(sp),sp
@@ -231,7 +231,7 @@ linea_stub_msg:
 
 
 /* These routines are now different, and no longer usable from assembler */
-linea_vecs:                     
+linea_vecs:
         dc.l    _linea_0
         dc.l    _linea_1        /* _put_pix */
         dc.l    _linea_2        /* _get_pix */

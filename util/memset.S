@@ -13,19 +13,19 @@
  *
  * Altered to m68k-atari-mint-as 68k syntax 12 september 2001
  */
- 
+
 #include "asmdefs.h"
- 
- 
+
+
 // ==== Defines ==============================================================
 
         .globl  _memset
         .globl  _bzero
-           
+
         .text
 //
 // void bzero(void *address, unsigned long size)
-// 
+//
 _bzero:
         move.l   4(sp),a0
         move.l   8(sp),d0
@@ -52,18 +52,18 @@ _memset:
         move.w   d0,d7
         move.l   14(sp),d0
         ble      end
-           
+
 // at this point, a0=block, d7=pattern, d0=size, (sp)=saved d7
 // and we do not read the stack args any more.
-memset:           
+memset:
         move.l   a0,d1
         btst     #0,d1
         beq.s    even
         move.b   d7,(a0)+
         sub.l    #1,d0
 even:
-        move.l   #63,d1                // 
-        cmp.l    d1,d0                 // 
+        move.l   #63,d1                //
+        cmp.l    d1,d0                 //
         ble      zero4                 // count < 64
 #ifdef __mcoldfire__
         lea      -36(a7),a7
@@ -85,7 +85,7 @@ even:
         lsr.l    #8,d0                 // count div 256
         bra.s    end256
 loop256:
-        lea      256(a0),a0           
+        lea      256(a0),a0
 #ifdef __mcoldfire__
         movem.l  d2-d7/a1-a5,-44(a0)   // zero 11x4 bytes
         movem.l  d2-d7/a1-a5,-88(a0)   // zero 11x4 bytes
@@ -100,7 +100,7 @@ loop256:
         movem.l  d2-d7/a1-a5,-(a0)     // zero 11x4 bytes
         movem.l  d2-d7/a1-a5,-(a0)     // zero 11x4 bytes
         movem.l  d2-d7/a1-a3,-(a0)     // zero 9x4 bytes
-        lea      256(a0),a0           
+        lea      256(a0),a0
 #endif
 end256:
 #ifdef __mcoldfire__
@@ -130,7 +130,7 @@ done:
 loop64:
         movem.l  d2-d7/a4-a5,(a0)      // zero 8x4 bytes
         movem.l  d2-d7/a4-a5,32(a0)    // zero 8x4 bytes
-        lea      64(a0),a0           
+        lea      64(a0),a0
 end64:
 #ifdef __mcoldfire__
         subq.l   #1,d0
@@ -142,7 +142,7 @@ end64:
         movem.l  (a7)+,d2-d6/a2-a5     // restore regs for movem use
 #endif
         move.l   d1,d0                 // remainder becomes new count
-           
+
 zero4:
         move.b   d0,d1                 // +
 #ifdef __mcoldfire__

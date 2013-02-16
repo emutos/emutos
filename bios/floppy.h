@@ -14,10 +14,10 @@
 #define FLOPPY_H
 
 #include "portab.h"
- 
+
 /* bios functions */
 
-/* Functions hdv_boot, hdv_init, rwabs, getbpb and mediach are 
+/* Functions hdv_boot, hdv_init, rwabs, getbpb and mediach are
  * called using variable pointers. The flop_* functions
  * are the implementation of these provided by floppy.c.
  */
@@ -28,16 +28,16 @@ extern LONG flop_mediach(WORD dev);
 
 /* xbios functions */
 
-extern LONG floprd(LONG buf, LONG filler, WORD dev, 
-                   WORD sect, WORD track, WORD side, WORD count); 
-extern LONG flopwr(LONG buf, LONG filler, WORD dev, 
-                   WORD sect, WORD track, WORD side, WORD count); 
+extern LONG floprd(LONG buf, LONG filler, WORD dev,
+                   WORD sect, WORD track, WORD side, WORD count);
+extern LONG flopwr(LONG buf, LONG filler, WORD dev,
+                   WORD sect, WORD track, WORD side, WORD count);
 extern LONG flopfmt(LONG buf, WORD *skew, WORD dev, WORD spt,
-                    WORD track, WORD side, WORD interleave, 
-                    ULONG magic, WORD virgin); 
+                    WORD track, WORD side, WORD interleave,
+                    ULONG magic, WORD virgin);
 extern void protobt(LONG buf, LONG serial, WORD type, WORD exec);
-extern LONG flopver(LONG buf, LONG filler, WORD dev, 
-                    WORD sect, WORD track, WORD side, WORD count); 
+extern LONG flopver(LONG buf, LONG filler, WORD dev,
+                    WORD sect, WORD track, WORD side, WORD count);
 extern LONG floprate(WORD dev, WORD rate);
 
 #if CONF_WITH_FDC

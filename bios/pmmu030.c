@@ -121,7 +121,7 @@ static const struct pmmutable mmutable_rom =
       PMMU_SF_TABLE(tic)            /* for 0xf0000000-0xffffffff, use table tic */
     },
     /* tic: third-level table for standard Falcon addresses
-     * 
+     *
      * note that this table maps both 0x00000000-0x00ffffff and 0xff000000-0xffffffff
      * to the same physical address range (0x00000000-0x00ffffff)
      */

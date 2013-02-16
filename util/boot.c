@@ -17,7 +17,7 @@ extern void bootasm(long dest, char *src, long count);
 extern long getbootsize(void);
 
 /*
- * the file TOS_FILENAME will be loaded in memory, then copied at the 
+ * the file TOS_FILENAME will be loaded in memory, then copied at the
  * address indicated by its header and finally be executed by
  * jumping at that address.
  */
@@ -64,36 +64,36 @@ int main()
   long count;
   char *buf;
   long address;
-  
+
   /* get the file size */
-  
+
   Fsetdta((char *)&dta);
   if (0 != Fsfirst(TOS_FILENAME, 0)) fatal("missing file " TOS_FILENAME);
   count = dta.size;
-  
+
   /* allocate the buffer */
-  
+
   buf = (char *) Malloc(ADDR + count + 1 + getbootsize());
   if(buf == 0) {
     fatal("cannot allocate memory");
   }
   buf += ADDR;
-  
+
   /* open the file and load all in memory */
 
   fh = Fopen(TOS_FILENAME, 0);
   if(fh < 0) fatal("cannot open file " TOS_FILENAME);
   if (count != Fread(fh, count, buf)) fatal("read error");
   Fclose(fh);
-  
+
   /* get final address */
-  
+
   address = *((long *)(buf + 8));
-  
+
   (void)Cconws("\012\015address = 0x");
   putl(address);
   (void)Cconws(".\012\015");
-  
+
   /* check that the address is not after our buffer */
 
   if((address <= 0x400L) || (address >= (long)buf)) {
@@ -104,14 +104,14 @@ int main()
 
   (void)Cconws("Hit RETURN to boot " TOS_FILENAME);
   Cconin();
-  
+
   /* supervisor */
-  
+
   Super(0);
-  
+
   /* do the rest in assembler */
-  
+
   bootasm(address, buf, count);
-  
+
   return 1;
 }

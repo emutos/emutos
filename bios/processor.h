@@ -13,10 +13,10 @@
 /*
  * Processor-related handling in EmuTOS
  * ------------------------------------
- * 
- * EmuTOS does not use or support advanced 680x0 features, except for long 
- * stack frames starting from the 68010. In fact one might imagine that the 
- * processor for which EmuTOS is developed is a kind of 68000 with 32-bit 
+ *
+ * EmuTOS does not use or support advanced 680x0 features, except for long
+ * stack frames starting from the 68010. In fact one might imagine that the
+ * processor for which EmuTOS is developed is a kind of 68000 with 32-bit
  * addresses.
  *
  * Exception:
@@ -27,14 +27,14 @@
  * -------
  * - all addresses are considered to be 32 bit wide -- there is no 'clever'
  *   reusing of the upper 8 bits in e.g. exception vectors.
- * - move-from-sr is a privileged instruction except on a plain 68000. 
- *   the privilege exception handler in vectors.S catches any user-mode 
+ * - move-from-sr is a privileged instruction except on a plain 68000.
+ *   the privilege exception handler in vectors.S catches any user-mode
  *   call to move-from-sr and replaces it with a move-from-ccr instead.
- * - move-from-ccr is an illegal instruction on a plain 68000. the 
+ * - move-from-ccr is an illegal instruction on a plain 68000. the
  *   illegal instruction handler in vectors.S catches any illegal call to
  *   move-from-ccr and replaces it with a move-from-sr instead.
  * - stack frames: variable longframe indicates whether the exception stack
- *   frames are like on a plain 68000 or with an additional format word 
+ *   frames are like on a plain 68000 or with an additional format word
  *   telling the length of the frame.
  * - floating point support: not handled.
  * - data cache: disabled.
@@ -55,7 +55,7 @@
 
 #ifndef PROCESSOR_H
 #define PROCESSOR_H
- 
+
 long detect_cpu(void);
 long detect_fpu(void);
 

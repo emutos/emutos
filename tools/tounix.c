@@ -20,7 +20,7 @@
  * - the backup file will be filename~ in all cases, even when a filename~
  *   already exists (it will then be overriden).
  * - I've tried to restore things in place in case of trouble, but I
- *   cannot test all cases. 
+ *   cannot test all cases.
  */
 
 #include <stdio.h>
@@ -101,7 +101,7 @@ fail3:
   fclose(g);
 fail2:
   err = rename(t, dst);
-  if(err) 
+  if(err)
     error("could not rename %s to %s", t, dst);
 fail1:
   return;
@@ -118,7 +118,7 @@ int main(int argc, char **argv)
   FILE *tmp = tmpfile();
   int flag = 0;
   long len;
-  
+
   for(i = 1 ; i < argc ; i++) {
     if(argv[i][strlen(argv[i])-1] == '~') continue;
     f = fopen(argv[i], "rb");
@@ -134,7 +134,7 @@ int main(int argc, char **argv)
         break;
       } else if(c == 13) {
         flag = 1; /* need to convert */
-      } else if( c != 9 && c != 10 && c != 12 
+      } else if( c != 9 && c != 10 && c != 12
           && (c < 32 || (c > 126 && c < 0240 ))) {
         /* printf("binary file %s\n", argv[i]); */
         /* no need to convert */
@@ -142,7 +142,7 @@ int main(int argc, char **argv)
         break;
       } else {
         putc(c, tmp);
-      } 
+      }
     }
     fclose(f);
     len = ftell(tmp);
@@ -158,9 +158,9 @@ int main(int argc, char **argv)
       }
     }
   }
-  
+
   fclose(tmp);
   exit(0);
 }
 
-        
+

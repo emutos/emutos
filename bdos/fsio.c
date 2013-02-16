@@ -1,5 +1,5 @@
 /*
- * fsio.c - read/write routines for the file system                     
+ * fsio.c - read/write routines for the file system
  *
  * Copyright (c) 2001 Lineo, Inc.
  *               2002 - 2010 The EmuTOS development team
@@ -197,7 +197,7 @@ fillin:
  *   bios()
  */
 
-long    xread(int h, long len, void *ubufr) 
+long    xread(int h, long len, void *ubufr)
 {
     OFD *p;
     long ret;
@@ -255,7 +255,7 @@ long    ixread(OFD *p, long len, void *ubufr)
  *   bios()
  */
 
-long    xwrite(int h, long len, void *ubufr) 
+long    xwrite(int h, long len, void *ubufr)
 {
     register OFD *p;
     long ret;
@@ -502,8 +502,8 @@ eof:
 /*
  * usrio -
  *
- * NOTE: longjmp_rwabs() is a macro that includes a longjmp() which is 
- *       executed if the BIOS returns an error, therefore usrio() does 
+ * NOTE: longjmp_rwabs() is a macro that includes a longjmp() which is
+ *       executed if the BIOS returns an error, therefore usrio() does
  *       not need to return any error codes.
  */
 

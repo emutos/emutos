@@ -1,6 +1,6 @@
-# 
+#
 # ru.po: the translations in Russian language
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: EMUTOS beta\n"

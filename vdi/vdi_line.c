@@ -380,7 +380,7 @@ void _v_pline(Vwk * vwk)
     /* check, if we want to draw a bezier curve */
     if (CONTRL[5] == 13 && vwk->bez_qual )        //FIXME: bez_qual ok??
         v_bez(vwk, point, count);
-    else 
+    else
 #endif
     {
         if (vwk->line_width == 1) {
@@ -736,7 +736,7 @@ void r_fa_attr(Vwk * vwk)
 
 void wideline(Vwk * vwk, Point * point, int count)
 {
-    WORD i, k;         
+    WORD i, k;
     WORD wx1, wy1, wx2, wy2, vx, vy;
     Point *ptr, box[5];      /* box too high, to close polygon */
 

@@ -20,7 +20,7 @@
 #define P_TLEN  0x0C
 #define P_DLEN  0x14
 #define P_BLEN  0x1C
- 
+
 #define MSHRINK 0x4A
 #define PTERM   0x4C
 
@@ -28,7 +28,7 @@
         .globl  _start
         .globl  _exit
         .globl  ___main
-        
+
         .extern _main
 
         .text
@@ -61,10 +61,10 @@ _start:
         move.w  d0,-(sp)
 
 _exit:
-        move.w  #PTERM,-(sp)     
+        move.w  #PTERM,-(sp)
         trap    #1
-        
-        // this is to fool gcc lib. called at start of main() 
+
+        // this is to fool gcc lib. called at start of main()
 ___main:
         rts
 

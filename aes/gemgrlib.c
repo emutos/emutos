@@ -1,14 +1,14 @@
 /*      GEMGRLIB.C      4/11/84 - 09/20/85      Gregg Morris            */
-/*      merge High C vers. w. 2.2               8/21/87         mdf     */ 
+/*      merge High C vers. w. 2.2               8/21/87         mdf     */
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
 *                 2002 The EmuTOS development team
 *
-*       This software is licenced under the GNU Public License.         
-*       Please see LICENSE.TXT for further information.                 
+*       This software is licenced under the GNU Public License.
+*       Please see LICENSE.TXT for further information.
 *
-*                  Historical Copyright                                 
+*                  Historical Copyright
 *       -------------------------------------------------------------
 *       GEM Application Environment Services              Version 2.3
 *       Serial No.  XXXX-0000-654321              All Rights Reserved
@@ -59,7 +59,7 @@ static WORD gr_stilldn(WORD out, WORD x, WORD y, WORD w, WORD h)
         tmpmoblk.m_w = w;
         tmpmoblk.m_h = h;
 
-        which = ev_multi(MU_KEYBD | MU_BUTTON | MU_M1, &tmpmoblk, 
+        which = ev_multi(MU_KEYBD | MU_BUTTON | MU_M1, &tmpmoblk,
                 NULLPTR, 0x0L, 0x0001ff00L, 0x0L, &rets[0]);
 
         if ( which & MU_BUTTON )
@@ -170,7 +170,7 @@ static WORD gr_wait(GRECT *po, GRECT *poff)
 {
         register WORD   have2box;
         register WORD   down;
-        
+
         have2box = !rc_equal(&gl_rzero, poff);
                                                 /* draw/erase old       */
         gsx_moff();
@@ -198,10 +198,10 @@ void gr_rubwind(WORD xorigin, WORD yorigin, WORD wmin, WORD hmin,
         WORD    down;
         GRECT   o;
 
-        
+
         wm_update(TRUE);
         gr_setup(BLACK);
-        
+
         r_set(&o, xorigin, yorigin, 0, 0);
                                                 /* clamp size of rubber */
                                                 /*   box to no smaller  */
@@ -274,7 +274,7 @@ void gr_2box(WORD flag1, WORD cnt, GRECT *pt, WORD xstep, WORD ystep, WORD flag2
 
         gsx_moff();
         for (i=0; i<2; i++)
-          gr_xor(flag1, cnt, pt->g_x, pt->g_y, pt->g_w, pt->g_h, 
+          gr_xor(flag1, cnt, pt->g_x, pt->g_y, pt->g_w, pt->g_h,
                         xstep, ystep, flag2);
         gsx_mon();
 }
@@ -345,7 +345,7 @@ WORD gr_watchbox(LONG tree, WORD obj, WORD instate, WORD outstate)
 
         gsx_sclip(&gl_rscreen);
         ob_actxywh(tree, obj, &t);
-        
+
         out = FALSE;
         do
         {
@@ -366,8 +366,8 @@ WORD gr_slidebox(LONG tree, WORD parent, WORD obj, WORD isvert)
 
         ob_actxywh(tree, parent, &c);
         ob_relxywh(tree, obj, &t);
-        gr_dragbox(t.g_w, t.g_h, t.g_x + c.g_x, t.g_y + c.g_y, 
-                        &c, &t.g_x, &t.g_y); 
+        gr_dragbox(t.g_w, t.g_h, t.g_x + c.g_x, t.g_y + c.g_y,
+                        &c, &t.g_x, &t.g_y);
 
         if ( isvert )
         {

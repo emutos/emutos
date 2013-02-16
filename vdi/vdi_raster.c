@@ -838,7 +838,7 @@ setup_info (Vwk * vwk, struct blit_frame * info)
     }
     else {
         /* source form is screen */
-        info->s_form = (UWORD*) v_bas_ad;               
+        info->s_form = (UWORD*) v_bas_ad;
         info->s_nxwd = v_planes * 2;
         info->s_nxln = v_lin_wr;
     }

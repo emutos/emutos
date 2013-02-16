@@ -1,5 +1,5 @@
 /*
- * osmem.c - allocate/release os memory                         
+ * osmem.c - allocate/release os memory
  *
  * Copyright (c) 2001 Lineo, Inc.
  *
@@ -85,7 +85,7 @@ static int *getosm(int n)
 {
     int *m;
 
-    if( n > osmlen ) 
+    if( n > osmlen )
     {
       /*  not enough room  */
         kcprintf(_("\033EOut of internal memory.\nUse FOLDR100.PRG to get more.\nSystem halted!\n"));

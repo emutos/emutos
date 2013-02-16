@@ -139,7 +139,7 @@ static void do_nothing(void)
 
 
 /*
- * dis_cur - Displays the mouse cursor if the number of hide 
+ * dis_cur - Displays the mouse cursor if the number of hide
  *           operations has gone back to 0.
  *
  *  Decrement the counter for the number of hide operations performed.
@@ -602,7 +602,7 @@ void vdimouse_init(Vwk * vwk)
 /*
  * vdimouse_exit - deinitialize/disable mouse
  */
- 
+
 void vdimouse_exit(Vwk * vwk)
 {
     LONG * pointer;             /* help for storing LONGs in INTIN */

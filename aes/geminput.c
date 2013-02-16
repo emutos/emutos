@@ -1,5 +1,5 @@
 /*      GEMINPUT.C      1/28/84 - 09/12/85      Lee Jay Lorenzen        */
-/*      merge High C vers. w. 2.2               8/21/87         mdf     */ 
+/*      merge High C vers. w. 2.2               8/21/87         mdf     */
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
@@ -82,11 +82,11 @@ void post_mb(WORD ismouse, EVB *elist, WORD parm1, WORD parm2);
 
 
 /*
-*       Routine to return TRUE if mouse is in a position that 
+*       Routine to return TRUE if mouse is in a position that
 *       satisfies a particular mouse rectangle block.
 */
 UWORD in_mrect(MOBLK *pmo)
-{ 
+{
         return( pmo->m_out != inside(xrat, yrat, (GRECT *)&pmo->m_x) );
 }
 
@@ -182,7 +182,7 @@ void b_click(WORD state)
 
 
 /*
-*       Button delay code that is called from the tick interrupt code with 
+*       Button delay code that is called from the tick interrupt code with
 *       interrupts off.
 */
 
@@ -225,7 +225,7 @@ void set_ctrl(GRECT *pt)
 /*
 *       Get the current control rectangle which is the part of the
 *       screen owned by the active process.  Normally, the work area
-*       of the top window, but sometimes the whole screen during 
+*       of the top window, but sometimes the whole screen during
 *       form fill-in.
 */
 
@@ -248,7 +248,7 @@ void get_mown(PD **pmown)
 
 /*
 *       Used by control manager and form_do to give the mouse or keyboard
-*       to another process.  The mouse should only be given with the 
+*       to another process.  The mouse should only be given with the
 *       buttons in an up state.
 */
 
@@ -323,7 +323,7 @@ void evremove(EVB *e, UWORD ret)
 
 void kchange(UWORD ch, WORD kstat)
 {
-        
+
         kstate = kstat;
         if (ch)
           post_keybd(gl_mowner->p_cda, ch);
@@ -369,7 +369,7 @@ void bchange(WORD new, WORD clicks)
                                                 /*   ownership change   */
                                                 /*   to or from ctrlmgr */
         if ( (!gl_ctmown) &&
-             (new == MB_DOWN) && 
+             (new == MB_DOWN) &&
              (button == 0x0) )
           chkown();
 
@@ -400,9 +400,9 @@ void mchange(WORD rx, WORD ry)
                                                 /* zero out button wait */
                                                 /*   if mouse moves more*/
                                                 /*   then a little      */
-        if ( (gl_bdely) && 
-             ( (xrat-rx > 2) || 
-               (xrat-rx < -2) || 
+        if ( (gl_bdely) &&
+             ( (xrat-rx > 2) ||
+               (xrat-rx < -2) ||
                (yrat-ry > 2) ||
                (yrat-ry < -2) ) )
           b_delay(gl_bdely );
@@ -527,10 +527,10 @@ void akbin(EVB *e)
 void adelay(EVB *e, LONG c)
 {
         register EVB   *p, *q;
-        
+
         if (c == 0x0L)
           c = 0x1L;
-  
+
         cli();
         if (CMP_TICK)
         {
@@ -542,7 +542,7 @@ void adelay(EVB *e, LONG c)
                                                 /*   from its accumulated*/
                                                 /*   value              */
           if (c <= CMP_TICK)
-            CMP_TICK = c; 
+            CMP_TICK = c;
         }
         else
         {
@@ -604,7 +604,7 @@ void abutton(EVB *e, LONG p)
 void amouse(EVB *e, LONG pmo)
 {
         MOBLK           mob;
-        
+
         LBCOPY(ADDR(&mob), pmo, sizeof(MOBLK));
                                                /* if already in (or out) */
                                                /* signal immediately     */

@@ -1,5 +1,5 @@
 /*      GEMMNLIB.C      04/26/84 - 08/14/86     Lowell Webster          */
-/*      merge High C vers. w. 2.2               8/21/87         mdf     */ 
+/*      merge High C vers. w. 2.2               8/21/87         mdf     */
 /*      fix mn_bar -- bar too wide              11/19/87        mdf     */
 
 /*
@@ -9,7 +9,7 @@
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
 *
-*                  Historical Copyright                                 
+*                  Historical Copyright
 *       -------------------------------------------------------------
 *       GEM Application Environment Services              Version 3.0
 *       Serial No.  XXXX-0000-654321              All Rights Reserved
@@ -71,7 +71,7 @@ static WORD menu_sub(LONG *ptree, WORD ititle)
           imenu = (tree+imenu)->ob_next;
         }
                                                 /* special case desk acc*/
-        if (imenu == gl_dabox)  
+        if (imenu == gl_dabox)
         {
           *ptree = gl_datree;
           imenu = 0;
@@ -197,7 +197,7 @@ UWORD do_chg(LONG tree, WORD iitem, UWORD chgvalue,
         if ( (chkdisabled) &&
              (curr_state & DISABLED) )
           return(FALSE);
-        
+
         if ( dochg )
           curr_state |= chgvalue;
         else
@@ -205,7 +205,7 @@ UWORD do_chg(LONG tree, WORD iitem, UWORD chgvalue,
 
         if (dodraw)
           gsx_sclip(&gl_rzero);
-        
+
         ob_change(tree, iitem, curr_state, dodraw);
         return(TRUE);
 }
@@ -237,7 +237,7 @@ void menu_sr(WORD saveit, LONG tree, WORD imenu)
         GRECT           t;
                                                 /* do the blit to save  */
                                                 /*   or restore         */
-        gsx_sclip(&gl_rzero);   
+        gsx_sclip(&gl_rzero);
         ob_actxywh(tree, imenu, &t);
         t.g_x -= MTH;
         t.g_w += 2*MTH;
@@ -301,7 +301,7 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
         buparm = 0x00010101L;
         cur_title = cur_menu = cur_item = NIL;
         cur_tree = tree = gl_mntree;
-        
+
         while (!done)
         {
                                                 /* assume menustate is  */
@@ -461,7 +461,7 @@ void mn_bar(LONG tree, WORD showit, WORD pid)
         OBJECT          *obj;
 
         p = fpdnm(NULLPTR, pid);
-        
+
         if ( showit )
         {
           gl_mnppd = p;
@@ -552,7 +552,7 @@ WORD mn_register(WORD pid, LONG pstr)
         }
         else
           return(-1);
-}       
+}
 
 #if CONF_WITH_PCGEM
 /*
@@ -571,7 +571,7 @@ void mn_unregister(WORD da_id)
             }
         }
         menu_fixup(&rlr->p_name[0]);
-}       
+}
 #endif
 
 /*

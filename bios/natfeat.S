@@ -18,7 +18,7 @@
 
 // ==== References ===========================================================
 
-        
+
         .globl  _detect_native_features
         .globl  _natfeat_cookie
         .globl  _xhdi_vec
@@ -34,7 +34,7 @@
 
 #if DETECT_NATIVE_FEATURES
 
-/* 
+/*
  * NatFeats test
  */
 _detect_native_features:

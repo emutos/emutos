@@ -6,7 +6,7 @@
  * The functions in this file were borrowed from the AROS sources.
  * Glued to EmuTOS by:
  *  VRI   Vincent Rivière
- * 
+ *
  * This file is covered by the AROS PUBLIC LICENSE (APL) Version 1.1
  * See doc/license_aros.txt for details.
  */

@@ -19,7 +19,7 @@
  */
         .globl  _setjmp
         .globl  _longjmp
-        
+
         .text
 
 _setjmp:

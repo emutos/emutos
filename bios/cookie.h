@@ -12,15 +12,15 @@
 
 #ifndef COOKIE_H
 #define COOKIE_H
- 
+
 struct cookie {
         long tag;
         long value;
 };
- 
+
 #define CJAR (* (struct cookie **) 0x5a0)
 
-/* 
+/*
  * Some relevant tag values
  * cookies will also exist in variables, defined in bios/machine.c
  */
@@ -41,10 +41,10 @@ struct cookie {
 #define COOKIE_XHDI     0x58484449L
 #define COOKIE_COLDFIRE 0x5f43465fL
 
-/* 
+/*
  * values of MCH cookie
  */
- 
+
 #define MCH_NOHARD  0xffffffffL /* No ST-compatible hardware */
 #define MCH_ST      0
 #define MCH_STE     0x00010000L
@@ -62,10 +62,10 @@ struct cookie {
 #define FDC_1ATC    0x01415443L
 #define FDC_2ATC    0x02415443L
 
-/* 
+/*
  * values of _SND cookie
  */
- 
+
 #define SND_PSG         0x01    /* Yamaha PSG */
 #define SND_8BIT        0x02    /* 8 bit DMA stereo */
 #define SND_16BIT       0x04    /* 16 bit CODEC */

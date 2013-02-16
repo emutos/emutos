@@ -69,6 +69,6 @@
 #define FDC_RT_SU   0x20    /* Record Type; Spin Up completed */
 #define FDC_WRI_PRO 0x40    /* Write Protected */
 #define FDC_MOTORON 0x80    /* Motor On */
- 
- 
+
+
 #endif /* FDC_H */

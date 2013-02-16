@@ -59,7 +59,7 @@ static WORD w_setpath(WNODE *pw, WORD drv, BYTE *path, BYTE *name, BYTE *ext)
         icx = rc.g_x + (rc.g_w / 2) - (G.g_wicon / 2);
         icy = rc.g_y + (rc.g_h / 2) - (G.g_hicon / 2);
         zoom_closed(0, pw->w_id, icx, icy);
-        do_fopen(pw, 0, drv, path, name, ext, FALSE, TRUE);  
+        do_fopen(pw, 0, drv, path, name, ext, FALSE, TRUE);
         return res;
 }
 
@@ -70,7 +70,7 @@ WORD true_closewnd(WNODE *pw)
         WORD  res = 0;
 
         wind_get(pw->w_id,WF_WXYWH, &rc.g_x, &rc.g_y, &rc.g_w, &rc.g_h);
-        zoom_closed(1, pw->w_id, G.g_screen[pw->w_obid].ob_x, 
+        zoom_closed(1, pw->w_id, G.g_screen[pw->w_obid].ob_x,
                         G.g_screen[pw->w_obid].ob_y);
         pn_close(pw->w_path);
         win_free(pw);
@@ -88,7 +88,7 @@ WORD fun_close(WNODE *pw, WORD trueclose)
         WORD drv;
         WORD rv;
 
-        if (!pw->w_path) 
+        if (!pw->w_path)
         {
                 form_alert(1,(LONG)"[1][Invalid WNODE passed|to fun_close()][OK]");
                 return 0;
@@ -113,7 +113,7 @@ WORD fun_close(WNODE *pw, WORD trueclose)
         }
         graf_mouse(ARROW, NULL);
         return rv;
-}       
+}
 
 
 
@@ -168,7 +168,7 @@ static WORD fun_file2desk(PNODE *pn_src, ANODE *an_dest, WORD dobj)
                                 strcpy(G.g_tmppth + 1, ":\\*.*");
                                 operation = OP_COPY;
                                 break;
-                        case AT_ISTRSH: 
+                        case AT_ISTRSH:
                                 operation = OP_DELETE;
                                 break;
                 }
@@ -207,7 +207,7 @@ static void fun_win2desk(WORD wh, WORD obj)
 {
         WNODE *wn_src;
         ANODE *an_dest;
-        
+
         an_dest = app_afind(TRUE, AT_ISFILE, obj, NULL, NULL);
         wn_src = win_find(wh);
         if (fun_file2desk(wn_src->w_path, an_dest, obj))
@@ -224,14 +224,14 @@ static WORD fun_file2any(WORD sobj, WNODE *wn_dest, ANODE *an_dest, FNODE *fn_de
         FNODE *bp8;
         ICONBLK * ib_src;
         PNODE *pn_src;
-        
+
         ib_src = (ICONBLK *)G.g_screen[sobj].ob_spec;
         pn_src = pn_open(ib_src->ib_char, "", "*", "*", F_SUBDIR);
         if (pn_src)
         {
                 okay = pn_active(pn_src);
                 /*if (okay == 0x12) {}    // Meaningless test for DOS error...*/
-                if (pn_src->p_flist) 
+                if (pn_src->p_flist)
                 {
                         for (bp8 = pn_src->p_flist; bp8; bp8 = bp8->f_next)
                         {
@@ -255,7 +255,7 @@ static WORD fun_file2any(WORD sobj, WNODE *wn_dest, ANODE *an_dest, FNODE *fn_de
 }
 
 
-static void fun_desk2win(WORD wh, WORD dobj) 
+static void fun_desk2win(WORD wh, WORD dobj)
 {
         WNODE *wn_dest;
         FNODE *fn_dest;
@@ -293,9 +293,9 @@ static void fun_desk2desk(WORD dobj)
         target = app_afind(1, 0, dobj, NULL, NULL);
         sobj  = 0;
         while ( (sobj = win_isel(G.g_screen, 1, sobj)) )
-        {       
+        {
                 source = i_find(0, sobj, &fn, &isapp);
-                
+
                 if (source == target)  continue;
 
                 if (source->a_type == AT_ISTRSH)
@@ -324,7 +324,7 @@ WORD desk1_drag(WORD wh, WORD dest_wh, WORD sobj, WORD dobj, WORD mx, WORD my)
         if (wh) /* Dragging something from window */
         {
                 if (dest_wh) fun_drag(wh, dest_wh, dobj, mx, my);
-                else            
+                else
                 {
                         if (sobj == dobj)
                         {

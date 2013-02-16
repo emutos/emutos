@@ -52,7 +52,7 @@ void _vsm_height(Vwk * vwk)
     *pts_out++ = h * DEF_MKWD;
     *pts_out = h * DEF_MKHT;
     flip_y = 1;
-} 
+}
 
 
 

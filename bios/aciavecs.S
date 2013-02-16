@@ -11,9 +11,9 @@
  */
 
 // (following text is taken from the Atari Compendium, xbios(0x22)
-// 
-// Kbdvbase() returns a pointer to a system structure KBDVECS which 
-// is defined as follows: 
+//
+// Kbdvbase() returns a pointer to a system structure KBDVECS which
+// is defined as follows:
 //
 // typedef struct
 // {
@@ -28,18 +28,18 @@
 //   void (*ikbdsys)( void );        /* Main IKBD Vector */
 // } KBDVECS;
 //
-//- midivec is called with the received data byte in d0. 
-//- If an overflow error occurred on either ACIA, vkbderr or vmiderr 
-//  will be called, as appropriate by midisys or ikbdsys with the 
+//- midivec is called with the received data byte in d0.
+//- If an overflow error occurred on either ACIA, vkbderr or vmiderr
+//  will be called, as appropriate by midisys or ikbdsys with the
 //  contents of the ACIA data register in d0.
-//- statvec, mousevec, clockvec, and joyvec all are called with 
+//- statvec, mousevec, clockvec, and joyvec all are called with
 //  the address of the packet in register A0.
-//- midisys and ikbdsys are called by the MFP ACIA interrupt handler 
-//  when a character is ready to be read from either the midi or 
+//- midisys and ikbdsys are called by the MFP ACIA interrupt handler
+//  when a character is ready to be read from either the midi or
 //  keyboard ports.
 //
 // In addition to the documented features, it was deemed necessary to add
-// the following undocumented features, located in memory immediately before 
+// the following undocumented features, located in memory immediately before
 // and after the documented part of the KBDVECS structure:
 //
 // struct UNDOCUMENTED {
@@ -52,13 +52,13 @@
 //- kbdvec (undocumented feature of TOS >= 2.0) is called with the
 //  received data byte in d0.
 //- The ikbdstate description in the Compendium is wrong. It should read:
-//  "When the ikbdstate variable is non-zero, it means that a packet is 
-//  currently being retrieved. In that case, kbdlength represents the number 
+//  "When the ikbdstate variable is non-zero, it means that a packet is
+//  currently being retrieved. In that case, kbdlength represents the number
 //  of remaining bytes to retrieve that are part of an IKBD packet."
 
 /* Known differences between this and the TOS:
  *
- * a) Although this doesn't appear to be documented, the TOS setups the 
+ * a) Although this doesn't appear to be documented, the TOS setups the
  * following registers before entering vectors ikbdsys and midisys:
  *   a0: address of the iorec structure
  *   a1: address of the ACIA control register
@@ -66,16 +66,16 @@
  *   d2: value of the ACIA status register
  * Currently EmuTOS does not setup these registers.
  *
- * b) In EmuTOS the same buffer kbdbuf is used to accumulate the various IKBD 
- * packets, whereas TOS uses five different buffers: 
+ * b) In EmuTOS the same buffer kbdbuf is used to accumulate the various IKBD
+ * packets, whereas TOS uses five different buffers:
  *   statvec, mousevec (absolute), mousevec (relative), clockvec, joyvec.
  *
- * c) EmuTOS currently does not check errors at all. The TOS checks the 
- * following errors:  
- *  - if an interrupt request was received and no full byte is ready to be 
+ * c) EmuTOS currently does not check errors at all. The TOS checks the
+ * following errors:
+ *  - if an interrupt request was received and no full byte is ready to be
  *    read, then the TOS jumps to the error vector;
- *  - if a byte was read but an overrun occurred, then after having 
- *    correctly processed the received byte, the TOS reads the data register 
+ *  - if a byte was read but an overrun occurred, then after having
+ *    correctly processed the received byte, the TOS reads the data register
  *    again, then jumps to the error vector.
  */
 
@@ -125,7 +125,7 @@ midiibufhi:     ds.w    1
 
 _mousexvec:     ds.l    1       // mouse-routine for additional buttons
 kbdvec:         ds.l    1       // must be right before _kbdvecs
-_kbdvecs:       
+_kbdvecs:
 midivec:        ds.l    1       // MIDI input
 vkbderr:        ds.l    1       // keyboard error
 vmiderr:        ds.l    1       // MIDI-Error
@@ -135,14 +135,14 @@ clockvec:       ds.l    1       // time-routine
 joyvec:         ds.l    1       // joystick-routinee
 midisys:        ds.l    1       // MIDI-systemvector
 ikbdsys:        ds.l    1       // IKBD-systemvector
-ikbdstate:      ds.b    1       // action to take upon packet completion 
+ikbdstate:      ds.b    1       // action to take upon packet completion
 kbdlength:      ds.b    1       // number of bytes remaining in current packet
         .even
 
 
 
         .text
-                
+
 _init_acia_vecs:
         // initialize the kbdvecs structure
         lea     _just_rts,a0            // dummy vector
@@ -189,14 +189,14 @@ _init_acia_vecs:
         move.l  #_ikbdsys,ikbdsys-_kbdvecs(a1)
 #endif
 #endif /* CONF_WITH_IKBD_ACIA */
-        
+
         // initialize the iorecs
         pea     iorec_table_end-iorec_table
         pea     iorec_table
         pea     _ikbdiorec
         jsr     _memmove
         lea     12(sp),sp
-        
+
 #if CONF_WITH_IKBD_ACIA
         // initialize IKBD-related variables
         moveq.l #0,d0
@@ -204,7 +204,7 @@ _init_acia_vecs:
         move.b  d0,joybuf+1
         move.b  d0,joybuf+2
 #endif /* CONF_WITH_IKBD_ACIA */
-        
+
 #if CONF_WITH_IKBD_ACIA || CONF_WITH_MIDI_ACIA
         // finally, setup the interrupt vector
         pea     _int_acia
@@ -217,7 +217,7 @@ _init_acia_vecs:
         jsr     _amiga_init_keyboard_interrupt
 #endif
         rts
-        
+
         // FIXME: The iorec stuff should go into the .data segment (if
         // EmuTOS had a functional one) instead of copying the following to
         // the .bss segment at run time.
@@ -228,9 +228,9 @@ iorec_table:
         dc.w    0x100,  0,  0, 0x40, 0xC0
         dc.l    midiibufbuf
         dc.w     0x80,  0,  0, 0x20, 0x60
-iorec_table_end:        
+iorec_table_end:
         .text
-        
+
 #if CONF_WITH_IKBD_ACIA || CONF_WITH_MIDI_ACIA
 
 // ==== Int 0x118 - midi/kbd interrupt routine ================
@@ -238,7 +238,7 @@ iorec_table_end:
 
 _int_acia:
         // save scratch regs
-        /* LVL: Strictly speaking there is no specification telling what 
+        /* LVL: Strictly speaking there is no specification telling what
          * registers can be freely used by the vectors of the kbdvecs struct.
          * Theoretically d0-d1/a0-a1 would be sufficient here.
          */
@@ -248,7 +248,7 @@ _int_acia:
 #else
         movem.l d0-d3/a0-a3,-(sp)
 #endif
-                
+
 int_acia_loop:
 #if CONF_WITH_MIDI_ACIA
         move.l  midisys,a0
@@ -262,7 +262,7 @@ int_acia_loop:
         btst.b  #4,0x1(a1)                // while still interrupting
         beq     int_acia_loop
         bclr.b  #6,0x11(a1)               // clear in service bit
-        
+
         // restore scratch regs
 #ifdef __mcoldfire__
         movem.l (sp),d0-d3/a0-a3
@@ -277,11 +277,11 @@ int_acia_loop:
 #if CONF_WITH_MIDI_ACIA
 
 // ==== MIDI stuff ================
-//        
+//
 
         .equ    midi_acia_stat, 0xfffffc04
         .equ    midi_acia_data, 0xfffffc06
-        
+
 _midisys:
         move.b  midi_acia_stat,d0
         bpl     midirts                 // not interrupting
@@ -322,17 +322,17 @@ _midivec:
 #if CONF_WITH_IKBD_ACIA
 
 // ==== IKBD stuff ================
-//        
+//
 // Packets received from the IKBD are accumulated into the kbdbuf buffer.
-// The packet header (F6 to FF) determines the packet length and the 
+// The packet header (F6 to FF) determines the packet length and the
 // action to be taken once the packet has been received completely.
-// During the reception of a packet, variable ikbdstate contains the 
+// During the reception of a packet, variable ikbdstate contains the
 // action number, and variable kbdlength contains the number of bytes
 // not received yet.
-// 
+//
 // action <--whole IKBD packet-->  Comment
 // number    <-given to routine->
-//               
+//
 //  1     F6 a1 a2 a3 a4 a5 a6 a7 (miscellaneous, 7 bytes)
 //  2     F7 0b xh xl yh yl       (absolute mouse)
 //  3        F8 dx dy             (relative mouse, no button)
@@ -344,12 +344,12 @@ _midivec:
 //  6        FE bj                (joystick 0)
 //  7        FF bj                (joystick 1)
 //
-        .bss   
+        .bss
         .even
-kbdindex:       
+kbdindex:
         ds.w    1   // position of next byte in buffer
 kbdbuf: ds.b    8   // buffer where packets are being reconstructed
-joybuf: ds.b    3        
+joybuf: ds.b    3
 
 #endif /* CONF_WITH_IKBD_ACIA */
 
@@ -379,7 +379,7 @@ _ikbdsys:
         bpl     just_rts                // not interrupting
         // TODO (?): check errors (buffer full ?)
         move.b  ikbd_acia_data,d0
-        
+
         tst.b   ikbdstate       // inside a multi-byte packet?
         bne     in_packet       // ikbdstate != 0 => go and add to the packet
         cmp.w   #0xf6,d0        // is byte a packet header?
@@ -400,8 +400,8 @@ begin_packet:
 #else
         move.w  #1,kbdindex     // next position in buffer is byte number 1
         sub.b   #0xf6,d0
-        move.b  ikbdstate_table(pc,d0),ikbdstate  
-        move.b  kbdlength_table(pc,d0),kbdlength  
+        move.b  ikbdstate_table(pc,d0),ikbdstate
+        move.b  kbdlength_table(pc,d0),kbdlength
 #endif
         rts
 ikbdstate_table:
@@ -495,15 +495,15 @@ kbd_joy1:
         lea     joybuf,a1
         move.b  (a0)+,(a1)
         move.b  (a0),2(a1)
-joy_next:       
+joy_next:
         move.l  a1,a0
         move.l  joyvec,a1
-        
-kbd_jump_vec:           
+
+kbd_jump_vec:
         move.l  a0,-(sp)
         jsr     (a1)
         addq.l  #4,sp
         clr.b   ikbdstate
         rts
-                
+
 #endif /* CONF_WITH_IKBD_ACIA */

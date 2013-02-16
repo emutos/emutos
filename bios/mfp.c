@@ -23,7 +23,7 @@
 #if CONF_WITH_MFP
 
 /*==== mfp_init - initialize the MFP ========================================*/
- 
+
 void mfp_init(void)
 {
     MFP *mfp=MFP_BASE;   /* set base address of MFP */
@@ -58,7 +58,7 @@ void mfp_init(void)
     /* initialize the MFP */
     mfp->vr = 0x48;      /* vectors 0x40 to 0x4F, software end of interrupt */
 }
- 
+
 
 /*==== xbios functions ===========================================*/
 
@@ -159,7 +159,7 @@ void init_system_timer(void)
 
 #if CONF_WITH_MFP
     /* Timer C: ctrl = divide 64, data = 192 */
-    xbtimer(2, 0x50, 192, (LONG)int_timerc); 
+    xbtimer(2, 0x50, 192, (LONG)int_timerc);
 #endif
 
     /* The timer will really be enabled when sr is set to 0x2500 or lower. */

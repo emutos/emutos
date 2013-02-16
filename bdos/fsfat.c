@@ -1,5 +1,5 @@
 /*
- * fsfat.c - fat mgmt routines for file system           
+ * fsfat.c - fat mgmt routines for file system
  *
  * Copyright (c) 2001 Lineo, Inc.
  *               2002 - 2010 The EmuTOS development team
@@ -13,7 +13,7 @@
 #include        "config.h"
 #include        "portab.h"
 #include        "asm.h"
-#include        "fs.h" 
+#include        "fs.h"
 #include        "gemerror.h"
 
 
@@ -181,7 +181,7 @@ int nextcl(OFD *p, int wrtflg)
                 {
                         if (!getrealcl(rover,dm))       /* check for empty cluster */
                                 break;
-                        if (rover == dm->m_numcl+1)     /* wrap at max cluster num */ 
+                        if (rover == dm->m_numcl+1)     /* wrap at max cluster num */
                                 rover = 1;
                 }
                 cl2 = rover;
@@ -222,7 +222,7 @@ retcl:  p->o_curcl = cl2;
         Last modified   SCC     15 May 85
 */
 
-long xgetfree(long *buf, int drv) 
+long xgetfree(long *buf, int drv)
 {
         CLNO i, free;
         long n;

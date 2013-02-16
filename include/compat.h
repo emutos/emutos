@@ -1,12 +1,12 @@
 /*
  * compat.h - compiler/architecture compatibility settings
- * 
+ *
  * This file was originally named MACHINE.H, and almost-identical
  * versions existed in the AES and DESK subdirectories.  It was
  * renamed by the EmuTOS development team (to avoid confusion with
  * the MACHINE.H header used within the BIOS subdirectory) and
  * centralised in the INCLUDE subdirectory.
- * 
+ *
  */
 /*      MACHINE.H               09/29/84-02/08/85       Lee Lorenzen    */
 /*      GEM20                   12/17/85                Lowell Webster  */
@@ -15,7 +15,7 @@
 *       Copyright 1999, Caldera Thin Clients, Inc.
 *                 2002 The EmuTOS development team
 *
-*       This software is licenced under the GNU Public License.         
+*       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
 *
 *                  Historical Copyright
@@ -36,10 +36,10 @@
 
 
 #define NUM_WIN 8               /* 8 for main app and desk accs       */
- 
+
 #define NUM_ACCS 6              /* maximum number of desk accessory   */
                                 /* _files_ (.ACC) that will be loaded */
- 
+
 #define NUM_DESKACC 6           /* maximum number of desk accessory   */
                                 /* _slots_ available (one slot per    */
                                 /* mn_register() call)                */

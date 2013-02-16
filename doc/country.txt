@@ -2,7 +2,7 @@ country.txt - an overview of i18n issues in EmuTOS
 
 EmuTOS supports different countries. The way it does is sometimes
 dictated by TOS specifications, and sometimes solved in original
-ways. 
+ways.
 
 What can vary
 -------------
@@ -13,12 +13,12 @@ What can vary
 - font: the graphical display of individual characters
 - date&time: the way of printing time-related info in text.
 
-In EmuTOS, we shall call 'country' a community having the same value 
+In EmuTOS, we shall call 'country' a community having the same value
 for all the parameters above. This means that 'Switzerland(German)' and
 'Switzerland(French)' are not the same 'country' because the language and
 keyboards are different.
 
-Obviously these things are related. For instance, the language, 
+Obviously these things are related. For instance, the language,
 keyboard and font depend on the charset.
 
 Where is it in the code
@@ -30,7 +30,7 @@ Where is it in the code
 - language: this is covered by the 'nls' stuff, in files
   util/langs.[ch], util/nls.c, util/nlsasm.S
 
-- keyboard: 
+- keyboard:
   bios/country.h holds #defines for the keyboard codes;
   bios/keyb_* contain the actual kbd layouts
   bios/country.c contains the logic to choose the keyboard to use.
@@ -43,7 +43,7 @@ Where is it in the code
   bios/country.c contains the logic to choose the fontsets to use.
 
 - date&time:
-  the cookie _IDT. Should be used by cli/command.c and bios/initinfo. 
+  the cookie _IDT. Should be used by cli/command.c and bios/initinfo.
 
 How is it set?
 --------------
@@ -59,21 +59,21 @@ detect(), when filling the cookie jar). See in bios.c:
   cookie_init();  /* sets a cookie jar */
   machine_init(); /* detect hardware features and fill the cookie jar */
 
-If an NVRAM is found, then the time&date, keyboard, language and 
+If an NVRAM is found, then the time&date, keyboard, language and
 country are taken from it, and the charset is deduced from the
-language. Else the country code is taken from the OS header, and 
-all parameters are deduced from the country code. The values of 
+language. Else the country code is taken from the OS header, and
+all parameters are deduced from the country code. The values of
 parameters in the OS header are contained in file bios/header.h,
 itself created by tools/mkheader.awk, depending on the build date and
 the value of the Makefile variable $(COUNTRY).
-  
+
 Later, nls is inited and configured according to the language.
 See in bios.c:
 
   nls_init();         /* init native language support */
   nls_set_lang(get_lang_name());
 
-Here, function get_lang_name() is the method from country.c to obtain 
+Here, function get_lang_name() is the method from country.c to obtain
 the language name.
 
 New country check list
@@ -88,23 +88,23 @@ New country check list
     and FreeMiNT people to avoid a number clash.
   - add your new entry in bios/ctrycodes.h
 - add suitable lines in the tables in country.mk
-- if a specific charset is needed, 
+- if a specific charset is needed,
   - find a two character name for this charset
   - add a line in the charset table in bios/country.h
-  - provide C source code fonts for this charset (you may use 
-    tool fntconv to create the C files, available from Laurent's 
+  - provide C source code fonts for this charset (you may use
+    tool fntconv to create the C files, available from Laurent's
     page at http://lvogel.free.fr). The files should be named
-    bios/fnt_xx_6x6.c, bios/fnt_xx_8x8.c and bios/fnt_xx_8x16.c, 
-    where xx is the charset name; each should define a struct 
+    bios/fnt_xx_6x6.c, bios/fnt_xx_8x8.c and bios/fnt_xx_8x16.c,
+    where xx is the charset name; each should define a struct
     font_head which has the same name as the file's without extension.
-    => IMPORTANT NOTICE: the GEM will crash if the values in the 
-    => font header are not as follow: 
+    => IMPORTANT NOTICE: the GEM will crash if the values in the
+    => font header are not as follow:
     =>    font_id = 1
     =>    flags = F_STDFORM | F_DEFAULT | F_MONOSPACE
   - update the font table in country.mk
   - check if this charset is known by GNU recode and if not
     - send mail to the GNU recode maintainer (!)
-  - see chapter 'charsets' of doc/nls.txt 
+  - see chapter 'charsets' of doc/nls.txt
 - if a specific keyboard is needed,
   - add its name in bios/country.h
   - provide the keyboard layout in a file bios/keyb_*.h

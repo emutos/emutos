@@ -57,7 +57,7 @@
 #define ACIA_PE   (1<<6)        /* Parity Error */
 #define ACIA_IRQ  (1<<7)        /* Interrupt Request */
 
-struct ACIA 
+struct ACIA
 {
     UBYTE ctrl;
     UBYTE dummy1;

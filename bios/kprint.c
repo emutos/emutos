@@ -91,10 +91,10 @@ extern void printout_stonx(char *);    /* in kprintasm.S */
  *  globals
  */
 
-/* this variable is filled by function kprint_init(), in kprintasm.S, 
+/* this variable is filled by function kprint_init(), in kprintasm.S,
  * called very early just after clearing the BSS.
  */
- 
+
 int native_print_kind;
 
 
@@ -184,7 +184,7 @@ static int vkprintf(const char *fmt, va_list ap)
 #if STONX_NATIVE_PRINT || DETECT_NATIVE_PRINT
     if (native_print_kind) {
         return doprintf(kprintf_outc_stonx, fmt, ap);
-    } 
+    }
 #endif
 
 #if MIDI_DEBUG_PRINT
@@ -309,7 +309,7 @@ void dopanic(const char *fmt, ...)
     /* wrap the cursor */
     cprintf("\033v\r\n");
     /* TODO use sane screen settings (color, address) */
-    
+
     if (proc_lives != 0x12345678) {
         kcprintf("No saved info in dopanic; halted.\n");
         halt();
@@ -462,10 +462,10 @@ void dopanic(const char *fmt, ...)
     }
 #endif
     kcprintf("Dregs: %08lx %08lx %08lx %08lx  %08lx %08lx %08lx %08lx\n",
-             proc_dregs[0], proc_dregs[1], proc_dregs[2], proc_dregs[3], 
+             proc_dregs[0], proc_dregs[1], proc_dregs[2], proc_dregs[3],
              proc_dregs[4], proc_dregs[5], proc_dregs[6], proc_dregs[7]);
     kcprintf("Aregs: %08lx %08lx %08lx %08lx  %08lx %08lx %08lx %08lx\n",
-             proc_aregs[0], proc_aregs[1], proc_aregs[2], proc_aregs[3], 
+             proc_aregs[0], proc_aregs[1], proc_aregs[2], proc_aregs[3],
              proc_aregs[4], proc_aregs[5], proc_aregs[6], proc_aregs[7]);
     kcprintf("                                                                 usp = %08lx\n",
              proc_usp);

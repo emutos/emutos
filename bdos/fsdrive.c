@@ -1,5 +1,5 @@
 /*
- * fsdrive.c - physical drive routines for file system 
+ * fsdrive.c - physical drive routines for file system
  *
  * Copyright (c) 2001 Lineo, Inc.
  *               2002 - 2010 The EmuTOS development team

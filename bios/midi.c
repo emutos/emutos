@@ -35,7 +35,7 @@ LONG bconstat3(void)
 
 LONG bconin3(void)
 {
-  while(!bconstat3()) 
+  while(!bconstat3())
     ;
 
 #if CONF_WITH_MIDI_ACIA
@@ -45,13 +45,13 @@ LONG bconin3(void)
 
     /* disable interrupts */
     old_sr = set_sr(0x2700);
-    
+
     midiiorec.head ++;
     if(midiiorec.head >= midiiorec.size) {
       midiiorec.head = 0;
     }
     value = *(UBYTE *)(midiiorec.buf+midiiorec.head);
-    
+
     /* restore interrupts */
     set_sr(old_sr);
     return value;
@@ -108,7 +108,7 @@ void midiws(WORD cnt, LONG ptr)
  *      FUNCTION:  This routine is needed for the keyboard to
  *      work, since the IRQ is shared between both ACIAs.
  */
- 
+
 void midi_init(void)
 {
 #if CONF_WITH_MIDI_ACIA

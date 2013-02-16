@@ -105,7 +105,7 @@ clearbss:
 /*
  * memchk - Check, if old memory config can be used
  */
- 
+
 memchk:
 #ifdef __mcoldfire__
         move.l  #0x752019f3, d1
@@ -176,7 +176,7 @@ memconf:
  * At first the memory configuration is set to 4 Mb. If the memory
  * configuration is not really 2 * 2 mb, the written test values will
  * repeat in memory. The trick is to find these repeated values and
- * set the memory config accordingly. No real memory check is done, 
+ * set the memory config accordingly. No real memory check is done,
  * because in emulators it should be always ok - hopefully!
  *
  * 24/05/10 - jfdn
@@ -380,7 +380,7 @@ falcmemconf:
         cmp.b   #5,d1
         bne.s   less16
         move.l  #0x00E00000,d0
-less16: 
+less16:
         move.l  d0, d5                  // this is phystop - the end of RAM
         moveq   #0, d6                  // fake memctrl with Falcon MMU
 
@@ -406,7 +406,7 @@ amiga_memconf_ret:
  * - The size of the ST-RAM has been detected
  * - The MMU has been properly initalized
  * - The ST-RAM is ready to be used
- * 
+ *
  * d5 = phystop
  * d6 = memctrl
  */

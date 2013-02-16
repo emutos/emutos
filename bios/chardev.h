@@ -47,6 +47,6 @@ LONG charout_dummy(WORD dev, WORD x);
 /* internal init routine */
 
 extern void chardev_init(void);
- 
+
 #endif /* _CHARDEV_H */
 

@@ -1,6 +1,6 @@
 The obj/ directory contains the object files during compilation.
-This readme.txt ensures that obj/ is not empty, so that doing 
- 
+This readme.txt ensures that obj/ is not empty, so that doing
+
   cvs update -d -P
 
 or having the line

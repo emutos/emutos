@@ -1,5 +1,5 @@
 /*
- * umem.c - user memory management interface routines                   
+ * umem.c - user memory management interface routines
  *
  * Copyright (c) 2001 Lineo, Inc.
  *
@@ -35,7 +35,7 @@
 MPB pmd;
 #if CONF_WITH_ALT_RAM
 MPB pmdalt;
-int has_alt_ram;  
+int has_alt_ram;
 #endif
 
 /* internal variables */
@@ -53,7 +53,7 @@ static void dump_mem_map(void)
 {
     MD *m;
     int i;
-  
+
     kprintf("===mem_dump==========================\n");
     kprintf("| mp_mfl = 0x%08lx {\n|   ", (long)(m = pmd.mp_mfl));
     i = 0;
@@ -62,8 +62,8 @@ static void dump_mem_map(void)
             kprintf("\n|   ");
             i = 0;
         }
-        i++; 
-        kprintf("[0x%06lx, 0x%06lx], ", m->m_start, m->m_length); 
+        i++;
+        kprintf("[0x%06lx, 0x%06lx], ", m->m_start, m->m_length);
     }
     kprintf("\n| }\n");
     kprintf("| mp_mal = 0x%08lx {\n|   ",  (long)(m = pmd.mp_mal));
@@ -73,7 +73,7 @@ static void dump_mem_map(void)
             kprintf(" \n|   ");
             i = 0;
         }
-        i++; 
+        i++;
         kprintf("[0x%06lx, 0x%06lx], ", m->m_start, m->m_length);
     }
     kprintf("\n| }\n");
@@ -244,7 +244,7 @@ long    xmxalloc(long amount, int mode)
 
     /*
      * if amount == -1L, return the size of the biggest block
-     * 
+     *
      */
     if(amount == -1L) {
         switch(mode) {
@@ -260,7 +260,7 @@ long    xmxalloc(long amount, int mode)
         case MX_PREFTTRAM:
             /* TODO - I assume that the correct behaviour is to return
              * the biggest size in either pools. The documentation is unclear.
-             */ 
+             */
             {
                 ret_value = (long) ffit(-1L,&pmd);
 #if CONF_WITH_ALT_RAM
@@ -278,7 +278,7 @@ long    xmxalloc(long amount, int mode)
         goto ret;
     }
 
-    /* 
+    /*
      * return NULL if asking for a negative or null amount
      */
 
@@ -288,7 +288,7 @@ long    xmxalloc(long amount, int mode)
     }
 
     /*
-     * Pass the request on to the internal routine. 
+     * Pass the request on to the internal routine.
      */
 
     switch(mode) {
@@ -303,14 +303,14 @@ long    xmxalloc(long amount, int mode)
     case MX_PREFSTRAM:
         m = ffit(amount,&pmd);
 #if CONF_WITH_ALT_RAM
-        if(m == NULL) 
+        if(m == NULL)
             m = ffit(amount,&pmdalt);
 #endif
         break;
     case MX_PREFTTRAM:
 #if CONF_WITH_ALT_RAM
         m = ffit(amount,&pmdalt);
-        if(m == NULL) 
+        if(m == NULL)
 #endif
             m = ffit(amount,&pmd);
         break;
@@ -342,23 +342,23 @@ ret:
 #if CONF_WITH_ALT_RAM
 
 /*
- * Maddalt() informs GEMDOS of the existence of additional 'alternative' 
- * RAM that would not normally have been identified by the system.  
+ * Maddalt() informs GEMDOS of the existence of additional 'alternative'
+ * RAM that would not normally have been identified by the system.
  *
- * Available as of GEMDOS version 0.19 only.  
- * Parameters: start indicates the starting address for the block of 
- * memory to be added to the GEMDOS free list. size indicates the length 
- * of this block in bytes.  
- *  
- * Maddalt() returns E_OK (0) if the call succeeds or a negative GEMDOS error 
- * code otherwise.  
+ * Available as of GEMDOS version 0.19 only.
+ * Parameters: start indicates the starting address for the block of
+ * memory to be added to the GEMDOS free list. size indicates the length
+ * of this block in bytes.
  *
- * This call should only be used to identify RAM not normally identified 
- * by the BIOS at startup (added through a VME-card or hardware 
- * modification). Once this RAM has been identified to the system it 
- * may not be removed and should only be allocated and used via the 
- * standard system calls. In addition, programs wishing to use this 
- * RAM must have their alternative RAM load bit set or use Mxalloc() 
+ * Maddalt() returns E_OK (0) if the call succeeds or a negative GEMDOS error
+ * code otherwise.
+ *
+ * This call should only be used to identify RAM not normally identified
+ * by the BIOS at startup (added through a VME-card or hardware
+ * modification). Once this RAM has been identified to the system it
+ * may not be removed and should only be allocated and used via the
+ * standard system calls. In addition, programs wishing to use this
+ * RAM must have their alternative RAM load bit set or use Mxalloc()
  * to specifically request alternative RAM.
  */
 
@@ -420,7 +420,7 @@ void umem_init(void)
 {
     /* get the MPB */
     Getmpb((long)&pmd);
-    /* derive the addresses, assuming the MPB is in clean state */ 
+    /* derive the addresses, assuming the MPB is in clean state */
     start_stram = pmd.mp_mfl->m_start;
     end_stram = start_stram + pmd.mp_mfl->m_length;
 #if CONF_WITH_ALT_RAM

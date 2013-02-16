@@ -14,15 +14,15 @@
 #define DMA_H
 
 #include "portab.h"
- 
+
 #define DMA     ((volatile struct dma *) 0xFFFF8600)
 
 struct dma {
-    UWORD   pad0[2];   
+    UWORD   pad0[2];
      WORD   data;       /* sector count, data register */
      WORD   control;    /* status/control register */
     UBYTE   pad1;
-    UBYTE   addr_high;  
+    UBYTE   addr_high;
     UBYTE   pad2;
     UBYTE   addr_med;
     UBYTE   pad3;

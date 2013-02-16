@@ -85,7 +85,7 @@ size_ptsin:
         move.w  #ptsin_max,d0   // user vertices > # of allowable vertices
         move.w  d0,W_1(a0)      // put max # of vertices in user's CONTRL[1]
 ptsin_ok:
-        subq.l  #1,d0           // adjust coordinate count for loop 
+        subq.l  #1,d0           // adjust coordinate count for loop
 save_ptsin:
         move.l  (a4)+,(a3)+     // save x,y coordinate pair
 #ifdef __mcoldfire__
@@ -118,7 +118,7 @@ intin_ok:
         movem.l (sp)+, d1-d7/a0-a6 // restore the caller's registers
 #endif
         clr.l   d0
-        move.w  _flip_y,d0      // set d0 to indicate magnitude/coordinate 
+        move.w  _flip_y,d0      // set d0 to indicate magnitude/coordinate
 
         rts
 
@@ -144,7 +144,7 @@ intin_ok:
         .extern _GCURY          // graphics cursor y-coordinate
         .extern _HIDE_CNT       // graphics cursor hide count
         .extern _MOUSE_BT       // mouse button state
-        
+
         .extern _cur_ms_stat    // current mouse status
         .extern _draw_flag      // Non-zero means draw mouse form on vblank
         .extern _mouse_flag     // Non-zero if mouse ints disabled
@@ -228,10 +228,10 @@ cl_done:
 /*
  * _mouse_int - Mouse interrupt routine
  * entry:       a0 = address of mouse buffer from aciavecs.S
- * exit:        none                   
- * destroys:    nothing                
+ * exit:        none
+ * destroys:    nothing
  */
- 
+
 _mouse_int:
         tst.b   _mouse_flag     // If we are in a show/hide operation
         bne     ms_exit         // just exit.
@@ -262,7 +262,7 @@ _mouse_int:
         lsr.b   #1, d0          // left button pressed?
 #endif
         bcc     no_left         // no
-        bset    #1, d0          // set bit 0 for left button 
+        bset    #1, d0          // set bit 0 for left button
 
 no_left:
         move.b  _cur_ms_stat,d1 // get previous mouse state
@@ -391,8 +391,8 @@ ms_exit:
 /*
  * _wheel_int - Mouse wheel interrupt routine
  * entry:       a0 = address of IKBD status packet buffer from aciavecs.S
- * exit:        none                   
- * destroys:    nothing                
+ * exit:        none
+ * destroys:    nothing
  */
 
 _wheel_int:
@@ -464,7 +464,7 @@ wheel_check:
 #else
         movem.l (sp)+,d2-d7/a2-a6
 #endif
-                
+
 #ifdef __mcoldfire__
         movem.l (sp),d0-d1/a0-a1
         lea     16(sp),sp
@@ -488,7 +488,7 @@ wheel_ikbd_packet:
 
 
 
-/*      
+/*
  * mov_cur - moves the mouse cursor to its new location
  *           unless the cursor is currently hidden.
  *
@@ -523,7 +523,7 @@ _mov_cur:
         move.w  sr,-(sp)        // save current value of status register
         ori.w   #0x0700,sr      // mask off all interrupts
 #endif
-        
+
         move.w  d0,_newx        // save new cursor x-coordinate
         move.w  d1,_newy        // save new cursor y-coordinate
 

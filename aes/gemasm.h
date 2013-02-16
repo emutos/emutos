@@ -17,12 +17,12 @@
 extern void psetup(PD *p, void *codevalue);
 
 /* launches the top of rlr list, as if called from within function
- * back(PD *top_of_rlr) 
+ * back(PD *top_of_rlr)
  */
 extern void gotopgm(void) /*NORETURN*/ ;
 
 /* called repeatedly to give hand to another process - actually a
- * wrapper around disp() in gemdisp.c 
+ * wrapper around disp() in gemdisp.c
  */
 extern void dsptch(void);
 

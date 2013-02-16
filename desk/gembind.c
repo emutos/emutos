@@ -169,7 +169,7 @@ typedef struct gemblkstr
         LONG            gb_pintin;
         LONG            gb_pintout;
         LONG            gb_padrin;
-        LONG            gb_padrout;             
+        LONG            gb_padrout;
 } GEMBLK;
 
 
@@ -211,7 +211,7 @@ static WORD gem_if(WORD opcode)
 
 WORD appl_init(void)
 {
-        gb.gb_pcontrol = ADDR((BYTE *) &control[0]); 
+        gb.gb_pcontrol = ADDR((BYTE *) &control[0]);
         gb.gb_pglobal = ADDR((BYTE *) &global[0]);
         gb.gb_pintin = ADDR((BYTE *) &int_in[0]);
         gb.gb_pintout = ADDR((BYTE *) &int_out[0]);
@@ -343,7 +343,7 @@ WORD evnt_timer(UWORD locnt, UWORD hicnt)
 
 
 WORD evnt_multi(UWORD flags, UWORD bclk, UWORD bmsk, UWORD bst,
-                UWORD m1flags, UWORD m1x, UWORD m1y, UWORD m1w, UWORD m1h, 
+                UWORD m1flags, UWORD m1x, UWORD m1y, UWORD m1w, UWORD m1h,
                 UWORD m2flags, UWORD m2x, UWORD m2y, UWORD m2w, UWORD m2h,
                 LONG mepbuff, UWORD tlc, UWORD thc, UWORD *pmx, UWORD *pmy,
                 UWORD *pmb, UWORD *pks, UWORD *pkr, UWORD *pbr )
@@ -735,7 +735,7 @@ proc_malloc(csize, adrcsize)
 {
         PR_IASIZE = csize;
         AOUT_LEN = 2;
-        gem_if(PROC_MALLOC);    
+        gem_if(PROC_MALLOC);
         *adrcsize = PR_OCSIZE;
         AOUT_LEN = 0;
         return(PR_OBEGADDR);

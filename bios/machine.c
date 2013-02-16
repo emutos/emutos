@@ -85,7 +85,7 @@ static void detect_video(void)
   volatile BYTE *other_reg1 = (BYTE *) 0xffff8203;
   volatile WORD *other_reg2 = (WORD *) 0xffff8240;
 
-  has_ste_shifter = 0;  
+  has_ste_shifter = 0;
   if(!check_read_byte((long)ste_reg)) return;
   *ste_reg = 90;
   *other_reg1; /* force register read (really useful ?) */
@@ -94,7 +94,7 @@ static void detect_video(void)
     *other_reg2; /* force register read (really useful ?) */
     if(*ste_reg == 0) {
       has_ste_shifter = 1;
-    } 
+    }
   }
 
 #if DBG_MACHINE
@@ -159,7 +159,7 @@ static void detect_vme(void)
 {
   volatile BYTE *vme_mask = (BYTE *) VME_INT_MASK;
   volatile BYTE *sys_mask = (BYTE *) SYS_INT_MASK;
-  
+
   if(check_read_byte(SCU_GPR1)) {
     *vme_mask = 0x40;  /* ??? IRQ3 from VMEBUS/soft */
     *sys_mask = 0x14;  /* ??? set VSYNC and HSYNC */
@@ -245,7 +245,7 @@ static void setvalue_vdo(void)
 #endif
   {
     cookie_vdo = 0x00000000L;
-  } 
+  }
 
 #if DBG_MACHINE
   kprintf("cookie_vdo = 0x%08lx\n", cookie_vdo);
@@ -328,7 +328,7 @@ static void setvalue_snd(void)
   kprintf("cookie_snd = 0x%08lx\n", cookie_snd);
 #endif
 }
-  
+
 #if CONF_WITH_FRB
 
 /* FRB */
@@ -368,7 +368,7 @@ static void setvalue_fdc(void)
 #endif
   {
     cookie_fdc = FDC_0ATC;
-  } 
+  }
 
 #if DBG_MACHINE
   kprintf("cookie_fdc = 0x%08lx\n", cookie_fdc);
@@ -456,7 +456,7 @@ volatile BYTE *fbcr = (BYTE *)FALCON_BUS_CTL;
  #endif
 #endif /* CONF_WITH_RESET */
 }
-  
+
 void fill_cookie_jar(void)
 {
 #ifdef __mcoldfire__
@@ -467,12 +467,12 @@ void fill_cookie_jar(void)
 #endif
 
   /* _VDO
-   * This cookie represents the revision of the video shifter present. 
-   * Currently valid values are: 
-   * 0x00000000  ST 
-   * 0x00010000  STe 
-   * 0x00020000  TT030 
-   * 0x00030000  Falcon030 
+   * This cookie represents the revision of the video shifter present.
+   * Currently valid values are:
+   * 0x00000000  ST
+   * 0x00010000  STe
+   * 0x00020000  TT030
+   * 0x00030000  Falcon030
    */
 
   setvalue_vdo();
@@ -488,10 +488,10 @@ void fill_cookie_jar(void)
   cookie_add(COOKIE_MCH, cookie_mch);
 
 #if CONF_WITH_DIP_SWITCHES
-  /* _SWI  On machines that contain internal configuration dip switches, 
-   * this value specifies their positions as a bitmap. Dip switches are 
-   * generally used to indicate the presence of additional hardware which 
-   * will be represented by other cookies.  
+  /* _SWI  On machines that contain internal configuration dip switches,
+   * this value specifies their positions as a bitmap. Dip switches are
+   * generally used to indicate the presence of additional hardware which
+   * will be represented by other cookies.
    */
   if (cookie_mch == MCH_MSTE || cookie_mch == MCH_TT
       || cookie_mch == MCH_FALCON) {
@@ -501,55 +501,55 @@ void fill_cookie_jar(void)
 #endif
 
   /* _SND
-   * This cookie contains a bitmap of sound features available to the 
-   * system as follows:  
-   * 0x01 GI Sound Chip (PSG) 
-   * 0x02 1 Stereo 8-bit Playback 
-   * 0x04 DMA Record (w/XBIOS) 
-   * 0x08 16-bit CODEC 
-   * 0x10 DSP 
+   * This cookie contains a bitmap of sound features available to the
+   * system as follows:
+   * 0x01 GI Sound Chip (PSG)
+   * 0x02 1 Stereo 8-bit Playback
+   * 0x04 DMA Record (w/XBIOS)
+   * 0x08 16-bit CODEC
+   * 0x10 DSP
    */
-  
+
   setvalue_snd();
   cookie_add(COOKIE_SND, cookie_snd);
 
 #if CONF_WITH_FRB
-  /* _FRB  This cookie is present when alternative RAM is present. It 
-   * points to a 64k buffer that may be used by DMA device drivers to 
-   * transfer memory between alternative RAM and ST RAM for DMA operations.  
+  /* _FRB  This cookie is present when alternative RAM is present. It
+   * points to a 64k buffer that may be used by DMA device drivers to
+   * transfer memory between alternative RAM and ST RAM for DMA operations.
    */
   setvalue_frb();
   if (cookie_frb) {
     cookie_add(COOKIE_FRB, cookie_frb);
   }
 #endif /* CONF_WITH_FRB */
-   
-  /* _FLK  The presence of this cookie indicates that file and record 
-   * locking extensions to GEMDOS exist. The value field is a version 
-   * number currently undefined.  
-   */
-  
-  /* _IDT This cookie defines the currently configured date and time 
-   * format, Bits #0-7 contain the ASCII code of the date separator. 
-   * Bits #8-11 contain a value indicating the date display format as 
-   * follows:  
-   *   0 MM-DD-YY 
-   *   1 DD-MM-YY 
-   *   2 YY-MM-DD 
-   *   3 YY-DD-MM
-   * Bits #12-15 contain a value indicating the time format as follows:  
-   *   0 12 hour 
-   *   1 24 hour
-   * Note: The value of this cookie does not affect any of the internal 
-   * time functions. It is intended for informational use by applications 
+
+  /* _FLK  The presence of this cookie indicates that file and record
+   * locking extensions to GEMDOS exist. The value field is a version
+   * number currently undefined.
    */
 
-  /* _AKP  This cookie indicates the presence of an Advanced Keyboard 
-   * Processor. The high word of this cookie is currently reserved. 
-   * The low word indicates the language currently used by TOS for 
-   * keyboard interpretation and alerts. 
+  /* _IDT This cookie defines the currently configured date and time
+   * format, Bits #0-7 contain the ASCII code of the date separator.
+   * Bits #8-11 contain a value indicating the date display format as
+   * follows:
+   *   0 MM-DD-YY
+   *   1 DD-MM-YY
+   *   2 YY-MM-DD
+   *   3 YY-DD-MM
+   * Bits #12-15 contain a value indicating the time format as follows:
+   *   0 12 hour
+   *   1 24 hour
+   * Note: The value of this cookie does not affect any of the internal
+   * time functions. It is intended for informational use by applications
    */
-  
+
+  /* _AKP  This cookie indicates the presence of an Advanced Keyboard
+   * Processor. The high word of this cookie is currently reserved.
+   * The low word indicates the language currently used by TOS for
+   * keyboard interpretation and alerts.
+   */
+
   detect_akp();
 #if DBG_MACHINE
   kprintf("cookie_akp = 0x%08lx\n", cookie_akp);
@@ -561,10 +561,10 @@ void fill_cookie_jar(void)
   kprintf("cookie_idt = 0x%08lx\n", cookie_idt);
 #endif
   cookie_add(COOKIE_IDT, cookie_idt);
-  
+
 #if CONF_WITH_FDC
-  /* Floppy Drive Controller 
-   * Most significant byte means: 
+  /* Floppy Drive Controller
+   * Most significant byte means:
    * 0 - DD (Normal floppy interface)
    * 1 - HD (1.44 MB with 3.5")
    * 2 - ED (2.88 MB with 3.5")
@@ -616,7 +616,7 @@ static const char * guess_machine_name(void)
   case MCH_TT: return "TT";
   case MCH_FALCON: return "Falcon";
   default: return "unknown";
-  } 
+  }
 }
 
 const char * machine_name(void)

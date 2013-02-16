@@ -15,7 +15,7 @@
         .globl  kprintf
 
         .globl  _printout_stonx
-        
+
         .extern _kprintf
         .extern _native_print_kind
 
@@ -30,15 +30,15 @@
  * sets variable _native_print_kind:
  *   0: no native print detected
  *   1: STonX
- * 
+ *
  * Calling kprintf should only be done after:
  *   1/ the bss is cleared
  *   2/ this function is called
- * (calling kprintf before 1 may crash the machine with unexpected 
+ * (calling kprintf before 1 may crash the machine with unexpected
  * exceptions; calling kprintf after 1/ and before 2/ will do nothing).
- * 
+ *
  * Note: It is not possible to actually detect that something is printed
- * on the emulator. However the probability is high that emulators which 
+ * on the emulator. However the probability is high that emulators which
  * do not raise exceptions for these special opcodes also implement the
  * expected behaviour.
  */
@@ -75,7 +75,7 @@ fail_stonx:
 #endif  /* DETECT_NATIVE_PRINT */
         clr.w   _native_print_kind
         rts
-        
+
 msg_empty:
         .ascii  "\0"
         .even
@@ -114,8 +114,8 @@ kprintf:
 // ===========================================================================
 // ==== BSS segment ==========================================================
 // ===========================================================================
-        .bss    
-        
-kprintfsave:    
+        .bss
+
+kprintfsave:
         ds.l    5       // save zone for kprintf
 

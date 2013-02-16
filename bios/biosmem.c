@@ -26,7 +26,7 @@ static int bmem_allowed;
 /*
  * bmem_init - initialize some memory related variables
  *
- * when the TOS is in ROM, the ST RAM is used thus: 
+ * when the TOS is in ROM, the ST RAM is used thus:
  *   0        400   end                         v_bas_ad   phystop
  *   +---------+-----+------------------------------+--------+
  *   | vectors | BSS | Transiant Program Area (TPA) | screen |
@@ -50,10 +50,10 @@ static int bmem_allowed;
  *
  * For unknown reasons, it is reported that in the first RAM TOS membot
  * and end_os id have different values. Here in EmuTOS we will always
- * have: 
+ * have:
  *   membot = end_os = os_end = start of TPA
- *   memtop = end of TPA   
- * 
+ *   memtop = end of TPA
+ *
  */
 void bmem_init(void)
 {
@@ -64,15 +64,15 @@ void bmem_init(void)
 #endif
 
     /* initialise some memory variables */
-    membot = end_os = os_end; 
+    membot = end_os = os_end;
 #if CONF_VRAM_ADDRESS
     /* Available ST-RAM ends at the physical ST-RAM end */
-    memtop = (LONG) phystop; 
+    memtop = (LONG) phystop;
 #else
     /* Available ST-RAM ends at the screen start */
-    memtop = (LONG) v_bas_ad; 
+    memtop = (LONG) v_bas_ad;
 #endif
-    
+
     /* Fill out the first memory descriptor */
     themd.m_link = (MD*) 0;     /* no next memory descriptor */
     themd.m_start = os_end;

@@ -1,5 +1,5 @@
 /*      GEMAPLIB.C      03/15/84 - 08/21/85     Lee Lorenzen            */
-/*      merge High C vers. w. 2.2 & 3.0         8/19/87         mdf     */ 
+/*      merge High C vers. w. 2.2 & 3.0         8/19/87         mdf     */
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
@@ -111,7 +111,7 @@ WORD ap_find(LONG pname)
         BYTE            temp[9];
 
         strcpy(temp, (char *)pname);
- 
+
         p = fpdnm(&temp[0], 0x0);
         return( ((p) ? (p->p_pid) : (-1)) );
 }
@@ -201,7 +201,7 @@ WORD ap_trecd(LONG pbuff, WORD length)
           if((LONG)proutine == (LONG)tchange)
           {
             code = TCHNG;
-            LLSET(pbuff+sizeof(WORD *), LLGET(pbuff+sizeof(WORD *)) * 
+            LLSET(pbuff+sizeof(WORD *), LLGET(pbuff+sizeof(WORD *)) *
                         gl_ticktime);
           }
           if((LONG)proutine == (LONG)mchange)

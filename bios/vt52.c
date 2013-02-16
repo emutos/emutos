@@ -381,7 +381,7 @@ static void
 cursor_right (void)
 {
     if ( v_cur_cx != v_cel_mx)
-        move_cursor(v_cur_cx + 1, v_cur_cy);   
+        move_cursor(v_cur_cx + 1, v_cur_cy);
 }
 
 

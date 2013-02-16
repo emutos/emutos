@@ -13,7 +13,7 @@ if possible add a line telling in which version it did run.
   Pacifist v0.48      |  yes  | LVL | winter 2001 |
   STonX 0.6.7.6       |  yes  | THH | 14 Nov 2008 |
   STonC v0.8.1        |  yes  | LVL | 9  Feb 2003 |
-  STeem v2.0.6        |  yes  | LVL | 30 Sep 2002 | 
+  STeem v2.0.6        |  yes  | LVL | 30 Sep 2002 |
   TOSBox 1.10a        |   no  |  ?  |  < Sep 2002 |
   WinSTon V0.1r2      |   no  |  ?  |  < Sep 2002 |
   FireBee             |  yes  | VRI |    Oct 2011 |
@@ -63,7 +63,7 @@ T tested and working on an emulator or real hardware
  T SCC
  T IDE
  > ACSI hard disk
- T NatFeats (a framework for native features on emulators) 
+ T NatFeats (a framework for native features on emulators)
 
 
  BOOT sequence
@@ -94,7 +94,7 @@ T tested and working on an emulator or real hardware
  T console
  X IKBD
  X MIDI
- T ascii 
+ T ascii
 
 
  ACIA interrupt routines
@@ -197,7 +197,7 @@ TOS v4.00:
  X 0x59 Vmontype        (for Falcon Videl only)
  X 0x5a VsetSync        (for Falcon Videl only)
  X 0x5b VgetSize        (for Falcon Videl only)
- 
+
  X 0x5d VsetRGB         (for Falcon Videl only)
  X 0x5e VgetRGB         (for Falcon Videl only)
 
@@ -301,7 +301,7 @@ GEMDOS v0.19 (TOS v2):
  ----------------------------------------------------------------------------
 
  All TOS 1.0 calls are implemented.
- 
+
  T      v_opnwk
  X      v_clswk
  T      v_opnvwk

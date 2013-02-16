@@ -12,7 +12,7 @@
 
 #include "config.h"
 #include "portab.h"
- 
+
 #include "nls.h"
 #include "langs.h"
 #include "string.h"
@@ -48,5 +48,5 @@ void nls_set_lang(const char *s)
     }
   }
 }
-  
+
 #endif /* CONF_WITH_NLS */

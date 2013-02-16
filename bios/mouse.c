@@ -96,7 +96,7 @@ void Initmous(WORD type, struct param *param, void *newvec)
          * deltax - distance in X clicks to return (LEFT) or (RIGHT)
          * deltay - distance in Y clicks to return (UP) or (DOWN)
          */
-        
+
         if (param != NULL) {
             ikbd_writeb(0x0a);          /* set keyboard mode */
             ikbd_writeb(p->xparam);
@@ -108,7 +108,7 @@ void Initmous(WORD type, struct param *param, void *newvec)
     }
 
     if (retval!=0 && type!=0) {         /* if no error */
-        
+
         if (param != NULL) {
             if (p->topmode == IN_YBOT)
                 ikbd_writeb(0x0f);      /* set bottom to y=0 */

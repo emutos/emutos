@@ -13,7 +13,7 @@ ULONG Isqrt(ULONG x);
  * mul_div - signed integer multiply and divide
  *
  * mul_div (m1,m2,d1)
- * 
+ *
  * ( ( m1 * m2 ) / d1 ) + 1/2
  *
  * m1 = signed 16 bit integer

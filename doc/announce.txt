@@ -78,7 +78,7 @@ scratch and implements all relevant TOS 1.0 Bios & XBIOS functionality,
 and a bit more, e.g. hard disk access. See doc/status.txt for details.
 
 The GEMDOS part is based on Digital Research's GEMDOS sources, which were
-made available under GPL license in 1999 by Caldera. 
+made available under GPL license in 1999 by Caldera.
 
 The graphical parts like VDI and AES are now more or less fully
 implemented up to TOS v1.04 level. They work in all the graphics modes
@@ -156,11 +156,11 @@ The project home is on SourceForge:
 
 The latest releases can be downloaded from:
 
-    http://sourceforge.net/projects/emutos/files/emutos/ 
+    http://sourceforge.net/projects/emutos/files/emutos/
 
-Development snapshots allow you to test the current development progress: 
+Development snapshots allow you to test the current development progress:
 
-    http://sourceforge.net/projects/emutos/files/snapshots/ 
+    http://sourceforge.net/projects/emutos/files/snapshots/
 
 The latest sources are always available from our CVS server at:
 
@@ -172,12 +172,12 @@ OS, you are invited to subscribe to our mailing list for developers at:
     https://lists.sourceforge.net/lists/listinfo/emutos-devel
 
 
-We hope that you like EmuTOS. If you have any suggestions or comments, we 
+We hope that you like EmuTOS. If you have any suggestions or comments, we
 always appreciate to hear the good and also the bad things about it.
 
 
 The EmuTOS development team.
 
--- 
+--
 Originally written by Martin Doering
 http://emutos.sourceforge.net/

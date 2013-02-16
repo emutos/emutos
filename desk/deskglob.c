@@ -30,4 +30,4 @@
 GLOBAL ICONBLK          gl_icons[NUM_WOBS];
 /* */
 
-GLOBAL GLOBES           G;  
+GLOBAL GLOBES           G;

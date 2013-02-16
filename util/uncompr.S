@@ -10,8 +10,8 @@
 
 /*
  * compression format:
- * the compressed data is a series of alternatingly 
- * - verbatim data to be written in memory, and 
+ * the compressed data is a series of alternatingly
+ * - verbatim data to be written in memory, and
  * - copy-back instructions telling to copy length bytes starting
  *   at offset bytes back.
  * it starts with (potentially null) verbatim data, and ends
@@ -24,7 +24,7 @@
  * <couple> ::= <verbatim> <copy-back>
  * <verbatim> ::= <verbatim-num> <byte> *   (num bytes output)
  * <verbatim-num> ::= <num>
- * <copy-back> ::= <offset> <length>   
+ * <copy-back> ::= <offset> <length>
  * <offset> ::= <non-null-num>
  * <length> ::= <num>
  * <non-null-num> ::= <positive-byte-num> | <word-num>
@@ -33,17 +33,17 @@
  * <positive-byte-num> ::= [1 - 127]
  * <word-num> ::= [128 - 255] <byte>
  * <byte> ::= [0 - 255]
- * 
- * where notation [0] means byte 0, and [a - b] means any byte 
- * between a and b inclusive. 
+ *
+ * where notation [0] means byte 0, and [a - b] means any byte
+ * between a and b inclusive.
  */
 
 /*
  * This implementation is really stupid. It can be greatly improved
- * by performing the copy more efficiently if the data is known to be 
+ * by performing the copy more efficiently if the data is known to be
  * aligned.
  */
-        
+
 #include "asmdefs.h"
 
         .text
@@ -56,7 +56,7 @@
  *
  * void uncompr(struct header * header);
  */
-        
+
         .globl  _uncompr
 _uncompr:
         move.l  4(sp),a0  // src
@@ -72,19 +72,19 @@ loop:
 
 /* do the verbatim copy */
         bsr     copy
-        
+
 /* get the copy-back offset */
         bsr     getnum
         tst.w   d0
         beq     done
-        
+
         move.l  a1,d1
         sub.l   d0,d1
 
 /* get the copy-back length */
         bsr     getnum
 
-/* do the copy-back copy */     
+/* do the copy-back copy */
 #ifdef __mcoldfire__
         move.l  a0,a2   // backup a0 into a2 instead of d1
         move.l  d1,a0
@@ -125,7 +125,7 @@ getnum:
 next:
         rts
 
-        
+
 /*
  * copy: copy d0 bytes from a0 to a1
  * this needs, of course, to be improved for speed.

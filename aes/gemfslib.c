@@ -1,5 +1,5 @@
 /*
- * gemfslib.c - 
+ * gemfslib.c -
  *
  * Copyright 1999, Caldera Thin Clients, Inc.
  *           2002 by EmuTOS development team.
@@ -148,7 +148,7 @@ static WORD fs_active(BYTE *ppath, BYTE *pspec, WORD *pcount)
         LONG            thefile, fs_index, temp;
         register WORD   i, j, gap;
         BYTE            *fname, allpath[LEN_ZPATH+1];
-        
+
         gsx_mfset(ad_hgmice);
 
         thefile = 0L;
@@ -229,8 +229,8 @@ static WORD fs_1scroll(WORD curr, WORD count, WORD touchob)
 
 
 /*
-*       Routine to take the filenames that will appear in the window, 
-*       based on the current scrolled position, and point at them 
+*       Routine to take the filenames that will appear in the window,
+*       based on the current scrolled position, and point at them
 *       with the sub-tree of G_STRINGs that makes up the window box.
 */
 static void fs_format(LONG tree, WORD currtop, WORD count)
@@ -277,7 +277,7 @@ static void fs_format(LONG tree, WORD currtop, WORD count)
 
 
 /*
-*       Routine to select or deselect a file name in the scrollable 
+*       Routine to select or deselect a file name in the scrollable
 *       list.
 */
 static void fs_sel(WORD sel, WORD state)
@@ -291,7 +291,7 @@ static void fs_sel(WORD sel, WORD state)
 *       Routine to handle scrolling the directory window a certain number
 *       of file names.
 */
-static WORD fs_nscroll(LONG tree, WORD *psel, WORD curr, WORD count, 
+static WORD fs_nscroll(LONG tree, WORD *psel, WORD curr, WORD count,
                        WORD touchob, WORD n)
 {
         register WORD   i, newcurr, diffcurr;
@@ -327,7 +327,7 @@ static WORD fs_nscroll(LONG tree, WORD *psel, WORD curr, WORD count,
               sy = r[0].g_y;
             }
 
-            bb_screen(S_ONLY, r[0].g_x, sy, r[0].g_x, dy, r[0].g_w, 
+            bb_screen(S_ONLY, r[0].g_x, sy, r[0].g_x, dy, r[0].g_w,
                                 r[0].g_h * (NM_NAMES - diffcurr) );
             if ( !neg )
               r[0].g_y += r[0].g_h * (NM_NAMES - diffcurr);
@@ -350,10 +350,10 @@ static WORD fs_nscroll(LONG tree, WORD *psel, WORD curr, WORD count,
 *       Routine to call when a new directory has been specified.  This
 *       will activate the directory, format it, and display ir[0].
 */
-        
-static WORD fs_newdir(BYTE *fpath, 
-                      BYTE *pspec, 
-                      LONG tree, 
+
+static WORD fs_newdir(BYTE *fpath,
+                      BYTE *pspec,
+                      LONG tree,
                       WORD *pcount)
 {
         const BYTE      *ptmp;
@@ -464,7 +464,7 @@ static WORD path_changed(char *path)
 
 /*
 *       File Selector input routine that takes control of the mouse
-*       and keyboard, searchs and sort the directory, draws the file 
+*       and keyboard, searchs and sort the directory, draws the file
 *       selector, interacts with the user to determine a selection
 *       or change of path, and returns to the application with
 *       the selected path, filename, and exit button.
@@ -477,7 +477,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
         LONG            tree;
         ULONG           bitmask;
         BYTE            *ad_fpath, *ad_fname, *ad_ftitle;
-        WORD            drive; 
+        WORD            drive;
         WORD            dclkret, cont, newlist, newsel, newdrive;
         register BYTE   *pstr;
         GRECT           pt;
@@ -546,7 +546,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
                                                 /* set clip and start   */
                                                 /*   form fill-in by    */
                                                 /*   drawing the form   */
-        gsx_sclip(&gl_rfs);     
+        gsx_sclip(&gl_rfs);
         fm_dial(FMD_START, &gl_rfs);
         ob_draw(tree, ROOT, 2);
                                                 /* init for while loop  */
@@ -559,7 +559,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
         {
           touchob = (newlist) ? 0x0 : fm_do(tree, FSSELECT);
           gsx_mxmy(&mx, &my);
-        
+
           if ( newlist )
           {
             fs_sel(sel, NORMAL);
@@ -567,7 +567,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
                  (touchob == FSCANCEL) )
               ob_change(tree, touchob, NORMAL, TRUE);
             inf_sset(tree, FSDIRECT, locstr);
-            pstr = fs_pspec(locstr, NULL);        
+            pstr = fs_pspec(locstr, NULL);
             strcpy(pstr, mask);
             fs_newdir(locstr, mask, tree, &count);
             curr = 0;

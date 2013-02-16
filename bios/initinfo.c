@@ -73,8 +73,8 @@ static void print_art(const char *s)
 {
     int old = -1;
     int color;
-    
-    set_margin(); 
+
+    set_margin();
     while(*s) {
         color = (*s++) & 15;
         if(color != old) {
@@ -113,7 +113,7 @@ static void pair_start(const char *left)
     set_margin();
     n = cprintf(left);
     cprintf(": ");
-    while(n++ < 14) 
+    while(n++ < 14)
         cprintf(" ");
     cprintf("\033b!");
 }
@@ -166,7 +166,7 @@ void initinfo(void)
     print_art("1111   1 1  1   1  7   7   7  777 ");
     print_art("1     1 1 1 1   1  7   7   7     7");
     print_art("11111 1   1  111   7    777  7777 ");
-    
+
     /* Just a separator */
     set_line();
     cprintf("\n\r");
@@ -224,7 +224,7 @@ void initinfo(void)
     cprintf("\r\n");
 #if WITH_CLI
     set_margin(); cprintf(_("Press 'C' to run an early console"));
-    cprintf("\r\n"); 
+    cprintf("\r\n");
 #endif
     cprintf("\r\n");
     cprintf("\r\n");
@@ -232,7 +232,7 @@ void initinfo(void)
     cprintf("\033p");
     cprintf(_(" Hold <Shift> to pause this screen "));
     cprintf("\033q");
-    
+
     /* pause for a short while (or longer if a Shift key is held down) */
     {
         /* Wait until timeout or keypress */
@@ -261,8 +261,8 @@ void initinfo(void)
             shiftbits = kbshift(-1);
         }
     }
-    if (bconstat2()) {  /* examine the keypress */  
-        int c = 0xFF & bconin2(); 
+    if (bconstat2()) {  /* examine the keypress */
+        int c = 0xFF & bconin2();
         MAYBE_UNUSED(c);
 #if WITH_CLI
         if (c == 'c' || c == 'C') {

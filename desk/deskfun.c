@@ -183,7 +183,7 @@ WORD fun_op(WORD op, PNODE *pspath, BYTE *pdest, WORD dulx, WORD duly,
         {
           if (op == OP_COPY)
           {
-            if ( !par_chk(&pspath->p_spec[0], pspath->p_flist, 
+            if ( !par_chk(&pspath->p_spec[0], pspath->p_flist,
                                 &G.g_tmppth[0]) )
               return(FALSE);
           }
@@ -220,7 +220,7 @@ static WORD cmp_names(BYTE *psrc, BYTE *pdst)
         ptmp--;
         *ptmp = NULL;                           /* null it              */
                                                 /* see if they match    */
-        ret = !strcmp(psrc, pdst);      
+        ret = !strcmp(psrc, pdst);
                                                 /* restore it           */
         *lastslsh = '\\';
         *ptmp = '\\';
@@ -260,7 +260,7 @@ fun_wdst(PNODE *pspath, BYTE *pdspec, WORD datype, FNODE *pdf,
           ptmp = &G.g_tmppth[0];                /* set in dr_fnode()    */
           while (*ptmp < 'A' - 1)               /* find drive letter    */
             ptmp++;
-          drv_ltr = *ptmp; 
+          drv_ltr = *ptmp;
         } /* if V_TEXT */
 /* */
         strcpy(&G.g_tmppth[0], &pdspec[0]);
@@ -388,7 +388,7 @@ static WORD fun_disk(WORD src_ob, WNODE *pdw, WORD datype, FNODE *pdf, WORD dulx
 
 /*
 *       Routine to call when several icons have been dragged from a
-*       window to another window (it might be the same window) and 
+*       window to another window (it might be the same window) and
 *       dropped on a particular icon or open space.
 */
 void fun_drag(WORD src_wh, WORD dst_wh, WORD dst_ob, WORD dulx, WORD duly)
@@ -408,7 +408,7 @@ void fun_drag(WORD src_wh, WORD dst_wh, WORD dst_ob, WORD dulx, WORD duly)
 
         if (psw->w_path->p_spec[0] != '@')
         {
-          ret = fun_wdst(psw->w_path, &pdw->w_path->p_spec[0], 
+          ret = fun_wdst(psw->w_path, &pdw->w_path->p_spec[0],
                          datype, pdf, dulx, duly, FALSE, 0, &do_both);
           if (ret)
           {

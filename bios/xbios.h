@@ -9,7 +9,7 @@
 
 #ifndef XBIOS_H
 #define XBIOS_H
- 
+
 /* misc XBIOS functions */
 LONG iorec(WORD devno);
 LONG random(void);

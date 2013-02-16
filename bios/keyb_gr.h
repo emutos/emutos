@@ -7,14 +7,14 @@
  *  GGN   ggn@atari.org
  *
  * This file may not be distributed at all, or I'll have yer head off!
- * 
+ *
  * Only kidding! Actually the keymaps took a bit of time to rip!
  * Yes, they were ripped of an Accessoy written by D. Gizis and
  * M.Statharas of ELKAT, Greece (which was Atari Greece if you wonder).
  *
  * Note: this file was not automatically generated, although I took this
  * header from an automatically generated header, just for the looks!
- * 
+ *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
  */
@@ -27,14 +27,14 @@ static const BYTE keytbl_gr_altshft[];
 static const BYTE keytbl_gr_altcaps[];
 
 static const struct keytbl keytbl_gr = {
-    keytbl_gr_norm, 
-    keytbl_gr_shft, 
-    keytbl_gr_caps, 
-    keytbl_gr_altnorm, 
-    keytbl_gr_altshft, 
-    keytbl_gr_altcaps, 
+    keytbl_gr_norm,
+    keytbl_gr_shft,
+    keytbl_gr_caps,
+    keytbl_gr_altnorm,
+    keytbl_gr_altshft,
+    keytbl_gr_altcaps,
     NULL
-}; 
+};
 
 static const BYTE keytbl_gr_altnorm[] = {
         0, 0x1B, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36,

@@ -1,5 +1,5 @@
 /*      GEMASYNC.C      1/27/84 - 09/12/85      Lee Jay Lorenzen        */
-/*      merge High C vers. w. 2.2 & 3.0         8/19/87         mdf     */ 
+/*      merge High C vers. w. 2.2 & 3.0         8/19/87         mdf     */
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
@@ -171,7 +171,7 @@ UWORD apret(EVSPEC mask)
                                                 /*   on the process list*/
         for (p = (q = (EVB *) &rlr->p_evlist) -> e_nextp; p;
                                                  p = (q=p)->e_nextp)
-          if (p->e_mask == mask) 
+          if (p->e_mask == mask)
             break;
                                                 /* found the event,     */
                                                 /*   remove it from the */

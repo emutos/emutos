@@ -1,5 +1,5 @@
 /*      GEMPD.C         1/27/84 - 03/20/85      Lee Jay Lorenzen        */
-/*      merge High C vers. w. 2.2               8/21/87         mdf     */ 
+/*      merge High C vers. w. 2.2               8/21/87         mdf     */
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
@@ -52,7 +52,7 @@ PD *fpdnm(BYTE *pname, UWORD pid)
           if (pname != NULLPTR)
           {
             /* TODO - strncmp */
-            memcpy(temp, p->p_name, 8); 
+            memcpy(temp, p->p_name, 8);
             if( strcmp(pname, temp)==0 )
               return(p);
           }
@@ -67,14 +67,14 @@ PD *fpdnm(BYTE *pname, UWORD pid)
 static PD *getpd()
 {
         register PD     *p;
-                                                
+
         /* we got all our memory so link it  */
         p = pd_index(curpid);
         p->p_pid = curpid++;
-                                            
+
         /* was: setdsss(p->p_uda); */
         p->p_uda->u_insuper = 1;
-        
+
         /* return the pd we got */
         return(p);
 }
@@ -124,7 +124,7 @@ void p_setappdir(PD *pd, BYTE *pfilespec)
 PD *pstart(void *pcode, BYTE *pfilespec, LONG ldaddr)
 {
         register PD     *px;
-                                               
+
         /* create process to execute it */
         px = getpd();
         px->p_ldaddr = ldaddr;
@@ -149,7 +149,7 @@ void insert_process(PD *pi, PD **root)
 {
         register PD     *p, *q;
                                                 /* find the end         */
-        for ( p = (q = (PD *) root) -> p_link ; p ; p = (q = p) -> p_link); 
+        for ( p = (q = (PD *) root) -> p_link ; p ; p = (q = p) -> p_link);
                                                 /* link him in          */
         pi->p_link = p;
         q->p_link = pi;

@@ -35,11 +35,11 @@ struct font_head fon6x6;
 void font_init(void)
 {
     const struct font_head *f6x6, *f8x8, *f8x16;
-  
+
     /* ask country.c for the right fonts */
 
     get_fonts(&f6x6, &f8x8, &f8x16);
-  
+
     /* copy the ROM-fontheaders of 3 system fonts to RAM */
 
     fon6x6 = *f6x6;

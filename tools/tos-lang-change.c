@@ -1,11 +1,11 @@
 /* A program for changing the language setting of a multi-language
  * TOS ROM (EmuTOS) file.
- * 
+ *
  * Compile with:
  *      gcc -o tos-lang-change -O -Wall tos-lang-change.c
- * 
+ *
  * Copyright 2005 by Eero Tamminen
- * 
+ *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
  */
@@ -138,7 +138,7 @@ int main(int argc, char *argv[])
         }
 
         printf("Opening TOS ROM file '%s' for reading/writing...\n", argv[1]);
-        
+
         /* get current OS configuration value */
         if (!(fp = fopen(argv[1], "rb+"))) {
                 perror("Error opening TOS ROM file");

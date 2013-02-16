@@ -1,7 +1,7 @@
 /*      GEMINIT.C       4/23/84 - 08/14/85      Lee Lorenzen            */
 /*      GEMCLI.C        1/28/84 - 08/14/85      Lee Jay Lorenzen        */
 /*      GEM 2.0         10/31/85                Lowell Webster          */
-/*      merge High C vers. w. 2.2               8/21/87         mdf     */ 
+/*      merge High C vers. w. 2.2               8/21/87         mdf     */
 /*      fix command tail handling               10/19/87        mdf     */
 
 /*
@@ -120,12 +120,12 @@ static BYTE     cmd[LEN_ZPATH];
 WORD hex_dig(BYTE achar)
 {
         if ( (achar >= '0') && (achar <= '9') )
-          return(achar - '0');  
+          return(achar - '0');
         else
         {
           achar = toupper(achar);
           if ( (achar >= 'A') && (achar <= 'F') )
-             return(achar - 'A' + 10);  
+             return(achar - 'A' + 10);
           else
             return(NULL);
         }
@@ -411,7 +411,7 @@ static void sh_init(void)
                                                 /* add in internal      */
                                                 /*   search paths with  */
                                                 /*   right drive letter */
-        
+
         sh_addpath();
                                                 /* set defaults         */
         psh->sh_doexec = psh->sh_dodef = gl_shgem
@@ -449,7 +449,7 @@ static void sh_init(void)
             savch = *pdst;
             *pdst = '\0';                       /* mark for sh_name()   */
             pend = sh_name(psrc);               /* see if path also     */
-            *pdst = savch;                      /* either blank or null */      
+            *pdst = savch;                      /* either blank or null */
             pdst = &D.s_cmd[0];
             if (pend != psrc)
             {
@@ -517,7 +517,7 @@ static void sh_init(void)
                                               /*  there will be a space */
                                               /*  at the end of the last*/
                                               /*  arg followed by a 0D  */
-            while ( (*psrc) && 
+            while ( (*psrc) &&
                     (*psrc != 0x0D) &&
                     (*psrc != 0x09) &&          /* what is this??       */
                     !((*psrc == '/') && (toupper(*(psrc+1)) == 'D')) )

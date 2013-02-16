@@ -17,10 +17,10 @@
 #include "tosvars.h"
 #include "asm.h"
 #include "vectors.h"
- 
+
 /*
  * This is a straightforward implementation of PSG-related xbios routines.
- * 
+ *
  * Note: some care has to be exerted when accessing the PSG registers.
  * Areas using the PSG are:
  * - xbios sound and floppy routines
@@ -28,9 +28,9 @@
  * - RS232 interrupts (to handle RTS/CTS hardware flow control)
  * - timer C sound interrupt (play dosound)
  * - parallel port bios device.
- * Since acessing to a PSG register is a two step operation that requires 
- * first to write in control, then read or write control or data, it is 
- * necessary that no interrupt which could also use the PSG occur when 
+ * Since acessing to a PSG register is a two step operation that requires
+ * first to write in control, then read or write control or data, it is
+ * necessary that no interrupt which could also use the PSG occur when
  * using the PSG.
  */
 
@@ -54,7 +54,7 @@ void snd_init(void)
 #if CONF_WITH_YM2149
   /* set ports A and B to output */
   PSG->control = PSG_MULTI;
-  PSG->data = 0xC0;  
+  PSG->data = 0xC0;
   /* deselect both floppies */
   PSG->control = PSG_PORT_A;
   PSG->data = 0x07;
@@ -71,12 +71,12 @@ LONG giaccess(WORD data, WORD reg)
 #if CONF_WITH_YM2149
   WORD old_sr;
   LONG value = 0;
-  
+
   old_sr = set_sr(0x2700);
   PSG->control = reg & 0xF;
   if(reg & GIACCESS_WRITE) {
     PSG->data = data;
-  } 
+  }
   value = PSG->control;
   set_sr(old_sr);
   return value;
@@ -90,7 +90,7 @@ void ongibit(WORD data)
 #if CONF_WITH_YM2149
   WORD old_sr;
   WORD tmp;
-  
+
   old_sr = set_sr(0x2700);
   PSG->control = PSG_PORT_A;
   tmp = PSG->control;
@@ -105,7 +105,7 @@ void offgibit(WORD data)
 #if CONF_WITH_YM2149
   WORD old_sr;
   WORD tmp;
-  
+
   old_sr = set_sr(0x2700);
   PSG->control = PSG_PORT_A;
   tmp = PSG->control;
@@ -135,7 +135,7 @@ void sndirq(void)
 {
   register BYTE *code;
   register BYTE instr;
-  
+
   code = sndtable;
   if(code == 0) return;
   if(snddelay) {
@@ -163,7 +163,7 @@ void sndirq(void)
       code -= 4;
     }
     break;
-  default: 
+  default:
     /* break; ??? */
   case 0xff:
     snddelay = *code++;
@@ -173,35 +173,35 @@ void sndirq(void)
   sndtable = code;
 }
 
-static const UBYTE bellsnd[] = { 
+static const UBYTE bellsnd[] = {
   0, 0x34,    /* channel A pitch */
   1, 0,
   2, 0,       /* no channel B */
   3, 0,
-  4, 0,       /* no channel C */ 
-  5, 0, 
-  6, 0,       /* no noise */ 
+  4, 0,       /* no channel C */
+  5, 0,
+  6, 0,       /* no noise */
   7, 0xFE,    /* no sound or noise except channel A */
   8, 0x10,    /* channel A amplitude */
   9, 0,
   10, 0,
   11, 0,      /* envelope */
   12, 16,
-  13, 9, 
+  13, 9,
   0xFF, 0,    /* stop sound */
 };
 
-static const UBYTE keyclicksnd[] = { 
+static const UBYTE keyclicksnd[] = {
   0, 0x3B,
   1, 0,
   2, 0,
   3, 0,
-  4, 0, 
-  5, 0, 
+  4, 0,
+  5, 0,
   6, 0,
   7, 0xFE,
   8, 16,
-  13, 3, 
+  13, 3,
   11, 0x80,
   12, 1,
   0xFF, 0,
@@ -221,7 +221,7 @@ static void do_bell(void)
 #endif
 }
 
-static void do_keyclick(void) 
+static void do_keyclick(void)
 {
 #if CONF_WITH_YM2149
   dosound((LONG) keyclicksnd);

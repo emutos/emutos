@@ -1,5 +1,5 @@
 /*      GEMGRAF.C       04/11/84 - 09/17/85     Lee Lorenzen            */
-/*      merge High C vers. w. 2.2               8/21/87         mdf     */ 
+/*      merge High C vers. w. 2.2               8/21/87         mdf     */
 /*      fix gr_gicon null text                  11/18/87        mdf     */
 
 /*
@@ -96,7 +96,7 @@ static WORD     gl_hsptschar;
 
 /*
 *       Routine to set the clip rectangle.  If the w,h of the clip
-*       is 0, then no clip should be set.  Ohterwise, set the 
+*       is 0, then no clip should be set.  Ohterwise, set the
 *       appropriate clip.
 */
 void gsx_sclip(GRECT *pt)
@@ -136,7 +136,7 @@ WORD gsx_chkclip(GRECT *pt)
         {
           if ((pt->g_y + pt->g_h) < gl_yclip)
             return(FALSE);                      /* all above    */
-          if ((pt->g_x + pt->g_w) < gl_xclip) 
+          if ((pt->g_x + pt->g_w) < gl_xclip)
             return(FALSE);                      /* all left     */
           if ((gl_yclip + gl_hclip) <= pt->g_y)
             return(FALSE);                      /* all below    */
@@ -159,7 +159,7 @@ static void gsx_xline(WORD ptscount, WORD *ppoints)
           if ( *ppoints == *(ppoints + 2) )
           {
             st = verttbl[( (( *ppoints) & 1) | ((*(ppoints + 1) & 1 ) << 1))];
-          }     
+          }
           else
           {
             linexy = ( *ppoints < *( ppoints + 2 )) ? ppoints : ppoints + 2;
@@ -170,7 +170,7 @@ static void gsx_xline(WORD ptscount, WORD *ppoints)
           ppoints += 2;
         }
         g_vsl_udsty( 0xffff );
-}       
+}
 
 
 /*
@@ -230,7 +230,7 @@ void gsx_attr(UWORD text, UWORD mode, UWORD color)
             contrl[0] = S_TEXT_COLOR;
             gl_tcolor = color;
           }
-        }       
+        }
         else
         {
           if (color != gl_lcolor)
@@ -385,7 +385,7 @@ void gsx_blt(LONG saddr, UWORD sx, UWORD sy, UWORD swb,
 void bb_screen(WORD scrule, WORD scsx, WORD scsy, WORD scdx, WORD scdy,
                WORD scw, WORD sch)
 {
-        gsx_blt(0x0L, scsx, scsy, 0, 
+        gsx_blt(0x0L, scsx, scsy, 0,
                 0x0L, scdx, scdy, 0,
                 scw, sch, scrule, -1, -1);
 }
@@ -427,13 +427,13 @@ void gsx_start()
           gl_nplanes++;
         }
         char_height = gl_ws.ws_chminh;
-        vst_height( char_height, &gl_wsptschar, &gl_hsptschar, 
+        vst_height( char_height, &gl_wsptschar, &gl_hsptschar,
                                 &gl_wschar, &gl_hschar );
         if(gl_ws.ws_yres<380)   /* Use a smaller font on tiny screens */
           char_height = 6;
         else
           char_height = gl_ws.ws_chmaxh;
-        vst_height( char_height, &gl_wptschar, &gl_hptschar, 
+        vst_height( char_height, &gl_wptschar, &gl_hptschar,
                                 &gl_wchar, &gl_hchar );
         gl_ncols = gl_width / gl_wchar;
         gl_nrows = gl_height / gl_hchar;
@@ -446,7 +446,7 @@ void gsx_start()
         r_set(&gl_rscreen, 0, 0, gl_width, gl_height);
         r_set(&gl_rfull, 0, gl_hbox, gl_width, (gl_height - gl_hbox));
         r_set(&gl_rzero, 0, 0, 0, 0);
-        r_set(&gl_rcenter, (gl_width-gl_wbox)/2, (gl_height-(2*gl_hbox))/2, 
+        r_set(&gl_rcenter, (gl_width-gl_wbox)/2, (gl_height-(2*gl_hbox))/2,
                         gl_wbox, gl_hbox);
         r_set(&gl_rmenu, 0, 0, gl_width, gl_hbox);
         ad_intin = (LONG) ADDR(&intin[0]);
@@ -535,7 +535,7 @@ void gsx_tblt(WORD tb_f, WORD x, WORD y, WORD tb_nc)
               pts_height = 6;
             else
               pts_height = gl_ws.ws_chmaxh;
-            vst_height( pts_height, &gl_wptschar, &gl_hptschar, 
+            vst_height( pts_height, &gl_wptschar, &gl_hptschar,
                                 &gl_wchar, &gl_hchar );
             gl_font = tb_f;
           }
@@ -547,7 +547,7 @@ void gsx_tblt(WORD tb_f, WORD x, WORD y, WORD tb_nc)
           if (tb_f != gl_font)
           {
             pts_height = gl_ws.ws_chminh;
-            vst_height( pts_height, &gl_wsptschar, &gl_hsptschar, 
+            vst_height( pts_height, &gl_wsptschar, &gl_hsptschar,
                                 &gl_wschar, &gl_hschar );
             gl_font = tb_f;
           }
@@ -590,7 +590,7 @@ void gr_rect(UWORD icolor, UWORD ipattern, GRECT *pt)
           fis = FIS_SOLID;
 
         g_vsf_color(icolor);
-        bb_fill(MD_REPLACE, fis, ipattern, 
+        bb_fill(MD_REPLACE, fis, ipattern,
                 pt->g_x, pt->g_y, pt->g_w, pt->g_h);
 }
 
@@ -691,9 +691,9 @@ void gr_crack(UWORD color, WORD *pbc, WORD *ptc, WORD *pip, WORD *pic, WORD *pmd
 
 static void gr_gblt(LONG pimage, GRECT *pi, WORD col1, WORD col2)
 {
-        gsx_blt(pimage, 0, 0, pi->g_w/8, 0x0L, pi->g_x, pi->g_y, 
+        gsx_blt(pimage, 0, 0, pi->g_w/8, 0x0L, pi->g_x, pi->g_y,
                         gl_width/8, pi->g_w, pi->g_h, MD_TRANS,
-                        col1, col2); 
+                        col1, col2);
 }
 
 
@@ -736,7 +736,7 @@ void gr_gicon(WORD state, LONG pmask, LONG pdata, LONG ptext, WORD ch,
         }
                                                 /* draw the data        */
         gr_gblt(pdata, pi, ifgcol, ibgcol);
-        
+
         if ( (state & SELECTED) &&
              (state & DRAW3D) )
         {

@@ -28,10 +28,10 @@ or
 or
     make 512 COUNTRY=de
 
-NOTE: by specifying COUNTRY=xx, all countries are included in the binary, 
-but a flag in the TOS header will indicate country 'xx'. If, however, the 
+NOTE: by specifying COUNTRY=xx, all countries are included in the binary,
+but a flag in the TOS header will indicate country 'xx'. If, however, the
 EmuTOS image is booted on an emulator featuring NVRAM emulation (such as
-ARAnyM), the country number in the NVRAM will override that setting of the 
+ARAnyM), the country number in the NVRAM will override that setting of the
 country in the TOS header.
 
 To build EmuTOS for a single country only, you must use UNIQUE instead of
@@ -64,7 +64,7 @@ Binary targets modifiers
 nothing       same as COUNTRY=us
 COUNTRY=xx    all countries in the binary, country xx being the default
 UNIQUE=xx     a smaller binary with only support for country xx
-DEF='-DSOMEDEFINE=value' 
+DEF='-DSOMEDEFINE=value'
               used to override the default settings from include/config.h.
               WARNING: do "make clean" first.
 
@@ -103,7 +103,7 @@ STonX-specific notes
 =======================
 
 EmuTOS now needs no change in STonX any longer. It will run on a
-normal STonX. 
+normal STonX.
 
 But, if you want to see debugging output in STonX, you need to do two
 things:
@@ -144,6 +144,6 @@ things:
 
 Have success!
 
--- 
+--
 The EmuTOS development team
 http://emutos.sourceforge.net/

@@ -17,7 +17,7 @@
 /*
  *       WORD LBWMOV(WORD *pdst, const UBYTE *psrc)
  *
- *       expand from unsigned bytes to words until you hit a null. 
+ *       expand from unsigned bytes to words until you hit a null.
  *       return the number of characters moved
  */
 

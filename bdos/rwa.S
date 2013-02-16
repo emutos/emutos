@@ -88,14 +88,14 @@
 //
 //      14 May 86       KTB     removed dojmp
 //
-//      02 Jul 86       KTB     M01.01a.0702.01 osinit now returns address of 
+//      02 Jul 86       KTB     M01.01a.0702.01 osinit now returns address of
 //                              date/time stamp for bdos
 //
 //      23 Jul 86       KTB     M01.01.0723.01 osinit needs to save stack ptr
 //                              in some other reg besides d1.
 //
 //      24 Jul 86       KTB     M01.01.0724.01 osinit no longer returns addr
-//                              of date/time stamp.  this is all handled in 
+//                              of date/time stamp.  this is all handled in
 //                              startup.a
 //
 //      04 Aug 86       KTB     M01.01.0804.02 osinit => _osinit
@@ -126,7 +126,7 @@
         .globl  _enter
         .globl  _old_trap2
         .globl  _bdos_trap2
-        
+
         .extern _osif
         .extern _xterm
         .extern _run
@@ -141,7 +141,7 @@
 // and VDI are already in memory.
 //
 
-_bdos_trap2:                              
+_bdos_trap2:
         tst.w   d0
         beq     oterm
 
@@ -278,7 +278,7 @@ retsys: move.l  a6,sp
 _termuser:
         move.l  _run,a5
         bra     ggusr
-        
+
         .bss
         .even
 

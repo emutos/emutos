@@ -1,5 +1,5 @@
 /*
- * fsopnclo.c - open/close/create/delete routines for file system       
+ * fsopnclo.c - open/close/create/delete routines for file system
  *
  * Copyright (c) 2001 Lineo, Inc.
  *
@@ -20,7 +20,7 @@
 **      originator of the fix.  The XX refers to the module in which the
 **      fix was originally made, fs.c (FS), sup.c (SUP), etc.  The NN is
 **      the fix number to that module as indicated on the change log.  For
-**      the most part, these numbers are meaningless, and serve only to 
+**      the most part, these numbers are meaningless, and serve only to
 **      correspond code to particular problems.
 **
 **  mods
@@ -52,7 +52,7 @@
 #include "asm.h"
 #include "fs.h"
 #include "gemerror.h"
-#include "string.h"      
+#include "string.h"
 #include "mem.h"
 #include "time.h"
 
@@ -109,18 +109,18 @@ static void sftdel(FTAB *sftp);
 **      Last modified   SCC     13 May 85
 */
 
-long    xcreat(char *name, char attr) 
+long    xcreat(char *name, char attr)
 {
         return(ixcreat(name, attr & ~FA_SUBDIR));
 }
 
 
-/*      
+/*
 **  ixcreat - internal routine for creating files
 */
 /*  name: path name of file
  *  attr: atttributes
- */             
+ */
 long ixcreat(char *name, char attr)
 {
         register DND *dn;
@@ -212,7 +212,7 @@ long ixcreat(char *name, char attr)
 }
 
 
-/*      
+/*
 **  xopen - open a file (path name)
 **
 **  returns
@@ -228,20 +228,20 @@ long ixcreat(char *name, char attr)
 **      Last modified   SCC     5 Apr 85
 */
 
-long    xopen(char *name, int mod) 
+long    xopen(char *name, int mod)
 {
         return (ixopen (name, mod&VALID_FOPEN_BITS));
 }
 
 /*
-**  ixopen - open a file 
+**  ixopen - open a file
 **
 **  returns
 **      <0 = error
 **      >0 = file handle
 */
 
-static long 
+static long
 ixopen(char *name, int mod)
 {
         FCB *f;
@@ -255,10 +255,10 @@ ixopen(char *name, int mod)
         if (!dn)                                                /* M01.01.1214.01 */
                 return( EFILNF );
 
-        /* 
-        **  now scan the directory file for a matching filename 
+        /*
+        **  now scan the directory file for a matching filename
         */
-        
+
         pos = 0;
         if (!(f = scan(dn,s,FA_NORM,&pos)))
                 return(EFILNF);
@@ -272,12 +272,12 @@ ixopen(char *name, int mod)
 
 
 /*
-**  makopn - make an open file for sft handle h 
+**  makopn - make an open file for sft handle h
 **
 **      Last modified   SCC     8 Apr 85
 */
 
-static long makopn(FCB *f, DND *dn, int h, int mod) 
+static long makopn(FCB *f, DND *dn, int h, int mod)
 {
         register OFD *p;
         register OFD *p2;
@@ -285,7 +285,7 @@ static long makopn(FCB *f, DND *dn, int h, int mod)
 
         dm = dn->d_drv;
 
-        if (!(p = MGET(OFD))) 
+        if (!(p = MGET(OFD)))
                 return(ENSMEM);
 
         p->o_mod = mod;                 /*  set mode                    */
@@ -308,8 +308,8 @@ static long makopn(FCB *f, DND *dn, int h, int mod)
         if (p2)
         {       /* steal time,date,startcl,fileln */
                 memcpy(&p->o_time, &p2->o_time, 12);
-                /* not used yet... TBA *********/      
-                p2->o_thread = p; 
+                /* not used yet... TBA *********/
+                p2->o_thread = p;
         }
         else
         {
@@ -332,7 +332,7 @@ static long makopn(FCB *f, DND *dn, int h, int mod)
 **              ENHNDL
 **
 **      NOTES:
-**              make a pointer to the ith entry of sft 
+**              make a pointer to the ith entry of sft
 **              make i a register int.
 */
 
@@ -365,8 +365,8 @@ static long opnfil(FCB *f, DND *dn, int mod)
 **      NULL
 */
 
-/* field: which field to match on 
- * ptr: ptr to match on 
+/* field: which field to match on
+ * ptr: ptr to match on
  */
 
 static FTAB *sftsrch(int field, char *ptr)
@@ -380,14 +380,14 @@ static FTAB *sftsrch(int field, char *ptr)
         {
                 case SFTOFD:
                         for( i = 0 , sftp = sft , ofd = (OFD *) ptr ;
-                             i < OPNFILES  &&  sftp->f_ofd != ofd ; 
-                             ++i, ++sftp ) 
+                             i < OPNFILES  &&  sftp->f_ofd != ofd ;
+                             ++i, ++sftp )
                                 ;
                         break ;
                 case SFTOWNER:
                         for( i = 0 , sftp = sft , pd = (PD *) ptr ;
-                             i < OPNFILES  &&  sftp->f_own != pd ; 
-                             ++i, ++sftp ) 
+                             i < OPNFILES  &&  sftp->f_own != pd ;
+                             ++i, ++sftp )
                                 ;
                         break ;
                 default:
@@ -431,9 +431,9 @@ static void sftdel( FTAB *sftp )
 **              EIHNDL
 **              ixclose()
 **
-**      SCC:    I have added 'rc' to allow return of status from ixclose().  I 
-**              do not yet know whether it is appropriate to perform the 
-**              operations inside the 'if' statement following the invocation 
+**      SCC:    I have added 'rc' to allow return of status from ixclose().  I
+**              do not yet know whether it is appropriate to perform the
+**              operations inside the 'if' statement following the invocation
 **              of ixclose(), but I am leaving the flow of control intact.
 */
 
@@ -486,8 +486,8 @@ long xclose(int h)
 **
 **      Last modified   SCC     10 Apr 85
 **
-**      NOTE:   I'm not sure that returning immediatly upon an error from 
-**              ixlseek() is the right thing to do.  Some data structures may 
+**      NOTE:   I'm not sure that returning immediatly upon an error from
+**              ixlseek() is the right thing to do.  Some data structures may
 **              not be updated correctly.  Watch out for this!
 **              Also, I'm not sure that the EINTRN return is ok.
 */
@@ -552,16 +552,16 @@ long    ixclose(OFD *fd, int part)
 /*
 ** [1]  We play games here (thanx, Jason).  The ixwrite() call will essentially
 **      copy the time, date, cluster, and length fields from the OFD of the
-**      (dir) file we are closeing to the FCB for this (dir) file in the 
-**      parent dir.  The fileln field of this dir is thus set to 0.  But if 
-**      this is a directory we are closing (path & CL_DIR), shouldn't the 
+**      (dir) file we are closeing to the FCB for this (dir) file in the
+**      parent dir.  The fileln field of this dir is thus set to 0.  But if
+**      this is a directory we are closing (path & CL_DIR), shouldn't the
 **      fileln be zero anyway?  I give up.
 **                                      - ktb
 */
 
 
 
-/*      
+/*
 **  xunlink - unlink (delete) a file
 **
 **      Function 0x41   f_delete
@@ -573,7 +573,7 @@ long    ixclose(OFD *fd, int part)
 **
 */
 
-long xunlink(char *name) 
+long xunlink(char *name)
 {
         register DND *dn;
         register FCB *f;
@@ -606,18 +606,18 @@ long xunlink(char *name)
 **  ixdel - internal delete file.
 **
 **  Traverse the list of files open for this directory node.
-**  If a file is found that has the same position in the directory as the one 
-**  we are to delete, then scan the system file table to see if this process is 
+**  If a file is found that has the same position in the directory as the one
+**  we are to delete, then scan the system file table to see if this process is
 **  then owner.  If so, then close it, otherwise abort.
-**  
-**  NOTE:       both 'for' loops scan for the entire length of their 
-**              respective data structures, and do not drop out of the loop on 
+**
+**  NOTE:       both 'for' loops scan for the entire length of their
+**              respective data structures, and do not drop out of the loop on
 **              the first occurence of a match.
 **      Used by
 **              ixcreat()
 **              xunlink()
 **              xrmdir()
-** 
+**
 */
 
 long ixdel(DND *dn, FCB *f, long pos)
@@ -665,8 +665,8 @@ long ixdel(DND *dn, FCB *f, long pos)
         ixclose(fd,CL_DIR);
 
 /*
-**      NOTE    that the preceding routines that do physical disk operations 
-**      will 'longjmp' on failure at the BIOS level, thereby allowing us to 
+**      NOTE    that the preceding routines that do physical disk operations
+**      will 'longjmp' on failure at the BIOS level, thereby allowing us to
 **      simply return with E_OK.
 */
 

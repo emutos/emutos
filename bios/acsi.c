@@ -40,7 +40,7 @@ static int do_acsi_rw(WORD rw, LONG sect, WORD cnt, LONG buf, WORD dev);
 
 #define SMALL_TIMEOUT 100   /* ms between cmd bytes */
 #define LARGE_TIMEOUT 1000  /* ms for the command itself */
- 
+
 /*
  * High-level ACSI stuff.
  */
@@ -52,20 +52,20 @@ LONG acsi_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev)
     int retry;
     int err = 0;
     LONG tmp_buf;
-    
+
 #if CONF_WITH_ACSI==0
     return EUNDEV;
 #endif
 
-    /* read by chunks of at most 0x80 sectors. 
+    /* read by chunks of at most 0x80 sectors.
      * (0x80 * 512 bytes will fit in the 64 kB buffer _FRB, and cnt
      * must fit in a byte anyway.)
      */
     while(count > 0) {
         cnt = 0x80;
-        if(cnt > count) 
+        if(cnt > count)
             cnt = count;
-            
+
 #if CONF_WITH_FRB
         if (buf > 0x1000000L) {
             if (cookie_frb == 0) {
@@ -81,7 +81,7 @@ LONG acsi_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev)
         {
             tmp_buf = buf;
         }
-        
+
         if(rw && need_frb) {
             memcpy((void *)tmp_buf, (void *)buf, (LONG)cnt * SECTOR_SIZE);
         }
@@ -99,7 +99,7 @@ LONG acsi_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev)
             kprintf("ACSI -> %d\n", err);
             return err;
         }
-        
+
         count -= cnt;
         buf += (LONG)cnt * SECTOR_SIZE;
         sector += cnt;
@@ -108,7 +108,7 @@ LONG acsi_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev)
 }
 
 /*
- * Internal implementation - 
+ * Internal implementation -
  * cnt <= 0xFF, no retry done, returns -1 if timeout, or the DMA status.
  */
 
@@ -127,10 +127,10 @@ static int do_acsi_rw(WORD rw, LONG sector, WORD cnt, LONG buf, WORD dev)
 
     /* set flock */
     flock = -1;
-    
+
     /* load DMA base address */
     set_dma_addr((ULONG) buf);
-    
+
     if(rw) {
         hdc_start_dma_write(cnt);
         opcode = 0x0a;      /* write */
@@ -138,7 +138,7 @@ static int do_acsi_rw(WORD rw, LONG sector, WORD cnt, LONG buf, WORD dev)
         hdc_start_dma_read(cnt);
         opcode = 0x08;      /* read */
     }
-        
+
     /* emit command */
     status = send_command(opcode,dev,sector,cnt);
 
@@ -198,8 +198,8 @@ static void dma_send_byte(UBYTE data, UBYTE control)
 
 
 /* the hdc_start_dma_*() functions toggle the DMA write bit, to
- * signal the DMA to clear its internal buffers (16 bytes in input, 
- * 32 bytes in output). This is done just before issuing the 
+ * signal the DMA to clear its internal buffers (16 bytes in input,
+ * 32 bytes in output). This is done just before issuing the
  * command to the DMA.
  */
 

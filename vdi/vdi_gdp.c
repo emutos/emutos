@@ -1,5 +1,5 @@
 /*
- * 
+ *
  *
  * Copyright 1982 by Digital Research Inc.  All rights reserved.
  * Copyright 1999 by Caldera, Inc. and Authors:

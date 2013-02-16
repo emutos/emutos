@@ -11,7 +11,7 @@
  */
 
 #define VERSION "0.2"
- 
+
 /*
  * This is a very naive compressor. It is best described by the
  * algorithm implemented in the decompressor:
@@ -22,7 +22,7 @@
  * forever {
  *   read number n
  *   append n bytes verbatim from the 'file' into the 'buffer'
- *   read number offset 
+ *   read number offset
  *   quit if offset == 0
  *   read number n
  *   append n bytes from (buffer_position - offset) info the 'buffer',
@@ -36,21 +36,21 @@
  *
  * This scheme was chosen so that the decompressor can be very fast.
  * It achieves a moderate 30% compression ratio on the EmuTOS binary,
- * and about 40% on this source code file. Decompression should be 
+ * and about 40% on this source code file. Decompression should be
  * only marginally slower than simply copying the uncompressed data.
  *
  * The compression algorithm is crude too. Conceptually, we scan
- * the data and compare the 4 bytes string at the current position 
- * with all possible previous 4 bytes string to find a matching 
- * substring, then we take the best possible substring. 
+ * the data and compare the 4 bytes string at the current position
+ * with all possible previous 4 bytes string to find a matching
+ * substring, then we take the best possible substring.
  *
  * Todo:
  * - check once and for all which stdio function set errno and which don't
- * - add an option to prepend the decompression code, together 
+ * - add an option to prepend the decompression code, together
  *   with the length of uncompressed data
- * 
+ *
  * Possible Improvements
- * - it shouldn't be necessary to read all the file, just keeping 
+ * - it shouldn't be necessary to read all the file, just keeping
  *   64 kB in memory (32 ahead, and 32 back) should suffice.
  */
 
@@ -65,7 +65,7 @@ static void fatal(int with_errno, const char *fmt, ...)
 {
   int err = errno;
   va_list ap;
-  
+
   va_start(ap, fmt);
   vfprintf(stderr, fmt, ap);
   va_end(ap);
@@ -103,7 +103,7 @@ void * xmalloc(size_t s)
 typedef struct xfile {
   FILE *f;
   char fname[1];
-} XFILE; 
+} XFILE;
 
 XFILE *xfopen(const char *fname, const char *mode)
 {
@@ -162,18 +162,18 @@ int xfseek(XFILE *f, long offset, int whence)
 }
 
 
-  
+
 #if INT_MAX >= 2147483647
 typedef int index_t;
 typedef unsigned int uhash_t;
 #else
 typedef long index_t;
 typedef unsigned long uhash_t;
-#endif 
+#endif
 
 typedef unsigned char uchar;
 
-/* 
+/*
  * globals - everything will be indices into the whole data buffer,
  * so let's make this buffer global.
  */
@@ -184,7 +184,7 @@ index_t len;  /* size of data */
 const int z = 4;  /* minimum number of char for a string */
 
 /*
- * lists of indices into the buffer (to each 4-bytes string is 
+ * lists of indices into the buffer (to each 4-bytes string is
  * associated the list of its occurrences so far)
  */
 
@@ -197,7 +197,7 @@ cell *freelist = NULL;
 cell *cellpool = NULL;
 int cellpoolsize = 0;
 
-cell *cell_new(void) 
+cell *cell_new(void)
 {
   cell *p;
   if(freelist) {
@@ -212,14 +212,14 @@ cell *cell_new(void)
   return p;
 }
 
-void cell_free(cell *p) 
+void cell_free(cell *p)
 {
-  p->next = freelist; freelist = p; 
+  p->next = freelist; freelist = p;
 }
 
 
 /*
- * the hash table: will hash z consecutive bytes and remember 
+ * the hash table: will hash z consecutive bytes and remember
  * them by the index in buf
  */
 
@@ -233,11 +233,11 @@ hcell *hfreelist = NULL;
 hcell *hcellpool = NULL;
 int hcellpoolsize = 0;
 
-hcell *hcell_new(void) 
+hcell *hcell_new(void)
 {
   hcell *p;
   if(hfreelist) {
-    p = hfreelist; 
+    p = hfreelist;
     hfreelist = p->next;
   } else {
     if(hcellpoolsize <= 0) {
@@ -249,10 +249,10 @@ hcell *hcell_new(void)
   return p;
 }
 
-void hcell_free(hcell *p) 
+void hcell_free(hcell *p)
 {
-  p->next = hfreelist; 
-  hfreelist = p; 
+  p->next = hfreelist;
+  hfreelist = p;
 }
 
 typedef struct hash {
@@ -287,7 +287,7 @@ uhash_t hash_compute(index_t x)
 }
 
 /* add the bucket if the prefix is not here, and in any case
- * return the address of the (maybe new) hash bucket 
+ * return the address of the (maybe new) hash bucket
  */
 hcell *hash_find_add(hash *h, index_t x)
 {
@@ -334,22 +334,22 @@ void hash_remove_old(hash *h, index_t min_x)
   }
 }
 
-/* 
- * output file 
+/*
+ * output file
  */
- 
+
 XFILE *ofile;
 
-void out_byte(uchar c) { 
+void out_byte(uchar c) {
   xfwrite(&c, 1, 1, ofile);
 }
 
-void out_num(int a) { 
+void out_num(int a) {
 #if DEBUG
-  if(a < 0 || a >= 0x8000) 
+  if(a < 0 || a >= 0x8000)
     fatal(0, "out_num(0x%x)", a);
 #endif
-  
+
   if(a < 128) {
     out_byte(a);
   } else {
@@ -370,9 +370,9 @@ void compress(void)
 {
   index_t i;
   int remove_timeout = 0x7FFF;
-  
+
   hash *h = hash_new();
-  
+
   index_t verb_x = 0;
   int current_n = 0;
 
@@ -380,9 +380,9 @@ void compress(void)
     hcell *hp = hash_find_add(h, i);
     cell *p = hp->list;
     if(p != NULL && current_n == 0) {
-      /* if this string was encountered, look for the biggest 
+      /* if this string was encountered, look for the biggest
        * matching substring. As the most recent strings come first,
-       * we can skip the end of the list once one of the string is too 
+       * we can skip the end of the list once one of the string is too
        * far away in the past.
        */
       index_t best_x = 0;
@@ -427,7 +427,7 @@ void compress(void)
         /* next verbatim part will be after this string */
         verb_x = i + best_n;
       }
-    } 
+    }
     /* in any case, record the current string in the hash. */
     p = cell_new();
     p->x = i;
@@ -436,8 +436,8 @@ void compress(void)
     /* if in a copy, decrement the length */
     if(current_n > 0) {
       current_n --;
-    } 
-    
+    }
+
     if(--remove_timeout <= 0) {
       if(verbose) fprintf(stderr, ".");
       remove_timeout = 0x7FFF;
@@ -469,15 +469,15 @@ void read_all(const char *fname, uchar **buf, index_t *len)
 {
   XFILE *f;
   size_t count;
-  
+
   f = xfopen(fname, "rb");
-  
+
   xfseek(f, 0L, SEEK_END);
   count = xftell(f);
   xfseek(f, 0L, SEEK_SET);
   *buf = xmalloc(count);
   *len = count;
-  if(count != xfread(*buf, 1, count, f)) 
+  if(count != xfread(*buf, 1, count, f))
     fatal(1, "short read on %s", fname);
   xfclose(f);
 }
@@ -504,7 +504,7 @@ void usage(int exit_value)
 void do_it(char *lfname, char *ifname, char *ofname)
 {
   ofile = xfopen(ofname, "wb");
-  
+
   if(lfname != NULL) {
     /* first copy the loader to the beginning of the output file */
     XFILE *lfile = xfopen(lfname, "rb");
@@ -516,38 +516,38 @@ void do_it(char *lfname, char *ifname, char *ofname)
     }
     xfclose(lfile);
   }
-  
+
   read_all(ifname, &buf, &len);
-  
+
   if(lfname != NULL) {
     /* align to even boundary */
     long len = xftell(ofile);
     if(len & 1) out_byte(0);
   }
-  
+
   /* append "CMPR" */
-  out_byte('C'); out_byte('M'); out_byte('P'); out_byte('R'); 
-  
+  out_byte('C'); out_byte('M'); out_byte('P'); out_byte('R');
+
   if(lfname != NULL) {
     /* destination-address, len */
     uchar *a = buf+8;
-    out_byte(*a++); out_byte(*a++); out_byte(*a++); out_byte(*a++); 
+    out_byte(*a++); out_byte(*a++); out_byte(*a++); out_byte(*a++);
     out_long(len);
-  } 
-  
+  }
+
   compress();
-  
+
   /* print stats just for fun */
   if(verbose)
-  { 
+  {
     long olen = xftell(ofile);
-    printf("len = %ld, olen = %ld, saved %ld (%d%%)\n", 
+    printf("len = %ld, olen = %ld, saved %ld (%d%%)\n",
         (long)len, (long)olen, (long)len-olen, percent(len, olen));
   }
   if(verbose > 1) {
     printf("total memory allocated %ld\n", total);
   }
-  
+
   xfclose(ofile);
 }
 

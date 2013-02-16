@@ -331,7 +331,7 @@ void d_gtext(Vwk * vwk)
                 else
                     LN_MASK = LN_MASK >> 1;
             }
-        } 
+        }
     }
 }
 

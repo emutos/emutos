@@ -72,8 +72,8 @@ void get_keytbl(const struct keytbl **tbl);
 const char *get_lang_name(void);
 
 /* used by initlinea.c */
-void get_fonts(const struct font_head **f6x6, 
-               const struct font_head **f8x8, 
+void get_fonts(const struct font_head **f6x6,
+               const struct font_head **f8x8,
                const struct font_head **f8x16);
 
 #endif /* COUNTRY_H */

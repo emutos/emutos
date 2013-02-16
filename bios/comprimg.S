@@ -15,8 +15,8 @@
 #include "asmdefs.h"
 #include "header.h"
 
-/* define this to 1 to activate minimum debug support. This will print 
- * data using the native feature interface. 
+/* define this to 1 to activate minimum debug support. This will print
+ * data using the native feature interface.
  */
 #define COMPRDBG 0
 
@@ -28,7 +28,7 @@
         .extern _uncompr
 
 /* To be sure not to have any trouble when loading the actual image
- * in RAM, just set the stack below the top of the exception vector 
+ * in RAM, just set the stack below the top of the exception vector
  * zone.  We won't need that much of a stack anyway.
  */
 _stktop = 0x378
@@ -39,7 +39,7 @@ stderr = 0x37C
 /*
  * OSHEADER
  */
- 
+
         .text
 
 _os_entry:
@@ -50,9 +50,9 @@ reseth:
     dc.l    _main       // reseth, pointer to reset handler
 _os_beg:
     dc.l    _os_entry   // os_beg, base of os = _sysbase
-_os_end: 
+_os_end:
     dc.l    _end        // os_end, first byte RAM not used by OS
-os_res1:        
+os_res1:
     dc.l    _main       // os_res1, reserved
 _os_magic:
     dc.l    0           // os_magic, pointer to GEM's MUPB
@@ -77,7 +77,7 @@ os_dummy:
 /*
  * Get in supervisor mode and reset all Hardware
  */
- 
+
 _main:                         // stunt to guarantee entry into supervisor mode
         move    #0x2700,sr     // disable interrupts
 #ifndef __mcoldfire__
@@ -104,11 +104,11 @@ nodiag:
 
 
 /*
- * Set up a supervisor stack 
+ * Set up a supervisor stack
  */
 
         lea     _stktop, sp             // Setup Supervisor Stack
-        
+
 /*
  * Check, if we should jump to a reset vector after warmboot
  */
@@ -152,12 +152,12 @@ find:
         addq.l  #4,a0
 
 /* okay, now a0 is just after 'CMPR', that's the start of compressed data.
- * It points to a header containing the address to where we must 
- * decompress, and the length of uncompressed data. 
+ * It points to a header containing the address to where we must
+ * decompress, and the length of uncompressed data.
  * Let's just pass all this to uncompress()
  */
         move.l  a0,-(sp)
-        
+
         jsr     _uncompr
 
         /* jump at start of RAMTOS. The address of the header is still
@@ -166,7 +166,7 @@ find:
         move.l  (sp)+,a0
         move.l  (a0),a0
         jmp     (a0)
-        
+
 
 /*
  * stubs - these are called during memory initialisation
@@ -200,7 +200,7 @@ _natfeat_init:
 fail_natfeat:
         move.l  a1,sp
         rts
-        
+
         SECTION_RODATA
 
 nf_stderr_name:
@@ -210,20 +210,20 @@ nf_stderr_name:
         .text
 
 #else /* no native features */
-        
+
 _natfeat_init:
         clr.l   stderr
-        rts       
+        rts
 
 #endif
-        
+
 /*
  * debug - activate to use minimal debug support using natfeat NF_STDERR.
  * usage:
- *    move.l d0,-(sp)   
- *    jsr p   
+ *    move.l d0,-(sp)
+ *    jsr p
  * prints d0 in hexadecimal
- *    jsr h    
+ *    jsr h
  * prints "H %08lx" the current pc
  */
 
@@ -234,7 +234,7 @@ p:
         move.l  16(sp),d0
         /* stack:  d0,d1,d2,rts,val */
         move.w  #7,d1
-nibble: 
+nibble:
         rol.l   #4,d0
         move.b  d0,d2
         and.b   #0xF,d2
@@ -267,7 +267,7 @@ h:
         bsr     outch
         addq.l  #2,sp
         rts
-        
+
 outch:
         subq.l  #4,sp
         clr.b   9(sp)

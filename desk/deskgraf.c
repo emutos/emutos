@@ -95,7 +95,7 @@ GLOBAL GRECT    gl_rmenu;
 
 /*
 *       Routine to set the clip rectangle.  If the w,h of the clip
-*       is 0, then no clip should be set.  Ohterwise, set the 
+*       is 0, then no clip should be set.  Ohterwise, set the
 *       appropriate clip.
 */
 WORD gsx_sclip(GRECT *pt)
@@ -137,7 +137,7 @@ void gsx_xline(WORD ptscount, WORD *ppoints )
           if ( *ppoints == *(ppoints + 2) )
           {
             st = verttbl[( (( *ppoints) & 1) | ((*(ppoints + 1) & 1 ) << 1))];
-          }     
+          }
           else
           {
             linexy = ( *ppoints < *( ppoints + 2 )) ? ppoints : ppoints + 2;
@@ -148,7 +148,7 @@ void gsx_xline(WORD ptscount, WORD *ppoints )
           ppoints += 2;
         }
         d_vsl_udsty( 0xffff );
-}       
+}
 
 
 /*
@@ -195,7 +195,7 @@ void gsx_attr(UWORD text, UWORD mode, UWORD color)
             contrl[0] = S_TEXT_COLOR;
             gl_tcolor = color;
           }
-        }       
+        }
         else
         {
           if (color != gl_lcolor)
@@ -276,7 +276,7 @@ gsx_blt(saddr, sx, sy, swb, daddr, dx, dy, dwb, w, h, rule, fgcolor, bgcolor)
 void bb_screen(WORD scrule, WORD scsx, WORD scsy, WORD scdx, WORD scdy,
                WORD scw, WORD sch)
 {
-        gsx_blt(0x0L, scsx, scsy, 0, 
+        gsx_blt(0x0L, scsx, scsy, 0,
                 0x0L, scdx, scdy, 0,
                 scw, sch, scrule, -1, -1);
 }
@@ -318,10 +318,10 @@ void gsx_start(void)
           gl_nplanes++;
         }
         char_height = gl_ws.ws_chminh;
-        vst_height( char_height, &gl_wptschar, &gl_hptschar, 
+        vst_height( char_height, &gl_wptschar, &gl_hptschar,
                                 &gl_wschar, &gl_hschar );
         char_height = gl_ws.ws_chmaxh;
-        vst_height( char_height, &gl_wptschar, &gl_hptschar, 
+        vst_height( char_height, &gl_wptschar, &gl_hptschar,
                                 &gl_wchar, &gl_hchar );
         gl_ncols = gl_width / gl_wchar;
         gl_nrows = gl_height / gl_hchar;
@@ -333,7 +333,7 @@ void gsx_start(void)
         r_set(&gl_rscreen, 0, 0, gl_width, gl_height);
         r_set(&gl_rfull, 0, gl_hbox, gl_width, (gl_height - gl_hbox));
         r_set(&gl_rzero, 0, 0, 0, 0);
-        r_set(&gl_rcenter, (gl_width-gl_wbox)/2, (gl_height-(2*gl_hbox))/2, 
+        r_set(&gl_rcenter, (gl_width-gl_wbox)/2, (gl_height-(2*gl_hbox))/2,
                         gl_wbox, gl_hbox);
         r_set(&gl_rmenu, 0, 0, gl_width, gl_hbox);
         ad_intin = ADDR(&intin[0]);
@@ -349,7 +349,7 @@ void gsx_tblt(WORD tb_f, WORD x, WORD y, WORD tb_nc)
           if (tb_f != gl_font)
           {
             pts_height = gl_ws.ws_chmaxh;
-            vst_height( pts_height, &gl_wptschar, &gl_hptschar, 
+            vst_height( pts_height, &gl_wptschar, &gl_hptschar,
                                 &gl_wchar, &gl_hchar );
             gl_font = tb_f;
           }

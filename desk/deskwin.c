@@ -69,7 +69,7 @@ void win_view(WORD vtype, WORD isort)
 {
         G.g_iview = vtype;
         G.g_isort = isort;
-        
+
         switch(vtype)
         {
           case V_TEXT:
@@ -78,7 +78,7 @@ void win_view(WORD vtype, WORD isort)
                 G.g_iwint = (2 * gl_wchar) - 1;
                 G.g_ihint = 2;
                 G.g_num = G.g_nmtext;
-                G.g_pxy = &G.g_xytext[0]; 
+                G.g_pxy = &G.g_xytext[0];
                 break;
           case V_ICON:
                 G.g_iwext = G.g_wicon;
@@ -86,7 +86,7 @@ void win_view(WORD vtype, WORD isort)
                 G.g_iwint = (gl_height <= 300) ? 0 : 8;
                 G.g_ihint = MIN_HINT;
                 G.g_num = G.g_nmicon;
-                G.g_pxy = &G.g_xyicon[0]; 
+                G.g_pxy = &G.g_xyicon[0];
                 break;
         }
         G.g_iwspc = G.g_iwext + G.g_iwint;
@@ -105,7 +105,7 @@ void win_start(void)
         WORD            i;
 
         obj_init();
-        win_view(START_VIEW, S_NAME);       
+        win_view(START_VIEW, S_NAME);
 
         for(i=0; i<NUM_WNODES; i++)
         {
@@ -168,10 +168,10 @@ WNODE *win_alloc(void)
           pw->w_vncol = 0x0;
           pw->w_vnrow = 0x0;
 #ifdef DESK1
-          pw->w_id = wind_create(WINDOW_STYLE, G.g_xdesk, G.g_ydesk, 
+          pw->w_id = wind_create(WINDOW_STYLE, G.g_xdesk, G.g_ydesk,
                                  G.g_wdesk, G.g_hdesk);
 #else
-          pw->w_id = wind_create(WINDOW_STYLE, G.g_xfull, G.g_yfull, 
+          pw->w_id = wind_create(WINDOW_STYLE, G.g_xfull, G.g_yfull,
                                  G.g_wfull, G.g_hfull);
 #endif
           if (pw->w_id != -1)
@@ -210,7 +210,7 @@ WNODE *win_find(WORD wh)
 void win_top(WNODE *thewin)
 {
         objc_order(G.a_screen, thewin->w_root, NIL);
-}       
+}
 
 
 /*
@@ -228,7 +228,7 @@ WNODE *win_ontop(void)
           return(&G.g_wlist[wob-2]);
         else
           return(0);
-}       
+}
 #endif
 
 
@@ -327,10 +327,10 @@ static void win_icalc(FNODE *pfnode)
 #endif
 
         if (pfnode->f_attr & F_SUBDIR)
-          pfnode->f_pa = app_afind(FALSE, AT_ISFOLD, -1, 
+          pfnode->f_pa = app_afind(FALSE, AT_ISFOLD, -1,
                                 &pfnode->f_name[0], &pfnode->f_isap);
         else
-          pfnode->f_pa = app_afind(FALSE, AT_ISFILE, -1, 
+          pfnode->f_pa = app_afind(FALSE, AT_ISFILE, -1,
                                 &pfnode->f_name[0], &pfnode->f_isap);
 }
 
@@ -360,7 +360,7 @@ void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h)
         o_hfit = min(pwin->w_pnrow + 1, pwin->w_vnrow - pwin->w_cvrow);
         r_cnt = c_cnt = 0;
         while ( (c_cnt < o_wfit) &&
-                (r_cnt < o_hfit) && 
+                (r_cnt < o_hfit) &&
                 (pstart) )
         {
                                                 /* calc offset          */
@@ -443,7 +443,7 @@ void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h)
 
 
 /*
-*       Routine to blt the contents of a window based on a new 
+*       Routine to blt the contents of a window based on a new
 *       current row or column
 */
 #ifdef DESK1
@@ -456,7 +456,7 @@ static void win_blt(WNODE *pw, WORD newcv)
         WORD            sx, sy, dx, dy, wblt, hblt, revblt, tmp;
         GRECT           c, t;
         newcv = max(0, newcv);
-        
+
 #ifdef DESK1
         if (vertical)
         {
@@ -510,7 +510,7 @@ static void win_blt(WNODE *pw, WORD newcv)
                 sx = delcv * G.g_iwspc;
                 dx = 0;
                 wblt = c.g_w - sx;
-                hblt = c.g_h; 
+                hblt = c.g_h;
             }
 #endif
             if (revblt)
@@ -523,7 +523,7 @@ static void win_blt(WNODE *pw, WORD newcv)
               dy = tmp;
             }
             gsx_sclip(&c);
-            bb_screen(S_ONLY, sx+c.g_x, sy+c.g_y, dx+c.g_x, dy+c.g_y, 
+            bb_screen(S_ONLY, sx+c.g_x, sy+c.g_y, dx+c.g_x, dy+c.g_y,
                         wblt, hblt);
 #ifdef DESK1
             if (vertical)       /* DESKTOP v1.2 bidirectional */
@@ -605,7 +605,7 @@ void win_arrow(WORD wh, WORD arrow_type)
 #ifdef DESK1
         BOOL            vertical = TRUE;
 #endif
-        
+
         newcv = 0;
         pw = win_find(wh);
 
@@ -626,19 +626,19 @@ void win_arrow(WORD wh, WORD arrow_type)
 #ifdef DESK1
           case WA_LFPAGE:
             newcv = pw->w_cvcol - pw->w_pncol;
-            vertical = FALSE; 
+            vertical = FALSE;
             break;
           case WA_RTPAGE:
             newcv = pw->w_cvcol + pw->w_pncol;
-            vertical = FALSE; 
+            vertical = FALSE;
             break;
           case WA_LFLINE:
             newcv = pw->w_cvcol - 1;
-            vertical = FALSE; 
+            vertical = FALSE;
             break;
           case WA_RTLINE:
             newcv = pw->w_cvcol + 1;
-            vertical = FALSE; 
+            vertical = FALSE;
             break;
 #endif
         }
@@ -685,7 +685,7 @@ void win_bdall(void)
 {
         WORD            ii;
         WORD            wh, xc, yc, wc, hc;
-        
+
         for (ii = 0; ii < NUM_WNODES; ii++)
         {
           wh = G.g_wlist[ii].w_id;

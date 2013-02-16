@@ -1,12 +1,12 @@
 /*      GEMOBED.C       05/29/84 - 06/20/85             Gregg Morris    */
-/*      merge High C vers. w. 2.2               8/21/87         mdf     */ 
+/*      merge High C vers. w. 2.2               8/21/87         mdf     */
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
 *                 2002 The EmuTOS development team
 *
-*       This software is licenced under the GNU Public License. 
-*       Please see LICENSE.TXT for further information.                 
+*       This software is licenced under the GNU Public License.
+*       Please see LICENSE.TXT for further information.
 *
 *                  Historical Copyright
 *       -------------------------------------------------------------
@@ -93,7 +93,7 @@ void ob_center(LONG tree, GRECT *pt)
 *       the specified character.  IDX is updated as we go based on
 *       the '_' characters that are encountered.  The reason for
 *       this routine is so that if a user types a template character
-*       during field entry the cursor will jump to the first 
+*       during field entry the cursor will jump to the first
 *       raw string underscore after that character.
 */
 static WORD scan_to_end(BYTE *pstr, WORD idx, BYTE chr)
@@ -117,7 +117,7 @@ static WORD find_pos(BYTE *str, WORD pos)
 {
         register WORD        i;
 
-        for (i=0; pos > 0; i++) 
+        for (i=0; pos > 0; i++)
         {
           if (str[i] == '_')
             pos--;
@@ -136,7 +136,7 @@ void pxl_rect(LONG tree, WORD obj, WORD ch_pos, GRECT *pt)
         GRECT           o;
 
         ob_actxywh(tree, obj, &o);
-        gr_just(edblk.te_just, edblk.te_font, edblk.te_ptmplt, 
+        gr_just(edblk.te_just, edblk.te_font, edblk.te_ptmplt,
                         o.g_w, o.g_h, &o);
         pt->g_x = o.g_x + (ch_pos * gl_wchar);
         pt->g_y = o.g_y;
@@ -176,7 +176,7 @@ void curfld(LONG tree, WORD obj, WORD new_pos, WORD dist)
 
 
 /*
-*       Routine to check to see if given character is in the desired 
+*       Routine to check to see if given character is in the desired
 *       range.  The character ranges are
 *       stored as enumerated characters (xyz) or ranges (x..z)
 */
@@ -313,7 +313,7 @@ WORD ob_edit(LONG tree, WORD obj, WORD in_char, WORD *idx, WORD kind)
         D.g_valstr[len] = NULL;
                                                 /* init formatted       */
                                                 /*   string             */
-        ob_format(edblk.te_just, &D.g_rawstr[0], &D.g_tmpstr[0], 
+        ob_format(edblk.te_just, &D.g_rawstr[0], &D.g_tmpstr[0],
                         &D.g_fmtstr[0]);
         switch(kind)
         {
@@ -375,7 +375,7 @@ WORD ob_edit(LONG tree, WORD obj, WORD in_char, WORD *idx, WORD kind)
                                                 /*   in specified set   */
                           if ( check(&bin_char, D.g_valstr[*idx]) )
                           {
-                            ins_char(&D.g_rawstr[0], *idx, bin_char, 
+                            ins_char(&D.g_rawstr[0], *idx, bin_char,
                                         edblk.te_txtlen);
                             *idx += 1;
                             no_redraw = FALSE;

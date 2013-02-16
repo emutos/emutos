@@ -91,7 +91,7 @@
 //                rotation tenths of degrees (0,900,1800,or 2700 only)  //
 //              CLIP - word                                             //
 //                if non-zero, clipping bounds (below) in effect        //
-//              XMN_CLIP,XMX_CLIP - word                                // 
+//              XMN_CLIP,XMX_CLIP - word                                //
 //                clipping region, x coordinate min & max               //
 //              YMN_CLIP,YMX_CLIP - word                                //
 //                clipping region, y coordinate min & max               //
@@ -133,7 +133,7 @@
 /////////////////////////////////////////////////////////
 //   Style equates..                                   //
 /////////////////////////////////////////////////////////
-        
+
 #define THICKM                 0x1
 #define LIGHTM                 0x2
 #define SKEWM                  0x4
@@ -142,7 +142,7 @@
 #define SHADOWM                0x20
 //
 //  Style equates converted to 68k bit numbers
-//  (bit number 0 is the least significant bit) 
+//  (bit number 0 is the least significant bit)
 //
 #define THICKEN                0
 #define LIGHT                  1
@@ -223,7 +223,7 @@
 //
 #if test1
 ////////////////////////////////////////////////////////////////////////
-//  test for very large font        //  
+//  test for very large font        //
 ////////////////////////////////////////////////////////////////////////
 #define l_off                   4               //left offset from skew
 #define r_off                   17              //right offset from skew
@@ -248,7 +248,7 @@
 //  different ways in order to accommodate rotation.                       //
 //////
 
-#define cel_ww  ((l_off+r_off+mxcelwd+15)/16)*2 //worst case # bytes/row 
+#define cel_ww  ((l_off+r_off+mxcelwd+15)/16)*2 //worst case # bytes/row
 //                                              //if width
 #define cel_wh  l_off+r_off+mxcelwd     //cell "width" if used as height
 //                                      //(90 rotation)
@@ -326,7 +326,7 @@
 //                                                  // small + large buffer
         .page
 /////////////////////////////////////////////////////////////////////////
-//  _text_blt expects variables scratchp & scrpt2 to be                 // 
+//  _text_blt expects variables scratchp & scrpt2 to be                 //
 //           initialized as follows:                                    //
 //                                                                      //
 //   _scrtchp:  is a long word pointer to the base of a buffer with at  //
@@ -347,13 +347,13 @@ _deftxbuf:
 
         .text // .rodata
 
-#define _scrpt1 0               // small buffer base offset 
+#define _scrpt1 0               // small buffer base offset
 
 _scrtsiz:
         .dc.w   cel_siz         // eat up some rom so value can be passed
 
-        
-        
+
+
 /////////////////////////////////////////////////////////////////////////
 //      Local variables defined on the user stack.                      //
 // NOTE: labels follow storage directives for use with LINK instruction  //
@@ -380,7 +380,7 @@ _scrtsiz:
 #define left_msk -38            //fringes of destination to be affected
 #define rota_msk -40            //overlap between words in inner loop
 #define shif_cnt -42            //shift count for use by left/right shift routines
-#define wrd_cnt  -44            //number inner loop words for left/right 
+#define wrd_cnt  -44            //number inner loop words for left/right
 
 /////////////////////////////////////////////////
 //  Vectors that may contain a toptable entry. //
@@ -477,7 +477,7 @@ _text_blt:
         move.w  _DESTX,-(a1)
         move.w  _DELY,-(a1)
         move.w  _DESTY,-(a1)
-        move.w  _CHUP,-(a1)             
+        move.w  _CHUP,-(a1)
 //
         move.w  _scrpt2,a0              //use big buffer
         move.w  DELY(a6),d3
@@ -490,17 +490,17 @@ _text_blt:
 //
 adr_dbl:
         movem.l a0/a1,-(sp)             //backup used scratch registers
-        move.w  d3,-(sp)                //pass DELY to act_siz on stack 
+        move.w  d3,-(sp)                //pass DELY to act_siz on stack
         move.l  8(a6),-(sp)             //pass also the parameter Vwk *
         jsr     _act_siz                //
         addq.l  #6,sp                   //remove act_siz parameters from stack
         movem.l (sp)+,a0/a1             //restore used scratch registers
-        move.w  d0,d3                   //set new DELY 
+        move.w  d0,d3                   //set new DELY
         move.w  d3,tmp_dely(a6)         //save in temp for replication use
-        move.w  DELX(a6),d2             //DELX to d2 
-        move.w  _XACC_DDA,d4            //get xacc_dda to d4 
-        move.w  _DDA_INC,d0             //dda_inc to d0      
-        moveq.l #0,d1                   //d1 = 0 
+        move.w  DELX(a6),d2             //DELX to d2
+        move.w  _XACC_DDA,d4            //get xacc_dda to d4
+        move.w  _DDA_INC,d0             //dda_inc to d0
+        moveq.l #0,d1                   //d1 = 0
         bra.b   clc_n_su
 doub_wid:
         add.w   d0,d4
@@ -626,7 +626,7 @@ chk_ymx:
         ble.b   chk_xmn                 //br if so, y-coord wholly within window
 //
 //  partial clipping of bottom portion..
-// 
+//
         andi.w  #1,d2                   //clipping odd # of lines?
         beq.b   chk_xmn                 //br if even
         btst.b  #OUTLINE,STYLE+1(a6)    //skip adjust if outlining
@@ -707,7 +707,7 @@ preblt:
         add.w   d0,d2                   // add x
         movea.l sform(a6),a0
         lea     (a0,d2.w),a0            // a0 -> font source for bottom of char
-//                                         
+//
         move.w  DELX(a6),d0             // char width
         move.w  _WEIGHT,d1              // thicken amount
         add.w   d6,d7                   // d7 = L_OFF + R_OFF
@@ -716,7 +716,7 @@ preblt:
         lsr.w   #1,d1                   // only thicken by half the regular amount
         bne.b   ful_wtok                // 26 Feb
         addq.w  #1,d1                   // 26 Feb if thickness = 0 then make = 1
-ful_wtok:       
+ful_wtok:
         lsr.w   #1,d7
 full_wt:
         btst.b  #THICKEN,STYLE+1(a6)    // smear?
@@ -730,7 +730,7 @@ no_smear:
         move.w  DELY(a6),d1
         move.w  STYLE(a6),d2
         btst    #OUTLINE,d2             // check for outline mode
-        beq.b   no_out                     
+        beq.b   no_out
         tst.w   _DOUBLE                 // doubling too?
         bne.b   no_out                  // br if yes, outline after doubling
 //
@@ -754,7 +754,7 @@ no_out:
         movea.l _scrtchp,a1
         adda.w  buffa(a6),a1            // use this logical buffer
         move.l  a1,sform(a6)            // this will be new source address
-        btst    #OUTLINE,d2                
+        btst    #OUTLINE,d2
         bne.b   do_clear
         btst    #SKEW,d2
         beq.b   no_clear
@@ -937,13 +937,13 @@ scrn_blt:
         move.b  nxtword-1(pc,d0.w),d0   // fetch offset from table (assumed:hi byte=0)
         move.w  d0,nextwrd(a6)          // save in local
 //
-        move.w  _SOURCEX,d0     
+        move.w  _SOURCEX,d0
         move.w  d0,d2
         andi.w  #0x0F,d2
         move.w  d2,tsdad(a6)            // save source dot address
         lsr.w   #3,d0                   // make byte address
         andi.w  #0xFFFE,d0              // make even-byte address (word aligned)
-        move.w  _SOURCEY,d2     
+        move.w  _SOURCEY,d2
 
         move.w  DELY(a6),height(a6)
         add.w   height(a6),d2
@@ -952,7 +952,7 @@ scrn_blt:
         neg.w   s_next(a6)
         add.w   d0,d2
 //
-//  Calculate the starting address for the character to be copied. 
+//  Calculate the starting address for the character to be copied.
 //
         movea.l sform(a6),a0
         adda.w  d2,a0                   // calculate character source address
@@ -1033,12 +1033,12 @@ blt_done:
 
 
         .text // .rodata
-        
+
 /*
- * Word Mask Table                                                
- * 
+ * Word Mask Table
+ *
  * The table has been compacted by taking the one's complement of the left
- * fringe table and combining it with the right fringe table.                                                  
+ * fringe table and combining it with the right fringe table.
  */
 
 lf_tab:         dc.w    0xFFFF          // origin for not left fringe lookup.
@@ -1125,7 +1125,7 @@ get_mask:
         not.w   d1
         and.w   d1,left_msk(a6)         // put the two masks together
 //
-        moveq.l #-4,d7                  // set blttype flag 
+        moveq.l #-4,d7                  // set blttype flag
         bra.b   msk_done                // exit mask stuff
 //
 //  Two fringe masks needed..
@@ -1207,7 +1207,7 @@ twoptble:
 
 plane_loop:
         move.w  WRT_MOD(a6),d0          // d0 = 0000xxxx ,_WRT_MODE
-        lsr.w   forecol(a6)             // this plane's foreground bit 
+        lsr.w   forecol(a6)             // this plane's foreground bit
         roxl.w  #1,d0
         lsr.w   ambient(a6)
         roxl.w  #1,d0
@@ -1403,7 +1403,7 @@ dblendr:
         jmp     (a5)                    //call special
 //
 dbl_1wrd:
-        move.w  d1,(a1)                 //write 1st scan word 
+        move.w  d1,(a1)                 //write 1st scan word
         move.w  d0,d1                   //get the other scan word
 //                                      // (it got shifted in)
         movea.w nextwrd(a6),a2          //get offset to next word
@@ -1620,9 +1620,9 @@ rgt_rfrng:
 
         .page
 ///////////////////////////////////////////////////
-//      Writing Mode Operations using fringe mask // 
+//      Writing Mode Operations using fringe mask //
 ///////////////////////////////////////////////////
-//      
+//
 top0:
         not.w   d2                      //mode 0 - D' = 0
         and.w   d2,d4
@@ -1642,7 +1642,7 @@ top3:
         and.w   d2,d1
         eor.w   d4,d1
         jmp     (a3)
-//      
+//
 top4:
         and.w   d2,d1                   //mode 4 - D' = [not S] and D
         not.w   d1
@@ -1818,7 +1818,7 @@ thkopwlp:
 //
 //      destroyed:      d5.w    bx
 //                      d6.w    cx
-//                      d7.hi w 
+//                      d7.hi w
 //
 thknopwf:
         movem.l d5-d7,-(sp)
@@ -1993,7 +1993,7 @@ nxt_word:
 //    special effect SKEW for words                                     //
 //    recomputes rotation and jumps to proper routine to finish char    //
 /////////////////////////////////////////////////////////////////////////
-//              
+//
 skewopw:
         rol.w   skew_msk(a6)
         bcc.b   do_shift
@@ -2086,7 +2086,7 @@ rot90:
         subq.w  #1,d1
         add.w   d1,d0                   //start at bottom
         mulu    d2,d0                   //get mem address of start corner
-        adda.w  d0,a0   
+        adda.w  d0,a0
 top_src:
         move.w  DELY(a6),d0
         lsr.w   #4,d0
@@ -2159,7 +2159,7 @@ rot_done:
         move.w  tmp_dely(a6), d0        //Must swap tmps too RJG 4/13/85
         move.w  tmp_delx(a6), tmp_dely(a6)
         move.w  d0, tmp_delx(a6)
-        move.w  #1, swap_tmps(a6)       
+        move.w  #1, swap_tmps(a6)
 
         move.w  d_next(a6),d0
         tst.w   chup_flag(a6)
@@ -2391,7 +2391,7 @@ repexit2:
 //  reg use:    d0 = grafix build               bx
 //              d1 = d_next                     n/a
 //              d2 = _DDA_INC                   di
-//              d3 = source bitmask             dx 
+//              d3 = source bitmask             dx
 //              d4 = dest bitmask               bp
 //              d5 = width                      cx
 //              d6 = temp                       n/a
@@ -2619,11 +2619,11 @@ concat:
         andi.w  #0xfff0,d2      // clear bits for offset into word
 
 //
-// Convert the adjusted x-coordinate to a word offset into the current        
-// scan line.  If the planes are arranged in an interleaved fashion with      
-// a word for each plane then shift the x-coordinate by a value contained     
-// in the shift table.  If the planes are arranged as separate, consecu-      
-// tive entities then divide the x-coordinate by 8 to get the number of bytes.                                                                     
+// Convert the adjusted x-coordinate to a word offset into the current
+// scan line.  If the planes are arranged in an interleaved fashion with
+// a word for each plane then shift the x-coordinate by a value contained
+// in the shift table.  If the planes are arranged as separate, consecu-
+// tive entities then divide the x-coordinate by 8 to get the number of bytes.
 //
         lea     _shift_offset,a0
         add.w   _v_planes,a0

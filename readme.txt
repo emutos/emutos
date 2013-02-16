@@ -21,6 +21,6 @@ doc/coding.txt     - EmuTOS coding standards (never used :-) )
 doc/nls.txt        - How to add a native language or use one
 doc/old_code.txt   - For developers, a museum of bugs due to old C language
 
--- 
+--
 The EmuTOS development team
 http://emutos.sourceforge.net/

@@ -14,7 +14,7 @@
 #define SOUND_H
 
 #include "portab.h"
- 
+
 /* xbios functions */
 
 #define GIACCESS_READ  0x00
@@ -38,13 +38,13 @@ extern void sndirq(void);
 #endif /* CONF_WITH_YM2149 */
 
 /* the routines below are implemented in assembler in vectors.S, because
- * a user routine hooked in these vectors might clobber registers D2/A2. 
+ * a user routine hooked in these vectors might clobber registers D2/A2.
  */
-  
+
 /* play bell sound, called by bconout2 */
-void bell(void);     
+void bell(void);
 
 /* play key click sound, called by keyboard interrupt */
-void keyclick(WORD scancode); 
+void keyclick(WORD scancode);
 
 #endif /* SOUND_H */

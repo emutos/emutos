@@ -184,7 +184,7 @@ struct mfp_rs232_table {
 };
 
 static const struct mfp_rs232_table mfp_rs232_init[] = {
-    { /* 19200 */  1, 1 }, 
+    { /* 19200 */  1, 1 },
     { /*  9600 */  1, 2 },
     { /*  4800 */  1, 4 },
     { /*  3600 */  1, 5 },
@@ -199,7 +199,7 @@ static const struct mfp_rs232_table mfp_rs232_init[] = {
     { /*   134 */  1, 143 },
     { /*   110 */  1, 175 },
     { /*    75 */  2, 64 },
-    { /*    50 */  2, 96 }, 
+    { /*    50 */  2, 96 },
 };
 #endif  /* CONF_WITH_MFP_RS232 */
 
@@ -543,7 +543,7 @@ ULONG reset_recovery_loops;
 #if CONF_WITH_TT_MFP
 /*
  * TT MFP i/o routines
- * 
+ *
  * TODO: implement these!
  */
 static LONG bconstatTT(void)

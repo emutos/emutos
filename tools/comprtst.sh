@@ -1,6 +1,6 @@
 #! /bin/sh
 
-# test compr/uncompr on various kind of input and check that 
+# test compr/uncompr on various kind of input and check that
 # the output of uncompr is identical to the input of compr.
 
 TMP=.compr
@@ -14,15 +14,15 @@ u="\$*"
 echo testing \$u
 rm -f b c
 ../compr a b
-if test -f b 
-then 
+if test -f b
+then
   ../uncompr b c
   if test -f c
   then
-    if diff a c 
+    if diff a c
     then
       echo \$u: success
-    else 
+    else
       echo \$u: comparison failed
     fi
   else
@@ -37,7 +37,7 @@ EOF
 cp ../readme.txt a
 sh -f t readme.txt
 
-if test -f ../ramtos.img 
+if test -f ../ramtos.img
 then
   cp ../ramtos.img a
   sh -f t ramtos.img

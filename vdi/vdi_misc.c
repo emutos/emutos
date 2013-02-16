@@ -102,7 +102,7 @@ void arb_hzline(Line * line)
  *
  * The etv_timer does point to this routine
  */
- 
+
 static void tick_int(int u)
 {
     if (!in_proc) {
@@ -121,7 +121,7 @@ static void tick_int(int u)
 
 /*
  * _vex_timv - exchange timer interrupt vector
- * 
+ *
  * entry:          new vector in CONTRL[7-8]
  * exit:           old vector in CONTRL[9-10]
  */

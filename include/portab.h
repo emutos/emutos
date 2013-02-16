@@ -8,7 +8,7 @@
  */
 
 /*
- * I guess now this file is just badly named. it just contains 
+ * I guess now this file is just badly named. it just contains
  * common macros that were so often in the code that we just have
  * to keep them here.
  */
@@ -45,7 +45,7 @@
 
 #undef __CLOBBER_RETURN
 #if __GNUC_PREREQ(3, 3)
-# define __CLOBBER_RETURN(a) 
+# define __CLOBBER_RETURN(a)
 #else
 # define __CLOBBER_RETURN(a) a,
 #endif
@@ -58,7 +58,7 @@
 #endif
 
 /*
- *  Constants 
+ *  Constants
  */
 
 #define NULL    0                       /*      Null character value        */

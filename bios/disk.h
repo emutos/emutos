@@ -14,7 +14,7 @@
 #define DISK_H
 
 #include "portab.h"
- 
+
 /* xbios functions */
 
 extern LONG DMAread(LONG sector, WORD count, LONG buf, WORD dev);

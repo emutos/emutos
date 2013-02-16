@@ -1,5 +1,5 @@
 /*      GEMOBLIB.C      03/15/84 - 05/27/85     Gregg Morris            */
-/*      merge High C vers. w. 2.2               8/21/87         mdf     */ 
+/*      merge High C vers. w. 2.2               8/21/87         mdf     */
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
@@ -89,8 +89,8 @@ void ob_actxywh(LONG tree, WORD obj, GRECT *pt)
         LONG            pw;
 
         ob_offset(tree, obj, &pt->g_x, &pt->g_y);
-        pt->g_w = LWGET(pw = OB_WIDTH(obj));    
-        pt->g_h = LWGET(pw + 0x02L);    
+        pt->g_w = LWGET(pw = OB_WIDTH(obj));
+        pt->g_h = LWGET(pw + 0x02L);
 } /* ob_actxywh */
 
 
@@ -163,7 +163,7 @@ static WORD far_call(WORD (*fcode)(), LONG fdata)
 
 
 /*
-*       Routine to load up and call a user defined object draw or change 
+*       Routine to load up and call a user defined object draw or change
 *       routine.
 */
 
@@ -214,7 +214,7 @@ void  just_draw(LONG tree, WORD obj, WORD sx, WORD sy)
             gr_inside(&c, -3);
           else
             gr_inside(&c, ((th < 0) ? (3 * th) : (-3 * th)) );
-        
+
           if ( !(gsx_chkclip(&c)) )
             return;
         }
@@ -268,7 +268,7 @@ void  just_draw(LONG tree, WORD obj, WORD sx, WORD sy)
                 if (obtype != G_IBOX)
                 {
                   gr_inside(&t, tmpth);
-                  gr_rect(icol, ipat, &t); 
+                  gr_rect(icol, ipat, &t);
                   gr_inside(&t, -tmpth);
                 }
                 break;
@@ -282,7 +282,7 @@ void  just_draw(LONG tree, WORD obj, WORD sx, WORD sy)
             case G_FBOXTEXT:
                 strcpy(D.g_rawstr, (char *) edblk.te_ptext);
                 strcpy(D.g_tmpstr, (char *) edblk.te_ptmplt);
-                ob_format(edblk.te_just, &D.g_rawstr[0], &D.g_tmpstr[0], 
+                ob_format(edblk.te_just, &D.g_rawstr[0], &D.g_tmpstr[0],
                         &D.g_fmtstr[0]);
                                                 /* fall thru to gr_gtext*/
             case G_BOXCHAR:
@@ -298,7 +298,7 @@ void  just_draw(LONG tree, WORD obj, WORD sx, WORD sy)
             case G_TEXT:
             case G_BOXTEXT:
                 gr_inside(&t, tmpth);
-                gr_gtext(edblk.te_just, edblk.te_font, edblk.te_ptext, 
+                gr_gtext(edblk.te_just, edblk.te_font, edblk.te_ptext,
                                 &t);
                 gr_inside(&t, -tmpth);
                 break;
@@ -311,9 +311,9 @@ void  just_draw(LONG tree, WORD obj, WORD sx, WORD sy)
             case G_ICON:
                 LBCOPY(&ib, spec, sizeof(ICONBLK));
                 ib.ib_xicon += t.g_x;
-                ib.ib_yicon += t.g_y; 
+                ib.ib_yicon += t.g_y;
                 ib.ib_xtext += t.g_x;
-                ib.ib_ytext += t.g_y; 
+                ib.ib_ytext += t.g_y;
                 gr_gicon(state, ib.ib_pmask, ib.ib_pdata, ib.ib_ptext,
                   ib.ib_char, ib.ib_xchar, ib.ib_ychar,
                   (GRECT *)&ib.ib_xicon, (GRECT *)&ib.ib_xtext);  /* FIXME: Ugly typecasting */
@@ -330,7 +330,7 @@ void  just_draw(LONG tree, WORD obj, WORD sx, WORD sy)
         {
           len = LBWMOV((WORD *)ad_intin, (BYTE *)spec);
           if (len)
-          { 
+          {
             gsx_attr(TRUE, MD_TRANS, BLACK);
             tmpy = t.g_y + ((t.g_h-gl_hchar)/2);
             if (obtype == G_BUTTON)
@@ -352,7 +352,7 @@ void  just_draw(LONG tree, WORD obj, WORD sx, WORD sy)
 
           if (th > 0)
             gr_inside(&t, th);
-          else 
+          else
             th = -th;
 
           if ( (state & SHADOWED) && th )
@@ -360,7 +360,7 @@ void  just_draw(LONG tree, WORD obj, WORD sx, WORD sy)
             g_vsf_color(bcol);
             bb_fill(MD_REPLACE, FIS_SOLID, 0, t.g_x, t.g_y+t.g_h+th,
                                 t.g_w + th, 2*th);
-            bb_fill(MD_REPLACE, FIS_SOLID, 0, t.g_x+t.g_w+th, t.g_y, 
+            bb_fill(MD_REPLACE, FIS_SOLID, 0, t.g_x+t.g_w+th, t.g_y,
                         2*th, t.g_h+(3*th));
           }
           if ( state & CHECKED )
@@ -468,7 +468,7 @@ WORD ob_find(LONG tree, WORD currobj, WORD depth, WORD mx, WORD my)
           parent = get_par(tree, currobj, &junk);
           ob_actxywh(tree, parent, &o);
         }
-        
+
         done = FALSE;
         dosibs = FALSE;
 
@@ -661,10 +661,10 @@ void ob_change(LONG tree, WORD obj, UWORD new_state, WORD redraw)
         LONG            spec;
 
         ob_sst(tree, obj, &spec, (WORD*)&curr_state, &obtype, &flags, &t, &th);
-        
+
         if ( (curr_state == new_state) ||
              (spec == -1L) )
-          return;       
+          return;
 
         LWSET(OB_STATE(obj), new_state);
 

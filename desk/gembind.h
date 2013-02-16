@@ -137,7 +137,7 @@ extern LONG     addr_out[AO_SIZE];
 #define IN_LEN control[1]
 #define OUT_LEN control[2]
 #define AIN_LEN control[3]
-                        
+
 #define RET_CODE int_out[0]
                                         /* application lib parameters   */
 #define AP_VERSION global[0]
@@ -244,7 +244,7 @@ extern LONG     addr_out[AO_SIZE];
 #define MT_LOCOUNT int_in[14]
 #define MT_HICOUNT int_in[15]
                                                 /* mu_flags             */
-#define MU_KEYBD 0x0001 
+#define MU_KEYBD 0x0001
 #define MU_BUTTON 0x0002
 #define MU_M1 0x0004
 #define MU_M2 0x0008
@@ -531,7 +531,7 @@ extern LONG     addr_out[AO_SIZE];
 #define RS_TYPE int_in[0]
 #define RS_INDEX int_in[1]
 #define RS_INADDR addr_in[0]
-#define RS_OUTADDR addr_out[0]          
+#define RS_OUTADDR addr_out[0]
 
 #define RS_TREE addr_in[0]
 #define RS_OBJ int_in[0]

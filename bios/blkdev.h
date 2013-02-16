@@ -86,23 +86,23 @@ struct fat16_bs {
 
 
 struct _pun_info
-{       
+{
         unsigned short  puns;                   /* Number of HD's */
         unsigned char   pun [16];               /* AND with masks below: */
-        
+
 # define PUN_DEV        0x1f                    /* device number of HD */
 # define PUN_UNIT       0x7                     /* Unit number */
 # define PUN_SCSI       0x8                     /* 1=SCSI 0=ACSI */
 # define PUN_IDE        0x10                    /* Falcon IDE */
 # define PUN_REMOVABLE  0x40                    /* Removable media */
 # define PUN_VALID      0x80                    /* zero if valid */
-        
+
         long            partition_start [16];
         long            cookie;                 /* 'AHDI' if following valid */
         long            *cookie_ptr;            /* Points to 'cookie' */
         unsigned short  version_num;            /* AHDI version */
         unsigned short  max_sect_siz;           /* Max logical sec size */
-        long            reserved[16];           /* Reserved */  
+        long            reserved[16];           /* Reserved */
 };
 
 typedef struct _pun_info PUN_INFO;
@@ -210,8 +210,8 @@ typedef struct _unit UNIT;
  * defined in blkdev.c, also used in floppy.c
  */
 
-extern BLKDEV blkdev[]; 
-extern UNIT devices[];  
+extern BLKDEV blkdev[];
+extern UNIT devices[];
 
 
 #endif /* BLKDEV_H */

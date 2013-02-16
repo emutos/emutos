@@ -90,7 +90,7 @@
  *  Each entry in the array specifies a partial string to match; any
  *  text string beginning with any of the match strings will _not_ be
  *  enclosed by N_().
- *  
+ *
  *  The user may also specify (via the -p option) a prefix to be applied
  *  to the names of all the arrays in the .c file.  A prefix of e.g.
  *  "desk" will prefix each of the array names with "desk_".  If no
@@ -2097,7 +2097,7 @@ unsigned char c;
     else t += sprintf(t,"\\%03o",c);
     strcpy(t,"'");
 
-    return temp;        
+    return temp;
 }
 
 /*
@@ -2120,7 +2120,7 @@ FLAGS *f;
         }
     }
 
-    return temp;        
+    return temp;
 }
 
 /*
@@ -2143,7 +2143,7 @@ static char temp[10], *p;
         break;
     }
 
-    return p;       
+    return p;
 }
 
 /*
@@ -2169,7 +2169,7 @@ static char temp[10], *p;
         break;
     }
 
-    return p;       
+    return p;
 }
 
 /*

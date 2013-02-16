@@ -24,12 +24,12 @@ Start... early ages
   updates are set to 0 when the OS starts up.
 
   Fix - Changed cinit() in SUP.C to call new BIOS date_time() function
-  (11h) so that the BIOS can initialise the internal variables from a 
+  (11h) so that the BIOS can initialise the internal variables from a
   hardware real-time clock, if supported.
 
 1987-10-09  ACH BDOSMAIN.C
 - Duplicate definition of supstk and SUPSIZ removed from this module.
-  (Duplicated in PROC.C and FS.H.) If the supervisor stack is to be OEM 
+  (Duplicated in PROC.C and FS.H.) If the supervisor stack is to be OEM
   configurable some more reliable method must be devised.
 
 1987-11-19  ACH RWA.A
@@ -41,7 +41,7 @@ Start... early ages
 2001-05-01
 - Started working on GEMDOS -> EmuTOS
 
-2001-07-28 
+2001-07-28
 - Working on MFP initialization
 
 2001-07-29
@@ -54,14 +54,14 @@ Start... early ages
 - implemented HBL handler
 - implemented keyboard interrupt handler
 
-2001-09-04 
+2001-09-04
 - working on the keyboard interrupt routine
 
 2001-09-05
 - got the keyboard interrupt running (wow!)
 
 2001-09-06
-- got the keyboard queue running 
+- got the keyboard queue running
 
 2001-09-07
 - Mega ST clock should work - could not test yet
@@ -73,7 +73,7 @@ Start... early ages
 
 2001-09-11
 - Got first real character blitted to screen
-- cons_out is basically working 
+- cons_out is basically working
 
 2001-09-12
 - Fighting much too long against a too small supervisor stack  :-(
@@ -90,11 +90,11 @@ Start... early ages
 2001-09-29
 - integrating STonX native BIOS emulation to BIOS
 
-2001-09-02 
+2001-09-02
 - found out, where the basepage is for DTA stuff
 
 2001-09-04
-- got memory setup descritor working 
+- got memory setup descritor working
 - got the command loading running
 
 2001-09-09
@@ -116,7 +116,7 @@ Start... early ages
 
 ===== Project created on Sourceforge ? ===================================
 
-2001-09-25 
+2001-09-25
 - linea commented out of cartridge (LVL)
 - added .even after .ascii strings (odd exception handlers) (LVL)
 - rwa.s, startup.s - changed "dc.w 0" by '\0' at end of .ascii strings (LVL)
@@ -147,7 +147,7 @@ Start... early ages
 - some malloc debug info.
 - added missing util directory (MAD)
 - changed sysvarend to _bssend (it is the BSS, that ends! - got from DRI)
-- added end.s with _bssend 
+- added end.s with _bssend
 
 2001-10-08
 - started iorec and kbdvbase stuff (aim is to reimplement kbd.c to
@@ -245,7 +245,7 @@ Start... early ages
 - fixed the BDOS-buffer-init bug: EmuTOS boots a real MegaSTE2!!! (LVL)
 - Removed hardcoded default drive #defines
 - added EmuCON (EmuTOS console, before command.prg) to EmuTOS      (MAD)
-  This is not yet working (it seems command.c is not ROMable for now) 
+  This is not yet working (it seems command.c is not ROMable for now)
 
 2001-11-02
 - EmuCON is now working. (THH)
@@ -287,14 +287,14 @@ Start... early ages
 - Native Language support tools, french translation (LVL)
 - asm glue for kprintf in startup.S (LVL)
 
-2001-11-15 
+2001-11-15
 - Native Language support, german translation (MAD)
 - introduced PTR in include/portab.h, which is a LONG (MAD)
 
 2001-11-16
 - Fixed bug in font_ring init (MAD)
 
-2001-11-18 
+2001-11-18
 - Initmous implemented (C part - no data from asm delivered yet)  (MAD)
 - removed -Tdata= from Makefile (LVL)
 - painfully ANSIfied bdos and removed nearly all warnings (LVL)
@@ -319,7 +319,7 @@ Start... early ages
 2001-11-25
 - Worked on bios/mouse.c   (MAD)
 
-2001-11-26 
+2001-11-26
 - got Initmous() working (thanks Laurent)  (MAD)
 - changed all "VOID"s to "void" in bios/*.[hc]  (MAD)
 
@@ -370,7 +370,7 @@ Start... early ages
 - make checkindent, make indent; updated coding rules for indent use (LVL)
 - changed some files to remove indent warnings (did NOT indent files) (LVL)
 - replaced explicit TABs in strings by \t in command.c (LVL)
-- fixed bugs due to obsolete C code in command.c, and wrote a description of 
+- fixed bugs due to obsolete C code in command.c, and wrote a description of
   these bugs in doc/old_code.txt to serve as a reference (LVL)
 - moved NORETURN to portab.h (LVL)
 - panic() now prints on the screen also (LVL)
@@ -417,7 +417,7 @@ Start... early ages
 - replaced "REG" by register in bios/ and bdos/  (MAD)
 - made bdos/kpgmld.c better readable (MAD)
 
-2002-01-04 
+2002-01-04
 - made bdos/fsio.c better readable (MAD)
 - bios/memory.S makes use of routines in bios/detect.S (PES)
 
@@ -437,7 +437,7 @@ Start... early ages
 - "061a executable file format" debug print corrected: "601a ..." (PES)
 
 2002-01-06
-- optimized divmod() and moved it to bdos/fsio.c (MAD) 
+- optimized divmod() and moved it to bdos/fsio.c (MAD)
 - did put usr2xfr/xfr2usr to bdos/fsio.c too (MAD)
 - CLI: added unix like commands mv, cp, pwd, format, clear, rmdir, mkdir (MAD)
 
@@ -468,7 +468,7 @@ Start... early ages
 
 2002-01-10
 - bios/floppy.c: renamed flop_hdv_boot to flop_bootcheck
-                 renamed do_hdv_boot to flop_hdv_boot 
+                 renamed do_hdv_boot to flop_hdv_boot
                  should boot now after warmstart... (MAD)
 
 2002-01-13
@@ -500,7 +500,7 @@ Start... early ages
            very sure about the blkdev/device concept. Also would need to set
            common language - how to call physical drive (unit? device? drive?)
            and how to call logical disk (C:, partition, disk?). The problem
-           now is how many things can be detected during boot - the size of 
+           now is how many things can be detected during boot - the size of
            partition, of the whole drive (especially with floppy) etc.
            bdos/fsio.c still strikes - passes null pointer for rwabs buffer.
            That needs to be debugged (or maybe rewritten completely). (PES)
@@ -513,7 +513,7 @@ Start... early ages
 - silly BIOS early memory init in biosmem.[ch], used in nvram (LVL)
 - changed some struct {...} foo [] = syntax that Indent didn't like (LVL)
 - removed from lineavars.h struct VIDEO_MODE used only inside lineainit.c (LVL)
-- fixed typos in bios-level memory (LVL) 
+- fixed typos in bios-level memory (LVL)
 - fixed the amount of fastram printed in debug mode (PES)
 - set the C: in drvbits for the hacked up host access disk drive (PES)
 
@@ -522,7 +522,7 @@ Start... early ages
 - bios/detect.S: functions now keep register a2 intact (LVL)
 - bios/kprint.c: temporarily removed console print in panic, until one
   knows of a way to be certain that the concole is configured (LVL)
-- collected a number of <string.h> routines scattered around and put 
+- collected a number of <string.h> routines scattered around and put
   them in util/string.c and include/string.h; merged btools.h with
   string.h to be consistent with standard ANSI C (LVL)
 - bios/kprint.h: silly debug macro HERE kprintf()s the location in file (LVL)
@@ -530,7 +530,7 @@ Start... early ages
 - transferred getmpb from bios.c to biosmem.c (LVL)
 - bios/conout.S: fixed bconout5(c) bug when c >= 128 (LVL)
 - removed obsolete bios/keyboard.h include/btools.h (LVL)
-- in bios/vectors.S, init_user_vec no longer relies on the previous value of 
+- in bios/vectors.S, init_user_vec no longer relies on the previous value of
   register a1 from init_exc_vec (LVL)
 - bios/blkdev.c - the floppy_init does not use the hdv_init vector. A: works
   under STonX again. (PES)
@@ -550,7 +550,7 @@ Start... early ages
 - made ramtop and ramvalid visible from C code (LVL)
 
 2002-01-19
-- experimental autodetect ARAnyM or STonX native print (activated in 
+- experimental autodetect ARAnyM or STonX native print (activated in
   bios/config.h) (LVL)
 - new setjmp/longjmp replacing older ones (LVL)
 - updated todo list (LVL)
@@ -575,7 +575,7 @@ Start... early ages
 2002-01-21
 - in bios/lineainit.c: removed font_ring initialization (MAD)
 - re-wrote completely Pexec() for header flags support. I kept the old routine
-  for reference, but ultimately it will go away. Fastram is allocated when 
+  for reference, but ultimately it will go away. Fastram is allocated when
   requested but it is still not freed (the *term routines in proc need to
   be changed as well); Pexec() flag 6 supported. I did not test on Fastram but
   all of autoexec, EmuCON, loading progs from C: and A: work. (LVL)
@@ -585,7 +585,7 @@ Start... early ages
 - cleaned up bios/biosmem.c:bmem_init, removed old _b_mdx from startup.S (MAD)
 - put diskbuf from startup.S to floppy.c, made dskbufp a pointer (MAD)
 - put parallel and serial output funcs from asm to chardev.c (MAD)
-- put cpu_init(), cooki_init() and machine_init() to the beginning of the 
+- put cpu_init(), cooki_init() and machine_init() to the beginning of the
   C-startup procedure of bios.c (MAD)
 - TT-RAM is added to BDOS memory by calling Maddalt (should be changed) (PES)
 - free TT-RAM is displayed in initinfo.c (PES)
@@ -651,15 +651,15 @@ Start... early ages
   now be linked with the rest of EmuTOS. (THH)
 
 2002-03-11
-- vdi/lisastub.c cleaned up of warnings 
+- vdi/lisastub.c cleaned up of warnings
 - vdi/gsxextrn.h added prototypes
 
 2002-03-12
-- vdi/* made prototypes, no warnings anymore, indented whole vdi (MAD) 
-- vdi/* jmptbl.c changed jumptables functions to void - arguments 
+- vdi/* made prototypes, no warnings anymore, indented whole vdi (MAD)
+- vdi/* jmptbl.c changed jumptables functions to void - arguments
   are passed in arrays in VDI, not via stack.  (MAD)
 - vdi/lisagem.S partially implemented mouse driver
-  
+
 2002-03-13
 - bios/bios.c removed mouse_init. Done, when graphics is initialized (MAD)
 
@@ -724,7 +724,7 @@ Start... early ages
 - added po/cs.po from Bohdan for Czech native language support  (MAD)
 
 2002-04-08
-- bios/mousedrv.S - cleaned up a bit (MAD) 
+- bios/mousedrv.S - cleaned up a bit (MAD)
 - vdi/lisagem.S - did remove SR saving in tick_int, like in TOS (MAD)
 - aes/* - removed some warnings (MAD)
 - bdos/fs* - replaced NULPTR completely by NULLPTR  (MAD)
@@ -857,7 +857,7 @@ Start... early ages
   enabled at the time when disk initialisation occurred) (LVL)
 - added limited parallel port implementation (output only) (LVL)
 - indented some files (LVL)
-- bios/floppy.c: FastRAM floppy read/write (FRB usage was read-only); 
+- bios/floppy.c: FastRAM floppy read/write (FRB usage was read-only);
   flopvbl added (but still no efficient mediach()) (LVL)
 - Makefile: added size checks for targets 192, 256, 512. (LVL)
 - vdi/gsxasm1.S: made __ABLINE externally visible (LVL)
@@ -872,7 +872,7 @@ Start... early ages
 - vdi/vdiinput.c - moved/rewrote vdimouse_init/exit to here (MAD)
 - vdi/vdimouse.S - move rest of asm routines from mousedrv.S to here (MAD)
 - vdi/mousedrv.S - deleted
-- util/miscasm.S - put trap1/13/14 to here from bdos/ for common use (MAD) 
+- util/miscasm.S - put trap1/13/14 to here from bdos/ for common use (MAD)
 - include/asm.h - added trap1/13/14 calls as externals (MAD)
 - vdi/vdiinput.c - vdimouse_init() fixed (MAD)
 
@@ -909,7 +909,7 @@ Start... early ages
 - Makefile - factored out some code for building sized images (LVL)
 - doc/changelog.txt - editorial changes back in the past (LVL)
 - doc/authors.txt - a first attempt. Please don't feel offended if I forgot
-  something. The idea is to be able in a second phase to remove the 'Authors' 
+  something. The idea is to be able in a second phase to remove the 'Authors'
   lines in our source file headers that IMHO are not truly meaningful (LVL)
 
 2002-06-23
@@ -918,18 +918,18 @@ Start... early ages
 
 2002-07-01
 - doc/processor.h - added some documentation about processor handling (LVL)
-- tools/bug.c 
+- tools/bug.c
   - prints "entry" instead of "entries" when only one entry (LVL)
   - GEM Alert strings folded at vertical bars in po files (LVL)
   - experimental translation directly within C files (LVL)
 - wrappers for (x)bios functions not present unless DBG_(X)BIOS is set; moved
   (x)bios function tables out of vectors.S into (x)bios.c (LVL)
 - bdos/fs*.[ch] - renamed rwabs to longjmp_rwabs for clarity (LVL)
-- */*_rsc.c 
+- */*_rsc.c
   - aes resource translation added, sharing code with desk/desk_rsc.c (LVL)
   - folded long strings: no source line longer than 80 chars (LVL)
 - po/fr.po - full FR translation (LVL)
-- Makefile 
+- Makefile
   - gmake black magic :-) shrinks down the size of build rules (LVL)
   - experimental building of a unique-country translated EmuTOS (LVL)
 - removed some 'extern' from C source files (should go in .h files) (LVL)
@@ -947,7 +947,7 @@ Start... early ages
 - bios/bios.c - priviledge exception ignored (LVL)
 - doc/authors.txt - updated and added email addresses (LVL)
 
-2002-07-22 
+2002-07-22
 - po/de.po - two more german translations done (MAD)
 - po/cs.po - did bug update cs.po for new translations (MAD)
 
@@ -1004,7 +1004,7 @@ Start... early ages
 
 2002-09-11
 - bios/startup.S - added NatFeat detection code (PES)
-- bios/bios.c - added 'int native_features' flag (please move elsewhere as 
+- bios/bios.c - added 'int native_features' flag (please move elsewhere as
   appropriate - it's definitely not bios related but will be used mostly
   there) (PES)
 - bios/disk.c - adapted to NatFeat. Finally clean XHDI interface that other
@@ -1039,14 +1039,14 @@ Start... early ages
 2002-09-20
 - vdi/vdimain.c - precalculated shift offset shft_off for concat (MAD)
 - Makefile, include/config.h, country.mk, bios/country.c - changed the way
-  UNIQUE country EmuTOS are built. Now make unique 192 and 256k work for 
+  UNIQUE country EmuTOS are built. Now make unique 192 and 256k work for
   all languages (e.g. make allbin; rm obj/*.o; make all192) but there is
   some redundancy as I can't figure yet how to avoid duplication between
   country.mk and country.c (LVL)
 - tools/bug.c - removed indent warning (LVL)
 - include/version.c - set version to 0.5 (LVL)
 - bios/clock.c - disabled nvram code for TOS1 192k ROMS (LVL)
-- bios/bios.c bios/machine.[ch] bios/startup.S - int native_features 
+- bios/bios.c bios/machine.[ch] bios/startup.S - int native_features
   renamed to int has_natfeats (LVL)
 - bios/initinfo.c - changed wait time from 5 to 2 sec (MAD)
 
@@ -1075,15 +1075,15 @@ Start... early ages
 2002-09-12
 - vdi/monout.c - abline() simplified (better for color) (MAD)
                - habline() initially implemented (MAD)
-               
+
 2002-09-15
 - vdi/monout.c - abline() always starts with smaller x value (MAD)
                - habline() fully implemented in C (MAD)
-               
+
 2002-09-17
 - vdi/monout.c - abline() new old algorithm and bug free (MAD)
                - abline() opt. (color now faster, than old asm) (MAD)
-- bios/linea.S - made CLC_FLIT as linea_6 working. (MAD) 
+- bios/linea.S - made CLC_FLIT as linea_6 working. (MAD)
 
 2002-09-18
 - vdi/monout.c - put_pix() for linea reimplemented in C (MAD)
@@ -1093,21 +1093,21 @@ Start... early ages
 2002-09-20
 - vdi/monout.c - abline() bugs fixed. Thanks, Johan! (MAD)
 
-2002-09-21 
+2002-09-21
 - vdi/tranfm.S - vr_trnfm() implemented in assembler (MAD)
 - vdi/monout.c - rectfill() in C (MAD)
                - habline() uses same sub-routines as rectfill() (MAD)
 - vdi/gsxasm1.S - concat() moved to gsxasm2.S, where it is used (MAD)
 
-2002-09-22 
+2002-09-22
 - vdi/monout.c - replaced asm vr_trnfm() by Johan's impl. in C (MAD)
                - fixed bugs in horizontal line drawing modes (MAD)
 - vdi/tranfm.S - removed from compile in Makefile (MAD)
 
-2002-09-25 
+2002-09-25
 - vdi/monout.c - fixed bug in color setting (MAD)
 
-2002-09-27 
+2002-09-27
 - vdi/monout.c - optimized horzline() and rectfill()  (MAD)
 
 2002-09-29
@@ -1119,15 +1119,15 @@ Start... early ages
 2002-09-30
 - tools/compr.c et al - added a header in the compressed data, for a cleaner
   handling of the destination address in ROM (LVL)
-- Makefile - code factorisation, various optimisations, foo.dsm is 
+- Makefile - code factorisation, various optimisations, foo.dsm is
   desassembly for foo.img (LVL)
 - util/comprtst.sh - changed . t into sh -f t for portability (LVL)
-- doc/status.txt - changed the table of supported emulators, to include date 
+- doc/status.txt - changed the table of supported emulators, to include date
   of update of individual entries (LVL)
 - doc/install.txt - documented some of the current makefile targets (LVL)
 
 2002-10-05
-- renamed _FOO_H into H_FOO_ for standard C compliance (I kept the script 
+- renamed _FOO_H into H_FOO_ for standard C compliance (I kept the script
   which did it in case anybody wants to change back or again) (LVL)
 - bdos/time.[ch] - regrouped stuff here, and connected it to _evt_timer (LVL)
 - bdos/rwa.S - removed some useless remnants, osinit now in C (LVL)
@@ -1138,14 +1138,14 @@ Start... early ages
   right thing [changing a move SR, to CCR, is done by the priv stuff] (LVL)
 
 2002-10-12
-- merged tools/keytbl2c and util/dumpkbd.c - now dumpkbd.prg directly 
+- merged tools/keytbl2c and util/dumpkbd.c - now dumpkbd.prg directly
   generates keyb_xx.h (LVL)
 - Makefile - fixed a bug in make depend (LVL)
 
 2002-10-13
 - renamed font files, to allow a systematic handling of fonts (LVL)
 - bios/country.c - tables now generated from country.mk in bios/ctables.h (LVL)
-- Makefile - introduced $(TOCLEAN) that gradually stores the name of files 
+- Makefile - introduced $(TOCLEAN) that gradually stores the name of files
   to be removed when doing make clean, to make it harder to forget files
   in make clean (LVL)
 - doc/country.txt - updated, but still not entirely satisfactory (LVL)
@@ -1167,14 +1167,14 @@ Start... early ages
 - bios/vectors.S - illegal instruction handler now changes move-from-CCR to
   move-from-SR (LVL)
 - bios/bios.c - illegal instruction handler only called on a bare 68000 (LVL)
-- Makefile - if a file local.mk is found, it will be included at the end just 
+- Makefile - if a file local.mk is found, it will be included at the end just
   before targets clean and distclean, for optional individual targets (LVL)
-- ikbd.[ch] - dead keys (see keyb_fr.h for an example of how to configure 
+- ikbd.[ch] - dead keys (see keyb_fr.h for an example of how to configure
   the keyboard to use it); ALT-keypad to enter chars by decimal numbers (LVL)
 - added "%p" in printf format string to print pointers as 0x%08lx (LVL)
-- changed again H_FOO_ to FOO_H (sorry about this, I won't change it 
+- changed again H_FOO_ to FOO_H (sorry about this, I won't change it
   a third time) (LVL)
-- include/config.h - removed "i18nconf.h" from there, as it caused trouble 
+- include/config.h - removed "i18nconf.h" from there, as it caused trouble
   with tools needing "string.h" but not "i18nconf.h" (LVL)
 
 2002-10-19
@@ -1335,10 +1335,10 @@ Start... early ages
 
 2003-02-15
 - desk/deskapp.c - Icon masks are working now (THH).
-- po/fr.po - updated. I think we should put back the EmuCON strings in it, 
-  since we now have decided to put back the console in EmuTOS. The size will 
+- po/fr.po - updated. I think we should put back the EmuCON strings in it,
+  since we now have decided to put back the console in EmuTOS. The size will
   not be a problem for 512k images, and for other sizes UNIQUE is fine.
-  However this will have to wait till I fix bug to bring back old entries 
+  However this will have to wait till I fix bug to bring back old entries
   into life. (LVL)
 - bios/comprimg.S - added natfeat_init stub, converted debug print from STonX
   to NF_STDERR (LVL)
@@ -1417,7 +1417,7 @@ Start... early ages
 - Makefile - make cvsready now also expands awk files (LVL)
 - bios/sound.c - minor comment editing (LVL)
 - include/asm.h - removed ints_off()/ints_on() macros as I really think their
-  direct use of the stack for storage is unsafe/unportable in conjunction 
+  direct use of the stack for storage is unsafe/unportable in conjunction
   with a C compiler (LVL)
 - vdi/*.c - replaced ints_off(); ... ints_on(); by the traditional way:
   WORD old_sr; ... old_sr = set_sr(2700); ... set_sr(old_sr); (LVL)
@@ -1527,7 +1527,7 @@ Start... early ages
   entries in the file menu that are needed to use this desktop mode. (THH)
 
 2003-07-29
-- vdi/blit.c: reactivated assembler implementation of vrt_cpyfm, 
+- vdi/blit.c: reactivated assembler implementation of vrt_cpyfm,
               vro_cpyfm and bit_blt till C is bug free  (MAD)
 
 2003-07-31
@@ -1590,9 +1590,9 @@ Start... early ages
 
 2004-01-27
 - desk/desk_rsc.c util/langs.h: preprocessor syntax fixed (LVL)
-- include/asm.h include/biosbind.h include/xbiosbind.h: fixed embedded asm 
+- include/asm.h include/biosbind.h include/xbiosbind.h: fixed embedded asm
   constructs (thanks to Patrice Mandin) (LVL)
-- po/fr.po: french translation updated (LVL) 
+- po/fr.po: french translation updated (LVL)
 
 2004-02-02
 - bios/cookie.c: cookie_add() was not checking jar size. Fixed. Also the jar
@@ -1615,7 +1615,7 @@ Start... early ages
 - vdi/blit.c: tuned. C-blit now just 6 times slower than asm version. (MAD)
 
 2004-06-26
-- doc/status.txt: updated to reflect successful run of recent EmuTOS on a 
+- doc/status.txt: updated to reflect successful run of recent EmuTOS on a
   MegaSTE (this is reported by Frédéric Pécourt who is curently testing EmuTOS
   on a extension board of his own for the MegaSTE) (LVL)
 
@@ -1677,7 +1677,7 @@ Start... early ages
 2004-08-19
 - vdi/vdi_bezier.c: implemented not filled bezier curves (MAD)
                     filled onces also, but not integrated (MAD)
-                    
+
 2004-08-19
 - bios/processor.S: added coldfire test in detect_cpu (MAD)
 
@@ -1705,7 +1705,7 @@ Start... early ages
 - Makefile: Replaced "-oformat" by "--oformat" (THH)
 
 2004-11-29
-- doc/coding.txt vdi/*.S: replaced all MOVEM.W by MOVEM.L as the MOVEM.W 
+- doc/coding.txt vdi/*.S: replaced all MOVEM.W by MOVEM.L as the MOVEM.W
   (memory to register) destroys the upper 16 bits of the registers :-( There
   was perhaps no real bug, but at least now there's no risk that someone
   not aware of this creates a bug by re-using a routine with MOVEM.W (LVL)
@@ -1716,25 +1716,25 @@ Start... early ages
   documented in some detail (the Compendium was wrong); also documented known
   remaining differences between EmuTOS and the original TOS (LVL)
 - bios/tosvars.[Sh]: ACIA stuff updated in sync with aciavecs.S (LVL)
-- bios/vectors.S, bios/*.c: glue functions protect_xxx() used to safely call 
+- bios/vectors.S, bios/*.c: glue functions protect_xxx() used to safely call
   external user-supplied routines (hooks, vectors, ...) even if those alter
-  registers D2/A2. Done for: bell_hook, kcl_hook, hdv_rw, hdv_mediach, 
-  hdv_bpb, bcoxxx[]. In fact I was surprised to see that some vectors are 
+  registers D2/A2. Done for: bell_hook, kcl_hook, hdv_rw, hdv_mediach,
+  hdv_bpb, bcoxxx[]. In fact I was surprised to see that some vectors are
   never called (hdv_init, hdv_boot, etv_term, etv_critic). Is it a bug? (LVL)
-- bios/ikbd.c, bios/sound.[ch]: keyclick() reportedly gets scancode as 
+- bios/ikbd.c, bios/sound.[ch]: keyclick() reportedly gets scancode as
   argument in register d0 (LVL)
 - bios/vt52.c: bell() called depending of bit 3 of conterm (LVL)
 
 2004-12-03
 - bios/processor.S: TTRs registers setup on a 68040 (probably quite useless
   on our current emulators, but who knows...) (LVL)
-- aes/gemgraf.c: removed the -1 pixel correction in gsx_tblt(); the AES text 
+- aes/gemgraf.c: removed the -1 pixel correction in gsx_tblt(); the AES text
   displays correctly now (used to be displayed one pixel up, which was
   annoying on small resolutions) (LVL)
-- aes/gemgraf.c: improved display of window elements by ensuring that 
+- aes/gemgraf.c: improved display of window elements by ensuring that
   gl_wbox is wide enough to hold the character glyphs (LVL)
 - bios/vectors.S: fixed bug in VBL interrupt routine (_vblsem is WORD) (LVL)
-- aes/gem*.c: wider slidebars (grep "anemic slidebars" to see the previous 
+- aes/gem*.c: wider slidebars (grep "anemic slidebars" to see the previous
   code where the slide bars were not as wide as their containing box) (LVL)
 
 2004-12-13
@@ -2992,7 +2992,7 @@ Start... early ages
   targets. Added TARGET_192, TARGET_256 and TARGET_512 instead. (VRI)
 - Makefile doc/readme-floppy.txt: Fixed "make flop" to implicitly use UNIQUE=us.
  (VRI)
-- desk/deskinf.c: Fixed random character after am/pm in EmuDesk windows in 
+- desk/deskinf.c: Fixed random character after am/pm in EmuDesk windows in
   "view as text" mode.
 - desk/deskapp.h desk/deskconf.h desk/deskfpd.h desk/deskwin.h: Allow up to 7
   windows on the standard (not fixed window) desktop. (RFB)
@@ -4408,3 +4408,4 @@ Start... early ages
 
 2013-02-16
 - doc/*: Updated. (VRI)
+- *: Removed trailing spaces. (VRI)

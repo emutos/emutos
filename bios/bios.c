@@ -96,7 +96,7 @@ WORD boot_status;               /* see kprint.h for bit flags */
 /*
  * setup all vectors
  */
- 
+
 static void vecs_init(void)
 {
     /* Initialize the exception vectors.
@@ -127,7 +127,7 @@ static void vecs_init(void)
     VEC_BIOS = biostrap;
     VEC_XBIOS = xbiostrap;
     VEC_LINEA = int_linea;
-    
+
     /* Emulate some instructions unsupported by the processor. */
 #ifdef __mcoldfire__
     /* On ColdFire, all the unsupported assembler instructions
@@ -154,7 +154,7 @@ static void vecs_init(void)
 
 static void bios_init(void)
 {
-    /* initialize Native Features, if available 
+    /* initialize Native Features, if available
      * do it as soon as possible so that kprintf can make use of them
      */
 #if DETECT_NATIVE_FEATURES
@@ -227,7 +227,7 @@ static void bios_init(void)
     if (has_scc)
         boot_status |= SCC_AVAILABLE;   /* track progress */
 #endif
-    
+
     /* The sound init must be done before allowing MFC interrupts,
      * because of dosound stuff in the timer C interrupt routine.
      */
@@ -236,8 +236,8 @@ static void bios_init(void)
 #endif
     snd_init();         /* Reset Soundchip, deselect floppies */
 
-    /* Init the two ACIA devices (MIDI and KBD). The three actions below can 
-     * be done in any order provided they happen before allowing MFP 
+    /* Init the two ACIA devices (MIDI and KBD). The three actions below can
+     * be done in any order provided they happen before allowing MFP
      * interrupts.
      */
     kbd_init();         /* init keyboard, disable mouse and joystick */
@@ -282,10 +282,10 @@ static void bios_init(void)
 
     osinit();                   /* initialize BDOS */
     boot_status |= DOS_AVAILABLE;   /* track progress */
-  
+
     /* Enable VBL processing */
     vblsem = 1;
-  
+
 #if DBGBIOS
     kprintf("BIOS: Last test point reached ...\n");
 #endif
@@ -428,7 +428,7 @@ void biosmain(void)
     BOOL coldboot = FALSE; /* Without clue, this is a warm boot */
     BOOL rtc_present = FALSE; /* some hardware keeps the time when power is off */
 
-    bios_init();                /* Initialize the BIOS */ 
+    bios_init();                /* Initialize the BIOS */
 
 #if CONF_WITH_PSEUDO_COLD_BOOT
     if (warm_magic != WARM_MAGIC)
@@ -437,7 +437,7 @@ void biosmain(void)
         warm_magic = WARM_MAGIC; /* Next boot will be warm */
     }
 #endif
-    
+
     /* If the RAM was not valid, this is a cold boot */
     if (memvalid!=0x752019f3 || memval2!=0x237698aa || memval3!=0x5555aaaa) {
         /* make memory config valid */
@@ -483,7 +483,7 @@ void biosmain(void)
         initinfo();             /* show initial config information */
     }
 #endif
-    
+
     /* boot eventually from a block device (floppy or harddisk) */
     blkdev_hdv_boot();
 
@@ -500,16 +500,16 @@ void biosmain(void)
         trap1_pexec(6, "", pd, "");
     }
 #endif
-    
+
     autoexec();                 /* autoexec Prgs from AUTO folder */
 
 /*    env[0]='\0';               - clear environment string */
 
     /* clear commandline */
-    
+
     if(cmdload != 0) {
         /* Pexec a program called COMMAND.PRG */
-        trap1_pexec(0, "COMMAND.PRG", "", null_env); 
+        trap1_pexec(0, "COMMAND.PRG", "", null_env);
     } else if (exec_os) {
         /* start the default (ROM) shell */
         PD *pd;
@@ -548,7 +548,7 @@ void biosmain(void)
 #if DBGBIOS
 static void bios_0(MPB *mpb)
 {
-    getmpb(mpb); 
+    getmpb(mpb);
 }
 #endif
 
@@ -759,7 +759,7 @@ static LONG bios_7(WORD drive)
  * bcostat - Read status of output device
  *
  * Returns status in D0.L:
- * -1   device is ready       
+ * -1   device is ready
  * 0    device is not ready
  */
 
@@ -879,7 +879,7 @@ extern LONG bios_unimpl(void);
 /**
  * bios_vecs - the table of bios command vectors.
  */
- 
+
 /* PFLONG defined in bios/vectors.h */
 
 #if DBGBIOS

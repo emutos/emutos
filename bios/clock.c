@@ -32,7 +32,7 @@
 
 /* Date/Time to use when the hardware clock is not set.
  * We use the OS creation date at 00:00:00
- */ 
+ */
 #define DEFAULT_DATETIME ((ULONG)os_dosdate << 16)
 
 #if CONF_WITH_MEGARTC
@@ -97,9 +97,9 @@ void detect_megartc(void)
       has_megartc = 1;
     }
   }
-  
+
 #if 0
-  /* 
+  /*
    * Then this is what TOS 1.2 seems to do. However emulators like
    * STonX do not accept writing to the RTC registers, even in the
    * 'second bank' (if this is what setting rega := 9 means).
@@ -131,11 +131,11 @@ void detect_megartc(void)
  */
 
 /* read the 13 non-control clock registers into clkregs1
- * read the registers twice, and returns only when the two reads 
+ * read the registers twice, and returns only when the two reads
  * returned the same value.
  * This is because the MegaRTC clock is a very slow chip (32768 kHz)
  * and presumably the carry is not reported instantly when the
- * time changes!!! (this is LVL interpretation, any other reason 
+ * time changes!!! (this is LVL interpretation, any other reason
  * is welcome.)
  */
 
@@ -206,7 +206,7 @@ static UWORD mdogettime(void)
   time = (((clkregs1.sec_l & 0xf) + 10 * (clkregs1.sec_h & 0xF)) >> 1)
     |  (((clkregs1.min_l & 0xf) + 10 * (clkregs1.min_h & 0xf)) << 5)
     |  (((clkregs1.hour_l & 0xf) + 10 * (clkregs1.hour_h & 0xf)) << 11) ;
- 
+
   return time;
 }
 
@@ -218,7 +218,7 @@ static void mdosetdate(UWORD date)
   clkregs1.mon_l = ((date >> 5) & 0xF) % 10;
   clkregs1.mon_h = ((date >> 5) & 0xF) / 10;
   clkregs1.year_l = (date >> 9) % 10;
-  clkregs1.year_h = (date >> 9) / 10;  
+  clkregs1.year_h = (date >> 9) / 10;
 
 #if DBG_CLOCK
   kprintf("mdosetdate() %x%x/%x%x/%x%x\n",
@@ -243,9 +243,9 @@ static UWORD mdogetdate(void)
      Fortunately, this is exactly the same as in the BIOS format. */
 
   date = ((clkregs1.day_l & 0xf) + 10 * (clkregs1.day_h & 0xf))
-    |  (((clkregs1.mon_l & 0xf) + 10 * (clkregs1.mon_h & 0xf)) << 5) 
+    |  (((clkregs1.mon_l & 0xf) + 10 * (clkregs1.mon_h & 0xf)) << 5)
     |  (((clkregs1.year_l & 0xf) + 10 * (clkregs1.year_h & 0xf)) << 9) ;
- 
+
   return date;
 }
 
@@ -329,7 +329,7 @@ static UWORD ndogettime(void)
   time = (seconds >> 1)
        | (minutes << 5)
        | (hours << 11);
- 
+
   return time;
 }
 
@@ -360,9 +360,9 @@ static UWORD ndogetdate(void)
 #endif
 
   date = (days & 0x1F)
-       | ((months & 0xF) << 5) 
+       | ((months & 0xF) << 5)
        | ((years + nvram_rtc_year_offset) << 9);
- 
+
   return date;
 }
 
@@ -485,7 +485,7 @@ static UWORD idogettime(void)
   return time;
 }
 
-static void idosettime(UWORD time) 
+static void idosettime(UWORD time)
 {
   iclkbuf.sec = int2bcd( (time << 1) & 0x3f );
   iclkbuf.min = int2bcd( (time >> 5) & 0x3f );
@@ -495,7 +495,7 @@ static void idosettime(UWORD time)
 #endif
 }
 
-static void idosetdate(UWORD date) 
+static void idosetdate(UWORD date)
 {
   UWORD year = 1980 + ((date >> 9) & 0x7f);
 

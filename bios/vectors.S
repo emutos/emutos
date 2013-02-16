@@ -20,7 +20,7 @@
         .globl  _xbiostrap      // call XBIOS from C
         .globl  _bios_unimpl
         .globl  _xbios_unimpl
-        
+
 
         .globl  _check_read_byte
         .globl  _int_vbl
@@ -36,7 +36,7 @@
         .globl  _keyclick
         .globl  _trap_save_area
 
-                
+
 // ==== tosvars.s - TOS System variables =====================================
 
         .extern _longframe
@@ -53,23 +53,23 @@
         .extern _blink          // conout.c - console output
 
 // Note: this scheme is designed to print the exception number
-// for vectors 2 to 63 even if working on a 32bit address bus. 
+// for vectors 2 to 63 even if working on a 32bit address bus.
 // LVL.
 
         .extern _dopanic
-        
+
         .extern _proc_lives
-        .extern _proc_dregs     
-        .extern _proc_aregs     
-        .extern _proc_enum      
-        .extern _proc_usp       
-        .extern _proc_stk       
-        
+        .extern _proc_dregs
+        .extern _proc_aregs
+        .extern _proc_enum
+        .extern _proc_usp
+        .extern _proc_stk
+
         .extern _stktop
 
 
         .text
-        
+
 
 
 /* basically initialize the 62 exception vectors. */
@@ -92,7 +92,7 @@ set_vec:
 
 /* initialize the 192 user vectors. */
 
-_init_user_vec: 
+_init_user_vec:
         lea     user_vec, a0
         lea     256, a1
         move.l  #191, d0
@@ -115,7 +115,7 @@ set_uvec:
  * the former method will allow any_vec to display the correct vector
  * number and report a meaningful panic message.
  */
-        
+
 deflt_vec_table:
         bsr.s   any_vec         // vector 2
         bsr.s   any_vec
@@ -250,7 +250,7 @@ _gemtrap:
 no_vdi:
         cmp.w   #0xfffe,d0              // vq_gdos call?
         beq     what_gdos
-        
+
         cmp.w   #0xffff,d0              // query for jsr:able address?
         beq     query
 
@@ -268,10 +268,10 @@ query:
 
 #if CONF_WITH_SHIFTER
 
-/* 
- * Int 0x68 - HBL interrupt 
+/*
+ * Int 0x68 - HBL interrupt
  */
- 
+
 _int_hbl:
 #ifdef __mcoldfire__
 // Beware: On ColdFire, the first word on the stack is the Format/Vector word,
@@ -302,7 +302,7 @@ is_ipl:
 
 
 /*
- * _int_vbl - Int 0x70 - VBL interrupt 
+ * _int_vbl - Int 0x70 - VBL interrupt
  *
  * no video resolution change is done.
  */
@@ -370,7 +370,7 @@ vbl_palette_loop:
 #else
         dbra    d1,vbl_palette_loop
 #endif
-vbl_no_palette: 
+vbl_no_palette:
 
         // set new video address
         move.l  _screenpt,d0
@@ -392,7 +392,7 @@ st_shifter:
         swap    d0
 #endif
         move.b  d0,0xffff8201.w
-vbl_no_screenpt:        
+vbl_no_screenpt:
 #endif /* CONF_WITH_SHIFTER */
 
 #if CONF_WITH_FDC
@@ -412,7 +412,7 @@ vbl_no_screenpt:
         sub.w   #1,d0
 #endif
         move.l  _vblqueue,a0
-vbl_queue_loop: 
+vbl_queue_loop:
         move.l  (a0)+,a1
         cmp.l   #0,a1
         beq     vbl_queue_next
@@ -429,7 +429,7 @@ vbl_queue_loop:
 #else
         movem.l (sp)+,d0/a0
 #endif
-vbl_queue_next: 
+vbl_queue_next:
 #ifdef __mcoldfire__
         subq.l  #1,d0
         bpl.s   vbl_queue_loop
@@ -437,9 +437,9 @@ vbl_queue_next:
         dbra    d0,vbl_queue_loop
 #endif
 vbl_no_queue:
-        
+
         // screen hardcopy
-        // (not done) 
+        // (not done)
 
 #ifdef __mcoldfire__
         movem.l (sp), d1-d7/a0-a6       // restore registers
@@ -468,7 +468,7 @@ vbl_end:
 
 // ==== Timer C interrupt handler ============================================
 _int_timerc:
-        
+
         addq.l  #1, _hz_200             // increment 200 Hz counter
 
 #ifdef __mcoldfire__
@@ -494,24 +494,24 @@ _int_timerc:
 #ifdef __mcoldfire__
         // On ColdFire, d0 and a0 were saved earlier
         lea     -52(sp),sp
-        movem.l d1-d7/a1-a6,(sp)        // save registers       
+        movem.l d1-d7/a1-a6,(sp)        // save registers
 #else
-        movem.l d0-d7/a0-a6,-(sp)       // save registers       
+        movem.l d0-d7/a0-a6,-(sp)       // save registers
 #endif
 
-        // repeat keys 
+        // repeat keys
         jsr     _kb_timerc_int
 
 #if CONF_WITH_YM2149
         // dosound support
         jsr     _sndirq
 #endif
-        
+
         move.w  _timer_ms, -(sp)
         move.l  _etv_timer, a0
         jsr     (a0)                    // jump to etv_timer routine
         addq.l  #2, sp                  // correct stack
-        
+
 #ifdef __mcoldfire__
         // On ColdFire, d0 and a0 will be restored later
         movem.l (sp),d1-d7/a1-a6
@@ -520,7 +520,7 @@ _int_timerc:
         movem.l (sp)+,d0-d7/a0-a6
 #endif
 
-timerc_end:                     
+timerc_end:
 #if CONF_WITH_MFP
 #ifdef __mcoldfire__
         lea     0xfffffa11.w, a0
@@ -557,9 +557,9 @@ _criter1:
 #ifndef __mcoldfire__
 
 /*
- * _int_illegal - illegal instruction handler 
+ * _int_illegal - illegal instruction handler
  *
- * Convert an illegal 'MOVE CCR,...' to 'MOVE SR,...' 
+ * Convert an illegal 'MOVE CCR,...' to 'MOVE SR,...'
  * (see bios/processor.h for the full story)
  */
 
@@ -583,8 +583,8 @@ ii_back:
 
 /*
  * _int_priv - privileged instruction handler
- *      
- * Convert a priviledged 'MOVE SR,...' to 'MOVE CCR,...' 
+ *
+ * Convert a priviledged 'MOVE SR,...' to 'MOVE CCR,...'
  * (see bios/processor.h for the full story)
  */
 
@@ -610,15 +610,15 @@ _int_priv:
         MOVEC_D0_CACR                   // invalidate the line
         bra.s   pi_next
 
-pi_not30:        
+pi_not30:
         cmp.b   #40,_mcpu+3
         bne     pi_next
-        
+
         // 68040 only, invalidate the line holding the opcode only
         nop
         dc.w    0xf488                  // cinvl   ic,(a0)
         nop
-        
+
 pi_next:
         movem.l (sp)+,d0/a0
         rte
@@ -647,7 +647,7 @@ _xbiostrap:
 // ==== Trap 13+14 handler ==================================================
 
 biosxbios:
-        move.l  _savptr, a1     
+        move.l  _savptr, a1
 #ifdef __mcoldfire__
         move.w  (sp)+,d0        // Format/Vector Word
         andi.l  #0x3000,d0      // Keep the filler bits
@@ -682,7 +682,7 @@ bx_nolongframe:
         movem.l d3-d7/a3-a7, -(a1)      // regs, including stack pointer
 #endif
         move.l  a1, _savptr
-        
+
         btst    #13,d0          // were we in user mode?
         bne     bx_sp_ok        // yes, the sp already points to the arguments
         move.l  usp,sp          // no, the arguments were on the user stack
@@ -749,7 +749,7 @@ _xbios_unimpl:
  * C call: int check_read_byte(long);
  * returns 0 if reading the address caused a bus error
  */
- 
+
 _check_read_byte:
         move.l  sp,d1
         move.l  (8).w,a1
@@ -789,28 +789,28 @@ msgcrb:
 
 
 
-/* 
+/*
  * _just_rts - just a dummy
  */
- 
-_just_rts:       
-        rts   
+
+_just_rts:
+        rts
 
 
 
 /*
- * just_rte - just rte for divide by zero 
+ * just_rte - just rte for divide by zero
  */
- 
+
 _just_rte:
-        rte             
+        rte
 
 
 /* ==== Glue for external vectors ===========================================
  *
  * EmuTOS uses d0-d1/a0-a1 as scratch registers. However the original TOS
  * used d0-d2/a0-a2 as scratch registers. For this reason, when jumping into
- * external user-supplied code we need to save/restore d2/a2. The routines 
+ * external user-supplied code we need to save/restore d2/a2. The routines
  * below provide the necessary assembler support.
  */
 
@@ -818,7 +818,7 @@ _just_rte:
         .globl   _protect_w
         .globl   _protect_ww
         .globl   _protect_wlwwwl
-        
+
 /*
  * LONG protect_v(LONG (*func)(void));
  */
@@ -936,12 +936,12 @@ _keyclick:
         rts
 
 // ==== Variables ============================================================
- 
+
         .bss
         .even
 
 /* save area for trap13/14. */
-save_beg:       ds.w    24*3    // d3-d7/a3-a7, sr, pc, vo = 24 words, 
+save_beg:       ds.w    24*3    // d3-d7/a3-a7, sr, pc, vo = 24 words,
                                 // multiplied by 3 ("3 level deep reentrant")
 _trap_save_area:                     // End of Save storage
 

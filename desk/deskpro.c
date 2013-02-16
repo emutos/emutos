@@ -44,7 +44,7 @@ WORD pro_chdir(WORD drv, BYTE *ppath)
         if (!drv)
           return( (DOS_ERR = TRUE) );
 
-        if ( drv != '@' ) 
+        if ( drv != '@' )
         {
           dos_sdrv(drv - 'A');
           G.g_srcpth[0] = drv;

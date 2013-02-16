@@ -1,5 +1,5 @@
 /*
- * fsmain.c - GEMDOS file system notes and misc routines          
+ * fsmain.c - GEMDOS file system notes and misc routines
  *
  * Copyright (c) 2001 Lineo, Inc.
  *               2002 - 2010 The EmuTOS development team
@@ -26,7 +26,7 @@
 **      13 Mar 85       SCC     Changed xgetfree() to return values into longs.
 **                              (As per spec).
 **
-**                              Changed handling of getbpb() return to allow 
+**                              Changed handling of getbpb() return to allow
 **                              flagging of bad getbpb().
 **
 **      14 Mar 85       JSL     Modified getrec() to clear b_dirty flag.
@@ -34,71 +34,71 @@
 **                              Modified ixcreat() to force flush
 **                              (for the sake of xmkdir() ).
 **
-**      22 Mar 85       SCC     Modified xsetdrv() to return drive map (to 
-**                              bring up to spec functionality, specifically 
+**      22 Mar 85       SCC     Modified xsetdrv() to return drive map (to
+**                              bring up to spec functionality, specifically
 **                              at request of Steve Schmitt (DR Logo) ).
 **
-**                              Extended good/bad returns based on ckdrv() 
+**                              Extended good/bad returns based on ckdrv()
 **                              results.
 **
-**      26 Mar 85       JSL     Modified xsfirst() to be a front end to 
-**                              ixsfirst().  ixsfirst() is used internally by 
-**                              xexec() to force a disk access prior to 
-**                              xpgmld() so that media change info can be 
+**      26 Mar 85       JSL     Modified xsfirst() to be a front end to
+**                              ixsfirst().  ixsfirst() is used internally by
+**                              xexec() to force a disk access prior to
+**                              xpgmld() so that media change info can be
 **                              updated sooner.
 **
-**                              Modified ixlseek() because of bug when pointer 
+**                              Modified ixlseek() because of bug when pointer
 **                              is at end of cluster prior to forward seek.
 **
 **                      SCC     Made above actual changes from JSL's notes.
 **
 **      27 Mar 85       SCC     Modifed dcrack() and findit() to terminate with
-**                              indication of no file found if bad return from 
+**                              indication of no file found if bad return from
 **                              ckdrv().
 **
-**      28 Mar 85       SCC     Modified xchdir() to look for NEGATIVE return 
+**      28 Mar 85       SCC     Modified xchdir() to look for NEGATIVE return
 **                              from ckdrv().
 **
 **      29 Mar 85       JSL     Fixed xrmdir() bug of "ghost" subdirectories.
-**                              Fixed problem creating files in unaccessed 
+**                              Fixed problem creating files in unaccessed
 **                              subdir.
 **
-**       4 Apr 85       SCC     Modified several functions to improve 
+**       4 Apr 85       SCC     Modified several functions to improve
 **                              readability.
 **
-**                              Removed a number of old 'SCC  ?? ??? 85' 
-**                              modification marks, and began adding formfeeds 
+**                              Removed a number of old 'SCC  ?? ??? 85'
+**                              modification marks, and began adding formfeeds
 **                              between routines and routine headers.
 **
 **                              Modified dup() to return long value and distinct
 **                              error codes.
 **
-**                              Modified xforce() and ixforce() to return long 
-**                              value and distinct error codes, and to range 
+**                              Modified xforce() and ixforce() to return long
+**                              value and distinct error codes, and to range
 **                              check 'h'.
 **
 **                              Now includes gemerror.h.
 **
-**                              Modified xclose() and ixclose() to return long 
+**                              Modified xclose() and ixclose() to return long
 **                              value and distinct error codes.
 **
-**       5 Apr 85       SCC     Modified ixforce() to range check 'std', and 
+**       5 Apr 85       SCC     Modified ixforce() to range check 'std', and
 **                              moved it after xforce().
 **
 **       8 Apr 85       SCC     Added declaration of 'drv' parameter to log().
 **
-**                              Added 'long' type to declaration of flush() 
+**                              Added 'long' type to declaration of flush()
 **                              and error returns.
 **
 **                              Added 'long' type to declaration of usrio().
 **
-**                              Added 'int' type to declaration of getpath() 
+**                              Added 'int' type to declaration of getpath()
 **                              and 'flg' parameter.
 **
-**                              Added 'long' type to declaration of getcl() 
+**                              Added 'long' type to declaration of getcl()
 **                              and error returns.
 **
-**                              Added 'long' type to declaration of ckdrv() 
+**                              Added 'long' type to declaration of ckdrv()
 **                              and error returns.
 **
 **                              Added 'long' type to declaration of opnfil().
@@ -110,13 +110,13 @@
 **                              Added 'int' type to declaration of divmod().
 **
 **      10 Apr 85       SCC     Removed 'long' return from flush(), reversing
-**                              modification of 8 Apr 85, since errors from 
-**                              the BIOS are handled by longjmp()ing back to 
+**                              modification of 8 Apr 85, since errors from
+**                              the BIOS are handled by longjmp()ing back to
 **                              top of dispatcher.
 **
 **                              Removed 'long' return from usrio(), reversing
-**                              modification of 8 Apr 85, since errors from 
-**                              the BIOS are handled by longjmp()ing back to 
+**                              modification of 8 Apr 85, since errors from
+**                              the BIOS are handled by longjmp()ing back to
 **                              top of dispatcher.
 **
 **                              Changed definition of rwerr from 'int' to 'long'
@@ -125,18 +125,18 @@
 **
 **                              Modified xwrite() to check validity of handle.
 **
-**                              Modified ixclose() to check error returns from 
+**                              Modified ixclose() to check error returns from
 **                              ixlseek().
 **
-**                              Modified ixclose() to return EINTRN where JSL 
-**                              had marked 'some kind of internal error', and 
+**                              Modified ixclose() to return EINTRN where JSL
+**                              had marked 'some kind of internal error', and
 **                              to return E_OK at end.
 **
 **                              Modified getcl() to return EINTRN.
 **
 **                              Modified nextcl() to return EINTRN and E_OK.
 **
-**                              Added rc to scan() to check error returns from 
+**                              Added rc to scan() to check error returns from
 **                              ixlseek().
 **
 **                              Modified xsnext() to return E_OK and ENMFIL.
@@ -151,42 +151,42 @@
 **
 **                              Added xfreset() and ixfreset().
 **
-**      12 Apr 85       SCC     Removed spurious ',0' from parameters passed 
+**      12 Apr 85       SCC     Removed spurious ',0' from parameters passed
 **                              to xclose() by xfreset().
 **
 **      14 Apr 85       SCC     Backed out modification of 11 Apr 85 that added
-**                              xfreset() and ixfreset().  They were not the 
-**                              solution to the problem they were aimed at 
-**                              fixing.  See corresponding note in the CLI 
+**                              xfreset() and ixfreset().  They were not the
+**                              solution to the problem they were aimed at
+**                              fixing.  See corresponding note in the CLI
 **                              about the ^C problem.
 **
 **                              Modified ixdel() to not delete an open file.
 **
-**                              Backed out modifications to getcl() (it is now 
+**                              Backed out modifications to getcl() (it is now
 **                              'int' and returns -1).
 **
-**                              Backed out modifications to nextcl() (it now 
+**                              Backed out modifications to nextcl() (it now
 **                              returns -1).
 **
-**                              Backed out modifications to clfix() (it us 
+**                              Backed out modifications to clfix() (it us
 **                              untyped).
 **
-**      16 Apr 85       SCC     Modified ixdel() to close the file if it is 
-**                              open, and then go ahead and delete it.  This 
-**                              fix was in response to the fact that AS68 
-**                              routinely deletes its files without closing 
+**      16 Apr 85       SCC     Modified ixdel() to close the file if it is
+**                              open, and then go ahead and delete it.  This
+**                              fix was in response to the fact that AS68
+**                              routinely deletes its files without closing
 **                              them.
 **
-**      29 Apr 85       SCC     Modified xrename() to check for existence of 
-**                              new file name before attempting to rename old 
+**      29 Apr 85       SCC     Modified xrename() to check for existence of
+**                              new file name before attempting to rename old
 **                              file.
 **
 **       1 May 85       SCC     Did slight code optimization on ixsfirst().
 **
-**       6 May 85       SCC     Modified ixsfirst() to report EFILNF on error 
+**       6 May 85       SCC     Modified ixsfirst() to report EFILNF on error
 **                              return from findit().
 **
-**                              Modified ixcreat() to return EPTHNF for null 
+**                              Modified ixcreat() to return EPTHNF for null
 **                              file name.
 **
 **       7 May 85       SCC     Modified xchdir() to return EPTHNF on failure of
@@ -195,28 +195,28 @@
 **       8 May 85       SCC     Modified xchdir() to not change path on failure
 **                              of findit().
 **
-**       9 May 85       SCC     Modified xrename() to return EACCDN if 
+**       9 May 85       SCC     Modified xrename() to return EACCDN if
 **                              destination filename already exists.
 **
-**      13 May 85       SCC     Modified xchdir() to call ucase() before path 
+**      13 May 85       SCC     Modified xchdir() to call ucase() before path
 **                              string is used.
 **
-**                              Modified findit() to call ucase() before name 
+**                              Modified findit() to call ucase() before name
 **                              string is used.
 **
-**                              Modified builds() to truncate pre-'.' portion 
+**                              Modified builds() to truncate pre-'.' portion
 **                              of file name to 8 characters.
 **
-**                              Modified xmkdir() to use ixcreat() instead of 
+**                              Modified xmkdir() to use ixcreat() instead of
 **                              xcreat().
 **
-**                              Modified xcreat() to prevent external caller 
+**                              Modified xcreat() to prevent external caller
 **                              from creating a subdirectory.
 **
 **      15 May 85       SCC     Modified xgetfree() to be 0=default, 1=A:, etc.
 **
-**      16 May 85       SCC     Modified builds() to terminate post-'.' 
-**                              portion of file name upon scanning a '.' as 
+**      16 May 85       SCC     Modified builds() to terminate post-'.'
+**                              portion of file name upon scanning a '.' as
 **                              well as the other characters it was checking.
 **
 **      26 Jun 85       LTG     Fixed bug in xrename to return err from open.
@@ -226,49 +226,49 @@
 **                              Modified xopen() & ixopen() to return EACCDN
 **                              if try to open file with read only mode in
 **                              read/write or write mode.
-** 
+**
 **                              Mod to xread() to return EACCDN err if try to
 **                              read file opened as write only.
-** 
+**
 **                              Modifiedixwrite()toreturnEACCDNerriftry
 **                              to write file opend as read only.
 **
-**                              Modified getdmd() to return NULLPTR if MGET 
+**                              Modified getdmd() to return NULLPTR if MGET
 **                              failed.
 **
-**                              Modified log() to return a long indicating 
+**                              Modified log() to return a long indicating
 **                              ENSMEM if getdmd() failed.
 **
-**                              Modified makofd() to return NULLPTR if MGET 
+**                              Modified makofd() to return NULLPTR if MGET
 **                              fails.
 **
-**                              Modified makdnd() to return NULLPTR if MGET 
+**                              Modified makdnd() to return NULLPTR if MGET
 **                              fails.
-** 
-**                              Modified makopn() to return ENSMEM if MGET 
+**
+**                              Modified makopn() to return ENSMEM if MGET
 **                              fails.
 **
 **                              Modified scan() to return NULLPTR if makofd()
 **                              or makdnd() fails.
 **
-**                              Modified xcreate() to return (ENSMEM) if 
+**                              Modified xcreate() to return (ENSMEM) if
 **                              makofd() fails.
 **
 **                              Modified xmkdir() to return ENSMEM if makofd()
 **                              or makdnd() fails.
 **
-**                              Modified rmdir() to return ENSMEM if makofd() 
+**                              Modified rmdir() to return ENSMEM if makofd()
 **                              fails.
 **
-**      19 Jul 85       LTG     Modified scan() to make sure a file has not be 
-**                              deleted before creating a DND for it.  This 
-**                              fixes the bug that prevented some directories 
+**      19 Jul 85       LTG     Modified scan() to make sure a file has not be
+**                              deleted before creating a DND for it.  This
+**                              fixes the bug that prevented some directories
 **                              from being removed.
 **
-**      19 Jul 85       SCC     Modified scan() to prevent creation of a new 
+**      19 Jul 85       SCC     Modified scan() to prevent creation of a new
 **                              DND for a subdirectory that already has one.
 **
-**                              Added routine uc() to upper-case a single 
+**                              Added routine uc() to upper-case a single
 **                              character and removed up_string().
 **
 **                              Modified dcrack() to use uc().
@@ -283,57 +283,57 @@
 **
 **                              Modified match() to use uc().
 **
-**      22 Jul 85       LTG     Modified ixcreate() to pass mode parameter to 
+**      22 Jul 85       LTG     Modified ixcreate() to pass mode parameter to
 **                              opnfl(), 0 for RO, 2 for RW.
 **
-**                      SCC     Modified scan().  Modification of 19 Jul 85 
+**                      SCC     Modified scan().  Modification of 19 Jul 85
 **                              was not correct.
 **
-**                              Modified ixcreat().  Modification of 22 Jul 85 
+**                              Modified ixcreat().  Modification of 22 Jul 85
 **                              did not check for R/O status correctly.
 **
-**      23 Jul 85       SCC     Modified scan().  Still in pursuit of 
+**      23 Jul 85       SCC     Modified scan().  Still in pursuit of
 **                              corrections to mods made on 22 Jul 85.
 **
 **      23 Jul 85       LTG     Modified builds() to chk for SLASH when namd is
-**                              8 chs long.  This fixes the bug with 8 char 
+**                              8 chs long.  This fixes the bug with 8 char
 **                              directory nms.
 **
 **      24 Jul 85       SCC     Modified scan().  (Snide comment about still not
 **                              having fixed the DND problem last referred to on
 **                              23 Jul 85.)
 **
-**      25 Jul 85       SCC     Modified xunlink().  It now reports correctly 
+**      25 Jul 85       SCC     Modified xunlink().  It now reports correctly
 **                              EACCDN if the file being removed is read-only.
 **
-**      26 Jul 85       LTG     Modified xrename(). Fixed call to getofd() to 
+**      26 Jul 85       LTG     Modified xrename(). Fixed call to getofd() to
 **                              pass an int instead of a long.
 **
 **                      SCC     Modified ixread().  Caller could pass in long
 **                              negative length, which was causing problems.
 **
-**      29 Jul 85       SCC     Modified ixcreat() to disallow creation of an 
-**                              entry beginning with '.', specifically to fix 
+**      29 Jul 85       SCC     Modified ixcreat() to disallow creation of an
+**                              entry beginning with '.', specifically to fix
 **                              'MD .'.
 **
-**                              Modified xrmdir() to disallow 'RD .' or 
+**                              Modified xrmdir() to disallow 'RD .' or
 **                              'RD ..'.
 **
 **      31 Jul 85       LTG     Modified ixlseek(). Now chks to see if at front of
-**                              file before bumping cluster num when on cluster 
+**                              file before bumping cluster num when on cluster
 **                              boundry.
 **
-**       6 Aug 85       LTG     Modified xchdir().  No longer removes drive 
-**                              specification from path name before sending it 
+**       6 Aug 85       LTG     Modified xchdir().  No longer removes drive
+**                              specification from path name before sending it
 **                              to findit().
 **
-**       7 Aug 85       LTG     Modified getdmd() to deallocate memory of just 
-**                              allocated data structures if it runs out of 
+**       7 Aug 85       LTG     Modified getdmd() to deallocate memory of just
+**                              allocated data structures if it runs out of
 **                              mem before it's done.
 **
 **  mod       who date          what
 **  --------- --- ---------     ----
-**  M00.14.01   ktb 02 Aug 85   Fix to xrw enabling proper deblocking of 
+**  M00.14.01   ktb 02 Aug 85   Fix to xrw enabling proper deblocking of
 **                              requests where cluster sizes are not 2.
 **
 **  M00.16.02   scc 11 Aug 85   Modified xmkdir() to deallocate DND it creates
@@ -373,7 +373,7 @@
 **      KTB     Karl T. Braun (kral)
 **
 ** ---------------------------------------------------------------------
-** 
+**
 ** Notes:
 **      1. Cluster size must be < 32K bytes (strictly less)
 **      2. Cluster size, record size must all be powers of two
@@ -453,7 +453,7 @@ long    xsetdrv(int drv)
  *      Last modified   SCC     1 May 85
  */
 
-long    xgetdrv(void) 
+long    xgetdrv(void)
 {
     return(run->p_curdrv);
 }

@@ -138,7 +138,7 @@ WORD oldres;
     return 1;
 }
 #endif
- 
+
 #if CONF_WITH_VIDEL
 /*
  *  change_falcon_rez(): change desktop Falcon resolution
@@ -205,7 +205,7 @@ WORD oldmode, oldbase, oldoptions;
     return 1;
 }
 #endif
- 
+
 /*
  *  change_resolution(): change desktop resolution
  *

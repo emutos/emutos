@@ -17,7 +17,7 @@ Internationalization
 - bugs in tools/bug.c; more things should be configurable on the command line
 
 VDI
-- The linemask for dashed lines is not calculated correct, depending on 
+- The linemask for dashed lines is not calculated correct, depending on
   the internal calculations of increase in x direction, like in original TOS.
 - vs_color and vq_color don't work with TT shifter.
 

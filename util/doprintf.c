@@ -1,6 +1,6 @@
 /*
  * doprintf adapted from ACK doprnt.c   1.1 as found in Minix 1.5
- * Unless otherwise stated, the MINIX BSD-ish license applies. 
+ * Unless otherwise stated, the MINIX BSD-ish license applies.
  *
  * modified Laurent Vogel 2000, 2001
  */

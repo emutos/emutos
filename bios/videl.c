@@ -13,7 +13,7 @@
 
 #define DBG_VIDEL 0
 
-#include "config.h"  
+#include "config.h"
 #include "machine.h"
 #include "screen.h"
 #include "videl.h"
@@ -648,11 +648,11 @@ static int use_ste_palette(WORD videomode)
 
 /*
  * set palette registers
- * 
+ *
  * note that the actual update of the hardware registers is done by the
  * VBL interrupt handler, according to the setting of 'colorptr'.  since
  * the address in colorptr must be even, we use bit 0 as a flag.
- * 
+ *
  * colorptr contents   VBL interrupt handler action
  * -----------------   ----------------------------
  *       0             do nothing

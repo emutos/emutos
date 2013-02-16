@@ -12,7 +12,7 @@
 
 
 /* LVL: I do not use types WORD and ULONG on purpose, to
- * avoid gcc complaining about conflicting types for built-in 
+ * avoid gcc complaining about conflicting types for built-in
  * functions (memset, memcpy, strlen, ...).
  *
  * Nevertheless this header will only work with -mshort option.
@@ -41,11 +41,11 @@ int sprintf(char *str, const char *fmt, ...);
 
 /* Inline string routines: */
 #if USE_STATIC_INLINES
-static inline char *strcpy(char *dest, const char *src) 
+static inline char *strcpy(char *dest, const char *src)
 {
     register char *tmp = dest;
- 
-    while( (*tmp++ = *src++) ) 
+
+    while( (*tmp++ = *src++) )
         ;
     return dest;
 }
@@ -58,13 +58,13 @@ int memcmp(const void * s1, const void * s2, unsigned long int n);
 /* moves length bytes from src to dst. returns dst as passed.
  * the behaviour is undefined if the two regions overlap.
  */
-void memcpy(void * dst, const void * src, 
+void memcpy(void * dst, const void * src,
             long unsigned int length);
-       
-/* moves length bytes from src to dst, performing correctly 
+
+/* moves length bytes from src to dst, performing correctly
  * if the two regions overlap. returns dst as passed.
  */
-void memmove(void * dst, const void * src, 
+void memmove(void * dst, const void * src,
              long unsigned int length);
 
 /* fills with byte c, returns the given address. */

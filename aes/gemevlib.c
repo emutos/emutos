@@ -1,5 +1,5 @@
 /*      GEMEVLIB.C      1/28/84 - 09/12/85      Lee Jay Lorenzen        */
-/*      merge High C vers. w. 2.2 & 3.0         8/20/87         mdf     */ 
+/*      merge High C vers. w. 2.2 & 3.0         8/20/87         mdf     */
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
@@ -176,7 +176,7 @@ WORD ev_multi(WORD flags, MOBLK *pmo1, MOBLK *pmo2, LONG tmcount,
             }
           }
                                                 /* quick check mouse rec*/
-          if ( ( flags & MU_M1 ) &&     
+          if ( ( flags & MU_M1 ) &&
                ( in_mrect(pmo1) ) )
               what |= MU_M1;
                                                 /* quick check mouse rec*/
@@ -215,7 +215,7 @@ WORD ev_multi(WORD flags, MOBLK *pmo1, MOBLK *pmo2, LONG tmcount,
             iasync( MU_M1, ADDR(pmo1) );
                                                 /* wait for mouse rect. */
           if (flags & MU_M2)
-            iasync( MU_M2, ADDR(pmo2) ); 
+            iasync( MU_M2, ADDR(pmo2) );
                                                 /* wait for message     */
           if (flags & MU_MESAG)
           {
@@ -260,7 +260,7 @@ WORD ev_multi(WORD flags, MOBLK *pmo1, MOBLK *pmo2, LONG tmcount,
 
 
 /*
-*       Wait for a key to be ready at the keyboard and return it. 
+*       Wait for a key to be ready at the keyboard and return it.
 */
 WORD ev_dclick(WORD rate, WORD setit)
 {

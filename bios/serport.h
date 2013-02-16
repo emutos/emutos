@@ -23,8 +23,8 @@
  */
 #define B19200 0
 #define B9600  1
-#define B4800  2 
-#define B3600  3 
+#define B4800  2
+#define B3600  3
 #define B2400  4
 #define B2000  5
 #define B1800  6

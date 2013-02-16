@@ -34,7 +34,7 @@ int printf(const char *fmt, ...)
 }
 
 static char *month_name[] = {
-  "Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
   "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
   "13?", "14?", "15?"
 };
@@ -60,7 +60,7 @@ int main(int argc, char **argv)
   min = (time >> 5) & 0x3F;
   sec = (time << 1) & 0x3F;
 
-  printf("%d %s %d, %02d:%02d:%02d\n", 
+  printf("%d %s %d, %02d:%02d:%02d\n",
          day, month_name[month-1], year, hour, min, sec);
   return 0;
 }

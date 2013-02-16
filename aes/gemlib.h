@@ -21,7 +21,7 @@
 #define GEMLIB_H
 
                                                 /* mu_flags             */
-#define MU_KEYBD 0x0001 
+#define MU_KEYBD 0x0001
 #define MU_BUTTON 0x0002
 #define MU_M1 0x0004
 #define MU_M2 0x0008
@@ -43,7 +43,7 @@ typedef struct moblk
 /*      MENULIB.H       05/04/84 - 11/01/84     Lowell Webster  */
 
 #define WID_DESKACC 21
-        
+
 #define MTH 1                                   /* menu thickness       */
 
 #define THESCREEN 0
@@ -175,10 +175,10 @@ typedef struct rshdr
         WORD            rsh_tedinfo;
         WORD            rsh_iconblk;    /* list of ICONBLKS             */
         WORD            rsh_bitblk;
-        WORD            rsh_frstr;      
+        WORD            rsh_frstr;
         WORD            rsh_string;
         WORD            rsh_imdata;     /* image data                   */
-        WORD            rsh_frimg;      
+        WORD            rsh_frimg;
         WORD            rsh_trindex;
         WORD            rsh_nobs;       /* counts of various structs    */
         WORD            rsh_ntree;

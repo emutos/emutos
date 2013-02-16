@@ -139,7 +139,7 @@ p1_update:
 
 
 //////                                         //////
-//////   FIRST FRINGE FRAGMENTS:single transfer   ////// 
+//////   FIRST FRINGE FRAGMENTS:single transfer   //////
 //////                                         //////
 
 
@@ -160,7 +160,7 @@ f0_right:
 
 
 //////                            //////
-//////   FIRST FRINGE FRAGMENTS   ////// 
+//////   FIRST FRINGE FRAGMENTS   //////
 //////                            //////
 
 
@@ -378,7 +378,7 @@ f2_l2r_rt:
 
         move.l  d1,d0           // d0(31:16) <- next to last SOURCE word                 4
         move.w  (a0),d0         // d0(15:00) <- last SOURCE word                         8
-  
+
         ror.l   d4,d0           // d0(15:00) <- alligned SRC: old|new         8-24
 
         bra     f2_out          // send fringe to DESTINATION                   10
@@ -457,7 +457,7 @@ f2_update:
 
         adda.w  SRC_WR(a6),a0   // a0 -> last word of next line: SRC            16
         adda.w  DST_WR(a6),a1   // a1 -> last word of next line: DST            16
-  
+
         jmp     (a4)            // thread to first fringe fragment               8
 
 
@@ -496,7 +496,7 @@ f1_drt:
         swap    d5              //                                               4
 
         adda.w  DST_WR(a6),a1   // a1 -> initial word of next line: DST         16
-  
+
         jmp     (a4)            // thread to first fringe fragment               8
 
 
@@ -599,7 +599,7 @@ mode_02:
         and.w   d7,d0           // S and P                                       4
 f1op_02:
         not.w   d0
-        and.w   d6,d0   
+        and.w   d6,d0
         or.w    d0,(a1)         // D' <- not {[not S] or D}
         eor.w   d6,(a1)
         jmp     (a3)
@@ -609,7 +609,7 @@ f1op_02:
         and.w   d7,d0           // S and P                                       4
 f2op_02:
         not.w   d0
-        and.w   d6,d0   
+        and.w   d6,d0
         or.w    d0,(a1)         // D' <- not {[not S] or D}
         eor.w   d6,(a1)
         bra     f2_rtn
@@ -668,7 +668,7 @@ f2op_04:
 
 
 mode_05:                        // dummy label. Never called!!!!
-        
+
 
         and.w   d7,d0           // S and P                                       4
 mode_06:
@@ -905,12 +905,12 @@ f2op_15:
 // it is for now - some of it is also used for text blitting.
 
 _bit_blt:
-        // A wrapper, so save and set up registers 
+        // A wrapper, so save and set up registers
         movem.l d2-d7/a2-a6,-(sp)
 
         lea     _info, a6               // get info structure
 
-        add.l   #FRAME_LEN, a6          // emulate link opcode 
+        add.l   #FRAME_LEN, a6          // emulate link opcode
 
         move.w  S_XMIN(a6),d0           // clipped Xmin source
         move.w  D_XMIN(a6),d2           // clipped Xmin destination
@@ -920,14 +920,14 @@ _bit_blt:
         move.l  S_FORM(a6),a0           // a0 -> start of source form (0,0)
         move.l  D_FORM(a6),a1           // a1 -> start of dest.  form (0,0)
         move.l  _PTSIN,a2               // a2 -> PTSIN array
-        
+
         bsr.s   bit_blt
 
         movem.l (sp)+,d2-d7/a2-a6
         rts
 
 //
-// bit_blt - set up parameters for bitblt and 
+// bit_blt - set up parameters for bitblt and
 //           thread together the appropriate bitblt fragments
 //
 // in:
@@ -945,7 +945,7 @@ bit_blt:
         moveq.l #0x0F,d5                        // d5 <- mod 16 mask
 
         move.w  d0,d1
-        and.w   d5,d1                   // d1 <- Xmin src mod 16 
+        and.w   d5,d1                   // d1 <- Xmin src mod 16
         move.w  d2,d3
         and.w   d5,d3                   // d3 <- Xmin dst mod 16
 
@@ -959,16 +959,16 @@ bit_blt:
         sub.w   d2,d6                   // d6 <- # destination words -1
 
         move.w  d4,d5
-        sub.w   d6,d5                   // d5 <- # source words - # destination words 
+        sub.w   d6,d5                   // d5 <- # source words - # destination words
 
-        sub.w   d3,d1                   // d1 <- (Sxmin mod 16) - (Dxmin mod 16)        
+        sub.w   d3,d1                   // d1 <- (Sxmin mod 16) - (Dxmin mod 16)
         bne     std_blt                 // if Xmin src mod 16 = Xmin dst mod 16 ...
 
         tst.l   FG_COL(a6)              // and fore and background colors are both 0 ...
-        bne     std_blt 
-        cmpi.b  #03,OP_TAB+00(a6)       // and D'<- S is the logic operation    
+        bne     std_blt
+        cmpi.b  #03,OP_TAB+00(a6)       // and D'<- S is the logic operation
 
-        bne     std_blt         
+        bne     std_blt
 
         move.w  d4,d7                   // and both source and destination occupy
         add.w   d6,d7                   // three or more words apiece ...
@@ -994,16 +994,16 @@ std_blt:
 //
 //                      bit  1     actual shift direction:
 //
-//                                 1: opposite of logical shift 
+//                                 1: opposite of logical shift
 //                                 0: same direction as shift
 //
 //
 //                      bit  2     blt direction                r2l:1 l2r:0
 //
 //                      bit  3    source width : destination width
-//                                 
+//
 //                                 0: source words =  destination words
-//                                 1: source words <> destination words 
+//                                 1: source words <> destination words
 //
 //              note: width delta is either 1 word or 0 words
 
@@ -1031,7 +1031,7 @@ std_blt:
         neg.w   d4                      // d4 <- positive shift value
         addq.w  #1,d5                   // Smod16 - Dmod16 < 0 => logical right shift
 
-act_shift:      
+act_shift:
         cmpi.w  #8,d4
         blt     start_addr
 
@@ -1126,8 +1126,8 @@ save_addr:
 
         move.l  frag_tab+04(pc,d5.w),a3 // a3 <- thread from logic op frag to inner loop
         move.l  frag_tab+00(pc,d5.w),a4 // a4 <- thread from update frag to 1st fringe
-        
-        tst.w   INNER_CT(a6)            // INNER_CT = -1  =>  Destination is 
+
+        tst.w   INNER_CT(a6)            // INNER_CT = -1  =>  Destination is
         bge     pre_flight              // only one word wide. (a special case)
 
         move.l  d6,d0
@@ -1136,7 +1136,7 @@ save_addr:
 
         lea     f2_update,a3            // a3 <- thread that bypasses 2nd fringe
 
-        btst.l  #6,d5                   
+        btst.l  #6,d5
         bne     pre_flight              // skip if source is 2 words wide
 
         lsr.w   #1,d5                   // entries are 4 bytes wide
@@ -1155,13 +1155,13 @@ solo_tab:
         dc.l    f0_left                 //    reverse logical right physical left
 
 
-                                                   
+
 //      0000:l2rf1fll  0001:l2rf0f2r  0010:l2rf1flr  0011:l2rf0f2l
 //      0100:r2lf0f2l  0101:r2lf1flr  0110:r2lf0f2r  0111:r2lf1fll
 //      1000:l2rf1f2l  1001:l2rf0flr  1010:l2rf1f2r  1011:l2rf0fll
 //      1100:r2lf1f2l  1101:r2lf0flr  1110:r2lf1f2r  1111:r2lf0fll
-                                                   
-frag_tab:                                          
+
+frag_tab:
 //                  a4        a3
 
         dc.l    f1_l2r_lf,fl_l2r_lf     // l2rf1fll
@@ -1329,7 +1329,7 @@ get_fringe:
 
 fr_l_mask:
 
-        dc.w    0x0000  
+        dc.w    0x0000
 
 fr_r_mask:
 
@@ -1454,7 +1454,7 @@ word_blt:
 //  The method selected is based on whether the source starting address is
 //  larger than the destination starting address. The intent is not to alter
 //  the source area before it is copied to the destination area.
-//  
+//
         bcc     l2r_t2b                 // select direction based on order of addresses
 
 r2l_b2t:
@@ -1494,7 +1494,7 @@ set_fringe:
 
 fringe_ok:
 
-//   set up word to word increment values  
+//   set up word to word increment values
 
         move.l  a0,S_ADDR(a6)           // save source address for other planes
         move.l  a1,D_ADDR(a6)           // save destination address for other planes
@@ -1556,7 +1556,7 @@ sc_mp_enter:
         move.l  D_ADDR(a6),a1
 
         add.w   S_NXPL(a6),a0
-        add.w   D_NXPL(a6),a1   
+        add.w   D_NXPL(a6),a1
 
         move.l  a0,S_ADDR(a6)
         move.l  a1,D_ADDR(a6)

@@ -14,9 +14,9 @@
 #   make help
 #
 # C code (C) and assembler (S) source go in directories bios/, bdos/, ...
-# To modify the list of source code files, update the variables xxx_csrc 
-# and xxx_ssrc below; each directories has a different set of build flags 
-# indicated in variables xxx_copts and xxx_sopts below. 
+# To modify the list of source code files, update the variables xxx_csrc
+# and xxx_ssrc below; each directories has a different set of build flags
+# indicated in variables xxx_copts and xxx_sopts below.
 # (xxx being the directory name)
 
 
@@ -67,7 +67,7 @@ CORE = *.stackdump
 DDOPTS = iflag=binary oflag=binary
 else
 # ordinary Unix stuff
-EXE = 
+EXE =
 CORE = core
 DDOPTS =
 endif
@@ -79,11 +79,11 @@ endif
 ifneq (,$(wildcard localconf.h))
 LOCALCONF = -DLOCALCONF
 else
-LOCALCONF = 
+LOCALCONF =
 endif
 
 #
-# TOCLEAN will accumulate over thie Makefile the names of files to remove 
+# TOCLEAN will accumulate over thie Makefile the names of files to remove
 # when doing make clean; temporary Makefile files are *.tmp
 #
 
@@ -97,7 +97,7 @@ TOCLEAN := *~ */*~ $(CORE) *.tmp
 
 NODEP :=
 
-# 
+#
 # compilation flags
 #
 
@@ -150,7 +150,7 @@ OBJCOPY = $(TOOLCHAIN_PREFIX)objcopy
 # the native C compiler, for tools
 NATIVECC = gcc -ansi -pedantic -Wall -Wextra -O
 
-# 
+#
 # source code in bios/
 # Note: tosvars.o must be the first object linked.
 
@@ -170,7 +170,7 @@ bios_ssrc = tosvars.S startup.S aciavecs.S vectors.S lineavars.S \
 
 bdos_csrc = console.c fsdrive.c fshand.c fsopnclo.c osmem.c \
             umem.c bdosmain.c fsbuf.c fsfat.c fsio.c iumem.c proc.c \
-            fsdir.c fsglob.c fsmain.c kpgmld.c time.c 
+            fsdir.c fsglob.c fsmain.c kpgmld.c time.c
 bdos_ssrc = rwa.S
 
 #
@@ -236,7 +236,7 @@ util_copts = -Ibios
 cli_copts  = -Ibios
 vdi_copts  = -Ibios
 aes_copts  = -Ibios
-desk_copts = -Ibios -Iaes 
+desk_copts = -Ibios -Iaes
 
 #
 # Directory selection depending on the features
@@ -263,7 +263,7 @@ include country.mk
 
 #
 # everything should work fine below.
-# 
+#
 
 COBJ = $(foreach d,$(dirs),$(patsubst %.c,obj/%.o,$($(d)_csrc)))
 SOBJ = $(foreach d,$(dirs),$(patsubst %.S,obj/%.o,$($(d)_ssrc)))
@@ -274,8 +274,8 @@ SSRC = $(foreach d,$(dirs),$(addprefix $(d)/,$($(d)_ssrc)))
 OBJECTS = $(SOBJ) $(COBJ) $(FONTOBJ) obj/version.o
 
 #
-# production targets 
-# 
+# production targets
+#
 
 .PHONY: all
 NODEP += all
@@ -290,8 +290,8 @@ help:
 	@echo "help    this help message"
 	@echo "192     $(ROM_192), EmuTOS ROM padded to size 192 kB (starting at $(VMA_T1))"
 	@echo "256     $(ROM_256), EmuTOS ROM padded to size 256 kB (starting at $(VMA_T2))"
-	@echo "512     $(ROM_512), EmuTOS ROM padded to size 512 kB (starting at $(VMA_T2))" 
-	@echo "aranym  $(ROM_ARANYM), suitable for ARAnyM" 
+	@echo "512     $(ROM_512), EmuTOS ROM padded to size 512 kB (starting at $(VMA_T2))"
+	@echo "aranym  $(ROM_ARANYM), suitable for ARAnyM"
 	@echo "firebee $(SREC_FIREBEE), to be flashed on the FireBee"
 	@echo "amiga   $(ROM_AMIGA), EmuTOS ROM for Amiga hardware"
 	@echo "amigakd $(AMIGA_KICKDISK), EmuTOS as Amiga 1000 Kickstart disk"
@@ -461,8 +461,8 @@ firebee:
 	$(MAKE) COLDFIRE=1 CPUFLAGS='-mcpu=5474' DEF='-DMACHINE_FIREBEE' LMA=0xe0600000 SRECFILE=$(SREC_FIREBEE) $(SREC_FIREBEE)
 
 #
-# ram - In two stages. first link emutos2.img to know the top address of bss, 
-# then use this value (taken from the map) to relocate the RamTOS. 
+# ram - In two stages. first link emutos2.img to know the top address of bss,
+# then use this value (taken from the map) to relocate the RamTOS.
 #
 
 TOCLEAN += boot.prg
@@ -635,7 +635,7 @@ mkrom$(EXE): tools/mkrom.c
 
 .PHONY: allbin
 NODEP += allbin
-allbin: 
+allbin:
 	@echo "# Building $(ROM_512)"
 	$(MAKE) $(ROM_512)
 	$(RM) obj/*.o
@@ -672,13 +672,13 @@ all192:
 
 #
 # Mono-country translated EmuTOS: translate files only if the language
-# is not 'us', and if a UNIQUE EmuTOS is requested. 
+# is not 'us', and if a UNIQUE EmuTOS is requested.
 #
 # If the '.tr.c' files are present the '.o' files are compiled from these
 # source files because the '%.o: %.tr.c' rule comes before the normal
-# '%.o: %.c' rule. 
-# Changing the settings of $(COUNTRY) or $(UNIQUE) will remove both 
-# the '.o' files (to force rebuilding them) and the '.tr.c' files 
+# '%.o: %.c' rule.
+# Changing the settings of $(COUNTRY) or $(UNIQUE) will remove both
+# the '.o' files (to force rebuilding them) and the '.tr.c' files
 # (otherwise 'make UNIQUE=fr; make UNIQUE=us' falsely keeps the
 # .tr.c french translations). See target obj/country below.
 #
@@ -697,7 +697,7 @@ endif
 endif
 
 #
-# obj/country contains the current values of $(COUNTRY) and $(UNIQUE). 
+# obj/country contains the current values of $(COUNTRY) and $(UNIQUE).
 # whenever it changes, whatever necessary steps are taken so that the
 # correct files get re-compiled, even without doing make depend.
 #
@@ -731,7 +731,7 @@ obj/country: always-execute-recipe
 
 #
 # i18nconf.h - this file is automatically created by the Makefile. This
-# is done this way instead of simply passing the flags as -D on the 
+# is done this way instead of simply passing the flags as -D on the
 # command line because:
 # - the command line is shorter
 # - it allows #defining CONF_KEYB as KEYB_US with KEYB_US #defined elsewhere
@@ -805,7 +805,7 @@ obj/%.o : %.S
 
 #
 # version string
-# 
+#
 
 TOCLEAN += obj/*.c
 
@@ -931,9 +931,9 @@ NODEP += tounix$(EXE)
 tounix$(EXE): tools/tounix.c
 	$(NATIVECC) -o $@ $<
 
-# LVL - I checked that both on Linux and Cygwin passing more than 10000 
-# arguments on the command line works fine. On other systems it might be 
-# necessary to adopt another technique, for example using an find | xargs 
+# LVL - I checked that both on Linux and Cygwin passing more than 10000
+# arguments on the command line works fine. On other systems it might be
+# necessary to adopt another technique, for example using an find | xargs
 # approach like that below:
 #
 # HERE = $(shell pwd)
@@ -965,7 +965,7 @@ include local.mk
 endif
 
 #
-# clean and distclean 
+# clean and distclean
 # (distclean is called before creating a source archive)
 #
 
@@ -977,7 +977,7 @@ clean:
 .PHONY: distclean
 NODEP += distclean
 distclean: clean
-	rm -f '.#'* */'.#'* 
+	rm -f '.#'* */'.#'*
 
 #
 # ColdFire autoconverted sources.
@@ -985,7 +985,7 @@ distclean: clean
 # To regenerate them, type "make coldfire-sources".
 # You will need the PortAsm/68K for ColdFire tool from MicroAPL.
 # See http://www.microapl.co.uk/Porting/ColdFire/pacf_download.html
-# 
+#
 
 PORTASM = pacf
 PORTASMFLAGS = -blanks on -core v4 -hardware_divide -hardware_mac -a gnu -out_syntax standard -nowarning 402,502,900,1111,1150 -noerrfile

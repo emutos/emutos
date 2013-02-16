@@ -17,7 +17,7 @@
 **      originator of the fix.  The XX refers to the module in which the
 **      fix was originally made, fs.c (FS), sup.c (SUP), etc.  The NN is
 **      the fix number to that module as indicated on the change log.  For
-**      the most part, these numbers are meaningless, and serve only to 
+**      the most part, these numbers are meaningless, and serve only to
 **      correspond code to particular problems.
 **
 **  mods
@@ -37,7 +37,7 @@
 **                                      open in it.
 **
 **  27 May 1986 ktb M01.01.0527.01      adding definitions of a structure for
-**                                      the info kept in the dta between 
+**                                      the info kept in the dta between
 **                                      search-first and search-next calls.
 **
 **  27 May 1986 ktb M01.01.0527.02      moved makbuf from fsdir to here.
@@ -49,7 +49,7 @@
 **  27 May 1986 ktb M01.01.0527.06      new subroutine for searching for DND's
 **
 **  27 May 1986 ktb M01.01.0529.01      findit(), scan(): removed all ref's
-**                                      to O_COMPLETE flag, as we follow 
+**                                      to O_COMPLETE flag, as we follow
 **                                      different algorithms now.
 **
 **  08 Jul 1986 ktb M01.01a.0708.01     removed all references to d_scan
@@ -116,7 +116,7 @@
 **                  M01.01.1214.02      Added declaration of ckdrv() as long.
 **
 ** [1]  the scheme had a small hole, where not all searches for entries
-**      started at the start of the dir (d_scan !always= 0 on entry to 
+**      started at the start of the dir (d_scan !always= 0 on entry to
 **      scan)..
 */
 
@@ -159,7 +159,7 @@ static int getpath(const char *p, char *d, int dirspec);
 static BOOL match(char *s1, char *s2);
 static void makbuf(FCB *f, DTAINFO *dt);
 static int xcmps(char *s, char *d);
-static DND *getdnd(char *n, DND *d); 
+static DND *getdnd(char *n, DND *d);
 static void freednd(DND *dn);
 
 /*
@@ -205,7 +205,7 @@ static int namlen(char *s11)                            /* M01.01.1107.01 */
 **
 */
 
-long xmkdir(char *s) 
+long xmkdir(char *s)
 {
         register OFD *f;
         register FCB *f2;
@@ -306,7 +306,7 @@ long xmkdir(char *s)
 
 
 /*
-**  xrmdir - remove (delete) a directory 
+**  xrmdir - remove (delete) a directory
 **
 **      Function 0x3A   d_delete
 **
@@ -339,11 +339,11 @@ long xrmdir(char *p)
         for( i = 1 ; i <= NCURDIR ; i++ )       /*  Can't delete in use  */
                 if( diruse[i] && dirtbl[i] == d )
                     return( EACCDN ) ;
-         
+
         /*  end M01.01.SCC.FS.09  */
 
         if (!(fd = d->d_ofd))
-                if (!(fd = makofd(d))) 
+                if (!(fd = makofd(d)))
                         return (ENSMEM);
 
         ixlseek(fd,0x40L);
@@ -376,7 +376,7 @@ long xrmdir(char *p)
 
         if (d->d_ofd)
         {
-                xmfreblk((char *)d->d_ofd);             
+                xmfreblk((char *)d->d_ofd);
         }
 
         d1 = d->d_parent;
@@ -674,17 +674,17 @@ long xgsdtof(int *buf, int h, int wrt)
 #define MAXFNCHARS      8
 
 
-/*      
+/*
 **  builds - build a directory style file spec from a portion of a path name
-**      the string at 's1' is expected to be a path spec in the form of 
+**      the string at 's1' is expected to be a path spec in the form of
 **      (xxx/yyy/zzz).  *builds* will take the string and crack it
 **      into the form 'ffffffffeee' where 'ffffffff' is a non-terminated
 **      string of characters, padded on the right, specifying the filename
 **      portion of the file spec.  (The file spec terminates with the first
 **      occurrence of a SLASH or NULL, the filename portion of the file spec
 **      terminates with SLASH, NULL, PERIOD or WILDCARD-CHAR).  'eee' is the
-**      file extension portion of the file spec, and is terminated with 
-**      any of the above.  The file extension portion is left justified into 
+**      file extension portion of the file spec, and is terminated with
+**      any of the above.  The file extension portion is left justified into
 **      the last three characters of the destination (11 char) buffer, but is
 **      padded on the right.  The padding character depends on whether or not
 **      the filename or file extension was terminated with a separator
@@ -693,7 +693,7 @@ long xgsdtof(int *buf, int h, int wrt)
 */
 
 /* s1 source
- * s2 dest 
+ * s2 dest
  */
 
 void builds(char *s1, char *s2)
@@ -765,7 +765,7 @@ void builds(char *s1, char *s2)
 
 #else
 
-/*      
+/*
 **  builds -
 **
 **      Last modified   LTG     23 Jul 85
@@ -811,7 +811,7 @@ void builds(const char *s1, char *s2)
 
 
 /*
-**  xrename - rename a file, 
+**  xrename - rename a file,
 **      oldpath p1, new path p2
 **
 **      Function 0x56   f_rename
@@ -891,7 +891,7 @@ long xrename(int n, char *p1, char *p2)
         return(ixclose(fd,CL_DIR));
 }
 
-/*      
+/*
 **  xchdir - change current dir to path p (extended cd n:=[a:][\bin])
 **
 **      Function 0x3B   d_setpath
@@ -966,7 +966,7 @@ xch:    if (p[1] == ':')
         return(E_OK);
 }
 
-/*      
+/*
 **  xgetdir -
 **
 **      Function 0x47   d_getpath
@@ -976,13 +976,13 @@ xch:    if (p[1] == ':')
 */
 
 /* return text of current dir into specified buffer */
-long    xgetdir(char *buf, int drv) 
+long    xgetdir(char *buf, int drv)
 {
         DND     *p;
         int     len;                                            /* M01.01.1024.02 */
 
         drv = (drv == 0) ? run->p_curdrv : drv-1 ;
-        
+
         if( !(Drvmap() & (1<<drv)) || (ckdrv(drv) < 0) )     /* M01.01.1031.01 */
         {
                 *buf = 0;
@@ -1021,12 +1021,12 @@ FCB     *dirinit(DND *dn)
         **      get the record and zero it out
         */
 
-        for (i2 = 1; i2 < dm->m_clsiz; i2++)    
+        for (i2 = 1; i2 < dm->m_clsiz; i2++)
         {
 #if DBGFSDIR
                 kprintf("dirinit i2 = %li\n", i2);
 #endif
-                s1 = getrec(fd->o_currec+i2,fd,1);       
+                s1 = getrec(fd->o_currec+i2,fd,1);
                 bzero( s1 , num ) ;
         }
 
@@ -1081,13 +1081,13 @@ static char *dopath(DND *p, char *buf, int *len)
 static const long negone = { -1L } ;
 
 
-/*      
+/*
  *  findit - find a file/dir entry
  *      M01.01.SCC.FS.07        (routine replaced for this fix)
  */
-/*  name: name of file/dir      
+/*  name: name of file/dir
  * dflag: T: name is for a directory
- */             
+ */
 DND     *findit(char *name, const char **sp, int dflag)
 {
     register DND *p;
@@ -1198,9 +1198,9 @@ DND     *findit(char *name, const char **sp, int dflag)
 ** [1]  The first call to dirscan is if there are no children logged in.
 **      However, we need to call dirscan if children are logged in and we still
 **      didn't find the desired node, as the desired child may've been flushed.
-**      This is a terrible thing to have happen to a child.  However, we can't 
+**      This is a terrible thing to have happen to a child.  However, we can't
 **      afford to have all these kids around here, so when new ones come in, we
-**      see which we can flush out (see makdnd()).  This is a hack -- no doubt 
+**      see which we can flush out (see makdnd()).  This is a hack -- no doubt
 **      about that; the cached DND scheme needs to be redesigned all around.
 **      Anyway, the second call to dirscan backs up to the parent (note that n
 **      has not yet been bumped, so is still pointing to the current subdir's
@@ -1219,7 +1219,7 @@ DND     *findit(char *name, const char **sp, int dflag)
  */
 
 FCB     *scan(register DND *dnd, const char *n, WORD att, LONG *posp)
-{ 
+{
         char    name[12];
         register FCB *fcb;
         OFD     *fd;
@@ -1261,9 +1261,9 @@ FCB     *scan(register DND *dnd, const char *n, WORD att, LONG *posp)
 
         while ((fcb = (FCB *) ixread(fd,32L,NULLPTR)) && (fcb->f_name[0]))
         {
-                /* 
+                /*
                 **  Add New DND.
-                **  ( iff after scan ptr && complete flag not set && not a . 
+                **  ( iff after scan ptr && complete flag not set && not a .
                 **  or .. && subdirectory && not deleted ) M01.01.0512.01
                 */
 
@@ -1271,7 +1271,7 @@ FCB     *scan(register DND *dnd, const char *n, WORD att, LONG *posp)
 #if     ! M0101052901
                     (!(fd->o_flag & O_COMPLETE))        &&
 #endif
-                    (fcb->f_name[0] != '.')             && 
+                    (fcb->f_name[0] != '.')             &&
                     (fcb->f_name[0] != (char)0xe5)
                 )
                 {       /*  see if we already have it  */
@@ -1325,7 +1325,7 @@ FCB     *scan(register DND *dnd, const char *n, WORD att, LONG *posp)
 **              M01.01.SCC.FS.07
 */
 
-static DND *makdnd(DND *p, FCB *b) 
+static DND *makdnd(DND *p, FCB *b)
 {
         register DND *p1;
         register DND **prev;
@@ -1335,9 +1335,9 @@ static DND *makdnd(DND *p, FCB *b)
 
         fd = p->d_ofd;
 
-        /* 
-        **  scavenge a DND at this level if we can find one that has not 
-        **  d_left 
+        /*
+        **  scavenge a DND at this level if we can find one that has not
+        **  d_left
         */
         for (prev = &p->d_left; (p1 = *prev) ; prev = &p1->d_right)
         {
@@ -1497,7 +1497,7 @@ static int getpath(const char *p, char *d, int dirspec)
 
         /*
         **  If the string we have just scanned over is a directory name, it
-        **      will either be terminated by a SLASH, or 'dirspec' will be set 
+        **      will either be terminated by a SLASH, or 'dirspec' will be set
         **      indicating that we are dealing with a directory path only
         **      (no file name at the end).
         */
@@ -1588,7 +1588,7 @@ static void makbuf(FCB *f, DTAINFO *dt)
     swpw(dt->dt_date) ;
     dt->dt_fileln = f->f_fileln ;
     swpl( dt->dt_fileln ) ;
-    
+
     if( f->f_attrib & FA_VOL ) {
         memcpy(&dt->dt_fname[0], &f->f_name[0], 11);
         dt->dt_fname[11] = '\0' ;
@@ -1599,7 +1599,7 @@ static void makbuf(FCB *f, DTAINFO *dt)
 
 
 
-/*  
+/*
 **  xcmps - utility routine to compare two 11-character strings
 **
 **      Last modified   19 Jul 85       SCC
@@ -1646,8 +1646,8 @@ static void freednd(DND *dn)                    /* M01.01.1031.02 */
     if ( dn->d_ofd ) {                /* free associated OFD if it's linked */
         xmfreblk( (char *)(dn->d_ofd) );
     }
-    for ( prev = &(dn->d_parent->d_left); 
-          *prev != dn; 
+    for ( prev = &(dn->d_parent->d_left);
+          *prev != dn;
           prev = &((*prev)->d_right) )
         ;                             /* find the predecessor to this DND */
     *prev = dn->d_right;              /* then cut this DND out of the list */

@@ -24,7 +24,7 @@
 #include "ide.h"
 
 #include "xhdi.h"
- 
+
 #define DBG_XHDI        0
 
 #if CONF_WITH_XHDI
@@ -89,7 +89,7 @@ static long XHInqDev2(UWORD drv, UWORD *major, UWORD *minor, ULONG *start,
             'A' + drv, pstart, blkdev[drv].size,
             blkdev[drv].id[0], blkdev[drv].id[1], blkdev[drv].id[2]);
 #endif
-    
+
     if (next_handler) {
         long ret = next_handler(XHINQDEV2, drv, major, minor, start, bpb, blocks, partid);
         if (ret != EINVFN && ret != EUNDEV && ret != EDRIVE)
@@ -246,7 +246,7 @@ static long XHReaccess(UWORD major, UWORD minor)
         if (ret != EINVFN && ret != EUNDEV && ret != EDRIVE)
             return ret;
     }
-    
+
     return EINVFN;
 }
 
@@ -314,7 +314,7 @@ long XHGetCapacity(UWORD major, UWORD minor, ULONG *blocks, ULONG *blocksize)
 #if DBG_XHDI
     kprintf("XHGetCapacity(%d.%d)\n", major, minor);
 #endif
-    
+
 #if CONF_WITH_XHDI
     if (next_handler) {
         long ret = next_handler(XHGETCAPACITY, major, minor, blocks, blocksize);
@@ -625,7 +625,7 @@ long xhdi_handler(UWORD *stack)
             return XHMediumChanged(args->major, args->minor);
         }
 
-/* 
+/*
        MiNT places itself at the beginning of the chain,
        We don't need to pass this call.
 

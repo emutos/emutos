@@ -36,7 +36,7 @@
   where it goes with normal TOS.
 - Game result text in "Sherlock" is positioned wrong (overlaps).
 - Thick arcs going partly outside of screen have incorrectly
-  drawn pixels at top of screen in vditext tester.  
+  drawn pixels at top of screen in vditext tester.
 - In Mario Becroft's GEM Pacman, "game over" melt effect happens
   for the whole screen, not just for the game window.
 - '-' key for moving left in VDI "Invaders" and 'h' & 'j' keys
@@ -91,7 +91,7 @@ Links to programs listed above:
 - Speed of Light:
   http://www.umich.edu/~archive/atari/Graphics/spoflt38.zip
 - Sysinfo 5.02:
-  http://gfa.atari-users.net/ftp/download.php?fn=sinf502e.zip 
+  http://gfa.atari-users.net/ftp/download.php?fn=sinf502e.zip
 - Yukon:
   http://www.umich.edu/~archive/atari/Games/Cards/yukone1.lzh
   http://www.haun-online.de/Atari/e_index.html

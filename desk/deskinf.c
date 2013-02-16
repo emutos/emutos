@@ -79,7 +79,7 @@ static void my_itoa(UWORD number, BYTE *pnumstr)
 *       <     hh     > <    mm    > <   xx  >
 *       hh = binary 0-23
 *       mm = binary 0-59
-*       xx = binary seconds \ 2 
+*       xx = binary seconds \ 2
 *
 *       put into this form 12:45 pm
 */
@@ -116,7 +116,7 @@ static void fmt_time(UWORD time, BYTE *ptime)
 
 /*
 *       Routine to format DOS style date.
-*       
+*
 *       15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0
 *       <     yy          > < mm  > <  dd   >
 *       yy = 0 - 119 (1980 - 2099)
@@ -141,9 +141,9 @@ static void fmt_date(UWORD date, BYTE *pdate)
         }
 
         /* [JCE 25-11-2001] year 2000 bugfix. Without this, the
-         * my_itoa() call overruns the buffer in ob_sfcb() by 
+         * my_itoa() call overruns the buffer in ob_sfcb() by
          * putting 3 bytes where there was only room for 2. The
-         * last byte hits the saved BP value, with hilarious 
+         * last byte hits the saved BP value, with hilarious
          * consequences. */
         year = 1980 + (((date & 0xfe00) >> 9) & 0x007f);
         my_itoa(year % 100, &pdate[4]);
@@ -192,7 +192,7 @@ static WORD ob_sfcb(LONG psfcb, BYTE *pfmt)
         {
           ULONG size = sf.sfcb_size;
           static const char *fix[4] = { "", "K", "M", "G" };
-          int fi = 0;  
+          int fi = 0;
           while (size >= 10000000L && fi <= 3)
           {
             size = (size + 1023) / 1024;
@@ -230,7 +230,7 @@ static WORD ob_sfcb(LONG psfcb, BYTE *pfmt)
         strcpy(pdst, &ptime_str[4]); /* am or pm */
         pdst += 2;
         return(pdst - pfmt);
-}       
+}
 
 
 static WORD dr_fnode(UWORD last_state, UWORD curr_state, WORD x, WORD y,
@@ -412,7 +412,7 @@ WORD inf_folder(BYTE *ppath, FNODE *pf)
         WORD            more;
         BYTE            *pname, fname[LEN_ZFNAME];
 
-        graf_mouse(HGLASS, 0x0L);       
+        graf_mouse(HGLASS, 0x0L);
 
         tree = G.a_trees[ADFOLDIN];
 
@@ -447,7 +447,7 @@ WORD inf_disk(BYTE dr_id)
         WORD    more;
         BYTE    puse_str[11], pav_str[11], plab_str[12];
         BYTE    drive[2];
-        
+
         graf_mouse(HGLASS, 0x0L);
         tree = G.a_trees[ADDISKIN];
 
@@ -469,7 +469,7 @@ WORD inf_disk(BYTE dr_id)
 
           sprintf(&puse_str[0], "%lu", G.g_size);
           inf_sset(tree, DIUSED, &puse_str[0]);
-          
+
           sprintf(&pav_str[0], "%lu", avail);
           inf_sset(tree, DIAVAIL, &pav_str[0]);
 
@@ -488,7 +488,7 @@ WORD inf_pref(void)
         WORD            cyes, cno, i;
         WORD            sndefpref;
         WORD            rbld;
-        
+
         tree = G.a_trees[ADSETPRE];
         rbld = FALSE;
 

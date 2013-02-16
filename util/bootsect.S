@@ -1,5 +1,5 @@
 /*
- * bootsect.S - bootsector for fast loading EmuTOS in RAM 
+ * bootsect.S - bootsector for fast loading EmuTOS in RAM
  *
  * Copyright (c) 2001 EmuTOS development team
  *
@@ -16,8 +16,8 @@
  * the ramtos will be loaded at address TMPADDR, then
  * a boot routine will be copied after it, and finally
  * the bootsector will jump into this boot routine
- * to avoid erasing itself. The boot routine will copy 
- * the TOS from TMPADDR to the address given in the TOS 
+ * to avoid erasing itself. The boot routine will copy
+ * the TOS from TMPADDR to the address given in the TOS
  * header
  */
 
@@ -42,8 +42,8 @@
         /* bootsector for a single-sized floppy */
 
         .org    0
-        
-        bra.s   start         //  0 bra[2]    branch  
+
+        bra.s   start         //  0 bra[2]    branch
         .ascii  "Loader"      //  2 loader[6]
         .ascii  "ABC"         //  8 serial[3]
         dc.b    0x00, 0x02    //  b bps[2]    bytes per sector
@@ -58,7 +58,7 @@
         dc.b    0x01, 0x00    // 1a sides[2]  number of sides
         dc.b    0x00, 0x00    // 1c hid[2]    number of hidden sectors
 execflg:
-        dc.w    0             
+        dc.w    0
 ldmode:
         dc.w    0
 ssect:
@@ -80,9 +80,9 @@ start:
         move.w  #GETBPB,-(sp)
         trap    #13
         addq.l  #4,sp
-        
+
         /* read the sectors in memory */
-        
+
         move.l  ldaddr(pc),a4
         move.w  sectcnt(pc),d6
         move.w  BOOTDEV,-(sp)
@@ -99,42 +99,42 @@ start:
         /* tell EmuTOS to ask for floppy removal before going on */
 
         move.l  #0x1234abcd,0x6f8.w     // EJECT_MAGIC, _eject_magic
-        
+
         /* d4 = max size of TOS */
-        
+
         clr.l   d4
         move.w  d6,d4
         lsl.l   #8,d4
         add.l   d4,d4
-        
+
         /* copy boot routine immediately after */
-        
+
         lea     boot(pc),a0
         lea     (a4,d4),a3
         move.l  a3,a1
         move.l  #endboot-boot,d0
         bsr     memcpy
-        
+
         /* jump in boot routine */
-        
+
         jmp     (a3)
 
 fail:
         rts
-        
-boot:   
+
+boot:
         move.w  #0x2700,sr
-        
+
         /* copy from temporary address to destination */
-        
+
         move.l  8(a4),a3
         move.l  a3,a1
         move.l  a4,a0
         move.l  d4,d0
         bsr     memcpy
-        
+
         /* jump in TOS */
-        
+
         jmp     (a3)
 
         /* copies d0 bytes from a0 to a1 */
@@ -149,8 +149,8 @@ cpy:
         bpl.s   cpy
 #else
         dbra    d0,cpy
-        sub.l   #0x10000,d0 
-        bhi     cpy 
+        sub.l   #0x10000,d0
+        bhi     cpy
 #endif
         rts
 endboot:

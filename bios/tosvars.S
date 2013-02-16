@@ -19,7 +19,7 @@
         .globl  _proc_enum
         .globl  _proc_usp
         .globl  _proc_stk
-                
+
         .globl  _etv_timer
         .globl  _etv_critic
         .globl  _etv_term
@@ -117,8 +117,8 @@
 // ===========================================================================
 
         .data
-_sdata: 
-        
+_sdata:
+
 // ===========================================================================
 // ==== BSS segment ==========================================================
 // ===========================================================================
@@ -157,7 +157,7 @@ _memtop:        ds.l    1       // end of TPA (user memory)
 _memval2:
 memval2:        ds.l    1       // validates memcntrl/memconf, if 0x237698aa
 _flock:         ds.w    1       // if != 0, VBL floppy routine is disabled
-_seekrate:      ds.w    1       // floppy seek rate 
+_seekrate:      ds.w    1       // floppy seek rate
 _timer_ms:      ds.w    1       // time between timer calls in ms
 _fverify:       ds.w    1       // if != 0, verify floppy writes
 _bootdev:       ds.w    1       // default boot drive
@@ -191,7 +191,7 @@ _nflops:        ds.w    1       // number of connected floppy drives
 con_state:      ds.l    1       // vector for screen output
 _save_row:      ds.w    1       // temporary storage for cursor line pos.
 sav_context:    ds.l    1       // ptr to save area for exception processing
-_bufl:          ds.l    2       // pointers to buffer ctrl blocks for GEMDOS 
+_bufl:          ds.l    2       // pointers to buffer ctrl blocks for GEMDOS
 _hz_200:        ds.l    1       // counter for 200 Hz system clock
 the_env:        ds.l    1       // pointer to default environment string
         .org 0x4c2
@@ -212,7 +212,7 @@ _prt_stat:      ds.l    1       // pointer to prv_lsto
 _prt_vec:       ds.l    1       // pointer to prv_lst
 _aux_stat:      ds.l    1       // pointer to prv_auxo
 _aux_vec:       ds.l    1       // pointer to prv_aux
-_pun_ptr:       ds.l    1       // if AHDI, pointer to pun_info  
+_pun_ptr:       ds.l    1       // if AHDI, pointer to pun_info
 _memval3:
 memval3:        ds.l    1       // memory conf valid if = $5555aaaa
 _bconstat_vec:  ds.l    8       // 8 pointers to input-status routines
@@ -249,7 +249,7 @@ _pmmutree:      ds.l    64      // for pmmu tree on 68030
 //  or a buffer that is only accessed in supervisor mode.)
         .org 0x800
 
-        
+
 // memory past this address will be cleared on startup or on reset.
 bssstart:
 // Note: _shifty was moved here to ensure that it lies within the first 32K

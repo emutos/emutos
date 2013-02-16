@@ -1,5 +1,5 @@
 /*      OPTIMIZE.C      1/25/84 - 06/05/85      Lee Jay Lorenzen        */
-/*      merge High C vers. w. 2.2               8/25/87         mdf     */ 
+/*      merge High C vers. w. 2.2               8/25/87         mdf     */
 /*      modify fs_sset                          10/30/87        mdf     */
 
 /*
@@ -258,7 +258,7 @@ WORD inf_what(LONG tree, WORD ok, WORD cncl)
 
 
 /*
-*       Routine to see if the test filename matches one of a set of 
+*       Routine to see if the test filename matches one of a set of
 *       comma delimited wildcard strings.
 *               e.g.,   pwld = "*.COM,*.EXE,*.BAT"
 *                       ptst = "MYFILE.BAT"
@@ -292,7 +292,7 @@ WORD wildcmp(BYTE *pwld, BYTE *ptst)
             }
           }
                                                 /* finish off comparison*/
-          while( (*ptest) && 
+          while( (*ptest) &&
                  (*pwild) &&
                  (*pwild != ',') )
           {
@@ -308,7 +308,7 @@ WORD wildcmp(BYTE *pwld, BYTE *ptst)
               {
                 if (*ptest != '.')
                   ptest++;
-                else            
+                else
                   pwild++;
               }
               else
@@ -332,7 +332,7 @@ WORD wildcmp(BYTE *pwld, BYTE *ptst)
                                                 /* if any part of wild- */
                                                 /*   card or test is    */
                                                 /*   left then no match */
-          if ( ((*pwild == NULL) || (*pwild == ',')) && 
+          if ( ((*pwild == NULL) || (*pwild == ',')) &&
                (!*ptest) )
             return( TRUE );
         }

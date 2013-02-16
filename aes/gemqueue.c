@@ -1,5 +1,5 @@
 /*      GEMQUEUE.C      1/27/84 - 07/09/85      Lee Jay Lorenzen        */
-/*      merge High C vers. w. 2.2               8/21/87         mdf     */ 
+/*      merge High C vers. w. 2.2               8/21/87         mdf     */
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
@@ -99,7 +99,7 @@ void aqueue(WORD isqwrite, EVB *e, LONG lm)
         register QPB    *m;
         EVB             **ppe;
         WORD            qready;
-        
+
         m = (QPB *) lm;
 
         p = m->qpb_ppd;

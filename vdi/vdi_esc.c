@@ -79,12 +79,12 @@ static void escfn3(Vwk * vwk)
 
 
 /*
- * escfn4 - moves the alpha cursor up one line.  
+ * escfn4 - moves the alpha cursor up one line.
  */
 
 static void escfn4(Vwk * vwk)
 {
-    trap1(wntstr, "\033A");   
+    trap1(wntstr, "\033A");
 }
 
 

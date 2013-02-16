@@ -1,5 +1,5 @@
 /*
- * psg.h - Programmable Sound Generator YM-2149 
+ * psg.h - Programmable Sound Generator YM-2149
  *
  * Copyright (c) 2001-2013 EmuTOS development team
  *
@@ -12,7 +12,7 @@
 
 #ifndef PSG_H
 #define PSG_H
- 
+
 struct psg {
   UBYTE control;
   UBYTE pad0;
@@ -31,5 +31,5 @@ struct psg {
 #define PSG_PORT_A 0xE
 #define PSG_PORT_B 0xF
 
- 
+
 #endif /* PSG_H */

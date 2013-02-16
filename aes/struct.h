@@ -77,7 +77,7 @@ CDA
 
 UDA
 {
-        WORD    u_insuper;              /*   0  in supervisor flag       */ 
+        WORD    u_insuper;              /*   0  in supervisor flag       */
         ULONG   u_regs[15];             /*   2  d0-d7, a0-a6             */
         ULONG   *u_spsuper;             /*  3E  supervisor stack         */
         ULONG   *u_spuser;              /*  42  user stack               */
@@ -109,7 +109,7 @@ EVB             /* event block structure */
 #define         WAITIN          0x0001
 #define         SWITCHIN        0x8000
 
-PD 
+PD
 {
         PD      *p_link;        /*  0 */
         PD      *p_thread;      /*  4 */

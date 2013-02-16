@@ -63,14 +63,14 @@
 /*
  *
  */
- 
+
 static inline void xbios_v_v(int op)
 {
     __asm__ __volatile__ (
         "move.w  %0,-(sp)\n\t"
         "trap    #14\n\t"
         "addq.l  #2,sp"
-         : 
+         :
          : "nr"(op)
          : "d0", "d1", "d2", "a0", "a1", "a2", "memory", "cc"
         );
@@ -83,7 +83,7 @@ static inline void xbios_v_w(int op, short a)
         "move.w  %0,-(sp)\n\t"
         "trap    #14\n\t"
         "addq.l  #4,sp"
-         : 
+         :
          : "nr"(op), "nr"(a)
          : "d0", "d1", "d2", "a0", "a1", "a2", "memory", "cc"
         );
@@ -97,8 +97,8 @@ static inline void xbios_v_wl(int op, short a, long b)
         "move.w  %0,-(sp)\n\t"
         "trap    #14\n\t"
         "addq.l  #8,sp"
-         : 
-         : "nr"(op), "nr"(a), "ir"(b) 
+         :
+         : "nr"(op), "nr"(a), "ir"(b)
          : "d0", "d1", "d2", "a0", "a1", "a2", "memory", "cc"
         );
 }
@@ -112,13 +112,13 @@ static inline void xbios_v_wll(int op, short a, long b, long c)
         "move.w  %0,-(sp)\n\t"
         "trap    #14\n\t"
         "lea     12(sp),sp"
-         : 
-         : "nr"(op), "nr"(a), "ir"(b), "ir"(c) 
+         :
+         : "nr"(op), "nr"(a), "ir"(b), "ir"(c)
          : "d0", "d1", "d2", "a0", "a1", "a2", "memory", "cc"
         );
 }
 
-static inline void 
+static inline void
 xbios_v_wwl(int op, short a, short b, long c)
 {
     __asm__ __volatile__ (
@@ -128,13 +128,13 @@ xbios_v_wwl(int op, short a, short b, long c)
         "move.w  %0,-(sp)\n\t"
         "trap    #14\n\t"
         "lea     10(sp),sp"
-         : 
-         : "nr"(op), "nr"(a), "nr"(b), "ir"(c) 
+         :
+         : "nr"(op), "nr"(a), "nr"(b), "ir"(c)
          : "d0", "d1", "d2", "a0", "a1", "a2", "memory", "cc"
         );
 }
 
-static inline void 
+static inline void
 xbios_v_wwwl(int op, short a, short b, short c, long d)
 {
     __asm__ __volatile__ (
@@ -145,13 +145,13 @@ xbios_v_wwwl(int op, short a, short b, short c, long d)
         "move.w  %0,-(sp)\n\t"
         "trap    #14\n\t"
         "lea     12(sp),sp"
-         : 
-         : "nr"(op), "nr"(a), "nr"(b), "nr"(c), "ir"(d) 
+         :
+         : "nr"(op), "nr"(a), "nr"(b), "nr"(c), "ir"(d)
          : "d0", "d1", "d2", "a0", "a1", "a2", "memory", "cc"
         );
 }
 
-static inline void 
+static inline void
 xbios_v_wwwwww(int op, short a, short b, short c, short d, short e, short f)
 {
     __asm__ __volatile__ (
@@ -164,8 +164,8 @@ xbios_v_wwwwww(int op, short a, short b, short c, short d, short e, short f)
         "move.w  %0,-(sp)\n\t"
         "trap    #14\n\t"
         "lea     14(sp),sp"
-         : 
-         : "nr"(op), "nr"(a), "nr"(b), "nr"(c), "nr"(d), "nr"(e), "nr"(f) 
+         :
+         : "nr"(op), "nr"(a), "nr"(b), "nr"(c), "nr"(d), "nr"(e), "nr"(f)
          : "d0", "d1", "d2", "a0", "a1", "a2", "memory", "cc"
         );
 }
@@ -177,7 +177,7 @@ static inline void xbios_v_l(int op, long a)
         "move.w  %0,-(sp)\n\t"
         "trap    #14\n\t"
         "addq.l  #6,sp"
-         : 
+         :
          : "nr"(op), "ir"(a)
          : "d0", "d1", "d2", "a0", "a1", "a2", "memory", "cc"
         );
@@ -192,13 +192,13 @@ static inline void xbios_v_llw(int op, long a, long b, short c)
         "move.w  %0,-(sp)\n\t"
         "trap    #14\n\t"
         "lea     12(sp),sp"
-         : 
+         :
          : "nr"(op), "ir"(a), "ir"(b), "nr"(c)
          : "d0", "d1", "d2", "a0", "a1", "a2", "memory", "cc"
         );
 }
 
-static inline void 
+static inline void
 xbios_v_llww(int op, long a, long b, short c, short d)
 {
     __asm__ __volatile__ (
@@ -209,7 +209,7 @@ xbios_v_llww(int op, long a, long b, short c, short d)
         "move.w  %0,-(sp)\n\t"
         "trap    #14\n\t"
         "lea     14(sp),sp"
-         : 
+         :
          : "nr"(op), "ir"(a), "ir"(b), "nr"(c), "nr"(d)
          : "d0", "d1", "d2", "a0", "a1", "a2", "memory", "cc"
         );
@@ -240,7 +240,7 @@ static inline short xbios_w_w(int op, short a)
         "trap    #14\n\t"
         "addq.l  #4,sp"
          : "=r"(retval)
-         : "nr"(op), "nr"(a) 
+         : "nr"(op), "nr"(a)
          : "d1", "d2", "a0", "a1", "a2", "memory", "cc"
         );
     return retval;
@@ -257,13 +257,13 @@ static inline short xbios_w_ww(int op, short a, short b)
         "trap    #14\n\t"
         "addq.l  #6,sp"
          : "=r"(retval)
-         : "nr"(op), "nr"(a), "nr"(b) 
+         : "nr"(op), "nr"(a), "nr"(b)
          : "d1", "d2", "a0", "a1", "a2", "memory", "cc"
         );
     return retval;
 }
 
-static inline short xbios_w_llwwwww(int op, 
+static inline short xbios_w_llwwwww(int op,
     long a, long b, short c, short d, short e, short f, short g)
 {
     register long retval __asm__("d0");
@@ -280,8 +280,8 @@ static inline short xbios_w_llwwwww(int op,
         "trap    #14\n\t"
         "lea     20(sp),sp"
          : "=r"(retval)
-         : "nr"(op), "ir"(a), "ir"(b), "nr"(c), "nr"(d), "nr"(e), "nr"(f), 
-           "nr"(g) 
+         : "nr"(op), "ir"(a), "ir"(b), "nr"(c), "nr"(d), "nr"(e), "nr"(f),
+           "nr"(g)
          : "d1", "d2", "a0", "a1", "a2", "memory", "cc"
         );
     return retval;
@@ -312,7 +312,7 @@ static inline long xbios_l_w(int op, short a)
         "trap    #14\n\t"
         "addq.l  #4,sp"
          : "=r"(retval)
-         : "nr"(op), "nr"(a) 
+         : "nr"(op), "nr"(a)
          : "d1", "d2", "a0", "a1", "a2", "memory", "cc"
         );
     return retval;

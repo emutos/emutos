@@ -56,7 +56,7 @@ extern WORD font_count;                 // all three fonts and NULL
 
 /* the font header descibes a font */
 
-struct font_head {              
+struct font_head {
     WORD font_id;
     WORD point;
     BYTE name[32];
@@ -65,7 +65,7 @@ struct font_head {
     UWORD top;
     UWORD ascent;
     UWORD half;
-    UWORD descent;              
+    UWORD descent;
     UWORD bottom;
     UWORD max_char_width;
     UWORD max_cell_width;
@@ -75,7 +75,7 @@ struct font_head {
     UWORD ul_size;              /* size of the underline */
     UWORD lighten;              /* mask to and with to lighten  */
     UWORD skew;                 /* mask for skewing */
-    UWORD flags;                    
+    UWORD flags;
 
     const UBYTE *hor_table;     /* horizontal offsets */
     const UWORD *off_table;     /* character offsets  */

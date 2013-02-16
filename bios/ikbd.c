@@ -17,7 +17,7 @@
  */
 
 /*
- * not supported: 
+ * not supported:
  * - mouse move using alt-arrowkeys
  * - alt-help screen hardcopy
  * - KEYTBL.TBL config with _AKP cookie (tos 5.00 and later)
@@ -148,16 +148,16 @@ static void push_ikbdiorec(LONG value)
 
 /*
  * key repeat is handled as follows:
- * As a key is hit and enters the buffer, it is recorded as kb_last_key; 
+ * As a key is hit and enters the buffer, it is recorded as kb_last_key;
  * at the same time a downward counter kb_ticks is set to the first delay,
  * kb_initial.
  * Every fourth timer C interrupt (50 Hz ticks), kb_tick is decremented if
  * not null (kb_tick null means no more key repeat for this key). If kb_tick
- * reaches zero, the key is re-emited and kb_tick is now set to the second 
+ * reaches zero, the key is re-emited and kb_tick is now set to the second
  * delay kb_repeat.
- * Finally, any kind of key depress IKBD event stops the repeat handling 
+ * Finally, any kind of key depress IKBD event stops the repeat handling
  * by setting kb_tick back to zero.
- * There is no need to disable interrupts when modifying kb_tick, kb_initial 
+ * There is no need to disable interrupts when modifying kb_tick, kb_initial
  * and kb_repeat since:
  * - each routine not in interrupt routines only accesses kb_tick once;
  * - the interrupt routines (ACIA and timer C) cannot happen at the same
@@ -174,9 +174,9 @@ static void (*kb_last_ikbdsys)(void); /* ikbdsys when kb_last_key was set */
 WORD kbrate(WORD initial, WORD repeat)
 {
     WORD ret = (kb_initial << 8) | (kb_repeat & 0xFF);
-    if(initial > 1) 
+    if(initial > 1)
         kb_initial = initial;
-    if(repeat > 1) 
+    if(repeat > 1)
         kb_repeat = repeat;
     return ret;
 }
@@ -299,7 +299,7 @@ void kbd_int(WORD scancode)
     if (scancode & KEY_RELEASED) {
         /* stop key repeat */
         kb_ticks = 0;
-        
+
         scancode = scancode_only;
         switch (scancode) {
         case KEY_RSHIFT:
@@ -321,7 +321,7 @@ void kbd_int(WORD scancode)
             break;
         }
         /* The TOS does not return when ALT is set, to emulate
-         * mouse movement using alt keys. This feature is not 
+         * mouse movement using alt keys. This feature is not
          * currently supported by EmuTOS.
          */
 #if 0
@@ -350,11 +350,11 @@ void kbd_int(WORD scancode)
         shifty ^= MODE_CAPS;    /* toggle bit */
         return;
     }
-    
-    
+
+
     if (shifty & MODE_ALT) {
         const BYTE *a;
-         
+
         /* ALT-keypad means that char number */
         if (scancode >= 103 && scancode <= 112) {
             if (kb_altnum < 0) {
@@ -363,8 +363,8 @@ void kbd_int(WORD scancode)
             kb_altnum *= 10;
             kb_altnum += "\7\10\11\4\5\6\1\2\3\0" [scancode - 103];
             return;
-        } 
-        
+        }
+
         if (shifty & MODE_SHIFT) {
             a = current_keytbl.altshft;
         } else if (shifty & MODE_CAPS) {
@@ -401,7 +401,7 @@ void kbd_int(WORD scancode)
         }
         if (*a++) {
             ascii = *a;
-        } 
+        }
         kb_dead = -1;
     } else if(ascii <= DEADMAX && ascii >= DEADMIN) {
         kb_dead = ascii - DEADMIN;
@@ -420,7 +420,7 @@ void kbd_int(WORD scancode)
     kprintf("KBD iorec: Pushing value 0x%08lx\n", value);
 #endif
     push_ikbdiorec(value);
-    
+
     /* set initial delay for key repeat */
     kb_last_key = value;
     kb_last_ikbdsys = kbdvecs.ikbdsys;
@@ -550,7 +550,7 @@ void kbd_init(void)
     kb_ticks = 0;
     kb_initial = 25;
     kb_repeat = 5;
- 
+
     kb_dead = -1;      /* not in a dead key sequence */
     kb_altnum = -1;    /* not in an alt-numeric sequence */
 

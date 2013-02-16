@@ -23,7 +23,7 @@
 .globl _m_lptr2
 
         .text
-        
+
 _gsx2:
 #ifdef __mcoldfire__
         lea     tmp_contrl,a0
@@ -38,7 +38,7 @@ _gsx2:
 
 
 /*
- * Fill routines for the normal Array pointers 
+ * Fill routines for the normal Array pointers
  */
 _i_intin:
 #ifdef __mcoldfire__

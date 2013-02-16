@@ -78,7 +78,7 @@ void desk_verify(WORD wh, WORD changed)
 
 #ifdef DESK1
         if (wh)
-        { 
+        {
 #endif
                                                 /* get current size     */
         pw = win_find(wh);
@@ -194,7 +194,7 @@ void do_wopen(WORD new_win, WORD wh, WORD curr, WORD x, WORD y, WORD w, WORD h)
         graf_growbox(d.g_x, d.g_y, d.g_w, d.g_h, x, y, w, h);
 #endif
 
-        act_chg(G.g_cwin, G.a_screen, G.g_croot, curr, &c, SELECTED, 
+        act_chg(G.g_cwin, G.a_screen, G.g_croot, curr, &c, SELECTED,
                 FALSE, TRUE, TRUE);
         if (new_win)
           wind_open(wh, x, y, w, h);
@@ -222,7 +222,7 @@ void do_wfull(WORD wh)
                 wind_set(wh, WF_CXYWH, prev.g_x, prev.g_y, prev.g_w, prev.g_h);
                 graf_shrinkbox(prev.g_x, prev.g_y, prev.g_w, prev.g_h,
                                full.g_x, full.g_y, full.g_w, full.g_h);
-        }       
+        }
         else
         {
                 graf_growbox(curr.g_x, curr.g_y, curr.g_w, curr.g_h,
@@ -307,13 +307,13 @@ WORD do_diropen(WNODE *pw, WORD new_win, WORD curr_icon, WORD drv,
 #ifdef DESK1
         if (curr_icon)
         {
-                do_wopen(new_win, pw->w_id, curr_icon, 
+                do_wopen(new_win, pw->w_id, curr_icon,
                                 pt->g_x, pt->g_y, pt->g_w, pt->g_h);
                 if (new_win)
                         win_top(pw);
         }
 #else
-        do_wopen(new_win, pw->w_id, curr_icon, 
+        do_wopen(new_win, pw->w_id, curr_icon,
                                 pt->g_x, pt->g_y, pt->g_w, pt->g_h);
         if (new_win)
             win_top(pw);
@@ -347,7 +347,7 @@ static WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, WORD drv,
         isgraf = pa->a_flags & AF_ISGRAF;
         isover = 1;
         isparm = pa->a_flags & AF_ISPARM;
-        uninstalled = ( (*pa->a_pappl == '*') || 
+        uninstalled = ( (*pa->a_pappl == '*') ||
                         (*pa->a_pappl == '?') ||
                         (*pa->a_pappl == NULL) );
                                                 /* change current dir.  */
@@ -427,7 +427,7 @@ static WORD do_dopen(WORD curr)
           drv = (0x00ff & pib->ib_char);
           pro_chdir(drv, "");
           if (!DOS_ERR)
-            do_diropen(pw, TRUE, curr, drv, "", "*", "*", 
+            do_diropen(pw, TRUE, curr, drv, "", "*", "*",
                         (GRECT *)&G.g_screen[pw->w_root].ob_x, TRUE);
           else
             win_free(pw);
@@ -453,7 +453,7 @@ void do_fopen(WNODE *pw, WORD curr, WORD drv, BYTE *ppath, BYTE *pname,
         WORD    ok;
         BYTE    *pnew;
         BYTE    *pp;
-        
+
         ok = TRUE;
         pnew = ppath;
         wind_get(pw->w_id, WF_WXYWH, &t.g_x, &t.g_y, &t.g_w, &t.g_h);
@@ -573,7 +573,7 @@ WORD do_open(WORD curr)
           fpd_parse(&pw->w_path->p_spec[0],&drv,&path[0],&name[0],&ext[0]);
 
         if ( pa )
-        {       
+        {
           switch( pa->a_type )
           {
             case AT_ISFILE:
@@ -641,7 +641,7 @@ WORD do_info(WORD curr)
         pw = win_find(G.g_cwin);
 
         if ( pa )
-        {       
+        {
           switch( pa->a_type )
           {
             case AT_ISFILE:
@@ -732,7 +732,7 @@ int do_format(WORD curr)
             else
               fun_alert(1, STNOFRMT, NULLPTR);
 
-            graf_mouse(ARROW, 0x0L);    
+            graf_mouse(ARROW, 0x0L);
           } /* if ret */
         } /* if */
 

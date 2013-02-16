@@ -22,7 +22,7 @@
 
 // ==== References ===========================================================
 
-        
+
         .globl  _os_entry
 #if CONF_WITH_CARTRIDGE
         .globl  _run_cartridge_applications
@@ -30,9 +30,9 @@
         .globl  _stktop
 
 // ==== tosvars.s - TOS System variables =====================================
-                
-        .extern resvalid      
-        .extern resvector     
+
+        .extern resvalid
+        .extern resvector
 //        .extern _kprintf
 
 // ==== memory.s - variables for memory  =====================================
@@ -44,7 +44,7 @@
         .extern _end          // end of bss + comm sections (ld generated)
         .extern _etext        // end of text section
         .extern _edata        // end of data section
-        
+
 
 // ===========================================================================
 // ==== TEXT segment (TOS image) =============================================
@@ -92,7 +92,7 @@ reseth:
     dc.l    _main       // reseth, pointer to reset handler
 _os_beg:
     dc.l    _os_entry   // os_beg, base of os = _sysbase
-_os_end: 
+_os_end:
 #ifdef EMUTOS_RAM
     // When EmuTOS is run from the RAM, the BSS starts at address 0 as usual,
     // but the TEXT and DATA segments are just after the BSS.
@@ -104,7 +104,7 @@ _os_end:
     // Thus the first unused RAM address is the end of the BSS segment.
     dc.l    _end        // os_end, first byte RAM not used by OS
 #endif
-os_res1:        
+os_res1:
     dc.l    _main       // os_res1, reserved
 _os_magic:
 #if WITH_AES
@@ -114,7 +114,7 @@ _os_magic:
 #endif
 _os_date:
     dc.l    OS_DATE     // os_date, Date of system build
-_os_conf:        
+_os_conf:
     dc.w    (OS_COUNTRY << 1) + OS_PAL // Flag for PAL version + country
 _os_dosdate:
     dc.w    OS_DOSDATE  // os_date, Date of system build in GEMDOS format
@@ -145,7 +145,7 @@ os_dummy:
  *    it doesn't matter if the VBR is non-zero because, if it is, the MOVEC
  *    instruction must be legal so the trap won't get taken ...
  */
- 
+
 _main:
 #if !DIAGNOSTIC_CARTRIDGE
         move    #0x2700,sr     // disable interrupts
@@ -217,7 +217,7 @@ cache_done:
         PMOVE_TO_TC(zero)          //  we're done if we get a lineF exception ...
         bra.b   mmu_done
 not_68030:
-        move.l  #mmu_done,0x10     // if a MOVEC causes an exception, we're done 
+        move.l  #mmu_done,0x10     // if a MOVEC causes an exception, we're done
         moveq   #0,d0
         MOVEC_D0_ITT0              // first we initialise the TTRs (ACRs on a 68ec040)
         MOVEC_D0_ITT1
@@ -251,14 +251,14 @@ noreset:
 
 
 /*
- * Set up a supervisor stack 
+ * Set up a supervisor stack
  * It is required by meminit, but may be destroyed.
  */
 
         lea     _stktop, sp             // Setup Supervisor Stack
 
 
-/* 
+/*
  * memory configuration
  */
 
@@ -274,7 +274,7 @@ memdone:
         jsr     kprintf_init
 
 
-/* 
+/*
  * From now, the stack is allowed, and C code can be used.
  * The BIOS startup goes on in bios.c
  */
@@ -290,7 +290,7 @@ memdone:
  *
  * typebit: application type bit number which must be set to 1 to match
  */
-_run_cartridge_applications:      
+_run_cartridge_applications:
         move.w  4(sp),d0                // application bit number
         lea     cart_base, a0
 #ifdef __mcoldfire__
@@ -318,7 +318,7 @@ testtype:
 #else
         movem.l (sp)+, d0-d7/a0-a6      // restore registers
 #endif
-nextapp:        
+nextapp:
         tst.l   (a0)                    // another application?
         move.l  (a0), a0
         bne     testtype

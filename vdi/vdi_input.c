@@ -152,7 +152,7 @@ void vqi_mode(Vwk * vwk)
  *
  * returns:   CTL/SHIFT/ALT status
  */
- 
+
 WORD gshift_s()
 {
     return (Kbshift(-1) & 0x000f);
@@ -181,7 +181,7 @@ WORD gchc_key()
  *
  * returns:  1     button pressed
  *           0     nothing happened
- * 
+ *
  * TERM_CH         16 bit char info
  */
 

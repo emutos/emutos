@@ -72,15 +72,15 @@ END {
     for(keyb in needkeybs) {
         print "#if (CONF_KEYB == KEYB_ALL || CONF_KEYB == KEYB_" keyb ")"
         print "#include \"keyb_" tolower(keyb) ".h\""
-        print "#endif" 
+        print "#endif"
     }
     print "\nstatic const struct kbd_record avail_kbd[] = {"
     for(keyb in needkeybs) {
-        print "#if (CONF_KEYB == KEYB_ALL || CONF_KEYB == KEYB_" keyb ")" 
+        print "#if (CONF_KEYB == KEYB_ALL || CONF_KEYB == KEYB_" keyb ")"
         print "    { KEYB_" keyb ", &keytbl_" tolower(keyb) " },"
-        print "#endif" 
+        print "#endif"
     }
-    print "};\n\n" 
+    print "};\n\n"
 
     for(cset in needcsets) {
         lcset = tolower(cset)
@@ -92,7 +92,7 @@ END {
     for(cset in needcsets) {
         lcset = tolower(cset)
         print "#if (CONF_CHARSET == CHARSET_ALL || CONF_CHARSET == CHARSET_" \
-            cset ")" 
+            cset ")"
         print "    { CHARSET_" cset ", &fnt_" lcset "_6x6, &fnt_" lcset \
             "_8x8, &fnt_" lcset "_8x16 },"
         print "#endif"

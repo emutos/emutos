@@ -56,7 +56,7 @@ long rawconio(int parm);
 void xprt_line(char *p);
 void readline(char *p);
 int cgets(int h, int maxlen, char *buf);
-long conin(int h); 
+long conin(int h);
 void tabout(int h, int ch);
 
 

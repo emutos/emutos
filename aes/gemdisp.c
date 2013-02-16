@@ -1,5 +1,5 @@
 /*      GEMDISP.C       1/27/84 - 09/13/85      Lee Jay Lorenzen        */
-/*      merge High C vers. w. 2.2 & 3.0         8/19/87         mdf     */ 
+/*      merge High C vers. w. 2.2 & 3.0         8/19/87         mdf     */
 /*      add beep in chkkbd                      11/12/87        mdf     */
 
 /*
@@ -70,23 +70,23 @@ void forkq(void (*fcode)(), LONG fdata)
 
 
 static void disp_act(PD *p)
-{      
+{
                                                 /* process is ready,    */
                                                 /*   so put him on RLR  */
         p->p_stat &= ~WAITIN;
-        insert_process(p, &rlr);        
+        insert_process(p, &rlr);
 }
 
 
 static void mwait_act(PD *p)
-{       
+{
                                                 /* sleep on nrl if      */
                                                 /*   event flags are    */
                                                 /*   not set            */
         if (p->p_evwait & p->p_evflg)
           disp_act(p);
         else
-        { 
+        {
                                                 /* good night, Mrs.     */
                                                 /*   Calabash, wherever */
                                                 /*   you are            */
@@ -103,7 +103,7 @@ void forker(void)
         register PD     *oldrl;
         register LONG   amt;
         FPD             g;
-        
+
         oldrl = rlr;
         rlr = (PD *) -1;
         while(fpcnt)
@@ -115,7 +115,7 @@ void forker(void)
                                         /* copy FPD so an interrupt     */
                                         /*  doesn't overwrite it.       */
           LBCOPY(ADDR(&g), ADDR(f), sizeof(FPD) );
-          if (fph == NFORKS) 
+          if (fph == NFORKS)
             fph = 0;
           sti();
 /* */
@@ -133,14 +133,14 @@ void forker(void)
                                                 /* if its a time event &*/
                                                 /*   previously recorded*/
                                                 /*   was a time event   */
-                                                /*   then coalesce them */ 
+                                                /*   then coalesce them */
                                                 /*   else record the    */
                                                 /*   event              */
               if ( ((void *)g.f_code == (void *)tchange) &&
                    (LLGET(gl_rbuf - sizeof(FPD)) == (LONG)tchange) )
               {
                 amt = g.f_data + LLGET(gl_rbuf-sizeof(LONG));
-                LLSET(gl_rbuf - sizeof(LONG), amt);           
+                LLSET(gl_rbuf - sizeof(LONG), amt);
               }
               else
               {
@@ -237,7 +237,7 @@ void disp(void)
                                                 /* based on the state   */
                                                 /*   of the process p   */
                                                 /*   do something       */
-        if (p->p_stat & WAITIN) 
+        if (p->p_stat & WAITIN)
           mwait_act(p);
         else
           disp_act(p);

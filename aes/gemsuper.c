@@ -92,7 +92,7 @@ static UWORD crysbind(WORD opcode, LONG pglobal, WORD control[], WORD int_in[], 
         ret = TRUE;
 
         switch(opcode)
-        {       
+        {
                                 /* Application Manager                  */
           case APPL_INIT:
 #if DBG_GEMSUPER
@@ -114,7 +114,7 @@ static UWORD crysbind(WORD opcode, LONG pglobal, WORD control[], WORD int_in[], 
                 break;
           case APPL_READ:
           case APPL_WRITE:
-                ap_rdwr(opcode == APPL_READ ? MU_MESAG : MU_SDMSG, 
+                ap_rdwr(opcode == APPL_READ ? MU_MESAG : MU_SDMSG,
                         fpdnm(NULLPTR, AP_RWID), AP_LENGTH, AP_PBUFF);
                 break;
           case APPL_FIND:
@@ -163,7 +163,7 @@ static UWORD crysbind(WORD opcode, LONG pglobal, WORD control[], WORD int_in[], 
                 if (MU_FLAGS & MU_TIMER)
                   maddr = HW(MT_HICOUNT) + LW(MT_LOCOUNT);
                 buparm = HW(MB_CLICKS) | LW((MB_MASK << 8) | MB_STATE);
-                ret = ev_multi(MU_FLAGS, (MOBLK *)&MMO1_FLAGS, (MOBLK *)&MMO2_FLAGS, 
+                ret = ev_multi(MU_FLAGS, (MOBLK *)&MMO1_FLAGS, (MOBLK *)&MMO2_FLAGS,
                         maddr, buparm, MME_PBUFF, &EV_MX);
                 break;
           case EVNT_DCLICK:
@@ -180,17 +180,17 @@ static UWORD crysbind(WORD opcode, LONG pglobal, WORD control[], WORD int_in[], 
                 do_chg(MM_ITREE, ITEM_NUM, CHECKED, CHECK_IT, FALSE, FALSE);
                 break;
           case MENU_IENABLE:
-                do_chg(MM_ITREE, (ITEM_NUM & 0x7fff), DISABLED, 
+                do_chg(MM_ITREE, (ITEM_NUM & 0x7fff), DISABLED,
                         !ENABLE_IT, ((ITEM_NUM & 0x8000) != 0x0), FALSE);
                 break;
           case MENU_TNORMAL:
                 if (gl_mntree == menu_tree[rlr->p_pid])
-                  do_chg(MM_ITREE, TITLE_NUM, SELECTED, !NORMAL_IT, 
+                  do_chg(MM_ITREE, TITLE_NUM, SELECTED, !NORMAL_IT,
                                 TRUE, TRUE);
                 break;
           case MENU_TEXT:
                 tree = (OBJECT *)MM_ITREE;
-                strcpy((char *)tree[ITEM_NUM].ob_spec,(char *)MM_PTEXT);   
+                strcpy((char *)tree[ITEM_NUM].ob_spec,(char *)MM_PTEXT);
                 break;
           case MENU_REGISTER:
                 ret = mn_register(MM_PID, MM_PSTR);
@@ -229,7 +229,7 @@ static UWORD crysbind(WORD opcode, LONG pglobal, WORD control[], WORD int_in[], 
                 ob_draw(OB_TREE, OB_DRAWOB, OB_DEPTH);
                 break;
           case OBJC_FIND:
-                ret = ob_find(OB_TREE, OB_STARTOB, OB_DEPTH, 
+                ret = ob_find(OB_TREE, OB_STARTOB, OB_DEPTH,
                                 OB_MX, OB_MY);
                 break;
           case OBJC_OFFSET:
@@ -275,11 +275,11 @@ static UWORD crysbind(WORD opcode, LONG pglobal, WORD control[], WORD int_in[], 
                 break;
                                 /* Graphics Manager                     */
           case GRAF_RUBBOX:
-                gr_rubbox(GR_I1, GR_I2, GR_I3, GR_I4, 
+                gr_rubbox(GR_I1, GR_I2, GR_I3, GR_I4,
                           &GR_O1, &GR_O2);
                 break;
           case GRAF_DRAGBOX:
-                gr_dragbox(GR_I1, GR_I2, GR_I3, GR_I4, (GRECT *)&GR_I5, 
+                gr_dragbox(GR_I1, GR_I2, GR_I3, GR_I4, (GRECT *)&GR_I5,
                            &GR_O1, &GR_O2);
                 break;
           case GRAF_MBOX:
@@ -314,7 +314,7 @@ static UWORD crysbind(WORD opcode, LONG pglobal, WORD control[], WORD int_in[], 
                 }
                 else
                 {
-                  if (GR_MNUMBER != 255)                
+                  if (GR_MNUMBER != 255)
                   {
                     switch(GR_MNUMBER) {
                       case 1:
@@ -397,8 +397,8 @@ static UWORD crysbind(WORD opcode, LONG pglobal, WORD control[], WORD int_in[], 
                 wm_update(WM_BEGUP);
                 break;
           case WIND_CALC:
-                wm_calc(WM_WCTYPE, WM_WCKIND, WM_WCIX, WM_WCIY, 
-                        WM_WCIW, WM_WCIH, &WM_WCOX, &WM_WCOY, 
+                wm_calc(WM_WCTYPE, WM_WCKIND, WM_WCIX, WM_WCIY,
+                        WM_WCIW, WM_WCIH, &WM_WCOX, &WM_WCOY,
                         &WM_WCOW, &WM_WCOH);
                 break;
           case WIND_NEW:
@@ -482,7 +482,7 @@ static void xif(LONG pcrys_blk)
         if (AIN_LEN)
           LWCOPY(ADDR(&addr_in[0]), ADDR_IN, min(AIN_LEN,AI_SIZE)*2);
 
-        int_out[0] = crysbind(OP_CODE, GGLOBAL, &control[0], &int_in[0], &int_out[0], 
+        int_out[0] = crysbind(OP_CODE, GGLOBAL, &control[0], &int_in[0], &int_out[0],
                                 &addr_in[0]);
 
         if (OUT_LEN)

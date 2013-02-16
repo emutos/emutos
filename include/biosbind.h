@@ -40,7 +40,7 @@ static inline void bios_v_l(int op, long a)
         "move.w  %0,-(sp)\n\t"
         "trap    #13\n\t"
         "addq.l  #6,sp"
-         : 
+         :
          : "nr"(op), "ir"(a)
          : "d0", "d1", "d2", "a0", "a1", "a2", "memory", "cc"
         );
@@ -54,8 +54,8 @@ static inline void bios_v_ww(int op, short a, short b)
         "move.w  %0,-(sp)\n\t"
         "trap    #13\n\t"
         "addq.l  #6,sp"
-         : 
-         : "nr"(op), "nr"(a), "nr"(b) 
+         :
+         : "nr"(op), "nr"(a), "nr"(b)
          : "d0", "d1", "d2", "a0", "a1", "a2", "memory", "cc"
         );
 }
@@ -72,7 +72,7 @@ static inline short bios_w_w(int op, short a)
         "trap    #13\n\t"
         "addq.l  #4,sp"
          : "=r"(retval)
-         : "nr"(op), "nr"(a) 
+         : "nr"(op), "nr"(a)
          : "d1", "d2", "a0", "a1", "a2", "memory", "cc"
         );
     return retval;
@@ -103,7 +103,7 @@ static inline long bios_l_w(int op, short a)
         "trap    #13\n\t"
         "addq.l  #4,sp"
          : "=r"(retval)
-         : "nr"(op), "nr"(a) 
+         : "nr"(op), "nr"(a)
          : "d1", "d2", "a0", "a1", "a2", "memory", "cc"
         );
     return retval;
@@ -143,7 +143,7 @@ static inline long bios_l_wl(int op, short a, long b)
     return retval;
 }
 
-static inline long 
+static inline long
 bios_l_wlwwwl(int op, short a, long b, short c, short d, short e, long f)
 {
     register long retval __asm__("d0");

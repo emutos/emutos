@@ -25,11 +25,11 @@
 /* The following functions are either used as inlines in string.h
    or here as normal functions */
 #if !(USE_STATIC_INLINES)
-char *strcpy(char *dest, const char *src) 
+char *strcpy(char *dest, const char *src)
 {
     register char *tmp = dest;
- 
-    while( (*tmp++ = *src++) ) 
+
+    while( (*tmp++ = *src++) )
         ;
     return dest;
 }
@@ -45,9 +45,9 @@ char *strcpy(char *dest, const char *src)
  *      as the length is > 0)
  *    . it does not nul-fill the destination (a performance
  *      benefit when the source is short and the destination
- *      is large) 
+ *      is large)
  *    . the return value allows a simple test for truncation
- * 
+ *
  * this implementation of strlcpy() was written from scratch
  * by roger burrows.  it is based on the description of the
  * function in the paper "strlcpy and strlcat - consistent,
@@ -90,13 +90,13 @@ unsigned long int strlen(const char *s)
     return (n);
 }
 
-char *strcat(char *dest, const char *src) 
+char *strcat(char *dest, const char *src)
 {
     register char *tmp = dest;
-    while( *tmp++ ) 
+    while( *tmp++ )
         ;
     tmp --;
-    while( (*tmp++ = *src++) ) 
+    while( (*tmp++ = *src++) )
         ;
     return dest;
 }
@@ -116,7 +116,7 @@ int memcmp(const void * aa, const void * bb, unsigned long int n)
 {
     const unsigned char * a = aa;
     const unsigned char * b = bb;
-    
+
     while(n && *a == *b) {
         n--;
         a++;

@@ -2103,7 +2103,7 @@
 .pa
 
              4 - (unused)
- 
+
              5 - Set if the application is a desk accessory.
 
              6 - Set if the application is NOT a GEM  application.

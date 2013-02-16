@@ -20,8 +20,8 @@
  * - some weird messages
  * - trigraphs are not handled (this is a feature actually !)
  */
- 
-/* 
+
+/*
  * Structure of this file
  * (in this order, as each function calls functions above):
  * - library support (errors, memory, ...)
@@ -37,11 +37,11 @@
  * - main()
  */
 
-/* 
+/*
  * TODO list
  * - better algorithm for merging po files (keep the order of entries)
  * - parse_po_file is a mess
- * - memory is not freed correctly, esp. after xstrdup 
+ * - memory is not freed correctly, esp. after xstrdup
  * - use strerror() to report errors
  * - use #~ for old entries
  * - split this into proper files
@@ -56,23 +56,23 @@
 #include <time.h>
 
 #define VERSION "0.2b"
- 
+
 #define TOOLNAME "bug"
 #define DOCNAME  "doc/nls.txt"
 #define LANGS_C  "util/langs.c"
 
 #define HERE fprintf(stderr, "%s:%d\n", __FUNCTION__, __LINE__);
 
-/* 
+/*
  * typedefs
  */
 
 typedef unsigned char uchar;
 
-/* 
+/*
  * errors
  */
- 
+
 void warn(const char *fmt, ...)
 {
   va_list ap;
@@ -159,7 +159,7 @@ char * now(void)
   char tz_sign;
   long tz_min;
   char buf[40];
-  
+
   time (&now);
   local_time = *localtime (&now);
   tz_sign = '+';
@@ -229,7 +229,7 @@ void da_add(da *d, void *elem)
   }
   d->buf[d->len++] = elem;
 }
- 
+
 /*
  * s - string
  */
@@ -261,7 +261,7 @@ void s_grow(str *s)
   }
 }
 
-void s_free(str *s) 
+void s_free(str *s)
 {
   if(s->size) {
     free(s->buf);
@@ -269,7 +269,7 @@ void s_free(str *s)
   free(s);
 }
 
-void s_addch(str *s, char c) 
+void s_addch(str *s, char c)
 {
   if(s->len >= s->size) {
     s_grow(s);
@@ -277,7 +277,7 @@ void s_addch(str *s, char c)
   s->buf[s->len++] = c;
 }
 
-void s_addstr(str *s, char *t) 
+void s_addstr(str *s, char *t)
 {
   while(*t) {
     s_addch(s, *t++);
@@ -334,7 +334,7 @@ hash * h_new(void)
 unsigned compute_hash(char *t)
 {
   unsigned m = 0;
-  
+
   while(*t) {
     m += *t++;
     m <<= 1;
@@ -348,7 +348,7 @@ void * h_find(hash *h, char *key)
   da *d;
   int i, n;
   hi *k;
-  
+
   d = h->d[m];
   if(d != NULL) {
     n = da_len(d);
@@ -366,7 +366,7 @@ void h_insert(hash *h, void *k)
 {
   unsigned m = compute_hash(((hi *)k)->key) % HASH_SIZ;
   da *d;
-  
+
   d = h->d[m];
   if(d == NULL) {
     d = da_new();
@@ -443,10 +443,10 @@ ref * ref_new(char *fname, int lineno)
 
 /*
  * poe - po-entries
- * the po structure is an ordered-hash of po-entries, 
+ * the po structure is an ordered-hash of po-entries,
  * the po-entry being a sub-type of hash-item.
  */
- 
+
 #define KIND_NORM 0
 #define KIND_COMM 1
 #define KIND_OLD 2
@@ -474,7 +474,7 @@ poe * poe_new(char *t)
 
 
 /*
- * gettext administrative entry, an entry with msgid empty, and 
+ * gettext administrative entry, an entry with msgid empty, and
  * msgstr being specially formatted (example in doc/nls.txt)
  */
 
@@ -508,13 +508,13 @@ void fill_pot_ae(ae_t *a)
 char * ae_to_string(ae_t *a)
 {
   str *s = s_new();
-  s_addstr(s, "Project-Id-Version: "); s_addstr(s, a->pidvers); 
-  s_addstr(s, "\nPOT-Creation-Date: "); s_addstr(s, a->potcrdate); 
-  s_addstr(s, "\nPO-Revision-Date: "); s_addstr(s, a->porevdate); 
-  s_addstr(s, "\nLast-Translator: "); s_addstr(s, a->lasttrans); 
-  s_addstr(s, "\nLanguage-Team: "); s_addstr(s, a->langteam); 
-  s_addstr(s, "\nMIME-Version: 1.0\nContent-Type: text/plain; charset="); 
-  s_addstr(s, a->charset); 
+  s_addstr(s, "Project-Id-Version: "); s_addstr(s, a->pidvers);
+  s_addstr(s, "\nPOT-Creation-Date: "); s_addstr(s, a->potcrdate);
+  s_addstr(s, "\nPO-Revision-Date: "); s_addstr(s, a->porevdate);
+  s_addstr(s, "\nLast-Translator: "); s_addstr(s, a->lasttrans);
+  s_addstr(s, "\nLanguage-Team: "); s_addstr(s, a->langteam);
+  s_addstr(s, "\nMIME-Version: 1.0\nContent-Type: text/plain; charset=");
+  s_addstr(s, a->charset);
   s_addstr(s, "\nContent-Transfer-Encoding: 8bit\n");
   s_addstr(s, a->other);
   return s_detach(s);
@@ -543,7 +543,7 @@ static int ae_check_line(char **cc, char *start, char **end)
   *end = t;
   return 1;
 }
-  
+
 int parse_ae(char *msgstr, ae_t *a)
 {
   char *c = msgstr;
@@ -558,7 +558,7 @@ int parse_ae(char *msgstr, ae_t *a)
     warn("MIME version must be 1.0");
     goto fail;
   }
-  if(!ae_check_line(&c, "Content-Type: text/plain; charset=", &a->charset)) 
+  if(!ae_check_line(&c, "Content-Type: text/plain; charset=", &a->charset))
     goto fail;
   if(!ae_check_line(&c, "Content-Transfer-Encoding: ", &tmp)) goto fail;
   if(strcmp(tmp, "8bit")) {
@@ -567,7 +567,7 @@ int parse_ae(char *msgstr, ae_t *a)
   }
   a->other = xstrdup(c);
   return 1;
-fail: 
+fail:
   warn("Error in administrative entry");
   return 0;
 }
@@ -576,10 +576,10 @@ fail:
 /*
  * input files
  */
- 
+
 #define BACKSIZ 10
 #define READSIZ 512
- 
+
 typedef struct ifile {
   int lineno;
   char *fname;
@@ -599,11 +599,11 @@ void irefill(IFILE *f)
   }
   f->size += fread(f->buf + f->size, 1, READSIZ, f->fh);
 }
-    
+
 IFILE *ifopen(char *fname)
 {
   IFILE *f = xmalloc(sizeof(IFILE));
-  
+
   f->fname = xstrdup(fname);
   f->fh = fopen(fname, "rb");
   if(f->fh == 0) {
@@ -659,7 +659,7 @@ int igetc(IFILE *f)
 int inextsh(IFILE *f)
 {
   int ret;
-  
+
   ret = igetc(f);
   if(ret == 015) {
     ret = igetc(f);
@@ -682,7 +682,7 @@ int inextsh(IFILE *f)
 int inextc(IFILE *f)
 {
   int ret;
-  
+
 again:
   ret = igetc(f);
   /* look ahead if backslash new-line */
@@ -734,7 +734,7 @@ again:
  */
 
 
-int try_eof(IFILE *f) 
+int try_eof(IFILE *f)
 {
   int c = igetc(f);
   if(c == EOF) {
@@ -748,7 +748,7 @@ int try_eof(IFILE *f)
 int try_c_comment(IFILE *f)
 {
   int c;
-  
+
   c = inextc(f);
   if(c == '/') {
     c = inextc(f);
@@ -774,8 +774,8 @@ int try_c_comment(IFILE *f)
         warn("EOF reached inside comment");
         return 1;
       }
-    } 
-  } 
+    }
+  }
   iback(f);
   return 0;
 }
@@ -817,7 +817,7 @@ int try_c_white(IFILE *f)
 int get_c_string(IFILE *f, str *s)
 {
   int c;
-  
+
   c = inextc(f);
   if(c != '"') {
     iback(f);
@@ -886,7 +886,7 @@ int get_c_string(IFILE *f, str *s)
 int try_c_string(IFILE *f)
 {
   int c;
-  
+
   c = inextc(f);
   if(c != '"') {
     iback(f);
@@ -902,10 +902,10 @@ int try_c_string(IFILE *f)
       if(c == EOF) {
         warn("EOF reached inside string");
         return 0;
-      } 
+      }
     } else if(c == '"') {
       return 1;
-    } 
+    }
   }
 }
 
@@ -919,7 +919,7 @@ int try_c_string(IFILE *f)
  * when anything meaningful has been parsed, the corresponding structure of
  * the action structure is called.
  */
- 
+
 typedef struct parse_c_action {
   void (*gstring)(void *this, str *s, char *fname, int lineno);
   void (*string)(void *this, str *s);
@@ -932,9 +932,9 @@ void pca_xgettext_gstring(void *this, str *s, char *fname, int lineno)
   poe *e;
   ref *r;
   char *t;
-         
+
   t = s_detach(s);
-  
+
   /* add the string into the hash */
   e = o_find(o, t);
   if(e) {
@@ -987,7 +987,7 @@ void pca_translate_gstring(void *this, str *s, char *fname, int lineno)
 
   (void)fname;
   (void)lineno;
-  
+
   t = s_detach(s);
   e = o_find(p->o, t);
   if(e) {  /* if there is a translation, get it instead */
@@ -1003,7 +1003,7 @@ void pca_translate_string(void *this, str *s)
 {
   pcati *p = (pcati *) this;
   char *t;
-  
+
   t = s_detach(s);
   print_canon(p->f, t, "");
   free(t);
@@ -1012,7 +1012,7 @@ void pca_translate_string(void *this, str *s)
 void pca_translate_other(void *this, int c)
 {
   pcati *p = (pcati *) this;
-  
+
   fputc(c, p->f);
 }
 
@@ -1029,7 +1029,7 @@ void parse_c_file(char *fname, parse_c_action *pca, void *this)
   int state;
   str *s;
   int lineno;
-        
+
   IFILE *f = ifopen(fname);
   if(f == NULL) {
     warn("could not open file '%s'", fname);
@@ -1107,7 +1107,7 @@ void parse_c_file(char *fname, parse_c_action *pca, void *this)
       } else if(is_white(c)) {
         if((state == 1) || (state == 4)) {
           state = 0;
-        } 
+        }
       } else if(is_letter(c) || is_digit(c)) {
         state = 4;
       } else {
@@ -1131,7 +1131,7 @@ void parse_po_file(char *fname, oh *o, int ignore_ae)
   IFILE *f;
   poe *e;
   str *s, *userstr, *refstr, *otherstr, *msgid, *msgstr;
-  
+
   f = ifopen(fname);
   if(f == NULL) {
     /* TODO: UGLY HACK !!! */
@@ -1158,8 +1158,8 @@ void parse_po_file(char *fname, oh *o, int ignore_ae)
     }
     if (c == EOF) {
       break;
-    } 
-    
+    }
+
     /* start an entry */
     userstr = 0;
     refstr = 0;
@@ -1215,12 +1215,12 @@ void parse_po_file(char *fname, oh *o, int ignore_ae)
           s_free(refstr);
           warn("stray ref ignored in %s:%d", fname, f->lineno);
         }
-        /* we will reach here when an entry is followed by more than one 
+        /* we will reach here when an entry is followed by more than one
          * empty line, at each additional empty line.
          */
         continue;
       }
-      e = poe_new(""); 
+      e = poe_new("");
       e->comment = s_detach(userstr);
       e->kind = KIND_COMM;
       o_add(o, e);
@@ -1245,7 +1245,7 @@ void parse_po_file(char *fname, oh *o, int ignore_ae)
     /* accumulate all consecutive strings (separated by spaces) */
     do {
       iback(f);
-      get_c_string(f, s);      
+      get_c_string(f, s);
       c = inextsh(f);
       while((c == ' ') || (c == '\t')) {
         c = inextsh(f);
@@ -1334,12 +1334,12 @@ err:
     warn("syntax error at %s:%d (c = '%c')", fname, f->lineno, c);
     while(c != '\n' && c != EOF) {
       c = inextsh(f);
-    }    
+    }
   }
   ifclose(f);
 }
-   
- 
+
+
 
 /*
  * parse OIPL (one item per line) simple files
@@ -1349,7 +1349,7 @@ void parse_oipl_file(char *fname, da *d)
 {
   int c;
   IFILE *f;
-  
+
   f = ifopen(fname);
   if(f == NULL) {
     fatal("could not open %s", fname);
@@ -1404,11 +1404,11 @@ void print_canon(FILE *f, char *t, char *prefix)
 #if CANON_GEM_ALERT
   int gem_alert = 0;
 #endif /* CANON_GEM_ALERT */
-  
+
   if(strchr(t, '\n')) {
     fprintf(f, "\"\"\n%s", prefix);
   }
-  
+
 #if CANON_GEM_ALERT
   if(t[0] == '[' && t[1] >= '0' && t[1] <= '9' && t[2] == ']' && t[3] == '[') {
     fprintf(f, "\"[%c][\"\n%s", t[1], prefix);
@@ -1420,7 +1420,7 @@ void print_canon(FILE *f, char *t, char *prefix)
   fprintf(f, "\"");
   while(*t) {
     switch(*t) {
-    case '\n': 
+    case '\n':
       if(t[1]) {
         fprintf(f, "\\n\"\n%s\"", prefix);
       } else {
@@ -1429,7 +1429,7 @@ void print_canon(FILE *f, char *t, char *prefix)
       break;
     case '\r': fprintf(f, "\\r"); break;
     case '\t': fprintf(f, "\\t"); break;
-    case '\"': 
+    case '\"':
     case '\\': fprintf(f, "\\%c", *t); break;
 #if CANON_GEM_ALERT
     case '|':
@@ -1466,7 +1466,7 @@ char * refs_to_str(da *refs)
   str *s;
   ref *r;
   char line[12];
-  
+
   s = s_new();
   s_addstr(s, "#:");
   pos = 2;
@@ -1478,7 +1478,7 @@ char * refs_to_str(da *refs)
     if(pos + len > 78) {
       s_addstr(s, "\n#:");
       pos = 2;
-    } 
+    }
     pos += len + 1;
     s_addch(s, ' ');
     s_addstr(s, r->fname);
@@ -1493,12 +1493,12 @@ char * refs_to_str(da *refs)
  * convert_refs : transform da * refs into char * refstr in all entries
  * of the po file contained in an oh.
  */
- 
+
 void po_convert_refs(oh *o)
 {
   int i, n;
   poe *e;
-  
+
   n = o_len(o);
   for(i = 0 ; i < n ; i++) {
     e = o_nth(o, i);
@@ -1506,10 +1506,10 @@ void po_convert_refs(oh *o)
       e->refstr = refs_to_str(e->refs);
       da_free(e->refs);
       e->refs = 0;
-    } 
+    }
   }
 }
-      
+
 /*
  * print po file
  */
@@ -1518,7 +1518,7 @@ void print_po_file(FILE *f, oh *o)
 {
   int i, n;
   char *prefix;
-  
+
   n = o_len(o);
   for(i = 0 ; i < n ; i++) {
     poe *e = o_nth(o, i);
@@ -1535,7 +1535,7 @@ void print_po_file(FILE *f, oh *o)
     fprintf(f, "%smsgid ", prefix);
     print_canon(f, e->msgid.key, prefix);
     fprintf(f, "\n%smsgstr ", prefix);
-    print_canon(f, e->msgstr, prefix); 
+    print_canon(f, e->msgstr, prefix);
     fputs("\n\n", f);
   }
 }
@@ -1565,12 +1565,12 @@ void update(char *fname)
   s_addstr(s, fname);
   s_addstr(s, ".bak");
   bfname = s_detach(s);
-  
+
   if(rename(fname, bfname)) {
     warn("cannot rename file '%s' to '%s', cancelled", fname, bfname);
     return;
   }
-  
+
   /* parse the po file */
   o2 = o_new();
   parse_po_file(bfname, o2, 0);
@@ -1595,14 +1595,14 @@ void update(char *fname)
     e = poe_new("");
     if(e2 != NULL) {
       e->comment = e2->comment; /* keep the initial comment */
-    } 
+    }
     e->kind = KIND_NORM;
     e->msgstr = ae_to_string(&a2);
     o_insert(o, e);
   }
-  
+
   /* TODO, better algorithm to keep the order of entries... */
-  
+
   /* first, update entries in the po file */
   for(i2 = 0 ; i2 < n2 ; i2 ++) {
     e2 = o_nth(o2, i2);
@@ -1612,7 +1612,7 @@ void update(char *fname)
       /* the old admin entry - do nothing */
     } else {
       e = o_find(o1, e2->msgid.key);
-      if(e) { 
+      if(e) {
         e2->kind = KIND_NORM;
         e2->refstr = e->refstr;
         e2->refs = 0;
@@ -1627,10 +1627,10 @@ void update(char *fname)
         o_add(o, e2);
         numold++;
       }
-    } 
+    }
   }
-  
-  /* then, add new entries from the template */ 
+
+  /* then, add new entries from the template */
   for(i1 = 0 ; i1 < n1 ; i1 ++) {
     e1 = o_nth(o1, i1);
     if(e1->kind == KIND_NORM) {
@@ -1643,11 +1643,11 @@ void update(char *fname)
       }
     }
   }
-  
+
   /* print stats */
   printf("translated %d, untranslated %d, obsolete %d\n",
     numtransl, numuntransl, numold);
-    
+
   /* dump o into the new file */
   f = fopen(fname, "w");
   if(f == NULL) {
@@ -1671,12 +1671,12 @@ void xgettext(void)
   char *fname;
   ae_t a;
   poe *e;
-  
+
   d = da_new();
   parse_oipl_file("po/POTFILES.in", d);
-  
+
   o = o_new();
-  
+
   /* create the administrative entry */
   fill_pot_ae(&a);
   e = poe_new("");
@@ -1685,14 +1685,14 @@ void xgettext(void)
   e->comment = "# SOME DESCRIPTIVE TITLE.\n\
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.\n";
   o_add(o, e);
-  
+
   n = da_len(d);
   for(i = 0 ; i < n ; i++) {
     parse_c_file(da_nth(d,i), pca_xgettext, o);
   }
-  
+
   po_convert_refs(o);
-  
+
   fname = "po/messages.pot";
   f = fopen(fname, "w");
   if(f == NULL) {
@@ -1747,7 +1747,7 @@ unsigned char i2a[] = {
   /*     ¡     ¢     £     ¤     ¥     ¦     § */
   ' ' , 0xad, 0x9b, 0x9c,    0, 0x9d, '|', 0xdd,
   /* ¨   ©     ª     «     ¬     ­     ®     ¯ */
-  0xb9, 0xbd, 0xa6, 0xae, 0xaa,  '-', 0xbe, 0xff, 
+  0xb9, 0xbd, 0xa6, 0xae, 0xaa,  '-', 0xbe, 0xff,
   /* °   ±     ²     ³     ´     µ     ¶     · */
   0xf8, 0xf1, 0xfd, 0xfe, 0xba, 0xe6, 0xbc,  0,
   /* ¸   ¹     º     »     ¼     ½     ¾     ¿ */
@@ -1768,7 +1768,7 @@ unsigned char i2a[] = {
   0   , 0xa4, 0x95, 0xa2, 0x93, 0xb1, 0x94, 0xf6,
   /* ø   ù     ú     û     ü     ý     þ     ÿ */
   0xb3, 0x97, 0xa3, 0x96, 0x81,  'y',  0,   0x98,
-}; 
+};
 
 void latin1_to_atarist(char *s)
 {
@@ -1814,11 +1814,11 @@ converter_t get_converter(const char * from, const char * to)
 {
   int i;
   int n = sizeof(converters)/sizeof(*converters);
-  
+
   if(!strcmp(from, to)) {
     return converter_noop;
   }
-  
+
   for(i = 0 ; i < n ; i++) {
     if(!strcmp(from, converters[i].from) && !strcmp(to,converters[i].to)) {
       return converters[i].func;
@@ -1833,13 +1833,13 @@ converter_t get_converter(const char * from, const char * to)
 }
 
 /*
- * thash - target hash. 
+ * thash - target hash.
  * Needless to say, any change here must be checked against the
  * code using this hash in the run-time routine
  */
 
 /* 1024 entries, means at least 8 kB, plus 8 bytes per string,
- * plus the lengths of strings 
+ * plus the lengths of strings
  */
 #define TH_BITS 10
 #define TH_SIZE (1 << TH_BITS)
@@ -1863,14 +1863,14 @@ int compute_th_value(char *t)
   a ^= b;
   return a;
 }
-  
+
 /*
  * make a big langs.c file from all supplied lang names.
  */
- 
+
 
 /* decomposes a string <lang><white><encoding>, returning
- * 0 if s is badly formatted. 
+ * 0 if s is badly formatted.
  * needs a 3-byte buffer in lang
  */
 int parse_linguas_item(const char *s, char *lang, char **charset)
@@ -1885,7 +1885,7 @@ int parse_linguas_item(const char *s, char *lang, char **charset)
   *charset = get_canon_cset_name(s);
   return 1;
 }
-  
+
 void make(void)
 {
   da *d;
@@ -1902,20 +1902,20 @@ void make(void)
   converter_t converter;
   int numref = 0;   /* number of entries in the reference */
   int numtransl;    /* number of translated entries */
-  
+
   langs = da_new();
-  
+
   d = da_new();
   parse_oipl_file("po/LINGUAS", d);
-  
+
   oref = o_new();
   parse_po_file("po/messages.pot", oref, 1);
-  
+
   f = fopen(LANGS_C, "w");
   if(f == NULL) {
     fatal("cannot open " LANGS_C);
   }
-  
+
   fprintf(f, "\
 /*\n\
  * " LANGS_C " - tables for all languages\n\
@@ -1925,17 +1925,17 @@ void make(void)
  *\n\
  * For more info, refer to file " DOCNAME "\n\
  */\n\n", now());
-  
+
   fprintf(f, "#include \"config.h\"\n");
   fprintf(f, "#include \"i18nconf.h\"\n\n");
   fprintf(f, "#if CONF_WITH_NLS\n\n");
   fprintf(f, "#include \"langs.h\"\n\n");
-  
+
   /* generate the default strings table, and store the
-   * name of the key string in msgstr 
+   * name of the key string in msgstr
    */
   fprintf(f, "/*\n * The keys for hash tables below.\n */\n\n");
-    
+
   m = o_len(oref);
   for(j = 0 ; j < m ; j++) {
     eref = o_nth(oref, j);
@@ -1949,30 +1949,30 @@ void make(void)
     }
   }
   fprintf(f, "\n\n");
-  
+
   /* for each language, generate a hash table, pointing
    * back to the keys output above
    */
   n = da_len(d);
   for(i = 0 ; i < n ; i++) {
-    
+
     /* clear target hash */
     for(j = 0 ; j < TH_SIZE ; j++) {
       th[j] = 0;
     }
-    
+
     /* obtain destination charset from LINGUAS */
     t = da_nth(d, i);
     if(!parse_linguas_item(t, lang, &to_charset)) {
       warn("po/LINGUAS: bad lang/charset specification \"%s\"", t);
       continue;
     }
-    
+
     /* read translations */
     o = o_new();
     sprintf(tmp, "po/%s.po", lang);
     parse_po_file(tmp, o, 0);
-    
+
     { /* get the source charset from the po file */
       ae_t a;
       poe *e = o_find(o, "");
@@ -1983,9 +1983,9 @@ void make(void)
       from_charset = get_canon_cset_name(a.charset);
     }
     da_add(langs, xstrdup(lang));
-    
+
     converter = get_converter(from_charset, to_charset);
-    
+
     /* compare o to oref */
     numtransl = 0;
     m = o_len(o);
@@ -2003,16 +2003,16 @@ void make(void)
           converter(e->msgstr);
           da_add(th[a], e->msgstr);
           numtransl++;
-        } 
+        }
       }
     }
-    
+
     /* print stats if some entries are missing */
     if(numtransl < numref) {
-      printf("lang %s: %d untranslated entr%s\n", 
+      printf("lang %s: %d untranslated entr%s\n",
           lang, numref - numtransl, (numref - numtransl == 1)? "y" : "ies");
     }
-    
+
     /* dump the hash table */
     fprintf(f, "/*\n * hash table for lang %s.\n */\n\n", lang);
     for(j = 0 ; j < TH_SIZE ; j++) {
@@ -2038,11 +2038,11 @@ void make(void)
       }
     }
     fprintf(f, "  0\n};\n\n");
-    
+
     /* free this po */
     o_free(o);
   }
-  
+
   /* print a lang table */
   fprintf(f, "/*\n * the table of available langs.\n */\n\n");
   n = da_len(langs);
@@ -2051,7 +2051,7 @@ void make(void)
     fprintf(f, "\
 static const struct lang_info lang_%s = { \"%s\", msg_%s };\n", t, t, t);
   }
-  fprintf(f, "\n");  
+  fprintf(f, "\n");
   fprintf(f, "const struct lang_info * const langs[] = {\n");
   for(i = 0 ; i < n ; i++) {
     t = da_nth(langs, i);
@@ -2074,7 +2074,7 @@ void translate(char *lang, char * from)
   char *to;
   char po[10];
   char *from_charset, *to_charset;
-   
+
   { /* build destination filename */
     int len = strlen(from);
     if(len < 2 || from[len-1] != 'c' || from[len-2] != '.') {
@@ -2092,7 +2092,7 @@ void translate(char *lang, char * from)
   }
   free(to);
   p.f = g;
-  
+
   to_charset = NULL;
   { /* obtain destination charset from LINGUAS */
     da *d = da_new();
@@ -2109,17 +2109,17 @@ void translate(char *lang, char * from)
         break;
       }
     }
-  } 
+  }
   if(to_charset == NULL) {
     warn("cannot find destination charset.");
     to_charset = "unknown";
-  }     
+  }
 
   /* read all translations */
   p.o = o_new();
   sprintf(po, "po/%s.po", lang);
   parse_po_file(po, p.o, 0);
-    
+
   { /* get the source charset from the po file */
     ae_t a;
     poe *e = o_find(p.o, "");
@@ -2131,7 +2131,7 @@ void translate(char *lang, char * from)
   }
 
   p.conv = get_converter(from_charset, to_charset);
- 
+
   parse_c_file(from, pca_translate, &p);
 fail:
   o_free(p.o);
@@ -2139,10 +2139,10 @@ fail:
 }
 
 /*
- * main 
+ * main
  */
 
-int main(int argc, char **argv) 
+int main(int argc, char **argv)
 {
   if(argc < 2) goto usage;
   if(!strcmp(argv[1], "xgettext")) {
@@ -2164,7 +2164,7 @@ int main(int argc, char **argv)
   } else if(!strcmp(argv[1], "--version")) {
     printf("version " VERSION "\n");
     exit(0);
-  } 
+  }
 usage:
   fprintf(stderr, "\
 Usage: " TOOLNAME " command\n");
@@ -2183,13 +2183,13 @@ Commands are:\n\
 
   fprintf(stderr, "\
 \n\
-Note: " 
-TOOLNAME 
+Note: "
+TOOLNAME
 " is a very limited gettext clone, with some compatibility \n\
 with the original gettext. To have more control on your po files, \n\
 please use the original gettext utilities. You will still need this \n\
 tool to create the C file(s) at the end, though.\n");
-  
+
   exit(EXIT_FAILURE);
 }
 

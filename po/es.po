@@ -1,7 +1,7 @@
 # -*-C-*- I hate emacs po mode
-# 
+#
 # es.po: traducción a español
-# 
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: EMUTOS beta\n"

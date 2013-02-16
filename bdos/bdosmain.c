@@ -39,7 +39,7 @@
 **  externals
 */
 
-/* 
+/*
  * in rwa.S
  */
 
@@ -86,7 +86,7 @@ FND
 
 static const FND funcs[0x58] =
 {
-    
+
      { (long(*)()) x0term, 0, 0 }, /* 0x00 */
 
     /*
@@ -209,7 +209,7 @@ static const FND funcs[0x58] =
     { (long(*)()) xterm, 0, 1 },   /* 0x4C */
 
     { ni,       0, 0 },
-                
+
     { xsfirst,  0, 3 },      /* 0x4E */
     { xsnext,   0, 0 },      /* 0x4F */
 
@@ -407,7 +407,7 @@ restrt:
 #if DBGOSIF
     kprintf("bdos(fn = 0x%04x)\n", fn);
 #endif
-    
+
     if ( setjmp(errbuf) )
     {
         rc = errcode;

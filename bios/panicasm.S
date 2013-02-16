@@ -14,7 +14,7 @@
 
 
         .text
-  
+
         .globl  _panic
         .globl  _halt
         .globl  _warm_reset
@@ -28,7 +28,7 @@
  * note: the stack dump will contain the attributes.
  * the exception number proc_enum will be zero.
  */
- 
+
 _panic:
         // supervisor mode, no interrupts
         move.w  #0x2700,sr
@@ -58,7 +58,7 @@ _panic:
         // magic value
         move.l  #0x12345678,_proc_lives
 #endif
-        // at that time, we did not alter the stack, to we can jump to the 
+        // at that time, we did not alter the stack, to we can jump to the
         // C routine directly in kprint.c
         jmp     _dopanic
 
@@ -68,7 +68,7 @@ _panic:
 _halt:
 #if !USE_STOP_INSN_TO_FREE_HOST_CPU
         // disable the interrupts
-        move.w  #0x2700,sr  
+        move.w  #0x2700,sr
 #endif
 haltloop:
         // endless loop

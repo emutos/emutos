@@ -159,7 +159,7 @@ static void xbios_6(LONG palettePtr)
  * specified 'color'. If 'color' is negative, the hardware register is not
  * changed.
  *
- * Return the old color. 
+ * Return the old color.
  */
 
 #if DBG_XBIOS
@@ -262,7 +262,7 @@ static LONG xbios_a(LONG buf, WORD *skew, WORD devno, WORD spt,
                     LONG magic)
 {
     kprintf("XBIOS: flopfmt()\n");
-    return flopfmt(buf, skew, devno, spt, trackno, sideno, interlv, 
+    return flopfmt(buf, skew, devno, spt, trackno, sideno, interlv,
                    virgin, magic);
 }
 #endif
@@ -672,7 +672,7 @@ static void xbios_20(LONG ptr)
  * xbios_22 - (kbdvbase) Returns pointer to a kbdvecs structure
  *
  */
- 
+
 LONG kbdvbase(void)
 {
     return (LONG) &kbdvecs;
@@ -691,7 +691,7 @@ static LONG xbios_22(void)
 /*
  * xbios_23 - (kbrate) Get/set the keyboard's repeat rate
  */
- 
+
 #if DBG_XBIOS
 static WORD xbios_23(WORD initial, WORD repeat)
 {
@@ -759,7 +759,7 @@ static LONG xbios_26(LONG codeptr)
 /* unimplemented */
 
 /*
- * xbios_29 - (Floprate) 
+ * xbios_29 - (Floprate)
  */
 
 #if DBG_XBIOS
@@ -771,7 +771,7 @@ static LONG xbios_29(WORD dev, WORD rate)
 #endif
 
 /*
- * xbios_2a - (DMAread) 
+ * xbios_2a - (DMAread)
  */
 
 #if DBG_XBIOS
@@ -783,7 +783,7 @@ static LONG xbios_2a(LONG sector, WORD count, PTR buf, WORD dev)
 #endif
 
 /*
- * xbios_2b - (DMAwrite) 
+ * xbios_2b - (DMAwrite)
  */
 
 #if DBG_XBIOS
@@ -795,7 +795,7 @@ static LONG xbios_2b(LONG sector, WORD count, PTR buf, WORD dev)
 #endif
 
 /*
- * xbios_2c - (Bconmap) 
+ * xbios_2c - (Bconmap)
  */
 
 #if DBG_XBIOS
@@ -809,7 +809,7 @@ static LONG xbios_2c(WORD devno)
 
 
 /*
- * xbios_2e - (NVMaccess) 
+ * xbios_2e - (NVMaccess)
  */
 
 #if DBG_XBIOS && CONF_WITH_NVRAM
@@ -977,7 +977,7 @@ extern LONG xbios_unimpl(void);
 
 const PFLONG xbios_vecs[] = {
     VEC(xbios_0, Initmous),
-    xbios_unimpl,   /*  1 ssbrk */ 
+    xbios_unimpl,   /*  1 ssbrk */
     VEC(xbios_2, physbase),
     VEC(xbios_3, logbase),
     VEC(xbios_4, getrez),
@@ -987,7 +987,7 @@ const PFLONG xbios_vecs[] = {
     VEC(xbios_8, floprd),
     VEC(xbios_9, flopwr),
     VEC(xbios_a, flopfmt),
-    xbios_unimpl,   /*  b used_by_bios */ 
+    xbios_unimpl,   /*  b used_by_bios */
     VEC(xbios_c, midiws),
 #if CONF_WITH_MFP
     VEC(xbios_d, mfpint),
@@ -1022,13 +1022,13 @@ const PFLONG xbios_vecs[] = {
     xbios_unimpl,   /* 1f */
 #endif
     VEC(xbios_20, dosound),
-    xbios_unimpl,   /* 21 setprt */ 
+    xbios_unimpl,   /* 21 setprt */
     VEC(xbios_22, kbdvbase),
     VEC(xbios_23, kbrate),
-    xbios_unimpl,   /* 24 prtblk */ 
+    xbios_unimpl,   /* 24 prtblk */
     VEC(xbios_25, vsync),
     VEC(xbios_26, supexec),
-    xbios_unimpl,   /* 27 puntaes */ 
+    xbios_unimpl,   /* 27 puntaes */
     xbios_unimpl,   /* 28 */
     VEC(xbios_29, floprate),
     VEC(xbios_2a, DMAread),

@@ -1,6 +1,6 @@
 /*      GEMCTRL.C       5/14/84 - 08/22/85      Lee Jay Lorenzen        */
 /*      GEM 2.0         11/06/85                Lowell Webster          */
-/*      merge High C vers. w. 2.2 & 3.0         8/19/87         mdf     */ 
+/*      merge High C vers. w. 2.2 & 3.0         8/19/87         mdf     */
 /*      fix menu bar hang                       11/16/87        mdf     */
 
 /*
@@ -110,7 +110,7 @@ static void hctl_window(WORD w_handle, WORD mx, WORD my)
         register WORD   cpt, message;
         LONG            tree;
         OBJECT          *obj;
-        
+
         message = 0;
         if ( (w_handle == gl_wtop) ||
              ( (D.w_win[w_handle].w_flags & VF_SUBWIN) &&
@@ -167,7 +167,7 @@ static void hctl_window(WORD w_handle, WORD mx, WORD my)
                 if ( cpt == W_HSLIDE )
                 {
                                                 /* APPLE change         */
-                  /* anemic slidebars 
+                  /* anemic slidebars
                     pt.g_y -= 2;
                     pt.g_h += 4;
                   */
@@ -236,7 +236,7 @@ doelev:         message = (cpt == W_HELEV) ? WM_HSLID : WM_VSLID;
 
           message = WM_TOPPED;
         }
-        ct_msgup(message, D.w_win[w_handle].w_owner, w_handle, 
+        ct_msgup(message, D.w_win[w_handle].w_owner, w_handle,
                         x, y, w, h);
 }
 
@@ -246,7 +246,7 @@ static void hctl_rect(void)
         WORD            title, item;
         register WORD   mesag;
         PD     *owner;
-        
+
         if ( gl_mntree != 0x0L )
         {
           mesag = 0;
@@ -271,7 +271,7 @@ static void hctl_rect(void)
                   for (ii=0; ii<NUM_ACCS; ii++)
                     dsptch();
                 }
-                
+
                 mesag = AC_OPEN;
               }
               else
@@ -300,14 +300,14 @@ void ct_chgown(PD *mpd, GRECT *pr)
 
 void ct_mouse(WORD grabit)
 {
-        
+
         if (grabit)
         {
           wm_update(TRUE);
           gl_ctmown = TRUE;
           gl_mowner = rlr;
           gsx_mfset(ad_armice);
-          gl_tmpmoff = gl_moff; 
+          gl_tmpmoff = gl_moff;
           if (gl_tmpmoff)
             ratinit();
         }
@@ -355,7 +355,7 @@ void ctlmgr(void)
           {
             for (i=0; i<(NUM_PDS*2); i++)
               dsptch();
-            
+
             ev_which = MU_BUTTON;
             rets[0] = xrat;
             rets[1] = yrat;
@@ -365,7 +365,7 @@ void ctlmgr(void)
             ev_which = MU_KEYBD | MU_BUTTON;
             if ( gl_mntree != 0x0L )    /* only wait on bar when there  */
               ev_which |= MU_M1;        /* is a menu                    */
-            ev_which = ev_multi(ev_which, &gl_ctwait, &gl_ctwait, 
+            ev_which = ev_multi(ev_which, &gl_ctwait, &gl_ctwait,
                         0x0L, 0x0001ff01L, 0x0L, &rets[0]);
                                                 /* grab screen sink     */
           }
