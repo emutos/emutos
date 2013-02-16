@@ -1,16 +1,17 @@
-EmuTOS - cartridge versions
+EmuTOS - cartridge version
 
-These special EmuTOS versions are cartridge images for the ROM port.
+This special EmuTOS version is a cartridge image for the ROM port.
+It behaves just like a diagnostic cartridge.
 
-etoscart.img - Generic cartridge image
+etoscart.img - Raw binary cartridge image
   emutos.stc - Steem Engine cartridge image
 
-These ROMs are compatible with any hardware (except the FireBee) or emulator.
-Due to size limitation, they have limited features:
+This cartridge is compatible with any Atari hardware (except the FireBee) or
+emulator. Due to size limitation, it has limited features:
 - English language only
 - No AES/Desktop
 - EmuCON only
 
-These ROM images have been built using:
+These cartridge images have been built using:
 make cart
 
