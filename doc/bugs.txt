@@ -43,7 +43,7 @@
   for moving character left & right in Anduril don't work, only
   special key (Alt/Shift) input works:
   http://sourceforge.net/mailarchive/message.php?msg_id=29277643
-- Box drawing in Gl"ucksrad leaves garbage on top of screen
+- Box drawing in Glücksrad leaves garbage on top of screen
   and player name input text isn't shown.
 - In "MathMaze", game win dialog leaves some lines on screen.
 - Monopoly game board isn't drawn properly, maybe due to issues
