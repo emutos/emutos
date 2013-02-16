@@ -59,7 +59,7 @@ typedef struct {
     IOREC in;
     IOREC out;
     UBYTE baudrate;     /* remember value set by Rsconf() */
-    UBYTE flowctrl;  	/* TODO, flow control */
+    UBYTE flowctrl;     /* TODO, flow control */
     UBYTE ucr;          /* remember value set by Rsconf() */
     UBYTE datamask;     /* masks off hi-order bits (handles < 8 bits/char) */
     UBYTE wr5;          /* shadow of real wr5 (for SCC only) */

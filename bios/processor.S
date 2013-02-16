@@ -222,9 +222,9 @@ _processor_init:
         // TODO enable the caches
 #else
         jsr     _detect_cpu
-        swap	d0
-        move.w	d0,_mcpu_subtype    // save processor subtype
-        clr.w	d0
+        swap    d0
+        move.w  d0,_mcpu_subtype    // save processor subtype
+        clr.w   d0
         swap    d0
         move.l  d0,_mcpu            // & type
         beq     m68000

@@ -147,6 +147,6 @@ static const struct pmmutable mmutable_rom =
 
 void setup_68030_pmmu(void)
 {
-	memcpy(&mmutable_ram, &mmutable_rom, sizeof mmutable_rom);
+    memcpy(&mmutable_ram, &mmutable_rom, sizeof mmutable_rom);
 }
 #endif /* CONF_WITH_68030_PMMU */

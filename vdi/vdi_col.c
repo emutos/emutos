@@ -250,7 +250,8 @@ void init_colors(void)
     else
 #endif
     {
-	}
+        /* Nothing */
+    }
 
     /* set up vdi pen -> hardware colour register mapping */
     memcpy(MAP_COL, MAP_COL_ROM, sizeof(MAP_COL_ROM));
@@ -264,7 +265,7 @@ void init_colors(void)
 
     /* set up reverse mapping (hardware colour register -> vdi pen) */
     for (i = 0; i < DEV_TAB[13]; i++)
-		REV_MAP_COL[MAP_COL[i]] = i;
+        REV_MAP_COL[MAP_COL[i]] = i;
 
     /* now initialise the hardware */
     for (i = 0; i < DEV_TAB[13]; i++)
