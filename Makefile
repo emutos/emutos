@@ -417,13 +417,20 @@ cart:
 TOCLEAN += *.rom
 
 ROM_AMIGA = emutos-amiga.rom
+AMIGA_DEFS = -DMACHINE_AMIGA
+
+# AROS support is disabled by default due to license issues
+AROS = 0
+ifeq (1,$(AROS))
+AMIGA_DEFS += -DCONF_WITH_AROS=1
+endif
 
 .PHONY: amiga
 NODEP += amiga
 amiga: UNIQUE = $(COUNTRY)
 amiga:
 	@echo "# Building Amiga EmuTOS into $(ROM_AMIGA)"
-	$(MAKE) DEF='-DMACHINE_AMIGA' UNIQUE=$(UNIQUE) VMA=0x00fc0000 $(ROM_AMIGA)
+	$(MAKE) DEF='$(AMIGA_DEFS)' UNIQUE=$(UNIQUE) VMA=0x00fc0000 $(ROM_AMIGA)
 
 $(ROM_AMIGA): emutos2.img mkrom$(EXE)
 	./mkrom$(EXE) amiga $< $(ROM_AMIGA)
