@@ -297,6 +297,8 @@ LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG lrecnr
                                      lrecnr,scount,(void *)buf);
             }
         } while((retval < 0) && (--retries > 0));
+        if (retval < 0)     /* error, retries exhausted */
+            break;
         buf += scount * devices[unit].pssize;
         lrecnr += scount;
         lcount -= scount;

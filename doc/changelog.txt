@@ -4412,3 +4412,6 @@ Start... early ages
 - Makefile bios/initinfo.c doc/readme-amiga.txt: AROS support can be enabled
   with "make amiga AROS=1". Warning message added. (VRI)
 - doc/status.txt: A few minor changes. (RFB)
+
+2013-02-17
+- bios/blkdev.c: Fix obscure latent bug in blkdev_rwabs(). (RFB)
