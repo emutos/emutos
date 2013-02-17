@@ -4415,3 +4415,5 @@ Start... early ages
 
 2013-02-17
 - bios/blkdev.c: Fix obscure latent bug in blkdev_rwabs(). (RFB)
+- desk/desktop.def desk/desktop.rsc: Change Easter Egg object size to fix
+  regression in 0.8.7. (RFB)
