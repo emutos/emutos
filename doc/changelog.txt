@@ -4411,3 +4411,4 @@ Start... early ages
 - *: Removed trailing spaces. (VRI)
 - Makefile bios/initinfo.c doc/readme-amiga.txt: AROS support can be enabled
   with "make amiga AROS=1". Warning message added. (VRI)
+- doc/status.txt: A few minor changes. (RFB)

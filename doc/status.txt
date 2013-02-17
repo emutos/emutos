@@ -42,7 +42,7 @@ T tested and working on an emulator or real hardware
  Hardware initialization
  ----------------------------------------------------------------------------
 
- t CPU setting (tested only 68000 (real and emu) and 68040 (emu))
+ t CPU setting (tested only 68000 (real & emu), 68030 (real & emu) and 68040 (emu))
  > FPU (detected, is any initialization needed?)
  T 68030 MMU and cache initialization
  T Memory controller (both ST and Falcon)
@@ -89,12 +89,16 @@ T tested and working on an emulator or real hardware
  BIOS devices
  ----------------------------------------------------------------------------
 
- > parallel port
- > serial port
- T console
- X IKBD
- X MIDI
- T ascii
+ > 0 PRN: parallel port
+ > 1 AUX: default serial port
+ T 2 CON: console (screen)
+ X 3 MIDI
+ X 4 IKBD
+ T 5 raw screen
+ > 6 ST-compatible serial port
+ > 7 SCC channel B
+ - 8 TT-MFP serial port
+ > 9 SCC channel A
 
 
  ACIA interrupt routines
