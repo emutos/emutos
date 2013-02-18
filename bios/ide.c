@@ -212,9 +212,7 @@ static int ide_read_sector(UWORD device, ULONG sector, UBYTE buffer[SECTOR_SIZE]
     if (need_byteswap)
         byteswap(buffer, SECTOR_SIZE);
 
-    ide_wait_not_busy_check_error();
-
-    return E_OK;
+    return ide_wait_not_busy_check_error();
 }
 
 static int ide_write_sector(UWORD device, ULONG sector, UBYTE buffer[SECTOR_SIZE], BOOL need_byteswap)
