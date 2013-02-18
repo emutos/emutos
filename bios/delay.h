@@ -1,7 +1,7 @@
 /*
  * delay.h - header for delay.c
  *
- * Copyright (c) 2012 The EmuTOS development team
+ * Copyright (c) 2013 The EmuTOS development team
  *
  * Authors:
  *  RFB    Roger Burrows

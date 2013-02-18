@@ -4,7 +4,7 @@
  * note that the timings are quite imprecise (but conservative) unless
  * you are running on at least a 32MHz 68030 processor
  *
- * Copyright (c) 2012 The EmuTOS development team
+ * Copyright (c) 2013 The EmuTOS development team
  *
  * Authors:
  *  RFB    Roger Burrows
