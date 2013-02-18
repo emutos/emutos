@@ -178,6 +178,6 @@ always appreciate to hear the good and also the bad things about it.
 
 The EmuTOS development team.
 
---
+-- 
 Originally written by Martin Doering
 http://emutos.sourceforge.net/

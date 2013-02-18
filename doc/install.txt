@@ -144,6 +144,6 @@ things:
 
 Have success!
 
---
+-- 
 The EmuTOS development team
 http://emutos.sourceforge.net/
