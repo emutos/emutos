@@ -1,4 +1,4 @@
-- Changing the VDI color palette is not possible on TT and Falcon.
+- Changing the VDI color palette is not possible on the TT.
 - PROCALC.ACC doesn't open after changing the resolution.
 - Desktop doesn't use the _IDT date separator.
 - Drag-and-drop does not work in the freeware GEM games "Abalone"

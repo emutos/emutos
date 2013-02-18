@@ -4425,3 +4425,4 @@ Start... early ages
 - bios/ide.c: Fixed return value of ide_read_sector(). (VRI)
 - *: Removed empty lines at end of file. (VRI)
 - *.S: Removed useless .end directive at end of file. (VRI)
+- doc/bugs.txt doc/coding.txt: Minor updates. (RFB)

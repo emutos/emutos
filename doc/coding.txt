@@ -113,10 +113,13 @@ Exceptions to the 'underscore leading' rule are:
 
 Use 68000-only instructions and addressing modes. If for some reason
 you need 680X0 intructions not present on the 68000, code them using
-dc.w and put the 680X0 mnemonics in comment. Example:
+dc.w/dc.l and put the 680x0 mnemonics in a comment. Example:
 
   dc.l    0x4e7b0002      // movec   d0,cacr
 
+To reduce the possibility of mistakes, there are now macros that will
+generate dc.w/dc.l statements for some of the commonly-used 680x0
+mnemonics: see asmdefs.h for specifics.
 
 Do NOT use movem.w to save/restore registers, as the upper 16 bits
 of the registers will be clobbered upon restoring. Always use
