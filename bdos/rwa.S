@@ -4,6 +4,7 @@
  * Copyright (c) 1999 by Caldera Inc.
  * Copyright (c) 1985, 2001 by Authors:
  *
+ * Authors:
  *  EWF  Eric W. Fleischman
  *  JSL  Jason S. Loveman
  *  SCC  Steven C. Cavender

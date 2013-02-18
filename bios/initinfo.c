@@ -3,6 +3,7 @@
  *
  * Copyright (c) 2001-2008 by Authors:
  *
+ * Authors:
  *  MAD     Martin Doering
  *  PES     Petr Stehlik
  *

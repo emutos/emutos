@@ -3,6 +3,7 @@
  *
  * Copyright (c) 2001-2011 by Authors:
  *
+ * Authors:
  *  MAD  Martin Doering
  *  PES  Petr Stehlik
  *  jfdn Jean-François DEL NERO

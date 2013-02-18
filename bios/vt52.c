@@ -4,6 +4,7 @@
  *
  * Copyright (c) 2004 by Authors:
  *
+ * Authors:
  *  MAD     Martin Doering
  *
  * This file is distributed under the GPL, version 2 or at your

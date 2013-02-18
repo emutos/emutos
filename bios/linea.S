@@ -3,6 +3,7 @@
  *
  * Copyright (c) 2002 by Authors:
  *
+ * Authors:
  *  THH  Thomas Huth
  *  MAD  Martin Doering
  *  LVL  Laurent Vogel

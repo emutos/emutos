@@ -3,6 +3,7 @@
  *
  * Copyright (c) 1999, 2002 by Authors:
  *
+ * Authors:
  *      Jörg Westheide <joerg_westheide@su.maus.de>
  *      Draco
  * LVL  Laurent Vogel

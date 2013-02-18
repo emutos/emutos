@@ -1,8 +1,9 @@
 /*
  *  kprintasm.S - Native print asm routines
  *
- * Copyright (c) 2002 by Authors:
+ * Copyright (c) 2002 The EmuTOS development team:
  *
+ * Authors:
  *  LVL  Laurent Vogel
  *
  * This file is distributed under the GPL, version 2 or at your

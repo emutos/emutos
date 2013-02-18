@@ -3,6 +3,7 @@
  *
  * Copyright (c) 2001 by Authors:
  *
+ * Authors:
  *  LVL  Laurent Vogel
  *  DAL  Dale Schumacher
  *  KS   Klamer Schutte

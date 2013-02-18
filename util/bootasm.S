@@ -1,8 +1,9 @@
 /*
  * bootasm.S - assembler stuff for boot.prg
  *
- * Copyright (c) 2001 by Authors:
+ * Copyright (c) 2001 The EmuTOS development team
  *
+ * Authors:
  *  LVL  Laurent Vogel
  *
  * This file is distributed under the GPL, version 2 or at your
