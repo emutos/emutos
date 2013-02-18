@@ -1,8 +1,9 @@
 /*
  * command.c - GEMDOS command interpreter
  *
- * Copyright (c) 2001, Lineo, Inc.
- * Copyright (c) 2001, Martin Doering
+ * Copyright (c) 2001 Lineo, Inc.
+ * Copyright (c) 2001 Martin Doering
+ * Copyright (c) 2001 The EmuTOS development team
  *
  * Authors:
  *  JSL Jason S. Loveman

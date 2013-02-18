@@ -2,8 +2,10 @@
  * coma.S - GEMDOS command interpreter assembly language interface
  *
  * Copyright (c) 1999 by Caldera Inc.
- * Copyright (c) 1985, 2001 by Authors:
+ * Copyright (c) 1985 by Authors
+ * Copyright (c) 2001-2013 The EmuTOS development team
  *
+ * Authors:
  *  JSL  Jason S. Loveman
  *  SCC  Steven C. Cavender
  *  MAD  Martin Doering

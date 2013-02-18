@@ -1,7 +1,7 @@
 /*
  * xbios.c - C portion of XBIOS initialization and front end
  *
- * Copyright (c) 2001, 2007 by
+ * Copyright (c) 2001-2013 The EmuTOS development team
  *
  * Authors:
  *  MAD     Martin Doering
