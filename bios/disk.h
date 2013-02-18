@@ -1,7 +1,7 @@
 /*
  * disk.h - disk routines
  *
- * Copyright (c) 2001-2013 EmuTOS development team
+ * Copyright (c) 2001-2013 The EmuTOS development team
  *
  * Authors:
  *  PES   Petr Stehlik

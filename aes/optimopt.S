@@ -1,7 +1,7 @@
 /*
  * optimopt.S - misc. optimised assembler routines
  *
- * Copyright (c) 2002 EmuTOS development team
+ * Copyright (c) 2002 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel

@@ -1,7 +1,7 @@
 /*
  * nls.h - Definitions for Native Language Support
  *
- * Copyright (c) 2001 Emutos Development Team
+ * Copyright (c) 2001 The Emutos Development Team
  *
  * Authors:
  *  LVL   Laurent Vogel

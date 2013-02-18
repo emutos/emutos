@@ -1,7 +1,7 @@
 /*
  * config.h - default settings
  *
- * Copyright (c) 2001-2013 The EmuTOS Development Team
+ * Copyright (c) 2001-2013 The EmuTOS development team
  *
  *  MAD     Martin Doering
  *  LVL     Laurent Vogel

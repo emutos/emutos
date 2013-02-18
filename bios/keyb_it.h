@@ -1,7 +1,7 @@
 /*
  * keyb_it.h - keyboard layout definition
  *
- * Copyright (c) 2011 EmuTOS development team
+ * Copyright (c) 2011 The EmuTOS development team
  *
  * Authors:
  *  L. Zanier

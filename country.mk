@@ -1,7 +1,7 @@
 #
 # country.mk - the country tables
 #
-# Copyright (c) 2002-2005 EmuTOS development team.
+# Copyright (c) 2002-2005 The EmuTOS development team
 #
 # This file is distributed under the GPL, version 2 or at your
 # option any later version.  See doc/license.txt for details.

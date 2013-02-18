@@ -1,7 +1,7 @@
 /*
  * proc.h - processes defines
  *
- * Copyright (c) 2001 EmuTOS Development Team.
+ * Copyright (c) 2001 The EmuTOS development team.
  *
  * Authors:
  *  LVL   Laurent Vogel

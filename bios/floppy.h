@@ -1,7 +1,7 @@
 /*
  * floppy.h - floppy routines
  *
- * Copyright (c) 2001-2012 EmuTOS development team
+ * Copyright (c) 2001-2012 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel

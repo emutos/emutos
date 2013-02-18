@@ -1,7 +1,7 @@
 /*
  * machine.c - detection of machine type
  *
- * Copyright (c) 2001-2012 EmuTOS development team.
+ * Copyright (c) 2001-2012 The EmuTOS development team
  *
  * Authors:
  *  LVL     Laurent Vogel

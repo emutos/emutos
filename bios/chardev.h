@@ -1,7 +1,7 @@
 /*
  * chardev.h - bios devices
  *
- * Copyright (c) 2001 EmuTOS development team
+ * Copyright (c) 2001 The EmuTOS development team
  *
  * Authors:
  *  MAD   Martin Doering

@@ -1276,7 +1276,7 @@ char *basersc;
     fprintf(fp," *\n");
     fprintf(fp," * Generated from %s.rsc and %s.%s by %s %s\n",basersc,basersc,defext,PROGRAM_NAME,VERSION);
     fprintf(fp," *\n");
-    fprintf(fp," * Copyright by the EmuTOS development team\n");
+    fprintf(fp," * Copyright 2013 The EmuTOS development team\n");
     fprintf(fp," *\n");
     fprintf(fp," * This software is licenced under the GNU General Public License.\n");
     fprintf(fp," * Please see LICENSE.TXT for further information.\n");

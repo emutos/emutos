@@ -1,7 +1,7 @@
 /*
  * mouse.c - Mouse vector setting for XBIOS 0
  *
- * Copyright (c) 2001 EmuTOS development team
+ * Copyright (c) 2001 The EmuTOS development team
  * Copyright (C) 1995 - 1998 Russell King <linux@arm.linux.org.uk>
  *
  * Authors:

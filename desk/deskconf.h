@@ -3,7 +3,7 @@
  *
  * This file provides a place to centralise the desktop configuration.
  *
- * Copyright (c) 2011 EmuTOS development team
+ * Copyright (c) 2011 The EmuTOS development team
  *
  * Authors:
  *  RFB    Roger Burrows

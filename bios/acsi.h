@@ -1,7 +1,7 @@
 /*
  * acsi.h - Atari Simple Computer Interface (ACSI) support
  *
- * Copyright (c) 2002 EmuTOS development team
+ * Copyright (c) 2002 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel

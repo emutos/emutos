@@ -1,7 +1,7 @@
 /*
  * dmasound.c - STe/TT/Falcon DMA sound routines
  *
- * Copyright (c) 2011 EmuTOS development team
+ * Copyright (c) 2011 The EmuTOS development team
  *
  * Authors:
  *  VRI   Vincent Rivière

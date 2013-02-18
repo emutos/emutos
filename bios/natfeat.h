@@ -1,7 +1,7 @@
 /*
  * natfeat.h - NatFeat header file
  *
- * Copyright (c) 2001-2003 EmuTOS development team
+ * Copyright (c) 2001-2003 The EmuTOS development team
  *
  * Authors:
  *  PES   Petr Stehlik

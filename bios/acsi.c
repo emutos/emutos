@@ -1,7 +1,7 @@
 /*
  * acsi.c - Atari Computer System Interface (ACSI) support
  *
- * Copyright (c) 2002-2013 EmuTOS development team
+ * Copyright (c) 2002-2013 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel

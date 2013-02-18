@@ -1,7 +1,7 @@
 /*
  * nvram.c - Non-Volatile RAM access
  *
- * Copyright (c) 2001, 2011 EmuTOS development team.
+ * Copyright (c) 2001, 2011 The EmuTOS development team
  *
  * Authors:
  *  LVL     Laurent Vogel

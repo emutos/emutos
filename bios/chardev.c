@@ -1,7 +1,7 @@
 /*
  *  chardev.c - BIOS character device functions
  *
- * Copyright (c) 2001-2012 by the EmuTOS Development Team
+ * Copyright (c) 2001-2012 The EmuTOS development team
  *
  * Authors:
  *  THO     Thomas Huth

@@ -1,7 +1,7 @@
 #
 # version.sed - extract version name from doc/changelog
 #
-# Copyright (c) 2003 EmuTOS development team.
+# Copyright (c) 2003 The EmuTOS development team
 #
 # Authors:
 #  LVL     Laurent Vogel

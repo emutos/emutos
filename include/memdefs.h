@@ -4,7 +4,7 @@
  * This file exists to centralise the definition of the MD & MPB, which were
  * previously defined (identically, fortunately) in two different places.
  *
- * Copyright (c) 2013 The EmuTOS Development Team
+ * Copyright (c) 2013 The EmuTOS development team
  *
  * Authors:
  *  RFB    Roger Burrows

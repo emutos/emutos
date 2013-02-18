@@ -1,7 +1,7 @@
 /*
  * dumpkbd.c : dump the TOS keyboard tables into a KEYTBL.TBL file format
  *
- * Copyright (c) 2001-2005 EmuTOS development team
+ * Copyright (c) 2001-2005 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -192,7 +192,7 @@ void dump_tables(struct ktbl *ktbl, char *fname, char *name)
 "/*\n"
 " * %s - a keyboard layout definition\n"
 " *\n"
-" * Copyright (c) 2002 EmuTOS development team\n"
+" * Copyright (c) 2002 The EmuTOS development team\n"
 " *\n"
 " * This file is distributed under the GPL, version 2 or at your\n"
 " * option any later version.  See doc/license.txt for details.\n"

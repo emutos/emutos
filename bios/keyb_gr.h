@@ -1,7 +1,7 @@
 /*
  * keyb_gr.h - Greek keyboard layout definition
  *
- * Copyright (c) 2002 EmuTOS development team
+ * Copyright (c) 2002 The EmuTOS development team
  *
  * Authors:
  *  GGN   ggn@atari.org

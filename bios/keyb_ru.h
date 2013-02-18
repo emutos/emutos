@@ -1,7 +1,7 @@
 /*
  * keyb_ru.h - a keyboard layout definition
  *
- * Copyright (c) 2010 EmuTOS development team
+ * Copyright (c) 2010 The EmuTOS development team
  *
  * Authors:
  *  Dima Sobolev

@@ -1,7 +1,7 @@
 /*
  * doprintf.h - Header for doprintf()
  *
- * Copyright (c) 2011 EmuTOS development team
+ * Copyright (c) 2011 The EmuTOS development team
  *
  * Authors:
  *        Eero Tamminen
