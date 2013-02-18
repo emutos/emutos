@@ -1,7 +1,7 @@
 #
 # Makefile - the EmuTOS overbloated Makefile
 #
-# Copyright (c) 2001, 02, 03 EmuTOS development team.
+# Copyright (c) 2001-2013 The EmuTOS development team.
 #
 # This file is distributed under the GPL, version 2 or at your
 # option any later version.  See doc/license.txt for details.

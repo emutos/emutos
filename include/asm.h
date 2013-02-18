@@ -1,7 +1,7 @@
 /*
  * asm.h - Assembler help routines
  *
- * Copyright (c) 2001-2012 EmuTOS development team
+ * Copyright (c) 2001-2013 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel

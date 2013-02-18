@@ -2,6 +2,7 @@
  * umem.c - user memory management interface routines
  *
  * Copyright (c) 2001 Lineo, Inc.
+ *               2002-2013 The EmuTOS Development Team
  *
  * Authors:
  *  KTB   Karl T. Braun (kral)

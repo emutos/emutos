@@ -4419,3 +4419,6 @@ Start... early ages
   regression in 0.8.7. (RFB)
 - bios/blkdev.c bios/disk.c bios/processor.h bios/processor.S: Move
   TOS-compatibility i-cache invalidation to Rwabs() & DMAread(). (RFB)
+
+2013-02-18
+- *: Updated copyright year for files modified since last release. (VRI)

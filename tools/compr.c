@@ -1,7 +1,7 @@
 /*
  * compr.c - a simple compressor
  *
- * Copyright (C) 2002 EmuTOS development team
+ * Copyright (C) 2002 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel

@@ -1,7 +1,7 @@
 /*
  * string.c - simple implementation of <string.h> ANSI routines
  *
- * Copyright (c) 2002 by following authors
+ * Copyright (c) 2002-2013 The EmuTOS development team
  *
  * Authors:
  *  LVL     Laurent Vogel
