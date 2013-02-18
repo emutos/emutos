@@ -56,7 +56,7 @@ struct IDE
     UBYTE control; /* Read: Alternate status */
 };
 
-#define ide_interface (*(volatile struct IDE*)0x00f00000)
+#define ide_interface (*(volatile struct IDE*)0xfff00000)
 
 #endif /* CONF_ATARI_HARDWARE */
 
