@@ -233,8 +233,8 @@ void initinfo(void)
 #endif
     cprintf("\r\n");
 #if CONF_WITH_AROS
-    set_margin(); cprintf("\033pWarning: This binary mixes GPL and AROS \033q\r\n");
-    set_margin(); cprintf("\033psources, redistribution is forbidden.   \033q\r\n");
+    set_margin(); cprintf("\033pThis binary mixes GPL and AROS APL\033q\r\n");
+    set_margin(); cprintf("\033pcode, redistribution is forbidden.\033q\r\n");
 #endif
     cprintf("\r\n");
     set_margin();
