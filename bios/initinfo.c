@@ -1,7 +1,7 @@
 /*
  *  initinfo.c - Info screen at startup
  *
- * Copyright (c) 2001-2008 by Authors:
+ * Copyright (c) 2001-2013 by Authors:
  *
  * Authors:
  *  MAD     Martin Doering

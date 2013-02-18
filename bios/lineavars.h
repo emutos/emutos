@@ -1,7 +1,7 @@
 /*
  * lineavars.h - name of linea graphics related variables
  *
- * Copyright (c) 2001 by Authors:
+ * Copyright (c) 2001-2013 by Authors:
  *
  * Authors:
  *  MAD   Martin Doering

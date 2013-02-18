@@ -1,7 +1,8 @@
 /*
  * processor.S - Detect and set CPU and FPU type
  *
- * Copyright (c) 1999, 2002 by Authors:
+ * Copyright (c) 2002-2013 The EmuTOS development team
+ * Copyright (c) 1999, 2002 by Authors
  *
  * Authors:
  *      Jörg Westheide <joerg_westheide@su.maus.de>

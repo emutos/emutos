@@ -1,7 +1,7 @@
 /*
  *  mfp.h - header file for MFP defines
  *
- * Copyright (c) 2001 Martin Doering
+ * Copyright (c) 2001-2013 Martin Doering
  *
  * Authors:
  *  MAD     Martin Doering

@@ -1,7 +1,7 @@
 /*
  * clock.c - BIOS time and date routines
  *
- * Copyright (c) 2001-2011 The EmuTOS development team
+ * Copyright (c) 2001-2013 The EmuTOS development team
  *
  * Authors:
  *  MAD   Martin Doering

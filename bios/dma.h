@@ -1,7 +1,7 @@
 /*
  * dma.h - dma definitions
  *
- * Copyright (c) 2001-2012 The EmuTOS development team
+ * Copyright (c) 2001-2013 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel

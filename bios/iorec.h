@@ -1,7 +1,7 @@
 /*
  * iorec.h - Input Output RECords related things
  *
- * Copyright (c) 2001 The EmuTOS development team
+ * Copyright (c) 2001-2013 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel

@@ -1,7 +1,7 @@
 /*
  * mfp.c - handling of the Atari ST Multi-Function Peripheral MFP 68901
  *
- * Copyright (c) 2001 The EmuTOS development team
+ * Copyright (c) 2001-2013 The EmuTOS development team
  * Copyright (c) 2001 Martin Doering
  *
  * Authors:
