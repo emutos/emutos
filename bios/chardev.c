@@ -4,7 +4,7 @@
  * Copyright (c) 2001-2013 The EmuTOS development team
  *
  * Authors:
- *  THO     Thomas Huth
+ *  THH     Thomas Huth
  *  LVL     Laurent Vogel
  *  MAD     Martin Doering
  *
