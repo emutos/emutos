@@ -76,4 +76,3 @@ stack_base:
         ds.w    1
 
         .end
-

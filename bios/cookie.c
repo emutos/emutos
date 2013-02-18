@@ -51,9 +51,3 @@ void cookie_add(long tag, long value)
     jar[1].value = n;
   }
 }
-
-
-
-
-
-

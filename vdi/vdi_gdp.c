@@ -450,4 +450,3 @@ static void gdp_ell(Vwk * vwk)
     clc_arc(vwk, steps);
     return;
 }
-

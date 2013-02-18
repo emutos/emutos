@@ -312,5 +312,3 @@ WORD fm_alert(WORD defbut, LONG palstr)
                                                 /* return selection     */
         return( i - BUTOFF + 1 );
 }
-
-

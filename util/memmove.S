@@ -452,5 +452,3 @@ end16:
 #endif
         move.l   d1,d0
         bra      end1
-
-

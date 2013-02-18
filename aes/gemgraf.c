@@ -786,5 +786,3 @@ void gr_box(WORD x, WORD y, WORD w, WORD h, WORD th)
           gsx_mon();
         }
 }
-
-

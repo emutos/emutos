@@ -15,4 +15,3 @@ void forker(void);
 void chkkbd(void);
 
 #endif
-

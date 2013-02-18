@@ -35,4 +35,3 @@ extern WORD     fpt, fph, fpcnt;                /* forkq tail, head,    */
 extern SPB      wind_spb;
 extern CDA      *cda;
 extern WORD     curpid;
-

@@ -489,4 +489,3 @@ void fun_del(WNODE *pdw)
           graf_mouse(ARROW, 0x0L);
         } /* else */
 } /* fun_del */
-

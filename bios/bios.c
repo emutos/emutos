@@ -905,5 +905,3 @@ const PFLONG bios_vecs[] = {
 };
 
 const UWORD bios_ent = sizeof(bios_vecs) / sizeof(PFLONG);
-
-

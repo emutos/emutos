@@ -20,4 +20,3 @@ extern WORD     gl_whsiztop;
 ANODE *i_find(WORD wh, WORD item, FNODE **ppf, WORD *pisapp);
 WORD hndl_msg(void);
 WORD deskmain(void);
-

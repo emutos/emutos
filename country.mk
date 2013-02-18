@@ -111,4 +111,3 @@ FONTOBJ = $(FONTOBJ_$(ETOSCSET):%=obj/%)
 else
 FONTOBJ = $(FONTOBJ_ALL:%=obj/%)
 endif
-

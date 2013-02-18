@@ -479,4 +479,3 @@ BYTE *rs_str(UWORD stnum)
         strcpy(free_str, (char *) ad_string);
         return( &free_str[0] );
 }
-

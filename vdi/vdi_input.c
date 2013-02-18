@@ -260,6 +260,3 @@ WORD gloc_key()
     }
     return retval;
 }
-
-
-

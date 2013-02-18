@@ -203,4 +203,3 @@ void get_fonts(const struct font_head **f6x6,
     *f8x8 = font_sets[j].f8x8;
     *f8x16 = font_sets[j].f8x16;
 }
-

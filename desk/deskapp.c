@@ -897,4 +897,3 @@ ANODE *app_afind(WORD isdesk, WORD atype, WORD obid, BYTE *pname, WORD *pisapp)
         } /* for */
         return(0);
 } /* app_afind */
-

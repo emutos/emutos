@@ -763,4 +763,3 @@ WORD act_bdown(WORD wh, LONG tree, WORD root, WORD *in_mx, WORD *in_my,
         *in_my = duly;
         return(dst_wh);
 } /* act_bdown */
-

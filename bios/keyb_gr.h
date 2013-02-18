@@ -149,4 +149,3 @@ static const BYTE keytbl_gr_caps[] = {
      0x30, 0x2E, 0x0D,    0,    0,    0,    0,    0,
         0,    0,    0,    0,    0,    0,    0,    0,
 };
-

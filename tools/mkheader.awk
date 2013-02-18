@@ -70,4 +70,3 @@ BEGIN {
 
     print "#endif /* HEADER_H */"
 }
-

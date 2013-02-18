@@ -8,4 +8,3 @@
  */
 
 BYTE *ini_str(WORD stnum);
-

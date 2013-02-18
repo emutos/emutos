@@ -58,4 +58,3 @@
 #define EGSBF   -67L    /* setblock failure due to growth restrictions  */
 
 #endif /* GEMERROR_H */
-

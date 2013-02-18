@@ -1657,5 +1657,3 @@ static void freednd(DND *dn)                    /* M01.01.1031.02 */
     }
     xmfreblk( (char *)dn );           /* finally free this DND */
 }
-
-

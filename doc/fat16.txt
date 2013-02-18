@@ -66,4 +66,3 @@ each of the FAT, the root directory, and the data area.
 
 o_currec, o_curcl, o_curbyt in the OFD: the current record number,
 cluster number, and byte number within the file.
-

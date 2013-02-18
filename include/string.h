@@ -74,4 +74,3 @@ void * memset(void *address, int c, long unsigned int size);
 void bzero(void *address, long unsigned int size);
 
 #endif /* STRING_H */
-

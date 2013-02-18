@@ -123,5 +123,3 @@ static const BYTE * const keytbl_fr_dead[] = {
     keytbl_fr_dead0,
     keytbl_fr_dead1,
 };
-
-

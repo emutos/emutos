@@ -155,8 +155,3 @@ extern ULONG warm_magic;
 #endif
 
 #endif /* TOSVARS_H */
-
-
-
-
-

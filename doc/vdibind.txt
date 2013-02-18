@@ -2138,4 +2138,3 @@ BYTE *filename;
     contrl[6] = handle;
     vdi();
 }
-

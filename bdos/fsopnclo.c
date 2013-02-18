@@ -695,7 +695,3 @@ BOOL contains_illegal_characters(const char *test)
 
         return( FALSE ) ;
 }
-
-
-
-

@@ -423,5 +423,3 @@ WORD ob_edit(LONG tree, WORD obj, WORD in_char, WORD *idx, WORD kind)
         curfld(tree, obj, cur_pos, 0);
         return(TRUE);
 }
-
-

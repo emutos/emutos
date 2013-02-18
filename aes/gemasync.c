@@ -222,5 +222,3 @@ EVSPEC acancel(EVSPEC m)
         }
         return(m1);
 }
-
-

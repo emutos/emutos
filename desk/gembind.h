@@ -589,4 +589,3 @@ extern LONG     addr_out[AO_SIZE];
 #define XGR_O3 int_out[3]
 #define XGR_O4 int_out[4]
 #define XGR_O5 int_out[5]
-

@@ -380,4 +380,3 @@ void _vq_color(Vwk *vwk)
         INTOUT[3] = st2vdi(c);
     }
 }
-

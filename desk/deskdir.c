@@ -949,4 +949,3 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
         graf_mouse(ARROW, 0x0L);
         return(TRUE);
 } /* dir_op */
-

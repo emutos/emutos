@@ -472,4 +472,3 @@ void dopanic(const char *fmt, ...)
     kcprintf("Processor halted.\n");
     halt();
 }
-

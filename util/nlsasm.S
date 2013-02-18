@@ -225,4 +225,3 @@ ram_hash:
 #endif /* USE_RAM_HASH */
 
 #endif /* CONF_WITH_NLS */
-

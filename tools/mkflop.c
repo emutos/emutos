@@ -130,4 +130,3 @@ fail:
   fprintf(stderr, "something failed.\n");
   exit(EXIT_FAILURE);
 }
-

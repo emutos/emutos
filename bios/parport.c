@@ -92,5 +92,3 @@ LONG bconout0(WORD dev, WORD c)
     }
     return 0L;
 }
-
-

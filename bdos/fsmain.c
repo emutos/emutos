@@ -493,4 +493,3 @@ OFD     *getofd(int h)
 {
     return(sft[syshnd(h)].f_ofd);
 }
-

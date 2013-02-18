@@ -85,5 +85,3 @@ extern void ikbd_writeb(UBYTE b);
 extern void ikbd_writew(WORD w);
 
 #endif /* IKBD_H */
-
-

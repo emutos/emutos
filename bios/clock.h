@@ -33,4 +33,3 @@ extern void settime(LONG time);
 extern LONG gettime(void);
 
 #endif /* CLOCK_H */
-

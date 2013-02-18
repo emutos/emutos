@@ -227,4 +227,3 @@ void ap_exit(void)
         wm_update(FALSE);
         all_run();
 }
-

@@ -102,4 +102,3 @@ LONG protect_ww(LONG (*func)(void), WORD, WORD);
 LONG protect_wlwwwl(LONG (*func)(void), WORD, LONG, WORD, WORD, WORD, LONG);
 
 #endif /* VECTORS_H */
-

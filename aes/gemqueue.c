@@ -134,5 +134,3 @@ void aqueue(WORD isqwrite, EVB *e, LONG lm)
           evinsert(e, ppe);
         }
 }
-
-

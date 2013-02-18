@@ -889,5 +889,3 @@ void gem_main(void)
     givecpm();
     sti();
 }
-
-

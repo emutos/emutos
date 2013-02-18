@@ -616,4 +616,3 @@ v_bez_qual(Vwk * vwk)
 }
 
 #endif
-

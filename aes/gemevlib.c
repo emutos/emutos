@@ -271,4 +271,3 @@ WORD ev_dclick(WORD rate, WORD setit)
         }
         return( gl_dcindex );
 }
-

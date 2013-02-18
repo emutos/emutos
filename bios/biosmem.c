@@ -123,4 +123,3 @@ void getmpb(MPB * mpb)
     mpb->mp_mfl = mpb->mp_rover = &themd;   /* free list/rover set to init MD */
     mpb->mp_mal = (MD *)0;                /* allocated list set to NULL */
 }
-

@@ -134,5 +134,3 @@ int main(int argc, char **argv)
   if(fclose(fout)) fatal(0, "cannot close %s", argv[2]);
   exit(0);
 }
-
-

@@ -105,5 +105,3 @@ static const BYTE keytbl_it_altcaps[] = {
     0x2B,0xf8,
     0,
 };
-
-

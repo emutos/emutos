@@ -1713,4 +1713,3 @@ WORD deskmain(void)
 
         return(TRUE);
 } /* main */
-

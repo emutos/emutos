@@ -92,4 +92,3 @@ bcopy:
         jmp     (a0)
 bootend:
         .end
-

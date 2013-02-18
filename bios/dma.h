@@ -61,4 +61,3 @@ int timeout_gpip(LONG delay);  /* delay in milliseconds */
 #endif /* CONF_WITH_MFP */
 
 #endif /* DMA_H */
-

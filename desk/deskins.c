@@ -548,5 +548,3 @@ WORD ins_app(BYTE *pfname, ANODE *pa)
 
         return(change);
 } /* ins_app */
-
-

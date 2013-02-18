@@ -766,4 +766,3 @@ void do_chkall(WORD redraw)
           }
         }
 } /* do_chkall */
-

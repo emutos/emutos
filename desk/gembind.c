@@ -1127,4 +1127,3 @@ WORD shel_wdef(LONG lpcmd, LONG lpdir)
         return( gem_if( SHEL_WDEF ) );
 }
 */
-

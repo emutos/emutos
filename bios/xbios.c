@@ -1121,5 +1121,3 @@ const PFLONG xbios_vecs[] = {
 };
 
 const UWORD xbios_ent = sizeof(xbios_vecs) / sizeof(PFLONG);
-
-

@@ -178,5 +178,3 @@ end:
         move.l   (sp)+,d7
         move.l   4(sp),d0              // return the address.
         rts
-
-

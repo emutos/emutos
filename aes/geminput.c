@@ -622,4 +622,3 @@ void amouse(EVB *e, LONG pmo)
           evinsert(e, &rlr->p_cda->c_msleep );
         }
 }
-

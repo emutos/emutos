@@ -465,4 +465,3 @@ WORD fm_error(WORD n)             /* n = dos error number */
 
         return (ret != 1);
 }
-

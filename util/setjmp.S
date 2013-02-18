@@ -39,4 +39,3 @@ nonzero:
         movem.l (a0),d2-d7/a2-a7
         move.l  d1,(sp)
         rts
-

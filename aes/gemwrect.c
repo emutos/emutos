@@ -210,5 +210,3 @@ void newrect(LONG tree, WORD wh)
         w_getsize(WS_TRUE, wh, (GRECT *)&new->o_x);
         pwin->w_rlist = new;
 }
-
-

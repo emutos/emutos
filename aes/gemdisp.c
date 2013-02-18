@@ -262,4 +262,3 @@ void disp(void)
  */
         switchto(rlr->p_uda);
 }
-

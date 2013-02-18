@@ -393,5 +393,3 @@ void gr_mkstate(WORD *pmx, WORD *pmy, WORD *pmstat, WORD *pkstat)
         *pmstat = button;
         *pkstat = kstate;
 }
-
-

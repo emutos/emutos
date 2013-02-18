@@ -1529,4 +1529,3 @@ void wm_new(void)
         if(D.w_win[wh].w_flags & VF_INUSE)   wm_delete(wh);
     }
 }
-

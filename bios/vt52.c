@@ -895,4 +895,3 @@ vt52_init(void)
 
     clear_and_home();
 }
-

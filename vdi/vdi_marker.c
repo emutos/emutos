@@ -189,6 +189,3 @@ void vqm_attr(Vwk * vwk)
     CONTRL[2] = 1;
     flip_y = 1;
 }
-
-
-

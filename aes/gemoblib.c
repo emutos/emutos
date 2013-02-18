@@ -707,4 +707,3 @@ UWORD ob_fs(LONG tree, WORD ob, WORD *pflag)
         *pflag = LWGET(OB_FLAGS(ob));
         return( LWGET(OB_STATE(ob)) );
 }
-

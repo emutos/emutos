@@ -240,5 +240,3 @@ mystak:         .ds.l   1               // Stack for command.prg
 coma_bss_end:
 
         .end
-
-

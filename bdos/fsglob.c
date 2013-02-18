@@ -69,4 +69,3 @@ jmp_buf errbuf;
  */
 
 unsigned int    time, date ;
-

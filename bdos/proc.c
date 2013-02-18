@@ -597,4 +597,3 @@ WORD    xtermres(long blkln, WORD rc)
 
     xterm(rc);
 }
-

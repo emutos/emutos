@@ -2431,4 +2431,3 @@ cmain(char *bp)
 
     wrtln("Leaving EmuCON...\r\n");
 }
-

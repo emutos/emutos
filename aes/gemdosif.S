@@ -379,4 +379,3 @@ gstack:                         // gsx stack for mouse
         .ds.b    0x80
 tstack:                         // tick stack
         .ds.l    1
-

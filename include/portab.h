@@ -104,4 +104,3 @@ typedef WORD WORD_ALIAS MAY_ALIAS;
 typedef LONG LONG_ALIAS MAY_ALIAS;
 
 #endif /* PORTAB_H */
-

@@ -101,4 +101,3 @@ const char * machine_name(void);
 
 
 #endif /* MACHINE_H */
-

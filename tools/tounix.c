@@ -162,5 +162,3 @@ int main(int argc, char **argv)
   fclose(tmp);
   exit(0);
 }
-
-

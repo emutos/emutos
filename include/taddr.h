@@ -32,4 +32,3 @@ extern LONG obaddr(LONG tree, WORD obj, WORD fld_off);
 #define OB_Y(x) obaddr(tree, x, 18)
 #define OB_WIDTH(x) obaddr(tree, x, 20)
 #define OB_HEIGHT(x) obaddr(tree, x, 22)
-

@@ -70,4 +70,3 @@ extern void mouse_int(void);    /* mouse interrupt vector */
 
 
 #endif /* MOUSE_H */
-

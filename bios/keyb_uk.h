@@ -95,5 +95,3 @@ static const BYTE keytbl_uk_altshft[] = {
 static const BYTE keytbl_uk_altcaps[] = {
     0,
 };
-
-

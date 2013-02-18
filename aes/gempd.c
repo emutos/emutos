@@ -154,4 +154,3 @@ void insert_process(PD *pi, PD **root)
         pi->p_link = p;
         q->p_link = pi;
 }
-

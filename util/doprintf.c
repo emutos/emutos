@@ -220,4 +220,3 @@ int doprintf(void (*outc)(int), const char *fmt, va_list ap)
     }
   }
 }
-

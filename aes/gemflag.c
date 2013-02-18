@@ -135,6 +135,3 @@ void unsync(SPB *sy)
             sy->sy_owner = NULLPTR;             /* reset owner field    */
         }
 }
-
-
-

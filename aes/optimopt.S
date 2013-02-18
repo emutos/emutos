@@ -153,4 +153,3 @@ scasb_end:
         subq.l  #1,a0
         move.l  a0,d0
         rts
-

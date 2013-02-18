@@ -17,4 +17,3 @@
  */
 
 extern const char version[];
-

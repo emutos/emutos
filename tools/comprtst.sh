@@ -66,5 +66,3 @@ sh -f t "empty file"
 # cleanup
 cd ..
 rm -rf $TMP
-
-

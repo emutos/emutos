@@ -363,4 +363,3 @@ void ins_char(BYTE *str, WORD pos, BYTE chr, WORD tot_len)
         else
           str[tot_len-1] = NULL;
 }
-

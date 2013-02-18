@@ -723,4 +723,3 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
 
         return( TRUE );
 }
-

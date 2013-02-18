@@ -4423,3 +4423,4 @@ Start... early ages
 2013-02-18
 - *: Updated copyright year for files modified since last release. (VRI)
 - bios/ide.c: Fixed return value of ide_read_sector(). (VRI)
+- *: Removed empty lines at end of file. (VRI)

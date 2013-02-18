@@ -107,4 +107,3 @@ static const BYTE keytbl_sg_altshft[] = {
 static const BYTE keytbl_sg_altcaps[] = {
     0,
 };
-
