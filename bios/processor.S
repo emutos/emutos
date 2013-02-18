@@ -23,6 +23,7 @@
 
         .globl  _processor_init
         .globl  _invalidate_instruction_cache
+        .globl  _instruction_cache_kludge
         .globl  _flush_data_cache
         .globl  _invalidate_data_cache
         .globl  _mcpu
@@ -347,6 +348,29 @@ ii_done:
 #endif
 
 /*
+ * void instruction_cache_kludge(void)
+ *
+ * TOS compatibility: invalidate the instruction cache (68030 only)
+ * 
+ * this provides backward compatibility in case some foolish person
+ * reads code from an I/O device and branches to it directly; this
+ * would have been legal on STs and STes.  since the caches are
+ * relatively small on a 68030, this should not have a large impact
+ * on performance.
+ */
+
+_instruction_cache_kludge:
+#ifndef __mcoldfire__
+        cmpi.b  #30,_mcpu+3
+        bne.s   ick_done
+        MOVEC_CACR_D0                   // get current cacr
+        ori.b   #0x08,d0                // set the CI bit
+        MOVEC_D0_CACR                   // clear the whole i-cache
+ick_done:
+#endif
+        rts
+
+/*
  * void flush_data_cache(void *start, long length)
  *
  * flush data cache before writing data with DMA
@@ -390,17 +414,9 @@ _invalidate_data_cache:
 #else
         cmpi.b  #30,_mcpu+3
         bne.s   ic_not30
-//
-// for a 68030, we invalidate both instruction and data caches, just
-// like TOS4.  this allows backward compatibility in case some foolish
-// person reads code from an i/o device and branches to it directly;
-// this would have been legal on STs and STes.  since the caches are
-// relatively small on a 68030, this should not have a large impact on
-// performance.
-//
         MOVEC_CACR_D0                   // get current cacr
-        ori.w   #0x0808,d0              // set CD & ID bits
-        MOVEC_D0_CACR                   // clear both caches
+        ori.w   #0x0800,d0              // set CD bit
+        MOVEC_D0_CACR                   // clear data cache
         //bra.s   ic_done
 ic_not30:
         //cmpi.b  #40,_mcpu+3
@@ -408,8 +424,7 @@ ic_not30:
 //
 // at this time, the data cache is disabled on 68040, so we have
 // nothing to do.  if the data cache is enabled in the future, we
-// should issue a "cinva dc" instead.  for performance reasons, we
-// do not intend to invalidate the instruction cache in this case.
+// should issue a "cinva dc" here.
 //
 
 ic_done:

@@ -339,7 +339,13 @@ static int atari_partition(int xhdidev)
 
 LONG DMAread(LONG sector, WORD count, LONG buf, WORD dev)
 {
-    return XHReadWrite(dev, 0, 0, sector, count, (void *)buf);
+LONG rc;
+
+    rc = XHReadWrite(dev, 0, 0, sector, count, (void *)buf);
+
+    instruction_cache_kludge(); /* TOS compatibility */
+
+    return rc;
 }
 
 LONG DMAwrite(LONG sector, WORD count, LONG buf, WORD dev)

@@ -304,6 +304,9 @@ LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG lrecnr
         lcount -= scount;
     } while(lcount > 0);
 
+    if ((rw&RW_RW) == RW_READ)
+        instruction_cache_kludge(); /* TOS compatibility */
+
     return retval;
 }
 
