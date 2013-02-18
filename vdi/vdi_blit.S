@@ -1565,6 +1565,3 @@ sc_plane:
 
         dbra    d4,sc_mp_enter
         rts
-
-
-        .end

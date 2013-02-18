@@ -348,6 +348,3 @@ _scrpt2:        ds.w    1               // large buffer base offset
 _TEXT_BG:       ds.w    1               // text background color
 _COPYTRAN:      ds.w    1               // Flag for Copy-raster-form (<>0 = Transparent)
 _FILL_ABORT:    ds.l    1               // Adress of Routine for Test of break of contour fill function
-
-
-                .end

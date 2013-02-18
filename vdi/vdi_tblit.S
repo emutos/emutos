@@ -2639,7 +2639,3 @@ concat:
         add.l   d2,d1           // compute total offset into screen buffer
         movem.l (sp)+,d2/d3/a0  // restore the clobbered registers
         rts
-
-
-
-        .end

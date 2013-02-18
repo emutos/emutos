@@ -436,5 +436,3 @@ fix_rte:
 #endif
 fr_exit:
         rte
-
-        .end

@@ -108,5 +108,3 @@ handle_timer:                   //68000:
         .bss
 intcount: ds.l  1
 intsave:  ds.l  1
-
-        .end

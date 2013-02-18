@@ -74,5 +74,3 @@ ___main:
         ds.l    STACK_SIZE
 stack_base:
         ds.w    1
-
-        .end

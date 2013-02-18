@@ -560,7 +560,3 @@ _call_user_wheel:
         move.w  6(sp),d1
         move.l  _user_wheel,a0
         jmp     (a0)
-
-
-
-        .end

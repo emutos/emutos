@@ -113,5 +113,3 @@ _xhdi_vec:
         rts
 
 #endif  /* CONF_WITH_XHDI */
-
-        .end

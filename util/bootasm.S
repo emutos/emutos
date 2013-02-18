@@ -91,4 +91,3 @@ bcopy:
         /* the instruction cache should be invalidated here */
         jmp     (a0)
 bootend:
-        .end
