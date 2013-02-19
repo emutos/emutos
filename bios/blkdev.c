@@ -228,6 +228,8 @@ LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG lrecnr
     int unit = dev;
     LONG lcount = cnt;
     LONG retval;
+    ULONG pssize;
+    void *bufstart = (void *)buf;
 
 #if DBG_BLKDEV
     kprintf("rwabs(rw=%d, buf=%ld, count=%ld, recnr=%u, dev=%d, lrecnr=%ld)\n", rw, buf, lcount, recnr, dev, lrecnr);
@@ -283,6 +285,8 @@ LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG lrecnr
         }
     }
 
+    pssize = devices[unit].pssize;
+
     do {
         /* split the transfer to 15-bit count blocks (lowlevel functions take WORD count) */
         WORD scount = (lcount > CNTMAX) ? CNTMAX : lcount;
@@ -299,13 +303,14 @@ LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG lrecnr
         } while((retval < 0) && (--retries > 0));
         if (retval < 0)     /* error, retries exhausted */
             break;
-        buf += scount * devices[unit].pssize;
+        buf += scount * pssize;
         lrecnr += scount;
         lcount -= scount;
     } while(lcount > 0);
 
+    /* TOS invalidates the i-cache here, so be compatible */
     if ((rw&RW_RW) == RW_READ)
-        instruction_cache_kludge(); /* TOS compatibility */
+        instruction_cache_kludge(bufstart,cnt*pssize);
 
     return retval;
 }

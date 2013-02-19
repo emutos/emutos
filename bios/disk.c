@@ -343,7 +343,8 @@ LONG rc;
 
     rc = XHReadWrite(dev, 0, 0, sector, count, (void *)buf);
 
-    instruction_cache_kludge(); /* TOS compatibility */
+    /* TOS invalidates the i-cache here, so be compatible */
+    instruction_cache_kludge((void *)buf,count*devices[dev+NUMFLOPPIES].pssize);
 
     return rc;
 }

@@ -318,6 +318,24 @@ pi_done:
         rts
 
 /*
+ * void instruction_cache_kludge(void *start, long length)
+ *
+ * TOS compatibility: invalidate the instruction cache (680x0 only)
+ * 
+ * this provides backward compatibility in case some foolish person
+ * reads code from an I/O device and branches to it directly; this
+ * would have been legal on STs and STes.
+ */
+
+_instruction_cache_kludge:
+#ifdef __mcoldfire__
+        rts
+#endif
+//
+// for 680x0, we drop into invalidate_instruction_cache
+//
+
+/*
  * void invalidate_instruction_cache(void *start, long length)
  * First, the data cache is flushed to push changes into the RAM.
  * Then the instruction cache is invalidated for the specified zone.
@@ -348,29 +366,6 @@ ii_not30:
 ii_done:
         rts
 #endif
-
-/*
- * void instruction_cache_kludge(void)
- *
- * TOS compatibility: invalidate the instruction cache (68030 only)
- * 
- * this provides backward compatibility in case some foolish person
- * reads code from an I/O device and branches to it directly; this
- * would have been legal on STs and STes.  since the caches are
- * relatively small on a 68030, this should not have a large impact
- * on performance.
- */
-
-_instruction_cache_kludge:
-#ifndef __mcoldfire__
-        cmpi.b  #30,_mcpu+3
-        bne.s   ick_done
-        MOVEC_CACR_D0                   // get current cacr
-        ori.b   #0x08,d0                // set the CI bit
-        MOVEC_D0_CACR                   // clear the whole i-cache
-ick_done:
-#endif
-        rts
 
 /*
  * void flush_data_cache(void *start, long length)

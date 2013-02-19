@@ -4430,3 +4430,5 @@ Start... early ages
 2013-02-19
 - doc/bugs.txt: Updated. Contributed by Eero Tamminen. (VRI)
 - *.c: Removed useless inline on static functions. (VRI)
+- bios/blkdev.c bios/disk.c bios/processor.h bios/processor.S: I-cache
+  invalidation kludge now applies to all 680x0. (RFB)
