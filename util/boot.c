@@ -10,6 +10,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+#include "config.h"
+#include "portab.h"
 #include <osbind.h>
 #include <stdlib.h>
 
@@ -108,6 +110,11 @@ int main()
   /* supervisor */
 
   Super(0);
+
+#if CONF_WITH_PSEUDO_COLD_BOOT
+  /* simulate a pseudo-cold boot, when EmuTOS loads itself */
+  *(ULONG*)0x6fc = 0; /* warm_magic */
+#endif
 
   /* do the rest in assembler */
 
