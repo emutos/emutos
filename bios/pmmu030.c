@@ -12,8 +12,6 @@
 #include "config.h"
 #include "portab.h"
 #include "string.h"
-#include "tosvars.h"
-#include <stddef.h>                 /* for 'offsetof' */
 
 /*
  * pmmu tree
