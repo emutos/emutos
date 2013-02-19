@@ -1888,7 +1888,7 @@ Start... early ages
   crashes... (THH)
 
 2005-07-22
-- vdi/vdi_control.c: Implemented vs_color and vq_color (for ST/STE). (THH)
+- vdi/vdi_control.c: Implemented vs_color and vq_color (for ST/STe). (THH)
 
 2005-07-24
 - vdi/vdi_control.c vdi_col.c: Moved vs_color and vq_color to a new file and
@@ -2197,7 +2197,7 @@ Start... early ages
 
 2010-05-25
 - bios/memory.S: Improved memory detection which should now also work on a
-  real STE (patch by Jean-François DEL NERO)
+  real STe (patch by Jean-François DEL NERO)
 
 2010-05-27
 - vdi/vdi_defs.h, vdi/vdi_tblit.S, vdi/vdi_text.c: Added a Vwk* parameter

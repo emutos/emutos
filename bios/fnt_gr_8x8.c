@@ -5,7 +5,7 @@
  *
  * And then the font was "refined" a bit by GGN
  * because I always hated having ANSI characters from
- * MS-DOS on my STE instead of the copyright or TM characters!
+ * MS-DOS on my STe instead of the copyright or TM characters!
  *
  * (BTW: original font comes from ELKAT)
  */

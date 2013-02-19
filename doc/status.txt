@@ -53,7 +53,7 @@ T tested and working on an emulator or real hardware
  T ST shifter
  T ACIAs, IKBD protocol
  t MegaST Real-Time Clock  (set clock not tested)
- T STE shifter
+ T STe shifter
  t NVRAM (including RTC)
  T Videl
  - Blitter

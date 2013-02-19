@@ -275,7 +275,7 @@ static UWORD get_videl_bpp(void)
      * is set. Priority in f_shift is: 10 ">" 8 ">" 4, i.e.
      * if bit 10 set then bit 8 and bit 4 don't care...
      * If all these bits are 0 get display depth from st_shift
-     * (as for ST and STE)
+     * (as for ST and STe)
      */
     int bits_per_pixel = 1;
     if (f_shift & 0x400)         /* 2 colors */
@@ -630,7 +630,7 @@ static void convert2ste(WORD *ste,LONG *falcon)
 
 /*
  * determine whether to update STe or Falcon h/w palette registers
- * returns TRUE if we need to update the STE h/w palette
+ * returns TRUE if we need to update the STe h/w palette
  */
 static int use_ste_palette(WORD videomode)
 {

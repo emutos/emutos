@@ -539,7 +539,7 @@ void clock_init(void)
 #endif /* MACHINE_AMIGA */
 #if CONF_WITH_NVRAM
   else if(has_nvram) {
-    /* On Mega-STE and early TTs the year offset in the NVRAM is different */
+    /* On Mega-STe and early TTs the year offset in the NVRAM is different */
     if (cookie_mch < MCH_TT || (cookie_mch == MCH_TT && TOS_VERSION <= 0x0305)) {
         nvram_rtc_year_offset = 1970 - 1980;
     }

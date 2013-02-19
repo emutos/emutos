@@ -132,7 +132,7 @@ static const WORD videl_palette2[240][3] =
 #endif
 
 
-/* Create a ST/STE color value from VDI color */
+/* Create a ST/STe color value from VDI color */
 static int vdi2ste(int col)
 {
     col = col * 3 / 200;
@@ -181,7 +181,7 @@ static void set_color(int colnum, int r, int g, int b)
     else
 #endif
     {
-        /* ST and STE shifter: */
+        /* ST and STe shifter: */
         r = vdi2ste(r);
         g = vdi2ste(g);
         b = vdi2ste(b);
@@ -282,7 +282,7 @@ void init_colors(void)
 
 #if CONF_WITH_STE_SHIFTER
 
-/* Create a VDI color value from STE color */
+/* Create a VDI color value from STe color */
 static int ste2vdi(int col)
 {
     col = ((col & 0x7) << 1) | ((col >> 3) & 0x1);

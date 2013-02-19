@@ -132,7 +132,7 @@ This is the currently supported Atari hardware:
 - MFP
 - PSG
 - ST shifter
-- STE shifter
+- STe shifter
 - VIDEL
 - ACIAs, IKBD protocol, mouse
 - MegaST Real-Time Clock (set clock not tested)

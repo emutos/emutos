@@ -151,7 +151,7 @@ no_memctrl:
  * We first test if EmuTOS runs on a Falcon by reading a Falcon
  * hardware register. If so, we can use the Falcon register $ff8006 for
  * memory setup. Note that we can't use $ff8006 to do the Falcon test
- * since the STE does not generate a bus error when reading from this
+ * since the STe does not generate a bus error when reading from this
  * register, however it does not really have the $ff8006 register :-(
  */
 memconf:
