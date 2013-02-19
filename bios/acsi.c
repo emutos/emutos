@@ -148,13 +148,14 @@ static int do_acsi_rw(WORD rw, LONG sector, WORD cnt, LONG buf, WORD dev)
         status = DMA->data;
     }
 
+    /* put back to floppy and free flock */
+    DMA->control = DMA_FDC;
+    flock = 0;
+
     /* invalidate data cache if we've read into memory */
     if (rw == RW_READ)
         invalidate_data_cache((void *)buf,buflen);
 
-    /* put back to floppy and free flock */
-    DMA->control = DMA_FDC;
-    flock = 0;
     return status;
 }
 

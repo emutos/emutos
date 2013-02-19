@@ -4434,3 +4434,4 @@ Start... early ages
   invalidation kludge now applies to all 680x0. (RFB)
 - Makefile util/boot.c: Fixed pseudo-cold boot when EmuTOS loads itself. (VRI)
 - bios/blkdev.c: Initialize drvbits to avoid bogus drives in EmuTOS-RAM. (VRI)
+- bios/acsi.c bios/floppy.c: Minor reordering between caches and locks. (VRI)

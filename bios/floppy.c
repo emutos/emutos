@@ -854,11 +854,11 @@ static WORD floprw(LONG buf, WORD rw, WORD dev,
       sect++;
     }
 
+    flopunlk();
+
     /* invalidate data cache if we've read into memory */
     if (rw == RW_READ)
         invalidate_data_cache((void *)buf,buflen);
-
-    flopunlk();
 #else
     err = EUNDEV;
 #endif
