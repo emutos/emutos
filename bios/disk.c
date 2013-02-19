@@ -94,7 +94,7 @@ static int VALID_PARTITION(struct partition_info *pi, unsigned long hdsiz)
         pi->st + pi->siz <= hdsiz);
 }
 
-static inline int OK_id(char *s)
+static int OK_id(char *s)
 {
     /* for description of the following partition types see
      * the XHDI specification ver 1.30

@@ -405,12 +405,12 @@ void clockvec(BYTE *buf)
   iclk_ready = 1;
 }
 
-static inline UBYTE int2bcd(UWORD a)
+static UBYTE int2bcd(UWORD a)
 {
   return (a % 10) + ((a / 10) << 4);
 }
 
-static inline UWORD bcd2int(UBYTE a)
+static UWORD bcd2int(UBYTE a)
 {
   return (a & 0xF) + ((a >> 4) * 10);
 }

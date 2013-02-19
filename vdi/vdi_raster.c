@@ -283,7 +283,7 @@ struct blit {
     //BYTE           ready;
 };
 
-static inline void
+static void
 do_blit(blit * blt)
 {
     ULONG   blt_src_in;

@@ -47,11 +47,11 @@ static country_t countries[] = {
 };
 
 
-static inline uint16_t conf2country(uint16_t conf)
+static uint16_t conf2country(uint16_t conf)
 {
         return conf >> 1;
 }
-static inline uint16_t country2conf(uint16_t conf, uint16_t country)
+static uint16_t country2conf(uint16_t conf, uint16_t country)
 {
         return (country << 1) | (conf & 1);
 }

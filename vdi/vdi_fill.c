@@ -370,7 +370,7 @@ st_fl_ptr(Vwk * vwk)
  *     count - number of words in array.
  */
 
-static inline void
+static void
 bub_sort (WORD * buf, WORD count)
 {
     int i, j;
@@ -749,7 +749,7 @@ rectfill (Vwk * vwk, Rect * rect)
 /*
  * get_color - Get color value of requested pixel.
  */
-static inline UWORD
+static UWORD
 get_color (UWORD mask, UWORD * addr)
 {
     UWORD color = 0;                    /* clear the pixel value accumulator. */
@@ -793,7 +793,7 @@ pixelread(const WORD x, const WORD y)
     return get_color(mask, addr);       /* return the composed color value */
 }
 
-static inline UWORD
+static UWORD
 search_to_right (Vwk * vwk, WORD x, UWORD mask, const UWORD search_col, UWORD * addr)
 {
     /* is x coord < x resolution ? */
@@ -816,7 +816,7 @@ search_to_right (Vwk * vwk, WORD x, UWORD mask, const UWORD search_col, UWORD * 
     return x - 1;       /* output x coord -1 to endxright. */
 }
 
-static inline UWORD
+static UWORD
 search_to_left (Vwk * vwk, WORD x, UWORD mask, const UWORD search_col, UWORD * addr)
 {
     /* Now, search to the left. */
