@@ -4426,3 +4426,6 @@ Start... early ages
 - *: Removed empty lines at end of file. (VRI)
 - *.S: Removed useless .end directive at end of file. (VRI)
 - doc/bugs.txt doc/coding.txt: Minor updates. (RFB)
+
+2013-02-19
+- doc/bugs.txt: Updated. Contributed by Eero Tamminen. (VRI)

@@ -1,4 +1,5 @@
 - Changing the VDI color palette is not possible on the TT.
+  - Colors are wrong in GEM Nethack on TT (and it panics EmuTOS on exit).
 - PROCALC.ACC doesn't open after changing the resolution.
 - Desktop doesn't use the _IDT date separator.
 - Drag-and-drop does not work in the freeware GEM games "Abalone"
@@ -33,21 +34,20 @@
   http://sourceforge.net/mailarchive/message.php?msg_id=29276993
 - Text input in GFA programs like "Minigolf" (which dont' use GEM)
   always goes to the top left corner of screen, not to the position
-  where it goes with normal TOS.
+  where it goes with normal TOS.  This makes many such games
+  unplayable.
 - Game result text in "Sherlock" is positioned wrong (overlaps).
 - Thick arcs going partly outside of screen have incorrectly
   drawn pixels at top of screen in vditext tester.
 - In Mario Becroft's GEM Pacman, "game over" melt effect happens
   for the whole screen, not just for the game window.
 - '-' key for moving left in VDI "Invaders" and 'h' & 'j' keys
-  for moving character left & right in Anduril don't work, only
+  for moving character left & right in "Anduril" don't work, only
   special key (Alt/Shift) input works:
   http://sourceforge.net/mailarchive/message.php?msg_id=29277643
 - Box drawing in Glücksrad leaves garbage on top of screen
   and player name input text isn't shown.
 - In "MathMaze", game win dialog leaves some lines on screen.
-- Monopoly game board isn't drawn properly, maybe due to issues
-  in filled polylines.
 - Ramses game panics after Mediach() if floppy is missing:
   http://sourceforge.net/mailarchive/message.php?msg_id=29277256
 - 7UP hangs on exit.
@@ -68,6 +68,8 @@ Links to programs listed above:
   http://www.umich.edu/~archive/atari/Games/Puzzle/bombs.arc
 - Clac:
   http://koti.mbnet.fi/tammat/open.shtml#clac
+- GEM Nethack:
+  http://www.nethack.org/v343/ports/download-atari.html
 - Hotshot checkers:
   http://www.umich.edu/~archive/atari/Games/Board/hotshot.arc
 - ImCon:
@@ -77,7 +79,7 @@ Links to programs listed above:
 - Mind sweeper:
   http://www.umich.edu/~archive/atari/Games/Puzzle/minds_11.zip
 - Minigolf:
-  http://koti.mbnet.fi/tammat/src/minigolf.tar.gz
+  http://koti.mbnet.fi/tammat/hatari/sources/minigolf.zip
 - Pacman:
   http://gem.win.co.nz/mb/atarisw/pacman.html
 - Patience (older version):
@@ -96,5 +98,4 @@ Links to programs listed above:
   http://www.umich.edu/~archive/atari/Games/Cards/yukone1.lzh
   http://www.haun-online.de/Atari/e_index.html
 
-(Links missing to: yams, mathmaze, monopoly,
-laserchess/diamondminer and ramses.)
+(Links missing to: yams, mathmaze, laserchess, diamondminer and ramses.)
