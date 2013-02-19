@@ -22,13 +22,13 @@ CHANGES SINCE LAST RELEASE
 - Added support for real Falcon 030 hardware with EmuTOS-RAM.
 - Added support for Amiga hardware (including WinUAE and Blizzard 1260).
 - Enabled internal IDE support for all machines, including Falcon.
-- Added support for hard disks with Atari, PC, or no partition table.
+- Added support for hard disks with Atari or PC partition tables (or none).
 - Fixed floppy support for DD and HD drives.
 - Added support for Falcon and TT SCC serial port.
 - Many file selector improvements, including drive buttons.
 - Fixed support for Hatari extended VDI screens.
 - Use the default boot video mode if the NVRAM value is unsupported.
-- Center the welcome screen screen vertically.
+- Center the welcome screen vertically.
 - Fixed the welcome screen key repeat bug when booting FreeMiNT.
 - Changed GEM alerts to conform to standard TOS alert line length.
 - Always center dialogs, even with high resolutions.
@@ -42,18 +42,18 @@ CHANGES SINCE LAST RELEASE
 - Added Bconmap() support.
 - Fixed Rsconf() return value.
 - Fixed Setscreen() to clear the screen on video mode change.
-- Protobt(): add new disk types and fix checksum & serial number.
+- Protobt(): added new disk types and fix checksum & serial number.
 - Flopfmt(): added support for the skew array introduced in TOS 1.04.
 - Fixed swapping of Bcostat() for IKBD and MIDI.
 - Fixed Falcon palette initialisation.
 - Enabled again Mega ST clock support in 192 kB ROMs.
-- Enabled the STOP instruction usage to free ths host CPU in 192 kB ROMs, too.
-- Enabled instruction, data cache and MMU on 68030.
+- Enabled the STOP instruction usage to free the host CPU in 192 kB ROMs, too.
+- Enabled instruction cache, data cache and MMU on 68030.
 - Fixed _SWI cookie to set high order bytes to zeros.
 - Added FOLDRxxx.PRG message when internal OS memory is exhausted.
 - Consistent cold/warm reset behaviour.
 - Fixed EmuCON MV command to move rather than copy.
-- Changed Greece country from 18 to 31 to match FreeMiNT standard.
+- Changed Greece country code from 18 to 31 to match the FreeMiNT standard.
 - Added internal gem.rsc and icon.rsc files, with resource decompilers.
 - Many internal bugfixes and cleanups.
 - Added compilation support for the m68k-elf toolchain.
@@ -111,7 +111,7 @@ access and enable you to use networking with all bells and whistles -
 and many other things you might not have even dreamed of.
 
 ARAnyM emulator has most extensive support for NatFeats.
-Hatari emulator spports the basic NatFeats facilities.
+Hatari emulator supports the basic NatFeats facilities.
 
 
 

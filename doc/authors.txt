@@ -6,7 +6,7 @@ The 'historical' authors - those who wrote the code before the start of the
 EmuTOS project - are mentioned in the individual files they've authored.
 Major 'historical' parts are:
 - BDOS, VDI, CLI - it comes from the latest known GEMDOS version from
-  Digital Research (later versions seem to have been developped by Atari).
+  Digital Research (later versions seem to have been developed by Atari).
 - AES, desktop - The C source code for GEM comes from the x86 version.
 - Some GEM assembler files come from the AES for the Apple LISA.
 
@@ -42,7 +42,7 @@ Vincent Rivière (VRI) <vincent.riviere at freesbee.fr>
 Roger Burrows (RFB) <rfburrows at ymail.com>
 - FAT16 partitions up to 2 GB (inspired from Didier Méquignon's BDOS fork)
 - Full support for Falcon and TT video hardware
-- Real Falcon 030 support (cache, SCC, HD floppy)
+- Real Falcon 030 support (cache, MMU, SCC, HD floppy)
 - Desktop and file selector improvements
 - erd tool: the EmuTOS Resource Decompiler
 - Various bugfixes and cleanups
@@ -84,7 +84,7 @@ Stanislav Opichal (SOP) <opichals at seznam.cz>
 - FreeMiNT kernel bootstrap via BOOTSTRAP NatFeat
 
 Frank Naumann
-- MiNT
+- FreeMiNT
 
 Ctirad Fertr <phanatic at volny.cz>,
 Milan Jurik <M.Jurik at sh.cvut.cz>
@@ -104,6 +104,7 @@ Patrice Mandin and Markus Oberhumer
 
 Eero Tamminen
 - Many bug reports, extensive testing, testcases supply
+- Many documentation updates
 - Finnish translation and keyboard mapping
 - Static source analysis and cleanup
 
@@ -151,10 +152,10 @@ and all the ACP team
 James Boulton <james.boulton at eiconic.com>
 - floprw() fix for reading multiple sectors
 
-Stephen Leary <sleary@vavi.co.uk>
+Stephen Leary <sleary at vavi.co.uk>
 - Fixed support for IDE slave device
 
-Miro Kropáček <miro.kropacek@gmail.com>
+Miro Kropáček <miro.kropacek at gmail.com>
 - Experimental 68040 MMU support
 
 WongCK on Atari-Forum
