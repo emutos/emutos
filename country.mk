@@ -9,7 +9,7 @@
 
 # this file is included in the Makefile to build unique-country ROMs.
 #
-# indormation in lines below serve also as source to fill the tables
+# information in lines below serve also as source to fill the tables
 # needed by bios/country.c (tables generated in bios/ctables.h). For
 # each country there should be a four line paragraph giving the language,
 # keyboard code, charset and IDT.
