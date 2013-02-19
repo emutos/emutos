@@ -105,6 +105,7 @@ Patrice Mandin and Markus Oberhumer
 Eero Tamminen
 - Many bug reports, extensive testing, testcases supply
 - Many documentation updates
+- Hatari debug symbols
 - Finnish translation and keyboard mapping
 - Static source analysis and cleanup
 
