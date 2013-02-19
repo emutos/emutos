@@ -4432,3 +4432,4 @@ Start... early ages
 - *.c: Removed useless inline on static functions. (VRI)
 - bios/blkdev.c bios/disk.c bios/processor.h bios/processor.S: I-cache
   invalidation kludge now applies to all 680x0. (RFB)
+- Makefile util/boot.c: Fixed pseudo-cold boot when EmuTOS loads itself. (VRI)
