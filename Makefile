@@ -487,6 +487,7 @@ ramtos.img ramtos.map: emutos2-ram
 	@echo '# Second pass to build ramtos.img with TEXT and DATA just after the BSS'
 	$(LD) -o ramtos.img $(OBJECTS) $(LDFLAGS) -Wl,-Map,ramtos.map
 
+boot.prg: override DEF += -DEMUTOS_RAM
 boot.prg: obj/minicrt.o obj/boot.o obj/bootasm.o
 	$(LD) -s -o $@ $+ -lgcc
 
