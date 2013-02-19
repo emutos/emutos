@@ -124,6 +124,10 @@ void pun_info_setup(void)
 
 void blkdev_hdv_init(void)
 {
+    /* Start with no drives. This matters for EmuTOS-RAM, because the system
+     * variables are not automatically reinitialized. */
+    drvbits = 0;
+
     /* Detect and initialize floppy drives */
     flop_hdv_init();
 
