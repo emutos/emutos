@@ -1,7 +1,7 @@
 /*
  * 68040_pmmu.S - MMU initialization for 68040 (taken from set_mmu.prg).
  *
- * Copyright 2013 by Odd Skancke and Miro Kropacek.
+ * Copyright 2013 by Odd Skancke and Miro Kropáček.
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
