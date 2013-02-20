@@ -148,9 +148,15 @@ os_dummy:
 
 _main:
 #if !DIAGNOSTIC_CARTRIDGE
-        move    #0x2700,sr     // disable interrupts
-#ifndef __mcoldfire__
+        // disable the interrupts
+        // if we are a diagnostic cartridge,
+        // this has already been done by the ROM.
+        move    #0x2700,sr
+#endif
+
         lea     _stktop,sp     // required for exception
+
+#ifndef __mcoldfire__
         move.l  #not_falcon,16 // must be 68000 if we get illegal instrn error
         moveq   #0,d0
         MOVEC_D0_VBR           // initialise VBR to zero
@@ -168,7 +174,6 @@ reset_done:
 not_falcon:
 #endif /* CONF_WITH_RESET */
 #endif /* __mcoldfire__ */
-#endif /* !DIAGNOSTIC_CARTRIDGE */
 
 main_after_reset_instruction:
 

@@ -4435,3 +4435,6 @@ Start... early ages
 - Makefile util/boot.c: Fixed pseudo-cold boot when EmuTOS loads itself. (VRI)
 - bios/blkdev.c: Initialize drvbits to avoid bogus drives in EmuTOS-RAM. (VRI)
 - bios/acsi.c bios/floppy.c: Minor reordering between caches and locks. (VRI)
+
+2013-02-20
+- bios/startup.S: Fixed startup regression in emutos-cartridge. (VRI)
