@@ -320,11 +320,14 @@ pi_done:
 /*
  * void instruction_cache_kludge(void *start, long length)
  *
- * TOS compatibility: invalidate the instruction cache (680x0 only)
- * 
+ * TOS compatibility: invalidate the instruction cache
+ *
  * this provides backward compatibility in case some foolish person
  * reads code from an I/O device and branches to it directly; this
  * would have been legal on STs and STes.
+ *
+ * we don't do that on ColdFire, because ColdFire executables are brand new
+ * and supposed to be aware of cache issues.
  */
 
 _instruction_cache_kludge:
