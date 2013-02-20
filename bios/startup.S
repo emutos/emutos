@@ -166,10 +166,9 @@ _main:
         tst.w   0xffff8006.w   // magic: must access this before & after the reset
         reset                  // reset all hardware
         tst.w   0xffff8006.w   // remaining magic
-        bra.b   reset_done
+        bra.b   main_after_reset_instruction
 not_falcon:
         reset
-reset_done:
 #else
 not_falcon:
 #endif /* CONF_WITH_RESET */
