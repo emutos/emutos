@@ -161,3 +161,9 @@ Miro Kropáček <miro.kropacek at gmail.com>
 
 WongCK on Atari-Forum
 - Tests on real Falcon 030
+
+Michaël Gibs on English Amiga Board
+- Tests on Amiga 1200 with Blizzard 1260 accelerator
+
+Amiman99 on English Amiga Board
+- Tests on Amiga 1000
