@@ -733,9 +733,10 @@
  * in EmuTOS RAM, because it causes crashes very early in startup (the
  * "black screen" problem).  It is surmised that the hardware reset may
  * reset the RAM controller allowing/causing RAM contents to change.
+ * Also, there is no reset instruction on ColdFire.
  */
 #ifndef CONF_WITH_RESET
-# ifdef EMUTOS_RAM
+# if defined(EMUTOS_RAM) || defined(__mcoldfire__)
  # define CONF_WITH_RESET 0
 # else
  # define CONF_WITH_RESET 1

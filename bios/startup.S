@@ -163,19 +163,24 @@ _main:
 vbr_ok:
 #endif
 
-#ifndef __mcoldfire__
 #if CONF_WITH_RESET
+        // now, reset the external hardware
+
+#if CONF_ATARI_HARDWARE
+        // on Falcon, we need special care around the reset instruction
         move.l  #not_falcon,8  // can't be Falcon if we get bus error
+
+        // special Falcon reset
         tst.w   0xffff8006.w   // magic: must access this before & after the reset
         reset                  // reset all hardware
         tst.w   0xffff8006.w   // remaining magic
         bra.b   main_after_reset_instruction
+#endif /* CONF_ATARI_HARDWARE */
+
 not_falcon:
+        // we are not on Falcon, a simple reset is enough
         reset
-#else
-not_falcon:
 #endif /* CONF_WITH_RESET */
-#endif /* __mcoldfire__ */
 
 main_after_reset_instruction:
 
@@ -216,7 +221,6 @@ cache_done:
  * disable the MMU
  */
 #ifndef __mcoldfire__
-        lea     _stktop,sp         // required for exception
         move.l  #not_68030,0x2c    // PMOVE is lineF on non-68030 systems
         PMOVE_TO_TTR0(zero)        // first we initialise the TTRs (ACRs on a 68ec030)
         PMOVE_TO_TTR1(zero)
