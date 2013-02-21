@@ -4438,3 +4438,6 @@ Start... early ages
 
 2013-02-20
 - bios/startup.S: Fixed startup regression in emutos-cartridge. (VRI)
+
+2013-02-21
+- bios/startup.S: Disable the interrupts at startup even on cartridge. (VRI)

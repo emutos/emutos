@@ -147,12 +147,10 @@ os_dummy:
  */
 
 _main:
-#if !DIAGNOSTIC_CARTRIDGE
         // disable the interrupts
-        // if we are a diagnostic cartridge,
-        // this has already been done by the ROM.
+        // this is useless on cold boot,
+        // but it matters for software reset
         move    #0x2700,sr
-#endif
 
         lea     _stktop,sp     // required for exception
 
