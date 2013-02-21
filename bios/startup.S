@@ -155,11 +155,16 @@ _main:
         lea     _stktop,sp     // required for exception
 
 #ifndef __mcoldfire__
-        move.l  #not_falcon,16 // must be 68000 if we get illegal instrn error
+        // first, reset the VBR
+        // it may have been modified before emutos-ram or soft reset
+        move.l  #vbr_ok,16     // must be 68000 if we get illegal instrn error
         moveq   #0,d0
         MOVEC_D0_VBR           // initialise VBR to zero
+vbr_ok:
+#endif
+
+#ifndef __mcoldfire__
 #if CONF_WITH_RESET
-        lea     _stktop,sp     // required for exception
         move.l  #not_falcon,8  // can't be Falcon if we get bus error
         tst.w   0xffff8006.w   // magic: must access this before & after the reset
         reset                  // reset all hardware
