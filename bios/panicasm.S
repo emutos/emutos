@@ -96,7 +96,11 @@ _cold_reset:
         move.l  0x00fc0004,a0   // Get the entry adress from offset 4 in the ROM
         reset                   // The entry usually points just after reset
         jmp     (a0)
-#elif CONF_ATARI_HARDWARE && !defined(MACHINE_FIREBEE)
+#elif defined(MACHINE_FIREBEE)
+        // Do not invalidate memvalid, to keep the RAM settings
+        move.l  0x00e00004,a0   // Get the entry adress from offset 4 in the ROM
+        jmp     (a0)
+#elif CONF_ATARI_HARDWARE
         clr.l   0x420           // Invalidate memvalid
         move.l  0x004,a0        // The 2 first longs are mapped to the ROM
         jmp     (a0)
