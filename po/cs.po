@@ -14,69 +14,69 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: KBabel 0.9.5\n"
 
-#: bios/bios.c:470
+#: bios/bios.c:471
 msgid "Please eject the floppy and hit RETURN"
 msgstr "Vysuòte prosím disketu a stisknìte RETURN"
 
-#: bios/bios.c:530
+#: bios/bios.c:531
 msgid ""
 "System halted!\n"
 msgstr ""
 "Systém zastaven!\n"
 
-#: bios/initinfo.c:174
+#: bios/initinfo.c:179
 msgid "EmuTOS Version"
 msgstr "EmuTOS verze"
 
-#: bios/initinfo.c:176
+#: bios/initinfo.c:181
 msgid "CPU type"
 msgstr "Typ CPU"
 
-#: bios/initinfo.c:184
+#: bios/initinfo.c:189
 msgid "Machine"
 msgstr "Poèítaè"
 
-#: bios/initinfo.c:186
+#: bios/initinfo.c:191
 msgid "Free ST-RAM"
 msgstr "Volná ST-RAM"
 
-#: bios/initinfo.c:187 bios/initinfo.c:194
+#: bios/initinfo.c:192 bios/initinfo.c:199
 msgid "%ld kB"
 msgstr "%ld kB"
 
-#: bios/initinfo.c:193
+#: bios/initinfo.c:198
 msgid "Free FastRAM"
 msgstr "Volná FastRAM"
 
-#: bios/initinfo.c:199
+#: bios/initinfo.c:204
 msgid "Screen start"
 msgstr "Zaèátek obrazu"
 
-#: bios/initinfo.c:201
+#: bios/initinfo.c:206
 msgid "GEMDOS drives"
 msgstr "Disky GEMDOSu"
 
-#: bios/initinfo.c:215
+#: bios/initinfo.c:220
 msgid "Boot time"
 msgstr "Èas startu"
 
-#: bios/initinfo.c:221
+#: bios/initinfo.c:226
 msgid "Hold <Control> to skip AUTO/ACC"
 msgstr "Podr¾ <Ctrl> a pøeskoè AUTO/ACC"
 
-#: bios/initinfo.c:223
+#: bios/initinfo.c:228
 msgid "Hold <Alternate> to skip HDD boot"
 msgstr "Podr¾ <Alt> k pøeskoèení HDD"
 
-#: bios/initinfo.c:226
+#: bios/initinfo.c:231
 msgid "Press 'C' to run an early console"
 msgstr "Stiskni 'C' pro spu¹tìní konzoly"
 
-#: bios/initinfo.c:233
+#: bios/initinfo.c:242
 msgid " Hold <Shift> to pause this screen "
 msgstr " Podr¾ <Shift> pro pauzu obrazovky "
 
-#: bdos/osmem.c:91
+#: bdos/osmem.c:92
 msgid ""
 "\033EOut of internal memory.\n"
 "Use FOLDR100.PRG to get more.\n"

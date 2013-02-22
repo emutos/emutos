@@ -14,69 +14,69 @@ msgstr ""
 "X-Generator: Emacs 23.2\n"
 "Plural-Forms:  nplurals=2; plural=(n != 1);\n"
 
-#: bios/bios.c:462
+#: bios/bios.c:471
 msgid "Please eject the floppy and hit RETURN"
 msgstr "Poista levyke ja paina RETURN"
 
-#: bios/bios.c:521
+#: bios/bios.c:531
 msgid ""
 "System halted!\n"
 msgstr ""
 "Systeemi pys‰ytetty!\n"
 
-#: bios/initinfo.c:175
+#: bios/initinfo.c:179
 msgid "EmuTOS Version"
 msgstr "EmuTOS versio"
 
-#: bios/initinfo.c:177
+#: bios/initinfo.c:181
 msgid "CPU type"
 msgstr "CPU-tyyppi"
 
-#: bios/initinfo.c:185
+#: bios/initinfo.c:189
 msgid "Machine"
 msgstr "Kone"
 
-#: bios/initinfo.c:187
+#: bios/initinfo.c:191
 msgid "Free ST-RAM"
 msgstr "Vapaa ST-RAM"
 
-#: bios/initinfo.c:188 bios/initinfo.c:195
+#: bios/initinfo.c:192 bios/initinfo.c:199
 msgid "%ld kB"
 msgstr "%ld kB"
 
-#: bios/initinfo.c:194
+#: bios/initinfo.c:198
 msgid "Free FastRAM"
 msgstr "Vapaa FastRAM"
 
-#: bios/initinfo.c:200
+#: bios/initinfo.c:204
 msgid "Screen start"
 msgstr "Ruudun alku"
 
-#: bios/initinfo.c:202
+#: bios/initinfo.c:206
 msgid "GEMDOS drives"
 msgstr "GEMDOS-asemat"
 
-#: bios/initinfo.c:216
+#: bios/initinfo.c:220
 msgid "Boot time"
 msgstr "K‰ynnistysaika"
 
-#: bios/initinfo.c:222
+#: bios/initinfo.c:226
 msgid "Hold <Control> to skip AUTO/ACC"
 msgstr "<Cntrl> pohjassa = ohita AUTO/ACC"
 
-#: bios/initinfo.c:224
+#: bios/initinfo.c:228
 msgid "Hold <Alternate> to skip HDD boot"
 msgstr "<Alt> pohjassa = ohita kovalevy"
 
-#: bios/initinfo.c:227
+#: bios/initinfo.c:231
 msgid "Press 'C' to run an early console"
 msgstr "Paina 'C' p‰‰st‰ksesi konsoliin"
 
-#: bios/initinfo.c:234
+#: bios/initinfo.c:242
 msgid " Hold <Shift> to pause this screen "
 msgstr "Pys‰yt‰ ruutu <Shift> n‰pp‰imell‰ "
 
-#: bdos/osmem.c:91
+#: bdos/osmem.c:92
 msgid ""
 "\033EOut of internal memory.\n"
 "Use FOLDR100.PRG to get more.\n"
