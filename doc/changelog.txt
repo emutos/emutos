@@ -4443,3 +4443,6 @@ Start... early ages
 - bios/startup.S: Disable the interrupts at startup even on cartridge. (VRI)
 - bios/startup.S include/config.h: Fixed reset for non-Atari hardware. (VRI)
 - bios/panicasm.S: Better cold boot on the FireBee. (VRI)
+
+2013-02-22
+- po/gr.po: Updated Greek translation. Contributed by Christos Tziotzis. (VRI)

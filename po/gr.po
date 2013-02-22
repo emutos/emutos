@@ -17,7 +17,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: 2003-07-29 21:42+0200\n"
-"PO-Revision-Date: 2012-06-03 22:49+0200\n"
+"PO-Revision-Date: 2013-02-22 15:02+0100\n"
 "Last-Translator: Christos Tziotzis <ctziotzis@gmail.com>\n"
 "Language-Team: None\n"
 "MIME-Version: 1.0\n"
@@ -85,13 +85,23 @@ msgstr "«γ©« 'C'   ¤ «¨β¥« §¨ι £ £ε ΅¦¤©ζΆ"
 msgid " Hold <Shift> to pause this screen "
 msgstr "   «γ©« «¦ <Shift>   §η©   "
 
+#: bdos/osmem.c:92
+msgid ""
+"\033EOut of internal memory.\n"
+"Use FOLDR100.PRG to get more.\n"
+"System halted!\n"
+msgstr ""
+"\033E ‚£α« £¤γ£.\n"
+"•¨© £¦§¦ γ©« «¦ FOLDR100.PRG   §¨ ©©ζ«¨.\n"
+"ƒ ΅¦§γ ©¬©«γ£«¦ª\n"
+
 #: aes/gem_rsc.c:32
 msgid "Selection:  ________.___"
 msgstr "„§ Ά¦γ:  ________.___"
 
-#: aes/gem_rsc.c:787
-msgid "ITEM SELECTOR"
-msgstr "„‚„€‘ €•„—"
+#: aes/gem_rsc.c:37
+msgid "Drives:"
+msgstr "ƒε©΅¦ :"
 
 #: aes/gem_rsc.c:583 desk/desk_rsc.c:18
 msgid "OK"
@@ -101,11 +111,189 @@ msgstr "‰"
 msgid "Cancel"
 msgstr "κ΅¬¨¦"
 
+#: aes/gem_rsc.c:687
+msgid "[2]["
+"You cannot write to the disk|"
+"in drive %c: because it is|"
+"write-protected.][Cancel|Retry]"
+msgstr "[2]["
+"ƒ¤ £§¦¨ε« ¤ ¨α―« ©«¦|"
+"›ε©΅¦ %c: § ›γ ε¤ |"
+"§¨¦©««¬£β¤¦ª.][κ΅¬¨¦|„§¤αΆ―]"
+
+#: aes/gem_rsc.c:692
+msgid "[2]["
+"Drive %c: is not responding.|"
+"Ensure that the disk is loaded|"
+"properly.  If the drive is a|"
+"hard disk, check that it is|"
+"connected properly.][Cancel|Retry]"
+msgstr "[2]["
+" ›ε©΅¦ª %c: ›¤ §¦΅¨ε¤« .|"
+"™ ΰε«  ζ«  ¦ ›ε©΅¦ª ­¦¨«ι΅|"
+"©ΰ©«α.  €¤ ε¤  ©΅Ά¨ζª ›ε©΅¦ª|"
+"Άβ¥« ζ«  ε¤  ©¬¤››£β¤¦ª|"
+"©ΰ©«α.][κ΅¬¨¦|„§¤αΆ―]"
+
+#: aes/gem_rsc.c:701
+msgid "[2]["
+"Data on the disk in drive %c:|"
+"may be damaged.  Ensure that|"
+"you are using the right kind|"
+"of disk and the drive is|"
+"connected properly.][Cancel|Retry]"
+msgstr "[2]["
+"’ ››¦£β¤ ©«¦¤ ›ε©΅¦ %c:|"
+"£§¦¨ε ¤ ε¤  ΅«©«¨££β¤.|"
+"™™ ΰε«  ζ«  ¦ ›ε©΅¦ª βε¤ |"
+"©ΰ©«ζª ΅  ζ«  ε¤  ©¬¤››£β¤¦ª|"
+"©ΰ©«α.][κ΅¬¨¦|„§¤αΆ―]"
+
+#: aes/gem_rsc.c:710
+msgid "[2]["
+"Cannot read data on the disk|"
+"in drive %c:.  Ensure that|"
+"the disk is formatted, and|"
+"the drive is powered on and|"
+"connected to your computer.][Cancel|Retry]"
+msgstr "[2]["
+"[’ ››¦£β¤ ©«¦ ›ε©΅¦ %c:|"
+"›¤ £§¦¨¦η¤ ¤ › ™©«¦η¤|"
+"™™ ΰε« ζ«  ¦ ›ε©΅¦ª ε¤ |"
+"› £¦¨­ΰ£β¤¦ª ΅  ©¬¤›£β¤¦ª|"
+"©ΰ©«α.][κ΅¬¨¦|„§¤αΆ―]"
+
+#: aes/gem_rsc.c:719
+msgid "[2]["
+"Your output device is not|"
+"receiving data.  Before you|"
+"retry, make sure the device|"
+"has power, is on-line, and|"
+"is ready.][Cancel|Retry]"
+msgstr "[2]["
+"† ©¬©΅¬γ ¥ζ›¦¬ ›¤|"
+"Ά£™α¤  ››¦£β¤. „Άβ¥« ζ« |"
+" ©¬©΅¬γ ε¤  ©¬¤››£β¤|"
+"΅  β«¦ £.][κ΅¬¨¦|„§¤αΆ―]"
+
+#: aes/gem_rsc.c:728
+msgid "[3]["
+"An error has occurred in GEM.|"
+"Please contact the EmuTOS|"
+"Development Team and submit|"
+"a bug report.][Cancel]"
+msgstr "[3]["
+"λ¤ ©­αΆ£ §¨¦¬© α©«΅|"
+"©«¦ GEM. ¨΅Ά¦η£ ©«εΆ«|"
+"¤­¦¨α ©­αΆ£«¦ª ©«¤ ¦£α›|"
+"¤α§«¬¥ª «¦¬ Emutos.][κ΅¬¨¦]"
+
+#: aes/gem_rsc.c:735
+msgid "[1]["
+"The application cannot find|"
+"the folder or document you|"
+"are trying to open.  Check|"
+"the name you have entered.][  OK  ]"
+msgstr "[1]["
+"† ­¨£¦γ ›¤ £§¦¨ε ¤ ™¨ |"
+"«¦ ­α΅Ά¦ γ «¦ β¨­¦ §¦¬|"
+"§¨¦©§ε« ¤ ¤¦ε¥«. „Άβ¥«|"
+"«¦ ζ¤¦£ §¦¬ ›ι©«.][  OK  ]"
+
+#: aes/gem_rsc.c:742
+msgid "[3]["
+"Your system doesn't have|"
+"enough memory to run EmuDesk.][Cancel]"
+msgstr "[3]["
+"’¦ ©η©«£ ›¤ β®  ¨΅«γ|"
+"£¤γ£   «¦ Emudesk.][κ΅¬¨¦]"
+
+#: aes/gem_rsc.c:745
+msgid "[1]["
+"The application doesn't have|"
+"enough room to open another|"
+"document.  To make room, close|"
+"any documents you don't need.][  OK  ]"
+msgstr "[1]["
+"† ­¨£¦γ ›¤ β®  ¨΅«ζ|"
+"®ι¨¦   ¤ ¤¦ε¥  αΆΆ¦ ¨®ε¦|"
+"‰Άε©« ζ§¦ ¦ ¨®ε¦ ›¤|"
+"®¨ α©«.][ OK ]"
+
+#: aes/gem_rsc.c:752
+msgid "[1]["
+"An item with this name already|"
+"exists in the folder, or the|"
+"item is set to Read-Only.|"
+"Use the \"Info/Rename\" command|"
+"to change the item's status.][  OK  ]"
+msgstr "[1]["
+"“§α¨®  γ› ¨®ε¦ £ ¬«ζ|"
+"«¦ ζ¤¦£, γ «¦ ¨®ε¦ ε¤  £ζ¤¦  |"
+"¤α¤ΰ©. •¨© £¦§¦ γ©« «¤ ¤«¦Άγ|"
+"\"Ά¨¦­¦¨εª\"   ¤ ΆΆα¥« «¤|"
+"΅«α©«© «¦¬ ¨®ε¦¬][  OK  ]"
+
+#: aes/gem_rsc.c:761
+msgid "[1]["
+"The specified disk drive does|"
+"not exist.  Check the drive|"
+"letter you entered.][  OK  ]"
+msgstr "[1]["
+" ›ε©΅¦ª ›¤ ¬§α¨® |"
+"Άβ¥« «¦ ¨α££ ›ε©΅¦¬ §¦¬|"
+"›ι©«.][  OK  ]"
+
+#: aes/gem_rsc.c:766
+msgid "[1]["
+"You cannot delete the folder|"
+"in which you are currently|"
+"working.][  OK  ]"
+msgstr "[1]["
+"ƒ¤ £§¦¨ε« ¤ › ¨α―«|"
+"«¦¤ ­α΅Ά¦ ©«¦¤ ¦§¦ε¦|"
+"¨α©«.][  OK  ]"
+
+#: aes/gem_rsc.c:771
+msgid "[1]["
+"Cannot run the application|"
+"you have selected.  It may|"
+"be damaged, or your system|"
+"may not have enough memory.][  OK  ]"
+msgstr "[1]["
+"† ­¨£¦γ §¦¬ § Άβ¥«|"
+"›¤ £§¦¨ε ¤ ΅΅ ¤γ© .|"
+"£§¦¨ε ¤ ε¤  ΅«©«¨££β¤|"
+"γ «¦ ©η©«£ ©ª ¤ £¤ β® |"
+"§¨΅γ £¤γ£.][  OK  ]"
+
 #: aes/gem_rsc.c:778
 msgid "[3]["
 "DOS error #%d.][Cancel]"
 msgstr "[3]["
 "DOS error #%d.][κ΅¬¨¦]"
+
+#: aes/gem_rsc.c:779
+msgid "[3]["
+"Unsupported AES function #%d.][Cancel]"
+msgstr "[3]["
+"‹ ¬§¦©«¨ ζ£¤ Ά «¦¬¨ε AES #%d.][κ΅¬¨¦]"
+
+#: aes/gem_rsc.c:780
+msgid "[3]["
+"An unexpected error has|"
+"occurred.  Please report|"
+"this message to the EmuTOS|"
+"Development team.][Cancel]"
+msgstr "[3]["
+"‘¬¤β™ β¤ £ ¤£¤ζ£¤¦|"
+"©­αΆ£. ¨΅Ά¦η£ ¤­β¨« ¬«ζ|"
+"«¦ £γ¤¬£ ©« ¦£α› ¤α§«¬¥ª|"
+"«¦¬ Emutos.][κ΅¬¨¦]"
+
+#: aes/gem_rsc.c:787
+msgid "ITEM SELECTOR"
+msgstr "„‚„€‘ €•„—"
 
 #: desk/desk_rsc.c:20
 msgid "Install"
@@ -567,6 +755,14 @@ msgstr "%ld bytes ®¨© £¦§¦ ¦η¤«  © %d ¨®ε."
 msgid "  Show as icons  \007S"
 msgstr "  „£­α¤ © ΰª  ΅¦¤ε›       \007S"
 
+#: desk/desk_rsc.c:1840
+msgid "  Show as text   \007S"
+msgstr "  „£­α¤ © ΰª ΅ε£¤¦        \007S"
+
+#: desk/desk_rsc.c:1841
+msgid "Not available"
+msgstr "‹ › β© £¦"
+
 #: desk/desk_rsc.c:1842
 msgid "application"
 msgstr "­¨£¦γ"
@@ -575,16 +771,6 @@ msgstr "­¨£¦γ"
 msgid "documents"
 msgstr "¨®ε"
 
-#: desk/desk_rsc.c:1854
-msgid "[2]["
-"Switch resolution?][Yes|No]"
-msgstr "[2]["
-"€ΆΆγ ¤αΆ¬©ª;][ |ξ® ]"
-
-#: desk/desk_rsc.c:1840
-msgid "  Show as text   \007S"
-msgstr "  „£­α¤ © ΰª ΅ε£¤¦        \007S"
-
 #: desk/desk_rsc.c:1844
 msgid "New Folder"
 msgstr "β¦ª ­α΅Ά¦ª"
@@ -592,6 +778,20 @@ msgstr "β¦ª ­α΅Ά¦ª"
 #: desk/desk_rsc.c:1845
 msgid "Disk Drives:"
 msgstr "Drives:"
+
+#: desk/desk_rsc.c:1852
+msgid "DISK"
+msgstr "ƒ‘‰‘"
+
+#: desk/desk_rsc.c:1853
+msgid "TRASH"
+msgstr "€‹€’€"
+
+#: desk/desk_rsc.c:1854
+msgid "[2]["
+"Switch resolution?][Yes|No]"
+msgstr "[2]["
+"€ΆΆγ ¤αΆ¬©ª;][ |ξ® ]"
 
 #: desk/desk_rsc.c:1855
 msgid "[1]["
@@ -797,4 +997,80 @@ msgstr "[1]["
 "© αΆΆ¦ ©£ε¦ ©«¤ § ­α¤ |"
 "¨©εª GEM ΆΆα ζ®  §α¤ΰ|"
 "© αΆΆ¦  ΅¦¤ε› ¦.][  OK  ]"
+
+#: desk/icons.c:1026
+msgid " Generic "
+msgstr " ‚¤ ΅γ "
+
+#: desk/icons.c:1027
+msgid " Spreadsheet "
+msgstr " ¦ ©« ΅ζ ­ηΆΆ¦ "
+
+#: desk/icons.c:1028
+msgid " Word Processor "
+msgstr " „§¥¨©«γª ‰ £β¤¦¬ "
+
+#: desk/icons.c:1029
+msgid " Database "
+msgstr " α© ››¦£β¤ΰ¤ "
+
+#: desk/icons.c:1030
+msgid " Draw "
+msgstr " ‘®›ε© "
+
+#: desk/icons.c:1031
+msgid " Paint "
+msgstr " …ΰ¨­ ΅γ "
+
+#: desk/icons.c:1032
+msgid " Project "
+msgstr " ‘®β› ¦ "
+
+#: desk/icons.c:1033
+msgid " Graph "
+msgstr " ‚¨α­£ "
+
+#: desk/icons.c:1034
+msgid " Outline "
+msgstr " Outline "
+
+#: desk/icons.c:1035
+msgid " Accounting "
+msgstr " ¦ ©« ΅γ "
+
+#: desk/icons.c:1036
+msgid " Multi-Function "
+msgstr " ¦Ά¬Ά «¦¬¨ε "
+
+#: desk/icons.c:1037
+msgid " Education "
+msgstr " „΅§ε›¬© "
+
+#: desk/icons.c:1038
+msgid " Communications "
+msgstr " „§ ΅¦ ¤ΰ¤εª "
+
+#: desk/icons.c:1039
+msgid " Programmer's Tool "
+msgstr " „¨Άε €¤α§«¬¥ª "
+
+#: desk/icons.c:1040
+msgid " Game "
+msgstr "  ®¤ε›  "
+
+#: desk/icons.c:1041
+msgid " Output "
+msgstr " λ¥¦›¦ª "
+
+#: desk/icons.c:1042
+msgid " Desktop Publisher "
+msgstr " Desktop Publisher "
+
+#: desk/icons.c:1043
+msgid " Scan "
+msgstr " Scan "
+
+#: desk/icons.c:1044
+msgid " Mail "
+msgstr " ’®¬›¨¦£ε¦ "
 
