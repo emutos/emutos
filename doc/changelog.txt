@@ -4446,3 +4446,6 @@ Start... early ages
 
 2013-02-22
 - po/gr.po: Updated Greek translation. Contributed by Christos Tziotzis. (VRI)
+
+2013-02-23
+- aes/gemfslib.c: Initialize newdrive.  Thanks to David Savinkoff. (RFB)

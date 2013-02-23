@@ -553,7 +553,7 @@ WORD fs_input(BYTE *pipath, BYTE *pisel, WORD *pbutton, BYTE *pilabel)
                                                 /*   by forcing initial */
                                                 /*   fs_newdir call     */
         sel = 0;
-        newsel = FALSE;
+        newsel = newdrive = FALSE;
         cont = newlist = TRUE;
         while( cont )
         {
