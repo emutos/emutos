@@ -15,6 +15,7 @@
 
         .globl  _bootasm
         .globl  _getbootsize
+        .extern _cpu
 
         .text
 /*
@@ -65,8 +66,14 @@ copy:
 #endif
 
         /* jump into boot routine */
-
-        /* the instruction cache should be invalidated here */
+#ifndef __mcoldfire__
+        cmpi.l   #30,_cpu
+        bne.s    not68030
+        MOVEC_CACR_D0
+        ori.b   #0x08,d0        // invalidate instruction cache
+        MOVEC_D0_CACR
+not68030:
+#endif
         jmp     (a4)
 
 boot:
@@ -87,7 +94,13 @@ bcopy:
 #endif
 
         /* jump into it */
-
-        /* the instruction cache should be invalidated here */
+#ifndef __mcoldfire__
+        cmpi.l   #30,_cpu
+        bne.s    bnot30
+        MOVEC_CACR_D0
+        ori.b   #0x08,d0        // invalidate instruction cache
+        MOVEC_D0_CACR
+bnot30:
+#endif
         jmp     (a0)
 bootend:

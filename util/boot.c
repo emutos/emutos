@@ -37,6 +37,18 @@ struct {
   char name[14];
 } dta;
 
+/*
+ * cookie stuff
+ */
+#define _p_cookies  *(struct cookie **)0x5a0
+#define _CPU        0x5f435055L
+
+struct cookie {
+  long id;
+  long value;
+};
+long cpu;
+
 static void putl(unsigned long u)
 {
   int i;
@@ -58,6 +70,21 @@ static void fatal(const char *s)
   (void)Cconws("\012\015hit any key.");
   Cconin();
   exit(1);
+}
+
+/* return value from _CPU cookie */
+static long get_cpu_cookie()
+{
+  struct cookie *cptr = _p_cookies;
+
+  if (cptr) {
+    do {
+      if (cptr->id == _CPU)
+        return cptr->value;
+    } while ((++cptr)->id);
+  }
+
+  return 0L;
 }
 
 int main()
@@ -110,6 +137,8 @@ int main()
   /* supervisor */
 
   Super(0);
+
+  cpu = get_cpu_cookie();   /* used by bootasm code */
 
 #if CONF_WITH_PSEUDO_COLD_BOOT
   /* simulate a pseudo-cold boot, when EmuTOS loads itself */

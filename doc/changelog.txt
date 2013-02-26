@@ -4449,3 +4449,6 @@ Start... early ages
 
 2013-02-23
 - aes/gemfslib.c: Initialize newdrive.  Thanks to David Savinkoff. (RFB)
+
+2013-02-25
+- util/boot.c util/bootasm.S: Add i-cache invalidation (68030 only). (RFB)
