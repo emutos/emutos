@@ -294,7 +294,7 @@ static void flop_detect_drive(WORD dev)
 #if CONF_WITH_FDC
     floplock(dev);
     select(dev, 0);
-    set_fdc_reg(FDC_CS, FDC_RESTORE | finfo[cur_dev].actual_rate);
+    set_fdc_reg(FDC_CS, FDC_RESTORE | finfo[dev].actual_rate);
     if(timeout_gpip(TIMEOUT)) {
         /* timeout */
 #if DBG_FLOP

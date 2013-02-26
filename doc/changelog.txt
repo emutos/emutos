@@ -4452,3 +4452,7 @@ Start... early ages
 
 2013-02-25
 - util/boot.c util/bootasm.S: Add i-cache invalidation (68030 only). (RFB)
+
+2013-02-26
+- bios/floppy.c: Fix bug: floppy auto-detect did not work properly on
+  real hardware. (RFB)
