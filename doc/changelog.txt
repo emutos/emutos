@@ -4458,3 +4458,7 @@ Start... early ages
   real hardware. (RFB)
 - bios/floppy.c: Floppy i/o failed when i/o accesses were more than
   0.5secs apart. (RFB)
+
+2013-02-27
+- bios/blkdev.c bios/blkdev.h bios/floppy.c: Flop_mediach() now checks
+  for either TOS or MSDOS serial number change. (RFB)

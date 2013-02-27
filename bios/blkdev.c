@@ -415,9 +415,8 @@ LONG blkdev_getbpb(WORD dev)
     /* additional geometry info */
     blkdev[dev].geometry.sides = getiword(b->sides);
     blkdev[dev].geometry.spt = getiword(b->spt);
-    blkdev[dev].serial[0] = b->serial[0];
-    blkdev[dev].serial[1] = b->serial[1];
-    blkdev[dev].serial[2] = b->serial[2];
+    memcpy(blkdev[dev].serial,b->serial,3);
+    memcpy(blkdev[dev].serial2,b16->serial2,4);
 
 #if DBG_BLKDEV
     kprintf("bpb[dev = %d] = {\n", dev);

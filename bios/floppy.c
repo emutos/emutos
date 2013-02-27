@@ -326,7 +326,7 @@ LONG flop_mediach(WORD dev)
 {
     int unit;
     WORD err;
-    struct bs *bootsec = (struct bs *) dskbufp;
+    struct fat16_bs *bootsec = (struct fat16_bs *) dskbufp;
 #if DBG_FLOP
     kprintf("flop_mediach(%d)\n",dev);
 #endif
@@ -348,10 +348,12 @@ LONG flop_mediach(WORD dev)
         return MEDIACHANGE;
 
 #if DBG_FLOP
-    kprintf("flop_mediach() got bootsec, serial=0x%02x%02x%02x\n",
-            bootsec->serial[0],bootsec->serial[1],bootsec->serial[2]);
+    kprintf("flop_mediach() got bootsec, serial=0x%02x%02x%02x, serial2=0x%02x%02x%02x%02x\n",
+            bootsec->serial[0],bootsec->serial[1],bootsec->serial[2],
+            bootsec->serial2[0],bootsec->serial2[1],bootsec->serial2[2],bootsec->serial2[3]);
 #endif
-    if (memcmp(bootsec->serial,blkdev[dev].serial,3))
+    if (memcmp(bootsec->serial,blkdev[dev].serial,3)
+     || memcmp(bootsec->serial2,blkdev[dev].serial2,4))
         return MEDIACHANGE;
 
 #if DBG_FLOP
