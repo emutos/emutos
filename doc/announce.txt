@@ -24,6 +24,7 @@ CHANGES SINCE LAST RELEASE
 - Enabled internal IDE support for all machines, including Falcon.
 - Added support for hard disks with Atari or PC partition tables (or none).
 - Fixed floppy support for DD and HD drives.
+- Improved media change detection.
 - Added support for Falcon and TT SCC serial port.
 - Many file selector improvements, including drive buttons.
 - Fixed support for Hatari extended VDI screens.
