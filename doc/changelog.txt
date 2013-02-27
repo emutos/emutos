@@ -4456,3 +4456,5 @@ Start... early ages
 2013-02-26
 - bios/floppy.c: Fix bug: floppy auto-detect did not work properly on
   real hardware. (RFB)
+- bios/floppy.c: Floppy i/o failed when i/o accesses were more than
+  0.5secs apart. (RFB)

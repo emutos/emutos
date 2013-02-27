@@ -357,7 +357,7 @@ LONG flop_mediach(WORD dev)
 #if DBG_FLOP
     kprintf("flop_mediach() serial is unchanged\n");
 #endif
-    return MEDIAMAYCHANGE;
+    return MEDIANOCHANGE;
 }
 
 
