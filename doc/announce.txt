@@ -3,7 +3,7 @@ Dear Atari Community!
 
 We are happy to announce a new public release of EmuTOS:
 
-EmuTOS 0.9.0 -- February XXth, 2013
+EmuTOS 0.9.0 -- February 28th, 2013
 
 
 INTRODUCTION
