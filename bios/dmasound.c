@@ -1,10 +1,11 @@
 /*
  * dmasound.c - STe/TT/Falcon DMA sound routines
  *
- * Copyright (c) 2011 The EmuTOS development team
+ * Copyright (c) 2011, 2013 The EmuTOS development team
  *
  * Authors:
  *  VRI   Vincent Rivière
+ *  THH   Thomas Huth
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -13,10 +14,11 @@
 #define DBG_DMASOUND 0
 
 #include "config.h"
-#include "dmasound.h"
 #include "portab.h"
+#include "dmasound.h"
 #include "vectors.h"
 #include "kprint.h"
+#include "gemerror.h"
 
 #if CONF_WITH_DMASOUND
 
@@ -108,6 +110,8 @@ struct dmasound
 /* LMC1992 parameter for Faders functions */
 #define LMC1992_FADER(x) (((x) + 40) / 2) /* Range from -40 to 0 dB */
 
+static int sound_locked;
+
 int has_dmasound;
 int has_microwire;
 int has_falcon_dmasound;
@@ -164,9 +168,294 @@ static void lmc1992_init(void)
 
 void dmasound_init(void)
 {
+    sound_locked = 0;
+
     lmc1992_init();
 
     /* TODO: Initialize the other DMA sound hardware */
+}
+
+/* *** XBIOS DMA sound functions *** */
+
+/**
+ * Lock the XBIOS DMA sound subsystem
+ */
+LONG locksnd(void)
+{
+    if (sound_locked || !has_dmasound)
+        return -129;
+
+    sound_locked = 1;
+    return 1;
+}
+
+/**
+ * Free the XBIOS DMA sound subsystem
+ */
+LONG unlocksnd(void)
+{
+    if (!sound_locked)
+        return -128;
+
+    sound_locked = 0;
+    return 0;
+}
+
+/**
+ * Configure various sound setttings
+ */
+LONG soundcmd(WORD mode, WORD data)
+{
+    if (mode == 6)   /* Set STE/TT compatible prescale? */
+    {
+        UWORD modectrl = DMASOUND->mode_control;
+        if (data >= 0 && data <= 3)
+        {
+            modectrl = (modectrl & 0xFC) | data;
+            DMASOUND->mode_control = modectrl;
+        }
+        return modectrl & 0x3;
+    }
+
+    // TODO: Volume settings
+
+    return 0;
+}
+
+/**
+ * Set DMA sound frame buffer pointers
+ */
+LONG setbuffer(UWORD mode, ULONG startaddr, ULONG endaddr)
+{
+    if (mode > 1 || (mode == 1 && !has_falcon_dmasound))
+        return EBADRQ;
+
+    if (has_falcon_dmasound)
+    {
+        if (mode == 1)
+            DMASOUND->control |= 0x80;  /* Select recording frame registers */
+        else
+            DMASOUND->control &= 0x7f;  /* Select replay frame registers */
+    }
+
+    /* Set frame start address */
+    DMASOUND->frame_start_high = (UBYTE)(startaddr >> 16);
+    DMASOUND->frame_start_mid = (UBYTE)(startaddr >> 8);
+    DMASOUND->frame_start_low = (UBYTE)startaddr;
+
+    /* Set frame end address */
+    DMASOUND->frame_end_high = (UBYTE)(endaddr >> 16);
+    DMASOUND->frame_end_mid = (UBYTE)(endaddr >> 8);
+    DMASOUND->frame_end_low = (UBYTE)endaddr;
+
+    return 0;
+}
+
+/**
+ * Set sound mode (stereo/mono, 8-bit/16-bit)
+ */
+LONG setsndmode(UWORD mode)
+{
+    UBYTE modectrl;
+
+    if (mode > 2)
+        return EBADRQ;
+
+    modectrl = DMASOUND->mode_control & 0x3f;
+    if (mode == 2)
+        modectrl |= 0x80;   /* Select mono */
+    if (mode == 1)
+        modectrl |= 0x40;   /* Select 16-bit mode */
+    DMASOUND->mode_control = modectrl;
+
+    return 0;
+}
+
+/**
+ * Set interrupt mode (Timer-A or MFP-i7)
+ */
+LONG setinterrupt(UWORD mode, WORD cause)
+{
+    UBYTE irqreg;
+
+    if (mode > 1 || !has_falcon_dmasound)
+        return EBADRQ;
+
+    irqreg = DMASOUND->interrupt;
+    cause &= 0x3;
+
+    if (mode == 0)
+    {
+        irqreg &= 0xF3;
+        irqreg |= cause << 2;
+    }
+    else
+    {
+        irqreg &= 0xFC;
+        irqreg |= cause;
+    }
+
+    DMASOUND->interrupt = irqreg;
+
+    return 0;
+}
+
+/**
+ * Enable/disable frame replay/recording and set looping mode
+ */
+LONG buffoper(WORD mode)
+{
+    if (mode < 0)
+    {
+        LONG ret;
+        UBYTE ctrl = DMASOUND->control;
+        ret = ctrl & 0x3;
+        if (has_falcon_dmasound)
+            ret |= ((ctrl >> 2) & 0xc);
+        return ret;
+    }
+
+    DMASOUND->control = ((mode & 0xc) << 2) | (mode & 0x3);
+    return 0;
+}
+
+/**
+ * Devconnect for Falcon hardware
+ */
+static LONG devconnect_falcon(WORD source, WORD dest, WORD clk,
+                              WORD prescale, WORD protocol)
+{
+    UWORD data;
+    int i, val;
+    int ret = 0;
+
+    protocol &= 1;
+    source &= 3;
+
+    if (source == 3 && clk > 1) {
+        clk = 0;
+        ret = EBADRQ;
+    }
+
+    data = DMASOUND->crossbar_src;
+    data &= ~(0xf << (source*4));   /* Mask old settings */
+    val = ((clk&3)<<1) | protocol;
+    if (source == 3)
+        val &= 0xE;
+    data |= val << (source*4);
+    if ((dest & 0xD) != 0 && protocol == 0)
+        data |= 0x8;
+    DMASOUND->crossbar_src = data;
+
+    data = DMASOUND->crossbar_dest;
+    for (i = 0; i < 4; i++)
+    {
+        if ((dest & (1 << i)) != 0)
+        {
+            data &= ~(0xf << (i*4));   /* Mask old settings */
+            val = ((source << 1)| protocol);
+            if (i == 3)
+                val &= 0xE;
+            if (source != 1 && i == 0 && protocol == 0)
+                val |= 0x8;
+            data |= val << (i*4);
+        }
+    }
+    DMASOUND->crossbar_dest = data;
+
+    if (clk == 1)
+        DMASOUND->freq_ext = prescale;
+    else
+        DMASOUND->freq_int = prescale;
+
+    return 0;
+}
+
+
+/**
+ * Provide STE/TT compatible frequency setting
+ */
+static LONG devconnect_ste(WORD source, WORD dest, WORD clk,
+                           WORD prescale, WORD protocol)
+{
+    UWORD modectrl;
+
+    if (source != 0 || dest != 8 || clk != 0)
+        return EBADRQ;
+
+    modectrl = DMASOUND->mode_control & 0xFC;
+    switch (prescale)
+    {
+     case 0:             /* Set STE compatible mode -> we can abort here */
+        return 0;
+     case 1:
+        modectrl |= 3;         /* 50 kHz */ 
+        break;
+     case 2: case 3: case 4:
+        modectrl |= 2;         /* 25 kHz */
+        break;
+     case 5: case 6: case 7: case 8:
+        modectrl |= 1;         /* 12 kHz */
+        break;
+     default:
+        break;                 /* leave it at 6 kHz */
+    }
+    DMASOUND->mode_control = modectrl;
+
+    return 0;
+}
+
+LONG devconnect(WORD source, WORD dest, WORD clk, WORD prescale, WORD protocol)
+{
+    if (has_falcon_dmasound)
+        return devconnect_falcon(source, dest, clk, prescale, protocol);
+    else
+        return devconnect_ste(source, dest, clk, prescale, protocol);
+}
+
+
+LONG sndstatus(WORD reset)
+{
+    LONG ret = 0;
+    // TODO: add the remaining bits here and add reset support
+    if (has_falcon_dmasound)
+    {
+        ret = (DMASOUND->codec_status & 3) << 4;
+    }
+    return 0;
+}
+
+/**
+ * Get current frame replay/recording positions
+ */
+LONG buffptr(LONG ptr)
+{
+    struct SndBufPtr {
+        LONG play;
+        LONG record;
+        LONG res1;
+        LONG res2;
+    } *sbp;
+    UBYTE hi, mid, low;
+
+    sbp = (struct SndBufPtr *)ptr;
+
+    if (has_falcon_dmasound)
+    {
+        DMASOUND->control |= 0x80;  /* Select recording frame registers */
+        hi = DMASOUND->frame_counter_high;
+        mid = DMASOUND->frame_counter_mid;
+        low = DMASOUND->frame_counter_low;
+        sbp->record = ((ULONG)hi << 16) | ((ULONG)mid << 8) | low;
+        DMASOUND->control &= 0x7f;  /* Select replay frame registers */
+    }
+
+    hi = DMASOUND->frame_counter_high;
+    mid = DMASOUND->frame_counter_mid;
+    low = DMASOUND->frame_counter_low;
+    sbp->play = ((ULONG)hi << 16) | ((ULONG)mid << 8) | low;
+
+    return 0;
 }
 
 #endif /* CONF_WITH_DMASOUND */

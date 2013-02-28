@@ -4464,3 +4464,7 @@ Start... early ages
   for either TOS or MSDOS serial number change. (RFB)
 
 * Release: 0.9.0
+
+2013-03-01
+
+- bios/dmasound.* bios/xbios.c: Added the core XBIOS DMA sound functions. (THH)

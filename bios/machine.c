@@ -320,7 +320,7 @@ static void setvalue_snd(void)
 
   if (has_falcon_dmasound) {
     /* FIXME: Enable the following when Falcon XBIOS functions are implemented */
-    /*cookie_snd |= SND_16BIT | SND_MATRIX;*/
+    cookie_snd |= SND_16BIT | SND_MATRIX;
   }
 #endif
 

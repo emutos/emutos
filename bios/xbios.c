@@ -28,6 +28,7 @@
 #include "screen.h"
 #include "videl.h"
 #include "sound.h"
+#include "dmasound.h"
 #include "floppy.h"
 #include "disk.h"
 #include "clock.h"
@@ -1116,6 +1117,55 @@ const PFLONG xbios_vecs[] = {
     xbios_unimpl,   /* 5d */
     xbios_unimpl,   /* 5e */
 #endif
+#if CONF_WITH_DMASOUND
+    xbios_unimpl,   /* 5f */
+    xbios_unimpl,   /* 60 */
+    xbios_unimpl,   /* 61 */
+    xbios_unimpl,   /* 62 */
+    xbios_unimpl,   /* 63 */
+    xbios_unimpl,   /* 64 */
+    xbios_unimpl,   /* 65 */
+    xbios_unimpl,   /* 66 */
+    xbios_unimpl,   /* 67 */
+    xbios_unimpl,   /* 68 */
+    xbios_unimpl,   /* 69 */
+    xbios_unimpl,   /* 6a */
+    xbios_unimpl,   /* 6b */
+    xbios_unimpl,   /* 6c */
+    xbios_unimpl,   /* 6d */
+    xbios_unimpl,   /* 6e */
+    xbios_unimpl,   /* 6f */
+    xbios_unimpl,   /* 70 */
+    xbios_unimpl,   /* 71 */
+    xbios_unimpl,   /* 72 */
+    xbios_unimpl,   /* 73 */
+    xbios_unimpl,   /* 74 */
+    xbios_unimpl,   /* 75 */
+    xbios_unimpl,   /* 76 */
+    xbios_unimpl,   /* 77 */
+    xbios_unimpl,   /* 78 */
+    xbios_unimpl,   /* 79 */
+    xbios_unimpl,   /* 7a */
+    xbios_unimpl,   /* 7b */
+    xbios_unimpl,   /* 7c */
+    xbios_unimpl,   /* 7d */
+    xbios_unimpl,   /* 7e */
+    xbios_unimpl,   /* 7f */
+    VEC(xbios_80, locksnd),     /* 80 */
+    VEC(xbios_81, unlocksnd),   /* 81 */
+    VEC(xbios_82, soundcmd),    /* 82 */
+    VEC(xbios_83, setbuffer),   /* 83 */
+    VEC(xbios_84, setsndmode),  /* 84 */
+    xbios_unimpl,   /* 85 */
+    xbios_unimpl,   /* 86 */
+    VEC(xbios_87, setinterrupt), /* 87 */
+    VEC(xbios_88, buffoper),    /* 88 */
+    xbios_unimpl,   /* 89 */
+    xbios_unimpl,   /* 8a */
+    VEC(xbios_8b, devconnect),  /* 8b */
+    VEC(xbios_8c, sndstatus),   /* 8c */
+    VEC(xbios_8d, buffptr),     /* 8d */
+#endif /* CONF_WITH_DMASOUND */
 
 #endif /* TOS_VERSION >= 0x200 */
 };
