@@ -4468,3 +4468,4 @@ Start... early ages
 2013-03-01
 
 - bios/dmasound.* bios/xbios.c: Added the core XBIOS DMA sound functions. (THH)
+- aes/gemrslib.c: Code cleanup: eliminate OB_ macros. (RFB)

@@ -78,15 +78,15 @@ static char    free_str[256];   /* must be long enough for longest freestring in
 
 /*
 *       Fix up a character position, from offset,row/col to a pixel value.
-*       If column or width is 80 then convert to rightmost column or
-*       full screen width.
+*       If width is 80 then convert to full screen width.  If height is 25
+*       then convert to full screen height.  Is this correct??
 */
-static void fix_chpos(LONG pfix, WORD offset)
+static void fix_chpos(WORD *pfix, WORD offset)
 {
         WORD    coffset;
         WORD    cpos;
 
-        cpos = LWGET(pfix);
+        cpos = *pfix;
         coffset = (cpos >> 8) & 0x00ff;
         cpos &= 0x00ff;
 
@@ -109,7 +109,7 @@ static void fix_chpos(LONG pfix, WORD offset)
         }
 
         cpos += ( coffset > 128 ) ? (coffset - 256) : coffset;
-        LWSET(pfix, cpos);
+        *pfix = cpos;
 }
 
 
@@ -119,12 +119,13 @@ static void fix_chpos(LONG pfix, WORD offset)
 void rs_obfix(LONG tree, WORD curob)
 {
         register WORD   offset;
-        register LONG   p;
+        OBJECT *obj = (OBJECT *)tree + curob;
+        WORD *p;
                                                 /* set X,Y,W,H */
-        p = OB_X(curob);
+        p = &obj->ob_x;
 
         for (offset=0; offset<4; offset++)
-          fix_chpos(p+(LONG)(2*offset), offset);
+          fix_chpos(p+offset, offset);
 }
 
 
@@ -239,17 +240,17 @@ static void fix_trindex(void)
 {
         register WORD   ii;
         register LONG   ptreebase;
-        LONG            tree;
+        OBJECT *root;
 
         ptreebase = get_sub(0, RT_TRINDEX, sizeof(LONG) );
         LLSET(APP_LOPNAME, ptreebase );
 
         for (ii = NUM_TREE-1; ii >= 0; ii--)
         {
-          tree = fix_long(ptreebase + LW(ii*4));
-          if ( (LWGET(OB_STATE(ROOT)) == OUTLINED) &&
-               (LWGET(OB_TYPE(ROOT)) == G_BOX) )
-           LWSET( OB_STATE(ROOT), SHADOWED );
+          root = (OBJECT *)fix_long(ptreebase + LW(ii*4));
+          if ( (root->ob_state == OUTLINED) &&
+               (root->ob_type == G_BOX) )
+            root->ob_state = SHADOWED;
         }
 }
 
