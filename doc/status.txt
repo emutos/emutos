@@ -42,27 +42,28 @@ T tested and working on an emulator or real hardware
  Hardware initialization
  ----------------------------------------------------------------------------
 
- t CPU setting (tested only 68000 (real & emu), 68030 (real & emu) and 68040 (emu))
+ t CPU setting, tested on:
+   68000 (real & emu), 68030 (real & emu), 68040 (emu), v4e (real)
  > FPU (detected, is any initialization needed?)
  T 68030 MMU and cache initialization
  T Memory controller (both ST and Falcon)
  T DMA controller
- t WD 1772 Floppy disk controller (write track not tested)
+ t WD 1772 / AJAX Floppy disk controller (write track not tested)
  T MFP
  T PSG
  T ST shifter
+ t STe shifter
+ T VIDEL
  T ACIAs, IKBD protocol
  t MegaST Real-Time Clock  (set clock not tested)
- T STe shifter
  t NVRAM (including RTC)
- T Videl
  - Blitter
  T Microwire
  - DMA sound
  - DSP
  T SCC
  T IDE
- > ACSI hard disk
+ > ACSI
  T NatFeats (a framework for native features on emulators)
 
 

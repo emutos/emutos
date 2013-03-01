@@ -126,10 +126,11 @@ This is the currently supported Atari hardware:
 
 - CPU support for m68000, m68010, m68020, m68030, m68040, m68060, ColdFire V4e
 - FPU detected
+- 68030 MMU and cache
 - Memory controller (both ST and Falcon)
 - Monitor type detection (mono, RGB or VGA)
-- WD 1772 / AJAX Floppy disk controller (write track not tested)
 - DMA controller
+- WD 1772 / AJAX Floppy disk controller (write track not tested)
 - MFP
 - PSG
 - ST shifter
@@ -138,9 +139,14 @@ This is the currently supported Atari hardware:
 - ACIAs, IKBD protocol, mouse
 - MegaST Real-Time Clock (set clock not tested)
 - NVRAM (including RTC)
-- Falcon IDE
+- Blitter (Blitmode() just returns HW status)
+- Microwire
 - SCC
-- The native feature interface to some degree
+- IDE
+- ACSI
+- The Native Features interface to some degree
+
+Support for DMA sound, Falcon sound matrix and DSP HW are missing.
 
 EmuTOS is also available on some non-Atari hardware:
 - Amiga (WinUAE, Amiga 1000, Amiga 1200 with Blizzard 1260)

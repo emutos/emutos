@@ -4475,3 +4475,4 @@ Start... early ages
   with shift/mask. (RFB)
 - bdos/fsfat.c: Performance: replace multiply with shift. (RFB)
 - desk/deskdir.c: Code cleanup: eliminate OB_ macros. (RFB)
+- doc/*: Updated. Contributed by Eero Tamminen. (VRI)

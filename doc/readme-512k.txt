@@ -14,6 +14,10 @@ need to use a smaller EmuTOS image.
 etos512k.img - Multilanguage
 etos512k.sym - Symbol address information for Hatari debugger and profiler
 
+Additional information on debugging EmuTOS and its software compatibility
+is included with Hatari:
+http://hg.tuxfamily.org/mercurialroot/hatari/hatari/raw-file/tip/doc/emutos.txt
+
 The default language is English.
 Other supported languages are:
 - Czech
