@@ -368,7 +368,7 @@ static LONG devconnect_falcon(WORD source, WORD dest, WORD clk,
     else
         DMASOUND->freq_int = prescale;
 
-    return 0;
+    return ret;
 }
 
 
@@ -422,7 +422,7 @@ LONG sndstatus(WORD reset)
     {
         ret = (DMASOUND->codec_status & 3) << 4;
     }
-    return 0;
+    return ret;
 }
 
 /**
