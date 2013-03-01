@@ -240,13 +240,14 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD numpts,
 {
         LONG    tree, curr_tree;
         WNODE   *pw;
-        WORD    root, state, curr_wh, curr_root, curr_sel, dst_wh;
+        WORD    root, curr_wh, curr_root, curr_sel, dst_wh;
         WORD    /* overwhite,*/ l_mx, l_my;
         WORD    offx, offy;
         WORD    down, button, keystate, junk;
         FNODE   *pf;
         GRECT   o, ln;
         ANODE   *pa;
+        OBJECT *obj;
 
         graf_mouse(4, 0x0L);                    /* flat hand            */
 
@@ -327,8 +328,8 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD numpts,
               curr_sel = 0;
             }
           }
-          state = LWGET(OB_STATE(*pdobj)); /*state = tree[*pdobj].ob_state;*/
-          if ( !(state & SELECTED) )
+          obj = (OBJECT *)tree + *pdobj;
+          if ( !(obj->ob_state & SELECTED) )
           {
                 pa = i_find(dst_wh, *pdobj, &pf, &junk);
                 if (pa && ((pa->a_type == AT_ISFOLD) ||
@@ -368,12 +369,13 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD *pdulx, WORD *pdu
 {
         LONG    tree, curr_tree;
         WNODE   *pw;
-        WORD    root, state, curr_wh, curr_root, curr_sel, dst_wh;
+        WORD    root, curr_wh, curr_root, curr_sel, dst_wh;
         WORD    overwhite, l_mx, l_my;
         WORD    down, button, keystate, junk;
         UWORD   ret[4];
         FNODE   *pf;
         ANODE   *pa;
+        OBJECT *obj;
 
         gsx_sclip(&gl_rscreen);
         graf_mouse(4, 0x0L);                    /* flat hand            */
@@ -417,8 +419,8 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc, WORD *pdulx, WORD *pdu
             }
             if (!overwhite)
             {
-              state = LWGET(OB_STATE(*pdobj));
-              if ( !(state & SELECTED) )
+              obj = (OBJECT *)tree + *pdobj;
+              if ( !(obj->ob_state & SELECTED) )
               {
                 pa = i_find(dst_wh, *pdobj, &pf, &junk);
                 if (pa && (((pa->a_type == AT_ISFOLD) ||

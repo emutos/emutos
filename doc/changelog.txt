@@ -4470,3 +4470,4 @@ Start... early ages
 - bios/dmasound.* bios/xbios.c: Added the core XBIOS DMA sound functions. (THH)
 - aes/gemrslib.c: Code cleanup: eliminate OB_ macros. (RFB)
 - aes/gemoblib.c: Code cleanup: eliminate OB_ macros. (RFB)
+- desk/deskact.c: Code cleanup: eliminate OB_ macros. (RFB)
