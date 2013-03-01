@@ -3,7 +3,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002 The EmuTOS development team
+*                 2002-2013 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -58,15 +58,15 @@ GLOBAL ICONBLK  ib;
 void ob_offset(LONG tree, WORD obj, WORD *pxoff, WORD *pyoff)
 {
         WORD            junk;
-        LONG            px;
+        OBJECT *treeptr = (OBJECT *)tree;
 
         *pxoff = *pyoff = 0;
         do
         {
                                                 /* have our parent--    */
                                                 /*  add in his x, y     */
-          *pxoff += LWGET(px = OB_X(obj));
-          *pyoff += LWGET(px + 0x02L);
+          *pxoff += (treeptr+obj)->ob_x;
+          *pyoff += (treeptr+obj)->ob_y;
           obj = get_par(tree, obj, &junk);
         } while ( obj != NIL );
 }
@@ -77,7 +77,9 @@ void ob_offset(LONG tree, WORD obj, WORD *pxoff, WORD *pyoff)
 /************************************************************************/
 void ob_relxywh(LONG tree, WORD obj, GRECT *pt)
 {
-        LWCOPY(ADDR(pt), OB_X(obj), sizeof(GRECT)/2);
+        OBJECT *objptr = ((OBJECT *)tree) + obj;
+
+        memcpy(pt, &objptr->ob_x, sizeof(GRECT));
 } /* ob_relxywh */
 
 
@@ -86,18 +88,20 @@ void ob_relxywh(LONG tree, WORD obj, GRECT *pt)
 /************************************************************************/
 void ob_actxywh(LONG tree, WORD obj, GRECT *pt)
 {
-        LONG            pw;
+        OBJECT *objptr = ((OBJECT *)tree) + obj;
 
         ob_offset(tree, obj, &pt->g_x, &pt->g_y);
-        pt->g_w = LWGET(pw = OB_WIDTH(obj));
-        pt->g_h = LWGET(pw + 0x02L);
+        pt->g_w = objptr->ob_width;
+        pt->g_h = objptr->ob_height;
 } /* ob_actxywh */
 
 
 
 void ob_setxywh(LONG tree, WORD obj, GRECT *pt)
 {
-        LWCOPY(OB_X(obj), ADDR(pt), sizeof(GRECT)/2);
+        OBJECT *objptr = ((OBJECT *)tree) + obj;
+
+        memcpy(&objptr->ob_x, pt, sizeof(GRECT));
 }
 
 
@@ -423,13 +427,14 @@ void ob_draw(LONG tree, WORD obj, WORD depth)
 WORD get_prev(LONG tree, WORD parent, WORD obj)
 {
         register WORD   nobj, pobj;
+        OBJECT *treeptr = (OBJECT *)tree;
 
-        pobj = LWGET(OB_HEAD(parent));
+        pobj = (treeptr+parent)->ob_head;
         if (pobj != obj)
         {
           while (TRUE)
           {
-            nobj = LWGET(OB_NEXT(pobj));
+            nobj = (treeptr+pobj)->ob_next;
             if (nobj != obj)
               pobj = nobj;
             else
@@ -458,6 +463,7 @@ WORD ob_find(LONG tree, WORD currobj, WORD depth, WORD mx, WORD my)
         WORD            dosibs, done, junk;
         GRECT           t, o;
         WORD            parent, childobj, flags;
+        OBJECT          *objptr;
 
         lastfound = NIL;
 
@@ -481,13 +487,14 @@ WORD ob_find(LONG tree, WORD currobj, WORD depth, WORD mx, WORD my)
           t.g_x += o.g_x;
           t.g_y += o.g_y;
 
-          flags = LWGET(OB_FLAGS(currobj));
+          objptr = ((OBJECT *)tree) + currobj;
+          flags = objptr->ob_flags;
           if ( (inside(mx, my, &t)) &&
                (!(flags & HIDETREE)) )
           {
             lastfound = currobj;
 
-            childobj = LWGET(OB_TAIL(currobj));
+            childobj = objptr->ob_tail;
             if ( (childobj != NIL) && depth)
             {
               currobj = childobj;
@@ -527,25 +534,27 @@ WORD ob_find(LONG tree, WORD currobj, WORD depth, WORD mx, WORD my)
 void ob_add(LONG tree, WORD parent, WORD child)
 {
         register WORD   lastkid;
-        register LONG   ptail;
+        OBJECT *treeptr = (OBJECT *)tree;
+        OBJECT *parentptr;
 
         if ( (parent != NIL) &&
              (child != NIL) )
         {
+          parentptr = treeptr + parent;
                                                 /* initialize child     */
-          LWSET(OB_NEXT(child), parent);
+          (treeptr+child)->ob_next = parent;
 
-          lastkid = LWGET( ptail = OB_TAIL(parent) );
+          lastkid = parentptr->ob_tail;
           if (lastkid == NIL)
                                                 /* this is parent's 1st */
                                                 /*   kid, so both head  */
                                                 /*   and tail pt to it  */
-            LWSET(OB_HEAD(parent), child);
+            parentptr->ob_head = child;
           else
                                                 /* add kid to end of    */
                                                 /*   kid list           */
-            LWSET(OB_NEXT(lastkid), child);
-          LWSET(ptail, child);
+            (treeptr+lastkid)->ob_next = child;
+          parentptr->ob_tail = child;
         }
 } /* ob_add */
 
@@ -557,28 +566,30 @@ void ob_delete(LONG tree, WORD obj)
 {
         register WORD   parent;
         WORD            prev, nextsib;
-        register LONG   ptail, phead;
+        OBJECT          *treeptr = (OBJECT *)tree;
+        OBJECT          *parentptr, *prevptr;
 
-        if (obj != ROOT)
-          parent = get_par(tree, obj, &nextsib);
-        else
+        if (obj == ROOT)
           return;
 
-        if ( LWGET(phead = OB_HEAD(parent)) == obj )
+        parent = get_par(tree, obj, &nextsib);
+        parentptr = treeptr + parent;
+
+        if ( parentptr->ob_head == obj )
         {
                                                 /* this is head child   */
                                                 /*   in list            */
-          if ( LWGET(ptail = OB_TAIL(parent)) == obj)
+          if ( parentptr->ob_tail == obj)
           {
                                                 /* this is only child   */
                                                 /*   in list, so fix    */
                                                 /*   head & tail ptrs   */
             nextsib = NIL;
-            LWSET(ptail, NIL);
+            parentptr->ob_tail = NIL;
           }
                                                 /*   move head ptr to   */
                                                 /*   next child in list */
-          LWSET(phead, nextsib);
+          parentptr->ob_head = nextsib;
         }
         else
         {
@@ -586,13 +597,14 @@ void ob_delete(LONG tree, WORD obj)
                                                 /*   so move pnext      */
                                                 /*   around it          */
           prev = get_prev(tree, parent, obj);
-          LWSET(OB_NEXT(prev), nextsib);
-          if ( LWGET(ptail = OB_TAIL(parent)) == obj)
+          prevptr = treeptr + prev;
+          prevptr->ob_next = nextsib;
+          if ( parentptr->ob_tail == obj)
                                                 /* this is last child   */
                                                 /*   in list, so move   */
                                                 /*   tail ptr to prev   */
                                                 /*   child in list      */
-            LWSET(ptail, prev);
+            parentptr->ob_tail = prev;
         }
 } /* ob_delete */
 
@@ -606,40 +618,46 @@ void ob_order(LONG tree, WORD mov_obj, WORD new_pos)
 {
         register WORD   parent;
         WORD            chg_obj, ii, junk;
-        register LONG   phead, pnext, pmove;
+        OBJECT          *treeptr = (OBJECT *)tree;
+        OBJECT          *parentptr, *movptr, *chgptr;
 
-        if (mov_obj != ROOT)
-          parent = get_par(tree, mov_obj, &junk);
-        else
+        if (mov_obj == ROOT)
           return;
 
+        parent = get_par(tree, mov_obj, &junk);
+        parentptr = treeptr + parent;
+        movptr = treeptr + mov_obj;
+
         ob_delete(tree, mov_obj);
-        chg_obj = LWGET(phead = OB_HEAD(parent));
-        pmove = OB_NEXT(mov_obj);
+        chg_obj = parentptr->ob_head;
         if (new_pos == 0)
         {
                                                 /* put mov_obj at head  */
                                                 /*   of list            */
-          LWSET(pmove, chg_obj);
-          LWSET(phead, mov_obj);
+          movptr->ob_next = chg_obj;
+          parentptr->ob_head = mov_obj;
         }
         else
         {
                                                 /* find new_pos         */
           if (new_pos == NIL)
-            chg_obj = LWGET(OB_TAIL(parent));
+            chg_obj = parentptr->ob_tail;
           else
           {
             for (ii = 1; ii < new_pos; ii++)
-              chg_obj = LWGET(OB_NEXT(chg_obj));
+              {
+                chgptr = treeptr + chg_obj;
+                chg_obj = chgptr->ob_next;
+              }
           } /* else */
                                                 /* now add mov_obj      */
                                                 /*   after chg_obj      */
-          LWSET(pmove, LWGET(pnext = OB_NEXT(chg_obj)));
-          LWSET(pnext, mov_obj);
+          chgptr = treeptr + chg_obj;
+          movptr->ob_next = chgptr->ob_next;
+          chgptr->ob_next = mov_obj;
         }
-        if (LWGET(pmove) == parent)
-          LWSET(OB_TAIL(parent), mov_obj);
+        if (movptr->ob_next == parent)
+          parentptr->ob_tail = mov_obj;
 } /* ob_order */
 
 
@@ -659,6 +677,7 @@ void ob_change(LONG tree, WORD obj, UWORD new_state, WORD redraw)
         GRECT           t;
         UWORD           curr_state;
         LONG            spec;
+        OBJECT          *objptr;
 
         ob_sst(tree, obj, &spec, (WORD*)&curr_state, &obtype, &flags, &t, &th);
 
@@ -666,7 +685,8 @@ void ob_change(LONG tree, WORD obj, UWORD new_state, WORD redraw)
              (spec == -1L) )
           return;
 
-        LWSET(OB_STATE(obj), new_state);
+        objptr = ((OBJECT *)tree) + obj;
+        objptr->ob_state = new_state;
 
         if (redraw)
         {
@@ -702,8 +722,10 @@ void ob_change(LONG tree, WORD obj, UWORD new_state, WORD redraw)
 } /* ob_change */
 
 
-UWORD ob_fs(LONG tree, WORD ob, WORD *pflag)
+UWORD ob_fs(LONG tree, WORD obj, WORD *pflag)
 {
-        *pflag = LWGET(OB_FLAGS(ob));
-        return( LWGET(OB_STATE(ob)) );
+        OBJECT          *objptr = ((OBJECT *)tree) + obj;
+
+        *pflag = objptr->ob_flags;
+        return( objptr->ob_state );
 }
