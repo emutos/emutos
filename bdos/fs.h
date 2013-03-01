@@ -2,7 +2,7 @@
  * fs.h - file system defines
  *
  * Copyright (c) 2001 Lineo, Inc.
- *               2002 - 2010 The EmuTOS development team
+ *               2002 - 2013 The EmuTOS development team
  *
  * Authors:
  *  JSL   Jason S. Loveman
@@ -240,6 +240,7 @@ DMD /* drive media block */
     int    m_rblog;     /* log (base 2) of recsiz in bytes      */
     int    m_rbm;       /* recsiz in bytes, mask                */
     int    m_clblog;    /* log (base 2) of clsiz in bytes       */
+    int    m_clbm;      /* clsiz in bytes, mask                 */
     OFD    *m_fatofd;   /* OFD for 'fat file'                   */
 
     OFD    *m_ofl;      /*  list of open files                  */

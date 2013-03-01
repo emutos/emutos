@@ -2,7 +2,7 @@
  * fsdrive.c - physical drive routines for file system
  *
  * Copyright (c) 2001 Lineo, Inc.
- *               2002 - 2010 The EmuTOS development team
+ *               2002 - 2013 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -233,6 +233,7 @@ long    log_media(BPB *b, int drv)
         dm->m_rblog = log2(rsiz);           /*  set log of bytes/record     */
         dm->m_rbm = (1L<<dm->m_rblog)-1;            /*  and mask of it      */
         dm->m_clblog = log2(dm->m_clsizb);          /*  log of bytes/clus   */
+        dm->m_clbm = (1L<<dm->m_clblog)-1;          /*  and mask of it      */
 
         f->o_fileln = n * rsiz;     /*  size of file (root dir)     */
         d->d_strtcl = f->o_strtcl = 2;      /*  root start pseudo-cluster   */

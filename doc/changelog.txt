@@ -4471,3 +4471,5 @@ Start... early ages
 - aes/gemrslib.c: Code cleanup: eliminate OB_ macros. (RFB)
 - aes/gemoblib.c: Code cleanup: eliminate OB_ macros. (RFB)
 - desk/deskact.c: Code cleanup: eliminate OB_ macros. (RFB)
+- bdos/fs.h bdos/fsdrive.c bdos/fsio.c: Performance: replaced divmod()
+  with shift/mask. (RFB)

@@ -2,7 +2,7 @@
  * fsio.c - read/write routines for the file system
  *
  * Copyright (c) 2001 Lineo, Inc.
- *               2002 - 2010 The EmuTOS development team
+ *               2002 - 2013 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -23,7 +23,6 @@
 
 static void xfr2usr(int n, char *s, char *d);
 static void usr2xfr(int n, char *d, char *s);
-static long divmod(unsigned int *modp, long divdnd, int divsor);
 static void addit(OFD *p, long siz, int flg);
 static long xrw(int wrtflg, OFD *p, long len, char *ubufr,
                 void (*bufxfr)(int, char *, char *));
@@ -51,25 +50,6 @@ static void usr2xfr(int n, char *d, char *s)
     while (n--)
         *d++ = *s++;
 }
-
-
-
-/*
- * divmod - do divide and modulo arithmetic
- *
- * the divide is accomplished with the log2 shift factor passed in as
- * as psuedo divisor, the remainder (modulo) is left in the varable
- * pointed to by the third argument.
- */
-
-/* divsor is log2 of actual divisor */
-static long divmod(unsigned int *modp, long divdnd, int divsor)
-{
-    *modp = (unsigned int)(divdnd % (1L<<divsor));
-
-    return (long)(divdnd >> divsor);
-}
-
 
 
 /*
@@ -146,7 +126,8 @@ long    ixlseek(register OFD *p, long n)
         curflg = 0 ;
     /***  end  ***/
 
-    clnum = divmod(&p->o_curbyt,n,dm->m_clblog);
+    clnum = n >> dm->m_clblog;
+    p->o_curbyt = n & dm->m_clbm;
 
     if (p->o_curcl && (n >= p->o_bytnum))
     {
@@ -361,7 +342,9 @@ static long xrw(int wrtflg, OFD *p, long len, char *ubufr,
      * (bytn will be byte offset into sector # recn)
      */
 
-    recn = divmod(&bytn,(long) p->o_curbyt,dm->m_rblog);
+    recn = p->o_curbyt >> dm->m_rblog;
+    bytn = p->o_curbyt & dm->m_rbm;
+
     recn += p->o_currec;
 
     /* determine "header" of request. */
@@ -416,7 +399,9 @@ static long xrw(int wrtflg, OFD *p, long len, char *ubufr,
         /* do whole clusters */
 
         lenrec = lenmid >> dm->m_rblog;            /* nbr of records  */
-        num = divmod(&tailrec,lenrec,dm->m_clrlog);/* nbr of clusters */
+
+        num = lenrec >> dm->m_clrlog;
+        tailrec = lenrec & dm->m_clrm;
 
         last = nrecs = 0L;
         nbyts = lflg = 0;
@@ -475,7 +460,8 @@ mulio:
 
     if (lentail)
     {
-        recn = divmod(&bytn,(long) p->o_curbyt,dm->m_rblog);
+        recn = p->o_curbyt >> dm->m_rblog;
+        bytn = p->o_curbyt & dm->m_rbm;
 
         if ((!recn) || (recn == (RECNO)dm->m_clsiz))
         {
