@@ -177,8 +177,9 @@ static void do_namecon(void)
 void draw_fld(LONG tree, WORD obj)
 {
         GRECT           t;
+        OBJECT *objptr = (OBJECT *)tree + obj;
 
-        LWCOPY(ADDR(&t), OB_X(obj), 4);
+        memcpy(&t,&objptr->ob_x,sizeof(GRECT));
         objc_offset(tree, obj, &t.g_x, &t.g_y);
         objc_draw(tree, obj, MAX_DEPTH, t.g_x, t.g_y, t.g_w, t.g_h);
 } /* draw_fld */
@@ -435,7 +436,7 @@ static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WO
 
               tree = G.a_trees[ADCPALER];
               ob = inf_gindex(G.a_trees[ADCPALER], CAOK, 3) + CAOK;
-              LWSET(OB_STATE(ob), NORMAL);
+              ((OBJECT *)tree+ob)->ob_state = NORMAL;
               if (ob == CASTOP)
                 copy = more = FALSE;
               else if (ob == CACNCL)
