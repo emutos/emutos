@@ -946,6 +946,60 @@ static void xbios_5e(WORD index,WORD count,LONG *rgb)
 }
 #endif
 
+#if CONF_WITH_DMASOUND
+static LONG xbios_80(void)
+{
+    kprintf("XBIOS: locksnd\n");
+    return locksnd();
+}
+static LONG xbios_81(void)
+{
+     kprintf("XBIOS: unlocksnd\n");
+   return unlocksnd();
+}
+static LONG xbios_82(WORD mode, WORD data)
+{
+    kprintf("XBIOS: soundcmd\n");
+    return soundcmd(mode, data);
+}
+static LONG xbios_83(UWORD mode, ULONG startaddr, ULONG endaddr)
+{
+    kprintf("XBIOS: setbuffer\n");
+    return setbuffer(mode, startaddr, endaddr);
+}
+static LONG xbios_84(UWORD mode)
+{
+    kprintf("XBIOS: setsndmode\n");
+    return setsndmode(mode);
+}
+static LONG xbios_87(UWORD mode, WORD cause)
+{
+    kprintf("XBIOS: setinterrupt\n");
+    return setinterrupt(mode, cause);
+}
+static LONG xbios_88(WORD mode)
+{
+    kprintf("XBIOS: buffoper\n");
+    return buffoper(mode);
+}
+static LONG xbios_8b(WORD source, WORD dest, WORD clk, WORD prescale, WORD protocol)
+{
+    kprintf("XBIOS: devconnect\n");
+    return devconnect(source, dest, clk, prescale, protocol);
+}
+static LONG xbios_8c(WORD reset)
+{
+    kprintf("XBIOS: sndstatus\n");
+    return sndstatus(reset);
+}
+static LONG xbios_8d(LONG sptr)
+{
+    kprintf("XBIOS: buffptr\n");
+    return buffptr(sptr);
+}
+
+#endif
+
 /*
  * xbios_unimpl
  *
