@@ -4487,3 +4487,4 @@ Start... early ages
 - aes/geminit.c aes/gemobed.c aes/gemoblib.c aes/gemrslib.c aes/gemshlib.c
   aes/gemsuper.c desk/deskact.c desk/deskdir.c desk/deskinf.c desk/deskins.c
   desk/deskmain.c desk/desksupp.c: Removed #include for taddr.h. (RFB)
+- include/taddr.h: Deleted (no longer required). (RFB)
