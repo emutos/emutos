@@ -4476,3 +4476,6 @@ Start... early ages
 - bdos/fsfat.c: Performance: replace multiply with shift. (RFB)
 - desk/deskdir.c: Code cleanup: eliminate OB_ macros. (RFB)
 - doc/*: Updated. Contributed by Eero Tamminen. (VRI)
+
+2013-03-02
+- bios/xbios.c: Fixed GCC warning messages. (RFB)

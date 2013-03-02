@@ -946,7 +946,7 @@ static void xbios_5e(WORD index,WORD count,LONG *rgb)
 }
 #endif
 
-#if CONF_WITH_DMASOUND
+#if DBG_XBIOS & CONF_WITH_DMASOUND
 static LONG xbios_80(void)
 {
     kprintf("XBIOS: locksnd\n");
