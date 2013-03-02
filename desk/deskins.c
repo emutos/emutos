@@ -148,36 +148,35 @@ static ANODE *get_disk(WORD letter)
 /************************************************************************/
 WORD ins_disk(ANODE *pa)
 {
-        LONG            tree;
+        OBJECT          *tree;
         WORD            change, icon, flop, hard, fld;
         BYTE            cletter[2], clabel[LEN_ZFNAME];
         BYTE            nletter[2], nlabel[LEN_ZFNAME];
         ANODE           *newpa;
 
-        tree = G.a_trees[ADINSDIS];
+        tree = (OBJECT *)G.a_trees[ADINSDIS];
 
         change = FALSE;
         cletter[0] = pa->a_letter;
         cletter[1] = NULL;
         strcpy(&clabel[0], pa->a_pappl);
 
-        inf_sset(tree, DRID, &cletter[0]);
-        inf_sset(tree, DRLABEL, &clabel[0]);
+        inf_sset((LONG)tree, DRID, &cletter[0]);
+        inf_sset((LONG)tree, DRLABEL, &clabel[0]);
 
         flop = (pa->a_aicon == IG_FLOPPY) ? SELECTED : NORMAL;
         hard = (pa->a_aicon == IG_HARD) ? SELECTED : NORMAL;
-        LWSET(OB_STATE(DRFLOPPY), flop);
-        LWSET(OB_STATE(DRHARD), hard);
-        LWSET(OB_STATE(DRREM), (lastdisk()) ? DISABLED : NORMAL );
+        tree[DRFLOPPY].ob_state = flop;
+        tree[DRHARD].ob_state = hard;
+        tree[DRREM].ob_state = (lastdisk()) ? DISABLED : NORMAL;
 
-        inf_show(tree, 0);
+        inf_show((LONG)tree, 0);
 
-        inf_sget(tree, DRID, &nletter[0]);
-        inf_sget(tree, DRLABEL, &nlabel[0]);
-        fld = inf_gindex(tree, DRINST, 3);      /* which exit button?   */
-        LWSET(OB_STATE(DRINST + fld), NORMAL);
-        icon = ( LWGET(OB_STATE(DRFLOPPY)) & SELECTED );
-        icon = (icon) ? IG_FLOPPY : IG_HARD;
+        inf_sget((LONG)tree, DRID, &nletter[0]);
+        inf_sget((LONG)tree, DRLABEL, &nlabel[0]);
+        fld = inf_gindex((LONG)tree, DRINST, 3);      /* which exit button?   */
+        tree[DRINST+fld].ob_state = NORMAL;
+        icon = (tree[DRFLOPPY].ob_state & SELECTED) ? IG_FLOPPY : IG_HARD;
         if ( fld == 0 )                 /* Install              */
         {
 /* BugFix       */
@@ -248,10 +247,12 @@ WORD ins_disk(ANODE *pa)
 #if HAVE_APPL_IBLKS
 static void insa_icon(LONG tree, WORD obj, WORD nicon, ICONBLK *pic, BYTE *ptext)
 {
+        OBJECT *objptr = (OBJECT *)tree + obj;
+
         movs(sizeof(ICONBLK), &G.g_iblist[nicon], pic);
         pic->ib_ptext = ADDR( ptext );
-        LWSET(OB_TYPE(obj), G_ICON);
-        LLSET(OB_SPEC(obj), ADDR(pic));
+        objptr->ob_type = G_ICON;
+        objptr->ob_spec = (LONG)pic;
 }
 #endif
 
@@ -260,17 +261,20 @@ static void insa_elev(LONG tree, WORD nicon, WORD numics)
 {
         WORD            y, h, th;
         const char      *lp;
+        OBJECT *obj;
 
         y = 0;
-        th = h = LWGET(OB_HEIGHT(APFSVSLI));
+        obj = (OBJECT *)tree + APFSVSLI;
+        th = h = obj->ob_height;
         if ( numics > 1)
         {
           h = mul_div(1, h, numics);
           h = max((gl_hbox/2)+2, h);            /* min size elevator    */
           y = mul_div(nicon, th-h, numics-1);
         }
-        LWSET(OB_Y(APFSVELE), y);
-        LWSET(OB_HEIGHT(APFSVELE), h);
+        obj = (OBJECT *)tree + APFSVELE;
+        obj->ob_y = y;
+        obj->ob_height = h;
 
 #if HAVE_APPL_IBLKS
         strcpy(&G.g_1text[0], ini_str(STAPPL));
@@ -295,6 +299,7 @@ static WORD insa_dial(LONG tree, WORD nicon, WORD numics)
         WORD            mx, my, kret, bret, cont;
         BYTE            *pstr, doctype[4];
         GRECT           pt;
+        OBJECT          *obj;
                                                 /* draw the form        */
         show_hide(FMD_START, tree);
                                                 /* init for while loop  */
@@ -343,13 +348,14 @@ dofelev:        wind_update(3);
                 ob_relxywh(tree, APFSVSLI, &pt);
                 pt.g_x += 3;
                 pt.g_w -= 6;
-                LWSET(OB_X(APFSVSLI), pt.g_x);
-                LWSET(OB_WIDTH(APFSVSLI), pt.g_w);
+                obj = (OBJECT *)tree + APFSVSLI;
+                obj->ob_x = pt.g_x;
+                obj->ob_width = pt.g_w;
                 value = graf_slidebox(tree, APFSVSLI, APFSVELE, TRUE);
                 pt.g_x -= 3;
                 pt.g_w += 6;
-                LWSET(OB_X(APFSVSLI), pt.g_x);
-                LWSET(OB_WIDTH(APFSVSLI), pt.g_w);
+                obj->ob_x = pt.g_x;
+                obj->ob_width = pt.g_w;
                 wind_update(2);
                 value = mul_div(value, numics-1, 1000) - nicon;
                 break;
@@ -426,7 +432,7 @@ static void insa_stypes(LONG tree, BYTE *pdata)
 /************************************************************************/
 WORD ins_app(BYTE *pfname, ANODE *pa)
 {
-        LONG            tree;
+        OBJECT          *tree;
         ANODE           *newpa;
         BYTE            pname[12];
         BYTE            ntypes[6*8];
@@ -435,22 +441,22 @@ WORD ins_app(BYTE *pfname, ANODE *pa)
         WORD            change, field;
         WORD            uninstalled, h;
 
-        tree = G.a_trees[ADINSAPP];
+        tree = (OBJECT *)G.a_trees[ADINSAPP];
 
-        h = LWGET(OB_HEIGHT(APSCRLBA));
-        LWSET(OB_HEIGHT(APFUPARO), gl_hbox + 2);
-        LWSET(OB_Y(APFSVSLI), gl_hbox + 2);
-        LWSET(OB_HEIGHT(APFSVSLI), h - (2 * (gl_hbox + 2)));
-        LWSET(OB_Y(APFDNARO), h - (gl_hbox + 2));
-        LWSET(OB_HEIGHT(APFDNARO), gl_hbox + 2);
+        h = tree[APSCRLBA].ob_height;
+        tree[APFUPARO].ob_height = gl_hbox + 2;
+        tree[APFSVSLI].ob_y = gl_hbox + 2;
+        tree[APFSVSLI].ob_height = h - (2 * (gl_hbox + 2));
+        tree[APFDNARO].ob_y = h - (gl_hbox + 2);
+        tree[APFDNARO].ob_height = gl_hbox + 2;
 
         uninstalled = !is_installed(pa);
-        LWSET(OB_STATE(APREMV), (uninstalled) ? DISABLED : NORMAL );
+        tree[APREMV].ob_state = (uninstalled) ? DISABLED : NORMAL;
                                                 /* stuff in appl name   */
         fmt_str(pfname, &pname[0]);
-        inf_sset(tree, APNAME, &pname[0]);
+        inf_sset((LONG)tree, APNAME, &pname[0]);
                                                 /* stuff in docu types  */
-        insa_stypes(tree, pa->a_pdata);
+        insa_stypes((LONG)tree, pa->a_pdata);
         oflag = pa->a_flags;
         if (pa->a_flags & AF_ISCRYS)
         {
@@ -458,34 +464,34 @@ WORD ins_app(BYTE *pfname, ANODE *pa)
         }
         else
           field = (pa->a_flags & AF_ISPARM) ? APPARMS : APDOS;
-        LWSET(OB_STATE(field), SELECTED);
+        tree[field].ob_state = SELECTED;
 
         if (pa->a_aicon == IA_GENERIC_ALT)
             oicon = 0;
         else oicon = pa->a_aicon - IA_GENERIC;
 
-        insa_elev(tree, oicon, gl_numics);
-        nicon = insa_dial(tree, oicon, gl_numics);
+        insa_elev((LONG)tree, oicon, gl_numics);
+        nicon = insa_dial((LONG)tree, oicon, gl_numics);
         change = FALSE;
 
                                                 /* set type flags       */
         nflag = 0;
-        field = inf_gindex(tree, APGEM, 3);
+        field = inf_gindex((LONG)tree, APGEM, 3);
         if (field == 0)
           nflag = AF_ISCRYS | AF_ISGRAF;
         if (field == 2)
           nflag = AF_ISPARM;
-        LWSET(OB_STATE(APGEM + field), NORMAL);
+        tree[APGEM+field].ob_state = NORMAL;
                                                 /* get button selection */
-        field = inf_gindex(tree, APINST, 3);
-        LWSET(OB_STATE(APINST + field), NORMAL);
+        field = inf_gindex((LONG)tree, APINST, 3);
+        tree[APINST+field].ob_state = NORMAL;
 
         if ( field == 0 )
         {
                                                 /* install the appl.    */
                                                 /*   if its uninstalled */
                                                 /*   or has new types   */
-          insa_gtypes(tree, &ntypes[0]);
+          insa_gtypes((LONG)tree, &ntypes[0]);
           if ( (uninstalled) ||
                (strcmp(&ntypes[0], pa->a_pdata)) )
           {

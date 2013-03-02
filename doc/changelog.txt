@@ -4482,3 +4482,4 @@ Start... early ages
 - desk/desksupp.c: Code cleanup: eliminate OB_ macros. (RFB)
 - desk/deskmain.c: Code cleanup: eliminate OB_ macros. (RFB)
 - desk/deskinf.c: Code cleanup: eliminate OB_ macros. (RFB)
+- desk/deskins.c: Code cleanup: eliminate OB_ macros. (RFB)
