@@ -425,6 +425,7 @@ static WORD do_deskmenu(WORD item)
 {
         WORD            done, touchob;
         LONG            tree;
+        OBJECT *obj;
 
         done = FALSE;
         switch( item )
@@ -451,7 +452,8 @@ static WORD do_deskmenu(WORD item)
                   else
                     done = TRUE;
                 }
-                LWSET(OB_STATE(DEOK), NORMAL);
+                obj = (OBJECT *)tree + DEOK;
+                obj->ob_state = NORMAL;
                 show_hide(FMD_FINISH, tree);
                 done = FALSE;
                 break;
