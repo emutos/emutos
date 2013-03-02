@@ -4479,3 +4479,4 @@ Start... early ages
 
 2013-03-02
 - bios/xbios.c: Fixed GCC warning messages. (RFB)
+- desk/desksupp.c: Code cleanup: eliminate OB_ macros. (RFB)

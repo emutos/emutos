@@ -634,7 +634,7 @@ WORD do_info(WORD curr)
         WNODE   *pw;
         FNODE   *pf;
 #ifndef DESK1
-        LONG    tree;
+        OBJECT  *tree;
 #endif
 
         pa = i_find(G.g_cwin, curr, &pf, &junk);
@@ -653,9 +653,9 @@ WORD do_info(WORD curr)
 #ifndef DESK1
                 if (pf->f_attr & F_FAKE)
                 {
-                  tree = G.a_trees[ADNFINFO];
-                  inf_show(tree, 0);
-                  LWSET(OB_STATE(NFINOK), NORMAL);
+                  tree = (OBJECT *)G.a_trees[ADNFINFO];
+                  inf_show((LONG)tree, 0);
+                  tree[NFINOK].ob_state = NORMAL;
                 }
                 else
 #endif
