@@ -24,11 +24,6 @@
 #include "kprint.h"
 
 
-LONG obaddr(LONG tree, WORD obj, WORD fld_off)
-{
-        return( (tree + ((obj) * sizeof(OBJECT) + fld_off)) );
-}
-
 
 BYTE ob_sst(LONG tree, WORD obj, LONG *pspec, WORD *pstate, WORD *ptype,
             WORD *pflags, GRECT *pt, WORD *pth)

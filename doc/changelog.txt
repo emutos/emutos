@@ -4483,3 +4483,4 @@ Start... early ages
 - desk/deskmain.c: Code cleanup: eliminate OB_ macros. (RFB)
 - desk/deskinf.c: Code cleanup: eliminate OB_ macros. (RFB)
 - desk/deskins.c: Code cleanup: eliminate OB_ macros. (RFB)
+- aes/gemobjop.c: Removed obaddr() function (no longer required). (RFB)
