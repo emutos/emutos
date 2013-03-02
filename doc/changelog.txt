@@ -4484,3 +4484,6 @@ Start... early ages
 - desk/deskinf.c: Code cleanup: eliminate OB_ macros. (RFB)
 - desk/deskins.c: Code cleanup: eliminate OB_ macros. (RFB)
 - aes/gemobjop.c: Removed obaddr() function (no longer required). (RFB)
+- aes/geminit.c aes/gemobed.c aes/gemoblib.c aes/gemrslib.c aes/gemshlib.c
+  aes/gemsuper.c desk/deskact.c desk/deskdir.c desk/deskinf.c desk/deskins.c
+  desk/deskmain.c desk/desksupp.c: Removed #include for taddr.h. (RFB)

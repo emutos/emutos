@@ -22,7 +22,6 @@
 #include "portab.h"
 #include "compat.h"
 #include "obdefs.h"
-#include "taddr.h"
 #include "dos.h"
 #include "deskapp.h"
 #include "deskfpd.h"
