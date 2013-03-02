@@ -4,7 +4,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002 The EmuTOS development team
+*                 2002-2013 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -289,8 +289,11 @@ WORD inf_show(LONG tree, WORD start)
 */
 static void inf_finish(LONG tree, WORD dl_ok)
 {
+        OBJECT *obj;
+
         inf_show(tree, 0);
-        LWSET(OB_STATE(dl_ok), NORMAL);
+        obj = (OBJECT *)tree + dl_ok;
+        obj->ob_state = NORMAL;
 }
 
 
@@ -346,6 +349,7 @@ WORD inf_file(BYTE *ppath, FNODE *pfnode)
         LONG            tree;
         WORD            attr, more, nmidx;
         BYTE            poname[LEN_ZFNAME], pnname[LEN_ZFNAME];
+        OBJECT          *obj;
 
         tree = G.a_trees[ADFILEIN];
 
@@ -385,7 +389,8 @@ WORD inf_file(BYTE *ppath, FNODE *pfnode)
           } /* if */
                                         /* update the attributes        */
           attr = pfnode->f_attr;
-          if (LWGET(OB_STATE(FIRONLY)) & SELECTED)
+          obj = (OBJECT *)tree + FIRONLY;
+          if (obj->ob_state & SELECTED)
             attr |= F_RDONLY;
           else
             attr &= ~F_RDONLY;
@@ -484,77 +489,77 @@ WORD inf_disk(BYTE dr_id)
 */
 WORD inf_pref(void)
 {
-        LONG            tree;
+        OBJECT          *tree;
         WORD            cyes, cno, i;
         WORD            sndefpref;
         WORD            rbld;
 
-        tree = G.a_trees[ADSETPRE];
+        tree = (OBJECT *)G.a_trees[ADSETPRE];
         rbld = FALSE;
 
         cyes = (G.g_cdelepref) ? SELECTED : NORMAL;
         cno = (G.g_cdelepref) ? NORMAL : SELECTED;
-        LWSET(OB_STATE(SPCDYES), cyes);
-        LWSET(OB_STATE(SPCDNO), cno);
+        tree[SPCDYES].ob_state = cyes;
+        tree[SPCDNO].ob_state = cno;
 
         cyes = (G.g_ccopypref) ? SELECTED : NORMAL;
         cno = (G.g_ccopypref) ? NORMAL : SELECTED;
-        LWSET(OB_STATE(SPCCYES), cyes);
-        LWSET(OB_STATE(SPCCNO), cno);
+        tree[SPCCYES].ob_state = cyes;
+        tree[SPCCNO].ob_state = cno;
 
         cyes = (G.g_covwrpref) ? SELECTED : NORMAL;
         cno = (G.g_covwrpref) ? NORMAL : SELECTED;
-        LWSET(OB_STATE(SPCOWYES), cyes);
-        LWSET(OB_STATE(SPCOWNO), cno);
+        tree[SPCOWYES].ob_state = cyes;
+        tree[SPCOWNO].ob_state = cno;
 
         cyes = (G.g_cmclkpref) ? SELECTED : NORMAL;
         cno = (G.g_cmclkpref) ? NORMAL : SELECTED;
-        LWSET(OB_STATE(SPMNCLKY), cyes);
-        LWSET(OB_STATE(SPMNCLKN), cno);
+        tree[SPMNCLKY].ob_state = cyes;
+        tree[SPMNCLKN].ob_state = cno;
 
         cyes = (G.g_ctimeform) ? SELECTED : NORMAL;
         cno = (G.g_ctimeform) ? NORMAL : SELECTED;
-        LWSET(OB_STATE(SPTF12HR), cyes);
-        LWSET(OB_STATE(SPTF24HR), cno);
+        tree[SPTF12HR].ob_state = cyes;
+        tree[SPTF24HR].ob_state = cno;
 
         cyes = (G.g_cdateform) ? SELECTED : NORMAL;
         cno = (G.g_cdateform) ? NORMAL : SELECTED;
-        LWSET(OB_STATE(SPDFMMDD), cyes);
-        LWSET(OB_STATE(SPDFDDMM), cno);
+        tree[SPDFMMDD].ob_state = cyes;
+        tree[SPDFDDMM].ob_state = cno;
 
         for(i=0; i<5; i++)
-          LWSET(OB_STATE(SPDC1+i), NORMAL);
+          tree[SPDC1+i].ob_state = NORMAL;
 
         G.g_cdclkpref = evnt_dclick(0, FALSE);
-        LWSET(OB_STATE(SPDC1+G.g_cdclkpref), SELECTED);
+        tree[SPDC1+G.g_cdclkpref].ob_state = SELECTED;
 
         sndefpref = !sound(FALSE, 0xFFFF, 0);
 
         cyes = (sndefpref) ? SELECTED : NORMAL;
         cno = (sndefpref) ? NORMAL : SELECTED;
-        LWSET(OB_STATE(SPSEYES), cyes);
-        LWSET(OB_STATE(SPSENO), cno);
+        tree[SPSEYES].ob_state = cyes;
+        tree[SPSENO].ob_state = cno;
 
-        inf_show(tree, 0);
+        inf_show((LONG)tree, 0);
 
-        if ( inf_what(tree, SPOK, SPCNCL) )
+        if ( inf_what((LONG)tree, SPOK, SPCNCL) )
         {
-          G.g_cdelepref = inf_what(tree, SPCDYES, SPCDNO);
-          G.g_ccopypref = inf_what(tree, SPCCYES, SPCCNO);
-          G.g_covwrpref = inf_what(tree, SPCOWYES, SPCOWNO);
-          G.g_cmclkpref = inf_what(tree, SPMNCLKY, SPMNCLKN);
+          G.g_cdelepref = inf_what((LONG)tree, SPCDYES, SPCDNO);
+          G.g_ccopypref = inf_what((LONG)tree, SPCCYES, SPCCNO);
+          G.g_covwrpref = inf_what((LONG)tree, SPCOWYES, SPCOWNO);
+          G.g_cmclkpref = inf_what((LONG)tree, SPMNCLKY, SPMNCLKN);
           G.g_cmclkpref = menu_click(G.g_cmclkpref, TRUE);
-          G.g_cdclkpref = inf_gindex(tree, SPDC1, 5);
+          G.g_cdclkpref = inf_gindex((LONG)tree, SPDC1, 5);
           G.g_cdclkpref = evnt_dclick(G.g_cdclkpref, TRUE);
-          sndefpref = inf_what(tree, SPSEYES, SPSENO);
+          sndefpref = inf_what((LONG)tree, SPSEYES, SPSENO);
                                         /* changes if file display? */
-          cyes = inf_what(tree, SPTF12HR, SPTF24HR);
+          cyes = inf_what((LONG)tree, SPTF12HR, SPTF24HR);
           if (G.g_ctimeform != cyes)
           {
             rbld = (G.g_iview == V_TEXT);
             G.g_ctimeform = cyes;
           }
-          cyes = inf_what(tree, SPDFMMDD, SPDFDDMM);
+          cyes = inf_what((LONG)tree, SPDFMMDD, SPDFDDMM);
           if (G.g_cdateform != cyes)
           {
             rbld |= (G.g_iview == V_TEXT);

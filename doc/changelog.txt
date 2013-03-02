@@ -4481,3 +4481,4 @@ Start... early ages
 - bios/xbios.c: Fixed GCC warning messages. (RFB)
 - desk/desksupp.c: Code cleanup: eliminate OB_ macros. (RFB)
 - desk/deskmain.c: Code cleanup: eliminate OB_ macros. (RFB)
+- desk/deskinf.c: Code cleanup: eliminate OB_ macros. (RFB)
