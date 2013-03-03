@@ -2,7 +2,7 @@
  * fsfat.c - fat mgmt routines for file system
  *
  * Copyright (c) 2001 Lineo, Inc.
- *               2002 - 2010 The EmuTOS development team
+ *               2002 - 2013 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -94,29 +94,45 @@ void clfix(CLNO cl, CLNO link, DMD *dm)
 
 CLNO getrealcl(CLNO cl, DMD *dm)
 {
-        unsigned int f[1];
+        CLNO f;
+        LONG offset, recnum;
+        char *buf;
 
+        offset = dm->m_16 ? (LONG)cl << 1 : ((LONG)cl + (cl >> 1));
+        recnum = offset >> dm->m_rblog;
+        offset &= dm->m_rbm;
+        buf = getrec(recnum,dm->m_fatofd,0) + offset;
+
+        /*
+         * handle 16-bit FAT
+         * easier because content is word-aligned and cannot span FAT sectors
+         */
         if (dm->m_16)
-        {                               /*  M01.01.04  */
-                ixlseek( dm->m_fatofd , (long)( (long)(cl) << 1 ) ) ;
-                ixread(dm->m_fatofd,2L,f);
-                swpw(f[0]);
-                return(f[0]);
+        {
+                f = *(CLNO *)buf;
+                swpw(f);
+                return f;
         }
 
-        ixlseek(dm->m_fatofd,((long) (cl + (cl >> 1))));
-        ixread(dm->m_fatofd,2L,f);
-        swpw(f[0]);
+        /*
+         * handle 12-bit FATs
+         */
+        f = *(UBYTE *)buf++ << 8;
+        if (dm->m_recsiz-offset == 1) /* content spans FAT sectors ... */
+                buf = getrec(recnum+1,dm->m_fatofd,0);
+        f |= *(UBYTE *)buf;
+
+        swpw(f);
 
         if (cl & 1)
-                cl = f[0] >> 4;
+                cl = f >> 4;
         else
-                cl = 0x0fff & f[0];
+                cl = f & 0x0fff;
 
         if (cl == 0x0fff)
-                return(0xffff);
+                cl = 0xffff;
 
-        return(cl);
+        return cl;
 }
 
 

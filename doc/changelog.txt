@@ -4488,3 +4488,7 @@ Start... early ages
   aes/gemsuper.c desk/deskact.c desk/deskdir.c desk/deskinf.c desk/deskins.c
   desk/deskmain.c desk/desksupp.c: Removed #include for taddr.h. (RFB)
 - include/taddr.h: Deleted (no longer required). (RFB)
+
+2013-03-03
+- bdos/fsfat.c: Rewrote getrealcl() for better performance. Based on a
+  idea by Laurent Vogel. (RFB)
