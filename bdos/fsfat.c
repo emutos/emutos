@@ -41,41 +41,61 @@ RECNO cl2rec(CLNO cl, DMD *dm)
 
 void clfix(CLNO cl, CLNO link, DMD *dm)
 {
-        int f[1],mask;
-        long pos;
+        int spans;
+        CLNO f, mask;
+        LONG offset, recnum;
+        char *buf;
 
+        offset = dm->m_16 ? (LONG)cl << 1 : ((LONG)cl + (cl >> 1));
+        recnum = offset >> dm->m_rblog;
+        offset &= dm->m_rbm;
+
+        /*
+         * handle 16-bit FAT
+         * easier because content is word-aligned and cannot span FAT sectors
+         */
         if (dm->m_16)
         {
+                buf = getrec(recnum,dm->m_fatofd,1);
                 swpw(link);
-                pos = (long)(cl) << 1;                  /*  M01.01.04   */
-                ixlseek(dm->m_fatofd,pos);
-                ixwrite(dm->m_fatofd,2L,&link);
+                *(CLNO *)(buf+offset) = link;
                 return;
         }
 
-        pos = (cl + (cl >> 1));
-
-        link = link & 0x0fff;
-
+        /*
+         * handle 12-bit FAT
+         */
         if (cl & 1)
         {
                 link = link << 4;
                 mask = 0x000f;
         }
         else
+        {
+                link = link & 0x0fff;
                 mask = 0xf000;
+        }
 
-        ixlseek(dm->m_fatofd,pos);
+        spans = (dm->m_recsiz-offset == 1); /* content spans FAT sectors ... */
 
-        /* pre -read */
-        ixread(dm->m_fatofd,2L,f);
+        /* get current contents */
+        buf = getrec(recnum,dm->m_fatofd,0) + offset;
+        f = *(UBYTE *)buf++ << 8;
+        if (spans)
+                buf = getrec(recnum+1,dm->m_fatofd,0);
+        f |= *(UBYTE *)buf;
 
-        swpw(f[0]);
-        f[0] = (f[0] & mask) | link;
-        swpw(f[0]);
+        /* update */
+        swpw(f);
+        f = (f & mask) | link;
+        swpw(f);
 
-        ixlseek(dm->m_fatofd,pos);
-        ixwrite(dm->m_fatofd,2L,f);
+        /* write back */
+        buf = getrec(recnum,dm->m_fatofd,1) + offset;
+        *(UBYTE *)buf++ = f >> 8;
+        if (spans)
+                buf = getrec(recnum+1,dm->m_fatofd,1);
+        *(UBYTE *)buf = f & 0xff;
 }
 
 

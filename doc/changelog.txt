@@ -4492,3 +4492,5 @@ Start... early ages
 2013-03-03
 - bdos/fsfat.c: Rewrote getrealcl() for better performance. Based on a
   idea by Laurent Vogel. (RFB)
+- bdos/fsfat.c: Rewrote clfix() for better performance. Based on an idea
+  by Laurent Vogel. (RFB)
