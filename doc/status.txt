@@ -206,6 +206,8 @@ TOS v4.00:
  X 0x5d VsetRGB         (for Falcon Videl only)
  X 0x5e VgetRGB         (for Falcon Videl only)
 
+ - 0x96 VsetMask        (for Falcon Videl only)
+
 2nd bit in _SND is set:
  t 0x80 LockSnd
  t 0x81 UnlockSnd
