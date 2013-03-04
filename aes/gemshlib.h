@@ -28,7 +28,6 @@ WORD sh_write(WORD doex, WORD isgem, WORD isover, const BYTE *pcmd, const BYTE *
 void sh_get(void *pbuffer, WORD len);
 void sh_put(const void *pdata, WORD len);
 void sh_tographic(void);
-void sh_toalpha(void);
 
 BYTE *sh_name(BYTE *ppath);
 void sh_envrn(BYTE **ppath, const BYTE *psrch);

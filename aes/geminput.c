@@ -305,7 +305,7 @@ UWORD dq(CQUEUE *qptr)
 /*
 *       Flush the characters from a circular keyboard buffer.
 */
-void fq()
+void fq(void)
 {
         while (rlr->p_cda->c_q.c_cnt)
           dq(&rlr->p_cda->c_q);

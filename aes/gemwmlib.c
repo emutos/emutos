@@ -468,13 +468,13 @@ void w_bldbar(UWORD kind, WORD istop, WORD w_bar, WORD sl_value, WORD sl_size,
 }
 
 
-WORD w_top()
+static WORD w_top(void)
 {
         return( (gl_wtop != NIL) ? gl_wtop : DESKWH );
 }
 
 
-void w_setactive()
+void w_setactive(void)
 {
         GRECT           d;
         register WORD   wh;
@@ -840,7 +840,7 @@ void w_setmen(WORD pid)
 /*
 *       Routine to draw menu of top most window as the current menu bar.
 */
-void w_menufix()
+static void w_menufix(void)
 {
         WORD            pid;
 
@@ -1075,7 +1075,7 @@ void w_owns(WORD w_handle, ORECT *po, GRECT *pt, WORD *poutwds)
 /*
 *       Start the window manager up by initializing internal variables.
 */
-void wm_start()
+void wm_start(void)
 {
         register WORD   i;
         register ORECT  *po;

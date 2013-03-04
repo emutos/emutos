@@ -24,6 +24,9 @@
 GLOBAL UWORD    DOS_AX; /* really a "DOS_RET"   */
 GLOBAL UWORD    DOS_ERR;
 
+/* K&R prototype to avoid prototype mismatch warnings
+ * with different arguments.
+ */
 extern LONG gemdos();
 
 
@@ -125,7 +128,7 @@ WORD dos_sfirst(BYTE *pspec, WORD attr)
         return(!gemdos(X_SFIRST,pspec,attr));
 }
 
-WORD dos_snext()
+WORD dos_snext(void)
 {
         return(!gemdos(X_SNEXT));
 }

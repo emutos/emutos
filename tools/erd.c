@@ -1442,11 +1442,13 @@ int write_include(FILE *fp,char *name)
     fprintf(fp,"#include \"string.h\"\n");
     fprintf(fp,"#include \"portab.h\"\n");
     fprintf(fp,"#include \"obdefs.h\"\n");
-#ifdef GEM_RSC
-    fprintf(fp,"#include \"gemrslib.h\"\n");
+#if defined(GEM_RSC) || defined(ICON_RSC)
+    fprintf(fp,"#include \"../desk/deskapp.h\"\n");
 #endif
-#ifdef ICON_RSC
-    fprintf(fp,"#include \"deskapp.h\"\n");
+#ifdef GEM_RSC
+    fprintf(fp,"#include \"../desk/deskfpd.h\"\n");
+    fprintf(fp,"#include \"../desk/deskmain.h\"\n");
+    fprintf(fp,"#include \"gemrslib.h\"\n");
 #endif
     fprintf(fp,"#include \"%s.h\"\n",name);
     fprintf(fp,"#include \"nls.h\"\n\n");
@@ -1904,11 +1906,7 @@ int write_c_epilogue(FILE *fp)
     fprintf(fp,"static char msg_str[MAX_LINENUM][MAX_LINELEN+1];\n");
     fprintf(fp,"static char msg_but[MAX_BUTNUM][MAX_BUTLEN+1];\n\n");
 
-    fprintf(fp,"/* functions defined in deskmain.c */\n");
-    fprintf(fp,"extern void xlate_obj_array(OBJECT *obj, int nobj);\n");
-    fprintf(fp,"extern void xlate_fix_tedinfo(TEDINFO *tedinfo, int nted);\n\n");
-
-    fprintf(fp,"void gem_rsc_init()\n");
+    fprintf(fp,"void gem_rsc_init(void)\n");
     fprintf(fp,"{\n");
     fprintf(fp,"    /* Copy data from ROM to RAM: */\n");
     fprintf(fp,"    memcpy(%srs_obj, %srs_obj_rom, RS_NOBS*sizeof(OBJECT));\n",prefix,prefix);
@@ -1923,7 +1921,7 @@ int write_c_epilogue(FILE *fp)
     fprintf(fp,"    *(char *)rs_tedinfo[2].te_ptext = 0;\n");
     fprintf(fp,"}\n\n\n");
 
-    fprintf(fp,"void gem_rsc_fixit()\n");
+    fprintf(fp,"void gem_rsc_fixit(void)\n");
     fprintf(fp,"{\n");
     fprintf(fp,"    int i;\n");
     fprintf(fp,"    OBJECT *tree, *p;\n\n");

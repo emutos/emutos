@@ -490,7 +490,7 @@ void mn_bar(LONG tree, WORD showit, WORD pid)
 *       Routine to tell all desk accessories that the currently running
 *       application is about to terminate.
 */
-void mn_clsda()
+void mn_clsda(void)
 {
         register WORD   i;
 

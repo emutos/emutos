@@ -240,13 +240,9 @@ void gsx_fix(FDB *pfd, LONG theaddr, WORD wb, WORD h)
 *       Routine to blit, to and from a specific area
 */
         void
-gsx_blt(saddr, sx, sy, swb, daddr, dx, dy, dwb, w, h, rule, fgcolor, bgcolor)
-        LONG            saddr;
-        UWORD           sx, sy, swb;
-        LONG            daddr;
-        UWORD           dx, dy, dwb;
-        UWORD           w, h, rule;
-        WORD            fgcolor, bgcolor;
+gsx_blt(LONG saddr, UWORD sx, UWORD sy, UWORD swb,
+	LONG daddr, UWORD dx, UWORD dy, UWORD dwb,
+	UWORD w, UWORD h, UWORD rule, WORD fgcolor, WORD bgcolor)
 {
         gsx_fix(&gl_src, saddr, swb, h);
         gsx_fix(&gl_dst, daddr, dwb, h);

@@ -38,7 +38,7 @@ GLOBAL ORECT    *rul;
 GLOBAL ORECT    gl_mkrect;
 
 
-void or_start()
+void or_start(void)
 {
         register WORD   i;
 
@@ -52,7 +52,7 @@ void or_start()
 }
 
 
-ORECT *get_orect()
+ORECT *get_orect(void)
 {
         ORECT           *po;
 

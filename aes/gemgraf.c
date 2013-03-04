@@ -410,7 +410,7 @@ void gsx_trans(LONG saddr, UWORD swb, LONG daddr, UWORD dwb, UWORD h)
 *       Routine to initialize all the global variables dealing
 *       with a particular workstation open
 */
-void gsx_start()
+void gsx_start(void)
 {
         WORD            char_height, nc;
 

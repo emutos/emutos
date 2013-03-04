@@ -69,7 +69,7 @@ void font_init(void)
  * set linea variables according to choosen font configuration
  */
 
-void font_set_default()
+void font_set_default(void)
 {
     struct font_head *font;
 

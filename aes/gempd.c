@@ -64,7 +64,7 @@ PD *fpdnm(BYTE *pname, UWORD pid)
 }
 
 
-static PD *getpd()
+static PD *getpd(void)
 {
         register PD     *p;
 

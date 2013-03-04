@@ -85,7 +85,7 @@ WORD sc_write(const BYTE *pscrap)
 /*                                                                      */
 /************************************************************************/
 
-WORD sc_clear()
+WORD sc_clear(void)
 {
     BYTE    *ptmp;
     WORD    found;

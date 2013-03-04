@@ -86,10 +86,10 @@ static LONG  gl_mlen;
 static WORD  gl_graphic;
 
 
-
 /* Some local Prototypes: */
-void  g_v_opnwk(WORD *pwork_in, WORD *phandle, WS *pwork_out );
-ULONG  gsx_gbufflen(void);
+static void  g_v_opnwk(WORD *pwork_in, WORD *phandle, WS *pwork_out );
+static ULONG  gsx_gbufflen(void);
+
 
 static LONG form_alert_bufsize(void)
 {
@@ -107,7 +107,7 @@ static LONG form_alert_bufsize(void)
  * of the screen size.  this is increased if necessary to allow the
  * for the maximum-sized form alert.
  */
-ULONG gsx_mcalc()
+static ULONG gsx_mcalc(void)
 {
     LONG mem;
 
@@ -127,7 +127,7 @@ ULONG gsx_mcalc()
 
 
 
-void gsx_malloc()
+void gsx_malloc(void)
 {
     ULONG   mlen;
 
@@ -138,7 +138,7 @@ void gsx_malloc()
 
 
 
-void gsx_mfree()
+void gsx_mfree(void)
 {
     dos_free(gl_tmp.fd_addr);
 }
@@ -381,7 +381,7 @@ void gsx_mxmy(WORD *pmx, WORD *pmy)
 
 
 
-WORD gsx_kstate()
+WORD gsx_kstate(void)
 {
     gsx_ncode(KEY_SHST, 0, 0);
     return(intout[0]);
@@ -389,7 +389,7 @@ WORD gsx_kstate()
 
 
 
-void gsx_moff()
+void gsx_moff(void)
 {
     if (!gl_moff)
         gsx_ncode(HIDE_CUR, 0, 0);
@@ -399,7 +399,7 @@ void gsx_moff()
 
 
 
-void gsx_mon()
+void gsx_mon(void)
 {
     gl_moff--;
     if (!gl_moff)
@@ -408,7 +408,7 @@ void gsx_mon()
 
 
 
-WORD gsx_char()
+WORD gsx_char(void)
 {
     intin[0] = 4;
     intin[1] = 2;
@@ -431,7 +431,7 @@ WORD gsx_char()
  * so it seems that intout[26] will always contain zeros, and therefore
  * that this function will always return zero - Roger
  */
-ULONG gsx_gbufflen()
+static ULONG gsx_gbufflen(void)
 {
     gsx_1code(EXTENDED_INQUIRE, 1);
     return(LLGET(ADDR(&intout[26])));
@@ -441,7 +441,7 @@ ULONG gsx_gbufflen()
 
 /* This function was formerly just called v_opnwk, but there was a
    conflict with the VDI then, so I renamed it to g_v_opnwk  - Thomas */
-void g_v_opnwk(WORD *pwork_in, WORD *phandle, WS *pwork_out )
+static void g_v_opnwk(WORD *pwork_in, WORD *phandle, WS *pwork_out )
 {
     WORD            *ptsptr;
 

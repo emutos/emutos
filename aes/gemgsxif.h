@@ -18,8 +18,6 @@ extern WORD  ptsout[];
 
 extern WORD  gl_moff;
 
-
-ULONG gsx_mcalc(void);
 void gsx_malloc(void);
 void gsx_mfree(void);
 

@@ -246,9 +246,6 @@ void rectfill (Vwk * vwk, Rect * rect);
 
 
 WORD gloc_key(void);
-WORD gchc_key(void);
-WORD gchr_key(void);
-WORD gshift_s(void);
 
 BOOL clip_line(Vwk * vwk, Line * line);
 void arb_corner(Rect * rect);

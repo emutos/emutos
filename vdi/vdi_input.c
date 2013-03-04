@@ -19,6 +19,10 @@
 #include "vdi_defs.h"
 
 
+static WORD gchc_key(void);
+static WORD gchr_key(void);
+static WORD gshift_s(void);
+
 
 /* CHOICE_INPUT: */
 void v_choice(Vwk * vwk)
@@ -153,7 +157,7 @@ void vqi_mode(Vwk * vwk)
  * returns:   CTL/SHIFT/ALT status
  */
 
-WORD gshift_s()
+static WORD gshift_s(void)
 {
     return (Kbshift(-1) & 0x000f);
 }
@@ -168,7 +172,7 @@ WORD gshift_s()
  *            2    button pressed
  */
 
-WORD gchc_key()
+static WORD gchc_key(void)
 {
     TERM_CH = 1;                /* 16 bit char info */
     return TERM_CH;
@@ -185,7 +189,7 @@ WORD gchc_key()
  * TERM_CH         16 bit char info
  */
 
-WORD gchr_key()
+static WORD gchr_key(void)
 {
     ULONG ch;
 
@@ -226,7 +230,7 @@ WORD gchr_key()
  * 7 - 0x80 Left mouse button status flag  (0=hasn't changed)
  */
 
-WORD gloc_key()
+WORD gloc_key(void)
 {
     WORD retval;
     ULONG ch;

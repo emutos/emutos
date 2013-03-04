@@ -46,6 +46,7 @@
 #include "string.h"
 #include "kprint.h"             /* for debugging */
 
+#include "gemshlib.h"
 
 #define DBGSHLIB 0
 
@@ -80,12 +81,12 @@ GLOBAL WORD     gl_nextrez;
 
 
 /* Prototypes: */
-WORD sh_find(BYTE *pspec);
 extern void deskstart(void) NORETURN;   /* see ../desk/deskstart.S */
-
 #if WITH_CLI != 0
-extern void coma_start(void) NORETURN;
+extern void coma_start(void) NORETURN;  /* see ../cli/coma.S */
 #endif
+
+static void sh_toalpha(void);
 
 
 
@@ -310,7 +311,7 @@ void sh_put(const void *pdata, WORD len)
 *       Convert the screen to graphics-mode in preparation for the
 *       running of a GEM-based graphic application.
 */
-void sh_tographic()
+void sh_tographic(void)
 {
                                                 /* retake ints that may */
                                                 /*   have been stepped  */
@@ -337,7 +338,7 @@ void sh_tographic()
 *       Convert the screen and system back to alpha-mode in preparation for
 *       the running of a DOS-based character application.
 */
-void sh_toalpha()
+static void sh_toalpha(void)
 {
                                                 /* put mouse to arrow   */
         gsx_mfset(ad_armice);
@@ -682,7 +683,7 @@ static void aes_run_rom_program(PRG_ENTRY *entry)
         dos_exec(6, NULL, (const BYTE *)pd, NULL);
 }
 
-void sh_ldapp()
+static void sh_ldapp(void)
 {
         WORD    ret, badtry, retry;
         SHELL   *psh;
@@ -808,7 +809,7 @@ void sh_ldapp()
 
 
 
-void sh_main()
+void sh_main(void)
 {
                                                 /* do the exec          */
         sh_ldapp();
