@@ -4503,3 +4503,4 @@ Start... early ages
   code to ANSI-C. Contributed by Eero Tamminen. (VRI)
 - aes/gemaplib.c aes/gemdisp.c aes/gemdisp.h aes/geminput.c aes/geminput.h
   bios/ide.c include/portab.h: Fixed forkq() prototype. (VRI)
+- Makefile: Fix compatibility with GCC 2.95. Contributed by Eero Tamminen. (VRI)

@@ -148,7 +148,7 @@ OBJDUMP = $(TOOLCHAIN_PREFIX)objdump
 OBJCOPY = $(TOOLCHAIN_PREFIX)objcopy
 
 # the native C compiler, for tools
-NATIVECC = gcc -ansi -pedantic -Wall -Wextra -O
+NATIVECC = gcc -ansi -pedantic -Wall -W -O
 
 #
 # source code in bios/
