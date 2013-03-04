@@ -267,17 +267,23 @@ DMD /* drive media block */
 
 /*
  *  BCB - Buffer Control Block
+ *
+ *  note that this is part of the TOS API, via the pointers to BCB
+ *  chains at bufl[2].  for compatibility with existing programs
+ *  (such as CACHEnnn.PRG and HDDRIVER), the length must be 20 bytes,
+ *  and the fields marked (API) below must remain the same (contents,
+ *  size, and offset within structure).
  */
 
 BCB
 {
-    BCB     *b_link;    /*  next bcb                    */
-    int     b_bufdrv;   /*  unit for buffer             */
-    int     b_buftyp;   /*  buffer type                 */
+    BCB     *b_link;    /*  next bcb (API)              */
+    WORD    b_bufdrv;   /*  unit for buffer (API)       */
     RECNO   b_bufrec;   /*  record number               */
-    BOOL    b_dirty;    /*  true if buffer dirty        */
+    UBYTE   b_buftyp;   /*  buffer type                 */
+    UBYTE   b_dirty;    /*  true if buffer dirty        */
     DMD     *b_dm;      /*  ptr to drive media block    */
-    char    *b_bufr;    /*  pointer to buffer           */
+    char    *b_bufr;    /*  pointer to buffer (API)     */
 } ;
 
 /*
