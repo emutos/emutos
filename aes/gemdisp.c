@@ -20,6 +20,7 @@
 #include "config.h"
 
 #include "portab.h"
+#include "gemdisp.h"
 #include "compat.h"
 #include "struct.h"
 #include "basepage.h"
@@ -46,7 +47,7 @@
 
 /* forkq puts a fork block with a routine in the fork ring      */
 
-void forkq(void (*fcode)(), LONG fdata)
+void forkq(FCODE fcode, LONG fdata)
 {
         register FPD    *f;
                                                 /* q a fork process,    */
@@ -123,8 +124,7 @@ void forker(void)
           if (gl_recd)
           {
                                                   /* check for stop key */
-            if ( ((void *)g.f_code == (void *)kchange) &&
-                 ((g.f_data & 0x0000ffffL) == KEYSTOP) )
+            if (g.f_code == kchange && LLOWD(g.f_data) == KEYSTOP)
               gl_recd = FALSE;
                                                 /* if still recording   */
                                                 /*   then handle event  */
@@ -136,7 +136,7 @@ void forker(void)
                                                 /*   then coalesce them */
                                                 /*   else record the    */
                                                 /*   event              */
-              if ( ((void *)g.f_code == (void *)tchange) &&
+              if (g.f_code == tchange &&
                    (LLGET(gl_rbuf - sizeof(FPD)) == (LONG)tchange) )
               {
                 amt = g.f_data + LLGET(gl_rbuf-sizeof(LONG));
@@ -174,7 +174,7 @@ void chkkbd(void)
              (kstat != kstate) )
           {
             cli();
-            forkq( (void (*)())kchange, (((LONG)achar<<16)|kstat) );
+            forkq(kchange, MAKE_ULONG(achar, kstat));
             sti();
           }
         }

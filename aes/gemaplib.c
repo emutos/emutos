@@ -143,18 +143,18 @@ void ap_tplay(LONG pbuff, WORD length, WORD scale)
                 f.f_code = 0;
                 break;
             case MCHNG:
-                f.f_code = (void(*)())mchange;
+                f.f_code = mchange;
                 break;
             case BCHNG:
-                f.f_code = (void(*)())bchange;
+                f.f_code = bchange;
                 break;
             case KCHNG:
-                f.f_code = (void(*)())kchange;
+                f.f_code = kchange;
                 break;
           }
                                                 /* play it              */
-          if (f.f_code)      /* FIXME: Hope the endianess is okay here: */
-            forkq(f.f_code, LLOWD(f.f_data), LHIWD(f.f_data));
+          if (f.f_code)
+            forkq(f.f_code, f.f_data);
                                                 /* let someone else     */
                                                 /*   hear it and respond*/
           dsptch();
@@ -170,7 +170,7 @@ WORD ap_trecd(LONG pbuff, WORD length)
 {
         register WORD   i;
         register WORD   code;
-        WORD            (*proutine)(void);
+        FCODE           proutine;
 
         code = -1;
                                                 /* start recording in   */
@@ -197,18 +197,18 @@ WORD ap_trecd(LONG pbuff, WORD length)
                                                 /*   recording          */
         for(i=0; i<length; i++)
         {
-          proutine = (WORD (*)(void))LLGET(pbuff);
-          if((LONG)proutine == (LONG)tchange)
+          proutine = (FCODE)LLGET(pbuff);
+          if(proutine == tchange)
           {
             code = TCHNG;
             LLSET(pbuff+sizeof(WORD *), LLGET(pbuff+sizeof(WORD *)) *
                         gl_ticktime);
           }
-          if((LONG)proutine == (LONG)mchange)
+          if(proutine == mchange)
             code = MCHNG;
-          if((LONG)proutine == (LONG)kchange)
+          if(proutine == kchange)
             code = KCHNG;
-          if((LONG)proutine == (LONG)bchange)
+          if(proutine == bchange)
             code = BCHNG;
           LWSET(pbuff, code);
           pbuff += sizeof(FPD);

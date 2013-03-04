@@ -172,7 +172,7 @@ void b_click(WORD state)
               gl_bdely = gl_dclick;
             }
             else
-              forkq( (void(*)())bchange, state, 1);
+              forkq(bchange, MAKE_ULONG(state, 1));
           }
                                                 /* update true state of */
                                                 /*   the mouse          */
@@ -199,10 +199,10 @@ void b_delay(WORD amnt)
           gl_bdely -= amnt;
           if ( !(gl_bdely) )
           {
-            forkq( (void(*)())bchange, gl_bdesired, gl_bclick);
+            forkq(bchange, MAKE_ULONG(gl_bdesired, gl_bclick));
             if (gl_bdesired != gl_btrue)
             {
-              forkq( (void(*)())bchange, gl_btrue, 1);
+              forkq(bchange, MAKE_ULONG(gl_btrue, 1));
             }
           }
         }
@@ -321,8 +321,10 @@ void evremove(EVB *e, UWORD ret)
 }
 
 
-void kchange(UWORD ch, WORD kstat)
+void kchange(LONG fdata)
 {
+        UWORD ch = LHIWD(fdata);
+        WORD kstat = LLOWD(fdata);
 
         kstate = kstat;
         if (ch)
@@ -362,8 +364,10 @@ static void chkown(void)
 }
 
 
-void bchange(WORD new, WORD clicks)
+void bchange(LONG fdata)
 {
+        WORD new = LHIWD(fdata);
+        WORD clicks = LLOWD(fdata);
                                                 /* see if this button   */
                                                 /*   event causes an    */
                                                 /*   ownership change   */
@@ -395,8 +399,10 @@ WORD downorup(WORD new, LONG buparm)
 }
 
 
-void mchange(WORD rx, WORD ry)
+void mchange(LONG fdata)
 {
+        WORD rx = LHIWD(fdata);
+        WORD ry = LLOWD(fdata);
                                                 /* zero out button wait */
                                                 /*   if mouse moves more*/
                                                 /*   then a little      */

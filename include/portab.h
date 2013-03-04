@@ -90,6 +90,13 @@ typedef unsigned short  UWORD;                  /*  unsigned 16 bit word*/
 typedef long            LONG;                   /*  signed 32 bit word  */
 
 /*
+ *  Macros
+ */
+
+#define MAKE_UWORD(hi,lo) (((UWORD)(BYTE)(hi) << 8) | (BYTE)(lo))
+#define MAKE_ULONG(hi,lo) (((ULONG)(UWORD)(hi) << 16) | (UWORD)(lo))
+
+/*
  * Workarounds for the GCC strict aliasing rule
  */
 

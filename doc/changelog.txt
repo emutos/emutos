@@ -4501,3 +4501,5 @@ Start... early ages
   aes/gemwmlib.c aes/gemwrect.c bios/font.c desk/deskgraf.c desk/deskmain.h
   tools/erd.c vdi/vdi_defs.h vdi/vdi_input.c Makefile: Convert remaining K&R
   code to ANSI-C. Contributed by Eero Tamminen. (VRI)
+- aes/gemaplib.c aes/gemdisp.c aes/gemdisp.h aes/geminput.c aes/geminput.h
+  bios/ide.c include/portab.h: Fixed forkq() prototype. (VRI)

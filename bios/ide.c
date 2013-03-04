@@ -31,8 +31,6 @@
 
 #if CONF_WITH_IDE
 
-#define MAKE_UWORD(a, b) (((UWORD)(a) << 8) | (b))
-
 #if CONF_ATARI_HARDWARE
 
 struct IDE
