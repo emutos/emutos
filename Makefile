@@ -293,6 +293,7 @@ help:
 	@echo "512     $(ROM_512), EmuTOS ROM padded to size 512 kB (starting at $(VMA_T2))"
 	@echo "aranym  $(ROM_ARANYM), suitable for ARAnyM"
 	@echo "firebee $(SREC_FIREBEE), to be flashed on the FireBee"
+	@echo "firebee-ram ramtos.img + boot.prg, a RAM tos for the FireBee"
 	@echo "amiga   $(ROM_AMIGA), EmuTOS ROM for Amiga hardware"
 	@echo "amigakd $(AMIGA_KICKDISK), EmuTOS as Amiga 1000 Kickstart disk"
 	@echo "all192  all 192 kB images"
