@@ -882,35 +882,6 @@ static int get_c_string(IFILE *f, str *s)
   }
 }
 
-/* like get, but do not accumulate the result */
-static int try_c_string(IFILE *f)
-{
-  int c;
-
-  c = inextc(f);
-  if(c != '"') {
-    iback(f);
-    return 0;
-  }
-  for(;;) {
-    c = inextc(f);
-    if(c == EOF) {
-      warn("EOF reached inside string");
-      return 0;
-    } else if(c == '\\') {
-      c = inextc(f);
-      if(c == EOF) {
-        warn("EOF reached inside string");
-        return 0;
-      }
-    } else if(c == '"') {
-      return 1;
-    }
-  }
-}
-
-
-
 /*
  * parse c files
  * put strings surrounded by _("...") or N_("...") into the ordered-hash
