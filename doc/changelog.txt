@@ -4506,3 +4506,4 @@ Start... early ages
 - Makefile: Fix compatibility with GCC 2.95. Contributed by Eero Tamminen. (VRI)
 - bdos/fs.h: Make BCB compatible with TOS tools. (RFB)
 - util/minicrt.S: Correct misleading usage of STACK_SIZE. (RFB)
+- util/boot.c: Convert K&R code to ANSI-C. (RFB)

@@ -73,7 +73,7 @@ static void fatal(const char *s)
 }
 
 /* return value from _CPU cookie */
-static long get_cpu_cookie()
+static long get_cpu_cookie(void)
 {
   struct cookie *cptr = _p_cookies;
 
@@ -87,7 +87,7 @@ static long get_cpu_cookie()
   return 0L;
 }
 
-int main()
+int main(void)
 {
   int fh;
   long count;
