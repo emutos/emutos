@@ -499,7 +499,7 @@ do_blit(blit * blt)
 #define PLANES   32 // Number of planes to blt .w:
 
 void
-bit_blt ()
+bit_blt (void)
 {
     WORD plane;
     UWORD s_xmin, s_xmax;
