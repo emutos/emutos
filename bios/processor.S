@@ -222,7 +222,7 @@ fexit:  move.l  a1,(0x2c).w     // restore Line-F
 
 _processor_init:
 #ifdef __mcoldfire__
-        // TODO enable the caches
+        // On ColdFire, the caches are enabled by the pre-OS
 #else
         jsr     _detect_cpu
         swap    d0
