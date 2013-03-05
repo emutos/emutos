@@ -4512,3 +4512,4 @@ Start... early ages
 - tools/bug.c: Static cleanup. Contributed by Eero Tamminen. (RFB)
 - tools/bug.c: Removed unused function try_c_string(). (VRI)
 - Makefile bootasm.S: Added new firebee-ram target. (VRI)
+- bios/vectors.S: Fixed return value of unimplemented (X)BIOS functions. (VRI)

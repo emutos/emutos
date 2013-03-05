@@ -727,16 +727,18 @@ bx_nolong2:
 
 /*
  * (X)BIOS unimplemented function handler.
+ * These functions are called indirectly, ONLY from biosxbios.
+ * The requested BIOS/XBIOS function number is in d0.
  */
 
 _bios_unimpl:
-       move.w   d1,-(sp)
+       move.w   d0,-(sp)
        jsr      _bios_do_unimpl
        addq.l   #2,sp
        rts
 
 _xbios_unimpl:
-       move.w   d1,-(sp)
+       move.w   d0,-(sp)
        jsr      _xbios_do_unimpl
        addq.l   #2,sp
        rts
