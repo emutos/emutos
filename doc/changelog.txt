@@ -4507,3 +4507,6 @@ Start... early ages
 - bdos/fs.h: Make BCB compatible with TOS tools. (RFB)
 - util/minicrt.S: Correct misleading usage of STACK_SIZE. (RFB)
 - util/boot.c: Convert K&R code to ANSI-C. (RFB)
+
+2013-03-05
+- tools/bug.c: Static cleanup. Contributed by Eero Tamminen. (RFB)

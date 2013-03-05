@@ -73,7 +73,7 @@ typedef unsigned char uchar;
  * errors
  */
 
-void warn(const char *fmt, ...)
+static void warn(const char *fmt, ...)
 {
   va_list ap;
   va_start(ap, fmt);
@@ -83,7 +83,7 @@ void warn(const char *fmt, ...)
   va_end(ap);
 }
 
-void fatal(const char *fmt, ...)
+static void fatal(const char *fmt, ...)
 {
   va_list ap;
   va_start(ap, fmt);
@@ -98,14 +98,14 @@ void fatal(const char *fmt, ...)
  * memory
  */
 
-void * xmalloc(size_t s)
+static void * xmalloc(size_t s)
 {
   void * a = calloc(1, s);
   if(a == 0) fatal("memory");
   return a;
 }
 
-void * xrealloc(void * b, size_t s)
+static void * xrealloc(void * b, size_t s)
 {
   void * a = realloc(b, s);
   if(a == 0) fatal("memory");
@@ -116,7 +116,7 @@ void * xrealloc(void * b, size_t s)
  * xstrdup
  */
 
-char * xstrdup(const char *s)
+static char * xstrdup(const char *s)
 {
   int len = strlen(s);
   char *a = xmalloc(len+1);
@@ -152,7 +152,7 @@ static long difftm (const struct tm *a, const struct tm *b)
 }
 
 
-char * now(void)
+static char * now(void)
 {
   time_t now;
   struct tm local_time;
@@ -187,7 +187,7 @@ typedef struct da {
 
 #define DA_SIZE 1000
 
-void da_grow(da *d)
+static void da_grow(da *d)
 {
   if(d->size == 0) {
     d->size = DA_SIZE;
@@ -198,7 +198,7 @@ void da_grow(da *d)
   }
 }
 
-da * da_new(void)
+static da * da_new(void)
 {
   da *d = xmalloc(sizeof(*d));
   d->size = 0;
@@ -206,23 +206,23 @@ da * da_new(void)
   return d;
 }
 
-void da_free(da *d)
+static void da_free(da *d)
 {
   free(d->buf);
   free(d);
 }
 
-int da_len(da *d)
+static int da_len(da *d)
 {
   return d->len;
 }
 
-void * da_nth(da *d, int n)
+static void * da_nth(da *d, int n)
 {
   return d->buf[n];
 }
 
-void da_add(da *d, void *elem)
+static void da_add(da *d, void *elem)
 {
   if(d->len >= d->size) {
     da_grow(d);
@@ -242,7 +242,7 @@ typedef struct str {
 
 #define STR_SIZE 100
 
-str * s_new(void)
+static str * s_new(void)
 {
   str *s = xmalloc(sizeof(*s));
   s->size = 0;
@@ -250,7 +250,7 @@ str * s_new(void)
   return s;
 }
 
-void s_grow(str *s)
+static void s_grow(str *s)
 {
   if(s->size == 0) {
     s->size = STR_SIZE;
@@ -261,7 +261,7 @@ void s_grow(str *s)
   }
 }
 
-void s_free(str *s)
+static void s_free(str *s)
 {
   if(s->size) {
     free(s->buf);
@@ -269,7 +269,7 @@ void s_free(str *s)
   free(s);
 }
 
-void s_addch(str *s, char c)
+static void s_addch(str *s, char c)
 {
   if(s->len >= s->size) {
     s_grow(s);
@@ -277,7 +277,7 @@ void s_addch(str *s, char c)
   s->buf[s->len++] = c;
 }
 
-void s_addstr(str *s, char *t)
+static void s_addstr(str *s, char *t)
 {
   while(*t) {
     s_addch(s, *t++);
@@ -285,7 +285,7 @@ void s_addstr(str *s, char *t)
 }
 
 /* add a trailing 0 if needed and release excess mem */
-char * s_close(str *s)
+static char * s_close(str *s)
 {
   if(s->size == 0) {
     s->buf = xmalloc(1);
@@ -297,7 +297,7 @@ char * s_close(str *s)
   return s->buf;
 }
 
-char * s_detach(str *s)
+static char * s_detach(str *s)
 {
   char *t = s_close(s);
   free(s);
@@ -324,16 +324,16 @@ typedef struct hash {
   da *d[HASH_SIZ];
 } hash;
 
-hash * h_new(void)
+static hash * h_new(void)
 {
   hash *h = xmalloc(sizeof(*h));
   return h;
 }
 
 /* a dumb one */
-unsigned compute_hash(char *t)
+static unsigned int compute_hash(char *t)
 {
-  unsigned m = 0;
+  unsigned int m = 0;
 
   while(*t) {
     m += *t++;
@@ -342,7 +342,7 @@ unsigned compute_hash(char *t)
   return m;
 }
 
-void * h_find(hash *h, char *key)
+static void * h_find(hash *h, char *key)
 {
   unsigned m = compute_hash(key) % HASH_SIZ;
   da *d;
@@ -362,7 +362,7 @@ void * h_find(hash *h, char *key)
   return NULL;
 }
 
-void h_insert(hash *h, void *k)
+static void h_insert(hash *h, void *k)
 {
   unsigned m = compute_hash(((hi *)k)->key) % HASH_SIZ;
   da *d;
@@ -384,7 +384,7 @@ typedef struct oh {
   da *d;
 } oh;
 
-oh * o_new(void)
+static oh * o_new(void)
 {
   oh *o = malloc(sizeof(*o));
   o->h = h_new();
@@ -392,34 +392,34 @@ oh * o_new(void)
   return o;
 }
 
-void o_free(oh *o)
+static void o_free(oh *o)
 {
   (void)o;
   /* TODO */
 }
 
-void * o_find(oh *o, char *t)
+static void * o_find(oh *o, char *t)
 {
   return h_find(o->h, t);
 }
 
-void o_insert(oh *o, void *k)
+static void o_insert(oh *o, void *k)
 {
   da_add(o->d, k);
   h_insert(o->h, k);
 }
 
-void o_add(oh *o, void *k)
+static void o_add(oh *o, void *k)
 {
   da_add(o->d, k);
 }
 
-int o_len(oh *o)
+static int o_len(oh *o)
 {
   return da_len(o->d);
 }
 
-void * o_nth(oh *o, int n)
+static void * o_nth(oh *o, int n)
 {
   return da_nth(o->d, n);
 }
@@ -433,7 +433,7 @@ typedef struct ref {
   int lineno;
 } ref;
 
-ref * ref_new(char *fname, int lineno)
+static ref * ref_new(char *fname, int lineno)
 {
   ref *r = xmalloc(sizeof(*r));
   r->fname = fname;
@@ -460,7 +460,7 @@ typedef struct poe {
   char *msgstr;    /* the translation */
 } poe;
 
-poe * poe_new(char *t)
+static poe * poe_new(char *t)
 {
   poe *e = xmalloc(sizeof(*e));
   e->msgid.key = t;
@@ -488,13 +488,13 @@ typedef struct {
   char *other;
 } ae_t;
 
-void update_ae(ae_t *a, ae_t *pot_ae)
+static void update_ae(ae_t *a, ae_t *pot_ae)
 {
   a->potcrdate = pot_ae->potcrdate;
   a->porevdate = now();
 }
 
-void fill_pot_ae(ae_t *a)
+static void fill_pot_ae(ae_t *a)
 {
   a->pidvers = "PACKAGE VERSION";
   a->potcrdate = now();
@@ -505,7 +505,7 @@ void fill_pot_ae(ae_t *a)
   a->other = "";
 }
 
-char * ae_to_string(ae_t *a)
+static char * ae_to_string(ae_t *a)
 {
   str *s = s_new();
   s_addstr(s, "Project-Id-Version: "); s_addstr(s, a->pidvers);
@@ -544,7 +544,7 @@ static int ae_check_line(char **cc, char *start, char **end)
   return 1;
 }
 
-int parse_ae(char *msgstr, ae_t *a)
+static int parse_ae(char *msgstr, ae_t *a)
 {
   char *c = msgstr;
   char *tmp;
@@ -590,7 +590,7 @@ typedef struct ifile {
   int ateof;
 } IFILE;
 
-void irefill(IFILE *f)
+static void irefill(IFILE *f)
 {
   if(f->size > BACKSIZ) {
     memmove(f->buf, f->buf + f->size - BACKSIZ, BACKSIZ);
@@ -600,7 +600,7 @@ void irefill(IFILE *f)
   f->size += fread(f->buf + f->size, 1, READSIZ, f->fh);
 }
 
-IFILE *ifopen(char *fname)
+static IFILE *ifopen(char *fname)
 {
   IFILE *f = xmalloc(sizeof(IFILE));
 
@@ -617,13 +617,13 @@ IFILE *ifopen(char *fname)
   return f;
 }
 
-void ifclose(IFILE *f)
+static void ifclose(IFILE *f)
 {
   fclose(f->fh);
   free(f);
 }
 
-void iback(IFILE *f)
+static void iback(IFILE *f)
 {
   if(f->index == 0) {
     fatal("too far backward");
@@ -635,7 +635,7 @@ void iback(IFILE *f)
   }
 }
 
-void ibackn(IFILE *f, int n)
+static void ibackn(IFILE *f, int n)
 {
   f->index -= n;
   if(f->index < 0) {
@@ -643,7 +643,7 @@ void ibackn(IFILE *f, int n)
   }
 }
 
-int igetc(IFILE *f)
+static int igetc(IFILE *f)
 {
   if(f->index >= f->size) {
     irefill(f);
@@ -656,7 +656,7 @@ int igetc(IFILE *f)
 }
 
 /* returns the next logical char, in sh syntax */
-int inextsh(IFILE *f)
+static int inextsh(IFILE *f)
 {
   int ret;
 
@@ -679,7 +679,7 @@ int inextsh(IFILE *f)
 }
 
 /* returns the next logical char, in C syntax */
-int inextc(IFILE *f)
+static int inextc(IFILE *f)
 {
   int ret;
 
@@ -734,7 +734,7 @@ again:
  */
 
 
-int try_eof(IFILE *f)
+static int try_eof(IFILE *f)
 {
   int c = igetc(f);
   if(c == EOF) {
@@ -745,7 +745,7 @@ int try_eof(IFILE *f)
   }
 }
 
-int try_c_comment(IFILE *f)
+static int try_c_comment(IFILE *f)
 {
   int c;
 
@@ -780,7 +780,7 @@ int try_c_comment(IFILE *f)
   return 0;
 }
 
-int try_white(IFILE *f)
+static int try_white(IFILE *f)
 {
   int c;
 
@@ -798,7 +798,7 @@ int try_white(IFILE *f)
   }
 }
 
-int try_c_white(IFILE *f)
+static int try_c_white(IFILE *f)
 {
   if(try_eof(f)) {
     return 0;
@@ -814,7 +814,7 @@ int try_c_white(IFILE *f)
 
 
 /* only one "..." string, will be appended onto string s */
-int get_c_string(IFILE *f, str *s)
+static int get_c_string(IFILE *f, str *s)
 {
   int c;
 
@@ -883,7 +883,7 @@ int get_c_string(IFILE *f, str *s)
 }
 
 /* like get, but do not accumulate the result */
-int try_c_string(IFILE *f)
+static int try_c_string(IFILE *f)
 {
   int c;
 
@@ -926,7 +926,7 @@ typedef struct parse_c_action {
   void (*other)(void *this, int c);
 } parse_c_action;
 
-void pca_xgettext_gstring(void *this, str *s, char *fname, int lineno)
+static void pca_xgettext_gstring(void *this, str *s, char *fname, int lineno)
 {
   oh *o = (oh *) this;
   poe *e;
@@ -951,13 +951,13 @@ void pca_xgettext_gstring(void *this, str *s, char *fname, int lineno)
   da_add(e->refs, r);
 }
 
-void pca_xgettext_string(void *this, str *s)
+static void pca_xgettext_string(void *this, str *s)
 {
   (void)this;
   s_free(s);
 }
 
-void pca_xgettext_other(void *this, int c)
+static void pca_xgettext_other(void *this, int c)
 {
   (void)this;
   (void)c;
@@ -969,7 +969,7 @@ parse_c_action pca_xgettext[] = { {
   pca_xgettext_other,
 } };
 
-void print_canon(FILE *, char *, char *);
+static void print_canon(FILE *, const char *, const char *);
 
 /* pcati - Parse C Action Translate Info */
 typedef struct pcati {
@@ -979,7 +979,7 @@ typedef struct pcati {
 } pcati;
 
 
-void pca_translate_gstring(void *this, str *s, char *fname, int lineno)
+static void pca_translate_gstring(void *this, str *s, char *fname, int lineno)
 {
   pcati *p = (pcati *) this;
   char *t;
@@ -999,7 +999,7 @@ void pca_translate_gstring(void *this, str *s, char *fname, int lineno)
   free(t);
 }
 
-void pca_translate_string(void *this, str *s)
+static void pca_translate_string(void *this, str *s)
 {
   pcati *p = (pcati *) this;
   char *t;
@@ -1009,7 +1009,7 @@ void pca_translate_string(void *this, str *s)
   free(t);
 }
 
-void pca_translate_other(void *this, int c)
+static void pca_translate_other(void *this, int c)
 {
   pcati *p = (pcati *) this;
 
@@ -1023,7 +1023,7 @@ parse_c_action pca_translate [] = { {
 } } ;
 
 
-void parse_c_file(char *fname, parse_c_action *pca, void *this)
+static void parse_c_file(char *fname, parse_c_action *pca, void *this)
 {
   int c;
   int state;
@@ -1125,7 +1125,7 @@ void parse_c_file(char *fname, parse_c_action *pca, void *this)
  */
 
 
-void parse_po_file(char *fname, oh *o, int ignore_ae)
+static void parse_po_file(char *fname, oh *o, int ignore_ae)
 {
   int c;
   IFILE *f;
@@ -1345,7 +1345,7 @@ err:
  * parse OIPL (one item per line) simple files
  */
 
-void parse_oipl_file(char *fname, da *d)
+static void parse_oipl_file(char *fname, da *d)
 {
   int c;
   IFILE *f;
@@ -1398,7 +1398,7 @@ void parse_oipl_file(char *fname, da *d)
 
 #define CANON_GEM_ALERT 1
 
-void print_canon(FILE *f, char *t, char *prefix)
+static void print_canon(FILE *f, const char *t, const char *prefix)
 {
   unsigned a;
 #if CANON_GEM_ALERT
@@ -1459,7 +1459,7 @@ void print_canon(FILE *f, char *t, char *prefix)
  * pretty print refs.
  */
 
-char * refs_to_str(da *refs)
+static char * refs_to_str(da *refs)
 {
   int pos, len;
   int i, n;
@@ -1494,7 +1494,7 @@ char * refs_to_str(da *refs)
  * of the po file contained in an oh.
  */
 
-void po_convert_refs(oh *o)
+static void po_convert_refs(oh *o)
 {
   int i, n;
   poe *e;
@@ -1514,7 +1514,7 @@ void po_convert_refs(oh *o)
  * print po file
  */
 
-void print_po_file(FILE *f, oh *o)
+static void print_po_file(FILE *f, oh *o)
 {
   int i, n;
   char *prefix;
@@ -1544,7 +1544,7 @@ void print_po_file(FILE *f, oh *o)
  * update po file against messages.pot
  */
 
-void update(char *fname)
+static void update(char *fname)
 {
   oh *o1, *o2, *o;
   poe *e1, *e2, *e;
@@ -1662,7 +1662,7 @@ void update(char *fname)
  * xgettext : parse POTFILES.in, and generate messages.pot
  */
 
-void xgettext(void)
+static void xgettext(void)
 {
   da *d;
   oh *o;
@@ -1712,8 +1712,8 @@ void xgettext(void)
  */
 
 struct charset_alias {
-  char *name;
-  char *alias;
+  const char *name;
+  const char *alias;
 };
 
 const struct charset_alias charsets[] = {
@@ -1723,7 +1723,7 @@ const struct charset_alias charsets[] = {
 };
 
 /* resolve any known alias */
-char * get_canon_cset_name(const char *name)
+static const char * get_canon_cset_name(const char *name)
 {
   int i;
   int n = sizeof(charsets)/sizeof(*charsets);
@@ -1743,7 +1743,7 @@ char * get_canon_cset_name(const char *name)
  * iso_to_atari : convert in situ iso latin 1 to atari ST encoding
  */
 
-unsigned char i2a[] = {
+static const unsigned char i2a[] = {
   /*     ¡     ¢     £     ¤     ¥     ¦     § */
   ' ' , 0xad, 0x9b, 0x9c,    0, 0x9d, '|', 0xdd,
   /* ¨   ©     ª     «     ¬     ­     ®     ¯ */
@@ -1770,7 +1770,7 @@ unsigned char i2a[] = {
   0xb3, 0x97, 0xa3, 0x96, 0x81,  'y',  0,   0x98,
 };
 
-void latin1_to_atarist(char *s)
+static void latin1_to_atarist(char *s)
 {
   unsigned c;
   int warned = 0;
@@ -1792,7 +1792,7 @@ void latin1_to_atarist(char *s)
 }
 
 
-void converter_noop(char *s)
+static void converter_noop(char *s)
 {
   (void)s;
 }
@@ -1801,16 +1801,16 @@ typedef void(*converter_t)(char *);
 
 
 struct converter_info {
-  char * from;
-  char * to;
+  const char * from;
+  const char * to;
   converter_t func;
 };
 
-const struct converter_info converters[] = {
+static const struct converter_info converters[] = {
   { "latin1", "atarist", latin1_to_atarist },
 };
 
-converter_t get_converter(const char * from, const char * to)
+static converter_t get_converter(const char * from, const char * to)
 {
   int i;
   int n = sizeof(converters)/sizeof(*converters);
@@ -1846,9 +1846,9 @@ converter_t get_converter(const char * from, const char * to)
 #define TH_MASK (TH_SIZE - 1)
 #define TH_BMASK ((1 << (16 - TH_BITS)) - 1)
 
-int compute_th_value(char *t)
+static int compute_th_value(const char *t)
 {
-  uchar *u = (uchar *) t;
+  const uchar *u = (const uchar *) t;
   unsigned a, b;
 
   a = 0;
@@ -1873,7 +1873,8 @@ int compute_th_value(char *t)
  * 0 if s is badly formatted.
  * needs a 3-byte buffer in lang
  */
-int parse_linguas_item(const char *s, char *lang, char **charset)
+#define LANG_LEN 3
+static int parse_linguas_item(const char *s, char *lang, const char **charset)
 {
   if(*s <'a' || *s >= 'z') return 0;
   *lang++ = *s++;
@@ -1886,7 +1887,7 @@ int parse_linguas_item(const char *s, char *lang, char **charset)
   return 1;
 }
 
-void make(void)
+static void make(void)
 {
   da *d;
   da *th[TH_SIZE];
@@ -1896,9 +1897,9 @@ void make(void)
   poe *eref;
   char tmp[20];
   char *t;
-  char lang[3];
+  char lang[LANG_LEN];
   da *langs;
-  char *from_charset, *to_charset;
+  const char *from_charset, *to_charset;
   converter_t converter;
   int numref = 0;   /* number of entries in the reference */
   int numtransl;    /* number of translated entries */
@@ -2067,13 +2068,13 @@ static const struct lang_info lang_%s = { \"%s\", msg_%s };\n", t, t, t);
  * translate
  */
 
-void translate(char *lang, char * from)
+static void translate(char *lang, char * from)
 {
   FILE *g;
   pcati p;
   char *to;
   char po[10];
-  char *from_charset, *to_charset;
+  const char *from_charset, *to_charset;
 
   { /* build destination filename */
     int len = strlen(from);
@@ -2102,7 +2103,7 @@ void translate(char *lang, char * from)
     n = da_len(d);
     for(i = 0 ; i < n ; i++) {
       char *t = da_nth(d, i);
-      char l[3];
+      char l[LANG_LEN];
       if(! parse_linguas_item(t, l, &to_charset)) {
         warn("po/LINGUAS: bad lang/charset specification \"%s\"", t);
       } else if(!strcmp(lang, l)) {
