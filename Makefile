@@ -467,6 +467,12 @@ firebee:
 	@echo "# Building FireBee EmuTOS into $(SREC_FIREBEE)"
 	$(MAKE) COLDFIRE=1 CPUFLAGS='-mcpu=5474' DEF='-DMACHINE_FIREBEE' LMA=0xe0600000 SRECFILE=$(SREC_FIREBEE) $(SREC_FIREBEE)
 
+.PHONY: firebee-ram
+NODEP += firebee-ram
+firebee-ram:
+	@echo "# Building FireBee EmuTOS for RAM"
+	$(MAKE) COLDFIRE=1 CPUFLAGS='-mcpu=5474' DEF='-DMACHINE_FIREBEE' ram
+
 #
 # ram - In two stages. first link emutos2.img to know the top address of bss,
 # then use this value (taken from the map) to relocate the RamTOS.
