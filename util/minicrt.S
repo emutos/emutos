@@ -14,7 +14,7 @@
 #include "asmdefs.h"
 
 #ifndef STACK_SIZE
-#define STACK_SIZE 0x100
+#define STACK_SIZE 0x100        // note: this is in longwords
 #endif
 
 #define P_TLEN  0x0C
@@ -40,7 +40,8 @@ _start:
 
 // mshrink
 
-        move.l  #STACK_SIZE,d0   // compute size for Mshrink()
+                                 // compute size for Mshrink()
+        move.l  #256,d0          // size of basepage
         add.l   P_TLEN(a0),d0
         add.l   P_DLEN(a0),d0
         add.l   P_BLEN(a0),d0

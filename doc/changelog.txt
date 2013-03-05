@@ -4505,3 +4505,4 @@ Start... early ages
   bios/ide.c include/portab.h: Fixed forkq() prototype. (VRI)
 - Makefile: Fix compatibility with GCC 2.95. Contributed by Eero Tamminen. (VRI)
 - bdos/fs.h: Make BCB compatible with TOS tools. (RFB)
+- util/minicrt.S: Correct misleading usage of STACK_SIZE. (RFB)
