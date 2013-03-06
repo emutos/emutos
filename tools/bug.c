@@ -19,6 +19,11 @@
  * - no fuzzy or printf-format parameters
  * - some weird messages
  * - trigraphs are not handled (this is a feature actually !)
+ * 
+ * NOTE: to get warning messages about generation of illegal alert
+ * strings, you must #define ALERT_TEXT_WARNINGS.  The generated
+ * messages can include Atari versions of non-Latin characters, so
+ * may appear as garbage on non-Atari systems.
  */
 
 /*
@@ -1359,6 +1364,44 @@ static void parse_oipl_file(char *fname, da *d)
 
 
 /*
+ * Check given alert line and button text and complain
+ * if they're too long or there are too many lines of
+ * text.  For buttons the lines parameter is zero.
+ */
+#if ALERT_TEXT_WARNINGS
+static void alert_check(const char *start, const char *end, int lines)
+{
+  int len = end - start - 1;
+  const char *errstr;
+  char *tmpstr;
+
+  if (lines) {
+    /* dialog text */
+    if (lines > 5) {
+      errstr = "with line '%s', dialog has more than 5 lines";
+    } else if (len > 32) {
+      errstr = "dialog line '%s' longer than 32 chars";
+    } else {
+      return;
+    }
+  } else {
+    /* dialog button */
+    if (len > 10) {
+      errstr = "dialog button text '%s' exceeds 10 chars";
+    } else {
+      return;
+    }
+  }
+  tmpstr = xstrdup(start);
+  tmpstr[len] = '\0';
+  warn(errstr, tmpstr);
+  free(tmpstr);
+}
+#else /* !ALERT_TEXT_WARNINGS */
+#define alert_check(a,b,c)
+#endif
+
+/*
  * print string in canonical format
  *
  * NOTE: the 'canonical' format is modified for handling of
@@ -1373,7 +1416,8 @@ static void print_canon(FILE *f, const char *t, const char *prefix)
 {
   unsigned a;
 #if CANON_GEM_ALERT
-  int gem_alert = 0;
+  int gem_alert = 0, gem_button = 0, alert_lines = 0;
+  const char *line_start = NULL;
 #endif /* CANON_GEM_ALERT */
 
   if(strchr(t, '\n')) {
@@ -1384,6 +1428,7 @@ static void print_canon(FILE *f, const char *t, const char *prefix)
   if(t[0] == '[' && t[1] >= '0' && t[1] <= '9' && t[2] == ']' && t[3] == '[') {
     fprintf(f, "\"[%c][\"\n%s", t[1], prefix);
     t += 4;
+    line_start = t;
     gem_alert = 1;
   }
 #endif /* CANON_GEM_ALERT */
@@ -1405,11 +1450,28 @@ static void print_canon(FILE *f, const char *t, const char *prefix)
 #if CANON_GEM_ALERT
     case '|':
       if(gem_alert) {
-        fprintf(f, "%c\"\n%s\"", *t, prefix); break;
+        alert_lines += 1;
+        alert_check(line_start, t, alert_lines);
+        line_start = t + 1;
+        fprintf(f, "%c\"\n%s\"", *t, prefix);
+        break;
+      } else if (gem_button) {
+        alert_check(line_start, t, 0);
+        line_start = t + 1;
       }
-      /* else fallthrough */
+      /* fallthrough */
     case ']':
-      gem_alert = 0;
+      if(gem_alert) {
+        gem_alert = 0;
+        alert_check(line_start, t, alert_lines + 1);
+        if(t[1] == '[') {
+          line_start = t + 2;
+          gem_button = 1;
+        }
+      } else if (gem_button && *t != '|') {
+        gem_button = 0;
+        alert_check(line_start, t, 0);
+      }
       /* fallthrough */
 #endif /* CANON_GEM_ALERT */
     default:

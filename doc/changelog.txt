@@ -4516,3 +4516,5 @@ Start... early ages
 - aes/gemdos.c aes/gemdos.h aes/geminit.c desk/deskbind.h desk/deskdir.c:
   Allow dos_read()/dos_write() to transfer >64K. (RFB)
 - desk/deskbind.h desk/deskdir.c: Improve desktop file copy performance. (RFB)
+- tools/bug.c: Generate warning messages for illegal alerts (disabled
+  initially). Contributed by Eero Tamminen. (RFB)
