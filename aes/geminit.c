@@ -548,7 +548,8 @@ static void sh_init(void)
 */
 static void sh_rdinf(void)
 {
-        WORD    fh, size;
+        WORD    fh;
+        LONG    size;
         char    *pfile;
         char    tmpstr[MAX_LEN];
 

@@ -152,14 +152,14 @@ WORD dos_close(WORD handle)
 }
 
 
-UWORD dos_read(WORD handle, UWORD cnt, LONG pbuffer)
+LONG dos_read(WORD handle, LONG cnt, LONG pbuffer)
 {
-        return(gemdos(X_READ,handle,(ULONG)cnt,pbuffer));
+        return(gemdos(X_READ,handle,cnt,pbuffer));
 }
 
-UWORD dos_write(WORD handle, UWORD cnt, LONG pbuffer)
+LONG dos_write(WORD handle, LONG cnt, LONG pbuffer)
 {
-        return(gemdos(X_WRITE,handle,(ULONG)cnt,pbuffer));
+        return(gemdos(X_WRITE,handle,cnt,pbuffer));
 }
 
 

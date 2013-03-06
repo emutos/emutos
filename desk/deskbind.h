@@ -138,7 +138,7 @@ GLOBES
 /*GLOBAL*/ WORD         g_wicon;
 /*GLOBAL*/ WORD         g_hicon;
 
-/*GLOBAL*/ WORD         g_afsize;
+/*GLOBAL*/ LONG         g_afsize;
 /*GLOBAL*/ BYTE         *g_pbuff;
 /*GLOBAL*/ ANODE        g_alist[NUM_ANODES];
 

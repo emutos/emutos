@@ -377,7 +377,7 @@ static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WO
 {
         LONG            tree;
         WORD            srcfh, dstfh;
-        UWORD           amntrd, amntwr;
+        LONG            amntrd, amntwr;
         WORD            copy, cont, more, samedir, ob;
 
         copy = TRUE;
