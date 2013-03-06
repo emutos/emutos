@@ -4515,3 +4515,4 @@ Start... early ages
 - bios/vectors.S: Fixed return value of unimplemented (X)BIOS functions. (VRI)
 - aes/gemdos.c aes/gemdos.h aes/geminit.c desk/deskbind.h desk/deskdir.c:
   Allow dos_read()/dos_write() to transfer >64K. (RFB)
+- desk/deskbind.h desk/deskdir.c: Improve desktop file copy performance. (RFB)

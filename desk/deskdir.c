@@ -47,8 +47,10 @@
 #define abs(x) ( (x) < 0 ? -(x) : (x) )
 #define MAX_TWIDTH 45                           /* used in blank_it()   */
 
+#define MAX_CLUS_SIZE   (32*1024L)  /* maximum cluster size */
 
-
+static UBYTE    *copybuf;   /* for copy operations */
+static LONG     copylen;    /* size of above buffer */
 
 static BYTE     ml_files[4], ml_dirs[4];
 static WORD     ml_dlfi, ml_dlfo, ml_dlok, ml_dlcn;
@@ -479,13 +481,13 @@ static WORD d_dofcopy(BYTE *psrc_file, BYTE *pdst_file, WORD time, WORD date, WO
           more = d_errmsg();
           if (more)
           {
-            amntrd = dos_read(srcfh, G.g_xlen, G.g_xbuf);
+            amntrd = dos_read(srcfh, copylen, (LONG)copybuf);
             more = d_errmsg();
             if (more)
             {
               if (amntrd)
               {
-                amntwr = dos_write(dstfh, amntrd, G.g_xbuf);
+                amntwr = dos_write(dstfh, amntrd, (LONG)copybuf);
                 more = d_errmsg();
                 if (more)
                 {
@@ -783,10 +785,22 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
                 }
                 break;
           case OP_COPY:
-                lavail = dos_avail();
-                G.g_xlen = (lavail > 0x0000fff0L) ? 0xfff0 : LLOWD(lavail);
-                G.g_xlen -= 0x0200;
-                G.g_xbuf = dos_alloc( LW(G.g_xlen) );
+                lavail = dos_avail() - 0x400;   /* allow safety margin */
+                if (lavail < 0L)
+                    return FALSE;       /* TODO: alert for insufficient memory */
+                /*
+                 * for efficiency, the copy length should be a multiple of
+                 * cluster size.  it's a lot of work to figure out the actual
+                 * cluster sizes for the source and destination, but in most
+                 * cases, available memory will be >=32K, the maximum possible
+                 * cluster size.  in this case, we set 'copylen' to the largest
+                 * multiple that fits in available memory.  if we have less
+                 * than 32K available, we just set it as large as possible.
+                 */
+                if (lavail >= MAX_CLUS_SIZE)
+                    copylen = lavail & ~(MAX_CLUS_SIZE-1);
+                else copylen = lavail;
+                copybuf = (UBYTE *)dos_alloc(copylen);
 
                 ml_dlpr = G.g_ccopypref;
                 if (ml_dlpr)
@@ -941,7 +955,7 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
           case OP_DELETE:
                 break;
           case OP_COPY:
-                dos_free(G.g_xbuf);
+                dos_free((LONG)copybuf);
                 break;
         } /* switch */
         if (ml_havebox)

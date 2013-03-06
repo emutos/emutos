@@ -69,10 +69,6 @@ GLOBES
 
 /*GLOBAL*/ BYTE         g_srcpth[82];
 /*GLOBAL*/ BYTE         g_dstpth[82];
-                                                /* data xfer buffer and */
-                                                /*   length for copying */
-/*GLOBAL*/ LONG         g_xbuf;
-/*GLOBAL*/ UWORD        g_xlen;
                                                 /* stack of fcb's to use*/
                                                 /*   for non-recursive  */
                                                 /*   directory tree     */
