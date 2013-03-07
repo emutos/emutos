@@ -45,9 +45,6 @@
                                 /* mn_register() call)                */
 
 
-                                                /* Use memcpy to copy bytes: */
-#define LBCOPY(dest,src,len) memcpy((void *)(dest), (void *)(src), (len))
-
 #define LSTRLEN(p) strlen((char *)p)
 
 extern WORD LBWMOV(WORD *pdst, BYTE *psrc);

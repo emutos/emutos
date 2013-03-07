@@ -237,7 +237,7 @@ void  just_draw(LONG tree, WORD obj, WORD sx, WORD sy)
             case G_FBOXTEXT:
             case G_TEXT:
             case G_FTEXT:
-                  LBCOPY(&edblk, spec, sizeof(TEDINFO));
+                  memcpy(&edblk, (TEDINFO *)spec, sizeof(TEDINFO));
                   gr_crack(edblk.te_color, &bcol,&tcol, &ipat, &icol, &tmode);
                 break;
           }
@@ -306,13 +306,13 @@ void  just_draw(LONG tree, WORD obj, WORD sx, WORD sy)
                 gr_inside(&t, -tmpth);
                 break;
             case G_IMAGE:
-                LBCOPY(&bi, spec, sizeof(BITBLK));
+                memcpy(&bi, (BITBLK *)spec, sizeof(BITBLK));
                 gsx_blt(bi.bi_pdata, bi.bi_x, bi.bi_y, bi.bi_wb,
                                 0x0L, t.g_x, t.g_y, gl_width/8, bi.bi_wb * 8,
                                 bi.bi_hl, MD_TRANS, bi.bi_color, WHITE);
                 break;
             case G_ICON:
-                LBCOPY(&ib, spec, sizeof(ICONBLK));
+                memcpy(&ib, (ICONBLK *)spec, sizeof(ICONBLK));
                 ib.ib_xicon += t.g_x;
                 ib.ib_yicon += t.g_y;
                 ib.ib_xtext += t.g_x;

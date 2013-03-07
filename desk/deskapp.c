@@ -311,7 +311,7 @@ void app_tran(WORD bi_num)
 
         rsrc_gaddr(R_BITBLK, bi_num, &lpbi);
 
-        LBCOPY(ADDR(&lb), lpbi, sizeof(BITBLK));
+        memcpy(&lb, (BITBLK *)lpbi, sizeof(BITBLK));
 
         gsx_trans(lb.bi_pdata, lb.bi_wb, lb.bi_pdata, lb.bi_wb, lb.bi_hl);
 }

@@ -89,7 +89,7 @@ void ap_rdwr(WORD code, PD *p, WORD length, LONG pbuff)
              (p->p_qindex == length) &&
              (length == 16) )
         {
-          LBCOPY(pbuff, p->p_qaddr, p->p_qindex);
+          memcpy((void *)pbuff, (void *)p->p_qaddr, p->p_qindex);
           p->p_qindex = 0;
         }
         else
@@ -124,15 +124,12 @@ void ap_tplay(LONG pbuff, WORD length, WORD scale)
 {
         register WORD   i;
         FPD             f;
-        LONG            ad_f;
-
-        ad_f = (LONG) ADDR(&f);
 
         gl_play = TRUE;
         for(i=0; i<length; i++)
         {
                                                 /* get an event to play */
-          LBCOPY(ad_f, pbuff, sizeof(FPD));
+          memcpy(&f, (FPD *)pbuff, sizeof(FPD));
           pbuff += sizeof(FPD);
                                                 /* convert it to machine*/
                                                 /*   specific form      */

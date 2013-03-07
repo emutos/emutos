@@ -93,7 +93,7 @@ static void sh_toalpha(void);
 void sh_read(BYTE *pcmd, BYTE *ptail)
 {
         strcpy(pcmd, D.s_cmd);
-        LBCOPY(ptail, ad_stail, 128);
+        memcpy(ptail, (BYTE *)ad_stail, 128);
 }
 
 
@@ -201,7 +201,7 @@ void sh_fixtail(WORD iscpm)
             s_tail[i++] = *ptmp++;
         }
 
-        LBCOPY(ADDR(&s_tail[i]), ad_stail, 128 - i);
+        memcpy(s_tail+i, (BYTE *)ad_stail, 128 - i);
 
         if (iscpm)
         {
@@ -230,7 +230,7 @@ void sh_fixtail(WORD iscpm)
           }
         }
                                                 /* copy into true tail  */
-        LBCOPY(ad_stail, s_tail, 128);
+        memcpy((BYTE *)ad_stail, s_tail, 128);
 }
 
 
@@ -258,7 +258,7 @@ WORD sh_write(WORD doex, WORD isgem, WORD isover, const BYTE *pcmd, const BYTE *
         }
 
         strcpy(D.s_cmd, pcmd);
-        LBCOPY(ad_stail, ptail, 128);
+        memcpy((BYTE *)ad_stail, ptail, 128);
 
         if (isover > 0)
         {
@@ -293,7 +293,7 @@ WORD sh_write(WORD doex, WORD isgem, WORD isover, const BYTE *pcmd, const BYTE *
 */
 void sh_get(void *pbuffer, WORD len)
 {
-        LBCOPY(pbuffer, ad_ssave, len);
+        memcpy(pbuffer, (BYTE *)ad_ssave, len);
 }
 
 
@@ -303,7 +303,7 @@ void sh_get(void *pbuffer, WORD len)
 */
 void sh_put(const void *pdata, WORD len)
 {
-        LBCOPY(ad_ssave, pdata, len);
+        memcpy((BYTE *)ad_ssave, pdata, len);
 }
 
 
@@ -437,7 +437,7 @@ void sh_envrn(BYTE **ppath, const BYTE *psrch)
           {
             if (((last == NULL) || (last == -1)) && (tmp == loc2[0]))
             {
-              LBCOPY(ADDR(&loc1[0]), lp, len);
+              memcpy(loc1, lp, len);
               if ( strcmp(&loc1[0], &loc2[1])==0 )
               {
                 lp += len;

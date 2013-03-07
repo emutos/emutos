@@ -611,7 +611,7 @@ void amouse(EVB *e, LONG pmo)
 {
         MOBLK           mob;
 
-        LBCOPY(ADDR(&mob), pmo, sizeof(MOBLK));
+        memcpy(&mob, (MOBLK *)pmo, sizeof(MOBLK));
                                                /* if already in (or out) */
                                                /* signal immediately     */
         if ( (rlr == gl_mowner) &&

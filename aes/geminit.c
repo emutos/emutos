@@ -537,7 +537,7 @@ static void sh_init(void)
             psh->sh_doexec = (toupper(*(psrc+1)) == 'D');
           }
         }
-        LBCOPY(ad_stail, (LONG)(&s_tail[0]), 128);
+        memcpy(ad_stail, s_tail, 128);
 }
 
 
@@ -819,7 +819,7 @@ void gem_main(void)
         /* fix up icons         */
         for(i=0; i<3; i++) {
             tmpadbi = &rs_bitblk[NOTEBB+i];
-            memcpy((char *)&bi, tmpadbi, sizeof(BITBLK));
+            memcpy(&bi, tmpadbi, sizeof(BITBLK));
             gsx_trans(bi.bi_pdata, bi.bi_wb, bi.bi_pdata, bi.bi_wb, bi.bi_hl);
         }
 

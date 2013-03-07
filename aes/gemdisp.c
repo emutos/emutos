@@ -115,7 +115,7 @@ void forker(void)
           f = &D.g_fpdx[fph++];
                                         /* copy FPD so an interrupt     */
                                         /*  doesn't overwrite it.       */
-          LBCOPY(ADDR(&g), ADDR(f), sizeof(FPD) );
+          memcpy(&g, f, sizeof(FPD));
           if (fph == NFORKS)
             fph = 0;
           sti();
@@ -144,7 +144,7 @@ void forker(void)
               }
               else
               {
-                LBCOPY(gl_rbuf, ADDR(f), sizeof(FPD));
+                memcpy((void *)gl_rbuf, f, sizeof(FPD));
                 gl_rbuf += sizeof(FPD);
                 gl_rlen--;
                 gl_recd = gl_rlen;

@@ -38,7 +38,7 @@ void doq(WORD donq, PD *p, QPB *m)
         n = m->qpb_cnt;
         if (donq)
         {
-          LBCOPY(p->p_qaddr + p->p_qindex, m->qpb_buf, n);
+          memcpy((BYTE *)p->p_qaddr+p->p_qindex, (BYTE *)m->qpb_buf, n);
                                                 /* if its a redraw msg  */
                                                 /*   try to find a      */
                                                 /*   matching msg and   */
@@ -84,10 +84,10 @@ void doq(WORD donq, PD *p, QPB *m)
         }
         else
         {
-          LBCOPY(m->qpb_buf, p->p_qaddr, n);
+          memcpy((BYTE *)m->qpb_buf, (BYTE *)p->p_qaddr, n);
           p->p_qindex -= n;
           if ( p->p_qindex )
-            LBCOPY(p->p_qaddr, p->p_qaddr + n, p->p_qindex);
+            memcpy((BYTE *)p->p_qaddr, (BYTE *)p->p_qaddr + n, p->p_qindex);
         }
 }
 

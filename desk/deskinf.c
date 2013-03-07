@@ -156,7 +156,7 @@ static WORD ob_sfcb(LONG psfcb, BYTE *pfmt)
         BYTE    pdate_str[7], ptime_str[7], psize_str[9];
         WORD    cnt;
 
-        LBCOPY(ADDR(&sf.sfcb_junk), psfcb, sizeof(SFCB));
+        memcpy(&sf.sfcb_junk, (SFCB *)psfcb, sizeof(SFCB));
         pdst = pfmt;
         psrc = &sf.sfcb_name[0];
         *pdst++ = ' ';
@@ -257,7 +257,7 @@ WORD dr_code(LONG pparms)
         GRECT           oc;
         WORD            state;
 
-        LBCOPY(ADDR(&pb), pparms, sizeof(PARMBLK));
+        memcpy(&pb, (PARMBLK *)pparms, sizeof(PARMBLK));
         gsx_gclip(&oc);
         gsx_sclip((GRECT *)&pb.pb_xc);
         state = dr_fnode(pb.pb_prevstate, pb.pb_currstate,
