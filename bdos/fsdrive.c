@@ -129,7 +129,7 @@ long    ckdrv(int d)
 **      getdmd - allocate storage for and initialize a DMD
 */
 
-DMD     *getdmd(int drv)
+static DMD *getdmd(int drv)
 {
         DMD *dm;
 

@@ -4518,3 +4518,6 @@ Start... early ages
 - desk/deskbind.h desk/deskdir.c: Improve desktop file copy performance. (RFB)
 - tools/bug.c: Generate warning messages for illegal alerts (disabled
   initially). Contributed by Eero Tamminen. (RFB)
+
+2013-03-06
+- bios/blkdev.c bios/blkdev.h bdos/fs.h bdos/fsdrive.c: Static cleanup. (RFB)

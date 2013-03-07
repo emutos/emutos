@@ -40,6 +40,11 @@ static BYTE diskbuf[2*SECTOR_SIZE];     /* buffer for 2 sectors */
 
 PUN_INFO pun_info;
 
+/*
+ * Function prototypes
+ */
+static void blkdev_hdv_init(void);
+
 /* get intel words */
 static UWORD getiword(UBYTE *addr)
 {
@@ -122,7 +127,7 @@ void pun_info_setup(void)
  *
  */
 
-void blkdev_hdv_init(void)
+static void blkdev_hdv_init(void)
 {
     /* Start with no drives. This matters for EmuTOS-RAM, because the system
      * variables are not automatically reinitialized. */
