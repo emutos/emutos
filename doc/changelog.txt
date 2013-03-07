@@ -4528,3 +4528,4 @@ Start... early ages
   use MFORM for mouse form instead of array of WORDs. (RFB)
 - aes/gemgsxif.c aes/gemsuper.c include/compat.h: Code cleanup: eliminate
   LWCOPY macro. (RFB)
+- bios/memory.S: Do not clear the FastRAM anymore, to improve boot speed. (VRI)
