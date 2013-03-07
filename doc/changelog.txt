@@ -4526,3 +4526,5 @@ Start... early ages
 2013-03-07
 - aes/gemctrl.c aes/gemgsxif.c aes/geminit.c aes/geminit.h: Code cleanup:
   use MFORM for mouse form instead of array of WORDs. (RFB)
+- aes/gemgsxif.c aes/gemsuper.c include/compat.h: Code cleanup: eliminate
+  LWCOPY macro. (RFB)

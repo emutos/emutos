@@ -46,8 +46,6 @@
 
 
                                                 /* Use memcpy to copy bytes: */
-#define LWCOPY(dest,src,len) memcpy((void *)(dest), (void*)(src), (len)*2)
-                                                /* Use memcpy to copy bytes: */
 #define LBCOPY(dest,src,len) memcpy((void *)(dest), (void *)(src), (len))
 
 #define LSTRLEN(p) strlen((char *)p)

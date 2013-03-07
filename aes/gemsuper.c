@@ -475,17 +475,17 @@ static void xif(LONG pcrys_blk)
         WORD            int_out[O_SIZE];
         LONG            addr_in[AI_SIZE];
 
-        LWCOPY(ADDR(&control[0]), CONTROL, C_SIZE);
+        memcpy(control, (void *)CONTROL, C_SIZE*sizeof(WORD));
         if (IN_LEN)
-          LWCOPY(ADDR(&int_in[0]), INT_IN, min(IN_LEN,I_SIZE));
+          memcpy(int_in, (void *)INT_IN, min(IN_LEN,I_SIZE)*sizeof(WORD));
         if (AIN_LEN)
-          LWCOPY(ADDR(&addr_in[0]), ADDR_IN, min(AIN_LEN,AI_SIZE)*2);
+          memcpy(addr_in, (void *)ADDR_IN, min(AIN_LEN,AI_SIZE)*sizeof(LONG));
 
         int_out[0] = crysbind(OP_CODE, GGLOBAL, &control[0], &int_in[0], &int_out[0],
                                 &addr_in[0]);
 
         if (OUT_LEN)
-          LWCOPY(INT_OUT, ADDR(&int_out[0]), OUT_LEN);
+          memcpy((void *)INT_OUT, int_out, OUT_LEN*sizeof(WORD));
         if (OP_CODE == RSRC_GADDR)
           LLSET(ADDR_OUT, ad_rso);
 }
