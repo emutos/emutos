@@ -557,6 +557,10 @@ long    ixclose(OFD *fd, int part)
 **      this is a directory we are closing (path & CL_DIR), shouldn't the
 **      fileln be zero anyway?  I give up.
 **                                      - ktb
+**      Answer: The fileln field in a directory OFD is set to 0x7fffffff
+**      (see makofd()), so we need to do this to ensure the length in the
+**      actual directory entry is zero.
+**                                      - RFB
 */
 
 

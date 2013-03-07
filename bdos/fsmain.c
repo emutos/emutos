@@ -461,7 +461,7 @@ long    xgetdrv(void)
 
 
 /*
- *  makofd -
+ *  makofd - create an OFD for a directory
  */
 
 OFD     *makofd(register DND *p)
