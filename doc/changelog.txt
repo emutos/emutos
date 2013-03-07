@@ -4524,4 +4524,5 @@ Start... early ages
 - bdos/fsmain.c bdos/fsopnclo.c: Added some clarification comments. (RFB)
 
 2013-03-07
-- FIXME: remove this line
+- aes/gemctrl.c aes/gemgsxif.c aes/geminit.c aes/geminit.h: Code cleanup:
+  use MFORM for mouse form instead of array of WORDs. (RFB)

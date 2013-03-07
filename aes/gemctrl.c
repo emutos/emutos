@@ -316,7 +316,7 @@ void ct_mouse(WORD grabit)
           if (gl_tmpmoff)
             gsx_moff();
           gl_moff = gl_tmpmoff;
-          gsx_mfset((LONG)&gl_mouse[0]);
+          gsx_mfset((LONG)&gl_mouse);
           gl_ctmown = FALSE;
           wm_update(FALSE);
         }

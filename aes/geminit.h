@@ -9,6 +9,7 @@
 
 #ifndef GEMINIT_H
 #define GEMINIT_H
+#include "gsxdefs.h"
 
 #define PATH_ENV    "PATH="     /* PATH environment variable */
 #define DEF_PATH    "C:\\GEMAPPS\\GEMSYS;C:\\GEMAPPS;C:\\"  /* default value */
@@ -26,7 +27,7 @@ extern LONG     ad_stdesk;
 extern BYTE     gl_dir[130];
 extern BYTE     gl_1loc[256];
 extern BYTE     gl_2loc[256];
-extern WORD     gl_mouse[37];
+extern MFORM    gl_mouse;
 extern BYTE     gl_logdrv;
 
 extern WORD     totpds;

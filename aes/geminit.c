@@ -90,7 +90,7 @@ GLOBAL BYTE     *ad_envrn;              /* initialized in GEMSTART      */
 GLOBAL LONG     ad_stdesk;
 
 GLOBAL BYTE     gl_dir[130];
-GLOBAL WORD     gl_mouse[37];
+GLOBAL MFORM    gl_mouse;
 GLOBAL BYTE     gl_logdrv;
 
 GLOBAL PD       *rlr, *drl, *nrl;
