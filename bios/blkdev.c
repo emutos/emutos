@@ -38,12 +38,14 @@ UNIT devices[UNITSNUM];
 
 static BYTE diskbuf[2*SECTOR_SIZE];     /* buffer for 2 sectors */
 
-PUN_INFO pun_info;
+static PUN_INFO pun_info;
 
 /*
  * Function prototypes
  */
 static void blkdev_hdv_init(void);
+static LONG blkdev_mediach(WORD dev);
+static LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG lrecnr);
 
 /* get intel words */
 static UWORD getiword(UBYTE *addr)
@@ -231,7 +233,7 @@ int add_partition(int dev, char id[], ULONG start, ULONG size)
 
 #define CNTMAX  0x7FFF  /* 16-bit MAXINT */
 
-LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG lrecnr)
+static LONG blkdev_rwabs(WORD rw, LONG buf, WORD cnt, WORD recnr, WORD dev, LONG lrecnr)
 {
     int retries = RWABS_RETRIES;
     int unit = dev;
@@ -445,7 +447,7 @@ LONG blkdev_getbpb(WORD dev)
  * blkdev_mediach - BIOS media change vector
  */
 
-LONG blkdev_mediach(WORD dev)
+static LONG blkdev_mediach(WORD dev)
 {
     BLKDEV *b = &blkdev[dev];
 

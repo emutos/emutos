@@ -4534,3 +4534,6 @@ Start... early ages
   include/compat.h: Code cleanup: eliminate LBCOPY macro. (RFB)
 - util/memmove.S: Improve memcpy() speed for small lengths. (RFB)
 - bdos/fs.h bdos/fsopnclo.c: Remove some duplicate #defines. (RFB)
+
+2013-03-08
+- bios/blkdev.c bios/blkdev.h: Static cleanup. (RFB)
