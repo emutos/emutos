@@ -492,9 +492,6 @@ long xclose(int h)
 **              Also, I'm not sure that the EINTRN return is ok.
 */
 
-#define CL_DIR 0x0002   /* this is a directory file, flush, do not free */
-#define CL_FULL 0x0004  /* even though its a directory, full close */
-
 long    ixclose(OFD *fd, int part)
 {                                       /*  M01.01.03                   */
         OFD *p,**q;

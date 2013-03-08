@@ -4533,3 +4533,4 @@ Start... early ages
   aes/gemqueue.c aes/gemshlib.c desk/deskapp.c desk/deskinf.c
   include/compat.h: Code cleanup: eliminate LBCOPY macro. (RFB)
 - util/memmove.S: Improve memcpy() speed for small lengths. (RFB)
+- bdos/fs.h bdos/fsopnclo.c: Remove some duplicate #defines. (RFB)

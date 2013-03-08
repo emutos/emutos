@@ -461,8 +461,8 @@ OFD  *getofd(int h);
 
 
 /* Misc. defines */
-
-#define CL_DIR  0x0002
-#define CL_FULL 0x0004
+                    /* the following are used for the second arg to ixclose() */
+#define CL_DIR  0x0002      /* this is a directory file, flush, do not free */
+#define CL_FULL 0x0004      /* even though it's a directory, full close */
 
 #endif /* FS_H */
