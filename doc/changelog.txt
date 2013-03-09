@@ -4540,3 +4540,5 @@ Start... early ages
 
 2013-03-09
 - cli/command.c: Fix occasional crash in CLI rename command. (RFB)
+- include/config.h aes/gemdisof.S aes/gemsuper.c aes/struct.h: Added
+  CONF_DEBUG_AES_STACK to debug and estimate the AES stack usage. (VRI)

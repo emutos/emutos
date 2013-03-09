@@ -505,3 +505,58 @@ WORD super(WORD cx, LONG pcrys_blk)
 
         return 0;
 }
+
+#if CONF_DEBUG_AES_STACK
+
+#define MARKER_BYTE 0xaa
+
+UBYTE* check_min; /* Minimum stack address to check */
+UBYTE* check_max; /* Maximum stack address to check */
+ULONG max_usage = 0; /* Maximum stack usage for an AES call, since the beginning */
+UBYTE* min_pointer = NULL; /* Minimum detected stack pointer, since the beginning */
+
+/* Called when entering AES trap #2 */
+void trapaes_debug_enter(void)
+{
+    UBYTE* bottom = (UBYTE*)rlr->p_uda->u_super;
+    UBYTE* current = (UBYTE*)rlr->p_uda->u_spsuper;
+    UBYTE* top = bottom + sizeof rlr->p_uda->u_super;
+
+    kprintf("AES enter rlr=0x%08lx bottom=0x%08lx current=0x%08lx top=0x%08lx free=%ld\n",
+        (ULONG)rlr, (ULONG)bottom, (ULONG)current, (ULONG)top, current - bottom);
+
+    if (!min_pointer)
+        min_pointer = top;
+
+    /* Fill unused stack stack space with the marker */
+    check_min = bottom;
+    check_max = current;
+    memset(check_min, MARKER_BYTE, check_max - check_min);
+}
+
+/* Called when exiting AES trap #2 */
+void trapaes_debug_exit(void)
+{
+    UBYTE* bottom = (UBYTE*)rlr->p_uda->u_super;
+    UBYTE* current = (UBYTE*)rlr->p_uda->u_spsuper;
+    UBYTE* top = bottom + sizeof rlr->p_uda->u_super;
+    UBYTE* p;
+    ULONG used;
+    ULONG recommended;
+
+    /* Detect the minimum used stack pointer during this AES call */
+    for (p = check_min; p < check_max && *p == MARKER_BYTE; p++);
+    used = check_max - p;
+    if (used > max_usage)
+        max_usage = used;
+
+    if (p < min_pointer)
+        min_pointer = p;
+
+    recommended = (top - min_pointer) + 512; // Heuristic
+
+    kprintf("AES exit  rlr=0x%08lx bottom=0x%08lx current=0x%08lx top=0x%08lx free=%ld, used=%ld, max_usage=%ld, recommended STACK_SIZE=%ld\n",
+        (ULONG)rlr, (ULONG)bottom, (ULONG)current, (ULONG)top, current - bottom, used, max_usage, recommended/4);
+}
+
+#endif /* CONF_DEBUG_AES_STACK */

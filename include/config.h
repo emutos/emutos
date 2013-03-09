@@ -785,6 +785,14 @@
 #endif
 
 /*
+ * Set CONF_DEBUG_AES_STACK to 1 to trace the internal AES stack usage,
+ * and estimate the stack requirements.
+ */
+#ifndef CONF_DEBUG_AES_STACK
+# define CONF_DEBUG_AES_STACK 0
+#endif
+
+/*
  * Miscellaneous definitions that apply to more than one EmuTOS subsystem
  */
 #define BLKDEVNUM 26                    /* number of block devices supported: A: ... Z: */

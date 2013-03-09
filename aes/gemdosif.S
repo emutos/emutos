@@ -161,6 +161,14 @@ _back:
 
 
 trapaes:
+#if CONF_DEBUG_AES_STACK
+        lea     -16(sp),sp
+        movem.l d0-d1/a0-a1,(sp)
+        jsr     _trapaes_debug_enter
+        movem.l (sp),d0-d1/a0-a1
+        lea     16(sp),sp
+#endif
+
         bsr     _cli                    // mask out interrupts
         move.l  usp,a0
 #ifdef __mcoldfire__
@@ -202,6 +210,14 @@ supret:                                 // return from gementry
 #endif
         move.l  a0,usp
         bsr     _sti                    // restore interrupt mask
+
+#if CONF_DEBUG_AES_STACK
+        lea     -16(sp),sp
+        movem.l d0-d1/a0-a1,(sp)
+        jsr     _trapaes_debug_exit
+        movem.l (sp),d0-d1/a0-a1
+        lea     16(sp),sp
+#endif
         rte
 
 
