@@ -4542,3 +4542,4 @@ Start... early ages
 - cli/command.c: Fix occasional crash in CLI rename command. (RFB)
 - include/config.h aes/gemdisof.S aes/gemsuper.c aes/struct.h: Added
   CONF_DEBUG_AES_STACK to debug and estimate the AES stack usage. (VRI)
+- aes/struct.h: Increased STACK_SIZE to allow running XaAES with GEM=ROM. (VRI)
