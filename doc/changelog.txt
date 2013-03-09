@@ -4543,3 +4543,6 @@ Start... early ages
 - include/config.h aes/gemdisof.S aes/gemsuper.c aes/struct.h: Added
   CONF_DEBUG_AES_STACK to debug and estimate the AES stack usage. (VRI)
 - aes/struct.h: Increased STACK_SIZE to allow running XaAES with GEM=ROM. (VRI)
+- desk/deskmain.c desk/desksupp.c desk/desktop.def desk/desktop.rsc:
+  Remove unnecessary info dialog for "New folder" (present in all ROMs
+  but only used in 192K). (RFB)

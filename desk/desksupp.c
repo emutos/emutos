@@ -632,9 +632,6 @@ WORD do_info(WORD curr)
         ANODE   *pa;
         WNODE   *pw;
         FNODE   *pf;
-#ifndef DESK1
-        OBJECT  *tree;
-#endif
 
         pa = i_find(G.g_cwin, curr, &pf, &junk);
         pw = win_find(G.g_cwin);
@@ -651,14 +648,9 @@ WORD do_info(WORD curr)
             case AT_ISFOLD:
 #ifndef DESK1
                 if (pf->f_attr & F_FAKE)
-                {
-                  tree = (OBJECT *)G.a_trees[ADNFINFO];
-                  inf_show((LONG)tree, 0);
-                  tree[NFINOK].ob_state = NORMAL;
-                }
-                else
+                  break;
 #endif
-                  inf_folder(&pw->w_path->p_spec[0], pf);
+                inf_folder(&pw->w_path->p_spec[0], pf);
                 break;
             case AT_ISDISK:
 #ifdef DESK1

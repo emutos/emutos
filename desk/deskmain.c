@@ -105,7 +105,7 @@ static void    cnx_put(void);
 static WORD     ig_close;
 
 #ifndef DESK1
-static const BYTE     ILL_ITEM[] = {L1ITEM, L2ITEM, L3ITEM, L4ITEM, L5ITEM, CLSWITEM, 0};
+static const BYTE     ILL_ITEM[] = {L1ITEM, L2ITEM, L3ITEM, L4ITEM, L5ITEM, NFOLITEM, CLSWITEM, 0};
 #else
 static const BYTE     ILL_ITEM[] = {L1ITEM, L2ITEM, L3ITEM, L4ITEM, L5ITEM, 0};
 #endif
@@ -503,10 +503,6 @@ static WORD do_filemenu(WORD item)
                   fun_close(pw, 1);
                 break;
 #else
-          case NFOLITEM:
-                if (pw)
-                  fun_mkdir(pw);
-                break;
           case CLOSITEM:
           case CLSWITEM:
                 hot_close(G.g_cwin);
