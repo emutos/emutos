@@ -4537,3 +4537,6 @@ Start... early ages
 
 2013-03-08
 - bios/blkdev.c bios/blkdev.h: Static cleanup. (RFB)
+
+2013-03-09
+- cli/command.c: Fix occasional crash in CLI rename command. (RFB)

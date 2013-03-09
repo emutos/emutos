@@ -2027,9 +2027,15 @@ xCmdLn(char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl)
         }
 
         *d++ = 0;
+        /*
+         * make sure that remaining arg ptrs point to an empty string.
+         * this circumvents problems with the code not always checking
+         * the value of argc (which e.g. caused a crash in the rename
+         * command under some circumstances).
+         */
         *d = 0;
-        i = argc;
-        argv[++i] = d;
+        for (i = argc+1; i < MAXARGS; )
+            argv[i++] = d;
 
         s = argv[0];
         p = argv[1];
