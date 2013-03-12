@@ -125,8 +125,8 @@ __extension__                             \
   __asm__ __volatile__                    \
   ("move.w sr,%0\n\t"                     \
    "move.w %1,sr"                         \
-  : "=&dm"(_r)       /* outputs */        \
-  : "ndm"(_a)        /* inputs  */        \
+  : "=&d"(_r)       /* outputs */        \
+  : "nd"(_a)        /* inputs  */        \
   : "cc", "memory"   /* clobbered */      \
   );                                      \
   _r;                                     \
