@@ -120,8 +120,17 @@ static void vecs_init(void)
     VEC_LEVEL6 = just_rte;
     VEC_LEVEL7 = just_rte;
 
+#ifdef __mcoldfire__
+    /* On ColdFire, when a zero divide exception occurs, the PC value in the
+     * exception frame points to the offending instruction, not the next one.
+     * If we put a simple rte in the exception handler, this will result in
+     * and endless loop.
+     * New ColdFire programs are supposed to be clean and and avoid zero
+     * divides. So we keep the default panic() behaviour in such case. */
+#else
     /* Original TOS cowardly ignores integer divide by zero. */
     VEC_DIVNULL = just_rte;
+#endif
 
     /* initialise some vectors we really need */
     VEC_AES = gemtrap;
