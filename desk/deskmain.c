@@ -593,8 +593,8 @@ static WORD do_optnmenu(WORD item)
 {
         ANODE           *pa;
         WORD            done, rebld, curr;
-        FNODE           *pf;
-        WORD            isapp;
+        FNODE           *pf = NULL;
+        WORD            isapp = FALSE;
         WORD            newres, newmode;
         BYTE            *pstr;
 #ifdef DESK1
