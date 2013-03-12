@@ -4550,3 +4550,6 @@ Start... early ages
 2013-03-11
 - aes/geminit.c: Fix divide-by-zero when ev_dclick() is called before
   gl_ticktime is initialised. (RFB)
+
+2013-03-12
+- bios/dmasound.c: Added remaining Soundcmd() functionality for Falcon. (THH)

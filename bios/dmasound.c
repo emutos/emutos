@@ -201,8 +201,64 @@ LONG unlocksnd(void)
     return 0;
 }
 
+
 /**
- * Configure various sound setttings
+ * Configure various sound settings of Falcon DMA sound
+ */
+static LONG sndcmd_falcon(WORD mode, WORD data)
+{
+    UWORD val;
+
+    switch (mode) {
+     case 0:                // LTATTEN
+       val = DMASOUND->channel_attenuation;
+       if (data != -1) {
+           data = (data & 0x00f0) << 4;
+           val = (val & 0xf0ff) | data;
+           DMASOUND->channel_attenuation = val;
+       }
+       return (val >> 4) & 0x00f0;
+     case 1:                // RTATTEN
+       val = DMASOUND->channel_attenuation;
+       if (data != -1) {
+           data = data & 0x00f0;
+           val = (val & 0xff0f) | data;
+           DMASOUND->channel_attenuation = val;
+       }
+       return val & 0x00f0;
+     case 2:                // LTGAIN
+       val = DMASOUND->channel_amplification;
+       if (data != -1) {
+           data = data & 0xf0;
+           val = (val & 0x0f) | data;
+           DMASOUND->channel_attenuation = val;
+       }
+       return val & 0x0f0;
+     case 3:                // RTGAIN
+       val = DMASOUND->channel_amplification;
+       if (data != -1) {
+           data = (data & 0xf0) >> 4;
+           val = (val & 0xf0) | data;
+           DMASOUND->channel_attenuation = val;
+       }
+       return (val & 0x0f) << 4;
+     case 4:                // ADDERIN
+       if (data != -1) {
+           DMASOUND->codec_16bit_source = data;
+       }
+       return DMASOUND->codec_16bit_source & 0x3;
+     case 5:                // ADCINPUT
+       if (data != -1) {
+           DMASOUND->codec_adc_source = data;
+       }
+       return DMASOUND->codec_adc_source & 0x3;
+    }
+
+    return 0;
+}
+
+/**
+ * Configure various sound settings
  */
 LONG soundcmd(WORD mode, WORD data)
 {
@@ -217,7 +273,12 @@ LONG soundcmd(WORD mode, WORD data)
         return modectrl & 0x3;
     }
 
-    // TODO: Volume settings
+    if (has_falcon_dmasound)
+    {
+        return sndcmd_falcon(mode, data);
+    }
+
+    // TODO: Volume settings via STE microwire interface
 
     return 0;
 }
