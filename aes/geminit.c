@@ -596,9 +596,7 @@ static void process_inf1(void)
             continue;
           if (*pcurr++ == 'E')          /* #E 3A 11 FF 02               */
           {                             /* desktop environment          */
-            pcurr = scan_2(pcurr, &env1);
-            ev_dclick(env1 & 0x07, TRUE);
-            pcurr = scan_2(pcurr, &env2);
+            pcurr += 6;                 /* skip over non-video preferences */
             if (*pcurr == '\r')         /* no video info saved */
               break;
 

@@ -4546,3 +4546,7 @@ Start... early ages
 - desk/deskmain.c desk/desksupp.c desk/desktop.def desk/desktop.rsc:
   Remove unnecessary info dialog for "New folder" (present in all ROMs
   but only used in 192K). (RFB)
+
+2013-03-11
+- aes/geminit.c: Fix divide-by-zero when ev_dclick() is called before
+  gl_ticktime is initialised. (RFB)
