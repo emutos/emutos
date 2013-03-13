@@ -78,17 +78,17 @@ _detect_cpu:
 // on 68000 we try out a `move from CCR'.
 
         clr.l   d0              // assume 68000
-        dc.w    0x42c0          // move.w ccr,d0 legal on 68010+
+        .dc.w   0x42c0          // move.w ccr,d0 legal on 68010+
         moveq   #10,d0
 
 // CACR is present only in 68020+
 
-        dc.l    0x4e7a1002      // movec cacr,d1  get cache control register
+        .dc.l   0x4e7a1002      // movec cacr,d1  get cache control register
         move.l  d1,d2           // hold a copy for later
         ori.w   #0x8100,d1      // enable '030 data and '040 instr. caches
-        dc.l    0x4e7b1002      // movec d1,cacr  set new cache controls
-        dc.l    0x4e7a1002      // movec cacr,d1  read it back to check
-        dc.l    0x4e7b2002      // movec d2,cacr  restore original CACR
+        .dc.l   0x4e7b1002      // movec d1,cacr  set new cache controls
+        .dc.l   0x4e7a1002      // movec cacr,d1  read it back to check
+        .dc.l   0x4e7b2002      // movec d2,cacr  restore original CACR
         tst.w   d1              // if 15th bit was set, this is a 68040+
         bmi.s   x040
         moveq   #20,d0          // assume 68020
@@ -102,7 +102,7 @@ _detect_cpu:
 // 68040 or 68060
 
 x040:   moveq   #40,d0          // assume 68040
-        dc.l    0x4e7a1808      // movec pcr,d1
+        .dc.l   0x4e7a1808      // movec pcr,d1
         moveq   #60,d0          // no fault -> this is 68060
 exit:
         move.l  a3,(0xf4).w     // restore stuff and exit
@@ -170,21 +170,21 @@ _detect_fpu:
         cmpi.w  #60,d1          // enable FPU on 68060 before the check
         bmi.s   no60
 
-        dc.l    0x4e7a0808      // movec pcr,d0
+        .dc.l   0x4e7a0808      // movec pcr,d0
         swap    d0
         cmp.w   #0x0431,d0      // "broken" 68LC/EC060
         beq.s   no60
         swap    d0
         bclr    #0x01,d0
-        dc.l    0x4e7b0808      // movec d0,pcr
+        .dc.l   0x4e7b0808      // movec d0,pcr
 
-no60:   dc.l    0xf2800000      // fnop
+no60:   .dc.l   0xf2800000      // fnop
         clr.l   -(sp)           // push NULL frame
         clr.l   -(sp)           // extra longs for 68060
         clr.l   -(sp)
-        dc.w    0xf35f          // frestore (sp)+  reset FPU into NULL state
-        dc.l    0xf2800000      // fnop  force it into IDLE state
-        dc.w    0xf327          // fsave -(sp)  save the IDLE frame
+        .dc.w   0xf35f          // frestore (sp)+  reset FPU into NULL state
+        .dc.l   0xf2800000      // fnop  force it into IDLE state
+        .dc.w   0xf327          // fsave -(sp)  save the IDLE frame
 
         moveq   #0x10,d0        // assume 68060 FPU (cookie 0x00100000)
         cmpi.w  #60,d1          // d1 is loaded above the FPU code
@@ -289,27 +289,27 @@ pi_chk040:
 // On a 68040 only, clear the instruction cache then activate it;
 // the data cache remains disabled.
         nop
-        dc.w    0xf498          // cinva   ic
+        .dc.w   0xf498          // cinva   ic
         nop
         move.l  #0x8000,d0
-        dc.l    0x4e7b0002      // movec   d0,cacr
+        .dc.l   0x4e7b0002      // movec   d0,cacr
 
         // Instruction Transparent Translation Registers (ITTRs):
         // all addresses (bits 23-16), enabled (bit 15), both user and
         // supervisor (bits 14-13), cachable+write-through (bits 6-5)
         move.l  #0x00ffe000,d0
-        dc.l    0x4e7b0004      // movec   d0,ittr0
+        .dc.l   0x4e7b0004      // movec   d0,ittr0
         moveq.l #0,d0
-        dc.l    0x4e7b0005      // movec   d0,ittr1
+        .dc.l   0x4e7b0005      // movec   d0,ittr1
 
         // The Transparent Translation Registers are setup (even if the cache
         // and the MMU are disabled) to ensure serialized access ("Without
         // serialization, the IU pipeline allows read accesses to occur
         // before completion of a write-back for a previous instruction.")
         move.l  #0x00ffe040,d0
-        dc.l    0x4e7b0006      // movec   d0,dttr0
+        .dc.l   0x4e7b0006      // movec   d0,dttr0
         moveq.l #0,d0
-        dc.l    0x4e7b0007      // movec   d0,dttr1
+        .dc.l   0x4e7b0007      // movec   d0,dttr1
 #endif /* CONF_WITH_68040_PMMU */
 
 #endif /* __mcoldfire__ */
@@ -364,7 +364,7 @@ ii_not30:
         cmp.b   #40,_mcpu+3
         bne     ii_done
         nop
-        dc.w    0xf498          // cinva   ic
+        .dc.w   0xf498          // cinva   ic
         nop
 ii_done:
         rts
@@ -493,13 +493,13 @@ cpushl_bc:
 
 #if CONF_WITH_68030_PMMU
 root_pointer_descriptor:
-        dc.l    0x80000002,_pmmutree // lower limit 0, short format, table at '_pmmutree'
+        .dc.l   0x80000002,_pmmutree // lower limit 0, short format, table at '_pmmutree'
 init_tc:
-        dc.l    0x80F04445          // enable, 32K pages, table indexes=4/4/4/5
+        .dc.l   0x80F04445          // enable, 32K pages, table indexes=4/4/4/5
 init_ttr0:                          // transparent translation is enabled for all FCs
-        dc.l    0x017E8107          //   for 0x01000000-0x7fffffff, caching allowed
+        .dc.l   0x017E8107          //   for 0x01000000-0x7fffffff, caching allowed
 init_ttr1:                          // transparent translation is enabled for all FCs
-        dc.l    0x807E8507          //   for 0x80000000-0xfeffffff, *caching inhibited*
+        .dc.l   0x807E8507          //   for 0x80000000-0xfeffffff, *caching inhibited*
 #endif
 
 // ==== Variables ============================================================
@@ -508,10 +508,10 @@ init_ttr1:                          // transparent translation is enabled for al
         .even
 
 #ifndef __mcoldfire__
-_mcpu:          ds.l    1
-_mcpu_subtype:  ds.w    1
-_fputype:       ds.l    1
-temp:           ds.l    1
+_mcpu:          .ds.l   1
+_mcpu_subtype:  .ds.w   1
+_fputype:       .ds.l   1
+temp:           .ds.l   1
 #endif
 
 

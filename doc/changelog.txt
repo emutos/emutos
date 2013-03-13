@@ -4555,3 +4555,5 @@ Start... early ages
 - bios/dmasound.c: Added remaining Soundcmd() functionality for Falcon. (THH)
 - bios/bios.c: Panic instead of endless loop on zero divide on ColdFire. (VRI)
 - include/asm.h: Safe set_sr() for ColdFire. Reported by Markus Fröschle. (VRI)
+- *.S: Replaced dc.b by .dc.b and so on. This makes the pseudo-ops more visible
+  and fixes compilation with buggy m68k-elf toolchain with -g. (VRI)

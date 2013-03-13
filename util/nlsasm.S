@@ -220,8 +220,8 @@ srh_end:
         .bss
 #if USE_RAM_HASH
 ram_hash:
-        ds.l    2048    // 1024 entries
-        ds.l    20      // 10 additional slots.
+        .ds.l   2048    // 1024 entries
+        .ds.l   20      // 10 additional slots.
 #endif /* USE_RAM_HASH */
 
 #endif /* CONF_WITH_NLS */

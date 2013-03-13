@@ -616,7 +616,7 @@ pi_not30:
 
         // 68040 only, invalidate the line holding the opcode only
         nop
-        dc.w    0xf488                  // cinvl   ic,(a0)
+        .dc.w   0xf488                  // cinvl   ic,(a0)
         nop
 
 pi_next:
@@ -943,7 +943,7 @@ _keyclick:
         .even
 
 /* save area for trap13/14. */
-save_beg:       ds.w    24*3    // d3-d7/a3-a7, sr, pc, vo = 24 words,
+save_beg:       .ds.w   24*3    // d3-d7/a3-a7, sr, pc, vo = 24 words,
                                 // multiplied by 3 ("3 level deep reentrant")
 _trap_save_area:                     // End of Save storage
 

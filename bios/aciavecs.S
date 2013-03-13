@@ -97,47 +97,47 @@
 // ==== IOREC BUFFERS ======================================================
 // Table of input-output buffers for kbd in, midi in
 
-ikbdibufbuf:    ds.b    0x100
-midiibufbuf:    ds.b    0x80
+ikbdibufbuf:    .ds.b   0x100
+midiibufbuf:    .ds.b   0x80
 
 
 // ==== IORECS =============================================================
 // Table of input-output records for kbd in, midi in
 
 _ikbdiorec:
-ikbdibuf:       ds.l    1
-ikbdibufsz:     ds.w    1
-ikbdibufhd:     ds.w    1
-ikbdibuftl:     ds.w    1
-ikbdibuflo:     ds.w    1
-ikbdibufhi:     ds.w    1
+ikbdibuf:       .ds.l   1
+ikbdibufsz:     .ds.w   1
+ikbdibufhd:     .ds.w   1
+ikbdibuftl:     .ds.w   1
+ikbdibuflo:     .ds.w   1
+ikbdibufhi:     .ds.w   1
 _midiiorec:
-midiibuf:       ds.l    1
-midiibufsz:     ds.w    1
-midiibufhd:     ds.w    1
-midiibuftl:     ds.w    1
-midiibuflo:     ds.w    1
-midiibufhi:     ds.w    1
+midiibuf:       .ds.l   1
+midiibufsz:     .ds.w   1
+midiibufhd:     .ds.w   1
+midiibuftl:     .ds.w   1
+midiibuflo:     .ds.w   1
+midiibufhi:     .ds.w   1
 
 
 // ==== KBDVBASE =============================================================
 // This is now the table of routines for managing midi and keyboard data
 // in packets from IKBD (shown by A0 und 4(sp))
 
-_mousexvec:     ds.l    1       // mouse-routine for additional buttons
-kbdvec:         ds.l    1       // must be right before _kbdvecs
+_mousexvec:     .ds.l   1       // mouse-routine for additional buttons
+kbdvec:         .ds.l   1       // must be right before _kbdvecs
 _kbdvecs:
-midivec:        ds.l    1       // MIDI input
-vkbderr:        ds.l    1       // keyboard error
-vmiderr:        ds.l    1       // MIDI-Error
-statvec:        ds.l    1       // IKBD-Status
-mousevec:       ds.l    1       // mouse-routine
-clockvec:       ds.l    1       // time-routine
-joyvec:         ds.l    1       // joystick-routinee
-midisys:        ds.l    1       // MIDI-systemvector
-ikbdsys:        ds.l    1       // IKBD-systemvector
-ikbdstate:      ds.b    1       // action to take upon packet completion
-kbdlength:      ds.b    1       // number of bytes remaining in current packet
+midivec:        .ds.l   1       // MIDI input
+vkbderr:        .ds.l   1       // keyboard error
+vmiderr:        .ds.l   1       // MIDI-Error
+statvec:        .ds.l   1       // IKBD-Status
+mousevec:       .ds.l   1       // mouse-routine
+clockvec:       .ds.l   1       // time-routine
+joyvec:         .ds.l   1       // joystick-routinee
+midisys:        .ds.l   1       // MIDI-systemvector
+ikbdsys:        .ds.l   1       // IKBD-systemvector
+ikbdstate:      .ds.b   1       // action to take upon packet completion
+kbdlength:      .ds.b   1       // number of bytes remaining in current packet
         .even
 
 
@@ -225,10 +225,10 @@ _init_acia_vecs:
         SECTION_RODATA
 iorec_table:
         //         sz, hd, tl,   lo, hi
-        dc.l    ikbdibufbuf
-        dc.w    0x100,  0,  0, 0x40, 0xC0
-        dc.l    midiibufbuf
-        dc.w     0x80,  0,  0, 0x20, 0x60
+        .dc.l   ikbdibufbuf
+        .dc.w   0x100,  0,  0, 0x40, 0xC0
+        .dc.l   midiibufbuf
+        .dc.w    0x80,  0,  0, 0x20, 0x60
 iorec_table_end:
         .text
 
@@ -348,9 +348,9 @@ _midivec:
         .bss
         .even
 kbdindex:
-        ds.w    1   // position of next byte in buffer
-kbdbuf: ds.b    8   // buffer where packets are being reconstructed
-joybuf: ds.b    3
+        .ds.w   1   // position of next byte in buffer
+kbdbuf: .ds.b   8   // buffer where packets are being reconstructed
+joybuf: .ds.b   3
 
 #endif /* CONF_WITH_IKBD_ACIA */
 
@@ -406,9 +406,9 @@ begin_packet:
 #endif
         rts
 ikbdstate_table:
-        dc.b    1, 2, 3, 3, 3, 3, 4, 5, 6, 7
+        .dc.b   1, 2, 3, 3, 3, 3, 4, 5, 6, 7
 kbdlength_table:
-        dc.b    7, 5, 2, 2, 2, 2, 6, 2, 1, 1
+        .dc.b   7, 5, 2, 2, 2, 2, 6, 2, 1, 1
         .even
 
 in_packet:
@@ -449,17 +449,17 @@ got_packet:
         lea     kbdbuf,a0
         jmp     (a1)
 action_table:
-        dc.l    kbd_status      // 1
-        dc.l    kbd_abs_mouse   // 2
-        dc.l    kbd_rel_mouse   // 3
+        .dc.l   kbd_status      // 1
+        .dc.l   kbd_abs_mouse   // 2
+        .dc.l   kbd_rel_mouse   // 3
 #ifdef CONF_WITH_IKBD_CLOCK
-        dc.l    kbd_clock       // 4
+        .dc.l   kbd_clock       // 4
 #else
-        dc.l    0               // 4
+        .dc.l   0               // 4
 #endif
-        dc.l    kbd_joys        // 5
-        dc.l    kbd_joy0        // 6
-        dc.l    kbd_joy1        // 7
+        .dc.l   kbd_joys        // 5
+        .dc.l   kbd_joy0        // 6
+        .dc.l   kbd_joy1        // 7
 kbd_status:
         addq.l  #1,a0
         move.l  statvec,a1

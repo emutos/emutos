@@ -41,9 +41,9 @@ _trap1:
         .bss
         .even
 t1spsav:
-        ds.l    1       // Save space for _trap_1
+        .ds.l   1       // Save space for _trap_1
 t1regsav:
-        ds.l    2
+        .ds.l   2
 
 
 

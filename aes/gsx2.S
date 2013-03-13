@@ -106,12 +106,12 @@ _m_lptr2:
  * Storage for the normal Array pointers of AES
  */
 tmp_contrl:
-        ds.l    1
+        .ds.l   1
 tmp_intin:
-        ds.l    1
+        .ds.l   1
 tmp_ptsin:
-        ds.l    1
+        .ds.l   1
 tmp_intout:
-        ds.l    1
+        .ds.l   1
 tmp_ptsout:
-        ds.l    1
+        .ds.l   1

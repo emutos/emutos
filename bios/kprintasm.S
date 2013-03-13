@@ -64,8 +64,8 @@ kprintf_init:
         move.l  #fail_stonx,vec_linea
         pea     msg_empty
         sub.l   #4,sp
-        dc.w    0xa0ff
-        dc.l    0
+        .dc.w   0xa0ff
+        .dc.l   0
         move.l  a1,sp
         move.l  a0,vec_linea
         move.w  #1,_native_print_kind
@@ -84,8 +84,8 @@ msg_empty:
 
 // ==== STonX - Native print routine for debugging ====================
 _printout_stonx:
-        dc.w    0xa0ff     // Jump to native execution
-        dc.l    0          // Printing subroutine
+        .dc.w   0xa0ff     // Jump to native execution
+        .dc.l   0          // Printing subroutine
         rts
 
 
@@ -118,4 +118,4 @@ kprintf:
         .bss
 
 kprintfsave:
-        ds.l    5       // save zone for kprintf
+        .ds.l   5       // save zone for kprintf

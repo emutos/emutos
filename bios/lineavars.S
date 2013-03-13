@@ -277,15 +277,15 @@ _v_bytes_lin:   .ds.w   1       // -2   byte per screen line
 
 line_a_vars:                            // This is the base line-a pointer
 
-_v_planes:      ds.w    1               // +0   number of video planes.
-_v_lin_wr:      ds.w    1               // +2   number of bytes/video line.
+_v_planes:      .ds.w   1               // +0   number of video planes.
+_v_lin_wr:      .ds.w   1               // +2   number of bytes/video line.
 
 _local_pb:
-_CONTRL:        ds.l    1               // +4   ptr to the CONTRL array.
-_INTIN:         ds.l    1               // +8   ptr to the INTIN array.
-_PTSIN:         ds.l    1               // +12  ptr to the PTSIN array.
-_INTOUT:        ds.l    1               // +16  ptr to the INTOUT array.
-_PTSOUT:        ds.l    1               // +20  ptr to the PTSOUT array.
+_CONTRL:        .ds.l   1               // +4   ptr to the CONTRL array.
+_INTIN:         .ds.l   1               // +8   ptr to the INTIN array.
+_PTSIN:         .ds.l   1               // +12  ptr to the PTSIN array.
+_INTOUT:        .ds.l   1               // +16  ptr to the INTOUT array.
+_PTSOUT:        .ds.l   1               // +20  ptr to the PTSOUT array.
 
 // ===========================================================================
 //      The following 4 variables are accessed by the line-drawing routines
@@ -293,58 +293,58 @@ _PTSOUT:        ds.l    1               // +20  ptr to the PTSOUT array.
 // ===========================================================================
 
 _fg_bp:
-_FG_BP_1:       ds.w    1               // foreground bit_plane #1 value.
-_FG_BP_2:       ds.w    1               // foreground bit_plane #2 value.
-_FG_BP_3:       ds.w    1               // foreground bit_plane #3 value.
-_FG_BP_4:       ds.w    1               // foreground bit_plane #4 value.
+_FG_BP_1:       .ds.w   1               // foreground bit_plane #1 value.
+_FG_BP_2:       .ds.w   1               // foreground bit_plane #2 value.
+_FG_BP_3:       .ds.w   1               // foreground bit_plane #3 value.
+_FG_BP_4:       .ds.w   1               // foreground bit_plane #4 value.
 
-_LSTLIN:        ds.w    1               // 0 => not last line of polyline.
-_LN_MASK:       ds.w    1               // line style mask.
-_WRT_MODE:      ds.w    1               // writing mode.
+_LSTLIN:        .ds.w   1               // 0 => not last line of polyline.
+_LN_MASK:       .ds.w   1               // line style mask.
+_WRT_MODE:      .ds.w   1               // writing mode.
 
 
-_X1:            ds.w    1               // _X1 coordinate for squares
-_Y1:            ds.w    1               // _Y1 coordinate for squares
-_X2:            ds.w    1               // _X2 coordinate for squares
-_Y2:            ds.w    1               // _Y2 coordinate for squares
-_patptr:        ds.l    1               // unused by linea now
-_patmsk:        ds.w    1               // unused by linea now
-_multifill:     ds.w    1               // multi-plane fill flag. (0 => 1 plane)
+_X1:            .ds.w   1               // _X1 coordinate for squares
+_Y1:            .ds.w   1               // _Y1 coordinate for squares
+_X2:            .ds.w   1               // _X2 coordinate for squares
+_Y2:            .ds.w   1               // _Y2 coordinate for squares
+_patptr:        .ds.l   1               // unused by linea now
+_patmsk:        .ds.w   1               // unused by linea now
+_multifill:     .ds.w   1               // multi-plane fill flag. (0 => 1 plane)
 
-_CLIP:          ds.w    1               // clipping flag.
-_XMN_CLIP:      ds.w    1               // x minimum clipping value.
-_YMN_CLIP:      ds.w    1               // y minimum clipping value.
-_XMX_CLIP:      ds.w    1               // x maximum clipping value.
-_YMX_CLIP:      ds.w    1               // y maximum clipping value.
+_CLIP:          .ds.w   1               // clipping flag.
+_XMN_CLIP:      .ds.w   1               // x minimum clipping value.
+_YMN_CLIP:      .ds.w   1               // y minimum clipping value.
+_XMX_CLIP:      .ds.w   1               // x maximum clipping value.
+_YMX_CLIP:      .ds.w   1               // y maximum clipping value.
 
-_XACC_DDA:      ds.w    1               // accumulator for x DDA
-_DDA_INC:       ds.w    1               // the fraction to be added to the DDA
-_T_SCLSTS:      ds.w    1               // scale up or down flag.
-_MONO_STATUS:   ds.w    1               // non-zero - cur font is monospaced
-_SOURCEX:       ds.w    1
-_SOURCEY:       ds.w    1               // upper left of character in font file
-_DESTX:         ds.w    1
-_DESTY:         ds.w    1               // upper left of destination on screen
-_DELX:          ds.w    1
-_DELY:          ds.w    1               // width and height of character
-_FBASE:         ds.l    1               // pointer to font data
-_FWIDTH:        ds.w    1               // offset,segment and form with of font
-_STYLE:         ds.w    1               // special effects
-_LITEMASK:      ds.w    1               // special effects
-_SKEWMASK:      ds.w    1               // special effects
-_WEIGHT:        ds.w    1               // special effects
-_R_OFF:         ds.w    1
-_L_OFF:         ds.w    1               // skew above and below baseline
-_DOUBLE:        ds.w    1               // replicate pixels
-_CHUP:          ds.w    1               // character rotation vector
-_TEXT_FG:       ds.w    1               // text foreground color
-_scrtchp:       ds.l    1               // pointer to base of scratch buffer
-_scrpt2:        ds.w    1               // large buffer base offset
+_XACC_DDA:      .ds.w   1               // accumulator for x DDA
+_DDA_INC:       .ds.w   1               // the fraction to be added to the DDA
+_T_SCLSTS:      .ds.w   1               // scale up or down flag.
+_MONO_STATUS:   .ds.w   1               // non-zero - cur font is monospaced
+_SOURCEX:       .ds.w   1
+_SOURCEY:       .ds.w   1               // upper left of character in font file
+_DESTX:         .ds.w   1
+_DESTY:         .ds.w   1               // upper left of destination on screen
+_DELX:          .ds.w   1
+_DELY:          .ds.w   1               // width and height of character
+_FBASE:         .ds.l   1               // pointer to font data
+_FWIDTH:        .ds.w   1               // offset,segment and form with of font
+_STYLE:         .ds.w   1               // special effects
+_LITEMASK:      .ds.w   1               // special effects
+_SKEWMASK:      .ds.w   1               // special effects
+_WEIGHT:        .ds.w   1               // special effects
+_R_OFF:         .ds.w   1
+_L_OFF:         .ds.w   1               // skew above and below baseline
+_DOUBLE:        .ds.w   1               // replicate pixels
+_CHUP:          .ds.w   1               // character rotation vector
+_TEXT_FG:       .ds.w   1               // text foreground color
+_scrtchp:       .ds.l   1               // pointer to base of scratch buffer
+_scrpt2:        .ds.w   1               // large buffer base offset
 
 
 // ==== Additional Atari specific things =====================================
 // (unused in our VDI, but we have to keep the variables just in case that
 //  a program tries to write values there...)
-_TEXT_BG:       ds.w    1               // text background color
-_COPYTRAN:      ds.w    1               // Flag for Copy-raster-form (<>0 = Transparent)
-_FILL_ABORT:    ds.l    1               // Adress of Routine for Test of break of contour fill function
+_TEXT_BG:       .ds.w   1               // text background color
+_COPYTRAN:      .ds.w   1               // Flag for Copy-raster-form (<>0 = Transparent)
+_FILL_ABORT:    .ds.l   1               // Adress of Routine for Test of break of contour fill function

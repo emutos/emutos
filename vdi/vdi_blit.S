@@ -551,7 +551,7 @@ f1op_00:
         not.w   d6              //                                               4
         jmp     (a3)            //                                               8
 
-        ds.w    2
+        .ds.w   2
 
         and.w   d7,d0           // S and P                                       4
 f2op_00:
@@ -568,7 +568,7 @@ mode_01:
         and.w   d0,(a1)         // D' <- S and D                                12
         jmp     (a3)            //                                               8
 
-        ds.w    1
+        .ds.w   1
 
         and.w   d7,d0           // S and P                                       4
 f1op_01:
@@ -578,7 +578,7 @@ f1op_01:
         and.w   d0,(a1)
         jmp     (a3)
 
-        ds.w    1
+        .ds.w   1
 
         and.w   d7,d0           // S and P                                       4
 f2op_01:
@@ -604,7 +604,7 @@ f1op_02:
         eor.w   d6,(a1)
         jmp     (a3)
 
-        ds.w    1
+        .ds.w   1
 
         and.w   d7,d0           // S and P                                       4
 f2op_02:
@@ -621,7 +621,7 @@ mode_03:
         move.w  d0,(a1)         // D' <- S                                       8
         jmp     (a3)            //                                               8
 
-        ds.w    1
+        .ds.w   1
 
         and.w   d7,d0           // S and P                                       4
 f1op_03:
@@ -655,7 +655,7 @@ f1op_04:
         and.w   d0,(a1)
         jmp     (a3)
 
-        ds.w    2
+        .ds.w   2
 
         and.w   d7,d0           // S and P                                       4
 f2op_04:
@@ -675,7 +675,7 @@ mode_06:
         eor.w   d0,(a1)         // D' <- S xor D                                12
         jmp     (a3)            //                                               8
 
-        ds.w    1
+        .ds.w   1
 
         and.w   d7,d0           // S and P                                       4
 f1op_06:
@@ -683,7 +683,7 @@ f1op_06:
         eor.w   d0,(a1)
         jmp     (a3)
 
-        ds.w    3
+        .ds.w   3
 
         and.w   d7,d0           // S and P                                       4
 f2op_06:
@@ -698,7 +698,7 @@ mode_07:
         or.w    d0,(a1)         // D' <- S or D                                 12
         jmp     (a3)            //                                               8
 
-        ds.w    1
+        .ds.w   1
 
         and.w   d7,d0           // S and P                                       4
 f1op_07:
@@ -706,7 +706,7 @@ f1op_07:
         or.w    d0,(a1)
         jmp     (a3)
 
-        ds.w    3
+        .ds.w   3
 
         and.w   d7,d0           // S and P                                       4
 f2op_07:
@@ -728,7 +728,7 @@ f1op_08:
         eor.w   d6,(a1)
         jmp     (a3)
 
-        ds.w    2
+        .ds.w   2
 
         and.w   d7,d0           // S and P                                       4
 f2op_08:
@@ -751,7 +751,7 @@ f1op_09:
         eor.w   d6,(a1)
         jmp     (a3)
 
-        ds.w    2
+        .ds.w   2
 
         and.w   d7,d0           // S and P                                       4
 f2op_09:
@@ -766,14 +766,14 @@ mode_10:
         not.w   (a1)            // D' <- not D                                  12
         jmp     (a3)            //                                               8
 
-        ds.w    1
+        .ds.w   1
 
         and.w   d7,d0           // S and P                                       4
 f1op_10:
         eor.w   d6,(a1)
         jmp     (a3)
 
-        ds.w    4
+        .ds.w   4
 
         and.w   d7,d0           // S and P                                       4
 f2op_10:
@@ -795,7 +795,7 @@ f1op_11:
         or.w    d0,(a1)
         jmp     (a3)
 
-        ds.w    2
+        .ds.w   2
 
         and.w   d7,d0           // S and P                                       4
 f2op_11:
@@ -819,7 +819,7 @@ f1op_12:
         eor.w   d0,(a1)
         jmp     (a3)
 
-        ds.w    2
+        .ds.w   2
 
         and.w   d7,d0           // S and P                                       4
 f2op_12:
@@ -842,7 +842,7 @@ f1op_13:
         or.w    d0,(a1)
         jmp     (a3)
 
-        ds.w    2
+        .ds.w   2
 
         and.w   d7,d0           // S and P                                       4
 f2op_13:
@@ -866,7 +866,7 @@ f1op_14:
         or.w    d0,(a1)
         jmp     (a3)
 
-        ds.w    1
+        .ds.w   1
 
         and.w   d7,d0           // S and P                                       4
 f2op_14:
@@ -888,7 +888,7 @@ f1op_15:
         or.w    d6,(a1)
         jmp     (a3)
 
-        ds.w    4
+        .ds.w   4
 
         and.w   d7,d0           // S and P                                       4
 f2op_15:
@@ -1149,10 +1149,10 @@ save_addr:
 
 solo_tab:
 
-        dc.l    f0_left                 // no reverse logical left  physical left
-        dc.l    f0_right                // no reverse logical right physical right
-        dc.l    f0_right                //    reverse logical left  physical right
-        dc.l    f0_left                 //    reverse logical right physical left
+        .dc.l   f0_left                 // no reverse logical left  physical left
+        .dc.l   f0_right                // no reverse logical right physical right
+        .dc.l   f0_right                //    reverse logical left  physical right
+        .dc.l   f0_left                 //    reverse logical right physical left
 
 
 
@@ -1164,25 +1164,25 @@ solo_tab:
 frag_tab:
 //                  a4        a3
 
-        dc.l    f1_l2r_lf,fl_l2r_lf     // l2rf1fll
-        dc.l    f0_l2r_rt,f2_l2r_rt     // l2rf0f2r
-        dc.l    f1_l2r_rt,fl_l2r_rt     // l2rf1flr
-        dc.l    f0_l2r_lf,f2_l2r_lf     // l2rf0f2l
+        .dc.l   f1_l2r_lf,fl_l2r_lf     // l2rf1fll
+        .dc.l   f0_l2r_rt,f2_l2r_rt     // l2rf0f2r
+        .dc.l   f1_l2r_rt,fl_l2r_rt     // l2rf1flr
+        .dc.l   f0_l2r_lf,f2_l2r_lf     // l2rf0f2l
 
-        dc.l    f0_r2l_lf,f2_r2l_lf     // r2lf0f2l
-        dc.l    f1_r2l_rt,fl_r2l_rt     // r2lf1flr
-        dc.l    f0_r2l_rt,f2_r2l_rt     // r2lf0f2r
-        dc.l    f1_r2l_lf,fl_r2l_lf     // r2lf1fll
+        .dc.l   f0_r2l_lf,f2_r2l_lf     // r2lf0f2l
+        .dc.l   f1_r2l_rt,fl_r2l_rt     // r2lf1flr
+        .dc.l   f0_r2l_rt,f2_r2l_rt     // r2lf0f2r
+        .dc.l   f1_r2l_lf,fl_r2l_lf     // r2lf1fll
 
-        dc.l    f1_l2r_lf,f2_l2r_lf     // l2rf1f2l
-        dc.l    f0_l2r_rt,fl_l2r_rt     // l2rf0flr
-        dc.l    f1_l2r_rt,f2_l2r_rt     // l2rf1f2r
-        dc.l    f0_l2r_lf,fl_l2r_lf     // l2rf0fll
+        .dc.l   f1_l2r_lf,f2_l2r_lf     // l2rf1f2l
+        .dc.l   f0_l2r_rt,fl_l2r_rt     // l2rf0flr
+        .dc.l   f1_l2r_rt,f2_l2r_rt     // l2rf1f2r
+        .dc.l   f0_l2r_lf,fl_l2r_lf     // l2rf0fll
 
-        dc.l    f1_r2l_lf,f2_r2l_lf     // r2lf1f2l
-        dc.l    f0_r2l_rt,fl_r2l_rt     // r2lf0flr
-        dc.l    f1_r2l_rt,f2_r2l_rt     // r2lf1f2r
-        dc.l    f0_r2l_lf,fl_r2l_lf     // r2lf0fll
+        .dc.l   f1_r2l_lf,f2_r2l_lf     // r2lf1f2l
+        .dc.l   f0_r2l_rt,fl_r2l_rt     // r2lf0flr
+        .dc.l   f1_r2l_rt,f2_r2l_rt     // r2lf1f2r
+        .dc.l   f0_r2l_lf,fl_r2l_lf     // r2lf0fll
 
 
 pre_flight:
@@ -1265,8 +1265,8 @@ np_cont:
 quit_blt:
         rts
 log_op:
-        dc.l    mode_00,mode_01,mode_02,mode_03,mode_04,mode_05,mode_06,mode_07
-        dc.l    mode_08,mode_09,mode_10,mode_11,mode_12,mode_13,mode_14,mode_15
+        .dc.l   mode_00,mode_01,mode_02,mode_03,mode_04,mode_05,mode_06,mode_07
+        .dc.l   mode_08,mode_09,mode_10,mode_11,mode_12,mode_13,mode_14,mode_15
 
 unary_blt:
         movem.l a3-a4,-(sp)             // save routine threads
@@ -1329,26 +1329,26 @@ get_fringe:
 
 fr_l_mask:
 
-        dc.w    0x0000
+        .dc.w   0x0000
 
 fr_r_mask:
 
-        dc.w    0x8000
-        dc.w    0xC000
-        dc.w    0xE000
-        dc.w    0xF000
-        dc.w    0xF800
-        dc.w    0xFC00
-        dc.w    0xFE00
-        dc.w    0xFF00
-        dc.w    0xFF80
-        dc.w    0xFFC0
-        dc.w    0xFFE0
-        dc.w    0xFFF0
-        dc.w    0xFFF8
-        dc.w    0xFFFC
-        dc.w    0xFFFE
-        dc.w    0xFFFF
+        .dc.w   0x8000
+        .dc.w   0xC000
+        .dc.w   0xE000
+        .dc.w   0xF000
+        .dc.w   0xF800
+        .dc.w   0xFC00
+        .dc.w   0xFE00
+        .dc.w   0xFF00
+        .dc.w   0xFF80
+        .dc.w   0xFFC0
+        .dc.w   0xFFE0
+        .dc.w   0xFFF0
+        .dc.w   0xFFF8
+        .dc.w   0xFFFC
+        .dc.w   0xFFFE
+        .dc.w   0xFFFF
 
 
 

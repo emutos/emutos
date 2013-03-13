@@ -46,33 +46,33 @@
         bra.s   start         //  0 bra[2]    branch
         .ascii  "Loader"      //  2 loader[6]
         .ascii  "ABC"         //  8 serial[3]
-        dc.b    0x00, 0x02    //  b bps[2]    bytes per sector
-        dc.b    0x02          //  d spc       sectors per cluster
-        dc.b    0x01, 0x00    //  e res[2]    number of reserved sectors
-        dc.b    0x02          // 10 fat       number of FATs
-        dc.b    0x70, 0x00    // 11 dir[2]    number of DIR root entries
-        dc.b    0xd0, 0x02    // 13 sec[2]    total number of sectors
-        dc.b    0xf8          // 15 media     media descriptor
-        dc.b    0x05, 0x00    // 16 spf[2]    sectors per FAT
-        dc.b    0x09, 0x00    // 18 spt[2]    sectors per track
-        dc.b    0x01, 0x00    // 1a sides[2]  number of sides
-        dc.b    0x00, 0x00    // 1c hid[2]    number of hidden sectors
+        .dc.b   0x00, 0x02    //  b bps[2]    bytes per sector
+        .dc.b   0x02          //  d spc       sectors per cluster
+        .dc.b   0x01, 0x00    //  e res[2]    number of reserved sectors
+        .dc.b   0x02          // 10 fat       number of FATs
+        .dc.b   0x70, 0x00    // 11 dir[2]    number of DIR root entries
+        .dc.b   0xd0, 0x02    // 13 sec[2]    total number of sectors
+        .dc.b   0xf8          // 15 media     media descriptor
+        .dc.b   0x05, 0x00    // 16 spf[2]    sectors per FAT
+        .dc.b   0x09, 0x00    // 18 spt[2]    sectors per track
+        .dc.b   0x01, 0x00    // 1a sides[2]  number of sides
+        .dc.b   0x00, 0x00    // 1c hid[2]    number of hidden sectors
 execflg:
-        dc.w    0
+        .dc.w   0
 ldmode:
-        dc.w    0
+        .dc.w   0
 ssect:
-        dc.w    START
+        .dc.w   START
 sectcnt:
-        dc.w    COUNT
+        .dc.w   COUNT
 ldaddr:
-        dc.l    TMPADDR
+        .dc.l   TMPADDR
 fatbuf:
-        dc.l    0
+        .dc.l   0
 fname:
-        ds.b    11
+        .ds.b   11
 resvd:
-        ds.b    1
+        .ds.b   1
 start:
         /* getbpb before rwabs */
 

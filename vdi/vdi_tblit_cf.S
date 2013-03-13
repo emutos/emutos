@@ -10,7 +10,7 @@
 |                   All Rights Reserved Worldwide                       #
 |                                                                       #
 |########################################################################
-| Translated on Sat Feb  2 00:37:40 2013 by version 2.6.0 of PortAsm translator
+| Translated on Wed Mar 13 01:04:05 2013 by version 2.6.0 of PortAsm translator
 | PortAsm Licence Number #3250
 | Target assembler:    Gnu 'gas'
 |
@@ -993,41 +993,41 @@ blt_done:
 
 |;;           .text                    | [635]
 | 1044 "vdi/vdi_tblit.S"
-|;;   lf_tab: dc.w 0xFFFF              | [637]
+|;;   lf_tab: .dc.w 0xFFFF             | [637]
 lf_tab:
 	.short	0xFFFF
-|;;   rf_tab: dc.w 0x7FFF              | [638]
+|;;   rf_tab: .dc.w 0x7FFF             | [638]
 rf_tab:
 	.short	0x7FFF
-|;;                   dc.w 0x3FFF      | [639]
+|;;                   .dc.w 0x3FFF     | [639]
 	.short	0x3FFF
-|;;                   dc.w 0x1FFF      | [640]
+|;;                   .dc.w 0x1FFF     | [640]
 	.short	0x1FFF
-|;;                   dc.w 0x0FFF      | [641]
+|;;                   .dc.w 0x0FFF     | [641]
 	.short	0x0FFF
-|;;                   dc.w 0x07FF      | [642]
+|;;                   .dc.w 0x07FF     | [642]
 	.short	0x07FF
-|;;                   dc.w 0x03FF      | [643]
+|;;                   .dc.w 0x03FF     | [643]
 	.short	0x03FF
-|;;                   dc.w 0x01FF      | [644]
+|;;                   .dc.w 0x01FF     | [644]
 	.short	0x01FF
-|;;                   dc.w 0x00FF      | [645]
+|;;                   .dc.w 0x00FF     | [645]
 	.short	0x00FF
-|;;                   dc.w 0x007F      | [646]
+|;;                   .dc.w 0x007F     | [646]
 	.short	0x007F
-|;;                   dc.w 0x003F      | [647]
+|;;                   .dc.w 0x003F     | [647]
 	.short	0x003F
-|;;                   dc.w 0x001F      | [648]
+|;;                   .dc.w 0x001F     | [648]
 	.short	0x001F
-|;;                   dc.w 0x000F      | [649]
+|;;                   .dc.w 0x000F     | [649]
 	.short	0x000F
-|;;                   dc.w 0x0007      | [650]
+|;;                   .dc.w 0x0007     | [650]
 	.short	0x0007
-|;;                   dc.w 0x0003      | [651]
+|;;                   .dc.w 0x0003     | [651]
 	.short	0x0003
-|;;                   dc.w 0x0001      | [652]
+|;;                   .dc.w 0x0001     | [652]
 	.short	0x0001
-|;;                   dc.w 0x0000      | [653]
+|;;                   .dc.w 0x0000     | [653]
 	.short	0x0000
 
 |;;           .text                    | [655]
@@ -1397,7 +1397,7 @@ no_more_planes:
 	lea      8(%a7),%a7
       rts                              | [880]
 blttype:
-|;;           dc.l sgl_loop, dbl_loop, mlt_rite, mlt_left | [882]
+|;;           .dc.l sgl_loop, dbl_loop, mlt_rite, mlt_left | [882]
 	.long	sgl_loop,dbl_loop,mlt_rite,mlt_left
 
 
@@ -3628,9 +3628,6 @@ concat:
 	movem.l  (%a7),%d2-%d3/%a0
 	lea      12(%a7),%a7
       rts                              | [2064]
-
-
-
 
 | End section on aligned boundary
 	.p2align 2,0

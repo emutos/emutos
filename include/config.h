@@ -315,8 +315,8 @@
 
 /* set this to 1 if your emulator provides an STonX-like
  * native_print() function, i.e. if the code:
- *   dc.w 0xa0ff
- *   dc.l 0
+ *   .dc.w 0xa0ff
+ *   .dc.l 0
  * executes native function void print_native(char *string);
  */
 #ifndef STONX_NATIVE_PRINT

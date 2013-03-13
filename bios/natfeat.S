@@ -47,7 +47,7 @@ _detect_native_features:
 #ifdef __mcoldfire__
 #error Conflict with instruction mvs.b d0,d1
 #else
-        dc.w    0x7300              // Jump to NATFEAT_ID
+        .dc.w   0x7300              // Jump to NATFEAT_ID
 #endif
         tst.l   d0
         beq.s   fail_natfeat
@@ -72,16 +72,16 @@ nf_version_name:
 // ===========================================================================
 
 _natfeat_cookie:
-        dc.l    0x20021021              // NatFeat magic constant
-        dc.l    nfID
-        dc.l    nfCall
+        .dc.l   0x20021021              // NatFeat magic constant
+        .dc.l   nfID
+        .dc.l   nfCall
 
 nfID:
-        dc.w    0x7300  // Conflict with ColdFire instruction mvs.b d0,d1
+        .dc.w   0x7300  // Conflict with ColdFire instruction mvs.b d0,d1
         rts
 
 nfCall:
-        dc.w    0x7301  // Conflict with ColdFire instruction mvs.b d1,d1
+        .dc.w   0x7301  // Conflict with ColdFire instruction mvs.b d1,d1
         rts
 
 #endif  /* DETECT_NATIVE_FEATURES */
@@ -93,7 +93,7 @@ nfCall:
 // ==== XHDI cookie points here ==============================================
 // ===========================================================================
 
-        dc.l    0x27011992              // XHDI magic constant
+        .dc.l   0x27011992              // XHDI magic constant
 _xhdi_vec:
 #ifdef __mcoldfire__
         lea     -12(sp),sp

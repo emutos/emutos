@@ -69,13 +69,13 @@
         .globl  _run
 
 #if DIAGNOSTIC_CARTRIDGE
-    dc.l    0xfa52235f  // diagnostic cartridge magic number
+    .dc.l   0xfa52235f  // diagnostic cartridge magic number
 #endif
 
 #if defined(MACHINE_AMIGA) && !defined(EMUTOS_RAM)
-    dc.w    0x1111      // 256 kB ROM
-    dc.w    0x4ef9      // jmp
-    dc.l    amiga_main  // pc at power on or after physical reset
+    .dc.w   0x1111      // 256 kB ROM
+    .dc.w   0x4ef9      // jmp
+    .dc.l   amiga_main  // pc at power on or after physical reset
 
     /* Some softkick programs (ex: BlizKick) requires the entry point to be here */
     .org    0xd0
@@ -87,43 +87,43 @@ amiga_main:
 _os_entry:
     bra.s   _main       // os_entry, branch to _main
 os_version:
-    dc.w    TOS_VERSION // os_version, TOS version
+    .dc.w   TOS_VERSION // os_version, TOS version
 reseth:
-    dc.l    _main       // reseth, pointer to reset handler
+    .dc.l   _main       // reseth, pointer to reset handler
 _os_beg:
-    dc.l    _os_entry   // os_beg, base of os = _sysbase
+    .dc.l   _os_entry   // os_beg, base of os = _sysbase
 _os_end:
 #ifdef EMUTOS_RAM
     // When EmuTOS is run from the RAM, the BSS starts at address 0 as usual,
     // but the TEXT and DATA segments are just after the BSS.
     // Thus the first unused RAM address is the end of the DATA segment.
-    dc.l    _edata
+    .dc.l   _edata
 #else
     // When EmuTOS is run from the ROM, the TEXT and DATA segments stays in the
     // ROM, but the BSS starts at address 0.
     // Thus the first unused RAM address is the end of the BSS segment.
-    dc.l    _end        // os_end, first byte RAM not used by OS
+    .dc.l   _end        // os_end, first byte RAM not used by OS
 #endif
 os_res1:
-    dc.l    _main       // os_res1, reserved
+    .dc.l   _main       // os_res1, reserved
 _os_magic:
 #if WITH_AES
-    dc.l    _ui_mupb    // os_magic, pointer to GEM's MUPB
+    .dc.l   _ui_mupb    // os_magic, pointer to GEM's MUPB
 #else
-    dc.l    0           // os_magic, pointer to GEM's MUPB
+    .dc.l   0           // os_magic, pointer to GEM's MUPB
 #endif
 _os_date:
-    dc.l    OS_DATE     // os_date, Date of system build
+    .dc.l   OS_DATE     // os_date, Date of system build
 _os_conf:
-    dc.w    (OS_COUNTRY << 1) + OS_PAL // Flag for PAL version + country
+    .dc.w   (OS_COUNTRY << 1) + OS_PAL // Flag for PAL version + country
 _os_dosdate:
-    dc.w    OS_DOSDATE  // os_date, Date of system build in GEMDOS format
+    .dc.w   OS_DOSDATE  // os_date, Date of system build in GEMDOS format
 os_root:
-    dc.l    _root       // Pointer to the GEMDOS mem pool - not yet supported
+    .dc.l   _root       // Pointer to the GEMDOS mem pool - not yet supported
 os_kbshift:
-    dc.l    _shifty     // Pointer to the keyboard shift keys states
+    .dc.l   _shifty     // Pointer to the keyboard shift keys states
 os_run:
-    dc.l    _run        // Pointer to a pointer to the actual basepage
+    .dc.l   _run        // Pointer to a pointer to the actual basepage
 os_dummy:
     .ascii  "ETOS"      // _main should start at offset 0x30, shouldn't it?
 
@@ -358,7 +358,7 @@ cartover:
 // ===========================================================================
         .text
 
-zero:   dc.l    0
+zero:   .dc.l   0
 
 
 // ===========================================================================
@@ -366,5 +366,5 @@ zero:   dc.l    0
 // ===========================================================================
         .bss
 
-_stkbot:        ds.w    SUPSIZ  // Supervisor stack
+_stkbot:        .ds.w   SUPSIZ  // Supervisor stack
 _stktop:                        // filled from top to bottom

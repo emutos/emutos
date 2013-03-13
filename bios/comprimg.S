@@ -45,29 +45,29 @@ stderr = 0x37C
 _os_entry:
     bra.s   _main       // os_entry, branch to _main
 os_version:
-    dc.w    TOS_VERSION // os_version, TOS version
+    .dc.w   TOS_VERSION // os_version, TOS version
 reseth:
-    dc.l    _main       // reseth, pointer to reset handler
+    .dc.l   _main       // reseth, pointer to reset handler
 _os_beg:
-    dc.l    _os_entry   // os_beg, base of os = _sysbase
+    .dc.l   _os_entry   // os_beg, base of os = _sysbase
 _os_end:
-    dc.l    _end        // os_end, first byte RAM not used by OS
+    .dc.l   _end        // os_end, first byte RAM not used by OS
 os_res1:
-    dc.l    _main       // os_res1, reserved
+    .dc.l   _main       // os_res1, reserved
 _os_magic:
-    dc.l    0           // os_magic, pointer to GEM's MUPB
+    .dc.l   0           // os_magic, pointer to GEM's MUPB
 _os_date:
-    dc.l    OS_DATE     // os_date, Date of system build
+    .dc.l   OS_DATE     // os_date, Date of system build
 _os_conf:
-    dc.w    (OS_COUNTRY << 1) + OS_PAL // Flag for PAL version + country
+    .dc.w   (OS_COUNTRY << 1) + OS_PAL // Flag for PAL version + country
 _os_dosdate:
-    dc.w    OS_DOSDATE  // os_date, Date of system build in GEMDOS format
+    .dc.w   OS_DOSDATE  // os_date, Date of system build in GEMDOS format
 os_root:
-    dc.l    0           // Pointer to the GEMDOS mem pool - not yet supported
+    .dc.l   0           // Pointer to the GEMDOS mem pool - not yet supported
 os_kbshift:
-    dc.l    0           // Pointer to the keyboard shift keys states
+    .dc.l   0           // Pointer to the keyboard shift keys states
 os_run:
-    dc.l    0           // Pointer to a pointer to the actual basepage
+    .dc.l   0           // Pointer to a pointer to the actual basepage
 os_dummy:
     .ascii  "ETOS"      // _main should start at offset 0x30, shouldn't it?
 
@@ -195,7 +195,7 @@ _natfeat_init:
         move.l  #fail_natfeat,vec_illegal
         pea     nf_stderr_name
         sub.l   #4,sp
-        dc.w    0x7300              // Jump to NATFEAT_ID
+        .dc.w   0x7300              // Jump to NATFEAT_ID
         move.l  d0,stderr
 fail_natfeat:
         move.l  a1,sp
@@ -276,7 +276,7 @@ outch:
         move.l  stderr,-(sp)
         beq     no_natfeat
         move.l  d0,-(sp)
-        dc.w    0x7301
+        .dc.w   0x7301
         move.l  (sp)+,d0
 no_natfeat:
         add.l   #12,sp

@@ -72,6 +72,6 @@ ___main:
         .bss
         .even
 
-        ds.l    STACK_SIZE
+        .ds.l   STACK_SIZE
 stack_base:
-        ds.w    1
+        .ds.w   1

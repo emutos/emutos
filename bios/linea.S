@@ -233,24 +233,24 @@ linea_stub_msg:
 
 /* These routines are now different, and no longer usable from assembler */
 linea_vecs:
-        dc.l    _linea_0
-        dc.l    _linea_1        /* _put_pix */
-        dc.l    _linea_2        /* _get_pix */
-        dc.l    _linea_3        /* _abline  */
-        dc.l    _linea_4        /* _habline */
-        dc.l    _linea_5        /* _rectfill */
-        dc.l    _linea_6        /* _clc_flit */
-        dc.l    _linea_7        /* _bit_blt */
-        dc.l    _linea_8        /* _text_blt */
-        dc.l    __v_show_c       /* $9 - _dis_cur */
-        dc.l    __v_hide_c       /* $A - _hide_cur */
-        dc.l    _linea_b        /* _xfm_crfm */
-        dc.l    _linea_c        /* cur_replace??? */
-        dc.l    _linea_d        /* cur_display??? */
-        dc.l    _linea_e        /* _COPY_RFM */
-        dc.l    _linea_f        /* _d_contourfill?? */
+        .dc.l   _linea_0
+        .dc.l   _linea_1        /* _put_pix */
+        .dc.l   _linea_2        /* _get_pix */
+        .dc.l   _linea_3        /* _abline  */
+        .dc.l   _linea_4        /* _habline */
+        .dc.l   _linea_5        /* _rectfill */
+        .dc.l   _linea_6        /* _clc_flit */
+        .dc.l   _linea_7        /* _bit_blt */
+        .dc.l   _linea_8        /* _text_blt */
+        .dc.l   __v_show_c       /* $9 - _dis_cur */
+        .dc.l   __v_hide_c       /* $A - _hide_cur */
+        .dc.l   _linea_b        /* _xfm_crfm */
+        .dc.l   _linea_c        /* cur_replace??? */
+        .dc.l   _linea_d        /* cur_display??? */
+        .dc.l   _linea_e        /* _COPY_RFM */
+        .dc.l   _linea_f        /* _d_contourfill?? */
 linea_ents:
-        dc.w    (linea_ents-linea_vecs)/4
+        .dc.w   (linea_ents-linea_vecs)/4
 
 
 
