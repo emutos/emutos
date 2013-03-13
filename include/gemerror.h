@@ -2,6 +2,7 @@
  * gemerror.h - standard error numbers for GEMDOS
  *
  * Copyright (c) 2001 Lineo, Inc.
+ *               2013 The EmuTOS development team
  *
  * Authors:
  *  MAD     Martin Doering
@@ -48,6 +49,7 @@
 
 #define EDRIVE  -46L    /* invalid drive was specified                  15 */
 
+#define ENSAME  -48L    /* cross-device rename */
 #define ENMFIL  -49L    /* no more files                                18 */
 
 /* our own inventions */

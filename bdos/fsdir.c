@@ -2,7 +2,7 @@
  * fsdir.c - directory routines for the file system
  *
  * Copyright (c) 2001 Lineo, Inc.
- *               2002 - 2010 The EmuTOS development team
+ *               2002 - 2013 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -818,75 +818,134 @@ void builds(const char *s1, char *s2)
 **
 **      Error returns
 **              EPTHNF
+**              EACCDN
+**              ENSAME
 **
 */
 /* rename file, n unused, old path p1, new path p2 */
 /*ARGSUSED*/
 long xrename(int n, char *p1, char *p2)
 {
-        register OFD *fd2;
-        OFD     *f1,*fd;
+        OFD     *fd, *fd2;
         FCB     *f;
-        DND     *dn1,*dn2;
-        const char *s1,*s2;
-        char    buf[11];
-        int     hnew,att;
-        long    rc, h1;
+        DND     *dn1, *dn2;
+        DMD     *dmd1, *dmd2;
+        CLNO    strtcl1, strtcl2, temp;
+        const char *s1, *s2;
+        char    buf[11], att;
+        int     hnew;
+        long    posp;
+        UWORD   time, date;
+        CLNO    clust;
+        LONG    fileln;
 
-        if (!ixsfirst(p2,0,(DTAINFO *)0L))
+        if (!ixsfirst(p2,0,(DTAINFO *)0L))  /* check if new path exists */
                 return(EACCDN);
 
         if ((long)(dn1 = findit(p1,&s1,0)) < 0)          /* M01.01.1212.01 */
                 return( (long)dn1 );
         if (!dn1)                                        /* M01.01.1214.01 */
                 return( EPTHNF );
+        dmd1 = dn1->d_drv;          /* remember the drive and */
+        strtcl1 = dn1->d_strtcl;    /* starting cluster for old path */
+
+        /* scan DND for matching name */
+        posp = 0L;
+        f = scan(dn1,s1,0xff,&posp);
+        if (!f)                     /* old path doesn't exist */
+                return EPTHNF;
+
+        /* at this point:
+         *   f -> FCB for old path
+         *   dn1->d_ofd -> OFD for the directory containing the old path
+         *   posp = offset of FCB from start of directory in bytes, plus 32
+         */
+        fd = dn1->d_ofd;
+        posp -= 32;                 /* adjust to start of FCB */
+
+        /* get old attribute & time/date/cluster/length */
+        att = f->f_attrib;
+        time = f->f_time;
+        swpw(time);                 /* convert from little-endian format */
+        date = f->f_date;
+        swpw(date);
+        clust = f->f_clust;
+        swpw(clust);
+        fileln = f->f_fileln;
+        swpl(fileln);
 
         if ((long)(dn2 = findit(p2,&s2,0)) < 0)          /* M01.01.1212.01 */
                 return( (long)dn2 );
         if (!dn2)                                        /* M01.01.1214.01 */
                 return( EPTHNF );
+        dmd2 = dn2->d_drv;          /* remember the drive and */
+        strtcl2 = dn2->d_strtcl;    /* starting cluster for new path */
 
         if (contains_illegal_characters(s2))
                 return( EACCDN ) ;
 
-        if ((h1 = xopen(p1, 2)) < 0L)
-                return (h1);
+        /* disallow cross-device rename */
+        if (dmd1 != dmd2)
+                return ENSAME;
 
-        f1 = getofd ((int)h1);
-
-        fd = f1->o_dirfil;
-        buf[0] = 0xe5;
-        ixlseek(fd,f1->o_dirbyt);
-
-        if (dn1 != dn2)
+        /*
+         * check for cross-directory rename
+         */
+        if (strtcl1 != strtcl2)
         {
-                /* get old attribute */
-                f = (FCB *) ixread(fd,32L,NULLPTR);
-                att = f->f_attrib;
                 /* erase (0xe5) old file */
-                ixlseek(fd,f1->o_dirbyt);
+                buf[0] = 0xe5;
+                ixlseek(fd,posp);
                 ixwrite(fd,1L,buf);
 
-                /* copy time/date/clust, etc. */
-
-                ixlseek(fd,f1->o_dirbyt + 22);
-                ixread(fd,10L,buf);
+                /* create new directory entry with old info.  even if
+                 * we're renaming a folder, we call xcreat() to create
+                 * a normal file.  we'll fix it up later.
+                 */
                 hnew = xcreat(p2,att);
-                fd2 = getofd(hnew);
-                ixlseek(fd2->o_dirfil,fd2->o_dirbyt + 22);
-                ixwrite(fd2->o_dirfil,10L,buf);
-                fd2->o_flag &= ~O_DIRTY;
-                xclose(hnew);
+                if (hnew < 0)
+                        return EPTHNF;
+                fd2 = getofd(hnew); /* fd2 is the OFD for the new file/folder */
+
+                /* copy the time/date/cluster/length to the OFD */
+                fd2->o_time = time;
+                fd2->o_date = date;
+                fd2->o_strtcl = clust;
+                fd2->o_fileln = fileln;
+
+                /* if this is really a folder we're moving, we need to
+                 * do two things: fix up the parent directory pointer in
+                 * this folder, and fix up the attribute of the folder
+                 * in the parent directory.
+                 */
+                if (att&FA_SUBDIR) {
+                        fd2->o_fileln = 0x7fffffffL;    /* fake size for dirs */
+
+                        /* set .. entry to point to new parent */
+                        temp = fd2->o_dirfil->o_strtcl; /* parent's start cluster */
+                        swpw(temp);                     /* convert to disk format */
+                        ixlseek(fd2,32+26);             /* seek to cluster field  */
+                        ixwrite(fd2,2l,&temp);          /*  & write it            */
+
+                        /* set attribute for this file in parent directory */
+                        ixlseek(fd2->o_dirfil,fd2->o_dirbyt+11);
+                        ixwrite(fd2->o_dirfil,1L,&att);
+                }
+                fd2->o_flag |= O_DIRTY;
+                if (att&FA_SUBDIR) {
+                        ixclose(fd2,CL_DIR|CL_FULL);    /* force flush & write */
+                        xmfreblk((char *)fd2);          /* free OFD */
+                        sft[hnew-NUMSTD].f_own = 0;     /* free handle */
+                        sft[hnew-NUMSTD].f_ofd = 0;
+                } else xclose(hnew);
                 ixclose(fd2->o_dirfil,CL_DIR);
         }
         else
         {
-                builds(s2,buf);
+                builds(s2,buf);             /* build disk version of name */
+                ixlseek(fd,posp);           /* and just overwrite the FCB */
                 ixwrite(fd,11L,buf);
         }
-
-        if ((rc = xclose((int)h1)) < 0L)
-                return(rc);
 
         return(ixclose(fd,CL_DIR));
 }

@@ -4559,3 +4559,4 @@ Start... early ages
   and fixes compilation with buggy m68k-elf toolchain with -g. (VRI)
 - bios/xhdi.c: Uncomment XHMiNTInfo and add it to the XHDI handler. Contributed
   by David Gálvez. (VRI)
+- bdos/fsdir.c include/gemerror.h: Allow Frename() to rename folders. (RFB)
