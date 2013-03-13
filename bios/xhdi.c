@@ -217,6 +217,17 @@ static long XHMediumChanged(UWORD major, UWORD minor)
     return EINVFN;
 }
 
+static long XHMiNTInfo(UWORD opcode, void *data)
+{
+    if (next_handler) {
+        long ret = next_handler(XHMINTINFO, opcode, data);
+        if (ret != EINVFN && ret != EUNDEV && ret != EDRIVE)
+            return ret;
+    }
+
+    return EINVFN;
+}
+
 static long XHDOSLimits(UWORD which, ULONG limit)
 {
    if (next_handler) {
@@ -625,15 +636,18 @@ long xhdi_handler(UWORD *stack)
             return XHMediumChanged(args->major, args->minor);
         }
 
-/*
-       MiNT places itself at the beginning of the chain,
-       We don't need to pass this call.
-
         case XHMINTINFO:
         {
-            return XHMiNTInfo();
+            struct XHMINTINFO_args
+            {
+                UWORD opcode;
+                UWORD subopcode;
+                void *data;
+            } *args = (struct XHMINTINFO_args *)stack;
+
+            return XHMiNTInfo(args->subopcode, args->data);
         }
-*/
+
         case XHDOSLIMITS:
         {
             struct XHDOSLIMITS_args

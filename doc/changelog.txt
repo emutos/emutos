@@ -4557,3 +4557,5 @@ Start... early ages
 - include/asm.h: Safe set_sr() for ColdFire. Reported by Markus Fröschle. (VRI)
 - *.S: Replaced dc.b by .dc.b and so on. This makes the pseudo-ops more visible
   and fixes compilation with buggy m68k-elf toolchain with -g. (VRI)
+- bios/xhdi.c: Uncomment XHMiNTInfo and add it to the XHDI handler. Contributed
+  by David Gálvez. (VRI)
