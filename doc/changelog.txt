@@ -4560,3 +4560,6 @@ Start... early ages
 - bios/xhdi.c: Uncomment XHMiNTInfo and add it to the XHDI handler. Contributed
   by David Gálvez. (VRI)
 - bdos/fsdir.c include/gemerror.h: Allow Frename() to rename folders. (RFB)
+
+2013-03-13
+- bdos/fsdir.c: Removed non-TOS extension to Dsetpath(). (RFB)

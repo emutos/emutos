@@ -951,7 +951,7 @@ long xrename(int n, char *p1, char *p2)
 }
 
 /*
-**  xchdir - change current dir to path p (extended cd n:=[a:][\bin])
+**  xchdir - change current dir to path p
 **
 **      Function 0x3B   d_setpath
 **
@@ -965,30 +965,16 @@ long xchdir(char *p)
 {
         register int dr, i ;
         long    l;
-        int     dphy,dlog,flg;
+        int     dlog;
         const char *s;
 
-        dlog = 0; /* dummy, to avoid warning */
-        flg = 1;
-
-xch:    if (p[1] == ':')
-                dphy = uc(p[0]) - 'A';
+        if (p[1] == ':')
+                dlog = uc(p[0]) - 'A';
         else
-                dphy = run->p_curdrv;
+                dlog = run->p_curdrv;
 
-        if (flg)
-        {
-                dlog = dphy;
-                if (p[2] == '=')
-                {
-                        flg = 0;
-                        p += 3;
-                        goto xch;
-                }
-        }
-
-        if ((l=ckdrv(dphy)) < 0)
-                return(l);
+        if ((l=ckdrv(dlog)) < 0)        /* log in drive if not previously */
+                return(l);              /* accessed by bdos               */
 
         /* find space in dirtbl */
         if ( (dr = run->p_curdir[dlog]) )
@@ -1015,8 +1001,6 @@ xch:    if (p[1] == ':')
                 return( l );
         if (!l)                                                 /* M01.01.1214.01 */
                 return( EPTHNF );
-
-        drvsel |= 1L << dlog ;          /*  M01.01.SCC.FS.03  */
 
         dirtbl[dr] = (DND *) l;
 
