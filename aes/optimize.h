@@ -19,8 +19,6 @@ void fmt_str(BYTE *instr, BYTE *outstr);
 void unfmt_str(BYTE *instr, BYTE *outstr);
 void inf_sset(LONG tree, WORD obj, BYTE *pstr);
 void inf_sget(LONG tree, WORD obj, BYTE *pstr);
-void inf_fldset(LONG tree, WORD obj, UWORD testfld, UWORD testbit,
-                UWORD truestate, UWORD falsestate);
 WORD inf_gindex(LONG tree, WORD baseobj, WORD numobj);
 WORD inf_what(LONG tree, WORD ok, WORD cncl);
 WORD wildcmp(BYTE *pwld, BYTE *ptst);

@@ -364,8 +364,10 @@ WORD inf_file(BYTE *ppath, FNODE *pfnode)
 
         inf_dttmsz(tree, pfnode, FIDATE, FITIME, FISIZE, pfnode->f_size);
 
-        inf_fldset(tree, FIRONLY, pfnode->f_attr, F_RDONLY,SELECTED, NORMAL);
-        inf_fldset(tree, FIRWRITE, pfnode->f_attr, F_RDONLY,NORMAL,SELECTED);
+        obj = (OBJECT *)tree + FIRONLY;
+        obj->ob_state = (pfnode->f_attr & F_RDONLY) ? SELECTED : NORMAL;
+        obj = (OBJECT *)tree + FIRWRITE;
+        obj->ob_state = (pfnode->f_attr & F_RDONLY) ? NORMAL : SELECTED;
 
         inf_show(tree, 0);
                                         /* now find out what happened   */

@@ -203,20 +203,6 @@ void inf_sget(LONG tree, WORD obj, BYTE *pstr)
 
 
 /*
- *      Sets the ob_state field of (tree,obj) to either 'truestate' or
- *      'falsestate', depending on whether (testfld&testbit) is true
- *      or false.
- */
-void inf_fldset(LONG tree, WORD obj, UWORD testfld, UWORD testbit,
-                UWORD truestate, UWORD falsestate)
-{
-        OBJECT          *objptr = ((OBJECT *)tree) + obj;
-
-        objptr->ob_state = (testfld & testbit) ? truestate : falsestate;
-}
-
-
-/*
  *      Examines 'numobj' objects in 'tree', starting at 'baseobj', looking
  *      for a SELECTED onject.  Returns the relative number of the first
  *      SELECTED object, or -1 if none of the objects is selected.

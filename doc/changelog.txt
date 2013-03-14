@@ -4567,3 +4567,5 @@ Start... early ages
 - aes/gemqueue.c aes/gemwmlib.c desk/deskapp.c desk/deskfpd.c
   desk/deskins.c desk/deskobj.c desk/deskwin.c include/compat.h: Replace
   movs() macro with memcpy(). (RFB)
+- aes/optimize.c aes/optimize.h desk/deskinf.c: Eliminate inf_fldset()
+  function to save space & clarify code. (RFB)
