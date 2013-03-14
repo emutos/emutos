@@ -793,6 +793,16 @@
 #endif
 
 /*
+ * Set CONF_DEBUG_DESK_STACK to 1 to monitor the desktop stack usage.
+ */
+#ifndef CONF_DEBUG_DESK_STACK
+# define CONF_DEBUG_DESK_STACK 0
+#endif
+#if CONF_DEBUG_DESK_STACK
+# define STACK_MARKER 0xdeadbeef
+#endif
+
+/*
  * Miscellaneous definitions that apply to more than one EmuTOS subsystem
  */
 #define BLKDEVNUM 26                    /* number of block devices supported: A: ... Z: */

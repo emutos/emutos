@@ -56,6 +56,7 @@
 #include "deskact.h"
 #include "desk1.h"
 #include "deskrez.h"
+#include "kprint.h"
 
 #define abs(x) ( (x) < 0 ? -(x) : (x) )
 #define menu_text(tree,inum,ptext) (((OBJECT *)(tree)+(inum))->ob_spec = ptext)
@@ -174,6 +175,25 @@ static void detect_features(void)
 {
     can_change_resolution = rez_changeable();
 }
+
+
+#if CONF_DEBUG_DESK_STACK
+extern LONG deskstackbottom[];
+
+static void display_free_stack(void)
+{
+    LONG *p;
+
+    for (p = deskstackbottom; ; p++)
+        if (*p != STACK_MARKER)
+            break;
+
+    kprintf("Desktop stack has %ld bytes available\n",
+            (p-deskstackbottom)*sizeof(LONG));
+}
+#else
+#define display_free_stack()
+#endif
 
 
 #ifndef DESK1
@@ -430,6 +450,7 @@ static WORD do_deskmenu(WORD item)
         switch( item )
         {
           case ABOUITEM:
+                display_free_stack();
                 tree = G.a_trees[ADDINFO];
                                                 /* draw the form        */
                 show_hide(FMD_START, tree);
@@ -524,6 +545,7 @@ static WORD do_filemenu(WORD item)
                 break;
 
           case QUITITEM:
+                display_free_stack();
                 pro_exit(G.a_cmd, G.a_tail);
                 done = TRUE;
                 break;

@@ -11,10 +11,15 @@
 
 #include "asmdefs.h"
 
+#define DESKSTACKSIZE   2048    /* in bytes: must be multiple of 4 */
+
 .globl  _deskstart
 .globl  _gemdos
 .globl  _gem
 
+#if CONF_DEBUG_DESK_STACK
+.globl  _deskstackbottom
+#endif
 
         .text
 
@@ -34,6 +39,16 @@ _deskstart:
         move.w  #0x4A,-(a7)
         trap    #1                      // Mshrink
         lea     12(a7),a7
+
+#if CONF_DEBUG_DESK_STACK
+        move.l  #STACK_MARKER,d0        // fill stack with marker bytes
+        lea     _deskstackbottom,a0
+        lea     deskustack,a1
+fill:
+        move.l  d0,(a0)+
+        cmpa.l  a0,a1
+        bge.b   fill
+#endif
 
         move.l  #far_draw,d0
         move.l  d0,_drawaddr
@@ -96,10 +111,9 @@ _gem:
 
 
 // Space for the Stack:
-
-        .ds.b   0x800
+_deskstackbottom:
+        .ds.b   DESKSTACKSIZE
 deskustack:
-
 
 LD5EA:  .ds.l   1
 
