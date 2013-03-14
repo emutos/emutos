@@ -4563,3 +4563,4 @@ Start... early ages
 
 2013-03-13
 - bdos/fsdir.c: Removed non-TOS extension to Dsetpath(). (RFB)
+- aes/gemshlib.c: Small code optimisation. (RFB)

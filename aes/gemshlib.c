@@ -252,8 +252,8 @@ WORD sh_write(WORD doex, WORD isgem, WORD isover, const BYTE *pcmd, const BYTE *
         {
           gl_changerez = 1 + isover;
           gl_nextrez = isgem;
-          strcpy(D.s_cmd, "");
-          strcpy(ad_stail, "");
+          D.s_cmd[0] = '\0';
+          ad_stail[0] = '\0';
           return TRUE;
         }
 
