@@ -394,7 +394,7 @@ void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h)
                                              pstart->f_pa->a_dicon;
                 G.g_index[obid] = i_index;
                 G.g_screen[obid].ob_spec = ADDR( &gl_icons[obid] );
-                movs(sizeof(ICONBLK), &G.g_iblist[i_index], &gl_icons[obid]);
+                memcpy(&gl_icons[obid], &G.g_iblist[i_index], sizeof(ICONBLK));
                 gl_icons[obid].ib_ptext = ADDR(&pstart->f_name[0]);
                 gl_icons[obid].ib_char |= (0x00ff & pstart->f_pa->a_letter);
                 break;

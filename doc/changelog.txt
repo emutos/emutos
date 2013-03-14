@@ -4564,3 +4564,6 @@ Start... early ages
 2013-03-13
 - bdos/fsdir.c: Removed non-TOS extension to Dsetpath(). (RFB)
 - aes/gemshlib.c: Small code optimisation. (RFB)
+- aes/gemqueue.c aes/gemwmlib.c desk/deskapp.c desk/deskfpd.c
+  desk/deskins.c desk/deskobj.c desk/deskwin.c include/compat.h: Replace
+  movs() macro with memcpy(). (RFB)

@@ -1136,8 +1136,8 @@ void wm_start(void)
                                                 /* init tedinfo parts   */
                                                 /*   of title and info  */
                                                 /*   lines              */
-        movs(sizeof(TEDINFO), &gl_asamp, &gl_aname);
-        movs(sizeof(TEDINFO), &gl_asamp, &gl_ainfo);
+        memcpy(&gl_aname, &gl_asamp, sizeof(TEDINFO));
+        memcpy(&gl_ainfo, &gl_asamp, sizeof(TEDINFO));
         gl_aname.te_just = TE_CNTR;
         W_ACTIVE[W_NAME].ob_spec = ADDR(&gl_aname);
         W_ACTIVE[W_INFO].ob_spec = ADDR(&gl_ainfo);

@@ -248,7 +248,7 @@ static void insa_icon(LONG tree, WORD obj, WORD nicon, ICONBLK *pic, BYTE *ptext
 {
         OBJECT *objptr = (OBJECT *)tree + obj;
 
-        movs(sizeof(ICONBLK), &G.g_iblist[nicon], pic);
+        memcpy(pic, &G.g_iblist[nicon], sizeof(ICONBLK));
         pic->ib_ptext = ADDR( ptext );
         objptr->ob_type = G_ICON;
         objptr->ob_spec = (LONG)pic;

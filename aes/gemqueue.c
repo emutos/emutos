@@ -72,7 +72,7 @@ void doq(WORD donq, PD *p, QPB *m)
                                                 /*   and get next messg */
                 if (om[0] == WM_ARROWED)
                 {
-                  movs(16, &nm[0], &om[0]);
+                  memcpy(om, nm, 16);
                   n = 0;
                 }
                 else

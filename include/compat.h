@@ -109,7 +109,4 @@ extern WORD LBWMOV(WORD *pdst, BYTE *psrc);
                                                 /*   ptr, LLSET(lp, bt) */
 #define LLSET(x, y) ( *((LONG_ALIAS *)(x)) = y)
 
-
-#define movs(num, ps, pd)  memcpy((char *)pd, (const char *)ps, num)
-
 #endif  /* _COMPAT_H */

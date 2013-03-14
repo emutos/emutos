@@ -528,7 +528,7 @@ static WORD pn_folder(PNODE *thepath)
                                                 /*   save it            */
               if (!firstime)
               {
-                movs(23, &G.g_wdta[20], &thefile->f_junk);
+                memcpy(&thefile->f_junk, &G.g_wdta[20], 23);
                 thefile->f_attr &= ~(F_DESKTOP | F_FAKE);
               }
               thepath->p_size += thefile->f_size;

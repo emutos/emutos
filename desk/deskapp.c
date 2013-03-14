@@ -853,7 +853,7 @@ BYTE app_blddesk(void)
             pob->ob_type = G_ICON;
             G.g_index[obid] = pa->a_aicon;
             pob->ob_spec = ADDR( pic = &gl_icons[obid] );
-            movs(sizeof(ICONBLK), &G.g_iblist[pa->a_aicon], pic);
+            memcpy(pic, &G.g_iblist[pa->a_aicon], sizeof(ICONBLK));
             pic->ib_xicon = ((G.g_wicon - pic->ib_wicon) / 2);
             pic->ib_ptext = ADDR(pa->a_pappl);
             pic->ib_char |= (0x00ff & pa->a_letter);

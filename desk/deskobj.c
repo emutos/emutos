@@ -56,11 +56,11 @@ void obj_init(void)
           G.g_screen[ii].ob_next = NIL;
           G.g_screen[ii].ob_tail = NIL;
         }
-        movs(sizeof(OBJECT), &gl_sampob[0], &G.g_screen[ROOT]);
+        memcpy(&G.g_screen[ROOT], &gl_sampob[0], sizeof(OBJECT));
         r_set((GRECT *)&G.g_screen[ROOT].ob_x, 0, 0, gl_width, gl_height);
         for (ii = 0; ii < (NUM_WNODES+1); ii++)
         {
-          movs(sizeof(OBJECT), &gl_sampob[1], &G.g_screen[DROOT+ii]);
+          memcpy(&G.g_screen[DROOT+ii], &gl_sampob[1], sizeof(OBJECT));
           objc_add(tree, ROOT, DROOT+ii);
         } /* for */
 } /* obj_init */
