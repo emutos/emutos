@@ -4569,3 +4569,6 @@ Start... early ages
   movs() macro with memcpy(). (RFB)
 - aes/optimize.c aes/optimize.h desk/deskinf.c: Eliminate inf_fldset()
   function to save space & clarify code. (RFB)
+
+2013-03-14
+- desk/deskinf.c: Code cleanup: save some stack & code space. (RFB)

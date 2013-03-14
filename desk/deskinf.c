@@ -303,7 +303,7 @@ static void inf_finish(LONG tree, WORD dl_ok)
 static WORD inf_fifo(LONG tree, WORD dl_fi, WORD dl_fo, BYTE *ppath)
 {
         WORD            junk, more;
-        BYTE            nf_str[6], nd_str[6];
+        BYTE            str[8];
 
         G.g_nfiles = 0x0L;
         G.g_ndirs = 0x0L;
@@ -315,11 +315,11 @@ static WORD inf_fifo(LONG tree, WORD dl_fi, WORD dl_fo, BYTE *ppath)
           return(FALSE);
         G.g_ndirs--;
 
-        sprintf(&nf_str[0], "%ld", G.g_nfiles);
-        inf_sset(tree, dl_fi, &nf_str[0]);
+        sprintf(str, "%ld", G.g_nfiles);
+        inf_sset(tree, dl_fi, str);
 
-        sprintf(&nd_str[0], "%ld", G.g_ndirs);
-        inf_sset(tree, dl_fo, &nd_str[0]);
+        sprintf(str, "%ld", G.g_ndirs);
+        inf_sset(tree, dl_fo, str);
         return(TRUE);
 }
 
@@ -327,16 +327,16 @@ static WORD inf_fifo(LONG tree, WORD dl_fi, WORD dl_fo, BYTE *ppath)
 static void inf_dttmsz(LONG tree, FNODE *pf, WORD dl_dt, WORD dl_tm,
                        WORD dl_sz, ULONG size)
 {
-        BYTE    psize_str[11], ptime_str[7], pdate_str[7];
+        BYTE    str[11];
 
-        fmt_date(pf->f_date, &pdate_str[0]);
-        inf_sset(tree, dl_dt, &pdate_str[0]);
+        fmt_date(pf->f_date, str);
+        inf_sset(tree, dl_dt, str);
 
-        fmt_time(pf->f_time, &ptime_str[0]);
-        inf_sset(tree, dl_tm, &ptime_str[0]);
+        fmt_time(pf->f_time, str);
+        inf_sset(tree, dl_tm, str);
 
-        sprintf(&psize_str[0], "%lu", size);
-        inf_sset(tree, dl_sz, &psize_str[0]);
+        sprintf(str, "%lu", size);
+        inf_sset(tree, dl_sz, str);
 }
 
 
@@ -451,7 +451,7 @@ WORD inf_disk(BYTE dr_id)
         LONG    tree;
         LONG    total, avail;
         WORD    more;
-        BYTE    puse_str[11], pav_str[11], plab_str[12];
+        BYTE    str[12];
         BYTE    drive[2];
 
         graf_mouse(HGLASS, 0x0L);
@@ -468,16 +468,16 @@ WORD inf_disk(BYTE dr_id)
         if (more)
         {
           dos_space(dr_id - 'A' + 1, &total, &avail);
-          dos_label(dr_id - 'A' + 1, &plab_str[0]);
+          dos_label(dr_id - 'A' + 1, str);
 
-          inf_sset(tree, DIDRIVE, &drive[0]);
-          inf_sset(tree, DIVOLUME, &plab_str[0]);
+          inf_sset(tree, DIDRIVE, drive);
+          inf_sset(tree, DIVOLUME, str);
 
-          sprintf(&puse_str[0], "%lu", G.g_size);
-          inf_sset(tree, DIUSED, &puse_str[0]);
+          sprintf(str, "%lu", G.g_size);
+          inf_sset(tree, DIUSED, str);
 
-          sprintf(&pav_str[0], "%lu", avail);
-          inf_sset(tree, DIAVAIL, &pav_str[0]);
+          sprintf(str, "%lu", avail);
+          inf_sset(tree, DIAVAIL, str);
 
           inf_finish(tree, DIOK);
         }
