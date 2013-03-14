@@ -346,21 +346,24 @@ static void inf_dttmsz(LONG tree, FNODE *pf, WORD dl_dt, WORD dl_tm,
 WORD inf_file(BYTE *ppath, FNODE *pfnode)
 {
         LONG            tree;
-        WORD            attr, more, nmidx;
+        WORD            more, nmidx;
+        BYTE            attr;
+        BYTE            srcpth[LEN_ZPATH+LEN_ZFNAME+1];
+        BYTE            dstpth[LEN_ZPATH+LEN_ZFNAME+1];
         BYTE            poname[LEN_ZFNAME], pnname[LEN_ZFNAME];
         OBJECT          *obj;
 
         tree = G.a_trees[ADFILEIN];
 
-        strcpy(&G.g_srcpth[0], ppath);
-        strcpy(&G.g_dstpth[0], ppath);
+        strcpy(srcpth, ppath);
+        strcpy(dstpth, ppath);
         nmidx = 0;
-        while (G.g_srcpth[nmidx] != '*')
+        while (srcpth[nmidx] != '*')
           nmidx++;
 
-        fmt_str(&pfnode->f_name[0], &poname[0]);
+        fmt_str(pfnode->f_name, poname);
 
-        inf_sset(tree, FINAME, &poname[0]);
+        inf_sset(tree, FINAME, poname);
 
         inf_dttmsz(tree, pfnode, FIDATE, FITIME, FISIZE, pfnode->f_size);
 
@@ -371,41 +374,39 @@ WORD inf_file(BYTE *ppath, FNODE *pfnode)
 
         inf_show(tree, 0);
                                         /* now find out what happened   */
-                                                /* was it OK or CANCEL? */
-        if ( inf_what(tree, FIOK, FICNCL) )
-        {
-          graf_mouse(HGLASS, 0x0L);
+        if (inf_what(tree, FIOK, FICNCL) != 1)
+          return FALSE;
 
-          more = TRUE;
-          inf_sget(tree, FINAME, &pnname[0]);
+        graf_mouse(HGLASS, 0x0L);       /* user said OK */
+
+        more = TRUE;
+        inf_sget(tree, FINAME, pnname);
                                         /* unformat the strings         */
-          unfmt_str(&poname[0], &G.g_srcpth[nmidx]);
-          unfmt_str(&pnname[0], &G.g_dstpth[nmidx]);
-                                                /* do the DOS rename    */
-          if ( strcmp(&G.g_srcpth[nmidx], &G.g_dstpth[nmidx]) )
-          {
-            dos_rename((BYTE *)ADDR(&G.g_srcpth[0]), (BYTE *)ADDR(&G.g_dstpth[0]));
-            if ( (more = d_errmsg()) != 0 )
-              strcpy(&pfnode->f_name[0], &G.g_dstpth[nmidx]);
-          } /* if */
-                                        /* update the attributes        */
-          attr = pfnode->f_attr;
-          obj = (OBJECT *)tree + FIRONLY;
-          if (obj->ob_state & SELECTED)
-            attr |= F_RDONLY;
-          else
-            attr &= ~F_RDONLY;
-          if ( (BYTE) attr != pfnode->f_attr )
-          {
-            dos_chmod((BYTE *)ADDR(&G.g_dstpth[0]), F_SETMOD, attr);
-            if ( (more = d_errmsg()) != 0 )
-              pfnode->f_attr = attr;
-          }
-          graf_mouse(ARROW, 0x0L);
-          return(more);
+        unfmt_str(poname, srcpth+nmidx);
+        unfmt_str(pnname, dstpth+nmidx);
+                                        /* do the DOS rename    */
+        if (strcmp(srcpth+nmidx, dstpth+nmidx))
+        {
+          dos_rename(srcpth, dstpth);
+          if ((more = d_errmsg()) != 0)
+            strcpy(pfnode->f_name, dstpth+nmidx);
         }
+                                        /* update the attributes        */
+        attr = pfnode->f_attr;
+        obj = (OBJECT *)tree + FIRONLY;
+        if (obj->ob_state & SELECTED)
+          attr |= F_RDONLY;
         else
-          return(FALSE);
+          attr &= ~F_RDONLY;
+        if (attr != pfnode->f_attr)
+        {
+          dos_chmod(dstpth, F_SETMOD, attr);
+          if ((more = d_errmsg()) != 0)
+            pfnode->f_attr = attr;
+        }
+        graf_mouse(ARROW, 0x0L);
+
+        return more;
 } /* inf_file */
 
 
@@ -416,30 +417,32 @@ WORD inf_folder(BYTE *ppath, FNODE *pf)
 {
         LONG            tree;
         WORD            more;
+        BYTE            srcpth[LEN_ZPATH+LEN_ZFNAME+1];
         BYTE            *pname, fname[LEN_ZFNAME];
 
         graf_mouse(HGLASS, 0x0L);
 
         tree = G.a_trees[ADFOLDIN];
 
-        strcpy(&G.g_srcpth[0], ppath);
-        pname = &G.g_srcpth[0];
+        strcpy(srcpth, ppath);
+        pname = srcpth;
         while (*pname != '*')
           pname++;
-        strcpy(pname, &pf->f_name[0]);
+        strcpy(pname, pf->f_name);
         strcat(pname, "\\*.*");
-        more = inf_fifo(tree, FOLNFILE, FOLNFOLD, &G.g_srcpth[0]);
+        more = inf_fifo(tree, FOLNFILE, FOLNFOLD, srcpth);
 
         graf_mouse(ARROW, 0x0L);
-        if (more)
-        {
-          fmt_str(&pf->f_name[0], &fname[0]);
-          inf_sset(tree, FOLNAME, &fname[0]);
+        if (!more)
+          return TRUE;
 
-          inf_dttmsz(tree, pf, FOLDATE, FOLTIME, FOLSIZE, G.g_size);
-          inf_finish(tree, FOLOK);
-        }
-        return(TRUE);
+        fmt_str(pf->f_name, fname);
+        inf_sset(tree, FOLNAME, fname);
+
+        inf_dttmsz(tree, pf, FOLDATE, FOLTIME, FOLSIZE, G.g_size);
+        inf_finish(tree, FOLOK);
+
+        return TRUE;
 } /* inf_folder */
 
 
@@ -451,6 +454,7 @@ WORD inf_disk(BYTE dr_id)
         LONG    tree;
         LONG    total, avail;
         WORD    more;
+        BYTE    srcpth[LEN_ZPATH+LEN_ZFNAME+1];
         BYTE    str[12];
         BYTE    drive[2];
 
@@ -459,10 +463,11 @@ WORD inf_disk(BYTE dr_id)
 
         drive[0] = dr_id;
         drive[1] = NULL;
-        G.g_srcpth[0] = drive[0];
-        strcpy(&G.g_srcpth[1], ":\\*.*");
+        srcpth[0] = dr_id;
+        srcpth[1] = ':';
+        strcpy(srcpth+2, "\\*.*");
 
-        more = inf_fifo(tree, DINFILES, DINFOLDS, &G.g_srcpth[0]);
+        more = inf_fifo(tree, DINFILES, DINFOLDS, srcpth);
 
         graf_mouse(ARROW, 0x0L);
         if (more)
@@ -481,7 +486,7 @@ WORD inf_disk(BYTE dr_id)
 
           inf_finish(tree, DIOK);
         }
-        return(TRUE);
+        return TRUE;
 } /* inf_disk */
 
 

@@ -4574,3 +4574,5 @@ Start... early ages
 - desk/deskinf.c: Code cleanup: save some stack & code space. (RFB)
 - desk/deskmain.c desk/deskstart.S include/config.h: Added
   CONF_DEBUG_DESK_STACK to debug and estimate desktop stack usage. (RFB)
+- desk/deskinf.c: Code cleanup: eliminate compatibility macros, replace
+  some globals with locals. (RFB)
