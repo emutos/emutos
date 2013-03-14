@@ -416,33 +416,57 @@ WORD inf_file(BYTE *ppath, FNODE *pfnode)
 WORD inf_folder(BYTE *ppath, FNODE *pf)
 {
         LONG            tree;
-        WORD            more;
+        WORD            more, nmidx;
         BYTE            srcpth[LEN_ZPATH+LEN_ZFNAME+1];
-        BYTE            *pname, fname[LEN_ZFNAME];
+        BYTE            dstpth[LEN_ZPATH+LEN_ZFNAME+1];
+        BYTE            poname[LEN_ZFNAME], pnname[LEN_ZFNAME];
 
         graf_mouse(HGLASS, 0x0L);
 
         tree = G.a_trees[ADFOLDIN];
 
         strcpy(srcpth, ppath);
-        pname = srcpth;
-        while (*pname != '*')
-          pname++;
-        strcpy(pname, pf->f_name);
-        strcat(pname, "\\*.*");
+        strcpy(dstpth, ppath);
+        nmidx = 0;
+        while (srcpth[nmidx] != '*')
+          nmidx++;
+
+        strcpy(srcpth+nmidx, pf->f_name);
+        strcat(srcpth, "\\*.*");
         more = inf_fifo(tree, FOLNFILE, FOLNFOLD, srcpth);
 
         graf_mouse(ARROW, 0x0L);
         if (!more)
-          return TRUE;
+          return FALSE;
 
-        fmt_str(pf->f_name, fname);
-        inf_sset(tree, FOLNAME, fname);
+        fmt_str(pf->f_name, poname);
+        inf_sset(tree, FOLNAME, poname);
 
         inf_dttmsz(tree, pf, FOLDATE, FOLTIME, FOLSIZE, G.g_size);
-        inf_finish(tree, FOLOK);
 
-        return TRUE;
+        inf_show(tree, 0);
+
+        if (inf_what(tree, FOLOK, FOLCNCL) != 1)
+          return FALSE;
+
+        graf_mouse(HGLASS, 0x0L);       /* user said OK */
+
+        more = TRUE;
+        inf_sget(tree, FOLNAME, pnname);
+                                        /* unformat the strings         */
+        unfmt_str(poname, srcpth+nmidx);
+        unfmt_str(pnname, dstpth+nmidx);
+                                        /* do the DOS rename    */
+        if (strcmp(srcpth+nmidx, dstpth+nmidx))
+        {
+          dos_rename(srcpth, dstpth);
+          if ((more = d_errmsg()) != 0)
+            strcpy(pf->f_name, dstpth+nmidx);
+        }
+
+        graf_mouse(ARROW, 0x0L);
+
+        return more;
 } /* inf_folder */
 
 

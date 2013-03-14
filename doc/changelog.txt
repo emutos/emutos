@@ -4576,3 +4576,5 @@ Start... early ages
   CONF_DEBUG_DESK_STACK to debug and estimate desktop stack usage. (RFB)
 - desk/deskinf.c: Code cleanup: eliminate compatibility macros, replace
   some globals with locals. (RFB)
+- desk/deskinf.c desk/desksupp.c desk/desktop.def desk/desktop.rsc:
+  Allow folders to be renamed from the desktop. (RFB)

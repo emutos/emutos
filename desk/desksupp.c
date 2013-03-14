@@ -650,7 +650,9 @@ WORD do_info(WORD curr)
                 if (pf->f_attr & F_FAKE)
                   break;
 #endif
-                inf_folder(&pw->w_path->p_spec[0], pf);
+                ret = inf_folder(&pw->w_path->p_spec[0], pf);
+                if (ret)
+                  fun_rebld(pw);
                 break;
             case AT_ISDISK:
 #ifdef DESK1
