@@ -36,6 +36,7 @@
 #include "deskglob.h"
 #include "deskgraf.h"
 #include "deskdir.h"
+#include "deskrsrc.h"
 
 
 
@@ -341,19 +342,22 @@ static void inf_dttmsz(LONG tree, FNODE *pf, WORD dl_dt, WORD dl_tm,
 
 
 /************************************************************************/
-/* i n f _ f i l e                                                      */
+/* i n f _ f i l e _ f o l d e r                                        */
 /************************************************************************/
-WORD inf_file(BYTE *ppath, FNODE *pfnode)
+WORD inf_file_folder(BYTE *ppath, FNODE *pf)
 {
-        LONG            tree;
-        WORD            more, nmidx;
+        LONG            tree, size;
+        WORD            more, nmidx, title;
         BYTE            attr;
         BYTE            srcpth[LEN_ZPATH+LEN_ZFNAME+1];
         BYTE            dstpth[LEN_ZPATH+LEN_ZFNAME+1];
         BYTE            poname[LEN_ZFNAME], pnname[LEN_ZFNAME];
         OBJECT          *obj;
 
-        tree = G.a_trees[ADFILEIN];
+        tree = G.a_trees[ADFFINFO];
+        title = (pf->f_attr & F_SUBDIR) ? STFOINFO : STFIINFO;
+        obj = (OBJECT *)tree + FFTITLE;
+        obj->ob_spec = (LONG) ini_str(title); 
 
         strcpy(srcpth, ppath);
         strcpy(dstpth, ppath);
@@ -361,102 +365,62 @@ WORD inf_file(BYTE *ppath, FNODE *pfnode)
         while (srcpth[nmidx] != '*')
           nmidx++;
 
-        fmt_str(pfnode->f_name, poname);
-
-        inf_sset(tree, FINAME, poname);
-
-        inf_dttmsz(tree, pfnode, FIDATE, FITIME, FISIZE, pfnode->f_size);
-
-        obj = (OBJECT *)tree + FIRONLY;
-        obj->ob_state = (pfnode->f_attr & F_RDONLY) ? SELECTED : NORMAL;
-        obj = (OBJECT *)tree + FIRWRITE;
-        obj->ob_state = (pfnode->f_attr & F_RDONLY) ? NORMAL : SELECTED;
-
-        inf_show(tree, 0);
-                                        /* now find out what happened   */
-        if (inf_what(tree, FIOK, FICNCL) != 1)
-          return FALSE;
-
-        graf_mouse(HGLASS, 0x0L);       /* user said OK */
-
-        more = TRUE;
-        inf_sget(tree, FINAME, pnname);
-                                        /* unformat the strings         */
-        unfmt_str(poname, srcpth+nmidx);
-        unfmt_str(pnname, dstpth+nmidx);
-                                        /* do the DOS rename    */
-        if (strcmp(srcpth+nmidx, dstpth+nmidx))
+        /*
+         * for folders, count the contents
+         */
+        if (pf->f_attr & F_SUBDIR)
         {
-          dos_rename(srcpth, dstpth);
-          if ((more = d_errmsg()) != 0)
-            strcpy(pfnode->f_name, dstpth+nmidx);
+          graf_mouse(HGLASS, 0x0L);
+          strcpy(srcpth+nmidx, pf->f_name);
+          strcat(srcpth, "\\*.*");
+          more = inf_fifo(tree, FFNUMFIL, FFNUMFOL, srcpth);
+          graf_mouse(ARROW, 0x0L);
+          if (!more)
+            return FALSE;
         }
-                                        /* update the attributes        */
-        attr = pfnode->f_attr;
-        obj = (OBJECT *)tree + FIRONLY;
-        if (obj->ob_state & SELECTED)
-          attr |= F_RDONLY;
-        else
-          attr &= ~F_RDONLY;
-        if (attr != pfnode->f_attr)
-        {
-          dos_chmod(dstpth, F_SETMOD, attr);
-          if ((more = d_errmsg()) != 0)
-            pfnode->f_attr = attr;
-        }
-        graf_mouse(ARROW, 0x0L);
-
-        return more;
-} /* inf_file */
-
-
-/************************************************************************/
-/* i n f _ f o l d e r                                                  */
-/************************************************************************/
-WORD inf_folder(BYTE *ppath, FNODE *pf)
-{
-        LONG            tree;
-        WORD            more, nmidx;
-        BYTE            srcpth[LEN_ZPATH+LEN_ZFNAME+1];
-        BYTE            dstpth[LEN_ZPATH+LEN_ZFNAME+1];
-        BYTE            poname[LEN_ZFNAME], pnname[LEN_ZFNAME];
-
-        graf_mouse(HGLASS, 0x0L);
-
-        tree = G.a_trees[ADFOLDIN];
-
-        strcpy(srcpth, ppath);
-        strcpy(dstpth, ppath);
-        nmidx = 0;
-        while (srcpth[nmidx] != '*')
-          nmidx++;
-
-        strcpy(srcpth+nmidx, pf->f_name);
-        strcat(srcpth, "\\*.*");
-        more = inf_fifo(tree, FOLNFILE, FOLNFOLD, srcpth);
-
-        graf_mouse(ARROW, 0x0L);
-        if (!more)
-          return FALSE;
 
         fmt_str(pf->f_name, poname);
-        inf_sset(tree, FOLNAME, poname);
+        inf_sset(tree, FFNAME, poname);
+        size = (pf->f_attr & F_SUBDIR) ? G.g_size : pf->f_size;
+        inf_dttmsz(tree, pf, FFDATE, FFTIME, FFSIZE, size);
 
-        inf_dttmsz(tree, pf, FOLDATE, FOLTIME, FOLSIZE, G.g_size);
+        /*
+         * initialise the attributes display
+         */
+        obj = (OBJECT *)tree + FFRONLY;
+        if (pf->f_attr & F_SUBDIR)
+          obj->ob_state = DISABLED;
+        else if (pf->f_attr & F_RDONLY)
+          obj->ob_state = SELECTED;
+        else
+          obj->ob_state = NORMAL;
+
+        obj = (OBJECT *)tree + FFRWRITE;
+        if (pf->f_attr & F_SUBDIR)
+          obj->ob_state = DISABLED;
+        else if (!(pf->f_attr & F_RDONLY))
+          obj->ob_state = SELECTED;
+        else
+          obj->ob_state = NORMAL;
 
         inf_show(tree, 0);
-
-        if (inf_what(tree, FOLOK, FOLCNCL) != 1)
+        if (inf_what(tree, FFOK, FFCNCL) != 1)
           return FALSE;
 
-        graf_mouse(HGLASS, 0x0L);       /* user said OK */
+        /*
+         * user selected OK - we rename and/or change attributes
+         */
+        graf_mouse(HGLASS, 0x0L);
 
         more = TRUE;
-        inf_sget(tree, FOLNAME, pnname);
+        inf_sget(tree, FFNAME, pnname);
                                         /* unformat the strings         */
         unfmt_str(poname, srcpth+nmidx);
         unfmt_str(pnname, dstpth+nmidx);
-                                        /* do the DOS rename    */
+
+        /*
+         * if user has changed the name, do the DOS rename
+         */
         if (strcmp(srcpth+nmidx, dstpth+nmidx))
         {
           dos_rename(srcpth, dstpth);
@@ -464,10 +428,29 @@ WORD inf_folder(BYTE *ppath, FNODE *pf)
             strcpy(pf->f_name, dstpth+nmidx);
         }
 
+        /*
+         * if user has changed the attributes, tell DOS to change them
+         */
+        if (!(pf->f_attr & F_SUBDIR))
+        {
+          attr = pf->f_attr;
+          obj = (OBJECT *)tree + FFRONLY;
+          if (obj->ob_state & SELECTED)
+            attr |= F_RDONLY;
+          else
+            attr &= ~F_RDONLY;
+          if (attr != pf->f_attr)
+          {
+            dos_chmod(dstpth, F_SETMOD, attr);
+            if ((more = d_errmsg()) != 0)
+              pf->f_attr = attr;
+          }
+        }
+
         graf_mouse(ARROW, 0x0L);
 
         return more;
-} /* inf_folder */
+}
 
 
 /************************************************************************/

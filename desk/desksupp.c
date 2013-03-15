@@ -640,17 +640,14 @@ WORD do_info(WORD curr)
         {
           switch( pa->a_type )
           {
-            case AT_ISFILE:
-                ret = inf_file(&pw->w_path->p_spec[0], pf);
-                if (ret)
-                  fun_rebld(pw);
-                break;
             case AT_ISFOLD:
 #ifndef DESK1
                 if (pf->f_attr & F_FAKE)
                   break;
 #endif
-                ret = inf_folder(&pw->w_path->p_spec[0], pf);
+                /* drop thru */
+            case AT_ISFILE:
+                ret = inf_file_folder(&pw->w_path->p_spec[0], pf);
                 if (ret)
                   fun_rebld(pw);
                 break;

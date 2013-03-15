@@ -4580,3 +4580,7 @@ Start... early ages
   Allow folders to be renamed from the desktop. (RFB)
 - desk/deskbind.h desk/deskdir.c desk/deskfun.c desk/deskpro.c:
   Eliminate global variables D.g_srcpth, D.g_dstpth. (RFB)
+
+2013-03-15
+- desk/deskinf.c desk/deskinf.h desk/desksupp.c desk/desktop.def
+  desk/desktop.rsc: Combine file and folder information dialogs. (RFB)
