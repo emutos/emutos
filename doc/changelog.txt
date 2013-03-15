@@ -4578,3 +4578,5 @@ Start... early ages
   some globals with locals. (RFB)
 - desk/deskinf.c desk/desksupp.c desk/desktop.def desk/desktop.rsc:
   Allow folders to be renamed from the desktop. (RFB)
+- desk/deskbind.h desk/deskdir.c desk/deskfun.c desk/deskpro.c:
+  Eliminate global variables D.g_srcpth, D.g_dstpth. (RFB)

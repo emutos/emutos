@@ -691,18 +691,20 @@ WORD par_chk(BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path)
         REG BYTE        *tsrc, *tdst;
         WORD    same;
         REG FNODE       *pf;
+        BYTE            srcpth[LEN_ZPATH+LEN_ZFNAME+1];
+        BYTE            dstpth[LEN_ZPATH+LEN_ZFNAME+1];
 
         if (psrc_path[0] != pdst_path[0])               /* check drives */
           return(TRUE);
 
-        tsrc = &G.g_srcpth[0];
-        tdst = &G.g_dstpth[0];
+        tsrc = srcpth;
+        tdst = dstpth;
         same = TRUE;
         do
         {
                                                         /* new copies   */
-          strcpy(&G.g_srcpth[0], psrc_path);
-          strcpy(&G.g_dstpth[0], pdst_path);
+          strcpy(srcpth, psrc_path);
+          strcpy(dstpth, pdst_path);
                                                         /* get next paths*/
           tsrc = ret_path(tsrc);
           tdst = ret_path(tdst);
@@ -759,11 +761,13 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
         WORD            ret, more, obj;
         BYTE            *pglsrc, *pgldst;
         LONG            lavail;
+        BYTE            srcpth[LEN_ZPATH+LEN_ZFNAME+1];
+        BYTE            dstpth[LEN_ZPATH+LEN_ZFNAME+1];
 
 /* BugFix       */
         graf_mouse(HGLASS, 0x0L);
-        pglsrc = &G.g_srcpth[0];
-        pgldst = &G.g_dstpth[0];
+        pglsrc = srcpth;
+        pgldst = dstpth;
         tree = 0x0L;
         ml_havebox = FALSE;
         switch(op)

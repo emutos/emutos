@@ -67,8 +67,6 @@ GLOBES
                                                 /*   window             */
 /*GLOBAL*/ WORD         g_isort;                /* current sort type    */
 
-/*GLOBAL*/ BYTE         g_srcpth[82];
-/*GLOBAL*/ BYTE         g_dstpth[82];
                                                 /* stack of fcb's to use*/
                                                 /*   for non-recursive  */
                                                 /*   directory tree     */

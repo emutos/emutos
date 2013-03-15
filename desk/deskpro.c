@@ -38,6 +38,7 @@
 
 WORD pro_chdir(WORD drv, BYTE *ppath)
 {
+        BYTE            path[LEN_ZPATH+LEN_ZFNAME+1];
                                                 /* change to directory  */
                                                 /*   that application   */
                                                 /*   is in              */
@@ -47,11 +48,11 @@ WORD pro_chdir(WORD drv, BYTE *ppath)
         if ( drv != '@' )
         {
           dos_sdrv(drv - 'A');
-          G.g_srcpth[0] = drv;
-          G.g_srcpth[1] = ':';
-          G.g_srcpth[2] = '\\';
-          strcpy(&G.g_srcpth[3], ppath);
-          dos_chdir((BYTE *)ADDR(&G.g_srcpth[0]));
+          path[0] = drv;
+          path[1] = ':';
+          path[2] = '\\';
+          strcpy(path+3, ppath);
+          dos_chdir(path);
         }
         else
           dos_sdrv(gl_stdrv);           /* don't leave closed drive hot */

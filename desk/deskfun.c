@@ -118,10 +118,11 @@ WORD fun_mkdir(WNODE *pw_node)
         LONG            tree;
         WORD            more, cont, i;
         BYTE            fnew_name[LEN_ZFNAME], unew_name[LEN_ZFNAME], *ptmp;
+        BYTE            path[LEN_ZPATH+LEN_ZFNAME+1];
 
         tree = G.a_trees[ADMKDBOX];
         pp_node = pw_node->w_path;
-        ptmp = &G.g_srcpth[0];
+        ptmp = path;
         strcpy(ptmp, &pp_node->p_spec[0]);
         i = 0;
         while (*ptmp++)
@@ -148,15 +149,15 @@ WORD fun_mkdir(WNODE *pw_node)
             unfmt_str(&fnew_name[0], &unew_name[0]);
             if ( unew_name[0] != NULL )
             {
-              add_fname(&G.g_srcpth[0], &unew_name[0]);
-              dos_mkdir((BYTE *)ADDR(&G.g_srcpth[0]));
+              add_fname(path, unew_name);
+              dos_mkdir(path);
               if (DOS_ERR)
               {
-                if (strlen(G.g_srcpth) >= LEN_ZPATH-3)
+                if (strlen(path) >= LEN_ZPATH-3)
                   fun_alert(1,STDEEPPA,NULLPTR);
                 else
                   cont = fun_alert(2,STFOEXIS,NULLPTR) - 1;
-                del_fname(&G.g_srcpth[0]);
+                del_fname(path);
               }
               else
               {
