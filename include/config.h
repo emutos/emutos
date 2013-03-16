@@ -287,19 +287,6 @@
 #endif
 
 /*
- * Set CONF_SERIAL_CONSOLE to 1 in order to:
- * - send console output to the serial port, in addition to the screen
- * - use exclusively the serial port for console input
- */
-#ifndef CONF_SERIAL_CONSOLE
-# if !CONF_WITH_SHIFTER && !defined(MACHINE_AMIGA)
-#  define CONF_SERIAL_CONSOLE 1
-# else
-#  define CONF_SERIAL_CONSOLE 0
-# endif
-#endif
-
-/*
  * use #ifndef ... #endif for definitions below, to allow them to
  * be overriden by the Makefile or by localconf.h
  */
@@ -324,61 +311,6 @@
  */
 #ifndef AES_VERSION
 # define AES_VERSION 0x0140
-#endif
-
-/* set this to 1 if your emulator provides an STonX-like
- * native_print() function, i.e. if the code:
- *   .dc.w 0xa0ff
- *   .dc.l 0
- * executes native function void print_native(char *string);
- */
-#ifndef STONX_NATIVE_PRINT
-#define STONX_NATIVE_PRINT 0
-#endif
-
-/* set this to 1 to try autodetect whether STonX
- * native print is available (experimental).
- */
-#ifndef DETECT_NATIVE_PRINT
-#define DETECT_NATIVE_PRINT 0
-#endif
-
-/* set this to 1 to detect, and (if detected) use native features provided
- * by the standard "native features" interface.
- */
-#ifndef DETECT_NATIVE_FEATURES
-# ifdef __mcoldfire__
-#  define DETECT_NATIVE_FEATURES 0 /* Conflict with ColdFire instructions. */
-# else
-#  define DETECT_NATIVE_FEATURES 1
-# endif
-#endif
-
-/* set this to 1 to redirect debug prints on MFP RS232 out, for emulator
- * without any native debug print capabilities or real hardware.
- */
-#ifndef RS232_DEBUG_PRINT
-# if CONF_SERIAL_CONSOLE
-#  define RS232_DEBUG_PRINT 1
-# else
-#  define RS232_DEBUG_PRINT 0
-# endif
-#endif
-
-/* set this to 1 to redirect debug prints on SCC portB RS232 out.
- * this is primarily for real Falcon hardware, which does not use
- * the MFP USART.
- */
-#ifndef SCC_DEBUG_PRINT
-#define SCC_DEBUG_PRINT 0
-#endif
-
-/* set this to 1 to redirect debug prints on MIDI out, for emulator
- * without ANY native debug print capabilities.
- * This overrides previous debug print settings.
- */
-#ifndef MIDI_DEBUG_PRINT
-#define MIDI_DEBUG_PRINT 0
 #endif
 
 /*
@@ -817,6 +749,74 @@
 #endif
 #if CONF_DEBUG_DESK_STACK
 # define STACK_MARKER 0xdeadbeef
+#endif
+
+/*
+ * Set CONF_SERIAL_CONSOLE to 1 in order to:
+ * - send console output to the serial port, in addition to the screen
+ * - use exclusively the serial port for console input
+ */
+#ifndef CONF_SERIAL_CONSOLE
+# if !CONF_WITH_SHIFTER && !defined(MACHINE_AMIGA)
+#  define CONF_SERIAL_CONSOLE 1
+# else
+#  define CONF_SERIAL_CONSOLE 0
+# endif
+#endif
+
+/* set this to 1 if your emulator provides an STonX-like
+ * native_print() function, i.e. if the code:
+ *   .dc.w 0xa0ff
+ *   .dc.l 0
+ * executes native function void print_native(char *string);
+ */
+#ifndef STONX_NATIVE_PRINT
+#define STONX_NATIVE_PRINT 0
+#endif
+
+/* set this to 1 to try autodetect whether STonX
+ * native print is available (experimental).
+ */
+#ifndef DETECT_NATIVE_PRINT
+#define DETECT_NATIVE_PRINT 0
+#endif
+
+/* set this to 1 to detect, and (if detected) use native features provided
+ * by the standard "native features" interface.
+ */
+#ifndef DETECT_NATIVE_FEATURES
+# ifdef __mcoldfire__
+#  define DETECT_NATIVE_FEATURES 0 /* Conflict with ColdFire instructions. */
+# else
+#  define DETECT_NATIVE_FEATURES 1
+# endif
+#endif
+
+/* set this to 1 to redirect debug prints on MFP RS232 out, for emulator
+ * without any native debug print capabilities or real hardware.
+ */
+#ifndef RS232_DEBUG_PRINT
+# if CONF_SERIAL_CONSOLE
+#  define RS232_DEBUG_PRINT 1
+# else
+#  define RS232_DEBUG_PRINT 0
+# endif
+#endif
+
+/* set this to 1 to redirect debug prints on SCC portB RS232 out.
+ * this is primarily for real Falcon hardware, which does not use
+ * the MFP USART.
+ */
+#ifndef SCC_DEBUG_PRINT
+#define SCC_DEBUG_PRINT 0
+#endif
+
+/* set this to 1 to redirect debug prints on MIDI out, for emulator
+ * without ANY native debug print capabilities.
+ * This overrides previous debug print settings.
+ */
+#ifndef MIDI_DEBUG_PRINT
+#define MIDI_DEBUG_PRINT 0
 #endif
 
 /*
