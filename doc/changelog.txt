@@ -4584,3 +4584,6 @@ Start... early ages
 2013-03-15
 - desk/deskinf.c desk/deskinf.h desk/desksupp.c desk/desktop.def
   desk/desktop.rsc: Combine file and folder information dialogs. (RFB)
+
+2013-03-16
+- bios/kprint.c: Added CRLF translation in kprintf_outc_rs232(). (VRI)

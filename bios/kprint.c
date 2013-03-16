@@ -137,6 +137,10 @@ static void kprintf_outc_midi(int c)
 #if RS232_DEBUG_PRINT
 static void kprintf_outc_rs232(int c)
 {
+    /* Raw terminals usually require CRLF */
+    if (c == '\n')
+        bconout1(1,'\r');
+
     bconout1(1,c);
 }
 #endif
