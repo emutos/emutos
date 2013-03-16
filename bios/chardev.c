@@ -21,6 +21,7 @@
 #include "conout.h"
 #include "vt52.h"
 #include "mfp.h"
+#include "bios.h"
 
 #define NUM_CHAR_VECS   8
 
@@ -91,6 +92,9 @@ int i;
 
 LONG bconout2(WORD dev, WORD b)
 {
+#if CONF_SERIAL_CONSOLE
+    bconout(1, b);
+#endif
     cputc(b);
     return 1L;
 }
@@ -98,6 +102,10 @@ LONG bconout2(WORD dev, WORD b)
 /* bconout5 - raw console output. */
 LONG bconout5(WORD dev, WORD ch)
 {
+#if CONF_SERIAL_CONSOLE
+    // The terminal will interpret the control characters, anyway.
+    bconout(1, ch);
+#endif
     ascii_out(ch);
     return 1L;
 }
@@ -108,5 +116,8 @@ LONG bconout5(WORD dev, WORD ch)
 
 LONG bcostat2(void)
 {
+#if CONF_SERIAL_CONSOLE
+    return bcostat(1);
+#endif
   return -1;
 }

@@ -287,6 +287,18 @@
 #endif
 
 /*
+ * Set CONF_SERIAL_CONSOLE to 1 in order to:
+ * - send console output to the serial port, in addition to the screen
+ * - use exclusively the serial port for console input
+ */
+#ifndef CONF_SERIAL_CONSOLE
+# if !CONF_WITH_SHIFTER && !defined(MACHINE_AMIGA)
+#  define CONF_SERIAL_CONSOLE 1
+# else
+#  define CONF_SERIAL_CONSOLE 0
+# endif
+#endif
+
  * use #ifndef ... #endif for definitions below, to allow them to
  * be overriden by the Makefile or by localconf.h
  */
@@ -345,7 +357,11 @@
  * without any native debug print capabilities or real hardware.
  */
 #ifndef RS232_DEBUG_PRINT
-#define RS232_DEBUG_PRINT 0
+# if CONF_SERIAL_CONSOLE
+#  define RS232_DEBUG_PRINT 1
+# else
+#  define RS232_DEBUG_PRINT 0
+# endif
 #endif
 
 /* set this to 1 to redirect debug prints on SCC portB RS232 out.

@@ -37,6 +37,7 @@
 #include "ikbd.h"
 #include "sound.h"              /* for keyclick */
 #include "delay.h"
+#include "bios.h"
 
 #define DBG_KBD 0
 
@@ -100,6 +101,10 @@ LONG kbshift(WORD flag)
 
 LONG bconstat2(void)
 {
+#if CONF_SERIAL_CONSOLE
+    return bconstat(1);
+#endif
+
     if (ikbdiorec.head == ikbdiorec.tail) {
         return 0;               /* iorec empty */
     } else {
@@ -111,6 +116,20 @@ LONG bconin2(void)
 {
     WORD old_sr;
     LONG value;
+
+#if CONF_SERIAL_CONSOLE
+    value = bconin(1);
+
+    /* We need to emulate these scancodes if we want to launch EmuCon
+     * from EmuDesk by using the keyboard shortcuts.
+     */
+    if (value == 0x11) /* ^Q */
+        value |= 0x100000; /* Scancode of Q */
+    if (value == 0x1a) /* ^Z */
+        value |= 0x2c0000; /* Scancode of Z */
+
+    return value;
+#endif
 
     while (!bconstat2()) {
 #if USE_STOP_INSN_TO_FREE_HOST_CPU

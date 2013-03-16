@@ -4587,3 +4587,5 @@ Start... early ages
 
 2013-03-16
 - bios/kprint.c: Added CRLF translation in kprintf_outc_rs232(). (VRI)
+- aes/gemsuper.c bios/chardev.c bios/ikbd.c include/config.h: Added new define
+  CONF_SERIAL_CONSOLE to redirect console I/O to the serial port. (VRI)

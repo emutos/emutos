@@ -47,7 +47,11 @@
 
 #include "string.h"
 
+#if CONF_SERIAL_CONSOLE
+#define DBG_GEMSUPER 1
+#else
 #define DBG_GEMSUPER 0
+#endif
 
 
 #define CONTROL LLGET(pcrys_blk)
