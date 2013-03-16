@@ -582,8 +582,8 @@ static void sh_rdinf(void)
 */
 static void process_inf1(void)
 {
-        WORD    env1, env2;
 #if CONF_WITH_SHIFTER
+        WORD    env1, env2;
         WORD    mode;
 #endif
         char    *pcurr;
