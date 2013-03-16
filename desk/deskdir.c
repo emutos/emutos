@@ -38,6 +38,7 @@
 #include "deskgsx.h"
 #include "desksupp.h"
 #include "deskfun.h"
+#include "deskrsrc.h"
 
 
 #define S_FILL_STYLE            23              /* used in blank_it()   */
@@ -53,7 +54,6 @@ static UBYTE    *copybuf;   /* for copy operations */
 static LONG     copylen;    /* size of above buffer */
 
 static BYTE     ml_files[4], ml_dirs[4];
-static WORD     ml_dlfi, ml_dlfo, ml_dlok, ml_dlcn;
 static WORD     ml_dlpr, ml_havebox;
 static BYTE     ml_fsrc[LEN_ZFNAME], ml_fdst[LEN_ZFNAME], ml_fstr[LEN_ZFNAME], ml_ftmp[LEN_ZFNAME];
 
@@ -167,7 +167,7 @@ static void do_namecon(void)
         }
         form_do(G.a_trees[ADCPALER], 0);
         if (ml_dlpr)
-          draw_dial(G.a_trees[ADCOPYDI]);
+          draw_dial(G.a_trees[ADCPYDEL]);
         graf_mouse(HRGLASS, 0x0L);
 } /* do_namecon */
 
@@ -573,8 +573,8 @@ WORD d_doop(WORD op, LONG tree, WORD obj, BYTE *psrc_path, BYTE *pdst_path,
               {
                 *pdcnt -= 1;
                 sprintf(&ml_dirs[0], "%d", *pdcnt);
-                inf_sset(tree, ml_dlfo, &ml_dirs[0]);
-                draw_fld(tree, ml_dlfo);
+                inf_sset(tree, CDFOLDS, &ml_dirs[0]);
+                draw_fld(tree, CDFOLDS);
               }
               skip = TRUE;
               level--;
@@ -642,8 +642,8 @@ WORD d_doop(WORD op, LONG tree, WORD obj, BYTE *psrc_path, BYTE *pdst_path,
               {
                 *pfcnt -= 1;
                 sprintf(&ml_files[0], "%d", *pfcnt);
-                inf_sset(tree, ml_dlfi, &ml_files[0]);
-                draw_fld(tree, ml_dlfi);
+                inf_sset(tree, CDFILES, &ml_files[0]);
+                draw_fld(tree, CDFILES);
               }
             }
           }
@@ -758,11 +758,12 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
 {
         LONG            tree;
         FNODE           *pf;
-        WORD            ret, more, obj;
+        WORD            ret, more, ob;
         BYTE            *pglsrc, *pgldst;
         LONG            lavail;
         BYTE            srcpth[LEN_ZPATH+LEN_ZFNAME+1];
         BYTE            dstpth[LEN_ZPATH+LEN_ZFNAME+1];
+        OBJECT          *obj;
 
 /* BugFix       */
         graf_mouse(HGLASS, 0x0L);
@@ -781,11 +782,9 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
                 ml_dlpr = G.g_cdelepref;
                 if (ml_dlpr)
                 {
-                  tree = G.a_trees[ADDELEDI];
-                  ml_dlfi = DDFILES;
-                  ml_dlfo = DDFOLDS;
-                  ml_dlok = DDOK;
-                  ml_dlcn = DDCNCL;
+                  tree = G.a_trees[ADCPYDEL];
+                  obj = (OBJECT *)tree + CDTITLE;
+                  obj->ob_spec = (LONG) ini_str(STDELETE);
                 }
                 break;
           case OP_COPY:
@@ -809,11 +808,9 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
                 ml_dlpr = G.g_ccopypref;
                 if (ml_dlpr)
                 {
-                  tree = G.a_trees[ADCOPYDI];
-                  ml_dlfi = CDFILES;
-                  ml_dlfo = CDFOLDS;
-                  ml_dlok = CDOK;
-                  ml_dlcn = CDCNCL;
+                  tree = G.a_trees[ADCPYDEL];
+                  obj = (OBJECT *)tree + CDTITLE;
+                  obj->ob_spec = (LONG) ini_str(STCOPY);
                 }
                 break;
         } /* switch */
@@ -821,15 +818,15 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
         if (tree)
         {
           sprintf(&ml_files[0], "%d", *pfcnt);
-          inf_sset(tree, ml_dlfi, &ml_files[0]);
+          inf_sset(tree, CDFILES, &ml_files[0]);
           sprintf(&ml_dirs[0], "%d", *pdcnt);
-          inf_sset(tree, ml_dlfo, &ml_dirs[0]);
+          inf_sset(tree, CDFOLDS, &ml_dirs[0]);
           ml_havebox = TRUE;
           show_hide(FMD_START, tree);
           graf_mouse(ARROW, 0x0L);
           form_do(tree, 0);
           graf_mouse(HGLASS, 0x0L);
-          ret = inf_what(tree, ml_dlok, ml_dlcn);
+          ret = inf_what(tree, CDOK, CDCNCL);
         }
         else
           ret = TRUE;
@@ -850,10 +847,10 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
               if (!ml_dlpr)             /* show the moving icon!        */
               {
                 if (from_disk)
-                  obj = src_ob;
+                  ob = src_ob;
                 else
-                  obj = pf->f_obid;
-                move_icon(obj, dulx, duly);
+                  ob = pf->f_obid;
+                move_icon(ob, dulx, duly);
               } /* if */
             } /* if OP_COPY */
             if (pf->f_attr & F_SUBDIR)
@@ -942,8 +939,8 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
               {
                 *pfcnt -= 1;
                 sprintf(&ml_files[0], "%d", *pfcnt);
-                inf_sset(tree, ml_dlfi, &ml_files[0]);
-                draw_fld(tree, ml_dlfi);
+                inf_sset(tree, CDFILES, &ml_files[0]);
+                draw_fld(tree, CDFILES);
               } /* if tree */
             } /* else */
           } /* if */
