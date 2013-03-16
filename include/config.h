@@ -299,6 +299,7 @@
 # endif
 #endif
 
+/*
  * use #ifndef ... #endif for definitions below, to allow them to
  * be overriden by the Makefile or by localconf.h
  */
