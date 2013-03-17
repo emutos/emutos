@@ -4595,3 +4595,4 @@ Start... early ages
 2013-03-17
 - desk/deskdir.c desk/deskinf.c desk/deskmain.c desk/deskmain.h:
   Automatically centre desktop dialog titles. (RFB)
+- desk/deskdir.c: Code cleanup: simplify fold_wind(). (RFB)

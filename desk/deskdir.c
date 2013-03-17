@@ -251,11 +251,11 @@ static WORD fold_wind(BYTE *path)
         WORD            i;
         WNODE           *pwin;
 
-        for(i = NUM_WNODES; i; i--)
+        for (i = 0, pwin = G.g_wlist; i < NUM_WNODES; i++, pwin++)
         {
-          pwin = win_ith(i);
-          if ( (pwin->w_id) && (!strcmp(&pwin->w_path->p_spec[0], path)) )
-            return(TRUE);
+          if (pwin->w_id)
+            if (strcmp(pwin->w_path->p_spec, path) == 0)
+              return(TRUE);
         }
         return(FALSE);
 }
