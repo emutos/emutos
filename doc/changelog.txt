@@ -4591,3 +4591,7 @@ Start... early ages
   CONF_SERIAL_CONSOLE to redirect console I/O to the serial port. (VRI)
 - desk/deskdir.c desk/desktop.def desk/desktop.rsc: Combine copy and
   delete desktop dialogs. (RFB)
+
+2013-03-17
+- desk/deskdir.c desk/deskinf.c desk/deskmain.c desk/deskmain.h:
+  Automatically centre desktop dialog titles. (RFB)

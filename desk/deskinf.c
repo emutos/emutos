@@ -357,7 +357,8 @@ WORD inf_file_folder(BYTE *ppath, FNODE *pf)
         tree = G.a_trees[ADFFINFO];
         title = (pf->f_attr & F_SUBDIR) ? STFOINFO : STFIINFO;
         obj = (OBJECT *)tree + FFTITLE;
-        obj->ob_spec = (LONG) ini_str(title); 
+        obj->ob_spec = (LONG) ini_str(title);
+        centre_title(tree);
 
         strcpy(srcpth, ppath);
         strcpy(dstpth, ppath);

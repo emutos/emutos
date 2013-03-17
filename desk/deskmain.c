@@ -1455,6 +1455,29 @@ static void adjust_menu(OBJECT *obj_array)
 }
 
 /*
+ *      Horizontally centre dialog title: this is done dynamically to
+ *      handle translated titles.
+ *
+ *      If object 1 of a tree is a G_STRING and its y position equals
+ *      one character height, we assume it's the title.
+ */
+void centre_title(LONG tree)
+{
+        OBJECT          *root, *title;
+        WORD            len;
+
+        root = (OBJECT *)tree;
+        title = root + 1;
+
+        if ((title->ob_type == G_STRING) && (title->ob_y == gl_hchar)) {
+          len = strlen((char *)title->ob_spec) * gl_wchar;
+          if (len > root->ob_width)
+            len = root->ob_width;
+          title->ob_x = (root->ob_width - len) / 2;
+        }
+}
+
+/*
  * translate and fixup desktop objects
  */
 void desk_xlate_fix(void)
@@ -1585,8 +1608,10 @@ WORD deskmain(void)
 #endif
                                                 /* initialize menus and */
                                                 /*   dialogs            */
-        for(ii = 0; ii < RS_NTREE; ii++)
+        for(ii = 0; ii < RS_NTREE; ii++) {
           rsrc_gaddr(R_TREE, ii, &G.a_trees[ii]);
+          centre_title(G.a_trees[ii]);
+        }
 
         for (ii=0; ii<RS_NBB; ii++)             /* initialize bit images */
         {

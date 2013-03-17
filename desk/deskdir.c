@@ -39,6 +39,7 @@
 #include "desksupp.h"
 #include "deskfun.h"
 #include "deskrsrc.h"
+#include "deskmain.h"
 
 
 #define S_FILL_STYLE            23              /* used in blank_it()   */
@@ -817,6 +818,7 @@ WORD dir_op(WORD op, BYTE *psrc_path, FNODE *pflist, BYTE *pdst_path,
 
         if (tree)
         {
+          centre_title(tree);
           sprintf(&ml_files[0], "%d", *pfcnt);
           inf_sset(tree, CDFILES, &ml_files[0]);
           sprintf(&ml_dirs[0], "%d", *pdcnt);
