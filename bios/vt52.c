@@ -76,10 +76,6 @@ void (*con_state)(WORD);        /* state of conout state machine */
 
 
 
-BOOL vt52_initialized;  /* checked by kprintf for safety */
-
-
-
 /* jumptable for ESC + uppercase character */
 static void (* const am_tab[])(void) = {
     cursor_up,          /* Cursor Up */
@@ -890,8 +886,6 @@ vt52_init(void)
     v_col_bg = 0;
 
     con_state = normal_ascii;           /* Init conout state machine */
-
-    vt52_initialized = TRUE;
 
     clear_and_home();
 }

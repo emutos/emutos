@@ -4596,3 +4596,4 @@ Start... early ages
 - desk/deskdir.c desk/deskinf.c desk/deskmain.c desk/deskmain.h:
   Automatically centre desktop dialog titles. (RFB)
 - desk/deskdir.c: Code cleanup: simplify fold_wind(). (RFB)
+- bios/vt52.c: Removed unused vt52_initialized. (VRI)
