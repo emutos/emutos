@@ -203,7 +203,7 @@ BYTE *scan_slsh(BYTE *path)
 *       Add a new directory name to the end of an existing path.  This
 *       includes appending a \*.*.
 */
-static void add_path(BYTE *path, BYTE *new_name)
+void add_path(BYTE *path, BYTE *new_name)
 {
         while (*path != '*')
           path++;

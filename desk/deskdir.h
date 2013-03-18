@@ -12,6 +12,7 @@ void draw_fld(LONG tree, WORD obj);
 BYTE *scan_slsh(BYTE *path);
 void add_fname(BYTE *path, BYTE *new_name);
 void del_fname(BYTE *pstr);
+void add_path(BYTE *path, BYTE *new_name);
 WNODE *fold_wind(BYTE *path);
 WORD d_errmsg(void);
 WORD d_doop(WORD op, LONG tree, WORD obj, BYTE *psrc_path, BYTE *pdst_path,

@@ -4600,3 +4600,7 @@ Start... early ages
 - bios/bios.c bios/kprint.h: Check CHARDEV_AVAILABLE in BIOS character IO. (VRI)
 - desk/deskapp.c desk/deskdir.c desk/deskdir.h: Refresh relevant open
   windows after saving EMUDESK.INF. (RFB)
+
+2013-03-18
+- desk/deskdir.c desk/deskdir.h desk/deskfun.c: Rewrote some functions
+  to fix a window refresh bug, simplify code, and save space. (RFB)

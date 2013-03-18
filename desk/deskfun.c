@@ -5,7 +5,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002 The EmuTOS development team
+*                 2002-2013 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -204,7 +204,77 @@ WORD fun_op(WORD op, PNODE *pspath, BYTE *pdest, WORD dulx, WORD duly,
         return(FALSE);
 } /* fun_op */
 
+#ifdef DESK1
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *   D E S K 1   r o u t i n e s                                         *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
+/*
+ *      Routine to call when several icons have been dragged from a
+ *      window to another window (it might be the same window) and
+ *      dropped on a particular icon or open space.
+ *
+ *      Note that, for DESK1, this is NEVER called if either the source
+ *      or destination is the desktop.  Therefore 'datype' can ONLY be
+ *      AT_ISFILE or AT_ISFOLD.
+ */
+void fun_drag(WORD src_wh, WORD dst_wh, WORD dst_ob, WORD dulx, WORD duly)
+{
+        WORD            ret, junk, datype;
+        WNODE           *psw, *pdw;
+        ANODE           *pda;
+        FNODE           *pdf;
+        BYTE            destpath[LEN_ZPATH+LEN_ZFNAME+1];
+
+        psw = win_find(src_wh);
+        pdw = win_find(dst_wh);
+
+        pda = i_find(dst_wh, dst_ob, &pdf, &junk);
+        datype = (pda) ? pda->a_type : AT_ISFILE;
+
+        /* set up default destination path name */
+        strcpy(destpath, pdw->w_path->p_spec);
+
+        /* if destination is folder, insert folder name in path */
+        if (datype == AT_ISFOLD)
+          add_path(destpath, pdf->f_name);
+
+        ret = fun_op(OP_COPY, psw->w_path, destpath, dulx, duly, FALSE, 0);
+
+        if (ret)
+        {
+          if (src_wh != dst_wh)
+            desk_clear(src_wh);
+          fun_rebld(pdw);
+          /*
+           * if we copied into a folder, we must check to see if it's
+           * open in a window and, if so, redraw it too
+           */
+          if (datype == AT_ISFOLD) {
+            pdw = fold_wind(destpath);
+            if (pdw)
+              fun_rebld(pdw);
+          }
+        }
+}
+
+/*
+ *      This routine is called when the 'Delete' menu item is selected
+ */
+void fun_del(WNODE *pdw)
+{
+        WORD        ret;
+
+        ret = fun_op(OP_DELETE, pdw->w_path, NULL, 0, 0, 0, 0);
+        if (ret)
+/*        fun_rebld(pdw);*/
+          do_chkall(TRUE);
+}
+
+#else
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *   R o u t i n e s   f o r   t h e   c r i p p l e d   d e s k t o p   *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
 
 static WORD cmp_names(BYTE *psrc, BYTE *pdst)
 {
@@ -228,7 +298,6 @@ static WORD cmp_names(BYTE *psrc, BYTE *pdst)
                                                 /* return if same       */
         return( ret );
 } /* cmp_names */
-
 
 /*
 *       Routine to call when a list of files has been dragged on
@@ -280,11 +349,9 @@ fun_wdst(PNODE *pspath, BYTE *pdspec, WORD datype, FNODE *pdf,
                                                 /*   path, if it is a   */
                                                 /*   fake then treat it */
                                                 /*   like open space    */
-#ifndef DESK1
                 if (pdf->f_attr & F_FAKE)
                   strcat(pdname, "*.*");
                 else
-#endif
                 {
                   strcpy(pdname, &pdf->f_name[0]);
                   strcat(pdname, "\\*.*");
@@ -387,6 +454,7 @@ static WORD fun_disk(WORD src_ob, WNODE *pdw, WORD datype, FNODE *pdf, WORD dulx
 } /* fun_disk */
 
 
+
 /*
 *       Routine to call when several icons have been dragged from a
 *       window to another window (it might be the same window) and
@@ -437,7 +505,6 @@ void fun_drag(WORD src_wh, WORD dst_wh, WORD dst_ob, WORD dulx, WORD duly)
           } /* while */
         } /* else */
 } /* fun_drag */
-
 
 /*
 *       Routine to call when several icons have been dragged from a
@@ -490,3 +557,5 @@ void fun_del(WNODE *pdw)
           graf_mouse(ARROW, 0x0L);
         } /* else */
 } /* fun_del */
+
+#endif
