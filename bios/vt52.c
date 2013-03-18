@@ -31,7 +31,9 @@
 
 static void nop(void);
 static void cursor_up(void);
+static void cursor_down_impl(void);
 static void cursor_down(void);
+static void cursor_left_impl(void);
 static void cursor_left(void);
 static void cursor_right(void);
 static void clear_and_home(void);
@@ -51,7 +53,6 @@ static void cursor_on_cnt(void);
 static void save_cursor_pos(void);
 static void restore_cursor_pos(void);
 static void erase_line(void);
-static void erase_to_eol(void);
 static void erase_from_bol(void);
 static void reverse_video_on(void);
 static void reverse_video_off(void);
@@ -59,6 +60,7 @@ static void line_wrap_on(void);
 static void line_wrap_off(void);
 
 static void do_bell(void);
+static void do_backspace(void);
 static void do_tab(void);
 static void ascii_lf(void);
 static void ascii_cr(void);
@@ -123,7 +125,7 @@ static void (* const bw_tab[])(void) = {
 /* jumptable for ASCII control codes */
 static void (* const cntl_tab[])(void) = {
     do_bell,            /* 7 = bell */
-    cursor_left,        /* 8 = backspace */
+    do_backspace,       /* 8 = backspace */
     do_tab,             /* 9 = Horizontal tab */
     ascii_lf,           /* 10 = Line feed */
     ascii_lf,           /* 11 = Vertical tab (Treated as line feed) */
@@ -181,12 +183,9 @@ normal_ascii(WORD ch)
         con_state = esc_ch1;    /* set constate to handle esc codes */
     }
 
-    else if ( ch >= 7 ) {
-        /* Range check the character */
-        ch -= 7;
-        if ( ch <= 6 ) {
-            (*cntl_tab[ch])();
-        }
+    /* Other control haracters */
+    else if ( ch >= 7 && ch <= 13 ) {
+        (*cntl_tab[ch - 7])();
     }
     /* All others are thrown away. */
 }
@@ -213,6 +212,16 @@ do_bell(void) {
     }
 }
 
+
+/*
+ * do_backspace - Same as Cursor Left
+ */
+
+static void
+do_backspace (void)
+{
+    cursor_left_impl();
+}
 
 
 /*
@@ -359,14 +368,26 @@ cursor_up (void)
 
 
 /*
+ * cursor_down_impl - Used by Cursor Down and LF
+ */
+
+static void
+cursor_down_impl (void)
+{
+    if ( v_cur_cy != v_cel_my)
+        move_cursor(v_cur_cx, v_cur_cy + 1);
+}
+
+
+
+/*
  * cursor_down - Alpha Cursor Down
  */
 
 static void
 cursor_down (void)
 {
-    if ( v_cur_cy != v_cel_my)
-        move_cursor(v_cur_cx, v_cur_cy + 1);
+    cursor_down_impl();
 }
 
 
@@ -385,14 +406,26 @@ cursor_right (void)
 
 
 /*
+ * cursor_left_impl - Used by Cursor Left and Backspace
+ */
+
+static void
+cursor_left_impl (void)
+{
+    if ( v_cur_cx )
+        move_cursor(v_cur_cx - 1, v_cur_cy);
+}
+
+
+
+/*
  * cursor_left - Alpha Cursor Left
  */
 
 static void
 cursor_left (void)
 {
-    if ( v_cur_cx )
-        move_cursor(v_cur_cx - 1, v_cur_cy);
+    cursor_left_impl();
 }
 
 
@@ -429,7 +462,7 @@ erase_to_eos (void)
 
 
 /*
- * erase_line - Erase to End of Line.
+ * erase_to_eol - Erase to End of Line.
  */
 
 static void
@@ -763,7 +796,7 @@ ascii_lf (void)
 {
     /* at bottom of screen? */
     if ( v_cur_cy != v_cel_my )
-        cursor_down();
+        cursor_down_impl();
     else {
         cursor_off();                   /* yes, hide cursor. */
         scroll_up(0);                   /* scroll up 1 line */
