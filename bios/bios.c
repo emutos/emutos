@@ -670,6 +670,14 @@ static LONG bios_3(WORD handle, WORD what)
 }
 #endif
 
+#if CONF_SERIAL_CONSOLE_ANSI
+/* Output a string via bconout() */
+void bconout_str(WORD handle, const char* str)
+{
+    while (*str)
+        bconout(handle, (UBYTE)*str++);
+}
+#endif
 
 /**
  * rwabs  - Read or write sectors

@@ -25,4 +25,9 @@ LONG bcostat(WORD handle);
 LONG mediach(WORD drv);
 LONG drvmap(void);
 
+/* utility functions */
+#if CONF_SERIAL_CONSOLE_ANSI
+void bconout_str(WORD handle, const char* str);
+#endif
+
 #endif /* BIOS_H */
