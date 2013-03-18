@@ -231,6 +231,7 @@ static void bios_init(void)
 
     /* Initialize the RS-232 port(s) */
     chardev_init();     /* Initialize low-memory bios vectors */
+    boot_status |= CHARDEV_AVAILABLE;   /* track progress */
     init_serport();
     boot_status |= RS232_AVAILABLE;     /* track progress */
 #if CONF_WITH_SCC
@@ -577,6 +578,9 @@ static void bios_0(MPB *mpb)
 
 LONG bconstat(WORD handle)        /* GEMBIOS character_input_status */
 {
+    if (!(boot_status & CHARDEV_AVAILABLE))
+        return 0;
+
 #if BCONMAP_AVAILABLE
     WORD map_index = handle - BCONMAP_START_HANDLE;
     if (map_index >= bconmap_root.maptabsize)
@@ -614,6 +618,9 @@ static LONG bios_1(WORD handle)
 
 LONG bconin(WORD handle)
 {
+    if (!(boot_status & CHARDEV_AVAILABLE))
+        return 0;
+
 #if BCONMAP_AVAILABLE
     WORD map_index = handle - BCONMAP_START_HANDLE;
     if (map_index >= bconmap_root.maptabsize)
@@ -640,6 +647,9 @@ static LONG bios_2(WORD handle)
 
 LONG bconout(WORD handle, WORD what)
 {
+    if (!(boot_status & CHARDEV_AVAILABLE))
+        return 0;
+
 #if BCONMAP_AVAILABLE
     WORD map_index = handle - BCONMAP_START_HANDLE;
     if (map_index >= bconmap_root.maptabsize)
@@ -777,6 +787,9 @@ static LONG bios_7(WORD drive)
 
 LONG bcostat(WORD handle)       /* GEMBIOS character_output_status */
 {
+    if (!(boot_status & CHARDEV_AVAILABLE))
+        return 0;
+
 #if BCONMAP_AVAILABLE
     WORD map_index = handle - BCONMAP_START_HANDLE;
     if (map_index >= bconmap_root.maptabsize)

@@ -20,6 +20,7 @@ extern WORD boot_status;
 #define MIDI_AVAILABLE  0x02
 #define DOS_AVAILABLE   0x04
 #define SCC_AVAILABLE   0x08
+#define CHARDEV_AVAILABLE 0x10
 
 #ifdef __GNUC__
 #define PRINTF_STYLE __attribute__ ((format (printf, 1, 2)))
