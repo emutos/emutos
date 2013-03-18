@@ -4604,3 +4604,4 @@ Start... early ages
 2013-03-18
 - desk/deskdir.c desk/deskdir.h desk/deskfun.c: Rewrote some functions
   to fix a window refresh bug, simplify code, and save space. (RFB)
+- bios/chardev.c bios/vt52.c: Added ANSI translation for serial console. (VRI)

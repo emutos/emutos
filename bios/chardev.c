@@ -92,9 +92,6 @@ int i;
 
 LONG bconout2(WORD dev, WORD b)
 {
-#if CONF_SERIAL_CONSOLE
-    bconout(1, b);
-#endif
     cputc(b);
     return 1L;
 }

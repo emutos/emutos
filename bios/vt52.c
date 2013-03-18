@@ -23,7 +23,10 @@
 #include "string.h"
 #include "conout.h"
 #include "vt52.h"
+#include "bios.h"
 
+/* The serial console is more convenient when the cursor goes only forward */
+#define SERIAL_CONSOLE_HONOR_HOME 1
 
 /*
  * internal prototypes
@@ -142,6 +145,15 @@ static void (* const cntl_tab[])(void) = {
 void
 cputc(WORD ch)
 {
+#if CONF_SERIAL_CONSOLE && !CONF_SERIAL_CONSOLE_ANSI
+    /* When no translation needs to be performed, output the character
+     * immediately and unconditionally to the serial port.
+     * When ANSI translation is required, output will be done in the
+     * appropriate subroutines.
+     */
+    bconout(1, b);
+#endif
+
     if (!con_state) {
         /* vt52_init() has not been called yet, ignore */
         return;
@@ -162,6 +174,9 @@ normal_ascii(WORD ch)
 {
     /* If the character is printable ascii */
     if ( ch >= 0x20 ) {
+#if CONF_SERIAL_CONSOLE_ANSI
+        bconout(1, ch);
+#endif
         ascii_out(ch);    /* go print it. */
     }
 
@@ -185,6 +200,9 @@ normal_ascii(WORD ch)
 
     /* Other control haracters */
     else if ( ch >= 7 && ch <= 13 ) {
+#if CONF_SERIAL_CONSOLE_ANSI
+        bconout(1, ch);
+#endif
         (*cntl_tab[ch - 7])();
     }
     /* All others are thrown away. */
@@ -301,6 +319,12 @@ get_column (WORD ch)
 static void
 get_fg_col (WORD ch)
 {
+#if CONF_SERIAL_CONSOLE_ANSI
+    char ansi[10];
+    sprintf(ansi, "\033[%dm", 30 + (ch & 7));
+    bconout_str(1, ansi);
+#endif
+
     /* set the foreground color, low-order bits only. */
     v_col_fg = (ch - 0x20) & 0x0f;
     con_state = normal_ascii;           /* Next char is not special */
@@ -315,6 +339,12 @@ get_fg_col (WORD ch)
 static void
 get_bg_col (WORD ch)
 {
+#if CONF_SERIAL_CONSOLE_ANSI
+    char ansi[10];
+    sprintf(ansi, "\033[%dm", 40 + (ch & 7));
+    bconout_str(1, ansi);
+#endif
+
     /* set the foreground color, low-order bits only. */
     v_col_bg = (ch - 0x20) & 0x0f;
     con_state = normal_ascii;           /* Next char is not special */
@@ -347,6 +377,15 @@ set_bg(void)
 static void
 clear_and_home(void)
 {
+#if CONF_SERIAL_CONSOLE_ANSI
+# if SERIAL_CONSOLE_HONOR_HOME
+    bconout_str(1, "\033[H\033[2J");
+# else
+    if ( v_cur_cx )
+        bconout_str(1, "\r\n");
+# endif
+#endif
+
     move_cursor(0, 0);                          /* cursor home */
     blank_out (0, 0, v_cel_mx, v_cel_my);        /* clear screen. */
 }
@@ -360,6 +399,10 @@ clear_and_home(void)
 static void
 cursor_up (void)
 {
+#if CONF_SERIAL_CONSOLE_ANSI
+    bconout_str(1, "\033[A");
+#endif
+
     if ( v_cur_cy )
         move_cursor(v_cur_cx, v_cur_cy - 1);
 }
@@ -387,6 +430,10 @@ cursor_down_impl (void)
 static void
 cursor_down (void)
 {
+#if CONF_SERIAL_CONSOLE_ANSI
+    bconout_str(1, "\033[B");
+#endif
+
     cursor_down_impl();
 }
 
@@ -399,6 +446,10 @@ cursor_down (void)
 static void
 cursor_right (void)
 {
+#if CONF_SERIAL_CONSOLE_ANSI
+    bconout_str(1, "\033[C");
+#endif
+
     if ( v_cur_cx != v_cel_mx)
         move_cursor(v_cur_cx + 1, v_cur_cy);
 }
@@ -425,6 +476,10 @@ cursor_left_impl (void)
 static void
 cursor_left (void)
 {
+#if CONF_SERIAL_CONSOLE_ANSI
+    bconout_str(1, "\033[D");
+#endif
+
     cursor_left_impl();
 }
 
@@ -437,6 +492,15 @@ cursor_left (void)
 static void
 cursor_home (void)
 {
+#if CONF_SERIAL_CONSOLE_ANSI
+# if SERIAL_CONSOLE_HONOR_HOME
+    bconout_str(1, "\033[H");
+# else
+    if ( v_cur_cx )
+        bconout_str(1, "\r\n");
+# endif
+#endif
+
     move_cursor(0, 0);
 }
 
@@ -449,6 +513,10 @@ cursor_home (void)
 static void
 erase_to_eos (void)
 {
+#if CONF_SERIAL_CONSOLE_ANSI
+    bconout_str(1, "\033[J");
+#endif
+
     erase_to_eol();    /* erase to end of line. */
 
     /* last line? */
@@ -468,6 +536,11 @@ erase_to_eos (void)
 static void
 erase_to_eol (void)
 {
+#if CONF_SERIAL_CONSOLE_ANSI
+    /* Disabled because function used from internal VT52 implementation. */
+    //bconout_str(1, "\033[K");
+#endif
+
     BOOL wrap = v_stat_0 & M_CEOL;      /* save line wrap status */
     v_stat_0 &= ~M_CEOL;    /* clear EOL handling bit. (overwrite) */
 
@@ -501,6 +574,10 @@ erase_to_eol (void)
 static void
 reverse_video_on (void)
 {
+#if CONF_SERIAL_CONSOLE_ANSI
+    bconout_str(1, "\033[7m");
+#endif
+
     v_stat_0 |= M_REVID;    /* set the reverse bit. */
 }
 
@@ -515,6 +592,10 @@ reverse_video_on (void)
 static void
 reverse_video_off (void)
 {
+#if CONF_SERIAL_CONSOLE_ANSI
+    bconout_str(1, "\033[27m");
+#endif
+
     v_stat_0 &= ~M_REVID;    /* clear the reverse bit. */
 }
 
@@ -576,6 +657,10 @@ delete_line (void)
 static void
 erase_from_home (void)
 {
+#if CONF_SERIAL_CONSOLE_ANSI
+    bconout_str(1, "\033[1J");
+#endif
+
     erase_from_bol();    /* erase from beginning of line. */
 
     /* first line? */
@@ -616,6 +701,11 @@ do_cnt_esce (void)
 static void
 cursor_on(void)
 {
+#if CONF_SERIAL_CONSOLE_ANSI
+    /* Disabled because function used from internal VT52 implementation. */
+    //bconout_str(1, "\033[?25h");
+#endif
+
     /* if disable count is zero (cursor still shown) then return */
     if ( !disab_cnt )
         return;
@@ -651,6 +741,11 @@ cursor_on_cnt(void)
 static void
 cursor_off (void)
 {
+#if CONF_SERIAL_CONSOLE_ANSI
+    /* Disabled because function used from internal VT52 implementation. */
+    //bconout_str(1, "\033[?25l");
+#endif
+
     disab_cnt++;                        /* increment the disable counter */
 
     /* test and clear the visible state bit. */
@@ -679,6 +774,11 @@ cursor_off (void)
 static void
 save_cursor_pos (void)
 {
+#if CONF_SERIAL_CONSOLE_ANSI
+    /* Disabled because function used from internal VT52 implementation. */
+    //bconout_str(1, "\033[s");
+#endif
+
     v_stat_0 |= M_SVPOS;    /* set "position saved" status bit. */
 
     /* save the x and y coords of cursor. */
@@ -695,6 +795,11 @@ save_cursor_pos (void)
 static void
 restore_cursor_pos (void)
 {
+#if CONF_SERIAL_CONSOLE_ANSI
+    /* Disabled because function used from internal VT52 implementation. */
+    //bconout_str(1, "\033[u");
+#endif
+
     if ( v_stat_0 & M_SVPOS )
         move_cursor(sav_cur_x, sav_cur_y);      /* move to saved position. */
     else
@@ -714,6 +819,10 @@ restore_cursor_pos (void)
 static void
 erase_line (void)
 {
+#if CONF_SERIAL_CONSOLE_ANSI
+    bconout_str(1, "\033[2K\033[1G");
+#endif
+
     cursor_off();               /* hide cursor. */
     blank_out (0, v_cur_cy, v_cel_mx, v_cur_cy);   /* blank whole line. */
     move_cursor(0, v_cur_cy);   /* move cursor to beginning of line. */
@@ -732,6 +841,11 @@ erase_line (void)
 static void
 erase_from_bol (void)
 {
+#if CONF_SERIAL_CONSOLE_ANSI
+    /* Disabled because function used from internal VT52 implementation. */
+    //bconout_str(1, "\033[1K");
+#endif
+
     cursor_off();               /* hide cursor. */
     save_cursor_pos();          /* save cursor position. */
 

@@ -764,6 +764,18 @@
 # endif
 #endif
 
+/*
+ * Set CONF_SERIAL_CONSOLE_ANSI to 1 if the terminal connected to the serial
+ * port uses ANSI escape sequences. Set it to 0 if it is an Atari VT52 terminal.
+ */
+#ifndef CONF_SERIAL_CONSOLE_ANSI
+# if CONF_SERIAL_CONSOLE
+#  define CONF_SERIAL_CONSOLE_ANSI 1
+# else
+#  define CONF_SERIAL_CONSOLE_ANSI 0
+# endif
+#endif
+
 /* set this to 1 if your emulator provides an STonX-like
  * native_print() function, i.e. if the code:
  *   .dc.w 0xa0ff
@@ -893,6 +905,12 @@
 #if !CONF_WITH_SCC
 # if SCC_DEBUG_PRINT
 #  error "SCC_DEBUG_PRINT requires CONF_WITH_SCC."
+# endif
+#endif
+
+#if !CONF_SERIAL_CONSOLE
+# if CONF_SERIAL_CONSOLE_ANSI
+#  error "CONF_SERIAL_CONSOLE_ANSI requires CONF_SERIAL_CONSOLE."
 # endif
 #endif
 
