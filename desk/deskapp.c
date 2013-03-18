@@ -42,6 +42,7 @@
 #include "deskgraf.h"
 #include "deskglob.h"
 #include "deskmain.h"
+#include "deskdir.h"
 #include "icons.h"
 #include "desk1.h"
 #include "xbiosbind.h"
@@ -706,6 +707,8 @@ void app_save(WORD todisk)
         BYTE            *pcurr, *ptmp;
         ANODE           *pa;
         WSAVE           *pws;
+        WNODE           *w;
+        BYTE            inf_file_name[sizeof(INF_FILE_NAME)];
 
         memset(&gl_afile[0], 0, SIZE_AFILE);
         pcurr = &gl_afile[0];
@@ -790,7 +793,6 @@ void app_save(WORD todisk)
           fh = 0;
           while (!fh)
           {
-            char inf_file_name[16];
             strcpy(inf_file_name, INF_FILE_NAME);
             inf_file_name[0] += gl_stdrv;         /* Adjust drive letter  */
             fh = dos_create(inf_file_name, 0x0);
@@ -804,6 +806,12 @@ void app_save(WORD todisk)
           }
           G.g_afsize = dos_write(fh, G.g_afsize, ADDR(&gl_afile[0]));
           dos_close(fh);
+
+          /* now update any open windows for the directory containing the saved file */
+          del_fname(inf_file_name);     /* convert to pathname ending in *.* */
+          w = fold_wind(inf_file_name); /* scan for matching windows */
+          if (w)                        /* got one:                          */
+            fun_rebld(w);               /* rebuild all matching open windows */
         }
 }
 

@@ -4598,3 +4598,5 @@ Start... early ages
 - desk/deskdir.c: Code cleanup: simplify fold_wind(). (RFB)
 - bios/vt52.c: Removed unused vt52_initialized. (VRI)
 - bios/bios.c bios/kprint.h: Check CHARDEV_AVAILABLE in BIOS character IO. (VRI)
+- desk/deskapp.c desk/deskdir.c desk/deskdir.h: Refresh relevant open
+  windows after saving EMUDESK.INF. (RFB)

@@ -245,8 +245,11 @@ void add_fname(BYTE *path, BYTE *new_name)
 
 /*
 *       Check if path is associated with an open window
+*
+*       If so, returns pointer to first matching window;
+*       otherwise returns NULL.
 */
-static WORD fold_wind(BYTE *path)
+WNODE *fold_wind(BYTE *path)
 {
         WORD            i;
         WNODE           *pwin;
@@ -255,9 +258,9 @@ static WORD fold_wind(BYTE *path)
         {
           if (pwin->w_id)
             if (strcmp(pwin->w_path->p_spec, path) == 0)
-              return(TRUE);
+              return pwin;
         }
-        return(FALSE);
+        return NULL;
 }
 
 
