@@ -135,7 +135,7 @@ MULTILIBFLAGS = $(CPUFLAGS) -mshort
 INC = -Iinclude
 OPTFLAGS = -Os -fomit-frame-pointer
 OTHERFLAGS = -ffreestanding
-WARNFLAGS = -Wall -Wundef -Wold-style-definition #-fno-common -Wshadow -Wmissing-prototypes -Wstrict-prototypes #-Werror
+WARNFLAGS = -Wall -Wundef #-Wold-style-definition -fno-common -Wshadow -Wmissing-prototypes -Wstrict-prototypes #-Werror
 DEFINES = $(LOCALCONF) -DWITH_AES=$(WITH_AES) -DWITH_CLI=$(WITH_CLI) $(DEF)
 CFLAGS = $(MULTILIBFLAGS) $(TOOLCHAIN_CFLAGS) $(OPTFLAGS) $(WARNFLAGS) $(OTHERFLAGS) $(INC) $(DEFINES)
 
