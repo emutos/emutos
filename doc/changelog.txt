@@ -4611,3 +4611,6 @@ Start... early ages
   o_bytnum/o_curbyt. (RFB)
 - include/config.h: Change consistency check for CONF_WITH_DESK1 /
   CONF_WITH_DESKTOP_ICONS for future use. (RFB)
+
+2013-03-19
+- Don't use -Wold-style-definition by default, for GCC 2.x compatibility. (VRI)
