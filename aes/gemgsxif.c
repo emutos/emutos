@@ -220,13 +220,13 @@ void ratexit(void)
 }
 
 
-static void gsx_setmb(void *boff, void *moff, LONG *pdrwaddr)
+static void gsx_setmb(PFVOID boff, PFVOID moff, LONG *pdrwaddr)
 {
-    i_lptr1( boff );
+    i_lptr1( (void*)boff );
     gsx_ncode(BUT_VECX, 0, 0);
     m_lptr2( &old_bcode );
 
-    i_lptr1( moff );
+    i_lptr1( (void*)moff );
     gsx_ncode(MOT_VECX, 0, 0);
     m_lptr2( &old_mcode );
 

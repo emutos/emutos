@@ -89,6 +89,12 @@ typedef short int       WORD;                   /*  signed 16 bit word  */
 typedef unsigned short  UWORD;                  /*  unsigned 16 bit word*/
 typedef long            LONG;                   /*  signed 32 bit word  */
 
+/* pointer to function returning LONG */
+typedef LONG (*PFLONG)(void);
+
+/* pointer to function returning VOID */
+typedef void (*PFVOID)(void);
+
 /*
  *  Macros
  */
