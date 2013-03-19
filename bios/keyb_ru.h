@@ -10,7 +10,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-static const BYTE keytbl_ru_norm[] = {
+static const UBYTE keytbl_ru_norm[] = {
        0, 0x1b,  '1',  '2',  '3',  '4',  '5',  '6',
      '7',  '8',  '9',  '0',  '-',  '=',    8, 0x09,
      'q',  'w',  'e',  'r',  't',  'y',  'u',  'i',
@@ -29,7 +29,7 @@ static const BYTE keytbl_ru_norm[] = {
        0,    0,    0,    0,    0,    0,    0,    0,
 };
 
-static const BYTE keytbl_ru_shft[] = {
+static const UBYTE keytbl_ru_shft[] = {
        0, 0x1b,  '!',  '@',  '#',  '$',  '%',  '^',
      '&',  '*',  '(',  ')',  '_',  '+',    8, 0x09,
      'Q',  'W',  'E',  'R',  'T',  'Y',  'U',  'I',
@@ -48,7 +48,7 @@ static const BYTE keytbl_ru_shft[] = {
        0,    0,    0,    0,    0,    0,    0,    0,
 };
 
-static const BYTE keytbl_ru_caps[] = {
+static const UBYTE keytbl_ru_caps[] = {
        0, 0x1b,  '1',  '2',  '3',  '4',  '5',  '6',
      '7',  '8',  '9',  '0',  '-',  '=',    8, 0x09,
      'Q',  'W',  'E',  'R',  'T',  'Y',  'U',  'I',
@@ -67,7 +67,7 @@ static const BYTE keytbl_ru_caps[] = {
        0,    0,    0,    0,    0,    0,    0,    0,
 };
 
-static const BYTE keytbl_ru_altnorm[] = {
+static const UBYTE keytbl_ru_altnorm[] = {
     0x00, 0x1b, 0x23, 0x2d, 0x2f, 0x22, 0x3a, 0x2c,
     0x2e, 0x5f, 0x3f, 0x25, 0x21, 0x3b, 0x08, 0x09,
     0xe9, 0xf6, 0xf3, 0xea, 0xe5, 0xed, 0xe3, 0xf8,
@@ -86,7 +86,7 @@ static const BYTE keytbl_ru_altnorm[] = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
 
-static const BYTE keytbl_ru_altshft[] = {
+static const UBYTE keytbl_ru_altshft[] = {
     0x00, 0x1b, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36,
     0x37, 0x38, 0x39, 0x30, 0x2f, 0x5c, 0xbc, 0x09,
     0xc9, 0xd6, 0xd3, 0xca, 0xc5, 0xcd, 0xc3, 0xd8,
@@ -105,7 +105,7 @@ static const BYTE keytbl_ru_altshft[] = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
 
-static const BYTE keytbl_ru_altcaps[] = {
+static const UBYTE keytbl_ru_altcaps[] = {
     0x00, 0x1b, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36,
     0x37, 0x38, 0x39, 0x30, 0x3f, 0x66, 0x08, 0x09,
     0xc9, 0xd6, 0xd3, 0xca, 0xc5, 0xcd, 0xc3, 0xd8,

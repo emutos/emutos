@@ -48,15 +48,15 @@ extern BYTE shifty;
 
 struct keytbl {
   /* 128-sized array giving char codes for each scan code */
-  const BYTE *norm;
-  const BYTE *shft;
-  const BYTE *caps;
+  const UBYTE *norm;
+  const UBYTE *shft;
+  const UBYTE *caps;
   /* couples of (scan code, char code), ended by byte zero */
-  const BYTE *altnorm;
-  const BYTE *altshft;
-  const BYTE *altcaps;
+  const UBYTE *altnorm;
+  const UBYTE *altshft;
+  const UBYTE *altcaps;
   /* table of at most eight dead key translation tables */
-  const BYTE * const *dead;
+  const UBYTE * const *dead;
 };
 
 /* initialise the ikbd */
@@ -76,7 +76,7 @@ extern LONG bconout4(WORD dev, WORD c);
 extern LONG kbshift(WORD flag);
 
 /* some xbios functions */
-extern LONG keytbl(LONG norm, LONG shft, LONG caps);
+extern LONG keytbl(UBYTE* norm, UBYTE* shft, UBYTE* caps);
 extern WORD kbrate(WORD initial, WORD repeat);
 extern void bioskeys(void);
 

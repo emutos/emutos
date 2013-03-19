@@ -11,7 +11,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-static const BYTE keytbl_uk_norm[] = {
+static const UBYTE keytbl_uk_norm[] = {
        0,   27,  '1',  '2',  '3',  '4',  '5',  '6',
      '7',  '8',  '9',  '0',  '-',  '=',    8,    9,
      'q',  'w',  'e',  'r',  't',  'y',  'u',  'i',
@@ -30,7 +30,7 @@ static const BYTE keytbl_uk_norm[] = {
        0,    0,    0,    0,    0,    0,    0,    0,
 };
 
-static const BYTE keytbl_uk_shft[] = {
+static const UBYTE keytbl_uk_shft[] = {
        0,   27,  '!', '\"',  156,  '$',  '%',  '^',
      '&',  '*',  '(',  ')',  '_',  '+',    8,    9,
      'Q',  'W',  'E',  'R',  'T',  'Y',  'U',  'I',
@@ -49,7 +49,7 @@ static const BYTE keytbl_uk_shft[] = {
        0,    0,    0,    0,    0,    0,    0,    0,
 };
 
-static const BYTE keytbl_uk_caps[] = {
+static const UBYTE keytbl_uk_caps[] = {
        0,   27,  '1',  '2',  '3',  '4',  '5',  '6',
      '7',  '8',  '9',  '0',  '-',  '=',    8,    9,
      'Q',  'W',  'E',  'R',  'T',  'Y',  'U',  'I',
@@ -68,15 +68,15 @@ static const BYTE keytbl_uk_caps[] = {
        0,    0,    0,    0,    0,    0,    0,    0,
 };
 
-static const BYTE keytbl_uk_altnorm[] = {
+static const UBYTE keytbl_uk_altnorm[] = {
     0,
 };
 
-static const BYTE keytbl_uk_altshft[] = {
+static const UBYTE keytbl_uk_altshft[] = {
     0,
 };
 
-static const BYTE keytbl_uk_altcaps[] = {
+static const UBYTE keytbl_uk_altcaps[] = {
     0,
 };
 

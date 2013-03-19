@@ -57,16 +57,16 @@
 
 static struct keytbl current_keytbl;
 
-LONG keytbl(LONG norm, LONG shft, LONG caps)
+LONG keytbl(UBYTE* norm, UBYTE* shft, UBYTE* caps)
 {
-    if (norm != -1L) {
-        current_keytbl.norm = (BYTE *) norm;
+    if (norm != (UBYTE*)-1) {
+        current_keytbl.norm = norm;
     }
-    if (shft != -1L) {
-        current_keytbl.shft = (BYTE *) shft;
+    if (shft != (UBYTE*)-1) {
+        current_keytbl.shft = shft;
     }
-    if (caps != -1L) {
-        current_keytbl.caps = (BYTE *) caps;
+    if (caps != (UBYTE*)-1) {
+        current_keytbl.caps = caps;
     }
     return (LONG) & current_keytbl;
 }
@@ -385,11 +385,11 @@ void kbd_int(WORD scancode)
         }
 
         if (shifty & MODE_SHIFT) {
-            a = current_keytbl.altshft;
+            a = (const BYTE*)current_keytbl.altshft;
         } else if (shifty & MODE_CAPS) {
-            a = current_keytbl.altcaps;
+            a = (const BYTE*)current_keytbl.altcaps;
         } else {
-            a = current_keytbl.altnorm;
+            a = (const BYTE*)current_keytbl.altnorm;
         }
         while (*a && *a != scancode) {
             a += 2;
@@ -414,7 +414,7 @@ void kbd_int(WORD scancode)
         /* More complicated in TOS, but is it really necessary ? */
         ascii &= 0x1F;
     } else if(kb_dead >= 0) {
-        const BYTE *a = current_keytbl.dead[kb_dead];
+        const BYTE *a = (const BYTE*)current_keytbl.dead[kb_dead];
         while (*a && *a != ascii) {
             a += 2;
         }

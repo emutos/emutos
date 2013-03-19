@@ -9,7 +9,7 @@
  * Adapted from keyb_de.h. aug 2005 RCL
  */
 
-static const BYTE keytbl_sg_norm[] = {
+static const UBYTE keytbl_sg_norm[] = {
     0x00, 0x1b,  '1',  '2',  '3',  '4',  '5',  '6',
      '7',  '8',  '9',  '0', '\'',  '^', 0x08, 0x09,
      'q',  'w',  'e',  'r',  't',  'z',  'u',  'i',
@@ -28,7 +28,7 @@ static const BYTE keytbl_sg_norm[] = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
 
-static const BYTE keytbl_sg_shft[] = {
+static const UBYTE keytbl_sg_shft[] = {
     0x00, 0x1b,  '+', '\"',  '*', 0x87,  '%',  '&',
      '/',  '(',  ')',  '=',  '?',  '`', 0x08, 0x09,
      'Q',  'W',  'E',  'R',  'T',  'Z',  'U',  'I',
@@ -47,7 +47,7 @@ static const BYTE keytbl_sg_shft[] = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
 
-static const BYTE keytbl_sg_caps[] = {
+static const UBYTE keytbl_sg_caps[] = {
     0x00, 0x1b,  '1',  '2',  '3',  '4',  '5',  '6',
      '7',  '8',  '9',  '0', '\'',  '^', 0x08, 0x09,
      'Q',  'W',  'E',  'R',  'T',  'Z',  'U',  'I',
@@ -67,7 +67,7 @@ static const BYTE keytbl_sg_caps[] = {
 };
 
 
-static const BYTE keytbl_sg_altnorm[] = {
+static const UBYTE keytbl_sg_altnorm[] = {
     0x02, '|',          /* ST_1 */
     0x03, '@',          /* ST_2 */
     0x04, '#',          /* ST_3 */
@@ -81,13 +81,13 @@ static const BYTE keytbl_sg_altnorm[] = {
     0,
 };
 
-static const BYTE keytbl_sg_altshft[] = {
+static const UBYTE keytbl_sg_altshft[] = {
     0x1a, '{',
     0x1b, '}',
     0,
 };
 
-static const BYTE keytbl_sg_altcaps[] = {
+static const UBYTE keytbl_sg_altcaps[] = {
     0,
 };
 

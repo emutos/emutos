@@ -10,7 +10,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-static const BYTE keytbl_de_norm[] = {
+static const UBYTE keytbl_de_norm[] = {
     0x00, 0x1b,  '1',  '2',  '3',  '4',  '5',  '6',
      '7',  '8',  '9',  '0', 0x9e, '\'', 0x08, 0x09,
      'q',  'w',  'e',  'r',  't',  'z',  'u',  'i',
@@ -29,7 +29,7 @@ static const BYTE keytbl_de_norm[] = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
 
-static const BYTE keytbl_de_shft[] = {
+static const UBYTE keytbl_de_shft[] = {
     0x00, 0x1b,  '!', '\"', 0xdd,  '$',  '%',  '&',
      '/',  '(',  ')',  '=',  '?',  '`', 0x08, 0x09,
      'Q',  'W',  'E',  'R',  'T',  'Z',  'U',  'I',
@@ -48,7 +48,7 @@ static const BYTE keytbl_de_shft[] = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
 
-static const BYTE keytbl_de_caps[] = {
+static const UBYTE keytbl_de_caps[] = {
     0x00, 0x1b,  '1',  '2',  '3',  '4',  '5',  '6',
      '7',  '8',  '9',  '0', 0x9e, '\'', 0x08, 0x09,
      'Q',  'W',  'E',  'R',  'T',  'Z',  'U',  'I',
@@ -72,21 +72,21 @@ static const BYTE keytbl_de_caps[] = {
  * (they come out of Minix 1.5 source code)
  */
 
-static const BYTE keytbl_de_altnorm[] = {
+static const UBYTE keytbl_de_altnorm[] = {
     0x1a, '@',
     0x27, '[',
     0x28, ']',
     0,
 };
 
-static const BYTE keytbl_de_altshft[] = {
+static const UBYTE keytbl_de_altshft[] = {
     0x1a, '\\',
     0x27, '{',
     0x28, '}',
     0,
 };
 
-static const BYTE keytbl_de_altcaps[] = {
+static const UBYTE keytbl_de_altcaps[] = {
     0x1a, '@',
     0x27, '[',
     0x28, ']',
