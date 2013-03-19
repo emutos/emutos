@@ -402,7 +402,6 @@ void ob_draw(LONG tree, WORD obj, WORD depth)
 
         pobj = get_par(tree, obj, &last);
 
-        //kprintf("It does not work without this kprintf...\n");
         if (pobj != NIL)
           ob_offset(tree, pobj, &sx, &sy);
         else

@@ -171,18 +171,9 @@ int add_partition(int dev, char id[], ULONG start, ULONG size);
 
 struct _blkdev
 {
-//    UWORD       major;          /* XHDI */
-//    UWORD     minor;          /* XHDI */
-//    UWORD     mode;           /* some flags */
-
-//    UWORD     lock;           /* device in use */
-
     char        id[4];          /* XHDI partition id (GEM, BGM, RAW, \0D6, ...) */
-//    UWORD     key;            /* XHDI key */
-
     ULONG       start;          /* physical start sector */
     ULONG       size;           /* physical sectors */
-
     UBYTE       valid;          /* device valid */
     UBYTE       mediachange;    /* current mediachange status */
     BPB         bpb;
