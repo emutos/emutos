@@ -729,7 +729,7 @@
  * be enabled. This also allows to run FreeMiNT on 68040 without set_mmu.prg.
  */
 #ifndef CONF_WITH_68040_PMMU
-// This is currently an experimental feature
+/* This is currently an experimental feature */
 # define CONF_WITH_68040_PMMU 0
 #endif
 
