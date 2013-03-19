@@ -252,8 +252,6 @@ long    log_media(BPB *b, int drv)
         dm->m_recoff[BT_DATA] = (RECNO)b->datrec;
         // kprintf("dm->m_recoff[2] = 0x%lx\n", dm->m_recoff[2]);
 
-        fo->o_bytnum = 3;
-        fo->o_curbyt = 3;
         fo->o_fileln = fs * rsiz;
 
         return (0L);

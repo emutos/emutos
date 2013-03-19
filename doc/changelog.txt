@@ -4607,3 +4607,5 @@ Start... early ages
 - bios/chardev.c bios/vt52.c: Added ANSI translation for serial console. (VRI)
 - desk/desktop.def desk/desktop.rsc: Fixed 'Open Application' dialog size
   for low-res display. (RFB)
+- bdos/fsdrive.c: Code cleanup: remove bogus initialisation of
+  o_bytnum/o_curbyt. (RFB)
