@@ -126,15 +126,15 @@ extern void (*mousexvec)(WORD scancode);    /* Additional mouse buttons */
 
 struct kbdvecs
 {
-    void (*midivec)( UBYTE data );  /* MIDI Input */
-    void (*vkbderr)( UBYTE data );  /* IKBD Error */
-    void (*vmiderr)( UBYTE data );  /* MIDI Error */
-    void (*statvec)(char *buf);     /* IKBD Status */
-    void (*mousevec)(char *buf);    /* IKBD Mouse */
-    void (*clockvec)(char *buf);    /* IKBD Clock */
-    void (*joyvec)(char *buf);      /* IKBD Joystick */
-    void (*midisys)( void );        /* Main MIDI Vector */
-    void (*ikbdsys)( void );        /* Main IKBD Vector */
+    PFVOID midivec;     /* MIDI Input */
+    PFVOID vkbderr;     /* IKBD Error */
+    PFVOID vmiderr;     /* MIDI Error */
+    PFVOID statvec;     /* IKBD Status */
+    PFVOID mousevec;    /* IKBD Mouse */
+    PFVOID clockvec;    /* IKBD Clock */
+    PFVOID joyvec;      /* IKBD Joystick */
+    PFVOID midisys;     /* Main MIDI Vector */
+    PFVOID ikbdsys;     /* Main IKBD Vector */
 };
 extern struct kbdvecs kbdvecs;
 

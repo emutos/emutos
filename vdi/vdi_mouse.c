@@ -80,7 +80,7 @@ extern WORD save_len;           /* number of lines to be returned */
 
 /* FIXME: should go to linea variables */
 void     (*user_wheel)(void);   /* user provided mouse wheel vector */
-void     (*old_statvec)(char *);  /* original IKBD status packet routine */
+PFVOID old_statvec;             /* original IKBD status packet routine */
 
 
 
@@ -589,7 +589,7 @@ void vdimouse_init(Vwk * vwk)
     *vblqueue = (LONG)vb_draw;   /* set GEM VBL-routine to vbl_list[0] */
 
     /* Initialize mouse via XBIOS in relative mode */
-    Initmous(1, (LONG)&mouse_params, (LONG)mouse_int);
+    Initmous(1, (LONG)&mouse_params, mouse_int);
 
     kbd_vectors = (struct kbdvecs *)Kbdvbase();
     old_statvec = kbd_vectors->statvec;

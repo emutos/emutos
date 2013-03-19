@@ -398,6 +398,7 @@ static struct ikbdregs {
 static volatile WORD iclk_ready;
 
 /* called by the ACIA interrupt */
+/* EmuTOS' ikbdsys also puts the buffer on the stack */
 void clockvec(BYTE *buf)
 {
   BYTE *b = 1 + ((BYTE *)&iclkbuf);

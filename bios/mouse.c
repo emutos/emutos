@@ -41,7 +41,7 @@ struct param rel_pblock;        /* mouse parameter block */
  *
  */
 
-void Initmous(WORD type, struct param *param, void *newvec)
+void Initmous(WORD type, struct param *param, PFVOID newvec)
 {
     long retval = -1;           /* ok, if it stays so... */
     struct param *p =
@@ -119,9 +119,9 @@ void Initmous(WORD type, struct param *param, void *newvec)
             ikbd_writeb(p->buttons);
         }
         if (newvec != NULL)
-            kbdvecs.mousevec = (void*)newvec;   /* set mouse vector */
+            kbdvecs.mousevec = newvec;  /* set mouse vector */
 
     } else {                    /* if error */
-        kbdvecs.mousevec = (void*) just_rts;    /* set dummy vector */
+        kbdvecs.mousevec = just_rts;    /* set dummy vector */
     }
 }

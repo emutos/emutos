@@ -188,7 +188,7 @@ static WORD kb_initial;
 static WORD kb_repeat;
 static WORD kb_ticks;
 static LONG kb_last_key;
-static void (*kb_last_ikbdsys)(void); /* ikbdsys when kb_last_key was set */
+static PFVOID kb_last_ikbdsys; /* ikbdsys when kb_last_key was set */
 
 WORD kbrate(WORD initial, WORD repeat)
 {
