@@ -60,7 +60,7 @@
 
 #include "string.h"
 #include "ikbd.h"
-#include "kprint.h"     // just for debugging
+#include "kprint.h"
 
 #define DBG_GEMINIT 0
 

@@ -82,7 +82,6 @@ extern BYTE end[];        /* end of bss + comm sections */
 extern LONG os_end;
 extern LONG membot;
 extern LONG memtop;
-//extern LONG themd;
 
 extern LONG ramtop;       /* top of fastram */
 #define RAMVALID_MAGIC 0x1357BD13

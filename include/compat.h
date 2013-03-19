@@ -79,7 +79,6 @@ extern WORD LBWMOV(WORD *pdst, BYTE *psrc);
 #define LPOINTER /**/
                                                 /* return a long address*/
                                                 /*   of a short pointer */
-//#define ADDR (long) /*!!!*/
 #define ADDR(x) ((LONG) (x))
 
 
