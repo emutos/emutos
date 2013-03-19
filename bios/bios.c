@@ -578,11 +578,15 @@ static void bios_0(MPB *mpb)
 
 LONG bconstat(WORD handle)        /* GEMBIOS character_input_status */
 {
+#if BCONMAP_AVAILABLE
+    WORD map_index;
+#endif
+
     if (!(boot_status & CHARDEV_AVAILABLE))
         return 0;
 
 #if BCONMAP_AVAILABLE
-    WORD map_index = handle - BCONMAP_START_HANDLE;
+    map_index = handle - BCONMAP_START_HANDLE;
     if (map_index >= bconmap_root.maptabsize)
         return 0L;
     if (map_index >= 0)
@@ -618,11 +622,15 @@ static LONG bios_1(WORD handle)
 
 LONG bconin(WORD handle)
 {
+#if BCONMAP_AVAILABLE
+    WORD map_index;
+#endif
+
     if (!(boot_status & CHARDEV_AVAILABLE))
         return 0;
 
 #if BCONMAP_AVAILABLE
-    WORD map_index = handle - BCONMAP_START_HANDLE;
+    map_index = handle - BCONMAP_START_HANDLE;
     if (map_index >= bconmap_root.maptabsize)
         return 0L;
     if (map_index >= 0)
@@ -647,11 +655,15 @@ static LONG bios_2(WORD handle)
 
 LONG bconout(WORD handle, WORD what)
 {
+#if BCONMAP_AVAILABLE
+    WORD map_index;
+#endif
+
     if (!(boot_status & CHARDEV_AVAILABLE))
         return 0;
 
 #if BCONMAP_AVAILABLE
-    WORD map_index = handle - BCONMAP_START_HANDLE;
+    map_index = handle - BCONMAP_START_HANDLE;
     if (map_index >= bconmap_root.maptabsize)
         return 0L;
     if (map_index >= 0)
@@ -795,11 +807,15 @@ static LONG bios_7(WORD drive)
 
 LONG bcostat(WORD handle)       /* GEMBIOS character_output_status */
 {
+#if BCONMAP_AVAILABLE
+    WORD map_index;
+#endif
+
     if (!(boot_status & CHARDEV_AVAILABLE))
         return 0;
 
 #if BCONMAP_AVAILABLE
-    WORD map_index = handle - BCONMAP_START_HANDLE;
+    map_index = handle - BCONMAP_START_HANDLE;
     if (map_index >= bconmap_root.maptabsize)
         return 0L;
     if (map_index >= 0)
