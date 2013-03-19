@@ -88,6 +88,8 @@
 
 #if CONF_WITH_DESKTOP_ICONS
 #define NUM_IBLKS 72
+#elif CONF_WITH_DESK1
+#define NUM_IBLKS 8
 #else
 #define NUM_IBLKS 0
 #endif

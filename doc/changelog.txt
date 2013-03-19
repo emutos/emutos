@@ -4616,3 +4616,5 @@ Start... early ages
 - Don't use -Wold-style-definition by default, for GCC 2.x compatibility. (VRI)
 - bios/fnt_* bios/keyb_*: Do not use forward declarations for arrays. (VRI)
 - bios/bios.c: Fixed declarations after instructions, for ANSI compliance. (VRI)
+- desk/deskapp.c desk/deskapp.h desk/deskmain.c: Allow CONF_WITH_DESK1 to
+  be specified without CONF_WITH_DESKTOP_ICONS. (RFB)

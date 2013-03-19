@@ -569,7 +569,7 @@ static WORD do_viewmenu(WORD item)
         switch( item )
         {
           case ICONITEM:
-#if CONF_WITH_DESKTOP_ICONS
+#if CONF_WITH_DESK1
                 newview = (G.g_iview == V_ICON) ? V_TEXT : V_ICON;
 #else
                 newview = V_TEXT;
@@ -1510,7 +1510,7 @@ void desk_xlate_fix(void)
     /* translate and fix TEDINFO strings */
     xlate_fix_tedinfo(desk_rs_tedinfo, RS_NTED);
 
-#if !CONF_WITH_DESKTOP_ICONS
+#if !CONF_WITH_DESK1
     /* Disable menu entry that toggles icon/text mode */
     menu_ienable((LONG)desk_rs_trees[ADMENU],ICONITEM,FALSE);
 #endif
