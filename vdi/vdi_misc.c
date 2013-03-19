@@ -197,14 +197,14 @@ void timer_exit(Vwk * vwk)
 
 
 
-void * get_start_addr(const WORD x, const WORD y)
+UWORD * get_start_addr(const WORD x, const WORD y)
 {
-    void * addr;
+    UBYTE * addr;
 
     /* init adress counter */
     addr = v_bas_ad;                    /* start of screen */
     addr += (x&0xfff0)>>shift_offset[v_planes]; /* add x coordinate part of addr */
     addr += (LONG)y * v_lin_wr;         /* add y coordinate part of addr */
 
-    return addr;
+    return (UWORD*)addr;
 }

@@ -987,7 +987,7 @@ void arrow(Vwk * vwk, Point * point, int count)
 
 void abline (Vwk * vwk, Line * line, WORD color)
 {
-    UBYTE *adr;
+    UWORD *adr;
     UWORD x1,y1,x2,y2;          /* the coordinates */
     WORD dx;                    /* width of rectangle around line */
     WORD dy;                    /* height of rectangle around line */
@@ -1045,7 +1045,7 @@ void abline (Vwk * vwk, Line * line, WORD color)
         UWORD bit;
 
         /* load values fresh for this bitplane */
-        addr = adr;             /* initial start address for changes */
+        addr = (UBYTE *)adr;    /* initial start address for changes */
         bit = msk;              /* initial bit position in WORD */
         linemask = LN_MASK;
 
@@ -1282,7 +1282,7 @@ void abline (Vwk * vwk, Line * line, WORD color)
                 }
             }
         }
-        adr+=2;
+        adr++;
         color >>= 1;    /* shift color index: next plane */
     }
     LN_MASK = linemask;
