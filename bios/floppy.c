@@ -660,7 +660,7 @@ LONG flopfmt(LONG buf, WORD *skew, WORD dev, WORD spt,
     int i, j;
     WORD track_size, leader, offset;
     BYTE b1, b2;
-    BYTE *s;
+    UBYTE *s;
     LONG used, err;
 
 #define APPEND(b, count) do { memset(s, b, count); s += count; } while(0)
@@ -684,7 +684,7 @@ LONG flopfmt(LONG buf, WORD *skew, WORD dev, WORD spt,
     if (interleave == 0)
         interleave = 1;
 
-    s = (BYTE *)buf;
+    s = (UBYTE *)buf;
 
     /*
      * create the image in memory.
