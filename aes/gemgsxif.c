@@ -257,7 +257,7 @@ static void gsx_resetmb(void)
 
 void gsx_init(void)
 {
-    void* old_wheelv; /* Ignored */
+    PFVOID old_wheelv; /* Ignored */
 
     gsx_wsopen();
     gsx_start();
@@ -557,9 +557,9 @@ void g_vsl_width(WORD width)
 
 
 
-void vex_wheelv(void *new, void **old)
+void vex_wheelv(PFVOID new, PFVOID *old)
 {
-    i_ptr( new );
+    i_ptr( (void*)new );
     gsx_ncode(WHEEL_VECX, 0, 0);
-    *old = (void*)LLGET(ADDR(&contrl[9]));
+    *old = (PFVOID)LLGET(ADDR(&contrl[9]));
 }

@@ -55,6 +55,6 @@ void vrt_cpyfm(WORD wr_mode, WORD *pxyarray, FDB *psrcMFDB, FDB *pdesMFDB,
                WORD fgcolor, WORD bgcolor);
 void vrn_trnfm(FDB *psrcMFDB, FDB *pdesMFDB);
 void g_vsl_width(WORD width);
-void vex_wheelv(void *new, void **old);
+void vex_wheelv(PFVOID new, PFVOID *old);
 
 #endif
