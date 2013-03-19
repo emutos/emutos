@@ -7,41 +7,9 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
 #include "config.h"
 #include "portab.h"
 #include "font.h"
-
-static const UWORD off_table[], dat_table[];
-
-const struct font_head fnt_st_8x8 = {
-    1,  /* WORD font_id */
-    9,  /* WORD point */
-    "8x8 system font",  /*   BYTE name[32]      */
-    0,  /* WORD first_ade */
-    255,  /* WORD last_ade */
-    6,  /* UWORD top */
-    6,  /* UWORD ascent */
-    4,  /* UWORD half */
-    1,  /* UWORD descent */
-    1,  /* UWORD bottom */
-    7,  /* UWORD max_char_width */
-    8,  /* UWORD max_cell_width */
-    1,  /* UWORD left_offset */
-    3,  /* UWORD right_offset */
-    1,  /* UWORD thicken */
-    1,  /* UWORD ul_size */
-    0x5555, /* UWORD lighten */
-    0x5555, /* UWORD skew */
-    F_STDFORM | F_MONOSPACE | F_DEFAULT,  /* UWORD flags        */
-    0,                  /*   UBYTE *hor_table   */
-    off_table,           /*   UWORD *off_table   */
-    dat_table,           /*   UWORD *dat_table   */
-    256,  /* UWORD form_width */
-    8,  /* UWORD form_height */
-    0,  /* struct font * next_font */
-    0   /* UWORD next_seg */
-};
 
 static const UWORD off_table[] =
 {
@@ -210,5 +178,33 @@ static const UWORD dat_table[] =
     0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0070, 0x0000,
     0x0060, 0xf848, 0x0000, 0xc010, 0x3c00, 0x0000, 0x6010, 0x0000,
     0x0000, 0x0000, 0x1800, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000,
+};
 
+const struct font_head fnt_st_8x8 = {
+    1,  /* WORD font_id */
+    9,  /* WORD point */
+    "8x8 system font",  /*   BYTE name[32]      */
+    0,  /* WORD first_ade */
+    255,  /* WORD last_ade */
+    6,  /* UWORD top */
+    6,  /* UWORD ascent */
+    4,  /* UWORD half */
+    1,  /* UWORD descent */
+    1,  /* UWORD bottom */
+    7,  /* UWORD max_char_width */
+    8,  /* UWORD max_cell_width */
+    1,  /* UWORD left_offset */
+    3,  /* UWORD right_offset */
+    1,  /* UWORD thicken */
+    1,  /* UWORD ul_size */
+    0x5555, /* UWORD lighten */
+    0x5555, /* UWORD skew */
+    F_STDFORM | F_MONOSPACE | F_DEFAULT,  /* UWORD flags        */
+    0,                  /*   UBYTE *hor_table   */
+    off_table,           /*   UWORD *off_table   */
+    dat_table,           /*   UWORD *dat_table   */
+    256,  /* UWORD form_width */
+    8,  /* UWORD form_height */
+    0,  /* struct font * next_font */
+    0   /* UWORD next_seg */
 };

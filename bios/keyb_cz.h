@@ -10,23 +10,6 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-static const BYTE keytbl_cz_norm[];
-static const BYTE keytbl_cz_shft[];
-static const BYTE keytbl_cz_caps[];
-static const BYTE keytbl_cz_altnorm[];
-static const BYTE keytbl_cz_altshft[];
-static const BYTE keytbl_cz_altcaps[];
-
-static const struct keytbl keytbl_cz = {
-    keytbl_cz_norm,
-    keytbl_cz_shft,
-    keytbl_cz_caps,
-    keytbl_cz_altnorm,
-    keytbl_cz_altshft,
-    keytbl_cz_altcaps,
-    NULL
-};
-
 static const BYTE keytbl_cz_norm[] = {
        0, 0x1b, 0xf3, 0xec, 0xb9, 0xe8, 0xf8, 0xbe,
     0xfd, 0xe1, 0xed, 0xe9,  '=', '\'',    8, 0x09,
@@ -97,4 +80,14 @@ static const BYTE keytbl_cz_altshft[] = {
 
 static const BYTE keytbl_cz_altcaps[] = {
     0,
+};
+
+static const struct keytbl keytbl_cz = {
+    keytbl_cz_norm,
+    keytbl_cz_shft,
+    keytbl_cz_caps,
+    keytbl_cz_altnorm,
+    keytbl_cz_altshft,
+    keytbl_cz_altcaps,
+    NULL
 };

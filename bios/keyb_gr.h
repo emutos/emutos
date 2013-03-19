@@ -19,23 +19,6 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-static const BYTE keytbl_gr_norm[];
-static const BYTE keytbl_gr_shft[];
-static const BYTE keytbl_gr_caps[];
-static const BYTE keytbl_gr_altnorm[];
-static const BYTE keytbl_gr_altshft[];
-static const BYTE keytbl_gr_altcaps[];
-
-static const struct keytbl keytbl_gr = {
-    keytbl_gr_norm,
-    keytbl_gr_shft,
-    keytbl_gr_caps,
-    keytbl_gr_altnorm,
-    keytbl_gr_altshft,
-    keytbl_gr_altcaps,
-    NULL
-};
-
 static const BYTE keytbl_gr_altnorm[] = {
         0, 0x1B, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36,
      0x37, 0x38, 0x39, 0x30, 0x2D, 0x3D, 0x08, 0x09,
@@ -148,4 +131,14 @@ static const BYTE keytbl_gr_caps[] = {
      0x38, 0x39, 0x34, 0x35, 0x36, 0x31, 0x32, 0x33,
      0x30, 0x2E, 0x0D,    0,    0,    0,    0,    0,
         0,    0,    0,    0,    0,    0,    0,    0,
+};
+
+static const struct keytbl keytbl_gr = {
+    keytbl_gr_norm,
+    keytbl_gr_shft,
+    keytbl_gr_caps,
+    keytbl_gr_altnorm,
+    keytbl_gr_altshft,
+    keytbl_gr_altcaps,
+    NULL
 };

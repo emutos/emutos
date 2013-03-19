@@ -14,37 +14,6 @@
 #include "portab.h"
 #include "font.h"
 
-static const UWORD off_table[], dat_table[];
-
-const struct font_head fnt_gr_6x6 = {
-    1,  /* font_id */
-    8,  /* point */
-    "6X6 system font",  /*   BYTE name[32]      */
-    0,  /* first_ade */
-    255,  /* last_ade */
-    4,  /* top */
-    4,  /* ascent */
-    3,  /* half */
-    1,  /* descent */
-    1,  /* bottom */
-    5,  /* max_char_width */
-    6,  /* max_cell_width */
-    0,  /* left_offset */
-    2,  /* right_offset */
-    1,  /* thicken */
-    1,  /* ul_size */
-    0x5555, /* lighten */
-    0x5555, /* skew */
-    F_STDFORM | F_MONOSPACE | F_DEFAULT,  /* flags */
-    0,                  /*   UBYTE *hor_table   */
-    off_table,          /*   UWORD *off_table   */
-    dat_table,          /*   UWORD *dat_table   */
-    192,  /* form_width */
-    6,  /* form_height */
-    0,  /* struct font * next_font */
-    0   /* UWORD next_seg */
-};
-
 static const UWORD off_table[] =
 {
     0x0000, 0x0006, 0x000c, 0x0012, 0x0018, 0x001e, 0x0024, 0x002a,
@@ -156,4 +125,33 @@ static const UWORD dat_table[] =
     0x10C0, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x00C0,
     0x0000, 0x0000, 0x0001, 0x8000, 0x0000, 0x0000, 0x0000, 0x0000,
     0x0000, 0x0000, 0x0000, 0x0033, 0x0000, 0x0000, 0x0800, 0x0000,
+};
+
+const struct font_head fnt_gr_6x6 = {
+    1,  /* font_id */
+    8,  /* point */
+    "6X6 system font",  /*   BYTE name[32]      */
+    0,  /* first_ade */
+    255,  /* last_ade */
+    4,  /* top */
+    4,  /* ascent */
+    3,  /* half */
+    1,  /* descent */
+    1,  /* bottom */
+    5,  /* max_char_width */
+    6,  /* max_cell_width */
+    0,  /* left_offset */
+    2,  /* right_offset */
+    1,  /* thicken */
+    1,  /* ul_size */
+    0x5555, /* lighten */
+    0x5555, /* skew */
+    F_STDFORM | F_MONOSPACE | F_DEFAULT,  /* flags */
+    0,                  /*   UBYTE *hor_table   */
+    off_table,          /*   UWORD *off_table   */
+    dat_table,          /*   UWORD *dat_table   */
+    192,  /* form_width */
+    6,  /* form_height */
+    0,  /* struct font * next_font */
+    0   /* UWORD next_seg */
 };

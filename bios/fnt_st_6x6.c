@@ -7,44 +7,9 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
-
 #include "config.h"
 #include "portab.h"
 #include "font.h"
-
-static const UWORD off_table[], dat_table[];
-
-const struct font_head fnt_st_6x6 = {
-    1,                  /*   WORD font_id       */
-    8,                  /*   WORD point         */
-    "6x6 system font",  /*   BYTE name[32]      */
-    0,                  /*   UWORD first_ade    */
-    255,                /*   UWORD last_ade     */
-    4,                  /*   UWORD top          */
-    4,                  /*   UWORD ascent       */
-    3,                  /*   UWORD half         */
-    1,                  /*   UWORD descent      */
-    1,                  /*   UWORD bottom       */
-    5,                  /*   UWORD max_char_width*/
-    6,                  /*   UWORD max_cell_width*/
-    0,                  /*   UWORD left_offset  */
-    2,                  /*   UWORD right_offset */
-    1,                  /*   UWORD thicken      */
-    1,                  /*   UWORD ul_size      */
-    0x5555,             /*   UWORD lighten      */
-    0x5555,             /*   UWORD skew         */
-    F_STDFORM | F_MONOSPACE,/*   UWORD flags        */
-
-    0,                  /*   UBYTE *hor_table   */
-    off_table,          /*   UWORD *off_table   */
-    dat_table,          /*   UWORD *dat_table   */
-    192,                /*   UWORD form_width   */
-    6,                  /*   UWORD form_height  */
-
-    0,              /*   UWORD next_font    */
-    0                   /*   UWORD next_seg     */
-};
 
 static const UWORD off_table[] =
 {
@@ -157,4 +122,35 @@ static const UWORD dat_table[576] =
     0x1000, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
     0x0, 0x0, 0x0, 0x0, 0x100, 0x0, 0x800, 0x0,
     0x60, 0x4000, 0x0, 0x11, 0x8000, 0x0, 0x600, 0x0,
+};
+
+const struct font_head fnt_st_6x6 = {
+    1,                  /*   WORD font_id       */
+    8,                  /*   WORD point         */
+    "6x6 system font",  /*   BYTE name[32]      */
+    0,                  /*   UWORD first_ade    */
+    255,                /*   UWORD last_ade     */
+    4,                  /*   UWORD top          */
+    4,                  /*   UWORD ascent       */
+    3,                  /*   UWORD half         */
+    1,                  /*   UWORD descent      */
+    1,                  /*   UWORD bottom       */
+    5,                  /*   UWORD max_char_width*/
+    6,                  /*   UWORD max_cell_width*/
+    0,                  /*   UWORD left_offset  */
+    2,                  /*   UWORD right_offset */
+    1,                  /*   UWORD thicken      */
+    1,                  /*   UWORD ul_size      */
+    0x5555,             /*   UWORD lighten      */
+    0x5555,             /*   UWORD skew         */
+    F_STDFORM | F_MONOSPACE,/*   UWORD flags        */
+
+    0,                  /*   UBYTE *hor_table   */
+    off_table,          /*   UWORD *off_table   */
+    dat_table,          /*   UWORD *dat_table   */
+    192,                /*   UWORD form_width   */
+    6,                  /*   UWORD form_height  */
+
+    0,              /*   UWORD next_font    */
+    0                   /*   UWORD next_seg     */
 };

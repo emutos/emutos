@@ -9,23 +9,6 @@
  * Adapted from keyb_de.h. aug 2005 RCL
  */
 
-static const BYTE keytbl_sg_norm[];
-static const BYTE keytbl_sg_shft[];
-static const BYTE keytbl_sg_caps[];
-static const BYTE keytbl_sg_altnorm[];
-static const BYTE keytbl_sg_altshft[];
-static const BYTE keytbl_sg_altcaps[];
-
-static const struct keytbl keytbl_sg = {
-    keytbl_sg_norm,
-    keytbl_sg_shft,
-    keytbl_sg_caps,
-    keytbl_sg_altnorm,
-    keytbl_sg_altshft,
-    keytbl_sg_altcaps,
-    NULL
-};
-
 static const BYTE keytbl_sg_norm[] = {
     0x00, 0x1b,  '1',  '2',  '3',  '4',  '5',  '6',
      '7',  '8',  '9',  '0', '\'',  '^', 0x08, 0x09,
@@ -106,4 +89,14 @@ static const BYTE keytbl_sg_altshft[] = {
 
 static const BYTE keytbl_sg_altcaps[] = {
     0,
+};
+
+static const struct keytbl keytbl_sg = {
+    keytbl_sg_norm,
+    keytbl_sg_shft,
+    keytbl_sg_caps,
+    keytbl_sg_altnorm,
+    keytbl_sg_altshft,
+    keytbl_sg_altcaps,
+    NULL
 };

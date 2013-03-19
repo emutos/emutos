@@ -10,24 +10,6 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-static const BYTE keytbl_fr_norm[];
-static const BYTE keytbl_fr_shft[];
-static const BYTE keytbl_fr_caps[];
-static const BYTE keytbl_fr_altnorm[];
-static const BYTE keytbl_fr_altshft[];
-static const BYTE keytbl_fr_altcaps[];
-static const BYTE * const keytbl_fr_dead[];
-
-static const struct keytbl keytbl_fr = {
-    keytbl_fr_norm,
-    keytbl_fr_shft,
-    keytbl_fr_caps,
-    keytbl_fr_altnorm,
-    keytbl_fr_altshft,
-    keytbl_fr_altcaps,
-    keytbl_fr_dead
-};
-
 static const BYTE keytbl_fr_norm[] = {
        0, 0x1b,  '&', 0x82, '\"', '\'',  '(', 0xdd,
     0x8a,  '!', 0x87, 0x85,  ')',  '-',    8, 0x09,
@@ -122,4 +104,14 @@ static const BYTE keytbl_fr_dead1[] = {
 static const BYTE * const keytbl_fr_dead[] = {
     keytbl_fr_dead0,
     keytbl_fr_dead1,
+};
+
+static const struct keytbl keytbl_fr = {
+    keytbl_fr_norm,
+    keytbl_fr_shft,
+    keytbl_fr_caps,
+    keytbl_fr_altnorm,
+    keytbl_fr_altshft,
+    keytbl_fr_altcaps,
+    keytbl_fr_dead
 };

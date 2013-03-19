@@ -4614,3 +4614,4 @@ Start... early ages
 
 2013-03-19
 - Don't use -Wold-style-definition by default, for GCC 2.x compatibility. (VRI)
+- bios/fnt_* bios/keyb_*: Do not use forward declarations for arrays. (VRI)

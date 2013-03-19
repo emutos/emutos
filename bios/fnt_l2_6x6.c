@@ -8,37 +8,6 @@
 #include "portab.h"
 #include "font.h"
 
-static const UWORD off_table[], dat_table[];
-
-const struct font_head fnt_l2_6x6 = {
-    1,  /* font_id */
-    8,  /* point */
-    "MiNT ISO 8859-2 6x6",  /*   BYTE name[32]  */
-    0,  /* first_ade */
-    255,  /* last_ade */
-    4,  /* top */
-    4,  /* ascent */
-    3,  /* half */
-    1,  /* descent */
-    1,  /* bottom */
-    6,  /* max_char_width */
-    6,  /* max_cell_width */
-    0,  /* left_offset */
-    3,  /* right_offset */
-    1,  /* thicken */
-    1,  /* ul_size */
-    0x5555,  /* lighten */
-    0xaaaa,  /* skew */
-    F_STDFORM | F_MONOSPACE | F_DEFAULT,  /* flags */
-    0,  /* hor_table */
-    off_table,  /* off_table */
-    dat_table,  /* dat_table */
-    192,  /* form_width */
-    6,  /* form_height */
-    0,  /* struct font * next_font */
-    0   /* UWORD next_seg */
-};
-
 static const UWORD off_table[] =
 {
     0x0000, 0x0006, 0x000c, 0x0012, 0x0018, 0x001e, 0x0024, 0x002a,
@@ -150,4 +119,33 @@ static const UWORD dat_table[] =
     0x9a28, 0xa288, 0x0788, 0x7be1, 0x3ef9, 0xc73c, 0x0228, 0x9c71,
     0xc700, 0x99e7, 0x9e78, 0x8430, 0x41e7, 0x9e78, 0x0708, 0x71c2,
     0x1c71, 0xc71e, 0x0228, 0x9c71, 0xc700, 0x41e7, 0x9e7b, 0xc200,
+};
+
+const struct font_head fnt_l2_6x6 = {
+    1,  /* font_id */
+    8,  /* point */
+    "MiNT ISO 8859-2 6x6",  /*   BYTE name[32]  */
+    0,  /* first_ade */
+    255,  /* last_ade */
+    4,  /* top */
+    4,  /* ascent */
+    3,  /* half */
+    1,  /* descent */
+    1,  /* bottom */
+    6,  /* max_char_width */
+    6,  /* max_cell_width */
+    0,  /* left_offset */
+    3,  /* right_offset */
+    1,  /* thicken */
+    1,  /* ul_size */
+    0x5555,  /* lighten */
+    0xaaaa,  /* skew */
+    F_STDFORM | F_MONOSPACE | F_DEFAULT,  /* flags */
+    0,  /* hor_table */
+    off_table,  /* off_table */
+    dat_table,  /* dat_table */
+    192,  /* form_width */
+    6,  /* form_height */
+    0,  /* struct font * next_font */
+    0   /* UWORD next_seg */
 };

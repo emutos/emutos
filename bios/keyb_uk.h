@@ -11,24 +11,6 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
-static const BYTE keytbl_uk_norm[];
-static const BYTE keytbl_uk_shft[];
-static const BYTE keytbl_uk_caps[];
-static const BYTE keytbl_uk_altnorm[];
-static const BYTE keytbl_uk_altshft[];
-static const BYTE keytbl_uk_altcaps[];
-
-static const struct keytbl keytbl_uk = {
-    keytbl_uk_norm,
-    keytbl_uk_shft,
-    keytbl_uk_caps,
-    keytbl_uk_altnorm,
-    keytbl_uk_altshft,
-    keytbl_uk_altcaps,
-    NULL
-};
-
 static const BYTE keytbl_uk_norm[] = {
        0,   27,  '1',  '2',  '3',  '4',  '5',  '6',
      '7',  '8',  '9',  '0',  '-',  '=',    8,    9,
@@ -89,9 +71,21 @@ static const BYTE keytbl_uk_caps[] = {
 static const BYTE keytbl_uk_altnorm[] = {
     0,
 };
+
 static const BYTE keytbl_uk_altshft[] = {
     0,
 };
+
 static const BYTE keytbl_uk_altcaps[] = {
     0,
+};
+
+static const struct keytbl keytbl_uk = {
+    keytbl_uk_norm,
+    keytbl_uk_shft,
+    keytbl_uk_caps,
+    keytbl_uk_altnorm,
+    keytbl_uk_altshft,
+    keytbl_uk_altcaps,
+    NULL
 };

@@ -10,24 +10,6 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-
-static const BYTE keytbl_ru_norm[];
-static const BYTE keytbl_ru_shft[];
-static const BYTE keytbl_ru_caps[];
-static const BYTE keytbl_ru_altnorm[];
-static const BYTE keytbl_ru_altshft[];
-static const BYTE keytbl_ru_altcaps[];
-
-static const struct keytbl keytbl_ru = {
-    keytbl_ru_norm,
-    keytbl_ru_shft,
-    keytbl_ru_caps,
-    keytbl_ru_altnorm,
-    keytbl_ru_altshft,
-    keytbl_ru_altcaps,
-    NULL
-};
-
 static const BYTE keytbl_ru_norm[] = {
        0, 0x1b,  '1',  '2',  '3',  '4',  '5',  '6',
      '7',  '8',  '9',  '0',  '-',  '=',    8, 0x09,
@@ -140,4 +122,14 @@ static const BYTE keytbl_ru_altcaps[] = {
     0x38, 0x39, 0x34, 0x35, 0x36, 0x31, 0x32, 0x33,
     0x30, 0x2e, 0x0d, 0x00, 0x00, 0x00, 0x00, 0x00,
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+};
+
+static const struct keytbl keytbl_ru = {
+    keytbl_ru_norm,
+    keytbl_ru_shft,
+    keytbl_ru_caps,
+    keytbl_ru_altnorm,
+    keytbl_ru_altshft,
+    keytbl_ru_altcaps,
+    NULL
 };
