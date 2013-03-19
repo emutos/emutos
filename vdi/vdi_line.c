@@ -1026,18 +1026,18 @@ void abline (Vwk * vwk, Line * line, WORD color)
     /* calculate increase values for x and y to add to actual address */
     if (dy < 0) {
         dy = -dy;                       /* make dy absolute */
-        yinc = (LONG) -1 * v_lin_wr;    /* sub one line of bytes */
+        yinc = (LONG) -1 * v_lin_wr / 2; /* sub one line of words */
     } else {
-        yinc = (LONG) v_lin_wr;         /* add one line of bytes */
+        yinc = (LONG) v_lin_wr / 2;     /* add one line of words */
     }
-    xinc = v_planes<<1;                 /* add v_planes WORDS */
+    xinc = v_planes;                    /* add v_planes WORDS */
 
-    adr = get_start_addr(x1, y1);      /* init adress counter */
+    adr = get_start_addr(x1, y1);       /* init adress counter */
     msk = 0x8000 >> (x1&0xf);           /* initial bit position in WORD */
     linemask = LN_MASK;                 /* to avoid compiler warning */
 
     for (plane = v_planes-1; plane >= 0; plane-- ) {
-        UBYTE *addr;
+        UWORD *addr;
         WORD  eps;              /* epsilon */
         WORD  e1;               /* epsilon 1 */
         WORD  e2;               /* epsilon 2 */
@@ -1045,7 +1045,7 @@ void abline (Vwk * vwk, Line * line, WORD color)
         UWORD bit;
 
         /* load values fresh for this bitplane */
-        addr = (UBYTE *)adr;    /* initial start address for changes */
+        addr = adr;             /* initial start address for changes */
         bit = msk;              /* initial bit position in WORD */
         linemask = LN_MASK;
 
@@ -1060,7 +1060,7 @@ void abline (Vwk * vwk, Line * line, WORD color)
                     for (loopcnt=dx;loopcnt >= 0;loopcnt--) {
                         linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
                         if (linemask&0x0001)
-                            *(WORD*)addr &= ~bit;
+                            *addr &= ~bit;
                         bit = bit >> 1| bit << 15;
                         if (bit&0x8000)
                             addr += xinc;
@@ -1074,7 +1074,7 @@ void abline (Vwk * vwk, Line * line, WORD color)
                     for (loopcnt=dx;loopcnt >= 0;loopcnt--) {
                         linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
                         if (linemask&0x0001)
-                            *(WORD*)addr |= bit;
+                            *addr |= bit;
                         bit = bit >> 1| bit << 15;
                         if (bit&0x8000)
                             addr += xinc;
@@ -1090,7 +1090,7 @@ void abline (Vwk * vwk, Line * line, WORD color)
                 for (loopcnt=dx;loopcnt >= 0;loopcnt--) {
                     linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
                     if (linemask&0x0001)
-                        *(WORD*)addr ^= bit;
+                        *addr ^= bit;
                     bit = bit >> 1| bit << 15;
                     if (bit&0x8000)
                         addr += xinc;
@@ -1106,7 +1106,7 @@ void abline (Vwk * vwk, Line * line, WORD color)
                     for (loopcnt=dx;loopcnt >= 0;loopcnt--) {
                         linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
                         if (linemask&0x0001)
-                            *(WORD*)addr |= bit;
+                            *addr |= bit;
                         bit = bit >> 1| bit << 15;
                         if (bit&0x8000)
                             addr += xinc;
@@ -1120,7 +1120,7 @@ void abline (Vwk * vwk, Line * line, WORD color)
                     for (loopcnt=dx;loopcnt >= 0;loopcnt--) {
                         linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
                         if (linemask&0x0001)
-                            *(WORD*)addr &= ~bit;
+                            *addr &= ~bit;
                         bit = bit >> 1| bit << 15;
                         if (bit&0x8000)
                             addr += xinc;
@@ -1137,9 +1137,9 @@ void abline (Vwk * vwk, Line * line, WORD color)
                     for (loopcnt=dx;loopcnt >= 0;loopcnt--) {
                         linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
                         if (linemask&0x0001)
-                            *(WORD*)addr |= bit;
+                            *addr |= bit;
                         else
-                            *(WORD*)addr &= ~bit;
+                            *addr &= ~bit;
                         bit = bit >> 1| bit << 15;
                         if (bit&0x8000)
                             addr += xinc;
@@ -1153,7 +1153,7 @@ void abline (Vwk * vwk, Line * line, WORD color)
                 else {
                     for (loopcnt=dx;loopcnt >= 0;loopcnt--) {
                         linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
-                        *(WORD*)addr &= ~bit;
+                        *addr &= ~bit;
                         bit = bit >> 1| bit << 15;
                         if (bit&0x8000)
                             addr += xinc;
@@ -1176,7 +1176,7 @@ void abline (Vwk * vwk, Line * line, WORD color)
                     for (loopcnt=dy;loopcnt >= 0;loopcnt--) {
                         linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
                         if (linemask&0x0001)
-                            *(WORD*)addr &= ~bit;
+                            *addr &= ~bit;
                         addr += yinc;
                         eps += e1;
                         if (eps >= 0 ) {
@@ -1190,7 +1190,7 @@ void abline (Vwk * vwk, Line * line, WORD color)
                     for (loopcnt=dy;loopcnt >= 0;loopcnt--) {
                         linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
                         if (linemask&0x0001)
-                            *(WORD*)addr |= bit;
+                            *addr |= bit;
                         addr += yinc;
                         eps += e1;
                         if (eps >= 0 ) {
@@ -1206,7 +1206,7 @@ void abline (Vwk * vwk, Line * line, WORD color)
                 for (loopcnt=dy;loopcnt >= 0;loopcnt--) {
                     linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
                     if (linemask&0x0001)
-                        *(WORD*)addr ^= bit;
+                        *addr ^= bit;
                     addr += yinc;
                     eps += e1;
                     if (eps >= 0 ) {
@@ -1222,7 +1222,7 @@ void abline (Vwk * vwk, Line * line, WORD color)
                     for (loopcnt=dy;loopcnt >= 0;loopcnt--) {
                         linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
                         if (linemask&0x0001)
-                            *(WORD*)addr |= bit;
+                            *addr |= bit;
                         addr += yinc;
                         eps += e1;
                         if (eps >= 0 ) {
@@ -1236,7 +1236,7 @@ void abline (Vwk * vwk, Line * line, WORD color)
                     for (loopcnt=dy;loopcnt >= 0;loopcnt--) {
                         linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
                         if (linemask&0x0001)
-                            *(WORD*)addr &= ~bit;
+                            *addr &= ~bit;
                         addr += yinc;
                         eps += e1;
                         if (eps >= 0 ) {
@@ -1253,9 +1253,9 @@ void abline (Vwk * vwk, Line * line, WORD color)
                     for (loopcnt=dy;loopcnt >= 0;loopcnt--) {
                         linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
                         if (linemask&0x0001)
-                            *(WORD*)addr |= bit;
+                            *addr |= bit;
                         else
-                            *(WORD*)addr &= ~bit;
+                            *addr &= ~bit;
                         addr += yinc;
                         eps += e1;
                         if (eps >= 0 ) {
@@ -1269,7 +1269,7 @@ void abline (Vwk * vwk, Line * line, WORD color)
                 else {
                     for (loopcnt=dy;loopcnt >= 0;loopcnt--) {
                         linemask = linemask >> 15|linemask << 1;     /* get next bit of line style */
-                        *(WORD*)addr &= ~bit;
+                        *addr &= ~bit;
                         addr += yinc;
                         eps += e1;
                         if (eps >= 0 ) {
