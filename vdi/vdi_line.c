@@ -987,7 +987,7 @@ void arrow(Vwk * vwk, Point * point, int count)
 
 void abline (Vwk * vwk, Line * line, WORD color)
 {
-    void *adr;                  /* using void pointer is much faster */
+    UBYTE *adr;
     UWORD x1,y1,x2,y2;          /* the coordinates */
     WORD dx;                    /* width of rectangle around line */
     WORD dy;                    /* height of rectangle around line */
@@ -1037,7 +1037,7 @@ void abline (Vwk * vwk, Line * line, WORD color)
     linemask = LN_MASK;                 /* to avoid compiler warning */
 
     for (plane = v_planes-1; plane >= 0; plane-- ) {
-        void *addr;
+        UBYTE *addr;
         WORD  eps;              /* epsilon */
         WORD  e1;               /* epsilon 1 */
         WORD  e2;               /* epsilon 2 */
