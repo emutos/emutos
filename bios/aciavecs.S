@@ -357,11 +357,6 @@ joybuf: .ds.b   3
         .text
 
 _kbdvec:
-#ifdef __mcoldfire__
-        and.l   #0x00ff,d0
-#else
-        and.w   #0x00ff,d0
-#endif
         move.w  d0,-(sp)
         // call the C routine in ikbd.c to do the work.
         jsr     _kbd_int

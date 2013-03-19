@@ -245,7 +245,7 @@ static void do_key_repeat(void)
 
     /* Play the key click sound */
     if (conterm & 1)
-        keyclick((WORD)((kb_last_key & 0x00ff0000) >> 16));
+        keyclick((UBYTE)((kb_last_key & 0x00ff0000) >> 16));
 
     /* Simulate a key press */
     push_ikbdiorec(kb_last_key);
@@ -275,16 +275,16 @@ static int kb_altnum;
  * kbd_int : called by the interrupt routine for key events.
  */
 
-void kbd_int(WORD scancode)
+void kbd_int(UBYTE scancode)
 {
     LONG value;                 /* the value to push into iorec */
     UBYTE ascii = 0;
-    WORD scancode_only = scancode & ~KEY_RELEASED;  /* get rid of release bits */
+    UBYTE scancode_only = scancode & ~KEY_RELEASED;  /* get rid of release bits */
 
 
 #if DBG_KBD
     kprintf("================\n ");
-    kprintf("Key-scancode: 0x%02x\n", scancode & 0xff);
+    kprintf("Key-scancode: 0x%02x\n", scancode);
 
     kprintf("Key-shift bits: 0x%02x\n", shifty);
 #endif
@@ -372,7 +372,7 @@ void kbd_int(WORD scancode)
 
 
     if (shifty & MODE_ALT) {
-        const BYTE *a;
+        const UBYTE *a;
 
         /* ALT-keypad means that char number */
         if (scancode >= 103 && scancode <= 112) {
@@ -385,11 +385,11 @@ void kbd_int(WORD scancode)
         }
 
         if (shifty & MODE_SHIFT) {
-            a = (const BYTE*)current_keytbl.altshft;
+            a = current_keytbl.altshft;
         } else if (shifty & MODE_CAPS) {
-            a = (const BYTE*)current_keytbl.altcaps;
+            a = current_keytbl.altcaps;
         } else {
-            a = (const BYTE*)current_keytbl.altnorm;
+            a = current_keytbl.altnorm;
         }
         while (*a && *a != scancode) {
             a += 2;
@@ -414,7 +414,7 @@ void kbd_int(WORD scancode)
         /* More complicated in TOS, but is it really necessary ? */
         ascii &= 0x1F;
     } else if(kb_dead >= 0) {
-        const BYTE *a = (const BYTE*)current_keytbl.dead[kb_dead];
+        const UBYTE *a = current_keytbl.dead[kb_dead];
         while (*a && *a != ascii) {
             a += 2;
         }
@@ -430,7 +430,7 @@ void kbd_int(WORD scancode)
   push_value:
     if (conterm & 1)
         keyclick(scancode);
-    value = ((LONG) scancode & 0xFF) << 16;
+    value = ((LONG) scancode) << 16;
     value += ascii;
     if (conterm & 0x8) {
         value += ((LONG) shifty) << 24;

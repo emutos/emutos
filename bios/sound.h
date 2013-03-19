@@ -45,6 +45,6 @@ extern void sndirq(void);
 void bell(void);
 
 /* play key click sound, called by keyboard interrupt */
-void keyclick(WORD scancode);
+void keyclick(UBYTE scancode);
 
 #endif /* SOUND_H */

@@ -4619,3 +4619,5 @@ Start... early ages
 - desk/deskapp.c desk/deskapp.h desk/deskmain.c: Allow CONF_WITH_DESK1 to
   be specified without CONF_WITH_DESKTOP_ICONS. (RFB)
 - *: Fixed most warnings with -pedantic. (VRI)
+- bios/aciavecs.S bios/ikbd.c bios/ikbd.h bios/sound.h: Cleaned up kbd_int()
+  and keyclick() parameter signedness. (VRI)
