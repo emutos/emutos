@@ -20,7 +20,7 @@
 #define IOREC struct iorec
 
 IOREC {
-  void *buf;            /* input buffer */
+  UBYTE *buf;           /* input buffer */
   WORD size;            /* buffer size */
   WORD head;            /* head index */
   volatile WORD tail;   /* tail index */
