@@ -36,7 +36,7 @@ extern WORD v_col_fg;           // current foreground color
 
 /* Cursor related linea variables */
 
-extern void *v_cur_ad;          // current cursor address
+extern UBYTE *v_cur_ad;         // current cursor address
 extern WORD v_cur_of;           // cursor offset
 extern WORD v_cur_cx;           // current cursor cell x
 extern WORD v_cur_cy;           // current cursor cell y
