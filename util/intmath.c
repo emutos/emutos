@@ -34,7 +34,8 @@ ULONG Isqrt(ULONG x)
     } while (s1 > s2);
 
     s1 = s2 = (s1 + (s2 / 2)) / 2;
-    ((s1 &= ~7) & ~63) ? : (s1 = s2); /* Improve first estimate further */
+    if (!((s1 &= ~7) & ~63))
+        s1 = s2; /* Improve first estimate further */
 
     s2 = (1 + x/s1 + s1) / 2;
     if (s1 == s2) /* First iteration */
