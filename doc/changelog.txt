@@ -4618,3 +4618,4 @@ Start... early ages
 - bios/bios.c: Fixed declarations after instructions, for ANSI compliance. (VRI)
 - desk/deskapp.c desk/deskapp.h desk/deskmain.c: Allow CONF_WITH_DESK1 to
   be specified without CONF_WITH_DESKTOP_ICONS. (RFB)
+- *: Fixed most warnings with -pedantic. (VRI)
