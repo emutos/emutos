@@ -81,7 +81,7 @@ BCONMAP bconmap_root;
  * local variables
  */
 static EXT_IOREC iorec1;
-static char ibuf1[RS232_BUFSIZE], obuf1[RS232_BUFSIZE];
+static UBYTE ibuf1[RS232_BUFSIZE], obuf1[RS232_BUFSIZE];
 static const EXT_IOREC iorec_init = {
     { NULL, RS232_BUFSIZE, 0, 0, RS232_BUFSIZE/4, 3*RS232_BUFSIZE/4 },
     { NULL, RS232_BUFSIZE, 0, 0, RS232_BUFSIZE/4, 3*RS232_BUFSIZE/4 },
@@ -100,8 +100,8 @@ static const MAPTAB maptable_mfp =
 #if CONF_WITH_SCC
 ULONG recovery_loops;
 static EXT_IOREC iorecA, iorecB;
-static char ibufA[RS232_BUFSIZE], obufA[RS232_BUFSIZE];
-static char ibufB[RS232_BUFSIZE], obufB[RS232_BUFSIZE];
+static UBYTE ibufA[RS232_BUFSIZE], obufA[RS232_BUFSIZE];
+static UBYTE ibufB[RS232_BUFSIZE], obufB[RS232_BUFSIZE];
 static const MAPTAB maptable_port_a =
     { bconstatA, bconinA, bcostatA, bconoutA, rsconfA, &iorecA };
 static const MAPTAB maptable_port_b =
@@ -110,7 +110,7 @@ static const MAPTAB maptable_port_b =
 
 #if CONF_WITH_TT_MFP
 static EXT_IOREC iorecTT;
-static char ibufTT[RS232_BUFSIZE], obufTT[RS232_BUFSIZE];
+static UBYTE ibufTT[RS232_BUFSIZE], obufTT[RS232_BUFSIZE];
 static const MAPTAB maptable_mfp_tt =
     { bconstatTT, bconinTT, bcostatTT, bconoutTT, rsconfTT, &iorecTT };
 #endif  /* CONF_WITH_TT_MFP */
