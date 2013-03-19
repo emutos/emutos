@@ -51,7 +51,7 @@ static void cur_replace(void);
 static void vb_draw(void);             /* user button vector */
 
 extern void mouse_int(void);    /* mouse interrupt routine */
-extern void wheel_int(char *);  /* wheel interrupt routine */
+extern void wheel_int(void);    /* wheel interrupt routine */
 extern void mov_cur(void);      /* user button vector */
 
 
