@@ -131,7 +131,7 @@ long ixcreat(char *name, char attr)
         int i,f2;                               /*  M01.01.03   */
         long pos,rc;
 
-        n[0] = 0xe5; n[1] = 0;
+        n[0] = (char)0xe5; n[1] = 0;
 
         /* first find path */
 
@@ -661,7 +661,7 @@ long ixdel(DND *dn, FCB *f, long pos)
 
         fd = dn->d_ofd;
         ixlseek(fd,pos);
-        c = 0xe5;
+        c = (char)0xe5;
         ixwrite(fd,1L,&c);
         ixclose(fd,CL_DIR);
 

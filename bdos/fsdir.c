@@ -894,7 +894,7 @@ long xrename(int n, char *p1, char *p2)
         if (strtcl1 != strtcl2)
         {
                 /* erase (0xe5) old file */
-                buf[0] = 0xe5;
+                buf[0] = (char)0xe5;
                 ixlseek(fd,posp);
                 ixwrite(fd,1L,buf);
 

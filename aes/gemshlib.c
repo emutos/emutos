@@ -431,7 +431,7 @@ void sh_envrn(BYTE **ppath, const BYTE *psrch)
                (tmp == NULL) )
           {
             findend = FALSE;
-            tmp = 0xFF;
+            tmp = (BYTE)0xFF;
           }
           else
           {
