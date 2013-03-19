@@ -26,7 +26,7 @@
 
 
 /*
- * psetup(PD *p, void *codevalue)
+ * psetup(PD *p, PFVOID codevalue)
  * arranges for codevalue to be pushed to the stack for process p,
  * in a standard RTS stack frame, "in preparation for an RTS that
  * will start this process executing".

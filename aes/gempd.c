@@ -121,7 +121,7 @@ void p_setappdir(PD *pd, BYTE *pfilespec)
         *pdest = '\0';
 }
 
-PD *pstart(void *pcode, BYTE *pfilespec, LONG ldaddr)
+PD *pstart(PFVOID pcode, BYTE *pfilespec, LONG ldaddr)
 {
         register PD     *px;
 

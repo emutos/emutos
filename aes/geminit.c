@@ -221,7 +221,7 @@ static void ev_init(EVB evblist[], WORD cnt)
 *       Also do all the initialization that is required.
 * TODO - get rid of this.
 */
-static PD *iprocess(BYTE *pname, void (*routine)())
+static PD *iprocess(BYTE *pname, PFVOID routine)
 {
         register ULONG  ldaddr;
 

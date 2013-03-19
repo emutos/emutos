@@ -14,7 +14,7 @@
  * in a 68000-only RTE stack frame, "in preparation for an RTE that
  * will start this process executing".
  */
-extern void psetup(PD *p, void *codevalue);
+extern void psetup(PD *p, PFVOID codevalue);
 
 /* launches the top of rlr list, as if called from within function
  * back(PD *top_of_rlr)

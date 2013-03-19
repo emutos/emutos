@@ -24,7 +24,7 @@ extern void p_nameit(PD *p, BYTE *pname);
 /* set the application directory of a PD */
 extern void p_setappdir(PD *p, BYTE *pfilespec);
 
-extern PD *pstart(void *pcode, BYTE *pfilespec, LONG ldaddr);
+extern PD *pstart(PFVOID pcode, BYTE *pfilespec, LONG ldaddr);
 
 /* insert the process pi at the end of the process list pointed to by root */
 extern void insert_process(PD *pi, PD **root);
