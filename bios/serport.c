@@ -179,8 +179,8 @@ LONG bconout1(WORD dev, WORD b)
  */
 #if CONF_WITH_MFP_RS232
 struct mfp_rs232_table {
-    BYTE control;
-    BYTE data;
+    UBYTE control;
+    UBYTE data;
 };
 
 static const struct mfp_rs232_table mfp_rs232_init[] = {
