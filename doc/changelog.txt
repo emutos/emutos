@@ -4630,3 +4630,6 @@ Start... early ages
   Tamminen. (VRI)
 - tools/compr.c tools/erd.c tools/mkflop.c tools/mkrom.c tools/uncompr.c:
   Static cleanup. Contributed by Eero Tamminen. (VRI)
+- Makefile bios/coldfire.c bios/coldfire.h bios/coldpriv.h bios/serport.c
+  include/config.h: Added CONF_WITH_COLDFIRE_RS232 to use the internal ColdFire
+  RS-232 port instead of the MFP one. (VRI)

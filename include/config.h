@@ -400,6 +400,17 @@
 #endif
 
 /*
+ * Set CONF_WITH_COLDFIRE_RS232 to 1 to use the internal ColdFire serial port
+ */
+#ifndef CONF_WITH_COLDFIRE_RS232
+# ifdef __mcoldfire__
+#  define CONF_WITH_COLDFIRE_RS232 1
+# else
+#  define CONF_WITH_COLDFIRE_RS232 0
+# endif
+#endif
+
+/*
  * Set CONF_WITH_YM2149 to 1 to enable YM2149 soundchip support
  */
 #ifndef CONF_WITH_YM2149

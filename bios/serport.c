@@ -23,6 +23,7 @@
 #include "serport.h"
 #include "string.h"
 #include "tosvars.h"
+#include "coldfire.h"
 
 /*
  * defines
@@ -120,7 +121,9 @@ static const MAPTAB maptable_mfp_tt =
  */
 LONG bconstat1(void)
 {
-#if CONF_WITH_MFP_RS232
+#if CONF_WITH_COLDFIRE_RS232
+    return coldfire_rs232_can_read() ? -1 : 0;
+#elif CONF_WITH_MFP_RS232
     /* Character available in the serial input buffer? */
     /* FIXME: We ought to use Iorec() for this... */
     if (MFP_BASE->rsr & 0x80)
@@ -134,7 +137,9 @@ LONG bconstat1(void)
 
 LONG bconin1(void)
 {
-#if CONF_WITH_MFP_RS232
+#if CONF_WITH_COLDFIRE_RS232
+    return coldfire_rs232_read_byte();
+#elif CONF_WITH_MFP_RS232
     /* Wait for character at the serial line */
     while(!bconstat1())
         ;
@@ -149,7 +154,9 @@ LONG bconin1(void)
 
 LONG bcostat1(void)
 {
-#if CONF_WITH_MFP_RS232
+#if CONF_WITH_COLDFIRE_RS232
+    return coldfire_rs232_can_write() ? -1 : 0;
+#elif CONF_WITH_MFP_RS232
     if (MFP_BASE->tsr & 0x80)
         return -1;
     else
@@ -161,7 +168,10 @@ LONG bcostat1(void)
 
 LONG bconout1(WORD dev, WORD b)
 {
-#if CONF_WITH_MFP_RS232
+#if CONF_WITH_COLDFIRE_RS232
+    coldfire_rs232_write_byte(b);
+    return 1;
+#elif CONF_WITH_MFP_RS232
     /* Wait for transmit buffer to become empty */
     while(!bcostat1())
         ;
