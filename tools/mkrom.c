@@ -37,8 +37,8 @@ typedef enum
 } CMD_TYPE;
 
 /* Global variables */
-const char* g_argv0; /* Program name */
-unsigned char g_buffer[BUFFER_SIZE]; /* Global buffer to minimize stack usage */
+static const char* g_argv0; /* Program name */
+static unsigned char g_buffer[BUFFER_SIZE]; /* Global buffer to minimize stack usage */
 
 /* Read a big endian long */
 static unsigned long read_big_endian_long(const unsigned long* p)
@@ -101,7 +101,7 @@ static unsigned long add_with_carry(unsigned long a, unsigned long b)
 }
 
 /* Get an integer value from an integer string with a k, m, or g suffix */
-size_t get_size_value(const char* strsize)
+static size_t get_size_value(const char* strsize)
 {
     unsigned long val;
     char suffix;
@@ -127,7 +127,7 @@ size_t get_size_value(const char* strsize)
 }
 
 /* Get the size of an open file */
-size_t get_file_size(FILE* file, const char* filename)
+static size_t get_file_size(FILE* file, const char* filename)
 {
     long initial_pos; /* Initial file position */
     int err; /* Seek error */
@@ -170,7 +170,7 @@ size_t get_file_size(FILE* file, const char* filename)
 }
 
 /* Write a block of same bytes to a file */
-int write_byte_block(FILE* outfile, const char* outfilename, unsigned char value, size_t count)
+static int write_byte_block(FILE* outfile, const char* outfilename, unsigned char value, size_t count)
 {
     size_t towrite; /* Number of bytes to write this time */
     size_t written; /* Number of bytes written this time */
@@ -193,9 +193,9 @@ int write_byte_block(FILE* outfile, const char* outfilename, unsigned char value
 }
 
 /* Copy a stream into another one */
-int copy_stream(FILE* infile, const char* infilename,
-                FILE* outfile, const char* outfilename,
-                size_t count)
+static int copy_stream(FILE* infile, const char* infilename,
+                       FILE* outfile, const char* outfilename,
+                       size_t count)
 {
     size_t toread; /* Number of bytes to read this time */
     size_t towrite; /* Number of bytes to write this time */

@@ -40,9 +40,9 @@ struct loader {
   uchar reserved;
 };
 
-int fill = 1;
+static int fill = 1;
 
-int mkflop(FILE *bootf, FILE *tosf, FILE *flopf)
+static int mkflop(FILE *bootf, FILE *tosf, FILE *flopf)
 {
   uchar buf[512];
   struct loader *b = (struct loader *)buf;

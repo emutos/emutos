@@ -2439,7 +2439,7 @@ char *base = (char *)rschdr;
 /*
  *  display info from converted RSC header
  */
-PRIVATE void display_header()
+PRIVATE void display_header(void)
 {
     printf("RSC header (version %d), loaded from %s\n",rsh.vrsn,inrsc); /* version */
     printf("  Object offset  %5d\n",rsh.object);            /* offset to object[] */

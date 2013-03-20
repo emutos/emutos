@@ -4628,3 +4628,5 @@ Start... early ages
 - Makefile: Updated make help. Suggested by David Savinkoff. (VRI)
 - Makefile: Adjust warning options according to GCC version. Contributed by Eero
   Tamminen. (VRI)
+- tools/compr.c tools/erd.c tools/mkflop.c tools/mkrom.c tools/uncompr.c:
+  Static cleanup. Contributed by Eero Tamminen. (VRI)

@@ -46,13 +46,13 @@ typedef unsigned char uchar;
  * globals
  */
 
-FILE *fin;
-FILE *fout;
+static FILE *fin;
+static FILE *fout;
 
-uchar buf[0x7FFF];
-int buf_x = 0;
+static uchar buf[0x7FFF];
+static int buf_x = 0;
 
-void put_byte(uchar a)
+static void put_byte(uchar a)
 {
   buf[buf_x] = a;
   fputc(a, fout);
@@ -61,7 +61,7 @@ void put_byte(uchar a)
   if(buf_x >= 0x7FFF) buf_x = 0;
 }
 
-uchar at_offset(int off)
+static uchar at_offset(int off)
 {
   int x = buf_x - off;
   if(x < 0) x += 0x7FFF;
@@ -69,14 +69,14 @@ uchar at_offset(int off)
 }
 
 
-uchar get_byte(void)
+static uchar get_byte(void)
 {
   int c = fgetc(fin);
   if(c == EOF) fatal(0, "eof reached");
   return c;
 }
 
-int get_num(void)
+static int get_num(void)
 {
   int a = get_byte();
   if(a & 0x80) {
@@ -87,7 +87,7 @@ int get_num(void)
   return a;
 }
 
-void uncompress(void)
+static void uncompress(void)
 {
   for(;;) {
     int n, off;

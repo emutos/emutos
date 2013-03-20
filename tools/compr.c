@@ -77,11 +77,11 @@ static void fatal(int with_errno, const char *fmt, ...)
   exit(EXIT_FAILURE);
 }
 
-int verbose = 0;
+static int verbose = 0;
 
 static long total = 0;
 
-void * xmalloc(size_t s)
+static void * xmalloc(size_t s)
 {
   void * a = malloc(s);
   if(a == NULL) {
@@ -105,7 +105,7 @@ typedef struct xfile {
   char fname[1];
 } XFILE;
 
-XFILE *xfopen(const char *fname, const char *mode)
+static XFILE *xfopen(const char *fname, const char *mode)
 {
   int len = strlen(fname);
   XFILE *f = xmalloc(sizeof(*f) + len);
@@ -117,7 +117,7 @@ XFILE *xfopen(const char *fname, const char *mode)
   return f;
 }
 
-int xfclose(XFILE *f)
+static int xfclose(XFILE *f)
 {
   if(fclose(f->f)) {
     fatal(1, "cannot close %s", f->fname);
@@ -126,7 +126,7 @@ int xfclose(XFILE *f)
   return 0;
 }
 
-size_t xfread(void *buf, size_t a, size_t b, XFILE * f)
+static size_t xfread(void *buf, size_t a, size_t b, XFILE * f)
 {
   size_t count = fread(buf, a, b, f->f);
   if(ferror(f->f)) {
@@ -135,7 +135,7 @@ size_t xfread(void *buf, size_t a, size_t b, XFILE * f)
   return count;
 }
 
-size_t xfwrite(void *buf, size_t a, size_t b, XFILE * f)
+static size_t xfwrite(void *buf, size_t a, size_t b, XFILE * f)
 {
   size_t count = fwrite(buf, a, b, f->f);
   if(ferror(f->f)) {
@@ -144,7 +144,7 @@ size_t xfwrite(void *buf, size_t a, size_t b, XFILE * f)
   return count;
 }
 
-long xftell(XFILE *f)
+static long xftell(XFILE *f)
 {
   long t = ftell(f->f);
   if(t < 0) {
@@ -153,7 +153,7 @@ long xftell(XFILE *f)
   return t;
 }
 
-int xfseek(XFILE *f, long offset, int whence)
+static int xfseek(XFILE *f, long offset, int whence)
 {
   if(fseek(f->f, offset, whence)) {
     fatal(1, "cannot fseek on %s", f->fname);
@@ -178,10 +178,10 @@ typedef unsigned char uchar;
  * so let's make this buffer global.
  */
 
-uchar *buf; /* holds the entire data to compress */
-index_t len;  /* size of data */
+static uchar *buf; /* holds the entire data to compress */
+static index_t len;  /* size of data */
 
-const int z = 4;  /* minimum number of char for a string */
+static const int z = 4;  /* minimum number of char for a string */
 
 /*
  * lists of indices into the buffer (to each 4-bytes string is
@@ -193,11 +193,11 @@ typedef struct cell {
   struct cell *next;
 } cell;
 
-cell *freelist = NULL;
-cell *cellpool = NULL;
-int cellpoolsize = 0;
+static cell *freelist = NULL;
+static cell *cellpool = NULL;
+static int cellpoolsize = 0;
 
-cell *cell_new(void)
+static cell *cell_new(void)
 {
   cell *p;
   if(freelist) {
@@ -212,7 +212,7 @@ cell *cell_new(void)
   return p;
 }
 
-void cell_free(cell *p)
+static void cell_free(cell *p)
 {
   p->next = freelist; freelist = p;
 }
@@ -229,11 +229,11 @@ typedef struct hcell {
   struct cell *list;
 } hcell;
 
-hcell *hfreelist = NULL;
-hcell *hcellpool = NULL;
-int hcellpoolsize = 0;
+static hcell *hfreelist = NULL;
+static hcell *hcellpool = NULL;
+static int hcellpoolsize = 0;
 
-hcell *hcell_new(void)
+static hcell *hcell_new(void)
 {
   hcell *p;
   if(hfreelist) {
@@ -249,7 +249,7 @@ hcell *hcell_new(void)
   return p;
 }
 
-void hcell_free(hcell *p)
+static void hcell_free(hcell *p)
 {
   p->next = hfreelist;
   hfreelist = p;
@@ -260,7 +260,7 @@ typedef struct hash {
   hcell **cells;
 } hash;
 
-hash *hash_new(void)
+static hash *hash_new(void)
 {
   hash *h = xmalloc(sizeof *h);
   uhash_t i;
@@ -272,7 +272,7 @@ hash *hash_new(void)
   return h;
 }
 
-uhash_t hash_compute(index_t x)
+static uhash_t hash_compute(index_t x)
 {
   uhash_t a = 0;
   uchar *c = buf + x;
@@ -289,7 +289,7 @@ uhash_t hash_compute(index_t x)
 /* add the bucket if the prefix is not here, and in any case
  * return the address of the (maybe new) hash bucket
  */
-hcell *hash_find_add(hash *h, index_t x)
+static hcell *hash_find_add(hash *h, index_t x)
 {
   uhash_t m = hash_compute(x) % h->mod;
   hcell *p;
@@ -307,7 +307,7 @@ hcell *hash_find_add(hash *h, index_t x)
 }
 
 /* removes old strings from the hash, i.e. whose index x is < min_x */
-void hash_remove_old(hash *h, index_t min_x)
+static void hash_remove_old(hash *h, index_t min_x)
 {
   uhash_t i;
   for(i = 0 ; i < h->mod ; i++) {
@@ -338,13 +338,14 @@ void hash_remove_old(hash *h, index_t min_x)
  * output file
  */
 
-XFILE *ofile;
+static XFILE *ofile;
 
-void out_byte(uchar c) {
+static void out_byte(uchar c) {
   xfwrite(&c, 1, 1, ofile);
 }
 
-void out_num(int a) {
+static void out_num(int a)
+{
 #if DEBUG
   if(a < 0 || a >= 0x8000)
     fatal(0, "out_num(0x%x)", a);
@@ -358,7 +359,7 @@ void out_num(int a) {
   }
 }
 
-void out_long(index_t a)
+static void out_long(index_t a)
 {
   out_byte((a>>24) & 0xFF);
   out_byte((a>>16) & 0xFF);
@@ -366,7 +367,7 @@ void out_long(index_t a)
   out_byte(a & 0xFF);
 }
 
-void compress(void)
+static void compress(void)
 {
   index_t i;
   int remove_timeout = 0x7FFF;
@@ -465,7 +466,7 @@ void compress(void)
   out_num(0);
 }
 
-void read_all(const char *fname, uchar **buf, index_t *len)
+static void read_all(const char *fname, uchar **buf, index_t *len)
 {
   XFILE *f;
   size_t count;
@@ -482,7 +483,7 @@ void read_all(const char *fname, uchar **buf, index_t *len)
   xfclose(f);
 }
 
-int percent(long a, long b)
+static int percent(long a, long b)
 {
   if(a <= 0 || a <= b) {
     return 0;
@@ -495,13 +496,13 @@ int percent(long a, long b)
   }
 }
 
-void usage(int exit_value)
+static void usage(int exit_value)
 {
   fprintf(stderr, "usage: compr -v * [ --rom <loader> ] <in> <out>\n");
   exit(exit_value);
 }
 
-void do_it(char *lfname, char *ifname, char *ofname)
+static void do_it(char *lfname, char *ifname, char *ofname)
 {
   ofile = xfopen(ofname, "wb");
 
