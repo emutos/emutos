@@ -62,6 +62,8 @@
 
 #define VERSION "0.2b"
 
+#define ALERT_TEXT_WARNINGS 0   /* 1 => generate experimental warning msgs */
+
 #define TOOLNAME "bug"
 #define DOCNAME  "doc/nls.txt"
 #define LANGS_C  "util/langs.c"

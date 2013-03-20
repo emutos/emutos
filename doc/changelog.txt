@@ -4636,4 +4636,4 @@ Start... early ages
 
 2013-03-20
 - tools/erd.c: Fixed warnings when compiling erd.c with ICON_RSC defined. (RFB)
- 
+- tools/bug.c: Fix warning message. (RFB)
