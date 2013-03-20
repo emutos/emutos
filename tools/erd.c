@@ -143,6 +143,12 @@
  *          . add support for icon resource generation (performed if
  *            preprocessor symbol ICON_RSC is #defined)
  *          . generate "#error" directive if internal error is detected
+ *
+ *  v4.1    roger burrows/eero tamminen, march/2013
+ *          . add some constness
+ *          . declare global variables as LOCAL & most functions as
+ *            PRIVATE; define both of them as 'static' by default (for
+ *            debugging, define them as empty strings)
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -155,6 +161,9 @@
 #include <getopt.h>
 #define DIRSEP  '/'
 #endif
+
+#define LOCAL   static  /* undef for debugging */
+#define PRIVATE static
 
 /*
  *  check which type of resource is to be processed
@@ -348,7 +357,7 @@ typedef struct {
   #define PROGRAM_NAME  "ird"
 #endif
 
-#define VERSION         "v4.0"
+#define VERSION         "v4.1"
 #define MAX_STRLEN      300         /* max size for internal string areas */
 #define NLS             "N_("       /* the macro used in EmuTOS for NLS support*/
 
@@ -432,13 +441,13 @@ typedef struct {
 /*
  *  conditional wrapping control
  */
-CONDITIONAL frstr_cond = { "STNOOPEN", "#ifdef DESK1" };
-CONDITIONAL other_cond = { "ADTTREZ", "#ifndef TARGET_192" };
+LOCAL const CONDITIONAL frstr_cond = { "STNOOPEN", "#ifdef DESK1" };
+LOCAL const CONDITIONAL other_cond = { "ADTTREZ", "#ifndef TARGET_192" };
 
 /*
  *  table of complete strings that will have a shared data item
  */
-SHARED_ENTRY shared[] = {
+LOCAL SHARED_ENTRY shared[] = {
     { "OK", SHRT_MAX },
     { "Cancel", SHRT_MAX },
     { "Install", SHRT_MAX },
@@ -446,12 +455,12 @@ SHARED_ENTRY shared[] = {
     { "Yes", SHRT_MAX },
     { "No", SHRT_MAX }
 };
-int num_shared = sizeof(shared) / sizeof(SHARED_ENTRY);
+LOCAL int num_shared = sizeof(shared) / sizeof(SHARED_ENTRY);
 
 /*
  *  table of string prefixes for text that should not be translated
  */
-NOTRANS_ENTRY notrans[] = {
+LOCAL NOTRANS_ENTRY notrans[] = {
     { 0, "- EmuTOS -" },
     { 0, "http://" },
     { 0, "GEM" },
@@ -464,7 +473,7 @@ NOTRANS_ENTRY notrans[] = {
     { 0, "640 x " },
     { 0, "320 x " }
 };
-int num_notrans = sizeof(notrans) / sizeof(NOTRANS_ENTRY);
+LOCAL int num_notrans = sizeof(notrans) / sizeof(NOTRANS_ENTRY);
 #endif
 
 
@@ -472,26 +481,26 @@ int num_notrans = sizeof(notrans) / sizeof(NOTRANS_ENTRY);
 /*
  *  conditional wrapping control
  */
-CONDITIONAL frstr_cond = { "?", "#error \"Code generation error\"" };  /* no match, error if it does ... */
-CONDITIONAL other_cond = { "?", "#error \"Code generation error\"" };  /* likewise */
+LOCAL const CONDITIONAL frstr_cond = { "?", "#error \"Code generation error\"" };  /* no match, error if it does ... */
+LOCAL const CONDITIONAL other_cond = { "?", "#error \"Code generation error\"" };  /* likewise */
 
 /*
  *  table of complete strings that will have a shared data item
  */
-SHARED_ENTRY shared[] = {
+LOCAL SHARED_ENTRY shared[] = {
     { "_ ________.___ ", SHRT_MAX },
     { "xF", SHRT_MAX },
 };
-int num_shared = sizeof(shared) / sizeof(SHARED_ENTRY);
+LOCAL int num_shared = sizeof(shared) / sizeof(SHARED_ENTRY);
 
 /*
  *  table of string prefixes for text that should not be translated
  */
-NOTRANS_ENTRY notrans[] = {
+LOCAL NOTRANS_ENTRY notrans[] = {
     { 0, "__________________" },
     { 0, "xF" },
 };
-int num_notrans = sizeof(notrans) / sizeof(NOTRANS_ENTRY);
+LOCAL int num_notrans = sizeof(notrans) / sizeof(NOTRANS_ENTRY);
 #endif
 
 
@@ -499,20 +508,20 @@ int num_notrans = sizeof(notrans) / sizeof(NOTRANS_ENTRY);
 /*
  *  conditional wrapping control
  */
-CONDITIONAL frstr_cond = { "?", "#error \"Code generation error\"" };  /* no match, error if it does ... */
-CONDITIONAL other_cond = { "?", "#error \"Code generation error\"" };  /* likewise */
+LOCAL const CONDITIONAL frstr_cond = { "?", "#error \"Code generation error\"" };  /* no match, error if it does ... */
+LOCAL const CONDITIONAL other_cond = { "?", "#error \"Code generation error\"" };  /* likewise */
 
 /*
  *  table of complete strings that will have a shared data item
  */
-SHARED_ENTRY shared[1];     /* dummy */
-int num_shared = 0;
+LOCAL SHARED_ENTRY shared[1];     /* dummy */
+LOCAL int num_shared = 0;
 
 /*
  *  table of string prefixes for text that should not be translated
  */
-NOTRANS_ENTRY notrans[1];   /* dummy */
-int num_notrans = 0;
+LOCAL NOTRANS_ENTRY notrans[1];   /* dummy */
+LOCAL int num_notrans = 0;
 #endif
 
 
@@ -524,49 +533,49 @@ int num_notrans = 0;
 /*
  *  other globals
  */
-char *copyright = PROGRAM_NAME " " VERSION " copyright (c) 2012 by Roger Burrows\n"
+LOCAL const char *copyright = PROGRAM_NAME " " VERSION " copyright (c) 2012-2013 by Roger Burrows\n"
 "This program is licensed under the GNU General Public License.\n"
 "Please see LICENSE.TXT for details.\n";
 
-int debug = 0;                          /* options */
-char prefix[MAX_STRLEN] = "";
-int verbose = 0;
+LOCAL int debug = 0;                    /* options */
+LOCAL char prefix[MAX_STRLEN] = "";
+LOCAL int verbose = 0;
 
-char *rsc_root = NULL;                  /* paths of input, output files */
-char *out_path = NULL;
-char defext[5];                         /* extension of definition file actually used */
+LOCAL char *rsc_root = NULL;            /* paths of input, output files */
+LOCAL char *out_path = NULL;
+LOCAL char defext[5];                   /* extension of definition file actually used */
 
-char inrsc[MAX_STRLEN] = "";            /* actual file names */
-char indef[MAX_STRLEN] = "";
-char cfile[MAX_STRLEN] = "";
-char hfile[MAX_STRLEN] = "";
+LOCAL char inrsc[MAX_STRLEN] = "";      /* actual file names */
+LOCAL char indef[MAX_STRLEN] = "";
+LOCAL char cfile[MAX_STRLEN] = "";
+LOCAL char hfile[MAX_STRLEN] = "";
 
 
 RSHDR *rschdr = NULL;                   /* RSC header */
 MY_RSHDR rsh;                           /* converted RSC header */
 
 DEF_ENTRY *def = NULL;                  /* table of #defines from HRD/DEF/RSD/DFN */
-int num_defs = 0;                       /* entries in def */
-int first_freestr = -1;                 /* # of entry in def[] corresponding to first free string */
+LOCAL int num_defs = 0;                 /* entries in def */
+LOCAL int first_freestr = -1;           /* # of entry in def[] corresponding to first free string */
 
 /*
  *  arrays used to figure out conditional wrapping stuff
  *
  *  pointers to malloc'd arrays; non-zero entry => item is conditional
  */
-char *tedinfo_status = NULL;
-char *bitblk_status = NULL;
-char *iconblk_status = NULL;
+LOCAL char *tedinfo_status = NULL;
+LOCAL char *bitblk_status = NULL;
+LOCAL char *iconblk_status = NULL;
 
 /*
  *  the following values are derived such that *all* items from
  *  the given value to the end of the array are conditional.
  */
-int conditional_tree_start;
-int conditional_object_start;
-int conditional_tedinfo_start;
-int conditional_bitblk_start;
-int conditional_iconblk_start;
+LOCAL int conditional_tree_start;
+LOCAL int conditional_object_start;
+LOCAL int conditional_tedinfo_start;
+LOCAL int conditional_bitblk_start;
+LOCAL int conditional_iconblk_start;
 
 /*
  *  table for decoding ob_flags
@@ -576,7 +585,7 @@ typedef struct {
     char *desc;
 } FLAGS;
 
-FLAGS flaglist[] = {
+LOCAL const FLAGS flaglist[] = {
     { SELECTABLE, "SELECTABLE" }, { DEFAULT,  "DEFAULT" },
     { EXIT,       "EXIT" },       { EDITABLE, "EDITABLE" },
     { RBUTTON,    "RBUTTON" },    { LASTOB,   "LASTOB" },
@@ -593,7 +602,7 @@ typedef struct {
     char *desc;
 } STATE;
 
-STATE statelist[] = {
+LOCAL const STATE statelist[] = {
     { SELECTED, "SELECTED" }, { CROSSED,  "CROSSED" },
     { CHECKED,  "CHECKED" },  { DISABLED, "DISABLED" },
     { OUTLINED, "OUTLINED" }, { SHADOWED, "SHADOWED" },
@@ -607,7 +616,7 @@ typedef struct {
     char *desc;
 } TYPE;
 
-TYPE typelist[] = {
+LOCAL const TYPE typelist[] = {
     { G_BOX,      "G_BOX" },      { G_TEXT,    "G_TEXT" },
     { G_BOXTEXT,  "G_BOXTEXT" },  { G_IMAGE,   "G_IMAGE" },
     { G_PROGDEF,  "G_PROGDEF" },  { G_IBOX,    "G_IBOX" },
@@ -621,71 +630,71 @@ TYPE typelist[] = {
 /*
  *  function prototypes
  */
-int all_dashes(char *string);
-int cmp_def(const void *a,const void *b);
-int cmp_shared(const void *a,const void *b);
-int compare_data(ICONBLK *b1,ICONBLK *b2);
-int compare_images(BITBLK *b1,BITBLK *b2);
-int compare_mask(ICONBLK *b1,ICONBLK *b2);
-void convert_header(RSHDR *hdr);
-short convert_def_type(int deftype);
-short convert_dfn_type(int dfntype,int dfnind);
-int copycheck(char *dest,char *src,int len);
-void copyfix(char *dest,char *src,int len);
-char *decode_flags(short flags);
-char *decode_font(short font);
-char *decode_ib_char(short iconchar);
-char *decode_just(short just);
-char *decode_state(short state);
-char *decode_type(short type);
-void display_defs(int entries);
-void display_header(void);
-void display_notrans(int n);
-void display_shared(int n);
-void error(char *s,char *t);
-void fixshared(char *dest,char *src);
-int getlen(int *length,char *s);
-short get_short(SHORT *p);
-unsigned short get_ushort(USHORT *p);
-unsigned long get_offset(OFFSET *p);
-int init_all_status(MY_RSHDR *hdr);
-void init_notrans(int n);
-int init_status(char **array,int entries);
-SHARED_ENTRY *isshared(char *text);
-int load_definition(char *file);
-int load_def(FILE *fp);
-int load_dfn(FILE *fp);
-int load_hrd(FILE *fp);
-RSHDR *load_rsc(char *path);
-DEF_ENTRY *lookup_object(int tree,int obj);
-DEF_ENTRY *lookup_tree(int tree);
-void mark_conditional(void);
-int notranslate(char *text);
-FILE *openfile(char *name,char *ext,char *mode);
-void process_start_names(int num_defs);
-int scan_conditional(char *conditional,int length);
-void shrink_valid(char *dest,char *src);
-void sort_def_table(int n);
-void sort_shared(int n);
-char *strdup(const char *string);
-void trim_spaces(char *string);
-void usage(char *s);
-int write_c_epilogue(FILE *fp);
-int write_c_file(char *name,char *ext);
-int write_data(FILE *fp,int words,USHORT *data);
-int write_freestr(FILE *fp);
-int write_general_prologue(FILE *fp,char *name,char *ext);
-int write_h_file(char *name,char *ext);
-int write_h_define(FILE *fp);
-int write_h_extern(FILE *fp);
-int write_bitblk(FILE *fp);
-int write_iconblk(FILE *fp);
-int write_include(FILE *fp,char *name);
-int write_object(FILE *fp);
-int write_obspec(FILE *fp,OBJECT *obj);
-int write_shared(FILE *fp);
-int write_tedinfo(FILE *fp);
-int write_tree(FILE *fp);
+PRIVATE int all_dashes(char *string);
+PRIVATE int cmp_def(const void *a,const void *b);
+PRIVATE int cmp_shared(const void *a,const void *b);
+PRIVATE int compare_data(ICONBLK *b1,ICONBLK *b2);
+PRIVATE int compare_images(BITBLK *b1,BITBLK *b2);
+PRIVATE int compare_mask(ICONBLK *b1,ICONBLK *b2);
+PRIVATE void convert_header(RSHDR *hdr);
+PRIVATE short convert_def_type(int deftype);
+PRIVATE short convert_dfn_type(int dfntype,int dfnind);
+PRIVATE int copycheck(char *dest,char *src,int len);
+PRIVATE void copyfix(char *dest,char *src,int len);
+PRIVATE char *decode_flags(short flags);
+PRIVATE char *decode_font(short font);
+PRIVATE char *decode_ib_char(short iconchar);
+PRIVATE char *decode_just(short just);
+PRIVATE char *decode_state(short state);
+PRIVATE char *decode_type(short type);
+PRIVATE void display_defs(int entries);
+PRIVATE void display_header(void);
+PRIVATE void display_notrans(int n);
+PRIVATE void display_shared(int n);
+PRIVATE void error(char *s,char *t);
+PRIVATE void fixshared(char *dest,char *src);
+PRIVATE int getlen(int *length,char *s);
+PRIVATE short get_short(SHORT *p);
+PRIVATE unsigned short get_ushort(USHORT *p);
+PRIVATE unsigned long get_offset(OFFSET *p);
+PRIVATE int init_all_status(MY_RSHDR *hdr);
+PRIVATE void init_notrans(int n);
+PRIVATE int init_status(char **array,int entries);
+PRIVATE SHARED_ENTRY *isshared(char *text);
+PRIVATE int load_definition(char *file);
+PRIVATE int load_def(FILE *fp);
+PRIVATE int load_dfn(FILE *fp);
+PRIVATE int load_hrd(FILE *fp);
+PRIVATE RSHDR *load_rsc(char *path);
+PRIVATE DEF_ENTRY *lookup_object(int tree,int obj);
+PRIVATE DEF_ENTRY *lookup_tree(int tree);
+PRIVATE void mark_conditional(void);
+PRIVATE int notranslate(char *text);
+PRIVATE FILE *openfile(char *name,char *ext,char *mode);
+PRIVATE void process_start_names(int num_defs);
+PRIVATE int scan_conditional(char *conditional,int length);
+PRIVATE void shrink_valid(char *dest,char *src);
+PRIVATE void sort_def_table(int n);
+PRIVATE void sort_shared(int n);
+PRIVATE char *strdup(const char *string);
+PRIVATE void trim_spaces(char *string);
+PRIVATE void usage(char *s);
+PRIVATE int write_c_epilogue(FILE *fp);
+PRIVATE int write_c_file(char *name,char *ext);
+PRIVATE int write_data(FILE *fp,int words,USHORT *data);
+PRIVATE int write_freestr(FILE *fp);
+PRIVATE int write_general_prologue(FILE *fp,char *name,char *ext);
+PRIVATE int write_h_file(char *name,char *ext);
+PRIVATE int write_h_define(FILE *fp);
+PRIVATE int write_h_extern(FILE *fp);
+PRIVATE int write_bitblk(FILE *fp);
+PRIVATE int write_iconblk(FILE *fp);
+PRIVATE int write_include(FILE *fp,char *name);
+PRIVATE int write_object(FILE *fp);
+PRIVATE int write_obspec(FILE *fp,OBJECT *obj);
+PRIVATE int write_shared(FILE *fp);
+PRIVATE int write_tedinfo(FILE *fp);
+PRIVATE int write_tree(FILE *fp);
 
 
 
@@ -787,7 +796,7 @@ int n;
  *      returns NULL if there's a problem reading the file
  *      exits directly for other errors
  */
-RSHDR *load_rsc(char *path)
+PRIVATE RSHDR *load_rsc(char *path)
 {
 long fsize;
 unsigned short vrsn, rssize;
@@ -840,7 +849,7 @@ char s[MAX_STRLEN];
  *  convert header to internal representation
  *  (save converting for each use)
  */
-void convert_header(RSHDR *hdr)
+PRIVATE void convert_header(RSHDR *hdr)
 {
     rsh.vrsn = get_ushort(&hdr->rsh_vrsn);
     rsh.object = get_ushort(&hdr->rsh_object);
@@ -866,7 +875,7 @@ void convert_header(RSHDR *hdr)
  *  load definition file into memory
  *  returns number of entries
  */
-int load_definition(char *file)
+PRIVATE int load_definition(char *file)
 {
 FILE *fp = NULL;
 
@@ -893,7 +902,7 @@ FILE *fp = NULL;
  *  load a .HRD definition file
  *  returns number of entries
  */
-int load_hrd(FILE *fp)
+PRIVATE int load_hrd(FILE *fp)
 {
 int i, n, rc, c;
 DEF_ENTRY *d;
@@ -973,7 +982,7 @@ char name[MAXLEN_HRD+1], *p;
 /*
  *  load a .DEF/.RSD definition file
  */
-int load_def(FILE *fp)
+PRIVATE int load_def(FILE *fp)
 {
 int i, n;
 DEF_ENTRY *d;
@@ -1024,7 +1033,7 @@ char temp[9];
 /*
  *  load a .DFN definition file
  */
-int load_dfn(FILE *fp)
+PRIVATE int load_dfn(FILE *fp)
 {
 int i, n;
 DEF_ENTRY *d;
@@ -1075,7 +1084,7 @@ char temp[9];
 /*
  *  convert the type from a .DEF/.RSD entry to the standard .HRD type
  */
-short convert_def_type(int deftype)
+PRIVATE short convert_def_type(int deftype)
 {
 short new;
 
@@ -1112,7 +1121,7 @@ short new;
 /*
  *  convert the type from a .DFN entry to the standard .HRD type
  */
-short convert_dfn_type(int dfntype,int dfnind)
+PRIVATE short convert_dfn_type(int dfntype,int dfnind)
 {
 short new;
 
@@ -1146,7 +1155,7 @@ short new;
  *  if found, return pointer to entry
  *  otherwise, return NULL
  */
-DEF_ENTRY *lookup_object(int tree,int obj)
+PRIVATE DEF_ENTRY *lookup_object(int tree,int obj)
 {
 int i;
 DEF_ENTRY *d;
@@ -1174,7 +1183,7 @@ DEF_ENTRY *d;
  *  if found, return pointer to entry
  *  otherwise, return NULL
  */
-DEF_ENTRY *lookup_tree(int tree)
+PRIVATE DEF_ENTRY *lookup_tree(int tree)
 {
 int i;
 DEF_ENTRY *d;
@@ -1194,7 +1203,7 @@ DEF_ENTRY *d;
 
 /*****  output routines *****/
 
-int write_c_file(char *name,char *ext)
+PRIVATE int write_c_file(char *name,char *ext)
 {
 FILE *fp;
 char *basename;
@@ -1233,7 +1242,7 @@ char *basename;
     return 0;
 }
 
-int write_h_file(char *name,char *ext)
+PRIVATE int write_h_file(char *name,char *ext)
 {
 FILE *fp;
 char *basename;
@@ -1261,7 +1270,7 @@ char *basename;
 /*
  *  this creates the general stuff at the start of both output files
  */
-int write_general_prologue(FILE *fp,char *name,char *ext)
+PRIVATE int write_general_prologue(FILE *fp,char *name,char *ext)
 {
 char *basersc;
 
@@ -1288,7 +1297,7 @@ char *basersc;
 /*
  *  this creates the #defines of the .h file
  */
-int write_h_define(FILE *fp)
+PRIVATE int write_h_define(FILE *fp)
 {
 int i;
 int first_time = 1;
@@ -1398,7 +1407,7 @@ short old_tree = -1;
 /*
  *  this creates the externs of the .h file
  */
-int write_h_extern(FILE *fp)
+PRIVATE int write_h_extern(FILE *fp)
 {
 #ifdef DESK_RSC
     fprintf(fp,"extern const BITBLK %srs_bitblk[];\n",prefix);
@@ -1436,7 +1445,7 @@ int write_h_extern(FILE *fp)
 /*
  *  this creates the includes at the beginning of the .c file
  */
-int write_include(FILE *fp,char *name)
+PRIVATE int write_include(FILE *fp,char *name)
 {
     fprintf(fp,"#include \"config.h\"\n");
     fprintf(fp,"#include \"string.h\"\n");
@@ -1463,11 +1472,11 @@ int write_include(FILE *fp,char *name)
 /*
  *  this creates the shared strings for the .c file
  */
-int write_shared(FILE *fp)
+PRIVATE int write_shared(FILE *fp)
 {
 int i;
 int first_time = 1;
-SHARED_ENTRY *e;
+const SHARED_ENTRY *e;
 char temp[MAX_STRLEN];
 
     if (num_shared == 0)
@@ -1496,12 +1505,12 @@ char temp[MAX_STRLEN];
 /*
  *  sort the shared entry table
  */
-void sort_shared(int n)
+PRIVATE void sort_shared(int n)
 {
     qsort(shared,n,sizeof(SHARED_ENTRY),cmp_shared);
 }
 
-int cmp_shared(const void *a,const void *b)
+PRIVATE int cmp_shared(const void *a,const void *b)
 {
 const SHARED_ENTRY *e1 = a;
 const SHARED_ENTRY *e2 = b;
@@ -1512,7 +1521,7 @@ const SHARED_ENTRY *e2 = b;
 /*
  *  this creates the TEDINFO stuff for the .c file
  */
-int write_tedinfo(FILE *fp)
+PRIVATE int write_tedinfo(FILE *fp)
 {
 int i, nted;
 TEDINFO *ted;
@@ -1563,7 +1572,7 @@ char *base = (char *)rschdr, *p;
 /*
  *  this creates the ICONBLK stuff for the .c file
  */
-int write_iconblk(FILE *fp)
+PRIVATE int write_iconblk(FILE *fp)
 {
 int i, j, n, nib;
 short iconchar;
@@ -1663,7 +1672,7 @@ char *base = (char *)rschdr;
 /*
  *  this creates the BITBLK stuff for the .c file
  */
-int write_bitblk(FILE *fp)
+PRIVATE int write_bitblk(FILE *fp)
 {
 int i, j, n, nbb;
 int *map;
@@ -1736,7 +1745,7 @@ char *base = (char *)rschdr;
 /*
  *  this creates the OBJECT stuff for the .c file
  */
-int write_object(FILE *fp)
+PRIVATE int write_object(FILE *fp)
 {
 #ifndef ICON_RSC
 int i, j, nobs, tree, ntree;
@@ -1746,7 +1755,7 @@ OBJECT *obj;
 OFFSET *trindex;
 DEF_ENTRY *d;
 char temp[MAX_STRLEN];
-char *p;
+const char *p;
 char *base = (char *)rschdr;
 
     fprintf(fp,"OBJECT %srs_obj[RS_NOBS];\n\n",prefix);
@@ -1806,7 +1815,7 @@ char *base = (char *)rschdr;
 /*
  *  this creates the TREE stuff for the .c file
  */
-int write_tree(FILE *fp)
+PRIVATE int write_tree(FILE *fp)
 {
 #ifndef ICON_RSC
 int i, ntree;
@@ -1840,7 +1849,7 @@ char temp[MAX_STRLEN];
 /*
  *  this creates the free string stuff for the .c file
  */
-int write_freestr(FILE *fp)
+PRIVATE int write_freestr(FILE *fp)
 {
 int i, j, n, nstring;
 int xlate, numstr, len;
@@ -1890,7 +1899,7 @@ char *base = (char *)rschdr;
 /*
  *  this creates miscellaneous defines + the initialisation code in the .c file
  */
-int write_c_epilogue(FILE *fp)
+PRIVATE int write_c_epilogue(FILE *fp)
 {
 #ifdef DESK_RSC
     fprintf(fp,"void %srs_init(void)\n",prefix);
@@ -1948,7 +1957,7 @@ int write_c_epilogue(FILE *fp)
 /*
  *  copies string, returns non-zero if it may need translating
  */
-int copycheck(char *dest,char *src,int len)
+PRIVATE int copycheck(char *dest,char *src,int len)
 {
 char *s;
 int i;
@@ -1967,7 +1976,7 @@ int i;
 /*
  *  copies string, fixing unprintable characters
  */
-void copyfix(char *dest,char *src,int len)
+PRIVATE void copyfix(char *dest,char *src,int len)
 {
 char *d, *s;
 int i;
@@ -1985,7 +1994,7 @@ int i;
 /*
  *  shrinks TEDINFO validate string to minimum
  */
-void shrink_valid(char *dest,char *src)
+PRIVATE void shrink_valid(char *dest,char *src)
 {
 char *d, *s, *new;
 
@@ -2002,7 +2011,7 @@ char *d, *s, *new;
 /*
  *  initialises length fields in notrans table
  */
-void init_notrans(int n)
+PRIVATE void init_notrans(int n)
 {
 int i;
 NOTRANS_ENTRY *e;
@@ -2015,7 +2024,7 @@ NOTRANS_ENTRY *e;
  *  looks for match between supplied string and notranslate entries
  *  returns 1 iff match found
  */
-int notranslate(char *text)
+PRIVATE int notranslate(char *text)
 {
 int i;
 NOTRANS_ENTRY *e;
@@ -2031,7 +2040,7 @@ NOTRANS_ENTRY *e;
  *  looks for match between supplied string and shared string entries
  *  returns 1 iff match found
  */
-SHARED_ENTRY *isshared(char *text)
+PRIVATE SHARED_ENTRY *isshared(char *text)
 {
 int i;
 SHARED_ENTRY *e;
@@ -2054,7 +2063,7 @@ SHARED_ENTRY *e;
  *  note: we only look for vertical bars between the first
  *  and second occurrences of ']'
  */
-int getlen(int *length,char *s)
+PRIVATE int getlen(int *length,char *s)
 {
 int i;
 char *start;
@@ -2082,7 +2091,7 @@ char right_brackets = 0;
 /*
  *  returns pointer to string containing decoded data from ib_char
  */
-char *decode_ib_char(short iconchar)
+PRIVATE char *decode_ib_char(short iconchar)
 {
 static char temp[20];
 char *t;
@@ -2101,10 +2110,10 @@ unsigned char c;
 /*
  *  returns pointer to string defining flags
  */
-char *decode_flags(short flags)
+PRIVATE char *decode_flags(short flags)
 {
 static char temp[MAX_STRLEN];
-FLAGS *f;
+const FLAGS *f;
 
     if (flags == 0)
         return "NONE";
@@ -2124,7 +2133,7 @@ FLAGS *f;
 /*
  *  returns pointer to string defining font
  */
-char *decode_font(short font)
+PRIVATE char *decode_font(short font)
 {
 static char temp[10], *p;
 
@@ -2147,7 +2156,7 @@ static char temp[10], *p;
 /*
  *  returns pointer to string defining justification
  */
-char *decode_just(short just)
+PRIVATE char *decode_just(short just)
 {
 static char temp[10], *p;
 
@@ -2173,10 +2182,10 @@ static char temp[10], *p;
 /*
  *  returns pointer to string defining state
  */
-char *decode_state(short state)
+PRIVATE char *decode_state(short state)
 {
 static char temp[MAX_STRLEN];
-STATE *s;
+const STATE *s;
 
     if (state == 0)
         return "NORMAL";
@@ -2197,9 +2206,9 @@ STATE *s;
 /*
  *  returns pointer to string defining type
  */
-char *decode_type(short type)
+PRIVATE char *decode_type(short type)
 {
-TYPE *t;
+const TYPE *t;
 static char temp[10];
 
     for (t = typelist; t->type; t++)
@@ -2213,7 +2222,7 @@ static char temp[10];
 /*
  *  write array of USHORT data items, 4 per line
  */
-int write_data(FILE *fp,int words,USHORT *data)
+PRIVATE int write_data(FILE *fp,int words,USHORT *data)
 {
 int i, last = 0;
 
@@ -2233,7 +2242,7 @@ int i, last = 0;
 /*
  *  writes formatted obspec to output
  */
-int write_obspec(FILE *fp,OBJECT *obj)
+PRIVATE int write_obspec(FILE *fp,OBJECT *obj)
 {
 int xlate, type;
 char *p;
@@ -2304,7 +2313,7 @@ char *base = (char *)rschdr;
 /*
  *  copies string, changing non-alphanumeric characters to underscore
  */
-void fixshared(char *dest,char *src)
+PRIVATE void fixshared(char *dest,char *src)
 {
 char *d, *s;
 
@@ -2323,7 +2332,7 @@ char *d, *s;
  *  can make them visible to the nls support, and therefore capable
  *  of being changed in length.
  */
-int all_dashes(char *string)
+PRIVATE int all_dashes(char *string)
 {
 char *p;
 
@@ -2340,7 +2349,7 @@ char *p;
 /*
  *  trims trailing spaces from string
  */
-void trim_spaces(char *string)
+PRIVATE void trim_spaces(char *string)
 {
 char *p;
 
@@ -2353,7 +2362,7 @@ char *p;
 /*
  *  compare images, return 0 iff identical size & image data
  */
-int compare_images(BITBLK *b1,BITBLK *b2)
+PRIVATE int compare_images(BITBLK *b1,BITBLK *b2)
 {
 int i, size1, size2;
 char *p1, *p2;
@@ -2379,7 +2388,7 @@ char *base = (char *)rschdr;
 /*
  *  compare icon mask, return 0 iff identical size & mask
  */
-int compare_mask(ICONBLK *b1,ICONBLK *b2)
+PRIVATE int compare_mask(ICONBLK *b1,ICONBLK *b2)
 {
 int i, size1, size2;
 char *p1, *p2;
@@ -2403,7 +2412,7 @@ char *base = (char *)rschdr;
 /*
  *  compare icon data, return 0 iff identical size & data
  */
-int compare_data(ICONBLK *b1,ICONBLK *b2)
+PRIVATE int compare_data(ICONBLK *b1,ICONBLK *b2)
 {
 int i, size1, size2;
 char *p1, *p2;
@@ -2430,7 +2439,7 @@ char *base = (char *)rschdr;
 /*
  *  display info from converted RSC header
  */
-void display_header()
+PRIVATE void display_header()
 {
     printf("RSC header (version %d), loaded from %s\n",rsh.vrsn,inrsc); /* version */
     printf("  Object offset  %5d\n",rsh.object);            /* offset to object[] */
@@ -2455,7 +2464,7 @@ void display_header()
 /*
  *  sort the definition table
  */
-void sort_def_table(int n)
+PRIVATE void sort_def_table(int n)
 {
 int i;
 DEF_ENTRY *d;
@@ -2484,7 +2493,7 @@ DEF_ENTRY *d;
     qsort(def,n,sizeof(DEF_ENTRY),cmp_def);
 }
 
-int cmp_def(const void *a,const void *b)
+PRIVATE int cmp_def(const void *a,const void *b)
 {
 const DEF_ENTRY *d1 = a;
 const DEF_ENTRY *d2 = b;
@@ -2498,7 +2507,7 @@ const DEF_ENTRY *d2 = b;
     return d1->obj - d2->obj;
 }
 
-void display_defs(int n)
+PRIVATE void display_defs(int n)
 {
 int i;
 DEF_ENTRY *d;
@@ -2511,7 +2520,7 @@ DEF_ENTRY *d;
     printf("\n");
 }
 
-void display_notrans(int n)
+PRIVATE void display_notrans(int n)
 {
 int i;
 NOTRANS_ENTRY *e;
@@ -2528,7 +2537,7 @@ NOTRANS_ENTRY *e;
     printf("\n");
 }
 
-void display_shared(int n)
+PRIVATE void display_shared(int n)
 {
 int i;
 SHARED_ENTRY *e;
@@ -2553,7 +2562,7 @@ SHARED_ENTRY *e;
  *   2. mark any tedinfo/bitblk/iconblk pointed to by a conditional
  *      object as conditional
  */
-void mark_conditional(void)
+PRIVATE void mark_conditional(void)
 {
 int n;
 OBJECT *obj;
@@ -2643,7 +2652,7 @@ char *obj_base, *p;
  *  scan a conditional array backwards, returning the start of a
  *  sequence of conditional objects stretching to the end of the array
  */
-int scan_conditional(char *conditional,int length)
+PRIVATE int scan_conditional(char *conditional,int length)
 {
 int i;
 
@@ -2657,7 +2666,7 @@ int i;
 /*
  *  initialise conditional status of trees/objects, free strings/alerts
  */
-void process_start_names(int num_defs)
+PRIVATE void process_start_names(int num_defs)
 {
 int i;
 DEF_ENTRY *d;
@@ -2708,7 +2717,7 @@ OFFSET *trindex = (OFFSET *)((char *)rschdr + rsh.trindex);
 /*
  *  initialise all xxx_status arrays
  */
-int init_all_status(MY_RSHDR *hdr)
+PRIVATE int init_all_status(MY_RSHDR *hdr)
 {
     if (init_status(&tedinfo_status,hdr->nted) < 0)
         return -1;
@@ -2723,7 +2732,7 @@ int init_all_status(MY_RSHDR *hdr)
 /*
  *  init one _status array
  */
-int init_status(char **array,int entries)
+PRIVATE int init_status(char **array,int entries)
 {
     *array = calloc(entries,1);
     if (entries && !*array)
@@ -2735,7 +2744,7 @@ int init_status(char **array,int entries)
 /*
  *  convert big-endian short to short
  */
-short get_short(SHORT *p)
+PRIVATE short get_short(SHORT *p)
 {
     return (p->hi<<8) | p->lo;
 }
@@ -2743,7 +2752,7 @@ short get_short(SHORT *p)
 /*
  *  convert big-endian short to short
  */
-unsigned short get_ushort(USHORT *p)
+PRIVATE unsigned short get_ushort(USHORT *p)
 {
     return (p->hi<<8) | p->lo;
 }
@@ -2751,7 +2760,7 @@ unsigned short get_ushort(USHORT *p)
 /*
  *  convert big-endian offset to unsigned long
  */
-unsigned long get_offset(OFFSET *p)
+PRIVATE unsigned long get_offset(OFFSET *p)
 {
     return (p->b1<<24) | (p->b2<<16) | (p->b3<<8) | p->b4;
 }
@@ -2759,7 +2768,7 @@ unsigned long get_offset(OFFSET *p)
 /*
  *  open a file, specified as name & extension separately
  */
-FILE *openfile(char *name,char *ext,char *mode)
+PRIVATE FILE *openfile(char *name,char *ext,char *mode)
 {
 char s[MAX_STRLEN];
 
@@ -2770,7 +2779,7 @@ char s[MAX_STRLEN];
 /*
  *  allocate memory & copy string to it
  */
-char *strdup(const char *string)
+PRIVATE char *strdup(const char *string)
 {
 char *p;
 
@@ -2781,7 +2790,7 @@ char *p;
     return p;
 }
 
-void error(char *s,char *t)
+PRIVATE void error(char *s,char *t)
 {
     fprintf(stderr,"  error: %s",s);
     if (t)
@@ -2790,7 +2799,7 @@ void error(char *s,char *t)
     exit(1);
 }
 
-void usage(char *s)
+PRIVATE void usage(char *s)
 {
     if (*s)
         fprintf(stderr,"%s %s: %s\n",PROGRAM_NAME,VERSION,s);
