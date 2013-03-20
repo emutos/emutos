@@ -578,6 +578,13 @@ LOCAL int conditional_bitblk_start;
 LOCAL int conditional_iconblk_start;
 
 /*
+ *  the following control generation of trees and objects
+ *  (the generated icon C file does not contain either)
+ */
+LOCAL int generate_trees = 1;
+LOCAL int generate_objects = 1;
+
+/*
  *  table for decoding ob_flags
  */
 typedef struct {
@@ -771,6 +778,10 @@ int n;
      *  mark as conditional any tedinfo/bitblk/iconblk pointed to.
      */
     mark_conditional();
+
+#ifdef ICON_RSC
+    generate_trees = generate_objects = 0;  /* the generated C file has neither */
+#endif
 
     /*
      *  we write the C file first, because it figures out what free strings
@@ -1747,7 +1758,6 @@ char *base = (char *)rschdr;
  */
 PRIVATE int write_object(FILE *fp)
 {
-#ifndef ICON_RSC
 int i, j, nobs, tree, ntree;
 int first_time = 1;
 unsigned short type, ext_type;
@@ -1757,6 +1767,9 @@ DEF_ENTRY *d;
 char temp[MAX_STRLEN];
 const char *p;
 char *base = (char *)rschdr;
+
+    if (!generate_objects)
+        return 0;
 
     fprintf(fp,"OBJECT %srs_obj[RS_NOBS];\n\n",prefix);
 
@@ -1807,7 +1820,6 @@ char *base = (char *)rschdr;
         fprintf(fp,"#endif\n");
 
     fprintf(fp,"};\n\n\n");
-#endif
 
     return ferror(fp) ? -1 : 0;
 }
@@ -1817,11 +1829,13 @@ char *base = (char *)rschdr;
  */
 PRIVATE int write_tree(FILE *fp)
 {
-#ifndef ICON_RSC
 int i, ntree;
 int first_time = 1;
 DEF_ENTRY *d;
 char temp[MAX_STRLEN];
+
+    if (!generate_trees)
+        return 0;
 
     fprintf(fp,"OBJECT * const %srs_trees[] = {\n",prefix);
 
@@ -1841,7 +1855,6 @@ char temp[MAX_STRLEN];
         fprintf(fp,"#endif\n");
 
     fprintf(fp,"};\n\n\n");
-#endif
 
     return ferror(fp) ? -1 : 0;
 }
