@@ -4626,3 +4626,5 @@ Start... early ages
   Tamminen. (RFB)
 - util/bootasm.S: Removed non-ASCII dash. Contributed by David Savinkoff. (VRI)
 - Makefile: Updated make help. Suggested by David Savinkoff. (VRI)
+- Makefile: Adjust warning options according to GCC version. Contributed by Eero
+  Tamminen. (VRI)

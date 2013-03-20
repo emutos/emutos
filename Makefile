@@ -135,7 +135,16 @@ MULTILIBFLAGS = $(CPUFLAGS) -mshort
 INC = -Iinclude
 OPTFLAGS = -Os -fomit-frame-pointer
 OTHERFLAGS = -ffreestanding
-WARNFLAGS = -Wall -Wundef #-Wold-style-definition -fno-common -Wshadow -Wmissing-prototypes -Wstrict-prototypes #-Werror
+
+WARNFLAGS = -Wall -Wundef #-fno-common -Wshadow -Wmissing-prototypes -Wstrict-prototypes #-Werror
+GCCVERSION := $(shell $(CC) -dumpversion | cut -d. -f1)
+# add warning flags not supported by GCC v2
+ifneq (,$(GCCVERSION))
+ifneq (2,$(GCCVERSION))
+WARNFLAGS += -Wold-style-definition
+endif
+endif
+
 DEFINES = $(LOCALCONF) -DWITH_AES=$(WITH_AES) -DWITH_CLI=$(WITH_CLI) $(DEF)
 CFLAGS = $(MULTILIBFLAGS) $(TOOLCHAIN_CFLAGS) $(OPTFLAGS) $(WARNFLAGS) $(OTHERFLAGS) $(INC) $(DEFINES)
 
@@ -148,7 +157,14 @@ OBJDUMP = $(TOOLCHAIN_PREFIX)objdump
 OBJCOPY = $(TOOLCHAIN_PREFIX)objcopy
 
 # the native C compiler, for tools
-NATIVECC = gcc -ansi -pedantic -Wall -W -O
+NATIVECC = gcc -ansi -pedantic $(WARNFLAGS) -W -O
+
+# test target to build all tools
+tools: bug compr erd mkflop mkrom tos-lang-change tounix uncompr
+
+# user tool, not needed in EmuTOS building
+tos-lang-change$(EXE): tools/tos-lang-change.c
+	$(NATIVECC) -o $@ $<
 
 #
 # source code in bios/
