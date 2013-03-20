@@ -4624,3 +4624,4 @@ Start... early ages
 - vdi/vdi_line.c: Now abline() uses pointers to UWORD instead of UBYTE. (VRI)
 - tools/erd.c: Add static and const where relevant. Contributed by Eero
   Tamminen. (RFB)
+- util/bootasm.S: Removed non-ASCII dash. Contributed by David Savinkoff. (VRI)
