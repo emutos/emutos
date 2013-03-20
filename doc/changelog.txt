@@ -4624,6 +4624,8 @@ Start... early ages
 - vdi/vdi_line.c: Now abline() uses pointers to UWORD instead of UBYTE. (VRI)
 - tools/erd.c: Add static and const where relevant. Contributed by Eero
   Tamminen. (RFB)
+
+2013-03-20
 - util/bootasm.S: Removed non-ASCII dash. Contributed by David Savinkoff. (VRI)
 - Makefile: Updated make help. Suggested by David Savinkoff. (VRI)
 - Makefile: Adjust warning options according to GCC version. Contributed by Eero
@@ -4633,7 +4635,5 @@ Start... early ages
 - Makefile bios/coldfire.c bios/coldfire.h bios/coldpriv.h bios/serport.c
   include/config.h: Added CONF_WITH_COLDFIRE_RS232 to use the internal ColdFire
   RS-232 port instead of the MFP one. (VRI)
-
-2013-03-20
 - tools/erd.c: Fixed warnings when compiling erd.c with ICON_RSC defined. (RFB)
 - tools/bug.c: Fix warning message. (RFB)
