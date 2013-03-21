@@ -4644,3 +4644,6 @@ Start... early ages
 - Makefile bios/coldfire.c bios/coldfire.h bios/coldfire2.S bios/coldpriv.h
   bios/mfp.c bios/vectors.S: Added CONF_COLDFIRE_TIMER_C to emulate the Timer C
   on ColdFire machines without MFP, using the internal ColdFire timers. (VRI)
+
+2013-03-22
+- bios/dmasound.c xbios.c: Implemented setracks() and setmontracks(). (THH)

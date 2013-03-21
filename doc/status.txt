@@ -214,8 +214,8 @@ TOS v4.00:
  > 0x82 Soundcmd
  X 0x83 Setbuffer
  X 0x84 Setmode
- - 0x85 Settracks
- - 0x86 Setmontracks
+ X 0x85 Settracks
+ X 0x86 Setmontracks
  X 0x87 Setinterrupt
  > 0x8c Sndstatus
 

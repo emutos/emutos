@@ -972,6 +972,16 @@ static LONG xbios_84(UWORD mode)
     kprintf("XBIOS: setsndmode\n");
     return setsndmode(mode);
 }
+static LONG xbios_85(UWORD playtracks, UWORD rectracks)
+{
+    kprintf("XBIOS: settracks\n");
+    return settracks(playtracks, rectracks);
+}
+static LONG xbios_86(UWORD track)
+{
+    kprintf("XBIOS: setsndmode\n");
+    return setmontracks(track);
+}
 static LONG xbios_87(UWORD mode, WORD cause)
 {
     kprintf("XBIOS: setinterrupt\n");
@@ -1210,8 +1220,8 @@ const PFLONG xbios_vecs[] = {
     VEC(xbios_82, soundcmd),    /* 82 */
     VEC(xbios_83, setbuffer),   /* 83 */
     VEC(xbios_84, setsndmode),  /* 84 */
-    xbios_unimpl,   /* 85 */
-    xbios_unimpl,   /* 86 */
+    VEC(xbios_85, settracks),   /* 85 */
+    VEC(xbios_86, setmontracks), /* 86 */
     VEC(xbios_87, setinterrupt), /* 87 */
     VEC(xbios_88, buffoper),    /* 88 */
     xbios_unimpl,   /* 89 */

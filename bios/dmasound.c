@@ -333,6 +333,33 @@ LONG setsndmode(UWORD mode)
 }
 
 /**
+ * Set amount of tracks
+ */
+LONG settracks(UWORD playtracks, UWORD rectracks)
+{
+    if (playtracks > 3 || rectracks > 3 || !has_falcon_dmasound)
+        return EBADRQ;
+
+    DMASOUND->track_control = (DMASOUND->track_control & 0xfc) | playtracks;
+    DMASOUND->record_tracks = rectracks;
+
+    return 0;
+}
+
+/**
+ * Set DAC track
+ */
+LONG setmontracks(UWORD montrack)
+{
+    if (montrack > 3 || !has_falcon_dmasound)
+        return EBADRQ;
+
+    DMASOUND->track_control = (DMASOUND->track_control&0xcf) | (montrack << 4);
+
+    return 0;
+}
+
+/**
  * Set interrupt mode (Timer-A or MFP-i7)
  */
 LONG setinterrupt(UWORD mode, WORD cause)

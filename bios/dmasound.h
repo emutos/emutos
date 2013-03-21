@@ -24,6 +24,8 @@ LONG unlocksnd(void);
 LONG soundcmd(WORD mode, WORD data);
 LONG setbuffer(UWORD mode, ULONG startaddr, ULONG endaddr);
 LONG setsndmode(UWORD mode);
+LONG settracks(UWORD playtracks, UWORD rectracks);
+LONG setmontracks(UWORD montrack);
 LONG setinterrupt(UWORD mode, WORD cause);
 LONG buffoper(WORD mode);
 LONG devconnect(WORD source, WORD dest, WORD clk, WORD prescale, WORD protocol);
