@@ -26,6 +26,9 @@ typedef volatile unsigned long vuint32;
 # error Unknown ColdFire Machine
 #endif
 
+#define EXCEPTION_VECTOR(n) (*(void* volatile *)(__VBR + (n)*4))
+#define INTERRUPT_VECTOR(n) EXCEPTION_VECTOR(64 + (n))
+
 /*********************************************************************
 *
 * Programmable Serial Controller (UART Compatible Definitions) (UART)

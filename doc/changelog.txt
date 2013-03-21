@@ -4639,3 +4639,8 @@ Start... early ages
 - tools/bug.c: Fix warning message. (RFB)
 - tools/erd.c: Generate smaller icons.c if CONF_WITH_DESKTOP_ICONS is 0. (RFB)
 - include/config.h: Changed the default desktop for 192K ROMs to DESK1. (RFB)
+
+2013-03-21
+- Makefile bios/coldfire.c bios/coldfire.h bios/coldfire2.S bios/coldpriv.h
+  bios/mfp.c bios/vectors.S: Added CONF_COLDFIRE_TIMER_C to emulate the Timer C
+  on ColdFire machines without MFP, using the internal ColdFire timers. (VRI)

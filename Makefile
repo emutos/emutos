@@ -182,6 +182,7 @@ bios_ssrc = tosvars.S startup.S aciavecs.S vectors.S lineavars.S \
 
 ifeq (1,$(COLDFIRE))
   bios_csrc += coldfire.c
+  bios_ssrc += coldfire2.S
 endif
 
 #

@@ -22,6 +22,11 @@ BOOL coldfire_rs232_can_read(void);
 UBYTE coldfire_rs232_read_byte(void);
 #endif
 
+#if CONF_COLDFIRE_TIMER_C
+void coldfire_init_system_timer(void);
+void coldfire_int_61(void); /* In coldfire2.S */
+#endif
+
 #endif /* __mcoldfire__ */
 
 #endif /* COLDFIRE_H */

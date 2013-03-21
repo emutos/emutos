@@ -467,8 +467,10 @@ vbl_end:
 
 
 // ==== Timer C interrupt handler ============================================
-_int_timerc:
 
+#define REAL_TIMER_C_HANDLER (CONF_WITH_MFP && !CONF_COLDFIRE_TIMER_C)
+
+_int_timerc:
         addq.l  #1, _hz_200             // increment 200 Hz counter
 
 #ifdef __mcoldfire__
@@ -521,14 +523,14 @@ _int_timerc:
 #endif
 
 timerc_end:
-#if CONF_WITH_MFP
+#if REAL_TIMER_C_HANDLER
 #ifdef __mcoldfire__
         lea     0xfffffa11.w, a0
         bclr    #5, (a0)                // clear interrupt service bit
 #else
         bclr    #5, 0xfffffa11.w        // clear interrupt service bit
 #endif
-#endif /* CONF_WITH_MFP */
+#endif /* REAL_TIMER_C_HANDLER */
 
 #ifdef __mcoldfire__
         // Restore late ColdFire registers
@@ -536,7 +538,7 @@ timerc_end:
         move.l  (sp)+, d0
 #endif
 
-#if CONF_WITH_MFP
+#if REAL_TIMER_C_HANDLER
         rte
 #else
         rts

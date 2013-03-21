@@ -19,6 +19,7 @@
 #include "mfp.h"
 #include "tosvars.h"
 #include "vectors.h"
+#include "coldfire.h"
 
 #if CONF_WITH_MFP
 
@@ -157,7 +158,9 @@ void init_system_timer(void)
     timer_c_sieve = 0x1111;
     timer_ms = 20;
 
-#if CONF_WITH_MFP
+#if CONF_COLDFIRE_TIMER_C
+    coldfire_init_system_timer();
+#elif CONF_WITH_MFP
     /* Timer C: ctrl = divide 64, data = 192 */
     xbtimer(2, 0x50, 192, (LONG)int_timerc);
 #endif

@@ -400,6 +400,18 @@
 #endif
 
 /*
+ * Set CONF_COLDFIRE_TIMER_C to 1 to simulate the Timer C using the
+ * internal ColdFire timers.
+ */
+#ifndef CONF_COLDFIRE_TIMER_C
+# if defined(__mcoldfire__) && !CONF_WITH_MFP
+#  define CONF_COLDFIRE_TIMER_C 1
+# else
+#  define CONF_COLDFIRE_TIMER_C 0
+# endif
+#endif
+
+/*
  * Set CONF_WITH_COLDFIRE_RS232 to 1 to use the internal ColdFire serial port
  */
 #ifndef CONF_WITH_COLDFIRE_RS232
