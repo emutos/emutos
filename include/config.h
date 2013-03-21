@@ -142,7 +142,7 @@
 #  define CONF_WITH_ASSERT 0
 # endif
 # ifndef CONF_WITH_DESK1
-#  define CONF_WITH_DESK1 0 /* Sad but necessary to fit size requirements */
+#  define CONF_WITH_DESK1 1
 # endif
 # ifndef CONF_WITH_DESKTOP_ICONS
 #  define CONF_WITH_DESKTOP_ICONS 0

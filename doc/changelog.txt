@@ -4638,3 +4638,4 @@ Start... early ages
 - tools/erd.c: Fixed warnings when compiling erd.c with ICON_RSC defined. (RFB)
 - tools/bug.c: Fix warning message. (RFB)
 - tools/erd.c: Generate smaller icons.c if CONF_WITH_DESKTOP_ICONS is 0. (RFB)
+- include/config.h: Changed the default desktop for 192K ROMs to DESK1. (RFB)
