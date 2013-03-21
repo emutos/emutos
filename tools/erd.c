@@ -149,6 +149,10 @@
  *          . declare global variables as LOCAL & most functions as
  *            PRIVATE; define both of them as 'static' by default (for
  *            debugging, define them as empty strings)
+ *
+ *  v4.2    roger burrows, march/2013
+ *          . generate additional #ifdefs when creating icon resource,
+ *            to support DESK1 in 192K ROMs
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -162,7 +166,7 @@
 #define DIRSEP  '/'
 #endif
 
-#define LOCAL   static  /* undef for debugging */
+#define LOCAL   static  /* comment out for LatticeC debugging */
 #define PRIVATE static
 
 /*
@@ -357,7 +361,7 @@ typedef struct {
   #define PROGRAM_NAME  "ird"
 #endif
 
-#define VERSION         "v4.1"
+#define VERSION         "v4.2"
 #define MAX_STRLEN      300         /* max size for internal string areas */
 #define NLS             "N_("       /* the macro used in EmuTOS for NLS support*/
 
@@ -441,7 +445,7 @@ typedef struct {
 /*
  *  conditional wrapping control
  */
-LOCAL const CONDITIONAL frstr_cond = { "STNOOPEN", "#ifdef DESK1" };
+LOCAL const CONDITIONAL frstr_cond = { "STNOOPEN", "#if CONF_WITH_DESK1" };
 LOCAL const CONDITIONAL other_cond = { "ADTTREZ", "#ifndef TARGET_192" };
 
 /*
@@ -509,7 +513,7 @@ LOCAL int num_notrans = sizeof(notrans) / sizeof(NOTRANS_ENTRY);
  *  conditional wrapping control
  */
 LOCAL const CONDITIONAL frstr_cond = { "?", "#error \"Code generation error\"" };  /* no match, error if it does ... */
-LOCAL const CONDITIONAL other_cond = { "?", "#error \"Code generation error\"" };  /* likewise */
+LOCAL const CONDITIONAL other_cond = { "APPS", "#if CONF_WITH_DESKTOP_ICONS" };
 
 /*
  *  table of complete strings that will have a shared data item
@@ -1473,10 +1477,6 @@ PRIVATE int write_include(FILE *fp,char *name)
     fprintf(fp,"#include \"%s.h\"\n",name);
     fprintf(fp,"#include \"nls.h\"\n\n");
 
-#ifdef ICON_RSC
-    fprintf(fp,"#if CONF_WITH_DESKTOP_ICONS\n\n");
-#endif
-
     return ferror(fp) ? -1 : 0;
 }
 
@@ -1631,10 +1631,16 @@ char *base = (char *)rschdr;
         }
     }
 
+#ifdef ICON_RSC
+    fprintf(fp,"#if CONF_WITH_DESK1 || CONF_WITH_DESKTOP_ICONS\n\n");
+#endif
+
     /*
      * then we create the actual icon mask/data arrays
      */
     for (i = 0; i < nib; i++, iconblk++) {
+        if (i == conditional_iconblk_start)
+            fprintf(fp,"%s\n",other_cond.string);
         if (mmap[i] < 0) {      /* only create icon mask for an "unmapped" icon */
             n = get_short(&iconblk->ib_hicon) * get_short(&iconblk->ib_wicon) / 16;
             fprintf(fp,"static const WORD rs_iconmask%d[] = {\n",i);    /* output mask */
@@ -1648,7 +1654,15 @@ char *base = (char *)rschdr;
             fprintf(fp,"};\n\n");
         }
     }
+    if (conditional_iconblk_start < nib)
+        fprintf(fp,"#endif\n");
+
+#ifdef ICON_RSC
+    fprintf(fp,"#endif /* CONF_WITH_DESK1 || CONF_WITH_DESKTOP_ICONS */\n\n\n");
+    fprintf(fp,"#if CONF_WITH_DESK1 || CONF_WITH_DESKTOP_ICONS\n\n");
+#else
     fprintf(fp,"\n");
+#endif
 
     /*
      * finally we create the array of ICONBLKs with pointers to mask/data
@@ -1657,7 +1671,7 @@ char *base = (char *)rschdr;
     iconblk = (ICONBLK *)(base + rsh.iconblk);
     for (i = 0; i < nib; i++, iconblk++) {
         if (i == conditional_iconblk_start)
-            fprintf(fp,"%s\n",other_cond.string);
+            fprintf(fp,"\n%s\n",other_cond.string);
         iconchar = get_short(&iconblk->ib_char);
         copyfix(temp,base+get_offset(&iconblk->ib_ptext),MAX_STRLEN-1);
         fprintf(fp,"    { (LONG) rs_iconmask%d, (LONG) rs_icondata%d, (LONG) \"%s\", %s,\n",
@@ -1672,7 +1686,13 @@ char *base = (char *)rschdr;
     }
     if (conditional_iconblk_start < nib)
         fprintf(fp,"#endif\n");
-    fprintf(fp,"};\n\n\n");
+    fprintf(fp,"};\n");
+
+#ifdef ICON_RSC
+    fprintf(fp,"\n#endif /* CONF_WITH_DESK1 || CONF_WITH_DESKTOP_ICONS */\n");
+#endif
+
+    fprintf(fp,"\n\n");
 
     free(mmap);
     free(dmap);
@@ -1874,6 +1894,10 @@ DEF_ENTRY *d;
 char temp[MAX_STRLEN];
 char *base = (char *)rschdr;
 
+#ifdef ICON_RSC
+    fprintf(fp,"#if CONF_WITH_DESKTOP_ICONS\n\n");
+#endif
+
     fprintf(fp,"const char * const %srs_fstr[] = {\n",prefix);
 
     nstring = rsh.nstring;
@@ -1904,7 +1928,13 @@ char *base = (char *)rschdr;
     }
     if (!first_time)
         fprintf(fp,"#endif\n");
-    fprintf(fp,"};\n\n\n");
+    fprintf(fp,"};\n");
+
+#ifdef ICON_RSC
+    fprintf(fp,"\n#endif /* CONF_WITH_DESKTOP_ICONS */\n");
+#endif
+
+    fprintf(fp,"\n\n");
 
     return ferror(fp) ? -1 : 0;
 }
@@ -1959,9 +1989,6 @@ PRIVATE int write_c_epilogue(FILE *fp)
     fprintf(fp,"    for (i = 0, p = tree+BUTOFF; i < MAX_BUTNUM; i++, p++)\n");
     fprintf(fp,"        p->ob_spec = (LONG)&msg_but[i];\n");
     fprintf(fp,"}\n");
-#endif
-#ifdef ICON_RSC
-    fprintf(fp,"#endif /* CONF_WITH_DESKTOP_ICONS */\n");
 #endif
 
     return ferror(fp) ? -1 : 0;
@@ -2697,11 +2724,10 @@ OFFSET *trindex = (OFFSET *)((char *)rschdr + rsh.trindex);
                 for ( ; i < num_defs; i++, d++) {
                     switch(d->type) {
                     case DEF_OBJECT:
-                        if (conditional_object_start == rsh.nobs)   /* first time */
-                            conditional_object_start = (get_offset(&trindex[d->tree]) - get_offset(&trindex[0])) / sizeof(OBJECT);
-                        /* drop through */
                     case DEF_DIALOG:
                     case DEF_MENU:
+                        if (conditional_object_start == rsh.nobs)   /* first time */
+                            conditional_object_start = (get_offset(&trindex[d->tree]) - get_offset(&trindex[0])) / sizeof(OBJECT);
                         d->conditional = 1;
                         break;
                     }

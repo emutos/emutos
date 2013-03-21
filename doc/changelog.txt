@@ -4637,3 +4637,4 @@ Start... early ages
   RS-232 port instead of the MFP one. (VRI)
 - tools/erd.c: Fixed warnings when compiling erd.c with ICON_RSC defined. (RFB)
 - tools/bug.c: Fix warning message. (RFB)
+- tools/erd.c: Generate smaller icons.c if CONF_WITH_DESKTOP_ICONS is 0. (RFB)
