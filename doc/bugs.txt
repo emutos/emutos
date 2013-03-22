@@ -48,8 +48,6 @@
 - Box drawing in Glücksrad leaves garbage on top of screen
   and player name input text isn't shown.
 - In "MathMaze", game win dialog leaves some lines on screen.
-- Ramses game panics after Mediach() if floppy is missing:
-  http://sourceforge.net/mailarchive/message.php?msg_id=29277256
 - 7UP hangs on exit.
 
 
@@ -67,7 +65,7 @@ Links to programs listed above:
 - Bombs:
   http://www.umich.edu/~archive/atari/Games/Puzzle/bombs.arc
 - Clac:
-  http://koti.mbnet.fi/tammat/open.shtml#clac
+  http://koti.mbnet.fi/tammat/hatari/programs.shtml#clac
 - GEM Nethack:
   http://www.nethack.org/v343/ports/download-atari.html
 - Hotshot checkers:
@@ -98,4 +96,4 @@ Links to programs listed above:
   http://www.umich.edu/~archive/atari/Games/Cards/yukone1.lzh
   http://www.haun-online.de/Atari/e_index.html
 
-(Links missing to: yams, mathmaze, laserchess, diamondminer and ramses.)
+(Links missing to: yams, mathmaze, laserchess, diamondminer.)
