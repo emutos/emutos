@@ -2336,7 +2336,7 @@ xCmdLn(char *parm[], int *pipeflg, long *nonStdIn, char *outsd_tl)
                 xwrite(1, 2L, "\033w");
                 dspMsg(5);
             } else if (xncmps(4, s, "CLS") || xncmps(6, s, "CLEAR"))
-                xwrite(1, 4L, "\033H\033J");
+                xwrite(1, 2L, "\033E");
             else {
                 if (*nonStdIn)
                     dspCL(&argv[0]);

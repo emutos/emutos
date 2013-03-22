@@ -4649,3 +4649,5 @@ Start... early ages
 - bios/dmasound.c xbios.c: Implemented setracks() and setmontracks(). (THH)
 - include/config.h: Enable CONF_WITH_FASTRAM when CONF_FASTRAM_SIZE is
   defined. (VRI)
+- bios/vt52.c: Fixed cursor artifact on Esc E (Clear Screen). (VRI)
+- cli/command.c: Use Esc E to clear the screen. (VRI)
