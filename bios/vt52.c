@@ -25,8 +25,10 @@
 #include "vt52.h"
 #include "bios.h"
 
-/* The serial console is more convenient when the cursor goes only forward */
-#define SERIAL_CONSOLE_HONOR_HOME 1
+#if CONF_SERIAL_CONSOLE_ANSI
+/* We disable cursor home commands because it is more convenient. */
+# define SERIAL_CONSOLE_HONOR_HOME 0
+#endif
 
 /*
  * internal prototypes

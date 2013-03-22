@@ -4651,3 +4651,4 @@ Start... early ages
   defined. (VRI)
 - bios/vt52.c: Fixed cursor artifact on Esc E (Clear Screen). (VRI)
 - cli/command.c: Use Esc E to clear the screen. (VRI)
+- bios/vt52.c: Disable SERIAL_CONSOLE_HONOR_HOME by default. (VRI)
