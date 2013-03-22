@@ -4647,3 +4647,5 @@ Start... early ages
 
 2013-03-22
 - bios/dmasound.c xbios.c: Implemented setracks() and setmontracks(). (THH)
+- include/config.h: Enable CONF_WITH_FASTRAM when CONF_FASTRAM_SIZE is
+  defined. (VRI)
