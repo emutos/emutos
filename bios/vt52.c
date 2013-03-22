@@ -43,6 +43,7 @@ static void clear_and_home(void);
 static void cursor_home(void);
 static void reverse_linefeed(void);
 static void erase_to_eos(void);
+static void erase_to_eol_impl(void);
 static void erase_to_eol(void);
 static void insert_line(void);
 static void delete_line(void);
@@ -56,6 +57,7 @@ static void cursor_on_cnt(void);
 static void save_cursor_pos(void);
 static void restore_cursor_pos(void);
 static void erase_line(void);
+static void erase_from_bol_impl(void);
 static void erase_from_bol(void);
 static void reverse_video_on(void);
 static void reverse_video_off(void);
@@ -517,7 +519,7 @@ erase_to_eos (void)
     bconout_str(1, "\033[J");
 #endif
 
-    erase_to_eol();    /* erase to end of line. */
+    erase_to_eol_impl(); /* erase to end of line. */
 
     /* last line? */
     if ( v_cur_cy == v_cel_my )
@@ -530,17 +532,12 @@ erase_to_eos (void)
 
 
 /*
- * erase_to_eol - Erase to End of Line.
+ * erase_to_eol_impl - Erase to End of Line (implementation)
  */
 
 static void
-erase_to_eol (void)
+erase_to_eol_impl (void)
 {
-#if CONF_SERIAL_CONSOLE_ANSI
-    /* Disabled because function used from internal VT52 implementation. */
-    //bconout_str(1, "\033[K");
-#endif
-
     BOOL wrap = v_stat_0 & M_CEOL;      /* save line wrap status */
     v_stat_0 &= ~M_CEOL;    /* clear EOL handling bit. (overwrite) */
 
@@ -564,6 +561,21 @@ erase_to_eol (void)
 
     restore_cursor_pos();       /* restore cursor position. */
     cursor_on_cnt();            /* show cursor. */
+}
+
+
+/*
+ * erase_to_eol - Erase to End of Line.
+ */
+
+static void
+erase_to_eol (void)
+{
+#if CONF_SERIAL_CONSOLE_ANSI
+    bconout_str(1, "\033[K");
+#endif
+
+    erase_to_eol_impl();
 }
 
 
@@ -661,7 +673,7 @@ erase_from_home (void)
     bconout_str(1, "\033[1J");
 #endif
 
-    erase_from_bol();    /* erase from beginning of line. */
+    erase_from_bol_impl(); /* erase from beginning of line. */
 
     /* first line? */
     if ( !v_cur_cy )
@@ -832,20 +844,15 @@ erase_line (void)
 
 
 /*
- * erase_from_bol - Erase from Beginning of Line.
+ * erase_from_bol_impl - Erase from Beginning of Line (implementation)
  *
  * upper left coords. (0,y)
  * lower right coords. (x,y)
  */
 
 static void
-erase_from_bol (void)
+erase_from_bol_impl (void)
 {
-#if CONF_SERIAL_CONSOLE_ANSI
-    /* Disabled because function used from internal VT52 implementation. */
-    //bconout_str(1, "\033[1K");
-#endif
-
     cursor_off();               /* hide cursor. */
     save_cursor_pos();          /* save cursor position. */
 
@@ -864,6 +871,25 @@ erase_from_bol (void)
 
     restore_cursor_pos();       /* restore cursor position. */
     cursor_on_cnt();            /* show cursor. */
+}
+
+
+
+/*
+ * erase_from_bol - Erase from Beginning of Line.
+ *
+ * upper left coords. (0,y)
+ * lower right coords. (x,y)
+ */
+
+static void
+erase_from_bol (void)
+{
+#if CONF_SERIAL_CONSOLE_ANSI
+    bconout_str(1, "\033[1K");
+#endif
+
+    erase_from_bol_impl();
 }
 
 
