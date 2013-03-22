@@ -388,8 +388,10 @@ clear_and_home(void)
 # endif
 #endif
 
+    cursor_off();                               /* hide cursor. */
     move_cursor(0, 0);                          /* cursor home */
-    blank_out (0, 0, v_cel_mx, v_cel_my);        /* clear screen. */
+    blank_out (0, 0, v_cel_mx, v_cel_my);       /* clear screen. */
+    cursor_on_cnt();                            /* show cursor. */
 }
 
 
