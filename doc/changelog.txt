@@ -4658,3 +4658,4 @@ Start... early ages
 
 2013-03-23
 - include/config.h: Fixed regression on FastRAM support. (VRI)
+- tools/erd.c: Changed name of strdup() due to conflict on BSD systems. (RFB)

@@ -687,7 +687,7 @@ PRIVATE int scan_conditional(char *conditional,int length);
 PRIVATE void shrink_valid(char *dest,char *src);
 PRIVATE void sort_def_table(int n);
 PRIVATE void sort_shared(int n);
-PRIVATE char *strdup(const char *string);
+PRIVATE char *string_dup(const char *string);
 PRIVATE void trim_spaces(char *string);
 PRIVATE void usage(char *s);
 PRIVATE int write_c_epilogue(FILE *fp);
@@ -981,7 +981,7 @@ char name[MAXLEN_HRD+1], *p;
             if (c == 0)
                 break;
         }
-        d->name = strdup(name);
+        d->name = string_dup(name);
         if (d->type == DEF_PREFIX) {
             if (!prefix[0]) {           /* use prefix from file if not already specified */
                 strcpy(prefix,d->name);
@@ -1038,7 +1038,7 @@ char temp[9];
         }
         d->indicator = entry.indicator;
         memcpy(temp,entry.name,8);
-        d->name = strdup(temp);
+        d->name = string_dup(temp);
     }
     fclose(fp);
 
@@ -1089,7 +1089,7 @@ char temp[9];
         }
         d->indicator = entry.indicator;
         memcpy(temp,entry.name,8);
-        d->name = strdup(temp);
+        d->name = string_dup(temp);
     }
     fclose(fp);
 
@@ -2816,9 +2816,10 @@ char s[MAX_STRLEN];
 }
 
 /*
- *  allocate memory & copy string to it
+ *  allocate memory & copy string to it: this is
+ *  available on BSD-type systems as strdup()
  */
-PRIVATE char *strdup(const char *string)
+PRIVATE char *string_dup(const char *string)
 {
 char *p;
 
