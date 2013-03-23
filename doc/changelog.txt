@@ -4655,3 +4655,6 @@ Start... early ages
 - Makefile release.mk bios/coldfire.c bios/coldfire.h bios/coldfire2.S
   bios/coldpriv.h bios/ide.c bios/machine.c bios/startup.S doc/readme-m548x.txt
   include/config.h: Added support for the ColdFire Evaluation boards. (VRI)
+
+2013-03-23
+- include/config.h: Fixed regression on FastRAM support. (VRI)

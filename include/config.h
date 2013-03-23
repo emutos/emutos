@@ -375,22 +375,18 @@
 #endif
 
 /*
+ * Set CONF_WITH_FASTRAM to 1 to enable detection and usage of FastRAM (TT-RAM)
+ */
+#ifndef CONF_WITH_FASTRAM
+# define CONF_WITH_FASTRAM 1
+#endif
+
+/*
  * Define CONF_FASTRAM_SIZE to the actual size of the FastRAM, in bytes.
  * If set to 0, the amount of FastRAM will be autodetected.
  */
 #ifndef CONF_FASTRAM_SIZE
 # define CONF_FASTRAM_SIZE 0
-#endif
-
-/*
- * Set CONF_WITH_FASTRAM to 1 to enable detection and usage of FastRAM (TT-RAM)
- */
-#ifndef CONF_WITH_FASTRAM
-# if CONF_FASTRAM_SIZE != 0
-#  define CONF_WITH_FASTRAM 1
-# else
-#  define CONF_WITH_FASTRAM 0
-# endif
 #endif
 
 /*
