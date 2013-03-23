@@ -317,6 +317,7 @@ help:
 	@echo "firebee-ram ramtos.img + boot.prg, a RAM tos for the FireBee"
 	@echo "amiga   $(ROM_AMIGA), EmuTOS ROM for Amiga hardware"
 	@echo "amigakd $(AMIGA_KICKDISK), EmuTOS as Amiga 1000 Kickstart disk"
+	@echo "m548x   $(SREC_M548X), EmuTOS-RAM for ColdFire Evaluation Boards"
 	@echo "all192  all 192 kB images"
 	@echo "all256  all 256 kB images"
 	@echo "allbin  all 192 kB, 256 kB and 512 kB images"
@@ -497,6 +498,14 @@ NODEP += firebee-ram
 firebee-ram:
 	@echo "# Building FireBee EmuTOS for RAM"
 	$(MAKE) COLDFIRE=1 CPUFLAGS='-mcpu=5474' DEF='-DMACHINE_FIREBEE' ram
+
+SREC_M548X = emutos-m548x.s19
+.PHONY: m548x
+NODEP += m548x
+m548x: UNIQUE = $(COUNTRY)
+m548x:
+	@echo "# Building M548x EmuTOS in $(SREC_M548X)"
+	$(MAKE) COLDFIRE=1 DEF='-DMACHINE_M548X' UNIQUE=$(UNIQUE) SRECFILE=$(SREC_M548X) $(SREC_M548X)
 
 #
 # ram - In two stages. first link emutos2.img to know the top address of bss,

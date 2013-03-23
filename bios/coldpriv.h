@@ -18,7 +18,10 @@ typedef volatile unsigned char vuint8;
 typedef volatile unsigned short vuint16;
 typedef volatile unsigned long vuint32;
 
-#ifdef MACHINE_FIREBEE
+#ifdef MACHINE_M548X
+# define __MBAR ((vuint8*)0x10000000)
+# define __VBR ((vuint8*)0x00000000)
+#elif defined (MACHINE_FIREBEE)
 # define __MBAR ((vuint8*)0xff000000)
 # define __RAMBAR0 ((vuint8*)0xff100000)
 # define __VBR __RAMBAR0
@@ -2087,5 +2090,31 @@ typedef volatile unsigned long vuint32;
 #define MCF_SIU_JTAGID_MCF5472      (0x0801501D)
 #define MCF_SIU_JTAGID_MCF5471      (0x0801601D)
 #define MCF_SIU_JTAGID_MCF5470      (0x0801701D)
+
+/*********************************************************************
+*
+* M548X specific defines
+*
+*********************************************************************/
+
+#ifdef MACHINE_M548X
+
+#define FIRE_ENGINE_CS4_BASE 0xC0000000L
+#define FIRE_ENGINE_CS4_SIZE 0x10000000L
+#define FIRE_ENGINE_CS4_ACCESS \
+        (MCF_FBCS_CSCR_ASET(1) + MCF_FBCS_CSCR_WS(25) + MCF_FBCS_CSCR_AA + MCF_FBCS_CSCR_PS_16) // 0x106580
+
+#define FIRE_ENGINE_CS5_BASE 0xE0000000L
+#define FIRE_ENGINE_CS5_SIZE 0x10000000L
+#define FIRE_ENGINE_CS5_ACCESS \
+        (MCF_FBCS_CSCR_ASET(1) + MCF_FBCS_CSCR_WS(10) + MCF_FBCS_CSCR_AA + MCF_FBCS_CSCR_PS_16) // 0x102980
+
+#define FIRE_ENGINE_CPLD_HW_REVISION (FIRE_ENGINE_CS5_BASE + 0x08000000)
+#define FIRE_ENGINE_CPLD_SW_REVISION (FIRE_ENGINE_CS5_BASE + 0x07000000)
+#define FIRE_ENGINE_CPLD_PWRMGT (FIRE_ENGINE_CS5_BASE + 0x04000000)
+
+#define COMPACTFLASH_BASE (FIRE_ENGINE_CS5_BASE + 0x0A000000)
+
+#endif /* MACHINE_M548X */
 
 #endif /* COLDPRIV_H */

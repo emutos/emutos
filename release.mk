@@ -166,6 +166,21 @@ release-amiga:
 	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_AMIGA).zip $(RELEASE_AMIGA)
 	rm -r $(RELEASE_DIR)/$(RELEASE_AMIGA)
 
+.PHONY: release-m548x
+NODEP += release-m548x
+RELEASE_M548X = emutos-m548x-$(VERSION)
+release-m548x:
+	$(MAKE) clean
+	$(MAKE) m548x
+	mkdir $(RELEASE_DIR)/$(RELEASE_M548X)
+	cp $(SREC_M548X) $(RELEASE_DIR)/$(RELEASE_M548X)
+	cat doc/readme-m548x.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_M548X)/readme.txt
+	mkdir $(RELEASE_DIR)/$(RELEASE_M548X)/doc
+	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_M548X)/doc
+	find $(RELEASE_DIR)/$(RELEASE_M548X) -name '*.txt' -exec unix2dos '{}' ';'
+	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_M548X).zip $(RELEASE_M548X)
+	rm -r $(RELEASE_DIR)/$(RELEASE_M548X)
+
 .PHONY: release-ram
 NODEP += release-ram
 RELEASE_RAM = emutos-ram-$(VERSION)
@@ -201,6 +216,7 @@ release-floppy:
 NODEP += release
 release: distclean release-clean release-mkdir \
   release-src release-512k release-256k release-192k release-cartridge \
-  release-aranym release-firebee release-amiga release-ram release-floppy
+  release-aranym release-firebee release-amiga release-m548x \
+  release-ram release-floppy
 	$(MAKE) clean
 	@echo '# Packages successfully generated inside $(RELEASE_DIR)'

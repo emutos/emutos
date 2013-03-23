@@ -27,6 +27,13 @@ void coldfire_init_system_timer(void);
 void coldfire_int_61(void); /* In coldfire2.S */
 #endif
 
+#ifdef MACHINE_M548X
+const char* m548x_machine_name(void);
+# if CONF_WITH_IDE
+void m548x_init_cpld(void);
+# endif
+#endif /* MACHINE_M548X */
+
 #endif /* __mcoldfire__ */
 
 #endif /* COLDFIRE_H */

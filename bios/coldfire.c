@@ -18,6 +18,14 @@
 #include "portab.h"
 #include "coldfire.h"
 #include "coldpriv.h"
+#include "tosvars.h"
+
+void coldfire_early_init(void)
+{
+#if defined(MACHINE_M548X) && CONF_WITH_IDE
+    m548x_init_cpld();
+#endif
+}
 
 #if CONF_WITH_COLDFIRE_RS232
 
@@ -98,3 +106,40 @@ void coldfire_init_system_timer(void)
 }
 
 #endif /* CONF_COLDFIRE_TIMER_C */
+
+#ifdef MACHINE_M548X
+
+const char* m548x_machine_name(void)
+{
+    /* Guess the board type from the CPU model */
+    switch (MCF_SIU_JTAGID & MCF_SIU_JTAGID_PROCESSOR)
+    {
+        case MCF_SIU_JTAGID_MCF5484:
+            return "M5484LITE";
+
+        case MCF_SIU_JTAGID_MCF5485:
+            return "M5485EVB";
+
+        default:
+            return "M548????";
+    }
+}
+
+#if CONF_WITH_IDE
+
+void m548x_init_cpld(void)
+{
+    MCF_FBCS4_CSAR = MCF_FBCS_CSAR_BA(FIRE_ENGINE_CS4_BASE);
+    MCF_FBCS4_CSCR = FIRE_ENGINE_CS4_ACCESS;
+    MCF_FBCS4_CSMR = MCF_FBCS_CSMR_BAM_256M + MCF_FBCS_CSMR_V;
+
+    MCF_FBCS5_CSAR = MCF_FBCS_CSAR_BA(FIRE_ENGINE_CS5_BASE);
+    MCF_FBCS5_CSCR = FIRE_ENGINE_CS5_ACCESS;
+    MCF_FBCS5_CSMR = MCF_FBCS_CSMR_BAM_256M + MCF_FBCS_CSMR_V;
+
+    *(volatile UWORD*)(FIRE_ENGINE_CS5_BASE + 0x1000000) |= 0x8000;
+}
+
+#endif /* CONF_WITH_IDE */
+
+#endif /* MACHINE_M548X */

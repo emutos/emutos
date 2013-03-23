@@ -184,6 +184,12 @@ not_falcon:
 
 main_after_reset_instruction:
 
+#ifdef __mcoldfire__
+        lea     coldfire_startup_ret,a6
+        jmp     coldfire_startup
+coldfire_startup_ret:
+#endif
+
 #if CONF_WITH_CARTRIDGE
 /*
  * Check for diagnostic cartridge

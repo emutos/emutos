@@ -33,6 +33,7 @@
 #include "delay.h"
 #include "mfp.h"
 #include "scc.h"
+#include "coldfire.h"
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
 #endif
@@ -625,6 +626,8 @@ const char * machine_name(void)
   return "FireBee";
 #elif defined(MACHINE_AMIGA)
   return "Amiga";
+#elif defined(MACHINE_M548X)
+  return m548x_machine_name();
 #else
   return guess_machine_name();
 #endif

@@ -25,11 +25,46 @@
 #include "gemerror.h"
 #include "vectors.h"
 #include "kprint.h"
+#include "coldfire.h"
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
 #endif
 
 #if CONF_WITH_IDE
+
+#ifdef MACHINE_M548X
+
+#include "coldpriv.h"
+
+struct IDE
+{
+    UBYTE filler00[2];
+    UBYTE sector_number;
+    UBYTE sector_count;
+    UBYTE cylinder_high;
+    UBYTE cylinder_low;
+    UBYTE command; /* Read: status */
+    UBYTE head;
+    UWORD data;
+    UBYTE filler0a[5];
+    UBYTE control; /* Read: Alternate status */
+};
+
+#define ide_interface (*(volatile struct IDE*)(COMPACTFLASH_BASE + 0x1800))
+
+#define IDE_WRITE_REGISTER_PAIR(r, a, b) \
+    *(volatile UWORD*)&ide_interface.r = MAKE_UWORD(a, b)
+
+#define IDE_WRITE_PAIR_SECTOR_NUMBER_SECTOR_COUNT(a, b) \
+    IDE_WRITE_REGISTER_PAIR(sector_number, a, b)
+
+#define IDE_WRITE_PAIR_CYLINDER_HIGH_CYLINDER_LOW(a) \
+    *(volatile UWORD*)&ide_interface.cylinder_high = a
+
+#define IDE_WRITE_PAIR_COMMAND_HEAD(a, b) \
+    IDE_WRITE_REGISTER_PAIR(command, a, b)
+
+#endif /* MACHINE_M548X */
 
 #if CONF_ATARI_HARDWARE
 
@@ -83,6 +118,8 @@ void detect_ide(void)
 {
 #ifdef MACHINE_AMIGA
     has_ide = has_gayle;
+#elif defined(MACHINE_M548X)
+    has_ide = TRUE;
 #else
     has_ide = check_read_byte((long)&ide_interface.command);
 #endif
@@ -127,6 +164,10 @@ static int ide_wait_not_busy_check_error(void)
 
 static void ide_select_sector_lba(UWORD device, ULONG sector)
 {
+#ifdef MACHINE_M548X
+    IDE_WRITE_PAIR_SECTOR_NUMBER_SECTOR_COUNT((UBYTE)(sector & 0xff), 1);
+    IDE_WRITE_PAIR_CYLINDER_HIGH_CYLINDER_LOW((UWORD)((sector & 0xffff00) >> 8));
+#else
     // first change the device bit without changing anything else
     ide_interface.head = IDE_DEVICE(device) | (ide_interface.head & ~IDE_DEVICE(1));
     ide_interface.sector_number = (UBYTE)(sector & 0xff);
@@ -134,6 +175,7 @@ static void ide_select_sector_lba(UWORD device, ULONG sector)
     ide_interface.cylinder_high = (UBYTE)((sector >> 16) & 0xff);
     // now write the rest of the devhead register.
     ide_interface.head = IDE_MODE_LBA | IDE_DEVICE(device) | (UBYTE)((sector >> 24) & 0x0f);
+#endif
 }
 
 static int ide_wait_drq(void)
@@ -143,7 +185,11 @@ static int ide_wait_drq(void)
         UBYTE status = ide_interface.command;
         //kprintf("IDE status = 0x%02x\n", status);
 
+#ifdef MACHINE_M548X
+        if (status == 0 || status == 0xea)
+#else
         if (status == 0)
+#endif
             return EUNDEV;
 
         if (status & IDE_STATUS_ERR)
@@ -200,9 +246,12 @@ static int ide_read_sector(UWORD device, ULONG sector, UBYTE buffer[SECTOR_SIZE]
     int ret;
 
     ide_select_sector_lba(device, sector);
+#ifdef MACHINE_M548X
+    IDE_WRITE_PAIR_COMMAND_HEAD(IDE_CMD_READ_SECTOR, IDE_MODE_LBA | IDE_DEVICE(device) | (UBYTE)((sector >> 24) & 0x0f));
+#else
     ide_interface.sector_count = 1;
     ide_interface.command = IDE_CMD_READ_SECTOR;
-
+#endif
     ret = ide_read_data(buffer);
     if (ret < 0)
         return ret;
@@ -218,8 +267,13 @@ static int ide_write_sector(UWORD device, ULONG sector, UBYTE buffer[SECTOR_SIZE
     int ret;
 
     ide_select_sector_lba(device, sector);
+#ifdef MACHINE_M548X
+    IDE_WRITE_PAIR_SECTOR_NUMBER_SECTOR_COUNT((UBYTE)(sector & 0xff), 1);
+    IDE_WRITE_PAIR_COMMAND_HEAD(IDE_CMD_WRITE_SECTOR, IDE_MODE_LBA | IDE_DEVICE(device) | (UBYTE)((sector >> 24) & 0x0f));
+#else
     ide_interface.sector_count = 1;
     ide_interface.command = IDE_CMD_WRITE_SECTOR;
+#endif
 
     ret = ide_write_data(buffer, need_byteswap);
     if (ret < 0)

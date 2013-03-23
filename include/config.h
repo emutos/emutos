@@ -177,6 +177,24 @@
 #endif
 
 /*
+ * Defaults for the M548x target.
+ */
+#ifdef MACHINE_M548X
+# ifndef CONF_ATARI_HARDWARE
+#  define CONF_ATARI_HARDWARE 0
+# endif
+# ifndef CONF_STRAM_SIZE
+#  define CONF_STRAM_SIZE 14*1024*1024
+# endif
+# ifndef CONF_FASTRAM_SIZE
+#  define CONF_FASTRAM_SIZE 48*1024*1024
+# endif
+# ifndef CONF_WITH_IDE
+#  define CONF_WITH_IDE 1
+# endif
+#endif
+
+/*
  * By default, EmuTOS is built for Atari ST/TT/Falcon compatible hardware.
  */
 #ifndef CONF_ATARI_HARDWARE

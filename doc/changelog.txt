@@ -4652,3 +4652,6 @@ Start... early ages
 - bios/vt52.c: Fixed cursor artifact on Esc E (Clear Screen). (VRI)
 - cli/command.c: Use Esc E to clear the screen. (VRI)
 - bios/vt52.c: Disable SERIAL_CONSOLE_HONOR_HOME by default. (VRI)
+- Makefile release.mk bios/coldfire.c bios/coldfire.h bios/coldfire2.S
+  bios/coldpriv.h bios/ide.c bios/machine.c bios/startup.S doc/readme-m548x.txt
+  include/config.h: Added support for the ColdFire Evaluation boards. (VRI)
