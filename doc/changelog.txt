@@ -4661,4 +4661,5 @@ Start... early ages
 - tools/erd.c: Changed name of strdup() due to conflict on BSD systems. (RFB)
 
 2013-03-24
-- bios/dmasound.* bios/xbios.c: Added dsptristate and gpio XBIOS calls. (THH)
+- bios/dmasound.* bios/xbios.c: Added dsptristate() and gpio() XBIOS calls,
+  and fixed write_microwire() to wait correctly now. (THH)

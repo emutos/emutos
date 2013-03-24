@@ -142,13 +142,14 @@ void detect_dmasound(void)
 
 static void write_microwire(UWORD data)
 {
-    UWORD olddata = DMASOUND->microwire_data;
+    UWORD oldmask = DMASOUND->microwire_mask;
+
+    while (DMASOUND->microwire_mask != oldmask)
+    {
+        /* Wait for previous data transfer to finish */
+    }
 
     DMASOUND->microwire_data = data;
-    while (DMASOUND->microwire_data != olddata)
-    {
-        /* Wait for data to be tranferred */
-    }
 }
 
 static void lmc1992_init(void)
