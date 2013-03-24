@@ -408,6 +408,49 @@ LONG buffoper(WORD mode)
 }
 
 /**
+ * Connect/disconnect the DSP from the sound matrix
+ */
+LONG dsptristate(WORD dspxmit, WORD dsprec)
+{
+    if (!has_falcon_dmasound)
+        return EBADRQ;
+
+    if (dspxmit)
+        DMASOUND->crossbar_src |= 0x80;
+    else
+        DMASOUND->crossbar_src &= 0x7f;
+
+    if (dsprec)
+        DMASOUND->crossbar_dest |= 0x80;
+    else
+        DMASOUND->crossbar_dest &= 0x7f;
+
+    return 0;
+}
+
+/**
+ * Set/get the GPIO pins of the DSP connector
+ */
+LONG gpio(UWORD mode, UWORD data)
+{
+    switch (mode)
+    {
+     case 0:             /* Set direction */
+        DMASOUND->gpx_data_direction = data;
+        break;
+     case 1:             /* Read the pins */
+        return DMASOUND->gpx_data_port & 0x07;
+     case 2:             /* Set output pins */
+        DMASOUND->gpx_data_port = data;
+        break;
+     default:
+        return EBADRQ;
+    }
+
+    return 0;
+}
+
+/**
  * Devconnect for Falcon hardware
  */
 static LONG devconnect_falcon(WORD source, WORD dest, WORD clk,

@@ -4659,3 +4659,6 @@ Start... early ages
 2013-03-23
 - include/config.h: Fixed regression on FastRAM support. (VRI)
 - tools/erd.c: Changed name of strdup() due to conflict on BSD systems. (RFB)
+
+2013-03-24
+- bios/dmasound.* bios/xbios.c: Added dsptristate and gpio XBIOS calls. (THH)

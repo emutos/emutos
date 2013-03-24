@@ -28,6 +28,8 @@ LONG settracks(UWORD playtracks, UWORD rectracks);
 LONG setmontracks(UWORD montrack);
 LONG setinterrupt(UWORD mode, WORD cause);
 LONG buffoper(WORD mode);
+LONG dsptristate(WORD dspxmit, WORD dsprec);
+LONG gpio(UWORD mode, UWORD data);
 LONG devconnect(WORD source, WORD dest, WORD clk, WORD prescale, WORD protocol);
 LONG sndstatus(WORD reset);
 LONG buffptr(LONG sptr);

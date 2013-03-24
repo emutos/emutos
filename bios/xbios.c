@@ -992,6 +992,16 @@ static LONG xbios_88(WORD mode)
     kprintf("XBIOS: buffoper\n");
     return buffoper(mode);
 }
+static LONG xbios_89(WORD dspxmit, WORD dsprec)
+{
+    kprintf("XBIOS: dsptristate\n");
+    return dsptristate(dspxmit, dsprec);
+}
+static LONG xbios_8a(UWORD mode, UWORD data)
+{
+    kprintf("XBIOS: gpio\n");
+    return gpio(mode, data);
+}
 static LONG xbios_8b(WORD source, WORD dest, WORD clk, WORD prescale, WORD protocol)
 {
     kprintf("XBIOS: devconnect\n");
@@ -1224,8 +1234,8 @@ const PFLONG xbios_vecs[] = {
     VEC(xbios_86, setmontracks), /* 86 */
     VEC(xbios_87, setinterrupt), /* 87 */
     VEC(xbios_88, buffoper),    /* 88 */
-    xbios_unimpl,   /* 89 */
-    xbios_unimpl,   /* 8a */
+    VEC(xbios_89, dsptristate), /* 89 */
+    VEC(xbios_8a, gpio),        /* 8a */
     VEC(xbios_8b, devconnect),  /* 8b */
     VEC(xbios_8c, sndstatus),   /* 8c */
     VEC(xbios_8d, buffptr),     /* 8d */

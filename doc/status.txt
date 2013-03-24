@@ -221,12 +221,12 @@ TOS v4.00:
 
 3rd bit in _SND is set:
  X 0x88 Buffoper
- - 0x8a Gpio
+ X 0x8a Gpio
  > 0x8b Devconnect
  X 0x8d Buffptr
 
 3&4 bits in _SND are set:
- - 0x89 Dsptristate
+ X 0x89 Dsptristate
 
 5th bit in _SND is set:
  - 0x61-0x7e, 32 Dsp_* functions
