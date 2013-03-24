@@ -142,12 +142,15 @@ void detect_dmasound(void)
 
 static void write_microwire(UWORD data)
 {
-    UWORD oldmask = DMASOUND->microwire_mask;
+    UWORD oldmask;
 
-    while (DMASOUND->microwire_mask != oldmask)
+    do
     {
         /* Wait for previous data transfer to finish */
+        oldmask = DMASOUND->microwire_mask;
+        asm volatile (" nop " ::: "memory");
     }
+    while (oldmask != DMASOUND->microwire_mask);
 
     DMASOUND->microwire_data = data;
 }
