@@ -4665,4 +4665,5 @@ Start... early ages
   and fixed write_microwire() to wait correctly now. (THH)
 
 2013-03-25
-- bios/dmasound.c: Added volume control via soundcmd() for STE/TT, too. (THH)
+- bios/dmasound.c: Added volume control via soundcmd() for STE/TT, too, and
+  improved sndstatus() for Falcon. (THH)

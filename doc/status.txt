@@ -217,7 +217,7 @@ TOS v4.00:
  X 0x85 Settracks
  X 0x86 Setmontracks
  X 0x87 Setinterrupt
- > 0x8c Sndstatus
+ X 0x8c Sndstatus
 
 3rd bit in _SND is set:
  X 0x88 Buffoper

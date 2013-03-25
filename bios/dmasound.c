@@ -62,8 +62,8 @@ struct dmasound
     UBYTE codec_adc_source; /* CODEC ADC-Input for L+R Channel */
     UBYTE channel_amplification; /* Channel amplification */
     UWORD channel_attenuation; /* Channel attenuation */
-    UBYTE codec_status; /* CODEC-Status */
-    UBYTE filler3d[4];
+    UWORD codec_status; /* CODEC-Status */
+    UBYTE filler3e[3];
     UBYTE gpx_data_direction; /* GPx Data Direction */
     UBYTE filler42;
     UBYTE gpx_data_port; /* GPx Data Port */
@@ -594,13 +594,17 @@ LONG devconnect(WORD source, WORD dest, WORD clk, WORD prescale, WORD protocol)
 
 LONG sndstatus(WORD reset)
 {
-    LONG ret = 0;
-    // TODO: add the remaining bits here and add reset support
-    if (has_falcon_dmasound)
+    if (!has_falcon_dmasound)
+        return 0;
+
+    if (reset)
     {
-        ret = (DMASOUND->codec_status & 3) << 4;
+        DMASOUND->channel_attenuation = 0x0000;
+        DMASOUND->codec_16bit_source |= 0x08;    // TOS does this, so do we
+        DMASOUND->codec_16bit_source &= ~0x08;
     }
-    return ret;
+
+    return (DMASOUND->codec_status >> 4) & 0x3f;
 }
 
 /**
