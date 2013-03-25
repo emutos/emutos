@@ -197,9 +197,8 @@ linea_stub:
 2:      move.w  d0,-(sp)                // Opcode
         move.l  a0,-(sp)                // Opcode/Return address
         pea     linea_stub_msg
-        jsr     _kprintf
-        lea     10(sp),sp
-        rts
+        jsr     _panic
+        // Never returns
 
         SECTION_RODATA
 
