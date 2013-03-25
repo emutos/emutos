@@ -4669,3 +4669,4 @@ Start... early ages
   improved sndstatus() for Falcon. (THH)
 - vdi/vdi_defs.h vdi/vdi_gdp.c vdi/vdi_line.c vdi/vdi_main.c: Static cleanup.
   Contributed by Eero Tamminen. (VRI)
+- bios/kprintasm.S: Removed unused ASM glue for kprintf(). (VRI)
