@@ -310,8 +310,8 @@ static const char *exc_messages[] = {
 
 void dopanic(const char *fmt, ...)
 {
-    /* wrap the cursor */
-    cprintf("\033v\r\n");
+    /* hide cursor, wrap line, new line */
+    cprintf("\033f\033v\r\n");
     /* TODO use sane screen settings (color, address) */
 
     if (proc_lives != 0x12345678) {
