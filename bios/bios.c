@@ -62,7 +62,7 @@
 /*==== Defines ============================================================*/
 
 #define DBGBIOS 0               /* If you want debugging output */
-#define DBGAUTOBOOT 1           /* If you want to see AUTO folder loading */
+#define DBGAUTOBOOT 0           /* If you want to see AUTO folder loading */
 
 /*==== External declarations ==============================================*/
 

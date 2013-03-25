@@ -4671,3 +4671,4 @@ Start... early ages
   Contributed by Eero Tamminen. (VRI)
 - bios/kprintasm.S: Removed unused ASM glue for kprintf(). (VRI)
 - bios/linea.S: Added DBG_LINEA. (VRI)
+- bios/bios.c: Disabled DBGAUTOBOOT. (VRI)
