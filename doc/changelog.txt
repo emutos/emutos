@@ -4673,3 +4673,4 @@ Start... early ages
 - bios/linea.S: Added DBG_LINEA. (VRI)
 - bios/bios.c: Disabled DBGAUTOBOOT. (VRI)
 - bios/acsi.c: Added DBG_ACSI. (VRI)
+- bios/disk.c: Always test DBG_DISK before calling kprintf(). (VRI)

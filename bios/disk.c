@@ -162,7 +162,9 @@ static int atari_partition(int xhdidev)
     if (DMAread(0, 1, (long)&physsect, xhdidev))
         return -1;
 
+#if DBG_DISK
     kprintf("%cd%c:","ash"[xhdidev>>3],'a'+(xhdidev&0x07));
+#endif
 
     /* check for DOS byteswapped master boot record.
      * this is enabled on IDE devices only,
@@ -182,7 +184,9 @@ static int atari_partition(int xhdidev)
         ULONG size = check_for_no_partitions(sect);
         if (size) {
             add_partition(xhdidev,"BGM",0UL,size);
+#if DBG_DISK
             kprintf("fake BGM\n");
+#endif
             return 1;
         }
     }
@@ -225,15 +229,17 @@ static int atari_partition(int xhdidev)
                     start, size, type);
 #endif
             if (type == 0x05 || type == 0x0f || type == 0x85) {
-                kprintf(" extended partitions not yet supported ");
+#if DBG_DISK
+                kprintf(" extended partitions not yet supported\n");
+#endif
             }
             else {
                 add_partition(xhdidev, pid, start, size);
-                kprintf(" $%02x", type);
+#if DBG_DISK
+                kprintf(" $%02x\n", type);
+#endif
             }
         }
-
-        kprintf("\n");
 
         return 1;
     }
@@ -250,7 +256,9 @@ static int atari_partition(int xhdidev)
          * format partition table (there's no reliable magic or the like
          * :-()
          */
+#if DBG_DISK
         kprintf(" Non-ATARI root sector\n");
+#endif
         return 0;
     }
 
@@ -266,27 +274,35 @@ static int atari_partition(int xhdidev)
             /* we don't care about other id's */
             if (add_partition(xhdidev, pi->id, pi->st, pi->siz))
                 break;  /* max number of partitions reached */
+#if DBG_DISK
             kprintf(" %c%c%c", pi->id[0], pi->id[1], pi->id[2]);
+#endif
             continue;
         }
         /* extension partition */
 #ifdef ICD_PARTS
         part_fmt = 1;
 #endif
+#if DBG_DISK
         kprintf(" XGM<");
+#endif
         partsect = extensect = pi->st;
         while (1) {
             /* reset the sector buffer content */
             bzero(&physsect2, sizeof(physsect2));
 
             if (DMAread(partsect, 1, (long)&physsect2, xhdidev)) {
+#if DBG_DISK
                 kprintf(" block %ld read failed\n", partsect);
+#endif
                 return 0;
             }
 
             /* ++roman: sanity check: bit 0 of flg field must be set */
             if (!(xrs->part[0].flg & 1)) {
+#if DBG_DISK
                 kprintf( "\nFirst sub-partition in extended partition is not valid!\n" );
+#endif
                 break;
             }
 
@@ -294,27 +310,35 @@ static int atari_partition(int xhdidev)
                               partsect + xrs->part[0].st,
                               xrs->part[0].siz))
                 break;  /* max number of partitions reached */
+#if DBG_DISK
             kprintf(" %c%c%c", xrs->part[0].id[0], xrs->part[0].id[1], xrs->part[0].id[2]);
+#endif
 
             if (!(xrs->part[1].flg & 1)) {
                 /* end of linked partition list */
                 break;
             }
             if (memcmp( xrs->part[1].id, "XGM", 3 ) != 0) {
+#if DBG_DISK
                 kprintf("\nID of extended partition is not XGM!\n");
+#endif
                 break;
             }
 
             partsect = xrs->part[1].st + extensect;
         }
+#if DBG_DISK
         kprintf(" >");
+#endif
     }
 #ifdef ICD_PARTS
     if ( part_fmt!=1 ) { /* no extended partitions -> test ICD-format */
         pi = &rs->icdpart[0];
         /* sanity check: no ICD format if first partition invalid */
         if (OK_id(pi->id)) {
+#if DBG_DISK
             kprintf(" ICD<");
+#endif
             for (; pi < &rs->icdpart[8]; pi++) {
                 /* accept only GEM,BGM,RAW,LNX,SWP partitions */
                 if (!((pi->flg & 1) && OK_id(pi->id)))
@@ -322,14 +346,20 @@ static int atari_partition(int xhdidev)
                 part_fmt = 2;
                 if (add_partition(xhdidev, pi->id, pi->st, pi->siz))
                     break;  /* max number of partitions reached */
+#if DBG_DISK
                 kprintf(" %c%c%c", pi->id[0], pi->id[1], pi->id[2]);
+#endif
             }
+#if DBG_DISK
             kprintf(" >");
+#endif
         }
     }
 #endif
 
+#if DBG_DISK
     kprintf("\n");
+#endif
 
     return 1;
 }
