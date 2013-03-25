@@ -25,10 +25,6 @@ void screen(void);
 WORD lcl_ptsin[ptsin_size];
 WORD flip_y;                    /* True if magnitudes being returned */
 
-/* GDP variables */
-WORD angle, beg_ang, del_ang, end_ang;
-WORD xc, xrad, yc, yrad;
-
 
 /* Two main jumptables for VDI functions */
 static void (* const jmptb1[])(Vwk *) = {

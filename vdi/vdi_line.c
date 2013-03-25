@@ -696,7 +696,7 @@ static void do_circ(Vwk * vwk, WORD cx, WORD cy)
  * s_fa_attr - Save the fill area attribute
  */
 
-void s_fa_attr(Vwk * vwk)
+static void s_fa_attr(Vwk * vwk)
 {
     /* Set up the fill area attribute environment. */
     LN_MASK = LINE_STYLE[0];
@@ -719,7 +719,7 @@ void s_fa_attr(Vwk * vwk)
  * r_fa_attr - Restore the fill area attribute
  */
 
-void r_fa_attr(Vwk * vwk)
+static void r_fa_attr(Vwk * vwk)
 {
     /* Restore the fill area attribute environment. */
     vwk->fill_color = s_fil_col;

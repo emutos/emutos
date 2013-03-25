@@ -202,10 +202,6 @@ extern WORD line_cw;            /* Linewidth for current circle */
 extern WORD num_qc_lines;
 extern WORD val_mode, chc_mode, loc_mode, str_mode;
 
-/* gdp area variables */
-extern WORD xc, yc, xrad, yrad, del_ang, beg_ang, end_ang;
-extern WORD angle, n_steps;
-
 /* These are still needed for text blitting */
 extern const UWORD LINE_STYLE[];
 extern const UWORD ROM_UD_PATRN[];
@@ -259,8 +255,6 @@ void set_LN_MASK(Vwk *vwk);
 void chk_esc(Vwk *);
 void st_fl_ptr(Vwk *);
 void d_justified(Vwk *);
-void r_fa_attr(Vwk *);
-void s_fa_attr(Vwk *);
 
 /* drawing primitives */
 void abline (Vwk * vwk, Line * line, WORD color);

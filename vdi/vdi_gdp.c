@@ -23,7 +23,9 @@
 #define    PI        1800
 #define    TWOPI     3600
 
-
+/* local GDP variables */
+static WORD angle, beg_ang, del_ang, end_ang;
+static WORD xc, xrad, yc, yrad;
 
 /* Prototypes local to this module */
 static void gdp_rbox(Vwk * vwk);
