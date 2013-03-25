@@ -68,10 +68,8 @@ _int_linea:
 #else
         and.w   #0xFFF,d0       /* Keep only the function number */
 #endif
-        tst.w   d0
-        bmi     wrong_linea
-        cmp.w   linea_ents,d0
-        bpl     wrong_linea
+        cmp.w   #(linea_ents-linea_vecs)/4,d0
+        bhs.s   wrong_linea
 
 #if DBG_LINEA
 #ifdef __mcoldfire__
@@ -264,9 +262,6 @@ linea_vecs:
         .dc.l   _linea_e        /* _COPY_RFM */
         .dc.l   _linea_f        /* _d_contourfill?? */
 linea_ents:
-        .dc.w   (linea_ents-linea_vecs)/4
-
-
 
 // ===========================================================================
 // ==== End ==================================================================
