@@ -4678,3 +4678,4 @@ Start... early ages
 - aes/gemgsxif.c: Added DBG_GEMGSXIF. (VRI)
 - bios/blkdev.c: Always test DBG_BLKDEV before calling kprintf(). (VRI)
 - bios/kprintf.c: Hide the cursor in panic(). (VRI)
+- vios.linea.S: Cleaned up linea_stub. (VRI)

@@ -184,16 +184,18 @@ _linea_f:
         moveq   #0xf,d0
         // Fall into linea_stub
 
+/* We may arrive here either from our own Line A exception dispatcher,
+ * or from direct function call.
+ */
 linea_stub:
         move.l  (sp),d1
-        sub.l   #linea_dispatch_pc,d1
-        and.l   #0xFFFFFF,d1
-        bne     1f
-        move.l  a1,a0
-        bra     2f
-1:      move.l  (sp),a0
-2:      move.w  d0,-(sp)
-        move.l  a0,-(sp)
+        cmp.l   #linea_dispatch_pc,d1   // Our own exception dispatcher?
+        bne.s   1f                      // No
+        move.l  a1,a0                   // Get the exception opcode address
+        bra.s   2f
+1:      move.l  d1,a0                   // Get the caller return address
+2:      move.w  d0,-(sp)                // Opcode
+        move.l  a0,-(sp)                // Opcode/Return address
         pea     linea_stub_msg
         jsr     _kprintf
         lea     10(sp),sp
