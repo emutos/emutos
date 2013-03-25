@@ -50,7 +50,7 @@ _int_linea:
         move.l  2(sp),a0        /* Get the opcode address */
 #endif
         move.l  a0,a1
-        clr.l   d0
+        moveq   #0,d0
         move.w  (a0)+,d0        /* Get the opcode value */
 #ifdef __mcoldfire__
         move.l  a0,4(sp)        /* Return after the Line A opcode */
@@ -144,55 +144,55 @@ _linea_0:
 //
 
 _linea_1:
-        move.w  #1,d0
+        moveq   #1,d0
         bra.s   linea_stub
 
 _linea_2:
-        move.w  #2,d0
+        moveq   #2,d0
         bra.s   linea_stub
 
 _linea_3:
-        move.w  #3,d0
+        moveq   #3,d0
         bra.s   linea_stub
 
 _linea_4:
-        move.w  #4,d0
+        moveq   #4,d0
         bra.s   linea_stub
 
 _linea_5:
-        move.w  #5,d0
+        moveq   #5,d0
         bra.s   linea_stub
 
 _linea_6:
-        move.w  #6,d0
+        moveq   #6,d0
         bra.s   linea_stub
 
 _linea_7:
-        move.w  #7,d0
+        moveq   #7,d0
         bra.s   linea_stub
 
 _linea_8:
-        move.w  #8,d0
+        moveq   #8,d0
         bra.s   linea_stub
 
 _linea_b:
-        move.w  #0xb,d0
+        moveq   #0xb,d0
         bra.s   linea_stub
 
 _linea_c:
-        move.w  #0xc,d0
+        moveq   #0xc,d0
         bra.s   linea_stub
 
 _linea_d:
-        move.w  #0xd,d0
+        moveq   #0xd,d0
         bra.s   linea_stub
 
 _linea_e:
-        move.w  #0xe,d0
+        moveq   #0xe,d0
         bra.s   linea_stub
 
 _linea_f:
-        move.w  #0xf,d0
+        moveq   #0xf,d0
         // Fall into linea_stub
 
 linea_stub:
