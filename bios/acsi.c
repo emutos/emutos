@@ -10,6 +10,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+#define DBG_ACSI 0
+
 #include "config.h"
 #include "acsi.h"
 #include "dma.h"
@@ -69,7 +71,9 @@ LONG acsi_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev)
 #if CONF_WITH_FRB
         if (buf > 0x1000000L) {
             if (cookie_frb == 0) {
+#if DBG_ACSI
                 kprintf("missing FRB buffer");
+#endif
                 return -1L;
             } else {
                 /* proper FRB lock (TODO) */
@@ -96,7 +100,9 @@ LONG acsi_rw(WORD rw, LONG sector, WORD count, LONG buf, WORD dev)
             /* proper FRB unlock (TODO) */
         }
         if(err) {
+#if DBG_ACSI
             kprintf("ACSI -> %d\n", err);
+#endif
             return err;
         }
 

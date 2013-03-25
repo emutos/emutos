@@ -4672,3 +4672,4 @@ Start... early ages
 - bios/kprintasm.S: Removed unused ASM glue for kprintf(). (VRI)
 - bios/linea.S: Added DBG_LINEA. (VRI)
 - bios/bios.c: Disabled DBGAUTOBOOT. (VRI)
+- bios/acsi.c: Added DBG_ACSI. (VRI)
