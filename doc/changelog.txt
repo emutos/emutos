@@ -4663,3 +4663,6 @@ Start... early ages
 2013-03-24
 - bios/dmasound.* bios/xbios.c: Added dsptristate() and gpio() XBIOS calls,
   and fixed write_microwire() to wait correctly now. (THH)
+
+2013-03-25
+- bios/dmasound.c: Added volume control via soundcmd() for STE/TT, too. (THH)

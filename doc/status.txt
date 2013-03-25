@@ -211,7 +211,7 @@ TOS v4.00:
 2nd bit in _SND is set:
  t 0x80 LockSnd
  t 0x81 UnlockSnd
- > 0x82 Soundcmd
+ X 0x82 Soundcmd
  X 0x83 Setbuffer
  X 0x84 Setmode
  X 0x85 Settracks
