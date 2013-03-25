@@ -17,16 +17,22 @@
 
 // ==== External Declarations ================================================
 
-        .extern _put_pix
-        .extern _get_pix
-        .extern _abline
-        .extern _habline
-        .extern _clc_flit         // from vdi/gsxasm1.S
-        .extern _RECTFILL
-        .extern _text_blt
-        .extern _dis_cur
-        .extern _hide_cur
-        .extern _xfm_crfm
+        .extern _linea_0
+        .extern   _linea_1
+        .extern   _linea_2
+        .extern   _linea_3
+        .extern   _linea_4
+        .extern   _linea_5
+        .extern   _linea_6
+        .extern   _linea_7
+        .extern   _linea_8
+        .extern   __v_show_c
+        .extern   __v_hide_c
+        .extern   _linea_b
+        .extern   _linea_c
+        .extern   _linea_d
+        .extern   _linea_e
+        .extern   _linea_f
 
 
 // ==== Global Declarations ================================================
