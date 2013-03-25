@@ -12,7 +12,7 @@
 /*      GEMGSXIF.C      05/06/84 - 06/13/85     Lee Lorenzen            */
 /*      merge High C vers. w. 2.2               8/21/87         mdf     */
 
-
+#define DBG_GEMGSXIF
 
 #include "config.h"
 #include "portab.h"
@@ -308,9 +308,11 @@ static void bb_set(WORD sx, WORD sy, WORD sw, WORD sh, WORD *pts1, WORD *pts2,
     if (size > gl_mlen) {       /* buffer too small */
         /* adjust height to fit buffer: this will leave droppings! */
         sh = gl_mlen * sh / size;
+#if DBG_GEMGSXIF
         /* issue warning message for backup only, not for subsequent restore */
         if (pdst == &gl_tmp)
             kprintf("Menu/alert buffer too small: need at least %ld bytes\n",size);
+#endif
     }
 
     gl_tmp.fd_stand = TRUE;

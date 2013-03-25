@@ -4675,3 +4675,4 @@ Start... early ages
 - bios/acsi.c: Added DBG_ACSI. (VRI)
 - bios/disk.c: Always test DBG_DISK before calling kprintf(). (VRI)
 - aes/gemsuper.c: Always test DBG_GEMSUPER before calling kprintf(). (VRI)
+- aes/gemgsxif.c: Added DBG_GEMGSXIF. (VRI)
