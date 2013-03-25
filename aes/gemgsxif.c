@@ -12,7 +12,7 @@
 /*      GEMGSXIF.C      05/06/84 - 06/13/85     Lee Lorenzen            */
 /*      merge High C vers. w. 2.2               8/21/87         mdf     */
 
-#define DBG_GEMGSXIF
+#define DBG_GEMGSXIF 0
 
 #include "config.h"
 #include "portab.h"
