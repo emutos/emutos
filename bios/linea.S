@@ -13,6 +13,8 @@
  *
  */
 
+#define DBG_LINEA 0
+
 #include "asmdefs.h"
 
 // ==== External Declarations ================================================
@@ -71,7 +73,7 @@ _int_linea:
         cmp.w   linea_ents,d0
         bpl     wrong_linea
 
-#if 0
+#if DBG_LINEA
 #ifdef __mcoldfire__
         lea     -16(sp),sp
         movem.l d0-d1/a0-a1,(sp)
@@ -88,7 +90,7 @@ _int_linea:
 #else
         movem.l (sp)+,d0-d1/a0-a1
 #endif
-#endif
+#endif /* DBG_LINEA */
 
         lea     linea_vecs,a0
 #ifdef __mcoldfire__
@@ -102,15 +104,19 @@ linea_dispatch_pc:
         rte
 
 wrong_linea:
+#if DBG_LINEA
         move.w  d0,-(sp)
         subq.l  #2,a0
         move.l  a0,-(sp)
         pea     wrong_linea_msg
         jsr     _kprintf
         lea     10(sp),sp
+#endif /* DBG_LINEA */
         rte
 
         SECTION_RODATA
+
+#if DBG_LINEA
 
 wrong_linea_msg:
         .ascii  "pc=0x%08lx: Line-A call number 0x%03x out of bounds\n\0"
@@ -119,6 +125,8 @@ wrong_linea_msg:
 linea_msg:
         .ascii  "Line-A #%x\n\0"
         .even
+
+#endif  /* DBG_LINEA */
 
         .text
 

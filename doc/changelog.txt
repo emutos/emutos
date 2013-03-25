@@ -4670,3 +4670,4 @@ Start... early ages
 - vdi/vdi_defs.h vdi/vdi_gdp.c vdi/vdi_line.c vdi/vdi_main.c: Static cleanup.
   Contributed by Eero Tamminen. (VRI)
 - bios/kprintasm.S: Removed unused ASM glue for kprintf(). (VRI)
+- bios/linea.S: Added DBG_LINEA. (VRI)
