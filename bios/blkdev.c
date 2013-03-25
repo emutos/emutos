@@ -195,7 +195,9 @@ int add_partition(int dev, char id[], ULONG start, ULONG size)
     int unit = dev + NUMFLOPPIES;
 
     if (blkdevnum == BLKDEVNUM) {
+#if DBG_BLKDEV
         kprintf("Maximum number of partitions reached!\n");
+#endif
         return -1;
     }
 #if DBG_BLKDEV
