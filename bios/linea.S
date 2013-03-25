@@ -143,82 +143,57 @@ _linea_0:
 // was called using the line a opcode, or directly via its address.
 //
 
-
 _linea_1:
         move.w  #1,d0
         bra.s   linea_stub
-
 
 _linea_2:
         move.w  #2,d0
         bra.s   linea_stub
 
-
 _linea_3:
         move.w  #3,d0
         bra.s   linea_stub
-
 
 _linea_4:
         move.w  #4,d0
         bra.s   linea_stub
 
-
 _linea_5:
         move.w  #5,d0
         bra.s   linea_stub
-
 
 _linea_6:
         move.w  #6,d0
         bra.s   linea_stub
 
-
 _linea_7:
         move.w  #7,d0
         bra.s   linea_stub
-
 
 _linea_8:
         move.w  #8,d0
         bra.s   linea_stub
 
-/*
-_linea_9:
-        move.w  #9,d0
-        bra.s   linea_stub
-*/
-/*
-_linea_a:
-        move.w  #0xa,d0
-        bra.s   linea_stub
-*/
-
 _linea_b:
         move.w  #0xb,d0
         bra.s   linea_stub
-
 
 _linea_c:
         move.w  #0xc,d0
         bra.s   linea_stub
 
-
 _linea_d:
         move.w  #0xd,d0
         bra.s   linea_stub
-
 
 _linea_e:
         move.w  #0xe,d0
         bra.s   linea_stub
 
-
 _linea_f:
         move.w  #0xf,d0
         // Fall into linea_stub
-
-
 
 linea_stub:
         move.l  (sp),d1
