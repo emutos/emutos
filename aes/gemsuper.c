@@ -456,7 +456,9 @@ static UWORD crysbind(WORD opcode, LONG pglobal, WORD control[], WORD int_in[], 
         }
 
         if (unsupported) {
+#if DBG_GEMSUPER
             kprintf("Bad AES function %d\n", opcode);
+#endif
             if (opcode != 0)    /* Ignore the 0 since some PRGs are this call */
                 fm_show(ALNOFUNC, &opcode, 1);
             ret = -1;

@@ -4674,3 +4674,4 @@ Start... early ages
 - bios/bios.c: Disabled DBGAUTOBOOT. (VRI)
 - bios/acsi.c: Added DBG_ACSI. (VRI)
 - bios/disk.c: Always test DBG_DISK before calling kprintf(). (VRI)
+- aes/gemsuper.c: Always test DBG_GEMSUPER before calling kprintf(). (VRI)
